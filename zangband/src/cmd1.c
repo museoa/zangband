@@ -1713,15 +1713,6 @@ void py_attack(int y, int x)
 
 					int inc_chance = (o_ptr->activate + 128 == ART_VORPAL_BLADE) ? 2 : 4;
 
-					if ((o_ptr->activate + 128 == ART_CHAINSWORD) && one_in_(2))
-					{
-						char chainsword_noise[1024];
-						if (!get_rnd_line("chainswd.txt", 0, chainsword_noise))
-						{
-							msg_print(chainsword_noise);
-						}
-					}
-
 					if (o_ptr->activate + 128 == ART_VORPAL_BLADE)
 					{
 						msg_print("Your Vorpal Blade goes snicker-snack!");
