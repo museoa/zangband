@@ -108,8 +108,8 @@ BORGOBJS := \
 ## The list of ports available
 ##
 PORTS := default_port linux linux_svga openbsd freebsd main-cap vt100 \
-         solaris sgi dec isc next aix cygwin dos ibm lcc risc emx amiga \
-		 borland
+         sunos solaris sgi dec isc next aix cygwin dos ibm lcc risc emx \
+		 amiga borland
 
 ##
 ## Following are some "system" definitions
@@ -237,6 +237,13 @@ vt100: CFLAGS += -D"USE_CAP" -D"USE_HARDCODE"
 
 solaris: CFLAGS += -D"USE_X11" -D"USE_GCU" -D"SOLARIS"
 solaris: LIBS := -lX11 -lsocket -lcurses
+
+##
+## Variation -- compile for SunOS
+##
+
+sunos: CFLAGS += -D"USE_X11" -D"USE_GCU" -D"SUNOS"
+sunos: LIBS := -lX11 -lsocket -lcurses -lnsl -L/usr/lib
 
 ##
 ## Variation -- compile for SGI Indigo runnig Irix
