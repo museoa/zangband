@@ -3312,13 +3312,6 @@ static void print_monster_string(FILE *fff, byte a, char c, cptr name, int num)
 		/* Hack - no unique coins */
 		froff(fff, "  %s$$" CLR_WHITE "     %d pile of %s\n", color_seq[a], num, name);
 	}
-#if 0
-	else if (c == '#')
-	{
-	
-	
-	}
-#endif
 	else
 	{
 		if (num)
@@ -3777,6 +3770,10 @@ static bool do_cmd_knowledge_objects(int dummy)
 
 	char file_name[1024];
 	
+	byte a;
+	char c;
+	cptr attr;
+	
 	/* Hack - ignore parameter */
 	(void) dummy;
 
@@ -3801,9 +3798,22 @@ static bool do_cmd_knowledge_objects(int dummy)
 
 			/* Create fake object */
 			o_ptr = object_prep(k);
-
-			/* Print a message */
-			froff(fff, "     %v\n", OBJECT_STORE_FMT(o_ptr, FALSE, 0));
+			
+			a = object_attr(o_ptr);
+			c = object_char(o_ptr);
+			
+			attr = color_seq[tval_to_attr[o_ptr->tval % 128]];
+			
+			if (c == '$')
+			{
+				/* Print a message ('$' needs to be escaped) */
+				froff(fff, " %s$$%s  %v\n", color_seq[a], attr, OBJECT_STORE_FMT(o_ptr, FALSE, 0));
+			}
+			else
+			{
+				/* Print a message */
+				froff(fff, " %s%c%s  %v\n", color_seq[a], c, attr, OBJECT_STORE_FMT(o_ptr, FALSE, 0));
+			}
 		}
 	}
 
