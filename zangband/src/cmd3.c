@@ -834,8 +834,17 @@ static void do_cmd_refill_lamp(void)
 	j_ptr = &inventory[INVEN_LITE];
 
 	/* Refuel */
-	j_ptr->timeout += o_ptr->timeout;
-
+	if (o_ptr->tval == TV_FLASK)
+	{
+		/* Flasks use the pval to store the fuel */
+		j_ptr->timeout += o_ptr->pval;
+	}
+	else
+	{
+		/* Lanterns use the timeout to store the fuel */ 
+		j_ptr->timeout += o_ptr->timeout;
+	}
+	
 	/* Message */
 	msg_print("You fuel your lamp.");
 
