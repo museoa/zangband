@@ -3125,10 +3125,21 @@ static s32b borg_power_aux3(void)
 	/*** Reward various things ***/
 
 	/* Hack -- Reward light radius */
-	value += (bp_ptr->cur_lite * 100000L);
+	value += 1000000 * MIN(bp_ptr->cur_lite, 3);
+	value += 1000 * MIN_FLOOR(bp_ptr->cur_lite, 3, 10);
 
 	/* Hack -- Reward for wearing a permanent light */
-	if (bp_ptr->britelite) value += 5000;
+	if (bp_ptr->britelite)
+	{
+		value += 5000;
+	}
+	/* if there is no permanent light */
+	else
+	{
+		/* Reward carrying a light item, so the borg can cast phlogiston on it */
+		if (look_up_equip_slot(EQUIP_LITE) &&
+			borg_has_realm(REALM_ARCANE)) value += 1000;
+	}
 
 	/* Hack -- Reward speed */
 
@@ -3606,8 +3617,8 @@ static s32b borg_power_aux4(void)
 			/* reward carrying a lantern when you don't use it */
 			value += 500 * MIN(amt_lantern, 1);
 
-			/* If you need fuel prefer torches */
-			if (bp_ptr->able.fuel < 1000) value += 50 * MIN(amt_torch, 7);
+			/* Prefer torches */
+			value += 50 * MIN(amt_torch, 7);
 
 			/*
 			 * The flasks acts as molotov cocktails, but they can't
@@ -3619,9 +3630,8 @@ static s32b borg_power_aux4(void)
 		/* If the borg wields a lantern */
 		if (k_info[l_ptr->k_idx].sval == SV_LITE_LANTERN)
 		{
-			/* If you need fuel prefer flasks/lanterns */
-			if (bp_ptr->able.fuel < 1000)
-				value += 50 * MIN(amt_lantern + amt_flask, 7);
+			/* Prefer flasks/lanterns to torches */
+			value += 50 * MIN(amt_lantern + amt_flask, 7);
 
 			/* Keep some more flasks as molotov cocktails */
 			if (bp_ptr->lev < 15) value += 50 * MIN_FLOOR(amt_flask, 7, 20);

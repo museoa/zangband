@@ -2131,14 +2131,18 @@ static void borg_notice_inven_item(list_item *l_ptr)
 
 		case TV_LITE:
 		{
-			/* If not empty, count whatever it is as 1 fuel */
-			if (l_ptr->timeout) bp_ptr->able.fuel += number;
+			/* If not empty */
+			if (l_ptr->timeout)
+			{
+				/* Count whatever it is as 1 fuel */
+				bp_ptr->able.fuel += number;
 
-			/* Count a lantern as lantern fuel */
-			if (k_ptr->sval == SV_LITE_LANTERN) amt_lantern += number;
-			
-			/* Count a torch as torch fuel */
-			if (k_ptr->sval == SV_LITE_TORCH) amt_torch += number;
+				/* Count a lantern as lantern fuel */
+				if (k_ptr->sval == SV_LITE_LANTERN) amt_lantern += number;
+				
+				/* Count a torch as torch fuel */
+				if (k_ptr->sval == SV_LITE_TORCH) amt_torch += number;
+			}
 			
 			break;
 		}
@@ -2515,7 +2519,10 @@ static void borg_notice_aux2(void)
 	/* Handle "phlogiston" */
 	if (borg_spell_legal_fail(REALM_ARCANE, 1, 1, 40))
 	{
-		bp_ptr->able.fuel += 1000;
+		/* Not too much or you'll be casting phlogiston in the dark */
+		bp_ptr->able.fuel += 5;
+		amt_lantern += 5;
+		amt_torch += 5;
 	}
 
 	/* Handle "rune of protection" glyph" */
