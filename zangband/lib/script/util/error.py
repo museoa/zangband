@@ -24,6 +24,8 @@ class ErrorClass:
 				msg_print(text[0:-1])
 			else:
 				msg_print(text)
+	def read(self, n = -1):
+		pass
 
 # Redirect stderr and stdout
 sys.stderr = sys.stdout = ErrorClass()

@@ -28,7 +28,7 @@ class monster(monster_type, monster_typePtr):
 		debug.trace("monster.__init__(%s, %s)" % (self, m_ptr))
 
 	def move(self):
-		return [2]
+		pass
 
 	def kill(self):
 		pass
