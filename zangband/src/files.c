@@ -4144,18 +4144,14 @@ static void close_game_handle_death(void)
 	if (take_notes)
 	{
 		char long_day[30];
-		char buf[80];
 		time_t ct = time((time_t *) NULL);
 
 		/* Get the date */
 		(void)strftime(long_day, 30, "%Y-%m-%d at %H:%M:%S", localtime(&ct));
 
-		/* Create string */
-		sprintf(buf, "\n%s was killed by %s on %s\n", player_name,
-				p_ptr->died_from, long_day);
-
 		/* Output to the notes file */
-		output_note(buf);
+		output_note("\n%s was killed by %s on %s\n", player_name,
+				p_ptr->died_from, long_day);
 	}
 
 	/* Enter player in high score list */
