@@ -2014,36 +2014,49 @@ static errr Term_pict_x11(int x, int y, int n, const byte *ap, const char *cp)
 		/* For extra speed - cache these values */
 		x2 = (tc&0x7F) * td->fnt->wid;
 		y2 = (ta&0x7F) * td->fnt->hgt;
-
-		/* Mega Hack^2 - assume the top left corner is "black" */
-		blank = XGetPixel(td->tiles, 0, td->fnt->hgt * 6);
-
-		for (k = 0; k < td->fnt->wid; k++)
+		
+		/* Optimise the common case */
+		if ((x1 == x2) && (y1 == y2))
 		{
-			for (l = 0; l < td->fnt->hgt; l++)
-			{
-				/* If mask set... */
-				if ((pixel = XGetPixel(td->tiles, x1 + k, y1 + l)) == blank)
-				{
-
-					/* Output from the terrain */
-					pixel = XGetPixel(td->tiles, x2 + k, y2 + l);
-				}
-
-				/* Store into the temp storage. */
-				XPutPixel(td->TmpImage, k, l, pixel);
-			}
+			/* Draw object / terrain */
+			XPutImage(Metadpy->dpy, td->win->win,
+		  	        clr[0]->gc,
+		  	        td->tiles,
+		  	        x1, y1,
+		  	        x, y,
+		  	        td->fnt->wid, td->fnt->hgt);	
 		}
+		else
+		{
+
+			/* Mega Hack^2 - assume the top left corner is "black" */
+			blank = XGetPixel(td->tiles, 0, td->fnt->hgt * 6);
+
+			for (k = 0; k < td->fnt->wid; k++)
+			{
+				for (l = 0; l < td->fnt->hgt; l++)
+				{
+					/* If mask set... */
+					if ((pixel = XGetPixel(td->tiles, x1 + k, y1 + l)) == blank)
+					{
+						/* Output from the terrain */
+						pixel = XGetPixel(td->tiles, x2 + k, y2 + l);
+					}
+					
+					/* Store into the temp storage. */
+					XPutPixel(td->TmpImage, k, l, pixel);
+				}
+			}
 
 
-		/* Draw to screen */
+			/* Draw to screen */
 
-		XPutImage(Metadpy->dpy, td->win->win,
-		          clr[0]->gc,
-		          td->TmpImage,
-		          0, 0, x, y,
-		          td->fnt->wid, td->fnt->hgt);
-
+			XPutImage(Metadpy->dpy, td->win->win,
+		    	      clr[0]->gc,
+		     	     td->TmpImage,
+		     	     0, 0, x, y,
+		     	     td->fnt->wid, td->fnt->hgt);
+		}
 
 #else /* USE_TRANSPARENCY */
 

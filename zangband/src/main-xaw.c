@@ -434,41 +434,56 @@ static void AngbandOutputPict(AngbandWidget widget, int x, int y, int n,
 		x2 = (tc&0x7F) * widget->angband.fontwidth;
 		y2 = (ta&0x7F) * widget->angband.fontheight;
 
-		/* Mega Hack^2 - assume the top left corner is "black" */
-		blank = XGetPixel(widget->angband.tiles,
-			 0, widget->angband.fontheight * 6);
-
-		for (k = 0; k < widget->angband.fontwidth; k++)
+		/* Optimise the common case */
+		if ((x1 == x2) && (y1 == y2))
 		{
-			for (l = 0; l < widget->angband.fontheight; l++)
-			{
-				/* If mask set... */
-				if ((pixel = XGetPixel(widget->angband.tiles,
-					 x1 + k, y1 + l)) == blank)
-				{
-
-					/* Output from the terrain */
-					pixel = XGetPixel(widget->angband.tiles,
-						 x2 + k, y2 + l);
-				}
-
-				/* Store into the temp storage. */
-				XPutPixel(widget->angband.TmpImage,
-					 k, l, pixel);
-			}
+			/* Draw object / terrain */
+			XPutImage(XtDisplay(widget), XtWindow(widget),
+		  	        widget->angband.gc[0],
+		    	      widget->angband.tiles,
+		    	      x1, y1,
+		    	      x, y,
+		    	      widget->angband.fontwidth,
+		 	      widget->angband.fontheight);
 		}
+		else
+		{		
+			/* Mega Hack^2 - assume the top left corner is "black" */
+			blank = XGetPixel(widget->angband.tiles,
+				 0, widget->angband.fontheight * 6);
+
+			for (k = 0; k < widget->angband.fontwidth; k++)
+			{
+				for (l = 0; l < widget->angband.fontheight; l++)
+				{
+					/* If mask set... */
+					if ((pixel = XGetPixel(widget->angband.tiles,
+						 x1 + k, y1 + l)) == blank)
+					{
+
+						/* Output from the terrain */
+						pixel = XGetPixel(widget->angband.tiles,
+							 x2 + k, y2 + l);
+					}
+
+					/* Store into the temp storage. */
+					XPutPixel(widget->angband.TmpImage,
+						 k, l, pixel);
+				}
+			}
 
 
-		/* Draw to screen */
+			/* Draw to screen */
 
-		/* Draw object / terrain */
-		XPutImage(XtDisplay(widget), XtWindow(widget),
-		          widget->angband.gc[0],
-		          widget->angband.TmpImage,
-		          0, 0,
-		          x, y,
-		          widget->angband.fontwidth,
-		          widget->angband.fontheight);
+			/* Draw object / terrain */
+			XPutImage(XtDisplay(widget), XtWindow(widget),
+			          widget->angband.gc[0],
+			          widget->angband.TmpImage,
+			          0, 0,
+			          x, y,
+			          widget->angband.fontwidth,
+			          widget->angband.fontheight);
+		}
 
 #else /* USE_TRANSPARENCY */
 
