@@ -332,6 +332,15 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
  */
 static store_type *st_ptr = NULL;
 
+/*
+ * We store the current field here so that it can be accessed everywhere
+ */
+static field_type *f_ptr = NULL;
+
+/* Save info flags for store */
+static byte	info_flags;
+
+
 
 /*
  * Determine the price of an item (qty one) in a store.
@@ -358,7 +367,7 @@ static s32b price_item(object_type *o_ptr, int greed, bool flip)
 	int 	adjust;
 	s32b	price;
 
-	owner_type *ot_ptr = &owners[st_ptr->f_ptr->data[0]][st_ptr->owner];
+	owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
 
 	/* Get the value of one of the items */
 	price = object_value(o_ptr);
@@ -384,8 +393,7 @@ static s32b price_item(object_type *o_ptr, int greed, bool flip)
 		if (adjust > 100) adjust = 100;
 
 		/* Mega-Hack -- Black market sucks */
-		if ((st_ptr->info_flags & ST_GREED) ||
-			(st_ptr->info_flags & ST_ULTRA_GREED))
+		if ((info_flags & ST_GREED) || (info_flags & ST_ULTRA_GREED))
 		{
 			price = price / 2;
 		}
@@ -401,10 +409,10 @@ static s32b price_item(object_type *o_ptr, int greed, bool flip)
 		if (adjust < 100) adjust = 100;
 
 		/* Mega-Hack -- Black market sucks */
-		if (st_ptr->info_flags & ST_GREED)
+		if (info_flags & ST_GREED)
 			price = price * 2;
 			
-		if (st_ptr->info_flags & ST_ULTRA_GREED)
+		if (info_flags & ST_ULTRA_GREED)
 			price = price * 4;
 	}
 
@@ -708,8 +716,6 @@ static bool store_will_buy(object_type *o_ptr)
 	/* Thing to pass to the action functions */
 	field_obj_test f_o_t;
 	
-	byte restrict = st_ptr->info_flags;
-	
 	/* Save information to pass to the field action function */
 	f_o_t.o_ptr = o_ptr;
 	
@@ -733,19 +739,19 @@ static bool store_will_buy(object_type *o_ptr)
 	/* Check restriction flags */
 	
 	/* Blessed items only */
-	if (restrict & ST_REST_BLESSED)
+	if (info_flags & ST_REST_BLESSED)
 	{
 		if (!item_tester_hook_is_blessed(o_ptr)) return (FALSE);
 	}
 	
 	/* Good items only */
-	if (restrict & ST_REST_GOOD)
+	if (info_flags & ST_REST_GOOD)
 	{
 		if (!item_tester_hook_is_good(o_ptr)) return (FALSE);
 	}
 	
 	/* Great items only */
-	if (restrict & ST_REST_GREAT)
+	if (info_flags & ST_REST_GREAT)
 	{
 		if (!item_tester_hook_is_good(o_ptr)) return (FALSE);
 	}
@@ -1079,8 +1085,6 @@ static void store_create(void)
 	object_type *q_ptr;
 	
 	obj_theme theme;
-	
-	field_type *f_ptr = st_ptr->f_ptr;
 
 	byte restrict = f_ptr->data[7];
 		
@@ -1250,7 +1254,7 @@ static void display_entry(int pos)
 
 	int maxwid;
 	
-	owner_type *ot_ptr = &owners[st_ptr->f_ptr->data[0]][st_ptr->owner];
+	owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
 
 	/* Get the item */
 	o_ptr = &st_ptr->stock[pos];
@@ -1417,7 +1421,7 @@ static void display_store(int store_top)
 {
 	char buf[80];
 	
-	owner_type *ot_ptr = &owners[st_ptr->f_ptr->data[0]][st_ptr->owner];
+	owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
 
 	/* Clear screen */
 	Term_clear();
@@ -1441,8 +1445,8 @@ static void display_store(int store_top)
 	/* Normal stores */
 	else
 	{
-		cptr store_name = t_info[st_ptr->f_ptr->t_idx].name;
-		cptr owner_name = (ot_ptr->owner_name);
+		cptr store_name = t_info[f_ptr->t_idx].name;
+		cptr owner_name = ot_ptr->owner_name;
 		cptr race_name = race_info[ot_ptr->owner_race].title;
 
 		/* Put the owner name and race */
@@ -1682,7 +1686,7 @@ static int get_stock(int *com_val, cptr pmt, int i, int j)
  */
 static bool increase_insults(void)
 {
-	owner_type *ot_ptr = &owners[st_ptr->f_ptr->data[0]][st_ptr->owner];
+	owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
 	
 	/* Increase insults */
 	st_ptr->insult_cur++;
@@ -1912,7 +1916,7 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 
 	char		out_val[160];
 
-	owner_type *ot_ptr = &owners[st_ptr->f_ptr->data[0]][st_ptr->owner];
+	owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
 
 	*price = 0;
 
@@ -2089,7 +2093,7 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 	cptr    pmt = "Offer";
 	char    out_val[160];
 	
-	owner_type *ot_ptr = &owners[st_ptr->f_ptr->data[0]][st_ptr->owner];
+	owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
 
 	*price = 0;	
 
@@ -2284,7 +2288,7 @@ static void store_purchase(int *store_top)
 
 	char out_val[160];
 	
-	owner_type *ot_ptr = &owners[st_ptr->f_ptr->data[0]][st_ptr->owner];
+	owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
 
 	/* Empty? */
 	if (st_ptr->stock_num <= 0)
@@ -3349,15 +3353,13 @@ bool allocate_store(store_type *st_ptr)
  * into other commands, normally, we convert "p" (pray) and "m"
  * (cast magic) into "g" (get), and "s" (search) into "d" (drop).
  */
-void do_cmd_store(field_type *f_ptr)
+void do_cmd_store(field_type *f1_ptr)
 {
 	int which = -1;
 	int maintain_num;
 	int tmp_chr;
 	int i;
 	int store_top;
-	
-	owner_type *ot_ptr;
 	
 	town_type	*twn_ptr = &town[p_ptr->town_num];
 	
@@ -3377,16 +3379,15 @@ void do_cmd_store(field_type *f_ptr)
 		msg_print("Could not locate building!");
 		return;
 	}
+	
+	/* Hack - save f1_ptr for later */
+	f_ptr = f1_ptr;
 
-	/* Save the store and owner pointers */
+	/* Save the store pointer */
 	st_ptr = &twn_ptr->store[which];
-	ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
-
-	/* Hack - save f_ptr for later */
-	st_ptr->f_ptr = f_ptr;
 	
 	/* Hack - save interesting flags for later */
-	st_ptr->info_flags = f_ptr->data[7];
+	info_flags = f_ptr->data[7];
 	
 	
 	/* Hack -- Check the "locked doors" */
