@@ -608,6 +608,8 @@ errr get_obj_num_prep(void)
 {
 	int i;
 
+	byte prob;
+
 	/* Get the entry */
 	alloc_entry *table = alloc_kind_table;
 
@@ -615,17 +617,21 @@ errr get_obj_num_prep(void)
 	for (i = 0; i < alloc_kind_size; i++)
 	{
 		/* Accept objects which pass the restriction, if any */
-		if (!get_obj_num_hook || (*get_obj_num_hook)(table[i].index))
+		if (get_obj_num_hook)
+		{
+			/* Get probability */
+			prob = (*get_obj_num_hook)(table[i].index);
+		
+			/* Paranoia */
+			if (prob > 100) prob = 100;
+		
+			/* Accept this object */
+			table[i].prob2 = (table[i].prob1 * prob) / 100;
+		}
+		else
 		{
 			/* Accept this object */
 			table[i].prob2 = table[i].prob1;
-		}
-
-		/* Do not use this object */
-		else
-		{
-			/* Decline this object */
-			table[i].prob2 = 0;
 		}
 	}
 
@@ -3811,16 +3817,18 @@ void init_match_hook(byte tval, byte sval)
 
 /*
  * Hack -- match certain types of object only.
+ *
+ * Return 0% or 100% of matching based on tval and sval.
  */
-bool kind_is_match(int k_idx)
+byte kind_is_match(int k_idx)
 {
 	object_kind *k_ptr = &k_info[k_idx];
 
 	/* Does the tval match? */
-	if (k_ptr->tval != match_tv) return (FALSE);
+	if (k_ptr->tval != match_tv) return (0);
 
 	/* Does the sval match? */
-	if ((match_sv == SV_ANY) || (k_ptr->sval == match_sv)) return (TRUE);
+	if ((match_sv == SV_ANY) || (k_ptr->sval == match_sv)) return (100);
 
 	/* Not a match */
 	return (FALSE);
@@ -3838,12 +3846,12 @@ static void init_match_theme(obj_theme theme)
 
 /*
  * Hack -- match certain types of object only.
+ *
+ * Return percentage probability of match.
  */
-bool kind_is_theme(int k_idx)
+byte kind_is_theme(int k_idx)
 {
 	object_kind *k_ptr = &k_info[k_idx];
-
-	byte prob = 0;
 
 	/* Pick probability to use */
 	switch (k_ptr->tval)
@@ -3853,55 +3861,51 @@ bool kind_is_theme(int k_idx)
 		case TV_JUNK:
 		{
 			/* Degree of junk is defined in terms of the other 4 quantities */
-			prob = 100 - (match_theme.treasure + match_theme.combat +
-						match_theme.magic + match_theme.tools);
-			break;
+			return (100 - (match_theme.treasure + match_theme.combat +
+						match_theme.magic + match_theme.tools));
 		}
-		case TV_SPIKE:		prob = match_theme.tools; break;
-		case TV_CHEST:		prob = match_theme.treasure; break;
-		case TV_FIGURINE:	prob = match_theme.treasure; break;
-		case TV_STATUE:		prob = match_theme.treasure; break;
-		case TV_SHOT:		prob = match_theme.combat; break;
-		case TV_ARROW:		prob = match_theme.combat; break;
-		case TV_BOLT:		prob = match_theme.combat; break;
-		case TV_BOW:		prob = match_theme.combat; break;
-		case TV_DIGGING:	prob = match_theme.tools; break;
-		case TV_HAFTED:		prob = match_theme.combat; break;
-		case TV_POLEARM:	prob = match_theme.combat; break;
-		case TV_SWORD:		prob = match_theme.combat; break;
-		case TV_BOOTS:		prob = match_theme.tools; break;
-		case TV_GLOVES:		prob = match_theme.combat; break;
-		case TV_HELM:		prob = match_theme.combat; break;
-		case TV_CROWN:		prob = match_theme.treasure; break;
-		case TV_SHIELD:		prob = match_theme.combat; break;
-		case TV_CLOAK:		prob = match_theme.tools; break;
-		case TV_SOFT_ARMOR:	prob = match_theme.combat; break;
-		case TV_HARD_ARMOR: prob = match_theme.combat; break;
-		case TV_DRAG_ARMOR: prob = match_theme.treasure; break;
-		case TV_LITE:		prob = match_theme.tools; break;
-		case TV_AMULET:		prob = match_theme.treasure; break;
-		case TV_RING:		prob = match_theme.treasure; break;
-		case TV_STAFF:		prob = match_theme.magic; break;
-		case TV_WAND:		prob = match_theme.magic; break;
-		case TV_ROD:		prob = match_theme.magic; break;
-		case TV_SCROLL:		prob = match_theme.magic; break;
-		case TV_POTION:		prob = match_theme.magic; break;
-		case TV_FLASK:		prob = match_theme.tools; break;
-		case TV_FOOD:		prob = match_theme.tools; break;
-		case TV_LIFE_BOOK:	prob = match_theme.magic; break;
-		case TV_SORCERY_BOOK: prob = match_theme.magic; break;
-		case TV_NATURE_BOOK:  prob = match_theme.magic; break;
-		case TV_CHAOS_BOOK:   prob = match_theme.magic; break;
-		case TV_DEATH_BOOK:   prob = match_theme.magic; break;
-		case TV_TRUMP_BOOK:   prob = match_theme.magic; break;
-		case TV_ARCANE_BOOK:  prob = match_theme.magic; break;
+		case TV_SPIKE:		return (match_theme.tools);
+		case TV_CHEST:		return (match_theme.treasure);
+		case TV_FIGURINE:	return (match_theme.treasure);
+		case TV_STATUE:		return (match_theme.treasure);
+		case TV_SHOT:		return (match_theme.combat);
+		case TV_ARROW:		return (match_theme.combat);
+		case TV_BOLT:		return (match_theme.combat);
+		case TV_BOW:		return (match_theme.combat);
+		case TV_DIGGING:	return (match_theme.tools);
+		case TV_HAFTED:		return (match_theme.combat);
+		case TV_POLEARM:	return (match_theme.combat);
+		case TV_SWORD:		return (match_theme.combat);
+		case TV_BOOTS:		return (match_theme.tools);
+		case TV_GLOVES:		return (match_theme.combat);
+		case TV_HELM:		return (match_theme.combat);
+		case TV_CROWN:		return (match_theme.treasure);
+		case TV_SHIELD:		return (match_theme.combat);
+		case TV_CLOAK:		return (match_theme.tools);
+		case TV_SOFT_ARMOR:	return (match_theme.combat);
+		case TV_HARD_ARMOR: return (match_theme.combat);
+		case TV_DRAG_ARMOR: return (match_theme.treasure);
+		case TV_LITE:		return (match_theme.tools);
+		case TV_AMULET:		return (match_theme.treasure);
+		case TV_RING:		return (match_theme.treasure);
+		case TV_STAFF:		return (match_theme.magic);
+		case TV_WAND:		return (match_theme.magic);
+		case TV_ROD:		return (match_theme.magic);
+		case TV_SCROLL:		return (match_theme.magic);
+		case TV_POTION:		return (match_theme.magic);
+		case TV_FLASK:		return (match_theme.tools);
+		case TV_FOOD:		return (match_theme.tools);
+		case TV_LIFE_BOOK:	return (match_theme.magic);
+		case TV_SORCERY_BOOK: return (match_theme.magic);
+		case TV_NATURE_BOOK:  return (match_theme.magic);
+		case TV_CHAOS_BOOK:   return (match_theme.magic);
+		case TV_DEATH_BOOK:   return (match_theme.magic);
+		case TV_TRUMP_BOOK:   return (match_theme.magic);
+		case TV_ARCANE_BOOK:  return (match_theme.magic);
+		
+		/* Paranoia */
+		default:	return (0);
 	}
-
-	/* Roll to see if it can be made */
-	if (randint0(100) < prob) return (TRUE);
-
-	/* Not a match */
-	return (FALSE);
 }
 
 
