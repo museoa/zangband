@@ -59,6 +59,7 @@ enum
 	BD_DESTRUCTION,
 	BD_BANISHMENT,
 	BD_DETECT_INVISO,
+	BD_TELEPATHY,
 	BD_LIGHT_BEAM,
 	BD_TRUMP_SERVANT,
 
@@ -1759,6 +1760,41 @@ static int borg_defend_aux_inviso(int p1)
 }
 
 /*
+ * Use temp esp.
+ * Used only if the borg is hit by an unseen guy.
+ */
+static int borg_defend_aux_esp(int p1)
+{
+	int fail_allowed = 40;
+
+	if (borg_simulate)
+	{
+		/* Has the borg esp already? */
+		if (borg_esp || FLAG(bp_ptr, TR_TELEPATHY)) return (0);
+
+		/* not recent */
+		if (borg_t > need_see_inviso + 5) return (0);
+
+		/* too dangerous to cast */
+		if (p1 > avoidance * 7) return (0);
+
+		/* Do I have anything that will work? */
+		if (!borg_spell_okay_fail(REALM_SORCERY, 1, 3, fail_allowed) &&
+			!borg_spell_okay_fail(REALM_ARCANE, 3, 7, fail_allowed) &&
+			!borg_mindcr_okay_fail(MIND_PRECOGNIT, 24, fail_allowed))
+			return (0);
+
+		/* No real value known, but lets cast it to find the bad guys. */
+		return (10);
+	}
+
+	/* long time */
+	return (borg_spell(REALM_SORCERY, 3, 3) ||
+		borg_spell(REALM_ARCANE, 3, 7) ||
+		borg_mindcr(MIND_PRECOGNIT, 24));
+}
+
+/*
  * Light Beam to spot lurkers
  * Used only if I am hit by an unseen guy.
  * Lights up a hallway.
@@ -2001,6 +2037,10 @@ static int borg_defend_aux(int what, int p1, int *key)
 		case BD_DETECT_INVISO:
 		{
 			return (borg_defend_aux_inviso(p1));
+		}
+		case BD_TELEPATHY:
+		{
+			return (borg_defend_aux_esp(p1));
 		}
 		case BD_LIGHT_BEAM:
 		{
