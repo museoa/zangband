@@ -95,7 +95,16 @@ ZAngband 2.7.0:
   understands most of the angband coding style.
 - The svga port now knows about the font location on debian boxes.
 - Added patch to only darken rods if the whole stack is charging.
-
+- Updated the quark compaction code.
+- Fixed up some bugs in the automake makefiles.
+- The messages when loading a savefile are now displayed correctly.
+- Fixed bug with loading vanilla town savefiles with the player
+  standing the lower right hand corner of the map.
+- Fixed the crash caused by starting the game with the wizard mode
+  option and with a dead character.
+- Fixed bug trying to display a term with the overhead map, but with
+  too small of a size.
+- Aquatic monsters cannot be teleported onto dry land.
 
 ZAngband 2.6.2:
 - Made potions of restore life levels more common.
