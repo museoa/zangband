@@ -71,6 +71,7 @@ OBJS=\
 	generate.obj \
 	flavor.obj \
 	files.obj \
+	fields.obj \
 	effects.obj \
 	dungeon.obj \
 	cmd6.obj \
@@ -972,6 +973,27 @@ FLAVOR_C=\
 
 flavor.obj: $(FLAVOR_C) flavor.c
 	$(CC) -c $(CFLAGS) flavor.c
+
+# Build FIELDS.C
+FIELDS_C=\
+	angband.h\
+	h-basic.h\
+	h-config.h\
+	h-system.h\
+	h-type.h\
+	h-define.h\
+	z-util.h\
+	z-virt.h\
+	z-form.h\
+	z-rand.h\
+	z-term.h\
+	z-config.h\
+	defines.h\
+	types.h\
+	externs.h\
+
+fields.obj: $(FIELDS_C) fields.c
+	$(CC) -c $(CFLAGS) fields.c
 
 # Build FILES.C
 FILES_C=\
