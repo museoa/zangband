@@ -148,7 +148,7 @@ L:INTERT:action = ACT_DISARM
 L:INTER:trap_disarm(6)
 L:TARGET:trap_gf()
 L:PENTER:hit_trap(field)
-L:PENTER:if (player.flags[1] BAnd TR1_FEATHER ~= 0) then
+L:PENTER:if (player.flags[1] bAnd TR1_FEATHER ~= 0) then
 L:PENTER:	msgf("You fly over a trap door.")
 L:PENTER:else
 L:PENTER:	msgf("You have fallen through a trap door!")
@@ -167,7 +167,7 @@ L:INTERT:action = ACT_DISARM
 L:INTER:trap_disarm(5)
 L:TARGET:trap_gf()
 L:PENTER:hit_trap(field)
-L:PENTER:if (player.flags[1] BAnd TR1_FEATHER ~= 0) then
+L:PENTER:if (player.flags[1] bAnd TR1_FEATHER ~= 0) then
 L:PENTER:	msgf("You fly over a pit trap.")
 L:PENTER:else
 L:PENTER:	msgf("You have fallen into a pit!")
@@ -185,7 +185,7 @@ L:INTER:trap_disarm(5)
 L:TARGET:trap_gf()
 L:PENTER:local dam
 L:PENTER:hit_trap(field)
-L:PENTER:if (player.flags[1] BAnd TR1_FEATHER ~= 0) then
+L:PENTER:if (player.flags[1] bAnd TR1_FEATHER ~= 0) then
 L:PENTER:	msgf("You fly over a spiked pit.")
 L:PENTER:else
 L:PENTER:	msgf("You fall into a spiked pit!")
@@ -210,7 +210,7 @@ L:INTER:trap_disarm(10)
 L:TARGET:trap_gf()
 L:PENTER:local dam
 L:PENTER:hit_trap(field)
-L:PENTER:if (player.flags[1] BAnd TR2_FEATHER ~= 0) then
+L:PENTER:if (player.flags[1] bAnd TR2_FEATHER ~= 0) then
 L:PENTER:	msgf("You fly over a spiked pit.")
 L:PENTER:else
 L:PENTER:	msgf("You fall into a spiked pit!")
@@ -514,7 +514,7 @@ L:PENTER:		msgf("You are cured of all mutations.")
 L:PENTER:		player.muta1 = 0
 L:PENTER:		player.muta2 = 0
 L:PENTER:		player.muta3 = 0
-L:PENTER:		player.update = BOr(player.upate, PU_BONUS)
+L:PENTER:		player.update = bOr(player.upate, PU_BONUS)
 L:PENTER:		handle_stuff()
 L:PENTER:	end
 L:PENTER:end
@@ -562,8 +562,8 @@ L:PENTER:hit_trap(field)
 L:PENTER:if (dont_save(75) == TRUE) then
 L:PENTER:	msgf("Your purse becomes weightless!")
 L:PENTER:	player.au = player.au / 2
-L:PENTER:	player.redraw = BOr(player.redraw, PR_GOLD)
-L:PENTER:	player.window = BOr(player.window, PW_PLAYER)
+L:PENTER:	player.redraw = bOr(player.redraw, PR_GOLD)
+L:PENTER:	player.window = bOr(player.window, PW_PLAYER)
 L:PENTER:end
 
 # shimmering rune
@@ -1791,7 +1791,7 @@ L:SBINIT:place_sb(rand_range(105, 110), rand_range(5, 10) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE1:result = FALSE
 L:STORE1:-- This leaves the store with scrolls, tools, ammo, and diggers (by elimination)
-L:STORE1:if (item_tester_hook_tval(object, POTION) == TRUE) then result = TRUE end
+L:STORE1:if (item_tester_hook_tval(object, TV_POTION) == TRUE) then result = TRUE end
 L:STORE1:if (item_tester_hook_weapon_armour(object) == TRUE) then result = TRUE end
 L:STORE1:if (item_tester_hook_recharge(object) == TRUE) then result = TRUE end
 L:STORE1:if (item_tester_hook_is_book(object) == TRUE) then result = TRUE end
@@ -1806,7 +1806,7 @@ L:SBINIT:place_sb(rand_range(105, 110), rand_range(5, 10) * 10)
 L:PENTER:do_cmd_store(field)
 L:STORE1:result = FALSE
 L:STORE1:-- This leaves the store with scrolls, tools, ammo, and diggers (by elimination)
-L:STORE1:if (item_tester_hook_tval(object, POTION) == TRUE) then result = TRUE end
+L:STORE1:if (item_tester_hook_tval(object, TV_POTION) == TRUE) then result = TRUE end
 L:STORE1:if (item_tester_hook_weapon_armour(object) == TRUE) then result = TRUE end
 L:STORE1:if (item_tester_hook_recharge(object) == TRUE) then result = TRUE end
 L:STORE1:if (item_tester_hook_is_book(object) == TRUE) then result = TRUE end
