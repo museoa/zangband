@@ -3331,7 +3331,7 @@ static void create_wild_info(int *bestx, int *besty)
 			w_ptr->trans.info = 0;
 
 			/* How good is this spot to put a town? */
-			if ((law < 20) && (hgt > 160))
+			if ((law > 230) && (hgt > 160))
 			{
 				/* Hack - Only record the first such place */
 				if ((x == -1) && (y == -1))
@@ -3499,7 +3499,6 @@ void create_wilderness(void)
 	int x, y;
 
 	bool done = FALSE;
-	int count = 0;
 	
 	/* Invalidate the player while we make everything */
 	character_dungeon = FALSE;
@@ -3537,10 +3536,6 @@ void create_wilderness(void)
 	 */
 	while (!done)
 	{
-		count++;
-
-		if (count > 50) quit("Cannot make wilderness, adjust constraints.");
-
 		/* Clear the wilderness */
 		wipe_wilderness();
 
