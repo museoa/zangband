@@ -469,8 +469,6 @@ extern void do_cmd_use(void);
 extern void play_game(bool new_game);
 extern void notice_lite_change(object_type *o_ptr);
 extern bool psychometry(void);
-extern void leave_level(int level);
-extern void enter_level(int level);
 
 
 /* files.c */

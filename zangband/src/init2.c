@@ -2321,11 +2321,6 @@ static errr init_alloc(void)
 
 #endif /* SORT_R_INFO */
 
-#if 0
-
-	write_r_info_txt();
-
-#endif
 
 	/* Init "alloc_kind_table" and "alloc_ego_table" */
 	(void)init_object_alloc();
