@@ -69,6 +69,38 @@ char *AssignToString_Icon(char *buf, t_assign_icon *assign)
 	return buf;
 }
 
+static int Icon_Validate(Tcl_Interp *interp, char *typeName, int index, IconSpec *specPtr)
+{
+	t_icon_data *iconDataPtr;
+	int type;
+
+	/* Look up the icon type by name */
+	if (Icon_FindTypeByName(interp, &type, typeName) != TCL_OK)
+	{
+		return TCL_ERROR;
+	}
+
+	iconDataPtr = &g_icon_data[type];
+
+	/* Verify index */
+	if ((index < 0) || (index >= iconDataPtr->icon_count))
+	{
+		/* Set the error */
+		Tcl_SetStringObj(Tcl_GetObjResult(interp),
+			format("bad icon index \"%d\": must be from 0 to %d",
+			index, iconDataPtr->icon_count - 1), -1);
+
+		/* Failure */
+		return TCL_ERROR;
+	}
+
+	specPtr->type = type;
+	specPtr->index = index;
+
+	/* Success */
+	return TCL_OK;
+}
+
 static int StringToAssign_Icon(Tcl_Interp *interp, t_assign_icon *assignPtr, cptr desc)
 {
 	char option[64], typeName[64];
@@ -83,8 +115,7 @@ static int StringToAssign_Icon(Tcl_Interp *interp, t_assign_icon *assignPtr, cpt
 		return TCL_ERROR;
 	}
 
-	if (Icon_Validate(interp, typeName, iconSpec.index, iconSpec.ascii,
-		&iconSpec) != TCL_OK)
+	if (Icon_Validate(interp, typeName, iconSpec.index, &iconSpec) != TCL_OK)
 	{
 		return TCL_ERROR;
 	}
@@ -772,50 +803,6 @@ int Icon_GetIndexFromObj(Tcl_Interp *interp, int *indexPtr,
 
 	return TCL_OK;
 }
-
-int Icon_Validate(Tcl_Interp *interp, char *typeName, int index, int ascii,
-	IconSpec *specPtr)
-{
-	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
-	t_icon_data *iconDataPtr;
-	int type;
-
-	/* Look up the icon type by name */
-	if (Icon_FindTypeByName(interp, &type, typeName) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	iconDataPtr = &g_icon_data[type];
-
-	/* Must not specify ascii */
-	if (ascii != -1)
-	{
-		Tcl_AppendStringsToObj(resultPtr, "icon type \"", typeName, "\"",
-			" is not ascii", NULL);
-		return TCL_ERROR;
-	}
-
-	/* Verify index */
-	if ((index < 0) || (index >= iconDataPtr->icon_count))
-	{
-		/* Set the error */
-		Tcl_SetStringObj(Tcl_GetObjResult(interp),
-			format("bad icon index \"%d\": must be from 0 to %d",
-			index, iconDataPtr->icon_count - 1), -1);
-
-		/* Failure */
-		return TCL_ERROR;
-	}
-
-	specPtr->type = type;
-	specPtr->index = index;
-	specPtr->ascii = ascii;
-
-	/* Success */
-	return TCL_OK;
-}
-
 
 /*
  * Initialization.
