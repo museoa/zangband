@@ -2285,12 +2285,6 @@ static void process_monster(int m_idx)
 			do_move = TRUE;
 		}
 
-		/* Hack -- semi-transparent terrains are no obstacle */
-		else if ((area(py, px)->feat & 0x60) == 0x60)
-		{
-			do_move = TRUE;
-		}
-
 		/* Hack -- player 'in' wall */
 		else if ((ny == py) && (nx == px))
 		{
@@ -2307,7 +2301,13 @@ static void process_monster(int m_idx)
 		else if ((c_ptr->feat >= FEAT_PERM_EXTRA) &&
 			(c_ptr->feat <= FEAT_PERM_SOLID))
 		{
-			/* Nothing */
+			do_move = FALSE;
+		}
+
+		/* Hack -- semi-transparent terrains are no obstacle */
+		else if ((c_ptr->feat & 0x60) == 0x60)
+		{
+			do_move = TRUE;
 		}
 
 
