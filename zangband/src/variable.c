@@ -1053,6 +1053,7 @@ bool ironman_empty_levels;    /* Always create empty 'arena' levels */
 bool terrain_streams;         /* Create terrain 'streamers' in the dungeon */
 bool munchkin_mindcraft;      /* Allow the 'Dimension Door' Mindcraft power */
 bool munchkin_death;          /* Ask for saving death */
+bool munchkin_rings;				/* Allow multiple rings */
 bool ironman_rooms;           /* Always generate very unusual rooms */
 bool ironman_nightmare;			/* Play the game in Nightmare mode */
 bool maximize_mode;

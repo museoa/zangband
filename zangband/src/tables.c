@@ -5955,6 +5955,9 @@ option_type option_info[] =
 	{ &munchkin_death,              FALSE, 6,6,11,
 	"munchkin_death",               "Ask for saving death" },
 
+	{ &munchkin_rings,					FALSE, 6, 6, 17,
+	"munchkin_rings",						"Allow multiple rings" },
+
 	{ &ironman_rooms,               FALSE, 6,6,12,
 	"ironman_rooms",                "Always generate very unusual rooms" },
 

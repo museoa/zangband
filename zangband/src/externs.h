@@ -416,6 +416,7 @@ extern bool ironman_empty_levels;
 extern bool terrain_streams;
 extern bool munchkin_mindcraft;
 extern bool munchkin_death;
+extern bool munchkin_rings;
 extern bool ironman_rooms;
 extern bool ironman_nightmare;
 extern bool maximize_mode;
