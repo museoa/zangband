@@ -84,48 +84,56 @@ G:,:d
 I:80:1:500
 W:5:0:1:0
 A:9/2
+F:EASY_KNOW
 
 N:2:Paranoia
 G:,:d
 I:80:2:500
 W:5:0:1:0
 A:9/2
+F:EASY_KNOW
 
 N:3:Confusion
 G:,:d
 I:80:3:500
 W:5:0:1:0
 A:9/2
+F:EASY_KNOW
 
 N:4:Hallucination
 G:,:d
 I:80:4:500
 W:9:0:1:0
 A:17/2
+F:EASY_KNOW
 
 N:5:Cure Poison
 G:,:d
 I:80:12:500
 W:9:0:1:60
 A:9/1
+F:EASY_KNOW
 
 N:6:Cure Blindness
 G:,:d
 I:80:13:500
 W:9:0:1:50
 A:9/1
+F:EASY_KNOW
 
 N:7:Cure Paranoia
 G:,:d
 I:80:14:500
 W:9:0:1:25
 A:9/1
+F:EASY_KNOW
 
 N:8:Cure Confusion
 G:,:d
 I:80:15:500
 W:9:0:1:50
 A:9/1
+F:EASY_KNOW
 
 N:9:Weakness
 G:,:d
@@ -133,6 +141,7 @@ I:80:6:500
 W:5:0:1:0
 A:9/2
 P:0:5d5:0:0:0
+F:EASY_KNOW
 
 N:10:Unhealth
 G:,:d
@@ -140,30 +149,35 @@ I:80:10:500
 W:20:0:1:100
 A:26/1
 P:0:10d10:0:0:0
+F:EASY_KNOW
 
 N:11:Restore Constitution
 G:,:d
 I:80:18:500
 W:25:0:1:350
 A:25/1
+F:EASY_KNOW
 
 N:12:Restoring
 G:,:d
 I:80:19:500
 W:50:0:1:1000
 A:35/28:52/14:65/4
+F:EASY_KNOW
 
 N:13:Stupidity
 G:,:d
 I:80:8:500
 W:15:0:1:0
 A:26/3
+F:EASY_KNOW
 
 N:14:Naivety
 G:,:d
 I:80:9:500
 W:15:0:1:0
 A:26/3
+F:EASY_KNOW
 
 N:15:Poison
 G:,:d
@@ -171,6 +185,7 @@ I:80:0:500
 W:5:0:1:0
 A:9/2
 P:0:4d4:0:0:0
+F:EASY_KNOW
 
 N:16:Sickness
 G:,:d
@@ -178,18 +193,21 @@ I:80:7:500
 W:9:0:1:0
 A:17/2
 P:0:4d4:0:0:0
+F:EASY_KNOW
 
 N:17:Paralysis
 G:,:d
 I:80:5:500
 W:20:0:1:0
 A:35/2
+F:EASY_KNOW
 
 N:18:Restore Strength
 G:,:d
 I:80:17:500
 W:25:0:1:350
 A:25/1
+F:EASY_KNOW
 
 N:19:Disease
 G:,:d
@@ -197,12 +215,14 @@ I:80:11:500
 W:20:0:1:300
 A:35/2
 P:0:15d15:0:0:0
+F:EASY_KNOW
 
 N:20:Cure Serious Wounds
 G:,:d
 I:80:16:500
 W:16:0:1:75
 A:16/1
+F:EASY_KNOW
 
 ##### Normal Food #####
 
