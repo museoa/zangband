@@ -1095,8 +1095,6 @@ void map_info(int y, int x, byte *ap, char *cp)
 				/* Do nothing */
 			}
 
-			
-
 			/* Multi-hued monster */
 			else if (r_ptr->flags1 & (RF1_ATTR_MULTI))
 			{
@@ -1168,7 +1166,11 @@ void map_info(int y, int x, byte *ap, char *cp)
 			if (p_ptr->invuln || !use_color) a = TERM_WHITE;
 			else if (p_ptr->wraith_form) a = TERM_L_DARK;
 		}
-		
+
+		/* Save the info */
+		(*ap) = a;
+		(*cp) = c;
+
 		/* Done */
 		return;	
 	}
