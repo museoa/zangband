@@ -1019,8 +1019,13 @@ static void do_cmd_wiz_play(void)
 	/* The main loop */
 	while (TRUE)
 	{
-		/* Display the item */
-		wiz_display_item(q_ptr);
+        /* Display the item */
+        /* XXX wiz_display_item will use the temp buffer, which is currently
+         holding o_ptr. I don't really understand the interactions but the
+         net effect is that the item's quarks get erased. This is the same
+         problem as with wiz_reroll_item, other than only trying to keep
+         three temp objects at once. -RML- */
+		wiz_display_item(o_ptr);
 
 		/* Get choice */
 		if (!get_com
@@ -1060,7 +1065,13 @@ static void do_cmd_wiz_play(void)
 		}
 
 		if (ch == 'r' || ch == 'r')
-		{
+        {
+            /* XXX wiz_reroll_item makes use of the temp buffer object, which
+             we are currently holding. It seems like changes made in
+             wiz_reroll_item will be passed back in the temp buffer object,
+             rather than in the object passed as an argument, which only
+             works because we always use the temp buffer object as the
+             argument. I can't tell if this is deliberate. -RML- */
 			if (!wiz_reroll_item(o_ptr))
 			{
 				/* Restore old item */
