@@ -1298,6 +1298,7 @@ static void spoil_mon_desc(cptr fname)
 {
 	int i, n = 0;
 
+	u16b why = 2;
 	s16b *who;
 
 	char buf[1024];
@@ -1356,6 +1357,13 @@ static void spoil_mon_desc(cptr fname)
 		/* Use that monster */
 		if (r_ptr->name) who[n++] = i;
 	}
+
+        /* Select the sort method */
+	ang_sort_comp = ang_sort_comp_hook;
+	ang_sort_swap = ang_sort_swap_hook;
+
+	/* Sort the array by dungeon depth of monsters */
+	ang_sort(who, &why, n);
 
 
 	/* Scan again */
