@@ -97,6 +97,36 @@ typedef int sint;
 #define TV_BOOKS_MAX    TV_ARCANE_BOOK  /* Last tval of spellbooks */
 
 
+/*
+ * Use for wand of wonder
+ */
+#define SV_WAND_HEAL_MONSTER             0
+#define SV_WAND_HASTE_MONSTER            1
+#define SV_WAND_CLONE_MONSTER            2
+#define SV_WAND_TELEPORT_AWAY            3
+#define SV_WAND_DISARMING                4
+#define SV_WAND_TRAP_DOOR_DEST           5
+#define SV_WAND_STONE_TO_MUD             6
+#define SV_WAND_LITE                     7
+#define SV_WAND_SLEEP_MONSTER            8
+#define SV_WAND_SLOW_MONSTER             9
+#define SV_WAND_CONFUSE_MONSTER         10
+#define SV_WAND_FEAR_MONSTER            11
+#define SV_WAND_DRAIN_LIFE              12
+#define SV_WAND_POLYMORPH               13
+#define SV_WAND_STINKING_CLOUD          14
+#define SV_WAND_MAGIC_MISSILE           15
+#define SV_WAND_ACID_BOLT               16
+#define SV_WAND_CHARM_MONSTER           17
+#define SV_WAND_FIRE_BOLT               18
+#define SV_WAND_COLD_BOLT               19
+#define SV_WAND_ACID_BALL               20
+#define SV_WAND_ELEC_BALL               21
+#define SV_WAND_FIRE_BALL               22
+#define SV_WAND_COLD_BALL               23
+#define SV_WAND_WONDER                  24
+
+
 #define OBJ_GOLD_LIST   480     /* First "gold" entry */
 #define MAX_GOLD        18      /* Number of "gold" entries */
 
