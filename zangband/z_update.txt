@@ -20,7 +20,6 @@ ZAngband 2.5.0:
 -Fixed the problem with vampiric attacks, where only if the monster
  was seen, was the hp bonus given to the player. This was done via
  the addition of a new GF type: GF_NEW_DRAIN.
-
 -Lava rivers are found deeper in the dungeon.
 -Fixed some out of bounds accesses of the wilderness map.
 -Added out of bounds checks to the running algorithm.
