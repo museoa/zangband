@@ -357,7 +357,9 @@ says: 'My fangs are not for chattering, soon you will feel them.'
 says: 'My throat is well made to gulp you down.'
 growls: 'Come here, young braggart.'
 
-#N:713:Fangorn the Treebeard
+N:713:Fangorn the Treebeard
+1
+says: 'Hoom, hm, ah well.'
 
 N:715:Glaurung, Father of the Dragons
 N:766:Ancalagon the Black
