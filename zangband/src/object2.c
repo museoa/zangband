@@ -172,7 +172,7 @@ void drop_object_list(s16b *o_idx_ptr, int x, int y)
 	OBJ_ITT_START (*o_idx_ptr, o_ptr)
 	{
 		/* Duplicate object */
-		object_copy(q_ptr, o_ptr);
+		q_ptr = object_dup(o_ptr);
 	
 		/* Drop object */
 		drop_near(q_ptr, -1, x, y);
@@ -1686,7 +1686,7 @@ bool object_similar(const object_type *o_ptr, const object_type *j_ptr)
 /*
  * Allow one item to "absorb" another, assuming they are similar
  */
-void object_absorb(object_type *o_ptr, object_type *j_ptr)
+void object_absorb(object_type *o_ptr, const object_type *j_ptr)
 {
 	int total = o_ptr->number + j_ptr->number;
 
@@ -1697,11 +1697,9 @@ void object_absorb(object_type *o_ptr, object_type *j_ptr)
 	if (object_known_p(j_ptr)) object_known(o_ptr);
 
 	/* Hack -- clear "storebought" if only one has it */
-	if (((o_ptr->info & OB_STOREB) || (j_ptr->info & OB_STOREB)) &&
-		(!((o_ptr->info & OB_STOREB) && (j_ptr->info & OB_STOREB))))
+	if ((o_ptr->info & OB_STOREB) && !(j_ptr->info & OB_STOREB))
 	{
-		if (j_ptr->info & OB_STOREB) j_ptr->info &= ~OB_STOREB;
-		if (o_ptr->info & OB_STOREB) o_ptr->info &= ~OB_STOREB;
+		o_ptr->info &= ~OB_STOREB;
 	}
 
 	/* Hack -- blend "mental" status */
@@ -4351,11 +4349,9 @@ void place_specific_object(int x, int y, int level, int k_idx)
  */
 void place_object(int x, int y, bool good, bool great)
 {
-	s16b o_idx;
-
 	cave_type *c_ptr;
 
-	object_type *q_ptr;
+	object_type *o_ptr;
 
 	/* Paranoia -- check bounds */
 	if (!in_bounds(x, y)) return;
@@ -4374,25 +4370,17 @@ void place_object(int x, int y, bool good, bool great)
 	}
 
 	/* Make an object (if possible) */
-	q_ptr = make_object((u16b)((good ? 15 : 0) + (great ? 15 : 0)), dun_theme);
+	o_ptr = make_object((u16b)((good ? 15 : 0) + (great ? 15 : 0)), dun_theme);
 
 	/* Failure? */
-	if (!q_ptr) return;
-
-	/* Make an object */
-	o_idx = o_pop();
+	if (!o_ptr) return;
+	
+	/* Add the object to the ground */
+	o_ptr = add_object_list(&c_ptr->o_idx, o_ptr);
 
 	/* Success */
-	if (o_idx)
+	if (o_ptr)
 	{
-		object_type *o_ptr;
-
-		/* Acquire object */
-		o_ptr = &o_list[o_idx];
-
-		/* Structure Copy */
-		object_copy(o_ptr, q_ptr);
-
 		/* Location */
 		o_ptr->iy = y;
 		o_ptr->ix = x;
@@ -4400,24 +4388,15 @@ void place_object(int x, int y, bool good, bool great)
 		/* Region */
 		o_ptr->region = cur_region;
 
-		/* Is allocated */
-		o_ptr->allocated = TRUE;
-
-		/* Build a stack */
-		o_ptr->next_o_idx = c_ptr->o_idx;
-
-		/* Place the object */
-		c_ptr->o_idx = o_idx;
-
 		/* Notice + Redraw */
 		note_spot(x, y);
 	}
 	else
 	{
-		if ((preserve_mode) && (q_ptr->flags3 & TR3_INSTA_ART) &&
-			(q_ptr->activate > 127))
+		if ((preserve_mode) && (o_ptr->flags3 & TR3_INSTA_ART) &&
+			(o_ptr->activate > 127))
 		{
-			a_info[q_ptr->activate - 128].cur_num = 0;
+			a_info[o_ptr->activate - 128].cur_num = 0;
 		}
 	}
 }
@@ -4477,7 +4456,7 @@ object_type *make_gold(int coin_type)
  */
 void place_gold(int x, int y)
 {
-	s16b o_idx;
+	object_type *o_ptr;
 
 	cave_type *c_ptr;
 
@@ -4489,36 +4468,22 @@ void place_gold(int x, int y)
 
 	/* Require nice floor space */
 	if (!cave_nice_grid(c_ptr)) return;
-
-	/* Make an object */
-	o_idx = o_pop();
+	
+	/* Make some gold */
+	o_ptr = make_gold(0);
+	
+	/* Add the object to the ground */
+	o_ptr = add_object_list(&c_ptr->o_idx, o_ptr);
 
 	/* Success */
-	if (o_idx)
+	if (o_ptr)
 	{
-		object_type *o_ptr;
-
-		/* Acquire object */
-		o_ptr = &o_list[o_idx];
-
-		/* Make some gold */
-		object_copy(o_ptr, make_gold(0));
-
-		/* Save location */
+		/* Location */
 		o_ptr->iy = y;
 		o_ptr->ix = x;
 
 		/* Region */
 		o_ptr->region = cur_region;
-
-		/* Is allocated */
-		o_ptr->allocated = TRUE;
-
-		/* Build a stack */
-		o_ptr->next_o_idx = c_ptr->o_idx;
-
-		/* Place the object */
-		c_ptr->o_idx = o_idx;
 
 		/* Notice + Redraw */
 		note_spot(x, y);
@@ -4542,7 +4507,7 @@ void place_gold(int x, int y)
  * the object can combine, stack, or be placed.  Artifacts will try very
  * hard to be placed, including "teleporting" to a useful grid if needed.
  */
-void drop_near(object_type *j_ptr, int chance, int x, int y)
+void drop_near(const object_type *j_ptr, int chance, int x, int y)
 {
 	int i, k, d, s;
 
@@ -4550,8 +4515,6 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 	int by, bx;
 	int dy, dx;
 	int ty, tx;
-
-	s16b o_idx = 0;
 
 	cave_type *c_ptr;
 	object_type *o_ptr = NULL;
@@ -4803,10 +4766,20 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 	/* Get new object */
 	if (!done)
 	{
-		o_idx = o_pop();
+		/* Add the object to the ground */
+		o_ptr = add_object_list(&c_ptr->o_idx, o_ptr);
 
-		/* Failure */
-		if (!o_idx)
+		/* Success */
+		if (o_ptr)
+		{
+			/* Location */
+			o_ptr->iy = by;
+			o_ptr->ix = bx;
+	
+			/* Region */
+			o_ptr->region = cur_region;
+		}
+		else
 		{
 			/* Message */
 			msg_format("The %s disappear%s.", o_name, (plural ? "" : "s"));
@@ -4817,27 +4790,6 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 			/* Failure */
 			return;
 		}
-
-		o_ptr = &o_list[o_idx];
-
-		/* Structure copy */
-		object_copy(o_ptr, j_ptr);
-
-		/* Locate */
-		o_ptr->iy = by;
-		o_ptr->ix = bx;
-
-		/* Region */
-		o_ptr->region = cur_region;
-
-		/* Is allocated */
-		o_ptr->allocated = TRUE;
-
-		/* Build a stack */
-		o_ptr->next_o_idx = c_ptr->o_idx;
-
-		/* Place the object */
-		c_ptr->o_idx = o_idx;
 	}
 
 	/* Note + Redraw the spot */
@@ -5198,13 +5150,13 @@ static void item_optimize(object_type *o_ptr)
  */
 object_type *item_split(object_type *o_ptr, int num)
 {
-	object_type *q_ptr = &temp_object;
+	object_type *q_ptr;
 
 	/* Paranoia */
 	if (o_ptr->number < num) num = o_ptr->number;
 
-	/* Obtain a local object */
-	object_copy(q_ptr, o_ptr);
+	/* Duplicate the object */
+	q_ptr = object_dup(o_ptr);
 
 	/* Update item totals */
 	o_ptr->number -= num;

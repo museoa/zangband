@@ -1971,6 +1971,8 @@ bool artifact_scroll(void)
 static void bad_luck(object_type *o_ptr)
 {
 	bool is_art = ((o_ptr->flags3 & TR3_INSTA_ART) ? TRUE : FALSE);
+	
+	object_type *q_ptr;
 
 	/* Do not curse unwieldable items */
 	if (wield_slot(o_ptr) == -1) return;
@@ -1986,7 +1988,10 @@ static void bad_luck(object_type *o_ptr)
 			o_ptr->flags3 |= TR3_CURSED;
 
 			/* Prepare it */
-			object_copy(o_ptr, object_prep(o_ptr->k_idx));
+			q_ptr = object_prep(o_ptr->k_idx);
+			
+			/* Swap it */
+			swap_objects(o_ptr, q_ptr);
 
 			/* Restore the number */
 			o_ptr->number = number;
