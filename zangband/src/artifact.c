@@ -2309,26 +2309,34 @@ bool activate_random_artifact(object_type * o_ptr)
 
 		case ACT_RECALL:
 		{
-			if (dun_level && (p_ptr->max_dlv > dun_level))
+			if (ironman_downward)
 			{
-				if (get_check("Reset recall depth? "))
-				p_ptr->max_dlv = dun_level;
-			}
-
-			msg_print("It glows soft white...");
-
-			p_ptr->redraw |= (PR_STATUS);
-
-			if (!p_ptr->word_recall)
-			{
-				p_ptr->word_recall = randint(20) + 15;
-				msg_print("The air about you becomes charged...");
+				msg_print("It glows and then fades.");
 			}
 			else
 			{
-				p_ptr->word_recall = 0;
-				msg_print("A tension leaves the air around you...");
+				if (dun_level && (p_ptr->max_dlv > dun_level))
+				{
+					if (get_check("Reset recall depth? "))
+					p_ptr->max_dlv = dun_level;
+				}
+
+				msg_print("It glows soft white...");
+
+				p_ptr->redraw |= (PR_STATUS);
+
+				if (!p_ptr->word_recall)
+				{
+				p_ptr->word_recall = randint(20) + 15;
+				msg_print("The air about you becomes charged...");
+				}
+				else
+				{
+					p_ptr->word_recall = 0;
+					msg_print("A tension leaves the air around you...");
+				}
 			}
+			
 			o_ptr->timeout = 200;
 			break;
 		}
