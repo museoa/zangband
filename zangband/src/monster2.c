@@ -1798,6 +1798,9 @@ static bool place_monster_group(int y, int x, int r_idx, bool slp, bool friendly
 			int mx, my;
 
 			scatter(&my, &mx, hy, hx, 4, 0);
+			
+			/* paranoia */
+			if(!in_bounds2(my, mx)) continue;
 
 			/* Walls and Monsters block flow */
 			c_ptr = area(my, mx);
@@ -1926,6 +1929,9 @@ bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, bool friendl
 
 			/* Pick a location */
 			scatter(&ny, &nx, y, x, d, 0);
+
+			/* paranoia */
+			if(!in_bounds2(y, x)) continue;
 
 			/* Require empty grids */
 			c_ptr = area(ny, nx);
@@ -2454,6 +2460,9 @@ bool summon_specific(int who, int y1, int x1, int lev, int type, bool group, boo
 
 		/* Pick a location */
 		scatter(&y, &x, y1, x1, d, 0);
+		
+		/* paranoia */
+		if (!in_bounds2(y, x)) continue;
 
 		/* Require "empty" floor grid */
 		c_ptr = area(y, x);
@@ -2521,6 +2530,9 @@ bool summon_named_creature(int oy, int ox, int r_idx, bool slp, bool group_ok, b
 
 		/* Pick a location */
 		scatter(&y, &x, oy, ox, d, 0);
+		
+		/* paranoia */
+		if (!in_bounds2(y, x)) continue;
 
 		/* Require empty grids */
 		c_ptr = area(y, x);
@@ -2560,6 +2572,9 @@ bool multiply_monster(int m_idx, bool clone, bool friendly, bool pet)
 
 		/* Pick a location */
 		scatter(&y, &x, m_ptr->fy, m_ptr->fx, d, 0);
+
+		/* paranoia */
+		if (!in_bounds2(y, x)) continue;
 
 		/* Require an "empty" floor grid */
 		c_ptr = area(y, x);
