@@ -191,3 +191,9 @@ function inc_oppose_all(turns)
 	inc_oppose_cold(turns)
 	inc_oppose_pois(turns)
 end
+
+
+function set_obj_flag(object, num, flag)
+	object.flags[num] = bOr(object.flags[num], flag)
+end
+	
