@@ -94,7 +94,7 @@ bool borg_recover(void)
 	/* Hack -- cure stun */
 	if (bp_ptr->status.stun && (q < 75))
 	{
-		if (borg_activate_artifact(ART_LOTHARANG, FALSE) ||
+		if (borg_activate(BORG_ACT_HEAL_SERIOUS) ||
 			borg_spell(REALM_LIFE, 0, 1) ||
 			borg_spell(REALM_LIFE, 0, 6) ||
 			borg_spell(REALM_ARCANE, 0, 7))
@@ -110,7 +110,7 @@ bool borg_recover(void)
 	/* Hack -- cure stun */
 	if (bp_ptr->status.heavy_stun)
 	{
-		if (borg_activate_artifact(ART_LOTHARANG, FALSE) ||
+		if (borg_activate(BORG_ACT_HEAL_SERIOUS) ||
 			borg_spell(REALM_LIFE, 1, 2))
 		{
 			/* Take note */
@@ -123,7 +123,7 @@ bool borg_recover(void)
 	/* Hack -- cure cuts */
 	if (bp_ptr->status.cut && (q < 75))
 	{
-		if (borg_activate_artifact(ART_LOTHARANG, FALSE) ||
+		if (borg_activate(BORG_ACT_HEAL_SERIOUS) ||
 			borg_spell(REALM_LIFE, 1, 2) ||
 			borg_spell(REALM_NATURE, 0, 7) ||
 			borg_spell(REALM_LIFE, 0, 6))
@@ -138,7 +138,7 @@ bool borg_recover(void)
 	/* Hack -- cure poison */
 	if (bp_ptr->status.poisoned && (q < 75))
 	{
-		if (borg_activate_artifact(ART_DAL, FALSE) ||
+		if (borg_activate(BORG_ACT_CURE_POISON) ||
 			borg_spell(REALM_ARCANE, 1, 7) ||
 			borg_spell(REALM_NATURE, 0, 7) ||
 			borg_spell(REALM_LIFE, 1, 2))
@@ -153,7 +153,7 @@ bool borg_recover(void)
 	/* Hack -- cure fear */
 	if (bp_ptr->status.afraid && (q < 75))
 	{
-		if (borg_activate_artifact(ART_DAL, FALSE) ||
+		if (borg_activate(BORG_ACT_REMOVE_FEAR) ||
 			borg_spell(REALM_LIFE, 0, 3))
 		{
 			/* Take note */
@@ -180,7 +180,7 @@ bool borg_recover(void)
 	if ((bp_ptr->chp < bp_ptr->mhp / 2) && (q < 75) && p == 0
 		&& (bp_ptr->csp > bp_ptr->msp / 4))
 	{
-		if (borg_activate_artifact(ART_SOULKEEPER, FALSE) ||
+		if (borg_activate(BORG_ACT_HEAL_BIG) ||
 			borg_spell(REALM_LIFE, 1, 6) ||
 			borg_spell(REALM_NATURE, 1, 7))
 		{
@@ -193,7 +193,7 @@ bool borg_recover(void)
 
 	/* cure experience loss with prayer */
 	if (bp_ptr->status.fixexp &&
-		(borg_activate_artifact(ART_LUTHIEN, FALSE) ||
+		(borg_activate(BORG_ACT_RESTORE_LIFE) ||
 		 borg_spell(REALM_LIFE, 3, 3) ||
 		 borg_spell(REALM_DEATH, 1, 7) ||
 		 borg_racial(RACE_SKELETON) ||
@@ -221,8 +221,7 @@ bool borg_recover(void)
 		if (borg_use_staff_fail(SV_STAFF_CURING) ||
 			borg_zap_rod(SV_ROD_CURING) ||
 			borg_zap_rod(SV_ROD_HEALING) ||
-			borg_activate_artifact(ART_SOULKEEPER, FALSE) ||
-			borg_activate_artifact(ART_GONDOR, FALSE) ||
+			borg_activate(BORG_ACT_HEAL_BIG) ||
 			borg_quaff_crit(FALSE))
 		{
 			return (TRUE);
@@ -236,8 +235,7 @@ bool borg_recover(void)
 			borg_use_staff_fail(SV_STAFF_CURING) ||
 			borg_zap_rod(SV_ROD_CURING) ||
 			borg_zap_rod(SV_ROD_HEALING) ||
-			borg_activate_artifact(ART_SOULKEEPER, FALSE) ||
-			borg_activate_artifact(ART_GONDOR, FALSE))
+			borg_activate(BORG_ACT_HEAL_BIG))
 		{
 			return (TRUE);
 		}
@@ -249,8 +247,7 @@ bool borg_recover(void)
 		if (borg_use_staff_fail(SV_STAFF_CURING) ||
 			borg_zap_rod(SV_ROD_CURING) ||
 			borg_zap_rod(SV_ROD_HEALING) ||
-			borg_activate_artifact(ART_SOULKEEPER, FALSE) ||
-			borg_activate_artifact(ART_GONDOR, FALSE) ||
+			borg_activate(BORG_ACT_HEAL_BIG) ||
 			borg_quaff_crit((bool) (bp_ptr->chp < 10)))
 		{
 			return (TRUE);
@@ -267,7 +264,7 @@ bool borg_recover(void)
 			borg_quaff_crit((bool) (bp_ptr->chp < 10)) ||
 			borg_use_staff_fail(SV_STAFF_CURING) ||
 			borg_zap_rod(SV_ROD_CURING) ||
-			borg_activate_artifact(ART_DAL, FALSE))
+			borg_activate(BORG_ACT_CURE_POISON))
 		{
 			return (TRUE);
 		}
@@ -307,7 +304,9 @@ bool borg_recover(void)
 			borg_quaff_potion(SV_POTION_BOLDNESS) ||
 			borg_quaff_potion(SV_POTION_HEROISM) ||
 			borg_quaff_potion(SV_POTION_BERSERK_STRENGTH) ||
-			borg_activate_artifact(ART_DAL, FALSE) ||
+			borg_activate(BORG_ACT_REMOVE_FEAR) ||
+			borg_activate(BORG_ACT_HEROISM) ||
+			borg_activate(BORG_ACT_BERSERKER) ||
 			borg_mutation(MUT1_BERSERK) ||
 			borg_racial(RACE_HALF_ORC) ||
 			borg_racial(RACE_HALF_TROLL))
@@ -331,7 +330,7 @@ bool borg_recover(void)
 		if (borg_zap_rod(SV_ROD_HEALING) ||
 			borg_quaff_potion(SV_POTION_CURE_SERIOUS) ||
 			borg_quaff_crit(FALSE) ||
-			borg_activate_artifact(ART_LOTHARANG, FALSE))
+			borg_activate(BORG_ACT_HEAL_SERIOUS))
 		{
 			return (TRUE);
 		}
@@ -669,7 +668,8 @@ static bool borg_play_step(int y2, int x2)
 			return (TRUE);
 		}
 		/* allow "destroy doors" */
-		if (borg_spell(REALM_CHAOS, 0, 1))
+		if (borg_spell(REALM_CHAOS, 0, 1) ||
+			borg_activate(BORG_ACT_DISARM))
 		{
 			borg_note("# Unbarring ways");
 			mb_ptr->trap = FT_NONE;
@@ -835,8 +835,8 @@ bool borg_twitchy(void)
 		(borg_spell_fail(REALM_ARCANE, 0, 4, 40) ||
 		 borg_spell_fail(REALM_SORCERY, 0, 1, 40) ||
 		 borg_spell_fail(REALM_TRUMP, 0, 0, 40) ||
-		 borg_activate_artifact(ART_ANGUIREL, FALSE) ||
-		 borg_activate_artifact(ART_COLANNON, FALSE) ||
+		 borg_activate(BORG_ACT_PHASE_DOOR) ||
+		 borg_activate(BORG_ACT_TELEPORT) ||
 		 borg_read_scroll(SV_SCROLL_PHASE_DOOR)))
 	{
 		/* We did something */

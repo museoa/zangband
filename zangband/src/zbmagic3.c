@@ -108,6 +108,7 @@ static int borg_defend_aux_bless(int p1)
 		/* Check if the borg be blessed (weakest last) */
 		if (!borg_spell_okay_fail(REALM_LIFE, 3, 1, fail_allowed) &&
 			!borg_spell_okay_fail(REALM_LIFE, 0, 2, fail_allowed) &&
+			!borg_activate_fail(BORG_ACT_BLESS) &&
 			!borg_read_scroll_fail(SV_SCROLL_HOLY_PRAYER) &&
 			!borg_read_scroll_fail(SV_SCROLL_HOLY_CHANT) &&
 			!borg_read_scroll_fail(SV_SCROLL_BLESSING))
@@ -125,7 +126,8 @@ static int borg_defend_aux_bless(int p1)
 	}
 
 	/* do it! */
-	return (borg_spell(REALM_LIFE, 3, 1) ||
+	return (borg_activate_fail(BORG_ACT_BLESS) ||
+		borg_spell(REALM_LIFE, 3, 1) ||
 		borg_spell(REALM_LIFE, 0, 2) ||
 		borg_read_scroll(SV_SCROLL_BLESSING) ||
 		borg_read_scroll(SV_SCROLL_HOLY_CHANT) ||
@@ -246,7 +248,8 @@ static int borg_defend_aux_goi(int p1)
 		}
 
 		/* Do we have the spell? */
-		if (!borg_spell_okay_fail(REALM_SORCERY, 3, 7, fail_allowed) &&
+		if (!borg_activate_fail(BORG_ACT_INVULNERABILITY) &&
+			!borg_spell_okay_fail(REALM_SORCERY, 3, 7, fail_allowed) &&
 			!borg_spell_okay_fail(REALM_LIFE, 3, 7, fail_allowed))
 			return (0);
 
@@ -288,7 +291,8 @@ static int borg_defend_aux_goi(int p1)
 	}
 
 	/* do it! */
-	return (borg_spell(REALM_SORCERY, 3, 7) ||
+	return (borg_activate(BORG_ACT_INVULNERABILITY) ||
+		borg_spell(REALM_SORCERY, 3, 7) ||
 		borg_spell(REALM_LIFE, 3, 7));
 }
 
@@ -362,7 +366,8 @@ static int borg_defend_aux_resist_fce(int p1)
 		fail_allowed = borg_fail_allowed(p1);
 
 		/* Does the borg have the spell? */
-		if (!borg_spell_okay_fail(REALM_NATURE, 0, 6, fail_allowed)) return (0);
+		if (!borg_spell_okay_fail(REALM_NATURE, 0, 6, fail_allowed) &&
+			!borg_activate_fail(BORG_ACT_RESISTANCE)) return (0);
 
 		/* pretend we are protected and look again */
 		save_fire = my_oppose_fire;
@@ -392,7 +397,7 @@ static int borg_defend_aux_resist_fce(int p1)
 	}
 
 	/* do it! */
-	return (borg_activate_artifact(ART_COLLUIN, FALSE) ||
+	return (borg_activate(BORG_ACT_RESISTANCE) ||
 		borg_spell(REALM_NATURE, 0, 6));
 }
 
@@ -418,7 +423,8 @@ static int borg_defend_aux_resist_fecap(int p1)
 		 * down.  Ought to at least wait until 3 of the 4 are down.
 		 */
 		if (!borg_spell_okay_fail(REALM_NATURE, 2, 3, fail_allowed) &&
-			!borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 35, fail_allowed) &&
+			!borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 33, fail_allowed) &&
+			!borg_activate_fail(BORG_ACT_RESISTANCE) &&
 			!borg_mutation_check(MUT1_RESIST, TRUE) &&
 			!borg_slot(TV_POTION, SV_POTION_RESISTANCE))
 			return (0);
@@ -456,9 +462,9 @@ static int borg_defend_aux_resist_fecap(int p1)
 	}
 
 	/* do it! */
-	return (borg_activate_artifact(ART_COLLUIN, FALSE) ||
+	return (borg_activate(BORG_ACT_RESISTANCE) ||
 		borg_spell(REALM_NATURE, 2, 3) ||
-		borg_mindcr(MIND_CHAR_ARMOUR, 35) ||
+		borg_mindcr(MIND_CHAR_ARMOUR, 33) ||
 		borg_mutation(MUT1_RESIST) ||
 		borg_quaff_potion(SV_POTION_RESISTANCE));
 }
@@ -478,9 +484,11 @@ static int borg_defend_aux_resist_f(int p1)
 		fail_allowed = borg_fail_allowed(p1);
 
 		if (!borg_spell_okay_fail(REALM_ARCANE, 1, 7, fail_allowed) &&
-			!borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 20, fail_allowed) &&
+			!borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 21, fail_allowed) &&
 			!borg_spell_okay_fail(REALM_NATURE, 0, 6, fail_allowed) &&
 			!borg_spell_okay_fail(REALM_NATURE, 2, 3, fail_allowed) &&
+			!borg_activate_fail(BORG_ACT_RESIST_FIRE) &&
+			!borg_activate_fail(BORG_ACT_RESISTANCE) &&
 			!borg_slot(TV_POTION, SV_POTION_RESIST_HEAT))
 			return (0);
 
@@ -505,11 +513,12 @@ static int borg_defend_aux_resist_f(int p1)
 	}
 
 	/* do it! */
-	return (borg_activate_artifact(ART_COLLUIN, FALSE) ||
+	return (borg_activate(BORG_ACT_RESIST_FIRE) ||
+		borg_activate(BORG_ACT_RESISTANCE) ||
 		borg_spell(REALM_NATURE, 0, 6) ||
 		borg_spell(REALM_ARCANE, 1, 7) ||
 		borg_spell(REALM_NATURE, 2, 3) ||
-		borg_mindcr(MIND_CHAR_ARMOUR, 20) ||
+		borg_mindcr(MIND_CHAR_ARMOUR, 21) ||
 		borg_quaff_potion(SV_POTION_RESIST_HEAT));
 }
 
@@ -530,6 +539,8 @@ static int borg_defend_aux_resist_c(int p1)
 
 		if (!borg_spell_okay_fail(REALM_ARCANE, 1, 7, fail_allowed) &&
 			!borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 25, fail_allowed) &&
+			!borg_activate_fail(BORG_ACT_RESIST_COLD) &&
+			!borg_activate_fail(BORG_ACT_RESISTANCE) &&
 			!borg_slot(TV_POTION, SV_POTION_RESIST_COLD))
 			return (0);
 
@@ -554,7 +565,8 @@ static int borg_defend_aux_resist_c(int p1)
 	}
 
 	/* do it! */
-	return (borg_activate_artifact(ART_COLLUIN, FALSE) ||
+	return (borg_activate(BORG_ACT_RESIST_COLD) ||
+		borg_activate(BORG_ACT_RESISTANCE) ||
 		borg_spell(REALM_ARCANE, 1, 7) ||
 		borg_mindcr(MIND_CHAR_ARMOUR, 25) ||
 		borg_quaff_potion(SV_POTION_RESIST_COLD));
@@ -576,7 +588,9 @@ static int borg_defend_aux_resist_a(int p1)
 		fail_allowed = borg_fail_allowed(p1);
 
 		if (!borg_spell_okay_fail(REALM_ARCANE, 2, 1, fail_allowed) &&
-			!borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 15, fail_allowed))
+			!borg_activate_fail(BORG_ACT_RESIST_ACID) &&
+			!borg_activate_fail(BORG_ACT_RESISTANCE) &&
+			!borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 17, fail_allowed))
 			return (0);
 
 		/* pretend we are protected and look again */
@@ -599,7 +613,8 @@ static int borg_defend_aux_resist_a(int p1)
 	}
 
 	/* do it! */
-	return (borg_activate_artifact(ART_COLLUIN, FALSE) ||
+	return (borg_activate(BORG_ACT_RESIST_ACID) ||
+		borg_activate(BORG_ACT_RESISTANCE) ||
 		borg_mindcr(MIND_CHAR_ARMOUR, 15) ||
 		borg_spell(REALM_ARCANE, 2, 1));
 }
@@ -618,7 +633,10 @@ static int borg_defend_aux_resist_p(int p1)
 		/* Get the allowed fail_rate */
 		fail_allowed = borg_fail_allowed(p1);
 
-		if (!borg_spell_okay_fail(REALM_DEATH, 0, 5, fail_allowed))
+		if (!borg_spell_okay_fail(REALM_DEATH, 0, 5, fail_allowed) &&
+			!borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 33, fail_allowed) &&
+			!borg_activate_fail(BORG_ACT_RESIST_POISON) &&
+			!borg_activate_fail(BORG_ACT_RESISTANCE))
 			return (0);
 
 		/* pretend we are protected and look again */
@@ -642,7 +660,9 @@ static int borg_defend_aux_resist_p(int p1)
 	}
 
 	/* do it! */
-	return (borg_activate_artifact(ART_COLLUIN, FALSE) ||
+	return (borg_activate(BORG_ACT_RESIST_POISON) ||
+		borg_activate(BORG_ACT_RESISTANCE) ||
+		borg_mindcr(MIND_CHAR_ARMOUR, 33) ||
 		borg_spell(REALM_DEATH, 0, 5));
 }
 
@@ -660,7 +680,8 @@ static int borg_defend_aux_prot_evil(int p1)
 		fail_allowed = borg_fail_allowed(p1);
 
 		/* Is the spell available? */
-		if (!borg_spell_okay_fail(REALM_LIFE, 1, 5, fail_allowed) ||
+		if (!borg_spell_okay_fail(REALM_LIFE, 1, 5, fail_allowed) &&
+			!borg_activate_fail(BORG_ACT_PROT_EVIL) &&
 			!borg_read_scroll_fail(SV_SCROLL_PROTECTION_FROM_EVIL)) return (0);
 
 		/* pretend we are protected and look again */
@@ -685,7 +706,7 @@ static int borg_defend_aux_prot_evil(int p1)
 
 	/* do it! */
 	return (borg_spell(REALM_LIFE, 1, 5) ||
-		borg_activate_artifact(ART_CARLAMMAS, FALSE) ||
+		borg_activate(BORG_ACT_PROT_EVIL) ||
 		borg_read_scroll(SV_SCROLL_PROTECTION_FROM_EVIL));
 }
 
@@ -768,6 +789,7 @@ static int borg_defend_aux_tell_away(int p1)
 		if (!borg_spell_okay_fail(REALM_ARCANE, 3, 3, fail_allowed) &&
 			!borg_spell_okay_fail(REALM_SORCERY, 1, 4, fail_allowed) &&
 			!borg_spell_okay_fail(REALM_CHAOS, 1, 5, fail_allowed) &&
+			!borg_activate_fail(BORG_ACT_TELEPORT_AWAY) &&
 			!borg_equips_rod_fail(SV_ROD_TELEPORT_AWAY) &&
 			!borg_equips_wand_fail(SV_WAND_TELEPORT_AWAY))
 			return (0);
@@ -801,7 +823,7 @@ static int borg_defend_aux_tell_away(int p1)
 	return (borg_spell(REALM_SORCERY, 1, 4) ||
 		borg_spell(REALM_ARCANE, 3, 3) ||
 		borg_spell(REALM_CHAOS, 1, 5) ||
-		borg_activate_artifact(ART_ULMO, FALSE) ||
+		borg_activate(BORG_ACT_TELEPORT_AWAY) ||
 		borg_zap_rod(SV_ROD_TELEPORT_AWAY) ||
 		borg_aim_wand(SV_WAND_TELEPORT_AWAY));
 }
@@ -822,13 +844,15 @@ static int borg_defend_aux_hero(int p1)
 		if (!borg_spell_okay_fail(REALM_LIFE, 3, 0, fail_allowed) &&
 			!borg_spell_okay_fail(REALM_DEATH, 2, 0, fail_allowed) &&
 			!borg_mindcr_okay_fail(MIND_ADRENALINE, 23, fail_allowed) &&
+			!borg_activate_fail(BORG_ACT_HEROISM) &&
+			!borg_activate_fail(BORG_ACT_BERSERKER) &&
 			!borg_racial_check(RACE_HALF_TROLL, TRUE) &&
 			!borg_racial_check(RACE_BARBARIAN, TRUE) &&
 			!borg_mutation_check(MUT1_BERSERK, TRUE) &&
 			!borg_slot(TV_POTION, SV_POTION_BERSERK_STRENGTH) &&
 			!borg_slot(TV_POTION, SV_POTION_HEROISM)) return (0);
 
-		/* if we are in some danger but not much, go for a quick bless */
+		/* if we are in some danger but not much, go for a quick heroism */
 		if (borg_goi || (p1 > avoidance / 12 && p1 < avoidance / 2) ||
 			(borg_fighting_unique && p1 < avoidance * 13 / 10))
 		{
@@ -844,6 +868,8 @@ static int borg_defend_aux_hero(int p1)
 	return (borg_spell(REALM_LIFE, 3, 0) ||
 		borg_spell(REALM_DEATH, 2, 0) ||
 		borg_mindcr(MIND_ADRENALINE, 23) ||
+		borg_activate(BORG_ACT_HEROISM) ||
+		borg_activate(BORG_ACT_BERSERKER) ||
 		borg_racial(RACE_HALF_TROLL) ||
 		borg_racial(RACE_BARBARIAN) ||
 		borg_mutation(MUT1_BERSERK) ||
@@ -1149,6 +1175,7 @@ static int borg_defend_aux_mass_genocide(int p1)
 		/* see if prayer is legal */
 		if (!borg_spell_okay_fail(REALM_DEATH, 2, 7, 40) &&
 			!borg_spell_okay_fail(REALM_DEATH, 3, 6, 40) &&
+			!borg_activate_fail(BORG_ACT_MASS_GENOCIDE) &&
 			!borg_read_scroll_fail(SV_SCROLL_MASS_GENOCIDE)) return (0);
 
 		/* See if he is in real danger */
@@ -1212,8 +1239,8 @@ static int borg_defend_aux_mass_genocide(int p1)
 	/* Cast the spell */
 	return (borg_spell(REALM_DEATH, 2, 7) ||
 		borg_spell(REALM_DEATH, 3, 6) ||
-		borg_read_scroll(SV_SCROLL_MASS_GENOCIDE) ||
-		borg_activate_artifact(ART_EONWE, FALSE));
+		borg_activate(BORG_ACT_MASS_GENOCIDE) ||
+		borg_read_scroll(SV_SCROLL_MASS_GENOCIDE));
 }
 
 /* This will simulate and cast the genocide spell.
@@ -1253,6 +1280,7 @@ static int borg_defend_aux_genocide(int p1, int *genocide_target)
 		/* Is genocide available at all? */
 		if (!borg_spell_okay_fail(REALM_DEATH, 1, 6, fail_allowed) &&
 			!borg_equips_staff_fail(SV_STAFF_GENOCIDE) &&
+			!borg_activate_fail(BORG_ACT_GENOCIDE) &&
 			!borg_read_scroll_fail(SV_SCROLL_GENOCIDE)) return (0);
 
 		/* Don't try it if really weak */
@@ -1408,7 +1436,7 @@ static int borg_defend_aux_genocide(int p1, int *genocide_target)
 	/* do it! ---use scrolls first since they clutter inventory */
 	if (borg_read_scroll(SV_SCROLL_GENOCIDE) ||
 		borg_spell(REALM_DEATH, 1, 6) ||
-		borg_activate_artifact(ART_CELEBORN, FALSE) ||
+		borg_activate(BORG_ACT_GENOCIDE) ||
 		borg_use_staff(SV_STAFF_GENOCIDE))
 	{
 		/* and the winner is..... */
@@ -1460,6 +1488,7 @@ static int borg_defend_aux_genocide_hounds(int p1)
 
 		/* Is the spell available? */
 		if (!borg_spell_okay_fail(REALM_DEATH, 1, 6, 35) &&
+			!borg_activate_fail(BORG_ACT_GENOCIDE) &&
 			!borg_equips_staff_fail(SV_STAFF_GENOCIDE)) return (0);
 
 		return (1);
@@ -1468,7 +1497,7 @@ static int borg_defend_aux_genocide_hounds(int p1)
 	borg_note("# Genociding Hounds at Start of DLevel");
 
 	if (borg_spell(REALM_DEATH, 1, 6) ||
-		borg_activate_artifact(ART_CELEBORN, FALSE) ||
+		borg_activate(BORG_ACT_GENOCIDE) ||
 		borg_use_staff(SV_STAFF_GENOCIDE))
 	{
 		/* and the winner is..... */
@@ -1723,6 +1752,7 @@ static int borg_defend_aux_inviso(int p1)
 		if (!borg_slot(TV_POTION, SV_POTION_DETECT_INVIS) &&
 			!borg_read_scroll_fail(SV_SCROLL_DETECT_INVIS) &&
 			!borg_equips_staff_fail(SV_STAFF_DETECT_INVIS) &&
+			!borg_activate_fail(BORG_ACT_DETECT_EVIL) &&
 			!borg_equips_staff_fail(SV_STAFF_DETECT_EVIL) &&
 			!borg_spell_okay_fail(REALM_LIFE, 1, 3, fail_allowed) &&
 			!borg_spell_okay_fail(REALM_ARCANE, 0, 2, fail_allowed))
@@ -1747,7 +1777,8 @@ static int borg_defend_aux_inviso(int p1)
 		return (10);
 	}
 	/* snap shot */
-	if (borg_read_scroll(SV_SCROLL_DETECT_INVIS) ||
+	if (borg_activate(BORG_ACT_DETECT_EVIL) ||
+		borg_read_scroll(SV_SCROLL_DETECT_INVIS) ||
 		borg_use_staff(SV_STAFF_DETECT_INVIS) ||
 		borg_use_staff(SV_STAFF_DETECT_EVIL))
 	{
@@ -1784,6 +1815,7 @@ static int borg_defend_aux_esp(int p1)
 		/* Do I have anything that will work? */
 		if (!borg_spell_okay_fail(REALM_SORCERY, 2, 4, fail_allowed) &&
 			!borg_spell_okay_fail(REALM_ARCANE, 3, 7, fail_allowed) &&
+			!borg_activate_fail(BORG_ACT_TELEPATHY) &&
 			!borg_mindcr_okay_fail(MIND_PRECOGNIT, 24, fail_allowed))
 			return (0);
 
@@ -1792,7 +1824,8 @@ static int borg_defend_aux_esp(int p1)
 	}
 
 	/* long time */
-	return (borg_spell(REALM_SORCERY, 2, 4) ||
+	return (borg_activate(BORG_ACT_TELEPATHY) ||
+		borg_spell(REALM_SORCERY, 2, 4) ||
 		borg_spell(REALM_ARCANE, 3, 7) ||
 		borg_mindcr(MIND_PRECOGNIT, 24));
 }
@@ -2204,8 +2237,13 @@ static int borg_perma_aux_bless(void)
 		/* already blessed */
 		if (borg_bless) return (0);
 
+		/* Is the bless activation available? */
+		if (borg_activate_fail(BORG_ACT_BLESS))
+		{
+			cost = 0;
+		}
 		/* Is the life prayer spell available? */
-		if (borg_spell_okay_fail(REALM_LIFE, 3, 1, fail_allowed))
+		else if (borg_spell_okay_fail(REALM_LIFE, 3, 1, fail_allowed))
 		{
 			/* Obtain the cost of the spell */
 			cost = borg_spell_mana(REALM_LIFE, 3, 1);
@@ -2676,8 +2714,13 @@ static int borg_perma_aux_telepathy(void)
 		/* already telepathic */
 		if (borg_esp || (FLAG(bp_ptr, TR_TELEPATHY))) return (0);
 
+		/* ESP from an artifact is for free */
+		if (borg_activate_fail(BORG_ACT_TELEPATHY))
+		{
+			cost = 0;
+		}
 		/* Is the Arcane telepathy spell available? */
-		if (borg_spell_okay_fail(REALM_ARCANE, 3, 7, fail_allowed))
+		else if (borg_spell_okay_fail(REALM_ARCANE, 3, 7, fail_allowed))
 		{
 			/* Obtain the cost of the spell */
 			cost = borg_spell_mana(REALM_ARCANE, 3, 7);
@@ -2708,7 +2751,8 @@ static int borg_perma_aux_telepathy(void)
 	}
 
 	/* do it! */
-	return (borg_spell(REALM_ARCANE, 3, 7) ||
+	return (borg_activate(BORG_ACT_TELEPATHY) ||
+		borg_spell(REALM_ARCANE, 3, 7) ||
 		borg_spell(REALM_SORCERY, 2, 4) ||
 		borg_mindcr(MIND_PRECOGNIT, 24));
 }
@@ -2847,11 +2891,17 @@ static int borg_perma_aux_hero(void)
 		if (unique_on_level) fail_allowed = 10;
 		if (borg_fighting_unique) fail_allowed = 15;
 
-		/* already blessed */
+		/* already heroed */
 		if (borg_hero || borg_berserk) return (0);
 
+		/* Is the hero or berserk activation spell available? */
+		if (borg_activate_fail(BORG_ACT_HEROISM) ||
+			borg_activate_fail(BORG_ACT_BERSERKER))
+		{
+			cost = 0;
+		}
 		/* Can the borg cast the death berserk spell? */
-		if (borg_spell_okay_fail(REALM_DEATH, 2, 0, fail_allowed))
+		else if (borg_spell_okay_fail(REALM_DEATH, 2, 0, fail_allowed))
 		{
 			/* Obtain the cost of the spell */
 			cost = borg_spell_mana(REALM_DEATH, 2, 0);
@@ -2885,7 +2935,9 @@ static int borg_perma_aux_hero(void)
 	}
 
 	/* Do it!  (We know one of these will succeed) */
-	return (borg_spell(REALM_DEATH, 2, 0) ||
+	return (borg_activate(BORG_ACT_HEROISM) ||
+		borg_activate(BORG_ACT_BERSERKER) ||
+		borg_spell(REALM_DEATH, 2, 0) ||
 		borg_mindcr(MIND_ADRENALINE, 23) ||
 		borg_spell(REALM_LIFE, 3, 0));
 }

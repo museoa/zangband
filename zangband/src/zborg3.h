@@ -190,6 +190,8 @@ extern bool borg_use_staff(int sval);
 extern bool borg_use_staff_fail(int sval);
 extern bool borg_equips_staff_fail(int sval);
 extern bool borg_equips_staff(int sval);
+extern bool borg_activate(int act_index);
+extern bool borg_activate_fail(int act_index);
 extern bool borg_activate_artifact(int name1, bool secondary);	/* apw */
 extern bool borg_activate_rand_art(int effect);
 extern bool borg_check_artifact(list_item *l_ptr, bool real_use);
@@ -223,6 +225,78 @@ extern bool borg_mutation_check(u32b mutation, bool check_fail);
 extern bool borg_mutation(u32b mutation);
 extern void borg_cheat_spell(int realm);
 extern void prepare_race_class_info(void);
+
+
+/* Big list of artifact activations with some use */
+enum
+{
+	BORG_ACT_NONE,
+	BORG_ACT_LIGHT,
+	BORG_ACT_LIGHT2,
+	BORG_ACT_LIGHT3,
+	BORG_ACT_LIGHT4,
+	BORG_ACT_MAGIC_MAP,
+	BORG_ACT_CLAIRVOYANCE,
+	BORG_ACT_RECALL,
+	BORG_ACT_PROT_EVIL,
+	BORG_ACT_SPEED,
+	BORG_ACT_SPEED2,
+	BORG_ACT_HEAL_BIG,
+	BORG_ACT_HEAL_BIG2,
+	BORG_ACT_HEAL_BIG3,
+	BORG_ACT_HEAL_BIG4,
+	BORG_ACT_GENOCIDE,
+	BORG_ACT_DISARM,
+	BORG_ACT_DETECTION,
+	BORG_ACT_CREATE_FOOD,
+	BORG_ACT_RESISTANCE,
+	BORG_ACT_RESISTANCE2,
+	BORG_ACT_RECHARGE,		/* Both recharge and recharging */
+	BORG_ACT_TELEPORT,
+	BORG_ACT_TELEPORT2,
+	BORG_ACT_RESTORE_LIFE,
+	BORG_ACT_RESTORE_LIFE2,
+	BORG_ACT_REMOVE_FEAR,
+	BORG_ACT_CURE_POISON,
+	BORG_ACT_PHASE_DOOR,
+	BORG_ACT_PHASE_DOOR2,
+	BORG_ACT_MASS_GENOCIDE,
+	BORG_ACT_HEAL_SERIOUS,
+	BORG_ACT_HEAL_SERIOUS2,
+	BORG_ACT_TELEPORT_AWAY,
+	BORG_ACT_IDENTIFY,
+	BORG_ACT_STAR_IDENTIFY,
+	BORG_ACT_STAR_IDENTIFY2,
+	BORG_ACT_HEAL_LIGHT,
+	BORG_ACT_DIM_DOOR,
+	BORG_ACT_ALCHEMY,
+	BORG_ACT_SATISFY,
+	BORG_ACT_RESTORATION,
+	BORG_ACT_TELEPATHY,
+	BORG_ACT_HEROISM,
+	BORG_ACT_BERSERKER,
+	BORG_ACT_BLESS,
+	BORG_ACT_RESIST_ACID,
+	BORG_ACT_RESIST_FIRE,
+	BORG_ACT_RESIST_COLD,
+	BORG_ACT_RESIST_ELEC,
+	BORG_ACT_RESIST_POISON,
+	BORG_ACT_WRAITH_FORM,
+	BORG_ACT_INVULNERABILITY,
+	BORG_ACT_DETECT_EVIL,
+	BORG_ACT_DETECT_MONSTERS,
+	BORG_ACT_DETECT_TRAP_DOOR,
+	BORG_ACT_REMOVE_CURSE,
+	BORG_ACT_STAR_REMOVE_CURSE,
+	BORG_ACT_DETECT_OBJECTS,
+	BORG_ACT_SELF_KNOWLEDGE,
+	BORG_ACT_TELEPORT_LEVEL,
+	BORG_ACT_CREATE_DOORS,
+	BORG_ACT_CREATE_STAIRS,
+	BORG_ACT_ALTER_REALITY,
+	
+	BORG_ACT_MAX
+};
 
 /*
  * Initialize this file

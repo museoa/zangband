@@ -699,6 +699,78 @@ static byte borg_magic_rating[8][4][8] =
 
 };
 
+
+/* Recognition list for the activations.  Should be in sync with BORG_ACT_* */
+static cptr borg_activation[] =
+{
+	"",
+	"illumination",
+	"light area",
+	"magic mapping and illumination",
+	"magic mapping and light area",
+	"magic mapping",
+	"clairvoyance",
+	"word of recall",
+	"protection from evil",
+	"haste self",
+	"speed",
+	"heal (1000)",
+	"curing, heroism and heal (777)",
+	"heal (700)",
+	"heavenly blessing and heal (500)",
+	"genocide",
+	"trap and door destruction",
+	"detection",
+	"create food",
+	"resistance",
+	"resist elements",
+	"recharg",
+	"teleport every",
+	"teleport (100)",
+	"restore life levels",
+	"restore stats and life levels",
+	"remove fear",
+	"remove fear and cure poison",
+	"a getaway",
+	"phase door",
+	"mass genocide",
+	"cure wounds",
+	"remove fear and heal",
+	"teleport away",
+	"identify",
+	"probing, detection",
+	"identify true",
+	"heal (45)",
+	"dimension door",
+	"alchemy",
+	"satisfy hunger",
+	"restore stats",
+	"telepathy",
+	"heroism (",
+	"berserk",
+	"bless",
+	"resist acid",
+	"resist fire",
+	"resist cold",
+	"resist lightning",
+	"resist poison",
+	"wraith form",
+	"invulnerability",
+	"detect evil",
+	"detect monsters",
+	"detect traps and doors",
+	"remove curse",
+	"dispel curse",
+	"detect objects",
+	"self knowledge",
+	"teleport level",
+	"create doors",
+	"create stairs",
+	"alter reality",
+	"phase door",
+	"borg_act_max"
+};
+
 /*
  * Return the slot that items of the given type are wielded into
  *
@@ -1881,10 +1953,10 @@ bool borg_check_artifact(list_item *l_ptr, bool real_use)
 	if (!l_ptr || !l_ptr->k_idx) return (FALSE);
 
 	/* Skip non-artifacts */
-	if (!(KN_FLAG(l_ptr, TR_INSTA_ART))) return (FALSE);
+	if (!KN_FLAG(l_ptr, TR_INSTA_ART)) return (FALSE);
 
 	/* Is this an activatable item? */
-	if (!(KN_FLAG(l_ptr, TR_ACTIVATE))) return (FALSE);
+	if (!KN_FLAG(l_ptr, TR_ACTIVATE)) return (FALSE);
 
 	/* Can we activate this artifact */
 	if (!borg_use_item_fail(l_ptr, FALSE)) return (FALSE);
@@ -1898,16 +1970,12 @@ bool borg_check_artifact(list_item *l_ptr, bool real_use)
 	return (TRUE);
 }
 
-/*
- * Hack -- attempt to use the given artifact
- * Doesn't work because I don't know how to find out the activation.
- * It is possible to do this by name (Galadriel, etc) but that leaves
- * out the randarts.
- */
-bool borg_activate_artifact(int name1, bool secondary)
+
+/* Try to activate a certain activation */
+static bool borg_activate_aux(int act_index, bool real_use)
 {
-	int slot,
-		act;
+	int slot;
+	cptr act;
 
 	/* Check the equipment */
 	for (slot = 0; slot < equip_num; slot++)
@@ -1917,45 +1985,118 @@ bool borg_activate_artifact(int name1, bool secondary)
 		/* Is this item an artifact that can be activated now? */
 		if (!borg_check_artifact(l_ptr, TRUE)) continue;
 
-		/* 
-		 * Find out what activation is, but not like this
-		 * act = p_ptr->equipment[slot].activate;
-		 * With act = 0 no activation will be found
-		 */
-		act = 0;
+		/* Hack!  Get the activation */
+		act = item_activation(&p_ptr->equipment[slot]);
 
-		/* Is this a predefined artifact with the right activation? */
-		if (act < 128 || act - 128 != name1) continue;
+		/* Check if it is the activation the borg is after */
+		if (!prefix(act, borg_activation[act_index])) continue;
 
-		/* Log the message */
-		borg_note_fmt("# Activating artifact %s.", l_ptr->o_name);
+		/* Just checking for the ability? */
+		if (!real_use) return (TRUE);
 
-		/* Perform the action */
+		/* Try it */
 		borg_keypress('A');
 		borg_keypress(I2A(slot));
 
-		/* Jewel also gives Recall */
-		if (act - 128 == ART_THRAIN)
-		{
-			/* probably some spaces missing */
-			borg_keypress(' ');
-
-			if (secondary == FALSE)
-			{
-				borg_keypress('n');
-			}
-			else
-			{
-				borg_keypress('y');
-			}
-		}
-
-		/* Success */
+		/* Confirm success */
 		return (TRUE);
 	}
 
-	/* The artifact is not in the equipment */
+	/* No such luck */
 	return (FALSE);
+}
+
+
+/* Fiddle a bit with peculiar activations */
+bool borg_activate_aux2(int act_index, bool real_use)
+{
+	switch (act_index)
+	{
+		/* illumination has several entries */
+		case BORG_ACT_LIGHT:
+		{
+			return (borg_activate_aux(BORG_ACT_LIGHT, real_use) ||
+					borg_activate_aux(BORG_ACT_LIGHT2, real_use) ||
+					borg_activate_aux(BORG_ACT_LIGHT3, real_use) ||
+					borg_activate_aux(BORG_ACT_LIGHT4, real_use));
+		}
+
+		/* Speed has several entries */
+		case BORG_ACT_SPEED:
+		{
+			return (borg_activate_aux(BORG_ACT_SPEED, real_use) ||
+					borg_activate_aux(BORG_ACT_SPEED2, real_use));
+		}
+
+		/* Resistance has several entries */
+		case BORG_ACT_RESISTANCE:
+		{
+			return (borg_activate_aux(BORG_ACT_RESISTANCE, real_use) ||
+					borg_activate_aux(BORG_ACT_RESISTANCE2, real_use));
+		}
+
+		/* *identify* has several entries */
+		case BORG_ACT_STAR_IDENTIFY:
+		{
+			return (borg_activate_aux(BORG_ACT_STAR_IDENTIFY, real_use) ||
+					borg_activate_aux(BORG_ACT_STAR_IDENTIFY2, real_use));
+		}
+
+		/* Restore life levels has several entries */
+		case BORG_ACT_RESTORE_LIFE:
+		{
+			return (borg_activate_aux(BORG_ACT_RESTORE_LIFE, real_use) ||
+					borg_activate_aux(BORG_ACT_RESTORE_LIFE2, real_use));
+		}
+
+		/* Restore life levels has several entries */
+		case BORG_ACT_HEAL_SERIOUS:
+		{
+			return (borg_activate_aux(BORG_ACT_HEAL_SERIOUS, real_use) ||
+					borg_activate_aux(BORG_ACT_HEAL_SERIOUS2, real_use));
+		}
+
+		/* Teleport has several entries */
+		case BORG_ACT_TELEPORT:
+		{
+			return (borg_activate_aux(BORG_ACT_TELEPORT, real_use) ||
+					borg_activate_aux(BORG_ACT_TELEPORT2, real_use));
+		}
+
+		/* Big healers have several entries */
+		case BORG_ACT_HEAL_BIG:
+		{
+			return (borg_activate_aux(BORG_ACT_HEAL_BIG, real_use) ||
+					borg_activate_aux(BORG_ACT_HEAL_BIG2, real_use) ||
+					borg_activate_aux(BORG_ACT_HEAL_BIG3, real_use) ||
+					borg_activate_aux(BORG_ACT_HEAL_BIG4, real_use));
+		}
+
+		default:
+		{
+			if (act_index <= BORG_ACT_NONE ||
+				act_index >= BORG_ACT_MAX) return (FALSE);
+
+			/* Do the work */
+			return (borg_activate_aux(act_index, real_use));
+		}
+	}
+}
+
+
+/* Perform a certain activation if available */
+bool borg_activate(int act_index)
+{
+	/* Do the work */
+	return (borg_activate_aux2(act_index, TRUE));
+}
+
+
+/* Check if a certain activation is available */
+bool borg_activate_fail(int act_index)
+{
+	/* Do the work */
+	return (borg_activate_aux2(act_index, FALSE));
 }
 
 

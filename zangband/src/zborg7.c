@@ -96,7 +96,7 @@ bool borg_use_things(void)
 
 	/* Quaff experience restoration potion */
 	if (bp_ptr->status.fixexp &&
-		(borg_activate_artifact(ART_LUTHIEN, FALSE) ||
+		(borg_activate(BORG_ACT_RESTORE_LIFE) ||
 		 borg_spell(REALM_LIFE, 3, 3) ||
 		 borg_spell(REALM_DEATH, 1, 7) ||
 		 borg_quaff_potion(SV_POTION_RESTORE_EXP)))
@@ -119,23 +119,28 @@ bool borg_use_things(void)
 	if ((bp_ptr->status.fixstat[A_STR] &&
 		 (borg_quaff_potion(SV_POTION_RES_STR) ||
 		  borg_zap_rod(SV_ROD_RESTORATION) ||
+		  borg_activate(BORG_ACT_RESTORATION) ||
 		  borg_eat_food(SV_FOOD_RESTORE_STR) ||
 		  borg_eat_food(SV_FOOD_RESTORING))) ||
 		(bp_ptr->status.fixstat[A_INT] &&
 		 (borg_quaff_potion(SV_POTION_RES_INT) ||
 		  borg_zap_rod(SV_ROD_RESTORATION) ||
+		  borg_activate(BORG_ACT_RESTORATION) ||
 		  borg_eat_food(SV_FOOD_RESTORING))) ||
 		(bp_ptr->status.fixstat[A_WIS] &&
 		 (borg_quaff_potion(SV_POTION_RES_WIS) ||
 		  borg_zap_rod(SV_ROD_RESTORATION) ||
+		  borg_activate(BORG_ACT_RESTORATION) ||
 		  borg_eat_food(SV_FOOD_RESTORING))) ||
 		(bp_ptr->status.fixstat[A_DEX] &&
 		 (borg_quaff_potion(SV_POTION_RES_DEX) ||
 		  borg_zap_rod(SV_ROD_RESTORATION) ||
+		  borg_activate(BORG_ACT_RESTORATION) ||
 		  borg_eat_food(SV_FOOD_RESTORING))) ||
 		(bp_ptr->status.fixstat[A_CON] &&
 		 (borg_quaff_potion(SV_POTION_RES_CON) ||
 		  borg_zap_rod(SV_ROD_RESTORATION) ||
+		  borg_activate(BORG_ACT_RESTORATION) ||
 		  borg_eat_food(SV_FOOD_RESTORE_CON) ||
 		  borg_eat_food(SV_FOOD_RESTORING))) ||
 		(bp_ptr->status.fixstat[A_CHR] &&
@@ -227,6 +232,7 @@ bool borg_use_things(void)
 			borg_eat_food(SV_FOOD_SLIME_MOLD) ||
 			borg_eat_food(SV_FOOD_PINT_OF_ALE) ||
 			borg_eat_food(SV_FOOD_PINT_OF_WINE) ||
+			borg_activate(BORG_ACT_CREATE_FOOD) ||
 			borg_eat_food(SV_FOOD_RATION) ||
 			borg_read_scroll(SV_SCROLL_SATISFY_HUNGER) ||
 			borg_eat_food(SV_FOOD_WAYBREAD))
@@ -365,8 +371,7 @@ bool borg_check_lite(void)
 	{
 		/* Check for traps and doors and evil */
 		if (borg_zap_rod(SV_ROD_DETECTION) ||
-			borg_activate_artifact(ART_HOLHENNETH, FALSE) ||
-			borg_activate_artifact(ART_OLORIN, FALSE) ||
+			borg_activate(BORG_ACT_DETECTION) ||
 			borg_spell_fail(REALM_SORCERY, 1, 6, 20) ||
 			borg_spell_fail(REALM_ARCANE, 3, 5, 20) ||
 			borg_spell_fail(REALM_TRUMP, 3, 0, 20) ||
@@ -390,7 +395,7 @@ bool borg_check_lite(void)
 		 (!when_detect_doors || (borg_t - when_detect_doors >= 5))))
 	{
 		/* Check for traps and doors */
-		if (borg_activate_artifact(ART_THRAIN, FALSE) ||
+		if (borg_activate(BORG_ACT_CLAIRVOYANCE) ||
 			borg_spell_fail(REALM_LIFE, 0, 5, 20) ||
 			borg_spell_fail(REALM_SORCERY, 0, 2, 20) ||
 			borg_spell_fail(REALM_ARCANE, 1, 0, 20) ||
@@ -414,7 +419,8 @@ bool borg_check_lite(void)
 	if (do_trap && (!when_detect_traps || (borg_t - when_detect_traps >= 7)))
 	{
 		/* Check for traps */
-		if (borg_read_scroll(SV_SCROLL_DETECT_TRAP) ||
+		if (borg_activate(BORG_ACT_DETECT_TRAP_DOOR) ||
+			borg_read_scroll(SV_SCROLL_DETECT_TRAP) ||
 			borg_use_staff(SV_STAFF_DETECT_TRAP) ||
 			borg_zap_rod(SV_ROD_DETECT_TRAP))
 		{
@@ -433,7 +439,8 @@ bool borg_check_lite(void)
 	if (do_door && (!when_detect_doors || (borg_t - when_detect_doors >= 9)))
 	{
 		/* Check for doors */
-		if (borg_read_scroll(SV_SCROLL_DETECT_DOOR) ||
+		if (borg_activate(BORG_ACT_DETECT_TRAP_DOOR) ||
+			borg_read_scroll(SV_SCROLL_DETECT_DOOR) ||
 			borg_use_staff(SV_STAFF_DETECT_DOOR) ||
 			borg_zap_rod(SV_ROD_DETECT_DOOR))
 		{
@@ -452,7 +459,7 @@ bool borg_check_lite(void)
 	if (do_wall && (!when_detect_walls || (borg_t - when_detect_walls >= 15)))
 	{
 		/* Check for walls */
-		if (borg_activate_artifact(ART_ELENDIL, FALSE) ||
+		if (borg_activate(BORG_ACT_MAGIC_MAP) ||
 			borg_read_scroll(SV_SCROLL_MAPPING) ||
 			borg_use_staff(SV_STAFF_MAPPING) ||
 			borg_zap_rod(SV_ROD_MAPPING) ||
@@ -474,7 +481,8 @@ bool borg_check_lite(void)
 	if (do_evil && (!when_detect_evil || (borg_t - when_detect_evil >= 9)))
 	{
 		/* Check for traps */
-		if (borg_use_staff(SV_STAFF_DETECT_EVIL) ||
+		if (borg_activate(BORG_ACT_DETECT_EVIL) ||
+			borg_use_staff(SV_STAFF_DETECT_EVIL) ||
 			borg_spell_fail(REALM_NATURE, 0, 0, 20) ||
 			borg_spell_fail(REALM_ARCANE, 0, 3, 20) ||
 			borg_spell_fail(REALM_SORCERY, 0, 0, 20) ||
@@ -561,8 +569,7 @@ bool borg_check_lite(void)
 	if (do_lite && (!when_call_lite || (borg_t - when_call_lite >= 7)))
 	{
 		/* Call light */
-		if (borg_activate_artifact(ART_GALADRIEL, FALSE) ||
-			borg_activate_artifact(ART_ELENDIL, FALSE) ||
+		if (borg_activate(BORG_ACT_LIGHT) ||
 			borg_zap_rod(SV_ROD_ILLUMINATION) ||
 			borg_use_staff(SV_STAFF_LITE) ||
 			borg_read_scroll(SV_SCROLL_LIGHT) ||
@@ -661,7 +668,7 @@ bool borg_check_lite(void)
 	if (TRUE && (!when_wizard_lite || (borg_t - when_wizard_lite >= 1000)))
 	{
 		/* Wizard lite */
-		if (borg_activate_artifact(ART_THRAIN, FALSE) ||
+		if (borg_activate(BORG_ACT_CLAIRVOYANCE) ||
 			borg_spell(REALM_ARCANE, 3, 7) ||
 			borg_spell(REALM_SORCERY, 3, 3) ||
 			borg_spell(REALM_NATURE, 3, 5))
@@ -762,8 +769,7 @@ bool borg_check_lite_only(void)
 	if (do_lite && (!when_call_lite || (borg_t - when_call_lite >= 7)))
 	{
 		/* Call light */
-		if (borg_activate_artifact(ART_GALADRIEL, FALSE) ||
-			borg_activate_artifact(ART_ELENDIL, FALSE) ||
+		if (borg_activate(BORG_ACT_LIGHT) ||
 			borg_zap_rod(SV_ROD_ILLUMINATION) ||
 			borg_use_staff(SV_STAFF_LITE) ||
 			borg_read_scroll(SV_SCROLL_LIGHT) ||
@@ -790,7 +796,7 @@ bool borg_check_lite_only(void)
 	if (TRUE && (!when_wizard_lite || (borg_t - when_wizard_lite >= 1000)))
 	{
 		/* Wizard lite */
-		if (borg_activate_artifact(ART_THRAIN, FALSE) ||
+		if (borg_activate(BORG_ACT_CLAIRVOYANCE) ||
 			borg_spell(REALM_ARCANE, 3, 7) ||
 			borg_spell(REALM_SORCERY, 3, 3) ||
 			borg_spell(REALM_NATURE, 3, 5))
@@ -1272,7 +1278,9 @@ static bool borg_decurse(void)
 	if (!borg_wears_cursed(FALSE)) return (FALSE);
 
 	/* remove the curse */
-	if (borg_spell_fail(REALM_LIFE, 1, 0, 60) ||
+	if (borg_activate(BORG_ACT_REMOVE_CURSE) ||
+		borg_activate(BORG_ACT_STAR_REMOVE_CURSE) ||
+		borg_spell_fail(REALM_LIFE, 1, 0, 60) ||
 		borg_spell_fail(REALM_LIFE, 2, 1, 60) ||
 		borg_use_staff_fail(SV_STAFF_REMOVE_CURSE) ||
 		borg_read_scroll(SV_SCROLL_REMOVE_CURSE))
@@ -1293,7 +1301,8 @@ static bool borg_star_decurse(void)
 	if (!borg_wears_cursed(TRUE)) return (FALSE);
 
 	/* remove the curse */
-	if (borg_spell_fail(REALM_LIFE, 2, 1, 60) ||
+	if (borg_activate(BORG_ACT_STAR_REMOVE_CURSE) ||
+		borg_spell_fail(REALM_LIFE, 2, 1, 60) ||
 		borg_read_scroll(SV_SCROLL_STAR_REMOVE_CURSE))
 	{
 		/* Shekockazol! */
@@ -1378,7 +1387,7 @@ bool borg_recharging(void)
 	if (charge == -1) return (FALSE);
 
 	/* Attempt to recharge */
-	if (borg_activate_artifact(ART_THINGOL, FALSE) ||
+	if (borg_activate(BORG_ACT_RECHARGE) ||
 		borg_spell(REALM_ARCANE, 3, 0) ||
 		borg_spell(REALM_CHAOS, 2, 2) ||
 		borg_spell(REALM_SORCERY, 0, 7) ||
@@ -1606,15 +1615,13 @@ static void borg_destroy_item(list_item *l_ptr, int slot, int number)
 	/* Destroy that item */
 	if (!KN_FLAG(l_ptr, TR_INSTA_ART))
 	{
-		/* Convert the object to money! */
-		if (!borg_spell_no_reserve(REALM_SORCERY, 3, 6))
+		/* Try to convert the object to money! */
+		if (!borg_spell_no_reserve(REALM_SORCERY, 3, 6) &&
+			!borg_activate(BORG_ACT_ALCHEMY) &&
+			!borg_mutation(MUT1_MIDAS_TCH))
 		{
-			/* Try the mutation to gain money */
-			if (!borg_mutation(MUT1_MIDAS_TCH))
-			{
-				/* Allright then, press the letter */
-				borg_keypress('k');
-			}
+			/* Allright then, press the letter */
+			borg_keypress('k');
 		}
 	}
 	else
@@ -1920,13 +1927,21 @@ static bool borg_test_stuff(void)
 	bool inven = FALSE;
 
 	/* Is there a way to identify things? */
-	if (!borg_equips_rod_fail(SV_ROD_IDENTIFY) &&
+	if (!borg_activate_fail(BORG_ACT_IDENTIFY) &&
+		!borg_equips_rod_fail(SV_ROD_IDENTIFY) &&
 		!borg_spell_legal_fail(REALM_ARCANE, 3, 2, 60) &&
 		!borg_spell_legal_fail(REALM_SORCERY, 1, 1, 60) &&
 		!borg_mindcr_legal_fail(MIND_PSYCHOMETRY, 25, 60) &&
 		!borg_equips_staff_fail(SV_STAFF_IDENTIFY) &&
-		!borg_read_scroll_fail(SV_SCROLL_IDENTIFY)) return (FALSE);
-
+		!borg_read_scroll_fail(SV_SCROLL_IDENTIFY) &&
+		/* Or *identify* */
+		!borg_spell_legal_fail(REALM_SORCERY, 1, 7, 60) &&
+		!borg_spell_legal_fail(REALM_NATURE, 2, 5, 60) &&
+		!borg_spell_legal_fail(REALM_DEATH, 3, 2, 60) &&
+		!borg_spell_legal_fail(REALM_TRUMP, 3, 1, 60) &&
+		!borg_spell_legal_fail(REALM_LIFE, 3, 5, 60) &&
+		!borg_activate_fail(BORG_ACT_STAR_IDENTIFY)) return (FALSE);
+		
 	/* Look for an item to identify (equipment) */
 	for (i = 0; i < equip_num; i++)
 	{
@@ -2061,13 +2076,20 @@ static bool borg_test_stuff(void)
 	if (b_i >= 0)
 	{
 		/* Use a Spell/Prayer/Rod/Staff/Scroll of Identify */
-		if (borg_activate_artifact(ART_ERIRIL, FALSE) ||
+		if (borg_activate(BORG_ACT_IDENTIFY) ||
 			borg_zap_rod(SV_ROD_IDENTIFY) ||
 			borg_spell_no_reserve(REALM_ARCANE, 3, 2) ||
 			borg_spell_no_reserve(REALM_SORCERY, 1, 1) ||
 			borg_mindcr_no_reserve(MIND_PSYCHOMETRY, 25) ||
 			borg_use_staff(SV_STAFF_IDENTIFY) ||
-			borg_read_scroll(SV_SCROLL_IDENTIFY))
+			borg_read_scroll(SV_SCROLL_IDENTIFY) ||
+			/* Or use *id* */
+			borg_spell_no_reserve(REALM_SORCERY, 1, 7) ||
+			borg_spell_no_reserve(REALM_NATURE, 2, 5) ||
+			borg_spell_no_reserve(REALM_DEATH, 3, 2) ||
+			borg_spell_no_reserve(REALM_TRUMP, 3, 1) ||
+			borg_spell_no_reserve(REALM_LIFE, 3, 5) ||
+			borg_activate(BORG_ACT_STAR_IDENTIFY))
 		{
 			if (inven)
 			{
@@ -2132,6 +2154,7 @@ static bool borg_test_stuff_star(void)
 		!borg_spell_legal_fail(REALM_DEATH, 3, 2, 60) &&
 		!borg_spell_legal_fail(REALM_TRUMP, 3, 1, 60) &&
 		!borg_spell_legal_fail(REALM_LIFE, 3, 5, 60) &&
+		!borg_activate_fail(BORG_ACT_STAR_IDENTIFY) &&
 		!borg_read_scroll_fail(SV_SCROLL_STAR_IDENTIFY)) return (FALSE);
 
 	/* Look for an item to identify (equipment) */
@@ -2149,17 +2172,14 @@ static bool borg_test_stuff_star(void)
 			if (!l_ptr) continue;
 		}
 
-		/* Ignore items that were *id'd* before */
+		/* All items should first be id'd */
+		if (!borg_obj_known_p(l_ptr)) continue;
+
+		/* Ignore items that were *id*'d before */
 		if (borg_obj_known_full(l_ptr)) continue;
 
-		/*
-		 * Accept unknown items if there are unlimited *id*s
-		 * Ignore items that are known and have no hidden flags.
-		 */
-		if ((bp_ptr->able.star_id < 100 ||
-			borg_obj_known_p(l_ptr)) &&
-			!borg_obj_star_id_able(l_ptr))
-			continue;
+		/* Ignore items that are known and have no hidden flags.*/
+		if (!borg_obj_star_id_able(l_ptr)) continue;
 
 		/* Track it */
 		b_i = i;
@@ -2175,6 +2195,7 @@ static bool borg_test_stuff_star(void)
 			borg_spell_no_reserve(REALM_DEATH, 3, 2) ||
 			borg_spell_no_reserve(REALM_TRUMP, 3, 1) ||
 			borg_spell_no_reserve(REALM_LIFE, 3, 5) ||
+			borg_activate(BORG_ACT_STAR_IDENTIFY) ||
 			borg_read_scroll(SV_SCROLL_STAR_IDENTIFY))
 		{
 			if (b_i >= equip_num)

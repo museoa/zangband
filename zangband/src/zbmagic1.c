@@ -312,8 +312,7 @@ bool borg_recall(void)
 
 		/* Try to "recall" */
 		if (borg_zap_rod(SV_ROD_RECALL) ||
-			borg_activate_artifact(ART_AVAVIR, FALSE) ||
-			borg_activate_artifact(ART_THRAIN, TRUE) ||
+			borg_activate(BORG_ACT_RECALL) ||
 			borg_spell_fail(REALM_SORCERY, 2, 7, 60) ||
 			borg_spell_fail(REALM_ARCANE, 3, 6, 60) ||
 			borg_spell_fail(REALM_TRUMP, 1, 6, 60) ||
@@ -1192,7 +1191,8 @@ bool borg_escape(int b_q)
 	if (FLAG(bp_ptr, TR_NO_TELE)) return (FALSE);
 
 	/* if we have Dim Door spell */
-	amt_dim_door = (borg_spell_okay_fail(REALM_SORCERY, 2, 3, allow_fail) ||
+	amt_dim_door = (borg_activate_fail(BORG_ACT_DIM_DOOR) ||
+					borg_spell_okay_fail(REALM_SORCERY, 2, 3, allow_fail) ||
 					borg_spell_okay_fail(REALM_TRUMP, 0, 5, allow_fail) ||
 					borg_mindcr_okay_fail(MIND_MINOR_DISP, 40, allow_fail));
 
@@ -1248,7 +1248,7 @@ bool borg_escape(int b_q)
 			borg_mindcr_fail(MIND_MAJOR_DISP, 7, allow_fail - 10) ||
 			borg_read_scroll(SV_SCROLL_TELEPORT) ||
 			borg_use_staff_fail(SV_STAFF_TELEPORTATION) ||
-			borg_activate_artifact(ART_COLANNON, FALSE) ||
+			borg_activate(BORG_ACT_TELEPORT) ||
 			/* revisit spells, increased fail rate */
 			borg_spell_fail(REALM_ARCANE, 2, 3, allow_fail + 9) ||
 			borg_spell_fail(REALM_TRUMP, 0, 4, allow_fail + 9) ||
@@ -1258,6 +1258,7 @@ bool borg_escape(int b_q)
 			borg_racial(RACE_GNOME) ||
 			borg_mutation(MUT1_VTELEPORT) ||
 			/* Attempt Teleport Level */
+			borg_activate(BORG_ACT_TELEPORT_LEVEL) ||
 			borg_spell_fail(REALM_SORCERY, 2, 6, allow_fail + 9) ||
 			borg_spell_fail(REALM_TRUMP, 1, 5, allow_fail + 9) ||
 			borg_spell_fail(REALM_ARCANE, 3, 1, allow_fail + 9) ||
@@ -1265,12 +1266,13 @@ bool borg_escape(int b_q)
 			borg_read_scroll(SV_SCROLL_TELEPORT_LEVEL) ||
 			/* try Dimension Door */
 			(amt_dim_door && borg_dim_door(TRUE, b_q) &&
-			  (borg_spell_fail(REALM_SORCERY, 2, 3, allow_fail) ||
+			  (borg_activate(BORG_ACT_DIM_DOOR) ||
+			   borg_spell_fail(REALM_SORCERY, 2, 3, allow_fail) ||
 			   borg_spell_fail(REALM_TRUMP, 0, 5, allow_fail) ||
 			   borg_mindcr_fail(MIND_MINOR_DISP, 40, allow_fail))) ||
 			/* try phase at least */
 			borg_read_scroll(SV_SCROLL_PHASE_DOOR) ||
-			borg_activate_artifact(ART_ANGUIREL, FALSE) ||
+			borg_activate(BORG_ACT_PHASE_DOOR) ||
 			borg_spell_fail(REALM_ARCANE, 0, 4, allow_fail) ||
 			borg_spell_fail(REALM_SORCERY, 0, 1, allow_fail) ||
 			borg_spell_fail(REALM_TRUMP, 0, 0, allow_fail) ||
@@ -1283,7 +1285,7 @@ bool borg_escape(int b_q)
 
 		/* try to teleport, get far away from here */
 		if (borg_use_staff_fail(SV_STAFF_TELEPORTATION) ||
-			borg_activate_artifact(ART_COLANNON, FALSE) ||
+			borg_activate(BORG_ACT_TELEPORT) ||
 			borg_read_scroll(SV_SCROLL_TELEPORT))
 		{
 			/* Flee! */
@@ -1308,9 +1310,10 @@ bool borg_escape(int b_q)
 
 
 		/* emergency phase spell */
-		if (borg_activate_artifact(ART_ANGUIREL, FALSE) ||
-			(bp_ptr->able.phase && borg_caution_phase(80, 5) &&
-			(borg_read_scroll(SV_SCROLL_PHASE_DOOR))) ||
+		if ((bp_ptr->able.phase && borg_caution_phase(80, 5) &&
+			(borg_read_scroll(SV_SCROLL_PHASE_DOOR) ||
+			 borg_activate(BORG_ACT_PHASE_DOOR))) ||
+			borg_activate(BORG_ACT_TELEPORT_LEVEL) ||
 			borg_read_scroll(SV_SCROLL_TELEPORT_LEVEL))
 		{
 			/* Flee! */
@@ -1360,7 +1363,7 @@ bool borg_escape(int b_q)
 			borg_spell_fail(REALM_SORCERY, 0, 5, allow_fail - 10) ||
 			borg_mindcr_fail(MIND_MAJOR_DISP, 7, allow_fail - 10) ||
 			borg_use_staff_fail(SV_STAFF_TELEPORTATION) ||
-			borg_activate_artifact(ART_COLANNON, FALSE) ||
+			borg_activate(BORG_ACT_TELEPORT) ||
 			borg_read_scroll(SV_SCROLL_TELEPORT) ||
 			borg_spell_fail(REALM_ARCANE, 2, 3, allow_fail) ||
 			borg_spell_fail(REALM_TRUMP, 0, 4, allow_fail) ||
@@ -1371,7 +1374,8 @@ bool borg_escape(int b_q)
 			borg_mutation(MUT1_VTELEPORT) ||
 			/* try Dimension Door */
 			(amt_dim_door && borg_dim_door(TRUE, b_q) &&
-			 (borg_spell_fail(REALM_SORCERY, 2, 3, allow_fail) ||
+			 (borg_activate(BORG_ACT_DIM_DOOR) ||
+			  borg_spell_fail(REALM_SORCERY, 2, 3, allow_fail) ||
 			  borg_spell_fail(REALM_TRUMP, 0, 5, allow_fail) ||
 			  borg_mindcr_fail(MIND_MINOR_DISP, 40, allow_fail))))
 		{
@@ -1388,8 +1392,8 @@ bool borg_escape(int b_q)
 			 borg_spell(REALM_SORCERY, 0, 1) ||
 			 borg_spell(REALM_TRUMP, 0, 0) ||
 			 borg_mindcr(MIND_MINOR_DISP, 3) ||
-			 borg_activate_artifact(ART_ANGUIREL, FALSE) ||
-			 borg_activate_artifact(ART_COLANNON, FALSE)))
+			 borg_activate(BORG_ACT_PHASE_DOOR) ||
+			 borg_activate(BORG_ACT_TELEPORT)))
 		{
 			/* Flee! */
 			borg_note("# Danger Level 2.2");
@@ -1411,7 +1415,8 @@ bool borg_escape(int b_q)
 	{
 		/* try Dimension Door */
 		if ((amt_dim_door && borg_dim_door(TRUE, b_q) &&
-			 (borg_spell_fail(REALM_SORCERY, 2, 3, allow_fail) ||
+			 (borg_activate(BORG_ACT_DIM_DOOR) ||
+			  borg_spell_fail(REALM_SORCERY, 2, 3, allow_fail) ||
 			  borg_spell_fail(REALM_TRUMP, 0, 5, allow_fail) ||
 			  borg_mindcr_fail(MIND_MINOR_DISP, 40, allow_fail))) ||
 			/* Phase door, if useful */
@@ -1420,8 +1425,8 @@ bool borg_escape(int b_q)
 			  borg_spell_fail(REALM_SORCERY, 0, 1, allow_fail) ||
 			  borg_spell_fail(REALM_TRUMP, 0, 0, allow_fail) ||
 			  borg_mindcr_fail(MIND_MINOR_DISP, 3, allow_fail) ||
-			  borg_activate_artifact(ART_ANGUIREL, FALSE) ||
-			  borg_activate_artifact(ART_COLANNON, FALSE) ||
+			  borg_activate(BORG_ACT_PHASE_DOOR) ||
+			  borg_activate(BORG_ACT_TELEPORT) ||
 			  borg_read_scroll(SV_SCROLL_PHASE_DOOR))))
 		{
 			/* Flee! */
@@ -1438,8 +1443,7 @@ bool borg_escape(int b_q)
 			borg_spell_fail(REALM_CHAOS, 0, 7, allow_fail) ||
 			borg_spell_fail(REALM_SORCERY, 0, 5, allow_fail) ||
 			borg_mindcr_fail(MIND_MAJOR_DISP, 7, allow_fail) ||
-			borg_activate_artifact(ART_COLANNON, FALSE) ||
-			borg_activate_artifact(ART_ANGUIREL, FALSE) ||
+			borg_activate(BORG_ACT_TELEPORT) ||
 			borg_use_staff_fail(SV_STAFF_TELEPORTATION) ||
 			borg_read_scroll(SV_SCROLL_TELEPORT) ||
 			borg_mutation(MUT1_VTELEPORT) ||
@@ -1458,8 +1462,8 @@ bool borg_escape(int b_q)
 			 borg_spell_fail(REALM_CHAOS, 0, 7, allow_fail) ||
 			 borg_spell_fail(REALM_SORCERY, 0, 5, allow_fail) ||
 			 borg_mindcr_fail(MIND_MINOR_DISP, 3, allow_fail) ||
-			 borg_activate_artifact(ART_ANGUIREL, FALSE) ||
-			 borg_activate_artifact(ART_COLANNON, FALSE) ||
+			 borg_activate(BORG_ACT_PHASE_DOOR) ||
+			 borg_activate(BORG_ACT_TELEPORT) ||
 			 borg_read_scroll(SV_SCROLL_PHASE_DOOR)))
 		{
 			/* Flee! */
@@ -1509,7 +1513,8 @@ bool borg_escape(int b_q)
 	{
 		/* Phase door, if useful */
 		if ((amt_dim_door && borg_dim_door(TRUE, b_q) &&
-			 (borg_spell_fail(REALM_SORCERY, 2, 3, allow_fail) ||
+			 (borg_activate(BORG_ACT_DIM_DOOR) ||
+			  borg_spell_fail(REALM_SORCERY, 2, 3, allow_fail) ||
 			  borg_spell_fail(REALM_TRUMP, 0, 5, allow_fail) ||
 			  borg_mindcr_fail(MIND_MINOR_DISP, 40, allow_fail))) ||
 			(bp_ptr->able.phase && borg_caution_phase(20, 2) &&
@@ -1517,8 +1522,8 @@ bool borg_escape(int b_q)
 			  borg_spell_fail(REALM_SORCERY, 0, 1, allow_fail) ||
 			  borg_spell_fail(REALM_TRUMP, 0, 0, allow_fail) ||
 			  borg_mindcr_fail(MIND_MINOR_DISP, 3, allow_fail) ||
-			  borg_activate_artifact(ART_ANGUIREL, FALSE) ||
-			  borg_activate_artifact(ART_COLANNON, FALSE) ||
+			  borg_activate(BORG_ACT_PHASE_DOOR) ||
+			  borg_activate(BORG_ACT_TELEPORT) ||
 			  borg_read_scroll(SV_SCROLL_PHASE_DOOR))))
 		{
 			/* Flee! */
@@ -1534,8 +1539,7 @@ bool borg_escape(int b_q)
 			borg_spell_fail(REALM_CHAOS, 0, 7, allow_fail) ||
 			borg_spell_fail(REALM_SORCERY, 0, 5, allow_fail) ||
 			borg_mindcr_fail(MIND_MAJOR_DISP, 7, allow_fail) ||
-			borg_activate_artifact(ART_COLANNON, FALSE) ||
-			borg_activate_artifact(ART_ANGUIREL, FALSE) ||
+			borg_activate(BORG_ACT_TELEPORT) ||
 			borg_read_scroll(SV_SCROLL_TELEPORT) ||
 			borg_use_staff_fail(SV_STAFF_TELEPORTATION) ||
 			borg_mutation(MUT1_VTELEPORT) ||
@@ -1576,8 +1580,8 @@ bool borg_escape(int b_q)
 			 borg_spell_fail(REALM_SORCERY, 0, 1, allow_fail) ||
 			 borg_spell_fail(REALM_TRUMP, 0, 0, allow_fail) ||
 			 borg_mindcr_fail(MIND_MINOR_DISP, 3, allow_fail) ||
-			 borg_activate_artifact(ART_ANGUIREL, FALSE) ||
-			 borg_activate_artifact(ART_COLANNON, FALSE) ||
+			 borg_activate(BORG_ACT_PHASE_DOOR) ||
+			 borg_activate(BORG_ACT_TELEPORT) ||
 			 borg_read_scroll(SV_SCROLL_PHASE_DOOR)))
 		{
 			/* Flee! */
@@ -1597,7 +1601,8 @@ bool borg_escape(int b_q)
 	{
 		/* Dimension Door, if useful */
 		if ((amt_dim_door && borg_dim_door(TRUE, b_q) &&
-			 (borg_spell_fail(REALM_SORCERY, 2, 3, allow_fail) ||
+			 (borg_activate(BORG_ACT_DIM_DOOR) ||
+			  borg_spell_fail(REALM_SORCERY, 2, 3, allow_fail) ||
 			  borg_spell_fail(REALM_TRUMP, 0, 5, allow_fail) ||
 			  borg_mindcr_fail(MIND_MINOR_DISP, 40, allow_fail))) ||
 			/* Phase Door */
@@ -1606,8 +1611,8 @@ bool borg_escape(int b_q)
 			  borg_spell_fail(REALM_SORCERY, 0, 1, allow_fail) ||
 			  borg_spell_fail(REALM_TRUMP, 0, 0, allow_fail) ||
 			  borg_mindcr_fail(MIND_MINOR_DISP, 3, allow_fail) ||
-			  borg_activate_artifact(ART_ANGUIREL, FALSE) ||
-			  borg_activate_artifact(ART_COLANNON, FALSE) ||
+			  borg_activate(BORG_ACT_PHASE_DOOR) ||
+			  borg_activate(BORG_ACT_TELEPORT) ||
 			  borg_read_scroll(SV_SCROLL_PHASE_DOOR))))
 		{
 			/* Flee! */
@@ -1622,8 +1627,7 @@ bool borg_escape(int b_q)
 			borg_spell_fail(REALM_CHAOS, 0, 7, allow_fail) ||
 			borg_spell_fail(REALM_SORCERY, 0, 5, allow_fail) ||
 			borg_mindcr_fail(MIND_MAJOR_DISP, 7, allow_fail) ||
-			borg_activate_artifact(ART_COLANNON, FALSE) ||
-			borg_activate_artifact(ART_ANGUIREL, FALSE) ||
+			borg_activate(BORG_ACT_TELEPORT) ||
 			borg_read_scroll(SV_SCROLL_TELEPORT) ||
 			borg_use_staff_fail(SV_STAFF_TELEPORTATION) ||
 			borg_mutation(MUT1_VTELEPORT) ||
@@ -1663,8 +1667,8 @@ bool borg_escape(int b_q)
 			 borg_spell_fail(REALM_SORCERY, 0, 1, allow_fail) ||
 			 borg_spell_fail(REALM_TRUMP, 0, 0, allow_fail) ||
 			 borg_mindcr_fail(MIND_MINOR_DISP, 3, allow_fail) ||
-			 borg_activate_artifact(ART_ANGUIREL, FALSE) ||
-			 borg_activate_artifact(ART_COLANNON, FALSE) ||
+			 borg_activate(BORG_ACT_PHASE_DOOR) ||
+			 borg_activate(BORG_ACT_TELEPORT) ||
 			 borg_read_scroll(SV_SCROLL_PHASE_DOOR)))
 		{
 			/* Flee! */
@@ -1686,7 +1690,8 @@ bool borg_escape(int b_q)
 	{
 		/* Dimension Door, if useful */
 		if ((amt_dim_door && borg_dim_door(TRUE, b_q) &&
-			 (borg_spell_fail(REALM_SORCERY, 2, 3, allow_fail) ||
+			 (borg_activate(BORG_ACT_DIM_DOOR) ||
+			  borg_spell_fail(REALM_SORCERY, 2, 3, allow_fail) ||
 			  borg_spell_fail(REALM_TRUMP, 0, 5, allow_fail) ||
 			  borg_mindcr_fail(MIND_MINOR_DISP, 40, allow_fail))) ||
 			/* Phase Door */
@@ -1695,8 +1700,8 @@ bool borg_escape(int b_q)
 			  borg_spell_fail(REALM_SORCERY, 0, 1, allow_fail) ||
 			  borg_spell_fail(REALM_TRUMP, 0, 0, allow_fail) ||
 			  borg_mindcr_fail(MIND_MINOR_DISP, 3, allow_fail) ||
-			  borg_activate_artifact(ART_ANGUIREL, FALSE) ||
-			  borg_activate_artifact(ART_COLANNON, FALSE) ||
+			  borg_activate(BORG_ACT_PHASE_DOOR) ||
+			  borg_activate(BORG_ACT_TELEPORT) ||
 			  borg_read_scroll(SV_SCROLL_PHASE_DOOR))))
 		{
 			/* Flee! */
@@ -1711,8 +1716,7 @@ bool borg_escape(int b_q)
 			borg_spell_fail(REALM_CHAOS, 0, 7, allow_fail) ||
 			borg_spell_fail(REALM_SORCERY, 0, 5, allow_fail) ||
 			borg_mindcr_fail(MIND_MAJOR_DISP, 7, allow_fail) ||
-			borg_activate_artifact(ART_COLANNON, FALSE) ||
-			borg_activate_artifact(ART_ANGUIREL, FALSE) ||
+			borg_activate(BORG_ACT_TELEPORT) ||
 			borg_read_scroll(SV_SCROLL_TELEPORT) ||
 			borg_use_staff_fail(SV_STAFF_TELEPORTATION) ||
 			borg_mutation(MUT1_VTELEPORT) ||
@@ -1807,7 +1811,7 @@ bool borg_heal(int danger)
 		}
 		if (danger - 20 < bp_ptr->chp &&
 			(borg_eat_food(SV_FOOD_CURE_CONFUSION) ||
-			 borg_activate_artifact(ART_BELEGENNON, FALSE) ||
+			 borg_activate(BORG_ACT_HEAL_BIG) ||
 			 borg_quaff_potion(SV_POTION_CURE_SERIOUS) ||
 			 borg_quaff_crit(FALSE) ||
 			 borg_quaff_potion(SV_POTION_HEALING) ||
@@ -1871,7 +1875,6 @@ bool borg_heal(int danger)
 			  FLAG(bp_ptr, TR_TELEPATHY)))
 		{
 			if (borg_eat_food(SV_FOOD_CURE_BLINDNESS) ||
-			    borg_activate_artifact(ART_BELEGENNON, FALSE) ||
 				borg_quaff_potion(SV_POTION_CURE_SERIOUS) ||
 				borg_quaff_crit(TRUE) ||
 				borg_quaff_potion(SV_POTION_HEALING) ||
@@ -2120,9 +2123,7 @@ bool borg_heal(int danger)
 		   (bp_ptr->skill_dev -
 			borg_get_kind(TV_ROD, SV_ROD_HEALING)->level > 7)) &&
 		  borg_zap_rod(SV_ROD_HEALING)) ||
-		 borg_activate_artifact(ART_SOULKEEPER, FALSE) ||
-		 borg_activate_artifact(ART_GONDOR, FALSE) ||
-		 borg_activate_artifact(ART_BELEGENNON, FALSE) ||
+		 borg_activate(BORG_ACT_HEAL_BIG) ||
 		 borg_use_staff_fail(SV_STAFF_HEALING) ||
 		 borg_spell_fail(REALM_LIFE, 1, 6, allow_fail) ||
 		 borg_quaff_potion(SV_POTION_HEALING)))
@@ -2161,9 +2162,7 @@ bool borg_heal(int danger)
 		 borg_use_staff_fail(SV_STAFF_HOLINESS) ||
 		 borg_use_staff_fail(SV_STAFF_HEALING) ||
 		 borg_quaff_potion(SV_POTION_HEALING) ||
-		 borg_activate_artifact(ART_SOULKEEPER, FALSE) ||
-		 borg_activate_artifact(ART_BELEGENNON, FALSE) ||
-		 borg_activate_artifact(ART_GONDOR, FALSE)))
+		 borg_activate(BORG_ACT_HEAL_BIG)))
 	{
 		borg_note("# Healing Level 8.");
 		return (TRUE);
@@ -2183,14 +2182,11 @@ bool borg_heal(int danger)
 		 ((!bp_ptr->able.teleport ||
 		   (bp_ptr->skill_dev - borg_get_kind(TV_ROD,
 											  SV_ROD_HEALING)->level > 7)) &&
-		  borg_zap_rod(SV_ROD_HEALING)) || borg_quaff_potion(SV_POTION_HEALING)
-		 || borg_activate_artifact(ART_SOULKEEPER, FALSE) ||
-		 borg_activate_artifact(ART_BELEGENNON, FALSE) ||
-		 borg_activate_artifact(ART_GONDOR, FALSE) || (borg_fighting_unique &&
-													   (borg_quaff_potion
-														(SV_POTION_HEALING) ||
-														borg_quaff_potion
-														(SV_POTION_LIFE)))))
+		  borg_zap_rod(SV_ROD_HEALING)) ||
+		  borg_quaff_potion(SV_POTION_HEALING) ||
+		 borg_activate(BORG_ACT_HEAL_BIG) ||
+		 (borg_fighting_unique && (borg_quaff_potion(SV_POTION_HEALING) ||
+								   borg_quaff_potion(SV_POTION_LIFE)))))
 	{
 		borg_note("# Healing Level 9.");
 		return (TRUE);
@@ -2210,8 +2206,7 @@ bool borg_heal(int danger)
 			borg_spell_fail(REALM_ARCANE, 1, 5, 60) ||
 			borg_spell_fail(REALM_NATURE, 0, 7, 60) ||
 			borg_quaff_potion(SV_POTION_CURE_POISON) ||
-			borg_activate_artifact(ART_DAL, FALSE) ||
-			borg_activate_artifact(ART_BELEGENNON, FALSE) ||
+			borg_activate(BORG_ACT_CURE_POISON) ||
 			borg_use_staff(SV_STAFF_CURING) ||
 			borg_eat_food(SV_FOOD_CURE_POISON) ||
 			/* buy time */
@@ -3372,7 +3367,9 @@ bool borg_caution(void)
 			borg_quaff_potion(SV_POTION_BOLDNESS) ||
 			borg_quaff_potion(SV_POTION_HEROISM) ||
 			borg_quaff_potion(SV_POTION_BERSERK_STRENGTH) ||
-			borg_activate_artifact(ART_DAL, FALSE) ||
+			borg_activate(BORG_ACT_REMOVE_FEAR) ||
+			borg_activate(BORG_ACT_HEROISM) ||
+			borg_activate(BORG_ACT_BERSERKER) ||
 			borg_mutation(MUT1_BERSERK) ||
 			borg_racial(RACE_HALF_ORC) ||
 			borg_racial(RACE_HALF_TROLL))
@@ -3494,8 +3491,8 @@ bool borg_caution(void)
 			borg_spell_fail(REALM_SORCERY, 0, 1, 25) ||
 			borg_spell_fail(REALM_TRUMP, 0, 0, 25) ||
 			borg_mindcr_fail(MIND_MINOR_DISP, 3, 35) ||
-			borg_activate_artifact(ART_ANGUIREL, FALSE) ||
-			borg_activate_artifact(ART_COLANNON, FALSE) ||
+			borg_activate(BORG_ACT_PHASE_DOOR) ||
+			borg_activate(BORG_ACT_TELEPORT) ||
 			borg_zap_rod(SV_ROD_HEALING))
 		{
 			borg_note("# Buying time waiting for Recall.  Step 2.");

@@ -1732,6 +1732,7 @@ static int borg_damage_artifact_monster(cptr act)
 				else if (prefix(act, "banish"))
 				{
 					style  = BORG_DISPEL;
+					dam = 30;
 
 					if (prefix(act, "banishment")) gf = GF_AWAY_ALL;
 					else if (prefix(act, "banish evil")) gf = GF_AWAY_EVIL;
@@ -1915,11 +1916,20 @@ static int borg_damage_artifact_monster(cptr act)
 			case 't':
 			{
 				if (prefix(act, "time")) gf = GF_TIME;
-				else if (prefix(act, "turns")) stop = TRUE;
+				else if (prefix(act, "turn"))
+				{
+					style = BORG_DISPEL;
+					dam = 20;
+
+					if (prefix(act, "turns")) stop = TRUE;
+					else if (prefix(act, "turn monsters")) gf = GF_TURN_ALL;
+					else if (prefix(act, "turn evil")) gf = GF_TURN_EVIL;
+				}
 				else if (prefix(act, "teleport away"))
 				{
 					style = BORG_BEAM;
 					gf = GF_AWAY_ALL;
+					dam = 50;
 				}
 
 				break;
@@ -2024,17 +2034,8 @@ static int borg_attack_artifact(int *b_slot)
 			/* What item is this */
 			l_ptr = look_up_equip_slot(i);
 
-			/* Empty slot */
-			if (!l_ptr) continue;
-
-			/* Is this an artifact */
-			if (!KN_FLAG(l_ptr, TR_INSTA_ART)) continue;
-
-			/* Is there an activation? */
-			if (!KN_FLAG(l_ptr, TR_ACTIVATE)) continue;
-
-			/* Not recharging */
-			if (l_ptr->timeout) continue;
+			/* Is this item an artifact that can be activated now? */
+			if (!borg_check_artifact(l_ptr, TRUE)) continue;
 
 			/* Hack!  Get the activation */
 			act = item_activation(&p_ptr->equipment[i]);

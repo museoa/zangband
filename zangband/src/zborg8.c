@@ -1807,7 +1807,6 @@ bool borg_think_dungeon(void)
 			(borg_spell(REALM_SORCERY, 0, 1) ||
 			 borg_spell(REALM_TRUMP, 0, 0) ||
 			 borg_spell(REALM_ARCANE, 0, 4) ||
-			 borg_activate_artifact(ART_BELEGENNON, FALSE) ||
 			 borg_read_scroll(SV_SCROLL_PHASE_DOOR)))
 		{
 			/* Success */
@@ -1886,8 +1885,7 @@ bool borg_think_dungeon(void)
 		borg_note("# Teleport (twitchy)");
 
 		/* Teleport */
-		if (borg_activate_artifact(ART_COLANNON, FALSE) ||
-			borg_activate_artifact(ART_ANGUIREL, FALSE) ||
+		if (borg_activate(BORG_ACT_TELEPORT) ||
 			borg_spell_fail(REALM_ARCANE, 2, 3, 45) ||
 			borg_spell_fail(REALM_TRUMP, 0, 4, 45) ||
 			borg_spell_fail(REALM_CHAOS, 0, 7, 45) ||
