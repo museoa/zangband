@@ -1853,7 +1853,7 @@ void request_quest(const store_type *b_ptr, int scale)
 }
 
 /* Show the quest status as a string */
-cptr quest_status_string(quest_type *q_ptr)
+static cptr quest_status_string(quest_type *q_ptr)
 {
 	int monst_num = 0;
 	int max_num = 0;
@@ -1918,6 +1918,8 @@ cptr quest_status_string(quest_type *q_ptr)
 
 		/* Finnished */
 		case QUEST_STATUS_FINISHED: return ("(Completed)\n");
+
+		default: return ("(BUG!)\n");
 	}
 }
 
