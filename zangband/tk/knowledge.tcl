@@ -35,7 +35,6 @@ proc NSKnowledge::InitModule {} {
 	MsgCatInit know
 
 	set Priv(hook) {}
-	lappend Priv(hook) hook_monster [mc Monsters]
 
 	# Create the Knowledge Window
 	NSObject::New NSKnowledge
@@ -88,10 +87,6 @@ proc NSKnowledge::NSKnowledge {oop} {
 		Info $oop group,$hook 0
 		Info $oop member,$hook -1
 	}
-
-	# Set the hook, but don't set the list
-	Info $oop hook hook_monster
-	Info $oop radio,hook hook_monster
 
 	set Priv(find,string) ""
 	set Priv(find,fromStart) 1
@@ -1307,180 +1302,6 @@ proc NSKnowledge::Find {oop again} {
 	return
 }
 
-
-proc NSKnowledge::group_list_monster {oop {asIndex 0}} {
-
-	set index 0
-	set match {}
-
-	foreach {title findSpec} [Global groups,r_info] {
-
-		# Find the last monster in the group
-		set match2 [eval angband r_info find -known yes -unique no \
-			-limit 1 $findSpec]
-
-		# The group is not empty
-		if {[llength $match2]} {
-
-			if {$asIndex} {
-				# Keep a list of matching indexes
-				lappend match $index
-			} else {
-				lappend match $title $findSpec
-			}
-		}
-
-		incr index
-	}
-
-	return $match
-}
-
-proc NSKnowledge::member_list_monster {oop findSpec} {
-
-	# Find matching monsters in the group
-	set match [eval angband r_info find -known yes -unique no $findSpec]
-
-	set list {}
-	foreach r_idx $match {
-		lappend list [list $r_idx [angband r_info set $r_idx level]]
-	}
-
-	# Sort on depth
-	set result {}
-	foreach match [lsort -integer -index 1 $list] {
-		lappend result [lindex $match 0]
-	}
-
-	return $result
-}
-
-proc NSKnowledge::hook_monster {oop message args} {
-
-	switch -- $message {
-
-		set_list_group {
-
-			set canvistId [Info $oop group,canvistId]
-
-			# Keep a list of matching indexes
-			set match {}
-
-			# Collect info for each row
-			set itemList {}
-				
-			set index 0
-			foreach {title findSpec} [Global groups,r_info] {
-
-				# Find the last monster in the group
-				set match2 [member_list_monster $oop $findSpec]
-
-				# The group is not empty
-				if {[llength $match2]} {
-
-					# Get the icon
-					set icon [angband r_info info [lindex $match2 end] icon]
-
-					# Collect info for each row
-					lappend itemList [list -assign $icon -text [mc $title]]
-	
-					# Keep a list of matching indexes
-					lappend match $index
-				}
-
-				incr index
-			}
-
-			# Add each group to the list
-			NSCanvist::InsertMany $canvistId end $itemList
-
-			# Keep a list of matching indexes
-			Info $oop group,match $match
-		}
-
-		set_list_member {
-
-			set canvistId [Info $oop member,canvistId]
-
-			set group [lindex [Info $oop group,match] [lindex $args 0]]
-			set findSpec [lindex [Global groups,r_info] [expr {$group * 2 + 1}]]
-
-			set isUnique [expr {[string first "-unique yes" $findSpec] != -1}]
-
-			# Get a list of monsters in the group
-			set match [member_list_monster $oop $findSpec]
-
-			# Collect info for each row
-			set itemList {}
-
-			# Add each match to the list
-			foreach index $match {
-		
-				# Get the icon and name
-				set icon [angband r_info info $index icon]
-				set name [angband r_info info $index name]
-
-				set extra ""
-				if {$isUnique} {
-					if {[angband r_info set $index max_num]} {
-						set extra alive
-					} else {
-						set extra dead
-					}
-				}
-
-				# Collect info for each row
-				lappend itemList [list -assign $icon -text $name -extra $extra]
-			}
-
-			# Add each row to the list
-			NSCanvist::InsertMany $canvistId end $itemList
-
-			# Keep a list of matching indexes
-			Info $oop member,match $match
-
-			# Display number of members
-			set num [llength $match]
-			[Info $oop win].statusBar itemconfigure t2 \
-				-text [format [mc "%d in group"] $num]
-		}
-
-		click_member {
-			set row [lindex $args 0]
-			set index [lindex [Info $oop member,match] $row]
-		}
-		
-		select_member {
-			set row [lindex $args 0]
-			set index [lindex [Info $oop member,match] $row]
-			NSRecall::RecallMonster $index
-		}
-
-		group_names {
-			set names {}
-			foreach {title findSpec} [Global groups,r_info] {
-				lappend names [mc $title]
-			}
-			return $names
-		}
-
-		group_list {
-			return [group_list_monster $oop 1]
-		}
-
-		member_name {
-			return [angband r_info info [lindex $args 0] name]
-		}
-
-		member_list {
-			set group [lindex $args 0]
-			set findSpec [lindex [Global groups,r_info] [expr {$group * 2 + 1}]]
-			return [member_list_monster $oop $findSpec]
-		}
-	}	
-
-	return
-}
 
 
 # NSKnowledge::CalcGroupListWidth --
