@@ -543,9 +543,21 @@ static void prt_depth(void)
 	{
 		if (p_ptr->place_num)
 		{
-			if (place[p_ptr->place_num].quest_num)
+			int q_num = place[p_ptr->place_num].quest_num;
+
+			/* Is there a quest here? */
+			if (q_num)
 			{
-				prtf(COL_DEPTH, Term->hgt - 1, "Quest");
+				/* Is this a quest to find a ruin? */
+				if (quest[q_num].type == QUEST_TYPE_FIND_PLACE)
+				{
+					prtf(COL_DEPTH, Term->hgt - 1, "Ruin");
+				}
+				/* then it is this a wilderness quest */
+				else
+				{
+					prtf(COL_DEPTH, Term->hgt - 1, "Quest");
+				}
 			}
 			else
 			{
