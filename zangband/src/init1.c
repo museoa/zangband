@@ -2820,7 +2820,7 @@ errr init_t_info_txt(FILE *fp, char *buf)
 			i = atoi(buf+2);
 
 			/* Verify information */
-			if (i < error_idx) return (PARSE_ERROR_NON_SEQUENTIAL_RECORDS);
+			if (i <= error_idx) return (PARSE_ERROR_NON_SEQUENTIAL_RECORDS);
 
 			/* Check to see if there is room in array */
 			if (i > max_t_idx - 1) return (PARSE_ERROR_OUT_OF_MEMORY);
