@@ -2184,6 +2184,12 @@ static void borg_notice_rods(list_item *l_ptr, int number)
 			break;
 		}
 
+		case SV_ROD_TELEPORT_AWAY:
+		{
+			bp_ptr->able.teleport_away += number * 100;
+			break;
+		}
+
 		case SV_ROD_PESTICIDE:
 		{
 			/* Only for small borgs */
@@ -2206,7 +2212,6 @@ static void borg_notice_rods(list_item *l_ptr, int number)
 		case SV_ROD_ELEC_BOLT:
 		case SV_ROD_COLD_BOLT:
 		case SV_ROD_DRAIN_LIFE:
-		case SV_ROD_TELEPORT_AWAY:
 		case SV_ROD_LITE:
 		{
 			bp_ptr->able.bolt += 5 * number;
@@ -2262,6 +2267,14 @@ static void borg_notice_wands(list_item *l_ptr, int number)
 	/* What sort of wand is this? */
 	switch (sval)
 	{
+		case SV_WAND_TELEPORT_AWAY:
+		{
+			/* count the charges */
+			bp_ptr->able.teleport_away += pval + 5 * non_empty;
+
+			break;
+		}
+
 		/* Ball Wands */
 		case SV_WAND_ACID_BALL:
 		case SV_WAND_ELEC_BALL:
@@ -2280,7 +2293,6 @@ static void borg_notice_wands(list_item *l_ptr, int number)
 		}
 
 		/* Bolt wands */
-		case SV_WAND_TELEPORT_AWAY:
 		case SV_WAND_LITE:
 		case SV_WAND_DRAIN_LIFE:
 		case SV_WAND_STINKING_CLOUD:

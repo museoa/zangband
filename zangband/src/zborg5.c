@@ -4060,6 +4060,12 @@ static s32b borg_power_aux4(void)
 
 	/*** Various ***/
 
+	/* Reward carrying a full wand of teleport away */
+	value += 100 * MIN(bp_ptr->able.teleport_away, 12);
+
+	/* Reward carrying up to 10 rods of teleport away */
+	value += 100 * MIN(bp_ptr->able.teleport_away / 100, 10);
+
 	/* Reward carrying a wand or rod with balls */
 	value += 500 * MIN(bp_ptr->able.ball, 10);
 

@@ -208,6 +208,7 @@ struct borg_ability
 	s16b phase;
 	s16b teleport;
 	s16b teleport_level;
+	s16b teleport_away;
 	s16b escape;
 	s16b fuel;
 
