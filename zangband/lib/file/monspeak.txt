@@ -203,13 +203,17 @@ hums 'Ride of the Valkyries.'
 #This next may be unnecessarily evil... :-]
 
 N:393:It
-6
+11
 says, 'Nyah, nyah, betcha can't find me!'
 says, 'Come get some!'
-magically summons mighty undead opponents!
 chuckles evilly.
+blinks away.
+casts a spell and cackles evilly.
+commands you to return.
+magically summons its kin!
 magically summons Cyberdemons!
-summons special opponents!
+magically summons greater undead!
+magically summons special opponents!
 
 #N:409:Kharis the Powerslave
 #N:413:Ulwarth, Son of Ulfang
@@ -253,6 +257,12 @@ says: 'A fray! A fray!'
 #N:670:Jack of Shadows
 #N:674:Judge Fear
 #N:681:Chaugnar Faugn, Horror from the Hills
+
+N:685:Shoggoth
+2
+barrels towards you horrifyingly.
+wails, 'Tekeli-li!  Tekeli-li!'
+
 #N:686:Judge Death
 #N:687:Ariel, Queen of Air
 #N:697:Smaug the Golden

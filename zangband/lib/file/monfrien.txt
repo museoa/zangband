@@ -107,6 +107,12 @@ N:55:Fang, Farmer Maggot's dog
 #N:670:Jack of Shadows
 #N:674:Judge Fear
 #N:681:Chaugnar Faugn, Horror from the Hills
+
+N:685:Shoggoth
+2
+wobbles about disgustingly.
+wails, 'Tekeli-li!  Tekeli-li!'
+
 #N:686:Judge Death
 #N:687:Ariel, Queen of Air
 #N:697:Smaug the Golden
