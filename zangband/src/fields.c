@@ -515,15 +515,31 @@ s16b field_add(field_type *f_ptr, s16b *fld_idx2)
 {
 	s16b fld_idx = *fld_idx2;
 	s16b new_idx;
+	field_type *j_ptr = &fld_list[*fld_idx2];
+	
+	bool merge = FALSE;
+	
+	s32b counter;
 
 	/* Add to a list of fields */
-	while ((*fld_idx2) && (fld_list[*fld_idx2].priority > f_ptr->priority))
+	while ((*fld_idx2) && (j_ptr->priority > f_ptr->priority))
 	{
+		/* Look for fields that can be merged */
+		if ((f_ptr->info & FIELD_INFO_MERGE) && (f_ptr->t_idx == j_ptr->t_idx))
+		{
+			/* Set merging flag */
+			merge = TRUE;
+			break;
+		}
+		
 		/* Save old field number */
 		fld_idx = *fld_idx2;
 
 		/* Get next field in the list */
-		fld_idx2 = &(fld_list[*fld_idx2].next_f_idx);
+		fld_idx2 = &(j_ptr->next_f_idx);
+		
+		/* Update the pointer */
+		j_ptr = &fld_list[*fld_idx2];
 	}
 
 	/* An Empty list is easy */
@@ -546,6 +562,20 @@ s16b field_add(field_type *f_ptr, s16b *fld_idx2)
 		hack_fld_ptr = fld_idx2;
 
 		return (new_idx);
+	}
+	
+	if (merge)
+	{
+		/* Merge the two together */
+		counter = j_ptr->counter + f_ptr->counter;
+		
+		/* Bounds checking */
+		if (counter > MAX_SHORT) counter = MAX_SHORT;
+		
+		/* Store in new counter */
+		j_ptr->counter = counter;
+		
+		return (*fld_idx2);
 	}
 
 	/* Bump a node out of the way */
