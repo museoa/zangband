@@ -3507,9 +3507,6 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 					/* Scan all objects in the grid */
 					OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 					{
-						/* Verify the item (if required) */
-						if (other_query_flag && !verify("Try", o_ptr)) continue;
-
 						/* Allow player to "refuse" certain actions */
 						if (!get_item_allow(o_ptr)) continue;
 

@@ -3561,7 +3561,7 @@
 
 #define rogue_like_commands		p_ptr->options[0]
 #define quick_messages			p_ptr->options[1]
-#define other_query_flag		p_ptr->options[2]
+/* {TRUE,  0, NULL,					"Number 2" }, p_ptr->options[2] */
 #define carry_query_flag		p_ptr->options[3]
 #define use_old_target			p_ptr->options[4]
 #define always_pickup			p_ptr->options[5]

@@ -6136,7 +6136,7 @@ option_type option_info[OPT_MAX] =
 {
 	{FALSE, 1, "rogue_like_commands",	"Rogue-like commands" },
 	{TRUE,  1, "quick_messages",		"Activate quick messages" },
-	{FALSE, 1, "other_query_flag",		"Prompt for various information" },
+	{TRUE,  0, NULL,					"Number 2" },
 	{TRUE,  1, "carry_query_flag",		"Prompt before picking things up" },
 	{FALSE, 1, "use_old_target",		"Use old target by default" },
 	{TRUE,  1, "always_pickup",			"Pick things up by default" },
