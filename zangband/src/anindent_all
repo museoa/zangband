@@ -1,0 +1,243 @@
+#!/bin/sh
+
+# Indent all Zangband files supporting indentation
+
+./anindent angband.h
+./anmerge angband.h
+
+./anindent artifact.c
+./anmerge artifact.c
+
+./anindent avatar.c
+./anmerge avatar.c
+
+./anindent birth.c
+./anmerge birth.c
+
+./anindent bldg.c
+./anmerge bldg.c
+
+./anindent cave.c
+./anmerge cave.c
+
+./anindent cmd1.c
+./anmerge cmd1.c
+
+./anindent cmd2.c
+./anmerge cmd2.c
+
+./anindent cmd3.c
+./anmerge cmd3.c
+
+./anindent cmd4.c
+./anmerge cmd4.c
+
+./anindent cmd5.c
+./anmerge cmd5.c
+
+./anindent cmd6.c
+./anmerge cmd6.c
+
+./anindent compress.c
+./anmerge compress.c
+
+./anindent defines.h
+./anmerge defines.h
+
+./anindent dungeon.c
+./anmerge dungeon.c
+
+./anindent effects.c
+./anmerge effects.c
+
+./anindent externs.h
+./anmerge externs.h
+
+./anindent fields.c
+./anmerge fields.c
+
+./anindent files.c
+./anmerge files.c
+
+./anindent flavor.c
+./anmerge flavor.c
+
+./anindent generate.c
+./anmerge generate.c
+
+./anindent generate.h
+./anmerge generate.h
+
+./anindent grid.c
+./anmerge grid.c
+
+./anindent grid.h
+./anmerge grid.h
+
+./anindent h-basic.h
+./anmerge h-basic.h
+
+./anindent h-config.h
+./anmerge h-config.h
+
+./anindent h-define.h
+./anmerge h-define.h
+
+./anindent h-system.h
+./anmerge h-system.h
+
+./anindent h-type.h
+./anmerge h-type.h
+
+./anindent init.h
+./anmerge init.h
+
+./anindent init1.c
+./anmerge init1.c
+
+./anindent init2.c
+./anmerge init2.c
+
+./anindent load.c
+./anmerge load.c
+
+./anindent main.c
+./anmerge main.c
+
+./anindent melee1.c
+./anmerge melee1.c
+
+./anindent melee2.c
+./anmerge melee2.c
+
+./anindent mind.c
+./anmerge mind.c
+
+./anindent monster1.c
+./anmerge monster1.c
+
+./anindent monster2.c
+./anmerge monster2.c
+
+./anindent mspells1.c
+./anmerge mspells1.c
+
+./anindent mspells2.c
+./anmerge mspells2.c
+
+./anindent mutation.c
+./anmerge mutation.c
+
+./anindent notes.c
+./anmerge notes.c
+
+./anindent obj_kind.c
+./anmerge obj_kind.c
+
+./anindent object1.c
+./anmerge object1.c
+
+./anindent object2.c
+./anmerge object2.c
+
+./anindent quest.c
+./anmerge quest.c
+
+./anindent racial.c
+./anmerge racial.c
+
+./anindent rooms.c
+./anmerge rooms.c
+
+./anindent rooms.h
+./anmerge rooms.h
+
+./anindent save.c
+./anmerge save.c
+
+./anindent scores.c
+./anmerge scores.c
+
+./anindent spells1.c
+./anmerge spells1.c
+
+./anindent spells2.c
+./anmerge spells2.c
+
+./anindent spells3.c
+./anmerge spells3.c
+
+./anindent store.c
+./anmerge store.c
+
+./anindent streams.c
+./anmerge streams.c
+
+./anindent streams.h
+./anmerge streams.h
+
+./anindent types.h
+./anmerge types.h
+
+./anindent util.c
+./anmerge util.c
+
+./anindent variable.c
+./anmerge variable.c
+
+./anindent wild.h
+./anmerge wild.h
+
+./anindent wild1.c
+./anmerge wild1.c
+
+./anindent wild2.c
+./anmerge wild2.c
+
+./anindent wizard1.c
+./anmerge wizard1.c
+
+./anindent wizard2.c
+./anmerge wizard2.c
+
+./anindent xtra1.c
+./anmerge xtra1.c
+
+./anindent xtra2.c
+./anmerge xtra2.c
+
+./anindent z-config.h
+./anmerge z-config.h
+
+./anindent z-form.c
+./anmerge z-form.c
+
+./anindent z-form.h
+./anmerge z-form.h
+
+./anindent z-rand.c
+./anmerge z-rand.c
+
+./anindent z-rand.h
+./anmerge z-rand.h
+
+./anindent z-term.c
+./anmerge z-term.c
+
+./anindent z-term.h
+./anmerge z-term.h
+
+./anindent z-util.c
+./anmerge z-util.c
+
+./anindent z-util.h
+./anmerge z-util.h
+
+./anindent z-virt.c
+./anmerge z-virt.c
+
+./anindent z-virt.h
+./anmerge z-virt.h
+
+rm ./s_back.c
+rm ./s_back.c~

@@ -1,0 +1,4 @@
+#!/bin/sh
+
+patch -u $1 diff.txt
+
