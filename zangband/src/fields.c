@@ -1545,6 +1545,91 @@ void field_action_corpse_raise(s16b *field_ptr, void *input)
 	return;
 }
 
+/*
+ * Convert the char of the monster to a corpse type
+ * There are seven sizes of corpses.
+ * 0 is large
+ * 6 is small
+ */ 
+static char corpse_type(char feat)
+{
+	switch (feat)
+	{
+		case 'a':return(6);
+		case 'b':return(6);
+		case 'c':return(5);
+		case 'd':return(0);
+		case 'e':return(6);
+		case 'f':return(4);
+		case 'g':return(1);
+		case 'h':return(2);
+		case 'i':return(5);
+		case 'j':return(3);
+		case 'k':return(4);
+		case 'l':return(0);
+		case 'm':return(6);
+		case 'n':return(3);
+		case 'o':return(3);
+		case 'p':return(2);
+		case 'q':return(4);
+		case 'r':return(6);
+		case 's':return(2);
+		case 't':return(2);
+		case 'u':return(3);
+		case 'v':return(4);
+		case 'w':return(5);
+		case 'x':return(5);
+		case 'y':return(4);
+		case 'z':return(3);
+		case 'A':return(2);
+		case 'B':return(5);
+		case 'C':return(5);
+		case 'D':return(0);
+		case 'E':return(3);
+		case 'F':return(4);
+		case 'G':return(3);
+		case 'H':return(2);
+		case 'I':return(6);
+		case 'J':return(5);
+		case 'K':return(3);
+		case 'L':return(1);
+		case 'M':return(1);
+		case 'N':return(3);
+		case 'O':return(1);
+		case 'P':return(0);
+		case 'Q':return(3);
+		case 'R':return(5);
+		case 'S':return(6);
+		case 'T':return(1);
+		case 'U':return(0);
+		case 'V':return(1);
+		case 'W':return(6);
+		case 'X':return(1);
+		case 'Y':return(1);
+		case 'Z':return(5);
+		case ',':return(6);
+		default:return(3);
+	}
+}
+
+/* Initialise a corpse / skeleton after being loaded from a savefile */
+void field_action_corpse_load(s16b *field_ptr, void *input)
+{
+	field_type *f_ptr = &fld_list[*field_ptr];
+	
+	/* Monster race */
+	u16b r_idx = ((u16b) f_ptr->data[1]) * 256 + f_ptr->data[2];
+	
+	monster_race	*r_ptr = &r_info[r_idx];
+	
+	/* Initialise the graphic */
+	if (use_transparency)
+	{
+		/* Hack - get new tile via offset table */
+		f_ptr->f_char += corpse_type(r_ptr->d_char);
+	}
+}
+
 
 /* Initialise corpse / skeletons */
 void field_action_corpse_init(s16b *field_ptr, void *input)
@@ -1552,6 +1637,8 @@ void field_action_corpse_init(s16b *field_ptr, void *input)
 	field_type *f_ptr = &fld_list[*field_ptr];
 
 	monster_type *m_ptr = (monster_type *) input;
+	
+	monster_race	*r_ptr = &r_info[m_ptr->r_idx];
 	
 	/*
 	 * Data[1] * 256 + Data[2] = r_idx of monster.
@@ -1561,9 +1648,12 @@ void field_action_corpse_init(s16b *field_ptr, void *input)
 	f_ptr->data[1] = m_ptr->r_idx / 256;
 	f_ptr->data[2] = m_ptr->r_idx % 256;
 	
-	/* Initialise the name here? */
-	
-	/* Initialise the graphic here? */
+	/* Initialise the graphic */
+	if (use_transparency)
+	{
+		/* Hack - get new tile via offset table */
+		f_ptr->f_char += corpse_type(r_ptr->d_char);
+	}
 	
 	/* Redraw the square if visible */
 	if (area(f_ptr->fy, f_ptr->fx)->info & CAVE_VIEW)
