@@ -1870,7 +1870,7 @@ void move_cursor_relative(int col, int row)
 /*
  * Place an attr/char pair at the given map coordinate, if legal.
  */
-void print_rel(char c, byte a, int y, int x)
+void print_rel(char c, byte a, int x, int y)
 {
 	/* Only do "legal" locations */
 	if (panel_contains(y, x))

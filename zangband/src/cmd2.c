@@ -2569,7 +2569,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 			byte a = object_attr(i_ptr);
 
 			/* Draw, Hilite, Fresh, Pause, Erase */
-			print_rel(c, a, ny, nx);
+			print_rel(c, a, nx, ny);
 			move_cursor_relative(nx, ny);
 			Term_fresh();
 			Term_xtra(TERM_XTRA_DELAY, msec);
@@ -3009,7 +3009,7 @@ void do_cmd_throw_aux(int mult)
 			byte a = object_attr(q_ptr);
 
 			/* Draw, Hilite, Fresh, Pause, Erase */
-			print_rel(c, a, ny, nx);
+			print_rel(c, a, nx, ny);
 			move_cursor_relative(nx, ny);
 			Term_fresh();
 			Term_xtra(TERM_XTRA_DELAY, msec);

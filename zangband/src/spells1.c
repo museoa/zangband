@@ -4261,7 +4261,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 				bolt_pict(oy, ox, y, x, typ, &a, &c);
 
 				/* Visual effects */
-				print_rel(c, a, y, x);
+				print_rel(c, a, x, y);
 				move_cursor_relative(x, y);
 				
 				if (fresh_before) Term_fresh();
@@ -4280,7 +4280,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 					bolt_pict(y, x, y, x, typ, &a, &c);
 
 					/* Visual effects */
-					print_rel(c, a, y, x);
+					print_rel(c, a, x, y);
 				}
 
 				/* Hack -- Activate delay */
@@ -4495,7 +4495,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 					bolt_pict(y, x, y, x, typ, &a, &c);
 
 					/* Visual effects -- Display */
-					print_rel(c, a, y, x);
+					print_rel(c, a, x, y);
 				}
 			}
 
