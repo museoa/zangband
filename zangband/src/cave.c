@@ -981,7 +981,8 @@ void map_info(int y, int x, byte *ap, char *cp)
 	info = c_ptr->info;
 
 	/* Is this feature memorized? */
-	if (info & (CAVE_MARK | CAVE_LITE | CAVE_MNLT))
+	if ((info & (CAVE_MARK | CAVE_LITE)) ||
+		 ((info & (CAVE_VIEW | CAVE_MNLT)) == (CAVE_VIEW | CAVE_MNLT)))
 	{
 		feat = c_ptr->feat;
 
@@ -1006,7 +1007,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 			 && (!(feat & 0x20) || view_granite_lite))
 		{
 			/* It's not in view? */
-			if ((!(info & CAVE_VIEW)) && view_bright_lite)
+			if ((!(info & (CAVE_VIEW))) && view_bright_lite)
 			{
 				/* If is ascii graphics */
 				if (!(a & 0x80))
@@ -1470,7 +1471,7 @@ void note_spot(int y, int x)
 void note_wild_spot(cave_type *c_ptr)
 {
 	s16b this_o_idx, next_o_idx = 0;
-
+	s16b this_f_idx, next_f_idx = 0;
 
 	/* Blind players see nothing */
 	if (p_ptr->blind) return;
@@ -1498,12 +1499,24 @@ void note_wild_spot(cave_type *c_ptr)
 		o_ptr->marked = TRUE;
 	}
 
+	/* Hack -- memorize fields */
+	for (this_f_idx = c_ptr->fld_idx; this_f_idx; this_f_idx = next_f_idx)
+	{
+		field_type *f_ptr = &fld_list[this_f_idx];
+
+		/* Acquire next field */
+		next_f_idx = f_ptr->next_f_idx;
+
+		/* Memorize fields */
+		f_ptr->info |= FIELD_INFO_MARK;
+	}
+
 
 	/* Hack -- memorize grids */
 	if (!(c_ptr->info & (CAVE_MARK)))
 	{
 		/* Handle floor grids first */
-		if (cave_floor_grid(c_ptr))
+		if (c_ptr->feat == FEAT_FLOOR)
 		{
 			/* Option -- memorize all torch-lit floors */
 			if (view_torch_grids && (c_ptr->info & (CAVE_LITE)))
@@ -1520,7 +1533,7 @@ void note_wild_spot(cave_type *c_ptr)
 			}
 		}
 		
-		/* Memorize torch-lit walls */
+		/* Memorize torch-lit squares */
 		else if (c_ptr->info & (CAVE_LITE))
 		{
 			/* Memorize */
@@ -3158,22 +3171,34 @@ void update_view(void)
 					}
 
 					/* Memorize? */
-					if (((info & (CAVE_LITE)) && view_torch_grids)
-						 || info & (CAVE_GLOW))
+					if (c_ptr->feat == FEAT_FLOOR)
 					{
-						/*
-						 * Hack - Memorize
-						 *
-						 * These floors are forgotten unless the
-						 * view_perma_grids flag is set.
-						 *
-						 * This hack is done to simplify the map_info()
-						 * function enormously.  All lit grids in
-						 * view are marked...
-						 */
+						/* Why should floor be different? */
+						if (((info & (CAVE_LITE)) && view_torch_grids) ||
+							info & (CAVE_GLOW))
+						{
+							/*
+							 * Hack - Memorize
+							 *
+							 * These floors are forgotten unless the
+							 * view_perma_grids flag is set.
+							 *
+							 * This hack is done to simplify the map_info()
+							 * function enormously.  All lit grids in
+							 * view are marked...
+							 */
 						 
-						/* Memorize */
-						info |= (CAVE_MARK);
+							/* Memorize */
+							info |= (CAVE_MARK);
+						}
+					}
+					else
+					{
+						if (info & (CAVE_LITE | CAVE_GLOW))
+						{					 
+							/* Memorize */
+							info |= (CAVE_MARK);
+						}
 					}
 
 					/* Save cave info */
@@ -3340,7 +3365,7 @@ void update_view(void)
 #define mon_lite_hack(C,Y,X) \
     if (in_bounds2((Y),(X)) && (!((C)->info & CAVE_MNLT)))\
 	{\
-		if (!((C)->info & CAVE_TEMP))\
+		if (temp_n < TEMP_MAX)\
 		{\
 			temp_x[temp_n] = (X);\
 			temp_y[temp_n] = (Y);\
@@ -3369,17 +3394,14 @@ void update_mon_lite(void)
 	
 	s16b end_temp;
 	
-	/* Copy all monster lit squares to CAVE_XTRA */
+	/* Clear all monster lit squares */
 	for (i = 0; i < lite_n; i++)
 	{
 		/* Point to grid */
 		c_ptr = area(lite_y[i], lite_x[i]);
 		
 		/* Clear monster illumination flag */
-		c_ptr->info &= ~(CAVE_MNLT);
-		
-		/* Save in temp flag */
-		c_ptr->info |= CAVE_TEMP;	
+		c_ptr->info &= ~(CAVE_MNLT);	
 	}
 	
 	/* Empty temp list of new squares to lite up */
@@ -3597,13 +3619,10 @@ void update_mon_lite(void)
 		/* Point to grid */
 		c_ptr = area(fy, fx);
 		
-		/* Clear the temp flag */
-		c_ptr->info &= ~(CAVE_TEMP);
-		
-		/* Has it changed? */
+		/* It it lit? */
 		if (c_ptr->info & CAVE_MNLT)
 		{
-			/* No - just add to lit list */
+			/* Just add to lit list */
 			temp_x[temp_n] = fx;
 			temp_y[temp_n] = fy;
 			temp_n++;
@@ -3629,9 +3648,6 @@ void update_mon_lite(void)
 		
 		/* Point to grid */
 		c_ptr = area(fy, fx);
-		
-		/* Set the monster lit flag */
-		c_ptr->info |= CAVE_MNLT;
 		
 		/* The first ones in the array are squares which are newly lit. */
 		if ((i < end_temp) && (player_has_los_grid(c_ptr)))
