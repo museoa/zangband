@@ -1163,6 +1163,46 @@ static void save_map(int ymax, int ymin, int xmax, int xmin)
 	}
 
 
+	/* Note that this will induce two wasted bytes */
+	count = 0;
+	prev_char = 0;
+	
+	/* Dump the cave */
+	for (y = ymin; y < ymax; y++)
+	{
+		for (x = xmin; x < xmax; x++)
+		{
+			/* Get the cave */
+			pc_ptr = parea(y, x);
+
+			/* Extract a byte */
+			tmp8u = pc_ptr->feat;
+
+			/* If the run is broken, or too full, flush it 	*/
+			if ((tmp8u != prev_char) || (count == MAX_UCHAR))
+			{
+				wr_byte((byte)count);
+				wr_byte((byte)prev_char);
+				prev_char = tmp8u;
+				count = 1;
+			}
+
+			/* Continue the run */
+			else
+			{
+				count++;
+			}
+		}
+	}
+
+	/* Flush the data (if any) */
+	if (count)
+	{
+		wr_byte((byte)count);
+		wr_byte((byte)prev_char);
+	}
+
+
 
 	/*** Simple "Run-Length-Encoding" of cave ***/
 
@@ -1204,49 +1244,6 @@ static void save_map(int ymax, int ymin, int xmax, int xmin)
 		wr_byte((byte)count);
 		wr_byte((byte)prev_char);
 	}
-
-
-	/*** Simple "Run-Length-Encoding" of cave ***/
-
-	/* Note that this will induce two wasted bytes */
-	count = 0;
-	prev_char = 0;
-
-	/* Dump the cave */
-	for (y = ymin; y < ymax; y++)
-	{
-		for (x = xmin; x < xmax; x++)
-		{
-			/* Get the cave */
-			c_ptr = area(y,x);
-
-			/* Extract a byte - the "mimic" feat variable has been removed. */
-			tmp8u = 0;
-
-			/* If the run is broken, or too full, flush it */
-			if ((tmp8u != prev_char) || (count == MAX_UCHAR))
-			{
-				wr_byte((byte)count);
-				wr_byte((byte)prev_char);
-				prev_char = tmp8u;
-				count = 1;
-			}
-
-			/* Continue the run */
-			else
-			{
-				count++;
-			}
-		}
-	}
-
-	/* Flush the data (if any) */
-	if (count)
-	{
-		wr_byte((byte)count);
-		wr_byte((byte)prev_char);
-	}
-	
 }
 
 /*

@@ -2494,14 +2494,17 @@ static void process_monster(int m_idx)
 				msg_print("There is a grinding sound.");
 			}
 
-			/* Forget the wall */
-			pc_ptr->player &= ~(GRID_MARK);
-
 			/* Notice */
 			cave_set_feat(ny, nx, FEAT_FLOOR);
 
 			/* Note changes to viewable region */
-			if (player_can_see_bold(ny, nx)) do_view = TRUE;
+			if (player_can_see_bold(ny, nx))
+			{
+				do_view = TRUE;
+				
+				/* Forget the wall */
+				pc_ptr->feat = c_ptr->feat;
+			}
 		}
 		
 		else if (c_ptr->feat & 0x20)

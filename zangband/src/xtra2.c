@@ -2005,6 +2005,7 @@ static bool target_set_accept(int y, int x)
 	s16b this_o_idx, next_o_idx = 0;
 	s16b this_f_idx, next_f_idx = 0;
 
+	byte feat;
 
 	/* Player grid is always interesting */
 	if ((y == py) && (x == px)) return (TRUE);
@@ -2061,28 +2062,27 @@ static bool target_set_accept(int y, int x)
 	}
 
 	/* Interesting memorized features */
-	if (pc_ptr->player & (GRID_MARK))
-	{
-		/* Notice the Pattern */
-		if ((c_ptr->feat <= FEAT_PATTERN_XTRA2) &&
-		    (c_ptr->feat >= FEAT_PATTERN_START))
-			return (TRUE);
+	feat = pc_ptr->feat;
+	
+	/* Notice the Pattern */
+	if ((feat <= FEAT_PATTERN_XTRA2) &&
+		(feat >= FEAT_PATTERN_START))
+		return (TRUE);
 
-		/* Notice doors */
-		if (c_ptr->feat == FEAT_OPEN) return (TRUE);
-		if (c_ptr->feat == FEAT_BROKEN) return (TRUE);
+	/* Notice doors */
+	if (feat == FEAT_OPEN) return (TRUE);
+	if (feat == FEAT_BROKEN) return (TRUE);
 
-		/* Notice stairs */
-		if (c_ptr->feat == FEAT_LESS) return (TRUE);
-		if (c_ptr->feat == FEAT_MORE) return (TRUE);
+	/* Notice stairs */
+	if (feat == FEAT_LESS) return (TRUE);
+	if (feat == FEAT_MORE) return (TRUE);
 
-		/* Notice doors */
-		if (c_ptr->feat == FEAT_CLOSED) return (TRUE);
+	/* Notice doors */
+	if (feat == FEAT_CLOSED) return (TRUE);
 
-		/* Notice veins with treasure */
-		if (c_ptr->feat == FEAT_MAGMA_K) return (TRUE);
-		if (c_ptr->feat == FEAT_QUARTZ_K) return (TRUE);
-	}
+	/* Notice veins with treasure */
+	if (feat == FEAT_MAGMA_K) return (TRUE);
+	if (feat == FEAT_QUARTZ_K) return (TRUE);
 
 	/* Nope */
 	return (FALSE);
@@ -2609,15 +2609,8 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 			}
 		}
 
-		/* Get terrain feature */
-		feat = c_ptr->feat;
-
-		/* Require knowledge about grid, or ability to see grid */
-		if (!(pc_ptr->player & GRID_MARK) && !player_can_see_bold(y, x))
-		{
-			/* Forget feature */
-			feat = FEAT_NONE;
-		}
+		/* Get memorised terrain feature */
+		feat = pc_ptr->feat;
 
 		/* Terrain feature if needed */
 		if (boring || (feat >= FEAT_OPEN))

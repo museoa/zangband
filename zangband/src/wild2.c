@@ -1972,7 +1972,7 @@ void light_dark_square(int y, int x, bool daytime)
 		c_ptr->info |= (CAVE_GLOW);
 
 		/* Hack -- Memorize lit grids if allowed */
-		if (view_perma_grids) pc_ptr->player |= (GRID_MARK);
+		if (view_perma_grids) pc_ptr->feat = c_ptr->feat;
 	}
 	else
 	{
@@ -1982,9 +1982,9 @@ void light_dark_square(int y, int x, bool daytime)
 		    ((c_ptr->feat >= FEAT_CLOSED) &&
 			(c_ptr->feat <= FEAT_PERM_SOLID))))
 		{
-			/* Forget the grid */
+			/* Hack - Forget the grid */
 			c_ptr->info &= ~(CAVE_GLOW);
-			pc_ptr->player &= ~(GRID_MARK);
+			pc_ptr->feat = FEAT_NONE;
 		}
 		else
 		{
@@ -1992,7 +1992,7 @@ void light_dark_square(int y, int x, bool daytime)
 			c_ptr->info |= (CAVE_GLOW);
 
 			/* Hack -- Memorize lit grids if allowed */
-			if (view_perma_grids) pc_ptr->player |= (GRID_MARK);
+			if (view_perma_grids) pc_ptr->feat = c_ptr->feat;
 		}
 	}
 }
@@ -2441,6 +2441,8 @@ void move_wild(void)
 	p_ptr->old_wild_y = y;	
 }
 
+#if 0
+
 /*
  * Lighten / Darken Wilderness
  */
@@ -2459,6 +2461,7 @@ static void day_night(void)
 	}
 }
 
+#endif /* 0 */
 
 /*
  * Access the old cave array.

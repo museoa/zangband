@@ -1416,7 +1416,7 @@ bool field_action_glyph_warding(field_type *f_ptr, vptr input)
 	    (randint1(BREAK_GLYPH) < r_ptr->level)) 
 	{
 		/* Describe observable breakage */
-		if (parea(f_ptr->fy, f_ptr->fx)->player & GRID_MARK)
+		if (player_has_los_grid(parea(f_ptr->fy, f_ptr->fx)))
 		{
 			msg_print("The rune of protection is broken!");
 		}
@@ -3432,9 +3432,6 @@ bool field_action_door_gf(field_type *f_ptr, vptr input)
 		c_ptr = area(f_ptr->fy, f_ptr->fx);
 		pc_ptr = parea(f_ptr->fy, f_ptr->fx);
 		
-		/* Forget the door */
-		pc_ptr->player &= ~(GRID_MARK);
-		
 		/* Destroy the feature */
 		c_ptr->feat = FEAT_FLOOR;
 		
@@ -3455,9 +3452,6 @@ bool field_action_door_gf(field_type *f_ptr, vptr input)
 
 		c_ptr = area(f_ptr->fy, f_ptr->fx);
 		pc_ptr = parea(f_ptr->fy, f_ptr->fx);
-		
-		/* Forget the door */
-		pc_ptr->player &= ~(GRID_MARK);
 		
 		/* Destroy the feature */
 		c_ptr->feat = FEAT_FLOOR;

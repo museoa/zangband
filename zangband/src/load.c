@@ -1611,7 +1611,7 @@ static void load_map(int ymax, int ymin, int xmax, int xmin)
 				 * Set old CAVE_MARK and CAVE_LITE flags
 				 * (Ignore the CAVE_VIEW flag)
 				 */
-				pc_ptr->player = tmp8u & (GRID_MARK | GRID_LITE);
+				pc_ptr->player = tmp8u & (0x01 | GRID_LITE);
 			}
 
 			/* Advance/Wrap */
@@ -1659,6 +1659,39 @@ static void load_map(int ymax, int ymin, int xmax, int xmin)
 		}
 	}
 
+	if (sf_version > 28)
+	{
+		/*** Run length decoding ***/
+	
+		/* Load the dungeon data */
+		for (x = xmin, y = ymin; y < ymax; )
+		{
+			/* Grab RLE info */
+			rd_byte(&count);
+			rd_byte(&tmp8u);
+
+			/* Apply the RLE info */
+			for (i = count; i > 0; i--)
+			{
+				/* Access the cave */
+				pc_ptr = parea(y,x);
+
+				/* Extract "feat" */
+				pc_ptr->feat = tmp8u;
+
+				/* Advance/Wrap */
+				if (++x >= xmax)
+				{
+					/* Wrap */
+					x = xmin;
+
+					/* Advance/Wrap */
+					if (++y >= ymax) break;
+				}
+			}
+		}
+	}
+
 	/*** Run length decoding ***/
 
 	/* Load the dungeon data */
@@ -1679,6 +1712,19 @@ static void load_map(int ymax, int ymin, int xmax, int xmin)
 			
 			/* Quick hack to fix various removed features */
 			fix_tile(c_ptr);
+			
+			/* Fix player memory for old savefiles */
+			if (sf_version < 28)
+			{
+				pc_ptr = parea(y,x);
+				
+				/* Old CAVE_MARK flag set? */
+				if (pc_ptr->player & 0x01)
+				{
+					/* Remember square */
+					pc_ptr->feat = c_ptr->feat;
+				}
+			}
 
 			/* Advance/Wrap */
 			if (++x >= xmax)
@@ -1697,26 +1743,29 @@ static void load_map(int ymax, int ymin, int xmax, int xmin)
 	{
 		/*** Run length decoding ***/
 
-		/* Load the dungeon data */
-		for (x = xmin, y = ymin; y < ymax; )
+		if (sf_version < 28)
 		{
-			/* Grab RLE info */
-			rd_byte(&count);
-			rd_byte(&tmp8u);
-
-			/* Apply the RLE info */
-			for (i = count; i > 0; i--)
+			/* Load the dungeon data */
+			for (x = xmin, y = ymin; y < ymax; )
 			{
-				/* Ignore this (The mimic field has been removed) */
-			
-				/* Advance/Wrap */
-				if (++x >= xmax)
-				{
-					/* Wrap */
-					x = xmin;
+				/* Grab RLE info */
+				rd_byte(&count);
+				rd_byte(&tmp8u);
 
+				/* Apply the RLE info */
+				for (i = count; i > 0; i--)
+				{
+					/* Ignore this (The mimic field has been removed) */
+			
 					/* Advance/Wrap */
-					if (++y >= ymax) break;
+					if (++x >= xmax)
+					{
+						/* Wrap */
+						x = xmin;
+
+						/* Advance/Wrap */
+						if (++y >= ymax) break;
+					}
 				}
 			}
 		}
@@ -1817,28 +1866,81 @@ static void strip_map(int ymax, int ymin, int xmax, int xmin)
 		}
 	}
 
-
-	/*** Run length decoding ***/
-
-	/* Load the dungeon data */
-	for (x = xmin, y = ymin; y < ymax; )
+	if (sf_version > 26)
 	{
-		/* Grab RLE info */
-		rd_byte(&count);
-		rd_byte(&tmp8u);
-
-		/* Apply the RLE info */
-		for (i = count; i > 0; i--)
+		/* Load the dungeon data */
+		for (x = xmin, y = ymin; y < ymax; )
 		{
+			/* Grab RLE info */
+			rd_byte(&count);
+			rd_byte(&tmp8u);
 
-			/* Advance/Wrap */
-			if (++x >= xmax)
+			/* Apply the RLE info */
+			for (i = count; i > 0; i--)
 			{
-				/* Wrap */
-				x = xmin;
-
 				/* Advance/Wrap */
-				if (++y >= ymax) break;
+				if (++x >= xmax)
+				{
+					/* Wrap */
+					x = xmin;
+
+					/* Advance/Wrap */
+					if (++y >= ymax) break;
+				}
+			}
+		}
+	}
+	
+	if (sf_version > 28)
+	{
+		/* Load the dungeon data */
+		for (x = xmin, y = ymin; y < ymax; )
+		{
+			/* Grab RLE info */
+			rd_byte(&count);
+			rd_byte(&tmp8u);
+
+			/* Apply the RLE info */
+			for (i = count; i > 0; i--)
+			{
+				/* Advance/Wrap */
+				if (++x >= xmax)
+				{
+					/* Wrap */
+					x = xmin;
+
+					/* Advance/Wrap */
+					if (++y >= ymax) break;
+				}
+			}
+		}
+	}
+
+
+	if (sf_version < 29)
+	{
+		/*** Run length decoding ***/
+
+		/* Load the dungeon data */
+		for (x = xmin, y = ymin; y < ymax; )
+		{
+			/* Grab RLE info */
+			rd_byte(&count);
+			rd_byte(&tmp8u);
+
+			/* Apply the RLE info */
+			for (i = count; i > 0; i--)
+			{
+	
+				/* Advance/Wrap */
+				if (++x >= xmax)
+				{
+					/* Wrap */
+					x = xmin;
+
+					/* Advance/Wrap */
+					if (++y >= ymax) break;
+				}
 			}
 		}
 	}
@@ -1891,10 +1993,10 @@ static void load_wild_data(void)
 	if (sf_version < 28)
 	{
 		/* Load bounds */
-		rd_u16b(&tmp_u16b);
-		rd_u16b(&tmp_u16b);
-		rd_u16b(&tmp_u16b);
-		rd_u16b(&tmp_u16b);
+		rd_u16b(&p_ptr->max_hgt);
+		rd_u16b(&p_ptr->max_wid);
+		rd_u16b(&p_ptr->min_hgt);
+		rd_u16b(&p_ptr->min_wid);
 		rd_byte(&tmp_byte);
 		rd_byte(&tmp_byte);
 
@@ -1947,8 +2049,6 @@ static void load_wild_data(void)
 			}
 		}
 	}
-
-	/* init_wild_cache(); */
 }
 
 /* The version when the format of the wilderness last changed */

@@ -387,6 +387,8 @@ static void do_cmd_wiz_feature(int feat)
 
 	int y, x, d = 3, attempts = 30;
 
+	cave_type *c_ptr;
+
 	while (1)
 	{
 		/* Find a location */
@@ -407,24 +409,27 @@ static void do_cmd_wiz_feature(int feat)
 			attempts = 8 * d;
 		}
 
+		/* Access grid */
+		c_ptr = area(y, x);
+		
 		/* Try to place a new feature */
-		if (area(y, x)->feat == feat) continue;
+		if (c_ptr->feat == feat) continue;
 
 		/* Okay */
 		break;
 	}
 
 	/* Nuke objects */
-	delete_object_idx(area(y, x)->o_idx);
+	delete_object_idx(c_ptr->o_idx);
 
 	/* Nuke monsters */
-	delete_monster_idx(area(y, x)->m_idx);
-
-	/* Forget this grid */
-	parea(y, x)->player &= ~(GRID_MARK);
+	delete_monster_idx(c_ptr->m_idx);
 
 	/* Place the feature */
 	cave_set_feat(y, x, feat);
+	
+	/* Change knowledge of grid */
+	parea(y, x)->feat = feat;
 
 	/* Update stuff */
 	p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_MON_LITE);
@@ -1973,7 +1978,7 @@ void do_cmd_debug(void)
 				for (x = p_ptr->min_wid; x < p_ptr->max_wid; x++)
 				{
 					area(y, x)->info |= (CAVE_GLOW);
-					parea(y, x)->player |= (GRID_MARK);
+					parea(y, x)->feat = area(y, x)->feat;
 				}
 			}
 

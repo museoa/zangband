@@ -165,7 +165,7 @@ static void place_player_start(s32b *x, s32b *y, u16b this_town)
 	/* Get corner of visible region */
 	shift_in_bounds(&tempx, &tempy);
 	
-	assert(!wc_cnt);
+	/* assert(!wc_cnt); */
 	
 	/* Set corner of visible region */
 	p_ptr->old_wild_x = tempx;

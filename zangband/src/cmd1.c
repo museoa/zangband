@@ -2385,10 +2385,10 @@ void move_player(int dir, int do_pickup)
 			disturb(FALSE);
 
 			/* Notice things in the dark */
-			if (!(pc_ptr->player & GRID_MARK) && !(pc_ptr->player & GRID_SEEN))
+			if (!(pc_ptr->feat) && !(pc_ptr->player & GRID_SEEN))
 			{
 				msg_print("You feel a closed door blocking your way.");
-				pc_ptr->player |= (GRID_MARK);
+				pc_ptr->feat = c_ptr->feat;
 				lite_spot(y, x);
 			}
 
@@ -2429,10 +2429,10 @@ void move_player(int dir, int do_pickup)
 		disturb(FALSE);
 
 		/* Notice things in the dark */
-		if (!(pc_ptr->player & (GRID_MARK)) && !(pc_ptr->player & (GRID_SEEN)))
+		if (!(pc_ptr->feat) && !(pc_ptr->player & (GRID_SEEN)))
 		{
 			message(MSG_HITWALL, 0, "You feel something blocking your way.");
-			pc_ptr->player |= (GRID_MARK);
+			pc_ptr->feat = c_ptr->feat;
 			lite_spot(y, x);
 		}
 		/* Notice things */
@@ -2592,8 +2592,9 @@ void move_player(int dir, int do_pickup)
  */
 static int see_wall(int dir, int y, int x)
 {
-	cave_type *c_ptr;
 	pcave_type *pc_ptr;
+	
+	byte feat;
 
 	/* Get the new location */
 	y += ddy[dir];
@@ -2602,27 +2603,24 @@ static int see_wall(int dir, int y, int x)
 	/* Illegal grids are "walls" */
 	if (!in_boundsp(y, x)) return (TRUE);
 
-	c_ptr = area(y, x);
 	pc_ptr = parea(y, x);
+	
+	feat = pc_ptr->feat;
 
 	/* Non-wall grids are not known walls */
-	if (c_ptr->feat < FEAT_PILLAR) return (FALSE);
+	if (feat < FEAT_PILLAR) return (FALSE);
 
-	if ((c_ptr->feat >= FEAT_DEEP_WATER) &&
-	    (c_ptr->feat <= FEAT_GRASS)) return (FALSE);
+	if ((feat >= FEAT_DEEP_WATER) &&
+	    (feat <= FEAT_GRASS)) return (FALSE);
 
 	/* Semi - transparent terrains */
-	if ((c_ptr->feat & 0x60) == 0x60) return (FALSE);
+	if ((feat & 0x60) == 0x60) return (FALSE);
 
-	if ((c_ptr->feat == FEAT_GRASS) ||
-		(c_ptr->feat == FEAT_DIRT) ||
-		(c_ptr->feat == FEAT_TREE_WATER)) return (FALSE);
+	if ((feat == FEAT_GRASS) ||
+		(feat == FEAT_DIRT) ||
+		(feat == FEAT_TREE_WATER)) return (FALSE);
 
-	if ((c_ptr->feat >= FEAT_BUSH) &&
-	    (c_ptr->feat <= FEAT_SNOW)) return (FALSE);
-
-	/* Must be known to the player */
-	if (!(pc_ptr->player & (GRID_MARK))) return (FALSE);
+	if ((feat >= FEAT_BUSH) && (feat <= FEAT_SNOW)) return (FALSE);
 
 	/* Default */
 	return (TRUE);
@@ -2648,7 +2646,7 @@ static int see_nothing(int dir, int y, int x)
 	pc_ptr = parea(y, x);
 
 	/* Memorized grids are always known */
-	if (pc_ptr->player & (GRID_MARK)) return (FALSE);
+	if (pc_ptr->feat) return (FALSE);
 
 	/* Non-floor grids are unknown */
 	if (!cave_floor_grid(c_ptr)) return (TRUE);
@@ -3005,7 +3003,7 @@ static bool run_test(void)
 		inv = TRUE;
 
 		/* Check memorized grids */
-		if (pc_ptr->player & (GRID_MARK))
+		if (pc_ptr->feat)
 		{
 			bool notice = TRUE;
 

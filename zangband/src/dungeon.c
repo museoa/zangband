@@ -3081,7 +3081,7 @@ static void dungeon(void)
 			}
 
 			/* Mark the stairs as known */
-			parea(p_ptr->py, p_ptr->px)->player |= (GRID_MARK);
+			parea(p_ptr->py, p_ptr->px)->feat = area(p_ptr->py, p_ptr->px)->feat;
 		}
 
 		/* Cancel the stair request */

@@ -35,7 +35,7 @@
 /*
  * Current version string
  */
-#define VERSION_STRING	"2.6.2"
+#define VERSION_STRING	"2.7.0"
 
 
 /*
@@ -45,14 +45,14 @@
 #define VERSION_MINOR   8
 #define VERSION_PATCH   1
 
-#define SAVEFILE_VERSION 28
+#define SAVEFILE_VERSION 29
 
 /* Added for ZAngband */
 /* Why do we need a fake version number? */
 #define FAKE_VERSION   0
 #define FAKE_VER_MAJOR 2
-#define FAKE_VER_MINOR 6
-#define FAKE_VER_PATCH 2
+#define FAKE_VER_MINOR 7
+#define FAKE_VER_PATCH 0
 
 #define ANGBAND_2_8_1
 #define ZANGBAND
@@ -2334,7 +2334,7 @@
  *
  * This data structure will eventually be moved into the players struct.
  */
-#define GRID_MARK		0x01	/* Known */
+#define GRID_DUM1		0x01
 #define GRID_VIEW		0x02	/* In LOS */
 #define GRID_SEEN		0x04	/* In LOS + Lit in some way */
 #define GRID_DUM2		0x08

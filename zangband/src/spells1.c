@@ -213,7 +213,6 @@ static int project_m_y;
 static bool project_f(int who, int r, int y, int x, int dam, int typ)
 {
 	cave_type       *c_ptr = area(y, x);
-	pcave_type		*pc_ptr = parea(y, x);
 
 	bool obvious = FALSE;
 	bool known = player_can_see_bold(y, x);
@@ -278,10 +277,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 
 				/* Now is floor */
 				c_ptr->feat = FEAT_FLOOR;
-						
-				/* Forget the door */
-				pc_ptr->player &= ~(GRID_MARK);
-				
+					
 				/* Note + Lite the spot */
 				note_spot(y, x);
 			}
@@ -342,121 +338,117 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			/* Terrain */
 			if (c_ptr->feat >= FEAT_TREES)
 			{
+				/* Destroy the wall */
+				cave_set_feat(y, x, FEAT_DIRT);
+				
 				/* Message */
-				if (known && (pc_ptr->player & (GRID_MARK)))
+				if (known)
 				{
 					msg_print("It disappears!");
 					obvious = TRUE;
+					
+					note_spot(y, x);
 				}
-
-				/* Forget the wall */
-				pc_ptr->player &= ~(GRID_MARK);
-
-				/* Destroy the wall */
-				cave_set_feat(y, x, FEAT_DIRT);
 			}
 
 			/* Granite */
 			if (c_ptr->feat >= FEAT_WALL_EXTRA)
 			{
+				/* Destroy the wall */
+				cave_set_feat(y, x, FEAT_FLOOR);
+				
 				/* Message */
-				if (known && (pc_ptr->player & (GRID_MARK)))
+				if (known)
 				{
 					msg_print("The wall turns into mud!");
 					obvious = TRUE;
+					
+					note_spot(y, x);
 				}
-
-				/* Forget the wall */
-				pc_ptr->player &= ~(GRID_MARK);
-
-				/* Destroy the wall */
-				cave_set_feat(y, x, FEAT_FLOOR);
 			}
 
 			/* Quartz / Magma with treasure */
 			else if (c_ptr->feat >= FEAT_MAGMA_H)
 			{
+				/* Destroy the wall */
+				cave_set_feat(y, x, FEAT_FLOOR);
+				
+				/* Place some gold */
+				place_gold(y, x);
+				
 				/* Message */
-				if (known && (pc_ptr->player & (GRID_MARK)))
+				if (known)
 				{
 					msg_print("The vein turns into mud!");
 					msg_print("You have found something!");
 					obvious = TRUE;
+					
+					note_spot(y, x);
 				}
-
-				/* Forget the wall */
-				pc_ptr->player &= ~(GRID_MARK);
-
-				/* Destroy the wall */
-				cave_set_feat(y, x, FEAT_FLOOR);
-
-				/* Place some gold */
-				place_gold(y, x);
 			}
 
 			/* Quartz / Magma */
 			else if (c_ptr->feat >= FEAT_MAGMA)
 			{
+				/* Destroy the wall */
+				cave_set_feat(y, x, FEAT_FLOOR);
+				
 				/* Message */
-				if (known && (pc_ptr->player & (GRID_MARK)))
+				if (known)
 				{
 					msg_print("The vein turns into mud!");
 					obvious = TRUE;
+					
+					note_spot(y, x);
 				}
-
-				/* Forget the wall */
-				pc_ptr->player &= ~(GRID_MARK);
-
-				/* Destroy the wall */
-				cave_set_feat(y, x, FEAT_FLOOR);
 			}
 
 			/* Rubble */
 			else if (c_ptr->feat == FEAT_RUBBLE)
 			{
+				/* Destroy the rubble */
+				cave_set_feat(y, x, FEAT_FLOOR);
+				
 				/* Message */
-				if (known && (pc_ptr->player & (GRID_MARK)))
+				if (known)
 				{
 					msg_print("The rubble turns into mud!");
 					obvious = TRUE;
+					
+					note_spot(y, x);
 				}
-
-				/* Forget the wall */
-				pc_ptr->player &= ~(GRID_MARK);
-
-				/* Destroy the rubble */
-				cave_set_feat(y, x, FEAT_FLOOR);
 
 				/* Hack -- place an object */
 				if (randint0(100) < 10)
 				{
+					/* Place gold */
+					place_object(y, x, FALSE, FALSE);
+					
 					/* Found something */
-					if (player_can_see_bold(y, x))
+					if (known)
 					{
 						msg_print("There was something buried in the rubble!");
 						obvious = TRUE;
+						
+						note_spot(y, x);
 					}
-
-					/* Place gold */
-					place_object(y, x, FALSE, FALSE);
 				}
 			}
 
 			/* Destroy doors (and secret doors) */
 			else if ((c_ptr->feat == FEAT_OPEN) || (c_ptr->feat == FEAT_SECRET))
 			{
+				/* Destroy the feature */
+				cave_set_feat(y, x, FEAT_FLOOR);
+				
 				/* Hack -- special message */
-				if (known && (pc_ptr->player & (GRID_MARK)))
+				if (known)
 				{
 					msg_print("The door turns into mud!");
 					obvious = TRUE;
+					
+					note_spot(y, x);
 				}
-
-				/* Forget the wall */
-				pc_ptr->player &= ~(GRID_MARK);
-				
-				/* Destroy the feature */
-				cave_set_feat(y, x, FEAT_FLOOR);
 			}
 
 			/* Update some things */
@@ -478,7 +470,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			cave_set_feat(y, x, FEAT_CLOSED);
 
 			/* Observe */
-			if (pc_ptr->player & (GRID_MARK)) obvious = TRUE;
+			if (known) obvious = TRUE;
 
 			/* Update some things */
 			p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_MON_LITE);
@@ -536,7 +528,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			/* Notice + Redraw */
 			note_spot(y, x);
 
-			/* Observe */
+			/* Observe (after lighting) */
 			if (player_can_see_bold(y, x)) obvious = TRUE;
 
 			/* Mega-Hack -- Update the monster in the affected grid */
@@ -551,7 +543,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 		case GF_DARK:
 		{
 			/* Notice */
-			if (player_can_see_bold(y, x)) obvious = TRUE;
+			if (known) obvious = TRUE;
 
 			/* Turn off the light. */
 			c_ptr->info &= ~(CAVE_GLOW);
@@ -559,9 +551,6 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			/* Hack -- Forget "boring" grids */
 			if (c_ptr->feat == FEAT_FLOOR)
 			{
-				/* Forget */
-				pc_ptr->player &= ~(GRID_MARK);
-
 				/* Notice + Redraw */
 				note_spot(y, x);
 			}
