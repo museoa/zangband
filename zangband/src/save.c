@@ -525,7 +525,7 @@ static void wr_string(cptr str)
  */
 static void wr_item(const object_type *o_ptr)
 {
-	int i;
+	byte i;
 	
 	wr_s16b(o_ptr->k_idx);
 
@@ -754,7 +754,7 @@ static void wr_store(const store_type *st_ptr)
 	wr_byte(st_ptr->greed);
 
 	/* Hack - Save whether or not we have stock */
-	wr_byte(st_ptr->stock ? TRUE : FALSE);
+	wr_byte((byte) (st_ptr->stock ? TRUE : FALSE));
 
 	/* Position in the town */
 	wr_u16b(st_ptr->x);
@@ -1292,7 +1292,7 @@ static void wr_dungeon(void)
 
 	/* Dungeon specific info follows */
 	wr_u16b(p_ptr->depth);
-	wr_u16b(base_level());
+	wr_u16b((u16b) base_level());
 	wr_u16b(num_repro);
 	wr_u16b(p_ptr->py);
 	wr_u16b(p_ptr->px);
@@ -1474,7 +1474,7 @@ static bool wr_savefile_new(void)
 	for (i = tmp16u - 1; i >= 0; i--)
 	{
 		wr_string(message_str((s16b)i));
-		wr_byte(message_type((s16b)i));
+		wr_byte((byte) message_type((s16b)i));
 	}
 
 
