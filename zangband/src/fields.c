@@ -210,8 +210,6 @@ void delete_field_ptr(s16b *fld_idx)
 	fld_cnt--;
 }
 
-
-
 /*
  * Deletes the list of fields attached to something.
  */
@@ -1058,18 +1056,35 @@ s16b place_field(int y, int x, s16b t_idx)
  *
  * It returns FALSE if the field deleted itself, TRUE otherwise.
  */
-bool field_hook_single(s16b *field_ptr, int action, vptr action_struct)
+bool field_hook_single(s16b *fld_ptr, int action, vptr action_struct)
 {
 	/* Point to the field */
-	field_type *f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[*fld_ptr];
 	field_thaum *t_ptr = &t_info[f_ptr->t_idx];
 	
 	/* Paranoia - Is there a function to call? */
 	if (t_ptr->action[action])
 	{
 		/* Call the action function */
-		t_ptr->action[action](field_ptr, action_struct);
+		if (t_ptr->action[action](f_ptr, action_struct))
+		{
+			/* The field wants to be deleted */
+			delete_field_ptr(fld_ptr);
+		
+			/* The field no longer exists */
+			return (FALSE);
+		}
+		else
+		{
+			/* The field exists */
+			return (TRUE);
+		}
 	}
+	
+	/*
+	 * XXX XXX Is this logic correct?
+	 * What should we do if the field doesn't have the function?
+	 */
 	
 	/* Check for deletion */
 	if (f_ptr->t_idx)
@@ -1107,10 +1122,12 @@ void field_hook(s16b *field_ptr, int action, vptr action_struct)
 		if (t_ptr->action[action])
 		{
 			/* Call the action function */
-			t_ptr->action[action](field_ptr, action_struct);
-			
-			/* Check for no deletion */
-			if (f_ptr->t_idx)
+			if( t_ptr->action[action](f_ptr, action_struct))
+			{
+				/* The field wants to be deleted */
+				delete_field_ptr(field_ptr);
+			}
+			else
 			{
 				/* Get next field in the list */
 				field_ptr = &f_ptr->next_f_idx;
@@ -1147,17 +1164,17 @@ bool field_hook_special(s16b *field_ptr, u16b ftype, vptr action_struct)
 		if ((t_ptr->type == ftype) && (t_ptr->action[FIELD_ACT_SPECIAL]))
 		{
 			/* Call the action function */
-			t_ptr->action[FIELD_ACT_SPECIAL](field_ptr, action_struct);
-			
-			/* Check for no deletion */
-			if (f_ptr->t_idx)
+			if (t_ptr->action[FIELD_ACT_SPECIAL](f_ptr, action_struct))
 			{
-				/* Get next field in the list */
-				field_ptr = &f_ptr->next_f_idx;
+				/* The field wants to be deleted */
+				delete_field_ptr(field_ptr);
+				
+				deleted = TRUE;
 			}
 			else
 			{
-				deleted = TRUE;
+				/* Get next field in the list */
+				field_ptr = &f_ptr->next_f_idx;
 			}
 		}
 		else
@@ -1191,7 +1208,11 @@ s16b *field_hook_find(s16b *field_ptr, int action, vptr action_struct)
 		if (t_ptr->action[action])
 		{
 			/* Call the action function */
-			t_ptr->action[action](field_ptr, action_struct);
+			if (t_ptr->action[action](f_ptr, action_struct))
+			{
+				/* The field wants to be deleted */
+				delete_field_ptr(field_ptr);
+			}
 			
 			/* Done */
 			break;
@@ -1336,40 +1357,38 @@ void test_field_data_integrity(void)
 
 
 /* Simple function that does nothing */
-void field_action_nothing(s16b *field_ptr, vptr nothing)
+bool field_action_nothing(field_type *f_ptr, vptr nothing)
 {
-	/* Hack - ignore 'field_ptr' */
-	(void) field_ptr;
+	/* Hack - ignore 'f_ptr' */
+	(void) f_ptr;
 
 	/* Hack - ignore 'nothing' */
 	(void) nothing;
 
 	/* Action: Do nothing at all */
-	return;
+	return (FALSE);
 }
 
 
 /* Simple function that deletes the field */
-void field_action_delete(s16b *field_ptr, vptr nothing)
+bool field_action_delete(field_type *f_ptr, vptr nothing)
 {		
+	/* Hack - ignore 'f_ptr' */
+	(void) f_ptr;
+	
 	/* Hack - ignore 'nothing' */
 	(void) nothing;
 	
-	/* Delete the field */
-	delete_field_ptr(field_ptr);
-
-	/* Done */
-	return;
+	/* Delete ourself */
+	return (TRUE);
 }
 
 
 /*
  * The function that now controls the glyph of warding rune.
  */
-void field_action_glyph_warding(s16b *field_ptr, vptr input)
+bool field_action_glyph_warding(field_type *f_ptr, vptr input)
 {
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
 	/* Look at input data */
 	field_mon_test *mon_enter = (field_mon_test *) input;
 
@@ -1384,7 +1403,7 @@ void field_action_glyph_warding(s16b *field_ptr, vptr input)
 		mon_enter->do_move = FALSE;
 		
 		/* Done */
-		return;
+		return (FALSE);
 	}
 	
 	/* Get race */
@@ -1398,12 +1417,12 @@ void field_action_glyph_warding(s16b *field_ptr, vptr input)
 		{
 			msg_print("The rune of protection is broken!");
 		}
-
-		/* Delete the field */
-		delete_field_ptr(field_ptr);
-			
+		
 		/* Allow movement */
 		mon_enter->do_move = TRUE;
+
+		/* Delete ourself */
+		return (TRUE);
 	}
 	else
 	{
@@ -1412,26 +1431,22 @@ void field_action_glyph_warding(s16b *field_ptr, vptr input)
 	}
 	
 	/* Done */
-	return;
+	return (FALSE);
 }
 
 
 /*
  * The function that now controls the exploding rune spell.
  */
-void field_action_glyph_explode(s16b *field_ptr, vptr input)
+bool field_action_glyph_explode(field_type *f_ptr, vptr input)
 {
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
 	/* Look at input data */
 	field_mon_test *mon_enter = (field_mon_test *) input;
 
 	monster_type *m_ptr = mon_enter->m_ptr;
 	
 	monster_race *r_ptr;
-	
-	bool do_move = mon_enter->do_move;
-	
+		
 	/* Hack: No monster - just test for existance of glyph */
 	if (!m_ptr)
 	{
@@ -1439,13 +1454,13 @@ void field_action_glyph_explode(s16b *field_ptr, vptr input)
 		mon_enter->do_move = FALSE;
 				
 		/* Done */
-		return;
+		return (FALSE);
 	}
 	
 	/* Get race */
 	r_ptr = &r_info[m_ptr->r_idx];
 	
-	if (do_move && !(r_ptr->flags1 & RF1_NEVER_BLOW) && 
+	if (mon_enter->do_move && !(r_ptr->flags1 & RF1_NEVER_BLOW) && 
 	    (randint1(BREAK_MINOR_GLYPH) < r_ptr->level)) 
 	{
 		if ((f_ptr->fy == p_ptr->py) && (f_ptr->fx == p_ptr->px))
@@ -1455,24 +1470,21 @@ void field_action_glyph_explode(s16b *field_ptr, vptr input)
 		}
 		else
 			msg_print("An explosive rune was disarmed.");
+			
+		/* Allow movement */
+		mon_enter->do_move = TRUE;
 		
 		/* Delete the field */
-		delete_field_ptr(field_ptr);
-
-		/* Allow movement */
-		do_move = TRUE;
+		return (TRUE);
 	}
 	else
 	{
 		/* No move allowed */
-		do_move = FALSE;
+		mon_enter->do_move = FALSE;
 	}
-
-	/* Save result */
-	mon_enter->do_move = do_move;
 	
 	/* Done */
-	return;
+	return (FALSE);
 }
 
 
@@ -1481,10 +1493,8 @@ void field_action_glyph_explode(s16b *field_ptr, vptr input)
  *
  * In nightmare mode, they reappear as monsters.
  */
-void field_action_corpse_decay(s16b *field_ptr, vptr nothing)
+bool field_action_corpse_decay(field_type *f_ptr, vptr nothing)
 {
-	field_type *f_ptr = &fld_list[*field_ptr];
-
 	field_thaum *t_ptr = &t_info[f_ptr->t_idx];
 		
 	/*
@@ -1531,19 +1541,15 @@ void field_action_corpse_decay(s16b *field_ptr, vptr nothing)
 	}
 
 	/* Delete the field */
-	delete_field_ptr(field_ptr);
-
-	return;
+	return (TRUE);
 }
 
 
 /* 
  * Special action to raise corpses.
  */
-void field_action_corpse_raise(s16b *field_ptr, vptr input)
+bool field_action_corpse_raise(field_type *f_ptr, vptr input)
 {
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
 	bool want_pet = *((bool *) input); 
 	
 	/*
@@ -1562,9 +1568,7 @@ void field_action_corpse_raise(s16b *field_ptr, vptr input)
 	}
 
 	/* Delete the field */
-	delete_field_ptr(field_ptr);
-
-	return;
+	return (TRUE);
 }
 
 
@@ -1639,10 +1643,8 @@ static char corpse_type(char feat)
 /*
  * Initialise a corpse / skeleton after being loaded from a savefile.
  */
-void field_action_corpse_load(s16b *field_ptr, vptr nothing)
+bool field_action_corpse_load(field_type *f_ptr, vptr nothing)
 {
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
 	/* Monster race */
 	u16b r_idx = ((u16b) f_ptr->data[1]) * 256 + f_ptr->data[2];
 	
@@ -1657,16 +1659,17 @@ void field_action_corpse_load(s16b *field_ptr, vptr nothing)
 		/* Hack - get new tile via offset table */
 		f_ptr->f_char += corpse_type(r_ptr->d_char);
 	}
+
+	/* Done */
+	return (FALSE);
 }
 
 
 /*
  * Initialise corpse / skeletons
  */
-void field_action_corpse_init(s16b *field_ptr, vptr input)
+bool field_action_corpse_init(field_type *f_ptr, vptr input)
 {
-	field_type *f_ptr = &fld_list[*field_ptr];
-
 	monster_type *m_ptr = (monster_type *) input;
 	
 	monster_race	*r_ptr = &r_info[m_ptr->r_idx];
@@ -1689,17 +1692,16 @@ void field_action_corpse_init(s16b *field_ptr, vptr input)
 	/* Notice the changes */
 	notice_field(f_ptr);
 	
-	return;
+	/* Done */
+	return (FALSE);
 }
 
 
 /*
  * Looking at a corpse tells you what type of monster it was
  */
-void field_action_corpse_look(s16b *field_ptr, vptr output)
+bool field_action_corpse_look(field_type *f_ptr, vptr output)
 {
-	field_type *f_ptr = &fld_list[*field_ptr];
-
 	char *name = (char *)output;
 	
 	/* Monster race */
@@ -1722,41 +1724,47 @@ void field_action_corpse_look(s16b *field_ptr, vptr output)
 	}
 	
 	/* Done */
-	return;
+	return (FALSE);
 }
 
 
 /*
  * Try to tunnel into a wall.
  */
-void field_action_wall_tunnel(s16b *field_ptr, vptr input)
+bool field_action_wall_tunnel(field_type *f_ptr, vptr input)
 {	
 	int dig = *((int *) input);
+	
+	/* Hack - ignore 'f_ptr' */
+	(void) f_ptr;
 	
 	if (dig > 40 + randint0(1600))
 	{
 		/* Success */
 		
-		/* Delete the field */
-		delete_field_ptr(field_ptr);
-		
 		msg_print("You have finished the tunnel.");
-	}
-	else
-	{
-		/* Failure */
 		
-		msg_print("You tunnel into it.");
+		/* Delete field */
+		return (TRUE);
 	}
+
+	/* Failure */
+	
+	msg_print("You tunnel into it.");
+		
+	return (FALSE);
 }
 
 
 /*
  * Invisible walls interact with GF_KILL_WALL
  */
-void field_action_wall_gf(s16b *field_ptr, vptr input)
-{	
+bool field_action_wall_gf(field_type *f_ptr, vptr input)
+{
 	field_magic_target *f_m_t = (field_magic_target*) input;
+	
+	/* Hack - ignore 'f_ptr' */
+	(void) f_ptr;
 	
 	if (f_m_t->typ == GF_KILL_WALL)
 	{
@@ -1766,9 +1774,12 @@ void field_action_wall_gf(s16b *field_ptr, vptr input)
 			f_m_t->notice = TRUE;
 		}
 		
-		/* Delete the field */
-		delete_field_ptr(field_ptr);
+		/* Delete field */
+		return (TRUE);
 	}
+	
+	/* Done */
+	return (FALSE);
 }
 
 
@@ -1776,45 +1787,48 @@ void field_action_wall_gf(s16b *field_ptr, vptr input)
  * The various types of interaction used by
  * the "interact with grid" command.
  */
-void field_action_interact_tunnel(s16b *field_ptr, vptr output)
+bool field_action_interact_tunnel(field_type *f_ptr, vptr output)
 {
 	int *action = (int *)output;
 
-	/* Hack - ignore field_ptr */
-	(void) field_ptr;
+	/* Hack - ignore f_ptr */
+	(void) f_ptr;
 	
 	/* Tunnel flag */
 	*action = 0;
 
-	return;
+	/* Done */
+	return (FALSE);
 }
 
 
-void field_action_interact_disarm(s16b *field_ptr, vptr output)
+bool field_action_interact_disarm(field_type *f_ptr, vptr output)
 {
 	int *action = (int *)output;
 	
-	/* Hack - ignore field_ptr */
-	(void) field_ptr;
+	/* Hack - ignore f_ptr */
+	(void) f_ptr;
 
 	/* Disarm flag */
 	*action = 1;
 
-	return;
+	/* Done */
+	return (FALSE);
 }
 
 
-void field_action_interact_open(s16b *field_ptr, vptr output)
+bool field_action_interact_open(field_type *f_ptr, vptr output)
 {
 	int *action = (int *)output;
 	
-	/* Hack - ignore field_ptr */
-	(void) field_ptr;
+	/* Hack - ignore f_ptr */
+	(void) f_ptr;
 	
 	/* Open flag */
 	*action = 2;
 
-	return;
+	/* Done */
+	return (FALSE);
 }
 
 
@@ -2014,10 +2028,8 @@ void place_trap(int y, int x)
 /*
  * Initialise the trap
  */
-void field_action_trap_init(s16b *field_ptr, vptr nothing)
+bool field_action_trap_init(field_type *f_ptr, vptr nothing)
 {
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
 	/* Hack - ignore 'nothing' */
 	(void) nothing;
 	
@@ -2033,17 +2045,17 @@ void field_action_trap_init(s16b *field_ptr, vptr nothing)
 	/* Initialize the name here? */
 	
 	/* Initialize the graphic here? */
-	return;
+
+	/* Done */
+	return (FALSE);
 }
 
 
 /*
  * Try to disarm a trap.
  */
-void field_action_trap_disarm(s16b *field_ptr, vptr input)
+bool field_action_trap_disarm(field_type *f_ptr, vptr input)
 {
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
 	int disarm = *((int *) input);
 	
 	/* Extract trap "power" */
@@ -2060,19 +2072,20 @@ void field_action_trap_disarm(s16b *field_ptr, vptr input)
 		/* Success */
 		
 		/* Delete the field */
-		delete_field_ptr(field_ptr);
+		return (TRUE);
 	}
+	
+	/* Done */
+	return (FALSE);
 }
 
 
 /*
  * Traps interact with magic.
  */
-void field_action_trap_gf(s16b *field_ptr, vptr input)
+bool field_action_trap_gf(field_type *f_ptr, vptr input)
 {
 	field_magic_target *f_m_t = (field_magic_target*) input;
-	
-	field_type *f_ptr = &fld_list[*field_ptr];
 	
 	/* Destroy traps */
 	if ((f_m_t->typ == GF_KILL_TRAP) || (f_m_t->typ == GF_KILL_DOOR))
@@ -2099,9 +2112,11 @@ void field_action_trap_gf(s16b *field_ptr, vptr input)
 			}
 		
 			/* Delete the field */
-			delete_field_ptr(field_ptr);
+			return (TRUE);
 		}
 	}
+	
+	return (FALSE);
 }
 
 
@@ -2139,13 +2154,11 @@ static void hit_trap(field_type *f_ptr)
  * What horrible fate awaits the player after stepping
  * on this particular trap?
  */
-void field_action_hit_trap_door(s16b *field_ptr, vptr nothing)
+bool field_action_hit_trap_door(field_type *f_ptr, vptr nothing)
 {	
 	int dam;
 	
 	cptr name;
-	
-	field_type *f_ptr = &fld_list[*field_ptr];
 	
 	/* Hack - ignore 'nothing' */
 	(void) nothing;
@@ -2177,14 +2190,15 @@ void field_action_hit_trap_door(s16b *field_ptr, vptr nothing)
 			p_ptr->leaving = TRUE;
 		}
 	}
+
+	/* Done */
+	return (FALSE);
 }
 
 
-void field_action_hit_trap_pit(s16b *field_ptr, vptr nothing)
+bool field_action_hit_trap_pit(field_type *f_ptr, vptr nothing)
 {	
 	int dam;
-	
-	field_type *f_ptr = &fld_list[*field_ptr];
 	
 	cptr name;
 	
@@ -2206,14 +2220,15 @@ void field_action_hit_trap_pit(s16b *field_ptr, vptr nothing)
 		name = "a pit trap";
 		take_hit(dam, name);
 	}
+
+	/* Done */
+	return (FALSE);
 }
 
 
-void field_action_hit_trap_spike(s16b *field_ptr, vptr nothing)
+bool field_action_hit_trap_spike(field_type *f_ptr, vptr nothing)
 {	
 	int dam;
-	
-	field_type *f_ptr = &fld_list[*field_ptr];
 	
 	cptr name;
 	
@@ -2248,14 +2263,15 @@ void field_action_hit_trap_spike(s16b *field_ptr, vptr nothing)
 		/* Take the damage */
 		take_hit(dam, name);
 	}
+
+	/* Done */
+	return (FALSE);
 }
 
 
-void field_action_hit_trap_poison_pit(s16b *field_ptr, vptr nothing)
+bool field_action_hit_trap_poison_pit(field_type *f_ptr, vptr nothing)
 {	
 	int dam;
-	
-	field_type *f_ptr = &fld_list[*field_ptr];
 	
 	cptr name;
 	
@@ -2302,13 +2318,14 @@ void field_action_hit_trap_poison_pit(s16b *field_ptr, vptr nothing)
 		/* Take the damage */
 		take_hit(dam, name);
 	}
+
+	/* Done */
+	return (FALSE);
 }
 
 
-void field_action_hit_trap_curse(s16b *field_ptr, vptr nothing)
+bool field_action_hit_trap_curse(field_type *f_ptr, vptr nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
 	/* Hack - ignore 'nothing' */
 	(void) nothing;
 	
@@ -2316,7 +2333,7 @@ void field_action_hit_trap_curse(s16b *field_ptr, vptr nothing)
 	hit_trap(f_ptr);
 	
 	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return (FALSE);
 	
 	msg_print("There is a flash of shimmering light!");
 	
@@ -2349,14 +2366,12 @@ void field_action_hit_trap_curse(s16b *field_ptr, vptr nothing)
 	}
 	
 	/* Delete the field */
-	delete_field_ptr(field_ptr);
+	return (TRUE);
 }
 
 
-void field_action_hit_trap_teleport(s16b *field_ptr, vptr nothing)
+bool field_action_hit_trap_teleport(field_type *f_ptr, vptr nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
 	/* Hack - ignore 'nothing' */
 	(void) nothing;
 	
@@ -2364,18 +2379,19 @@ void field_action_hit_trap_teleport(s16b *field_ptr, vptr nothing)
 	hit_trap(f_ptr);
 	
 	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return (FALSE);
 	
 	msg_print("You hit a teleport trap!");
 	teleport_player(100);
+	
+	/* Done */
+	return (FALSE);
 }
 
 
-void field_action_hit_trap_element(s16b *field_ptr, vptr nothing)
+bool field_action_hit_trap_element(field_type *f_ptr, vptr nothing)
 {	
 	int dam;
-	
-	field_type *f_ptr = &fld_list[*field_ptr];
 	
 	/* Hack - ignore 'nothing' */
 	(void) nothing;
@@ -2428,13 +2444,14 @@ void field_action_hit_trap_element(s16b *field_ptr, vptr nothing)
 			break;
 		}
 	}
+
+	/* Done */
+	return (FALSE);
 }
 
 
-void field_action_hit_trap_ba_element(s16b *field_ptr, vptr nothing)
+bool field_action_hit_trap_ba_element(field_type *f_ptr, vptr nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
 	/* Hack - ignore 'nothing' */
 	(void) nothing;
 	
@@ -2492,13 +2509,14 @@ void field_action_hit_trap_ba_element(s16b *field_ptr, vptr nothing)
 			break;
 		}
 	}
+
+	/* Done */
+	return (FALSE);
 }
 
 
-void field_action_hit_trap_gas(s16b *field_ptr, vptr nothing)
+bool field_action_hit_trap_gas(field_type *f_ptr, vptr nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
 	/* Hack - ignore 'nothing' */
 	(void) nothing;
 	
@@ -2570,16 +2588,14 @@ void field_action_hit_trap_gas(s16b *field_ptr, vptr nothing)
 			break;
 		}
 	}
+
+	/* Done */
+	return (FALSE);
 }
 
 
-void field_action_hit_trap_traps(s16b *field_ptr, vptr nothing)
+bool field_action_hit_trap_traps(field_type *f_ptr, vptr nothing)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
 	/* Hack - ignore 'nothing' */
 	(void) nothing;
 	
@@ -2587,24 +2603,22 @@ void field_action_hit_trap_traps(s16b *field_ptr, vptr nothing)
 	hit_trap(f_ptr);
 	
 	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return (FALSE);
 	
 	msg_print("There is a bright flash of light!");
 
 	/* Make some new traps */
-	project(0, 1, py, px, 0, GF_MAKE_TRAP,
+	project(0, 1, p_ptr->py, p_ptr->px, 0, GF_MAKE_TRAP,
 	        PROJECT_HIDE | PROJECT_JUMP | PROJECT_GRID);
 
 	/* Delete the field */
-	delete_field_ptr(field_ptr);
+	return (TRUE);
 }
 
 
-void field_action_hit_trap_temp_stat(s16b *field_ptr, vptr nothing)
+bool field_action_hit_trap_temp_stat(field_type *f_ptr, vptr nothing)
 {	
 	int dam;
-	
-	field_type *f_ptr = &fld_list[*field_ptr];
 	
 	/* Hack - ignore 'nothing' */
 	(void) nothing;
@@ -2663,14 +2677,15 @@ void field_action_hit_trap_temp_stat(s16b *field_ptr, vptr nothing)
 			break;
 		}
 	}
+
+	/* Done */
+	return (FALSE);
 }
 
 
-void field_action_hit_trap_perm_stat(s16b *field_ptr, vptr nothing)
+bool field_action_hit_trap_perm_stat(field_type *f_ptr, vptr nothing)
 {	
 	int dam;
-	
-	field_type *f_ptr = &fld_list[*field_ptr];
 	
 	/* Hack - ignore 'nothing' */
 	(void) nothing;
@@ -2689,31 +2704,33 @@ void field_action_hit_trap_perm_stat(s16b *field_ptr, vptr nothing)
 	{
 		msg_print("A small dart barely misses you.");
 	}
+
+	/* Done */
+	return (FALSE);
 }
 
 
-void field_action_hit_trap_lose_xp(s16b *field_ptr, vptr nothing)
+bool field_action_hit_trap_lose_xp(field_type *f_ptr, vptr nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
 	/* Hack - ignore 'nothing' */
 	(void) nothing;
 	
 	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return (FALSE);
 	
 	/* Hit the trap */
 	hit_trap(f_ptr);
 		
 	msg_print("Your head throbs!");
 	lose_exp(p_ptr->exp / 5);
+	
+	/* Done */
+	return (FALSE);
 }
 
 
-void field_action_hit_trap_disenchant(s16b *field_ptr, vptr nothing)
-{	
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
+bool field_action_hit_trap_disenchant(field_type *f_ptr, vptr nothing)
+{
 	/* Hack - ignore 'nothing' */
 	(void) nothing;
 	
@@ -2721,7 +2738,7 @@ void field_action_hit_trap_disenchant(s16b *field_ptr, vptr nothing)
 	hit_trap(f_ptr);
 		
 	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return (FALSE);
 	
 	if (!p_ptr->resist_disen)
 	{
@@ -2732,14 +2749,15 @@ void field_action_hit_trap_disenchant(s16b *field_ptr, vptr nothing)
 	{
 		msg_print("You feel the air throb.");
 	}
+	
+	/* Done */
+	return (FALSE);
 }
 
 
-void field_action_hit_trap_drop_item(s16b *field_ptr, vptr nothing)
-{	
+bool field_action_hit_trap_drop_item(field_type *f_ptr, vptr nothing)
+{
 	int item;
-	
-	field_type *f_ptr = &fld_list[*field_ptr];
 	
 	/* Hack - ignore 'nothing' */
 	(void) nothing;
@@ -2748,7 +2766,7 @@ void field_action_hit_trap_drop_item(s16b *field_ptr, vptr nothing)
 	hit_trap(f_ptr);
 	
 	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return (FALSE);
 		
 	msg_print("You fumble with your equipment!");
 	
@@ -2764,13 +2782,14 @@ void field_action_hit_trap_drop_item(s16b *field_ptr, vptr nothing)
 			inven_drop(item, inventory[item].number);
 		}
 	}
+	
+	/* Done */
+	return (FALSE);
 }
 
 
-void field_action_hit_trap_mutate(s16b *field_ptr, vptr nothing)
-{	
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
+bool field_action_hit_trap_mutate(field_type *f_ptr, vptr nothing)
+{
 	/* Hack - ignore 'nothing' */
 	(void) nothing;
 	
@@ -2778,16 +2797,17 @@ void field_action_hit_trap_mutate(s16b *field_ptr, vptr nothing)
 	hit_trap(f_ptr);
 	
 	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return (FALSE);
 		
 	(void)gain_mutation(0);
+	
+	/* Done */
+	return (FALSE);
 }
 
 
-void field_action_hit_trap_new_life(s16b *field_ptr, vptr nothing)
+bool field_action_hit_trap_new_life(field_type *f_ptr, vptr nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
 	/* Hack - ignore 'nothing' */
 	(void) nothing;
 	
@@ -2795,7 +2815,7 @@ void field_action_hit_trap_new_life(s16b *field_ptr, vptr nothing)
 	hit_trap(f_ptr);
 	
 	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return (FALSE);
 		
 	if (p_ptr->muta1 || p_ptr->muta2 || p_ptr->muta3)
 	{
@@ -2806,17 +2826,12 @@ void field_action_hit_trap_new_life(s16b *field_ptr, vptr nothing)
 	}
 	
 	/* Delete the field */
-	delete_field_ptr(field_ptr);
+	return (TRUE);
 }
 
 
-void field_action_hit_trap_no_lite(s16b *field_ptr, vptr nothing)
-{	
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
+bool field_action_hit_trap_no_lite(field_type *f_ptr, vptr nothing)
+{
 	object_type *o_ptr;
 	
 	/* Hack - ignore 'nothing' */
@@ -2826,7 +2841,7 @@ void field_action_hit_trap_no_lite(s16b *field_ptr, vptr nothing)
 	hit_trap(f_ptr);
 	
 	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return (FALSE);
 	
 	msg_print("Darkness surrounds you!");
 	
@@ -2841,20 +2856,21 @@ void field_action_hit_trap_no_lite(s16b *field_ptr, vptr nothing)
 	}
 	
 	/* Darkeness */
-	unlite_room(py, px);
+	unlite_room(p_ptr->py, p_ptr->px);
 	
 	/* Recalculate torch */
 	p_ptr->update |= (PU_TORCH);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_EQUIP);
+	
+	/* Done */
+	return (FALSE);
 }
 
 
-void field_action_hit_trap_hunger(s16b *field_ptr, vptr nothing)
+bool field_action_hit_trap_hunger(field_type *f_ptr, vptr nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
 	/* Hack - ignore 'nothing' */
 	(void) nothing;
 	
@@ -2862,7 +2878,7 @@ void field_action_hit_trap_hunger(s16b *field_ptr, vptr nothing)
 	hit_trap(f_ptr);
 	
 	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return (FALSE);
 	
 	msg_print("You suddenly feel very, very hungry!");
 	
@@ -2874,14 +2890,12 @@ void field_action_hit_trap_hunger(s16b *field_ptr, vptr nothing)
 	}
 		
 	/* Delete the field */
-	delete_field_ptr(field_ptr);
+	return (TRUE);
 }
 
 
-void field_action_hit_trap_no_gold(s16b *field_ptr, vptr nothing)
+bool field_action_hit_trap_no_gold(field_type *f_ptr, vptr nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
 	/* Hack - ignore 'nothing' */
 	(void) nothing;
 	
@@ -2889,7 +2903,7 @@ void field_action_hit_trap_no_gold(s16b *field_ptr, vptr nothing)
 	hit_trap(f_ptr);
 	
 	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return (FALSE);
 	
 	msg_print("Your purse becomes weightless!");
 	
@@ -2901,13 +2915,14 @@ void field_action_hit_trap_no_gold(s16b *field_ptr, vptr nothing)
 
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
+	
+	/* Done */
+	return (FALSE);
 }
 
 
-void field_action_hit_trap_haste_mon(s16b *field_ptr, vptr nothing)
+bool field_action_hit_trap_haste_mon(field_type *f_ptr, vptr nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
 	/* Hack - ignore 'nothing' */
 	(void) nothing;
 	
@@ -2915,24 +2930,19 @@ void field_action_hit_trap_haste_mon(s16b *field_ptr, vptr nothing)
 	hit_trap(f_ptr);
 	
 	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return (FALSE);
 	
 	msg_print("A shrill note sounds!");
 	
 	(void)speed_monsters();	
 	
 	/* Delete the field */
-	delete_field_ptr(field_ptr);
+	return (TRUE);
 }
 
 
-void field_action_hit_trap_raise_mon(s16b *field_ptr, vptr nothing)
+bool field_action_hit_trap_raise_mon(field_type *f_ptr, vptr nothing)
 {	
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
 	/* Hack - ignore 'nothing' */
 	(void) nothing;
 	
@@ -2940,18 +2950,19 @@ void field_action_hit_trap_raise_mon(s16b *field_ptr, vptr nothing)
 	hit_trap(f_ptr);
 	
 	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return (FALSE);
 	
 	msg_print("You smell something musty.");
 	
-	(void)raise_dead(py, px, FALSE);
+	(void)raise_dead(p_ptr->py, p_ptr->px, FALSE);
+	
+	/* Done */
+	return (FALSE);
 }
 
 
-void field_action_hit_trap_drain_magic(s16b *field_ptr, vptr nothing)
+bool field_action_hit_trap_drain_magic(field_type *f_ptr, vptr nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
 	int i, k;
 	object_type *o_ptr;
 	
@@ -2962,7 +2973,7 @@ void field_action_hit_trap_drain_magic(s16b *field_ptr, vptr nothing)
 	hit_trap(f_ptr);
 	
 	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return (FALSE);
 	
 	msg_print("Static fills the air.");
 	
@@ -2994,13 +3005,14 @@ void field_action_hit_trap_drain_magic(s16b *field_ptr, vptr nothing)
 			p_ptr->window |= (PW_INVEN);
 		}
 	}
+	
+	/* Done */
+	return (FALSE);
 }
 
 
-void field_action_hit_trap_aggravate(s16b *field_ptr, vptr nothing)
-{	
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
+bool field_action_hit_trap_aggravate(field_type *f_ptr, vptr nothing)
+{
 	/* Hack - ignore 'nothing' */
 	(void) nothing;
 	
@@ -3008,21 +3020,19 @@ void field_action_hit_trap_aggravate(s16b *field_ptr, vptr nothing)
 	hit_trap(f_ptr);
 	
 	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return (FALSE);
 	
 	msg_print("Shouts fill the air!");
 	
 	aggravate_monsters(0);
+	
+	/* Done */
+	return (FALSE);
 }
 
 
-void field_action_hit_trap_summon(s16b *field_ptr, vptr nothing)
-{	
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
+bool field_action_hit_trap_summon(field_type *f_ptr, vptr nothing)
+{
 	/* Hack - ignore 'nothing' */
 	(void) nothing;
 	
@@ -3030,22 +3040,21 @@ void field_action_hit_trap_summon(s16b *field_ptr, vptr nothing)
 	hit_trap(f_ptr);
 	
 	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return (FALSE);
 	
 	msg_print("Zap!");
 	
 	/* Summon monsters */
-	summon_specific(0, py, px, p_ptr->depth, 0, TRUE, FALSE, FALSE);
+	summon_specific(0, p_ptr->py, p_ptr->px, p_ptr->depth,
+		 0, TRUE, FALSE, FALSE);
 	
 	/* Delete the field */
-	delete_field_ptr(field_ptr);
+	return (TRUE);
 }
 
 
-void field_action_hit_trap_lose_memory(s16b *field_ptr, vptr nothing)
+bool field_action_hit_trap_lose_memory(field_type *f_ptr, vptr nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
 	/* Hack - ignore 'nothing' */
 	(void) nothing;
 	
@@ -3058,12 +3067,15 @@ void field_action_hit_trap_lose_memory(s16b *field_ptr, vptr nothing)
 		/* Find the trap */
 		hit_trap(f_ptr);
 		
-		return;
+		return (FALSE);
 	}
 	
 	msg_print("You are not sure what just happened!");
 	
 	lose_all_info();
+	
+	/* Done */
+	return (FALSE);
 }
 
 
@@ -3143,10 +3155,8 @@ void make_lockjam_door(int y, int x, int power, bool jam)
 /*
  * Initialise a field with a counter
  */
-void field_action_counter_init(s16b *field_ptr, vptr input)
+bool field_action_counter_init(field_type *f_ptr, vptr input)
 {
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
 	int value = *((int *) input);
 	int max;
 	int new_value;
@@ -3167,27 +3177,22 @@ void field_action_counter_init(s16b *field_ptr, vptr input)
 	}
 	else if (new_value < 0)
 	{
-		f_ptr->counter = 0;
-		
-		/* Call completion routine */
-		if (field_hook_single(field_ptr, FIELD_ACT_EXIT, NULL))
-		{
-			/* It didn't delete itself - do it now */
-			delete_field_ptr(field_ptr);
-		}
+		/* Hack - we'll decrement next turn */
+		f_ptr->counter = 1;
 	}
 	else
 	{
 		/* Store in the new value */
 		f_ptr->counter = new_value;
 	}
+	
+	/* Done */
+	return (FALSE);
 }
 
 
-void field_action_door_unlock(s16b *field_ptr, vptr input)
+bool field_action_door_unlock(field_type *f_ptr, vptr input)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
 	int lock = *((int *) input);
 	
 	/* Extract door "power" */
@@ -3207,26 +3212,25 @@ void field_action_door_unlock(s16b *field_ptr, vptr input)
 		cave_set_feat(f_ptr->fy, f_ptr->fx, FEAT_OPEN);
 		
 		/* Delete the field */
-		delete_field_ptr(field_ptr);
+		return (TRUE);
 	}
-	else
-	{
-		/* Failure */
-		
-		/* Message */
-		msg_print("You failed to unlock the door.");
-		
-		/* We know the door is locked */
-		f_ptr->info |= FIELD_INFO_NFT_LOOK;
-		f_ptr->info &= ~(FIELD_INFO_NO_LOOK);
-	}
+
+	/* Failure */
+	
+	/* Message */
+	msg_print("You failed to unlock the door.");
+	
+	/* We know the door is locked */
+	f_ptr->info |= FIELD_INFO_NFT_LOOK;
+	f_ptr->info &= ~(FIELD_INFO_NO_LOOK);
+
+	/* Done */
+	return (FALSE);
 }
 
 
-void field_action_door_bash(s16b *field_ptr, vptr input)
+bool field_action_door_bash(field_type *f_ptr, vptr input)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
 	int jam = *((int *) input);
 	
 	/* Extract unjamming "power" */
@@ -3252,19 +3256,20 @@ void field_action_door_bash(s16b *field_ptr, vptr input)
 		}
 		
 		/* Delete the field */
-		delete_field_ptr(field_ptr);
+		return (TRUE);
 	}
 	
 	/* We know the door is jammed */
 	f_ptr->info |= FIELD_INFO_NFT_LOOK;
 	f_ptr->info &= ~(FIELD_INFO_NO_LOOK);
+	
+	/* Done */
+	return (FALSE);
 }
 
 
-void field_action_door_lock_monster(s16b *field_ptr, vptr input)
+bool field_action_door_lock_monster(field_type *f_ptr, vptr input)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
 	field_mon_test *mon_enter = (field_mon_test *) input;
 	
 	monster_type *m_ptr = mon_enter->m_ptr;
@@ -3278,7 +3283,7 @@ void field_action_door_lock_monster(s16b *field_ptr, vptr input)
 		mon_enter->do_move = FALSE;
 		
 		/* Done */
-		return;
+		return (FALSE);
 	}
 	
 	/* Get race */
@@ -3289,7 +3294,7 @@ void field_action_door_lock_monster(s16b *field_ptr, vptr input)
 		/* Monster cannot open the door */
 		
 		/* Done */
-		return;
+		return (FALSE);
 	}			
 	
 	/* Locked doors */
@@ -3309,20 +3314,24 @@ void field_action_door_lock_monster(s16b *field_ptr, vptr input)
 					| PU_MONSTERS | PU_MON_LITE);
 			}
 			
+			/* Cannot move */
+			mon_enter->do_move = FALSE;
+			
 			/* Delete the field */
-			delete_field_ptr(field_ptr);
+			return (TRUE);
 		}
 	}
 	
 	/* Cannot move */
 	mon_enter->do_move = FALSE;
+	
+	/* Done */
+	return (FALSE);
 }
 
 
-void field_action_door_jam_monster(s16b *field_ptr, vptr input)
+bool field_action_door_jam_monster(field_type *f_ptr, vptr input)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
 	field_mon_test *mon_enter = (field_mon_test *) input;
 	
 	monster_type *m_ptr = mon_enter->m_ptr;
@@ -3336,7 +3345,7 @@ void field_action_door_jam_monster(s16b *field_ptr, vptr input)
 		mon_enter->do_move = FALSE;
 		
 		/* Done */
-		return;
+		return (FALSE);
 	}
 	
 	/* Get race */
@@ -3347,10 +3356,9 @@ void field_action_door_jam_monster(s16b *field_ptr, vptr input)
 		/* Monster cannot open the door */
 		
 		/* Done */
-		return;
+		return (FALSE);
 	}
 			
-
 	/* Stuck Door */
 	if ((r_ptr->flags2 & RF2_BASH_DOOR) &&
 	    (!is_pet(m_ptr) || p_ptr->pet_open_doors))
@@ -3383,27 +3391,26 @@ void field_action_door_jam_monster(s16b *field_ptr, vptr input)
 				                  PU_MONSTERS | PU_MON_LITE);
 			}
 			
-			/* Delete the field */
-			delete_field_ptr(field_ptr);
-
 			/* Hack -- fall into doorway */
 			mon_enter->do_move = TRUE;
-				
-			return;
+			
+			/* Delete the field */
+			return (TRUE);
 		}
 	}
 	
 	/* Cannot move */
 	mon_enter->do_move = FALSE;
+	
+	/* Done */
+	return (FALSE);
 }
 
 /*
  * Doors interact with various magic effects
  */
-void field_action_door_gf(s16b *field_ptr, vptr input)
+bool field_action_door_gf(field_type *f_ptr, vptr input)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-
 	field_magic_target *f_m_t = (field_magic_target*) input;
 	
 	cave_type *c_ptr;
@@ -3429,7 +3436,7 @@ void field_action_door_gf(s16b *field_ptr, vptr input)
 		p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS | PU_MON_LITE);
 
 		/* Delete the field */
-		delete_field_ptr(field_ptr);
+		return (TRUE);
 	}
 	else if (f_m_t->typ == GF_KILL_DOOR)
 	{
@@ -3452,7 +3459,7 @@ void field_action_door_gf(s16b *field_ptr, vptr input)
 		p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS | PU_MON_LITE);
 
 		/* Delete the field */
-		delete_field_ptr(field_ptr);
+		return (TRUE);
 	}
 	else if (f_m_t->typ == GF_KILL_TRAP)
 	{
@@ -3464,17 +3471,18 @@ void field_action_door_gf(s16b *field_ptr, vptr input)
 		}
 		
 		/* Delete the field */
-		delete_field_ptr(field_ptr);
+		return (TRUE);
 	}
+	
+	/* Done*/
+	return (FALSE);
 }
 
 /*
  * Interact with a store
  */
-void field_action_door_store(s16b *field_ptr, vptr nothing)
+bool field_action_door_store(field_type *f_ptr, vptr nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
 	/* Hack - ignore 'nothing' */
 	(void) nothing;
 	
@@ -3485,16 +3493,17 @@ void field_action_door_store(s16b *field_ptr, vptr nothing)
 	 * data[0] contains the type of store.
 	 */
 	do_cmd_store(f_ptr);
+
+	/* Done */
+	return (FALSE);
 }
 
 
 /*
  * Interact with a building
  */
-void field_action_door_build(s16b *field_ptr, vptr nothing)
+bool field_action_door_build(field_type *f_ptr, vptr nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
 	/* Hack - ignore 'nothing' */
 	(void) nothing;
 
@@ -3505,6 +3514,9 @@ void field_action_door_build(s16b *field_ptr, vptr nothing)
 	 * data[0] contains the type of building.
 	 */
 	do_cmd_bldg(f_ptr);
+
+	/* Done */
+	return (FALSE);
 }
 
 /* Does the player have enough gold for this action? */
@@ -3532,24 +3544,23 @@ static bool test_gold(s32b *cost)
 /*
  * Weaponmaster1
  */
-void field_action_weaponmaster1(s16b *field_ptr, vptr input)
+bool field_action_weaponmaster1(field_type *f_ptr, vptr input)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-
 	int factor = *((int *) input);
 	char tmp_str[80];
 
 	sprintf(tmp_str, " E) Examine Weapons (%dgp)", f_ptr->data[1] * factor);
 	c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+
+	/* Done */
+	return (FALSE);
 }
 
 /*
  * Weaponmaster2
  */
-void field_action_weaponmaster2(s16b *field_ptr, vptr input)
+bool field_action_weaponmaster2(field_type *f_ptr, vptr input)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-
 	int *factor = ((int*) input);
 	s32b cost;
 	
@@ -3570,16 +3581,17 @@ void field_action_weaponmaster2(s16b *field_ptr, vptr input)
 	{
 		*factor = FALSE;
 	}
+
+	/* Done */
+	return (FALSE);
 }
 
 
 /*
  * Recharge1
  */
-void field_action_recharge1(s16b *field_ptr, vptr input)
+bool field_action_recharge1(field_type *f_ptr, vptr input)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-
 	int factor = *((int*) input);
 	char tmp_str[80];
 
@@ -3588,15 +3600,16 @@ void field_action_recharge1(s16b *field_ptr, vptr input)
 	sprintf(tmp_str, " I) Identify Items (%dgp)",
 	f_ptr->data[2] * factor);
 	c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+	
+	/* Done */
+	return (FALSE);
 }
 
 /*
  * Recharge2
  */
-void field_action_recharge2(s16b *field_ptr, vptr input)
+bool field_action_recharge2(field_type *f_ptr, vptr input)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-
 	int *factor = ((int*) input);
 	s32b cost;
 
@@ -3632,30 +3645,32 @@ void field_action_recharge2(s16b *field_ptr, vptr input)
 		/* We didn't do anything */
 		*factor = FALSE;
 	}
+
+	/* Done */
+	return (FALSE);
 }
 
 
 /*
  * Weaponplus1
  */
-void field_action_weaponplus1(s16b *field_ptr, vptr input)
+bool field_action_weaponplus1(field_type *f_ptr, vptr input)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-
 	int factor = *((int*) input);
 	char tmp_str[80];
 
 	sprintf(tmp_str, " E) Enchant Weapons (%dgp)", f_ptr->data[1] * factor);
 	c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+	
+	/* Done */
+	return (FALSE);
 }
 
 /*
  * Weaponplus2
  */
-void field_action_weaponplus2(s16b *field_ptr, vptr input)
+bool field_action_weaponplus2(field_type *f_ptr, vptr input)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-
 	int *factor = ((int*) input);
 	
 	if (p_ptr->command_cmd == 'E')
@@ -3671,30 +3686,32 @@ void field_action_weaponplus2(s16b *field_ptr, vptr input)
 	{
 		*factor = FALSE;
 	}
+
+	/* Done */
+	return (FALSE);
 }
 
 
 /*
  * Armourplus1
  */
-void field_action_armourplus1(s16b *field_ptr, vptr input)
+bool field_action_armourplus1(field_type *f_ptr, vptr input)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-
 	int factor = *((int*) input);
 	char tmp_str[80];
 
 	sprintf(tmp_str, " E) Enchant Armour (%dgp)", f_ptr->data[1] * factor);
 	c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+
+	/* Done */
+	return (FALSE);
 }
 
 /*
  * Armourplus2
  */
-void field_action_armourplus2(s16b *field_ptr, vptr input)
+bool field_action_armourplus2(field_type *f_ptr, vptr input)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-
 	int *factor = ((int*) input);
 	
 	if (p_ptr->command_cmd == 'E')
@@ -3710,31 +3727,33 @@ void field_action_armourplus2(s16b *field_ptr, vptr input)
 	{
 		*factor = FALSE;
 	}
+
+	/* Done */
+	return (FALSE);
 }
 
 
 /*
  * Mutate1
  */
-void field_action_mutate1(s16b *field_ptr, vptr input)
+bool field_action_mutate1(field_type *f_ptr, vptr input)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-
 	int factor = *((int*) input);
 	char tmp_str[80];
 
 	sprintf(tmp_str, " E) Expose yourself to raw chaos (%dgp)",
 		 f_ptr->data[1] * factor * (count_mutations() + 1));
 	c_put_str(TERM_YELLOW, tmp_str, 19, 30);
+
+	/* Done */
+	return (FALSE);
 }
 
 /*
  * Mutate2
  */
-void field_action_mutate2(s16b *field_ptr, vptr input)
+bool field_action_mutate2(field_type *f_ptr, vptr input)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-
 	int *factor = ((int*) input);
 	s32b cost;
 	
@@ -3772,30 +3791,32 @@ void field_action_mutate2(s16b *field_ptr, vptr input)
 	{
 		*factor = FALSE;
 	}
+
+	/* Done */
+	return (FALSE);
 }
 
 
 /*
  * Buymap1
  */
-void field_action_buymap1(s16b *field_ptr, vptr input)
+bool field_action_buymap1(field_type *f_ptr, vptr input)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-
 	int factor = *((int*) input);
 	char tmp_str[80];
 
 	sprintf(tmp_str, " E) Examine Map (%dgp)", f_ptr->data[1] * factor);
 	c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+
+	/* Done */
+	return (FALSE);
 }
 
 /*
  * Buymap2
  */
-void field_action_buymap2(s16b *field_ptr, vptr input)
+bool field_action_buymap2(field_type *f_ptr, vptr input)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-
 	int *factor = ((int*) input);
 	s32b cost;
 	
@@ -3822,30 +3843,32 @@ void field_action_buymap2(s16b *field_ptr, vptr input)
 	{
 		*factor = FALSE;
 	}
+
+	/* Done */
+	return (FALSE);
 }
 
 
 /*
  * Library1
  */
-void field_action_library1(s16b *field_ptr, vptr input)
+bool field_action_library1(field_type *f_ptr, vptr input)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-
 	int factor = *((int*) input);
 	char tmp_str[80];
 
 	sprintf(tmp_str, " R) Read about monsters (%dgp)", f_ptr->data[1] * factor);
 	c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+
+	/* Done */
+	return (FALSE);
 }
 
 /*
  * Library2
  */
-void field_action_library2(s16b *field_ptr, vptr input)
+bool field_action_library2(field_type *f_ptr, vptr input)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-
 	int *factor = ((int*) input);
 	s32b cost;
 	
@@ -3866,17 +3889,20 @@ void field_action_library2(s16b *field_ptr, vptr input)
 	{
 		*factor = FALSE;
 	}
+
+	/* Done */
+	return (FALSE);
 }
 
 /*
  * Casino1
  */
-void field_action_casino1(s16b *field_ptr, vptr nothing)
+bool field_action_casino1(field_type *f_ptr, vptr nothing)
 {	
 	char tmp_str[80];
 	
-	/* Ignore field_ptr */
-	(void) field_ptr;
+	/* Ignore f_ptr */
+	(void) f_ptr;
 	
 	/* Ignore nothing */
 	(void) nothing;
@@ -3895,17 +3921,20 @@ void field_action_casino1(s16b *field_ptr, vptr nothing)
 	
 	sprintf(tmp_str, " D) Dice slots");
 	c_put_str(TERM_YELLOW, tmp_str, 20, 35);
+
+	/* Done */
+	return (FALSE);
 }
 
 /*
  * Casino2
  */
-void field_action_casino2(s16b *field_ptr, vptr input)
+bool field_action_casino2(field_type *f_ptr, vptr input)
 {	
 	int *factor = ((int*) input);
 	
-	/* Ignore field_ptr */
-	(void) field_ptr;
+	/* Ignore f_ptr */
+	(void) f_ptr;
 	
 	switch (p_ptr->command_cmd)
 	{
@@ -3960,15 +3989,16 @@ void field_action_casino2(s16b *field_ptr, vptr input)
 			break;
 		}
 	}
+	
+	/* Done */
+	return (FALSE);
 }
 
 /*
  * Inn1
  */
-void field_action_inn1(s16b *field_ptr, vptr input)
+bool field_action_inn1(field_type *f_ptr, vptr input)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
 	char tmp_str[80];
 	
 	int factor = *((int*) input);
@@ -3978,15 +4008,16 @@ void field_action_inn1(s16b *field_ptr, vptr input)
 	
 	sprintf(tmp_str, " R) Rest (%dgp)", f_ptr->data[1] * factor / 20);
 	c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+
+	/* Done */
+	return (FALSE);
 }
 
 /*
  * Inn2
  */
-void field_action_inn2(s16b *field_ptr, vptr input)
+bool field_action_inn2(field_type *f_ptr, vptr input)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
 	int *factor = ((int*) input);
 	
 	s32b cost;
@@ -4025,31 +4056,33 @@ void field_action_inn2(s16b *field_ptr, vptr input)
 	{
 		*factor = FALSE;
 	}
+
+	/* Done */
+	return (FALSE);
 }
 
 
 /*
  * Healer1
  */
-void field_action_healer1(s16b *field_ptr, vptr input)
+bool field_action_healer1(field_type *f_ptr, vptr input)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
 	char tmp_str[80];
 	
 	int factor = *((int*) input);
 
 	sprintf(tmp_str, " R) Restore Stats (%dgp)", f_ptr->data[1] * factor);
 	c_put_str(TERM_YELLOW, tmp_str, 18, 35);
+
+	/* Done */
+	return (FALSE);
 }
 
 /*
  * Healer2
  */
-void field_action_healer2(s16b *field_ptr, vptr input)
+bool field_action_healer2(field_type *f_ptr, vptr input)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
 	int *factor = ((int*) input);
 	
 	s32b cost;
@@ -4071,6 +4104,9 @@ void field_action_healer2(s16b *field_ptr, vptr input)
 	{
 		*factor = FALSE;
 	}
+
+	/* Done */
+	return (FALSE);
 }
 
 
@@ -4079,74 +4115,89 @@ void field_action_healer2(s16b *field_ptr, vptr input)
 /*
  * Bookstore will buy/sell
  */
-void field_action_isbook_tester(s16b *field_ptr, vptr input)
+bool field_action_isbook_tester(field_type *f_ptr, vptr input)
 {
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
-	/* Hack - ignore field_ptr */
-	(void) field_ptr;
+	/* Hack - ignore fd_ptr */
+	(void) f_ptr;
 	
 	f_o_ptr->result = item_tester_hook_is_book(f_o_ptr->o_ptr);
+
+	/* Done */
+	return (FALSE);
 }
 
 /*
  * Weaponstore will buy/sell
  */
-void field_action_isweapon_tester(s16b *field_ptr, vptr input)
+bool field_action_isweapon_tester(field_type *f_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
-	/* Hack - ignore field_ptr */
-	(void) field_ptr;
+	/* Hack - ignore f_ptr */
+	(void) f_ptr;
 	
 	f_o_ptr->result = item_tester_hook_weapon(f_o_ptr->o_ptr);
+
+	/* Done */
+	return (FALSE);
 }
 
 /*
  * Armourstore will buy/sell
  */
-void field_action_isarmour_tester(s16b *field_ptr, vptr input)
+bool field_action_isarmour_tester(field_type *f_ptr, vptr input)
 {
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
-	/* Hack - ignore field_ptr */
-	(void) field_ptr;
+	/* Hack - ignore f_ptr */
+	(void) f_ptr;
 	
 	f_o_ptr->result = item_tester_hook_armour(f_o_ptr->o_ptr);
+	
+	/* Done */
+	return (FALSE);
 }
 
 
 /*
  * Weapon/Armourstore will buy/sell
  */
-void field_action_isweaparmour_tester(s16b *field_ptr, vptr input)
+bool field_action_isweaparmour_tester(field_type *f_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
-	/* Hack - ignore field_ptr */
-	(void) field_ptr;
+	/* Hack - ignore f_ptr */
+	(void) f_ptr;
 	
 	f_o_ptr->result = item_tester_hook_weapon_armour(f_o_ptr->o_ptr);
+	
+	/* Done */
+	return (FALSE);
 }
 
 
 /*
  * Ammo store will buy/sell
  */
-void field_action_isammo_tester(s16b *field_ptr, vptr input)
+bool field_action_isammo_tester(field_type *f_ptr, vptr input)
 {
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
-	/* Hack - ignore field_ptr */
-	(void) field_ptr;
+	/* Hack - ignore f_ptr */
+	(void) f_ptr;
 	
 	f_o_ptr->result = item_tester_hook_ammo(f_o_ptr->o_ptr);
+	
+	/* Done */
+	return (FALSE);
 }
 
 /*
  * Potion store will buy/sell
  */
-void field_action_ispotion_tester(s16b *field_ptr, vptr input)
+bool field_action_ispotion_tester(field_type *f_ptr, vptr input)
 {
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 
@@ -4154,7 +4205,7 @@ void field_action_ispotion_tester(s16b *field_ptr, vptr input)
 	byte tval_save = item_tester_tval;
 	
 	/* Hack - ignore field_ptr */
-	(void) field_ptr;
+	(void) f_ptr;
 	
 	/* Pick potions */
 	item_tester_tval = TV_POTION;
@@ -4163,12 +4214,15 @@ void field_action_ispotion_tester(s16b *field_ptr, vptr input)
 
 	/* Restore tval */
 	item_tester_tval = tval_save;
+
+	/* Done */
+	return (FALSE);
 }
 
 /*
  * Scroll store will buy/sell
  */
-void field_action_isscroll_tester(s16b *field_ptr, vptr input)
+bool field_action_isscroll_tester(field_type *f_ptr, vptr input)
 {
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
@@ -4176,7 +4230,7 @@ void field_action_isscroll_tester(s16b *field_ptr, vptr input)
 	byte tval_save = item_tester_tval;
 	
 	/* Hack - ignore field_ptr */
-	(void) field_ptr;
+	(void) f_ptr;
 	
 	/* Pick scrolls */
 	item_tester_tval = TV_SCROLL;
@@ -4185,21 +4239,24 @@ void field_action_isscroll_tester(s16b *field_ptr, vptr input)
 	
 	/* Restore tval */
 	item_tester_tval = tval_save;
+
+	/* Done */
+	return (FALSE);
 }
 
 
 /*
  * Statue store will buy/sell
  */
-void field_action_isstatue_tester(s16b *field_ptr, vptr input)
+bool field_action_isstatue_tester(field_type *f_ptr, vptr input)
 {
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
 	/* Save old tval */	
 	byte tval_save = item_tester_tval;
 	
-	/* Hack - ignore field_ptr */
-	(void) field_ptr;
+	/* Hack - ignore f_ptr */
+	(void) f_ptr;
 	
 	/* Pick statues */
 	item_tester_tval = TV_STATUE;
@@ -4208,20 +4265,23 @@ void field_action_isstatue_tester(s16b *field_ptr, vptr input)
 	
 	/* Restore tval */
 	item_tester_tval = tval_save;
+
+	/* Done */
+	return (FALSE);
 }
 
 /*
  * Figurine store will buy/sell
  */
-void field_action_isfigurine_tester(s16b *field_ptr, vptr input)
+bool field_action_isfigurine_tester(field_type *f_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
 	/* Save old tval */	
 	byte tval_save = item_tester_tval;
 	
-	/* Hack - ignore field_ptr */
-	(void) field_ptr;
+	/* Hack - ignore f_ptr */
+	(void) f_ptr;
 	
 	/* Pick figurines */
 	item_tester_tval = TV_FIGURINE;
@@ -4230,20 +4290,23 @@ void field_action_isfigurine_tester(s16b *field_ptr, vptr input)
 	
 	/* Restore tval */
 	item_tester_tval = tval_save;
+
+	/* Done */
+	return (FALSE);
 }
 
 /*
  * Food store will buy/sell
  */
-void field_action_isfood_tester(s16b *field_ptr, vptr input)
+bool field_action_isfood_tester(field_type *f_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
 	/* Save old tval */	
 	byte tval_save = item_tester_tval;
 	
-	/* Hack - ignore field_ptr */
-	(void) field_ptr;
+	/* Hack - ignore f_ptr */
+	(void) f_ptr;
 	
 	/* Pick figurines */
 	item_tester_tval = TV_FOOD;
@@ -4252,76 +4315,90 @@ void field_action_isfood_tester(s16b *field_ptr, vptr input)
 	
 	/* Restore tval */
 	item_tester_tval = tval_save;
+
+	/* Done */
+	return (FALSE);
 }
 
 
 /*
  * Magic charges store will buy/sell
  */
-void field_action_isrecharge_tester(s16b *field_ptr, vptr input)
+bool field_action_isrecharge_tester(field_type *f_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
-	/* Hack - ignore field_ptr */
-	(void) field_ptr;
+	/* Hack - ignore f_ptr */
+	(void) f_ptr;
 		
 	f_o_ptr->result = item_tester_hook_recharge(f_o_ptr->o_ptr);
+
+	/* Done */
+	return (FALSE);
 }
 
 /*
  * Jeweler will buy/sell
  */
-void field_action_isjewel_tester(s16b *field_ptr, vptr input)
+bool field_action_isjewel_tester(field_type *f_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
-	/* Hack - ignore field_ptr */
-	(void) field_ptr;
+	/* Hack - ignore f_ptr */
+	(void) f_ptr;
 		
 	f_o_ptr->result = item_tester_hook_jewel(f_o_ptr->o_ptr);
-}
 
+	/* Done */
+	return (FALSE);
+}
 
 
 /*
  * Weildable items store will buy/sell
  */
-void field_action_iswield_tester(s16b *field_ptr, vptr input)
+bool field_action_iswield_tester(field_type *f_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 		
-	/* Hack - ignore field_ptr */
-	(void) field_ptr;
+	/* Hack - ignore f_ptr */
+	(void) f_ptr;
 	
 	f_o_ptr->result = item_tester_hook_wear(f_o_ptr->o_ptr);
+
+	/* Done */
+	return (FALSE);
 }
 
 /*
  * Fletcher will buy/sell
  */
-void field_action_isfletcher_tester(s16b *field_ptr, vptr input)
+bool field_action_isfletcher_tester(field_type *f_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
-	/* Hack - ignore field_ptr */
-	(void) field_ptr;
+	/* Hack - ignore f_ptr */
+	(void) f_ptr;
 		
 	f_o_ptr->result = item_tester_hook_fletcher(f_o_ptr->o_ptr);
+
+	/* Done */
+	return (FALSE);
 }
 
 
 /*
  * Swordsman will buy/sell
  */
-void field_action_issword_tester(s16b *field_ptr, vptr input)
+bool field_action_issword_tester(field_type *f_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
 	/* Save old tval */	
 	byte tval_save = item_tester_tval;
 	
-	/* Hack - ignore field_ptr */
-	(void) field_ptr;
+	/* Hack - ignore f_ptr */
+	(void) f_ptr;
 		
 	/* Pick swords */
 	item_tester_tval = TV_SWORD;
@@ -4330,33 +4407,39 @@ void field_action_issword_tester(s16b *field_ptr, vptr input)
 	
 	/* Restore tval */
 	item_tester_tval = tval_save;
+
+	/* Done */
+	return (FALSE);
 }
 
 /*
  * Axeman will buy/sell
  */
-void field_action_isnonsword_tester(s16b *field_ptr, vptr input)
+bool field_action_isnonsword_tester(field_type *f_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
-	/* Hack - ignore field_ptr */
-	(void) field_ptr;
+	/* Hack - ignore f_ptr */
+	(void) f_ptr;
 		
 	f_o_ptr->result = item_tester_hook_nonsword(f_o_ptr->o_ptr);
+
+	/* Done */
+	return (FALSE);
 }
 
 /*
  * Shieldsman will buy/sell
  */
-void field_action_isshield_tester(s16b *field_ptr, vptr input)
+bool field_action_isshield_tester(field_type *f_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
 	/* Save old tval */	
 	byte tval_save = item_tester_tval;
 	
-	/* Hack - ignore field_ptr */
-	(void) field_ptr;
+	/* Hack - ignore f_ptr */
+	(void) f_ptr;
 		
 	/* Pick swords */
 	item_tester_tval = TV_SHIELD;
@@ -4365,73 +4448,88 @@ void field_action_isshield_tester(s16b *field_ptr, vptr input)
 	
 	/* Restore tval */
 	item_tester_tval = tval_save;
+
+	/* Done */
+	return (FALSE);
 }
 
 /*
  * Clothesstore will buy/sell
  */
-void field_action_isclothes_tester(s16b *field_ptr, vptr input)
+bool field_action_isclothes_tester(field_type *f_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
-	/* Hack - ignore field_ptr */
-	(void) field_ptr;
+	/* Hack - ignore f_ptr */
+	(void) f_ptr;
 		
 	f_o_ptr->result = item_tester_hook_soft_armour(f_o_ptr->o_ptr);
+
+	/* Done */
+	return (FALSE);
 }
 
 /*
  * Heavy Armour store will buy/sell
  */
-void field_action_ishardarmour_tester(s16b *field_ptr, vptr input)
+bool field_action_ishardarmour_tester(field_type *f_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
-	/* Hack - ignore field_ptr */
-	(void) field_ptr;
+	/* Hack - ignore f_ptr */
+	(void) f_ptr;
 		
 	f_o_ptr->result = item_tester_hook_hard_armour(f_o_ptr->o_ptr);
+
+	/* Done */
+	return (FALSE);
 }
 
 /*
  * Pure Heavy Armour store will buy/sell
  */
-void field_action_isphardarmour_tester(s16b *field_ptr, vptr input)
+bool field_action_isphardarmour_tester(field_type *f_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
-	/* Hack - ignore field_ptr */
-	(void) field_ptr;
+	/* Hack - ignore f_ptr */
+	(void) f_ptr;
 		
 	f_o_ptr->result = item_tester_hook_pure_hard_armour(f_o_ptr->o_ptr);
+
+	/* Done */
+	return (FALSE);
 }
 
 /*
  * Helmsman will buy/sell
  */
-void field_action_ishelm_tester(s16b *field_ptr, vptr input)
+bool field_action_ishelm_tester(field_type *f_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
-	/* Hack - ignore field_ptr */
-	(void) field_ptr;
+	/* Hack - ignore f_ptr */
+	(void) f_ptr;
 		
 	f_o_ptr->result = item_tester_hook_helm(f_o_ptr->o_ptr);
+
+	/* Done */
+	return (FALSE);
 }
 
 
 /*
  * Supplies store will buy/sell
  */
-void field_action_issupplies_tester(s16b *field_ptr, vptr input)
+bool field_action_issupplies_tester(field_type *f_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
 	/* Save old tval */	
 	byte tval_save = item_tester_tval;
 	
-	/* Hack - ignore field_ptr */
-	(void) field_ptr;
+	/* Hack - ignore f_ptr */
+	(void) f_ptr;
 	
 	/* Pick potions */
 	item_tester_tval = TV_POTION;
@@ -4453,6 +4551,7 @@ void field_action_issupplies_tester(s16b *field_ptr, vptr input)
 		item_tester_hook_is_book(f_o_ptr->o_ptr));
 	
 	/* This leaves the store with scrolls, tools, ammo, and diggers. */
+
+	/* Done */
+	return (FALSE);
 }
-
-

@@ -853,11 +853,12 @@ typedef struct field_type field_type;
 
 /*
  * A function pointer to an action.  The function takes two values:
- * 1) a pointer to the index of the field that is undergoing the action.
+ * 1) a pointer to the field that is undergoing the action.
  * 2) a pointer to a structure cast to void that contains the
  *	information the action needs to complete its job.
+ * The function returns a bool saying whether or not to delete the field.
  */
-typedef void (*field_action_type)(s16b *field_ptr, vptr);
+typedef bool (*field_action_type)(field_type *f_ptr, vptr);
 
 
 
