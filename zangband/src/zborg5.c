@@ -87,27 +87,6 @@ static s16b *borg_normal_what;      /* Indexes of normals */
 static cptr *borg_normal_text;      /* Names of normals */
 
 
-
-/*
- * Hack -- monster/object tracking grids
- */
-
-typedef struct borg_wank borg_wank;
-
-struct borg_wank
-{
-    byte x;
-    byte y;
-
-    byte t_a;
-    char t_c;
-
-    bool is_take;
-    bool is_kill;
-};
-
-
-
 /*
  * Hack -- object/monster tracking array
  */
@@ -115,115 +94,6 @@ struct borg_wank
 static int borg_wank_num = 0;
 
 static borg_wank *borg_wanks;
-
-
-
-
-/*
- * Attempt to guess what kind of object is at the given location.
- *
- * This routine should rarely, if ever, return "zero".
- *
- * Hack -- we use "base level" instead of "allocation levels".
- */
-static int borg_guess_kind(byte a, char c,int y,int x)
-{
-	/* ok, this is an real cheat.  he ought to use the look command
-     * in order to correctly id the object.  But I am passing that up for
-     * the sake of speed and accuracy
-     */
-    
-	map_block *mb_ptr = map_loc(x, y);
-	
-	/* Ignore attr and char */
-	(void) a;
-	(void) c;
-
-    /* Actual item */
-    return (mb_ptr->object);
-
-
-
-
-#if 0
-/* The rest here is the original code.  It made several mistakes */
-    /* Actual item */
-    {
-    int i, s;
-
-    int b_i = 0, b_s = 0;
-    /* Find an "acceptable" object */
-
-    for (i = 1; i < max_k_idx; i++)
-    {
-        object_kind *k_ptr = &k_info[i];
-
-        /* Skip non-objects */
-        if (!k_ptr->name) continue;
-
-
-        /* Base score */
-        s = 10000;
-
-
-        /* Hack -- penalize "extremely" out of depth */
-        if (k_ptr->level > borg_skill[BI_CDEPTH] + 50) s = s - 500;
-
-        /* Hack -- penalize "very" out of depth */
-        if (k_ptr->level > borg_skill[BI_CDEPTH] + 15) s = s - 100;
-
-        /* Hack -- penalize "rather" out of depth */
-        if (k_ptr->level > borg_skill[BI_CDEPTH] + 5) s = s - 50;
-
-        /* Hack -- penalize "somewhat" out of depth */
-        if (k_ptr->level > borg_skill[BI_CDEPTH]) s = s - 10;
-
-        /* Hack -- Penalize "depth miss" */
-        s = s - ABS(k_ptr->level - borg_skill[BI_CDEPTH]);
-
-
-        /* Hack -- Penalize INSTA_ART items */
-        if (k_ptr->flags3 & TR3_INSTA_ART) s = s - 1000;
-
-
-        /* Hack -- Penalize CURSED items */
-        if (k_ptr->flags3 & TR3_LIGHT_CURSE) s = s - 5000;
-
-        /* Hack -- Penalize BROKEN items */
-        if (k_ptr->cost <= 0) s = s - 5000;
-
-
-        /* Verify char */
-        if (c != k_ptr->d_char) continue;
-
-
-        /* Flavored objects */
-        if (k_ptr->flavor)
-        {
-            /* Hack -- penalize "flavored" objects */
-            s = s - 20;
-        }
-
-        /* Normal objects */
-        else
-        {
-            /* Verify attr */
-              if (a != k_ptr->d_attr) continue;
-        }
-
-
-        /* Desire "best" possible score */
-        if (b_i && (s < b_s)) continue;
-
-        /* Track it */
-        b_i = i; b_s = s;
-    }
-
-    /* Result */
-    return (b_i);
-}
-#endif
-}
 
 
 /*
@@ -362,14 +232,15 @@ static int borg_new_take(int k_idx, int y, int x)
 /*
  * Attempt to notice a changing "take"
  */
-static bool observe_take_diff(int y, int x, byte a, char c)
+static bool observe_take_diff(int y, int x)
 {
     int i, k_idx;
 
     borg_take *take;
+	map_block *mb_ptr = map_loc(x, y);
 
-    /* Guess the kind */
-    k_idx = borg_guess_kind(a, c,y,x);
+    /* Get the kind */
+    k_idx = mb_ptr->object;
 
     /* Oops */
     if (!k_idx) return (FALSE);
@@ -529,101 +400,6 @@ static int borg_guess_race(byte a, char c, bool multi, int y, int x)
 
 	/* Actual monsters */
     return (mb_ptr->monster);
-
-#if 0
-    /* If I cannot locate it, then use the old routine to id the monster */
-    /* Find an "acceptable" monster */
-    for (i = 1; i < max_r_idx-1; i++)
-    {
-        monster_race *r_ptr = &r_info[i];
-
-        /* Skip non-monsters */
-        if (!r_ptr->name) continue;
-
-
-        /* Base score */
-        s = 10000;
-
-
-        /* Verify char rr9*/
-        if (c != r_ptr->d_char) continue;
-
-        /* Clear or multi-hued monsters */
-        if (r_ptr->flags1 & (RF1_ATTR_MULTI | RF1_ATTR_CLEAR))
-        {
-            /* Penalize "weird" monsters */
-            if (!multi) s = s - 1000;
-        }
-
-        /* Normal monsters */
-        else
-        {
-            /* Verify multi */
-            if (multi) continue;
-
-            /* Verify attr */
-            if (a != r_ptr->d_attr) continue;
-        }
-
-
-        /* Check uniques */
-        if (r_ptr->flags1 & RF1_UNIQUE)
-        {
-            /* Hack -- Dead uniques stay dead */
-            if (borg_race_death[i] > 0) continue;
-
-            /* Prefer normals */
-            s = s - 10;
-        }
-
-
-        /* Hack -- penalize "extremely" out of depth */
-        if (r_ptr->level > borg_skill[BI_CDEPTH] + 50) continue;
-
-        /* Hack -- penalize "very" out of depth */
-        if (r_ptr->level > borg_skill[BI_CDEPTH] + 15) s = s - 100;
-
-        /* Hack -- penalize "rather" out of depth */
-        if (r_ptr->level > borg_skill[BI_CDEPTH] + 5) s = s - 50;
-
-        /* Hack -- penalize "somewhat" out of depth */
-        if (r_ptr->level > borg_skill[BI_CDEPTH]) s = s - 10;
-
-        /* Penalize "depth miss" */
-        s = s - ABS(r_ptr->level - borg_skill[BI_CDEPTH]);
-
-
-        /* Hack -- Reward group monsters */
-        if (r_ptr->flags1 & (RF1_FRIEND | RF1_FRIENDS)) s = s + 5;
-
-        /* Hack -- Reward multiplying monsters */
-        if (r_ptr->flags2 & RF2_MULTIPLY) s = s + 10;
-
-
-        /* Count occurances */
-        n = borg_race_count[i];
-
-        /* Mega-Hack -- Reward occurances XXX XXX XXX */
-        s = s + (n / 100) + (((n < 100) ? n : 100) / 10) + ((n < 10) ? n : 10);
-
-
-        /* Desire "best" possible score */
-        if (b_i && (s < b_s)) continue;
-
-        /* Track it */
-        b_i = i; b_s = s;
-    }
-
-    /* Success */
-    if (b_i) return (b_i);
-
-
-    /* Message */
-    borg_note(format("# Assuming player ghost (char %d, attr %d)", c, a));
-
-    /* Assume player ghost */
-    return (max_r_idx - 1);
-#endif
 }
 
 
@@ -1518,17 +1294,18 @@ static int borg_new_kill(int r_idx, int y, int x)
 /*
  * Attempt to notice a changing "kill"
  */
-static bool observe_kill_diff(int y, int x, byte a, char c)
+static bool observe_kill_diff(int y, int x)
 {
     int i, r_idx;
 
     borg_kill *kill;
+	map_block *mb_ptr = map_loc(x, y);
 
     /* Guess the race */
-    r_idx = borg_guess_race(a, c, FALSE, y ,x);
+    r_idx = mb_ptr->monster;
 
     /* Oops */
-    /* if (!r_idx) return (FALSE); */
+    if (!r_idx) return (FALSE);
 
     /* Create a new monster */
     i = borg_new_kill(r_idx, y, x);
@@ -4492,8 +4269,7 @@ void borg_update(void)
         borg_wank *wank = &borg_wanks[i];
 
         /* Track new objects */
-        if (wank->is_take &&
-            observe_take_diff(wank->y, wank->x, wank->t_a, wank->t_c))
+        if (wank->is_take && observe_take_diff(wank->y, wank->x))
         {
             /* Hack -- excise the entry */
             borg_wanks[i] = borg_wanks[--borg_wank_num];
@@ -4506,7 +4282,7 @@ void borg_update(void)
 
         /* Track new monsters */
         if (wank->is_kill &&
-            observe_kill_diff(wank->y, wank->x, wank->t_a, wank->t_c))
+            observe_kill_diff(wank->y, wank->x))
         {
             /* Hack -- excise the entry */
             borg_wanks[i] = borg_wanks[--borg_wank_num];

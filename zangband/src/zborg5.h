@@ -20,6 +20,29 @@
 /* Hack - this is a field, so define it here */
 #define FEAT_INVIS	0x02
 
+
+/*
+ * Hack -- monster/object tracking grids
+ */
+
+typedef struct borg_wank borg_wank;
+
+struct borg_wank
+{
+    byte x;
+    byte y;
+
+    byte t_a;
+    char t_c;
+	
+	u16b object;
+	u16b monster;
+
+    bool is_take;
+    bool is_kill;
+};
+
+
 /*
  * Update state based on current "map"
  */
