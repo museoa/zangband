@@ -13,7 +13,7 @@ subdir = ./src/
 ## The Zangband source files
 ##
 
-ANGOBJS := $(addprefix src/,\
+NORMOBJS := $(addprefix src/,\
 	variable.o tables.o util.o cave.o \
 	object1.o object2.o monster1.o monster2.o \
 	xtra1.o xtra2.o spells1.o spells2.o \
@@ -24,8 +24,11 @@ ANGOBJS := $(addprefix src/,\
 	generate.o dungeon.o init1.o init2.o \
 	effects.o quest.o racial.o run.o script.o \
 	artifact.o mutation.o flavor.o spells3.o \
-	mspells1.o mspells2.o scores.o mind.o maid-x11.o\
-	bldg.o obj_kind.o wild1.o wild2.o wild3.o avatar.o notes.o\
+	mspells1.o mspells2.o scores.o mind.o \
+	bldg.o obj_kind.o wild1.o wild2.o wild3.o avatar.o notes.o)
+
+ANGOBJS := $(NORMOBJS) $(addprefix src/,\
+	maid-x11.o\
 	main-cap.o main-gcu.o main-x11.o main-xaw.o main-xpj.o\
 	main-lsl.o main-vcs.o main-gtk.o main-win.o main.o \
 	maid-grf.o main-dos.o main-ibm.o main-emx.o \
@@ -231,5 +234,8 @@ include $(scandir)
 $(LUAWSRCS): %.c: %.pkg src/lua/tolua $(TOLUALUAOBJS)
 	$(TOLUA) -n $(subst l-,,$(notdir $*)) -o $@ $<
 
-
+# List of makefiles in other build system so we can test them
+makefiles := $(addprefix src/,\
+				makefile.bcc makefile.ros makefile.std \
+				makefile.wat makefile.win)
 

@@ -114,7 +114,7 @@ zangband: $(objs-y)
 ##
 ## Hack - make sure the build system is consistant.
 ##
-makefile: configure makefile.in
+makefile: configure makefile.in .makefiles
 	$(CONFIGURE)
 	
 configure: configure.in
@@ -226,6 +226,21 @@ configure.in: .version
 	cat configure.in | sed -e "s/AC_INIT.*$$/AC_INIT\(Zangband,\ `cat .version`,\ bugs@zangband.org\)/" > configure.new
 	mv configure.new configure.in
 		
+# Test to see that all source files are in the other makefiles.
+.makefiles: $(makefiles)
+	for i in $(notdir $(NORMOBJS)) ; do \
+		for j in $(makefiles) ; do \
+			if [ x"`grep $$i $$j | sed 1q`" == x ]; then \
+				echo "Error: makefile $$j has $$i missing"; \
+				k="stop"; \
+			fi; \
+		done; \
+	done; \
+	if [ "x$$k" == "xstop" ]; then \
+		exit 1; \
+	fi; \
+	touch .makefiles;
+
 
 .PHONY: dirs base installbase install uninstall dist distcheck distgz \
 		 clean distclean test
