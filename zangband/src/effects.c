@@ -1830,7 +1830,8 @@ bool pois_dam(int dam, cptr kb_str, int pois)
 	take_hit(dam, kb_str);
 
 	/* Add poison to counter */
-	inc_poisoned(pois);
+	if (res_pois_lvl() > 3)
+		inc_poisoned(pois);
 	
 	/* Obvious */
 	return (TRUE);
