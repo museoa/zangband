@@ -3115,7 +3115,7 @@ static void cave_temp_room_aux(int x, int y)
 /*
  * Illuminate any room containing the given location.
  */
-void lite_room(int y1, int x1)
+void lite_room(int x1, int y1)
 {
 	int i, x, y;
 
@@ -3155,7 +3155,7 @@ void lite_room(int y1, int x1)
 /*
  * Darken all rooms containing the given location
  */
-void unlite_room(int y1, int x1)
+void unlite_room(int x1, int y1)
 {
 	int i, x, y;
 
@@ -3211,7 +3211,7 @@ bool lite_area(int dam, int rad)
 	(void)project(0, rad, p_ptr->px, p_ptr->py, dam, GF_LITE_WEAK, flg);
 
 	/* Lite up the room */
-	lite_room(p_ptr->py, p_ptr->px);
+	lite_room(p_ptr->px, p_ptr->py);
 
 	/* Assume seen */
 	return (TRUE);
@@ -3236,7 +3236,7 @@ bool unlite_area(int dam, int rad)
 	(void)project(0, rad, p_ptr->px, p_ptr->py, dam, GF_DARK_WEAK, flg);
 
 	/* Lite up the room */
-	unlite_room(p_ptr->py, p_ptr->px);
+	unlite_room(p_ptr->px, p_ptr->py);
 
 	/* Assume seen */
 	return (TRUE);

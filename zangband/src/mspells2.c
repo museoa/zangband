@@ -2389,7 +2389,7 @@ bool monst_spell_monst(int m_idx)
 
 				(void)project(m_idx, 3, x, y, 0, GF_DARK_WEAK, PROJECT_GRID | PROJECT_KILL);
 
-				unlite_room(y, x);
+				unlite_room(x, y);
 
 				break;
 			}

@@ -2859,7 +2859,7 @@ bool field_action_hit_trap_no_lite(field_type *f_ptr, vptr nothing)
 	}
 	
 	/* Darkeness */
-	unlite_room(p_ptr->py, p_ptr->px);
+	unlite_room(p_ptr->px, p_ptr->py);
 	
 	/* Recalculate torch */
 	p_ptr->update |= (PU_TORCH);
