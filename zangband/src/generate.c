@@ -538,8 +538,8 @@ static bool cave_gen(void)
 #ifdef FORCE_V_IDX
 				if (room_build(y, x, 8)) continue;
 #else
-				/* Type 8 -- Greater vault (4%) */
-				if (k < 4)
+				/* Type 8 -- Greater vault (7%) */
+				if (k < 7)
 				{
 					if (max_vault_ok > 1)
 					{
@@ -551,8 +551,8 @@ static bool cave_gen(void)
 					}
 				}
 
-				/* Type 7 -- Lesser vault (6%) */
-				if (k < 10)
+				/* Type 7 -- Lesser vault (10%) */
+				if (k < 17)
 				{
 					if (max_vault_ok > 0)
 					{
@@ -566,13 +566,13 @@ static bool cave_gen(void)
 
 
 				/* Type 5 -- Monster nest (8%) */
-				if ((k < 18) && room_build(y, x, 5)) continue;
+				if ((k < 25) && room_build(y, x, 5)) continue;
 
 				/* Type 6 -- Monster pit (10%) */
-				if ((k < 28) && room_build(y, x, 6)) continue;
+				if ((k < 35) && room_build(y, x, 6)) continue;
 
-				/* Type 10 -- Random vault (4%) */
-				if ((k < 32) && room_build(y, x, 10)) continue;
+				/* Type 10 -- Random vault (8%) */
+				if ((k < 43) && room_build(y, x, 10)) continue;
 #endif
 
 			}
