@@ -573,6 +573,13 @@
 /* Was 512... 256 quarks added for random artifacts */
 
 /*
+ * Number of times to pass through quark list while compacting.
+ * QUARK_COMPACT * QUARK_MAX must be less than MAX_SHORT
+ */
+#define QUARK_COMPACT	3
+
+
+/*
  * OPTION: Maximum number of messages to remember (see "utils.c")
  * Default: assume maximal memorization of 2048 total messages
  */

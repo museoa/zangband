@@ -1890,103 +1890,39 @@ char inkey(void)
 
 
 /*
- * Sorting hook -- comp function -- by "access time"
- *
- * We use "u" and "v" to point to arrays of "x" and "y" positions,
- * and sort the arrays by the value in y.  The value in x is
- * saved as a reference to the old position in the list.
- */
-static bool ang_sort_comp_a_time(vptr u, vptr v, int a, int b)
-{
-	s16b *y = (s16b*)(v);
-	
-	/* Hack - ignore u */
-	(void) u;
-
-	/* Compare them */
-	return (y[a] <= y[b]);
-}
-
-
-/*
- * Sorting hook -- swap function -- by "access time"
- *
- * We use "u" and "v" to point to arrays of "x" and "y" positions,
- * and sort the arrays by the value in y.  The value in x is
- * saved as a reference to the old position in the list.
- */
-static void ang_sort_swap_a_time(vptr u, vptr v, int a, int b)
-{
-	s16b *x = (s16b*)(u);
-	s16b *y = (s16b*)(v);
-
-	s16b temp;
-
-	/* Swap "x" */
-	temp = x[a];
-	x[a] = x[b];
-	x[b] = temp;
-
-	/* Swap "y" */
-	temp = y[a];
-	y[a] = y[b];
-	y[b] = temp;
-}
-
-
-/*
  * Out of space - Compact the quarks
  */
 static s16b compact_quarks(void)
 {
-	s16b empty, i;
+	s16b i, empty = 1;
 	
-	/* Save the times */
+	u16b min_use = quark__use[quark__num - 1];
+	
+	/* Find least recently used quark */
 	for (i = 1; i < quark__num; i++)
 	{
-		temp_x[i] = i;
-		temp_y[i] = quark__use[i];
-	}
-	
-	temp_n = quark__num;
-	
-	/* Set the sort hooks */
-	ang_sort_comp = ang_sort_comp_a_time;
-	ang_sort_swap = ang_sort_swap_a_time;
-
-	/* Sort by access time */
-	ang_sort(temp_x, temp_y, temp_n);
-
-	
-	/* Find the one with the least non-zero time */
-	i = 1;
-	
-	while (!temp_y[i]) i++;
-	
-	/* Save the most unused temporary quark */
-	empty = i;
-	
-	
-	/* Reset all the times to something "smaller" */
-	for (;i < quark__num; i++)
-	{
-		/* Paranoia */
-		if (temp_x[i])
+		if (quark__use[i] < min_use)
 		{
-			quark__use[temp_x[i]] = temp_y[i];
+			/* Less used than current quark? */
+			empty = i;
+			min_use = quark__use[i];
 		}
+	}
+		
+	/* Reset all the times to something "smaller" */
+	for (i = 1; i < quark__num; i++)
+	{
+		/* Hack XXX XXX - just use old value divided by QUARK_COMPACT */
+		quark__use[i] = quark__use[i] / QUARK_COMPACT;
 	}
 
 	/* 
 	 * Reset the time
 	 *
-	 * Note that QUARK_MAX * 3 must be less than the
+	 * Note that QUARK_MAX * QUARK_COMPACT must be less than the
 	 * size of a s16b.
 	 */
 	quark__tim = quark__num + 1;
-
-	/* Reset temp_n */
-	temp_n = 0;
 
 	return (empty);
 }
@@ -2001,9 +1937,6 @@ s16b quark_add(cptr str)
 	/* Look for an existing quark */
 	for (i = 1; i < quark__num; i++)
 	{
-		/* Check for non-permanence */
-		if (!quark__use[i]) continue;
-		
 		/* Check for equality */
 		if (streq(quark__str[i], str)) return (i);
 	}
@@ -2037,58 +1970,14 @@ s16b quark_add(cptr str)
 
 
 /*
- * Add a new permanent "quark" to the set of quarks.
- */
-s16b quark_add_perm(cptr str)
-{
-	int i;
-
-	/* Look for an existing quark */
-	for (i = 1; i < quark__num; i++)
-	{
-		/* Check for permanence */
-		if (quark__use[i]) continue;
-		
-		/* Check for equality */
-		if (streq(quark__str[i], str)) return (i);
-	}
-
-	/* Paranoia -- Require room */
-	if (quark__num == QUARK_MAX)
-	{
-		i = compact_quarks();
-		
-		/* Paranoia - no room? */
-		if (!i) return(0);
-		
-		/* Delete the old quark */
-		string_free(quark__str[i]);
-	}
-	else
-	{
-		/* New maximal quark */
-		quark__num = i + 1;
-	}
-
-	/* Add a new quark */
-	quark__str[i] = string_make(str);
-
-	/* Make it permanent */
-	quark__use[i] = 0;
-
-	/* Return the index */
-	return (i);
-}
-
-/*
  * This function looks up a quark
  */
 cptr quark_str(s16b i)
 {
 	cptr q;
 
-	/* Verify */
-	if ((i < 0) || (i >= quark__num)) i = 0;
+	/* Paranoia */
+	if ((i < 0) || (i >= quark__num)) return (NULL);
 
 	/* Access the quark */
 	q = quark__str[i];
@@ -2097,7 +1986,7 @@ cptr quark_str(s16b i)
 	quark__use[i] = ++quark__tim;
 	
 	/* Compact from time to time */
-	if (quark__tim > 3 * QUARK_MAX)
+	if (quark__tim > QUARK_COMPACT * QUARK_MAX)
 	{
 		(void) compact_quarks();
 	}
