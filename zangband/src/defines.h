@@ -3568,6 +3568,20 @@
 	 RF3_BR_GRAV | RF3_BR_SHAR | RF3_BR_PLAS | RF3_BR_WALL | RF3_BR_MANA | \
 	 RF3_BR_NUKE | RF3_BR_DISI)
 
+/* Skills */
+#define MAX_SKILL	10
+
+#define SKILL_DIS	0 /* Skill: Disarming */
+#define SKILL_DEV	1 /* Skill: Magic Devices */
+#define SKILL_SAV	2 /* Skill: Saving throw */
+#define SKILL_STL	3 /* Skill: Stealth factor */
+#define SKILL_SNS	4 /* Skill: Sensing ability */
+#define SKILL_FOS	5 /* Skill: Searching frequency */
+#define SKILL_THN	6 /* Skill: To hit (normal) */
+#define SKILL_THB	7 /* Skill: To hit (shooting) */
+#define SKILL_THT	8 /* Skill: To hit (throwing) */
+#define SKILL_DIG	9 /* Skill: Digging */
+
 /*** Menu Stuff ***/
 
 

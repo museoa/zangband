@@ -507,7 +507,7 @@ void search(void)
 	object_type *o_ptr;
 
 	/* Start with base search ability */
-	chance = p_ptr->skill.sns;
+	chance = p_ptr->skills[SKILL_SNS];
 
 	/* Penalize various conditions */
 	if (p_ptr->tim.blind || no_lite()) chance = chance / 10;
@@ -1069,7 +1069,7 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 
 	/* Calculate the "attack quality" */
 	bonus = p_ptr->to_h;
-	chance = (p_ptr->skill.thn + (bonus * BTH_PLUS_ADJ));
+	chance = (p_ptr->skills[SKILL_THN] + (bonus * BTH_PLUS_ADJ));
 
 	/* Test for hit */
 	if ((!(RF_FLAG(r_ptr->flags, 1, QUANTUM)) || one_in_(2)) &&
@@ -1181,7 +1181,7 @@ static bool monster_bash(int *blows, int sleeping_bonus, const cave_type *c_ptr,
 
 	/* Bashing chance depends on melee Skill, Dex, and a class level bonus. */
 	else
-		bash_chance = p_ptr->skill.thn +
+		bash_chance = p_ptr->skills[SKILL_THN] +
 			(adj_dex_th[p_ptr->stat[A_DEX].ind]) - 128 +
 			(((p_ptr->rp.pclass == CLASS_WARRIOR) ||
 			  (p_ptr->rp.pclass == CLASS_PALADIN) ||
@@ -1209,7 +1209,7 @@ static bool monster_bash(int *blows, int sleeping_bonus, const cave_type *c_ptr,
 		msgf("You get in a shield bash!");
 
 		/* Calculate attack quality, a mix of momentum and accuracy. */
-		bash_quality = p_ptr->skill.thn + (p_ptr->rp.wt / 8) +
+		bash_quality = p_ptr->skills[SKILL_THN] + (p_ptr->rp.wt / 8) +
 			(p_ptr->total_weight / 80) + (o_ptr->weight / 3);
 
 		/* Calculate damage.  Big shields are deadly. */
@@ -1583,7 +1583,7 @@ void py_attack(int x, int y)
 	 * to 1, base skill and modifiers to skill are given equal weight. -LM-
 	 */
 	bonus = p_ptr->to_h + o_ptr->to_h;
-	chance = (p_ptr->skill.thn + (bonus * BTH_PLUS_ADJ));
+	chance = (p_ptr->skills[SKILL_THN] + (bonus * BTH_PLUS_ADJ));
 
 	apply_object_trigger(TRIGGER_ATTACK, o_ptr, "p:iiii", 
 		LUA_MONSTER_NAMED(m_ptr, "monster"), LUA_RETURN(chance),
@@ -2626,7 +2626,7 @@ void move_player(int dir, int do_pickup)
 		}
 
 		/* Spontaneous Searching */
-		if ((p_ptr->skill.fos >= 50) || one_in_(50 - p_ptr->skill.fos))
+		if ((p_ptr->skills[SKILL_FOS] >= 50) || one_in_(50 - p_ptr->skills[SKILL_FOS]))
 		{
 			search();
 		}

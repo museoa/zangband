@@ -934,7 +934,7 @@ bool make_attack_normal(int m_idx)
 							msgf("You stand your ground!");
 							obvious = TRUE;
 						}
-						else if (saving_throw(p_ptr->skill.sav - power))
+						else if (saving_throw(p_ptr->skills[SKILL_SAV] - power))
 						{
 							msgf("You stand your ground!");
 							obvious = TRUE;
@@ -970,7 +970,7 @@ bool make_attack_normal(int m_idx)
 							msgf("You are unaffected!");
 							obvious = TRUE;
 						}
-						else if (saving_throw(p_ptr->skill.sav - power))
+						else if (saving_throw(p_ptr->skills[SKILL_SAV] - power))
 						{
 							msgf("You resist the effects!");
 							obvious = TRUE;

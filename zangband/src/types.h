@@ -1395,25 +1395,6 @@ struct player_command
 };
 
 /*
- * The player skills
- */
-typedef struct player_skill player_skill;
-
-struct player_skill
-{
-	s16b dis; /* Skill: Disarming */
-	s16b dev; /* Skill: Magic Devices */
-	s16b sav; /* Skill: Saving throw */
-	s16b stl; /* Skill: Stealth factor */
-	s16b sns; /* Skill: Sensing ability */
-	s16b fos; /* Skill: Searching frequency */
-	s16b thn; /* Skill: To hit (normal) */
-	s16b thb; /* Skill: To hit (shooting) */
-	s16b tht; /* Skill: To hit (throwing) */
-	s16b dig; /* Skill: Digging */
-};
-
-/*
  * The player stats
  */
 typedef struct player_stat player_stat;
@@ -1507,7 +1488,7 @@ struct player_type
 	
 	player_state state;	/* Internal state of the player */
 	
-	player_skill skill;	/* Player skills */
+	s16b skills[MAX_SKILL];	/* Player skills */
 	
 	player_command cmd;	/* The current command status */
 	

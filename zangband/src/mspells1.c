@@ -1466,7 +1466,7 @@ bool make_attack_spell(int m_idx)
 				msgf("%^s gazes deep into your eyes.", m_name);
 			}
 
-			if (saving_throw(p_ptr->skill.sav - power))
+			if (saving_throw(p_ptr->skills[SKILL_SAV] - power))
 			{
 				msgf("You resist the effects!");
 			}
@@ -1503,7 +1503,7 @@ bool make_attack_spell(int m_idx)
 				msgf("%^s looks deep into your eyes.", m_name);
 			}
 
-			if (saving_throw(p_ptr->skill.sav - power - 10))
+			if (saving_throw(p_ptr->skills[SKILL_SAV] - power - 10))
 			{
 				msgf("You resist the effects!");
 			}
@@ -1525,9 +1525,9 @@ bool make_attack_spell(int m_idx)
 				}
 				(void)inc_slow(rand_range(4, 8));
 
-				while (!saving_throw(p_ptr->skill.sav))
+				while (!saving_throw(p_ptr->skills[SKILL_SAV]))
 					(void)do_dec_stat(A_INT);
-				while (!saving_throw(p_ptr->skill.sav))
+				while (!saving_throw(p_ptr->skills[SKILL_SAV]))
 					(void)do_dec_stat(A_WIS);
 
 				if (!(TEST_FLAG(p_ptr->flags, 1, TR1_RES_CHAOS)))
@@ -1546,7 +1546,7 @@ bool make_attack_spell(int m_idx)
 			if (blind) msgf("%^s mumbles.", m_name);
 			else
 				msgf("%^s points at you and curses.", m_name);
-			if (saving_throw(p_ptr->skill.sav - power + 20))
+			if (saving_throw(p_ptr->skills[SKILL_SAV] - power + 20))
 			{
 				msgf("You resist the effects!");
 			}
@@ -1566,7 +1566,7 @@ bool make_attack_spell(int m_idx)
 			if (blind) msgf("%^s mumbles.", m_name);
 			else
 				msgf("%^s points at you and curses horribly.", m_name);
-			if (saving_throw(p_ptr->skill.sav - power + 10))
+			if (saving_throw(p_ptr->skills[SKILL_SAV] - power + 10))
 			{
 				msgf("You resist the effects!");
 			}
@@ -1586,7 +1586,7 @@ bool make_attack_spell(int m_idx)
 			if (blind) msgf("%^s mumbles loudly.", m_name);
 			else
 				msgf("%^s points at you, incanting terribly!", m_name);
-			if (saving_throw(p_ptr->skill.sav - power))
+			if (saving_throw(p_ptr->skills[SKILL_SAV] - power))
 			{
 				msgf("You resist the effects!");
 			}
@@ -1607,7 +1607,7 @@ bool make_attack_spell(int m_idx)
 			else
 				msgf("%^s points at you, screaming the word DIE!",
 						   m_name);
-			if (saving_throw(p_ptr->skill.sav - power - 10))
+			if (saving_throw(p_ptr->skills[SKILL_SAV] - power - 10))
 			{
 				msgf("You resist the effects!");
 			}
@@ -1765,7 +1765,7 @@ bool make_attack_spell(int m_idx)
 			{
 				msgf("You refuse to be frightened.");
 			}
-			else if (saving_throw(p_ptr->skill.sav - power))
+			else if (saving_throw(p_ptr->skills[SKILL_SAV] - power))
 			{
 				msgf("You refuse to be frightened.");
 			}
@@ -1789,7 +1789,7 @@ bool make_attack_spell(int m_idx)
 			{
 				msgf("You are unaffected!");
 			}
-			else if (saving_throw(p_ptr->skill.sav - power))
+			else if (saving_throw(p_ptr->skills[SKILL_SAV] - power))
 			{
 				msgf("You resist the effects!");
 			}
@@ -1814,7 +1814,7 @@ bool make_attack_spell(int m_idx)
 			{
 				msgf("You disbelieve the feeble spell.");
 			}
-			else if (saving_throw(p_ptr->skill.sav - power))
+			else if (saving_throw(p_ptr->skills[SKILL_SAV] - power))
 			{
 				msgf("You disbelieve the feeble spell.");
 			}
@@ -1836,7 +1836,7 @@ bool make_attack_spell(int m_idx)
 			{
 				msgf("You are unaffected!");
 			}
-			else if (saving_throw(p_ptr->skill.sav - power))
+			else if (saving_throw(p_ptr->skills[SKILL_SAV] - power))
 			{
 				msgf("You resist the effects!");
 			}
@@ -1860,7 +1860,7 @@ bool make_attack_spell(int m_idx)
 			{
 				msgf("You are unaffected!");
 			}
-			else if (saving_throw(p_ptr->skill.sav - power))
+			else if (saving_throw(p_ptr->skills[SKILL_SAV] - power))
 			{
 				msgf("You resist the effects!");
 			}
@@ -1907,7 +1907,7 @@ bool make_attack_spell(int m_idx)
 			/* RF5_HAND_DOOM */
 			disturb(TRUE);
 			msgf("%^s invokes the Hand of Doom!", m_name);
-			if (saving_throw(p_ptr->skill.sav - power - 10))
+			if (saving_throw(p_ptr->skills[SKILL_SAV] - power - 10))
 			{
 				msgf("You resist the effects!");
 			}
@@ -2070,7 +2070,7 @@ bool make_attack_spell(int m_idx)
 			{
 				msgf("You are unaffected!");
 			}
-			else if (saving_throw(p_ptr->skill.sav - power))
+			else if (saving_throw(p_ptr->skills[SKILL_SAV] - power))
 			{
 				msgf("You resist the effects!");
 			}
@@ -2120,7 +2120,7 @@ bool make_attack_spell(int m_idx)
 			disturb(TRUE);
 			msgf("%^s tries to blank your mind.", m_name);
 
-			if (saving_throw(p_ptr->skill.sav - power))
+			if (saving_throw(p_ptr->skills[SKILL_SAV] - power))
 			{
 				msgf("You resist the effects!");
 			}

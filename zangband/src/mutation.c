@@ -1800,7 +1800,7 @@ void mutation_effect(void)
 	
 	if (p_ptr->muta1 & MUT1_ILLUMINE)
 	{
-		p_ptr->skill.stl -= 1;
+		p_ptr->skills[SKILL_STL] -= 1;
 	}
 
 	if (p_ptr->muta1 & MUT1_BERSERK)
@@ -1816,7 +1816,7 @@ void mutation_effect(void)
 
 	if (p_ptr->muta1 & MUT1_RESIST)
 	{
-		p_ptr->skill.sav -= 10;
+		p_ptr->skills[SKILL_SAV] -= 10;
 	}
 
 	if (p_ptr->muta1 & MUT1_EARTHQUAKE)
@@ -1831,12 +1831,12 @@ void mutation_effect(void)
 
 	if (p_ptr->muta1 & MUT1_DAZZLE)
 	{
-		p_ptr->skill.stl -= 1;
+		p_ptr->skills[SKILL_STL] -= 1;
 	}
 
 	if (p_ptr->muta1 & MUT1_LASER_EYE)
 	{
-		p_ptr->skill.sns -= 10;
+		p_ptr->skills[SKILL_SNS] -= 10;
 	}
 
 	if (p_ptr->muta1 & MUT1_COLD_TOUCH)
@@ -1946,19 +1946,19 @@ void mutation_effect(void)
 
 	if (p_ptr->muta3 & MUT3_XTRA_EYES)
 	{
-		p_ptr->skill.fos += 15;
-		p_ptr->skill.sns += 15;
+		p_ptr->skills[SKILL_FOS] += 15;
+		p_ptr->skills[SKILL_SNS] += 15;
 		p_ptr->stat[A_CHR].add -= 1;
 	}
 
 	if (p_ptr->muta3 & MUT3_MAGIC_RES)
 	{
-		p_ptr->skill.sav += (15 + (p_ptr->lev / 5));
+		p_ptr->skills[SKILL_SAV] += (15 + (p_ptr->lev / 5));
 	}
 
 	if (p_ptr->muta3 & MUT3_XTRA_NOIS)
 	{
-		p_ptr->skill.stl -= 3;
+		p_ptr->skills[SKILL_STL] -= 3;
 	}
 
 	if (p_ptr->muta3 & MUT3_INFRAVIS)
@@ -2049,7 +2049,7 @@ void mutation_effect(void)
 	if (p_ptr->muta3 & MUT3_MOTION)
 	{
 		/* SET_FLAG(p_ptr->flags, 1, TR1_FREE_ACT) */;
-		p_ptr->skill.stl += 1;
+		p_ptr->skills[SKILL_STL] += 1;
 	}
 
 	if (p_ptr->muta3 & MUT3_ILL_NORM)

@@ -3651,7 +3651,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 			{
 				if (stop_ty ||
 					((TEST_FLAG(p_ptr->flags, 1, TR1_FREE_ACT)) &&
-					 (saving_throw(p_ptr->skill.sav))))
+					 (saving_throw(p_ptr->skills[SKILL_SAV]))))
 				{
 					/* Do nothing */ ;
 				}

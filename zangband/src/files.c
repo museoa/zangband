@@ -1449,12 +1449,12 @@ static void display_player_abilities(void)
 	/* Fighting Skill (with current weapon) */
 	o_ptr = &p_ptr->equipment[EQUIP_WIELD];
 	tmp = p_ptr->to_h + o_ptr->to_h;
-	xthn = p_ptr->skill.thn + (tmp * BTH_PLUS_ADJ);
+	xthn = p_ptr->skills[SKILL_THN] + (tmp * BTH_PLUS_ADJ);
 
 	/* Shooting Skill (with current bow and normal missile) */
 	o_ptr = &p_ptr->equipment[EQUIP_BOW];
 	tmp = p_ptr->to_h + o_ptr->to_h;
-	xthb = p_ptr->skill.thb + (tmp * BTH_PLUS_ADJ);
+	xthb = p_ptr->skills[SKILL_THB] + (tmp * BTH_PLUS_ADJ);
 
 	/* Is the player is wielding a shooter? */
 	if (o_ptr->k_idx)
@@ -1489,18 +1489,18 @@ static void display_player_abilities(void)
 							  CLR_WHITE "Stealth     : %v",
 		 					likert, xthn, 10,
 		 					likert, xthb, 10,
-		 					likert, p_ptr->skill.sav, 10,
-		 					likert, p_ptr->skill.stl, 1);
+		 					likert, p_ptr->skills[SKILL_SAV], 10,
+		 					likert, p_ptr->skills[SKILL_STL], 1);
 
 
 	put_fstr(COL_SKILLS2, 16, CLR_WHITE "Perception  : %v\n"
 							  CLR_WHITE "Sensing     : %v\n"
 							  CLR_WHITE "Disarming   : %v\n"
 							  CLR_WHITE "Magic Device: %v",
-							likert, p_ptr->skill.fos, 6,
-							likert, p_ptr->skill.sns, 6,
-							likert, p_ptr->skill.dis, 8,
-							likert, p_ptr->skill.dev, 6);
+							likert, p_ptr->skills[SKILL_FOS], 6,
+							likert, p_ptr->skills[SKILL_SNS], 6,
+							likert, p_ptr->skills[SKILL_DIS], 8,
+							likert, p_ptr->skills[SKILL_DEV], 6);
 
 	if (!muta_att)
 		put_fstr(COL_SKILLS3, 16, "Blows/Round : %d", p_ptr->num_blow);

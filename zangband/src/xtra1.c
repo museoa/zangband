@@ -2403,34 +2403,34 @@ static void calc_bonuses(void)
 
 
 	/* Base skill -- disarming */
-	p_ptr->skill.dis = rp_ptr->r_dis + cp_ptr->c_dis;
+	p_ptr->skills[SKILL_DIS] = rp_ptr->r_dis + cp_ptr->c_dis;
 
 	/* Base skill -- magic devices */
-	p_ptr->skill.dev = rp_ptr->r_dev + cp_ptr->c_dev;
+	p_ptr->skills[SKILL_DEV] = rp_ptr->r_dev + cp_ptr->c_dev;
 
 	/* Base skill -- saving throw */
-	p_ptr->skill.sav = rp_ptr->r_sav + cp_ptr->c_sav;
+	p_ptr->skills[SKILL_SAV] = rp_ptr->r_sav + cp_ptr->c_sav;
 
 	/* Base skill -- stealth */
-	p_ptr->skill.stl = rp_ptr->r_stl + cp_ptr->c_stl;
+	p_ptr->skills[SKILL_STL] = rp_ptr->r_stl + cp_ptr->c_stl;
 
 	/* Base skill -- sensing ability */
-	p_ptr->skill.sns = rp_ptr->r_sns + cp_ptr->c_sns;
+	p_ptr->skills[SKILL_SNS] = rp_ptr->r_sns + cp_ptr->c_sns;
 
 	/* Base skill -- searching frequency */
-	p_ptr->skill.fos = rp_ptr->r_fos + cp_ptr->c_fos;
+	p_ptr->skills[SKILL_FOS] = rp_ptr->r_fos + cp_ptr->c_fos;
 
 	/* Base skill -- combat (normal) */
-	p_ptr->skill.thn = rp_ptr->r_thn + cp_ptr->c_thn;
+	p_ptr->skills[SKILL_THN] = rp_ptr->r_thn + cp_ptr->c_thn;
 
 	/* Base skill -- combat (shooting) */
-	p_ptr->skill.thb = rp_ptr->r_thb + cp_ptr->c_thb;
+	p_ptr->skills[SKILL_THB] = rp_ptr->r_thb + cp_ptr->c_thb;
 
 	/* Base skill -- combat (throwing) */
-	p_ptr->skill.tht = rp_ptr->r_thb + cp_ptr->c_thb;
+	p_ptr->skills[SKILL_THT] = rp_ptr->r_thb + cp_ptr->c_thb;
 
 	/* Base skill -- digging */
-	p_ptr->skill.dig = 0;
+	p_ptr->skills[SKILL_DIG] = 0;
 
 	/* Get the player racial/class flags (including some mutations) */
 	player_flags(ff);
@@ -2478,19 +2478,19 @@ static void calc_bonuses(void)
 		if (TEST_FLAG(o_ptr->flags, 0, TR0_SP)) p_ptr->sp_bonus += o_ptr->pval;
 
 		/* Affect stealth */
-		if (TEST_FLAG(o_ptr->flags, 0, TR0_STEALTH)) p_ptr->skill.stl += o_ptr->pval;
+		if (TEST_FLAG(o_ptr->flags, 0, TR0_STEALTH)) p_ptr->skills[SKILL_STL] += o_ptr->pval;
 
 		/* Affect sensing ability (factor of five) */
-		if (TEST_FLAG(o_ptr->flags, 0, TR0_SEARCH)) p_ptr->skill.sns += (o_ptr->pval * 5);
+		if (TEST_FLAG(o_ptr->flags, 0, TR0_SEARCH)) p_ptr->skills[SKILL_SNS] += (o_ptr->pval * 5);
 
 		/* Affect searching frequency (factor of five) */
-		if (TEST_FLAG(o_ptr->flags, 0, TR0_SEARCH)) p_ptr->skill.fos += (o_ptr->pval * 5);
+		if (TEST_FLAG(o_ptr->flags, 0, TR0_SEARCH)) p_ptr->skills[SKILL_FOS] += (o_ptr->pval * 5);
 
 		/* Affect infravision */
 		if (TEST_FLAG(o_ptr->flags, 0, TR0_INFRA)) p_ptr->see_infra += o_ptr->pval;
 
 		/* Affect digging (factor of 20) */
-		if (TEST_FLAG(o_ptr->flags, 0, TR0_TUNNEL)) p_ptr->skill.dig += (o_ptr->pval * 20);
+		if (TEST_FLAG(o_ptr->flags, 0, TR0_TUNNEL)) p_ptr->skills[SKILL_DIG] += (o_ptr->pval * 20);
 
 		/* Affect speed */
 		if (TEST_FLAG(o_ptr->flags, 0, TR0_SPEED)) p_ptr->pspeed += o_ptr->pval;
@@ -2502,7 +2502,7 @@ static void calc_bonuses(void)
 		if (TEST_FLAG(o_ptr->flags, 2, TR2_XTRA_SHOTS)) extra_shots++;
 		
 		/* Boost saving throws */
-		if (TEST_FLAG(o_ptr->flags, 3, TR3_LUCK_10)) p_ptr->skill.sav += 10;
+		if (TEST_FLAG(o_ptr->flags, 3, TR3_LUCK_10)) p_ptr->skills[SKILL_SAV] += 10;
 
 		/* Modify the base armor class */
 		p_ptr->ac += o_ptr->ac;
@@ -2966,13 +2966,13 @@ static void calc_bonuses(void)
 		}
 	}
 	/* Add all class and race-specific adjustments to missile Skill. -LM- */
-	p_ptr->skill.thb += add_special_missile_skill(p_ptr->rp.pclass);
+	p_ptr->skills[SKILL_THB] += add_special_missile_skill(p_ptr->rp.pclass);
 
 	/* Examine the "main weapon" */
 	o_ptr = &p_ptr->equipment[EQUIP_WIELD];
 
 	/* Add all other class-specific adjustments to melee Skill. -LM- */
-	p_ptr->skill.thn += add_special_melee_skill(p_ptr->rp.pclass, o_ptr);
+	p_ptr->skills[SKILL_THN] += add_special_melee_skill(p_ptr->rp.pclass, o_ptr);
 
 	/* Assume okay */
 	p_ptr->icky_wield = FALSE;
@@ -3005,63 +3005,63 @@ static void calc_bonuses(void)
 	}
 
 	/* Affect Skill -- stealth (bonus one) */
-	p_ptr->skill.stl += 1;
+	p_ptr->skills[SKILL_STL] += 1;
 
 	/* Affect Skill -- disarming (DEX and INT) */
-	p_ptr->skill.dis += adj_dex_dis[p_ptr->stat[A_DEX].ind];
-	p_ptr->skill.dis += adj_int_dis[p_ptr->stat[A_INT].ind];
+	p_ptr->skills[SKILL_DIS] += adj_dex_dis[p_ptr->stat[A_DEX].ind];
+	p_ptr->skills[SKILL_DIS] += adj_int_dis[p_ptr->stat[A_INT].ind];
 
 	/* Affect Skill -- magic devices (INT) */
-	p_ptr->skill.dev += adj_int_dev[p_ptr->stat[A_INT].ind];
+	p_ptr->skills[SKILL_DEV] += adj_int_dev[p_ptr->stat[A_INT].ind];
 
 	/* Affect Skill -- saving throw (WIS) */
-	p_ptr->skill.sav += (adj_wis_sav[p_ptr->stat[A_WIS].ind] - 128);
+	p_ptr->skills[SKILL_SAV] += (adj_wis_sav[p_ptr->stat[A_WIS].ind] - 128);
 
 	/* Affect Skill -- digging (STR) */
-	p_ptr->skill.dig += adj_str_dig[p_ptr->stat[A_STR].ind];
+	p_ptr->skills[SKILL_DIG] += adj_str_dig[p_ptr->stat[A_STR].ind];
 
 	/* Affect Skill -- disarming (Level, by Class) */
-	p_ptr->skill.dis += (cp_ptr->x_dis * p_ptr->lev / 10);
+	p_ptr->skills[SKILL_DIS] += (cp_ptr->x_dis * p_ptr->lev / 10);
 
 	/* Affect Skill -- magic devices (Level, by Class) */
-	p_ptr->skill.dev += (cp_ptr->x_dev * p_ptr->lev / 10);
+	p_ptr->skills[SKILL_DEV] += (cp_ptr->x_dev * p_ptr->lev / 10);
 
 	/* Affect Skill -- saving throw (Level, by Class) */
-	p_ptr->skill.sav += (cp_ptr->x_sav * p_ptr->lev / 10);
+	p_ptr->skills[SKILL_SAV] += (cp_ptr->x_sav * p_ptr->lev / 10);
 
 	/* Affect Skill -- stealth (Level, by Class) */
-	p_ptr->skill.stl += (cp_ptr->x_stl * p_ptr->lev / 10);
+	p_ptr->skills[SKILL_STL] += (cp_ptr->x_stl * p_ptr->lev / 10);
 
 	/* Affect Skill -- sensing ability (Level, by Class) */
-	p_ptr->skill.sns += (cp_ptr->x_sns * p_ptr->lev / 10);
+	p_ptr->skills[SKILL_SNS] += (cp_ptr->x_sns * p_ptr->lev / 10);
 
 	/* Affect Skill -- search frequency (Level, by Class) */
-	p_ptr->skill.fos += (cp_ptr->x_fos * p_ptr->lev / 10);
+	p_ptr->skills[SKILL_FOS] += (cp_ptr->x_fos * p_ptr->lev / 10);
 
 	/* Affect Skill -- combat (normal) (Level, by Class) */
-	p_ptr->skill.thn += (cp_ptr->x_thn * p_ptr->lev / 50);
+	p_ptr->skills[SKILL_THN] += (cp_ptr->x_thn * p_ptr->lev / 50);
 
 	/* Affect Skill -- combat (shooting) (Level, by Class) */
-	p_ptr->skill.thb += (cp_ptr->x_thb * p_ptr->lev / 50);
+	p_ptr->skills[SKILL_THB] += (cp_ptr->x_thb * p_ptr->lev / 50);
 
 	/* Affect Skill -- combat (throwing) (Level, by Class) */
-	p_ptr->skill.tht += (cp_ptr->x_thb * p_ptr->lev / 50);
+	p_ptr->skills[SKILL_THT] += (cp_ptr->x_thb * p_ptr->lev / 50);
 
 	/* Limit Skill -- digging from 1 up */
-	if (p_ptr->skill.dig < 1) p_ptr->skill.dig = 1;
+	if (p_ptr->skills[SKILL_DIG] < 1) p_ptr->skills[SKILL_DIG] = 1;
 
 	/* Limit Skill -- saving throw from 1 up */
-	if (p_ptr->skill.sav < 1) p_ptr->skill.sav = 1;
+	if (p_ptr->skills[SKILL_SAV] < 1) p_ptr->skills[SKILL_SAV] = 1;
 
 	/* Limit Skill -- stealth from 0 to 30 */
-	if (p_ptr->skill.stl > 30) p_ptr->skill.stl = 30;
-	if (p_ptr->skill.stl < 0) p_ptr->skill.stl = 0;
+	if (p_ptr->skills[SKILL_STL] > 30) p_ptr->skills[SKILL_STL] = 30;
+	if (p_ptr->skills[SKILL_STL] < 0) p_ptr->skills[SKILL_STL] = 0;
 
 	/* Apply Skill -- Extract noise from stealth */
-	p_ptr->noise = (1L << (30 - p_ptr->skill.stl));
+	p_ptr->noise = (1L << (30 - p_ptr->skills[SKILL_STL]));
 
-	if ((TEST_FLAG(p_ptr->flags, 2, TR2_NO_MAGIC)) && (p_ptr->skill.sav < p_ptr->lev + 85))
-		 p_ptr->skill.sav = p_ptr->lev + 85;
+	if ((TEST_FLAG(p_ptr->flags, 2, TR2_NO_MAGIC)) && (p_ptr->skills[SKILL_SAV] < p_ptr->lev + 85))
+		 p_ptr->skills[SKILL_SAV] = p_ptr->lev + 85;
 
 	/* Assume not heavy */
 	p_ptr->heavy_wield = FALSE;
@@ -3113,7 +3113,7 @@ static void calc_bonuses(void)
 			p_ptr->num_blow = blows_table[str_index][dex_index];
 
 			/* Get weapon skill */
-			skill = p_ptr->skill.thn + (p_ptr->to_h * BTH_PLUS_ADJ);
+			skill = p_ptr->skills[SKILL_THN] + (p_ptr->to_h * BTH_PLUS_ADJ);
 
 			/* Require high skill to get large number of blows */
 			if ((skill < 100) && (p_ptr->num_blow > 3))
@@ -3137,7 +3137,7 @@ static void calc_bonuses(void)
 
 
 			/* Boost digging skill by weapon weight */
-			p_ptr->skill.dig += (o_ptr->weight / 10);
+			p_ptr->skills[SKILL_DIG] += (o_ptr->weight / 10);
 		}
 	}
 

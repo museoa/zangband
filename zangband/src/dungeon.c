@@ -390,7 +390,7 @@ static void sense_inventory(void)
 	 * Scale difficulty depending on sensing ability 
 	 * This can be affected by objects.
 	 */
-	difficulty /= (p_ptr->skill.sns > 0 ? p_ptr->skill.sns : 1);
+	difficulty /= (p_ptr->skills[SKILL_SNS] > 0 ? p_ptr->skills[SKILL_SNS] : 1);
 
 	/* Rescale larger by a facter of 25 */
 	difficulty *= 25;

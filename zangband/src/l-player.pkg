@@ -210,19 +210,19 @@ struct player_state
 	bool create_down_stair;	/* Create down stair on next level */
 };
 
-struct player_skill
-{
-	s16b dis; /* Skill: Disarming */
-	s16b dev; /* Skill: Magic Devices */
-	s16b sav; /* Skill: Saving throw */
-	s16b stl; /* Skill: Stealth factor */
-	s16b sns; /* Skill: Sensing ability */
-	s16b fos; /* Skill: Searching frequency */
-	s16b thn; /* Skill: To hit (normal) */
-	s16b thb; /* Skill: To hit (shooting) */
-	s16b tht; /* Skill: To hit (throwing) */
-	s16b dig; /* Skill: Digging */
-};
+/* Skills */
+#define MAX_SKILL	10
+
+#define SKILL_DIS	0 /* Skill: Disarming */
+#define SKILL_DEV	1 /* Skill: Magic Devices */
+#define SKILL_SAV	2 /* Skill: Saving throw */
+#define SKILL_STL	3 /* Skill: Stealth factor */
+#define SKILL_SNS	4 /* Skill: Sensing ability */
+#define SKILL_FOS	5 /* Skill: Searching frequency */
+#define SKILL_THN	6 /* Skill: To hit (normal) */
+#define SKILL_THB	7 /* Skill: To hit (shooting) */
+#define SKILL_THT	8 /* Skill: To hit (throwing) */
+#define SKILL_DIG	9 /* Skill: Digging */
 
 struct player_stat
 {
@@ -291,7 +291,7 @@ struct player_type
 	
 	player_state state;	/* Internal state of the player */
 	
-	player_skill skill;	/* Player skills */
+	s16b skills[MAX_SKILL];	/* Player skills */
 	
 	player_stat stat[A_MAX];	/* The player's stats */
 
