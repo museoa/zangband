@@ -56,7 +56,6 @@
 
 static void do_cmd_eat_food_aux(int item)
 {
-	int lev;
 	bool ident;
 	object_type *o_ptr;
 
@@ -81,9 +80,6 @@ static void do_cmd_eat_food_aux(int item)
 	/* Identity not known yet */
 	ident = FALSE;
 
-	/* Object level */
-	lev = get_object_level(o_ptr);
-
 	/* Eat the food */
 	use_object(o_ptr, &ident);
 
@@ -102,6 +98,9 @@ static void do_cmd_eat_food_aux(int item)
 	/* The player is now aware of the object */
 	if (ident && !object_aware_p(o_ptr))
 	{
+		/* Object level */
+		int lev = get_object_level(o_ptr);
+
 		object_aware(o_ptr);
 		gain_exp((lev + p_ptr->lev / 2) / p_ptr->lev);
 	}
@@ -200,7 +199,6 @@ void do_cmd_eat_food(void)
  */
 static void do_cmd_quaff_potion_aux(int item)
 {
-	int lev;
 	bool ident;
 	object_type	*o_ptr;
 
@@ -227,9 +225,6 @@ static void do_cmd_quaff_potion_aux(int item)
 	/* Not identified yet */
 	ident = FALSE;
 
-	/* Object level */
-	lev = get_object_level(o_ptr);
-
 	/* Quaff the potion */
 	use_object(o_ptr, &ident);
 
@@ -254,6 +249,9 @@ static void do_cmd_quaff_potion_aux(int item)
 	/* An identification was made */
 	if (ident && !object_aware_p(o_ptr))
 	{
+		/* Object level */
+		int lev = get_object_level(o_ptr);
+
 		object_aware(o_ptr);
 		gain_exp((lev + p_ptr->lev / 2) / p_ptr->lev);
 	}
@@ -330,9 +328,8 @@ static void do_cmd_read_scroll_aux(int item)
 	int py = p_ptr->py;
 	int px = p_ptr->px;
 
-	int         k, used_up, ident, lev;
+	bool ident, used_up;
 	object_type *o_ptr;
-	char        Rumor[1024];
 
 
 	/* Get the item (in the pack) */
@@ -354,400 +351,8 @@ static void do_cmd_read_scroll_aux(int item)
 	/* Not identified yet */
 	ident = FALSE;
 
-	/* Object level */
-	lev = get_object_level(o_ptr);
-
-	/* Assume the scroll will get used up */
-	used_up = TRUE;
-
-	/* Analyze the scroll */
-	switch (o_ptr->sval)
-	{
-		case SV_SCROLL_DARKNESS:
-		{
-			if (!(p_ptr->resist_blind) && !(p_ptr->resist_dark))
-			{
-				(void)set_blind(p_ptr->blind + rand_range(3, 8));
-			}
-			if (unlite_area(10, 3)) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_AGGRAVATE_MONSTER:
-		{
-			msg_print("There is a high pitched humming noise.");
-			aggravate_monsters(0);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_CURSE_ARMOR:
-		{
-			if (curse_armor()) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_CURSE_WEAPON:
-		{
-			if (curse_weapon()) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_SUMMON_MONSTER:
-		{
-			for (k = 0; k < randint1(3); k++)
-			{
-				if (summon_specific(0, py, px, p_ptr->depth, 0, TRUE, FALSE, FALSE))
-				{
-					ident = TRUE;
-				}
-			}
-			break;
-		}
-
-		case SV_SCROLL_SUMMON_UNDEAD:
-		{
-			for (k = 0; k < randint1(3); k++)
-			{
-				if (summon_specific(0, py, px, p_ptr->depth, SUMMON_UNDEAD, TRUE, FALSE, FALSE))
-				{
-					ident = TRUE;
-				}
-			}
-			break;
-		}
-
-		case SV_SCROLL_TRAP_CREATION:
-		{
-			if (trap_creation()) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_PHASE_DOOR:
-		{
-			teleport_player(10);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_TELEPORT:
-		{
-			teleport_player(100);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_TELEPORT_LEVEL:
-		{
-			(void)teleport_player_level();
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_WORD_OF_RECALL:
-		{
-			word_of_recall();
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_IDENTIFY:
-		{
-			ident = TRUE;
-			if (!ident_spell()) used_up = FALSE;
-			break;
-		}
-
-		case SV_SCROLL_STAR_IDENTIFY:
-		{
-			ident = TRUE;
-			if (!identify_fully()) used_up = FALSE;
-			break;
-		}
-
-		case SV_SCROLL_REMOVE_CURSE:
-		{
-			if (remove_curse())
-			{
-				msg_print("You feel as if someone is watching over you.");
-				ident = TRUE;
-			}
-			break;
-		}
-
-		case SV_SCROLL_STAR_REMOVE_CURSE:
-		{
-			(void)remove_all_curse();
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_ENCHANT_ARMOR:
-		{
-			ident = TRUE;
-			if (!enchant_spell(0, 0, 1)) used_up = FALSE;
-			break;
-		}
-
-		case SV_SCROLL_ENCHANT_WEAPON_TO_HIT:
-		{
-			if (!enchant_spell(1, 0, 0)) used_up = FALSE;
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_ENCHANT_WEAPON_TO_DAM:
-		{
-			if (!enchant_spell(0, 1, 0)) used_up = FALSE;
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_STAR_ENCHANT_ARMOR:
-		{
-			if (!enchant_spell(0, 0, rand_range(2, 7))) used_up = FALSE;
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_STAR_ENCHANT_WEAPON:
-		{
-			if (!enchant_spell(randint1(5), randint1(5), 0)) used_up = FALSE;
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_RECHARGING:
-		{
-			if (!recharge(130)) used_up = FALSE;
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_MUNDANITY:
-		{
-			ident = TRUE;
-			if (!mundane_spell()) used_up = FALSE;
-			break;
-		}
-
-		case SV_SCROLL_LIGHT:
-		{
-			if (lite_area(damroll(2, 8), 2)) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_MAPPING:
-		{
-			map_area();
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_DETECT_GOLD:
-		{
-			if (detect_treasure()) ident = TRUE;
-			if (detect_objects_gold()) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_DETECT_ITEM:
-		{
-			if (detect_objects_normal()) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_DETECT_TRAP:
-		{
-			if (detect_traps()) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_DETECT_DOOR:
-		{
-			if (detect_doors()) ident = TRUE;
-			if (detect_stairs()) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_DETECT_INVIS:
-		{
-			if (detect_monsters_invis()) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_SATISFY_HUNGER:
-		{
-			if (set_food(PY_FOOD_MAX - 1)) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_BLESSING:
-		{
-			if (set_blessed(p_ptr->blessed + rand_range(6, 18))) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_HOLY_CHANT:
-		{
-			if (set_blessed(p_ptr->blessed + rand_range(12, 36))) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_HOLY_PRAYER:
-		{
-			if (set_blessed(p_ptr->blessed + rand_range(24, 72))) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_MONSTER_CONFUSION:
-		{
-			if (p_ptr->confusing == 0)
-			{
-				msg_print("Your hands begin to glow.");
-				p_ptr->confusing = TRUE;
-				ident = TRUE;
-				p_ptr->redraw |= (PR_STATUS);
-			}
-			break;
-		}
-
-		case SV_SCROLL_PROTECTION_FROM_EVIL:
-		{
-			k = 3 * p_ptr->lev;
-			if (set_protevil(p_ptr->protevil + randint1(25) + k)) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_RUNE_OF_PROTECTION:
-		{
-			if (!warding_glyph()) used_up = FALSE;
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_TRAP_DOOR_DESTRUCTION:
-		{
-			if (destroy_doors_touch()) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_STAR_DESTRUCTION:
-		{
-			if (destroy_area(py, px, 15))
-				ident = TRUE;
-			else
-				msg_print("The dungeon trembles...");
-
-			break;
-		}
-
-		case SV_SCROLL_DISPEL_UNDEAD:
-		{
-			if (dispel_undead(60)) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_GENOCIDE:
-		{
-			(void)genocide(TRUE);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_MASS_GENOCIDE:
-		{
-			(void)mass_genocide(TRUE);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_ACQUIREMENT:
-		{
-			acquirement(py, px, 1, TRUE, FALSE);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_STAR_ACQUIREMENT:
-		{
-			acquirement(py, px, rand_range(2, 3), TRUE, FALSE);
-			ident = TRUE;
-			break;
-		}
-
-		/* New Zangband scrolls */
-		case SV_SCROLL_FIRE:
-		{
-			(void)fire_ball(GF_FIRE, 0, 300, 4);
-			/* Note: "Double" damage since it is centered on the player ... */
-			if (!(p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire))
-				take_hit(rand_range(50, 100), "a Scroll of Fire");
-			ident = TRUE;
-			break;
-		}
-
-
-		case SV_SCROLL_ICE:
-		{
-			(void)fire_ball(GF_ICE, 0, 350, 4);
-			if (!(p_ptr->oppose_cold || p_ptr->resist_cold || p_ptr->immune_cold))
-				take_hit(rand_range(100, 200), "a Scroll of Ice");
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_CHAOS:
-		{
-			(void)fire_ball(GF_CHAOS, 0, 400, 4);
-			if (!p_ptr->resist_chaos)
-				take_hit(rand_range(150, 300), "a Scroll of Logrus");
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_RUMOR:
-		{
-			errr err;
-
-			switch (randint1(20))
-			{
-				case 1:
-					err = get_rnd_line("chainswd.txt", 0, Rumor);
-					break;
-				case 2:
-					err = get_rnd_line("error.txt", 0, Rumor);
-					break;
-				case 3:
-				case 4:
-				case 5:
-					err = get_rnd_line("death.txt", 0, Rumor);
-					break;
-				default:
-					err = get_rnd_line("rumors.txt", 0, Rumor);
-					break;
-			}
-
-			/* An error occured */
-			if (err) strcpy(Rumor, "Some rumors are wrong.");
-
-			msg_print("There is message on the scroll. It says:");
-			message_flush();
-			msg_format("%s", Rumor);
-			message_flush();
-			msg_print("The scroll disappears in a puff of smoke!");
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_ARTIFACT:
-		{
-			if (!artifact_scroll()) used_up = FALSE;
-			ident = TRUE;
-			break;
-		}
-	}
-
+	/* Read the scroll */
+	used_up = use_object(o_ptr, &ident);
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -764,6 +369,9 @@ static void do_cmd_read_scroll_aux(int item)
 	/* An identification was made */
 	if (ident && !object_aware_p(o_ptr))
 	{
+		/* Object level */
+		int lev = get_object_level(o_ptr);
+
 		object_aware(o_ptr);
 		gain_exp((lev + p_ptr->lev / 2) / p_ptr->lev);
 	}
@@ -845,7 +453,7 @@ static void do_cmd_use_staff_aux(int item)
 	int py = p_ptr->py;
 	int px = p_ptr->px;
 
-	int         ident, chance, k, lev;
+	int ident, chance, k, lev;
 	object_type *o_ptr;
 
 
