@@ -3809,23 +3809,49 @@ void do_cmd_save_and_exit(void)
 	p_ptr->leaving = TRUE;
 }
 
-
 /*
- * Centers a string within a 31 character string		-JWT-
+ * Center a format string in the buffer.
+ *
+ * The first parameter on the stack must be the width
+ *  to center in.
+ *
+ * The second must be the string to center with.
+ * This is treated as a format string - so may contain
+ * other commands etc...
  */
-static void center_string(char *buf, cptr str)
+static void center_string(char *buf, uint max, cptr fmt, va_list *vp)
 {
 	int i, j;
 
+	cptr str;
+	
+	char tmp[1024];
+	
+    int size;
+	
+	/* Unused parameter */
+	(void)fmt;
+	    
+    /* Get the size of the string to center in */
+	size = va_arg(*vp, u32b);
+	
+	/* Get the string to center with. */
+	str = va_arg(*vp, cptr);
+	
+	/* Expand the string */
+	vstrnfmt(tmp, 1024, str, vp);
+	
 	/* Total length */
-	i = strlen(str);
+	i = strlen(tmp);
 
 	/* Necessary border */
-	j = 15 - i / 2;
+	j = (size - i) / 2;
 
-	/* Mega-Hack */
-	strnfmt(buf, 1024, "%*s%s%*s", j, "", str, 31 - i - j, "");
+	/* Mega-Hack center the (format) string in the buffer */
+	strnfmt(buf, max, "%*s%s%*s", j, "", tmp, size - i - j, "");
 }
+
+
 
 
 /*
@@ -3851,12 +3877,7 @@ static void print_tomb(void)
 	/* Print the text-tombstone */
 	if (!done)
 	{
-		cptr p;
-
-		char tmp[160];
-
 		char buf[1024];
-		char dummy[80];
 
 		FILE *fp;
 
@@ -3889,64 +3910,45 @@ static void print_tomb(void)
 		}
 
 
+		put_fstr(11, 6, "%v", center_string, 31, player_name);
+
+		put_fstr(11, 7, "%v", center_string, 31, "the");
+
+		
 		/* King or Queen */
 		if (p_ptr->total_winner || (p_ptr->lev > PY_MAX_LEVEL))
 		{
-			p = "Magnificent";
+			put_fstr(11, 8, "%v", center_string, 31, "Magnificent");
 		}
 
 		/* Normal */
 		else
 		{
-			p = player_title[p_ptr->pclass][(p_ptr->lev - 1) / 5];
+			put_fstr(11, 8, "%v", center_string, 31,
+					 player_title[p_ptr->pclass][(p_ptr->lev - 1) / 5]);
 		}
 
-		center_string(buf, player_name);
-		put_fstr(11, 6, buf);
+		put_fstr(11, 10, "%v", center_string, 31, cp_ptr->title);
 
-		center_string(buf, "the");
-		put_fstr(11, 7, buf);
+		put_fstr(11, 11, "%v", center_string, 31, "Level: %d", (int)p_ptr->lev);
 
-		center_string(buf, p);
-		put_fstr(11, 8, buf);
+		put_fstr(11, 12, "%v", center_string, 31, "Exp: %ld", (long)p_ptr->exp);
 
+		put_fstr(11, 13, "%v", center_string, 31, "AU: %ld", (long)p_ptr->au);
 
-		center_string(buf, cp_ptr->title);
-		put_fstr(11, 10, buf);
-
-		strnfmt(tmp, 160, "Level: %d", (int)p_ptr->lev);
-		center_string(buf, tmp);
-		put_fstr(11, 11, buf);
-
-		strnfmt(tmp, 160, "Exp: %ld", (long)p_ptr->exp);
-		center_string(buf, tmp);
-		put_fstr(11, 12, buf);
-
-		strnfmt(tmp, 160, "AU: %ld", (long)p_ptr->au);
-		center_string(buf, tmp);
-		put_fstr(11, 13, buf);
-
-		strnfmt(tmp, 160, "Killed on Level %d", p_ptr->depth);
-		center_string(buf, tmp);
-		put_fstr(11, 14, buf);
+		put_fstr(11, 14, "%v", center_string, 31, "Killed on Level %d", p_ptr->depth);
 
 
 		if (strlen(p_ptr->died_from) > 24)
 		{
-			strncpy(dummy, p_ptr->died_from, 24);
-			dummy[24] = '\0';
-			strnfmt(tmp, 160, "by %s.", dummy);
+			put_fstr(11, 15, "%v", center_string, 31, "by %.24s.", p_ptr->died_from);
 		}
 		else
-			strnfmt(tmp, 160, "by %s.", p_ptr->died_from);
+		{
+			put_fstr(11, 15, "%v", center_string, 31, "by %s.", p_ptr->died_from);
+		}
 
-		center_string(buf, tmp);
-		put_fstr(11, 15, buf);
-
-
-		strnfmt(tmp, 160, "%-.24s", ctime(&ct));
-		center_string(buf, tmp);
-		put_fstr(11, 17, buf);
+		put_fstr(11, 17, "%v", center_string, 31, "%-.24s", ctime(&ct));
 	}
 }
 
