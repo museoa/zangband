@@ -801,69 +801,6 @@ static t_widget_color *WidgetColor_Find(int color, int opacity)
 }
 
 
-/*
- * Set the interpreter result with the value of an item's configuration
- * option.
- *
- * $widget itemcget $index $option
- */
-static int WidgetItem_Cget(Tcl_Interp *interp, Widget *widgetPtr,
-	int objc, Tcl_Obj *CONST objv[])
-{
-	WidgetItem *itemPtr;
-	int index;
-	Tcl_Obj *objPtr;
-	DoubleLink *link;
-
-	/* Required number of arguments */
-	if (objc != 4)
-	{
-		/* Set the error */
-		Tcl_WrongNumArgs(interp, 2, objv, "index option");
-
-		/* Failure */
-		return TCL_ERROR;
-	}
-
-	/* Get the item index */
-	if (Tcl_GetIntFromObj(interp, objv[2], &index) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* Verify the item index */
-	if ((index < 0) || (index >= widgetPtr->linkerItem.count))
-	{
-		/* Set the error */
-		Tcl_AppendResult(interp, format("bad item index \"%d\"", index),
-			NULL);
-
-		/* Failure */
-		return TCL_ERROR;
-	}
-
-	/* Get the first item */
-	link = widgetPtr->linkerItem.head;
-
-	/* Walk through the items to the desired item */
-	while (index--) link = link->next;
-	itemPtr = DoubleLink_Data(link, WidgetItem);
-
-	/* Get the value of the configuration option */
-	objPtr = Tk_GetOptionValue(interp, (char *) itemPtr,
-		itemPtr->typePtr->optionTable, objv[3], widgetPtr->tkwin);
-	if (objPtr == NULL)
-	{
-		return TCL_ERROR;
-	}
-	
-	Tcl_SetObjResult(interp, objPtr);
-
-	/* Success */
-	return TCL_OK;
-}
-
-
 static int Widget_CaveToView(Widget *widgetPtr, int y, int x, int *rowPtr, int *colPtr)
 {
 	if ((y < widgetPtr->y_min) || (y >= widgetPtr->y_max))
@@ -1022,11 +959,11 @@ static t_widget_color *WidgetColor_Alloc(int color, int opacity)
  */
 static int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
-	static cptr commandNames[] = {"caveyx", "center", "cget", "configure",
-		"coloralloc", "colorderef", "itemcget",
+	static cptr commandNames[] = {"caveyx", "center", "configure",
+		"coloralloc", "colorderef",
 		"wipe", "bounds", "visible", "wipespot", "hittest", NULL};
-	enum {IDX_CAVEYX, IDX_CENTER, IDX_CGET, IDX_CONFIGURE,
-		IDX_COLORALLOC, IDX_COLORDEREF, IDX_ITEMCGET,
+	enum {IDX_CAVEYX, IDX_CENTER, IDX_CONFIGURE,
+		IDX_COLORALLOC, IDX_COLORDEREF,
 		IDX_WIPE, IDX_BOUNDS, IDX_VISIBLE, IDX_WIPESPOT, IDX_HITTEST} option;
 	Widget *widgetPtr = (Widget *) clientData;
 	int result;
@@ -1127,31 +1064,6 @@ static int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int ob
 		
 				/* Return the center */
 				Tcl_SetStringObj(Tcl_GetObjResult(interp), buffer, -1);
-			}
-			break;
-		}
-
-		case IDX_CGET: /* cget */
-		{
-			/* Required number of arguments */
-			if (objc != 3)
-			{
-				/* Set the error */
-				Tcl_WrongNumArgs(interp, 2, objv, "option");
-	
-				/* Failure */
-				goto error;
-			}
-		
-			objPtr = Tk_GetOptionValue(interp, (char *) widgetPtr,
-				optionTable, objv[2], widgetPtr->tkwin);
-			if (objPtr == NULL)
-			{
-				goto error;
-			}
-			else
-			{
-				Tcl_SetObjResult(interp, objPtr);
 			}
 			break;
 		}
@@ -1304,13 +1216,6 @@ static int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int ob
 				/* Dereference */
 				WidgetColor_Deref(color_ptr);
 			}
-			break;
-		}
-
-		case IDX_ITEMCGET: /* itemcget */
-		{
-			/* Query a Widget item option */
-			result = WidgetItem_Cget(interp, widgetPtr, objc, objv);
 			break;
 		}
 
