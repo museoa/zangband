@@ -189,6 +189,202 @@ static void place_building(int x, int y, blk_ptr block_ptr)
 	block_ptr[y][x].feat = FEAT_PERM_SOLID;
 }
 
+
+
+
+
+
+/* Store routine for the fractal cave generator */
+/* this routine probably should be an inline function or a macro. */
+static void store_height(int x, int y, int val)
+{	
+	/* only write to points that are "blank" */
+	if (temp_block[y][x] != MAX_SHORT) return;
+
+	/* store the value in height-map format */
+	temp_block[y][x] = val;
+	
+	return;
+}
+
+/*
+* Explanation of the plasma fractal algorithm:
+*
+* A grid of points is created with the properties of a 'height-map'
+* This is done by making the corners of the grid have a random value.
+* The grid is then subdivided into one with twice the resolution.
+* The new points midway between two 'known' points can be calculated
+* by taking the average value of the 'known' ones and randomly adding
+* or subtracting an amount proportional to the distance between those
+* points.  The final 'middle' points of the grid are then calculated
+* by averaging all four of the originally 'known' corner points.  An
+* random amount is added or subtracted from this to get a value of the
+* height at that point.  The scaling factor here is adjusted to the
+* slightly larger distance diagonally as compared to orthogonally.
+*
+* This is then repeated recursively to fill an entire 'height-map'
+* A rectangular map is done the same way, except there are different
+* scaling factors along the x and y directions.
+*
+ */
+
+static void frac_block(void)
+{
+	int cutoff, grd;
+
+	/* fixed point variables- these are stored as 256 x normal value
+	* this gives 8 binary places of fractional part + 8 places of normal part*/
+
+	u16b lstep, hstep, i, j, diagsize, size;
+	
+	/* Size is one bigger than normal blocks for speed of algorithm with 2^n + 1 */
+	size = WILD_BLOCK_SIZE;
+	
+
+	/*
+	* Scale factor for middle points:
+	* About sqrt(2) * 256 / 2 - correct for a square lattice.
+	*/
+	diagsize = 181;
+
+	/* Clear the section */
+	for (i = 0; i <= size; i++)
+	{
+		for (j = 0; j <= size; j++)
+		{
+			/* MAX_SHORT is a flag for "not done yet" */
+			temp_block[j][i] = MAX_SHORT;
+		}
+	}
+
+	/* Hack - set boundary value midway. */
+	cutoff = WILD_BLOCK_SIZE * 128;
+	
+	grd = 4 * 256;
+
+	/* Set the corner values just in case grd > size. */
+	store_height(0, 0, cutoff);
+	store_height(0, size, cutoff);
+	store_height(size, 0, cutoff);
+	store_height(size, size, cutoff);
+
+	/* Set the middle square to be an open area. */
+	store_height(size / 2, size / 2, cutoff);
+
+	/* Initialize the step sizes */
+	lstep = hstep = size * 256;
+	size = size * 256;
+
+	/*
+	 * Fill in the square with fractal height data -
+	 * like the 'plasma fractal' in fractint.
+	 */
+	while (lstep > 256)
+	{
+		/* Halve the step sizes */
+		lstep = hstep;
+		hstep /= 2;
+
+		/* middle top to bottom.*/
+		for (i = hstep; i <= size - hstep; i += lstep)
+		{
+			for (j = 0; j <= size; j += lstep)
+			{
+				if (hstep > grd)
+				{
+					/* If greater than 'grid' level then is random */
+					store_height(i / 256, j / 256, randint(WILD_BLOCK_SIZE * 256));
+				}
+			   	else
+				{
+					/* Average of left and right points +random bit */
+					store_height(i / 256, j / 256,
+					(temp_block[j / 256][(i - hstep) / 256] +
+					temp_block[j / 256][(i + hstep) / 256]) / 2 +
+					(randint(lstep) - hstep) / 2);
+				}
+			}
+		}
+
+
+		/* middle left to right.*/
+		for (j = hstep; j <= size - hstep; j += lstep)
+		{
+			for (i = 0; i <= size; i += lstep)
+		   	{
+				if (hstep > grd)
+				{
+					/* If greater than 'grid' level then is random */
+					store_height(i / 256, j / 256, randint(WILD_BLOCK_SIZE * 256));
+				}
+		   		else
+				{
+					/* Average of up and down points +random bit */
+					store_height(i / 256, j / 256,
+					(temp_block[(j - hstep) / 256][i / 256]
+					+ temp_block[(j + hstep) / 256][i / 256]) / 2
+					+ (randint(lstep) - hstep) / 2);
+				}
+			}
+		}
+
+		/* center.*/
+		for (i = hstep; i <= size - hstep; i += lstep)
+		{
+			for (j = hstep; j <= size - hstep; j += lstep)
+			{
+			   	if (hstep > grd)
+				{
+					/* If greater than 'grid' level then is random */
+					store_height(i / 256, j / 256, randint(WILD_BLOCK_SIZE * 256));
+				}
+		   		else
+				{
+					/* average over all four corners + scale by diagsize to
+					 * reduce the effect of the square grid on the shape of the fractal */
+					store_height(i / 256, j / 256,
+					(temp_block[(j - hstep) / 256][(i - hstep) / 256]
+					+ temp_block[(j + hstep) / 256][(i - hstep) / 256]
+					+ temp_block[(j - hstep) / 256][(i + hstep) / 256]
+					+ temp_block[(j + hstep) / 256][(i + hstep) / 256]) / 4
+					+ (randint(lstep) - hstep) * diagsize / 256);
+				}
+			}
+		}
+	}
+}
+
+/*
+ * This function copies the fractal height map in temp_block
+ * to a normal wilderness block.  The height map is modified
+ * via a simple function to make terrain. XXX XXX XXX
+ */
+
+static void copy_block(blk_ptr block_ptr)
+{
+	int i, j, element;
+	for (j = 0; j < WILD_BLOCK_SIZE; j++)
+	{	
+		for (i = 0; i < WILD_BLOCK_SIZE; i++)
+		{
+			element = temp_block[j][i];
+			if (element < WILD_BLOCK_SIZE * 128)
+			{ 
+				/* Grass */
+				block_ptr[j][i].info = CAVE_GLOW|CAVE_MARK;
+				block_ptr[j][i].feat = FEAT_GRASS;			
+			}
+			else
+			{
+				/* Trees */
+				block_ptr[j][i].info = CAVE_GLOW|CAVE_MARK;
+				block_ptr[j][i].feat = FEAT_TREES;			
+			}
+		}
+	}
+}
+
+
 	
 /* Make a new block based on the terrain type */
 static void gen_block(int x, int y, blk_ptr block_ptr)
@@ -211,6 +407,7 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 		
 	/* Generate a terrain block*/
 	
+	#if 0
 	for (i = 0; i < WILD_BLOCK_SIZE; i++)
 	{
 		for (j = 0; j < WILD_BLOCK_SIZE; j++)
@@ -226,8 +423,14 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 	/* Add a tree so know if movement works properly. */
 	block_ptr[rand_int(WILD_BLOCK_SIZE)]
 	 [rand_int(WILD_BLOCK_SIZE)].feat = FEAT_TREES;
-	 
-	 
+	#endif 0
+	 	
+	/* Test fractal terrain */
+	/* Note that this is very dodgy at the moment.
+	 * There is no wilderness 
+	frac_block();
+	copy_block(block_ptr);
+	 	 
 	/* Add roads / river / lava (Not done)*/
 	 
 	 
