@@ -1712,7 +1712,7 @@ I:70:28:0
 W:9:0:5:5
 A:9/1
 F:EASY_KNOW
-L:USE:	ident = detect_traps()
+L:USE:	ident = detect_traps(ident)
 
 ##### Extra ammunition #####
 
@@ -2721,7 +2721,7 @@ I:55:12:12
 W:5:0:50:50
 A:5/1
 P:0:1d2:0:0:0
-L:USE:	ident = detect_traps()
+L:USE:	ident = detect_traps(ident)
 
 N:301:Treasure Location
 G:_:d
@@ -3171,7 +3171,7 @@ W:10:0:15:100
 A:10/2
 P:0:1d1:0:0:0
 F:EASY_KNOW
-L:USE:	if detect_traps() then ident = TRUE end
+L:USE:	ident = detect_traps(ident)
 
 N:353:Probing
 G:-:d
@@ -3946,7 +3946,7 @@ L:USE:	message_flush()
 L:USE:	wiz_lite()
 L:USE:	do_inc_stat(A_INT)
 L:USE:	do_inc_stat(A_WIS)
-L:USE:	detect_traps(); detect_doors(); detect_stairs()
+L:USE:	detect_traps(TRUE); detect_doors(); detect_stairs()
 L:USE:	detect_treasure(); detect_objects_gold(); detect_objects_normal()
 L:USE:	identify_pack()
 L:USE:	self_knowledge()
