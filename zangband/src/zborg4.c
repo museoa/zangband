@@ -1143,69 +1143,15 @@ static void borg_notice_aux1(void)
 
 
 /*
- * Helper function -- notice the player inventory
+ * Notice the inventory
  */
-static void borg_notice_aux2(void)
+static void borg_notice_inven(void)
 {
-	int i, ii;
-	int carry_capacity;
-
 	list_item *l_ptr;
 	
+	int i;
+	
 	int number;
-
-
-	/*** Reset counters ***/
-
-
-	/* Reset basic */
-	amt_phase = 0;
-	amt_food_lowcal = 0;
-	amt_food_hical = 0;
-
-	/* Reset healing */
-	amt_slow_poison = 0;
-	amt_cure_confusion = 0;
-	amt_cure_blind = 0;
-
-	/* Reset books */
-	for (i = 0; i < MAX_REALM; i++)
-	{
-		for (ii = 0; ii < 4; ii++)
-		{
-			amt_book[i][ii] = 0;
-		}
-	}
-
-	/* Reset various */
-	amt_add_stat[A_STR] = 0;
-	amt_add_stat[A_INT] = 0;
-	amt_add_stat[A_WIS] = 0;
-	amt_add_stat[A_DEX] = 0;
-	amt_add_stat[A_CON] = 0;
-	amt_add_stat[A_CHR] = 0;
-	amt_fix_stat[A_STR] = 0;
-	amt_fix_stat[A_INT] = 0;
-	amt_fix_stat[A_WIS] = 0;
-	amt_fix_stat[A_DEX] = 0;
-	amt_fix_stat[A_CON] = 0;
-	amt_fix_stat[A_CHR] = 0;
-	amt_fix_stat[6] = 0;
-
-	amt_fix_exp = 0;
-	amt_cool_staff = 0;
-	amt_digger = 0;
-
-	/* Reset enchantment */
-	amt_enchant_to_a = 0;
-	amt_enchant_to_d = 0;
-	amt_enchant_to_h = 0;
-
-	amt_brand_weapon = 0;
-	amt_enchant_weapon = 0;
-	amt_enchant_armor = 0;
-
-	/*** Process the inventory ***/
 
 	/* Scan the inventory */
 	for (i = 0; i < inven_num; i++)
@@ -1843,6 +1789,69 @@ static void borg_notice_aux2(void)
 			}
 		}
 	}
+}
+
+
+/*
+ * Helper function -- notice the player inventory
+ */
+static void borg_notice_aux2(void)
+{
+	int i, ii;
+	int carry_capacity;
+
+	/*** Reset counters ***/
+
+
+	/* Reset basic */
+	amt_phase = 0;
+	amt_food_lowcal = 0;
+	amt_food_hical = 0;
+
+	/* Reset healing */
+	amt_slow_poison = 0;
+	amt_cure_confusion = 0;
+	amt_cure_blind = 0;
+
+	/* Reset books */
+	for (i = 0; i < MAX_REALM; i++)
+	{
+		for (ii = 0; ii < 4; ii++)
+		{
+			amt_book[i][ii] = 0;
+		}
+	}
+
+	/* Reset various */
+	amt_add_stat[A_STR] = 0;
+	amt_add_stat[A_INT] = 0;
+	amt_add_stat[A_WIS] = 0;
+	amt_add_stat[A_DEX] = 0;
+	amt_add_stat[A_CON] = 0;
+	amt_add_stat[A_CHR] = 0;
+	amt_fix_stat[A_STR] = 0;
+	amt_fix_stat[A_INT] = 0;
+	amt_fix_stat[A_WIS] = 0;
+	amt_fix_stat[A_DEX] = 0;
+	amt_fix_stat[A_CON] = 0;
+	amt_fix_stat[A_CHR] = 0;
+	amt_fix_stat[6] = 0;
+
+	amt_fix_exp = 0;
+	amt_cool_staff = 0;
+	amt_digger = 0;
+
+	/* Reset enchantment */
+	amt_enchant_to_a = 0;
+	amt_enchant_to_d = 0;
+	amt_enchant_to_h = 0;
+
+	amt_brand_weapon = 0;
+	amt_enchant_weapon = 0;
+	amt_enchant_armor = 0;
+
+	/*** Process the inventory ***/
+	borg_notice_inven();
 
 
 	/*** Process the Spells and Prayers ***/
