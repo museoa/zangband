@@ -123,7 +123,7 @@ static void roff_aux(int r_idx, int remem)
 	{
 		/* XXX XXX XXX */
 
-		/* Save the "old" memory */
+		/* Save the "old" memory (structure copy) */
 		save_mem = *r_ptr;
 
 		/* Hack -- Maximal info */

@@ -897,17 +897,18 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode)
 		case TV_FIGURINE:
 		case TV_STATUE:
 		{
-			cptr t = r_name + r_ptr->name;
+			cptr tmp = r_name + r_ptr->name;
 
 			if (!(r_ptr->flags1 & RF1_UNIQUE))
 			{
-				sprintf(tmp_val2, "%s%s", (is_a_vowel(*t) ? "an " : "a "), t);
+				sprintf(tmp_val2, "%s%s",
+					 (is_a_vowel(*tmp) ? "an " : "a "), tmp);
 
 				modstr = tmp_val2;
 			}
 			else
 			{
-				modstr = t;
+				modstr = tmp;
 			}
 
 			break;
@@ -1151,7 +1152,6 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode)
 			return;
 		}
 	}
-
 
 	/* Start dumping the result */
 	t = tmp_val;
@@ -1772,13 +1772,13 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode)
 	/* Use the standard inscription if available */
 	if (o_ptr->inscription)
 	{
-		char *u = tmp_val2;
+		char *tmp = tmp_val2;
 
 		strcpy(tmp_val2, quark_str(o_ptr->inscription));
 
-		for (; *u && (*u != '#'); u++);
+		for (; *tmp && (*tmp != '#'); tmp++);
 
-		*u = '\0';
+		*tmp = '\0';
 	}
 
 	/* Use the game-generated "feeling" otherwise, if available */

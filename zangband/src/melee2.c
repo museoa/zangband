@@ -924,14 +924,12 @@ static bool get_moves(int m_idx, int *mm)
 			/* Count room grids next to player */
 			for (i = 0; i < 8; i++)
 			{
-				int x = px + ddx_ddd[i];
-				int y = py + ddy_ddd[i];
+				int xx = px + ddx_ddd[i];
+				int yy = py + ddy_ddd[i];
 
-				cave_type *c_ptr;
+				if (!in_bounds2(yy, xx)) continue;
 
-				if (!in_bounds2(y, x)) continue;
-
-				c_ptr = area(y, x);
+				c_ptr = area(yy, xx);
 
 				/* Check grid */
 				if (((cave_floor_grid(c_ptr)) || ((c_ptr->feat & 0x60) == 0x60)) &&
@@ -1034,12 +1032,12 @@ static bool get_moves(int m_idx, int *mm)
 	if (x > 0) move_val += 4;
 
 	/* Prevent the diamond maneuvre */
-	if (ay > (ax << 1))
+	if (ay > (ax * 2))
 	{
 		move_val++;
 		move_val++;
 	}
-	else if (ax > (ay << 1))
+	else if (ax > (ay * 2))
 	{
 		move_val++;
 	}
@@ -1557,11 +1555,11 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 
 				if ((p_ptr->image) && one_in_(3))
 				{
-					strfmt(temp, "%s %s.",
+					(void)strfmt(temp, "%s %s.",
 					       silly_attacks[randint0(MAX_SILLY_ATTACK)],t_name);
 				}
 				else
-					strfmt(temp, act, t_name);
+					(void)strfmt(temp, act, t_name);
 
 				msg_format("%^s %s", m_name, temp);
 			}
@@ -1683,7 +1681,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 				{
 					if (damage > 23)
 					{
-						earthquake(m_ptr->fy, m_ptr->fx, 8);
+						(void)earthquake(m_ptr->fy, m_ptr->fx, 8);
 					}
 					break;
 				}
@@ -1719,7 +1717,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 				/* Do damage if not exploding */
 				if (!explode)
 				{
-					project(m_idx, 0, t_ptr->fy, t_ptr->fx,
+					(void)project(m_idx, 0, t_ptr->fy, t_ptr->fx,
 						(pt == GF_OLD_SLEEP ? r_ptr->level : damage), pt, PROJECT_KILL | PROJECT_STOP);
 				}
 
@@ -1759,7 +1757,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 							if (see_t)
 								tr_ptr->r_flags2 |= RF2_AURA_FIRE;
 						}
-						project(t_idx, 0, m_ptr->fy, m_ptr->fx,
+						(void)project(t_idx, 0, m_ptr->fy, m_ptr->fx,
 							damroll (1 + ((tr_ptr->level) / 26),
 							1 + ((tr_ptr->level) / 17)),
 							GF_FIRE, PROJECT_KILL | PROJECT_STOP);
@@ -1776,7 +1774,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 							if (see_t)
 								tr_ptr->r_flags3 |= RF3_AURA_COLD;
 						}
-						project(t_idx, 0, m_ptr->fy, m_ptr->fx,
+						(void)project(t_idx, 0, m_ptr->fy, m_ptr->fx,
 							damroll (1 + ((tr_ptr->level) / 26),
 							1 + ((tr_ptr->level) / 17)),
 							GF_COLD, PROJECT_KILL | PROJECT_STOP);
@@ -1792,7 +1790,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 							if (see_t)
 								tr_ptr->r_flags2 |= RF2_AURA_ELEC;
 						}
-						project(t_idx, 0, m_ptr->fy, m_ptr->fx,
+						(void)project(t_idx, 0, m_ptr->fy, m_ptr->fx,
 							damroll (1 + ((tr_ptr->level) / 26),
 							1 + ((tr_ptr->level) / 17)),
 							GF_ELEC, PROJECT_KILL | PROJECT_STOP);
@@ -1874,7 +1872,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 			p_ptr->mon_fight = TRUE;
 		}
 
-		teleport_away(m_idx, MAX_SIGHT * 2 + 5);
+		(void)teleport_away(m_idx, MAX_SIGHT * 2 + 5);
 	}
 
 	return TRUE;
@@ -1936,7 +1934,7 @@ static void process_monster(int m_idx)
 	bool            did_kill_wall;
 	bool            gets_angry = FALSE;
 	field_mon_test	mon_enter_test;
-
+	
 	/* Quantum monsters are odd */
 	if (r_ptr->flags2 & (RF2_QUANTUM))
 	{
@@ -1953,11 +1951,9 @@ static void process_monster(int m_idx)
 
 			if (m_ptr->ml)
 			{
-				char m_name[80];
-
 				/* Acquire the monster name */
 				monster_desc(m_name, m_ptr, 0);
-
+				
 				/* Oops */
 				msg_format("%^s disappears!", m_name);
 			}
@@ -2002,7 +1998,7 @@ static void process_monster(int m_idx)
 		if ((notice * notice * notice) <= p_ptr->noise)
 		{
 			/* Hack -- amount of "waking" */
-			int d = 1;
+			d = 1;
 
 			/* Wake up faster near the player */
 			if (m_ptr->cdis < 50) d = (100 / m_ptr->cdis);
@@ -2036,8 +2032,6 @@ static void process_monster(int m_idx)
 				/* Notice the "waking up" */
 				if ((m_ptr->ml) && (!(m_ptr->smart & SM_MIMIC)))
 				{
-					char m_name[80];
-
 					/* Acquire the monster name */
 					monster_desc(m_name, m_ptr, 0);
 
@@ -2065,7 +2059,7 @@ static void process_monster(int m_idx)
 	/* Handle "stun" */
 	if (m_ptr->stunned)
 	{
-		int d = 1;
+		d = 1;
 
 		/* Make a "saving throw" against stun */
 		if (randint0(10000) <= r_ptr->level * r_ptr->level)
@@ -2090,8 +2084,6 @@ static void process_monster(int m_idx)
 			/* Message if visible */
 			if (m_ptr->ml)
 			{
-				char m_name[80];
-
 				/* Acquire the monster name */
 				monster_desc(m_name, m_ptr, 0);
 
@@ -2109,7 +2101,7 @@ static void process_monster(int m_idx)
 	if (m_ptr->confused)
 	{
 		/* Amount of "boldness" */
-		int d = randint1(r_ptr->level / 20 + 1);
+		d = randint1(r_ptr->level / 20 + 1);
 
 		/* Still confused */
 		if (m_ptr->confused > d)
@@ -2127,8 +2119,6 @@ static void process_monster(int m_idx)
 			/* Message if visible */
 			if ((m_ptr->ml) && (!(m_ptr->smart & SM_MIMIC)))
 			{
-				char m_name[80];
-
 				/* Acquire the monster name */
 				monster_desc(m_name, m_ptr, 0);
 
@@ -2146,8 +2136,6 @@ static void process_monster(int m_idx)
 
 		if (!(m_ptr->invulner) && m_ptr->ml)
 		{
-			char m_name[80];
-
 			/* Acquire the monster name */
 			monster_desc(m_name, m_ptr, 0);
 
@@ -2159,11 +2147,12 @@ static void process_monster(int m_idx)
 	/* No one wants to be your friend if you're aggravating */
 	if (!is_hostile(m_ptr) && p_ptr->aggravate)
 		gets_angry = TRUE;
+		
+	/* Acquire the monster name */
+	monster_desc(m_name, m_ptr, 0);
 
 	if (gets_angry)
 	{
-		char m_name[80];
-		monster_desc(m_name, m_ptr, 0);
 		msg_format("%^s suddenly becomes hostile!", m_name);
 		set_hostile(m_ptr);
 	}
@@ -2172,7 +2161,7 @@ static void process_monster(int m_idx)
 	if (m_ptr->monfear)
 	{
 		/* Amount of "boldness" */
-		int d = randint1(r_ptr->level / 20 + 1);
+		d = randint1(r_ptr->level / 20 + 1);
 
 		/* Still afraid */
 		if (m_ptr->monfear > d)
@@ -2190,11 +2179,9 @@ static void process_monster(int m_idx)
 			/* Visual note */
 			if (m_ptr->ml)
 			{
-				char m_name[80];
 				char m_poss[80];
 
-				/* Acquire the monster name/poss */
-				monster_desc(m_name, m_ptr, 0);
+				/* Acquire the monster poss */
 				monster_desc(m_poss, m_ptr, 0x22);
 
 				/* Dump a message */
@@ -2255,15 +2242,11 @@ static void process_monster(int m_idx)
 	    (r_ptr->flags2 & RF2_CAN_SPEAK) && one_in_(SPEAK_CHANCE) &&
 		player_has_los_grid(c_ptr))
 	{
-		char m_name[80];
 		char monmessage[1024];
 		cptr filename;
 
 		/* Acquire the monster name/poss */
-		if (m_ptr->ml)
-			monster_desc(m_name, m_ptr, 0);
-		else
-			strcpy(m_name, "It");
+		if (!m_ptr->ml) strcpy(m_name, "It");
 
 		/* Select the file for monster quotes */
 		if (m_ptr->monfear)
@@ -2382,7 +2365,7 @@ static void process_monster(int m_idx)
 				}
 
 				/* Find the player */
-				get_moves(m_idx, mm);
+				(void)get_moves(m_idx, mm);
 
 				/* Restore the leash */
 				p_ptr->pet_follow_distance = dis;
@@ -2397,13 +2380,13 @@ static void process_monster(int m_idx)
 		mm[0] = mm[1] = mm[2] = mm[3] = 5;
 
 		/* Look for an enemy */
-		get_enemy_dir(m_ptr, mm);
+		(void)get_enemy_dir(m_ptr, mm);
 	}
 	/* Normal movement */
 	else if (stupid_monsters)
 	{
 		/* Logical moves */
-		get_moves(m_idx, mm);
+		(void)get_moves(m_idx, mm);
 	}
 	else
 	{
@@ -2942,8 +2925,6 @@ static void process_monster(int m_idx)
 		/* Message if seen */
 		if (m_ptr->ml)
 		{
-			char m_name[80];
-
 			/* Acquire the monster name */
 			monster_desc(m_name, m_ptr, 0);
 

@@ -2268,7 +2268,7 @@ bool monst_spell_monst(int m_idx)
 					msg_format("%^s blinks away.", m_name);
 				}
 
-				teleport_away(m_idx, 10);
+				(void)teleport_away(m_idx, 10);
 
 				break;
 			}
@@ -2281,7 +2281,7 @@ bool monst_spell_monst(int m_idx)
 					msg_format("%^s teleports away.", m_name);
 				}
 
-				teleport_away(m_idx, MAX_SIGHT * 2 + 5);
+				(void)teleport_away(m_idx, MAX_SIGHT * 2 + 5);
 
 				break;
 			}
@@ -2348,7 +2348,7 @@ bool monst_spell_monst(int m_idx)
 
 				if (!resists_tele)
 				{
-					teleport_away(t_idx, MAX_SIGHT * 2 + 5);
+					(void)teleport_away(t_idx, MAX_SIGHT * 2 + 5);
 				}
 
 				break;

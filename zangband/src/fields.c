@@ -1466,7 +1466,7 @@ bool field_action_glyph_explode(field_type *f_ptr, vptr input)
 		if ((f_ptr->fy == p_ptr->py) && (f_ptr->fx == p_ptr->px))
 		{
 			msg_print("The rune explodes!");
-			fire_ball(GF_MANA, 0, 2 * ((p_ptr->lev / 2) + damroll(7, 7)), 2);
+			(void)fire_ball(GF_MANA, 0, 2 * ((p_ptr->lev / 2) + damroll(7, 7)), 2);
 		}
 		else
 			msg_print("An explosive rune was disarmed.");
@@ -2464,7 +2464,7 @@ bool field_action_hit_trap_ba_element(field_type *f_ptr, vptr nothing)
 		case 0:
 		{
 			msg_print("You are enveloped in a ball of flames!");
-			fire_ball(GF_FIRE, 0, 350, 4);
+			(void)fire_ball(GF_FIRE, 0, 350, 4);
 			
 			fire_dam(150, "a fire trap");
 			break;
@@ -2473,7 +2473,7 @@ bool field_action_hit_trap_ba_element(field_type *f_ptr, vptr nothing)
 		case 1:
 		{
 			msg_print("You are soaked with acid!");
-			fire_ball(GF_ACID, 0, 350, 4);
+			(void)fire_ball(GF_ACID, 0, 350, 4);
 			
 			acid_dam(150, "an acid trap");
 			break;
@@ -2482,7 +2482,7 @@ bool field_action_hit_trap_ba_element(field_type *f_ptr, vptr nothing)
 		case 2:
 		{
 			msg_print("A pungent grey gas surrounds you!");
-			fire_ball(GF_POIS, 0, 350, 4);
+			(void)fire_ball(GF_POIS, 0, 350, 4);
 			
 			if (!p_ptr->resist_pois && !p_ptr->oppose_pois)
 			{
@@ -2494,7 +2494,7 @@ bool field_action_hit_trap_ba_element(field_type *f_ptr, vptr nothing)
 		case 3:
 		{
 			msg_print("You are soaked with freezing liquid!");
-			fire_ball(GF_ICE, 0, 350, 4);
+			(void)fire_ball(GF_ICE, 0, 350, 4);
 			
 			cold_dam(150, "a cold trap");
 			break;
@@ -2503,7 +2503,7 @@ bool field_action_hit_trap_ba_element(field_type *f_ptr, vptr nothing)
 		case 4:
 		{
 			msg_print("You are hit by lightning!");
-			fire_ball(GF_ELEC, 0, 350, 4);
+			(void)fire_ball(GF_ELEC, 0, 350, 4);
 			
 			elec_dam(150, "a lightning trap");
 			break;
@@ -2530,6 +2530,7 @@ bool field_action_hit_trap_gas(field_type *f_ptr, vptr nothing)
 		{
 			msg_print("A blue gas surrounds you!");
 			(void)set_slow(p_ptr->slow + rand_range(20, 40));
+			break;
 		}
 
 		case 1:
@@ -2608,7 +2609,7 @@ bool field_action_hit_trap_traps(field_type *f_ptr, vptr nothing)
 	msg_print("There is a bright flash of light!");
 
 	/* Make some new traps */
-	project(0, 1, p_ptr->py, p_ptr->px, 0, GF_MAKE_TRAP,
+	(void)project(0, 1, p_ptr->py, p_ptr->px, 0, GF_MAKE_TRAP,
 	        PROJECT_HIDE | PROJECT_JUMP | PROJECT_GRID);
 
 	/* Delete the field */
@@ -3045,7 +3046,7 @@ bool field_action_hit_trap_summon(field_type *f_ptr, vptr nothing)
 	msg_print("Zap!");
 	
 	/* Summon monsters */
-	summon_specific(0, p_ptr->py, p_ptr->px, p_ptr->depth,
+	(void)summon_specific(0, p_ptr->py, p_ptr->px, p_ptr->depth,
 		 0, TRUE, FALSE, FALSE);
 	
 	/* Delete the field */
@@ -3072,7 +3073,7 @@ bool field_action_hit_trap_lose_memory(field_type *f_ptr, vptr nothing)
 	
 	msg_print("You are not sure what just happened!");
 	
-	lose_all_info();
+	(void)lose_all_info();
 	
 	/* Done */
 	return (FALSE);
@@ -3677,7 +3678,7 @@ bool field_action_weaponplus2(field_type *f_ptr, vptr input)
 	{
 		item_tester_hook = item_tester_hook_melee_weapon;
 				
-		enchant_item(f_ptr->data[1] * *factor, TRUE, TRUE, FALSE);
+		(void)enchant_item(f_ptr->data[1] * *factor, TRUE, TRUE, FALSE);
 					
 		/* Hack, use factor as a return value */	
 		*factor = TRUE;
@@ -3718,7 +3719,7 @@ bool field_action_armourplus2(field_type *f_ptr, vptr input)
 	{
 		item_tester_hook = item_tester_hook_armour;
 				
-		enchant_item(f_ptr->data[1] * *factor, FALSE, FALSE, TRUE);			
+		(void)enchant_item(f_ptr->data[1] * *factor, FALSE, FALSE, TRUE);
 		
 		/* Hack, use factor as a return value */	
 		*factor = TRUE;

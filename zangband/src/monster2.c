@@ -1073,7 +1073,7 @@ void update_mon(int m_idx, bool full)
 		int dx = (px > fx) ? (px - fx) : (fx - px);
 
 		/* Approximate distance */
-		d = (dy > dx) ? (dy + (dx >> 1)) : (dx + (dy >> 1));
+		d = (dy > dx) ? (dy + (dx / 2)) : (dx + (dy / 2));
 
 		/* Restrict distance */
 		if (d > 255) d = 255;

@@ -1090,7 +1090,7 @@ bool make_attack_normal(int m_idx)
 						/* Obvious */
 						obvious = TRUE;
 
-						/* Hack -- Reduce damage based on the player armor class */
+						/* Hack Reduce damage based on the player armor class */
 						damage -= (damage * ((ac < 150) ? ac : 150) / 250);
 
 						/* Take damage */
@@ -1099,7 +1099,7 @@ bool make_attack_normal(int m_idx)
 						/* Radius 8 earthquake centered at the monster */
 						if (damage > 23)
 						{
-							earthquake(m_ptr->fy, m_ptr->fx, 8);
+							(void)earthquake(m_ptr->fy, m_ptr->fx, 8);
 						}
 
 						break;
@@ -1372,8 +1372,6 @@ bool make_attack_normal(int m_idx)
 			/* Handle cut */
 			if (do_cut)
 			{
-				int k;
-
 				/* Critical hit (zero if non-critical) */
 				tmp = monster_critical(d_dice, d_side, damage);
 
@@ -1397,8 +1395,6 @@ bool make_attack_normal(int m_idx)
 			/* Handle stun */
 			if (do_stun)
 			{
-				int k;
-
 				/* Critical hit (zero if non-critical) */
 				tmp = monster_critical(d_dice, d_side, damage);
 
@@ -1549,7 +1545,7 @@ bool make_attack_normal(int m_idx)
 	if (blinked && alive)
 	{
 		msg_print("The thief flees laughing!");
-		teleport_away(m_idx, MAX_SIGHT * 2 + 5);
+		(void)teleport_away(m_idx, MAX_SIGHT * 2 + 5);
 	}
 
 

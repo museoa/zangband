@@ -397,7 +397,7 @@ static int score_idx = -1;
  *
  * Assumes "signals_ignore_tstp()" has been called.
  */
-errr enter_score(void)
+void enter_score(void)
 {
 	int i;
 	high_score   the_score;
@@ -411,7 +411,7 @@ errr enter_score(void)
 	/* No score file */
 	if (highscore_fd < 0)
 	{
-		return (0);
+		return;
 	}
 
 #ifndef SCORE_WIZARDS
@@ -421,7 +421,7 @@ errr enter_score(void)
 		msg_print("Score not registered for wizards.");
 		msg_print(NULL);
 		score_idx = -1;
-		return (0);
+		return;
 	}
 #endif
 
@@ -432,7 +432,7 @@ errr enter_score(void)
 		msg_print("Score not registered for borgs.");
 		msg_print(NULL);
 		score_idx = -1;
-		return (0);
+		return;
 	}
 #endif
 
@@ -443,7 +443,7 @@ errr enter_score(void)
 		msg_print("Score not registered for cheaters.");
 		msg_print(NULL);
 		score_idx = -1;
-		return (0);
+		return;
 	}
 #endif
 
@@ -453,7 +453,7 @@ errr enter_score(void)
 		msg_print("Score not registered due to interruption.");
 		msg_print(NULL);
 		score_idx = -1;
-		return (0);
+		return;
 	}
 
 	/* Quitter */
@@ -462,7 +462,7 @@ errr enter_score(void)
 		msg_print("Score not registered due to quitting.");
 		msg_print(NULL);
 		score_idx = -1;
-		return (0);
+		return;
 	}
 
 
@@ -527,16 +527,16 @@ errr enter_score(void)
 
 
 	/* Lock (for writing) the highscore file, or fail */
-	if (fd_lock(highscore_fd, F_WRLCK)) return (1);
+	if (fd_lock(highscore_fd, F_WRLCK)) return;
 
 	/* Add a new entry to the score list, see where it went */
 	score_idx = highscore_add(&the_score);
 
 	/* Unlock the highscore file, or fail */
-	if (fd_lock(highscore_fd, F_UNLCK)) return (1);
+	if (fd_lock(highscore_fd, F_UNLCK)) return;
 
 	/* Success */
-	return (0);
+	return;
 }
 
 
@@ -544,7 +544,7 @@ errr enter_score(void)
 /*
  * Displays some relevant portion of the high score list.
  */
-errr top_twenty(void)
+void top_twenty(void)
 {
 	/* Clear screen */
 	Term_clear();
@@ -554,7 +554,7 @@ errr top_twenty(void)
 	{
 		msg_print("Score file unavailable.");
 		msg_print(NULL);
-		return (0);
+		return;
 	}
 
 	/* Hack -- Display the top fifteen scores */
@@ -571,26 +571,25 @@ errr top_twenty(void)
 	}
 
 	/* Success */
-	return (0);
+	return;
 }
 
 
 /*
  * Predict the players location, and display it.
  */
-errr predict_score(void)
+void predict_score(void)
 {
 	int          j;
 
 	high_score   the_score;
-
 
 	/* No score file */
 	if (highscore_fd < 0)
 	{
 		msg_print("Score file unavailable.");
 		msg_print(NULL);
-		return (0);
+		return;
 	}
 
 
@@ -645,10 +644,6 @@ errr predict_score(void)
 		display_scores_aux(0, 5, -1, NULL);
 		display_scores_aux(j - 2, j + 7, j, &the_score);
 	}
-
-
-	/* Success */
-	return (0);
 }
 
 
