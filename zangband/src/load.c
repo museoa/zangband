@@ -405,7 +405,7 @@ static void rd_item(object_type *o_ptr)
 	{
 		byte i;
 
-		for (i = 0; i <= FEEL_MAX; i++)
+		for (i = 0; i <= 9; i++)
 		{
 			if (game_inscriptions[i] == NULL)
 			{

@@ -53,6 +53,12 @@ static byte value_check_aux1(object_type *o_ptr)
 
 	/* Good "weapon" bonus */
 	if (o_ptr->to_h + o_ptr->to_d > 0) return FEEL_GOOD;
+	
+	/* Bad "armor" bonus */
+	if (o_ptr->to_a < 0) return FEEL_BAD;
+
+	/* Bad "weapon" bonus */
+	if (o_ptr->to_h + o_ptr->to_d < 0) return FEEL_BAD;
 
 	/* Default to "average" */
 	return FEEL_AVERAGE;
@@ -81,6 +87,12 @@ static byte value_check_aux2(object_type *o_ptr)
 
 	/* Good weapon bonuses */
 	if (o_ptr->to_h + o_ptr->to_d > 0) return FEEL_GOOD;
+	
+	/* Bad armor bonus */
+	if (o_ptr->to_a < 0) return FEEL_BAD;
+
+	/* Bad weapon bonuses */
+	if (o_ptr->to_h + o_ptr->to_d < 0) return FEEL_BAD;
 
 	/* No feeling */
 	return FEEL_NONE;
@@ -333,10 +345,11 @@ static void sense_inventory(void)
 				}
 				case FEEL_AVERAGE:
 				{
-					feel = randint0(2) ? FEEL_CURSED : FEEL_GOOD;
+					feel = randint0(2) ? FEEL_BAD : FEEL_GOOD;
 					break;
 				}
 				case FEEL_GOOD:
+				case FEEL_BAD:
 				{
 					feel = randint0(3) ? FEEL_CURSED : FEEL_AVERAGE;
 					break;

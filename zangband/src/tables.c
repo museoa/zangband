@@ -6437,6 +6437,7 @@ cptr game_inscriptions[] =
 	"good",          /* FEEL_GOOD */
 	"excellent",     /* FEEL_EXCELLENT */
 	"special",       /* FEEL_SPECIAL */
+	"bad",			 /* FEEL_BAD */
 };
 
 

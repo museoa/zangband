@@ -2386,8 +2386,9 @@
 #define FEEL_GOOD              7
 #define FEEL_EXCELLENT         8
 #define FEEL_SPECIAL           9
+#define FEEL_BAD			   10
 
-#define FEEL_MAX               9
+#define FEEL_MAX               10
 
 /*
  * Hack -- special "xtra" object powers
