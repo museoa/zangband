@@ -209,6 +209,14 @@ else
   ,[AC_MSG_WARN(Can't compile tk port)])
 fi
 
+dnl Virtual Console port support.
+AC_CHECK_HEADER(sys/ioctl.h,
+  [AC_CHECK_HEADER(termios.h,
+    [
+	   AC_DEFINE(USE_VCS, 1, [VCS port])
+	])
+  ])
+
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
