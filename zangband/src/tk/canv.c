@@ -27,7 +27,6 @@ struct WidgetItem  {
 	double x, y;
 	Tk_Anchor anchor;
 	t_assign_icon assign;
-	t_assign_icon assignbg;
 	int gwidth, gheight;
 	XColor *borderColor;
 	int borderWidth;
@@ -74,9 +73,6 @@ static Tk_ConfigSpec configSpecs[] = {
 	 "2", Tk_Offset(WidgetItem, borderWidth), 0, NULL},
     {TK_CONFIG_CUSTOM, (char *) "-assign", NULL, NULL,
 	 NULL, Tk_Offset(WidgetItem, assign), TK_CONFIG_USER_BIT,
-	 &assignOption},
-    {TK_CONFIG_CUSTOM, (char *) "-assignbg", NULL, NULL,
-	 NULL, Tk_Offset(WidgetItem, assignbg), TK_CONFIG_USER_BIT,
 	 &assignOption},
     {TK_CONFIG_CUSTOM, (char *) "-state", NULL, NULL,
 	 NULL, Tk_Offset(Tk_Item, state), TK_CONFIG_NULL_OK,
@@ -171,7 +167,6 @@ CreateWidget(
     none.type = ICON_TYPE_NONE;
     none.index = 0;
 	widgetPtr->assign = none;
-	widgetPtr->assignbg = none;
 	widgetPtr->gwidth = widgetPtr->gheight = g_icon_size;
 	widgetPtr->anchor = TK_ANCHOR_NW;
 	widgetPtr->borderColor = NULL;
@@ -398,7 +393,7 @@ static void DisplayWidget(Tk_Canvas canvas, Tk_Item *itemPtr,
 	WidgetItem *widgetPtr = (WidgetItem *) itemPtr;
 	short drawableX, drawableY;	
 	int borderSize = 0;
-	IconSpec iconSpecFG, iconSpecBG;
+	IconSpec iconSpecFG;
 	
 #ifdef PLATFORM_WIN
     HDC dc, dc2;
@@ -427,7 +422,6 @@ static void DisplayWidget(Tk_Canvas canvas, Tk_Item *itemPtr,
 		&drawableX, &drawableY);
 
 	FinalIcon(&iconSpecFG, &widgetPtr->assign);
-	FinalIcon(&iconSpecBG, &widgetPtr->assignbg);
 
 	if (widgetPtr->borderColor && widgetPtr->borderWidth)
 	{
@@ -435,7 +429,7 @@ static void DisplayWidget(Tk_Canvas canvas, Tk_Item *itemPtr,
 	}
 
 
-	if ((iconSpecFG.type != ICON_TYPE_NONE) || (iconSpecBG.type != ICON_TYPE_NONE))
+	if (iconSpecFG.type != ICON_TYPE_NONE)
 	{
 
 #ifdef PLATFORM_WIN
@@ -451,12 +445,6 @@ static void DisplayWidget(Tk_Canvas canvas, Tk_Item *itemPtr,
 		gc = Tk_GetGC(tkwin, GCFunction | GCGraphicsExposures, &gcValues);
 #endif /* PLATFORM_X11 */
 		
-		/* Draw background icon */
-		if (iconSpecBG.type != ICON_TYPE_NONE)
-		{
-			DrawIconSpec(&iconSpecBG);
-		}
-	
 		/* Draw foreground icon */
 		if (iconSpecFG.type != ICON_TYPE_NONE)
 		{
