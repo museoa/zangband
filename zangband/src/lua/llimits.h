@@ -162,6 +162,13 @@ typedef unsigned long Instruction;
 #define MAXUPVALUES	MAXARG_B
 #endif
 
+/* special code to fit a LUA_MULTRET inside an argB */
+#define MULT_RET        255	/* (<=MAXARG_B) */
+#if MULT_RET>MAXARG_B
+#undef MULT_RET
+#define MULT_RET	MAXARG_B
+#endif
+
 
 /* maximum number of variables in the left side of an assignment */
 #ifndef MAXVARSLH
