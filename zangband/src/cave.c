@@ -562,7 +562,7 @@ static bool feat_supports_lighting[256] =
 	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0x10 */
 	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0x18 */
 	FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,/* 0x20 */
-	FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, /* 0x28 */
+	FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,/* 0x28 */
 	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0x30 */
 	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0x38 */
 	TRUE,  FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,/* 0x40 */
@@ -588,7 +588,7 @@ static bool feat_supports_lighting[256] =
 	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0xE0 */
 	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0xE8 */
 	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0xF0 */
-	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE /* 0xF8 */
+	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE  /* 0xF8 */
 };	
 
 
@@ -652,6 +652,178 @@ static byte lighting_colours[16][2] =
 	{TERM_L_UMBER, TERM_UMBER}
 };
 
+#ifdef VARIABLE_PLAYER_GRAPH
+static void variable_player_graph(byte *a, char *c)
+{
+	if (!streq(ANGBAND_GRAF, "new"))
+	{
+		if (!streq(ANGBAND_SYS,"ibm"))
+		{
+			if (use_graphics)
+			{
+				*a = BMP_FIRST_PC_CLASS + p_ptr->pclass;
+				*c = BMP_FIRST_PC_RACE  + p_ptr->prace;
+			}
+		}
+		else
+		{
+			if (use_graphics)
+			{
+				if (p_ptr->psex == SEX_FEMALE) *c = (char)242;
+				switch (p_ptr->pclass)
+				{
+					case CLASS_PALADIN:
+						if (p_ptr->lev < 20)
+							*a = TERM_L_WHITE;
+						else
+							*a = TERM_WHITE;
+						*c = 253;
+						break;
+					case CLASS_WARRIOR_MAGE:
+						if (p_ptr->lev < 20)
+							*a = TERM_L_RED;
+						else
+							*a = TERM_VIOLET;
+						break;
+					case CLASS_CHAOS_WARRIOR:
+						*a = rand_int(14) + 1;
+						break;
+					case CLASS_MAGE:
+					case CLASS_HIGH_MAGE:
+						if (p_ptr->lev < 20)
+							*a = TERM_L_RED;
+						else
+							*a = TERM_RED;
+						*c = 248;
+						break;
+					case CLASS_PRIEST:
+						if (p_ptr->lev < 20)
+							*a = TERM_L_BLUE;
+						else
+							*a = TERM_BLUE;
+						*c = 248;
+						break;
+					case CLASS_RANGER:
+						if (p_ptr->lev < 20)
+							*a = TERM_L_GREEN;
+						else
+							*a = TERM_GREEN;
+						break;
+					case CLASS_ROGUE:
+						if (p_ptr->lev < 20)
+							*a = TERM_SLATE;
+						else
+							*a = TERM_L_DARK;
+						break;
+					case CLASS_WARRIOR:
+						if (p_ptr->lev < 20)
+							*a = TERM_L_UMBER;
+						else
+							*a = TERM_UMBER;
+						break;
+					case CLASS_MONK:
+					case CLASS_MINDCRAFTER:
+						if (p_ptr->lev < 20)
+							*a = TERM_L_UMBER;
+						else
+							*a = TERM_UMBER;
+						*c = 248;
+						break;
+					default: /* Unknown */
+						*a = TERM_WHITE;
+				}
+
+				switch (p_ptr->prace)
+				{
+					case RACE_GNOME:
+					case RACE_HOBBIT:
+						*c = 144;
+						break;
+					case RACE_DWARF:
+						*c = 236;
+						break;
+					case RACE_HALF_ORC:
+							*c = 243;
+						break;
+					case RACE_HALF_TROLL:
+						*c = 184;
+						break;
+					case RACE_ELF:
+					case RACE_HALF_ELF:
+					case RACE_HIGH_ELF:
+						*c = 223;
+						break;
+					case RACE_HALF_OGRE:
+						*c = 168;
+						break;
+					case RACE_HALF_GIANT:
+					case RACE_HALF_TITAN:
+					case RACE_CYCLOPS:
+						*c = 145;
+						break;
+					case RACE_YEEK:
+						*c = 209;
+						break;
+					case RACE_KLACKON:
+						*c = 229;
+						break;
+					case RACE_KOBOLD:
+						*c = 204;
+						break;
+					case RACE_NIBELUNG:
+						*c = 144;
+						break;
+					case RACE_DARK_ELF:
+						*c = 223;
+						break;
+					case RACE_DRACONIAN:
+						if (p_ptr->lev < 20)
+							*c = 240;
+						else if (p_ptr->lev < 40)
+							*c = 22;
+						else
+							*c = 137;
+						break;
+					case RACE_MIND_FLAYER:
+						*c = 236;
+						break;
+					case RACE_IMP:
+						*c = 142;
+						break;
+					case RACE_GOLEM:
+						*c = 6;
+						break;
+					case RACE_SKELETON:
+						if (p_ptr->pclass == CLASS_MAGE ||
+							p_ptr->pclass == CLASS_PRIEST ||
+							p_ptr->pclass == CLASS_HIGH_MAGE ||
+							p_ptr->pclass == CLASS_MONK ||
+							p_ptr->pclass == CLASS_MINDCRAFTER)
+							*c = 159;
+						else
+							*c = 181;
+						break;
+					case RACE_ZOMBIE:
+						*c = 221;
+						break;
+					case RACE_VAMPIRE:
+						*c = 217;
+						break;
+					case RACE_SPECTRE:
+						*c = 241;
+						break;
+					case RACE_SPRITE:
+						*c = 244;
+						break;
+					case RACE_BEASTMAN:
+						*c = 154;
+						break;
+				}
+			}
+		}
+	}
+}
+#endif /* VARIABLE_PLAYER_GRAPH */
 
 /*
  * Extract the attr/char to display at the given (legal) map location
@@ -790,17 +962,22 @@ void map_info(int y, int x, byte *ap, char *cp)
 	{
 		feat = c_ptr->feat;
 		
-		/* point to the feat (mimiced) */
+		/* point to the feat ("mimic"ed) */
 		f_ptr = &f_info[f_info[feat].mimic];
 			
-		/* Blank attr */
+		/* The feats attr */
 		a = f_ptr->x_attr;
 
-		/* Blank char */
+		/* The feats char */
 		c = f_ptr->x_char;
 	
 		/* 
 		 * Look for more lighting effects.
+		 *
+		 * Hack - the cave_floor_grid() macro is not used
+		 * since the feat is already known.  This gives a
+		 * tiny speedup.  (But any speed increase in this
+		 * extremely important routine is good.)
 		 */
 		if (view_special_lite && !p_ptr->blind
 			 && (!(feat & 0x20) || view_granite_lite))
@@ -868,33 +1045,25 @@ void map_info(int y, int x, byte *ap, char *cp)
 	(*tcp) = c;
 #endif /* USE_TRANSPARENCY */
 
-
-	/* Objects */
-	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
+	/* Handle "player" */
+	if ((y == py) && (x == px))
 	{
-		/* Acquire object */
-		o_ptr = &o_list[this_o_idx];
+		monster_race *r_ptr = &r_info[0];
 
-		/* Acquire next object */
-		next_o_idx = o_ptr->next_o_idx;
+		/* Get the "player" attr */
+		*ap = r_ptr->x_attr;
 
-		/* Memorized objects */
-		if (o_ptr->marked)
-		{
-			/* Normal char */
-			c = object_char(o_ptr);
+		/* Get the "player" char */
+		*cp = r_ptr->x_char;
+#ifdef VARIABLE_PLAYER_GRAPH
 
-			/* Normal attr */
-			a = object_attr(o_ptr);
+		variable_player_graph(ap, cp)
 
-			/* Hack -- hallucination */
-			if (halluc) image_object(&a, &c);
+#endif /* VARIABLE_PLAYER_GRAPH */
 
-			/* Done */
-			break;
-		}
+		/* Done */
+		return;
 	}
-
 
 	/* Handle monsters */
 	if (c_ptr->m_idx)
@@ -926,14 +1095,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 				/* Do nothing */
 			}
 
-			/* Mimics' colors vary */
-			else if (strchr("\"!=", c) && !(r_ptr->flags1 & RF1_UNIQUE))
-			{
-				/* Use char */;
-
-				/* Use semi-random attr */
-				a = c_ptr->m_idx % 15 + 1;
-			}
+			
 
 			/* Multi-hued monster */
 			else if (r_ptr->flags1 & (RF1_ATTR_MULTI))
@@ -982,6 +1144,15 @@ void map_info(int y, int x, byte *ap, char *cp)
 						break;
 				}
 			}
+			/* Mimics' colors vary */
+			else if (((c == '\"') || (c == '!') || (c == '='))
+				 && !(r_ptr->flags1 & RF1_UNIQUE))
+			{	
+				/* Use char */;
+
+				/* Use semi-random attr */
+				a = c_ptr->m_idx % 15 + 1;
+			}
 
 			/* Hack -- hallucination */
 			if (halluc)
@@ -990,192 +1161,42 @@ void map_info(int y, int x, byte *ap, char *cp)
 				image_monster(&a, &c);
 			}
 		}
+	
+		/* Hack -- fake monochrome */
+		if (fake_monochrome)
+		{
+			if (p_ptr->invuln || !use_color) a = TERM_WHITE;
+			else if (p_ptr->wraith_form) a = TERM_L_DARK;
+		}
+		
+		/* Done */
+		return;	
 	}
 
-	/* Handle "player" */
-	if ((y == py) && (x == px))
+	/* Objects */
+	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
 	{
-		monster_race *r_ptr = &r_info[0];
+		/* Acquire object */
+		o_ptr = &o_list[this_o_idx];
 
-		/* Get the "player" attr */
-		a = r_ptr->x_attr;
+		/* Acquire next object */
+		next_o_idx = o_ptr->next_o_idx;
 
-		/* Get the "player" char */
-		c = r_ptr->x_char;
-
-#ifdef VARIABLE_PLAYER_GRAPH
-
-		if (!streq(ANGBAND_GRAF, "new"))
+		/* Memorized objects */
+		if (o_ptr->marked)
 		{
-			if (!streq(ANGBAND_SYS,"ibm"))
-			{
-				if (use_graphics)
-				{
-					a = BMP_FIRST_PC_CLASS + p_ptr->pclass;
-					c = BMP_FIRST_PC_RACE  + p_ptr->prace;
-				}
-			}
-			else
-			{
-				if (use_graphics)
-				{
-					if (p_ptr->psex == SEX_FEMALE) c = (char)242;
-					switch (p_ptr->pclass)
-					{
-						case CLASS_PALADIN:
-							if (p_ptr->lev < 20)
-								a = TERM_L_WHITE;
-							else
-								a = TERM_WHITE;
-							c = 253;
-							break;
-						case CLASS_WARRIOR_MAGE:
-							if (p_ptr->lev < 20)
-								a = TERM_L_RED;
-							else
-								a = TERM_VIOLET;
-							break;
-						case CLASS_CHAOS_WARRIOR:
-							a = rand_int(14) + 1;
-							break;
-						case CLASS_MAGE:
-						case CLASS_HIGH_MAGE:
-							if (p_ptr->lev < 20)
-								a = TERM_L_RED;
-							else
-								a = TERM_RED;
-							c = 248;
-							break;
-						case CLASS_PRIEST:
-							if (p_ptr->lev < 20)
-								a = TERM_L_BLUE;
-							else
-								a = TERM_BLUE;
-							c = 248;
-							break;
-						case CLASS_RANGER:
-							if (p_ptr->lev < 20)
-								a = TERM_L_GREEN;
-							else
-								a = TERM_GREEN;
-							break;
-						case CLASS_ROGUE:
-							if (p_ptr->lev < 20)
-								a = TERM_SLATE;
-							else
-								a = TERM_L_DARK;
-							break;
-						case CLASS_WARRIOR:
-							if (p_ptr->lev < 20)
-								a = TERM_L_UMBER;
-							else
-								a = TERM_UMBER;
-							break;
-						case CLASS_MONK:
-						case CLASS_MINDCRAFTER:
-							if (p_ptr->lev < 20)
-								a = TERM_L_UMBER;
-							else
-								a = TERM_UMBER;
-							c = 248;
-							break;
-						default: /* Unknown */
-							a = TERM_WHITE;
-					}
+			/* Normal char */
+			c = object_char(o_ptr);
 
-					switch (p_ptr->prace)
-					{
-						case RACE_GNOME:
-						case RACE_HOBBIT:
-							c = 144;
-							break;
-						case RACE_DWARF:
-							c = 236;
-							break;
-						case RACE_HALF_ORC:
-							c = 243;
-							break;
-						case RACE_HALF_TROLL:
-							c = 184;
-							break;
-						case RACE_ELF:
-						case RACE_HALF_ELF:
-						case RACE_HIGH_ELF:
-							c = 223;
-							break;
-						case RACE_HALF_OGRE:
-							c = 168;
-							break;
-						case RACE_HALF_GIANT:
-						case RACE_HALF_TITAN:
-						case RACE_CYCLOPS:
-							c = 145;
-							break;
-						case RACE_YEEK:
-							c = 209;
-							break;
-						case RACE_KLACKON:
-							c = 229;
-							break;
-						case RACE_KOBOLD:
-							c = 204;
-							break;
-						case RACE_NIBELUNG:
-							c = 144;
-							break;
-						case RACE_DARK_ELF:
-							c = 223;
-							break;
-						case RACE_DRACONIAN:
-							if (p_ptr->lev < 20)
-								c = 240;
-							else if (p_ptr->lev < 40)
-								c = 22;
-							else
-								c = 137;
-							break;
-						case RACE_MIND_FLAYER:
-							c = 236;
-							break;
-						case RACE_IMP:
-							c = 142;
-							break;
-						case RACE_GOLEM:
-							c = 6;
-							break;
-						case RACE_SKELETON:
-							if (p_ptr->pclass == CLASS_MAGE ||
-								p_ptr->pclass == CLASS_PRIEST ||
-								p_ptr->pclass == CLASS_HIGH_MAGE ||
-								p_ptr->pclass == CLASS_MONK ||
-								p_ptr->pclass == CLASS_MINDCRAFTER)
-								c = 159;
-							else
-								c = 181;
-							break;
-						case RACE_ZOMBIE:
-							c = 221;
-							break;
-						case RACE_VAMPIRE:
-							c = 217;
-							break;
-						case RACE_SPECTRE:
-							c = 241;
-							break;
-						case RACE_SPRITE:
-							c = 244;
-							break;
-						case RACE_BEASTMAN:
-							c = 154;
-							break;
-					}
-				}
-			}
+			/* Normal attr */
+			a = object_attr(o_ptr);
+
+			/* Hack -- hallucination */
+			if (halluc) image_object(&a, &c);
+
+			/* Done */
+			break;
 		}
-
-		
-
-#endif /* VARIABLE_PLAYER_GRAPH */
 	}
 		
 	/* Hack -- fake monochrome */
@@ -1226,9 +1247,6 @@ void print_rel(char c, byte a, int y, int x)
 		Term_draw(x-panel_col_prt, y-panel_row_prt, a, c);
 	}
 }
-
-
-
 
 
 /*
