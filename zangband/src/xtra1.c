@@ -776,6 +776,9 @@ static void health_redraw(void)
 		/* Asleep */
 		if (m_ptr->csleep) attr = TERM_BLUE;
 
+		/* Invulnerable */
+		if (m_ptr->invulner) attr = TERM_WHITE;
+
 		/* Convert percent into "health" */
 		len = (pct < 10) ? 1 : (pct < 90) ? (pct / 10 + 1) : 10;
 
