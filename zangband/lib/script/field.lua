@@ -67,10 +67,13 @@ end
 --	Initialise a corpse field
 --
 function corpse_init(r_idx)
+	local race
 	field.data[1] = r_idx / 256
 	field.data[2] = mod(r_idx, 256)
 	
-	set_corpse_size(field, corpse_type(r_info[r_idx].d_char))
+	race = monst_race(r_idx)
+	
+	set_corpse_size(field, corpse_type(race.d_char))
 
 	notice_field(field)
 end
