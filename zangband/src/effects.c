@@ -2588,6 +2588,9 @@ void do_poly_self(void)
 		mutate_player();
 		power--;
 	}
+	
+	/* Hack - reset visuals so the player's tile can change */
+	reset_visuals();
 }
 
 
