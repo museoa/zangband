@@ -1606,22 +1606,33 @@ static errr CheckEvent(bool wait)
 			/* Clear the window */
 			/*Infowin_wipe();*/
 
-			x1 = (xev->xexpose.x - Infowin->ox)/Infofnt->wid;
-			x2 = (xev->xexpose.x + xev->xexpose.width -
-				 Infowin->ox)/Infofnt->wid;
-
-			y1 = (xev->xexpose.y - Infowin->oy)/Infofnt->hgt;
-			y2 = (xev->xexpose.y + xev->xexpose.height -
-				 Infowin->oy)/Infofnt->hgt;
+			
 
 			/* Redraw */
 			if (window == 0)
 			{
+				x1 = (xev->xexpose.x - Infowin->ox)/P_TILE_SIZE;
+				x2 = (xev->xexpose.x + xev->xexpose.width -
+					 Infowin->ox)/P_TILE_SIZE;
+
+				y1 = (xev->xexpose.y - Infowin->oy)/P_TILE_SIZE;
+				y2 = (xev->xexpose.y + xev->xexpose.height -
+					 Infowin->oy)/P_TILE_SIZE;
+				
 				/* Hack - area invalidated on main window is not a rectangle */
-				Term_redraw();
+				Term_redraw_section(x1 - y2 / 2, y1, x2 + y2 / 2, y2);
+				/* Term_redraw(); */
 			}
 			else
 			{
+				x1 = (xev->xexpose.x - Infowin->ox)/Infofnt->wid;
+				x2 = (xev->xexpose.x + xev->xexpose.width -
+					 Infowin->ox)/Infofnt->wid;
+
+				y1 = (xev->xexpose.y - Infowin->oy)/Infofnt->hgt;
+				y2 = (xev->xexpose.y + xev->xexpose.height -
+					 Infowin->oy)/Infofnt->hgt;
+				
 				Term_redraw_section(x1, y1, x2, y2);
 			}
 
@@ -1659,10 +1670,14 @@ static errr CheckEvent(bool wait)
 			if (window == 0)
 			{
 				/* Determine "proper" number of rows/cols */
-				
+#if 0				
 				rows = 24;
 				
 				cols = 80;
+#endif /* 0 */
+				cols = (Infowin->w - (ox + ox)) / P_TILE_SIZE - 1;
+				rows = (Infowin->h - (oy + oy)) / P_TILE_SIZE - 1;
+
 			}
 			else
 			{
@@ -1670,6 +1685,7 @@ static errr CheckEvent(bool wait)
 				cols = (Infowin->w - (ox + ox)) / td->fnt->wid;
 				rows = (Infowin->h - (oy + oy)) / td->fnt->hgt;
 			}
+
 
 			/* Hack -- minimal size */
 			if (cols < 1) cols = 1;
@@ -1686,8 +1702,7 @@ static errr CheckEvent(bool wait)
 			{ 
 				/* Desired size of window */
 
-				wid = (cols + 1) * P_TILE_SIZE + rows * P_TILE_SIZE / 2
-					 + ox * 2;
+				wid = (cols + 1) * P_TILE_SIZE + ox * 2;
 				hgt = (rows + 1) * P_TILE_SIZE + oy * 2;
 			}
 			else
@@ -2598,12 +2613,12 @@ static errr term_data_init(term_data *td, int i)
 	{
 		sh->flags = PMinSize | PMaxSize;
 		sh->min_height = (24 + 1) * P_TILE_SIZE + oy * 2;
-		sh->min_width = (80 + 1) * P_TILE_SIZE + ox * 2 + 24 * P_TILE_SIZE / 2;
+		sh->min_width = (80 + 1) * P_TILE_SIZE + ox * 2;
 		sh->max_height = (255 + 1) * P_TILE_SIZE + oy * 2;
 		sh->max_width = (255 + 1) * P_TILE_SIZE + ox * 2 + 255 * P_TILE_SIZE / 2;
 		/* Resize increment */
 		sh->flags |= PResizeInc;
-		sh->width_inc = P_TILE_SIZE;
+		sh->width_inc = P_TILE_SIZE * 3 / 2;
 		sh->height_inc = P_TILE_SIZE;
 	}
 
