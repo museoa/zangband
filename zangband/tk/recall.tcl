@@ -527,68 +527,6 @@ proc NSRecall::RecallMonster {r_idx} {
 }
 
 
-# NSRecall::RecallQuest --
-#
-#	Show info about a quest.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSRecall::RecallQuest {q_idx} {
-
-	variable Priv
-
-	if {![Value recall,show]} return
-
-	# Hack -- Get the object id
-	set oop [Global recall,oop]
-	
-	# If we are in "list mode", don't clobber the text
-	if {[string length [Info $oop hook]]} return
-
-	# Get information about this quest
-	array set attrib [struct set quest_type $q_idx]
-
-	# Default icon
-	set icon "icon none 0"
-
-	# Default color
-	set color [Value TERM_YELLOW]
-
-	# Build the name
-	set name $attrib(name)
-
-	# Use any monster icon
-	if {$attrib(r_idx)} {
-		set icon [assign set monster $attrib(r_idx)]
-	}
-
-	# Build the name
-	append name " - Danger level $attrib(level):"
-
-	# Get the memory
-	set memory [struct info quest_type $q_idx text]
-
-	# No memory (QUEST_TYPE_KILL_XXX)
-	if {![string length $memory]} {
-		if {$attrib(r_idx)} {
-			RecallMonster $attrib(r_idx)
-			return
-		} else {
-			set $name "" ; # Random quests have no description
-		}
-	}
-
-	# Set the text
-	SetText $oop $icon $color $name $memory
-
-	return
-}
-
-
 # NSRecall::RecallSpell --
 #
 #	Show info about a spell.

@@ -91,10 +91,4 @@ set attr(shape,unique) [icon ascii create -foreground [palette set 0] \
 # Attribute characters used by monsters and objects
 # set attrStr "dwsorgbuDWvyRGBU"
 
-
-# Object 0 icon used for floor stack, when "easy_floor" option is on
-set index [icon ascii index ascii *]
-assign set object 0 "icon ascii $index $attr(stack)"
-
-
 unset attr

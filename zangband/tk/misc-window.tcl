@@ -521,7 +521,7 @@ proc NSMiscWindow::InitDisplay_Misc {parent} {
 	$c create text 0 0 -font $font -justify left \
 		-anchor w -fill [Value TERM_L_BLUE] -tags {font title}
 	CanvasFeedbackAdd $c title "NSMiscWindow::CanvasFeedbackCmd_MiscWindow title"
-
+if 0 {
 	# Stat titles
 	foreach title {STR INT WIS DEX CON CHR} stat [angband info stat_name] {
 		$c create image 0 0 -image Image_Misc$title -anchor nw \
@@ -540,6 +540,7 @@ proc NSMiscWindow::InitDisplay_Misc {parent} {
 		CanvasFeedbackAdd $c $stat \
 			"NSMiscWindow::CanvasFeedbackCmd_MiscWindow $stat"
 	}
+}
 
 	# Race and Class
 	foreach info {race class} {
@@ -1944,9 +1945,11 @@ proc NSMiscWindow::MiscArrangeWide {} {
 	set pad 10
 	set offset [expr {$maxWidth + $pad + [font measure $font 18/999]}]
 	set y [expr {$topSpace - $rowHeight}]
+if 0 {	
 	foreach stat [angband info stat_name] {
 		$canvas coords $stat $offset [incr y $rowHeight]
 	}
+}
 	set reqWidthLeft $offset
 
 	# Race and Class
@@ -2025,9 +2028,12 @@ proc NSMiscWindow::MiscArrangeWide {} {
 	$canvas coords divider 2 22 [expr {$x2 - 2}] 22
 
 	set d [expr {$x2 - $reqWidthLeft - $reqWidthRight - 2}]
+
+if 0 {
 	foreach stat [angband info stat_name] {
 		$canvas move $stat $d 0
 	}
+}
 	foreach info {race class} {
 		$canvas move $info $d 0
 	}
@@ -2230,13 +2236,14 @@ proc NSMiscWindow::MiscArrangeTall {} {
 		$canvas coords $tag $minRight $y
 		incr y $rowHeight
 	}
-
+if 0 {
 	# Stat values
 	set y $top2
 	foreach stat [angband info stat_name] {
 		$canvas coords $stat $minRight $y
 		incr y $rowHeight
 	}
+}
 
 	# AC value
 	set y $top3

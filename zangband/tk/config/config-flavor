@@ -268,12 +268,6 @@ if {[string match dg32* [Global config,prefix]]} {
 		flavor assign potion $i -type potions -index $flavor2gif($i)
 	}
 
-	# Assign a flavor to each object
-	foreach k_idx [angband k_info find -tval TV_POTION] {
-		set sval [angband k_info set $k_idx sval]
-		assign set object $k_idx "flavor potion $sval"
-	}
-
 # David E. Gervais
 }
 
@@ -299,12 +293,6 @@ foreach flavor $flavor_name {
 			flavor assign $flavor $i -type $gif_type($flavor) -index $index
 		}
 		incr i
-	}
-	foreach k_idx [angband k_info find -tval $gif_tval($flavor)] {
-		set sval [angband k_info set $k_idx sval]
-#		if {$attrib(insta_art)} continue
-		if {[string equal $flavor mushroom] && ($sval >= 32)} continue
-		assign set object $k_idx "flavor $flavor $sval"
 	}
 }
 

@@ -699,6 +699,8 @@ proc NSCharInfoCanvas::SetInfo {oop} {
 	set burden [format "%d.%d $units" [expr {$weight / 10}] [expr {$weight % 10}]]
 	$canvas itemconfigure *burden -text $burden -fill [Value TERM_L_GREEN]
 
+if 0 {
+
 	# Stats
 	set attribs [angband info stat_name]
 	foreach attrib $attribs {
@@ -723,6 +725,7 @@ proc NSCharInfoCanvas::SetInfo {oop} {
 			$canvas itemconfigure $attrib.use -text ""
 		}
 	}
+}
 
 	# Experience
 	set info [angband player exp]
@@ -848,12 +851,6 @@ proc NSCharInfoCanvas::WipeInfo {oop} {
 
 	foreach tag $tags {
 		$canvas itemconfigure $tag -text {}
-	}
-
-	foreach tag [angband info stat_name] {
-		foreach mod {max race class equip top use} {
-			$canvas itemconfigure $tag.$mod -text ""
-		}
 	}
 
 	return
