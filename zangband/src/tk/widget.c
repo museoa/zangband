@@ -23,7 +23,7 @@ struct Widget
     Tcl_Interp *interp;
     Tcl_Command widgetCmd;
 	GC copyGC;					/* XCopyArea() context */
-	BitmapType bitmap;			/* Offscreen bitmap */
+	BitmapPtr bitmap;			/* Offscreen bitmap */
     int width;					/* # of columns */
     int height;					/* # of rows */
 	
@@ -57,6 +57,106 @@ struct Widget
     int oldGWidth, oldGHeight;	/* To notice changes */
 };
 
+/* Predeclare */
+static void widget_draw_all(Widget *widgetPtr);
+
+/*
+ * Actually draw stuff into the Widget's display. This routine is
+ * usually passed to Tcl_DoWhenIdle().
+ */
+static void Widget_Display(ClientData clientData)
+{
+	Widget *widgetPtr = (Widget *) clientData;
+	Tk_Window tkwin = widgetPtr->tkwin;
+
+	/* We want to draw all grids */
+	if (widgetPtr->flags & WIDGET_WIPE)
+	{
+		/* Forget that a wipe (and redraw) is needed */
+		widgetPtr->flags &= ~(WIDGET_WIPE);
+
+		/* Draw all grids */
+		widget_draw_all(widgetPtr);
+	}
+
+	/* Forget that a redraw is scheduled */
+	widgetPtr->flags &= ~WIDGET_REDRAW;
+
+	/* The window doesn't exist, or it is not mapped */
+	if ((tkwin == NULL) || (!Tk_IsMapped(tkwin)))
+	{		
+		/* Done */
+		return;
+	}
+
+	if (widgetPtr->flags & WIDGET_EXPOSE)
+	{
+		/* Reset dirty bounds to entire window */
+		widgetPtr->dx = widgetPtr->bx;
+		widgetPtr->dy = widgetPtr->by;
+		widgetPtr->dw = widgetPtr->width;
+		widgetPtr->dh = widgetPtr->height;
+
+		/* Forget expose flag */
+		widgetPtr->flags &= ~WIDGET_EXPOSE;
+	}
+
+#if 0
+	/* Use Tk_SetWindowBackgroundPixmap() for more speed */
+	XClearWindow(widgetPtr->display, Tk_WindowId(tkwin));
+#endif
+
+#if 0
+	XCopyArea(widgetPtr->display,
+		widgetPtr->bitmap->pixmap, /* source drawable */
+		Tk_WindowId(tkwin), /* dest drawable */
+		widgetPtr->copyGC, /* graphics context */
+		widgetPtr->dx, widgetPtr->dy, /* source top-left */
+		(unsigned int) widgetPtr->dw, /* width */
+		(unsigned int) widgetPtr->dh, /* height */
+		widgetPtr->dx - widgetPtr->bx,
+		widgetPtr->dy - widgetPtr->by /* dest top-left */
+	);
+#endif /* 0 */
+
+	XCopyArea(widgetPtr->display,
+		widgetPtr->bitmap->pixmap, /* source drawable */
+		Tk_WindowId(tkwin), /* dest drawable */
+		widgetPtr->copyGC, /* graphics context */
+		0, 0, /* source top-left */
+		(unsigned int) widgetPtr->width, /* width */
+		(unsigned int) widgetPtr->height, /* height */
+		0,
+		0 /* dest top-left */
+	);
+
+	Plat_SyncDisplay(widgetPtr->display);
+
+	/* Reset dirty bounds to entire window */
+	widgetPtr->dx = widgetPtr->bx;
+	widgetPtr->dy = widgetPtr->by;
+	widgetPtr->dw = widgetPtr->width;
+	widgetPtr->dh = widgetPtr->height;
+}
+
+
+
+static void Widget_EventuallyRedraw(Widget *widgetPtr)
+{
+	if (widgetPtr->tkwin == NULL)
+		return;
+
+	/* A redraw is already scheduled */
+	if (widgetPtr->flags & WIDGET_REDRAW)
+		return;
+
+	/* Schedule a redraw */
+	Tcl_DoWhenIdle(Widget_Display, (ClientData) widgetPtr);
+
+	/* Remember a redraw is scheduled */
+	widgetPtr->flags |= WIDGET_REDRAW;
+}
+
 
 /*
  * Draw a blank square at this 'unkown' location
@@ -76,9 +176,7 @@ static void DrawBlank(int x, int y, BitmapPtr bitmapPtr)
 	srcPtr = iconDataPtr->icon_data;
 	
 	/* Get the address of where to write the data in the bitmap */
-	dstPtr = bitmapPtr->pixelPtr +
-		x * bypp +
-		y * pitch;
+	dstPtr = bitmapPtr->pixelPtr + x * bypp + y * pitch;
 	
 	/* Write the icon data */
 	for (y2 = 0; y2 < g_icon_size; y2++)
@@ -89,29 +187,15 @@ static void DrawBlank(int x, int y, BitmapPtr bitmapPtr)
 	}
 }
 
-static int r16mask = 0, r16shift = 0;
-static int g16mask = 0, g16shift = 0;
-static int b16mask = 0, b16shift = 0;
+static u16b r16mask = 0, r16shift = 0;
+static u16b g16mask = 0, g16shift = 0;
+static u16b b16mask = 0, b16shift = 0;
 
 static int count_ones(u16b mask)
 {
 	int n;
 
 	for (n = 0; mask != 0; mask &= mask - 1)
-	{
-		n++;
-	}
-	
-	return (n);
-}
-
-static u16b get_shift(u16b mask)
-{
-	/* Basically, count leading zeros */
-	
-	int n;
-	
-	for (n = 0; !(mask & 0x8000); mask *= 2)
 	{
 		n++;
 	}
@@ -126,46 +210,27 @@ static void init_masks(Tcl_Interp *interp)
 	Tk_Window tkwin = Tk_MainWindow(interp);
 	Visual *visual = Tk_Visual(tkwin);
 	
-	u16b red_mask = visual->red_mask;
-	u16b green_mask = visual->green_mask;
-	u16b blue_mask = visual->blue_mask;
-
-	int count;
+	int redcount, greencount, bluecount;
+	
+	r16mask = visual->red_mask;
+	g16mask = visual->green_mask;
+	b16mask = visual->blue_mask;
 
 #ifdef PLATFORM_WIN
 	/* XXX Always 5-5-5 */
-	red_mask = 0x7C00;
-	green_mask = 0x03E0;
-	blue_mask = 0x001F;
+	r16mask = 0x7C00;
+	g16mask = 0x03E0;
+	b16mask = 0x001F;
 #endif
 	
 	/* Get red mask and shift */
-	count = count_ones(red_mask);
+	redcount = count_ones(r16mask);
+	greencount = count_ones(g16mask);
+	bluecount = count_ones(b16mask);
 	
-	if (count == 5) r16mask = 0xF8;
-	else if (count == 6) r16mask = 0xFC;
-	else quit("Bad number of red bits");
-	
-	r16shift = get_shift(red_mask);
-
-
-	/* Get green mask and shift */
-	count = count_ones(green_mask);
-	
-	if (count == 5) g16mask = 0xF8;
-	else if (count == 6) g16mask = 0xFC;
-	else quit("Bad number of green bits");
-	
-	g16shift = get_shift(green_mask);
-	
-	/* Get blue mask and shift */
-	count = count_ones(blue_mask);
-	
-	if (count == 5) b16mask = 0xF8;
-	else if (count == 6) b16mask = 0xFC;
-	else quit("Bad number of blue bits");
-	
-	r16shift = get_shift(blue_mask);
+	r16shift = redcount + greencount + bluecount - 8;
+	g16shift = greencount + bluecount - 8;
+	b16shift = 8 - bluecount;
 }
 
 
@@ -183,27 +248,28 @@ static byte *get_icon_ptr(BitmapPtr bitmap_ptr, int x, int y)
  */
 static void DrawIconSpec(int x, int y, map_block *mb_ptr, Widget *widgetPtr)
 {
-	byte *src1, *src2, *dest;
-	byte r, g, b;
-	
-	int i, j;
+	u32b *src1, *src2;
+	byte *dest;
+	u16b r, g, b;
 	
 	u32b pixel;
 	
-	int depth = widgetPtr->bitmap.depth;
+	int i, j;
+	
+	int depth = widgetPtr->bitmap->depth;
 	
 	int s1x = 0, s2x = 0, s1y = 0, s2y = 0;
 	
 	if (mb_ptr->a & 0x80)
 	{
-		s1x = (mb_ptr->a & 0x7F) * widgetPtr->gwidth;
-		s1y = (mb_ptr->c & 0x7F) * widgetPtr->gwidth;
+		s1x = (mb_ptr->c & 0x7F) * widgetPtr->gwidth;
+		s1y = (mb_ptr->a & 0x7F) * widgetPtr->gheight;
 	}
 	
 	if (mb_ptr->ta & 0x80)
 	{
-		s2x = (mb_ptr->ta & 0x7F) * widgetPtr->gwidth;
-		s2y = (mb_ptr->tc & 0x7F) * widgetPtr->gwidth;
+		s2x = (mb_ptr->tc & 0x7F) * widgetPtr->gwidth;
+		s2y = (mb_ptr->ta & 0x7F) * widgetPtr->gheight;
 	}
 	
 	
@@ -213,25 +279,22 @@ static void DrawIconSpec(int x, int y, map_block *mb_ptr, Widget *widgetPtr)
 		for (j = 0; j < widgetPtr->gheight; j++)
 		{
 			/* Get address of icon data in tiles bitmap */	
-			src1 = get_icon_ptr(widgetPtr->tiles, s1x + i, s1y + j);
-			src2 = get_icon_ptr(widgetPtr->tiles, s2x + i, s2y + j);
+			src1 = (u32b *) get_icon_ptr(widgetPtr->tiles, s1x + i, s1y + j);
+			src2 = (u32b *) get_icon_ptr(widgetPtr->tiles, s2x + i, s2y + j);
 
 			/* Get destination */
-			dest = get_icon_ptr(&widgetPtr->bitmap, x + i, y + j);
-		
-		
-		
+			dest = get_icon_ptr(widgetPtr->bitmap, x + i, y + j);
+				
 			/* Get tile pixel (using transparency) */
 			pixel = *src1 & 0x00FFFFFF;
 			
 			/* Hack - overlay */
-			if (!pixel) pixel = *src2 & 0x00FFFFFF;
+			/* if (!pixel) pixel = *src2 & 0x00FFFFFF; */
 			
-			/* Get red, green, blue masked colours */
-			r = (pixel & 0x00FF0000) >> 16;
+			b = (pixel & 0x00FF0000) >> 16;
 			g = (pixel & 0x0000FF00) >> 8;
-			b = pixel & 0x000000FF;
-			
+			r = pixel & 0xFF;
+						
 			
 			/* Convert to bitdepth of screen bitmap and display */
 			
@@ -249,12 +312,14 @@ static void DrawIconSpec(int x, int y, map_block *mb_ptr, Widget *widgetPtr)
 					u16b p;
 					
 					/* Convert to 16bit colour */
-					p = (r & r16mask) << r16shift;
-					p += (g & g16mask) << g16shift;
-					p += (b & b16mask) << b16shift;
 					
+					p = (r << r16shift) & r16mask;
+					p += (g << g16shift) & g16mask;
+					p += (b >> b16shift) & b16mask;
+					
+					dest[1] = (byte) ((p & 0xFF00) >> 8);
 					dest[0] = (byte) (p & 0x00FF);
-					dest[1] = (byte) ((p & 0xFF00) >> 8);		
+					
 					break;
 				}
 		
@@ -282,7 +347,7 @@ static void widget_draw_all(Widget *widgetPtr)
 	map_block *mb_ptr;
 
 	/* Paranoia: make sure the bitmap exists */
-	if (widgetPtr->bitmap.pixelPtr == NULL) return;
+	if (!widgetPtr->bitmap) return;
 
 	/* Drawing is disabled */
 	if (widgetPtr->flags & WIDGET_NO_UPDATE) return;
@@ -303,7 +368,7 @@ static void widget_draw_all(Widget *widgetPtr)
 				{
 					
 					/* Just "erase" this spot */
-					DrawBlank(xp, yp, &widgetPtr->bitmap);
+					DrawBlank(xp, yp, widgetPtr->bitmap);
 				}
 				
 				continue;
@@ -322,6 +387,9 @@ static void widget_draw_all(Widget *widgetPtr)
 	widgetPtr->dy = widgetPtr->by;
 	widgetPtr->dw = widgetPtr->width;
 	widgetPtr->dh = widgetPtr->height;
+	
+		
+	Widget_EventuallyRedraw(widgetPtr);
 }
 
 
@@ -332,22 +400,28 @@ static void widget_draw_all(Widget *widgetPtr)
  */
 static void Widget_CreateBitmap(Widget *widgetPtr)
 {
+	/* Create the bitmap structure */
+	MAKE(widgetPtr->bitmap, BitmapType);
+
 	/* Calculate the bitmap dimensions in pixels */
-	widgetPtr->bitmap.width = widgetPtr->bw;
-	widgetPtr->bitmap.height = widgetPtr->bh;
+	widgetPtr->bitmap->width = widgetPtr->bw;
+	widgetPtr->bitmap->height = widgetPtr->bh;
 
 	/* widgetPtr->bitmap.depth =
 		((widgetPtr->gwidth == g_icon_size) ? g_icon_depth : 8); */
-	widgetPtr->bitmap.depth = g_icon_depth;
-
+	widgetPtr->bitmap->depth = g_icon_depth;
+	
 	/* Create the bitmap */
-	Bitmap_New(widgetPtr->interp, &widgetPtr->bitmap);
+	Bitmap_New(widgetPtr->interp, widgetPtr->bitmap);
 }
 
 /* Free the bitmap for this Widget */
 static void Widget_DeleteBitmap(Widget *widgetPtr)
 {
-	Bitmap_Delete(&widgetPtr->bitmap);
+	Bitmap_Delete(widgetPtr->bitmap);
+	
+	/* Free the bitmap structure */
+	FREE(widgetPtr->bitmap);
 }
 
 
@@ -393,90 +467,6 @@ static void Widget_Calc(Widget *widgetPtr)
 
 
 /*
- * Actually draw stuff into the Widget's display. This routine is
- * usually passed to Tcl_DoWhenIdle().
- */
-static void Widget_Display(ClientData clientData)
-{
-	Widget *widgetPtr = (Widget *) clientData;
-	Tk_Window tkwin = widgetPtr->tkwin;
-
-	/* We want to draw all grids */
-	if ((widgetPtr->flags & WIDGET_WIPE) != 0)
-	{
-		/* Forget that a wipe (and redraw) is needed */
-		widgetPtr->flags &= ~(WIDGET_WIPE);
-
-		/* Draw all grids */
-		widget_draw_all(widgetPtr);
-	}
-
-	/* Forget that a redraw is scheduled */
-	widgetPtr->flags &= ~WIDGET_REDRAW;
-
-	/* The window doesn't exist, or it is not mapped */
-	if ((tkwin == NULL) || (!Tk_IsMapped(tkwin)))
-	{		
-		/* Done */
-		return;
-	}
-
-	if (widgetPtr->flags & WIDGET_EXPOSE)
-	{
-		/* Reset dirty bounds to entire window */
-		widgetPtr->dx = widgetPtr->bx;
-		widgetPtr->dy = widgetPtr->by;
-		widgetPtr->dw = widgetPtr->width;
-		widgetPtr->dh = widgetPtr->height;
-
-		/* Forget expose flag */
-		widgetPtr->flags &= ~WIDGET_EXPOSE;
-	}
-
-#if 0
-	/* Use Tk_SetWindowBackgroundPixmap() for more speed */
-	XClearWindow(widgetPtr->display, Tk_WindowId(tkwin));
-#endif
-
-	XCopyArea(widgetPtr->display,
-		widgetPtr->bitmap.pixmap, /* source drawable */
-		Tk_WindowId(tkwin), /* dest drawable */
-		widgetPtr->copyGC, /* graphics context */
-		widgetPtr->dx, widgetPtr->dy, /* source top-left */
-		(unsigned int) widgetPtr->dw, /* width */
-		(unsigned int) widgetPtr->dh, /* height */
-		widgetPtr->dx - widgetPtr->bx,
-		widgetPtr->dy - widgetPtr->by /* dest top-left */
-	);
-
-	Plat_SyncDisplay(widgetPtr->display);
-
-	/* Reset dirty bounds to entire window */
-	widgetPtr->dx = widgetPtr->bx;
-	widgetPtr->dy = widgetPtr->by;
-	widgetPtr->dw = widgetPtr->width;
-	widgetPtr->dh = widgetPtr->height;
-}
-
-
-static void Widget_EventuallyRedraw(Widget *widgetPtr)
-{
-	if (widgetPtr->tkwin == NULL)
-		return;
-
-	/* A redraw is already scheduled */
-	if (widgetPtr->flags & WIDGET_REDRAW)
-		return;
-
-	/* Schedule a redraw */
-	Tcl_DoWhenIdle(Widget_Display, (ClientData) widgetPtr);
-
-	/* Remember a redraw is scheduled */
-	widgetPtr->flags |= WIDGET_REDRAW;
-}
-
-
-/*
  * This procedure is called when the world has changed in some
  * way and the widget needs to recompute all its graphics contexts
  * and determine its new geometry.
@@ -506,19 +496,19 @@ static void Widget_WorldChanged(ClientData instanceData)
 	}
 
 	/* The bitmap is not the right size */
-	if ((widgetPtr->bitmap.pixelPtr != NULL) &&
-		((widgetPtr->bw != widgetPtr->bitmap.width) ||
-		(widgetPtr->bh != widgetPtr->bitmap.height)))
+	if ((widgetPtr->bitmap) &&
+		((widgetPtr->bw != widgetPtr->bitmap->width) ||
+		(widgetPtr->bh != widgetPtr->bitmap->height)))
 	{
 		/* Delete the bitmap */
 		Widget_DeleteBitmap(widgetPtr);
 
 		/* Forget the bitmap */
-		widgetPtr->bitmap.pixelPtr = NULL;
+		widgetPtr->bitmap = NULL;
 	}
 
 	/* No bitmap yet */
-	if (widgetPtr->bitmap.pixelPtr == NULL)
+	if (!widgetPtr->bitmap)
 	{
 		/* Allocate bitmap */
 		Widget_CreateBitmap(widgetPtr);
@@ -722,13 +712,18 @@ static void Widget_map_info(map_block *mb_ptr, term_map *map, vptr data)
 	if (widgetPtr->flags & WIDGET_WIPE) return;
 
 	/* Needs to be on the screen */
-	if ((x <= widgetPtr->x_min) || (x > widgetPtr->x_max)) return;
-	if ((y <= widgetPtr->y_min) || (y > widgetPtr->y_max)) return;
+	if ((x < widgetPtr->x_min) || (x >= widgetPtr->x_max)) return;
+	if ((y < widgetPtr->y_min) || (y >= widgetPtr->y_max)) return;
 
 	/* Bitmap coords */
 	xp = (x - widgetPtr->x_min) * widgetPtr->gwidth;
 	yp = (y - widgetPtr->y_min) * widgetPtr->gheight;
 	
+	mb_ptr->a = map->a;
+	mb_ptr->c = map->c;
+	mb_ptr->ta = map->ta;
+	mb_ptr->tc = map->tc;
+		
 	/* Draw stuff at this location */
 	DrawIconSpec(xp, yp, mb_ptr, widgetPtr);
 	
@@ -743,6 +738,8 @@ static void Widget_map_info(map_block *mb_ptr, term_map *map, vptr data)
 	widgetPtr->dy = dt;
 	widgetPtr->dw = dr - dl + 1;
 	widgetPtr->dh = db - dt + 1;
+	
+	Widget_EventuallyRedraw(widgetPtr);
 }
 
 static void Widget_map_erase(vptr data)
@@ -1042,7 +1039,7 @@ static void Widget_Destroy(Widget *widgetPtr)
     }
 
 	/* Free the bitmap */
-	if (widgetPtr->bitmap.pixelPtr != NULL)
+	if (widgetPtr->bitmap)
 	{
 		Widget_DeleteBitmap(widgetPtr);
 	}
@@ -1224,8 +1221,6 @@ static int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 
 	/* Set more fields */
 	widgetPtr->copyGC = None;
-	widgetPtr->bitmap.pixelPtr = NULL;
-	widgetPtr->bitmap.pixmap = None;
     widgetPtr->width = 0;
     widgetPtr->height = 0;
     widgetPtr->gwidth = tnb_tile_x;

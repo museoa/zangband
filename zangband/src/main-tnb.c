@@ -453,9 +453,6 @@ int init_tnb(int argc, cptr *argv)
 	quit_aux = hook_quit;
 	core_aux = hook_quit;
 
-	/* Set the system suffix */
-	ANGBAND_SYS = "tk-x11";
-
 	/* Initialize Tcl and Tk. */
 	g_interp = TclTk_Init(argv);
 	

@@ -694,7 +694,7 @@ static void save_map_location(int x, int y, term_map *map)
 			map_cache_refcount[block_num]--;
 		}
 	}
-	
+
 	for (callback = callbacks[CALL_MAP_INFO]; callback; callback = callback->next)
 	{
 		/* Execute the callback */

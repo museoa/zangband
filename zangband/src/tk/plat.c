@@ -452,7 +452,7 @@ static u32b *ReadBMP(cptr Name, int *bw, int *bh)
 
 	int i;
 
-	u16b x, y;
+	int x, y;
 
 	/* Open the BMP file */
 	f = fopen(Name, "r");
@@ -537,11 +537,13 @@ static u32b *ReadBMP(cptr Name, int *bw, int *bh)
 	C_MAKE(Data32, total + 4, u32b);
 	p = Data32;
 		
-	for (y = 0; y < infoheader.biHeight; y++)
+	for (y = 0; y < (int) infoheader.biHeight; y++)
 	{
-		for (x = 0; x < infoheader.biWidth; x++)
+		for (x = 0; x < (int) infoheader.biWidth; x++)
 		{
 			int ch = getc(f);
+			
+			p = Data32 + x + (infoheader.biHeight - 1 - y) * infoheader.biWidth;
 
 			/* Verify not at end of file XXX XXX */
 			if (feof(f)) quit_fmt("Unexpected end of file in %s", Name);
@@ -551,7 +553,7 @@ static u32b *ReadBMP(cptr Name, int *bw, int *bh)
 				pixel = pal[ch * 3];
 				pixel = pixel * 256 + pal[ch * 3 + 1];
 				pixel = pixel * 256 + pal[ch * 3 + 2];
-				*p++ = pixel;
+				*p = pixel;
 			}
 			else if (infoheader.biBitCount == 24)
 			{
@@ -567,7 +569,7 @@ static u32b *ReadBMP(cptr Name, int *bw, int *bh)
 				if (feof(f)) quit_fmt("Unexpected end of file in %s", Name);
 				pixel = pixel * 256 + ch;
 
-				*p++ = pixel;
+				*p = pixel;
 			}
 		}
 	}
@@ -610,10 +612,6 @@ BitmapPtr Bitmap_Load(Tcl_Interp *interp, cptr name)
 	/* Copy in the data */
 	if (bitmapPtr->pixelSize == 3)
 	{
-		C_COPY(bitmapPtr->pixmap, data, bitmapPtr->pitch * bitmapPtr->height, byte);
-	}
-	else if (bitmapPtr->pixelSize == 4)
-	{
 		byte *d8 = (byte *) data;
 	
 		byte *p = (byte *) bitmapPtr->pixelPtr;
@@ -623,12 +621,18 @@ BitmapPtr Bitmap_Load(Tcl_Interp *interp, cptr name)
 		{
 			for (j = 0; j < bitmapPtr->width; j++)
 			{
+				/* I bet this is wrong... */
+			
 				*p++ = *d8++;
 				*p++ = *d8++;
 				*p++ = *d8++;
-				p++;
+				d8++;
 			}
 		}
+	}
+	else if (bitmapPtr->pixelSize == 4)
+	{
+		C_COPY(bitmapPtr->pixelPtr, data, bitmapPtr->pitch * bitmapPtr->height, byte);
 	}
 	
 	FREE(data);
