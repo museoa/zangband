@@ -248,6 +248,58 @@ static void borg_notice_player(void)
 	if (borg_skill[BI_ISGORGED]) borg_skill[BI_SPEED] -= 10;
 }
 
+/*
+ * Find which item goes in an equipment slot.
+ *
+ * Normally, this is just the item already there,
+ * however, sometimes we want to simulate another
+ * item being in that location.
+ *
+ * Note: there must only be one TREAT_AS_SWAP
+ * item in the inventory at any time.
+ */
+static list_item *look_up_equip_slot(int slot)
+{
+	list_item *l_ptr;
+	
+	int i;
+	
+	/* Look in equipment */
+	l_ptr = &equipment[slot];
+	
+	/* Does it exist and are we aware? */
+	if (l_ptr->k_idx)
+	{
+		/* Normal item? */
+		if (l_ptr->treat_as == TREAT_AS_NORM) return (l_ptr);
+		
+		/* Missing item? */
+		if (l_ptr->treat_as == TREAT_AS_GONE) return (NULL);
+		
+		/* Assume TREAT_AS_SWAP */
+	}
+	else
+	{
+		/* Optimise common case of empty slot */
+		if (l_ptr->treat_as != TREAT_AS_SWAP) return (NULL);
+	}
+	
+	/* Otherwise, scan the inventory */
+	for (i = 0; i < inven_num; i++)
+	{
+		l_ptr = &inventory[i];
+		
+		/* Does it exist and are we aware? */
+		if (l_ptr->k_idx)
+		{
+			/* The item to swap with */
+			if (l_ptr->treat_as == TREAT_AS_SWAP) return (l_ptr);
+		}
+	}
+	
+	/* No match! */
+	return (NULL);
+}
 
 /*
  * Notice the effects of equipment
@@ -262,13 +314,10 @@ static void borg_notice_equip(int *extra_blows, int *extra_shots,
 	/* Scan the equipment */
 	for (i = 0; i < equip_num; i++)
 	{
-		l_ptr = &equipment[i];
+		l_ptr = look_up_equip_slot(i);
 
 		/* Pretend item isn't there */
-		if (l_ptr->treat_as == TREAT_AS_GONE) continue;
-
-		/* Skip empty items */
-		if (!l_ptr->k_idx) continue;
+		if (!l_ptr) continue;
 
 		/* Check for cursed items */
 		if (l_ptr->kn_flags3 & TR3_CURSED) borg_wearing_cursed = TRUE;
@@ -525,7 +574,10 @@ static void borg_notice_shooter(int hold, int extra_might, int extra_shots)
 	my_ammo_range = 0;
 
 	/* Examine the "current bow" */
-	l_ptr = &equipment[EQUIP_BOW];
+	l_ptr = look_up_equip_slot(EQUIP_BOW);
+	
+	/* No bow? */
+	if (!l_ptr) return;
 
 	/* and assume we can enchant up to +8 if borg_skill[BI_CLEVEL] > 25 */
 	borg_skill[BI_BTOHIT] = l_ptr->to_h;
@@ -631,7 +683,10 @@ static void borg_notice_weapon(int hold, int extra_blows)
 	list_item *l_ptr;
 
 	/* Examine the "main weapon" */
-	l_ptr = &equipment[EQUIP_WIELD];
+	l_ptr = look_up_equip_slot(EQUIP_WIELD);
+	
+	/* No weapon? */
+	if (!l_ptr) return;
 
 	/* and assume we can enchant up to +8 if borg_skill[BI_CLEVEL] > 25 */
 	borg_skill[BI_WTOHIT] = l_ptr->to_h;
@@ -861,17 +916,22 @@ static void borg_recalc_monk(int extra_blows)
 	int monk_arm_wgt = 0;
 	int ma = MAX_MA - 1;
 	const martial_arts *ma_ptr = &ma_blows[MAX_MA];
+	
+	int i;
+	
+	list_item *l_ptr;
 
 	/* Weigh the armor */
-	monk_arm_wgt += equipment[EQUIP_BODY].weight;
-	monk_arm_wgt += equipment[EQUIP_HEAD].weight;
-	monk_arm_wgt += equipment[EQUIP_ARM].weight;
-	monk_arm_wgt += equipment[EQUIP_OUTER].weight;
-	monk_arm_wgt += equipment[EQUIP_HANDS].weight;
-	monk_arm_wgt += equipment[EQUIP_FEET].weight;
+	for (i = EQUIP_BODY; i <= EQUIP_FEET; i++)
+	{
+		l_ptr = look_up_equip_slot(i);
+		
+		/* Add up the total */
+		if (l_ptr) monk_arm_wgt += l_ptr->weight;
+	}
 
 	/* Consider the Martial Arts */
-	if (!(equipment[EQUIP_WIELD].k_idx))
+	if (!look_up_equip_slot(EQUIP_WIELD))
 	{
 		borg_skill[BI_BLOWS] = 2;
 
@@ -925,27 +985,27 @@ static void borg_recalc_monk(int extra_blows)
 		/* Free action if unencumbered at level 25 */
 		if (borg_skill[BI_CLEVEL] > 24) borg_skill[BI_FRACT] = TRUE;
 
-		if (!(equipment[EQUIP_BODY].k_idx))
+		if (!look_up_equip_slot(EQUIP_BODY))
 		{
 			borg_skill[BI_ARMOR] += (borg_skill[BI_CLEVEL] * 3) / 2;
 		}
-		if (!(equipment[EQUIP_OUTER].k_idx) && (borg_skill[BI_CLEVEL] > 15))
+		if (!look_up_equip_slot(EQUIP_OUTER) && (borg_skill[BI_CLEVEL] > 15))
 		{
 			borg_skill[BI_ARMOR] += ((borg_skill[BI_CLEVEL] - 13) / 3);
 		}
-		if (!(equipment[EQUIP_ARM].k_idx) && (borg_skill[BI_CLEVEL] > 10))
+		if (!look_up_equip_slot(EQUIP_ARM) && (borg_skill[BI_CLEVEL] > 10))
 		{
 			borg_skill[BI_ARMOR] += ((borg_skill[BI_CLEVEL] - 8) / 3);
 		}
-		if (!(equipment[EQUIP_HEAD].k_idx) && (borg_skill[BI_CLEVEL] > 4))
+		if (!look_up_equip_slot(EQUIP_HEAD) && (borg_skill[BI_CLEVEL] > 4))
 		{
 			borg_skill[BI_ARMOR] += (borg_skill[BI_CLEVEL] - 2) / 3;
 		}
-		if (!(equipment[EQUIP_HANDS].k_idx))
+		if (!look_up_equip_slot(EQUIP_HANDS))
 		{
 			borg_skill[BI_ARMOR] += (borg_skill[BI_CLEVEL] / 2);
 		}
-		if (!(equipment[EQUIP_FEET].k_idx))
+		if (!look_up_equip_slot(EQUIP_FEET))
 		{
 			borg_skill[BI_ARMOR] += (borg_skill[BI_CLEVEL] / 3);
 		}
@@ -971,10 +1031,10 @@ static void borg_notice_enchant(void)
 	/* Hack -- enchant all the equipment (weapons) */
 	for (i = 0; i <= EQUIP_BOW; i++)
 	{
-		l_ptr = &equipment[i];
-
-		/* Skip empty items */
-		if (!l_ptr->k_idx) continue;
+		l_ptr = look_up_equip_slot(i);
+		
+		/* Skip missing items */
+		if (!l_ptr) continue;
 
 		/* Skip "unknown" items */
 		if (!(l_ptr->info & OB_KNOWN)) continue;
@@ -1012,10 +1072,10 @@ static void borg_notice_enchant(void)
 	/* Hack -- enchant all the equipment (armor) */
 	for (i = EQUIP_BODY; i <= EQUIP_FEET; i++)
 	{
-		l_ptr = &equipment[i];
+		l_ptr = look_up_equip_slot(i);
 
 		/* Skip empty items */
-		if (!l_ptr->k_idx) continue;
+		if (!l_ptr) continue;
 
 		/* Skip "unknown" items */
 		if (!(l_ptr->info & OB_KNOWN)) continue;
@@ -1047,9 +1107,6 @@ static void borg_notice_lite(void)
 {
 	list_item *l_ptr;
 
-	/* Examine the lite */
-	l_ptr = &equipment[EQUIP_LITE];
-
 	/* Assume normal lite radius */
 	borg_skill[BI_CUR_LITE] = 0;
 
@@ -1059,25 +1116,35 @@ static void borg_notice_lite(void)
 	/* Vampires that do not Resist Light are in trouble */
 	if (borg_race == RACE_VAMPIRE && !borg_skill[BI_RLITE])
 		borg_skill[BI_FEAR_LITE] = TRUE;
+	
+	/* Examine the lite */
+	l_ptr = look_up_equip_slot(EQUIP_LITE);
+	
+	/* Item missing? */
+	if (!l_ptr) return;
+	
+	/* No need for fuel */
+	if (l_ptr->kn_flags3 & TR3_LITE) borg_skill[BI_AFUEL] += 1000;
 
 	/* Lite */
 	if (l_ptr->tval == TV_LITE)
 	{
 		object_kind *k_ptr = &k_info[l_ptr->k_idx];
-
-		/* Torches -- radius one */
-		if (k_ptr->sval == SV_LITE_TORCH) borg_skill[BI_CUR_LITE] = 1;
-
-		/* Lanterns -- radius two */
-		if (k_ptr->sval == SV_LITE_LANTERN) borg_skill[BI_CUR_LITE] = 2;
-
+		
 		/* No fuel means no radius */
-		if (!l_ptr->timeout) borg_skill[BI_CUR_LITE] = 0;
+		if (l_ptr->timeout)
+		{
+			/* Torches -- radius one */
+			if (k_ptr->sval == SV_LITE_TORCH) borg_skill[BI_CUR_LITE] += 1;
+
+			/* Lanterns -- radius two */
+			if (k_ptr->sval == SV_LITE_LANTERN) borg_skill[BI_CUR_LITE] += 2;
+		}
 
 		/* Artifact lites -- radius three */
 		if (l_ptr->kn_flags3 & TR3_INSTA_ART)
 		{
-			borg_skill[BI_CUR_LITE] = 3;
+			borg_skill[BI_CUR_LITE] += 3;
 
 			/* Artifact lites -- assume glowing */
 			borg_skill[BI_LITE] = TRUE;
@@ -2109,11 +2176,7 @@ static void borg_notice_aux2(void)
 	}
 
 	/*** Process the Needs ***/
-
-	/* No need for fuel */
-	if (equipment[EQUIP_LITE].kn_flags3 & TR3_LITE)
-		borg_skill[BI_AFUEL] += 1000;
-
+	
 	/* No need to *buy* stat increase potions */
 	if (my_stat_cur[A_STR] >= (18 + 100) + 10 *
 		(rp_ptr->r_adj[A_STR] + cp_ptr->c_adj[A_STR]))
@@ -3416,14 +3479,11 @@ static s32b borg_power_aux3(void)
 	hold = adj_str_hold[my_stat_ind[A_STR]];
 
 	/*** Analyze weapon ***/
+	l_ptr = look_up_equip_slot(EQUIP_WIELD);
 
-
-	/* Examine current weapon for non-martial artist */
-	if (borg_class != CLASS_MONK ||
-		(borg_class == CLASS_MONK && equipment[EQUIP_WIELD].number))
+	/* Examine current weapon */
+	if (l_ptr)
 	{
-		l_ptr = &equipment[EQUIP_WIELD];
-
 		/* Calculate "average" damage per "normal" blow  */
 		/* and assume we can enchant up to +8 if borg_skill[BI_CLEVEL] > 25 */
 		damage = (l_ptr->dd * l_ptr->ds * 20L);
@@ -3482,8 +3542,9 @@ static s32b borg_power_aux3(void)
 		dam = damage * 5 * borg_skill[BI_BLOWS];
 		if (borg_skill[BI_WK_DRAGON]) value += (dam * 5) / 2;
 	}
-	else						/* Martial Artists */
+	else
 	{
+		/* Martial Artists */
 		int ma = MAX_MA - 1;
 
 		const martial_arts *ma_ptr = &ma_blows[MAX_MA];
@@ -3531,46 +3592,45 @@ static s32b borg_power_aux3(void)
 	if (borg_skill[BI_HEAVYWEPON]) value -= 500000L;
 
 	/*** Analyze bow ***/
-
+	l_ptr = look_up_equip_slot(EQUIP_BOW);
+	
 	/* Examine current bow */
-	l_ptr = &equipment[EQUIP_BOW];
-
-	/* Calculate "average" damage per "normal" shot (times 2) */
-	if (l_ptr->to_d > 8 || borg_skill[BI_CLEVEL] < 25)
-		damage = ((my_ammo_sides) + (l_ptr->to_d)) * my_ammo_power;
-	else
-		damage = (my_ammo_sides + 8) * my_ammo_power;
-
-	/* Reward "damage" */
-	value += (borg_skill[BI_SHOTS] * damage * 9L);
-
-	/* AJG - slings force you to carry heavy ammo.  Penalty for that unles you have lots of str  */
-	if (k_info[l_ptr->k_idx].sval == SV_SLING && !l_ptr->xtra_name &&
-		my_stat_ind[A_STR] < 14)
+	if (l_ptr)
 	{
-		value -= 5000L;
+		/* Calculate "average" damage per "normal" shot (times 2) */
+		if (l_ptr->to_d > 8 || borg_skill[BI_CLEVEL] < 25)
+			damage = ((my_ammo_sides) + (l_ptr->to_d)) * my_ammo_power;
+		else
+			damage = (my_ammo_sides + 8) * my_ammo_power;
+
+		/* Reward "damage" */
+		value += (borg_skill[BI_SHOTS] * damage * 9L);
+
+		/* AJG - slings force you to carry heavy ammo.  Penalty for that unles you have lots of str  */
+		if (k_info[l_ptr->k_idx].sval == SV_SLING && !l_ptr->xtra_name &&
+			my_stat_ind[A_STR] < 14)
+		{
+			value -= 5000L;
+		}
+
+		/* Reward "bonus to hit" */
+		if (l_ptr->to_h > 8 || borg_skill[BI_CLEVEL] < 25)
+			value += ((borg_skill[BI_TOHIT] + l_ptr->to_h) * 7L);
+		else
+			value += ((borg_skill[BI_TOHIT] + 8) * 7L);
+
+		/* Prefer bows */
+		if (borg_class == CLASS_RANGER && my_ammo_tval == TV_ARROW) value += 30000L;
+
+		/* Hack -- It is hard to hold a heavy weapon */
+		if (hold < l_ptr->weight / 10) value -= 500000L;
 	}
 
-
-	/* Reward "bonus to hit" */
-	if (l_ptr->to_h > 8 || borg_skill[BI_CLEVEL] < 25)
-		value += ((borg_skill[BI_TOHIT] + l_ptr->to_h) * 7L);
-	else
-		value += ((borg_skill[BI_TOHIT] + 8) * 7L);
-
-	/* Prefer bows */
-	if (borg_class == CLASS_RANGER && my_ammo_tval == TV_ARROW) value += 30000L;
-
-	/* Hack -- It is hard to hold a heavy weapon */
-	if (hold < l_ptr->weight / 10) value -= 500000L;
-
-
 	/*** apw Analyze dragon armour  ***/
+	l_ptr = look_up_equip_slot(EQUIP_BODY);
 
 	/* Examine current armor */
-	l_ptr = &equipment[EQUIP_BODY];
-
-	if (l_ptr->tval == TV_DRAG_ARMOR)
+	if (l_ptr && (l_ptr->tval == TV_DRAG_ARMOR))
 	{
 		switch (k_info[l_ptr->k_idx].sval)
 		{
@@ -3944,23 +4004,25 @@ my_stat_ind[A_INT] * 35000L;
 	/*** Penalize armor weight ***/
 	if (my_stat_ind[A_STR] < 15)
 	{
-		if (equipment[EQUIP_BODY].weight > 200)
-			value -= (equipment[EQUIP_BODY].weight - 200) * 15;
-		if (equipment[EQUIP_HEAD].weight > 30)
-			value -= 250;
-		if (equipment[EQUIP_ARM].weight > 10)
-			value -= 250;
-		if (equipment[EQUIP_FEET].weight > 50)
-			value -= 250;
+		l_ptr = look_up_equip_slot(EQUIP_BODY);
+		if (l_ptr && (l_ptr->weight > 200)) value -= (l_ptr->weight - 200) * 15;
+		
+		l_ptr = look_up_equip_slot(EQUIP_HEAD);
+		if (l_ptr && (l_ptr->weight > 30)) value -= 250;
+		
+		l_ptr = look_up_equip_slot(EQUIP_ARM);
+		if (l_ptr && (l_ptr->weight > 10)) value -= 250;
+		
+		l_ptr = look_up_equip_slot(EQUIP_FEET);
+		if (l_ptr && (l_ptr->weight > 50)) value -= 250;
 	}
 
 	/* Compute the total armor weight */
-	cur_wgt += equipment[EQUIP_BODY].weight;
-	cur_wgt += equipment[EQUIP_HEAD].weight;
-	cur_wgt += equipment[EQUIP_ARM].weight;
-	cur_wgt += equipment[EQUIP_OUTER].weight;
-	cur_wgt += equipment[EQUIP_HANDS].weight;
-	cur_wgt += equipment[EQUIP_FEET].weight;
+	for (i = EQUIP_BODY; i <= EQUIP_FEET; i++)
+	{
+		l_ptr = look_up_equip_slot(i);
+		if (l_ptr) cur_wgt += l_ptr->weight;
+	}
 
 	/* Determine the weight allowance */
 	max_wgt = mp_ptr->spell_weight;
@@ -3980,11 +4042,10 @@ my_stat_ind[A_INT] * 35000L;
 	/* Hack -- most gloves hurt magic for spell-casters */
 	if (borg_class == CLASS_MAGE)
 	{
-		l_ptr = &equipment[EQUIP_HANDS];
+		l_ptr = look_up_equip_slot(EQUIP_HANDS);
 
 		/* Penalize non-usable gloves */
-		if (l_ptr->k_idx &&
-			(!(l_ptr->kn_flags2 & TR2_FREE_ACT)) &&
+		if (l_ptr && (!(l_ptr->kn_flags2 & TR2_FREE_ACT)) &&
 			(!((l_ptr->kn_flags1 & TR1_DEX) && (l_ptr->pval > 0))))
 		{
 			/* Hack -- Major penalty */
@@ -3995,11 +4056,12 @@ my_stat_ind[A_INT] * 35000L;
 	/* apw Hack -- most edged weapons hurt magic for priests */
 	if (borg_class == CLASS_PRIEST)
 	{
-		l_ptr = &equipment[EQUIP_WIELD];
+		l_ptr = look_up_equip_slot(EQUIP_WIELD);
 
 		/* Penalize non-blessed edged weapons */
-		if (((l_ptr->tval == TV_SWORD) || (l_ptr->tval == TV_POLEARM)) &&
-			(!(l_ptr->kn_flags3 & TR3_BLESSED)))
+		if (l_ptr && (((l_ptr->tval == TV_SWORD) ||
+			 (l_ptr->tval == TV_POLEARM)) &&
+			!(l_ptr->kn_flags3 & TR3_BLESSED)))
 		{
 			/* Hack -- Major penalty */
 			value -= 75000L;
@@ -4066,10 +4128,10 @@ my_stat_ind[A_INT] * 35000L;
 	{
 		int multibonus = 0;
 
-		l_ptr = &equipment[i];
+		l_ptr = look_up_equip_slot(i);
 
 		/* Skip empty items */
-		if (!l_ptr->number) continue;
+		if (l_ptr) continue;
 
 		/* Good to have one item with multiple high resists */
 		multibonus = (((l_ptr->kn_flags2 & TR2_RES_POIS) != 0) +
@@ -4504,13 +4566,6 @@ static s32b borg_power_aux4(void)
 
 	/* Reward *enchant armour*  */
 	if (amt_enchant_armor) value += 5000L;
-
-	/* Reward carrying a shovel if low level */
-	if (borg_skill[BI_MAXDEPTH] <= 54 &&
-		equipment[EQUIP_WIELD].tval != TV_DIGGING &&
-		amt_digger == 1) value += 5000L;
-	if (amt_digger > 1 ||
-		equipment[EQUIP_WIELD].tval == TV_DIGGING) value -= 100000L;
 
 	/*** Hack -- books ***/
 
