@@ -2908,16 +2908,6 @@ static errr rd_savefile_new_aux(void)
 		rd_s32b(&p_ptr->wilderness_x);
 		rd_s32b(&p_ptr->wilderness_y);
 
-		tempx = (int)p_ptr->wilderness_x / 16;
-		tempy = (int)p_ptr->wilderness_y / 16;
-
-		/* Get corner of visible region */
-		shift_in_bounds(&tempx, &tempy);
-
-		/* Set corner of visible region */
-		p_ptr->old_wild_x = tempx;
-		p_ptr->old_wild_y = tempy;
-
 		/* Size of the wilderness */
 		rd_s32b(&wild_x_size);
 		rd_s32b(&wild_y_size);
@@ -2939,6 +2929,16 @@ static errr rd_savefile_new_aux(void)
 
 		/* Hack - set size of wilderness to x size only */
 		max_wild = wild_x_size;
+
+		tempx = (int)p_ptr->wilderness_x / 16;
+		tempy = (int)p_ptr->wilderness_y / 16;
+
+		/* Get corner of visible region */
+		shift_in_bounds(&tempx, &tempy);
+
+		/* Set corner of visible region */
+		p_ptr->old_wild_x = tempx;
+		p_ptr->old_wild_y = tempy;
 
 		/* Ignore the seeds from old versions */
 		if (sf_version < 9)
