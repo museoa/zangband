@@ -3210,7 +3210,7 @@ void build_lake(int type)
 
 		/* Make up size of various componants */
 		/* Floor */
-		c3 = 2 * xsize / 3;
+		c3 = 3 * xsize / 4;
 
 		/* Deep water/lava*/
 		c1 = rand_int(c3 / 2) + rand_int(c3 / 2) - 5;
