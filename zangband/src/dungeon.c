@@ -1655,7 +1655,7 @@ static void process_world(void)
 		if (o_ptr->timeout > 0)
 		{
 			/* Hack lights with the LITE flag are everburning */
-			if (!(o_ptr->flags3 & TR3_LITE) && (o_ptr->tval == TV_LITE))
+			if (!((o_ptr->flags3 & TR3_LITE) && (o_ptr->tval == TV_LITE)))
 			{
 				/* Recharge */
 				o_ptr->timeout--;
