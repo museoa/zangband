@@ -157,7 +157,7 @@ void delete_monster_idx(int i)
 /*
  * Delete the monster, if any, at a given location
  */
-void delete_monster(int y, int x)
+void delete_monster(int x, int y)
 {
 	cave_type *c_ptr;
 

@@ -375,9 +375,6 @@ void destroy_level(void)
 				/* Stay in the circle of death */
 				if (k >= 16) continue;
 
-				/* Delete the monster (if any) */
-				delete_monster(y, x);
-
 				/* Access the grid */
 				c_ptr = &cave[y][x];
 

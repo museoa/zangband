@@ -2267,7 +2267,7 @@ bool destroy_area(int y1, int x1, int r)
 			else
 			{
 				/* Delete the monster (if any) */
-				delete_monster(y, x);
+				delete_monster(x, y);
 			}
 
 			/* Fields can block destruction */
@@ -2705,7 +2705,7 @@ bool earthquake(int cy, int cx, int r)
 						msg_format("%^s is embedded in the rock!", m_name);
 
 						/* Delete the monster */
-						delete_monster(yy, xx);
+						delete_monster(xx, yy);
 
 						/* No longer safe */
 						sn = 0;
