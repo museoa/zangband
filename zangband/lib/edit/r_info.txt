@@ -5953,7 +5953,7 @@ D:It walks on four legs, but mostly resembles a slug-shaped jelly.
 D:It even has two disgusting antennae in its head. Yecch!
 
 N:423:Creeping adamantite coins
-G:$:v
+G:$:G
 I:120:14d25:5:25:10
 W:40:4:0:7670
 O:100:0:0
