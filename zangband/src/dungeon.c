@@ -105,7 +105,7 @@ static byte value_check_aux2(const object_type *o_ptr)
 /*
  * Psuedo-id the item
  */
-static void sense_item(object_type *o_ptr, bool heavy, bool wield)
+void sense_item(object_type *o_ptr, bool heavy, bool wield, bool msg)
 {
 	byte feel;
 
@@ -157,7 +157,7 @@ static void sense_item(object_type *o_ptr, bool heavy, bool wield)
 	if (object_known_p(o_ptr)) return;
 
 	/* Occasional failure on inventory items */
-	if (wield && !one_in_(5)) return;
+	if (!wield && !one_in_(5)) return;
 
 	/* Good luck */
 	if ((p_ptr->muta3 & MUT3_GOOD_LUCK) && !one_in_(13))
@@ -168,8 +168,8 @@ static void sense_item(object_type *o_ptr, bool heavy, bool wield)
 	/* Check for a feeling */
 	feel = (heavy ? value_check_aux1(o_ptr) : value_check_aux2(o_ptr));
 
-	/* Skip non-feelings */
-	if (!feel) return;
+	/* Skip non-changes */
+	if (feel == o_ptr->feeling) return;
 
 	/* Bad luck */
 	if ((p_ptr->muta3 & MUT3_BAD_LUCK) && !one_in_(13))
@@ -218,27 +218,31 @@ static void sense_item(object_type *o_ptr, bool heavy, bool wield)
 	/* Stop everything */
 	if (disturb_minor) disturb(FALSE);
 
-	/* Message (equipment) */
-	if (wield)
+	/* Message */
+	if (msg)
 	{
-		slot = GET_ARRAY_INDEX(p_ptr->equipment, o_ptr);
+		/* Message (equipment) */
+		if (wield)
+		{
+			slot = GET_ARRAY_INDEX(p_ptr->equipment, o_ptr);
 
-		msgf("You feel the %v (%c) you are %s %s %s...",
+			msgf("You feel the %v (%c) you are %s %s %s...",
 				   OBJECT_FMT(o_ptr, FALSE, 0), I2A(slot),
 				   describe_use(slot),
 				   ((o_ptr->number == 1) ? "is" : "are"),
 				   game_inscriptions[feel]);
-	}
+		}
 
-	/* Message (inventory) */
-	else
-	{
-		slot = get_item_position(p_ptr->inventory, o_ptr);
+		/* Message (inventory) */
+		else
+		{
+			slot = get_item_position(p_ptr->inventory, o_ptr);
 
-		msgf("You feel the %v (%c) in your pack %s %s...",
+			msgf("You feel the %v (%c) in your pack %s %s...",
 				   OBJECT_FMT(o_ptr, FALSE, 0), I2A(slot),
 				   ((o_ptr->number == 1) ? "is" : "are"),
 				   game_inscriptions[feel]);
+		}
 	}
 
 	/* We have "felt" it */
@@ -410,13 +414,13 @@ static void sense_inventory(void)
 		/* Skip empty slots */
 		if (!o_ptr->k_idx) continue;
 
-		sense_item(o_ptr, heavy, TRUE);
+		sense_item(o_ptr, heavy, TRUE, TRUE);
 	}
 
 	/* Scan inventory */
 	OBJ_ITT_START (p_ptr->inventory, o_ptr)
 	{
-		sense_item(o_ptr, heavy, FALSE);
+		sense_item(o_ptr, heavy, FALSE, TRUE);
 	}
 	OBJ_ITT_END;
 }

@@ -1408,6 +1408,8 @@ void identify_pack(void)
 static bool uncurse_item(object_type *o_ptr, bool all)
 {
 	u32b f1, f2, f3;
+	
+	bool heavy;
 
 	/* Uncursed already */
 	if (!cursed_p(o_ptr)) return (FALSE);
@@ -1434,14 +1436,19 @@ static bool uncurse_item(object_type *o_ptr, bool all)
 		/* Done */
 		return (FALSE);
 	}
-
-	/* Hack -- Assume felt */
-	o_ptr->info |= (OB_SENSE);
-
+	
 	/* Uncurse the item */
-	o_ptr->flags3 &= ~(TR3_CURSED);
-	o_ptr->flags3 &= ~(TR3_HEAVY_CURSE);
+	o_ptr->flags3 &= ~(TR3_CURSED | TR3_HEAVY_CURSE);
+	o_ptr->kn_flags3 &= ~(TR3_CURSED | TR3_HEAVY_CURSE);
+	
+	/* Heavy sensing? */
+	heavy = class_info[p_ptr->pclass].heavy_sense;
+	
+	/* Hack -- assume no feeling */
+	o_ptr->feeling = FEEL_NONE;
 
+	/* Hack -- Update feeling */
+	sense_item(o_ptr, heavy, TRUE, FALSE);
 
 	/* Recalculate the bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -1668,15 +1675,9 @@ static void break_curse(object_type *o_ptr)
 	if (cursed_p(o_ptr) && !(f3 & TR3_PERMA_CURSE) && (randint0(100) < 25))
 	{
 		msgf("The curse is broken!");
-
-		o_ptr->info |= (OB_SENSE);
-
-		if (o_ptr->flags3 & TR3_CURSED)
-			o_ptr->flags3 &= ~(TR3_CURSED);
-		if (o_ptr->flags3 & TR3_HEAVY_CURSE)
-			o_ptr->flags3 &= ~(TR3_HEAVY_CURSE);
-
-		o_ptr->feeling = FEEL_UNCURSED;
+		
+		/* Uncurse it */
+		uncurse_item(o_ptr, TRUE);
 	}
 }
 
@@ -2625,21 +2626,9 @@ bool bless_weapon(void)
 		}
 
 		msgf("A malignant aura leaves the %s.", o_name);
-
+		
 		/* Uncurse it */
-		o_ptr->flags3 &= ~(TR3_CURSED);
-
-		/* Hack -- Assume felt */
-		o_ptr->info |= (OB_SENSE);
-
-		/* Take note */
-		o_ptr->feeling = FEEL_UNCURSED;
-
-		/* Recalculate the bonuses */
-		p_ptr->update |= (PU_BONUS);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_EQUIP);
+		uncurse_item(o_ptr, TRUE);
 	}
 
 	/*

@@ -431,10 +431,10 @@ extern void do_cmd_rerate(void);
 extern void ring_of_power(int dir);
 
 /* dungeon.c */
-extern void play_game(bool new_game);
+extern void sense_item(object_type *o_ptr, bool heavy, bool wield, bool msg);
 extern void notice_lite_change(object_type *o_ptr);
 extern bool psychometry(void);
-
+extern void play_game(bool new_game);
 
 /* files.c */
 extern void safe_setuid_drop(void);
