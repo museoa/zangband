@@ -1084,17 +1084,6 @@ byte blows_table[12][12] =
 };
 
 
-s16b arena_monsters[MAX_ARENA_MONS] =
-{
-	 30,	 43,	102,	118,	126,	149,	173,
-	183,	188,	191,	216,	230,	238,	244,
-	255,	262,	293,	297,	321,	349,	372,
-	401,	415,	454,	464,	485,	538,	631,
-	641
-};
-
-
-
 /*
  * Store owners (exactly four "possible" owners per store, chosen randomly)
  * { name, purse, max greed, min greed, haggle_per, tolerance, race, unused }
@@ -1443,10 +1432,8 @@ owner_type owners[MAX_STORES][MAX_OWNERS] =
  * energy per turn, but then speed becomes very "expensive",
  * and you must get all the way to "Fast (+50)" to reach the
  * point of getting 45 energy per turn.  After that point,
- * furthur increases in speed are more or less pointless,
+ * further increases in speed are more or less pointless,
  * except to balance out heavy inventory.
- *
- * Note that currently the fastest monster is "Fast (+30)".
  *
  * It should be possible to lower the energy threshhold from
  * 100 units to 50 units, though this may interact badly with
@@ -6115,7 +6102,7 @@ option_type option_info[] =
 	"view_granite_lite",            "Use special colors for wall grids (slow)" },
 
 	{ &view_special_lite,           FALSE, 5, 1, 31,
-	"view_special_lite",            "Use special colors for floor grids (slow)" },
+	"view_special_lite",            "Turn on lighting effects (slow)" },
 
 	{ &hilite_player,               TRUE, 5, 1, 27,
 	"hilite_player",                "Hilite the player with the cursor" },
