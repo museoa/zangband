@@ -1395,7 +1395,7 @@ static bool borg_build_casino(void)
 	borg_keypresses(buf);
 	borg_keypress('n');
 
-	/* Hack so the borg won't repeat this building */
+	/* One visit to this building is enough */
 	return (FALSE);
 }
 
@@ -1473,8 +1473,8 @@ static bool borg_build_healer(void)
 	/* Heal me */
 	borg_keypress('R');
 
-	/* success */
-	return (TRUE);
+	/* One visit is enough */
+	return (FALSE);
 }
 
 
