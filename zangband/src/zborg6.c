@@ -7507,7 +7507,7 @@ static int borg_attack_whirlwind(void)
 	if (borg_simulate)
 	{
 		/* Scan neighboring grids */
-		for (i = 0; i <= borg_next_n; i++)
+		for (i = 0; i < borg_next_n; i++)
 		{
 			/* Fetch the coords */
 			y = borg_next_y[i];
@@ -7985,7 +7985,7 @@ static int borg_chaos_damage_monster(int book, int spell)
 					dam = 0;
 
 					/* Scan neighboring grids */
-					for (i = 0; i <= borg_next_n; i++)
+					for (i = 0; i < borg_next_n; i++)
 					{
 						/* Fetch the coords */
 						y = borg_next_y[i];
@@ -11029,6 +11029,9 @@ static int borg_defend_aux_inviso(int p1)
 
 	if (borg_simulate)
 	{
+		/* Can the borg see invis already? */
+		if (borg_see_inv || FLAG(bp_ptr, TR_SEE_INVIS)) return (0);
+
 		/* not recent */
 		if (borg_t > need_see_inviso + 5) return (0);
 
@@ -11992,7 +11995,7 @@ static int borg_perma_aux_prot_evil(void)
 	if (borg_simulate)
 	{
 		/* if already protected */
-		if (borg_prot_from_evil) return (0);
+		if (borg_prot_from_evil || FLAG(bp_ptr, TR_SLAY_EVIL)) return (0);
 
 		/* increase the threshold */
 		if (unique_on_level) fail_allowed = 10;
