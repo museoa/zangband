@@ -72,6 +72,23 @@ proc cnv_stat_disp {val} {
 }
 
 
+# ImageExists --
+#
+#	Return true if an image with the given name exists.
+#
+# Arguments:
+#	arg1					about arg1
+#
+# Results:
+#	What happened.
+
+proc ImageExists {imageName} {
+
+	set imageList [image names]
+	return [expr {[lsearch -exact $imageList $imageName] != -1}]
+}
+
+
 # InitImageIfNeeded --
 #
 #	Creates a new photo image from the given file. If the image
