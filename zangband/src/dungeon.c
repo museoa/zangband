@@ -862,7 +862,7 @@ static void recharged_notice(object_type *o_ptr)
 static void process_world(void)
 {
 	int x, y, i, j;
-	int regen_amount;
+	s32b regen_amount;
 	bool cave_no_regen = FALSE;
 	int upkeep_factor = 0;
 	cave_type *c_ptr;
