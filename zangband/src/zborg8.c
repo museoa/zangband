@@ -177,10 +177,6 @@ static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
 	/* Hack -- Require identical "broken" status */
 	if ((l_ptr->info & OB_MENTAL) != (q_ptr->info & OB_MENTAL)) return (FALSE);
 
-	/* Hack -- normally require matching "inscriptions" */
-	if (!stack_force_notes &&
-		(!streq(l_ptr->o_name, q_ptr->o_name))) return (FALSE);
-
 	/* They match, so they must be similar */
 	return (TRUE);
 }

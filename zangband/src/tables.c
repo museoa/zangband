@@ -6142,7 +6142,7 @@ option_type option_info[OPT_MAX] =
 	{TRUE,  1, "always_pickup",			"Pick things up by default" },
 	{TRUE,  1, "always_repeat",			"Repeat obvious commands" },
 	{FALSE, 5, "depth_in_feet",			"Show dungeon level in feet" },
-	{TRUE,  1, "stack_force_notes",		"Merge inscriptions when stacking" },
+	{TRUE,  0, NULL,					"Number 8" },
 	{FALSE, 1, "stack_force_costs",		"Merge discounts when stacking" },
 	{TRUE,  5, "show_labels",			"Show labels in object listings" },
 	{TRUE,  5, "show_weights",			"Show weights in object listings" },

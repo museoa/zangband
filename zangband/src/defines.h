@@ -3567,7 +3567,7 @@
 #define always_pickup			p_ptr->options[5]
 #define always_repeat			p_ptr->options[6]
 #define depth_in_feet			p_ptr->options[7]
-#define stack_force_notes		p_ptr->options[8]
+/* {TRUE,  0, NULL,					"Number 8" }, p_ptr->options[8] */
 #define stack_force_costs		p_ptr->options[9]
 #define show_labels				p_ptr->options[10]
 #define show_weights			p_ptr->options[11]

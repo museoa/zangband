@@ -1706,10 +1706,6 @@ bool object_similar(const object_type *o_ptr, const object_type *j_ptr)
 		(o_ptr->inscription != j_ptr->inscription))
 		return (FALSE);
 
-	/* Hack -- normally require matching "inscriptions" */
-	if (!stack_force_notes
-		&& (o_ptr->inscription != j_ptr->inscription)) return (FALSE);
-
 	/* Hack -- normally require matching "discounts" */
 	if (!stack_force_costs
 		&& (o_ptr->discount != j_ptr->discount)) return (FALSE);

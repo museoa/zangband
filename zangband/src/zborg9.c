@@ -2501,7 +2501,6 @@ void borg_init_9(void)
 	depth_in_feet = FALSE;
 
 	/* Allow items to stack */
-	stack_force_notes = TRUE;
 	stack_force_costs = TRUE;
 
 	/* Hack - we don't understand this */
@@ -2513,13 +2512,6 @@ void borg_init_9(void)
 
 
 	/* Zangband Commands */
-
-
-	/* Ignore discounts */
-	stack_force_costs = TRUE;
-
-	/* Ignore inscriptions */
-	stack_force_notes = TRUE;
 
 	/* The borg doesn't understand the easy options */
 	easy_floor = FALSE;
