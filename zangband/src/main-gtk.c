@@ -1753,6 +1753,9 @@ errr init_gtk(unsigned char *new_game, int argc, char **argv)
 
 	/* Catch nasty signals */
 	signals_init();
+	
+	/* Need to initialize system type */
+	ANGBAND_SYS = "gtk";
 
 	/* Initialize */
 	init_angband();

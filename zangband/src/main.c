@@ -689,7 +689,6 @@ int main(int argc, char *argv[])
 	{
 		if (0 == init_gtk((unsigned char*) &new_game, argc, argv))
 		{
-			ANGBAND_SYS = "gtk";
 			done = TRUE;
 		}
 	}
