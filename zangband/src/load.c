@@ -1336,7 +1336,16 @@ static void rd_extra(void)
 	if (p_ptr->max_depth < 0) p_ptr->max_depth = 1;
 
 	/* More info */
-	strip_bytes(8);
+	rd_s16b(&p_ptr->recall_depth);
+	rd_s16b(&p_ptr->recall_place);
+
+	if (sf_version < 46 || !p_ptr->recall_depth)
+	{
+		p_ptr->recall_depth = p_ptr->depth;
+		p_ptr->recall_place = p_ptr->place_num;
+	}
+
+	strip_bytes(4);
 	rd_s16b(&p_ptr->rp.sc);
 	strip_bytes(2);
 
