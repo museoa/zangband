@@ -95,7 +95,7 @@ bool is_visible_trap(cave_type *c_ptr)
  */
 static bool los_general(int y1, int x1, int y2, int x2, bool (*f)(cave_type*))
 {
-	int i, j, temp;
+	int i, j, temp, dist;
 	
 	int x, y;
 	
@@ -103,8 +103,13 @@ static bool los_general(int y1, int x1, int y2, int x2, bool (*f)(cave_type*))
 	
 	cave_type *c_ptr;
 
+	dist = distance(y1, x1, y2, x2);
+
+	/* If (x1,y1) == (x2, y2) we know we can see ourselves */
+	if (dist == 0) return (TRUE);
+
 	/* We only work for points that are less than MAX_SIGHT appart. */
-	if (distance(y1, x1, y2, x2) > MAX_SIGHT) return (FALSE);
+	if (dist > MAX_SIGHT) return (FALSE);
 
 	/* Extract the offset */
 	dy = y2 - y1;
@@ -201,11 +206,11 @@ static bool los_general(int y1, int x1, int y2, int x2, bool (*f)(cave_type*))
  */
 static bool cave_stop_wall(cave_type *c_ptr)
 {
-	/* Walls block the path */
-	if (!cave_los_grid(c_ptr)) return (TRUE);
+	/* Is it passable? */
+	if (cave_los_grid(c_ptr)) return (FALSE);
 	
 	/* Seems ok */
-	return (FALSE);
+	return (TRUE);
 }
 
 /*
@@ -458,7 +463,7 @@ static bool project_stop(cave_type *c_ptr, u16b flg)
 		/* Require fields do not block magic */
 		if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC))
 		{
-			return (FALSE);
+			return (TRUE);
 		}
 		
 		/* Is the square occupied by a monster? */
@@ -466,20 +471,20 @@ static bool project_stop(cave_type *c_ptr, u16b flg)
 		{
 			if (flg & (PROJECT_STOP))
 			{
-				return (FALSE);
+				return (TRUE);
 			}
 			if ((flg & (PROJECT_FRND)) && is_pet(&m_list[c_ptr->m_idx]))
 			{
-				return (FALSE);
+				return (TRUE);
 			}
 		}
 		
 		/* Seems ok */
-		return (TRUE);
+		return (FALSE);
 	}
 	
 	/* Blocked */	
-	return (FALSE);
+	return (TRUE);
 }
 
 
@@ -670,7 +675,7 @@ sint project_path(coord *gp, int y1, int x1, int y2, int x2, u16b flg)
 	}
 
 	/* Length */
-	return (sq);
+	return (sq + 1);
 }
 
 
