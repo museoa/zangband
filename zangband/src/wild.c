@@ -3357,8 +3357,6 @@ static void shift_left(void)
 void move_wild(void)
 {
 	int x, y, dx, dy;
-
-	
 	
 	/* Get upper left hand block in grid. */
 
@@ -4186,8 +4184,8 @@ void wild_done(void)
 	py = p_ptr->wilderness_y;
 
 	/* Determine number of panels */
-	max_panel_rows = max_wild * 16 * 2 - 2;
-	max_panel_cols = max_wild * 16 * 2 - 2;
+	max_panel_rows = (max_wild*16 / SCREEN_HGT) * 2 - 2;
+	max_panel_cols = (max_wild*16 / SCREEN_WID) * 2 - 2;
 
 	/* Assume illegal panel */
 	panel_row = max_panel_rows;

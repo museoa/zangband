@@ -31,7 +31,6 @@ void do_cmd_redraw(void)
 
 	term *old = Term;
 
-
 	/* Hack -- react to changes */
 	Term_xtra(TERM_XTRA_REACT, 0);
 
