@@ -14,6 +14,33 @@
 %:graf-new.prf
 
 ##### Override some things #####
+#
+#
+# This pref file is unlike most others that set the graphics.
+#
+# The demands of a 3d view are such that extra information needs
+# to be passed to the renderer.  This information is encoded as
+# bits in the 'character' byte, as well as the 'attribute' byte.
+#
+# Note that "normally" graphics is used when both bytes have the
+# high-bit set.  This has changed so that only the attr high-bit
+# needs to be set for this.
+#
+# Now - the size of the graphics bitmap allows us two 'spare' bits.
+# The 0x40 bit in the character byte is used to denote '3d' tiles.
+# These tiles have a 'roof' and walls.
+# If the 0x80 bit in the character byte is set - then the illumination
+# of the roof is controlled by the BRIGHT_WALLS #define in main-xpj.c
+# Note that this is a major hack - it will only work if the tiles are
+# aligned correctly modulo three.
+#
+# If this bit is not set, then the 'normal' illumination is used.  This
+# is the case for jungle and the various door tiles.
+#
+# If this bit is not set, and the 'wall' bit is not set - then the
+# behavior is undefined.  (We may use this case to denote other effects
+# in the future.
+
 
 
 ##### Feature attr/char definitions #####
@@ -31,10 +58,10 @@ F:2:0x80/0x81
 F:3:0x8D/0x95
 
 # open door
-F:4:0x82/0xC4
+F:4:0x82/0x44
 
 # broken door
-F:5:0x82/0xC5
+F:5:0x82/0x45
 
 # up staircase
 F:6:0x80/0x96
@@ -67,7 +94,7 @@ F:14:0xBB/0x8B
 F:15:0xBD/0x94
 
 # closed door
-F:32:0x82/0xC3
+F:32:0x82/0x43
 
 # Pillar
 F:33:0xBE/0x97
@@ -201,7 +228,7 @@ W:113:0xBB/0x8E
 F:114:0xBE/0x83
 
 # Jungle
-F:115:0x82/0xDA
+F:115:0x82/0x5A
 
 # Bush
 F:128:0x82/0x9D
@@ -243,55 +270,55 @@ F:137:0xBE/0x89
 
 
 # Locked Door
-T:32:0x82/0xC3
+T:32:0x82/0x43
 
 # Jammed Door
-T:33:0x82/0xC3
+T:33:0x82/0x43
 
 # General Store
-T:34:0x82/0xC7
+T:34:0x82/0x47
 
 # Armoury
-T:35:0x82/0xC8
+T:35:0x82/0x48
 
 # Weapon Smiths
-T:36:0x82/0xC9
+T:36:0x82/0x49
 
 # Temple
-T:37:0x82/0xCA
+T:37:0x82/0x4A
 
 # Alchemy Shop
-T:38:0x82/0xCB
+T:38:0x82/0x4B
 
 # Magic Shop
-T:39:0x82/0xCC
+T:39:0x82/0x4C
 
 # Black Market
-T:40:0x82/0xCD
+T:40:0x82/0x4D
 
 # Home
-T:41:0x82/0xCE
+T:41:0x82/0x4E
 
 # Bookstore
-T:42:0x82/0xCF
+T:42:0x82/0x4F
 
 # Weaponmaster
-T:43:0xBE/0xD4
+T:43:0xBE/0x54
 
 # Zymurgist
-T:44:0xBE/0xD6
+T:44:0xBE/0x56
 
 # Magesmith (weapon)
-T:45:0xBE/0xD5
+T:45:0xBE/0x55
 
 # Magesmith (armour)
-T:46:0xBE/0xD5
+T:46:0xBE/0x55
 
 # Mutatalist
-T:47:0xBE/0xD1
+T:47:0xBE/0x51
 
 # Map Maker
-T:48:0xBE/0xD2
+T:48:0xBE/0x52
 
 # Load the special player pictures
 %:xtra-new.prf
