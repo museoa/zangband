@@ -21,3 +21,9 @@
 #  and value is a single-quote delimited value.
 # For example:
 #*.gif -k 'b'
+
+*.gif -k 'b'
+*.bmp -k 'b'
+*.fnt -k 'b'
+*.fon -k 'b'
+*.wav -k 'b'
