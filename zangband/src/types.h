@@ -1797,12 +1797,14 @@ struct mutation_type
 	cptr gain_text;		/* Text displayed on gaining the mutation */
 	cptr lose_text;		/* Text displayed on losing the mutation */
 
-	char name[40];		/* Short description (activatable mutations) */
+	char name[39];		/* Short description (activatable mutations) */
+	byte level;			/* Minimum level (activatable mutations) */
+	
 	int cost;			/* Mana/HP Cost (activatable mutations) */
 	int stat;			/* Stat dependency (activatable mutations) */
 	int diff;			/* Difficulty (activatable mutations) */
 	int chance;			/* Chance of occuring (random mutations) / 100 */
-	byte level;			/* Minimum level (activatable mutations) */
+	
 };
 
 
