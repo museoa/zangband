@@ -2220,7 +2220,7 @@ void do_cmd_stay(int pickup)
 	/* 
 	 * Fields you are standing on may do something.
 	 */
-	field_hook(&area(p_ptr->py, p_ptr->px)->fld_idx, FIELD_ACT_PLAYER_ON, NULL);
+	field_hook(&area(p_ptr->py, p_ptr->px)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);
 
 #if 0
 
