@@ -784,7 +784,9 @@ void do_cmd_racial_power(void)
         repeat_push(i);
 	}
 
-	if (power_desc[i].number < 0)
+	
+	
+	if (power_desc[i].number == -1)
 	{
 		cmd_racial_power_aux(power_desc[i].power);
 	}
