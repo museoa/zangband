@@ -24,16 +24,16 @@
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 #endif
 
-int g_palette_white, g_palette_black;
+extern int g_palette_white, g_palette_black;
 #define PALETTE_WHITE g_palette_white
 #define PALETTE_BLACK g_palette_black
 
-int g_colormap_white, g_colormap_black;
+extern int g_colormap_white, g_colormap_black;
 #define COLORMAP_WHITE g_colormap_white
 #define COLORMAP_BLACK g_colormap_black
 
-unsigned char g_palette2colormap[256];
-unsigned char g_colormap2palette[256];
+extern unsigned char g_palette2colormap[256];
+extern unsigned char g_colormap2palette[256];
 
 typedef unsigned char TintValue, TintTable[256], *TintPtr;
 int Palette_Init(Tcl_Interp *interp, char *fileName);
@@ -131,7 +131,7 @@ struct DoubleLink
 struct DoubleLinker
 {
 	int count;
-	char *what;
+	cptr what;
 	DoubleLink *head;
 	DoubleLink *tail;
 };

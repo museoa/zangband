@@ -10,17 +10,16 @@
  * included in all such copies.
  */
 
-#include <limits.h>
-#ifndef USHRT_MAX
-#define USHRT_MAX 65535
-#endif
-
-#include <math.h>
-#include <string.h>
+#include "angband.h"
 #include <tcl.h>
 #include "cmdinfo-dll.h"
 #include "util-dll.h"
 #include "plat-dll.h"
+
+#include <limits.h>
+#ifndef USHRT_MAX
+#define USHRT_MAX 65535
+#endif
 
 extern int debug_widgets;
 
@@ -137,7 +136,7 @@ void *Array_Delete(void *array_ptr, int *count, int elem_size,
 	return (void *) Tcl_ReallocDebug(ap, n * elem_size);
 }
 
-void IndexedColor_ResetHash(IndexedColor *idc)
+static void IndexedColor_ResetHash(IndexedColor *idc)
 {
 	int i;
 
@@ -151,7 +150,7 @@ void IndexedColor_ResetHash(IndexedColor *idc)
  * Returns the nearest matching palette index for the given
  * RGB values.
  */
-int IndexedColor_RGB2Index(IndexedColor *idc, unsigned char r, unsigned char g, unsigned char b)
+static int IndexedColor_RGB2Index(IndexedColor *idc, unsigned char r, unsigned char g, unsigned char b)
 {
 	int i, delta, index, sum, max;
 	unsigned char *col;
@@ -212,7 +211,7 @@ int IndexedColor_RGB2Index(IndexedColor *idc, unsigned char r, unsigned char g, 
  * looks like at the given opacity against each of the standard
  * palette colors.
  */
-void IndexedColor_TintTable(IndexedColor *idc, int tint, int opacity, TintTable table)
+static void IndexedColor_TintTable(IndexedColor *idc, int tint, int opacity, TintTable table)
 {
 	int i;
 	long v1, v2, m;
@@ -262,8 +261,9 @@ void IndexedColor_TintTable(IndexedColor *idc, int tint, int opacity, TintTable 
  * Return gamma-corrected intensity. This is usually called on
  * each component of an RGB value.
  */
-int gamma_correct(int value, double gamma)
+static int gamma_correct(int value, double gamma)
 {
+#if 0 /* Don't use the math library... use util.c */
 	double ind;
 	double inverse;
 
@@ -277,6 +277,11 @@ int gamma_correct(int value, double gamma)
 	}
 	ind = (double) value / 256.0;
 	return (int) (256 * pow(ind, inverse));
+#endif /* 0 */
+	/* Hack - ignore gamma value now */
+	(void) gamma;
+
+	return (value);
 }
 
 /* 
@@ -285,7 +290,7 @@ int gamma_correct(int value, double gamma)
  * RGB value of the global palette, then finding the nearest
  * palette index for the gamma-corrected RGB.
  */
-void IndexedColor_GammaTable(IndexedColor *idc, double gamma, TintTable tint)
+static void IndexedColor_GammaTable(IndexedColor *idc, double gamma, TintTable tint)
 {
 	int i, r, g, b;
 	unsigned char *rgb = idc->rgb;
@@ -307,7 +312,7 @@ void IndexedColor_GammaTable(IndexedColor *idc, double gamma, TintTable tint)
  * Returns the given value adjusted for brightness.
  * This is usually called on each component of an RGB value.
  */
-int brightness_value(int intensity, int value)
+static int brightness_value(int intensity, int value)
 {
 	double brightValue = intensity;
 
@@ -328,7 +333,7 @@ int brightness_value(int intensity, int value)
  * Adjusts the given 256 palette indices for the given intensity.
  * 'Intensity' can be from -127 to +127 inclusive.
  */
-void IndexedColor_BrightnessTable(IndexedColor *idc, int intensity, TintTable table)
+static void IndexedColor_BrightnessTable(IndexedColor *idc, int intensity, TintTable table)
 {
 	int i, r, g, b;
 	unsigned char *rgb = idc->rgb;
@@ -353,11 +358,13 @@ void IndexedColor_BrightnessTable(IndexedColor *idc, int intensity, TintTable ta
 	}
 }
 
+
+#if 0
 /*
  * Returns the given value adjusted for contrast.
  * This is usually called on each component of an RGB value.
  */
-int contrast_value(int intensity, int value)
+static int contrast_value(int intensity, int value)
 {
 	int v;
 	double contrastValue = intensity;
@@ -387,12 +394,14 @@ int contrast_value(int intensity, int value)
 		return (value > 127) ? (255 - v) : v;
 	}
 }
+#endif /* 0 */
+
 
 /*
  * Adjusts the given 256 palette indices for the given contrast.
  * 'Intensity' can be from -127 to +127 inclusive.
  */
-void IndexedColor_ContrastTable(IndexedColor *idc, int intensity, TintTable table)
+static void IndexedColor_ContrastTable(IndexedColor *idc, int intensity, TintTable table)
 {
 	int i, r, g, b;
 	unsigned char *rgb = idc->rgb;
@@ -406,12 +415,15 @@ void IndexedColor_ContrastTable(IndexedColor *idc, int intensity, TintTable tabl
 		r = rgb[n * 3 + 0];
 		g = rgb[n * 3 + 1];
 		b = rgb[n * 3 + 2];
-
+#if 0
 		/* Adjust contrast */
 		r = contrast_value(intensity, r);
 		g = contrast_value(intensity, g);
 		b = contrast_value(intensity, b);
-				
+#endif /* 0 */
+		/* Ignore unused parameter due to above */
+		(void) intensity;
+	
 		/* Now we have the RGB value, convert it into a palette index */
 		table[i] = IndexedColor_RGB2Index(idc, r, g, b);
 	}
@@ -420,7 +432,7 @@ void IndexedColor_ContrastTable(IndexedColor *idc, int intensity, TintTable tabl
 /*
  * Create a tint table that maps to the same palette index
  */
-void IndexedColor_One2OneTable(IndexedColor *idc, TintTable table)
+static void IndexedColor_One2OneTable(TintTable table)
 {
 	int i;
 
@@ -431,7 +443,7 @@ void IndexedColor_One2OneTable(IndexedColor *idc, TintTable table)
 }
 
 /* nearest $color */
-int objcmd_palette_nearest(ClientData clientData, Tcl_Interp *interp,
+static int objcmd_palette_nearest(ClientData clientData, Tcl_Interp *interp,
 	int objc, Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -439,6 +451,9 @@ int objcmd_palette_nearest(ClientData clientData, Tcl_Interp *interp,
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 	XColor *xColorPtr;
 	int nearest;
+
+	/* Hack - ignore parameter */
+	(void) objc;
 
 	xColorPtr = Tk_AllocColorFromObj(interp, Tk_MainWindow(interp), objV[1]);
 	if (xColorPtr == NULL)
@@ -459,7 +474,7 @@ int objcmd_palette_nearest(ClientData clientData, Tcl_Interp *interp,
 }
 
 /* set $index ?$color? */
-int objcmd_palette_set(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_palette_set(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -578,81 +593,6 @@ error:
 	return TCL_ERROR;
 }
 
-#if 0
-
-#ifdef PLATFORM_X11
-
-int Palette_Init(Tcl_Interp *interp, char *fileName)
-{
-	FILE *fp;
-	int count = 0, r, g, b;
-	char buf[80], errorMsg[512];
-	unsigned char *rgb;
-
-	if (Palette_Initialized) return TCL_OK;
-
-	rgb = g_palette.rgb;
-
-	/* Try to open the palette file */
-	if ((fp = fopen(fileName, "r")) == NULL)
-	{
-		(void) sprintf(errorMsg,
-			"can't open palette file \"%s\"", fileName);
-		goto error;
-	}
-
-	/* Read each line until done */
-	while (!feof(fp))
-	{
-		/* Get a line */
-		if (!fgets(buf, 80, fp)) continue;
-
-		/* Skip comments */
-		if (buf[0] == '#') continue;
-
-		/* Require RGB triplet */
-		if (sscanf(buf, "%d %d %d", &r, &g, &b) != 3) continue;
-
-		/* Write this color to the array */
-		*rgb++ = r, *rgb++ = g, *rgb++ = b;
-
-		/* Count the colors */
-		count++;
-	}
-
-	/* Close the file */
-	fclose(fp);
-
-	/* Require 256 colors exactly */
-	if (count != 256)
-	{
-		/* Fatal error */
-		(void) sprintf(errorMsg,
-			"expected 256 colors, got \"%d\"", count);
-		goto error;
-	}
-
-	(void) CommandInfo_Init(interp, commandInit, NULL);
-
-	Palette_ResetHash();
-
-	Palette_Initialized = 1;
-
-Colormap_Init(interp);
-
-	return TCL_OK;
-
-error:
-	/* Set the error */
-	Tcl_SetStringObj(Tcl_GetObjResult(interp), errorMsg, -1);
-
-	/* Failure */
-	return TCL_ERROR;
-}
-
-#endif /* PLATFORM_X11 */
-
-#endif /* 0 */
 
 void Palette_ResetHash(void)
 {
@@ -804,12 +744,10 @@ void DoubleLink_Unlink(DoubleLink *link)
 
 if (!linker->count)
 	if (linker->head != NULL || linker->tail != NULL)
-		Tcl_Panic("linker \"%s\" count is zero, but head=%ld tail=%ld",
+		Tcl_Panic((char *) "linker \"%s\" count is zero, but head=%ld tail=%ld",
 			linker->what, linker->head, linker->tail);
 			
 }
-
-#if 1
 
 void Bitmap_New(Tcl_Interp *interp, BitmapPtr bitmapPtr)
 {
@@ -820,277 +758,6 @@ void Bitmap_Delete(BitmapPtr bitmapPtr)
 {
 	Plat_BitmapDelete(bitmapPtr);
 }
-
-#else /* not 1 */
-
-#ifdef PLATFORM_WIN
-
-void Bitmap_New16or24(Tcl_Interp *interp, BitmapPtr bitmapPtr)
-{
-	int depth = bitmapPtr->depth;
-	BITMAPINFO *infoPtr;
-
-	/* Hack -- See Tcl_AllocDebug() */
-	((int *) bitmapPtr)[0] = TCL_FREE_MAGIC;
-	((int *) bitmapPtr)[1] = sizeof(BitmapType);
-
-	/* Allocate temp storage */
-	infoPtr = (BITMAPINFO *) Tcl_Alloc(sizeof(BITMAPINFO));
-
-	/* Set header fields */
-	infoPtr->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	infoPtr->bmiHeader.biWidth = bitmapPtr->width;
-	infoPtr->bmiHeader.biHeight = -bitmapPtr->height; /* Top-down */
-	infoPtr->bmiHeader.biPlanes = 1;
-	infoPtr->bmiHeader.biBitCount = depth; /* 16 or 24 */
-	infoPtr->bmiHeader.biCompression = BI_RGB;
-	infoPtr->bmiHeader.biSizeImage = 0;
-	infoPtr->bmiHeader.biXPelsPerMeter = 0;
-	infoPtr->bmiHeader.biYPelsPerMeter = 0;
-	infoPtr->bmiHeader.biClrUsed = 0;
-	infoPtr->bmiHeader.biClrImportant = 0;
-
-	/* Create the bitmap, and get the address of the bits */
-	bitmapPtr->hbm = CreateDIBSection(NULL /* bitmapPtr->hdc */, infoPtr,
-		DIB_RGB_COLORS, (LPVOID) &bitmapPtr->pixelPtr, NULL, 0);
-
-	/* Free temp storage */
-	Tcl_Free((char *) infoPtr);
-
-	bitmapPtr->pixelSize = depth / 8;
-	bitmapPtr->pitch = bitmapPtr->width * bitmapPtr->pixelSize;
-
-	if (bitmapPtr->pitch % sizeof(LONG))
-		bitmapPtr->pitch += sizeof(LONG) - bitmapPtr->pitch % sizeof(LONG);
-
-	/* Now create a Pixmap */
-	bitmapPtr->twd.type = TWD_BITMAP;
-	bitmapPtr->twd.bitmap.depth = depth;
-	bitmapPtr->twd.bitmap.handle = bitmapPtr->hbm;
-	bitmapPtr->twd.bitmap.colormap = Tk_Colormap(Tk_MainWindow(interp));
-	bitmapPtr->pixmap = (Pixmap) &bitmapPtr->twd;
-}
-
-/*
- * Create an 8-bits-per-pixel bitmap.
- * bitmapPtr->width and bitmapPtr->height must be set on input with
- * the desired size (in pixels) of the new bitmap.
- */
-void Bitmap_New(Tcl_Interp *interp, BitmapPtr bitmapPtr)
-{
-	int depth = bitmapPtr->depth;
-	BITMAPINFO *infoPtr;
-	PALETTEENTRY entries[256];
-	int i;
-
-	if (depth != 8)
-	{
-		Bitmap_New16or24(interp, bitmapPtr);
-		return;
-	}
-
-	/* Hack -- See Tcl_AllocDebug() */
-	((int *) bitmapPtr)[0] = TCL_FREE_MAGIC;
-	((int *) bitmapPtr)[1] = sizeof(BitmapType);
-
-	/* Allocate temp storage */
-	infoPtr = (BITMAPINFO *) Tcl_Alloc(sizeof(BITMAPINFOHEADER) + 
-		256 * sizeof(RGBQUAD));
-
-	/* Set header fields */
-	infoPtr->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	infoPtr->bmiHeader.biWidth = bitmapPtr->width;
-	infoPtr->bmiHeader.biHeight = -bitmapPtr->height; /* Top-down */
-	infoPtr->bmiHeader.biPlanes = 1;
-	infoPtr->bmiHeader.biBitCount = 8;
-	infoPtr->bmiHeader.biCompression = BI_RGB;
-	infoPtr->bmiHeader.biSizeImage = 0;
-	infoPtr->bmiHeader.biXPelsPerMeter = 0;
-	infoPtr->bmiHeader.biYPelsPerMeter = 0;
-	infoPtr->bmiHeader.biClrUsed = 256;
-	infoPtr->bmiHeader.biClrImportant = 0;
-
-	/* Get the 256 standard colors as PALETTEENTRIES */
-    GetPaletteEntries(g_palette.hPal, 0, 256, entries);
-
-	/* Copy the colors to the bitmap color table */
-	for (i = 0; i < 256; i++)
-	{
-		infoPtr->bmiColors[i].rgbRed = entries[i].peRed;
-		infoPtr->bmiColors[i].rgbGreen = entries[i].peGreen;
-		infoPtr->bmiColors[i].rgbBlue = entries[i].peBlue;
-		infoPtr->bmiColors[i].rgbReserved = 0;
-	}		
-
-	/* Create the bitmap, and get the address of the bits */
-	bitmapPtr->hbm = CreateDIBSection(NULL /* bitmapPtr->hdc */, infoPtr,
-		DIB_RGB_COLORS, (LPVOID) &bitmapPtr->pixelPtr, NULL, 0);
-
-	/* Free temp storage */
-	Tcl_Free((char *) infoPtr);
-
-	bitmapPtr->pixelSize = depth / 8;
-	bitmapPtr->pitch = bitmapPtr->width * bitmapPtr->pixelSize;
-
-	if (bitmapPtr->pitch % sizeof(LONG))
-		bitmapPtr->pitch += sizeof(LONG) - bitmapPtr->pitch % sizeof(LONG);
-
-	/* Create a Colormap */
-	bitmapPtr->twc.palette = Palette_GetHPal();
-
-	/* Now create a Pixmap */
-	bitmapPtr->twd.type = TWD_BITMAP;
-	bitmapPtr->twd.bitmap.depth = depth;
-	bitmapPtr->twd.bitmap.handle = bitmapPtr->hbm;
-	bitmapPtr->twd.bitmap.colormap = (Colormap) &bitmapPtr->twc;
-	bitmapPtr->pixmap = (Pixmap) &bitmapPtr->twd;
-}
-
-/*
- * Delete a bitmap.
- */
-void Bitmap_Delete(BitmapPtr bitmapPtr)
-{
-	int i, size;
-
-	/* Hack -- See Tcl_FreeDebug() */
-	if (((int *) bitmapPtr)[0] != TCL_FREE_MAGIC)
-		Tcl_Panic("Tcl_FreeDebug: magic number not found");
-	size = ((int *) bitmapPtr)[1];
-
-	DeleteObject(bitmapPtr->hbm);
-
-	/* Hack -- See Tcl_FreeDebug() */
-	for (i = 0; i < size; i++)
-		((char *) bitmapPtr)[i] = 0;
-}
-
-#endif /* PLATFORM_WIN */
-
-#ifdef PLATFORM_X11
-
-#include <errno.h>
-
-static int ErrorHandler(ClientData clientData, XErrorEvent *errEventPtr)
-{
-    int *anyError = (int *) clientData;
-    *anyError = 1;
-    return 0;
-}
-
-void Bitmap_New(Tcl_Interp *interp, BitmapPtr bitmapPtr)
-{
-	int depth = bitmapPtr->depth;
-	Display *display = tk_display;
-	int screenNum = XDefaultScreen(display);
-	Tk_ErrorHandler handler;
-	Window root = RootWindow(display, screenNum);
-	Visual *visual = DefaultVisual(display, screenNum);
-	int ret, anyError;
-
-	/* Verify shared-memory pixmaps are available */
-	{
-		int major, minor;
-		Bool pixmaps;
-		XShmQueryVersion(display, &major, &minor, &pixmaps);
-		if (pixmaps != True)
-		{
-			Tcl_Panic("no shared pixmaps");
-		}
-	}
-
-	if (bitmapPtr->width < 1) bitmapPtr->width = 1;
-	if (bitmapPtr->height < 1) bitmapPtr->height = 1;
-
-	/* Create shared-memory image. */
-    bitmapPtr->ximage = XShmCreateImage(display, visual, depth, ZPixmap, NULL,
-		&bitmapPtr->shminfo, bitmapPtr->width, bitmapPtr->height);
-
-	/* Allocate shared memory */
-    ret = bitmapPtr->shminfo.shmid = shmget(IPC_PRIVATE,
-		bitmapPtr->ximage->bytes_per_line * bitmapPtr->ximage->height,
-		IPC_CREAT | 0777);
-	if (ret < 0)
-	{
-		printf("shmget: errno is %s (%d): %s\n", Tcl_ErrnoId(), errno, Tcl_ErrnoMsg(errno));
-		Tcl_Panic("shmget() failed");
-	}
-
-    ret = (int) bitmapPtr->shminfo.shmaddr =
-    	shmat(bitmapPtr->shminfo.shmid, 0, 0);
-    if(ret == -1)
-    {
-		printf("shmat: errno is %s (%d): %s\n", Tcl_ErrnoId(), errno, Tcl_ErrnoMsg(errno));
-		shmctl(bitmapPtr->shminfo.shmid, IPC_RMID, 0);
-		Tcl_Panic("shmat() failed");
-	}
-
-	/* Allow the server to write into our pixmap */
-	bitmapPtr->shminfo.readOnly = False;
-
-    anyError = 0;
-    handler = Tk_CreateErrorHandler(display, -1, -1, -1, ErrorHandler,
-    	(ClientData) &anyError);
-    ret = XShmAttach(display, &bitmapPtr->shminfo);
-    if(ret != True)
-    {
-		shmdt(bitmapPtr->shminfo.shmaddr);
-		shmctl(bitmapPtr->shminfo.shmid, IPC_RMID, 0);
-		Tcl_Panic("XShmAttach() failed");
-    }
-	XSync(display, False);
-    Tk_DeleteErrorHandler(handler);
-    if (anyError)
-    {
-		shmdt(bitmapPtr->shminfo.shmaddr);
-		shmctl(bitmapPtr->shminfo.shmid, IPC_RMID, 0);
-		Tcl_Panic("XShmAttach() etc gave errors");
-    }
-
-    ret = shmctl(bitmapPtr->shminfo.shmid, IPC_RMID, 0);
-    if(ret < 0)
-    {
-		XShmDetach(display, &bitmapPtr->shminfo);
-		shmdt(bitmapPtr->shminfo.shmaddr);
-		shmctl(bitmapPtr->shminfo.shmid, IPC_RMID, 0);
-		Tcl_Panic("shmctl() failed");
-    }
-
-	/* Image uses shared memory we allocated */
-    bitmapPtr->ximage->data = bitmapPtr->shminfo.shmaddr;
-
-	/* Create shared-memory Pixmap */
-    bitmapPtr->pixmap = XShmCreatePixmap(display, root,
-    	bitmapPtr->shminfo.shmaddr, &bitmapPtr->shminfo,
-    	bitmapPtr->width, bitmapPtr->height, depth);
-
-	if (bitmapPtr->pixmap == None)
-	{
-		Tcl_Panic("XShmCreatePixmap() failed");
-	}
-
-	/* Set pitch, pixelSize, and pixelPtr */
-	bitmapPtr->pitch = bitmapPtr->ximage->bytes_per_line;
-	bitmapPtr->pixelSize = bitmapPtr->ximage->bits_per_pixel / 8;
-	bitmapPtr->pixelPtr = bitmapPtr->shminfo.shmaddr;
-}
-
-#include <X11/Xutil.h>
-
-void Bitmap_Delete(BitmapPtr bitmapPtr)
-{
-	Display *display = tk_display;
-
-	XShmDetach(display, &bitmapPtr->shminfo);
-	XDestroyImage(bitmapPtr->ximage);
-	XFreePixmap(display, bitmapPtr->pixmap);
-	shmdt(bitmapPtr->shminfo.shmaddr);
-	shmctl(bitmapPtr->shminfo.shmid, IPC_RMID, 0);
-}
-
-#endif /* PLATFORM_X11 */
-
-#endif /* 0 */
 
 Tcl_Obj *ExtToUtf_NewStringObj(CONST char *bytes, int length)
 {
@@ -1127,103 +794,6 @@ char *UtfToExt_TranslateFileName(Tcl_Interp *interp, char *utfPath, Tcl_DString 
 	Tcl_DStringFree(&utfDString);
 	return extString;
 }
-
-
-
-#ifdef PLATFORM_WIN
-
-#if 0 /* NOT USED */
-
-#include <tkFont.h>
-
-#define FONTMAP_SHIFT	    10
-
-#define FONTMAP_PAGES	    	(1 << (sizeof(Tcl_UniChar)*8 - FONTMAP_SHIFT))
-#define FONTMAP_BITSPERPAGE	(1 << FONTMAP_SHIFT)
-
-typedef struct FontFamily {
-    struct FontFamily *nextPtr;	/* Next in list of all known font families. */
-    int refCount;		/* How many SubFonts are referring to this
-				 * FontFamily.  When the refCount drops to
-				 * zero, this FontFamily may be freed. */
-    /*
-     * Key.
-     */
-     
-    Tk_Uid faceName;		/* Face name key for this FontFamily. */
-
-    /*
-     * Derived properties.
-     */
-     
-    Tcl_Encoding encoding;	/* Encoding for this font family. */
-    int isSymbolFont;		/* Non-zero if this is a symbol font. */
-    int isWideFont;		/* 1 if this is a double-byte font, 0 
-				 * otherwise. */
-    BOOL (WINAPI *textOutProc)(HDC, int, int, TCHAR *, int);
-				/* The procedure to use to draw text after
-				 * it has been converted from UTF-8 to the 
-				 * encoding of this font. */
-    BOOL (WINAPI *getTextExtentPoint32Proc)(HDC, TCHAR *, int, LPSIZE);
-				/* The procedure to use to measure text after
-				 * it has been converted from UTF-8 to the 
-				 * encoding of this font. */
-
-    char *fontMap[FONTMAP_PAGES];
-				/* Two-level sparse table used to determine
-				 * quickly if the specified character exists.
-				 * As characters are encountered, more pages
-				 * in this table are dynamically added.  The
-				 * contents of each page is a bitmask
-				 * consisting of FONTMAP_BITSPERPAGE bits,
-				 * representing whether this font can be used
-				 * to display the given character at the
-				 * corresponding bit position.  The high bits
-				 * of the character are used to pick which
-				 * page of the table is used. */
-
-    /*
-     * Cached Truetype font info.
-     */
-     
-    int segCount;		/* The length of the following arrays. */
-    USHORT *startCount;		/* Truetype information about the font, */
-    USHORT *endCount;		/* indicating which characters this font
-				 * can display (malloced).  The format of
-				 * this information is (relatively) compact,
-				 * but would take longer to search than 
-				 * indexing into the fontMap[][] table. */
-} FontFamily;
-
-typedef struct SubFont {
-    char **fontMap;		/* Pointer to font map from the FontFamily, 
-				 * cached here to save a dereference. */
-    HFONT hFont;		/* The specific screen font that will be
-				 * used when displaying/measuring chars
-				 * belonging to the FontFamily. */
-    FontFamily *familyPtr;	/* The FontFamily for this SubFont. */
-} SubFont;
-
-#define SUBFONT_SPACE		3
-
-typedef struct WinFont {
-    TkFont font;		/* Stuff used by generic font package.  Must
-				 * be first in structure. */
-    SubFont staticSubFonts[SUBFONT_SPACE];
-				/* Builtin space for a limited number of
-				 * SubFonts. */
-
-	/*** Missing fields here ***/
-} WinFont ;
-
-HFONT TkToWinFont(Tk_Font tkFont)
-{
-	return ((WinFont *) tkFont)->staticSubFonts[0].hFont;
-}
-
-#endif /* 0 */
-
-#endif /* PLATFORM_WIN */
 
 static IndexedColor g_colormap;
 unsigned char *g_colormap_rgb;
@@ -1351,52 +921,6 @@ void Colormap_ContrastTable(int intensity, TintTable table)
 
 void Colormap_One2OneTable(TintTable table)
 {
-	IndexedColor_One2OneTable(&g_colormap, table);
+	IndexedColor_One2OneTable(table);
 }
 
-#if 0 /* NOT USED */
-
-/*
- * XXX Hack -- Check to see if the colormap changed
- * That would be bad, because all our icons would look technicolor.
- */
-void Colormap_Check(Tcl_Interp *interp)
-{
-#ifdef PLATFORM_X11
-	Tk_Window tkwin = Tk_MainWindow(interp);
-	Display *display = Tk_Display(tkwin);
-	Colormap colormap = Tk_Colormap(tkwin); /* DefaultColormap() */
-	XColor xColor;
-#endif
-	int i, r, g, b;
-
-	for (i = 0; i < 256; i++)
-	{
-#ifdef PLATFORM_X11
-		/* Get the XColor at this location in the colormap */
-		xColor.pixel = i;
-		XQueryColor(display, colormap, &xColor);
-
-		/* Convert RGB values to 0-255 */
-		r = ((double) xColor.red) / USHRT_MAX * 255;
-		g = ((double) xColor.green) / USHRT_MAX * 255;
-		b = ((double) xColor.blue) / USHRT_MAX * 255;
-#endif /* */
-
-#ifdef PLATFORM_WIN
-		PALETTEENTRY entry;
-		HDC hdc = GetDC(NULL);
-		GetSystemPaletteEntries(hdc, i, 1, &entry);
-		ReleaseDC(NULL, hdc);
-		r = entry.peRed;
-		g = entry.peGreen;
-		b = entry.peBlue;
-#endif /* PLATFORM_WIN */
-
-		if (g_colormap.rgb[i * 3 + 0] == r &&
-			g_colormap.rgb[i * 3 + 1] == g &&
-			g_colormap.rgb[i * 3 + 2] == b) continue;
-	}
-}
-
-#endif /* 0 */
