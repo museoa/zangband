@@ -854,7 +854,7 @@ bool player_can_see_bold(int y, int x)
 	if (c_ptr->info & (CAVE_LITE)) return (TRUE);
 
 	/* Require line of sight to the grid */
-	if (!player_has_los_grid(c_ptr)) return (FALSE);
+	if (!(c_ptr->info & (CAVE_VIEW))) return (FALSE);
 
 	/* Require "perma-lite" of the grid or monster lit grid */
 	if (!(c_ptr->info & (CAVE_GLOW | CAVE_MNLT))) return (FALSE);
@@ -4214,8 +4214,6 @@ void update_mon_lite(void)
 
 	s16b fx, fy;
 
-	s16b end_temp;
-
 	/* Blindness check */
 	if (p_ptr->blind)
 	{
@@ -4420,10 +4418,7 @@ void update_mon_lite(void)
 			}
 		}
 	}
-
-	/* Save end of list of new squares */
-	end_temp = temp_n;
-
+	
 	/*
 	 * Look at old set flags to see if there are any changes.
 	 */
@@ -4438,16 +4433,24 @@ void update_mon_lite(void)
 		c_ptr = area(fy, fx);
 
 		/* It it no longer lit? */
-		if (!(c_ptr->info & CAVE_MNLT) && player_has_los_grid(c_ptr))
+		if (!(c_ptr->info & CAVE_MNLT))
 		{
-			/* It is now unlit */
-			note_spot(fy, fx);
+			/* Clear the temp flag for the old lit grids */
+			c_ptr->info &= ~(CAVE_TEMP);
+			
+			if (c_ptr->info & (CAVE_VIEW))
+			{
+				/* Do we have a monster on this square? */
+				if (c_ptr->m_idx)
+				{
+					/* Update the monster */
+					update_mon(c_ptr->m_idx, FALSE);
+				}
+			
+				/* It is now unlit */
+				note_spot(fy, fx);	
+			}
 		}
-
-		/* Add to end of temp array */
-		temp_x[temp_n] = fx;
-		temp_y[temp_n] = fy;
-		temp_n++;
 	}
 
 	/* Clear the lite array */
@@ -4464,32 +4467,30 @@ void update_mon_lite(void)
 		/* Point to grid */
 		c_ptr = area(fy, fx);
 
-		if (i >= end_temp)
+		if (c_ptr->info & CAVE_TEMP)
 		{
-			/* Clear the temp flag for the old lit grids */
+			/* Clear the temp flag for the old lit grids that are still lit */
 			c_ptr->info &= ~(CAVE_TEMP);
 		}
-		else
+		
+		/* Is the square newly lit and visible? */
+		else if (c_ptr->info & (CAVE_VIEW))
 		{
-			/* The is the square newly lit and visible? */
-			if ((c_ptr->info & (CAVE_VIEW | CAVE_TEMP)) == CAVE_VIEW)
+			/* Do we have a monster on this square? */
+			if (c_ptr->m_idx)
 			{
-				/* Do we have a monster on this square? */
-				if (c_ptr->m_idx)
-				{
-					/* Update the monster */
-					update_mon(c_ptr->m_idx, FALSE);
-				}
-				
-				/* It is now lit */
-				note_spot(fy, fx);
+				/* Update the monster */
+				update_mon(c_ptr->m_idx, FALSE);
 			}
-
-			/* Save in the monster lit array */
-			lite_x[lite_n] = fx;
-			lite_y[lite_n] = fy;
-			lite_n++;
+			
+			/* It is now lit */
+			note_spot(fy, fx);
 		}
+		
+		/* Save in the monster lit array */
+		lite_x[lite_n] = fx;
+		lite_y[lite_n] = fy;
+		lite_n++;
 	}
 
 	/* Finished with temp_n */
