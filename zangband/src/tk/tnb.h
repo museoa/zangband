@@ -240,55 +240,6 @@ extern int inkey_flags;
 /* r_info.c */
 extern long angtk_roff(int r_idx, char *buffer);
 
-/* Event types */
-#define EVENT_POSITION 1
-#define EVENT_STAT 2
-#define EVENT_TARGET 3
-#define EVENT_STATUS 4
-#define EVENT_INKEY 5
-#define EVENT_CURSOR 6
-#define EVENT_ASSIGN 7
-#define EVENT_TERM 8
-#define EVENT_CHOOSE 9
-#define EVENT_TRACK 10
-#define EVENT_PY 11
-#define EVENT_SETTING 12
-#define EVENT_DUNGEON 13
-#define EVENT_KEYMAP 14
-
-#define KEYWORD_TERM_FRESH 0
-#define KEYWORD_TERM_INKEY 1
-
-#define KEYWORD_CHOOSE_ITEM 0
-#define KEYWORD_CHOOSE_SPELL 1
-
-#define KEYWORD_CHOOSE_POWER 2
-#define KEYWORD_CHOOSE_MINDCRAFT 3
-#define KEYWORD_CHOOSE_CMD_PET 4
-
-#define KEYWORD_PY_HP 0
-#define KEYWORD_PY_SP 1
-#define KEYWORD_PY_FOOD 2
-#define KEYWORD_PY_DEPTH 3
-#define KEYWORD_PY_EXP 4
-#define KEYWORD_PY_LEVEL 5
-#define KEYWORD_PY_AC 6
-#define KEYWORD_PY_NAME 7
-#define KEYWORD_PY_TITLE 8
-#define KEYWORD_PY_GOLD 9
-#define KEYWORD_PY_RACE 10
-
-#define KEYWORD_DUNGEON_ENTER 0
-#define KEYWORD_DUNGEON_LEAVE 1
-#define KEYWORD_DUNGEON_GEN 2
-
-/* bind.c */
-extern cptr keyword_assign[];
-extern cptr keyword_stat[];
-extern cptr keyword_status[];
-extern cptr keyword_target[];
-extern cptr *keyword_setting;
-
 /* birth-tnb.c */
 extern void init_birth(void);
 
