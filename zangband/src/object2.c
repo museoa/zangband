@@ -4375,7 +4375,8 @@ static bool put_object(object_type *o_ptr, int x, int y)
 		return (TRUE);
 	}
 
-	quit("Failed to place object!");
+	/* Warn the player */
+	msg_print("Failed to place object!");
 
 	/* Paranoia - preserve artifacts */
 	if ((preserve_mode) && (o_ptr->flags3 & TR3_INSTA_ART) &&
