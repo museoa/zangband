@@ -3185,7 +3185,7 @@ W:15:0:15:250
 A:15/2
 P:0:1d1:0:0:0
 F:EASY_KNOW
-L:USE:	if (lite_area(damroll(4, 8), 2)) then ident = TRUE end
+L:USE:	ident = lite_area(damroll(4, 8), 2)
 
 N:356:Light
 G:-:d
