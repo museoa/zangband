@@ -440,13 +440,12 @@ F:FREE_ACT | SEE_INVIS
 N:69:of Extra Attacks
 X:24:20
 W:0:0:0:1500
-C:0:0:0:3
 F:BLOWS
 
 N:70:of Slaying
 X:24:15
 W:0:0:0:2000
-C:0:0:0:0
+
 
 # 71 (unused)
 
