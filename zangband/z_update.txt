@@ -72,6 +72,8 @@ ZAngband 2.5.3:
 - Added some of the more useful "new" buildings in 2.4.0
 - Changed how word of recall works.  You can only recall into the dungeon
   when you are standing in a town with stairs.
+- Added a new building type - the map maker.
+- Removed virtues from the chardump.
 
 ZAngband 2.5.2b:
 -The "Good luck" and "Bad luck" mutations no longer affect unweildable
