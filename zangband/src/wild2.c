@@ -2655,7 +2655,7 @@ void change_level(int level)
 		/* In the dungeon */
 		
 		/* Used to be in the wilderness? */
-		if (area != access_cave) switched = TRUE;
+		if (area == access_wild) switched = TRUE;
 		
 		/* Change dun_ptr? */
 

@@ -1952,7 +1952,7 @@ static void load_wild_data(void)
 }
 
 /* The version when the format of the wilderness last changed */
-#define VERSION_CHANGE_WILD		24
+#define VERSION_CHANGE_WILD		28
 
 
 /*
@@ -2104,41 +2104,19 @@ static errr rd_dungeon(void)
 	{
 		/* Load wilderness data */
 		load_wild_data();
+		
+		change_level(p_ptr->depth);
 
 		if (p_ptr->depth)
 		{
-			change_level(p_ptr->depth);
-
 			/* Load dungeon map */
 			load_map(cur_hgt, 0, cur_wid, 0);
-
-			/* Set pointers to wilderness - but do not make towns */
-			change_level(0);
-
-			/* Load wilderness map */
-			load_map(p_ptr->max_hgt, p_ptr->min_hgt,
-			         p_ptr->max_wid, p_ptr->min_wid);
-
-			change_level(p_ptr->depth);
-			
-			/* Restore the bounds */
-			p_ptr->max_hgt = cur_hgt;
-			p_ptr->min_hgt = 0;
-			p_ptr->max_wid = cur_wid;
-			p_ptr->min_wid = 0;
 		}
 		else
 		{
-			/* Hack - move to level without creating it */
-			p_ptr->depth = 1;
-			change_level(0);
-
 			/* Load the wilderness */
 			load_map(p_ptr->max_hgt, p_ptr->min_hgt,
 			         p_ptr->max_wid, p_ptr->min_wid);
-
-			/* Reset level */
-			p_ptr->depth = 0;
 		}
 	}
 

@@ -3471,8 +3471,8 @@ void play_game(bool new_game)
 	/* Roll new character */
 	if (new_game)
 	{
-		/* Hack - get player out of wilderness */
-		if (character_loaded) change_level(1);
+		/* Mega hack - get player out of wilderness */
+		if (wc_cnt) change_level(1);
 		
 		/* Roll up a new character */
 		player_birth();
