@@ -2594,7 +2594,7 @@ void move_player(int dir, int do_pickup)
 /*
  * Hack -- Check for a "known wall" (see below)
  */
-static int see_wall(int dir, int y, int x)
+static int see_wall(int dir, int x, int y)
 {
 	pcave_type *pc_ptr;
 	
@@ -2634,7 +2634,7 @@ static int see_wall(int dir, int y, int x)
 /*
  * Hack -- Check for an "unknown corner" (see below)
  */
-static int see_nothing(int dir, int y, int x)
+static int see_nothing(int dir, int x, int y)
 {
 	cave_type *c_ptr;
 	pcave_type *pc_ptr;
@@ -2869,24 +2869,24 @@ static void run_init(int dir)
 	i = chome[dir];
 
 	/* Check for nearby wall */
-	if (see_wall(cycle[i+1], py, px))
+	if (see_wall(cycle[i+1], px, py))
 	{
 		p_ptr->run_break_left = TRUE;
 		shortleft = TRUE;
 	}
-	else if (see_wall(cycle[i+1], row, col))
+	else if (see_wall(cycle[i+1], col, row))
 	{
 		p_ptr->run_break_left = TRUE;
 		deepleft = TRUE;
 	}
 
 	/* Check for nearby wall */
-	if (see_wall(cycle[i-1], py, px))
+	if (see_wall(cycle[i-1], px, py))
 	{
 		p_ptr->run_break_right = TRUE;
 		shortright = TRUE;
 	}
-	else if (see_wall(cycle[i-1], row, col))
+	else if (see_wall(cycle[i-1], col, row))
 	{
 		p_ptr->run_break_right = TRUE;
 		deepright = TRUE;
@@ -2912,7 +2912,7 @@ static void run_init(int dir)
 		}
 
 		/* Hack -- allow blunt corridor entry */
-		else if (see_wall(cycle[i], row, col))
+		else if (see_wall(cycle[i], col, row))
 		{
 			if (shortleft && !shortright)
 			{
@@ -3225,7 +3225,7 @@ static bool run_test(void)
 			if (!in_bounds2(row, col)) continue;
 
 			/* Unknown grid or non-wall XXX XXX XXX cave_floor_grid(c_ptr)) */
-			if (!see_wall(new_dir, py, px))
+			if (!see_wall(new_dir, px, py))
 
 			{
 				/* Looking to break right */
@@ -3260,7 +3260,7 @@ static bool run_test(void)
 			c_ptr = area(row, col);
 
 			/* Unknown grid or non-wall XXX XXX XXX cave_floor_grid(c_ptr)) */
-			if (!see_wall(new_dir, py, px))
+			if (!see_wall(new_dir, px, py))
 
 			{
 				/* Looking to break left */
@@ -3321,14 +3321,14 @@ static bool run_test(void)
 
 			/* Don't see that it is closed off. */
 			/* This could be a potential corner or an intersection. */
-			if (!see_wall(option, row, col) ||
-			    !see_wall(check_dir, row, col))
+			if (!see_wall(option, col, row) ||
+			    !see_wall(check_dir, col, row))
 			{
 				/* Can not see anything ahead and in the direction we */
 				/* are turning, assume that it is a potential corner. */
 				if (find_examine &&
-				    see_nothing(option, row, col) &&
-				    see_nothing(option2, row, col))
+				    see_nothing(option, col, row) &&
+				    see_nothing(option2, col, row))
 				{
 					p_ptr->run_cur_dir = option;
 					p_ptr->run_old_dir = option2;
@@ -3360,7 +3360,7 @@ static bool run_test(void)
 
 
 	/* About to hit a known wall, stop */
-	if (see_wall(p_ptr->run_cur_dir, py, px))
+	if (see_wall(p_ptr->run_cur_dir, px, py))
 	{
 		return (TRUE);
 	}
@@ -3380,7 +3380,7 @@ void run_step(int dir)
 	if (dir)
 	{
 		/* Hack -- do not start silly run */
-		if (see_wall(dir, p_ptr->py, p_ptr->px))
+		if (see_wall(dir, p_ptr->px, p_ptr->py))
 		{
 			/* Message */
 			msg_print("You cannot run in that direction.");
