@@ -1923,15 +1923,6 @@ errr init_w_info(void)
 		/* Quit */
 		quit("Error in 'w_info.txt' file.");
 	}
-#if 0 /* Hack no longer required as overhead map doesn't work in vanilla town */
-
-	/*
-	 * Make wilderness type 0 have a char/attr
-	 * so the overhead map looks good in vanilla town mode.
-	 */
-	wild_gen_data[0].w_attr = TERM_GREEN;
-	wild_gen_data[0].w_char = '.';
-#endif /* 0 */
 
 	/* Success */
 	return (0);
