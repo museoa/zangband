@@ -593,37 +593,6 @@ proc NSPets::SelectionChanged {oop canvistId select deselect} {
 	return
 }
 
-# NSPets::CountPetObjects --
-#
-#	Return the number of objects carried by a pet.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSPets::CountPetObjects {oop m_idx} {
-
-	set numObjects 0
-	
-	# Get the o_list[] index of the first object carried
-	set o_idx [angband m_list set $m_idx hold_o_idx]
-
-	# Check the chain of objects being carried
-	while {$o_idx} {
-
-		# Get info about this object
-		set o_idx [angband o_list set $o_idx next_o_idx]
-
-		# One more object
-		incr numObjects
-	}
-
-	return $numObjects
-}
-
-
 
 # NSPets::StatusBar --
 #

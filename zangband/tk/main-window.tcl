@@ -1150,12 +1150,15 @@ proc NSMainWindow::TargetSetup {oop} {
 proc NSMainWindow::TargetSet {widget r_idx} {
 
 	set itemId [Global target,itemId]
-
+if 0 {
 	if {$r_idx} {
 		set text [angband r_info set $r_idx d_char]
 	} else {
 		set text ""
 	}
+}
+	set text ""
+	
 	$widget itemconfigure $itemId -visible yes -text $text
 
 	return
@@ -2253,12 +2256,18 @@ proc NSMainWindow::UpdateHealthWho {oop m_idx friend} {
 
 	# Set the progress
 	array set attrib [angband m_list set $m_idx]
+
+if 0 {
+
 	if {$attrib(ml)} {
 		set curhp [expr {($attrib(hp) > 0) ? $attrib(hp) : 0}]
 		set current [expr {int((double($curhp) / $attrib(maxhp)) * 100)}]
 	} else {
 		set current 0
 	}
+}
+	set current 0
+
 	if {$current != $Progress(current)} {
 		$widget itemconfigure $Progress(barId) \
 			-current $current -maximum 100
