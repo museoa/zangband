@@ -33,7 +33,7 @@
 #define VERSION_MINOR   8
 #define VERSION_PATCH   1
 
-#define SAVEFILE_VERSION 19
+#define SAVEFILE_VERSION 20
 
 /* Added for ZAngband */
 #ifdef USE_SCRIPT
@@ -123,12 +123,6 @@
  * Number of buildings
  */
 #define MAX_BLDG		32
-
-/*
- * Total number of stores (see "store.c", etc)
- */
-#define MAX_STORES_PER_TOWN 12
-#define MAX_STORE_TYPES      9
 
 #define STORE_GENERAL   0
 #define STORE_ARMOURY   1
@@ -900,10 +894,6 @@
 #define FEAT_PATTERN_XTRA1      0x48
 #define FEAT_PATTERN_XTRA2      0x49
 
-/* Shops */
-#define FEAT_SHOP_HEAD          0x4A
-#define FEAT_SHOP_TAIL          0x52
-
 /* Terrains */
 #define FEAT_DEEP_WATER         0x53
 #define FEAT_SHAL_WATER         0x54
@@ -1001,6 +991,15 @@
 #define FT_TRAP_LOSE_MEMORY	0x001F
 #define FT_LOCK_DOOR		0x0020
 #define FT_JAM_DOOR			0x0021
+#define FT_STORE_GENERAL	0x0022
+#define FT_STORE_ARMOURY	0x0023
+#define FT_STORE_WEAPON		0x0024
+#define FT_STORE_TEMPLE		0x0025
+#define FT_STORE_ALCHEMIST	0x0026
+#define FT_STORE_MAGIC		0x0027
+#define FT_STORE_BLACK		0x0028
+#define FT_STORE_HOME		0x0029
+#define FT_STORE_BOOK		0x002A
 
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
 
@@ -3388,9 +3387,7 @@
 	 ((C)->feat == FEAT_MORE)) || \
 	(((C)->feat & 0x70) == 0x70) || \
 	 (((C)->feat >= FEAT_PATTERN_START) && \
-	  ((C)->feat <= FEAT_PATTERN_XTRA2)) || \
-	(((C)->feat >= FEAT_SHOP_HEAD) && \
-	 ((C)->feat <= FEAT_SHOP_TAIL)))
+	  ((C)->feat <= FEAT_PATTERN_XTRA2)))
 
 
 /*
@@ -3762,7 +3759,7 @@ extern int PlayerUID;
 #define FIELD_ACTION_MAX		18	/* The last action + 1 */
 
 
-#define FIELD_ACTION_TYPES  50 /* Number of FIELD_ACT functions in tables.c */
+#define FIELD_ACTION_TYPES  51 /* Number of FIELD_ACT functions in tables.c */
 
 
 

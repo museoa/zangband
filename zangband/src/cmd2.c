@@ -1567,9 +1567,7 @@ void do_cmd_tunnel(void)
 		c_ptr = area(y, x);
 
 		/* No tunnelling through doors */
-		if ((c_ptr->feat == FEAT_CLOSED) ||
-		    ((c_ptr->feat >= FEAT_SHOP_HEAD) &&
-		     (c_ptr->feat <= FEAT_SHOP_TAIL)))
+		if (c_ptr->feat == FEAT_CLOSED)
 		{
 			/* Message */
 			msg_print("You cannot tunnel through doors.");
@@ -2229,9 +2227,6 @@ void do_cmd_stay(int pickup)
 	int px = p_ptr->px;
 	int py = p_ptr->py;
 
-	cave_type *c_ptr = area(py, px);
-
-
 	/* Allow repeated command */
 	if (p_ptr->command_arg)
 	{
@@ -2266,17 +2261,6 @@ void do_cmd_stay(int pickup)
 	/* Handle "objects" */
 	carry(pickup);
 
-
-	/* Hack -- enter a store if we are on one */
-	if ((c_ptr->feat >= FEAT_SHOP_HEAD) &&
-	    (c_ptr->feat <= FEAT_SHOP_TAIL))
-	{
-		/* Disturb */
-		disturb(0, 0);
-
-		/* Hack -- enter store */
-		p_ptr->command_new = '_';
-	}
 #if 0
 	/* Hack -- enter a building if we are on one -KMW- */
 	else if ((c_ptr->feat >= FEAT_BLDG_HEAD) &&

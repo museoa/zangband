@@ -1936,10 +1936,6 @@ static bool target_set_accept(int y, int x)
 		if (c_ptr->feat == FEAT_LESS) return (TRUE);
 		if (c_ptr->feat == FEAT_MORE) return (TRUE);
 
-		/* Notice shops */
-		if ((c_ptr->feat >= FEAT_SHOP_HEAD) &&
-		    (c_ptr->feat <= FEAT_SHOP_TAIL)) return (TRUE);
-
 		/* Notice doors */
 		if (c_ptr->feat == FEAT_CLOSED) return (TRUE);
 
@@ -2496,23 +2492,18 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 				s2 = "in ";
 			}
 
-			/* Hack -- special introduction for store & building doors -KMW- */
-			if (((feat >= FEAT_SHOP_HEAD) && (feat <= FEAT_SHOP_TAIL)))
-			{
-				s3 = "the entrance to the ";
-			}
-			else if ((feat == FEAT_FLOOR) ||
-					((feat & 0xF8) == 0x08) ||
-					(feat == FEAT_DEEP_WATER) ||
-					(feat == FEAT_SHAL_WATER) ||
-					(feat == FEAT_OCEAN_WATER) ||
-					(feat == FEAT_DEEP_LAVA) ||
-					(feat == FEAT_SHAL_LAVA) ||
-					(feat == FEAT_DIRT) ||
-					(feat == FEAT_DEEP_ACID) ||
-					(feat == FEAT_SHAL_ACID) ||
-					(feat == FEAT_JUNGLE) ||
-					(feat == FEAT_GRASS_LONG))
+			if ((feat == FEAT_FLOOR) ||
+				((feat & 0xF8) == 0x08) ||
+				(feat == FEAT_DEEP_WATER) ||
+				(feat == FEAT_SHAL_WATER) ||
+				(feat == FEAT_OCEAN_WATER) ||
+				(feat == FEAT_DEEP_LAVA) ||
+				(feat == FEAT_SHAL_LAVA) ||
+				(feat == FEAT_DIRT) ||
+				(feat == FEAT_DEEP_ACID) ||
+				(feat == FEAT_SHAL_ACID) ||
+				(feat == FEAT_JUNGLE) ||
+				(feat == FEAT_GRASS_LONG))
 			{
 				s3 ="";
 			}

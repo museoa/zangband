@@ -1494,32 +1494,6 @@ static void rd_messages(void)
 }
 
 
-
-/*
- * Old "cave grid" flags -- saved in savefile
- */
-#define OLD_GRID_W_01   0x0001  /* Wall type (bit 1) */
-#define OLD_GRID_W_02   0x0002  /* Wall type (bit 2) */
-#define OLD_GRID_PERM   0x0004  /* Wall type is permanent */
-#define OLD_GRID_QQQQ   0x0008  /* Unused */
-#define OLD_GRID_MARK   0x0010  /* Grid is memorized */
-#define OLD_GRID_GLOW   0x0020  /* Grid is illuminated */
-#define OLD_GRID_ROOM   0x0040  /* Grid is part of a room */
-#define OLD_GRID_ICKY   0x0080  /* Grid is anti-teleport */
-
-/*
- * Masks for the new grid types
- */
-#define OLD_GRID_WALL_MASK      0x0003  /* Wall type */
-
-/*
- * Legal results of OLD_GRID_WALL_MASK
- */
-#define OLD_GRID_WALL_NONE              0x0000  /* No wall */
-#define OLD_GRID_WALL_MAGMA             0x0001  /* Magma vein */
-#define OLD_GRID_WALL_QUARTZ    0x0002  /* Quartz vein */
-#define OLD_GRID_WALL_GRANITE   0x0003  /* Granite wall */
-
 static void fix_tile(cave_type *c_ptr)
 {
 	/* Get rid of pre-fields terrain */
@@ -1574,7 +1548,6 @@ static void fix_tile(cave_type *c_ptr)
 /*
  * Load dungeon or wilderness map
  */
-
 static void load_map(int ymax, int ymin, int xmax, int xmin)
 {
 	int i, y, x;
@@ -1715,6 +1688,122 @@ static void load_map(int ymax, int ymin, int xmax, int xmin)
 		}
 	}
 }
+
+
+/*
+ * Strip old dungeon or wilderness map from the savefile
+ */
+static void strip_map(int ymax, int ymin, int xmax, int xmin)
+{
+	int i, y, x;
+	byte count;
+	byte tmp8u;
+	s16b tmp16s;
+
+	/*** Run length decoding ***/
+
+	/* Load the dungeon data */
+	for (x = xmin, y = ymin; y < ymax; )
+	{
+		/* Grab RLE info */
+		rd_byte(&count);
+		rd_byte(&tmp8u);
+
+		/* Apply the RLE info */
+		for (i = count; i > 0; i--)
+		{
+			/* Advance/Wrap */
+			if (++x >= xmax)
+			{
+				/* Wrap */
+				x = xmin;
+
+				/* Advance/Wrap */
+				if (++y >= ymax) break;
+			}
+		}
+	}
+
+
+	/*** Run length decoding ***/
+
+	/* Load the dungeon data */
+	for (x = xmin, y = ymin; y < ymax; )
+	{
+		/* Grab RLE info */
+		rd_byte(&count);
+		rd_byte(&tmp8u);
+
+		/* Apply the RLE info */
+		for (i = count; i > 0; i--)
+		{
+			/* Advance/Wrap */
+			if (++x >= xmax)
+			{
+				/* Wrap */
+				x = xmin;
+
+				/* Advance/Wrap */
+				if (++y >= ymax) break;
+			}
+		}
+	}
+
+
+	/*** Run length decoding ***/
+
+	/* Load the dungeon data */
+	for (x = xmin, y = ymin; y < ymax; )
+	{
+		/* Grab RLE info */
+		rd_byte(&count);
+		rd_byte(&tmp8u);
+
+		/* Apply the RLE info */
+		for (i = count; i > 0; i--)
+		{
+
+			/* Advance/Wrap */
+			if (++x >= xmax)
+			{
+				/* Wrap */
+				x = xmin;
+
+				/* Advance/Wrap */
+				if (++y >= ymax) break;
+			}
+		}
+	}
+	
+	/*** Run length decoding ***/
+
+	/* This isn't stored in later versions. */
+	if (sf_version < 15)
+	{
+		/* Load the dungeon data */
+		for (x = xmin, y = ymin; y < ymax; )
+		{
+			/* Grab RLE info */
+			rd_byte(&count);
+			rd_s16b(&tmp16s);
+
+			/* Apply the RLE info */
+			for (i = count; i > 0; i--)
+			{
+				/* Advance/Wrap */
+				if (++x >= xmax)
+				{
+					/* Wrap */
+					x = xmin;
+
+					/* Advance/Wrap */
+					if (++y >= ymax) break;
+				}
+			}
+		}
+	}
+}
+
 
 /*
  * Size of the wilderness to load
@@ -1889,9 +1978,8 @@ static errr rd_dungeon(void)
 
 		create_wilderness();
 
-		/* Clear new monsters / objects */
-		wipe_o_list();
 		wipe_m_list();
+		wipe_o_list();
 
 		/* Hack - do not load data into wilderness */
 		change_level(1);
@@ -1907,6 +1995,55 @@ static errr rd_dungeon(void)
 
 		/* Load dungeon map */
 		load_map(cur_hgt, 0, cur_wid, 0);
+	}
+	else if (sf_version < 20)
+	{
+		/* Load wilderness data */
+		load_wild_data();
+
+		if (p_ptr->depth)
+		{
+			change_level(p_ptr->depth);
+			
+			/* Save player location */
+			px_back = px;
+			py_back = py;
+
+			create_wilderness();
+			
+			wipe_o_list();
+			wipe_m_list();
+			
+			/* Load dungeon map */
+			load_map(cur_hgt, 0, cur_wid, 0);
+
+			/* Strip the wilderness map */
+			strip_map(wild_grid.y_max, wild_grid.y_min,
+			         wild_grid.x_max, wild_grid.x_min);
+			
+			change_level(p_ptr->depth);
+			
+			px = px_back;
+			py = py_back;
+			
+			/* Restore the bounds */
+			max_hgt = cur_hgt;
+			min_hgt = 0;
+			max_wid = cur_wid;
+			min_wid = 0;
+		}
+		else
+		{
+			/* Strip the wilderness map */
+			strip_map(wild_grid.y_max, wild_grid.y_min,
+			         wild_grid.x_max, wild_grid.x_min);
+
+			/* Make a new wilderness */
+			create_wilderness();
+			
+			wipe_m_list();
+			wipe_o_list();
+		}
 	}
 	else
 	{
@@ -1949,6 +2086,7 @@ static errr rd_dungeon(void)
 			p_ptr->depth = 0;
 		}
 	}
+
 
 	/* Hack - restore player position */
 	p_ptr->px = px;
@@ -2010,7 +2148,7 @@ static errr rd_dungeon(void)
 		}
 
 		/* Dungeon */
-		else
+		else if (!((sf_version < 20) && (p_ptr->depth == 0)))
 		{
 			/* Access the item location */
 			c_ptr = area(o_ptr->iy,o_ptr->ix);
@@ -2063,13 +2201,14 @@ static errr rd_dungeon(void)
 		/* Read the monster */
 		rd_monster(m_ptr);
 
+		if (!((sf_version < 20) && (p_ptr->depth == 0)))
+		{
+			/* Access grid */
+			c_ptr = area(m_ptr->fy,m_ptr->fx);
 
-		/* Access grid */
-		c_ptr = area(m_ptr->fy,m_ptr->fx);
-
-		/* Mark the location */
-		c_ptr->m_idx = m_idx;
-
+			/* Mark the location */
+			c_ptr->m_idx = m_idx;
+		}
 
 		/* Access race */
 		r_ptr = &r_info[m_ptr->r_idx];
@@ -2104,17 +2243,20 @@ static errr rd_dungeon(void)
 			/* Read the field */
 			rd_field(f_ptr);
 
-			/* Access the fields location */
-			c_ptr = area(f_ptr->fy, f_ptr->fx);
-
-			/* Build a stack */
-			fld_idx = field_add(f_ptr, &c_ptr->fld_idx);
-
-			/* Oops */
-			if (i != fld_idx)
+			if (!((sf_version < 20) && (p_ptr->depth == 0)))
 			{
-				note(format("Field allocation error (%d <> %d)", i, fld_idx));
-				return (152);
+				/* Access the fields location */
+				c_ptr = area(f_ptr->fy, f_ptr->fx);
+
+				/* Build a stack */
+				fld_idx = field_add(f_ptr, &c_ptr->fld_idx);
+
+				/* Oops */
+				if (i != fld_idx)
+				{
+					note(format("Field allocation error (%d <> %d)", i, fld_idx));
+					return (152);
+				}
 			}
 		}
 	}
@@ -2134,19 +2276,8 @@ static errr rd_dungeon(void)
 	}
 
 	/* Hack - make new level only after objects + monsters are loaded */
-	if (sf_version < 7)
+	if (sf_version < 20)
 	{
-		/* In the wilderness - old monsters in 'wrong' positions */
-		if (!p_ptr->depth)
-		{
-			/* Clear old monsters / objects */
-			wipe_o_list();
-			wipe_m_list();
-
-			/* refresh wilderness */
-			character_dungeon = FALSE;
-		}
-		
 		/* enter the level */
 		change_level(p_ptr->depth);
 		
@@ -2157,6 +2288,12 @@ static errr rd_dungeon(void)
 			min_hgt = 0;
 			max_wid = cur_wid;
 			min_wid = 0;
+		}
+		else
+		{
+			character_dungeon = FALSE;
+			wipe_m_list();
+			wipe_o_list();
 		}
 	}
 	

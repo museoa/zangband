@@ -938,7 +938,7 @@ extern bool polymorph_monster(int y, int x);
 extern bool dimension_door(void);
 
 /* store.c */
-extern void do_cmd_store(void);
+extern void do_cmd_store(field_type *f_ptr);
 extern void store_shuffle(int which);
 extern void store_maint(int town_num, int store_num);
 extern void deallocate_store(void);
@@ -1256,6 +1256,7 @@ extern void field_action_door_bash(s16b *field_ptr, void *input);
 extern void field_action_door_lock_monster(s16b *field_ptr, void *input);
 extern void field_action_door_jam_monster(s16b *field_ptr, void *input);
 extern void field_action_door_gf(s16b *field_ptr, void *input);
+extern void field_action_door_store(s16b *field_ptr, void *input);
 
 /*
  * Hack -- conditional (or "bizarre") externs

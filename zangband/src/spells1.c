@@ -4162,9 +4162,7 @@ int dist_to_line(int y, int x, int y1, int x1, int y2, int x2)
 #define cave_stop_disintegration(C) \
 	((((C)->feat >= FEAT_PERM_EXTRA) && \
 	  ((C)->feat <= FEAT_PERM_SOLID)) || \
-	  ((C)->feat == FEAT_MOUNTAIN) || \
-	 (((C)->feat >= FEAT_SHOP_HEAD) && \
-	  ((C)->feat <= FEAT_SHOP_TAIL)))
+	  ((C)->feat == FEAT_MOUNTAIN))
 
 
 /*

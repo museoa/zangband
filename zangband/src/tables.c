@@ -6630,5 +6630,8 @@ field_action f_action[FIELD_ACTION_TYPES] =
 	
 	/* Doors interact with magic */
 	{field_action_door_gf, "field_action_door_gf"},
+	
+	/* Stores open when walked on */
+	{field_action_door_store, "field_action_door_store"},
 };
 

@@ -3363,3 +3363,19 @@ void field_action_door_gf(s16b *field_ptr, void *input)
 		delete_field_ptr(field_ptr);
 	}
 }
+
+/*
+ * Interact with a store
+ */
+void field_action_door_store(s16b *field_ptr, void *nothing)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+
+	/* Disturb */
+	disturb(0, 0);
+
+	/*
+	 * data[0] contains the type of store.
+	 */
+	do_cmd_store(f_ptr);
+}

@@ -2798,12 +2798,6 @@ static void process_command(void)
 
 		/*** Stairs and Doors and Chests and Traps ***/
 
-		/* Enter store */
-		case '_':
-		{
-			do_cmd_store();
-			break;
-		}
 #if 0
 		/* Enter building -KMW- */
 		case ']':

@@ -1783,7 +1783,7 @@ static void store_prt_gold(void)
 /*
  * Displays store (after clearing screen)		-RAK-
  */
-static void display_store(void)
+static void display_store(field_type *f_ptr)
 {
 	char buf[80];
 
@@ -1810,7 +1810,7 @@ static void display_store(void)
 	/* Normal stores */
 	else
 	{
-		cptr store_name = (f_name + f_info[FEAT_SHOP_HEAD + cur_store_num].name);
+		cptr store_name = t_info[f_ptr->t_idx].name;
 		cptr owner_name = (ot_ptr->owner_name);
 		cptr race_name = race_info[ot_ptr->owner_race].title;
 
@@ -3182,7 +3182,7 @@ static bool leave_store = FALSE;
  * must disable some commands which are allowed in the dungeon
  * but not in the stores, to prevent chaos.
  */
-static void store_process_command(void)
+static void store_process_command(field_type *f_ptr)
 {
 	/* Handle repeating the last command */
 	repeat_check();
@@ -3222,7 +3222,7 @@ static void store_process_command(void)
 		case KTRL('R'):
 		{
 			do_cmd_redraw();
-			display_store();
+			display_store(f_ptr);
 			break;
 		}
 
@@ -3268,17 +3268,6 @@ static void store_process_command(void)
 			do_cmd_takeoff();
 			break;
 		}
-
-#if 0
-
-		/* Drop an item */
-		case 'd':
-		{
-			do_cmd_drop();
-			break;
-		}
-
-#endif
 
 		/* Destroy an item */
 		case 'k':
@@ -3365,7 +3354,7 @@ static void store_process_command(void)
 		case 'C':
 		{
 			do_cmd_character();
-			display_store();
+			display_store(f_ptr);
 			break;
 		}
 
@@ -3604,34 +3593,12 @@ bool allocate_store(store_type *store)
  * into other commands, normally, we convert "p" (pray) and "m"
  * (cast magic) into "g" (get), and "s" (search) into "d" (drop).
  */
-void do_cmd_store(void)
+void do_cmd_store(field_type *f_ptr)
 {
-	int         which;
+	int			which = f_ptr->data[0];
 	int         maintain_num;
 	int         tmp_chr;
 	int         i;
-	cave_type   *c_ptr;
-
-
-	/* Access the player grid */
-	c_ptr = area(p_ptr->py, p_ptr->px);
-
-	/* Verify a store */
-	if (!((c_ptr->feat >= FEAT_SHOP_HEAD) &&
-		  (c_ptr->feat <= FEAT_SHOP_TAIL)))
-	{
-		msg_print("You see no store here.");
-		return;
-	}
-
-	/* Extract the store code */
-
-	/* Later will have to modify data structures so multiple stores
-	 * of same type can exist in a town.
-	 * (Need to wait for python though - will probably be with "hotspot"
-	 * code.
-	 */
-	which = (c_ptr->feat - FEAT_SHOP_HEAD);
 
 	/* Hack -- Check the "locked doors" */
 	if ((town[p_ptr->town_num].store[which].store_open >= turn) ||
@@ -3642,7 +3609,8 @@ void do_cmd_store(void)
 	}
 
 	/* Calculate the number of store maintainances since the last visit */
-	maintain_num = (turn - town[p_ptr->town_num].store[which].last_visit) / (10L * STORE_TURNS);
+	maintain_num = (turn - town[p_ptr->town_num].store[which].last_visit) /
+		 (10L * STORE_TURNS);
 
 	/* Allocate object storage if required */
 	if (allocate_store(&town[p_ptr->town_num].store[which]))
@@ -3697,7 +3665,7 @@ void do_cmd_store(void)
 	store_top = 0;
 
 	/* Display the store */
-	display_store();
+	display_store(f_ptr);
 
 	/* Do not leave */
 	leave_store = FALSE;
@@ -3748,7 +3716,7 @@ void do_cmd_store(void)
 		request_command(TRUE);
 
 		/* Process the command */
-		store_process_command();
+		store_process_command(f_ptr);
 
 		/* Hack -- Character is still in "icky" mode */
 		character_icky = TRUE;

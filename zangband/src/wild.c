@@ -241,7 +241,8 @@ static void build_store(int n, int yy, int xx)
 	}
 
 	/* Clear previous contents, add a store door */
-	cave[y][x].feat = FEAT_SHOP_HEAD + n;
+	cave[y][x].feat = FEAT_FLOOR;
+	cave[y][x].fld_idx = FT_STORE_GENERAL + n;
 }
 
 /* Dodgy replacement for SCREEN_WID and SCREEN_HGT */
@@ -344,9 +345,7 @@ static void town_gen_hack(u16b town_num, int *xx, int *yy)
 		feat = cave[*yy][*xx].feat;
 
 		/* If square is a shop, exit */
-		if (feat == FEAT_PERM_EXTRA) continue;
-		if ((feat >= FEAT_SHOP_HEAD) &&
-			(feat <= FEAT_SHOP_TAIL)) continue;
+		if ((feat == FEAT_PERM_EXTRA) || (feat == FEAT_FLOOR)) continue;
 
 		/* Blank square */
 		break;
@@ -359,11 +358,6 @@ static void town_gen_hack(u16b town_num, int *xx, int *yy)
 		{
 			/* Get feat at location */
 			feat = cave[*yy + y][*xx + x].feat;
-
-			/* If square is a shop, exit */
-			if (feat == FEAT_PERM_EXTRA) continue;
-			if ((feat >= FEAT_SHOP_HEAD) &&
-			    (feat <= FEAT_SHOP_TAIL)) continue;
 
 			/* Convert square to dungeon floor */
 			cave[*yy + y][*xx + x].feat = FEAT_FLOOR;
@@ -535,6 +529,21 @@ static void overlay_town(int y, int x, u16b w_town, blk_ptr block_ptr)
 							 FIELD_ACT_INIT, &data);
 					}
 					
+					break;
+				}
+				
+				case FT_STORE_GENERAL:
+				case FT_STORE_ARMOURY:
+				case FT_STORE_WEAPON:
+				case FT_STORE_TEMPLE:
+				case FT_STORE_ALCHEMIST:
+				case FT_STORE_MAGIC:
+				case FT_STORE_BLACK:
+				case FT_STORE_HOME:
+				case FT_STORE_BOOK:
+				{
+					(void) place_field(y * 16 + j, x * 16 + i, c_ptr->fld_idx);
+
 					break;
 				}
 			}

@@ -2575,16 +2575,6 @@ void move_player(int dir, int do_pickup)
 		/* Handle "objects" */
 		carry(do_pickup != always_pickup);
 
-		/* Handle "store doors" */
-		if ((c_ptr->feat >= FEAT_SHOP_HEAD) &&
-			 (c_ptr->feat <= FEAT_SHOP_TAIL))
-		{
-			/* Disturb */
-			disturb(0, 0);
-
-			/* Hack -- Enter store */
-			p_ptr->command_new = '_';
-		}
 #if 0
 		/* Handle "building doors" -KMW- */
 		else if ((c_ptr->feat >= FEAT_BLDG_HEAD) &&
@@ -2659,9 +2649,6 @@ static int see_wall(int dir, int y, int x)
 
 	if ((c_ptr->feat >= FEAT_DEEP_WATER) &&
 	    (c_ptr->feat <= FEAT_GRASS)) return (FALSE);
-
-	if ((c_ptr->feat >= FEAT_SHOP_HEAD) &&
-	    (c_ptr->feat <= FEAT_SHOP_TAIL)) return (FALSE);
 
 	/* Semi - transparent terrains */
 	if ((c_ptr->feat & 0x60) == 0x60) return (FALSE);
