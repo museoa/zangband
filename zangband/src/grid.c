@@ -347,6 +347,9 @@ void vault_monsters(int y1, int x1, int num)
 			monster_level = base_level + 2;
 			(void)place_monster(y, x, TRUE, TRUE);
 			monster_level = base_level;
+			
+			/* Have placed a monster */
+			break;
 		}
 	}
 }
