@@ -1327,7 +1327,8 @@ static bool do_cmd_tunnel_aux(int y, int x)
 	else if (((c_ptr->feat >= FEAT_WALL_EXTRA) &&
 	          (c_ptr->feat <= FEAT_WALL_SOLID)) ||
 	         (c_ptr->feat == FEAT_MOUNTAIN) ||
-	         (c_ptr->feat == FEAT_SNOW_MOUNTAIN))
+	         (c_ptr->feat == FEAT_SNOW_MOUNTAIN) ||
+			 (c_ptr->feat == FEAT_PILLAR))
 	{
 		/* Tunnel */
 		if ((p_ptr->skill_dig > 40 + randint0(1600)) && twall(y, x, FEAT_FLOOR))
@@ -1957,7 +1958,8 @@ void do_cmd_alter(void)
 		          (c_ptr->feat == FEAT_SNOW_MOUNTAIN) ||
 		          (c_ptr->feat == FEAT_PINE_TREE) ||
 		          (c_ptr->feat == FEAT_SNOW_TREE) ||
-		          (c_ptr->feat == FEAT_JUNGLE)))
+		          (c_ptr->feat == FEAT_JUNGLE) ||
+				  (c_ptr->feat == FEAT_PILLAR)))
 		{
 			/* Tunnel */
 			more = do_cmd_tunnel_aux(y, x);
