@@ -1926,9 +1926,9 @@ static errr Term_curs_win(int x, int y)
 	rc.bottom = rc.top + td->tile_hgt;
 
 	/* Cursor is done as a yellow "box" */
-	hdc = GetDC(data[0].w);
+	hdc = GetDC(td->w);
 	FrameRect(hdc, &rc, hbrYellow);
-	ReleaseDC(data[0].w, hdc);
+	ReleaseDC(td->w, hdc);
 
 	/* Success */
 	return 0;
