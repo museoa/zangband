@@ -3530,6 +3530,7 @@ errr file_character(cptr name, bool full)
 	return (0);
 }
 
+#endif /* 0 -- TNB */
 
 typedef struct file_tag
 {
@@ -3583,9 +3584,9 @@ static int get_line(file_tags * the_tags, cptr name)
 	return 0;
 }
 
-#endif /* 0 -- TNB */
 
-#if 1 /* TNB */
+
+#if 0 /* TNB */
 
 bool show_file(cptr name, cptr what, int line, int mode)
 {
@@ -3613,7 +3614,7 @@ void do_cmd_help(void)
 	angtk_eval("angband_display", "help", "hide", NULL);
 }
 
-#else /* not 1 -- TNB */
+#else /* not 0 -- TNB */
 
 /*
  * Recursive file perusal.
@@ -4159,7 +4160,7 @@ void do_cmd_help(void)
 	screen_load();
 }
 
-#endif /* not 1 -- TNB */
+#endif /* not 0 -- TNB */
 
 /*
  * Process the player name.
