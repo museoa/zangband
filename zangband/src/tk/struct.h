@@ -93,21 +93,13 @@ struct StructType {
 	Tcl_HashTable *nameTable;
 };
 
-int Struct_Init(Tcl_Interp *interp);
-int Struct_AddType(Tcl_Interp *interp, StructType *data);
-int Struct_Find(Tcl_Interp *interp, StructType *typePtr, int objc,
-	Tcl_Obj *CONST objv[], int objOffset);
-int Struct_Flags(Tcl_Interp *interp, StructType *typePtr, int elemIndex,
-	int objc, Tcl_Obj *CONST objv[], int objOffset);
-int Struct_GetTypeFromObj(Tcl_Interp *interp, StructType **typePtrPtr,
+extern int Struct_Init(Tcl_Interp *interp);
+extern int Struct_AddType(Tcl_Interp *interp, StructType *data);
+extern int Struct_GetTypeFromObj(Tcl_Interp *interp, StructType **typePtrPtr,
 	Tcl_Obj *objPtr);
-int Struct_GetArrayIndexFromObj(Tcl_Interp *interp, StructType *typePtr,
+extern int Struct_GetArrayIndexFromObj(Tcl_Interp *interp, StructType *typePtr,
 	int *elemIndex, Tcl_Obj *objPtr);
-int Struct_Info(Tcl_Interp *interp, StructType *typePtr, int elemIndex,
-	int objc, Tcl_Obj *CONST objv[], int objOffset);
-StructType *Struct_Lookup(Tcl_Interp *interp, char *name);
-int Struct_Set(Tcl_Interp *interp, StructType *typePtr, int elemIndex,
-	int objc, Tcl_Obj *CONST objv[], int objOffset);
+extern StructType *Struct_Lookup(Tcl_Interp *interp, char *name);
 
 #endif /* INCLUDED_STRUCT_H */
 

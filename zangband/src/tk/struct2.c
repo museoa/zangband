@@ -480,7 +480,7 @@ int Struct_AddType(Tcl_Interp *interp, StructType *data)
 }
 
 /* Public interface to "struct find" */
-int Struct_Find(Tcl_Interp *interp, StructType *typePtr, int objc,
+static int Struct_Find(Tcl_Interp *interp, StructType *typePtr, int objc,
 	Tcl_Obj *CONST objv[], int objOffset)
 {
 	int objC = objc - objOffset;
@@ -751,7 +751,7 @@ static int objcmd_find(ClientData clientData, Tcl_Interp *interp, int objc,
 }
 
 /* Public interface to "struct flags" */
-int Struct_Flags(Tcl_Interp *interp, StructType *typePtr, int elemIndex,
+static int Struct_Flags(Tcl_Interp *interp, StructType *typePtr, int elemIndex,
 	int objc, Tcl_Obj *CONST objv[], int objOffset)
 {
 /*	int objC = objc - objOffset; */
@@ -842,7 +842,7 @@ int Struct_Flags(Tcl_Interp *interp, StructType *typePtr, int elemIndex,
 }
 
 /* (struct set array index) ?field? ?value? */
-int Struct_Set(Tcl_Interp *interp, StructType *typePtr, int elemIndex,
+static int Struct_Set(Tcl_Interp *interp, StructType *typePtr, int elemIndex,
 	int objc, Tcl_Obj *CONST objv[], int objOffset)
 {
 	int objC = objc - objOffset;
@@ -942,7 +942,7 @@ static int objcmd_flags(ClientData clientData, Tcl_Interp *interp, int objc,
 }
 
 /* (info array index) ?args ...? */
-int Struct_Info(Tcl_Interp *interp, StructType *typePtr, int elemIndex,
+static int Struct_Info(Tcl_Interp *interp, StructType *typePtr, int elemIndex,
 	int objc, Tcl_Obj *CONST objv[], int objOffset)
 {
 	unsigned char *elem;
