@@ -662,7 +662,7 @@ static bool store_check_num(object_type *o_ptr)
 	if (st_ptr->stock_num < st_ptr->max_stock) return TRUE;
 
 	/* The "home" acts like the player */
-	if (st_ptr->f_ptr->data[0] == STORE_HOME)
+	if (st_ptr->type == BUILD_STORE_HOME)
 	{
 		/* Check all the items */
 		for (i = 0; i < st_ptr->stock_num; i++)
@@ -1276,7 +1276,7 @@ static void display_entry(int pos)
 	Term_draw(3, i + 6, a, c);
 
 	/* Describe an item in the home */
-	if (st_ptr->f_ptr->data[0] == STORE_HOME)
+	if (st_ptr->type == BUILD_STORE_HOME)
 	{
 		maxwid = 75;
 
@@ -1423,7 +1423,7 @@ static void display_store(int store_top)
 	Term_clear();
 
 	/* The "Home" is special */
-	if (st_ptr->f_ptr->data[0] == STORE_HOME)
+	if (st_ptr->type == BUILD_STORE_HOME)
 	{
 		/* Put the owner name */
 		put_str("Your Home", 3, 30);
@@ -1484,7 +1484,7 @@ static void store_maint(void)
 	int 	old_rating = rating;
 
 	/* Ignore home + locker */
-	if (st_ptr->f_ptr->data[0] == STORE_HOME) return;
+	if (st_ptr->type == BUILD_STORE_HOME) return;
 
 	/* Store keeper forgives the player */
 	st_ptr->insult_cur = 0;
@@ -1573,7 +1573,7 @@ static void store_shuffle(store_type *st_ptr)
 	int i, j;
 
 	/* Ignore home + locker */
-	if (st_ptr->f_ptr->data[0] == STORE_HOME) return;
+	if (st_ptr->type == BUILD_STORE_HOME) return;
 
 	/* Pick a new owner */
 	for (j = st_ptr->owner; j == st_ptr->owner; )
@@ -2289,7 +2289,7 @@ static void store_purchase(int *store_top)
 	/* Empty? */
 	if (st_ptr->stock_num <= 0)
 	{
-		if (st_ptr->f_ptr->data[0] == STORE_HOME)
+		if (st_ptr->type == BUILD_STORE_HOME)
 			msg_print("Your home is empty.");
 		else
 			msg_print("I am currently out of stock.");
@@ -2304,7 +2304,7 @@ static void store_purchase(int *store_top)
 	if (i > 12) i = 12;
 
 	/* Prompt */
-	if (st_ptr->f_ptr->data[0] == STORE_HOME)
+	if (st_ptr->type == BUILD_STORE_HOME)
 	{
 		sprintf(out_val, "Which item do you want to take? ");
 	}
@@ -2351,7 +2351,7 @@ static void store_purchase(int *store_top)
 	if (o_ptr->number > 1)
 	{
 		/* Hack -- note cost of "fixed" items */
-		if (!(st_ptr->f_ptr->data[0] == STORE_HOME)
+		if (!(st_ptr->type == BUILD_STORE_HOME)
 			 && (o_ptr->ident & IDENT_FIXED))
 		{
 			msg_format("That costs %ld gold per item.", (long)(best));
@@ -2387,7 +2387,7 @@ static void store_purchase(int *store_top)
 	}
 
 	/* Attempt to buy it */
-	if (!(st_ptr->f_ptr->data[0] == STORE_HOME))
+	if (!(st_ptr->type == BUILD_STORE_HOME))
 	{
 		/* Fixed price, quick buy */
 		if (o_ptr->ident & (IDENT_FIXED))
@@ -2623,7 +2623,7 @@ static void store_sell(int *store_top)
 
 
 	/* Prepare a prompt */
-	if (st_ptr->f_ptr->data[0] == STORE_HOME)
+	if (st_ptr->type == BUILD_STORE_HOME)
 		q = "Drop which item? ";
 	else
 		q = "Sell which item? ";
@@ -2709,7 +2709,7 @@ static void store_sell(int *store_top)
 	object_desc(o_name, q_ptr, TRUE, 3);
 
 	/* Remove any inscription, feeling for stores */
-	if (!(st_ptr->f_ptr->data[0] == STORE_HOME))
+	if (!(st_ptr->type == BUILD_STORE_HOME))
 	{
 		q_ptr->inscription = 0;
 		q_ptr->feeling = FEEL_NONE;
@@ -2718,7 +2718,7 @@ static void store_sell(int *store_top)
 	/* Is there room in the store (or the home?) */
 	if (!store_check_num(q_ptr))
 	{
-		if (st_ptr->f_ptr->data[0] == STORE_HOME)
+		if (st_ptr->type == BUILD_STORE_HOME)
 			msg_print("Your home is full.");
 		else
 			msg_print("I have not the room in my store to keep it.");
@@ -2727,7 +2727,7 @@ static void store_sell(int *store_top)
 
 
 	/* Real store */
-	if (!(st_ptr->f_ptr->data[0] == STORE_HOME))
+	if (!(st_ptr->type == BUILD_STORE_HOME))
 	{
 		/* Describe the transaction */
 		msg_format("Selling %s (%c).", o_name, index_to_label(item));
@@ -2870,7 +2870,7 @@ static void store_examine(int store_top)
 	/* Empty? */
 	if (st_ptr->stock_num <= 0)
 	{
-		if (st_ptr->f_ptr->data[0] == STORE_HOME)
+		if (st_ptr->type == BUILD_STORE_HOME)
 			msg_print("Your home is empty.");
 		else
 			msg_print("I am currently out of stock.");
@@ -3243,7 +3243,7 @@ static void deallocate_store(void)
 	if (store_cache_num == 0) return;
 
 	/* Do not deallocate homes or lockers */
-	while (store_cache[0]->f_ptr->data[0] == STORE_HOME)
+	while (store_cache[0]->type == BUILD_STORE_HOME)
 	{
 		/* Hack - move home to end of cache */
 
@@ -3482,7 +3482,7 @@ void do_cmd_store(field_type *f_ptr)
 		}
 
 		/* Home commands */
-		if (st_ptr->f_ptr->data[0] == STORE_HOME)
+		if (st_ptr->type == BUILD_STORE_HOME)
 		{
 		   prt(" g) Get an item.", 22, 31);
 		   prt(" d) Drop an item.", 23, 31);
@@ -3524,7 +3524,7 @@ void do_cmd_store(field_type *f_ptr)
 			object_type *o_ptr = &inventory[item];
 
 			/* Hack -- Flee from the store */
-			if (!(st_ptr->f_ptr->data[0] == STORE_HOME))
+			if (!(st_ptr->type == BUILD_STORE_HOME))
 			{
 				/* Message */
 				msg_print("Your pack is so full that you flee the store...");
