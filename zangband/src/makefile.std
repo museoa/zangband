@@ -270,20 +270,18 @@ aix: CFLAGS += -bnoquiet -D"USE_X11" -D"SYS_V"
 aix: LIBS := -lX11 -ltermcap -lcurses -lbsd -lXm -lXmu -lXaw -lXt
 
 ##
-## Variation -- Dos using "main-dos.c" and the allegro library
+## Variation -- Dos using "main-dos.c" and the allegro library, with djgpp
 ##
-dos: CFLAGS += -s -DUSE_DOS -DUSE_IBM -D"USE_BACKGROUND"
+dos: CFLAGS := -Wall -O2 -g -DUSE_DOS -DUSE_IBM -D"USE_BACKGROUND"
 dos: LIBS := -lpc -lalleg
 dos: INSTALL := copy zangband ../zangband.exe
-dos: LUA := $(subst /, \, $(LUA))
 dos: EXEC := .exe
 
 ##
-## Variation -- Compile using the main-ibm.c port
+## Variation -- Compile using the main-ibm.c port with djgpp
 ##
-ibm: CFLAGS += -DUSE_IBM
+ibm: CFLAGS := -Wall -O2 -g -DUSE_IBM
 ibm: LIBS := -lpc
-ibm: LUA := $(subst /, \, $(LUA))
 ibm: EXEC := .exe
 
 ##
@@ -383,16 +381,11 @@ zangband$(EXEC): $(OBJS)
 ##
 
 clean:
-	-rm -f *.bak *.o;
-	-rm -f ./lua/*.bak ./lua/*.o;
-	-rm -f ./l-*.c;
-	-rm -f ./lua/tolua;
-	-rm -f ./lua/tolua_boot;
-	-del *.obj
-	-del lua\*.obj
-	-del *.exe
-	-del lua\*.exe
-	-del *.res
+	-rm -f *.bak *.o
+	-rm -f ./lua/*.bak ./lua/*.o
+	-rm -f ./l-*.c
+	-rm -f ./lua/tolua
+	-rm -f ./lua/tolua_boot
 ##
 ## Generate dependencies automatically
 ##
