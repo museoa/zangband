@@ -2255,10 +2255,6 @@ static void borg_read_map(void)
 			/* Is this a dungeon */
 			if (pl_ptr->dungeon)
 			{
-				/* No repeats of the same dungeon */
-				if (prev == pl_ptr->seed) continue;
-				prev = pl_ptr->seed;
-
 				/* A town dungeon always starts at level 1 */
 				if (pl_ptr->numstores) depth = 1;
 
@@ -2949,7 +2945,7 @@ void borg_status_window(void)
 			prtf(1, 7, "%sLite", attr);
 
 			if (FLAG(bp_ptr, TR_RES_DARK)) attr = CLR_BLUE;
-			else if (FLAG(bp_ptr, TR_IM_POIS)) attr = CLR_WHITE;
+			else if (FLAG(bp_ptr, TR_IM_DARK)) attr = CLR_WHITE;
 			else attr = CLR_SLATE;
 			prtf(1, 8, "%sDark", attr);
 

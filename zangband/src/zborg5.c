@@ -4299,6 +4299,7 @@ cptr borg_restock(int depth)
 
 	/* Something to cure poison */
 	if (!FLAG(bp_ptr, TR_RES_POIS) &&
+		!FLAG(bp_ptr, TR_IM_POIS) &&
 		bp_ptr->able.cure_pois < 4) return ("rs cure poison");
 
 	/* Assume happy at level 9 */

@@ -1654,8 +1654,7 @@ bool borg_flow_stair_more(int why)
 
 	/* don't head for the stairs if you are recalling,  */
 	/* even if you are fleeing. */
-	if (goal_recalling)
-		return (FALSE);
+	if (goal_recalling)	return (FALSE);
 
 	/* Clear the flow codes */
 	borg_flow_clear();

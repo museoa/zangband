@@ -2663,7 +2663,7 @@ void borg_add_dungeon(int x, int y, bool guess, int depth)
 	}
 
 	/* It is close */
-	if (b_d < 120)
+	if (b_d < 6 * WILD_BLOCK_SIZE)
 	{
 		/* The borg knows better already */
 		if (guess) return;
@@ -2681,6 +2681,8 @@ void borg_add_dungeon(int x, int y, bool guess, int depth)
 		borg_dungeons[b_i].min_depth = depth;
 		borg_dungeons[b_i].max_depth = depth;
 	}
+
+	borg_note("# Adding a dungeon at (%d, %d), depth = %d", x, y, depth);
 }
 
 

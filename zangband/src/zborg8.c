@@ -1034,6 +1034,9 @@ static bool borg_choose_shop(void)
 		}
 	}
 
+	/* All shops have been visited */
+	if (goal_shop == -1) return (FALSE);
+
 	/* Is it worth our while to continue? */
 	if (bu > SHOP_SCAN_THRESHOLD)
 	{
@@ -2270,19 +2273,9 @@ bool borg_think_dungeon(void)
 		/* Take note */
 		borg_note("# Waiting for Recall...");
 
-		if (bp_ptr->depth)
-		{
-			/* Rest until done */
-			borg_keypress('R');
-			borg_keypress('\n');
-		}
-		else
-		{
-			/* Rest one round-- we keep count of turns while in town */
-			borg_keypress('0');
-			borg_keypress('1');
-			borg_keypress('R');
-		}
+		/* Rest until done */
+		borg_keypress('R');
+		borg_keypress('\n');
 
 		/* Done */
 		return (TRUE);

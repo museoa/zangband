@@ -2553,7 +2553,7 @@ bool borg_caution(void)
 			if ((track_more_y[i] == c_y) && (track_more_x[i] == c_x))
 			{
 				/* if standing on one */
-				borg_note("# Standing on dn-stairs");
+				borg_note("# Standing on dn-stairs, (%d, %d)", c_x, c_y);
 			}
 		}
 	}
@@ -2713,8 +2713,8 @@ bool borg_caution(void)
 		 * but not when starving, or lacking food
 		 */
 		stair_more = goal_fleeing;
-		if (!borg_prepared(bp_ptr->depth + 1))
-			stair_more = TRUE;
+
+		if (borg_prepared_depth() > bp_ptr->depth) stair_more = TRUE;
 
 		/* Its ok to go one level deep if evading scary guy */
 		if (scaryguy_on_level) stair_more = TRUE;
@@ -2744,7 +2744,6 @@ bool borg_caution(void)
 			return (TRUE);
 		}
 	}
-
 
 	/* Take stairs down */
 	if (stair_more && !goal_recalling)

@@ -3099,7 +3099,9 @@ bool borg_wait_recharge(void)
  */
 bool borg_leave_level(bool bored)
 {
-	int k, g = 0;
+	int g = 0;
+	int target_depth = borg_prepared_depth();
+	cptr reason;
 
 	/* Hack -- waiting for "recall" */
 	if (goal_recalling) return (FALSE);
@@ -3110,39 +3112,32 @@ bool borg_leave_level(bool bored)
 		/* Cancel rising */
 		goal_rising = FALSE;
 
-		/* Wait until bored */
-		if (!bored) return (FALSE);
-
-		/* Find the best dungeon */
-		return (borg_find_dungeon());
+		/* Nothing to do here */
+		return (FALSE);
 	}
 
 	/** In the Dungeon **/
 
 	/* do not hangout on boring levels for *too* long */
-	if (!borg_prepared(bp_ptr->depth + 1)) g = 1;
-
-	/* Count sellable items */
-	k = borg_count_sell();
+	if (target_depth > bp_ptr->depth + 3) g = 1;
 
 	/* Do not dive when "full" of items */
-	if (g && (k >= 12)) g = 0;
+	if (inven_num >= INVEN_PACK - 1) g = 0;
 
 	/* Do not dive when drained */
-	if (g && bp_ptr->status.fixexp) g = 0;
-
+	if (bp_ptr->status.fixexp) g = 0;
 
 	/* Hack -- Stay on each level for a minimal amount of time */
-	if ((bp_ptr->lev > 10) &&
-		(g != 0) && (borg_t - borg_began < value_feeling[borg_feeling]))
+	if (bp_ptr->lev > 10 && borg_t - borg_began < value_feeling[borg_feeling])
 	{
 		g = 0;
 	}
 
+	reason = borg_prepared(bp_ptr->depth + 1);
+
 	/* Rise a level if bored and unable to dive. */
-	if (bored && borg_prepared(bp_ptr->depth + 1))
+	if (bored && reason)
 	{
-		cptr reason = borg_prepared(bp_ptr->depth + 1);
 		g = -1;
 		borg_note("# heading up (bored and unable to dive: %s)", reason);
 	}
@@ -3151,9 +3146,9 @@ bool borg_leave_level(bool bored)
 	if (!borg_prepared(bp_ptr->depth + 5)) g = 1;
 
 	/* Hack -- Power-climb upwards when needed */
-	if (borg_prepared(bp_ptr->depth) && !unique_on_level)
+	if (bp_ptr->depth > target_depth && !unique_on_level)
 	{
-		cptr reason = borg_prepared(bp_ptr->depth);
+		reason = borg_prepared(bp_ptr->depth);
 
 		borg_note("# heading up (too deep: %s)", reason);
 		g = -1;
@@ -3161,17 +3156,13 @@ bool borg_leave_level(bool bored)
 		/* if I must restock go to town */
 		if (borg_restock(bp_ptr->depth))
 		{
-			cptr reason = borg_prepared(bp_ptr->depth);
-
-			borg_note("# returning to town to restock(too deep: %s)",
-						  reason);
+			borg_note("# returning to town to restock(too deep: %s)", reason);
 			goal_rising = TRUE;
 		}
 
 		/* if I am really out of depth go to town */
-		if (borg_prepared(bp_ptr->max_depth * 5 / 10))
+		if (target_depth * 2 < bp_ptr->depth)
 		{
-			cptr reason = borg_prepared(bp_ptr->depth);
 			borg_note("# returning to town (too deep: %s)", reason);
 			goal_rising = TRUE;
 		}
@@ -3184,7 +3175,7 @@ bool borg_leave_level(bool bored)
 	if (bp_ptr->winner) g = 1;
 
 	/* Return to town to sell stuff */
-	if (bored && (k >= 12))
+	if (bored && inven_num >= INVEN_PACK - 1)
 	{
 		borg_note("# Going to town (Sell Stuff).");
 		goal_rising = TRUE;
@@ -3215,8 +3206,8 @@ bool borg_leave_level(bool bored)
 	}
 
 	/* return to town if been scumming for a bit */
-	if (bp_ptr->max_depth >= bp_ptr->depth + 25 &&
-		bp_ptr->depth < 9 && borg_time_town + borg_t - borg_began > 3500)
+	if (bp_ptr->depth < 9 && bp_ptr->max_depth >= 20 &&
+		borg_time_town + borg_t - borg_began > 3500)
 	{
 		borg_note("# Going to town (scumming check).");
 		goal_rising = TRUE;
@@ -3277,6 +3268,7 @@ bool borg_leave_level(bool bored)
 	{
 		/* Take next stairs */
 		stair_more = TRUE;
+		borg_note("via deze?");
 
 		/* Attempt to use those stairs */
 		if (borg_flow_stair_more(GOAL_BORE)) return (TRUE);
