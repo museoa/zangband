@@ -280,7 +280,10 @@ void do_cmd_wield(void)
 
 		/* Note the curse */
 		o_ptr->info |= (OB_SENSE);
-	}
+    }
+
+    /* Learn some "obvious" things about the item */
+    o_ptr->kn_flags1 |= (o_ptr->flags1 & TR1_EASY_MASK);
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);

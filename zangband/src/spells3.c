@@ -1379,6 +1379,12 @@ void identify_pack(void)
  * Note that if "all" is FALSE, then Items which are
  * "Heavy-Cursed" (Mormegil, Calris, and Weapons of Morgul)
  * will not be uncursed.
+ *
+ * If the item is heavily or permanently cursed, we add that flag
+ * to the 'known' flags so the player can see that it is cursed on
+ * the 'C'haracter screen. This may allow a player to learn that
+ * an unidentified scroll is remove curse when it has no apparent
+ * effect, in rare circumstances.
  */
 static int remove_curse_aux(int all)
 {
@@ -1401,10 +1407,22 @@ static int remove_curse_aux(int all)
 		object_flags(o_ptr, &f1, &f2, &f3);
 
 		/* Heavily Cursed Items need a special spell */
-		if (!all && (f3 & TR3_HEAVY_CURSE)) continue;
+        if (!all && (f3 & TR3_HEAVY_CURSE))
+        {
+            /* Let the player know */
+            o_ptr->kn_flags3 |= TR3_HEAVY_CURSE;
+
+            continue;
+        }
 
 		/* Perma-Cursed Items can NEVER be uncursed */
-		if (f3 & TR3_PERMA_CURSE) continue;
+        if (f3 & TR3_PERMA_CURSE)
+        {
+            /* Let the player know */
+            o_ptr->kn_flags3 |= TR3_PERMA_CURSE;
+
+            continue;
+        }
 
 		/* Hack -- Assume felt */
 		o_ptr->info |= (OB_SENSE);

@@ -2963,6 +2963,15 @@
      TR1_SPEED | TR1_BLOWS)
 
 /*
+ * Flag set 1 -- mask for "easy" flags.
+ * These flags are automatically learned if the item is worn.
+ */
+#define TR1_EASY_MASK \
+    (TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | \
+     TR1_CON | TR1_CHR | \
+     TR1_INFRA | TR1_SPEED | TR1_BLOWS)
+
+/*
  * Flag set 3 -- mask for "ignore element" flags.
  */
 #define TR3_IGNORE_MASK \
