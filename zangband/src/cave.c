@@ -5028,9 +5028,7 @@ void object_kind_track(int k_idx)
 /*
  * Something has happened to disturb the player.
  *
- * The first arg indicates a major disturbance, which affects search.
- *
- * The second arg is currently unused, but could induce output flush.
+ * The arg indicates a major disturbance, which affects search.
  *
  * All disturbance cancels repeated commands, resting, and running.
  */

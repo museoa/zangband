@@ -1212,11 +1212,6 @@ errr macro_init(void)
 
 #endif /* 0 */
 
-/*
- * Local "need flush" variable
- */
-static bool flush_later = FALSE;
-
 
 /*
  * Local variable -- we are inside a "macro action"
@@ -1243,7 +1238,7 @@ static bool parse_under = FALSE;
 void flush(void)
 {
 	/* Do it later */
-	flush_later = TRUE;
+	inkey_xtra = TRUE;
 }
 
 

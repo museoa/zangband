@@ -3623,10 +3623,10 @@
 #define avoid_other				p_ptr->options[36]
 #define flush_failure			p_ptr->options[37]
 #define flush_disturb			p_ptr->options[38]
-#define flush_command			p_ptr->options[39]
+/* {FALSE, 0, NULL, 					"Number 54" }, p_ptr->options[39] */
 #define fresh_before			p_ptr->options[40]
 #define fresh_after				p_ptr->options[41]
-#define fresh_message			p_ptr->options[42]
+/* {FALSE, 0, NULL,					"Number 57" }, p_ptr->options[42] */
 #define compress_savefile		p_ptr->options[43]
 #define hilite_player			p_ptr->options[44]
 #define view_yellow_lite		p_ptr->options[45]
