@@ -1405,50 +1405,6 @@ bool init_places(int xx, int yy)
 	/* Paranoia */
     if (!best_town) return (FALSE);
 
-    /* Link magetowers together */
-    {
-        int large_tower_max = 0;
-        int large_tower_i[32];
-        int large_tower_j[32];
-
-        for (i = 0; i < place_count; i++)
-        {
-            place_type *pl_ptr2 = &place[i];
-
-            for (j = 0; j < pl_ptr2->numstores; j++)
-            {
-                store_type *st_ptr2 = &pl_ptr2->store[j];
-
-                if (large_tower_max < 32 &&
-                    st_ptr2->type == BUILD_MAGETOWER1)
-                {
-                    large_tower_i[large_tower_max] = i;
-                    large_tower_j[large_tower_max] = j;
-                    large_tower_max++;
-                }
-            }
-        }
-
-        for (i = 0; i < place_count; i++)
-        {
-            place_type *pl_ptr2 = &place[i];
-
-            for (j = 0; j < pl_ptr2->numstores; j++)
-            {
-                store_type *st_ptr2 = &pl_ptr2->store[j];
-
-                if (large_tower_max > 0 &&
-                    (st_ptr2->type == BUILD_MAGETOWER0 ||
-                     st_ptr2->type == BUILD_MAGETOWER1))
-                {
-                    n = randint0(large_tower_max);
-                    st_ptr2->good_buy = large_tower_i[n];
-                    st_ptr2->bad_buy = large_tower_j[n];
-                }
-            }
-        }
-    }
-
 	/* Build starting city / town */
 	draw_city(best_town);
 

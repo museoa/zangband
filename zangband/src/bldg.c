@@ -1555,13 +1555,7 @@ static int collect_magetower_links(store_type *st_ptr, int n, int which,
                 continue;
 
             /* Hack - store link data in good_buy and bad_buy */
-            if (
-#if 0
-                (st_ptr->good_buy == i && st_ptr->bad_buy == j) ||
-                (st_ptr2->good_buy == p_ptr->place_num &&
-                 st_ptr2->bad_buy == which) ||
-#endif
-                (st_ptr2->type == BUILD_MAGETOWER0) ||
+            if ((st_ptr2->type == BUILD_MAGETOWER0) ||
                 (st_ptr2->type == BUILD_MAGETOWER1))
             {
                 link_p[max_link] = i;
