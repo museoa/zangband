@@ -748,7 +748,7 @@ static void wiz_reroll_item(object_type *o_ptr)
 		wiz_display_item(q_ptr);
 
 		/* Ask wizard what to do. */
-		if (!get_com("[a]ccept, [n]ormal, [g]ood, [e]xcellent, [s]pecial? ", &ch))
+		if (!get_com("[a]ccept, [w]orthless, [c]ursed, [n]ormal, [g]ood, [e]xcellent, [s]pecial? ", &ch))
 		{
 			/* Preserve wizard-generated artifacts */
 			if (artifact_p(q_ptr))
@@ -775,35 +775,52 @@ static void wiz_reroll_item(object_type *o_ptr)
 			q_ptr->name1 = 0;
 		}
 
-		/* Apply normal magic, but first clear object */
-		if (ch == 'n' || ch == 'N')
+		switch(ch)
 		{
-			object_prep(q_ptr, o_ptr->k_idx);
-			apply_magic(q_ptr, dun_level, FALSE, FALSE, FALSE);
-		}
+			/* Apply bad magic, but first clear object */
+			case 'w': case 'W':
+			{
+				object_prep(q_ptr, o_ptr->k_idx);
+				apply_magic(q_ptr, dun_level, FALSE, TRUE, TRUE, TRUE);
+				break;
+			}
+			/* Apply bad magic, but first clear object */
+			case 'c': case 'C':
+			{
+				object_prep(q_ptr, o_ptr->k_idx);
+				apply_magic(q_ptr, dun_level, FALSE, TRUE, FALSE, TRUE);
+				break;
+			}
+			/* Apply normal magic, but first clear object */
+			case 'n': case 'N':
+			{
+				object_prep(q_ptr, o_ptr->k_idx);
+				apply_magic(q_ptr, dun_level, FALSE, FALSE, FALSE, FALSE);
+				break;
+			}
+			/* Apply good magic, but first clear object */
+			case 'g': case 'G':
+			{
+				object_prep(q_ptr, o_ptr->k_idx);
+				apply_magic(q_ptr, dun_level, FALSE, TRUE, FALSE, FALSE);
+				break;
+			}
+			/* Apply great magic, but first clear object */
+			case 'e': case 'E':
+			{
+				object_prep(q_ptr, o_ptr->k_idx);
+				apply_magic(q_ptr, dun_level, FALSE, TRUE, TRUE, FALSE);
+				break;
+			}
+			case 's': case 'S':
+			{
+				object_prep(q_ptr, o_ptr->k_idx);
+				apply_magic(q_ptr, dun_level, TRUE, TRUE, TRUE, FALSE);
 
-		/* Apply good magic, but first clear object */
-		else if (ch == 'g' || ch == 'G')
-		{
-			object_prep(q_ptr, o_ptr->k_idx);
-			apply_magic(q_ptr, dun_level, FALSE, TRUE, FALSE);
-		}
-
-		/* Apply great magic, but first clear object */
-		else if (ch == 'e' || ch == 'E')
-		{
-			object_prep(q_ptr, o_ptr->k_idx);
-			apply_magic(q_ptr, dun_level, FALSE, TRUE, TRUE);
-		}
-
-		/* Apply special magic, but first clear object */
-		else if (ch == 's' || ch == 'S')
-		{
-			object_prep(q_ptr, o_ptr->k_idx);
-			apply_magic(q_ptr, dun_level, TRUE, TRUE, TRUE);
-
-			/* Failed to create normal artifact; make a random one */
-			if (!artifact_p(q_ptr)) create_artifact(q_ptr, FALSE);
+				/* Failed to create normal artifact; make a random one */
+				if (!artifact_p(q_ptr)) create_artifact(q_ptr, FALSE);
+				break;
+			}
 		}
 	}
 
@@ -1222,12 +1239,12 @@ static void wiz_create_item(void)
 		}
 
 		/* Apply magic */
-		apply_magic(q_ptr, -1, TRUE, TRUE, TRUE);
+		apply_magic(q_ptr, -1, TRUE, TRUE, TRUE, FALSE);
 	}
 	else
 	{
 		/* Apply magic */
-		apply_magic(q_ptr, dun_level, FALSE, FALSE, FALSE);
+		apply_magic(q_ptr, dun_level, FALSE, FALSE, FALSE, FALSE);
 	}
 
 #ifdef USE_SCRIPT

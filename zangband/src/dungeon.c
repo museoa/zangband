@@ -299,11 +299,60 @@ static void sense_inventory(void)
 		/* Occasional failure on inventory items */
 		if ((i < INVEN_WIELD) && (0 != rand_int(5))) continue;
 
+		/* Good luck */
+		if ((p_ptr->muta3 & MUT3_GOOD_LUCK) && !rand_int(13))
+		{
+			heavy = TRUE;
+		}
+
 		/* Check for a feeling */
 		feel = (heavy ? value_check_aux1(o_ptr) : value_check_aux2(o_ptr));
 
 		/* Skip non-feelings */
 		if (!feel) continue;
+
+		/* Bad luck */
+		if ((p_ptr->muta3 & MUT3_BAD_LUCK) && !rand_int(13))
+		{
+			switch (feel)
+			{
+				case FEEL_TERRIBLE:
+				{
+					feel = FEEL_SPECIAL;
+					break;
+				}
+				case FEEL_WORTHLESS:
+				{
+					feel = FEEL_EXCELLENT;
+					break;
+				}
+				case FEEL_CURSED:
+				{
+					feel = rand_int(3) ? FEEL_GOOD : FEEL_AVERAGE;
+					break;
+				}
+				case FEEL_AVERAGE:
+				{
+					feel = rand_int(2) ? FEEL_CURSED : FEEL_GOOD;
+					break;
+				}
+				case FEEL_GOOD:
+				{
+					feel = rand_int(3) ? FEEL_CURSED : FEEL_AVERAGE;
+					break;
+				}
+				case FEEL_EXCELLENT:
+				{
+					feel = FEEL_WORTHLESS;
+					break;
+				}
+				case FEEL_SPECIAL:
+				{
+					feel = FEEL_TERRIBLE;
+					break;
+				}
+			}
+		}
 
 		/* Stop everything */
 		if (disturb_minor) disturb(0, 0);
@@ -315,9 +364,9 @@ static void sense_inventory(void)
 		if (i >= INVEN_WIELD)
 		{
 			msg_format("You feel the %s (%c) you are %s %s %s...",
-			           o_name, index_to_label(i), describe_use(i),
-			           ((o_ptr->number == 1) ? "is" : "are"),
-					   game_inscriptions[feel]);
+						  o_name, index_to_label(i), describe_use(i),
+						  ((o_ptr->number == 1) ? "is" : "are"),
+						game_inscriptions[feel]);
 		}
 
 		/* Message (inventory) */

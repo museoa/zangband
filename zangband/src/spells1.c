@@ -3757,6 +3757,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 		{
 			if (fuzzy) msg_print("You are hit by a blast from the past!");
 
+#ifdef MUT3_RES_TIME
 			if (p_ptr->muta3 & MUT3_RES_TIME)
 			{
 				dam *= 4;
@@ -3765,6 +3766,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			}
 			else
 			{
+#endif /* MUT3_RES_TIME */
 				switch (randint(10))
 				{
 					case 1: case 2: case 3: case 4: case 5:
@@ -3807,7 +3809,9 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 						break;
 					}
 				}
+#ifdef MUT3_RES_TIME
 			}
+#endif
 			take_hit(dam, killer);
 			break;
 		}

@@ -1738,6 +1738,7 @@ static void player_flags(u32b *f1, u32b *f2, u32b *f3)
 			(*f2) |= TR2_FREE_ACT;
 		}
 
+#ifdef MUT3_SUS_STATS
 		if (p_ptr->muta3 & MUT3_SUS_STATS)
 		{
 			(*f2) |= TR2_SUST_CON;
@@ -1752,6 +1753,7 @@ static void player_flags(u32b *f1, u32b *f2, u32b *f3)
 			if (p_ptr->lev > 49)
 				(*f2) |= TR2_SUST_CHR;
 		}
+#endif /* MUT3_SUS_STATS */
 	}
 }
 

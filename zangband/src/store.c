@@ -1467,7 +1467,7 @@ static void store_create(void)
 		object_prep(q_ptr, i);
 
 		/* Apply some "low-level" magic (no artifacts) */
-		apply_magic(q_ptr, level, FALSE, FALSE, FALSE);
+		apply_magic(q_ptr, level, FALSE, FALSE, FALSE, FALSE);
 
 		/* Require valid object */
 		if (!store_will_buy(q_ptr)) continue;

@@ -328,10 +328,10 @@
 #define MUT3_ESP                        0x02000000L
 #define MUT3_LIMBER                     0x04000000L
 #define MUT3_ARTHRITIS                  0x08000000L
-#define MUT3_RES_TIME                   0x10000000L
+#define MUT3_BAD_LUCK                   0x10000000L
 #define MUT3_VULN_ELEM                  0x20000000L
 #define MUT3_MOTION                     0x40000000L
-#define MUT3_SUS_STATS                  0x80000000L
+#define MUT3_GOOD_LUCK                  0x80000000L
 
 
 /* Monk martial arts... */

@@ -585,10 +585,12 @@ void self_knowledge(void)
 		{
 			info[i++] = "Your joints ache constantly (-3 DEX).";
 		}
+#ifdef MUT3_RES_TIME
 		if (p_ptr->muta3 & MUT3_RES_TIME)
 		{
 			info[i++] = "You are protected from the ravages of time.";
 		}
+#endif /* MUT3_RES_TIME */
 		if (p_ptr->muta3 & MUT3_VULN_ELEM)
 		{
 			info[i++] = "You are susceptible to damage from the elements.";
@@ -597,9 +599,13 @@ void self_knowledge(void)
 		{
 			info[i++] = "Your movements are precise and forceful (+1 STL).";
 		}
-		if (p_ptr->muta3 & MUT3_SUS_STATS)
+		if (p_ptr->muta3 & MUT3_GOOD_LUCK)
 		{
-			/* Unnecessary */
+			info[i++] = "There is a white aura surrounding you.";
+		}
+		if (p_ptr->muta3 & MUT3_BAD_LUCK)
+		{
+			info[i++] = "There is a black aura surrounding you.";
 		}
 	}
 

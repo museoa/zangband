@@ -2330,6 +2330,7 @@ void calc_bonuses(void)
 			p_ptr->skill_stl += 1;
 		}
 
+#ifdef MUT3_SUS_STATS
 		if (p_ptr->muta3 & MUT3_SUS_STATS)
 		{
 			p_ptr->sustain_con = TRUE;
@@ -2344,6 +2345,7 @@ void calc_bonuses(void)
 			if (p_ptr->lev > 49)
 				p_ptr->sustain_chr = TRUE;
 		}
+#endif /* MUT3_SUS_STATS */
 
 		if (p_ptr->muta3 & MUT3_ILL_NORM)
 		{

@@ -2932,7 +2932,7 @@ static errr process_dungeon_file_aux(char *buf, int ymin, int xmin, int ymax, in
 				}
 
 				/* Apply magic (no messages, no artifacts) */
-				apply_magic(o_ptr, base_level, FALSE, TRUE, FALSE);
+				apply_magic(o_ptr, base_level, FALSE, TRUE, FALSE, FALSE);
 
 #ifdef USE_SCRIPT
 				o_ptr->python = object_create_callback(o_ptr);

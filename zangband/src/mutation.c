@@ -26,7 +26,7 @@ bool gain_random_mutation(int choose_mut)
 
 	while (attempts_left--)
 	{
-		switch (choose_mut ? choose_mut : randint(194))
+		switch (choose_mut ? choose_mut : randint(193))
 		{
 		case 1: case 2: case 3: case 4:
 			muta_class = &(p_ptr->muta1);
@@ -494,8 +494,12 @@ bool gain_random_mutation(int choose_mut)
 			break;
 		case 188:
 			muta_class = &(p_ptr->muta3);
+#ifdef MUT3_RES_TIME
 			muta_which = MUT3_RES_TIME;
 			muta_desc = "You feel immortal.";
+#endif /* MUT3_RES_TIME */
+			muta_which = MUT3_BAD_LUCK;
+			muta_desc = "There is a malignant black aura surrounding you...";
 			break;
 		case 189:
 			muta_class = &(p_ptr->muta3);
@@ -507,10 +511,14 @@ bool gain_random_mutation(int choose_mut)
 			muta_which = MUT3_MOTION;
 			muta_desc = "You move with new assurance.";
 			break;
-		case 193: case 194:
+		case 193:
 			muta_class = &(p_ptr->muta3);
+#ifdef MUT3_SUS_STATS
 			muta_which = MUT3_SUS_STATS;
 			muta_desc = "You feel like you can recover from anything.";
+#endif /* MUT3_SUS_STATS */
+			muta_which = MUT3_GOOD_LUCK;
+			muta_desc = "There is a benevolent white aura surrounding you...";
 			break;
 		default:
 			muta_class = NULL;
@@ -1197,8 +1205,12 @@ bool lose_mutation(int choose_mut)
 			break;
 		case 188:
 			muta_class = &(p_ptr->muta3);
+#ifdef MUT3_RES_TIME
 			muta_which = MUT3_RES_TIME;
 			muta_desc = "You feel all too mortal.";
+#endif /* MUT3_RES_TIME */
+			muta_which = MUT3_BAD_LUCK;
+			muta_desc = "Your black aura swirls and fades.";
 			break;
 		case 189:
 			muta_class = &(p_ptr->muta3);
@@ -1212,8 +1224,12 @@ bool lose_mutation(int choose_mut)
 			break;
 		case 193: case 194:
 			muta_class = &(p_ptr->muta3);
+#ifdef MUT3_SUS_STATS
 			muta_which = MUT3_SUS_STATS;
 			muta_desc = "You no longer feel like you can recover from anything.";
+#endif /* MUT3_SUS_STATS */
+			muta_which = MUT3_GOOD_LUCK;
+			muta_desc = "Your white aura shimmers and fades.";
 			break;
 		default:
 			muta_class = NULL;
@@ -1629,10 +1645,12 @@ void dump_mutations(FILE *OutFile)
 		{
 			fprintf(OutFile, " Your joints ache constantly (-3 DEX).\n");
 		}
+#ifdef MUT3_RES_TIME
 		if (p_ptr->muta3 & MUT3_RES_TIME)
 		{
 			fprintf(OutFile, " You are protected from the ravages of time.\n");
 		}
+#endif /* MUT3_RES_TIME */
 		if (p_ptr->muta3 & MUT3_VULN_ELEM)
 		{
 			fprintf(OutFile, " You are susceptible to damage from the elements.\n");
@@ -1641,10 +1659,21 @@ void dump_mutations(FILE *OutFile)
 		{
 			fprintf(OutFile, " Your movements are precise and forceful (+1 STL).\n");
 		}
+#ifdef MUT3_SUS_STATS
 		if (p_ptr->muta3 & MUT3_SUS_STATS)
 		{
 			fprintf(OutFile, " Your body resists serious damage.\n");
 		}
+#endif /* MUT3_SUS_STATS */
+		if (p_ptr->muta3 & MUT3_GOOD_LUCK)
+		{
+			fprintf(OutFile, "There is a white aura surrounding you.");
+		}
+		if (p_ptr->muta3 & MUT3_BAD_LUCK)
+		{
+			fprintf(OutFile, "There is a black aura surrounding you.");
+		}
+
 	}
 }
 

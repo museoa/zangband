@@ -2360,7 +2360,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 			else if (power < -1)
 			{
 				/* Roll for ego-item */
-				if (rand_int(MAX_DEPTH) < level)
+				if ((rand_int(MAX_DEPTH) < level) || (power < -2))
 				{
 					o_ptr->name2 = EGO_MORGUL;
 					if (randint(6) == 1) o_ptr->art_flags3 |= TR3_TY_CURSE;
@@ -2487,7 +2487,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 			else if (power < -1)
 			{
 				/* Roll for ego-item */
-				if (rand_int(MAX_DEPTH) < level)
+				if ((rand_int(MAX_DEPTH) < level) || (power < -2))
 				{
 					o_ptr->name2 = EGO_BACKBITING;
 				}
@@ -3697,7 +3697,7 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power)
  * "good" and "great" arguments are false.  As a total hack, if "great" is
  * true, then the item gets 3 extra "attempts" to become an artifact.
  */
-void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
+void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great, bool curse)
 {
 
 	int i, rolls, f1, f2, power;
@@ -3742,6 +3742,20 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 		if (magik(f2)) power = -2;
 	}
 
+	/* Apply curse */
+	if (curse)
+	{
+		/* Assume 'cursed' */
+		if (power > 0)
+		{
+			power = 0 - power;
+		}
+		/* Everything else gets more badly cursed */
+		else
+		{
+			power--;
+		}
+	}
 
 	/* Assume no rolls */
 	rolls = 0;
@@ -4117,7 +4131,7 @@ bool make_object(object_type *j_ptr, bool good, bool great)
 	}
 
 	/* Apply magic (allow artifacts) */
-	apply_magic(j_ptr, object_level, TRUE, good, great);
+	apply_magic(j_ptr, object_level, TRUE, good, great, FALSE);
 
 	/* Hack -- generate multiple spikes/missiles */
 	switch (j_ptr->tval)

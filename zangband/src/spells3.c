@@ -1698,10 +1698,118 @@ bool artifact_scroll(void)
 
 
 /*
+ * Apply good luck to an object
+ */
+static void good_luck(object_type *o_ptr)
+{
+	/* Objects become better sometimes */
+	if (!rand_int(13))
+	{
+		int number = o_ptr->number;
+
+		bool great = ego_item_p(o_ptr);
+
+		/* Prepare it */
+		object_prep(o_ptr, o_ptr->k_idx);
+
+		/* Restore the number */
+		o_ptr->number = number;
+
+		/* Apply good magic (allow artifacts, good, great if an ego-item, no curse) */
+		apply_magic(o_ptr, dun_level, TRUE, TRUE, great, FALSE);
+	}
+
+	/* Objects duplicate sometimes */
+	if (!rand_int(777) && (o_ptr->number < 99))
+	{
+		o_ptr->number++;
+	}
+}
+
+
+/*
+ * Apply bad luck to an object
+ */
+static void bad_luck(object_type *o_ptr)
+{
+	bool is_art = artifact_p(o_ptr) || o_ptr->art_name;
+
+	/* Objects become worse sometimes */
+	if (!rand_int(13))
+	{
+		int number = o_ptr->number;
+
+		bool great = ego_item_p(o_ptr);
+
+		/* Non-artifacts get rerolled */
+		if (!is_art)
+		{
+			o_ptr->ident |= IDENT_CURSED;
+
+			/* Prepare it */
+			object_prep(o_ptr, o_ptr->k_idx);
+
+			/* Restore the number */
+			o_ptr->number = number;
+
+			/* Apply bad magic (disallow artifacts, good, great if an ego-item, cursed) */
+			apply_magic(o_ptr, dun_level, FALSE, TRUE, great, TRUE);
+		}
+
+		/* Now curse it */
+		o_ptr->ident |= IDENT_CURSED;
+	}
+
+	/* Objects are blasted sometimes */
+	if (!rand_int(666) && (!is_art || !rand_int(3)))
+	{
+		/* Blast it */
+		o_ptr->name1 = 0;
+		o_ptr->name2 = EGO_BLASTED;
+		if (o_ptr->to_a) o_ptr->to_a = 0 - randint(5) - randint(5);
+		if (o_ptr->to_h) o_ptr->to_h = 0 - randint(5) - randint(5);
+		if (o_ptr->to_d) o_ptr->to_d = 0 - randint(5) - randint(5);
+		o_ptr->ac = 0;
+		o_ptr->dd = 0;
+		o_ptr->ds = 0;
+		o_ptr->art_flags1 = 0;
+		o_ptr->art_flags2 = 0;
+		o_ptr->art_flags3 = 0;
+
+		/* Curse it */
+		o_ptr->ident |= (IDENT_CURSED);
+
+		/* Break it */
+		o_ptr->ident |= (IDENT_BROKEN);
+
+		/* Recalculate bonuses */
+		p_ptr->update |= (PU_BONUS);
+
+		/* Recalculate mana */
+		p_ptr->update |= (PU_MANA);
+
+		/* Window stuff */
+		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+	}
+}
+
+
+/*
  * Identify an object
  */
 void identify_item(object_type *o_ptr)
 {
+	if ((p_ptr->muta3 & MUT3_GOOD_LUCK) &&
+		 !artifact_p(o_ptr) && !o_ptr->art_name && !object_known_p(o_ptr))
+	{
+		good_luck(o_ptr);
+	}
+
+	if (p_ptr->muta3 & MUT3_BAD_LUCK)
+	{
+		bad_luck(o_ptr);
+	}
+
 	/* Identify it fully */
 	object_aware(o_ptr);
 	object_known(o_ptr);
@@ -3672,7 +3780,7 @@ bool curse_weapon(void)
 	{
 		/* Cool */
 		msg_format("A %s tries to %s, but your %s resists the effects!",
-		           "terrible black aura", "surround your weapon", o_name);
+					  "terrible black aura", "surround your weapon", o_name);
 	}
 
 	/* not artifact or failed save... */

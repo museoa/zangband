@@ -488,7 +488,7 @@ void monster_death(int m_idx)
 		/* Prepare to make a Blade of Chaos */
 		object_prep(q_ptr, lookup_kind(TV_CORPSE, (corpse ? SV_CORPSE : SV_SKELETON)));
 
-		apply_magic(q_ptr, object_level, FALSE, FALSE, FALSE);
+		apply_magic(q_ptr, object_level, FALSE, FALSE, FALSE, FALSE);
 
 		q_ptr->pval = m_ptr->r_idx;
 
@@ -613,7 +613,7 @@ void monster_death(int m_idx)
 		/* Prepare to make a Blade of Chaos */
 		object_prep(q_ptr, lookup_kind(TV_SWORD, SV_BLADE_OF_CHAOS));
 
-		apply_magic(q_ptr, object_level, FALSE, FALSE, FALSE);
+		apply_magic(q_ptr, object_level, FALSE, FALSE, FALSE, FALSE);
 
 #ifdef USE_SCRIPT
 		q_ptr->python = object_create_callback(q_ptr);
@@ -661,7 +661,7 @@ void monster_death(int m_idx)
 			q_ptr->name1 = ART_GROND;
 
 			/* Mega-Hack -- Actually create "Grond" */
-			apply_magic(q_ptr, -1, TRUE, TRUE, TRUE);
+			apply_magic(q_ptr, -1, TRUE, TRUE, TRUE, FALSE);
 
 #ifdef USE_SCRIPT
 			q_ptr->python = object_create_callback(q_ptr);
@@ -680,7 +680,7 @@ void monster_death(int m_idx)
 			q_ptr->name1 = ART_MORGOTH;
 
 			/* Mega-Hack -- Actually create "Morgoth" */
-			apply_magic(q_ptr, -1, TRUE, TRUE, TRUE);
+			apply_magic(q_ptr, -1, TRUE, TRUE, TRUE, FALSE);
 
 #ifdef USE_SCRIPT
 			q_ptr->python = object_create_callback(q_ptr);
