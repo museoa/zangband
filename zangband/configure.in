@@ -276,6 +276,7 @@ AC_CHECK_CC_OPT(-Wunused)
 AC_CHECK_CC_OPT(-Wuninitialized)
 AC_CHECK_CC_OPT(-Wundef)
 AC_CHECK_CC_OPT(-Wnested-externs)
+AC_CHECK_CC_OPT(-Wdeclaration-after-statement)
 
 AC_CONFIG_FILES([makefile])
 AC_OUTPUT
