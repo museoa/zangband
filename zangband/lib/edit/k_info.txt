@@ -4356,7 +4356,7 @@ F:PSI_CRIT | LITE | SHOW_MODS
 
 N:593:& Hammer~ of Returning
 G:\:D
-I:21:8:0
+I:21:22:0
 W:9:0:85:675
 A:31/4
 P:0:3d4:0:0:0
