@@ -366,9 +366,9 @@ int next_to_walls(int y, int x)
 	int	k = 0;
 
 	if (cave_floor_bold(y + 1, x)) k++;
-	if (cave_floor_bold(y-1, x)) k++;
+	if (cave_floor_bold(y - 1, x)) k++;
 	if (cave_floor_bold(y, x + 1)) k++;
-	if (cave_floor_bold(y, x-1)) k++;
+	if (cave_floor_bold(y, x - 1)) k++;
 
 	return (k);
 }
@@ -749,14 +749,14 @@ static bool set_tunnel(int *x, int *y, bool affectwall)
 
 		/* find usable square and return value in (x,y) */
 
-		i=50;
+		i = 50;
 
-		dy=0;
-		dx=0;
-		while ((i>0)&&(cave[*y + dy][*x + dx].feat == FEAT_WALL_SOLID))
+		dy = 0;
+		dx = 0;
+		while ((i>0) && (cave[*y + dy][*x + dx].feat == FEAT_WALL_SOLID))
 		{
-			dy=rand_int(3) - 1;
-			dx=rand_int(3) - 1;
+			dy = rand_int(3) - 1;
+			dx = rand_int(3) - 1;
 
 			if (!in_bounds(*y + dy, *x + dx))
 			{
@@ -796,20 +796,20 @@ static void create_cata_tunnel(int x, int y)
 	int x1, y1;
 
 	/* Build tunnel */
-	x1=x-1;
-	y1=y;
+	x1 = x - 1;
+	y1 = y;
 	set_tunnel(&x1, &y1, FALSE);
 
-	x1=x + 1;
-	y1=y;
+	x1 = x + 1;
+	y1 = y;
 	set_tunnel(&x1, &y1, FALSE);
 
-	x1=x;
-	y1=y-1;
+	x1 = x;
+	y1 = y - 1;
 	set_tunnel(&x1, &y1, FALSE);
 
-	x1=x;
-	y1=y + 1;
+	x1 = x;
+	y1 = y + 1;
 	set_tunnel(&x1, &y1, FALSE);
 }
 
@@ -841,49 +841,47 @@ static void short_seg_hack(int x1, int y1, int x2, int y2, int type, int count, 
 	/* Check for early exit */
 	if (!(*fail)) return;
 
-	length=distance(x1, y1, x2, y2);
+	length = distance(x1, y1, x2, y2);
 
 	count++;
 
-	if ((type == 1)&&(length!=0))
+	if ((type == 1) && (length != 0))
 	{
 
-		for (i=0; i<=length; i++)
+		for (i = 0; i <= length; i++)
 		{
-			x=x1 + i*(x2-x1)/length;
-			y=y1 + i*(y2-y1)/length;
+			x = x1 + i * (x2 - x1) / length;
+			y = y1 + i * (y2 - y1) / length;
 			if (!set_tunnel(&x, &y, TRUE))
 			{
-				if (count>50)
+				if (count > 50)
 				{
 					/* This isn't working - probably have an infinite loop */
-					*fail=FALSE;
+					*fail = FALSE;
 					return;
 				}
 
 				/* solid wall - so try to go around */
-				short_seg_hack(x, y, x1+(i-1)*(x2-x1)/length, y1+(i-1)*(y2-y1)/length, 1
-					,count, fail);
-				short_seg_hack(x, y, x1+(i + 1)*(x2-x1)/length, y1+(i + 1)*(y2-y1)/length, 1
-					,count, fail);
+				short_seg_hack(x, y, x1 + (i - 1) * (x2 - x1) / length, y1 + (i - 1) * (y2 - y1) / length, 1, count, fail);
+				short_seg_hack(x, y, x1 + (i + 1) * (x2 - x1) / length, y1 + (i + 1) * (y2 - y1) / length, 1, count, fail);
 			}
 		}
 	}
-	else if ((type == 2)||(type == 3))
+	else if ((type == 2) || (type == 3))
 	{
-		if (x1<x2)
+		if (x1 < x2)
 		{
-			for (i=x1; i<=x2; i++)
+			for (i = x1; i <= x2; i++)
 			{
-				x=i;
-				y=y1;
+				x = i;
+				y = y1;
 				if (!set_tunnel(&x, &y, TRUE))
 				{
 					/* solid wall - so try to go around */
-					short_seg_hack(x, y, i-1, y1, 1, count, fail);
+					short_seg_hack(x, y, i - 1, y1, 1, count, fail);
 					short_seg_hack(x, y, i + 1, y1, 1, count, fail);
 				}
-				if ((type == 3)&&((x + y)%2))
+				if ((type == 3) && ((x + y) % 2))
 				{
 					create_cata_tunnel(i, y1);
 				}
@@ -891,36 +889,36 @@ static void short_seg_hack(int x1, int y1, int x2, int y2, int type, int count, 
 		}
 		else
 		{
-			for (i=x2; i<=x1; i++)
+			for (i = x2; i <= x1; i++)
 			{
-				x=i;
-				y=y1;
+				x = i;
+				y = y1;
 				if (!set_tunnel(&x, &y, TRUE))
 				{
 					/* solid wall - so try to go around */
-					short_seg_hack(x, y, i-1, y1, 1, count, fail);
+					short_seg_hack(x, y, i - 1, y1, 1, count, fail);
 					short_seg_hack(x, y, i + 1, y1, 1, count, fail);
 				}
-				if ((type == 3)&&((x + y)%2))
+				if ((type == 3) && ((x + y) % 2))
 				{
 					create_cata_tunnel(i, y1);
 				}
 			}
 
 		}
-		if (y1<y2)
+		if (y1 < y2)
 		{
-			for (i=y1; i<=y2; i++)
+			for (i = y1; i <= y2; i++)
 			{
-				x=x2;
-				y=i;
+				x = x2;
+				y = i;
 				if (!set_tunnel(&x, &y, TRUE))
 				{
 					/* solid wall - so try to go around */
-					short_seg_hack(x, y, x2, i-1, 1, count, fail);
+					short_seg_hack(x, y, x2, i - 1, 1, count, fail);
 					short_seg_hack(x, y, x2, i + 1, 1, count, fail);
 				}
-				if ((type == 3)&&((x + y)%2))
+				if ((type == 3) && ((x + y) % 2))
 				{
 					create_cata_tunnel(x2, i);
 				}
@@ -928,17 +926,17 @@ static void short_seg_hack(int x1, int y1, int x2, int y2, int type, int count, 
 		}
 		else
 		{
-			for (i=y2; i<=y1; i++)
+			for (i = y2; i <= y1; i++)
 			{
-				x=x2;
-				y=i;
+				x = x2;
+				y = i;
 				if (!set_tunnel(&x, &y, TRUE))
 				{
 					/* solid wall - so try to go around */
-					short_seg_hack(x, y, x2, i-1, 1, count, fail);
+					short_seg_hack(x, y, x2, i - 1, 1, count, fail);
 					short_seg_hack(x, y, x2, i + 1, 1, count, fail);
 				}
-				if ((type == 3)&&((x + y)%2))
+				if ((type == 3) && ((x + y) % 2))
 				{
 					create_cata_tunnel(x2, i);
 				}
@@ -968,49 +966,50 @@ bool build_tunnel2(int x1, int y1, int x2, int y2, int type, int cutoff)
 	int i;
 	bool retval, firstsuccede;
 
-	length=distance(x1, y1, x2, y2);
-	if(length>cutoff)
+	length = distance(x1, y1, x2, y2);
+
+	if (length > cutoff)
 	{
 		/*
 		* Divide path in half and call routine twice.
 		*/
-		dx=(x2-x1)/2;
-		dy=(y2-y1)/2;
+		dx = (x2 - x1) / 2;
+		dy = (y2 - y1) / 2;
 
 		/* perturbation perpendicular to path */
-		changex=(rand_int(abs(dy)+2)*2-abs(dy)-1)/2;
+		changex = (rand_int(abs(dy) + 2) * 2 - abs(dy) - 1) / 2;
 
 		/* perturbation perpendicular to path */
-		changey=(rand_int(abs(dx)+2)*2-abs(dx)-1)/2;
+		changey = (rand_int(abs(dx) + 2) * 2 - abs(dx) - 1) / 2;
 
 		/* Work out "mid" ponit */
-		x3=x1 + dx + changex;
-		y3=y1 + dy + changey;
+		x3 = x1 + dx + changex;
+		y3 = y1 + dy + changey;
 
-		/* See if in bounds - if not -do not perturb point*/
+		/* See if in bounds - if not - do not perturb point*/
 		if (!in_bounds(y3, x3))
 		{
-			x3=(x1 + x2)/2;
-			y3=(y1 + y2)/2;
+			x3 = (x1 + x2) / 2;
+			y3 = (y1 + y2) / 2;
 		}
 		/* cache midvalue */
-		midval=cave[y3][x3].feat;
+		midval = cave[y3][x3].feat;
 		if (midval == FEAT_WALL_SOLID)
 		{
 			/* move midpoint a bit to avoid problem. */
 
-			i=50;
+			i = 50;
 
-			dy=0;
-			dx=0;
-			while ((i>0)&&(cave[y3 + dy][x3 + dx].feat == FEAT_WALL_SOLID))
+			dy = 0;
+			dx = 0;
+			while ((i > 0) && (cave[y3 + dy][x3 + dx].feat == FEAT_WALL_SOLID))
 			{
-				dy=rand_int(3)-1;
-				dx=rand_int(3)-1;
+				dy = rand_int(3) - 1;
+				dx = rand_int(3) - 1;
 				if (!in_bounds(y3 + dy, x3 + dx))
 				{
-					dx=0;
-					dy=0;
+					dx = 0;
+					dy = 0;
 				}
 				i--;
 			}
@@ -1018,28 +1017,28 @@ bool build_tunnel2(int x1, int y1, int x2, int y2, int type, int cutoff)
 			if (i == 0)
 			{
 				/* Failed for some reason: hack - ignore the solidness*/
-				cave[y3][x3].feat=FEAT_WALL_OUTER;
-				dx=0;
-				dy=0;
+				cave[y3][x3].feat = FEAT_WALL_OUTER;
+				dx = 0;
+				dy = 0;
 			}
-			y3+=dy;
-			x3+=dx;
-			midval=cave[y3][x3].feat;
+			y3 += dy;
+			x3 += dx;
+			midval = cave[y3][x3].feat;
 		}
 
 		if (midval == FEAT_FLOOR)
 		{
 			if (build_tunnel2(x1, y1, x3, y3, type, cutoff))
 			{
-				if ((cave[y3][x3].info&CAVE_ROOM)||(randint(100)>95))
+				if ((cave[y3][x3].info & CAVE_ROOM) || (randint(100) > 95))
 				{
-					/*do second half only if works + if have hit a room*/
-					retval=(build_tunnel2(x3, y3, x2, y2, type, cutoff));
+					/* do second half only if works + if have hit a room */
+					retval = build_tunnel2(x3, y3, x2, y2, type, cutoff);
 				}
 				else
 				{
 					/* have hit another tunnel - make a set of doors here */
-					retval= FALSE;
+					retval = FALSE;
 
 					/* Save the door location */
 					if (dun->door_n < DOOR_MAX)
@@ -1049,28 +1048,28 @@ bool build_tunnel2(int x1, int y1, int x2, int y2, int type, int cutoff)
 						dun->door_n++;
 					}
 				}
-				firstsuccede=TRUE;
+				firstsuccede = TRUE;
 			}
 			else
 			{
 				/* false- didn't work all the way */
-				retval= FALSE;
-				firstsuccede=FALSE;
+				retval = FALSE;
+				firstsuccede = FALSE;
 			}
 		}
 		else
 		{
 			/* tunnel through walls */
-			if(build_tunnel2(x1, y1, x3, y3, type, cutoff))
+			if (build_tunnel2(x1, y1, x3, y3, type, cutoff))
 			{
-				retval=(build_tunnel2(x3, y3, x2, y2, type, cutoff));
-				firstsuccede=TRUE;
+				retval = build_tunnel2(x3, y3, x2, y2, type, cutoff);
+				firstsuccede = TRUE;
 			}
 			else
 			{
 				/* false- didn't work all the way */
-				retval= FALSE;
-				firstsuccede=FALSE;
+				retval = FALSE;
+				firstsuccede = FALSE;
 			}
 		}
 		if (firstsuccede)
@@ -1084,7 +1083,7 @@ bool build_tunnel2(int x1, int y1, int x2, int y2, int type, int cutoff)
 	else
 	{
 		/* Do a short segment */
-		retval=TRUE;
+		retval = TRUE;
 		short_seg_hack(x1, y1, x2, y2, type, 0, &retval);
 
 		/* Hack - ignore return value so avoid infinite loops */
