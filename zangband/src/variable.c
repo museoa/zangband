@@ -80,8 +80,6 @@ bool character_xtra;		/* The game is in an icky startup mode */
 u32b seed_flavor;		/* Hack -- consistent object colors */
 u32b seed_town;			/* Hack -- consistent town layout */
 
-s16b energy_use;		/* Energy use this turn */
-
 bool msg_flag;			/* Used in msg_print() for "buffering" */
 
 s16b min_hgt;			/* Current y bounds of area() */
@@ -102,17 +100,10 @@ s16b base_level;        /* Base dungeon level */
 s32b turn;				/* Current game turn */
 s32b old_turn;			/* Turn when level began (feelings) */
 
-bool wizard;			/* Is the player currently in Wizard mode? */
-
 bool use_sound;			/* The "sound" mode is enabled */
 bool use_graphics;		/* The "graphics" mode is enabled */
 
 bool use_transparency = FALSE; /* Use transparent tiles */
-
-u16b total_winner;		/* Semi-Hack -- Game has been won */
-
-u16b panic_save;		/* Track some special "conditions" */
-u16b noscore;			/* Track various "cheating" conditions */
 
 bool can_save = TRUE;         /* Game can be saved */
 
@@ -129,9 +120,6 @@ bool repair_monsters;	/* Hack -- optimize detect monsters */
 
 bool hack_mind;
 bool hack_mutation;
-
-s16b inven_cnt;			/* Number of items in inventory */
-s16b equip_cnt;			/* Number of items in equipment */
 
 s16b o_max = 1;			/* Number of allocated objects */
 s16b o_cnt = 0;			/* Number of live objects */

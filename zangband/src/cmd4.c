@@ -499,7 +499,7 @@ static void do_cmd_options_cheat(cptr info)
 			case 'Y':
 			case '6':
 			{
-				noscore |= (cheat_info[k].o_set * 256 + cheat_info[k].o_bit);
+				p_ptr->noscore |= (cheat_info[k].o_set * 256 + cheat_info[k].o_bit);
 				(*cheat_info[k].o_var) = TRUE;
 				k = (k + 1) % n;
 				break;

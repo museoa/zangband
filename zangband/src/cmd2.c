@@ -99,7 +99,7 @@ void do_cmd_go_up(void)
 	 * act first when we go up stairs, theoretically resulting in a possible
 	 * insta-death.
 	 */
-			energy_use = 0;
+			p_ptr->energy_use = 0;
 
 			/* Success */
 			msg_print("You enter a maze of up staircases.");
@@ -238,7 +238,7 @@ void do_cmd_go_down(void)
 
 		if (go_down)
 		{
-			energy_use = 0;
+			p_ptr->energy_use = 0;
 
 			/* Success */
 			msg_print("You enter a maze of down staircases.");
@@ -283,7 +283,7 @@ void do_cmd_search(void)
 	}
 
 	/* Take a turn */
-	energy_use = 100;
+	p_ptr->energy_use = 100;
 
 #ifdef USE_SCRIPT
 	if (cmd_search_callback(py, px))
@@ -632,7 +632,7 @@ static bool do_cmd_open_chest(int y, int x, s16b o_idx)
 
 
 	/* Take a turn */
-	energy_use = 100;
+	p_ptr->energy_use = 100;
 
 	/* Attempt to unlock it */
 	if (o_ptr->pval > 0)
@@ -875,7 +875,7 @@ bool do_cmd_open_aux(int y, int x)
 	s16b *fld_ptr;
 
 	/* Take a turn */
-	energy_use = 100;
+	p_ptr->energy_use = 100;
 
 	/* Get requested grid */
 	c_ptr = area(y,x);
@@ -1027,7 +1027,7 @@ void do_cmd_open(void)
 		else if (c_ptr->m_idx)
 		{
 			/* Take a turn */
-			energy_use = 100;
+			p_ptr->energy_use = 100;
 
 			/* Message */
 			msg_print("There is a monster in the way!");
@@ -1074,7 +1074,7 @@ static bool do_cmd_close_aux(int y, int x)
 
 
 	/* Take a turn */
-	energy_use = 100;
+	p_ptr->energy_use = 100;
 
 	/* Get grid and contents */
 	c_ptr = area(y,x);
@@ -1172,7 +1172,7 @@ void do_cmd_close(void)
 		else if (c_ptr->m_idx)
 		{
 			/* Take a turn */
-			energy_use = 100;
+			p_ptr->energy_use = 100;
 
 			/* Message */
 			msg_print("There is a monster in the way!");
@@ -1247,7 +1247,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 			 FIELD_ACT_INTERACT_TEST, (void *) &action);
 			 
 	/* Take a turn */
-	energy_use = 100;
+	p_ptr->energy_use = 100;
 	
 	/* Sound */
 	sound(SOUND_DIG);
@@ -1611,7 +1611,7 @@ void do_cmd_tunnel(void)
 		else if (c_ptr->m_idx)
 		{
 			/* Take a turn */
-			energy_use = 100;
+			p_ptr->energy_use = 100;
 
 			/* Message */
 			msg_print("There is a monster in the way!");
@@ -1652,7 +1652,7 @@ static bool do_cmd_disarm_chest(int y, int x, s16b o_idx)
 
 
 	/* Take a turn */
-	energy_use = 100;
+	p_ptr->energy_use = 100;
 
 	/* Get the "disarm" factor */
 	i = p_ptr->skill_dis;
@@ -1748,7 +1748,7 @@ bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
 	}
 	
 	/* Take a turn */
-	energy_use = 100;
+	p_ptr->energy_use = 100;
 	
 	/* Point to field */
 	f_ptr = &fld_list[*fld_ptr];
@@ -1970,7 +1970,7 @@ void do_cmd_alter(void)
 		c_ptr = area(y, x);
 
 		/* Take a turn */
-		energy_use = 100;
+		p_ptr->energy_use = 100;
 
 		/* Attack monsters */
 		if (c_ptr->m_idx)
@@ -2136,7 +2136,7 @@ void do_cmd_spike(void)
 		else if (c_ptr->m_idx)
 		{
 			/* Take a turn */
-			energy_use = 100;
+			p_ptr->energy_use = 100;
 
 			/* Message */
 			msg_print("There is a monster in the way!");
@@ -2149,7 +2149,7 @@ void do_cmd_spike(void)
 		else
 		{
 			/* Take a turn */
-			energy_use = 100;
+			p_ptr->energy_use = 100;
 
 			/* Successful jamming */
 			msg_print("You jam the door with a spike.");
@@ -2194,7 +2194,7 @@ void do_cmd_walk(int pickup)
 	if (get_rep_dir(&dir,FALSE))
 	{
 		/* Take a turn */
-		energy_use = 100;
+		p_ptr->energy_use = 100;
 
 		/* Actually move the character */
 		move_player(dir, pickup);
@@ -2263,7 +2263,7 @@ void do_cmd_stay(int pickup)
 
 
 	/* Take a turn */
-	energy_use = 100;
+	p_ptr->energy_use = 100;
 
 
 	/* Spontaneous Searching */
@@ -2397,7 +2397,7 @@ void do_cmd_rest(void)
 			chg_virtue(V_DILIGENCE, -1);
 
 	/* Take a turn XXX XXX XXX (?) */
-	energy_use = 100;
+	p_ptr->energy_use = 100;
 
 	/* Save the rest code */
 	p_ptr->resting = p_ptr->command_arg;
@@ -2699,7 +2699,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 		case SV_SLING:
 		{
 			tmul = 2;
-			energy_use = 50;
+			p_ptr->energy_use = 50;
 			break;
 		}
 
@@ -2707,7 +2707,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 		case SV_SHORT_BOW:
 		{
 			tmul = 2;
-			energy_use = 100;
+			p_ptr->energy_use = 100;
 			break;
 		}
 
@@ -2723,7 +2723,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 				/* weak players cannot use a longbow well */
 				tmul = 2;
 			}
-			energy_use = 100;
+			p_ptr->energy_use = 100;
 			break;
 		}
 
@@ -2731,7 +2731,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 		case SV_LIGHT_XBOW:
 		{
 			tmul = 4;
-			energy_use = 120;
+			p_ptr->energy_use = 120;
 			break;
 		}
 
@@ -2741,12 +2741,12 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 			tmul = 5;
 			if (p_ptr->stat_use[A_DEX] >= 16)
 			{
-				energy_use = 150;
+				p_ptr->energy_use = 150;
 			}
 			else
 			{
 				/* players with low dex will take longer to load */
-				energy_use = 200;
+				p_ptr->energy_use = 200;
 			}
 			break;
 		}
@@ -2761,7 +2761,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	/* Take a (partial) turn - note strange formula. */
 	
 	/* The real number of shots per round is (1 + n)/2 */
-	energy_use = (2 * energy_use / (1 + thits));
+	p_ptr->energy_use = (2 * p_ptr->energy_use / (1 + thits));
 
 	/* Another thing to do in python */
 #if 0
@@ -2990,7 +2990,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 				tdam = mon_damage_mod(m_ptr, tdam, 0);
 
 				/* Complex message */
-				if (wizard)
+				if (p_ptr->wizard)
 				{
 					msg_format("You do %d (out of %d) damage.",
 					           tdam, m_ptr->hp);
@@ -3059,7 +3059,7 @@ void do_cmd_fire(void)
 
 
 	/* Require proper missile */
-	item_tester_tval = p_ptr->tval_ammo;
+	item_tester_tval = p_ptr->ammo_tval;
 
 	/* Get an item */
 	q = "Fire which item? ";
@@ -3204,7 +3204,7 @@ void do_cmd_throw_aux(int mult)
 
 
 	/* Take a turn */
-	energy_use = 100;
+	p_ptr->energy_use = 100;
 
 
 	/* Start at the player */
@@ -3427,7 +3427,7 @@ void do_cmd_throw_aux(int mult)
 				tdam = mon_damage_mod(m_ptr, tdam, 0);
 
 				/* Complex message */
-				if (wizard)
+				if (p_ptr->wizard)
 				{
 					msg_format("You do %d (out of %d) damage.",
 					           tdam, m_ptr->hp);

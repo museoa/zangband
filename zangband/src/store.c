@@ -3841,7 +3841,7 @@ void do_cmd_store(void)
 
 
 	/* Free turn XXX XXX XXX */
-	energy_use = 0;
+	p_ptr->energy_use = 0;
 
 
 	/* Hack -- Character is no longer in "icky" mode */

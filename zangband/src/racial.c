@@ -74,7 +74,7 @@ bool racial_aux(s16b min_level, int cost, int use_stat, int difficulty)
 	if (p_ptr->lev < min_level)
 	{
 		msg_format("You need to attain level %d to use this power.", min_level);
-		energy_use = 0;
+		p_ptr->energy_use = 0;
 		return FALSE;
 	}
 
@@ -82,7 +82,7 @@ bool racial_aux(s16b min_level, int cost, int use_stat, int difficulty)
 	else if (p_ptr->confused)
 	{
 		msg_print("You are too confused to use this power.");
-		energy_use = 0;
+		p_ptr->energy_use = 0;
 		return FALSE;
 	}
 
@@ -91,7 +91,7 @@ bool racial_aux(s16b min_level, int cost, int use_stat, int difficulty)
 	{
 		if (!get_check("Really use the power in your weakened state? "))
 		{
-			energy_use = 0;
+			p_ptr->energy_use = 0;
 			return FALSE;
 		}
 	}
@@ -112,7 +112,7 @@ bool racial_aux(s16b min_level, int cost, int use_stat, int difficulty)
 	if (difficulty < 5) difficulty = 5;
 
 	/* take time and pay the price */
-	energy_use = 100;
+	p_ptr->energy_use = 100;
 
 	if (use_hp)
 	{
@@ -565,7 +565,7 @@ static void cmd_racial_power_aux(s32b command)
 
 		default:
 			msg_print("This race has no bonus power.");
-			energy_use = 0;
+			p_ptr->energy_use = 0;
 	}
 
 	/* Redraw mana and hp */
@@ -614,7 +614,7 @@ void do_cmd_racial_power(void)
 	if (p_ptr->confused)
 	{
 		msg_print("You are too confused to use any powers!");
-		energy_use = 0;
+		p_ptr->energy_use = 0;
 		return;
 	}
 
@@ -802,7 +802,7 @@ void do_cmd_racial_power(void)
 	if (!has_racial && !p_ptr->muta1)
 	{
 		msg_print("You have no powers to activate.");
-		energy_use = 0;
+		p_ptr->energy_use = 0;
 		return;
 	}
 
@@ -1226,7 +1226,7 @@ void do_cmd_racial_power(void)
 	/* Abort if needed */
 	if (!flag)
 	{
-		energy_use = 0;
+		p_ptr->energy_use = 0;
 		return;
 	}
 

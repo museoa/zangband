@@ -1522,8 +1522,8 @@ static void player_wipe(void)
 	p_ptr->total_weight = 0;
 
 	/* No items */
-	inven_cnt = 0;
-	equip_cnt = 0;
+	p_ptr->inven_cnt = 0;
+	p_ptr->equip_cnt = 0;
 
 	/* Clear the inventory */
 	for (i = 0; i < INVEN_TOTAL; i++)
@@ -1584,13 +1584,13 @@ static void player_wipe(void)
 	cheat_live = FALSE;
 
 	/* Assume no winning game */
-	total_winner = FALSE;
+	p_ptr->total_winner = FALSE;
 
 	/* Assume no panic save */
-	panic_save = 0;
+	p_ptr->panic_save = 0;
 
 	/* Assume no cheating */
-	noscore = 0;
+	p_ptr->noscore = 0;
 
 	/* Default pet command settings */
 	p_ptr->pet_follow_distance = PET_FOLLOW_DIST;

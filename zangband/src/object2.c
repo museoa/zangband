@@ -4505,7 +4505,7 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 			   o_name, (plural ? "" : "s"));
 
 		/* Debug */
-		if (wizard) msg_print("(breakage)");
+		if (p_ptr->wizard) msg_print("(breakage)");
 
 		/* Failure */
 		return (0);
@@ -4629,7 +4629,7 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 			   o_name, (plural ? "" : "s"));
 
 		/* Debug */
-		if (wizard) msg_print("(no floor space)");
+		if (p_ptr->wizard) msg_print("(no floor space)");
 
 		/* Failure */
 		return (0);
@@ -4704,7 +4704,7 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 			}
 
 			/* Debug */
-			if (wizard) msg_print("(contact with lava)");
+			if (p_ptr->wizard) msg_print("(contact with lava)");
 
 			/* Failure */
 			return (0);
@@ -4722,7 +4722,7 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 			}
 
 			/* Debug */
-			if (wizard) msg_print("(contact with water)");
+			if (p_ptr->wizard) msg_print("(contact with water)");
 
 			/* Failure */
 			return (0);
@@ -4768,7 +4768,7 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 			   o_name, (plural ? "" : "s"));
 
 		/* Debug */
-		if (wizard) msg_print("(too many objects)");
+		if (p_ptr->wizard) msg_print("(too many objects)");
 
 		/* Failure */
 		return (0);
@@ -4982,7 +4982,7 @@ void inven_item_optimize(int item)
 		int i;
 
 		/* One less item */
-		inven_cnt--;
+		p_ptr->inven_cnt--;
 
 #ifdef USE_SCRIPT
 		object_delete_callback(&inventory[item]);
@@ -5006,7 +5006,7 @@ void inven_item_optimize(int item)
 	else
 	{
 		/* One less item */
-		equip_cnt--;
+		p_ptr->equip_cnt--;
 
 #ifdef USE_SCRIPT
 		object_delete_callback(&inventory[item]);
@@ -5126,7 +5126,7 @@ bool inven_carry_okay(object_type *o_ptr)
 	int j;
 
 	/* Empty slot? */
-	if (inven_cnt < INVEN_PACK) return (TRUE);
+	if (p_ptr->inven_cnt < INVEN_PACK) return (TRUE);
 
 	/* Similar slot? */
 	for (j = 0; j < INVEN_PACK; j++)
@@ -5203,7 +5203,7 @@ s16b inven_carry(object_type *o_ptr)
 
 
 	/* Paranoia */
-	if (inven_cnt > INVEN_PACK) return (-1);
+	if (p_ptr->inven_cnt > INVEN_PACK) return (-1);
 
 	/* Find an empty slot */
 	for (j = 0; j <= INVEN_PACK; j++)
@@ -5319,7 +5319,7 @@ s16b inven_carry(object_type *o_ptr)
 	p_ptr->total_weight += (j_ptr->number * j_ptr->weight);
 
 	/* Count the items */
-	inven_cnt++;
+	p_ptr->inven_cnt++;
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -5524,7 +5524,7 @@ void combine_pack(void)
 				object_absorb(j_ptr, o_ptr);
 
 				/* One object is gone */
-				inven_cnt--;
+				p_ptr->inven_cnt--;
 
 				/* Slide everything down */
 				for (k = i; k < INVEN_PACK; k++)
@@ -5575,7 +5575,7 @@ void reorder_pack(void)
 	for (i = 0; i < INVEN_PACK; i++)
 	{
 		/* Mega-Hack -- allow "proper" overflow slot*/
-		if ((i == INVEN_PACK) && (inven_cnt == INVEN_PACK)) break;
+		if ((i == INVEN_PACK) && (p_ptr->inven_cnt == INVEN_PACK)) break;
 
 		/* Get the item */
 		o_ptr = &inventory[i];

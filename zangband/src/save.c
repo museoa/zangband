@@ -856,7 +856,7 @@ static void wr_options(void)
 
 	c = 0;
 
-	if (wizard) c |= 0x0002;
+	if (p_ptr->wizard) c |= 0x0002;
 
 	if (cheat_peek) c |= 0x0100;
 	if (cheat_hear) c |= 0x0200;
@@ -1097,9 +1097,9 @@ static void wr_extra(void)
 
 
 	/* Special stuff */
-	wr_u16b(panic_save);
-	wr_u16b(total_winner);
-	wr_u16b(noscore);
+	wr_u16b(p_ptr->panic_save);
+	wr_u16b(p_ptr->total_winner);
+	wr_u16b(p_ptr->noscore);
 
 
 	/* Write death */

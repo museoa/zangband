@@ -347,7 +347,7 @@ errr top_twenty(void)
 
 #ifndef SCORE_WIZARDS
 	/* Wizard-mode pre-empts scoring */
-	if (noscore & 0x000F)
+	if (p_ptr->noscore & 0x000F)
 	{
 		msg_print("Score not registered for wizards.");
 		msg_print(NULL);
@@ -358,7 +358,7 @@ errr top_twenty(void)
 
 #ifndef SCORE_BORGS
 	/* Borg-mode pre-empts scoring */
-	if (noscore & 0x00F0)
+	if (p_ptr->noscore & 0x00F0)
 	{
 		msg_print("Score not registered for borgs.");
 		msg_print(NULL);
@@ -369,7 +369,7 @@ errr top_twenty(void)
 
 #ifndef SCORE_CHEATERS
 	/* Cheaters are not scored */
-	if (noscore & 0xFF00)
+	if (p_ptr->noscore & 0xFF00)
 	{
 		msg_print("Score not registered for cheaters.");
 		msg_print(NULL);
@@ -379,7 +379,7 @@ errr top_twenty(void)
 #endif
 
 	/* Interupted */
-	if (!total_winner && streq(p_ptr->died_from, "Interrupting"))
+	if (!p_ptr->total_winner && streq(p_ptr->died_from, "Interrupting"))
 	{
 		msg_print("Score not registered due to interruption.");
 		msg_print(NULL);
@@ -388,7 +388,7 @@ errr top_twenty(void)
 	}
 
 	/* Quitter */
-	if (!total_winner && streq(p_ptr->died_from, "Quitting"))
+	if (!p_ptr->total_winner && streq(p_ptr->died_from, "Quitting"))
 	{
 		msg_print("Score not registered due to quitting.");
 		msg_print(NULL);

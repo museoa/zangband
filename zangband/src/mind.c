@@ -545,7 +545,7 @@ void do_cmd_mindcraft(void)
 	}
 
 	/* Take a turn */
-	energy_use = 100;
+	p_ptr->energy_use = 100;
 
 	/* Sufficient mana */
 	if (spell.mana_cost <= old_csp)

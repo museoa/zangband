@@ -1632,7 +1632,9 @@ struct player_type
 
 	byte tval_xtra;		/* Correct xtra tval */
 
-	byte tval_ammo;		/* Correct ammo tval */
+	byte ammo_mult;		/* Ammo multiplier */
+
+	byte ammo_tval;		/* Ammo variety */
 
 	s16b pspeed;		/* Current speed */
 

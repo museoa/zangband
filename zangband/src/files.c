@@ -2835,7 +2835,7 @@ errr file_character(cptr name, bool full)
 	fprintf(fff, "\n Recall Depth:       Level %d (%d')\n", p_ptr->max_depth,
 		50 * p_ptr->max_depth);
 
-	if (noscore)
+	if (p_ptr->noscore)
 		fprintf(fff, "\n You have done something illegal.");
 
 	if (stupid_monsters)
@@ -2938,7 +2938,7 @@ errr file_character(cptr name, bool full)
 
 
 	/* Dump the equipment */
-	if (equip_cnt)
+	if (p_ptr->equip_cnt)
 	{
 		fprintf(fff, "  [Character Equipment]\n\n");
 		for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
@@ -3800,7 +3800,7 @@ void do_cmd_suicide(void)
 	flush();
 
 	/* Verify Retirement */
-	if (total_winner)
+	if (p_ptr->total_winner)
 	{
 		/* Verify */
 		if (!get_check("Do you want to retire? ")) return;
@@ -3812,7 +3812,7 @@ void do_cmd_suicide(void)
 		/* Verify */
 		if (!get_check("Do you really want to commit suicide? ")) return;
 
-		if (!noscore)
+		if (!p_ptr->noscore)
 		{
 			/* Special Verification for suicide */
 			prt("Please verify SUICIDE by typing the '@' sign: ", 0, 0);
@@ -4011,7 +4011,7 @@ static void make_bones(void)
 
 
 	/* Ignore wizards and borgs */
-	if (!(noscore & 0x00FF))
+	if (!(p_ptr->noscore & 0x00FF))
 	{
 		/* Ignore people who die in town */
 		if (dun_level)
@@ -4118,7 +4118,7 @@ static void print_tomb(void)
 
 
 		/* King or Queen */
-		if (total_winner || (p_ptr->lev > PY_MAX_LEVEL))
+		if (p_ptr->total_winner || (p_ptr->lev > PY_MAX_LEVEL))
 		{
 			p = "Magnificent";
 		}
@@ -4291,7 +4291,7 @@ static void show_info(void)
 	/* Show equipment and inventory */
 
 	/* Equipment -- if any */
-	if (equip_cnt)
+	if (p_ptr->equip_cnt)
 	{
 		Term_clear();
 		item_tester_full = TRUE;
@@ -4301,7 +4301,7 @@ static void show_info(void)
 	}
 
 	/* Inventory -- if any */
-	if (inven_cnt)
+	if (p_ptr->inven_cnt)
 	{
 		Term_clear();
 		item_tester_full = TRUE;
@@ -4391,7 +4391,7 @@ void close_game(void)
 	if (p_ptr->is_dead)
 	{
 		/* Handle retirement */
-		if (total_winner)
+		if (p_ptr->total_winner)
 		{
 			/* Save winning message to notes file. */
 			if (take_notes)
@@ -4497,7 +4497,7 @@ void exit_game_panic(void)
 	if (p_ptr->chp < 0) p_ptr->is_dead = FALSE;
 
 	/* Hardcode panic save */
-	panic_save = 1;
+	p_ptr->panic_save = 1;
 
 	/* Forbid suspend */
 	signals_ignore_tstp();
@@ -4792,7 +4792,7 @@ static void handle_signal_abort(int sig)
 	Term_fresh();
 
 	/* Panic Save */
-	panic_save = 1;
+	p_ptr->panic_save = 1;
 
 	/* Panic save */
 	(void)strcpy(p_ptr->died_from, "(panic save)");

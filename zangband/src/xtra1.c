@@ -414,13 +414,13 @@ static void prt_title(void)
 	cptr p;
 
 	/* Wizard */
-	if (wizard)
+	if (p_ptr->wizard)
 	{
 		p = "[=-WIZARD-=]";
 	}
 
 	/* Winner */
-	else if (total_winner || (p_ptr->lev > PY_MAX_LEVEL))
+	else if (p_ptr->total_winner || (p_ptr->lev > PY_MAX_LEVEL))
 	{
 		p = "***WINNER***";
 	}
@@ -2208,7 +2208,7 @@ static sint add_special_missile_skill(byte pclass, s16b weight, object_type *o_p
 		/* Rogues are good with slings. */
 		case CLASS_ROGUE:
 		{
-			if (p_ptr->tval_ammo == TV_SHOT)
+			if (p_ptr->ammo_tval == TV_SHOT)
 			{
 				add_skill = 3 + p_ptr->lev / 4;
 			}
@@ -2219,11 +2219,11 @@ static sint add_special_missile_skill(byte pclass, s16b weight, object_type *o_p
 		* be great with xbows and slings. */
 		case CLASS_RANGER:
 		{
-			if (p_ptr->tval_ammo == TV_SHOT)
+			if (p_ptr->ammo_tval == TV_SHOT)
 			{
 				add_skill = 0 - p_ptr->lev / 7;
 			}
-			if (p_ptr->tval_ammo == TV_BOLT)
+			if (p_ptr->ammo_tval == TV_BOLT)
 			{
 				add_skill = 0 - p_ptr->lev / 7;
 			}
@@ -2233,7 +2233,7 @@ static sint add_special_missile_skill(byte pclass, s16b weight, object_type *o_p
 		/* Monks get a small bonus with slings. */
 		case CLASS_MONK:
 		{
-			if (p_ptr->tval_ammo == TV_SHOT)
+			if (p_ptr->ammo_tval == TV_SHOT)
 			{
 				add_skill = p_ptr->lev / 7;
 			}
@@ -2316,7 +2316,7 @@ void calc_bonuses(void)
 	p_ptr->tval_xtra = 0;
 
 	/* Reset the "ammo" tval */
-	p_ptr->tval_ammo = 0;
+	p_ptr->ammo_tval = 0;
 
 	/* Clear all the flags */
 	p_ptr->aggravate = FALSE;
@@ -3246,21 +3246,21 @@ void calc_bonuses(void)
 		{
 			case SV_SLING:
 			{
-				p_ptr->tval_ammo = TV_SHOT;
+				p_ptr->ammo_tval = TV_SHOT;
 				break;
 			}
 
 			case SV_SHORT_BOW:
 			case SV_LONG_BOW:
 			{
-				p_ptr->tval_ammo = TV_ARROW;
+				p_ptr->ammo_tval = TV_ARROW;
 				break;
 			}
 
 			case SV_LIGHT_XBOW:
 			case SV_HEAVY_XBOW:
 			{
-				p_ptr->tval_ammo = TV_BOLT;
+				p_ptr->ammo_tval = TV_BOLT;
 				break;
 			}
 		}
@@ -3273,7 +3273,7 @@ void calc_bonuses(void)
 
 			/* Hack -- Rangers love Bows */
 			if ((p_ptr->pclass == CLASS_RANGER) &&
-			    (p_ptr->tval_ammo == TV_ARROW))
+			    (p_ptr->ammo_tval == TV_ARROW))
 			{
 				/* Extra shot at level 20 */
 				if (p_ptr->lev >= 20) p_ptr->num_fire++;
@@ -3284,7 +3284,7 @@ void calc_bonuses(void)
 
 			/* Hack -- Rangers can use XBows as well */
 			if ((p_ptr->pclass == CLASS_RANGER) &&
-			    (p_ptr->tval_ammo == TV_BOLT))
+			    (p_ptr->ammo_tval == TV_BOLT))
 			{
 				/* Extra shot at level 20 */
 				if (p_ptr->lev >= 30) p_ptr->num_fire++;
@@ -3292,7 +3292,7 @@ void calc_bonuses(void)
 
 			/* Hack -- Rogues love Slings */
 			if ((p_ptr->pclass == CLASS_ROGUE) &&
-			    (p_ptr->tval_ammo == TV_SHOT))
+			    (p_ptr->ammo_tval == TV_SHOT))
 			{
 				/* Extra shot at level 20 */
 				if (p_ptr->lev >= 20) p_ptr->num_fire++;
@@ -3306,8 +3306,8 @@ void calc_bonuses(void)
 			 * with _any_ missile weapon -- TY
 			 */
 			if (p_ptr->pclass == CLASS_WARRIOR &&
-			   (p_ptr->tval_ammo <= TV_BOLT) &&
-			   (p_ptr->tval_ammo >= TV_SHOT))
+			   (p_ptr->ammo_tval <= TV_BOLT) &&
+			   (p_ptr->ammo_tval >= TV_SHOT))
 			{
 				/* Extra shot at level 40 */
 				if (p_ptr->lev >= 40) p_ptr->num_fire++;
@@ -3532,13 +3532,15 @@ void calc_bonuses(void)
 	/* Affect Skill -- combat (throwing) (Level, by Class) */
 	p_ptr->skill_tht += (cp_ptr->x_thb * p_ptr->lev / 50);
 
+	/* Limit Skill -- digging from 1 up */
+	if (p_ptr->skill_dig < 1) p_ptr->skill_dig = 1;
 
 	/* Limit Skill -- stealth from 0 to 30 */
 	if (p_ptr->skill_stl > 30) p_ptr->skill_stl = 30;
 	if (p_ptr->skill_stl < 0) p_ptr->skill_stl = 0;
 
-	/* Limit Skill -- digging from 1 up */
-	if (p_ptr->skill_dig < 1) p_ptr->skill_dig = 1;
+	/* Apply Skill -- Extract noise from stealth */
+	p_ptr->noise = (1L << (30 - p_ptr->skill_stl));
 
 	if ((p_ptr->anti_magic) && (p_ptr->skill_sav < 95)) p_ptr->skill_sav = 95;
 

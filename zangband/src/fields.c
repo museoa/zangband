@@ -2609,7 +2609,7 @@ void field_action_hit_trap_drop_item(s16b *field_ptr, void *nothing)
 	msg_print("You fumble with your equipment!");
 	
 	/* Get the item to drop */
-	item = randint1(inven_cnt);
+	item = randint1(p_ptr->inven_cnt);
 	
 	if (inventory[item].k_idx)
 	{

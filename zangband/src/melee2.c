@@ -1894,12 +1894,6 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 
 
 /*
- * Hack -- local "player stealth" value (see below)
- */
-static u32b noise = 0L;
-
-
-/*
  * Process a monster
  *
  * The monster is known to be within 100 grids of the player
@@ -2014,7 +2008,7 @@ static void process_monster(int m_idx)
 		if (ironman_nightmare) notice /= 2;
 
 		/* Hack -- See if monster "notices" player */
-		if ((notice * notice * notice) <= noise)
+		if ((notice * notice * notice) <= p_ptr->noise)
 		{
 			/* Hack -- amount of "waking" */
 			int d = 1;
@@ -3087,9 +3081,6 @@ void process_monsters(int min_energy)
 		old_r_cast_spell = r_ptr->r_cast_spell;
 	}
 
-
-	/* Hack -- calculate the "player noise" */
-	noise = (1L << (30 - p_ptr->skill_stl));
 
 	/* Process the monsters (backwards) */
 	for (i = m_max - 1; i >= 1; i--)

@@ -1489,7 +1489,7 @@ static void process_world(void)
 	if (total_friends)
 	{
 #ifdef TRACK_FRIENDS
-		if (wizard)
+		if (p_ptr->wizard)
 			msg_format("Total friends: %d.", total_friends);
 #endif /* TRACK_FRIENDS */
 
@@ -1501,7 +1501,7 @@ static void process_world(void)
 			else if (upkeep_factor < 5) upkeep_factor = 5;
 
 #ifdef TRACK_FRIENDS
-			if (wizard)
+			if (p_ptr->wizard)
 			msg_format("Levels %d, upkeep %d", total_friend_levels, upkeep_factor);
 #endif /* TRACK_FRIENDS */
 
@@ -1517,7 +1517,7 @@ static void process_world(void)
 			regenmana(upkeep_regen);
 
 #ifdef TRACK_FRIENDS
-			if (wizard)
+			if (p_ptr->wizard)
 			{
 				msg_format("Regen: %d/%d", upkeep_regen, regen_amount);
 			}
@@ -2472,9 +2472,9 @@ static bool enter_wizard_mode(void)
 {
 	/* Ask first time */
 #if 0
-	if (!(noscore & 0x0002))
+	if (!(p_ptr->noscore & 0x0002))
 #else
-	if (!noscore)
+	if (!p_ptr->noscore)
 #endif
 	{
 		/* Mention effects */
@@ -2489,7 +2489,7 @@ static bool enter_wizard_mode(void)
 		}
 
 		/* Mark savefile */
-		noscore |= 0x0002;
+		p_ptr->noscore |= 0x0002;
 	}
 
 	/* Success */
@@ -2506,9 +2506,9 @@ static bool enter_debug_mode(void)
 {
 	/* Ask first time */
 #if 0
-	if (!(noscore & 0x0008))
+	if (!(p_ptr->noscore & 0x0008))
 #else
-	if (!noscore)
+	if (!p_ptr->noscore)
 #endif
 	{
 		/* Mention effects */
@@ -2523,7 +2523,7 @@ static bool enter_debug_mode(void)
 		}
 
 		/* Mark savefile */
-		noscore |= 0x0008;
+		p_ptr->noscore |= 0x0008;
 	}
 
 	/* Success */
@@ -2546,7 +2546,7 @@ extern void do_cmd_debug(void);
 static bool enter_borg_mode(void)
 {
 	/* Ask first time */
-	if (!(noscore & 0x0010))
+	if (!(p_ptr->noscore & 0x0010))
 	{
 		/* Mention effects */
 		msg_print("The borg commands are for debugging and experimenting.");
@@ -2560,7 +2560,7 @@ static bool enter_borg_mode(void)
 		}
 
 		/* Mark savefile */
-		noscore |= 0x0010;
+		p_ptr->noscore |= 0x0010;
 	}
 
 	/* Success */
@@ -2608,14 +2608,14 @@ static void process_command(void)
 		/* Toggle Wizard Mode */
 		case KTRL('W'):
 		{
-			if (wizard)
+			if (p_ptr->wizard)
 			{
-				wizard = FALSE;
+				p_ptr->wizard = FALSE;
 				msg_print("Wizard mode off.");
 			}
 			else if (enter_wizard_mode())
 			{
-				wizard = TRUE;
+				p_ptr->wizard = TRUE;
 				msg_print("Wizard mode on.");
 			}
 
@@ -2901,7 +2901,7 @@ static void process_command(void)
 
 					msg_format("An anti-magic shell disrupts your %s!", which_power);
 
-					energy_use = 0;
+					p_ptr->energy_use = 0;
 				}
 				else
 				{
@@ -3463,14 +3463,14 @@ static void process_player(void)
 
 
 		/* Assume free turn */
-		energy_use = 0;
+		p_ptr->energy_use = 0;
 
 
 		/* Paralyzed or Knocked Out */
 		if (p_ptr->paralyzed || (p_ptr->stun >= 100))
 		{
 			/* Take a turn */
-			energy_use = 100;
+			p_ptr->energy_use = 100;
 		}
 
 		/* Resting */
@@ -3487,7 +3487,7 @@ static void process_player(void)
 			}
 
 			/* Take a turn */
-			energy_use = 100;
+			p_ptr->energy_use = 100;
 		}
 
 		/* Running */
@@ -3536,10 +3536,10 @@ static void process_player(void)
 		/*** Clean up ***/
 
 		/* Significant */
-		if (energy_use)
+		if (p_ptr->energy_use)
 		{
 			/* Use some energy */
-			p_ptr->energy -= energy_use;
+			p_ptr->energy -= p_ptr->energy_use;
 
 
 			/* Hack -- constant hallucination */
@@ -3646,7 +3646,7 @@ static void process_player(void)
 		if (p_ptr->leaving) break;
 
 		/* Used up energy for this turn */
-		if (energy_use) break;
+		if (p_ptr->energy_use) break;
 	}
 }
 
@@ -4292,7 +4292,7 @@ void play_game(bool new_game)
 
 
 	/* Hack -- Enter wizard mode */
-	if (arg_wizard && enter_wizard_mode()) wizard = TRUE;
+	if (arg_wizard && enter_wizard_mode()) p_ptr->wizard = TRUE;
 
 	/* Flavor the objects */
 	flavor_init();
@@ -4408,7 +4408,7 @@ void play_game(bool new_game)
 		if (p_ptr->playing && p_ptr->is_dead)
 		{
 			/* Mega-Hack -- Allow player to cheat death */
-			if ((wizard || cheat_live) && !get_check("Die? "))
+			if ((p_ptr->wizard || cheat_live) && !get_check("Die? "))
 			{
 				/* Mark social class, reset age, if needed */
 				if (p_ptr->sc) p_ptr->sc = p_ptr->age = 0;
@@ -4417,7 +4417,7 @@ void play_game(bool new_game)
 				p_ptr->age++;
 
 				/* Mark savefile */
-				noscore |= 0x0001;
+				p_ptr->noscore |= 0x0001;
 
 				/* Message */
 				msg_print("You invoke wizard mode and cheat death.");

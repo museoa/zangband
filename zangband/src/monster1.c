@@ -1382,7 +1382,7 @@ static void roff_top(int r_idx)
 	Term_addstr(-1, TERM_WHITE, "'):");
 
 	/* Wizards get extra info */
-	if (wizard)
+	if (p_ptr->wizard)
 	{
 		char buf[6];
 

@@ -2341,7 +2341,7 @@ void mutation_power_aux(u32b power)
 			break;
 
 		default:
-			energy_use = 0;
+			p_ptr->energy_use = 0;
 			msg_format("Power %s not implemented. Oops.", power);
 	}
 }

@@ -2683,7 +2683,7 @@ void take_hit(int damage, cptr hit_from)
 		if (p_ptr->image) strcat(p_ptr->died_from, "(?)");
 
 		/* No longer a winner */
-		total_winner = FALSE;
+		p_ptr->total_winner = FALSE;
 
 		/* Leaving */
 		p_ptr->leaving = TRUE;

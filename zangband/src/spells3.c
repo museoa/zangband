@@ -3380,7 +3380,7 @@ void print_spells(byte *spells, int num, int y, int x, int realm)
 	byte            line_attr;
 
 
-	if (((realm < 0) || (realm > MAX_REALM - 1)) && wizard)
+	if (((realm < 0) || (realm > MAX_REALM - 1)) && p_ptr->wizard)
 		msg_print("Warning! print_spells called with null realm");
 
 	/* Title the list */

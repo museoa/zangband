@@ -203,7 +203,7 @@ void do_cmd_wield(void)
 	}
 
 	/* Take a turn */
-	energy_use = 100;
+	p_ptr->energy_use = 100;
 
 	/* Get local object */
 	q_ptr = &forge;
@@ -251,7 +251,7 @@ void do_cmd_wield(void)
 	p_ptr->total_weight += q_ptr->weight;
 
 	/* Increment the equip counter by hand */
-	equip_cnt++;
+	p_ptr->equip_cnt++;
 
 	/* Where is the item now */
 	if (slot == INVEN_WIELD)
@@ -347,7 +347,7 @@ void do_cmd_takeoff(void)
 
 
 	/* Take a partial turn */
-	energy_use = 50;
+	p_ptr->energy_use = 50;
 
 	/* Take off the item */
 	(void)inven_takeoff(item, 255);
@@ -408,7 +408,7 @@ void do_cmd_drop(void)
 
 
 	/* Take a partial turn */
-	energy_use = 50;
+	p_ptr->energy_use = 50;
 
 	/* Drop (some of) the item */
 	inven_drop(item, amt);
@@ -511,13 +511,13 @@ void do_cmd_destroy(void)
 #endif /* USE_SCRIPT */
 
 	/* Take a turn */
-	energy_use = 100;
+	p_ptr->energy_use = 100;
 
 	/* Can the player destroy the object? */
 	if (!can_player_destroy_object(o_ptr))
 	{
 		/* Don't take a turn */
-		energy_use = 0;
+		p_ptr->energy_use = 0;
 
 		/* Message */
 		msg_format("You cannot destroy %s.", o_name);
@@ -825,7 +825,7 @@ static void do_cmd_refill_lamp(void)
 
 
 	/* Take a partial turn */
-	energy_use = 50;
+	p_ptr->energy_use = 50;
 
 	/* Access the lantern */
 	j_ptr = &inventory[INVEN_LITE];
@@ -913,7 +913,7 @@ static void do_cmd_refill_torch(void)
 
 
 	/* Take a partial turn */
-	energy_use = 50;
+	p_ptr->energy_use = 50;
 
 	/* Access the primary torch */
 	j_ptr = &inventory[INVEN_LITE];

@@ -974,7 +974,7 @@ static void rd_options(void)
 
 	rd_u16b(&c);
 
-	if (c & 0x0002) wizard = TRUE;
+	if (c & 0x0002) p_ptr->wizard = TRUE;
 
 	cheat_peek = (c & 0x0100) ? TRUE : FALSE;
 	cheat_hear = (c & 0x0200) ? TRUE : FALSE;
@@ -1352,9 +1352,9 @@ static void rd_extra(void)
 
 
 	/* Special stuff */
-	rd_u16b(&panic_save);
-	rd_u16b(&total_winner);
-	rd_u16b(&noscore);
+	rd_u16b(&p_ptr->panic_save);
+	rd_u16b(&p_ptr->total_winner);
+	rd_u16b(&p_ptr->noscore);
 
 
 	/* Read "death" */
@@ -1407,8 +1407,8 @@ static errr rd_inventory(void)
 	p_ptr->total_weight = 0;
 
 	/* No items */
-	inven_cnt = 0;
-	equip_cnt = 0;
+	p_ptr->inven_cnt = 0;
+	p_ptr->equip_cnt = 0;
 
 	/* Read until done */
 	while (1)
@@ -1443,11 +1443,11 @@ static errr rd_inventory(void)
 			p_ptr->total_weight += (q_ptr->number * q_ptr->weight);
 
 			/* One more item */
-			equip_cnt++;
+			p_ptr->equip_cnt++;
 		}
 
 		/* Warning -- backpack is full */
-		else if (inven_cnt == INVEN_PACK)
+		else if (p_ptr->inven_cnt == INVEN_PACK)
 		{
 			/* Oops */
 			note("Too many items in the inventory!");
@@ -1469,7 +1469,7 @@ static errr rd_inventory(void)
 			p_ptr->total_weight += (q_ptr->number * q_ptr->weight);
 
 			/* One more item */
-			inven_cnt++;
+			p_ptr->inven_cnt++;
 		}
 	}
 
@@ -2277,7 +2277,7 @@ static errr rd_savefile_new_aux(void)
 	if (munchkin_death)
 	{
 		/* Mark savefile */
-		noscore |= 0x0001;
+		p_ptr->noscore |= 0x0001;
 	}
 
 	/* Then the "messages" */

@@ -827,7 +827,7 @@ void monster_death(int m_idx)
 				chance = 50;
 			}
 
-			if ((a_idx > 0) && ((randint1(99) < chance) || (wizard)))
+			if ((a_idx > 0) && ((randint1(99) < chance) || (p_ptr->wizard)))
 			{
 				if (a_info[a_idx].cur_num == 0)
 				{
@@ -944,7 +944,7 @@ void monster_death(int m_idx)
 	if (strstr((r_name + r_ptr->name), "Serpent of Chaos"))
 	{
 		/* Total winner */
-		total_winner = TRUE;
+		p_ptr->total_winner = TRUE;
 
 		/* Redraw the "title" */
 		p_ptr->redraw |= (PR_TITLE);
@@ -2531,7 +2531,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 			}
 
 			/* Display a message */
-			if (wizard)
+			if (p_ptr->wizard)
 				sprintf(out_val, "%s%s%s%s [%s] (%d:%d)", s1, s2, s3, name, info, y, x);
 			else
 				sprintf(out_val, "%s%s%s%s [%s]", s1, s2, s3, name, info);

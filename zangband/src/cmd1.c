@@ -1137,7 +1137,7 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 		k = mon_damage_mod(m_ptr, k, 0);
 
 		/* Complex message */
-		if (wizard)
+		if (p_ptr->wizard)
 		{
 			msg_format("You do %d (out of %d) damage.", k, m_ptr->hp);
 		}
@@ -1248,7 +1248,7 @@ static bool monster_bash(int *blows, int sleeping_bonus, cave_type *c_ptr,
 			msg_print("WHAMM!");
 
 		/* Complex message */
-		if (wizard)
+		if (p_ptr->wizard)
 		{
 			msg_format("You do %d (out of %d) damage.", bash_dam, m_ptr->hp);
 		}
@@ -1321,7 +1321,7 @@ static void monk_attack(monster_type *m_ptr, long *k, char *m_name)
 		{
 			old_ptr = ma_ptr;
 
-			if (wizard && cheat_xtra)
+			if (p_ptr->wizard && cheat_xtra)
 			{
 				msg_print("Attack re-selected.");
 			}
@@ -1765,7 +1765,7 @@ void py_attack(int y, int x)
 			k = mon_damage_mod(m_ptr, k, 0);
 
 			/* Complex message */
-			if (wizard)
+			if (p_ptr->wizard)
 			{
 				msg_format("You do %d (out of %d) damage.", k, m_ptr->hp);
 			}
@@ -1779,9 +1779,9 @@ void py_attack(int y, int x)
 				if (((p_ptr->pclass == CLASS_WARRIOR) ||
 				     (p_ptr->pclass == CLASS_CHAOS_WARRIOR)) &&
 				     (p_ptr->lev > 39) && (num < p_ptr->num_blow) &&
-					(energy_use))
+					(p_ptr->energy_use))
 				{
-					energy_use = energy_use * num / p_ptr->num_blow;
+					p_ptr->energy_use = p_ptr->energy_use * num / p_ptr->num_blow;
 				}
 
 				mdeath = TRUE;
@@ -2136,7 +2136,7 @@ static bool pattern_seq(int c_y, int c_x, int n_y, int n_x)
 					ok_move = FEAT_PATTERN_1;
 					break;
 				default:
-					if (wizard)
+					if (p_ptr->wizard)
 						msg_format("Funny Pattern walking, %d.", *area(c_y,c_x));
 					return TRUE; /* Goof-up */
 			}
@@ -2211,7 +2211,7 @@ void move_player(int dir, int do_pickup)
 		{
 			/* Do not leave the wilderness */
 			msg_print("You can not leave the wilderness.");
-			energy_use = 0;
+			p_ptr->energy_use = 0;
 			return;
 		}
 	}
@@ -2282,7 +2282,7 @@ void move_player(int dir, int do_pickup)
 			else
 			{
 				msg_format("%^s is in your way!", m_name);
-				energy_use = 0;
+				p_ptr->energy_use = 0;
 				oktomove = FALSE;
 			}
 
@@ -2313,7 +2313,7 @@ void move_player(int dir, int do_pickup)
 		(c_ptr->feat == FEAT_SNOW_TREE))
 	{
 		oktomove = TRUE;
-		if (p_ptr->pclass != CLASS_RANGER) energy_use += 10;
+		if (p_ptr->pclass != CLASS_RANGER) p_ptr->energy_use += 10;
 	}
 
 	/* Some terrains are hard to move through */
@@ -2324,7 +2324,7 @@ void move_player(int dir, int do_pickup)
 		(c_ptr->feat == FEAT_BOULDER))
 	{
 		oktomove = TRUE;
-		energy_use += 10;
+		p_ptr->energy_use += 10;
 	}
 
 	else if ((c_ptr->feat >= FEAT_SAND) && (c_ptr->feat <= FEAT_SOLID_LAVA))
@@ -2380,7 +2380,7 @@ void move_player(int dir, int do_pickup)
 				msg_print("There is a closed door blocking your way.");
 
 				if (!(p_ptr->confused || p_ptr->stun || p_ptr->image))
-					energy_use = 0;
+					p_ptr->energy_use = 0;
 			}
 
 			/* Sound */
@@ -2420,7 +2420,7 @@ void move_player(int dir, int do_pickup)
 				msg_print("There is rubble blocking your way.");
 
 				if (!(p_ptr->confused || p_ptr->stun || p_ptr->image))
-					energy_use = 0;
+					p_ptr->energy_use = 0;
 
 				/*
 				 * Well, it makes sense that you lose time bumping into
@@ -2435,7 +2435,7 @@ void move_player(int dir, int do_pickup)
 				msg_print("The jungle is impassable.");
 
 				if (!(p_ptr->confused || p_ptr->stun || p_ptr->image))
-					energy_use = 0;
+					p_ptr->energy_use = 0;
 			}
 			
 			/* Pillar */
@@ -2444,7 +2444,7 @@ void move_player(int dir, int do_pickup)
 				msg_print("There is a pillar blocking your way.");
 
 				if (!(p_ptr->confused || p_ptr->stun || p_ptr->image))
-					energy_use = 0;
+					p_ptr->energy_use = 0;
 			}
 
 			/* Wall (or secret door) */
@@ -2453,7 +2453,7 @@ void move_player(int dir, int do_pickup)
 				msg_print("There is a wall blocking your way.");
 
 				if (!(p_ptr->confused || p_ptr->stun || p_ptr->image))
-					energy_use = 0;
+					p_ptr->energy_use = 0;
 			}
 		}
 
@@ -2466,7 +2466,7 @@ void move_player(int dir, int do_pickup)
 	{
 		if (!(p_ptr->confused || p_ptr->stun || p_ptr->image))
 		{
-			energy_use = 0;
+			p_ptr->energy_use = 0;
 		}
 
 		/* To avoid a loop with running */
@@ -3478,7 +3478,7 @@ void run_step(int dir)
 	p_ptr->running--;
 
 	/* Take time */
-	energy_use = 100;
+	p_ptr->energy_use = 100;
 
 	/* Move the player, using the "pickup" flag */
 	move_player(p_ptr->run_cur_dir, FALSE);

@@ -457,7 +457,7 @@ void do_cmd_study(void)
 
 
 	/* Take a turn */
-	energy_use = 100;
+	p_ptr->energy_use = 100;
 
 	if (increment) spell += increment;
 
@@ -2885,7 +2885,7 @@ void do_cmd_cast(void)
 	}
 
 	/* Take a turn */
-	energy_use = 100;
+	p_ptr->energy_use = 100;
 
 	/* Sufficient mana */
 	if (s_ptr->smana <= p_ptr->csp)
@@ -3167,7 +3167,7 @@ void do_cmd_pet(void)
 	/* Abort if needed */
 	if (!flag)
 	{
-		energy_use = 0;
+		p_ptr->energy_use = 0;
 		return;
 	}
 

@@ -75,7 +75,7 @@ static void do_cmd_eat_food_aux(int item)
 	sound(SOUND_EAT);
 
 	/* Take a turn */
-	energy_use = 100;
+	p_ptr->energy_use = 100;
 
 	/* Identity not known yet */
 	ident = FALSE;
@@ -458,7 +458,7 @@ static void do_cmd_quaff_potion_aux(int item)
 
 
 	/* Take a turn */
-	energy_use = 100;
+	p_ptr->energy_use = 100;
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -1126,7 +1126,7 @@ static void do_cmd_read_scroll_aux(int item)
 
 
 	/* Take a turn */
-	energy_use = 100;
+	p_ptr->energy_use = 100;
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -1659,7 +1659,7 @@ static void do_cmd_use_staff_aux(int item)
 
 
 	/* Take a turn */
-	energy_use = 100 * 40 / (30 + p_ptr->skill_dev);
+	p_ptr->energy_use = 100 * 40 / (30 + p_ptr->skill_dev);
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -2126,7 +2126,7 @@ static void do_cmd_aim_wand_aux(int item)
 
 
 	/* Take a turn */
-	energy_use = 100 * 40 / (30 + p_ptr->skill_dev);
+	p_ptr->energy_use = 100 * 40 / (30 + p_ptr->skill_dev);
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -2533,7 +2533,7 @@ static void do_cmd_zap_rod_aux(int item)
 
 
 	/* Take a turn */
-	energy_use = 100 * 40 / (30 + p_ptr->skill_dev);
+	p_ptr->energy_use = 100 * 40 / (30 + p_ptr->skill_dev);
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -2973,7 +2973,7 @@ static void do_cmd_activate_aux(int item)
 	}
 
 	/* Take a turn */
-	energy_use = 100 * 40 / (30 + p_ptr->skill_dev);
+	p_ptr->energy_use = 100 * 40 / (30 + p_ptr->skill_dev);
 
 	/* Extract the item level */
 	lev = get_object_level(o_ptr);
@@ -3246,7 +3246,7 @@ static bool item_tester_hook_use(object_type *o_ptr)
 	u32b f1, f2, f3;
 
 	/* Ammo */
-	if (o_ptr->tval == p_ptr->tval_ammo)
+	if (o_ptr->tval == p_ptr->ammo_tval)
 		return (TRUE);
 
 	/* Useable object */
