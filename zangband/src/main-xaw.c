@@ -801,13 +801,14 @@ static Boolean SetValues(AngbandWidget current, AngbandWidget request,
 	Display *dpy = XtDisplay(wnew);
 
 	Boolean font_changed = FALSE;
-	Boolean font_redraw = FALSE;
 	Boolean border_changed = FALSE;
 	int height, width;
 	int i;
 
 	/* Ignore parameters */
-	(void) request;	
+	(void) request;
+	(void) args;
+	(void) num_args;
 	
 	/* Handle font change */
 	if (wnew->angband.font != current->angband.font)
@@ -825,7 +826,6 @@ static Boolean SetValues(AngbandWidget current, AngbandWidget request,
 		else
 		{
 			font_changed = TRUE;
-			font_redraw = TRUE;
 
 			/* Free the old font */
 			XFreeFont(XtDisplay((Widget)wnew), current->angband.fnt);
@@ -836,64 +836,6 @@ static Boolean SetValues(AngbandWidget current, AngbandWidget request,
 			wnew->angband.fontascent = wnew->angband.fnt->ascent;
 		}
 	}
-
-	/* Hack - Notice font changes */
-	for (i = 0; (Cardinal) i < *num_args; i++)
-	{
-		if (args[i].name == XtNfont)
-		{
-			XFontStruct *fnt;
-			
-			/* Check if the font exists */
-			fnt = getFont(wnew, (String) args[i].value, FALSE);
-
-			/* The font didn't exist */
-			if (fnt == NULL)
-			{
-				XtWarning("Couldn't find the requested font!");
-				
-				XtWarning((String) args[i].value);
-			}
-			else
-			{
-				int height, width;
-				
-				font_redraw = TRUE;
-
-				/* Free the old font */
-				XFreeFont(XtDisplay((Widget)wnew), wnew->angband.fnt);
-				
-				/* Update font information */
-				wnew->angband.fontheight = fnt->ascent + fnt->descent;
-				wnew->angband.fontwidth = fnt->max_bounds.width;
-				wnew->angband.fontascent = fnt->ascent;
-				
-				for (i = 0; i < NUM_COLORS; i++)
-				{
-					/* Be sure the correct font is ready */
-					XSetFont(dpy, wnew->angband.gc[i], fnt->fid);
-				}
-				
-				height = (wnew->angband.start_rows * wnew->angband.fontheight +
-	                     2 * wnew->angband.internal_border);
-				width = (wnew->angband.start_columns * wnew->angband.fontwidth +
-	                    2 * wnew->angband.internal_border);
-				
-				/* Get the new window shape */
-				if (XtMakeResizeRequest((Widget)wnew, width, height, NULL, NULL) == XtGeometryNo)
-				{
-					/* Not allowed */
-					XtWarning("Size change denied!");
-				}
-				else
-				{
-					/* Recalculate size hints */
-					calculateSizeHints(wnew);
-				}
-			}
-		}
-	}
-
 
 	/* Handle font change */
 	if (font_changed)
@@ -949,7 +891,7 @@ static Boolean SetValues(AngbandWidget current, AngbandWidget request,
 	}
 
 	/* Tell it to redraw the widget if anything has changed */
-	return (font_redraw || border_changed);
+	return (font_changed || border_changed);
 }
 
 
@@ -1638,15 +1580,56 @@ static errr term_data_init(term_data *td, Widget topLevel,
 	/* Have we redefined the font? */
 	if (streq(td->widget->angband.font, DEFAULT_X11_FONT))
 	{
-		Arg font_arg;
-		Cardinal arguments = 1;		
+		XFontStruct *fnt;
 		
-		font_arg.name = XtNfont;
-		font_arg.value = (unsigned long) get_default_font(i);
-		
-		/* Tell the widget about the change */
-		SetValues(td->widget, td->widget,
-                         td->widget, &font_arg, &arguments);		
+		/* Check if the font exists */
+		fnt = getFont(td->widget, (String) get_default_font(i), FALSE);
+
+		/* The font didn't exist */
+		if (fnt == NULL)
+		{
+			XtWarning("Couldn't find the requested font!");
+		}
+		else
+		{
+			int height, width;
+
+			/* Free the old font */
+			XFreeFont(XtDisplay((Widget)td->widget), td->widget->angband.fnt);
+				
+			/* Update font information */
+			td->widget->angband.fontheight = fnt->ascent + fnt->descent;
+			td->widget->angband.fontwidth = fnt->max_bounds.width;
+			td->widget->angband.fontascent = fnt->ascent;
+				
+			for (i = 0; i < NUM_COLORS; i++)
+			{
+				/* Be sure the correct font is ready */
+				XSetFont(XtDisplay((Widget)td->widget),
+					 td->widget->angband.gc[i], fnt->fid);
+			}
+				
+			/* Get the window shape */
+			height = (td->widget->angband.start_rows *
+				td->widget->angband.fontheight +
+				2 * td->widget->angband.internal_border);
+			width = (td->widget->angband.start_columns *
+				td->widget->angband.fontwidth +
+				2 * td->widget->angband.internal_border);
+				
+			/* Request a change to the new shape */
+			if (XtMakeResizeRequest((Widget)td->widget,
+				 width, height, NULL, NULL) == XtGeometryNo)
+			{
+				/* Not allowed */
+				XtWarning("Size change denied!");
+			}
+			else
+			{
+				/* Recalculate size hints */
+				calculateSizeHints(td->widget);
+			}
+		}
 	}
 
 	/* Make it visible */
