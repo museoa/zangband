@@ -1023,6 +1023,8 @@ bool avoid_center;
 /* Auto-destruction options */
 bool destroy_worthless;
 
+/* Monster lighting effects */
+bool monster_light;
 
 /*
  * Buildings

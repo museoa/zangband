@@ -6197,6 +6197,9 @@ option_type option_info[] =
 
 	{ &destroy_worthless,           FALSE, 8, 7, 0,
 	"destroy_worthless",            "Auto-destroy known worthless items" },
+	
+	{ &monster_light,           FALSE, 8, 7, 1,
+	"monster_light",            "Allow monsters to carry lights" },
 
 
 	/*** End of Table ***/

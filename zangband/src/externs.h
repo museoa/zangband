@@ -254,6 +254,7 @@ extern bool use_command;
 extern bool center_player;
 extern bool avoid_center;
 extern bool destroy_worthless;
+extern bool monster_light;
 extern bool take_notes;
 extern bool auto_notes;
 extern bool point_based;

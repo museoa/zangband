@@ -3727,7 +3727,7 @@ void update_stuff(void)
 		update_view();
 	}
 	
-	if (p_ptr->update & (PU_MON_LITE))
+	if ((p_ptr->update & (PU_MON_LITE)) && monster_light)
 	{
 		p_ptr->update &= ~(PU_MON_LITE);
 		update_mon_lite();
