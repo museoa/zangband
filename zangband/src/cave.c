@@ -595,6 +595,66 @@ static bool feat_supports_lighting(byte feat)
 	}
 }
 
+/*
+ * This array lists the effects of "brightness" on various "base" colours.
+ *
+ * This is used to do dynamic lighting effects in ascii :-)
+ * At the moment, only the various "floor" tiles are affected.
+ *
+ * The layout of the array is [x][0] = light and [x][1] = dark.
+ */
+
+static byte lighting_colours[16][2] =
+{
+	/* TERM_DARK */
+	{TERM_L_DARK, TERM_DARK},
+
+	/* TERM_WHITE */
+	{TERM_YELLOW, TERM_L_WHITE},
+	
+	/* TERM_SLATE */
+	{TERM_L_WHITE, TERM_L_DARK},
+	
+	/* TERM_ORANGE */
+	{TERM_YELLOW, TERM_UMBER},
+	
+	/* TERM_RED */
+	{TERM_L_RED, TERM_UMBER},
+	
+	/* TERM_GREEN */
+	{TERM_L_GREEN, TERM_L_DARK},
+	
+	/* TERM_BLUE */
+	{TERM_L_BLUE, TERM_L_DARK},
+	
+	/* TERM_UMBER */
+	{TERM_L_UMBER, TERM_L_DARK},
+	
+	/* TERM_L_DARK */
+	{TERM_SLATE, TERM_DARK},
+	
+	/* TERM_L_WHITE */
+	{TERM_WHITE, TERM_SLATE},
+	
+	/* TERM_VIOLET */
+	{TERM_L_RED, TERM_BLUE},
+	
+	/* TERM_YELLOW */
+	{TERM_L_WHITE, TERM_ORANGE},
+	
+	/* TERM_L_RED */
+	{TERM_L_RED, TERM_RED},
+	
+	/* TERM_L_GREEN */
+	{TERM_YELLOW, TERM_GREEN},
+	
+	/* TERM_L_BLUE */
+	{TERM_SLATE, TERM_BLUE},
+	
+	/* TERM_L_UMBER */
+	{TERM_L_WHITE, TERM_UMBER}
+};
+
 
 /*
  * Extract the attr/char to display at the given (legal) map location
@@ -739,8 +799,8 @@ void map_info(int y, int x, byte *ap, char *cp)
 	/* Feature code */
 	feat = c_ptr->feat;
 
-	/* Floors (etc) */
-	if ((feat <= FEAT_INVIS) || (feat == FEAT_WALL_INVIS))
+	/* XXX XXX Hack - Pick floors (etc) by using '.' */
+	if (f_info[feat].x_char == '.')
 	{
 		/* Memorized (or visible) floor */
 		if   ((c_ptr->info & CAVE_MARK) ||
@@ -750,7 +810,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 		     !p_ptr->blind))
 		{
 			/* Access floor */
-			f_ptr = &f_info[FEAT_FLOOR];
+			f_ptr = &f_info[feat];
 
 			/* Normal char */
 			c = f_ptr->x_char;
@@ -759,7 +819,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 			a = f_ptr->x_attr;
 
 			/* Special lighting effects */
-			if (view_special_lite && ((a == TERM_WHITE) || use_transparency))
+			if (view_special_lite || use_transparency)
 			{
 				/* Handle "blind" */
 				if (p_ptr->blind)
@@ -771,8 +831,8 @@ void map_info(int y, int x, byte *ap, char *cp)
 					}
 					else
 					{
-						/* Use "dark gray" */
-						a = TERM_L_DARK;
+						/* Use darkened colour */
+						a = lighting_colours[a][1];
 					}
 				}
 
@@ -789,8 +849,8 @@ void map_info(int y, int x, byte *ap, char *cp)
 						}
 						else
 						{
-							/* Use "yellow" */
-							a = TERM_YELLOW;
+							/* Use lightened colour */
+							a = lighting_colours[a][0];
 						}
 					}
 				}
@@ -805,8 +865,8 @@ void map_info(int y, int x, byte *ap, char *cp)
 					}
 					else
 					{
-						/* Use "dark gray" */
-						a = TERM_L_DARK;
+						/* Use darkened colour */
+						a = lighting_colours[a][1];
 					}
 				}
 
@@ -823,8 +883,8 @@ void map_info(int y, int x, byte *ap, char *cp)
 						}
 						else
 						{
-							/* Use "gray" */
-							a = TERM_SLATE;
+							/* Use darkened colour */
+							a = lighting_colours[a][1];
 						}
 					}
 				}
@@ -3276,7 +3336,7 @@ void update_view(void)
 			m = MIN(z, x_max - xpn);
 
 			/* South side */
-			if ((ypn <= x_max) && (n < es))
+			if ((ypn <= y_max) && (n < es))
 			{
 				/* Scan */
 				for (k = n, d = 1; d <= m; d++)
