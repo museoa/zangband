@@ -324,9 +324,6 @@ extern void map_symbol_set(int y, int x);
 extern char *map_symbol_name(int symbolIndex);
 extern int map_symbol_feature(int f_idx);
 
-/* savefile.c */
-extern errr angtk_savefile_info(char *fileName, char *varName);
-
 /* setting.c */
 extern void init_settings(void);
 

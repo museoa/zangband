@@ -440,7 +440,6 @@ bad_index:
 	return TCL_ERROR;
 }
 
-#ifdef ALLOW_EASY_FLOOR
 
 /*
  *--------------------------------------------------------------
@@ -465,15 +464,14 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 	int objC = objc - infoCmd->depth;
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
-	static char *cmdOptions[] = {"find", "memory", "inscription",
+	static cptr cmdOptions[] = {"find", "memory", "inscription",
 		NULL};
 	enum {IDX_FIND, IDX_MEMORY, IDX_INSCRIPTION} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 	int index;
 
 	Tcl_Obj *listObjPtr;
-	char buf[80], *buffer, *t, *varName;
-	int this_o_idx, next_o_idx;
+	char buf[80], *buffer, *t;
 	int i, tval;
 	long length;
 	object_type *o_ptr;
@@ -490,19 +488,19 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 
 	if (objC < 2)
 	{
-		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, "option ?arg ...?");
+		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, (char *) "option ?arg ...?");
 		return TCL_ERROR;
 	}
 
-	if (Tcl_GetIndexFromObj(interp, objV[1], cmdOptions, "option", 0, 
+	if (Tcl_GetIndexFromObj(interp, objV[1], (char **) cmdOptions, (char *) "option", 0, 
 		(int *) &option) != TCL_OK)
 	{
 		return TCL_ERROR;
 	}
 
 	/* XXX Hack -- Determine the location to display */
-	fy = py;
-	fx = px;
+	fy = p_ptr->py;
+	fx = p_ptr->px;
 
 	switch (option)
 	{
@@ -517,11 +515,11 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 			/* Scan arguments for options */
 			for (i = 2; i < objC; )
 			{
-				static char *cmdOptions[] = {"-hook", "-limit", "-tester",
+				static cptr cmdOptions[] = {"-limit", "-tester",
 					"-tval", NULL};
 
 				/* Get the sub-option */
-				if (Tcl_GetIndexFromObj(interp, objV[i], cmdOptions, "option",
+				if (Tcl_GetIndexFromObj(interp, objV[i], (char **) cmdOptions, (char *) "option",
 					0, &index) != TCL_OK)
 				{
 					return TCL_ERROR;
@@ -529,24 +527,7 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 
 				switch (index)
 				{
-					case 0: /* hook */
-						t = Tcl_GetStringFromObj(objV[i+1], NULL);
-						if (streq(t, "cast"))
-							temp_tester_hook = item_tester_hook_cast;
-						else if (streq(t, "study"))
-							temp_tester_hook = item_tester_hook_study;
-						else
-						{
-							Tcl_SetResult(interp, format("unknown hook \"%s\"",
-								t), TCL_VOLATILE);
-							return TCL_ERROR;
-						}
-						request_tester = 1;
-						match_tester = 1;
-						i += 2;
-						break;
-
-					case 1: /* Limit */
+					case 0: /* Limit */
 						if (Tcl_GetIntFromObj(interp, objV[i+1], &match_limit)
 							!= TCL_OK)
 						{
@@ -556,7 +537,7 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 						i += 2;
 						break;
 
-					case 2: /* Tester */
+					case 1: /* Tester */
 						if (Tcl_GetBooleanFromObj(interp, objV[i+1],
 							&match_tester) != TCL_OK)
 						{
@@ -566,7 +547,7 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 						i += 2;
 						break;
 		
-					case 3: /* Tval */
+					case 2: /* Tval */
 						t = Tcl_GetStringFromObj(objV[i+1], NULL);
 						if (angtk_tval_const(&tval, t) != TCL_OK)
 						{
@@ -585,14 +566,8 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 			listObjPtr = Tcl_NewListObj(0, NULL);
 
 			/* Scan all objects in the grid */
-			for (this_o_idx = cave[fy][fx].o_idx; this_o_idx; this_o_idx = next_o_idx)
+			OBJ_ITT_START (area(fx, fy)->o_idx, o_ptr)
 			{
-				/* Acquire object */
-				o_ptr = &o_list[this_o_idx];
-
-				/* Acquire next object */
-				next_o_idx = o_ptr->next_o_idx;
-	
 				if (request_tester && match_tester)
 				{
 					/* Accept TV_GOLD if no tester */
@@ -617,11 +592,12 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 	
 				/* Found a match */
 				Tcl_ListObjAppendElement(interp, listObjPtr,
-					Tcl_NewIntObj(this_o_idx));
+					Tcl_NewIntObj(_this_o_idx));
 	
 				/* Return x matches */
 				if (request_limit && (++cnt >= match_limit)) break;
 			}
+			OBJ_ITT_END;
 
 			/* XXX Hack -- Restore the hook */
 			item_tester_hook = old_tester_hook;
@@ -659,7 +635,7 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 			if (objC < 3)
 			{
 				/* Set the error */
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, "index ?string?");
+				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, (char *) "index ?string?");
 
 				/* Failure */
 				return TCL_ERROR;
@@ -727,7 +703,6 @@ bad_index:
 	return TCL_ERROR;
 }
 
-#endif /* ALLOW_EASY_FLOOR */
 
 /*
  *--------------------------------------------------------------
@@ -774,16 +749,16 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 
 	static cptr cmdOptions[] = {"abort", "directory",
 		"macro_dump", "new", "open", "process_pref_file", "quit",
-		"keymap_dump", "savefile_info", "version",
+		"keymap_dump", "version",
 		"savefile", NULL};
 	enum {IDX_ABORT, IDX_DIRECTORY,
 		IDX_MACRO_DUMP, IDX_NEW, IDX_OPEN, IDX_PROCESS_PREF_FILE, IDX_QUIT,
-		IDX_KEYMAP_DUMP, IDX_SAVEFILE_INFO, IDX_VERSION,
+		IDX_KEYMAP_DUMP, IDX_VERSION,
 		IDX_SAVEFILE} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 	int index;
 
-	char *t, *utfString, *extString, *varName;
+	char *t, *utfString, *extString;
 	cptr *angband_path[10];
 	Tcl_DString utfDString, extDString;
 	Tcl_Channel c;
@@ -1093,45 +1068,6 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 				/* Clean up */
 				Tcl_DStringFree(&extDString);
 			}
-			break;
-
-		case IDX_SAVEFILE_INFO: /* savefile_info */
-			if (objC != 4)
-			{
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, (char *) "fileName varName");
-				return TCL_ERROR;
-			}
-			if (!g_initialized)
-			{
-				Tcl_SetStringObj(resultPtr, (char *) "game is not initialized", -1);
-				return TCL_ERROR;
-			}
-
-			/* Get the file path */
-			t = Tcl_GetString(objV[2]);
-
-			/* Get the file path */
-			varName = Tcl_GetString(objV[3]);
-
-			/* Translate the file path */
-			extString = UtfToExt_TranslateFileName(interp, t, &extDString);
-			if (extString == NULL) return TCL_ERROR;
-
-			/* Scan the savefile */
-			if (angtk_savefile_info(extString, varName))
-			{
-				/* Set the error */
-				Tcl_SetStringObj(resultPtr, (char *) "error parsing savefile", -1);
-
-				/* Clean up */
-				Tcl_DStringFree(&extDString);
-
-				/* Failure */
-				return TCL_ERROR;
-			}
-
-			/* Clean up */
-			Tcl_DStringFree(&extDString);
 			break;
 
 		case IDX_VERSION: /* version */

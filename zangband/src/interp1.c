@@ -1262,7 +1262,6 @@ cptr power_desc[] = {
 "Throw Object"
 };
 
-
 /* Constants for racial and mutation powers */
 enum {
 
@@ -1336,7 +1335,7 @@ MAX_POWER
 /*
  * Get a list of POWER_XXX indexes of character powers.
  */
-int get_powers(int *power)
+static int get_powers(int *power)
 {
 	int num = 0;
 
