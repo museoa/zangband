@@ -897,6 +897,7 @@ errr init_t_info(void)
  */
 static vstrnfmt_aux_func my_format_functions[8] =
 {
+	set_message_type,
 	object_fmt,
 	object_store_fmt,
 	monster_fmt,
