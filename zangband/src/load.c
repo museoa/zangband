@@ -1964,6 +1964,10 @@ static errr rd_dungeon(void)
 		}
 	}
 
+	/* Hack - restore player position */
+	p_ptr->px = px;
+	p_ptr->py = py;
+
 	/*** Objects ***/
 
 	/* Read the item count */
