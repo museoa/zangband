@@ -13157,7 +13157,7 @@ D:an end, all order reverting to Primal Chaos.
 N:863:Quantum dot
 G:,:v
 I:110:4d2:20:100:0
-W:20:2:0:50
+W:35:5:0:50
 B:SPORE:LOSE_ALL:2d4
 B:SPORE:UN_BONUS:2d4
 B:SPORE:CONFUSE:2d4
