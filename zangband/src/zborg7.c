@@ -333,13 +333,14 @@ bool borg_use_things(void)
 	if (borg_skill[BI_ISHUNGRY])
 	{
 		/* Attempt to satisfy hunger */
-		if (borg_spell(REALM_SORCERY, 2, 0) ||
+		if (borg_eat_food(SV_FOOD_BISCUIT) ||
+			borg_eat_food(SV_FOOD_JERKY) ||
+			borg_eat_food(SV_FOOD_WAYBREAD) ||
+			borg_eat_food(SV_FOOD_RATION) ||
+			borg_spell(REALM_SORCERY, 2, 0) ||
 			borg_spell(REALM_LIFE, 0, 7) ||
 			borg_spell(REALM_ARCANE, 2, 7) ||
-			borg_spell(REALM_NATURE, 0, 3) ||
-			borg_eat_food(SV_FOOD_BISCUIT) ||
-			borg_eat_food(SV_FOOD_JERKY) ||
-			borg_eat_food(SV_FOOD_WAYBREAD) || borg_eat_food(SV_FOOD_RATION))
+			borg_spell(REALM_NATURE, 0, 3))
 		{
 			return (TRUE);
 		}

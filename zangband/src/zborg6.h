@@ -29,11 +29,6 @@
 #define GOAL_FLEE   7			/* Fleeing */
 #define GOAL_TOWN	8			/* Town Special Grid */
 
-/*
- * Minimum "harmless" food
- */
-
-#define SV_FOOD_MIN_OKAY    SV_FOOD_CURE_POISON
 
 
 /*

@@ -663,7 +663,7 @@ static bool borg_eat_food_any(void)
 		if (item->tval != TV_FOOD) continue;
 
 		/* Skip "icky" food */
-		if (item->sval < SV_FOOD_MIN_OKAY) continue;
+		if (item->sval < SV_FOOD_MIN_FOOD) continue;
 
 		/* Eat something of that type */
 		if (borg_eat_food(item->sval)) return (TRUE);
