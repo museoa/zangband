@@ -1435,6 +1435,7 @@ static bool borg_consume(list_item *l_ptr)
 				case SV_POTION_CURE_LIGHT:
 				case SV_POTION_CURE_SERIOUS:
 				case SV_POTION_CURE_CRITICAL:
+				case SV_POTION_CURING:
 				case SV_POTION_HEALING:
 				case SV_POTION_STAR_HEALING:
 				case SV_POTION_LIFE:

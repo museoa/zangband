@@ -1030,7 +1030,8 @@ bool borg_quaff_crit(bool no_check)
 {
 	if (no_check)
 	{
-		if (borg_quaff_potion(SV_POTION_CURE_CRITICAL))
+		if (borg_quaff_potion(SV_POTION_CURE_CRITICAL) ||
+			borg_quaff_potion(SV_POTION_CURING))
 		{
 			when_last_quaff = borg_t;
 			return (TRUE);
@@ -1046,7 +1047,8 @@ bool borg_quaff_crit(bool no_check)
 		when_last_quaff <= borg_t && (randint0(100) < 75))
 		return FALSE;
 
-	if (borg_quaff_potion(SV_POTION_CURE_CRITICAL))
+	if (borg_quaff_potion(SV_POTION_CURE_CRITICAL) ||
+		borg_quaff_potion(SV_POTION_CURING))
 	{
 		when_last_quaff = borg_t;
 		return (TRUE);

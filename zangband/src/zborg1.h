@@ -240,6 +240,7 @@ struct borg_ability
 	s16b csw;
 	s16b res_heat;
 	s16b res_cold;
+	s16b res_all;
 
 	s16b death;
 	s16b poison;
@@ -567,6 +568,7 @@ extern s16b amt_flask;
 extern s16b amt_slow_poison;
 extern s16b amt_cure_confusion;
 extern s16b amt_cure_blind;
+extern s16b amt_pot_curing;
 extern s16b amt_star_heal;
 extern s16b amt_life;
 extern s16b amt_rod_heal;

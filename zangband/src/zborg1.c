@@ -261,6 +261,7 @@ s16b amt_flask;
 s16b amt_slow_poison;
 s16b amt_cure_confusion;
 s16b amt_cure_blind;
+s16b amt_pot_curing;
 s16b amt_star_heal;
 s16b amt_life;
 s16b amt_rod_heal;

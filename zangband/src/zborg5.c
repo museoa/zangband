@@ -3668,11 +3668,15 @@ static s32b borg_power_aux4(void)
 	if (bp_ptr->status.poisoned && bp_ptr->able.curepois) value += 15000;
 	if (bp_ptr->status.poisoned && amt_slow_poison) value += 5000;
 
+	/* Reward potion of curing when the borg is hallucinating */
+	if (bp_ptr->status.image && amt_pot_curing) value += 100000;
+
 	/* Reward Resistance Potions for Warriors */
 	if (borg_class == CLASS_WARRIOR)
 	{
 		value += 1500 * MIN(bp_ptr->able.res_heat, 5);
 		value += 1500 * MIN(bp_ptr->able.res_cold, 5);
+		value += 300 * MIN(bp_ptr->able.res_all, 5);
 	}
 
 	/* Reward ident */
@@ -3683,7 +3687,7 @@ static s32b borg_power_aux4(void)
 	if (bp_ptr->lev > 20)
 	{
 		/* *identify* scrolls */
-		value += 10000 * MIN(bp_ptr->able.star_id, 7);
+		value += 5000 * MIN(bp_ptr->able.star_id, 7);
 		value += 2000 * MIN_FLOOR(bp_ptr->able.star_id, 7, 15);
 
 		/*  Reward PFE  carry lots of these */
@@ -3773,6 +3777,9 @@ static s32b borg_power_aux4(void)
 
 	/* Reward cure critical.  Heavy reward on first 10 */
 	value += 5000 * MIN(bp_ptr->able.ccw, 10);
+
+	/* potions of curing and of ccw are basically the same:  prefer curing */
+	value += 50 * MIN(amt_pot_curing, 10);
 
 	/* If the borg has no confusion resist */
 	if (!FLAG(bp_ptr, TR_RES_CONF))

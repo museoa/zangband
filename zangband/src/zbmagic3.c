@@ -418,7 +418,8 @@ static int borg_defend_aux_resist_fecap(int p1)
 		 */
 		if (!borg_spell_okay_fail(REALM_NATURE, 2, 3, fail_allowed) &&
 			!borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 35, fail_allowed) &&
-			!borg_mutation_check(MUT1_RESIST, TRUE))
+			!borg_mutation_check(MUT1_RESIST, TRUE) &&
+			!borg_slot(TV_POTION, SV_POTION_RESISTANCE))
 			return (0);
 
 		/* pretend we are protected and look again */
@@ -457,7 +458,8 @@ static int borg_defend_aux_resist_fecap(int p1)
 	return (borg_activate_artifact(ART_COLLUIN, FALSE) ||
 		borg_spell(REALM_NATURE, 2, 3) ||
 		borg_mindcr(MIND_CHAR_ARMOUR, 35) ||
-		borg_mutation(MUT1_RESIST));
+		borg_mutation(MUT1_RESIST) ||
+		borg_quaff_potion(SV_POTION_RESISTANCE));
 }
 
 /* fire */
@@ -2129,6 +2131,7 @@ enum
 	BP_RESIST_F,
 	BP_RESIST_C,
 	BP_RESIST_A,
+	BP_RESIST_E,
 	BP_RESIST_P,
 	BP_RESIST_FCE,
 
@@ -2208,10 +2211,21 @@ static int borg_perma_aux_resist(void)
 		/* Not needed if GOI is on */
 		if (borg_goi) return (0);
 
-		if (!borg_spell_okay_fail(REALM_NATURE, 2, 3, fail_allowed)) return (0);
-
-		/* Obtain the cost of the spell */
-		cost = borg_spell_mana(REALM_NATURE, 2, 3);
+		if (borg_spell_okay_fail(REALM_NATURE, 2, 3, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_spell_mana(REALM_NATURE, 2, 3);
+		}
+		else if (borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 35, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_minds[MIND_CHAR_ARMOUR].power;
+		}
+		else
+		{
+			/* No resistance available */
+			return (0);
+		}
 
 		/* If its cheap, go ahead */
 		if (cost >= bp_ptr->csp / (unique_on_level ? 7 : 10)) return (0);
@@ -2221,7 +2235,8 @@ static int borg_perma_aux_resist(void)
 	}
 
 	/* do it! */
-	return (borg_spell(REALM_NATURE, 2, 3));
+	return (borg_spell(REALM_NATURE, 2, 3) ||
+		borg_mindcr(MIND_CHAR_ARMOUR, 35));
 }
 
 
@@ -2246,10 +2261,21 @@ static int borg_perma_aux_resist_f(void)
 		if (FLAG(bp_ptr, TR_IM_FIRE)) return (0);
 
 		/* Is the spell available? */
-		if (!borg_spell_okay_fail(REALM_ARCANE, 1, 6, fail_allowed)) return (0);
-
-		/* Obtain the cost of the spell */
-		cost = borg_spell_mana(REALM_ARCANE, 1, 6);
+		if (borg_spell_okay_fail(REALM_ARCANE, 1, 6, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_spell_mana(REALM_ARCANE, 1, 6);
+		}
+		else if (borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 20, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_minds[MIND_CHAR_ARMOUR].power;
+		}
+		else
+		{
+			/* No resistance to fire available */
+			return (0);
+		}
 
 		/* If its cheap, go ahead */
 		if (cost >= bp_ptr->csp / 20) return (0);
@@ -2259,7 +2285,8 @@ static int borg_perma_aux_resist_f(void)
 	}
 
 	/* do it! */
-	return (borg_spell(REALM_ARCANE, 1, 6));
+	return (borg_spell(REALM_ARCANE, 1, 6) ||
+		borg_mindcr(MIND_CHAR_ARMOUR, 20));
 }
 
 /* resists--- Only bother if a Unique is on the level.*/
@@ -2282,10 +2309,21 @@ static int borg_perma_aux_resist_c(void)
 		/* Not needed if GOI is on */
 		if (borg_goi) return (0);
 
-		if (!borg_spell_okay_fail(REALM_ARCANE, 1, 7, fail_allowed)) return (0);
-
-		/* Obtain the cost of the spell */
-		cost = borg_spell_mana(REALM_ARCANE, 1, 7);
+		if (borg_spell_okay_fail(REALM_ARCANE, 1, 7, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_spell_mana(REALM_ARCANE, 1, 7);
+		}
+		else if (borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 25, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_minds[MIND_CHAR_ARMOUR].power;
+		}
+		else
+		{
+			/* No resistance to cold available */
+			return (0);
+		}
 
 		/* If its cheap, go ahead */
 		if (cost >= bp_ptr->csp / 20) return (0);
@@ -2295,7 +2333,8 @@ static int borg_perma_aux_resist_c(void)
 	}
 
 	/* do it! */
-	return (borg_spell(REALM_ARCANE, 1, 7));
+	return (borg_spell(REALM_ARCANE, 1, 7) ||
+		borg_mindcr(MIND_CHAR_ARMOUR, 25));
 }
 
 /* resists--- Only bother if a Unique is on the level.*/
@@ -2318,10 +2357,21 @@ static int borg_perma_aux_resist_a(void)
 		/* Not needed if GOI is on */
 		if (borg_goi) return (0);
 
-		if (!borg_spell_okay_fail(REALM_ARCANE, 2, 1, fail_allowed)) return (0);
-
-		/* Obtain the cost of the spell */
-		cost = borg_spell_mana(REALM_ARCANE, 2, 1);
+		if (borg_spell_okay_fail(REALM_ARCANE, 2, 1, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_spell_mana(REALM_ARCANE, 2, 1);
+		}
+		else if (borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 15, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_minds[MIND_CHAR_ARMOUR].power;
+		}
+		else
+		{
+			/* No resistance to acid available */
+			return (0);
+		}
 
 		/* If its cheap, go ahead */
 		if (cost >= bp_ptr->csp / 20) return (0);
@@ -2331,7 +2381,56 @@ static int borg_perma_aux_resist_a(void)
 	}
 
 	/* do it! */
-	return (borg_spell(REALM_ARCANE, 2, 1));
+	return (borg_spell(REALM_ARCANE, 2, 1) ||
+		borg_mindcr(MIND_CHAR_ARMOUR, 15));
+}
+
+/* resists--- Only bother if a Unique is on the level.*/
+static int borg_perma_aux_resist_e(void)
+{
+	int cost = 0;
+	int fail_allowed = 5;
+
+	if (borg_simulate)
+	{
+		/* increase the threshold */
+		if (unique_on_level) fail_allowed = 10;
+		if (borg_fighting_unique) fail_allowed = 15;
+
+		if (my_oppose_elec || !unique_on_level) return (0);
+
+		/* No need if the borg is immune to Acid */
+		if (FLAG(bp_ptr, TR_IM_ACID)) return (0);
+
+		/* Not needed if GOI is on */
+		if (borg_goi) return (0);
+
+		if (borg_spell_okay_fail(REALM_ARCANE, 2, 0, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_spell_mana(REALM_ARCANE, 2, 0);
+		}
+		else if (borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 30, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_minds[MIND_CHAR_ARMOUR].power;
+		}
+		else
+		{
+			/* No resistance to elec available */
+			return (0);
+		}
+
+		/* If its cheap, go ahead */
+		if (cost >= bp_ptr->csp / 20) return (0);
+
+		/* Simulation */
+		return (1);
+	}
+
+	/* do it! */
+	return (borg_spell(REALM_ARCANE, 2, 1) ||
+		borg_mindcr(MIND_CHAR_ARMOUR, 30));
 }
 
 /* resists--- Only bother if a Unique is on the level.*/
@@ -2918,6 +3017,10 @@ static int borg_perma_aux(int what)
 		case BP_RESIST_A:
 		{
 			return (borg_perma_aux_resist_a());
+		}
+		case BP_RESIST_E:
+		{
+			return (borg_perma_aux_resist_e());
 		}
 		case BP_RESIST_P:
 		{

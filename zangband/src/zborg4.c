@@ -32,6 +32,7 @@ int num_cure_serious;
 
 int num_pot_rheat;
 int num_pot_rcold;
+int num_pot_resist;
 
 int num_missile;
 
@@ -47,7 +48,6 @@ int num_pfe;
 int num_glyph;
 int num_mass_genocide;
 int num_goi_pot;
-int num_resist_pot;
 
 int num_enchant_to_a;
 int num_enchant_to_d;
@@ -1378,6 +1378,12 @@ static void borg_notice_potions(list_item *l_ptr, int number)
 			amt_life += number;
 			break;
 		}
+		case SV_POTION_CURING:
+		{
+			bp_ptr->able.ccw += number;
+			amt_pot_curing += number;
+			break;
+		}
 		case SV_POTION_CURE_CRITICAL:
 		{
 			bp_ptr->able.ccw += number;
@@ -1411,6 +1417,13 @@ static void borg_notice_potions(list_item *l_ptr, int number)
 		case SV_POTION_RESIST_COLD:
 		{
 			bp_ptr->able.res_cold += number;
+			break;
+		}
+		case SV_POTION_RESISTANCE:
+		{
+			bp_ptr->able.res_all += number;
+			bp_ptr->able.res_cold += number;
+			bp_ptr->able.res_heat += number;
 			break;
 		}
 		case SV_POTION_INC_STR:
@@ -1746,6 +1759,16 @@ static void borg_notice_rods(list_item *l_ptr, int number)
 			break;
 		}
 
+		case SV_ROD_CURING:
+		{
+			/* Don't count on it if I suck at activations */
+			if (bp_ptr->skill_dev - k_ptr->level > 7)
+			{
+				bp_ptr->able.ccw += number;
+			}
+			break;
+		}
+
 		case SV_ROD_PESTICIDE:
 		{
 			/* Only for small borgs */
@@ -1890,6 +1913,11 @@ static void borg_notice_staves(list_item *l_ptr, int number)
 		case SV_STAFF_IDENTIFY:
 		{
 			bp_ptr->able.id += number * l_ptr->pval;
+			break;
+		}
+		case SV_STAFF_CURING:
+		{
+			bp_ptr->able.ccw += number * l_ptr->pval;
 			break;
 		}
 		case SV_STAFF_TELEPORTATION:
@@ -2320,6 +2348,7 @@ static void borg_notice_aux2(void)
 	amt_slow_poison = 0;
 	amt_cure_confusion = 0;
 	amt_cure_blind = 0;
+	amt_pot_curing = 0;
 	amt_star_heal = 0;
 	amt_life = 0;
 	amt_rod_heal = 0;
@@ -2917,9 +2946,9 @@ static void borg_notice_home_clear(void)
 	num_berserk = 0;
 	num_pot_rheat = 0;
 	num_pot_rcold = 0;
+	num_pot_resist = 0;
 	num_speed = 0;
 	num_goi_pot = 0;
-	num_resist_pot = 0;
 
 	num_slow_digest = 0;
 	num_regenerate = 0;
@@ -3354,6 +3383,12 @@ static void borg_notice_home_potion(list_item *l_ptr)
 	/* Analyze */
 	switch (k_info[l_ptr->k_idx].sval)
 	{
+		case SV_POTION_CURING:
+		{
+			num_cure_critical += l_ptr->number;
+			break;
+		}
+
 		case SV_POTION_CURE_CRITICAL:
 		{
 			num_cure_critical += l_ptr->number;
@@ -3375,6 +3410,14 @@ static void borg_notice_home_potion(list_item *l_ptr)
 		case SV_POTION_RESIST_COLD:
 		{
 			num_pot_rcold += l_ptr->number;
+			break;
+		}
+
+		case SV_POTION_RESISTANCE:
+		{
+			num_pot_rcold += l_ptr->number;
+			num_pot_rheat += l_ptr->number;
+			num_pot_resist += l_ptr->number;
 			break;
 		}
 
@@ -3459,12 +3502,6 @@ static void borg_notice_home_potion(list_item *l_ptr)
 		case SV_POTION_INVULNERABILITY:
 		{
 			num_goi_pot += l_ptr->number;
-			break;
-		}
-
-		case SV_POTION_RESISTANCE:
-		{
-			num_resist_pot += l_ptr->number;
 			break;
 		}
 	}
@@ -3983,6 +4020,12 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 					num_recall += l_ptr->number * 50;
 					break;
 				}
+
+				case SV_ROD_CURING:
+				{
+					num_cure_critical += l_ptr->number * 50;
+					break;
+				}
 			}
 
 			break;
@@ -4002,6 +4045,12 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 				case SV_STAFF_IDENTIFY:
 				{
 					num_ident += l_ptr->number * l_ptr->pval;
+					break;
+				}
+
+				case SV_STAFF_CURING:
+				{
+					num_cure_critical += l_ptr->number * l_ptr->pval;
 					break;
 				}
 
@@ -4530,8 +4579,8 @@ static s32b borg_power_home_aux2(void)
 	value += 200 * MIN_FLOOR(num_ident, 20, 2 * bp_ptr->lev - 1);
 
 	/* Collect *id*ent */
-	value += 5000 * MIN(num_star_ident, 10);
-	value += 500 * MIN_FLOOR(num_ident, 10, 2 * bp_ptr->lev - 1);
+	value += 1500 * MIN(num_star_ident, 10);
+	value += 500 * MIN_FLOOR(num_star_ident, 10, 2 * bp_ptr->lev - 1);
 
 	/* Collect *remove curse* */
 	value += 5000 * MIN(num_star_remove_curse, 5);
@@ -4557,6 +4606,8 @@ static s32b borg_power_home_aux2(void)
 		value += 100 * MIN_FLOOR(num_pot_rheat, 20, bp_ptr->lev * 2 - 1);
 		value += 1000 * MIN(num_pot_rcold, 20);
 		value += 100 * MIN_FLOOR(num_pot_rcold, 20, bp_ptr->lev * 2 - 1);
+		value += 200 * MIN(num_pot_resist, 20);
+		value += 20 * MIN_FLOOR(num_pot_resist, 20, bp_ptr->lev * 2 - 1);
 	}
 
 	/* Collect recall */

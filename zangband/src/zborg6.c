@@ -107,7 +107,8 @@ bool borg_recover(void)
 	{
 		if (borg_activate_artifact(ART_LOTHARANG, FALSE) ||
 			borg_spell(REALM_LIFE, 0, 1) ||
-			borg_spell(REALM_LIFE, 0, 6) || borg_spell(REALM_ARCANE, 0, 7))
+			borg_spell(REALM_LIFE, 0, 6) ||
+			borg_spell(REALM_ARCANE, 0, 7))
 
 		{
 			/* Take note */
@@ -135,7 +136,8 @@ bool borg_recover(void)
 	{
 		if (borg_activate_artifact(ART_LOTHARANG, FALSE) ||
 			borg_spell(REALM_LIFE, 1, 2) ||
-			borg_spell(REALM_NATURE, 0, 7) || borg_spell(REALM_LIFE, 0, 6))
+			borg_spell(REALM_NATURE, 0, 7) ||
+			borg_spell(REALM_LIFE, 0, 6))
 		{
 			/* Take note */
 			borg_note_fmt("# Cure Cuts", p);
@@ -149,7 +151,8 @@ bool borg_recover(void)
 	{
 		if (borg_activate_artifact(ART_DAL, FALSE) ||
 			borg_spell(REALM_ARCANE, 1, 7) ||
-			borg_spell(REALM_NATURE, 0, 7) || borg_spell(REALM_LIFE, 1, 2))
+			borg_spell(REALM_NATURE, 0, 7) ||
+			borg_spell(REALM_LIFE, 1, 2))
 		{
 			/* Take note */
 			borg_note_fmt("# Cure poison", p);
@@ -189,7 +192,8 @@ bool borg_recover(void)
 		&& (bp_ptr->csp > bp_ptr->msp / 4))
 	{
 		if (borg_activate_artifact(ART_SOULKEEPER, FALSE) ||
-			borg_spell(REALM_LIFE, 1, 6) || borg_spell(REALM_NATURE, 1, 7))
+			borg_spell(REALM_LIFE, 1, 6) ||
+			borg_spell(REALM_NATURE, 1, 7))
 		{
 			/* Take note */
 			borg_note("# heal damage (recovering)");
@@ -203,7 +207,8 @@ bool borg_recover(void)
 		(borg_activate_artifact(ART_LUTHIEN, FALSE) ||
 		 borg_spell(REALM_LIFE, 3, 3) ||
 		 borg_spell(REALM_DEATH, 1, 7) ||
-		 borg_racial(RACE_SKELETON) || borg_racial(RACE_ZOMBIE)))
+		 borg_racial(RACE_SKELETON) ||
+		 borg_racial(RACE_ZOMBIE)))
 	{
 		return (TRUE);
 	}
@@ -229,7 +234,7 @@ bool borg_recover(void)
 			borg_zap_rod(SV_ROD_HEALING) ||
 			borg_activate_artifact(ART_SOULKEEPER, FALSE) ||
 			borg_activate_artifact(ART_GONDOR, FALSE) ||
-			borg_quaff_crit(FALSE) || borg_quaff_potion(SV_POTION_CURING))
+			borg_quaff_crit(FALSE))
 		{
 			return (TRUE);
 		}
@@ -239,7 +244,6 @@ bool borg_recover(void)
 	if (bp_ptr->status.heavy_stun && (q < 95))
 	{
 		if (borg_quaff_crit(TRUE) ||
-			borg_quaff_potion(SV_POTION_CURING) ||
 			borg_use_staff_fail(SV_STAFF_CURING) ||
 			borg_zap_rod(SV_ROD_CURING) ||
 			borg_zap_rod(SV_ROD_HEALING) ||
@@ -256,7 +260,6 @@ bool borg_recover(void)
 		if (borg_use_staff_fail(SV_STAFF_CURING) ||
 			borg_zap_rod(SV_ROD_CURING) ||
 			borg_zap_rod(SV_ROD_HEALING) ||
-			borg_quaff_potion(SV_POTION_CURING) ||
 			borg_activate_artifact(ART_SOULKEEPER, FALSE) ||
 			borg_activate_artifact(ART_GONDOR, FALSE) ||
 			borg_quaff_crit((bool) (bp_ptr->chp < 10)))
@@ -275,7 +278,6 @@ bool borg_recover(void)
 			borg_quaff_crit((bool) (bp_ptr->chp < 10)) ||
 			borg_use_staff_fail(SV_STAFF_CURING) ||
 			borg_zap_rod(SV_ROD_CURING) ||
-			borg_quaff_potion(SV_POTION_CURING) ||
 			borg_activate_artifact(ART_DAL, FALSE))
 		{
 			return (TRUE);
@@ -290,7 +292,7 @@ bool borg_recover(void)
 			borg_quaff_potion(SV_POTION_CURE_SERIOUS) ||
 			borg_quaff_crit(FALSE) ||
 			borg_use_staff_fail(SV_STAFF_CURING) ||
-			borg_quaff_potion(SV_POTION_CURING) || borg_zap_rod(SV_ROD_CURING))
+			borg_zap_rod(SV_ROD_CURING))
 		{
 			return (TRUE);
 		}
@@ -303,7 +305,7 @@ bool borg_recover(void)
 			borg_quaff_potion(SV_POTION_CURE_SERIOUS) ||
 			borg_quaff_crit(FALSE) ||
 			borg_use_staff_fail(SV_STAFF_CURING) ||
-			borg_zap_rod(SV_ROD_CURING) || borg_quaff_potion(SV_POTION_CURING))
+			borg_zap_rod(SV_ROD_CURING))
 		{
 			return (TRUE);
 		}

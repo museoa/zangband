@@ -1743,12 +1743,15 @@ bool borg_heal(int danger)
 	}
 
 	/* Special cases get a second vote */
-	if (borg_class == CLASS_MAGE &&
+	if ((borg_class == CLASS_MAGE || borg_class == CLASS_HIGH_MAGE) &&
 		bp_ptr->status.fixstat[A_INT]) stats_needing_fix++;
-	if (borg_class == CLASS_PRIEST &&
+
+	if ((borg_class == CLASS_PRIEST || borg_class == CLASS_MINDCRAFTER) &&
 		bp_ptr->status.fixstat[A_WIS]) stats_needing_fix++;
-	if (borg_class == CLASS_WARRIOR &&
+
+	if (!borg_has_realm(REALM_LIFE) &&
 		bp_ptr->status.fixstat[A_CON]) stats_needing_fix++;
+
 	if (bp_ptr->mhp <= 850 && bp_ptr->status.fixstat[A_CON])
 	{
 		stats_needing_fix++;
@@ -1757,10 +1760,13 @@ bool borg_heal(int danger)
 	{
 		stats_needing_fix += 3;
 	}
-	if (borg_class == CLASS_PRIEST && bp_ptr->msp < 100 &&
+	if ((borg_class == CLASS_PRIEST || borg_class == CLASS_MINDCRAFTER) &&
+		bp_ptr->msp < 100 &&
 		bp_ptr->status.fixstat[A_WIS])
 		stats_needing_fix += 5;
-	if (borg_class == CLASS_MAGE && bp_ptr->msp < 100 &&
+
+	if ((borg_class == CLASS_MAGE || borg_class == CLASS_HIGH_MAGE) &&
+		bp_ptr->msp < 100 &&
 		bp_ptr->status.fixstat[A_INT])
 		stats_needing_fix += 5;
 
@@ -2200,7 +2206,6 @@ bool borg_heal(int danger)
 			borg_activate_artifact(ART_BELEGENNON, FALSE) ||
 			borg_use_staff(SV_STAFF_CURING) ||
 			borg_eat_food(SV_FOOD_CURE_POISON) ||
-			borg_quaff_potion(SV_POTION_CURING) ||
 			/* buy time */
 			borg_quaff_crit(TRUE) ||
 			borg_spell_fail(REALM_LIFE, 0, 6, 40) ||
@@ -3354,6 +3359,16 @@ bool borg_caution(void)
 		{
 			return (TRUE);
 		}
+	}
+
+	/* Cure hallucination as soon as possible! */
+	if (bp_ptr->status.image &&
+		borg_quaff_potion(SV_POTION_CURING) ||
+		borg_use_staff(SV_STAFF_CURING) ||
+		borg_zap_rod(SV_ROD_CURING))
+	{
+		/* Tried to stop the visions */
+		return (TRUE);
 	}
 
 	/* Hack -- cure fear when afraid */
