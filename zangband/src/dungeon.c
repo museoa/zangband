@@ -1363,6 +1363,9 @@ static void process_world(void)
 			/* Slow digestion takes less food */
 			if (p_ptr->flags3 & (TR3_SLOW_DIGEST)) i -= 10;
 
+			/* Slow healing gives some benefit... */
+			if (p_ptr->flags4 & (TR4_SLOW_HEAL)) i -= 5;
+
 			/* Minimal digestion */
 			if (i < 1) i = 1;
 
@@ -1437,6 +1440,12 @@ static void process_world(void)
 		{
 			regen_amount = regen_amount * 2;
 		}
+	
+		if (p_ptr->flags4 & (TR4_SLOW_HEAL))
+		{
+			regen_amount = regen_amount / 4;
+		}
+
 	}
 
 
@@ -1538,6 +1547,9 @@ static void process_world(void)
 	{
 		int adjust = adj_con_fix[p_ptr->stat[A_CON].ind] + 1;
 
+		if (p_ptr->flags4 & (TR4_SLOW_HEAL))
+			adjust /= 2;
+
 		/* Hack -- Truly "mortal" wound */
 		if (p_ptr->tim.cut > 1000) adjust = 0;
 
@@ -1571,6 +1583,21 @@ static void process_world(void)
 			p_ptr->exp--;
 			p_ptr->max_exp--;
 			check_experience();
+		}
+	}
+
+	/* Handle stat draining */
+	if (p_ptr->flags4 & (TR4_DRAIN_STATS))
+	{
+		if (one_in_(250))
+		{
+			int stat = randint0(6);
+
+			if (p_ptr->stat[stat].cur > 30)
+			{
+				p_ptr->stat[stat].cur--;
+				p_ptr->update |= (PU_BONUS);
+			}
 		}
 	}
 

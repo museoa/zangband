@@ -44,6 +44,8 @@ static void curse_artifact(object_type *o_ptr)
 	if (one_in_(7)) o_ptr->flags4 |= TR4_HURT_ELEC;
 	if (one_in_(7)) o_ptr->flags4 |= TR4_HURT_FIRE;
 	if (one_in_(7)) o_ptr->flags4 |= TR4_HURT_COLD;
+	if (one_in_(3)) o_ptr->flags4 |= TR4_DRAIN_STATS;
+	if (one_in_(3)) o_ptr->flags4 |= TR4_SLOW_HEAL;
 
 	if ((p_ptr->rp.pclass != CLASS_WARRIOR) && one_in_(3))
 		o_ptr->flags3 |= TR3_NO_MAGIC;
@@ -874,7 +876,7 @@ static int random_curse(object_type *o_ptr, int artifact_bias)
 
 	}
 
-	switch (randint1(6))
+	switch (randint1(10))
 	{
 		case 1:
 			o_ptr->flags4 |= TR4_HURT_ACID;
@@ -897,6 +899,12 @@ static int random_curse(object_type *o_ptr, int artifact_bias)
 		case 7:
 		case 8:
 			o_ptr->flags3 |= TR3_AGGRAVATE;
+			break;
+		case 9:
+			o_ptr->flags4 |= TR4_SLOW_HEAL;
+			break;
+		case 10:
+			o_ptr->flags4 |= TR4_DRAIN_STATS;
 			break;
 	}
 
