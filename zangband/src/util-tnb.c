@@ -153,6 +153,26 @@ int objcmd_menuentrystate(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Ob
 	return TCL_OK;
 }
 
+cptr keyword_term_color[16] = {
+	"TERM_DARK",
+	"TERM_WHITE",
+	"TERM_SLATE",
+	"TERM_ORANGE",
+	"TERM_RED",
+	"TERM_GREEN",
+	"TERM_BLUE",
+	"TERM_UMBER",
+	"TERM_L_DARK",
+	"TERM_L_WHITE",
+	"TERM_VIOLET",
+	"TERM_YELLOW",
+	"TERM_L_RED",
+	"TERM_L_GREEN",
+	"TERM_L_BLUE",
+	"TERM_L_UMBER"
+};
+
+
 byte g_prompt_attr = TERM_WHITE;
 
 /*
