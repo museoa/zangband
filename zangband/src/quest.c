@@ -797,7 +797,7 @@ void trigger_quest_complete(byte x_type, vptr data)
 			case QX_NONE:
 			{
 				/* Paranoia */
-				continue;
+				break;
 			}
 			
 			case QX_KILL_MONST:
@@ -829,7 +829,7 @@ void trigger_quest_complete(byte x_type, vptr data)
 					}
 				}
 				
-				continue;
+				break;
 			}
 			
 			case QX_KILL_WINNER:
@@ -870,7 +870,7 @@ void trigger_quest_complete(byte x_type, vptr data)
 					create_stairs(m_ptr->fx, m_ptr->fy);
 				}
 				
-				continue;
+				break;
 			}
 			
 			case QX_WILD_ENTER:
@@ -881,7 +881,7 @@ void trigger_quest_complete(byte x_type, vptr data)
 				/* Complete the quest */
 				q_ptr->status = QUEST_STATUS_FINISHED;
 			
-				continue;
+				break;
 			}
 		}
 		
@@ -904,8 +904,8 @@ void trigger_quest_complete(byte x_type, vptr data)
 				add_note(note, 'Q');
 			}
 #endif /* 0 */
+
 			msg_print("You just completed your quest!");
-			message_flush();
 		}
 
 	}
@@ -1116,9 +1116,18 @@ void do_cmd_knowledge_quests(void)
 		
 			case QUEST_TYPE_WILD:
 			{
-		
-				/* Paranoia */
-				continue;
+				if (q_ptr->status == QUEST_STATUS_TAKEN)
+				{
+					/* Hack - this is simple */
+					strnfmt(tmp_str, 256, "%s\n\n", q_ptr->name);
+				}
+				else
+				{
+					/* Hack - this is simple */
+					strnfmt(tmp_str, 256, "%s (Completed)\n", q_ptr->name);
+				}
+				
+				break;
 			}
 		
 			default:
@@ -1659,7 +1668,7 @@ void draw_quest(u16b town_num)
 			/* Place monsters on spots */
 			if (one_in_(QUEST_CAMP_MON))
 			{
-				/* Pick a race to clone */
+ 				/* Pick a race to clone */
 				c_ptr->m_idx = get_mon_num(depth);
 				
 				/* Place junk under monsters */
@@ -1671,8 +1680,8 @@ void draw_quest(u16b town_num)
 		}
 	}
 	
-	/* Activate quest + create quest */
-	q_ptr->flags |= (QUEST_FLAG_ACTIVE | QUEST_FLAG_CREATED);
+	/* Activate quest + create quest + we know about the quest */
+	q_ptr->flags |= (QUEST_FLAG_ACTIVE | QUEST_FLAG_CREATED | QUEST_FLAG_KNOWN);
 	
 	/* Hack - we now take this quest */
 	if (q_ptr->status == QUEST_STATUS_UNTAKEN)
