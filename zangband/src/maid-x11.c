@@ -66,6 +66,11 @@
   ((unsigned)(keysym) >= 0xFF00)
 
 
+#ifdef SUPPORT_GAMMA
+static bool gamma_table_ready = FALSE;
+#endif /* SUPPORT_GAMMA */
+
+
 /*
  * Hack -- Convert an RGB value to an X11 Pixel, or die.
  */
@@ -79,14 +84,13 @@ static unsigned long create_pixel(Display *dpy, byte red, byte green, byte blue)
 
 #ifdef SUPPORT_GAMMA
 
-	bool checked = FALSE;
 	int gamma = 0;
 
-	if (!checked)
+	if (!gamma_table_ready)
 	{
 		cptr str = getenv("ANGBAND_X11_GAMMA");
 		if (str != NULL) gamma = atoi(str);
-		checked = TRUE;
+		gamma_table_ready = TRUE;
 		build_gamma_table(gamma);
 	}
 
