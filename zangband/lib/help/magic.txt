@@ -263,28 +263,6 @@ Death
      accursed tome have retained their sanity.
 
 
-***** <Restrictions>
-=== Class/Realm Restrictions ===
-
-In the table below, '1st' indicates that the realm may only be the
-first choice, '2nd' indicates that the realm may only be the second
-choice and '1st/2nd' indicates that it can be either. Classes that
-only have '1st' options do not get a second realm. Classes with
-only one '1st' option must choose this option as their first realm.
-
-Class          Life    Arcane  Sorcery Nature  Trump   Chaos   Death
-----------------------------------------------------------------------
-Mage           1st/2nd 1st/2nd 1st/2nd 1st/2nd 1st/2nd 1st/2nd 1st/2nd
-Priest         1st     2nd     2nd     2nd     2nd     2nd     1st
-Rogue                  1st     1st             1st             1st
-Ranger                 2nd     2nd     1st     2nd     2nd     2nd
-Paladin        1st                                             1st
-Warrior-Mage   2nd     1st     2nd     2nd     2nd     2nd     2nd
-Chaos Warrior                                          1st
-Monk           1st                     1st                     1st
-High Mage      1st     1st     1st     1st     1st     1st     1st
-
-
 ***** <CastingSpells>
 === On Casting Spells ... ===
 
@@ -429,10 +407,8 @@ spells.
 If you pick the realms always in the same order (e.g. nature as your
 first realm and chaos as your second realm, not the other way around)
 you will be less confused when trying to pick the correct spellbook to
-use in the game.
-
-If you still get confused trying to select the correct spellbook, try
-using macros (either the 'full' macros or inscriptions).
+use in the game. If you still get confused trying to select the correct
+spellbook, try using macros (either the 'full' macros or inscriptions).
 
 
 ***** <SpellLists>

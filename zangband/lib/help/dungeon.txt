@@ -29,7 +29,7 @@ Note that you can use a "user pref file" to change any of these symbols
 to something you are more comfortable with.
    
  
-                Features that do not block line of sight
+--- Features that do not block line of sight ---
  
   .   A floor space                   1   Entrance to General Store
   .   A trap (hidden)                 2   Entrance to Armory
@@ -41,7 +41,7 @@ to something you are more comfortable with.
   >   A staircase down                8   Entrance to your Home
 
 
-                   Features that block line of sight
+--- Features that block line of sight ---
 
   #   A secret door                   #   A wall
   +   A closed door                   %   A mineral vein
@@ -49,7 +49,7 @@ to something you are more comfortable with.
   +   A jammed door                   :   A pile of rubble
 
 
-                             Objects
+--- Objects ---
  
   !   A potion (or flask)             /   A pole-arm
   ?   A scroll (or book)              |   An edged weapon
@@ -63,36 +63,36 @@ to something you are more comfortable with.
   ~   Junk, Sticks, Skeletons, etc    &   (unused)
  
  
-                             Monsters
+--- Monsters ---
  
-            $   Creeping Coins      ,   Mushroom Patch
-            a   Giant Ant           A   Angelic being
-            b   Giant Bat           B   Bird
-            c   Giant Centipede     C   Canine
-            d   Dragon              D   Ancient Dragon
-            e   Floating Eye        E   Elemental
-            f   Feline              F   Dragon Fly
-            g   Golem               G   Ghost
-            h   Humanoids           H   Hybrid
-            i   Icky-Thing          I   Insect
-            j   Jelly               J   Snake
-            k   Kobold              K   Killer Beetle
-            l   Giant Louse         L   Lich
-            m   Mold                M   Multi-Headed Hydra
-            n   Naga                N   (unused)
-            o   Orc                 O   Ogre
-            p   Human               P   Giant Human(oid)
-            q   Quadruped           Q   Quylthulg
-            r   Rodent              R   Reptile/Amphibian
-            s   Skeleton            S   Spider/Scorpion/Tick
-            t   Townsperson         T   Troll
-            u   Minor demon         U   Major demon
-            v   Vortex              V   Vampire
-            w   Worm or Worm Mass   W   Wight/Wraith
-            x   (unused)            X   Xorn/Xaren
-            y   Yeek                Y   Yeti
-            z   Zombie/Mummy        Z   Zephyr Hound
-            ~   Aquatic monsters
+  $   Creeping Coins                  ,   Mushroom Patch
+  a   Giant Ant                       A   Angelic being
+  b   Giant Bat                       B   Bird
+  c   Giant Centipede                 C   Canine
+  d   Dragon                          D   Ancient Dragon
+  e   Floating Eye                    E   Elemental
+  f   Feline                          F   Dragon Fly
+  g   Golem                           G   Ghost
+  h   Humanoids                       H   Hybrid
+  i   Icky-Thing                      I   Insect
+  j   Jelly                           J   Snake
+  k   Kobold                          K   Killer Beetle
+  l   Giant Louse                     L   Lich
+  m   Mold                            M   Multi-Headed Hydra
+  n   Naga                            N   (unused)
+  o   Orc                             O   Ogre
+  p   Human                           P   Giant Human(oid)
+  q   Quadruped                       Q   Quylthulg
+  r   Rodent                          R   Reptile/Amphibian
+  s   Skeleton                        S   Spider/Scorpion/Tick
+  t   Townsperson                     T   Troll
+  u   Minor demon                     U   Major demon
+  v   Vortex                          V   Vampire
+  w   Worm or Worm Mass               W   Wight/Wraith
+  x   (unused)                        X   Xorn/Xaren
+  y   Yeek                            Y   Yeti
+  z   Zombie/Mummy                    Z   Zephyr Hound
+  ~   Aquatic monsters
 
 
 ***** <TownLevel>
@@ -560,57 +560,8 @@ killing the monsters. This technique is frowned upon by many players
 and should be noted in any 'winner' post to the newsgroup.
 
 
-***** <Winning>
-=== Winning The Game ===
-
-Once your character has killed Oberon, who lives on level 99 (4950') in
-the dungeon, a magical staircase will appear that will finally allow
-you to reach level 100. The Serpent of Chaos lurks on this level of his
-dungeon, and you will not be able to go below his level until you have
-killed him. Try to avoid wandering around on level 100 unless you are
-ready for him, since it has a habit of coming at you across the
-dungeon, to slay you for your impudence.
-
-The Serpent of Chaos cannot be killed by some of the easier methods
-used on normal creatures. The Serpent of Chaos, like all other "Unique"
-monsters, will simply teleport away to another region of the level if
-you attempt to use a spell such as destruction is upon it. The Serpent
-of Chaos, like some other monsters, cannot be polymorphed, slept,
-charmed, or genocided. Magical spells like Mana Storm and Orb of
-Draining are effective against it, as are some of the more powerful
-weapons, but it is difficult to kill and if allowed to escape for a
-time it will heal itself rapidly.
-
-If you should actually survive the attempt of killing the Serpent of
-Chaos, you will receive the status of WINNER. You may continue to
-explore, and may even save the game and play more later, but since you
-have defeated the toughest creature alive, there is really not much
-point. Unless you wish to listen to the rumors of a powerful ring
-buried somewhere in the dungeon...
-
-When you are ready to retire, simply "commit suicide" ("^K") to have
-your character entered into the high score list as a winner. Note that
-until you retire, you can still be killed, so you may want to retire
-before wandering into a hoard of Cyberdemons...
-
-
-***** <UponDeath>
-=== Upon Death and Dying ===
- 
-If your character falls below 0 hit points, he has died and cannot be
-restored. A tombstone showing information about your character will be
-displayed. You are also permitted to get a record of your character,
-and all your equipment (identified) either on the screen or in a file.
-
-Your character will leave behind a reduced save file, which contains
-only the monster memory and your option choices. It may be restored, in
-which case the new character is generated exactly as if the file was
-not there, but the new player will find his monster memory containing
-all the experience of past incarnations.
-
-
 --
 Original   : (??)
 Updated    : (??)
 Updated    : Zangband DevTeam
-Last update: December 12, 1999
+Last update: December 24, 1999

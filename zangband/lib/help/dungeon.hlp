@@ -12,8 +12,6 @@ Please choose one of the following online help files:
     (7) Mining                                (dungeon.txt#Mining)
     (8) Staircases, Doors, Passages & Rooms   (dungeon.txt#StairsDoorsEtc)
     (9) Random Quests                         (dungeon.txt#RandomQuests)
-    (a) Winning the Game                      (dungeon.txt#Winning)
-    (b) Upon Death and Dying                  (dungeon.txt#UponDeath)
 
     (?) Help System Commands                  (helpinfo.txt)
 
@@ -28,5 +26,3 @@ Please choose one of the following online help files:
 ***** [7] dungeon.txt#Mining
 ***** [8] dungeon.txt#StairsDoorsEtc
 ***** [9] dungeon.txt#RandomQuests
-***** [a] dungeon.txt#Winning
-***** [b] dungeon.txt#UponDeath
