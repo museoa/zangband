@@ -517,7 +517,7 @@ static void borg_notice_equip(int *extra_blows, int *extra_shots,
 		borg_skill[BI_ARMOR] += l_ptr->to_a;
 
 		/* Keep track of weight */
-		borg_skill[BI_WEIGHT] += l_ptr->weight;
+		bp_ptr->weight += l_ptr->weight;
 
 		/* Hack -- do not apply "weapon" bonuses */
 		if (i == EQUIP_WIELD) continue;
@@ -1772,13 +1772,13 @@ static void borg_notice_inven_item(list_item *l_ptr)
 	borg_has[l_ptr->k_idx] += number;
 
 	/* Keep track of weight */
-	borg_skill[BI_WEIGHT] += l_ptr->weight * number;
+	bp_ptr->weight += l_ptr->weight * number;
 
 	/* Get item type */
 	k_ptr = &k_info[l_ptr->k_idx];
 
 	/* Keep track of (base) value */
-	borg_skill[BI_VALUE] += k_ptr->cost * number;
+	bp_ptr->value += k_ptr->cost * number;
 
 	/* Analyze the item */
 	switch (l_ptr->tval)
@@ -2428,9 +2428,9 @@ static void borg_notice_aux2(void)
 	carry_capacity = (adj_str_wgt[my_stat_ind[A_STR]] * 100) / 2;
 
 	/* over or under the limit */
-	if (borg_skill[BI_WEIGHT] > carry_capacity)
+	if (bp_ptr->weight > carry_capacity)
 	{
-		borg_skill[BI_ENCUMBERD] = (borg_skill[BI_WEIGHT] - carry_capacity);
+		borg_skill[BI_ENCUMBERD] = (bp_ptr->weight - carry_capacity);
 	}
 	else
 	{

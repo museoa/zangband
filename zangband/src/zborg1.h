@@ -245,7 +245,8 @@ struct borg_player
 	u32b flags3;
 
 
-
+	u32b value;	/* Cost of items we are carrying */
+	s16b weight; /* Weight of items we are carrying */
 };
 
 extern borg_player *bp_ptr;
@@ -319,24 +320,7 @@ extern borg_player *bp_ptr;
 #define BI_CRSNOMAGIC	143		/* no magic */
 #define BI_ENCUMBERD	144
 
-#define BI_WS_ANIMAL	146
-#define BI_WS_EVIL	147
-#define BI_WS_UNDEAD	148
-#define BI_WS_DEMON	149
-#define BI_WS_ORC	150
-#define BI_WS_TROLL	151
-#define BI_WS_GIANT	152
-#define BI_WS_DRAGON	153
-#define BI_WK_DRAGON	154
-#define BI_W_IMPACT	155
-#define BI_WB_ACID	156
-#define BI_WB_ELEC	157
-#define BI_WB_FIRE	158
-#define BI_WB_COLD	159
-#define BI_WB_POIS	160
-#define BI_WB_VORPAL	161
-#define BI_WB_VAMPIRIC	162
-#define BI_WB_CHAOTIC	163
+
 #define BI_ATELEPORT	164
 #define BI_AESCAPE	165
 #define BI_AFUEL	166
@@ -364,9 +348,7 @@ extern borg_player *bp_ptr;
 #define BI_AGOI		188			/* GOI spell */
 #define BI_AHWORD	189			/* Holy Word prayer */
 
-#define BI_WEIGHT	190
-#define BI_VALUE	191
-#define BI_MAX		192
+#define BI_MAX		190
 
 
 /*

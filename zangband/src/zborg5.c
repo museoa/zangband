@@ -2987,36 +2987,36 @@ static s32b borg_power_aux3(void)
 
 		/* assume 2x base damage for x% of creatures */
 		dam = damage * 2 * borg_skill[BI_BLOWS];
-		if (borg_skill[BI_WS_ANIMAL]) value += (dam * 2) / 2;
-		if (borg_skill[BI_WB_POIS]) value += (dam * 2) / 2;
-		if (borg_skill[BI_WS_EVIL]) value += (dam * 7) / 2;
+		if (bp_ptr->flags1 & TR1_SLAY_ANIMAL) value += (dam * 2) / 2;
+		if (bp_ptr->flags1 & TR1_BRAND_POIS) value += (dam * 2) / 2;
+		if (bp_ptr->flags1 & TR1_SLAY_EVIL) value += (dam * 7) / 2;
 
 		/* assume 3x base damage for x% of creatures */
 		dam = damage * 3 * borg_skill[BI_BLOWS];
-		if (borg_skill[BI_WS_UNDEAD]) value += (dam * 5) / 2;
-		if (borg_skill[BI_WS_DEMON]) value += (dam * 3) / 2;
-		if (borg_skill[BI_WS_DRAGON] &&
-			(!borg_skill[BI_WK_DRAGON])) value += (dam * 6) / 2;
-		if (borg_skill[BI_WS_GIANT]) value += (dam * 4) / 2;
-		if (borg_skill[BI_WB_ACID]) value += (dam * 4) / 2;
-		if (borg_skill[BI_WB_ELEC]) value += (dam * 5) / 2;
-		if (borg_skill[BI_WB_FIRE]) value += (dam * 3) / 2;
-		if (borg_skill[BI_WB_COLD]) value += (dam * 3) / 2;
-		if (borg_skill[BI_WB_VAMPIRIC]) value += (dam * 3) / 2;
-		if (borg_skill[BI_WB_VORPAL]) value += (dam * 3) / 2;
-		if (borg_skill[BI_WB_CHAOTIC]) value += (dam * 12) / 10;
+		if (bp_ptr->flags1 & TR1_SLAY_UNDEAD) value += (dam * 5) / 2;
+		if (bp_ptr->flags1 & TR1_SLAY_DEMON) value += (dam * 3) / 2;
+		if ((bp_ptr->flags1 & TR1_SLAY_DRAGON) &&
+			(!(bp_ptr->flags1 & TR1_KILL_DRAGON))) value += (dam * 6) / 2;
+		if (bp_ptr->flags1 & TR1_SLAY_GIANT) value += (dam * 4) / 2;
+		if (bp_ptr->flags1 & TR1_BRAND_ACID) value += (dam * 4) / 2;
+		if (bp_ptr->flags1 & TR1_BRAND_ELEC) value += (dam * 5) / 2;
+		if (bp_ptr->flags1 & TR1_BRAND_FIRE) value += (dam * 3) / 2;
+		if (bp_ptr->flags1 & TR1_BRAND_COLD) value += (dam * 3) / 2;
+		if (bp_ptr->flags1 & TR1_VAMPIRIC) value += (dam * 3) / 2;
+		if (bp_ptr->flags1 & TR1_VORPAL) value += (dam * 3) / 2;
+		if (bp_ptr->flags1 & TR1_CHAOTIC) value += (dam * 12) / 10;
 		/* SOrc and STroll get 1/2 of reward now */
-		if (borg_skill[BI_WS_ORC]) value += (dam * 1) / 2;
-		if (borg_skill[BI_WS_TROLL]) value += (dam * 2) / 2;
+		if (bp_ptr->flags1 & TR1_SLAY_ORC) value += (dam * 1) / 2;
+		if (bp_ptr->flags1 & TR1_SLAY_TROLL) value += (dam * 2) / 2;
 		/* and the other 2/2 if SEvil not possesed */
-		if (borg_skill[BI_WS_ORC] &&
-			!borg_skill[BI_WS_EVIL]) value += (dam * 1) / 2;
-		if (borg_skill[BI_WS_TROLL] &&
-			!borg_skill[BI_WS_EVIL]) value += (dam * 1) / 2;
+		if ((bp_ptr->flags1 & TR1_SLAY_ORC) &&
+			!(bp_ptr->flags1 & TR1_SLAY_EVIL)) value += (dam * 1) / 2;
+		if ((bp_ptr->flags1 & TR1_SLAY_TROLL) &&
+			!(bp_ptr->flags1 & TR1_SLAY_EVIL)) value += (dam * 1) / 2;
 
 		/* assume 5x base damage for x% of creatures */
 		dam = damage * 5 * borg_skill[BI_BLOWS];
-		if (borg_skill[BI_WK_DRAGON]) value += (dam * 5) / 2;
+		if (bp_ptr->flags1 & TR1_KILL_DRAGON) value += (dam * 5) / 2;
 	}
 	else if (borg_class == CLASS_MONK)
 	{
@@ -3061,8 +3061,9 @@ static s32b borg_power_aux3(void)
 
 	}
 
-	/* It is only on Grond */
-	if (borg_skill[BI_W_IMPACT]) value += 5000L;
+	/* Earthquakes... */
+	if (bp_ptr->flags1 & TR1_IMPACT) value += 5000L;
+	
 
 	/* Hack -- It is hard to hold a heavy weapon */
 	if (borg_skill[BI_HEAVYWEPON]) value -= 500000L;
@@ -3987,7 +3988,7 @@ static s32b borg_power_aux4(void)
 	}
 
 	/* Being too heavy is really bad */
-	value -= borg_skill[BI_WEIGHT] / adj_str_wgt[my_stat_ind[A_STR]];
+	value -= bp_ptr->weight / adj_str_wgt[my_stat_ind[A_STR]];
 
 	/* Reward empty slots */
 	if (INVEN_PACK - inven_num < 5)

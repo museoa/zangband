@@ -1533,7 +1533,7 @@ bool borg_crush_junk(void)
 	my_power = borg_power();
 
 	/* Include the effects of value of items */
-	old_value = (long)borg_skill[BI_VALUE];
+	old_value = bp_ptr->value;
 
 	/* Destroy actual "junk" items */
 	for (i = 0; i < inven_num; i++)
@@ -1568,7 +1568,7 @@ bool borg_crush_junk(void)
 			p = borg_power();
 
 			/* Include the effects of value of items */
-			value = old_value - borg_skill[BI_VALUE];
+			value = old_value - bp_ptr->value;
 
 			/* Restore item */
 			l_ptr->treat_as = TREAT_AS_NORM;

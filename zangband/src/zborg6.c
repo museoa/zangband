@@ -3994,21 +3994,21 @@ static int borg_thrust_damage_one(int i)
 	/* here is the place for slays and such */
 	mult = 1;
 
-	if (((borg_skill[BI_WS_ANIMAL]) && (r_ptr->flags3 & RF3_ANIMAL)) ||
-		((borg_skill[BI_WS_EVIL]) && (r_ptr->flags3 & RF3_EVIL)))
+	if (((bp_ptr->flags1 & TR1_SLAY_ANIMAL) && (r_ptr->flags3 & RF3_ANIMAL)) ||
+		((bp_ptr->flags1 & TR1_SLAY_EVIL) && (r_ptr->flags3 & RF3_EVIL)))
 		mult = 2;
-	if (((borg_skill[BI_WS_UNDEAD]) && (r_ptr->flags3 & RF3_ANIMAL)) ||
-		((borg_skill[BI_WS_DEMON]) && (r_ptr->flags3 & RF3_DEMON)) ||
-		((borg_skill[BI_WS_ORC]) && (r_ptr->flags3 & RF3_ORC)) ||
-		((borg_skill[BI_WS_TROLL]) && (r_ptr->flags3 & RF3_TROLL)) ||
-		((borg_skill[BI_WS_GIANT]) && (r_ptr->flags3 & RF3_GIANT)) ||
-		((borg_skill[BI_WS_DRAGON]) && (r_ptr->flags3 & RF3_DRAGON)) ||
-		((borg_skill[BI_WB_ACID]) && !(r_ptr->flags3 & RF3_IM_ACID)) ||
-		((borg_skill[BI_WB_FIRE]) && !(r_ptr->flags3 & RF3_IM_FIRE)) ||
-		((borg_skill[BI_WB_COLD]) && !(r_ptr->flags3 & RF3_IM_COLD)) ||
-		((borg_skill[BI_WB_ELEC]) && !(r_ptr->flags3 & RF3_IM_ELEC)))
+	if (((bp_ptr->flags1 & TR1_SLAY_UNDEAD) && (r_ptr->flags3 & RF3_ANIMAL)) ||
+		((bp_ptr->flags1 & TR1_SLAY_DEMON) && (r_ptr->flags3 & RF3_DEMON)) ||
+		((bp_ptr->flags1 & TR1_SLAY_ORC) && (r_ptr->flags3 & RF3_ORC)) ||
+		((bp_ptr->flags1 & TR1_SLAY_TROLL) && (r_ptr->flags3 & RF3_TROLL)) ||
+		((bp_ptr->flags1 & TR1_SLAY_GIANT) && (r_ptr->flags3 & RF3_GIANT)) ||
+		((bp_ptr->flags1 & TR1_SLAY_DRAGON) && (r_ptr->flags3 & RF3_DRAGON)) ||
+		((bp_ptr->flags1 & TR1_BRAND_ACID) && !(r_ptr->flags3 & RF3_IM_ACID)) ||
+		((bp_ptr->flags1 & TR1_BRAND_FIRE) && !(r_ptr->flags3 & RF3_IM_FIRE)) ||
+		((bp_ptr->flags1 & TR1_BRAND_COLD) && !(r_ptr->flags3 & RF3_IM_COLD)) ||
+		((bp_ptr->flags1 & TR1_BRAND_ELEC) && !(r_ptr->flags3 & RF3_IM_ELEC)))
 		mult = 3;
-	if ((borg_skill[BI_WK_DRAGON]) && (r_ptr->flags3 & RF3_DRAGON))
+	if ((bp_ptr->flags1 & TR1_KILL_DRAGON) && (r_ptr->flags3 & RF3_DRAGON))
 		mult = 5;
 
 	/* add the multiplier */

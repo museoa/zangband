@@ -2905,63 +2905,63 @@ void borg_status(void)
 			/* Display the slays */
 			Term_putstr(5, 10, -1, TERM_WHITE, "Weapon Slays:");
 
-			if (borg_skill[BI_WS_ANIMAL]) attr = TERM_BLUE;
+			if (bp_ptr->flags1 & TR1_SLAY_ANIMAL) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(1, 11, -1, attr, "Animal");
 
-			if (borg_skill[BI_WS_EVIL]) attr = TERM_BLUE;
+			if (bp_ptr->flags1 & TR1_SLAY_EVIL) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(8, 11, -1, attr, "Evil");
 
-			if (borg_skill[BI_WS_UNDEAD]) attr = TERM_BLUE;
+			if (bp_ptr->flags1 & TR1_SLAY_UNDEAD) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(15, 11, -1, attr, "Undead");
 
-			if (borg_skill[BI_WS_DEMON]) attr = TERM_BLUE;
+			if (bp_ptr->flags1 & TR1_SLAY_DEMON) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(22, 11, -1, attr, "Demon");
 
-			if (borg_skill[BI_WS_ORC]) attr = TERM_BLUE;
+			if (bp_ptr->flags1 & TR1_SLAY_ORC) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(1, 12, -1, attr, "Orc");
 
-			if (borg_skill[BI_WS_TROLL]) attr = TERM_BLUE;
+			if (bp_ptr->flags1 & TR1_SLAY_TROLL) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(8, 12, -1, attr, "Troll");
 
-			if (borg_skill[BI_WS_GIANT]) attr = TERM_BLUE;
+			if (bp_ptr->flags1 & TR1_SLAY_GIANT) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(15, 12, -1, attr, "Giant");
 
-			if (borg_skill[BI_WS_DRAGON]) attr = TERM_BLUE;
-			if (borg_skill[BI_WK_DRAGON]) attr = TERM_GREEN;
+			if (bp_ptr->flags1 & TR1_SLAY_DRAGON) attr = TERM_BLUE;
+			if (bp_ptr->flags1 & TR1_KILL_DRAGON) attr = TERM_GREEN;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(22, 12, -1, attr, "Dragon");
 
-			if (borg_skill[BI_WB_ACID]) attr = TERM_BLUE;
+			if (bp_ptr->flags1 & TR1_BRAND_ACID) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(1, 13, -1, attr, "Acid");
 
-			if (borg_skill[BI_WB_COLD]) attr = TERM_BLUE;
+			if (bp_ptr->flags1 & TR1_BRAND_COLD) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(8, 13, -1, attr, "Cold");
 
-			if (borg_skill[BI_WB_ELEC]) attr = TERM_BLUE;
+			if (bp_ptr->flags1 & TR1_BRAND_ELEC) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(15, 13, -1, attr, "Elec");
 
-			if (borg_skill[BI_WB_FIRE]) attr = TERM_BLUE;
+			if (bp_ptr->flags1 & TR1_BRAND_FIRE) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(22, 13, -1, attr, "Fire");
