@@ -694,6 +694,102 @@ static void draw_building(byte type, byte x, byte y, u16b store, u16b town_num)
 	Rand_value = rng_save_seed;
 }
 
+static void draw_gates(int x, int y, byte i, byte j, town_type *t_ptr)
+{				
+	int k, xx = x, yy = y;	
+	
+	/* Draw gates if visible */
+	for (k = 0; k < MAX_GATES; k++)
+	{
+		if ((t_ptr->gates_x[k] == i) && (t_ptr->gates_y[k] == j))
+		{
+			/* Add doors (hack) */
+			
+			switch (k)
+			{
+				case 0:
+				{
+					/* Hack - shift gate if next to walls */
+					if (cave[y + 2][x + 3].feat == FEAT_PERM_SOLID) yy -= 3;
+					if (cave[y + 5][x + 3].feat == FEAT_PERM_SOLID) yy += 3;
+					
+					y = yy;
+					
+					/* Draw an empty square */
+					generate_fill(y + 3, x + 3, y + 4, x + 4, FEAT_FLOOR);
+					
+					/* Right gate */
+					cave[y + 3][x + 4].fld_idx = FT_LOCK_DOOR;
+					cave[y + 3][x + 4].feat = FEAT_CLOSED;
+					cave[y + 4][x + 4].fld_idx = FT_LOCK_DOOR;
+					cave[y + 4][x + 4].feat = FEAT_CLOSED;
+					
+					return;
+				}
+			
+				case 1:
+				{
+					/* Hack - shift gate if next to walls */
+					if (cave[y + 2][x + 3].feat == FEAT_PERM_SOLID) yy -= 3;
+					if (cave[y + 5][x + 3].feat == FEAT_PERM_SOLID) yy += 3;
+					
+					y = yy;
+					
+					/* Draw an empty square */
+					generate_fill(y + 3, x + 3, y + 4, x + 4, FEAT_FLOOR);
+					
+					/* Left gate */
+					cave[y + 3][x + 3].fld_idx = FT_LOCK_DOOR;
+					cave[y + 3][x + 3].feat = FEAT_CLOSED;
+					cave[y + 4][x + 3].fld_idx = FT_LOCK_DOOR;
+					cave[y + 4][x + 3].feat = FEAT_CLOSED;
+					
+					return;
+				}
+				
+				case 2:
+				{
+					/* Hack - shift gate if next to walls */
+					if (cave[y + 3][x + 2].feat == FEAT_PERM_SOLID) xx -= 3;
+					if (cave[y + 3][x + 5].feat == FEAT_PERM_SOLID) xx += 3;
+					
+					x = xx;
+					
+					/* Draw an empty square */
+					generate_fill(y + 3, x + 3, y + 4, x + 4, FEAT_FLOOR);
+					
+					/* Bottom gate */
+					cave[y + 4][x + 3].fld_idx = FT_LOCK_DOOR;
+					cave[y + 4][x + 3].feat = FEAT_CLOSED;
+					cave[y + 4][x + 4].fld_idx = FT_LOCK_DOOR;
+					cave[y + 4][x + 4].feat = FEAT_CLOSED;
+					
+					return;
+				}
+				
+				case 3:
+				{
+					/* Hack - shift gate if next to walls */
+					if (cave[y + 3][x + 2].feat == FEAT_PERM_SOLID) xx -= 3;
+					if (cave[y + 3][x + 5].feat == FEAT_PERM_SOLID) xx += 3;
+					
+					x = xx;
+					
+					/* Draw an empty square */
+					generate_fill(y + 3, x + 3, y + 4, x + 4, FEAT_FLOOR);
+					
+					/* Top gate */
+					cave[y + 3][x + 3].fld_idx = FT_LOCK_DOOR;
+					cave[y + 3][x + 3].feat = FEAT_CLOSED;
+					cave[y + 3][x + 4].fld_idx = FT_LOCK_DOOR;
+					cave[y + 3][x + 4].feat = FEAT_CLOSED;
+					
+					return;
+				}
+			}
+		}
+	}
+}
 
 /* Actually draw the city on cave[][] */
 void draw_city(u16b town_num)
@@ -865,24 +961,12 @@ void draw_city(u16b town_num)
 							FEAT_PERM_SOLID);
 					}
 					
-					/* Draw gates if visible */
-					for (k = 0; k < MAX_GATES; k++)
-					{
-						if ((t_ptr->gates_x[k] == i) &&
-							 (t_ptr->gates_y[k] == j))
-						{
-							/* Draw an empty square */
-							generate_fill(y + 3, x + 3, y + 4, x + 4, 
-								FEAT_FLOOR);
-						}
-					}
+					/* Draw the gates */
+					draw_gates(x, y, i, j, t_ptr);
 				}
 			}
 		}
-	}
-	
-	/* Draw gates */
-	
+	}	
 	
 	/* Scan blocks in a random order */
 	for (build = 0; build < count; build++)
