@@ -796,6 +796,8 @@ static bool get_moves(int m_idx, int *mm)
 				int x = px + ddx_ddd[i];
 				int y = py + ddy_ddd[i];
 
+				if(!in_bounds2(y,x)) continue;
+				
 				/* Check grid */
 				if (monster_can_cross_terrain(area(y,x)->feat, r_ptr))
 				{
@@ -835,6 +837,8 @@ static bool get_moves(int m_idx, int *mm)
 					break;
 				}
 
+				if(!in_bounds2(y2, x2)) continue;
+				
 				/* Ignore filled grids */
 				c_ptr = area(y2, x2);
 				if (!cave_empty_grid(c_ptr)) continue;
