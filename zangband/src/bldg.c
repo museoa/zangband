@@ -302,7 +302,7 @@ bool test_gold(s32b *cost)
 /*
  * Display a building.
  */
-static void display_build(const field_type *f_ptr, const store_type *b_ptr)
+void display_build(const field_type *f_ptr, const store_type *b_ptr)
 {
 	const b_own_type *bo_ptr = &b_owners[f_ptr->data[0]][b_ptr->owner];
 
@@ -324,7 +324,7 @@ static void display_build(const field_type *f_ptr, const store_type *b_ptr)
 
 	/* Display building-specific information */
 	field_hook(&area(p_ptr->px, p_ptr->py)->fld_idx,
-			   FIELD_ACT_STORE_ACT1, factor);
+			   FIELD_ACT_STORE_ACT1, factor, b_ptr);
 
 	prtf(0, 23, " ESC) Exit building");
 
@@ -1797,14 +1797,7 @@ static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
 	factor = ((factor + 200) * bo_ptr->inflate) / 400;
 
 	field_hook(&area(p_ptr->px, p_ptr->py)->fld_idx,
-			   FIELD_ACT_STORE_ACT2, &factor);
-
-	/* Hack XXX XXX, factor is returned as 2 if we want a redraw */
-	if (factor == 2)
-	{
-		/* Redraw screen */
-		display_build(f_ptr, b_ptr);
-	}
+			   FIELD_ACT_STORE_ACT2, &factor, b_ptr);
 
 	/* Did we do anything? */
 	return (factor);

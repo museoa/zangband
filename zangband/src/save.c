@@ -1514,8 +1514,6 @@ static bool wr_savefile_new(void)
 			case QUEST_TYPE_BOUNTY:
 			{
 				/* Bounty quests */
-				wr_u16b(quest[i].data.bnt.place);
-				wr_u16b(quest[i].data.bnt.shop);
 				wr_u16b(quest[i].data.bnt.r_idx);
 				wr_u16b(quest[i].data.bnt.cur_num);
 				wr_u16b(quest[i].data.bnt.max_num);

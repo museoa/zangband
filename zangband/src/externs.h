@@ -826,6 +826,7 @@ extern void store_init(int town_num, int store_num, byte store);
 extern bool get_nightmare(int r_idx);
 extern void have_nightmare(void);
 extern bool test_gold(s32b *cost);
+extern void display_build(const field_type *f_ptr, const store_type *b_ptr);
 extern void do_cmd_bldg(field_type *f_ptr);
 extern bool compare_weapons(void);
 extern bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac);
@@ -1207,6 +1208,8 @@ DECL_FIELD_ACTION(ishardarmour_tester);
 DECL_FIELD_ACTION(isphardarmour_tester);
 DECL_FIELD_ACTION(ishelm_tester);
 DECL_FIELD_ACTION(issupplies_tester);
+DECL_FIELD_ACTION(castlequest1);
+DECL_FIELD_ACTION(castlequest2);
 
 /* compress.c */
 extern void test_compress_module(void);
@@ -1222,6 +1225,9 @@ extern void activate_quests(int level);
 extern int number_of_quests(void);
 extern void trigger_quest_create(byte c_type, vptr data);
 extern void trigger_quest_complete(byte x_type, vptr data);
+extern quest_type *lookup_quest_building(const store_type *b_ptr);
+extern void reward_quest(quest_type *q_ptr);
+extern void request_quest(const store_type *b_ptr, int scale);
 extern bool do_cmd_knowledge_quests(int dummy);
 
 /* maid-grf.c */

@@ -3788,6 +3788,8 @@ bool field_action_mutate2(field_type *f_ptr, va_list vp)
 {
 	int *factor = va_arg(vp, int *);
 	s32b cost;
+	
+	const store_type *b_ptr = va_arg(vp, const store_type *);
 
 	if (p_ptr->cmd.cmd == 'E')
 	{
@@ -3809,9 +3811,9 @@ bool field_action_mutate2(field_type *f_ptr, va_list vp)
 
 			/* Display messages */
 			message_flush();
-
-			/* Hack - We want to redraw the screen */
-			*factor = 2;
+			
+			/* Redraw screen */
+			display_build(f_ptr, b_ptr);
 		}
 		else
 		{
@@ -4671,6 +4673,75 @@ bool field_action_issupplies_tester(field_type *f_ptr, va_list vp)
 
 	/* This leaves the store with scrolls, tools, ammo, and diggers. */
 
+	/* Done */
+	return (FALSE);
+}
+
+
+/*
+ * Castle quest-giver building
+ */
+bool field_action_castlequest1(field_type *f_ptr, va_list vp)
+{
+	int factor = va_arg(vp, int);
+	const store_type *b_ptr = va_arg(vp, const store_type *);
+	
+	quest_type *q_ptr = lookup_quest_building(b_ptr);
+	
+	/* Ignore parameter */
+	(void) factor;
+	(void) f_ptr;
+	
+	/* Do we already have a quest here? */
+	if (q_ptr)
+	{
+		put_fstr(35, 19, CLR_YELLOW " R) Request Reward");
+	}
+	else
+	{
+		put_fstr(35, 19, CLR_YELLOW " R) Request Quest");
+	}
+	
+	/* Done */
+	return (FALSE);
+}
+
+
+/*
+ * Request a quest from the Lord.
+ */
+bool field_action_castlequest2(field_type *f_ptr, va_list vp)
+{
+	int *factor = va_arg(vp, int *);
+	
+	const store_type *b_ptr = va_arg(vp, const store_type *);
+	
+	quest_type *q_ptr = lookup_quest_building(b_ptr);
+	
+	
+	if (p_ptr->cmd.cmd == 'R')
+	{
+		/* Do we already have a quest? */
+		if (q_ptr)
+		{
+			/* Give reward? */
+			reward_quest(q_ptr);
+		}
+		else
+		{
+			/* Make a new quest */
+			request_quest(b_ptr, f_ptr->data[1] * *factor);
+		}
+
+		/* Hack, use factor as a return value */
+		*factor = TRUE;
+	}
+	else
+	{
+	
+		*factor = FALSE;
+	}
+	
 	/* Done */
 	return (FALSE);
 }

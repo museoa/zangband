@@ -145,9 +145,6 @@ static void prune_quests(void)
 
 		/*
 		 * Remove 'completed' quests.
-		 *
-		 * Set a quest to be 'finished' if you want to
-		 * keep the player memory of it.
 		 */
 		if (q_ptr->status == QUEST_STATUS_COMPLETED)
 		{
@@ -944,155 +941,83 @@ void trigger_quest_complete(byte x_type, vptr data)
 			}
 		}
 
-		/*
-		 * Hack - Give a message for 'completed' quests.
-		 * XXX XXX XXX (Not yet - no quest-givers)
-		 */
-		/* if (q_ptr->status == QUEST_STATUS_COMPLETED) */
-		if (q_ptr->status == QUEST_STATUS_FINISHED)
+		/* Finished the quest? */
+		if ((q_ptr->status == QUEST_STATUS_FINISHED) ||
+			(q_ptr->status == QUEST_STATUS_COMPLETED))
 		{
-#if 0
-			/* Take note */
-			if (auto_notes)
-			{
-				add_note('Q', "Finished quest: %d %s",
-						quest[i].max_num,
-						(r_name + r_info[quest[i].r_idx].name));
-			}
-#endif /* 0 */
-
 			msgf("You just completed your quest!");
 		}
-
 	}
 }
 
-#if 0
+
 /*
- * Display quest information
+ * Look up a quest that corresponds to the given building.
+ *
+ * If there is none, return NULL.
+ *
+ * (This assumes one quest per building.)
  */
-static void get_questinfo(int questnum)
+quest_type *lookup_quest_building(const store_type *b_ptr)
 {
 	int i;
-	int old_quest;
-	char tmp_str[80];
-
-
-	/* Clear the text */
-	for (i = 0; i < 10; i++)
+	quest_type *q_ptr;
+	
+	place_type *pl_ptr = &place[p_ptr->place_num];
+	
+	for (i = 0; i < q_max; i++)
 	{
-		quest_text[i][0] = '\0';
+		q_ptr = &quest[i];
+		
+		/* Bounds checking */
+		if (q_ptr->shop >= pl_ptr->numstores) continue;
+		
+		/* A match? */
+		if (&pl_ptr->store[q_ptr->shop] == b_ptr)
+		{
+		
+			return (q_ptr);
+		}
 	}
 
-
-	/* Print the quest info */
-	prtf(0, 5, "Quest Information (Danger level: %d)",
-			quest[questnum].level);
-
-	prtf(0, 7, quest[questnum].name);
-
-	for (i = 0; i < 10; i++)
-	{
-		put_fstr(0, i + 8, CLR_YELLOW "%s", quest_text[i]);
-	}
+	/* No match */
+	return (NULL);
 }
 
 
-/*
- * Request a quest from the Lord.
- */
-static void castle_quest(void)
+void reward_quest(quest_type *q_ptr)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
-	int q_index = 0;
-	monster_race *r_ptr;
-	quest_type *q_ptr;
-	cptr name;
-
-
-	clear_bldg(7, 18);
-
-	/* Current quest of the building */
-	q_index = get_qindex();
-
-	/* Is there a quest available at the building? */
-	if (!q_index)
-	{
-		put_fstr(0, 8, "I don't have a quest for you at the moment.");
-		return;
-	}
-
-	q_ptr = &quest[q_index];
-
 	/* Quest is completed */
 	if (q_ptr->status == QUEST_STATUS_COMPLETED)
 	{
+		/* Give reward */
+		p_ptr->au += q_ptr->reward * 100;
+		
+		msgf("You are given %ld gold pieces for your efforts.",
+				(long) q_ptr->reward * 100);
+	
 		/* Rewarded quest */
-		q_ptr->status = QUEST_STATUS_REWARDED;
-
-		get_questinfo(q_index);
-	}
-	/* Failed quest */
-	else if (q_ptr->status == QUEST_STATUS_FAILED)
-	{
-		get_questinfo(q_index);
-
-		/* Mark quest as done (but failed) */
-		q_ptr->status = QUEST_STATUS_FAILED_DONE;
-	}
-	/* Quest is still unfinished */
-	else if (q_ptr->status == QUEST_STATUS_TAKEN)
-	{
-		put_fstr(0, 8, "You have not completed your current quest yet!");
-		put_fstr(0, 9, "Use CTRL-Q to check the status of your quest.");
-		put_fstr(0, 12, "Return when you have completed your quest.");
-	}
-	/* No quest yet */
-	else if (q_ptr->status == QUEST_STATUS_UNTAKEN)
-	{
-		q_ptr->status = QUEST_STATUS_TAKEN;
-
-		/* Assign a new quest */
-		if (q_ptr->type == QUEST_TYPE_KILL_ANY_LEVEL)
+		q_ptr->status = QUEST_STATUS_FINISHED;
+		
+		/* Take note */
+		if (auto_notes)
 		{
-			if (q_ptr->r_idx == 0)
-			{
-				/* Random monster at least 5 - 10 levels out of deep */
-				q_ptr->r_idx = get_mon_num(q_ptr->level + rand_range(5, 10));
-			}
-
-			r_ptr = &r_info[q_ptr->r_idx];
-
-			while ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->rarity != 1))
-			{
-				q_ptr->r_idx = get_mon_num(q_ptr->level) + rand_range(5, 10);
-				r_ptr = &r_info[q_ptr->r_idx];
-			}
-
-			if (q_ptr->max_num == 0)
-			{
-				/* Random monster number */
-				if (randint1(10) > 7)
-					q_ptr->max_num = 1;
-				else
-					q_ptr->max_num = rand_range(2, 4);
-			}
-
-			q_ptr->cur_num = 0;
-			name = (r_name + r_ptr->name);
-			msgf("Your quest: kill %d %s", q_ptr->max_num, name);
-			message_flush();
+			add_note('Q', "Finished quest: %s", q_ptr->name);
 		}
-		else
-		{
-			get_questinfo(q_index);
-		}
+	}
+	else
+	{
+		msgf("You haven't completed the quest yet!");
+		message_flush();
 	}
 }
 
-#endif /* 0 */
+
+void request_quest(const store_type *b_ptr, int scale)
+{
+	/* Hack - do nothing now. */
+}
+
 
 
 /*

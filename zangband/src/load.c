@@ -2747,8 +2747,6 @@ static void rd_quests(int max_quests)
 			case QUEST_TYPE_BOUNTY:
 			{
 				/* Bounty quests */
-				rd_u16b(&q_ptr->data.bnt.place);
-				rd_u16b(&q_ptr->data.bnt.shop);
 				rd_u16b(&q_ptr->data.bnt.r_idx);
 				rd_u16b(&q_ptr->data.bnt.cur_num);
 				rd_u16b(&q_ptr->data.bnt.max_num);

@@ -7128,6 +7128,13 @@ const field_action f_action[] =
 	/* Non-scroll magic items maker */
 	{field_action_issupplies_tester, "field_action_issupplies_tester"},
 
+	/* Castle quest-giver part 1 */
+	{field_action_mutate1, "castlequest1"},
+	
+	/* Castle quest-giver part 2 */
+	{field_action_mutate2, "castlequest2"},
+
+
 	/* Done */
 	{NULL, NULL}
 };

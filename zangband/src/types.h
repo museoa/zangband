@@ -1033,11 +1033,6 @@ typedef struct quest_bnt quest_bnt;
 
 struct quest_bnt
 {
-	/* Mail quests */
-	u16b place;
-	u16b shop;	/* Owner to bring item */
-
-	/* Bounty quests */
 	u16b r_idx;	/* Monster */
 	u16b cur_num;	/* Number killed */
 	u16b max_num;	/* Number required */
