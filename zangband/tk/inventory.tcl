@@ -873,8 +873,6 @@ proc NSInventory::SetList {oop invOrEquip tval {both 0}} {
 
 	if {$both} {
 		set items [angband $invOrEquip find]
-	} elseif {[string length $tval]} {
-		set items [angband $invOrEquip find -tester yes -tval $tval]
 	} else {
 		set items [angband $invOrEquip find -tester yes]
 	}
