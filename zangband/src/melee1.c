@@ -657,12 +657,10 @@ bool make_attack_normal(int m_idx)
 							break;
 						}
 
-#if 0							/* This is broken until we rearrange the object-making code */
-
 						/* Find an item */
 						OBJ_ITT_START (p_ptr->inventory, o_ptr)
 						{
-							s16b o_idx;
+							char o_name[256];
 
 							/* Only some of the time */
 							if (!one_in_(INVEN_PACK)) continue;
@@ -674,48 +672,20 @@ bool make_attack_normal(int m_idx)
 							object_desc(o_name, o_ptr, FALSE, 3, 256);
 
 							/* Message */
-							msg_format("%sour %s (%c) was stolen!",
+							msg_format("%sour %s was stolen!",
 									   ((o_ptr->number > 1) ? "One of y" : "Y"),
-									   o_name, index_to_label(i));
+									   o_name);
 
 							chg_virtue(V_SACRIFICE, 1);
-
-							/* Make an object */
-							o_idx = o_pop();
-
-							/* Success */
-							if (o_idx)
-							{
-								object_type *j_ptr;
-
-								/* Get new object */
-								j_ptr = &o_list[o_idx];
-
-								/* Copy object */
-								object_copy(j_ptr, o_ptr);
-
-								/* Modify number */
-								j_ptr->number = 1;
-
-								/* Wand / rod stacking */
-								distribute_charges(o_ptr, j_ptr,
-												   --o_ptr->number);
-
-								/* Forget mark */
-								j_ptr->info &= ~(OB_SEEN);
-
-								/* Is allocated */
-								j_ptr->allocated = TRUE;
-
-								/* Build stack */
-								j_ptr->next_o_idx = m_ptr->hold_o_idx;
-
-								/* Build stack */
-								m_ptr->hold_o_idx = o_idx;
-							}
-
-							/* Steal the items */
-							item_increase(o_ptr, -1);
+							
+							/* Split object */
+							o_ptr = item_split(o_ptr, 1);
+							
+							/* Forget mark */
+							o_ptr->info &= ~(OB_SEEN);
+							
+							/* Give to the monster */
+							o_ptr = add_object_list(&m_ptr->hold_o_idx, o_ptr);
 
 							/* Obvious */
 							obvious = TRUE;
@@ -727,17 +697,17 @@ bool make_attack_normal(int m_idx)
 							break;
 						}
 						OBJ_ITT_END;
-#endif /* 0 */
+
 
 						break;
 					}
 
 					case RBE_EAT_FOOD:
 					{
+						char o_name[256];
+					
 						/* Take some damage */
 						take_hit(damage, ddesc);
-
-#if 0							/* Not working until object code done... */
 
 						/* Steal some food */
 						OBJ_ITT_START (p_ptr->inventory, o_ptr)
@@ -752,9 +722,9 @@ bool make_attack_normal(int m_idx)
 							object_desc(o_name, o_ptr, FALSE, 0, 256);
 
 							/* Message */
-							msg_format("%sour %s (%c) was eaten!",
+							msg_format("%sour %s was eaten!",
 									   ((o_ptr->number > 1) ? "One of y" : "Y"),
-									   o_name, index_to_label(i));
+									   o_name);
 
 							/* Steal the items */
 							item_increase(o_ptr, -1);
@@ -766,7 +736,7 @@ bool make_attack_normal(int m_idx)
 							break;
 						}
 						OBJ_ITT_END;
-#endif /* 0 */
+
 						break;
 					}
 
