@@ -3090,7 +3090,7 @@ void random_artifact_resistance(object_type *o_ptr)
 /*
  * Create the artifact of the specified number
  */
-void create_named_art(int a_idx, int y, int x)
+void create_named_art(int a_idx, int x, int y)
 {
 	object_type forge;
 	object_type *q_ptr;

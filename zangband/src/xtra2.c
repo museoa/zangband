@@ -526,10 +526,10 @@ bool monster_death(int m_idx, bool explode)
 		if (strstr((r_name + r_ptr->name), "Serpent of Chaos"))
 		{
 			/* Make Grond */
-			create_named_art(ART_GROND, y, x);
+			create_named_art(ART_GROND, x, y);
 			
 			/* Make Crown of Morgoth */
-			create_named_art(ART_MORGOTH, y, x);
+			create_named_art(ART_MORGOTH, x, y);
 		}
 		else
 		{
@@ -626,7 +626,7 @@ bool monster_death(int m_idx, bool explode)
 				if (a_info[a_idx].cur_num == 0)
 				{
 					/* Create the artifact */
-					create_named_art(a_idx, y, x);
+					create_named_art(a_idx, x, y);
 
 					/* The artifact has been created */
 					a_info[a_idx].cur_num = 1;

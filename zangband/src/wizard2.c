@@ -84,7 +84,7 @@ static void wiz_create_named_art(int a_idx)
 	int py = p_ptr->py;
 
 	/* Create the artifact */
-	create_named_art(a_idx, py, px);
+	create_named_art(a_idx, px, py);
 
 	/* All done */
 	msg_print("Allocated.");
@@ -1176,7 +1176,7 @@ static void wiz_create_item(void)
 			if ((a_ptr->tval == k_ptr->tval) && (a_ptr->sval == k_ptr->sval))
 			{
 				/* found it */
-				create_named_art(i, py, px);
+				create_named_art(i, px, py);
 
 				/* All done */
 				msg_print("Allocated.");
