@@ -118,30 +118,28 @@ bool borg_use_things(void)
 	/* Quaff potions of "restore" stat if needed */
 	if ((bp_ptr->status.fixstat[A_STR] &&
 		 (borg_quaff_potion(SV_POTION_RES_STR) ||
-		  borg_quaff_potion(SV_POTION_INC_STR) ||
+		  borg_zap_rod(SV_ROD_RESTORATION) ||
 		  borg_eat_food(SV_FOOD_RESTORE_STR) ||
 		  borg_eat_food(SV_FOOD_RESTORING))) ||
 		(bp_ptr->status.fixstat[A_INT] &&
 		 (borg_quaff_potion(SV_POTION_RES_INT) ||
-		  borg_quaff_potion(SV_POTION_INC_INT) ||
+		  borg_zap_rod(SV_ROD_RESTORATION) ||
 		  borg_eat_food(SV_FOOD_RESTORING))) ||
 		(bp_ptr->status.fixstat[A_WIS] &&
 		 (borg_quaff_potion(SV_POTION_RES_WIS) ||
-		  borg_quaff_potion(SV_POTION_INC_WIS) ||
+		  borg_zap_rod(SV_ROD_RESTORATION) ||
 		  borg_eat_food(SV_FOOD_RESTORING))) ||
 		(bp_ptr->status.fixstat[A_DEX] &&
 		 (borg_quaff_potion(SV_POTION_RES_DEX) ||
-		  borg_quaff_potion(SV_POTION_INC_DEX) ||
+		  borg_zap_rod(SV_ROD_RESTORATION) ||
 		  borg_eat_food(SV_FOOD_RESTORING))) ||
 		(bp_ptr->status.fixstat[A_CON] &&
 		 (borg_quaff_potion(SV_POTION_RES_CON) ||
-		  borg_quaff_potion(SV_POTION_INC_CON) ||
+		  borg_zap_rod(SV_ROD_RESTORATION) ||
 		  borg_eat_food(SV_FOOD_RESTORE_CON) ||
 		  borg_eat_food(SV_FOOD_RESTORING))) ||
 		(bp_ptr->status.fixstat[A_CHR] &&
-		 (borg_quaff_potion(SV_POTION_RES_CHR) ||
-		  borg_quaff_potion(SV_POTION_INC_CHR) ||
-		  borg_eat_food(SV_FOOD_RESTORING))))
+		 borg_quaff_potion(SV_POTION_RES_CHR)))
 	{
 		return (TRUE);
 	}
@@ -226,6 +224,9 @@ bool borg_use_things(void)
 			borg_spell_fail(REALM_NATURE, 0, 3, 40) ||
 			borg_eat_food(SV_FOOD_BISCUIT) ||
 			borg_eat_food(SV_FOOD_JERKY) ||
+			borg_eat_food(SV_FOOD_SLIME_MOLD) ||
+			borg_eat_food(SV_FOOD_PINT_OF_ALE) ||
+			borg_eat_food(SV_FOOD_PINT_OF_WINE) ||
 			borg_eat_food(SV_FOOD_RATION) ||
 			borg_read_scroll(SV_SCROLL_SATISFY_HUNGER) ||
 			borg_eat_food(SV_FOOD_WAYBREAD))
@@ -473,11 +474,11 @@ bool borg_check_lite(void)
 	if (do_evil && (!when_detect_evil || (borg_t - when_detect_evil >= 9)))
 	{
 		/* Check for traps */
-		if (borg_spell_fail(REALM_NATURE, 0, 0, 20) ||
+		if (borg_use_staff(SV_STAFF_DETECT_EVIL) ||
+			borg_spell_fail(REALM_NATURE, 0, 0, 20) ||
 			borg_spell_fail(REALM_ARCANE, 0, 3, 20) ||
 			borg_spell_fail(REALM_SORCERY, 0, 0, 20) ||
 			borg_spell_fail(REALM_DEATH, 0, 2, 20) ||
-			borg_spell_fail(REALM_DEATH, 0, 0, 20) ||
 			borg_spell_fail(REALM_LIFE, 0, 0, 20) ||
 			borg_spell_fail(REALM_DEATH, 0, 0, 20))
 		{
@@ -848,7 +849,7 @@ static bool borg_enchant_to_a(void)
 		}
 
 		/* Tell the world */
-		borg_note_fmt("# Enchanting %s (%c)",
+		borg_note("# Enchanting %s (%c)",
 					  equipment[slot].o_name, I2A(slot));
 
 		/* Choose that item */
@@ -884,13 +885,13 @@ static bool borg_enchant_to_h(void)
 		if (inven)
 		{
 			/* Tell the world */
-			borg_note_fmt("# Enchanting %s (%c)",
+			borg_note("# Enchanting %s (%c)",
 						  inventory[slot].o_name, I2A(slot));
 		}
 		else
 		{
 			/* Tell the world */
-			borg_note_fmt("# Enchanting %s (%c)",
+			borg_note("# Enchanting %s (%c)",
 						  equipment[slot].o_name, I2A(slot));
 
 			/*
@@ -945,13 +946,13 @@ static bool borg_enchant_to_d(void)
 		if (inven)
 		{
 			/* Tell the world */
-			borg_note_fmt("# Enchanting %s (%c)",
+			borg_note("# Enchanting %s (%c)",
 						  inventory[slot].o_name, I2A(slot));
 		}
 		else
 		{
 			/* Tell the world */
-			borg_note_fmt("# Enchanting %s (%c)",
+			borg_note("# Enchanting %s (%c)",
 						  equipment[slot].o_name, I2A(slot));
 
 			/*
@@ -1074,13 +1075,13 @@ static bool borg_enchant_to_w(void)
 		if (inven)
 		{
 			/* Tell the world */
-			borg_note_fmt("# Enchanting %s (%c)",
+			borg_note("# Enchanting %s (%c)",
 						  inventory[slot].o_name, I2A(slot));
 		}
 		else
 		{
 			/* Tell the world */
-			borg_note_fmt("# Enchanting %s (%c)",
+			borg_note("# Enchanting %s (%c)",
 						  equipment[slot].o_name, I2A(slot));
 
 			/*
@@ -1175,10 +1176,10 @@ static bool borg_enchant_artifact(void)
 
 	/* Tell the world */
 	if (inven)
-		borg_note_fmt("# Creating an artifact from %s (%c)",
+		borg_note("# Creating an artifact from %s (%c)",
 					  inventory[slot].o_name, I2A(slot));
 	else
-		borg_note_fmt("# Creating an artifact from %s (%c)",
+		borg_note("# Creating an artifact from %s (%c)",
 					  equipment[slot].o_name, I2A(slot));
 
 	/* Read the scroll */
@@ -1390,7 +1391,7 @@ bool borg_recharging(void)
 		borg_read_scroll(SV_SCROLL_RECHARGING))
 	{
 		/* Message */
-		borg_note_fmt("Recharging %s", inventory[charge].o_name);
+		borg_note("Recharging %s", inventory[charge].o_name);
 
 		/* Recharge the item */
 		borg_keypress(I2A(charge));
@@ -1600,7 +1601,7 @@ static void borg_destroy_item(list_item *l_ptr, int slot, int number)
 	char buf[4];
 
 	/* Message */
-	borg_note_fmt("# Destroying %s.", l_ptr->o_name);
+	borg_note("# Destroying %s.", l_ptr->o_name);
 
 	borg_keypress('0');
 
@@ -1638,7 +1639,7 @@ static void borg_destroy_item(list_item *l_ptr, int slot, int number)
 
 		bad_obj_x[bad_obj_n] = c_x;
 		bad_obj_y[bad_obj_n] = c_y;
-		borg_note_fmt("# Crappy artifact at %d,%d", c_x, c_y);
+		borg_note("# Crappy artifact at %d,%d", c_x, c_y);
 	}
 
 	borg_keypress(I2A(slot));
@@ -1738,16 +1739,14 @@ static bool borg_destroy_aux(bool must_destroy)
 	{
 		l_ptr = &inventory[i];
 
+		/* Initialize */
+		value = 0;
+
 		/* Skip empty / unaware items */
 		if (!l_ptr->k_idx) continue;
 
 		/* unknown? */
-		if (borg_worthless_item(l_ptr))
-		{
-			/* Some unknown items are valueless */
-			value = 0;
-		}
-		else
+		if (!borg_worthless_item(l_ptr))
 		{
 			/* Skip items that need to be *id*'d */
 			if (strstr(l_ptr->o_name, "{special") ||
@@ -1802,7 +1801,7 @@ static bool borg_destroy_aux(bool must_destroy)
 		if (value > b_v) continue;
 
 		/* Hehe, someone can not count */
-		if (value < 0) borg_oops_fmt("Destroying %s with value = %d ???", l_ptr->o_name, value);
+		if (value < 0) borg_oops("Destroying %s with value = %d ???", l_ptr->o_name, value);
 
 		/* do not allow too large values because that item is too interesting */
 		if (value > 1000)
@@ -1840,7 +1839,7 @@ static bool borg_destroy_aux(bool must_destroy)
 	if (borg_consume(l_ptr)) return (TRUE);
 
 	/* Make a note of the reason */
-	borg_note_fmt("# Destroying %sfor weight, value = %d",
+	borg_note("# Destroying %sfor weight, value = %d",
 		(destroy_weight) ? "" : "not ", b_v);
 
 	/* Destroy the item */
@@ -2045,7 +2044,7 @@ static bool borg_test_stuff(void)
 							if (borg_heavy_sense()) continue;
 
 							/* light pseudo may not work so id the item after a while */
-							if (randint0(1000)) continue;
+							if (!v && randint0(1000)) continue;
 						}
 
 						v = 5;
@@ -2096,7 +2095,7 @@ static bool borg_test_stuff(void)
 			}
 
 			/* Log -- may be cancelled */
-			borg_note_fmt("# Identifying %s.", l_ptr->o_name);
+			borg_note("# Identifying %s.", l_ptr->o_name);
 
 			/* Select the item */
 			borg_keypress(I2A(b_i));
@@ -2207,7 +2206,7 @@ static bool borg_test_stuff_star(void)
 			}
 
 			/* Log -- may be cancelled */
-			borg_note_fmt("# *IDENTIFY*ing %s.", l_ptr->o_name);
+			borg_note("# *IDENTIFY*ing %s.", l_ptr->o_name);
 
 			/* Select the item */
 			borg_keypress(I2A(b_i));
@@ -2316,7 +2315,7 @@ static bool borg_test_stuff_pseudo(void)
 		}
 
 		/* Log -- may be cancelled */
-		borg_note_fmt("# pseudo identifying %s.", l_ptr->o_name);
+		borg_note("# pseudo identifying %s.", l_ptr->o_name);
 
 		/* Select the item */
 		borg_keypress(I2A(b_i));
@@ -2474,7 +2473,7 @@ bool borg_wear_stuff(void)
 	l_ptr = &inventory[b_i];
 
 	/* Log */
-	borg_note_fmt("# Wearing %s. (%c)", l_ptr->o_name, I2A(b_i));
+	borg_note("# Wearing %s. (%c)", l_ptr->o_name, I2A(b_i));
 
 	/* Wear it */
 	borg_keypress('w');
@@ -2556,7 +2555,7 @@ bool borg_unwear_stuff(void)
 	if (b_slot == -1) return (FALSE);
 
 	/* Say you take it off */
-	borg_note_fmt("# Taking off a %s (%c)", equipment[b_slot].o_name, I2A(b_slot));
+	borg_note("# Taking off a %s (%c)", equipment[b_slot].o_name, I2A(b_slot));
 
 	/* Take it off */
 	borg_keypress('t');
@@ -2808,7 +2807,7 @@ bool borg_play_magic(bool bored)
 		borg_magic *as = &borg_magics[b_realm][b_book][b_spell];
 
 		/* Debugging Info */
-		borg_note_fmt("# Studying %s spell %s.", as->realm_name, as->name);
+		borg_note("# Studying %s spell %s.", as->realm_name, as->name);
 
 		/* Learn the spell */
 		borg_keypress('G');
@@ -3005,12 +3004,12 @@ bool borg_wait_recharge(void)
 	if (slot == -1)
 	{
 		/* Note the rod */
-		borg_note_fmt("Waiting for %s to recharge.", inventory[i].o_name);
+		borg_note("Waiting for %s to recharge.", inventory[i].o_name);
 	}
 	else
 	{
 		/* Note the swapping */
-		borg_note_fmt("Swapping %s to recharge it.", inventory[i].o_name);
+		borg_note("Swapping %s to recharge it.", inventory[i].o_name);
 
 		/* wear the item */
 		borg_note("# Swapping Item for Recharge.");
@@ -3087,7 +3086,7 @@ bool borg_leave_level(bool bored)
 				if (borg_prepared(bp_ptr->max_depth * 6 / 10))
 				{
 					cptr reason = borg_prepared(bp_ptr->max_depth);
-					borg_note_fmt
+					borg_note
 						("# Way too scary to recall down there!   %s", reason);
 				}
 				else
@@ -3137,7 +3136,7 @@ bool borg_leave_level(bool bored)
 	{
 		cptr reason = borg_prepared(bp_ptr->depth + 1);
 		g = -1;
-		borg_note_fmt("# heading up (bored and unable to dive: %s)", reason);
+		borg_note("# heading up (bored and unable to dive: %s)", reason);
 	}
 
 	/* Power dive if I am playing too shallow */
@@ -3148,7 +3147,7 @@ bool borg_leave_level(bool bored)
 	{
 		cptr reason = borg_prepared(bp_ptr->depth);
 
-		borg_note_fmt("# heading up (too deep: %s)", reason);
+		borg_note("# heading up (too deep: %s)", reason);
 		g = -1;
 
 		/* if I must restock go to town */
@@ -3156,7 +3155,7 @@ bool borg_leave_level(bool bored)
 		{
 			cptr reason = borg_prepared(bp_ptr->depth);
 
-			borg_note_fmt("# returning to town to restock(too deep: %s)",
+			borg_note("# returning to town to restock(too deep: %s)",
 						  reason);
 			goal_rising = TRUE;
 		}
@@ -3165,7 +3164,7 @@ bool borg_leave_level(bool bored)
 		if (borg_prepared(bp_ptr->max_depth * 5 / 10))
 		{
 			cptr reason = borg_prepared(bp_ptr->depth);
-			borg_note_fmt("# returning to town (too deep: %s)", reason);
+			borg_note("# returning to town (too deep: %s)", reason);
 			goal_rising = TRUE;
 		}
 	}
