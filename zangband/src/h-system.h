@@ -208,7 +208,18 @@ struct module_type
 };
 
 
-/* Macro to make an entry for a port in main.c's list */
+/*
+ * Macro to make an entry for a port in main.c's list.
+ *
+ * This expands 'INIT_MODULE(port)' to be:
+ *
+ * { "port", help_port, init_port }   (Without the type-cast. )
+ *
+ * When adding new ports make sure you use the correct parameter
+ * types to init_"port_name"().  If you need to add a new one,
+ * add it on the end of the list.  (You don't have to use all the
+ * parameters due to the way C passes them on the stack.)
+ */
 #define INIT_MODULE(P) \
 		{ #P, help_##P, (errr (*)(int, char **, unsigned char *)) init_##P }
 
