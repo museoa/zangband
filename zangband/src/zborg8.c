@@ -1049,7 +1049,7 @@ bool borg_think_store(void)
 	borg_shops[shop_num].when = borg_t;
 
 	/* Remove "useless" equipment */
-	if (borg_remove_stuff()) return (TRUE);
+	if (borg_unwear_stuff()) return (TRUE);
 
 	/* Wear good stuff */
 	if (borg_wear_stuff()) return (TRUE);
@@ -1513,9 +1513,6 @@ bool borg_think_dungeon(void)
 
 	/* Take off things that have become useless */
 	if (borg_unwear_stuff()) return (TRUE);
-
-	/* Remove stuff that is useless or detrimental */
-	if (borg_remove_stuff()) return (TRUE);
 
 	/* Check the light */
 	if (borg_check_lite()) return (TRUE);

@@ -336,7 +336,7 @@ bool borg_use_things(void)
 	{
 		/* Attempt to satisfy hunger */
 		if (borg_spell_fail(REALM_LIFE, 0, 7, 40) ||
-			borg_spell_fail(REALM_ARCANE, 2, 7, 40) ||
+			borg_spell_fail(REALM_ARCANE, 2, 6, 40) ||
 			borg_spell_fail(REALM_NATURE, 0, 3, 40) ||
 			borg_eat_food(SV_FOOD_BISCUIT) ||
 			borg_eat_food(SV_FOOD_JERKY) ||
@@ -1916,7 +1916,7 @@ static bool borg_destroy_aux(bool must_destroy)
 		if (value > b_v) continue;
 
 		/* Hehe, someone can not count */
-		if (value < 0) borg_oops("Destroying item with negative value???");
+		if (value < 0) borg_oops_fmt("Destroying %s with value = %d ???", l_ptr->o_name, value);
 
 		/* do not allow too large values because that item is too interesting */
 		if (value > 1000)
@@ -2453,202 +2453,6 @@ bool borg_test_stuff_pseudo(void)
 
 
 /*
- * Place our "best" ring on the "tight" finger if needed
- *
- * This function is adopted from "borg_wear_stuff()"
- *
- * Basically, we evaluate the world in which each ring is added
- * to the current set of equipment, and we wear the ring, if any,
- * that gives us the most "power".
- */
-static bool borg_wear_rings(void)
-{
-	int slot;
-
-	s32b p, b_p = borg_power();
-
-	int i, b_i = -1;
-
-	bool hand = FALSE;
-
-	list_item *l_ptr;
-
-	/* Require an empty slot */
-	if (inven_num >= INVEN_PACK - 1) return (FALSE);
-
-	/* Scan inventory */
-	for (i = 0; i < inven_num; i++)
-	{
-		l_ptr = &inventory[i];
-
-		/* Skip empty / unaware items */
-		if (!l_ptr->k_idx) continue;
-
-		/* Not cursed items */
-		if (KN_FLAG(l_ptr, TR_CURSED)) continue;
-
-		/* skip artifact rings not star id'd  */
-		if ((KN_FLAG(l_ptr, TR_INSTA_ART)) &&
-			!borg_obj_known_full(l_ptr)) continue;
-
-		/* Where does it go */
-		slot = borg_wield_slot(l_ptr);
-
-		/* Only process "rings" */
-		if (slot != EQUIP_LEFT) continue;
-
-		/* Test both fingers */
-		for (; slot <= EQUIP_RIGHT; slot++)
-		{
-			/* Pretend to move item into equipment slot */
-			equipment[slot].treat_as = TREAT_AS_SWAP;
-			l_ptr->treat_as = TREAT_AS_LESS;
-
-			/* Evaluate the inventory */
-			p = borg_power();
-
-			/* Restore the old items */
-			equipment[slot].treat_as = TREAT_AS_NORM;
-			l_ptr->treat_as = TREAT_AS_NORM;
-
-			/* Ignore "bad" swaps */
-			if ((b_i >= 0) && (p < b_p)) continue;
-
-			/* Maintain the "best" */
-			b_i = i;
-			b_p = p;
-
-			/* On right hand? */
-			if (slot == EQUIP_RIGHT)
-			{
-				hand = TRUE;
-			}
-			else
-			{
-				hand = FALSE;
-			}
-		}
-	}
-
-	/* No item */
-	if ((b_i >= 0) && (b_p > borg_power()))
-	{
-		/* Get the item */
-		l_ptr = &inventory[b_i];
-
-		/* Log */
-		borg_note("# Putting on ring.");
-
-		/* Log */
-		borg_note_fmt("# Wearing %s.", l_ptr->o_name);
-
-		/* Wear it */
-		borg_keypress('w');
-		borg_keypress(I2A(b_i));
-
-		/* Check for two rings */
-		if (equipment[EQUIP_LEFT].number && equipment[EQUIP_RIGHT].number)
-		{
-			/* On right hand? */
-			if (hand)
-			{
-				borg_keypress('y');
-			}
-			else
-			{
-				borg_keypress('n');
-			}
-		}
-
-		return (TRUE);
-	}
-
-	/* Nope */
-	return (FALSE);
-}
-
-/*
- * Remove useless equipment.
- *
- * Look through the inventory for equipment that is reducing power.
- *
- * Basically, we evaluate the world both with the current set of
- * equipment, and in the alternate world in which various items
- * are removed, and we take
- * one step towards the world in which we have the most "power".
- */
-bool borg_remove_stuff(void)
-{
-	s32b p, b_p = 0L;
-
-	int i, b_i = -1;
-
-	list_item *l_ptr;
-
-	/* Require an empty slot */
-	if (inven_num == INVEN_PACK) return (FALSE);
-
-	/* Start with good power */
-	b_p = borg_power();
-
-	/* Scan equip */
-	for (i = 0; i < equip_num; i++)
-	{
-		l_ptr = look_up_equip_slot(i);
-
-		/* Skip empty / unaware items */
-		if (!l_ptr) continue;
-
-		/* Require "known" (or average, good, etc) */
-		if (!borg_obj_known_p(l_ptr) &&
-			!strstr(l_ptr->o_name, "{average") &&
-			!strstr(l_ptr->o_name, "{good") &&
-			!strstr(l_ptr->o_name, "{excellent") &&
-			!strstr(l_ptr->o_name, "{special")) continue;
-
-		/* skip it if it has not been decursed */
-		if (strstr(l_ptr->o_name, "{cursed") ||
-			KN_FLAG(l_ptr, TR_CURSED) ||
-			KN_FLAG(l_ptr, TR_HEAVY_CURSE)) continue;
-
-		/* Take it off */
-		l_ptr->treat_as = TREAT_AS_GONE;
-
-		/* Evaluate the inventory */
-		p = borg_power();
-
-		/* Put it back on */
-		l_ptr->treat_as = TREAT_AS_NORM;
-
-		/* Track the crappy items */
-		if (p >= b_p)
-		{
-			b_i = i;
-		}
-	}
-
-	/* No item */
-	if (b_i >= 0)
-	{
-		/* Get the item */
-		l_ptr = &equipment[b_i];
-
-		/* Log */
-		borg_note_fmt("# Removing %s.", l_ptr->o_name);
-
-		/* Wear it */
-		borg_keypress('t');
-		borg_keypress(I2A(b_i));
-
-		return (TRUE);
-	}
-
-	/* Nope */
-	return (FALSE);
-}
-
-
-/*
  * Wear useful equipment.
  *
  * Look through the inventory for equipment that is better than
@@ -2661,23 +2465,23 @@ bool borg_remove_stuff(void)
  */
 bool borg_wear_stuff(void)
 {
-	int slot;
+	int slot, b_slot = -1;
 	int d;
+	bool ring_repeat = FALSE;
 
 	s32b p, b_p = borg_power();
 
-	int i, b_i = -1;
+	int ii, i, b_i = -1;
 	int danger;
 
 	list_item *l_ptr;
-
-	/* Wear new rings if better */
-	if (borg_wear_rings()) return (TRUE);
 
 	/* Scan inventory */
 	for (i = 0; i < inven_num; i++)
 	{
 		l_ptr = &inventory[i];
+
+		ii = i;
 
 		/* Skip empty / unaware items */
 		if (!l_ptr->k_idx) continue;
@@ -2703,6 +2507,26 @@ bool borg_wear_stuff(void)
 		/* Cannot wear this item */
 		if (slot < 0) continue;
 
+		/* Process non-rings */
+		if (slot == EQUIP_LEFT)
+		{
+			/* if this is the second time you see this ring */
+			if (ring_repeat)
+			{
+				/* use the other ring slot */
+				slot = EQUIP_RIGHT;
+			}
+			/* So it is the first time this ring is valued */
+			else
+			{
+				/* Pull back the counter to force a repetition of this item */
+				i--;
+			}
+
+			/* Flip value */
+			ring_repeat = !ring_repeat;
+		}
+
 		/* skip it if it this slot has been decursed */
 		if (KN_FLAG(&equipment[slot], TR_CURSED) ||
 			KN_FLAG(&equipment[slot], TR_HEAVY_CURSE) ) continue;
@@ -2710,33 +2534,30 @@ bool borg_wear_stuff(void)
 		/* Obtain danger */
 		danger = borg_danger(c_x, c_y, 1, TRUE);
 
-		/*** Process non-rings ***/
-		if (slot != EQUIP_LEFT)
-		{
-			/* Swap items */
-			equipment[slot].treat_as = TREAT_AS_SWAP;
-			l_ptr->treat_as = TREAT_AS_LESS;
+		/* Swap items */
+		equipment[slot].treat_as = TREAT_AS_SWAP;
+		l_ptr->treat_as = TREAT_AS_LESS;
 
-			/* Evaluate the inventory */
-			p = borg_power();
+		/* Evaluate the inventory */
+		p = borg_power();
 
-			/* Evaluate local danger */
-			d = borg_danger(c_x, c_y, 1, TRUE);
+		/* Evaluate local danger */
+		d = borg_danger(c_x, c_y, 1, TRUE);
 
-			/* Restore items */
-			equipment[slot].treat_as = TREAT_AS_NORM;
-			l_ptr->treat_as = TREAT_AS_NORM;
+		/* Restore items */
+		equipment[slot].treat_as = TREAT_AS_NORM;
+		l_ptr->treat_as = TREAT_AS_NORM;
 
-			/* Ignore "bad" swaps */
-			if ((b_i >= 0) && (p <= b_p)) continue;
+		/* Ignore "bad" swaps */
+		if ((b_i >= 0) && (p <= b_p)) continue;
 
-			/* Ignore if more dangerous */
-			if (danger < d) continue;
+		/* Ignore if more dangerous */
+		if (danger < d) continue;
 
-			/* Maintain the "best" */
-			b_i = i;
-			b_p = p;
-		}
+		/* Maintain the "best" */
+		b_i = ii;
+		b_p = p;
+		b_slot = slot;
 	}
 
 	/* No item */
@@ -2746,12 +2567,26 @@ bool borg_wear_stuff(void)
 		l_ptr = &inventory[b_i];
 
 		/* Log */
-		borg_note_fmt("# Wearing %s. New Power (%ld)", l_ptr->o_name, b_p);
+		borg_note_fmt("# Wearing %s. (%c)", l_ptr->o_name, b_i);
 
 		/* Wear it */
 		borg_keypress('w');
 		borg_keypress(I2A(b_i));
 
+		/* Check for two rings */
+		if ((b_slot == EQUIP_LEFT || b_slot == EQUIP_RIGHT) &&
+			equipment[EQUIP_LEFT].number && equipment[EQUIP_RIGHT].number)
+		{
+			/* On right hand? */
+			if (b_slot == EQUIP_RIGHT)
+			{
+				borg_keypress('y');
+			}
+			else
+			{
+				borg_keypress('n');
+			}
+		}
 		return (TRUE);
 	}
 
@@ -2795,7 +2630,7 @@ bool borg_unwear_stuff(void)
 		/* Calculate new power */
 		p = borg_power();
 
-		/* Cal;culate the new danger */
+		/* Calculate the new danger */
 		d = borg_danger(c_x, c_y, 1, TRUE);
 
 		/* Stop pretending */
@@ -2816,7 +2651,7 @@ bool borg_unwear_stuff(void)
 	if (b_slot == -1) return (FALSE);
 
 	/* Say you take it off */
-	borg_note_fmt("# Taking off a %s", equipment[b_slot].o_name);
+	borg_note_fmt("# Taking off a %s (%c)", equipment[b_slot].o_name, I2A(b_slot));
 
 	/* Take it off */
 	borg_keypress('t');

@@ -1002,20 +1002,20 @@ bool borg_refuel(void)
  */
 bool borg_eat_food(int sval)
 {
-	list_item *l_ptr;
+	int slot;
 
 	/* Look for that food */
-	l_ptr = borg_slot(TV_FOOD, sval);
+	slot = borg_slot_from(TV_FOOD, sval, 0);
 
 	/* None available */
-	if (!l_ptr) return (FALSE);
+	if (slot == -1) return (FALSE);
 
 	/* Log the message */
-	borg_note_fmt("# Eating %s.", l_ptr->o_name);
+	borg_note_fmt("# Eating %s. (%c)", inventory[slot].o_name, I2A(slot));
 
 	/* Perform the action */
 	borg_keypress('E');
-	borg_keypress(I2A(look_up_index(l_ptr)));
+	borg_keypress(I2A(slot));
 
 	/* Success */
 	return (TRUE);
@@ -1069,20 +1069,20 @@ bool borg_quaff_crit(bool no_check)
  */
 bool borg_quaff_potion(int sval)
 {
-	list_item *l_ptr;
+	int slot;
 
 	/* Look for that potion */
-	l_ptr = borg_slot(TV_POTION, sval);
+	slot = borg_slot_from(TV_POTION, sval, 0);
 
 	/* None available */
-	if (!l_ptr) return (FALSE);
+	if (slot == -1) return (FALSE);
 
 	/* Log the message */
-	borg_note_fmt("# Quaffing %s.", l_ptr->o_name);
+	borg_note_fmt("# Quaffing %s. (%c)", inventory[slot].o_name, I2A(slot));
 
 	/* Perform the action */
 	borg_keypress('q');
-	borg_keypress(I2A(look_up_index(l_ptr)));
+	borg_keypress(I2A(slot));
 
 	/* Success */
 	return (TRUE);
@@ -1107,7 +1107,7 @@ bool borg_quaff_unknown(void)
 		if (l_ptr->k_idx) continue;
 
 		/* Log the message */
-		borg_note_fmt("# Quaffing unknown potion %s.", l_ptr->o_name);
+		borg_note_fmt("# Quaffing unknown potion %s. (%c)", l_ptr->o_name, I2A(i));
 
 		/* Perform the action */
 		borg_keypress('q');
@@ -1147,7 +1147,7 @@ bool borg_read_unknown(void)
 		if (bp_ptr->status.blind || bp_ptr->status.confused) return (FALSE);
 
 		/* Log the message */
-		borg_note_fmt("# Reading unknown scroll %s.", l_ptr->o_name);
+		borg_note_fmt("# Reading unknown scroll %s. (%c)", l_ptr->o_name, I2A(i));
 
 		/* Perform the action */
 		borg_keypress('r');
@@ -1181,7 +1181,7 @@ bool borg_eat_unknown(void)
 		if (l_ptr->tval != TV_FOOD) continue;
 
 		/* Log the message */
-		borg_note_fmt("# Eating unknown mushroom %s.", l_ptr->o_name);
+		borg_note_fmt("# Eating unknown mushroom %s. (%c)", l_ptr->o_name, I2A(i));
 
 		/* Perform the action */
 		borg_keypress('E');
@@ -1214,7 +1214,7 @@ bool borg_use_unknown(void)
 		if (l_ptr->tval != TV_STAFF) continue;
 
 		/* Log the message */
-		borg_note_fmt("# Using unknown Staff %s.", l_ptr->o_name);
+		borg_note_fmt("# Using unknown Staff %s. (%c)", l_ptr->o_name, I2A(i));
 
 		/* Perform the action */
 		borg_keypress('u');
@@ -1248,7 +1248,7 @@ bool borg_read_scroll_fail(int sval)
 /* Attempt to read the given scroll (by sval) */
 bool borg_read_scroll(int sval)
 {
-	list_item *l_ptr;
+	int slot;
 	map_block *mb_ptr = map_loc(c_x, c_y);
 
 	/* Dark */
@@ -1258,25 +1258,23 @@ bool borg_read_scroll(int sval)
 	if (bp_ptr->status.blind || bp_ptr->status.confused) return (FALSE);
 
 	/* Look for that scroll */
-	l_ptr = borg_slot(TV_SCROLL, sval);
+	slot = borg_slot_from(TV_SCROLL, sval, 0);
 
 	/* None available */
-	if (!l_ptr) return (FALSE);
+	if (slot == -1) return (FALSE);
 
 	/* Log the message */
-	borg_note_fmt("# Reading %s.", l_ptr->o_name);
+	borg_note_fmt("# Reading %s. (%c)", inventory[slot].o_name, I2A(slot));
 
 	/* Perform the action */
-	borg_keypress(ESCAPE);
-	borg_keypress(ESCAPE);
 	borg_keypress('r');
-	borg_keypress(I2A(look_up_index(l_ptr)));
+	borg_keypress(I2A(slot));
 
 	/* reset recall depth in dungeon? */
 	if ((sval == SV_SCROLL_WORD_OF_RECALL) &&
 		(bp_ptr->depth < bp_ptr->max_depth) && bp_ptr->depth)
 	{
-		/* Do not reset Depth */
+		/* Do not reset depth */
 		borg_keypress('n');
 	}
 
@@ -1343,7 +1341,7 @@ static bool borg_rod_aux(int sval, bool zap, bool fail)
 	if (zap)
 	{
 		/* Log the message */
-		borg_note_fmt("# Zapping %s.", l_ptr->o_name);
+		borg_note_fmt("# Zapping %s (%c).", l_ptr->o_name, I2A(slot));
 
 		/* Perform the action */
 		borg_keypress('z');
@@ -1418,7 +1416,7 @@ static bool borg_wand_aux(int sval, bool aim, bool fail)
 	if (aim)
 	{
 		/* Log the message */
-		borg_note_fmt("# Aiming %s.", l_ptr->o_name);
+		borg_note_fmt("# Aiming %s (%c).", l_ptr->o_name, I2A(slot));
 
 		/* Perform the action */
 		borg_keypress('a');
@@ -1514,7 +1512,7 @@ static bool borg_staff_aux(int sval, bool use, bool fail)
 	if (use)
 	{
 		/* Log the message */
-		borg_note_fmt("# Using %s.", l_ptr->o_name);
+		borg_note_fmt("# Using %s (%c).", l_ptr->o_name, I2A(slot));
 
 		/* Perform the action */
 		borg_keypress('u');
@@ -2401,7 +2399,7 @@ static bool borg_power_check(bool race, u32b which, bool check_fail,
     if (stat <= 180)
         stat /= 10;
     else
-        stat += 18-180;
+        stat += 18 - 180;
 
 	/* Stun makes it more difficult */
 	if (bp_ptr->status.stun)

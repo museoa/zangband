@@ -165,7 +165,7 @@ bool borg_recover(void)
 	if ((bp_ptr->status.hungry || bp_ptr->status.weak) && (q < 75))
 	{
 		if (borg_spell_fail(REALM_LIFE, 0, 7, 65) ||
-			borg_spell_fail(REALM_ARCANE, 2, 7, 65) ||
+			borg_spell_fail(REALM_ARCANE, 2, 6, 65) ||
 			borg_spell_fail(REALM_NATURE, 0, 3, 65) ||
 			borg_racial(RACE_HOBBIT) ||
 			borg_read_scroll(SV_SCROLL_SATISFY_HUNGER))
@@ -1905,7 +1905,9 @@ bool borg_flow_kill(bool viewable, int nearness)
 	if (bp_ptr->depth == 0 && bp_ptr->lev < 7) return (FALSE);
 
 	/* YOU ARE NOT A WARRIOR!! DON'T ACT LIKE ONE!! */
-	if (borg_class == CLASS_MAGE &&
+	if ((borg_class == CLASS_MAGE ||
+		borg_class == CLASS_HIGH_MAGE ||
+		borg_class == CLASS_MINDCRAFTER) &&
 		bp_ptr->lev < (bp_ptr->depth ? 35 : 5)) return (FALSE);
 
 

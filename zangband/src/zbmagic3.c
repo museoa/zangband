@@ -1779,7 +1779,7 @@ static int borg_defend_aux_esp(int p1)
 		if (p1 > avoidance * 7) return (0);
 
 		/* Do I have anything that will work? */
-		if (!borg_spell_okay_fail(REALM_SORCERY, 1, 3, fail_allowed) &&
+		if (!borg_spell_okay_fail(REALM_SORCERY, 3, 3, fail_allowed) &&
 			!borg_spell_okay_fail(REALM_ARCANE, 3, 7, fail_allowed) &&
 			!borg_mindcr_okay_fail(MIND_PRECOGNIT, 24, fail_allowed))
 			return (0);

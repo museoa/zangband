@@ -327,11 +327,11 @@ static int borg_danger_aux1(int r_idx)
 				if ((borg_goi) && !borg_attacking)
 					z /= 25;
 				if (bp_ptr->sust[A_STR]) break;
-				if (borg_stat[A_STR] <= 3) break;
+				if (borg_stat[A_STR] <= 30) break;
 				if (borg_spell_legal(REALM_LIFE, 3, 3)) break;
 				z += 150;
 				/* extra scary to have str drain below 10 */
-				if (borg_stat[A_STR] < 10)
+				if (borg_stat[A_STR] < 100)
 					z += 350;
 				if ((pfe) && !borg_attacking)
 					z /= 2;
@@ -345,11 +345,11 @@ static int borg_danger_aux1(int r_idx)
 				if ((borg_goi) && !borg_attacking)
 					z /= 25;
 				if (bp_ptr->sust[A_DEX]) break;
-				if (borg_stat[A_DEX] <= 3) break;
+				if (borg_stat[A_DEX] <= 30) break;
 				if (borg_spell_legal(REALM_LIFE, 3, 3)) break;
 				z += 150;
 				/* extra scary to have drain below 10 */
-				if (borg_stat[A_DEX] < 10)
+				if (borg_stat[A_DEX] < 100)
 					z += 350;
 				if ((pfe) && !borg_attacking)
 					z /= 2;
@@ -363,12 +363,12 @@ static int borg_danger_aux1(int r_idx)
 				if ((borg_goi) && !borg_attacking)
 					z /= 25;
 				if (bp_ptr->sust[A_CON]) break;
-				if (borg_stat[A_CON] <= 3) break;
+				if (borg_stat[A_CON] <= 30) break;
 				if (borg_spell_legal(REALM_LIFE, 3, 3)) break;
 				if (!borg_full_damage)
 					z += 150;
 				/* extra scary to have con drain below 8 */
-				if (borg_stat[A_STR] < 8)
+				if (borg_stat[A_STR] < 80)
 					z += 350;
 				if ((pfe) && !borg_attacking)
 					z /= 2;
@@ -382,7 +382,7 @@ static int borg_danger_aux1(int r_idx)
 				if ((borg_goi) && !borg_attacking)
 					z /= 25;
 				if (bp_ptr->sust[A_INT]) break;
-				if (borg_stat[A_INT] <= 3) break;
+				if (borg_stat[A_INT] <= 30) break;
 				if (borg_spell_legal(REALM_LIFE, 3, 3)) break;
 				z += 150;
 				/* extra scary for spell caster */
@@ -400,7 +400,7 @@ static int borg_danger_aux1(int r_idx)
 				if ((borg_goi) && !borg_attacking)
 					z /= 25;
 				if (bp_ptr->sust[A_WIS]) break;
-				if (borg_stat[A_WIS] <= 3) break;
+				if (borg_stat[A_WIS] <= 30) break;
 				if (borg_spell_legal(REALM_LIFE, 3, 3)) break;
 				z += 150;
 				/* extra scary for pray'er */
@@ -418,7 +418,7 @@ static int borg_danger_aux1(int r_idx)
 				if ((borg_goi) && !borg_attacking)
 					z /= 25;
 				if (bp_ptr->sust[A_CHR]) break;
-				if (borg_stat[A_CHR] <= 3) break;
+				if (borg_stat[A_CHR] <= 30) break;
 				if (borg_spell_legal(REALM_LIFE, 3, 3)) break;
 				z += 50;
 				if ((pfe) && !borg_attacking)
@@ -3352,8 +3352,8 @@ static s32b borg_power_aux3(void)
 	if (FLAG(bp_ptr, TR_RES_CONF)) value += 80000L;
 
 	/* mages need a slight boost for this */
-	if (borg_class == CLASS_MAGE &&
-		(FLAG(bp_ptr, TR_RES_CONF))) value += 2000L;
+	if ((borg_class == CLASS_MAGE || borg_class == CLASS_HIGH_MAGE) &&
+		FLAG(bp_ptr, TR_RES_CONF)) value += 2000L;
 
 	if (FLAG(bp_ptr, TR_RES_DISEN)) value += 5000L;
 	if (FLAG(bp_ptr, TR_RES_SHARDS)) value += 100L;
@@ -3516,7 +3516,7 @@ static s32b borg_power_aux3(void)
 	/*** Penalize bad magic ***/
 
 	/* Hack -- most gloves hurt magic for spell-casters */
-	if (borg_class == CLASS_MAGE)
+	if (bp_ptr->intmana)
 	{
 		l_ptr = look_up_equip_slot(EQUIP_HANDS);
 
@@ -3686,15 +3686,15 @@ static s32b borg_power_aux4(void)
 	value += bp_ptr->able.logrus * 200;
 
 	/* Reward Cure Poison and Cuts */
-	if ((bp_ptr->status.cut || bp_ptr->status.poisoned) &&
-		bp_ptr->able.ccw) value += 100000;
-	if ((bp_ptr->status.cut || bp_ptr->status.poisoned) &&
-		bp_ptr->able.heal) value += 50000;
+	if ((bp_ptr->status.cut || bp_ptr->status.poisoned) && bp_ptr->able.ccw)
+		value += 100000;
+
+	if ((bp_ptr->status.cut || bp_ptr->status.poisoned) && bp_ptr->able.heal)
+		value += 50000;
+
 	if ((bp_ptr->status.cut || bp_ptr->status.poisoned) && bp_ptr->able.csw)
-	{
-		/* Reward cure serious wounds if needed */
-		value += 25000 * MIN(bp_ptr->able.csw, 5);
-	}
+		value += 25000;
+
 	if (bp_ptr->status.poisoned && bp_ptr->able.cure_pois) value += 15000;
 	if (bp_ptr->status.poisoned && amt_slow_poison) value += 5000;
 
@@ -3842,15 +3842,15 @@ static s32b borg_power_aux4(void)
 	/* potions of curing and of ccw are basically the same:  prefer curing */
 	value += 50 * MIN(amt_pot_curing, 10);
 
+	/* Reward cure serious relative to how many cure crits the borg has */
+	value += 1500 * MIN_FLOOR(bp_ptr->able.csw, 0, 10 - bp_ptr->able.ccw);
+	value += 1200 * MIN_FLOOR(bp_ptr->able.clw,
+							  0, 10 - bp_ptr->able.ccw - bp_ptr->able.csw);
+
 	/* Take them home too */
 	value += 500 * MIN_FLOOR(bp_ptr->able.ccw, 10, 20);
-
-	/* Reward cure serious relative to how many cure crits the borg has */
-	value += 400 * MIN_FLOOR(bp_ptr->able.csw, bp_ptr->able.ccw, 5);
-	value += 400 * MIN_FLOOR(bp_ptr->able.csw, bp_ptr->able.ccw, 10);
-
-	/* Take them home too */
-	value += 100 * MIN_FLOOR(bp_ptr->able.csw, 0, 20);
+	value += 100 * MIN(bp_ptr->able.csw, 99);
+	if (bp_ptr->mhp < 250) value += 50 * MIN(bp_ptr->able.clw, 99);
 
 	/* If the borg has no confucius resist */
 	if (!FLAG(bp_ptr, TR_RES_CONF))
@@ -4095,7 +4095,8 @@ s32b borg_power(void)
 		/* Dump fear code */
 		if (borg_prepared(i)) break;
 	}
-	value += ((i - 1) * 20000L);
+
+	value += (i - 1) * 20000L;
 
 	/* Return the value */
 	return (value);
@@ -4152,25 +4153,32 @@ cptr borg_restock(int depth)
 
 	/*** Level 6 to 9 ***/
 
+	/* Must have "cure" */
+	if (bp_ptr->able.clw + bp_ptr->able.csw + bp_ptr->able.ccw < 2 &&
+		bp_ptr->max_lev < 30) return ("rs cure 2");
+
 	/* Must have good lite */
 	if (bp_ptr->cur_lite == 1) return ("rs lite+1");
 
-	/* Potions of Critical Wounds */
-	if (!bp_ptr->able.ccw &&
-		(!(FLAG(bp_ptr, TR_RES_BLIND)) ||
-		 !(FLAG(bp_ptr, TR_RES_CONF)))) return ("rs cure crit");
+	/* Something to cure poison */
+	if (!FLAG(bp_ptr, TR_RES_POIS) &&
+		bp_ptr->able.cure_pois < 4) return ("rs cure poison");
 
 	/* Assume happy at level 9 */
 	if (depth <= 9) return (NULL);
 
 	/*** Level 10 - 19  ***/
 
+	/* Something to cure confusion */
+	if (!FLAG(bp_ptr, TR_RES_CONF) &&
+		bp_ptr->able.cure_conf < 4) return ("rs cure conf");
+
 	/* Must have "phase" */
 	if (bp_ptr->able.phase < 1) return ("rs phase");
 
 	/* Must have "cure" */
-	if ((bp_ptr->max_lev < 30) &&
-		(bp_ptr->able.csw + bp_ptr->able.ccw < 4)) return ("rs cure");
+	if (bp_ptr->able.clw + bp_ptr->able.csw + bp_ptr->able.ccw < 4 &&
+		bp_ptr->max_lev < 30) return ("rs cure 4");
 
 	/* Must have "teleport" */
 	if (bp_ptr->able.teleport < 2) return ("rs teleport");
@@ -4180,9 +4188,13 @@ cptr borg_restock(int depth)
 
 	/*** Level 20 - 45  ***/
 
+	/* Something to cure blindness */
+	if (!FLAG(bp_ptr, TR_RES_BLIND) &&
+		bp_ptr->able.cure_blind < 4) return ("rs cure blind");
+
 	/* Must have "cure" */
-	if ((bp_ptr->max_lev < 30) &&
-		(bp_ptr->able.csw + bp_ptr->able.ccw < 6)) return ("rs cure");
+	if (bp_ptr->able.csw + bp_ptr->able.ccw < 6 &&
+		bp_ptr->max_lev < 30) return ("rs cure 6");
 
 	/* Must have "teleport" */
 	if (bp_ptr->able.teleport + bp_ptr->able.escape < 4)
@@ -4250,8 +4262,8 @@ static cptr borg_prepared_aux2(int depth)
 	if (bp_ptr->recall < 3) return ("3 recall");
 
 	/* Potions of Cure Serious Wounds */
-	if ((bp_ptr->max_lev < 30) &&
-		(bp_ptr->able.csw + bp_ptr->able.ccw < 2)) return ("2 cure");
+	if (bp_ptr->able.clw + bp_ptr->able.csw + bp_ptr->able.ccw < 2 &&
+		bp_ptr->max_lev < 30) return ("2 cures");
 
 	/* Usually ready for level 3 and 4 */
 	if (depth <= 4) return (NULL);
@@ -4266,8 +4278,8 @@ static cptr borg_prepared_aux2(int depth)
 	if (bp_ptr->recall < 4) return ("4 recalls");
 
 	/* Potions of Cure Serious/Critical Wounds */
-	if ((bp_ptr->max_lev < 30) &&
-		(bp_ptr->able.csw + bp_ptr->able.ccw < 5)) return ("5 cures");
+	if (bp_ptr->able.clw + bp_ptr->able.csw + bp_ptr->able.ccw < 4 &&
+		bp_ptr->max_lev < 30) return ("4 cures");
 
 	/* Usually ready for level 5 to 9 */
 	if (depth <= 9) return (NULL);
@@ -4280,19 +4292,18 @@ static cptr borg_prepared_aux2(int depth)
 		return ("2 teleports");
 
 	/* Potions of Cure Critical Wounds */
-	if ((bp_ptr->max_lev < 30) && (bp_ptr->able.ccw < 5))
-		return ("cure crit5");
-
-	/* See invisible */
-	/* or telepathy */
-	if ((!(FLAG(bp_ptr, TR_SEE_INVIS)) &&
-		 !(FLAG(bp_ptr, TR_TELEPATHY)))) return ("See Invis : ESP");
+	if (bp_ptr->able.csw + bp_ptr->able.ccw < 6 &&
+		bp_ptr->max_lev < 30) return ("6 cures");
 
 	/* Usually ready for level 10 to 19 */
 	if (depth <= 19) return (NULL);
 
 
 	/*** Essential Items for Level 20 ***/
+
+	/* See invisible or telepathy */
+	if (!FLAG(bp_ptr, TR_SEE_INVIS) &&
+		!FLAG(bp_ptr, TR_TELEPATHY)) return ("See Invis : ESP");
 
 	/* Free action */
 	if (!(FLAG(bp_ptr, TR_FREE_ACT))) return ("FA");
@@ -4302,20 +4313,6 @@ static cptr borg_prepared_aux2(int depth)
 
 
 	/*** Essential Items for Level 25 ***/
-
-	/* have some minimal stats */
-	if (borg_stat[A_STR] < 7) return ("low STR");
-
-	if (bp_ptr->intmana)
-	{
-		if (borg_stat[A_INT] < 7) return ("low INT");
-	}
-	if (bp_ptr->wismana)
-	{
-		if (borg_stat[A_WIS] < 7) return ("low WIS");
-	}
-	if (borg_stat[A_DEX] < 7) return ("low DEX");
-	if (borg_stat[A_CON] < 7) return ("low CON");
 
 	/* Ready for level 25 */
 	if (depth <= 25) return (NULL);
@@ -4330,8 +4327,8 @@ static cptr borg_prepared_aux2(int depth)
 		return ("tell&esc6");
 
 	/* Cure Critical Wounds */
-	if ((bp_ptr->max_lev < 30) &&
-		(bp_ptr->able.ccw + bp_ptr->able.csw < 10)) return ("cure10");
+	if (bp_ptr->able.csw + bp_ptr->able.ccw < 10 &&
+		bp_ptr->max_lev < 30) return ("10 cures");
 
 	/* Ready for level 33 */
 	if (depth <= 33) return (NULL);
@@ -4346,18 +4343,16 @@ static cptr borg_prepared_aux2(int depth)
 
 	/*** Essential Items for Level 40 to 45 ***/
 
-	if (borg_stat[A_STR] < 16) return ("low STR");
+	if (borg_stat[A_STR] < 160) return ("low STR");
 
-	if (borg_has_realm(REALM_SORCERY))
-	{
-		if (borg_stat[A_INT] < 16) return ("low INT");
-	}
-	if (borg_has_realm(REALM_LIFE))
-	{
-		if (borg_stat[A_WIS] < 16) return ("low WIS");
-	}
-	if (borg_stat[A_DEX] < 16) return ("low DEX");
-	if (borg_stat[A_CON] < 16) return ("low CON");
+	if ((borg_class == CLASS_MAGE || borg_class == CLASS_HIGH_MAGE) &&
+		borg_stat[A_INT] < 160) return ("low INT");
+
+	if ((borg_class == CLASS_PRIEST || borg_class == CLASS_MINDCRAFTER) &&
+		borg_stat[A_WIS] < 160) return ("low WIS");
+
+	if (borg_stat[A_DEX] < 160) return ("low DEX");
+	if (borg_stat[A_CON] < 160) return ("low CON");
 
 	if (depth <= 45) return (NULL);
 
@@ -4371,18 +4366,16 @@ static cptr borg_prepared_aux2(int depth)
 	if (!bp_ptr->able.heal && !bp_ptr->able.easy_heal) return ("1heal");
 
 	/* High stats XXX XXX XXX */
-	if (borg_stat[A_STR] < 18 + 40) return ("low STR");
+	if (borg_stat[A_STR] < 220) return ("low STR");
 
-	if (borg_has_realm(REALM_SORCERY))
-	{
-		if (borg_stat[A_INT] < 18 + 100) return ("low INT");
-	}
-	if (borg_has_realm(REALM_LIFE))
-	{
-		if (borg_stat[A_WIS] < 18 + 100) return ("low WIS");
-	}
-	if (borg_stat[A_DEX] < 18 + 60) return ("low DEX");
-	if (borg_stat[A_CON] < 18 + 60) return ("low CON");
+	if ((borg_class == CLASS_MAGE || borg_class == CLASS_HIGH_MAGE) &&
+		borg_stat[A_INT] < 280) return ("low INT");
+
+	if ((borg_class == CLASS_PRIEST || borg_class == CLASS_MINDCRAFTER) &&
+		borg_stat[A_WIS] < 280) return ("low WIS");
+
+	if (borg_stat[A_DEX] < 240) return ("low DEX");
+	if (borg_stat[A_CON] < 240) return ("low CON");
 
 	/* Hold Life */
 	if (!(FLAG(bp_ptr, TR_HOLD_LIFE)) &&
@@ -4433,14 +4426,22 @@ static cptr borg_prepared_aux2(int depth)
 	{
 		if ((bp_ptr->msp > 100) && (bp_ptr->able.mana < 15)) return ("15ResMana");
 
-		/* must have lots of heal */
-		if (bp_ptr->able.heal < 15 &&
-			(borg_class == CLASS_MAGE ||
-			 borg_class == CLASS_PRIEST)) return ("15Heal");
-		else if (bp_ptr->able.heal < 25) return ("25Heal");
-
 		/* must have lots of ez-heal */
-		if (bp_ptr->able.easy_heal < 15) return ("15EZHeal");
+		if (bp_ptr->able.easy_heal < 25) return ("25 easy_heal");
+
+		/* must have lots of heal */
+		if (borg_has_realm(REALM_LIFE) || borg_has_realm(REALM_NATURE))
+		{
+			/* Healers can afford to carry less */
+			if (bp_ptr->able.heal + bp_ptr->able.easy_heal < 40)
+				return ("40 heal + easy_heal");
+		}
+		else
+		{
+			/* Non-healers need to carry more */
+			if (bp_ptr->able.heal + bp_ptr->able.easy_heal < 50)
+				return ("50 heal + easy_heal");
+		}
 
 		/* must have lots of speed */
 		if (bp_ptr->able.speed < 15) return ("15Speed");

@@ -29,6 +29,7 @@ int num_teleport_level;
 
 int num_cure_critical;
 int num_cure_serious;
+int num_cure_light;
 
 int num_pot_rheat;
 int num_pot_rcold;
@@ -534,38 +535,8 @@ static void borg_notice_stats(void)
 {
 	int i;
 
-	/* Update "stats" */
-	for (i = 0; i < A_MAX; i++)
-	{
-		int use, ind, add;
-
-		add = my_stat_add[i];
-
-		/* Modify the stats for race/class */
-		add += (rp_ptr->r_adj[i] + cp_ptr->c_adj[i]);
-
-		/* Extract the new "use_stat" value for the stat */
-		use = modify_stat_value(my_stat_cur[i], add);
-
-		/* Save the stat */
-		my_stat_use[i] = use;
-
-		/* Values: 3, ..., 17 */
-		if (use <= 18) ind = (use - 3);
-
-		/* Ranges: 18/00-18/09, ..., 18/210-18/219 */
-		else if (use <= 18 + 219) ind = (15 + (use - 18) / 10);
-
-		/* Range: 18/220+ */
-		else
-			ind = (37);
-
-		/* Save the index */
-		if (ind > 37)
-			my_stat_ind[i] = 37;
-		else
-			my_stat_ind[i] = p_ptr->stat[i].ind;
-	}
+	/* Update stats */
+	for (i = 0; i < A_MAX; i++) my_stat_ind[i] = MIN(37, p_ptr->stat[i].ind);
 
 	/* Actual Modifier Bonuses (Un-inflate stat bonuses) */
 	bp_ptr->ac += ((int)(adj_dex_ta[my_stat_ind[A_DEX]]) - 128);
@@ -644,7 +615,7 @@ static void borg_notice_shooter(int hold, int extra_might, int extra_shots)
 			case SV_LONG_BOW:
 			{
 				my_ammo_tval = TV_ARROW;
-				if (borg_stat[A_STR] >= 16)
+				if (borg_stat[A_STR] >= 160)
 				{
 					if (extra_might)
 					{
@@ -1399,7 +1370,7 @@ static void borg_notice_potions(list_item *l_ptr, int number)
 		}
 		case SV_POTION_CURE_LIGHT:
 		{
-			if (bp_ptr->status.cut) bp_ptr->able.csw += number;
+			bp_ptr->able.clw += number;
 			bp_ptr->able.cure_blind += number;
 			break;
 		}
@@ -2418,7 +2389,7 @@ static void borg_notice_aux2(void)
 	/* Handle "satisfy hunger" -> infinite food */
 	if (borg_spell_legal_fail(REALM_SORCERY, 2, 0, 40) ||
 		borg_spell_legal_fail(REALM_LIFE, 0, 7, 40) ||
-		borg_spell_legal_fail(REALM_ARCANE, 2, 7, 40) ||
+		borg_spell_legal_fail(REALM_ARCANE, 2, 6, 40) ||
 		borg_spell_legal_fail(REALM_NATURE, 0, 3, 40) ||
 		borg_racial_check(RACE_HOBBIT, TRUE))
 	{
@@ -2585,9 +2556,11 @@ static void borg_notice_aux2(void)
 		 borg_spell_okay_fail(REALM_LIFE, 4, 1, 5) ||
 		 borg_spell_okay_fail(REALM_TRUMP, 0, 4, 5) ||
 		 borg_spell_okay_fail(REALM_CHAOS, 0, 7, 5) ||
-		 borg_mindcr_okay_fail(MIND_MAJOR_DISP, 7, 5)) &&
-		 FLAG(bp_ptr, TR_RES_BLIND) && FLAG(bp_ptr, TR_RES_CONF)) ||
-		borg_mutation_check(MUT1_VTELEPORT, TRUE))
+		 borg_mindcr_okay_fail(MIND_MAJOR_DISP, 7, 5) ||
+		 borg_mutation_check(MUT1_VTELEPORT, TRUE)) &&
+		 FLAG(bp_ptr, TR_RES_BLIND) &&
+		 FLAG(bp_ptr, TR_RES_CONF)) 
+		)
 	{
 		bp_ptr->able.teleport += 1000;
 	}
@@ -2639,27 +2612,27 @@ static void borg_notice_aux2(void)
 	/*** Process the Needs ***/
 
 	/* No need to *buy* stat increase potions */
-	if (my_stat_cur[A_STR] >= (18 + 100) + 10 *
+	if (my_stat_cur[A_STR] >= 180 + 100 + 10 *
 		(rp_ptr->r_adj[A_STR] + cp_ptr->c_adj[A_STR]))
 		amt_add_stat[A_STR] += 1000;
 
-	if (my_stat_cur[A_INT] >= (18 + 100) + 10 *
+	if (my_stat_cur[A_INT] >= 180 + 100 + 10 *
 		(rp_ptr->r_adj[A_INT] + cp_ptr->c_adj[A_INT]))
 		amt_add_stat[A_INT] += 1000;
 
-	if (my_stat_cur[A_WIS] >= (18 + 100) + 10 *
+	if (my_stat_cur[A_WIS] >= 180 + 100 + 10 *
 		(rp_ptr->r_adj[A_WIS] + cp_ptr->c_adj[A_WIS]))
 		amt_add_stat[A_WIS] += 1000;
 
-	if (my_stat_cur[A_DEX] >= (18 + 100) + 10 *
+	if (my_stat_cur[A_DEX] >= 180 + 100 + 10 *
 		(rp_ptr->r_adj[A_DEX] + cp_ptr->c_adj[A_DEX]))
 		amt_add_stat[A_DEX] += 1000;
 
-	if (my_stat_cur[A_CON] >= (18 + 100) + 10 *
+	if (my_stat_cur[A_CON] >= 180 + 100 + 10 *
 		(rp_ptr->r_adj[A_CON] + cp_ptr->c_adj[A_CON]))
 		amt_add_stat[A_CON] += 1000;
 
-	if (my_stat_cur[A_CHR] >= (18 + 100) + 10 *
+	if (my_stat_cur[A_CHR] >= 180 + 100 + 10 *
 		(rp_ptr->r_adj[A_CHR] + cp_ptr->c_adj[A_CHR]))
 		amt_add_stat[A_CHR] += 1000;
 
@@ -2989,6 +2962,7 @@ static void borg_notice_home_clear(void)
 	/* Reset healing */
 	num_cure_critical = 0;
 	num_cure_serious = 0;
+	num_cure_light = 0;
 	num_fix_exp = 0;
 	num_mana = 0;
 	num_heal = 0;
@@ -3381,6 +3355,12 @@ static void borg_notice_home_potion(list_item *l_ptr)
 			break;
 		}
 
+		case SV_POTION_CURE_LIGHT:
+		{
+			num_cure_light += l_ptr->number;
+			break;
+		}
+
 		case SV_POTION_RESIST_HEAT:
 		{
 			num_pot_rheat += l_ptr->number;
@@ -3584,7 +3564,7 @@ static void borg_notice_home_spells(void)
 	/* Handle "satisfy hunger" -> infinite food */
 	if (borg_spell_legal_fail(REALM_SORCERY, 2, 0, 40) ||
 		borg_spell_legal_fail(REALM_LIFE, 0, 7, 40) ||
-		borg_spell_legal_fail(REALM_ARCANE, 2, 7, 40) ||
+		borg_spell_legal_fail(REALM_ARCANE, 2, 6, 40) ||
 		borg_spell_legal_fail(REALM_NATURE, 0, 3, 40))
 	{
 		num_food += 1000;
@@ -4642,6 +4622,9 @@ static s32b borg_power_home_aux2(void)
 
 	/* Collect cure serious - but they aren't as good */
 	value += 400 * MIN(num_cure_serious, 99);
+
+	/* Borgs with low HP collect cure light wounds */
+	if (bp_ptr->mhp < 250) value += 200 * MIN(num_cure_light, 99);
 
 	/*** Various ***/
 

@@ -1664,7 +1664,8 @@ bool borg_escape(int b_q)
 	}
 
 	/* 6- not too scary but I'm out of mana  */
-	if ((borg_class == CLASS_MAGE || borg_class == CLASS_PRIEST) &&
+	if ((borg_class == CLASS_MAGE || borg_class == CLASS_HIGH_MAGE ||
+		borg_class == CLASS_PRIEST || borg_class == CLASS_MINDCRAFTER) &&
 		(b_q >= avoidance * (6 + risky_boost) / 10 ||
 		 (b_q >= avoidance * (8 + risky_boost) / 10 && borg_fighting_unique >= 1
 		  && borg_fighting_unique <= 8)) &&
@@ -2016,7 +2017,7 @@ bool borg_heal(int danger)
 		chance -= 75;
 	else
 	{
-		if (borg_class != CLASS_PRIEST && borg_class != CLASS_PALADIN)
+		if (!borg_has_realm(REALM_LIFE) && !borg_has_realm(REALM_NATURE))
 			chance -= 25;
 	}
 
@@ -2037,58 +2038,41 @@ bool borg_heal(int danger)
 		return FALSE;
 
 
-	/* Cure light Wounds (2d10) */
-	if (hp_down < 10 &&
-		((danger / 2) < bp_ptr->chp + 6) &&
+	/* Cure light Wounds (50) */
+	if (hp_down < 50 &&
+		danger < bp_ptr->chp + 50 &&
+		danger > bp_ptr->chp &&
 		(borg_spell_fail(REALM_LIFE, 0, 1, allow_fail) ||
 		 borg_spell_fail(REALM_ARCANE, 0, 7, allow_fail) ||
 		 borg_spell_fail(REALM_NATURE, 0, 1, allow_fail) ||
-		 borg_quaff_potion(SV_POTION_CURE_LIGHT) ||
-		 borg_activate_artifact(ART_CATAPULT, FALSE) ||
-		 borg_activate_artifact(ART_LOTHARANG, FALSE)))
+		 borg_quaff_potion(SV_POTION_CURE_LIGHT)))
 	{
 		borg_note("# Healing Level 1.");
 		return (TRUE);
 	}
-	/* Cure Serious Wounds (4d10) */
-	if (hp_down < 20 &&
-		((danger / 2) < bp_ptr->chp + 18) &&
-		(borg_activate_artifact(ART_CATAPULT, FALSE) ||
-		 borg_spell_fail(REALM_LIFE, 0, 6, allow_fail) ||
-		 borg_spell_fail(REALM_ARCANE, 2, 3, allow_fail) ||
-		 borg_mindcr_fail(MIND_ADRENALINE, 23, allow_fail) ||
+	/* Cure Serious Wounds (75) */
+	if (hp_down < 75 &&
+		danger < bp_ptr->chp + 75 &&
+		danger > bp_ptr->chp &&
+		(borg_spell_fail(REALM_LIFE, 0, 6, allow_fail) ||
+		 borg_spell_fail(REALM_ARCANE, 2, 2, allow_fail) ||
 		 borg_quaff_potion(SV_POTION_CURE_SERIOUS)))
 	{
 		borg_note("# Healing Level 2.");
 		return (TRUE);
 	}
 
-	/* Cure Critical Wounds (6d10) */
-	if (hp_down < 50 &&
-		((danger / 2) < bp_ptr->chp + 35) &&
+	/* Cure Critical Wounds (150) */
+	if (hp_down < 150 &&
+		danger < bp_ptr->chp + 150 &&
+		danger > bp_ptr->chp &&
 		(borg_spell_fail(REALM_LIFE, 1, 2, allow_fail) ||
-		 borg_mindcr_fail(MIND_ADRENALINE, 35, allow_fail) ||
 		 borg_quaff_crit(FALSE)))
 	{
 		borg_note("# Healing Level 3.");
 		return (TRUE);
 	}
 
-	/* Cure Mortal Wounds (8d10) */
-#if 0							/* These spells are not in Z */
-	if (hp_down < 120 &&
-		((danger / 2) < bp_ptr->chp + 55) &&
-		(borg_spell_fail(REALM_LIFE, 2, 7, allow_fail) ||
-		 borg_spell_fail(REALM_LIFE, 6, 1, allow_fail) ||
-		 borg_mindcr_fail(MIND_ADRENALINE, 50, allow_fail) ||
-		 /* ||
-		    borg_quaff_crit(FALSE) don't want to CCW here, it would not help enough */
-		))
-	{
-		borg_note("# Healing Level 4.");
-		return (TRUE);
-	}
-#endif
 	/* If in danger try  one more Cure Critical if it will help */
 	if (danger >= bp_ptr->chp &&
 		danger < bp_ptr->mhp &&
@@ -2105,8 +2089,11 @@ bool borg_heal(int danger)
 	 * (unless The Serpent is dead)
 	 * Priests wont need to bail, they have good heal spells.
 	 */
-	if ((bp_ptr->max_depth >= 98) && !bp_ptr->winner &&
-		!borg_fighting_unique && (borg_class != CLASS_PRIEST))
+	if (bp_ptr->max_depth >= 98 &&
+		!bp_ptr->winner &&
+		!borg_fighting_unique &&
+		!borg_has_realm(REALM_LIFE) &&
+		!borg_has_realm(REALM_NATURE))
 	{
 		/* Bail out to save the heal pots for The Serpent */
 		return (FALSE);
@@ -2647,25 +2634,26 @@ bool borg_caution(void)
 		}
 	}
 
-	if (borg_class == CLASS_MAGE)
-	{
-		/* do some defence before running away */
-		if (borg_defend(p))
-			return TRUE;
-
-		/* try healing before running away */
-		if (borg_heal(p))
-			return TRUE;
-	}
-	else
+	/* If the borg has healing spells */
+	if (borg_has_realm(REALM_LIFE) || borg_has_realm(REALM_NATURE))
 	{
 		/* try healing before running away */
 		if (borg_heal(p))
-			return TRUE;
+			return (TRUE);
 
 		/* do some defence before running away! */
 		if (borg_defend(p))
-			return TRUE;
+			return (TRUE);
+	}
+	else
+	{
+		/* do some defence before running away */
+		if (borg_defend(p))
+			return (TRUE);
+
+		/* try healing before running away */
+		if (borg_heal(p))
+			return (TRUE);
 	}
 
 	/* If I am waiting for recall,  & safe, then stay put. */
@@ -2925,7 +2913,7 @@ bool borg_caution(void)
 		/* Attempt to satisfy hunger */
 		if (borg_eat_food_any() ||
 			borg_spell_fail(REALM_LIFE, 0, 7, 45) ||
-			borg_spell_fail(REALM_ARCANE, 2, 7, 45) ||
+			borg_spell_fail(REALM_ARCANE, 2, 6, 45) ||
 			borg_spell_fail(REALM_NATURE, 0, 3, 45))
 		{
 			/* Success */

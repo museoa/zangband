@@ -174,8 +174,11 @@ static int borg_thrust_damage_one(int i)
 	if (chance > 95) chance = 95;
 	if (chance < 5) chance = 5;
 
-	/* add 20% to chance to give a bit more wieght to weapons */
-	if (bp_ptr->lev > 15 && borg_class != CLASS_MAGE) chance += 20;
+	/* add 20% to chance to give a bit more weight to weapons */
+	if (bp_ptr->lev > 15 &&
+		borg_class != CLASS_MAGE &&
+		borg_class != CLASS_HIGH_MAGE &&
+		borg_class != CLASS_MINDCRAFTER) chance += 20;
 
 	dam = (dam * chance) / 100;
 
@@ -183,7 +186,10 @@ static int borg_thrust_damage_one(int i)
 	if (dam > kill->power * 2) dam = kill->power * 2;
 
 	/* Reduce the damage if a mage, they should not melee if they can avoid it */
-	if (borg_class == CLASS_MAGE && bp_ptr->max_lev < 40) dam = dam * 6 / 10;
+	if ((borg_class == CLASS_MAGE ||
+		borg_class != CLASS_HIGH_MAGE ||
+		borg_class != CLASS_MINDCRAFTER) &&
+		bp_ptr->max_lev < 40) dam = dam * 6 / 10;
 
 	/*
 	 * Enhance the preceived damage on Uniques.  This way we target them

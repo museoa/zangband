@@ -238,9 +238,10 @@ struct borg_ability
 	s16b star_remove_curse;
 	s16b pfe;
 	s16b glyph;
-	s16b ccw;
 
+	s16b ccw;
 	s16b csw;
+	s16b clw;
 	s16b res_heat;
 	s16b res_cold;
 	s16b res_all;
@@ -536,7 +537,6 @@ extern int bad_obj_y[50];	/* Dropped cursed artifact at location (Y) */
 
 extern s16b my_stat_max[6];	/* Current "maximal" stat values    */
 extern s16b my_stat_cur[6];	/* Current "natural" stat values    */
-extern s16b my_stat_use[6];	/* Current "resulting" stat values  */
 extern s16b my_stat_ind[6];	/* Current "additions" to stat values   */
 extern bool my_need_stat_check[6];	/* do I need to check my stats */
 
