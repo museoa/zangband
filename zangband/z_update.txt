@@ -6,6 +6,8 @@ code for details. In reversed chronological order (more or less):
 ZAngband 2.5.0:
 -Completely reworked the wilderness.  The extended towns and fixed
  quests are not available at the moment.
+-Towns now have gates so the nasty monsters in the wilderness cannot
+ get in.
 -Added a feature to allow your game to be automatically logged. You
  may append notes to the log file by pressing ':'.
 -Added point-bases stat allocation at birth (adapted from standard
@@ -40,7 +42,8 @@ ZAngband 2.5.0:
  had various flags removed.
 -The energy it takes to zap a rod/ aim a wand / use a staff and
  activate an artifact now depends on the players device skill.
--The XP function now uses the one taken from Rangband.
+-The XP function now decreases the amount per monster killed as you
+ kill more.  The effect is less than in Rangband.
 -Changed monster critical hit code so that stormy doesn't get
  insta-kills quite as often.
 -Golems lose their "nostun" ability in hard games with the ironman
