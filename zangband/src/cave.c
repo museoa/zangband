@@ -786,26 +786,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 	info = c_ptr->info;
 	
 	/* Is this feature memorized? */
-	if (!(info & (CAVE_MARK | CAVE_LITE)))
-	{
-		/* 
-		 * Hack - when blind the players light radius is 0
-		 * This means that the CAVE_LITE flag does not affect
-		 * the result of the comparison in that case.
-		 *
-		 * This gives a very quick test for the FEAT_NONE case.
-		 */
-		
-		/* Unknown. Access darkness */
-		f_ptr = &f_info[FEAT_NONE];
-			
-		/* Blank attr */
-		a = f_ptr->x_attr;
-
-		/* Blank char */
-		c = f_ptr->x_char;		
-	}
-	else
+	if (info & (CAVE_MARK | CAVE_LITE))
 	{
 		/* Apply mimic field to feat */
 		feat = f_info[c_ptr->feat].mimic;
@@ -862,7 +843,25 @@ void map_info(int y, int x, byte *ap, char *cp)
 			image_random(&a, &c);
 		}
 	}
-	
+	else
+	{
+		/* 
+		 * Hack - when blind the players light radius is 0
+		 * This means that the CAVE_LITE flag does not affect
+		 * the result of the comparison in that case.
+		 *
+		 * This gives a very quick test for the FEAT_NONE case.
+		 */
+		
+		/* Unknown. Access darkness */
+		f_ptr = &f_info[FEAT_NONE];
+			
+		/* Blank attr */
+		a = f_ptr->x_attr;
+
+		/* Blank char */
+		c = f_ptr->x_char;
+	}
 
 #ifdef USE_TRANSPARENCY
 	/* Save the terrain info for the transparency effects */
