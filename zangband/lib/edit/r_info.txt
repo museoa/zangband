@@ -13512,8 +13512,6 @@ F:FORCE_SLEEP | FRIENDS | DROP_SKELETON | DROP_CORPSE
 F:BASH_DOOR | RES_DISE
 F:ANIMAL | NO_CONF | NO_SLEEP
 S:1_IN_5 |
-F:ANIMAL | NO_CONF | NO_SLEEP
-S:1_IN_5 |
 S:BR_DISE
 D:A field of static energy surrounds this hound. Its presence seems 
 D:to dampen all other energies...
