@@ -93,7 +93,7 @@ static u16b select_building(byte pop, byte magic, byte law, u16b *build,
 	}
 	
 	/* Dungeons are not in large cities */
-	if (build_num > 16) b_select[BUILD_STAIRS] = 0;
+	if (build_num > 11) b_select[BUILD_STAIRS] = 0;
 	
 	/* Blank buildings don't exist for small towns */
 	if (build_num < 10)
@@ -109,7 +109,7 @@ static u16b select_building(byte pop, byte magic, byte law, u16b *build,
 		b_select[BUILD_BLANK] = 1;
 	}
 	
-	/* Not more that one home */
+	/* Not more than one home */
 	if (build[BUILD_STORE_HOME]) b_select[BUILD_STORE_HOME] = 0;
 
 	/* Some buildings are normally rare */
