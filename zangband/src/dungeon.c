@@ -4166,6 +4166,9 @@ void play_game(bool new_game)
 	 */
 	if (init_w_info()) quit("Cannot initialize wilderness");
 
+	/* Initialize field info */
+	if (init_t_info()) quit("Cannot initialize fields");
+	
 	/* Attempt to load */
 	if (!load_player())
 	{
@@ -4334,8 +4337,7 @@ void play_game(bool new_game)
 	/* Initialize vault info */
 	if (init_v_info()) quit("Cannot initialize vaults");
 
-	/* Initialize field info */
-	if (init_t_info()) quit("Cannot initialize fields");
+	
 
 
 	/* React to changes */
