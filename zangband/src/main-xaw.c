@@ -1652,12 +1652,12 @@ static errr term_data_init(term_data *td, Widget topLevel,
  */
 errr init_xaw(int argc, char *argv[])
 {
-	int i, bitdepth = 0;
+	int i;
+	
 	Widget topLevel;
 	Display *dpy;
 
 	cptr dpy_name = "";
-
 
 #ifdef USE_GRAPHICS
 
@@ -1666,6 +1666,8 @@ errr init_xaw(int argc, char *argv[])
 	int pict_wid = 0;
 	int pict_hgt = 0;
 
+	int bitdepth = 0;
+	
 #ifdef USE_TRANSPARENCY
 
 	char *TmpData;

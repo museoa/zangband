@@ -2296,8 +2296,8 @@ static errr term_data_init(term_data *td, int i)
  */
 errr init_x11(int argc, char *argv[])
 {
-	int i, bitdepth = 0;
-
+	int i;
+	
 	cptr dpy_name = "";
 
 	int num_term = 3;
@@ -2308,6 +2308,8 @@ errr init_x11(int argc, char *argv[])
 
 	int pict_wid = 0;
 	int pict_hgt = 0;
+	
+	int bitdepth = 0;
 
 #ifdef USE_TRANSPARENCY
 

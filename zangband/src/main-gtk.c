@@ -98,9 +98,10 @@ static int gamma_val = 0;
 /* The colours */
 static infoclr colours[256];
 
+#ifdef USE_GRAPHICS
 static GdkImage *tiles_norm;
 static int	tile_size;
-
+#endif /* USE_GRAPHICS */
 
 /*
  * Hack -- Convert an RGB value to an X11 Pixel, or die.
@@ -222,6 +223,8 @@ static errr Term_clear_gtk(void)
 	/* Success */
 	return (0);
 }
+
+#ifdef USE_GRAPHICS
 
 /*
  * The Win32 "BITMAPFILEHEADER" type.
@@ -614,6 +617,7 @@ static GdkImage *resize_tiles(int tile_wid, int tile_hgt)
 	return (new_image);
 }
 
+#endif /* USE_GRAPHICS */
 
 /*
  * Erase some characters.
@@ -1590,8 +1594,11 @@ errr init_gtk(unsigned char *new_game, int argc, char **argv)
 {
 	int i;
 
+#ifdef USE_GRAPHICS
+
 	char filename[1024];
 	int bitdepth = 0;
+#endif /* USE_GRAPHICS */
 	
 	/* See if gtk exists and works */
 	if (!gtk_init_check(&argc, &argv)) return (1);
@@ -1694,7 +1701,9 @@ errr init_gtk(unsigned char *new_game, int argc, char **argv)
 	{
 		term_data *td = &data[i];
 
+#ifdef USE_GRAPHICS		
 		term *t = &td->t;
+#endif /* USE_GRAPHICS */
 		
 		/* Initialize the term_data */
 		term_data_init(td, i);
