@@ -77,7 +77,7 @@ static bool get_enemy_dir(monster_type *m_ptr, int *mm)
 
 		/* Monster must be projectable if we can't pass through walls */
 		if (!(r_ptr->flags2 & (RF2_PASS_WALL | RF2_KILL_WALL)) &&
-			!projectable(m_ptr->fy, m_ptr->fx, t_ptr->fy, t_ptr->fx))
+			!projectable(m_ptr->fx, m_ptr->fy, t_ptr->fx, t_ptr->fy))
 		{
 			continue;
 		}

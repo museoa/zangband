@@ -1498,7 +1498,7 @@ bool target_able(int m_idx)
 	if (m_ptr->smart & SM_MIMIC) return (FALSE);
 	
 	/* Monster must be projectable */
-	if (!projectable(py, px, m_ptr->fy, m_ptr->fx)) return (FALSE);
+	if (!projectable(px, py, m_ptr->fx, m_ptr->fy)) return (FALSE);
 
 	/* Hack -- no targeting hallucinations */
 	if (p_ptr->image) return (FALSE);

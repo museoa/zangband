@@ -127,7 +127,7 @@ bool monst_spell_monst(int m_idx)
 		if (!are_enemies(m_ptr, t_ptr)) continue;
 
 		/* Monster must be projectable */
-		if (!projectable(m_ptr->fy, m_ptr->fx, t_ptr->fy, t_ptr->fx)) continue;
+		if (!projectable(m_ptr->fx, m_ptr->fy, t_ptr->fx, t_ptr->fy)) continue;
 
 		/* OK -- we've got a target */
 		y = t_ptr->fy;

@@ -438,7 +438,7 @@ void mmove2(int *x, int *y, int x1, int y1, int x2, int y2, int *slope, int *sq)
  * XXX XXX Should there be two slightly different versions of this function
  *         a 'smart' one, and a 'dumb' but fast one?
  */
-bool projectable(int y1, int x1, int y2, int x2)
+bool projectable(int x1, int y1, int x2, int y2)
 {
 	int y, x;
 

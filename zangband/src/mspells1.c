@@ -819,7 +819,7 @@ bool make_attack_spell(int m_idx)
 		if (m_ptr->cdis > MAX_RANGE) return (FALSE);
 
 		/* Check path */
-		if (!projectable(m_ptr->fy, m_ptr->fx, py, px)) return (FALSE);
+		if (!projectable(m_ptr->fx, m_ptr->fy, px, py)) return (FALSE);
 	}
 
 	/* Extract the racial spell flags */
