@@ -2684,10 +2684,12 @@ static void cave_temp_room_lite(void)
 			int y = temp_y[i] + ddy_ddd[j];
 			int x = temp_x[i] + ddx_ddd[j];
 
-			cave_type *c_ptr = area(x, y);
+			cave_type *c_ptr;
 
 			/* Verify */
 			if (!in_bounds2(x, y)) continue;
+			
+			c_ptr = area(x, y);
 
 			/* No longer in the array */
 			c_ptr->info &= ~(CAVE_TEMP);
