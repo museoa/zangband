@@ -1317,6 +1317,9 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 		/* Stop attacking if the target dies! */
 		if (t_ptr->fx != x_saver || t_ptr->fy != y_saver)
 			break;
+		
+		/* Stop attacking if the aggressor dies (fire sheath etc.) */
+		if (m_ptr->hp < 0) return TRUE;
 
 		/* Hack -- no more attacks */
 		if (!method) break;
