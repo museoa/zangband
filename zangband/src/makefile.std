@@ -103,13 +103,7 @@ BORGOBJS := \
 	zborg1.o zborg2.o zborg3.o zborg4.o zborg5.o \
 	zborg6.o zborg7.o zborg8.o zborg9.o \
 
-##
-## Get the list of .c files from the .o files
-##
-ANGSRCS := $(ANGOBJS:.o=.c)
-ZUTILSRCS := $(ZUTILOBJS:.o=.c)
-BORGSRCS := $(BORGOBJS:.o=.c)
-LUAWSRCS := $(LUAWOBJS:.o=.c)
+
 
 ##
 ## The list of ports available
@@ -308,6 +302,14 @@ risc: ANGOBJS += C:o.Stubs OSLib:o.OSLib C:o.eventlib
 
 
 ##########################################################
+
+##
+## Get the list of .c files from the .o files
+##
+ANGSRCS := $(ANGOBJS:.o=.c)
+ZUTILSRCS := $(ZUTILOBJS:.o=.c)
+BORGSRCS := $(BORGOBJS:.o=.c)
+LUAWSRCS := $(LUAWOBJS:.o=.c)
 
 ##
 ## The "source" and "object" files.
