@@ -1038,6 +1038,39 @@ void do_cmd_options(void)
 				break;
 			}
 
+			case '|':
+			{
+				int i;
+				FILE    *fff;
+				char    buf[1024];
+
+				/* Build the filename */
+				path_build(buf, 1024, ANGBAND_DIR_USER, "pref-opt.prf");
+
+				/* Open the file */
+				fff = my_fopen(buf, "w");
+
+				/* Failed */
+				if (!fff) break;
+
+				/* Header */
+				fprintf(fff, "# File: pref-opt.prf\n\n");
+				fprintf(fff, "# Allow user specification of various options\n\n");
+
+				/* Scan the options */
+				for (i = 0; option_info[i].o_desc; i++)
+				{
+					fprintf(fff, "%c:%s\n",
+					        (*option_info[i].o_var ? 'Y' : 'X'),
+					        option_info[i].o_text);
+				}
+
+				/* Close the file */
+				my_fclose(fff);
+
+				break;
+			}
+
 			/* Unknown option */
 			default:
 			{
