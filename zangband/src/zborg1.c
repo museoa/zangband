@@ -68,7 +68,6 @@ bool borg_respawn_winners;
 
 /* dynamic borg stuff */
 bool borg_uses_swaps;
-bool borg_uses_calcs = TRUE;
 bool borg_plays_risky;
 bool borg_slow_optimizehome;
 bool borg_scums_uniques;

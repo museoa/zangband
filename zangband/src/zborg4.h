@@ -40,8 +40,7 @@ extern void borg_notice_home(borg_item *in_item, bool no_items);
  * Calculate the basic "power"
  */
 extern s32b borg_power(void);
-extern s32b borg_power_aux1(void);
-extern s32b borg_power_aux2(void);
+
 /*
  * Calculate the basic "power" of the home
  */

@@ -218,7 +218,6 @@ extern bool borg_respawn_winners;
 
 extern bool borg_plays_risky;
 extern bool borg_uses_swaps;
-extern bool borg_uses_calcs;
 extern bool borg_slow_optimizehome;
 extern bool borg_scums_uniques;
 extern bool borg_engage_cloak;

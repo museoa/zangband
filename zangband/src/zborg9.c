@@ -3105,7 +3105,6 @@ static void init_borg_txt_file(void)
 		borg_stop_dlevel = 128;
 		borg_stop_clevel = 55;
 		borg_stop_king = TRUE;
-		borg_uses_calcs = FALSE;
 		borg_respawn_winners = FALSE;
 		borg_respawn_class = -1;
 		borg_respawn_race = -2;
@@ -3180,18 +3179,6 @@ TRUE;
 TRUE;
 			else
 				borg_stop_king = FALSE;
-			continue;
-		}
-
-
-		if (prefix(buf, "borg_uses_dynamic_calcs ="))
-		{
-			if (buf[strlen("borg_uses_dynamic_calcs =") + 1] == 'T' ||
-				buf[strlen("borg_uses_dynamic_calcs =") + 1] == '1' ||
-				buf[strlen("borg_uses_dynamic_calcs =") + 1] ==
-				't') borg_uses_calcs = TRUE;
-			else
-				borg_uses_calcs = FALSE;
 			continue;
 		}
 
