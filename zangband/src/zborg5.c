@@ -3131,8 +3131,7 @@ static s32b borg_power_aux3(void)
 	
 
 	/* Hack -- Reward for wearing a permanent light */
-	if (bp_ptr->able.fuel >= 1000)
-		value += 5000;
+	if (bp_ptr->britelite) value += 5000;
 	/* Hack -- Reward speed */
 
 	if (bp_ptr->speed >= 150)
@@ -3292,7 +3291,7 @@ static s32b borg_power_aux3(void)
 	{
 		if (bp_ptr->flags3 & TR3_FEATHER) value += 50;
 	}
-	if (bp_ptr->britelite) value += 2000L;
+	if (bp_ptr->britelite) value += 200000L;
 	if (bp_ptr->flags3 & TR3_TELEPATHY)
 	{
 		if (bp_ptr->flags3 & TR3_SEE_INVIS) value += 500L;

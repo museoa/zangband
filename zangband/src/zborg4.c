@@ -1173,16 +1173,13 @@ static void borg_notice_lite(void)
 	/* Item missing? */
 	if (!l_ptr) return;
 
-	/* No need for fuel */
-	if (l_ptr->kn_flags3 & TR3_LITE) bp_ptr->able.fuel += 1000;
-
 	/* Lite */
 	if (l_ptr->tval == TV_LITE)
 	{
 		object_kind *k_ptr = &k_info[l_ptr->k_idx];
 
 		/* No fuel means no radius */
-		if (l_ptr->timeout)
+		if (l_ptr->timeout || (l_ptr->kn_flags3 & TR3_LITE))
 		{
 			/* Torches -- radius one */
 			if (k_ptr->sval == SV_LITE_TORCH) bp_ptr->cur_lite += 1;
@@ -1190,14 +1187,26 @@ static void borg_notice_lite(void)
 			/* Lanterns -- radius two */
 			if (k_ptr->sval == SV_LITE_LANTERN) bp_ptr->cur_lite += 2;
 		}
-
+		
+		if (l_ptr->kn_flags3 & TR3_LITE)
+		{
+			/* Permanently glowing */
+			bp_ptr->britelite = TRUE;
+			
+			/* No need for fuel */
+			bp_ptr->able.fuel += 1000;
+		}
+		
 		/* Artifact lites -- radius three */
 		if (l_ptr->kn_flags3 & TR3_INSTA_ART)
 		{
 			bp_ptr->cur_lite += 3;
-
-			/* Artifact lites -- assume glowing */
+			
+			/* Permanently glowing */
 			bp_ptr->britelite = TRUE;
+			
+			/* No need for fuel */
+			bp_ptr->able.fuel += 1000;
 
 			/* Vampires need to be concerned with Artifacts Lites */
 			if ((borg_race == RACE_VAMPIRE) && !(bp_ptr->flags2 & TR2_RES_LITE))
