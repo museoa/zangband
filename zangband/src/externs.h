@@ -819,7 +819,7 @@ extern bool rustproof(void);
 extern bool curse_armor(void);
 extern bool curse_weapon(void);
 extern bool brand_bolts(void);
-extern bool polymorph_monster(int y, int x);
+extern bool polymorph_monster(int x, int y);
 extern bool dimension_door(void);
 extern void map_wilderness(int radius, s32b x, s32b y);
 extern void sanity_blast(const monster_type *m_ptr);

@@ -2770,7 +2770,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 	/* Mega-Hack -- Handle "polymorph" -- monsters get a saving throw */
 	else if (do_poly && (randint1(150) > r_ptr->level))
 	{
-		if (polymorph_monster(y, x))
+		if (polymorph_monster(x, y))
 		{
 			/* Obvious */
 			if (seen) obvious = TRUE;

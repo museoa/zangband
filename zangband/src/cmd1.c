@@ -1909,7 +1909,7 @@ void py_attack(int x, int y)
 				    !(r_ptr->flags4 & RF4_BR_CHAO) &&
 				    !(r_ptr->flags1 & RF1_QUESTOR))
 				{
-					if (polymorph_monster(y, x))
+					if (polymorph_monster(x, y))
 					{
 						msg_format("%^s changes!", m_name);
 

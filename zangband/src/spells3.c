@@ -4255,7 +4255,7 @@ static s16b poly_r_idx(int r_idx)
 }
 
 
-bool polymorph_monster(int y, int x)
+bool polymorph_monster(int x, int y)
 {
 	cave_type *c_ptr = area(y, x);
 	monster_type *m_ptr = &m_list[c_ptr->m_idx];
