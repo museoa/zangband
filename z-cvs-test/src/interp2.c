@@ -1258,7 +1258,6 @@ bad_index:
  * 	Syntax:
  *		game abort ?confirm? -- Quit without saving
  *		game directory -- Get a directory pathname
- *		game file_character -- Dump a character file
  *		game keymap_dump -- Dump a keymap file
  *		game macro_dump -- Dump a macro file
  *		game new -- Start a new game
@@ -1300,11 +1299,11 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 	int objC = objc - infoCmd->depth;
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
-	static char *cmdOptions[] = {"abort", "directory", "file_character",
+	static char *cmdOptions[] = {"abort", "directory",
 		"macro_dump", "new", "open", "process_pref_file", "quit",
 		"keymap_dump", "savefile_info", "version", "variant",
 		"savefile", NULL};
-	enum {IDX_ABORT, IDX_DIRECTORY, IDX_FILE_CHARACTER,
+	enum {IDX_ABORT, IDX_DIRECTORY,
 		IDX_MACRO_DUMP, IDX_NEW, IDX_OPEN, IDX_PROCESS_PREF_FILE, IDX_QUIT,
 		IDX_KEYMAP_DUMP, IDX_SAVEFILE_INFO, IDX_VERSION, IDX_VARIANT,
 		IDX_SAVEFILE} option;
@@ -1445,43 +1444,6 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 			ExtToUtf_SetResult(interp, (char *) *angband_path[index]);
 			break;
 			
-		case IDX_FILE_CHARACTER: /* file_character */
-			if (objC != 3)
-			{
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, "filename");
-				return TCL_ERROR;
-			}
-
-			/* Get the file path */
-			t = Tcl_GetStringFromObj(objV[2], NULL);
-
-			/* */
-			if (t[0] && t[0] != ' ')
-			{
-				/* Translate the file path */
-				extString = UtfToExt_TranslateFileName(interp, t, &extDString);
-				if (extString == NULL) return TCL_ERROR;
-
-				/* Create a character dump */
-				if (file_character(extString, FALSE) == -1)
-				{
-					/* Set the error */
-					Tcl_AppendStringsToObj(resultPtr,
-						"character dump failed to \"", t, "\"",
-						NULL);
-
-					/* Clean up */
-					Tcl_DStringFree(&extDString);
-
-					/* Failure */
-					return TCL_ERROR;
-				}
-
-				/* Clean up */
-				Tcl_DStringFree(&extDString);
-			}
-			break;
-
 		case IDX_MACRO_DUMP: /* macro_dump */
 			if (objC != 3)
 			{
