@@ -2913,8 +2913,15 @@ static void save_object_list(term_list *l_ptr, int num, byte list_type)
  */
 static void set_basic_flags(term_list *l_ptr, object_type *o_ptr, bool in_store)
 {
+	object_flags oflags;
+
 	/* Known flags */
-	object_flags_known(o_ptr, l_ptr->kn_flags);
+	object_flags_known(o_ptr, &oflags);
+	
+	l_ptr->kn_flags[0] = oflags.flags[0];
+	l_ptr->kn_flags[1] = oflags.flags[1];
+	l_ptr->kn_flags[2] = oflags.flags[2];
+	l_ptr->kn_flags[3] = oflags.flags[3];
 
 	/* Type of object */
 	if (object_aware_p(o_ptr) || in_store)

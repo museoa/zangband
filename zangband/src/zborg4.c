@@ -290,7 +290,8 @@ void borg_list_info(byte list_type, vptr dummy)
  */
 static void borg_notice_player(void)
 {
-	u32b ff[4];
+	object_flags oflags;
+	object_flags *of_ptr = &oflags;
 
 	/* Recalc some Variables */
 	bp_ptr->ac = 0;
@@ -332,20 +333,21 @@ static void borg_notice_player(void)
 	/* Racial Skills */
 
 	/* Extract the player flags */
-	player_flags(ff);
+	player_flags(of_ptr);
 
-	bp_ptr->flags[0] |= ff[0];
-	bp_ptr->flags[1] |= ff[1];
-	bp_ptr->flags[2] |= ff[2];
+	bp_ptr->flags[0] |= oflags.flags[0];
+	bp_ptr->flags[1] |= oflags.flags[1];
+	bp_ptr->flags[2] |= oflags.flags[2];
+	bp_ptr->flags[3] |= oflags.flags[3];
 	/* XXX XXX XXX Don't handle flags4 yet */
 
 	/* Sustain flags */
-	if (TR_FLAG(ff, 1, SUST_STR)) bp_ptr->sust[A_STR] = TRUE;
-	if (TR_FLAG(ff, 1, SUST_INT)) bp_ptr->sust[A_INT] = TRUE;
-	if (TR_FLAG(ff, 1, SUST_WIS)) bp_ptr->sust[A_WIS] = TRUE;
-	if (TR_FLAG(ff, 1, SUST_DEX)) bp_ptr->sust[A_DEX] = TRUE;
-	if (TR_FLAG(ff, 1, SUST_CON)) bp_ptr->sust[A_CON] = TRUE;
-	if (TR_FLAG(ff, 1, SUST_CHR)) bp_ptr->sust[A_CHR] = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, SUST_STR)) bp_ptr->sust[A_STR] = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, SUST_INT)) bp_ptr->sust[A_INT] = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, SUST_WIS)) bp_ptr->sust[A_WIS] = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, SUST_DEX)) bp_ptr->sust[A_DEX] = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, SUST_CON)) bp_ptr->sust[A_CON] = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, SUST_CHR)) bp_ptr->sust[A_CHR] = TRUE;
 
 	/* Bloating slows the player down (a little) */
 	if (bp_ptr->status.gorged) bp_ptr->speed -= 10;
@@ -3520,7 +3522,8 @@ static void borg_notice_home_spells(void)
  */
 static void borg_notice_home_player(void)
 {
-	u32b ff[4];
+	object_flags oflags;
+	object_flags *of_ptr = &oflags;
 
 	int i;
 
@@ -3531,51 +3534,51 @@ static void borg_notice_home_player(void)
 	}
 
 	/* Extract the player flags */
-	player_flags(ff);
+	player_flags(of_ptr);
 
 	/* Good flags */
-	if (TR_FLAG(ff, 2, SLOW_DIGEST)) num_slow_digest = TRUE;
-	if (TR_FLAG(ff, 2, FEATHER)) num_ffall = TRUE;
-	if (TR_FLAG(ff, 2, LITE)) num_lite = TRUE;
-	if (TR_FLAG(ff, 2, REGEN)) num_regenerate = TRUE;
-	if (TR_FLAG(ff, 2, TELEPATHY)) num_telepathy = TRUE;
-	if (TR_FLAG(ff, 2, SEE_INVIS)) num_see_inv = TRUE;
-	if (TR_FLAG(ff, 1, FREE_ACT)) num_free_act = TRUE;
-	if (TR_FLAG(ff, 1, HOLD_LIFE)) num_hold_life = TRUE;
+	if (OBJ_FLAG(of_ptr, 2, SLOW_DIGEST)) num_slow_digest = TRUE;
+	if (OBJ_FLAG(of_ptr, 2, FEATHER)) num_ffall = TRUE;
+	if (OBJ_FLAG(of_ptr, 2, LITE)) num_lite = TRUE;
+	if (OBJ_FLAG(of_ptr, 2, REGEN)) num_regenerate = TRUE;
+	if (OBJ_FLAG(of_ptr, 2, TELEPATHY)) num_telepathy = TRUE;
+	if (OBJ_FLAG(of_ptr, 2, SEE_INVIS)) num_see_inv = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, FREE_ACT)) num_free_act = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, HOLD_LIFE)) num_hold_life = TRUE;
 
 	/* Weird flags */
 
 	/* Bad flags */
 
 	/* Immunity flags */
-	if (TR_FLAG(ff, 1, IM_FIRE)) num_immune_fire = TRUE;
-	if (TR_FLAG(ff, 1, IM_ACID)) num_immune_acid = TRUE;
-	if (TR_FLAG(ff, 1, IM_COLD)) num_immune_cold = TRUE;
-	if (TR_FLAG(ff, 1, IM_ELEC)) num_immune_elec = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, IM_FIRE)) num_immune_fire = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, IM_ACID)) num_immune_acid = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, IM_COLD)) num_immune_cold = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, IM_ELEC)) num_immune_elec = TRUE;
 
 	/* Resistance flags */
-	if (TR_FLAG(ff, 1, RES_ACID)) num_resist_acid = TRUE;
-	if (TR_FLAG(ff, 1, RES_ELEC)) num_resist_elec = TRUE;
-	if (TR_FLAG(ff, 1, RES_FIRE)) num_resist_fire = TRUE;
-	if (TR_FLAG(ff, 1, RES_COLD)) num_resist_cold = TRUE;
-	if (TR_FLAG(ff, 1, RES_POIS)) num_resist_pois = TRUE;
-	if (TR_FLAG(ff, 1, RES_LITE)) num_resist_lite = TRUE;
-	if (TR_FLAG(ff, 1, RES_DARK)) num_resist_dark = TRUE;
-	if (TR_FLAG(ff, 1, RES_BLIND)) num_resist_blind = TRUE;
-	if (TR_FLAG(ff, 1, RES_CONF)) num_resist_conf = TRUE;
-	if (TR_FLAG(ff, 1, RES_SOUND)) num_resist_sound = TRUE;
-	if (TR_FLAG(ff, 1, RES_SHARDS)) num_resist_shard = TRUE;
-	if (TR_FLAG(ff, 1, RES_NEXUS)) num_resist_nexus = TRUE;
-	if (TR_FLAG(ff, 1, RES_NETHER)) num_resist_neth = TRUE;
-	if (TR_FLAG(ff, 1, RES_CHAOS)) num_resist_chaos = TRUE;
-	if (TR_FLAG(ff, 1, RES_DISEN)) num_resist_disen = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, RES_ACID)) num_resist_acid = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, RES_ELEC)) num_resist_elec = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, RES_FIRE)) num_resist_fire = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, RES_COLD)) num_resist_cold = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, RES_POIS)) num_resist_pois = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, RES_LITE)) num_resist_lite = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, RES_DARK)) num_resist_dark = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, RES_BLIND)) num_resist_blind = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, RES_CONF)) num_resist_conf = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, RES_SOUND)) num_resist_sound = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, RES_SHARDS)) num_resist_shard = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, RES_NEXUS)) num_resist_nexus = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, RES_NETHER)) num_resist_neth = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, RES_CHAOS)) num_resist_chaos = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, RES_DISEN)) num_resist_disen = TRUE;
 
 	/* Sustain flags */
-	if (TR_FLAG(ff, 1, SUST_STR)) num_sustain_str = TRUE;
-	if (TR_FLAG(ff, 1, SUST_INT)) num_sustain_int = TRUE;
-	if (TR_FLAG(ff, 1, SUST_WIS)) num_sustain_wis = TRUE;
-	if (TR_FLAG(ff, 1, SUST_DEX)) num_sustain_dex = TRUE;
-	if (TR_FLAG(ff, 1, SUST_CON)) num_sustain_con = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, SUST_STR)) num_sustain_str = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, SUST_INT)) num_sustain_int = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, SUST_WIS)) num_sustain_wis = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, SUST_DEX)) num_sustain_dex = TRUE;
+	if (OBJ_FLAG(of_ptr, 1, SUST_CON)) num_sustain_con = TRUE;
 }
 
 

@@ -105,45 +105,48 @@ void reset_visuals(void)
 /*
  * Obtain the "flags" for an item which are known to the player
  */
-void object_flags_known(const object_type *o_ptr, u32b *ff)
+void object_flags_known(const object_type *o_ptr, object_flags *of_ptr)
 {
 	const object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
 	bool known = object_known_p(o_ptr);
 
 	/* Clear */
-	ff[0] = ff[1] = ff[2] = ff[3] = 0L;
-
+	of_ptr->flags[0] = 0L;
+	of_ptr->flags[1] = 0L;
+	of_ptr->flags[2] = 0L;
+	of_ptr->flags[3] = 0L;
+	
 	if (cursed_p(o_ptr) && (known || (o_ptr->info & (OB_SENSE))))
 	{
-		SET_FLAG(ff, 2, TR2_CURSED);;
+		SET_FLAG(of_ptr->flags, 2, TR2_CURSED);
 	}
 
 	/* Must be identified */
 	if (!known) return;
 
 	/* Base object */
-	ff[0] = k_ptr->flags[0];
-	ff[1] = k_ptr->flags[1];
-	ff[2] = k_ptr->flags[2];
-	ff[3] = k_ptr->flags[3];
+	of_ptr->flags[0] = k_ptr->flags[0];
+	of_ptr->flags[1] = k_ptr->flags[1];
+	of_ptr->flags[2] = k_ptr->flags[2];
+	of_ptr->flags[3] = k_ptr->flags[3];
 
 	/* Show modifications to stats */
-	ff[0] |= (o_ptr->flags[0] & TR0_EASY_MASK);
+	of_ptr->flags[0] |= (o_ptr->flags[0] & TR0_EASY_MASK);
 
 	/* 
 	 * *Identify* sets these flags,
 	 * and ego items have some set on creation.
 	 */
-	ff[0] |= o_ptr->kn_flags[0];
-	ff[1] |= o_ptr->kn_flags[1];
-	ff[2] |= o_ptr->kn_flags[2];
-	ff[3] |= o_ptr->kn_flags[3];
+	of_ptr->flags[0] |= o_ptr->kn_flags[0];
+	of_ptr->flags[1] |= o_ptr->kn_flags[1];
+	of_ptr->flags[2] |= o_ptr->kn_flags[2];
+	of_ptr->flags[3] |= o_ptr->kn_flags[3];
 
 	/* We now now whether or not it is an artifact */
 	if (OBJ_FLAG(o_ptr, 2, INSTA_ART))
 	{
-		SET_FLAG(ff, 2, TR2_INSTA_ART);;
+		SET_FLAG(of_ptr->flags, 2, TR2_INSTA_ART);
 	}
 }
 
@@ -187,7 +190,8 @@ static void roff_obj_aux(const object_type *o_ptr)
 	
 	int n;
 
-	u32b ff[4];
+	object_flags oflags;
+	object_flags *of_ptr = &oflags;
 
 	int vn;
 	cptr vp[80];
@@ -195,7 +199,7 @@ static void roff_obj_aux(const object_type *o_ptr)
 	k_ptr = &k_info[o_ptr->k_idx];
 
 	/* Extract the flags */
-	object_flags_known(o_ptr, ff);
+	object_flags_known(o_ptr, of_ptr);
 
 	/* Indicate if fully known */
 	if (object_known_full(o_ptr))
@@ -256,22 +260,22 @@ static void roff_obj_aux(const object_type *o_ptr)
 	/* Collect stat boosts */
 	vn = 0;
 	/* All stats is handled specially */
-	if ((ff[0] & TR0_STAT_MASK) == TR0_STAT_MASK)
+	if ((of_ptr->flags[0] & TR0_STAT_MASK) == TR0_STAT_MASK)
 		vp[vn++] = "all your stats";
 	else
 	{
-		if (TR_FLAG(ff, 0, STR)) vp[vn++] = "strength";
-		if (TR_FLAG(ff, 0, INT)) vp[vn++] = "intelligence";
-		if (TR_FLAG(ff, 0, WIS)) vp[vn++] = "wisdom";
-		if (TR_FLAG(ff, 0, DEX)) vp[vn++] = "dexterity";
-		if (TR_FLAG(ff, 0, CON)) vp[vn++] = "constitution";
-		if (TR_FLAG(ff, 0, CHR)) vp[vn++] = "charisma";
+		if (OBJ_FLAG(of_ptr, 0, STR)) vp[vn++] = "strength";
+		if (OBJ_FLAG(of_ptr, 0, INT)) vp[vn++] = "intelligence";
+		if (OBJ_FLAG(of_ptr, 0, WIS)) vp[vn++] = "wisdom";
+		if (OBJ_FLAG(of_ptr, 0, DEX)) vp[vn++] = "dexterity";
+		if (OBJ_FLAG(of_ptr, 0, CON)) vp[vn++] = "constitution";
+		if (OBJ_FLAG(of_ptr, 0, CHR)) vp[vn++] = "charisma";
 	}
 
-	if (TR_FLAG(ff, 0, SPEED))   vp[vn++] = "speed";
-	if (TR_FLAG(ff, 0, STEALTH)) vp[vn++] = "stealth";
-	if (TR_FLAG(ff, 0, SEARCH))  vp[vn++] = "perception";
-	if (TR_FLAG(ff, 0, TUNNEL))  vp[vn++] = "ability to dig";
+	if (OBJ_FLAG(of_ptr, 0, SPEED))   vp[vn++] = "speed";
+	if (OBJ_FLAG(of_ptr, 0, STEALTH)) vp[vn++] = "stealth";
+	if (OBJ_FLAG(of_ptr, 0, SEARCH))  vp[vn++] = "perception";
+	if (OBJ_FLAG(of_ptr, 0, TUNNEL))  vp[vn++] = "ability to dig";
 
 	/* Describe stat boosts */
 	if (vn > 0)
@@ -297,7 +301,7 @@ static void roff_obj_aux(const object_type *o_ptr)
 		roff(" by %+i.  ", o_ptr->pval);
 	}
 
-	if (TR_FLAG(ff, 0, SP))
+	if (OBJ_FLAG(of_ptr, 0, SP))
 	{
 		if (o_ptr->pval > 0)
 		{
@@ -310,7 +314,7 @@ static void roff_obj_aux(const object_type *o_ptr)
 		roff(CLR_L_GREEN "maximum sp" CLR_DEFAULT " by %i per level.  ", o_ptr->pval);
 	}
 
-	if (TR_FLAG(ff, 0, INFRA))
+	if (OBJ_FLAG(of_ptr, 0, INFRA))
 	{
 		if (o_ptr->pval > 0)
 		{
@@ -326,7 +330,7 @@ static void roff_obj_aux(const object_type *o_ptr)
 		}
 	}
 
-	if (TR_FLAG(ff, 0, BLOWS))
+	if (OBJ_FLAG(of_ptr, 0, BLOWS))
 	{
 		if (o_ptr->pval > 0)
 		{
@@ -341,10 +345,10 @@ static void roff_obj_aux(const object_type *o_ptr)
 
 	/* Collect brands */
 	vn = 0;
-	if (TR_FLAG(ff, 0, BRAND_ACID)) vp[vn++] = "acid";
-	if (TR_FLAG(ff, 0, BRAND_ELEC)) vp[vn++] = "electricity";
-	if (TR_FLAG(ff, 0, BRAND_FIRE)) vp[vn++] = "fire";
-	if (TR_FLAG(ff, 0, BRAND_COLD)) vp[vn++] = "frost";
+	if (OBJ_FLAG(of_ptr, 0, BRAND_ACID)) vp[vn++] = "acid";
+	if (OBJ_FLAG(of_ptr, 0, BRAND_ELEC)) vp[vn++] = "electricity";
+	if (OBJ_FLAG(of_ptr, 0, BRAND_FIRE)) vp[vn++] = "fire";
+	if (OBJ_FLAG(of_ptr, 0, BRAND_COLD)) vp[vn++] = "frost";
 
 	/* Describe brands */
 	if (vn)
@@ -363,49 +367,49 @@ static void roff_obj_aux(const object_type *o_ptr)
 		roff(".  ");
 	}
 
-	if (TR_FLAG(ff, 0, BRAND_POIS))
+	if (OBJ_FLAG(of_ptr, 0, BRAND_POIS))
 	{
 		roff("It " CLR_VIOLET "poisons" CLR_DEFAULT " your foes.  ");
 	}
 
-	if (TR_FLAG(ff, 0, CHAOTIC))
+	if (OBJ_FLAG(of_ptr, 0, CHAOTIC))
 	{
 		roff("It produces " CLR_VIOLET "chaotic effects" CLR_DEFAULT ".  ");
 	}
 
-	if (TR_FLAG(ff, 0, VAMPIRIC))
+	if (OBJ_FLAG(of_ptr, 0, VAMPIRIC))
 	{
 		roff("It " CLR_VIOLET "drains life" CLR_DEFAULT " from your foes.  ");
 	}
 
-	if (TR_FLAG(ff, 0, IMPACT))
+	if (OBJ_FLAG(of_ptr, 0, IMPACT))
 	{
 		roff("It can cause " CLR_VIOLET "earthquakes" CLR_DEFAULT ".  ");
 	}
 
-	if (TR_FLAG(ff, 0, VORPAL))
+	if (OBJ_FLAG(of_ptr, 0, VORPAL))
 	{
 		roff("It is very sharp and can cut your foes.  ");
 	}
 
 	if (o_ptr->tval >= TV_DIGGING && o_ptr->tval <= TV_SWORD)
 	{
-		if (TR_FLAG(ff, 0, KILL_DRAGON))
+		if (OBJ_FLAG(of_ptr, 0, KILL_DRAGON))
 		{
 			roff("It is a great bane of " CLR_YELLOW "dragons" CLR_DEFAULT ".  ");
 		}
 
 		/* Collect slays */
 		vn = 0;
-		if ((TR_FLAG(ff, 0, SLAY_DRAGON)) && !(TR_FLAG(ff, 0, KILL_DRAGON)))
+		if (OBJ_FLAG(of_ptr, 0, SLAY_DRAGON) && !OBJ_FLAG(of_ptr, 0, KILL_DRAGON))
 			vp[vn++] = "dragons";
-		if (TR_FLAG(ff, 0, SLAY_ORC))    vp[vn++] = "orcs";
-		if (TR_FLAG(ff, 0, SLAY_TROLL))  vp[vn++] = "trolls";
-		if (TR_FLAG(ff, 0, SLAY_GIANT))  vp[vn++] = "giants";
-		if (TR_FLAG(ff, 0, SLAY_DEMON))  vp[vn++] = "demons";
-		if (TR_FLAG(ff, 0, SLAY_UNDEAD)) vp[vn++] = "the undead";
-		if (TR_FLAG(ff, 0, SLAY_EVIL))   vp[vn++] = "evil monsters";
-		if (TR_FLAG(ff, 0, SLAY_ANIMAL)) vp[vn++] = "natural creatures";
+		if (OBJ_FLAG(of_ptr, 0, SLAY_ORC))    vp[vn++] = "orcs";
+		if (OBJ_FLAG(of_ptr, 0, SLAY_TROLL))  vp[vn++] = "trolls";
+		if (OBJ_FLAG(of_ptr, 0, SLAY_GIANT))  vp[vn++] = "giants";
+		if (OBJ_FLAG(of_ptr, 0, SLAY_DEMON))  vp[vn++] = "demons";
+		if (OBJ_FLAG(of_ptr, 0, SLAY_UNDEAD)) vp[vn++] = "the undead";
+		if (OBJ_FLAG(of_ptr, 0, SLAY_EVIL))   vp[vn++] = "evil monsters";
+		if (OBJ_FLAG(of_ptr, 0, SLAY_ANIMAL)) vp[vn++] = "natural creatures";
 
 		/* Print slays */
 		if (vn)
@@ -425,25 +429,25 @@ static void roff_obj_aux(const object_type *o_ptr)
 		}
 	}
 
-	if (TR_FLAG(ff, 3, GHOUL_TOUCH))
+	if (OBJ_FLAG(of_ptr, 3, GHOUL_TOUCH))
 	{
 		roff("It gives you a paralyzing touch.  ");
 	}
-	if (TR_FLAG(ff, 3, PSI_CRIT))
+	if (OBJ_FLAG(of_ptr, 3, PSI_CRIT))
 	{
 		roff("It uses psychic energy to strike great blows.  ");
 	}
-	if (TR_FLAG(ff, 3, RETURN))
+	if (OBJ_FLAG(of_ptr, 3, RETURN))
 	{
 		roff("It returns when thrown.  ");
 	}
-	if (TR_FLAG(ff, 3, EXPLODE))
+	if (OBJ_FLAG(of_ptr, 3, EXPLODE))
 	{
 		roff("It explodes when fired.  ");
 	}
 
 	/* Collect sustains */
-	if ((ff[1] & TR1_SUST_MASK) == TR1_SUST_MASK)
+	if ((of_ptr->flags[1] & TR1_SUST_MASK) == TR1_SUST_MASK)
 	{
 		/* Handle all stats specially */
 		roff("It sustains " CLR_GREEN "all your stats" CLR_DEFAULT ".  ");
@@ -451,12 +455,12 @@ static void roff_obj_aux(const object_type *o_ptr)
 	else
 	{
 		vn = 0;
-		if (TR_FLAG(ff, 1, SUST_STR)) vp[vn++] = "strength";
-		if (TR_FLAG(ff, 1, SUST_INT)) vp[vn++] = "intelligence";
-		if (TR_FLAG(ff, 1, SUST_WIS)) vp[vn++] = "wisdom";
-		if (TR_FLAG(ff, 1, SUST_DEX)) vp[vn++] = "dexterity";
-		if (TR_FLAG(ff, 1, SUST_CON)) vp[vn++] = "constitution";
-		if (TR_FLAG(ff, 1, SUST_CHR)) vp[vn++] = "charisma";
+		if (OBJ_FLAG(of_ptr, 1, SUST_STR)) vp[vn++] = "strength";
+		if (OBJ_FLAG(of_ptr, 1, SUST_INT)) vp[vn++] = "intelligence";
+		if (OBJ_FLAG(of_ptr, 1, SUST_WIS)) vp[vn++] = "wisdom";
+		if (OBJ_FLAG(of_ptr, 1, SUST_DEX)) vp[vn++] = "dexterity";
+		if (OBJ_FLAG(of_ptr, 1, SUST_CON)) vp[vn++] = "constitution";
+		if (OBJ_FLAG(of_ptr, 1, SUST_CHR)) vp[vn++] = "charisma";
 
 		/* Print sustains */
 		if (vn)
@@ -478,13 +482,13 @@ static void roff_obj_aux(const object_type *o_ptr)
 	
 	/* Collect immunities */
 	vn = 0;
-	if (TR_FLAG(ff, 1, IM_ACID)) vp[vn++] = "acid";
-	if (TR_FLAG(ff, 1, IM_ELEC)) vp[vn++] = "electricity";
-	if (TR_FLAG(ff, 1, IM_FIRE)) vp[vn++] = "fire";
-	if (TR_FLAG(ff, 1, IM_COLD)) vp[vn++] = "cold";
-	if (TR_FLAG(ff, 3, IM_LITE)) vp[vn++] = "light";
-	if (TR_FLAG(ff, 3, IM_DARK)) vp[vn++] = "darkness";
-	if (TR_FLAG(ff, 1, FREE_ACT)) vp[vn++] = "paralysis";
+	if (OBJ_FLAG(of_ptr, 1, IM_ACID)) vp[vn++] = "acid";
+	if (OBJ_FLAG(of_ptr, 1, IM_ELEC)) vp[vn++] = "electricity";
+	if (OBJ_FLAG(of_ptr, 1, IM_FIRE)) vp[vn++] = "fire";
+	if (OBJ_FLAG(of_ptr, 1, IM_COLD)) vp[vn++] = "cold";
+	if (OBJ_FLAG(of_ptr, 3, IM_LITE)) vp[vn++] = "light";
+	if (OBJ_FLAG(of_ptr, 3, IM_DARK)) vp[vn++] = "darkness";
+	if (OBJ_FLAG(of_ptr, 1, FREE_ACT)) vp[vn++] = "paralysis";
 
 	/* Print immunities */
 	if (vn)
@@ -505,23 +509,23 @@ static void roff_obj_aux(const object_type *o_ptr)
 
 	/* Collect resistances */
 	vn = 0;
-	if (TR_FLAG(ff, 1, RES_ACID))   vp[vn++] = "acid";
-	if (TR_FLAG(ff, 1, RES_ELEC))   vp[vn++] = "electricity";
-	if (TR_FLAG(ff, 1, RES_FIRE))   vp[vn++] = "fire";
-	if (TR_FLAG(ff, 1, RES_COLD))   vp[vn++] = "cold";
-	if (TR_FLAG(ff, 1, RES_POIS))   vp[vn++] = "poison";
-	if (TR_FLAG(ff, 1, RES_LITE))   vp[vn++] = "bright light";
-	if (TR_FLAG(ff, 1, RES_DARK))   vp[vn++] = "magical darkness";
-	if (TR_FLAG(ff, 1, RES_FEAR))   vp[vn++] = "fear";
-	if (TR_FLAG(ff, 1, RES_BLIND))  vp[vn++] = "blindness";
-	if (TR_FLAG(ff, 1, RES_CONF))   vp[vn++] = "confusion";
-	if (TR_FLAG(ff, 1, RES_SOUND))  vp[vn++] = "sound";
-	if (TR_FLAG(ff, 1, RES_SHARDS)) vp[vn++] = "shards";
-	if (TR_FLAG(ff, 1, RES_NETHER)) vp[vn++] = "nether";
-	if (TR_FLAG(ff, 1, RES_NEXUS))  vp[vn++] = "nexus";
-	if (TR_FLAG(ff, 1, RES_CHAOS))  vp[vn++] = "chaos";
-	if (TR_FLAG(ff, 1, RES_DISEN))  vp[vn++] = "disenchantment";
-	if (TR_FLAG(ff, 1, HOLD_LIFE))  vp[vn++] = "life draining";
+	if (OBJ_FLAG(of_ptr, 1, RES_ACID))   vp[vn++] = "acid";
+	if (OBJ_FLAG(of_ptr, 1, RES_ELEC))   vp[vn++] = "electricity";
+	if (OBJ_FLAG(of_ptr, 1, RES_FIRE))   vp[vn++] = "fire";
+	if (OBJ_FLAG(of_ptr, 1, RES_COLD))   vp[vn++] = "cold";
+	if (OBJ_FLAG(of_ptr, 1, RES_POIS))   vp[vn++] = "poison";
+	if (OBJ_FLAG(of_ptr, 1, RES_LITE))   vp[vn++] = "bright light";
+	if (OBJ_FLAG(of_ptr, 1, RES_DARK))   vp[vn++] = "magical darkness";
+	if (OBJ_FLAG(of_ptr, 1, RES_FEAR))   vp[vn++] = "fear";
+	if (OBJ_FLAG(of_ptr, 1, RES_BLIND))  vp[vn++] = "blindness";
+	if (OBJ_FLAG(of_ptr, 1, RES_CONF))   vp[vn++] = "confusion";
+	if (OBJ_FLAG(of_ptr, 1, RES_SOUND))  vp[vn++] = "sound";
+	if (OBJ_FLAG(of_ptr, 1, RES_SHARDS)) vp[vn++] = "shards";
+	if (OBJ_FLAG(of_ptr, 1, RES_NETHER)) vp[vn++] = "nether";
+	if (OBJ_FLAG(of_ptr, 1, RES_NEXUS))  vp[vn++] = "nexus";
+	if (OBJ_FLAG(of_ptr, 1, RES_CHAOS))  vp[vn++] = "chaos";
+	if (OBJ_FLAG(of_ptr, 1, RES_DISEN))  vp[vn++] = "disenchantment";
+	if (OBJ_FLAG(of_ptr, 1, HOLD_LIFE))  vp[vn++] = "life draining";
 
 	/* Print resistances */
 	if (vn)
@@ -540,27 +544,27 @@ static void roff_obj_aux(const object_type *o_ptr)
 		roff(".  ");
 	}
 
-	if (TR_FLAG(ff, 1, THROW))
+	if (OBJ_FLAG(of_ptr, 1, THROW))
 	{
 		roff("It is perfectly balanced for throwing.  ");
 	}
 
 	/* Collect miscellaneous */
 	vn = 0;
-	if (TR_FLAG(ff, 2, XXX7))        vp[vn++] = "renders you XXX7'ed";
-	if (TR_FLAG(ff, 2, FEATHER))     vp[vn++] = "allows you to levitate";
-	if (TR_FLAG(ff, 2, LITE))        vp[vn++] = "provides permanent light";
-	if (TR_FLAG(ff, 2, SEE_INVIS))   vp[vn++] = "allows you to see invisible monsters";
-	if (TR_FLAG(ff, 2, TELEPATHY))   vp[vn++] = "gives telepathic powers";
-	if (TR_FLAG(ff, 2, SLOW_DIGEST)) vp[vn++] = "slows your metabolism";
-	if (TR_FLAG(ff, 2, REGEN))       vp[vn++] = "speeds your regenerative powers";
-	if (TR_FLAG(ff, 1, REFLECT))     vp[vn++] = "reflects bolts and arrows";
-	if (TR_FLAG(ff, 3, LUCK_10))       vp[vn++] = "increases your saving throws";
-	if (TR_FLAG(ff, 3, MUTATE))        vp[vn++] = "causes mutations";
-	if (TR_FLAG(ff, 3, PATRON))        vp[vn++] = "attracts the attention of chaos gods";
-	if (TR_FLAG(ff, 3, STRANGE_LUCK))  vp[vn++] = "warps fate around you";
-	if (TR_FLAG(ff, 3, PASS_WALL))     vp[vn++] = "allows you to pass through solid rock";
-	if (TR_FLAG(ff, 2, NO_TELE))     vp[vn++] = "prevents teleporation";
+	if (OBJ_FLAG(of_ptr, 2, XXX7))        vp[vn++] = "renders you XXX7'ed";
+	if (OBJ_FLAG(of_ptr, 2, FEATHER))     vp[vn++] = "allows you to levitate";
+	if (OBJ_FLAG(of_ptr, 2, LITE))        vp[vn++] = "provides permanent light";
+	if (OBJ_FLAG(of_ptr, 2, SEE_INVIS))   vp[vn++] = "allows you to see invisible monsters";
+	if (OBJ_FLAG(of_ptr, 2, TELEPATHY))   vp[vn++] = "gives telepathic powers";
+	if (OBJ_FLAG(of_ptr, 2, SLOW_DIGEST)) vp[vn++] = "slows your metabolism";
+	if (OBJ_FLAG(of_ptr, 2, REGEN))       vp[vn++] = "speeds your regenerative powers";
+	if (OBJ_FLAG(of_ptr, 1, REFLECT))     vp[vn++] = "reflects bolts and arrows";
+	if (OBJ_FLAG(of_ptr, 3, LUCK_10))       vp[vn++] = "increases your saving throws";
+	if (OBJ_FLAG(of_ptr, 3, MUTATE))        vp[vn++] = "causes mutations";
+	if (OBJ_FLAG(of_ptr, 3, PATRON))        vp[vn++] = "attracts the attention of chaos gods";
+	if (OBJ_FLAG(of_ptr, 3, STRANGE_LUCK))  vp[vn++] = "warps fate around you";
+	if (OBJ_FLAG(of_ptr, 3, PASS_WALL))     vp[vn++] = "allows you to pass through solid rock";
+	if (OBJ_FLAG(of_ptr, 2, NO_TELE))     vp[vn++] = "prevents teleporation";
 
 	/* Print miscellaneous */
 	if (vn)
@@ -581,11 +585,11 @@ static void roff_obj_aux(const object_type *o_ptr)
 
 	/* Collect "produces" */
 	vn = 0;
-	if (TR_FLAG(ff, 2, SH_FIRE))  vp[vn++] = "a fiery sheath";
-	if (TR_FLAG(ff, 2, SH_ELEC))  vp[vn++] = "an electric sheath";
-	if (TR_FLAG(ff, 3, SH_ACID))  vp[vn++] = "an acidic sheath";
-	if (TR_FLAG(ff, 3, SH_COLD))  vp[vn++] = "a freezing sheath";
-	if (TR_FLAG(ff, 2, NO_MAGIC)) vp[vn++] = "an anti-magic shell";
+	if (OBJ_FLAG(of_ptr, 2, SH_FIRE))  vp[vn++] = "a fiery sheath";
+	if (OBJ_FLAG(of_ptr, 2, SH_ELEC))  vp[vn++] = "an electric sheath";
+	if (OBJ_FLAG(of_ptr, 3, SH_ACID))  vp[vn++] = "an acidic sheath";
+	if (OBJ_FLAG(of_ptr, 3, SH_COLD))  vp[vn++] = "a freezing sheath";
+	if (OBJ_FLAG(of_ptr, 2, NO_MAGIC)) vp[vn++] = "an anti-magic shell";
 
 	/* Print "produces" */
 	if (vn)
@@ -604,24 +608,24 @@ static void roff_obj_aux(const object_type *o_ptr)
 		roff(".  ");
 	}
 
-	if (TR_FLAG(ff, 2, XTRA_MIGHT))
+	if (OBJ_FLAG(of_ptr, 2, XTRA_MIGHT))
 	{
 		roff("It fires missiles with " CLR_GREEN "extra might" CLR_DEFAULT ".  ");
 	}
-	if (TR_FLAG(ff, 2, XTRA_SHOTS))
+	if (OBJ_FLAG(of_ptr, 2, XTRA_SHOTS))
 	{
 		roff("It fires missiles " CLR_GREEN "excessively fast" CLR_DEFAULT ".  ");
 	}
 
 	/* Collect curses */
 	vn = 0;
-	if (TR_FLAG(ff, 2, DRAIN_EXP))   vp[vn++] = "drains your experience";
-	if (TR_FLAG(ff, 3, DRAIN_STATS)) vp[vn++] = "drains your stats";
-	if (TR_FLAG(ff, 2, TELEPORT))    vp[vn++] = "induces random teleportation";
-	if (TR_FLAG(ff, 2, AGGRAVATE))     vp[vn++] = "aggravates nearby creatures";
-	if (TR_FLAG(ff, 3, AUTO_CURSE))  vp[vn++] = "becomes cursed randomly";
-	if (TR_FLAG(ff, 3, CANT_EAT))    vp[vn++] = "makes you unable to eat normal food";
-	if (TR_FLAG(ff, 3, SLOW_HEAL))   vp[vn++] = "slows your healing";
+	if (OBJ_FLAG(of_ptr, 2, DRAIN_EXP))   vp[vn++] = "drains your experience";
+	if (OBJ_FLAG(of_ptr, 3, DRAIN_STATS)) vp[vn++] = "drains your stats";
+	if (OBJ_FLAG(of_ptr, 2, TELEPORT))    vp[vn++] = "induces random teleportation";
+	if (OBJ_FLAG(of_ptr, 2, AGGRAVATE))     vp[vn++] = "aggravates nearby creatures";
+	if (OBJ_FLAG(of_ptr, 3, AUTO_CURSE))  vp[vn++] = "becomes cursed randomly";
+	if (OBJ_FLAG(of_ptr, 3, CANT_EAT))    vp[vn++] = "makes you unable to eat normal food";
+	if (OBJ_FLAG(of_ptr, 3, SLOW_HEAL))   vp[vn++] = "slows your healing";
 
 	/* Print curses */
 	if (vn)
@@ -640,21 +644,21 @@ static void roff_obj_aux(const object_type *o_ptr)
 		roff(".  ");
 	}
 
-	if (TR_FLAG(ff, 2, BLESSED))
+	if (OBJ_FLAG(of_ptr, 2, BLESSED))
 	{
 		roff("It has been blessed by the gods.  ");
 	}
 
 	/* Collect protections */
 	vn = 0;
-	if (TR_FLAG(ff, 0, SLAY_ANIMAL)) vp[vn++] = "natural creatures";
-	if (TR_FLAG(ff, 0, SLAY_EVIL))   vp[vn++] = "evil monsters";
-	if (TR_FLAG(ff, 0, SLAY_UNDEAD)) vp[vn++] = "the undead";
-	if (TR_FLAG(ff, 0, SLAY_DEMON))  vp[vn++] = "demons";
-	if (TR_FLAG(ff, 0, SLAY_ORC))    vp[vn++] = "orcs";
-	if (TR_FLAG(ff, 0, SLAY_TROLL))  vp[vn++] = "trolls";
-	if (TR_FLAG(ff, 0, SLAY_GIANT))  vp[vn++] = "giants";
-	if (TR_FLAG(ff, 0, SLAY_DRAGON)) vp[vn++] = "dragons";
+	if (OBJ_FLAG(of_ptr, 0, SLAY_ANIMAL)) vp[vn++] = "natural creatures";
+	if (OBJ_FLAG(of_ptr, 0, SLAY_EVIL))   vp[vn++] = "evil monsters";
+	if (OBJ_FLAG(of_ptr, 0, SLAY_UNDEAD)) vp[vn++] = "the undead";
+	if (OBJ_FLAG(of_ptr, 0, SLAY_DEMON))  vp[vn++] = "demons";
+	if (OBJ_FLAG(of_ptr, 0, SLAY_ORC))    vp[vn++] = "orcs";
+	if (OBJ_FLAG(of_ptr, 0, SLAY_TROLL))  vp[vn++] = "trolls";
+	if (OBJ_FLAG(of_ptr, 0, SLAY_GIANT))  vp[vn++] = "giants";
+	if (OBJ_FLAG(of_ptr, 0, SLAY_DRAGON)) vp[vn++] = "dragons";
 
 	/* Print protections */
 	if (vn)
@@ -675,12 +679,12 @@ static void roff_obj_aux(const object_type *o_ptr)
 
 	/* Collect vulnerabilities */
 	vn = 0;
-	if (TR_FLAG(ff, 3, HURT_ACID)) vp[vn++] = "acid";
-	if (TR_FLAG(ff, 3, HURT_ELEC)) vp[vn++] = "lightning";
-	if (TR_FLAG(ff, 3, HURT_FIRE)) vp[vn++] = "fire";
-	if (TR_FLAG(ff, 3, HURT_COLD)) vp[vn++] = "frost";
-	if (TR_FLAG(ff, 3, HURT_LITE)) vp[vn++] = "bright light";
-	if (TR_FLAG(ff, 3, HURT_DARK)) vp[vn++] = "magical darkness";
+	if (OBJ_FLAG(of_ptr, 3, HURT_ACID)) vp[vn++] = "acid";
+	if (OBJ_FLAG(of_ptr, 3, HURT_ELEC)) vp[vn++] = "lightning";
+	if (OBJ_FLAG(of_ptr, 3, HURT_FIRE)) vp[vn++] = "fire";
+	if (OBJ_FLAG(of_ptr, 3, HURT_COLD)) vp[vn++] = "frost";
+	if (OBJ_FLAG(of_ptr, 3, HURT_LITE)) vp[vn++] = "bright light";
+	if (OBJ_FLAG(of_ptr, 3, HURT_DARK)) vp[vn++] = "magical darkness";
 
 	/* Print vulnerabilities */
 	if (vn)
@@ -701,26 +705,26 @@ static void roff_obj_aux(const object_type *o_ptr)
 
 	if (cursed_p(o_ptr))
 	{
-		if (TR_FLAG(ff, 2, PERMA_CURSE))
+		if (OBJ_FLAG(of_ptr, 2, PERMA_CURSE))
 		{
 			roff(CLR_L_RED "It is permanently cursed.  ");
 		}
-		else if (TR_FLAG(ff, 2, HEAVY_CURSE))
+		else if (OBJ_FLAG(of_ptr, 2, HEAVY_CURSE))
 		{
 			roff(CLR_L_RED "It is heavily cursed.  ");
 		}
-		else if (TR_FLAG(ff, 2, CURSED))
+		else if (OBJ_FLAG(of_ptr, 2, CURSED))
 		{
 			roff(CLR_RED "It is cursed.  ");
 		}
 	}
 
-	if (TR_FLAG(ff, 2, TY_CURSE))
+	if (OBJ_FLAG(of_ptr, 2, TY_CURSE))
 	{
 		roff(CLR_L_RED "It carries an ancient foul curse.  ");
 	}
 
-	if ((ff[2] & TR2_IGNORE_MASK) == TR2_IGNORE_MASK)
+	if ((of_ptr->flags[2] & TR2_IGNORE_MASK) == TR2_IGNORE_MASK)
 	{
 		roff("It cannot be harmed by the elements.  ");
 	}
@@ -728,10 +732,10 @@ static void roff_obj_aux(const object_type *o_ptr)
 	{
 		/* Collect ignores */
 		vn = 0;
-		if (TR_FLAG(ff, 2, IGNORE_ACID)) vp[vn++] = "acid";
-		if (TR_FLAG(ff, 2, IGNORE_ELEC)) vp[vn++] = "electricity";
-		if (TR_FLAG(ff, 2, IGNORE_FIRE)) vp[vn++] = "fire";
-		if (TR_FLAG(ff, 2, IGNORE_COLD)) vp[vn++] = "cold";
+		if (OBJ_FLAG(of_ptr, 2, IGNORE_ACID)) vp[vn++] = "acid";
+		if (OBJ_FLAG(of_ptr, 2, IGNORE_ELEC)) vp[vn++] = "electricity";
+		if (OBJ_FLAG(of_ptr, 2, IGNORE_FIRE)) vp[vn++] = "fire";
+		if (OBJ_FLAG(of_ptr, 2, IGNORE_COLD)) vp[vn++] = "cold";
 
 		/* Print ignores */
 		if (vn)
@@ -1425,11 +1429,11 @@ bool item_tester_hook_tval(const object_type *o_ptr)
 
 bool item_tester_hook_is_blessed(const object_type *o_ptr)
 {
-	u32b ff[4];
-	object_flags_known(o_ptr, ff);
+	object_flags oflags;
+	object_flags_known(o_ptr, &oflags);
 
 	/* Is it blessed? */
-	if (TR_FLAG(ff, 2, BLESSED)) return (TRUE);
+	if (OBJ_FLAG(&oflags, 2, BLESSED)) return (TRUE);
 
 	/* Check for unallowable weapons */
 	if ((o_ptr->tval == TV_SWORD)

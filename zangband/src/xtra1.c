@@ -2323,7 +2323,8 @@ static void calc_bonuses(void)
 	bool old_icky_wield = p_ptr->icky_wield;
 	bool old_monk_armour = p_ptr->monk_armour_stat;
 
-	u32b ff[4];
+	object_flags oflags;
+	object_flags *of_ptr = &oflags;
 
 	/* Save the old speed */
 	old_speed = p_ptr->pspeed;
@@ -2433,19 +2434,19 @@ static void calc_bonuses(void)
 	p_ptr->skills[SKILL_DIG] = 0;
 
 	/* Get the player racial/class flags (including some mutations) */
-	player_flags(ff);
+	player_flags(of_ptr);
 
 	/* Hack - handle speed from monk/sprite/klackon here */
-	if (TR_FLAG(ff, 0, SPEED))
+	if (OBJ_FLAG(of_ptr, 0, SPEED))
 	{
 		p_ptr->pspeed += (p_ptr->lev) / 10;
-		ff[0] &= ~(TR0_SPEED);
+		of_ptr->flags[0] &= ~(TR0_SPEED);
 	}
 
-	p_ptr->flags[0] |= ff[0];
-	p_ptr->flags[1] |= ff[1];
-	p_ptr->flags[2] |= ff[2];
-	p_ptr->flags[3] |= ff[3];
+	p_ptr->flags[0] |= of_ptr->flags[0];
+	p_ptr->flags[1] |= of_ptr->flags[1];
+	p_ptr->flags[2] |= of_ptr->flags[2];
+	p_ptr->flags[3] |= of_ptr->flags[3];
 
 	/* Effects of constantly acting mutations */
 	if (p_ptr->muta3)

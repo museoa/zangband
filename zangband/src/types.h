@@ -126,6 +126,17 @@ struct feature_type
 
 
 /*
+ * Hack - a type for 'object flags'
+ */
+typedef struct object_flags object_flags;
+
+struct object_flags
+{
+	u32b flags[4];
+};
+
+
+/*
  * Information about object "kinds", including player knowledge.
  *
  * Only "aware" and "tried" are saved in the savefile
@@ -276,6 +287,15 @@ struct ego_item_type
 };
 
 
+/*
+ * Hack - a type for 'monster flags'
+ */
+typedef struct monster_flags monster_flags;
+
+struct monster_flags
+{
+	u32b flags[9];
+};
 
 
 /*
