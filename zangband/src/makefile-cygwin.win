@@ -29,6 +29,7 @@ CYGDIR	=	d:/cygnus/cygwin-b20/h-i586-cygwin32
 SRCDIR	=	d:/zangband/src
 OBJDIR	=	d:/zangband/src
 BINDIR	=	d:/zangband/src
+TGTDIR	=	d:/zangband
 
 
 #
@@ -40,7 +41,7 @@ WRES		=	windres
 LIBDIRS	=	-L$(CYGDIR)/lib
 INCDIRS	=	-I$(CYGDIR)/i586-cygwin32/include/mingw32
 LIBS		=	-s -mno-cygwin -mwindows -e _mainCRTStartup -lwinmm
-CFLAGS	=	-Wall -O2 -fno-strength-reduce -DNEAR=
+CFLAGS	=	-Wall -O2 -fno-strength-reduce
 
 
 SRCS		= \
@@ -178,24 +179,27 @@ INCS		= \
 	$(SRCDIR)/z-form.h $(HDRS)
 
 
-ALLOBJS	=	$(EXOBJS)
-ALLBIN	=	$(BINDIR)/zangband
-ALLTGT	=	$(BINDIR)/zangband
-
-
 #
 # Targets
 #
 
-all:		$(ALLTGT)
 
-objs:		$(ALLOBJS)
+default:	$(BINDIR)/zangband
+
+install:	$(BINDIR)/zangband movebin cleanobjs
+
+# movebin:
+#		copy zangband.exe ..
+#		del zangband.exe
+
+movebin:
+		mv -f $(BINDIR)/zangband.exe $(TGTDIR)/zangband.exe
 
 cleanobjs:
-		rm -f $(ALLOBJS)
+		rm -f $(EXOBJS)
 
 cleanbin:
-		rm -f $(ALLBIN)
+		rm -f $(BINDIR)/zangband
 
 clean:	cleanobjs cleanbin
 
@@ -204,9 +208,9 @@ clean:	cleanobjs cleanbin
 # Dependency rules
 #
 
-
 $(BINDIR)/zangband: $(EXOBJS)
 	$(CC) -o $(BINDIR)/zangband $(EXOBJS) $(INCDIRS) $(LIBDIRS) $(LIBS)
+
 
 #
 # Compiling angband.rc
@@ -220,6 +224,7 @@ $(BINDIR)/zangband: $(EXOBJS)
 
 $(OBJDIR)/angband.res : $(SRCDIR)/angband.rc
 	$(WRES) $< -O coff -o $@
+
 
 #
 # Compiling objects
@@ -327,8 +332,13 @@ $(OBJDIR)/obj_kind.o: $(SRCDIR)/obj_kind.c $(INCS)
 $(OBJDIR)/racial.o: $(SRCDIR)/racial.c $(INCS)
 	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $<
 
+#
+# Note the additional -DNEAR= flag to cope with the 'NEAR'
+# keyword used in readdib.c
+#
+
 $(OBJDIR)/readdib.o: $(SRCDIR)/readdib.c $(INCS) readdib.h
-	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $<
+	$(CC) $(CFLAGS) -DNEAR= $(INCDIRS) -c -o $@ $<
 
 $(OBJDIR)/rooms.o: $(SRCDIR)/rooms.c $(INCS) grid.h rooms.h generate.h
 	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $<
