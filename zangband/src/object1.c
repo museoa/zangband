@@ -2498,7 +2498,7 @@ void show_list(s16b o_list_ptr)
 	col = (len > wid - 4) ? 0 : (wid - len - 1);
 
 	/* Output each entry */
-	for (j = 0; j < k; j++)
+	for (j = 0; j <= k; j++)
 	{
 		/* Get the item */
 		o_ptr = out_object[j];
