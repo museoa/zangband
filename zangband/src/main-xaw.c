@@ -1028,8 +1028,8 @@ Arg specialArgs[TERM_FALLBACKS] =
 	{ XtNstartColumns, 80},
 	{ XtNminRows,      24},
 	{ XtNminColumns,   80},
-	{ XtNmaxRows,      256},
-	{ XtNmaxColumns,   256}
+	{ XtNmaxRows,      255},
+	{ XtNmaxColumns,   255}
 };
 
 
@@ -1042,8 +1042,8 @@ Arg defaultArgs[TERM_FALLBACKS] =
 	{ XtNstartColumns, 80},
 	{ XtNminRows,      1},
 	{ XtNminColumns,   1},
-	{ XtNmaxRows,      256},
-	{ XtNmaxColumns,   256}
+	{ XtNmaxRows,      255},
+	{ XtNmaxColumns,   255}
 };
 
 

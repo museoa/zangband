@@ -2322,8 +2322,8 @@ static errr term_data_init(term_data *td, int i)
 		sh->flags = PMinSize | PMaxSize;
 		sh->min_width = 80 * td->fnt->wid + (ox + ox);
 		sh->min_height = 24 * td->fnt->hgt + (oy + oy);
-		sh->max_width = 256 * td->fnt->wid + (ox + ox);
-		sh->max_height = 256 * td->fnt->hgt + (oy + oy);
+		sh->max_width = 255 * td->fnt->wid + (ox + ox);
+		sh->max_height = 255 * td->fnt->hgt + (oy + oy);
 	}
 
 	/* Other windows can be shrunk to 1x1 */
@@ -2333,8 +2333,8 @@ static errr term_data_init(term_data *td, int i)
 		sh->flags = PMinSize | PMaxSize;
 		sh->min_width = td->fnt->wid + (ox + ox);
 		sh->min_height = td->fnt->hgt + (oy + oy);
-		sh->max_width = 256 * td->fnt->wid + (ox + ox);
-		sh->max_height = 256 * td->fnt->hgt + (oy + oy);
+		sh->max_width = 255 * td->fnt->wid + (ox + ox);
+		sh->max_height = 255 * td->fnt->hgt + (oy + oy);
 	}
 
 	/* Resize increment */
