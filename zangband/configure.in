@@ -59,6 +59,22 @@ AC_ARG_WITH(gtk,
 AC_PROG_CC
 AC_PROG_CPP
 
+
+dnl Detect cygwin
+case `(uname -s) 2>/dev/null` in
+  *cygwin* ) CYGWIN=yes;;
+  *CYGWIN* ) CYGWIN=yes;;
+         * ) CYGWIN=no;;
+esac
+
+if test "$CYGWIN" = "yes"; then
+  AC_DEFINE(WINDOWS, 1, [WIN32 port])
+  LIBS="$LIBS -lwinmm"
+  LDFLAGS="$LDFLAGS -s -mwindows -e _mainCRTStartup"
+  cygwin="y"
+  AC_SUBST(cygwin)
+fi
+
 if test "x$with_x11" != "xno" ; then
 	if test "x$with_gtk" != "xno" ; then
 		# Add gtk include paths if needed
@@ -154,20 +170,28 @@ if test "x$with_tcltk" != "xno" ; then
 fi
 
 # Check for a 64-bit `long long' type
-AC_CHECK_TYPE([long long], 
-	AC_DEFINE(USE_64B, 1, [Have 64-bit long long type]))
+AC_TRY_COMPILE(,[long long int i;], 
+	AC_DEFINE(USE_64B, 1, [Have 64-bit long long type]),)
 
+dnl Detect Dos
+case `(uname -s) 2>/dev/null` in
+  *DOS* ) DOS=yes;;
+      * ) DOS=no;;
+esac
 
-# FIXME: Replace `main' with a function in `-lpc':
-AC_CHECK_LIB([pc], [main],
-	LIBS="-lpc $LIBS"
-	AC_DEFINE(USE_IBM, 1, [Use DOS port]))
+if test "$DOS" = "yes"; then
 
-# FIXME: Replace `main' with a function in `-lalleg':
-AC_CHECK_LIB([alleg], [main],
-	LIBS="-lalleg $LIBS"
-	AC_DEFINE(USE_DOS, 1, [Use graphical DOS port])
-	AC_DEFINE(USE_BACKGROUND, 1, [Background support for DOS port]))
+	# FIXME: Replace `main' with a function in `-lpc':
+	AC_CHECK_LIB([pc], [main],
+		LIBS="-lpc $LIBS"
+		AC_DEFINE(USE_IBM, 1, [Use DOS port]))
+
+	# FIXME: Replace `main' with a function in `-lalleg':
+	AC_CHECK_LIB([alleg], [main],
+		LIBS="-lalleg $LIBS"
+		AC_DEFINE(USE_DOS, 1, [Use graphical DOS port])
+		AC_DEFINE(USE_BACKGROUND, 1, [Background support for DOS port]))
+fi
 
 # FIXME: Replace `main' with a function in `-lbsd':
 AC_CHECK_LIB([bsd], [main])
@@ -200,12 +224,10 @@ AC_CHECK_HEADERS([termios.h],
 	AC_DEFINE(USE_VCS, 1, [Use termios port]))
 
 # Checks for typedefs, structures, and compiler characteristics.
-AC_HEADER_STDBOOL
 AC_C_CONST
 AC_TYPE_SIZE_T
 AC_HEADER_TIME
 AC_STRUCT_TM
-AC_C_VOLATILE
 
 # Checks for library functions.
 AC_FUNC_ERROR_AT_LINE
@@ -240,17 +262,6 @@ if test ${!FLAG} = yes ; then
   CFLAGS="$1 $CFLAGS"
 fi
 ])
-#AC_DEFUN(AC_CHECK_CC_OPT,
-#[AC_MSG_CHECKING(whether ${CC-cc} accepts [$1])
-#echo 'void f(void); void f(){}' > conftest.c
-#if test -z "`${CC-cc} -c ${CFLAGS} $1 conftest.c 2>&1`"; then
-#  CFLAGS="$1 $CFLAGS"
-#  AC_MSG_RESULT(yes)
-#else
-#  AC_MSG_RESULT(no)
-#fi
-#rm -f conftest*
-#])
 
 dnl Check for lots of extra warning options
 AC_CHECK_CC_OPT(-pedantic)
