@@ -4283,3 +4283,13 @@ W:5:0:2:150
 A:13/8
 F:STEALTH | INFRA
 
+# 585-589 are unused
+
+##### New weapon type #####
+N:590:& Elfblade~
+G:|:w
+I:23:32:0
+W:85:0:140:15000
+A:85/8
+P:0:4d4:0:0:0
+

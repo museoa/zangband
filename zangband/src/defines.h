@@ -1915,6 +1915,7 @@
 #define SV_ZWEIHANDER                   29
 #define SV_BLADE_OF_CHAOS               30
 #define SV_DIAMOND_EDGE                 31
+#define SV_ELFBLADE                     32
 
 /* The "sval" codes for TV_SHIELD */
 #define SV_SMALL_LEATHER_SHIELD          2

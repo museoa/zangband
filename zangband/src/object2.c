@@ -562,11 +562,11 @@ object_type *add_object_list(s16b *o_idx_ptr, const object_type *o_ptr)
 	j_ptr = &o_list[o_idx];
 
 	/* Copy */
-	object_copy(j_ptr, o_ptr);
-	
+    object_copy(j_ptr, o_ptr);
+
 	/* Allocate quarks */
-	quark_dup(o_ptr->xtra_name);
-	quark_dup(o_ptr->inscription);
+	quark_dup(j_ptr->xtra_name);
+	quark_dup(j_ptr->inscription);
 
 	/* Add to the list */
 	j_ptr->next_o_idx = *o_idx_ptr;
@@ -2426,8 +2426,16 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 		case TV_POLEARM:
 		case TV_SWORD:
 		{
-			/* Very Good */
-			if (flags & OC_FORCE_GOOD)
+            /* Elfblades are always special */
+            if (o_ptr->sval == SV_ELFBLADE)
+            {
+                (void)create_artifact(o_ptr, FALSE);
+
+                break;
+            }
+
+            /* Very Good */
+			else if (flags & OC_FORCE_GOOD)
 			{
 				/* Roll for a random artifact */
 				if (one_in_(40))
