@@ -1552,6 +1552,9 @@ void prt_map(void)
 	/* map bounds */
 	s16b	xmin, xmax, ymin, ymax;
 	
+	/* Temp variables to speed up deletion loops */
+	s16b l1, l2;
+	
 	byte *pa;
 	char *pc;
 	
@@ -1586,93 +1589,39 @@ void prt_map(void)
 		ymax = (wild_grid.y_max - 1 > panel_row_max) ? panel_row_max : wild_grid.y_max - 1;
 	}
 	
-	
-	
-#ifdef USE_TRANSPARENCY	
 	/* Bottom section of screen */
 	for (y = 1; y <= ymin - panel_row_prt; y++)
 	{
-		for (x = 13; x < map_wid + 13; x++)
-		{
-			/* Efficiency -- Redraw that grid of the map */
-			Term_queue_char(x, y , TERM_WHITE, ' ', TERM_WHITE, ' ');
-		}
+		/* Erase the section */
+		Term_erase(13, y, map_wid);
 	}
 	
 	/* Top section of screen */
 	for (y = ymax - panel_row_prt; y <= map_hgt; y++)
 	{
-		for (x = 13; x < map_wid + 13; x++)
-		{
-			
-			/* Efficiency -- Redraw that grid of the map */
-			Term_queue_char(x, y, TERM_WHITE, ' ', TERM_WHITE, ' ');
-		}	
+		/* Erase the section */
+		Term_erase(13, y, map_wid);
 	}
 	
 	/* Left section of screen */
-	for (x = 13; x < xmin - panel_col_prt; x++)
+	l1 = xmin - panel_col_min;
+	
+	for (y = ymin - panel_row_prt; y <= ymax - panel_row_prt; y++)
 	{
-		for (y = ymin - panel_row_prt; y <= ymax - panel_row_prt; y++)
-		{
-			/* Efficiency -- Redraw that grid of the map */
-			Term_queue_char(x, y, TERM_WHITE, ' ', TERM_WHITE, ' ');
-		}
+		/* Erase the section */
+		Term_erase(13, y, l1);
 	}
 
 	/* Right section of screen */
-	for (x = xmax - panel_col_prt; x < map_wid + 13; x++)
+	l1 = xmax - panel_col_prt;
+	l2 = xmax - panel_col_min - map_wid;	
+	
+	for (y = ymin - panel_row_prt; y <= ymax - panel_row_prt; y++)
 	{
-		for (y = ymin - panel_row_prt; y <= ymax - panel_row_prt; y++)
-		{
-			/* Efficiency -- Redraw that grid of the map */
-			Term_queue_char(x, y, TERM_WHITE, ' ', TERM_WHITE, ' ');
-		}
+		/* Erase the section */
+		Term_erase(l1, y, l2);
 	}
 	
-#else /* USE_TRANSPARENCY */
-	/* Bottom section of screen */
-	for (y = 1; y < ymin - panel_row_prt; y++)
-	{
-		for (x = 13; x < map_wid + 13; x++)
-		{
-			/* Efficiency -- Redraw that grid of the map */
-			Term_queue_char(x, y , TERM_WHITE, ' ');
-		}
-	}
-	
-	/* Top section of screen */
-	for (y = ymax - panel_row_prt; y < map_hgt; y++)
-	{
-		for (x = 13; x < map_wid + 13; x++)
-		{
-			
-			/* Efficiency -- Redraw that grid of the map */
-			Term_queue_char(x, y, TERM_WHITE, ' ');
-		}	
-	}
-	
-	/* Left section of screen */
-	for (x = 13; x < xmin - panel_col_prt; x++)
-	{
-		for (y = ymin - panel_row_prt; y < ymax - panel_row_prt; y++)
-		{
-			/* Efficiency -- Redraw that grid of the map */
-			Term_queue_char(x, y, TERM_WHITE, ' ');
-		}
-	}
-
-	/* Right section of screen */
-	for (x = xmax - panel_col_prt; x < map_wid + 13; x++)
-	{
-		for (y = ymin - panel_row_prt; y < ymax - panel_row_prt; y++)
-		{
-			/* Efficiency -- Redraw that grid of the map */
-			Term_queue_char(x, y, TERM_WHITE, ' ');
-		}
-	}
-#endif /* USE_TRANSPARENCY */
-
 	/* Pointers to current position in the string */
 	pa = mp_a;
 	pc = mp_c;
