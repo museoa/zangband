@@ -7165,7 +7165,7 @@ static int borg_danger_aux2(int i, int y, int x, bool average)
 
     borg_kill *kill = &borg_kills[i];
 
-    borg_grid   *ag;
+	map_block *mb_ptr;
 
     monster_race *r_ptr = &r_info[kill->r_idx];
 
@@ -7211,14 +7211,15 @@ static int borg_danger_aux2(int i, int y, int x, bool average)
             x = spot_x + c_x;
             y = spot_y + c_y;
 
-            ag = &borg_grids[y][x];
+			mb_ptr = map_loc(x, y);
 
             /* skip our own spot */
             if (x == c_x && y == c_y) continue;
 
             /* track spaces already protected */
-            if ( /* ag->feat == FEAT_GLYPH || */ ag->kill ||
-               ((ag->feat >= FEAT_CLOSED) && (ag->feat <= FEAT_PERM_SOLID)))
+            if ( /* ag->feat == FEAT_GLYPH || */ mb_ptr->monster ||
+               ((mb_ptr->terrain >= FEAT_CLOSED)
+			   	&& (mb_ptr->terrain <= FEAT_PERM_SOLID)))
             {   /* track the safe areas for calculating danger */
                 spot_safe ++;
 

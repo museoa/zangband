@@ -881,10 +881,10 @@ bool borg_check_lite_only(void)
 bool borg_on_safe_grid(void)
 {
 	/* Get the grid under the borg */
-	borg_grid *ag = &borg_grids[c_y][c_x];
+	map_block *mb_ptr = map_loc(c_x, c_y);
 
 	/* Lava */
-	if (ag->feat == FEAT_SHAL_LAVA)
+	if (mb_ptr->terrain == FEAT_SHAL_LAVA)
 	{
 		/* Immunity helps */
 		if (borg_skill[BI_IFIRE]) return (TRUE);
@@ -897,7 +897,7 @@ bool borg_on_safe_grid(void)
 	}
 
 	/* Water */
-	if (ag->feat == FEAT_SHAL_WATER)
+	if (mb_ptr->terrain == FEAT_SHAL_WATER)
 	{
 		/* Levatation helps */
 		if (borg_skill[BI_FEATH]) return (TRUE);

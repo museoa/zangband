@@ -986,6 +986,8 @@ static void borg_follow_kill(int i)
     /* Old location */
     ox = kill->x;
     oy = kill->y;
+	
+	mb_ptr = map_loc(ox, oy);
 
     /* Out of sight */
     if (!borg_follow_kill_aux(i, oy, ox)) return;
@@ -997,7 +999,7 @@ static void borg_follow_kill(int i)
 
 
     /* Prevent silliness */
-    if (!borg_cave_floor_bold(oy, ox))
+    if (!borg_cave_floor_grid(mb_ptr))
     {
         /* Delete the monster */
         borg_delete_kill(i);
@@ -2325,11 +2327,7 @@ static bool borg_handle_self(cptr str)
  */
 static void borg_forget_map(void)
 {
-    int x, y;
-
-    borg_grid *ag;
-
-
+#if 0
     /* Clean up the grids */
     for (y = 0; y < AUTO_MAX_Y; y++)
     {
@@ -2361,7 +2359,7 @@ static void borg_forget_map(void)
             /* if (!borg_skill[BI_CDEPTH]) ag->feat = FEAT_FLOOR; */
         }
     }
-
+#endif /* 0 */
 
     /* Reset "borg_data_cost" */
     COPY(borg_data_cost, borg_data_hard, borg_data);
@@ -2539,12 +2537,10 @@ static void borg_update_map(void)
                 /* I might be standing on a stair */
                 if (borg_on_dnstairs)
                 {
-                    ag->feat = FEAT_MORE;
                     borg_on_dnstairs = FALSE;
                 }
                 if (borg_on_upstairs)
                 {
-                    ag->feat = FEAT_LESS;
                     borg_on_upstairs = FALSE;
                 }
 
@@ -2567,17 +2563,14 @@ static void borg_update_map(void)
                 }
 
                 /* AJG Just get the char from the features array */
-                if (ag->feat != FEAT_NONE)
-                    t_c = f_info[ag->feat].d_char;
+                if (mb_ptr->terrain != FEAT_NONE)
+                    t_c = f_info[mb_ptr->terrain].d_char;
                 else
                     t_c = f_info[FEAT_FLOOR].d_char;
             }
 
             /* Save the old "wall" or "door" */
             old_wall = !borg_cave_floor_grid(mb_ptr);
-			
-			/* Save terrain */
-			ag->feat = mb_ptr->terrain;
 			
 			/*
 			 * Examine monsters
@@ -2635,9 +2628,6 @@ static void borg_update_map(void)
                /* Up stairs */
                 case FEAT_LESS:
                 {
-                    /* Obvious */
-                    ag->feat = FEAT_LESS;
-
                     /* Check for an existing "up stairs" */
                     for (i = 0; i < track_less_num; i++)
                     {
@@ -2659,9 +2649,6 @@ static void borg_update_map(void)
                 /* Down stairs */
                 case FEAT_MORE:
                 {
-                    /* Obvious */
-                    ag->feat = FEAT_MORE;
-
                     /* Check for an existing "down stairs" */
                     for (i = 0; i < track_more_num; i++)
                     {

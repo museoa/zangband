@@ -38,17 +38,6 @@
    ((borg_cave_floor_grid(C)) || (borg_cave_half_grid(C)))
 
 
-/*
- * Determine if a grid is a floor grid
- */
-#define borg_cave_floor_bold(Y,X) \
-    (!(borg_grids[Y][X].feat & 0x20))
-/*
- * Used to see if square is transparent.
- * Trees now block sight only half the time.
- */
-#define borg_cave_half_bold(Y,X) \
-	((cave[Y][X].feat == FEAT_TREES) && (quick_rand()))
 
 /*
  * Determine if a "legal" grid is a "clean" floor grid
@@ -66,8 +55,11 @@
 	  (cave[Y][X].feat == FEAT_DIRT)) && \
 	  (cave[Y][X].o_idx == 0))
 
-
-
+/*
+ * Bold version of borg_cave_floor_grid
+ */
+#define borg_cave_floor_bold(Y, X) \
+    (borg_cave_floor_grid(map_loc((X),(Y))))
 
 
 /*

@@ -1256,10 +1256,6 @@ static void borg_parse_aux(cptr msg, int len)
     char who[256];
     char buf[256];
 
-    borg_grid *ag = &borg_grids[g_y][g_x];
-	/* map_block *mb_ptr = map_loc(c_x, c_y); */
-
-
     /* Log (if needed) */
     if (borg_fff) borg_info(format("& Msg <%s>", msg));
 
@@ -1978,31 +1974,16 @@ static void borg_parse_aux(cptr msg, int len)
     /* Feature XXX XXX XXX */
     if (streq(msg, "The door appears to be broken."))
     {
-        /* Only process open doors */
-        if (ag->feat == FEAT_OPEN)
-        {
-            /* Mark as broken */
-            ag->feat = FEAT_BROKEN;
-
-            /* Clear goals */
-            goal = 0;
-        }
+		/* Clear goals */
+        goal = 0;
         return;
     }
 
     /* Feature XXX XXX XXX */
     if (streq(msg, "The door appears to be stuck."))
     {
-        /* Only process non-jammed doors */
-        /* if ((ag->feat >= FEAT_DOOR_HEAD) && (ag->feat <= FEAT_DOOR_HEAD + 0x07)) */
-        {
-
-            /* Mark the door as jammed */
-            /* ag->feat = FEAT_DOOR_HEAD + 0x08; */
-
-            /* Clear goals */
-            goal = 0;
-        }
+		/* Clear goals */
+		goal = 0;
 
         return;
     }
@@ -2012,15 +1993,9 @@ static void borg_parse_aux(cptr msg, int len)
     /* Feature XXX XXX XXX */
     if (streq(msg, "This seems to be permanent rock."))
     {
-        /* Only process walls */
-        if ((ag->feat >= FEAT_WALL_EXTRA) && (ag->feat <= FEAT_PERM_SOLID))
-        {
-            /* Mark the wall as permanent */
-            ag->feat = FEAT_PERM_EXTRA;
-
-            /* Clear goals */
-            goal = 0;
-        }
+		
+		/* Clear goals */
+        goal = 0;
 
         return;
     }
@@ -2030,16 +2005,9 @@ static void borg_parse_aux(cptr msg, int len)
     {
         /* reseting my panel clock */
         time_this_panel = 1;
-
-        /* Only process walls */
-        if ((ag->feat >= FEAT_WALL_EXTRA) && (ag->feat <= FEAT_PERM_SOLID))
-        {
-            /* Mark the wall as granite */
-            ag->feat = FEAT_WALL_EXTRA;
-
-            /* Clear goals */
-            goal = 0;
-        }
+		
+		/* Clear goals */
+        goal = 0;
 
         return;
     }
@@ -2047,15 +2015,8 @@ static void borg_parse_aux(cptr msg, int len)
     /* Feature Invisible Walls */
     if (streq(msg, "You bump into something."))
     {
-        /* Only process floor grids */
-        if (ag->feat == FEAT_FLOOR)
-        {
-            /* Mark the wall as granite */
-            ag->feat = FEAT_WALL_EXTRA;
-
-            /* Clear goals */
-            goal = 0;
-        }
+		/* Clear goals */
+        goal = 0;
 
         return;
     }
@@ -2063,25 +2024,8 @@ static void borg_parse_aux(cptr msg, int len)
     /* Feature XXX XXX XXX */
     if (streq(msg, "You tunnel into the quartz vein."))
     {
-        /* Process magma veins with treasure */
-        if (ag->feat == FEAT_MAGMA_K)
-        {
-            /* Mark the vein */
-            ag->feat = FEAT_QUARTZ_K;
-
-            /* Clear goals */
-            goal = 0;
-        }
-
-        /* Process magma veins */
-        else if (ag->feat == FEAT_MAGMA)
-        {
-            /* Mark the vein */
-            ag->feat = FEAT_QUARTZ;
-
-            /* Clear goals */
-            goal = 0;
-        }
+		/* Clear goals */
+        goal = 0;
 
         return;
     }
@@ -2089,25 +2033,8 @@ static void borg_parse_aux(cptr msg, int len)
     /* Feature XXX XXX XXX */
     if (streq(msg, "You tunnel into the magma vein."))
     {
-        /* Process quartz veins with treasure */
-        if (ag->feat == FEAT_QUARTZ_K)
-        {
-            /* Mark the vein */
-            ag->feat = FEAT_MAGMA_K;
-
-            /* Clear goals */
-            goal = 0;
-        }
-
-        /* Process quartz veins */
-        else if (ag->feat == FEAT_QUARTZ)
-        {
-            /* Mark the vein */
-            ag->feat = FEAT_MAGMA;
-
-            /* Clear goals */
-            goal = 0;
-        }
+		/* Clear goals */
+        goal = 0;
 
         return;
     }
@@ -2288,8 +2215,6 @@ static void borg_parse_aux(cptr msg, int len)
     /* Feature XXX XXX XXX */
     if (prefix(msg, "You see nothing there "))
     {
-        ag->feat = FEAT_BROKEN;
-
         my_no_alter = TRUE;
         /* Clear goals */
         goal = 0;
@@ -2299,8 +2224,6 @@ static void borg_parse_aux(cptr msg, int len)
     /* Tunneling not understood correctly */
     if (prefix(msg, "You cannot tunnel through air."))
     {
-        ag->feat = FEAT_BROKEN;
-
         my_no_alter = TRUE;
 
         /* Clear goals */
@@ -2520,13 +2443,6 @@ static void borg_parse_aux(cptr msg, int len)
         track_glyph_y[track_glyph_num] = 0;
         track_glyph_num --;
 
-        /* note it */
-        borg_note("# Removing the Glyph under me, placing with broken door.");
-
-        /* mark that we are not on a clear spot.  The borg ignores
-         * broken doors and this will keep him from casting it again.
-         */
-        ag->feat = FEAT_BROKEN;
         return;
     }
 
@@ -2544,8 +2460,6 @@ static void borg_parse_aux(cptr msg, int len)
                  * is out of lite and searching in the dark.
                  */
                  if (borg_skill[BI_CUR_LITE]) continue;
-
-                 if (ag->feat == FEAT_RUBBLE) ag->feat = FEAT_BROKEN;
              }
          }
         return;
@@ -2605,9 +2519,6 @@ static void borg_parse_aux(cptr msg, int len)
     {
         borg_note("# Help! I can't swim");
 
-		/* just in case, make the grid under us water */
-		borg_grids[c_y][c_x].feat = FEAT_SHAL_WATER;
-
         return;
     }
 
@@ -2615,9 +2526,6 @@ static void borg_parse_aux(cptr msg, int len)
     if (prefix(msg, "The lava burns you"))
     {
         borg_note("# Help! I'm burning");
-
-		/* just in case, make the grid under us lava */
-		borg_grids[c_y][c_x].feat = FEAT_SHAL_LAVA;
 
         return;
     }
@@ -5415,8 +5323,8 @@ void do_cmd_borg(void)
         Term_putstr(2, i++, -1, TERM_WHITE, "Command '_' Regional Fear info.");
         Term_putstr(42, i, -1, TERM_WHITE, "Command 'p' Borg Power.");
         Term_putstr(2, i++, -1, TERM_WHITE, "Command '1' change max depth.");
-        Term_putstr(42, i, -1, TERM_WHITE, "Command '2' level prep info.");
-        Term_putstr(2, i++, -1, TERM_WHITE, "Command '3' Feature of grid.");
+        Term_putstr(42, i++, -1, TERM_WHITE, "Command '2' level prep info.");
+        /*Term_putstr(2, i++, -1, TERM_WHITE, "Command '3' Feature of grid.");*/
         Term_putstr(42, i, -1, TERM_WHITE, "Command '!' Time.");
         Term_putstr(2, i++, -1, TERM_WHITE, "Command '@' Borg LOS.");
         Term_putstr(42, i, -1, TERM_WHITE, "Command 'w' My Swap Weapon.");
@@ -5824,13 +5732,14 @@ void do_cmd_borg(void)
                 {
                     byte a = TERM_RED;
 
-                    borg_grid *ag = &borg_grids[y][x];
+                    map_block *mb_ptr = map_loc(x, y);
 
                     /* show only those grids */
-                    if (!(ag->feat >= low && ag->feat <= high)) continue;
+                    if (!(mb_ptr->terrain >= low
+						&& mb_ptr->terrain <= high)) continue;
 
                     /* Color */
-                    if (borg_cave_floor_bold(y, x)) a = TERM_YELLOW;
+                    if (borg_cave_floor_grid(mb_ptr)) a = TERM_YELLOW;
 
                     /* Display */
                     print_rel('*', a, y, x);
@@ -6382,25 +6291,7 @@ void do_cmd_borg(void)
 
             break;
         }
-        /* Command: debug -- Feature of grid */
-        case '3':
-        {
-            borg_grid *ag = &borg_grids[p_ptr->target_col][p_ptr->target_row];
-
-
-            /* Examine the screen */
-            borg_update_frame();
-            borg_update();
-            borg_hidden();
-
-            ag=&borg_grids[p_ptr->target_col][p_ptr->target_row];
-
-            /* Feature of grid */
-            msg_format("Feature of (%d,%d) is %d",
-                        p_ptr->target_col, p_ptr->target_row, ag->feat);
-            break;
-        }
-
+		
         /* Command: List the swap weapon and armour */
         case 'w':
         case 'W':

@@ -106,6 +106,8 @@ static int borg_goto_dir(int y1, int x1, int y2, int x2)
 
     int ay = (y2 > y1) ? (y2 - y1) : (y1 - y2);
     int ax = (x2 > x1) ? (x2 - x1) : (x1 - x2);
+	
+	map_block *mb_ptr;
 
 
     /* Default direction */
@@ -120,14 +122,20 @@ static int borg_goto_dir(int y1, int x1, int y2, int x2)
     if (ay > ax)
     {
         d = (y1 < y2) ? 2 : 8;
-        if (borg_cave_floor_bold(y1 + ddy[d], x1 + ddx[d])) return (d);
+		
+		mb_ptr = map_loc(x1 + ddx[d], y1 + ddy[d]);
+		
+        if (borg_cave_floor_grid(mb_ptr)) return (d);
     }
 
     /* Try east/west (primary) */
     if (ay < ax)
     {
         d = (x1 < x2) ? 6 : 4;
-        if (borg_cave_floor_bold(y1 + ddy[d], x1 + ddx[d])) return (d);
+        
+		mb_ptr = map_loc(x1 + ddx[d], y1 + ddy[d]);
+		
+        if (borg_cave_floor_grid(mb_ptr)) return (d);
     }
 
 
@@ -135,21 +143,30 @@ static int borg_goto_dir(int y1, int x1, int y2, int x2)
     d = borg_extract_dir(y1, x1, y2, x2);
 
     /* Check for walls */
-    if (borg_cave_floor_bold(y1 + ddy[d], x1 + ddx[d])) return (d);
+    
+		mb_ptr = map_loc(x1 + ddx[d], y1 + ddy[d]);
+		
+        if (borg_cave_floor_grid(mb_ptr)) return (d);
 
 
     /* Try south/north (secondary) */
     if (ay <= ax)
     {
         d = (y1 < y2) ? 2 : 8;
-        if (borg_cave_floor_bold(y1 + ddy[d], x1 + ddx[d])) return (d);
+        
+		mb_ptr = map_loc(x1 + ddx[d], y1 + ddy[d]);
+		
+        if (borg_cave_floor_grid(mb_ptr)) return (d);
     }
 
     /* Try east/west (secondary) */
     if (ay >= ax)
     {
         d = (x1 < x2) ? 6 : 4;
-        if (borg_cave_floor_bold(y1 + ddy[d], x1 + ddx[d])) return (d);
+        
+		mb_ptr = map_loc(x1 + ddx[d], y1 + ddy[d]);
+		
+        if (borg_cave_floor_grid(mb_ptr)) return (d);
     }
 
 
@@ -158,11 +175,17 @@ static int borg_goto_dir(int y1, int x1, int y2, int x2)
     {
         /* Circle to the south */
         d = (x1 < x2) ? 3 : 1;
-        if (borg_cave_floor_bold(y1 + ddy[d], x1 + ddx[d])) return (d);
+        
+		mb_ptr = map_loc(x1 + ddx[d], y1 + ddy[d]);
+		
+        if (borg_cave_floor_grid(mb_ptr)) return (d);
 
         /* Circle to the north */
         d = (x1 < x2) ? 9 : 7;
-        if (borg_cave_floor_bold(y1 + ddy[d], x1 + ddx[d])) return (d);
+        
+		mb_ptr = map_loc(x1 + ddx[d], y1 + ddy[d]);
+		
+        if (borg_cave_floor_grid(mb_ptr)) return (d);
     }
 
     /* Circle obstacles */
@@ -170,11 +193,17 @@ static int borg_goto_dir(int y1, int x1, int y2, int x2)
     {
         /* Circle to the east */
         d = (y1 < y2) ? 3 : 9;
-        if (borg_cave_floor_bold(y1 + ddy[d], x1 + ddx[d])) return (d);
+        
+		mb_ptr = map_loc(x1 + ddx[d], y1 + ddy[d]);
+		
+        if (borg_cave_floor_grid(mb_ptr)) return (d);
 
         /* Circle to the west */
         d = (y1 < y2) ? 1 : 7;
-        if (borg_cave_floor_bold(y1 + ddy[d], x1 + ddx[d])) return (d);
+        
+		mb_ptr = map_loc(x1 + ddx[d], y1 + ddy[d]);
+		
+        if (borg_cave_floor_grid(mb_ptr)) return (d);
     }
 
 
@@ -317,6 +346,7 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid, bool tunnelin
             int old_head;
 
             borg_grid *ag;
+			map_block *mb_ptr;
 
 
             /* Neighbor grid */
@@ -332,41 +362,42 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid, bool tunnelin
 
             /* Access the grid */
             ag = &borg_grids[y][x];
+			mb_ptr = map_loc(x, y);
 
             /* Avoid "wall" grids (not doors) unless tunneling*/
             if (!tunneling &&
-                (ag->feat >= FEAT_SECRET &&
-                 ag->feat <= FEAT_WALL_SOLID)) continue;
+                (mb_ptr->terrain >= FEAT_SECRET &&
+                 mb_ptr->terrain <= FEAT_WALL_SOLID)) continue;
 
             /* Avoid "perma-wall" grids */
-            if (ag->feat >= FEAT_PERM_EXTRA &&
-                ag->feat <= FEAT_PERM_SOLID) continue;
+            if (mb_ptr->terrain >= FEAT_PERM_EXTRA &&
+                mb_ptr->terrain <= FEAT_PERM_SOLID) continue;
 
 			/* Avoid Lava */
-			if ((ag->feat == FEAT_DEEP_LAVA ||
-				 ag->feat == FEAT_SHAL_LAVA)
+			if ((mb_ptr->terrain == FEAT_DEEP_LAVA ||
+				 mb_ptr->terrain == FEAT_SHAL_LAVA)
 	   			&& !borg_skill[BI_IFIRE]) continue;
 
 			/* Avoid Water if dangerous */
-			if (ag->feat == FEAT_SHAL_WATER &&
+			if (mb_ptr->terrain == FEAT_SHAL_WATER &&
 				 (borg_skill[BI_ENCUMBERD] &&
 				 !borg_skill[BI_FEATH])) continue;
 
 
 			/* Avoid Mountains */
-			if (ag->feat == FEAT_MOUNTAIN) continue;
+			if (mb_ptr->terrain == FEAT_MOUNTAIN) continue;
 
 			/* Avoid some other Zang Terrains */
 
             /* Avoid unknown grids (if requested or retreating) */
-            if ((avoid || borg_desperate) && (ag->feat == FEAT_NONE)) continue;
+            if ((avoid || borg_desperate) && (mb_ptr->terrain == FEAT_NONE)) continue;
 
             /* Avoid Monsters if Desprerate */
             if (borg_desperate && (ag->kill)) continue;
 
 #if 0
             /* Avoid Traps if low level-- unless brave or scaryguy. */
-            if (ag->feat >= FEAT_TRAP_TRAPDOOR && ag->feat <= FEAT_TRAP_SLEEP &&
+            if (mb_ptr->terrain >= FEAT_TRAP_TRAPDOOR && mb_ptr->terrain <= FEAT_TRAP_SLEEP &&
                 avoidance <= borg_skill[BI_CURHP] && !scaryguy_on_level)
             {
                 /* Do not disarm when you could end up dead */
@@ -732,10 +763,10 @@ static bool borg_surrounded(void)
         if (mb_ptr->monster) non_safe_grids++;
 #if 0
         /* Mega-Hack -- skip stores XXX XXX XXX */
-        if ((ag->feat >= FEAT_SHOP_HEAD) && (ag->feat <= FEAT_SHOP_TAIL)) non_safe_grids ++;
+        if ((mb_ptr->terrain >= FEAT_SHOP_HEAD) && (mb_ptr->terrain <= FEAT_SHOP_TAIL)) non_safe_grids ++;
 
         /* Mega-Hack -- skip traps XXX XXX XXX */
-        if ((ag->feat >= FEAT_TRAP_TRAPDOOR) && (ag->feat <= FEAT_TRAP_SLEEP)) non_safe_grids ++;
+        if ((mb_ptr->terrain >= FEAT_TRAP_TRAPDOOR) && (mb_ptr->terrain <= FEAT_TRAP_SLEEP)) non_safe_grids ++;
 #endif /* 0 */
     }
 
@@ -836,15 +867,15 @@ static bool borg_happy_grid_bold(int y, int x)
 {
     int i;
 
-    borg_grid *ag = &borg_grids[y][x];
+	map_block *mb_ptr = map_loc(x, y);
 
 
     /* Accept stairs */
-    if (ag->feat == FEAT_LESS) return (TRUE);
-    if (ag->feat == FEAT_MORE) return (TRUE);
+    if (mb_ptr->terrain == FEAT_LESS) return (TRUE);
+    if (mb_ptr->terrain == FEAT_MORE) return (TRUE);
 #if 0
-    if (ag->feat == FEAT_MINOR_GLYPH) return (TRUE);
-    if (ag->feat == FEAT_GLYPH) return (TRUE);
+    if (mb_ptr->terrain == FEAT_MINOR_GLYPH) return (TRUE);
+    if (mb_ptr->terrain == FEAT_GLYPH) return (TRUE);
 #endif /* 0 */
 
     /* Hack -- weak/dark is very unhappy */
@@ -968,6 +999,7 @@ bool borg_lite_beam(bool simulation)
     bool spell_ok = FALSE;
 
     borg_grid *ag = &borg_grids[c_y][c_x];
+	map_block *mb_ptr = map_loc(c_x, c_y);
 
     /* Hack -- weak/dark is very unhappy */
     if (borg_skill[BI_ISWEAK] || borg_skill[BI_CUR_LITE] == 0) return (FALSE);
@@ -990,7 +1022,7 @@ bool borg_lite_beam(bool simulation)
     case 1:
         ag = &borg_grids[c_y- (borg_skill[BI_CUR_LITE] +1)][c_x];
         if (borg_cave_floor_bold(c_y - 1,c_x) &&
-        !ag->feat == FEAT_FLOOR  && ag->feat < FEAT_CLOSED)
+        !mb_ptr->terrain == FEAT_FLOOR  && mb_ptr->terrain < FEAT_CLOSED)
         {
             /* note the direction */
             dir = 8;
@@ -1001,7 +1033,7 @@ bool borg_lite_beam(bool simulation)
         ag = &borg_grids[c_y- (borg_skill[BI_CUR_LITE] +1)][c_x];
         if (borg_cave_floor_bold(c_y - 1,c_x) &&
         borg_cave_floor_bold(c_y - 2,c_x) &&
-        !ag->feat == FEAT_FLOOR  && ag->feat < FEAT_CLOSED)
+        !mb_ptr->terrain == FEAT_FLOOR  && mb_ptr->terrain < FEAT_CLOSED)
         {
             /* note the direction */
             dir = 8;
@@ -1014,7 +1046,7 @@ bool borg_lite_beam(bool simulation)
         if (borg_cave_floor_bold(c_y - 1,c_x) &&
         borg_cave_floor_bold(c_y - 2,c_x) &&
         borg_cave_floor_bold(c_y - 3,c_x) &&
-        !ag->feat == FEAT_FLOOR  && ag->feat < FEAT_CLOSED)
+        !mb_ptr->terrain == FEAT_FLOOR  && mb_ptr->terrain < FEAT_CLOSED)
         {
             /* note the direction */
             dir = 8;
@@ -1028,7 +1060,7 @@ bool borg_lite_beam(bool simulation)
     case 1:
         ag = &borg_grids[c_y + (borg_skill[BI_CUR_LITE] +1)][c_x];
         if (borg_cave_floor_bold(c_y + 1,c_x) &&
-        !ag->feat == FEAT_FLOOR  && ag->feat < FEAT_CLOSED)
+        !mb_ptr->terrain == FEAT_FLOOR  && mb_ptr->terrain < FEAT_CLOSED)
         {
             /* note the direction */
             dir = 2;
@@ -1039,7 +1071,7 @@ bool borg_lite_beam(bool simulation)
         ag = &borg_grids[c_y + (borg_skill[BI_CUR_LITE] +1)][c_x];
         if (borg_cave_floor_bold(c_y + 1,c_x) &&
         borg_cave_floor_bold(c_y + 2,c_x) &&
-        !ag->feat == FEAT_FLOOR  && ag->feat < FEAT_CLOSED)
+        !mb_ptr->terrain == FEAT_FLOOR  && mb_ptr->terrain < FEAT_CLOSED)
         {
             /* note the direction */
             dir = 2;
@@ -1051,7 +1083,7 @@ bool borg_lite_beam(bool simulation)
         if (borg_cave_floor_bold(c_y + 1,c_x) &&
         borg_cave_floor_bold(c_y + 2,c_x) &&
         borg_cave_floor_bold(c_y + 3,c_x) &&
-        !ag->feat == FEAT_FLOOR  && ag->feat < FEAT_CLOSED)
+        !mb_ptr->terrain == FEAT_FLOOR  && mb_ptr->terrain < FEAT_CLOSED)
         {
             /* note the direction */
             dir = 2;
@@ -1066,7 +1098,7 @@ bool borg_lite_beam(bool simulation)
     case 1:
         ag = &borg_grids[c_y][c_x+(borg_skill[BI_CUR_LITE] +1)];
         if (borg_cave_floor_bold(c_y ,c_x +1) &&
-        !ag->feat == FEAT_FLOOR  && ag->feat < FEAT_CLOSED)
+        !mb_ptr->terrain == FEAT_FLOOR  && mb_ptr->terrain < FEAT_CLOSED)
         {
             /* note the direction */
             dir = 6;
@@ -1077,7 +1109,7 @@ bool borg_lite_beam(bool simulation)
         ag = &borg_grids[c_y][c_x+(borg_skill[BI_CUR_LITE] +1)];
         if (borg_cave_floor_bold(c_y ,c_x + 1) &&
         borg_cave_floor_bold(c_y,c_x + 2) &&
-        !ag->feat == FEAT_FLOOR  && ag->feat < FEAT_CLOSED)
+        !mb_ptr->terrain == FEAT_FLOOR  && mb_ptr->terrain < FEAT_CLOSED)
         {
             /* note the direction */
             dir = 6;
@@ -1089,7 +1121,7 @@ bool borg_lite_beam(bool simulation)
         if (borg_cave_floor_bold(c_y ,c_x + 1) &&
         borg_cave_floor_bold(c_y ,c_x + 2) &&
         borg_cave_floor_bold(c_y ,c_x + 3) &&
-        !ag->feat == FEAT_FLOOR  && ag->feat < FEAT_CLOSED)
+        !mb_ptr->terrain == FEAT_FLOOR  && mb_ptr->terrain < FEAT_CLOSED)
         {
             /* note the direction */
             dir = 6;
@@ -1104,7 +1136,7 @@ bool borg_lite_beam(bool simulation)
     case 1:
         ag = &borg_grids[c_y][c_x-(borg_skill[BI_CUR_LITE] +1)];
         if (borg_cave_floor_bold(c_y ,c_x -1) &&
-        !ag->feat == FEAT_FLOOR  && ag->feat < FEAT_CLOSED)
+        !mb_ptr->terrain == FEAT_FLOOR  && mb_ptr->terrain < FEAT_CLOSED)
         {
             /* note the direction */
             dir = 4;
@@ -1115,7 +1147,7 @@ bool borg_lite_beam(bool simulation)
         ag = &borg_grids[c_y][c_x-(borg_skill[BI_CUR_LITE] +1)];
         if (borg_cave_floor_bold(c_y ,c_x - 1) &&
         borg_cave_floor_bold(c_y,c_x - 2) &&
-        !ag->feat == FEAT_FLOOR  && ag->feat < FEAT_CLOSED)
+        !mb_ptr->terrain == FEAT_FLOOR  && mb_ptr->terrain < FEAT_CLOSED)
         {
             /* note the direction */
             dir = 4;
@@ -1127,7 +1159,7 @@ bool borg_lite_beam(bool simulation)
         if (borg_cave_floor_bold(c_y ,c_x - 1) &&
         borg_cave_floor_bold(c_y ,c_x - 2) &&
         borg_cave_floor_bold(c_y ,c_x - 3) &&
-        !ag->feat == FEAT_FLOOR && ag->feat < FEAT_CLOSED)
+        !mb_ptr->terrain == FEAT_FLOOR && mb_ptr->terrain < FEAT_CLOSED)
         {
             /* note the direction */
             dir = 4;
@@ -1333,7 +1365,7 @@ bool borg_caution_phase(int emergency, int turns)
     int min;
 
     borg_grid *ag= &borg_grids[c_y][c_x];
-
+	map_block *mb_ptr = map_loc(c_x, c_y);
 
 	/* Define minimal distance */
 	min =  dis / 2;
@@ -1361,13 +1393,13 @@ bool borg_caution_phase(int emergency, int turns)
             ag = &borg_grids[y][x];
 
             /* If low level, unknown squares are scary */
-            if (ag->feat == FEAT_NONE && borg_skill[BI_MAXHP] < 30) break;
+            if (mb_ptr->terrain == FEAT_NONE && borg_skill[BI_MAXHP] < 30) break;
 
             /* Skip unknown grids */
-            if (ag->feat == FEAT_NONE) continue;
+            if (mb_ptr->terrain == FEAT_NONE) continue;
 
             /* Skip weird grids */
-            if (ag->feat == FEAT_INVIS) continue;
+            if (mb_ptr->terrain == FEAT_INVIS) continue;
 
             /* Skip walls */
             if (!borg_cave_floor_bold(y, x)) continue;
@@ -1380,7 +1412,7 @@ bool borg_caution_phase(int emergency, int turns)
         }
 
         /* If low level, unknown squares are scary */
-        if (ag->feat == FEAT_NONE && borg_skill[BI_MAXHP] < 30)
+        if (mb_ptr->terrain == FEAT_NONE && borg_skill[BI_MAXHP] < 30)
         {
             n++;
             continue;
@@ -1429,7 +1461,7 @@ static bool borg_dim_door(int emergency, int p1)
     int dis = borg_skill[BI_CLEVEL] + 2;
 
     borg_grid *ag= &borg_grids[c_y][c_x];
-
+	map_block *mb_ptr = map_loc(c_x, c_y);
 
     /* Scan every grid in landing zone */
     for (y = c_y - dis; y < c_y + dis; y++)
@@ -1450,10 +1482,10 @@ static bool borg_dim_door(int emergency, int p1)
 			if (distance(y, x, c_y, c_x) > borg_skill[BI_CLEVEL] + 2) continue;
 
             /* Skip unknown grids */
-            if (ag->feat == FEAT_NONE) continue;
+            if (mb_ptr->terrain == FEAT_NONE) continue;
 
             /* Skip weird grids */
-            if (ag->feat == FEAT_INVIS) continue;
+            if (mb_ptr->terrain == FEAT_INVIS) continue;
 
             /* Skip walls, trees, water, lava*/
             if (!borg_cave_floor_bold(y, x)) continue;
@@ -3109,10 +3141,10 @@ bool borg_caution(void)
     if (stair_less)
     {
         /* Current grid */
-        borg_grid *ag = &borg_grids[c_y][c_x];
+		map_block *mb_ptr = map_loc(c_x, c_y);
 
         /* Usable stairs */
-        if (ag->feat == FEAT_LESS)
+        if (mb_ptr->terrain == FEAT_LESS)
         {
             if ((borg_skill[BI_MAXDEPTH] - 4) > borg_skill[BI_CDEPTH] && borg_skill[BI_MAXCLEVEL] >= 35)
             {
@@ -3134,10 +3166,10 @@ bool borg_caution(void)
     if (stair_more && !goal_recalling)
     {
         /* Current grid */
-        borg_grid *ag = &borg_grids[c_y][c_x];
+		map_block *mb_ptr = map_loc(c_x, c_y);
 
         /* Usable stairs */
-        if (ag->feat == FEAT_MORE)
+        if (mb_ptr->terrain == FEAT_MORE)
         {
             if ((borg_skill[BI_MAXDEPTH] - 5) > borg_skill[BI_CDEPTH] && borg_skill[BI_MAXCLEVEL] >= 35)
             {
@@ -3480,7 +3512,7 @@ bool borg_caution(void)
                 if (mb_ptr->monster) break;
 #if 0
                 /* Skip traps */
-                if ((ag->feat >= FEAT_TRAP_TRAPDOOR) && (ag->feat <= FEAT_TRAP_SLEEP)) break;
+                if ((mb_ptr->terrain >= FEAT_TRAP_TRAPDOOR) && (mb_ptr->terrain <= FEAT_TRAP_SLEEP)) break;
 #endif /* 0 */
                 /* Safe arrival */
                 if ((x1 == x2) && (y1 == y2))
@@ -3571,10 +3603,10 @@ bool borg_caution(void)
             if (mb_ptr->monster) continue;
 #if 0
             /* Mega-Hack -- skip stores XXX XXX XXX */
-            if ((ag->feat >= FEAT_SHOP_HEAD) && (ag->feat <= FEAT_SHOP_TAIL)) continue;
+            if ((mb_ptr->terrain >= FEAT_SHOP_HEAD) && (mb_ptr->terrain <= FEAT_SHOP_TAIL)) continue;
 
             /* Mega-Hack -- skip traps XXX XXX XXX */
-            if ((ag->feat >= FEAT_TRAP_TRAPDOOR) && (ag->feat <= FEAT_TRAP_SLEEP)) continue;
+            if ((mb_ptr->terrain >= FEAT_TRAP_TRAPDOOR) && (mb_ptr->terrain <= FEAT_TRAP_SLEEP)) continue;
 #endif /* 0 */
 
             /* Extract the danger there */
@@ -4404,37 +4436,38 @@ bool borg_target_unknown_wall(int y, int x)
      * 'x' being 'not a floor' and '.' being a floor.
      */
 
-    if ((borg_grids[c_y+1][c_x].feat == FEAT_FLOOR &&
-        borg_grids[c_y+2][c_x].feat == FEAT_FLOOR &&
-        borg_grids[c_y-1][c_x].feat == FEAT_FLOOR &&
-        borg_grids[c_y-2][c_x].feat == FEAT_FLOOR) &&
-        (borg_grids[c_y][c_x+1].feat != FEAT_FLOOR &&
-         borg_grids[c_y][c_x-1].feat != FEAT_FLOOR))
+    if (borg_cave_floor_bold(c_y+1,c_x) &&
+        borg_cave_floor_bold(c_y+2,c_x) &&
+        borg_cave_floor_bold(c_y-1,c_x) &&
+        borg_cave_floor_bold(c_y-2,c_x) &&
+        !borg_cave_floor_bold(c_y,c_x+1) &&
+        !borg_cave_floor_bold(c_y,c_x-1))
         x_hall = TRUE;
 
     /* check for 'in a hall' y axis */
-    if ((borg_grids[c_y][c_x+1].feat == FEAT_FLOOR &&
-        borg_grids[c_y][c_x+2].feat == FEAT_FLOOR &&
-        borg_grids[c_y][c_x-1].feat == FEAT_FLOOR &&
-        borg_grids[c_y][c_x-2].feat == FEAT_FLOOR) &&
-        (borg_grids[c_y+1][c_x].feat != FEAT_FLOOR &&
-         borg_grids[c_y-1][c_x].feat != FEAT_FLOOR))
+    if (borg_cave_floor_bold(c_y,c_x+1) &&
+        borg_cave_floor_bold(c_y,c_x+2) &&
+		borg_cave_floor_bold(c_y,c_x-1) &&
+        borg_cave_floor_bold(c_y,c_x-2) &&
+        !borg_cave_floor_bold(c_y+1,c_x) &&
+        !borg_cave_floor_bold(c_y-1,c_x))
         y_hall = TRUE;
 
+	/* XXX XXX hack */
     while (1)
     {
-        if (borg_grids[n_y][n_x].feat == FEAT_NONE &&
+        map_block *mb_ptr = map_loc(n_x, n_y);
+		
+		if (mb_ptr->terrain == FEAT_NONE &&
             ((n_y != c_y) || !y_hall) &&
             ((n_x != c_x) || !x_hall))
         {
             borg_note(format("# Guessing wall (%d,%d) near target (%d,%d)", n_y, n_x, y, x));
-            borg_grids[n_y][n_x].feat = FEAT_WALL_SOLID;
+            mb_ptr->terrain = FEAT_WALL_SOLID;
             found = TRUE;
-            return found; /* not sure... should we return here?
-                             maybe should mark ALL unknowns in path... */
         }
-        if (n_x == x && n_y == y)
-            break;
+		
+        if (n_x == x && n_y == y) break;
 
         /* Calculate the new location */
         borgmove2(&n_y, &n_x, c_y, c_x, y, x);
@@ -5129,10 +5162,10 @@ static int borg_launch_bolt_aux_hack(int i, int dam, int typ)
 
 #if 0
     /* Hack -- Unknown grids should be avoided some of the time */
-    if ((ag->feat == FEAT_NONE) && ((borg_t % 8) == 0)) return (0);
+    if ((mb_ptr->terrain == FEAT_NONE) && ((borg_t % 8) == 0)) return (0);
 
     /* Hack -- Weird grids should be avoided some of the time */
-    if ((ag->feat == FEAT_INVIS) && ((borg_t % 8) == 0)) return (0);
+    if ((mb_ptr->terrain == FEAT_INVIS) && ((borg_t % 8) == 0)) return (0);
 #endif
 
     /* dont shoot at ghosts in walls, not perfect */
@@ -6989,7 +7022,7 @@ static int borg_attack_aux_spell_callvoid(void)
 
 	int dam = 0;
 
-	borg_grid *ag;
+	map_block *mb_ptr;
 
 	if (!borg_spell_fail(REALM_CHAOS, 3, 7, 20)) return 0;
 	/* Scan neighboring grids */
@@ -6998,11 +7031,11 @@ static int borg_attack_aux_spell_callvoid(void)
 		y = c_y + ddy[dir];
 		x = c_x + ddx[dir];
 
-		ag = &borg_grids[y][x];
+		mb_ptr = map_loc(x, y);
 
 		/* is there a kill next to me */
-		if (ag->feat >= FEAT_MAGMA &&
-		    ag->feat <= FEAT_PERM_SOLID)
+		if (mb_ptr->terrain >= FEAT_MAGMA &&
+		    mb_ptr->terrain <= FEAT_PERM_SOLID)
 		{
 			return (0);
 
@@ -9414,14 +9447,14 @@ static int borg_defend_aux_glyph( int p1)
      */
 
     if ( (ag->take)/* ||
-         (ag->feat == FEAT_MINOR_GLYPH) ||
-         (ag->feat == FEAT_GLYPH) ||
-         ((ag->feat >= FEAT_TRAP_TRAPDOOR) && (ag->feat <= FEAT_TRAP_SLEEP))*/ ||
-         (ag->feat == FEAT_CLOSED) ||
-         (ag->feat == FEAT_LESS) ||
-         (ag->feat == FEAT_MORE) ||
-         (ag->feat == FEAT_OPEN) ||
-         (ag->feat == FEAT_BROKEN) )
+         (mb_ptr->terrain == FEAT_MINOR_GLYPH) ||
+         (mb_ptr->terrain == FEAT_GLYPH) ||
+         ((mb_ptr->terrain >= FEAT_TRAP_TRAPDOOR) && (mb_ptr->terrain <= FEAT_TRAP_SLEEP))*/ ||
+         (mb_ptr->terrain == FEAT_CLOSED) ||
+         (mb_ptr->terrain == FEAT_LESS) ||
+         (mb_ptr->terrain == FEAT_MORE) ||
+         (mb_ptr->terrain == FEAT_OPEN) ||
+         (mb_ptr->terrain == FEAT_BROKEN) )
         {
             return (0);
         }
@@ -9503,7 +9536,7 @@ static int borg_defend_aux_true_warding( int p1)
     int glyph_x, glyph_y,x,y;
 
     borg_grid *ag;
-
+	map_block *mb_ptr;
 
     /* any summoners near?*/
     if (!borg_fighting_summoner) return (0);
@@ -9534,20 +9567,21 @@ static int borg_defend_aux_true_warding( int p1)
             y = glyph_y + c_y;
 
             ag = &borg_grids[y][x];
+			mb_ptr = map_loc(x, y);
 
             /* track spaces already protected */
-            if ( (ag->feat >= FEAT_CLOSED) && (ag->feat <= FEAT_PERM_SOLID))
+            if ((mb_ptr->terrain >= FEAT_CLOSED) && (mb_ptr->terrain <= FEAT_PERM_SOLID))
             {
                 glyph_bad++;
             }
 
             /* track spaces that cannot be protected */
             if ( (ag->take)/* ||
-               ((ag->feat >= FEAT_TRAP_TRAPDOOR) && (ag->feat <= FEAT_TRAP_SLEEP))*/ ||
-               (ag->feat == FEAT_LESS) ||
-               (ag->feat == FEAT_MORE) ||
-               (ag->feat == FEAT_OPEN) ||
-               (ag->feat == FEAT_BROKEN) ||
+               ((mb_ptr->terrain >= FEAT_TRAP_TRAPDOOR) && (mb_ptr->terrain <= FEAT_TRAP_SLEEP))*/ ||
+               (mb_ptr->terrain == FEAT_LESS) ||
+               (mb_ptr->terrain == FEAT_MORE) ||
+               (mb_ptr->terrain == FEAT_OPEN) ||
+               (mb_ptr->terrain == FEAT_BROKEN) ||
                (ag->kill))
             {
                 glyph_bad++;
@@ -9603,7 +9637,7 @@ static int borg_defend_aux_create_walls( int p1)
     int wall_x, wall_y,x,y;
 
     borg_grid *ag;
-
+	map_block *mb_ptr;
 
     /* any summoners near?*/
     if (!borg_fighting_summoner) return (0);
@@ -9635,22 +9669,23 @@ static int borg_defend_aux_create_walls( int p1)
             y = wall_y + c_y;
 
             ag = &borg_grids[y][x];
-
+			mb_ptr = map_loc(x, y);
+			
             /* track spaces already protected */
-            if ( /* (ag->feat == FEAT_GLYPH) ||
-            	 (ag->feat == FEAT_MINOR_GLYPH) ||*/ ag->kill ||
-               ((ag->feat >= FEAT_CLOSED) && (ag->feat <= FEAT_PERM_SOLID)))
+            if ( /* (mb_ptr->terrain == FEAT_GLYPH) ||
+            	 (mb_ptr->terrain == FEAT_MINOR_GLYPH) ||*/ ag->kill ||
+               ((mb_ptr->terrain >= FEAT_CLOSED) && (mb_ptr->terrain <= FEAT_PERM_SOLID)))
             {
                 wall_bad++;
             }
 
             /* track spaces that cannot be protected */
             if ( (ag->take) /*||
-               ((ag->feat >= FEAT_TRAP_TRAPDOOR) && (ag->feat <= FEAT_TRAP_SLEEP)) */||
-               (ag->feat == FEAT_LESS) ||
-               (ag->feat == FEAT_MORE) ||
-               (ag->feat == FEAT_OPEN) ||
-               (ag->feat == FEAT_BROKEN) ||
+               ((mb_ptr->terrain >= FEAT_TRAP_TRAPDOOR) && (mb_ptr->terrain <= FEAT_TRAP_SLEEP)) */||
+               (mb_ptr->terrain == FEAT_LESS) ||
+               (mb_ptr->terrain == FEAT_MORE) ||
+               (mb_ptr->terrain == FEAT_OPEN) ||
+               (mb_ptr->terrain == FEAT_BROKEN) ||
                (ag->kill))
             {
                 wall_bad++;
@@ -10104,6 +10139,7 @@ static int borg_defend_aux_earthquake(void)
     int door_x, door_y, x, y;
 
     borg_grid *ag;
+	map_block *mb_ptr;
 
     /* Obtain initial danger */
     p1= borg_danger(c_y,c_x,1, TRUE);
@@ -10126,21 +10162,22 @@ static int borg_defend_aux_earthquake(void)
             y = door_y + c_y;
 
             ag = &borg_grids[y][x];
+			mb_ptr = map_loc(x, y);
 
             /* track spaces already protected */
-            if ( /*(ag->feat == FEAT_GLYPH) || */ag->kill ||
-               ((ag->feat >= FEAT_CLOSED) && (ag->feat <= FEAT_PERM_SOLID)))
+            if ( /*(mb_ptr->terrain == FEAT_GLYPH) || */ag->kill ||
+               ((mb_ptr->terrain >= FEAT_CLOSED) && (mb_ptr->terrain <= FEAT_PERM_SOLID)))
             {
                 door_bad++;
             }
 
             /* track spaces that cannot be protected */
             if ( (ag->take) ||
-               /*((ag->feat >= FEAT_TRAP_TRAPDOOR) && (ag->feat <= FEAT_TRAP_SLEEP)) ||*/
-               (ag->feat == FEAT_LESS) ||
-               (ag->feat == FEAT_MORE) ||
-               (ag->feat == FEAT_OPEN) ||
-               (ag->feat == FEAT_BROKEN) ||
+               /*((mb_ptr->terrain >= FEAT_TRAP_TRAPDOOR) && (mb_ptr->terrain <= FEAT_TRAP_SLEEP)) ||*/
+               (mb_ptr->terrain == FEAT_LESS) ||
+               (mb_ptr->terrain == FEAT_MORE) ||
+               (mb_ptr->terrain == FEAT_OPEN) ||
+               (mb_ptr->terrain == FEAT_BROKEN) ||
                (ag->kill))
             {
                 door_bad++;
@@ -11576,6 +11613,7 @@ static int borg_perma_aux_glyph(void)
     int fail_allowed = 20;
 
     borg_grid *ag = &borg_grids[c_y][c_x];
+	map_block *mb_ptr = map_loc(c_x, c_y);
 
     /* check to make sure a summoner is near */
     if (borg_kills_summoner == -1) return (0);
@@ -11591,13 +11629,13 @@ static int borg_perma_aux_glyph(void)
      * broken doors, so he won't loop.
      */
     if ( (ag->take) /*||
-    	 (ag->feat == FEAT_GLYPH) ||
-         ((ag->feat >= FEAT_TRAP_TRAPDOOR) && (ag->feat <= FEAT_TRAP_SLEEP))*/ ||
-         (ag->feat == FEAT_CLOSED) ||
-         (ag->feat == FEAT_LESS) ||
-         (ag->feat == FEAT_MORE) ||
-         (ag->feat == FEAT_OPEN) ||
-         (ag->feat == FEAT_BROKEN) )
+    	 (mb_ptr->terrain == FEAT_GLYPH) ||
+         ((mb_ptr->terrain >= FEAT_TRAP_TRAPDOOR) && (mb_ptr->terrain <= FEAT_TRAP_SLEEP))*/ ||
+         (mb_ptr->terrain == FEAT_CLOSED) ||
+         (mb_ptr->terrain == FEAT_LESS) ||
+         (mb_ptr->terrain == FEAT_MORE) ||
+         (mb_ptr->terrain == FEAT_OPEN) ||
+         (mb_ptr->terrain == FEAT_BROKEN) )
         {
             return (0);
         }
@@ -11615,8 +11653,8 @@ static int borg_perma_aux_glyph(void)
             ag = &borg_grids[y][x];
 
             /* track adjacent walls */
-            if ( /* (ag->feat == FEAT_GLYPH) || */
-               ((ag->feat >= FEAT_MAGMA) && (ag->feat <= FEAT_WALL_SOLID)))
+            if ( /* (mb_ptr->terrain == FEAT_GLYPH) || */
+               ((mb_ptr->terrain >= FEAT_MAGMA) && (mb_ptr->terrain <= FEAT_WALL_SOLID)))
             {
                 wall_count++;
             }
@@ -12343,6 +12381,7 @@ bool borg_recover(void)
 static bool borg_play_step(int y2, int x2)
 {
     borg_grid *ag;
+	map_block *mb_ptr;
 
     int dir, x, y, ox, oy, i;
 
@@ -12354,31 +12393,32 @@ static bool borg_play_step(int y2, int x2)
         /* scan the adjacent grids */
         for (ox = -1; ox <= 1; ox++)
         {
-                for (oy = -1; oy <= 1; oy++)
-                {
-                    /* skip our own spot */
-                    if ((oy+c_y == c_y) && (ox+c_x == c_x)) continue;
+        	for (oy = -1; oy <= 1; oy++)
+        	{
+        	    /* skip our own spot */
+        	    if ((oy+c_y == c_y) && (ox+c_x == c_x)) continue;
 
-                    /* skip our orignal goal */
-                    if ((oy+c_y == y2) && (ox+c_x == x2)) continue;
+        	    /* skip our orignal goal */
+        	    if ((oy+c_y == y2) && (ox+c_x == x2)) continue;
 
-                    /* Acquire location */
-                    ag = &borg_grids[oy+c_y][ox+c_x];
+        	    /* Acquire location */
+        	    ag = &borg_grids[oy+c_y][ox+c_x];
+				mb_ptr = map_loc(ox + c_x, oy + c_y);
 
-                    /* skip non open doors */
-                    if (ag->feat != FEAT_OPEN) continue;
+        	    /* skip non open doors */
+        	    if (mb_ptr->terrain != FEAT_OPEN) continue;
 
-                    /* skip monster on door */
-                    if (ag->kill) continue;
+        	    /* skip monster on door */
+        	    if (ag->kill) continue;
 
-                    /* Skip repeatedly closed doors */
-                    if (track_door_num >= 255) continue;
+        	    /* Skip repeatedly closed doors */
+        	    if (track_door_num >= 255) continue;
 
-                    /* save this spot */
-                    o_y = oy;
-                    o_x = ox;
-                    door_found = 1;
-                }
+        	    /* save this spot */
+        	    o_y = oy;
+        	    o_x = ox;
+        	    door_found = 1;
+        	}
         }
 
         /* Is there a door to close? */
@@ -12433,6 +12473,7 @@ static bool borg_play_step(int y2, int x2)
 
     /* Access the grid we are stepping on */
     ag = &borg_grids[y][x];
+	mb_ptr = map_loc(x, y);
 
     /* Hack -- set goal */
     g_x = x;
@@ -12555,8 +12596,8 @@ static bool borg_play_step(int y2, int x2)
 
 #if 0
     /* Glyph of Warding */
-    if (ag->feat == FEAT_MINOR_GLYPH ||
-    	ag->feat == FEAT_GLYPH)
+    if (mb_ptr->terrain == FEAT_MINOR_GLYPH ||
+    	mb_ptr->terrain == FEAT_GLYPH)
     {
         /* Message */
         borg_note(format("# Walking onto a glyph of warding."));
@@ -12570,7 +12611,7 @@ static bool borg_play_step(int y2, int x2)
 #if 0
     /* Traps -- disarm -- */
     if (borg_skill[BI_CUR_LITE] && !borg_skill[BI_ISBLIND] && !borg_skill[BI_ISCONFUSED] && !scaryguy_on_level &&
-        (ag->feat >= FEAT_TRAP_TRAPDOOR) && (ag->feat <= FEAT_TRAP_SLEEP))
+        (mb_ptr->terrain >= FEAT_TRAP_TRAPDOOR) && (mb_ptr->terrain <= FEAT_TRAP_SLEEP))
     {
 
         /* NOTE: If a scary guy is on the level, we allow the borg to run over the
@@ -12597,13 +12638,13 @@ static bool borg_play_step(int y2, int x2)
         borg_keypress(I2D(dir));
 
         /* We are not sure if the trap will get 'untrapped'. pretend it will*/
-        ag->feat = FEAT_NONE;
+        mb_ptr->terrain = FEAT_NONE;
         return (TRUE);
     }
 #endif /* 0 */
 
     /* Closed Doors -- Open */
-    if (ag->feat == FEAT_CLOSED)
+    if (mb_ptr->terrain == FEAT_CLOSED)
     {
         /* Paranoia XXX XXX XXX */
         if (one_in_(100)) return (FALSE);
@@ -12628,7 +12669,7 @@ static bool borg_play_step(int y2, int x2)
 
 #if 0 /* Need to use fields */
     /* Jammed Doors -- Bash or destroy */
-    if ((ag->feat >= FEAT_DOOR_HEAD + 0x08) && (ag->feat <= FEAT_DOOR_TAIL))
+    if ((mb_ptr->terrain >= FEAT_DOOR_HEAD + 0x08) && (mb_ptr->terrain <= FEAT_DOOR_TAIL))
     {
         /* Paranoia XXX XXX XXX */
         if (one_in_(100)) return (FALSE);
@@ -12664,8 +12705,8 @@ static bool borg_play_step(int y2, int x2)
 #endif /* 0 */
 
     /* Rubble, Treasure, Seams, Walls -- Tunnel or Melt */
-    if (ag->feat >= FEAT_SECRET &&
-        ag->feat <= FEAT_WALL_SOLID)
+    if (mb_ptr->terrain >= FEAT_SECRET &&
+        mb_ptr->terrain <= FEAT_WALL_SOLID)
     {
 
         /* Mega-Hack -- prevent infinite loops */
@@ -12718,10 +12759,10 @@ static bool borg_play_step(int y2, int x2)
 
 #if 0 /* Need to use fields */
     /* Shops -- Enter */
-    if ((ag->feat >= FEAT_SHOP_HEAD) && (ag->feat <= FEAT_SHOP_TAIL))
+    if ((mb_ptr->terrain >= FEAT_SHOP_HEAD) && (mb_ptr->terrain <= FEAT_SHOP_TAIL))
     {
         /* Message */
-        borg_note(format("# Entering a '%d' shop", (ag->feat - FEAT_SHOP_HEAD) + 1));
+        borg_note(format("# Entering a '%d' shop", (mb_ptr->terrain - FEAT_SHOP_HEAD) + 1));
 
         /* Enter the shop */
         borg_keypress(I2D(dir));
@@ -12758,7 +12799,7 @@ static bool borg_play_step(int y2, int x2)
     if (goal_less)
     {
         /* Up stairs */
-        if (ag->feat == FEAT_LESS)
+        if (mb_ptr->terrain == FEAT_LESS)
         {
             /* Stand on stairs */
             borg_on_upstairs = TRUE;
@@ -13506,7 +13547,8 @@ bool borg_flow_kill_corridor(bool viewable)
     {
         for (o_y = -1; o_y <= 1; o_y++)
         {
-            borg_grid *ag ;
+            borg_grid *ag;
+			map_block *mb_ptr;
 
             /* Check grids near monster */
             m_x = kill->x + o_x;
@@ -13514,6 +13556,7 @@ bool borg_flow_kill_corridor(bool viewable)
 
             /* grid the grid */
             ag = &borg_grids[m_y][m_x];
+			mb_ptr = map_loc(m_x, m_y);
 
             /* avoid screen edgeds */
             if (m_x > AUTO_MAX_X-2 ||
@@ -13523,8 +13566,8 @@ bool borg_flow_kill_corridor(bool viewable)
                 continue;
 
             /* Can't tunnel a non wall or permawall*/
-            if (ag->feat != FEAT_NONE && ag->feat < FEAT_MAGMA) continue;
-            if (ag->feat >= FEAT_PERM_EXTRA && ag->feat <= FEAT_PERM_SOLID)
+            if (mb_ptr->terrain != FEAT_NONE && mb_ptr->terrain < FEAT_MAGMA) continue;
+            if (mb_ptr->terrain >= FEAT_PERM_EXTRA && mb_ptr->terrain <= FEAT_PERM_SOLID)
             {
                 perma_grids ++;
                 continue;
@@ -13558,8 +13601,8 @@ bool borg_flow_kill_corridor(bool viewable)
                     ag = &borg_grids[m_y+f_y][m_x+f_x];
 
                     /* check if this neighbor is a floor */
-                    if (ag->feat == FEAT_FLOOR ||
-                        ag->feat == FEAT_BROKEN) floors ++;
+                    if (mb_ptr->terrain == FEAT_FLOOR ||
+                        mb_ptr->terrain == FEAT_BROKEN) floors ++;
                 }
             }
 
@@ -13643,11 +13686,12 @@ bool borg_flow_kill(bool viewable, int nearness)
             y = hall_y + c_y;
 
             ag = &borg_grids[y][x];
+			mb_ptr = map_loc(x, y);
 
             /* track walls */
-            if (/* (ag->feat == FEAT_GLYPH) ||
-            	(ag->feat == FEAT_MINOR_GLYPH) || */
-               ((ag->feat >= FEAT_MAGMA) && (ag->feat <= FEAT_PERM_SOLID)))
+            if (/* (mb_ptr->terrain == FEAT_GLYPH) ||
+            	(mb_ptr->terrain == FEAT_MINOR_GLYPH) || */
+               ((mb_ptr->terrain >= FEAT_MAGMA) && (mb_ptr->terrain <= FEAT_PERM_SOLID)))
             {
                 hall_walls++;
             }
@@ -13749,9 +13793,9 @@ bool borg_flow_kill(bool viewable, int nearness)
                     ag = &borg_grids[hall_y + y][hall_x + x];
 
                     /* track walls */
-                    if (/* (ag->feat == FEAT_GLYPH) ||
-                         (ag->feat == FEAT_MINOR_GLYPH) || */
-                         ((ag->feat >= FEAT_MAGMA) && (ag->feat <= FEAT_PERM_SOLID)))
+                    if (/* (mb_ptr->terrain == FEAT_GLYPH) ||
+                         (mb_ptr->terrain == FEAT_MINOR_GLYPH) || */
+                         ((mb_ptr->terrain >= FEAT_MAGMA) && (mb_ptr->terrain <= FEAT_PERM_SOLID)))
                     {
                         hall_walls++;
                     }
@@ -13974,12 +14018,14 @@ static bool borg_flow_dark_interesting(int y, int x, int b_stair)
 
 
     borg_grid *ag;
+	map_block *mb_ptr;
 
     /* Have the borg so some Searching */
     borg_needs_searching = TRUE;
 
     /* Get the borg_grid */
     ag = &borg_grids[y][x];
+	mb_ptr = map_loc(x, y);
 
     /* Skip ones that make me wander too far */
     if (b_stair != -1 && borg_skill[BI_CLEVEL < 10])
@@ -13997,13 +14043,13 @@ static bool borg_flow_dark_interesting(int y, int x, int b_stair)
 
 
     /* Explore unknown grids */
-    if (ag->feat == FEAT_NONE) return (TRUE);
+    if (mb_ptr->terrain == FEAT_NONE) return (TRUE);
 
     /* Efficiency -- Ignore "boring" grids */
-    if (ag->feat < FEAT_CLOSED) return (FALSE);
+    if (mb_ptr->terrain < FEAT_CLOSED) return (FALSE);
 
     /* Explore "known treasure" */
-    if ((ag->feat == FEAT_MAGMA_K) || (ag->feat == FEAT_QUARTZ_K))
+    if ((mb_ptr->terrain == FEAT_MAGMA_K) || (mb_ptr->terrain == FEAT_QUARTZ_K))
     {
         /* Do not disarm when confused */
         if (borg_skill[BI_ISCONFUSED]) return (FALSE);
@@ -14036,8 +14082,8 @@ static bool borg_flow_dark_interesting(int y, int x, int b_stair)
     }
 
     /* "Vaults" Explore non perma-walls adjacent to a perma wall */
-    if (ag->feat == FEAT_WALL_EXTRA || ag->feat == FEAT_MAGMA ||
-        ag->feat == FEAT_QUARTZ)
+    if (mb_ptr->terrain == FEAT_WALL_EXTRA || mb_ptr->terrain == FEAT_MAGMA ||
+        mb_ptr->terrain == FEAT_QUARTZ)
     {
         /* Do not attempt when confused */
         if (borg_skill[BI_ISCONFUSED]) return (FALSE);
@@ -14061,7 +14107,7 @@ static bool borg_flow_dark_interesting(int y, int x, int b_stair)
                     ag = &borg_grids[oy+y][ox+x];
 
                     /* skip non perma grids wall */
-                    if (ag->feat != FEAT_PERM_INNER) continue;
+                    if (mb_ptr->terrain != FEAT_PERM_INNER) continue;
 
                     /* Allow "stone to mud" ability */
 			        if (borg_spell_legal(REALM_SORCERY,1, 8) ||
@@ -14093,13 +14139,13 @@ static bool borg_flow_dark_interesting(int y, int x, int b_stair)
     }
 
     /* Explore "rubble" */
-    if (ag->feat == FEAT_RUBBLE)
+    if (mb_ptr->terrain == FEAT_RUBBLE)
     {
         return (TRUE);
     }
 
     /* Explore "Trees" somewhat */
-    if (ag->feat == FEAT_TREES)
+    if (mb_ptr->terrain == FEAT_TREES)
     {
         /* Scan near trees for unknown grids */
 
@@ -14118,7 +14164,7 @@ static bool borg_flow_dark_interesting(int y, int x, int b_stair)
                     ag = &borg_grids[oy+y][ox+x];
 
                     /* look for Unknown grid */
-                    if (ag->feat == FEAT_NONE) return (TRUE);
+                    if (mb_ptr->terrain == FEAT_NONE) return (TRUE);
 				}
 			}
 		}
@@ -14129,7 +14175,7 @@ static bool borg_flow_dark_interesting(int y, int x, int b_stair)
 
 
     /* Explore "closed doors" */
-    if (ag->feat == FEAT_CLOSED)
+    if (mb_ptr->terrain == FEAT_CLOSED)
     {
             /* some closed doors leave alone */
             if (breeder_level)
@@ -14152,7 +14198,7 @@ static bool borg_flow_dark_interesting(int y, int x, int b_stair)
 
 #if 0
     /* Explore "visible traps" */
-    if ((ag->feat >= FEAT_TRAP_TRAPDOOR) && (ag->feat <= FEAT_TRAP_SLEEP))
+    if ((mb_ptr->terrain >= FEAT_TRAP_TRAPDOOR) && (mb_ptr->terrain <= FEAT_TRAP_SLEEP))
     {
         /* Do not disarm when blind */
         if (borg_skill[BI_ISBLIND]) return (FALSE);
@@ -14167,7 +14213,7 @@ static bool borg_flow_dark_interesting(int y, int x, int b_stair)
         if (borg_skill[BI_CUR_LITE] == 0) return (FALSE);
 
         /* Do not disarm trap doors on level 99 */
-        if (borg_skill[BI_CDEPTH] == 99 && ag->feat == FEAT_TRAP_TRAPDOOR) return (FALSE);
+        if (borg_skill[BI_CDEPTH] == 99 && mb_ptr->terrain == FEAT_TRAP_TRAPDOOR) return (FALSE);
 
         /* Do not disarm when you could end up dead */
         if (borg_skill[BI_CURHP] < 60) return (FALSE);
@@ -14265,6 +14311,7 @@ extern void borg_flow_direct(int y, int x)
     int shift;
 
     borg_grid *ag;
+	map_block *mb_ptr;
 
     /* Avoid icky grids */
     if (borg_data_icky->data[y][x]) return;
@@ -14342,28 +14389,29 @@ extern void borg_flow_direct(int y, int x)
 
         /* Access the grid */
         ag = &borg_grids[y][x];
+		mb_ptr = map_loc(x, y);
 
 		/* Floors are ok */
 
 		/* Trees are ok */
 
 		/* Mountains not ok */
-		if (ag->feat == FEAT_MOUNTAIN) return;
+		if (mb_ptr->terrain == FEAT_MOUNTAIN) return;
 
         /* Ignore certain "non-wall" grids */
-        if ((ag->feat == FEAT_SHAL_WATER &&
+        if ((mb_ptr->terrain == FEAT_SHAL_WATER &&
         	 (!borg_skill[BI_ENCUMBERD] &&
 			  !borg_skill[BI_FEATH])) ||
-		    (ag->feat == FEAT_SHAL_LAVA &&
+		    (mb_ptr->terrain == FEAT_SHAL_LAVA &&
 			  !borg_skill[BI_IFIRE])) return;
 
 		/* Certain types of Walls */
-		if (ag->feat >=FEAT_WALL_EXTRA &&
-		 	ag->feat <=FEAT_WALL_SOLID) return;
+		if (mb_ptr->terrain >=FEAT_WALL_EXTRA &&
+		 	mb_ptr->terrain <=FEAT_WALL_SOLID) return;
 
 		/* Certain types of Perm walls */
-		if (ag->feat >=FEAT_PERM_EXTRA &&
-		 	ag->feat <=FEAT_PERM_SOLID) return;
+		if (mb_ptr->terrain >=FEAT_PERM_EXTRA &&
+		 	mb_ptr->terrain <=FEAT_PERM_SOLID) return;
 
         /* Abort at "icky" grids */
         if (borg_data_icky->data[y][x]) return;
@@ -15207,7 +15255,7 @@ bool borg_flow_spastic(bool bored)
             for (i = 0; i < 4; i++)
             {
                 ag = ag_ptr[i];
-                if (ag->feat >= FEAT_WALL_EXTRA) wall++;
+                if (mb_ptr->terrain >= FEAT_WALL_EXTRA) wall++;
             }
 
             /* No possible secret doors */
@@ -15220,12 +15268,12 @@ bool borg_flow_spastic(bool bored)
                 ag = ag_ptr[i];
 
                 /* Rubble */
-                if (ag->feat == FEAT_RUBBLE) continue;
+                if (mb_ptr->terrain == FEAT_RUBBLE) continue;
 
                 /* Walls, Doors */
-                if (((ag->feat >= FEAT_SECRET) && (ag->feat <= FEAT_PERM_SOLID)) ||
-                    ((ag->feat == FEAT_OPEN) || (ag->feat == FEAT_BROKEN)) ||
-                    (ag->feat == FEAT_CLOSED))
+                if (((mb_ptr->terrain >= FEAT_SECRET) && (mb_ptr->terrain <= FEAT_PERM_SOLID)) ||
+                    ((mb_ptr->terrain == FEAT_OPEN) || (mb_ptr->terrain == FEAT_BROKEN)) ||
+                    (mb_ptr->terrain == FEAT_CLOSED))
                 {
                     supp++;
                 }
@@ -15237,10 +15285,10 @@ bool borg_flow_spastic(bool bored)
                 ag = ag_ptr[i];
 
                 /* Rubble */
-                if (ag->feat == FEAT_RUBBLE) continue;
+                if (mb_ptr->terrain == FEAT_RUBBLE) continue;
 
                 /* Walls */
-                if (ag->feat >= FEAT_SECRET)
+                if (mb_ptr->terrain >= FEAT_SECRET)
                 {
                     diag++;
                 }
