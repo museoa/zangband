@@ -45,6 +45,9 @@ extern void borg_update_frame(void);
 extern void borg_notice(void);
 extern void borg_notice_home(void);
 extern s32b borg_power_home(void);
+extern int  borg_notice_enchant_ac(void);
+extern int  borg_notice_enchant_hit(bool *inven);
+extern int  borg_notice_enchant_dam(bool *inven);
 
 
 /*

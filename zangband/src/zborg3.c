@@ -1981,7 +1981,7 @@ int borg_spell_fail_rate(int realm, int book, int what)
 	if (borg_class == CLASS_WARRIOR) return (100);
 
 	/* Access the spell  */
-	if (realm == REALM_ARCANE-1)
+	if (realm == REALM_ARCANE - 1)
 		chance = as->level + 20;
 	else
 		chance = as->level * 3 / 2 + 20;
@@ -2023,11 +2023,8 @@ int borg_spell_fail_rate(int realm, int book, int what)
 	if (bp_ptr->muta3 & MUT3_MAGIC_RES ||
 		bp_ptr->muta1 & MUT1_EAT_MAGIC) chance += 5;
 
-	/*
-	 * 'realm' is 0-based, while the REALM_* constants are 1-based.
-	 * So, subtract 1 from the constant to get a 0-based version.
-	 */
-	if (realm == REALM_DEATH-1 &&
+	/* Having two banishments hurts your chances */
+	if (realm == REALM_DEATH - 1 &&
 		bp_ptr->muta1 & MUT1_BANISH) chance += 10;
 
 	/* Squeeeeeek */

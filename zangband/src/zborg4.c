@@ -1046,38 +1046,12 @@ static void borg_recalc_monk(int extra_blows)
 	}
 }
 
-
-/*
- * Recalculate required enchantment levels
- */
-static void borg_notice_enchant(void)
+/* Return the item in the equipment with the lowest ac */
+int borg_notice_enchant_ac(void)
 {
+	int i, b_i = -1;
+	int best = 15;
 	list_item *l_ptr;
-
-	int i;
-
-	/* Assume no enchantment needed */
-	my_need_enchant_to_a = FALSE;
-	my_need_enchant_to_h = FALSE;
-	my_need_enchant_to_d = FALSE;
-
-	/* Hack -- enchant all the equipment (weapons) */
-	for (i = 0; i <= EQUIP_BOW; i++)
-	{
-		l_ptr = look_up_equip_slot(i);
-
-		/* Skip missing items */
-		if (!l_ptr) continue;
-
-		/* Skip "unknown" items */
-		if (!borg_obj_known_p(l_ptr)) continue;
-
-		/* Can we use a to_hit */
-		if (l_ptr->to_h < 15) my_need_enchant_to_h = TRUE;
-
-		/* Can we use a to_dam */
-		if (l_ptr->to_d < 25) my_need_enchant_to_d = TRUE;
-	}
 
 	/* Hack -- enchant all the equipment (armor) */
 	for (i = EQUIP_BODY; i <= EQUIP_FEET; i++)
@@ -1090,15 +1064,136 @@ static void borg_notice_enchant(void)
 		/* Skip "unknown" items */
 		if (!borg_obj_known_p(l_ptr)) continue;
 
-		/* Can we use a to_ac */
-		if (l_ptr->to_a < 15)
-		{
-			my_need_enchant_to_a = TRUE;
+		/* Skip items with ac higher then current best */
+		if (l_ptr->to_a >= best) continue;
 
-			/* After one candidate is found skip the rest */
-			break;
-		}
+		/* Remember this one */
+		b_i = i;
+		best = l_ptr->to_a;
 	}
+
+	return (best);
+}
+
+
+/* Return the item with the lowest to_hit */
+int borg_notice_enchant_hit(bool *inven)
+{
+	int i, ammo = -1, weapon = -1;
+	int best_a = 15, best_w = 15;
+
+	/* look through inventory for ammo */
+	for (i = 0; i < inven_num; i++)
+	{
+		list_item *l_ptr = &inventory[i];
+
+		/* Only enchant if qty >= 5 */
+		if (l_ptr->number < 5) continue;
+
+		/* Skip non-identified items  */
+		if (!borg_obj_known_p(l_ptr)) continue;
+
+		/* Make sure it is the right type if missile */
+		if (l_ptr->tval != my_ammo_tval) continue;
+
+		/* Find the least enchanted item */
+		if (l_ptr->to_h >= best_a) continue;
+
+		/* Save the info  */
+		ammo = i;
+		best_a = l_ptr->to_h;
+	}
+
+	/* Look for a weapon that needs enchanting */
+	for (i = EQUIP_WIELD; i <= EQUIP_BOW; i++)
+	{
+		list_item *l_ptr = look_up_equip_slot(i);
+
+		/* Skip empty slots */
+		if (!l_ptr) continue;
+
+		/* Skip non-identified items */
+		if (!borg_obj_known_p(l_ptr)) continue;
+
+		/* Find the least enchanted item */
+		if (l_ptr->to_h >= best_w) continue;
+
+		/* Save the info */
+		weapon = i;
+		best_w = l_ptr->to_h;
+	}
+
+	/* If the weapon is high and the ammo is low */
+	if (best_w >= 10 && best_a < 10)
+	{
+		/* Return the ammo */
+		*inven = TRUE;
+		return (ammo);
+	}
+
+	/* Otherwise the weapon */
+	*inven = FALSE;
+	return (weapon);
+}
+
+/* Return the item with the lowest to_dam bonus */
+int borg_notice_enchant_dam(bool *inven)
+{
+	int i, ammo = -1, weapon = -1;
+	int best_a = 25, best_w = 25;
+
+	/* look through inventory for ammo */
+	for (i = 0; i < inven_num; i++)
+	{
+		list_item *l_ptr = &inventory[i];
+
+		/* Only enchant if qty >= 5 */
+		if (l_ptr->number < 5) continue;
+
+		/* Skip non-identified items  */
+		if (!borg_obj_known_p(l_ptr)) continue;
+
+		/* Make sure it is the right type if missile */
+		if (l_ptr->tval != my_ammo_tval) continue;
+
+		/* Find the least enchanted item */
+		if (l_ptr->to_d >= best_a) continue;
+
+		/* Save the info  */
+		ammo = i;
+		best_a = l_ptr->to_d;
+	}
+
+	/* Look for a weapon that needs enchanting */
+	for (i = EQUIP_WIELD; i <= EQUIP_BOW; i++)
+	{
+		list_item *l_ptr = look_up_equip_slot(i);
+
+		/* Skip empty slots */
+		if (!l_ptr) continue;
+
+		/* Skip non-identified items */
+		if (!borg_obj_known_p(l_ptr)) continue;
+
+		/* Find the least enchanted item */
+		if (l_ptr->to_d >= best_w) continue;
+
+		/* Save the info */
+		weapon = i;
+		best_w = l_ptr->to_d;
+	}
+
+	/* If the weapon is high and the ammo is low */
+	if (best_w >= 10 && best_a < 10)
+	{
+		/* Return the ammo */
+		*inven = TRUE;
+		return (ammo);
+	}
+
+	/* Otherwise the weapon */
+	*inven = FALSE;
+	return (weapon);
 }
 
 
@@ -1234,9 +1329,6 @@ static void borg_notice_aux1(void)
 	{
 		borg_recalc_monk(extra_blows);
 	}
-
-	/* See if we need to enchant anything */
-	borg_notice_enchant();
 
 	/* Examine lite */
 	borg_notice_lite();
@@ -1558,35 +1650,74 @@ static void borg_notice_scrolls(list_item *l_ptr, int number)
 			bp_ptr->recall += number;
 			break;
 		}
+		case SV_SCROLL_STAR_ENCHANT_ARMOR:
 		case SV_SCROLL_ENCHANT_ARMOR:
 		{
-			amt_enchant_to_a += number;
-			break;
-		}
-		case SV_SCROLL_ENCHANT_WEAPON_TO_HIT:
-		{
-			amt_enchant_to_h += number;
-			break;
-		}
-		case SV_SCROLL_ENCHANT_WEAPON_TO_DAM:
-		{
-			amt_enchant_to_d += number;
+			/* Get the best item to enchant */
+			int slot = borg_notice_enchant_ac();
+
+			/* If there is an item with low ac or the borg has loads of cash */
+			if (slot != -1 &&
+				(equipment[slot].to_a < 10 || borg_gold > 10000))
+			{
+				/* count the scroll */
+				amt_enchant_to_a += number;
+			}
 			break;
 		}
 		case SV_SCROLL_STAR_ENCHANT_WEAPON:
+		case SV_SCROLL_ENCHANT_WEAPON_TO_HIT:
 		{
-			amt_enchant_to_h += number * 2;
-			amt_enchant_to_d += number * 2;
+			int hit, slot;
+			bool inven;
+
+			/* Get the best item to enchant */
+			slot = borg_notice_enchant_hit(&inven);
+
+			/* If there is no item */
+			if (slot != -1)
+			{
+				/* find out the to_hit value */
+				hit = (inven) ? inventory[slot].to_h : equipment[slot].to_h;
+
+				/* If the item has low to_hit or the borg is rich */
+				if (hit < 10 || borg_gold > 10000)
+				{
+					/* Count the scroll */
+					amt_enchant_to_h += number;
+				}
+			}
+
+			/* Fall through for a scroll of *enchant weapon* */
+			if (sval == SV_SCROLL_ENCHANT_WEAPON_TO_HIT) break;
+		}
+		case SV_SCROLL_ENCHANT_WEAPON_TO_DAM:
+		{
+			int dam, slot;
+			bool inven;
+
+			/* Get the best item to enchant */
+			slot = borg_notice_enchant_dam(&inven);
+
+			/* If there is no item */
+			if (slot != -1)
+			{
+				/* find out the to_dam value */
+				dam = (inven) ? inventory[slot].to_d : equipment[slot].to_d;
+
+				/* If the item has low to_dam or the borg is loaded */
+				if (dam < 10 || borg_gold > 10000)
+				{
+					/* Count the scroll */
+					amt_enchant_to_d += number;
+				}
+			}
+
 			break;
 		}
 		case SV_SCROLL_PROTECTION_FROM_EVIL:
 		{
 			bp_ptr->able.pfe += number;
-			break;
-		}
-		case SV_SCROLL_STAR_ENCHANT_ARMOR:
-		{
-			amt_enchant_to_a += number * 2;
 			break;
 		}
 		case SV_SCROLL_RUNE_OF_PROTECTION:
@@ -1741,6 +1872,9 @@ static void borg_notice_rods(list_item *l_ptr, int number)
 			if (borg_use_item_fail(l_ptr, FALSE))
 			{
 				bp_ptr->able.ccw += number;
+				bp_ptr->able.cure_pois += number;
+				bp_ptr->able.cure_blind += number;
+				bp_ptr->able.cure_conf += number;
 			}
 			break;
 		}
@@ -1894,6 +2028,9 @@ static void borg_notice_staves(list_item *l_ptr, int number)
 		case SV_STAFF_CURING:
 		{
 			bp_ptr->able.ccw += number * l_ptr->pval;
+			bp_ptr->able.cure_pois += number;
+			bp_ptr->able.cure_blind += number;
+			bp_ptr->able.cure_conf += number;
 			break;
 		}
 		case SV_STAFF_TELEPORTATION:
@@ -2159,35 +2296,6 @@ static void borg_notice_inven_item(list_item *l_ptr)
 
 			/* Count them */
 			bp_ptr->able.missile += number;
-
-			/* Enchant missiles if have lots of cash */
-			if (bp_ptr->lev > 35)
-			{
-				if (borg_spell_okay_fail(REALM_SORCERY, 3, 4, 40) && number >= 5)
-				{
-					if (l_ptr->to_h < 8)
-					{
-						my_need_enchant_to_h += (10 - l_ptr->to_h);
-					}
-
-					if (l_ptr->to_d < 8)
-					{
-						my_need_enchant_to_d += (10 - l_ptr->to_d);
-					}
-				}
-				else
-				{
-					if (l_ptr->to_h < 5)
-					{
-						my_need_enchant_to_h += (8 - l_ptr->to_h);
-					}
-
-					if (l_ptr->to_d < 5)
-					{
-						my_need_enchant_to_d += (8 - l_ptr->to_d);
-					}
-				}
-			}
 
 			break;
 		}
@@ -2498,6 +2606,7 @@ static void borg_notice_aux2(void)
 	if (borg_spell_legal_fail(REALM_SORCERY, 0, 1, 40) ||
 		borg_spell_legal_fail(REALM_ARCANE, 0, 4, 40) ||
 		borg_spell_legal_fail(REALM_TRUMP, 0, 0, 40) ||
+		borg_mindcr_legal_fail(MIND_MINOR_DISP, 3, 40) ||
 		borg_mutation_check(MUT1_BLINK, TRUE))
 	{
 		bp_ptr->able.phase += 1000;
@@ -4629,7 +4738,7 @@ static s32b borg_power_home_aux2(void)
 	value += 3500 * MIN(num_cure_critical, 99);
 
 	/* Collect cure serious - but they aren't as good */
-	if (bp_ptr->mhp < 500) value += 400 * MIN(num_cure_serious, 399);
+	if (bp_ptr->mhp < 500) value += 400 * MIN(num_cure_serious, 99);
 
 	/* Borgs with low HP collect cure light wounds */
 	if (bp_ptr->mhp < 250) value += 200 * MIN(num_cure_light, 99);

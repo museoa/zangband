@@ -554,10 +554,6 @@ extern int my_ammo_tval;	/* Ammo -- "tval"   */
 extern s16b my_ammo_power;	/* Average power   */
 extern s16b my_ammo_range;	/* Shooting range   */
 
-extern bool my_need_enchant_to_a;	/* Need some enchantment */
-extern bool my_need_enchant_to_h;	/* Need some enchantment */
-extern bool my_need_enchant_to_d;	/* Need some enchantment */
-
 
 /*
  * Various "amounts" (for the player)

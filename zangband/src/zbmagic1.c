@@ -307,6 +307,9 @@ bool borg_recall(void)
 	/* Multiple "recall" fails */
 	if (!goal_recalling)
 	{
+		/* Press an ESC to try to avoid the take-off loop */
+		borg_keypress(ESCAPE);
+
 		/* Try to "recall" */
 		if (borg_zap_rod(SV_ROD_RECALL) ||
 			borg_activate_artifact(ART_AVAVIR, FALSE) ||

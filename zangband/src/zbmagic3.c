@@ -1212,6 +1212,7 @@ static int borg_defend_aux_mass_genocide(int p1)
 	/* Cast the spell */
 	return (borg_spell(REALM_DEATH, 2, 7) ||
 		borg_spell(REALM_DEATH, 3, 6) ||
+		borg_read_scroll(SV_SCROLL_MASS_GENOCIDE) ||
 		borg_activate_artifact(ART_EONWE, FALSE));
 }
 

@@ -91,9 +91,9 @@ static s16b value_feeling[] =
 
 
 /* This function (copied from dungeon.c) delivers the chance for pseudo-id. */
-static int borg_calc_pseudo(void)
+static long borg_calc_pseudo(void)
 {
-	int difficulty;
+	long difficulty;
 
 	/* Based on race get the basic feel factor. */
 	switch (borg_class)
@@ -1046,43 +1046,13 @@ bool borg_check_lite_only(void)
  */
 static bool borg_enchant_to_a(void)
 {
-	int i, b_i = -1;
-	int a, b_a = 99;
+	int i, slot;
 
-	/* Nothing to enchant */
-	if (!my_need_enchant_to_a) return (FALSE);
+	/* What is the best item? */
+	slot = borg_notice_enchant_ac();
 
-	/* Need "enchantment" ability */
-	if (!amt_enchant_to_a) return (FALSE);
-
-	/* Don't cast the spell in the dungeon, keep it for town */
-	if (bp_ptr->depth &&
-		amt_enchant_to_a == 1000) return (FALSE);
-	
-	/* Look for armor that needs enchanting */
-	for (i = EQUIP_BODY; i < equip_num; i++)
-	{
-		list_item *l_ptr = look_up_equip_slot(i);
-
-		/* Skip empty / unaware items */
-		if (!l_ptr) continue;
-
-		/* Skip non-identified items */
-		if (!borg_obj_known_p(l_ptr)) continue;
-
-		/* Obtain the bonus */
-		a = l_ptr->to_a;
-
-		/* Find the least enchanted item */
-		if (a >= b_a) continue;
-
-		/* Save the info */
-		b_i = i;
-		b_a = a;
-	}
-
-	/* Don't bother to try if the AC is too high */
-	if (b_a >= 15) return (FALSE);
+	/* No suitable item */
+	if (slot == -1) return (FALSE);
 
 	/* Enchant it */
 	if (borg_read_scroll(SV_SCROLL_STAR_ENCHANT_ARMOR) ||
@@ -1107,8 +1077,12 @@ static bool borg_enchant_to_a(void)
 			}
 		}
 
+		/* Tell the world */
+		borg_note_fmt("# Enchanting %s (%c)",
+					  equipment[slot].o_name, I2A(slot));
+
 		/* Choose that item */
-		borg_keypress(I2A(b_i));
+		borg_keypress(I2A(slot));
 
 		/* Success */
 		return (TRUE);
@@ -1124,93 +1098,31 @@ static bool borg_enchant_to_a(void)
  */
 static bool borg_enchant_to_h(void)
 {
-	int i, a_i = -1, b_i = -1;
-	int a, a_a = 99, b_a = 99;
+	int i, slot;
 
 	bool inven = FALSE;
 
-	/* Nothing to enchant */
-	if (!my_need_enchant_to_h) return (FALSE);
+	/* What is the best item? */
+	slot = borg_notice_enchant_hit(&inven);
 
-	/* Need "enchantment" ability */
-	if (!amt_enchant_to_h) return (FALSE);
-
-	/* Don't cast the spell in the dungeon, keep it for town */
-	if (bp_ptr->depth &&
-		amt_enchant_to_h == 1000) return (FALSE);
-	
-	/* look through inventory for ammo */
-	for (i = 0; i < inven_num; i++)
-	{
-		list_item *l_ptr = &inventory[i];
-
-		/* Only enchant if qty >= 5 */
-		if (l_ptr->number < 5) continue;
-
-		/* Skip non-identified items  */
-		if (!borg_obj_known_p(l_ptr)) continue;
-
-		/* Make sure it is the right type if missile */
-		if (l_ptr->tval != my_ammo_tval) continue;
-
-		/* Obtain the bonus  */
-		a = l_ptr->to_h;
-
-		/* Find the least enchanted item */
-		if (a >= a_a) continue;
-
-		/* Save the info  */
-		a_i = i;
-		a_a = a;
-	}
-
-	/* Look for a weapon that needs enchanting */
-	for (i = EQUIP_WIELD; i <= EQUIP_BOW; i++)
-	{
-		list_item *l_ptr = look_up_equip_slot(i);
-
-		/* Skip empty / unaware items */
-		if (!l_ptr) continue;
-
-		/* Skip non-identified items */
-		if (!borg_obj_known_p(l_ptr)) continue;
-
-		/* Obtain the bonus */
-		a = l_ptr->to_h;
-
-		/* Find the least enchanted item */
-		if (a >= b_a) continue;
-
-		/* Save the info */
-		b_i = i;
-		b_a = a;
-	}
-
-	/* If the weapon is high and the ammo is low */
-	if (b_a >= 10 && a_a < 10)
-	{
-		/* Assign the ammo to be enchanted */
-		b_a = a_a;
-		b_i = a_i;
-		inven = TRUE;
-	}
-
-	/* Nothing */
-	if (b_a >= 15) return (FALSE);
+	/* No suitable item */
+	if (slot == -1) return (FALSE);
 
 	/* Enchant it */
-	if (borg_read_scroll(SV_SCROLL_STAR_ENCHANT_WEAPON) ||
-		borg_read_scroll(SV_SCROLL_ENCHANT_WEAPON_TO_HIT) ||
-		(!bp_ptr->depth && borg_spell_fail(REALM_SORCERY, 3, 4, 40)))
-		{
-
+	if (borg_read_scroll(SV_SCROLL_ENCHANT_WEAPON_TO_HIT))
+	{
 		if (inven)
 		{
-			/* choose the swap or ammo */
-			borg_keypress(I2A(b_i));
+			/* Tell the world */
+			borg_note_fmt("# Enchanting %s (%c)",
+						  inventory[slot].o_name, I2A(slot));
 		}
 		else
 		{
+			/* Tell the world */
+			borg_note_fmt("# Enchanting %s (%c)",
+						  equipment[slot].o_name, I2A(slot));
+
 			/*
 			 * Find out if the prompt is at Inven or Equip by checking if
 			 * there is a weapon or ammo in the inventory.  If there is
@@ -1228,10 +1140,10 @@ static bool borg_enchant_to_h(void)
 					break;
 				}
 			}
-
-			/* Choose that item */
-			borg_keypress(I2A(b_i));
 		}
+
+		/* Choose that item */
+		borg_keypress(I2A(slot));
 
 		/* Success */
 		return (TRUE);
@@ -1247,92 +1159,31 @@ static bool borg_enchant_to_h(void)
  */
 static bool borg_enchant_to_d(void)
 {
-	int i, a_i = -1, b_i = -1;
-	int a, a_a = 99, b_a = 99;
+	int i, slot;
 
 	bool inven = FALSE;
 
-	/* Nothing to enchant */
-	if (!my_need_enchant_to_d) return (FALSE);
+	/* What is the best item? */
+	slot = borg_notice_enchant_dam(&inven);
 
-	/* Need "enchantment" ability */
-	if (!amt_enchant_to_d) return (FALSE);
-
-	/* Don't cast the spell in the dungeon, keep it for town */
-	if (bp_ptr->depth &&
-		amt_enchant_to_d == 1000) return (FALSE);
-	
-	/* Look for a weapon that needs enchanting */
-	for (i = EQUIP_WIELD; i <= EQUIP_BOW; i++)
-	{
-		list_item *l_ptr = look_up_equip_slot(i);
-
-		/* Skip empty / unaware items */
-		if (!l_ptr) continue;
-
-		/* Skip non-identified items */
-		if (!borg_obj_known_p(l_ptr)) continue;
-
-		/* Obtain the bonus */
-		a = l_ptr->to_d;
-
-		/* Find the least enchanted item */
-		if (a >= b_a) continue;
-
-		/* Save the info */
-		b_i = i;
-		b_a = a;
-	}
-
-	/* look through inventory for ammo */
-	for (i = 0; i < inven_num; i++)
-	{
-		list_item *l_ptr = &inventory[i];
-
-		/* Only enchant if qty >= 5 */
-		if (l_ptr->number < 5) continue;
-
-		/* Skip non-identified items  */
-		if (!borg_obj_known_p(l_ptr)) continue;
-
-		/* Make sure it is the right type if missile */
-		if (l_ptr->tval != my_ammo_tval) continue;
-
-		/* Obtain the bonus  */
-		a = l_ptr->to_d;
-
-		/* Find the least enchanted item */
-		if (a >= a_a) continue;
-
-		/* Save the info  */
-		a_i = i;
-		a_a = a;
-	}
-
-	/* If the weapon is high and the ammo is low */
-	if (b_a >= 10 && a_a < 10)
-	{
-		/* Assign the ammo to be enchanted */
-		b_a = a_a;
-		b_i = a_i;
-		inven = TRUE;
-	}
-
-	/* Nothing */
-	if (b_a >= 25) return (FALSE);
+	/* No suitable item */
+	if (slot == -1) return (FALSE);
 
 	/* Enchant it */
-	if (borg_read_scroll(SV_SCROLL_STAR_ENCHANT_WEAPON) ||
-		borg_read_scroll(SV_SCROLL_ENCHANT_WEAPON_TO_DAM) ||
-		borg_spell_fail(REALM_SORCERY, 3, 4, 40))
+	if (borg_read_scroll(SV_SCROLL_ENCHANT_WEAPON_TO_DAM))
 	{
 		if (inven)
 		{
-			/* choose the swap or ammo */
-			borg_keypress(I2A(b_i));
+			/* Tell the world */
+			borg_note_fmt("# Enchanting %s (%c)",
+						  inventory[slot].o_name, I2A(slot));
 		}
 		else
 		{
+			/* Tell the world */
+			borg_note_fmt("# Enchanting %s (%c)",
+						  equipment[slot].o_name, I2A(slot));
+
 			/*
 			 * Find out if the prompt is at Inven or Equip by checking if
 			 * there is a weapon or ammo in the inventory.  If there is
@@ -1350,10 +1201,10 @@ static bool borg_enchant_to_d(void)
 					break;
 				}
 			}
-
-			/* Choose that item */
-			borg_keypress(I2A(b_i));
 		}
+
+		/* Choose that item */
+		borg_keypress(I2A(slot));
 
 		/* Success */
 		return (TRUE);
@@ -1362,6 +1213,138 @@ static bool borg_enchant_to_d(void)
 	/* Nothing to do */
 	return (FALSE);
 }
+
+/*
+ * Enchant weapons to dam and to hit.
+ * Target a wielded weapon if it has a bonus < 10
+ * Otherwise target arrows.
+ * Forget about enchanting arrows with the spell if its bonuses are high
+ */
+static bool borg_enchant_to_w(void)
+{
+	int i, slot, slot_d, slot_h;
+
+	bool inven, inven_d, inven_h;
+	bool scroll = borg_read_scroll_fail(SV_SCROLL_STAR_ENCHANT_WEAPON);
+
+
+	/* Can we enchant at all */
+	if (!scroll &&
+		!borg_spell_fail(REALM_SORCERY, 3, 4, 40)) return (FALSE);
+
+	/* What is the item with the lowest dam? */
+	slot_d = borg_notice_enchant_dam(&inven_d);
+
+	/* What is the item with the lowest hit? */
+	slot_h = borg_notice_enchant_dam(&inven_h);
+
+	/* Is the item with the lowest dam bonus in the inventory? */
+	if (inven_d)
+	{
+		/* Is the item with the lowest hit bonus in the inventory? */
+		if (inven_h)
+		{
+			/* Both hit and dam items are in the inventory */
+			inven = TRUE;
+
+			/* Which has the lower bonus? */
+			if (inventory[slot_d].to_d < inventory[slot_h].to_h)
+				slot = slot_d;
+			else
+				slot = slot_h;
+		}
+		/* Equipment goes first */
+		else
+		{
+			inven = FALSE;
+			slot = slot_h;
+		}
+	}
+	/* The item with the lowest dam bonus is in the equipment */
+	else
+	{
+		/* Target the equipment */
+		inven = FALSE;
+
+		/* Or maybe the hit bonus? */
+		if (!inven_h &&
+			equipment[slot_d].to_h < equipment[slot_h].to_d)
+		{
+			/* So it is the hit bonus */
+			slot = slot_h;
+		}
+		else
+		{
+			/* The dam bonus is the lowest */
+			slot = slot_d;
+		}
+	}
+
+	/* No suitable item */
+	if (slot == -1) return (FALSE);
+
+	/* If you are using the spell */
+	if (!scroll)
+	{
+		/* Don't bother enchanting arrows up to the max with the spell */
+		if (inven &&
+			inventory[slot].to_h > 10 &&
+			inventory[slot].to_d > 15) return (FALSE);
+
+		/* Don't bother enchanting equipped items all the way */
+		if (!inven &&
+			equipment[slot].to_h > 13 &&
+			equipment[slot].to_d > 20) return (FALSE);
+	}
+
+	/* Enchant it */
+	if (borg_read_scroll(SV_SCROLL_STAR_ENCHANT_WEAPON) ||
+		borg_spell(REALM_SORCERY, 3, 4))
+	{
+		if (inven)
+		{
+			/* Tell the world */
+			borg_note_fmt("# Enchanting %s (%c)",
+						  inventory[slot].o_name, I2A(slot));
+		}
+		else
+		{
+			/* Tell the world */
+			borg_note_fmt("# Enchanting %s (%c)",
+						  equipment[slot].o_name, I2A(slot));
+
+			/*
+			 * Find out if the prompt is at Inven or Equip by checking if
+			 * there is a weapon or ammo in the inventory.  If there is
+			 * then the prompt is at Inven and has to be moved to Equip.
+			 */
+			for (i = 0; i < inven_num; i++)
+			{
+				list_item *l_ptr = &inventory[i];
+
+				/* Is this item is enchantable? */
+				if (l_ptr->tval >= TV_SHOT && l_ptr->tval <= TV_SWORD)
+				{
+					/* Goto the equipment */
+					borg_keypress('/');
+					break;
+				}
+			}
+		}
+
+		/* Choose that item */
+		borg_keypress(I2A(slot));
+
+		/* Success */
+		return (TRUE);
+	}
+
+	/* Flow can't get here because of the availability check at the start */
+	borg_oops("Marooned code was reached.");
+
+	return (FALSE);
+}
+
 
 /* Find out if the borg wears a cursed item */
 bool borg_wears_cursed(bool heavy)
@@ -1467,10 +1450,11 @@ bool borg_enchanting(void)
 	if (borg_decurse()) return (TRUE);
 	if (borg_star_decurse()) return (TRUE);
 
-	/* Enchant things, but don't get stuck on just trying the first type */
-	if (one_in_(2) && borg_enchant_to_d()) return (TRUE);
+	/* Enchant things */
 	if (borg_enchant_to_a()) return (TRUE);
+	if (borg_enchant_to_d()) return (TRUE);
 	if (borg_enchant_to_h()) return (TRUE);
+	if (borg_enchant_to_w()) return (TRUE);
 
 	/* Nope */
 	return (FALSE);
@@ -1977,11 +1961,12 @@ static bool borg_destroy_aux(bool must_destroy)
 	int my_encumber, extra, number = 1;
 	bool destroy_weight;
 	s16b b_w = 0;
-	s32b value = -1, b_v = 1000L, my_power;
+	s32b value = -1, b_v = 1000L, my_power, my_home_power;
 	list_item *l_ptr;
 
 	/* Get the starting power and encumberment */
 	my_power = borg_power();
+	my_home_power = borg_power_home();
 	my_encumber = bp_ptr->encumber;
 
 	/* if the carry capacity is used for more than 120% */
@@ -2033,6 +2018,16 @@ static bool borg_destroy_aux(bool must_destroy)
 			/* Calculate the value of this item */
 			value = my_power - borg_power();
 
+			/* Useless for now.  Maybe take it home? */
+			if (!value)
+			{
+				/* Find out the difference when this item goes home */
+				value = borg_power_home() - my_home_power;
+
+				/* If the home value decreases then nullify value */
+				if (value < 0) value = 0;
+			}
+	
 			/* Restore item */
 			l_ptr->treat_as = TREAT_AS_NORM;
 
@@ -2481,8 +2476,8 @@ static bool borg_test_stuff_pseudo(void)
 		bp_ptr->lev > 24)
 	{
 		/* Is it heavy pseudo id and likely to kick in by itself? */
-		if (borg_heavy_sense() &&
-			borg_calc_pseudo() > 50) return (FALSE);
+		if (!borg_heavy_sense() ||
+			borg_calc_pseudo() > 100) return (FALSE);
 	}
 
 	/* Look for an item to pseudo identify */

@@ -71,7 +71,7 @@ int successful_target = BORG_TARGET;
  * Various silly flags
  */
 
-bool borg_flag_save = TRUE;	/* Save savefile at each level */
+bool borg_flag_save = FALSE;	/* Save savefile at each level */
 bool borg_flag_dump = FALSE;	/* Save savefile at each death */
 bool borg_save = FALSE;	/* do a save next level */
 
@@ -242,10 +242,6 @@ bool borg_heavy_curse;
 int my_ammo_tval;	/* Ammo -- "tval" */
 s16b my_ammo_power;	/* Average power */
 s16b my_ammo_range;	/* Shooting range */
-
-bool my_need_enchant_to_a;	/* Need some enchantment */
-bool my_need_enchant_to_h;	/* Need some enchantment */
-bool my_need_enchant_to_d;	/* Need some enchantment */
 
 
 /*

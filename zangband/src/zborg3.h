@@ -15,15 +15,30 @@
 #include "zborg1.h"
 
 /*
+ * Incorrect test to see if an item is identified.
+ * Despite test three it failed for mindcrafters.
+ * I am keeping this as a memory aid.
+ *
  * Determine if a given inventory item is "known"
  * Test One -- Check for special "known" tag
  * Test Two -- Check for "Easy Know" + "Aware"
  * Test Three -- Check for Mind Blast attack, which loses 'awareness'.
- */
+ 
 #define borg_obj_known_p(T) \
     ((((T)->info & (OB_KNOWN)) || \
      ((T)->k_idx && k_info[(T)->k_idx].easy_know)) && \
 	 !((T)->k_idx && k_info[(T)->k_idx].flavor && !k_info[(T)->k_idx].aware))
+*/
+/*
+ * New version of the known test.
+ * An object is known if has a non-zero k_idx and one of these is true:
+ * (1) The object is easy_known and the borg is aware of it.
+ * (2) The OB_KNOWN is set.
+ */
+#define borg_obj_known_p(T) \
+	((T)->k_idx && \
+     ((k_info[(T)->k_idx].easy_know && k_info[(T)->k_idx].aware) || \
+	 (T)->info & (OB_KNOWN)))
 
 /*
  * Is the object fully known?

@@ -3709,18 +3709,18 @@ static s32b borg_power_aux4(void)
 	if (borg_class == CLASS_WARRIOR)
 	{
 		value += 250 * MIN(bp_ptr->able.res_heat, 5);
-		value += 50 * MIN_FLOOR(bp_ptr->able.res_heat, 5, 20);
 		value += 250 * MIN(bp_ptr->able.res_cold, 5);
-		value += 50 * MIN_FLOOR(bp_ptr->able.res_cold, 5, 20);
 
 		/* It is counted as res_heas & cold too */
 		value += 250 * MIN(bp_ptr->able.res_all, 5);
-		value += 50 * MIN_FLOOR(bp_ptr->able.res_all, 5, 20);
 	}
 
 	/* Reward ident */
 	value += 6000 * MIN(bp_ptr->able.id, 10);
 	value += 600 * MIN_FLOOR(bp_ptr->able.id, 10, 25);
+
+	/* Try to carry 3 rods if there is no identify spell available */
+	if (bp_ptr->able.id >= 100) value += 6 * MIN(bp_ptr->able.id, 3 * 100);
 
 	/*  Don't start with these before you are likely to need them */
 	if (bp_ptr->lev > 20)
@@ -3732,23 +3732,12 @@ static s32b borg_power_aux4(void)
 		/*  Reward PFE */
 		value += 300 * MIN(bp_ptr->able.pfe, 10);
 	}
-	else
-	{
-		/* Take them home */
-		value += 100 * bp_ptr->able.star_id;
-		value += 100 * bp_ptr->able.pfe;
-	}
 
 	if (bp_ptr->lev > 40)
 	{
 		/*  Reward Glyph- Rune of Protection-  carry lots of these */
 		value += 10000 * MIN(bp_ptr->able.glyph, 10);
 		value += 2000 * MIN_FLOOR(bp_ptr->able.glyph, 10, 25);
-	}
-	else
-	{
-		/* Take them home */
-		value += 100 * bp_ptr->able.glyph;
 	}
 
 	/* Reward recall */
@@ -3802,9 +3791,6 @@ static s32b borg_power_aux4(void)
 		value += 50 * MIN(amt_star_heal, max_carry);
 	}
 
-	/* Collect big heals for at home */
-	value += 2000 * MIN_FLOOR(bp_ptr->able.easy_heal, max_carry, 99);
-
 	/* If the borg has a reliable healing spell */
 	if (borg_spell_legal_fail(REALM_LIFE, 3, 4, 5) ||
 	    borg_spell_legal_fail(REALM_LIFE, 1, 6, 5) ||
@@ -3833,12 +3819,6 @@ static s32b borg_power_aux4(void)
 		value += 4000 * MIN(bp_ptr->able.mana, 10);
 		value += 4000 * MIN(bp_ptr->able.staff_magi, 10);
 	}
-	else if (borg_class != CLASS_WARRIOR)
-	{
-		/* reward carrying potions/staffs of mana to bring home */
-		value += 500 * MIN(bp_ptr->able.mana, 99);
-		value += 500 * MIN(bp_ptr->able.staff_magi, 99);
-	}
 
 	/* Reward cure critical.  Heavy reward on first 10 */
 	value += 5000 * MIN(bp_ptr->able.ccw, 10);
@@ -3850,11 +3830,6 @@ static s32b borg_power_aux4(void)
 	value += 1500 * MIN_FLOOR(bp_ptr->able.csw, 0, 10 - bp_ptr->able.ccw);
 	value += 1200 * MIN_FLOOR(bp_ptr->able.clw,
 							  0, 10 - bp_ptr->able.ccw - bp_ptr->able.csw);
-
-	/* Take them home too */
-	value += 500 * MIN_FLOOR(bp_ptr->able.ccw, 10, 20);
-	if (bp_ptr->mhp < 500) value += 100 * MIN(bp_ptr->able.csw, 99);
-	if (bp_ptr->mhp < 250) value += 50 * MIN(bp_ptr->able.clw, 99);
 
 	/* If the borg has no confucius resist */
 	if (!FLAG(bp_ptr, TR_RES_CONF))
@@ -3897,9 +3872,18 @@ static s32b borg_power_aux4(void)
 	/* Reward magic mapping */
 	value += 4000 * MIN(bp_ptr->able.magic_map, 1);
 
+	/* Try to carry 3 rods if there is no magic_map spell available */
+	if (bp_ptr->able.magic_map >= 100)
+	{
+		value += 6 * MIN(bp_ptr->able.magic_map, 3 * 100);
+	}
+
 	/* Reward room lites */
 	value += 600 * MIN(bp_ptr->able.lite, 10);
 	value += 60 * MIN_FLOOR(bp_ptr->able.lite, 10, 25);
+
+	/* Try to carry 3 rods if there is no light spell available */
+	if (bp_ptr->able.lite >= 100) value += 6 * MIN(bp_ptr->able.lite, 3 * 100);
 
 	/* Stuff to use against the the Serpent */
 	if (bp_ptr->max_depth >= 98)
@@ -3914,17 +3898,6 @@ static s32b borg_power_aux4(void)
 
 		/* Invulnerability Potions */
 		value += 10000 * MIN(bp_ptr->able.invulnerability, 99);
-	}
-	else
-	{
-		/* Genocide scrolls */
-		value += 900 * MIN(bp_ptr->able.genocide, 10);
-	
-		/* Mass Genocide scrolls */
-		value += 900 * MIN(bp_ptr->able.mass_genocide, 10);
-
-		/* Invulnerability Potions */
-		value += 1000 * MIN(bp_ptr->able.invulnerability, 99);
 	}
 
 	/* Reward speed potions/staves */
@@ -3991,17 +3964,8 @@ static s32b borg_power_aux4(void)
 	/* Reward *Remove Curse* (Pick them up from home) */
 	if (borg_heavy_curse && bp_ptr->able.star_remove_curse) value += 90000;
 
-	/* Bring them home */
-	if (bp_ptr->able.star_remove_curse < 1000)
-	{
-		value += bp_ptr->able.star_remove_curse * 500;
-	}
-
 	/* Reward restore experience */
 	if (bp_ptr->lev < bp_ptr->max_lev && bp_ptr->status.fixexp) value += 50000;
-
-	/* Collect them to take them home */
-	value += 200 * MIN_FLOOR(bp_ptr->status.fixexp, 0, 20);
 
 	/* Reward getting stat restore potions when needed */
 	for (i = 0; i < A_MAX; i++)
@@ -4012,13 +3976,13 @@ static s32b borg_power_aux4(void)
 	/*** Enchantment ***/
 
 	/* Reward enchant armor */
-	if (amt_enchant_to_a && my_need_enchant_to_a) value += amt_enchant_to_a * 14L;
+	value += amt_enchant_to_a * 14L;
 
 	/* Reward enchant weapon to hit */
-	if (amt_enchant_to_h && my_need_enchant_to_h) value += amt_enchant_to_h * 24L;
+	value += amt_enchant_to_h * 24L;
 
 	/* Reward enchant weapon to damage */
-	if (amt_enchant_to_d && my_need_enchant_to_d) value += amt_enchant_to_d * 109L;
+	value += amt_enchant_to_d * 109L;
 
 	/*** Hack -- books ***/
 
@@ -4050,12 +4014,6 @@ static s32b borg_power_aux4(void)
 					if (bp_ptr->lev > 35)
 						value += 1000 * MIN_FLOOR(amt_book[realm][book], 2, 3);
 				}
-			}
-			/* This is a book the borg can not use yet */
-			else
-			{
-				/* Give it value to get it home */
-				value += 3000 * MIN(amt_book[realm][book], 1);
 			}
 		}
 	}
@@ -4337,9 +4295,6 @@ static cptr borg_prepared_aux2(int depth)
 	/* Ready for level 33 */
 	if (depth <= 33) return (NULL);
 
-	/* Minimal level */
-	if (bp_ptr->max_lev < 40) return ("level 40");
-
 	/* Usually ready for level 20 to 39 */
 	if (depth <= 39) return (NULL);
 
@@ -4359,7 +4314,6 @@ static cptr borg_prepared_aux2(int depth)
 	if (borg_stat[A_CON] < 160) return ("low CON");
 
 	if (depth <= 45) return (NULL);
-
 
 	/*** Essential Items for Level 46 to 55 ***/
 
@@ -4384,6 +4338,9 @@ static cptr borg_prepared_aux2(int depth)
 	/* Hold Life */
 	if (!(FLAG(bp_ptr, TR_HOLD_LIFE)) &&
 		(bp_ptr->max_lev < 50)) return ("hold life");
+
+	/* Minimal level */
+	if (bp_ptr->max_lev < 40) return ("level 40");
 
 	/* Usually ready for level 46 to 55 */
 	if (depth <= 55) return (NULL);

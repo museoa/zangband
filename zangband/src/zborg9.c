@@ -4049,8 +4049,8 @@ void do_cmd_borg(void)
 				break;
 			}
 
-			/* The first 8 items of the inventory can be a book of the realm */
-			for (inv = 0; (inv < 4 * MAX_REALM) && (inv < inven_num); inv++)
+			/* Loop through the inventory */
+			for (inv = 0; inv < inven_num; inv++)
 			{
 				borg_magic *as;
 				int realm, book;
