@@ -971,7 +971,6 @@ proc NSOptions::GetPage {page} {
 				show_details
 				show_labels
 				show_weights
-				show_icons
 			}
 		}
 	

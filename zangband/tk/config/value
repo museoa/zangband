@@ -133,7 +133,6 @@ Manage record,message 1
 Manage record,photo 1
 Manage savefile {Path lib save Test}
 Manage settings,showUnused 0
-Manage show_icons 1
 Manage statusBadBD #770000
 Manage statusBadBD2 145
 Manage statusBadBG #990000

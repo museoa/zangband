@@ -140,8 +140,6 @@ proc NSValueManager::InitModule {} {
 	Manage TERM_L_BLUE [palette set 180] ; # ~turquoise2
 	Manage TERM_L_UMBER [palette set 52]
 	
-
-	Manage show_icons 1
 	Manage ambient_delay 120
 
 	Manage tip,current 1000
@@ -661,9 +659,6 @@ proc Setting {keyword args} {
 	if {[llength $args]} {
 		set value [lindex $args 0]
 		switch -- $keyword {
-			show_icons {
-				Value $keyword [NSUtils::GetBoolean $value]
-			}
 			default {
 				angband setting set $keyword $value
 			}
@@ -672,8 +667,7 @@ proc Setting {keyword args} {
 	# Get
 	} else {
 		switch -- $keyword {
-			ambient_delay -
-			show_icons {
+			ambient_delay{
 				return [Value $keyword]
 			}
 			default {
@@ -698,9 +692,6 @@ proc Setting {keyword args} {
 proc SettingDesc {keyword} {
 
 	switch -- $keyword {
-		show_icons {
-			return "Show icons in inventory/store list"
-		}
 		default {
 			return [angband setting desc $keyword]
 		}

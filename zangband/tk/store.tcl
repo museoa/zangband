@@ -776,13 +776,6 @@ proc NSStore::Win98MenuCmd_Options {oop button} {
 	set keywordList {}
 	set descList {}
 
-	Info $oop setting,show_icons [Setting show_icons]
-	$menu add checkbutton -label [mc "Show Icons"] \
-		-command {Setting show_icons [StoreObj Info setting,show_icons]} \
-		-variable NSStore($oop,setting,show_icons)
-	lappend keywordList show_icons
-	lappend descList [SettingDesc show_icons]
-
 	Info $oop setting,show_weights [Setting show_weights]
 	$menu add checkbutton -label [mc "Show Weights"] \
 		-command {Setting show_weights [StoreObj Info setting,show_weights]} \
@@ -1145,17 +1138,14 @@ proc NSStore::SetList {oop} {
 	NSCanvist::DeleteAll $canvistId
 
 	# Calculate the row height. This is done every time here since
-	# the show_icons option may change, and so may the font. The
-	# row height equals the linespace of the font plus 8 pixels for
-	# the selection rectangle, or the icon size plus 8, whichever
-	# is greater.
+	# the font may change. The row height equals the linespace of 
+	# the font plus 8 pixels for the selection rectangle, or the
+	# icon size plus 8, whichever is greater.
 	set rowHgt [font metrics [Value font,store] -linespace]
 
 	# Option: Show icons in lists
-	if {[Value show_icons]} {
-		if {[icon size] > $rowHgt} {
-			set rowHgt [icon size]
-		}
+	if {[icon size] > $rowHgt} {
+		set rowHgt [icon size]
 	}
 
 	# Leave room for the selection rectangle on each line
@@ -1181,9 +1171,6 @@ proc NSStore::SetList {oop} {
 
 		# Get the (optional) icon
 		set icon $attrib(icon)
-		if {![Value show_icons]} {
-			set icon ""
-		}
 
 		# Get the (optional) weight
 		set weight $attrib(weight)
@@ -1598,11 +1585,7 @@ proc NSStore::NewItemCmd {oop canvistId y char number text weight tval icon pric
 	set fh [font metrics $font -linespace]
 	set diff [expr {int([expr {($lineHeight - $fh) / 2}])}]
 
-	if {[Value show_icons]} {
-		set offset [expr {[icon size] + 8}]
-	} else {
-		set offset 4
-	}
+	set offset [expr {[icon size] + 8}]
 
 	# Image
 	if {[string length $icon]} {
@@ -1717,11 +1700,7 @@ proc NSStore::PositionItems {oop} {
 	# Get the width of the canvas
 	set canvasWidth [winfo width $canvas]
 	
-	if {[Value show_icons]} {
-		set offset [expr {[icon size] + 8}]
-	} else {
-		set offset 4
-	}
+	set offset [expr {[icon size] + 8}]
 
 	incr offset $Priv(width,char)
 	
