@@ -158,6 +158,13 @@ Zangband 2.7.1:
 - Removed a heap of warnings from the gtk and xaw ports.
 - Fixed saving of message colours in the savefile.
 - Updated the FAQ with recent common questions.
+- Removed the lua wrapper files from the archive, they can be created
+  from the makefile.
+- Fixed a problem with the autoconf bootstrap method.
+- Rangers are better, not worse at hitting monsters hiding in trees.	
+- Normal stores can generate good or excellent items again.
+- 
+
 
 ZAngband 2.7.0:
 - Removed the python code, and replaced it with scripting using Lua.
