@@ -980,13 +980,13 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 			chg_virtue(V_COMPASSION, -1);
 		}
 
-		if ((r_ptr->flags1 & RF3_GOOD) &&
+		if ((r_ptr->flags3 & RF3_GOOD) &&
 			((r_ptr->level) / 10 + (3 * p_ptr->depth) >= randint1(100)))
 
 			chg_virtue(V_UNLIFE, 1);
 
 		/* "Good" angels */
-		if ((r_ptr->d_char == 'A') && !(r_ptr->flags1 & RF3_EVIL))
+		if ((r_ptr->d_char == 'A') && !(r_ptr->flags3 & RF3_EVIL))
 		{
 			if (r_ptr->flags1 & RF1_UNIQUE)
 				chg_virtue(V_FAITH, -2);
