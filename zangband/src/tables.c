@@ -6219,16 +6219,16 @@ option_type option_info[] =
 	{ &ironman_rooms,               FALSE, 6,6,12,
 	"ironman_rooms",                "Always generate very unusual rooms" },
 
-	{ &ironman_nightmare,           FALSE, 6, 6, 13,
+	{ &ironman_nightmare,           FALSE, 6, 6,18,
 	 "ironman_nightmare",			  "Nightmare mode (this isn't even remotely fair!)" },
 
-	{ &maximize_mode,               TRUE,  6,6,14,
+	{ &maximize_mode,               TRUE,  6,6,13,
 	"maximize_mode",                "Maximize stats" },
 
-	{ &preserve_mode,               TRUE,  6,6,15,
+	{ &preserve_mode,               TRUE,  6,6,14,
 	"preserve_mode",                "Preserve artifacts" },
 
-	{ &autoroller,                  TRUE,  6,6,16,
+	{ &autoroller,                  TRUE,  6,6,15,
 	"autoroller",                   "Specify 'minimal' stats" },
 
 	/*** Stacking ***/
