@@ -1935,10 +1935,19 @@ void display_map(int *cy, int *cx)
 
 	int i, j, x, y;
 
+	byte feat;
+	
 	byte ta;
 	char tc;
+	
+#ifdef USE_TRANSPARENCY
+	byte tta;
+	char ttc;
+#endif  /* USE_TRANSPARENCY */
 
 	byte tp;
+
+	bool road;
 
 	u16b w_type, w_info, town;
 
@@ -1946,6 +1955,11 @@ void display_map(int *cy, int *cx)
 	char **mc;
 
 	byte **mp;
+
+#ifdef USE_TRANSPARENCY
+	byte **mta;
+	char **mtc;
+#endif /* USE_TRANSPARENCY */
 
 	bool old_view_special_lite = view_special_lite;
 	bool old_view_granite_lite = view_granite_lite;
@@ -1968,6 +1982,12 @@ void display_map(int *cy, int *cx)
 	C_MAKE(mc, (hgt + 2), char_ptr);
 	C_MAKE(mp, (hgt + 2), byte_ptr);
 
+#ifdef USE_TRANSPARENCY
+	C_MAKE(mta, (hgt + 2), byte_ptr);
+	C_MAKE(mtc, (hgt + 2), char_ptr);
+#endif /* USE_TRANSPARENCY */
+
+
 	/* Allocate and wipe each line map */
 	for (i = 0; i < (hgt + 2); i++)
 	{
@@ -1975,6 +1995,11 @@ void display_map(int *cy, int *cx)
 		C_MAKE(ma[i], (wid + 2), byte);
 		C_MAKE(mc[i], (wid + 2), char);
 		C_MAKE(mp[i], (wid + 2), byte);
+
+#ifdef USE_TRANSPARENCY
+		C_MAKE(mta[i], (wid + 2), byte);
+		C_MAKE(mtc[i], (wid + 2), char);
+#endif /* USE_TRANSPARENCY */
 	}
 
 	/* Clear the chars and attributes */
@@ -1985,6 +2010,11 @@ void display_map(int *cy, int *cx)
 			/* Nothing here */
 			ma[y][x] = TERM_WHITE;
 			mc[y][x] = ' ';
+
+#ifdef USE_TRANSPARENCY
+			mta[y][x] = TERM_WHITE;
+			mtc[y][x] = ' ';
+#endif /* USE_TRANSPARENCY */
 
 			/* No priority */
 			mp[y][x] = 0;
@@ -2024,40 +2054,65 @@ void display_map(int *cy, int *cx)
 				w_type = wild[j + y][i + x].done.wild;
 				w_info = wild[j + y][i + x].done.info;
 
-				/* Get attr / char pair for wilderness block type */
-
-				/* This is a nasty hack */
-
-				/* Add in effects of sea / roads */
-				if ((w_type >= WILD_SEA) || (w_info & (WILD_INFO_WATER)))
+				if (w_type < WILD_SEA)
 				{
-					ma[j + 1][i + 1] = TERM_BLUE;
-					mc[j + 1][i + 1] = '~';
+					/* Normal terrain */
+					feat = wild_gen_data[w_type].feat;
+					
+					/* Allow roads to be drawn */
+					road = TRUE;
+				}
+				else
+				{
+					feat = FEAT_DEEP_WATER;
+					
+					/* No roads please */
+					road = FALSE;
+				}
+				
+				/* Add in effect of other specials */
+				if (w_info & (WILD_INFO_WATER))
+				{
+					feat = FEAT_DEEP_WATER;
 				}
 				else if (w_info & (WILD_INFO_ACID))
 				{
-					ma[j + 1][i + 1] = TERM_GREEN;
-					mc[j + 1][i + 1] = '~';
+					feat = FEAT_DEEP_ACID;
 				}
 				else if (w_info & (WILD_INFO_LAVA))
 				{
-					ma[j + 1][i + 1] = TERM_RED;
-					mc[j + 1][i + 1] = '~';
+					feat = FEAT_DEEP_LAVA;
 				}
-				else if (w_info & (WILD_INFO_ROAD))
+
+				/* Get attr / char pair for wilderness block type */
+				ma[j + 1][i + 1] = f_info[feat].x_attr;
+				mc[j + 1][i + 1] = f_info[feat].x_char;
+
+#ifdef USE_TRANSPARENCY
+				if (f_info[feat].w_attr)
+				{
+					mta[j + 1][i + 1] = f_info[feat].w_attr;
+					mtc[j + 1][i + 1] = f_info[feat].w_char;
+				}
+				else
+				{
+					mta[j + 1][i + 1] = ma[j + 1][i + 1];
+					mtc[j + 1][i + 1] = mc[j + 1][i + 1];
+				}
+#endif /* USE_TRANSPARENCY */
+				
+				/* This is a nasty hack */
+
+				/* Add in effects of roads */
+				if ((w_info & (WILD_INFO_ROAD)) && road)
 				{
 					ma[j + 1][i + 1] = TERM_UMBER;
 					mc[j + 1][i + 1] = '+';
 				}
-				else if (w_info & (WILD_INFO_TRACK))
+				else if ((w_info & (WILD_INFO_TRACK)) && road)
 				{
 					ma[j + 1][i + 1] = TERM_L_UMBER;
 					mc[j + 1][i + 1] = '+';
-				}
-				else
-				{
-					ma[j + 1][i + 1] = wild_gen_data[w_type].w_attr;
-					mc[j + 1][i + 1] = wild_gen_data[w_type].w_char;
 				}
 
 				/* Hack - draw towns/specials */
@@ -2071,7 +2126,6 @@ void display_map(int *cy, int *cx)
 					/* Hack make a char /attr */
 					ma[j + 1][i + 1] = TERM_WHITE;
 					mc[j + 1][i + 1] = '0' + town % 10;
-
 				}
 
 				/* Finally show position of player */
@@ -2110,7 +2164,7 @@ void display_map(int *cy, int *cx)
 
 				/* Extract the current attr/char at that map location */
 #ifdef USE_TRANSPARENCY
-				map_info(j, i, &ta, &tc, &ta, &tc);
+				map_info(j, i, &ta, &tc, &tta, &ttc);
 #else /* USE_TRANSPARENCY */
 				map_info(j, i, &ta, &tc);
 #endif /* USE_TRANSPARENCY */
@@ -2126,6 +2180,12 @@ void display_map(int *cy, int *cx)
 
 					/* Save the attr */
 					ma[y][x] = ta;
+
+#ifdef USE_TRANSPARENCY
+					/* Save the transparency graphic */
+					mtc[y][x] = ttc;
+					mta[y][x] = tta;
+#endif /* USE_TRANSPARENCY */
 
 					/* Save priority */
 					mp[y][x] = tp;
@@ -2151,20 +2211,24 @@ void display_map(int *cy, int *cx)
 	/* Display each map line in order */
 	for (j = 0; j < hgt + 2; ++j)
 	{
-		/* Start a new line */
-		Term_gotoxy(COL_MAP - 1, j);
-
 		/* Display the line */
 		for (i = 0; i < wid + 2; ++i)
 		{
 			ta = ma[j][i];
 			tc = mc[j][i];
 
-			/* Add the character */
-			Term_addch(ta, tc);
+			#ifdef USE_TRANSPARENCY
+			tta = mta[j][i];
+			ttc = mtc[j][i];
+			
+			/* Hack -- Queue it */
+			Term_queue_char(COL_MAP + i - 1, j, ta, tc, tta, ttc);
+			#else /* USE_TRANSPARENCY */
+			
+			Term_queue_char(COL_MAP + i - 1, j, ta, tc);
+			#endif /* USE_TRANSPARENCY */
 		}
 	}
-
 
 	/* Restore lighting effects */
 	view_special_lite = old_view_special_lite;
@@ -2176,12 +2240,20 @@ void display_map(int *cy, int *cx)
 		/* Free one row each array */
 		C_FREE(ma[i], (wid + 2), byte);
 		C_FREE(mc[i], (wid + 2), char);
+#ifdef USE_TRANSPARENCY
+		C_FREE(mta[i], (wid + 2), byte);
+		C_FREE(mtc[i], (wid + 2), char);
+#endif /* USE_TRANSPARENCY */
 		C_FREE(mp[i], (wid + 2), byte);
 	}
 
 	/* Free the maps */
 	C_FREE(ma, (hgt + 2), byte_ptr);
 	C_FREE(mc, (hgt + 2), char_ptr);
+#ifdef USE_TRANSPARENCY
+	C_FREE(mta, (hgt + 2), byte_ptr);
+	C_FREE(mtc, (hgt + 2), char_ptr);
+#endif /* USE_TRANSPARENCY */
 	C_FREE(mp, (hgt + 2), byte_ptr);
 }
 

@@ -657,8 +657,6 @@ struct wild_choice_tree_type
  * This type is used to describe a region in parameter space
  * for wilderness generation.
  */
-
-
 typedef struct wild_bound_box_type wild_bound_box_type;
 
 struct wild_bound_box_type
@@ -685,8 +683,7 @@ typedef struct wild_gen_data_type wild_gen_data_type;
 
 struct wild_gen_data_type
 {
-	byte	w_attr;		/* Default attribute for overhead map */
-	char	w_char;		/* Default character for overhead map */
+	byte	feat;		/* The feature to look like on the overhead map */
 
 	byte	gen_routine;	/* Generation routine number */
 
