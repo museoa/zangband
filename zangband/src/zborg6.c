@@ -260,6 +260,100 @@ static void borg_flow_clear(void)
 }
 
 
+/* Check to see if the borg is standing on a nasty grid.
+ * Lava can hurt the borg unless he is IFire.
+ * Water can hurt if it is deep/ocean and encumbered.
+ * Acid can hurt the borg unless he is IAcid.
+ * Swamp can hurt the borg unless he is ResPoison.
+ * Levitation item can reduce the effect of nasty grids.
+ */
+bool borg_on_safe_feat(byte feat)
+{
+	/* Nothing hurts when Invulnerable */
+	if (borg_goi) return (TRUE);
+
+	/* Lava */
+	if (feat == FEAT_DEEP_LAVA)
+	{
+		/* Immunity helps */
+		if (bp_ptr->flags2 & TR2_IM_FIRE) return (TRUE);
+
+		/* Everything else hurts */
+		return (FALSE);
+	}
+
+	if (feat == FEAT_SHAL_LAVA)
+	{
+		/* Levitation helps */
+		if (bp_ptr->flags3 & TR3_FEATHER) return (TRUE);
+
+		/* Immunity helps */
+		if (bp_ptr->flags2 & TR2_IM_FIRE) return (TRUE);
+
+		/* Everything else hurts */
+		return (FALSE);
+	}
+
+	/* Water */
+	if (feat == FEAT_DEEP_WATER ||
+	 	 feat == FEAT_OCEAN_WATER)
+	{
+		/* Levitation helps */
+		if (bp_ptr->flags3 & TR3_FEATHER) return (TRUE);
+
+		/* Being non-encumbered helps */
+		if (!bp_ptr->encumber) return (TRUE);
+
+		/* Everything else hurts */
+		return (FALSE);
+	}
+
+	/* Swamp */
+	if (feat == FEAT_DEEP_SWAMP)
+	{
+		/* (temp) Resistance helps */
+		if ((bp_ptr->flags2 & TR2_RES_POIS) || my_oppose_pois) return (TRUE);
+
+		return (FALSE);
+	}
+	if (feat == FEAT_SHAL_SWAMP)
+	{
+		/* (temp) Resistance helps */
+		if ((bp_ptr->flags2 & TR2_RES_POIS) || my_oppose_pois) return (TRUE);
+
+		/* Levitation helps */
+		if (bp_ptr->flags3 & TR3_FEATHER) return (TRUE);
+
+		/* Everything else hurts */
+		return (FALSE);
+	}
+
+	/* Acid */
+	if (feat == FEAT_DEEP_ACID)
+	{
+		/* Immunity helps */
+		if (bp_ptr->flags2 & TR2_IM_ACID) return (TRUE);
+
+		/* Everything else hurts */
+		return (FALSE);
+	}
+
+	if (feat == FEAT_SHAL_ACID)
+	{
+		/* Immunity helps */
+		if (bp_ptr->flags2 & TR2_IM_ACID) return (TRUE);
+
+		/* Levitation helps */
+		if (bp_ptr->flags3 & TR3_FEATHER) return (TRUE);
+
+		/* Everything else hurts */
+		return (FALSE);
+	}
+	/* Generally ok */
+	return (TRUE);
+}
+
+
 
 /*
  * Spread a "flow" from the "destination" grids outwards
@@ -396,15 +490,8 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid,
 			/* Avoid "perma-wall" grids */
 			if (mb_ptr->feat >= FEAT_PERM_EXTRA &&
 				mb_ptr->feat <= FEAT_PERM_SOLID) continue;
-
-			/* Avoid Lava */
-			if ((mb_ptr->feat == FEAT_DEEP_LAVA ||
-				 mb_ptr->feat == FEAT_SHAL_LAVA)
-				&& !(bp_ptr->flags2 & TR2_IM_FIRE)) continue;
-
-			/* Avoid Water if dangerous */
-			if (mb_ptr->feat == FEAT_SHAL_WATER &&
-				(bp_ptr->encumber && !(bp_ptr->flags3 & TR3_FEATHER))) continue;
+			
+			if (!borg_on_safe_feat(mb_ptr->feat)) continue;
 
 			/* Avoid Mountains */
 			if (mb_ptr->feat == FEAT_MOUNTAIN) continue;
@@ -11675,7 +11762,7 @@ bool borg_check_rest(void)
 	}
 
 	/* Now check the ground to see if safe. */
-	if (borg_on_safe_grid() == FALSE) return (FALSE);
+	if (borg_on_safe_feat(map_loc(c_x, c_y)->feat) == FALSE) return (FALSE);
 
 	/* Examine all the monsters */
 	for (i = 1; i < borg_kills_nxt; i++)
@@ -13835,15 +13922,8 @@ static bool borg_flow_dark_reachable(int x, int y)
 
 		/* Accept Trees too */
 		if (mb_ptr->feat == FEAT_TREES) return (TRUE);
-
-		/* Accept Lava if immune */
-		if (mb_ptr->feat == FEAT_SHAL_LAVA &&
-			(bp_ptr->flags2 & TR2_IM_FIRE)) return (TRUE);
-
-		/* Accept Water if not drowning */
-		if (mb_ptr->feat == FEAT_SHAL_WATER &&
-			(!bp_ptr->encumber ||
-			 (bp_ptr->flags3 & TR3_FEATHER))) return (TRUE);
+		
+		if (borg_on_safe_feat(mb_ptr->feat)) return (TRUE);
 
 		/* I can push pass friendly monsters */
 		if (mb_ptr->kill &&
@@ -13972,11 +14052,7 @@ void borg_flow_direct(int x, int y)
 		}
 
 		/* Ignore certain "non-wall" grids */
-		if ((mb_ptr->feat == FEAT_SHAL_WATER &&
-			 (!bp_ptr->encumber &&
-			  !(bp_ptr->flags3 & TR3_FEATHER))) ||
-			(mb_ptr->feat == FEAT_SHAL_LAVA &&
-			 !(bp_ptr->flags2 & TR2_IM_FIRE))) return;
+		if (!borg_on_safe_feat(mb_ptr->feat)) return;
 
 		/* Abort at "icky" grids */
 		if (mb_ptr->info & BORG_MAP_ICKY) return;

@@ -831,48 +831,6 @@ bool borg_check_lite_only(void)
 	return (FALSE);
 }
 
-/* Check to see if the borg is standing on a nasty grid.
- * Lava can hurt the borg unless he is IFire.
- * Water can hurt if it is deep and encumbered.
- * Levetation item can reduce the effect of nasty grids.
- */
-bool borg_on_safe_grid(void)
-{
-	/* Get the grid under the borg */
-	map_block *mb_ptr = map_loc(c_x, c_y);
-
-	/* Lava */
-	if (mb_ptr->feat == FEAT_SHAL_LAVA)
-	{
-		/* Immunity helps */
-		if (bp_ptr->flags2 & TR2_IM_FIRE) return (TRUE);
-
-		/* Invulnerability helps */
-		if (borg_goi) return (TRUE);
-
-		/* Everything else hurts */
-		return (FALSE);
-	}
-
-	/* Water */
-	if (mb_ptr->feat == FEAT_SHAL_WATER)
-	{
-		/* Levatation helps */
-		if (bp_ptr->flags3 & TR3_FEATHER) return (TRUE);
-
-		/* Invulnerability helps */
-		if (borg_goi) return (TRUE);
-
-		/* Being non-encumbered helps */
-		if (!bp_ptr->encumber) return (TRUE);
-
-		/* Everything else hurts */
-		return (FALSE);
-	}
-
-	/* Generally ok */
-	return (TRUE);
-}
 
 /*
  * Enchant armor, not including my swap armour
@@ -1543,8 +1501,9 @@ bool borg_crush_junk(void)
 		/* Skip empty / unaware items */
 		if (!l_ptr->k_idx) continue;
 
-		/* dont crush our spell books */
-		if (l_ptr->tval == mp_ptr->spell_book) continue;
+		/* Don't crush our spell books */
+		if ((l_ptr->tval == bp_ptr->realm1) ||
+			(l_ptr->tval == bp_ptr->realm2)) continue;
 
 		/* Hack - we need to work this out properly */
 		value = 0;

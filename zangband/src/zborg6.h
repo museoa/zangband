@@ -46,7 +46,7 @@ extern bool borg_defend(int p);
 extern bool borg_perma_spell(void);
 
 extern bool borg_check_rest(void);
-extern bool borg_on_safe_grid(void);
+extern bool borg_on_safe_feat(byte feat);
 
 /*
  * Twitchy goals

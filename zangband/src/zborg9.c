@@ -3422,7 +3422,7 @@ void do_cmd_borg(void)
 		{
 			/* Command: check Grid "feature" flags */
 
-			u16b feat = 0;
+			byte feat = 0;
 
 			/* Get a "Borg command", or abort */
 			if (!get_com("Borg command: Show grids: ", &cmd)) return;
@@ -3440,6 +3440,11 @@ void do_cmd_borg(void)
 					feat = FEAT_OPEN;
 					break;
 				}
+				case '+':
+				{
+					feat = FEAT_CLOSED;
+					break;
+				}
 				case 'x':
 				{
 					feat = FEAT_BROKEN;
@@ -3453,11 +3458,6 @@ void do_cmd_borg(void)
 				case '>':
 				{
 					feat = FEAT_MORE;
-					break;
-				}
-				case '+':
-				{
-					feat = FEAT_CLOSED;
 					break;
 				}
 				case 's':
@@ -3495,7 +3495,31 @@ void do_cmd_borg(void)
 					feat = FEAT_DEEP_WATER;
 					break;
 				}
-
+				case 'o':
+				{
+					feat = FEAT_OCEAN_WATER;
+					break;
+				}
+				case 'b':
+				{
+					feat = FEAT_SHAL_ACID;
+				    break;
+				}
+				case 'B':
+				{
+					feat = FEAT_DEEP_ACID;
+				    break;
+				}
+				case 'c':
+				{
+					feat = FEAT_SHAL_SWAMP;
+					break;
+				}
+				case 'C':
+				{
+					feat = FEAT_DEEP_SWAMP;
+					break;
+				}
 				case 'w':
 				{
 					feat = FEAT_WALL_EXTRA;
@@ -3509,8 +3533,37 @@ void do_cmd_borg(void)
 
 				default:
 				{
-					feat = FEAT_NONE;
-					break;
+					Term_save();
+					Term_clear();
+					prtf(1, 1, "Possible entries for features.\n"
+								".  Dungeon floor\n"
+								",  Open door\n"
+								"+  Closed door\n"
+								"x  Broken door\n"
+								"s  Secret door\n"
+								"<  Up staircase\n"
+								">  Down staircase\n"
+								":  Rubble\n"
+								"t  Trees\n"
+								"l  Shallow Lava\n"
+								"L  Deep Lava\n"
+								"a  Shallow water\n"
+								"A  Deep water\n"
+								"o  Ocean water\n"
+								"b  Shallow acid\n"
+								"B  Deep acid\n"
+								"c  Shallow swamp\n"
+								"C  Deep swamp\n"
+								"w  Wall\n"
+								"p  Permanent wall\n");
+
+					/* Get keypress */
+					msgf("Press any key.");
+					message_flush();
+
+					Term_load();
+					
+					return;
 				}
 			}
 
@@ -3530,7 +3583,7 @@ void do_cmd_borg(void)
 		case 'I':
 		{
 			/* Command: check "info" flags */
-			u16b mask;
+			byte mask;
 
 			/* Get a "Borg command", or abort */
 			if (!get_com("Borg command: Show grids: ", &cmd)) return;
@@ -3725,7 +3778,7 @@ void do_cmd_borg(void)
 		case '%':
 		{
 			/* Command: debug -- current flow */
-			int i;
+			byte i;
 
 			/* Flow */
 			for (i = 0; i < 250; i++)
@@ -4002,7 +4055,7 @@ void do_cmd_borg(void)
 		case 'd':
 		case 'D':
 		{
-			/* Dump realms */
+			/* Dump realms (requires big screen to work) */
 			int ii = 1, k;
 
 			/* Save the screen */
@@ -4016,28 +4069,31 @@ void do_cmd_borg(void)
 				/* skip wrong realms */
 				if ((k != bp_ptr->realm1) && (k != bp_ptr->realm2)) continue;
 
-				ii++;
-
 				/* Books */
 				for (i = 0; i < 4; i++)
 				{
 
 					/* Clear the screen */
 					Term_clear();
+					
+					ii += 1;
+					
+					put_fstr(1, ii, "Realm:  %s", borg_magics[k][0][0].realm_name);
 
-					put_fstr(1, ii++, "[ Realm 1 ]:(%s)", &borg_magics[k][0][0].realm_name);
+					ii++;
+
 					for (j = 0; j < 8; j++)
 					{
-						borg_magic *as = &borg_magics[bp_ptr->realm1][i][j];
+						borg_magic *as = &borg_magics[k][i][j];
 						cptr legal = NULL;
 
 						if (as->level < 99)
 						{
-							legal = (borg_spell_legal(bp_ptr->realm1, i, j) ?
-								 "legal" : "Not Legal ");
+							legal = (borg_spell_legal(k, i, j) ?
+								 "Legal" : "Not Legal ");
 						}
-						put_fstr(1, ii++, "%s, %s, attempted %d times",
-									as->name, legal, as->times);
+						put_fstr(1, ii, "%s",	as->name);
+						put_fstr(30, ii++, "%s, attempted %d times", legal, as->times);
 					}
 					get_com("Exam spell books.  Press any key for next book.",
 							&cmd);
