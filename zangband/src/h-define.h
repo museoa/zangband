@@ -140,7 +140,7 @@
 		if (!(expr))\
 		{\
 			signals_ignore_tstp();\
-			(void) __assert_save;\
+			__assert_save;\
 			__assert_fmt("\n%s%s\n%s%s\n%s%d\n\n",\
 			"Assertion failed: ", #expr,\
 			"in file ", __FILE__,\
