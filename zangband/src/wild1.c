@@ -276,7 +276,7 @@ static u16b select_building(byte pop, byte magic, byte law, u16b *build,
 		/* Hack - Increase possibility of 'general' features */
 		for (i = 0; i < MAX_CITY_BUILD; i++)
 		{
-			if (wild_build[i].type == BT_GENERAL)
+			if (build_is_general(i))
 			{
 				wild_build[i].gen *= ((build_num - 5) / 6);
 			}
@@ -288,7 +288,7 @@ static u16b select_building(byte pop, byte magic, byte law, u16b *build,
 		for (i = 0; i < MAX_CITY_BUILD; i++)
 		{
 			/* No 'filler' buildings in small towns. */
-			if (wild_build[i].type == BT_GENERAL)
+			if (build_is_general(i))
 			{
 				wild_build[i].gen = 0;
 			}
@@ -313,7 +313,7 @@ static u16b select_building(byte pop, byte magic, byte law, u16b *build,
 	total = randint0(total);
 
 	/* Later add checks for silliness */
-	/* (A small town with 5 "homes" would be silly */
+	/* (A small town with 5 "homes" would be silly) */
 
 
 	/* Find which building we've got */
@@ -445,9 +445,6 @@ static bool create_city(int x, int y, int town_num)
 	{ 
 		/* Use a low pop - we don't want too many blank buildings */
 		pop = 32 + 128;
-		
-		/* Medium magic */
-		magic = 150;
 	}
 		
 	/* Wipe the list of allocated buildings */
@@ -1022,7 +1019,7 @@ static void init_vanilla_town(void)
  * three parameters (hgt,pop,law) is proportional to log(n).
  * This speeds up wilderness generation alot.  (Note the
  * "obvious" method of using a linear search to find matching
- * wilderness creation functions is too slow.
+ * wilderness creation functions is too slow.)
  *
  * The "type" value has two different uses.  One is to specify
  * which axis of the parameter space is being split.  The other
@@ -1075,7 +1072,7 @@ static u16b get_gen_type(byte hgt, byte pop, byte law)
 			 * Get lower two bits of type to decribe which of
 			 * (hgt,pop,law) cutoff refers to.
 			 */
-			switch(tree_ptr->info & 3)
+			switch(tree_ptr->info & 0x03)
 			{
 				case DT_HGT:
 				{
