@@ -1890,6 +1890,16 @@ errr init_w_info(bool new_game)
 	C_MAKE(wild_choice_tree, 100, wild_choice_tree_type);
 	C_MAKE(wild_gen_data, 27, wild_gen_data_type);
 	C_MAKE(wild_temp_dist, WILD_SIZE, byte);
+	
+	/*
+	 * Hack XXX XXXX
+	 * Make wild_gen_data start at one rather than zero.
+	 * This is done to make the type==0 case a flag to indicate
+	 * an "unused" node.  (Needed because the whole of the
+	 * parameter space is empty on the decision trees creation.
+	 */
+	 wild_gen_data--;
+	
 	/*** Load the ascii template file ***/
 
 	/* Build the filename */
@@ -1934,8 +1944,11 @@ errr init_w_info(bool new_game)
 		change_level(dun_level);
 	}
 	
+	#if 0
 	/* Free decision tree now that are done with it */
 	C_FREE(wild_choice_tree, 100, wild_choice_tree_type);
+	#endif
+	
 	
 	/* Success */
 	return(0);

@@ -2439,7 +2439,7 @@ errr init_r_info_txt(FILE *fp, char *buf)
  */
 errr init_w_info_txt(FILE *fp, char *buf)
 {
-	int i = -1;
+	int i = 0;
 
 	/* Bounding box of entry */
 	wild_bound_box_type bound;
@@ -2565,16 +2565,16 @@ errr init_w_info_txt(FILE *fp, char *buf)
 			w_ptr->data[7] = d7;
 			
 			/* Initialise if tree is empty */
-			if (i == 0)
+			if (i == 1)
 			{
-				init_choice_tree(&bound, i+1);
+				init_choice_tree(&bound, i);
 				/*if(init_choice_tree(&bound, i+1) == 0)
 					return (2);*/
 			}
 			else
 			{
 				/* Add type to decision tree */
-				if(add_node_tree_root(&bound, i+1) == 0)
+				if(add_node_tree_root(&bound, i) == 0)
 					return (2);
 			}
 			

@@ -520,7 +520,7 @@ static u16b get_gen_type(byte hgt, byte pop, byte law)
 		{
 			/* randomly choose branch */
 			if (randint(tree_ptr->chance1+tree_ptr->chance2) 
-				> tree_ptr->chance1)
+				> tree_ptr->chance2)
 			{
 				/* Chance1 of going "left" */
 				branch = TRUE;
@@ -750,10 +750,7 @@ static u16b add_node_chance(u16b type, u16b node, bool branch)
 	tree_ptr = &wild_choice_tree[node];
 	
 	if (branch)
-	{
-		/* Get left leaf status */
-		is_tree = (tree_ptr->info & 4);
-		
+	{		
 		old_node = tree_ptr->ptrnode1;
 		
 		/* Check for null case. */
@@ -766,12 +763,12 @@ static u16b add_node_chance(u16b type, u16b node, bool branch)
 			return(node);
 		}
 		
+		/* Get left leaf status */
+		is_tree = (wild_choice_tree[old_node].info & 4);
+		
 	}
 	else
-	{
-		/* Get right leaf status */
-		is_tree = (tree_ptr->info & 8);
-		
+	{		
 		old_node = tree_ptr->ptrnode2;
 		
 		/* Check for null case. */
@@ -783,6 +780,9 @@ static u16b add_node_chance(u16b type, u16b node, bool branch)
 			/* Return current node. */
 			return(node);
 		}
+		
+		/* Get right leaf status */
+		is_tree = (wild_choice_tree[old_node].info & 8);		
 	}
 
 	/* Insert new node */
@@ -815,8 +815,8 @@ static u16b add_node_chance(u16b type, u16b node, bool branch)
 		tree_ptr->info = 8;
 		
 		/* Calculate the chance fields */		
-		tree_ptr->chance1 = wild_choice_tree[tree_ptr->ptrnode1].chance1 +
-			wild_choice_tree[tree_ptr->ptrnode1].chance2;
+		tree_ptr->chance1 = wild_choice_tree[old_node].chance1 +
+			wild_choice_tree[old_node].chance2;
 		
 		tree_ptr->chance2 = wild_gen_data[type].chance;
 	}
@@ -827,7 +827,7 @@ static u16b add_node_chance(u16b type, u16b node, bool branch)
 		tree_ptr->info = 8 + 4;
 		
 		/* Calculate the chance fields */
-		tree_ptr->chance1 = wild_gen_data[tree_ptr->ptrnode1].chance;
+		tree_ptr->chance1 = wild_gen_data[old_node].chance;
 		tree_ptr->chance2 = wild_gen_data[type].chance;
 	}
 	
@@ -1326,19 +1326,9 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
 	wild_choice_tree_type	*tree_ptr;
 	
 	tree_ptr = &wild_choice_tree[node];
-	
-	/* Check to see if bouding boxes are the same.
-	 * If so, use the add_node_chance function to increase the
-	 * size of the "leaf"
-	 */
-	if (compare_bounds(bound1, bound2))
-	{
-		return(add_node_chance(type, node, branch));
-	}
-	
+		
 	if(bound1->hgtmin != bound2->hgtmin)
 	{
-		
 		/* Record branch node */
 		if(branch)
 		{
@@ -1898,6 +1888,32 @@ u16b add_node_tree_root(wild_bound_box_type *bound, u16b type)
 	return(add_node(bound, &start_bounds, type, 0));
 }
 
+
+/* Testing code - remove later. */
+void test_decision_tree(void)
+{
+	u16b hgt, pop, law;
+	
+	u16b type;
+	
+	/* get parameters */
+	msg_print("Type in hgt");
+	
+	hgt = get_quantity(NULL, 255);
+	
+	msg_print("Type in pop");
+	
+	pop = get_quantity(NULL, 255);
+	
+	msg_print("Type in law");
+	
+	law = get_quantity(NULL, 255);
+	
+	/* Get value from decision tree */
+	type = get_gen_type(hgt, pop, law);
+
+	msg_format("Type returned: %d .", type);
+}
 
 
 /* Delete a wilderness block */

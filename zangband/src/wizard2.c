@@ -1823,6 +1823,10 @@ void do_cmd_debug(void)
 		wiz_lite();
 		break;
 
+		case 'W':
+		test_decision_tree();
+		break;
+
 		/* Increase Experience */
 		case 'x':
 		if (command_arg)
