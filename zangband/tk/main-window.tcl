@@ -1811,7 +1811,7 @@ proc NSMainWindow::TrackMotion {oop x y} {
 #	corresponding direction character (0-9).
 #
 #	During INKEY_CMD it calls "angband keypress" with a direction
-#	key (to move the character), but only if the grid is not blocked.
+#	key (to move the character).
 #
 #	This command is usually called when the <Inkey> binding is invoked,
 #	but if the character is unable to move it calls itself again as
@@ -1903,60 +1903,6 @@ if 0 {
 	# If the game is NOT asking for a command, then do nothing
 	if {[string compare $flags INKEY_CMD]} {
 		return
-	}
-
-	# If the grid in the desired direction is blocked, then we will
-	# attempt to "slide" in that direction.
-	if {[angband cave blocked $y $x]} {
-
-		scan $::PYPX "%d %d" py px
-		set xdiff [expr {$caveX - $px}]
-		set ydiff [expr {$caveY - $py}]
-
-		set xdiff [expr {abs($xdiff)}]
-		set ydiff [expr {abs($ydiff)}]
-		switch $dirKey {
-			1 {
-				if {$xdiff > $ydiff} {
-					incr y -1
-					set dirKey 4
-				} else {
-					incr x
-					set dirKey 2
-				}
-			}
-			3 {
-				if {$xdiff > $ydiff} {
-					incr y -1
-					set dirKey 6
-				} else {
-					incr x -1
-					set dirKey 2
-				}
-			}
-			7 {
-				if {$xdiff > $ydiff} {
-					incr y 1
-					set dirKey 4
-				} else {
-					incr x
-					set dirKey 8
-				}
-			}
-			9 {
-				if {$xdiff > $ydiff} {
-					incr y 1
-					set dirKey 6
-				} else {
-					incr x -1
-					set dirKey 8
-				}
-			}
-		}
-		if {[angband cave blocked $y $x]} {
-			set trackId [after 1 NSMainWindow::TrackOnce $oop]
-			return
-		}
 	}
 
 	# If the mouse is over the player grid, only move if this is
