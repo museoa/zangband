@@ -86,7 +86,11 @@ typedef unsigned char byte;
 
 /* Note that a bool is smaller than a full "int" */
 /* Simple True/False type */
+#ifndef HAVE_STDBOOL_H
 typedef char bool;
+#else
+# include <stdbool.h>
+#endif
 
 
 /* A signed, standard integer (at least 2 bytes) */
