@@ -552,8 +552,6 @@ proc NSStore2::InitMenus {oop} {
 	lappend entries [list -type command -label [mc Buy] -identifier E_STORE_BUY]
 	lappend entries [list -type command -label [mc Sell] -identifier E_STORE_SELL]
 	lappend entries [list -type separator -identifier E_SEP_1]
-	lappend entries [list -type checkbutton -label [mc Auto-Haggle] \
-		-variable NSStore2::Priv(radio) -identifier E_AUTO_HAGGLE]
 	lappend entries [list -type separator]
 	lappend entries [list -type command -label [mc Leave] \
 		-identifier E_STORE_EXIT]
@@ -658,8 +656,6 @@ proc NSStore2::SetupMenus {oop mbarID} {
 
 	if {[string equal [angband inkey_flags] INKEY_CMD]} {
 		lappend identList E_STORE_BUY E_STORE_SELL E_STORE_EXIT
-		set Priv(radio) [Setting auto_haggle]
-		lappend identList E_AUTO_HAGGLE
 		if {[angband store ishome]} {
 			lappend identList E_DESTROY
 		}
@@ -690,13 +686,6 @@ proc NSStore2::MenuSelect {oop menuId index ident} {
 	switch -- $ident {
 		{} {
 			set desc {}
-		}
-		E_AUTO_HAGGLE {
-			if {$Priv(radio)} {
-				set desc "Disables automatic price negotiation."
-			} else {
-				set desc "Enables automatic price negotiation."
-			}
 		}
 		E_STORE_EXIT {
 			if {[angband store ishome]} {
@@ -786,7 +775,6 @@ proc NSStore2::MenuInvoke {oop menuId ident} {
 		E_STORE_BUY {DoCommandIfAllowed p}
 		E_STORE_SELL {DoCommandIfAllowed s}
 		E_DESTROY {DoCommandIfAllowed K}
-		E_AUTO_HAGGLE {Setting auto_haggle $Priv(radio)}
 		E_STORE_EXIT {DoCommandIfAllowed \033}
 	}
 
@@ -1562,9 +1550,6 @@ proc NSStore2::ContextMenu {oop menu x y} {
 		# Complex handling of Destroy command. The entire stack is
 		# destroyed, and the user isn't asked to confirm.
 		set command "angband keypress 0${itemAmount}K$itemKey"
-		if {!([Setting auto_destroy] && [angband store worthless $index])} {
-			append command y
-		}
 		$menu add separator
 		$menu add command -label [mc *Destroy*] -command $command
 	}

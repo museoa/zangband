@@ -951,9 +951,6 @@ proc NSInventory::ContextMenu {oop menu x y} {
 
 		# Skip the y/n prompt if the user is asked to confirm
 		# the destruction of worthless items.
-		if {!([Setting auto_destroy] && [angband inventory worthless $index])} {
-			append command y
-		}
 		$menu add command -label [mc *Destroy*] -command $command
 	}
 
