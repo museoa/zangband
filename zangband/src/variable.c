@@ -113,6 +113,7 @@ s16b min_wid;			/* Current x bounds of area() */
 s16b max_wid;
 
 s16b dun_level;			/* Current dungeon level */
+obj_theme dun_theme;	/* Current dungeon object theme */
 s16b num_repro;			/* Current reproducer count */
 
 bool mon_fight;			/* Monster fighting indicator */
@@ -141,8 +142,6 @@ bool inkey_xtra;		/* See the "inkey()" function */
 bool inkey_scan;		/* See the "inkey()" function */
 bool inkey_flag;		/* See the "inkey()" function */
 
-s16b coin_type;			/* Hack -- force coin type */
-
 bool shimmer_monsters;	/* Hack -- optimize multi-hued monsters */
 
 bool repair_monsters;	/* Hack -- optimize detect monsters */
@@ -150,7 +149,6 @@ bool repair_monsters;	/* Hack -- optimize detect monsters */
 s16b inven_nxt;			/* Hack -- unused */
 bool hack_mind;
 bool hack_mutation;
-int artifact_bias;
 
 s16b inven_cnt;			/* Number of items in inventory */
 s16b equip_cnt;			/* Number of items in equipment */

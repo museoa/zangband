@@ -1887,8 +1887,6 @@ static void bad_luck(object_type *o_ptr)
 	{
 		int number = o_ptr->number;
 
-		bool great = ego_item_p(o_ptr);
-
 		/* Non-artifacts get rerolled */
 		if (!is_art)
 		{
@@ -1900,8 +1898,8 @@ static void bad_luck(object_type *o_ptr)
 			/* Restore the number */
 			o_ptr->number = number;
 
-			/* Apply bad magic (disallow artifacts, good, great if an ego-item, cursed) */
-			apply_magic(o_ptr, dun_level, FALSE, TRUE, great, TRUE);
+			/* Apply bad magic */
+			apply_magic(o_ptr, dun_level, 0, OC_FORCE_BAD);
 		}
 
 		/* Now curse it */

@@ -54,14 +54,7 @@
  */
 #define randint1(M) \
 	(randint0(M) + 1)
-
-
-/*
- * Evaluate to TRUE "P" percent of the time
- */
-#define magik(P) \
-	(randint0(100) < (P))
-
+	
 
 #define one_in_(X) \
 	(randint0(X) == 0)

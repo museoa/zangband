@@ -2011,6 +2011,14 @@
 #define OBJ_GOLD_LIST   480     /* First "gold" entry */
 #define MAX_GOLD        18      /* Number of "gold" entries */
 
+/*
+ * Object creation flags
+ * These are the values passable to apply_magic
+ */
+#define OC_NORMAL		0x01
+#define OC_FORCE_BAD	0x02
+#define OC_FORCE_GOOD	0x04
+
 
 /*** General flag values ***/
 

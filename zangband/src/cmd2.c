@@ -484,14 +484,14 @@ static void chest_death(int y, int x, s16b o_idx)
 		if (small && (randint0(100) < 25))
 		{
 			/* Make some gold */
-			if (!make_gold(q_ptr)) continue;
+			if (!make_gold(q_ptr, 0)) continue;
 		}
 
 		/* Otherwise drop an item */
 		else
 		{
 			/* Make a good themed object */
-			if (!make_object(q_ptr, TRUE, FALSE)) continue;
+			if (!make_object(q_ptr, 20, dun_theme)) continue;
 		}
 
 #ifdef USE_SCRIPT

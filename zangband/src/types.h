@@ -195,6 +195,21 @@ struct object_kind
 };
 
 
+/*
+ * "Themed" objects.
+ * Probability in percent for each class of objects to be dropped.
+ * This could perhaps be an array - but that wouldn't be as clear.
+ */
+typedef struct obj_theme obj_theme;
+
+struct obj_theme
+{
+	byte treasure;
+	byte combat;
+	byte magic;
+	byte tools;
+};
+
 
 /*
  * Information about "artifacts".
@@ -395,6 +410,8 @@ struct monster_race
 	u32b r_flags5;			/* Observed racial flags */
 	u32b r_flags6;			/* Observed racial flags */
 	u32b r_flags7;			/* Observed racial flags */
+	
+	obj_theme obj_drop;		/* Type of objects to drop when killed */
 };
 
 
@@ -1026,7 +1043,6 @@ struct alloc_entry
 };
 
 
-
 /*
  * Available "options"
  *
@@ -1206,7 +1222,7 @@ struct player_race
 {
 	cptr title;			/* Type of race */
 
-	s16b r_adj[A_MAX];		/* Racial stat bonuses */
+	s16b r_adj[6];		/* Racial stat bonuses */
 
 	s16b r_dis;			/* disarming */
 	s16b r_dev;			/* magic devices */
@@ -1250,7 +1266,7 @@ struct player_class
 {
 	cptr title;			/* Type of class */
 
-	s16b c_adj[A_MAX];		/* Class stat modifier */
+	s16b c_adj[6];		/* Class stat modifier */
 
 	s16b c_dis;			/* class disarming */
 	s16b c_dev;			/* class magic devices */
@@ -1298,10 +1314,11 @@ typedef struct player_type player_type;
 
 struct player_type
 {
-	s16b py;		/* Player location */
-	s16b px;		/* Player location */
 	s16b oldpy;		/* Previous player location -KMW- */
 	s16b oldpx;		/* Previous player location -KMW- */
+
+	s16b px;		/* The player location - not used yet. -SF- */
+	s16b py;
 
 	byte psex;			/* Sex index */
 	byte prace;			/* Race index */
@@ -1351,8 +1368,8 @@ struct player_type
 	s16b max_plv;		/* Max Player Level */
 	s16b max_dlv;		/* Max level explored */
 
-	s16b stat_max[A_MAX];	/* Current "maximal" stat values */
-	s16b stat_cur[A_MAX];	/* Current "natural" stat values */
+	s16b stat_max[6];	/* Current "maximal" stat values */
+	s16b stat_cur[6];	/* Current "natural" stat values */
 
 	s16b fast;			/* Timed -- Fast */
 	s16b slow;			/* Timed -- Slow */
@@ -1449,11 +1466,11 @@ struct player_type
 	u32b redraw;		/* Normal Redraws (bit flags) */
 	u32b window;		/* Window Redraws (bit flags) */
 
-	s16b stat_use[A_MAX];	/* Current modified stats */
-	s16b stat_top[A_MAX];	/* Maximal modified stats */
+	s16b stat_use[6];	/* Current modified stats */
+	s16b stat_top[6];	/* Maximal modified stats */
 
-	s16b stat_add[A_MAX];	/* Modifiers to stat values */
-	s16b stat_ind[A_MAX];	/* Indexes into stat tables */
+	s16b stat_add[6];	/* Modifiers to stat values */
+	s16b stat_ind[6];	/* Indexes into stat tables */
 
 	bool immune_acid;	/* Immunity to acid */
 	bool immune_elec;	/* Immunity to lightning */

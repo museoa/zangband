@@ -50,7 +50,7 @@ static void curse_artifact(object_type * o_ptr)
 }
 
 
-static void random_plus(object_type * o_ptr)
+static int random_plus(object_type * o_ptr, int artifact_bias)
 {
 	int this_type = (o_ptr->tval < TV_BOOTS ? 23 : 19);
 
@@ -59,19 +59,19 @@ static void random_plus(object_type * o_ptr)
 		if (!(o_ptr->flags1 & TR1_STR))
 		{
 			o_ptr->flags1 |= TR1_STR;
-			if (randint1(2) == 1) return; /* 50% chance of being a "free" power */
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 
 		if (!(o_ptr->flags1 & TR1_CON))
 		{
 			o_ptr->flags1 |= TR1_CON;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 
 		if (!(o_ptr->flags1 & TR1_DEX))
 		{
 			o_ptr->flags1 |= TR1_DEX;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 	}
 	else if (artifact_bias == BIAS_MAGE)
@@ -79,7 +79,7 @@ static void random_plus(object_type * o_ptr)
 		if (!(o_ptr->flags1 & TR1_INT))
 		{
 			o_ptr->flags1 |= TR1_INT;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 	}
 	else if (artifact_bias == BIAS_PRIESTLY)
@@ -87,7 +87,7 @@ static void random_plus(object_type * o_ptr)
 		if (!(o_ptr->flags1 & TR1_WIS))
 		{
 			o_ptr->flags1 |= TR1_WIS;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 	}
 	else if (artifact_bias == BIAS_RANGER)
@@ -95,19 +95,19 @@ static void random_plus(object_type * o_ptr)
 		if (!(o_ptr->flags1 & TR1_CON))
 		{
 			o_ptr->flags1 |= TR1_CON;
-			if (randint1(2) == 1) return; /* 50% chance of being a "free" power */
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 
 		if (!(o_ptr->flags1 & TR1_DEX))
 		{
 			o_ptr->flags1 |= TR1_DEX;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 
 		if (!(o_ptr->flags1 & TR1_STR))
 		{
 			o_ptr->flags1 |= TR1_STR;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 	}
 	else if (artifact_bias == BIAS_ROGUE)
@@ -115,12 +115,12 @@ static void random_plus(object_type * o_ptr)
 		if (!(o_ptr->flags1 & TR1_STEALTH))
 		{
 			o_ptr->flags1 |= TR1_STEALTH;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 		if (!(o_ptr->flags1 & TR1_SEARCH))
 		{
 			o_ptr->flags1 |= TR1_SEARCH;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 	}
 	else if (artifact_bias == BIAS_STR)
@@ -128,7 +128,7 @@ static void random_plus(object_type * o_ptr)
 		if (!(o_ptr->flags1 & TR1_STR))
 		{
 			o_ptr->flags1 |= TR1_STR;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 	}
 	else if (artifact_bias == BIAS_WIS)
@@ -136,7 +136,7 @@ static void random_plus(object_type * o_ptr)
 		if (!(o_ptr->flags1 & TR1_WIS))
 		{
 			o_ptr->flags1 |= TR1_WIS;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 	}
 	else if (artifact_bias == BIAS_INT)
@@ -144,7 +144,7 @@ static void random_plus(object_type * o_ptr)
 		if (!(o_ptr->flags1 & TR1_INT))
 		{
 			o_ptr->flags1 |= TR1_INT;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 	}
 	else if (artifact_bias == BIAS_DEX)
@@ -152,7 +152,7 @@ static void random_plus(object_type * o_ptr)
 		if (!(o_ptr->flags1 & TR1_DEX))
 		{
 			o_ptr->flags1 |= TR1_DEX;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 	}
 	else if (artifact_bias == BIAS_CON)
@@ -160,7 +160,7 @@ static void random_plus(object_type * o_ptr)
 		if (!(o_ptr->flags1 & TR1_CON))
 		{
 			o_ptr->flags1 |= TR1_CON;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 	}
 	else if (artifact_bias == BIAS_CHR)
@@ -168,7 +168,7 @@ static void random_plus(object_type * o_ptr)
 		if (!(o_ptr->flags1 & TR1_CHR))
 		{
 			o_ptr->flags1 |= TR1_CHR;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 	}
 
@@ -248,7 +248,10 @@ static void random_plus(object_type * o_ptr)
 		
 		break;
 	case 22: case 23:
-		if (o_ptr->tval == TV_BOW) random_plus(o_ptr);
+		if (o_ptr->tval == TV_BOW)
+		{
+			artifact_bias = random_plus(o_ptr, artifact_bias);
+		}
 		else
 		{
 			o_ptr->flags1 |= TR1_BLOWS;
@@ -258,10 +261,12 @@ static void random_plus(object_type * o_ptr)
 		}
 		break;
 	}
+	
+	return (artifact_bias);
 }
 
 
-void random_resistance(object_type *o_ptr, int specific)
+int random_resistance(object_type *o_ptr, int specific, int artifact_bias)
 {
 	if (!specific) /* To avoid a number of possible bugs */
 	{
@@ -270,12 +275,12 @@ void random_resistance(object_type *o_ptr, int specific)
 			if (!(o_ptr->flags2 & TR2_RES_ACID))
 			{
 				o_ptr->flags2 |= TR2_RES_ACID;
-				if (randint1(2) == 1) return;
+				if (randint1(2) == 1) return (artifact_bias);
 			}
 			if ((randint1(BIAS_LUCK) == 1) && !(o_ptr->flags2 & TR2_IM_ACID))
 			{
 				o_ptr->flags2 |= TR2_IM_ACID;
-				if (randint1(2) == 1) return;
+				if (randint1(2) == 1) return (artifact_bias);
 			}
 		}
 		else if (artifact_bias == BIAS_ELEC)
@@ -283,18 +288,18 @@ void random_resistance(object_type *o_ptr, int specific)
 			if (!(o_ptr->flags2 & TR2_RES_ELEC))
 			{
 				o_ptr->flags2 |= TR2_RES_ELEC;
-				if (randint1(2) == 1) return;
+				if (randint1(2) == 1) return (artifact_bias);
 			}
 			if ((o_ptr->tval >= TV_CLOAK) && (o_ptr->tval <= TV_HARD_ARMOR) &&
 			   !(o_ptr->flags3 & TR3_SH_ELEC))
 			{
 				o_ptr->flags3 |= TR3_SH_ELEC;
-				if (randint1(2) == 1) return;
+				if (randint1(2) == 1) return (artifact_bias);
 			}
 			if (randint1(BIAS_LUCK) == 1 && !(o_ptr->flags2 & TR2_IM_ELEC))
 			{
 				o_ptr->flags2 |= TR2_IM_ELEC;
-				if (randint1(2) == 1) return;
+				if (randint1(2) == 1) return (artifact_bias);
 			}
 		}
 		else if (artifact_bias == BIAS_FIRE)
@@ -302,20 +307,20 @@ void random_resistance(object_type *o_ptr, int specific)
 			if (!(o_ptr->flags2 & TR2_RES_FIRE))
 			{
 				o_ptr->flags2 |= TR2_RES_FIRE;
-				if (randint1(2) == 1) return;
+				if (randint1(2) == 1) return (artifact_bias);
 			}
 			if ((o_ptr->tval >= TV_CLOAK) &&
 			    (o_ptr->tval <= TV_HARD_ARMOR) &&
 			    !(o_ptr->flags3 & TR3_SH_FIRE))
 			{
 				o_ptr->flags3 |= TR3_SH_FIRE;
-				if (randint1(2) == 1) return;
+				if (randint1(2) == 1) return (artifact_bias);
 			}
 			if ((randint1(BIAS_LUCK) == 1) &&
 			    !(o_ptr->flags2 & TR2_IM_FIRE))
 			{
 				o_ptr->flags2 |= TR2_IM_FIRE;
-				if (randint1(2) == 1) return;
+				if (randint1(2) == 1) return (artifact_bias);
 			}
 		}
 		else if (artifact_bias == BIAS_COLD)
@@ -323,12 +328,12 @@ void random_resistance(object_type *o_ptr, int specific)
 			if (!(o_ptr->flags2 & TR2_RES_COLD))
 			{
 				o_ptr->flags2 |= TR2_RES_COLD;
-				if (randint1(2) == 1) return;
+				if (randint1(2) == 1) return (artifact_bias);
 			}
 			if (randint1(BIAS_LUCK) == 1 && !(o_ptr->flags2 & TR2_IM_COLD))
 			{
 				o_ptr->flags2 |= TR2_IM_COLD;
-				if (randint1(2) == 1) return;
+				if (randint1(2) == 1) return (artifact_bias);
 			}
 		}
 		else if (artifact_bias == BIAS_POIS)
@@ -336,7 +341,7 @@ void random_resistance(object_type *o_ptr, int specific)
 			if (!(o_ptr->flags2 & TR2_RES_POIS))
 			{
 				o_ptr->flags2 |= TR2_RES_POIS;
-				if (randint1(2) == 1) return;
+				if (randint1(2) == 1) return (artifact_bias);
 			}
 		}
 		else if (artifact_bias == BIAS_WARRIOR)
@@ -344,12 +349,12 @@ void random_resistance(object_type *o_ptr, int specific)
 			if (randint1(3) != 1 && (!(o_ptr->flags2 & TR2_RES_FEAR)))
 			{
 				o_ptr->flags2 |= TR2_RES_FEAR;
-				if (randint1(2) == 1) return;
+				if (randint1(2) == 1) return (artifact_bias);
 			}
 			if ((randint1(3) == 1) && (!(o_ptr->flags3 & TR3_NO_MAGIC)))
 			{
 				o_ptr->flags3 |= TR3_NO_MAGIC;
-				if (randint1(2) == 1) return;
+				if (randint1(2) == 1) return (artifact_bias);
 			}
 		}
 		else if (artifact_bias == BIAS_NECROMANTIC)
@@ -357,17 +362,17 @@ void random_resistance(object_type *o_ptr, int specific)
 			if (!(o_ptr->flags2 & TR2_RES_NETHER))
 			{
 				o_ptr->flags2 |= TR2_RES_NETHER;
-				if (randint1(2) == 1) return;
+				if (randint1(2) == 1) return (artifact_bias);
 			}
 			if (!(o_ptr->flags2 & TR2_RES_POIS))
 			{
 				o_ptr->flags2 |= TR2_RES_POIS;
-				if (randint1(2) == 1) return;
+				if (randint1(2) == 1) return (artifact_bias);
 			}
 			if (!(o_ptr->flags2 & TR2_RES_DARK))
 			{
 				o_ptr->flags2 |= TR2_RES_DARK;
-				if (randint1(2) == 1) return;
+				if (randint1(2) == 1) return (artifact_bias);
 			}
 		}
 		else if (artifact_bias == BIAS_CHAOS)
@@ -375,17 +380,17 @@ void random_resistance(object_type *o_ptr, int specific)
 			if (!(o_ptr->flags2 & TR2_RES_CHAOS))
 			{
 				o_ptr->flags2 |= TR2_RES_CHAOS;
-				if (randint1(2) == 1) return;
+				if (randint1(2) == 1) return (artifact_bias);
 			}
 			if (!(o_ptr->flags2 & TR2_RES_CONF))
 			{
 				o_ptr->flags2 |= TR2_RES_CONF;
-				if (randint1(2) == 1) return;
+				if (randint1(2) == 1) return (artifact_bias);
 			}
 			if (!(o_ptr->flags2 & TR2_RES_DISEN))
 			{
 				o_ptr->flags2 |= TR2_RES_DISEN;
-				if (randint1(2) == 1) return;
+				if (randint1(2) == 1) return (artifact_bias);
 			}
 		}
 	}
@@ -394,7 +399,7 @@ void random_resistance(object_type *o_ptr, int specific)
 	{
 		case 1:
 			if (randint1(WEIRD_LUCK) != 1)
-				random_resistance(o_ptr, specific);
+				artifact_bias = random_resistance(o_ptr, 0, artifact_bias);
 			else
 			{
 				o_ptr->flags2 |= TR2_IM_ACID;
@@ -405,7 +410,7 @@ void random_resistance(object_type *o_ptr, int specific)
 			break;
 		case 2:
 			if (randint1(WEIRD_LUCK) != 1)
-				random_resistance(o_ptr, specific);
+				artifact_bias = random_resistance(o_ptr, 0, artifact_bias);
 			else
 			{
 				o_ptr->flags2 |= TR2_IM_ELEC;
@@ -416,7 +421,7 @@ void random_resistance(object_type *o_ptr, int specific)
 			break;
 		case 3:
 			if (randint1(WEIRD_LUCK) != 1)
-				random_resistance(o_ptr, specific);
+				artifact_bias = random_resistance(o_ptr, 0, artifact_bias);
 			else
 			{
 				o_ptr->flags2 |= TR2_IM_COLD;
@@ -427,7 +432,7 @@ void random_resistance(object_type *o_ptr, int specific)
 			break;
 		case 4:
 			if (randint1(WEIRD_LUCK) != 1)
-				random_resistance(o_ptr, specific);
+				artifact_bias = random_resistance(o_ptr, 0, artifact_bias);
 			else
 			{
 				o_ptr->flags2 |= TR2_IM_FIRE;
@@ -544,7 +549,7 @@ void random_resistance(object_type *o_ptr, int specific)
 			if (o_ptr->tval >= TV_CLOAK && o_ptr->tval <= TV_HARD_ARMOR)
 				o_ptr->flags3 |= TR3_SH_ELEC;
 			else
-				random_resistance(o_ptr, specific);
+				artifact_bias = random_resistance(o_ptr, 0, artifact_bias);
 			if (!artifact_bias)
 				artifact_bias = BIAS_ELEC;
 			break;
@@ -552,7 +557,7 @@ void random_resistance(object_type *o_ptr, int specific)
 			if (o_ptr->tval >= TV_CLOAK && o_ptr->tval <= TV_HARD_ARMOR)
 				o_ptr->flags3 |= TR3_SH_FIRE;
 			else
-				random_resistance(o_ptr, specific);
+				artifact_bias = random_resistance(o_ptr, 0, artifact_bias);
 			if (!artifact_bias)
 				artifact_bias = BIAS_FIRE;
 			break;
@@ -561,21 +566,23 @@ void random_resistance(object_type *o_ptr, int specific)
 			    o_ptr->tval == TV_HELM || o_ptr->tval == TV_HARD_ARMOR)
 				o_ptr->flags2 |= TR2_REFLECT;
 			else
-				random_resistance(o_ptr, specific);
+				artifact_bias = random_resistance(o_ptr, 0, artifact_bias);
 			break;
 	}
+	
+	return (artifact_bias);
 }
 
 
 
-static void random_misc(object_type * o_ptr)
+static int random_misc(object_type * o_ptr, int artifact_bias)
 {
 	if (artifact_bias == BIAS_RANGER)
 	{
 		if (!(o_ptr->flags2 & TR2_SUST_CON))
 		{
 			o_ptr->flags2 |= TR2_SUST_CON;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 	}
 	else if (artifact_bias == BIAS_STR)
@@ -583,7 +590,7 @@ static void random_misc(object_type * o_ptr)
 		if (!(o_ptr->flags2 & TR2_SUST_STR))
 		{
 			o_ptr->flags2 |= TR2_SUST_STR;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 	}
 	else if (artifact_bias == BIAS_WIS)
@@ -591,7 +598,7 @@ static void random_misc(object_type * o_ptr)
 		if (!(o_ptr->flags2 & TR2_SUST_WIS))
 		{
 			o_ptr->flags2 |= TR2_SUST_WIS;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 	}
 	else if (artifact_bias == BIAS_INT)
@@ -599,7 +606,7 @@ static void random_misc(object_type * o_ptr)
 		if (!(o_ptr->flags2 & TR2_SUST_INT))
 		{
 			o_ptr->flags2 |= TR2_SUST_INT;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 	}
 	else if (artifact_bias == BIAS_DEX)
@@ -607,7 +614,7 @@ static void random_misc(object_type * o_ptr)
 		if (!(o_ptr->flags2 & TR2_SUST_DEX))
 		{
 			o_ptr->flags2 |= TR2_SUST_DEX;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 	}
 	else if (artifact_bias == BIAS_CON)
@@ -615,7 +622,7 @@ static void random_misc(object_type * o_ptr)
 		if (!(o_ptr->flags2 & TR2_SUST_CON))
 		{
 			o_ptr->flags2 |= TR2_SUST_CON;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 	}
 	else if (artifact_bias == BIAS_CHR)
@@ -623,7 +630,7 @@ static void random_misc(object_type * o_ptr)
 		if (!(o_ptr->flags2 & TR2_SUST_CHR))
 		{
 			o_ptr->flags2 |= TR2_SUST_CHR;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 	}
 	else if (artifact_bias == BIAS_CHAOS)
@@ -631,7 +638,7 @@ static void random_misc(object_type * o_ptr)
 		if (!(o_ptr->flags3 & TR3_TELEPORT))
 		{
 			o_ptr->flags3 |= TR3_TELEPORT;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 	}
 	else if (artifact_bias == BIAS_FIRE)
@@ -734,7 +741,9 @@ static void random_misc(object_type * o_ptr)
 		case 25:
 		case 26:
 			if (o_ptr->tval >= TV_BOOTS)
-				random_misc(o_ptr);
+			{
+				artifact_bias = random_misc(o_ptr, artifact_bias);
+			}
 			else
 			{
 				o_ptr->flags3 |= TR3_SHOW_MODS;
@@ -755,17 +764,19 @@ static void random_misc(object_type * o_ptr)
 			o_ptr->flags3 |= TR3_NO_TELE;
 			break;
 	}
+	
+	return (artifact_bias);
 }
 
 
-static void random_slay(object_type *o_ptr)
+static int random_slay(object_type *o_ptr, int artifact_bias)
 {
 	if (artifact_bias == BIAS_CHAOS && (o_ptr->tval != TV_BOW))
 	{
 		if (!(o_ptr->flags1 & TR1_CHAOTIC))
 		{
 			o_ptr->flags1 |= TR1_CHAOTIC;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 	}
 
@@ -782,12 +793,12 @@ static void random_slay(object_type *o_ptr)
 		if (!(o_ptr->flags1 & TR1_VAMPIRIC))
 		{
 			o_ptr->flags1 |= TR1_VAMPIRIC;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 		if (!(o_ptr->flags1 & TR1_BRAND_POIS) && (randint1(2) == 1))
 		{
 			o_ptr->flags1 |= TR1_BRAND_POIS;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 	}
 
@@ -796,7 +807,7 @@ static void random_slay(object_type *o_ptr)
 		if (!(o_ptr->flags1 & TR1_SLAY_ANIMAL))
 		{
 			o_ptr->flags1 |= TR1_SLAY_ANIMAL;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 	}
 
@@ -812,7 +823,7 @@ static void random_slay(object_type *o_ptr)
 		if ((!(o_ptr->flags1 & TR1_BRAND_POIS)) && (randint1(2) == 1))
 		{
 			o_ptr->flags1 |= TR1_BRAND_POIS;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 	}
 
@@ -821,7 +832,7 @@ static void random_slay(object_type *o_ptr)
 		if (!(o_ptr->flags1 & TR1_BRAND_POIS))
 		{
 			o_ptr->flags1 |= TR1_BRAND_POIS;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 	}
 
@@ -830,7 +841,7 @@ static void random_slay(object_type *o_ptr)
 		if (!(o_ptr->flags1 & TR1_BRAND_FIRE))
 		{
 			o_ptr->flags1 |= TR1_BRAND_FIRE;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 	}
 
@@ -839,7 +850,7 @@ static void random_slay(object_type *o_ptr)
 		if (!(o_ptr->flags1 & TR1_BRAND_COLD))
 		{
 			o_ptr->flags1 |= TR1_BRAND_COLD;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 	}
 
@@ -848,7 +859,7 @@ static void random_slay(object_type *o_ptr)
 		if (!(o_ptr->flags1 & TR1_BRAND_ELEC))
 		{
 			o_ptr->flags1 |= TR1_BRAND_ELEC;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 	}
 
@@ -857,7 +868,7 @@ static void random_slay(object_type *o_ptr)
 		if (!(o_ptr->flags1 & TR1_BRAND_ACID))
 		{
 			o_ptr->flags1 |= TR1_BRAND_ACID;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 	}
 
@@ -866,17 +877,17 @@ static void random_slay(object_type *o_ptr)
 		if (!(o_ptr->flags1 & TR1_SLAY_EVIL))
 		{
 			o_ptr->flags1 |= TR1_SLAY_EVIL;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 		if (!(o_ptr->flags1 & TR1_SLAY_UNDEAD))
 		{
 			o_ptr->flags1 |= TR1_SLAY_UNDEAD;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 		if (!(o_ptr->flags1 & TR1_SLAY_DEMON))
 		{
 			o_ptr->flags1 |= TR1_SLAY_DEMON;
-			if (randint1(2) == 1) return;
+			if (randint1(2) == 1) return (artifact_bias);
 		}
 	}
 
@@ -946,7 +957,9 @@ static void random_slay(object_type *o_ptr)
 						artifact_bias = BIAS_WARRIOR;
 				}
 				else
-					random_slay(o_ptr);
+				{
+					artifact_bias = random_slay(o_ptr, artifact_bias);
+				}
 				break;
 			case 20:
 				o_ptr->flags1 |= TR1_IMPACT;
@@ -1026,10 +1039,12 @@ static void random_slay(object_type *o_ptr)
 			break;
 		}
 	}
+	
+	return (artifact_bias);
 }
 
 
-static void give_activation_power(object_type *o_ptr)
+static void give_activation_power(object_type *o_ptr, int artifact_bias)
 {
 	int type = 0, chance = 0;
 
@@ -1369,9 +1384,7 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 	s32b    total_flags;
 	bool    a_cursed = FALSE;
 	int     warrior_artifact_bias = 0;
-
-
-	artifact_bias = 0;
+	int		artifact_bias = 0;
 
 	/* No activation yet */
 	o_ptr->activate = 0;
@@ -1441,17 +1454,17 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 		switch (randint1(max_type))
 		{
 			case 1: case 2:
-				random_plus(o_ptr);
+				artifact_bias = random_plus(o_ptr, artifact_bias);
 				has_pval = TRUE;
 				break;
 			case 3: case 4:
-				random_resistance(o_ptr, FALSE);
+				artifact_bias = random_resistance(o_ptr, 0, artifact_bias);
 				break;
 			case 5:
-				random_misc(o_ptr);
+				artifact_bias = random_misc(o_ptr, artifact_bias);
 				break;
 			case 6: case 7:
-				random_slay(o_ptr);
+				artifact_bias = random_slay(o_ptr, artifact_bias);
 				break;
 			default:
 				if (wizard) msg_print("Switch error in create_artifact!");
@@ -1508,7 +1521,7 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 	    ? ACTIVATION_CHANCE * 2 : ACTIVATION_CHANCE) == 1))
 	{
 		o_ptr->activate = 0;
-		give_activation_power(o_ptr);
+		give_activation_power(o_ptr, artifact_bias);
 	}
 
 	if (o_ptr->tval >= TV_BOOTS)
@@ -3065,11 +3078,9 @@ void random_artifact_resistance(object_type * o_ptr)
 		add_ego_power(EGO_XTRA_ABILITY, o_ptr);
 	}
 
-	artifact_bias = 0;
-
 	if (give_resistance)
 	{
-		random_resistance(o_ptr, randint1(22) + 16);
+		(void) random_resistance(o_ptr, randint1(22) + 16, 0);
 	}
 }
 

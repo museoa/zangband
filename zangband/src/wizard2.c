@@ -828,7 +828,7 @@ static void wiz_reroll_item(object_type *o_ptr)
 		wiz_display_item(q_ptr);
 
 		/* Ask wizard what to do. */
-		if (!get_com("[a]ccept, [w]orthless, [c]ursed, [n]ormal, [g]ood, [e]xcellent, [s]pecial? ", &ch))
+		if (!get_com("[a]ccept, [w]orthless, [n]ormal, [e]xcellent, [s]pecial? ", &ch))
 		{
 			/* Preserve wizard-generated artifacts */
 			if ((q_ptr->flags3 & TR3_INSTA_ART) && (q_ptr->activate > 128))
@@ -863,47 +863,29 @@ static void wiz_reroll_item(object_type *o_ptr)
 			case 'w': case 'W':
 			{
 				object_prep(q_ptr, o_ptr->k_idx);
-				apply_magic(q_ptr, dun_level, FALSE, TRUE, TRUE, TRUE);
-				break;
-			}
-			/* Apply bad magic, but first clear object */
-			case 'c': case 'C':
-			{
-				object_prep(q_ptr, o_ptr->k_idx);
-				apply_magic(q_ptr, dun_level, FALSE, TRUE, FALSE, TRUE);
+				apply_magic(q_ptr, dun_level, 30, OC_FORCE_BAD);
 				break;
 			}
 			/* Apply normal magic, but first clear object */
 			case 'n': case 'N':
 			{
 				object_prep(q_ptr, o_ptr->k_idx);
-				apply_magic(q_ptr, dun_level, FALSE, FALSE, FALSE, FALSE);
-				break;
-			}
-			/* Apply good magic, but first clear object */
-			case 'g': case 'G':
-			{
-				object_prep(q_ptr, o_ptr->k_idx);
-				apply_magic(q_ptr, dun_level, FALSE, TRUE, FALSE, FALSE);
+				apply_magic(q_ptr, dun_level, 0, OC_NORMAL);
 				break;
 			}
 			/* Apply great magic, but first clear object */
 			case 'e': case 'E':
 			{
 				object_prep(q_ptr, o_ptr->k_idx);
-				apply_magic(q_ptr, dun_level, FALSE, TRUE, TRUE, FALSE);
+				apply_magic(q_ptr, dun_level, 30, OC_FORCE_GOOD);
 				break;
 			}
 			case 's': case 'S':
 			{
 				object_prep(q_ptr, o_ptr->k_idx);
-				apply_magic(q_ptr, dun_level, TRUE, TRUE, TRUE, FALSE);
-
-				/* Failed to create normal artifact; make a random one */
-				if (!(q_ptr->flags3 & TR3_INSTA_ART))
-				{
-					create_artifact(q_ptr, FALSE);
-				}
+				
+				/* Make a random artifact */
+				create_artifact(q_ptr, FALSE);
 				break;
 			}
 		}
@@ -953,7 +935,7 @@ static void wiz_statistics(object_type *o_ptr)
 	char ch;
 	char *quality;
 
-	bool good, great;
+	bool great;
 
 	object_type forge;
 	object_type	*q_ptr;
@@ -967,7 +949,7 @@ static void wiz_statistics(object_type *o_ptr)
 	/* Interact */
 	while (TRUE)
 	{
-		cptr pmt = "Roll for [n]ormal, [g]ood, or [e]xcellent treasure? ";
+		cptr pmt = "Roll for [n]ormal or [e]xcellent treasure? ";
 
 		/* Display item */
 		wiz_display_item(o_ptr);
@@ -977,25 +959,16 @@ static void wiz_statistics(object_type *o_ptr)
 
 		if (ch == 'n' || ch == 'N')
 		{
-			good = FALSE;
 			great = FALSE;
 			quality = "normal";
 		}
-		else if (ch == 'g' || ch == 'G')
-		{
-			good = TRUE;
-			great = FALSE;
-			quality = "good";
-		}
 		else if (ch == 'e' || ch == 'E')
 		{
-			good = TRUE;
 			great = TRUE;
 			quality = "excellent";
 		}
 		else
 		{
-			good = FALSE;
 			great = FALSE;
 			break;
 		}
@@ -1036,7 +1009,6 @@ static void wiz_statistics(object_type *o_ptr)
 				Term_fresh();
 			}
 
-
 			/* Get local object */
 			q_ptr = &forge;
 
@@ -1044,7 +1016,7 @@ static void wiz_statistics(object_type *o_ptr)
 			object_wipe(q_ptr);
 
 			/* Create an object */
-			make_object(q_ptr, good, great);
+			make_object(q_ptr, great ? 30 : 0, dun_theme);
 
 			/* Test for the same tval and sval. */
 			if ((o_ptr->tval) != (q_ptr->tval)) continue;
@@ -1309,29 +1281,12 @@ static void wiz_create_item(void)
 
 	if (k_info[k_idx].flags3 & TR3_INSTA_ART)
 	{
-		int i;
-
-		/* Artifactify */
-		for (i = 1; i < max_a_idx; i++)
-		{
-			/* Ignore incorrect tval */
-			if (a_info[i].tval != q_ptr->tval) continue;
-
-			/* Ignore incorrect sval */
-			if (a_info[i].sval != q_ptr->sval) continue;
-
-			/* Choose this artifact */
-			q_ptr->activate = i + 128;
-			break;
-		}
-
-		/* Apply magic */
-		apply_magic(q_ptr, -1, TRUE, TRUE, TRUE, FALSE);
+		make_artifact(q_ptr);
 	}
 	else
 	{
 		/* Apply magic */
-		apply_magic(q_ptr, dun_level, FALSE, FALSE, FALSE, FALSE);
+		apply_magic(q_ptr, dun_level, 0, 0);
 	}
 
 #ifdef USE_SCRIPT

@@ -687,7 +687,7 @@ void monster_death(int m_idx)
 		/* Prepare to make a Blade of Chaos */
 		object_prep(q_ptr, lookup_kind(TV_SWORD, SV_BLADE_OF_CHAOS));
 
-		apply_magic(q_ptr, object_level, FALSE, FALSE, FALSE, FALSE);
+		apply_magic(q_ptr, object_level, 0, 0);
 
 #ifdef USE_SCRIPT
 		q_ptr->python = object_create_callback(q_ptr);
@@ -725,43 +725,11 @@ void monster_death(int m_idx)
 	{
 		if (strstr((r_name + r_ptr->name), "Serpent of Chaos"))
 		{
-			/* Get local object */
-			q_ptr = &forge;
-
-			/* Mega-Hack -- Prepare to make "Grond" */
-			object_prep(q_ptr, lookup_kind(TV_HAFTED, SV_GROND));
-
-			/* Mega-Hack -- Mark this item as "Grond" */
-			q_ptr->activate = ART_GROND + 128;
-
-			/* Mega-Hack -- Actually create "Grond" */
-			apply_magic(q_ptr, -1, TRUE, TRUE, TRUE, FALSE);
-
-#ifdef USE_SCRIPT
-			q_ptr->python = object_create_callback(q_ptr);
-#endif /* USE_SCRIPT */
-
-			/* Drop it in the dungeon */
-			(void)drop_near(q_ptr, -1, y, x);
-
-			/* Get local object */
-			q_ptr = &forge;
-
-			/* Mega-Hack -- Prepare to make "Morgoth" */
-			object_prep(q_ptr, lookup_kind(TV_CROWN, SV_MORGOTH));
-
-			/* Mega-Hack -- Mark this item as "Morgoth" */
-			q_ptr->activate = ART_MORGOTH + 128;
-
-			/* Mega-Hack -- Actually create "Morgoth" */
-			apply_magic(q_ptr, -1, TRUE, TRUE, TRUE, FALSE);
-
-#ifdef USE_SCRIPT
-			q_ptr->python = object_create_callback(q_ptr);
-#endif /* USE_SCRIPT */
-
-			/* Drop it in the dungeon */
-			(void)drop_near(q_ptr, -1, y, x);
+			/* Make Grond */
+			create_named_art(ART_GROND, y, x);
+			
+			/* Make Crown of Morgoth */
+			create_named_art(ART_MORGOTH, y, x);
 		}
 		else
 		{
@@ -877,9 +845,6 @@ void monster_death(int m_idx)
 
 	if (cloned) number = 0; /* Clones drop no stuff */
 
-	/* Hack -- handle creeping coins */
-	coin_type = force_coin;
-
 	/* Average dungeon and monster levels */
 	object_level = (dun_level + r_ptr->level) / 2;
 
@@ -896,7 +861,7 @@ void monster_death(int m_idx)
 		if (do_gold && (!do_item || (randint0(100) < 50)))
 		{
 			/* Make some gold */
-			if (!make_gold(q_ptr)) continue;
+			if (!make_gold(q_ptr, force_coin)) continue;
 
 			/* XXX XXX XXX */
 			dump_gold++;
@@ -906,7 +871,8 @@ void monster_death(int m_idx)
 		else
 		{
 			/* Make an object */
-			if (!make_object(q_ptr, good, great)) continue;
+			if (!make_object(q_ptr, (good ? 15 : 0) + (great ? 15 : 0),
+				 r_ptr->obj_drop)) continue;
 
 			/* XXX XXX XXX */
 			dump_item++;
@@ -922,10 +888,6 @@ void monster_death(int m_idx)
 
 	/* Reset the object level */
 	object_level = base_level;
-
-	/* Reset "coin" type */
-	coin_type = 0;
-
 
 	/* Take note of any dropped treasure */
 	if (visible && (dump_item || dump_gold))
@@ -949,12 +911,12 @@ void monster_death(int m_idx)
 		if (randint0(number_of_quests()) < 20)
 		{
 			/* Make a great object */
-			make_object(q_ptr, TRUE, TRUE);
+			make_object(q_ptr, 30, dun_theme);
 		}
 		else
 		{
 			/* Make a good object */
-			make_object(q_ptr, TRUE, FALSE);
+			make_object(q_ptr, 15, dun_theme);
 		}
 
 #ifdef USE_SCRIPT
@@ -3454,7 +3416,7 @@ void gain_level_reward(int chosen_reward)
 			q_ptr->to_h = 3 + randint1(dun_level) % 10;
 			q_ptr->to_d = 3 + randint1(dun_level) % 10;
 			
-			random_resistance(q_ptr, randint1(34) + 4);
+			(void) random_resistance(q_ptr, randint1(34) + 4, 0);
 			
 			add_ego_flags(q_ptr, EGO_CHAOTIC);
 

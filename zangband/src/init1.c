@@ -2447,6 +2447,30 @@ errr init_r_info_txt(FILE *fp, char *buf)
 			/* Next... */
 			continue;
 		}
+		
+		/* Process 'O' for "Object theme" (one line only) */
+		if (buf[0] == 'O')
+		{
+			int treasure, combat, magic;
+
+			/* Scan for the other values */
+			if (3 != sscanf(buf+2, "%d:%d:%d",
+				&treasure, &combat, &magic)) return (1);
+
+			/* Save the values */
+			r_ptr->obj_drop.treasure = (byte) treasure;
+			r_ptr->obj_drop.combat = (byte) combat;
+			r_ptr->obj_drop.magic = (byte) magic;
+			
+			/* 
+			 * Since monsters do not drop junk,
+			 * this value is defined in terms of the others
+			 */
+			r_ptr->obj_drop.tools = 100 - (treasure + combat + magic);
+
+			/* Next... */
+			continue;
+		}
 
 		/* Oops */
 		return (6);
@@ -3488,13 +3512,11 @@ static errr process_dungeon_file_aux(char *buf, int ymin, int xmin, int ymax, in
 
 				if (o_ptr->tval == TV_GOLD)
 				{
-					coin_type = object_index - OBJ_GOLD_LIST;
-					make_gold(o_ptr);
-					coin_type = 0;
+					make_gold(o_ptr, object_index - OBJ_GOLD_LIST);
 				}
 
 				/* Apply magic (no messages, no artifacts) */
-				apply_magic(o_ptr, base_level, FALSE, TRUE, FALSE, FALSE);
+				apply_magic(o_ptr, base_level, 10, 0);
 
 #ifdef USE_SCRIPT
 				o_ptr->python = object_create_callback(o_ptr);
