@@ -3394,14 +3394,14 @@ static bool do_cmd_knowledge_uniques(int dummy)
 		if (r_ptr->max_num == 0)
 		{
 			/* Dead */
-			print_monster_string(fff, r_ptr->x_attr, r_ptr->x_char,
+			print_monster_string(fff, r_ptr->d_attr, r_ptr->d_char,
 				format(CLR_L_DARK "%s is dead.", mon_race_name(r_ptr)),
 					 0);
 		}
 		else
 		{
 			/* Alive */
-			print_monster_string(fff, r_ptr->x_attr, r_ptr->x_char, 
+			print_monster_string(fff, r_ptr->d_attr, r_ptr->d_char, 
 				format(CLR_L_BLUE "%s is alive.", mon_race_name(r_ptr)),
 					0);
 		}
@@ -3695,7 +3695,7 @@ static bool do_cmd_knowledge_kill_count(int dummy)
 
 			if (dead)
 			{
-				print_monster_string(fff, r_ptr->x_attr, r_ptr->x_char, mon_race_name(r_ptr), 0);
+				print_monster_string(fff, r_ptr->d_attr, r_ptr->d_char, mon_race_name(r_ptr), 0);
 				total++;
 			}
 		}
@@ -3707,14 +3707,14 @@ static bool do_cmd_knowledge_kill_count(int dummy)
 			{
 				if (this < 2)
 				{
-					print_monster_string(fff, r_ptr->x_attr, r_ptr->x_char, mon_race_name(r_ptr), 1);
+					print_monster_string(fff, r_ptr->d_attr, r_ptr->d_char, mon_race_name(r_ptr), 1);
 				}
 				else
 				{
 					char ToPlural[80];
 					strcpy(ToPlural, mon_race_name(r_ptr));
 					plural_aux(ToPlural);
-					print_monster_string(fff, r_ptr->x_attr, r_ptr->x_char, ToPlural, this);
+					print_monster_string(fff, r_ptr->d_attr, r_ptr->d_char, ToPlural, this);
 				}
 
 				total += this;
@@ -3793,20 +3793,29 @@ static bool do_cmd_knowledge_objects(int dummy)
 			/* Create fake object */
 			o_ptr = object_prep(k);
 			
+			attr = color_seq[tval_to_attr[o_ptr->tval % 128]];
+			
 			a = object_attr(o_ptr);
 			c = object_char(o_ptr);
 			
-			attr = color_seq[tval_to_attr[o_ptr->tval % 128]];
-			
-			if (c == '$')
+			/* Only add equippys if in ascii mode */
+			if (!(a & 0x80) && !(c & 0x80))
 			{
-				/* Print a message ('$' needs to be escaped) */
-				froff(fff, " %s$$%s  %v\n", color_seq[a], attr, OBJECT_STORE_FMT(o_ptr, FALSE, 0));
+				if (c == '$')
+				{
+					/* Print a message ('$' needs to be escaped) */
+					froff(fff, " %s$$%s  %v\n", color_seq[a], attr, OBJECT_STORE_FMT(o_ptr, FALSE, 0));
+				}
+				else
+				{
+					/* Print a message */
+					froff(fff, " %s%c%s  %v\n", color_seq[a], c, attr, OBJECT_STORE_FMT(o_ptr, FALSE, 0));
+				}
 			}
 			else
 			{
 				/* Print a message */
-				froff(fff, " %s%c%s  %v\n", color_seq[a], c, attr, OBJECT_STORE_FMT(o_ptr, FALSE, 0));
+					froff(fff, "  %s  %v\n", attr, OBJECT_STORE_FMT(o_ptr, FALSE, 0));
 			}
 		}
 	}
@@ -3930,9 +3939,18 @@ void dump_town_info(FILE *fff, int town)
 				{
 					/* Get attr/char */
 					building_char(pl_ptr->store[j].type, &a, &c);
-				
-					/* Append information about store */
-					froff(fff, "  %s%c" CLR_WHITE "   %s\n", color_seq[a], c, build_name);
+					
+					/* Only draw symbols in ascii mode */
+					if (!(a & 0x80) && !(c & 0x80))
+					{				
+						/* Append information about store */
+						froff(fff, "  %s%c" CLR_WHITE "   %s\n", color_seq[a], c, build_name);
+					}
+					else
+					{
+						/* Append information about store */
+						froff(fff, "      %s\n", build_name);
+					}
 				}
 			}
 
