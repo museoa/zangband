@@ -3,13 +3,13 @@
 
 # Defines the field types.
 
-# Later this will be replaced by python.
+# Later this will be replaced by Python code.
 
 # === Understanding t_info.txt ===
 
 # N: serial number : field name
 # G: symbol : color
-# W: priority : type : counter inital value 
+# W: priority : type : counter initial value 
 # I: flag | flag | flag
 # D: Data[8] 
 # F: location,function | location,function | location,function
