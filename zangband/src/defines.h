@@ -40,7 +40,7 @@
 #define VERSION_MINOR   8
 #define VERSION_PATCH   1
 
-#define SAVEFILE_VERSION 11
+#define SAVEFILE_VERSION 12
 
 /* Added for ZAngband */
 #ifdef USE_SCRIPT
@@ -3776,7 +3776,7 @@ extern int PlayerUID;
 #define FIELD_ACTION_MAX	14	/* The last action + 1 */
 
 
-#define FIELD_ACTION_TYPES  1 /* Number of FIELD_ACT functions */
+#define FIELD_ACTION_TYPES  2 /* Number of FIELD_ACT functions */
 
 
 

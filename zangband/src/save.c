@@ -659,6 +659,57 @@ static void wr_monster(monster_type *m_ptr)
 	wr_byte(0);
 }
 
+/*
+ * Write a "field" record
+ */
+static void wr_field(field_type *f_ptr)
+{
+	int i;
+	
+	wr_s16b(f_ptr->t_idx);
+
+	/* Location */
+	wr_s16b(f_ptr->fy);
+	wr_s16b(f_ptr->fx);
+
+	/* Info flags */
+	wr_u16b(f_ptr->info);
+	
+	/* Counter */
+	wr_s16b(f_ptr->counter);
+	
+	/* Data */
+	for (i = 0; i < 8; i++)
+	{
+		wr_byte(f_ptr->data[i]);
+	}
+
+
+#ifdef USE_SCRIPT
+	{
+		cptr python_field = field_save_callback(f_ptr);
+		if (python_field && *python_field)
+		{
+			wr_s32b(strlen(python_field));
+			wr_string(python_field);
+			string_free(python_field);
+		}
+		else
+		{
+			/* No Python field */
+			wr_s32b(0);
+		}
+	}
+#else /* USE_SCRIPT */
+
+	/* No Python object */
+	wr_s32b(0);
+
+#endif /* USE_SCRIPT */
+}
+
+
+
 
 /*
  * Write a "lore" record
@@ -1234,7 +1285,7 @@ static void save_map(int ymax, int ymin, int xmax, int xmin)
 			c_ptr = area(y,x);
 
 			/* Extract a byte */
-			tmp16s = c_ptr->f_idx;
+			tmp16s = c_ptr->fld_idx;
 
 			/* If the run is broken, or too full, flush it */
 			if ((tmp16s != prev_s16b) || (count == MAX_UCHAR))
@@ -1350,8 +1401,12 @@ static void wr_dungeon(void)
 
 	/* Compact the objects */
 	compact_objects(0);
+	
 	/* Compact the monsters */
 	compact_monsters(0);
+	
+	/* Compact the fields */
+	compact_fields(0);
 
 	/*** Dump objects ***/
 
@@ -1381,6 +1436,20 @@ static void wr_dungeon(void)
 
 		/* Dump it */
 		wr_monster(m_ptr);
+	}
+	
+	/*** Dump the fields ***/
+
+	/* Total fields */
+	wr_u16b(fld_max);
+
+	/* Dump the fields */
+	for (i = 1; i < fld_max; i++)
+	{
+		field_type *f_ptr = &fld_list[i];
+
+		/* Dump it */
+		wr_field(f_ptr);
 	}
 }
 
@@ -1597,7 +1666,7 @@ static bool wr_savefile_new(void)
 		/* Type */
 		wr_u16b(town[i].type);
 
-		/* Locatation */
+		/* Location */
 		wr_byte(town[i].x);
 		wr_byte(town[i].y);
 

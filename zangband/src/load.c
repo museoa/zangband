@@ -1024,6 +1024,44 @@ static void rd_monster(monster_type *m_ptr)
 
 
 
+static void rd_field(field_type *f_ptr)
+{
+	s32b tmp32s;
+	int i;
+
+	/* Type */
+	rd_s16b(&f_ptr->t_idx);
+
+	/* Location */
+	rd_s16b(&f_ptr->fy);
+	rd_s16b(&f_ptr->fx);
+	
+	/* Info flags */
+	rd_u16b(&f_ptr->info);
+	
+	/* Counter */
+	rd_s16b(&f_ptr->counter);
+	
+	/* Data */
+	for (i = 0; i < 8; i++)
+	{
+		rd_byte(&f_ptr->data[i]);
+	}
+
+	rd_s32b(&tmp32s);
+#ifdef USE_SCRIPT
+	if (tmp32s)
+	{
+		char *python_field = (char*) malloc(tmp32s + 1);
+		rd_string(python_field, tmp32s + 1);
+		f_ptr->python = field_load_callback(python_field);
+		free(python_field);
+	}
+#else /* USE_SCRIPT */
+	strip_bytes(tmp32s);
+#endif /* USE_SCRIPT */
+
+}
 
 
 /*
@@ -2622,8 +2660,8 @@ static void load_map(int ymax, int ymin, int xmax, int xmin)
 				/* Access the cave */
 				c_ptr = area(y,x);
 
-				/* Extract "feat" */
-				c_ptr->f_idx = tmp16s;
+				/* Extract field */
+				c_ptr->fld_idx = tmp16s;
 
 				/* Advance/Wrap */
 				if (++x >= xmax)
@@ -2956,6 +2994,66 @@ static errr rd_dungeon(void)
 		r_ptr->cur_num++;
 	}
 
+	if (sf_version > 11)
+	{
+	
+		/*** Fields ***/
+
+		/* Read the field count */
+		rd_u16b(&limit);
+
+		/* Verify maximum */
+		if (limit >= max_fld_idx)
+		{
+			note(format("Too many (%d) field entries!", limit));
+			return (151);
+		}
+
+		/* Read the fields */
+		for (i = 1; i < limit; i++)
+		{
+			int fld_idx;
+
+			field_type temp_field;
+			field_type *f_ptr = &temp_field;
+
+			/* Read the field */
+			rd_field(f_ptr);
+
+
+			/* XXX XXX XXX XXX XXX */
+
+			/* If exists at a sqaure */
+			if ((f_ptr->fy) && (f_ptr->fx))
+			{
+				/* Access the fields location */
+				c_ptr = area(f_ptr->fy, f_ptr->fx);
+
+				/* Build a stack */
+				fld_idx = field_add(f_ptr, &c_ptr->fld_idx);
+			}
+			else
+			{
+				/* Add it to the list */
+				fld_idx = f_pop();
+		
+				if(fld_idx)
+				{	
+					/* Move field to list */
+					field_copy(f_ptr, &fld_list[fld_idx]);
+				}
+			}
+			
+			/* Oops */
+			if (i != fld_idx)
+			{
+				note(format("Field allocation error (%d <> %d)", i, fld_idx));
+				return (152);
+			}
+		}
+	}
+	
+	
 	/*** Success ***/
 
 	/* Regenerate the dungeon for old savefiles and corrupted panic-saves */
