@@ -2637,8 +2637,8 @@ bool borg_spell(int realm, int book, int what)
 
 		/* Report a little bit */
 		borg_note(format
-				  ("# Targetting Landing Zone (%d,%d)", dim_door_y,
-				   dim_door_x));
+				  ("# Targetting Landing Zone (%d,%d)", dim_door_x,
+				   dim_door_y));
 
 		/* Determine "path" */
 		x1 = c_x;
@@ -2834,8 +2834,8 @@ bool borg_mindcr(int spell, int level)
 
 		/* Report a little bit */
 		borg_note(format
-				  ("# Targetting Landing Zone (%d,%d)", dim_door_y,
-				   dim_door_x));
+				  ("# Targetting Landing Zone (%d,%d)", dim_door_x,
+				   dim_door_y));
 
 		/* Determine "path" */
 		x1 = c_x;

@@ -4448,7 +4448,7 @@ void do_cmd_borg(void)
 			borg_display_map_info(0, BORG_SHOW_AVOID);
 
 			/* Get keypress */
-			msg_format("(%d,%d) Avoidance value %d.", c_y, c_x, avoidance);
+			msg_format("(%d,%d) Avoidance value %d.", c_x, c_y, avoidance);
 			msg_print(NULL);
 
 			/* Redraw map */
@@ -4692,7 +4692,7 @@ void do_cmd_borg(void)
 			borg_display_map_info(0, BORG_SHOW_FEAR);
 
 			/* Get keypress */
-			msg_format("(%d,%d) Regional Fear.", c_y, c_x);
+			msg_format("(%d,%d) Regional Fear.", c_x, c_y);
 			msg_print(NULL);
 
 			/* Redraw map */

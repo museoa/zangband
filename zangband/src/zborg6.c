@@ -4333,7 +4333,7 @@ extern int borg_attack_aux_thrust(void)
 	/* Note */
 	borg_note(format
 			  ("# Facing %s at (%d,%d).",
-			   (r_name + r_info[mb_ptr->monster].name), g_y, g_x));
+			   (r_name + r_info[mb_ptr->monster].name), g_x, g_y));
 	borg_note(format
 			  ("# Attacking with weapon '%s'", borg_items[INVEN_WIELD].desc));
 
@@ -4377,7 +4377,7 @@ bool borg_target(int y, int x)
 	}
 	else
 	{
-		borg_note(format("# Targetting location (%d,%d)", y, x));
+		borg_note(format("# Targetting location (%d,%d)", x, y));
 	}
 
 	/* Target mode */
@@ -4425,7 +4425,7 @@ bool borg_target_unknown_wall(int y, int x)
 	bool y_hall = FALSE;
 	bool x_hall = FALSE;
 
-	borg_note(format("# Perhaps wall near targetted location (%d,%d)", y, x));
+	borg_note(format("# Perhaps wall near targetted location (%d,%d)", x, y));
 
 	/* Determine "path" */
 	n_x = c_x;
@@ -4472,7 +4472,7 @@ bool borg_target_unknown_wall(int y, int x)
 			{
 				borg_note(format
 						  ("# Guessing wall (%d,%d) near target (%d,%d)",
-						   n_y, n_x, y, x));
+						   n_x, n_y, x, y));
 				mb_ptr->feat = FEAT_WALL_SOLID;
 				found = TRUE;
 			}
@@ -7396,7 +7396,7 @@ static int borg_attack_aux_racial_thrust(int race, int level, int dam)
 	/* Note */
 	borg_note(format
 			  ("# Facing %s at (%d,%d).",
-			   (r_name + r_info[mb_ptr->monster].name), g_y, g_x));
+			   (r_name + r_info[mb_ptr->monster].name), g_x, g_y));
 	borg_note(format("# Attacking with Racial Attack '%d'", b_d));
 
 	/* Get a direction for attacking */
@@ -13042,7 +13042,7 @@ static bool borg_play_step(int y2, int x2)
 			if (!object_known_p(o_ptr) && chest_traps[o_ptr->pval])
 			{
 				borg_note(format("# Searching a '%s' at (%d,%d)",
-								 k_name + k_info[mb_ptr->object].name, y, x));
+								 k_name + k_info[mb_ptr->object].name, x, y));
 
 				/* Walk onto it */
 				borg_keypress('0');
@@ -13056,7 +13056,7 @@ static bool borg_play_step(int y2, int x2)
 				borg_skill[BI_DEV] - o_ptr->pval >= 13)
 			{
 				borg_note(format("# Disarming a '%s' at (%d,%d)",
-								 k_name + k_info[mb_ptr->object].name, y, x));
+								 k_name + k_info[mb_ptr->object].name, x, y));
 
 				/* Open it */
 				borg_keypress('D');
@@ -13068,7 +13068,7 @@ static bool borg_play_step(int y2, int x2)
 			/* if (o_ptr->pval < 0 || !object_known_p(o_ptr)) */
 			{
 				borg_note(format("# Opening a '%s' at (%d,%d)",
-								 k_name + k_info[mb_ptr->object].name, y, x));
+								 k_name + k_info[mb_ptr->object].name, x, y));
 
 				/* Open it */
 				borg_keypress('o');
@@ -13084,7 +13084,7 @@ static bool borg_play_step(int y2, int x2)
 		/*** Handle other takes ***/
 		/* Message */
 		borg_note(format("# Walking onto a '%s' at (%d,%d)",
-						 k_name + k_info[mb_ptr->object].name, y, x));
+						 k_name + k_info[mb_ptr->object].name, x, y));
 
 		/* Walk onto it */
 		borg_keypress(I2D(dir));

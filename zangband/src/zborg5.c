@@ -124,7 +124,7 @@ static void borg_delete_take(int i)
 
 	/* Note */
 	borg_note(format("# Forgetting an object '%s' at (%d,%d)",
-					 (k_name + k_info[take->k_idx].name), take->y, take->x));
+					 (k_name + k_info[take->k_idx].name), take->x, take->y));
 
 	/* Kill the object */
 	WIPE(take, borg_take);
@@ -237,7 +237,7 @@ static int borg_new_take(int k_idx, char unknown, int x, int y)
 
 	/* Note */
 	borg_note(format("# Creating an object '%s' at (%d,%d)",
-					 (k_name + k_info[take->k_idx].name), y, x));
+					 (k_name + k_info[take->k_idx].name), x, y));
 
 	/* Wipe goals */
 	goal = 0;
@@ -452,8 +452,8 @@ static void borg_fear_grid(cptr who, int y, int x, uint k, bool seen_guy)
 	else
 	{
 		borg_note(format
-				  ("# Fearing grid (%d,%d) value %d because of a non-LOS %s", y,
-				   x, k, who));
+				  ("# Fearing grid (%d,%d) value %d because of a non-LOS %s", x,
+				   y, k, who));
 	}
 
 	/* Current region */
@@ -2157,7 +2157,7 @@ static int borg_locate_kill(cptr who, int y, int x, int r)
 
 		/* Note */
 		borg_note(format("# Converting an object '%s' at (%d,%d)",
-						 (k_name + k_ptr->name), take->y, take->x));
+						 (k_name + k_ptr->name), take->x, take->y));
 
 		/* Save location */
 		x = take->x;
@@ -2236,7 +2236,7 @@ static int borg_locate_kill(cptr who, int y, int x, int r)
 
 	/* Note */
 	borg_note(format("# Ignoring a monster '%s' near (%d,%d)",
-					 (r_name + r_ptr->name), y, x));
+					 (r_name + r_ptr->name), x, y));
 
 	/* Oops */
 	/* this is the case where we know the name of the monster */
@@ -2310,7 +2310,7 @@ static bool borg_handle_self(cptr str)
 	else if (prefix(str, "lite"))
 	{
 		/* Message */
-		borg_note(format("# Called lite at (%d,%d)", o_c_y, o_c_x));
+		borg_note(format("# Called lite at (%d,%d)", o_c_x, o_c_y));
 	}
 
 
