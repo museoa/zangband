@@ -265,6 +265,7 @@ struct infofnt
 
 
 
+
 /**** Graphics Functions ****/
 
 
@@ -308,7 +309,7 @@ static Pixell Infoclr_Pixell(cptr name);
  *
  * Replaced ReadRaw & RemapColors.
  */
-static XImage *ReadBMP(Display *disp, char Name[])
+static XImage *ReadBMP(Display *disp, int depth, char Name[])
 {
 	FILE *f;
 
@@ -319,7 +320,7 @@ static XImage *ReadBMP(Display *disp, char Name[])
 
 	char *Data,cname[8];
 
-	int ncol,depth,x,y;
+	int ncol,x,y;
 
 	RGB clrg;
 
@@ -342,8 +343,6 @@ static XImage *ReadBMP(Display *disp, char Name[])
 		   fread(&clrg,4,1,f);
 		   sprintf(cname,"#%02x%02x%02x",clrg.r,clrg.g,clrg.b);
 		   clr_Pixells[x] = Infoclr_Pixell(cname); }
-
-		depth = DefaultDepth(disp, DefaultScreen(disp));
 		
 		x = 1;
 		y = (depth-1) >> 2;
@@ -2145,6 +2144,13 @@ struct term_data
 
 	XImage *tiles;
 
+#ifdef USE_TRANSPARENCY
+
+	/* Tempory storage for overlaying tiles. */
+	XImage *TmpImage;
+
+#endif
+
 #endif
 
 };
@@ -2651,6 +2657,9 @@ static errr Term_wipe_x11(int x, int y, int n)
  */
 static errr Term_text_x11(int x, int y, int n, byte a, cptr s)
 {
+	/* Mega Hack - don't crash */
+	if (a > 15) Infoclr_set(clr[15]);
+	else
 	/* Draw the text in Xor */
 	Infoclr_set(clr[a]);
 
@@ -2667,12 +2676,27 @@ static errr Term_text_x11(int x, int y, int n, byte a, cptr s)
 /*
  * Draw some graphical characters.
  */
+# ifdef USE_TRANSPARENCY
+static errr Term_pict_x11(int x, int y, int n, const byte *ap, const char *cp, const byte *tap, const char *tcp)
+# else /* USE_TRANSPARENCY */
 static errr Term_pict_x11(int x, int y, int n, const byte *ap, const char *cp)
+# endif /* USE_TRANSPARENCY */
+
 {
-	int i;
+	int i, x1, y1;
+	
 
 	byte a;
 	char c;
+#ifdef USE_TRANSPARENCY
+	byte ta;
+	char tc;
+	
+	int x2, y2;
+	int k,l;
+
+	unsigned long pixel, black;
+#endif /* USE_TRANSPARENCY */
 
 	term_data *td = (term_data*)(Term->data);
 
@@ -2683,16 +2707,62 @@ static errr Term_pict_x11(int x, int y, int n, const byte *ap, const char *cp)
 	{
 		a = *ap++;
 		c = *cp++;
+		
+		/* For extra speed - cache these values */
+		x1 = (c&0x7F) * td->fnt->wid;
+		y1 = (a&0x7F) * td->fnt->hgt;
+		
+#ifdef USE_TRANSPARENCY
+		
+		ta = *tap++;
+		tc = *tcp++;
+		
+		/* For extra speed - cache these values */
+		x2 = (tc&0x7F) * td->fnt->wid;
+		y2 = (ta&0x7F) * td->fnt->hgt;
+		
+		/* Mega Hack^2 - assume the top left corner is "black" */
+		black = XGetPixel(td->tiles, 0, td->fnt->hgt * 6);
+		
+		for (k = 0; k < td->fnt->wid; k++)
+		{
+			for(l = 0; l < td->fnt->hgt; l++)
+			{
+				/* If mask set... */
+				if ((pixel = XGetPixel(td->tiles, x1 + k, y1 + l)) == black)
+				{
+				
+					/* Output from the terrain */
+					pixel = XGetPixel(td->tiles, x2 + k, y2 + l);
+				}			
+				
+				/* Store into the temp storage. */
+				XPutPixel(td->TmpImage, k, l, pixel);
+			}
+		}
+		
+		
+		/* Draw to screen */
+		
+		XPutImage(Metadpy->dpy, td->inner->win,
+		          clr[15]->gc,
+		          td->TmpImage,
+		          0, 0, x, y,
+		          td->fnt->wid, td->fnt->hgt);
+		
 
+#else /* USE_TRANSPARENCY */		
+		
+		/* Draw object / terrain */
 		XPutImage(Metadpy->dpy, td->inner->win,
 		          clr[15]->gc,
 		          td->tiles,
-		          (c&0x7F) * td->fnt->wid,
-		          (a&0x7F) * td->fnt->hgt,
+		          x1, y1,
 		          x, y,
 		          td->fnt->wid, td->fnt->hgt);
-
-		x += td->fnt->wid;
+		
+#endif /* USE_TRANSPARENCY */		
+		x += td->fnt->wid;	
 	}
 
 	/* Success */
@@ -2744,6 +2814,7 @@ static errr term_data_init(term_data *td, bool fixed, cptr name, cptr font)
 #ifdef USE_GRAPHICS
 	/* No graphics yet */
 	td->tiles = NULL;
+	
 #endif /* USE_GRAPHICS */
 
 	/* Initialize the term */
@@ -2806,6 +2877,12 @@ errr init_x11(int argc, char *argv[])
 
 	char filename[1024];
 
+
+#ifdef USE_TRANSPARENCY
+	
+	char *TmpData;
+#endif /* USE_TRANSPARENCY */
+
 #endif /* USE_GRAPHICS */
 
 
@@ -2855,6 +2932,7 @@ errr init_x11(int argc, char *argv[])
 		{
 			/* Use graphics */
 			use_graphics = TRUE;
+			use_transparency = TRUE;
 			size = 16;
 			
 			ANGBAND_GRAF = "new";
@@ -2892,9 +2970,8 @@ errr init_x11(int argc, char *argv[])
 			}
 		}
 	}
-
-	/* Use transparency */
-	use_transparency = use_graphics;
+;
+	
 
 #endif /* USE_GRAPHICS */
 
@@ -2907,8 +2984,6 @@ errr init_x11(int argc, char *argv[])
 	MAKE(xor, infoclr);
 	Infoclr_set(xor);
 	Infoclr_init_ccn("fg", "bg", "xor", 0);
-
-
 
 	/* Initialize the windows */
 	for (i = 0; i < num_term; i++)
@@ -3000,11 +3075,10 @@ errr init_x11(int argc, char *argv[])
 	if (use_graphics)
 	{
 		XImage *tiles_raw;
-
 		
 
 		/* Load the graphics XXX XXX XXX */
-		tiles_raw = ReadBMP(Metadpy->dpy, filename);
+		tiles_raw = ReadBMP(Metadpy->dpy, DefaultDepth(Metadpy->dpy, DefaultScreen(Metadpy->dpy)), filename);
 
 		/* Initialize the windows */
 		for (i = 0; i < num_term; i++)
@@ -3015,6 +3089,25 @@ errr init_x11(int argc, char *argv[])
 			td->tiles = ResizeImage(Metadpy->dpy, tiles_raw, size, size,
 			                        td->fnt->wid, td->fnt->hgt);
 		}
+		
+		
+#ifdef USE_TRANSPARENCY
+		/* Initialize the windows */
+		for (i = 0; i < num_term; i++)
+		{
+			term_data *td = &data[i];
+			
+			TmpData = (char *)malloc(td->fnt->wid * td->fnt->hgt
+		 		* DefaultDepth(Metadpy->dpy, DefaultScreen(Metadpy->dpy)) / 8);
+		
+			td->TmpImage = XCreateImage(Metadpy->dpy,
+				DefaultVisual(Metadpy->dpy, DefaultScreen(Metadpy->dpy)),
+				DefaultDepth(Metadpy->dpy, DefaultScreen(Metadpy->dpy)),
+				ZPixmap, 0, TmpData,
+				td->fnt->wid, td->fnt->hgt, 8, 0);
+		
+		}
+#endif /* USE_TRANSPARENCY */		
 	}
 
 #endif /* USE_GRAPHICS */
