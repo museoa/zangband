@@ -806,36 +806,6 @@ lappend data \
 Global groups,r_info $data
 unset data
 
-# NSValueManager::Verify --
-#
-#	Check that all the objects, monsters, and artifacts are accounted
-#	for in the groups,x_info lists.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSValueManager::Verify {} {
-
-	foreach info {a_info k_info r_info} {
-		foreach idx [angband $info find] {
-			set match($idx) 0
-		}
-		foreach {label findSpec} [Global groups,$info] {
-			if {[string equal $info r_info]} {
-				set findSpec "-unique no $findSpec"
-			}
-			foreach idx [eval angband $info find $findSpec] {
-				set match($idx) 1
-			}
-		}
-	}
-
-	return
-}
-
 proc DumpValueManager {} {
 
 	set win .dumpvalue

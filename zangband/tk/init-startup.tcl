@@ -399,7 +399,7 @@ proc NSInitStartup::FinalizeStartupWindow {} {
 	button .opengame \
 		-text [mc Open] -command OpenGame -width 11 -underline 0
 	button .quit \
-		-text [mc Quit] -command "angband game quit" -width 11 -underline 0
+		-text [mc Quit] -command exit -width 11 -underline 0
 
 	switch -- [Platform] {
 		windows {
@@ -582,8 +582,6 @@ proc angband_initialized {} {
 	NSModule::IndexLoad [PathTk library moduleIndex.tcl]
 
 	NSInitStartup::FinalizeStartupWindow
-
-	if {$::DEBUG} { NSValueManager::Verify }
 
 	Source config.tcl
 	NSConfig::InitModule
