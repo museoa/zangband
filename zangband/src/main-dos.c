@@ -1836,22 +1836,30 @@ static bool init_graphics(void)
 		if ((tiles = load_bitmap(filename, tiles_pallete)) != NULL)
 		{
 			int i;
+			cptr graf_mode;
+			
 
 			/*
 			 * Set the graphics mode to "new" if Adam Bolt's
 			 * new 16x16 tiles are used.
 			 */
-			
-#error  Fixme:  Replace ANGBAND_GRAF with use_graphics
-#error	If ANGBAND_GRAF == new:  use_graphics = GRAPHICS_ADAM_BOLT
-#error	If ANGBAND_GRAF == old:  use_graphics = GRAPHICS_ORIGINAL
-#error	If ANGBAND_GRAF == none: use_graphics = GRAPHICS_NONE			
-			
-			ANGBAND_GRAF = get_config_string(section, "graf-mode", "old");
+			graf_mode = get_config_string(section, "graf-mode", "old");
 
-			/* Use transparent blits */
-			if (streq(ANGBAND_GRAF, "new"))
+			if (streq(graf_mode, "new"))
+			{
+				arg_graphics = GRAPHICS_ADAM_BOLT;
+
+				/* Use transparent blits */
 				use_transparency = TRUE;
+			}
+			else if (streq(graf_mode, "old"))
+			{
+				arg_graphics = GRAPHICS_ORIGINAL;
+			}
+			else
+			{
+				arg_graphics = GRAPHICS_NONE;
+			}
 
 			/* Select the bitmap pallete */
 			set_palette_range(tiles_pallete, 0, COLOR_OFFSET - 1, 0);
