@@ -78,11 +78,6 @@ proc NSStatus::InitModule {} {
 	set Priv(names) [list state winner cut stun hunger blind confused \
 		afraid poisoned speed study]
 	
-	# These are "extra" status messages not in the non-Tk version
-	lappend Priv(names) blessed hero berserk acid cold elec fire pois \
-		protevil shield invuln fast slow esp infra see_invis recall \
-		wraith image
-
 	#
 	# Assign "color" to each message
 	#
@@ -92,12 +87,6 @@ proc NSStatus::InitModule {} {
 	}
 	foreach status [list state winner speed study recall] {
 		set Priv($status,type) info
-	}
-	foreach status [list blessed hero berserk acid cold elec fire pois protevil shield invuln fast infra see_invis] {
-		set Priv($status,type) good
-	}
-	foreach status [list esp wraith] {
-		set Priv($status,type) good
 	}
 
 	# Sanity check
@@ -109,11 +98,6 @@ proc NSStatus::InitModule {} {
 
 	# Check each status keyword
 	foreach status $Priv(names) {
-
-		# Sanity check
-		if {$::DEBUG} {
-			angband player status $status
-		}
 
 		# Remember the item id
 		set Priv($status,itemId) 0

@@ -698,6 +698,9 @@ proc NSMiscWindow::MiscSet {} {
 	} else {
 		$canvas itemconfigure txt,EXP -text [mc ADV]
 	}
+
+if 0 {
+
 	eval bind_Py_exp [angband player exp]
 	
 	foreach stat [angband info stat_name] {
@@ -715,6 +718,7 @@ proc NSMiscWindow::MiscSet {} {
 	}
 
 	Equippy
+}
 
 	return
 }
@@ -1283,6 +1287,8 @@ proc NSMiscWindow::CanvasAddTextItem {canvas font col row width fill text justif
 
 proc NSMiscWindow::bind_Stat {stat} {
 
+if 0 {
+
 	set canvas [Global misc,canvas]
 
 	angband player stat $stat statInfo
@@ -1300,6 +1306,8 @@ proc NSMiscWindow::bind_Stat {stat} {
 		$canvas itemconfigure $stat -text $value
 		FlashCanvasText $canvas $stat White $fill 4
 	}
+
+}
 
 	return
 }

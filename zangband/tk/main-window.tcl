@@ -702,13 +702,7 @@ if 0 {
 
 	NSMenu::MenuInsertEntries $mbarId -end MENU_HELP $entries
 	
-	# Hack -- Accelerators depend on current keymap!
-	SynchMenuAccel $oop 1
-
-	# Hack -- Some labels depends on always_pickup
-	AlwaysPickupChanged $oop
-
-NSMenu::SetIdentArray $mbarId
+	NSMenu::SetIdentArray $mbarId
 
 	return
 }
@@ -1750,49 +1744,18 @@ proc NSMainWindow::SynchMenuAccel {oop force} {
 		set menuId [lindex $entry 0]
 		set index [lindex $entry 1]
 		set menu $NSMenu($menuId,menu)
+
+		if 0 {
+		
 		set string [angband keymap find $key]
 		regsub {\^} $string Ctrl+ string
 		$menu entryconfigure $index -accelerator $string
+		}
 	}
 
 	return
 }
 
-# NSMainWindow::AlwaysPickupChanged --
-#
-#	Called when the always_pickup option changes. I fiddle with the
-#	appearance of some menu entries.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSMainWindow::AlwaysPickupChanged {oop} {
-
-	set mbarId [Info $oop mbarId]
-
-	if {[Setting always_pickup]} {
-		set string1 " (With Pickup)"
-		set string2 ""
-	} else {
-		set string1 ""
-		set string2 " (With Pickup)"
-	}
-	
-	NSMenu::EntryConfigure $mbarId E_ACTION_WALK \
-		-label [mc Walk$string1]
-	NSMenu::EntryConfigure $mbarId E_ACTION_WALK_TOGGLE \
-		-label [mc Walk$string2]
-
-	NSMenu::EntryConfigure $mbarId E_ACTION_STAY \
-		-label [mc Stay$string1]
-	NSMenu::EntryConfigure $mbarId E_ACTION_STAY_TOGGLE \
-		-label [mc Stay$string2]
-
-	return
-}
 
 # NSMainWindow::MouseCmd --
 #
@@ -2735,8 +2698,13 @@ proc DoKeymapCmd {prefix command suffix} {
 		bracketright {set command \]}
 		quotedbl {set command \"}
 	}
+	
+	if 0 {
+	
 	set command [angband keymap find $command]
 	angband keypress $prefix$command$suffix
+
+	}
 
 	return
 }

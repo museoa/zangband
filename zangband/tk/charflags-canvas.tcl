@@ -420,47 +420,9 @@ proc NSCharFlagsCanvas::SetInfo {oop} {
 		$canvas itemconfigure $flag,py -fill White -outline White
 		set visible($flag) 1
 	}
-	set desc "[angband player name], the [angband player race]\
-		[angband player class]"
+	set desc "name, the race and class"
 	NSBalloon::Set_Canvas $header py $desc
 
-	# Hack -- Add special racial flag-like things
-	switch [angband player race] {
-		Golem {
-			set visible(RACE_IM_CUT) 1
-			set visible(RACE_IM_STUN) 1
-			$canvas itemconfigure RACE_IM_CUT,py -fill White -outline White
-			$canvas itemconfigure RACE_IM_STUN,py -fill White -outline White
-		}
-		Skeleton {
-			set visible(RACE_IM_CUT) 1
-			set visible(RACE_RES_SANITY) 1
-			$canvas itemconfigure RACE_IM_CUT,py -fill White -outline White
-			$canvas itemconfigure RACE_RES_SANITY,py -fill White -outline White
-		}
-		Spectre {
-			set visible(RACE_IM_CUT) 1
-			set visible(RACE_RES_SANITY) 1
-			set visible(RACE_EAT_NETHER) 1
-			$canvas itemconfigure RACE_IM_CUT,py -fill White -outline White
-			$canvas itemconfigure RACE_RES_SANITY,py -fill White -outline White
-			$canvas itemconfigure RACE_EAT_NETHER,py -fill White -outline White
-		}
-		Vampire {
-			set visible(RACE_IM_DARK) 1
-			set visible(RACE_RES_SANITY) 1
-			$canvas itemconfigure RACE_IM_DARK,py -fill White -outline White
-			$canvas itemconfigure RACE_RES_SANITY,py -fill White -outline White
-		}
-		Zombie {
-			if {[angband player level] > 11} {
-				set visible(RACE_IM_CUT) 1
-				$canvas itemconfigure RACE_IM_CUT,py -fill White -outline White
-			}
-			set visible(RACE_RES_SANITY) 1
-			$canvas itemconfigure RACE_RES_SANITY,py -fill White -outline White
-		}
-	}
 
 	foreach flag $Priv(flags) {
 		if {!$visible($flag)} {
@@ -521,8 +483,7 @@ proc NSCharFlagsCanvas::StatusBar_Slot {oop slot} {
 
 proc NSCharFlagsCanvas::StatusBar_Player {oop} {
 
-	set desc "[angband player name], the [angband player race]\
-		[angband player class]"
+	set desc " name, the  race and class"
 
 	[Info $oop statusBar] itemconfigure t1 -text $desc
 

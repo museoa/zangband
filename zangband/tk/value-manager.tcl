@@ -667,7 +667,6 @@ proc Setting {keyword args} {
 				set keyword plain_descriptions
 				set value [expr {$value ? 0 : 1}]
 				angband setting set $keyword $value
-#				qegenerate <Setting-show_flavors>
 				return
 			}
 		}
@@ -675,7 +674,6 @@ proc Setting {keyword args} {
 			scroll_follow -
 			show_icons {
 				Value $keyword [NSUtils::GetBoolean $value]
-				qegenerate <Setting-$keyword>
 			}
 			default {
 				angband setting set $keyword $value

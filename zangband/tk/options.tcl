@@ -943,7 +943,6 @@ proc NSOptions::GetPage {page} {
 
 		Object {
 			lappend optionList \
-				always_pickup \
 				stack_force_notes \
 				stack_force_costs \
 				stack_allow_items \
