@@ -158,10 +158,10 @@ cptr item_activation(const object_type *o_ptr)
 	/* Require activation ability */
 	if (!(o_ptr->flags3 & (TR3_ACTIVATE))) return ("nothing");
 
-	if (o_ptr->activate > 127)
+	if (o_ptr->activate)
 	{
 		/* Some artifacts can be activated */
-		switch (o_ptr->activate - 128)
+		switch (o_ptr->activate)
 		{
 			case ART_NARTHANC:
 			{

@@ -1620,7 +1620,7 @@ static void process_world(void)
 		}
 
 		/* Make a chainsword noise */
-		if ((o_ptr->activate == ART_CHAINSWORD + 128) &&
+		if ((o_ptr->activate == ART_CHAINSWORD) &&
 			one_in_(CHAINSWORD_NOISE))
 		{
 			char noise[1024];

@@ -905,9 +905,9 @@ static void analyze_misc(const object_type *o_ptr, char *misc_desc)
 	artifact_type *a_ptr;
 
 	/* Only look at artifacts */
-	if (o_ptr->activate < 128) return;
+	if (!o_ptr->activate) return;
 
-	a_ptr = &a_info[o_ptr->activate - 128];
+	a_ptr = &a_info[o_ptr->activate];
 
 	strnfmt(misc_desc, 80, "Level %u, Rarity %u, %d.%d lbs, %ld Gold",
 			(uint)a_ptr->level, (uint)a_ptr->rarity,
@@ -1169,7 +1169,7 @@ static object_type *make_fake_artifact(int a_idx)
 	o_ptr->weight = a_ptr->weight;
 
 	/* Mega-Hack -- set activation */
-	o_ptr->activate = a_idx + 128;
+	o_ptr->activate = a_idx;
 
 	/* Do not make another one */
 	a_ptr->cur_num = 1;

@@ -1688,7 +1688,7 @@ void py_attack(int x, int y)
 				 * should be pythonized.
 				 */
 				if ((o_ptr->flags1 & TR1_VORPAL) &&
-					(one_in_((o_ptr->activate + 128 == ART_VORPAL_BLADE)
+					(one_in_((o_ptr->activate == ART_VORPAL_BLADE)
 							 ? 3 : 6)))
 				{
 					/*
@@ -1703,9 +1703,9 @@ void py_attack(int x, int y)
 					int mult = 2;
 
 					int inc_chance =
-						(o_ptr->activate + 128 == ART_VORPAL_BLADE) ? 2 : 4;
+						(o_ptr->activate == ART_VORPAL_BLADE) ? 2 : 4;
 
-					if (o_ptr->activate + 128 == ART_VORPAL_BLADE)
+					if (o_ptr->activate == ART_VORPAL_BLADE)
 					{
 						msgf("Your Vorpal Blade goes snicker-snack!");
 					}

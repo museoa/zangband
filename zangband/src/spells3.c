@@ -2106,10 +2106,10 @@ void identify_item(object_type *o_ptr)
 	object_known(o_ptr);
 
 	/* Save knowledge of artifact */
-	if (o_ptr->activate > 127)
+	if (o_ptr->activate)
 	{
 		/* Have we seen it before? */
-		if (a_info[o_ptr->activate - 128].cur_num != 2)
+		if (a_info[o_ptr->activate].cur_num != 2)
 		{
 			/*
 			 * If the item was an artifact, and if the
@@ -2122,7 +2122,7 @@ void identify_item(object_type *o_ptr)
 			}
 		}
 
-		a_info[o_ptr->activate - 128].cur_num = 2;
+		a_info[o_ptr->activate].cur_num = 2;
 	}
 
 	/* Recalculate bonuses */

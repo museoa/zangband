@@ -534,11 +534,19 @@ static void rd_item(object_type *o_ptr)
 		else
 			rd_u32b(&o_ptr->kn_flags4);
 
-		/* Remove old randart activations */
-		if (o_ptr->activate && o_ptr->activate < 128)
+		if (o_ptr->activate && sf_version < 46)
 		{
-			o_ptr->activate = 0;
-			o_ptr->flags3 &= ~TR3_ACTIVATE;
+			if (o_ptr->activate < 128)
+			{
+				/* Remove old randart activations */
+				o_ptr->activate = 0;
+				o_ptr->flags3 &= ~TR3_ACTIVATE;
+			}
+			else
+			{
+				/* Now just use a_idx */
+				o_ptr->activate -= 128;
+			}
 		}
 
 		/* 
@@ -655,7 +663,7 @@ static void rd_item(object_type *o_ptr)
 			o_ptr->flags4 |= a_ptr->flags4;
 
 			/* Mega-Hack -- set activation */
-			o_ptr->activate = name1 + 128;
+			o_ptr->activate = name1;
 
 			/* Save the inscription */
 			o_ptr->xtra_name = quark_add(a_name + a_ptr->name);

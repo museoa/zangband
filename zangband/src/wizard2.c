@@ -899,6 +899,7 @@ static void wiz_tweak_item(object_type *o_ptr)
 	o_ptr->to_d = atoi(tmp_val);
 	wiz_display_item(o_ptr);
 
+	/* XXX XXX XXX Very dangerous... */
 	strnfmt(tmp_val, 80, "%d", (int)o_ptr->activate);
 	if (!get_string(tmp_val, 6, "Enter new 'activate' setting: ")) return;
 	o_ptr->activate = atoi(tmp_val);
@@ -914,8 +915,8 @@ static object_type *wiz_reroll_item(object_type *o_ptr)
 	char ch;
 
 	/* Hack -- leave normal artifacts alone */
-	if ((o_ptr->flags3 & TR3_INSTA_ART) &&
-		(o_ptr->activate > 128)) return (o_ptr);
+	if ((o_ptr->flags3 & TR3_INSTA_ART) && o_ptr->activate) 
+		return (o_ptr);
 
 	/* Main loop. Ask for magification and artifactification */
 	while (TRUE)
@@ -928,9 +929,9 @@ static object_type *wiz_reroll_item(object_type *o_ptr)
 			("[a]ccept, [w]orthless, [n]ormal, [e]xcellent, [s]pecial? ", &ch))
 		{
 			/* Preserve wizard-generated artifacts */
-			if ((o_ptr->flags3 & TR3_INSTA_ART) && (o_ptr->activate > 128))
+			if ((o_ptr->flags3 & TR3_INSTA_ART) && o_ptr->activate)
 			{
-				a_info[o_ptr->activate - 128].cur_num = 0;
+				a_info[o_ptr->activate].cur_num = 0;
 				o_ptr->activate = 0;
 			}
 
@@ -942,9 +943,9 @@ static object_type *wiz_reroll_item(object_type *o_ptr)
 		if (ch == 'A' || ch == 'a') break;
 
 		/* Preserve wizard-generated artifacts */
-		if ((o_ptr->flags3 & TR3_INSTA_ART) && (o_ptr->activate > 128))
+		if ((o_ptr->flags3 & TR3_INSTA_ART) && o_ptr->activate)
 		{
-			a_info[o_ptr->activate - 128].cur_num = 0;
+			a_info[o_ptr->activate].cur_num = 0;
 			o_ptr->activate = 0;
 
 			/* Remove the artifact flag */

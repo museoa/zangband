@@ -401,10 +401,10 @@ void wipe_o_list(void)
 
 		/* Preserve artifacts */
 		if (preserve_mode && (o_ptr->flags3 & TR3_INSTA_ART) &&
-			(o_ptr->activate > 127) &&
-			(a_info[o_ptr->activate - 128].cur_num == 1))
+			o_ptr->activate &&
+			(a_info[o_ptr->activate].cur_num == 1))
 		{
-			a_info[o_ptr->activate - 128].cur_num = 0;
+			a_info[o_ptr->activate].cur_num = 0;
 		}
 
 		/* Access location */
@@ -448,10 +448,10 @@ void wipe_objects(int rg_idx)
 
 		/* Preserve artifacts */
 		if (preserve_mode && (o_ptr->flags3 & TR3_INSTA_ART) &&
-			(o_ptr->activate > 127) &&
-			(a_info[o_ptr->activate - 128].cur_num == 1))
+			o_ptr->activate &&
+			(a_info[o_ptr->activate].cur_num == 1))
 		{
-			a_info[o_ptr->activate - 128].cur_num = 0;
+			a_info[o_ptr->activate].cur_num = 0;
 		}
 
 		/* Delete the object */
@@ -1111,87 +1111,6 @@ s32b flag_cost(const object_type *o_ptr, int plusses)
 	if (o_ptr->flags4 & TR4_CANT_EAT) total -= 500;
 	if (o_ptr->flags4 & TR4_SLOW_HEAL) total -= 2000;
 
-
-	/* Also, give some extra for activatable powers... */
-	if (o_ptr->xtra_name && (o_ptr->flags3 & TR3_ACTIVATE) &&
-		(o_ptr->activate < 128))
-	{
-		int type = o_ptr->activate;
-
-		if (type == ACT_SUNLIGHT) total += 250;
-		else if (type == ACT_BO_MISS_1) total += 250;
-		else if (type == ACT_BA_POIS_1) total += 300;
-		else if (type == ACT_BO_ELEC_1) total += 250;
-		else if (type == ACT_BO_ACID_1) total += 250;
-		else if (type == ACT_BO_COLD_1) total += 250;
-		else if (type == ACT_BO_FIRE_1) total += 250;
-		else if (type == ACT_BA_COLD_1) total += 750;
-		else if (type == ACT_BA_FIRE_1) total += 1000;
-		else if (type == ACT_DRAIN_1) total += 500;
-		else if (type == ACT_BA_COLD_2) total += 1250;
-		else if (type == ACT_BA_ELEC_2) total += 1500;
-		else if (type == ACT_DRAIN_2) total += 750;
-		else if (type == ACT_VAMPIRE_1) total = 1000;
-		else if (type == ACT_BO_MISS_2) total += 1000;
-		else if (type == ACT_BA_FIRE_2) total += 1750;
-		else if (type == ACT_BA_COLD_3) total += 2500;
-		else if (type == ACT_BA_ELEC_3) total += 2500;
-		else if (type == ACT_WHIRLWIND) total += 7500;
-		else if (type == ACT_VAMPIRE_2) total += 2500;
-		else if (type == ACT_CALL_CHAOS) total += 5000;
-		else if (type == ACT_ROCKET) total += 5000;
-		else if (type == ACT_DISP_EVIL) total += 4000;
-		else if (type == ACT_DISP_GOOD) total += 3500;
-		else if (type == ACT_BA_MISS_3) total += 5000;
-		else if (type == ACT_CONFUSE) total += 500;
-		else if (type == ACT_SLEEP) total += 750;
-		else if (type == ACT_QUAKE) total += 600;
-		else if (type == ACT_TERROR) total += 2500;
-		else if (type == ACT_TELE_AWAY) total += 2000;
-		else if (type == ACT_GENOCIDE) total += 10000;
-		else if (type == ACT_MASS_GENO) total += 10000;
-		else if (type == ACT_CHARM_ANIMAL) total += 7500;
-		else if (type == ACT_CHARM_UNDEAD) total += 10000;
-		else if (type == ACT_CHARM_OTHER) total += 10000;
-		else if (type == ACT_CHARM_ANIMALS) total += 12500;
-		else if (type == ACT_CHARM_OTHERS) total += 17500;
-		else if (type == ACT_SUMMON_ANIMAL) total += 10000;
-		else if (type == ACT_SUMMON_PHANTOM) total += 12000;
-		else if (type == ACT_SUMMON_ELEMENTAL) total += 15000;
-		else if (type == ACT_SUMMON_DEMON) total += 20000;
-		else if (type == ACT_SUMMON_UNDEAD) total += 20000;
-		else if (type == ACT_CURE_LW) total += 500;
-		else if (type == ACT_CURE_MW) total += 750;
-		else if (type == ACT_REST_LIFE) total += 7500;
-		else if (type == ACT_REST_ALL) total += 15000;
-		else if (type == ACT_CURE_700) total += 10000;
-		else if (type == ACT_CURE_1000) total += 15000;
-		else if (type == ACT_ESP) total += 1500;
-		else if (type == ACT_BERSERK) total += 800;
-		else if (type == ACT_PROT_EVIL) total += 5000;
-		else if (type == ACT_RESIST_ALL) total += 5000;
-		else if (type == ACT_SPEED) total += 15000;
-		else if (type == ACT_XTRA_SPEED) total += 25000;
-		else if (type == ACT_WRAITH) total += 25000;
-		else if (type == ACT_INVULN) total += 25000;
-		else if (type == ACT_LIGHT) total += 150;
-		else if (type == ACT_MAP_LIGHT) total += 500;
-		else if (type == ACT_DETECT_ALL) total += 1000;
-		else if (type == ACT_DETECT_XTRA) total += 12500;
-		else if (type == ACT_ID_FULL) total += 10000;
-		else if (type == ACT_ID_PLAIN) total += 1250;
-		else if (type == ACT_RUNE_EXPLO) total += 4000;
-		else if (type == ACT_RUNE_PROT) total += 10000;
-		else if (type == ACT_SATIATE) total += 2000;
-		else if (type == ACT_DEST_DOOR) total += 100;
-		else if (type == ACT_STONE_MUD) total += 1000;
-		else if (type == ACT_RECHARGE) total += 1000;
-		else if (type == ACT_ALCHEMY) total += 10000;
-		else if (type == ACT_DIM_DOOR) total += 10000;
-		else if (type == ACT_TELEPORT_1) total += 500;
-		else if (type == ACT_TELEPORT_2) total += 2000;
-		else if (type == ACT_RECALL) total += 7500;
-	}
 
 	return total;
 }
@@ -2116,7 +2035,7 @@ static void object_mention(object_type *o_ptr)
 	/* Artifact */
 	if (o_ptr->flags3 & TR3_INSTA_ART)
 	{
-		if (o_ptr->activate > 127)
+		if (o_ptr->activate)
 		{
 			/* Silly message */
 			type = "Artifact (";
@@ -2392,7 +2311,7 @@ static object_type *make_artifact(void)
 		o_ptr->weight = a_ptr->weight;
 
 		/* Mega-Hack XXX XXX -- set activation */
-		o_ptr->activate = i + 128;
+		o_ptr->activate = i;
 
 		/* Do not make another one */
 		a_ptr->cur_num = 1;
@@ -4536,9 +4455,9 @@ static bool put_object(object_type *o_ptr, int x, int y)
 
 	/* Paranoia - preserve artifacts */
 	if ((preserve_mode) && (o_ptr->flags3 & TR3_INSTA_ART) &&
-		(o_ptr->activate > 127))
+		o_ptr->activate)
 	{
-		a_info[o_ptr->activate - 128].cur_num = 0;
+		a_info[o_ptr->activate].cur_num = 0;
 	}
 
 	/* Failure */

@@ -2380,9 +2380,9 @@ bool activate_effect(object_type *o_ptr)
 	activate = o_ptr->activate;
 
 	/* Normal artifacts */
-	if (activate > 127)
+	if (activate)
 	{
-		switch (activate - 128)
+		switch (activate)
 		{
 			case ART_GALADRIEL:
 			{
@@ -3026,7 +3026,7 @@ void random_artifact_resistance(object_type *o_ptr)
 	bool give_resistance = FALSE, give_power = FALSE;
 
 	/* Terror Mask is for warriors... */
-	if (o_ptr->activate == ART_TERROR + 128)
+	if (o_ptr->activate == ART_TERROR)
 	{
 		if (p_ptr->rp.pclass == CLASS_WARRIOR)
 		{
@@ -3041,7 +3041,7 @@ void random_artifact_resistance(object_type *o_ptr)
 		}
 	}
 
-	switch (o_ptr->activate - 128)
+	switch (o_ptr->activate)
 	{
 		case ART_CELEBORN:
 		case ART_ARVEDUI:
@@ -3139,7 +3139,7 @@ void create_named_art(int a_idx, int x, int y)
 	q_ptr = object_prep(i);
 
 	/* Set the activation */
-	q_ptr->activate = a_idx + 128;
+	q_ptr->activate = a_idx;
 
 	/* Do not make another one */
 	a_ptr->cur_num = 1;

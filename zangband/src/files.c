@@ -1525,7 +1525,7 @@ static void display_player_abilities(void)
 	{
 		/* Is there a vorpal effect we know about? */
 		if (object_known_p(o_ptr) &&
-			(o_ptr->activate - 128 == ART_VORPAL_BLADE))
+			(o_ptr->activate == ART_VORPAL_BLADE))
 		{
 			/* vorpal blade */
 			avgdam *= 786;
