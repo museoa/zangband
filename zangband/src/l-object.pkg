@@ -1011,6 +1011,7 @@ struct object_type
 	u32b flags1;        /* Flags, set 1 */
 	u32b flags2;        /* Flags, set 2 */
 	u32b flags3;        /* Flags, set 3 */
+	u32b flags4;            /* Flags, set 4 */
 	
 	u32b kn_flags1;     /* Known Flags, set 1 */
 	u32b kn_flags2;     /* Known Flags, set 2 */

@@ -445,7 +445,7 @@ L:MAKE:	add_ego_power(EGO_XTRA_SUSTAIN, object)
 L:MAKE:	if one_in_(4) then
 L:MAKE:		object.flags1 = bOr(object.flags1, TR1_BLOWS)
 L:MAKE:		object.pval = randint1(4) - object.dd / 2
-L:MAKE:		if object.pval < 1 then object.pval = 1
+L:MAKE:		if object.pval < 1 then object.pval = 1 end
 L:MAKE:	end
 
 # OneSustain
