@@ -123,7 +123,7 @@ L:LOAD:set_corpse_size(field, corpse_type(r_info[race].d_char))
 L:SPEC:local race
 L:SPEC:race = monst_race(field.data[1] * 256 + field.data[2])
 L:SPEC:summon_cloned_creature(field.fx, field.fy, race, pet)
-L:SPEC:deleteme
+L:SPEC:deleteme()
 L:LOOK:corpse_look()
 L:EXIT:corpse_decay()
 
@@ -140,7 +140,7 @@ L:LOAD:set_corpse_size(field, corpse_type(r_info[race].d_char))
 L:SPEC:local race
 L:SPEC:race = monst_race(field.data[1] * 256 + field.data[2])
 L:SPEC:summon_cloned_creature(field.fx, field.fy, race, pet)
-L:SPEC:deleteme
+L:SPEC:deleteme()
 L:LOOK:corpse_look()
 L:EXIT:corpse_decay()
 
@@ -154,6 +154,7 @@ F:2,field_action_hit_trap_door
 L:INTERT:action = ACT_DISARM
 L:INTER:trap_disarm(6)
 L:TARGET:trap_gf()
+L:PENTER:
 
 # Pit
 N:7:pit
