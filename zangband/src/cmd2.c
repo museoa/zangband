@@ -1207,6 +1207,30 @@ static bool do_cmd_tunnel_aux(int y, int x)
 		}
 	}
 
+	/* Jungle */
+	else if (c_ptr->feat == FEAT_JUNGLE) 
+	{
+		/* Chop Down */
+		if ((p_ptr->skill_dig > 10 + rand_int(800)) && twall(y, x, FEAT_BUSH))
+		{
+			msg_print("You have cleared away the jungle.");
+
+			chg_virtue(V_DILIGENCE, 1);
+			chg_virtue(V_NATURE, -2);
+		}
+
+		/* Keep trying */
+		else
+		{
+			/* We may continue chopping */
+			msg_print("You chop away at the undergrowth.");
+			more = TRUE;
+
+			/* Occasional Search XXX XXX */
+			if (rand_int(100) < 25) search();
+		}
+	}
+
 
 	/* Granite + mountain side */
 	else if (((c_ptr->feat >= FEAT_WALL_EXTRA) &&
