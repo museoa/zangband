@@ -151,10 +151,11 @@ typedef uint (*vstrnfmt_aux_func) (char *buf, uint max, cptr fmt, va_list *vp);
 static uint vstrnfmt_aux_dflt(char *buf, uint max, cptr fmt, va_list *vp)
 {
 	uint len;
+    
+    vptr arg;
 
 	/* Unused parameter */
 	(void)fmt;
-    vptr arg;
     
     /* Get the argument */
 	arg = va_arg(*vp, vptr);
