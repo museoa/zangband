@@ -522,8 +522,6 @@ void apply_object_trigger(int trigger_id, object_type *o_ptr, cptr format, ...)
 	else
 		return;
 	
-	debug_lua_stack();
-	
 	/* Save parameter so recursion works. */
 	lua_getglobal (L, "object");
 	if (tolua_istype(L, -1, tolua_tag(L, "object_type"), 0))
