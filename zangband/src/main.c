@@ -431,20 +431,6 @@ int main(int argc, char *argv[])
 	}
 #endif /* USE_286 */
 
-
-#ifdef SET_UID
-
-	/* Default permissions on files */
-	(void)umask(022);
-
-#ifdef SECURE
-	/* Authenticate */
-	Authenticate();
-#endif /* SECURE */
-
-#endif /* SET_UID */
-
-
 	/* Get the file paths */
 	init_stuff();
 

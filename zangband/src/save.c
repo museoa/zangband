@@ -1835,19 +1835,6 @@ bool save_player(void)
 
 	char safe[1024];
 
-
-#ifdef SET_UID
-
-# ifdef SECURE
-
-	/* Get "games" permissions */
-	beGames();
-
-# endif
-
-#endif
-
-
 	/* New savefile */
 	strnfmt(safe, 1024, "%s.new", savefile);
 
@@ -1918,18 +1905,6 @@ bool save_player(void)
 		/* Success */
 		result = TRUE;
 	}
-
-
-#ifdef SET_UID
-
-# ifdef SECURE
-
-	/* Drop "games" permissions */
-	bePlayer();
-
-# endif
-
-#endif
 
 
 	/* Return the result */
@@ -2253,34 +2228,11 @@ void remove_loc(void)
 {
 #ifdef VERIFY_SAVEFILE
 	char temp[1024];
-#endif /* VERIFY_SAVEFILE */
-
-#ifdef SET_UID
-# ifdef SECURE
-
-	/* Get "games" permissions */
-	beGames();
-
-# endif	/* SECURE */
-#endif /* SET_UID */
-
-#ifdef VERIFY_SAVEFILE
 
 	/* Lock on savefile */
 	strnfmt(temp, 1024, "%s.lok", savefile);
 
 	/* Remove lock file */
 	fd_kill(temp);
-
 #endif /* VERIFY_SAVEFILE */
-
-#ifdef SET_UID
-# ifdef SECURE
-
-	/* Drop "games" permissions */
-	bePlayer();
-
-# endif	/* SECURE */
-#endif /* SET_UID */
-
 }

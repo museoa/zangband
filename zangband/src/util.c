@@ -118,8 +118,15 @@ void safe_setuid_grab(void)
 }
 
 
+/*
+ * Initialise things for multiuser machines
+ * Pay special attention to permisions.
+ */
 void init_setuid(void)
 {
+	/* Default permissions on files */
+	(void)umask(022);
+
 	/* Get the user id (?) */
 	player_uid = getuid();
 
