@@ -233,7 +233,7 @@ void get_grid_info(int y, int x, t_grid *gridPtr)
 #endif /* ALLOW_PILE_IMAGE */
 
 	/* Feature */
-	feat = cave_feat(y, x);
+	feat = cave[y][x].feat;
 
 	/* Apply "mimic" field */
 	if (cave[y][x].mimic)
@@ -243,7 +243,7 @@ void get_grid_info(int y, int x, t_grid *gridPtr)
 	feat = f_info[feat].mimic;
 
 	/* Monster/Player */
-	m_idx = cave_m_idx(y, x);
+	m_idx = cave[y][x].m_idx;
 
 	if ((y == p_ptr_py) && (x == p_ptr_px))
 		m_idx = -1;
@@ -262,7 +262,7 @@ void get_grid_info(int y, int x, t_grid *gridPtr)
 	}
 
 	/* Cave flags */
-	info = cave_info(y, x);
+	info = cave[y][x].info;
 
 	/* Boring grids (floors, etc) */
 	if (g_feat_flag[feat] & FEAT_FLAG_BORING)
@@ -303,7 +303,7 @@ void get_grid_info(int y, int x, t_grid *gridPtr)
 	}
 
 	/* Objects */
-	for (this_o_idx = cave_o_idx(y, x); this_o_idx; this_o_idx = next_o_idx)
+	for (this_o_idx = cave[y][x].o_idx; this_o_idx; this_o_idx = next_o_idx)
 	{
 		object_type *o_ptr;
 
@@ -742,7 +742,7 @@ void get_display_info(int y, int x, t_display *displayPtr)
 
 bool is_wall(int y, int x)
 {
-	int f_idx = cave_feat(y, x);
+	int f_idx = cave[y][x].feat;
 
 	/* Apply "mimic" field */
 	if (cave[y][x].mimic)
@@ -762,7 +762,7 @@ bool is_wall(int y, int x)
 
 bool is_door(int y, int x)
 {
-	int f_idx = cave_feat(y, x);
+	int f_idx = cave[y][x].feat;
 
 	/* Apply "mimic" field */
 	if (cave[y][x].mimic)
@@ -791,7 +791,7 @@ int wall_shape(int y, int x, bool force)
 		return GRID_SHAPE_NOT;
 
 	/* Require knowledge unless forced */
-	if (!force && !(cave_info(y, x) & CAVE_MARK))
+	if (!force && !(cave[y][x].info & CAVE_MARK))
 		return GRID_SHAPE_NOT;
 
 	/* Require wall or secret door */
@@ -816,7 +816,7 @@ int wall_shape(int y, int x, bool force)
 				continue;
 			}
 
-			known = force || ((cave_info(yy, xx) & CAVE_MARK) != 0);
+			known = force || ((cave[yy][xx].info & CAVE_MARK) != 0);
 
 			wall[j][i] = known &&
 				(g_grid[yy][xx].xtra & (GRID_XTRA_WALL | GRID_XTRA_DOOR));
@@ -1239,7 +1239,7 @@ void angtk_feat_known(int y, int x)
  */
 void set_grid_assign(int y, int x)
 {
-	int feat = cave_feat(y, x);
+	int feat = cave[y][x].feat;
 	t_assign assign, assignArray[ICON_LAYER_MAX];
 	IconSpec iconSpec;
 	int layer, shape;
@@ -1618,8 +1618,8 @@ bool door_vertical(int y, int x)
 	if (wall_above && wall_below) return (1);
 	
 	/* Check for doors on either horizontal side */
-	f_left = cave_feat(y, x - 1);
-	f_right = cave_feat(y, x + 1);
+	f_left = cave[y][x - 1].feat;
+	f_right = cave[y][x + 1].feat;
 	
 	/* Note we also check secret doors */
 	door_left = (f_left == FEAT_OPEN) || (f_left == FEAT_BROKEN) ||

@@ -702,7 +702,7 @@ static bool is_unknown_floor(int y, int x, int hack)
 		return FALSE;
 
 	/* Perma-lit */
-	if (cave_info(y, x) & CAVE_GLOW)
+	if (cave[y][x].info & CAVE_GLOW)
 		return FALSE;
 
 	/* Unlit floor */
@@ -1030,7 +1030,7 @@ if (!daytime && !dark && (g_grid[y][x].xtra & GRID_XTRA_WALL) &&
 		 */
 		else if (!layer && (f_idx != FEAT_FLOOR) &&
 			(g_background[f_idx] == FEAT_FLOOR) &&
-			(g_grid[y][x].dark && !(cave_info(y, x) & CAVE_GLOW)))
+			(g_grid[y][x].dark && !(cave[y][x].info & CAVE_GLOW)))
 		{
 			assign = g_assign[ASSIGN_FEATURE].assign[FEAT_NONE];
 		}

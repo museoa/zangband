@@ -22,10 +22,6 @@
  * to make the code cleaner.
  */
 
-#define cave_feat(y,x) cave[y][x].feat
-#define cave_info(y,x) cave[y][x].info
-#define cave_m_idx(y,x) cave[y][x].m_idx
-#define cave_o_idx(y,x) cave[y][x].o_idx
 #define in_bounds_test in_bounds2
 #define in_bounds_fully_test in_bounds
 #define p_ptr_depth dun_level

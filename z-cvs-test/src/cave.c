@@ -2318,9 +2318,9 @@ void forget_lite(void)
 
 #if 1 /* TNB */
 		if (cave_floor_bold(y, x))
-			angtk_view_floor(y, x, cave_info(y, x), 0);
+			angtk_view_floor(y, x, cave[y][x].info, 0);
 		else
-			angtk_view_wall(y, x, cave_info(y, x), 0);
+			angtk_view_wall(y, x, cave[y][x].info, 0);
 #endif /* TNB */
 
 		/* Redraw */
@@ -2581,9 +2581,9 @@ void update_lite(void)
 
 #if 1 /* TNB */
 		if (cave_floor_bold(y, x))
-			angtk_view_floor(y, x, cave_info(y, x), 1);
+			angtk_view_floor(y, x, cave[y][x].info, 1);
 		else
-			angtk_view_wall(y, x, cave_info(y, x), 1);
+			angtk_view_wall(y, x, cave[y][x].info, 1);
 #endif /* TNB */
 
 		/* Note */
@@ -2608,9 +2608,9 @@ void update_lite(void)
 
 #if 1 /* TNB */
 		if (cave_floor_bold(y, x))
-			angtk_view_floor(y, x, cave_info(y, x), 0);
+			angtk_view_floor(y, x, cave[y][x].info, 0);
 		else
-			angtk_view_wall(y, x, cave_info(y, x), 0);
+			angtk_view_wall(y, x, cave[y][x].info, 0);
 #endif /* TNB */
 
 		/* Redraw */
@@ -2654,9 +2654,9 @@ void forget_view(void)
 
 #if 1 /* TNB */
 		if (cave_floor_bold(y, x))
-			angtk_view_floor(y, x, cave_info(y, x), 0);
+			angtk_view_floor(y, x, cave[y][x].info, 0);
 		else
-			angtk_view_wall(y, x, cave_info(y, x), 0);
+			angtk_view_wall(y, x, cave[y][x].info, 0);
 #endif /* TNB */
 
 		/* Update the screen */
@@ -3335,10 +3335,10 @@ void update_view(void)
 
 #if 1 /* TNB */
 		if (cave_floor_bold(y, x))
-			angtk_view_floor(y, x, cave_info(y, x),
+			angtk_view_floor(y, x, cave[y][x].info,
 				(c_ptr->info & CAVE_LITE) != 0);
 		else
-			angtk_view_wall(y, x, cave_info(y, x),
+			angtk_view_wall(y, x, cave[y][x].info,
 				(c_ptr->info & CAVE_LITE) != 0);
 #endif /* TNB */
 
@@ -3371,10 +3371,10 @@ void update_view(void)
 
 #if 1 /* TNB */
 		if (cave_floor_bold(y, x))
-			angtk_view_floor(y, x, cave_info(y, x),
+			angtk_view_floor(y, x, cave[y][x].info,
 				(c_ptr->info & CAVE_LITE) != 0);
 		else
-			angtk_view_wall(y, x, cave_info(y, x),
+			angtk_view_wall(y, x, cave[y][x].info,
 				(c_ptr->info & CAVE_LITE) != 0);
 #endif /* TNB */
 

@@ -3648,7 +3648,7 @@ void angtk_cave_generated(void)
 	{
 		for (x = 0; x < g_cave_wid; x++)
 		{
-			int feat = cave_feat(y, x);
+			int feat = cave[y][x].feat;
 
 			/* This is a door (or secret door) */
 			if ((feat == FEAT_OPEN) || (feat == FEAT_BROKEN) ||
@@ -3739,7 +3739,7 @@ void angtk_character_generated(void)
 		{
 			for (x = 0; x < MAX_WID; x++)
 			{
-				int feat = cave_feat(y, x);
+				int feat = cave[y][x].feat;
 	
 				/* This is a door (or secret door) */
 				if ((feat == FEAT_OPEN) || (feat == FEAT_BROKEN) ||
@@ -3838,9 +3838,9 @@ void angtk_examine(int y, int x, char *out_val)
 
 
 	/* Actual monsters */
-	if (cave_m_idx(y, x) > 0)
+	if (cave[y][x].m_idx > 0)
 	{
-		monster_type *m_ptr = &m_list[cave_m_idx(y, x)];
+		monster_type *m_ptr = &m_list[cave[y][x].m_idx];
 
 		/* Visible */
 		if (m_ptr->ml)
@@ -3915,7 +3915,7 @@ void angtk_examine(int y, int x, char *out_val)
 #endif /* ALLOW_EASY_FLOOR */
 
 	/* Scan all objects in the grid */
-	for (this_o_idx = cave_o_idx(y, x); this_o_idx; this_o_idx = next_o_idx)
+	for (this_o_idx = cave[y][x].o_idx; this_o_idx; this_o_idx = next_o_idx)
 	{
 		object_type *o_ptr;
 
@@ -3942,7 +3942,7 @@ void angtk_examine(int y, int x, char *out_val)
 	}
 
 	/* Get feature */
-	feat = cave_feat(y, x);
+	feat = cave[y][x].feat;
 
 	if (cave[y][x].mimic)
 	{
@@ -3953,7 +3953,7 @@ void angtk_examine(int y, int x, char *out_val)
 	feat = f_info[feat].mimic;
 
 	/* Require knowledge about grid, or ability to see grid */
-	if (!(cave_info(y, x) & (CAVE_MARK)) && !player_can_see_bold(y,x))
+	if (!(cave[y][x].info & (CAVE_MARK)) && !player_can_see_bold(y,x))
 	{
 		/* Forget feature */
 		feat = FEAT_NONE;

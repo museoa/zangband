@@ -439,7 +439,7 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 			varName = Tcl_GetStringFromObj(objV[4], NULL);
 
 			/* Get the feature index */
-			feat = cave_feat(y, x);
+			feat = cave[y][x].feat;
 			feat = f_info[feat].mimic;
 
 			if (SetArrayValueLong(varName, "special", cave[y][x].special) != TCL_OK)
@@ -456,11 +456,11 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 			{
 				return TCL_ERROR;
 			}
-			if (SetArrayValueLong(varName, "m_idx", cave_m_idx(y, x)) != TCL_OK)
+			if (SetArrayValueLong(varName, "m_idx", cave[y][x].m_idx) != TCL_OK)
 			{
 				return TCL_ERROR;
 			}
-			if (SetArrayValueLong(varName, "o_idx", cave_o_idx(y, x)) != TCL_OK)
+			if (SetArrayValueLong(varName, "o_idx", cave[y][x].o_idx) != TCL_OK)
 			{
 				return TCL_ERROR;
 			}
@@ -1073,7 +1073,7 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 			listObjPtr = Tcl_NewListObj(0, NULL);
 
 			/* Scan all objects in the grid */
-			for (this_o_idx = cave_o_idx(fy, fx); this_o_idx; this_o_idx = next_o_idx)
+			for (this_o_idx = cave[fy][fx].o_idx; this_o_idx; this_o_idx = next_o_idx)
 			{
 				/* Acquire object */
 				o_ptr = &o_list[this_o_idx];
