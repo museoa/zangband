@@ -611,7 +611,8 @@ static void rd_item(object_type *o_ptr)
 				if (name2 == EGO_TRUMP)
 				{
 					/* Mega-Hack -- set activation */
-					o_ptr->activate = ACT_TELEPORT_1;
+					o_ptr->trigger[TRIGGER_USE] = quark_add(TRUMP_WEAPON_USE_LUA);
+					o_ptr->trigger[TRIGGER_DESC] = quark_add(TRUMP_WEAPON_DESC_LUA);
 				}
 
 				/* Change the price */
@@ -674,7 +675,11 @@ static void rd_item(object_type *o_ptr)
 		/* Convert Random artifacts */
 		else if (o_ptr->xtra_name)
 		{
-			o_ptr->activate = xtra2;
+			/* Strip activation */
+			if (xtra2)
+			{
+				o_ptr->flags3 &= ~TR3_ACTIVATE;
+			}
 
 			/* Make the object an artifact */
 			o_ptr->flags3 |= TR3_INSTA_ART;

@@ -2691,7 +2691,8 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 						}
 
 						/* Add activation */
-						o_ptr->activate = ACT_TELEPORT_1;
+						o_ptr->trigger[TRIGGER_USE] = quark_add(TRUMP_WEAPON_USE_LUA);
+						o_ptr->trigger[TRIGGER_DESC] = quark_add(TRUMP_WEAPON_DESC_LUA);
 
 						if (one_in_(7))
 						{
