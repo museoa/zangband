@@ -3160,6 +3160,9 @@ static void cave_temp_room_aux(int y, int x)
 	/* Verify */
 	if (!in_bounds(y, x)) return;
 
+	/* Do not exceed the maximum spell range */
+	if (distance(py, px, y, x) > MAX_RANGE) return;
+
 #if 0
 	/* Do not "leave" the current room */
 	if (!(c_ptr->info & (CAVE_ROOM))) return;
