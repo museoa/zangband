@@ -120,7 +120,7 @@ static void build_gamma_table(byte gamma)
 		 */
 		
 		n = 1;
-		value = 255 * 256;
+		value = 1 * 256;
 		diff = ((long) gamma_helper[i]) * gamma;
 		
 		while (diff)
