@@ -1611,7 +1611,7 @@ static bool player_birth_aux(void)
     /* Apply some randomness */
     for (i = 0; i < A_MAX; i++)
     {
-        p_ptr->stat[i].cur += randint0(10);
+        p_ptr->stat[i].cur += (s16b) randint0(10);
         p_ptr->stat[i].max = p_ptr->stat[i].cur;
     }
 
