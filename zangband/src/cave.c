@@ -3081,8 +3081,8 @@ void update_view(void)
 			temp_n++;
 		}
 
-		/* Clear "CAVE_VIEW" and "CAVE_LITE" flags */
-		info &= ~(CAVE_VIEW | CAVE_LITE);
+		/* Clear "CAVE_VIEW" flag */
+		info &= ~(CAVE_VIEW);
 
 		/* Save cave info */
 		c_ptr->info = info;
@@ -3228,8 +3228,31 @@ void update_view(void)
 					/* Torch-lit grids */
 					if (p->d <= radius)
 					{
-						/* Mark as "CAVE_LITE" */
-						info |= (CAVE_LITE);
+						if (!(info & CAVE_LITE))
+						{
+							/* Mark as "CAVE_LITE" */
+							info |= (CAVE_LITE);
+
+							c_ptr->info = info;
+						
+							/* Hack - lite the spot */
+							lite_spot(y, x);
+						}
+						else
+						{
+							/* Mark as "CAVE_LITE" */
+							info |= (CAVE_LITE);
+						}
+					}
+					else if (info & CAVE_LITE)
+					{
+						/* Clear the flag, and then redraw */
+						info &= ~(CAVE_LITE);
+
+						c_ptr->info = info;
+						
+						/* Hack - lite the spot */
+						lite_spot(y, x);
 					}
 
 					/* Memorize? */
@@ -3290,24 +3313,50 @@ void update_view(void)
 					/* Torch-lit grids */
 					if (p->d <= radius)
 					{
-						/* Mark as "CAVE_LITE", "CAVE_MARK" */
-						info |= (CAVE_LITE | CAVE_MARK);
-					}
-
-					/* Perma-lit grids */
-					else if (info & (CAVE_GLOW))
-					{
-						int yy, xx;
-
-						/* Hack -- move one grid towards player */
-						yy = (y < py) ? (y + 1) : (y > py) ? (y - 1) : y;
-						xx = (x < px) ? (x + 1) : (x > px) ? (x - 1) : x;
-
-						/* Check for "local" illumination */
-						if (area(yy, xx)->info & (CAVE_GLOW))
+						if (!(info & CAVE_LITE))
 						{
-							/* Memorize */
-							info |= (CAVE_MARK);
+							/* Mark as "CAVE_LITE" */
+							info |= (CAVE_LITE | CAVE_MARK);
+
+							c_ptr->info = info;
+						
+							/* Hack - lite the spot */
+							lite_spot(y, x);
+						}
+						else
+						{
+							/* Mark as "CAVE_LITE" */
+							info |= (CAVE_LITE | CAVE_MARK);
+						}
+					}
+					else 
+					{
+						if (info & CAVE_LITE)
+						{
+							/* Clear the flag, and then redraw */
+							info &= ~(CAVE_LITE);
+	
+							c_ptr->info = info;
+							
+							/* Hack - lite the spot */
+							lite_spot(y, x);
+						}
+
+						/* Perma-lit grids */
+						if (info & (CAVE_GLOW))
+						{
+							int yy, xx;
+
+							/* Hack -- move one grid towards player */
+							yy = (y < py) ? (y + 1) : (y > py) ? (y - 1) : y;
+							xx = (x < px) ? (x + 1) : (x > px) ? (x - 1) : x;
+	
+							/* Check for "local" illumination */
+							if (area(yy, xx)->info & (CAVE_GLOW))
+							{
+								/* Memorize */
+								info |= (CAVE_MARK);
+							}
 						}
 					}
 
@@ -3409,12 +3458,20 @@ void update_view(void)
 				info &= ~(CAVE_MARK);
 			}
 
+			/* Clear the cave-lite flag */
+			info &= ~(CAVE_LITE);
+			
+			/* Save cave info */
+			c_ptr->info = info;
+			
 			/* Redraw */
 			lite_spot(y, x);
 		}
-
-		/* Save cave info */
-		c_ptr->info = info;
+		else
+		{
+			/* Save cave info */
+			c_ptr->info = info;
+		}
 	}
 
 	/* None left */
