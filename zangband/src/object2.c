@@ -3923,7 +3923,7 @@ bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme)
 
 
 	/* Chance of "special object" */
-	prob = 1000 - delta_level * 50;
+	prob = 500 - delta_level * 20;
 
 	/* Bounds checking */
 	if (prob < 10) prob = 10;
