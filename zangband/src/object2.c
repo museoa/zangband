@@ -3112,12 +3112,18 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 			/* Analyze */
 			switch (o_ptr->sval)
 			{
-				/* Strength, Constitution, Dexterity, Intelligence */
+				
 				case SV_RING_ATTACKS:
 				{
-					/* Stat bonus */
-					o_ptr->pval = m_bonus(3, level);
-					if (o_ptr->pval < 1) o_ptr->pval = 1;
+					/* Rarely have a ring +2*/
+					if (randint(100)==1)
+					{
+						o_ptr->pval = 2;
+					}
+					else
+					{
+						o_ptr->pval = 1;
+					}
 
 					/* Cursed */
 					if (power < 0)
@@ -3134,7 +3140,8 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 
 					break;
 				}
-
+				
+				/* Strength, Constitution, Dexterity, Intelligence */
 				case SV_RING_STR:
 				case SV_RING_CON:
 				case SV_RING_DEX:
