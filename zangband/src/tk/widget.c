@@ -915,11 +915,6 @@ static void Widget_map_info(map_block *mb_ptr, term_map *map, vptr data)
 		
 	int xp, yp;
 	int x = map->x, y = map->y;
-	
-	mb_ptr->a = map->a;
-	mb_ptr->c = map->c;
-	mb_ptr->ta = map->ta;
-	mb_ptr->tc = map->tc;
 
 	if (widgetPtr->flags & WIDGET_WIPE) return;
 

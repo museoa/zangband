@@ -666,6 +666,12 @@ static void save_map_location(int x, int y, term_map *map)
 			map_cache_refcount[block_num]--;
 		}
 	}
+	
+	/* Save the tile data */
+	mb_ptr->a = map->a;
+	mb_ptr->c = map->c;
+	mb_ptr->ta = map->ta;
+	mb_ptr->tc = map->tc;
 
 	for (callback = callbacks[CALL_MAP_INFO]; callback; callback = callback->next)
 	{
@@ -876,6 +882,7 @@ static byte priority(byte feat)
 	return (20);
 }
 
+
 /*
  * Equivalent function to map_info, but for displaying
  * the reduced-size dungeon map.
@@ -928,7 +935,6 @@ static int display_map_info(int x, int y, char *c, byte *a, char *tc, byte *ta)
 	/* Return priority */
 	return (tp);
 }
-
 
 
 /*
@@ -2132,7 +2138,6 @@ static void map_info(int x, int y, byte *ap, char *cp, byte *tap, char *tcp)
 	/* Save location */
 	map.x = x;
 	map.y = y;
-
 	
 	/* Default priority */
 	map.priority = 0;
@@ -2156,6 +2161,9 @@ static void map_info(int x, int y, byte *ap, char *cp, byte *tap, char *tcp)
 		{
 			map.flags = MAP_GLOW;
 		}
+		
+		(*tap) = a;
+		(*tcp) = c;
 	}
 	else
 	{
@@ -2582,8 +2590,7 @@ void display_dungeon(void)
 				c = f_ptr->x_char;
 
 				/* Hack -- Queue it */
-				Term_queue_char(x - px + wid - 1, y - py + hgt - 1, a, c, ta,
-								tc);
+				Term_queue_char(x - px + wid - 1, y - py + hgt - 1, a, c, a, c);
 			}
 		}
 	}
