@@ -5,8 +5,6 @@
 * achieve perfection in various virtues.
 *
 * Topi Ylinen 1998
-* f1toyl@uta.fi
-* topi.ylinen@noodi.fi
 *
 */
 
