@@ -1994,7 +1994,11 @@ static void process_world(void)
 				disturb(0, 0);
 				msg_print("You can feel yourself wasting away!");
 				msg_print(NULL);
+#if 0
 				(void)dec_stat(which_stat, randint(6) + 6, randint(3) == 1);
+#else
+				(void)dec_stat(which_stat, randint(6) + 6, 0);
+#endif
 			}
 		}
 		if ((p_ptr->muta2 & MUT2_ATT_DRAGON) &&
