@@ -10,7 +10,7 @@
 import sys
 from ioc import msg_print
 import os.path
-from angband import system
+import system
 
 class error_handler:
 	def write(self, text):

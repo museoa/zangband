@@ -8,7 +8,7 @@
 
 import sys
 import os.path
-from angband import system, io
+import system, ioc
 from python import string
 from ioc import msg_print, get_line
 
@@ -78,11 +78,11 @@ class debug_class:
 		# Scan windows
 		for i in range(0, 7):
 			# No window
-			if not io.cvar.angband_term[i]:
+			if not ioc.cvar.angband_term[i]:
 				continue
 
 			# No relevant flags
-			if not (io.cvar.window_flag[i] & (io.PW_SCRIPT)):
+			if not (ioc.cvar.window_flag[i] & (ioc.PW_SCRIPT)):
 				continue
 
 			debug_terms.append(i)
@@ -91,19 +91,19 @@ class debug_class:
 
 	def readline(self):
 		# Save old window
-		old = io.cvar.Term
+		old = ioc.cvar.Term
 
 		terms = self.get_debug_terms()
 
 		# Activate
 		if terms:
-			io.Term_activate(io.cvar.angband_term[terms[0]])
+			ioc.Term_activate(ioc.cvar.angband_term[terms[0]])
 
 		# Get text
 		text = self.get_input()
 
 		# Restore
-		io.Term_activate(old)
+		ioc.Term_activate(old)
 
 		return text
 
@@ -114,19 +114,19 @@ class debug_class:
 		k = 0
 
 		# Cursor
-		err, x, y = io.Term_locate()
+		err, x, y = ioc.Term_locate()
 
 		len = 80 - x
 
 		while not done:
 			# Place cursor
-			io.Term_gotoxy(x + k, y)
+			ioc.Term_gotoxy(x + k, y)
 
 			# XXX
-			# io.cvar.inkey_base = 1
+			# ioc.cvar.inkey_base = 1
 
 			# Get a key
-			key = io.inkey()
+			key = ioc.inkey()
 
 			# Return
 			if key in "\n\r":
@@ -141,15 +141,15 @@ class debug_class:
 				if k > 0:
 					k = k - 1
 					text = text[:-1]
-					io.Term_erase(x, y, len)
-					io.Term_putstr(x, y, -1, io.TERM_WHITE, text)
+					ioc.Term_erase(x, y, len)
+					ioc.Term_putstr(x, y, -1, ioc.TERM_WHITE, text)
 				else:
-					io.bell()
+					ioc.bell()
 			else:
 				text = text + key
 				k = k + 1
-				io.Term_erase(x, y, len)
-				io.Term_putstr(x, y, -1, io.TERM_WHITE, text)
+				ioc.Term_erase(x, y, len)
+				ioc.Term_putstr(x, y, -1, ioc.TERM_WHITE, text)
 
 		self.write(text + '\n')
 		
@@ -168,7 +168,7 @@ class debug_class:
 
 	def refresh_term(self):
 		# Get size
-		err, w, h = io.Term_get_size()
+		err, w, h = ioc.Term_get_size()
 
 		lines = string.split(self._text, '\n')
 
@@ -191,35 +191,35 @@ class debug_class:
 			else:
 				text = ""
 			# Dump the message on the appropriate line
-			io.Term_putstr(0, (h - 1) - i, -1, io.TERM_WHITE, text)
+			ioc.Term_putstr(0, (h - 1) - i, -1, ioc.TERM_WHITE, text)
 
 			# Cursor
-			err, x, y = io.Term_locate()
+			err, x, y = ioc.Term_locate()
 
 			# Clear to end of line
-			io.Term_erase(x, y, 255)
+			ioc.Term_erase(x, y, 255)
 
 		# Place the cursor
-		io.Term_gotoxy(len(display[0]), h - 1)
+		ioc.Term_gotoxy(len(display[0]), h - 1)
 
 		# Fresh
-		io.Term_fresh()
+		ioc.Term_fresh()
 
 
 	def refresh(self):
 		# Save old window
-		old = io.cvar.Term
+		old = ioc.cvar.Term
 
 		terms = self.get_debug_terms()
 
 		# Scan windows
 		for term in terms:
 			# Activate
-			io.Term_activate(io.cvar.angband_term[term])
+			ioc.Term_activate(ioc.cvar.angband_term[term])
 
 			# Refresh
 			self.refresh_term()
 
 		# Restore
-		io.Term_activate(old)
+		ioc.Term_activate(old)
 
