@@ -288,17 +288,6 @@ struct ego_item_type
 
 
 /*
- * Hack - a type for 'monster flags'
- */
-typedef struct monster_flags monster_flags;
-
-struct monster_flags
-{
-	u32b flags[9];
-};
-
-
-/*
  * Monster blow structure
  *
  *	- Method (RBM_*)
