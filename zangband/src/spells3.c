@@ -338,7 +338,7 @@ void teleport_player(int dis)
 	int d, i, min, ox, oy;
 	int tries = 0;
 
-	int xx = -1, yy;
+	int xx, yy;
 
 	/* Initialize */
 	int y = py;
@@ -456,11 +456,9 @@ void teleport_player(int dis)
 	field_hook(&area(py, px)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);
 
 	/* Monsters with teleport ability may follow the player */
-	while (xx < 2)
+	for (xx = -1; xx <= 1; xx++)
 	{
-		yy = -1;
-
-		while (yy < 2)
+		for (yy = -1; yy <= 1; yy++)
 		{
 			if ((xx == 0) && (yy == 0))
 			{
@@ -488,11 +486,7 @@ void teleport_player(int dis)
 					}
 				}
 			}
-
-			yy++;
 		}
-
-		xx++;
 	}
 
 	/* Check for new panel (redraw map) */

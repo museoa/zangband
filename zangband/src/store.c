@@ -2496,6 +2496,7 @@ static void store_purchase(int *store_top)
 
 				/* Erase the "feeling" */
 				j_ptr->feeling = FEEL_NONE;
+
 				/* Give it to the player */
 				item_new = inven_carry(j_ptr);
 
