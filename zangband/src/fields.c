@@ -1656,7 +1656,7 @@ bool field_action_corpse_load(field_type *f_ptr, vptr nothing)
 	(void) nothing;
 	
 	/* Initialise the graphic */
-	if (use_graphics && streq(ANGBAND_GRAF, "new"))
+	if (use_graphics == GRAPHICS_ADAM_BOLT)
 	{
 		/* Hack - get new tile via offset table */
 		f_ptr->f_char += corpse_type(r_ptr->d_char);
@@ -1685,7 +1685,7 @@ bool field_action_corpse_init(field_type *f_ptr, vptr input)
 	f_ptr->data[2] = m_ptr->r_idx % 256;
 	
 	/* Initialise the graphic */
-	if (use_graphics && streq(ANGBAND_GRAF, "new"))
+	if (use_graphics == GRAPHICS_ADAM_BOLT)
 	{
 		/* Hack - get new tile via offset table */
 		f_ptr->f_char += corpse_type(r_ptr->d_char);

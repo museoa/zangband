@@ -262,7 +262,6 @@ extern char *r_text;
 extern field_thaum *t_info;
 extern quest_type *quest;
 extern cptr ANGBAND_SYS;
-extern cptr ANGBAND_GRAF;
 extern cptr ANGBAND_DIR;
 extern cptr ANGBAND_DIR_APEX;
 extern cptr ANGBAND_DIR_BONE;

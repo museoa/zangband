@@ -1233,7 +1233,7 @@ static const byte darking_colours[16] =
 
 static void variable_player_graph(byte *a, char *c)
 {
-	if (!streq(ANGBAND_GRAF, "new"))
+	if (use_graphics != GRAPHICS_ADAM_BOLT)
 	{
 		if (!streq(ANGBAND_SYS, "ibm"))
 		{

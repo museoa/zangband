@@ -3960,12 +3960,10 @@ bool pick_graphics(int graphics, int *xsize, int *ysize, char *filename)
 			/* Use graphics */
 			if (graphics == GRAPHICS_HALF_3D)
 			{
-				ANGBAND_GRAF = "none";
 				use_graphics = GRAPHICS_HALF_3D;
 			}
 			else
 			{
-				ANGBAND_GRAF = "new";
 				use_graphics = GRAPHICS_ADAM_BOLT;
 			}
 		}
@@ -3985,8 +3983,6 @@ bool pick_graphics(int graphics, int *xsize, int *ysize, char *filename)
 
 			*xsize = 8;
 			*ysize = 8;
-
-			ANGBAND_GRAF = "old";
 		}
 	}
 	

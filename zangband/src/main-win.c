@@ -1376,8 +1376,6 @@ static bool init_graphics(void)
 
 			name = "16X16.BMP";
 
-			ANGBAND_GRAF = "new";
-
 			use_transparency = TRUE;
 		}
 		else
@@ -1386,7 +1384,6 @@ static bool init_graphics(void)
 			hgt = 8;
 
 			name = "8X8.BMP";
-			ANGBAND_GRAF = "old";
 		}
 
 		/* Access the bitmap file */

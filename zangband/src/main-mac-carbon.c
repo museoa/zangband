@@ -2175,8 +2175,6 @@ static errr globe_init(term_data *td)
 				gTileCols = (pictRect.right - pictRect.left) / gTileWidth;
 				gTileCols = (pictRect.bottom - pictRect.top) / gTileHeight;
 				
-				ANGBAND_GRAF = "old";
-				
 				use_transparency = false;
 				use_graphics = GRAPHICS_ORIGINAL;
 				
@@ -2196,8 +2194,6 @@ static errr globe_init(term_data *td)
 				pictRect = (**newPictH).picFrame;
 				gTileCols = (pictRect.right - pictRect.left) / gTileWidth;
 				gTileCols = (pictRect.bottom - pictRect.top) / gTileHeight;
-				
-				ANGBAND_GRAF = "new";
 				
 				use_transparency = true;
 				use_graphics = GRAPHICS_ADAM_BOLT;

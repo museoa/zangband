@@ -3300,13 +3300,11 @@ errr init_xpj(int argc, char *argv[])
 	{
 		/* And use tiles */
 		graphmode = GRAPHICS_ADAM_BOLT;
-		ANGBAND_GRAF = "new";
 	}
 	else
 	{
 		/* But not for monsters / items */
 		graphmode = GRAPHICS_HALF_3D;
-		ANGBAND_GRAF = "none";
 	}
 	
 	/* Try graphics */

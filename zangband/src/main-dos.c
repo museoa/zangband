@@ -1841,6 +1841,12 @@ static bool init_graphics(void)
 			 * Set the graphics mode to "new" if Adam Bolt's
 			 * new 16x16 tiles are used.
 			 */
+			
+#error  Fixme:  Replace ANGBAND_GRAF with use_graphics
+#error	If ANGBAND_GRAF == new:  use_graphics = GRAPHICS_ADAM_BOLT
+#error	If ANGBAND_GRAF == old:  use_graphics = GRAPHICS_ORIGINAL
+#error	If ANGBAND_GRAF == none: use_graphics = GRAPHICS_NONE			
+			
 			ANGBAND_GRAF = get_config_string(section, "graf-mode", "old");
 
 			/* Use transparent blits */

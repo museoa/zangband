@@ -840,7 +840,14 @@ static cptr process_pref_file_expr(char **sp, char *fp)
 			/* Graphics */
 			else if (streq(b+1, "GRAF"))
 			{
-				v = ANGBAND_GRAF;
+				switch (use_graphics)
+				{
+					case GRAPHICS_NONE: v = "none"; break;
+					case GRAPHICS_ORIGINAL: v = "old"; break;
+					case GRAPHICS_ADAM_BOLT: v = "new"; break;
+					case GRAPHICS_ANY: v = "error"; break;
+					case GRAPHICS_HALF_3D: v = "none"; break;
+				}
 			}
 
 			/* Monochrome mode */
