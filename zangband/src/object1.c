@@ -2460,7 +2460,7 @@ void show_list(s16b o_list_ptr)
 
 		/* Is this item acceptable? */
 		if (!item_tester_okay(o_ptr)) continue;
-
+		
 		/* Advance to next "line" */
 		k++;
 
@@ -2493,9 +2493,18 @@ void show_list(s16b o_list_ptr)
 		if (l > len) len = l;
 	}
 	OBJ_ITT_END;
-
-	/* Find the column to start in */
-	col = (len > wid - 4) ? 0 : (wid - len - 1);
+	
+	/* Hack -- Find a column to start in and to put weights */
+	if (len > wid - 4)
+	{
+		col = 0;
+		lim = wid - 9;
+	}
+	else
+	{
+		col = (wid - len - 1) / 2;
+		lim = col + len - 9;
+	}
 
 	/* Output each entry */
 	for (j = 0; j <= k; j++)
@@ -2538,12 +2547,12 @@ void show_list(s16b o_list_ptr)
 		{
 			int wgt = o_ptr->weight * o_ptr->number;
 			(void)sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
-			put_str(tmp_val, wid - 9, j + 1);
+			put_str(tmp_val, lim, j + 1);
 		}
 	}
 
 	/* Make a "shadow" below the list (only if needed) */
-	if (j && (j < 23)) prt("", col ? col - 2 : col, j + 1);
+	if (j && (j < hgt - 2)) prt("", col ? col - 2 : col, j + 1);
 }
 
 
@@ -2635,8 +2644,17 @@ void show_equip(void)
 		k++;
 	}
 
-	/* Hack -- Find a column to start in */
-	col = (len > wid - 4) ? 0 : (wid - len - 1);
+	/* Hack -- Find a column to start in and to put weights */
+	if (len > wid - 4)
+	{
+		col = 0;
+		lim = wid - 9;
+	}
+	else
+	{
+		col = (wid - len - 1) / 2;
+		lim = col + len - 9;
+	}
 
 	/* Output each entry */
 	for (j = 0; j < k; j++)
@@ -2698,12 +2716,12 @@ void show_equip(void)
 		{
 			int wgt = o_ptr->weight * o_ptr->number;
 			(void)sprintf(tmp_val, "%3d.%d lb", wgt / 10, wgt % 10);
-			put_str(tmp_val, wid - 9, j + 1);
+			put_str(tmp_val, lim, j + 1);
 		}
 	}
 
 	/* Make a "shadow" below the list (only if needed) */
-	if (j && (j < 23)) prt("", col ? col - 2 : col, j + 1);
+	if (j && (j < hgt - 2)) prt("", col ? col - 2 : col, j + 1);
 }
 
 
