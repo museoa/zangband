@@ -168,12 +168,6 @@ void init_setuid(void)
 	/* Drop permissions */
 	safe_setuid_drop();
 
-	/* Initialize the "load" checker */
-	if (check_load_init() || check_load())
-	{
-		quit("The gates to Angband are closed (bad load).");
-	}
-
 	/* Get the "user name" as a default player name */
 	user_name(player_name, player_uid);
 

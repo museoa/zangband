@@ -349,13 +349,6 @@
 
 
 /*
- * OPTION: Check the "load" against "lib/file/load.txt"
- * This may require the 'rpcsvs' library
- */
-/* #define CHECK_LOAD */
-
-
-/*
  * OPTION: For some brain-dead computers with no command line interface,
  * namely Macintosh, there has to be some way of "naming" your savefiles.
  * The current "Macintosh" hack is to make it so whenever the character

@@ -139,9 +139,6 @@ bool cheat_xtra;
 bool cheat_know;
 bool cheat_live;
 
-
-bool closing_flag;	/* Dungeon is closing */
-
 bool fake_monochrome;	/* Use fake monochrome for effects */
 
 

@@ -924,43 +924,6 @@ static void process_world(void)
 	/* Every 10 game turns */
 	if (turn % 10) return;
 
-
-	/*** Check the Time and Load ***/
-
-	if (!(turn % 1000))
-	{
-		/* Check time and load */
-		if (0 != check_load())
-		{
-			/* Warning */
-			if (closing_flag <= 2)
-			{
-				/* Disturb */
-				disturb(FALSE);
-
-				/* Count warnings */
-				closing_flag++;
-
-				/* Message */
-				msgf("The gates to ANGBAND are closing...");
-				msgf("Please finish up and/or save your game.");
-			}
-
-			/* Slam the gate */
-			else
-			{
-				/* Message */
-				msgf("The gates to ANGBAND are now closed.");
-
-				/* Stop playing */
-				p_ptr->state.playing = FALSE;
-
-				/* Leaving */
-				p_ptr->state.leaving = TRUE;
-			}
-		}
-	}
-
 	/*** Attempt timed autosave ***/
 	if (autosave_t && autosave_freq)
 	{
