@@ -1327,8 +1327,16 @@ static bool store_access_item(object_type *o_ptr, s32b price, bool buy)
 	char out_val[160];
 	char o_name[256];
 
-	/* Describe the object (fully) */
-	object_desc_store(o_name, o_ptr, TRUE, 3, 256);
+	if (buy)
+	{
+		/* Describe the object (fully) */
+		object_desc_store(o_name, o_ptr, TRUE, 3, 256);
+	}
+	else 
+	{
+		/* Describe the object (only what we know) */
+		object_desc(o_name, o_ptr, TRUE, 3, 256);
+	}
 	
 	(void)sprintf(out_val, "%s %s, offer :  %ld",
 				  (buy) ? "Buying" : "Selling", o_name, (long) price);
