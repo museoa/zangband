@@ -375,11 +375,11 @@ static void random_curse(object_type *o_ptr, bool evil)
 			SET_FLAG(o_ptr, TR_CURSED);
 			break;
 		case 17:
-			o_ptr->to_a -= rand_range(5, 15);
+			o_ptr->to_a -= (s16b) rand_range(5, 15);
 			break;
 		case 18:
-			o_ptr->to_h -= rand_range(5, 10);
-			o_ptr->to_d -= rand_range(5, 10);
+			o_ptr->to_h -= (s16b) rand_range(5, 10);
+			o_ptr->to_d -= (s16b) rand_range(5, 10);
 			break;
 		case 24:
 		case 25:
@@ -1688,8 +1688,8 @@ static int random_minor_theme_weapon(object_type *o_ptr, int level)
 			break;
 
 		case 37:
-			o_ptr->to_h += rand_range(5, 15);
-			o_ptr->to_d += rand_range(5, 15);
+			o_ptr->to_h += (s16b) rand_range(5, 15);
+			o_ptr->to_d += (s16b) rand_range(5, 15);
 
 			if (one_in_(ACTIVATION_CHANCE))
 				misc_activation_power(o_ptr, level, "whirlwind attack");
@@ -2233,13 +2233,13 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 		else if (o_ptr->tval < TV_BOOTS)
 		{
 			act = random_major_theme_weapon(o_ptr, level);
-			o_ptr->to_h += rand_range(5, 15);
-			o_ptr->to_d += rand_range(5, 15);
+			o_ptr->to_h += (s16b) rand_range(5, 15);
+			o_ptr->to_d += (s16b) rand_range(5, 15);
 		}
 		else
 		{
 			act = random_major_theme_armor(o_ptr, level);
-			o_ptr->to_a += rand_range(5, 15);
+			o_ptr->to_a += (s16b) rand_range(5, 15);
 		}
 		powers -= 3;
 	}
