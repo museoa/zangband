@@ -706,18 +706,9 @@ proc NSInitStartup::InitStartup {} {
 
 	# Internationalization
 	Source msgcat.tcl
-	
-	update
-	Debug "testing2"
-	
-	# Internationalization
-	MsgCatInit startup
-		
+			
 	# Global copyright blurb
 	set Angband(copy) [mc original-z]
-	
-	update
-	Debug "testing3"
 
 	# Hack -- Require WindowPosition() command
 	Source library utils.tcl

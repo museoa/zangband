@@ -55,8 +55,7 @@ proc NSTerm::Redraw {} {
 	variable Priv
 	
 	variable Term
-
-	
+		
 	set width 640
 	set height 480
 
@@ -81,8 +80,6 @@ proc NSTerm::Redraw {} {
 	}	
 	
 	pack $grids -padx 1 -pady 1
-
-	update
 }
 
 proc NSTerm::InitWindow {} {
@@ -110,12 +107,9 @@ proc NSTerm::InitWindow {} {
 	wm minsize $Term 80 24
 	
 	Redraw
-	
+
 	raise $Term
-	focus $Term
-
-	update
-
+	
 	return
 }
 

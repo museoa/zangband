@@ -52,7 +52,7 @@ proc MsgCatInit {args} {
 	foreach dir $args {
 		uplevel ::msgcat::mcload [list [file join $::Angband(dirTk,msgs) $dir]]
 	}
-
+	
 	return
 }
 
@@ -80,16 +80,5 @@ proc msgcat::mcunknown {locale src} {
     return $src
 }
 
-if 0 {
-proc msgcat::mc {src} {
-	set ns [uplevel {namespace current}]
-	foreach loc $::msgcat::loclist {
-		if {[info exists ::msgcat::msgs($loc,$ns,$src)]} {
-			return *$::msgcat::msgs($loc,$ns,$src)
-		}
-	}
-	# we have not found the translation
-	return [uplevel 1 [list [namespace origin mcunknown] \
-		$::msgcat::locale $src]]
-}
-}
+# Internationalization
+MsgCatInit startup
