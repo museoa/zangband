@@ -1108,37 +1108,12 @@ static void overlay_town(int y, int x, u16b w_town, blk_ptr block_ptr)
 			 * Doors, buildings, traps, quests etc.
 			 * are all that are in this list.
 			 */
-			switch (c_ptr->fld_idx)
+			if (!(c_ptr->fld_idx)) continue;
+			
+			switch (t_info[c_ptr->fld_idx].type)
 			{
 				/* Nothing */
-				case 0: break;
-				
-				case FT_TRAP_DOOR:
-				case FT_TRAP_PIT:
-				case FT_TRAP_SPIKE_PIT:
-				case FT_TRAP_POISON_PIT:
-				case FT_TRAP_CURSE:
-				case FT_TRAP_TELEPORT:
-				case FT_TRAP_ELEMENT:
-				case FT_TRAP_BA_ELEMENT:
-				case FT_TRAP_GAS:
-				case FT_TRAP_TRAPS:
-				case FT_TRAP_TEMP_STAT:
-				case FT_TRAP_PERM_STAT:
-				case FT_TRAP_LOSE_XP:
-				case FT_TRAP_DISENCHANT:
-				case FT_TRAP_DROP_ITEM:
-				case FT_TRAP_MUTATE:
-				case FT_TRAP_NEW_LIFE:
-				case FT_TRAP_NO_LITE:
-				case FT_TRAP_HUNGER:
-				case FT_TRAP_NO_GOLD:
-				case FT_TRAP_HASTE_MON:
-				case FT_TRAP_RAISE_MON:
-				case FT_TRAP_DRAIN_MAGIC:
-				case FT_TRAP_AGGRAVATE:
-				case FT_TRAP_SUMMON:
-				case FT_TRAP_LOSE_MEMORY:
+				case FTYPE_TRAP:
 				{
 					/* Activate the trap */
 					if (place_field(y * 16 + j, x * 16 + i, c_ptr->fld_idx))
@@ -1151,8 +1126,7 @@ static void overlay_town(int y, int x, u16b w_town, blk_ptr block_ptr)
 					break;
 				}
 				
-				case FT_LOCK_DOOR:
-				case FT_JAM_DOOR:
+				case FTYPE_DOOR:
 				{
 					int data = 9;
 					
@@ -1167,21 +1141,7 @@ static void overlay_town(int y, int x, u16b w_town, blk_ptr block_ptr)
 					break;
 				}
 				
-				case FT_STORE_GENERAL:
-				case FT_STORE_ARMOURY:
-				case FT_STORE_WEAPON:
-				case FT_STORE_TEMPLE:
-				case FT_STORE_ALCHEMIST:
-				case FT_STORE_MAGIC:
-				case FT_STORE_BLACK:
-				case FT_STORE_HOME:
-				case FT_STORE_BOOK:
-				case FT_BUILD_WEAPON:
-				case FT_BUILD_RECHARGE:
-				case FT_BUILD_PLUS_WEAPON:
-				case FT_BUILD_PLUS_ARMOUR:
-				case FT_BUILD_MUTATE:
-				case FT_BUILD_MAP:
+				case FTYPE_BUILD:
 				{
 					/* Stores + buildings */
 					(void) place_field(y * 16 + j, x * 16 + i, c_ptr->fld_idx);

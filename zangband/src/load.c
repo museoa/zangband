@@ -924,7 +924,7 @@ static errr rd_store(int town_number, int store_number)
 		rd_item(q_ptr);
 
 		/* Acquire valid items */
-		if (st_ptr->stock_num < STORE_INVEN_MAX)
+		if (st_ptr->stock_num < st_ptr->max_stock)
 		{
 			int k = st_ptr->stock_num++;
 

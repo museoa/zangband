@@ -1598,6 +1598,25 @@ bool item_tester_hook_ammo(object_type *o_ptr)
 	return (FALSE);
 }
 
+/*
+ * Hook to specify "Bows+arrows"
+ */
+bool item_tester_hook_fletcher(object_type *o_ptr)
+{
+	switch (o_ptr->tval)
+	{
+		case TV_SHOT:
+		case TV_ARROW:
+		case TV_BOLT:
+		case TV_BOW:
+		{
+			return (TRUE);
+		}
+	}
+
+	return (FALSE);
+}
+
 
 /*
  * Hook to specify "armour"
@@ -1696,20 +1715,71 @@ bool item_tester_hook_tval(object_type *o_ptr)
 	return (FALSE);
 }
 
-/* Match the price */
-bool item_tester_hook_price(object_type *o_ptr)
+
+bool item_tester_hook_is_blessed(object_type *o_ptr)
 {
-	s32b price = object_value(o_ptr);
+	u32b f1, f2, f3;
+	object_flags(o_ptr, &f1, &f2, &f3);
 	
-	/* Check the price */
-	if ((price < item_tester_price_min) || price > item_tester_price_max)
+	/* Is it blessed? */
+	if (f3 & TR3_BLESSED) return (TRUE);
+	
+	/* Check for unallowable weapons */
+	if ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM)) return (FALSE);
+	
+	/* Everthing else is ok */
+	return (TRUE);
+}
+
+bool item_tester_hook_is_good(object_type *o_ptr)
+{
+	if (cursed_p(o_ptr)) return (FALSE);
+	
+	/* Ego item or artifact */
+	if (o_ptr->xtra_name) return (TRUE);
+	
+	/* Positve AC bonus */
+	if (o_ptr->to_a > 0) return (TRUE);
+	
+	/* Good attack + defence */
+	if (o_ptr->to_h + o_ptr->to_d > 0) return (TRUE);
+	
+	/* Everthing else isn't good */
+	return (FALSE);
+}
+
+
+bool item_tester_hook_is_great(object_type *o_ptr)
+{
+	if (cursed_p(o_ptr)) return (FALSE);
+	
+	/* Ego item or artifact */
+	if (o_ptr->xtra_name) return (TRUE);
+	
+	/* Everthing else isn't great */
+	return (FALSE);
+}
+
+
+
+bool item_tester_hook_is_book(object_type *o_ptr)
+{
+	switch (o_ptr->tval)
 	{
-		return (FALSE);
+		case TV_SORCERY_BOOK:
+		case TV_NATURE_BOOK:
+		case TV_CHAOS_BOOK:
+		case TV_DEATH_BOOK:
+		case TV_TRUMP_BOOK:
+		case TV_ARCANE_BOOK:
+		case TV_LIFE_BOOK:
+		
+		/* It is a book */	
+		return (TRUE);
 	}
 	
-	/* A match */
-	return (TRUE);
-
+	/* It isn't a book */
+	return (FALSE);
 }
 
 

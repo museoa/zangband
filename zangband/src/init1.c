@@ -2761,7 +2761,7 @@ static errr grab_one_action_flag(field_thaum *t_ptr, char *what)
 	}
 
 	/* Check flags */
-	for (i = 0; i < FIELD_ACTION_TYPES; i++)
+	for (i = 0; f_action[i].func; i++)
 	{
 		if (streq(t, f_action[i].func))
 		{

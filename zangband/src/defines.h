@@ -501,14 +501,20 @@
 /*
  * Store constants
  */
-#define STORE_INVEN_MAX 24              /* Max number of discrete objs in inven */
-#define STORE_CHOICES   48              /* Number of items to choose stock from */
-#define STORE_OBJ_LEVEL 10              /* Magic Level for normal stores */
-#define STORE_TURNOVER  9               /* Normal shop turnover, per day */
-#define STORE_MIN_KEEP  6               /* Min slots to "always" keep full */
-#define STORE_MAX_KEEP  18              /* Max slots to "always" keep full */
-#define STORE_SHUFFLE   21              /* 1/Chance (per day) of an owner changing */
-#define STORE_TURNS     1000		    /* Number of turns between turnovers */
+#define STORE_INVEN_MAX 24		/* Max number of discrete objs in inven */
+
+#define STORE_TURNOVER  9		/* Normal shop turnover, per day */
+#define STORE_MIN_KEEP  6		/* Min slots to "always" keep full */
+#define STORE_MAX_KEEP  18		/* Max slots to "always" keep full */
+#define STORE_SHUFFLE   21		/* 1/Chance (per day) of an owner changing */
+#define STORE_TURNS     1000	/* Number of turns between turnovers */
+
+/* Store extra flags */
+#define ST_REST_BLESSED		0x01	/* Blessed items */
+#define ST_REST_GOOD		0x02	/* Good items only */
+#define ST_REST_GREAT		0x04	/* Great items only */
+#define ST_HALF_INVEN		0x08	/* One page of inventory */
+#define ST_ULTRA_GREED		0x10	/* Double prices */
 
 
 /*
@@ -1487,7 +1493,7 @@
 #define TV_SPIKE         5      /* Spikes ('~') */
 #define TV_CHEST         7      /* Chests ('&') */
 #define TV_FIGURINE      8      /* Magical figurines */
-#define TV_STATUE        9      /* Statue, what a silly object... */
+#define TV_STATUE        9      /* Statue */
 /*#define TV_CORPSE       10  */    /* Corpses are now fields */
 #define TV_SHOT         16      /* Ammo for slings */
 #define TV_ARROW        17      /* Ammo for bows */
@@ -2095,6 +2101,7 @@
  * Object creation flags
  * These are the values passable to apply_magic
  */
+#define OC_NONE			0x00
 #define OC_NORMAL		0x01
 #define OC_FORCE_BAD	0x02
 #define OC_FORCE_GOOD	0x04
@@ -4137,11 +4144,10 @@ extern int PlayerUID;
 #define FIELD_ACT_SPECIAL		15	/* Special, type specific action */
 #define FIELD_ACT_INTERACT_TEST	16	/* Test for type of player interaction */
 #define FIELD_ACT_MON_ENTER_TEST 17 /* Monster attempts to enter grid */
+#define FIELD_ACT_STORE_ACT1	18	/* Store / building prelimiary action */
+#define FIELD_ACT_STORE_ACT2	19	/* Store / building final action */
 
-#define FIELD_ACTION_MAX		18	/* The last action + 1 */
-
-
-#define FIELD_ACTION_TYPES  54 /* Number of FIELD_ACT functions in tables.c */
+#define FIELD_ACTION_MAX		20
 
 
 

@@ -3508,3 +3508,516 @@ void field_action_door_build(s16b *field_ptr, void *nothing)
 	 */
 	do_cmd_bldg(f_ptr);
 }
+
+/* Does the player have enough gold for this action? */
+static bool test_gold(s32b *cost)
+{
+	if (p_ptr->au < *cost)
+	{
+		/* Player does not have enough gold */
+
+		msg_format("You need %ld gold to do this!", (long) *cost);
+		msg_print(NULL);
+		
+		*cost = 0;
+		
+		return (FALSE);
+	
+	}
+	
+	/* Player has enough gold */
+	return (TRUE);
+}
+
+
+
+/*
+ * Weaponmaster1
+ */
+void field_action_weaponmaster1(s16b *field_ptr, void *input)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+
+	int factor = *((int*) input);
+	char tmp_str[80];
+
+	sprintf(tmp_str, " E) Examine Weapons (%dgp)", f_ptr->data[1] * factor);
+	c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+}
+
+/*
+ * Recharge1
+ */
+void field_action_recharge1(s16b *field_ptr, void *input)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+
+	int factor = *((int*) input);
+	char tmp_str[80];
+
+	sprintf(tmp_str, " R) Recharge Items");
+	c_put_str(TERM_YELLOW, tmp_str, 19, 0);
+	sprintf(tmp_str, " I) Identify Items (%dgp)",
+	f_ptr->data[2] * factor);
+	c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+}
+
+
+/*
+ * Weaponplus1
+ */
+void field_action_weaponplus1(s16b *field_ptr, void *input)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+
+	int factor = *((int*) input);
+	char tmp_str[80];
+
+	sprintf(tmp_str, " E) Enchant Weapons (%dgp)", f_ptr->data[1] * factor);
+	c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+}
+
+/*
+ * Armourplus1
+ */
+void field_action_armourplus1(s16b *field_ptr, void *input)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+
+	int factor = *((int*) input);
+	char tmp_str[80];
+
+	sprintf(tmp_str, " E) Enchant Armour (%dgp)", f_ptr->data[1] * factor);
+	c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+}
+
+/*
+ * Mutate1
+ */
+void field_action_mutate1(s16b *field_ptr, void *input)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+
+	int factor = *((int*) input);
+	char tmp_str[80];
+
+	sprintf(tmp_str, " E) Expose yourself to raw chaos (%dgp)",
+		 f_ptr->data[1] * factor * (count_mutations() + 1));
+	c_put_str(TERM_YELLOW, tmp_str, 19, 30);
+}
+
+
+/*
+ * Buymap1
+ */
+void field_action_buymap1(s16b *field_ptr, void *input)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+
+	int factor = *((int*) input);
+	char tmp_str[80];
+
+	sprintf(tmp_str, " E) Examine Map (%dgp)", f_ptr->data[1] * factor);
+	c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+}
+
+
+
+/*
+ * Weaponmaster2
+ */
+void field_action_weaponmaster2(s16b *field_ptr, void *input)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+
+	int factor = *((int*) input);
+	s32b cost;
+	
+	if (p_ptr->command_cmd == 'E')
+	{
+		cost = f_ptr->data[1] * factor;
+				
+		if (test_gold(&cost))
+		{
+			compare_weapons();
+		}
+		
+		/* Subtract off cost */
+		p_ptr->au -= cost;
+		
+		/* Hack, use factor as a return value */	
+		factor = TRUE;
+	}
+	else
+	{
+		factor = FALSE;
+	}
+}
+
+
+/*
+ * Recharge2
+ */
+void field_action_recharge2(s16b *field_ptr, void *input)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+
+	int factor = *((int*) input);
+	s32b cost;
+
+	if (p_ptr->command_cmd == 'R')
+	{
+		building_recharge(f_ptr->data[1] * factor);
+		
+		factor = TRUE;
+	}
+			
+	else if (p_ptr->command_cmd == 'I')
+	{
+		cost = f_ptr->data[2] * factor;
+				
+		if (test_gold(&cost))
+		{
+			identify_pack();
+
+			/* Combine / Reorder the pack (later) */
+			p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
+			msg_print("Your posessions have been identified.");
+			msg_print(NULL);
+		}
+		
+		/* Subtract off cost */
+		p_ptr->au -= cost;
+								
+		factor = TRUE;
+	}
+	else
+	{
+		/* We didn't do anything */
+		factor = FALSE;
+	}
+}
+
+
+/*
+ * Weaponplus2
+ */
+void field_action_weaponplus2(s16b *field_ptr, void *input)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+
+	int factor = *((int*) input);
+	
+	if (p_ptr->command_cmd == 'E')
+	{
+		item_tester_hook = item_tester_hook_melee_weapon;
+				
+		enchant_item(f_ptr->data[1] * factor, TRUE, TRUE, FALSE);
+					
+		/* Hack, use factor as a return value */	
+		factor = TRUE;
+	}
+	else
+	{
+		factor = FALSE;
+	}
+}
+
+
+/*
+ * Armourplus2
+ */
+void field_action_armourplus2(s16b *field_ptr, void *input)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+
+	int factor = *((int*) input);
+	
+	if (p_ptr->command_cmd == 'E')
+	{
+		item_tester_hook = item_tester_hook_armour;
+				
+		enchant_item(f_ptr->data[1] * factor, FALSE, FALSE, TRUE);			
+		
+		/* Hack, use factor as a return value */	
+		factor = TRUE;
+	}
+	else
+	{
+		factor = FALSE;
+	}
+}
+
+
+/*
+ * Mutate2
+ */
+void field_action_mutate2(s16b *field_ptr, void *input)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+
+	int factor = *((int*) input);
+	s32b cost;
+	
+	if (p_ptr->command_cmd == 'E')
+	{
+		cost = f_ptr->data[1] * factor * (count_mutations()+1);
+				
+		if (test_gold(&cost))
+		{
+			if (lose_mutation(0))
+			{
+				msg_print("You feel oddly normal.");
+			}
+			else
+			{
+				(void) gain_mutation(0);
+			}
+			
+			/* Subtract off cost */
+			p_ptr->au -= cost;
+					
+			/* Display messages */
+			msg_print(NULL);
+			
+			/* Hack - We want to redraw the screen */
+			factor = 2;
+		}
+		else
+		{
+			/* Hack, use factor as a return value */	
+			factor = TRUE;
+		}
+	}
+	else
+	{
+		factor = FALSE;
+	}
+}
+
+
+/*
+ * Buymap2
+ */
+void field_action_buymap2(s16b *field_ptr, void *input)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+
+	int factor = *((int*) input);
+	s32b cost;
+	
+	if (p_ptr->command_cmd == 'E')
+	{
+		cost = f_ptr->data[1] * factor;
+				
+		if (test_gold(&cost))
+		{
+			msg_print("You learn of the lay of the lands.");
+					
+			/* Map a radius-20 circle around the player */
+			map_wilderness(20,
+				 p_ptr->wilderness_x / 16, p_ptr->wilderness_y / 16);
+			
+			/* Subtract off cost */
+			p_ptr->au -= cost;
+		}	
+		
+		/* Hack, use factor as a return value */	
+		factor = TRUE;
+	}
+	else
+	{
+		factor = FALSE;
+	}
+}
+
+/*
+ * Bookstore will buy/sell
+ */
+void field_action_isbook_tester(s16b *field_ptr, void *input)
+{
+	field_obj_test *f_o_ptr = (field_obj_test *) input;
+	
+	/* Hack - ignore field_ptr */
+	(void) field_ptr;
+	
+	f_o_ptr->result = item_tester_hook_is_book(f_o_ptr->o_ptr);
+}
+
+/*
+ * Weaponstore will buy/sell
+ */
+void field_action_isweapon_tester(s16b *field_ptr, void *input)
+{	
+	field_obj_test *f_o_ptr = (field_obj_test *) input;
+	
+	/* Hack - ignore field_ptr */
+	(void) field_ptr;
+	
+	f_o_ptr->result = item_tester_hook_weapon(f_o_ptr->o_ptr);
+}
+
+/*
+ * Armourstore will buy/sell
+ */
+void field_action_isarmour_tester(s16b *field_ptr, void *input)
+{
+	field_obj_test *f_o_ptr = (field_obj_test *) input;
+	
+	/* Hack - ignore field_ptr */
+	(void) field_ptr;
+	
+	f_o_ptr->result = item_tester_hook_armour(f_o_ptr->o_ptr);
+}
+
+
+/*
+ * Weapon/Armourstore will buy/sell
+ */
+void field_action_isweaparmour_tester(s16b *field_ptr, void *input)
+{	
+	field_obj_test *f_o_ptr = (field_obj_test *) input;
+	
+	/* Hack - ignore field_ptr */
+	(void) field_ptr;
+	
+	f_o_ptr->result = item_tester_hook_weapon_armour(f_o_ptr->o_ptr);
+}
+
+
+/*
+ * Ammo store will buy/sell
+ */
+void field_action_isammo_tester(s16b *field_ptr, void *input)
+{
+	field_obj_test *f_o_ptr = (field_obj_test *) input;
+	
+	/* Hack - ignore field_ptr */
+	(void) field_ptr;
+	
+	f_o_ptr->result = item_tester_hook_ammo(f_o_ptr->o_ptr);
+}
+
+/*
+ * Potion store will buy/sell
+ */
+void field_action_ispotion_tester(s16b *field_ptr, void *input)
+{
+	field_obj_test *f_o_ptr = (field_obj_test *) input;
+	
+	/* Hack - ignore field_ptr */
+	(void) field_ptr;
+	
+	/* Pick potions */
+	item_tester_tval = TV_POTION;
+	
+	f_o_ptr->result = item_tester_hook_tval(f_o_ptr->o_ptr);
+}
+
+/*
+ * Scroll store will buy/sell
+ */
+void field_action_isscroll_tester(s16b *field_ptr, void *input)
+{
+	field_obj_test *f_o_ptr = (field_obj_test *) input;
+	
+	/* Hack - ignore field_ptr */
+	(void) field_ptr;
+	
+	/* Pick scrolls */
+	item_tester_tval = TV_SCROLL;
+	
+	f_o_ptr->result = item_tester_hook_tval(f_o_ptr->o_ptr);
+}
+
+
+/*
+ * Statue store will buy/sell
+ */
+void field_action_isstatue_tester(s16b *field_ptr, void *input)
+{
+	field_obj_test *f_o_ptr = (field_obj_test *) input;
+	
+	/* Hack - ignore field_ptr */
+	(void) field_ptr;
+	
+	/* Pick statues */
+	item_tester_tval = TV_STATUE;
+	
+	f_o_ptr->result = item_tester_hook_tval(f_o_ptr->o_ptr);
+}
+
+/*
+ * Figurine store will buy/sell
+ */
+void field_action_isfigurine_tester(s16b *field_ptr, void *input)
+{	
+	field_obj_test *f_o_ptr = (field_obj_test *) input;
+	
+	/* Hack - ignore field_ptr */
+	(void) field_ptr;
+	
+	/* Pick figurines */
+	item_tester_tval = TV_FIGURINE;
+	
+	f_o_ptr->result = item_tester_hook_tval(f_o_ptr->o_ptr);
+}
+
+/*
+ * Food store will buy/sell
+ */
+void field_action_isfood_tester(s16b *field_ptr, void *input)
+{	
+	field_obj_test *f_o_ptr = (field_obj_test *) input;
+	
+	/* Hack - ignore field_ptr */
+	(void) field_ptr;
+	
+	/* Pick figurines */
+	item_tester_tval = TV_FOOD;
+	
+	f_o_ptr->result = item_tester_hook_tval(f_o_ptr->o_ptr);
+}
+
+
+/*
+ * Magic charges store will buy/sell
+ */
+void field_action_isrecharge_tester(s16b *field_ptr, void *input)
+{	
+	field_obj_test *f_o_ptr = (field_obj_test *) input;
+	
+	/* Hack - ignore field_ptr */
+	(void) field_ptr;
+		
+	f_o_ptr->result = item_tester_hook_recharge(f_o_ptr->o_ptr);
+}
+
+/*
+ * Weildable items store will buy/sell
+ */
+void field_action_iswield_tester(s16b *field_ptr, void *input)
+{	
+	field_obj_test *f_o_ptr = (field_obj_test *) input;
+		
+	/* Hack - ignore field_ptr */
+	(void) field_ptr;
+	
+	f_o_ptr->result = item_tester_hook_wear(f_o_ptr->o_ptr);
+}
+
+/*
+ * Fletcher will buy/sell
+ */
+void field_action_isfletcher_tester(s16b *field_ptr, void *input)
+{	
+	field_obj_test *f_o_ptr = (field_obj_test *) input;
+	
+	/* Hack - ignore field_ptr */
+	(void) field_ptr;
+		
+	f_o_ptr->result = item_tester_hook_fletcher(f_o_ptr->o_ptr);
+}
+
+

@@ -6667,7 +6667,7 @@ cptr silly_attacks[MAX_SILLY_ATTACK] =
 };
 
 /* Field function's + names */
-field_action f_action[FIELD_ACTION_TYPES] =
+field_action f_action[] =
 {
 	/* Null - Do absolutely nothing */
 	{NULL, "nothing"}, 
@@ -6824,6 +6824,84 @@ field_action f_action[FIELD_ACTION_TYPES] =
 	
 	/* Buildings open when walked on */
 	{field_action_door_build, "field_action_door_build"},
+
+	/* Weaponmaster part 1 */
+	{field_action_weaponmaster1, "field_action_weaponmaster1"},
+	
+	/* Weaponmaster part 2 */
+	{field_action_weaponmaster2, "field_action_weaponmaster2"},
+	
+	/* Recharge items part 1 */
+	{field_action_recharge1, "field_action_recharge1"},
+	
+	/* Recharge items part 2 */
+	{field_action_recharge2, "field_action_recharge2"},
+	
+	/* Enchant weapons part 1 */
+	{field_action_weaponplus1, "field_action_weaponplus1"},
+	
+	/* Enchant weapons part 2 */
+	{field_action_weaponplus2, "field_action_weaponplus2"},
+	
+	/* Enchant armour part 1 */
+	{field_action_armourplus1, "field_action_armourplus1"},
+	
+	/* Enchant armour part 2 */
+	{field_action_armourplus2, "field_action_armourplus2"},
+	
+	/* Mutatalist part 1 */
+	{field_action_mutate1, "field_action_mutate1"},
+	
+	/* Mutatalist part 2 */
+	{field_action_mutate2, "field_action_mutate2"},
+	
+	/* Map maker part 1 */
+	{field_action_buymap1, "field_action_buymap1"},
+	
+	/* Map maker part 2 */
+	{field_action_buymap2, "field_action_buymap2"},
+	
+	/* Bookstore */
+	{field_action_isbook_tester, "field_action_isbook_tester"},
+	
+	/* Weaponstore */
+	{field_action_isweapon_tester, "field_action_isweapon_tester"},
+	
+	/* Armourstore */
+	{field_action_isarmour_tester, "field_action_isarmour_tester"},
+	
+	/* Weapon/Armour store */
+	{field_action_isweaparmour_tester, "field_action_isweaparmour_tester"},
+	
+	/* Ammostore */
+	{field_action_isammo_tester, "field_action_isammo_tester"},
+	
+	/* Potion store */
+	{field_action_ispotion_tester, "field_action_ispotion_tester"},
+	
+	/* Scroll store */
+	{field_action_isscroll_tester, "field_action_isscroll_tester"},
+	
+	/* Statue store */
+	{field_action_isstatue_tester, "field_action_isstatue_tester"},
+	
+	/* Figurine store */
+	{field_action_isfigurine_tester, "field_action_isfigurine_tester"},
+	
+	/* Food store */
+	{field_action_isfood_tester, "field_action_isfood_tester"},
+	
+	/* Rechargable items store */
+	{field_action_isrecharge_tester, "field_action_isrecharge_tester"},
+	
+	/* Wieldable items store */
+	{field_action_iswield_tester, "field_action_iswield_tester"},
+	
+	/* Fletcher store */
+	{field_action_isfletcher_tester, "field_action_isfletcher_tester"},
+
+	/* Done */
+	{NULL, NULL}
 };
 
 /*

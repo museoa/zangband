@@ -984,6 +984,20 @@ struct field_mon_test
 	bool do_move; /* Does the monster enter this grid? */
 };
 
+/*
+ * Structure used to pass to field action functions that
+ * test objects for given properties.
+ */
+typedef struct field_obj_test field_obj_test;
+
+struct field_obj_test
+{
+	object_type *o_ptr; /* The object */
+	bool result; /* Result of the test */
+};
+
+
+
 
 /*
  * An entry for the object/monster allocation functions
@@ -1619,15 +1633,15 @@ struct store_type
 
 	s32b last_visit;		/* Last visited on this turn */
 
-	s16b table_num;			/* Table -- Number of entries */
-	s16b table_size;		/* Table -- Total Size of Array */
-	s16b *table;			/* Table -- Legal item kinds */
-
+	byte max_stock;			/* Stock -- Max number of entries */
 	byte stock_num;			/* Stock -- Number of entries */
 	object_type *stock;		/* Stock -- Actual stock items */
 	
 	u16b x;					/* Location x coord. */
 	u16b y;					/* Location y coord. */
+	
+	field_type *f_ptr;		/* Field corresponding to this store */
+	byte	info_flags;		/* Info flags - obtained from the field data[] */
 };
 
 typedef store_type *store_ptr;

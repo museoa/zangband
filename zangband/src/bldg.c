@@ -470,60 +470,10 @@ static void display_build(field_type *f_ptr, store_type *b_ptr)
 	prt(" ESC) Exit building", 23, 0);
 
 	/* Display building-specific information */
-	switch (f_ptr->data[0])
-	{
-		case BLDG_WEAPONMASTER:
-		{
-			sprintf(tmp_str, " E) Examine Weapons (%dgp)",
-				 f_ptr->data[1] * factor);
-			c_put_str(TERM_YELLOW, tmp_str, 19, 35);
-			break;
-		}
-		
-		case BLDG_RECHARGE:
-		{
-			sprintf(tmp_str, " R) Recharge Items");
-			c_put_str(TERM_YELLOW, tmp_str, 19, 0);
-			sprintf(tmp_str, " I) Identify Items (%dgp)",
-			f_ptr->data[2] * factor);
-			c_put_str(TERM_YELLOW, tmp_str, 19, 35);
-			break;
-		}
-		
-		case BLDG_PLUS_WEAPON:
-		{
-			sprintf(tmp_str, " E) Enchant Weapons (%dgp)",
-				 f_ptr->data[1] * factor);
-			c_put_str(TERM_YELLOW, tmp_str, 19, 35);
-			break;
-		}
-		
-		case BLDG_PLUS_ARMOUR:
-		{
-			sprintf(tmp_str, " E) Enchant Armour (%dgp)",
-				 f_ptr->data[1] * factor);
-			c_put_str(TERM_YELLOW, tmp_str, 19, 35);
-			break;
-		}
-		
-		case BLDG_MUTATE:
-		{
-			sprintf(tmp_str, " E) Expose yourself to raw chaos (%dgp)",
-				 f_ptr->data[1] * factor * (count_mutations() + 1));
-			c_put_str(TERM_YELLOW, tmp_str, 19, 30);
-			break;
-		}
-		
-		case BLDG_MAP:
-		{
-			sprintf(tmp_str, " E) Examine Map (%dgp)",
-				 f_ptr->data[1] * factor);
-			c_put_str(TERM_YELLOW, tmp_str, 19, 35);
-			break;
-		}
-	}
+	field_hook(&area(p_ptr->py, p_ptr->px)->fld_idx,
+		 FIELD_ACT_STORE_ACT1, (void *) &factor);
 
-
+	/* Show your gold */
 	building_prt_gold();
 }
 
@@ -1260,7 +1210,7 @@ static void list_weapon(object_type *o_ptr, int row, int col)
  * Copies the weapons to compare into the weapon-slot and
  * compares the values for both weapons.
  */
-static void compare_weapons(void)
+void compare_weapons(void)
 {
 	int item, item2;
 	object_type *o1_ptr, *o2_ptr;
@@ -1341,7 +1291,7 @@ static void compare_weapons(void)
 /*
  * Enchant item
  */
-static bool enchant_item(int cost, bool to_hit, bool to_dam, bool to_ac)
+bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac)
 {
 	int         item;
 	bool        okay = FALSE;
@@ -1432,7 +1382,7 @@ static bool enchant_item(int cost, bool to_hit, bool to_dam, bool to_ac)
  * for recharging wands and staves are dependent on the cost of
  * the base-item.
  */
-static void building_recharge(long cost)
+void building_recharge(s32b cost)
 {
 	int         item, lev;
 	object_type *o_ptr;
@@ -1840,32 +1790,9 @@ void do_cmd_quest(void)
 
 #endif /* 0 */
 
-/* Does the player have enough gold for this action? */
-static bool test_gold(int *cost)
-{
-	if (p_ptr->au < *cost)
-	{
-		/* Player does not have enough gold */
-
-		msg_format("You need %d gold to do this!", *cost);
-		msg_print(NULL);
-		
-		*cost = 0;
-		
-		return (FALSE);
-	
-	}
-	
-	/* Player has enough gold */
-	return (TRUE);
-}
-
 
 static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
 {
-	int		cost = 0;
-	bool	done = FALSE;
-	
 	b_own_type *bo_ptr = &b_owners[f_ptr->data[0]][b_ptr->owner];
 	
 	int		factor;
@@ -1878,140 +1805,18 @@ static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
 	
 	factor = ((300 - factor) * bo_ptr->inflate) / 100;
 	
-	switch (f_ptr->data[0])
+	field_hook(&area(p_ptr->py, p_ptr->px)->fld_idx,
+		 FIELD_ACT_STORE_ACT2, (void *) &factor);
+		
+	/* Hack XXX XXX, factor is returned as 2 if we want a redraw */
+	if (factor == 2)
 	{
-		case BLDG_WEAPONMASTER:
-		{
-			if (p_ptr->command_cmd == 'E')
-			{
-				cost = f_ptr->data[1] * factor;
-				
-				if (test_gold(&cost))
-				{
-					compare_weapons();
-				}
-				
-				done = TRUE;
-			}
-			
-			break;
-		}
-		
-		case BLDG_RECHARGE:
-		{
-			if (p_ptr->command_cmd == 'R')
-			{
-				building_recharge(f_ptr->data[1] * factor);
-				
-				done = TRUE;
-			}
-			
-			if (p_ptr->command_cmd == 'I')
-			{
-				cost = f_ptr->data[2] * factor;
-				
-				if (test_gold(&cost))
-				{
-					identify_pack();
-
-					/* Combine / Reorder the pack (later) */
-					p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
-					msg_print("Your posessions have been identified.");
-					msg_print(NULL);
-				}
-								
-				done = TRUE;
-			}
-
-			break;	
-		}
-		
-		case BLDG_PLUS_WEAPON:
-		{
-			if (p_ptr->command_cmd == 'E')
-			{
-				item_tester_hook = item_tester_hook_melee_weapon;
-				
-				enchant_item(f_ptr->data[1] * factor, TRUE, TRUE, FALSE);
-				
-				done = TRUE;
-			}		
-		
-			break;
-		}
-		
-		case BLDG_PLUS_ARMOUR:
-		{
-			if (p_ptr->command_cmd == 'E')
-			{
-				item_tester_hook = item_tester_hook_armour;
-				
-				enchant_item(f_ptr->data[1] * factor, FALSE, FALSE, TRUE);
-				
-				done = TRUE;
-			}
-		
-			break;
-		}
-		
-		case BLDG_MUTATE:
-		{
-			if (p_ptr->command_cmd == 'E')
-			{
-				cost = f_ptr->data[1] * factor * (count_mutations()+1);
-				
-				if (test_gold(&cost))
-				{
-					if (lose_mutation(0))
-					{
-						msg_print("You feel oddly normal.");
-					}
-					else
-					{
-						(void) gain_mutation(0);
-					}
-					
-					/* Display messages */
-					msg_print(NULL);
-					
-					/* Redraw screen */
-					display_build(f_ptr, b_ptr);
-				}
-				
-				done = TRUE;
-			}
-			
-			break;
-		}
-		
-		case BLDG_MAP:
-		{
-			if (p_ptr->command_cmd == 'E')
-			{
-				cost = f_ptr->data[1] * factor;
-				
-				if (test_gold(&cost))
-				{
-					msg_print("You learn of the lay of the lands.");
-					
-					/* Map a radius-20 circle around the player */
-					map_wilderness(20,
-						 p_ptr->wilderness_x / 16, p_ptr->wilderness_y / 16);
-				}
-				
-				done = TRUE;
-			}
-			
-			break;
-		}
+		/* Redraw screen */
+		display_build(f_ptr, b_ptr);
 	}
 	
-	/* Subtract off cost */
-	p_ptr->au -= cost;
-	
 	/* Did we do anything? */
-	return (done);
+	return (factor);
 }
 
 

@@ -744,42 +744,6 @@ bool make_attack_normal(int m_idx)
 									m_ptr->hold_o_idx = o_idx;
 								}
 							}
-							else
-							{
-								if (strstr((r_name + r_ptr->name), "black market") &&
-									randint1(2) != 1)
-								{
-									s16b o_idx;
-
-									/* Make an object */
-									o_idx = o_pop();
-
-									/* Success */
-									if (o_idx)
-									{
-										object_type *j_ptr;
-										if (cheat_xtra || cheat_peek)
-										msg_print("Moving object to black market...");
-
-										/* Get new object */
-										j_ptr = &o_list[o_idx];
-
-										/* Copy object */
-										object_copy(j_ptr, o_ptr);
-
-										/* Modify number */
-										j_ptr->number = 1;
-
-										/* Wand / rod stacking */
-										distribute_charges(o_ptr, j_ptr, --o_ptr->number);
-
-										/* Forget mark */
-										j_ptr->marked = FALSE;
-
-										move_to_black_market(j_ptr);
-									}
-								}
-							}
 
 							/* Steal the items */
 							inven_item_increase(i, -1);

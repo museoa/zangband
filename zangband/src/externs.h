@@ -74,7 +74,7 @@ extern int chaos_rewards[MAX_PATRON][20];
 extern martial_arts ma_blows[MAX_MA];
 extern cptr game_inscriptions[FEEL_MAX];
 extern cptr silly_attacks[MAX_SILLY_ATTACK];
-extern field_action f_action[FIELD_ACTION_TYPES];
+extern field_action f_action[];
 extern mutation_type mutations[MUT_SETS_MAX * MUT_PER_SET];
 extern mutation_type race_powers[MAX_RACE_POWERS];
 
@@ -640,12 +640,16 @@ extern void inven_drop(int item, int amt);
 extern bool item_tester_hook_weapon(object_type *o_ptr);
 extern bool item_tester_hook_melee_weapon(object_type *o_ptr);
 extern bool item_tester_hook_ammo(object_type *o_ptr);
+extern bool item_tester_hook_fletcher(object_type *o_ptr);
 extern bool item_tester_hook_armour(object_type *o_ptr);
 extern bool item_tester_hook_weapon_armour(object_type *o_ptr);
 extern bool item_tester_hook_wear(object_type *o_ptr);
 extern bool item_tester_hook_recharge(object_type *o_ptr);
 extern bool item_tester_hook_tval(object_type *o_ptr);
-extern bool item_tester_hook_price(object_type *o_ptr);
+extern bool item_tester_hook_is_blessed(object_type *o_ptr);
+extern bool item_tester_hook_is_good(object_type *o_ptr);
+extern bool item_tester_hook_is_great(object_type *o_ptr);
+extern bool item_tester_hook_is_book(object_type *o_ptr);
 extern bool item_tester_okay(object_type *o_ptr);
 extern void display_inven(void);
 extern void display_equip(void);
@@ -681,6 +685,8 @@ extern void add_ego_power(int power, object_type *o_ptr);
 extern void apply_magic(object_type *o_ptr, int lev, int lev_dif, byte flags);
 extern void init_match_hook(byte tval, byte sval);
 extern byte kind_is_match(int k_idx);
+extern void init_match_theme(obj_theme theme);
+extern byte kind_is_theme(int k_idx);
 extern bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme);
 extern void place_object(int y, int x, bool good, bool great);
 extern bool make_gold(object_type *j_ptr, int coin_type);
@@ -868,14 +874,15 @@ extern void map_wilderness(int radius, s32b x, s32b y);
 extern bool allocate_store(store_type *st_ptr);
 extern void do_cmd_store(field_type *f_ptr);
 extern void store_shuffle(int which);
-extern void store_maint(town_type *twn_ptr);
 extern void store_init(int town_num, int store_num, byte store_type);
-extern void move_to_black_market(object_type * o_ptr);
 
 /* bldg.c */
 extern bool get_nightmare(int r_idx);
 extern void have_nightmare(int r_idx);
 extern void do_cmd_bldg(field_type *f_ptr);
+extern void compare_weapons(void);
+extern bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac);
+extern void building_recharge(s32b cost);
 extern void do_cmd_quest(void);
 extern void quest_discovery(int q_idx);
 extern int quest_number(int level);
@@ -1192,6 +1199,37 @@ extern void field_action_door_jam_monster(s16b *field_ptr, void *input);
 extern void field_action_door_gf(s16b *field_ptr, void *input);
 extern void field_action_door_store(s16b *field_ptr, void *nothing);
 extern void field_action_door_build(s16b *field_ptr, void *nothing);
+extern void field_action_weaponmaster1(s16b *field_ptr, void *input);
+extern void field_action_recharge1(s16b *field_ptr, void *input);
+extern void field_action_weaponplus1(s16b *field_ptr, void *input);
+extern void field_action_armourplus1(s16b *field_ptr, void *input);
+extern void field_action_mutate1(s16b *field_ptr, void *input);
+extern void field_action_buymap1(s16b *field_ptr, void *input);
+extern void field_action_weaponmaster2(s16b *field_ptr, void *input);
+extern void field_action_recharge2(s16b *field_ptr, void *input);
+extern void field_action_weaponplus2(s16b *field_ptr, void *input);
+extern void field_action_armourplus2(s16b *field_ptr, void *input);
+extern void field_action_mutate2(s16b *field_ptr, void *input);
+extern void field_action_buymap2(s16b *field_ptr, void *input);
+extern void field_action_isbook_tester(s16b *field_ptr, void *input);
+extern void field_action_isweapon_tester(s16b *field_ptr, void *input);
+extern void field_action_isarmour_tester(s16b *field_ptr, void *input);
+extern void field_action_isweaparmour_tester(s16b *field_ptr, void *input);
+extern void field_action_isammo_tester(s16b *field_ptr, void *input);
+extern void field_action_ispotion_tester(s16b *field_ptr, void *input);
+extern void field_action_isscroll_tester(s16b *field_ptr, void *input);
+extern void field_action_isstatue_tester(s16b *field_ptr, void *input);
+extern void field_action_isfigurine_tester(s16b *field_ptr, void *input);
+extern void field_action_isfood_tester(s16b *field_ptr, void *input);
+extern void field_action_isrecharge_tester(s16b *field_ptr, void *input);
+extern void field_action_iswield_tester(s16b *field_ptr, void *input);
+extern void field_action_isfletcher_tester(s16b *field_ptr, void *input);
+
+
+
+
+
+
 /*
  * Hack -- conditional (or "bizarre") externs
  */

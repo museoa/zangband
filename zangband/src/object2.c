@@ -3838,7 +3838,7 @@ byte kind_is_match(int k_idx)
 /* The themed objects to use */
 static obj_theme match_theme;
 
-static void init_match_theme(obj_theme theme)
+void init_match_theme(obj_theme theme)
 {
 	/* Save the theme */
 	match_theme = theme;
