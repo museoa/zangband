@@ -268,11 +268,6 @@ dos: CFLAGS += -s -DUSE_DOS -DUSE_IBM -D"USE_BACKGROUND"
 dos: LIBS := -lpc -lalleg
 dos: INSTALL := copy zangband ../zangband.exe
 dos: LUA := lua\# Dos has different path seperators
-dos_clean:
-	-del *.o \
-	-del lua\*.o \
-	-del *.exe \
-	-del lua\*.exe
 
 ##
 ## Variation -- Compile using the main-ibm.c port
@@ -280,12 +275,6 @@ dos_clean:
 ibm: CFLAGS += -DUSE_IBM
 ibm: LIBS := -lpc
 ibm: LUA := lua\# Dos has different path seperators
-ibm_clean:
-	-del *.o \
-	-del lua\*.o \
-	-del *.exe \
-	-del lua\*.exe
-
 
 ##
 ## Variation -- Compile using the lcc32 compiler
@@ -299,10 +288,6 @@ lcc: RESCMD := -I$(LCC_PATH)\include angband.rc
 lcc: ANGOBJS += angband.res readdib.o
 lcc: INSTALL := copy zangband ..\zangband.exe
 lcc: LUA := lua\# Dos has different path seperators
-lcc_clean:
-	-del *.obj \
-	-del *.res \
-	-del *.exe;
 
 ##
 ## Variation -- Compile for Risc OS 3.10 or later  (Acorn)
@@ -376,12 +361,16 @@ zangband: $(OBJS)
 ##
 
 clean:
-	rm -f *.bak *.o; \
-	rm -f ./lua/*.bak ./lua/*.o; \
-	rm -f ./l-*.c; \
-	rm -f ./lua/tolua; \
-	rm -f ./lua/tolua_boot;
-
+	-rm -f *.bak *.o;
+	-rm -f ./lua/*.bak ./lua/*.o;
+	-rm -f ./l-*.c;
+	-rm -f ./lua/tolua;
+	-rm -f ./lua/tolua_boot;
+	-del *.obj
+	-del lua\*.obj
+	-del *.exe
+	-del lua\*.exe
+	-del *.res
 ##
 ## Generate dependencies automatically
 ##
@@ -431,9 +420,9 @@ grid.o: grid.h generate.h
 rooms.o: grid.h generate.h rooms.h
 streams.o: grid.h generate.h
 maid-grf.o: maid-grf.h
-main-gtk.o: maid-grf.h
 maid-x11.o: maid-grf.h
 main-acn.o: maid-grf.h
+main-gtk.o: maid-grf.h
 main-win.o: maid-grf.h
 main-x11.o: maid-grf.h maid-x11.h
 main-xaw.o: maid-grf.h maid-x11.h
