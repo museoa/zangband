@@ -169,7 +169,7 @@ else
     fi
 
     if test -n "$with_tkdir"; then
-      BASE_TK_DIR="$CPPFLAGS -I$with_tkdir/include"
+      BASE_TK_DIR="$with_tkdir/include"
       CFLAGS="-L$with_tkdir/lib $CFLAGS"
     fi
   
