@@ -2720,8 +2720,9 @@ bool borg_test_stuff(bool star_id)
 				case TV_SCROLL:
 				{
 
-					/* Hack -- boring levels */
-					if (borg_skill[BI_MAXDEPTH] < 5) break;
+					/* Hack -- on boring levels, only if pack is full */
+					if ((!borg_items[INVEN_PACK - 1].iqty) &&
+						 (borg_skill[BI_MAXDEPTH] < 5)) break;
 
 					/* Hack -- reward depth */
 					v += (borg_skill[BI_MAXDEPTH] * 500L);
