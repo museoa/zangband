@@ -183,6 +183,9 @@ static s16b critical_norm(int weight, int plus, int dam)
 	/* Extract "blow" power */
 	power = (weight + ((p_ptr->to_h + plus) * 5) + (p_ptr->lev * 3));
 
+	if (p_ptr->flags4 & (TR4_STRANGE_LUCK))
+		power = power * 3 / 2;
+
 	/* Chance */
 	if (randint1(5000) <= power)
 	{

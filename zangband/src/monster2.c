@@ -529,18 +529,19 @@ s16b get_mon_num(int level)
 		}
 		else
 		{
-			/* Occasional "nasty" monster */
-			if (one_in_(NASTY_MON))
-			{
-				/* Boost the level */
-				level += 7;
-			}
+			int checks = 2;
 
-			/* Occasional "nasty" monster */
-			if (one_in_(NASTY_MON))
+			if (p_ptr->flags4 & (TR4_STRANGE_LUCK))
+				checks = 5;
+
+			for ( ; checks > 0; checks--)
 			{
-				/* Boost the level */
-				level += 7;
+				/* Occasional "nasty" monster */
+				if (one_in_(NASTY_MON))
+				{
+					/* Boost the level */
+					level += 7;
+				}
 			}
 		}
 	}

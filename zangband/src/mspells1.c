@@ -447,6 +447,13 @@ void curse_equipment(int chance, int heavy_chance)
 
 	object_type *o_ptr = &p_ptr->equipment[randint0(EQUIP_MAX)];
 
+	/* Ow! */
+	if (p_ptr->flags4 & (TR4_STRANGE_LUCK))
+	{
+		chance = chance * 2;
+		heavy_chance = heavy_chance * 2;
+	}
+
 	if (randint1(100) > chance) return;
 
 	if (!o_ptr->k_idx) return;

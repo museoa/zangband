@@ -24,6 +24,10 @@ static int monster_critical(int dice, int sides, int dam)
 	int max = 0;
 	int total = dice * sides;
 
+	/* Luck isn't always good for you... */
+	if (p_ptr->flags4 & (TR4_STRANGE_LUCK))
+		dam = dam * 3 / 2;
+
 	/* Must do at least 95% of perfect */
 	if (dam < total * 19 / 20) return (0);
 

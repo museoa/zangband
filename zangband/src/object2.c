@@ -756,13 +756,18 @@ s16b get_obj_num(int level, int min_level)
 	long value1, value2, total;
 	alloc_entry *table = alloc_kind_table;
 
+	/* Luck gives occasional out-of-depth items */
+	if ((p_ptr->flags4 & (TR4_STRANGE_LUCK)) && one_in_(GREAT_OBJ))
+	{
+		level += 20;
+	}
+
 	/* Occasional "boost" */
 	if (one_in_(GREAT_OBJ))
 	{
 		/* What a bizarre calculation */
 		level = 1 + (level * MAX_DEPTH / randint1(MAX_DEPTH));
 	}
-
 
 	/* Reset total */
 	total = 0L;
@@ -4036,6 +4041,9 @@ void apply_magic(object_type *o_ptr, int lev, int lev_dif, byte flags)
 
 	/* Maximal chance of being "good" */
 	if (f > 42) f = 42;
+
+	if (p_ptr->flags4 & (TR4_STRANGE_LUCK))
+		f = f * 3 / 2;
 
 	/* Lights are more likely to be ego-items */
 	if (o_ptr->tval == TV_LITE) f *= 2;
