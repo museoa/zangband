@@ -896,7 +896,7 @@ extern void identify_item(object_type *o_ptr);
 extern bool identify_fully(void);
 extern bool recharge(int num);
 extern bool bless_weapon(void);
-extern bool potion_smash_effect(int who, int y, int x, int o_sval);
+extern bool potion_smash_effect(int who, int y, int x, int k_idx);
 extern void display_spell_list(void);
 extern s16b spell_chance(int spell,int realm);
 extern bool spell_okay(int spell, bool known, int realm);

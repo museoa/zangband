@@ -1386,7 +1386,7 @@ static bool cast_death_spell(int spell)
 		{   /* Special effect first */
 			dummy = randint(1000);
 			if (dummy == 666)
-				fire_bolt(GF_DEATH_RAY, dir, plev);
+				fire_bolt(GF_DEATH_RAY, dir, plev * 200);
 			else if (dummy < 500)
 				fire_bolt(GF_TURN_ALL, dir, plev);
 			else if (dummy < 800)

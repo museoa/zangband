@@ -3186,7 +3186,7 @@ void do_cmd_throw_aux(int mult)
 			/* Message */
 			msg_format("The %s shatters!", o_name);
 
-			if (potion_smash_effect(0, y, x, q_ptr->sval))
+			if (potion_smash_effect(0, y, x, q_ptr->k_idx))
 			{
 				monster_type *m_ptr = &m_list[cave[y][x].m_idx];
 

@@ -2330,7 +2330,7 @@ bool bless_weapon(void)
  *          the potion was in her inventory);
  *    o_ptr --- pointer to the potion object.
  */
-bool potion_smash_effect(int who, int y, int x, int o_sval)
+bool potion_smash_effect(int who, int y, int x, int k_idx)
 {
 	int     radius = 2;
 	int     dt = 0;
@@ -2338,7 +2338,9 @@ bool potion_smash_effect(int who, int y, int x, int o_sval)
 	bool    ident = FALSE;
 	bool    angry = FALSE;
 
-	switch (o_sval)
+	object_kind *k_ptr = &k_info[k_idx];
+
+	switch (k_ptr->sval)
 	{
 		case SV_POTION_SALT_WATER:
 		case SV_POTION_SLIME_MOLD:
@@ -2421,6 +2423,7 @@ bool potion_smash_effect(int who, int y, int x, int o_sval)
 			break;
 		case SV_POTION_DEATH:
 			dt = GF_DEATH_RAY;    /* !! */
+			dam = k_ptr->level * 10;
 			angry = TRUE;
 			radius = 1;
 			ident = TRUE;
@@ -3280,7 +3283,7 @@ int inven_damage(inven_func typ, int perc)
 				/* Potions smash open */
 				if (object_is_potion(o_ptr))
 				{
-					(void)potion_smash_effect(0, py, px, o_ptr->sval);
+					(void)potion_smash_effect(0, py, px, o_ptr->k_idx);
 				}
 
 				/* Reduce the charges of rods/wands */

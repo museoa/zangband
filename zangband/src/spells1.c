@@ -891,7 +891,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 
 	char o_name[80];
 
-	int o_sval = 0;
+	int k_idx = 0;
 	bool is_potion = FALSE;
 
 
@@ -1127,7 +1127,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 					msg_format("The %s%s", o_name, note_kill);
 				}
 
-				o_sval = o_ptr->sval;
+				k_idx = o_ptr->k_idx;
 				is_potion = object_is_potion(o_ptr);
 
 
@@ -1137,7 +1137,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 				/* Potions produce effects when 'shattered' */
 				if (is_potion)
 				{
-					(void)potion_smash_effect(who, y, x, o_sval);
+					(void)potion_smash_effect(who, y, x, k_idx);
 				}
 
 				/* Redraw */
@@ -2047,12 +2047,10 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 		/* Death Ray */
 		case GF_DEATH_RAY:
 		{
-#if 0
-			dam = 0;
-#endif
 			if (seen) obvious = TRUE;
+			
 			if ((r_ptr->flags3 & RF3_UNDEAD) ||
-			    (r_ptr->flags3 & RF3_NONLIVING))
+				 (r_ptr->flags3 & RF3_NONLIVING))
 			{
 				if (r_ptr->flags3 & RF3_UNDEAD)
 				{
@@ -2064,16 +2062,14 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 				dam = 0;
 			}
 			else if (((r_ptr->flags1 & RF1_UNIQUE) &&
-			    (randint(888) != 666)) ||
-			    (((r_ptr->level + randint(20)) > randint(dam + randint(10))) &&
-			    randint(100) != 66))
+				 (randint(888) != 666)) ||
+				 (((r_ptr->level + randint(20)) > randint(dam + randint(10))) &&
+				 randint(100) != 66))
 			{
 				note = " resists!";
 				obvious = FALSE;
 				dam = 0;
 			}
-
-			else dam = p_ptr->lev * 200;
 
 			break;
 		}
@@ -3917,6 +3913,33 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			if ((!(p_ptr->resist_cold || p_ptr->oppose_cold)) || (randint(12) == 1))
 			{
 				if (!p_ptr->immune_cold) inven_damage(set_cold_destroy, 3);
+			}
+
+			break;
+		}
+
+		/* Death Ray */
+		case GF_DEATH_RAY:
+		{
+			if (fuzzy) msg_print("You are hit by something extremely cold!");
+
+			switch (p_ptr->prace)
+			{
+				/* Some races are immune */
+				case RACE_GOLEM:
+				case RACE_ZOMBIE:
+				case RACE_VAMPIRE:
+				case RACE_SPECTRE:
+				{
+					dam = 0;
+					break;
+				}
+				/* Hurt a lot */
+				default:
+				{
+					take_hit(dam, killer);
+					break;
+				}
 			}
 
 			break;
