@@ -573,7 +573,7 @@ s16b field_add(field_type *f_ptr, s16b *fld_idx2)
 		if (counter > MAX_SHORT) counter = MAX_SHORT;
 		
 		/* Store in new counter */
-		j_ptr->counter = counter;
+		j_ptr->counter = (s16b)counter;
 		
 		return (*fld_idx2);
 	}
