@@ -33,8 +33,6 @@ proc NSStatus::InitModule {} {
 	variable Priv
 	variable Trans
 
-	MsgCatInit status
-
 	# Get the Main Window widget
 	set widget [Global main,widget]
 
@@ -46,22 +44,14 @@ proc NSStatus::InitModule {} {
 
 	# Calculate the height of a status item (includes bevel)
 	set statusHeight [expr {$fontHeight + 2}]
-
-	# Hack -- Check each translation string, and save it for speed
-	foreach loc $::msgcat::Loclist {
-		set prefix "$loc,::NSStatus,"
-		set len [string length $prefix]
-		foreach name [array names ::msgcat::Msgs $prefix*] {
-			lappend strings $::msgcat::Msgs($name)
-			set srcString [string range $name $len end]
-#			set Trans($srcString) $::msgcat::msgs($name)
-			set Trans($srcString) [mc $srcString]
-		}
-	}
+	
+	# Remember a list of status keywords
+	set Priv(names) [list state winner cut stun hunger blind confused \
+		afraid poisoned speed study]
 
 	# Calculate the minimum required width of a status item
 	set maxWidth 0
-	foreach string $strings {
+	foreach string $Priv(names) {
 		set width [font measure $font $string]
 		if {$width > $maxWidth} {
 			set maxWidth $width
@@ -73,10 +63,6 @@ proc NSStatus::InitModule {} {
 
 	# Remember the number of status items per row
 	set Priv(numPerRow) [expr {[winfo reqwidth $widget] / $statusWid}]
-
-	# Remember a list of status keywords
-	set Priv(names) [list state winner cut stun hunger blind confused \
-		afraid poisoned speed study]
 	
 	#
 	# Assign "color" to each message
@@ -346,12 +332,8 @@ proc NSStatus::InitStatusMessage {} {
 
 	# Hack -- Calculate the maximum dimensions of a status message
 	set maxWidth 0
-	foreach loc $::msgcat::Loclist {
-		foreach name [array names ::msgcat::Msgs $loc,::NSStatus,*] {
-			lappend strings $::msgcat::Msgs($name)
-		}
-	}
-	foreach string $strings {
+
+	foreach string $Priv(names) {
 		set width [font measure $font $string]
 		if {$width > $maxWidth} {
 			set maxWidth $width
@@ -491,13 +473,7 @@ proc NSStatus::ValueChanged_font_status {} {
 
 	# Calculate the minimum required width of a status item
 	set maxWidth 0
-	foreach loc $::msgcat::Loclist {
-		foreach name [array names ::msgcat::Msgs $loc,::NSStatus,*] {
-			set string $::msgcat::Msgs($name)
-			lappend strings [format $string 9999]
-		}
-	}
-	foreach string $strings {
+	foreach string $Priv(names) {
 		set width [font measure $font $string]
 		if {$width > $maxWidth} {
 			set maxWidth $width
