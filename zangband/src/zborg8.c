@@ -1130,9 +1130,6 @@ bool borg_think_store(void)
 	/* Stamp the shop with a time stamp */
 	borg_shops[shop_num].when = borg_t;
 
-	/* Wear "optimal" equipment */
-	if (borg_best_stuff()) return (TRUE);
-
 	/* Remove "useless" equipment */
 	if (borg_remove_stuff()) return (TRUE);
 
