@@ -1685,7 +1685,7 @@ void py_attack(int x, int y)
 				k += slay / 20;
 
 				/* Apply scripted effects */
-				apply_object_trigger(TRIGGER_HIT, o_ptr, "iiibbbbi", 
+				apply_object_trigger(TRIGGER_HIT, o_ptr, ":iiibbbbi", 
 					LUA_RETURN(ghoul_paral), LUA_RETURN(drain_power),
 					LUA_RETURN(vorpal_chance), LUA_RETURN(do_quake),
 					LUA_RETURN(do_conf), LUA_RETURN(do_tele),
