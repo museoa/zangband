@@ -2462,11 +2462,15 @@ void display_map(int *cx, int *cy)
 							int depth = (w_ptr->done.mon_gen + 9) / 10;
 
 							if (depth > 9) depth = 9;
-
-							/* Quests are red */
-							ma[j + 1][i + 1] = TERM_RED;
-							mc[j + 1][i + 1] = '0' + depth;
-							feat = FEAT_NONE;
+							
+							/* We haven't been here? */
+							if (!(w_info & WILD_INFO_DONE))
+							{
+								/* Quests are red */
+								ma[j + 1][i + 1] = TERM_RED;
+								mc[j + 1][i + 1] = '0' + depth;
+								feat = FEAT_NONE;
+							}
 							
 							break;
 						}

@@ -2258,8 +2258,10 @@ static void overlay_place(int x, int y, u16b w_place, blk_ptr block_ptr)
 
 	int fld_idx, type;
 
+	wild_done_type *w_ptr = &wild[y][x].done;
+
 	/* Generation level for monsters and objects */
-	int level = wild[y][x].done.mon_gen;
+	int level = w_ptr->mon_gen;
 
 	cave_type *c_ptr;
 	place_type *pl_ptr = &place[w_place];
@@ -2295,19 +2297,6 @@ static void overlay_place(int x, int y, u16b w_place, blk_ptr block_ptr)
 
 			/* Copy the terrain */
 			block_ptr[j][i].feat = c_ptr->feat;
-
-			/*
-			 * Instantiate object
-			 */
-			place_specific_object(x2, y2, level, c_ptr->o_idx);
-
-			/*
-			 * Instantiate monster
-			 */
-			if (c_ptr->m_idx)
-			{
-				place_monster_one(x2, y2, c_ptr->m_idx, FALSE, FALSE, FALSE);
-			}
 
 			/*
 			 * Instantiate field
@@ -2374,6 +2363,25 @@ static void overlay_place(int x, int y, u16b w_place, blk_ptr block_ptr)
 
 					break;
 				}
+			}
+			
+			/* Hack - finished quests don't have monsters or objects */
+			if ((pl_ptr->type == TOWN_QUEST) && (w_ptr->info & WILD_INFO_DONE))
+			{
+				continue;
+			}
+			
+			/*
+			 * Instantiate object
+			 */
+			place_specific_object(x2, y2, level, c_ptr->o_idx);
+
+			/*
+			 * Instantiate monster
+			 */
+			if (c_ptr->m_idx)
+			{
+				place_monster_one(x2, y2, c_ptr->m_idx, FALSE, FALSE, FALSE);
 			}
 		}
 	}
@@ -4064,6 +4072,7 @@ void move_wild(void)
 
 	quest_type *q_ptr;
 	place_type *pl_ptr;
+	wild_done_type *w_ptr;
 
 	/* Get upper left hand block in grid. */
 
@@ -4071,8 +4080,10 @@ void move_wild(void)
 	x = ((u16b)p_ptr->wilderness_x / WILD_BLOCK_SIZE);
 	y = ((u16b)p_ptr->wilderness_y / WILD_BLOCK_SIZE);
 
+	w_ptr = &wild[y][x].done;
+
 	/* The player sees the wilderness block he is on. */
-	wild[y][x].done.info |= WILD_INFO_SEEN;
+	w_ptr->info |= WILD_INFO_SEEN;
 
 	/* Hack - set place */
 	p_ptr->place_num = wild[y][x].done.place;
@@ -4087,8 +4098,8 @@ void move_wild(void)
 		/* Some quests are completed by walking on them */
 		if (q_ptr->x_type == QX_WILD_ENTER)
 		{
-			/* Remove town block from wilderness */
-			wild[y][x].done.place = 0;
+			/* We have been here */
+			w_ptr->info |= WILD_INFO_DONE;
 
 			/* Decrement active block counter */
 			pl_ptr->data--;
