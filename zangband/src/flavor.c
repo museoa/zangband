@@ -42,7 +42,7 @@ static cptr ring_adj[MAX_ROCKS] =
 	"Obsidian", "Silver", "Tortoise Shell", "Mithril", "Jet",
 	"Engagement", "Adamantite",
 	"Wire", "Dilithium", "Bone", "Wooden",
-	"Spikard", "Serpent", "Wedding", "Double",
+	"Iron", "Serpent", "Wedding", "Double",
 	"Plain", "Brass",  "Scarab", "Shining",
 	"Rusty", "Transparent"
 };
@@ -235,7 +235,7 @@ static cptr syllables[MAX_SYLLABLES] =
 	"sno", "so", "sol", "sri", "sta", "sun", "ta", "tab",
 	"tem", "ther", "ti", "tox", "trol", "tue", "turs", "u",
 	"ulk", "um", "un", "uni", "ur", "val", "viv", "vly",
-	"vom", "wah", "wed", "werg", "wex", "whon", "wun", "x",
+	"vom", "wah", "wed", "werg", "wex", "whon", "wun", "xi",
 	"yerg", "yp", "zun", "tri", "blaa", "jah", "bul", "on",
 	"foo", "ju", "xuxu"
 };
