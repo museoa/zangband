@@ -1393,7 +1393,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 		/* Show the armor class info */
 		if (show_armour)
 		{
-			strnfcat(buf, max, &len, " [%+d,%+d]", o_ptr->ac,  o_ptr->to_a);
+			strnfcat(buf, max, &len, " [%d,%+d]", o_ptr->ac,  o_ptr->to_a);
 		}
 
 		/* No base armor, but does increase armor */
@@ -1406,7 +1406,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 	/* Hack -- always show base armor */
 	else if (show_armour)
 	{
-		strnfcat(buf, max, &len, " [%+d]", o_ptr->ac);
+		strnfcat(buf, max, &len, " [%d]", o_ptr->ac);
 	}
 
 
