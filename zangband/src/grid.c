@@ -631,9 +631,13 @@ bool get_is_floor(int x, int y)
 		return (FALSE);
 	}
 
+	/* Do not count floors internal to other rooms */
+	if (cave[y][x].info & CAVE_ROOM) return (FALSE);
+
 	/* Do the real check */
 	if (cave[y][x].feat == FEAT_FLOOR) return (TRUE);
 
+	/* Not a floor */
 	return (FALSE);
 }
 
