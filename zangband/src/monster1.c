@@ -824,7 +824,7 @@ static void roff_aux(int r_idx, int remem)
 	if (flags2 & RF2_KILL_BODY) vp[vn++] = "destroy weaker monsters";
 	if (flags2 & RF2_TAKE_ITEM) vp[vn++] = "pick up objects";
 	if (flags2 & RF2_KILL_ITEM) vp[vn++] = "destroy objects";
-	if (flags7 & (RF7_LITE_1 | RF7_LITE_2)) vp[vn++] = "carrys a light";
+	if (flags7 & (RF7_LITE_1 | RF7_LITE_2)) vp[vn++] = "lights the dungeon around it";
 
 	/* Describe special abilities. */
 	if (vn)
