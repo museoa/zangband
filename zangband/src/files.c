@@ -180,6 +180,94 @@ s16b tokenize(char *buf, s16b num, char **tokens, int mode)
 }
 
 
+/* A number with a name */
+typedef struct named_num named_num;
+
+struct named_num
+{
+	cptr name;		/* The name of this thing */
+	int num;			/* A number associated with it */
+};
+
+
+/* Index of spell type names */
+static named_num gf_desc[] =
+{
+	{"GF_ELEC", 				GF_ELEC				},
+	{"GF_POIS", 				GF_POIS				},
+	{"GF_ACID", 				GF_ACID				},
+	{"GF_COLD", 				GF_COLD				},
+	{"GF_FIRE",		 			GF_FIRE				},
+	{"GF_MISSILE",				GF_MISSILE			},
+	{"GF_ARROW",				GF_ARROW				},
+	{"GF_PLASMA",				GF_PLASMA			},
+	{"GF_WATER",				GF_WATER				},
+	{"GF_LITE",					GF_LITE				},
+	{"GF_DARK",					GF_DARK				},
+	{"GF_LITE_WEAK",			GF_LITE_WEAK		},
+	{"GF_DARK_WEAK",			GF_DARK_WEAK		},
+	{"GF_SHARDS",				GF_SHARDS			},
+	{"GF_SOUND",				GF_SOUND				},
+	{"GF_CONFUSION",			GF_CONFUSION		},
+	{"GF_FORCE",				GF_FORCE				},
+	{"GF_INERTIA",				GF_INERTIA			},
+	{"GF_MANA",					GF_MANA				},
+	{"GF_METEOR",				GF_METEOR			},
+	{"GF_ICE",					GF_ICE				},
+	{"GF_CHAOS",				GF_CHAOS				},
+	{"GF_NETHER",				GF_NETHER			},
+	{"GF_DISENCHANT",			GF_DISENCHANT		},
+	{"GF_NEXUS",				GF_NEXUS				},
+	{"GF_TIME",					GF_TIME				},
+	{"GF_GRAVITY",				GF_GRAVITY			},
+	{"GF_KILL_WALL",			GF_KILL_WALL		},
+	{"GF_KILL_DOOR",			GF_KILL_DOOR		},
+	{"GF_KILL_TRAP",			GF_KILL_TRAP		},
+	{"GF_MAKE_WALL",			GF_MAKE_WALL		},
+	{"GF_MAKE_DOOR",			GF_MAKE_DOOR		},
+	{"GF_MAKE_TRAP",			GF_MAKE_TRAP		},
+	{"GF_OLD_CLONE",			GF_OLD_CLONE		},
+	{"GF_OLD_POLY",			GF_OLD_POLY			},
+	{"GF_OLD_HEAL",			GF_OLD_HEAL			},
+	{"GF_OLD_SPEED",			GF_OLD_SPEED		},
+	{"GF_OLD_SLOW",			GF_OLD_SLOW			},
+	{"GF_OLD_CONF",			GF_OLD_CONF			},
+	{"GF_OLD_SLEEP",			GF_OLD_SLEEP		},
+	{"GF_OLD_DRAIN",			GF_OLD_DRAIN		},
+	{"GF_AWAY_UNDEAD",		GF_AWAY_UNDEAD		},
+	{"GF_AWAY_EVIL",			GF_AWAY_EVIL		},
+	{"GF_AWAY_ALL",			GF_AWAY_ALL			},
+	{"GF_TURN_UNDEAD",		GF_TURN_UNDEAD		},
+	{"GF_TURN_EVIL",			GF_TURN_EVIL		},
+	{"GF_TURN_ALL",			GF_TURN_ALL			},
+	{"GF_DISP_UNDEAD",		GF_DISP_UNDEAD		},
+	{"GF_DISP_EVIL",			GF_DISP_EVIL		},
+	{"GF_DISP_ALL",			GF_DISP_ALL			},
+	{"GF_DISP_DEMON",			GF_DISP_DEMON		},
+	{"GF_DISP_LIVING",		GF_DISP_LIVING		},
+	{"GF_ROCKET",				GF_ROCKET			},
+	{"GF_NUKE",					GF_NUKE				},
+	{"GF_MAKE_GLYPH",			GF_MAKE_GLYPH		},
+	{"GF_STASIS",				GF_STASIS			},
+	{"GF_STONE_WALL",			GF_STONE_WALL		},
+	{"GF_DEATH_RAY",			GF_DEATH_RAY		},
+	{"GF_STUN",					GF_STUN				},
+	{"GF_HOLY_FIRE",			GF_HOLY_FIRE		},
+	{"GF_HELL_FIRE",			GF_HELL_FIRE		},
+	{"GF_DISINTEGRATE",		GF_DISINTEGRATE	},
+	{"GF_CHARM",				GF_CHARM				},
+	{"GF_CONTROL_UNDEAD",	GF_CONTROL_UNDEAD	},
+	{"GF_CONTROL_ANIMAL",	GF_CONTROL_ANIMAL	},
+	{"GF_PSI",					GF_PSI				},
+	{"GF_PSI_DRAIN",			GF_PSI_DRAIN		},
+	{"GF_TELEKINESIS",		GF_TELEKINESIS		},
+	{"GF_JAM_DOOR",			GF_JAM_DOOR			},
+	{"GF_DOMINATION",			GF_DOMINATION		},
+	{"GF_DISP_GOOD",			GF_DISP_GOOD		},
+	{NULL, 						0						}
+};
+
+
 /*
  * Parse a sub-file of the "extra info" (format shown below)
  *
@@ -239,6 +327,9 @@ s16b tokenize(char *buf, s16b num, char **tokens, int mode)
  *
  * Specify visual information, given an index, and some data
  *   V:<num>:<kv>:<rv>:<gv>:<bv>
+ *
+ * Specify the set of colors to use when drawing a zapped spell
+ *   Z:<type>:<str>
  */
 errr process_pref_file_aux(char *buf)
 {
@@ -448,6 +539,32 @@ errr process_pref_file_aux(char *buf)
 			    streq(option_info[i].o_text, buf + 2))
 			{
 				(*option_info[i].o_var) = TRUE;
+				return (0);
+			}
+		}
+	}
+
+	/* Process "Z:<type>:<str>" -- set spell color */
+	else if (buf[0] == 'Z')
+	{
+		/* Find the colon */
+		char *t = strchr(buf + 2, ':');
+
+		/* Oops */
+		if (!t) return (1);
+
+		/* Nuke the colon */
+		*(t++) = '\0';
+
+		for (i = 0; gf_desc[i].name; i++)
+		{
+			/* Match this type */
+			if (streq(gf_desc[i].name, buf + 2))
+			{
+				/* Remember this color set */
+				gf_color[gf_desc[i].num] = quark_add(t);
+
+				/* Success */
 				return (0);
 			}
 		}

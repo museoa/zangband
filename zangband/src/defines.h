@@ -2228,6 +2228,7 @@
 #define GF_DOMINATION   89
 #define GF_DISP_GOOD    90
 
+#define MAX_GF				91
 
 /*
  * Some things which induce learning

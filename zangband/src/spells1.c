@@ -100,48 +100,26 @@ static byte spell_color(int type)
 	/* Normal tiles or ASCII */
 	else if (use_color)
 	{
-		/* Analyze */
-		switch (type)
-		{
-			case GF_MISSILE:        return (TERM_SLATE);
-			case GF_ACID:           return (randint(5) < 3 ? TERM_YELLOW : TERM_L_GREEN);
-			case GF_ELEC:           return (randint(7) < 6 ? TERM_WHITE : (randint(4) == 1 ? TERM_BLUE : TERM_L_BLUE));
-			case GF_FIRE:           return (randint(6) < 4 ? TERM_YELLOW : (randint(4) == 1 ? TERM_RED : TERM_L_RED));
-			case GF_COLD:           return (randint(6) < 4 ? TERM_WHITE : TERM_L_WHITE);
-			case GF_POIS:           return (randint(5) < 3 ? TERM_L_GREEN : TERM_GREEN);
-			case GF_HOLY_FIRE:      return (randint(5) == 1 ? TERM_ORANGE : TERM_WHITE);
-			case GF_HELL_FIRE:      return (randint(6) == 1 ? TERM_RED : TERM_L_DARK);
-			case GF_MANA:           return (randint(5) != 1 ? TERM_VIOLET : TERM_L_BLUE);
-			case GF_ARROW:          return (TERM_L_UMBER);
-			case GF_WATER:          return (randint(4) == 1 ? TERM_L_BLUE : TERM_BLUE);
-			case GF_NETHER:         return (randint(4) == 1 ? TERM_SLATE : TERM_L_DARK);
-			case GF_CHAOS:          return (mh_attr(15));
-			case GF_DISENCHANT:     return (randint(5) != 1 ? TERM_L_BLUE : TERM_VIOLET);
-			case GF_NEXUS:          return (randint(5) < 3 ? TERM_L_RED : TERM_VIOLET);
-			case GF_CONFUSION:      return (mh_attr(4));
-			case GF_SOUND:          return (randint(4) == 1 ? TERM_VIOLET : TERM_WHITE);
-			case GF_SHARDS:         return (randint(5) < 3 ? TERM_UMBER : TERM_SLATE);
-			case GF_FORCE:          return (randint(5) < 3 ? TERM_L_WHITE : TERM_ORANGE);
-			case GF_INERTIA:        return (randint(5) < 3 ? TERM_SLATE : TERM_L_WHITE);
-			case GF_GRAVITY:        return (randint(3) == 1 ? TERM_L_UMBER : TERM_UMBER);
-			case GF_TIME:           return (randint(2) == 1 ? TERM_WHITE : TERM_L_DARK);
-			case GF_LITE_WEAK:      return (randint(3) == 1 ? TERM_ORANGE : TERM_YELLOW);
-			case GF_LITE:           return (randint(4) == 1 ? TERM_ORANGE : TERM_YELLOW);
-			case GF_DARK_WEAK:      return (randint(3) == 1 ? TERM_DARK : TERM_L_DARK);
-			case GF_DARK:           return (randint(4) == 1 ? TERM_DARK : TERM_L_DARK);
-			case GF_PLASMA:         return (randint(5) == 1 ? TERM_RED : TERM_L_RED);
-			case GF_METEOR:         return (randint(3) == 1 ? TERM_RED : TERM_UMBER);
-			case GF_ICE:            return (randint(4) == 1 ? TERM_L_BLUE : TERM_WHITE);
-			case GF_ROCKET:         return (randint(6) < 4 ? TERM_L_RED : (randint(4) == 1 ? TERM_RED : TERM_L_UMBER));
-			case GF_DEATH_RAY:      return (TERM_L_DARK);
-			case GF_NUKE:           return (mh_attr(2));
-			case GF_DISINTEGRATE:   return (randint(3) != 1 ? TERM_L_DARK : (randint(2) == 1 ? TERM_ORANGE : TERM_L_UMBER));
-			case GF_PSI:
-			case GF_PSI_DRAIN:
-			case GF_TELEKINESIS:
-			case GF_DOMINATION:
-				return (randint(3) != 1 ? TERM_L_BLUE : TERM_WHITE);
-		}
+		byte a;
+		char c;
+
+		/* Lookup the default colors for this type */
+		cptr s = quark_str(gf_color[type]);
+
+		/* Oops */
+		if (!s) return (TERM_WHITE);
+
+		/* Pick a random color */
+		c = s[rand_int(strlen(s))];
+
+		/* Lookup this color */
+		a = strchr(color_char, c) - color_char;
+
+		/* Invalid color */
+		if ((a < 0) || (a > 15)) return (TERM_WHITE);
+
+		/* Use this color */
+		return (a);
 	}
 
 	/* Standard "color" */
