@@ -835,6 +835,302 @@ static t_widget_color *WidgetColor_Find(int color, int opacity)
 	return NULL;
 }
 
+/*
+ * Fiddle with configuration options for a Widget item
+ *
+ * $widget itemconfigure $index ?option? ?value? ?option value ...?
+ */
+static int WidgetItem_Configure(Tcl_Interp *interp, Widget *widgetPtr,
+	int objc, Tcl_Obj *CONST objv[])
+{
+	WidgetItem *itemPtr;
+	int index, result = TCL_OK;
+	Tcl_Obj *objPtr;
+	DoubleLink *link;
+
+	/* Required number of arguments */
+	if (objc < 3)
+	{
+		/* Set the error */
+		Tcl_WrongNumArgs(interp, 2, objv, "index ?option? ?value? ?option value ...?");
+		
+		/* Failure */
+		return TCL_ERROR;
+	}
+
+	/* Get the item index */
+	if (Tcl_GetIntFromObj(interp, objv[2], &index) != TCL_OK)
+	{
+		return TCL_ERROR;
+	}
+
+	/* Verify the item index */
+	if ((index < 0) || (index >= widgetPtr->linkerItem.count))
+	{
+		/* Set the error */
+		Tcl_AppendResult(interp, format("bad item index \"%d\"", index),
+			NULL);
+
+		/* Failure */
+		return TCL_ERROR;
+	}
+
+	/* Get the first item */
+	link = widgetPtr->linkerItem.head;
+
+	/* Walk through the items to the desired item */
+	while (index--) link = link->next;
+	itemPtr = DoubleLink_Data(link, WidgetItem);
+
+	if (objc <= 4)
+	{
+		objPtr = Tk_GetOptionInfo(interp, (char *) itemPtr,
+			itemPtr->typePtr->optionTable,
+			(objc == 4) ? objv[3] : NULL,
+			widgetPtr->tkwin);
+		if (objPtr == NULL)
+		{
+			result = TCL_ERROR;
+		}
+		else
+		{
+			Tcl_SetObjResult(interp, objPtr);
+		}
+	}
+	else
+	{
+		result = (*itemPtr->typePtr->configProc)(interp, widgetPtr, itemPtr,
+			objc - 3, objv + 3);
+
+		if (itemPtr->visible != itemPtr->linkVis.isLinked)
+		{
+			if (itemPtr->linkVis.isLinked)
+				DoubleLink_Unlink(&itemPtr->linkVis);
+			else
+				DoubleLink_Link(&itemPtr->linkVis);
+		}
+	}
+
+	/* Result */
+	return result;
+}
+
+
+/*
+ * Set the interpreter result with the value of an item's configuration
+ * option.
+ *
+ * $widget itemcget $index $option
+ */
+static int WidgetItem_Cget(Tcl_Interp *interp, Widget *widgetPtr,
+	int objc, Tcl_Obj *CONST objv[])
+{
+	WidgetItem *itemPtr;
+	int index;
+	Tcl_Obj *objPtr;
+	DoubleLink *link;
+
+	/* Required number of arguments */
+	if (objc != 4)
+	{
+		/* Set the error */
+		Tcl_WrongNumArgs(interp, 2, objv, "index option");
+
+		/* Failure */
+		return TCL_ERROR;
+	}
+
+	/* Get the item index */
+	if (Tcl_GetIntFromObj(interp, objv[2], &index) != TCL_OK)
+	{
+		return TCL_ERROR;
+	}
+
+	/* Verify the item index */
+	if ((index < 0) || (index >= widgetPtr->linkerItem.count))
+	{
+		/* Set the error */
+		Tcl_AppendResult(interp, format("bad item index \"%d\"", index),
+			NULL);
+
+		/* Failure */
+		return TCL_ERROR;
+	}
+
+	/* Get the first item */
+	link = widgetPtr->linkerItem.head;
+
+	/* Walk through the items to the desired item */
+	while (index--) link = link->next;
+	itemPtr = DoubleLink_Data(link, WidgetItem);
+
+	/* Get the value of the configuration option */
+	objPtr = Tk_GetOptionValue(interp, (char *) itemPtr,
+		itemPtr->typePtr->optionTable, objv[3], widgetPtr->tkwin);
+	if (objPtr == NULL)
+	{
+		return TCL_ERROR;
+	}
+	
+	Tcl_SetObjResult(interp, objPtr);
+
+	/* Success */
+	return TCL_OK;
+}
+
+
+static int Widget_CaveToView(Widget *widgetPtr, int y, int x, int *rowPtr, int *colPtr)
+{
+	if ((y < widgetPtr->y_min) || (y >= widgetPtr->y_max))
+		return FALSE;
+	if ((x < widgetPtr->x_min) || (x >= widgetPtr->x_max))
+		return FALSE;
+	*rowPtr = y - widgetPtr->y_min;
+	*colPtr = x - widgetPtr->x_min;
+	return TRUE;
+}
+
+static void Widget_Wipe(Widget *widgetPtr)
+{
+	/* Remember to redraw all grids later */
+	widgetPtr->flags |= WIDGET_WIPE;
+
+	/* Don't bother drawing invalid grids */
+	widgetPtr->flags &= ~WIDGET_DRAW_INVALID;
+/*
+	if (widgetPtr->wipeProc)
+		(*widgetPtr->wipeProc)(widgetPtr);
+*/
+	/* Redraw later */
+	Widget_EventuallyRedraw(widgetPtr);
+}
+
+static void Widget_Invalidate(Widget *widgetPtr, int row, int col)
+{
+	int rc = widgetPtr->rc;
+	int cc = widgetPtr->cc;
+	int tile;
+
+if (widgetPtr->flags & WIDGET_WIPE) return;
+
+	if (row < 0 || row >= rc)
+		return;
+	if (col < 0 || col >= cc)
+		return;
+
+	tile = row * cc + col;
+	if (widgetPtr->info[tile] & (WIDGET_INFO_DIRTY | WIDGET_INFO_IGNORE))
+		return;
+	widgetPtr->info[tile] |= WIDGET_INFO_DIRTY;
+	widgetPtr->invalid[widgetPtr->invalidCnt++] = tile;
+}
+
+
+static void Widget_Center(Widget *widgetPtr, int cy, int cx)
+{
+	/* Remember new center */
+	widgetPtr->y = cy, widgetPtr->x = cx;
+
+	/* Calculate the limits of visibility */
+	widgetPtr->y_min = cy - widgetPtr->rc / 2;
+	widgetPtr->y_max = widgetPtr->y_min + widgetPtr->rc;
+	widgetPtr->x_min = cx - widgetPtr->cc / 2;
+	widgetPtr->x_max = widgetPtr->x_min + widgetPtr->cc;
+
+	Widget_Wipe(widgetPtr);
+}
+
+
+/*
+ * Decrement the reference count for a Widget item color. We never
+ * actually free the memory for a struct with zero references, since
+ * we allow them to be reused.
+ */
+static void WidgetColor_Deref(t_widget_color *color_ptr)
+{
+	/* Allow NULL color_ptr */
+	if (!color_ptr) return;
+
+	/* Decrement the reference count */
+	if (--color_ptr->ref_cnt <= 0)
+	{
+		/* Mark the color as unused */
+		color_ptr->ref_cnt = 0;
+		color_ptr->color = 0;
+		color_ptr->opacity = 0;
+	}
+}
+
+
+/*
+ * Search for an already allocated but unused Widget item color.
+ */
+static t_widget_color *WidgetColor_FindFree(void)
+{
+	int i;
+
+	/* Check each color */
+	for (i = 0; i < g_widget_color_count; i++)
+	{
+		/* This is free */
+		if (g_widget_color[i]->ref_cnt == 0)
+		{
+			/* Return the address */
+			return g_widget_color[i];
+		}
+	}
+
+	/* None are free */
+	return NULL;
+}
+
+
+/*
+ * Allocates a new Widget item color of the given properties. If such
+ * a color already exists, its references count is incremented and
+ * the color is returned. Otherwise a new struct is allocated.
+ */
+static t_widget_color *WidgetColor_Alloc(int color, int opacity)
+{
+	t_widget_color *color_ptr;
+
+	/* Look for an existing color */
+	if ((color_ptr = WidgetColor_Find(color, opacity)))
+	{
+		/* Increase the reference count */
+		color_ptr->ref_cnt++;
+
+		/* Return the address */
+		return color_ptr;
+	}
+
+	/* Look for a free struct */
+	if (!(color_ptr = WidgetColor_FindFree()))
+	{
+		/* Allocate a struct */
+		color_ptr = (t_widget_color *) Tcl_Alloc(sizeof(t_widget_color));
+
+		/* Append pointer to the global array */
+		g_widget_color = Array_Insert(g_widget_color,
+			&g_widget_color_count, sizeof(t_widget_color *),
+			g_widget_color_count);
+
+		/* Remember the new struct */
+		g_widget_color[g_widget_color_count - 1] = color_ptr;
+	}
+
+	/* Set the fields */
+	color_ptr->ref_cnt = 1;
+	color_ptr->color = color;
+	color_ptr->opacity = opacity;
+
+	/* Calculate the tint table */
+	Colormap_TintTable(g_palette2colormap[color], opacity, color_ptr->tint);
+
+	/* Return the address */
+	return color_ptr;
+}
+
 
 /*
  * This is the window-specific command created for each new Widget.
@@ -1282,7 +1578,6 @@ error:
 	return TCL_ERROR;
 }
 
-
 /*
  * Delete a Widget item. This is currently only called when a Widget
  * is deleted (ie, you can't delete an individual item. It would be
@@ -1302,6 +1597,90 @@ static void WidgetItem_Delete(Widget *widgetPtr, WidgetItem *itemPtr)
 
 	/* Free the item memory */
 	Tcl_Free((char *) itemPtr);
+}
+
+
+static void Widget_DrawInvalid(Widget *widgetPtr)
+{
+	if (widgetPtr->drawInvalidProc)
+		(*widgetPtr->drawInvalidProc)(widgetPtr);
+}
+
+
+/*
+ * Actually draw stuff into the Widget's display. This routine is
+ * usually passed to Tcl_DoWhenIdle().
+ */
+static void Widget_Display(ClientData clientData)
+{
+	Widget *widgetPtr = (Widget *) clientData;
+	Tk_Window tkwin = widgetPtr->tkwin;
+
+	/* We want to draw all grids */
+	if ((widgetPtr->flags & WIDGET_WIPE) != 0)
+	{
+		/* Forget that a wipe (and redraw) is needed */
+		widgetPtr->flags &= ~(WIDGET_WIPE | WIDGET_DRAW_INVALID);
+
+		/* Draw all grids */
+		Widget_DrawAll(widgetPtr);
+	}
+
+	/* We want to draw outdated grids */
+	if ((widgetPtr->flags & WIDGET_DRAW_INVALID) != 0)
+	{
+		/* Forget that a redraw is needed */
+		widgetPtr->flags &= ~WIDGET_DRAW_INVALID;
+
+		/* Draw outdated grids (offscreen) */
+		Widget_DrawInvalid(widgetPtr);
+	}
+
+	/* Forget that a redraw is scheduled */
+	widgetPtr->flags &= ~WIDGET_REDRAW;
+
+	/* The window doesn't exist, or it is not mapped */
+	if ((tkwin == NULL) || (!Tk_IsMapped(tkwin)))
+	{		
+		/* Done */
+		return;
+	}
+
+	if (widgetPtr->flags & WIDGET_EXPOSE)
+	{
+		/* Reset dirty bounds to entire window */
+		widgetPtr->dx = widgetPtr->bx;
+		widgetPtr->dy = widgetPtr->by;
+		widgetPtr->dw = widgetPtr->width;
+		widgetPtr->dh = widgetPtr->height;
+
+		/* Forget expose flag */
+		widgetPtr->flags &= ~WIDGET_EXPOSE;
+	}
+
+#if 0
+	/* Use Tk_SetWindowBackgroundPixmap() for more speed */
+	XClearWindow(widgetPtr->display, Tk_WindowId(tkwin));
+#endif
+
+	XCopyArea(widgetPtr->display,
+		widgetPtr->bitmap.pixmap, /* source drawable */
+		Tk_WindowId(tkwin), /* dest drawable */
+		widgetPtr->copyGC, /* graphics context */
+		widgetPtr->dx, widgetPtr->dy, /* source top-left */
+		(unsigned int) widgetPtr->dw, /* width */
+		(unsigned int) widgetPtr->dh, /* height */
+		widgetPtr->dx - widgetPtr->bx,
+		widgetPtr->dy - widgetPtr->by /* dest top-left */
+	);
+
+	Plat_SyncDisplay(widgetPtr->display);
+
+	/* Reset dirty bounds to entire window */
+	widgetPtr->dx = widgetPtr->bx;
+	widgetPtr->dy = widgetPtr->by;
+	widgetPtr->dw = widgetPtr->width;
+	widgetPtr->dh = widgetPtr->height;
 }
 
 
@@ -1938,217 +2317,12 @@ void angtk_lite_spot_real(int y, int x)
 }
 
 
-/*
- * Search for an already allocated but unused Widget item color.
- */
-static t_widget_color *WidgetColor_FindFree(void)
-{
-	int i;
-
-	/* Check each color */
-	for (i = 0; i < g_widget_color_count; i++)
-	{
-		/* This is free */
-		if (g_widget_color[i]->ref_cnt == 0)
-		{
-			/* Return the address */
-			return g_widget_color[i];
-		}
-	}
-
-	/* None are free */
-	return NULL;
-}
-
-/*
- * Allocates a new Widget item color of the given properties. If such
- * a color already exists, its references count is incremented and
- * the color is returned. Otherwise a new struct is allocated.
- */
-t_widget_color *WidgetColor_Alloc(int color, int opacity)
-{
-	t_widget_color *color_ptr;
-
-	/* Look for an existing color */
-	if ((color_ptr = WidgetColor_Find(color, opacity)))
-	{
-		/* Increase the reference count */
-		color_ptr->ref_cnt++;
-
-		/* Return the address */
-		return color_ptr;
-	}
-
-	/* Look for a free struct */
-	if (!(color_ptr = WidgetColor_FindFree()))
-	{
-		/* Allocate a struct */
-		color_ptr = (t_widget_color *) Tcl_Alloc(sizeof(t_widget_color));
-
-		/* Append pointer to the global array */
-		g_widget_color = Array_Insert(g_widget_color,
-			&g_widget_color_count, sizeof(t_widget_color *),
-			g_widget_color_count);
-
-		/* Remember the new struct */
-		g_widget_color[g_widget_color_count - 1] = color_ptr;
-	}
-
-	/* Set the fields */
-	color_ptr->ref_cnt = 1;
-	color_ptr->color = color;
-	color_ptr->opacity = opacity;
-
-	/* Calculate the tint table */
-	Colormap_TintTable(g_palette2colormap[color], opacity, color_ptr->tint);
-
-	/* Return the address */
-	return color_ptr;
-}
-
-/*
- * Decrement the reference count for a Widget item color. We never
- * actually free the memory for a struct with zero references, since
- * we allow them to be reused.
- */
-void WidgetColor_Deref(t_widget_color *color_ptr)
-{
-	/* Allow NULL color_ptr */
-	if (!color_ptr) return;
-
-	/* Decrement the reference count */
-	if (--color_ptr->ref_cnt <= 0)
-	{
-		/* Mark the color as unused */
-		color_ptr->ref_cnt = 0;
-		color_ptr->color = 0;
-		color_ptr->opacity = 0;
-	}
-}
-
-
-/*
- * Actually draw stuff into the Widget's display. This routine is
- * usually passed to Tcl_DoWhenIdle().
- */
-void Widget_Display(ClientData clientData)
-{
-	Widget *widgetPtr = (Widget *) clientData;
-	Tk_Window tkwin = widgetPtr->tkwin;
-
-	/* We want to draw all grids */
-	if ((widgetPtr->flags & WIDGET_WIPE) != 0)
-	{
-		/* Forget that a wipe (and redraw) is needed */
-		widgetPtr->flags &= ~(WIDGET_WIPE | WIDGET_DRAW_INVALID);
-
-		/* Draw all grids */
-		Widget_DrawAll(widgetPtr);
-	}
-
-	/* We want to draw outdated grids */
-	if ((widgetPtr->flags & WIDGET_DRAW_INVALID) != 0)
-	{
-		/* Forget that a redraw is needed */
-		widgetPtr->flags &= ~WIDGET_DRAW_INVALID;
-
-		/* Draw outdated grids (offscreen) */
-		Widget_DrawInvalid(widgetPtr);
-	}
-
-	/* Forget that a redraw is scheduled */
-	widgetPtr->flags &= ~WIDGET_REDRAW;
-
-	/* The window doesn't exist, or it is not mapped */
-	if ((tkwin == NULL) || (!Tk_IsMapped(tkwin)))
-	{		
-		/* Done */
-		return;
-	}
-
-	if (widgetPtr->flags & WIDGET_EXPOSE)
-	{
-		/* Reset dirty bounds to entire window */
-		widgetPtr->dx = widgetPtr->bx;
-		widgetPtr->dy = widgetPtr->by;
-		widgetPtr->dw = widgetPtr->width;
-		widgetPtr->dh = widgetPtr->height;
-
-		/* Forget expose flag */
-		widgetPtr->flags &= ~WIDGET_EXPOSE;
-	}
-
-#if 0
-	/* Use Tk_SetWindowBackgroundPixmap() for more speed */
-	XClearWindow(widgetPtr->display, Tk_WindowId(tkwin));
-#endif
-
-	XCopyArea(widgetPtr->display,
-		widgetPtr->bitmap.pixmap, /* source drawable */
-		Tk_WindowId(tkwin), /* dest drawable */
-		widgetPtr->copyGC, /* graphics context */
-		widgetPtr->dx, widgetPtr->dy, /* source top-left */
-		(unsigned int) widgetPtr->dw, /* width */
-		(unsigned int) widgetPtr->dh, /* height */
-		widgetPtr->dx - widgetPtr->bx,
-		widgetPtr->dy - widgetPtr->by /* dest top-left */
-	);
-
-	Plat_SyncDisplay(widgetPtr->display);
-
-	/* Reset dirty bounds to entire window */
-	widgetPtr->dx = widgetPtr->bx;
-	widgetPtr->dy = widgetPtr->by;
-	widgetPtr->dw = widgetPtr->width;
-	widgetPtr->dh = widgetPtr->height;
-}
-
-
-void Widget_Center(Widget *widgetPtr, int cy, int cx)
-{
-	/* Remember new center */
-	widgetPtr->y = cy, widgetPtr->x = cx;
-
-	/* Calculate the limits of visibility */
-	widgetPtr->y_min = cy - widgetPtr->rc / 2;
-	widgetPtr->y_max = widgetPtr->y_min + widgetPtr->rc;
-	widgetPtr->x_min = cx - widgetPtr->cc / 2;
-	widgetPtr->x_max = widgetPtr->x_min + widgetPtr->cc;
-
-	Widget_Wipe(widgetPtr);
-}
-
 void Widget_DrawAll(Widget *widgetPtr)
 {
 	if (widgetPtr->drawAllProc)
 		(*widgetPtr->drawAllProc)(widgetPtr);
 }
 
-void Widget_DrawInvalid(Widget *widgetPtr)
-{
-	if (widgetPtr->drawInvalidProc)
-		(*widgetPtr->drawInvalidProc)(widgetPtr);
-}
-
-void Widget_Invalidate(Widget *widgetPtr, int row, int col)
-{
-	int rc = widgetPtr->rc;
-	int cc = widgetPtr->cc;
-	int tile;
-
-if (widgetPtr->flags & WIDGET_WIPE) return;
-
-	if (row < 0 || row >= rc)
-		return;
-	if (col < 0 || col >= cc)
-		return;
-
-	tile = row * cc + col;
-	if (widgetPtr->info[tile] & (WIDGET_INFO_DIRTY | WIDGET_INFO_IGNORE))
-		return;
-	widgetPtr->info[tile] |= WIDGET_INFO_DIRTY;
-	widgetPtr->invalid[widgetPtr->invalidCnt++] = tile;
-}
 
 void Widget_InvalidateArea(Widget *widgetPtr, int top, int left, int bottom, int right)
 {
@@ -2163,21 +2337,6 @@ void Widget_InvalidateArea(Widget *widgetPtr, int top, int left, int bottom, int
 			Widget_Invalidate(widgetPtr, row, col);
 		}
 	}
-}
-
-void Widget_Wipe(Widget *widgetPtr)
-{
-	/* Remember to redraw all grids later */
-	widgetPtr->flags |= WIDGET_WIPE;
-
-	/* Don't bother drawing invalid grids */
-	widgetPtr->flags &= ~WIDGET_DRAW_INVALID;
-/*
-	if (widgetPtr->wipeProc)
-		(*widgetPtr->wipeProc)(widgetPtr);
-*/
-	/* Redraw later */
-	Widget_EventuallyRedraw(widgetPtr);
 }
 
 void Widget_EventuallyRedraw(Widget *widgetPtr)
@@ -2196,158 +2355,8 @@ void Widget_EventuallyRedraw(Widget *widgetPtr)
 	widgetPtr->flags |= WIDGET_REDRAW;
 }
 
-int Widget_CaveToView(Widget *widgetPtr, int y, int x, int *rowPtr, int *colPtr)
-{
-	if ((y < widgetPtr->y_min) || (y >= widgetPtr->y_max))
-		return FALSE;
-	if ((x < widgetPtr->x_min) || (x >= widgetPtr->x_max))
-		return FALSE;
-	*rowPtr = y - widgetPtr->y_min;
-	*colPtr = x - widgetPtr->x_min;
-	return TRUE;
-}
 
-/*
- * Set the interpreter result with the value of an item's configuration
- * option.
- *
- * $widget itemcget $index $option
- */
-int WidgetItem_Cget(Tcl_Interp *interp, Widget *widgetPtr,
-	int objc, Tcl_Obj *CONST objv[])
-{
-	WidgetItem *itemPtr;
-	int index;
-	Tcl_Obj *objPtr;
-	DoubleLink *link;
 
-	/* Required number of arguments */
-	if (objc != 4)
-	{
-		/* Set the error */
-		Tcl_WrongNumArgs(interp, 2, objv, "index option");
-
-		/* Failure */
-		return TCL_ERROR;
-	}
-
-	/* Get the item index */
-	if (Tcl_GetIntFromObj(interp, objv[2], &index) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* Verify the item index */
-	if ((index < 0) || (index >= widgetPtr->linkerItem.count))
-	{
-		/* Set the error */
-		Tcl_AppendResult(interp, format("bad item index \"%d\"", index),
-			NULL);
-
-		/* Failure */
-		return TCL_ERROR;
-	}
-
-	/* Get the first item */
-	link = widgetPtr->linkerItem.head;
-
-	/* Walk through the items to the desired item */
-	while (index--) link = link->next;
-	itemPtr = DoubleLink_Data(link, WidgetItem);
-
-	/* Get the value of the configuration option */
-	objPtr = Tk_GetOptionValue(interp, (char *) itemPtr,
-		itemPtr->typePtr->optionTable, objv[3], widgetPtr->tkwin);
-	if (objPtr == NULL)
-	{
-		return TCL_ERROR;
-	}
-	
-	Tcl_SetObjResult(interp, objPtr);
-
-	/* Success */
-	return TCL_OK;
-}
-
-/*
- * Fiddle with configuration options for a Widget item
- *
- * $widget itemconfigure $index ?option? ?value? ?option value ...?
- */
-int WidgetItem_Configure(Tcl_Interp *interp, Widget *widgetPtr,
-	int objc, Tcl_Obj *CONST objv[])
-{
-	WidgetItem *itemPtr;
-	int index, result = TCL_OK;
-	Tcl_Obj *objPtr;
-	DoubleLink *link;
-
-	/* Required number of arguments */
-	if (objc < 3)
-	{
-		/* Set the error */
-		Tcl_WrongNumArgs(interp, 2, objv, "index ?option? ?value? ?option value ...?");
-		
-		/* Failure */
-		return TCL_ERROR;
-	}
-
-	/* Get the item index */
-	if (Tcl_GetIntFromObj(interp, objv[2], &index) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* Verify the item index */
-	if ((index < 0) || (index >= widgetPtr->linkerItem.count))
-	{
-		/* Set the error */
-		Tcl_AppendResult(interp, format("bad item index \"%d\"", index),
-			NULL);
-
-		/* Failure */
-		return TCL_ERROR;
-	}
-
-	/* Get the first item */
-	link = widgetPtr->linkerItem.head;
-
-	/* Walk through the items to the desired item */
-	while (index--) link = link->next;
-	itemPtr = DoubleLink_Data(link, WidgetItem);
-
-	if (objc <= 4)
-	{
-		objPtr = Tk_GetOptionInfo(interp, (char *) itemPtr,
-			itemPtr->typePtr->optionTable,
-			(objc == 4) ? objv[3] : NULL,
-			widgetPtr->tkwin);
-		if (objPtr == NULL)
-		{
-			result = TCL_ERROR;
-		}
-		else
-		{
-			Tcl_SetObjResult(interp, objPtr);
-		}
-	}
-	else
-	{
-		result = (*itemPtr->typePtr->configProc)(interp, widgetPtr, itemPtr,
-			objc - 3, objv + 3);
-
-		if (itemPtr->visible != itemPtr->linkVis.isLinked)
-		{
-			if (itemPtr->linkVis.isLinked)
-				DoubleLink_Unlink(&itemPtr->linkVis);
-			else
-				DoubleLink_Link(&itemPtr->linkVis);
-		}
-	}
-
-	/* Result */
-	return result;
-}
 
 
 
