@@ -1126,11 +1126,10 @@ void note_spot(int x, int y)
 	int py = p_ptr->py;
 
 	object_type *o_ptr;
+	field_type *f_ptr;
 
 	cave_type *c_ptr = area(x, y);
 	pcave_type *pc_ptr = parea(x, y);
-
-	s16b this_f_idx, next_f_idx = 0;
 
 	/* Is it lit + in view + player is not blind? */
 	if (((c_ptr->info & (CAVE_GLOW | CAVE_MNLT))
@@ -1175,16 +1174,12 @@ void note_spot(int x, int y)
 		OBJ_ITT_END;
 
 		/* Hack -- memorize fields */
-		for (this_f_idx = c_ptr->fld_idx; this_f_idx; this_f_idx = next_f_idx)
+		FLD_ITT_START (c_ptr->fld_idx, f_ptr)
 		{
-			field_type *f_ptr = &fld_list[this_f_idx];
-
-			/* Acquire next field */
-			next_f_idx = f_ptr->next_f_idx;
-
 			/* Memorize fields */
 			f_ptr->info |= FIELD_INFO_MARK;
 		}
+		FLD_ITT_END;
 	}
 
 	/* Light the spot, now that we have noticed the changes. */
@@ -2007,6 +2002,7 @@ void update_view(void)
 	int px = p_ptr->px;
 
 	object_type *o_ptr;
+	field_type *f_ptr;
 
 	cave_type *c_ptr;
 	pcave_type *pc_ptr;
@@ -2014,8 +2010,6 @@ void update_view(void)
 	byte info, player;
 
 	int x, y, i, o2;
-
-	s16b this_f_idx, next_f_idx = 0;
 
 	/* Light radius */
 	s16b radius = p_ptr->cur_lite;
@@ -2295,17 +2289,12 @@ void update_view(void)
 			OBJ_ITT_END;
 
 			/* Show the fields */
-			for (this_f_idx = c_ptr->fld_idx; this_f_idx;
-				 this_f_idx = next_f_idx)
+			FLD_ITT_START(c_ptr->fld_idx, f_ptr)
 			{
-				field_type *f_ptr = &fld_list[this_f_idx];
-
-				/* Acquire next field */
-				next_f_idx = f_ptr->next_f_idx;
-
 				/* Memorize fields */
 				f_ptr->info |= FIELD_INFO_MARK;
 			}
+			FLD_ITT_END;
 
 			/* Memorise grid */
 			remember_grid(c_ptr, pc_ptr);

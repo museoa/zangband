@@ -109,32 +109,27 @@
 #define DEBUG_ABORT
 
 
-
 /*
  * An assertion macro
  */
 #undef assert
 
-#ifdef NDEBUG
-# define assert(ignore)	((void) 0)
-#else /* NDEBUG */
-
-	/* Pick which type of output to use */
-# ifdef DEBUG_CORE
-#  define ANG__assert_fmt core_fmt
-# else /* DEBUG_CORE */
-#  define ANG__assert_fmt quit_fmt
-# endif /* DEBUG_CORE */
+/* Pick which type of output to use */
+#ifdef DEBUG_CORE
+# define ANG__assert_fmt core_fmt
+#else /* DEBUG_CORE */
+# define ANG__assert_fmt quit_fmt
+#endif /* DEBUG_CORE */
 
 	/* Pick whether to save the game before aborting */
-# ifdef DEBUG_ABORT
-#  define ANG__assert_save ((void) 0)
-# else
-#  define ANG__assert_save save_player()
-# endif
+#ifdef DEBUG_ABORT
+# define ANG__assert_save ((void) 0)
+#else
+# define ANG__assert_save save_player()
+#endif
 
 	/* Possibly save the game, and then abort. */
-# define assert(expr)\
+#define assert(expr)\
 	do\
 	{\
 		if (!(expr))\
@@ -148,8 +143,6 @@
 		}\
 	}\
 	while (FALSE)
-#endif /* NDEBUG */
-
 
 
 /*

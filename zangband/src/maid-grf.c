@@ -1659,8 +1659,6 @@ static void map_info(int x, int y, byte *ap, char *cp, byte *tap, char *tcp)
 
 	field_type *fld_ptr;
 
-	s16b this_f_idx, next_f_idx;
-
 	/* Get location */
 	cave_type *c_ptr = area(x, y);
 	pcave_type *pc_ptr = parea(x, y);
@@ -1795,14 +1793,8 @@ static void map_info(int x, int y, byte *ap, char *cp, byte *tap, char *tcp)
 
 
 	/* Fields */
-	for (this_f_idx = c_ptr->fld_idx; this_f_idx; this_f_idx = next_f_idx)
+	FLD_ITT_START (c_ptr->fld_idx, fld_ptr)
 	{
-		/* Acquire field */
-		fld_ptr = &fld_list[this_f_idx];
-
-		/* Acquire next field */
-		next_f_idx = fld_ptr->next_f_idx;
-
 		/* Memorized, visible fields */
 		if ((fld_ptr->info & (FIELD_INFO_MARK | FIELD_INFO_VIS)) ==
 			(FIELD_INFO_MARK | FIELD_INFO_VIS))
@@ -1857,6 +1849,7 @@ static void map_info(int x, int y, byte *ap, char *cp, byte *tap, char *tcp)
 			break;
 		}
 	}
+	FLD_ITT_END;
 	
 	/* Objects */
 	OBJ_ITT_START (c_ptr->o_idx, o_ptr)

@@ -4451,6 +4451,25 @@ static __inline void COPY_FLAG_AUX(const u32b *flags1, u32b *flags2, int num, u3
 		} \
 	} while (0)
 
+/*
+ * Iterate over the fieldss in a list
+ */
+#define FLD_ITT_START(FSTART, F) \
+	do { \
+		s16b _this_f_idx, _next_f_idx = 0; \
+		\
+		for (_this_f_idx = (FSTART); _this_f_idx; _this_f_idx = _next_f_idx) \
+		{ \
+			(F) = &fld_list[_this_f_idx];\
+			assert((F)->t_idx); \
+			\
+			_next_f_idx = (F)->next_f_idx;
+
+#define FLD_ITT_END \
+		} \
+	} while (0)
+
+
 
 /*
  * Useful macros for object formatting

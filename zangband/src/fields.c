@@ -55,65 +55,48 @@ static s16b *field_find(s16b fld_idx)
  */
 void excise_field_idx(int fld_idx)
 {
-	s16b this_f_idx, next_f_idx = 0;
-
-	s16b prev_f_idx = 0;
-
-	/* Dungeon */
-	cave_type *c_ptr;
-
 	/* Field */
-	field_type *j_ptr = &fld_list[fld_idx];
-
+	field_type *f_ptr = &fld_list[fld_idx];
+	
+	field_type *j_ptr = NULL;
+	field_type *q_ptr;
+	
 	int y = j_ptr->fy;
 	int x = j_ptr->fx;
 
-	/* Grid */
-	c_ptr = area(x, y);
-
-	/* Scan all fields in the grid */
-	for (this_f_idx = c_ptr->fld_idx; this_f_idx; this_f_idx = next_f_idx)
+	s16b *f_idx_ptr = &area(x, y)->fld_idx;
+	
+	/* Scan all fields in the list */
+	FLD_ITT_START (*f_idx_ptr, q_ptr)
 	{
-		field_type *f_ptr;
-
-		/* Acquire field */
-		f_ptr = &fld_list[this_f_idx];
-
-		/* Acquire next field */
-		next_f_idx = f_ptr->next_f_idx;
-
-		/* Done */
-		if (this_f_idx == fld_idx)
+		/* Hack - Done? */
+		if (q_ptr == f_ptr)
 		{
 			/* No previous */
-			if (prev_f_idx == 0)
+			if (!j_ptr)
 			{
 				/* Remove from list */
-				c_ptr->fld_idx = next_f_idx;
+				*f_idx_ptr = q_ptr->next_f_idx;
 			}
 
 			/* Real previous */
 			else
 			{
-				field_type *k_ptr;
-
-				/* Previous field */
-				k_ptr = &fld_list[prev_f_idx];
-
 				/* Remove from list */
-				k_ptr->next_f_idx = next_f_idx;
+				j_ptr->next_f_idx = q_ptr->next_f_idx;
 			}
 
 			/* Forget next pointer */
-			f_ptr->next_f_idx = 0;
+			q_ptr->next_f_idx = 0;
 
 			/* Done */
 			break;
 		}
 
-		/* Save prev_f_idx */
-		prev_f_idx = this_f_idx;
+		/* Save previous object */
+		j_ptr = q_ptr;
 	}
+	FLD_ITT_END;
 }
 
 
@@ -214,25 +197,26 @@ void delete_field_ptr(s16b *fld_idx)
  */
 void delete_field_aux(s16b *fld_idx_ptr)
 {
-	s16b this_f_idx, next_f_idx = 0;
+	field_type *f_ptr;
+	
+	/*
+	 * Special exception: if the first field is (nothing),
+	 * just zero the index.
+	 * This happens when loading savefiles.
+	 */
+	if (!fld_list[*fld_idx_ptr].t_idx)
+		*fld_idx_ptr = 0;
 
 	/* Scan all fields in the grid */
-	for (this_f_idx = *fld_idx_ptr; this_f_idx; this_f_idx = next_f_idx)
+	FLD_ITT_START (*fld_idx_ptr, f_ptr)
 	{
-		field_type *f_ptr;
-
-		/* Acquire field */
-		f_ptr = &fld_list[this_f_idx];
-
-		/* Acquire next field */
-		next_f_idx = f_ptr->next_f_idx;
-
 		/* Wipe the field */
 		field_wipe(f_ptr);
 
 		/* Count fields */
 		fld_cnt--;
 	}
+	FLD_ITT_END;
 
 	/* Nothing left */
 	*fld_idx_ptr = 0;
@@ -933,12 +917,9 @@ bool field_detect_type(s16b fld_idx, byte typ)
 
 	bool flag = FALSE;
 
-	/* While the field exists */
-	while (fld_idx)
+	/* Scan the list */
+	FLD_ITT_START (fld_idx, f_ptr)
 	{
-		/* Get field */
-		f_ptr = &fld_list[fld_idx];
-
 		/* Is it the correct type? */
 		if (t_info[f_ptr->t_idx].type == typ)
 		{
@@ -963,10 +944,8 @@ bool field_detect_type(s16b fld_idx, byte typ)
 			/* Note + Lite the spot */
 			note_spot(f_ptr->fx, f_ptr->fy);
 		}
-
-		/* If not, get next one. */
-		fld_idx = f_ptr->next_f_idx;
 	}
+	FLD_ITT_END;
 
 	/* Return whether we found something or not */
 	return (flag);
@@ -1020,18 +999,13 @@ u16b fields_have_flags(s16b fld_idx, u16b info)
 
 	u16b flags = 0;
 
-	/* While the field exists */
-	while (fld_idx)
+	/* Scan the fields */
+	FLD_ITT_START (fld_idx, f_ptr)
 	{
-		/* Get field */
-		f_ptr = &fld_list[fld_idx];
-
 		/* Or the flags together */
 		flags |= f_ptr->info;
-
-		/* Get next field. */
-		fld_idx = f_ptr->next_f_idx;
 	}
+	FLD_ITT_END;
 
 	return (flags & info);
 }

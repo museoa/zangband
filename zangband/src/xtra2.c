@@ -1890,8 +1890,7 @@ static bool target_set_accept(int x, int y)
 	pcave_type *pc_ptr;
 
 	object_type *o_ptr;
-
-	s16b this_f_idx, next_f_idx = 0;
+	field_type *f_ptr;
 
 	byte feat;
 
@@ -1927,20 +1926,13 @@ static bool target_set_accept(int x, int y)
 	OBJ_ITT_END;
 
 	/* Scan all fields in the grid */
-	for (this_f_idx = c_ptr->fld_idx; this_f_idx; this_f_idx = next_f_idx)
+	FLD_ITT_START (c_ptr->fld_idx, f_ptr)
 	{
-		field_type *f_ptr;
-
-		/* Acquire field */
-		f_ptr = &fld_list[this_f_idx];
-
-		/* Acquire next field */
-		next_f_idx = f_ptr->next_f_idx;
-
 		/* Memorized , lookable field */
 		if ((f_ptr->info & (FIELD_INFO_MARK | FIELD_INFO_NO_LOOK)) ==
 			FIELD_INFO_MARK) return (TRUE);
 	}
+	FLD_ITT_END;
 
 	/* Interesting memorized features */
 	feat = pc_ptr->feat;
