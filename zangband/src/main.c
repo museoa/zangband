@@ -244,6 +244,85 @@ static void change_path(cptr info)
 	}
 }
 
+/*
+ * The default message to print when we get bad input.
+ */
+static void game_usage(void)
+{
+	/* Dump usage information */
+	puts("Usage: angband [options] [-- subopts]");
+	puts("  -n       Start a new character");
+	puts("  -f       Request fiddle mode");
+	puts("  -w       Request wizard mode");
+	puts("  -v       Request sound mode");
+	puts("  -g       Request graphics mode");
+	puts("  -o       Request original keyset");
+	puts("  -r       Request rogue-like keyset");
+	puts("  -M       Request monochrome mode");
+	puts("  -s<num>  Show <num> high scores");
+	puts("  -u<who>  Use your <who> savefile");
+	puts("  -d<def>  Define a 'lib' dir sub-path");
+	
+#ifdef USE_XAW
+	puts("  -mxaw    To use XAW");
+	puts("  --       Sub options");
+	puts("  -- -d    Set display name");
+	puts("  -- -s    Turn off smoothscaling graphics");
+	puts("  -- -n#   Number of terms to use");
+#endif /* USE_XAW */
+	
+#ifdef USE_X11
+	puts("  -mx11    To use X11");
+	puts("  --       Sub options");
+	puts("  -- -d    Set display name");
+	puts("  -- -s    Turn off smoothscaling graphics");
+	puts("  -- -n#   Number of terms to use");
+#endif /* USE_X11 */
+	
+#ifdef USE_XPJ
+	puts("  -mxpj    To use XPJ");
+	puts("  --       Sub options");
+	puts("  -- -d    Set display name");
+	puts("  -- -s    Turn off smoothscaling graphics");
+	puts("  -- -n#   Number of terms to use");
+#endif /* USE_XPJ */
+	
+#ifdef USE_GCU
+	puts("  -mgcu    To use GCU (GNU Curses)");
+#endif /* USE_GCU */
+
+#ifdef USE_CAP
+	puts("  -mcap    To use CAP (\"Termcap\" calls)");
+#endif /* USE_CAP */
+
+#ifdef USE_DOS
+	puts("  -mdos    To use DOS (Graphics)");
+#endif /* USE_DOS */
+
+#ifdef USE_IBM
+	puts("  -mibm    To use IBM (BIOS text mode)");
+#endif /* USE_IBM */
+
+#ifdef USE_SLA
+	puts("  -msla    To use SLA (SLANG)");
+#endif /* USE_SLA */
+
+#ifdef USE_LSL
+	puts("  -mlsl    To use LSL (Linux-SVGALIB)");
+#endif /* USE_LSL */
+
+#ifdef USE_AMI
+	puts("  -mami    To use AMI (Amiga)");
+#endif /* USE_AMI */
+
+#ifdef USE_VME
+	puts("  -mvme    To use VME (VAX/ESA)");
+#endif /* USE_VME */
+				
+	/* Actually abort the process */
+	quit(NULL);
+}
+
 
 /*
  * Simple "main" function for multiple platforms.
@@ -366,7 +445,7 @@ int main(int argc, char *argv[])
 	for (i = 1; args && (i < argc); i++)
 	{
 		/* Require proper options */
-		if (argv[i][0] != '-') goto usage;
+		if (argv[i][0] != '-') game_usage();
 
 		/* Analyze option */
 		switch (argv[i][1])
@@ -432,7 +511,7 @@ int main(int argc, char *argv[])
 			case 'u':
 			case 'U':
 			{
-				if (!argv[i][2]) goto usage;
+				if (!argv[i][2]) game_usage();
 #ifdef ANGBAND_2_8_1
 				strncpy(player_name, &argv[i][2], 32);
 				player_name[31] = '\0';
@@ -445,7 +524,7 @@ int main(int argc, char *argv[])
 
 			case 'm':
 			{
-				if (!argv[i][2]) goto usage;
+				if (!argv[i][2]) game_usage();
 				mstr = &argv[i][2];
 				break;
 			}
@@ -473,80 +552,9 @@ int main(int argc, char *argv[])
 			}
 
 			default:
-			usage:
 			{
-				/* Dump usage information */
-				puts("Usage: angband [options] [-- subopts]");
-				puts("  -n       Start a new character");
-				puts("  -f       Request fiddle mode");
-				puts("  -w       Request wizard mode");
-				puts("  -v       Request sound mode");
-				puts("  -g       Request graphics mode");
-				puts("  -o       Request original keyset");
-				puts("  -r       Request rogue-like keyset");
-				puts("  -M       Request monochrome mode");
-				puts("  -s<num>  Show <num> high scores");
-				puts("  -u<who>  Use your <who> savefile");
-				puts("  -d<def>  Define a 'lib' dir sub-path");
-				
-#ifdef USE_XAW
-				puts("  -mxaw    To use XAW");
-				puts("  --       Sub options");
-				puts("  -- -d    Set display name");
-				puts("  -- -s    Turn off smoothscaling graphics");
-				puts("  -- -n#   Number of terms to use");
-#endif /* USE_XAW */
-				
-#ifdef USE_X11
-				puts("  -mx11    To use X11");
-				puts("  --       Sub options");
-				puts("  -- -d    Set display name");
-				puts("  -- -s    Turn off smoothscaling graphics");
-				puts("  -- -n#   Number of terms to use");
-#endif /* USE_X11 */
-
-#ifdef USE_XPJ
-				puts("  -mxpj    To use XPJ");
-				puts("  --       Sub options");
-				puts("  -- -d    Set display name");
-				puts("  -- -s    Turn off smoothscaling graphics");
-				puts("  -- -n#   Number of terms to use");
-#endif /* USE_XPJ */
-
-#ifdef USE_GCU
-				puts("  -mgcu    To use GCU (GNU Curses)");
-#endif /* USE_GCU */
-
-#ifdef USE_CAP
-				puts("  -mcap    To use CAP (\"Termcap\" calls)");
-#endif /* USE_CAP */
-
-#ifdef USE_DOS
-				puts("  -mdos    To use DOS (Graphics)");
-#endif /* USE_DOS */
-
-#ifdef USE_IBM
-				puts("  -mibm    To use IBM (BIOS text mode)");
-#endif /* USE_IBM */
-
-#ifdef USE_SLA
-				puts("  -msla    To use SLA (SLANG)");
-#endif /* USE_SLA */
-
-#ifdef USE_LSL
-				puts("  -mlsl    To use LSL (Linux-SVGALIB)");
-#endif /* USE_LSL */
-
-#ifdef USE_AMI
-				puts("  -mami    To use AMI (Amiga)");
-#endif /* USE_AMI */
-
-#ifdef USE_VME
-				puts("  -mvme    To use VME (VAX/ESA)");
-#endif /* USE_VME */
-				
-				/* Actually abort the process */
-				quit(NULL);
+				 /* Default usage-help */
+				 game_usage();
 			}
 		}
 	}
