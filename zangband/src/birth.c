@@ -2256,41 +2256,6 @@ static bool player_birth_aux_1(void)
 	/* Clear */
 	clear_from(20);
 
-
-	/*** Birth options ***/
-
-	/* Extra info */
-	Term_putstr(5, 15, -1, TERM_WHITE,
-	            "You can change most of your options at any time, but the startup options");
-	Term_putstr(5, 16, -1, TERM_WHITE,
-	            "must be changed now to affect this character.");
-
-	/* Verify birth options */
-	while (1)
-	{
-		sprintf(buf, "Modify options (y/n)? ");
-		put_str(buf, 20, 2);
-		ch = inkey();
-		if (ch == 'Q') quit(NULL);
-		if (ch == 'S') return (FALSE);
-		if (ch == ESCAPE) break;
-		if (ch == 'y' || ch == 'n') break;
-		if (ch == '?') do_cmd_help();
-		else bell();
-	}
-
-	/* Verify */
-	if (ch == 'y')
-	{
-		/* Interact with options */
-		screen_save();
-		do_cmd_options_aux(6, "Startup Options");
-		screen_load();
-	}
-
-	/* Clean up */
-	clear_from(10);
-
 	/*** User enters number of quests ***/
 	/* Heino Vander Sanden and Jimmy De Laet */
 
