@@ -2109,6 +2109,11 @@ void identify_item(object_type *o_ptr)
 		/* Have we seen it before? */
 		if (a_info[o_ptr->activate].cur_num != 2)
 		{
+			int artifact = o_ptr->activate;
+			
+			/* Notice a quest for this artifact */
+			trigger_quest_complete(QX_KNOW_ARTIFACT, &artifact);
+		
 			/*
 			 * If the item was an artifact, and if the
 			 * auto-note is selected, write a message.

@@ -2752,7 +2752,7 @@ static void rd_quests(int max_quests)
 		/* Data - quest-type specific */
 		switch (q_ptr->type)
 		{
-			case QUEST_TYPE_UNKNOWN:
+			case QUEST_TYPE_NONE:
 			{
 				/* Un-initialised quests */
 				break;
@@ -2801,6 +2801,9 @@ static void rd_quests(int max_quests)
 				/* Find item quests */
 				rd_u16b(&q_ptr->data.fit.a_idx);
 				rd_u16b(&q_ptr->data.fit.place);
+				
+				/* The artifact is a quest item */
+				a_info[q_ptr->data.fit.a_idx].flags3 |= TR3_QUESTITEM;
 				break;
 			}
 			

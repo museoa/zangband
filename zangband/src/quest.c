@@ -60,7 +60,7 @@ static void quest_wipe(int q_idx)
 
 	q_ptr->status = QUEST_STATUS_UNTAKEN;
 	q_ptr->flags = 0x00;
-	q_ptr->type = QUEST_TYPE_UNKNOWN;
+	q_ptr->type = QUEST_TYPE_NONE;
 
 	/* No artificial quest item */
 	q_ptr->item = 0;
@@ -216,6 +216,106 @@ u16b insert_dungeon_monster_quest(u16b r_idx, u16b num, u16b level)
 
 
 /*
+ * Create the quests for the Serpent and Oberon
+ */
+static void insert_winner_quest(u16b r_idx, u16b num, u16b level)
+{
+	/* Normal monster quest */
+	u16b q_idx = insert_dungeon_monster_quest(r_idx, num, level);
+	
+	/* Winner result of quest */
+	quest[q_idx].x_type = QX_KILL_WINNER;
+	quest[q_idx].flags |= QUEST_FLAG_KNOWN;
+	quest[q_idx].status = QUEST_STATUS_TAKEN;
+}
+
+
+/*
+ * Look for an appropriate dungeon for a given level
+ */
+static u16b find_good_dungeon(int level)
+{
+	int i;
+	
+	int score, best_score = 0;
+	
+	int best_place = 0;
+	
+	place_type *pl_ptr;
+	
+	for (i = 0; i < place_count; i++)
+	{
+		pl_ptr = &place[i];
+		
+		/* Want dungeons */
+		if (!pl_ptr->dungeon) continue;
+	
+		/* Get difference in levels */
+		score = abs(pl_ptr->dungeon->max_level - level);
+		
+		/* The bigger the difference, the less likely a high score is */
+		score = randint1(127 - score); 
+	
+		if (score > best_score)
+		{
+			best_score = score;
+			best_place = i;
+		}
+	}
+	
+	/* Best match to reward level */
+	return (best_place);
+}
+
+static void insert_artifact_quest(u16b a_idx)
+{
+	artifact_type *a_ptr = &a_info[a_idx];
+	
+	quest_type *q_ptr;
+
+	int q_num;
+	
+	/* Skip "empty" artifacts */
+	if (!a_ptr->name) return;
+		
+	/* Cannot make an artifact twice */
+	if (a_ptr->cur_num) return;
+
+	/* No quest items */
+	if (a_ptr->flags3 & TR3_QUESTITEM) return;
+	
+	/* get a new quest */
+	q_num = q_pop();
+
+	/* Paranoia */
+	if (!q_num) return;
+
+	q_ptr = &quest[q_num];
+
+	/* Store in information */
+	q_ptr->type = QUEST_TYPE_FIND_ITEM;
+
+	/* We need to place the artifact in the dungeon */
+	q_ptr->c_type = QC_DUN_ARTIFACT;
+	
+	/* Finished when the player identifies it */
+	q_ptr->x_type = QX_KNOW_ARTIFACT;
+	
+	/* XXX XXX Create quest name */
+	(void)strnfmt(q_ptr->name, 60, "Find the relic %s.", a_ptr->name);
+	
+	/* Find an available dungeon to place it in */
+	
+	/* Save the quest data */
+	q_ptr->data.fit.a_idx = a_idx;
+	q_ptr->data.fit.place = find_good_dungeon(a_ptr->level);
+	
+	/* Artifact is now a quest item */
+	a_ptr->flags3 |= TR3_QUESTITEM;
+}
+
+
+/*
  * Initialise the quests
  */
 errr init_quests(void)
@@ -263,6 +363,7 @@ static bool monster_quest(int r_idx)
 
 #endif /* 0 */
 
+
 /*
  * Quests
  *
@@ -270,8 +371,6 @@ static bool monster_quest(int r_idx)
 void init_player_quests(void)
 {
 	int i;
-
-	int q_idx;
 
 	/* Reset number of quests */
 	q_max = 1;
@@ -285,16 +384,17 @@ void init_player_quests(void)
 	/* Add the winner quests */
 
 	/* Hack XXX XXX Oberon, hard coded */
-	q_idx = insert_dungeon_monster_quest(QW_OBERON, 1, 99);
-	quest[q_idx].x_type = QX_KILL_WINNER;
-	quest[q_idx].flags |= QUEST_FLAG_KNOWN;
-	quest[q_idx].status = QUEST_STATUS_TAKEN;
+	insert_winner_quest(QW_OBERON, 1, 99);
 
 	/* Hack XXX XXX Serpent, hard coded */
-	q_idx = insert_dungeon_monster_quest(QW_SERPENT, 1, 100);
-	quest[q_idx].x_type = QX_KILL_WINNER;
-	quest[q_idx].flags |= QUEST_FLAG_KNOWN;
-	quest[q_idx].status = QUEST_STATUS_TAKEN;
+	insert_winner_quest(QW_SERPENT, 1, 100);
+	
+	/* Insert some artifact quests */
+	for (i = 0; i < z_info->a_max / 2; i++)
+	{
+		/* Pick a random artifact to add to the list */
+		insert_artifact_quest(randint1(z_info->a_max));
+	}
 }
 
 
@@ -340,7 +440,7 @@ void quest_discovery(void)
 		/* See what type of quest it is */
 		switch (q_ptr->type)
 		{
-			case QUEST_TYPE_UNKNOWN:
+			case QUEST_TYPE_NONE:
 			{
 				/* Paranoia */
 				continue;
@@ -392,6 +492,18 @@ void quest_discovery(void)
 				/* Paranoia */
 				continue;
 			}
+			
+			case QUEST_TYPE_FIND_ITEM:
+			{
+				msgf("You feel there is something interesting about this level.");
+
+				/* Disturb */
+				disturb(FALSE);
+
+				/* Paranoia */
+				continue;
+			
+			}
 
 			default:
 			{
@@ -440,30 +552,59 @@ void activate_quests(int level)
 	for (i = 0; i < q_max; i++)
 	{
 		q_ptr = &quest[i];
+		
+		/* Assume no longer created or active */
+		q_ptr->flags &= ~(QUEST_FLAG_ACTIVE | QUEST_FLAG_CREATED);
 
 		/* Is the quest relevant? */
-		if ((q_ptr->type == QUEST_TYPE_BOUNTY)
-			|| ((q_ptr->type == QUEST_TYPE_DUNGEON)
-				&& (q_ptr->data.dun.level == level)))
+		switch (q_ptr->type)
 		{
-			q_ptr->flags |= QUEST_FLAG_ACTIVE;
-
-			/* Hack - toggle QUESTOR flag */
-			if (q_ptr->type == QUEST_TYPE_DUNGEON)
+			case QUEST_TYPE_DUNGEON:
 			{
-				r_info[q_ptr->data.dun.r_idx].flags1 |= RF1_QUESTOR;
+				/* Correct dungeon level? */
+				if (q_ptr->data.dun.level != level) break;
+				
+				/* Follow through */
+			}
+		
+			case QUEST_TYPE_BOUNTY:
+			{
+				q_ptr->flags |= QUEST_FLAG_ACTIVE;
 
+				/* Hack - toggle QUESTOR flag */
+				r_info[q_ptr->data.dun.r_idx].flags1 |= RF1_QUESTOR;
+	
 				/* Hack - we notice the dungeon quest */
 				if (q_ptr->status == QUEST_STATUS_UNTAKEN)
 				{
 					q_ptr->status = QUEST_STATUS_TAKEN;
 				}
+				
+				break;
 			}
-		}
-		else
-		{
-			/* No longer created or active */
-			q_ptr->flags &= ~(QUEST_FLAG_ACTIVE | QUEST_FLAG_CREATED);
+			
+			case QUEST_TYPE_FIND_ITEM:
+			{
+				int place_num = q_ptr->data.fit.place;
+				
+				place_type *pl_ptr;
+				
+				/* Not correct place? */
+				if (place_num != p_ptr->place_num) break;
+				
+				pl_ptr = &place[place_num];
+			
+				/* Correct dungeon level? */
+				if (level != pl_ptr->dungeon->max_level) break;
+				
+				q_ptr->flags |= QUEST_FLAG_ACTIVE;
+				
+				/* Hack - we notice the quest */
+				if (q_ptr->status == QUEST_STATUS_UNTAKEN)
+				{
+					q_ptr->status = QUEST_STATUS_TAKEN;
+				}
+			}
 		}
 	}
 }
@@ -571,14 +712,90 @@ static void quest_reward(int num, int x, int y)
 }
 
 
+
+static void display_monster_quest(quest_type *q_ptr)
+{
+	int j, k;
+	cave_type *c_ptr;
+	
+	int x, y;
+
+	monster_race *r_ptr = &r_info[q_ptr->data.dun.r_idx];
+
+	/* Hack -- "unique" monsters must be "unique" */
+	if ((r_ptr->flags1 & RF1_UNIQUE) &&
+		(r_ptr->cur_num >= r_ptr->max_num))
+	{
+		/* The unique is already dead */
+		q_ptr->status = QUEST_STATUS_FINISHED;
+	}
+	else
+	{
+		bool group;
+
+		for (j = 0; j < (q_ptr->data.dun.max_num
+							- q_ptr->data.dun.cur_num); j++)
+		{
+			for (k = 0; k < 5000; k++)
+			{
+				/* Find an empty grid */
+				while (TRUE)
+				{
+					y = rand_range(p_ptr->min_hgt + 1,
+								   p_ptr->max_hgt - 2);
+					x = rand_range(p_ptr->min_wid + 1,
+								   p_ptr->max_wid - 2);
+
+					/* Access the grid */
+					c_ptr = area(x, y);
+
+					if (!cave_naked_grid(c_ptr)) continue;
+					if (distance(x, y, p_ptr->px, p_ptr->py) <
+						10) continue;
+					else
+						break;
+				}
+
+				if (r_ptr->flags1 & RF1_FRIENDS)
+					group = FALSE;
+				else
+					group = TRUE;
+
+				/* Try to place the monster */
+				if (place_monster_aux
+					(x, y, q_ptr->data.dun.r_idx, FALSE, group,
+					 FALSE, FALSE, TRUE))
+				{
+					/* Success */
+					break;
+				}
+				else
+				{
+					/* Failure - Try again */
+					continue;
+				}
+			}
+		}
+	}
+}
+
+static void display_artifact_quest(quest_type *q_ptr)
+{
+	int	x = rand_range(p_ptr->min_wid + 1, p_ptr->max_wid - 2);
+	int y = rand_range(p_ptr->min_hgt + 1, p_ptr->max_hgt - 2);
+	
+	/* Drop artifact in dungeon */
+	create_named_art(q_ptr->data.fit.a_idx, x, y);
+}
+
+
 /*
  * Test each quest to see which ones are created
  */
 void trigger_quest_create(byte c_type, vptr data)
 {
-	int i, j, k;
+	int i;
 	quest_type *q_ptr;
-	cave_type *c_ptr;
 
 	/* Ignore data - it may be unused */
 	(void)data;
@@ -607,67 +824,14 @@ void trigger_quest_create(byte c_type, vptr data)
 
 			case QC_DUN_MONST:
 			{
-				int x, y;
-
-				monster_race *r_ptr = &r_info[q_ptr->data.dun.r_idx];
-
-				/* Hack -- "unique" monsters must be "unique" */
-				if ((r_ptr->flags1 & RF1_UNIQUE) &&
-					(r_ptr->cur_num >= r_ptr->max_num))
-				{
-					/* The unique is already dead */
-					q_ptr->status = QUEST_STATUS_FINISHED;
-				}
-				else
-				{
-					bool group;
-
-					for (j = 0;
-						 j <
-						 (q_ptr->data.dun.max_num - q_ptr->data.dun.cur_num);
-						 j++)
-					{
-						for (k = 0; k < 5000; k++)
-						{
-							/* Find an empty grid */
-							while (TRUE)
-							{
-								y = rand_range(p_ptr->min_hgt + 1,
-											   p_ptr->max_hgt - 2);
-								x = rand_range(p_ptr->min_wid + 1,
-											   p_ptr->max_wid - 2);
-
-								/* Access the grid */
-								c_ptr = area(x, y);
-
-								if (!cave_naked_grid(c_ptr)) continue;
-								if (distance(x, y, p_ptr->px, p_ptr->py) <
-									10) continue;
-								else
-									break;
-							}
-
-							if (r_ptr->flags1 & RF1_FRIENDS)
-								group = FALSE;
-							else
-								group = TRUE;
-
-							/* Try to place the monster */
-							if (place_monster_aux
-								(x, y, q_ptr->data.dun.r_idx, FALSE, group,
-								 FALSE, FALSE, TRUE))
-							{
-								/* Success */
-								break;
-							}
-							else
-							{
-								/* Failure - Try again */
-								continue;
-							}
-						}
-					}
-				}
+				display_monster_quest(q_ptr);
+				continue;
+			}
+			
+			case QC_DUN_ARTIFACT:
+			{
+				display_artifact_quest(q_ptr);
+				continue;
 			}
 		}
 
@@ -684,7 +848,6 @@ void trigger_quest_complete(byte x_type, vptr data)
 {
 	int i;
 	quest_type *q_ptr;
-
 
 	for (i = 0; i < q_max; i++)
 	{
@@ -713,15 +876,15 @@ void trigger_quest_complete(byte x_type, vptr data)
 			{
 				monster_type *m_ptr = ((monster_type *)data);
 
-				if (q_ptr->data.dun.r_idx == m_ptr->r_idx)
+				if (q_ptr->data.bnt.r_idx == m_ptr->r_idx)
 				{
 					/* Don't count clones */
 					if (m_ptr->smart & SM_CLONED) break;
 
 					/* Increment number killed */
-					q_ptr->data.dun.cur_num++;
+					q_ptr->data.bnt.cur_num++;
 
-					if (q_ptr->data.dun.cur_num >= q_ptr->data.dun.max_num)
+					if (q_ptr->data.bnt.cur_num >= q_ptr->data.bnt.max_num)
 					{
 						/* Complete the quest */
 						q_ptr->status = QUEST_STATUS_COMPLETED;
@@ -733,7 +896,7 @@ void trigger_quest_complete(byte x_type, vptr data)
 						quest_reward(q_ptr->reward, m_ptr->fx, m_ptr->fy);
 
 						/* Monster is no longer 'QUESTOR' */
-						r_info[q_ptr->data.dun.r_idx].flags1 &= ~(RF1_QUESTOR);
+						r_info[q_ptr->data.bnt.r_idx].flags1 &= ~(RF1_QUESTOR);
 					}
 				}
 
@@ -792,6 +955,15 @@ void trigger_quest_complete(byte x_type, vptr data)
 				q_ptr->status = QUEST_STATUS_FINISHED;
 
 				break;
+			}
+			
+			case QX_KNOW_ARTIFACT:
+			{
+				if (*((int *) data) == q_ptr->data.fit.a_idx)
+				{
+					/* Complete the quest */
+					q_ptr->status = QUEST_STATUS_FINISHED;
+				}
 			}
 		}
 
@@ -906,7 +1078,7 @@ bool do_cmd_knowledge_quests(int dummy)
 		/* See what type of quest it is */
 		switch (q_ptr->type)
 		{
-			case QUEST_TYPE_UNKNOWN:
+			case QUEST_TYPE_NONE:
 			{
 				/* Paranoia */
 				continue;

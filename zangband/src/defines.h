@@ -141,7 +141,7 @@
 /*
  * Quest type
  */
-#define QUEST_TYPE_UNKNOWN			0
+#define QUEST_TYPE_NONE				0
 #define QUEST_TYPE_BOUNTY			1
 #define QUEST_TYPE_DUNGEON			2
 #define QUEST_TYPE_WILD				3
@@ -156,6 +156,7 @@
  */
 #define QC_NONE					0
 #define QC_DUN_MONST			1
+#define QC_DUN_ARTIFACT			2
 
 
 /*
@@ -166,6 +167,7 @@
 #define QX_KILL_UNIQUE			2
 #define QX_KILL_WINNER			3
 #define QX_WILD_ENTER			4
+#define QX_KNOW_ARTIFACT		5
 
 /*
  * Mega Hack XXX XXX Info for winner quest

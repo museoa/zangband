@@ -1509,7 +1509,7 @@ static bool wr_savefile_new(void)
 		/* Data - quest-type specific */
 		switch (quest[i].type)
 		{
-			case QUEST_TYPE_UNKNOWN: break;
+			case QUEST_TYPE_NONE: break;
 
 			case QUEST_TYPE_BOUNTY:
 			{
