@@ -1307,9 +1307,6 @@ void generate_cave(void)
 		/* The "dungeon" is ready */
 		character_dungeon = TRUE;
 
-		/* Reset map panels */
-		map_panel_size();
-
 		return;
 	}
 	
@@ -1388,9 +1385,6 @@ void generate_cave(void)
 
 	/* The dungeon is ready */
 	character_dungeon = TRUE;
-
-	/* Reset map panels */
-	map_panel_size();
 
 	/* Remember when this level was "created" */
 	old_turn = turn;

@@ -2246,6 +2246,9 @@ void change_level(int level)
 		p_ptr->min_hgt = p_ptr->old_wild_y * WILD_BLOCK_SIZE;
 		p_ptr->max_wid = p_ptr->min_wid + WILD_VIEW * WILD_BLOCK_SIZE;
 		p_ptr->max_hgt = p_ptr->min_hgt + WILD_VIEW * WILD_BLOCK_SIZE;
+		
+		/* Update panels (later) */
+		p_ptr->update |= (PU_MAP);
 
 		/*
 		 * Restore the outside town if it exists

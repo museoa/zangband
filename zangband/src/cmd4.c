@@ -89,7 +89,7 @@ void resize_map(void)
 	if (!character_dungeon) return;
 
 	/* Reset the panels */
-	map_panel_size();
+	p_ptr->update |= (PU_MAP);
 
 	/* Update torch */
 	p_ptr->update |= (PU_TORCH);

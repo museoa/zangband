@@ -3387,11 +3387,11 @@ void play_game(bool new_game)
 	/* Hack -- Enforce "delayed death" */
 	if (p_ptr->chp < 0) p_ptr->state.is_dead = TRUE;
 
-	/* Resize / init the map */
-	map_panel_size();
-
 	/* Enter "xtra" mode */
 	character_xtra = TRUE;
+	
+	/* Resize / init the map */
+	p_ptr->update |= (PU_MAP);
 
 	/* Need to recalculate some transient things */
 	p_ptr->update |= (PU_BONUS | PU_SPELLS | PU_WEIGHT);
@@ -3519,6 +3519,11 @@ void play_game(bool new_game)
 
 		/* Make a new level */
 		generate_cave();
+		
+		/* Update panels */
+		p_ptr->update |= (PU_MAP);
+		
+		update_stuff();
 	}
 
 	/* Close stuff */

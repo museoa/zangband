@@ -2919,7 +2919,7 @@ void display_map(int *cx, int *cy)
 	FREE(mtc);
 	FREE(mp);
 	
-	/* Hack - Revert bigtile mode */
+	/* XXX XXX Hack - Revert bigtile mode */
 	if (use_bigtile) map_panel_size();
 }
 

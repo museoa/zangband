@@ -900,7 +900,7 @@ static errr Term_text_gcu(int x, int y, int n, byte a, cptr s)
 /*
  * Create a window for the given "term_data" argument.
  */
-static errr term_data_init_gcu(term_data *td, int rows, int cols, int y, int x, int i)
+static errr term_data_init_gcu(term_data *td, int rows, int cols, int y, int x)
 {
 	term *t = &td->t;
 
@@ -942,13 +942,6 @@ static errr term_data_init_gcu(term_data *td, int rows, int cols, int y, int x, 
 
 	/* Activate it */
 	Term_activate(t);
-
-	/* Reset map size if required */
-	if (i == 0)
-	{
-		/* Reset the panels */
-		map_panel_size();
-	}
 
 	/* Success */
 	return (0);
@@ -1161,7 +1154,7 @@ errr init_gcu(void)
 		if (rows <= 0 || cols <= 0) continue;
 
 		/* Create a term */
-		term_data_init_gcu(&data[next_win], rows, cols, y, x, i);
+		term_data_init_gcu(&data[next_win], rows, cols, y, x);
 
 		/* Remember the term */
 		angband_term[next_win] = &data[next_win].t;

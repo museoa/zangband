@@ -2859,17 +2859,6 @@ static void init_windows(void)
 	term_data_link(td);
 	term_screen = &td->t;
 
-#ifdef ZANGBAND_BIGSCREEN
-
-	/*
-	 * Reset map size if required
-	 */
-
-	/* Reset the panels */
-	map_panel_size();
-
-#endif /* ZANGBAND_BIGSCREEN */
-
 	/* Activate the main window */
 	SetActiveWindow(td->w);
 

@@ -1057,9 +1057,6 @@ errr init_cap(void)
 	/* Activate it */
 	Term_activate(term_screen);
 
-	/* Reset the panels */
-	map_panel_size();
-
 	/* Success */
 	return (0);
 }
