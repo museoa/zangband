@@ -1468,11 +1468,6 @@ static void natural_attack(s16b m_idx, int attack, bool * fear,
 	if ((!(r_ptr->flags2 & RF2_QUANTUM) || !rand_int(2)) &&
 		test_hit_combat(chance, r_ptr->ac, m_ptr->ml))
 	{
-
-#if 1 /* TNB */
-		angtk_invert_spot(m_ptr->fy, m_ptr->fx);
-#endif /* TNB */
-
 		msg_format("You hit %s with your %s.", m_name, atk_desc);
 
 		k = damroll(ddd, dss);
@@ -1580,10 +1575,6 @@ static bool monster_bash(int *blows, int sleeping_bonus, cave_type * c_ptr,
 	/* Try to get in a shield bash. */
 	if (bash_chance > rand_int(240 + r_ptr->level * 9))
 	{
-#if 1 /* TNB */
-		angtk_invert_spot(m_ptr->fy, m_ptr->fx);
-#endif /* TNB */
-
 		msg_print("You get in a shield bash!");
 
 		/* Calculate attack quality, a mix of momentum and accuracy. */
@@ -1955,11 +1946,6 @@ void py_attack(int y, int x)
 		if (test_hit_combat(chance + sleeping_bonus,
 				r_ptr->ac + terrain_bonus, m_ptr->ml))
 		{
-#if 1 /* TNB */
-			angtk_invert_spot(y, x);
-#endif /* TNB */
-
-
 			/* Hack -- bare hands do one damage */
 			k = 1;
 

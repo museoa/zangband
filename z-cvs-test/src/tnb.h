@@ -171,14 +171,10 @@ extern void angtk_effect_clear(int y, int x);
 extern bool angtk_effect_spell(int y, int x, int typ, int bolt);
 extern bool angtk_effect_ammo(int y, int x, object_type *o_ptr, int dir);
 extern bool angtk_effect_object(int y, int x, object_type *o_ptr);
-extern void angtk_invert_spot(int y, int x);
-extern void angtk_detect_radius(int y, int x, int r);
-extern void angtk_destroy_area(int arg);
 extern void (*angtk_lite_spot)(int y, int x);
 extern void angtk_lite_spot_real(int y, int x);
 extern void angtk_wipe_spot(int y, int x);
 extern void angtk_idle(void);
-extern void angtk_project_hint(int action, int rad, int y, int x, int flg);
 extern void angtk_locate(int dir);
 
 /* interp1.c */

@@ -3026,10 +3026,6 @@ void do_cmd_fire_aux(int item, object_type * j_ptr)
 
 				if (visible)
 				{
-#if 1 /* TNB */
-					angtk_invert_spot(y, x);
-#endif /* TNB */
-
 					/* Hack -- Track this monster race */
 					if (m_ptr->ml)
 						monster_race_track(m_ptr->r_idx);
@@ -3468,9 +3464,6 @@ void do_cmd_throw_aux(int mult)
 				/* Handle visible monster */
 				if (visible)
 				{
-#if 1 /* TNB */
-					angtk_invert_spot(y, x);
-#endif /* TNB */
 					/* Hack -- Track this monster race */
 					if (m_ptr->ml)
 						monster_race_track(m_ptr->r_idx);

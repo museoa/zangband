@@ -2001,21 +2001,7 @@ static void AngbandTimerProc(ClientData clientData)
 	g_timer_token = Tcl_CreateTimerHandler(TIMER_TICKS, AngbandTimerProc, 0);
 
 	/* No animation while repeating a command */
-#if 0
-	if (running || resting) return;
-
-	/*
-	 * If you look at do_cmd_bash() in ZAngband, command_rep is
-	 * set before get_rep_dir() is called, disabling animation
-	 * when asking for a direction. So if the command is repeated
-	 * and we are not actively waiting for a key, then skip animation.
-	 */
-	if (command_rep &&
-		(!inkey_flags || (inkey_flags == INKEY_DISTURB))) return;
-		
-#else
 	if (running || command_rep || resting) return;
-#endif
 
 #ifdef TIMER_STATS
 

@@ -1457,9 +1457,6 @@ static int detection_aux(cptr what)
 {
 	int y, x, dis, detect = FALSE;
 
-	/* Visual feedback */
-	angtk_detect_radius(py, px, MAX_RANGE);
-
 	for (y = py - MAX_RANGE; y <= py + MAX_RANGE; y++)
 	{
 		for (x = px - MAX_RANGE; x <= px + MAX_RANGE; x++)
@@ -3288,8 +3285,6 @@ bool destroy_area(int y1, int x1, int r, int full)
 		return (FALSE);
 	}
 
-	angtk_destroy_area(1); /* TNB */
-
 	/* Big area of affect */
 	for (y = (y1 - r); y <= (y1 + r); y++)
 	{
@@ -3428,14 +3423,6 @@ bool destroy_area(int y1, int x1, int r, int full)
 	{
 		/* Message */
 		msg_print("There is a searing blast of light!");
-
-#if 1 /* TNB */
-		angtk_widget_lock(TRUE);
-		angtk_destroy_area(2);
-		msg_print(NULL);
-		angtk_widget_lock(FALSE);
-		angtk_destroy_area(3);
-#endif /* TNB */
 
 		/* Blind the player */
 		if (!p_ptr->resist_blind && !p_ptr->resist_lite)
