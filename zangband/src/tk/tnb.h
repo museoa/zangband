@@ -58,7 +58,7 @@ extern char tnb_tile_file[1024];
 extern char tnb_font_file[1024];
 extern int tnb_font_size;
 
-extern void tnb_get_term(int x, int y, byte *attr, char *c);
+extern void tnb_get_term(int x, int y, byte *a, char *c, byte *ta, char *tc);
 
 /* plat.c */
 
@@ -268,4 +268,4 @@ DECLARE_TK_HOOK(inveninfo);
 
 
 extern int init_widget(Tcl_Interp *interp, int g_icon_depth);
-extern int init_term(Tcl_Interp *interp, int g_icon_depth);
+

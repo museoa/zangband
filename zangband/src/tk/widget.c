@@ -13,8 +13,6 @@
 #include "tnb.h"
 #include "../maid-grf.h"
 
-static int widget_icon_depth;
-
 typedef struct Widget Widget;
 
 struct Widget
@@ -46,13 +44,20 @@ struct Widget
     int gheight;				/* Source row height */
     int oldGWidth, oldGHeight;	/* To notice changes */
 	
+	int term; /* Boolean: Widget is a term, or not */
+	
 	#define WIDGET_REDRAW 0x01
 	#define WIDGET_DELETED 0x02
 	#define WIDGET_EXPOSE 0x04
 	#define WIDGET_WIPE 0x08
 	byte flags;                  /* Misc flags */
-
 };
+
+/* Colour depth */
+static int widget_icon_depth;
+
+/* Hack - have one widget for the current term */
+static Widget *tnb_term;
 
 /* Predeclare */
 static void widget_draw_all(Widget *widgetPtr);
@@ -238,6 +243,21 @@ static void set_colours(void)
 }
 
 
+errr Term_xtra_tnb_react(void)
+{
+	/* Paranoia */
+	if (!tnb_term) return (1);
+
+	/* React to colours */
+	set_colours();
+
+	/* Redraw later */
+	Widget_EventuallyRedraw(tnb_term);
+
+	return 0;
+}
+
+
 /*
  * Draw stuff at this location
  */
@@ -417,6 +437,7 @@ static void draw_pict(int x, int y, byte a, char c, byte ta, char tc, Widget *wi
 	}
 }
 
+
 static void draw_square(int x, int y, byte a, char c, byte ta, char tc, Widget *widgetPtr)
 {
 	if ((a & 0x80) || (ta & 0x80))
@@ -431,6 +452,101 @@ static void draw_square(int x, int y, byte a, char c, byte ta, char tc, Widget *
 	}
 }
 
+/*
+ * Wipe n characters at position x, y
+ */
+errr Term_wipe_tnb(int x, int y, int n)
+{
+	int i, xp, yp;
+	
+	/* Paranoia */
+	if (!tnb_term) return (1);
+	
+	for (i = 0; (i < n) && (x + i < 80); i++)
+	{
+		xp = (x + i - tnb_term->x_min) * tnb_term->gwidth;
+		yp = (y - tnb_term->y_min) * tnb_term->gheight;
+	
+		DrawBlank(xp, yp, tnb_term);
+	}
+	
+	/* Set dirty bounds to entire window */
+	tnb_term->dx = tnb_term->bx;
+	tnb_term->dy = tnb_term->by;
+	tnb_term->dw = tnb_term->width;
+	tnb_term->dh = tnb_term->height;
+	
+	/* Redraw later */
+	Widget_EventuallyRedraw(tnb_term);
+
+	return (0);
+}
+
+
+/*
+ * Draw a string of tiles
+ */
+errr Term_pict_tnb(int x, int y, int n, const byte *ap, const char *cp, const byte *tap, const char *tcp)
+{
+	int i, xp, yp;
+
+	/* Paranoia */
+	if (!tnb_term) return (1);
+	
+	for (i = 0; (i < n) && (x + i < 80); i++)
+	{
+		xp = (x + i - tnb_term->x_min) * tnb_term->gwidth;
+		yp = (y - tnb_term->y_min) * tnb_term->gheight;
+	
+		draw_pict(xp, yp, ap[i], cp[i], tap[i], tcp[i], tnb_term);
+	}
+	
+	/* Set dirty bounds to entire window */
+	tnb_term->dx = tnb_term->bx;
+	tnb_term->dy = tnb_term->by;
+	tnb_term->dw = tnb_term->width;
+	tnb_term->dh = tnb_term->height;
+	
+	Widget_EventuallyRedraw(tnb_term);
+	
+	/* Hack - we don't support icons here (yet) */
+	return 0;
+}
+
+
+/*
+ * Draw a string of characters
+ *
+ * (This could be made more efficient by drawing
+ * more than one character at a time.)
+ */
+errr Term_text_tnb(int x, int y, int n, byte a, const char *s)
+{
+	int i, xp, yp;
+		
+	/* Paranoia */
+	if (!tnb_term) return (1);
+	
+	for (i = 0; (i < n) && (x + i < 80); i++)
+	{
+		xp = (x + i - tnb_term->x_min) * tnb_term->gwidth;
+		yp = (y - tnb_term->y_min) * tnb_term->gheight;
+	
+		draw_char(xp, yp, a, s[i], tnb_term);
+	}
+	
+	/* Set dirty bounds to entire window */
+	tnb_term->dx = tnb_term->bx;
+	tnb_term->dy = tnb_term->by;
+	tnb_term->dw = tnb_term->width;
+	tnb_term->dh = tnb_term->height;
+	
+	/* Redraw later */
+	Widget_EventuallyRedraw(tnb_term);
+
+	return 0;
+}
+
 
 /*
  * Redraw everything.
@@ -438,6 +554,9 @@ static void draw_square(int x, int y, byte a, char c, byte ta, char tc, Widget *
 static void widget_draw_all(Widget *widgetPtr)
 {
 	int y, x, yp, xp;
+	
+	byte a, ta;
+	char c, tc;
 	
 	map_block *mb_ptr;
 
@@ -451,26 +570,44 @@ static void widget_draw_all(Widget *widgetPtr)
 			xp = (x - widgetPtr->x_min) * widgetPtr->gwidth;
 			yp = (y - widgetPtr->y_min) * widgetPtr->gheight;
 			
-			/* Are we on the map? */
-			if (!map_in_bounds(x, y))
+			if (widgetPtr->term)
 			{
-				/* Are we on the screen? */
-				if ((x >= widgetPtr->x_min) && (x < widgetPtr->x_max) &&
-					(y >= widgetPtr->y_min) && (y < widgetPtr->y_max))
+				if ((x < 0) || (x >= 80) || (y < 0) || (y >= 24))
 				{
-					
 					/* Just "erase" this spot */
 					DrawBlank(xp, yp, widgetPtr);
 				}
-				
-				continue;
-			}
+				else
+				{
+					/* Hack - Get attr/char of this location */
+					tnb_get_term(x, y, &a, &c, &ta, &tc);
 			
-			/* Get the map location */
-			mb_ptr = map_loc(x, y);
+					/* Draw stuff at that location */
+					draw_square(xp, yp, a, c, ta, tc, widgetPtr);
+				}
+			}
+			else
+			{
+				/* Are we on the map? */
+				if (!map_in_bounds(x, y))
+				{
+					/* Are we on the screen? */
+					if ((x >= widgetPtr->x_min) && (x < widgetPtr->x_max) &&
+						(y >= widgetPtr->y_min) && (y < widgetPtr->y_max))
+					{
+						/* Just "erase" this spot */
+						DrawBlank(xp, yp, widgetPtr);
+					}
+				
+					continue;
+				}
+			
+				/* Get the map location */
+				mb_ptr = map_loc(x, y);
 		
-			/* Draw stuff at that location */
-			draw_square(xp, yp, mb_ptr->a, mb_ptr->c, mb_ptr->ta, mb_ptr->tc, widgetPtr);
+				/* Draw stuff at that location */
+				draw_square(xp, yp, mb_ptr->a, mb_ptr->c, mb_ptr->ta, mb_ptr->tc, widgetPtr);
+			}
 		}
 	}
 
@@ -479,6 +616,9 @@ static void widget_draw_all(Widget *widgetPtr)
 	widgetPtr->dy = widgetPtr->by;
 	widgetPtr->dw = widgetPtr->width;
 	widgetPtr->dh = widgetPtr->height;
+	
+	/* Redraw later */
+	Widget_EventuallyRedraw(widgetPtr);
 }
 
 
@@ -540,7 +680,16 @@ static void Widget_Calc(Widget *widgetPtr)
 
 	cc = cLeft + 1 + cRight;
 	rc = rTop + 1 + rBottom;
-
+	
+	if (widgetPtr->term)
+	{
+		/* Calculate the limits of visibility (only for term) */
+		widgetPtr->y_min = 0;
+		widgetPtr->y_max = widgetPtr->y_min + widgetPtr->height / widgetPtr->gheight;
+		widgetPtr->x_min = 0;
+		widgetPtr->x_max = widgetPtr->x_min + widgetPtr->width / widgetPtr->gwidth;
+	}
+	
 	widgetPtr->rc = rc;
 	widgetPtr->cc = cc;
 
@@ -558,6 +707,19 @@ static void Widget_Wipe(Widget *widgetPtr)
 
 	/* Redraw later */
 	Widget_EventuallyRedraw(widgetPtr);
+}
+
+/*
+ * Wipe the term
+ */
+errr Term_xtra_tnb_clear(void)
+{
+	/* Paranoia */
+	if (!tnb_term) return (1);
+
+	Widget_Wipe(tnb_term);
+
+	return 0;
 }
 
 
@@ -1111,21 +1273,27 @@ static void Widget_Destroy(Widget *widgetPtr)
 
 	widgetPtr->tkwin = NULL;
 	
+	if (widgetPtr->term)
+	{
+		/* We no longer have a term */
+		tnb_term = NULL;
+	}
+	else
+	{
+		/* Free the callbacks */
+		del_callback(CALL_MAP_INFO, widgetPtr);
+		del_callback(CALL_MAP_ERASE, widgetPtr);
+		del_callback(CALL_PLAYER_MOVE, widgetPtr);
+	}
+	
 	/* Free the font, if any */
 	if (widgetPtr->font) Bitmap_Delete(widgetPtr->font);
-	
-	/* Free the callbacks */
-	del_callback(CALL_MAP_INFO, widgetPtr);
-	del_callback(CALL_MAP_ERASE, widgetPtr);
-	del_callback(CALL_PLAYER_MOVE, widgetPtr);
 	
 	/* Free the tiles */
 	if (widgetPtr->tiles) Bitmap_Delete(widgetPtr->tiles);
 
 	/* Free the Widget struct */
     Tcl_EventuallyFree((ClientData) widgetPtr, Tcl_Free);
-	
-	
 }
 
 
@@ -1190,6 +1358,8 @@ static Tk_OptionSpec optionSpecs[20] = {
     (char *) "32", -1, Tk_Offset(Widget, gheight), 0, 0, 0},
     {TK_OPTION_INT, (char *) "-gwidth", (char *) "gwidth", (char *) "Width",
     (char *) "32", -1, Tk_Offset(Widget, gwidth), 0, 0, 0},
+	{TK_OPTION_BOOLEAN, (char *) "-term", (char *) "term", (char *) "Term",
+    (char *) "0", -1, Tk_Offset(Widget, term), 0, 0, 0},
     {TK_OPTION_END, NULL, NULL, NULL,
      NULL, 0, -1, 0, 0, 0}
 };
@@ -1291,6 +1461,7 @@ static int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 	widgetPtr->x_min = widgetPtr->x_max = 0;
 	widgetPtr->dx = widgetPtr->dy = 0;
 	widgetPtr->dw = widgetPtr->dh = 0;
+	widgetPtr->term = 0;
 
 	/*
 	 * Arrange for our routine to be called when any of the specified
@@ -1299,7 +1470,7 @@ static int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tc
     Tk_CreateEventHandler(widgetPtr->tkwin,
 		ExposureMask | StructureNotifyMask | FocusChangeMask,
 		Widget_EventProc, (ClientData) widgetPtr);
-
+	
 	/* Set the default options for the new widget */
 	if (Tk_InitOptions(interp, (char *) widgetPtr, optionTable, tkwin)
 		!= TCL_OK)
@@ -1321,24 +1492,31 @@ static int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 		return TCL_ERROR;
 	}
 	
+	if (widgetPtr->term)
+	{
+		/* We now have a term */
+		tnb_term = widgetPtr;
+	}
+	else
+	{
+		/* Hack - initialise the hooks into the overhead map code */
+	
+		/* Initialise the overhead map code */
+		init_overhead_map();
+
+		/* Save the tk hooks into the overhead map */
+		set_callback((callback_type) Widget_map_info, CALL_MAP_INFO, widgetPtr);
+		set_callback((callback_type) Widget_map_erase, CALL_MAP_ERASE, widgetPtr);
+
+		/* Save old player movement hook */
+		set_callback((callback_type) Widget_player_move, CALL_PLAYER_MOVE, widgetPtr);
+	}
+	
 	/* Load the tiles */
 	widgetPtr->tiles = Bitmap_Load(g_interp, tnb_tile_file);
 	
 	/* Load the font */
 	widgetPtr->font = Font_Load(g_interp, tnb_font_file, tnb_font_size);
-	
-	
-	/* Hack - initialise the hooks into the overhead map code */
-
-	/* Initialise the overhead map code */
-	init_overhead_map();
-
-	/* Save the tk hooks into the overhead map */
-	set_callback((callback_type) Widget_map_info, CALL_MAP_INFO, widgetPtr);
-	set_callback((callback_type) Widget_map_erase, CALL_MAP_ERASE, widgetPtr);
-
-	/* Save old player movement hook */
-	set_callback((callback_type) Widget_player_move, CALL_PLAYER_MOVE, widgetPtr);
 
 	/* Return the window pathname */
     Tcl_SetStringObj(Tcl_GetObjResult(interp), Tk_PathName(widgetPtr->tkwin),
