@@ -4257,6 +4257,7 @@ extern int borg_attack_aux_thrust(void)
     int d, b_d = -1;
 
     borg_grid *ag;
+	map_block *mb_ptr;
 
     borg_kill *kill;
 
@@ -4275,22 +4276,23 @@ extern int borg_attack_aux_thrust(void)
 
         /* Acquire grid */
         ag = &borg_grids[y][x];
+		mb_ptr = map_loc(x, y);
 
         /* Calculate "average" damage */
-        d = borg_thrust_damage_one(ag->kill);
+        d = borg_thrust_damage_one(mb_ptr->kill);
 
         /* No damage */
         if (d <= 0) continue;
 
         /* Obtain the monster */
-        kill = &borg_kills[ag->kill];
+        kill = &borg_kills[mb_ptr->kill];
 
         /* Hack -- avoid waking most "hard" sleeping monsters */
         if (!kill->awake && (d <= kill->power) )
         {
             /* Calculate danger */
             borg_full_damage = TRUE;
-            p = borg_danger_aux(y, x, 1, ag->kill, TRUE);
+            p = borg_danger_aux(y, x, 1, mb_ptr->kill, TRUE);
             borg_full_damage = FALSE;
 
             if (p > avoidance / 2)
@@ -4303,7 +4305,7 @@ extern int borg_attack_aux_thrust(void)
 
         /* Calculate "danger" to player */
         borg_full_damage = TRUE;
-        p = borg_danger_aux(c_y, c_x, 2, ag->kill, TRUE);
+        p = borg_danger_aux(c_y, c_x, 2, mb_ptr->kill, TRUE);
         borg_full_damage = FALSE;
 
         /* Reduce "bonus" of partial kills */
@@ -4331,7 +4333,9 @@ extern int borg_attack_aux_thrust(void)
     g_y = borg_temp_y[b_i];
 
     ag = &borg_grids[g_y][g_x];
-    kill= &borg_kills[ag->kill];
+	
+	mb_ptr = map_loc(g_x, g_y);
+    kill= &borg_kills[mb_ptr->kill];
 
     /* Note */
     borg_note(format("# Facing %s at (%d,%d) who has %d Hit Points.",(r_name + r_info[kill->r_idx].name), g_y,g_x,kill->power));
@@ -4362,15 +4366,19 @@ bool borg_target(int y, int x)
     int x1, y1, x2, y2;
 
     borg_grid *ag;
-    borg_kill *kill;
+    map_block *mb_ptr;
+	
+	borg_kill *kill;
 
     ag = &borg_grids[y][x];
-    kill = &borg_kills[ag->kill];
+	mb_ptr = map_loc(x, y);
+	
+    kill = &borg_kills[mb_ptr->kill];
 
 
     /* Log */
     /* Report a little bit */
-    if (ag->kill)
+    if (mb_ptr->kill)
     {
        borg_note(format("# Targeting %s who has %d Hit Points.",(r_name + r_info[kill->r_idx].name), kill->power));
     }
@@ -5272,7 +5280,6 @@ static int borg_launch_bolt_aux(int y, int x, int rad, int dam, int typ, int max
 	borg_grid *ag;
 	
     monster_race *r_ptr;
-    borg_kill *kill;
 
     int q_x, q_y;
 
@@ -5296,9 +5303,9 @@ static int borg_launch_bolt_aux(int y, int x, int rad, int dam, int typ, int max
     for (dist = 0; dist < max; dist++)
     {
         /* Get the grid */
-        ag = &borg_grids[y2][x2];
-        kill = &borg_kills[ag->kill];
-        r_ptr = &r_info[kill->r_idx];
+		mb_ptr = map_loc(x2, y2);
+		
+        r_ptr = &r_info[mb_ptr->monster];
 
         ag = &borg_grids[y][x];
 		mb_ptr = map_loc(x, y);
@@ -5320,7 +5327,7 @@ static int borg_launch_bolt_aux(int y, int x, int rad, int dam, int typ, int max
         }
 
         /* Collect damage (bolts/beams) */
-        if (rad <= 0) n += borg_launch_bolt_aux_hack(ag->kill, dam, typ);
+        if (rad <= 0) n += borg_launch_bolt_aux_hack(mb_ptr->kill, dam, typ);
 
         /* Check for arrival at "final target" */
         /* except beams, which keep going. */
@@ -5514,7 +5521,7 @@ static int borg_launch_bolt_aux(int y, int x, int rad, int dam, int typ, int max
         if (rad == MAX_SIGHT) r = 0;
 
         /* Collect damage, lowered by distance */
-        n += borg_launch_bolt_aux_hack(ag->kill, dam / (r + 1), typ);
+        n += borg_launch_bolt_aux_hack(mb_ptr->kill, dam / (r + 1), typ);
 
         /* probable damage int was just changed by b_l_b_a_h*/
 
@@ -6987,6 +6994,7 @@ static int borg_attack_aux_nature_whirlwind(void)
 	int dam = 0;
 
 	borg_grid *ag;
+	map_block *mb_ptr;
 
 	if (!borg_spell_fail(REALM_NATURE, 3, 1, 20)) return 0;
 
@@ -6997,12 +7005,13 @@ static int borg_attack_aux_nature_whirlwind(void)
 		x = c_x + ddx[dir];
 
 		ag = &borg_grids[y][x];
+		mb_ptr = map_loc(x, y);
 
 		/* is ther ea kill next to me */
-		if (ag->kill)
+		if (mb_ptr->kill)
 		{
 	        /* Calculate "average" damage */
-	        dam  += borg_thrust_damage_one(ag->kill);
+	        dam  += borg_thrust_damage_one(mb_ptr->kill);
 		}
 
 	}
@@ -7111,6 +7120,7 @@ static int borg_attack_aux_racial_thrust(int race, int level, int dam)
     int d, b_d = -1;
 
     borg_grid *ag;
+	map_block *mb_ptr;
 
     borg_kill *kill;
 
@@ -7136,12 +7146,13 @@ static int borg_attack_aux_racial_thrust(int race, int level, int dam)
 
         /* Acquire grid */
         ag = &borg_grids[y][x];
+		mb_ptr = map_loc(x, y);
 
         /* Obtain the monster */
-        kill = &borg_kills[ag->kill];
+        kill = &borg_kills[mb_ptr->kill];
 
 	    /* monster race */
-	    r_ptr = &r_info[kill->r_idx];
+	    r_ptr = &r_info[mb_ptr->monster];
 
 		/* Dont attack our buddies */
 		if (kill->friendly) continue;
@@ -7165,7 +7176,7 @@ static int borg_attack_aux_racial_thrust(int race, int level, int dam)
         {
             /* Calculate danger */
             borg_full_damage = TRUE;
-            p = borg_danger_aux(y, x, 1, ag->kill, TRUE);
+            p = borg_danger_aux(y, x, 1, mb_ptr->kill, TRUE);
             borg_full_damage = FALSE;
 
             if (p > avoidance / 2)
@@ -7177,7 +7188,7 @@ static int borg_attack_aux_racial_thrust(int race, int level, int dam)
 
         /* Calculate "danger" to player */
         borg_full_damage = TRUE;
-        p = borg_danger_aux(c_y, c_x, 2, ag->kill, TRUE);
+        p = borg_danger_aux(c_y, c_x, 2, mb_ptr->kill, TRUE);
         borg_full_damage = FALSE;
 
         /* Reduce "bonus" of partial kills */
@@ -7205,10 +7216,12 @@ static int borg_attack_aux_racial_thrust(int race, int level, int dam)
     g_y = borg_temp_y[b_i];
 
     ag = &borg_grids[g_y][g_x];
-    kill= &borg_kills[ag->kill];
+	mb_ptr = map_loc(g_x, g_y);
+	
+    kill= &borg_kills[mb_ptr->kill];
 
     /* Note */
-    borg_note(format("# Facing %s at (%d,%d) who has %d Hit Points.",(r_name + r_info[kill->r_idx].name), g_y,g_x,kill->power));
+    borg_note(format("# Facing %s at (%d,%d) who has %d Hit Points.",(r_name + r_info[mb_ptr->monster].name), g_y,g_x,kill->power));
     borg_note(format("# Attacking with Racial Attack '%d'",
                      b_d));
 
@@ -12483,9 +12496,9 @@ static bool borg_play_step(int y2, int x2)
     g_y = y;
 
     /* Monsters -- Attack */
-    if (ag->kill)
+    if (mb_ptr->kill)
     {
-        borg_kill *kill = &borg_kills[ag->kill];
+        borg_kill *kill = &borg_kills[mb_ptr->kill];
 
         /* can't attack someone if afraid! */
         if (borg_skill[BI_ISAFRAID])
@@ -14276,7 +14289,7 @@ static bool borg_flow_dark_reachable(int y, int x)
 			  borg_skill[BI_FEATH])) return (TRUE);
 
 		/* I can push pass friendly monsters */
-		if (ag->kill && borg_kills[ag->kill].friendly)
+		if (mb_ptr->kill && borg_kills[mb_ptr->kill].friendly)
     		return (TRUE);
     }
 

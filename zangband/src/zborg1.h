@@ -260,7 +260,7 @@ typedef struct borg_grid borg_grid;
  */
 struct borg_grid
 {
-    byte kill;      /* Monster index */
+    /byte kill;      /* Monster index */
 };
 
 

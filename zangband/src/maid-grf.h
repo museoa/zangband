@@ -94,6 +94,9 @@ struct map_block
 	byte terrain;
 #endif /* TERM_CAVE_MAP */
 
+	/* We need to save the flags to get the refcounting right. */
+	byte flags;
+
 	/* Borg-specific stuff */
 #ifdef ALLOW_BORG
 	byte info;		/* info flags */
@@ -101,10 +104,9 @@ struct map_block
 	
 	byte flow;		/* "flow" data */
 	byte cost;		/* "cost" data */
+	
+	byte kill;		/* Entry into "kill" list */
 #endif /* ALLOW_BORG */
-
-	/* We need to save the flags to get the refcounting right. */
-	byte flags;
 };
 
 typedef map_block **map_blk_ptr;

@@ -803,6 +803,8 @@ static void borg_update_kill_old(int i)
 void borg_delete_kill(int i)
 {
     borg_kill *kill = &borg_kills[i];
+	
+	map_block *mb_ptr;
 
     /* Paranoia -- Already wiped */
     if (!kill->r_idx) return;
@@ -816,8 +818,10 @@ void borg_delete_kill(int i)
     borg_fear_grid(NULL, kill->y, kill->x, -(borg_danger(kill->y,kill->x,1, TRUE)), TRUE);
 #endif
 
+	mb_ptr = map_loc(kill->x, kill->y);
+
     /* Update the grids */
-    borg_grids[kill->y][kill->x].kill = 0;
+    mb_ptr->kill = 0;
 
     /* save a time stamp of when the last multiplier was killed */
     if (r_info[kill->r_idx].flags2 & RF2_MULTIPLY)
@@ -1044,7 +1048,7 @@ static void borg_follow_kill(int i)
         if (!borg_cave_floor_grid(mb_ptr)) continue;
 
         /* Skip known monsters */
-        if (ag->kill) continue;
+        if (mb_ptr->kill) continue;
 
         /* Skip visible grids */
         if (borg_follow_kill_aux(i, y, x)) continue;
@@ -1083,7 +1087,7 @@ static void borg_follow_kill(int i)
     }
 
     /* Avoid monsters */
-    if (ag->kill)
+    if (mb_ptr->kill)
     {
         /* Just delete the monster */
         borg_delete_kill(i);
@@ -1092,9 +1096,10 @@ static void borg_follow_kill(int i)
         return;
     }
 
+	mb_ptr = map_loc(kill->x, kill->y);
 
     /* Update the grids */
-    borg_grids[kill->y][kill->x].kill = 0;
+    mb_ptr->kill = 0;
 
     /* Save the old Location */
     kill->ox = ox;
@@ -1103,9 +1108,11 @@ static void borg_follow_kill(int i)
     /* Save the Location */
     kill->x = ox + b_dx;
     kill->y = oy + b_dy;
+	
+	mb_ptr = map_loc(kill->x, kill->y);
 
     /* Update the grids */
-    borg_grids[kill->y][kill->x].kill = i;
+    mb_ptr->kill = i;
 
     /* Note */
     borg_note(format("# Following a monster '%s' to (%d,%d) from (%d,%d)",
@@ -1128,6 +1135,8 @@ static int borg_new_kill(int r_idx, int y, int x)
 {
     int i, n = -1;
     int p = 0;
+
+	map_block *mb_ptr;
 
     borg_kill *kill;
 
@@ -1175,8 +1184,10 @@ static int borg_new_kill(int r_idx, int y, int x)
     kill->ox = kill->x = x;
     kill->oy = kill->y = y;
 
+	mb_ptr = map_loc(kill->x, kill->y);
+
     /* Update the grids */
-    borg_grids[kill->y][kill->x].kill = n;
+    mb_ptr->kill = n;
 
     /* Timestamp */
     kill->when = borg_t;
@@ -1256,6 +1267,8 @@ static bool observe_kill_move(int y, int x, int d, bool flag)
     borg_kill *kill;
     monster_race *r_ptr;
 
+	map_block *mb_ptr;
+
     /* Look at the monsters */
     for (i = 1; i < borg_kills_nxt; i++)
     {
@@ -1286,8 +1299,10 @@ static bool observe_kill_move(int y, int x, int d, bool flag)
         /* Actual movement */
         if (z)
         {
+			mb_ptr = map_loc(kill->x, kill->y);
+		
 			/* Update the grids */
-            borg_grids[kill->y][kill->x].kill = 0;
+            mb_ptr->kill = 0;
 
             /* Save the old Location */
             kill->ox = kill->x;
@@ -1296,9 +1311,11 @@ static bool observe_kill_move(int y, int x, int d, bool flag)
             /* Save the Location */
             kill->x = x;
             kill->y = y;
+			
+			mb_ptr = map_loc(kill->x, kill->y);
 
             /* Update the grids */
-            borg_grids[kill->y][kill->x].kill = i;
+            mb_ptr->kill = i;
 
             /* Note */
             borg_note(format("# Tracking a monster '%s' at (%d,%d) from (%d,%d)",

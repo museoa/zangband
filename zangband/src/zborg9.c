@@ -4378,10 +4378,9 @@ void borg_write_map(bool ask)
             }
 
             /* Known Monsters */
-            if (ag->kill)
+            if (mb_ptr->monster)
             {
-                borg_kill *kill = &borg_kills[ag->kill];
-                monster_race *r_ptr = &r_info[kill->r_idx];
+                monster_race *r_ptr = &r_info[mb_ptr->monster];
                 ch = r_ptr->d_char;
             }
 
