@@ -55,7 +55,7 @@ static int town_offset_y = 0;
  * Note the use of "town_illuminate()" to handle all "illumination"
  * and "memorization" issues.
  */
-static void build_store(int yy, int xx, store_type *st_ptr)
+static void build_store(int xx, int yy, store_type *st_ptr)
 {
 	int y, x, y0, x0, y1, x1, y2, x2, tmp;
 
@@ -168,7 +168,7 @@ static void town_gen_hack(u16b town_num)
 			k = ((n <= 1) ? 0 : randint0(n));
 
 			/* Build that store at the proper location */
-			build_store(y, x, &town[town_num].store[rooms[k]]);
+			build_store(x, y, &town[town_num].store[rooms[k]]);
 
 			/* Shift the stores down, remove one store */
 			rooms[k] = rooms[--n];
@@ -779,7 +779,7 @@ static void town_gen(u16b town_num)
  * Overlay the town block
  * If the town is not built correctly, build it
  */
-static void overlay_town(int y, int x, u16b w_town, blk_ptr block_ptr)
+static void overlay_town(int x, int y, u16b w_town, blk_ptr block_ptr)
 {
 	int		i, j, xx, yy;
 
@@ -1955,7 +1955,7 @@ static void add_monsters_block(int x, int y)
 	}
 }
 
-void light_dark_square(int y, int x, bool daytime)
+void light_dark_square(int x, int y, bool daytime)
 {
 	cave_type *c_ptr = area(y, x);
 	pcave_type *pc_ptr = parea(y, x);
@@ -2016,8 +2016,8 @@ static void light_dark_block(int x, int y)
 	{
 		for (i = 0; i < WILD_BLOCK_SIZE; i++)
 		{
-			light_dark_square(y * WILD_BLOCK_SIZE + j,
-				 x * WILD_BLOCK_SIZE + i, daytime);
+			light_dark_square( x * WILD_BLOCK_SIZE + i,y * WILD_BLOCK_SIZE + j,
+				daytime);
 		}
 	}
 }
@@ -2116,7 +2116,7 @@ static void gen_block(int x, int y)
 	if (w_town)
 	{
 		/* overlay town on wilderness */
-		overlay_town(y, x, w_town, block_ptr);
+		overlay_town(x, y, w_town, block_ptr);
 	}
 
 	/* Day / Night - lighten or darken the new block */
