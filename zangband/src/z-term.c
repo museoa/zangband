@@ -346,7 +346,7 @@ static errr term_win_init(term_win *s, int w, int h)
  * Copy a "term_win" from another
  * If bigtile is set, then copy bigtile region.
  */
-static errr term_win_copy(term_win *s, term_win *f, int w, int h, bool bigtile)
+static errr term_win_copy(term_win *s, term_win *f, int w, int h)
 {
 	int x, y;
 
@@ -367,9 +367,6 @@ static errr term_win_copy(term_win *s, term_win *f, int w, int h, bool bigtile)
 
 		for (x = 0; x < w; x++)
 		{
-			if ((!bigtile) && (x > s->big_x1) &&
-					(y >= s->big_y1) && (y <= s->big_y2)) break;
-			
 			*s_aa++ = *f_aa++;
 			*s_cc++ = *f_cc++;
 
@@ -383,6 +380,11 @@ static errr term_win_copy(term_win *s, term_win *f, int w, int h, bool bigtile)
 	s->cy = f->cy;
 	s->cu = f->cu;
 	s->cv = f->cv;
+	
+	/* Copy bigtile region */
+	s->big_x1 = f->big_x1;
+	s->big_y1 = f->big_y1;
+	s->big_y2 = f->big_y2;
 	
 	/* Copy list pointer */
 	s->next = f->next;
@@ -407,7 +409,7 @@ static errr Term_resize_win(int wn, int hn, int wo, int ho, term_win *win)
 	(void) term_win_init(&tmp, wn, hn);
 	
 	/* Copy in the information from the old window */
-	(void) term_win_copy(&tmp, win, wo, ho, TRUE);
+	(void) term_win_copy(&tmp, win, wo, ho);
 
 	/* Nuke the old window */
 	(void) term_win_nuke(win);
@@ -512,6 +514,40 @@ static errr Term_pict_hack(int x, int y, int n, const byte *ap, const char *cp,
 
 /*** Efficient routines ***/
 
+/*
+ * Decrease the size of the bigtile region so
+ * that it is outside the row y.
+ */
+static void Term_bigtile_expand(int x, int y)
+{
+	int sy;
+	
+	int i;
+	
+	/* Disable bigtile */
+	if (Term->scr->wipe_bigtile)
+	{
+		/* Are we in the bigtile region? */
+		if ((y >= Term->scr->big_y1) && (y <= Term->scr->big_y2) &&
+				(x >= Term->scr->big_x1))
+		{
+			/* Save start point */
+			sy = Term->scr->big_y1;
+			
+			/* Move bigscreen region to below text area */
+			Term->scr->big_y1 = y + 1;
+			
+			/* Wipe old bigtiled region */
+			for (i = sy; i < Term->scr->big_y1; i++)
+			{
+				Term_erase(Term->scr->big_x1, i, 255);
+			}
+			
+			/* Hack - We need to redraw everything later */
+			Term->total_erase = TRUE;
+		}
+	}
+}
 
 /*
  * Mentally draw an attr/char at a given location
@@ -527,7 +563,7 @@ void Term_queue_char(int x, int y, byte a, char c, byte ta, char tc)
 
 	byte *scr_taa = &scrn->ta[y][x];
 	char *scr_tcc = &scrn->tc[y][x];
-
+	
 	/* Hack -- Ignore non-changes */
 	if ((*scr_aa == a) && (*scr_cc == c) &&
 		(*scr_taa == ta) && (*scr_tcc == tc)) return;
@@ -569,6 +605,11 @@ void Term_queue_line(int x, int y, int n, byte *a, char *c, byte *ta, char *tc)
 
 	byte *scr_taa = &scrn->ta[y][x];
 	char *scr_tcc = &scrn->tc[y][x];
+	
+	/*
+	 * Hack - don't worry about bigtile stuff here,
+	 * since this routine isn't used by the menues. 
+	 */
 
 	while (n--)
 	{
@@ -617,64 +658,6 @@ void Term_queue_line(int x, int y, int n, byte *a, char *c, byte *ta, char *tc)
 		if (x2 > Term->x2[y]) Term->x2[y] = x2;
 	}
 }
-
-
-
-/*
- * Mentally draw some attr/chars at a given location
- *
- * Assumes that (x,y) is a valid location, that the first "n" characters
- * of the string "s" are all valid (non-zero), and that (x+n-1,y) is also
- * a valid location, so the first "n" characters of "s" can all be added
- * starting at (x,y) without causing any illegal operations.
- */
-void Term_queue_chars(int x, int y, int n, byte a, cptr s)
-{
-	int x1 = -1, x2 = -1;
-
-	byte *scr_aa = Term->scr->a[y];
-	char *scr_cc = Term->scr->c[y];
-
-	byte *scr_taa = Term->scr->ta[y];
-	char *scr_tcc = Term->scr->tc[y];
-
-	/* Queue the attr/chars */
-	for (; n; x++, s++, n--)
-	{
-		int oa = scr_aa[x];
-		int oc = scr_cc[x];
-
-		int ota = scr_taa[x];
-		int otc = scr_tcc[x];
-
-		/* Hack -- Ignore non-changes */
-		if ((oa == a) && (oc == *s) && (ota == 0) && (otc == 0)) continue;
-
-		/* Save the "literal" information */
-		scr_aa[x] = a;
-		scr_cc[x] = *s;
-
-		scr_taa[x] = 0;
-		scr_tcc[x] = 0;
-
-		/* Note the "range" of window updates */
-		if (x1 < 0) x1 = x;
-		x2 = x;
-	}
-
-	/* Expand the "change area" as needed */
-	if (x1 >= 0)
-	{
-		/* Check for new min/max row info */
-		if (y < Term->y1) Term->y1 = y;
-		if (y > Term->y2) Term->y2 = y;
-
-		/* Check for new min/max col info in this row */
-		if (x1 < Term->x1[y]) Term->x1[y] = x1;
-		if (x2 > Term->x2[y]) Term->x2[y] = x2;
-	}
-}
-
 
 
 /*** Refresh routines ***/
@@ -1067,6 +1050,81 @@ static void Term_fresh_row_text(int y, int x1, int x2)
 
 
 
+static void Term_fresh_section(void)
+{
+	int y;
+	int y1 = Term->y1;
+	int y2 = Term->y2;
+	
+	int w = Term->wid;
+	int h = Term->hgt;
+
+
+	
+	/* Something to update */
+	if (y1 <= y2)
+	{
+		/* Handle "icky corner" */
+		if (Term->icky_corner)
+		{
+			/* Avoid the corner */
+			if (y2 >= h - 1)
+			{
+				/* Avoid the corner */
+				if (Term->x2[h - 1] > w - 2)
+				{
+					/* Avoid the corner */
+					Term->x2[h - 1] = w - 2;
+				}
+			}
+		}
+
+
+		/* Scan the "modified" rows */
+		for (y = y1; y <= y2; ++y)
+		{
+			int x1 = Term->x1[y];
+			int x2 = Term->x2[y];
+
+			/* Flush each "modified" row */
+			if (x1 <= x2)
+			{
+				/* Always use "Term_pict()" */
+				if (Term->always_pict)
+				{
+					/* Flush the row */
+					Term_fresh_row_pict(y, x1, x2);
+				}
+
+				/* Sometimes use "Term_pict()" */
+				else if (Term->higher_pict)
+				{
+					/* Flush the row */
+					Term_fresh_row_both(y, x1, x2);
+				}
+
+				/* Never use "Term_pict()" */
+				else
+				{
+					/* Flush the row */
+					Term_fresh_row_text(y, x1, x2);
+				}
+
+				/* This row is all done */
+				Term->x1[y] = w;
+				Term->x2[y] = 0;
+
+				/* Hack -- Flush that row (if allowed) */
+				if (!Term->never_frosh) Term_xtra(TERM_XTRA_FROSH, y);
+			}
+		}
+
+		/* No rows are invalid */
+		Term->y1 = h;
+		Term->y2 = 0;
+	}
+}
+
 
 
 /*
@@ -1290,70 +1348,8 @@ void Term_fresh(void)
 		}
 	}
 
-
-	/* Something to update */
-	if (y1 <= y2)
-	{
-		/* Handle "icky corner" */
-		if (Term->icky_corner)
-		{
-			/* Avoid the corner */
-			if (y2 >= h - 1)
-			{
-				/* Avoid the corner */
-				if (Term->x2[h - 1] > w - 2)
-				{
-					/* Avoid the corner */
-					Term->x2[h - 1] = w - 2;
-				}
-			}
-		}
-
-
-		/* Scan the "modified" rows */
-		for (y = y1; y <= y2; ++y)
-		{
-			int x1 = Term->x1[y];
-			int x2 = Term->x2[y];
-
-			/* Flush each "modified" row */
-			if (x1 <= x2)
-			{
-				/* Always use "Term_pict()" */
-				if (Term->always_pict)
-				{
-					/* Flush the row */
-					Term_fresh_row_pict(y, x1, x2);
-				}
-
-				/* Sometimes use "Term_pict()" */
-				else if (Term->higher_pict)
-				{
-					/* Flush the row */
-					Term_fresh_row_both(y, x1, x2);
-				}
-
-				/* Never use "Term_pict()" */
-				else
-				{
-					/* Flush the row */
-					Term_fresh_row_text(y, x1, x2);
-				}
-
-				/* This row is all done */
-				Term->x1[y] = w;
-				Term->x2[y] = 0;
-
-				/* Hack -- Flush that row (if allowed) */
-				if (!Term->never_frosh) Term_xtra(TERM_XTRA_FROSH, y);
-			}
-		}
-
-		/* No rows are invalid */
-		Term->y1 = h;
-		Term->y2 = 0;
-	}
-
+	/* Redraw stuff as required */
+	Term_fresh_section();
 
 	/* Cursor update -- Show new Cursor */
 	if (Term->soft_cursor)
@@ -1482,6 +1478,9 @@ void Term_draw(int x, int y, byte a, char c)
 	/* Paranoia -- illegal char */
 	if (!c) return;
 
+	/* Notice bigtile region changes */
+	Term_bigtile_expand(x, y);
+	
 	/* Queue it for later */
 	Term_queue_char(x, y, a, c, 0, 0);
 
@@ -1512,6 +1511,9 @@ void Term_addch(byte a, char c)
 	/* Paranoia -- no illegal chars */
 	if (!c) return;
 
+	/* Notice bigtile region changes */
+	Term_bigtile_expand(Term->scr->cx, Term->scr->cy);
+	
 	/* Queue the given character for display */
 	Term_queue_char(Term->scr->cx, Term->scr->cy, a, c, 0, 0);
 
@@ -1536,7 +1538,7 @@ void Term_putch(int x, int y, byte a, char c)
 {
 	/* Move first */
 	Term_gotoxy(x, y);
-
+	
 	/* Then add the char */
 	Term_addch(a, c);
 }
@@ -1573,6 +1575,9 @@ void Term_erase(int x, int y, int n)
 
 	/* Force legal size */
 	if (x + n > w) n = w - x;
+	
+	/* Update bigtile info */
+	Term_bigtile_expand(x, y);
 
 	/* Fast access */
 	scr_aa = Term->scr->a[y];
@@ -1691,12 +1696,12 @@ void Term_redraw(void)
  */
 errr Term_redraw_section(int x1, int y1, int x2, int y2)
 {
-	int i, j;
+	int i;
 	
-	int bx1, bx2;
-	int cx1, cx2;
-
-	char *c_ptr;
+	bool total_erase;
+	
+	x1 = (x1 - 1) / 2;
+	x2 = x2 * 2;
 
 	/* Bounds checking */
 	if (y2 >= Term->hgt) y2 = Term->hgt - 1;
@@ -1705,52 +1710,21 @@ errr Term_redraw_section(int x1, int y1, int x2, int y2)
 	if (x1 < 0) x1 = 0;
 
 	/* Set y limits */
-	Term->y1 = y1;
-	Term->y2 = y2;
+	if (Term->y1 > y1) Term->y1 = y1;
+	if (Term->y2 < y2) Term->y2 = y2;
 	
-	/* Get limits for bigtile */
-	bx1 = x1;
-	if ((y1 < Term->scr->big_y1) || (y1 > Term->scr->big_y2))
-	{
-		bx1  -= (x1 - Term->scr->big_x1 + 1) / 2;
-	}
-	
-	bx2 = x2;
-	if ((y2 < Term->scr->big_y1) || (y2 > Term->scr->big_y2))
-	{
-		bx2  -= (x2 - Term->scr->big_x1 + 1) / 2;
-	}
-
 	/* Set the x limits */
-	for (i = Term->y1; i <= Term->y2; i++)
+	for (i = y1; i <= y2; i++)
 	{
-		/* Bigtile mode? */
-		if ((i >= Term->scr->big_y1) && (i <= Term->scr->big_y2))
-		{
-			cx1 = bx1;
-			cx2 = bx2;
-		}
-		else
-		{
-			cx1 = x1;
-			cx2 = x2;
-		}
-		
-		Term->x1[i] = cx1;
-		Term->x2[i] = cx2;
-
-		c_ptr = Term->old->c[i];
-
-		/* Clear the section so it is redrawn */
-		for (j = cx1; j <= cx2; j++)
-		{
-			/* Hack - set the old character to "none" */
-			c_ptr[j] = 0;
-		}
+		if (Term->x1[i] > x1) Term->x1[i] = x1;
+		if (Term->x2[i] < x2) Term->x2[i] = x2;
 	}
-
-	/* Hack -- Refresh */
-	Term_fresh();
+	
+	/* Refresh */
+	total_erase = Term->total_erase;
+	Term->total_erase = TRUE;
+	Term_fresh_section();
+	Term->total_erase = total_erase;
 
 	/* Success */
 	return (0);
@@ -1981,14 +1955,14 @@ void Term_save(void)
 	(void)term_win_init(tmp, w, h);
 	
 	/* Grab */
-	(void)term_win_copy(tmp, Term->scr, w, h, FALSE);
-
+	(void)term_win_copy(tmp, Term->scr, w, h);
+	
 	/* Add the front of the list */
 	tmp->next = Term->scr;
 	Term->scr = tmp;
 	
-	/* Hack - redraw wrongly? */
-	/* if (tmp->next->big_x1 != -1) Term->total_erase = TRUE; */
+	/* Wipe bigtile regions as required */
+	Term->scr->wipe_bigtile = TRUE;
 }
 
 
@@ -2035,7 +2009,11 @@ void Term_load(void)
 	Term->y2 = h - 1;
 	
 	/* Hack - is bigtile on? */
-	if (Term->scr->big_x1 != -1) Term_redraw();
+	if (Term->scr->big_x1 != -1)
+	{
+		/* Redraw term */
+		Term_redraw();
+	}
 }
 
 

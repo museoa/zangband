@@ -1629,7 +1629,6 @@ char inkey(void)
 	/* Hack -- Activate main screen */
 	Term_activate(angband_term[0]);
 
-
 	/* Get a key */
 	while (!ch)
 	{

@@ -1332,17 +1332,11 @@ static void square_to_pixel(int *x, int *y, int ox, int oy)
 	(*y) = oy * Infofnt->hgt + Infowin->oy;
 	
 	if ((use_bigtile) && (oy >= Term->scr->big_y1)
-			&& (oy <= Term->scr->big_y2))
+			&& (oy <= Term->scr->big_y2)
+			&& (ox > Term->scr->big_x1))
 	{
-		if (ox > Term->scr->big_x1)
-		{
-			(*x) = Term->scr->big_x1 * Infofnt->wid +
-					(ox - Term->scr->big_x1) * Infofnt->twid + Infowin->ox;
-		}
-		else
-		{
-			(*x) = ox * Infofnt->wid + Infowin->ox;
-		}
+		(*x) = ox * Infofnt->twid + Infowin->ox -
+				Term->scr->big_x1 * Infofnt->wid;
 	}
 	else
 	{
@@ -1437,14 +1431,14 @@ static errr Infofnt_text_non(int x, int y, int len)
 
 	/*** Find the dimensions ***/
 	square_to_pixel(&x1, &y1, x, y);
-	square_to_pixel(&x2, &y2, x + len, y + 1);
+	square_to_pixel(&x2, &y2, x + len, y);
 	
 	/*** Actually 'paint' the area ***/
 
 	/* Just do a Fill Rectangle */
 	XFillRectangle(Metadpy->dpy, Infowin->win, Infoclr->gc,
 					x1, y1,
-					x2 - 1, y2 - 1);
+					x2 - 1, y2 + Infofnt->hgt - 1);
 
 	/* Success */
 	return (0);

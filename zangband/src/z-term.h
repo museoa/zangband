@@ -52,6 +52,7 @@ struct term_win
 	char *vtc;
 	
 	/* Bigtile data */
+	bool wipe_bigtile;
 	int big_x1;
 	int big_y1;
 	int big_y2;
@@ -279,8 +280,6 @@ extern void Term_queue_char(int x, int y, byte a, char c, byte ta, char tc);
 
 extern void Term_queue_line(int x, int y, int n, byte *a, char *c, byte *ta,
 							char *tc);
-
-extern void Term_queue_chars(int x, int y, int n, byte a, cptr s);
 
 extern void Term_fresh(void);
 extern errr Term_set_cursor(int v);

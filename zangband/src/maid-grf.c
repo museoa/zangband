@@ -937,6 +937,9 @@ static bool do_cmd_view_map_aux(char c, int town)
 
 	/* Call this proc with a place that is a town */
 	if (place[town].numstores == 0) return (FALSE);
+	
+	/* Open temporary file */
+	fff = my_fopen_temp(file_name, 1024);
 
 	/* First find out if this command makes sense */
 	switch (c)
@@ -970,10 +973,13 @@ static bool do_cmd_view_map_aux(char c, int town)
 	}
 
 	/* go away if nothing will happen */
-	if (!success) return (FALSE);
-
-	/* Open temporary file */
-	fff = my_fopen_temp(file_name, 1024);
+	if (!success)
+	{
+		/* Close the file */
+		my_fclose(fff);
+		
+		return (FALSE);
+	}
 
 	/* Failure */
 	if (!fff) return (FALSE);
@@ -2310,10 +2316,6 @@ void prt_map(void)
 	ymin = p_ptr->panel_y1;
 	ymax = p_ptr->panel_y2 - 1;
 		
-		
-	/* Clear screen */
-    clear_region(COL_MAP, ROW_MAP, ROW_MAP + hgt - 1);
-
 	/* Pointers to current position in the string */
 	pa = mp_a;
 	pc = mp_c;
@@ -2324,6 +2326,15 @@ void prt_map(void)
 	/* Dump the map */
 	for (y = ymin; y <= ymax; y++)
 	{
+		/* Clear the arrays in case panel doesn't fill screen */
+		for (x = 0; x < wid; x++)
+		{
+			mp_a[x] = 0;
+			mp_c[x] = 0;
+			mp_ta[x] = 0;
+			mp_tc[x] = 0;
+		}
+		
 		/* Scan the columns of row "y" */
 		for (x = xmin; x <= xmax; x++)
 		{
@@ -3009,7 +3020,7 @@ void print_rel(char c, byte a, int x, int y)
 		y -= p_ptr->panel_y1 - ROW_MAP;
 
 		/* Draw the char using the attr */
-		Term_draw(x, y, a, c);
+		Term_queue_char(x, y, a, c, a, c);
 	}
 }
 
