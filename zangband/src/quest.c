@@ -1111,10 +1111,10 @@ void do_cmd_knowledge_quests(void)
 			case QUEST_TYPE_DUNGEON:
 			{
 				monster_race *r_ptr = &r_info[q_ptr->data.dun.r_idx];
-
-				strncpy(name, r_name + r_ptr->name, 80);
 				
 				char level[20];
+
+				strncpy(name, r_name + r_ptr->name, 80);
 				
 				/* In feet, or in levels */
 				if (depth_in_feet)
