@@ -1863,6 +1863,7 @@ void quark_remove(s16b *i)
 	if (!quark__ref[*i])
 	{
 		string_free(quark__str[*i]);
+		quark__str[*i] = NULL;
 	}
 
 	/* No longer have a quark here */
