@@ -1064,6 +1064,8 @@ s32b flag_cost(const object_type *o_ptr, int plusses)
 	if (FLAG(o_ptr, TR_HEAVY_CURSE)) total -= 12500;
 	if (FLAG(o_ptr, TR_PERMA_CURSE)) total -= 15000;
 	if (FLAG(o_ptr, TR_LUCK_10)) total += 3000;
+	if (FLAG(o_ptr, TR_WILD_SHOT)) total += 50;
+	if (FLAG(o_ptr, TR_WILD_WALK)) total += 200;
 	if (FLAG(o_ptr, TR_MUTATE)) total += 500;
 	if (FLAG(o_ptr, TR_PATRON)) total += 500;
 	if (FLAG(o_ptr, TR_STRANGE_LUCK)) total += 2000;

@@ -631,8 +631,8 @@ static cptr k_info_flags3[] =
 static cptr k_info_flags4[] =
 {
 	"LUCK_10",
-	"XXX2",
-	"XXX3",
+	"WILD_SHOT",
+	"WILD_WALK",
 	"XXX4",
 	"XXX5",
 	"XXX6",

@@ -561,6 +561,11 @@ static void roff_obj_aux(const object_type *o_ptr)
 		roff("It is perfectly balanced for throwing.  ");
 	}
 
+	if (FLAG(of_ptr, TR_THROW))
+	{
+		roff("Its shots are not hindered by trees.  ");
+	}
+
 	/* Collect miscellaneous */
 	vn = 0;
 	if (FLAG(of_ptr, TR_XXX7))        vp[vn++] = "renders you XXX7'ed";
@@ -572,6 +577,7 @@ static void roff_obj_aux(const object_type *o_ptr)
 	if (FLAG(of_ptr, TR_REGEN))       vp[vn++] = "speeds your regenerative powers";
 	if (FLAG(of_ptr, TR_REFLECT))     vp[vn++] = "reflects bolts and arrows";
 	if (FLAG(of_ptr, TR_LUCK_10))       vp[vn++] = "increases your saving throws";
+	if (FLAG(of_ptr, TR_WILD_WALK))     vp[vn++] = "allows you to walk the wild unhindered";
 	if (FLAG(of_ptr, TR_MUTATE))        vp[vn++] = "causes mutations";
 	if (FLAG(of_ptr, TR_PATRON))        vp[vn++] = "attracts the attention of chaos gods";
 	if (FLAG(of_ptr, TR_STRANGE_LUCK))  vp[vn++] = "warps fate around you";

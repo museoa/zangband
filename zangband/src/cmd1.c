@@ -1547,14 +1547,6 @@ void py_attack(int x, int y)
 	{
 		terrain_bonus = r_ptr->ac / 7 + 5;
 	}
-	/*
-	 * Monsters in trees can take advantage of cover,
-	 * except from rangers.
-	 */
-	else if ((c_ptr->feat == FEAT_TREES) && (p_ptr->rp.pclass != CLASS_RANGER))
-	{
-		terrain_bonus = r_ptr->ac / 7 + 5;
-	}
 	/* Monsters in water are vulnerable. -LM- */
 	else if (c_ptr->feat == FEAT_DEEP_WATER)
 	{
@@ -2385,19 +2377,16 @@ void move_player(int dir, int do_pickup)
 	 * Rangers can move without penality
 	 */
 	else if ((c_ptr->feat == FEAT_TREES) ||
-			 (c_ptr->feat == FEAT_PINE_TREE) || (c_ptr->feat == FEAT_SNOW_TREE))
-	{
-		oktomove = TRUE;
-		if (p_ptr->rp.pclass != CLASS_RANGER) p_ptr->state.energy_use += 10;
-	}
-
-	/* Some terrains are hard to move through */
-	else if ((c_ptr->feat == FEAT_MOUNTAIN) ||
+			 (c_ptr->feat == FEAT_PINE_TREE) || 
+			 (c_ptr->feat == FEAT_SNOW_TREE) ||
+	                 (c_ptr->feat == FEAT_MOUNTAIN) ||
 			 (c_ptr->feat == FEAT_SNOW_MOUNTAIN) ||
-			 (c_ptr->feat == FEAT_OBELISK) || (c_ptr->feat == FEAT_BOULDER))
+			 (c_ptr->feat == FEAT_OBELISK) || 
+			 (c_ptr->feat == FEAT_BOULDER))
 	{
 		oktomove = TRUE;
-		p_ptr->state.energy_use += 10;
+		if (!FLAG(p_ptr, TR_WILD_WALK))
+			p_ptr->state.energy_use += 10;
 	}
 
 	/* Disarm a visible trap */

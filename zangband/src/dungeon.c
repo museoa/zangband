@@ -1132,7 +1132,7 @@ static void process_world(void)
 	}
 
 	if ((c_ptr->feat == FEAT_SHAL_SWAMP) &&	!(FLAG(p_ptr, TR_FEATHER)) &&
-		!(p_ptr->rp.pclass == CLASS_RANGER && p_ptr->lev >= 15))
+		!FLAG(p_ptr, TR_WILD_WALK))
 	{
 		int damage = resist(depth / 4 + 1, res_pois_lvl);
 
@@ -1147,7 +1147,7 @@ static void process_world(void)
 	}
 
 	else if ((c_ptr->feat == FEAT_DEEP_SWAMP) && !p_ptr->tim.invuln &&
-		!(p_ptr->rp.pclass == CLASS_RANGER && p_ptr->lev >= 15))
+		!FLAG(p_ptr, TR_WILD_WALK))
 	{
 		int damage = resist(depth / 2, res_pois_lvl);
 		cptr message;

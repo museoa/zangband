@@ -1589,6 +1589,11 @@ void player_flags(object_flags *of_ptr)
 			if (p_ptr->lev > 39)
 				SET_FLAG(of_ptr, TR_RES_FEAR);
 			break;
+		case CLASS_RANGER:
+			SET_FLAG(of_ptr, TR_WILD_SHOT);
+			if (p_ptr->lev > 9)
+				SET_FLAG(of_ptr, TR_WILD_WALK);
+			break;
 		case CLASS_CHAOS_WARRIOR:
 			SET_FLAG(of_ptr, TR_PATRON);
 			if (p_ptr->lev > 29)

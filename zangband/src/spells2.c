@@ -569,6 +569,15 @@ void self_knowledge(void)
 		info[i++] = "Your touch paralyzes your foes.";
 	}
 
+	if (FLAG(p_ptr, TR_WILD_SHOT))
+	{
+		info[i++] = "Your shots are not affected by forest.";
+	}
+	if (FLAG(p_ptr, TR_WILD_WALK))
+	{
+		info[i++] = "You are not hindered by natural terrain.";
+	}
+
 	if (ff[0] & (TR0_STR))
 	{
 		info[i++] = "Your strength is affected by your equipment.";
