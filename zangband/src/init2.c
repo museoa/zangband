@@ -77,6 +77,9 @@ void init_file_paths(char *path)
 {
 	char *tail;
 
+#ifdef PRIVATE_USER_PATH
+	char buf[1024];
+#endif /* PRIVATE_USER_PATH */
 
 	/*** Free everything ***/
 
