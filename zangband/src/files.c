@@ -4451,8 +4451,14 @@ void close_game(void)
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_APEX, "scores.raw");
 
+	/* Grab permissions */
+	safe_setuid_grab();
+
 	/* Open the high score file, for reading/writing */
 	highscore_fd = fd_open(buf, O_RDWR);
+
+	/* Drop permissions */
+	safe_setuid_drop();
 
 	if (p_ptr->is_dead)
 	{
