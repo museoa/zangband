@@ -19,7 +19,7 @@
 int wild_stairs_x = 0;
 int wild_stairs_y = 0;
 
-wild_building_type	wild_build[] =
+wild_building_type	wild_build[MAX_CITY_BUILD] =
 {
 	{0, FT_STORE_GENERAL,		BT_STORE,	30, 0, 150},
 	{0,	FT_STORE_ARMOURY,		BT_STORE,	30, 0, 50},
@@ -56,64 +56,55 @@ static u16b select_building(byte pop, byte magic, byte law, u16b *build,
 	 int build_num)
 {
 	int i;
-	
-	u16b b_select[MAX_CITY_BUILD];
 
 	s32b total = 0;
-	
-	/* Hack - ignore the extra parameters for now */
-	(void) pop;
-	(void) magic;
-	(void) law;
-	
+		
 	/* Draw stairs first for small towns */
 	if ((build_num < 10) && (!build[BUILD_STAIRS])) return(BUILD_STAIRS);
 	
-	/* Next, we need a general store */
-	if (!build[BUILD_STORE_GENERAL]) return(BUILD_STORE_GENERAL);
-	
+		
 	for (i = 0; i < MAX_CITY_BUILD; i++)
 	{
+		/* Work out total effects due to location */
+		total = abs(pop - wild_build[i].pop) +
+				abs(magic - wild_build[i].magic) +
+				abs(law - wild_build[i].law) + 1;
+		
+		/* calculate probability based on location */
+		total = MAX_SHORT / total;
+		
 		/* All have equal prob. + effect due to total count */
-		b_select[i] = 1 + build[i] * 2;
+		wild_build[i].gen = ((u16b) total) + build[i] * 50;
 	}
 	
-	/* Dungeons are not in large cities */
-	if (build_num > 11) b_select[BUILD_STAIRS] = 0;
+	/* Hack - Dungeons are not in large cities */
+	if (build_num > 11) wild_build[BUILD_STAIRS].gen = 0;
 	
-	/* Blank buildings don't exist for small towns */
+	/* Some buildings don't exist for small towns */
 	if (build_num < 10)
 	{
-		b_select[BUILD_NONE] = 0;
-		b_select[BUILD_BLANK] = 0;
-		b_select[BUILD_RECHARGE] = 0;
-		b_select[BUILD_PLUS_WEAPON] = 0;
-		b_select[BUILD_PLUS_ARMOUR] = 0;
-		b_select[BUILD_MUTATE] = 0;
-		b_select[BUILD_MAP] = 0;
-	}
-
-	/* Blank buildings are much more common for large towns */
-	else
-	{
-		b_select[BUILD_NONE] = 1;
-		b_select[BUILD_BLANK] = 1;
-		
-		/* Some buildings are normally rare */
-		b_select[BUILD_RECHARGE] += 2;
-		b_select[BUILD_PLUS_WEAPON] += 2;
-		b_select[BUILD_PLUS_ARMOUR] += 2;
-		b_select[BUILD_MUTATE] += 4;
-		b_select[BUILD_MAP] +=2;
+		for (i = 0; i < MAX_CITY_BUILD; i++)
+		{
+			/* Only stairs and stores in small towns. */
+			if ((wild_build[i].type != BT_STORE) && (i != BUILD_STAIRS))
+			{
+				wild_build[i].gen = 0;
+			}
+		}
 	}
 	
-	/* Not more than one home */
-	if (build[BUILD_STORE_HOME]) b_select[BUILD_STORE_HOME] = 0;
+	/* Hack - Not more than one home */
+	if (build[BUILD_STORE_HOME])
+	{
+		wild_build[BUILD_STORE_HOME].gen = 0;
+	}
+	
+	total = 0;
 	
 	/* Calculate total */
 	for (i = 0; i < MAX_CITY_BUILD; i++)
 	{
-		if (b_select[i]) total += 256 / b_select[i];
+		total += wild_build[i].gen;
 	}
 
 	/* Pick a building */
@@ -126,9 +117,9 @@ static u16b select_building(byte pop, byte magic, byte law, u16b *build,
 	/* Find which building we've got */
 	for (i = 0; i < MAX_CITY_BUILD; i++)
 	{
-		if (b_select[i]) total -= 256 / b_select[i];
+		total -=  wild_build[i].gen;
 		
-		if (total <= 0) return (i);
+		if (total < 0) return (i);
 	}
 
 
@@ -136,19 +127,6 @@ static u16b select_building(byte pop, byte magic, byte law, u16b *build,
 	msg_print("FAILED to generate building!");
 	
 	return(0);
-	
-#if 0	
-	/* Just select the buildings in order... */
-	while (TRUE)
-	{
-		for (i = 0; i < MAX_CITY_BUILD; i++)
-		{
-			if (build[i] == count) return (i);
-		}
-	
-		count++;
-	}
-#endif /* 0 */	
 } 
 
 static void general_init(int town_num, int store_num, byte general_type)

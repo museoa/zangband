@@ -72,7 +72,7 @@ struct wild_building_type
 
 extern int wild_stairs_x;
 extern int wild_stairs_y;
-extern wild_building_type	wild_build[];
+extern wild_building_type	wild_build[MAX_CITY_BUILD];
 
 
 extern void clear_temp_block(void);
