@@ -1115,7 +1115,7 @@ struct quest_type
 
 	u32b timeout;	/* Time limits */
 
-	char name[60];	/* Quest name */
+	char name[128];	/* Quest name */
 
 	quest_data_type data;	/* Quest-specific data */
 };

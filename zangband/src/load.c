@@ -2744,7 +2744,7 @@ static void rd_quests(int max_quests)
 		rd_byte(&q_ptr->x_type);
 
 		rd_u32b(&q_ptr->timeout);
-		rd_string(q_ptr->name, 60);
+		rd_string(q_ptr->name, 128);
 
 		/* Data - quest-type specific */
 		switch (q_ptr->type)

@@ -156,12 +156,12 @@ u16b insert_dungeon_monster_quest(u16b r_idx, u16b num, u16b level)
 		plural_aux(buf);
 
 		/* XXX XXX Create quest name */
-		(void)strnfmt(q_ptr->name, 60, "Kill %d %s.", (int)num, buf);
+		(void)strnfmt(q_ptr->name, 128, "Kill %d %s.", (int)num, buf);
 	}
 	else
 	{
 		/* XXX XXX Create quest name */
-		(void)strnfmt(q_ptr->name, 60, "Kill %s.", r_name + r_ptr->name);
+		(void)strnfmt(q_ptr->name, 128, "Kill %s.", r_name + r_ptr->name);
 	}
 
 	/* Save the quest data */
@@ -1230,7 +1230,7 @@ static quest_type *insert_artifact_quest(u16b a_idx)
 	town_name = describe_quest_location(&town_dir, pl_ptr->x, pl_ptr->y);
 				
 	/* XXX XXX Create quest name */
-	(void)strnfmt(q_ptr->name, 60, "Find the relic %s, which is hidden %s of %s.", a_name + a_ptr->name, town_dir, town_name);
+	(void)strnfmt(q_ptr->name, 128, "Find the relic %s, which is hidden %s of %s.", a_name + a_ptr->name, town_dir, town_name);
 	
 	/* Artifact is now a quest item */
 	SET_FLAG(a_ptr, TR_QUESTITEM);
@@ -1341,12 +1341,12 @@ static quest_type *insert_bounty_quest(u16b r_idx, u16b num)
 		plural_aux(buf);
 
 		/* XXX XXX Create quest name */
-		(void)strnfmt(q_ptr->name, 60, "Kill %d %s.", (int)num, buf);
+		(void)strnfmt(q_ptr->name, 128, "Kill %d %s.", (int)num, buf);
 	}
 	else
 	{
 		/* XXX XXX Create quest name */
-		(void)strnfmt(q_ptr->name, 60, "Kill %s.", r_name + r_ptr->name);
+		(void)strnfmt(q_ptr->name, 128, "Kill %s.", r_name + r_ptr->name);
 	}
 	
 	/* No need to specially create anything */
@@ -1533,7 +1533,7 @@ static quest_type *insert_message_quest(int dist)
 	}
 		
 	/* XXX XXX Create quest name */
-	(void)strnfmt(q_ptr->name, 60, "Carry a message to %s in %s.", owner, pl_ptr->name);
+	(void)strnfmt(q_ptr->name, 128, "Carry a message to %s in %s.", owner, pl_ptr->name);
 	
 	
 	/* Save the quest data */
@@ -1635,7 +1635,7 @@ static quest_type *insert_find_place_quest(int dist)
 	town_name = describe_quest_location(&town_dir, pl_ptr->x, pl_ptr->y);
 				
 	/* XXX XXX Create quest name */
-	(void)strnfmt(q_ptr->name, 60, "Find a certain lost ruin, which is hidden %s of %s.", town_dir, town_name);
+	(void)strnfmt(q_ptr->name, 128, "Find a certain lost ruin, which is hidden %s of %s.", town_dir, town_name);
 
 	q_ptr->data.fpl.place = place_num;
 	
@@ -2247,7 +2247,7 @@ bool create_quest(int x, int y, int place_num)
 	town_name = describe_quest_location(&town_dir, pl_ptr->x, pl_ptr->y);
 
 	/* Create quest name */
-	(void)strnfmt(q_ptr->name, 60, "Defeat the %s camp %s of %s.",
+	(void)strnfmt(q_ptr->name, 128, "Defeat the %s camp %s of %s.",
 				  camp_types[qtype].name, town_dir, town_name);
 
 	/* Save the quest data */
