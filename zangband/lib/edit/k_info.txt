@@ -216,11 +216,13 @@ N:22:& Hard Biscuit~
 G:,:U
 I:80:32:500
 W:0:0:2:1
+A:0/3
 
 N:23:& Strip~ of Venison
 G:,:u
 I:80:33:1500
 W:0:0:2:2
+A:0/10
 
 N:24:& Slime Mold~
 G:,:g
@@ -238,11 +240,13 @@ N:26:& Pint~ of Fine Ale
 G:,:y
 I:80:38:500
 W:0:0:5:1
+A:0/3
 
 N:27:& Pint~ of Fine Wine
 G:,:r
 I:80:39:1000
 W:0:0:10:2
+A:0/3
 
 ##### Extra digger #####
 

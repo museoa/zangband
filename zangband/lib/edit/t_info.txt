@@ -378,60 +378,80 @@ F:10,field_action_door_bash | 11,field_action_door_gf
 F:15,field_action_delete | 16,field_action_interact_disarm
 F:17,field_action_door_jam_monster
 
+
+#
+# Stores use the D: line in the following way.
+# data[0] is an index into the shopkeeper name array.
+#     If this is equal to STORE_HOME, then the store will be
+#     treated like a home in various ways.
+# data[1] and data[2] represent the range in levels at which
+#     the items in the store are generated at.
+# data[3] - data[6] are the object theme of those items.  By
+#     using an object theme, as well as the restriction functions
+#     many different types of shop can be made.
+# data[7] contains the result of logical-and'ing the ST_XXX bitflags
+#     together for that store.
+
 # General store
 N:34:General Store
 G:1:U
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:0:0:0:0:0:0:0:0
+D:0:0:10:0:50:0:50:0
 F:2,field_action_door_store
+F:18,field_action_isweaparmour_tester
 
 # Armoury
 N:35:Armoury
 G:2:s
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:1:0:0:0:0:0:0:0
+D:1:5:20:0:100:0:0:0
 F:2,field_action_door_store
+F:19,field_action_isarmour_tester
 
 # Weapon Smiths
 N:36:Weapon Smiths
 G:3:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:0:0:0:0:0:0:0
+D:2:5:20:0:100:0:0:0
 F:2,field_action_door_store
+F:19,field_action_isweapon_tester
 
 # Temple
 N:37:Temple
 G:4:g
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:3:0:0:0:0:0:0:0
+D:3:5:20:33:33:34:0:1
 F:2,field_action_door_store
+F:18,field_action_isrecharge_tester
 
 # Alchemy Shop
 N:38:Alchemy Shop
 G:5:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:4:0:0:0:0:0:0:0
+D:4:5:30:0:0:100:0:0
 F:2,field_action_door_store
+F:18,field_action_isrecharge_tester
 
 # Magic Shop
 N:39:Magic Shop
 G:6:r
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:5:0:0:0:0:0:0:0
+D:5:5:30:0:0:100:0:0
 F:2,field_action_door_store
+F:18,field_action_isbook_tester
 
 # Black Market
 N:40:Black Market
 G:7:D
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:6:0:0:0:0:0:0:0
+D:6:20:50:25:25:25:25:16
 F:2,field_action_door_store
 
 # Home
@@ -447,8 +467,9 @@ N:42:Book Store
 G:9:o
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:8:0:0:0:0:0:0:0
+D:8:10:30:0:0:100:0:0
 F:2,field_action_door_store
+F:19,field_action_isbook_tester
 
 # Weaponmaster
 N:43:Weaponmaster
@@ -457,6 +478,7 @@ W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
 D:0:3:0:0:0:0:0:0
 F:2,field_action_door_build
+F:18,field_action_weaponmaster1 | 19,field_action_weaponmaster2
 
 # Zymurgist
 N:44:Zymurgist
@@ -465,6 +487,7 @@ W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
 D:1:1:4:0:0:0:0:0
 F:2,field_action_door_build
+F:18,field_action_recharge1 | 19,field_action_recharge2
 
 # Magesmith (weapon)
 N:45:Magesmith (weapons)
@@ -473,6 +496,7 @@ W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
 D:2:5:0:0:0:0:0:0
 F:2,field_action_door_build
+F:18,field_action_weaponplus1 | 19,field_action_weaponplus2
 
 # Magesmith (armour)
 N:46:Magesmith (armor)
@@ -481,6 +505,7 @@ W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
 D:3:5:0:0:0:0:0:0
 F:2,field_action_door_build
+F:18,field_action_armourplus1 | 19,field_action_armourplus2
 
 # Mutatalist
 N:47:Mutatalist
@@ -489,6 +514,7 @@ W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
 D:4:50:0:0:0:0:0:0
 F:2,field_action_door_build
+F:18,field_action_mutate1 | 19,field_action_mutate2
 
 # Map Maker
 N:48:Map Maker
@@ -497,3 +523,4 @@ W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
 D:5:5:0:0:0:0:0:0
 F:2,field_action_door_build
+F:18,field_action_buymap1 | 19,field_action_buymap2

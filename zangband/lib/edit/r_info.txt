@@ -2968,7 +2968,7 @@ D:stone corrupted by chaos, called a Warp Stone.
 N:218:Gazer
 G:e:b
 I:110:7d9:15:9:40
-W:19:1:0:326
+W:25:1:0:326
 O:0:0:0
 B:GAZE:PARALYZE:1d2
 B:GAZE:CONFUSE:1d2
