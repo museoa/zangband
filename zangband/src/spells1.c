@@ -583,29 +583,12 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 				note_spot(y, x);
 			}
 
-			/* Deliberate missing "break;" */
+			break;
 		}		
 		
 		/* Destroy Traps (and Locks) */
 		case GF_KILL_TRAP:
 		{
-			/* Destroy traps */
-			if (is_trap(c_ptr))
-			{
-				/* Check line of sight */
-				if (known)
-				{
-					obvious = TRUE;
-				}
-
-				/* Disarm all the traps using a "power" of 50 */
-				if (field_hook_special(&c_ptr->fld_idx, FTYPE_TRAP,
-					(void *) &dam))
-				{
-					msg_print("There is a bright flash of light!");
-				}
-			}
-
 			/* Reveal secret doors */
 			if (c_ptr->feat == FEAT_SECRET)
 			{
@@ -5509,6 +5492,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 				f_m_t.dam = dam;
 				f_m_t.typ = typ;
 				f_m_t.notice = notice;
+				f_m_t.known = player_can_see_bold(y, x);
 				
 				/* Affect fields on the grid */
 				field_hook(&area(y, x)->fld_idx,
@@ -5528,6 +5512,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 				f_m_t.dam = dam;
 				f_m_t.typ = typ;
 				f_m_t.notice = notice;
+				f_m_t.known = player_can_see_bold(y, x);
 				
 				/* Affect fields on the grid */
 				field_hook(&area(y, x)->fld_idx,

@@ -2016,6 +2016,46 @@ void field_action_trap_disarm(s16b *field_ptr, void *input)
 
 
 /*
+ * Traps interact with magic.
+ */
+void field_action_trap_gf(s16b *field_ptr, void *input)
+{
+	field_magic_target *f_m_t = (field_magic_target*) input;
+	
+	field_type *f_ptr = &fld_list[*field_ptr];
+	
+	/* Destroy traps */
+	if ((f_m_t->typ == GF_KILL_TRAP) || (f_m_t->typ == GF_KILL_DOOR))
+	{
+		/* Extract trap "power" */
+		int	power = f_ptr->data[0];	
+	
+		/* Extract the difficulty */
+		int j = f_m_t->dam - power;
+
+		/* Always have a small chance of success */
+		if (j < 2) j = 2;
+	
+		if (randint0(100) < j)
+		{
+			/* Success */
+		
+			/* Check line of sight */
+			if (f_m_t->known)
+			{
+				f_m_t->notice = TRUE;
+				
+				msg_print("There is a bright flash of light!");
+			}
+		
+			/* Delete the field */
+			delete_field_ptr(field_ptr);
+		}
+	}
+}
+
+
+/*
  * Common stuff that happens whenever the player
  * hits a trap.
  *

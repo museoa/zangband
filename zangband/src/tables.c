@@ -6528,6 +6528,9 @@ field_action f_action[FIELD_ACTION_TYPES] =
 	
 	/* Trap disarming function */
 	{field_action_trap_disarm, "field_action_trap_disarm"},
+
+	/* Trap magical interaction */
+	{field_action_trap_gf, "field_action_trap_gf"},
 	
 	/* Trapdoor */
 	{field_action_hit_trap_door, "field_action_hit_trap_door"},

@@ -1221,6 +1221,7 @@ extern void field_action_interact_open(s16b *field_ptr, void *output);
 extern void place_trap(int y, int x);
 extern void field_action_trap_init(s16b *field_ptr, void *input);
 extern void field_action_trap_disarm(s16b *field_ptr, void *input);
+extern void field_action_trap_gf(s16b *field_ptr, void *input);
 extern void field_action_hit_trap_door(s16b *field_ptr, void *nothing);
 extern void field_action_hit_trap_pit(s16b *field_ptr, void *nothing);
 extern void field_action_hit_trap_spike(s16b *field_ptr, void *nothing);

@@ -987,6 +987,7 @@ struct field_magic_target
 	int dam;	/* Damage parameter */
 	int typ;	/* GF type of interaction */
 	bool notice; /* Does the player notice? */
+	bool known;	/* Can the player see us? */
 };
 
 /* 
