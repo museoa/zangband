@@ -2189,6 +2189,39 @@ bool item_tester_okay(const object_type *o_ptr)
 	return (TRUE);
 }
 
+static bool item_is_recharging(object_type *o_ptr)
+{
+	object_kind *k_ptr = &k_info[o_ptr->k_idx];
+	int power;
+
+	/* Is the item recharging? */
+	if (o_ptr->timeout &&
+		((o_ptr->tval != TV_LITE) || (o_ptr->flags3 & TR3_INSTA_ART)))
+	{
+		if (object_known_p(o_ptr) && (o_ptr->tval == TV_ROD))
+		{
+			/* Paranoia. */
+			if (!k_ptr->pval) return (FALSE);
+
+			/*
+			 * Find out how many rods are charging, by dividing
+			 * current timeout by each rod's maximum timeout.
+			 */
+			power = (o_ptr->timeout + (k_ptr->pval - 1)) / k_ptr->pval;
+
+			/* Only darken fully-charging stacks. */
+			if (power >= o_ptr->number) return (TRUE);
+		}
+	}
+	else
+	{
+		return (TRUE);
+	}
+
+	return (FALSE);
+}
+
+
 
 /*
  * Choice window "shadow" of the "show_inven()" function
@@ -2252,11 +2285,7 @@ void display_inven(void)
 		attr = tval_to_attr[o_ptr->tval % 128];
 
 		/* Grey out charging items */
-		if (o_ptr->timeout &&
-			((o_ptr->tval != TV_LITE) || (o_ptr->flags3 & TR3_INSTA_ART)))
-		{
-			attr = TERM_L_DARK;
-		}
+		if (item_is_recharging(o_ptr)) attr = TERM_L_DARK;
 
 		/* Hack -- fake monochrome */
 		if (!use_color || ironman_moria) attr = TERM_WHITE;
@@ -2334,11 +2363,7 @@ void display_equip(void)
 		attr = tval_to_attr[o_ptr->tval % 128];
 
 		/* Grey out charging items */
-		if (o_ptr->timeout &&
-			((o_ptr->tval != TV_LITE) || (o_ptr->flags3 & TR3_INSTA_ART)))
-		{
-			attr = TERM_L_DARK;
-		}
+		if (item_is_recharging(o_ptr)) attr = TERM_L_DARK;
 
 		/* Hack -- fake monochrome */
 		if (!use_color || ironman_moria) attr = TERM_WHITE;
@@ -2445,17 +2470,7 @@ void show_inven(void)
 		out_color[k] = tval_to_attr[o_ptr->tval % 128];
 
 		/* Grey out charging items */
-		if (o_ptr->timeout &&
-			((o_ptr->tval != TV_LITE) || (o_ptr->flags3 & TR3_INSTA_ART)))
-		{
-			out_color[k] = TERM_L_DARK;
-		}
-
-		/* Fake monochrome */
-		if (!use_color || ironman_moria)
-		{
-			out_color[k] = TERM_WHITE;
-		}
+		if (item_is_recharging(o_ptr)) out_color[k] = TERM_L_DARK;
 
 		(void) strcpy(out_desc[k], o_name);
 
@@ -2590,11 +2605,7 @@ void show_equip(void)
 		out_color[k] = tval_to_attr[o_ptr->tval % 128];
 
 		/* Grey out charging items */
-		if (o_ptr->timeout &&
-			((o_ptr->tval != TV_LITE) || (o_ptr->flags3 & TR3_INSTA_ART)))
-		{
-			out_color[k] = TERM_L_DARK;
-		}
+		if (item_is_recharging(o_ptr)) out_color[k] = TERM_L_DARK;
 
 		/* Fake monochrome */
 		if (!use_color || ironman_moria)
