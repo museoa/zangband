@@ -63,6 +63,12 @@
 
 #ifdef USE_AMI
 
+cptr help_ami[] =
+{
+	"To use AMI (Amiga)",
+	NULL
+};
+
 /* Yep, Bablos, this is still a mess! ;) */
 #define VERTITLE "Zangband 2.5.2b"
 #define VERSION "Zangband"

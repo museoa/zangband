@@ -72,6 +72,14 @@
 #ifdef USE_VCS
 
 
+cptr help_vcs[] =
+{
+	"To use /dev/vcsa*",
+	"x0,y0,x1,y1  Create new term",
+	"--noframe    No window frames",
+	NULL
+};
+
 /* Change the palette. If this is un-define'd, the standard palette will
 be used, and it'll try to map colors to an equivalent color. */
 #define SET_COLORS

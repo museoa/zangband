@@ -99,6 +99,18 @@
 
 #ifdef USE_X11
 
+cptr help_x11[] =
+{
+	"To use X11",
+	"-d    Set display name",
+#ifdef USE_GRAPHICS
+	"-s    Turn off smoothscaling graphics",
+	"-b#   Set tileset bitmap",
+#endif /* USE_GRAPHICS */
+	"-n#   Number of terms to use",
+	NULL
+};
+
 
 #ifndef __MAKEDEPEND__
 #include <X11/Xlib.h>

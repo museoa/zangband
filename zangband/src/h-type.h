@@ -50,10 +50,6 @@
 typedef void *vptr;
 
 
-/* A string pointer */
-typedef const char *cptr;
-
-
 /* Hack -- disallow real numbers by causing compile error */
 #undef double
 #define double floating_point_is_not_allowed;

@@ -170,5 +170,10 @@
 #define GET_ARRAY_INDEX(A,P) \
 	((P)-(A))
 
+/*
+ * Get number of elements in an array
+ */
+#define NUM_ELEMENTS(A) \
+	(sizeof(A) / sizeof ((A)[0]))
 
 #endif

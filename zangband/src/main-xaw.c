@@ -36,6 +36,19 @@
 
 #ifdef USE_XAW
 
+cptr help_xaw[] =
+{
+	"To use XAW",
+	"-d    Set display name",
+#ifdef USE_GRAPHICS
+	"-s    Turn off smoothscaling graphics",
+	"-b#   Set tileset bitmap",
+#endif /* USE_GRAPHICS */
+	"-n#   Number of terms to use",
+	NULL
+};
+
+
 
 #ifndef __MAKEDEPEND__
 #include <X11/Xlib.h>

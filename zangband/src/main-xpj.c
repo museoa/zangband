@@ -37,6 +37,15 @@
 
 #ifdef USE_XPJ
 
+cptr help_xpj[] =
+{
+	"To use XPJ  (Projected view)",
+	"-d    Set display name",
+	"-s    Turn off smoothscaling graphics",
+	"-n#   Number of terms to use",
+	NULL
+};
+
 
 #ifndef USE_GRAPHICS
 #error "Must have USE_GRAPHICS compile-time flag on."

@@ -54,6 +54,12 @@
 
 #ifdef USE_IBM
 
+cptr help_ibm[] =
+{
+	"To use IBM (BIOS text mode)",
+	NULL
+};
+
 
 /*
  * Use a "virtual" screen to "buffer" screen writes.

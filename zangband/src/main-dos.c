@@ -72,6 +72,12 @@
 
 #ifdef USE_DOS
 
+cptr help_dos[] =
+{
+	"To use DOS (Graphics)",
+	NULL
+};
+
 #include <allegro.h>
 
 #ifdef USE_MOD_FILES

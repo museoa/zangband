@@ -26,6 +26,17 @@
 
 #ifdef USE_GTK
 
+cptr help_gtk[] =
+{
+	"To use GTK toolkit",
+#ifdef USE_GRAPHICS
+	"-b#   Set tileset bitmap",
+#endif /* USE_GRAPHICS */
+	"-n#   Number of terms to use",
+	NULL
+};
+
+
 /* Mega-hack, these include files require double and float to work */
 #undef float
 #undef double
@@ -2655,7 +2666,7 @@ static void init_gtk_window(term_data *td, int i)
 /*
  * Initialization function
  */
-errr init_gtk(unsigned char *new_game, int argc, char **argv)
+errr init_gtk(int argc, char **argv, unsigned char *new_game)
 {
 	int i;
 

@@ -15,6 +15,12 @@
 
 #ifdef USE_LSL
 
+cptr help_lsl[] =
+{
+	"To use LSL (Linux-SVGALIB)",
+	NULL
+};
+
 /* Standard C header files */
 #include <stdio.h>
 #include <stdlib.h>

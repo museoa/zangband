@@ -58,6 +58,13 @@
 
 #ifdef USE_XXX
 
+cptr help_xxx[] =
+{
+	"To use XXX",
+	"-f    Do something",
+	"-g    Do something else",
+	NULL
+};
 
 /*
  * Extra data to associate with each "window"
