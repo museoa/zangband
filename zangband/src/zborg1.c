@@ -458,21 +458,8 @@ FILE *borg_fff = NULL;	/* Log file */
 
 
 /*
- * Locate the store doors
- */
-
-s16b track_shop_num;
-s16b track_shop_size;
-int *track_shop_x;
-int *track_shop_y;
-
-int *track_quest_x;
-int *track_quest_y;
-
-/*
  * Track "stairs up"
  */
-
 s16b track_less_num;
 s16b track_less_size;
 int *track_less_x;
@@ -482,7 +469,6 @@ int *track_less_y;
 /*
  * Track "stairs down"
  */
-
 s16b track_more_num;
 s16b track_more_size;
 int *track_more_x;
@@ -515,21 +501,16 @@ int *track_door_y;
 /*
  * The object list.  This list is used to "track" objects.
  */
-
 s16b borg_takes_cnt;
-
 s16b borg_takes_nxt;
-
 borg_take *borg_takes;
 
 
 /*
  * The monster list.  This list is used to "track" monsters.
  */
-
 s16b borg_kills_cnt;
 s16b borg_kills_nxt;
-
 borg_kill *borg_kills;
 
 
@@ -1310,14 +1291,6 @@ void borg_init_1(void)
 
 	/* Prapare a local random number seed */
 	if (!borg_rand_local) borg_rand_local = randint0(0x10000000);
-
-	/*** Very special "tracking" array ***/
-
-	/* Track the shop locations */
-	track_shop_num = 0;
-	track_shop_size = 16;
-	C_MAKE(track_shop_x, track_shop_size, int);
-	C_MAKE(track_shop_y, track_shop_size, int);
 
 	/*** Special "tracking" arrays ***/
 

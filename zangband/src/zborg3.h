@@ -92,9 +92,16 @@ struct borg_item
  */
 struct borg_shop
 {
-	s16b when;	/* Time stamp */
-
-	borg_item ware[24];	/* Store contents */
+	/* Location */
+	int x;
+	int y;
+	
+	/* Time stamp */
+	s16b when;
+	
+	/* Is this shop useful? */
+	s16b b_count;
+	s16b u_count;
 };
 
 
@@ -206,6 +213,14 @@ extern borg_shop *borg_shops;	/* Current "shops" */
 extern borg_item *safe_home;	/* Safety "home" */
 
 extern borg_shop *safe_shops;	/* Safety "shops" */
+
+
+/*
+ * Number of allocated stores...
+ */
+extern s16b track_shop_num;
+extern s16b track_shop_size;
+
 
 
 /*

@@ -13374,23 +13374,9 @@ bool borg_flow_shop_visit(void)
 		/* Must not be visited */
 		if (borg_shops[i].when) continue;
 
-#if 0
-		/* if poisoned or bleeding skip non temples */
-		if ((borg_skill[BI_ISCUT] || borg_skill[BI_ISPOISONED]) &&
-			(i != BORG_TEMPLE && i != BORG_HOME)) continue;
-
-		/* if starving--skip non food places */
-		if (borg_skill[BI_ISWEAK] &&
-			(i != BORG_GSTORE && i != BORG_HOME)) continue;
-
-		/* if dark--skip non food places */
-		if (borg_skill[BI_CUR_LITE] == 0 && (i != 0) &&
-			borg_skill[BI_CLEVEL] >= 2) continue;
-#endif
-
 		/* Obtain the location */
-		x = track_shop_x[i];
-		y = track_shop_y[i];
+		x = borg_shops[i].x;
+		y = borg_shops[i].y;
 
 		/* Hack -- Must be known and not under the player */
 		if (!x || !y || ((c_x == x) && (c_y == y))) continue;
@@ -13426,9 +13412,9 @@ bool borg_flow_shop_entry(int i)
 	if (borg_skill[BI_CDEPTH]) return (FALSE);
 
 	/* Obtain the location */
-	x = track_shop_x[i];
-	y = track_shop_y[i];
-
+	x = borg_shops[i].x;
+	y = borg_shops[i].y;
+	
 	/* Hack -- Must be known */
 	if (!x || !y) return (FALSE);
 

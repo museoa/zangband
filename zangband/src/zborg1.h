@@ -784,14 +784,6 @@ extern char borg_match[128];	/* Search string */
  */
 extern FILE *borg_fff;	/* Log file */
 
-/*
- * Locate the store doors
- */
-extern s16b track_shop_num;
-extern s16b track_shop_size;
-extern int *track_shop_x;
-extern int *track_shop_y;
-
 
 /*
  * Track "stairs up"

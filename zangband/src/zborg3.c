@@ -33,6 +33,14 @@ borg_item *safe_home;	/* Safety "home stuff" */
 
 borg_shop *safe_shops;	/* Safety "shops" */
 
+/*
+ * Locate the store doors
+ */
+
+s16b track_shop_num;
+s16b track_shop_size;
+
+
 
 /*
  * Spell info
@@ -2678,6 +2686,10 @@ void borg_clear_3(void)
  */
 void borg_init_3(void)
 {
+	/* Track the shop locations */
+	track_shop_num = 0;
+	track_shop_size = 16;
+
 	/*** Item/Ware arrays ***/
 
 	/* Make the stores in the town */

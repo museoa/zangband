@@ -488,51 +488,22 @@ static bool borg_think(void)
 	if ((0 == borg_what_text(3, 5, 16, &t_a, buf)) &&
 		(streq(buf, "Item Description")))
 	{
-		static store_type *st_ptr = 0;
-		place_type *pl_ptr = &place[p_ptr->place_num];
-
 		/* Silly value */
 		shop_num = 0;
 
 		/* Scan for the right shop */
 		for (i = 0; i < track_shop_num; i++)
 		{
-			/*
-			 * The turn before moving into the shop we should have been
-			 * standing next to it, so check for shops 1 square away.
-			 */
-			if (abs(track_shop_x[i] - c_x) <= 1 &&
-				abs(track_shop_y[i] - c_y) <= 1)
+			if ((borg_shops[i].x == c_x) &&
+				(borg_shops[i].y == c_y))
 			{
 				shop_num = i;
 				break;
 			}
 		}
 
-		/* Scan for the right real shop */
-		for (i = 0; i < pl_ptr->numstores; i++)
-		{
-			if ((p_ptr->py - pl_ptr->y * 16 == pl_ptr->store[i].y) &&
-				(p_ptr->px - pl_ptr->x * 16 == pl_ptr->store[i].x))
-			{
-				st_ptr = &pl_ptr->store[i];
-				break;
-			}
-		}
-
-
 		/* Clear the goal (the goal was probably going to a shop) */
 		goal = 0;
-
-		/* Extract the "store" name */
-		if (0 == borg_what_text(50, 3, -20, &t_a, buf))
-		{
-			/* Fixme */
-		}
-
-		/* Hack -- reset page/more */
-		borg_shops[shop_num].page = 0;
-		borg_shops[shop_num].more = 0;
 
 		/* React to new stores */
 		if (borg_do_browse_what != shop_num)
@@ -548,82 +519,8 @@ static bool borg_think(void)
 			borg_do_browse_what = shop_num;
 		}
 
-		/* Extract the "page", if any */
-		if ((0 == borg_what_text(20, 5, 8, &t_a, buf)) && (prefix(buf, "(Page ")))	/* --)-- */
-		{
-			/* take note of the page */
-			borg_shops[shop_num].more = 1;
-			borg_shops[shop_num].page = (buf[6] - '0') - 1;
-		}
-
-		/* Hack -- Reset food counter for money scumming */
-		if (shop_num == 0 &&
-			borg_shops[shop_num].page == 0) borg_food_onsale = 0;
-
 		/* Cheat the current gold (unless in home) */
 		borg_gold = p_ptr->au;
-
-		/* Parse the store (or home) inventory */
-		for (i = 0; i < 12; i++)
-		{
-			int n;
-
-			char desc[80];
-			char cost[10];
-
-			/* Default to "empty" */
-			desc[0] = '\0';
-			cost[0] = '\0';
-
-			/* Verify "intro" to the item */
-			if ((0 == borg_what_text(0, i + 6, 3, &t_a, buf)) &&
-				(buf[0] == I2A(i)) && (buf[1] == ')') && (buf[2] == ' '))
-			{
-				int k;
-
-				/* Extract the item description */
-				if (0 != borg_what_text(5, i + 6, -62, &t_a, desc))
-				{
-					desc[0] = '\0';
-				}
-
-				/* Strip trailing spaces */
-				for (k = strlen(desc); (k > 0) && (desc[k - 1] == ' '); k--)
-					/* loop */ ;
-				desc[k] = '\0';
-
-				/* Extract the item cost in stores */
-				if (0 != borg_what_text(68, i + 6, -9, &t_a, cost))
-				{
-					cost[0] = '\0';
-				}
-			}
-
-			/* Extract actual index */
-			n = borg_shops[shop_num].page * 12 + i;
-
-			/* Save the cost */
-			borg_shops[shop_num].ware[n].cost = atoi(cost);
-		}
-
-		/* Hack -- browse as needed */
-		if (borg_shops[shop_num].more && borg_do_browse)
-		{
-			/* Check next page */
-			borg_keypress(' ');
-
-			/* Done browsing */
-			borg_do_browse = FALSE;
-
-			/* Done */
-			return (TRUE);
-		}
-
-		/* Recheck spells */
-		borg_do_spell = TRUE;
-
-		/* Hack -- browse again later */
-		borg_do_browse = TRUE;
 
 		/* Examine the inventory */
 		borg_notice();
