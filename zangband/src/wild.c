@@ -19,8 +19,8 @@
 /* Number of lakes to try and make */
 #define LAKE_NUM		4
 
-/* Constant that determines number of rivers */
-#define RIVER_CONST		1000
+/* Constant^2 that determines number of rivers */
+#define RIVER_NUM		4
 
 /* Maximum distance a road can connect */
 #define ROAD_DIST		30
@@ -4360,10 +4360,12 @@ static void create_rivers(void)
 {
 	int i, cur_posn, high_posn, dh, river_start;
 	int cx, cy, ch;
+	int r1, r2;
+	
 	long val, h_val;
 
 	/* Number of river starting points. */
-	river_start = (long) max_wild * max_wild / RIVER_CONST;
+	river_start = RIVER_NUM * RIVER_NUM;
 
 	/* paranoia - bounds checking */
 	if (river_start > TEMP_MAX) river_start = TEMP_MAX;
@@ -4371,8 +4373,16 @@ static void create_rivers(void)
 	/* Make some random starting positions */
 	for (i = 0; i < river_start; i++)
 	{
-		temp_y[i] = (s16b)randint0(max_wild);
-		temp_x[i] = (s16b)randint0(max_wild);
+		/* Evenly spread out the points */
+		r1 = ((i % RIVER_NUM) * max_wild) / RIVER_NUM;
+		r2 = r1 + (max_wild / RIVER_NUM);
+		
+		temp_y[i] = (s16b)rand_range(r1, r2);
+		
+		r1 = ((i / RIVER_NUM) * max_wild) / RIVER_NUM;;
+		r2 = r1 + (max_wild / RIVER_NUM);
+		
+		temp_x[i] = (s16b)rand_range(r1, r2);
 	}
 
 	temp_n = river_start;
