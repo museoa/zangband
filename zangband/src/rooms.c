@@ -4386,7 +4386,7 @@ static void build_type17(int bx0, int by0)
 	x2 = xval + (xsize - 1) / 2;
 	
 	/* Paranoia - Room is too small, just make a rectangle */
-	if (xsize * ysize < 15)
+	if (xsize * ysize < 20)
 	{
 		/* Generate new room */
 		generate_room(x1, y1, x2, y2, light);
