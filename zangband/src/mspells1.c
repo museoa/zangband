@@ -533,7 +533,7 @@ static bool spell_attack(byte spell)
 	if (spell >= 128 && spell <= 128 + 8) return (TRUE);
 
 	/* "Cause wounds" and "bolt" spells */
-	if (spell >= 128 + 12 && spell <= 128 + 27) return (TRUE);
+	if (spell >= 128 + 12 && spell < 128 + 27) return (TRUE);
 
 	/* Hand of Doom */
 	if (spell == 160 + 1) return (TRUE);
