@@ -70,14 +70,11 @@ void output_note(char *final_note)
  */
 void add_note(char *note, char code)
 {
-	char buf[80];
-	char final_note[255];
+	char buf[255];
 	char long_day[25];
 	time_t ct = time((time_t*)NULL);
 	char depths[32];
 
-	/* Get the first 60 chars and null-terminate */
-	(void)strnfmt(buf, 60, "%s", note);
 
 	/* Get depth */
 	if (!dun_level)
@@ -97,11 +94,11 @@ void add_note(char *note, char code)
 	strftime(long_day, 10, "%H:%M:%S", localtime(&ct));
 
 	/* Make note */
-	sprintf(final_note, "%s %9ld %s %c: %s\n", long_day, turn,
+	sprintf(buf, "%s %9ld %s %c: %s\n", long_day, turn,
 		 depths, code, note);
 
 	/* Output to the notes file */
-	output_note(final_note);
+	output_note(buf);
 }
 
 
