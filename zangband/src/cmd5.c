@@ -2735,7 +2735,7 @@ void do_cmd_cast(void)
 	chance = spell_chance(spell, use_realm - 1);
 
 	/* Failed spell */
-	if (1) //(rand_int(100) < chance)
+	if (rand_int(100) < chance)
 	{
 		if (flush_failure) flush();
 
