@@ -757,7 +757,7 @@ void field_sort_priority(s16b *fld_idx_ptr)
  */
 void field_prep(field_type *f_ptr, int t_idx)
 {
-	field_thaum *t_ptr = &t_info[t_idx];
+	field_thaum *t_ptr;
 	int i;
 
 	/* Clear the record */
@@ -791,6 +791,41 @@ void field_prep(field_type *f_ptr, int t_idx)
 		f_ptr->action[i] = t_ptr->action[i];
 	}
 	
+}
+
+
+/*
+ * Initialise all fields after the game has been loaded.
+ */
+void init_fields(void)
+{
+	int fld_idx;
+	field_type *f_ptr;
+	field_thaum *t_ptr;
+	
+	s16b *fld_ptr;
+	
+	for (fld_idx = 0; fld_idx < fld_max; fld_idx++)
+	{
+		/* Point to field */
+		f_ptr = &fld_list[fld_idx];
+
+		/* No dead fields */
+		if (!f_ptr->t_idx) continue;
+		
+		/* Get pointer to thaum type. */
+		t_ptr = &t_info[f_ptr->t_idx];
+
+		/* What it looks like */
+		f_ptr->f_attr = t_ptr->f_attr;
+		f_ptr->f_char = t_ptr->f_char;
+		
+		/* Get pointer to field index */
+		fld_ptr = field_find(fld_idx);
+		
+		/* Call loading routine */
+		(void) field_hook_single(fld_ptr, FIELD_ACT_LOAD, NULL);
+	}
 }
 
 /*
@@ -1206,9 +1241,6 @@ void process_fields(void)
 				continue;
 			}
 		}
-
-		/* If acts every turn */
-		(void) field_hook_single(fld_ptr, FIELD_ACT_ALWAYS, NULL);
 	}
 }
 
@@ -1294,7 +1326,7 @@ void test_field_data_integrity(void)
  * The type of the void pointer is:
  *
  * FIELD_ACT_INIT			Function dependent.  (Be careful)
- * FIELD_ACT_ALWAYS			NULL
+ * FIELD_ACT_LOAD			NULL
  * FIELD_ACT_PLAYER_ENTER	NULL
  * FIELD_ACT_PLAYER_ON		NULL
  * FIELD_ACT_PLAYER_LEAVE	NULL

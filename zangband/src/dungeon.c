@@ -4118,6 +4118,8 @@ void play_game(bool new_game)
 	/* Initialize field info */
 	if (init_t_info()) quit("Cannot initialize fields");
 	
+	
+	
 	/* Attempt to load */
 	if (!load_player())
 	{
@@ -4232,6 +4234,9 @@ void play_game(bool new_game)
 	/* Reset the visual mappings */
 	reset_visuals();
 	
+	/* Init the fields */
+	init_fields();
+	
 	/* Normal machine (process player name) */
 	if (savefile[0])
 	{
@@ -4275,10 +4280,10 @@ void play_game(bool new_game)
 
 #endif
 
-	
-
 	/* Load the "pref" files */
 	load_all_pref_files();
+	
+	
 
 	/* Set or clear "rogue_like_commands" if requested */
 	if (arg_force_original) rogue_like_commands = FALSE;

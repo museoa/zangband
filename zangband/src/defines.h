@@ -3749,7 +3749,7 @@ extern int PlayerUID;
  * Field Actions
  */
 #define FIELD_ACT_INIT			0	/* Initialise the field data */
-#define FIELD_ACT_ALWAYS		1	/* Every turn */
+#define FIELD_ACT_LOAD			1	/* Loading Initialisation */
 #define FIELD_ACT_PLAYER_ENTER	2	/* Player walks onto square */
 #define FIELD_ACT_PLAYER_ON		3	/* Player is on square */
 #define FIELD_ACT_PLAYER_LEAVE	4	/* Player leaves square */

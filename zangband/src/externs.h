@@ -1228,6 +1228,7 @@ extern void field_copy(field_type *f_ptr, field_type *j_ptr);
 extern s16b field_add(field_type *f_ptr, s16b *fld_idx2);
 extern void field_sort_priority(s16b *fld_idx_ptr);
 extern void field_prep(field_type *f_ptr, int t_idx);
+extern void init_fields(void);
 extern s16b field_is_type(s16b fld_idx, byte typ);
 extern s16b field_first_known(s16b fld_idx, byte typ);
 extern bool field_is_known_type(s16b fld_idx, byte typ);

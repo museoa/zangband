@@ -1219,7 +1219,6 @@ void map_info(int y, int x, byte *ap, char *cp)
 			if (fld_ptr->info & FIELD_INFO_FEAT)
 			{
 				/* Terrain level */
-
 				if (use_transparency && (fld_ptr->info & (FIELD_INFO_TRANS)))
 				{
 					/* Take into account dynamic lighting. */
