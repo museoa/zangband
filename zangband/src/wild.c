@@ -552,8 +552,8 @@ static bool town_blank(int x, int y, int xsize, int ysize)
 		for (j = y; j < y + ysize + 1; j++)
 		{
 			/* Hack - Not next to boundary */
-			if ((x + i <= 0) || (x + i >= max_wild - 1)
-				 || (y + j <= 0) || (y + j >= max_wild - 1))
+			if ((i <= 0) || (i >= max_wild - 1)
+				 || (j <= 0) || (j >= max_wild - 1))
 			{
 				return (FALSE);
 			}
