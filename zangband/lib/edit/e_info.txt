@@ -103,13 +103,31 @@ F:SUST_STR | SUST_DEX | SUST_CON | SUST_INT | SUST_WIS | SUST_CHR |
 F:HOLD_LIFE | RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | 
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
-# 12 (unused)
+### Lites ###
 
-# 13 (unused)
+N:12:of Everburning
+X:29:10
+W:0:2:0:500
+C:0:0:0:0
+F:LITE
 
-# 14 (unused)
+N:13:of Brightness
+X:29:10
+W:0:2:0:500
+C:0:0:0:6
+F:SEARCH
 
-# 15 (unused)
+N:14:of Vision
+X:29:15
+W:18:10:0:750
+C:0:0:0:6
+F:SEE_INVIS | RES_BLIND | SEARCH
+
+N:15:of Warmth
+X:29:13
+W:10:4:0:500
+C:0:0:0:0
+F:RES_COLD
 
 
 ### Shields ###
