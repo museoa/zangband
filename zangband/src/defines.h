@@ -126,55 +126,19 @@
 /* Number of gates in the city */
 #define MAX_GATES				4
 
-
+/* Building types */
 #define BT_GENERAL		0
 #define BT_STORE		1
 #define BT_BUILD		2
 
 
-/* The store types */
-#define STORE_GENERAL   0
-#define STORE_ARMOURY   1
-#define STORE_WEAPON    2
-#define STORE_TEMPLE    3
-#define STORE_ALCHEMIST 4
-#define STORE_MAGIC     5
-#define STORE_BLACK     6
+/* Special store type */
 #define STORE_HOME      7
-#define STORE_BOOK      8
-#define STORE_WEAPON1	9
-#define STORE_WEAPON2	10
-#define STORE_WEAPON3	11
-#define STORE_WEAPON4	12
-#define STORE_WEAPON5	13
-#define STORE_ARMOUR1	14
-#define STORE_ARMOUR2	15
-#define STORE_ARMOUR3	16
-#define STORE_ARMOUR4	17
-#define STORE_ARMOUR5	18
-#define STORE_SWORD0	19
-#define STORE_SWORD1	20
-#define STORE_SWORD2	21
-#define STORE_SWORD3	22
-#define STORE_SWORD4	23
-#define STORE_SWORD5	24
-#define STORE_SHIELD0	25
-#define STORE_SHIELD1	26
-#define STORE_SHIELD2	27
-#define STORE_SHIELD3	28
-#define STORE_SHIELD4	29
-#define STORE_SHIELD5	30
-#define STORE_AXE0		31
-#define STORE_AXE1		32
-#define STORE_AXE2		33
-#define STORE_AXE3		34
-#define STORE_AXE4		35
-#define STORE_AXE5		36
 
 /*
- * Total number of stores (see "store.c", etc)
+ * Total number of stores in vanilla town (see "store.c", etc)
  */
-#define MAX_STORES      37
+#define MAX_STORES      9
 
 
 /*
@@ -249,9 +213,32 @@
 #define BUILD_AXE3				43
 #define BUILD_AXE4				44
 #define BUILD_AXE5				45
+#define BUILD_AMMO0				46
+#define BUILD_AMMO1				47
+#define BUILD_AMMO2				48
+#define BUILD_FLET0				49
+#define BUILD_FLET1				50
+#define BUILD_FLET2				51
+#define BUILD_FLET3				52
+#define BUILD_WARHALL0			53
+#define BUILD_WARHALL1			54
+#define BUILD_WARHALL2			55
+#define BUILD_WARHALL3			56
+#define BUILD_WARHALL4			57
+#define BUILD_WARHALL5			58
+#define BUILD_CLOTH0			59
+#define BUILD_CLOTH1			60
+#define BUILD_HARMOUR0			61
+#define BUILD_HARMOUR1			62
+#define BUILD_HARMOUR2			63
+#define BUILD_HARMOUR3			64
+#define BUILD_HARMOUR4			65
+#define BUILD_HARMOUR5			66
+
+
 
 /* Maximum number of "building" types in a city */
-#define MAX_CITY_BUILD			46
+#define MAX_CITY_BUILD			67
 
 
 /*
@@ -1177,6 +1164,28 @@
 #define FT_STORE_AXE3			0x004A
 #define FT_STORE_AXE4			0x004B
 #define FT_STORE_AXE5			0x004C
+#define FT_STORE_AMMO0			0x004D
+#define FT_STORE_AMMO1			0x004E
+#define FT_STORE_AMMO2			0x004F
+#define FT_STORE_FLET0			0x0050
+#define FT_STORE_FLET1			0x0051
+#define FT_STORE_FLET2			0x0052
+#define FT_STORE_FLET3			0x0053
+#define FT_STORE_WARHALL0		0x0054
+#define FT_STORE_WARHALL1		0x0055
+#define FT_STORE_WARHALL2		0x0056
+#define FT_STORE_WARHALL3		0x0057
+#define FT_STORE_WARHALL4		0x0058
+#define FT_STORE_WARHALL5		0x0059
+#define FT_STORE_CLOTH0			0x005A
+#define FT_STORE_CLOTH1			0x005B
+#define FT_STORE_HARMOUR0		0x005C
+#define FT_STORE_HARMOUR1		0x005D
+#define FT_STORE_HARMOUR2		0x005E
+#define FT_STORE_HARMOUR3		0x005F
+#define FT_STORE_HARMOUR4		0x0060
+#define FT_STORE_HARMOUR5		0x0061
+
 
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
 

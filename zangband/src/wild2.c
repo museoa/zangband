@@ -233,7 +233,7 @@ static void build_store(int yy, int xx, store_type *st_ptr)
 
 	/* Clear previous contents, add a store door */
 	cave[y][x].feat = FEAT_FLOOR;
-	cave[y][x].fld_idx = FT_STORE_GENERAL + st_ptr->type;
+	cave[y][x].fld_idx = wild_build[st_ptr->type].field;
 	
 	/* Save location of store door */
 	st_ptr->x = x;
