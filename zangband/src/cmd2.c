@@ -1056,8 +1056,8 @@ static bool do_cmd_tunnel_aux(int x, int y)
 
 	int dig = p_ptr->skills[SKILL_DIG];
 
-	s16b *fld_ptr = field_hook_find(&c_ptr->fld_idx,
-									FIELD_ACT_INTERACT_TEST, &action);
+	field_type *f_ptr = field_hook_find(c_ptr,
+										FIELD_ACT_INTERACT_TEST, &action);
 
 	/* Take a turn */
 	p_ptr->state.energy_use = 100;
@@ -1075,9 +1075,9 @@ static bool do_cmd_tunnel_aux(int x, int y)
 		return (FALSE);
 	}
 
-	if (*fld_ptr && (action == 0))
+	if (f_ptr && (action == 0))
 	{
-		if (!field_hook_single(&fld_list[*fld_ptr], FIELD_ACT_INTERACT, dig))
+		if (!field_hook_single(f_ptr, FIELD_ACT_INTERACT, dig))
 		{
 			/* Finished tunneling */
 			return (FALSE);
@@ -1761,7 +1761,7 @@ void do_cmd_alter(void)
 			py_attack(x, y);
 		}
 
-		else if (*field_hook_find(&c_ptr->fld_idx, FIELD_ACT_INTERACT_TEST,
+		else if (field_hook_find(c_ptr, FIELD_ACT_INTERACT_TEST,
 								  &action))
 		{
 			switch (action)

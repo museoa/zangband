@@ -1161,7 +1161,7 @@ bool field_hook_special(cave_type *c_ptr, u16b ftype, ...)
 
 	bool deleted = FALSE;
     
-	FLD_ITT_START(c_ptr->fld_idx, f_ptr)
+	FLD_ITT_START (c_ptr->fld_idx, f_ptr)
 	{
 		/* Point to the field */
 		t_ptr = &t_info[f_ptr->t_idx];
@@ -1198,47 +1198,43 @@ bool field_hook_special(cave_type *c_ptr, u16b ftype, ...)
  * Call the required action function for the first field
  * in the specified list with that function.
  */
-s16b *field_hook_find(s16b *field_ptr, int action, ...)
+field_type *field_hook_find(cave_type *c_ptr, int action, ...)
 {
-	va_list vp;
-
 	field_type *f_ptr;
-	field_thaum *t_ptr;
-    
-    /* Begin the Varargs Stuff */
-	va_start(vp, action);
+	field_thaum *t_ptr;   
 
-	while (*field_ptr)
+	FLD_ITT_START (c_ptr->fld_idx, f_ptr)
 	{
 		/* Point to the field */
-		f_ptr = &fld_list[*field_ptr];
 		t_ptr = &t_info[f_ptr->t_idx];
 
 		/* Is there a function to call? */
 		if (t_ptr->action[action])
 		{
+			va_list vp;
+
+		    /* Begin the Varargs Stuff */
+			va_start(vp, action);
+		
 			/* Call the action function */
 			if (t_ptr->action[action] (f_ptr, vp))
 			{
 				/* The field wants to be deleted */
-				delete_field_ptr(field_ptr);
+				delete_field_ptr(field_find(f_ptr));
 			}
+			
+			/* End the Varargs Stuff */
+			va_end(vp);
 
 			/* Done */
-			break;
-		}
-		else
-		{
-			/* Get next field in the list */
-			field_ptr = &f_ptr->next_f_idx;
+			return (f_ptr);
 		}
 	}
+	FLD_ITT_END;
     
-    /* End the Varargs Stuff */
-	va_end(vp);
 
-	/* Done */
-	return (field_ptr);
+	/* Found nothing */
+	return (NULL);
 }
 
 
