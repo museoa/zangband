@@ -96,6 +96,9 @@ static int see_interesting(int x, int y)
 	/* Check for traps */
 	if (is_visible_trap(c_ptr)) return (TRUE);
 
+	/* Check for building */
+	if (is_build(c_ptr)) return (TRUE);
+
 	/* Check memorized grids */
 	if (pc_ptr->feat)
 	{

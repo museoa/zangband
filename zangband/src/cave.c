@@ -77,6 +77,16 @@ int distance(int x1, int y1, int x2, int y2)
 
 
 /*
+ * Return TRUE if the given square contains a building
+ */
+bool is_build(const cave_type *c_ptr)
+{
+	/* We assume field_is_type does not alter the data in c_ptr */
+	return (field_is_type(c_ptr, FTYPE_BUILD) != 0);
+}
+
+
+/*
  * Return TRUE if the given square contains a trap
  */
 bool is_trap(const cave_type *c_ptr)
