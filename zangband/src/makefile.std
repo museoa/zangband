@@ -597,8 +597,8 @@ $(LUAWSRCS): %.c: %.pkg $(LUA)tolua$(EXEC)
 ##
 ## Hack... .o files can be created from .obj files
 ##
-%.o:%.obj
-	move $@ $<
+#%.o:%.obj
+#	move $@ $<
 
 #LUALIST := basic.lua feature.lua verbatim.lua code.lua typedef.lua \
 #	container.lua package.lua module.lua define.lua enumerate.lua \
