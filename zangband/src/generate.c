@@ -984,6 +984,9 @@ static void quest_gen(void)
 
 #endif
 
+static int map_wid_old = 66;
+
+
 void map_panel_size(void)
 {
 	/* Only if the map exists */
@@ -1006,6 +1009,35 @@ void map_panel_size(void)
 	/* Assume illegal panel */
 	panel_row_min = max_panel_rows;
 	panel_col_min = max_panel_cols;
+	
+	/* Kill previous size of line */
+	
+#ifdef USE_TRANSPARENCY
+	/* String of terrain characters along one row of the map */
+	if (mp_ta) C_KILL(mp_ta, map_wid_old, byte);
+	if (mp_tc) C_KILL(mp_tc, map_wid_old, char);
+	
+#endif /* USE_TRANSPARENCY */	
+	
+	/* String of characters along one row of the map */
+	if (mp_a) C_KILL(mp_a, map_wid_old, byte);
+	if (mp_c) C_KILL(mp_c, map_wid_old, char);
+	
+	/* Save size */
+	map_wid_old = map_wid;
+	
+	/* Make the new lines */
+
+#ifdef USE_TRANSPARENCY
+	/* String of terrain characters along one row of the map */
+	C_MAKE(mp_ta, map_wid, byte);
+	C_MAKE(mp_tc, map_wid, char);
+	
+#endif /* USE_TRANSPARENCY */	
+	
+	/* String of characters along one row of the map */
+	C_MAKE(mp_a, map_wid, byte);
+	C_MAKE(mp_c, map_wid, char);
 }
 
 /* Make a real level */

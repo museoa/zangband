@@ -1730,22 +1730,14 @@ void prt_map(void)
 	/* map bounds */
 	s16b	xmin, xmax, ymin, ymax;
 	
-	byte *ma, *pa;
-	char *mc, *pc;
+	byte *pa;
+	char *pc;
 	
 #ifdef USE_TRANSPARENCY
-	byte *mta, *pta;
-	char *mtc, *ptc;
-	
-	/* String of terrain characters along one row of the map */
-	C_MAKE(mta, map_wid, byte);
-	C_MAKE(mtc, map_wid, char);
+	byte *pta;
+	char *ptc;
 	
 #endif /* USE_TRANSPARENCY */	
-	
-	/* String of characters along one row of the map */
-	C_MAKE(ma, map_wid, byte);
-	C_MAKE(mc, map_wid, char);
 	
 	/* Access the cursor state */
 	(void)Term_get_cursor(&v);
@@ -1859,13 +1851,13 @@ void prt_map(void)
 	}
 #endif /* USE_TRANSPARENCY */
 
-		/* Pointers to current position in the string */
-		pa = ma;
-		pc = mc;
+	/* Pointers to current position in the string */
+	pa = mp_a;
+	pc = mp_c;
 		
 #ifdef USE_TRANSPARENCY
-		pta = mta;
-		ptc = mtc;
+	pta = mp_ta;
+	ptc = mp_tc;
 #endif /* USE_TRANSPARENCY */	
 	
 	
@@ -1900,7 +1892,6 @@ void prt_map(void)
 			*pc++ = c;
 			*pta++ = ta;
 			*ptc++ = tc;
-			n++;
 						
 #else /* USE_TRANSPARENCY */
 
@@ -1917,49 +1908,35 @@ void prt_map(void)
 			/* Queue visible. */
 			*pa++ = a;
 			*pc++ = c;
-			n++;
 
 #endif /* USE_TRANSPARENCY */
 		}
 		
-		/* If a square was added */
-		if (n)
-		{
+		
 #ifdef USE_TRANSPARENCY		
 
-			pa = ma;
-			pc = mc;
-			pta = mta;
-			ptc = mtc;
+		/* Point to start of line */
+		pa = mp_a;
+		pc = mp_c;
+		pta = mp_ta;
+		ptc = mp_tc;
 			
-			/* Efficiency -- Redraw that row of the map */
-			Term_queue_line(xmin - panel_col_prt, y - panel_row_prt, n, pa, pc, pta, ptc);
+		/* Efficiency -- Redraw that row of the map */
+		Term_queue_line(xmin - panel_col_prt, y - panel_row_prt, xmax - xmin + 1
+			, pa, pc, pta, ptc);
 		
 #else /* USE_TRANSPARENCY */
 
-			pa = ma;
-			pc = mc;
+		/* Point to start of line */
+		pa = mp_a;
+		pc = mp_c;
 			
-			/* Efficiency -- Redraw that row of the map */
-			Term_queue_line(xmin - panel_col_prt, y - panel_row_prt, n, pa, pc);
+		/* Efficiency -- Redraw that row of the map */
+		Term_queue_line(xmin - panel_col_prt, y - panel_row_prt, xmax - xmin + 1
+			, pa, pc);
 		
 #endif /* USE_TRANSPARENCY */
-		}
 	}
-
-#ifdef USE_TRANSPARENCY
-	/* String of terrain characters along one row of the map */
-	C_KILL(mta, map_wid, byte);
-	C_KILL(mtc, map_wid, char);
-	
-#endif /* USE_TRANSPARENCY */	
-	
-	/* String of characters along one row of the map */
-	C_KILL(ma, map_wid, byte);
-	C_KILL(mc, map_wid, char);
-	
-	/* Display player */
-	lite_spot(py, px);
 
 	/* Restore the cursor */
 	(void)Term_set_cursor(v);

@@ -4387,6 +4387,12 @@ void play_game(bool new_game)
 	/* Hack -- Enforce "delayed death" */
 	if (p_ptr->chp < 0) death = TRUE;
 
+	/* Resize / init the map */
+	map_panel_size();
+
+	/* Verify the (possibly resized) panel */
+	verify_panel();
+	
 	/* Process */
 	while (TRUE)
 	{

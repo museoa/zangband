@@ -271,6 +271,12 @@ extern s16b panel_col_min, panel_col_max;
 extern s16b panel_col_prt, panel_row_prt;
 extern s16b map_wid;
 extern s16b map_hgt;
+extern byte *mp_a;
+extern char *mp_c;	
+#ifdef USE_TRANSPARENCY
+extern byte *mp_ta;
+extern char *mp_tc;
+#endif /* USE_TRANSPARENCY */
 extern s16b py;
 extern s16b px;
 extern s16b target_who;

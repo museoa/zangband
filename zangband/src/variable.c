@@ -349,6 +349,15 @@ s16b panel_col_prt, panel_row_prt;
 s16b map_wid = 66;
 s16b map_hgt = 22;
 
+byte *mp_a = NULL;
+char *mp_c = NULL;
+	
+#ifdef USE_TRANSPARENCY
+byte *mp_ta = NULL;
+char *mp_tc = NULL;
+#endif /* USE_TRANSPARENCY */
+
+
 /*
  * Player location in dungeon
  */
