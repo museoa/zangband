@@ -296,7 +296,7 @@ dos_clean:
 	-del *.o
 	-del lua\*.o
 	-del l-*.c
-	-del lua\tolua
+	-del lua\tolua.exe
 
 ##
 ## Variation -- Compile using the main-ibm.c port with djgpp
@@ -307,7 +307,7 @@ ibm: LIBS := -lpc
 ibm: EXEC := .exe
 ibm: INSTALL := copy zangband.exe ..
 ibm_clean: dos_clean
-	# Blank line required here
+
 
 ##
 ## Variation -- Compile using the lcc32 compiler
