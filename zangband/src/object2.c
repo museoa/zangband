@@ -4008,6 +4008,9 @@ void apply_magic(object_type *o_ptr, int lev, int lev_dif, byte flags)
 	/* Maximal chance of being "good" */
 	if (f > 42) f = 42;
 
+	/* Lights are more likely to be ego-items */
+	if (o_ptr->tval == TV_LITE) f *= 2;
+
 	/* Roll for ego items */
 	if ((flags & OC_NORMAL) && (randint0(100) < f))
 	{
