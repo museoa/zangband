@@ -3927,6 +3927,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			{
 				/* Some races are immune */
 				case RACE_GOLEM:
+				case RACE_SKELETON:
 				case RACE_ZOMBIE:
 				case RACE_VAMPIRE:
 				case RACE_SPECTRE:
