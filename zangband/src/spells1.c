@@ -4199,9 +4199,7 @@ int dist_to_line(int y, int x, int y1, int x1, int y2, int x2)
 /*
  * XXX XXX XXX
  * Modified version of los() for calculation of disintegration balls.
- * Disintegration effects are stopped by permanent walls.
- *
- * Hack - fields do _not_ stop disintegration.
+ * Disintegration effects are stopped by permanent walls and fields.
  */
 static bool in_disintegration_range(int y1, int x1, int y2, int x2)
 {
@@ -4518,6 +4516,328 @@ static bool in_disintegration_range(int y1, int x1, int y2, int x2)
 	/* Assume los */
 	return (TRUE);
 }
+
+/*
+ * XXX XXX XXX
+ * Modified version of los() for calculation of balls.
+ * Balls are stopped by walls, and by fields.
+ */
+static bool in_ball_range(int y1, int x1, int y2, int x2)
+{
+	/* Delta */
+	int dx, dy;
+
+	/* Absolute */
+	int ax, ay;
+
+	/* Signs */
+	int sx, sy;
+
+	/* Fractions */
+	int qx, qy;
+
+	/* Scanners */
+	int tx, ty;
+
+	/* Scale factors */
+	int f1, f2;
+
+	/* Slope, or 1/Slope, of LOS */
+	int m;
+	
+	cave_type *c_ptr;
+
+
+	/* Extract the offset */
+	dy = y2 - y1;
+	dx = x2 - x1;
+
+	/* Extract the absolute offset */
+	ay = ABS(dy);
+	ax = ABS(dx);
+
+
+	/* Handle adjacent (or identical) grids */
+	if ((ax < 2) && (ay < 2)) return (TRUE);
+
+
+	/* Paranoia -- require "safe" origin */
+	/* if (!in_bounds(y1, x1)) return (FALSE); */
+
+
+	/* Directly South/North */
+	if (!dx)
+	{
+		/* South -- check for walls */
+		if (dy > 0)
+		{
+			for (ty = y1 + 1; ty < y2; ty++)
+			{
+				c_ptr = area(ty, x1);
+				
+				if (!cave_floor_grid(c_ptr)) return (FALSE);
+				
+				/* Fields can block magic */
+				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC,
+					FIELD_INFO_NO_MAGIC))
+				{
+					return (FALSE);
+				}
+			}
+		}
+
+		/* North -- check for walls */
+		else
+		{
+			for (ty = y1 - 1; ty > y2; ty--)
+			{
+				c_ptr = area(ty, x1);
+				
+				if (!cave_floor_grid(c_ptr)) return (FALSE);
+				
+				/* Fields can block balls */
+				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC,
+					FIELD_INFO_NO_MAGIC))
+				{
+					return (FALSE);
+				}
+			}
+		}
+
+		/* Assume los */
+		return (TRUE);
+	}
+
+	/* Directly East/West */
+	if (!dy)
+	{
+		/* East -- check for walls */
+		if (dx > 0)
+		{
+			for (tx = x1 + 1; tx < x2; tx++)
+			{
+				c_ptr = area(y1, tx);
+				
+				if (!cave_floor_grid(c_ptr)) return (FALSE);
+				
+				/* Fields can block balls */
+				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC,
+					FIELD_INFO_NO_MAGIC))
+				{
+					return (FALSE);
+				}
+			}
+		}
+
+		/* West -- check for walls */
+		else
+		{
+			for (tx = x1 - 1; tx > x2; tx--)
+			{
+				c_ptr = area(y1, tx);
+				
+				if (!cave_floor_grid(c_ptr)) return (FALSE);
+				
+				/* Fields can block balls */
+				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC,
+					FIELD_INFO_NO_MAGIC))
+				{
+					return (FALSE);
+				}
+			}
+		}
+
+		/* Assume los */
+		return (TRUE);
+	}
+
+
+	/* Extract some signs */
+	sx = (dx < 0) ? -1 : 1;
+	sy = (dy < 0) ? -1 : 1;
+
+
+	/* Vertical "knights" */
+	if (ax == 1)
+	{
+		if (ay == 2)
+		{
+			c_ptr = area(y1 + sy, x1);
+			
+			/* Fields can block balls */
+			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC,
+				FIELD_INFO_NO_MAGIC))
+			{
+				return (FALSE);
+			}
+			
+			if (cave_floor_grid(c_ptr)) return (TRUE);
+		}
+	}
+
+	/* Horizontal "knights" */
+	else if (ay == 1)
+	{
+		if (ax == 2)
+		{
+			c_ptr = area(y1, x1 + sx);
+			
+			/* Fields can block balls */
+			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC,
+				FIELD_INFO_NO_MAGIC))
+			{
+				return (FALSE);
+			}
+			
+			if (cave_floor_grid(c_ptr)) return (TRUE);
+		}
+	}
+
+
+	/* Calculate scale factor div 2 */
+	f2 = (ax * ay);
+
+	/* Calculate scale factor */
+	f1 = f2 << 1;
+
+
+	/* Travel horizontally */
+	if (ax >= ay)
+	{
+		/* Let m = dy / dx * 2 * (dy * dx) = 2 * dy * dy */
+		qy = ay * ay;
+		m = qy << 1;
+
+		tx = x1 + sx;
+
+		/* Consider the special case where slope == 1. */
+		if (qy == f2)
+		{
+			ty = y1 + sy;
+			qy -= f1;
+		}
+		else
+		{
+			ty = y1;
+		}
+
+		/* Note (below) the case (qy == f2), where */
+		/* the LOS exactly meets the corner of a tile. */
+		while (x2 - tx)
+		{
+			c_ptr = area(ty, tx);
+			
+			if (!cave_floor_grid(c_ptr)) return (FALSE);
+			
+			/* Fields can block balls */
+			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC,
+				FIELD_INFO_NO_MAGIC))
+			{
+				return (FALSE);
+			}
+
+			qy += m;
+
+			if (qy < f2)
+			{
+				tx += sx;
+			}
+			else if (qy > f2)
+			{
+				ty += sy;
+				
+				c_ptr = area(ty, tx);
+				
+				if (!cave_floor_grid(c_ptr)) return (FALSE);
+				
+				/* Fields can block balls */
+				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC,
+					FIELD_INFO_NO_MAGIC))
+				{
+					return (FALSE);
+				}
+				qy -= f1;
+				tx += sx;
+			}
+			else
+			{
+				ty += sy;
+				qy -= f1;
+				tx += sx;
+			}
+		}
+	}
+
+	/* Travel vertically */
+	else
+	{
+		/* Let m = dx / dy * 2 * (dx * dy) = 2 * dx * dx */
+		qx = ax * ax;
+		m = qx << 1;
+
+		ty = y1 + sy;
+
+		if (qx == f2)
+		{
+			tx = x1 + sx;
+			qx -= f1;
+		}
+		else
+		{
+			tx = x1;
+		}
+
+		/* Note (below) the case (qx == f2), where */
+		/* the LOS exactly meets the corner of a tile. */
+		while (y2 - ty)
+		{
+			c_ptr = area(ty, tx);
+			
+			if (!cave_floor_grid(c_ptr)) return (FALSE);
+			
+			/* Fields can block balls */
+			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC,
+				FIELD_INFO_NO_MAGIC))
+			{
+				return (FALSE);
+			}
+
+			qx += m;
+
+			if (qx < f2)
+			{
+				ty += sy;
+			}
+			else if (qx > f2)
+			{
+				tx += sx;
+				
+				c_ptr = area(ty, tx);
+				
+				if (!cave_floor_grid(c_ptr)) return (FALSE);
+				
+				/* Fields can block disintegration to */
+				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC,
+					FIELD_INFO_NO_MAGIC))
+				{
+					return (FALSE);
+				}
+				qx -= f1;
+				ty += sy;
+			}
+			else
+			{
+				tx += sx;
+				qx -= f1;
+				ty += sy;
+			}
+		}
+	}
+
+	/* Assume los */
+	return (TRUE);
+}
+
 
 
 /*
@@ -4951,7 +5271,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 							if (distance(by, bx, y, x) != cdis) continue;
 
 							/* The blast is stopped by walls */
-							if (!los(by, bx, y, x)) continue;
+							if (!in_ball_range(by, bx, y, x)) continue;
 
 							/* Save this grid */
 							gy[grids] = y;
@@ -5031,7 +5351,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 						else
 						{
 							/* Ball explosions are stopped by walls/fields */
-							if (!los(y2, x2, y, x)) continue;
+							if (!in_ball_range(y2, x2, y, x)) continue;
 						}
 
 						/* Save this grid */
