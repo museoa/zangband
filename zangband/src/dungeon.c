@@ -884,6 +884,8 @@ static void process_world(void)
 	cave_type *c_ptr = area(p_ptr->px, p_ptr->py);
 	const mutation_type *mut_ptr;
 
+	int depth = base_level();
+
 	/* Announce the level feeling */
 	if ((turn - old_turn == 1000) && (p_ptr->depth)) do_cmd_feeling();
 
@@ -1047,7 +1049,7 @@ static void process_world(void)
 
 	if ((c_ptr->feat == FEAT_SHAL_LAVA) && !(FLAG(p_ptr, TR_FEATHER)))
 	{
-		int damage = resist(p_ptr->lev, res_fire_lvl);
+		int damage = resist(depth / 2 + 1, res_fire_lvl);
 
 		if (damage)
 		{
@@ -1060,7 +1062,7 @@ static void process_world(void)
 
 	else if (c_ptr->feat == FEAT_DEEP_LAVA)
 	{
-		int damage = resist(p_ptr->lev * 2, res_fire_lvl);
+		int damage = resist(depth, res_fire_lvl);
 		cptr message;
 		cptr hit_from;
 
@@ -1089,7 +1091,7 @@ static void process_world(void)
 
 	if ((c_ptr->feat == FEAT_SHAL_ACID) && !(FLAG(p_ptr, TR_FEATHER)))
 	{
-		int damage = resist(p_ptr->lev, res_acid_lvl);
+		int damage = resist(depth / 2 + 1, res_acid_lvl);
 
 		if (damage)
 		{
@@ -1102,7 +1104,7 @@ static void process_world(void)
 
 	else if (c_ptr->feat == FEAT_DEEP_ACID)
 	{
-		int damage = resist(p_ptr->lev * 2, res_acid_lvl);
+		int damage = resist(depth, res_acid_lvl);
 		cptr message;
 		cptr hit_from;
 
@@ -1129,12 +1131,13 @@ static void process_world(void)
 		}
 	}
 
-	if ((c_ptr->feat == FEAT_SHAL_SWAMP) &&	!(FLAG(p_ptr, TR_FEATHER)))
+	if ((c_ptr->feat == FEAT_SHAL_SWAMP) &&	!(FLAG(p_ptr, TR_FEATHER)) &&
+		!(p_ptr->rp.pclass == CLASS_RANGER && p_ptr->lev >= 15))
 	{
-		int damage = resist(p_ptr->lev / 2 + 1, res_pois_lvl);
+		int damage = resist(depth / 4 + 1, res_pois_lvl);
 
 		/* Hack - some resistance will save you */
-		if (damage >= p_ptr->lev / 2)
+		if (damage >= p_ptr->depth / 4)
 		{
 			/* Take damage */
 			msgf("The plants poison you!");
@@ -1143,9 +1146,10 @@ static void process_world(void)
 		}
 	}
 
-	else if ((c_ptr->feat == FEAT_DEEP_SWAMP) && !p_ptr->tim.invuln)
+	else if ((c_ptr->feat == FEAT_DEEP_SWAMP) && !p_ptr->tim.invuln &&
+		!(p_ptr->rp.pclass == CLASS_RANGER && p_ptr->lev >= 15))
 	{
-		int damage = resist(p_ptr->lev, res_pois_lvl);
+		int damage = resist(depth / 2, res_pois_lvl);
 		cptr message;
 		cptr hit_from;
 
@@ -1181,7 +1185,7 @@ static void process_world(void)
 		{
 			/* Take damage */
 			msgf("You are drowning!");
-			take_hit(randint1(p_ptr->lev), "drowning");
+			take_hit(randint1(depth + 1), "drowning");
 			cave_no_regen = TRUE;
 		}
 	}
@@ -1196,7 +1200,7 @@ static void process_world(void)
 	if (cave_wall_grid(c_ptr))
 	{
 		if (!p_ptr->tim.invuln && !p_ptr->tim.wraith_form &&
-			((p_ptr->chp > (p_ptr->lev / 5)) || 
+			((p_ptr->chp > (depth / 10)) || 
 			 !(FLAG(p_ptr, TR_PASS_WALL))))
 		{
 			cptr dam_desc;
@@ -1214,7 +1218,7 @@ static void process_world(void)
 				dam_desc = "solid rock";
 			}
 
-			take_hit(1 + (p_ptr->lev / 5), dam_desc);
+			take_hit(1 + (depth / 10), dam_desc);
 		}
 	}
 
