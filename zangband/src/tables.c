@@ -6398,7 +6398,7 @@ option_type option_info[OPT_MAX] =
 	{FALSE, 3, "auto_notes",			"Automatically note important events" },
 	{FALSE, 3, "take_notes",			"Allow notes to be appended to a file" },
 	{TRUE,  0, NULL,					"Number 253" },
-	{TRUE,  7, "testing_stack",			"Allow objects to stack on floor" },
+	{TRUE,  8, "testing_stack",			"Allow objects to stack on floor" },
 	{TRUE,  0, NULL,					"Number 255" },
 };
 
