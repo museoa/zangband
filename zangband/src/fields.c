@@ -1049,6 +1049,9 @@ s16b place_field(int y, int x, s16b t_idx)
 
 	field_type temp_field;
 	field_type *ft_ptr = &temp_field;
+	
+	/* Paranoia */
+	if ((t_idx <= 0) || (t_idx >= max_t_idx)) return (0);
 
 	/* Make the field */
 	field_prep(ft_ptr, t_idx);
