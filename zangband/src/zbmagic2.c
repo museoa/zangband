@@ -5201,7 +5201,7 @@ static void borg_add_temp_next(int x, int y)
  * borg failed to hit the target then there must be a wall in the way and the
  * borg will use borg_los_pure and borg_bolt_los_pure.
  */
-void borg_temp_fill(bool all_monsters)
+void borg_temp_fill(void)
 {
 	int i;
 	int dist;
@@ -5209,21 +5209,11 @@ void borg_temp_fill(bool all_monsters)
 	int x1, y1;
 
 	/* Avoid doing this costly procedure twice to get the same data */
-	if (all_monsters && 
-		borg_temp_fill_valid &&
+	if (borg_temp_fill_valid &&
 		borg_temp_fill_valid == borg_t) return;
 
-	/* Only if the temp arrays need to be filled */
-	if (all_monsters)
-	{
-		/* Set the counter to this turn */
-		borg_temp_fill_valid = borg_t;
-	}
-	else
-	{
-		/* Set the counter to never */
-		borg_temp_fill_valid = FALSE;
-	}
+	/* Set the counter to this turn */
+	borg_temp_fill_valid = borg_t;
 
 	/* Reset lists */
 	borg_temp_n = 0;
@@ -5235,10 +5225,8 @@ void borg_temp_fill(bool all_monsters)
 	/* Find "nearby" monsters */
 	for (i = 1; i < borg_kills_nxt; i++)
 	{
-		borg_kill *kill;
-
-		/* Monster */
-		kill = &borg_kills[i];
+		/* Get a monster */
+		borg_kill *kill = &borg_kills[i];
 
 		/* Skip dead monsters */
 		if (!kill->r_idx) continue;
@@ -5344,8 +5332,6 @@ void borg_temp_fill(bool all_monsters)
 						borg_add_temp_bolt(x1, y1);
 					}
 				}
-				/* Are we looking for a token monster or for all of them? */
-				if (!all_monsters && borg_ball_n) return;
 			}
 		}
 	}
@@ -5411,7 +5397,7 @@ bool borg_attack(bool boosted_bravery)
 	}
 
 	/* Check the surroundings for monsters */
-	borg_temp_fill(TRUE);
+	borg_temp_fill();
 
 	/* Are there monsters to kill? */
 	if (!borg_ball_n)

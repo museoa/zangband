@@ -2068,7 +2068,7 @@ bool borg_defend(int p1)
 	if (borg_refresh_goi()) return (TRUE);
 
 	/* Make sure you have the monsters lined correctly */
-	borg_temp_fill(TRUE);
+	borg_temp_fill();
 
 	/* Analyze the possible setup moves */
 	for (g = 0; g < BD_MAX; g++)

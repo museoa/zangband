@@ -1605,65 +1605,97 @@ bool borg_flow_shop_entry(int i)
 
 
 /*
+ * This proc returns TRUE if from (x, y) there is a monster to target, or the
+ * spot next to a monster.  It fails if the new position is next to a monster.
+ * The method to find out if there is a monster is taken from borg_temp_fill.
+ */
+bool borg_aim_ball(int x, int y)
+{
+	int i, dx, dy;
+	int x1, y1;
+	bool found_target = FALSE;
+
+	/* Loop through the close, known monsters */
+	for (i = 0; i < borg_temp_n; i++)
+	{
+		/* Fail if the new position is next to a monster */
+		if (distance(x, y, borg_temp_x[i], borg_temp_y[i]) == 1) return (FALSE);
+
+		/* Don't bother if a monster has been found already */
+		if (!found_target)
+		{
+			for (dx = -1; dx <= 1; dx++)
+			{
+				for (dy = -1; dy <= 1; dy++)
+				{
+					/* Get the coords of the target grid */
+					x1 = borg_temp_x[i] + dx;
+					y1 = borg_temp_y[i] + dy;
+
+					/* Bounds checking */
+					if (!map_in_bounds(x1, y1)) continue;
+
+					/* Is this grid out of range? */
+					if (distance(x, y, x1, y1) > MAX_RANGE) continue;
+
+					/* If the borg has no ESP
+					 * or the borg has ESP and has just hit his target
+					 * assume there is no wall in the way
+					 * OR
+					 * If the borg has ESP and has just missed his target
+					 * assume there is a wall in the way
+					 */
+					if (((!FLAG(bp_ptr, TR_TELEPATHY) ||
+						(FLAG(bp_ptr, TR_TELEPATHY) && successful_target)) &&
+						borg_los(x, y, x1, y1))
+						||
+						(FLAG(bp_ptr, TR_TELEPATHY) && !successful_target &&
+						borg_los_pure(x, y, x1, y1)))
+					{
+						/* If it is not a wall it is OK for a ball */
+						if (!borg_cave_wall_grid(map_loc(x, y)))
+						{
+							/* Found a targettable monster */
+							found_target = TRUE;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/* return result */
+	return (found_target);
+}
+
+/*
  * Take a couple of steps to line up a shot
  *
  */
 bool borg_flow_kill_aim(bool viewable)
 {
 	int o_y, o_x;
-	int s_c_y = c_y;
-	int s_c_x = c_x;
-	int i;
-
-	/* Check the surroundings for monsters */
-	borg_temp_fill(FALSE);
-
-	/* If you can shoot from where you are, don't bother reaiming */
-	if (borg_ball_n) return (FALSE);
 
 	/* Consider each adjacent spot */
-	for (o_x = -2; o_x <= 2; o_x++)
+	for (o_x = c_x - 2; o_x <= c_x + 2; o_x++)
 	{
-		for (o_y = -2; o_y <= 2; o_y++)
+		for (o_y = c_y - 2; o_y <= c_y + 2; o_y++)
 		{
 			/* borg_attack would have already checked
 			   for a shot from where I currently am */
-			if (o_x == 0 && o_y == 0)
-				continue;
-
-			/* XXX  Mess with where the program thinks the
-			   player is */
-			c_x = s_c_x + o_x;
-			c_y = s_c_y + o_y;
+			if (o_x == c_x && o_y == c_y) continue;
 
 			/* avoid screen edgeds */
-			if (!map_in_bounds(c_x + 2, c_y + 2)) continue;
-			if (!map_in_bounds(c_x - 2, c_y - 2)) continue;
-
-			/* Make sure we do not end up next to a monster */
-			for (i = 0; i < borg_bolt_n; i++)
-			{
-				if (distance(c_y, c_x, borg_bolt_y[i], borg_bolt_x[i]) == 1)
-					break;
-			}
-			if (i != borg_bolt_n)
-				continue;
-
-			/* Check the surroundings for monsters */
-			borg_temp_fill(FALSE);
+			if (!map_in_bounds(o_x, o_y)) continue;
 
 			/* Is there a possible target? */
-			if (borg_ball_n)
+			if (borg_aim_ball(o_x, o_y))
 			{
 				/* Clear the flow codes */
 				borg_flow_clear();
 
 				/* Enqueue the grid */
-				borg_flow_enqueue_grid(c_x, c_y);
-
-				/* restore the saved player position */
-				c_x = s_c_x;
-				c_y = s_c_y;
+				borg_flow_enqueue_grid(o_x, o_y);
 
 				/* Spread the flow */
 				borg_flow_spread(5, TRUE, (bool) !viewable, FALSE);
@@ -1675,16 +1707,14 @@ bool borg_flow_kill_aim(bool viewable)
 				/* Take one step */
 				if (!borg_flow_old(GOAL_KILL)) return (FALSE);
 
+				/* success */
 				return (TRUE);
 			}
 		}
 	}
 
-	/* restore the saved player position */
-	c_x = s_c_x;
-	c_y = s_c_y;
-
-	return FALSE;
+	/* No new flow */
+	return (FALSE);
 }
 
 /*
