@@ -489,13 +489,13 @@ static void town_gen(u16b town_num, int *xx, int *yy)
 				cave[y][x].feat = FEAT_PEBBLES;
 
 				/* Create Dirt */
-				if (!rand_int(5))
+				if (!rand_int(3))
 				{
 					cave[y][x].feat = FEAT_DIRT;
 				}
 
 				/* Create see-through terrain */
-				else if (!rand_int(5))
+				else if (!rand_int(20))
 				{
 					cave[y][x].feat = FEAT_NONE;
 				}
@@ -650,7 +650,7 @@ static void init_towns(void)
 				w_ptr->mon_gen = 0;
 
 				/* Monsters are fairly common */
-				w_ptr->mon_prob = 16;
+				w_ptr->mon_prob = 64;
 			}
 		}
 
@@ -695,7 +695,7 @@ static void init_vanilla_town(void)
 	p_ptr->wilderness_x = town[1].x * 16 + xx;
 	p_ptr->wilderness_y = town[1].y * 16 + yy;
 
-	/* One town */
+	/* One town + 1 for bounds*/
 	town_count = 2;
 }
 
@@ -4253,9 +4253,15 @@ void wild_done(void)
 
 	wild_grid.x = max_wild + 1;
 	wild_grid.y = max_wild + 1;
-
-	/* Change to the wilderness */
+	
+	/* hack */
+	dun_level = 1;
+	
+	/* Change to the wilderness - but do not light anything yet.*/
 	change_level(0);
+	
+	/* Change back to inside wilderness */
+	dun_level = 0;	
 
 	/* Make the wilderness block cache. */
 	move_wild();
@@ -4266,10 +4272,9 @@ void wild_done(void)
 
 /*
  * Create the wilderness - dodgy function now.  Much to be done.
- * Later this will use a fractal method to make the wilderness.
- * Towns / dungeons yet.
- * No monsters yet.
+ * No lakes yet.
  * No roads yet.
+ * No specials yet.
  */
 
 void create_wilderness(void)
@@ -4308,7 +4313,7 @@ void create_wilderness(void)
 				wild[j][i].done.mon_gen = 0;
 
 				/* Monsters are fairly common */
-				wild[j][i].done.mon_prob = 16;
+				wild[j][i].done.mon_prob = 64;
 			}
 		}
 
@@ -4485,7 +4490,7 @@ void create_wilderness(void)
 		}
 	}
 
-	/* A dodgy town */
+	/* A dodgy town generation routine */
 	init_towns();
 
 	/* Free up memory used to create the wilderness */
