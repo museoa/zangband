@@ -3923,16 +3923,14 @@ int stat_cap(int stat)
 
 int adjust_stat(int stat, int value, int amount)
 {
-	int i;
-
 	int cap = stat_cap(stat);
 
-    /* Apply bonus/penalty */
-    value += amount * 10;
+	/* Apply bonus/penalty */
+	value += amount * 10;
 
 	/* Cap value */
-    if (value > cap) value = cap;
-    if (value < 30)  value = 30;
+	if (value > cap) value = cap;
+	if (value < 30)  value = 30;
 
 	/* Return the result */
 	return (value);
