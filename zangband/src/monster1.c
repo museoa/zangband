@@ -1450,7 +1450,7 @@ static void roff_top(int r_idx)
 	{
 		char buf[6];
 
-		itoa(r_idx, buf, 10);
+		sprintf(buf, "%d", r_idx);
 
 		Term_addstr(-1, TERM_WHITE, " (");
 		Term_addstr(-1, TERM_L_BLUE, buf);
