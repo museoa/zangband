@@ -1,3 +1,4 @@
+# CVS: Last edit by $Author$ on $Date$
 # q0willow.txt
 # Old Man Willow Quest
 # By Shayne Steele (steele@cs.fsu.edu)
@@ -74,3 +75,4 @@ D:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 # Starting position
 P:18:1
+
