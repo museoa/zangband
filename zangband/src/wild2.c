@@ -1444,7 +1444,7 @@ static void build_store(int xx, int yy, store_type *st_ptr)
 
 	/* Find the "center" of the store */
 	y0 = yy * 6 + 4;
-	x0 = xx * 17 + 8;
+	x0 = xx * 16 + 8;
 
 	/* Determine the store boundaries */
 	y1 = y0 - randint1(2);
