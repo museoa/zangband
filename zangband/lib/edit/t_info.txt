@@ -1505,7 +1505,7 @@ L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_jewel(object)
 
 # Jeweler
-N:103:Copper Jewler
+N:103:Copper Jeweler
 G:5:r
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
