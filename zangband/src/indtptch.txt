@@ -1,20 +1,27 @@
---- indent-2.2.7/src/gperf.c	Tue Feb  5 20:03:14 2002
-+++ indent-2.2.7.bak/src/gperf.c	Mon Dec 17 20:07:45 2001
+Only in indent-2.2.7/src/: .deps
+Only in indent-2.2.7/src/: Makefile
+Only in indent-2.2.7/src/: args.o
+Only in indent-2.2.7/src/: backup.o
+Only in indent-2.2.7/src/: comments.o
+Only in indent-2.2.7/src/: globs.o
+diff -u indent-2.2.7.bak/src/gperf.c indent-2.2.7/src/gperf.c
+--- indent-2.2.7.bak/src/gperf.c	Mon Dec 17 20:07:45 2001
++++ indent-2.2.7/src/gperf.c	Tue Feb  5 20:03:14 2002
 @@ -1,12 +1,12 @@
  /* C code produced by gperf version 2.7.2 */
  /* Command-line: gperf -D -c -l -p -t -T -g -j1 -o -K rwd -N is_reserved indent.gperf  */
  
--#define TOTAL_KEYWORDS 33
-+#define TOTAL_KEYWORDS 32
+-#define TOTAL_KEYWORDS 32
++#define TOTAL_KEYWORDS 33
  #define MIN_WORD_LENGTH 2
--#define MAX_WORD_LENGTH 13
--#define MIN_HASH_VALUE 4
--#define MAX_HASH_VALUE 55
--/* maximum key range = 52, duplicates = 0 */
-+#define MAX_WORD_LENGTH 8
-+#define MIN_HASH_VALUE 3
-+#define MAX_HASH_VALUE 35
-+/* maximum key range = 33, duplicates = 0 */
+-#define MAX_WORD_LENGTH 8
+-#define MIN_HASH_VALUE 3
+-#define MAX_HASH_VALUE 35
+-/* maximum key range = 33, duplicates = 0 */
++#define MAX_WORD_LENGTH 13
++#define MIN_HASH_VALUE 4
++#define MAX_HASH_VALUE 55
++/* maximum key range = 52, duplicates = 0 */
  
  #ifdef __GNUC__
  __inline
@@ -22,249 +29,254 @@
  {
    static unsigned char asso_values[] =
      {
--      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
--      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
--      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
--      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
--      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
--      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
--      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
--      56, 56, 56, 56, 56, 56, 56, 20, 56, 56,
--      56, 56, 56, 56,  0, 56, 56, 56, 56, 56,
--      56, 56, 56, 56, 56, 56, 56, 56, 27, 16,
--       1,  0,  7, 23,  3, 21, 56,  0,  7,  2,
--      17, 28, 56, 56,  5,  4,  0,  7, 14,  0,
--      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
--      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
--      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
--      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
--      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
--      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
--      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
--      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
--      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
--      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
--      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
--      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
--      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
--      56, 56, 56, 56, 56, 56
-+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-+      36, 36, 36, 36, 36, 36, 36, 36, 19, 11,
-+       1,  0, 20, 19,  3,  9, 36,  0,  9,  2,
-+      11,  0, 36, 36,  3,  4,  0, 19, 14,  0,
-+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-+      36, 36, 36, 36, 36, 36
+-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+-      36, 36, 36, 36, 36, 36, 36, 36, 19, 11,
+-       1,  0, 20, 19,  3,  9, 36,  0,  9,  2,
+-      11,  0, 36, 36,  3,  4,  0, 19, 14,  0,
+-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+-      36, 36, 36, 36, 36, 36
++      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
++      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
++      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
++      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
++      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
++      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
++      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
++      56, 56, 56, 56, 56, 56, 56, 20, 56, 56,
++      56, 56, 56, 56,  0, 56, 56, 56, 56, 56,
++      56, 56, 56, 56, 56, 56, 56, 56, 27, 16,
++       1,  0,  7, 23,  3, 21, 56,  0,  7,  2,
++      17, 28, 56, 56,  5,  4,  0,  7, 14,  0,
++      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
++      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
++      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
++      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
++      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
++      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
++      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
++      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
++      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
++      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
++      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
++      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
++      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
++      56, 56, 56, 56, 56, 56
      };
    return len + asso_values[(unsigned char)str[len - 1]] + asso_values[(unsigned char)str[0]];
  }
-@@ -62,12 +62,13 @@
+@@ -62,13 +62,12 @@
  {
    static unsigned char lengthtable[] =
      {
--       4,  5,  4,  6,  7,  5,  6,  6,  5,  6,  7,  3,  8,  6,
--       8,  4,  4,  5,  8,  6,  3,  4,  6,  6,  6,  5,  2,  2,
--       5, 13,  4,  6,  4
-+       2,  4,  5,  4,  6,  7,  5,  6,  6,  3,  6,  8,  4,  5,
-+       6,  4,  4,  6,  6,  8,  4,  5,  5,  3,  7,  8,  6,  6,
-+       2,  4,  6,  5
+-       2,  4,  5,  4,  6,  7,  5,  6,  6,  3,  6,  8,  4,  5,
+-       6,  4,  4,  6,  6,  8,  4,  5,  5,  3,  7,  8,  6,  6,
+-       2,  4,  6,  5
++       4,  5,  4,  6,  7,  5,  6,  6,  5,  6,  7,  3,  8,  6,
++       8,  4,  4,  5,  8,  6,  3,  4,  6,  6,  6,  5,  2,  2,
++       5, 13,  4,  6,  4
      };
    static struct templ wordlist[] =
      {
-+      {"do", rw_sp_nparen,},
+-      {"do", rw_sp_nparen,},
        {"else", rw_sp_else,},
        {"while", rw_sp_paren,},
        {"enum", rw_enum,},
-@@ -76,39 +77,36 @@
+@@ -77,36 +76,39 @@
        {"short", rw_decl,},
        {"struct", rw_struct_like,},
        {"signed", rw_decl,},
--      {"float", rw_decl,},
-+      {"int", rw_decl,},
+-      {"int", rw_decl,},
++      {"float", rw_decl,},
        {"switch", rw_switch,},
--      {"typedef", rw_decl,},
--      {"for", rw_sp_paren,},
--      {"unsigned", rw_decl,},
--      {"sizeof", rw_sizeof,},
++      {"typedef", rw_decl,},
++      {"for", rw_sp_paren,},
++      {"unsigned", rw_decl,},
++      {"sizeof", rw_sizeof,},
        {"register", rw_decl,},
--      {"void", rw_decl,},
++      {"void", rw_decl,},
        {"case", rw_case,},
        {"const", rw_decl,},
--      {"volatile", rw_decl,},
-       {"extern", rw_decl,},
--      {"int", rw_decl,},
-       {"char", rw_decl,},
-+      {"void", rw_decl,},
-+      {"return", rw_return,},
-       {"static", rw_decl,},
 +      {"volatile", rw_decl,},
-+      {"goto", rw_break,},
-+      {"break", rw_break,},
-+      {"float", rw_decl,},
-+      {"for", rw_sp_paren,},
-+      {"typedef", rw_decl,},
-+      {"unsigned", rw_decl,},
-       {"va_dcl", rw_decl,},
+       {"extern", rw_decl,},
++      {"int", rw_decl,},
+       {"char", rw_decl,},
+-      {"void", rw_decl,},
 -      {"return", rw_return,},
--      {"union", rw_struct_like,},
-+      {"sizeof", rw_sizeof,},
-       {"if", rw_sp_paren,},
--      {"do", rw_sp_nparen,},
+       {"static", rw_decl,},
+-      {"volatile", rw_decl,},
+-      {"goto", rw_break,},
 -      {"break", rw_break,},
--      {"MAP_ITT_START", rw_sp_paren,},
+-      {"float", rw_decl,},
+-      {"for", rw_sp_paren,},
+-      {"typedef", rw_decl,},
+-      {"unsigned", rw_decl,},
+       {"va_dcl", rw_decl,},
+-      {"sizeof", rw_sizeof,},
++      {"return", rw_return,},
++      {"union", rw_struct_like,},
+       {"if", rw_sp_paren,},
++      {"do", rw_sp_nparen,},
++      {"break", rw_break,},
++      {"MAP_ITT_START", rw_sp_paren,},
        {"long", rw_decl,},
        {"global", rw_decl,},
--      {"goto", rw_break,}
-+      {"union", rw_struct_like,}
+-      {"union", rw_struct_like,}
++      {"goto", rw_break,}
      };
  
    static short lookup[] =
      {
--      -1, -1, -1, -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9,
--      10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
--      24, 25, 26, 27, 28, 29, 30, -1, 31, -1, -1, -1, -1, -1,
--      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 32
-+      -1, -1, -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10,
-+      11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-+      25, 26, 27, 28, 29, -1, 30, 31
+-      -1, -1, -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10,
+-      11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+-      25, 26, 27, 28, 29, -1, 30, 31
++      -1, -1, -1, -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9,
++      10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
++      24, 25, 26, 27, 28, 29, 30, -1, 31, -1, -1, -1, -1, -1,
++      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 32
      };
  
    if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)
-diff -u indent-2.2.7/src/indent.c indent-2.2.7.bak/src/indent.c
---- indent-2.2.7/src/indent.c	Tue Feb  5 19:48:48 2002
-+++ indent-2.2.7.bak/src/indent.c	Tue Oct 16 19:23:49 2001
-@@ -990,10 +990,7 @@
+Only in indent-2.2.7/src/: indent
+diff -u indent-2.2.7.bak/src/indent.c indent-2.2.7/src/indent.c
+--- indent-2.2.7.bak/src/indent.c	Tue Oct 16 19:23:49 2001
++++ indent-2.2.7/src/indent.c	Tue Feb  5 19:48:48 2002
+@@ -990,7 +990,10 @@
                      }
  
                      sp_sw = false;
--                    /* force_nl = true; */	/* must force newline after if */
--					
--					/* Force space instead */
--					parser_state_tos->want_blank = true;
-+                    force_nl = true;	/* must force newline after if */
+-                    force_nl = true;	/* must force newline after if */
++                    /* force_nl = true; */	/* must force newline after if */
++					
++					/* Force space instead */
++					parser_state_tos->want_blank = true;
                      parser_state_tos->last_u_d = true;	/* inform lexi that a
  							 * following operator is
  							 * unary */
-@@ -1221,16 +1218,10 @@
+@@ -1218,10 +1221,16 @@
                  /* parser_state_tos->pcas e will be used by dump_line to decide
                   * how to indent the label. force_nl will force a case n: to be
                   * on a line by itself */
--				
--				
--				/* No forced newline after case statement */
--				force_nl = false;
--				
--				parser_state_tos->want_blank = scase;
++				
++				
++				/* No forced newline after case statement */
++				force_nl = false;
++				
++				parser_state_tos->want_blank = scase;
  
--                parser_state_tos->pcase = scase;
-+                force_nl = parser_state_tos->pcase = scase;
+-                force_nl = parser_state_tos->pcase = scase;
++                parser_state_tos->pcase = scase;
                  scase = false;
--                
-+                parser_state_tos->want_blank = false;
+-                parser_state_tos->want_blank = false;
++                
                  break;
  
                  /* Deal with C++ Class::Method */
-@@ -1317,7 +1308,6 @@
+@@ -1308,6 +1317,7 @@
                  {
                      force_nl = true;	/* force other stuff on same line as '{' onto
                                           * new line */
--					
++					
                      parser_state_tos->in_stmt = false;	/* dont indent the '{' */
                  }
                  else
-@@ -1376,15 +1366,9 @@
+@@ -1366,9 +1376,15 @@
                          parser_state_tos->block_init_level++;
                      }
                  }
--				
--				if (parser_state_tos->in_parameter_declaration)
--                {
--                    prefix_blankline_requested = 0;
--                }
- 
--                if (s_code != e_code /* && parser_state_tos->block_init != 1 */)
-+                if (s_code != e_code && parser_state_tos->block_init != 1)
-                 {
--#if 0				
-                     if ((!parser_state_tos->in_decl && !btype_2) ||
-                         (parser_state_tos->in_decl && !braces_on_struct_decl_line))
-                     {
-@@ -1405,13 +1389,14 @@
-                             parser_state_tos->want_blank = true;
-                         }
-                     }
--#endif /* 0 */
--					/* Structs look like normal nested braces */
--					dump_line(true);
--					parser_state_tos->want_blank = true;
--					parser_state_tos->i_l_follow = 0;
-                 }
--                else
-+
-+                if (parser_state_tos->in_parameter_declaration)
++				
++				if (parser_state_tos->in_parameter_declaration)
 +                {
 +                    prefix_blankline_requested = 0;
 +                }
-+
-+                if (s_code == e_code)
+ 
+-                if (s_code != e_code && parser_state_tos->block_init != 1)
++                if (s_code != e_code /* && parser_state_tos->block_init != 1 */)
+                 {
++#if 0				
+                     if ((!parser_state_tos->in_decl && !btype_2) ||
+                         (parser_state_tos->in_decl && !braces_on_struct_decl_line))
+                     {
+@@ -1389,14 +1405,13 @@
+                             parser_state_tos->want_blank = true;
+                         }
+                     }
++#endif /* 0 */
++					/* Structs look like normal nested braces */
++					dump_line(true);
++					parser_state_tos->want_blank = true;
++					parser_state_tos->i_l_follow = 0;
+                 }
+-
+-                if (parser_state_tos->in_parameter_declaration)
+-                {
+-                    prefix_blankline_requested = 0;
+-                }
+-
+-                if (s_code == e_code)
++                else
                  {
                      parser_state_tos->ind_stmt = false;	/* dont put extra indentation
  							   on line with '{' */
-diff -u indent-2.2.7/src/indent.gperf indent-2.2.7.bak/src/indent.gperf
---- indent-2.2.7/src/indent.gperf	Tue Feb  5 19:59:21 2002
-+++ indent-2.2.7.bak/src/indent.gperf	Tue Oct 16 19:23:49 2001
-@@ -31,5 +31,4 @@
+diff -u indent-2.2.7.bak/src/indent.gperf indent-2.2.7/src/indent.gperf
+--- indent-2.2.7.bak/src/indent.gperf	Tue Oct 16 19:23:49 2001
++++ indent-2.2.7/src/indent.gperf	Tue Feb  5 19:59:21 2002
+@@ -31,4 +31,5 @@
  for, rw_sp_paren,
  else, rw_sp_else,
  do, rw_sp_nparen,
--MAP_ITT_START, rw_sp_paren,
++MAP_ITT_START, rw_sp_paren,
  sizeof, rw_sizeof,
-diff -u indent-2.2.7/src/io.c indent-2.2.7.bak/src/io.c
---- indent-2.2.7/src/io.c	Sun Jan 13 21:57:50 2002
-+++ indent-2.2.7.bak/src/io.c	Tue Oct 16 19:23:49 2001
-@@ -714,16 +714,10 @@
+Only in indent-2.2.7/src/: indent.o
+diff -u indent-2.2.7.bak/src/io.c indent-2.2.7/src/io.c
+--- indent-2.2.7.bak/src/io.c	Tue Oct 16 19:23:49 2001
++++ indent-2.2.7/src/io.c	Sun Jan 13 21:57:50 2002
+@@ -714,10 +714,16 @@
              int current_column,
              int target_column)
  {
--    int save_tabs = use_tabs;
--	
--	if (current_column >= target_column)
-+    if (current_column >= target_column)
+-    if (current_column >= target_column)
++    int save_tabs = use_tabs;
++	
++	if (current_column >= target_column)
      {
          return current_column;
      }
--	
--	/* Turn off tabs in function declarations */
--	if (parser_state_tos->in_parameter_declaration)
--		use_tabs = false;
++	
++	/* Turn off tabs in function declarations */
++	if (parser_state_tos->in_parameter_declaration)
++		use_tabs = false;
      
  
      if (use_tabs && tabsize > 1)
-@@ -739,8 +733,6 @@
+@@ -733,6 +739,8 @@
              offset = tabsize;
  	}
      }
--	
--	use_tabs = save_tabs;
++	
++	use_tabs = save_tabs;
  
      while (current_column < target_column)
      {
+Only in indent-2.2.7/src/: io.o
+Only in indent-2.2.7/src/: lexi.o
+Only in indent-2.2.7/src/: parse.o
