@@ -2021,9 +2021,6 @@ static void calc_hitpoints(void)
 
 /*
  * Extract and set the current "lite radius"
- *
- * SWD: Experimental modification: multiple light sources have additive effect.
- *
  */
 static void calc_torch(void)
 {
@@ -2087,15 +2084,6 @@ static void calc_torch(void)
 	 */
 	if (p_ptr->cur_lite == 0 && p_ptr->lite) p_ptr->cur_lite = 1;
 
-	/* end experimental mods */
-
-	/* Reduce lite when running if requested */
-	if (p_ptr->running && view_reduce_lite)
-	{
-		/* Reduce the lite radius if needed */
-		if (p_ptr->cur_lite > 1) p_ptr->cur_lite = 1;
-	}
-	
 	/*
 	 * Hack - blindness gives a torch radius of zero.
 	 * This speeds up the map_info() function.

@@ -3483,8 +3483,8 @@
 /* {TRUE,  0, NULL,					"Number 45" }, svr_ptr->options[12] */
 #define smart_packs				svr_ptr->options[13]
 /* {TRUE,  0, NULL,					"Number 47" }, svr_ptr->options[14] */
-#define	view_reduce_lite		p_ptr->options[33]
-#define view_reduce_view		p_ptr->options[34]
+/* {TRUE,  0, NULL,					"Number 48" }, p_ptr->options[33] */
+/* {TRUE,  0, NULL,					"Number 49" }, p_ptr->options[34] */
 #define avoid_abort				p_ptr->options[35]
 #define avoid_other				p_ptr->options[36]
 #define flush_failure			p_ptr->options[37]
