@@ -632,14 +632,14 @@ F:SHOW_MODS
 N:75:& Light Crossbow~
 G:}:s
 I:19:23:0
-W:15:0:110:140
+W:15:0:60:140
 A:15/1
 F:SHOW_MODS
 
 N:76:& Heavy Crossbow~
 G:}:s
 I:19:24:0
-W:30:0:200:300
+W:30:0:100:300
 A:30/1
 F:SHOW_MODS
 
