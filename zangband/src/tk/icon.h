@@ -189,19 +189,10 @@ extern t_assign g_assign_none;
 
 extern int *g_feat_lite;
 
-/*
- * When TRUE, uses 4 levels of grid light. The icon set must
- * support 4 levels for this to work.
- */
-extern int g_torchlite;
-
 extern int *g_image_object;
 
 /* Feature index for masked features */
 extern int *g_background;
-
-/* One icon for each feature, for each shape */
-extern cptr keyword_wall[];
 
 /* Layers of feature icons */
 enum {

@@ -29,13 +29,8 @@ int *g_background = NULL;
 t_darken g_darken[3];
 t_assign *g_icon_map[ICON_LAYER_MAX][MAX_HGT];
 bool g_icon_map_changed = FALSE;
-int g_torchlite; /* Use 4 levels of torch lite */
 int *g_image_monster, *g_image_object;
 bool g_daytime; /* Day or night */
-
-cptr keyword_wall[] = { "not", "single", "ns", "we", "corner_nw",
-	"corner_ne", "corner_sw", "corner_se", "tri_n", "tri_s",
-	"tri_w", "tri_e", "quad", NULL };
 
 /*
  * Calculate the light radius for this floor grid
@@ -400,30 +395,6 @@ void get_display_info(int y, int x, t_display *displayPtr)
 			}
 		}
 		g_icon_map_changed = FALSE;
-	}
-
-	/* Option: Use 4 levels of lighting. */
-	if (g_torchlite)
-	{
-		/* Grid is lit by the character's light source */
-		if (dark == GRID_LITE_TORCH)
-		{
-			/* Calculate distance from py,px */
-			dark = MAX(ABS(x - p_ptr->px), ABS(y - p_ptr->py)) - 1;
-
-			/* We may have dark == -1 at py,px */
-			if (dark < 0) dark = 0;
-
-			/* Light radius > 3 not allowed */
-			else if (dark > 3) dark = 3;
-		}
-
-		/* Grid isn't lit by character's light source */
-		else
-		{
-			/* Maximum darkness */
-			dark = 3;
-		}
 	}
 
 	/* In the Town */
