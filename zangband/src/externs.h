@@ -440,7 +440,7 @@ extern void display_player(int mode);
 extern void do_cmd_character(void);
 extern errr file_character(cptr name, bool full);
 extern errr process_pref_file_command(char *buf);
-extern errr process_pref_file(cptr name);
+extern errr process_pref_file(cptr fmt, ...);
 extern void print_equippy(void);
 extern errr check_time_init(void);
 extern errr check_load_init(void);

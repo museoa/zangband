@@ -3238,42 +3238,27 @@ FALSE;
  */
 static void load_all_pref_files(void)
 {
-	char buf[1024];
-
-	/* Access the "race" pref file */
-	strnfmt(buf, 1024, "%s.prf", rp_ptr->title);
+	/* Process that file */
+	(void)process_pref_file("%s.prf", rp_ptr->title);
 
 	/* Process that file */
-	(void)process_pref_file(buf);
-
-	/* Access the "class" pref file */
-	strnfmt(buf, 1024, "%s.prf", cp_ptr->title);
+	(void)process_pref_file("%s.prf", cp_ptr->title);
 
 	/* Process that file */
-	(void)process_pref_file(buf);
-
-	/* Access the "character" pref file */
-	strnfmt(buf, 1024, "%s.prf", player_base);
-
-	/* Process that file */
-	(void)process_pref_file(buf);
+	(void)process_pref_file("%s.prf", player_base);
 
 	/* Access the "realm 1" pref file */
 	if (p_ptr->realm1 != REALM_NONE)
 	{
-		strnfmt(buf, 1024, "%s.prf", realm_names[p_ptr->realm1]);
-
 		/* Process that file */
-		(void)process_pref_file(buf);
+		(void)process_pref_file("%s.prf", realm_names[p_ptr->realm1]);
 	}
 
 	/* Access the "realm 2" pref file */
 	if (p_ptr->realm2 != REALM_NONE)
 	{
-		strnfmt(buf, 1024, "%s.prf", realm_names[p_ptr->realm2]);
-
 		/* Process that file */
-		(void)process_pref_file(buf);
+		(void)process_pref_file("%s.prf", realm_names[p_ptr->realm2]);
 	}
 }
 

@@ -1405,28 +1405,16 @@ void init_angband(void)
 	note("[Initializing user pref files...]");
 
 	/* Access the "basic" pref file */
-	strcpy(buf, "pref.prf");
-
-	/* Process that file */
-	(void)process_pref_file(buf);
+	(void)process_pref_file("pref.prf");
 
 	/* Access the "user" pref file */
-	strcpy(buf, "user.prf");
-
-	/* Process that file */
-	(void)process_pref_file(buf);
+	(void)process_pref_file("user.prf");
 
 	/* Access the "basic" system pref file */
-	strnfmt(buf, 1024, "pref-%s.prf", ANGBAND_SYS);
-
-	/* Process that file */
-	(void)process_pref_file(buf);
+	(void)process_pref_file("pref-%s.prf", ANGBAND_SYS);
 
 	/* Access the "user" system pref file */
-	strnfmt(buf, 1024, "user-%s.prf", ANGBAND_SYS);
-
-	/* Process that file */
-	(void)process_pref_file(buf);
+	(void)process_pref_file("user-%s.prf", ANGBAND_SYS);
 
 	/* Initialise the fake monochrome flag */
 	fake_monochrome = (!use_graphics

@@ -1491,7 +1491,7 @@ static bool do_cmd_pref_key_load(int dummy)
 	}
 	
 	/* Process the given filename */
-	if (0 != process_pref_file(tmp))
+	if (0 != process_pref_file("%s", tmp))
 	{
 		/* Prompt */
 		msg_print("Could not load file!");
@@ -1978,7 +1978,7 @@ static bool do_cmd_pref_vis_load(int dummy)
 	}
 	
 	/* Process the given filename */
-	if (0 != process_pref_file(tmp))
+	if (0 != process_pref_file("%s", tmp))
 	{
 		/* Prompt */
 		msg_print("Could not load file!");
@@ -2630,7 +2630,7 @@ static bool do_cmd_pref_col_load(int dummy)
 	}
 	
 	/* Process the given filename */
-	if (0 != process_pref_file(tmp))
+	if (0 != process_pref_file("%s", tmp))
 	{
 		/* Prompt */
 		msg_print("Could not load file!");

@@ -361,7 +361,7 @@ errr process_pref_file_command(char *buf)
 	if (buf[0] == '%')
 	{
 		/* Attempt to Process the given file */
-		return (process_pref_file(buf + 2));
+		return (process_pref_file("%s", buf + 2));
 	}
 
 
@@ -983,7 +983,7 @@ static errr process_pref_file_aux(cptr name)
 		if (buf[0] == '%')
 		{
 			/* Process that file if allowed */
-			(void)process_pref_file(buf + 2);
+			(void)process_pref_file("%s", buf + 2);
 
 			/* Continue */
 			continue;
@@ -1025,12 +1025,22 @@ static errr process_pref_file_aux(cptr name)
  * We also accept the special "?" and "%" directives, which
  * allow conditional evaluation and filename inclusion.
  */
-errr process_pref_file(cptr name)
+errr process_pref_file(cptr fmt, ...)
 {
-	char buf[1024];
+	char buf[1024], name[1024];
 
 	errr err = 0;
+	
+	va_list vp;
 
+	/* Begin the Varargs Stuff */
+	va_start(vp, fmt);
+
+	/* Format the args, save the length */
+	(void)vstrnfmt(name, 1024, fmt, vp);
+
+	/* End the Varargs Stuff */
+	va_end(vp);
 
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_PREF, name);
