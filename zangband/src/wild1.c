@@ -15,6 +15,10 @@
 
 #include "wild.h"
 
+/* The starting position of the player */
+int wild_stairs_x = 0;
+int wild_stairs_y = 0;
+
 /* Is the building a store? */
 bool build_is_store(s16b type)
 {
@@ -60,41 +64,9 @@ bool build_is_general(byte type)
 /* Find a place for the player */
 static void place_player_start(u32b *x, u32b *y, u16b this_town)
 {
-	int i, j;
-	
-	int count = 0;
-	
-	while (count < 10000) 
-	{
-		/* Hack - Find a place for the player */
-		i = randint1(127);
-		j = randint1(64);
-
-		if (cave[j][i].feat == FEAT_FLOOR) break;
-		
-		/* infinite loop protection */
-		count++;
-	}
-	
-	if (count > 9999)
-	{
-		/* Try to look for an "open spot" */
-		
-		while (TRUE) 
-		{
-			/* Hack - Find a place for the player */
-			i = randint1(127);
-			j = randint1(64);
-
-			if (cave[j][i].feat == FEAT_NONE) break;
-			
-			/* infinite loop protection ?*/
-		}
-	}
-
 	/* Hack - Reset player position to be on the stairs in town */
-	*x = town[this_town].x * 16 + i;
-	*y = town[this_town].y * 16 + j;
+	*x = town[this_town].x * 16 + wild_stairs_x;
+	*y = town[this_town].y * 16 + wild_stairs_y;
 }
 
 

@@ -312,6 +312,9 @@ static void town_gen_hack(u16b town_num)
 
 	/* Clear previous contents, add down stairs */
 	cave[yy][xx].feat = FEAT_MORE;
+	
+	wild_stairs_x = xx;
+	wild_stairs_y = yy;
 }
 
 
@@ -455,6 +458,10 @@ static void draw_general(int x0, int y0, store_type *st_ptr, int x, int y)
 
 			/* Clear previous contents, add down stairs */
 			cave[y0][x0].feat = FEAT_MORE;
+			
+			/* Save the location so that we can start on it */
+			wild_stairs_x = x * 8 + x0 % 8;
+			wild_stairs_y = y * 8 + y0 % 8;
 			
 			break;
 		}

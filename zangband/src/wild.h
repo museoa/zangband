@@ -41,6 +41,9 @@
 #define ROAD_BORDER		(WILD_BLOCK_SIZE * 120)
 #define GROUND_LEVEL	(WILD_BLOCK_SIZE * 100)
 
+extern int wild_stairs_x;
+extern int wild_stairs_y;
+
 /* Externs */
 extern bool build_is_general(byte type);
 extern void clear_temp_block(void);
