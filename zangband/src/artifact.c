@@ -876,7 +876,7 @@ static int random_curse(object_type *o_ptr, int artifact_bias)
 
 	}
 
-	switch (randint1(12))
+	switch (randint1(13))
 	{
 		case 1:
 			o_ptr->flags4 |= TR4_HURT_ACID;
@@ -909,6 +909,9 @@ static int random_curse(object_type *o_ptr, int artifact_bias)
 		case 11:
 		case 12:
 			o_ptr->flags4 |= TR4_AUTO_CURSE;
+			break;
+		case 13:
+			o_ptr->flags4 |= TR4_CANT_EAT;
 			break;
 	}
 

@@ -106,32 +106,40 @@ static void do_cmd_eat_food_aux(object_type *o_ptr)
 		if (p_ptr->food < PY_FOOD_ALERT)	/* Hungry */
 			msgf("Your hunger can only be satisfied with fresh blood!");
 	}
-	else if (p_ptr->rp.prace == RACE_SKELETON)
+	else if (p_ptr->flags4 & (TR4_CANT_EAT))
 	{
-		if (!((o_ptr->sval == SV_FOOD_WAYBREAD) ||
-			  (o_ptr->sval < SV_FOOD_BISCUIT)))
+		if (p_ptr->rp.prace == RACE_SKELETON)
 		{
-			object_type *q_ptr;
+			if (!((o_ptr->sval == SV_FOOD_WAYBREAD) ||
+				  (o_ptr->sval < SV_FOOD_BISCUIT)))
+			{
+				object_type *q_ptr;
+	
+				msgf("The food falls through your jaws!");
 
-			msgf("The food falls through your jaws!");
+				/* Create the item */
+				q_ptr = object_prep(lookup_kind(o_ptr->tval, o_ptr->sval));
 
-			/* Create the item */
-			q_ptr = object_prep(lookup_kind(o_ptr->tval, o_ptr->sval));
-
-			/* Drop the object from heaven */
-			drop_near(q_ptr, -1, p_ptr->px, p_ptr->py);
+				/* Drop the object from heaven */
+				drop_near(q_ptr, -1, p_ptr->px, p_ptr->py);
+			}
+			else
+			{
+				msgf("The food falls through your jaws and vanishes!");
+			}
+		}
+		else if ((p_ptr->rp.prace == RACE_GOLEM) ||
+				 (p_ptr->rp.prace == RACE_ZOMBIE) ||
+				 (p_ptr->rp.prace == RACE_SPECTRE) || (p_ptr->rp.prace == RACE_GHOUL))
+		{
+			msgf("The food of mortals is poor sustenance for you.");
+			(void)set_food(p_ptr->food + ((o_ptr->pval) / 20));
 		}
 		else
 		{
-			msgf("The food falls through your jaws and vanishes!");
+			msgf("This food is poor sustenance for you.");
+			set_food(p_ptr->food + ((o_ptr->pval) / 20));
 		}
-	}
-	else if ((p_ptr->rp.prace == RACE_GOLEM) ||
-			 (p_ptr->rp.prace == RACE_ZOMBIE) ||
-			 (p_ptr->rp.prace == RACE_SPECTRE) || (p_ptr->rp.prace == RACE_GHOUL))
-	{
-		msgf("The food of mortals is poor sustenance for you.");
-		(void)set_food(p_ptr->food + ((o_ptr->pval) / 20));
 	}
 	else
 	{
