@@ -250,7 +250,7 @@ void monster_death(int m_idx)
 	{
 		if (r_ptr->blow[i].method == RBM_EXPLODE)
 		{
-			int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+			u16b flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 			int typ = GF_MISSILE;
 			int d_dice = r_ptr->blow[i].d_dice;
 			int d_side = r_ptr->blow[i].d_side;
@@ -644,7 +644,7 @@ void monster_death(int m_idx)
 	/* One more ultra-hack: An Unmaker goes out with a big bang! */
 	else if (strstr((r_name + r_ptr->name), "Unmaker"))
 	{
-		int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+		u16b flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 		(void)project(m_idx, 6, y, x, 100, GF_CHAOS, flg);
 	}
 

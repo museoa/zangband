@@ -431,7 +431,7 @@ bool clean_shot(int y1, int x1, int y2, int x2, bool friend)
  */
 static void bolt(int m_idx, int typ, int dam_hp)
 {
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	u16b flg = PROJECT_STOP | PROJECT_KILL;
 
 	/* Target the player with a bolt attack */
 	(void)project(m_idx, 0, py, px, dam_hp, typ, flg);
@@ -445,7 +445,7 @@ static void bolt(int m_idx, int typ, int dam_hp)
  */
 static void breath(int m_idx, int typ, int dam_hp, int rad, bool breath)
 {
-	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+	u16b flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 
 	monster_type *m_ptr = &m_list[m_idx];
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];

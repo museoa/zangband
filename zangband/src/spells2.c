@@ -3443,7 +3443,7 @@ void unlite_room(int y1, int x1)
  */
 bool lite_area(int dam, int rad)
 {
-	int flg = PROJECT_GRID | PROJECT_KILL;
+	u16b flg = PROJECT_GRID | PROJECT_KILL;
 
 	/* Hack -- Message */
 	if (!p_ptr->blind)
@@ -3468,7 +3468,7 @@ bool lite_area(int dam, int rad)
  */
 bool unlite_area(int dam, int rad)
 {
-	int flg = PROJECT_GRID | PROJECT_KILL;
+	u16b flg = PROJECT_GRID | PROJECT_KILL;
 
 	/* Hack -- Message */
 	if (!p_ptr->blind)
@@ -3498,7 +3498,7 @@ bool fire_ball(int typ, int dir, int dam, int rad)
 {
 	int tx, ty;
 
-	int flg = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+	u16b flg = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 
 	/* Use the given direction */
 	tx = px + 99 * ddx[dir];
@@ -3655,7 +3655,7 @@ bool project_hook(int typ, int dir, int dam, u16b flg)
  */
 bool fire_bolt(int typ, int dir, int dam)
 {
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	u16b flg = PROJECT_STOP | PROJECT_KILL;
 	return (project_hook(typ, dir, dam, flg));
 }
 
@@ -3667,7 +3667,7 @@ bool fire_bolt(int typ, int dir, int dam)
  */
 bool fire_beam(int typ, int dir, int dam)
 {
-	int flg = PROJECT_BEAM | PROJECT_KILL;
+	u16b flg = PROJECT_BEAM | PROJECT_KILL;
 	return (project_hook(typ, dir, dam, flg));
 }
 
@@ -3693,104 +3693,104 @@ bool fire_bolt_or_beam(int prob, int typ, int dir, int dam)
  */
 bool lite_line(int dir)
 {
-	int flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_KILL;
+	u16b flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_KILL;
 	return (project_hook(GF_LITE_WEAK, dir, damroll(6, 8), flg));
 }
 
 /* Drain life from monster, and do not give it to the player */
 bool drain_life(int dir, int dam)
 {
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	u16b flg = PROJECT_STOP | PROJECT_KILL;
 	return (project_hook(GF_OLD_DRAIN, dir, dam, flg));
 }
 
 /* Drain life from monster, and give it to the player */
 bool drain_gain_life(int dir, int dam)
 {
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	u16b flg = PROJECT_STOP | PROJECT_KILL;
 	return (project_hook(GF_NEW_DRAIN, dir, dam, flg));
 }
 
 bool wall_to_mud(int dir)
 {
-	int flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+	u16b flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 	return (project_hook(GF_KILL_WALL, dir, 20 + randint(30), flg));
 }
 
 
 bool wizard_lock(int dir)
 {
-	int flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+	u16b flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 	return (project_hook(GF_JAM_DOOR, dir, 20 + randint(30), flg));
 }
 
 
 bool destroy_door(int dir)
 {
-	int flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM;
+	u16b flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM;
 	return (project_hook(GF_KILL_DOOR, dir, 0, flg));
 }
 
 
 bool disarm_trap(int dir)
 {
-	int flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM;
+	u16b flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM;
 	return (project_hook(GF_KILL_TRAP, dir, 0, flg));
 }
 
 
 bool heal_monster(int dir)
 {
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	u16b flg = PROJECT_STOP | PROJECT_KILL;
 	return (project_hook(GF_OLD_HEAL, dir, damroll(4, 6), flg));
 }
 
 
 bool speed_monster(int dir)
 {
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	u16b flg = PROJECT_STOP | PROJECT_KILL;
 	return (project_hook(GF_OLD_SPEED, dir, p_ptr->lev, flg));
 }
 
 
 bool slow_monster(int dir)
 {
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	u16b flg = PROJECT_STOP | PROJECT_KILL;
 	return (project_hook(GF_OLD_SLOW, dir, p_ptr->lev, flg));
 }
 
 
 bool sleep_monster(int dir)
 {
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	u16b flg = PROJECT_STOP | PROJECT_KILL;
 	return (project_hook(GF_OLD_SLEEP, dir, p_ptr->lev, flg));
 }
 
 
 bool stasis_monster(int dir)
 {
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	u16b flg = PROJECT_STOP | PROJECT_KILL;
 	return (project_hook(GF_STASIS, dir, p_ptr->lev, flg));
 }
 
 
 bool confuse_monster(int dir, int plev)
 {
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	u16b flg = PROJECT_STOP | PROJECT_KILL;
 	return (project_hook(GF_OLD_CONF, dir, plev, flg));
 }
 
 
 bool stun_monster(int dir, int plev)
 {
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	u16b flg = PROJECT_STOP | PROJECT_KILL;
 	return (project_hook(GF_STUN, dir, plev, flg));
 }
 
 
 bool poly_monster(int dir)
 {
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	u16b flg = PROJECT_STOP | PROJECT_KILL;
 	bool tester = (project_hook(GF_OLD_POLY, dir, p_ptr->lev, flg));
 
 	if (tester)
@@ -3802,28 +3802,28 @@ bool poly_monster(int dir)
 
 bool clone_monster(int dir)
 {
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	u16b flg = PROJECT_STOP | PROJECT_KILL;
 	return (project_hook(GF_OLD_CLONE, dir, 0, flg));
 }
 
 
 bool fear_monster(int dir, int plev)
 {
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	u16b flg = PROJECT_STOP | PROJECT_KILL;
 	return (project_hook(GF_TURN_ALL, dir, plev, flg));
 }
 
 
 bool death_ray(int dir, int plev)
 {
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	u16b flg = PROJECT_STOP | PROJECT_KILL;
 	return (project_hook(GF_DEATH_RAY, dir, plev * 200, flg));
 }
 
 
 bool teleport_monster(int dir)
 {
-	int flg = PROJECT_BEAM | PROJECT_KILL;
+	u16b flg = PROJECT_BEAM | PROJECT_KILL;
 	return (project_hook(GF_AWAY_ALL, dir, MAX_SIGHT * 5, flg));
 }
 
@@ -3833,28 +3833,28 @@ bool teleport_monster(int dir)
  */
 bool door_creation(void)
 {
-	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
+	u16b flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
 	return (project(0, 1, py, px, 0, GF_MAKE_DOOR, flg));
 }
 
 
 bool trap_creation(void)
 {
-	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
+	u16b flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
 	return (project(0, 1, py, px, 0, GF_MAKE_TRAP, flg));
 }
 
 
 bool glyph_creation(void)
 {
-	int flg = PROJECT_GRID | PROJECT_ITEM;
+	u16b flg = PROJECT_GRID | PROJECT_ITEM;
 	return (project(0, 1, py, px, 0, GF_MAKE_GLYPH, flg));
 }
 
 
 bool wall_stone(void)
 {
-	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
+	u16b flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
 
 	bool dummy = (project(0, 1, py, px, 0, GF_STONE_WALL, flg));
 
@@ -3876,14 +3876,14 @@ bool wall_stone(void)
 
 bool destroy_doors_touch(void)
 {
-	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
+	u16b flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
 	return (project(0, 1, py, px, 0, GF_KILL_DOOR, flg));
 }
 
 
 bool sleep_monsters_touch(void)
 {
-	int flg = PROJECT_KILL | PROJECT_HIDE;
+	u16b flg = PROJECT_KILL | PROJECT_HIDE;
 	return (project(0, 1, py, px, p_ptr->lev, GF_OLD_SLEEP, flg));
 }
 
@@ -3946,7 +3946,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 {
 	int stat = 0;
 
-	int flg = (PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_JUMP);
+	u16b flg = (PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_JUMP);
 
 	do
 	{
@@ -4356,20 +4356,20 @@ bool deathray_monsters(void)
 
 bool charm_monster(int dir, int plev)
 {
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	u16b flg = PROJECT_STOP | PROJECT_KILL;
 	return (project_hook(GF_CHARM, dir, plev, flg));
 }
 
 
 bool control_one_undead(int dir, int plev)
 {
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	u16b flg = PROJECT_STOP | PROJECT_KILL;
 	return (project_hook(GF_CONTROL_UNDEAD, dir, plev, flg));
 }
 
 
 bool charm_animal(int dir, int plev)
 {
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	u16b flg = PROJECT_STOP | PROJECT_KILL;
 	return (project_hook(GF_CONTROL_ANIMAL, dir, plev, flg));
 }

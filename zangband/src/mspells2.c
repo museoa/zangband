@@ -21,7 +21,7 @@
  */
 static void monst_breath_monst(int m_idx, int y, int x, int typ, int dam_hp, int rad, bool breath)
 {
-	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+	u16b flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 
 	monster_type *m_ptr = &m_list[m_idx];
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
@@ -43,7 +43,7 @@ static void monst_breath_monst(int m_idx, int y, int x, int typ, int dam_hp, int
  */
 static void monst_bolt_monst(int m_idx, int y, int x, int typ, int dam_hp)
 {
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	u16b flg = PROJECT_STOP | PROJECT_KILL;
 
 	(void)project(m_idx, 0, y, x, dam_hp, typ, flg);
 }
