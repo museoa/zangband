@@ -344,50 +344,10 @@ static void borg_notice_player(void)
 
 	/* Extract the player flags */
 	player_flags(&f1, &f2, &f3);
-
-	/* Good flags */
-	if (f3 & (TR3_SLOW_DIGEST)) borg_skill[BI_SDIG] = TRUE;
-	if (f3 & (TR3_FEATHER)) borg_skill[BI_FEATH] = TRUE;
-	if (f3 & (TR3_LITE)) bp_ptr->britelite = TRUE;
-	if (f3 & (TR3_REGEN)) borg_skill[BI_REG] = TRUE;
-	if (f3 & (TR3_TELEPATHY)) borg_skill[BI_ESP] = TRUE;
-	if (f3 & (TR3_SEE_INVIS)) borg_skill[BI_SINV] = TRUE;
-	if (f2 & (TR2_FREE_ACT)) borg_skill[BI_FRACT] = TRUE;
-	if (f2 & (TR2_HOLD_LIFE)) borg_skill[BI_HLIFE] = TRUE;
-
-	/* Weird flags */
-
-	/* Bad flags */
-	if (f1 & (TR1_IMPACT)) borg_skill[BI_W_IMPACT] = TRUE;
-	if (f3 & (TR3_AGGRAVATE)) borg_skill[BI_CRSAGRV] = TRUE;
-	if (f3 & (TR3_TELEPORT)) borg_skill[BI_CRSTELE] = TRUE;
-	if (f3 & (TR3_NO_TELE)) borg_skill[BI_CRSNOTELE] = TRUE;
-	if (f3 & (TR3_NO_MAGIC)) borg_skill[BI_CRSNOMAGIC] = TRUE;
-
-	/* Immunity flags */
-	if (f2 & (TR2_IM_FIRE)) borg_skill[BI_IFIRE] = TRUE;
-	if (f2 & (TR2_IM_ACID)) borg_skill[BI_IACID] = TRUE;
-	if (f2 & (TR2_IM_COLD)) borg_skill[BI_ICOLD] = TRUE;
-	if (f2 & (TR2_IM_ELEC)) borg_skill[BI_IELEC] = TRUE;
-
-	/* Resistance flags */
-	if (f2 & (TR2_RES_ACID)) borg_skill[BI_RACID] = TRUE;
-	if (f2 & (TR2_RES_ELEC)) borg_skill[BI_RELEC] = TRUE;
-	if (f2 & (TR2_RES_FIRE)) borg_skill[BI_RFIRE] = TRUE;
-	if (f2 & (TR2_RES_COLD)) borg_skill[BI_RCOLD] = TRUE;
-	if (f2 & (TR2_RES_POIS)) borg_skill[BI_RPOIS] = TRUE;
-	if (f2 & (TR2_RES_FEAR)) borg_skill[BI_RFEAR] = TRUE;
-	if (f2 & (TR2_RES_LITE)) borg_skill[BI_RLITE] = TRUE;
-	if (f2 & (TR2_RES_DARK)) borg_skill[BI_RDARK] = TRUE;
-	if (f2 & (TR2_RES_BLIND)) borg_skill[BI_RBLIND] = TRUE;
-	if (f2 & (TR2_RES_CONF)) borg_skill[BI_RCONF] = TRUE;
-	if (f2 & (TR2_RES_SOUND)) borg_skill[BI_RSND] = TRUE;
-	if (f2 & (TR2_RES_SHARDS)) borg_skill[BI_RSHRD] = TRUE;
-	if (f2 & (TR2_RES_NEXUS)) borg_skill[BI_RNXUS] = TRUE;
-	if (f2 & (TR2_RES_NETHER)) borg_skill[BI_RNTHR] = TRUE;
-	if (f2 & (TR2_RES_CHAOS)) borg_skill[BI_RKAOS] = TRUE;
-	if (f2 & (TR2_RES_DISEN)) borg_skill[BI_RDIS] = TRUE;
-	if (f2 & (TR2_REFLECT)) borg_skill[BI_REFLECT] = TRUE;
+	
+	bp_ptr->flags1 |= f1;
+	bp_ptr->flags2 |= f2;
+	bp_ptr->flags3 |= f3;
 
 	/* Sustain flags */
 	if (f2 & (TR2_SUST_STR)) bp_ptr->sust[A_STR] = TRUE;
@@ -396,13 +356,6 @@ static void borg_notice_player(void)
 	if (f2 & (TR2_SUST_DEX)) bp_ptr->sust[A_DEX] = TRUE;
 	if (f2 & (TR2_SUST_CON)) bp_ptr->sust[A_CON] = TRUE;
 	if (f2 & (TR2_SUST_CHR)) bp_ptr->sust[A_CHR] = TRUE;
-
-	/* Hack -- Reward High Level Warriors with Res Fear */
-	if (borg_class == CLASS_WARRIOR)
-	{
-		/* Resist fear at level 30 */
-		if (bp_ptr->lev >= 30) borg_skill[BI_RFEAR] = TRUE;
-	}
 
 	/* Bloating slows the player down (a little) */
 	if (borg_skill[BI_ISGORGED]) borg_skill[BI_SPEED] -= 10;
@@ -507,26 +460,11 @@ static void borg_notice_equip(int *extra_blows, int *extra_shots,
 		if (l_ptr->kn_flags1 & TR1_DEX) my_stat_add[A_DEX] += l_ptr->pval;
 		if (l_ptr->kn_flags1 & TR1_CON) my_stat_add[A_CON] += l_ptr->pval;
 		if (l_ptr->kn_flags1 & TR1_CHR) my_stat_add[A_CHR] += l_ptr->pval;
-
-		/* Various slays */
-		if (l_ptr->kn_flags1 & TR1_SLAY_ANIMAL) borg_skill[BI_WS_ANIMAL] = TRUE;
-		if (l_ptr->kn_flags1 & TR1_SLAY_EVIL) borg_skill[BI_WS_EVIL] = TRUE;
-		if (l_ptr->kn_flags1 & TR1_SLAY_UNDEAD) borg_skill[BI_WS_UNDEAD] = TRUE;
-		if (l_ptr->kn_flags1 & TR1_SLAY_DEMON) borg_skill[BI_WS_DEMON] = TRUE;
-		if (l_ptr->kn_flags1 & TR1_SLAY_ORC) borg_skill[BI_WS_ORC] = TRUE;
-		if (l_ptr->kn_flags1 & TR1_SLAY_TROLL) borg_skill[BI_WS_TROLL] = TRUE;
-		if (l_ptr->kn_flags1 & TR1_SLAY_GIANT) borg_skill[BI_WS_GIANT] = TRUE;
-		if (l_ptr->kn_flags1 & TR1_SLAY_DRAGON) borg_skill[BI_WS_DRAGON] = TRUE;
-		if (l_ptr->kn_flags1 & TR1_KILL_DRAGON) borg_skill[BI_WK_DRAGON] = TRUE;
-		if (l_ptr->kn_flags1 & TR1_IMPACT) borg_skill[BI_W_IMPACT] = TRUE;
-		if (l_ptr->kn_flags1 & TR1_BRAND_ACID) borg_skill[BI_WB_ACID] = TRUE;
-		if (l_ptr->kn_flags1 & TR1_BRAND_ELEC) borg_skill[BI_WB_ELEC] = TRUE;
-		if (l_ptr->kn_flags1 & TR1_BRAND_FIRE) borg_skill[BI_WB_FIRE] = TRUE;
-		if (l_ptr->kn_flags1 & TR1_BRAND_COLD) borg_skill[BI_WB_COLD] = TRUE;
-		if (l_ptr->kn_flags1 & TR1_BRAND_POIS) borg_skill[BI_WB_POIS] = TRUE;
-		if (l_ptr->kn_flags1 & TR1_VORPAL) borg_skill[BI_WB_VORPAL] = TRUE;
-		if (l_ptr->kn_flags1 & TR1_VAMPIRIC) borg_skill[BI_WB_VAMPIRIC] = TRUE;
-		if (l_ptr->kn_flags1 & TR1_CHAOTIC) borg_skill[BI_WB_CHAOTIC] = TRUE;
+		
+		/* Affect flags */
+		bp_ptr->flags1 |= l_ptr->kn_flags1;
+		bp_ptr->flags2 |= l_ptr->kn_flags2;
+		bp_ptr->flags3 |= l_ptr->kn_flags3;
 
 		/* Affect infravision */
 		if (l_ptr->kn_flags1 & TR1_INFRA) borg_skill[BI_INFRA] += l_ptr->pval;
@@ -558,66 +496,11 @@ static void borg_notice_equip(int *extra_blows, int *extra_shots,
 		/* Boost might */
 		if (l_ptr->kn_flags3 & TR3_XTRA_MIGHT) (*extra_might)++;
 
-		/* Various flags */
-		if (l_ptr->kn_flags3 & TR3_SLOW_DIGEST) borg_skill[BI_SDIG] = TRUE;
-		if (l_ptr->kn_flags3 & TR3_AGGRAVATE) borg_skill[BI_CRSAGRV] = TRUE;
-		if (l_ptr->kn_flags3 & TR3_TY_CURSE) borg_skill[BI_CRSTY] = TRUE;
-		if (l_ptr->kn_flags3 & TR3_TELEPORT) borg_skill[BI_CRSTELE] = TRUE;
-		if (l_ptr->kn_flags3 & TR3_NO_TELE) borg_skill[BI_CRSNOTELE] = TRUE;
-		if (l_ptr->kn_flags3 & TR3_NO_MAGIC) borg_skill[BI_CRSNOMAGIC] = TRUE;
-
-		if (l_ptr->kn_flags3 & TR3_REGEN) borg_skill[BI_REG] = TRUE;
-		if (l_ptr->kn_flags3 & TR3_TELEPATHY) borg_skill[BI_ESP] = TRUE;
-		if (l_ptr->kn_flags3 & TR3_LITE) bp_ptr->britelite = TRUE;
-		if (l_ptr->kn_flags3 & TR3_SEE_INVIS) borg_skill[BI_SINV] = TRUE;
-		if (l_ptr->kn_flags3 & TR3_FEATHER) borg_skill[BI_FEATH] = TRUE;
-		if (l_ptr->kn_flags2 & TR2_FREE_ACT) borg_skill[BI_FRACT] = TRUE;
-		if (l_ptr->kn_flags2 & TR2_HOLD_LIFE) borg_skill[BI_HLIFE] = TRUE;
-
 		/* Immunity flags */
-		if (l_ptr->kn_flags2 & TR2_IM_FIRE)
-		{
-			borg_skill[BI_IFIRE] = TRUE;
-			borg_skill[BI_RFIRE] = TRUE;
-			my_oppose_fire = TRUE;
-		}
-		if (l_ptr->kn_flags2 & TR2_IM_ACID)
-		{
-			borg_skill[BI_IACID] = TRUE;
-			borg_skill[BI_RACID] = TRUE;
-			my_oppose_elec = TRUE;
-		}
-		if (l_ptr->kn_flags2 & TR2_IM_COLD)
-		{
-			borg_skill[BI_ICOLD] = TRUE;
-			borg_skill[BI_RCOLD] = TRUE;
-			my_oppose_elec = TRUE;
-		}
-		if (l_ptr->kn_flags2 & TR2_IM_ELEC)
-		{
-			borg_skill[BI_IELEC] = TRUE;
-			borg_skill[BI_RELEC] = TRUE;
-			my_oppose_elec = TRUE;
-		}
-
-		/* Resistance flags */
-		if (l_ptr->kn_flags2 & TR2_RES_ACID) borg_skill[BI_RACID] = TRUE;
-		if (l_ptr->kn_flags2 & TR2_RES_ELEC) borg_skill[BI_RELEC] = TRUE;
-		if (l_ptr->kn_flags2 & TR2_RES_FIRE) borg_skill[BI_RFIRE] = TRUE;
-		if (l_ptr->kn_flags2 & TR2_RES_COLD) borg_skill[BI_RCOLD] = TRUE;
-		if (l_ptr->kn_flags2 & TR2_RES_POIS) borg_skill[BI_RPOIS] = TRUE;
-		if (l_ptr->kn_flags2 & TR2_RES_CONF) borg_skill[BI_RCONF] = TRUE;
-		if (l_ptr->kn_flags2 & TR2_RES_SOUND) borg_skill[BI_RSND] = TRUE;
-		if (l_ptr->kn_flags2 & TR2_RES_LITE) borg_skill[BI_RLITE] = TRUE;
-		if (l_ptr->kn_flags2 & TR2_RES_DARK) borg_skill[BI_RDARK] = TRUE;
-		if (l_ptr->kn_flags2 & TR2_RES_CHAOS) borg_skill[BI_RKAOS] = TRUE;
-		if (l_ptr->kn_flags2 & TR2_RES_DISEN) borg_skill[BI_RDIS] = TRUE;
-		if (l_ptr->kn_flags2 & TR2_RES_SHARDS) borg_skill[BI_RSHRD] = TRUE;
-		if (l_ptr->kn_flags2 & TR2_RES_NEXUS) borg_skill[BI_RNXUS] = TRUE;
-		if (l_ptr->kn_flags2 & TR2_RES_BLIND) borg_skill[BI_RBLIND] = TRUE;
-		if (l_ptr->kn_flags2 & TR2_RES_NETHER) borg_skill[BI_RNTHR] = TRUE;
-		if (l_ptr->kn_flags2 & TR2_REFLECT) borg_skill[BI_REFLECT] = TRUE;
-		if (l_ptr->kn_flags2 & TR2_RES_FEAR) borg_skill[BI_RFEAR] = TRUE;
+		if (l_ptr->kn_flags2 & TR2_IM_FIRE) my_oppose_fire = TRUE;
+		if (l_ptr->kn_flags2 & TR2_IM_ACID) my_oppose_elec = TRUE;
+		if (l_ptr->kn_flags2 & TR2_IM_COLD) my_oppose_elec = TRUE;
+		if (l_ptr->kn_flags2 & TR2_IM_ELEC) my_oppose_elec = TRUE;
 
 		/* Sustain flags */
 		if (l_ptr->kn_flags2 & TR2_SUST_STR) bp_ptr->sust[A_STR] = TRUE;
@@ -1192,9 +1075,6 @@ static void borg_recalc_monk(int extra_blows)
 	{
 		borg_skill[BI_SPEED] += (bp_ptr->lev) / 10;
 
-		/* Free action if unencumbered at level 25 */
-		if (bp_ptr->lev > 24) borg_skill[BI_FRACT] = TRUE;
-
 		if (!look_up_equip_slot(EQUIP_BODY))
 		{
 			borg_skill[BI_ARMOR] += (bp_ptr->lev * 3) / 2;
@@ -1322,10 +1202,6 @@ static void borg_notice_lite(void)
 	/* Glowing player has light */
 	if (bp_ptr->britelite) borg_skill[BI_CUR_LITE] = 1;
 
-	/* Vampires that do not Resist Light are in trouble */
-	if (borg_race == RACE_VAMPIRE && !borg_skill[BI_RLITE])
-		borg_skill[BI_FEAR_LITE] = TRUE;
-
 	/* Examine the lite */
 	l_ptr = look_up_equip_slot(EQUIP_LITE);
 
@@ -1359,7 +1235,7 @@ static void borg_notice_lite(void)
 			bp_ptr->britelite = TRUE;
 
 			/* Vampires need to be concerned with Artifacts Lites */
-			if (borg_skill[BI_FEAR_LITE])
+			if ((borg_race == RACE_VAMPIRE) && !(bp_ptr->flags2 & TR2_RES_LITE))
 			{
 				borg_skill[BI_CUR_LITE] = 1;
 			}
@@ -2433,7 +2309,7 @@ static void borg_notice_aux2(void)
 		 borg_spell_okay_fail(REALM_TRUMP, 0, 4, 5) ||
 		 borg_spell_okay_fail(REALM_CHAOS, 0, 7, 5) ||
 		 borg_mindcr_okay_fail(MIND_MAJOR_DISP, 7, 5)) &&
-		borg_skill[BI_RBLIND] && borg_skill[BI_RCONF])
+		(bp_ptr->flags2 & TR2_RES_BLIND) && (bp_ptr->flags2 & TR2_RES_CONF))
 	{
 		borg_skill[BI_ATELEPORT] += 1000;
 	}
@@ -2441,9 +2317,9 @@ static void borg_notice_aux2(void)
 	/* Handle GOI spell carefully */
 	if ((borg_spell_legal_fail(REALM_LIFE, 3, 7, 4) ||
 		 borg_spell_legal_fail(REALM_SORCERY, 3, 7, 4)) &&
-		borg_skill[BI_RBLIND] &&
-		borg_skill[BI_RCONF] &&
-		borg_skill[BI_ESP] && (bp_ptr->mhp >= 650))
+		(bp_ptr->flags2 & TR2_RES_BLIND) &&
+		(bp_ptr->flags2 & TR2_RES_CONF) &&
+		(bp_ptr->flags3 & TR3_TELEPATHY) && (bp_ptr->mhp >= 650))
 	{
 		borg_skill[BI_AXGOI] += 1000;
 	}

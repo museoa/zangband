@@ -89,7 +89,7 @@ static int borg_danger_aux1(int r_idx)
 			{
 				z = (b_ptr->d_dice * b_ptr->d_side);
 				power = 5;
-				if (borg_skill[BI_RPOIS]) break;
+				if (bp_ptr->flags2 & TR2_RES_POIS) break;
 				if (my_oppose_pois) break;
 				if (!borg_full_damage)
 					z += 10;
@@ -104,7 +104,7 @@ static int borg_danger_aux1(int r_idx)
 				power = 20;
 				if ((borg_goi) && !borg_attacking)
 					z = 0;
-				if (borg_skill[BI_RDIS]) break;
+				if (bp_ptr->flags2 & TR2_RES_DISEN) break;
 				/* if invulnurable, no damage */
 				if (!borg_full_damage)
 					z += 500;
@@ -198,9 +198,9 @@ static int borg_danger_aux1(int r_idx)
 
 			case RBE_ACID:
 			{
-				if (borg_skill[BI_IACID]) break;
+				if (bp_ptr->flags2 & TR2_IM_ACID) break;
 				z = (b_ptr->d_dice * b_ptr->d_side);
-				if (borg_skill[BI_RACID]) z = (z + 2) / 3;
+				if (bp_ptr->flags2 & TR2_RES_ACID) z = (z + 2) / 3;
 				if (my_oppose_acid) z = (z + 2) / 3;
 				/* if invulnurable, no damage */
 				if ((borg_goi) && !borg_attacking)
@@ -214,13 +214,13 @@ static int borg_danger_aux1(int r_idx)
 
 			case RBE_ELEC:
 			{
-				if (borg_skill[BI_IELEC]) break;
+				if (bp_ptr->flags2 & TR2_IM_ELEC) break;
 				z = (b_ptr->d_dice * b_ptr->d_side);
 				power = 10;
 				/* if invulnurable, no damage */
 				if ((borg_goi) && !borg_attacking)
 					z = 0;
-				if (borg_skill[BI_RELEC]) z = (z + 2) / 3;
+				if (bp_ptr->flags2 & TR2_RES_ELEC) z = (z + 2) / 3;
 				if (my_oppose_elec) z = (z + 2) / 3;
 				if (!borg_full_damage)
 					z += 10;
@@ -231,13 +231,13 @@ static int borg_danger_aux1(int r_idx)
 
 			case RBE_FIRE:
 			{
-				if (borg_skill[BI_IFIRE]) break;
+				if (bp_ptr->flags2 & TR2_IM_FIRE) break;
 				z = (b_ptr->d_dice * b_ptr->d_side);
 				power = 10;
 				/* if invulnurable, no damage */
 				if ((borg_goi) && !borg_attacking)
 					z = 0;
-				if (borg_skill[BI_RFIRE]) z = (z + 2) / 3;
+				if (bp_ptr->flags2 & TR2_RES_FIRE) z = (z + 2) / 3;
 				if (my_oppose_fire) z = (z + 2) / 3;
 				if (!borg_full_damage)
 					z += 20;
@@ -248,13 +248,13 @@ static int borg_danger_aux1(int r_idx)
 
 			case RBE_COLD:
 			{
-				if (borg_skill[BI_ICOLD]) break;
+				if (bp_ptr->flags2 & TR2_IM_COLD) break;
 				z = (b_ptr->d_dice * b_ptr->d_side);
 				power = 10;
 				/* if invulnurable, no damage */
 				if ((borg_goi) && !borg_attacking)
 					z = 0;
-				if (borg_skill[BI_RCOLD]) z = (z + 2) / 3;
+				if (bp_ptr->flags2 & TR2_RES_COLD) z = (z + 2) / 3;
 				if (my_oppose_cold) z = (z + 2) / 3;
 				if (!borg_full_damage)
 					z += 15;
@@ -270,7 +270,7 @@ static int borg_danger_aux1(int r_idx)
 				/* if invulnurable, no damage */
 				if ((borg_goi) && !borg_attacking)
 					z = 0;
-				if (borg_skill[BI_RBLIND]) break;
+				if (bp_ptr->flags2 & TR2_RES_BLIND) break;
 				if (!borg_full_damage)
 					z += 10;
 				if ((pfe) && !borg_attacking)
@@ -285,7 +285,7 @@ static int borg_danger_aux1(int r_idx)
 				/* if invulnurable, no damage */
 				if ((borg_goi) && !borg_attacking)
 					z = 0;
-				if (borg_skill[BI_RCONF]) break;
+				if (bp_ptr->flags2 & TR2_RES_CONF) break;
 				if (!borg_full_damage)
 					z += 200;
 				if ((pfe) && !borg_attacking)
@@ -300,7 +300,7 @@ static int borg_danger_aux1(int r_idx)
 				/* if invulnurable, no damage */
 				if ((borg_goi) && !borg_attacking)
 					z = 0;
-				if (borg_skill[BI_RFEAR]) break;
+				if (bp_ptr->flags2 & TR2_RES_FEAR) break;
 				if (!borg_full_damage)
 					z += 10;
 				if ((pfe) && !borg_attacking)
@@ -315,7 +315,7 @@ static int borg_danger_aux1(int r_idx)
 				/* if invulnurable, no damage */
 				if ((borg_goi) && !borg_attacking)
 					z = 0;
-				if (borg_skill[BI_FRACT]) break;
+				if (bp_ptr->flags2 & TR2_FREE_ACT) break;
 				z += 200;
 				if ((pfe) && !borg_attacking)
 					z /= 2;
@@ -460,7 +460,7 @@ static int borg_danger_aux1(int r_idx)
 				/* if invulnurable, no damage */
 				if ((borg_goi) && !borg_attacking)
 					z = 0;
-				if (borg_skill[BI_HLIFE]) break;
+				if (bp_ptr->flags2 & TR2_HOLD_LIFE) break;
 				/* do not worry about drain exp after level 50 */
 				if (bp_ptr->lev == 50) break;
 				if (borg_spell_legal(REALM_LIFE, 3, 3) ||
@@ -478,7 +478,7 @@ static int borg_danger_aux1(int r_idx)
 				/* if invulnurable, no damage */
 				if ((borg_goi) && !borg_attacking)
 					z = 0;
-				if (borg_skill[BI_HLIFE]) break;
+				if (bp_ptr->flags2 & TR2_HOLD_LIFE) break;
 				/* do not worry about drain exp after level 50 */
 				if (bp_ptr->lev >= 50) break;
 				if (borg_spell_legal(REALM_LIFE, 3, 3) ||
@@ -496,7 +496,7 @@ static int borg_danger_aux1(int r_idx)
 				/* if invulnurable, no damage */
 				if ((borg_goi) && !borg_attacking)
 					z = 0;
-				if (borg_skill[BI_HLIFE]) break;
+				if (bp_ptr->flags2 & TR2_HOLD_LIFE) break;
 				/* do not worry about drain exp after level 50 */
 				if (bp_ptr->lev >= 50) break;
 				if (borg_spell_legal(REALM_LIFE, 3, 3) ||
@@ -514,7 +514,7 @@ static int borg_danger_aux1(int r_idx)
 				/* if invulnurable, no damage */
 				if ((borg_goi) && !borg_attacking)
 					z = 0;
-				if (borg_skill[BI_HLIFE]) break;
+				if (bp_ptr->flags2 & TR2_HOLD_LIFE) break;
 				/* do not worry about drain exp after level 50 */
 				if (bp_ptr->lev >= 50) break;
 				if (borg_spell_legal(REALM_LIFE, 3, 3) ||
@@ -532,7 +532,7 @@ static int borg_danger_aux1(int r_idx)
 				/* if invulnurable, no damage */
 				if ((borg_goi) && !borg_attacking)
 					z = 0;
-				if (!borg_skill[BI_RPOIS] && !my_oppose_pois) z += 50;
+				if (!(bp_ptr->flags2 & TR2_RES_POIS) && !my_oppose_pois) z += 50;
 				/* there is a 10% chance to suffer CON loss */
 				if (!bp_ptr->sust[A_CON]) z += 50;
 				if (!borg_full_damage)
@@ -548,8 +548,8 @@ static int borg_danger_aux1(int r_idx)
 				/* if invulnurable, no damage */
 				if ((borg_goi) && !borg_attacking)
 					z = 0;
-				if (!borg_skill[BI_HLIFE] &&
-					bp_ptr->lev != 50) z += 25;
+				if (!(bp_ptr->flags2 & TR2_HOLD_LIFE) &&
+					(bp_ptr->lev != 50)) z += 25;
 				if (!borg_spell_legal(REALM_LIFE, 3, 3) &&
 					!borg_spell_legal(REALM_DEATH, 1, 7)) z += 25;
 				/* Some fear for non sustaining stats ? */
@@ -566,8 +566,8 @@ static int borg_danger_aux1(int r_idx)
 				/* if invulnurable, no damage */
 				if ((borg_goi) && !borg_attacking)
 					z = 0;
-				if (!borg_skill[BI_HLIFE] &&
-					bp_ptr->lev != 50) z += 25;
+				if (!(bp_ptr->flags2 & TR2_HOLD_LIFE) &&
+					(bp_ptr->lev != 50)) z += 25;
 				if (!borg_spell_legal(REALM_LIFE, 3, 3) &&
 					!borg_spell_legal(REALM_DEATH, 1, 7)) z += 25;
 				if (!borg_full_damage)
@@ -775,7 +775,7 @@ static int borg_danger_aux2(int i, bool average)
 					z /= 25;
 					break;
 				}
-				if (borg_skill[BI_RSHRD]) z = (z + 2) / 3;
+				if (bp_ptr->flags2 & TR2_RES_SHARDS) z = (z + 2) / 3;
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
 				if (!borg_full_damage)
@@ -792,7 +792,7 @@ static int borg_danger_aux2(int i, bool average)
 					z /= 25;
 					break;
 				}
-				if (borg_skill[BI_REFLECT]) z = (z + 2) / 3;
+				if (bp_ptr->flags2 & TR2_REFLECT) z = (z + 2) / 3;
 				break;
 			}
 
@@ -805,7 +805,7 @@ static int borg_danger_aux2(int i, bool average)
 					z /= 25;
 					break;
 				}
-				if (borg_skill[BI_REFLECT]) z = (z + 2) / 3;
+				if (bp_ptr->flags2 & TR2_REFLECT) z = (z + 2) / 3;
 				break;
 			}
 
@@ -818,7 +818,7 @@ static int borg_danger_aux2(int i, bool average)
 					z /= 25;
 					break;
 				}
-				if (borg_skill[BI_REFLECT]) z = (z + 2) / 3;
+				if (bp_ptr->flags2 & TR2_REFLECT) z = (z + 2) / 3;
 				break;
 			}
 
@@ -831,14 +831,14 @@ static int borg_danger_aux2(int i, bool average)
 					z /= 25;
 					break;
 				}
-				if (borg_skill[BI_REFLECT]) z = (z + 2) / 3;
+				if (bp_ptr->flags2 & TR2_REFLECT) z = (z + 2) / 3;
 				break;
 			}
 
 			case 96 + 8:
 			{
 				/* RF4_BR_ACID */
-				if (borg_skill[BI_IACID]) break;
+				if (bp_ptr->flags2 & TR2_IM_ACID) break;
 				z = (hp / 3);
 				/* max damage */
 				if (z > 1200)
@@ -848,7 +848,7 @@ static int borg_danger_aux2(int i, bool average)
 					z /= 25;
 					break;
 				}
-				if (borg_skill[BI_RACID]) z = (z + 2) / 3;
+				if (bp_ptr->flags2 & TR2_RES_ACID) z = (z + 2) / 3;
 				if (my_oppose_acid) z = (z + 2) / 3;
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
@@ -860,7 +860,7 @@ static int borg_danger_aux2(int i, bool average)
 			case 96 + 9:
 			{
 				/* RF4_BR_ELEC */
-				if (borg_skill[BI_IELEC]) break;
+				if (bp_ptr->flags2 & TR2_IM_ELEC) break;
 				z = (hp / 3);
 				/* max damage */
 				if (z > 1200)
@@ -870,7 +870,7 @@ static int borg_danger_aux2(int i, bool average)
 					z /= 25;
 					break;
 				}
-				if (borg_skill[BI_RELEC]) z = (z + 2) / 3;
+				if (bp_ptr->flags2 & TR2_RES_ELEC) z = (z + 2) / 3;
 				if (my_oppose_elec) z = (z + 2) / 3;
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
@@ -882,7 +882,7 @@ static int borg_danger_aux2(int i, bool average)
 			case 96 + 10:
 			{
 				/* RF4_BR_FIRE */
-				if (borg_skill[BI_IFIRE]) break;
+				if (bp_ptr->flags2 & TR2_IM_FIRE) break;
 				z = (hp / 3);
 				/* max damage */
 				if (z > 1200)
@@ -892,7 +892,7 @@ static int borg_danger_aux2(int i, bool average)
 					z /= 25;
 					break;
 				}
-				if (borg_skill[BI_RFIRE]) z = (z + 2) / 3;
+				if (bp_ptr->flags2 & TR2_RES_FIRE) z = (z + 2) / 3;
 				if (my_oppose_fire) z = (z + 2) / 3;
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
@@ -904,7 +904,7 @@ static int borg_danger_aux2(int i, bool average)
 			case 96 + 11:
 			{
 				/* RF4_BR_COLD */
-				if (borg_skill[BI_ICOLD]) break;
+				if (bp_ptr->flags2 & TR2_IM_COLD) break;
 				z = (hp / 3);
 				/* max damage */
 				if (z > 1200)
@@ -914,7 +914,7 @@ static int borg_danger_aux2(int i, bool average)
 					z /= 25;
 					break;
 				}
-				if (borg_skill[BI_RCOLD]) z = (z + 2) / 3;
+				if (bp_ptr->flags2 & TR2_RES_COLD) z = (z + 2) / 3;
 				if (my_oppose_cold) z = (z + 2) / 3;
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
@@ -935,10 +935,10 @@ static int borg_danger_aux2(int i, bool average)
 					z /= 25;
 					break;
 				}
-				if (borg_skill[BI_RPOIS]) z = (z + 2) / 3;
+				if (bp_ptr->flags2 & TR2_RES_POIS) z = (z + 2) / 3;
 				if (my_oppose_pois) z = (z + 2) / 3;
 				if (my_oppose_pois) break;
-				if (borg_skill[BI_RPOIS]) break;
+				if (bp_ptr->flags2 & TR2_RES_POIS) break;
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
 				if (!borg_full_damage)
@@ -958,7 +958,7 @@ static int borg_danger_aux2(int i, bool average)
 					z /= 25;
 					break;
 				}
-				if (borg_skill[BI_RNTHR])
+				if (bp_ptr->flags2 & TR2_RES_NETHER)
 				{
 					z = (z * 6) / 9;
 					break;
@@ -982,12 +982,12 @@ static int borg_danger_aux2(int i, bool average)
 				{
 					z /= 25;
 				}
-				if (borg_skill[BI_RLITE])
+				if (bp_ptr->flags2 & TR2_RES_LITE)
 				{
 					z = (z * 2) / 3;
 					break;
 				}
-				if (borg_skill[BI_RBLIND]) break;
+				if (bp_ptr->flags2 & TR2_RES_BLIND) break;
 				p += 20;
 				break;
 			}
@@ -1003,9 +1003,12 @@ static int borg_danger_aux2(int i, bool average)
 				{
 					z /= 25;
 				}
-				if (borg_skill[BI_RDARK]) z = (z * 2) / 3;
-				if (borg_skill[BI_RDARK]) break;
-				if (borg_skill[BI_RBLIND]) break;
+				if (bp_ptr->flags2 & TR2_RES_DARK)
+				{
+					z = (z * 2) / 3;
+					break;
+				}
+				if (bp_ptr->flags2 & TR2_RES_BLIND) break;
 				p += 20;
 				break;
 			}
@@ -1021,8 +1024,11 @@ static int borg_danger_aux2(int i, bool average)
 				{
 					z /= 25;
 				}
-				if (borg_skill[BI_RCONF]) z = z / 2;
-				if (borg_skill[BI_RCONF]) break;
+				if (bp_ptr->flags2 & TR2_RES_CONF)
+				{
+					z = z / 2;
+					break;
+				}
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
 				if (!borg_full_damage)
@@ -1041,9 +1047,12 @@ static int borg_danger_aux2(int i, bool average)
 				{
 					z /= 25;
 				}
-				if (borg_skill[BI_RSND]) z = (z * 5) / 9;
-				if (borg_skill[BI_RSND]) break;
-				/* if already stunned be REALLY nervous dangerousabout this */
+				if (bp_ptr->flags2 & TR2_RES_SOUND)
+				{
+					z = (z * 5) / 9;
+					break;
+				}
+				/* if already stunned be REALLY nervous about this */
 				if (borg_skill[BI_ISSTUN])
 					p += 500;
 				if (borg_skill[BI_ISHEAVYSTUN])
@@ -1066,10 +1075,10 @@ static int borg_danger_aux2(int i, bool average)
 				{
 					z /= 25;
 				}
-				if (borg_skill[BI_RKAOS]) z = (z * 6) / 9;
+				if (bp_ptr->flags2 & TR2_RES_CHAOS) z = (z * 6) / 9;
 				if (!borg_full_damage)
 					p += 100;
-				if (borg_skill[BI_RKAOS]) break;
+				if (bp_ptr->flags2 & TR2_RES_CHAOS) break;
 				p += 200;
 				break;
 			}
@@ -1085,8 +1094,11 @@ static int borg_danger_aux2(int i, bool average)
 				{
 					z /= 25;
 				}
-				if (borg_skill[BI_RDIS]) z = (z * 6) / 10;
-				if (borg_skill[BI_RDIS]) break;
+				if (bp_ptr->flags2 & TR2_RES_DISEN)
+				{
+					z = (z * 6) / 10;
+					break;
+				}
 				p += 500;
 				break;
 			}
@@ -1102,8 +1114,11 @@ static int borg_danger_aux2(int i, bool average)
 				{
 					z /= 25;
 				}
-				if (borg_skill[BI_RNXUS]) z = (z * 6) / 10;
-				if (borg_skill[BI_RNXUS]) break;
+				if (bp_ptr->flags2 & TR2_RES_NEXUS)
+				{
+					z = (z * 6) / 10;
+					break;
+				}
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
 				if (!borg_full_damage)
@@ -1164,7 +1179,7 @@ static int borg_danger_aux2(int i, bool average)
 				/* do not count. */
 				if (!borg_full_damage)
 					p += 100;
-				if (borg_skill[BI_RSND]) break;
+				if (bp_ptr->flags2 & TR2_RES_SOUND) break;
 				/* Pump this up if you have goi so that the borg is sure */
 				/* to be made nervous */
 				if (borg_goi)
@@ -1191,8 +1206,11 @@ static int borg_danger_aux2(int i, bool average)
 					z /= 25;
 					break;
 				}
-				if (borg_skill[BI_RSHRD]) z = (z * 6) / 9;
-				if (borg_skill[BI_RSHRD]) break;
+				if (bp_ptr->flags2 & TR2_RES_SHARDS)
+				{
+					z = (z * 6) / 9;
+					break;
+				}
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
 				if (!borg_full_damage)
@@ -1212,7 +1230,7 @@ static int borg_danger_aux2(int i, bool average)
 					z /= 25;
 					break;
 				}
-				if (borg_skill[BI_RSND]) break;
+				if (bp_ptr->flags2 & TR2_RES_SOUND) break;
 				/* Pump this up if you have goi so that the borg is sure */
 				/* to be made nervous */
 				if (borg_goi)
@@ -1239,7 +1257,7 @@ static int borg_danger_aux2(int i, bool average)
 					z /= 25;
 					break;
 				}
-				if (borg_skill[BI_RSND]) break;
+				if (bp_ptr->flags2 & TR2_RES_SOUND) break;
 				/* if already stunned be REALLY nervous about this */
 				if (borg_skill[BI_ISSTUN])
 					p += 100;
@@ -1278,7 +1296,7 @@ static int borg_danger_aux2(int i, bool average)
 					z /= 25;
 					break;
 				}
-				if (!borg_skill[BI_RPOIS]) p += 25;
+				if (!(bp_ptr->flags2 & TR2_RES_POIS)) p += 25;
 				if (!borg_full_damage)
 					p += 50;
 				break;
@@ -1296,7 +1314,7 @@ static int borg_danger_aux2(int i, bool average)
 					z /= 25;
 					break;
 				}
-				if (!borg_skill[BI_RPOIS]) p += 25;
+				if (!(bp_ptr->flags2 & TR2_RES_POIS)) p += 25;
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
 				if (!borg_full_damage)
@@ -1313,7 +1331,7 @@ static int borg_danger_aux2(int i, bool average)
 					z /= 25;
 					break;
 				}
-				if (borg_skill[BI_RKAOS]) z = (z + 2) / 3;
+				if (bp_ptr->flags2 & TR2_RES_CHAOS) z = (z + 2) / 3;
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
 				if (!borg_full_damage)
@@ -1331,7 +1349,6 @@ static int borg_danger_aux2(int i, bool average)
 					z /= 25;
 					break;
 				}
-				/*     if (borg_skill[BI_Rdisintegration?]) z = (z + 2) / 3; */
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
 				if (!borg_full_damage)
@@ -1341,14 +1358,14 @@ static int borg_danger_aux2(int i, bool average)
 			case 128 + 0:
 			{
 				/* RF5_BA_ACID */
-				if (borg_skill[BI_IACID]) break;
+				if (bp_ptr->flags2 & TR2_IM_ACID) break;
 				z = (lev * 3) / 2 + 15;
 				if (borg_goi)
 				{
 					z /= 25;
 					break;
 				}
-				if (borg_skill[BI_RACID]) z = (z + 2) / 3;
+				if (bp_ptr->flags2 & TR2_RES_ACID) z = (z + 2) / 3;
 				if (my_oppose_acid) z = (z + 2) / 3;
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
@@ -1360,14 +1377,14 @@ static int borg_danger_aux2(int i, bool average)
 			case 128 + 1:
 			{
 				/* RF5_BA_ELEC */
-				if (borg_skill[BI_IELEC]) break;
+				if (bp_ptr->flags2 & TR2_IM_ELEC) break;
 				z = (lev * 3) / 2 + 8;
 				if (borg_goi)
 				{
 					z /= 25;
 					break;
 				}
-				if (borg_skill[BI_RELEC]) z = (z + 2) / 3;
+				if (bp_ptr->flags2 & TR2_RES_ELEC) z = (z + 2) / 3;
 				if (my_oppose_elec) z = (z + 2) / 3;
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
@@ -1379,14 +1396,14 @@ static int borg_danger_aux2(int i, bool average)
 			case 128 + 2:
 			{
 				/* RF5_BA_FIRE */
-				if (borg_skill[BI_IFIRE]) break;
+				if (bp_ptr->flags2 & TR2_IM_FIRE) break;
 				z = (lev * 7) / 2 + 10;
 				if (borg_goi)
 				{
 					z /= 25;
 					break;
 				}
-				if (borg_skill[BI_RFIRE]) z = (z + 2) / 3;
+				if (bp_ptr->flags2 & TR2_RES_FIRE) z = (z + 2) / 3;
 				if (my_oppose_fire) z = (z + 2) / 3;
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
@@ -1398,14 +1415,14 @@ static int borg_danger_aux2(int i, bool average)
 			case 128 + 3:
 			{
 				/* RF5_BA_COLD */
-				if (borg_skill[BI_ICOLD]) break;
+				if (bp_ptr->flags2 & TR2_IM_COLD) break;
 				z = (lev * 3) / 2 + 10;
 				if (borg_goi)
 				{
 					z /= 25;
 					break;
 				}
-				if (borg_skill[BI_RCOLD]) z = (z + 2) / 3;
+				if (bp_ptr->flags2 & TR2_RES_COLD) z = (z + 2) / 3;
 				if (my_oppose_cold) z = (z + 2) / 3;
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
@@ -1423,10 +1440,10 @@ static int borg_danger_aux2(int i, bool average)
 					z /= 25;
 					break;
 				}
-				if (borg_skill[BI_RPOIS]) z = (z + 2) / 3;
+				if (bp_ptr->flags2 & TR2_RES_POIS) z = (z + 2) / 3;
 				if (my_oppose_pois) z = (z + 2) / 3;
 				if (my_oppose_pois) break;
-				if (borg_skill[BI_RPOIS]) break;
+				if (bp_ptr->flags2 & TR2_RES_POIS) break;
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
 				if (!borg_full_damage)
@@ -1443,8 +1460,11 @@ static int borg_danger_aux2(int i, bool average)
 					z /= 25;
 					break;
 				}
-				if (borg_skill[BI_RNTHR]) z = (z * 6) / 8;
-				if (borg_skill[BI_RNTHR]) break;
+				if (bp_ptr->flags2 & TR2_RES_NETHER)
+				{
+					z = (z * 6) / 8;
+					break;
+				}
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
 				if (!borg_full_damage)
@@ -1461,13 +1481,13 @@ static int borg_danger_aux2(int i, bool average)
 					z /= 25;
 					break;
 				}
-				if (borg_skill[BI_RSND]) break;
+				if (bp_ptr->flags2 & TR2_RES_SOUND) break;
 				/* if already stunned be REALLY nervous about this */
 				if (borg_skill[BI_ISSTUN])
 					p += 500;
 				if (borg_skill[BI_ISHEAVYSTUN])
 					p += 1000;
-				if (borg_skill[BI_RCONF]) break;
+				if (bp_ptr->flags2 & TR2_RES_CONF) break;
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
 				if (!borg_full_damage)
@@ -1497,9 +1517,12 @@ static int borg_danger_aux2(int i, bool average)
 				{
 					z /= 25;
 				}
-				if (borg_skill[BI_RDARK]) z = (z * 6) / 9;
-				if (borg_skill[BI_RDARK]) break;
-				if (borg_skill[BI_RBLIND]) break;
+				if (bp_ptr->flags2 & TR2_RES_DARK)
+				{
+					z = (z * 6) / 9;
+					break;
+				}
+				if (bp_ptr->flags2 & TR2_RES_BLIND) break;
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
 				if (!borg_full_damage)
@@ -1590,14 +1613,14 @@ static int borg_danger_aux2(int i, bool average)
 			case 128 + 16:
 			{
 				/* RF5_BO_ACID */
-				if (borg_skill[BI_IACID]) break;
+				if (bp_ptr->flags2 & TR2_IM_ACID) break;
 				z = ((7 * 8) + (lev / 3));
 				if (borg_goi)
 				{
 					z /= 25;
 					break;
 				}
-				if (borg_skill[BI_RACID]) z = (z + 2) / 3;
+				if (bp_ptr->flags2 & TR2_RES_ACID) z = (z + 2) / 3;
 				if (my_oppose_acid) z = (z + 2) / 3;
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
@@ -1609,14 +1632,14 @@ static int borg_danger_aux2(int i, bool average)
 			case 128 + 17:
 			{
 				/* RF5_BO_ELEC */
-				if (borg_skill[BI_IELEC]) break;
+				if (bp_ptr->flags2 & TR2_IM_ELEC) break;
 				z = ((4 * 8) + (lev / 3));
 				if (borg_goi)
 				{
 					z /= 25;
 					break;
 				}
-				if (borg_skill[BI_RELEC]) z = (z + 2) / 3;
+				if (bp_ptr->flags2 & TR2_RES_ELEC) z = (z + 2) / 3;
 				if (my_oppose_elec) z = (z + 2) / 3;
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
@@ -1628,14 +1651,14 @@ static int borg_danger_aux2(int i, bool average)
 			case 128 + 18:
 			{
 				/* RF5_BO_FIRE */
-				if (borg_skill[BI_IFIRE]) break;
+				if (bp_ptr->flags2 & TR2_IM_FIRE) break;
 				z = ((9 * 8) + (lev / 3));
 				if (borg_goi)
 				{
 					z /= 25;
 					break;
 				}
-				if (borg_skill[BI_RFIRE]) z = (z + 2) / 3;
+				if (bp_ptr->flags2 & TR2_RES_FIRE) z = (z + 2) / 3;
 				if (my_oppose_fire) z = (z + 2) / 3;
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
@@ -1647,14 +1670,14 @@ static int borg_danger_aux2(int i, bool average)
 			case 128 + 19:
 			{
 				/* RF5_BO_COLD */
-				if (borg_skill[BI_ICOLD]) break;
+				if (bp_ptr->flags2 & TR2_IM_COLD) break;
 				z = ((6 * 8) + (lev / 3));
 				if (borg_goi)
 				{
 					z /= 25;
 					break;
 				}
-				if (borg_skill[BI_RCOLD]) z = (z + 2) / 3;
+				if (bp_ptr->flags2 & TR2_RES_COLD) z = (z + 2) / 3;
 				if (my_oppose_cold) z = (z + 2) / 3;
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
@@ -1679,8 +1702,11 @@ static int borg_danger_aux2(int i, bool average)
 					z /= 25;
 					break;
 				}
-				if (borg_skill[BI_RNTHR]) z = (z * 6) / 8;
-				if (borg_skill[BI_RNTHR]) break;
+				if (bp_ptr->flags2 & TR2_RES_NETHER)
+				{
+					z = (z * 6) / 8;
+					break;
+				}
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
 				if (!borg_full_damage)
@@ -1697,13 +1723,13 @@ static int borg_danger_aux2(int i, bool average)
 					z /= 25;
 					break;
 				}
-				if (borg_skill[BI_RSND]) break;
+				if (bp_ptr->flags2 & TR2_RES_SOUND) break;
 				/* if already stunned be REALLY nervous about this */
 				if (borg_skill[BI_ISSTUN])
 					p += 500;
 				if (borg_skill[BI_ISHEAVYSTUN])
 					p += 1000;
-				if (borg_skill[BI_RCONF]) break;
+				if (bp_ptr->flags2 & TR2_RES_CONF) break;
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
 				if (!borg_full_damage)
@@ -1734,7 +1760,7 @@ static int borg_danger_aux2(int i, bool average)
 					z /= 25;
 					break;
 				}
-				if (borg_skill[BI_RSND]) break;
+				if (bp_ptr->flags2 & TR2_RES_SOUND) break;
 				/* if already stunned be REALLY nervous about this */
 				if (borg_skill[BI_ISSTUN])
 					p += 500;
@@ -1756,7 +1782,7 @@ static int borg_danger_aux2(int i, bool average)
 				/* do not count. */
 				if (!borg_full_damage)
 					p += 20;
-				if (borg_skill[BI_RSND]) break;
+				if (bp_ptr->flags2 & TR2_RES_SOUND) break;
 				/* if already stunned be REALLY nervous about this */
 				if (borg_skill[BI_ISSTUN])
 					p += 50;
@@ -1813,7 +1839,7 @@ static int borg_danger_aux2(int i, bool average)
 			case 128 + 30:
 			{
 				/* RF5_SLOW */
-				if (borg_skill[BI_FRACT]) break;
+				if (bp_ptr->flags2 & TR2_FREE_ACT) break;
 				if (borg_skill[BI_SAV] >= 100) break;
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
@@ -1825,7 +1851,7 @@ static int borg_danger_aux2(int i, bool average)
 			case 128 + 31:
 			{
 				/* RF5_HOLD */
-				if (borg_skill[BI_FRACT]) break;
+				if (bp_ptr->flags2 & TR2_FREE_ACT) break;
 				if (borg_skill[BI_SAV] >= 100) break;
 				p += 150;
 				break;
@@ -3258,76 +3284,77 @@ static s32b borg_power_aux3(void)
 	/*** Reward current flags ***/
 
 	/* Various flags */
-	if (borg_skill[BI_SDIG]) value += 10L;
+	if (bp_ptr->flags3 & TR3_SLOW_DIGEST) value += 10L;
 
 	/* Feather Fall if low level is nice */
 	if (bp_ptr->max_depth < 20)
 	{
-		if (borg_skill[BI_FEATH]) value += 500L;
+		if (bp_ptr->flags3 & TR3_FEATHER) value += 500L;
 	}
 	else
 	{
-		if (borg_skill[BI_FEATH]) value += 50;
+		if (bp_ptr->flags3 & TR3_FEATHER) value += 50;
 	}
 	if (bp_ptr->britelite) value += 2000L;
-	if (borg_skill[BI_ESP])
+	if (bp_ptr->flags3 & TR3_TELEPATHY)
 	{
-		if (borg_skill[BI_SINV]) value += 500L;
+		if (bp_ptr->flags3 & TR3_SEE_INVIS) value += 500L;
 	}
-	else if (borg_skill[BI_SINV]) value += 5000L;
+	else if (bp_ptr->flags3 & TR3_SEE_INVIS) value += 5000L;
 
-	if (borg_skill[BI_FRACT]) value += 10000L;
+	if (bp_ptr->flags2 & TR2_FREE_ACT) value += 10000L;
 
 	/* after you max out you are pretty safe from drainers. */
 	if (bp_ptr->max_lev < 50)
 	{
-		if (borg_skill[BI_HLIFE]) value += 2000L;
+		if (bp_ptr->flags2 & TR2_HOLD_LIFE) value += 2000L;
 	}
 	else
 	{
-		if (borg_skill[BI_HLIFE]) value += 200L;
+		if (bp_ptr->flags2 & TR2_HOLD_LIFE) value += 200L;
 	}
-	if (borg_skill[BI_REG]) value += 2000L;
-	if (borg_skill[BI_ESP]) value += 80000L;
+	if (bp_ptr->flags3 & TR3_REGEN) value += 2000L;
+	if (bp_ptr->flags3 & TR3_TELEPATHY) value += 80000L;
 
 	/* Immunity flags */
-	if (borg_skill[BI_ICOLD]) value += 25000L;
-	if (borg_skill[BI_IELEC]) value += 40000L;
-	if (borg_skill[BI_IFIRE]) value += 60000L;
-	if (borg_skill[BI_IACID]) value += 80000L;
+	if (bp_ptr->flags2 & TR2_IM_COLD) value += 25000L;
+	if (bp_ptr->flags2 & TR2_IM_ELEC) value += 40000L;
+	if (bp_ptr->flags2 & TR2_IM_FIRE) value += 60000L;
+	if (bp_ptr->flags2 & TR2_IM_ACID) value += 80000L;
 	/* Warriors need a slight boost for this */
 	if ((borg_class == CLASS_WARRIOR ||
 		 borg_class == CLASS_CHAOS_WARRIOR) &&
-		borg_skill[BI_RFEAR]) value += 2000L;
-	if (borg_skill[BI_RFEAR]) value += 2000L;
+		(bp_ptr->flags2 & TR2_RES_FEAR)) value += 2000L;
+	if (bp_ptr->flags2 & TR2_RES_FEAR) value += 2000L;
 
 	/* Resistance flags */
-	if (borg_skill[BI_RCOLD]) value += 3000L;
-	if (borg_skill[BI_RELEC]) value += 4000L;
-	if (borg_skill[BI_RACID]) value += 6000L;
-	if (borg_skill[BI_RFIRE]) value += 8000L;
+	if (bp_ptr->flags2 & TR2_RES_COLD) value += 3000L;
+	if (bp_ptr->flags2 & TR2_RES_ELEC) value += 4000L;
+	if (bp_ptr->flags2 & TR2_RES_ACID) value += 6000L;
+	if (bp_ptr->flags2 & TR2_RES_FIRE) value += 8000L;
 	/* extra bonus for getting all basic resist */
-	if (borg_skill[BI_RFIRE] &&
-		borg_skill[BI_RACID] &&
-		borg_skill[BI_RELEC] && borg_skill[BI_RCOLD]) value += 10000L;
-	if (borg_skill[BI_RPOIS]) value += 20000L;
-	if (borg_skill[BI_RSND]) value += 3500L;
-	if (borg_skill[BI_RLITE]) value += 800L;
-	if (borg_skill[BI_RDARK]) value += 800L;
-	if (borg_skill[BI_RKAOS]) value += 5000L;
+	if ((bp_ptr->flags2 & TR2_RES_FIRE) &&
+		(bp_ptr->flags2 & TR2_RES_ACID) &&
+		(bp_ptr->flags2 & TR2_RES_ELEC) &&
+		(bp_ptr->flags2 & TR2_RES_COLD)) value += 10000L;
+	if (bp_ptr->flags2 & TR2_RES_POIS) value += 20000L;
+	if (bp_ptr->flags2 & TR2_RES_SOUND) value += 3500L;
+	if (bp_ptr->flags2 & TR2_RES_LITE) value += 800L;
+	if (bp_ptr->flags2 & TR2_RES_DARK) value += 800L;
+	if (bp_ptr->flags2 & TR2_RES_CHAOS) value += 5000L;
 
 	/* this is way boosted to avoid carrying stuff you don't need */
-	if (borg_skill[BI_RCONF]) value += 80000L;
+	if (bp_ptr->flags2 & TR2_RES_CONF) value += 80000L;
 
 	/* mages need a slight boost for this */
-	if (borg_class == CLASS_MAGE && borg_skill[BI_RCONF]) value += 2000L;
+	if (borg_class == CLASS_MAGE && (bp_ptr->flags2 & TR2_RES_CONF)) value += 2000L;
 
-	if (borg_skill[BI_RDIS]) value += 5000L;
-	if (borg_skill[BI_RSHRD]) value += 100L;
-	if (borg_skill[BI_RNXUS]) value += 100L;
-	if (borg_skill[BI_RBLIND]) value += 5000L;
-	if (borg_skill[BI_RNTHR]) value += 5500L;
-	if (borg_skill[BI_REFLECT]) value += 2000L;
+	if (bp_ptr->flags2 & TR2_RES_DISEN) value += 5000L;
+	if (bp_ptr->flags2 & TR2_RES_SHARDS) value += 100L;
+	if (bp_ptr->flags2 & TR2_RES_NEXUS) value += 100L;
+	if (bp_ptr->flags2 & TR2_RES_BLIND) value += 5000L;
+	if (bp_ptr->flags2 & TR2_RES_NETHER) value += 5500L;
+	if (bp_ptr->flags2 & TR2_REFLECT) value += 2000L;
 
 	/* Sustain flags */
 	if (bp_ptr->sust[A_STR]) value += 50L;
@@ -3345,60 +3372,60 @@ static s32b borg_power_aux3(void)
 	/*** XXX XXX XXX Reward "necessary" flags ***/
 
 	/* Mega-Hack -- See invisible (level 10) */
-	if ((borg_skill[BI_SINV] || borg_skill[BI_ESP]) &&
+	if (((bp_ptr->flags3 & TR3_SEE_INVIS) || (bp_ptr->flags3 & TR3_TELEPATHY)) &&
 		(bp_ptr->max_depth + 1 >= 10)) value += 100000L;
 
 
 	/* Mega-Hack -- Free action (level 20) */
-	if (borg_skill[BI_FRACT] &&
+	if ((bp_ptr->flags2 & TR2_FREE_ACT) &&
 		(bp_ptr->max_depth + 1 >= 20)) value += 100000L;
 
 
 	/*  Mega-Hack -- resists (level 25) */
-	if (borg_skill[BI_RFIRE] &&
+	if ((bp_ptr->flags2 & TR2_RES_FIRE) &&
 		(bp_ptr->max_depth + 1 >= 25)) value += 100000L;
 
 
 	/*  Mega-Hack -- resists (level 40) */
-	if (borg_skill[BI_RPOIS] &&
+	if ((bp_ptr->flags2 & TR2_RES_POIS) &&
 		(bp_ptr->max_depth + 1 >= 40)) value += 100000L;
-	if (borg_skill[BI_RELEC] &&
+	if ((bp_ptr->flags2 & TR2_RES_ELEC) &&
 		(bp_ptr->max_depth + 1 >= 40)) value += 100000L;
-	if (borg_skill[BI_RACID] &&
+	if ((bp_ptr->flags2 & TR2_RES_ACID) &&
 		(bp_ptr->max_depth + 1 >= 40)) value += 100000L;
-	if (borg_skill[BI_RCOLD] &&
+	if ((bp_ptr->flags2 & TR2_RES_COLD) &&
 		(bp_ptr->max_depth + 1 >= 40)) value += 100000L;
 
 
 	/* APW Mega-Hack -- Speed / Hold Life (level 46) and maxed out */
-	if ((borg_skill[BI_HLIFE] && (bp_ptr->max_depth + 1 >= 46) &&
+	if (((bp_ptr->flags2 & TR2_HOLD_LIFE) && (bp_ptr->max_depth + 1 >= 46) &&
 		 (bp_ptr->max_lev < 50))) value += 100000L;
 	if ((borg_skill[BI_SPEED] >= 115) &&
 		(bp_ptr->max_depth + 1 >= 46)) value += 100000L;
-	if (borg_skill[BI_RCONF] &&
+	if ((bp_ptr->flags2 & TR2_RES_CONF) &&
 		(bp_ptr->max_depth + 1 >= 46)) value += 100000L;
 
 	/*  Mega-Hack -- resist Nether is -very- nice to have at level 50 */
-	if (borg_skill[BI_RNTHR] &&
+	if ((bp_ptr->flags2 & TR2_RES_NETHER) &&
 		(bp_ptr->max_depth + 1 >= 50)) value += 55000L;
 
 	/*  Mega-Hack -- resist Sound to avoid being KO'd */
-	if (borg_skill[BI_RSND] &&
+	if ((bp_ptr->flags2 & TR2_RES_SOUND) &&
 		(bp_ptr->max_depth + 1 >= 50)) value += 100000L;
 
 	/*  Mega-Hack -- resists & Telepathy (level 55) */
-	if (borg_skill[BI_RBLIND] &&
+	if ((bp_ptr->flags2 & TR2_RES_BLIND) &&
 		(bp_ptr->max_depth + 1 >= 55)) value += 100000L;
-	if (borg_skill[BI_ESP] &&
+	if ((bp_ptr->flags3 & TR3_TELEPATHY) &&
 		(bp_ptr->max_depth + 1 >= 55)) value += 100000L;
-	if (borg_skill[BI_RNTHR] &&
+	if ((bp_ptr->flags2 & TR2_RES_NETHER) &&
 		(bp_ptr->max_depth + 1 >= 60)) value += 55000L;
 
 
 	/*  Mega-Hack -- resists & +10 speed (level 60) */
-	if (borg_skill[BI_RKAOS] &&
+	if ((bp_ptr->flags2 & TR2_RES_CHAOS) &&
 		(bp_ptr->max_depth + 1 >= 60)) value += 104000L;
-	if (borg_skill[BI_RDIS] &&
+	if ((bp_ptr->flags2 & TR2_RES_DISEN) &&
 		(bp_ptr->max_depth + 1 >= 60)) value += 90000L;
 	if ((borg_skill[BI_SPEED] >= 120) &&
 		(bp_ptr->max_depth + 1 >= 60)) value += 100000L;
@@ -3412,9 +3439,9 @@ static s32b borg_power_aux3(void)
 	 * RDark for deeper uniques
 	 * Good to have +30 speed
 	 */
-	if (borg_skill[BI_RNTHR] &&
+	if ((bp_ptr->flags2 & TR2_RES_NETHER) &&
 		(bp_ptr->max_depth + 1 >= 80)) value += 15000L;
-	if (borg_skill[BI_RDARK] &&
+	if ((bp_ptr->flags2 & TR2_RES_DARK) &&
 		(bp_ptr->max_depth + 1 >= 80)) value += 25000L;
 	if ((borg_skill[BI_SPEED] >= 140) && (bp_ptr->max_depth + 1 >= 80) &&
 		borg_class == CLASS_WARRIOR) value += 100000L;
@@ -3613,7 +3640,7 @@ static s32b borg_power_aux4(void)
 	for (k = 0; k < 25 && k < borg_skill[BI_FOOD]; k++) value += 10000L;
 	for (; k < 35 && k < borg_skill[BI_FOOD]; k++) value += 200L;
 
-	if (borg_skill[BI_REG] && !borg_skill[BI_SDIG])
+	if ((bp_ptr->flags3 & TR3_REGEN) && !(bp_ptr->flags3 & TR3_SLOW_DIGEST))
 	{
 		for (k = 0; k < 10 && k < borg_skill[BI_FOOD]; k++) value += 500L;
 	}
@@ -3733,7 +3760,7 @@ static s32b borg_power_aux4(void)
 	}
 
 	/* Reward cure critical.  Heavy reward on first 5 */
-	if (bp_ptr->lev < 35 || !borg_skill[BI_RCONF])
+	if ((bp_ptr->lev < 35) || !(bp_ptr->flags2 & TR2_RES_CONF))
 	{
 		for (k = 0; k < 10 && k < borg_skill[BI_ACCW]; k++) value += 5000L;
 		for (; k < 15 && k < borg_skill[BI_ACCW]; k++) value += 500L;
@@ -3759,15 +3786,15 @@ static s32b borg_power_aux4(void)
 	}
 
 	/* Reward Cures */
-	if (!borg_skill[BI_RCONF])
+	if (!(bp_ptr->flags2 & TR2_RES_CONF))
 	{
 		for (k = 0; k < 10 && k < amt_cure_confusion; k++) value += 400L;
 	}
-	if (!borg_skill[BI_RBLIND])
+	if (!(bp_ptr->flags2 & TR2_RES_BLIND))
 	{
 		for (k = 0; k < 5 && k < amt_cure_blind; k++) value += 300L;
 	}
-	if (!borg_skill[BI_RPOIS])
+	if (!(bp_ptr->flags2 & TR2_RES_POIS))
 	{
 		for (k = 0; k < 5 && k < borg_skill[BI_ACUREPOIS]; k++) value += 250L;
 	}
@@ -3781,7 +3808,7 @@ static s32b borg_power_aux4(void)
 	for (k = 0; k < 1 && k < borg_skill[BI_ADETDOOR]; k++) value += 2000L;
 
 	/* Reward detect evil */
-	if (!borg_skill[BI_ESP])
+	if (!(bp_ptr->flags3 & TR3_TELEPATHY))
 	{
 		for (k = 0; k < 1 && k < borg_skill[BI_ADETEVIL]; k++) value += 1000L;
 	}
@@ -4071,9 +4098,9 @@ cptr borg_restock(int depth)
 	/*** Level 6 to 9 ***/
 
 	/* Potions of Critical Wounds */
-	if (borg_skill[BI_ACCW] < 1 &&
-		(!borg_skill[BI_RBLIND] ||
-		 !borg_skill[BI_RCONF])) return ("rs cure crit");
+	if ((borg_skill[BI_ACCW] < 1) &&
+		(!(bp_ptr->flags2 & TR2_RES_BLIND) ||
+		 !(bp_ptr->flags2 & TR2_RES_CONF))) return ("rs cure crit");
 
 	/* Assume happy at level 9 */
 	if (depth <= 9) return (NULL);
@@ -4200,8 +4227,8 @@ static cptr borg_prepared_aux2(int depth)
 
 	/* See invisible */
 	/* or telepathy */
-	if ((!borg_skill[BI_SINV] &&
-		 !borg_skill[BI_ESP])) return ("See Invis : ESP");
+	if ((!(bp_ptr->flags3 & TR3_SEE_INVIS) &&
+		 !(bp_ptr->flags3 & TR3_TELEPATHY))) return ("See Invis : ESP");
 
 	/* Usually ready for level 10 to 19 */
 	if (depth <= 19) return (NULL);
@@ -4210,7 +4237,7 @@ static cptr borg_prepared_aux2(int depth)
 	/*** Essential Items for Level 20 ***/
 
 	/* Free action */
-	if (!borg_skill[BI_FRACT]) return ("FA");
+	if (!(bp_ptr->flags2 & TR2_FREE_ACT)) return ("FA");
 
 	/* ready for level 20 */
 	if (depth <= 20) return (NULL);
@@ -4218,14 +4245,6 @@ static cptr borg_prepared_aux2(int depth)
 
 	/*** Essential Items for Level 25 ***/
 
-	/* must have fire + 2 other basic resists */
-	if (!borg_skill[BI_SRFIRE]) return ("RF");
-	{
-		int basics =
-			borg_skill[BI_RACID] + borg_skill[BI_RCOLD] + borg_skill[BI_RELEC];
-
-		if (basics < 2) return ("basic resist2");
-	}
 	/* have some minimal stats */
 	if (borg_stat[A_STR] < 7) return ("low STR");
 
@@ -4269,12 +4288,6 @@ static cptr borg_prepared_aux2(int depth)
 
 	/*** Essential Items for Level 40 to 45 ***/
 
-	/* All Basic resistance & poison */
-	if (!borg_skill[BI_SRCOLD]) return ("RC");
-	if (!borg_skill[BI_SRELEC]) return ("RE");
-	if (!borg_skill[BI_SRACID]) return ("RA");
-	if (!borg_skill[BI_SRPOIS]) return ("RPois");
-
 	if (borg_stat[A_STR] < 16) return ("low STR");
 
 	if ((bp_ptr->realm1 >= REALM_SORCERY ||
@@ -4302,8 +4315,6 @@ static cptr borg_prepared_aux2(int depth)
 	if (borg_skill[BI_AHEAL] < 1 &&
 		(borg_skill[BI_AEZHEAL] < 1)) return ("1heal");
 
-	if (!borg_skill[BI_SRCONF]) return ("RConf");
-
 	/* High stats XXX XXX XXX */
 	if (borg_stat[A_STR] < 18 + 40) return ("low STR");
 
@@ -4321,7 +4332,7 @@ static cptr borg_prepared_aux2(int depth)
 	if (borg_stat[A_CON] < 18 + 60) return ("low CON");
 
 	/* Hold Life */
-	if (!borg_skill[BI_HLIFE] &&
+	if (!(bp_ptr->flags2 & TR2_HOLD_LIFE) &&
 		(bp_ptr->max_lev < 50)) return ("hold life");
 
 	/* Usually ready for level 46 to 55 */
@@ -4333,21 +4344,8 @@ static cptr borg_prepared_aux2(int depth)
 	if (borg_skill[BI_AHEAL] < 2 &&
 		borg_skill[BI_AEZHEAL] < 1) return ("2heal");
 
-	/* Resists */
-	if (!borg_skill[BI_SRBLIND]) return ("RBlind");
-
-	/* Must have resist nether */
-	if (borg_skill[BI_AXGOI])
-	{
-		/* this mage will not require RNethr to dive */
-	}
-	else
-	{
-		if (!borg_skill[BI_SRNTHR]) return ("RNeth");
-	}
-
 	/* Telepathy, better have it by now */
-	if (!borg_skill[BI_ESP]) return ("ESP");
+	if (!(bp_ptr->flags3 & TR3_TELEPATHY)) return ("ESP");
 
 	/* Usually ready for level 55 to 59 */
 	if (depth <= 59) return (NULL);
@@ -4358,18 +4356,6 @@ static cptr borg_prepared_aux2(int depth)
 
 	/* Must have +10 speed */
 	if (borg_skill[BI_SPEED] < 120) return ("+10 speed");
-
-
-	/* Resists */
-	if (borg_skill[BI_AXGOI])
-	{
-		/* This mage will not require Chaos to dive */
-	}
-	else
-	{
-		if (!borg_skill[BI_SRKAOS]) return ("RChaos");
-	}
-	if (!borg_skill[BI_SRDIS]) return ("RDisen");
 
 	/* Usually ready for level 61 to 80 */
 	if (depth <= 80) return (NULL);

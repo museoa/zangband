@@ -456,7 +456,7 @@ bool borg_check_lite(void)
 		 183 - (20 - bp_ptr->max_lev))) do_evil = TRUE;
 
 	/* Dont bother if I have ESP */
-	if (borg_skill[BI_ESP]) do_evil = FALSE;
+	if (bp_ptr->flags3 & TR3_TELEPATHY) do_evil = FALSE;
 
 	/* Do not do these if monsters near.  Save mana */
 	if (!borg_check_rest())
@@ -655,7 +655,7 @@ bool borg_check_lite(void)
 	if (floors <= 11) do_lite = do_lite_aux = FALSE;
 
 	/* Vampires need to be careful for Light */
-	if (borg_skill[BI_FEAR_LITE])
+	if ((borg_race == RACE_VAMPIRE) && !(bp_ptr->flags2 & TR2_RES_LITE))
 		do_lite = do_lite_aux = FALSE;
 
 	/* Hack -- call lite */
@@ -720,10 +720,6 @@ bool borg_check_lite_only(void)
 
 	/* Never when blind or hallucinating */
 	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISIMAGE]) return (FALSE);
-
-	/* Vampires need to be careful for Light */
-	if (borg_skill[BI_FEAR_LITE])
-		return (FALSE);
 
 	/* XXX XXX XXX Dark */
 
@@ -849,7 +845,7 @@ bool borg_on_safe_grid(void)
 	if (mb_ptr->feat == FEAT_SHAL_LAVA)
 	{
 		/* Immunity helps */
-		if (borg_skill[BI_IFIRE]) return (TRUE);
+		if (bp_ptr->flags2 & TR2_IM_FIRE) return (TRUE);
 
 		/* Invulnerability helps */
 		if (borg_goi) return (TRUE);
@@ -862,7 +858,7 @@ bool borg_on_safe_grid(void)
 	if (mb_ptr->feat == FEAT_SHAL_WATER)
 	{
 		/* Levatation helps */
-		if (borg_skill[BI_FEATH]) return (TRUE);
+		if (bp_ptr->flags3 & TR3_FEATHER) return (TRUE);
 
 		/* Invulnerability helps */
 		if (borg_goi) return (TRUE);

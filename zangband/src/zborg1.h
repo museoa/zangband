@@ -239,6 +239,11 @@ struct borg_player
 	s16b depth;	/* Cur depth */
 	s16b max_depth;	/* Max depth */
 	
+	/* Combined object flags */
+	u32b flags1;
+	u32b flags2;
+	u32b flags3;
+	
 	
 	
 };
@@ -246,15 +251,12 @@ struct borg_player
 extern borg_player *bp_ptr;
 
 
-#define BI_ESP		35
 #define BI_CUR_LITE	36
 #define BI_RECALL	37
 #define BI_FOOD		38
 #define BI_SPEED	39
-#define BI_SDIG		40
-#define BI_FEATH	41
-#define BI_REG		42
-#define BI_SINV		43
+
+
 #define BI_INFRA	44
 #define BI_DIS		45
 #define BI_DEV		46
@@ -266,47 +268,7 @@ extern borg_player *bp_ptr;
 #define BI_THB		52
 #define BI_THT		53
 #define BI_DIG		54
-#define BI_IFIRE	55
-#define BI_IACID	56
-#define BI_ICOLD	57
-#define BI_IELEC	58
-#define BI_RFIRE	59
-#define BI_RCOLD	60
-#define BI_RELEC	61
-#define BI_RACID	62
-#define BI_RPOIS	63
-#define BI_RFEAR	64
-#define BI_RLITE	65
-#define BI_RDARK	66
-#define BI_RBLIND	67
-#define BI_RCONF	68
-#define BI_RSND	 	69
-#define BI_RSHRD	70
-#define BI_RNXUS	71
-#define BI_RNTHR	72
-#define BI_RKAOS	73
-#define BI_RDIS		74
-#define BI_REFLECT	75
-#define BI_HLIFE	76
-#define BI_FRACT	77
-#define BI_SRFIRE	78
-#define BI_SRCOLD	79
-#define BI_SRELEC	80
-#define BI_SRACID	81
-#define BI_SRPOIS	82
-#define BI_SRFEAR	83
-#define BI_SRLITE	84
-#define BI_SRDARK	85
-#define BI_SRBLIND	86
-#define BI_SRCONF	87
-#define BI_SRSND	88
-#define BI_SRSHRD	89
-#define BI_SRNXUS	90
-#define BI_SRNTHR	91
-#define BI_SRKAOS	92
-#define BI_SRDIS	93
-#define BI_SHLIFE	94
-#define BI_SFRACT	95
+
 
 #define BI_KING		99
 
@@ -356,7 +318,7 @@ extern borg_player *bp_ptr;
 #define BI_CRSNOTELE	142		/* no teleport */
 #define BI_CRSNOMAGIC	143		/* no magic */
 #define BI_ENCUMBERD	144
-#define BI_FEAR_LITE	145
+
 #define BI_WS_ANIMAL	146
 #define BI_WS_EVIL	147
 #define BI_WS_UNDEAD	148

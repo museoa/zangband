@@ -1982,7 +1982,7 @@ static bool borg_follow_kill_aux(int i, int x, int y)
 		if (mb_ptr->flags & MAP_SEEN)
 		{
 			/* We can see invisible */
-			if (borg_skill[BI_SINV] || borg_see_inv) return (TRUE);
+			if ((bp_ptr->flags3 & TR3_SEE_INVIS) || borg_see_inv) return (TRUE);
 
 			/* Monster is not invisible */
 			if (!(r_ptr->flags2 & RF2_INVISIBLE)) return (TRUE);
@@ -1998,7 +1998,7 @@ static bool borg_follow_kill_aux(int i, int x, int y)
 
 
 	/* Telepathy requires "telepathy" */
-	if (borg_skill[BI_ESP])
+	if (bp_ptr->flags3 & TR3_TELEPATHY)
 	{
 		/* Telepathy fails on "strange" monsters */
 		if (r_ptr->flags2 & RF2_EMPTY_MIND) return (FALSE);
@@ -2084,7 +2084,10 @@ static void observe_kill_move(int new_type, int old_type, int dist)
 			borg_danger_wipe = TRUE;
 
 			/* Clear goals */
-			if (!borg_skill[BI_ESP] && goal == GOAL_TAKE) goal = 0;
+			if (!(bp_ptr->flags3 & TR3_TELEPATHY) && (goal == GOAL_TAKE))
+			{
+				goal = 0;
+			}
 		}
 	}
 }
@@ -3022,7 +3025,7 @@ static int borg_fear_spell(int i)
 		case 8:
 		{
 			/* RF4_BR_ACID */
-			if (borg_skill[BI_IACID]) break;
+			if (bp_ptr->flags2 & TR2_IM_ACID) break;
 			z = ouch;
 			p += 40;
 			break;
@@ -3031,7 +3034,7 @@ static int borg_fear_spell(int i)
 		case 9:
 		{
 			/* RF4_BR_ELEC */
-			if (borg_skill[BI_IELEC]) break;
+			if (bp_ptr->flags2 & TR2_IM_ELEC) break;
 			z = ouch;
 			p += 20;
 			break;
@@ -3040,7 +3043,7 @@ static int borg_fear_spell(int i)
 		case 10:
 		{
 			/* RF4_BR_FIRE */
-			if (borg_skill[BI_IFIRE]) break;
+			if (bp_ptr->flags2 & TR2_IM_FIRE) break;
 			z = ouch;
 			p += 40;
 			break;
@@ -3049,7 +3052,7 @@ static int borg_fear_spell(int i)
 		case 11:
 		{
 			/* RF4_BR_COLD */
-			if (borg_skill[BI_ICOLD]) break;
+			if (bp_ptr->flags2 & TR2_IM_COLD) break;
 			z = ouch;
 			p += 20;
 			break;
@@ -3059,7 +3062,7 @@ static int borg_fear_spell(int i)
 		{
 			/* RF4_BR_POIS */
 			z = ouch;
-			if (borg_skill[BI_RPOIS]) break;
+			if (bp_ptr->flags2 & TR2_RES_POIS) break;
 			if (my_oppose_pois) break;
 			p += 20;
 			break;
@@ -3069,9 +3072,9 @@ static int borg_fear_spell(int i)
 		{
 			/* RF4_BR_NETH */
 			z = ouch + 100;
-			if (borg_skill[BI_RNTHR]) break;
+			if (bp_ptr->flags2 & TR2_RES_NETHER) break;
 			p += 50;
-			if (borg_skill[BI_HLIFE]) break;
+			if (bp_ptr->flags2 & TR2_HOLD_LIFE) break;
 			/* do not worry about drain exp after level 50 */
 			if (bp_ptr->lev >= 50) break;
 			p += 150;
@@ -3082,8 +3085,8 @@ static int borg_fear_spell(int i)
 		{
 			/* RF4_BR_LITE */
 			z = ouch;
-			if (borg_skill[BI_RLITE]) break;
-			if (borg_skill[BI_RBLIND]) break;
+			if (bp_ptr->flags2 & TR2_RES_LITE) break;
+			if (bp_ptr->flags2 & TR2_RES_BLIND) break;
 			p += 20;
 			break;
 		}
@@ -3092,8 +3095,8 @@ static int borg_fear_spell(int i)
 		{
 			/* RF4_BR_DARK */
 			z = ouch;
-			if (borg_skill[BI_RDARK]) break;
-			if (borg_skill[BI_RBLIND]) break;
+			if (bp_ptr->flags2 & TR2_RES_DARK) break;
+			if (bp_ptr->flags2 & TR2_RES_BLIND) break;
 			p += 20;
 			break;
 		}
@@ -3102,7 +3105,7 @@ static int borg_fear_spell(int i)
 		{
 			/* RF4_BR_CONF */
 			z = ouch;
-			if (borg_skill[BI_RCONF]) break;
+			if (bp_ptr->flags2 & TR2_RES_CONF) break;
 			p += 100;
 			break;
 		}
@@ -3111,7 +3114,7 @@ static int borg_fear_spell(int i)
 		{
 			/* RF4_BR_SOUN */
 			z = ouch;
-			if (borg_skill[BI_RSND]) break;
+			if (bp_ptr->flags2 & TR2_RES_SOUND) break;
 			p += 50;
 			break;
 		}
@@ -3120,11 +3123,11 @@ static int borg_fear_spell(int i)
 		{
 			/* RF4_BR_CHAO */
 			z = ouch;
-			if (borg_skill[BI_RKAOS]) break;
+			if (bp_ptr->flags2 & TR2_RES_CHAOS) break;
 			p += 200;
-			if (!borg_skill[BI_RNTHR]) p += 50;
-			if (!borg_skill[BI_HLIFE]) p += 50;
-			if (!borg_skill[BI_RCONF]) p += 50;
+			if (!(bp_ptr->flags2 & TR2_RES_NETHER)) p += 50;
+			if (!(bp_ptr->flags2 & TR2_HOLD_LIFE)) p += 50;
+			if (!(bp_ptr->flags2 & TR2_RES_CONF)) p += 50;
 			if (bp_ptr->lev == 50) break;
 			p += 100;
 			break;
@@ -3134,7 +3137,7 @@ static int borg_fear_spell(int i)
 		{
 			/* RF4_BR_DISE */
 			z = ouch;
-			if (borg_skill[BI_RDIS]) break;
+			if (bp_ptr->flags2 & TR2_RES_DISEN) break;
 			p += 500;
 			break;
 		}
@@ -3143,7 +3146,7 @@ static int borg_fear_spell(int i)
 		{
 			/* RF4_BR_NEXU */
 			z = ouch;
-			if (borg_skill[BI_RNXUS]) break;
+			if (bp_ptr->flags2 & TR2_RES_NEXUS) break;
 			p += 100;
 			break;
 		}
@@ -3169,7 +3172,7 @@ static int borg_fear_spell(int i)
 			/* RF4_BR_GRAV */
 			z = ouch;
 			p += 50;
-			if (borg_skill[BI_RSND]) break;
+			if (bp_ptr->flags2 & TR2_RES_SOUND) break;
 			p += 50;
 			break;
 		}
@@ -3178,7 +3181,7 @@ static int borg_fear_spell(int i)
 		{
 			/* RF4_BR_SHAR */
 			z = ouch;
-			if (borg_skill[BI_RSHRD]) break;
+			if (bp_ptr->flags2 & TR2_RES_SHARDS) break;
 			p += 50;
 			break;
 		}
@@ -3187,7 +3190,7 @@ static int borg_fear_spell(int i)
 		{
 			/* RF4_BR_PLAS */
 			z = ouch;
-			if (borg_skill[BI_RSND]) break;
+			if (bp_ptr->flags2 & TR2_RES_SOUND) break;
 			p += 50;
 			break;
 		}
@@ -3196,7 +3199,7 @@ static int borg_fear_spell(int i)
 		{
 			/* RF4_BR_WALL */
 			z = ouch;
-			if (borg_skill[BI_RSND]) break;
+			if (bp_ptr->flags2 & TR2_RES_SOUND) break;
 			p += 50;
 			break;
 		}
@@ -3235,7 +3238,7 @@ static int borg_fear_spell(int i)
 		case 32:
 		{
 			/* RF5_BA_ACID */
-			if (borg_skill[BI_IACID]) break;
+			if (bp_ptr->flags2 & TR2_IM_ACID) break;
 			z = ouch;
 			p += 40;
 			break;
@@ -3244,7 +3247,7 @@ static int borg_fear_spell(int i)
 		case 33:
 		{
 			/* RF5_BA_ELEC */
-			if (borg_skill[BI_IELEC]) break;
+			if (bp_ptr->flags2 & TR2_IM_ELEC) break;
 			z = ouch;
 			p += 20;
 			break;
@@ -3253,7 +3256,7 @@ static int borg_fear_spell(int i)
 		case 34:
 		{
 			/* RF5_BA_FIRE */
-			if (borg_skill[BI_IFIRE]) break;
+			if (bp_ptr->flags2 & TR2_IM_FIRE) break;
 			z = ouch;
 			p += 40;
 			break;
@@ -3262,7 +3265,7 @@ static int borg_fear_spell(int i)
 		case 35:
 		{
 			/* RF5_BA_COLD */
-			if (borg_skill[BI_ICOLD]) break;
+			if (bp_ptr->flags2 & TR2_IM_COLD) break;
 			z = ouch;
 			p += 20;
 			break;
@@ -3272,7 +3275,7 @@ static int borg_fear_spell(int i)
 		{
 			/* RF5_BA_POIS */
 			z = ouch;
-			if (borg_skill[BI_RPOIS]) break;
+			if (bp_ptr->flags2 & TR2_RES_POIS) break;
 			p += 20;
 			break;
 		}
@@ -3281,7 +3284,7 @@ static int borg_fear_spell(int i)
 		{
 			/* RF5_BA_NETH */
 			z = ouch + 100;
-			if (borg_skill[BI_RNTHR]) break;
+			if (bp_ptr->flags2 & TR2_RES_NETHER) break;
 			p += 300;
 			break;
 		}
@@ -3305,8 +3308,8 @@ static int borg_fear_spell(int i)
 		{
 			/* RF5_BA_DARK */
 			z = ouch;
-			if (borg_skill[BI_RDARK]) break;
-			if (borg_skill[BI_RBLIND]) break;
+			if (bp_ptr->flags2 & TR2_RES_DARK) break;
+			if (bp_ptr->flags2 & TR2_RES_BLIND) break;
 			p += 20;
 			break;
 		}
@@ -3365,7 +3368,7 @@ static int borg_fear_spell(int i)
 		case 48:
 		{
 			/* RF5_BO_ACID */
-			if (borg_skill[BI_IACID]) break;
+			if (bp_ptr->flags2 & TR2_IM_ACID) break;
 			z = ouch;
 			p += 40;
 			break;
@@ -3374,7 +3377,7 @@ static int borg_fear_spell(int i)
 		case 49:
 		{
 			/* RF5_BO_ELEC */
-			if (borg_skill[BI_IELEC]) break;
+			if (bp_ptr->flags2 & TR2_IM_ELEC) break;
 			z = ouch;
 			p += 20;
 			break;
@@ -3383,7 +3386,7 @@ static int borg_fear_spell(int i)
 		case 50:
 		{
 			/* RF5_BO_FIRE */
-			if (borg_skill[BI_IFIRE]) break;
+			if (bp_ptr->flags2 & TR2_IM_FIRE) break;
 			z = ouch;
 			p += 40;
 			break;
@@ -3392,7 +3395,7 @@ static int borg_fear_spell(int i)
 		case 51:
 		{
 			/* RF5_BO_COLD */
-			if (borg_skill[BI_ICOLD]) break;
+			if (bp_ptr->flags2 & TR2_IM_COLD) break;
 			z = ouch;
 			p += 20;
 			break;
@@ -3409,7 +3412,7 @@ static int borg_fear_spell(int i)
 		{
 			/* RF5_BO_NETH */
 			z = ouch + 100;
-			if (borg_skill[BI_RNTHR]) break;
+			if (bp_ptr->flags2 & TR2_RES_NETHER) break;
 			p += 200;
 			break;
 		}

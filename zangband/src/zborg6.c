@@ -400,11 +400,11 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid,
 			/* Avoid Lava */
 			if ((mb_ptr->feat == FEAT_DEEP_LAVA ||
 				 mb_ptr->feat == FEAT_SHAL_LAVA)
-				&& !borg_skill[BI_IFIRE]) continue;
+				&& !(bp_ptr->flags2 & TR2_IM_FIRE)) continue;
 
 			/* Avoid Water if dangerous */
 			if (mb_ptr->feat == FEAT_SHAL_WATER &&
-				(borg_skill[BI_ENCUMBERD] && !borg_skill[BI_FEATH])) continue;
+				(borg_skill[BI_ENCUMBERD] && !(bp_ptr->flags3 & TR3_FEATHER))) continue;
 
 			/* Avoid Mountains */
 			if (mb_ptr->feat == FEAT_MOUNTAIN) continue;
@@ -576,18 +576,6 @@ static void borg_flow_reverse(void)
  */
 bool borg_recall(void)
 {
-
-	/* Vampires dont like to Recall up in Daytime */
-	if (borg_skill[BI_FEAR_LITE] && bp_ptr->depth >= 1)
-	{
-		/* If day time, Recall could be bad */
-		if ((borg_skill[BI_HRTIME] >= 5) && (borg_skill[BI_HRTIME] <= 18))
-		{
-			/* Do not Recall */
-			return (FALSE);
-		}
-	}
-
 	/* Multiple "recall" fails */
 	if (!goal_recalling)
 	{
@@ -1202,97 +1190,6 @@ static void borg_near_monster_type(int dist)
 			if (r_ptr->flags3 & RF3_EVIL) borg_fighting_evil_unique = TRUE;
 
 		}
-
-#if 0
-		/*** Scan for Scary Guys ***/
-
-		/* run from certain scaries */
-		if (bp_ptr->lev < 3 &&
-			(strstr(r_name + r_ptr->name, "Squint"))) scaryguy_on_level = TRUE;
-
-		/* run from certain dungeon scaries */
-		if (bp_ptr->lev <= 3 &&
-			(strstr(r_name + r_ptr->name, "Grip") ||
-			 strstr(r_name + r_ptr->name, "Agent") ||
-			 strstr(r_name + r_ptr->name, "Fang"))) scaryguy_on_level = TRUE;
-
-		/* run from certain scaries */
-		if (bp_ptr->lev <= 5 &&
-			(strstr(r_name + r_ptr->name, "Small kobold") ||
-			 strstr(r_name + r_ptr->name, "Kobold") ||
-			 strstr(r_name + r_ptr->name, "Jackal") ||
-			 strstr(r_name + r_ptr->name, "Filthy street urchin") ||
-			 strstr(r_name + r_ptr->name, "Battle scarred veteran") ||
-			 strstr(r_name + r_ptr->name,
-					"Mean looking mercenary"))) scaryguy_on_level = TRUE;
-
-		if (bp_ptr->lev <= 8 &&
-			(strstr(r_name + r_ptr->name, "Giant white mouse") ||
-			 strstr(r_name + r_ptr->name, "White worm mass") ||
-			 strstr(r_name + r_ptr->name,
-					"Green worm mass"))) scaryguy_on_level = TRUE;
-
-		if (bp_ptr->lev <= 10 &&
-			(strstr(r_name + r_ptr->name, "Cave spider") ||
-			 strstr(r_name + r_ptr->name, "Yellow worm mass") ||
-			 strstr(r_name + r_ptr->name, "Pink naga") ||
-			 strstr(r_name + r_ptr->name, "Giant pink frog") ||
-			 strstr(r_name + r_ptr->name, "Radiation eye"))) scaryguy_on_level =
-TRUE;
-
-
-		if (bp_ptr->lev <= 40 &&
-			(strstr(r_name + r_ptr->name, "Greater hell"))) scaryguy_on_level =
-TRUE;
-
-		/* Nether breath is bad */
-		if ((!borg_skill[BI_SRNTHR] && !borg_skill[BI_AXGOI]) &&
-			(strstr(r_name + r_ptr->name, "Azriel") ||
-			 strstr(r_name + r_ptr->name, "Dracolich") ||
-			 strstr(r_name + r_ptr->name, "Dracolisk"))) scaryguy_on_level =
-TRUE;
-
-		/* Blindness is really bad */
-		if ((!borg_skill[BI_SRBLIND]) &&
-			(strstr(r_name + r_ptr->name, "Light hound") ||
-			 strstr(r_name + r_ptr->name, "Dark hound"))) scaryguy_on_level =
-TRUE;
-
-		/* Chaos and Confusion are really bad */
-		if ((!borg_skill[BI_SRKAOS] && !borg_skill[BI_SRCONF]) &&
-			(strstr(r_name + r_ptr->name, "Chaos"))) scaryguy_on_level = TRUE;
-
-		/*** Scan for Summoners ***/
-
-		if ((r_ptr->flags6 & RF6_S_KIN) ||
-			(r_ptr->flags6 & RF6_S_CYBER) ||
-			(r_ptr->flags6 & RF6_S_MONSTER) ||
-			(r_ptr->flags6 & RF6_S_MONSTERS) ||
-			(r_ptr->flags6 & RF6_S_ANT) ||
-			(r_ptr->flags6 & RF6_S_SPIDER) ||
-			(r_ptr->flags6 & RF6_S_HOUND) ||
-			(r_ptr->flags6 & RF6_S_HYDRA) ||
-			(r_ptr->flags6 & RF6_S_ANGEL) ||
-			(r_ptr->flags6 & RF6_S_DEMON) ||
-			(r_ptr->flags6 & RF6_S_UNDEAD) ||
-			(r_ptr->flags6 & RF6_S_DRAGON) ||
-			(r_ptr->flags6 & RF6_S_HI_UNDEAD) ||
-			(r_ptr->flags6 & RF6_S_HI_DRAGON) ||
-			(r_ptr->flags6 & RF6_S_AMBERITES) ||
-			(r_ptr->flags6 & RF6_S_UNIQUE) || (r_ptr->flags1 & RF1_QUESTOR))
-		{
-			/* mark the flag */
-			borg_fighting_summoner = TRUE;
-
-			/* recheck the distance to see if close
-			 * and mark the index for as-corridor
-			 */
-			if (d < 8)
-			{
-				borg_kills_summoner = i;
-			}
-		}
-#endif /* 0 */
 	}
 }
 
@@ -2120,10 +2017,9 @@ static bool borg_heal(int danger)
 			return (TRUE);
 		}
 		/* Warriors with ESP won't need it so quickly */
-		if (!
-			(borg_class == CLASS_WARRIOR &&
+		if (!(borg_class == CLASS_WARRIOR &&
 			 bp_ptr->chp > bp_ptr->mhp / 4 &&
-			 borg_skill[BI_ESP]))
+			 (bp_ptr->flags3 & TR3_TELEPATHY)))
 		{
 			if (borg_eat_food(SV_FOOD_CURE_BLINDNESS) ||
 				borg_quaff_potion(SV_POTION_CURE_SERIOUS) ||
@@ -4565,14 +4461,12 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		{
 			/* Weak Lite */
 			if (!(r_ptr->flags3 & RF3_HURT_LITE)) dam = 0;
-			if (borg_skill[BI_FEAR_LITE]) dam = 0;
 			break;
 		}
 
 		case GF_LITE:
 		{
 			/* Regular Lite */
-			if (borg_skill[BI_FEAR_LITE]) dam = 0;
 			break;
 		}
 
@@ -5332,7 +5226,7 @@ static int borg_launch_bolt_aux(int x, int y, int rad, int dam, int typ,
 		 */
 
 		/* dont do the check if esp */
-		if (!borg_skill[BI_ESP])
+		if (!(bp_ptr->flags3 & TR3_TELEPATHY))
 		{
 			/* Check the missile path--no Infra, no HAS_LITE */
 			if (dist && (borg_skill[BI_INFRA] <= 0)
@@ -7461,7 +7355,6 @@ static int borg_attack_aux(int what)
 			/* Call Sunlight */
 			dam = 150;
 			rad = 8 + 10;
-			if (borg_skill[BI_FEAR_LITE] && bp_ptr->chp < 150) dam = 0;
 			return (borg_attack_aux_spell_dispel
 					(REALM_NATURE, 3, 5, rad, dam, GF_LITE_WEAK));
 		}
@@ -8923,11 +8816,6 @@ static int borg_defend_aux_resist_fce(int p1)
 
 	if (my_oppose_fire && my_oppose_cold && my_oppose_elec)
 		return (0);
-
-#if 0
-	if (borg_skill[BI_RFIRE] && borg_skill[BI_RCOLD])
-		return (0);
-#endif
 
 	/* if very scary, do not allow for much chance of fail */
 	if (p1 > avoidance)
@@ -10487,10 +10375,9 @@ static int borg_defend_aux_inviso(int p1)
 	int fail_allowed = 25;
 	map_block *mb_ptr = map_loc(c_x, c_y);
 
-
-	/* no need */
+	/* No need? */
 	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
-		borg_skill[BI_SINV] || borg_see_inv)
+		(bp_ptr->flags3 & TR3_SEE_INVIS) || borg_see_inv)
 		return (0);
 
 	/* not recent */
@@ -11016,7 +10903,7 @@ static int borg_perma_aux_resist_f(void)
 	if (my_oppose_fire || !unique_on_level)
 		return (0);
 
-	if (borg_skill[BI_IFIRE]) return (0);
+	if (bp_ptr->flags2 & TR2_IM_FIRE) return (0);
 
 	if (!borg_spell_okay_fail(REALM_ARCANE, 1, 6, fail_allowed))
 		return (0);
@@ -11060,7 +10947,7 @@ static int borg_perma_aux_resist_c(void)
 	if (my_oppose_cold || !unique_on_level)
 		return (0);
 
-	if (borg_skill[BI_ICOLD]) return (0);
+	if (bp_ptr->flags2 & TR2_IM_COLD) return (0);
 
 	/* Not needed if GOI is on */
 	if (borg_goi) return (0);
@@ -11188,17 +11075,17 @@ static int borg_perma_aux_resist_fce(void)
 
 	/* cast if one drops and unique is near */
 	if (borg_fighting_unique &&
-		((my_oppose_fire || borg_skill[BI_IFIRE]) &&
-		 (my_oppose_elec || borg_skill[BI_IELEC]) &
-		 (my_oppose_cold || borg_skill[BI_ICOLD]))) return (0);
+		(my_oppose_fire || (bp_ptr->flags2 & TR2_IM_FIRE)) &&
+		(my_oppose_elec || (bp_ptr->flags2 & TR2_IM_FIRE)) &&
+		(my_oppose_cold || (bp_ptr->flags2 & TR2_IM_FIRE))) return (0);
 
 
 	/* cast if both drop and no unique is near */
 	if (!borg_fighting_unique && (my_oppose_fire || my_oppose_cold)) return (0);
 
 	/* no need if immune */
-	if (borg_skill[BI_IFIRE] && borg_skill[BI_ICOLD] &&
-		borg_skill[BI_IELEC]) return (0);
+	if ((bp_ptr->flags2 & TR2_IM_FIRE) && (bp_ptr->flags2 & TR2_IM_COLD) &&
+		(bp_ptr->flags2 & TR2_IM_ELEC)) return (0);
 
 	/* Not needed if GOI is on */
 	if (borg_goi) return (0);
@@ -11346,7 +11233,7 @@ static int borg_perma_aux_telepathy(void)
 	if (borg_fighting_unique) fail_allowed = 15;
 
 	/* already blessed */
-	if (borg_esp || borg_skill[BI_ESP])
+	if (borg_esp || (bp_ptr->flags3 & TR3_TELEPATHY))
 		return (0);
 
 	/* must be able to */
@@ -11823,22 +11710,24 @@ bool borg_perma_spell()
 bool borg_check_rest(void)
 {
 	int i;
-
-	/* Do not rest in Sunlight */
-	if (borg_skill[BI_FEAR_LITE] && (bp_ptr->depth == 0))
+	
+	if ((borg_race == RACE_VAMPIRE) && !(bp_ptr->flags2 & TR2_RES_LITE))
 	{
-		/* day time */
-		if ((borg_skill[BI_HRTIME] >= 5) && (borg_skill[BI_HRTIME] <= 18))
+		/* Do not rest in Sunlight */
+		if (!bp_ptr->depth)
+		{
+			/* Day time */
+			if ((borg_skill[BI_HRTIME] >= 5) && (borg_skill[BI_HRTIME] <= 18))
+			{
+				return (FALSE);
+			}
+		}
+
+		/* Do not rest with Phial or Star if it hurts */
+		if (equipment[EQUIP_LITE].kn_flags3 & TR3_INSTA_ART)
 		{
 			return (FALSE);
 		}
-	}
-
-	/* Do not rest with Phial or Star if it hurts */
-	if (borg_skill[BI_FEAR_LITE] &&
-		(equipment[EQUIP_LITE].kn_flags3 & TR3_INSTA_ART))
-	{
-		return (FALSE);
 	}
 
 	/* Now check the ground to see if safe. */
@@ -14007,11 +13896,11 @@ static bool borg_flow_dark_reachable(int x, int y)
 
 		/* Accept Lava if immune */
 		if (mb_ptr->feat == FEAT_SHAL_LAVA &&
-			borg_skill[BI_IFIRE]) return (TRUE);
+			(bp_ptr->flags2 & TR2_IM_FIRE)) return (TRUE);
 
 		/* Accept Water if not drowning */
 		if (mb_ptr->feat == FEAT_SHAL_WATER &&
-			(!borg_skill[BI_ENCUMBERD] || borg_skill[BI_FEATH])) return (TRUE);
+			(!borg_skill[BI_ENCUMBERD] || (bp_ptr->flags3 & TR3_FEATHER))) return (TRUE);
 
 		/* I can push pass friendly monsters */
 		if (mb_ptr->kill &&
@@ -14142,8 +14031,8 @@ void borg_flow_direct(int x, int y)
 		/* Ignore certain "non-wall" grids */
 		if ((mb_ptr->feat == FEAT_SHAL_WATER &&
 			 (!borg_skill[BI_ENCUMBERD] &&
-			  !borg_skill[BI_FEATH])) ||
-			(mb_ptr->feat == FEAT_SHAL_LAVA && !borg_skill[BI_IFIRE])) return;
+			  !(bp_ptr->flags3 & TR3_FEATHER))) ||
+			(mb_ptr->feat == FEAT_SHAL_LAVA && !(bp_ptr->flags2 & TR2_IM_FIRE))) return;
 
 		/* Abort at "icky" grids */
 		if (mb_ptr->info & BORG_MAP_ICKY) return;

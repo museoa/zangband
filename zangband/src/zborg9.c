@@ -2778,97 +2778,97 @@ void borg_status(void)
 
 			/* Basic four */
 			attr = TERM_SLATE;
-			if (borg_skill[BI_RACID]) attr = TERM_BLUE;
+			if (bp_ptr->flags2 & TR2_RES_ACID) attr = TERM_BLUE;
 			if (my_oppose_acid) attr = TERM_GREEN;
-			if (borg_skill[BI_IACID]) attr = TERM_WHITE;
+			if (bp_ptr->flags2 & TR2_IM_ACID) attr = TERM_WHITE;
 			Term_putstr(1, 1, -1, attr, "Acid");
 
 			attr = TERM_SLATE;
-			if (borg_skill[BI_RELEC]) attr = TERM_BLUE;
+			if (bp_ptr->flags2 & TR2_RES_ELEC) attr = TERM_BLUE;
 			if (my_oppose_elec) attr = TERM_GREEN;
-			if (borg_skill[BI_IELEC]) attr = TERM_WHITE;
+			if (bp_ptr->flags2 & TR2_IM_ELEC) attr = TERM_WHITE;
 			Term_putstr(1, 2, -1, attr, "Elec");
 
 			attr = TERM_SLATE;
-			if (borg_skill[BI_RFIRE]) attr = TERM_BLUE;
+			if (bp_ptr->flags2 & TR2_RES_FIRE) attr = TERM_BLUE;
 			if (my_oppose_fire) attr = TERM_GREEN;
-			if (borg_skill[BI_IFIRE]) attr = TERM_WHITE;
+			if (bp_ptr->flags2 & TR2_IM_FIRE) attr = TERM_WHITE;
 			Term_putstr(1, 3, -1, attr, "Fire");
 
 			attr = TERM_SLATE;
-			if (borg_skill[BI_RCOLD]) attr = TERM_BLUE;
+			if (bp_ptr->flags2 & TR2_RES_COLD) attr = TERM_BLUE;
 			if (my_oppose_cold) attr = TERM_GREEN;
-			if (borg_skill[BI_ICOLD]) attr = TERM_WHITE;
+			if (bp_ptr->flags2 & TR2_IM_COLD) attr = TERM_WHITE;
 			Term_putstr(1, 4, -1, attr, "Cold");
 
 			/* High resists */
 			attr = TERM_SLATE;
-			if (borg_skill[BI_RPOIS]) attr = TERM_BLUE;
+			if (bp_ptr->flags2 & TR2_RES_POIS) attr = TERM_BLUE;
 			if (my_oppose_pois) attr = TERM_GREEN;
 			Term_putstr(1, 5, -1, attr, "Pois");
 
-			if (borg_skill[BI_RFEAR]) attr = TERM_BLUE;
+			if (bp_ptr->flags2 & TR2_RES_FEAR) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(1, 6, -1, attr, "Fear");
 
-			if (borg_skill[BI_RLITE]) attr = TERM_BLUE;
+			if (bp_ptr->flags2 & TR2_RES_LITE) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(1, 7, -1, attr, "Lite");
 
-			if (borg_skill[BI_RDARK]) attr = TERM_BLUE;
+			if (bp_ptr->flags2 & TR2_RES_DARK) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(1, 8, -1, attr, "Dark");
 
-			if (borg_skill[BI_RBLIND]) attr = TERM_BLUE;
+			if (bp_ptr->flags2 & TR2_RES_BLIND) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(6, 1, -1, attr, "Blind");
 
-			if (borg_skill[BI_RCONF]) attr = TERM_BLUE;
+			if (bp_ptr->flags2 & TR2_RES_CONF) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(6, 2, -1, attr, "Confu");
 
-			if (borg_skill[BI_RSND]) attr = TERM_BLUE;
+			if (bp_ptr->flags2 & TR2_RES_SOUND) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(6, 3, -1, attr, "Sound");
 
-			if (borg_skill[BI_RSHRD]) attr = TERM_BLUE;
+			if (bp_ptr->flags2 & TR2_RES_SHARDS) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(6, 4, -1, attr, "Shard");
 
-			if (borg_skill[BI_RNXUS]) attr = TERM_BLUE;
+			if (bp_ptr->flags2 & TR2_RES_NEXUS) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(6, 5, -1, attr, "Nexus");
 
-			if (borg_skill[BI_RNTHR]) attr = TERM_BLUE;
+			if (bp_ptr->flags2 & TR2_RES_NETHER) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(6, 6, -1, attr, "Nethr");
 
-			if (borg_skill[BI_RKAOS]) attr = TERM_BLUE;
+			if (bp_ptr->flags2 & TR2_RES_CHAOS) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(6, 7, -1, attr, "Chaos");
 
-			if (borg_skill[BI_RDIS]) attr = TERM_BLUE;
+			if (bp_ptr->flags2 & TR2_RES_DISEN) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(6, 8, -1, attr, "Disen");
 
 			/* Other abilities */
-			if (borg_skill[BI_SDIG]) attr = TERM_BLUE;
+			if (bp_ptr->flags3 & TR3_SLOW_DIGEST) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(12, 1, -1, attr, "S.Dig");
 
-			if (borg_skill[BI_FEATH]) attr = TERM_BLUE;
+			if (bp_ptr->flags3 & TR3_FEATHER) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(12, 2, -1, attr, "Feath");
@@ -2878,27 +2878,27 @@ void borg_status(void)
 				attr = TERM_SLATE;
 			Term_putstr(12, 3, -1, attr, "PLite");
 
-			if (borg_skill[BI_REG]) attr = TERM_BLUE;
+			if (bp_ptr->flags3 & TR3_REGEN) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(12, 4, -1, attr, "Regen");
 
-			if (borg_skill[BI_ESP]) attr = TERM_BLUE;
+			if (bp_ptr->flags3 & TR3_TELEPATHY) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(12, 5, -1, attr, "Telep");
 
-			if (borg_skill[BI_SINV]) attr = TERM_BLUE;
+			if (bp_ptr->flags3 & TR3_SEE_INVIS) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(12, 6, -1, attr, "Invis");
 
-			if (borg_skill[BI_FRACT]) attr = TERM_BLUE;
+			if (bp_ptr->flags2 & TR2_FREE_ACT) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(12, 7, -1, attr, "FrAct");
 
-			if (borg_skill[BI_HLIFE]) attr = TERM_BLUE;
+			if (bp_ptr->flags2 & TR2_HOLD_LIFE) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(12, 8, -1, attr, "HLife");
