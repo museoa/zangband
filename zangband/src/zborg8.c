@@ -490,7 +490,7 @@ static bool borg_good_sell(list_item *l_ptr)
 	if (!borg_obj_known_full(l_ptr) && KN_FLAG(l_ptr, TR_INSTA_ART))
 	{
 		/* *identify* this item first */
-		return (FALSE);
+		if (borg_gold < 300000) return (FALSE);
 	}
 
 	/* Assume we can */
