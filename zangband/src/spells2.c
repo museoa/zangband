@@ -2363,8 +2363,8 @@ bool destroy_area(int x1, int y1, int r)
 	cave_type *c_ptr;
 	pcave_type *pc_ptr;
 
-	/* Prevent destruction of quest levels and town */
-	if (!p_ptr->depth || is_quest_level(p_ptr->depth))
+	/* Prevent destruction of town and wilderness */
+	if (!p_ptr->depth)
 	{
 		return (FALSE);
 	}
@@ -2525,8 +2525,8 @@ bool earthquake(int cx, int cy, int r)
 	bool map[32][32];
 	byte flags;
 
-	/* Prevent destruction of quest levels and town */
-	if (!p_ptr->depth || is_quest_level(p_ptr->depth))
+	/* Prevent destruction of town and wilderness */
+	if (!p_ptr->depth)
 	{
 		return (FALSE);
 	}

@@ -2093,7 +2093,7 @@ void place_trap(int x, int y)
 		if (t_idx != FT_TRAP_DOOR) break;
 
 		/* Hack -- no trap doors on special levels */
-		if (is_quest_level(p_ptr->depth)) continue;
+		if (is_special_level(p_ptr->depth)) continue;
 
 		/* Hack -- no trap doors on the deepest level */
 		if (p_ptr->depth >= max_dun_level()) continue;

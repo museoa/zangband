@@ -1220,7 +1220,7 @@ extern u16b insert_dungeon_monster_quest(u16b r_idx, u16b num, u16b level);
 extern errr init_quests(void);
 extern void init_player_quests(void);
 extern void quest_discovery(void);
-extern bool is_quest_level(int level);
+extern bool is_special_level(int level);
 extern void activate_quests(int level);
 extern void trigger_quest_create(byte c_type, vptr data);
 extern void trigger_quest_complete(byte x_type, vptr data);

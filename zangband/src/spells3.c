@@ -654,8 +654,8 @@ void fixup_dun_level(void)
  */
 void teleport_player_level(void)
 {
-	/* No effect in quest */
-	if (is_quest_level(p_ptr->depth) && ironman_downward)
+	/* No effect in final quest */
+	if (is_special_level(p_ptr->depth) && ironman_downward)
 	{
 		msgf("There is no effect.");
 		return;
@@ -684,7 +684,7 @@ void teleport_player_level(void)
 		/* Leaving */
 		p_ptr->state.leaving = TRUE;
 	}
-	else if (is_quest_level(p_ptr->depth))
+	else if (is_special_level(p_ptr->depth))
 	{
 		msgf(MSGT_TPLEVEL, "You rise up through the ceiling.");
 
@@ -1321,7 +1321,7 @@ void fetch(int dir, int wgt, bool require_los)
 
 void alter_reality(void)
 {
-	if (!is_quest_level(p_ptr->depth) && p_ptr->depth)
+	if (p_ptr->depth)
 	{
 		msgf("The world changes!");
 
@@ -1675,7 +1675,7 @@ void stair_creation(void)
 		/* Town/wilderness or Ironman */
 		cave_set_feat(px, py, FEAT_MORE);
 	}
-	else if (is_quest_level(p_ptr->depth))
+	else if (is_special_level(p_ptr->depth))
 	{
 		/* Quest level */
 		cave_set_feat(px, py, FEAT_LESS);

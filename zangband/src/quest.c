@@ -315,6 +315,63 @@ static void insert_artifact_quest(u16b a_idx)
 }
 
 
+static quest_type *insert_bounty_quest(u16b r_idx, u16b num)
+{
+	quest_type *q_ptr;
+
+	int q_num;
+	
+	monster_race *r_ptr = &r_info[r_idx];
+	
+	/* get a new quest */
+	q_num = q_pop();
+
+	/* Paranoia */
+	if (!q_num) return (NULL);
+
+	q_ptr = &quest[q_num];
+
+	/* Bounty quest */
+	q_ptr->type = QUEST_TYPE_BOUNTY;
+	
+	if (num != 1)
+	{
+		char buf[80];
+		strcpy(buf, r_name + r_ptr->name);
+		plural_aux(buf);
+
+		/* XXX XXX Create quest name */
+		(void)strnfmt(q_ptr->name, 60, "Kill %d %s.", (int)num, buf);
+	}
+	else
+	{
+		/* XXX XXX Create quest name */
+		(void)strnfmt(q_ptr->name, 60, "Kill %s.", r_name + r_ptr->name);
+	}
+	
+	/* No need to specially create anything */
+	q_ptr->c_type = QC_NONE;
+
+	/* We need to trigger when the monsters are killed */
+	if (r_ptr->flags1 & RF1_UNIQUE)
+	{
+		q_ptr->x_type = QX_KILL_UNIQUE;
+	}
+	else
+	{
+		q_ptr->x_type = QX_KILL_MONST;
+	}
+	
+	/* Save the quest data */
+	q_ptr->data.bnt.r_idx = r_idx;
+	q_ptr->data.bnt.cur_num = 0;
+	q_ptr->data.bnt.max_num = num;
+
+	/* Done */
+	return (q_ptr);
+}
+
+
 /*
  * Initialise the quests
  */
@@ -516,8 +573,8 @@ void quest_discovery(void)
 
 
 /*
- * Is this dungeon level a quest level? */
-bool is_quest_level(int level)
+ * Is this dungeon level a special (winner) quest level? */
+bool is_special_level(int level)
 {
 	int i;
 
@@ -529,7 +586,10 @@ bool is_quest_level(int level)
 
 		/* Must be dungeon quest */
 		if (q_ptr->type != QUEST_TYPE_DUNGEON) continue;
-
+		
+		/* Must be winner quest */
+		if (q_ptr->x_type != QX_KILL_WINNER) continue;
+		
 		/* Is the quest still there? */
 		if (q_ptr->status > QUEST_STATUS_TAKEN) continue;
 
@@ -888,9 +948,6 @@ void trigger_quest_complete(byte x_type, vptr data)
 					{
 						/* Complete the quest */
 						q_ptr->status = QUEST_STATUS_COMPLETED;
-
-						/* Create some stairs */
-						create_stairs(m_ptr->fx, m_ptr->fy);
 
 						/* Drop the reward */
 						quest_reward(q_ptr->reward, m_ptr->fx, m_ptr->fy);

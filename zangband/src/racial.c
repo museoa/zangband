@@ -288,21 +288,12 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 
 				else if (mut_ptr->level == 30)
 				{
-					/* No effect in arena or quest */
-					if (is_quest_level(p_ptr->depth))
-					{
-						msgf("There is no effect.");
-					}
-					else
-					{
-						msgf
-							("You start walking around. Your surroundings change.");
+					msgf("You start walking around. Your surroundings change.");
 
-						if (autosave_l) do_cmd_save_game(TRUE);
+					if (autosave_l) do_cmd_save_game(TRUE);
 
-						/* Leaving */
-						p_ptr->state.leaving = TRUE;
-					}
+					/* Leaving */
+					p_ptr->state.leaving = TRUE;
 				}
 				break;
 			}

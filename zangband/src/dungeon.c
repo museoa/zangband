@@ -3016,8 +3016,8 @@ static void dungeon(void)
 		p_ptr->max_depth = p_ptr->depth;
 	}
 
-	/* No stairs down from Quest */
-	if (is_quest_level(p_ptr->depth))
+	/* No stairs down from final quests */
+	if (is_special_level(p_ptr->depth))
 	{
 		p_ptr->state.create_down_stair = FALSE;
 	}

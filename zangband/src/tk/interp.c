@@ -520,7 +520,6 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 	object_type *o_ptr;
 	int i, tmp;
 	long expadv;
-	double pct;
 	cptr t;
 
 	static cptr abilityOptions[] = {"fighting", "bows_throw", "saving_throw",

@@ -172,7 +172,7 @@ static bool alloc_stairs(int feat, int num, int walls)
 	else if (feat == FEAT_MORE)
 	{
 		/* No downstairs on quest levels */
-		if (p_ptr->depth && is_quest_level(p_ptr->depth)) return TRUE;
+		if (p_ptr->depth && is_special_level(p_ptr->depth)) return TRUE;
 
 		/* No downstairs at the bottom */
 		if (p_ptr->depth >= max_dun_level()) return TRUE;
@@ -686,9 +686,6 @@ static bool cave_gen(dun_type *d_ptr)
 
 		build_cavern();
 	}
-
-	/* Hack -- No destroyed "quest" levels */
-	if (is_quest_level(p_ptr->depth)) destroyed = FALSE;
 
 	/* Actual maximum number of rooms on this level */
 	dun->row_rooms = (p_ptr->max_hgt - p_ptr->min_hgt) / BLOCK_HGT;
