@@ -1586,6 +1586,13 @@ static void borg_parse_aux(cptr msg, int len)
 		return;
 	}
 
+	/* check for jungle blocking but not when confused */
+	if ((prefix(msg, "The jungle is impassable.") && !bp_ptr->status.confused))
+	{
+		my_need_alter = TRUE;
+		goal = 0;
+		return;
+	}
 
 	/* check for closed door but not when confused */
 	if ((prefix(msg, "There is a closed door blocking your way.") &&
