@@ -2567,12 +2567,19 @@
 /* xxx (many) */
 #define PU_VIEW         0x00100000L	/* Update view */
 #define PU_MON_LITE		0x00200000L	/* Monster illumination */
+#define PU_WIZ_FIX		0x00400000L	/* Fix up after a wiz_lite() */
 /* xxx */
 #define PU_MONSTERS     0x01000000L	/* Update monsters */
 #define PU_DISTANCE     0x02000000L	/* Update distances */
 /* xxx */
 #define PU_FLOW         0x10000000L	/* Update flow */
 /* xxx (many) */
+
+
+/*
+ * Bit flags for the "p_ptr->change" variable
+ */
+#define PC_WIZ_LITE		0x00000001L	/* Redraw map after a wiz_lite() */
 
 
 /*

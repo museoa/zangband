@@ -2673,8 +2673,7 @@ static void process_player(void)
 
 		/* Refresh (optional) */
 		if (fresh_before) Term_fresh();
-
-
+		
 		/* Hack -- Pack Overflow */
 		if (get_list_length(p_ptr->inventory) > INVEN_PACK)
 		{
@@ -2710,7 +2709,7 @@ static void process_player(void)
 			/* Update */
 			handle_stuff();
 		}
-
+		
 		/* Assume free turn */
 		p_ptr->state.energy_use = 0;
 
@@ -2789,7 +2788,9 @@ static void process_player(void)
 		{
 			/* Use some energy */
 			p_ptr->energy -= p_ptr->state.energy_use;
-
+			
+			/* Change stuff */
+			change_stuff();
 
 			/* Hack -- constant hallucination */
 			if (p_ptr->tim.image) p_ptr->redraw |= (PR_MAP);

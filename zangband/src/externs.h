@@ -300,6 +300,7 @@ extern void forget_flow(void);
 extern void update_flow(void);
 extern void map_area(void);
 extern void wiz_lite(void);
+extern void change_wiz_lite(void);
 extern void wiz_dark(void);
 extern void cave_set_feat(int x, int y, int feat);
 
@@ -900,6 +901,7 @@ extern void update_stuff(void);
 extern void redraw_stuff(void);
 extern void window_stuff(void);
 extern void handle_stuff(void);
+extern void change_stuff(void);
 
 
 /* effects.c */

@@ -3361,7 +3361,7 @@ void update_stuff(void)
 		p_ptr->update &= ~(PU_VIEW);
 		update_view();
 	}
-
+	
 	if (p_ptr->update & (PU_FLOW))
 	{
 		p_ptr->update &= ~(PU_FLOW);
@@ -3581,7 +3581,6 @@ void redraw_stuff(void)
 		p_ptr->redraw &= ~(PR_MAP);
 		prt_map();
 	}
-
 }
 
 
@@ -3593,7 +3592,6 @@ void window_stuff(void)
 	int j;
 
 	u32b mask = 0L;
-
 
 	/* Nothing to do */
 	if (!p_ptr->window) return;
@@ -3696,4 +3694,18 @@ void handle_stuff(void)
 
 	/* Window stuff */
 	if (p_ptr->window) window_stuff();
+}
+
+/*
+ * Handle "p_ptr->change"
+ */
+void change_stuff(void)
+{
+	/* Nothing to do */
+	if (!p_ptr->change) return;
+
+	if (p_ptr->change & (PC_WIZ_LITE))
+	{
+		change_wiz_lite();
+	}
 }

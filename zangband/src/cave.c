@@ -3141,6 +3141,47 @@ void wiz_lite(void)
 	/* Update the monsters */
 	p_ptr->update |= (PU_MONSTERS);
 
+	/* Remember to fix up the viewability */
+	p_ptr->change |= (PC_WIZ_LITE);
+
+	/* Redraw map */
+	p_ptr->redraw |= (PR_MAP);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
+}
+
+/*
+ * Fix up the dungeon after illumination.
+ */
+void change_wiz_lite(void)
+{
+	int x, y;
+
+	cave_type *c_ptr;
+
+	/* Scan all normal grids */
+	for (y = p_ptr->min_hgt; y < p_ptr->max_hgt; y++)
+	{
+		for (x = p_ptr->min_wid; x < p_ptr->max_wid; x++)
+		{
+			c_ptr = area(x, y);
+			
+			/* Forget memorized floor grids from view_torch_grids */
+			if (!(c_ptr->info & (CAVE_GLOW)) && !view_torch_grids
+				&& !cave_mem_grid(c_ptr))
+			{
+				forget_grid(parea(x, y));
+			}
+
+			/* Notice the change */
+			note_spot(x, y);
+		}
+	}
+
+	/* Update the monsters */
+	p_ptr->update |= (PU_MONSTERS);
+
 	/* Redraw map */
 	p_ptr->redraw |= (PR_MAP);
 

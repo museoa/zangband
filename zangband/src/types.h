@@ -1563,6 +1563,7 @@ struct player_type
 	u32b update;	/* Pending Updates (bit flags) */
 	u32b redraw;	/* Normal Redraws (bit flags) */
 	u32b window;	/* Window Redraws (bit flags) */
+	u32b change;	/* Once per turn (bit flags) */
 	
 	/*
 	 * Flags on equipment items and the racial/class
