@@ -360,8 +360,7 @@ static void game_usage(void)
 #ifdef USE_GTK
 	puts("  -mgtk    To use GTK toolkit");
 	puts("  --       Sub options");
-	/* puts("  -- -d    Set display name"); */
-	/* puts("  -- -s    Turn off smoothscaling graphics"); */
+	puts("  -- -b#   Set tileset bitmap");
 	puts("  -- -n#   Number of terms to use");
 #endif /* USE_GTK */
 
