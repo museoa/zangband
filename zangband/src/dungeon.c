@@ -4329,6 +4329,12 @@ void play_game(bool new_game)
 	/* Verify the (possibly resized) panel */
 	verify_panel();
 	
+	/* Update some stuff not stored in the savefile any more */
+	p_ptr->update |= (PU_VIEW | PU_MON_LITE);
+
+	/* Update stuff */
+	update_stuff();
+	
 	/* Process */
 	while (TRUE)
 	{
