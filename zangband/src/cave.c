@@ -2547,7 +2547,15 @@ void display_map(int *cx, int *cy)
 				if (twn)
 				{
 					/* Hack make a char /attr */
-					ma[j + 1][i + 1] = TERM_WHITE;
+					if (town[twn].quest_num)
+					{
+						ma[j + 1][i + 1] = TERM_RED;
+					}
+					else
+					{
+						ma[j + 1][i + 1] = TERM_WHITE;
+					}
+					
 					mc[j + 1][i + 1] = '0' + twn % 10;
 				}
 
@@ -2769,7 +2777,7 @@ void do_cmd_view_map(void)
 
 			/* Wait for it */
 			put_str("Move around, or hit any other key to continue.",
-			        hgt - 1, COL_MAP - 23 + (wid - COL_MAP) / 2);
+			        COL_MAP - 23 + (wid - COL_MAP) / 2, hgt - 1);
 
 			/* Hilite the player */
 			Term_gotoxy(cx, cy);
