@@ -3825,7 +3825,7 @@ static void build_type11(int bx0, int by0)
 	/* Occasional light */
 	if (randint1(p_ptr->depth) <= 15) light = TRUE;
 
-	rad = randint0(9);
+	rad = rand_range(2, 9);
 
 	/* Allocate in room_map.  If will not fit, exit */
 	if (!room_alloc(rad * 2 + 1, rad * 2 + 1, FALSE, bx0, by0, &x0, &y0))
@@ -3851,6 +3851,24 @@ static void build_type11(int bx0, int by0)
 
 	/* Find visible outer walls and set to be FEAT_OUTER */
 	add_outer_wall(x0, y0, light, x0 - rad, y0 - rad, x0 + rad, y0 + rad);
+
+	if (one_in_(3))
+	{
+		rad = randint1(rad);
+		
+		/* Make circular water feature */
+		for (x = x0 - rad; x <= x0 + rad; x++)
+		{
+			for (y = y0 - rad; y <= y0 + rad; y++)
+			{
+				if (distance(x0, y0, x, y) <= rad - 1)
+				{
+					/* inside- so is floor */
+					set_feat_bold(x, y, FEAT_SHAL_WATER);
+				}
+			}
+		}
+	}
 }
 
 
