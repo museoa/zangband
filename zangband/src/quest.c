@@ -602,7 +602,7 @@ void activate_quests(int level)
 				pl_ptr = &place[place_num];
 				
 				/* Need to be on the surface */
-				if (pl_ptr->dungeon) break;
+				if (p_ptr->depth) break;
 				
 				q_ptr->flags |= QUEST_FLAG_ACTIVE;
 			}
@@ -619,7 +619,7 @@ void activate_quests(int level)
 				pl_ptr = &place[place_num];
 				
 				/* Need to be on the surface */
-				if (pl_ptr->dungeon) break;
+				if (p_ptr->depth) break;
 				
 				q_ptr->flags |= QUEST_FLAG_ACTIVE;
 			}
@@ -901,8 +901,28 @@ void trigger_quest_complete(byte x_type, vptr data)
 
 			case QX_WILD_ENTER:
 			{
+				place_type *pl_ptr;
+			
 				/* Only trigger for the correct quest */
 				if (q_ptr != data) continue;
+				
+				pl_ptr = &place[p_ptr->place_num];
+				
+				/* Wilderness quests turn off the monsters */
+				if (q_ptr->type == QUEST_TYPE_WILD)
+				{
+					/* Unlink location from wilderness */
+					int x = ((u16b)p_ptr->wilderness_x / WILD_BLOCK_SIZE);
+					int y = ((u16b)p_ptr->wilderness_y / WILD_BLOCK_SIZE);
+
+					wild_done_type *w_ptr = &wild[y][x].done;
+					
+					/* No more place here */
+					w_ptr->place = 0;
+				}
+				
+				/* Are we done yet? */
+				if (pl_ptr->data) continue;
 
 				/* Complete the quest */
 				q_ptr->status = QUEST_STATUS_COMPLETED;

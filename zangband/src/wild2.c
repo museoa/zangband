@@ -2385,12 +2385,6 @@ static void overlay_place(int x, int y, u16b w_place, blk_ptr block_ptr)
 				}
 			}
 			
-			/* Hack - finished quests don't have monsters or objects */
-			if ((pl_ptr->type == TOWN_QUEST) && (w_ptr->info & WILD_INFO_DONE))
-			{
-				continue;
-			}
-			
 			/*
 			 * Instantiate object
 			 */
@@ -4156,37 +4150,34 @@ void move_wild(void)
 	w_ptr->info |= WILD_INFO_SEEN;
 
 	/* Hack - set place */
-	p_ptr->place_num = wild[y][x].done.place;
-
-	pl_ptr = &place[p_ptr->place_num];
-
-	/* Check for wilderness quests */
-	if ((pl_ptr->quest_num) && !(w_ptr->info & WILD_INFO_DONE))
-	{
-		q_ptr = &quest[pl_ptr->quest_num];
-
-		/* Some quests are completed by walking on them */
-		if (q_ptr->x_type == QX_WILD_ENTER)
-		{
-			/* We have been here */
-			w_ptr->info |= WILD_INFO_DONE;
-
-			/* Decrement active block counter */
-			pl_ptr->data--;
-
-			/* Done? */
-			if (!pl_ptr->data)
-			{
-				trigger_quest_complete(QX_WILD_ENTER, (vptr)q_ptr);
-			}
-		}
-	}
+	p_ptr->place_num = w_ptr->place;
 
 	/* Move boundary */
 	shift_in_bounds(&x, &y);
 
 	/* If we haven't moved block - exit */
 	if ((ox == x) && (oy == y)) return;
+	
+	/* We have moved, notice the new town/dungeon */
+	activate_quests(0);
+	
+	pl_ptr = &place[p_ptr->place_num];
+
+	/* Check for wilderness quests */
+	if (pl_ptr->quest_num)
+	{
+		q_ptr = &quest[pl_ptr->quest_num];
+
+		/* Some quests are completed by walking on them */
+		if (q_ptr->x_type == QX_WILD_ENTER)
+		{
+			/* Decrement active block counter */
+			pl_ptr->data--;
+
+			/* Done? */
+			trigger_quest_complete(QX_WILD_ENTER, (vptr)q_ptr);
+		}
+	}
 
 	/* Shift the player information */
 	while (ox < x)
