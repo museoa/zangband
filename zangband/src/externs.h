@@ -1231,6 +1231,7 @@ extern void display_dungeon(void);
 extern void lite_spot(int x, int y);
 extern void prt_map(void);
 extern void display_map(int *cx, int *cy);
+extern void update_overhead_map(void);
 extern void Term_erase_map(void);
 extern void Term_move_player(void);
 extern void Term_write_equipment(void);

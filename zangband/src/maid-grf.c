@@ -490,7 +490,7 @@ void del_overhead_map(void)
 	/* Delete each block */
 	for (i = 0; i < MAP_CACHE; i++)
 	{
-		/* Allocate rows of a block */
+		/* Deallocate rows of a block */
 		for (j = 0; j < WILD_BLOCK_SIZE; j++)
 		{
 			FREE(map_cache[i][j]);
@@ -1905,6 +1905,32 @@ static void map_info(int x, int y, byte *ap, char *cp, byte *tap, char *tcp)
 	
 	/* Save information in map */
 	save_map_location(x, y, &map);
+}
+
+
+/*
+ * Update the overhead map (used when the visuals change)
+ */
+void update_overhead_map(void)
+{
+	map_block *mb_ptr;
+
+	byte a, ta;
+	char c, tc;
+
+	int x, y;
+
+	MAP_ITT_START (mb_ptr)
+	{
+		MAP_GET_LOC(x, y);
+		
+		if (in_boundsp(x, y))
+		{
+			/* Update the known tile at the location */
+			map_info(x, y, &a, &c, &ta, &tc);
+		}
+	}
+	MAP_ITT_END;
 }
 
 
