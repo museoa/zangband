@@ -87,7 +87,7 @@ ANGOBJS := $(LUAWOBJS) \
 	bldg.o obj_kind.o wild1.o wild2.o avatar.o notes.o\
 	main-cap.o main-gcu.o main-x11.o main-xaw.o main-xpj.o\
 	main-lsl.o main-vcs.o main-gtk.o main-win.o main.o \
-	maid-grf.o main-dos.o main-ibm.o
+	maid-grf.o main-dos.o main-ibm.o main-acn.o
 
 ##
 ## The "Utility" files
@@ -427,6 +427,7 @@ streams.o: grid.h generate.h
 maid-grf.o: maid-grf.h
 main-gtk.o: maid-grf.h
 maid-x11.o: maid-grf.h
+main-acn.o: maid-grf.h
 main-win.o: maid-grf.h
 main-x11.o: maid-grf.h maid-x11.h
 main-xaw.o: maid-grf.h maid-x11.h
