@@ -313,12 +313,12 @@ static void borg_hidden(void)
 		if (!l_ptr) continue;
 
 		/* Affect stats */
-		if (l_ptr->kn_flags[0] & TR0_STR) my_stat_add[A_STR] += l_ptr->pval;
-		if (l_ptr->kn_flags[0] & TR0_INT) my_stat_add[A_INT] += l_ptr->pval;
-		if (l_ptr->kn_flags[0] & TR0_WIS) my_stat_add[A_WIS] += l_ptr->pval;
-		if (l_ptr->kn_flags[0] & TR0_DEX) my_stat_add[A_DEX] += l_ptr->pval;
-		if (l_ptr->kn_flags[0] & TR0_CON) my_stat_add[A_CON] += l_ptr->pval;
-		if (l_ptr->kn_flags[0] & TR0_CHR) my_stat_add[A_CHR] += l_ptr->pval;
+		if (KN_FLAG(l_ptr, TR_STR)) my_stat_add[A_STR] += l_ptr->pval;
+		if (KN_FLAG(l_ptr, TR_INT)) my_stat_add[A_INT] += l_ptr->pval;
+		if (KN_FLAG(l_ptr, TR_WIS)) my_stat_add[A_WIS] += l_ptr->pval;
+		if (KN_FLAG(l_ptr, TR_DEX)) my_stat_add[A_DEX] += l_ptr->pval;
+		if (KN_FLAG(l_ptr, TR_CON)) my_stat_add[A_CON] += l_ptr->pval;
+		if (KN_FLAG(l_ptr, TR_CHR)) my_stat_add[A_CHR] += l_ptr->pval;
 	}
 
 	/* Mega-Hack -- Guess at "my_stat_cur[]" */

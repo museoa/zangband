@@ -3504,8 +3504,8 @@ static s32b borg_power_aux3(void)
 		l_ptr = look_up_equip_slot(EQUIP_HANDS);
 
 		/* Penalize non-usable gloves */
-		if (l_ptr && (!(l_ptr->kn_flags[1] & TR1_FREE_ACT)) &&
-			(!((l_ptr->kn_flags[0] & TR0_DEX) && (l_ptr->pval > 0))))
+		if (l_ptr && !KN_FLAG(l_ptr, TR_FREE_ACT) &&
+			!(KN_FLAG(l_ptr, TR_DEX) && (l_ptr->pval > 0)))
 		{
 			/* Hack -- Major penalty */
 			value -= 275000L;
@@ -3520,7 +3520,7 @@ static s32b borg_power_aux3(void)
 		/* Penalize non-blessed edged weapons */
 		if (l_ptr && (((l_ptr->tval == TV_SWORD) ||
 					   (l_ptr->tval == TV_POLEARM)) &&
-					  !(l_ptr->kn_flags[2] & TR2_BLESSED)))
+					  !KN_FLAG(l_ptr, TR_BLESSED)))
 		{
 			/* Hack -- Major penalty */
 			value -= 75000L;
@@ -3591,17 +3591,17 @@ static s32b borg_power_aux3(void)
 		if (!l_ptr) continue;
 
 		/* Good to have one item with multiple high resists */
-		multibonus = (((l_ptr->kn_flags[1] & TR1_RES_POIS) != 0) +
-					  ((l_ptr->kn_flags[1] & TR1_RES_LITE) != 0) +
-					  ((l_ptr->kn_flags[1] & TR1_RES_DARK) != 0) +
-					  ((l_ptr->kn_flags[1] & TR1_RES_BLIND) != 0) +
-					  ((l_ptr->kn_flags[1] & TR1_RES_CONF) != 0) +
-					  ((l_ptr->kn_flags[1] & TR1_RES_SOUND) != 0) +
-					  ((l_ptr->kn_flags[1] & TR1_RES_SHARDS) != 0) +
-					  ((l_ptr->kn_flags[1] & TR1_RES_NEXUS) != 0) +
-					  ((l_ptr->kn_flags[1] & TR1_RES_NETHER) != 0) +
-					  ((l_ptr->kn_flags[1] & TR1_RES_CHAOS) != 0) +
-					  ((l_ptr->kn_flags[1] & TR1_RES_DISEN) != 0));
+		multibonus = (KN_FLAG(l_ptr, TR_RES_POIS) +
+					  KN_FLAG(l_ptr, TR_RES_LITE) +
+					  KN_FLAG(l_ptr, TR_RES_DARK) +
+					  KN_FLAG(l_ptr, TR_RES_BLIND) +
+					  KN_FLAG(l_ptr, TR_RES_CONF) +
+					  KN_FLAG(l_ptr, TR_RES_SOUND) +
+					  KN_FLAG(l_ptr, TR_RES_SHARDS) +
+					  KN_FLAG(l_ptr, TR_RES_NEXUS) +
+					  KN_FLAG(l_ptr, TR_RES_NETHER) +
+					  KN_FLAG(l_ptr, TR_RES_CHAOS) +
+					  KN_FLAG(l_ptr, TR_RES_DISEN));
 
 		if (multibonus >= 2) value += 15000 * multibonus;
 	}

@@ -5751,49 +5751,49 @@ static bool borg_missile_equals_type(list_item *l_ptr, int gf_i)
 		/* Flaming missiles */
 		case GF_ARROW_FLAME:
 		{
-			if (l_ptr->kn_flags[0] & TR0_BRAND_FIRE) return (TRUE);
+			if (KN_FLAG(l_ptr, TR_BRAND_FIRE)) return (TRUE);
 			return (FALSE);
 		}
 
 		/* Freezing missiles */
 		case GF_ARROW_FROST:
 		{
-			if (l_ptr->kn_flags[0] & TR0_BRAND_COLD) return (TRUE);
+			if (KN_FLAG(l_ptr, TR_BRAND_COLD)) return (TRUE);
 			return (FALSE);
 		}
 
 		/* Electric missiles */
 		case GF_ARROW_SHOCKING:
 		{
-			if (l_ptr->kn_flags[0] & TR0_BRAND_ELEC) return (TRUE);
+			if (KN_FLAG(l_ptr, TR_BRAND_ELEC)) return (TRUE);
 			return (FALSE);
 		}
 
 		/* Amimal missiles */
 		case GF_ARROW_ANIMAL:
 		{
-			if (l_ptr->kn_flags[0] & TR0_SLAY_ANIMAL) return (TRUE);
+			if (KN_FLAG(l_ptr, TR_SLAY_ANIMAL)) return (TRUE);
 			return (FALSE);
 		}
 
 		/* Evil missiles */
 		case GF_ARROW_EVIL:
 		{
-			if (l_ptr->kn_flags[0] & TR0_SLAY_EVIL) return (TRUE);
+			if (KN_FLAG(l_ptr, TR_SLAY_EVIL)) return (TRUE);
 			return (FALSE);
 		}
 
 		/* Dragon missiles */
 		case GF_ARROW_DRAGON:
 		{
-			if (l_ptr->kn_flags[0] & TR0_SLAY_DRAGON) return (TRUE);
+			if (KN_FLAG(l_ptr, TR_SLAY_DRAGON)) return (TRUE);
 			return (FALSE);
 		}
 
        	/* Exploding missiles */
 		case GF_ARROW_EXPLOSION:
 		{
-			if (l_ptr->kn_flags[3] & TR3_EXPLODE) return (TRUE);
+			if (KN_FLAG(l_ptr, TR_EXPLODE)) return (TRUE);
 			return (FALSE);
 		}
 
@@ -11575,7 +11575,7 @@ bool borg_check_rest(void)
 		}
 
 		/* Do not rest with Phial or Star if it hurts */
-		if (equipment[EQUIP_LITE].kn_flags[2] & TR2_INSTA_ART)
+		if (KN_FLAG(&equipment[EQUIP_LITE], TR_INSTA_ART))
 		{
 			return (FALSE);
 		}

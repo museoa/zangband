@@ -665,9 +665,9 @@ static s32b borg_think_buy_slot(list_item *l_ptr, int slot, bool home)
 	s32b p;
 
 	/* Paranoia */
-	if ((q_ptr->kn_flags[2] & TR2_CURSED) ||
-		(q_ptr->kn_flags[2] & TR2_HEAVY_CURSE) ||
-		(q_ptr->kn_flags[2] & TR2_PERMA_CURSE))
+	if (KN_FLAG(q_ptr, TR_CURSED) ||
+		KN_FLAG(q_ptr, TR_HEAVY_CURSE) ||
+		KN_FLAG(q_ptr, TR_PERMA_CURSE))
 	{
 		/* Hack, trying to wield into cursed slot - avoid this */
 		p = borg_power();

@@ -1540,7 +1540,7 @@ static void borg_destroy_item(list_item *l_ptr, int slot, int number)
 	borg_keypresses(buf);
 
 	/* Destroy that item */
-	if (!(l_ptr->kn_flags[2] & TR2_INSTA_ART))
+	if (!KN_FLAG(l_ptr, TR_INSTA_ART))
 		borg_keypress('k');
 	else
 	{
@@ -1779,7 +1779,7 @@ bool borg_crush_hole(void)
 		if (!l_ptr->k_idx) continue;
 
 		/* Hack -- skip "artifacts" */
-		if (l_ptr->kn_flags[2] & TR2_INSTA_ART) continue;
+		if (KN_FLAG(l_ptr, TR_INSTA_ART)) continue;
 
 		/* Don't crush our spell books */
 		if ((l_ptr->tval == (TV_BOOKS_MIN - 1 + bp_ptr->realm1)) ||
@@ -1955,7 +1955,7 @@ bool borg_obj_star_id_able(list_item *l_ptr)
 	if (!borg_obj_is_ego_art(l_ptr)) return (FALSE);
 
 	/* Artifacts */
-	if ((l_ptr->kn_flags[2]) & TR2_INSTA_ART) return (TRUE);
+	if (KN_FLAG(l_ptr, TR_INSTA_ART)) return (TRUE);
 
 	/* Weapons */
 	if (streq(l_ptr->xtra_name, "(Holy Avenger)")) return (TRUE);
@@ -2477,10 +2477,10 @@ static bool borg_wear_rings(void)
 		if (!l_ptr->k_idx) continue;
 
 		/* Not cursed items */
-		if (l_ptr->kn_flags[2] & TR2_CURSED) continue;
+		if (KN_FLAG(l_ptr, TR_CURSED)) continue;
 
 		/* skip artifact rings not star id'd  */
-		if ((l_ptr->kn_flags[2] & TR2_INSTA_ART) &&
+		if (KN_FLAG(l_ptr, TR_INSTA_ART) &&
 			!borg_obj_known_full(l_ptr)) continue;
 
 		/* Where does it go */
@@ -2599,8 +2599,8 @@ bool borg_remove_stuff(void)
 			!strstr(l_ptr->o_name, "{special")) continue;
 
 		/* skip it if it has not been decursed */
-		if ((l_ptr->kn_flags[2] & TR2_CURSED) ||
-			(l_ptr->kn_flags[2] & TR2_HEAVY_CURSE)) continue;
+		if (KN_FLAG(l_ptr, TR_CURSED) ||
+			KN_FLAG(l_ptr, TR_HEAVY_CURSE)) continue;
 
 		/* Take it off */
 		l_ptr->treat_as = TREAT_AS_GONE;
@@ -2687,8 +2687,8 @@ bool borg_wear_stuff(void)
 		if (!borg_obj_known_full(l_ptr) && borg_obj_is_ego_art(l_ptr)) continue;
 
 		/* skip it if it has not been decursed */
-		if ((l_ptr->kn_flags[2] & TR2_CURSED) ||
-			(l_ptr->kn_flags[2] & TR2_HEAVY_CURSE)) continue;
+		if (KN_FLAG(l_ptr, TR_CURSED) ||
+			KN_FLAG(l_ptr, TR_HEAVY_CURSE)) continue;
 
 		/* Where does it go */
 		slot = borg_wield_slot(l_ptr);
@@ -2697,7 +2697,7 @@ bool borg_wear_stuff(void)
 		if (slot < 0) continue;
 
 		/* skip it if it this slot has been decursed */
-		if (equipment[slot].kn_flags[2] & TR2_CURSED) continue;
+		if (KN_FLAG(&equipment[slot], TR_CURSED)) continue;
 
 		/* Obtain danger */
 		danger = borg_danger(c_x, c_y, 1, TRUE);

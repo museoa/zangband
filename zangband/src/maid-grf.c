@@ -2976,7 +2976,7 @@ static void set_basic_flags(term_list *l_ptr, object_type *o_ptr, bool in_store)
 	}
 
 	/* Pval */
-	if (o_ptr->kn_flags[0] & (TR0_PVAL_MASK))
+	if (KN_FLAG(o_ptr, TR_PVAL_MASK))
 	{
 		/* Normal items with noticable pval */
 		l_ptr->pval = o_ptr->pval;

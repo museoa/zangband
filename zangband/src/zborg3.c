@@ -1501,7 +1501,7 @@ bool borg_activate_artifact(int name1, bool secondary)
 		list_item *l_ptr = &equipment[i];
 
 		/* Skip non-artifacts */
-		if (!(l_ptr->kn_flags[2] & TR2_INSTA_ART)) continue;
+		if (!KN_FLAG(l_ptr, TR_INSTA_ART)) continue;
 
 		/* Check charge */
 		if (l_ptr->timeout) return (FALSE);

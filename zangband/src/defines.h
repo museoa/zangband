@@ -3991,6 +3991,10 @@
 #define COPY_FLAG(P1, P2, F) COPY_FLAG_AUX(P1, P2, F)
 
 
+#define KN_FLAG_AUX(P, TYPE, NUM, F) (((P)->kn_flags[NUM] & MASK(TYPE, NUM, F)) != 0)
+#define KN_FLAG(P, F) KN_FLAG_AUX(P, F)
+
+
 /* Skills */
 #define MAX_SKILL	10
 
