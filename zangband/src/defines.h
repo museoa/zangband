@@ -4370,3 +4370,10 @@ extern int PlayerUID;
 #define LIST_FLOOR			3
 #define LIST_STORE			4
 #define LIST_HOME			5
+
+/* Locations of the tables on the screen (see ui.c / birth.c) */
+#define HEADER_ROW		1
+#define QUESTION_ROW	7
+#define TABLE_ROW		10
+
+#define INVALID_CHOICE 255

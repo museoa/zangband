@@ -1458,10 +1458,10 @@ static void player_outfit(void)
 
 		(void)inven_carry(q_ptr);
 
-		/* Hack -- Give the player some arrows */
+		/* Hack -- Give the player a bow */
 		q_ptr = object_prep(lookup_kind(TV_BOW, SV_SHORT_BOW));
 
-		/* These objects are "storebought" */
+		/* This object is "storebought" */
 		q_ptr->info |= OB_STOREB;
 
 		object_aware(q_ptr);
@@ -1476,7 +1476,7 @@ static void player_outfit(void)
 		q_ptr->number = 1;
 		q_ptr->pval = (byte)rand_range(25, 30);
 
-		/* These objects are "storebought" */
+		/* This object is "storebought" */
 		q_ptr->info |= OB_STOREB;
 
 		object_aware(q_ptr);
@@ -1524,10 +1524,6 @@ static void player_outfit(void)
 }
 
 /* Locations of the tables on the screen */
-#define HEADER_ROW		1
-#define QUESTION_ROW	7
-#define TABLE_ROW		10
-
 #define QUESTION_COL	3
 #define SEX_COL			0
 #define RACE_COL		12
@@ -1552,284 +1548,6 @@ static void clear_question(void)
 		/* Clear line, position cursor */
 		Term_erase(0, i, 255);
 	}
-}
-
-
-/*
- * Generic "get choice from menu" function
- */
-static int get_player_choice(cptr *choices, int num, int col, int wid,
-                             cptr helpfile, void (*hook) (cptr))
-{
-	int top = 0, cur = 0;
-	/* int bot = 13; */
-	int i, dir;
-	char c;
-	char buf[80];
-	bool done = FALSE;
-	int hgt;
-
-
-	/* Autoselect if able */
-	if (num == 1) done = TRUE;
-
-	/* Clear */
-	for (i = TABLE_ROW; i < Term->hgt; i++)
-	{
-		/* Clear */
-		Term_erase(col, i, Term->wid - wid);
-	}
-
-	/* Choose */
-	while (TRUE)
-	{
-		/*
-		 * Note to Melkor: What happens when the screen is resized?
-		 * There is no 'redraw' hook at this point... 
-		 * (That is why the original code restricted itself to what
-		 * would fit in the smallest possible screen.) -SF-
-		 */
-		hgt = Term->hgt - TABLE_ROW - 1;
-
-		/* Redraw the list */
-		for (i = 0; ((i + top < num) && (i <= hgt)); i++)
-		{
-			if (i + top < 26)
-			{
-				sprintf(buf, "%c) %s", I2A(i + top), choices[i + top]);
-			}
-			else
-			{
-				/* ToDo: Fix the ASCII dependency */
-				sprintf(buf, "%c) %s", 'A' + (i + top - 26), choices[i + top]);
-			}
-
-			/* Clear */
-			Term_erase(col, i + TABLE_ROW, wid);
-
-			/* Display */
-			if (i == (cur - top))
-			{
-				/* Highlight the current selection */
-				Term_putstr(col, i + TABLE_ROW, wid, TERM_L_BLUE, buf);
-			}
-			else
-			{
-				Term_putstr(col, i + TABLE_ROW, wid, TERM_WHITE, buf);
-			}
-		}
-
-		if (done) return (cur);
-
-		/* Display auxiliary information if any is available. */
-		if (hook) hook(choices[cur]);
-
-		/* Move the cursor */
-		put_str("", col, TABLE_ROW + cur - top);
-
-		c = inkey();
-
-		if (c == KTRL('X'))
-		{
-			remove_loc();
-			quit(NULL);
-		}
-		if (c == ESCAPE)
-		{
-			/* Mega Hack - go back. */
-			return (INVALID_CHOICE);
-		}
-		if (c == '*')
-		{
-			/* Select at random */
-			cur = randint0(num);
-
-			/* Move it onto the screen */
-			if ((cur < top) || (cur > top + hgt))
-			{
-				top = cur;
-			}
-
-			/* Done */
-			done = TRUE;
-		}
-		else if (c == '?')
-		{
-			screen_save();
-			(void)show_file(helpfile, NULL, 0, 0);
-			screen_load();
-		}
-		else if (c == '=')
-		{
-			screen_save();
-			do_cmd_options(OPT_FLAG_BIRTH | OPT_FLAG_SERVER | OPT_FLAG_PLAYER);
-			screen_load();
-		}
-		else if ((c == '\n') || (c == '\r'))
-		{
-			/* Done */
-			return (cur);
-		}
-		else if (isdigit(c))
-		{
-			/* Get a direction from the key */
-			dir = get_keymap_dir(c);
-
-			/* Going up? */
-			if (dir == 8)
-			{
-				if (cur != 0)
-				{
-					/* Move selection */
-					cur--;
-				}
-
-				if ((top > 0) && ((cur - top) < 4))
-				{
-					/* Scroll up */
-					top--;
-				}
-			}
-
-			/* Going down? */
-			if (dir == 2)
-			{
-				if (cur != (num - 1))
-				{
-					/* Move selection */
-					cur++;
-				}
-
-				if ((top + hgt < (num - 1)) && ((top + hgt - cur) < 4))
-				{
-					/* Scroll down */
-					top++;
-				}
-			}
-		}
-		else if (isalpha(c))
-		{
-			int choice;
-
-			if (islower(c))
-			{
-				choice = A2I(c);
-			}
-			else
-			{
-				choice = c - 'A' + 26;
-			}
-
-			/* Validate input */
-			if ((choice > -1) && (choice < num))
-			{
-				cur = choice;
-
-				/* Move it onto the screen */
-				if ((cur < top) || (cur > top + hgt))
-				{
-					top = cur;
-				}
-
-				/* Done */
-				done = TRUE;
-			}
-			else
-			{
-				bell("Illegal birth choice!");
-			}
-		}
-
-		/* Invalid input */
-		bell("Illegal birth choice!");
-	}
-
-	return (INVALID_CHOICE);
-}
-
-
-/*
- * Sorting hook -- comp function -- strings (see below)
- *
- * We use "u" to point to an array of strings.
- */
-static bool ang_sort_comp_hook_string(const vptr u, const vptr v, int a, int b)
-{
-	cptr *x = (cptr *)(u);
-
-	/* Hack - ignore v */
-	(void)v;
-
-	return (strcmp(x[a], x[b]) <= 0);
-}
-
-
-/*
- * Sorting hook -- swap function -- array of strings (see below)
- *
- * We use "u" to point to an array of strings.
- */
-static void ang_sort_swap_hook_string(const vptr u, const vptr v, int a, int b)
-{
-	cptr *x = (cptr *)(u);
-
-	cptr temp;
-
-	/* Hack - ignore v */
-	(void)v;
-
-	/* Swap */
-	temp = x[a];
-	x[a] = x[b];
-	x[b] = temp;
-}
-
-
-/*
- * Present a sorted list to the player, and get a selection
- */
-static int get_player_sort_choice(cptr *choices, int num, int col, int wid,
-                                  cptr helpfile, void (*hook) (cptr))
-{
-	int i;
-	int choice;
-	cptr *strings;
-
-	C_MAKE(strings, num, cptr);
-
-	/* Initialise the sorted string array */
-	for (i = 0; i < num; i++)
-	{
-		strings[i] = choices[i];
-	}
-
-	/* Sort the strings */
-	ang_sort_comp = ang_sort_comp_hook_string;
-	ang_sort_swap = ang_sort_swap_hook_string;
-
-	/* Sort the (unique) slopes */
-	ang_sort((void *)strings, NULL, num);
-
-	/* Get the choice */
-	choice = get_player_choice(strings, num, col, wid, helpfile, hook);
-
-	/* Invert the choice */
-	for (i = 0; i < num; i++)
-	{
-		/* Does the string match the one we selected? */
-		if (choices[i] == strings[choice])
-		{
-			/* Save the choice + exit */
-			choice = i;
-			break;
-		}
-	}
-
-	/* Free the strings */
-	FREE((void *)strings);
-
-	/* Return the value from the list */
-	return (choice);
 }
 
 

@@ -891,8 +891,6 @@ extern errr fd_close(int fd);
 extern sint macro_find_exact(cptr pat);
 extern void macro_add(cptr pat, cptr act);
 extern void flush(void);
-extern void bell(cptr reason);
-extern void sound(int num);
 extern void text_to_ascii(char *buf, cptr str);
 extern void ascii_to_text(char *buf, cptr str);
 extern char inkey(void);
@@ -916,25 +914,9 @@ extern void msg_format(cptr fmt, ...);
 extern void message(u16b message_type, s16b extra, cptr message);
 extern void message_format(u16b message_type, s16b extra, cptr fmt, ...);
 extern void message_flush(void);
-extern void screen_save(void);
-extern void screen_load(void);
-extern void c_put_str(byte attr, cptr str, int col, int row);
-extern void put_str(cptr str, int col, int row);
-extern void c_prt(byte attr, cptr str, int col, int row);
-extern void prt(cptr str, int col, int row);
-extern void c_roff(byte attr, cptr str);
-extern void roff(cptr str);
-extern void clear_from(int row);
-extern bool askfor_aux(char *buf, int len);
-extern bool get_string(cptr prompt, char *buf, int len);
-extern bool get_check(cptr prompt);
-extern bool get_com(cptr prompt, char *command);
-extern s16b get_quantity(cptr prompt, int max);
-extern void pause_line(int row);
-extern void request_command(int shopping);
 extern bool is_a_vowel(int ch);
 extern int color_char_to_attr(char c);
-extern int get_keymap_dir(char ch);
+extern void request_command(int shopping);
 extern void repeat_push(int what);
 extern bool repeat_pull(int *what);
 extern void repeat_clear(void);
@@ -1256,6 +1238,30 @@ extern void Term_erase_map(void);
 extern void Term_move_player(void);
 extern void Term_write_equipment(void);
 extern void Term_write_list(s16b o_idx, byte list_type);
+
+/* ui.c */
+extern int get_player_choice(cptr *choices, int num, int col, int wid,
+                             cptr helpfile, void (*hook) (cptr));
+extern int get_player_sort_choice(cptr *choices, int num, int col, int wid,
+                                  cptr helpfile, void (*hook) (cptr));
+extern void bell(cptr reason);
+extern void sound(int num);
+extern void screen_save(void);
+extern void screen_load(void);
+extern void c_put_str(byte attr, cptr str, int col, int row);
+extern void put_str(cptr str, int col, int row);
+extern void c_prt(byte attr, cptr str, int col, int row);
+extern void prt(cptr str, int col, int row);
+extern void c_roff(byte attr, cptr str);
+extern void roff(cptr str);
+extern void clear_from(int row);
+extern bool askfor_aux(char *buf, int len);
+extern bool get_string(cptr prompt, char *buf, int len);
+extern bool get_check(cptr prompt);
+extern bool get_com(cptr prompt, char *command);
+extern s16b get_quantity(cptr prompt, int max);
+extern void pause_line(int row);
+extern int get_keymap_dir(char ch);
 
 
 /* borg.c */
