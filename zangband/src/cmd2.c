@@ -1767,7 +1767,7 @@ bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
 		/* Call completion routine */
 		if (field_hook_single(&fld_idx, FIELD_ACT_EXIT, NULL))
 		{
-			/* It didn't delete itself (naughty) so we do it now */
+			/* It didn't delete itself, so we do it now */
 			delete_field_idx(fld_idx);
 		}
 	}

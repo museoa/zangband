@@ -1234,6 +1234,7 @@ extern s16b place_field(int y, int x, s16b t_idx);
 extern s16b *field_find(s16b fld_idx);
 extern bool field_hook_single(s16b *field_ptr, int action, void *action_struct);
 extern void field_hook(s16b *field_ptr, int action, void *action_struct);
+extern void field_hook_special(s16b *field_ptr, u16b t_idx, void *action_struct);
 extern void process_fields(void);
 extern void test_field_data_integtrity(void);
 extern void field_action_nothing(s16b *field_ptr, void *nothing);
@@ -1242,6 +1243,7 @@ extern void field_action_compact_basic(s16b *field_ptr, void *compact_val);
 extern void field_action_glyph_warding(s16b *field_ptr, void *mon_enter_test);
 extern void field_action_glyph_explode(s16b *field_ptr, void *mon_enter_test);
 extern void field_action_corpse_decay(s16b *field_ptr, void *nothing);
+extern void field_action_corpse_raise(s16b *field_ptr, void *input);
 extern void field_action_corpse_init(s16b *field_ptr, void *input);
 extern void place_trap(int y, int x);
 extern void field_action_trap_init(s16b *field_ptr, void *input);
@@ -1262,6 +1264,18 @@ extern void field_action_hit_trap_disenchant(s16b *field_ptr, void *nothing);
 extern void field_action_hit_trap_drop_item(s16b *field_ptr, void *nothing);
 extern void field_action_hit_trap_mutate(s16b *field_ptr, void *nothing);
 extern void field_action_hit_trap_new_life(s16b *field_ptr, void *nothing);
+extern void field_action_hit_trap_no_lite(s16b *field_ptr, void *nothing);
+extern void field_action_hit_trap_hunger(s16b *field_ptr, void *nothing);
+extern void field_action_hit_trap_no_gold(s16b *field_ptr, void *nothing);
+extern void field_action_hit_trap_haste_mon(s16b *field_ptr, void *nothing);
+extern void field_action_hit_trap_raise_mon(s16b *field_ptr, void *nothing);
+extern void field_action_hit_trap_drain_magic(s16b *field_ptr, void *nothing);
+extern void field_action_hit_trap_aggravate(s16b *field_ptr, void *nothing);
+extern void field_action_hit_trap_summon(s16b *field_ptr, void *nothing);
+extern void field_action_hit_trap_lose_memory(s16b *field_ptr, void *nothing);
+
+
+
 
 
 /*

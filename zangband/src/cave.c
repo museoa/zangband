@@ -3758,6 +3758,18 @@ void wiz_dark(void)
 		/* Forget the object */
 		o_ptr->marked = FALSE;
 	}
+	
+	/* Forget all fields */
+	for (i = 1; i < fld_max; i++)
+	{
+		field_type *f_ptr = &fld_list[i];
+
+		/* Skip dead fields */
+		if (!f_ptr->t_idx) continue;
+
+		/* Forget the object */
+		f_ptr->info &= (~FIELD_INFO_MARK);
+	}
 
 	/* Mega-Hack -- Forget the view */
 	p_ptr->update |= (PU_UN_VIEW);

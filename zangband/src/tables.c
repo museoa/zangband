@@ -6512,6 +6512,9 @@ field_action f_action[FIELD_ACTION_TYPES] =
 	/* Corpse init function */
 	{field_action_corpse_init, "field_action_corpse_init"},
 	
+	/* Corpse raising function for spell */
+	{field_action_corpse_raise, "field_action_corpse_raise"},
+	
 	/* Trap init function */
 	{field_action_trap_init, "field_action_trap_init"},
 	
@@ -6564,6 +6567,33 @@ field_action f_action[FIELD_ACTION_TYPES] =
 	{field_action_hit_trap_mutate, "field_action_hit_trap_mutate"},
 	
 	/* New Life Trap */
-	{field_action_hit_trap_new_life, "field_action_hit_trap_new_life"}
+	{field_action_hit_trap_new_life, "field_action_hit_trap_new_life"},
+	
+	/* Light sucking Trap */
+	{field_action_hit_trap_no_lite, "field_action_hit_trap_no_lite"},
+	
+	/* Hunger Trap */
+	{field_action_hit_trap_hunger, "field_action_hit_trap_hunger"},
+	
+	/* Gold destruction Trap */
+	{field_action_hit_trap_no_gold, "field_action_hit_trap_no_gold"},
+	
+	/* Haste Monster Trap */
+	{field_action_hit_trap_haste_mon, "field_action_hit_trap_haste_monster"},
+	
+	/* Raise Monster Trap */
+	{field_action_hit_trap_raise_mon, "field_action_hit_trap_raise_mon"},
+	
+	/* Drain charges Trap */
+	{field_action_hit_trap_drain_magic, "field_action_hit_trap_drain_magic"},
+	
+	/* Aggravate Monster Trap */
+	{field_action_hit_trap_aggravate, "field_action_hit_trap_aggravate"},
+	
+	/* Summon Monster Trap */
+	{field_action_hit_trap_summon, "field_action_hit_trap_summon"},
+	
+	/* Lose Memory Trap */
+	{field_action_hit_trap_lose_memory, "field_action_hit_trap_lose_memory"}
 };
 

@@ -2235,13 +2235,9 @@ bool raise_dead(int y, int x, bool pet)
 	int fx, fy;
 
 	bool    obvious = FALSE;
+	bool 	want_pet = FALSE;
 
 	cave_type *c_ptr;
-	
-	bool nightmare_mode = ironman_nightmare;
-	
-	/* Mega hack XXX XXX */
-	ironman_nightmare = TRUE;
 
 	/* Check all (nearby) fields */
 	for (i = 1; i < fld_max; i++)
@@ -2266,12 +2262,12 @@ bool raise_dead(int y, int x, bool pet)
 
 		if (player_has_los_grid(c_ptr)) obvious = TRUE;
 		
-		/* Hack XXX XXX */
-		field_action_corpse_decay(&c_ptr->fld_idx, NULL);
+		/* Raise Corpses */
+		field_hook_special(&c_ptr->fld_idx, FT_CORPSE, (void *) &want_pet);
+		
+		/* Raise Skeletons */
+		field_hook_special(&c_ptr->fld_idx, FT_SKELETON, (void *) &want_pet);
 	}
-	
-	/* Mega hack XXX XXX */
-	ironman_nightmare = nightmare_mode;
 
 	/* Result */
 	return (obvious);

@@ -979,6 +979,43 @@ void field_hook(s16b *field_ptr, int action, void *action_struct)
 }
 
 
+/*
+ * Call the "special" action function for fields
+ * in the specified list which match the required
+ * field type.
+ */
+void field_hook_special(s16b *field_ptr, u16b t_idx, void *action_struct)
+{
+	field_type *f_ptr;
+	
+	while (*field_ptr)
+	{
+		/* Point to the field */
+		f_ptr = &fld_list[*field_ptr];
+
+		/* Check for the right field + existance of a function to call */
+		if ((f_ptr->t_idx == t_idx) && (f_ptr->action[FIELD_ACT_SPECIAL]))
+		{
+			/* Call the action function */
+			f_ptr->action[FIELD_ACT_SPECIAL](field_ptr, action_struct);
+		}
+		else
+		{
+			/* Paranoia - Next field in the list */
+			field_ptr = &f_ptr->next_f_idx;
+		}
+
+		/*
+		 * Hack - the action function must change *field_ptr
+		 * to point to the next field.
+		 *
+		 * This is much simpler than trying to work what the
+		 * next one is in the case where the field deletes itself.
+		 */
+	}
+}
+
+
 void process_fields(void)
 {
 	s16b fld_idx;
@@ -1113,13 +1150,13 @@ void test_field_data_integtrity(void)
  * FIELD_ACT_MONSTER_LEAVE	monster_type*	(m_ptr)
  * FIELD_ACT_OBJECT_DROP	object_type*	(o_ptr)	 
  * FIELD_ACT_OBJECT_ON		object_type*	(o_ptr)	 
- * FIELD_ACT_TUNNEL			Not implemented yet.
+ * FIELD_ACT_INTERACT		Not implemented yet.
  * FIELD_ACT_MAGIC_TARGET	field_magic_target*
  * FIELD_ACT_COMPACT		byte*
  * FIELD_ACT_EXIT			NULL
  * FIELD_ACT_MONSTER_AI		Not implemented yet.
- * FIELD_ACT_OPEN			Not implemented yet.
- * FIELD_ACT_CLOSE			Not implemented yet.
+ * FIELD_ACT_SPECIAL		Function dependent.   (Be careful)
+ * FIELD_ACT_XXXX16			Not implemented yet.
  * FIELD_ACT_MON_ENTER_TEST field_mon_test*
  */	
 
@@ -1389,16 +1426,22 @@ void field_action_corpse_decay(s16b *field_ptr, void *nothing)
 		if (summon_named_creature(f_ptr->fy, f_ptr->fx,
 				 r_idx, FALSE, FALSE, FALSE))
 		{
-			msg_format("The %s rises.", t_ptr->name);
+			if (area(f_ptr->fy, f_ptr->fx)->info & CAVE_VIEW)
+			{
+				msg_format("The %s rises.", t_ptr->name);
+			}
 
-				/* Set the cloned flag, so no treasure is dropped */
-				m_list[hack_m_idx_ii].smart |= SM_CLONED;
+			/* Set the cloned flag, so no treasure is dropped */
+			m_list[hack_m_idx_ii].smart |= SM_CLONED;
 		}
 	}
 	else
 	{
-		/* Let player know what happened. */
-		msg_format("The %s decays.", t_ptr->name);
+		if (area(f_ptr->fy, f_ptr->fx)->info & CAVE_VIEW)
+		{
+			/* Let player know what happened. */
+			msg_format("The %s decays.", t_ptr->name);
+		}
 	}
 
 
@@ -1408,6 +1451,39 @@ void field_action_corpse_decay(s16b *field_ptr, void *nothing)
 	/* Note that *field_ptr does not need to be updated */
 	return;
 }
+
+/* 
+ * Special action to raise corpses.
+ */
+void field_action_corpse_raise(s16b *field_ptr, void *input)
+{
+	field_type *f_ptr = &fld_list[*field_ptr];
+	
+	bool *want_pet = (bool *) input; 
+	
+	/*
+	 * Data[1] * 256 + Data[2] = r_idx of monster.
+	 */
+	
+	/* Monster race */
+	u16b r_idx = ((u16b) f_ptr->data[1]) * 256 + f_ptr->data[2];
+
+	/* Make a monster nearby if possible */
+	if (summon_named_creature(f_ptr->fy, f_ptr->fx,
+		 r_idx, FALSE, FALSE, *want_pet))
+	{
+
+		/* Set the cloned flag, so no treasure is dropped */
+		m_list[hack_m_idx_ii].smart |= SM_CLONED;
+	}
+
+	/* Delete the field */
+	delete_field_idx(*field_ptr);
+
+	/* Note that *field_ptr does not need to be updated */
+	return;
+}
+
 
 /* Initialise corpse / skeletons */
 void field_action_corpse_init(s16b *field_ptr, void *input)
@@ -1492,7 +1568,7 @@ static field_trap_type trap_num[] =
 	{FT_TRAP_TELEPORT, 40, 0},
 	{FT_TRAP_ELEMENT, 10, 5},
 	{FT_TRAP_BA_ELEMENT, 50, 5},
-	{FT_TRAP_GAS, 7, 5},
+	{FT_TRAP_GAS, 5, 5},
 	{FT_TRAP_TRAPS, 60, 0},
 	{FT_TRAP_TEMP_STAT, 25, 3},
 	{FT_TRAP_PERM_STAT, 70, 6},
@@ -1501,7 +1577,15 @@ static field_trap_type trap_num[] =
 	{FT_TRAP_DROP_ITEM, 55, 0},
 	{FT_TRAP_MUTATE, 45, 0},
 	{FT_TRAP_NEW_LIFE, 100, 0},
-	{0, 0 ,0}
+	{FT_TRAP_NO_LITE, 0, 0},
+	{FT_TRAP_HUNGER, 0, 0},
+	{FT_TRAP_NO_GOLD, 25, 0},
+	{FT_TRAP_HASTE_MON, 15, 0},
+	{FT_TRAP_RAISE_MON, 10, 0},
+	{FT_TRAP_DRAIN_MAGIC, 65, 0},
+	{FT_TRAP_AGGRAVATE, 15, 0},
+	{FT_TRAP_SUMMON, 20, 0},
+	{0, 0, 0}
 };
 
 
@@ -1524,9 +1608,6 @@ void place_trap(int y, int x)
 
 	/* Paranoia -- verify location */
 	if (!in_bounds(y, x)) return;
-
-	/* Require empty, clean, floor grid */
-	if (!cave_naked_grid(area(y, x))) return;
 
 	/* Calculate the total possibilities */
 	for (total = 0; TRUE; n_ptr++)
@@ -2410,3 +2491,292 @@ void field_action_hit_trap_new_life(s16b *field_ptr, void *nothing)
 	/* Note that *field_ptr does not need to be updated */
 }
 
+void field_action_hit_trap_no_lite(s16b *field_ptr, void *nothing)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+	
+	object_type *o_ptr;
+	
+	/* Look for invisible traps and detect them.*/
+	if (!(f_ptr->info & FIELD_INFO_VIS))
+	{
+		/* Detect it. */
+		f_ptr->info |= FIELD_INFO_VIS;
+		
+		/* Message */
+		msg_print("You found a trap!");
+	}
+
+	/* Disturb the player */
+	disturb(0, 0);
+	
+	msg_print("Darkness surrounds you!");
+	
+	/* Access the lite */
+	o_ptr = &inventory[INVEN_LITE];
+
+	if ((o_ptr->k_idx) &&
+		((o_ptr->sval == SV_LITE_LANTERN) || (o_ptr->sval == SV_LITE_TORCH)))
+	{
+		/* Drain all light. */
+		o_ptr->pval = 0;
+	}
+	
+	/* Darkeness */
+	unlite_room(py, px);
+	
+	/* Update *field_ptr to point to the next field in the list */
+	field_ptr = &(f_ptr->next_f_idx);
+}
+
+
+void field_action_hit_trap_hunger(s16b *field_ptr, void *nothing)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+		
+	/* Look for invisible traps and detect them.*/
+	if (!(f_ptr->info & FIELD_INFO_VIS))
+	{
+		/* Detect it. */
+		f_ptr->info |= FIELD_INFO_VIS;
+		
+		/* Message */
+		msg_print("You found a trap!");
+	}
+
+	/* Disturb the player */
+	disturb(0, 0);
+	
+	msg_print("You suddenly feel very, very hungry!");
+	
+	/* You are very hungry */
+	(void)set_food(PY_FOOD_WEAK);
+	
+	/* Delete the field */
+	delete_field_idx(*field_ptr);
+
+	/* Note that *field_ptr does not need to be updated */
+}
+
+
+void field_action_hit_trap_no_gold(s16b *field_ptr, void *nothing)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+		
+	/* Look for invisible traps and detect them.*/
+	if (!(f_ptr->info & FIELD_INFO_VIS))
+	{
+		/* Detect it. */
+		f_ptr->info |= FIELD_INFO_VIS;
+		
+		/* Message */
+		msg_print("You found a trap!");
+	}
+
+	/* Disturb the player */
+	disturb(0, 0);
+	
+	msg_print("Your purse becomes weightless!");
+	
+	/* No gold! */
+	p_ptr->au = 0;
+
+	/* Redraw gold */
+	p_ptr->redraw |= (PR_GOLD);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_PLAYER);
+	
+	/* Update *field_ptr to point to the next field in the list */
+	field_ptr = &(f_ptr->next_f_idx);
+}
+
+
+void field_action_hit_trap_haste_mon(s16b *field_ptr, void *nothing)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+	
+	/* Look for invisible traps and detect them.*/
+	if (!(f_ptr->info & FIELD_INFO_VIS))
+	{
+		/* Detect it. */
+		f_ptr->info |= FIELD_INFO_VIS;
+		
+		/* Message */
+		msg_print("You found a trap!");
+	}
+
+	/* Disturb the player */
+	disturb(0, 0);
+	
+	msg_print("A shrill note sounds!");
+	
+	(void) speed_monsters();	
+	
+	/* Delete the field */
+	delete_field_idx(*field_ptr);
+
+	/* Note that *field_ptr does not need to be updated */
+}
+
+
+void field_action_hit_trap_raise_mon(s16b *field_ptr, void *nothing)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+	
+	/* Look for invisible traps and detect them.*/
+	if (!(f_ptr->info & FIELD_INFO_VIS))
+	{
+		/* Detect it. */
+		f_ptr->info |= FIELD_INFO_VIS;
+		
+		/* Message */
+		msg_print("You found a trap!");
+	}
+
+	/* Disturb the player */
+	disturb(0, 0);
+	
+	msg_print("You smell something musty.");
+	
+	(void) raise_dead(py, px, FALSE);
+	
+	/* Update *field_ptr to point to the next field in the list */
+	field_ptr = &(f_ptr->next_f_idx);
+}
+
+
+void field_action_hit_trap_drain_magic(s16b *field_ptr, void *nothing)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+	
+	int i, k;
+	object_type *o_ptr;
+	
+	/* Look for invisible traps and detect them.*/
+	if (!(f_ptr->info & FIELD_INFO_VIS))
+	{
+		/* Detect it. */
+		f_ptr->info |= FIELD_INFO_VIS;
+		
+		/* Message */
+		msg_print("You found a trap!");
+	}
+
+	/* Disturb the player */
+	disturb(0, 0);
+	
+	msg_print("Static fills the air.");
+	
+	/* Find an item */
+	for (k = 0; k < 10; k++)
+	{
+		/* Pick an item */
+		i = rand_int(INVEN_PACK);
+
+		/* Obtain the item */
+		o_ptr = &inventory[i];
+
+		/* Skip non-objects */
+		if (!o_ptr->k_idx) continue;
+
+		/* Drain charged wands/staffs */
+		if (((o_ptr->tval == TV_STAFF) || (o_ptr->tval == TV_WAND)) &&
+			(o_ptr->pval))
+		{
+			/* Uncharge */
+			o_ptr->pval = 0;
+
+			/* Combine / Reorder the pack */
+			p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
+			/* Window stuff */
+			p_ptr->window |= (PW_INVEN);
+
+		}
+	}
+	
+	/* Update *field_ptr to point to the next field in the list */
+	field_ptr = &(f_ptr->next_f_idx);
+}
+
+
+void field_action_hit_trap_aggravate(s16b *field_ptr, void *nothing)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+	
+	/* Look for invisible traps and detect them.*/
+	if (!(f_ptr->info & FIELD_INFO_VIS))
+	{
+		/* Detect it. */
+		f_ptr->info |= FIELD_INFO_VIS;
+		
+		/* Message */
+		msg_print("You found a trap!");
+	}
+
+	/* Disturb the player */
+	disturb(0, 0);
+	
+	msg_print("Shouts fill the air!");
+	
+	aggravate_monsters(0);
+	
+	/* Update *field_ptr to point to the next field in the list */
+	field_ptr = &(f_ptr->next_f_idx);
+}
+
+
+void field_action_hit_trap_summon(s16b *field_ptr, void *nothing)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+	
+	/* Look for invisible traps and detect them.*/
+	if (!(f_ptr->info & FIELD_INFO_VIS))
+	{
+		/* Detect it. */
+		f_ptr->info |= FIELD_INFO_VIS;
+		
+		/* Message */
+		msg_print("You found a trap!");
+	}
+
+	/* Disturb the player */
+	disturb(0, 0);
+	
+	msg_print("Zap!");
+	
+	/* Summon monsters */
+	summon_specific(0, py, px, dun_level, 0, TRUE, FALSE, FALSE);
+	
+	/* Delete the field */
+	delete_field_idx(*field_ptr);
+
+	/* Note that *field_ptr does not need to be updated */
+}
+
+
+void field_action_hit_trap_lose_memory(s16b *field_ptr, void *nothing)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+	
+	/* Look for invisible traps and detect them.*/
+	if (!(f_ptr->info & FIELD_INFO_VIS))
+	{
+		/* Detect it. */
+		f_ptr->info |= FIELD_INFO_VIS;
+		
+		/* Message */
+		msg_print("You found a trap!");
+	}
+
+	/* Disturb the player */
+	disturb(0, 0);
+	
+	msg_print("You are not sure what just happened!");
+	
+	lose_all_info();
+	
+	/* Update *field_ptr to point to the next field in the list */
+	field_ptr = &(f_ptr->next_f_idx);
+}

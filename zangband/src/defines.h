@@ -1015,6 +1015,15 @@
 #define FT_TRAP_DROP_ITEM	0x0014
 #define FT_TRAP_MUTATE		0x0015
 #define FT_TRAP_NEW_LIFE	0x0016
+#define FT_TRAP_NO_LITE		0x0017
+#define FT_TRAP_HUNGER		0x0018
+#define FT_TRAP_NO_GOLD		0x0019
+#define FT_TRAP_HASTE_MON	0x001A
+#define FT_TRAP_RAISE_MON	0x001B
+#define FT_TRAP_DRAIN_MAGIC	0x001C
+#define FT_TRAP_AGGRAVATE	0x001D
+#define FT_TRAP_SUMMON		0x001E
+#define FT_TRAP_LOSE_MEMORY	0x001F
 
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
 
@@ -1474,10 +1483,6 @@
 #define SV_IVORY_STATUE			7
 #define SV_MITHRIL_STATUE		8
 #define SV_ORNATE_STATUE		9
-
-/* The "sval" codes for TV_CORPSE */
-#define SV_SKELETON 				0
-#define SV_CORPSE					1
 
 /* The "sval" codes for TV_SHOT/TV_ARROW/TV_BOLT */
 #define SV_AMMO_LIGHT                    0	/* pebbles, flight arrows */
@@ -3732,19 +3737,19 @@ extern int PlayerUID;
 #define FIELD_ACT_MONSTER_LEAVE	7	/* Monster leaves square */
 #define FIELD_ACT_OBJECT_DROP	8	/* Object lands on square */
 #define FIELD_ACT_OBJECT_ON		9	/* Object is on square */
-#define FIELD_ACT_TUNNEL		10  /* Something tries to tunnel into grid */
+#define FIELD_ACT_INTERACT		10  /* Type-specific interation */
 #define FIELD_ACT_MAGIC_TARGET	11	/* Targeting this square */
 #define FIELD_ACT_COMPACT		12	/* Compaction hook */
 #define FIELD_ACT_EXIT			13	/* Field is destroyed */
 #define FIELD_ACT_MONSTER_AI	14	/* Monster AI hook */
-#define FIELD_ACT_OPEN			15	/* Attempt to "open" grid */
-#define FIELD_ACT_CLOSE			16 	/* Attempt to "close" grid */
+#define FIELD_ACT_SPECIAL		15	/* Special, type specific action */
+#define FIELD_ACT_XXX16			16
 #define FIELD_ACT_MON_ENTER_TEST 17 /* Monster attempts to enter grid */
 
 #define FIELD_ACTION_MAX		18	/* The last action + 1 */
 
 
-#define FIELD_ACTION_TYPES  26 /* Number of FIELD_ACT functions in tables.c */
+#define FIELD_ACTION_TYPES  36 /* Number of FIELD_ACT functions in tables.c */
 
 
 
