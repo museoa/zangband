@@ -286,7 +286,7 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
  * Determine if there is a space near the player in which
  * a summoned creature can appear
  */
-static bool summon_possible(int y1, int x1)
+static bool summon_possible(int x1, int y1)
 {
 	int y, x;
 	int dy, dx;
@@ -866,7 +866,7 @@ bool make_attack_spell(int m_idx)
 		     (f5 & RF5_SUMMON_MASK) ||
 		     (f6 & RF6_SUMMON_MASK)) &&
 		     !(r_ptr->flags2 & RF2_STUPID) &&
-		     !(summon_possible(py, px)))
+		     !(summon_possible(px, py)))
 		{
 			/* Remove summoning spells */
 			f4 &= ~(RF4_SUMMON_MASK);
