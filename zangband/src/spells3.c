@@ -1851,6 +1851,9 @@ bool artifact_scroll(void)
  */
 static void good_luck(object_type *o_ptr)
 {
+	/* Do not bother with unwieldable items */
+	if (wield_slot(o_ptr) == -1) return;
+	
 	/* Objects become better sometimes */
 	if (!rand_int(13))
 	{
@@ -1876,6 +1879,9 @@ static void good_luck(object_type *o_ptr)
 static void bad_luck(object_type *o_ptr)
 {
 	bool is_art = artifact_p(o_ptr) || o_ptr->art_name;
+	
+	/* Do not curse unwieldable items */
+	if (wield_slot(o_ptr) == -1) return;
 
 	/* Objects become worse sometimes */
 	if (!rand_int(13))
