@@ -548,7 +548,7 @@ static s16b o_pop(void)
  *
  * The old object is wiped.
  */
-object_type *add_object_list(s16b *o_idx_ptr, const object_type *o_ptr)
+object_type *add_object_list(s16b *o_idx_ptr, object_type *o_ptr)
 {
 	s16b o_idx;
 
@@ -4549,7 +4549,7 @@ void place_gold(int x, int y)
  * the object can combine, stack, or be placed.  Artifacts will try very
  * hard to be placed, including "teleporting" to a useful grid if needed.
  */
-void drop_near(const object_type *j_ptr, int chance, int x, int y)
+void drop_near(object_type *j_ptr, int chance, int x, int y)
 {
 	int i, k, d, s;
 

@@ -616,7 +616,7 @@ extern void drop_object_list(s16b *o_idx_ptr, int x, int y);
 extern void compact_objects(int size);
 extern void wipe_o_list(void);
 extern void wipe_objects(int rg_idx);
-extern object_type *add_object_list(s16b *o_idx_ptr, const object_type *o_ptr);
+extern object_type *add_object_list(s16b *o_idx_ptr, object_type *o_ptr);
 extern void move_object(s16b *tgt_list_ptr, s16b *cur_list_ptr,
 						object_type *o_ptr);
 extern void swap_objects(object_type *o1_ptr, object_type *o2_ptr);
@@ -650,7 +650,7 @@ extern void place_specific_object(int x, int y, int level, int k_idx);
 extern void place_object(int x, int y, bool good, bool great);
 extern object_type *make_gold(int coin_type);
 extern void place_gold(int x, int y);
-extern void drop_near(const object_type *o_ptr, int chance, int x, int y);
+extern void drop_near(object_type *o_ptr, int chance, int x, int y);
 extern void acquirement(int x1, int y1, int num, bool great, bool known);
 extern s16b *look_up_list(object_type *o_ptr);
 extern object_type *get_list_item(s16b list_start, int number);
