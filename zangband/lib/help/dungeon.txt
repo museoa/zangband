@@ -8,7 +8,7 @@ In order to direct your character through his adventure, you will enter
 single character commands (see "commands.txt").
 
 
-***** <A>
+***** <MapSymbols>
 === Symbols On Your Map ===
 
 Symbols on your map can be broken down into three categories: Features
@@ -95,7 +95,7 @@ to something you are more comfortable with.
             ~   Aquatic monsters
 
 
-***** <B>
+***** <TownLevel>
 === The Town Level ===
 
 The town level is where you will begin your adventure. The first time
@@ -165,7 +165,7 @@ embellishments. The special buildings and the fixed quests are
 unavailable if you select this option as is the wilderness.
 
 
-***** <C>
+***** <Townspeople>
 === Townspeople ===
 
 The town contains many different kinds of people. There are the street
@@ -190,7 +190,7 @@ town. These should generaly be handled with much more caution
 than the ordinary townspeople.
 
 
-***** <D>
+***** <TownBuildings>
 === Town Buildings ===
 
 Your character will begin his adventure with some basic supplies, and
@@ -285,7 +285,7 @@ The Bookstore ("9")
     and sell spellbooks for the spellcasters here.
 
 
-***** <E>
+***** <WithinDungeon>
 === Within The Dungeon ===
 
 Once your character is adequately supplied with food, light, armor, and
@@ -325,7 +325,7 @@ appropriate. There are rumors of objects of exceptional power which
 glow with their own never-ending light.
 
 
-***** <F>
+***** <Objects>
 === Objects In The Dungeon ===
 
 The mines are full of objects just waiting to be picked up and used.
@@ -439,7 +439,7 @@ wrong. The item will also be inscribed "cursed".
 Shopkeepers will refuse to buy any known cursed item.
 
 
-***** <G>
+***** <Mining>
 === Mining ===
 
 Much of the treasure within the dungeon can be found only by mining it
@@ -483,7 +483,7 @@ rumors imply that these rooms are guarded by incredibly powerful
 monsters, so beware!
 
 
-***** <H>
+***** <StairsDoorsEtc>
 === Staircases, Secret Doors, Passages, and Rooms ===
 
 Staircases are the manner in which you get deeper or climb out of the
@@ -514,7 +514,7 @@ they pass through.
 For historical reasons, secret doors are never locked.
 
 
-***** <I>
+***** <RandomQuests>
 === Random Quests ===
 
 During character generation, you will be asked to input the number
@@ -560,7 +560,7 @@ killing the monsters. This technique is frowned upon by many players
 and should be noted in any 'winner' post to the newsgroup.
 
 
-***** <J>
+***** <Winning>
 === Winning The Game ===
 
 Once your character has killed Oberon, who lives on level 99 (4950') in
@@ -594,7 +594,7 @@ until you retire, you can still be killed, so you may want to retire
 before wandering into a hoard of Cyberdemons...
 
 
-***** <K>
+***** <UponDeath>
 === Upon Death and Dying ===
  
 If your character falls below 0 hit points, he has died and cannot be

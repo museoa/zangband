@@ -57,7 +57,7 @@ only need to carry a maximum of 4 spellbooks. All realms have 32
 spells, and each book contains 8 spells.
 
 
-***** <A>
+***** <ClassSpellAbil>
 === Class Spell Ability ===
 
 Warriors
@@ -166,7 +166,7 @@ High Mage
      failure rates in the spells of the realm of their specialty.
   
 
-***** <B>
+***** <MagicRealms>
 === The Realms of Magic ===
 
 Life
@@ -263,7 +263,7 @@ Death
      accursed tome have retained their sanity.
 
 
-***** <C>
+***** <Restrictions>
 === Class/Realm Restrictions ===
 
 In the table below, '1st' indicates that the realm may only be the
@@ -285,7 +285,7 @@ Monk           1st                     1st                     1st
 High Mage      1st     1st     1st     1st     1st     1st     1st
 
 
-***** <D>
+***** <CastingSpells>
 === On Casting Spells ... ===
 
 Players who select spellcasting characters may notice a few unusual
@@ -339,7 +339,7 @@ duration of 20 turns three times will not result in a duration of
 amount to the total duration.
 
 
-***** <E>
+***** <SpellTypes>
 === Spell Types ===
 
 --- Bolts and Beams ---
@@ -376,7 +376,7 @@ can vary considerably. For example, Light Area lights a single room
 while Detect Traps affects a map panel and Genocide the entire
 level.
 
-***** <F>
+***** <Pets>
 === Summoned/Charmed Creatures ===
 
 A friendly creature can be a mixed blessing. At first sight, one
@@ -411,7 +411,7 @@ pets the less mana you will be able to regain. Keep this in mind if
 you have a pet which can summon or otherwise produce more pets...
 
 
-***** <G>
+***** <Hints>
 === Hints and Tips ===
 
 If you miss the `old` magic user, try picking Sorcery and Chaos magic
@@ -435,7 +435,7 @@ If you still get confused trying to select the correct spellbook, try
 using macros (either the 'full' macros or inscriptions).
 
 
-***** <H>
+***** <SpellLists>
 === Spell Lists ===
 
 

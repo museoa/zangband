@@ -82,8 +82,8 @@ target file. Opening the new file will flush the previous links so
 
 Note: because various operating systems use different conventions to
 denote directory structures, Zangband does not support target file
-names like './spoiler/races/races.spo'. This forces means that all
-help files should be kept in the lib/help directory.
+names like './spoiler/races/races.spo'. This means that all help files
+should be kept in the lib/help or lib/info directory.
 
 We are currently testing methods of linking to a particular section
 in a document and may also implement histories to allow 'back' and

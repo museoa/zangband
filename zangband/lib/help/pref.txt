@@ -47,7 +47,7 @@ intuitive way than the user pref commands allow. The commands include
 with colors" (&), described below.
 
 
-***** <A>
+***** <Commands>
 --- User pref file commands ---
 
 Interact with options (=)
@@ -80,7 +80,7 @@ Interact with the system (!)
      This command is currently unused.
 
 
-***** <B>
+***** <Macros>
 --- User Pref Files (Macros) ---
 
 The "Interact with macros" command allows you to define or remove
@@ -118,7 +118,7 @@ the form "A:<str>", which defines the encoded macro action, and one of
 the form "P:<str>", which defines the encoded macro trigger.
 
 
-***** <C>
+***** <KeyMaps>
 --- User Pref Files (Keymaps) ---
 
 The "Interact with macros" command also allows you to define "keymaps",
@@ -141,7 +141,7 @@ roguelike), <key> is the encoded trigger key, and <str> is the encoded
 keymap action.
 
 
-***** <D>
+***** <Visuals>
 --- User Pref Files (Visuals) ---
 
 You can use the "Interact with visuals" command to change various
@@ -169,7 +169,7 @@ Keymaps can be specified in user pref files as lines of the form
 "U:<N>:<A>/<C>".
 
 
-***** <E>
+***** <Colors>
 --- User Pref Files (Colors) ---
 
 The "Interact with colors" command allows you to change the actual
@@ -183,7 +183,7 @@ Coors can be specified in user pref files as line of the form
 "V:<N>:<V>:<R>:<G>:<B>".
 
 
-***** <F>
+***** <Options>
 --- User Pref Files (Options) ---
 
 The "Interact with options" command allows you to turn options on or

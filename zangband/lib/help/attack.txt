@@ -36,7 +36,7 @@ harder to do damage, and so lead to more misses; they also reduce the
 damage from a strike that actually occurs.
  
 
-***** <A>
+***** <MonsterMemory>
 === Monster Memories ===
 
 There are hundreds of different creatures in Zangband, many of which
@@ -61,7 +61,7 @@ of each creature. This memory can be passed on to a new character even
 after you die by means of a reduced save file.
  
 
-***** <B>
+***** <Weapon>
 === Your Weapon ===
 
 Carrying a weapon in your backpack does you no good. You must wield a
@@ -102,7 +102,7 @@ identify the weapon before the displayed values reflect the real values
 used.
 
 
-***** <C>
+***** <EgoWeapon>
 === Ego Weapons ===
 
 In addition to the ordinary weapons your character may find in the
@@ -368,7 +368,7 @@ but the net effect is a 22% increase in damage (from the base
 damage of the weapon only and not on the slays, +to-dam, etc.)
 
 
-***** <D>
+***** <Bashing>
 === Body and Shield Bashes ===
 
 Weight is the primary factor in being able to bash something, but
@@ -386,7 +386,7 @@ balance, his opponent may get free hits on him. This is a risky attack.
 It is also a hack.  :-)
 
 
-***** <E>
+***** <Armor>
 === Your Armor Class ===
 
 Your armor class (or AC) is a number that describes the amount and the
@@ -422,7 +422,7 @@ your chances of hitting monsters. This can range from nonexistent
 for very light armor to (-8) for the very heaviest armor!
 
 
-***** <F>
+***** <EgoArmor>
 === Ego Armor ===
 
 In addition to the ordinary armor items your character may find in
@@ -602,7 +602,7 @@ Other items
      attacks.
 
 
-***** <G>
+***** <Artifacts>
 === Artifacts ===
 
 Of all the objects in Zangband that you might find, by far the most
@@ -669,7 +669,7 @@ sustains, resistances or other powers.  (See 'randabil.spo' for details
 of the random abilities of the fixed artifacts).
 
 
-***** <H>
+***** <MonkAttacks>
 === Monk Attacks ===
 
 The Monk character is designed to be a barehanded fighter rather
@@ -708,7 +708,7 @@ Dragon Fist     45      10d10     16
 Crushing Blow   48      10d12     18
 
 
-***** <I>
+***** <MeleeTactics>
 === Basic Tactics ===
 
 

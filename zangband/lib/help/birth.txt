@@ -28,7 +28,7 @@ others, the character name specifies special "pref" files. And the
 character name is used on the high score list.
 
 
-***** <A>
+***** <StartUp>
 === Start-up Options ===
 
 During character generation you may press '=' at any time to access
@@ -39,7 +39,7 @@ decide what type of town level you want. The various town options
 are discussed on the Town page.
 
 
-***** <B>
+***** <CharAttributes>
 === Character Attributes ===
 
 Once you begin character generation you will be asked to choose
@@ -159,7 +159,7 @@ racial abilities, which may include special resistances and
 activations.
 
 
-***** <C>
+***** <TheRaces>
 === Races ===
 
 There are thirty different races that you can choose from in ZAngband.
@@ -467,7 +467,7 @@ Beastman
     gaining yet another mutation.
 
 
-***** <D>
+***** <TheClasses>
 === Classes ===
  
 Once a race has been chosen, you will need to pick a class. Some
@@ -741,7 +741,7 @@ High Mage
     a priest.
  
 
-***** <E>
+***** <PrimaryStats>
 === Primary Statistcs ===
 
 Each character has six primary "stats", strength, intelligence, wisdom,
@@ -817,7 +817,7 @@ Charisma
      calculating the success of a mindcrafter at dominating a monster.
  
 
-***** <F>
+***** <PrimarySkills>
 === Primary Skills ===
 
 Characters possess some different abilities which can help them to
@@ -896,7 +896,7 @@ Infra-vision
      magically enhanced.
 
 
-***** <G>
+***** <AutoRoller>
 === The Auto-Roller ===
 
 Once you have chosen your race / class / magic combination, and
@@ -938,7 +938,7 @@ one random character at a time and then display it for you to
 either accept or reject.
 
 
-***** <H>
+***** <LifeRating>
 === Life Ratings ===
 
 During the course of 'rolling' your character you will be told its
@@ -954,7 +954,7 @@ larger increases in the later game or the other way around.
 Generally, however, the increases tend to be fairly even.
 
 
-***** <I> 
+***** <RaceClassComb> 
 === Race/Class Combinations ===
 
 These are the classes that are recommended for different races. You can
@@ -1034,116 +1034,130 @@ Sprite        No    Yes    Yes
 Beastman      Yes   Yes    Yes
 
 
-***** <J>
+***** <StatBonusTable>
 === Stat Bonus Tables ===
 
-Stat, hit dice, and experience points per level modifications due to race
-are listed in the following table.
- 
-            STR  INT  WIS  DEX  CON  CHR  Hit Dice  Rqd Exp/level
-Human        0    0    0    0    0    0      10     +0%
-Half-Elf    -1   +1   +1   +1   -1   +1       9     +10%
-Elf         -1   +2   +2   +1   -2   +2       8     +20%
-Hobbit      -2   +2   +1   +3   +2   +1       7     +10%
-Gnome       -1   +2    0   +2   +1   -2       8     +35%
-Dwarf       +2   -2   +2   -2   +2   -3      11     +35%
-Half-Orc    +2   -1    0    0   +1   -4      10     +10%
-Half-Troll  +4   -4   -2   -4   +3   -6      12     +37%
-Amberite    +1   +2   +2   +2   +3   +2      10     +125%
-High-Elf    +1   +3   +2   +3   +1   +5      10     +100%
-Barbarian   +3   -2   -1   +1   +2   -2      11     +20%
-Half-Ogre   +3   -1   -1   -1   +3   -3      12     +30%
-Half-Giant  +4   -2   -2   -2   +3   -3      13     +50% (*)
-Half-Titan  +5   +1   +1   -2   +3   +1      14     +155% (*)
-Cyclops     +4   -3   -3   -3   +4   -6      13     +30%
-Yeek        -2   +1   +1   +1   -2   -7       7     +0%
-Klackon     +2   -1   -1   +1   +2   -2      12     +35% (**)
-Kobold      +1   -1    0   +1    0   -4       9     +25%
-Nibelung    +1   -1   +2    0   +2   -4      11     +35%
-Dark Elf    -1   +3   +2   +2   -2   +1       9     +50%
-Draconian   +2   +1   +1   +1   +2   -3      11     +150%
-Mind Flayer -3   +4   +4    0   -2   -5       9     +40%
-Imp         -1   -1   -1   +1   +2   -3      10     +10%
-Golem       +4   -5   -5   -2   +4   -4      12     +100% (**)
-Skeleton     0   -2   -2    0   +1   -4      10     +45% (*)
-Zombie      +2   -6   -6   +1   +4   -5      13     +35% (*)
-Vampire     +3   +3   -1   -1   +1   +2      11     +100% (**)
-Spectre     -5   +4   +4   +2   -3   -6       7     +80% (**)
-Sprite      -4   +3   +3   +3   -2   +2       7     +75% (**)
-Beastman    +2   -2   -1   -1   +2   -4      11     +40% (**)
-
-        (*) = Changed in 2.0.6.
-        (**) = Changed or new in 2.1.0.
-
-
-             STR  INT  WIS  DEX  CON  CHR
-Warrior      +5   -2   -2   +2   +2   -1
-Mage         -5   +3    0   +1   -2   +1
-Priest       -1   -3   +3   -1    0   +2
-Rogue        +2   +1   -2   +3   +1   -1
-Ranger       +2   +2    0   +1   +1   +1
-Paladin      +3   -3   +1    0   +2   +2
-Warrior-Mage +2   +2    0   +1    0   +1
-haos Warrior +2   +1    0   +1   +2   -2
-Monk         +2   -1   +1   +3   +2   +1
-Mindcrafter  -1    0   +3   -1   -1   +2
-High Mage    -5   +4    0    0   -2   +1
+Each of the races and classes has certain modifications to their
+starting statistics an experience penalty. The experience penalty is
+designed to 'balance' the races with better starting statistics and
+abilities by requiring them to earn more experience before advancing a
+level.
  
 
-***** <K>
+--- Table 1 - Race Statistic Bonus Table ---
+
+              STR  INT  WIS  DEX  CON  CHR  Hit Dice  Exp Penalty
+Human          0    0    0    0    0    0      10         +0%
+Half-Elf      -1   +1   +1   +1   -1   +1       9         +10%
+Elf           -1   +2   +2   +1   -2   +2       8         +20%
+Hobbit        -2   +2   +1   +3   +2   +1       7         +10%
+Gnome         -1   +2    0   +2   +1   -2       8         +35%
+Dwarf         +2   -2   +2   -2   +2   -3      11         +35%
+Half-Orc      +2   -1    0    0   +1   -4      10         +10%
+Half-Troll    +4   -4   -2   -4   +3   -6      12         +37%
+Amberite      +1   +2   +2   +2   +3   +2      10         +125%
+High-Elf      +1   +3   +2   +3   +1   +5      10         +100%
+Barbarian     +3   -2   -1   +1   +2   -2      11         +20%
+Half-Ogre     +3   -1   -1   -1   +3   -3      12         +30%
+Half-Giant    +4   -2   -2   -2   +3   -3      13         +50%
+Half-Titan    +5   +1   +1   -2   +3   +1      14         +155%
+Cyclops       +4   -3   -3   -3   +4   -6      13         +30%
+Yeek          -2   +1   +1   +1   -2   -7       7         +0%
+Klackon       +2   -1   -1   +1   +2   -2      12         +35%
+Kobold        +1   -1    0   +1    0   -4       9         +25%
+Nibelung      +1   -1   +2    0   +2   -4      11         +35%
+Dark Elf      -1   +3   +2   +2   -2   +1       9         +50%
+Draconian     +2   +1   +1   +1   +2   -3      11         +150%
+Mind Flayer   -3   +4   +4    0   -2   -5       9         +40%
+Imp           -1   -1   -1   +1   +2   -3      10         +10%
+Golem         +4   -5   -5   -2   +4   -4      12         +100%
+Skeleton       0   -2   -2    0   +1   -4      10         +45%
+Zombie        +2   -6   -6   +1   +4   -5      13         +35%
+Vampire       +3   +3   -1   -1   +1   +2      11         +100%
+Spectre       -5   +4   +4   +2   -3   -6       7         +80%
+Sprite        -4   +3   +3   +3   -2   +2       7         +75%
+Beastman      +2   -2   -1   -1   +2   -4      11         +40%
+
+
+--- Table 2 - Class Statistic Bonus Table ---
+
+              STR  INT  WIS  DEX  CON  CHR  Hit Dice  Exp Penalty
+Warrior       +5   -2   -2   +2   +2   -1      +9         +0%
+Mage          -5   +3    0   +1   -2   +1       0         +30%
+Priest        -1   -3   +3   -1    0   +2      +2         +20%
+Rogue         +2   +1   -2   +3   +1   -1      +6         +25%
+Ranger        +2   +2    0   +1   +1   +1      +4         +30%
+Paladin       +3   -3   +1    0   +2   +2      +6         +35%
+Warrior-Mage  +2   +2    0   +1    0   +1      +4         +50%
+Chaos Warrior +2   +1    0   +1   +2   -2      +5         +35
+Monk          +2   -1   +1   +3   +2   +1      +6         +40%
+Mindcrafter   -1    0   +3   -1   -1   +2      +2         +25%
+High Mage     -5   +4    0    0   -2   +1       0         +30%
+ 
+
+***** <SkillBonusTable>
 === Ability Tables ===
 
- 
-
-            Dsrm  Dvce  Save  Stlh  Srch  Prcp  Melee Misl  Infravision
-Human        +0    +0    +0    +0    +0    +10   +0    +0   None
-Half-Elf     +2    +3    +3    +1    +6    +11   -1    +5   20 feet
-Elf          +5    +6    +6    +2    +8    +12   -5    +5   30 feet
-Hobbit       +15   +18   +18   +5    +12   +15   -10   +20  40 feet
-Gnome        +10   +12   +12   +3    +6    +13   -8    +12  40 feet
-Dwarf        +2    +9    +10   -1    +7    +10   +15   +0   50 feet
-Half-Orc     -3    -3    -3    -1    +0    +7    +12   -5   30 feet
-Half-Troll   -5    -8    -8    -2    -1    +5    +20   -10  30 feet
-Amberite     +4    +5    +5    +2    +3    +13   +15   +10  None
-High-Elf     +4    +20   +20   +4    +3    +14   +10   +25  40 feet
-Barbarian    -2    -10   +2    -1    +1    +7    +12   +10  None
-Half-Ogre    -3    -5    -5    -2    -1    +5    +20   +0   30 feet
-Half-Giant   -6    -8    -6    -2    -1    +5    +25   +5   30 feet
-Half-Titan   -5    +5    +2    -2    +1    +8    +25   +0   None
-Cyclops      -4    -5    -5    -2    -2    +5    +20   +12  10 feet
-Yeek         +2    +4    +10   +3    +5    +15   -5    -5   20 feet
-Klackon      +10   +5    +5    +0    -1    +10   +5    +5   20 feet
-Kobold       -2    -3    -2    -1    +1    +8    +10   -8   30 feet
-Nibelung     +3    +5    +10   +1    +5    +10   +9    +0   50 feet
-Dark Elf     +5    +15   +20   +3    +8    +12   -5    +10  50 feet
-Draconian    -2    +5    +3    +0    +1    +10   +5    +5   20 feet
-Mind Flayer  +10   +25   +15   +2    +5    +12   -10   -5   40 feet
-Imp          -3    +2    -1    +1    -1    +10   +5    -5   30 feet
-Golem        -5    -5    +10   -1    -1    +8    +20   +0   40 feet
-Skeleton     -5    -5    +5    -1    -1    +8    +10   +0   20 feet
-Zombie       -5    -5    +8    -1    -1    +5    +15   +0   20 feet
-Vampire      +4    +10   +10   +4    +1    +8    +5    +0   50 feet
-Spectre      +10   +25   +20   +5    +5    +14   -15   -5   50 feet
-Sprite       +10   +10   +10   +4    +10   +10   -12   +0   40 feet
-Beastman     -5    -2    -1    -1    -1    +5    +12   +5   None
+Each of the races and classes has certain modifications to their
+starting abilities. Players may also receive an additional level-based
+bonus to certain skills which is based on their class. For example
+mages improve teir magical device skill more rapidly than warriors. As
+noted above, some skills will not improve unless magically enhanced.
 
 
-             Disarm  Device  Save  Stealth Search  Melee  Missile  XP
-Warrior       25+12   18+7   18+10    1    14/2    70+45  55+45   +0%
-Mage          30+7    36+13  30+9     2    15/20   34+15  20+15   +30%
-Priest        25+7    30+10  32+12    2    16/8    48+20  35+20   +20%
-Rogue         45+15   32+10  28+10    5    32/24   60+40  66+30   +25%
-Ranger        30+8    32+10  28+10    3    24/16   56+30  72+45   +30%
-Paladin       20+7    24+10  26+11    1    12/2    68+35  40+30   +35%
-Warrior-Mage  30+7    30+10  28+9     2    18/16   50+20  25+20   +50%
-Chaos Warrior 20+7    25+11  25+10    1    14/12   65+34  40+29   +35%
-Monk          45+15   32+11  28+10    5    32/24   64+40  60+30   +40%
-Mindcrafter   30+10   30+10  30+10    3    22/16   50+20  40+30   +25%
-High Mage     30+7    36+13  30+9     2    15/20   34+15  20+15   +30%
+--- Table 1 - Race Skill Bonus Table ---
+
+              Dsrm  Dvce  Save  Stlh  Srch  Prcp  Melee Bows  Infra
+Human         +0    +0    +0    +0    +0    +10   +0    +0    None
+Half-Elf      +2    +3    +3    +1    +6    +11   -1    +5    20 feet
+Elf           +5    +6    +6    +2    +8    +12   -5    +5    30 feet
+Hobbit        +15   +18   +18   +5    +12   +15   -10   +20   40 feet
+Gnome         +10   +12   +12   +3    +6    +13   -8    +12   40 feet
+Dwarf         +2    +9    +10   -1    +7    +10   +15   +0    50 feet
+Half-Orc      -3    -3    -3    -1    +0    +7    +12   -5    30 feet
+Half-Troll    -5    -8    -8    -2    -1    +5    +20   -10   30 feet
+Amberite      +4    +5    +5    +2    +3    +13   +15   +10   None
+High-Elf      +4    +20   +20   +4    +3    +14   +10   +25   40 feet
+Barbarian     -2    -10   +2    -1    +1    +7    +12   +10   None
+Half-Ogre     -3    -5    -5    -2    -1    +5    +20   +0    30 feet
+Half-Giant    -6    -8    -6    -2    -1    +5    +25   +5    30 feet
+Half-Titan    -5    +5    +2    -2    +1    +8    +25   +0    None
+Cyclops       -4    -5    -5    -2    -2    +5    +20   +12   10 feet
+Yeek          +2    +4    +10   +3    +5    +15   -5    -5    20 feet
+Klackon       +10   +5    +5    +0    -1    +10   +5    +5    20 feet
+Kobold        -2    -3    -2    -1    +1    +8    +10   -8    30 feet
+Nibelung      +3    +5    +10   +1    +5    +10   +9    +0    50 feet
+Dark Elf      +5    +15   +20   +3    +8    +12   -5    +10   50 feet
+Draconian     -2    +5    +3    +0    +1    +10   +5    +5    20 feet
+Mind Flayer   +10   +25   +15   +2    +5    +12   -10   -5    40 feet
+Imp           -3    +2    -1    +1    -1    +10   +5    -5    30 feet
+Golem         -5    -5    +10   -1    -1    +8    +20   +0    40 feet
+Skeleton      -5    -5    +5    -1    -1    +8    +10   +0    20 feet
+Zombie        -5    -5    +8    -1    -1    +5    +15   +0    20 feet
+Vampire       +4    +10   +10   +4    +1    +8    +5    +0    50 feet
+Spectre       +10   +25   +20   +5    +5    +14   -15   -5    50 feet
+Sprite        +10   +10   +10   +4    +10   +10   -12   +0    40 feet
+Beastman      -5    -2    -1    -1    -1    +5    +12   +5    None
+
+
+--- Table 2 - Class Skill Bonus Table ---
+
+              Dsrm  Dvce  Save  Stlh  Srch  Prcp  Melee Bows  Infra
+Warrior       25+12 18+7  18+10  1    14/2        70+45 55+45 N/A
+Mage          30+7  36+13 30+9   2    15/20       34+15 20+15 N/A
+Priest        25+7  30+10 32+12  2    16/8        48+20 35+20 N/A
+Rogue         45+15 32+10 28+10  5    32/24       60+40 66+30 N/A
+Ranger        30+8  32+10 28+10  3    24/16       56+30 72+45 N/A
+Paladin       20+7  24+10 26+11  1    12/2        68+35 40+30 N/A
+Warrior-Mage  30+7  30+10 28+9   2    18/16       50+20 25+20 N/A
+Chaos Warrior 20+7  25+11 25+10  1    14/12       65+34 40+29 N/A
+Monk          45+15 32+11 28+10  5    32/24       64+40 60+30 N/A
+Mindcrafter   30+10 30+10 30+10  3    22/16       50+20 40+30 N/A
+High Mage     30+7  36+13 30+9   2    15/20       34+15 20+15 N/A
 
 
 --
 Original   : (??)
 Updated    : (??)
 Updated    : Zangband DevTeam
-Last update: December 12, 1999
+Last update: December 18, 1999
