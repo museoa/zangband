@@ -327,7 +327,7 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 			if (cave_floor_grid(c_ptr)) break;
 
 			/* Permanent walls */
-			if (c_ptr->feat >= FEAT_PERM_EXTRA) break;
+			if (cave_perma_grid(c_ptr)) break;
 
 			/* Fields can block destruction */
 			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM)) break;
@@ -4468,7 +4468,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 							delete_field_location(c_ptr);
 
 							if (cave_valid_grid(c_ptr) &&
-								(c_ptr->feat < FEAT_PATTERN_START ||
+								(c_ptr->feat <= FEAT_WALL_SOLID ||
 								 c_ptr->feat > FEAT_SHAL_ACID))
 							{
 								if ((c_ptr->feat == FEAT_TREES) ||

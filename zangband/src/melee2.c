@@ -282,7 +282,7 @@ static int cave_passable_mon(monster_type *m_ptr, cave_type *c_ptr)
 	/*** Check passability of various features. ***/
 
 	/* Feature is not a wall */
-	if (!(f_info[feat].flags & FF_BLOCK))
+	if (cave_floor_grid(c_ptr))
 	{
 		/* Ocean */
 		if (feat == FEAT_OCEAN_WATER)
@@ -360,7 +360,7 @@ static int cave_passable_mon(monster_type *m_ptr, cave_type *c_ptr)
 	}
 
 	/* Permanent walls + the pattern block movement */
-	else if ((feat >= FEAT_PERM_EXTRA) && (feat <= FEAT_PATTERN_XTRA2))
+	else if (cave_perma_grid(c_ptr))
 	{
 		return (0);
 	}
@@ -2227,8 +2227,7 @@ static void take_move(int m_idx, int *mm)
 		}
 
 		/* Permanent wall */
-		else if ((c_ptr->feat >= FEAT_PERM_EXTRA) &&
-				 (c_ptr->feat <= FEAT_PERM_SOLID))
+		else if (cave_perma_grid(c_ptr) && cave_wall_grid(c_ptr))
 		{
 			do_move = FALSE;
 		}
@@ -2313,8 +2312,8 @@ static void take_move(int m_idx, int *mm)
 		}
 
 		/* Handle closed doors and secret doors */
-		if (do_move && ((c_ptr->feat == FEAT_CLOSED)
-						|| (c_ptr->feat == FEAT_SECRET)) &&
+		if (do_move &&
+			((c_ptr->feat == FEAT_CLOSED) || (c_ptr->feat == FEAT_SECRET)) &&
 			(r_ptr->flags2 & RF2_OPEN_DOOR) &&
 			(!is_pet(m_ptr) || p_ptr->pet_open_doors))
 		{
@@ -2350,8 +2349,7 @@ static void take_move(int m_idx, int *mm)
 			do_turn = TRUE;
 		}
 
-		if ((c_ptr->feat >= FEAT_PATTERN_START) &&
-			(c_ptr->feat <= FEAT_PATTERN_XTRA2) &&
+		if (cave_perma_grid(c_ptr) && cave_floor_grid(c_ptr) &&
 			!do_turn && !(r_ptr->flags7 & RF7_CAN_FLY))
 		{
 			do_move = FALSE;

@@ -767,11 +767,12 @@ bool in_ball_range(int x1, int y1, int x2, int y2)
  */
 static bool cave_stop_disintegration(cave_type *c_ptr)
 {
-	/* Some terrain block disintegration */
-	if (((c_ptr->feat >= FEAT_PERM_EXTRA) &&
-		 (c_ptr->feat <= FEAT_PERM_SOLID)) ||
-		(c_ptr->feat == FEAT_MOUNTAIN)) return (TRUE);
-
+	/* Some terrain types block disintegration */
+	if (cave_wall_grid(c_ptr) && cave_perma_grid(c_ptr))
+	{
+		return (TRUE);
+	}
+	
 	/* Fields can block disintegration to */
 	if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM)) return (TRUE);
 
@@ -4668,7 +4669,7 @@ void update_flow(void)
 			if (c_ptr->when == flow_n) continue;
 
 			/* Ignore all "walls" except doors + terrain */
-			if ((f_info[feat].flags & FF_BLOCK) && (feat != FEAT_CLOSED))
+			if (cave_wall_grid(c_ptr) && (feat != FEAT_CLOSED))
 			{
 				continue;
 			}
@@ -4734,12 +4735,11 @@ void map_area(void)
 			pc_ptr = parea(x, y);
 
 			/* All non-walls are "checked" */
-			if ((c_ptr->feat < FEAT_SECRET) ||
-				(c_ptr->feat == FEAT_RUBBLE) ||
-				(c_ptr->feat >= FEAT_PATTERN_START))
+			if (!((c_ptr->feat >= FEAT_MAGMA) &&
+				(c_ptr->feat <= FEAT_PERM_SOLID)))
 			{
 				/* Memorize normal features */
-				if (c_ptr->feat >= FEAT_OPEN)
+				if (c_ptr->feat != FEAT_FLOOR)
 				{
 					/* Memorize the grid */
 					remember_grid(c_ptr, pc_ptr);
@@ -4751,8 +4751,9 @@ void map_area(void)
 					c_ptr = area(x + ddx_ddd[i], y + ddy_ddd[i]);
 					pc_ptr = parea(x + ddx_ddd[i], y + ddy_ddd[i]);
 
-					/* Memorize walls (etc) */
-					if (c_ptr->feat >= FEAT_SECRET)
+					/* Memorize walls */
+					if ((c_ptr->feat >= FEAT_MAGMA) &&
+						(c_ptr->feat <= FEAT_PERM_SOLID))
 					{
 						/* Memorize the walls */
 						remember_grid(c_ptr, pc_ptr);
@@ -4836,7 +4837,7 @@ void wiz_lite(void)
 			pcave_type *pc_ptr = parea(x, y);
 
 			/* Memorize normal features */
-			if (c_ptr->feat >= FEAT_OPEN)
+			if (c_ptr->feat != FEAT_FLOOR)
 			{
 				/* Memorize the grid */
 				remember_grid(c_ptr, pc_ptr);

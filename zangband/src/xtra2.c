@@ -451,7 +451,6 @@ bool monster_death(int m_idx, bool explode)
 	{
 		/* Assume skeleton */
 		bool corpse = FALSE;
-		byte feat;
 
 		/*
 		 * We cannot drop a skeleton? Note, if we are in this check,
@@ -474,14 +473,8 @@ bool monster_death(int m_idx, bool explode)
 			}
 		}
 
-		/* Terrain to put corpse on. */
-		feat = area(x, y)->feat;
-
 		/* Hack - corpses only appear on certain floors */
-		if ((feat == FEAT_FLOOR) ||
-			((feat >= FEAT_SAND) && (feat <= FEAT_SOLID_LAVA)) ||
-			((feat >= FEAT_DIRT) && (feat <= FEAT_OBELISK)) ||
-			((feat >= FEAT_BUSH) && (feat <= FEAT_SHAL_SWAMP)))
+		if (cave_clean_grid(area(x, y)))
 		{
 			if (corpse)
 			{
@@ -1966,8 +1959,7 @@ static bool target_set_accept(int x, int y)
 	feat = pc_ptr->feat;
 
 	/* Notice the Pattern */
-	if ((feat <= FEAT_PATTERN_XTRA2) && (feat >= FEAT_PATTERN_START))
-		return (TRUE);
+	if (cave_perma_grid(pc_ptr) && cave_floor_grid(pc_ptr)) return (TRUE);
 
 	/* Notice doors */
 	if (feat == FEAT_OPEN) return (TRUE);
@@ -2529,30 +2521,17 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 			/* Hack -- handle unknown grids */
 			if (feat == FEAT_NONE) name = "unknown grid";
 
-			/* Pick a prefix */
-			if (*s2 && ((feat >= FEAT_PATTERN_START) &&
-						(feat <= FEAT_PATTERN_XTRA2)))
+			/* Pick a prefix for the pattern */
+			if (*s2 && cave_perma_grid(pc_ptr))
 			{
 				s2 = "on ";
 			}
-			else if (*s2 && ((feat >= FEAT_CLOSED) &&
-							 (feat <= FEAT_PERM_SOLID)))
+			else if (*s2 && cave_wall_grid(pc_ptr))
 			{
 				s2 = "in ";
 			}
 
-			if ((feat == FEAT_FLOOR) ||
-				((feat & 0xF8) == 0x08) ||
-				(feat == FEAT_DEEP_WATER) ||
-				(feat == FEAT_SHAL_WATER) ||
-				(feat == FEAT_OCEAN_WATER) ||
-				(feat == FEAT_DEEP_LAVA) ||
-				(feat == FEAT_SHAL_LAVA) ||
-				(feat == FEAT_DIRT) ||
-				(feat == FEAT_DEEP_ACID) ||
-				(feat == FEAT_SHAL_ACID) ||
-				(feat == FEAT_JUNGLE) ||
-				(feat == FEAT_SNOW) || (feat == FEAT_GRASS_LONG))
+			if (cave_wall_grid(pc_ptr) || cave_perma_grid(pc_ptr))
 			{
 				s3 = "";
 			}

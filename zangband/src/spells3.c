@@ -93,8 +93,7 @@ bool teleport_away(int m_idx, int dis)
 			if ((ny == p_ptr->py) && (nx == p_ptr->px)) continue;
 
 			/* ...nor onto the Pattern */
-			if ((c_ptr->feat >= FEAT_PATTERN_START) &&
-				(c_ptr->feat <= FEAT_PATTERN_XTRA2)) continue;
+			if (cave_perma_grid(c_ptr)) continue;
 			
 			/* Not on bad terrain */
 			if (!monster_can_cross_terrain(c_ptr->feat, r_ptr)) continue;
@@ -262,8 +261,7 @@ void teleport_to_player(int m_idx)
 			if ((ny == py) && (nx == px)) continue;
 
 			/* ...nor onto the Pattern */
-			if ((c_ptr->feat >= FEAT_PATTERN_START) &&
-				(c_ptr->feat <= FEAT_PATTERN_XTRA2)) continue;
+			if (cave_perma_grid(c_ptr)) continue;
 
 			/* No teleporting into vaults and such */
 			/* if (c_ptr->info & (CAVE_ICKY)) continue; */

@@ -4353,8 +4353,8 @@ void place_object(int x, int y, bool good, bool great)
 	/* Acquire grid */
 	c_ptr = area(x, y);
 
-	/* Require clean floor space */
-	if (!cave_clean_grid(c_ptr)) return;
+	/* Require nice floor space */
+	if (!cave_nice_grid(c_ptr)) return;
 	
 	/* Do not generate items on "nasty" terrain */
 	if ((c_ptr->feat == FEAT_SHAL_LAVA) ||
@@ -4484,8 +4484,8 @@ void place_gold(int x, int y)
 	/* Acquire grid */
 	c_ptr = area(x, y);
 
-	/* Require clean floor space */
-	if (!cave_clean_grid(c_ptr)) return;
+	/* Require nice floor space */
+	if (!cave_nice_grid(c_ptr)) return;
 
 	/* Get local object */
 	q_ptr = &forge;
@@ -4627,15 +4627,12 @@ s16b drop_near(object_type *j_ptr, int chance, int x, int y)
 			c_ptr = area(tx, ty);
 
 			/* Require floor space */
-			if ((c_ptr->feat != FEAT_FLOOR) &&
-				(c_ptr->feat != FEAT_SHAL_WATER) &&
-				(c_ptr->feat != FEAT_GRASS) &&
-				(c_ptr->feat != FEAT_DIRT) &&
-				(c_ptr->feat != FEAT_SNOW) &&
-				(c_ptr->feat != FEAT_SHAL_LAVA) &&
-				(c_ptr->feat != FEAT_SHAL_ACID) &&
-				((c_ptr->feat & 0xF8) != 0x08) &&
-				((c_ptr->feat & 0x80) != 0x80)) continue;
+			if (!cave_nice_grid(c_ptr)) continue;
+			
+			/* Not on "nasty" terrains */
+			if ((c_ptr->feat == FEAT_SHAL_LAVA) ||
+				(c_ptr->feat == FEAT_SHAL_ACID) ||
+				(c_ptr->feat == FEAT_SHAL_WATER)) continue;
 
 			/* Check to see if fields dissallow placement */
 			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_OBJCT))
@@ -4733,18 +4730,6 @@ s16b drop_near(object_type *j_ptr, int chance, int x, int y)
 		/* Grid */
 		c_ptr = area(tx, ty);
 
-		/* Require floor space (or shallow terrain) -KMW- */
-		if ((c_ptr->feat != FEAT_FLOOR) &&
-			(c_ptr->feat != FEAT_SHAL_WATER) &&
-			(c_ptr->feat != FEAT_GRASS) &&
-			(c_ptr->feat != FEAT_DIRT) &&
-			(c_ptr->feat != FEAT_SNOW) &&
-			(c_ptr->feat != FEAT_SHAL_LAVA) &&
-			(c_ptr->feat != FEAT_SHAL_ACID) &&
-			((c_ptr->feat & 0xF8) != 0x08) &&
-			((c_ptr->feat & 0x80) != 0x80)) continue;
-
-
 		/* Check to see if fields dissallow placement */
 		if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_OBJCT)) continue;
 
@@ -4753,7 +4738,12 @@ s16b drop_near(object_type *j_ptr, int chance, int x, int y)
 		bx = tx;
 
 		/* Require floor space */
-		if (!cave_clean_grid(c_ptr)) continue;
+		if (!cave_nice_grid(c_ptr)) continue;
+		
+		/* Not on "nasty" terrains */
+		if ((c_ptr->feat == FEAT_SHAL_LAVA) ||
+			(c_ptr->feat == FEAT_SHAL_ACID) ||
+			(c_ptr->feat == FEAT_SHAL_WATER)) continue;
 
 		/* Okay */
 		flag = TRUE;

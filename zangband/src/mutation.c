@@ -1014,8 +1014,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 			msg_print("You bite into thin air!");
 			return;
 		}
-		else if (((c_ptr->feat >= FEAT_PERM_EXTRA) &&
-				  (c_ptr->feat <= FEAT_PERM_SOLID)) ||
+		else if (cave_perma_grid(c_ptr) ||
 				 (c_ptr->feat == FEAT_MOUNTAIN))
 		{
 			msg_print("Ouch!  This wall is harder than your teeth!");

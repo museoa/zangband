@@ -2334,7 +2334,7 @@ void move_player(int dir, int do_pickup)
 		p_can_pass_walls = TRUE;
 
 	/* Never walk through permanent features */
-	if ((c_ptr->feat >= FEAT_PERM_EXTRA) && (c_ptr->feat <= FEAT_PERM_SOLID))
+	if (cave_perma_grid(c_ptr) && cave_wall_grid(c_ptr))
 	{
 		p_can_pass_walls = FALSE;
 	}
@@ -2425,11 +2425,14 @@ void move_player(int dir, int do_pickup)
 		p_ptr->energy_use += 10;
 	}
 
-	else if ((c_ptr->feat >= FEAT_SAND) && (c_ptr->feat <= FEAT_SOLID_LAVA))
+	/* Disarm a visible trap */
+	else if ((do_pickup != easy_disarm) && is_visible_trap(c_ptr))
 	{
-		oktomove = TRUE;
+		(void)do_cmd_disarm_aux(c_ptr, dir);
+		return;
 	}
-	else if ((c_ptr->feat >= FEAT_BUSH) && (c_ptr->feat <= FEAT_SNOW))
+	
+	else if (cave_floor_grid(c_ptr))
 	{
 		oktomove = TRUE;
 	}
@@ -2485,15 +2488,8 @@ void move_player(int dir, int do_pickup)
 		}
 	}
 
-	/* Disarm a visible trap */
-	else if ((do_pickup != easy_disarm) && is_visible_trap(c_ptr))
-	{
-		(void)do_cmd_disarm_aux(c_ptr, dir);
-		return;
-	}
-
 	/* Player can not walk through "walls" unless in wraith form... */
-	else if (cave_wall_grid(c_ptr) && !p_can_pass_walls)
+	else if (!p_can_pass_walls)
 	{
 		oktomove = FALSE;
 

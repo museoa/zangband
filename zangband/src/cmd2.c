@@ -1133,7 +1133,7 @@ static bool do_cmd_tunnel_aux(int x, int y)
 	}
 
 	/* Titanium */
-	if ((c_ptr->feat >= FEAT_PERM_EXTRA) && (c_ptr->feat <= FEAT_PERM_SOLID))
+	if (cave_perma_grid(c_ptr) && cave_wall_grid(c_ptr))
 	{
 		msg_print("This seems to be permanent rock.");
 	}
@@ -1420,9 +1420,7 @@ void do_cmd_tunnel(void)
 		}
 
 		/* No tunnelling through air */
-		else if (cave_floor_grid(c_ptr) ||
-				 ((c_ptr->feat >= FEAT_PATTERN_START) &&
-				  (c_ptr->feat <= FEAT_PATTERN_XTRA2)))
+		else if (cave_floor_grid(c_ptr))
 		{
 			/* Message */
 			msg_print("You cannot tunnel through air.");
@@ -1828,26 +1826,19 @@ void do_cmd_alter(void)
 				}
 			}
 		}
-
-		/* Tunnel through walls */
-		else if (((c_ptr->feat >= FEAT_SECRET) &&
-				  (c_ptr->feat <= FEAT_PERM_SOLID)) ||
-				 ((c_ptr->feat == FEAT_TREES) ||
-				  (c_ptr->feat == FEAT_MOUNTAIN) ||
-				  (c_ptr->feat == FEAT_SNOW_MOUNTAIN) ||
-				  (c_ptr->feat == FEAT_PINE_TREE) ||
-				  (c_ptr->feat == FEAT_SNOW_TREE) ||
-				  (c_ptr->feat == FEAT_JUNGLE) || (c_ptr->feat == FEAT_PILLAR)))
-		{
-			/* Tunnel */
-			more = do_cmd_tunnel_aux(x, y);
-		}
-
+		
 		/* Open closed doors */
 		else if (c_ptr->feat == FEAT_CLOSED)
 		{
 			/* open */
 			more = do_cmd_open_aux(x, y);
+		}
+
+		/* Tunnel through walls */
+		else if (cave_wall_grid(c_ptr))
+		{
+			/* Tunnel */
+			more = do_cmd_tunnel_aux(x, y);
 		}
 
 		/* Close open doors */

@@ -2681,10 +2681,12 @@ bool earthquake(int cx, int cy, int r)
 							if (!(mon_enter_test.flags & MEG_DO_MOVE)) continue;
 
 							/* ... nor on the Pattern */
-							if ((c_ptr->feat <= FEAT_PATTERN_XTRA2) &&
-								(c_ptr->feat >= FEAT_PATTERN_START))
+							if (cave_perma_grid(c_ptr) &&
+								cave_floor_grid(c_ptr))
+							{
 								continue;
-
+							}
+							
 							/* Important -- Skip "quake" grids */
 							if (map[16 + y - cy][16 + x - cx]) continue;
 

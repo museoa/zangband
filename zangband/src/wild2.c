@@ -893,8 +893,8 @@ static void draw_gates(byte i, byte j, place_type *pl_ptr)
 				case 0:
 				{
 					/* Hack - shift gate if next to walls */
-					if (cave_p(x + 3, y + 2)->feat == FEAT_PERM_SOLID) yy -= 3;
-					if (cave_p(x + 3, y + 5)->feat == FEAT_PERM_SOLID) yy += 3;
+					if (cave_perma_grid(cave_p(x + 3, y + 2))) yy -= 3;
+					if (cave_perma_grid(cave_p(x + 3, y + 5))) yy += 3;
 
 					y = yy;
 
@@ -916,8 +916,8 @@ static void draw_gates(byte i, byte j, place_type *pl_ptr)
 				case 1:
 				{
 					/* Hack - shift gate if next to walls */
-					if (cave_p(x + 3, y + 2)->feat == FEAT_PERM_SOLID) yy -= 3;
-					if (cave_p(x + 3, y + 5)->feat == FEAT_PERM_SOLID) yy += 3;
+					if (cave_perma_grid(cave_p(x + 3, y + 2))) yy -= 3;
+					if (cave_perma_grid(cave_p(x + 3, y + 5))) yy += 3;
 
 					y = yy;
 
@@ -939,8 +939,8 @@ static void draw_gates(byte i, byte j, place_type *pl_ptr)
 				case 2:
 				{
 					/* Hack - shift gate if next to walls */
-					if (cave_p(x + 2, y + 3)->feat == FEAT_PERM_SOLID) xx -= 3;
-					if (cave_p(x + 5, y + 3)->feat == FEAT_PERM_SOLID) xx += 3;
+					if (cave_perma_grid(cave_p(x + 2, y + 3))) xx -= 3;
+					if (cave_perma_grid(cave_p(x + 5, y + 3))) xx += 3;
 
 					x = xx;
 
@@ -962,8 +962,8 @@ static void draw_gates(byte i, byte j, place_type *pl_ptr)
 				case 3:
 				{
 					/* Hack - shift gate if next to walls */
-					if (cave_p(x + 2, y + 3)->feat == FEAT_PERM_SOLID) xx -= 3;
-					if (cave_p(x + 5, y + 3)->feat == FEAT_PERM_SOLID) xx += 3;
+					if (cave_perma_grid(cave_p(x + 2, y + 3))) xx -= 3;
+					if (cave_perma_grid(cave_p(x + 5, y + 3))) xx += 3;
 
 					x = xx;
 
@@ -1537,8 +1537,7 @@ static void town_gen_hack(u16b town_num)
 	
 	/* Add an extra column to make it symmetrical */
 	int rooms[3 * 4];
-	byte feat;
-
+	
 	cave_type *c_ptr;
 
 	/* Prepare an array of "remaining stores", and count them */
@@ -1573,11 +1572,10 @@ static void town_gen_hack(u16b town_num)
 		yy = rand_range(3, TOWN_HGT - 4);
 		xx = rand_range(3, TOWN_WID - 4);
 
-		feat = cave_p(xx, yy)->feat;
+		c_ptr = cave_p(xx, yy);
 
 		/* If square is a shop then try again */
-		if ((feat == FEAT_PERM_EXTRA) || (cave_p(xx, yy)->fld_idx != 0))
-			continue;
+		if (!cave_naked_grid(c_ptr)) continue;
 
 		/* Blank square */
 		break;
@@ -1590,7 +1588,7 @@ static void town_gen_hack(u16b town_num)
 		{
 			c_ptr = cave_p(xx + x, yy + y);
 
-			if (c_ptr->feat == FEAT_PERM_EXTRA) continue;
+			if (!cave_naked_grid(c_ptr)) continue;
 
 			/* Convert square to dungeon floor */
 			set_feat_grid(c_ptr, FEAT_FLOOR);

@@ -3963,10 +3963,16 @@
    ((cave_floor_grid(C)) || (cave_half_grid(C)))
 
 /*
+ * A nice grid for dropping objects
+ */
+#define cave_nice_grid(C) \
+    (!(f_info[(C)->feat].flags & FF_ICKY))
+
+/*
  * Grid that does not have any objects or "interesting" terrains
  */
 #define cave_clean_grid(C) \
-    (!(f_info[(C)->feat].flags & FF_ICKY) && \
+    (cave_nice_grid(C) && \
 	((C)->o_idx == 0))
 
 /*
@@ -3979,10 +3985,10 @@
  * Grid that is empty of everything interesting
  */
 #define cave_naked_grid(C) \
-    (!(f_info[(C)->feat].flags & FF_ICKY) && \
-	  ((C)->o_idx == 0) && \
-	  ((C)->m_idx == 0) && \
-	  ((C)->fld_idx == 0))
+    (cave_nice_grid(C) && \
+	((C)->o_idx == 0) && \
+	((C)->m_idx == 0) && \
+	((C)->fld_idx == 0))
 
 
 /*
