@@ -10,11 +10,11 @@
 
 #include "angband.h"
 
-
 #ifdef USE_GTK
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
+
 
 #define NO_PADDING 0
 
@@ -65,6 +65,59 @@ static bool game_in_progress = FALSE;
  * Number of active terms
  */
 static int num_term = MAX_TERM_DATA;
+
+
+#ifdef SUPPORT_GAMMA
+static bool gamma_table_ready = FALSE;
+static int gamma_val = 0;
+#endif /* SUPPORT_GAMMA */
+
+
+/*
+ * Hack -- Convert an RGB value to an X11 Pixel, or die.
+ */
+static GdkColor create_pixel(byte red, byte green, byte blue)
+{
+	GdkColor gcolour;
+
+#ifdef SUPPORT_GAMMA
+
+	if (!gamma_table_ready)
+	{
+		cptr str = getenv("ANGBAND_X11_GAMMA");
+		if (str != NULL) gamma_val = atoi(str);
+
+		gamma_table_ready = TRUE;
+
+		/* Only need to build the table if gamma exists */
+		if (gamma_val) build_gamma_table(gamma_val);
+	}
+
+	/* Hack -- Gamma Correction */
+	if (gamma_val > 0)
+	{
+		red = gamma_table[red];
+		green = gamma_table[green];
+		blue = gamma_table[blue];
+	}
+
+#endif /* SUPPORT_GAMMA */
+
+	/* Build the color */
+
+	gcolour.red = red * 255;
+	gcolour.green = green * 255;
+	gcolour.blue = blue * 255;
+	
+	/* Attempt to Allocate the Parsed color */
+	if (!gdk_colormap_alloc_color(gdk_colormap_get_system(),
+		 &gcolour, FALSE, TRUE))
+	{
+		g_print("Couldn't allocate color.");
+	}
+
+	return (gcolour);
+}
 
 
 /*
@@ -128,20 +181,20 @@ static errr Term_text_gtk(int x, int y, int n, byte a, cptr s)
 	int i;
 	term_data *td = (term_data*)(Term->data);
 	GdkColor color;
+	byte red, green, blue;
 
-	color.red = angband_color_table[a][1] * 256;
-	color.green = angband_color_table[a][2] * 256;
-	color.blue = angband_color_table[a][3] * 256;
+	/* Get the rgb of the colour */
+	red = angband_color_table[a][1];
+	green = angband_color_table[a][2];
+	blue = angband_color_table[a][3];
+
+	/* Create the colour structure */
+	color = create_pixel(red, green, blue);
 
 	g_assert(td->pixmap != NULL);
 	g_assert(td->drawing_area->window != 0);
 
-	if (!gdk_colormap_alloc_color(gdk_colormap_get_system(),
-			 &color, TRUE, FALSE))
-	{
-		g_print("Couldn't allocate color.");
-	}
-	
+	/* Set the forground colour */
 	gdk_gc_set_foreground(td->gc, &color);
 
 	/* Clear the line */
@@ -229,18 +282,19 @@ static errr Term_xtra_gtk(int n, int v)
 static errr Term_curs_gtk(int x, int y)
 {
 	term_data *td = (term_data*)(Term->data);
-
+	byte red, green, blue;
 	GdkColor color;
 
-	color.red = angband_color_table[TERM_YELLOW][1] * 256;
-	color.green = angband_color_table[TERM_YELLOW][2] * 256;
-	color.blue = angband_color_table[TERM_YELLOW][3] * 256;
+	/* Get the rgb of the colour */
+	red = angband_color_table[TERM_YELLOW][1];
+	green = angband_color_table[TERM_YELLOW][2];
+	blue = angband_color_table[TERM_YELLOW][3];
+
+	/* Create the colour structure */
+	color = create_pixel(red, green, blue);
 
 	g_assert(td->pixmap != NULL);
 	g_assert(td->drawing_area->window != 0);
-
-	if (!gdk_colormap_alloc_color(gdk_colormap_get_system(), &color, TRUE, FALSE))
-		g_print("Couldn't allocate color.");
 
 	gdk_gc_set_foreground(td->gc, &color);
 
