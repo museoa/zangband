@@ -380,7 +380,7 @@ objcmd_system(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 	int objC = objc - infoCmd->depth;
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
-	static char *cmdOptions[] = {"color", "workarea", NULL};
+	static char *cmdOptions[] = {"workarea", NULL};
 	enum {IDX_COLOR, IDX_WORKAREA} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 
@@ -404,25 +404,6 @@ objcmd_system(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 
 	switch (option)
 	{
-		case IDX_COLOR: /* color */
-			t = Tcl_GetStringFromObj(objV[2], NULL);
-			for (i = 0; sysColors[i].name; i++)
-			{
-				if (!strcmp(t + 6, sysColors[i].name))
-				{
-					DWORD color = GetSysColor(sysColors[i].index);
-				    int red = GetRValue(color);
-				    int green = GetGValue(color);
-				    int blue = GetBValue(color);
-				    (void) sprintf(buf, "%d %d %d", red, green, blue);
-					Tcl_SetStringObj(Tcl_GetObjResult(interp), buf, -1);
-					return TCL_OK;
-				}
-			}
-			Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
-				"unknown color name \"%s\"", t, NULL);
-			return TCL_ERROR;
-
 		case IDX_WORKAREA:
 			if (!SystemParametersInfo(SPI_GETWORKAREA, 0, &rect, 0))
 			{
