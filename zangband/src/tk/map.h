@@ -45,7 +45,6 @@ typedef void (*DrawSymbolProc)(long *srcPtr, long *dstPtr, long pitch);
 extern DrawSymbolProc symbolProcTable[4][5];
 
 extern int Map_Init(Tcl_Interp *interp);
-extern void DrawMapSymbol(Widget *widgetPtr, int y, int x, int symbol);
 extern int symbol_find(Tcl_Interp *interp, Tcl_Obj *objName, char *strName,
 	t_symbol **symbolPtrPtr, int *symbolIndex);
 

@@ -53,90 +53,6 @@ int map_symbol_feature(int f_idx)
 	return g_symbol_assign[SYMBOL_ASSIGN_FEATURE].assign[f_idx];
 }
 
-/* special pet|dark ?symbol? */
-static int objcmd_symbol_special(ClientData clientData, Tcl_Interp *interp, int objc,
-	Tcl_Obj *CONST objv[])
-{
-	CommandInfo *infoCmd = (CommandInfo *) clientData;
-	int objC = objc - infoCmd->depth;
-	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
-	static cptr option[] = {"blank", "pet", NULL};
-	int special, symbol;
-
-	if (Tcl_GetIndexFromObj(interp, objV[1], (char **) option,
-		(char *) "special", 0, &special) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	if (objC == 2)
-	{
-		symbol = g_symbol_special[special];
-		Tcl_SetResult(interp, g_symbol[symbol]->name, TCL_STATIC);
-		return TCL_OK;
-	}
-
-	if (symbol_find(interp, objV[2], NULL, NULL, &symbol) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	g_symbol_special[special] = symbol;
-
-	return TCL_OK;
-}
-
-/*
- * assign $group $member ?$symbol?
- */
-static int objcmd_symbol_assign(ClientData clientData, Tcl_Interp *interp, int objc,
-	Tcl_Obj *CONST objv[])
-{
-	CommandInfo *infoCmd = (CommandInfo *) clientData;
-	int objC = objc - infoCmd->depth;
-	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
-	static cptr optionAssign[] = {"character", "feature", "monster",
-		"object", NULL};
-	int group, member;
-	int symbol;
-
-	if (Tcl_GetIndexFromObj(interp, objV[1], (char **) optionAssign,
-		(char *) "group", 0, &group) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	if (Tcl_GetIntFromObj(interp, objV[2], &member) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	if ((member < 0) || (member >= g_symbol_assign[group].count))
-	{
-		Tcl_SetObjResult(interp,
-			Tcl_NewStringObj(format("bad member \"%d\" : "
-			"must be from 0 to %d", member,
-			g_symbol_assign[group].count - 1), -1));
-		return TCL_ERROR;
-	}
-
-	/* Return the current assignment */
-	if (objC == 3)
-	{
-		symbol = g_symbol_assign[group].assign[member];
-		Tcl_SetResult(interp, g_symbol[symbol]->name, TCL_STATIC);
-		return TCL_OK;
-	}
-
-	if (symbol_find(interp, objV[3], NULL, NULL, &symbol) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-	g_symbol_assign[group].assign[member] = symbol;
-
-	return TCL_OK;
-}
-
 /*
  * Determine the symbol for given cave location
  */
@@ -341,13 +257,6 @@ void map_draw_invalid(Widget *widgetPtr)
 	widgetPtr->dh = (y_max - y_min + 1) * size;
 }
 
-static CommandInit commandInit[] = {
-	{0, "symbol", 0, 0, NULL, NULL, (ClientData) 0},
-		{1, "assign", 3, 4, "group member ?symbol?", objcmd_symbol_assign, (ClientData) 0},
-		{1, "special", 2, 3, "pet ?symbol?", objcmd_symbol_special, (ClientData) 0},
-	{0, NULL, 0, 0, NULL, NULL, (ClientData) 0}
-};
-
 static void assign_wipe(t_symbol_assign *groupPtr)
 {
 	int i;
@@ -394,6 +303,4 @@ void init_map(void)
 	{
 		g_symbol_special[i] = 0;
 	}
-
-	(void) CommandInfo_Init(g_interp, commandInit, NULL);
 }
