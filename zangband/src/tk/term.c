@@ -57,6 +57,9 @@ struct Widget
 /* Predeclare */
 static void widget_draw_all(Widget *widgetPtr);
 
+/* Hack - have one widget for the current term */
+static Widget *tnb_term;
+
 /*
  * Actually draw stuff into the Widget's display. This routine is
  * usually passed to Tcl_DoWhenIdle().
@@ -145,31 +148,54 @@ static void Widget_EventuallyRedraw(Widget *widgetPtr)
 /*
  * Draw a blank square at this 'unkown' location
  */
-static void DrawBlank(int x, int y, BitmapPtr bitmapPtr)
+static void DrawBlank(int x, int y, Widget *widgetPtr)
 {
-	int pitch = bitmapPtr->pitch;
-	int bypp = bitmapPtr->pixelSize;
-	t_icon_data *iconDataPtr;
-	IconPtr srcPtr, dstPtr;
+	BitmapPtr bitmapPtr = widgetPtr->bitmap;
+	IconPtr dstPtr;
 	int y2;
-	int length;
+	int length = widgetPtr->gwidth * bitmapPtr->pixelSize;
 	
-	/* Access the "blank" icon data */
-	iconDataPtr = &g_icon_data[ICON_TYPE_BLANK];
-	length = iconDataPtr->width * bypp;
-	srcPtr = iconDataPtr->icon_data;
+	int xp = (x - widgetPtr->x_min) * widgetPtr->gwidth;
+	int yp = (y - widgetPtr->y_min) * widgetPtr->gheight;
 	
 	/* Get the address of where to write the data in the bitmap */
-	dstPtr = bitmapPtr->pixelPtr + x * bypp + y * pitch;
+	dstPtr = bitmapPtr->pixelPtr + xp * bitmapPtr->pixelSize + yp * bitmapPtr->pitch;
 	
-	/* Write the icon data */
-	for (y2 = 0; y2 < g_icon_size; y2++)
+	/* Clear the area */
+	for (y2 = 0; y2 < widgetPtr->gheight; y2++)
 	{
-		memcpy(dstPtr, srcPtr, length);
-		srcPtr += length;
-		dstPtr += pitch;
+		C_WIPE(dstPtr, length, byte);
+		dstPtr += bitmapPtr->pitch;
 	}
 }
+
+/*
+ * Wipe n characters at position x, y
+ */
+errr Term_wipe_tnb(int x, int y, int n)
+{
+	int i;
+	
+	/* Paranoia */
+	if (!tnb_term) return (1);
+	
+	for (i = 0; (i < n) && (x + i < 80); i++)
+	{
+		DrawBlank(x + i, y, tnb_term);
+	}
+	
+	/* Set dirty bounds to entire window */
+	tnb_term->dx = tnb_term->bx;
+	tnb_term->dy = tnb_term->by;
+	tnb_term->dw = tnb_term->width;
+	tnb_term->dh = tnb_term->height;
+	
+	/* Redraw later */
+	Widget_EventuallyRedraw(tnb_term);
+
+	return (0);
+}
+
 
 /*
  * Draw stuff at this location
@@ -178,10 +204,12 @@ static void DrawIconSpec(int x, int y, byte attr, char c, Widget *widgetPtr)
 {
 	int x2, y2, width;
 	
+	int xp, yp;
+	
 	char buf[2];
 	
 	/* Draw a blank square first */
-	DrawBlank(x, y, widgetPtr->bitmap);
+	DrawBlank(x, y, widgetPtr);
 	
 	/* Only draw characters */
 	if (attr & 0x80) return;
@@ -194,12 +222,46 @@ static void DrawIconSpec(int x, int y, byte attr, char c, Widget *widgetPtr)
 	width = Tk_TextWidth(widgetPtr->font, buf, 1);
 	
 	/* Calculate the position of the character in the bitmap */
-	x2 = widgetPtr->gwidth + (widgetPtr->gwidth - width) / 2;
-	y2 = widgetPtr->gheight + widgetPtr->font_y;
+	x2 = (widgetPtr->gwidth - width) / 2;
+	y2 = widgetPtr->font_y;
+	
+	xp = (x - widgetPtr->x_min) * widgetPtr->gwidth;
+	yp = (y - widgetPtr->y_min) * widgetPtr->gheight;
 	
 	/* Draw the character into the bitmap */
 	Tk_DrawChars(widgetPtr->display, widgetPtr->bitmap->pixmap, widgetPtr->gc,
-				widgetPtr->font, buf, 1, x2 + x, y2 + y);
+				widgetPtr->font, buf, 1,
+				x2 + xp, y2 + yp);
+}
+
+/*
+ * Draw a string of characters
+ *
+ * (This could be made more efficient by drawing
+ * more than one character at a time.)
+ */
+errr Term_text_tnb(int x, int y, int n, byte a, const char *s)
+{
+	int i;
+		
+	/* Paranoia */
+	if (!tnb_term) return (1);
+	
+	for (i = 0; (i < n) && (x + i < 80); i++)
+	{
+		DrawIconSpec(x + i, y, a, s[i], tnb_term);
+	}
+	
+	/* Set dirty bounds to entire window */
+	tnb_term->dx = tnb_term->bx;
+	tnb_term->dy = tnb_term->by;
+	tnb_term->dw = tnb_term->width;
+	tnb_term->dh = tnb_term->height;
+	
+	/* Redraw later */
+	Widget_EventuallyRedraw(tnb_term);
+
+	return 0;
 }
 
 
@@ -220,20 +282,17 @@ static void widget_draw_all(Widget *widgetPtr)
 	{
 		for (y = widgetPtr->y_min; y < widgetPtr->y_max; y++)
 		{
-			xp = (x - widgetPtr->x_min) * widgetPtr->gwidth;
-			yp = (y - widgetPtr->y_min) * widgetPtr->gheight;
-			
 			if ((x < 0) || (x >= 80) || (y < 0) || (y >= 24))
 			{
 				/* Just "erase" this spot */
-				DrawBlank(xp, yp, widgetPtr->bitmap);
+				DrawBlank(x, y, widgetPtr);
 			}
 			
 			/* Hack - Get attr/char of this location */
 			tnb_get_term(x, y, &a, &c);
-					
+			
 			/* Draw stuff at that location */
-			DrawIconSpec(xp, yp, a, c, widgetPtr);
+			DrawIconSpec(x, y, a, c, widgetPtr);
 		}
 	}
 
@@ -305,6 +364,12 @@ static void Widget_Calc(Widget *widgetPtr)
 
 	cc = cLeft + 1 + cRight;
 	rc = rTop + 1 + rBottom;
+	
+	/* Calculate the limits of visibility (only for term) */
+	widgetPtr->y_min = 0;
+	widgetPtr->y_max = widgetPtr->y_min + widgetPtr->height / widgetPtr->gheight;
+	widgetPtr->x_min = 0;
+	widgetPtr->x_max = widgetPtr->x_min + widgetPtr->width / widgetPtr->gwidth;
 
 	widgetPtr->rc = rc;
 	widgetPtr->cc = cc;
@@ -325,6 +390,18 @@ static void Widget_Wipe(Widget *widgetPtr)
 	Widget_EventuallyRedraw(widgetPtr);
 }
 
+/*
+ * Wipe the term
+ */
+errr Term_xtra_tnb_clear(void)
+{
+	/* Paranoia */
+	if (!tnb_term) return (1);
+
+	Widget_Wipe(tnb_term);
+
+	return 0;
+}
 
 static void Widget_Center(Widget *widgetPtr, int cx, int cy)
 {
@@ -370,7 +447,7 @@ static void Widget_WorldChanged(ClientData instanceData)
 		/* Get info about the font */
 		Tk_GetFontMetrics(widgetPtr->font, &fm);
 		
-		widgetPtr->font_y = (widgetPtr->gheight - fm.linespace) / 2 + fm.ascent;
+		widgetPtr->font_y = /* (widgetPtr->gheight - fm.linespace) / 2*/ + fm.ascent;
 	}
 
 	/* Size changed */
@@ -485,16 +562,6 @@ static int Widget_Configure(Tcl_Interp *interp, Widget *widgetPtr, int objc, Tcl
 		    errorResult = Tcl_GetObjResult(interp);
 		    Tcl_IncrRefCount(errorResult);
 		    Tk_RestoreSavedOptions(&savedOptions);
-		}
-
-		/* Require gwidth == gheight. Why not have just one option? */
-		if (widgetPtr->gwidth != widgetPtr->gheight)
-		{
-			/* Set the error */
-			Tcl_AppendResult(interp, "expected gwidth equal to gheight", NULL);
-	
-			/* Failure */
-			continue;
 		}
 
 		break;
@@ -837,7 +904,8 @@ static void Widget_Destroy(Widget *widgetPtr)
 	/* Free the Widget struct */
     Tcl_EventuallyFree((ClientData) widgetPtr, Tcl_Free);
 	
-	
+	/* We no longer have a term */
+	tnb_term = NULL;
 }
 
 
@@ -974,7 +1042,7 @@ static int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 	
 	/* Create the pointer */
 	MAKE(widgetPtr, Widget);
-
+	
 	/* Set the class callbacks for the new Widget */
     Tk_SetClassProcs(tkwin, &widgetProcs, (ClientData) widgetPtr);
 
@@ -1037,6 +1105,10 @@ static int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 	
 	/* Load the tiles */
 	widgetPtr->tiles = Bitmap_Load(g_interp, tnb_tile_file);
+
+	/* We now have a term */
+	tnb_term = widgetPtr;
+
 	
 	/* Return the window pathname */
     Tcl_SetStringObj(Tcl_GetObjResult(interp), Tk_PathName(widgetPtr->tkwin),

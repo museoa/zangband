@@ -94,11 +94,6 @@ static errr Term_xtra_tnb_flush(void)
 	return (0);
 }
 
-static errr Term_xtra_tnb_clear(void)
-{
-	return 0;
-}
-
 /*
  * Hack -- make a noise
  */
@@ -224,28 +219,6 @@ static errr Term_curs_tnb(int x, int y)
 	/* Hack - ignore parameters for now */
 	(void) x;
 	(void) y;
-
-	return 0;
-}
-
-static errr Term_wipe_tnb(int x, int y, int n)
-{
-	/* Hack - ignore parameters for now */
-	(void) x;
-	(void) y;
-	(void) n;
-
-	return 0;
-}
-
-static errr Term_text_tnb(int x, int y, int n, byte a, const char *s)
-{
-	/* Hack - ignore parameters for now */
-	(void) x;
-	(void) y;
-	(void) n;
-	(void) a;
-	(void) s;
 
 	return 0;
 }
