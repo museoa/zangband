@@ -23,7 +23,7 @@
 # === Understanding e_info.txt ===
 
 # N: serial number : ego type
-# X: inventory slot : rating
+# X: ego type slot : rating
 # C: max to-hit : max to-dam : max to-ac : pval
 # W: depth : rarity : weight : cost
 # F: flag | flag | etc
