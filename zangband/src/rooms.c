@@ -2782,9 +2782,9 @@ static fill_data_type fill_data;
  * Quick and nasty fill routine used to find the connected region
  * of floor in the middle of the cave
  */
-static void fill_hack(int y, int x)
+static void fill_hack(byte y, byte x)
 {
-	int i, j;
+	byte i, j;
 
 	/* check 8 neighbours + self (self is caught in the isnt_wall function) */
 	for (i = x - 1; i <= x + 1; i++)
