@@ -3685,7 +3685,7 @@
 #define stack_allow_wands		svr_ptr->options[4]
 /* {TRUE, 0, NULL, 					"Number 36" }, svr_ptr->options[5] */
 #define expand_list				svr_ptr->options[6]
-#define view_perma_grids		p_ptr->options[31]
+/* {TRUE, 0, NULL, 					"Number 38" }, p_ptr->options[31] */
 #define view_torch_grids		p_ptr->options[32]
 /* {TRUE,  0, NULL,					"Number 40" }, svr_ptr->options[7] */
 #define dungeon_stair			svr_ptr->options[8]

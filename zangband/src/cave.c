@@ -1297,10 +1297,9 @@ void note_spot(int x, int y)
  * and should be unavailable for "teleportation" destinations.
  *
  *
- * The "view_perma_grids" allows the player to "memorize" every perma-lit grid
- * which is observed, and the "view_torch_grids" allows the player to memorize
- * every torch-lit grid.  The player will always memorize important walls,
- * doors, stairs, and other terrain features, as well as any "detected" grids.
+ * The "view_torch_grids" allows the player to memorize every torch-lit grid.
+ * The player will always memorize important walls, doors, stairs, and other
+ * terrain features, as well as any "detected" grids.
  *
  *
  * Note that the new "update_view()" method allows, among other things, a room
@@ -3055,16 +3054,8 @@ void map_area(void)
  *
  * This function "illuminates" every grid in the dungeon, memorizes all
  * "objects", memorizes all grids as with magic mapping, and, under the
- * standard option settings (view_perma_grids but not view_torch_grids)
- * memorizes all floor grids too.
- *
- * Note that if "view_perma_grids" is not set, we do not memorize floor
- * grids, since this would defeat the purpose of "view_perma_grids", not
- * that anyone seems to play without this option.
- *
- * Note that if "view_torch_grids" is set, we do not memorize floor grids,
- * since this would prevent the use of "view_torch_grids" as a method to
- * keep track of what grids have been observed directly.
+ * standard option settings (not view_torch_grids) memorizes all floor
+ * grids too.
  */
 void wiz_lite(void)
 {

@@ -3624,8 +3624,8 @@ void light_dark_square(int x, int y, bool daytime)
 		/* Assume lit */
 		c_ptr->info |= (CAVE_GLOW);
 
-		/* Hack -- Memorize lit grids if allowed */
-		if (view_perma_grids) remember_grid(c_ptr, pc_ptr);
+		/* Memorize lit grids */
+		remember_grid(c_ptr, pc_ptr);
 
 		/* If is daytime - have seen this square */
 		wild[y / 16][x / 16].done.info |= WILD_INFO_SEEN;
@@ -3647,8 +3647,8 @@ void light_dark_square(int x, int y, bool daytime)
 			/* Assume lit */
 			c_ptr->info |= (CAVE_GLOW);
 
-			/* Hack -- Memorize lit grids if allowed */
-			if (view_perma_grids) remember_grid(c_ptr, pc_ptr);
+			/* Memorize lit grids */
+			remember_grid(c_ptr, pc_ptr);
 		}
 	}
 	
