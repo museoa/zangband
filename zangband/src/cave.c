@@ -2998,9 +2998,6 @@ void map_area(void)
 			/* All non-walls are "checked" */
 			if (cave_floor_grid(c_ptr))
 			{
-				/* Memorize the grid */
-				remember_grid(c_ptr, pc_ptr);
-
 				/* Memorize known walls */
 				for (i = 0; i < 8; i++)
 				{
@@ -3022,9 +3019,6 @@ void map_area(void)
 						lite_spot(xx, yy);
 					}
 				}
-				
-				/* Notice the change */
-				lite_spot(x, y);
 			}
 		}
 	}
