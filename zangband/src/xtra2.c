@@ -452,13 +452,18 @@ void monster_death(int m_idx)
 	{
 		/* Stagger around */
 		c_ptr = area(y, x);
-		while (cave_perma_grid(c_ptr) || c_ptr->o_idx)
+		i = 0;
+		while ((cave_perma_grid(c_ptr) || c_ptr->o_idx) && !(i > 100))
 		{
 			/* Pick a location */
 			scatter(&ny, &nx, y, x, 1, 0);
 
 			/* Stagger */
 			y = ny; x = nx;
+			c_ptr = area(y, x);
+			
+			/* paranoia - increment counter */
+			i++;
 		}
 
 		/* Explain the staircase */
