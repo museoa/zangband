@@ -2124,6 +2124,8 @@ static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 
 	byte feat_not_ascii;
 	s16b halluc = p_ptr->tim.image;
+	
+	bool float_field = FALSE;
 
 	/* Info flags */
 	player = pc_ptr->player;
@@ -2212,24 +2214,91 @@ static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 		}
 	}
 
-	/* Handle "player" */
-	if (character_dungeon && (c_ptr == area(p_ptr->px, p_ptr->py)))
+
+	/* Fields */
+	for (this_f_idx = c_ptr->fld_idx; this_f_idx; this_f_idx = next_f_idx)
 	{
-		monster_race *r_ptr = &r_info[0];
+		/* Acquire field */
+		fld_ptr = &fld_list[this_f_idx];
 
-		/* Get the "player" attr */
-		*ap = r_ptr->x_attr;
+		/* Acquire next field */
+		next_f_idx = fld_ptr->next_f_idx;
 
-		/* Get the "player" char */
-		*cp = r_ptr->x_char;
-#ifdef VARIABLE_PLAYER_GRAPH
+		/* Memorized, visible fields */
+		if ((fld_ptr->info & (FIELD_INFO_MARK | FIELD_INFO_VIS)) ==
+			(FIELD_INFO_MARK | FIELD_INFO_VIS))
+		{
+			/* Which display level to use? */
+			if (fld_ptr->info & FIELD_INFO_FEAT)
+			{
+				/* Terrain level */
+				if ((use_graphics == GRAPHICS_ADAM_BOLT)
+					&& (fld_ptr->info & (FIELD_INFO_TRANS)))
+				{
+					/* Take into account dynamic lighting. */
+					c += fld_ptr->f_char - f_ptr->x_char;
+				}
+				else
+				{
+					/* Normal char */
+					c = fld_ptr->f_char;
+				}
 
-		variable_player_graph(ap, cp)
-#endif /* VARIABLE_PLAYER_GRAPH */
+				/* Normal attr */
+				a = fld_ptr->f_attr;
+
+				/* Save the terrain info for the transparency effects */
+				(*tap) = a;
+				(*tcp) = c;
+			}
+			else
+			{
+				/* Tile */
+				c = fld_ptr->f_char;
+				a = fld_ptr->f_attr;
+			
+				/* Do we need to look at objects? */
+				if (!(fld_ptr->info & (FIELD_INFO_IGNORE)))
+				{
+					/* Above objects */
+					float_field = TRUE;
+				}
+			}
+
 			/* Done */
-			return;
+			break;
+		}
 	}
+	
+	if (!float_field)
+	{
+		/* Objects */
+		OBJ_ITT_START (c_ptr->o_idx, o_ptr)
+		{
+			/* Memorized objects */
+			if (o_ptr->info & (OB_SEEN))
+			{
+				/* Hack -- hallucination */
+				if (halluc)
+				{
+					image_object(&a, &c);
+				}
+				else
+				{
+					/* Normal char */
+					c = object_char(o_ptr);
 
+					/* Normal attr */
+					a = object_attr(o_ptr);
+				}
+
+				/* Done */
+				break;
+			}
+		}
+		OBJ_ITT_END;
+	}
+	
 	/* Handle monsters */
 	if (c_ptr->m_idx)
 	{
@@ -2308,118 +2377,8 @@ static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 					a = c_ptr->m_idx % 15 + 1;
 				}
 			}
-	
-
-			/* Hack -- fake monochrome */
-			if (fake_monochrome)
-			{
-				if (p_ptr->tim.invuln || !use_color)
-				{
-					a = TERM_WHITE;
-				}
-				else if (p_ptr->tim.wraith_form) a = TERM_L_DARK;
-			}
-
-			/* Save the info */
-			(*ap) = a;
-			(*cp) = c;
-
-			/* Done */
-			return;
 		}
 	}
-
-	/* Fields */
-	for (this_f_idx = c_ptr->fld_idx; this_f_idx; this_f_idx = next_f_idx)
-	{
-		/* Acquire field */
-		fld_ptr = &fld_list[this_f_idx];
-
-		/* Acquire next field */
-		next_f_idx = fld_ptr->next_f_idx;
-
-		/* Memorized, visible fields */
-		if ((fld_ptr->info & (FIELD_INFO_MARK | FIELD_INFO_VIS)) ==
-			(FIELD_INFO_MARK | FIELD_INFO_VIS))
-		{
-			/* Which display level to use? */
-			if (fld_ptr->info & FIELD_INFO_FEAT)
-			{
-				/* Terrain level */
-				if ((use_graphics == GRAPHICS_ADAM_BOLT)
-					&& (fld_ptr->info & (FIELD_INFO_TRANS)))
-				{
-					/* Take into account dynamic lighting. */
-					c += fld_ptr->f_char - f_ptr->x_char;
-				}
-				else
-				{
-					/* Normal char */
-					c = fld_ptr->f_char;
-				}
-
-				/* Normal attr */
-				a = fld_ptr->f_attr;
-
-				/* Save the terrain info for the transparency effects */
-				(*tap) = a;
-				(*tcp) = c;
-			}
-			else
-			{
-				/* Hack - no monochrome effects.  Add them later? */
-
-				/* Do we need to look at objects? */
-				if (fld_ptr->info & (FIELD_INFO_IGNORE))
-				{
-					c = fld_ptr->f_char;
-					a = fld_ptr->f_attr;
-					break;
-				}
-
-
-				/* Above objects */
-
-				/* Normal char */
-				(*cp) = fld_ptr->f_char;
-
-				/* Normal attr */
-				(*ap) = fld_ptr->f_attr;
-
-				/* Done */
-				return;
-			}
-
-			/* Done */
-			break;
-		}
-	}
-
-	/* Objects */
-	OBJ_ITT_START (c_ptr->o_idx, o_ptr)
-	{
-		/* Memorized objects */
-		if (o_ptr->info & (OB_SEEN))
-		{
-			/* Hack -- hallucination */
-			if (halluc)
-			{
-				image_object(&a, &c);
-			}
-			else
-			{
-				/* Normal char */
-				c = object_char(o_ptr);
-
-				/* Normal attr */
-				a = object_attr(o_ptr);
-			}
-
-			/* Done */
-			break;
-		}
-	}
-	OBJ_ITT_END;
 
 	/* Hack -- fake monochrome */
 	if (fake_monochrome)
@@ -2427,7 +2386,23 @@ static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 		if (p_ptr->tim.invuln || !use_color) a = TERM_WHITE;
 		else if (p_ptr->tim.wraith_form) a = TERM_L_DARK;
 	}
+	
+	/* Handle "player" */
+	if (character_dungeon && (c_ptr == area(p_ptr->px, p_ptr->py)))
+	{
+		monster_race *r_ptr = &r_info[0];
 
+		/* Get the "player" attr */
+		a = r_ptr->x_attr;
+
+		/* Get the "player" char */
+		c = r_ptr->x_char;
+#ifdef VARIABLE_PLAYER_GRAPH
+
+		variable_player_graph(&a, &c)
+#endif /* VARIABLE_PLAYER_GRAPH */
+	}
+	
 	/* Save the info */
 	(*ap) = a;
 	(*cp) = c;
