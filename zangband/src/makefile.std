@@ -192,7 +192,6 @@ cygwin: ANGOBJS += angband.res readdib.o
 cygwin: INSTALL := mv -f zangband.exe ../zangband.exe
 cygwin: RES := windres
 cygwin: RESCMD = $< -O coff -o $@
-cygwin: LUA := $(subst /, \, $(LUA))
 cygwin: EXEC := .exe
 
 ##
