@@ -907,7 +907,7 @@ static const struct randart_activation randart_activations[] =
 		"You breathe the elements.",
 		"breathe the elements (%s, rad. 4)",
 		"fire_ball(GF_MISSILE, dir, %s, 4)",
-		5, FALSE, 40, 1000, 0	/* rlev * 10 */
+		5, TRUE, 40, 1000, 0	/* rlev * 10 */
 	},
 	{
 		"The %v vibrates...",
