@@ -1467,9 +1467,15 @@ static void display_player_various(void)
 	/*rescale*/
 	avgdam /= 200;
 	
+	/* normal players get two 1d1 punches */
+	if ((!o_ptr->k_idx)&&(!(p_ptr->pclass == CLASS_MONK))) avgdam = 1;
+	
 	if (avgdam==0)
-	{
-		desc = "nil!";		
+	{		
+		if ((p_ptr->pclass == CLASS_MONK)&&(!o_ptr->k_idx))
+			desc= "Special";
+		else
+			desc = "nil!";
 	}
 	else
 	{
