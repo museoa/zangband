@@ -101,8 +101,6 @@ static borg_wank *borg_wanks;
  */
 static void borg_delete_take(int i)
 {
-    borg_grid *ag;
-
     borg_take *take = &borg_takes[i];
 
     /* Paranoia -- Already wiped */
@@ -112,12 +110,6 @@ static void borg_delete_take(int i)
     borg_note(format("# Forgetting an object '%s' at (%d,%d)",
                      (k_name + k_info[take->k_idx].name),
                      take->y, take->x));
-
-    /* Access the grid */
-    ag = &borg_grids[take->y][take->x];
-
-    /* Forget it */
-    ag->take = 0;
 
     /* Kill the object */
     WIPE(take, borg_take);
@@ -165,9 +157,6 @@ static int borg_new_take(int k_idx, int y, int x)
 
     borg_take *take;
 
-    borg_grid *ag = &borg_grids[y][x];
-
-
     /* Look for a "dead" object */
     for (i = 1; (n < 0) && (i < borg_takes_nxt); i++)
     {
@@ -208,9 +197,6 @@ static int borg_new_take(int k_idx, int y, int x)
     /* Save the location */
     take->x = x;
     take->y = y;
-
-    /* Save the index */
-    ag->take = n;
 
     /* Timestamp */
     take->when = borg_t;
@@ -308,15 +294,9 @@ static bool observe_take_move(int y, int x, int d, byte a, char c)
         /* Actual movement (?) */
         if (z)
         {
-            /* Update the grids */
-            borg_grids[take->y][take->x].take = 0;
-
             /* Track it */
             take->x = x;
             take->y = y;
-
-            /* Update the grids */
-            borg_grids[take->y][take->x].take = i;
 
             /* Note */
             borg_note(format("# Tracking an object '%s' at (%d,%d) from (%d,%d)",

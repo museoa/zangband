@@ -264,7 +264,6 @@ typedef struct borg_grid borg_grid;
  */
 struct borg_grid
 {
-    byte take;      /* Object index */
     byte kill;      /* Monster index */
 };
 

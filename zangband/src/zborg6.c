@@ -1411,7 +1411,7 @@ bool borg_caution_phase(int emergency, int turns)
             if (!borg_cave_floor_bold(y, x)) continue;
 
             /* Skip monsters */
-            if (ag->kill) continue;
+            if (mb_ptr->monster) continue;
 
             /* Stop looking */
             break;
@@ -1492,10 +1492,10 @@ static bool borg_dim_door(int emergency, int p1)
             if (mb_ptr->terrain == FEAT_INVIS) continue;
 
             /* Skip walls, trees, water, lava*/
-            if (!borg_cave_floor_bold(y, x)) continue;
+            if (!borg_cave_floor_grid(mb_ptr)) continue;
 
             /* Skip monsters */
-            if (ag->kill) continue;
+            if (mb_ptr->monster) continue;
 
 	        /* Examine */
 	        p = borg_danger(y, x, 1, TRUE);
@@ -5327,7 +5327,7 @@ static int borg_launch_bolt_aux(int y, int x, int rad, int dam, int typ, int max
         if (rad != -1 && x == x2 && y == y2) break;
 
         /* Stop bolts at monsters  */
-        if (!rad && ag->kill) return (0);
+        if (!rad && mb_ptr->monster) return (0);
 
         /* The missile path can be complicated.  There are several checks
          * which need to be made.  First we assume that we targetting
@@ -5499,6 +5499,7 @@ static int borg_launch_bolt_aux(int y, int x, int rad, int dam, int typ, int max
 
         /* Get the grid */
         ag = &borg_grids[y][x];
+		mb_ptr = map_loc(x, y);
 
         /* Check distance */
         r = distance(y2, x2, y, x);
@@ -5518,10 +5519,9 @@ static int borg_launch_bolt_aux(int y, int x, int rad, int dam, int typ, int max
         /* probable damage int was just changed by b_l_b_a_h*/
 
         /* check destroyed stuff. */
-        if (ag->take)
+        if (mb_ptr->object)
         {
-            borg_take *take = &borg_takes[ag->take];
-            object_kind *k_ptr = &k_info[take->k_idx];
+            object_kind *k_ptr = &k_info[mb_ptr->object];
 
             switch (typ)
             {
@@ -9440,7 +9440,6 @@ static int borg_defend_aux_glyph( int p1)
     int fail_allowed = 30;
     bool glyph_spell = FALSE;
 
-    borg_grid *ag = &borg_grids[c_y][c_x];
 	map_block *mb_ptr = map_loc(c_x, c_y);
 
     /* He should not cast it while on an object.
@@ -9450,7 +9449,7 @@ static int borg_defend_aux_glyph( int p1)
      * broken doors, so he won't loop.
      */
 
-    if ( (ag->take)/* ||
+    if ( (mb_ptr->object)/* ||
          (mb_ptr->terrain == FEAT_MINOR_GLYPH) ||
          (mb_ptr->terrain == FEAT_GLYPH) ||
          ((mb_ptr->terrain >= FEAT_TRAP_TRAPDOOR) && (mb_ptr->terrain <= FEAT_TRAP_SLEEP))*/ ||
@@ -9580,13 +9579,13 @@ static int borg_defend_aux_true_warding( int p1)
             }
 
             /* track spaces that cannot be protected */
-            if ( (ag->take)/* ||
+            if ( (mb_ptr->object)/* ||
                ((mb_ptr->terrain >= FEAT_TRAP_TRAPDOOR) && (mb_ptr->terrain <= FEAT_TRAP_SLEEP))*/ ||
                (mb_ptr->terrain == FEAT_LESS) ||
                (mb_ptr->terrain == FEAT_MORE) ||
                (mb_ptr->terrain == FEAT_OPEN) ||
                (mb_ptr->terrain == FEAT_BROKEN) ||
-               (ag->kill))
+               (mb_ptr->monster))
             {
                 glyph_bad++;
             }
@@ -9677,20 +9676,20 @@ static int borg_defend_aux_create_walls( int p1)
 			
             /* track spaces already protected */
             if ( /* (mb_ptr->terrain == FEAT_GLYPH) ||
-            	 (mb_ptr->terrain == FEAT_MINOR_GLYPH) ||*/ ag->kill ||
+            	 (mb_ptr->terrain == FEAT_MINOR_GLYPH) ||*/ mb_ptr->monster ||
                ((mb_ptr->terrain >= FEAT_CLOSED) && (mb_ptr->terrain <= FEAT_PERM_SOLID)))
             {
                 wall_bad++;
             }
 
             /* track spaces that cannot be protected */
-            if ( (ag->take) /*||
+            if ( (mb_ptr->object) /*||
                ((mb_ptr->terrain >= FEAT_TRAP_TRAPDOOR) && (mb_ptr->terrain <= FEAT_TRAP_SLEEP)) */||
                (mb_ptr->terrain == FEAT_LESS) ||
                (mb_ptr->terrain == FEAT_MORE) ||
                (mb_ptr->terrain == FEAT_OPEN) ||
                (mb_ptr->terrain == FEAT_BROKEN) ||
-               (ag->kill))
+               (mb_ptr->monster))
             {
                 wall_bad++;
             }
@@ -10169,20 +10168,20 @@ static int borg_defend_aux_earthquake(void)
 			mb_ptr = map_loc(x, y);
 
             /* track spaces already protected */
-            if ( /*(mb_ptr->terrain == FEAT_GLYPH) || */ag->kill ||
+            if ( /*(mb_ptr->terrain == FEAT_GLYPH) || */mb_ptr->monster ||
                ((mb_ptr->terrain >= FEAT_CLOSED) && (mb_ptr->terrain <= FEAT_PERM_SOLID)))
             {
                 door_bad++;
             }
 
             /* track spaces that cannot be protected */
-            if ( (ag->take) ||
+            if ( (mb_ptr->object) ||
                /*((mb_ptr->terrain >= FEAT_TRAP_TRAPDOOR) && (mb_ptr->terrain <= FEAT_TRAP_SLEEP)) ||*/
                (mb_ptr->terrain == FEAT_LESS) ||
                (mb_ptr->terrain == FEAT_MORE) ||
                (mb_ptr->terrain == FEAT_OPEN) ||
                (mb_ptr->terrain == FEAT_BROKEN) ||
-               (ag->kill))
+               (mb_ptr->monster))
             {
                 door_bad++;
             }
@@ -11632,7 +11631,7 @@ static int borg_perma_aux_glyph(void)
      * from the array.  Then I set a broken door on that spot, the borg ignores
      * broken doors, so he won't loop.
      */
-    if ( (ag->take) /*||
+    if ( (mb_ptr->object) /*||
     	 (mb_ptr->terrain == FEAT_GLYPH) ||
          ((mb_ptr->terrain >= FEAT_TRAP_TRAPDOOR) && (mb_ptr->terrain <= FEAT_TRAP_SLEEP))*/ ||
          (mb_ptr->terrain == FEAT_CLOSED) ||
@@ -12413,7 +12412,7 @@ static bool borg_play_step(int y2, int x2)
         	    if (mb_ptr->terrain != FEAT_OPEN) continue;
 
         	    /* skip monster on door */
-        	    if (ag->kill) continue;
+        	    if (mb_ptr->monster) continue;
 
         	    /* Skip repeatedly closed doors */
         	    if (track_door_num >= 255) continue;
@@ -12518,10 +12517,8 @@ static bool borg_play_step(int y2, int x2)
 
 
     /* Objects -- Take */
-    if (ag->take)
+    if (mb_ptr->object)
     {
-        borg_take *take = &borg_takes[ag->take];
-
         /*** Handle Chests ***/
         /* The borg will cheat when it comes to chests.
          * He does not have to but it makes him faster and
@@ -12530,21 +12527,19 @@ static bool borg_play_step(int y2, int x2)
          * So there is no advantage to the borg.
          */
 #if 0
-        if (strstr(k_name + k_info[take->k_idx].name, "chest") &&
-            !strstr(k_name + k_info[take->k_idx].name, "Ruined"))
+        if (strstr(k_name + k_info[mb_ptr->object].name, "chest") &&
+            !strstr(k_name + k_info[mb_ptr->object].name, "Ruined"))
         {
  		   cave_type   *c_ptr = &cave[y2][x2];
 		   object_type  *o_ptr = &o_list[c_ptr->o_idx];
-
-            /* borg_take *take = &borg_takes[ag->take]; */
 
             /* Unknown, Search it */
             if (!object_known_p(o_ptr) &&
                 chest_traps[o_ptr->pval])
             {
                 borg_note(format("# Searching a '%s' at (%d,%d)",
-                         k_name + k_info[take->k_idx].name,
-                         take->y, take->x));
+                         k_name + k_info[mb_ptr->object].name,
+                         y, x));
 
                 /* Walk onto it */
                 borg_keypress('0');
@@ -12558,7 +12553,7 @@ static bool borg_play_step(int y2, int x2)
                 borg_skill[BI_DEV] - o_ptr->pval >= borg_chest_fail_tolerance )
             {
                 borg_note(format("# Disarming a '%s' at (%d,%d)",
-                         k_name + k_info[take->k_idx].name,
+                         k_name + k_info[mb_ptr->object].name,
                          take->y, take->x));
 
                 /* Open it */
@@ -12571,11 +12566,9 @@ static bool borg_play_step(int y2, int x2)
             /* No trap, or unknown trap that passed above checks - Open it */
             /* if (o_ptr->pval < 0 || !object_known_p(o_ptr)) */
             {
-                borg_take *take = &borg_takes[ag->take];
-				
 				borg_note(format("# Opening a '%s' at (%d,%d)",
-                         k_name + k_info[take->k_idx].name,
-                         take->y, take->x));
+                         k_name + k_info[mb_ptr->object].name,
+                         y, x));
 
                 /* Open it */
                 borg_keypress('o');
@@ -12590,8 +12583,8 @@ static bool borg_play_step(int y2, int x2)
         /*** Handle other takes ***/
         /* Message */
         borg_note(format("# Walking onto a '%s' at (%d,%d)",
-                         k_name + k_info[take->k_idx].name,
-                         take->y, take->x));
+                         k_name + k_info[mb_ptr->object].name,
+                         y, x));
 
         /* Walk onto it */
         borg_keypress(I2D(dir));

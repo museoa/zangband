@@ -4350,7 +4350,8 @@ void borg_write_map(bool ask)
 
 		    cave_type   *c_ptr = &cave[i][j];
 
-            borg_grid *ag= &borg_grids[i][j];
+            borg_grid *ag = &borg_grids[i][j];
+			mb_ptr = map_loc(j, i);
 
             m_idx = c_ptr->m_idx;
 
@@ -4364,10 +4365,9 @@ void borg_write_map(bool ask)
             }
 
             /* Known Items */
-            if (ag->take)
+            if (mb_ptr->object)
             {
-                borg_take *take = &borg_takes[ag->take];
-                object_kind *k_ptr = &k_info[take->k_idx];
+                object_kind *k_ptr = &k_info[mb_ptr->object];
                 ch = k_ptr->d_char;
             }
 
