@@ -3801,7 +3801,7 @@ void do_cmd_knowledge(void)
 		prt("(4) Display mutations", 7, 5);
 		prt("(5) Display current pets", 8, 5);
 		prt("(6) Display current quests", 9, 5);
-		prt("(7) Display virtues", 10, 5);
+		/* prt("(7) Display virtues", 10, 5); */
 		if (take_notes)
 			prt("(8) Display notes", 11, 5);
 
