@@ -234,7 +234,7 @@ static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
 static void borg_think_shop_sell(int item, list_item *l_ptr)
 {
 	/* Log */
-	borg_note_fmt("# Selling %s (%c)", l_ptr->o_name, I2A(item));
+	borg_note("# Selling %s (%c)", l_ptr->o_name, I2A(item));
 
 	/* One item */
 	borg_keypress('0');
@@ -283,7 +283,7 @@ static void borg_think_shop_buy(int item)
 	}
 
 	/* Log */
-	borg_note_fmt("# Buying %s (%i gold).", l_ptr->o_name, l_ptr->cost);
+	borg_note("# Buying %s (%i gold).", l_ptr->o_name, l_ptr->cost);
 
 	/* Buy one item */
 	borg_keypress('0');
@@ -328,21 +328,43 @@ static int borg_think_home_sell_aux2(void)
 	list_item *l_ptr;
 	int i, b_i = -1;
 
-	s32b p, b_p;
+	s32b p, b_p, b_s = 0;
 
 	/* Evaluate the home */
 	b_p = borg_power() + borg_power_home();
+
+	/* If the home is almost full */
+	if (home_num >= STORE_INVEN_MAX - 1)
+	{
+		/* Find out how much value will be lost if one item is taken from the home */
+		for (i = 0; i < home_num; i++)
+		{
+			list_item *l_ptr = &borg_home[i];
+
+			/* Remove the item */
+			l_ptr->treat_as = TREAT_AS_LESS;
+
+			/* Evaluate the home */
+			p = borg_power() + borg_power_home();
+
+			/* Restore item */
+			l_ptr->treat_as = TREAT_AS_NORM;
+
+			/* Ignore "bad" sales */
+			if (p < b_s) continue;
+
+			/* Maintain the "best" */
+			b_s = p;
+		}
+
+		/* Up the minimum a bit */
+		if (b_s < b_p) b_p += b_p - b_s;
+	}
 
 	/* Loop through all the items */
 	for (i = 0; i < inven_num; i++)
 	{
 		l_ptr = &inventory[i];
-
-		/* Require "aware" */
-		if (!l_ptr->k_idx) continue;
-
-		/* Require "known" */
-		if (!borg_obj_known_p(l_ptr)) continue;
 
 		/* Is there room for this item at home? */
 		if (home_num >= STORE_INVEN_MAX && !borg_can_merge_home(l_ptr)) continue;
@@ -457,7 +479,7 @@ static bool borg_good_sell(list_item *l_ptr)
 			if (borg_worthless_item(l_ptr)) return (TRUE);
 
 			/* Unknown items should not be sold */
-			if (borg_obj_known_p(l_ptr)) return (FALSE);
+			if (!borg_obj_known_p(l_ptr)) return (FALSE);
 
 			break;
 		}
@@ -925,6 +947,9 @@ static bool borg_think_home_grab_aux(void)
 	/* Evaluate the home */
 	b_s = borg_power() + borg_power_home();
 
+	/* If the home is full force one item to be picked up */
+	if (home_num == STORE_INVEN_MAX) b_s = 0;
+
 	/* Scan the home */
 	for (n = 0; n < home_num; n++)
 	{
@@ -940,7 +965,7 @@ static bool borg_think_home_grab_aux(void)
 		l_ptr->treat_as = TREAT_AS_NORM;
 
 		/* Ignore "bad" sales */
-		if (s <= b_s) continue;
+		if (s < b_s) continue;
 
 		/* Maintain the "best" */
 		b_n = n;
@@ -981,7 +1006,7 @@ static bool borg_choose_shop(void)
 	/* If we are already flowing toward a shop do not check again... */
 	if (goal_shop != -1)
 	{
-		borg_note_fmt("# Using previous goal shop: %d", goal_shop);
+		borg_note("# Using previous goal shop: %d", goal_shop);
 		return (TRUE);
 	}
 	
@@ -1017,7 +1042,7 @@ static bool borg_choose_shop(void)
 	if (bu > SHOP_SCAN_THRESHOLD)
 	{
 		/* We want to shop */
-		borg_note_fmt("# Goal shop: %d, use: %d", goal_shop, (int)bu);
+		borg_note("# Goal shop: %d, use: %d", goal_shop, (int)bu);
 
 		/* Success */
 		return (TRUE);
@@ -1027,7 +1052,7 @@ static bool borg_choose_shop(void)
 	goal_shop = -1;
 
 	/* Let us know what the value is when we fail */
-	borg_note_fmt("# No more shopping - value: %d", bu);
+	borg_note("# No more shopping - value: %d", bu);
 
 	/* Failure */
 	return (FALSE);
@@ -1737,7 +1762,7 @@ bool borg_think_dungeon(void)
 		bool done = FALSE;
 
 		/* Note */
-		borg_note_fmt("# Boosting bravery (1) from %d to %d!",
+		borg_note("# Boosting bravery (1) from %d to %d!",
 					  avoidance, bp_ptr->chp * 2);
 
 		/* Hack -- ignore some danger */
@@ -1791,7 +1816,7 @@ bool borg_think_dungeon(void)
 		bool done = FALSE;
 
 		/* Note */
-		borg_note_fmt("# Boosting bravery (2) from %d to %d!",
+		borg_note("# Boosting bravery (2) from %d to %d!",
 					  avoidance, bp_ptr->mhp * 4);
 
 		/* Hack -- ignore some danger */
@@ -1819,7 +1844,7 @@ bool borg_think_dungeon(void)
 		bool done = FALSE;
 
 		/* Note */
-		borg_note_fmt("# Boosting bravery (3) from %d to %d!",
+		borg_note("# Boosting bravery (3) from %d to %d!",
 					  avoidance, 30000);
 
 		/* Hack -- ignore some danger */
