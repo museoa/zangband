@@ -2739,19 +2739,6 @@ bool borg_think_dungeon(void)
 		return (TRUE);
 	}
 
-	/* Allow respawning borgs to update their variables */
-	if (borg_respawning > 1)
-	{
-		borg_note(format
-				  ("# Pressing 'space' to catch up and get in sync (%d).",
-				   borg_respawning));
-		borg_keypress(' ');
-		borg_keypress(ESCAPE);
-		borg_keypress(ESCAPE);
-		borg_respawning--;
-		return (TRUE);
-	}
-
 	/* add a short pause to slow the borg down for viewing */
 	Term_xtra(TERM_XTRA_DELAY, msec);
 

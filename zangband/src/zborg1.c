@@ -53,19 +53,6 @@
 /* Date of the last change */
 char borg_engine_date[] = __DATE__;
 
-/*
- * Borg information, ScreenSaver or continual play mode;
- */
-int borg_respawn_race;
-int borg_respawn_class;
-int borg_respawn_str;
-int borg_respawn_int;
-int borg_respawn_wis;
-int borg_respawn_dex;
-int borg_respawn_con;
-int borg_respawn_chr;
-bool borg_respawn_winners;
-
 /* dynamic borg stuff */
 bool borg_uses_swaps;
 bool borg_plays_risky;
@@ -372,7 +359,6 @@ s16b borg_quest_level;	/* On a level with quest */
 
 bool breeder_level = FALSE;	/* Borg will shut door */
 s16b old_depth = 128;
-s16b borg_respawning = 0;
 bool genocide_level_hounds = FALSE;	/* Used against Hounds */
 s16b borg_hound_count = 0;
 s16b borg_no_retreat = 0;

@@ -3350,7 +3350,7 @@ void borg_update(void)
 	/*** Handle new levels ***/
 
 	/* Hack -- note new levels */
-	if (old_depth != borg_skill[BI_CDEPTH] || borg_respawning >= 3)
+	if (old_depth != borg_skill[BI_CDEPTH])
 	{
 		/* if we are not leaving town increment time since town clock */
 		if (!old_depth)

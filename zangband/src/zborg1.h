@@ -205,17 +205,6 @@ extern int sold_item_sval;
 extern int sold_item_pval;
 extern int sold_item_store;
 
-/* options from the zborg.txt file */
-extern int borg_respawn_race;
-extern int borg_respawn_class;
-extern int borg_respawn_str;
-extern int borg_respawn_int;
-extern int borg_respawn_wis;
-extern int borg_respawn_dex;
-extern int borg_respawn_con;
-extern int borg_respawn_chr;
-extern bool borg_respawn_winners;
-
 extern bool borg_plays_risky;
 extern bool borg_uses_swaps;
 extern bool borg_slow_optimizehome;
@@ -537,7 +526,6 @@ extern s16b borg_quest_level;	/* On a level with quest */
 
 extern bool breeder_level;	/* Borg will shut doors */
 extern s16b old_depth;
-extern s16b borg_respawning;	/* to prevent certain crashes */
 extern bool genocide_level_hounds;	/* used against hounds */
 extern s16b borg_hound_count;
 extern s16b borg_no_retreat;

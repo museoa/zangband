@@ -541,11 +541,6 @@ static bool borg_think(void)
 		{
 			borg_oops("retire");
 		}
-		/* Borg will be respawning */
-		if (borg_respawn_winners)
-		{
-			/* Do nothing now */
-		}
 	}
 
 	/*** Handle stores ***/
@@ -2168,8 +2163,9 @@ static void borg_parse_aux(cptr msg, int len)
 	/* Hack to protect against clock overflows and errors */
 	if (prefix(msg, "Illegal "))
 	{
+		borg_oops(format("# Borg problem msg: %s", msg));
+		
 		/* Hack -- Oops */
-		borg_respawning = 7;
 		borg_keypress(ESCAPE);
 		borg_keypress(ESCAPE);
 		time_this_panel += 100;
@@ -3105,10 +3101,6 @@ static void init_borg_txt_file(void)
 		borg_stop_dlevel = 128;
 		borg_stop_clevel = 55;
 		borg_stop_king = TRUE;
-		borg_respawn_winners = FALSE;
-		borg_respawn_class = -1;
-		borg_respawn_race = -2;
-
 		return;
 	}
 
@@ -3179,32 +3171,6 @@ TRUE;
 TRUE;
 			else
 				borg_stop_king = FALSE;
-			continue;
-		}
-
-		if (prefix(buf, "borg_respawn_winners ="))
-		{
-			if (buf[strlen("borg_respawn_winners =") + 1] == 'T' ||
-				buf[strlen("borg_respawn_winners =") + 1] == '1' ||
-				buf[strlen("borg_respawn_winners =") + 1] ==
-				't') borg_respawn_winners = TRUE;
-			else
-				borg_respawn_winners = FALSE;
-			continue;
-		}
-
-
-		/* Extract the integers */
-		if (prefix(buf, "borg_respawn_race ="))
-		{
-			sscanf(buf + strlen("borg_respawn_race =") + 1, "%d",
-				   &borg_respawn_race);
-			continue;
-		}
-		if (prefix(buf, "borg_respawn_class ="))
-		{
-			sscanf(buf + strlen("borg_respawn_class =") + 1, "%d",
-				   &borg_respawn_class);
 			continue;
 		}
 
