@@ -103,8 +103,7 @@ endif
 ##
 
 HDRS := $(addprefix src/,\
-	h-basic.h \
-	h-define.h h-type.h h-system.h h-config.h)
+	autoconf.h h-basic.h h-define.h h-type.h h-system.h h-config.h)
 
 ##
 ## Angband includes
