@@ -1944,8 +1944,10 @@ void borg_update_frame(void)
 		case CLASS_PALADIN:
 		case CLASS_MONK:
 		case CLASS_MINDCRAFTER:
+		{
 		   borg_skill[BI_WISMANA] = 1;
 		   break;
+		}
 
 		case CLASS_MAGE:
 		case CLASS_ROGUE:
@@ -1953,11 +1955,16 @@ void borg_update_frame(void)
 		case CLASS_WARRIOR_MAGE:
 		case CLASS_CHAOS_WARRIOR:
 		case CLASS_HIGH_MAGE:
+		{
 			borg_skill[BI_INTMANA] = 1;
 			break;
+		}
+		
 		default:
+		{
 			borg_skill[BI_WISMANA] = 0;
 			borg_skill[BI_INTMANA] = 0;
+		}
 	}
 
 	/* Misc Zang stuff */
@@ -1985,114 +1992,146 @@ borg_check_formula(int *formula)
     /* loop until we hit BFO_DONE */
     for (stackptr = stack; *formula; formula++)
     {
-        if (stackptr < stack)
-            return 0;
+        if (stackptr < stack) return 0;
+		
         switch (*formula)
         {
-            /* Number */
             case BFO_NUMBER:
+			{
+				/* Number */
                 *stackptr++ = *++formula;
                 break;
+			}
 
-            /* Variable */
             case BFO_VARIABLE:
+			{
+				/* Variable */
                 *stackptr++ = borg_has[*++formula];
                 if ((*formula) > (z_info->k_max + z_info->k_max + z_info->a_max + BI_MAX))
                     return 0;
                 break;
-
-            /* Equal */
+			}
+			
             case BFO_EQ:
+			{
+				/* Equal */
                 oper2 = *--stackptr;
                 oper1 = *--stackptr;
                 *stackptr++ = (oper1 == oper2);
                 break;
+			}
 
-            /* Not Equal */
             case BFO_NEQ:
+			{
+				/* Not Equal */
                 oper2 = *--stackptr;
                 oper1 = *--stackptr;
                 *stackptr++ = (oper1 != oper2);
                 break;
+			}
 
-            /* Less Than */
             case BFO_LT:
+			{
+				/* Less Than */
                 oper2 = *--stackptr;
                 oper1 = *--stackptr;
                 *stackptr++ = (oper1 < oper2);
                 break;
-
-            /* Less Than Or Equal */
+			}
+			
             case BFO_LTE:
+			{
+				/* Less Than Or Equal */
                 oper2 = *--stackptr;
                 oper1 = *--stackptr;
                 *stackptr++ = (oper1 <= oper2);
                 break;
+			}
 
-            /* Greater Than */
             case BFO_GT:
+			{
+				/* Greater Than */
                 oper2 = *--stackptr;
                 oper1 = *--stackptr;
                 *stackptr++ = (oper1 > oper2);
                 break;
+			}
 
-            /* Greater Than Or Equal */
             case BFO_GTE:
+			{
+				/* Greater Than Or Equal */
                 oper2 = *--stackptr;
                 oper1 = *--stackptr;
                 *stackptr++ = (oper1 >= oper2);
                 break;
+			}
 
-            /* Logical And */
             case BFO_AND:
+			{
+				/* Logical And */
                 oper2 = *--stackptr;
                 oper1 = *--stackptr;
                 *stackptr++ = (oper1 && oper2);
                 break;
+			}
 
-            /* Logical Or */
             case BFO_OR:
+			{
+				/* Logical Or */
                 oper2 = *--stackptr;
                 oper1 = *--stackptr;
                 *stackptr++ = (oper1 || oper2);
                 break;
+			}
 
-            /* Plus */
             case BFO_PLUS:
+			{
+				/* Plus */
                 oper2 = *--stackptr;
                 oper1 = *--stackptr;
                 *stackptr++ = (oper1 + oper2);
                 break;
+			}
 
-            /* Minus */
             case BFO_MINUS:
+			{
+				/* Minus */
                 oper2 = *--stackptr;
                 oper1 = *--stackptr;
                 *stackptr++ = (oper1 - oper2);
                 break;
+			}
 
-            /* Divide */
             case BFO_DIVIDE:
+			{
+				/* Divide */
                 oper2 = *--stackptr;
                 oper1 = *--stackptr;
                 *stackptr++ = (oper1 / (oper2 ? oper2 : 1));
                 break;
+			}
 
-            /* Multiply */
             case BFO_MULT:
+			{
+				/* Multiply */
                 oper2 = *--stackptr;
                 oper1 = *--stackptr;
                 *stackptr++ = (oper1 * oper2);
                 break;
+			}
 
-            /* Logical Not */
             case BFO_NOT:
+			{
+				/* Logical Not */
                 oper1 = *--stackptr;
                 *stackptr++ = (!oper1);
                 break;
+			}
 
             default:
+			{
                 return 0;
+			}
         }
     }
 
@@ -2113,85 +2152,114 @@ borg_prt_formula(int *formula)
     {
         switch (*formula)
         {
-            /* Number */
             case BFO_NUMBER:
-
+			{
+				/* Number */
                 sprintf(tmpStr, "%d ", *++formula);
                 strcat(FormulaStr, tmpStr);
                 break;
+			}
 
-            /* Variable */
             case BFO_VARIABLE:
+			{
+				/* Variable */
                 strcat(FormulaStr, "'");
                 strcat(FormulaStr, borg_prt_item(*++formula));
                 strcat(FormulaStr, "'");
                 strcat(FormulaStr, " ");
                 break;
+			}
 
-            /* Equal */
             case BFO_EQ:
+			{
+				/* Equal */
                 strcat(FormulaStr, "== ");
                 break;
+			}
 
-            /* Not Equal */
             case BFO_NEQ:
+			{
+				/* Not Equal */
                 strcat(FormulaStr, "!= ");
                 break;
+			}
 
-            /* Less Than */
             case BFO_LT:
+			{
+				/* Less Than */
                 strcat(FormulaStr, "< ");
                 break;
+			}
 
-            /* Less Than Or Equal */
             case BFO_LTE:
+			{
+				/* Less Than Or Equal */
                 strcat(FormulaStr, "<= ");
                 break;
+			}
 
-            /* Greater Than */
             case BFO_GT:
+			{
+				/* Greater Than */
                 strcat(FormulaStr, "> ");
                 break;
+			}
 
-            /* Greater Than Or Equal */
             case BFO_GTE:
+			{
+				/* Greater Than Or Equal */
                 strcat(FormulaStr, ">= ");
                 break;
+			}
 
-            /* Logical And */
             case BFO_AND:
+			{
+				/* Logical And */
                 strcat(FormulaStr, "&& ");
                 break;
+			}
 
-            /* Logical Or */
             case BFO_OR:
+			{
+				/* Logical Or */
                 strcat(FormulaStr, "|| ");
                 break;
+			}
 
-            /* Plus */
             case BFO_PLUS:
+			{
+				/* Plus */
                 strcat(FormulaStr, "+ ");
                 break;
+			}
 
-            /* Minus */
             case BFO_MINUS:
+			{
+				/* Minus */
                 strcat(FormulaStr, "- ");
                 break;
+			}
 
-            /* Divide */
             case BFO_DIVIDE:
+			{
+				/* Divide */
                 strcat(FormulaStr, "/ ");
                 break;
+			}
 
-            /* Multiply */
             case BFO_MULT:
+			{
+				/* Multiply */
                 strcat(FormulaStr, "* ");
                 break;
+			}
 
-            /* Logical Not */
             case BFO_NOT:
+			{
+				/* Logical Not */
                 strcat(FormulaStr, "! ");
                 break;
+			}
         }
     }
 
@@ -2208,114 +2276,144 @@ borg_calc_formula(int *formula)
     int     *stackptr;      /* stack pointer */
 
 
-    if (!formula)
-        return 0;
+    if (!formula) return 0;
 
     *stack = 0;
+	
     /* loop until we hit BFO_DONE */
     for (stackptr = stack; *formula; formula++)
     {
         switch (*formula)
         {
-            /* Number */
             case BFO_NUMBER:
+			{
+				/* Number */
                 *stackptr++ = *++formula;
                 break;
+			}
 
-            /* Variable */
             case BFO_VARIABLE:
+			{
+				/* Variable */
                 *stackptr++ = borg_has[*++formula];
                 break;
+			}
 
-            /* Equal */
             case BFO_EQ:
+			{
+				/* Equal */
                 oper2 = *--stackptr;
                 oper1 = *--stackptr;
                 *stackptr++ = (oper1 == oper2);
                 break;
+			}
 
-            /* Not Equal */
             case BFO_NEQ:
+			{
+				/* Not Equal */
                 oper2 = *--stackptr;
                 oper1 = *--stackptr;
                 *stackptr++ = (oper1 != oper2);
                 break;
+			}
 
-            /* Less Than */
             case BFO_LT:
+			{
+				/* Less Than */
                 oper2 = *--stackptr;
                 oper1 = *--stackptr;
                 *stackptr++ = (oper1 < oper2);
                 break;
+			}
 
-            /* Less Than Or Equal */
             case BFO_LTE:
+			{
+				/* Less Than Or Equal */
                 oper2 = *--stackptr;
                 oper1 = *--stackptr;
                 *stackptr++ = (oper1 <= oper2);
                 break;
+			}
 
-            /* Greater Than */
             case BFO_GT:
+			{
+				/* Greater Than */
                 oper2 = *--stackptr;
                 oper1 = *--stackptr;
                 *stackptr++ = (oper1 > oper2);
                 break;
+			}
 
-            /* Greater Than Or Equal */
             case BFO_GTE:
+			{
+				/* Greater Than Or Equal */
                 oper2 = *--stackptr;
                 oper1 = *--stackptr;
                 *stackptr++ = (oper1 >= oper2);
                 break;
+			}
 
-            /* Logical And */
             case BFO_AND:
+			{
+				/* Logical And */
                 oper2 = *--stackptr;
                 oper1 = *--stackptr;
                 *stackptr++ = (oper1 && oper2);
                 break;
+			}
 
-            /* Logical Or */
             case BFO_OR:
+			{
+				/* Logical Or */
                 oper2 = *--stackptr;
                 oper1 = *--stackptr;
                 *stackptr++ = (oper1 || oper2);
                 break;
+			}
 
-            /* Plus */
             case BFO_PLUS:
+			{
+				/* Plus */
                 oper2 = *--stackptr;
                 oper1 = *--stackptr;
                 *stackptr++ = (oper1 + oper2);
                 break;
+			}
 
-            /* Minus */
             case BFO_MINUS:
+			{
+				/* Minus */
                 oper2 = *--stackptr;
                 oper1 = *--stackptr;
                 *stackptr++ = (oper1 - oper2);
                 break;
+			}
 
-            /* Divide */
             case BFO_DIVIDE:
+			{
+				/* Divide */
                 oper2 = *--stackptr;
                 oper1 = *--stackptr;
                 *stackptr++ = (oper1 / (oper2 ? oper2 : 1));
                 break;
+			}
 
-            /* Multiply */
             case BFO_MULT:
+			{
+				/* Multiply */
                 oper2 = *--stackptr;
                 oper1 = *--stackptr;
                 *stackptr++ = (oper1 * oper2);
                 break;
+			}
 
-            /* Logical Not */
             case BFO_NOT:
+			{
+				/* Logical Not */
                 oper1 = *--stackptr;
                 *stackptr++ = (!oper1);
                 break;
+			}
         }
     }
 
