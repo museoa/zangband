@@ -2560,7 +2560,7 @@ void update_lite(void)
 	{		
 		/* South of the player */
 		c_ptr = area(py + 1, px);
-		if ((cave_floor_grid(c_ptr)) || (cave_half_grid(c_ptr)))
+		if (cave_los_grid(c_ptr))
 		{
 			cave_lite_hack(py+2, px);
 			cave_lite_hack(py+2, px+1);
@@ -2570,7 +2570,7 @@ void update_lite(void)
 
 		/* North of the player */
 		c_ptr = area(py - 1, px);
-		if ((cave_floor_grid(c_ptr)) || (cave_half_grid(c_ptr)))
+		if (cave_los_grid(c_ptr))
 		{
 			cave_lite_hack(py-2, px);
 			cave_lite_hack(py-2, px+1);
@@ -2579,7 +2579,7 @@ void update_lite(void)
 
 		/* East of the player */
 		c_ptr = area(py, px + 1);
-		if ((cave_floor_grid(c_ptr)) || (cave_half_grid(c_ptr)))
+		if (cave_los_grid(c_ptr))
 		{
 			cave_lite_hack(py, px+2);
 			cave_lite_hack(py+1, px+2);
@@ -2588,7 +2588,7 @@ void update_lite(void)
 
 		/* West of the player */
 		c_ptr = area(py, px - 1);
-		if ((cave_floor_grid(c_ptr)) || (cave_half_grid(c_ptr)))
+		if (cave_los_grid(c_ptr))
 		{
 			cave_lite_hack(py, px-2);
 			cave_lite_hack(py+1, px-2);
@@ -2609,28 +2609,28 @@ void update_lite(void)
 
 		/* South-East of the player */
 		c_ptr = area(py + 1, px +1);
-		if ((cave_floor_grid(c_ptr)) || (cave_half_grid(c_ptr)))
+		if (cave_los_grid(c_ptr))
 		{
 			cave_lite_hack(py+2, px+2);
 		}
 
 		/* South-West of the player */
 		c_ptr = area(py + 1, px - 1);
-		if ((cave_floor_grid(c_ptr)) || (cave_half_grid(c_ptr)))
+		if (cave_los_grid(c_ptr))
 		{
 			cave_lite_hack(py+2, px-2);
 		}
 
 		/* North-East of the player */
 		c_ptr = area(py - 1, px + 1);
-		if ((cave_floor_grid(c_ptr)) || (cave_half_grid(c_ptr)))
+		if (cave_los_grid(c_ptr))
 		{
 			cave_lite_hack(py-2, px+2);
 		}
 
 		/* North-West of the player */
 		c_ptr = area(py - 1, px - 1);
-		if ((cave_floor_grid(c_ptr)) || (cave_half_grid(c_ptr)))
+		if (cave_los_grid(c_ptr))
 		{
 			cave_lite_hack(py-2, px-2);
 		}
@@ -2742,10 +2742,6 @@ void update_lite(void)
 
 
 
-
-
-
-
 /*
  * Clear the viewable space
  */
@@ -2827,8 +2823,8 @@ static bool update_view_aux(int y, int x, int y1, int x1, int y2, int x2)
 
 
 	/* Check for walls */
-	f1 = (cave_floor_grid(g1_c_ptr))||(cave_half_grid(g1_c_ptr));
-	f2 = (cave_floor_grid(g2_c_ptr))||(cave_half_grid(g2_c_ptr));
+	f1 = (cave_los_grid(g1_c_ptr));
+	f2 = (cave_los_grid(g2_c_ptr));
 
 	/* Totally blocked by physical walls */
 	if (!f1 && !f2) return (TRUE);
@@ -2847,7 +2843,7 @@ static bool update_view_aux(int y, int x, int y1, int x1, int y2, int x2)
 
 
 	/* Check for walls */
-	wall = (!cave_floor_grid(c_ptr)) && (!cave_half_grid(c_ptr));
+	wall = (!cave_los_grid(c_ptr));
 
 
 	/* Check the "ease" of visibility */
@@ -2923,7 +2919,7 @@ static int scan_grid(int y, int x)
 	cave_view_hack(c_ptr, y, x);
 
 	/* Is LOS free ? */
-	if (!cave_floor_grid(c_ptr) && !cave_half_grid(c_ptr))
+	if (!cave_los_grid(c_ptr))
 		return FALSE;
 	else
 		return TRUE;

@@ -92,7 +92,7 @@ void light_dark_block(blk_ptr block_ptr, u16b x, u16b y)
 static void day_night(void)
 {	
 	int x, y;
-	
+
 	/* Light up or darken the area */
 	for (y = 0; y < WILD_GRID_SIZE; y++)
 	{
@@ -191,14 +191,8 @@ void change_level(int level)
 		in_bounds2 = in_bounds2_wild;
 		area = access_wild;
 		
-		/*
-		 * Allocate blocks around player - only has effect if
-		 * old game is loaded in the dungeon.
-		 */
 		if (!dun_level)
 		{
-			move_wild();
-			
 			/* Lighten / darken wilderness */
 			day_night();
 		}
@@ -4166,6 +4160,9 @@ void wild_done(void)
 	 
 	wild_grid.x = max_wild + 1;
 	wild_grid.y = max_wild + 1;
+	
+	/* Make the wilderness block cache. */
+	move_wild();
 
 	/* Refresh random number seed */
 	wild_grid.wild_seed = rand_int(0x10000000);

@@ -2791,7 +2791,7 @@ static errr rd_dungeon(void)
 	{
 		return (rd_dungeon_aux());
 	}
-	else if (sf_version<7)
+	else if (sf_version < 7)
 	{
 		/* Hack - do not load data into wilderness */
 		change_level(1);
@@ -2806,7 +2806,7 @@ static errr rd_dungeon(void)
 
 		if (dun_level)
 		{
-			change_level(1);
+			change_level(dun_level);
 
 			/* Load dungeon map */
 			load_map(cur_hgt, 0, cur_wid, 0);
@@ -2817,6 +2817,8 @@ static errr rd_dungeon(void)
 			/* Load wilderness map*/
 			load_map(wild_grid.y_max, wild_grid.y_min,
 			         wild_grid.x_max, wild_grid.x_min);
+				 
+			change_level(dun_level);
 		}
 		else
 		{
@@ -2831,17 +2833,6 @@ static errr rd_dungeon(void)
 			/* Reset level */
 			dun_level = 0;
 		}
-
-		if (sf_version < 8)
-		{
-			create_wilderness();
-		}
-	}
-
-	if (sf_version > 6)
-	{
-		/* Allocate all the blocks */
-		change_level(dun_level);
 	}
 
 	/*** Objects ***/
@@ -2984,8 +2975,10 @@ static errr rd_dungeon(void)
 	/* Hack - make new level only after objects + monsters are loaded */
 	if (sf_version < 7)
 	{
+		dun_level = 0;
+		
 		create_wilderness();
-
+		
 		change_level(dun_level);
 	}
 
