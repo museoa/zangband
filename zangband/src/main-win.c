@@ -390,6 +390,7 @@ struct _term_data
 	bool xtra_hack;
 
 	bool visible;
+	bool maximized;
 
 	bool bizarre;
 
@@ -967,6 +968,12 @@ static void save_prefs_aux(term_data *td, cptr sec_name)
 	/* Acquire position in *normal* mode (not minimized) */
 	rc = lpwndpl.rcNormalPosition;
 
+	/* Get information about the placement of the window */
+	if (lpwndpl.flags & SW_SHOWMAXIMIZED)
+		td->maximized = TRUE;
+	else
+		td->maximized = FALSE;
+
 	/* Window position (x) */
 	wsprintf(buf, "%d", rc.left);
 	WritePrivateProfileString(sec_name, "PositionX", buf, ini_file);
@@ -974,6 +981,10 @@ static void save_prefs_aux(term_data *td, cptr sec_name)
 	/* Window position (y) */
 	wsprintf(buf, "%d", rc.top);
 	WritePrivateProfileString(sec_name, "PositionY", buf, ini_file);
+
+	/* Maximized */
+	strcpy(buf, td->maximized ? "1" : "0");
+	WritePrivateProfileString(sec_name, "Maximized", buf, ini_file);
 }
 
 
@@ -1019,6 +1030,9 @@ static void load_prefs_aux(term_data *td, cptr sec_name)
 
 	/* Visible */
 	td->visible = (GetPrivateProfileInt(sec_name, "Visible", td->visible, ini_file) != 0);
+
+	/* Maximized */
+	td->maximized = (GetPrivateProfileInt(sec_name, "Maximized", td->maximized, ini_file) != 0);
 
 	/* Desired font, with default */
 	GetPrivateProfileString(sec_name, "Font", "8X13.FON", tmp, 127, ini_file);
@@ -2639,6 +2653,7 @@ static void init_windows(void)
 	td->dwStyle = (WS_OVERLAPPED | WS_THICKFRAME | WS_SYSMENU |
 	               WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_CAPTION |
 	               WS_VISIBLE);
+	if (td->maximized) td->dwStyle |= WS_MAXIMIZE;
 	td->dwExStyle = 0;
 	td->visible = TRUE;
 
@@ -2647,6 +2662,7 @@ static void init_windows(void)
 	{
 		td = &data[i];
 		td->dwStyle = (WS_OVERLAPPED | WS_THICKFRAME | WS_SYSMENU);
+		if (td->maximized) td->dwStyle |= WS_MAXIMIZE;
 		td->dwExStyle = (WS_EX_TOOLWINDOW);
 	}
 
