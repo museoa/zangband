@@ -126,12 +126,6 @@ extern void (*angtk_lite_spot)(int y, int x);
 extern void angtk_lite_spot_real(int y, int x);
 extern void angtk_wipe_spot(int y, int x);
 
-/* Like object_attr, by k_info[] index */
-#define kind_attr(k_idx) \
-	((k_info[k_idx].flavor) ? \
-	 (misc_to_attr[k_info[k_idx].flavor]) : \
-	 (k_info[k_idx].x_attr))
-
 extern int exit_skip_save;
 extern bool command_repeating;
 extern void angtk_angband_initialized(void);
@@ -274,7 +268,6 @@ extern void Plat_SyncDisplay(Display *display);
 
 /* DECLARE_TK_HOOK(angband); */
 DECLARE_TK_HOOK(player);
-DECLARE_TK_HOOK(power);
 DECLARE_TK_HOOK(cave);
 DECLARE_TK_HOOK(floor);
 DECLARE_TK_HOOK(game);
