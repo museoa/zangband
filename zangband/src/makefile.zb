@@ -120,7 +120,7 @@ INCS := $(addprefix src/,\
 
 $(ANGOBJS): $(INCS)
 $(ZUTILOBJS): $(HDRS)
-$(BORGOBJS): $(HDRS)
+$(BORGOBJS): $(INCS)
 $(LUAWOBJS): $(INCS)
 
 

@@ -574,7 +574,7 @@ INCS := \
 
 $(ANGOBJS): $(INCS)
 $(ZUTILOBJS): $(HDRS)
-$(BORGOBJS): $(HDRS)
+$(BORGOBJS): $(INCS)
 
 ##
 ## Extra dependancies
