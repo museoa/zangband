@@ -3075,48 +3075,6 @@ void borg_status_window(void)
 }
 
 
-/* keep a log of certain battles, used on Questor uniques */
-void borg_log_battle(bool keep_log)
-{
-	/* char buf[80]; */
-
-	(void)keep_log;
-
-/* for now the log is deactivated */
-	return;
-#if 0
-	/* Close the log file */
-	if (!keep_log)
-	{
-		borg_info("Closing Battle Log");
-		borg_info("**************");
-		my_fclose(borg_fff);
-		borg_fff = NULL;		/* needed on unix! */
-		return;
-	}
-
-	/* Hack -- drop permissions */
-	safe_setuid_drop();
-
-	/* Default  */
-	strcpy(buf, "battle.log");
-
-	/* Open a new file */
-	borg_fff = my_fopen(buf, "a");
-	/* Failure */
-	if (!borg_fff) msg_print("Cannot open that file.");
-
-	/* Note start of log */
-	borg_info("**************");
-	borg_info("Opening Battle Log");
-
-	/* Hack -- grab permissions */
-	safe_setuid_grab();
-	return;
-#endif /* 0 */
-}
-
-
 /*
  * Hack -- interact with the "Ben Borg".
  */

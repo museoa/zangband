@@ -1175,9 +1175,6 @@ static void borg_near_monster_type(int dist)
 			/* return 1 if not Morgy, +10 if it is Morgy or Sauron */
 			if (r_ptr->flags1 & RF1_QUESTOR)
 			{
-				/* keep a battle log */
-				if (!borg_fff) borg_log_battle(TRUE);
-
 				borg_fighting_unique += 10;
 			}
 
