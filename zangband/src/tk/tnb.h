@@ -126,16 +126,6 @@ extern void (*angtk_lite_spot)(int y, int x);
 extern void angtk_lite_spot_real(int y, int x);
 extern void angtk_wipe_spot(int y, int x);
 
-/* interp1.c */
-typedef struct {
-	cptr key; /* Textual name of TVAL_XXX macro */
-	int value; /* TVAL_XXX constant */
-} t_tval;
-extern t_tval g_tval[];
-extern Tcl_HashTable *g_tval_str;
-extern Tcl_HashTable *g_tval_const;
-
-
 /* Like object_attr, by k_info[] index */
 #define kind_attr(k_idx) \
 	((k_info[k_idx].flavor) ? \
@@ -144,7 +134,6 @@ extern Tcl_HashTable *g_tval_const;
 
 extern int exit_skip_save;
 extern bool command_repeating;
-extern int angtk_tval_const(int *tval, cptr str);
 extern void angtk_angband_initialized(void);
 extern void angtk_display_info_init(void);
 extern void angtk_display_info_append(cptr s);
@@ -286,7 +275,6 @@ extern void Plat_SyncDisplay(Display *display);
 /* DECLARE_TK_HOOK(angband); */
 DECLARE_TK_HOOK(player);
 DECLARE_TK_HOOK(power);
-DECLARE_TK_HOOK(spell);
 DECLARE_TK_HOOK(cave);
 DECLARE_TK_HOOK(floor);
 DECLARE_TK_HOOK(game);
