@@ -186,12 +186,12 @@ static void build_store(int n, int yy, int xx)
 	int y, x, y0, x0, y1, x1, y2, x2, tmp;
 
 	/* Find the "center" of the store */
-	y0 = yy * 9 + 6;
-	x0 = xx * 14 + 12;
+	y0 = yy * 6 + 4;
+	x0 = xx * 17 + 8;
 
 	/* Determine the store boundaries */
-	y1 = y0 - randint((yy == 0) ? 3 : 2);
-	y2 = y0 + randint((yy == 1) ? 3 : 2);
+	y1 = y0 - randint(2);
+	y2 = y0 + randint(2);
 	x1 = x0 - randint(5);
 	x2 = x0 + randint(5);
 
@@ -289,11 +289,11 @@ static void town_gen_hack(u16b town_num)
 	/* Prepare an Array of "remaining stores", and count them */
 	for (n = 0; n < MAX_STORES; n++) rooms[n] = n;
 
-	/* Place two rows of stores */
-	for (y = 0; y < 2; y++)
+	/* Place three rows of stores */
+	for (y = 0; y < 3; y++)
 	{
-		/* Place four stores per row */
-		for (x = 0; x < 4; x++)
+		/* Place three stores per row */
+		for (x = 0; x < 3; x++)
 		{
 			/* Pick a random unplaced store */
 			k = ((n <= 1) ? 0 : rand_int(n));
@@ -693,6 +693,9 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 	/* Add roads / river / lava (Not done)*/
 	 
 	 
+	/* Hack -- Use the "complex" RNG */
+	Rand_quick = FALSE;
+	 
 	/* Overlay town */
 	w_town = wild[y][x].done.town;
 	
@@ -728,8 +731,7 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 	if (generate_wilderness_callback(y, x)) return;
 	#endif /* USE_SCRIPT */
 	
-	/* Hack -- Use the "complex" RNG */
-	Rand_quick = FALSE;
+	
 }
 
 
