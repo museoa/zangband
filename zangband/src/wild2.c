@@ -3761,3 +3761,31 @@ void change_level(int level)
 	}
 }
 
+
+/*
+ * Delete all active things
+ */
+void wipe_all_list(void)
+{
+	if (p_ptr->depth)
+	{
+		/* In the dungeon */
+		wipe_rg_list();
+
+		/* No more dungeon */
+		dun_ptr->region = 0;
+	}
+	else
+	{
+		/* In the wilderness - delete cache if it exists */
+		if (wc_cnt) del_wild_cache();
+	}
+	
+	/* reset function pointers */
+	area = NULL;
+	parea = NULL;
+	
+	in_bounds = NULL;
+	in_bounds2 = NULL;
+	in_boundsp = NULL;
+}

@@ -1173,6 +1173,7 @@ void set_region(int rg_idx)
 	cave_data = rg_list[cur_region];
 }
 
+
 /*
  * Delete all regions - and everything inside them
  */

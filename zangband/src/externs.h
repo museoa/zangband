@@ -1070,7 +1070,7 @@ extern bool object_is_potion(const object_type *o_ptr);
 extern errr init_object_alloc(void);
 extern void k_info_reset(void);
 
-/* wild.c */
+/* wild1.c and wild2.c */
 extern void select_town_name(char *name, int pop);
 extern void light_dark_square(int y, int x, bool daytime);
 extern u16b init_choice_tree(wild_bound_box_type *bound, u16b type);
@@ -1082,6 +1082,7 @@ extern void move_wild(void);
 extern void init_wild_cache(void);
 extern void shift_in_bounds(int *x, int *y);
 extern void change_level(int);
+extern void wipe_all_list(void);
 
 /* avatar.c */
 extern cptr virtue[MAX_VIRTUE];

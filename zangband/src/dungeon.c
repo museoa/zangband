@@ -3434,9 +3434,9 @@ void play_game(bool new_game)
 	/* Roll new character */
 	if (new_game)
 	{
-		/* Mega hack - get player out of wilderness */
-		if (wc_cnt) change_level(1);
-		
+		/* Wipe everything */
+		wipe_all_list();
+						
 		/* Roll up a new character */
 		player_birth();
 
@@ -3454,9 +3454,7 @@ void play_game(bool new_game)
 		{
 			turn = 1;
 		}
-
-		p_ptr->depth = 0;
-
+		
 		/* Create a new wilderness for the player */
 		create_wilderness();
 
