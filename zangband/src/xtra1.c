@@ -2603,12 +2603,13 @@ static void calc_bonuses(void)
 		use = modify_stat_value(p_ptr->stat[i].cur, p_ptr->stat[i].add);
 
 		if ((i == A_CHR) && (p_ptr->muta3 & MUT3_ILL_NORM))
-        {
-            int floor = 8 + 2 * p_ptr->lev;
-            if (floor <= 18)
-                floor *= 10;
-            else
-                floor += 180-18;
+		{
+			int floor = 8 + 2 * p_ptr->lev;
+
+			if (floor <= 18)
+				floor *= 10;
+			else
+				floor += 180-18;
 
 			/* 10 to 18/90 charisma, guaranteed, based on level */
 			if (use < floor)
@@ -2630,11 +2631,11 @@ static void calc_bonuses(void)
 			p_ptr->window |= (PW_PLAYER);
 		}
 
-
-        if (use < 400)
-            ind = use / 10 - 3;
-        else
-            ind = 37;
+		/* Find index into various tables */
+		if (use < 400)
+			ind = use / 10 - 3;
+		else
+			ind = 37;
 
 		/* Notice changes */
 		if (p_ptr->stat[i].ind != ind)
