@@ -498,8 +498,6 @@ static void draw_store(int x0, int y0, store_type *st_ptr, int x, int y)
 	int x1, y1, x2, y2;
 	int i, j;
 	int tmp;
-	u16b field;
-
 
 	/* Determine the store boundaries */
 	y1 = y0 - randint1(3);
@@ -551,110 +549,8 @@ static void draw_store(int x0, int y0, store_type *st_ptr, int x, int y)
 
 	/* Clear previous contents, add a store door */
 	cave[i][j].feat = FEAT_FLOOR;
-	
-	/* Look up field to use */
-	switch (st_ptr->type)
-	{
-		case BUILD_STORE_GENERAL:
-		{
-			field = FT_STORE_GENERAL;
-			break;
-		}
-		
-		case BUILD_STORE_ARMOURY:
-		{
-			field = FT_STORE_ARMOURY;
-			break;
-		}
-		
-		case BUILD_STORE_WEAPON:
-		{
-			field = FT_STORE_WEAPON;
-			break;
-		}
-		
-		case BUILD_STORE_TEMPLE:
-		{
-			field = FT_STORE_TEMPLE;
-			break;
-		}
-		
-		case BUILD_STORE_ALCHEMIST:
-		{
-			field = FT_STORE_ALCHEMIST;
-			break;
-		}
-		
-		case BUILD_STORE_MAGIC:
-		{
-			field = FT_STORE_MAGIC;
-			break;
-		}
-		
-		case BUILD_STORE_BLACK:
-		{
-			field = FT_STORE_BLACK;
-			break;
-		}
-		
-		case BUILD_STORE_HOME:
-		{
-			field = FT_STORE_HOME;
-			break;
-		}
-		
-		case BUILD_STORE_BOOK:
-		{
-			field = FT_STORE_BOOK;
-			break;
-		}
-		
-		case BUILD_WEAPONMASTER:
-		{
-			field = FT_BUILD_WEAPON;
-			break;
-		}
-		
-		case BUILD_RECHARGE:
-		{
-			field = FT_BUILD_RECHARGE;
-			break;
-		}
-		
-		case BUILD_PLUS_WEAPON:
-		{
-			field = FT_BUILD_PLUS_WEAPON;
-			break;
-		}
-		
-		case BUILD_PLUS_ARMOUR:
-		{
-			field = FT_BUILD_PLUS_ARMOUR;
-			break;
-		}
-		
-		case BUILD_MUTATE:
-		{
-			field = FT_BUILD_MUTATE;
-			break;
-		}
-		
-		case BUILD_MAP:
-		{
-			field = FT_BUILD_MAP;
-			break;
-		}
-		
-		default:
-		{
-			/* Hack - nothing here? */
-			field = FT_WALL_INVIS;
-			break;
-		}
-	}	
 
-
-	cave[i][j].fld_idx = field;
+	cave[i][j].fld_idx = wild_build[st_ptr->type].field;
 	
 	/* Save location of store door */
 	st_ptr->x = x * 8 + j % 8;

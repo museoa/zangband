@@ -865,15 +865,9 @@ static errr rd_store(int town_number, int store_number)
 	}
 	
 	
-	/* Initialise the store */
-	if (build_is_store(type))
-	{
-		store_init(town_number, store_number, type);
-	}
-	else
-	{
-		st_ptr->type = type;
-	}
+	/* Hack - Initialise the store (even if not really a store) */
+	store_init(town_number, store_number, type);
+
 	
 	/* Restore the saved parameters */
 	st_ptr->store_open = store_open;

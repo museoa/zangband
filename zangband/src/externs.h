@@ -1096,7 +1096,6 @@ extern errr init_object_alloc(void);
 extern void k_info_reset(void);
 
 /* wild.c */
-extern bool build_is_store(s16b type);
 extern void light_dark_block(blk_ptr block_ptr, int x, int y);
 extern void change_level(int);
 extern u16b init_choice_tree(wild_bound_box_type *bound, u16b type);

@@ -19,47 +19,28 @@
 int wild_stairs_x = 0;
 int wild_stairs_y = 0;
 
-/* Is the building a store? */
-bool build_is_store(s16b type)
+wild_building_type	wild_build[] =
 {
-	switch (type)
-	{
-		case BUILD_STORE_GENERAL:
-		case BUILD_STORE_ARMOURY:
-		case BUILD_STORE_WEAPON:
-		case BUILD_STORE_TEMPLE:
-		case BUILD_STORE_ALCHEMIST:
-		case BUILD_STORE_MAGIC:
-		case BUILD_STORE_BLACK:
-		case BUILD_STORE_HOME:
-		case BUILD_STORE_BOOK:
-		{
-			/* It is a store */
-			return(TRUE);
-		}
-	}
+	{0, FT_STORE_GENERAL,		BT_STORE,	30, 0, 150},
+	{0,	FT_STORE_ARMOURY,		BT_STORE,	30, 0, 50},
+	{0,	FT_STORE_WEAPON,		BT_STORE,	50, 0, 0},
+	{0,	FT_STORE_TEMPLE,		BT_STORE,	100, 100, 250},
+	{0,	FT_STORE_ALCHEMIST,		BT_STORE,	100, 100, 150},
+	{0,	FT_STORE_BLACK,			BT_STORE,	250, 150, 0},
+	{0,	FT_STORE_HOME,			BT_STORE,	250, 0, 100},
+	{0,	FT_STORE_BOOK,			BT_STORE,	150, 150, 100},
+	{0,		0,					BT_GENERAL,	50, 0, 0},
+	{0,	FT_BUILD_WEAPON,		BT_BUILD,	100, 0, 0},
+	{0,	FT_BUILD_RECHARGE,		BT_BUILD,	50, 100, 100},
+	{0,	FT_BUILD_PLUS_WEAPON,	BT_BUILD,	100, 150, 50},
+	{0,	FT_BUILD_PLUS_ARMOUR,	BT_BUILD,	100, 150, 50},
+	{0,	FT_BUILD_MUTATE,		BT_BUILD,	50, 250, 0},
+	{0,		0,					BT_GENERAL,	250, 150, 150},
+	{0,		0,					BT_GENERAL,	100, 150, 150},
+	{0,	FT_BUILD_MAP,			BT_BUILD,	150, 50, 250},
+};
 	
-	/* Not a store */
-	return(FALSE);
-}
 
-/* Is the building a general feature? */
-bool build_is_general(byte type)
-{
-	switch (type)
-	{
-		case BUILD_STAIRS:
-		case BUILD_NONE:
-		case BUILD_BLANK:
-		{
-			/* It is a general town feature */
-			return(TRUE);
-		}
-	}
-	
-	/* Nope it isn't */
-	return (FALSE);
-}
 
 /* Find a place for the player */
 static void place_player_start(s32b *x, s32b *y, u16b this_town)

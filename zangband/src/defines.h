@@ -127,6 +127,11 @@
 #define MAX_GATES				4
 
 
+#define BT_GENERAL		0
+#define BT_STORE		1
+#define BT_BUILD		2
+
+
 /* The store types */
 #define STORE_GENERAL   0
 #define STORE_ARMOURY   1
@@ -156,7 +161,7 @@
 #define MAX_OWNERS			32
 
 
-/* The building types */
+/* The building types - Do we need these?? */
 #define BLDG_WEAPONMASTER	0
 #define BLDG_RECHARGE		1
 #define BLDG_PLUS_WEAPON	2

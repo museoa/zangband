@@ -41,11 +41,40 @@
 #define ROAD_BORDER		(WILD_BLOCK_SIZE * 120)
 #define GROUND_LEVEL	(WILD_BLOCK_SIZE * 100)
 
-extern int wild_stairs_x;
-extern int wild_stairs_y;
+/* Some useful macros */
+#define build_is_store(X) \
+	(wild_build[X].type == BT_STORE)
+
+#define build_is_general(X) \
+	(wild_build[X].type == BT_GENERAL)
+
+#define build_is_build(X) \
+	(wild_build[X].type == BT_BUILD)
+
+/* Wilderness building info type */
+typedef struct wild_building_type wild_building_type;
+
+struct wild_building_type
+{
+	u16b	gen;	/* Created */
+	u16b	field;	/* Field type, if applicable */
+	
+	byte	type;	/* Type of building */
+	
+	/* Suggested location in parameter space */
+	byte	pop;
+	byte	magic;
+	byte	law;
+};
+
 
 /* Externs */
-extern bool build_is_general(byte type);
+
+extern int wild_stairs_x;
+extern int wild_stairs_y;
+extern wild_building_type	wild_build[];
+
+
 extern void clear_temp_block(void);
 extern void set_temp_corner_val(u16b val);
 extern void set_temp_mid(u16b val);
