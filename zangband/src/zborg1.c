@@ -986,7 +986,7 @@ bool borg_is_kill[256];     /* Symbol may be a monster */
  * The current map
  */
 
-borg_grid *borg_grids[AUTO_MAX_Y];  /* The grids */
+borg_grid *borg_grids[MAX_HGT];  /* The grids */
 
 
 /*
@@ -2350,10 +2350,10 @@ void borg_init_1(void)
     /*** Grids ***/
 
     /* Make each row of grids */
-    for (y = 0; y < AUTO_MAX_Y; y++)
+    for (y = 0; y < MAX_HGT; y++)
     {
         /* Make each row */
-        C_MAKE(borg_grids[y], AUTO_MAX_X, borg_grid);
+        C_MAKE(borg_grids[y], MAX_HGT, borg_grid);
     }
 
 

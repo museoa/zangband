@@ -43,13 +43,6 @@
 /*** Some constants ***/
 
 
-/*
- * Maximum possible dungeon size
- */
-#define AUTO_MAX_X  MAX_WID
-#define AUTO_MAX_Y  MAX_HGT
-
-
 
 /*
  * Flags for the "info" field of grids
@@ -232,7 +225,7 @@ struct borg_kill
  * But if AUTO_ROOMS * sizeof(borg_room) > 64K then some
  * machines may not be able to allocate the room array.
  */
-#define AUTO_ROOMS  (AUTO_MAX_X * AUTO_MAX_Y / 8)
+#define AUTO_ROOMS  (MAX_X * MAX_Y / 8)
 
 /*
  * Forward declare
@@ -1252,7 +1245,7 @@ extern bool borg_is_kill[256];      /* Symbol may be a monster */
  * Current "grid" list
  */
 
-extern borg_grid *borg_grids[AUTO_MAX_Y];   /* Current "grid list" */
+extern borg_grid *borg_grids[MAX_HGT];   /* Current "grid list" */
 
 
 

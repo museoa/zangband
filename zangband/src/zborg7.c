@@ -642,19 +642,18 @@ bool borg_check_lite(void)
      if (corners <= 2) do_lite = TRUE;
 
     /* Hack */
-    if (do_lite && (borg_skill[BI_CUR_LITE] >= 2) &&
-        (c_x >= borg_skill[BI_CUR_LITE]) && (c_x < AUTO_MAX_X - borg_skill[BI_CUR_LITE]) &&
-        (c_y >= borg_skill[BI_CUR_LITE]) && (c_y < AUTO_MAX_Y - borg_skill[BI_CUR_LITE]) &&
-        (randint0(100) < 90))
+    if (do_lite && (borg_skill[BI_CUR_LITE] >= 2) && (randint0(100) < 90))
     {
-
         floors = 0;
+		
         /* Scan the "local" grids (5x5) 2 same as torch grid*/
         for (y = c_y - 2; y <= c_y + 2; y++)
         {
             /* Scan the "local" grids (5x5) */
             for (x = c_x - 2; x <= c_x + 2; x++)
             {
+				if (!map_in_bounds(x, y)) continue;
+			
                 /* Get grid */
 				mb_ptr = map_loc(x, y);
 
@@ -727,6 +726,7 @@ bool borg_check_lite(void)
     /* Oops */
     return (FALSE);
 }
+
 bool borg_check_lite_only(void)
 {
     int i, x, y;
@@ -790,10 +790,7 @@ bool borg_check_lite_only(void)
      if (corners <= 2) do_lite = TRUE;
 
     /* Hack */
-    if (do_lite && (borg_skill[BI_CUR_LITE] >= 2) &&
-        (c_x >= borg_skill[BI_CUR_LITE]) && (c_x < AUTO_MAX_X - borg_skill[BI_CUR_LITE]) &&
-        (c_y >= borg_skill[BI_CUR_LITE]) && (c_y < AUTO_MAX_Y - borg_skill[BI_CUR_LITE]) &&
-        (randint0(100) < 90))
+    if (do_lite && (borg_skill[BI_CUR_LITE] >= 2) && (randint0(100) < 90))
     {
 
         floors = 0;
@@ -803,6 +800,8 @@ bool borg_check_lite_only(void)
             /* Scan the "local" grids (5x5) */
             for (x = c_x - 2; x <= c_x + 2; x++)
             {
+				if (!map_in_bounds(x, y)) continue;
+			
                 /* Get grid */
 				mb_ptr = map_loc(x, y);
 

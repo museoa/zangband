@@ -750,9 +750,7 @@ static bool borg_surrounded(void)
 
         map_block *mb_ptr;
 
-		/* check for bounds */
-		if (y > AUTO_MAX_Y || y < 0) continue;
-		if (x > AUTO_MAX_X || x < 0) continue;
+		if (!map_in_bounds(x, y)) continue;
 
         /* Access the grid */
         mb_ptr = map_loc(x, y);
@@ -1394,10 +1392,8 @@ bool borg_caution_phase(int emergency, int turns)
                 d = distance(c_y, c_x, y, x);
                 if ((d >= min) && (d <= dis)) break;
             }
-
-            /* Ignore illegal locations */
-            if ((y <= 0) || (y >= AUTO_MAX_Y - 1)) continue;
-            if ((x <= 0) || (x >= AUTO_MAX_X - 1)) continue;
+			
+			if (!map_in_bounds(x, y)) continue;
 
             /* Access */
             ag = &borg_grids[y][x];
@@ -1479,10 +1475,8 @@ static bool borg_dim_door(int emergency, int p1)
         /* Pick a location */
         for (x = c_x - dis; x < c_x + dis; x++)
         {
+			if (!map_in_bounds(x, y)) continue;
 
-            /* Ignore illegal locations */
-            if ((y <= 0) || (y >= AUTO_MAX_Y - 1)) continue;
-            if ((x <= 0) || (x >= AUTO_MAX_X - 1)) continue;
 			if ((x == c_x) && (y == c_y)) continue;
 
             /* Access */
@@ -13464,13 +13458,10 @@ bool borg_flow_kill_aim(bool viewable)
                player is */
             c_x = s_c_x + o_x;
             c_y = s_c_y + o_y;
-
-            /* avoid screen edgeds */
-            if (c_x > AUTO_MAX_X-2 ||
-                c_x < 2 ||
-                c_y > AUTO_MAX_Y-2 ||
-                c_y < 2)
-                continue;
+			
+			/* avoid screen edgeds */
+			if (!map_in_bounds(c_x + 2, c_y + 2)) continue;
+			if (!map_in_bounds(c_x - 2, c_y - 2)) continue;
 
             /* Make sure we do not end up next to a monster */
             for (i = 0; i < borg_temp_n; i++)
@@ -13576,17 +13567,14 @@ bool borg_flow_kill_corridor(bool viewable)
             /* Check grids near monster */
             m_x = kill->x + o_x;
             m_y = kill->y + o_y;
-
-            /* grid the grid */
+			
+			/* avoid screen edges */
+			if (!map_in_bounds(m_x + 2, m_y + 2)) continue;
+			if (!map_in_bounds(m_x - 2, m_y - 2)) continue;
+			
+			/* get the grid */
             ag = &borg_grids[m_y][m_x];
 			mb_ptr = map_loc(m_x, m_y);
-
-            /* avoid screen edgeds */
-            if (m_x > AUTO_MAX_X-2 ||
-                m_x < 2 ||
-                m_y > AUTO_MAX_Y-2 ||
-                m_y < 2)
-                continue;
 
             /* Can't tunnel a non wall or permawall*/
             if (mb_ptr->terrain != FEAT_NONE && mb_ptr->terrain < FEAT_MAGMA) continue;
@@ -14115,10 +14103,7 @@ static bool borg_flow_dark_interesting(int y, int x, int b_stair)
         if (!vault_on_level) return (FALSE);
 
         /* AJG Do not attempt on the edge */
-        if(x < AUTO_MAX_X-1
-        && y < AUTO_MAX_Y-1
-        && x > 1
-        && y > 1)
+		if (map_in_bounds(x, y))
         {
             /* scan the adjacent grids */
             for (ox = -1; ox <= 1; ox++)
@@ -14173,10 +14158,7 @@ static bool borg_flow_dark_interesting(int y, int x, int b_stair)
         /* Scan near trees for unknown grids */
 
         /* AJG Do not attempt on the edge */
-        if(x < AUTO_MAX_X-1
-	        && y < AUTO_MAX_Y-1
-	        && x > 1
-	        && y > 1)
+        if(map_in_bounds(x, y))
         {
             /* scan the adjacent grids */
             for (ox = -1; ox <= 1; ox++)
@@ -14734,10 +14716,7 @@ static bool borg_flow_dark_2(void)
         x = c_x + ddx_ddd[i] * r;
 
         /* Check legality */
-        if (y < 1) continue;
-        if (x < 1) continue;
-        if (y > AUTO_MAX_Y - 2) continue;
-        if (x > AUTO_MAX_X - 2) continue;
+		if (!map_in_bounds(x, y)) continue;
 
         /* Acquire grid */
         ag = &borg_grids[y][x];
@@ -14817,13 +14796,6 @@ static bool borg_flow_dark_3(int b_stair)
     y2 = c_y + 4;
     x2 = c_x + 4;
 
-    /* Restrict to "legal" grids */
-    if (y1 < 1) y1 = 1;
-    if (x1 < 1) x1 = 1;
-    if (y2 > AUTO_MAX_Y - 2) y2 = AUTO_MAX_Y - 2;
-    if (x2 > AUTO_MAX_X - 2) x2 = AUTO_MAX_X - 2;
-
-
     /* Reset */
     borg_temp_n = 0;
 
@@ -14833,13 +14805,13 @@ static bool borg_flow_dark_3(int b_stair)
         /* Examine the region */
         for (x = x1; x <= x2; x++)
         {
+			if (!map_in_bounds(x, y)) continue;
+		
             /* Skip "boring" grids */
             if (!borg_flow_dark_interesting(y, x, b_stair)) continue;
 
             /* Skip "unreachable" grids */
             if (!borg_flow_dark_reachable(y, x)) continue;
-
-
 
             /* Careful -- Remember it */
             borg_temp_x[borg_temp_n] = x;
@@ -14911,13 +14883,6 @@ static bool borg_flow_dark_4(int b_stair)
     y2 = c_y + 11;
     x2 = c_x + 11;
 
-    /* Restrict to "legal" grids */
-    if (y1 < 1) y1 = 1;
-    if (x1 < 1) x1 = 1;
-    if (y2 > AUTO_MAX_Y - 2) y2 = AUTO_MAX_Y - 2;
-    if (x2 > AUTO_MAX_X - 2) x2 = AUTO_MAX_X - 2;
-
-
     /* Nothing yet */
     borg_temp_n = 0;
 
@@ -14927,6 +14892,8 @@ static bool borg_flow_dark_4(int b_stair)
         /* Examine the panel */
         for (x = x1; x <= x2; x++)
         {
+			if (!map_in_bounds(x, y)) continue;
+		
             /* Skip "boring" grids */
             if (!borg_flow_dark_interesting(y, x, b_stair)) continue;
 
@@ -14989,40 +14956,35 @@ static bool borg_flow_dark_5(int b_stair)
 {
     int i, x, y;
 
+	map_block *mb_ptr;
 
     /* Hack -- not in town */
     if (!borg_skill[BI_CDEPTH]) return (FALSE);
-
 
     /* Nothing yet */
     borg_temp_n = 0;
 
     /* Examine every "legal" grid */
-    for (y = 1; y < AUTO_MAX_Y-1; y++)
+	MAP_ITT_START(mb_ptr)
     {
-        for (x = 1; x < AUTO_MAX_X-1; x++)
-        {
-            /* Skip "boring" grids */
-            if (!borg_flow_dark_interesting(y, x, b_stair)) continue;
+		/* Paranoia -- Check for overflow */
+		if (borg_temp_n == AUTO_TEMP_MAX) continue;
+	
+		/* Get location */
+		MAP_GET_LOC(x, y);
+	
+		/* Skip "boring" grids */
+		if (!borg_flow_dark_interesting(y, x, b_stair)) continue;
 
-            /* Skip "unreachable" grids */
-            if (!borg_flow_dark_reachable(y, x)) continue;
+		/* Skip "unreachable" grids */
+		if (!borg_flow_dark_reachable(y, x)) continue;
 
-            /* Careful -- Remember it */
-            borg_temp_x[borg_temp_n] = x;
-            borg_temp_y[borg_temp_n] = y;
-            borg_temp_n++;
-
-            /* Paranoia -- Check for overflow */
-            if (borg_temp_n == AUTO_TEMP_MAX)
-            {
-                /* Hack -- Double break */
-                y = AUTO_MAX_Y;
-                x = AUTO_MAX_X;
-                break;
-            }
-        }
+		/* Careful -- Remember it */
+		borg_temp_x[borg_temp_n] = x;
+		borg_temp_y[borg_temp_n] = y;
+		borg_temp_n++;
     }
+	MAP_ITT_END;
 
     /* Nothing useful */
     if (!borg_temp_n) return (FALSE);
@@ -15218,137 +15180,134 @@ bool borg_flow_spastic(bool bored)
     borg_flow_reverse();
 
     /* Scan the entire map */
-    for (y = 1; y < AUTO_MAX_Y-1; y++)
+	MAP_ITT_START(mb_ptr)
     {
-        for (x = 1; x < AUTO_MAX_X-1; x++)
-        {
-			map_block *mb_array[8];
+		map_block *mb_array[8];
 
-            int wall = 0;
-            int supp = 0;
-            int diag = 0;
-			
-			byte xtra_val;
+    	int wall = 0;
+    	int supp = 0;
+    	int diag = 0;
+	
+		byte xtra_val;
 
+    	/* Skip unknown grids */
+    	if (mb_ptr->terrain == FEAT_NONE) continue;
 
-            /* Acquire the grid */
-            ag = &borg_grids[y][x];
-			mb_ptr = map_loc(x, y);
+    	/* Skip walls/doors */
+    	if (!borg_cave_floor_grid(mb_ptr)) continue;
 
-            /* Skip unknown grids */
-            if (mb_ptr->terrain == FEAT_NONE) continue;
+    	/* Acquire the cost */
+    	cost = mb_ptr->cost;
 
-            /* Skip walls/doors */
-            if (!borg_cave_floor_grid(mb_ptr)) continue;
+    	/* Skip "unreachable" grids */
+    	if (cost >= 250) continue;
 
-            /* Acquire the cost */
-            cost = mb_ptr->cost;
+		xtra_val = mb_ptr->xtra;
 
-            /* Skip "unreachable" grids */
-            if (cost >= 250) continue;
+    	/* Tweak -- Limit total searches */
+    	if (xtra_val >= 50) continue;
+		if (xtra_val >= borg_skill[BI_CLEVEL] * 5) continue;
 
-			xtra_val = mb_ptr->xtra;
+    	/* Limit initial searches until bored */
+    	if (!bored && (xtra_val > 5)) continue;
+		
+		/* Acquire the location */
+		MAP_GET_LOC(x, y);
 
-            /* Tweak -- Limit total searches */
-            if (xtra_val >= 50) continue;
-			if (xtra_val >= borg_skill[BI_CLEVEL] * 5) continue;
+    	/* Avoid searching detected sectors */
+    	if (borg_detect_door[y/11][x/33]) continue;
 
-            /* Limit initial searches until bored */
-            if (!bored && (xtra_val > 5)) continue;
+    	/* Skip ones that make me wander too far */
+    	if (b_stair != -1 && borg_skill[BI_CLEVEL < 10])
+    	{
+    	    /* Check the distance of this grid to the stair */
+    	    j = distance (track_less_y[b_stair], track_less_x[b_stair],
+    	                  y, x);
+    	    /* Distance of me to the stairs */
+    	    b_j = distance (c_y, c_x, track_less_y[b_stair], track_less_x[b_stair]);
 
-            /* Avoid searching detected sectors */
-            if (borg_detect_door[y/11][x/33]) continue;
+    	    /* skip far away grids while I am close to stair*/
+    	    if (b_j <= borg_skill[BI_CLEVEL] * 5 + 9 &&
+    	          j >= borg_skill[BI_CLEVEL] * 5 + 9 ) continue;
+    	}
 
-            /* Skip ones that make me wander too far */
-            if (b_stair != -1 && borg_skill[BI_CLEVEL < 10])
-            {
-                /* Check the distance of this grid to the stair */
-                j = distance (track_less_y[b_stair], track_less_x[b_stair],
-                              y, x);
-                /* Distance of me to the stairs */
-                b_j = distance (c_y, c_x, track_less_y[b_stair], track_less_x[b_stair]);
+    	/* Extract adjacent locations */
+    	for (i = 0; i < 8; i++)
+    	{
+    	    /* Extract the location */
+    	    int xx = x + ddx_ddd[i];
+    	    int yy = y + ddy_ddd[i];
 
-                /* skip far away grids while I am close to stair*/
-                if (b_j <= borg_skill[BI_CLEVEL] * 5 + 9 &&
-                      j >= borg_skill[BI_CLEVEL] * 5 + 9 ) continue;
-            }
-
-            /* Extract adjacent locations */
-            for (i = 0; i < 8; i++)
-            {
-                /* Extract the location */
-                int xx = x + ddx_ddd[i];
-                int yy = y + ddy_ddd[i];
-
-                /* Get the grid contents */
-				mb_array[i] = map_loc(xx, yy);
-            }
+    	    /* Get the grid contents */
+			mb_array[i] = map_loc(xx, yy);
+    	}
 
 
-            /* Count possible door locations */
-            for (i = 0; i < 4; i++)
-            {
-                mb_ptr = mb_array[i];
-                if (mb_ptr->terrain >= FEAT_WALL_EXTRA) wall++;
-            }
+    	/* Count possible door locations */
+    	for (i = 0; i < 4; i++)
+    	{
+    	    mb_ptr = mb_array[i];
+    	    if (mb_ptr->terrain >= FEAT_WALL_EXTRA) wall++;
+    	}
 
-            /* No possible secret doors */
-            if (wall < 1) continue;
-
-
-            /* Count supporting evidence for secret doors */
-            for (i = 0; i < 4; i++)
-            {
-                mb_ptr = mb_array[i];
-
-                /* Rubble */
-                if (mb_ptr->terrain == FEAT_RUBBLE) continue;
-
-                /* Walls, Doors */
-                if (((mb_ptr->terrain >= FEAT_SECRET) && (mb_ptr->terrain <= FEAT_PERM_SOLID)) ||
-                    ((mb_ptr->terrain == FEAT_OPEN) || (mb_ptr->terrain == FEAT_BROKEN)) ||
-                    (mb_ptr->terrain == FEAT_CLOSED))
-                {
-                    supp++;
-                }
-            }
-
-            /* Count supporting evidence for secret doors */
-            for (i = 4; i < 8; i++)
-            {
-                mb_ptr = mb_array[i];
-
-                /* Rubble */
-                if (mb_ptr->terrain == FEAT_RUBBLE) continue;
-
-                /* Walls */
-                if (mb_ptr->terrain >= FEAT_SECRET)
-                {
-                    diag++;
-                }
-            }
-
-            /* No possible secret doors */
-            if (diag < 2) continue;
-
-            /* Tweak -- Reward walls, punish visitation and distance */
-            v = (supp * 500) + (diag * 100) - (xtra_val * 20) - (cost * 1);
-
-            /* The grid is not searchable */
-            if (v <= 0) continue;
+    	/* No possible secret doors */
+    	if (wall < 1) continue;
 
 
-            /* Tweak -- Minimal interest until bored */
-            if (!bored && (v < 1500)) continue;
+    	/* Count supporting evidence for secret doors */
+    	for (i = 0; i < 4; i++)
+    	{
+    	    mb_ptr = mb_array[i];
+
+    	    /* Rubble */
+    	    if (mb_ptr->terrain == FEAT_RUBBLE) continue;
+
+    	    /* Walls, Doors */
+    	    if (((mb_ptr->terrain >= FEAT_SECRET) && (mb_ptr->terrain <= FEAT_PERM_SOLID)) ||
+    	        ((mb_ptr->terrain == FEAT_OPEN) || (mb_ptr->terrain == FEAT_BROKEN)) ||
+    	        (mb_ptr->terrain == FEAT_CLOSED))
+    	    {
+    	        supp++;
+    	    }
+    	}
+
+    	/* Count supporting evidence for secret doors */
+    	for (i = 4; i < 8; i++)
+    	{
+    	    mb_ptr = mb_array[i];
+
+    	    /* Rubble */
+    	    if (mb_ptr->terrain == FEAT_RUBBLE) continue;
+
+    	    /* Walls */
+    	    if (mb_ptr->terrain >= FEAT_SECRET)
+    	    {
+    	        diag++;
+    	    }
+    	}
+
+    	/* No possible secret doors */
+    	if (diag < 2) continue;
+
+    	/* Tweak -- Reward walls, punish visitation and distance */
+    	v = (supp * 500) + (diag * 100) - (xtra_val * 20) - (cost * 1);
+
+    	/* The grid is not searchable */
+    	if (v <= 0) continue;
 
 
-            /* Track "best" grid */
-            if ((b_v >= 0) && (v < b_v)) continue;
+    	/* Tweak -- Minimal interest until bored */
+    	if (!bored && (v < 1500)) continue;
 
-            /* Save the data */
-            b_v = v; b_x = x; b_y = y;
-        }
+
+    	/* Track "best" grid */
+    	if ((b_v >= 0) && (v < b_v)) continue;
+
+    	/* Save the data */
+    	b_v = v; b_x = x; b_y = y;
+
     }
+	MAP_ITT_END;
 
     /* Clear the flow codes */
     borg_flow_clear();

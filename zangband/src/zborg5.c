@@ -2329,40 +2329,6 @@ static void borg_forget_map(void)
 {
 	map_block *mb_ptr;
 
-#if 0
-    /* Clean up the grids */
-    for (y = 0; y < AUTO_MAX_Y; y++)
-    {
-        for (x = 0; x < AUTO_MAX_X; x++)
-        {
-            /* Access the grid */
-            ag = &borg_grids[y][x];
-
-            /* Wipe it */
-            WIPE(ag, borg_grid);
-
-            /* Lay down the outer walls */
-            ag->feat = FEAT_PERM_SOLID;
-        }
-    }
-
-    /* Clean up the grids */
-    for (y = 1; y < AUTO_MAX_Y-1; y++)
-    {
-        for (x = 1; x < AUTO_MAX_X-1; x++)
-        {
-            /* Access the grid */
-            ag = &borg_grids[y][x];
-
-            /* Forget the contents */
-            ag->feat = FEAT_NONE;
-
-            /* Hack -- prepare the town */
-            /* if (!borg_skill[BI_CDEPTH]) ag->feat = FEAT_FLOOR; */
-        }
-    }
-#endif /* 0 */
-
 	/* Itterate over the map */
 	MAP_ITT_START(mb_ptr)
 	{
