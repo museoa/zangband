@@ -704,40 +704,12 @@ static bool store_check_num(object_type *o_ptr)
 
 /*
  * Determine if the current store will purchase the given item
- *
- * Two field action functions are called for a store.
- * The first checks to see if a store will not buy something.
- * The second checks the opposite.
- * By combining different action functions, lots of different
- * types of store can be made.
+ * (Check restriction flags, and object theme)
  */
 static bool store_will_buy(object_type *o_ptr)
 {
 	obj_theme theme;
 	
-	/* Thing to pass to the action functions */
-	field_obj_test f_o_t;
-	
-	/* Save information to pass to the field action function */
-	f_o_t.o_ptr = o_ptr;
-	
-	/* Default is to reject this rejection */
-	f_o_t.result = FALSE;
-	
-	/* Will the store !not! buy this item? */
-	field_hook(&area(p_ptr->py, p_ptr->px)->fld_idx,
-		 FIELD_ACT_STORE_ACT1, (vptr) &f_o_t);
-	
-	/* We don't want this item type? */
-	if (f_o_t.result == TRUE) return (FALSE);
-	
-	/* Change the default to acceptance */
-	f_o_t.result = TRUE;
-	
-	/* Will the store buy this item? */
-	field_hook(&area(p_ptr->py, p_ptr->px)->fld_idx,
-		 FIELD_ACT_STORE_ACT2, (vptr) &f_o_t);
-
 	/* Check restriction flags */
 	
 	/* Blessed items only */
@@ -772,11 +744,53 @@ static bool store_will_buy(object_type *o_ptr)
 	/* Initialise the theme tester */
 	init_match_theme(theme);
 	
-	/* Does the object have zero probability of being made? */
-	if (!kind_is_theme(o_ptr->k_idx)) return (FALSE);
+	/*
+	 * Final check: 
+	 * Does the object have a chance of being made?
+	 */
+	return (kind_is_theme(o_ptr->k_idx));
+}
 
-	/* Assume the field restriction is ok */
-	return (f_o_t.result);
+/*
+ * The player wants to sell something to the store.
+ * This is a much more restrictive case than the store_will_buy()
+ * function below.
+ * Only objects that pass the field hooks will be accepted.
+ * (As well as only selecting store_will_buy() objects.
+ *
+ * Two field action functions are called for a store.
+ * The first checks to see if a store will not buy something.
+ * The second checks the opposite.
+ * By combining different action functions, lots of different
+ * types of store can be made.
+ */
+static bool store_will_stock(object_type *o_ptr)
+{
+	/* Thing to pass to the action functions */
+	field_obj_test f_o_t;
+	
+	/* Save information to pass to the field action function */
+	f_o_t.o_ptr = o_ptr;
+	
+	/* Default is to reject this rejection */
+	f_o_t.result = FALSE;
+	
+	/* Will the store !not! buy this item? */
+	field_hook(&area(p_ptr->py, p_ptr->px)->fld_idx,
+		 FIELD_ACT_STORE_ACT1, (vptr) &f_o_t);
+	
+	/* We don't want this item type? */
+	if (f_o_t.result == TRUE) return (FALSE);
+	
+	/* Change the default to acceptance */
+	f_o_t.result = TRUE;
+	
+	/* Will the store buy this item? */
+	field_hook(&area(p_ptr->py, p_ptr->px)->fld_idx,
+		 FIELD_ACT_STORE_ACT2, (vptr) &f_o_t);
+
+	/* Finally check to see if we will buy the item */
+	return (f_o_t.result && store_will_buy(o_ptr));
 }
 
 
@@ -910,6 +924,9 @@ static int store_carry(object_type *o_ptr)
 
 	/* Cursed/Worthless items "disappear" when sold */
 	if (value <= 0) return (-1);
+
+	/* We will buy some items we will not stock */
+	if (!store_will_stock(o_ptr)) return (-1);
 
 	/* All store items are fully *identified* */
 	o_ptr->ident |= IDENT_MENTAL;
@@ -1159,7 +1176,7 @@ static void store_create(void)
 		}
 
 		/* Require valid object */
-		if (!store_will_buy(q_ptr)) continue;
+		if (!store_will_stock(q_ptr)) continue;
 		
 		/* Mega-Hack -- no chests in stores */
 		if (q_ptr->tval == TV_CHEST) continue;
