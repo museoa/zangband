@@ -38,9 +38,7 @@ static Tk_OptionSpec optionSpecs[20] = {
 	 (char *) "no", -1, Tk_Offset(Widget, setGrid), 0, 0, 0},
     {TK_OPTION_BOOLEAN, (char *) "-noupdate", (char *) "noUpdate", (char *) "NoUpdate",
 	 (char *) "no", -1, Tk_Offset(Widget, noUpdate), 0, 0, 0},
-	{TK_OPTION_STRING_TABLE, (char *) "-style", (char *) "style", (char *) "Style",
-	 (char *) "icon", -1, Tk_Offset(Widget, style), 0, keyword_widget_style, 0},
-    {TK_OPTION_END, NULL, NULL, NULL,
+   {TK_OPTION_END, NULL, NULL, NULL,
      NULL, 0, -1, 0, 0, 0}
 };
 
@@ -316,7 +314,6 @@ int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
     widgetPtr->gheight = 0;
     widgetPtr->oldWidth = widgetPtr->oldHeight = 0;
     widgetPtr->oldGWidth = widgetPtr->oldGHeight = 0;
-    widgetPtr->oldStyle = -1;
     widgetPtr->cursor = None;
 	widgetPtr->setGrid = FALSE;
     widgetPtr->flags = 0;
@@ -1001,24 +998,8 @@ void Widget_WorldChanged(ClientData instanceData)
 			&gcValues);
     }
 
-	/* Free old style data */
-	if (widgetPtr->style != widgetPtr->oldStyle)
-	{
-		if (widgetPtr->info)
-		{
-			Tcl_Free((char *) widgetPtr->info);
-			widgetPtr->info = NULL;
-		}
-		if (widgetPtr->invalid)
-		{
-			Tcl_Free((char *) widgetPtr->invalid);
-			widgetPtr->invalid = NULL;
-		}
-	}
-
-	/* Style or size changed */
-	if ((widgetPtr->style != widgetPtr->oldStyle) ||
-		(widgetPtr->width != widgetPtr->oldWidth) ||
+	/* Size changed */
+	if ((widgetPtr->width != widgetPtr->oldWidth) ||
 		(widgetPtr->height != widgetPtr->oldHeight) ||
 		(widgetPtr->gwidth != widgetPtr->oldGWidth) ||
 		(widgetPtr->gheight != widgetPtr->oldGHeight))
@@ -1105,7 +1086,6 @@ void Widget_WorldChanged(ClientData instanceData)
 	widgetPtr->oldHeight = widgetPtr->height;
 	widgetPtr->oldGWidth = widgetPtr->gwidth;
 	widgetPtr->oldGHeight = widgetPtr->gheight;
-	widgetPtr->oldStyle = widgetPtr->style;
 
 	/* Redraw the window (later) */
 	Widget_EventuallyRedraw(widgetPtr);

@@ -34,10 +34,6 @@ struct Widget
     int width;					/* # of columns */
     int height;					/* # of rows */
 
-#define WIDGET_STYLE_ICON 0
-#define WIDGET_STYLE_MAP 1
-	int style;
-
 #define WIDGET_REDRAW 0x0001
 #define WIDGET_DRAW_INVALID 0x0002
 #define WIDGET_DELETED 0x0008
@@ -47,7 +43,6 @@ struct Widget
 	int flags;                  /* Misc flags */
 
     int oldWidth, oldHeight;	/* To notice changes */
-    int oldStyle;				/* To notice changes */
     int oldTileCnt;				/* To notice changes */
     Tk_Cursor cursor;           /* Cursor? */
 	int setGrid;                /* Use gridded geometry */
@@ -74,15 +69,12 @@ struct Widget
 	int by, bx;					/* Offset of window from bitmap */
 	int dy, dx, dw, dh;			/* Dirty rect for copying */
 
-	/* WIDGET_STYLE_ICON */
-
 #define WIDGET_INFO_IGNORE 0x0001	/* This tile isn't visible */
 #define WIDGET_INFO_DIRTY 0x0002	/* This tile needs redraw */
 	short *info;					/* Flags for each tile */
 
 	int *invalid, invalidCnt;	/* List of invalid grids */
 
-	/* WIDGET_STYLE_ICON & WIDGET_STYLE_MAP */
 	int y_min, y_max;           /* Limits of displayed info */
 	int x_min, x_max;           /* Limits of displayed info */
     int gwidth;					/* Source column width */
