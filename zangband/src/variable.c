@@ -87,7 +87,7 @@ s32b turn;	/* Current game turn */
 s32b old_turn;	/* Turn when level began (feelings) */
 
 bool use_sound;	/* The "sound" mode is enabled */
-bool use_graphics;	/* The "graphics" mode is enabled */
+byte use_graphics;	/* The "graphics" mode enabled (0 is none) */
 
 bool use_transparency = FALSE;	/* Use transparent tiles */
 

@@ -115,7 +115,7 @@ extern s16b num_repro;
 extern s32b turn;
 extern s32b old_turn;
 extern bool use_sound;
-extern bool use_graphics;
+extern byte use_graphics;
 extern bool use_transparency;
 extern s16b signal_count;
 extern bool shimmer_monsters;
