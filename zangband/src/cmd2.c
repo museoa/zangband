@@ -1064,7 +1064,7 @@ void do_cmd_close(void)
 /*
  * Tunnel through wall.  Assumes valid location.
  */
-static bool twall(int y, int x, byte feat)
+static bool twall(int x, int y, byte feat)
 {
 	cave_type	*c_ptr = area(y, x);
 
@@ -1095,7 +1095,7 @@ static bool twall(int y, int x, byte feat)
  *
  * Returns TRUE if repeated commands may continue
  */
-static bool do_cmd_tunnel_aux(int y, int x)
+static bool do_cmd_tunnel_aux(int x, int y)
 {
 	bool more = FALSE;
 	
@@ -1166,7 +1166,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 	         (c_ptr->feat == FEAT_PINE_TREE))
 	{
 		/* Chop Down */
-		if ((p_ptr->skill_dig > 10 + randint0(400)) && twall(y, x, FEAT_GRASS))
+		if ((p_ptr->skill_dig > 10 + randint0(400)) && twall(x, y, FEAT_GRASS))
 		{
 			msg_print("You have cleared away the trees.");
 
@@ -1189,7 +1189,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 	else if (c_ptr->feat == FEAT_SNOW_TREE)
 	{
 		/* Chop Down */
-		if ((p_ptr->skill_dig > 10 + randint0(400)) && twall(y, x, FEAT_SNOW))
+		if ((p_ptr->skill_dig > 10 + randint0(400)) && twall(x, y, FEAT_SNOW))
 		{
 			msg_print("You have cleared away the trees.");
 
@@ -1213,7 +1213,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 	else if (c_ptr->feat == FEAT_JUNGLE)
 	{
 		/* Chop Down */
-		if ((p_ptr->skill_dig > 10 + randint0(800)) && twall(y, x, FEAT_BUSH))
+		if ((p_ptr->skill_dig > 10 + randint0(800)) && twall(x, y, FEAT_BUSH))
 		{
 			msg_print("You have cleared away the jungle.");
 
@@ -1241,7 +1241,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 			 (c_ptr->feat == FEAT_PILLAR))
 	{
 		/* Tunnel */
-		if ((p_ptr->skill_dig > 40 + randint0(1600)) && twall(y, x, FEAT_FLOOR))
+		if ((p_ptr->skill_dig > 40 + randint0(1600)) && twall(x, y, FEAT_FLOOR))
 		{
 			msg_print("You have finished the tunnel.");
 
@@ -1285,7 +1285,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 		}
 
 		/* Success */
-		if (okay && twall(y, x, FEAT_FLOOR))
+		if (okay && twall(x, y, FEAT_FLOOR))
 		{
 			/* Found treasure */
 			if (gold)
@@ -1329,7 +1329,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 	else if (c_ptr->feat == FEAT_RUBBLE)
 	{
 		/* Remove the rubble */
-		if ((p_ptr->skill_dig > randint0(200)) && twall(y, x, FEAT_FLOOR))
+		if ((p_ptr->skill_dig > randint0(200)) && twall(x, y, FEAT_FLOOR))
 		{
 			/* Message */
 			msg_print("You have removed the rubble.");
@@ -1360,7 +1360,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 	else if (c_ptr->feat >= FEAT_SECRET)
 	{
 		/* Tunnel */
-		if ((p_ptr->skill_dig > 30 + randint0(1200)) && twall(y, x, FEAT_FLOOR))
+		if ((p_ptr->skill_dig > 30 + randint0(1200)) && twall(x, y, FEAT_FLOOR))
 		{
 			msg_print("You have finished the tunnel.");
 		}
@@ -1485,7 +1485,7 @@ void do_cmd_tunnel(void)
 		else
 		{
 			/* Tunnel through walls */
-			more = do_cmd_tunnel_aux(y, x);
+			more = do_cmd_tunnel_aux(x, y);
 		}
 	}
 
@@ -1503,7 +1503,7 @@ void do_cmd_tunnel(void)
  *
  * Returns TRUE if repeated commands may continue
  */
-static bool do_cmd_disarm_chest(int y, int x, s16b o_idx)
+static bool do_cmd_disarm_chest(int x, int y, s16b o_idx)
 {
 	int i, j;
 
@@ -1755,7 +1755,7 @@ void do_cmd_disarm(void)
 		else if (o_idx)
 		{
 			/* Disarm the chest */
-			more = do_cmd_disarm_chest(y, x, o_idx);
+			more = do_cmd_disarm_chest(x, y, o_idx);
 		}
 
 		/* Disarm trap */
@@ -1842,7 +1842,7 @@ void do_cmd_alter(void)
 				case 0:
 				{
 					/* Tunnel */
-					more = do_cmd_tunnel_aux(y, x);
+					more = do_cmd_tunnel_aux(x, y);
 					break;
 				}
 				
@@ -1874,7 +1874,7 @@ void do_cmd_alter(void)
 				  (c_ptr->feat == FEAT_PILLAR)))
 		{
 			/* Tunnel */
-			more = do_cmd_tunnel_aux(y, x);
+			more = do_cmd_tunnel_aux(x, y);
 		}
 
 		/* Open closed doors */
