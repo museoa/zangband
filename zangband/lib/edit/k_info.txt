@@ -2488,7 +2488,7 @@ L:USE:		lose_exp(player.exp / 4)
 L:USE:		ident = TRUE
 L:USE:	end
 L:SMASH:angry = TRUE
-D:This potion causes amnesia and drains experience.
+D:This potion drains your experience.
 
 N:255:Salt Water
 G:!:d
