@@ -471,13 +471,14 @@ static void do_cmd_use_staff_aux(object_type *o_ptr)
 	/* XXX Hack -- unstack if necessary */
 	if (o_ptr->number > 1)
 	{
-		object_type *q_ptr;
-
 		/* Split object */
-		q_ptr = item_split(o_ptr, 1);
+		o_ptr = item_split(o_ptr, 1);
+		
+		/* Use a single charge */
+		o_ptr->pval--;
 
 		/* Unstack the used item */
-		o_ptr = inven_carry(q_ptr);
+		o_ptr = inven_carry(o_ptr);
 
 		/* Message */
 		msg_print("You unstack your staff.");
@@ -485,10 +486,12 @@ static void do_cmd_use_staff_aux(object_type *o_ptr)
 		/* Notice weight changes */
 		p_ptr->update |= PU_WEIGHT;
 	}
-
-	/* Use a single charge */
-	o_ptr->pval--;
-
+	else
+	{
+		/* Use a single charge */
+		o_ptr->pval--;
+	}
+	
 	/* Describe charges in the pack */
 	item_charges(o_ptr);
 
