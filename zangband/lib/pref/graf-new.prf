@@ -891,7 +891,7 @@ K:88:0x8E/0x8D
 # Dwarven Pick
 K:89:0x8E/0x91
 
-# Elven Cloak (rr9)
+# Elven Cloak
 K:90:0x89/0x89
 
 # Pair of Soft Leather Boots
@@ -2073,7 +2073,8 @@ K:524:0xB5/0x8C
 # Tanto
 K:525:0xB5/0x81
 
-# Splint Mail (rr9)
+# Splint Mail
+K:526:0xB6/0x92
 
 # Do-Maru
 K:527:0xB6/0x82
@@ -2159,7 +2160,8 @@ K:554:0xB5/0x99
 # Ninjato
 K:555:0xB5/0x97
 
-# Ring Mail (rr9)
+# Ring Mail
+K:556:0xB6/0x93
 
 # Cord Armour
 K:557:0xB6/0x8B
