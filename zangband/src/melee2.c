@@ -394,7 +394,7 @@ void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
 	bool known = (m_ptr->cdis <= MAX_SIGHT);
 
 	/* Extract monster name */
-	monster_desc(m_name, m_ptr, 0);
+	monster_desc(m_name, m_ptr, 0, 160);
 
 	/* Redraw (later) if needed */
 	if (p_ptr->health_who == m_idx) p_ptr->redraw |= (PR_HEALTH);
@@ -1559,13 +1559,13 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 	rlev = ((r_ptr->level >= 1) ? r_ptr->level : 1);
 
 	/* Get the monster name (or "it") */
-	monster_desc(m_name, m_ptr, 0);
+	monster_desc(m_name, m_ptr, 0, 80);
 
 	/* Get the monster name (or "it") */
-	monster_desc(t_name, t_ptr, 0);
+	monster_desc(t_name, t_ptr, 0, 80);
 
 	/* Get the "died from" information (i.e. "a kobold") */
-	monster_desc(ddesc, m_ptr, 0x88);
+	monster_desc(ddesc, m_ptr, 0x88, 80);
 
 	/* Assume no blink */
 	blinked = FALSE;
@@ -2526,7 +2526,7 @@ static void take_move(int m_idx, int *mm)
 					object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 					/* Acquire the monster name */
-					monster_desc(m_name, m_ptr, 0x04);
+					monster_desc(m_name, m_ptr, 0x04, 80);
 
 					/* React to objects that hurt the monster */
 					if (f1 & TR1_KILL_DRAGON) flg3 |= (RF3_DRAGON);
@@ -2914,7 +2914,7 @@ static void process_monster(int m_idx)
 		gets_angry = TRUE;
 
 	/* Acquire the monster name */
-	monster_desc(m_name, m_ptr, 0);
+	monster_desc(m_name, m_ptr, 0, 80);
 
 	if (gets_angry)
 	{

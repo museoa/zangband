@@ -3514,7 +3514,7 @@ static bool do_cmd_knowledge_pets(int dummy)
 			char pet_name[80];
 			t_friends++;
 			t_levels += r_info[m_ptr->r_idx].level;
-			monster_desc(pet_name, m_ptr, 0x88);
+			monster_desc(pet_name, m_ptr, 0x88, 80);
 			fprintf(fff, "%s (%s)\n", pet_name, look_mon_desc(i));
 		}
 	}

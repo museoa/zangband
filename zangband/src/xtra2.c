@@ -912,7 +912,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		char m_name[80];
 
 		/* Extract monster name */
-		monster_desc(m_name, m_ptr, 0);
+		monster_desc(m_name, m_ptr, 0, 80);
 
 		if (r_ptr->flags2 & RF2_CAN_SPEAK)
 		{

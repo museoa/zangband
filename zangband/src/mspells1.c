@@ -848,13 +848,13 @@ bool make_attack_spell(int m_idx)
 	}
 
 	/* Get the monster name (or "it") */
-	monster_desc(m_name, m_ptr, 0x00);
+	monster_desc(m_name, m_ptr, 0x00, 80);
 
 	/* Get the monster possessive ("his"/"her"/"its") */
-	monster_desc(m_poss, m_ptr, 0x22);
+	monster_desc(m_poss, m_ptr, 0x22, 80);
 
 	/* Hack -- Get the "died from" name */
-	monster_desc(ddesc, m_ptr, 0x88);
+	monster_desc(ddesc, m_ptr, 0x88, 80);
 
 	thrown_spell = choose_attack_spell(m_idx, f4, f5, f6);
 

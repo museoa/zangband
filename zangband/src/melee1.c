@@ -126,8 +126,6 @@ bool make_attack_normal(int m_idx)
 
 	object_type *o_ptr;
 
-	/* char o_name[256]; */
-
 	char m_name[80];
 
 	char ddesc[80];
@@ -154,10 +152,10 @@ bool make_attack_normal(int m_idx)
 
 
 	/* Get the monster name (or "it") */
-	monster_desc(m_name, m_ptr, 0);
+	monster_desc(m_name, m_ptr, 0, 80);
 
 	/* Get the "died from" information (i.e. "a kobold") */
-	monster_desc(ddesc, m_ptr, 0x88);
+	monster_desc(ddesc, m_ptr, 0x88, 80);
 
 
 	/* Assume no blink */

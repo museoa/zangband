@@ -696,7 +696,7 @@ s16b get_mon_num(int level)
  *   0x22 --> Possessive, genderized if visable ("his") or "its"
  *   0x23 --> Reflexive, genderized if visable ("himself") or "itself"
  */
-void monster_desc(char *desc, const monster_type *m_ptr, int mode)
+void monster_desc(char *desc, const monster_type *m_ptr, int mode, int max)
 {
 	cptr res;
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
@@ -704,6 +704,8 @@ void monster_desc(char *desc, const monster_type *m_ptr, int mode)
 	char silly_name[1024];
 	bool seen, pron;
 	bool named = FALSE;
+	
+	int n;
 
 	/* Are we hallucinating? (Idea from Nethack...) */
 	if (p_ptr->image)
@@ -886,7 +888,7 @@ void monster_desc(char *desc, const monster_type *m_ptr, int mode)
 		}
 
 		/* Copy the result */
-		(void)strcpy(desc, res);
+		strnfmt(desc, max, "%s", res);
 	}
 
 
@@ -894,10 +896,10 @@ void monster_desc(char *desc, const monster_type *m_ptr, int mode)
 	else if ((mode & 0x02) && (mode & 0x01))
 	{
 		/* The monster is visible, so use its gender */
-		if (r_ptr->flags1 & RF1_FEMALE) strcpy(desc, "herself");
-		else if (r_ptr->flags1 & RF1_MALE) strcpy(desc, "himself");
+		if (r_ptr->flags1 & RF1_FEMALE) strnfmt(desc, max, "herself");
+		else if (r_ptr->flags1 & RF1_MALE) strnfmt(desc, max, "himself");
 		else
-			strcpy(desc, "itself");
+			strnfmt(desc, max, "itself");
 	}
 
 
@@ -908,7 +910,7 @@ void monster_desc(char *desc, const monster_type *m_ptr, int mode)
 		if ((r_ptr->flags1 & RF1_UNIQUE) && !p_ptr->image)
 		{
 			/* Start with the name (thus nominative and objective) */
-			(void)strcpy(desc, name);
+			n = strnfmt(desc, max, "%s", name);
 		}
 
 		/* It could be an indefinite monster */
@@ -917,8 +919,7 @@ void monster_desc(char *desc, const monster_type *m_ptr, int mode)
 			/* XXX Check plurality for "some" */
 
 			/* Indefinite monsters need an indefinite article */
-			(void)strcpy(desc, is_a_vowel(name[0]) ? "an " : "a ");
-			(void)strcat(desc, name);
+			n = strnfmt(desc, max, is_a_vowel(name[0]) ? "an %s" : "a %s", name);
 		}
 
 		/* It could be a normal, definite, monster */
@@ -926,11 +927,9 @@ void monster_desc(char *desc, const monster_type *m_ptr, int mode)
 		{
 			/* Definite monsters need a definite article */
 			if (is_pet(m_ptr))
-				(void)strcpy(desc, "your ");
+				n = strnfmt(desc, max, "your %s", name);
 			else
-				(void)strcpy(desc, "the ");
-
-			(void)strcat(desc, name);
+				n = strnfmt(desc, max, "the %s", name);
 		}
 
 		/* Handle the Possessive as a special afterthought */
@@ -939,7 +938,7 @@ void monster_desc(char *desc, const monster_type *m_ptr, int mode)
 			/* XXX Check for trailing "s" */
 
 			/* Simply append "apostrophe" and "s" */
-			(void)strcat(desc, "'s");
+			strnfmt(desc + n, max - n, "'s");
 		}
 	}
 }
@@ -967,7 +966,7 @@ void monster_fmt(char *buf, uint max, cptr fmt, va_list *vp)
 	mode = va_arg(*vp, int);
 	
 	/* Print the description into the buffer */
-	monster_desc(buf, m_ptr, mode);
+	monster_desc(buf, m_ptr, mode, max);
 }
 
 
@@ -2583,7 +2582,7 @@ void message_pain(int m_idx, int dam)
 
 
 	/* Get the monster name */
-	monster_desc(m_name, m_ptr, 0);
+	monster_desc(m_name, m_ptr, 0, 80);
 
 	/* Notice non-damage */
 	if (dam == 0)

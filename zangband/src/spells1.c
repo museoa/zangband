@@ -988,7 +988,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 
 
 	/* Get the monster name (BEFORE polymorphing) */
-	monster_desc(m_name, m_ptr, 0);
+	monster_desc(m_name, m_ptr, 0, 80);
 
 
 	/* Some monsters get "destroyed" */
@@ -1499,7 +1499,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 					else
 					{
 						/* Injure +/- confusion */
-						monster_desc(killer, m_ptr, 0x88);
+						monster_desc(killer, m_ptr, 0x88, 80);
 						take_hit(dam, killer);	/* has already been /3 */
 						if (one_in_(4))
 						{
@@ -1595,7 +1595,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 					else
 					{
 						/* Injure + mana drain */
-						monster_desc(killer, m_ptr, 0x88);
+						monster_desc(killer, m_ptr, 0x88, 80);
 						msgf("Your psychic energy is drained!");
 						p_ptr->csp = MAX(0, p_ptr->csp - damroll(5, dam) / 2);
 						p_ptr->redraw |= PR_MANA;
@@ -2772,7 +2772,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 			msgf("%^s changes!", m_name);
 
 			/* Get the monster name (AFTER polymorphing) */
-			monster_desc(m_name, m_ptr, 0);
+			monster_desc(m_name, m_ptr, 0, 80);
 		}
 		else
 		{
@@ -3171,10 +3171,10 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 	m_ptr = &m_list[who];
 
 	/* Get the monster name */
-	monster_desc(m_name, m_ptr, 0);
+	monster_desc(m_name, m_ptr, 0, 80);
 
 	/* Get the monster's real name */
-	monster_desc(killer, m_ptr, 0x88);
+	monster_desc(killer, m_ptr, 0x88, 80);
 
 
 	/* Analyze the damage */

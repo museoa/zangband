@@ -925,7 +925,7 @@ static void touch_zap_player(const monster_type *m_ptr)
 				damroll(1 + (r_ptr->level / 26), 1 + (r_ptr->level / 17));
 
 			/* Hack -- Get the "died from" name */
-			monster_desc(aura_dam, m_ptr, 0x88);
+			monster_desc(aura_dam, m_ptr, 0x88, 80);
 
 			msgf("You are suddenly very hot!");
 
@@ -948,7 +948,7 @@ static void touch_zap_player(const monster_type *m_ptr)
 				damroll(1 + (r_ptr->level / 26), 1 + (r_ptr->level / 17));
 
 			/* Hack -- Get the "died from" name */
-			monster_desc(aura_dam, m_ptr, 0x88);
+			monster_desc(aura_dam, m_ptr, 0x88, 80);
 
 			msgf("You are suddenly very cold!");
 
@@ -971,7 +971,7 @@ static void touch_zap_player(const monster_type *m_ptr)
 				damroll(1 + (r_ptr->level / 26), 1 + (r_ptr->level / 17));
 
 			/* Hack -- Get the "died from" name */
-			monster_desc(aura_dam, m_ptr, 0x88);
+			monster_desc(aura_dam, m_ptr, 0x88, 80);
 
 			if (p_ptr->oppose_elec) aura_damage = (aura_damage + 2) / 3;
 			if (p_ptr->resist_elec) aura_damage = (aura_damage + 2) / 3;
@@ -1045,7 +1045,7 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 	}
 
 	/* Extract monster name (or "it") */
-	monster_desc(m_name, m_ptr, 0);
+	monster_desc(m_name, m_ptr, 0, 80);
 
 
 	/* Calculate the "attack quality" */
@@ -1468,7 +1468,7 @@ void py_attack(int x, int y)
 	m_ptr->csleep = 0;
 
 	/* Extract monster name (or "it") */
-	monster_desc(m_name, m_ptr, 0);
+	monster_desc(m_name, m_ptr, 0, 80);
 
 	/* Auto-Recall if possible and visible */
 	if (m_ptr->ml) monster_race_track(m_ptr->r_idx);
@@ -1917,7 +1917,7 @@ void py_attack(int x, int y)
 						m_ptr = &m_list[c_ptr->m_idx];
 
 						/* Oops, we need a different name... */
-						monster_desc(m_name, m_ptr, 0);
+						monster_desc(m_name, m_ptr, 0, 80);
 
 						/* Hack -- Get new race */
 						r_ptr = &r_info[m_ptr->r_idx];
@@ -2302,7 +2302,7 @@ void move_player(int dir, int do_pickup)
 			m_ptr->csleep = 0;
 
 			/* Extract monster name (or "it") */
-			monster_desc(m_name, m_ptr, 0);
+			monster_desc(m_name, m_ptr, 0, 80);
 
 			/* Auto-Recall if possible and visible */
 			if (m_ptr->ml) monster_race_track(m_ptr->r_idx);

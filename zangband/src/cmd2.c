@@ -2558,7 +2558,7 @@ void do_cmd_fire_aux(object_type *o_ptr, const object_type *j_ptr)
 				}
 
 				/* Get "the monster" or "it" */
-				monster_desc(m_name, m_ptr, 0);
+				monster_desc(m_name, m_ptr, 0, 80);
 
 				/* Hack -- Track this monster race */
 				if (m_ptr->ml) monster_race_track(m_ptr->r_idx);
@@ -3022,7 +3022,7 @@ void do_cmd_throw_aux(int mult)
 				}
 
 				/* Get "the monster" or "it" */
-				monster_desc(m_name, m_ptr, 0);
+				monster_desc(m_name, m_ptr, 0, 80);
 
 				/* Hack -- Track this monster race */
 				if (m_ptr->ml) monster_race_track(m_ptr->r_idx);

@@ -219,16 +219,16 @@ bool monst_spell_monst(int m_idx)
 		if (!num) return (FALSE);
 
 		/* Get the monster name (or "it") */
-		monster_desc(m_name, m_ptr, 0x00);
+		monster_desc(m_name, m_ptr, 0, 160);
 
 		/* Get the monster possessive ("his"/"her"/"its") */
-		monster_desc(m_poss, m_ptr, 0x22);
+		monster_desc(m_poss, m_ptr, 0x22, 160);
 
 		/* Get the target's name (or "it") */
-		monster_desc(t_name, t_ptr, 0x00);
+		monster_desc(t_name, t_ptr, 0, 160);
 
 		/* Hack -- Get the "died from" name */
-		monster_desc(ddesc, m_ptr, 0x88);
+		monster_desc(ddesc, m_ptr, 0x88, 160);
 
 		/* Choose a spell to cast */
 		thrown_spell = spell[randint0(num)];
