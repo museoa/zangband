@@ -582,7 +582,7 @@ static void roff_obj_aux(const object_type *o_ptr)
 	if (FLAG(of_ptr, TR_PATRON))        vp[vn++] = "attracts the attention of chaos gods";
 	if (FLAG(of_ptr, TR_STRANGE_LUCK))  vp[vn++] = "warps fate around you";
 	if (FLAG(of_ptr, TR_PASS_WALL))     vp[vn++] = "allows you to pass through solid rock";
-	if (FLAG(of_ptr, TR_NO_TELE))     vp[vn++] = "prevents teleporation";
+	if (FLAG(of_ptr, TR_NO_TELE))     vp[vn++] = "prevents teleportation";
 
 	/* Print miscellaneous */
 	if (vn)
