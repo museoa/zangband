@@ -375,12 +375,12 @@ static void prt_exp(void)
 	{
 		if (p_ptr->lev >= PY_MAX_LEVEL)
 		{
-			put_fstr(COL_EXP, ROW_EXP, "NEED %s********", attr);
+			put_fstr(COL_EXP, ROW_EXP, "NEED%s********", attr);
 		}
 		else
 		{
 			/* Print the amount of experience to go until the next level */
-			put_fstr(COL_EXP, ROW_EXP, "NEED %s%8ld", attr,
+			put_fstr(COL_EXP, ROW_EXP, "NEED%s%8ld", attr,
 						  (long)(player_exp[p_ptr->lev - 1] * p_ptr->expfact /
 								 100L) - (long)p_ptr->exp);
 		}
@@ -388,7 +388,7 @@ static void prt_exp(void)
 	else
 	{
 		/* Use the 'old' experience display */
-		put_fstr(COL_EXP, ROW_EXP, "EXP  %s%8ld", attr, (long)p_ptr->exp);
+		put_fstr(COL_EXP, ROW_EXP, "EXP %s%8ld", attr, (long)p_ptr->exp);
 	}
 }
 
