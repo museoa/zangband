@@ -851,7 +851,7 @@ void monster_death(int m_idx)
  *
  * Added fear (DGK) and check whether to print fear messages -CWS
  *
- * Genericized name, sex, and capitilization -BEN-
+ * Made name, sex, and capitalization generic -BEN-
  *
  * As always, the "ghost" processing is a total hack.
  *
@@ -888,7 +888,9 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		/* Extract monster name */
 		monster_desc(m_name, m_ptr, 0);
 
-		if ((r_ptr->flags3 & RF3_AMBERITE) && (randint(2) == 1))
+		/* Don't kill Amberites (or Topi) */
+		if (((r_ptr->flags3 & RF3_AMBERITE) && (randint(2) == 1)) ||
+			 strstr(r_name + r_ptr->name, "Ylinen"))
 		{
 			int curses = 1 + randint(3);
 			bool stop_ty = FALSE;
