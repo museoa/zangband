@@ -1170,6 +1170,9 @@ static void store_create(void)
 		/* Definitely done */
 		break;
 	}
+	
+	/* Clear restriction */
+	get_obj_num_hook = NULL;
 }
 
 
