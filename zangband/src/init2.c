@@ -2748,25 +2748,6 @@ static errr init_other(void)
 	C_MAKE(inventory, INVEN_TOTAL, object_type);
 
 
-	/*** Pre-allocate the basic "auto-inscriptions" ***/
-
-	/* The "basic" feelings */
-	(void)quark_add_perm("cursed");
-	(void)quark_add_perm("broken");
-	(void)quark_add_perm("average");
-	(void)quark_add_perm("good");
-
-	/* The "extra" feelings */
-	(void)quark_add_perm("excellent");
-	(void)quark_add_perm("worthless");
-	(void)quark_add_perm("special");
-	(void)quark_add_perm("terrible");
-
-	/* Some extra strings */
-	(void)quark_add_perm("uncursed");
-	(void)quark_add_perm("on sale");
-
-
 	/*** Prepare the options ***/
 
 	/* Scan the options */
