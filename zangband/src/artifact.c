@@ -1379,6 +1379,7 @@ static void misc_activation_power(object_type *o_ptr, int level, cptr fix_power)
 {
 	const struct randart_activation *act = NULL;
 	char dice[32];
+	char dice_desc[32];
 	char effect[256] = "";
 	char desc[256] = "";
 	int pp;
@@ -1409,12 +1410,18 @@ static void misc_activation_power(object_type *o_ptr, int level, cptr fix_power)
 		if (mult < 1) mult = 1;
 
 		if (mult > 1)
+		{
 			strnfmt(dice, 32, "player.lev * %i", mult);
+			strnfmt(dice_desc, 32, "plev * %i", mult);
+		}
 		else
+		{
 			strcpy(dice, "player.lev");
+			strcpy(dice_desc, "plev");
+		}
 		
 		/* Fill in the dice */
-		strnfmt(desc, 256, act->desc, dice);
+		strnfmt(desc, 256, act->desc, dice_desc);
 		strnfmt(effect, 256, act->effect, dice);
 
 		/* Assume plev 30 */
