@@ -1177,11 +1177,8 @@ static void note(cptr str)
  * may or may not be initialized, but the "plog()" and "quit()"
  * functions are "supposed" to work under any conditions.
  */
-static void init_angband_aux(cptr why)
+static void init_angband_fail(void)
 {
-	/* Why */
-	plog(why);
-
 	/* Explain */
 	plog("The 'lib' directory is probably missing or broken.");
 
@@ -1265,13 +1262,11 @@ void init_angband(void)
 	/* Failure */
 	if (fd < 0)
 	{
-		char why[1024];
-
 		/* Message */
-		strnfmt(why, 1024, "Cannot access the '%s' file!", buf);
+		plog_fmt("Cannot access the '%s' file!", buf);
 
 		/* Crash and burn */
-		init_angband_aux(why);
+		init_angband_fail();
 	}
 
 	/* Close it */
@@ -1335,13 +1330,11 @@ void init_angband(void)
 		/* Failure */
 		if (fd < 0)
 		{
-			char why[1024];
-
 			/* Message */
-			strnfmt(why, 1024, "Cannot create the '%s' file!", buf);
+			plog_fmt("Cannot create the '%s' file!", buf);
 
 			/* Crash and burn */
-			init_angband_aux(why);
+			init_angband_fail();
 		}
 	}
 
