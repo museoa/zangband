@@ -127,11 +127,11 @@ CC = gcc
 
 ##
 ## Graphics under X11 in linux.  (Run with the -g option)
-## Note: Get the 16x16.bmp file, and put in lib/xtra/graf
+## Note: Get the 16x16.bmp file, and put in Zdirectory/lib/xtra/graf
 ##       to get 256 colours.
 ##
 CFLAGS = -Wall -O2 -fno-strength-reduce -m486 -pipe -g \
-         -D"USE_X11" -D"USE_GCU" -D"USE_TRANSPARENCY"
+         -D"USE_X11" -D"USE_GCU"
 LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib
 
 #CFLAGS = -Wall -O2 -fno-strength-reduce -m486 -pipe -g \

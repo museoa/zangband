@@ -371,6 +371,12 @@
 #define USE_GRAPHICS
 
 /*
+ * OPTION: Allow the use of "transparent graphics" in various places
+ */
+#define USE_TRANSPARENCY
+
+
+/*
  * OPTION: Allow the use of "music" in various places
  */
 /* #define USE_MUSIC */
