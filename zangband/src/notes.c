@@ -24,7 +24,7 @@ cptr notes_file(void)
 	char base_name[9];
 
 	/* Hack -- extract first 8 characters of name */
-	(void)strnfmt(base_name, 9, "%s", player_base);
+	(void)strnfmt(base_name, 9, "%s", op_ptr->base_name);
 
 	/* Create the file name from the character's name plus .txt */
 	(void)strnfmt(fname, 15, "%s.txt", base_name);
@@ -139,7 +139,7 @@ void add_note_type(int note_number)
 
 			/* Add in "character start" information */
 			strnfmt(buf, 1024, "\n================================================\n");
-			strnfmt(buf, 1024, "%s%s the %s\n", buf, player_name, player);
+			strnfmt(buf, 1024, "%s%s the %s\n", buf, op_ptr->full_name, player);
 			strnfmt(buf, 1024, "%sBorn on %s\n", buf, long_day);
 			strnfmt(buf, 1024, "%s================================================\n\n", buf);
 		}
@@ -147,8 +147,8 @@ void add_note_type(int note_number)
 
 		case NOTE_WINNER:
 		{
-			strnfmt(buf, 1024, "%s slew the Serpent of Chaos on %s\n.", player_name, long_day);
-			strnfmt(buf, 1024, "%sLong live %s!\n", buf, player_name);
+			strnfmt(buf, 1024, "%s slew the Serpent of Chaos on %s\n.", op_ptr->full_name, long_day);
+			strnfmt(buf, 1024, "%sLong live %s!\n", buf, op_ptr->full_name);
 			strnfmt(buf, 1024,  "%s================================================\n", buf);
 		}
 		break;

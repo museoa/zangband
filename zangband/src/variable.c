@@ -317,10 +317,6 @@ bool monster_light;
 
 /* Special options */
 
-byte hitpoint_warn;		/* Hitpoint warning (0 to 9) */
-
-byte delay_factor;		/* Delay factor (0 to 9) */
-
 byte autosave_l;        /* Autosave before entering new levels */
 byte autosave_t;        /* Timed autosave */
 s16b autosave_freq;     /* Autosave frequency */
@@ -364,16 +360,6 @@ char *mp_tc = NULL;
 int player_uid;
 int player_euid;
 int player_egid;
-
-/*
- * Current player's character name
- */
-char player_name[32];
-
-/*
- * Stripped version of "player_name"
- */
-char player_base[32];
 
 
 /*
@@ -756,16 +742,6 @@ cptr keymap_act[KEYMAP_MODES][256];
 /*** Player information ***/
 
 /*
- * Static player info record
- */
-player_type p_body;
-
-/*
- * Pointer to the player info
- */
-player_type *p_ptr = &p_body;
-
-/*
  * Pointer to the player tables
  * (sex, race, class, magic)
  */
@@ -773,6 +749,26 @@ player_sex *sp_ptr;
 player_race *rp_ptr;
 player_class *cp_ptr;
 player_magic *mp_ptr;
+
+/*
+ * The player other record (static)
+ */
+static player_other player_other_body;
+
+/*
+ * Pointer to the player other record
+ */
+player_other *op_ptr = &player_other_body;
+
+/*
+ * The player info record (static)
+ */
+player_type player_type_body;
+
+/*
+ * Pointer to the player info record
+ */
+player_type *p_ptr = &player_type_body;
 
 
 /*

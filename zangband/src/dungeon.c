@@ -4067,7 +4067,7 @@ static void load_all_pref_files(void)
 	process_pref_file(buf);
 
 	/* Access the "character" pref file */
-	sprintf(buf, "%s.prf", player_base);
+	sprintf(buf, "%s.prf", op_ptr->base_name);
 
 	/* Process that file */
 	process_pref_file(buf);
@@ -4167,9 +4167,9 @@ void play_game(bool new_game)
 	}
 
 	/* Hack -- Default base_name */
-	if (!player_base[0])
+	if (!op_ptr->base_name[0])
 	{
-		strcpy(player_base, "PLAYER");
+		strcpy(op_ptr->base_name, "PLAYER");
 	}
 
 	/* Init the RNG */
@@ -4261,7 +4261,7 @@ void play_game(bool new_game)
 	}
 
 	/* Reset the visual mappings */
-	reset_visuals();
+	reset_visuals(TRUE);
 	
 	/* Init the fields */
 	init_fields();

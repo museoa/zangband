@@ -5015,7 +5015,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 
 	int y_saver, x_saver; /* For reflecting monsters */
 
-	int msec = delay_factor * delay_factor * delay_factor;
+	int msec = op_ptr->delay_factor * op_ptr->delay_factor * op_ptr->delay_factor;
 
 	/* Assume the player sees nothing */
 	bool notice = FALSE;

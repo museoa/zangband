@@ -2608,7 +2608,7 @@ void take_hit(int damage, cptr hit_from)
 
 	char death_message[1024];
 
-	int warning = (p_ptr->mhp * hitpoint_warn / 10);
+	int warning = (p_ptr->mhp * op_ptr->hitpoint_warn / 10);
 
 
 	/* Paranoia */

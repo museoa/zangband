@@ -1091,13 +1091,13 @@ void do_cmd_options(void)
 				/* Get a new value */
 				while (1)
 				{
-					int msec = delay_factor * delay_factor * delay_factor;
+					int msec = op_ptr->delay_factor * op_ptr->delay_factor * op_ptr->delay_factor;
 					prt(format("Current base delay factor: %d (%d msec)",
-					           delay_factor, msec), 22, 0);
+					           op_ptr->delay_factor, msec), 22, 0);
 					prt("Delay Factor (0-9 or ESC to accept): ", 20, 0);
 					k = inkey();
 					if (k == ESCAPE) break;
-					if (isdigit(k)) delay_factor = D2I(k);
+					if (isdigit(k)) op_ptr->delay_factor = D2I(k);
 					else bell();
 				}
 
@@ -1115,11 +1115,11 @@ void do_cmd_options(void)
 				while (1)
 				{
 					prt(format("Current hitpoint warning: %d0%%",
-					           hitpoint_warn), 22, 0);
+					           op_ptr->hitpoint_warn), 22, 0);
 					prt("Hitpoint Warning (0-9 or ESC to accept): ", 20, 0);
 					k = inkey();
 					if (k == ESCAPE) break;
-					if (isdigit(k)) hitpoint_warn = D2I(k);
+					if (isdigit(k)) op_ptr->hitpoint_warn = D2I(k);
 					else bell();
 				}
 
@@ -1543,7 +1543,7 @@ void do_cmd_macros(void)
 			prt("File: ", 18, 0);
 
 			/* Default filename */
-			sprintf(tmp, "%s.prf", player_name);
+			sprintf(tmp, "%s.prf", op_ptr->full_name);
 
 			/* Ask for a file */
 			if (!askfor_aux(tmp, 80)) continue;
@@ -1568,7 +1568,7 @@ void do_cmd_macros(void)
 			prt("File: ", 18, 0);
 
 			/* Default filename */
-			sprintf(tmp, "%s.prf", player_name);
+			sprintf(tmp, "%s.prf", op_ptr->full_name);
 
 			/* Ask for a file */
 			if (!askfor_aux(tmp, 80)) continue;
@@ -1691,7 +1691,7 @@ void do_cmd_macros(void)
 			prt("File: ", 18, 0);
 
 			/* Default filename */
-			sprintf(tmp, "%s.prf", player_name);
+			sprintf(tmp, "%s.prf", op_ptr->full_name);
 
 			/* Ask for a file */
 			if (!askfor_aux(tmp, 80)) continue;
@@ -2389,7 +2389,7 @@ void do_cmd_visuals(void)
 		else if (i == '0')
 		{
 			/* Reset */
-			reset_visuals();
+			reset_visuals(TRUE);
 
 			/* Message */
 			msg_print("Visual attr/char tables reset.");

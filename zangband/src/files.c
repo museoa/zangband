@@ -812,7 +812,7 @@ static cptr process_pref_file_expr(char **sp, char *fp)
 			/* Player */
 			else if (streq(b+1, "PLAYER"))
 			{
-				v = player_base;
+				v = op_ptr->base_name;
 			}
 		}
 
@@ -1989,7 +1989,7 @@ static void display_player_misc_info(void)
 	put_str("Race      :", 4, 1);
 	put_str("Class     :", 5, 1);
 
-	c_put_str(TERM_L_BLUE, player_name, 2, 13);
+	c_put_str(TERM_L_BLUE, op_ptr->full_name, 2, 13);
 	c_put_str(TERM_L_BLUE, sp_ptr->title, 3, 13);
 	c_put_str(TERM_L_BLUE, rp_ptr->title, 4, 13);
 	c_put_str(TERM_L_BLUE, cp_ptr->title, 5, 13);
@@ -2298,7 +2298,7 @@ static void display_player_top(void)
 		put_str("Patron   :", 7, COL_NAME);
 	}
 
-	c_put_str(TERM_L_BLUE, player_name, 2, COL_NAME + WID_NAME);
+	c_put_str(TERM_L_BLUE, op_ptr->full_name, 2, COL_NAME + WID_NAME);
 	c_put_str(TERM_L_BLUE, sp_ptr->title, 3, COL_NAME + WID_NAME);
 	c_put_str(TERM_L_BLUE, rp_ptr->title, 4, COL_NAME + WID_NAME);
 	c_put_str(TERM_L_BLUE, cp_ptr->title, 5, COL_NAME + WID_NAME);
@@ -2453,7 +2453,7 @@ static void display_player_middle(void)
 	{
 		attr = TERM_L_GREEN;
 	}
-	else if (p_ptr->chp > (p_ptr->mhp * hitpoint_warn) / 10)
+	else if (p_ptr->chp > (p_ptr->mhp * op_ptr->hitpoint_warn) / 10)
 	{
 		attr = TERM_YELLOW;
 	}
@@ -2470,7 +2470,7 @@ static void display_player_middle(void)
 	{
 		attr = TERM_L_GREEN;
 	}
-	else if (p_ptr->csp > (p_ptr->msp * hitpoint_warn) / 10)
+	else if (p_ptr->csp > (p_ptr->msp * op_ptr->hitpoint_warn) / 10)
 	{
 		attr = TERM_YELLOW;
 	}
@@ -2609,7 +2609,7 @@ void do_cmd_character(void)
 		/* File dump */
 		else if (c == 'f')
 		{
-			sprintf(tmp, "%s.txt", player_base);
+			sprintf(tmp, "%s.txt", op_ptr->base_name);
 			if (get_string("File name: ", tmp, 80))
 			{
 				if (tmp[0] && (tmp[0] != ' '))
@@ -3625,20 +3625,20 @@ void process_player_name(bool sf)
 
 
 	/* Cannot be too long */
-	if (strlen(player_name) > 15)
+	if (strlen(op_ptr->full_name) > 15)
 	{
 		/* Name too long */
-		quit_fmt("The name '%s' is too long!", player_name);
+		quit_fmt("The name '%s' is too long!", op_ptr->full_name);
 	}
 
 	/* Cannot contain "icky" characters */
-	for (i = 0; player_name[i]; i++)
+	for (i = 0; op_ptr->full_name[i]; i++)
 	{
 		/* No control characters */
-		if (iscntrl(player_name[i]))
+		if (iscntrl(op_ptr->full_name[i]))
 		{
 			/* Illegal characters */
-			quit_fmt("The name '%s' contains control chars!", player_name);
+			quit_fmt("The name '%s' contains control chars!", op_ptr->full_name);
 		}
 	}
 
@@ -3646,29 +3646,29 @@ void process_player_name(bool sf)
 #ifdef MACINTOSH
 
 	/* Extract "useful" letters */
-	for (i = 0; player_name[i]; i++)
+	for (i = 0; op_ptr->full_name[i]; i++)
 	{
-		char c = player_name[i];
+		char c = op_ptr->full_name[i];
 
 		/* Convert "dot" to "underscore" */
 		if (c == '.') c = '_';
 
 		/* Accept all the letters */
-		player_base[k++] = c;
+		op_ptr->base_name[k++] = c;
 	}
 
 #else
 
 	/* Extract "useful" letters */
-	for (i = 0; player_name[i]; i++)
+	for (i = 0; op_ptr->full_name[i]; i++)
 	{
-		char c = player_name[i];
+		char c = op_ptr->full_name[i];
 
 		/* Accept some letters */
-		if (isalpha(c) || isdigit(c)) player_base[k++] = c;
+		if (isalpha(c) || isdigit(c)) op_ptr->base_name[k++] = c;
 
 		/* Convert space, dot, and underscore to underscore */
-		else if (strchr(". _", c)) player_base[k++] = '_';
+		else if (strchr(". _", c)) op_ptr->base_name[k++] = '_';
 	}
 
 #endif
@@ -3682,10 +3682,10 @@ void process_player_name(bool sf)
 #endif
 
 	/* Terminate */
-	player_base[k] = '\0';
+	op_ptr->base_name[k] = '\0';
 
 	/* Require a "base" name */
-	if (!player_base[0]) strcpy(player_base, "PLAYER");
+	if (!op_ptr->base_name[0]) strcpy(op_ptr->base_name, "PLAYER");
 
 
 #ifdef SAVEFILE_MUTABLE
@@ -3702,15 +3702,15 @@ void process_player_name(bool sf)
 
 #ifdef SAVEFILE_USE_UID
 		/* Rename the savefile, using the player_uid and player_base */
-		(void)sprintf(temp, "%d.%s", player_uid, player_base);
+		(void)sprintf(temp, "%d.%s", player_uid, op_ptr->base_name);
 #else
 		/* Rename the savefile, using the player_base */
-		(void)sprintf(temp, "%s", player_base);
+		(void)sprintf(temp, "%s", op_ptr->base_name);
 #endif
 
 #ifdef VM
 		/* Hack -- support "flat directory" usage on VM/ESA */
-		(void)sprintf(temp, "%s.sv", player_base);
+		(void)sprintf(temp, "%s.sv", op_ptr->base_name);
 #endif /* VM */
 
 		/* Build the filename */
@@ -3744,10 +3744,10 @@ void change_player_name(void)
 		move_cursor(2, COL_NAME + WID_NAME);
 
 		/* Save the player name */
-		strcpy(tmp, player_name);
+		strcpy(tmp, op_ptr->full_name);
 
 		/* Get an input, ignore "Escape" */
-		if (askfor_aux(tmp, 15)) strcpy(player_name, tmp);
+		if (askfor_aux(tmp, 15)) strcpy(op_ptr->full_name, tmp);
 
 		/* Process the player name */
 		process_player_name(FALSE);
@@ -3757,7 +3757,7 @@ void change_player_name(void)
 	}
 
 	/* Pad the name (to clear junk) */
-	sprintf(tmp, "%-15.15s", player_name);
+	sprintf(tmp, "%-15.15s", op_ptr->full_name);
 
 	/* Re-Draw the name (in light blue) */
 	c_put_str(TERM_L_BLUE, tmp, 2, COL_NAME + WID_NAME);
@@ -3775,13 +3775,13 @@ void get_character_name(void)
 	char tmp[16];
 
 	/* Save the player name */
-	strcpy(tmp, player_name);
+	strcpy(tmp, op_ptr->full_name);
 
 	/* Prompt for a new name */
 	if (get_string("Enter a name for your character: ", tmp, 15))
 	{
 		/* Use the name */
-		strcpy(player_name, tmp);
+		strcpy(op_ptr->full_name, tmp);
 
 		/* Process the player name */
 		process_player_name(FALSE);
@@ -4043,7 +4043,7 @@ static void make_bones(void)
 			if (!fp) return;
 
 			/* Save the info */
-			fprintf(fp, "%s\n", player_name);
+			fprintf(fp, "%s\n", op_ptr->full_name);
 			fprintf(fp, "%d\n", p_ptr->mhp);
 			fprintf(fp, "%d\n", p_ptr->prace);
 			fprintf(fp, "%d\n", p_ptr->pclass);
@@ -4129,7 +4129,7 @@ static void print_tomb(void)
 			p =  player_title[p_ptr->pclass][(p_ptr->lev - 1) / 5];
 		}
 
-		center_string(buf, player_name);
+		center_string(buf, op_ptr->full_name);
 		put_str(buf, 6, 11);
 
 		center_string(buf, "the");
@@ -4176,7 +4176,7 @@ static void print_tomb(void)
 		center_string(buf, tmp);
 		put_str(buf, 17, 11);
 
-		msg_format("Goodbye, %s!", player_name);
+		msg_format("Goodbye, %s!", op_ptr->full_name);
 	}
 }
 
@@ -4423,7 +4423,7 @@ void close_game(void)
 				"%Y-%m-%d at %H:%M:%S", localtime(&ct));
 
 			/* Create string */
-			sprintf(buf, "\n%s was killed by %s on %s\n", player_name,
+			sprintf(buf, "\n%s was killed by %s on %s\n", op_ptr->full_name,
 				 p_ptr->died_from, long_day);
 
 			/* Output to the notes file */

@@ -439,7 +439,7 @@ errr top_twenty(void)
 #endif /* HIGHSCORE_DATE_HACK */
 
 	/* Save the player name (15 chars) */
-	sprintf(the_score.who, "%-.15s", player_name);
+	sprintf(the_score.who, "%-.15s", op_ptr->full_name);
 
 	/* Save the player info XXX XXX XXX */
 	sprintf(the_score.uid, "%7u", player_uid);
@@ -522,7 +522,7 @@ errr predict_score(void)
 	strcpy(the_score.day, "TODAY");
 
 	/* Save the player name (15 chars) */
-	sprintf(the_score.who, "%-.15s", player_name);
+	sprintf(the_score.who, "%-.15s", op_ptr->full_name);
 
 	/* Save the player info XXX XXX XXX */
 	sprintf(the_score.uid, "%7u", player_uid);
@@ -649,7 +649,7 @@ void show_highclass(int building)
 	}
 
 	sprintf(out_val, "You) %s the %s (Level %2d)",
-	    player_name, race_info[p_ptr->prace].title, p_ptr->lev);
+	    op_ptr->full_name, race_info[p_ptr->prace].title, p_ptr->lev);
 	prt(out_val, (m + 8), 0);
 
 	(void)fd_close(highscore_fd);
@@ -724,7 +724,7 @@ void race_score(int race_num)
 	if ((p_ptr->prace == race_num) && (p_ptr->lev >= lastlev))
 	{
 		sprintf(out_val, "You) %s the %s (Level %3d)",
-		    player_name, race_info[p_ptr->prace].title, p_ptr->lev);
+		    op_ptr->full_name, race_info[p_ptr->prace].title, p_ptr->lev);
 		prt(out_val, (m + 8), 0);
 	}
 

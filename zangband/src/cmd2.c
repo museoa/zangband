@@ -2612,7 +2612,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	char o_name[80];
 	char m_name[80];
 
-	int msec = delay_factor * delay_factor * delay_factor;
+	int msec = op_ptr->delay_factor * op_ptr->delay_factor * op_ptr->delay_factor;
 
 	cave_type *c_ptr;
 
@@ -3109,7 +3109,7 @@ void do_cmd_throw_aux(int mult)
 	char o_name[80];
 	char m_name[80];
 
-	int msec = delay_factor * delay_factor * delay_factor;
+	int msec = op_ptr->delay_factor * op_ptr->delay_factor * op_ptr->delay_factor;
 
 	u32b f1, f2, f3;
 	cptr q, s;

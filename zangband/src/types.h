@@ -1296,6 +1296,29 @@ struct player_class
 
 
 /*
+ * Some more player information
+ *
+ * This information is retained across player lives
+ */
+
+typedef struct player_other player_other;
+
+struct player_other
+{
+	char full_name[32];		/* Full name */
+	char base_name[32];		/* Base name */
+
+	bool opt[OPT_MAX];		/* Options */
+
+	u32b window_flag[8];	/* Window flags */
+
+	byte hitpoint_warn;		/* Hitpoint warning (0 to 9) */
+
+	byte delay_factor;		/* Delay factor (0 to 9) */
+};
+
+
+/*
  * Most of the "player" information goes here.
  *
  * This stucture gives us a large collection of player variables.

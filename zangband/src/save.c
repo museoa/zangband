@@ -846,10 +846,10 @@ static void wr_options(void)
 	/*** Special Options ***/
 
 	/* Write "delay_factor" */
-	wr_byte(delay_factor);
+	wr_byte(op_ptr->delay_factor);
 
 	/* Write "hitpoint_warn" */
-	wr_byte(hitpoint_warn);
+	wr_byte(op_ptr->hitpoint_warn);
 
 
 	/*** Cheating options ***/
@@ -941,7 +941,7 @@ static void wr_extra(void)
 {
 	int i;
 
-	wr_string(player_name);
+	wr_string(op_ptr->full_name);
 
 	wr_string(p_ptr->died_from);
 

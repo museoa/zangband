@@ -28,11 +28,12 @@
  *
  * The "prefs" parameter is no longer meaningful.  XXX XXX XXX
  */
-void reset_visuals(void)
+void reset_visuals(bool unused)
 {
 	int i;
 
-	/* Extract some info about terrain features */
+
+	/* Extract default attr/char code for features */
 	for (i = 0; i < max_f_idx; i++)
 	{
 		feature_type *f_ptr = &f_info[i];
@@ -62,6 +63,7 @@ void reset_visuals(void)
 		r_ptr->x_char = r_ptr->d_char;
 	}
 	
+
 	/* Extract default attr/char code for fields */
 	for (i = 0; i < max_t_idx; i++)
 	{
@@ -70,6 +72,14 @@ void reset_visuals(void)
 		/* Default attr/char */
 		t_ptr->f_attr = t_ptr->d_attr;
 		t_ptr->f_char = t_ptr->d_char;
+	}
+
+
+	/* Extract attr/chars for inventory objects (by tval) */
+	for (i = 0; i < 128; i++)
+	{
+		/* Default to white */
+		tval_to_attr[i] = TERM_WHITE;
 	}
 
 

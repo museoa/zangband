@@ -963,11 +963,11 @@ static void rd_options(void)
 
 	/* Read "delay_factor" */
 	rd_byte(&b);
-	delay_factor = b;
+	op_ptr->delay_factor = b;
 
 	/* Read "hitpoint_warn" */
 	rd_byte(&b);
-	hitpoint_warn = b;
+	op_ptr->hitpoint_warn = b;
 
 
 	/*** Cheating options ***/
@@ -1113,7 +1113,7 @@ static void rd_extra(void)
 	byte tmp8u;
 	s16b tmp16s;
 
-	rd_string(player_name, 32);
+	rd_string(op_ptr->full_name, 32);
 
 	rd_string(p_ptr->died_from, 80);
 
