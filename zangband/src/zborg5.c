@@ -2642,6 +2642,7 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 	mb_ptr->monster = map->monster;
     mb_ptr->field = map->field;
 	mb_ptr->terrain = map->terrain;
+	mb_ptr->unknown = map->unknown;
 
 	/*
 	 * Examine monsters

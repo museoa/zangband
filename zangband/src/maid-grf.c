@@ -652,6 +652,9 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 	monster_type *m_ptr;
 	object_type *o_ptr;
 	field_type *fld_ptr;
+	
+	monster_race *r_ptr;
+	object_kind *k_ptr;
 
 	bool visible = pc_ptr->player & GRID_SEEN;
 	bool glow = c_ptr->info & CAVE_GLOW;
@@ -691,6 +694,21 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 				/* Keep this grid */
 				map.flags |= MAP_ONCE;
 			}
+			
+			/* Mimic in los? */
+			else if (visible)
+			{
+				r_ptr = &r_info[m_ptr->r_idx];
+				
+				if (r_ptr->flags1 & RF1_CHAR_MIMIC)
+				{
+					/* Keep this grid */
+					map.flags |= MAP_ONCE;
+					
+					/* Save mimic character */
+					map.unknown = r_ptr->d_char;
+				}
+			}
 		}
 
 		/* Fields */
@@ -727,7 +745,19 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 			/* Memorized objects */
 			if (o_ptr->marked)
 			{
-				map.object = o_ptr->k_idx;
+				k_ptr = &k_info[o_ptr->k_idx];
+			
+				/* Flavoured object */
+				if (k_ptr->flavor)
+				{
+					/* Save flavor character */
+					map.unknown = k_ptr->d_char;
+				}
+				else
+				{
+					/* Save object */
+					map.object = o_ptr->k_idx;
+				}
 				
 				/* Keep this grid */
 				map.flags |= MAP_ONCE;

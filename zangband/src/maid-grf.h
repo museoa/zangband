@@ -76,13 +76,14 @@ struct term_map
 	s16b monster;
 	s16b field;
 	byte terrain;
-
-	/* Player-known flags */
-	byte flags;
+	char unknown;
 
 	/* Location */
 	u16b x;
 	u16b y;
+	
+	/* Player-known flags */
+	byte flags;
 };
 
 typedef struct map_block map_block;
@@ -100,10 +101,9 @@ struct map_block
 	s16b monster;
 	s16b field;
 	byte terrain;
+	char unknown;	/* unknown mimics or flavoured objects */
 #endif /* TERM_CAVE_MAP */
 
-	/* We need to save the flags to get the refcounting right. */
-	byte flags;
 
 	/* Borg-specific stuff */
 #ifdef ALLOW_BORG
@@ -117,6 +117,9 @@ struct map_block
 
 	byte kill;	/* Entry into "kill" list */
 #endif /* ALLOW_BORG */
+
+	/* We need to save the flags to get the refcounting right. */
+	byte flags;
 };
 
 typedef map_block **map_blk_ptr;
