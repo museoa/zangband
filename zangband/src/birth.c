@@ -1565,7 +1565,7 @@ static void player_wipe(void)
 	noscore = 0;
 
 	/* Default pet command settings */
-	p_ptr->pet_follow_distance = 6;
+	p_ptr->pet_follow_distance = PET_FOLLOW_DIST;
 	p_ptr->pet_open_doors = FALSE;
 	p_ptr->pet_pickup_items = FALSE;
 }
