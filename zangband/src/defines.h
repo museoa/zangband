@@ -468,7 +468,7 @@
 #define TOWN_DAWN               10000   /* Number of turns from dawn to dawn XXX */
 #define BREAK_GLYPH             550             /* Rune of protection resistance */
 #define BREAK_MINOR_GLYPH       99             /* For explosive runes */
-#define BTH_PLUS_ADJ    3       /* Adjust BTH per plus-to-hit */
+#define BTH_PLUS_ADJ    1               /* Adjust BTH per plus-to-hit */
 #define MON_MULT_ADJ    8               /* High value slows multiplication */
 #define MON_SUMMON_ADJ  2               /* Adjust level of summoned creatures */
 #define MON_DRAIN_LIFE  2               /* Percent of player exp drained per hit */

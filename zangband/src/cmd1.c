@@ -20,15 +20,17 @@
 * The Oangband combat system has been partially implemented. -SF-
 * The list of things still to do is:
 *
-* Monk Damage - They are too powerful now and need to be toned down
 * Artifacts - rebalance damage + damage from activations
 * RandArts - rebalance (lower number of attacks)
+*  - Number of attacks has now been toned down for the larger weapons.
 * Potions (death, detonations etc.) May need to rebalance
 * Wands
 * Rods
 * Staves  Damage from these three probably need to be adjusted.
 * Spells  - will probably have to wait for new system
-* Ego items.  Foo of extra attacks may need to be adjusted.
+* Ego items.
+*  - Number of attacks for various ego items has been lowered for larger
+*  - weapons.
 *     Oangband also has various modifyers for ego items that are not
 *     implemented as yet.  (See ego shooters in [o])
 * Class rebalancing - Max blows for mages etc has not be adjusted yet.
