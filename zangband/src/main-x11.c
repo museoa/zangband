@@ -32,10 +32,10 @@
  * The following shell script can be used to launch Angband, assuming that
  * it was extracted into "~/Angband", and compiled using "USE_X11", on a
  * Linux machine, with a 1280x1024 screen, using 6 windows (with the given
- * characteristics), with gamma correction of "180" (1 / 1.80), and without
- * graphics (add "-g" for graphics).  Just copy this comment into a file,
- * remove the leading " * " characters (and the head/tail of this comment),
- * and make the file executable.
+ * characteristics), with gamma correction of "280" (280 / 256) = 1.09, and
+ * without graphics (add "-g" for graphics).  Just copy this comment into a
+ * file, remove the leading " * " characters (and the head/tail of this
+ * comment), and make the file executable.
  * 
  *
  * #!/bin/csh
@@ -85,7 +85,7 @@
  * cd ~/Angband
  *
  * # Gamma correction
- * setenv ANGBAND_X1_GAMMA 128
+ * setenv ANGBAND_X1_GAMMA 280
  * 
  * # Launch Angband
  * ./src/angband -mx11 -- -n6 &
