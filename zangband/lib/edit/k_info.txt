@@ -2254,7 +2254,7 @@ D:This potion cures charisma drain.
 N:237:Curing
 G:!:d
 I:75:61:100
-W:18:0:4:100
+W:18:0:4:500
 A:18/2
 P:0:1d1:0:0:0
 F:EASY_KNOW
