@@ -206,22 +206,39 @@ static const struct luaL_reg anglib[] =
 };
 
 
+#define MULTIADIC(name, op) \
+	static int name(lua_State* L) \
+	{ \
+		int i, n = lua_gettop(L);\
+		\
+		int result = luaL_check_int(L, 1); \
+		\
+		for (i = 2; i <= n; i++)\
+		{	\
+			result = result op luaL_check_int(L, i); \
+		}	\
+		lua_pushnumber(L, result); \
+		return 1; \
+	}
+
 #define DYADIC(name, op) \
-    static int name(lua_State* L) { \
+    static int name(lua_State* L) \
+	{ \
         lua_pushnumber(L, luaL_check_int(L, 1) op luaL_check_int(L, 2)); \
 		return 1; \
     }
 
 #define MONADIC(name, op) \
-    static int name(lua_State* L) { \
+    static int name(lua_State* L) \
+	{ \
         lua_pushnumber(L, op luaL_check_int(L, 1)); \
 		return 1; \
     }
 
 
 DYADIC(intMod,      % )
-DYADIC(intAnd,      & )
-DYADIC(intOr,       | )
+MULTIADIC(intAnd,      & )
+MULTIADIC(intOr,       | )
 DYADIC(intXor,      ^ )
 DYADIC(intShiftl,   <<)
 DYADIC(intShiftr,   >>)
