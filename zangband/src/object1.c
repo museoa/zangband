@@ -223,7 +223,7 @@ static void roff_obj_aux(const object_type *o_ptr)
 	if ((o_ptr->flags3 & (TR3_ACTIVATE)) && object_known_p(o_ptr))
 	{
 		roff("It can be activated for ");
-		roff(item_activation(o_ptr));
+		roff(CLR_UMBER "%s", item_activation(o_ptr));
 		roff(" if it is being worn.  ");
 	}
 
@@ -291,7 +291,7 @@ static void roff_obj_aux(const object_type *o_ptr)
 			if (n > 0 && n == vn - 1) roff(" and ");
 			else if (n > 0)  roff(", ");
 
-			roff(CLR_L_RED "%s", vp[n]);
+			roff(CLR_L_GREEN "%s", vp[n]);
 		}
 
 		roff(" by %+i.  ", o_ptr->pval);
@@ -301,23 +301,28 @@ static void roff_obj_aux(const object_type *o_ptr)
 	{
 		if (o_ptr->pval > 0)
 		{
-			roff("It increases your maximum sp by %i per level.", o_ptr->pval);
+			roff("It increases your ");
 		}
 		else
 		{
-			roff("It decreases your maximum sp by %i per level.", o_ptr->pval);
+			roff("It decreases your ");
 		}
+		roff(CLR_L_GREEN "maximum sp" CLR_DEFAULT " by %i per level.  ", o_ptr->pval);
 	}
 
 	if (f1 & (TR1_INFRA))
 	{
 		if (o_ptr->pval > 0)
 		{
-			roff("It increases your infravision by %i feet.", o_ptr->pval * 10);
+			roff("It increases your ");
+			roff(CLR_L_GREEN "infravision");
+			roff(" by %i feet.  ", o_ptr->pval * 10);
 		}
 		else
 		{
-			roff("It decreases your infravision by %i feet.", -o_ptr->pval * 10);
+			roff("It decreases your ");
+			roff(CLR_L_GREEN "infravision");
+			roff(" by %i feet.  ", -o_ptr->pval * 10);
 		}
 	}
 
@@ -325,12 +330,13 @@ static void roff_obj_aux(const object_type *o_ptr)
 	{
 		if (o_ptr->pval > 0)
 		{
-			roff("It provides %i extra blows per turn.", o_ptr->pval);
+			roff("It provides %i extra ", o_ptr->pval);
 		}
 		else
 		{
-			roff("It provides %i fewer blows per turn.", -o_ptr->pval);
+			roff("It provides %i fewer ", -o_ptr->pval);
 		}
+		roff(CLR_L_GREEN "blows per turn" CLR_DEFAULT ".  ");
 	}
 
 	/* Collect brands */
@@ -351,7 +357,7 @@ static void roff_obj_aux(const object_type *o_ptr)
 			if (n > 0 && n == vn - 1) roff(" and ");
 			else if (n > 0)  roff(", ");
 
-			roff(CLR_L_RED "%s", vp[n]);
+			roff(CLR_VIOLET "%s", vp[n]);
 		}
 
 		roff(".  ");
@@ -359,22 +365,22 @@ static void roff_obj_aux(const object_type *o_ptr)
 
 	if (f1 & (TR1_BRAND_POIS))
 	{
-		roff("It poisons your foes.  ");
+		roff("It " CLR_VIOLET "poisons" CLR_DEFAULT " your foes.  ");
 	}
 
 	if (f1 & (TR1_CHAOTIC))
 	{
-		roff("It produces chaotic effects.  ");
+		roff("It produces " CLR_VIOLET "chaotic effects" CLR_DEFAULT ".  ");
 	}
 
 	if (f1 & (TR1_VAMPIRIC))
 	{
-		roff("It drains life from your foes.  ");
+		roff("It " CLR_VIOLET "drains life" CLR_DEFAULT " from your foes.  ");
 	}
 
 	if (f1 & (TR1_IMPACT))
 	{
-		roff("It can cause earthquakes.  ");
+		roff("It can cause " CLR_VIOLET "earthquakes" CLR_DEFAULT ".  ");
 	}
 
 	if (f1 & (TR1_VORPAL))
@@ -386,7 +392,7 @@ static void roff_obj_aux(const object_type *o_ptr)
 	{
 		if (f1 & (TR1_KILL_DRAGON))
 		{
-			roff("It is a great bane of dragons.  ");
+			roff("It is a great bane of " CLR_YELLOW "dragons" CLR_DEFAULT ".  ");
 		}
 
 		/* Collect slays */
@@ -412,7 +418,7 @@ static void roff_obj_aux(const object_type *o_ptr)
 				if (n > 0 && n == vn - 1) roff(" and ");
 				else if (n > 0)  roff(", ");
 	
-				roff(CLR_L_RED "%s", vp[n]);
+				roff(CLR_YELLOW "%s", vp[n]);
 			}
 
 			roff(".  ");
@@ -440,7 +446,7 @@ static void roff_obj_aux(const object_type *o_ptr)
 	if ((f2 & TR2_SUST_MASK) == TR2_SUST_MASK)
 	{
 		/* Handle all stats specially */
-		roff("It sustains all your stats.  ");
+		roff("It sustains " CLR_GREEN "all your stats" CLR_DEFAULT ".  ");
 	}
 	else
 	{
@@ -463,7 +469,7 @@ static void roff_obj_aux(const object_type *o_ptr)
 				if (n > 0 && n == vn - 1) roff(" and ");
 				else if (n > 0)  roff(", ");
 	
-				roff(CLR_L_RED "%s", vp[n]);
+				roff(CLR_GREEN "%s", vp[n]);
 			}
 
 			roff(".  ");
@@ -491,7 +497,7 @@ static void roff_obj_aux(const object_type *o_ptr)
 			if (n > 0 && n == vn - 1) roff(" and ");
 			else if (n > 0)  roff(", ");
 	
-			roff(CLR_L_RED "%s", vp[n]);
+			roff(CLR_BLUE "%s", vp[n]);
 		}
 
 		roff(".  ");
@@ -528,7 +534,7 @@ static void roff_obj_aux(const object_type *o_ptr)
 			if (n > 0 && n == vn - 1) roff(" and ");
 			else if (n > 0)  roff(", ");
 	
-			roff(CLR_L_RED "%s", vp[n]);
+			roff(CLR_L_BLUE "%s", vp[n]);
 		}
 
 		roff(".  ");
@@ -554,6 +560,7 @@ static void roff_obj_aux(const object_type *o_ptr)
 	if (f4 & TR4_PATRON)        vp[vn++] = "attracts the attention of chaos gods";
 	if (f4 & TR4_STRANGE_LUCK)  vp[vn++] = "warps fate around you";
 	if (f4 & TR4_PASS_WALL)     vp[vn++] = "allows you to pass through solid rock";
+	if (f3 & (TR3_NO_TELE))     vp[vn++] = "prevents teleporation";
 
 	/* Print miscellaneous */
 	if (vn)
@@ -566,7 +573,7 @@ static void roff_obj_aux(const object_type *o_ptr)
 			if (n > 0 && n == vn - 1) roff(" and ");
 			else if (n > 0)  roff(", ");
 	
-			roff(CLR_L_RED "%s", vp[n]);
+			roff("%s", vp[n]);
 		}
 
 		roff(".  ");
@@ -591,23 +598,19 @@ static void roff_obj_aux(const object_type *o_ptr)
 			if (n > 0 && n == vn - 1) roff(" and ");
 			else if (n > 0)  roff(", ");
 	
-			roff(CLR_L_RED "%s", vp[n]);
+			roff(CLR_VIOLET "%s", vp[n]);
 		}
 
 		roff(".  ");
 	}
 
-	if (f3 & (TR3_NO_TELE))
-	{
-		roff("It prevents teleportation.");
-	}
 	if (f3 & (TR3_XTRA_MIGHT))
 	{
-		roff("It fires missiles with extra might.");
+		roff("It fires missiles with " CLR_GREEN "extra might" CLR_DEFAULT ".  ");
 	}
 	if (f3 & (TR3_XTRA_SHOTS))
 	{
-		roff("It fires missiles excessively fast.");
+		roff("It fires missiles " CLR_GREEN "excessively fast" CLR_DEFAULT ".  ");
 	}
 
 	/* Collect curses */
@@ -631,7 +634,7 @@ static void roff_obj_aux(const object_type *o_ptr)
 			if (n > 0 && n == vn - 1) roff(" and ");
 			else if (n > 0)  roff(", ");
 	
-			roff(CLR_L_RED "%s", vp[n]);
+			roff(CLR_RED "%s", vp[n]);
 		}
 
 		roff(".  ");
@@ -639,7 +642,7 @@ static void roff_obj_aux(const object_type *o_ptr)
 
 	if (f3 & TR3_BLESSED)
 	{
-		roff("It has been blessed by the gods.");
+		roff("It has been blessed by the gods.  ");
 	}
 
 	/* Collect protections */
@@ -664,7 +667,7 @@ static void roff_obj_aux(const object_type *o_ptr)
 			if (n > 0 && n == vn - 1) roff(" and ");
 			else if (n > 0)  roff(", ");
 	
-			roff(CLR_L_RED "%s", vp[n]);
+			roff(CLR_BLUE "%s", vp[n]);
 		}
 
 		roff(".  ");
@@ -690,7 +693,7 @@ static void roff_obj_aux(const object_type *o_ptr)
 			if (n > 0 && n == vn - 1) roff(" and ");
 			else if (n > 0)  roff(", ");
 	
-			roff(CLR_L_RED "%s", vp[n]);
+			roff(CLR_RED "%s", vp[n]);
 		}
 
 		roff(".  ");
@@ -700,21 +703,21 @@ static void roff_obj_aux(const object_type *o_ptr)
 	{
 		if (f3 & TR3_PERMA_CURSE)
 		{
-			roff("It is permanently cursed.  ");
+			roff(CLR_L_RED "It is permanently cursed.  ");
 		}
 		else if (f3 & TR3_HEAVY_CURSE)
 		{
-			roff("It is heavily cursed.  ");
+			roff(CLR_L_RED "It is heavily cursed.  ");
 		}
 		else if (f3 & TR3_CURSED)
 		{
-			roff("It is cursed.  ");
+			roff(CLR_RED "It is cursed.  ");
 		}
 	}
 
 	if (f3 & TR3_TY_CURSE)
 	{
-		roff("It carries an ancient foul curse.");
+		roff(CLR_L_RED "It carries an ancient foul curse.  ");
 	}
 
 	if ((f3 & TR3_IGNORE_MASK) == TR3_IGNORE_MASK)
@@ -741,7 +744,7 @@ static void roff_obj_aux(const object_type *o_ptr)
 				if (n > 0 && n == vn - 1) roff(" or ");
 				else if (n > 0)  roff(", ");
 	
-				roff(CLR_L_RED "%s", vp[n]);
+				roff("%s", vp[n]);
 			}
 
 			roff(".  ");
