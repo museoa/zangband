@@ -2287,7 +2287,14 @@ static errr rd_dungeon(void)
 		/* Dungeon items */
 		if (!o_ptr->held && !ignore_stuff)
 		{
-			/* Access the item location */
+            if (!in_bounds(o_ptr->ix, o_ptr->iy))
+            {
+				note(format
+					 ("Object placement error (%d,%d)", o_ptr->ix, o_ptr->iy));
+				return (152);
+			}
+
+            /* Access the item location */
 			c_ptr = area(o_ptr->ix, o_ptr->iy);
 
 			/*
