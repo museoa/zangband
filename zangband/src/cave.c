@@ -1695,7 +1695,7 @@ void prt_map(void)
 	{
 		/* Erase the sections */
 		Term_erase(COL_MAP, y, l1);
-		Term_erase(l2, y, COL_MAP);
+		Term_erase(l2, y, l3);
 	}
 	
 	/* Pointers to current position in the string */
@@ -2202,7 +2202,7 @@ void do_cmd_view_map(void)
 
 			/* Wait for it */
 			put_str("Move around, or hit any other key to continue.",
-			        hgt - 1, COL_MAP - 11 + (wid - COL_MAP) / 2);
+			        hgt - 1, COL_MAP - 23 + (wid - COL_MAP) / 2);
 
 			/* Hilite the player */
 			move_cursor(cy, cx);
