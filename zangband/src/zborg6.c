@@ -3860,9 +3860,10 @@ bool borg_caution(void)
 	if (p > (borg_skill[BI_CURHP] * 4) && borg_skill[BI_CLEVEL] < 20 &&
 		!borg_skill[BI_MAXSP])
 	{
-		if (borg_use_unknown() ||
-			borg_read_unknown() ||
-			borg_quaff_unknown() || borg_eat_unknown()) return (TRUE);
+		if (borg_use_unknown()) return (TRUE);
+		if (borg_quaff_unknown()) return (TRUE);
+		if (borg_read_unknown()) return (TRUE);
+		if (borg_eat_unknown()) return (TRUE);
 
 	}
 
