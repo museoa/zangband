@@ -260,7 +260,7 @@ bool los(int x1, int y1, int x2, int y2)
  * This routine is very similar to los() except that we can use it
  * to return partial results.
  */
-void mmove2(int *y, int *x, int y1, int x1, int y2, int x2, int *slope, int *sq)
+void mmove2(int *x, int *y, int x1, int y1, int x2, int y2, int *slope, int *sq)
 {
 	int temp;
 	

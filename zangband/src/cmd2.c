@@ -2549,7 +2549,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 		/* Calculate the new location (see "project()") */
 		ny = y;
 		nx = x;
-		mmove2(&ny, &nx, py, px, ty, tx, &sl, &sq);
+		mmove2(&nx, &ny, px, py, tx, ty, &sl, &sq);
 
 		/* Stopped by wilderness boundary */
 		if (!in_bounds2(ny, nx)) break;
@@ -2982,7 +2982,7 @@ void do_cmd_throw_aux(int mult)
 		/* Calculate the new location (see "project()") */
 		ny = y;
 		nx = x;
-		mmove2(&ny, &nx, py, px, ty, tx, &sl, &sq);
+		mmove2(&nx, &ny, px, py, tx, ty, &sl, &sq);
 
 		/* Stopped by wilderness boundary */
 		if (!in_bounds2(ny, nx))

@@ -4386,7 +4386,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 				}
 
 				/* Ripple outwards */
-				mmove2(&by, &bx, y1, x1, y2, x2, &sl, &sq);
+				mmove2(&bx, &by, x1, y1, x2, y2, &sl, &sq);
 
 				/* Find the next ripple */
 				bdis++;
