@@ -47,7 +47,6 @@ dnl Checks for programs.
 AC_PROG_CC(gcc cc egcs)
 
 
-
 dnl -fno-strength-reduce prevents a bug in some versions of gcc
 if test "$GCC" = yes; then
   CFLAGS="$CFLAGS -fno-strength-reduce"
