@@ -235,8 +235,8 @@ AC_CHECK_FUNCS(gethostname mkdir select strstr strtol usleep mkstemp)
 dnl A nice function to test compiler options (like warnings)
 AC_DEFUN(AC_CHECK_CC_OPT,
 [AC_MSG_CHECKING(whether ${CC-cc} accepts [$1])
-echo 'void f(void); void f(){};' > conftest.c
-if test -z "`${CC-cc} -c $1 conftest.c 2>&1`"; then
+echo 'void f(void); void f(){}' > conftest.c
+if test -z "`${CC-cc} -c ${CFLAGS} $1 conftest.c 2>&1`"; then
   CFLAGS="$1 $CFLAGS"
   AC_MSG_RESULT($1)
 else
