@@ -14,6 +14,7 @@ void tolua_player_close (lua_State* tolua_S);
 /* function to register type */
 static void toluaI_reg_types (lua_State* tolua_S)
 {
+(void) tolua_S;	/* Hack - prevent compiler warnings */
  tolua_usertype(tolua_S,"player_sex");
  tolua_usertype(tolua_S,"player_class");
  tolua_usertype(tolua_S,"player_race");

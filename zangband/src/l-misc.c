@@ -14,6 +14,7 @@ void tolua_misc_close (lua_State* tolua_S);
 /* function to register type */
 static void toluaI_reg_types (lua_State* tolua_S)
 {
+(void) tolua_S;	/* Hack - prevent compiler warnings */
 }
 
 /* error messages */

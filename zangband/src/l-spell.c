@@ -14,6 +14,7 @@ void tolua_spell_close (lua_State* tolua_S);
 /* function to register type */
 static void toluaI_reg_types (lua_State* tolua_S)
 {
+(void) tolua_S;	/* Hack - prevent compiler warnings */
  tolua_usertype(tolua_S,"inven_func");
  tolua_usertype(tolua_S,"monster_type");
  tolua_usertype(tolua_S,"object_type");
