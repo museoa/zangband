@@ -1300,7 +1300,7 @@ static void draw_city(u16b town_num)
  */
 bool init_places(int xx, int yy)
 {
-	int x, y, i, j, n;
+	int x, y, i;
 	bool first_try = TRUE;
 
 	wild_gen2_type *w_ptr;
@@ -1398,9 +1398,16 @@ bool init_places(int xx, int yy)
 			store_init(best_town, i, wild_first_town[i]);
 		}
 		else if (i < START_STORE_NUM)
-		{
-			/* Hack - use the pre-defined stores */
-			store_init(best_town, i, wild_first_town[i]);
+        {
+            if (build_is_store(wild_first_town[i]))
+            {
+                /* Hack - use the pre-defined stores */
+                store_init(best_town, i, wild_first_town[i]);
+            }
+            else
+            {
+                build_init(best_town, i, wild_first_town[i]);
+            }
 		}
 		else
 		{
