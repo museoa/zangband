@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: defines.h */
 
 /* Purpose: global constants and macro definitions */
@@ -52,7 +51,7 @@
 #define FAKE_VERSION   0
 #define FAKE_VER_MAJOR 2
 #define FAKE_VER_MINOR 5
-#define FAKE_VER_PATCH 1
+#define FAKE_VER_PATCH 2
 #endif /* USE_SCRIPT */
 
 #define ANGBAND_2_8_1
