@@ -2531,16 +2531,14 @@ static int toluaI_object_inven_takeoff00(lua_State* tolua_S)
 {
  if (
      !tolua_istype(tolua_S,1,tolua_tag(tolua_S,"object_type"),0) ||
-     !tolua_istype(tolua_S,2,LUA_TNUMBER,0) ||
-     !tolua_isnoobj(tolua_S,3)
+     !tolua_isnoobj(tolua_S,2)
  )
   goto tolua_lerror;
  else
  {
   object_type* o_ptr = ((object_type*)  tolua_getusertype(tolua_S,1,0));
-  int amt = ((int)  tolua_getnumber(tolua_S,2,0));
   {
-   object_type* toluaI_ret = (object_type*)  inven_takeoff(o_ptr,amt);
+   object_type* toluaI_ret = (object_type*)  inven_takeoff(o_ptr);
    tolua_pushusertype(tolua_S,(void*)toluaI_ret,tolua_tag(tolua_S,"object_type"));
   }
  }

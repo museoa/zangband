@@ -192,7 +192,7 @@ void do_cmd_wield(void)
 	if (o_ptr->k_idx)
 	{
 		/* Take off existing item */
-		(void)inven_takeoff(o_ptr, 255);
+		(void)inven_takeoff(o_ptr);
 	}
 
 	/* Split object */
@@ -304,7 +304,7 @@ void do_cmd_takeoff(void)
 	p_ptr->energy_use = 50;
 
 	/* Take off the item */
-	(void)inven_takeoff(o_ptr, 255);
+	(void)inven_takeoff(o_ptr);
 
 	p_ptr->redraw |= (PR_EQUIPPY);
 

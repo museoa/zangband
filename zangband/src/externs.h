@@ -668,7 +668,7 @@ extern void item_increase(object_type *o_ptr, int num);
 extern void item_optimize(object_type *o_ptr);
 extern bool inven_carry_okay(const object_type *o_ptr);
 extern object_type *inven_carry(object_type *o_ptr);
-extern object_type *inven_takeoff(object_type *o_ptr, int amt);
+extern object_type *inven_takeoff(object_type *o_ptr);
 extern void inven_drop(object_type *o_ptr, int amt);
 extern cptr item_activation(const object_type *o_ptr);
 extern void combine_pack(void);

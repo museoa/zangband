@@ -5346,7 +5346,7 @@ object_type *inven_carry(object_type *o_ptr)
  *
  * Return the inventory slot into which the item is placed.
  */
-object_type *inven_takeoff(object_type *o_ptr, int amt)
+object_type *inven_takeoff(object_type *o_ptr)
 {
 	int item;
 
@@ -5355,11 +5355,8 @@ object_type *inven_takeoff(object_type *o_ptr, int amt)
  
 	cptr act;
 
-	/* Paranoia */
-	if (amt <= 0) return (NULL);
-
 	/* Split item */
-	q_ptr = item_split(o_ptr, amt);
+	q_ptr = item_split(o_ptr, o_ptr->number);
 
 	/* Describe the object */
 	object_desc(o_name, q_ptr, TRUE, 3, 256);
@@ -5433,7 +5430,7 @@ void inven_drop(object_type *o_ptr, int amt)
 	if (!list)
 	{
 		/* Take off first */
-		o_ptr = inven_takeoff(o_ptr, amt);
+		o_ptr = inven_takeoff(o_ptr);
 	}
 
 	/* Get local object */
