@@ -123,7 +123,7 @@
 	signals_ignore_tstp();\
 	save_player();\
 	if (!(expr)) {\
-		__asert_fmt("\n%s%s\n%s%s\n%s%d\n\n",\
+		__assert_fmt("\n%s%s\n%s%s\n%s%d\n\n",\
 		"Assertion failed: ", #expr,\
 		"in file ", __FILE__,\
 		"on line ", __LINE__);\
