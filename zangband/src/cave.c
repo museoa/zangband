@@ -772,7 +772,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 	feat = c_ptr->feat;
 
 	/* Floors (etc) */
-	if (feat <= FEAT_INVIS)
+	if ((feat <= FEAT_INVIS) || (feat == FEAT_WALL_INVIS))
 	{
 		/* Memorized (or visible) floor */
 		if   ((c_ptr->info & CAVE_MARK) ||
@@ -1523,7 +1523,7 @@ void note_spot(int y, int x)
 	if (!(c_ptr->info & (CAVE_MARK)))
 	{
 		/* Handle floor grids first */
-		if (c_ptr->feat <= FEAT_INVIS)
+		if ((c_ptr->feat <= FEAT_INVIS) || (c_ptr->feat == FEAT_WALL_INVIS))
 		{
 			/* Option -- memorize all torch-lit floors */
 			if (view_torch_grids && (c_ptr->info & (CAVE_LITE)))

@@ -834,7 +834,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			c_ptr->info &= ~(CAVE_GLOW);
 
 			/* Hack -- Forget "boring" grids */
-			if (c_ptr->feat <= FEAT_INVIS)
+			if ((c_ptr->feat <= FEAT_INVIS) || (c_ptr->feat == FEAT_WALL_INVIS))
 			{
 				/* Forget */
 				c_ptr->info &= ~(CAVE_MARK);

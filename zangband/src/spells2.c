@@ -3166,7 +3166,7 @@ static void cave_temp_room_unlite(void)
 			c_ptr->info &= ~(CAVE_GLOW);
 
 			/* Hack -- Forget "boring" grids */
-			if (c_ptr->feat <= FEAT_INVIS)
+			if ((c_ptr->feat <= FEAT_INVIS) || (c_ptr->feat == FEAT_WALL_INVIS))
 			{
 				/* Forget the grid */
 				c_ptr->info &= ~(CAVE_MARK);
