@@ -3276,20 +3276,20 @@ F:EVIL | GIANT
 D:A massive orc-like figure with black skin and powerful arms.
 
 N:263:Dweller on the threshold
-G:P:v
+G:Y:v
 I:110:22d8:30:15:0
 W:15:5:0:100
 B:GAZE:PARALYZE
 B:CLAW:UN_POWER:3d5
 B:CLAW:FIRE:3d5
 B:BITE:UN_BONUS:2d5
-F:NEVER_MOVE | DROP_60 | EVIL | DEMON | DROP_CORPSE
+F:NEVER_MOVE | DROP_60 | EVIL | DROP_CORPSE
 F:IM_POIS | IM_COLD | IM_FIRE | NO_FEAR | NO_CONF | NO_SLEEP
 F:RES_DISE
 S:1_IN_6
 S:BO_ACID | CONF | DRAIN_MANA
 D:A creature like a giant purple Buddha with lots of teeth.
-D:  It eats sorcerors.
+D:It cleans them with the bones of sorcerors.
 
 N:264:Half-orc
 G:o:s
