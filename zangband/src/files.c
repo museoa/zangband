@@ -3386,25 +3386,39 @@ bool show_file(cptr name, cptr what, int line, int mode)
 		           FAKE_VER_MAJOR, FAKE_VER_MINOR, FAKE_VER_PATCH,
 		           caption, line, size), 0, 0);
 
-		/* Prompt -- menu screen */
+		/* Prompt -- with menu */
 		if (menu)
 		{
-			/* Wait for it */
-			prt("[Press a Number, or ESC to exit.]", hgt - 1, 0);
-		}
+			/* Prompt -- small files */
+			if (size <= hgt - 4)
+			{
+				/* Wait for it */
+				prt("[Press a Number, or ESC to exit.]", hgt - 1, 0);
+			}
 
-		/* Prompt -- small files */
-		else if (size <= hgt - 4)
-		{
-			/* Wait for it */
-			prt("[Press ESC to exit.]", hgt - 1, 0);
+			/* Prompt -- large files */
+			else
+			{
+				/* Wait for it */
+				prt("[Press a Number, Return, Space, -, =, /, or ESC to exit.]",
+				    hgt - 1, 0);
+			}
 		}
-
-		/* Prompt -- large files */
 		else
 		{
-			/* Wait for it */
-			prt("[Press Return, Space, -, =, /, or ESC to exit.]", hgt - 1, 0);
+			/* Prompt -- small files */
+			if (size <= hgt - 4)
+			{
+				/* Wait for it */
+				prt("[Press ESC to exit.]", hgt - 1, 0);
+			}
+
+			/* Prompt -- large files */
+			else
+			{
+				/* Wait for it */
+				prt("[Press Return, Space, -, =, /, or ESC to exit.]", hgt - 1, 0);
+			}
 		}
 
 		/* Get a keypress */
@@ -3453,7 +3467,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 			}
 		}
 
-		/* Hack -- go to a specific line */
+		/* Go to a specific line */
 		if (k == '#')
 		{
 			char tmp[81];
@@ -3466,7 +3480,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 			}
 		}
 
-		/* Hack -- go to a specific file */
+		/* Go to a specific file */
 		if (k == '%')
 		{
 			char tmp[81];
@@ -3479,14 +3493,20 @@ bool show_file(cptr name, cptr what, int line, int mode)
 			}
 		}
 
-		/* Hack -- Allow backing up */
+		/* Go back half a page */
 		if (k == '-')
 		{
 			line = line - (hgt - 4) / 2;
 			if (line < 0) line = 0;
 		}
 
-		/* Hack -- Advance a single line */
+		/* Advance half a page */
+		if (k == '+')
+		{
+			line = line + (hgt - 4) / 2;
+		}
+
+		/* Advance a single line */
 		if ((k == '\n') || (k == '\r'))
 		{
 			line = line + 1;
@@ -3514,36 +3534,39 @@ bool show_file(cptr name, cptr what, int line, int mode)
 			}
 		}
 
-		/* Hack, dump to file */
+		/* Dump to file */
 		if (k == '|')
 		{
 			FILE *ffp;
-			char buff[1024];
+			char outfile[1024];
 			char xtmp[82];
 
-			strcpy (xtmp, "");
+			/* Start with an empty filename */
+			xtmp[0] = '\0';
 
-			if (get_string("File name: ", xtmp, 80))
-			{
-				if (xtmp[0] && (xtmp[0] != ' '))
-				{
-				}
-			}
-			else
-			{
-				continue;
-			}
+			/* Get a filename */
+			if (!get_string("File name: ", xtmp, 80)) continue;
+
+			/* Check for a "valid" name */
+			if (!(xtmp[0] && (xtmp[0] != ' '))) continue;
 
 			/* Build the filename */
-			path_build(buff, 1024, ANGBAND_DIR_USER, xtmp);
+			path_build(outfile, 1024, ANGBAND_DIR_USER, xtmp);
 
-			/* Close it */
+			/* Close the input file */
 			my_fclose(fff);
 
-			/* Hack -- Re-Open the file */
+			/* Hack -- Re-Open the input file */
 			fff = my_fopen(path, "r");
 
-			ffp = my_fopen(buff, "w");
+			/* Drop priv's */
+			safe_setuid_drop();
+
+			/* Open the output file */
+			ffp = my_fopen(outfile, "w");
+
+			/* Grab priv's */
+			safe_setuid_grab();
 
 			/* Oops */
 			if (!(fff && ffp))
@@ -3553,18 +3576,15 @@ bool show_file(cptr name, cptr what, int line, int mode)
 				break;
 			}
 
-			sprintf(xtmp, "%s: %s", player_name, what);
-			my_fputs(ffp, xtmp, 80);
-			my_fputs(ffp, "\n", 80);
+			/* Write the file line by line */
+			while (!my_fgets(fff, xtmp, 80))
+				my_fputs(ffp, xtmp, 80);
 
-			while (!my_fgets(fff, buff, 80))
-				my_fputs(ffp, buff, 80);
-
-			/* Close it */
+			/* Close the files */
 			my_fclose(fff);
 			my_fclose(ffp);
 
-			/* Hack -- Re-Open the file */
+			/* Hack -- Re-Open the input file */
 			fff = my_fopen(path, "r");
 		}
 
