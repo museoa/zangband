@@ -58,6 +58,40 @@ static int xxx_build_script_path(lua_State *L)
 }
 
 
+static int xxx_get_rumor(lua_State *L)
+{
+	errr err;
+	char buf[1024];
+
+	switch (randint1(20))
+	{
+		case 1:
+			err = get_rnd_line("chainswd.txt", 0, buf);
+			break;
+		case 2:
+			err = get_rnd_line("error.txt", 0, buf);
+			break;
+		case 3:
+		case 4:
+		case 5:
+			err = get_rnd_line("death.txt", 0, buf);
+			break;
+		default:
+			err = get_rnd_line("rumors.txt", 0, buf);
+			break;
+	}
+
+	/* An error occured */
+	if (err) strcpy(buf, "Some rumors are wrong.");
+
+	/* Push the rumor */
+	tolua_pushstring(L, buf);
+
+	/* One result */
+	return (1);
+}
+
+
 static int xxx_get_aim_dir(lua_State *L)
 {
 	int dir;
@@ -93,6 +127,7 @@ static const struct luaL_reg anglib[] =
 	{"get_aim_dir", xxx_get_aim_dir},
 	{"fire_beam", xxx_fire_beam},
 	{"build_script_path", xxx_build_script_path},
+	{"get_rumor", xxx_get_rumor},
 };
 
 
