@@ -1267,7 +1267,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 				}
 				case SV_LONG_BOW:
 				{
-					if (p_ptr->stat[A_STR].use >= 16)
+					if (p_ptr->stat[A_STR].use >= 160)
 					{
 						power = 3;
 					}

@@ -2857,7 +2857,7 @@ static void calc_bonuses(void)
 			{
 				p_ptr->ammo_tval = TV_ARROW;
 
-				if (p_ptr->stat[A_STR].use >= 16)
+				if (p_ptr->stat[A_STR].use >= 160)
 				{
 					p_ptr->ammo_mult = 3;
 				}
@@ -2884,7 +2884,7 @@ static void calc_bonuses(void)
 				p_ptr->ammo_tval = TV_BOLT;
 
 				p_ptr->ammo_mult = 5;
-				if (p_ptr->stat[A_DEX].use >= 16)
+				if (p_ptr->stat[A_DEX].use >= 160)
 				{
 					p_ptr->bow_energy = 150;
 				}
