@@ -288,7 +288,7 @@ void Plat_BitmapNew(Tcl_Interp *interp, BitmapPtr bitmapPtr)
 	bitmapPtr->platData = platData;
 }
 
-#include "tcltk-dll.h"
+#include "tcltk.h"
 
 void Plat_BitmapDelete(BitmapPtr bitmapPtr)
 {

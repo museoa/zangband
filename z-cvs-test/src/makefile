@@ -13,7 +13,7 @@ COMMONOBJS := \
 		const.o describe.o dungeon.o effects.o \
 		files.o flavor.o generate.o grid.o icon1.o icon2.o init1.o \
 		init2.o interp1.o interp2.o load.o struct-dll.o\
-		main-tnb.o map.o melee1.o TclTk-dll.o map-dll.o\
+		main-tnb.o map.o melee1.o tcltk.o map-dll.o\
 		melee2.o mind.o monster1.o monster2.o mspells1.o mspells2.o \
 		mutation.o notes.o obj_kind.o object1.o object2.o plat.o \
 		qebind-dll.o r_info.o racial.o rooms.o save.o savefile-z.o \

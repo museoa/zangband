@@ -14,7 +14,7 @@
 #include "angband.h"
 #include "tnb.h"
 #include "interp.h"
-#include "tcltk-dll.h"
+#include "tcltk.h"
 
 #ifdef PLATFORM_WIN
 #include <windows.h>
