@@ -32,7 +32,6 @@ struct WidgetItem  {
 	XColor *borderColor;
 	int borderWidth;
 	int borderDist;
-	DoubleLink link; /* Linked list of animated WidgetItems */
 };
 
 /*
@@ -186,7 +185,6 @@ CreateWidget(
 	widgetPtr->borderColor = NULL;
 	widgetPtr->borderWidth = 0;
 	widgetPtr->borderDist = 0;
-	DoubleLink_Init(&WidgetItemList, &widgetPtr->link, widgetPtr);
 
     /*
      * Process the arguments to fill in the item record.
@@ -278,12 +276,6 @@ ConfigureWidget(
 	
     ComputeWidgetBbox(canvas, widgetPtr);
 
-	/* Kill list of sprites... they no longer exist */
-	if (widgetPtr->link.isLinked)
-	{
-		DoubleLink_Unlink(&widgetPtr->link);
-	}
-
     return TCL_OK;
 }
 
@@ -295,13 +287,10 @@ ConfigureWidget(
 
 static void DeleteWidget(Tk_Canvas canvas, Tk_Item *itemPtr, Display *display)
 {
-	WidgetItem *widgetPtr = (WidgetItem *) itemPtr;
-	
 	/* Hack - ignore unused parameters */
 	(void) canvas;
 	(void) display;
-
-	DoubleLink_Unlink(&widgetPtr->link);
+	(void) itemPtr;
 }
 
 static void
@@ -483,121 +472,27 @@ static void DisplayWidget(Tk_Canvas canvas, Tk_Item *itemPtr,
 					 		Display *display, Drawable drawable,
 							int x, int y, int width, int height)
 {
+	WidgetItem *widgetPtr = (WidgetItem *) itemPtr;
+	short drawableX, drawableY;	
+	int borderSize = 0;
+	IconSpec iconSpecFG, iconSpecBG;
+	
 #ifdef PLATFORM_WIN
-
-    WidgetItem *widgetPtr = (WidgetItem *) itemPtr;
-    short drawableX, drawableY;
     HDC dc, dc2;
     TkWinDCState state, state2;
-	IconSpec iconSpecFG, iconSpecBG;
-	int borderSize = 0;
-
-    /*
-     * Translate the coordinates to those of the item, then redisplay it.
-     */
-
-    Tk_CanvasDrawableCoords(canvas,
-		(double) widgetPtr->header.x1,
-		(double) widgetPtr->header.y1,
-		&drawableX, &drawableY);
-
-	FinalIcon(&iconSpecFG, &widgetPtr->assign, 0, NULL);
-	FinalIcon(&iconSpecBG, &widgetPtr->assignbg, 0, NULL);
-
-	if (widgetPtr->borderColor && widgetPtr->borderWidth)
-	{
-		borderSize = widgetPtr->borderWidth + widgetPtr->borderDist;
-	}
-
-	if ((iconSpecFG.type != ICON_TYPE_NONE) || (iconSpecBG.type != ICON_TYPE_NONE))
-	{
-		/* This code is like TkPutImage() */
-		dc = TkWinGetDrawableDC(display, drawable, &state);
-		dc2 = TkWinGetDrawableDC(display, CanvWidgetBitmap.pixmap, &state2);
-
-		/* Transparent */
-		if (g_icon_data[iconSpecFG.type].rle_data ||
-			g_icon_data[iconSpecBG.type].rle_data)
-		{
-			/*
-			 * Ignorance alert! I want to copy the background from where
-			 * the masked icon should be drawn to the CanvWidgetBitmap
-			 * and draw the masked icon on top of that. So I figure I
-			 * will BitBlt() from the canvas HDC to CanvWidgetBitmap HDC.
-			 * But on 256-color monitors it is way too slow. So I find
-			 * what color is under the canvas item and use that.
-			 */
-			if (!g_256color)
-			{
-			    BitBlt(dc2, 0, 0, widgetPtr->gwidth,
-					widgetPtr->gheight, dc, drawableX + borderSize,
-					drawableY + borderSize, SRCCOPY);
-			}
-			else
-			{
-				TkWinFillRect(dc2, 0, 0,
-					widgetPtr->gwidth, widgetPtr->gheight,
-					GetPixel(dc, drawableX + borderSize,
-					drawableY + borderSize));
-			}
-		}
-		
-		/* Draw background icon */
-		if (iconSpecBG.type != ICON_TYPE_NONE)
-		{
-			DrawIconSpec(&iconSpecBG);
-		}
-	
-		/* Draw foreground icon */
-		if (iconSpecFG.type != ICON_TYPE_NONE)
-		{
-			DrawIconSpec(&iconSpecFG);
-		}
-
-		BitBlt(dc, drawableX + borderSize, drawableY + borderSize,
-			widgetPtr->gwidth, widgetPtr->gheight, dc2, 0, 0, SRCCOPY);
-	
-		TkWinReleaseDrawableDC(CanvWidgetBitmap.pixmap, dc2, &state2);
-		TkWinReleaseDrawableDC(drawable, dc, &state);
-	}
-
-	if (borderSize)
-	{
-		XGCValues gcValues;
-		GC gc;
-		int lineWidth = widgetPtr->borderWidth;
-
-		gcValues.foreground = widgetPtr->borderColor->pixel;
-		gcValues.line_width = lineWidth;
-		gc = Tk_GetGC(Tk_CanvasTkwin(canvas), GCForeground | GCLineWidth,
-			&gcValues);
-
-	    XDrawRectangle(display, drawable, gc,
-			drawableX + lineWidth / 2,
-			drawableY + lineWidth / 2,
-			(widgetPtr->header.x2 - widgetPtr->header.x1) - lineWidth / 2 - 1,
-			(widgetPtr->header.y2 - widgetPtr->header.y1) - lineWidth / 2 - 1);
-
-		Tk_FreeGC(display, gc);
-	}
-	
 #endif /* PLATFORM_WIN */
 
-	/*
-	 * This code works on Win32 too, last time I checked.
-	 * EXCEPT for the special case of 256-colors handled
-	 * by the above code.
-	 */
-
 #ifdef PLATFORM_X11
-
-    WidgetItem *widgetPtr = (WidgetItem *) itemPtr;
-    short drawableX, drawableY;
-	IconSpec iconSpecFG, iconSpecBG;
-	int borderSize = 0;
 	Tk_Window tkwin = ((TkCanvas *) canvas)->tkwin;
 	XGCValues gcValues;
 	GC gc;
+#endif /* PLATFORM_X11 */
+
+	/* Hack -ignore unused parameters */
+	(void) x;
+	(void) y;
+	(void) width;
+	(void) height;
 
     /*
      * Translate the coordinates to those of the image, then redisplay it.
@@ -616,16 +511,53 @@ static void DisplayWidget(Tk_Canvas canvas, Tk_Item *itemPtr,
 		borderSize = widgetPtr->borderWidth + widgetPtr->borderDist;
 	}
 
+
 	if ((iconSpecFG.type != ICON_TYPE_NONE) || (iconSpecBG.type != ICON_TYPE_NONE))
 	{
+
+#ifdef PLATFORM_WIN
+		/* This code is like TkPutImage() */
+		dc = TkWinGetDrawableDC(display, drawable, &state);
+		dc2 = TkWinGetDrawableDC(display, CanvWidgetBitmap.pixmap, &state2);
+
+#endif /* PLATFORM_WIN */
+
+#ifdef PLATFORM_X11
 		gcValues.function = GXcopy;
 		gcValues.graphics_exposures = False;
 		gc = Tk_GetGC(tkwin, GCFunction | GCGraphicsExposures, &gcValues);
+#endif /* PLATFORM_X11 */
 
 		/* Transparent */
 		if (g_icon_data[iconSpecFG.type].rle_data ||
 			g_icon_data[iconSpecBG.type].rle_data)
 		{
+			/*
+			 * Ignorance alert! I want to copy the background from where
+			 * the masked icon should be drawn to the CanvWidgetBitmap
+			 * and draw the masked icon on top of that. So I figure I
+			 * will BitBlt() from the canvas HDC to CanvWidgetBitmap HDC.
+			 * But on 256-color monitors it is way too slow. So I find
+			 * what color is under the canvas item and use that.
+			 */
+#ifdef PLATFORM_WIN
+
+			if (!g_256color)
+			{
+			    BitBlt(dc2, 0, 0, widgetPtr->gwidth,
+					widgetPtr->gheight, dc, drawableX + borderSize,
+					drawableY + borderSize, SRCCOPY);
+			}
+			else
+			{
+				TkWinFillRect(dc2, 0, 0,
+					widgetPtr->gwidth, widgetPtr->gheight,
+					GetPixel(dc, drawableX + borderSize,
+					drawableY + borderSize));
+			}
+#endif /* PLATFORM_WIN */
+
+#ifdef PLATFORM_X11
 			XCopyArea(display,
 				drawable, /* source drawable */
 				CanvWidgetBitmap.pixmap, /* dest drawable */
@@ -637,8 +569,10 @@ static void DisplayWidget(Tk_Canvas canvas, Tk_Item *itemPtr,
 			);
 
 			Plat_SyncDisplay(display);
-		}
+#endif /* PLATFORM_X11 */
 
+		}
+		
 		/* Draw background icon */
 		if (iconSpecBG.type != ICON_TYPE_NONE)
 		{
@@ -650,6 +584,17 @@ static void DisplayWidget(Tk_Canvas canvas, Tk_Item *itemPtr,
 		{
 			DrawIconSpec(&iconSpecFG);
 		}
+		
+		
+#ifdef PLATFORM_WIN
+		BitBlt(dc, drawableX + borderSize, drawableY + borderSize,
+			widgetPtr->gwidth, widgetPtr->gheight, dc2, 0, 0, SRCCOPY);
+	
+		TkWinReleaseDrawableDC(CanvWidgetBitmap.pixmap, dc2, &state2);
+		TkWinReleaseDrawableDC(drawable, dc, &state);
+#endif /* PLATFORM_WIN */
+
+#ifdef PLATFORM_X11
 
 		XCopyArea(display,
 			CanvWidgetBitmap.pixmap, /* source drawable */
@@ -663,6 +608,9 @@ static void DisplayWidget(Tk_Canvas canvas, Tk_Item *itemPtr,
 		);
 	
 		Tk_FreeGC(display, gc);
+
+#endif /* PLATFORM_X11 */
+
 	}
 
 	if (borderSize)
@@ -684,17 +632,9 @@ static void DisplayWidget(Tk_Canvas canvas, Tk_Item *itemPtr,
 
 		Tk_FreeGC(display, gc);
 	}
-
+	
 	/* Since multiple items may be drawn into CanvWidgetBitmap */
 	Plat_SyncDisplay(display);
-
-#endif /* PLATFORM_X11 */
-	
-	/* Hack -ignore unused parameters */
-	(void) x;
-	(void) y;
-	(void) width;
-	(void) height;
 }
 
 /*
