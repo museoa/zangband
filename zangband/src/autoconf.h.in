@@ -284,6 +284,9 @@
 /* Define to 1 if your <sys/time.h> declares `struct tm'. */
 #undef TM_IN_SYS_TIME
 
+/* Have 64-bit long long type */
+#undef USE_64B
+
 /* Background support for DOS port */
 #undef USE_BACKGROUND
 

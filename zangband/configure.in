@@ -153,6 +153,10 @@ if test "x$with_tcltk" != "xno" ; then
 		]))
 fi
 
+# Check for a 64-bit `long long' type
+AC_CHECK_TYPE([long long], 
+	AC_DEFINE(USE_64B, 1, [Have 64-bit long long type]))
+
 
 # FIXME: Replace `main' with a function in `-lpc':
 AC_CHECK_LIB([pc], [main],
