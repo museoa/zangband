@@ -1091,6 +1091,7 @@ extern void add_note_type(int note_number);
 
 /* fields.c */
 extern void notice_field(field_type *f_ptr);
+extern cptr field_name(field_type *f_ptr);
 extern void excise_field_idx(int fld_idx);
 extern void delete_field_ptr(field_type *f_ptr);
 extern void delete_field(int x, int y);
@@ -1123,7 +1124,6 @@ DECL_FIELD_ACTION(nothing);
 DECL_FIELD_ACTION(delete);
 DECL_FIELD_ACTION(glyph_warding);
 DECL_FIELD_ACTION(glyph_explode);
-DECL_FIELD_ACTION(corpse_look);
 extern void place_trap(int x, int y);
 DECL_FIELD_ACTION(hit_trap_door);
 DECL_FIELD_ACTION(hit_trap_pit);
@@ -1274,6 +1274,7 @@ extern void do_cmd_borg(void);
 extern void deleteme(void);
 extern bool player_res(u32b flag);
 extern monster_race *monst_race(int r_idx);
+extern cptr mon_race_name(monster_race *r_ptr);
 
 /*
  * Hack -- conditional (or "bizarre") externs

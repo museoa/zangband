@@ -2369,7 +2369,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 		{
 			field_thaum *t_ptr = &t_info[f_ptr->t_idx];
 
-			char fld_name[40];
+			char fld_name[41];
 
 			/* Do not describe this field */
 			if (f_ptr->info & FIELD_INFO_NO_LOOK) continue;
@@ -2377,12 +2377,24 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 			/* Describe if if is visible and known. */
 			if (f_ptr->info & FIELD_INFO_MARK)
 			{
-				/* Default to field name */
-				strncpy(fld_name, t_ptr->name, 40);
-			
-				/* See if it has a special name */
-				(void)field_hook_single(f_ptr, FIELD_ACT_LOOK, fld_name);
+				cptr name = "";
 				
+				/* See if it has a special name */
+				field_script_single(f_ptr, FIELD_ACT_LOOK, ":s", LUA_RETURN(name));
+				
+				/* Copy the string into the temp buffer */
+				strncpy(fld_name, name, 40);
+				
+				/* Anything there? */
+				if (!fld_name[0])
+				{				
+					/* Default to field name */
+					strncpy(fld_name, t_ptr->name, 40);
+				}
+				
+				/* Free string allocated to hold return value */
+				string_free(name);
+					
 				/* Not boring */
 				boring = FALSE;
 

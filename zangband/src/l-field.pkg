@@ -40,3 +40,4 @@ struct field_type
 extern void deleteme(void);
 extern void set_corpse_size(field_type *f_ptr, int size);
 extern void notice_field(field_type *f_ptr);
+extern cptr field_name(field_type *f_ptr);

@@ -48,6 +48,13 @@ void notice_field(field_type *f_ptr)
 	}
 }
 
+/*
+ * The name of a field
+ */
+cptr field_name(field_type *f_ptr)
+{
+	return (t_info[f_ptr->t_idx].name);
+}
 
 /*
  * Excise a field from a stack
@@ -1574,36 +1581,6 @@ void set_corpse_size(field_type *f_ptr, int size)
 			f_ptr->f_char += size;
 		}
 	}
-}
-
-/*
- * Looking at a corpse tells you what type of monster it was
- */
-bool field_action_corpse_look(field_type *f_ptr, va_list vp)
-{
-	char *name = va_arg(vp, char *);
-
-	/* Monster race */
-	u16b r_idx = ((u16b)f_ptr->data[1]) * 256 + f_ptr->data[2];
-
-	monster_race *r_ptr = &r_info[r_idx];
-
-	/* Are we looking at a unique corpse? */
-	if (FLAG(r_ptr, RF_UNIQUE))
-	{
-		/* Copy name to the output string. */
-		(void)strnfmt(name, 40, "%s of %s", t_info[f_ptr->t_idx].name,
-					  (r_name + r_ptr->name));
-	}
-	else
-	{
-		/* Copy name to the output string. */
-		(void)strnfmt(name, 40, "%s %s", (r_name + r_ptr->name),
-					  t_info[f_ptr->t_idx].name);
-	}
-
-	/* Done */
-	return (FALSE);
 }
 
 

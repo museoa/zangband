@@ -907,6 +907,14 @@ monster_race *monst_race(int r_idx)
 }
 
 /*
+ * Get the monster name from r_info[]
+ */
+cptr mon_race_name(monster_race *r_ptr)
+{
+	return (r_name + r_ptr->name);
+}
+
+/*
  * Debug lua stack overflow
  */
 #include "lua/lstate.h"
