@@ -1585,10 +1585,9 @@ void py_attack(int x, int y)
 	bonus = p_ptr->to_h + o_ptr->to_h;
 	chance = (p_ptr->skills[SKILL_THN] + (bonus * BTH_PLUS_ADJ));
 
-	apply_object_trigger(TRIGGER_ATTACK, o_ptr, "p:iiii", 
-		LUA_MONSTER_NAMED(m_ptr, "monster"), LUA_RETURN(chance),
-		LUA_RETURN(terrain_bonus), LUA_RETURN(total_deadliness),
-		LUA_RETURN(sleeping_bonus));
+	apply_object_trigger(TRIGGER_ATTACK, o_ptr, "iiii", 
+		LUA_RETURN(chance), LUA_RETURN(terrain_bonus),
+		LUA_RETURN(total_deadliness), LUA_RETURN(sleeping_bonus));
 
 	/* Attack once for each legal blow */
 	while (num++ < blows)
@@ -1704,8 +1703,7 @@ void py_attack(int x, int y)
 				k += slay / 20;
 
 				/* Apply scripted effects */
-				apply_object_trigger(TRIGGER_HIT, o_ptr, "p:iiiibbbb", 
-					LUA_MONSTER_NAMED(m_ptr, "monster"), LUA_RETURN(k), 
+				apply_object_trigger(TRIGGER_HIT, o_ptr, "iiibbbb", 
 					LUA_RETURN(ghoul_paral), LUA_RETURN(drain_power),
 					LUA_RETURN(vorpal_chance), LUA_RETURN(do_quake),
 					LUA_RETURN(do_conf), LUA_RETURN(do_tele),
