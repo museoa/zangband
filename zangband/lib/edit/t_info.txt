@@ -360,7 +360,7 @@ F:16,field_action_interact_disarm
 N:32:locked door
 G:+:U
 W:100:2:0
-I:NO_LOOK | MERGE | NO_LOOK
+I:NO_LOOK | MERGE
 D:0:0:0:0:0:0:0:0
 F:10,field_action_door_unlock
 F:15,field_action_delete | 16,field_action_interact_open
@@ -370,7 +370,7 @@ F:17,field_action_door_lock_monster
 N:33:stuck door
 G:+:U
 W:100:2:0
-I:NO_LOOK | MERGE | NO_LOOK
+I:NO_LOOK | MERGE
 D:15:1:0:0:0:0:0:0
 F:10,field_action_door_bash
 F:15,field_action_delete | 16,field_action_interact_disarm
