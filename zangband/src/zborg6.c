@@ -6469,7 +6469,7 @@ static int borg_attack_wand_aux(void)
 			/* Skip wands that have been considered already */
 			if (l_ptr->treat_as == TREAT_AS_GONE)
 			{
-				l_ptr->treat_as == TREAT_AS_NORM;
+				l_ptr->treat_as = TREAT_AS_NORM;
 				continue;
 			}
 
