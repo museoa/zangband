@@ -13,17 +13,29 @@ turn has supposedly borrowed it from the card game Magic the Gathering
 Zangband, consists of seven realms: Life, Arcane, Sorcery, Nature,
 Trump, Chaos and Death.
 
-In standard Angband, the type of a character's spell ability was
-determined solely by the character class. In Zangband, all classes can
-select one (or even two) types from the realms of magic available. (See
-later for available realms / class.)
+While any given realm of magic typically includes spells of a certain
+type or theme, each realm should have enough high-level spells to
+remain effective throughout the later stages of the game. The main
+difference lies in how they support your playing strategy. For example,
+some offer attacking spells which let you directly hurt your enemy,
+while others offer spells for protection, healing and gathering
+information.
 
-Since a character can have (at most) two realms of magic, and the old
-spells have been split between the existing realms, on the first
-glance it may seem that this system makes spell-users less powerful.
-However, the opposite holds true. While a given realm of magic
-typically includes spells of a certain type, new ultra powerful rare
-high-level spells have been added to many realms.
+In general, Life is defensive although it offers some good attacking
+spells against evil monsters, Arcane offers utility spells with limited
+offensive capability, Sorcery offers utility spells and some defensive
+capability, Nature specializes in the elements and offers both
+defensive and offensive spells, Trump specializes in teleportation and
+summoning spells and Chaos and Death are offensive.
+
+In Zangband, spellcasting classes can select either one or two realms
+from those available. Note that certain realms may be prohibited for
+some classes. Since a character can have (at most) two realms of magic,
+and the old spells have been split between the existing realms, on the
+first glance it may seem that this system makes spell-users less
+powerful. However, the opposite holds true. While a given realm of
+magic typically includes spells of a certain type, new ultra powerful
+rare high-level spells have been added to many realms.
 
 Any spell realm should have enough high-level spells even for the later
 stages of the game. The main difference lies in how they support your
@@ -33,17 +45,16 @@ gathering information.
 
 In standard Angband, there were 9 spellbooks for all spellcasters. In
 Zangband, there are 4 spellbooks per realm. Two of them can be bought
-in a store (Life spellbooks in the town temple, the rest in the magic
-shop; of course the Black Market may stock _any_ spellbook). The Arcane
-realm is an exception to this rule: Arcane magic has no high level
-spellbooks; all Arcane spellbooks can be bought in the magic shop. Just
-as one might expect, Arcane magic lacks the really powerful high level
-spells.
+in the town stores and the remaining two must be found in the dungeon
+(although they may occasionally appear in the Black Market). The
+exception to this rule is the Arcane realm since all Arcane spellbooks
+can be found in the magic shop or book store. Just as one might expect,
+Arcane magic lacks the really powerful high level spells.
 
 A character with two realms of magic will thus need to carry a maximum
-of 8 spellbooks while a character with only one realm of magic
-(paladins and rogues) will only need to carry a maximum of 4
-spellbooks. All realms have 32 spells, and each book has 8 spells.
+of 8 spellbooks while a character with only one realm of magic will
+only need to carry a maximum of 4 spellbooks. All realms have 32
+spells, and each book contains 8 spells.
 
 
 ***** <A>
@@ -253,37 +264,150 @@ Death
 
 
 ***** <C>
-=== Notes on Summoned / Charmed Creatures ===
+=== Class/Realm Restrictions ===
 
-A friendly creature can be a mixed blessing. At first sight, one might
-think that they can make the game much easier. It is of course highly
-satisfying to send your pet Hell Wyrm into a Troll pit and wait
-outside, listening for the howls of agony and terror, the sounds of
-guts splattering, bones crunching and so on. But one should not expect
-to gain any experience for such a combat: you will only gain experience
-for creatures to whom you deliver the death blow yourself. New
-experiences require hazards, nobody gains experience by sitting home
-watching the TV. Secondly, friendly monsters are often so eager to
-destroy your opponents they may forget all about you, and you get
-trampled under their feet as they charge at your foe. They are not as
-smart as the regular monsters, since they have given up their free will
-to serve you. So don't stand next to that Snaga when your pet
-Cyberdemon brandishes its rocket launcher! Pets are also rather easily
-irritable. Once you do something which causes the slightest discomfort
-to them, they will revert to their normal behavior and consider you
-their main target. This is something to think about before lighting up
-a room if you have pet Orcs. Needless to say, nobody wants to be your
-friend if you are aggravating them.
+In the table below, '1st' indicates that the realm may only be the
+first choice, '2nd' indicates that the realm may only be the second
+choice and '1st/2nd' indicates that it can be either. Classes that
+only have '1st' options do not get a second realm. Classes with
+only one '1st' option must choose this option as their first realm.
 
-Finally, it takes a lot of mental energy to maintain the control over
-the charmed monsters. The first monster or the first few are 'free',
-but after that maintaining the control will start taxing your mana
-regain rate. The higher the sum of the levels of your pets the less
-mana you will be able to regain. Keep this in mind if you have a pet
-which can summon or otherwise produce more pets...
+Class          Life    Arcane  Sorcery Nature  Trump   Chaos   Death
+----------------------------------------------------------------------
+Mage           1st/2nd 1st/2nd 1st/2nd 1st/2nd 1st/2nd 1st/2nd 1st/2nd
+Priest         1st     2nd     2nd     2nd     2nd     2nd     1st
+Rogue                  1st     1st             1st             1st
+Ranger                 2nd     2nd     1st     2nd     2nd     2nd
+Paladin        1st                                             1st
+Warrior-Mage   2nd     1st     2nd     2nd     2nd     2nd     2nd
+Chaos Warrior                                          1st
+Monk           1st                     1st                     1st
+High Mage      1st     1st     1st     1st     1st     1st     1st=== On Casting Spells ... ===
+
+Players who select spellcasting characters may notice a few unusual
+phenomona during the course of the game. Here's a few helps and
+hints on what may be happening.
+
+--- Armor and Spell Casting ---
+
+All spellcasting classes are penalized for wielding armor above a
+certain total combined weight. The threshold varies between 30lbs
+for a mage and 40lbs for a paladin. Typically, the more reliant on
+spells/prayers your class is deemed to be, the lower your weight
+allowance. If you exceed your weight limit, your mana will drop.
+This penalty is fairly stiff for low level characters but can
+generally be ignored by high level ones.
+
+--- Mage-Types and Gloves ---
+
+Spellcasters who use INT as the stat determining their spellcasting
+ability will be penalized heavily for wielding armor on their
+hands. The exception to this is that wielding gloves, gauntlets or
+cesti which boost DEX or which grant Free Action will result in no
+penalty. The rationale behind this is that the hands are needed to
+perform intricate gestures that accompany the casting of the spell
+and anything encumbering the hands would interfere with this. The
+priest-type classes (priest, paladin and monk) do not have the same
+restrictions as they are viewed as invoking the power of their
+deity directly through prayer.
+
+--- Casting Spells With Insufficent Mana ---
+
+Occasionally, you may try (either by accident or in desperation) to
+cast a spell when you have insufficient mana to do so. In these
+circumstances you will be told by the game that you do not have
+enough mana to cast the spell and then asked if you want to anyway.
+Casting the spell under these conditions has a drastically reduced
+chance of success and may also result in your constitution being
+damaged. It may also casue you to faint from the effort which will
+effectively paralyze you for several turns (even with free action).
+The CON drain and the paralyzation may happen regardless of whether
+the casting was successful or not.
+
+--- Spell Durations ---
+
+Some spells such as Haste-Self or Resistance grant an effect which
+wears off after a certain period of time. With very few exceptions,
+multiple castings of such spells are not cumulative in terms of the
+duration of the spell. In other words, casting a spell which has a
+duration of 20 turns three times will not result in a duration of
+60 turns. Typically, the subsequent castings will add only a small
+amount to the total duration.
 
 
 ***** <D>
+=== Spell Types ===
+
+--- Bolts and Beams ---
+
+A bolt spell is aimed in a direction or at a target but will hit
+the first monster or obstruction in its targeted direction. This
+may or may not be the intended target. Occasionally, you may note
+that your bolt spell hits multiple targets along the line of fire.
+This is because some bolt spells are granted a chance of 'beaming'
+which may be either fixed or level-dependent. A beam will hit every
+target within range along a 'straight' line in the direction in
+which it was aimed.
+
+--- Balls ---
+
+There are two things to remember about ball spells. Firstly, unlike
+bolt spells, they can be aimed at a specific target which allows
+you to target a specific monster as opposed to the first one in the
+direction you are aiming. Secondly, they have a radius (which
+varies from spell to spell). A radius value of one or more will
+result in the spell affecting monsters (and possibly objects, etc)
+around the target in addition to the target itself.
+
+--- Line-of-Sight ---
+
+Line-of-sight spells affect all monsters that that are currently
+in sight of your character. This inlcudes monsters that may not
+currently be visible due to darkness but would be if it was light.
+
+--- Area ---
+
+Area spells affect an area around the player. The size of the area
+can vary considerably. For example, Light Area lights a single room
+while Detect Traps affects a map panel and Genocide the entire
+level.
+
+***** <E>
+=== Notes on Summoned / Charmed Creatures ===
+
+A friendly creature can be a mixed blessing. At first sight, one
+might think that they can make the game much easier. It is of
+course highly satisfying to send your pet Hell Wyrm into a Troll
+pit and wait outside listening for the howls of agony and terror,
+the sounds of guts splattering, bones crunching and so on. But one
+should not expect to gain any experience for such a combat: you
+will only gain experience for creatures to whom you deliver the
+death blow yourself. New experiences require hazards, nobody gains
+experience by sitting home watching the TV.
+
+Secondly, friendly monsters are often so eager to destroy your
+opponents they may forget all about you, and you get trampled under
+their feet as they charge at your foe. They are not as smart as the
+regular monsters, since they have given up their free will to serve
+you. So don't stand next to that Snaga when your pet Cyberdemon
+brandishes its rocket launcher! Pets are also rather easily
+irritable.
+
+Once you do something which causes the slightest discomfort to
+them, they will revert to their normal behaviour and consider you
+their main target. This is something to think about before lighting
+up a room if you have pet orcs. Needless to say, nobody wants to be
+your friend if you are aggravating them.
+
+Finally, it takes a lot of mental energy to maintain the control
+over the charmed monsters. The first monster or the first few are
+'free', but after that maintaining the control will start taxing
+your mana regain rate. The higher the sum of the levels of your
+pets the less mana you will be able to regain. Keep this in mind if
+you have a pet which can summon or otherwise produce more pets...
+
+
+***** <F>
 === Hints and Tips ===
 
 If you miss the `old` magic user, try picking Sorcery and Chaos magic
@@ -307,7 +431,7 @@ If you still get confused trying to select the correct spellbook, try
 using macros (either the 'full' macros or inscriptions).
 
 
-***** <E>
+***** <G>
 === Spell Lists ===
 
 
@@ -564,4 +688,4 @@ Necronomicon
 Original : (??)
 Updated : (??)
 Updated : Zangband DevTeam
-Last update: November 16, 1999
+Last update: November 29, 1999

@@ -3,15 +3,17 @@ Creating a Character.
 Please choose one of the following online help files:
 
     (0) Creating a Character              (birth.txt)
-    (1) Character Characteristics         (birth.txt#A)
-    (2) The Races                         (birth.txt#B)
-    (3) The Classes                       (birth.txt#C)
-    (4) Stats                             (birth.txt#D)
-    (5) Abilities                         (birth.txt#E)
-    (6) Combinations of Race and Class    (birth.txt#F)
-    (7) Stat Bonus Tables                 (birth.txt#G)
-    (8) Ability Tables                    (birth.txt#H)
-    (9) Monk Attacks                      (birth.txt#I)
+    (1) Start-Up Options                  (birth.txt#A)
+    (2) Character Characteristics         (birth.txt#A)
+    (3) The Races                         (birth.txt#C)
+    (4) The Classes                       (birth.txt#D)
+    (5) The Primary Statistics            (birth.txt#E)
+    (6) Abilities                         (birth.txt#F)
+    (7) The Auto-Roller                   (birth.txt#G)
+    (8) Life Ratings                      (birth.txt#H)
+    (9) Combinations of Race and Class    (birth.txt#I)
+    (a) Stat Bonus Tables                 (birth.txt#J)
+    (b) Ability Tables                    (birth.txt#K)
 
     (?) Help System Commands              (helpinfo.txt)
 
@@ -26,3 +28,5 @@ Please choose one of the following online help files:
 ***** [7] birth.txt#G
 ***** [8] birth.txt#H
 ***** [9] birth.txt#I
+***** [a] birth.txt#J
+***** [b] birth.txt#K
