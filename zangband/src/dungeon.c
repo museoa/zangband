@@ -14,7 +14,6 @@
 #include "script.h"
 
 #define TY_CURSE_CHANCE 100
-#define CHAINSWORD_NOISE 100
 
 
 /*
