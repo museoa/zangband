@@ -22,6 +22,13 @@ proc tracecmd {text name1 name2 op} {
 		trace vdelete errorInfo w "tracecmd $text"
 		return
 	}
+	
+	# Hack - ignore the warnings about not finding the
+	# file tclIndex.tcl  They are harmless.
+	if [string match "*tclIndex*" $errorString] {
+		return
+	}
+	
 	set length [string length $traceInfo]
 	set string [string range $errorString 0 [expr {$length - 1}]]
 	set newline 1
@@ -132,8 +139,7 @@ proc tracesetup {} {
 	set traceText ""
 	set ErrorText ""
 
-	$text insert end "# IGNORE errors about tclIndex. It is okay.\n"
-	$text insert end "# (If it is not okay, then ignore this message. ;-\})\n\n"
+	$text insert end "# Error Messages:\n\n"
 
 	return
 }
