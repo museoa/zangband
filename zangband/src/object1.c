@@ -3143,6 +3143,9 @@ static void save_object_choice(object_type *o_ptr)
 	int index = -1;
 
 	cave_type *c_ptr;
+	
+	/* Paranoia */
+	if (!o_ptr) return;
 
 	/* Save type of prompt */
 	repeat_push(p_ptr->command_wrk);
@@ -3620,6 +3623,9 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 				if (was_inven ? !inven : !equip)
 				{
 					bell("Illegal object choice (tag)!");
+					
+					/* Invalid item */
+					o_ptr = NULL;
 					break;
 				}
 
@@ -3627,6 +3633,9 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 				if (!item_tester_okay(o_ptr))
 				{
 					bell("Illegal object choice (tag)!");
+					
+					/* Invalid item */
+					o_ptr = NULL;
 					break;
 				}
 
@@ -3673,6 +3682,9 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 				if (!o_ptr || !item_tester_okay(o_ptr))
 				{
 					bell("Illegal object choice (default)!");
+					
+					/* Invalid item */
+					o_ptr = NULL;
 					break;
 				}
 
@@ -3725,6 +3737,9 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 				if (!item_tester_okay(o_ptr))
 				{
 					bell("Illegal object choice (normal)!");
+					
+					/* Invalid item */
+					o_ptr = NULL;
 					break;
 				}
 
