@@ -372,22 +372,6 @@ int init_tnb(int argc, char **argv)
 	/* Use graphics */
 	use_graphics = 1;
 
-#ifdef SET_UID
-
-	/* Get the user id (?) */
-	player_uid = getuid();
-
-#ifdef SAFE_SETUID
-#ifdef _POSIX_SAVED_IDS
-
-	/* Save some info for later */
-	player_euid = geteuid();
-	player_egid = getegid();
-	
-#endif /* _POSIX_SAVED_IDS */
-#endif /* SAFE_SETUID */
-#endif /* SET_UID */
-
 	/* Prepare the windows */
 	init_windows();
 
@@ -404,19 +388,9 @@ int init_tnb(int argc, char **argv)
 	/* Paranoia */
 	if (!g_interp) return(1);
 
-	/* Sanity: Require same Tcl version as common.dll */
-	t = Tcl_GetVar(g_interp, (char *) "tcl_patchLevel", TCL_GLOBAL_ONLY);
-	if (!t || !streq(t, TCL_PATCH_LEVEL))
-	{
-		plog_fmt("The game was compiled with Tcl version %s, "
-			"but common.dll was compiled with Tcl version %s"
-			TCL_PATCH_LEVEL, t ? t : "UNKNOWN");
-		return(1);
-	}
-
 	/* Initialize */
 	angtk_init();
-
+#if 0
 	/* Initialize */
 	init_angband();
 
@@ -425,9 +399,13 @@ int init_tnb(int argc, char **argv)
 
 	/* Program is intialized */
 	angtk_angband_initialized();
-
-	/* XXX Did the user pass a savefile name via argv[]? */
-
+#endif /* 0 */
+	while (TRUE)
+	{
+	while (Tcl_DoOneEvent(TRUE) != 0)
+				;
+	}
+	
 	/* Paranoia */
 	return (0);
 }

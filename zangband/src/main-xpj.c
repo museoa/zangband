@@ -1220,7 +1220,7 @@ static errr Infofnt_prepare(XFontStruct *info)
  * Inputs:
  *	name: The name of the requested Font
  */
-static errr Infofnt_init_data(cptr name)
+static void Infofnt_init_data(cptr name)
 {
 	XFontStruct *info;
 
@@ -1228,13 +1228,13 @@ static errr Infofnt_init_data(cptr name)
 	/*** Load the info Fresh, using the name ***/
 
 	/* If the name is not given, report an error */
-	if (!name) return (-1);
+	if (!name) quit("Missing font!");
 
 	/* Attempt to load the font */
 	info = XLoadQueryFont(Metadpy->dpy, name);
 
-	/* The load failed, try to recover */
-	if (!info) return (-1);
+	/* The load failed */
+	if (!info) quit_fmt("Failed to find font:\"%s\"", name);
 
 
 	/*** Init the font ***/
@@ -1249,7 +1249,7 @@ static errr Infofnt_init_data(cptr name)
 		XFreeFont(Metadpy->dpy, info);
 
 		/* Fail */
-		return (-1);
+		quit_fmt("Failed to prepare font:\"%s\"", name);
 	}
 
 	/* Save a copy of the font name */
@@ -1257,9 +1257,6 @@ static errr Infofnt_init_data(cptr name)
 
 	/* Mark it as nukable */
 	Infofnt->nuke = 1;
-
-	/* Success */
-	return (0);
 }
 
 
