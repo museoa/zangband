@@ -1201,7 +1201,7 @@ F:SUST_CON | SUST_STR | SUST_INT | SUST_WIS | RES_ELEC | RES_DARK |
 F:RES_DISEN | RES_FEAR | SPEED | INSTA_ART
 L:USE:	werewindle()
 L:USE:	object.timeout = 35
-L:USE:	"a getaway every 35 turns"
+L:DESC:	return "a getaway every 35 turns"
 
 
 # The Long Sword 'Elvagil'-> 'Chainsword'
