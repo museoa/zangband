@@ -4133,8 +4133,6 @@ bool borg_play_magic(bool bored)
 
     /* Dark */
     if (!borg_skill[BI_CUR_LITE]) return (FALSE);
-	/*    if (borg_grids[c_y][c_x].info == BORG_DARK) return (FALSE); */
-
 
 	/* Check each realm, backwards */
 	for (realm = MAX_REALM; realm > 0; realm --)

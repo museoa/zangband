@@ -85,7 +85,7 @@
  */
 /* #define BORG_MARK   0x01 */   /* observed grid */
 #define BORG_GLOW   0x02    /* probably perma-lit */
-#define BORG_DARK   0x04    /* probably not perma-lit */
+/* #define BORG_DARK   0x04 */  /* probably not perma-lit */
 /* #define BORG_OKAY   0x08 */   /* on the current panel */
 /* #define BORG_LITE   0x10 */   /* lit by the torch */
 #define BORG_VIEW   0x20    /* in line of sight */

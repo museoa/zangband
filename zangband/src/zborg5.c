@@ -2583,9 +2583,6 @@ static void borg_update_map(void)
                     /* The grid is not lit */
                     ag->info &= ~BORG_GLOW;
 
-                    /* Known grids must be dark floors */
-                    if (ag->feat != FEAT_NONE) ag->info |= BORG_DARK;
-
                     /* Done */
                     break;
                 }
@@ -2644,8 +2641,6 @@ static void borg_update_map(void)
                     else if (t_a == TERM_L_DARK)
                     {
                         /* Dark floor grid */
-                        ag->info |= BORG_DARK;
-                        ag->info &= ~BORG_GLOW;
                     }
 
                     /* Handle "lit" floors */
