@@ -42,6 +42,7 @@ SRCS		= \
 	cmd6.c \
 	dungeon.c \
 	effects.c \
+	fields.c \
 	files.c \
 	flavor.c \
 	generate.c \
@@ -103,6 +104,7 @@ EXOBJS	= \
 	cmd6.o \
 	dungeon.o \
 	effects.o \
+	fields.o \
 	files.o \
 	flavor.o \
 	generate.o \
@@ -252,6 +254,9 @@ dungeon.o: dungeon.c $(INCS)
 	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $<
 
 effects.o: effects.c $(INCS)
+	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $<
+
+fields.o: fields.c $(INCS)
 	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $<
 
 files.o: files.c $(INCS)
