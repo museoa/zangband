@@ -248,7 +248,6 @@ static void borg_think_shop_sell(int item, list_item *l_ptr)
 	borg_keypress('y');
 	borg_keypress('\r');
 	borg_keypress('\r');
-	borg_keypress('\r');
 
 	/* Increment 'use' count */
 	borg_shops[shop_num].u_count++;
@@ -285,6 +284,9 @@ static void borg_think_shop_buy(int item)
 	borg_keypress('y');
 	borg_keypress('\r');
 	borg_keypress('\r');
+	
+	/* go to first Page */
+	if (item / 12) borg_keypress(' ');
 
 	/* Increment 'use' count */
 	borg_shops[shop_num].u_count++;
