@@ -70,25 +70,25 @@ F:USE_TRANS
 
 N:4:open door
 G:':U
-F:ICKY
+F:ICKY | OBJECT
 
 # 0x05 --> broken door
 
 N:5:broken door
 G:':u
-F:ICKY
+F:ICKY | OBJECT
 
 # 0x06 --> up stairs
 
 N:6:up staircase
 G:<:w
-F:USE_TRANS | ICKY | PERM
+F:USE_TRANS | ICKY | PERM | OBJECT
 
 # 0x07 --> down stairs
 
 N:7:down staircase
 G:>:w
-F:USE_TRANS | ICKY | PERM
+F:USE_TRANS | ICKY | PERM | OBJECT
 
 N:8:sand
 G:.:y
@@ -130,149 +130,149 @@ F:USE_TRANS
 
 N:32:door
 G:+:U
-F:BLOCK | ICKY
+F:BLOCK | ICKY | OBJECT
 
 # Pillar
 N:33:pillar
 G:#:D
-F:BLOCK | USE_TRANS | ICKY
+F:BLOCK | USE_TRANS | ICKY | OBJECT
 
 
 # 0x30 --> secret door
 
 N:48:granite wall
 G:#:w
-F:BLOCK | USE_TRANS | ICKY
+F:BLOCK | USE_TRANS | ICKY | OBJECT
 
 # 0x31 --> rubble
 
 N:49:pile of rubble
 G:::w
-F:BLOCK | USE_TRANS | ICKY
+F:BLOCK | USE_TRANS | ICKY | OBJECT
 
 # 0x32 --> magma vein
 
 N:50:magma vein
 G:#:s
-F:BLOCK | USE_TRANS | ICKY
+F:BLOCK | USE_TRANS | ICKY | OBJECT
 
 # 0x33 --> quartz vein
 
 N:51:quartz vein
 G:#:W
-F:BLOCK | USE_TRANS | ICKY
+F:BLOCK | USE_TRANS | ICKY | OBJECT
 
 # 0x34 --> magma vein + treasure
 # This terrain type may not actually be needed...
 N:52:magma vein
 G:#:s
-F:BLOCK | USE_TRANS | ICKY
+F:BLOCK | USE_TRANS | ICKY | OBJECT
 
 # 0x35 --> quartz vein + treasure
 # This terrain type may not actually be needed...
 N:53:quartz vein
 G:#:W
-F:BLOCK | USE_TRANS | ICKY
+F:BLOCK | USE_TRANS | ICKY | OBJECT
 
 # 0x36 --> magma vein + known treasure
 
 N:54:magma vein with treasure
 G:*:o
-F:BLOCK | USE_TRANS | ICKY
+F:BLOCK | USE_TRANS | ICKY | OBJECT
 
 # 0x37 --> quartz vein + known treasure
 
 N:55:quartz vein with treasure
 G:*:o
-F:BLOCK | USE_TRANS | ICKY
+F:BLOCK | USE_TRANS | ICKY | OBJECT
 
 # 0x38 --> granite wall -- basic
 
 N:56:granite wall
 G:#:w
-F:BLOCK | USE_TRANS | ICKY
+F:BLOCK | USE_TRANS | ICKY | OBJECT
 
 # 0x39 --> granite wall -- inner
 
 N:57:granite wall
 G:#:w
-F:BLOCK | USE_TRANS | ICKY
+F:BLOCK | USE_TRANS | ICKY | OBJECT
 
 # 0x3A --> granite wall -- outer
 
 N:58:granite wall
 G:#:w
-F:BLOCK | USE_TRANS | ICKY
+F:BLOCK | USE_TRANS | ICKY | OBJECT
 
 # 0x3B --> granite wall -- solid
 
 N:59:granite wall
 G:#:w
-F:BLOCK | USE_TRANS | ICKY
+F:BLOCK | USE_TRANS | ICKY | OBJECT
 
 # 0x3C --> permanent wall -- basic
 
 N:60:permanent wall
 G:#:w
-F:BLOCK | USE_TRANS | ICKY | PERM
+F:BLOCK | USE_TRANS | ICKY | PERM | OBJECT
 
 # 0x3D --> permanent wall -- inner
 
 N:61:permanent wall
 G:#:w
-F:BLOCK | USE_TRANS | ICKY | PERM
+F:BLOCK | USE_TRANS | ICKY | PERM | OBJECT
 
 # 0x3E --> permanent wall -- outer
 
 N:62:permanent wall
 G:#:w
-F:BLOCK | USE_TRANS | ICKY | PERM
+F:BLOCK | USE_TRANS | ICKY | PERM | OBJECT
 
 # 0x3F --> permanent wall -- solid
 
 N:63:permanent wall
 G:#:w
-F:BLOCK | USE_TRANS | ICKY | PERM
+F:BLOCK | USE_TRANS | ICKY | PERM | OBJECT
 
 N:64:explosive rune
 G:*:R
-F:USE_TRANS
+F:USE_TRANS | OBJECT
 
 N:65:Pattern startpoint
 G:*:w
-F:PERM
+F:PERM | OBJECT
 
 N:66:section of the Pattern
 G:*:B
-F:PERM
+F:PERM | OBJECT
 
 N:67:section of the Pattern
 G:*:b
-F:PERM
+F:PERM | OBJECT
 
 N:68:section of the Pattern
 G:*:B
-F:PERM
+F:PERM | OBJECT
 
 N:69:section of the Pattern
 G:*:b
-F:PERM
+F:PERM | OBJECT
 
 N:70:section of the Pattern
 G:*:W
-F:PERM
+F:PERM | OBJECT
 
 N:71:section of the Pattern (discharged)
 G:*:W
-F:PERM
+F:PERM | OBJECT
 
 N:72:Pattern exit
 G:*:w
-F:PERM
+F:PERM | OBJECT
 
 N:73:corrupted section of the Pattern
 G:*:D
-F:PERM
+F:PERM | OBJECT
 
 # 0x53 --> terrain -- deep water
 
@@ -294,7 +294,7 @@ F:USE_TRANS
 
 N:87:dark pit
 G:#:D
-F:USE_TRANS | ICKY
+F:USE_TRANS | ICKY | OBJECT
 
 N:88:dirt
 G:.:u
@@ -302,11 +302,11 @@ F:USE_TRANS
 
 N:89:patch of grass
 G:.:g
-F:USE_TRANS
+F:USE_TRANS | OBJECT
 
 N:90:compact rune
 G:^:D
-F:USE_TRANS
+F:USE_TRANS | OBJECT
 
 N:91:invisible wall
 G:.:w
@@ -326,66 +326,66 @@ F:USE_TRANS
 
 N:95:submerged tree
 G:%:b
-F:USE_TRANS | ICKY
+F:USE_TRANS | ICKY | OBJECT
 
 N:96:tree
 G:%:G
-F:HALF_LOS | USE_TRANS | ICKY
+F:HALF_LOS | USE_TRANS | ICKY | OBJECT
 
 N:97:rock face
 G:::u
-F:HALF_LOS | USE_TRANS | ICKY
+F:HALF_LOS | USE_TRANS | ICKY | OBJECT
 
 N:98:snow covered rock face
 G:::W
-F:HALF_LOS | USE_TRANS | ICKY
+F:HALF_LOS | USE_TRANS | ICKY | OBJECT
 
 N:99:boulder
 G:::y
-F:HALF_LOS | USE_TRANS | ICKY
+F:HALF_LOS | USE_TRANS | ICKY | OBJECT
 
 N:100:pine tree
 G:%:g
-F:HALF_LOS | USE_TRANS | ICKY
+F:HALF_LOS | USE_TRANS | ICKY | OBJECT
 
 N:101:snow covered tree
 G:%:w
-F:HALF_LOS | USE_TRANS | ICKY
+F:HALF_LOS | USE_TRANS | ICKY | OBJECT
 
 N:102:obelisk
 G:;:b
-F:HALF_LOS | USE_TRANS | ICKY
+F:HALF_LOS | USE_TRANS | ICKY | OBJECT
 
 N:103:pillar
 G:#:w
-F:HALF_LOS | USE_TRANS | ICKY
+F:HALF_LOS | USE_TRANS | ICKY | OBJECT
 
 N:112:stone fence
 G:::b
-F:HALF_LOS | USE_TRANS | ICKY | PERM
+F:HALF_LOS | USE_TRANS | ICKY | PERM | OBJECT
 
 N:113:well
 G:~:v
-F:HALF_LOS | USE_TRANS | ICKY | PERM
+F:HALF_LOS | USE_TRANS | ICKY | PERM | OBJECT
 
 N:114:fountain
 G:~:U
-F:HALF_LOS | USE_TRANS | ICKY | PERM
+F:HALF_LOS | USE_TRANS | ICKY | PERM | OBJECT
 
 N:115:jungle
 G:%:D
-F:BLOCK | USE_TRANS | ICKY
+F:BLOCK | USE_TRANS | ICKY | OBJECT
 
 
 
 
 N:128:bush
 G:%:y
-F:USE_TRANS
+F:USE_TRANS | OBJECT
 
 N:129:dead bush
 G:%:s
-F:USE_TRANS
+F:USE_TRANS | OBJECT
 
 N:130:long grass
 G:;:U
@@ -395,25 +395,25 @@ F:USE_TRANS
 
 N:131:rock
 G:::U
-F:USE_TRANS
+F:USE_TRANS | OBJECT
 
 #rock on snow
 
 N:132:rock
 G:::U
-F:USE_TRANS
+F:USE_TRANS | OBJECT
 
 # dead tree on general terrain
 
 N:133:dead tree
 G:%:u
-F:USE_TRANS | ICKY
+F:USE_TRANS | ICKY | OBJECT
 
 # dead tree on snow
 
 N:134:dead tree
 G:%:u
-F:USE_TRANS | ICKY
+F:USE_TRANS | ICKY | OBJECT
 
 N:135:snow
 G:.:W
