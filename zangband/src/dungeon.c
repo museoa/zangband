@@ -3981,6 +3981,13 @@ static void dungeon(void)
 		/* Hack -- Compress the object list occasionally */
 		if (o_cnt + 32 < o_max) compact_objects(0);
 
+		
+		/* Hack -- Compact the field list occasionally */
+		if (fld_cnt + 32 > max_fld_idx) compact_fields(64);
+
+		/* Hack -- Compress the field list occasionally */
+		if (fld_cnt + 32 < fld_max) compact_fields(0);
+
 		/*
 		 * Add energy to player and monsters.
 		 * Those with the most energy move first.
