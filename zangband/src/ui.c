@@ -529,6 +529,7 @@ bool display_menu(menu_type *options, int select, bool scroll, void (* disp)(voi
 	bool ask = FALSE;
 	char choice;
 	int num = 0;
+	int save_choice;
 	
 	/* Calculate the number of strings we have */
 	while (options[num].text) num++;
@@ -566,9 +567,13 @@ bool display_menu(menu_type *options, int select, bool scroll, void (* disp)(voi
         	return (FALSE);
         }
 		
-		/* Try to match with available options */
-		i = get_choice(choice, cnt, &ask);
-    
+		/* Try to get previously saved value */
+		if (!repeat_pull(&i))
+		{
+			/* Try to match with available options */
+			i = get_choice(choice, cnt, &ask);
+    	}
+		
 		/* No match? */
 		if (i == -1)
 		{
@@ -654,6 +659,8 @@ bool display_menu(menu_type *options, int select, bool scroll, void (* disp)(voi
 			bell("Illegal choice!");
 			continue;
 		}
+		
+		save_choice = i;
 
 		/* Find the action to call */
 		for (j = 0; j < num; j++)
@@ -680,6 +687,9 @@ bool display_menu(menu_type *options, int select, bool scroll, void (* disp)(voi
 					{
 						/* Restore the screen */
 						screen_load();
+						
+						/* Save for later */
+						repeat_push(save_choice);
 	
 						/* Success */
 						return (TRUE);
