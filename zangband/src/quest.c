@@ -238,7 +238,7 @@ static u16b find_good_dungeon(int level, int dist)
  * Look for an appropriate town with a distance appropriate
  * for the given level.
  */
-static u16b find_good_town(int dist)
+static u16b find_good_town(int *dist)
 {
 	int i;
 	
@@ -250,13 +250,16 @@ static u16b find_good_town(int dist)
 	
 	for (i = 0; i < place_count; i++)
 	{
+		/* Not current town */
+		if (i == p_ptr->place_num) continue;
+	
 		pl_ptr = &place[i];
 		
 		/* Want towns with buildings */
 		if (!pl_ptr->numstores) continue;
-			
+		
 		/* Get difference of distance in wilderness blocks and difficulty level */
-		score = abs(distance(pl_ptr->x, pl_ptr->y, p_ptr->px / 16, p_ptr->py / 16) - dist);
+		score = abs(distance(pl_ptr->x, pl_ptr->y, p_ptr->px / 16, p_ptr->py / 16) - *dist);
 		
 		/* The bigger the difference, the less likely a high score is */
 		score = randint1(WILD_SIZE - score); 
@@ -267,6 +270,10 @@ static u16b find_good_town(int dist)
 			best_place = i;
 		}
 	}
+	
+	/* Save distance to best town */
+	pl_ptr = &place[best_place];
+	*dist = distance(pl_ptr->x, pl_ptr->y, p_ptr->px / 16, p_ptr->py / 16);
 	
 	/* Best match to reward level */
 	return (best_place);
@@ -1485,7 +1492,7 @@ static quest_type *insert_message_quest(int dist)
 	q_ptr->x_type = QX_FIND_SHOP;
 	
 	/* Find a town that is roughly dist wilderness blocks away */
-	place_num = find_good_town(dist);
+	place_num = find_good_town(&dist);
 	
 	/* Get the place */
 	pl_ptr = &place[place_num];
