@@ -296,6 +296,7 @@ W:0:0:2:1
 A:1/1
 F:EASY_KNOW
 L:USE:	msgf("That tastes good.")
+D:A biscuit, cooked hard to last.
 
 N:23:& Strip~ of Venison
 G:,:u
@@ -304,6 +305,7 @@ W:0:0:2:2
 A:1/1
 F:EASY_KNOW
 L:USE:	msgf("That tastes good.")
+D:A piece of dried meat, from the haunch of a deer.
 
 N:24:& Slime Mold~
 G:,:g
@@ -331,6 +333,7 @@ W:0:0:5:1
 A:1/3
 F:EASY_KNOW
 L:USE:	msgf("That tastes good.")
+D:A jug of thick ale, to keep your hunger away.
 
 N:27:& Pint~ of Fine Wine
 G:,:r
@@ -339,6 +342,7 @@ W:0:0:10:2
 A:1/3
 F:EASY_KNOW
 L:USE:	msgf("That tastes good.")
+D:A rich, fruity wine to slake your hunger and thirst.
 
 ##### Extra digger #####
 
@@ -349,6 +353,8 @@ W:30:0:250:700
 A:30/12:50/1
 P:0:1d8:0:0:0
 F:SHOW_MODS | TUNNEL
+D:The digger that is wieldy enough to double as a weapon.
+
 
 ##### Edged Weapons #####
 
@@ -421,6 +427,7 @@ W:95:0:180:4000
 A:95/4
 P:0:6d5:0:0:0
 F:RES_CHAOS | SHOW_MODS
+D:The air seems to twist around this violet blade...
 
 N:37:& Two-Handed Sword~
 G:|:W
@@ -596,6 +603,7 @@ W:100:0:400:4300
 A:100/2
 P:0:5d8:0:0:0
 F:SLAY_UNDEAD | SHOW_MODS
+D:Dust and dry spatters decorate the head of this mighty weapon.
 
 N:58:& Lucerne Hammer~
 G:/:B
@@ -718,6 +726,7 @@ W:93:0:250:3500
 A:93/1:105/1
 P:0:8d4:0:0:0
 F:SHOW_MODS
+D:This blade seems to cut down foes as normal scythes do wheat.
 
 
 ##### Bows, Crossbows, Slings #####
@@ -817,6 +826,7 @@ W:4:0:60:10
 A:4/4
 P:0:1d2:0:0:0
 F:SHOW_MODS | TUNNEL
+D:A basic digging tool.
 
 N:85:& Gnomish Shovel~
 G:\:G
@@ -825,6 +835,7 @@ W:35:0:60:100
 A:35/4
 P:0:1d2:0:0:0
 F:SHOW_MODS | TUNNEL
+D:A well-crafted digging tool, ready to burrow.
 
 N:86:& Dwarven Shovel~
 G:\:B
@@ -833,6 +844,7 @@ W:55:0:120:300
 A:55/1
 P:0:1d3:0:0:0
 F:SHOW_MODS | TUNNEL
+D:An excellent digging tool, guaranteed to quickly shift rock.
 
 N:87:& Pick~
 G:\:s
@@ -841,6 +853,7 @@ W:17:0:150:50
 A:17/16
 P:0:1d3:0:0:0
 F:SHOW_MODS | TUNNEL
+D:A basic digging tool.
 
 N:88:& Orcish Pick~
 G:\:g
@@ -849,6 +862,7 @@ W:52:0:150:300
 A:52/4
 P:0:1d3:0:0:0
 F:SHOW_MODS | TUNNEL
+D:A crude but effective digging tool.
 
 N:89:& Dwarven Pick~
 G:\:b
@@ -857,6 +871,7 @@ W:75:0:200:600
 A:75/1
 P:0:1d4:0:0:0
 F:SHOW_MODS | TUNNEL
+D:The greatest of digging tools that cuts through any rock with ease.
 
 
 ##### Armor #####
@@ -1012,6 +1027,7 @@ I:37:1:0
 W:25:0:200:550
 A:43/1
 P:14:1d4:-5:0:-8
+D:This rusted heap still offers small protection, but hinders movement.
 
 N:111:Augmented Chain Mail~
 G:[:s
@@ -3293,6 +3309,8 @@ W:17:0:30:100
 A:17/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+D:A small, light-gray book, containing the simplest of good prayers 
+D:to lighten the way.
 
 N:331:[High Mass]
 G:?:W
@@ -3301,6 +3319,8 @@ W:20:0:30:1000
 A:35/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+D:A white book with invocations of healing, protection and 
+D:fighting evil.
 
 N:332:[Book of the Unicorn]
 G:?:w
@@ -3310,6 +3330,7 @@ A:65/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 F:EASY_KNOW
+D:A white grimoire with great spells of banishing evil.
 
 N:333:[Blessings of the Grail]
 G:?:w
@@ -3319,6 +3340,7 @@ A:95/3
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 F:EASY_KNOW
+D:A blindingly white tome, shining with the awesome power of Life.
 
 N:334:[Beginner's Handbook]
 G:?:B
@@ -3327,6 +3349,8 @@ W:17:0:30:100
 A:17/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+D:A small light-blue book with simple sorcerous spells of detection,
+D:teleportation and clouding the minds of your foes.
 
 N:335:[Master Sorcerer's Handbook]
 G:?:B
@@ -3335,6 +3359,8 @@ W:20:0:30:1000
 A:35/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+D:A blue book containing sorcerous spells of knowledge, speed,
+D:and hindering your enemies.
 
 N:336:[Pattern Sorcery]
 G:?:b
@@ -3344,6 +3370,7 @@ A:65/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 F:EASY_KNOW
+D:A deep-blue tome, containing great magics of mind over matter.
 
 N:337:[Grimoire of Power]
 G:?:b
@@ -3353,6 +3380,8 @@ A:95/3
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 F:EASY_KNOW
+D:A mighty grimoire glowing with eldritch blue from the magics
+D:it contains.
 
 ##### Chests #####
 
@@ -3764,6 +3793,8 @@ W:17:0:30:100
 A:17/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+D:A small, light-green book with nature rites of detection, curing,
+D:and other aid.
 
 N:380:[Nature Mastery]
 G:?:G
@@ -3772,6 +3803,8 @@ W:20:0:30:1000
 A:35/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+D:A green book with rites showing both the power and enlightenment
+D:of nature's magics.
 
 N:381:[Nature's Gifts]
 G:?:g
@@ -3781,6 +3814,8 @@ A:75/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 F:EASY_KNOW
+D:A sheaf of papers in deep-green leather bindings, filled with
+D:powerful spells of nature's protection.
 
 N:382:[Nature's Wrath]
 G:?:g
@@ -3790,6 +3825,8 @@ A:100/2
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 F:EASY_KNOW
+D:A mottled-green grimoire, vibrating with the power of nature's
+D:destructive magics.
 
 N:383:[Sign of Chaos]
 G:?:R
@@ -3798,6 +3835,7 @@ W:17:0:30:100
 A:17/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+D:A light-red book, containing minor chaotic offensive magics.
 
 N:384:[Chaos Mastery]
 G:?:R
@@ -3806,6 +3844,7 @@ W:20:0:30:1000
 A:35/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+D:A red book with many spells of causing destruction and chaos.
 
 N:385:[Chaos Channels]
 G:?:r
@@ -3815,6 +3854,8 @@ A:75/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 F:EASY_KNOW
+D:A deep-red codex, filled with ways of manifesting chaos upon this
+D:reality or even twisting life and reality itself.
 
 N:386:[Armageddon Tome]
 G:?:r
@@ -3824,6 +3865,8 @@ A:105/3
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 F:EASY_KNOW
+D:A fiery-red tome that sizzles with power, barely holding in check
+D:the most destructive magics imaginable.
 
 N:387:[Black Prayers]
 G:?:D
@@ -3832,6 +3875,7 @@ W:17:0:30:100
 A:17/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+D:A small dark-gray book, containing minor curses and ways of hurting.
 
 N:388:[Black Mass]
 G:?:D
@@ -3840,6 +3884,8 @@ W:20:0:30:1000
 A:35/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+D:A black book with many evil incantations and spells of pain, terror,
+D:and death.
 
 ##### Junk #####
 
@@ -4325,6 +4371,8 @@ A:75/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 F:EASY_KNOW
+D:This tome of blackest midnight holds spells to bind evil to oneself
+D:and bringing darkness and death upon others.
 
 N:424:[Necronomicon]
 G:?:v
@@ -4334,6 +4382,8 @@ A:95/3
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 F:EASY_KNOW
+D:This mighty grimoire of death seems to suck all life and light from 
+D:around it. Death in all it's forms is controlled by the rituals within.
 
 # Additional rings
 
@@ -4717,6 +4767,7 @@ W:17:0:30:100
 A:17/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+D:This light-brown deck of cards contains small magics of teleportation.
 
 N:513:[Deck of Many Things]
 G:?:U
@@ -4725,6 +4776,7 @@ W:20:0:30:1000
 A:35/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+D:A amber deck of cards, containing magics of summoning and movement.
 
 N:514:[Trumps of Doom]
 G:?:o
@@ -4734,6 +4786,7 @@ A:65/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 F:EASY_KNOW
+D:A exquisite deck of cards, containing great summoning magics.
 
 N:515:[Five Aces]
 G:?:o
@@ -4743,6 +4796,8 @@ A:95/3
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 F:EASY_KNOW
+D:The most powerful of all trump decks, these mystical cards contain
+D:great magics of summoning and knowledge.
 
 # Arcane Spellbooks
 
@@ -4753,6 +4808,8 @@ W:10:0:30:100
 A:10/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+D:A small drab gray spellbook, containing the simplest of common
+D:utility spells.
 
 N:517:[Minor Arcana]
 G:?:s
@@ -4761,6 +4818,7 @@ W:15:0:30:250
 A:15/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+D:A gray spellbook with spells of detection and protection.
 
 N:518:[Major Arcana]
 G:?:s
@@ -4769,6 +4827,7 @@ W:20:0:30:1000
 A:20/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+D:A gray spellbook with a mixture of common medium-level spells.
 
 N:519:[Manual of Mastery]
 G:?:s
@@ -4777,6 +4836,7 @@ W:20:0:30:2500
 A:35/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+D:A gray spellbook containing high-level utility spells.
 
 N:520:Reflection
 G:":d
