@@ -1759,6 +1759,9 @@ bool target_able(int m_idx)
 	/* Monster must be visible */
 	if (!m_ptr->ml) return (FALSE);
 
+	/* Monster must not be a mimic */
+	if (m_ptr->smart & SM_MIMIC) return (FALSE);
+	
 	/* Monster must be projectable */
 	if (!projectable(py, px, m_ptr->fy, m_ptr->fx)) return (FALSE);
 
@@ -1769,6 +1772,94 @@ bool target_able(int m_idx)
 	return (TRUE);
 }
 
+/* Hack - function to get object name of mimic */
+static bool mimic_desc(char *m_name, monster_race *r_ptr)
+{
+	/* Hack - look at default character */
+	switch (r_ptr->d_char)
+	{
+		case '$':
+		{
+			/* XXX XXX XXX Mega-Hack */
+			strcpy(m_name, r_name + r_ptr->name	+ sizeof("Creeping ") - 1);
+			return (TRUE);
+		}
+			
+		case '|':
+		{
+			/* Hack */
+			strcpy(m_name, r_name + r_ptr->name);
+			return (TRUE);
+		}
+			
+		case '?':
+		{
+			if (strstr(r_ptr->name + r_name, "Tome "))
+			{
+				strcpy(m_name, "tome");
+			}
+			else
+			{
+				strcpy(m_name, "scroll");
+			}
+			
+			return (TRUE);
+		}
+		
+		case '!':
+		{
+			strcpy(m_name, "potion");
+			return (TRUE);
+		}
+		
+		case '=':
+		{
+			strcpy(m_name, "ring");
+			return (TRUE);
+		}
+		
+		case '+':
+		{
+			strcpy(m_name, "door");
+			return (TRUE);
+		}
+		
+		case '&':
+		{
+			strcpy(m_name, "chest");
+			return (TRUE);
+		}
+		
+		case '(':
+		{
+			strcpy(m_name, "cloak");
+			return (TRUE);
+		}
+		
+		case '>':
+		{
+			strcpy(m_name, "down staircase");
+			return (TRUE);
+		}
+		
+		case '.':
+		{
+			/* Hack - do not notice lurkers etc. */
+			return (FALSE);
+		}
+		
+		case '#':
+		{
+			strcpy(m_name, "granite wall");
+			return (TRUE);
+		}
+	
+		default:
+		{
+			return (TRUE);
+		}
+	}
+}
 
 
 
@@ -2058,6 +2149,13 @@ static void target_set_prepare(int mode)
 			/* Require hostile creatures if "TARGET_HOST" is used */
 			if ((mode & (TARGET_HOST)) && !is_hostile(&m_list[c_ptr->m_idx])) continue;
 
+			/* Do not target unknown mimics if we want monsters */
+			if ((mode & (TARGET_KILL | TARGET_HOST)) &&
+				 (m_list[c_ptr->m_idx].smart & SM_MIMIC))
+			{
+				continue;
+			}
+
 			/* Save the location */
 			temp_x[temp_n] = x;
 			temp_y[temp_n] = y;
@@ -2170,111 +2268,15 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 				bool recall = FALSE;
 
 				char m_name[80];
-
+				
 				/* Not boring */
 				boring = FALSE;
 
-				/* Get the monster name ("a kobold") */
-				monster_desc(m_name, m_ptr, 0x08);
-
-				/* Hack -- track this monster race */
-				monster_race_track(m_ptr->r_idx);
-
-				/* Hack -- health bar for this monster */
-				health_track(c_ptr->m_idx);
-
-				/* Hack -- handle stuff */
-				handle_stuff();
-
-				/* Interact */
-				while (1)
+				/* Check for mimics + obtain object description */
+				if ((m_ptr->smart & SM_MIMIC) && mimic_desc(m_name, r_ptr))
 				{
-					/* Recall */
-					if (recall)
-					{
-						/* Save */
-						screen_save();
-
-						/* Recall on screen */
-						screen_roff(m_ptr->r_idx, 0);
-
-						/* Hack -- Complete the prompt (again) */
-						Term_addstr(-1, TERM_WHITE, format("  [r,%s]", info));
-
-						/* Command */
-						query = inkey();
-
-						/* Restore */
-						screen_load();
-					}
-
-					/* Normal */
-					else
-					{
-						cptr attitude;
-
-						if (is_pet(m_ptr))
-							attitude = " (pet) ";
-						else if (is_friendly(m_ptr))
-							attitude = " (friendly) ";
-						else
-							attitude = " ";
-
-						/* Describe, and prompt for recall */
-						sprintf(out_val, "%s%s%s%s (%s)%s[r,%s]",
-						    s1, s2, s3, m_name, look_mon_desc(c_ptr->m_idx),
-						    attitude, info);
-
-						prt(out_val, 0, 0);
-
-						/* Place cursor */
-						move_cursor_relative(y, x);
-
-						/* Command */
-						query = inkey();
-					}
-
-					/* Normal commands */
-					if (query != 'r') break;
-
-					/* Toggle recall */
-					recall = !recall;
-				}
-
-				/* Always stop at "normal" keys */
-				if ((query != '\r') && (query != '\n') && (query != ' ')) break;
-
-				/* Sometimes stop at "space" key */
-				if ((query == ' ') && !(mode & (TARGET_LOOK))) break;
-
-				/* Change the intro */
-				s1 = "It is ";
-
-				/* Hack -- take account of gender */
-				if (r_ptr->flags1 & (RF1_FEMALE)) s1 = "She is ";
-				else if (r_ptr->flags1 & (RF1_MALE)) s1 = "He is ";
-
-				/* Use a preposition */
-				s2 = "carrying ";
-
-				/* Scan all objects being carried */
-				for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx)
-				{
-					char o_name[80];
-
-					object_type *o_ptr;
-
-					/* Acquire object */
-					o_ptr = &o_list[this_o_idx];
-
-					/* Acquire next object */
-					next_o_idx = o_ptr->next_o_idx;
-
-					/* Obtain an object description */
-					object_desc(o_name, o_ptr, TRUE, 3);
-
 					/* Describe the object */
-					sprintf(out_val, "%s%s%s%s [%s]", s1, s2, s3, o_name, info);
+					sprintf(out_val, "%s%s%s%s [%s]", s1, s2, s3, m_name, info);
 					prt(out_val, 0, 0);
 					move_cursor_relative(y, x);
 					query = inkey();
@@ -2283,17 +2285,139 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 					if ((query != '\r') && (query != '\n') && (query != ' ')) break;
 
 					/* Sometimes stop at "space" key */
+					if ((query == ' ') && !(mode & TARGET_LOOK)) break;
+
+					/* Change the intro */
+					s1 = "It is ";
+
+					/* Preposition */
+					s2 = "on ";
+				}
+				
+				/* Normal monsters */
+				else
+				{
+					/* Get the monster name ("a kobold") */
+					monster_desc(m_name, m_ptr, 0x08);
+
+					/* Hack -- track this monster race */
+					monster_race_track(m_ptr->r_idx);
+	
+					/* Hack -- health bar for this monster */
+					health_track(c_ptr->m_idx);
+
+					/* Hack -- handle stuff */
+					handle_stuff();
+
+					/* Interact */
+					while (1)
+					{
+						/* Recall */
+						if (recall)
+						{
+							/* Save */
+							screen_save();
+
+							/* Recall on screen */
+							screen_roff(m_ptr->r_idx, 0);
+
+							/* Hack -- Complete the prompt (again) */
+							Term_addstr(-1, TERM_WHITE, format("  [r,%s]", info));
+	
+							/* Command */
+							query = inkey();
+
+							/* Restore */
+							screen_load();
+						}
+
+						/* Normal */
+						else
+						{
+							cptr attitude;
+
+							if (is_pet(m_ptr))
+								attitude = " (pet) ";
+							else if (is_friendly(m_ptr))
+								attitude = " (friendly) ";
+							else
+								attitude = " ";
+
+							/* Describe, and prompt for recall */
+							sprintf(out_val, "%s%s%s%s (%s)%s[r,%s]",
+							    s1, s2, s3, m_name, look_mon_desc(c_ptr->m_idx),
+						    	attitude, info);
+
+							prt(out_val, 0, 0);
+
+							/* Place cursor */
+							move_cursor_relative(y, x);
+
+							/* Command */
+							query = inkey();
+						}
+
+						/* Normal commands */
+						if (query != 'r') break;
+
+						/* Toggle recall */
+						recall = !recall;
+					}
+
+					/* Always stop at "normal" keys */
+					if ((query != '\r') && (query != '\n') && (query != ' ')) break;
+
+					/* Sometimes stop at "space" key */
 					if ((query == ' ') && !(mode & (TARGET_LOOK))) break;
 
 					/* Change the intro */
-					s2 = "also carrying ";
+					s1 = "It is ";
+
+					/* Hack -- take account of gender */
+					if (r_ptr->flags1 & (RF1_FEMALE)) s1 = "She is ";
+					else if (r_ptr->flags1 & (RF1_MALE)) s1 = "He is ";
+
+					/* Use a preposition */
+					s2 = "carrying ";
+
+					/* Scan all objects being carried */
+					for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx)
+					{
+						char o_name[80];
+	
+						object_type *o_ptr;
+
+						/* Acquire object */
+						o_ptr = &o_list[this_o_idx];
+
+						/* Acquire next object */
+						next_o_idx = o_ptr->next_o_idx;
+
+						/* Obtain an object description */
+						object_desc(o_name, o_ptr, TRUE, 3);
+
+						/* Describe the object */
+						sprintf(out_val, "%s%s%s%s [%s]", s1, s2, s3, o_name, info);
+						prt(out_val, 0, 0);
+						move_cursor_relative(y, x);
+						query = inkey();
+
+						/* Always stop at "normal" keys */
+						if ((query != '\r') && (query != '\n') && (query != ' ')) break;
+	
+						/* Sometimes stop at "space" key */
+						if ((query == ' ') && !(mode & (TARGET_LOOK))) break;
+
+						/* Change the intro */
+						s2 = "also carrying ";
+					}
+
+					/* Double break */
+					if (this_o_idx) break;
+
+					/* Use a preposition */
+					s2 = "on ";
 				}
-
-				/* Double break */
-				if (this_o_idx) break;
-
-				/* Use a preposition */
-				s2 = "on ";
 			}
 		}
 

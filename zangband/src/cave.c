@@ -876,7 +876,7 @@ static void variable_player_graph(byte *a, char *c)
  * which means their color changes, and "ATTR_CLEAR", which means they take
  * the color of whatever is under them, and "CHAR_CLEAR", which means that
  * they take the symbol of whatever is under them.  Technically, the flag
- * "CHAR_MULTI" is supposed to indicate that a monster looks strange when
+ * "CHAR_MIMIC" is supposed to indicate that a monster looks strange when
  * examined, but this flag is currently ignored.  All of these flags are
  * ignored if the "avoid_other" option is set, since checking for these
  * conditions is expensive and annoying on some systems.

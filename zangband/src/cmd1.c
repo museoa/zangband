@@ -1568,6 +1568,19 @@ void py_attack(int y, int x)
 
 	/* Track a new monster */
 	if (m_ptr->ml) health_track(c_ptr->m_idx);
+	
+	/* Look to see if we've spotted a mimic */
+	if (m_ptr->smart & SM_MIMIC)
+	{
+		/* Toggle flag */
+		m_ptr->smart &= ~(SM_MIMIC);
+		
+		/* It is in the monster list now */
+		update_mon_vis(m_ptr->r_idx, 1);
+		
+		/* We've spotted it */
+		msg_format("You've found a %s!", m_name);
+	}
 
 	/* Stop if friendly */
 	if (!is_hostile(m_ptr) &&

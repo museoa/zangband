@@ -2369,7 +2369,7 @@
 #define SM_OPP_FIRE             0x00040000
 #define SM_OPP_COLD             0x00080000
 #define SM_OPP_POIS             0x00100000
-#define SM_OPP_XXX1             0x00200000 /* (unused) */
+#define SM_MIMIC                0x00200000 /* XXX Unknown Mimic */
 #define SM_CLONED               0x00400000 /* XXX Cloned */
 #define SM_PET                  0x00800000 /* XXX Pet */
 #define SM_IMM_ACID             0x01000000
@@ -2929,14 +2929,14 @@
 #define RF1_MALE                0x00000004  /* Male gender */
 #define RF1_FEMALE              0x00000008  /* Female gender */
 #define RF1_CHAR_CLEAR          0x00000010  /* Absorbs symbol */
-#define RF1_CHAR_MULTI          0x00000020  /* Changes symbol */
+#define RF1_CHAR_MIMIC          0x00000020  /* Changes symbol */
 #define RF1_ATTR_CLEAR          0x00000040  /* Absorbs color */
 #define RF1_ATTR_MULTI          0x00000080  /* Changes color */
 #define RF1_FORCE_DEPTH         0x00000100  /* Start at "correct" depth */
 #define RF1_FORCE_MAXHP         0x00000200  /* Start with max hitpoints */
 #define RF1_FORCE_SLEEP         0x00000400  /* Start out sleeping */
 #define RF1_FORCE_EXTRA         0x00000800  /* Start out something */
-#define RF1_XXX1                0x00001000
+#define RF1_XXX_1               0x00001000  /* Unused */
 #define RF1_FRIENDS             0x00002000  /* Arrive with some friends */
 #define RF1_ESCORT              0x00004000  /* Arrive with an escort */
 #define RF1_ESCORTS             0x00008000  /* Arrive with some escorts */

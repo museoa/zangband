@@ -2755,6 +2755,19 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 			if (special_hit) armour /= 3;
 #endif /* 0 */
 
+			/* Look to see if we've spotted a mimic */
+			if ((m_ptr->smart & SM_MIMIC) && m_ptr->ml)
+			{
+				/* Toggle flag */
+				m_ptr->smart &= ~(SM_MIMIC);
+				
+				/* It is in the monster list now */
+				update_mon_vis(m_ptr->r_idx, 1);
+		
+				/* We've spotted it */
+				msg_format("You've found a %s!", m_name);
+			}
+
 			/* Did we hit it (penalize range) */
 			if (test_hit_fire(chance2 + sleeping_bonus, armour, m_ptr->ml))
 			{
@@ -3159,6 +3172,19 @@ void do_cmd_throw_aux(int mult)
 			/* Note the collision */
 			hit_body = TRUE;
 
+			/* Look to see if we've spotted a mimic */
+			if ((m_ptr->smart & SM_MIMIC) && m_ptr->ml)
+			{
+				/* Toggle flag */
+				m_ptr->smart &= ~(SM_MIMIC);
+				
+				/* It is in the monster list now */
+				update_mon_vis(m_ptr->r_idx, 1);
+		
+				/* We've spotted it */
+				msg_format("You've found a %s!", m_name);
+			}
+			
 			/* Did we hit it (penalize range) */
 			if (test_hit_fire(chance - cur_dis, r_ptr->ac + terrain_bonus, m_ptr->ml))
 			{

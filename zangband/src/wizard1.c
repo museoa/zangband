@@ -1806,9 +1806,9 @@ static void spoil_mon_info(cptr fname)
 			else spoil_out("an escort.  ");
 		}
 
-		if ((flags1 & RF1_XXX1) || (flags1 & RF1_XXX1))
+		if (flags1 & (RF1_CHAR_MIMIC))
 		{
-			sprintf(buf, "%s usually appears in XXX1s.  ", wd_che[msex]);
+			sprintf(buf, "%s is a mimic.  ", wd_che[msex]);
 			spoil_out(buf);
 		}
 

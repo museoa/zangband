@@ -2397,6 +2397,18 @@ bool make_attack_spell(int m_idx)
 	/* Remember what the monster did to us */
 	if (seen)
 	{
+		/* Look to see if we've spotted a mimic */
+		if (m_ptr->smart & SM_MIMIC)
+		{
+			/* Toggle flag */
+			m_ptr->smart &= ~(SM_MIMIC);
+			
+			/* It is in the monster list now */
+			update_mon_vis(m_ptr->r_idx, 1);
+		
+			/*Hack - no need for a message */
+		}
+		
 		/* Inate spell */
 		if (thrown_spell < 32 * 4)
 		{

@@ -1397,9 +1397,12 @@ void update_mon(int m_idx, bool full)
 			/* Mark as visible */
 			m_ptr->ml = TRUE;
 
-			/* Increment monster visibility counter */
-			update_mon_vis(m_ptr->r_idx, 1);
-
+			/* Increment monster visibility counter if we know about it */
+			if (!(m_ptr->smart & SM_MIMIC))
+			{
+				update_mon_vis(m_ptr->r_idx, 1);
+			}
+			
 			/* Draw the monster */
 			lite_spot(fy, fx);
 
@@ -1433,8 +1436,11 @@ void update_mon(int m_idx, bool full)
 			/* Mark as not visible */
 			m_ptr->ml = FALSE;
 
-			/* Decrement monster visibility counter */
-			update_mon_vis(m_ptr->r_idx, -1);
+			/* Decrement monster visibility counter if we know about it */
+			if (!(m_ptr->smart & SM_MIMIC))
+			{
+				update_mon_vis(m_ptr->r_idx, -1);
+			}
 			
 			/* Erase the monster */
 			lite_spot(fy, fx);
@@ -1761,6 +1767,12 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 		m_ptr->mflag |= (MFLAG_BORN);
 	}
 
+	/* Hack - are we a mimic? */
+	if (r_ptr->flags1 & RF1_CHAR_MIMIC) 
+	{
+		/* The player doesn't know about us yet */
+		m_ptr->smart |= SM_MIMIC;
+	}
 
 	/* Update the monster */
 	update_mon(c_ptr->m_idx, TRUE);

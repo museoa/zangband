@@ -1531,6 +1531,16 @@ bool make_attack_normal(int m_idx)
 				{
 					r_ptr->r_blows[ap_cnt]++;
 				}
+				
+				/* Look to see if we've spotted a mimic */
+				if (m_ptr->smart & SM_MIMIC)
+				{
+					/* Toggle flag */
+					m_ptr->smart &= ~(SM_MIMIC);
+					
+					/* It is in the monster list now */
+					update_mon_vis(m_ptr->r_idx, 1);
+				}
 			}
 		}
 	}

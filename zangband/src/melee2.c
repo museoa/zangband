@@ -1564,6 +1564,32 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 			/* Message */
 			if (act && see_either)
 			{
+				/* Look to see if we've spotted a mimic */
+				if ((m_ptr->smart & SM_MIMIC) && see_m)
+				{
+					/* Toggle flag */
+					m_ptr->smart &= ~(SM_MIMIC);
+					
+					/* It is in the monster list now */
+					update_mon_vis(m_ptr->r_idx, 1);
+		
+					/* We've spotted it */
+					msg_format("You see a %s!", m_name);
+				}
+
+				/* Look to see if we've spotted a mimic */
+				if ((t_ptr->smart & SM_MIMIC) && see_t)
+				{
+					/* Toggle flag */
+					t_ptr->smart &= ~(SM_MIMIC);
+
+					/* It is in the monster list now */
+					update_mon_vis(t_ptr->r_idx, 1);
+		
+					/* We've spotted it */
+					msg_format("You see a %s!", t_name);
+				}
+
 				if ((p_ptr->image) && one_in_(3))
 				{
 					strfmt(temp, "%s %s.",
@@ -1929,6 +1955,9 @@ static void process_monster(int m_idx)
 
 	monster_type    *y_ptr;
 
+	
+	char m_name[80];
+
 	bool            do_turn;
 	bool            do_move;
 	bool            do_view;
@@ -2040,7 +2069,7 @@ static void process_monster(int m_idx)
 				m_ptr->csleep = 0;
 
 				/* Notice the "waking up" */
-				if (m_ptr->ml)
+				if ((m_ptr->ml) && (!(m_ptr->smart & SM_MIMIC)))
 				{
 					char m_name[80];
 
@@ -2131,7 +2160,7 @@ static void process_monster(int m_idx)
 			m_ptr->confused = 0;
 
 			/* Message if visible */
-			if (m_ptr->ml)
+			if ((m_ptr->ml) && (!(m_ptr->smart & SM_MIMIC)))
 			{
 				char m_name[80];
 
@@ -2208,8 +2237,6 @@ static void process_monster(int m_idx)
 			}
 		}
 	}
-
-
 
 
 	/* Attempt to "multiply" if able and allowed */
@@ -2359,11 +2386,6 @@ static void process_monster(int m_idx)
 	{
 		/* Try four "random" directions */
 		mm[0] = mm[1] = mm[2] = mm[3] = 5;
-
-		/* Look for an enemy */
-#if 0  /* Hack - Too slow.  Mimic pits are horrible with this on. */
-		get_enemy_dir(m_ptr, mm);
-#endif /* 0 */
 	}
 
 	/* Pets will follow the player */
@@ -2700,7 +2722,22 @@ static void process_monster(int m_idx)
 			/* Take a turn */
 			do_turn = TRUE;
 
-			
+			/* Look to see if we've spotted a mimic */
+			if ((m_ptr->smart & SM_MIMIC) && m_ptr->ml)
+			{
+				/* Toggle flag */
+				m_ptr->smart &= ~(SM_MIMIC);
+		
+				/* It is in the monster list now */
+				update_mon_vis(m_ptr->r_idx, 1);
+		
+				/* Acquire the monster name */
+				monster_desc(m_name, m_ptr, 0x04);
+				
+				/* We've spotted it */
+				msg_format("You see a %s!", m_name);
+			}
+
 			/* Process fields under the monster. */
 			field_hook(&old_ptr->fld_idx,
 				 FIELD_ACT_MONSTER_LEAVE, (vptr) m_ptr);
@@ -2780,7 +2817,6 @@ static void process_monster(int m_idx)
 
 					u32b flg3 = 0L;
 
-					char m_name[80];
 					char o_name[80];
 
 					/* Extract some flags */
