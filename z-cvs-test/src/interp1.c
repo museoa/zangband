@@ -391,9 +391,9 @@ int dump_object_info(char *varName, object_type *o_ptr, int index)
 	}
 
 	/* Inscription */
-	if (get_user_inscription(o_ptr))
+	if (o_ptr->inscription)
 	{
-		strcpy(buf, quark_str(get_user_inscription(o_ptr)));
+		strcpy(buf, quark_str(o_ptr->inscription));
 	}
 	else
 	{
@@ -3814,7 +3814,7 @@ void angtk_examine(int y, int x, char *out_val)
 	s3 = "";
 
 	/* The player */
-	if (player_is_here(y, x))
+	if ((py == y) && (px == x))
 	{
 		/* Description */
 		s1 = "You are ";

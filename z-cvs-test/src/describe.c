@@ -633,9 +633,9 @@ int DumpObjectInfo(object_type *o_ptr, char *varName)
 	}
 
 	note = "";
-	if (get_user_inscription(o_ptr))
+	if (o_ptr->inscription)
 	{
-		note = (char *) quark_str(get_user_inscription(o_ptr));
+		note = (char *) quark_str(o_ptr->inscription);
 	}
 	if (ExtToUtf_SetArrayValueString(varName, "note", note) != TCL_OK)
 	{

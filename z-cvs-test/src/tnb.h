@@ -55,11 +55,6 @@
 #define p_ptr_auto_roller autoroller
 #define p_ptr_maximize maximize_mode
 #define p_ptr_preserve preserve_mode
-#define Rand_normal randnor
-#define set_user_inscription(o,q) o->inscription = q
-#define get_user_inscription(o) o->inscription
-#define player_is_here(y,x) \
-	(((y) == py) && ((x) == px))
 
 /*
  * Angband, KAngband and OAngband have monster_lore, while

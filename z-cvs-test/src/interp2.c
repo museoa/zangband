@@ -29,9 +29,9 @@ static char *object_inscription(object_type *o_ptr, char *buf)
 	buf[0] = '\0';
 
 	/* Use the user's inscription if available */
-	if (get_user_inscription(o_ptr))
+	if (o_ptr->inscription)
 	{
-		(void) strcpy(buf, quark_str(get_user_inscription(o_ptr)));
+		(void) strcpy(buf, quark_str(o_ptr->inscription));
 	}
 
 	return buf;
@@ -878,12 +878,12 @@ objcmd_equipment(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 				if (strlen(t))
 				{
 					/* Save the inscription */
-					set_user_inscription(o_ptr, quark_add(t));
+					o_ptr->inscription = quark_add(t);
 				}
 				else
 				{
 					/* Clear the inscription */
-					set_user_inscription(o_ptr, 0);
+					o_ptr->inscription =  0;
 				}
 		
 				/* Combine the pack */
@@ -1212,12 +1212,12 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 				if (strlen(t))
 				{
 					/* Save the inscription */
-					set_user_inscription(o_ptr, quark_add(t));
+					o_ptr->inscription = quark_add(t);
 				}
 				else
 				{
 					/* Clear the inscription */
-					set_user_inscription(o_ptr, 0);
+					o_ptr->inscription = 0;
 				}
 		
 				/* Combine the pack */
@@ -2770,12 +2770,12 @@ objcmd_inventory(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 				if (strlen(t))
 				{
 					/* Save the inscription */
-					set_user_inscription(o_ptr, quark_add(t));
+					o_ptr->inscription = quark_add(t);
 				}
 				else
 				{
 					/* Clear the inscription */
-					set_user_inscription(o_ptr, 0);
+					o_ptr->inscription = 0;
 				}
 		
 				/* Combine the pack */
