@@ -821,7 +821,7 @@ bool identify_fully_aux(const object_type *o_ptr)
 	/* Indicate if fully known */
 	if (o_ptr->ident & IDENT_MENTAL)
 	{
-		info[i++] = "You have full knowlege of this item.";
+		info[i++] = "You have full knowledge of this item.";
 	}
 	
 	/* Mega-Hack -- describe activation if item is identified */
