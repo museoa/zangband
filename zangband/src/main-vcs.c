@@ -329,12 +329,18 @@ static int active;
 
 static void Term_init_vcs(term *t)
 {
+	/* Ignore t */
+	(void) t;
+	
 	if (active++) return;
 	keymap_game();
 }
 
 static void Term_nuke_vcs(term *t)
 {
+	/* Ignore t */
+	(void) t;
+	
 	if (--active) return;
 
 	lseek(fd_vcsa,4+2*s_width*(s_height-1),SEEK_SET);
@@ -408,7 +414,8 @@ static void term_data_link(int x0,int y0,int x1,int y1)
 errr init_vcs(int argc,char **argv)
 {
 	int i;
-	unsigned char *c;
+	char *c;
+	byte *cc;
 	int frame=1,add_std_win=1;
 
 	{
@@ -442,10 +449,10 @@ errr init_vcs(int argc,char **argv)
 	}
 
 	/* clear screen and last row */
-	for (c=screen,i=0;i<s_width*(s_height+1);i++)
+	for (cc=screen,i=0;i<s_width*(s_height+1);i++)
 	{
-		*c++=' ';
-		*c++=0x07;
+		*cc++=' ';
+		*cc++=0x07;
 	}
 	row_clear=&screen[s_height*s_width*2];
 
@@ -536,15 +543,15 @@ errr init_vcs(int argc,char **argv)
 	if (frame)
 	{
 		int y;
-		for (c=screen,i=0;i<s_width*s_height;i++)
+		for (cc=screen,i=0;i<s_width*s_height;i++)
 		{
-			*c++=' ';
-			*c++=attr_for_color[1]+(attr_for_color[7]<<4);
+			*cc++=' ';
+			*cc++=attr_for_color[1]+(attr_for_color[7]<<4);
 		}
 		for (i=0;i<num_term;i++)
 		{
-			for (c=data[i].base,y=data[i].sy;y;y--,c+=2*s_width)
-				memcpy(c,row_clear,data[i].sx*2);
+			for (cc=data[i].base,y=data[i].sy;y;y--,cc+=2*s_width)
+				memcpy(cc,row_clear,data[i].sx*2);
 		}
 	}
 
