@@ -12,6 +12,10 @@
 
 #include "angband.h"
 
+/* Temp object used to return an object not allocated via o_pop() yet. */
+static object_type temp_object;
+
+
 /*
  * Excise a dungeon object from any stacks
  */
@@ -163,13 +167,12 @@ void delete_object_list(s16b *o_idx_ptr)
 void drop_object_list(s16b *o_idx_ptr, int x, int y)
 {
     object_type *o_ptr, *q_ptr;
-    object_type temp_object;
 
 	/* Drop objects being carried */
 	OBJ_ITT_START (*o_idx_ptr, o_ptr)
 	{
 		/* Get the object */
-		q_ptr = item_split(o_ptr, o_ptr->number, &temp_object);
+		q_ptr = item_split(o_ptr, o_ptr->number);
 
 		/* Drop it */
 		drop_near(q_ptr, -1, x, y);
@@ -1830,11 +1833,6 @@ void object_copy(object_type *o_ptr, const object_type *j_ptr)
  */
 object_type *object_prep(int k_idx)
 {
-    /*
-     * The use of a static buffer object here could cause problems if
-     * this function is called several times consecutively
-     */
-    static object_type temp_object;
     object_type *o_ptr = &temp_object;
 
 	object_kind *k_ptr = &k_info[k_idx];
@@ -5092,8 +5090,10 @@ void item_describe(object_type *o_ptr)
  * original pile's list, but will be in the static
  * temp_object defined above. 
  */
-object_type *item_split(object_type *o_ptr, int num, object_type *q_ptr)
+object_type *item_split(object_type *o_ptr, int num)
 {
+	object_type *q_ptr = &temp_object;
+
 	/* Paranoia */
 	if (o_ptr->number < num) num = o_ptr->number;
 
@@ -5428,15 +5428,14 @@ object_type *inven_takeoff(object_type *o_ptr, int amt)
 
 	char o_name[256];
     object_type *q_ptr;
-    object_type temp_object;
-
+ 
 	cptr act;
 
 	/* Paranoia */
 	if (amt <= 0) return (NULL);
 
 	/* Split item */
-	q_ptr = item_split(o_ptr, amt, &temp_object);
+	q_ptr = item_split(o_ptr, amt);
 
 	/* Describe the object */
 	object_desc(o_name, q_ptr, TRUE, 3, 256);
@@ -5490,8 +5489,7 @@ object_type *inven_takeoff(object_type *o_ptr, int amt)
 void inven_drop(object_type *o_ptr, int amt)
 {
     object_type *q_ptr;
-    object_type temp_object;
-
+ 
 	char o_name[256];
 
 	int slot;
@@ -5515,7 +5513,7 @@ void inven_drop(object_type *o_ptr, int amt)
 	}
 
 	/* Get local object */
-	q_ptr = item_split(o_ptr, amt, &temp_object);
+	q_ptr = item_split(o_ptr, amt);
 
 	/* Describe local object */
 	object_desc(o_name, q_ptr, TRUE, 3, 256);
