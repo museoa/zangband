@@ -6,7 +6,6 @@
 
 %}
 
-
 typedef char *cptr;
 typedef unsigned char byte;
 typedef signed short s16b;
@@ -17,71 +16,6 @@ typedef unsigned int u32b;
 %typemap(memberin) cptr title
 {
 	$target = string_make($source);
-}
-
-%typemap(memberout) cptr title
-{
-	$target = $source;
-}
-
-%typemap(memberin) s16b str_mod
-{
-	obj->r_adj[A_STR] = $source;
-}
-
-%typemap(memberout) s16b str_mod
-{
-	$target = obj->r_adj[A_STR];
-}
-
-%typemap(memberin) s16b int_mod
-{
-	obj->r_adj[A_INT] = $source;
-}
-
-%typemap(memberout) s16b int_mod
-{
-	$target = obj->r_adj[A_INT];
-}
-
-%typemap(memberin) s16b wis_mod
-{
-	obj->r_adj[A_WIS] = $source;
-}
-
-%typemap(memberout) s16b wis_mod
-{
-	$target = obj->r_adj[A_WIS];
-}
-
-%typemap(memberin) s16b dex_mod
-{
-	obj->r_adj[A_DEX] = $source;
-}
-
-%typemap(memberout) s16b dex_mod
-{
-	$target = obj->r_adj[A_DEX];
-}
-
-%typemap(memberin) s16b con_mod
-{
-	obj->r_adj[A_CON] = $source;
-}
-
-%typemap(memberout) s16b con_mod
-{
-	$target = obj->r_adj[A_CON];
-}
-
-%typemap(memberin) s16b chr_mod
-{
-	obj->r_adj[A_CHR] = $source;
-}
-
-%typemap(memberout) s16b chr_mod
-{
-	$target = obj->r_adj[A_CHR];
 }
 
 
@@ -121,15 +55,7 @@ struct player_race
 
 	byte infra;			/* Infra-vision	range */
 
-    u16b choice;        /* Legal class choices */
-
-	/* "Virtual" members */
-	s16b str_mod;
-	s16b int_mod;
-	s16b wis_mod;
-	s16b dex_mod;
-	s16b con_mod;
-	s16b chr_mod;
+	u16b choice;        /* Legal class choices */
 
 	%addmethods
 	{
@@ -142,6 +68,16 @@ struct player_race
 		~player_race(void)
 		{
 			free(self);
+		}
+
+		s16b get_r_adj(int i)
+		{
+			return self->r_adj[i];
+		}
+
+		void set_r_adj(int i, s16b val)
+		{
+			self->r_adj[i] = val;
 		}
 	}
 };

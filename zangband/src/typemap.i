@@ -21,7 +21,7 @@
 
 	for (i = 0; i < $dim0; i++)
 	{
-		o = SWIG_NewPointerObj((void *)angband_term[i], SWIGTYPE_term_p);
+		o = SWIG_NewPointerObj((void *)angband_term[i], SWIGTYPE_p_term);
 		PyList_SetItem($target, i, o);
 	}
 }

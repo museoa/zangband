@@ -24,66 +24,6 @@ typedef unsigned int u32b;
 	$target = $source;
 }
 
-%typemap(memberin) s16b str_mod
-{
-	obj->c_adj[A_STR] = $source;
-}
-
-%typemap(memberout) s16b str_mod
-{
-	$target = obj->c_adj[A_STR];
-}
-
-%typemap(memberin) s16b int_mod
-{
-	obj->c_adj[A_INT] = $source;
-}
-
-%typemap(memberout) s16b int_mod
-{
-	$target = obj->c_adj[A_INT];
-}
-
-%typemap(memberin) s16b wis_mod
-{
-	obj->c_adj[A_WIS] = $source;
-}
-
-%typemap(memberout) s16b wis_mod
-{
-	$target = obj->c_adj[A_WIS];
-}
-
-%typemap(memberin) s16b dex_mod
-{
-	obj->c_adj[A_DEX] = $source;
-}
-
-%typemap(memberout) s16b dex_mod
-{
-	$target = obj->c_adj[A_DEX];
-}
-
-%typemap(memberin) s16b con_mod
-{
-	obj->c_adj[A_CON] = $source;
-}
-
-%typemap(memberout) s16b con_mod
-{
-	$target = obj->c_adj[A_CON];
-}
-
-%typemap(memberin) s16b chr_mod
-{
-	obj->c_adj[A_CHR] = $source;
-}
-
-%typemap(memberout) s16b chr_mod
-{
-	$target = obj->c_adj[A_CHR];
-}
-
 
 /*
  * Player class info
@@ -118,14 +58,6 @@ struct player_class
 
 	byte pet_upkeep_div; /* Pet upkeep divider */
 
-	/* "Virtual" members */
-	s16b str_mod;
-	s16b int_mod;
-	s16b wis_mod;
-	s16b dex_mod;
-	s16b con_mod;
-	s16b chr_mod;
-
 	%addmethods
 	{
 		player_class(void)
@@ -137,6 +69,16 @@ struct player_class
 		~player_class(void)
 		{
 			free(self);
+		}
+
+		s16b get_c_adj(int i)
+		{
+			return self->c_adj[i];
+		}
+
+		void set_c_adj(int i, s16b val)
+		{
+			self->c_adj[i] = val;
 		}
 	}
 };

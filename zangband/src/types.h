@@ -905,9 +905,7 @@ struct field_type
 
 	u16b info;			/* quick access flags */
 
-
 	s16b counter;			/* Counter for timed effects */
-
 
 	/* Storage space for the actions to interact with. */
 	byte data[8];
@@ -915,6 +913,10 @@ struct field_type
 	field_action_type action[FIELD_ACTION_MAX]; /* Function pointers for the actions */
 
 	byte priority;			/* LOS priority higher = more visible */
+
+#ifdef USE_SCRIPT
+	PyObject *python;
+#endif /* USE_SCRIPT */
 };
 
 /*

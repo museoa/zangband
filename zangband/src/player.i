@@ -391,6 +391,7 @@ typedef struct player_type
 	bool leaving;			/* True if player is leaving */
 
 	/* Virtual fields */
+#if 0
 	char name[32];
 
 	int dun_level;
@@ -401,6 +402,7 @@ typedef struct player_type
 	char player_base[32];
 	char died_from[80];
 	char history[4][60];
+#endif
 } player_type;
 
 

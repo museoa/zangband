@@ -859,7 +859,7 @@ void store_examine_callback(object_type *o_ptr)
 	if (func)
 	{
 		/* Build the argument-list */
-		SWIG_MakePtr(_ptemp, o_ptr, SWIGTYPE_object_type_p);
+		SWIG_MakePtr(_ptemp, o_ptr, SWIGTYPE_p_object_type);
 		arglist = Py_BuildValue("(s)", _ptemp);
 
 		/* Call the object with the correct arguments */
@@ -1156,7 +1156,7 @@ bool destroy_object_callback(object_type *o_ptr, int number)
 	if (func)
 	{
 		/* Build the argument-list */
-		SWIG_MakePtr(_ptemp, o_ptr, SWIGTYPE_object_type_p);
+		SWIG_MakePtr(_ptemp, o_ptr, SWIGTYPE_p_object_type);
 		arglist = Py_BuildValue("((si))", _ptemp, number);
 
 		/* Call the object with the correct arguments */
@@ -1191,7 +1191,7 @@ PyObject* object_create_callback(object_type *o_ptr)
 	if (func)
 	{
 		/* Build the argument-list */
-		SWIG_MakePtr(_ptemp, o_ptr, SWIGTYPE_object_type_p);
+		SWIG_MakePtr(_ptemp, o_ptr, SWIGTYPE_p_object_type);
 		arglist = Py_BuildValue("(s)", _ptemp);
 
 		/* Call the object with the correct arguments */
@@ -1357,7 +1357,7 @@ PyObject* object_copy_callback(object_type *o_ptr, object_type *j_ptr)
 		char _ptemp[128];
 
 		/* Build the argument-list */
-		SWIG_MakePtr(_ptemp, j_ptr, SWIGTYPE_object_type_p);
+		SWIG_MakePtr(_ptemp, j_ptr, SWIGTYPE_p_object_type);
 
 		result = PyObject_CallMethod(o_ptr->python, "object_copy_hook", "(s)", _ptemp);
 
@@ -1710,6 +1710,99 @@ bool init_object_kind_list_callback(void)
 	}
 
 	return res;
+}
+
+
+/*** Field callbacks ***/
+
+void field_delete_callback(field_type *f_ptr)
+{
+	if (f_ptr && f_ptr->python &&
+	    PyObject_HasAttrString(f_ptr->python, "field_delete_hook"))
+	{
+		PyObject *result;
+
+		result = PyObject_CallMethod(f_ptr->python, "field_delete_hook", "");
+
+		/* Free the result */
+		Py_XDECREF(result);
+
+		/* Free the Python object */
+		Py_XDECREF(f_ptr->python);
+	}
+}
+
+
+PyObject* field_copy_callback(field_type *f_ptr, field_type *g_ptr)
+{
+	PyObject *result = NULL;
+
+	if (f_ptr && f_ptr->python &&
+	    PyObject_HasAttrString(f_ptr->python, "field_copy_hook"))
+	{
+		char _ptemp[128];
+
+		/* Build the argument-list */
+		SWIG_MakePtr(_ptemp, g_ptr, SWIGTYPE_p_field_type);
+
+		result = PyObject_CallMethod(f_ptr->python, "field_copy_hook", "(s)", _ptemp);
+
+		/* We don't free the result, since we store it! */
+	}
+
+	/* Return the object */
+	return result;
+}
+
+
+cptr field_save_callback(field_type *f_ptr)
+{
+	PyObject *result;
+	cptr res = NULL;
+
+	if (f_ptr && f_ptr->python &&
+	    PyObject_HasAttrString(f_ptr->python, "field_save_hook"))
+	{
+		result = PyObject_CallMethod(f_ptr->python, "field_save_hook", "");
+
+		if (result && PyString_Check(result))
+		{
+			res = string_make(PyString_AsString(result));
+		}
+
+		/* Free the result */
+		Py_XDECREF(result);
+	}
+
+	return res;
+}
+
+
+PyObject* field_load_callback(char *code)
+{
+	PyObject *func, *arglist;
+	PyObject *result;
+
+	/* Get the Python object */
+	func = python_callbacks[FIELD_LOAD_EVENT];
+
+	/* Callback installed */
+	if (func)
+	{
+		/* Build the argument-list */
+		arglist = Py_BuildValue("(s)", code);
+
+		/* Call the object with the correct arguments */
+		result = PyEval_CallObject(func, arglist);
+
+		/* Free the arguments */
+		Py_DECREF(arglist);
+
+		/* We don't free the result, since we store it! */
+	}
+
+	/* Return the object */
+	return result;
 }
 
 

@@ -74,9 +74,9 @@ extern void do_poly_self(void);
 /* spells1.c */
 extern void take_hit(int damage, cptr kb_str);
 extern u16b bolt_pict(int y, int x, int ny, int nx, int typ);
-extern sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, int flg);
+extern sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, u16b flg);
 extern int dist_to_line(int y, int x, int y1, int x1, int y2, int x2);
-extern bool project(int who, int rad, int y, int x, int dam, int typ, int flg);
+extern bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg);
 
 /* spells2.c */
 extern void message_pain(int m_idx, int dam);
@@ -153,7 +153,7 @@ extern s32b flag_cost(object_type *o_ptr, int plusses);
 extern void report_magics(void);
 extern bool teleport_swap(int dir);
 extern bool item_tester_hook_recharge(object_type *o_ptr);
-extern bool project_hook(int typ, int dir, int dam, int flg);
+extern bool project_hook(int typ, int dir, int dam, u16b flg);
 extern bool project_hack(int typ, int dam);
 
 /* spells3.c */

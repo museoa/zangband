@@ -88,8 +88,6 @@ struct cave_type
 
 	s16b m_idx;		/* Monster in this grid */
 
-	s16b special;	/* Special cave info */
-
 	byte mimic;		/* Feature to mimic */
 
 #ifdef MONSTER_FLOW

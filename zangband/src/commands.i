@@ -23,7 +23,6 @@ extern void do_cmd_open(void);
 extern void do_cmd_close(void);
 extern void do_cmd_tunnel(void);
 extern void do_cmd_disarm(void);
-extern void do_cmd_bash(void);
 extern void do_cmd_alter(void);
 extern void do_cmd_spike(void);
 extern void do_cmd_walk(int pickup);
@@ -85,5 +84,5 @@ extern void do_cmd_racial_power(void);
 extern void do_cmd_store(void);
 extern void do_cmd_mindcraft(void);
 extern void do_cmd_knowledge_mutations(void);
-extern bool do_cmd_disarm_aux(int y, int x, int dir);
+extern bool do_cmd_disarm_aux(cave_type *c_ptr, int dir);
 
