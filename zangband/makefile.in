@@ -86,8 +86,13 @@ define CC
 	@ echo CC $@
 	@ $(CC_AUX) 
 endef
+define LINK
+	@ echo LINK $@
+	@ $(CC_AUX)
+endef
 else
 CC = $(CC_AUX)
+LINK = $(CC_AUX)
 endif
 
 
@@ -98,7 +103,7 @@ endif
 ## Compile zangband.
 ##
 zangband: $(objs-y)
-	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS) $(DEFS)
+	$(LINK) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS) $(DEFS)
 
 ##
 ## .c files
