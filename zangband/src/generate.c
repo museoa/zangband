@@ -897,6 +897,9 @@ static bool cave_gen(dun_type *d_ptr)
 
 	/* Place quest monsters in the dungeon */
 	trigger_quest_create(QC_DUN_MONST, NULL);
+	
+	/* Place quest artifacts in the dungeon */
+	trigger_quest_create(QC_DUN_ARTIFACT, NULL);
 
 	/* Pick a base number of monsters */
 	i = MIN_M_ALLOC_LEVEL;

@@ -3,8 +3,8 @@
 /* Purpose: Quest code */
 
 /*
- * Copyright (c) 1989, 1999 James E. Wilson, Robert A. Koeneke,
- * Robert Ruehlmann
+ * Copyright (c) 1989, 2003 James E. Wilson, Robert A. Koeneke,
+ *                          Robert Ruehlmann, Steven Fuerst
  *
  * This software may be copied and distributed for educational, research, and
  * not for profit purposes provided that this copyright and statement are
@@ -266,6 +266,70 @@ static u16b find_good_dungeon(int level)
 	/* Best match to reward level */
 	return (best_place);
 }
+
+static cptr describe_quest_location(cptr * dirn, int x, int y)
+{
+	int i;
+	
+	int dx, dy;
+	
+	/* Find the nearest town */
+	int best_dist = 99999;
+	int best_town = 0;
+	
+	for (i = 0; i < place_count; i++)
+	{
+		int d;
+
+		/* Only real towns */
+		if (place[i].type != TOWN_FRACT)
+			continue;
+
+		/* Find closest town */
+		d = distance(x, y, place[i].x, place[i].y);
+		if (d < best_dist)
+		{
+			best_dist = d;
+			best_town = i;
+		}
+	}
+
+	
+	dx = x - place[best_town].x;
+	dy = y - place[best_town].y;
+
+	if (ABS(dy) > ABS(dx) * 3)
+	{
+		if (dy > 0)
+			*dirn = "south";
+		else
+			*dirn = "north";
+	}
+	else if (ABS(dx) > ABS(dy) * 3)
+	{
+		if (dx > 0)
+			*dirn = "east";
+		else
+			*dirn = "west";
+	}
+	else if (dx > 0)
+	{
+		if (dy > 0)
+			*dirn = "south-east";
+		else
+			*dirn = "north-east";
+	}
+	else
+	{
+		if (dy > 0)
+			*dirn = "south-west";
+		else
+			*dirn = "north-west";
+	}
+
+	return (place[best_town].name);
+}
+
 
 static void insert_artifact_quest(u16b a_idx)
 {
@@ -633,12 +697,6 @@ void activate_quests(int level)
 
 				/* Hack - toggle QUESTOR flag */
 				SET_FLAG(r_info[q_ptr->data.dun.r_idx].flags, 0, RF0_QUESTOR);
-	
-				/* Hack - we notice the dungeon quest */
-				if (q_ptr->status == QUEST_STATUS_UNTAKEN)
-				{
-					q_ptr->status = QUEST_STATUS_TAKEN;
-				}
 				
 				break;
 			}
@@ -661,12 +719,6 @@ void activate_quests(int level)
 				if (level != pl_ptr->dungeon->max_level) break;
 				
 				q_ptr->flags |= QUEST_FLAG_ACTIVE;
-				
-				/* Hack - we notice the quest */
-				if (q_ptr->status == QUEST_STATUS_UNTAKEN)
-				{
-					q_ptr->status = QUEST_STATUS_TAKEN;
-				}
 			}
 		}
 	}
@@ -1058,6 +1110,8 @@ quest_type *lookup_quest_building(const store_type *b_ptr)
 	{
 		q_ptr = &quest[i];
 		
+		if (q_ptr->place != p_ptr->place_num) continue; 
+		
 		/* Bounds checking */
 		if (q_ptr->shop >= pl_ptr->numstores) continue;
 		
@@ -1076,6 +1130,31 @@ quest_type *lookup_quest_building(const store_type *b_ptr)
 
 void reward_quest(quest_type *q_ptr)
 {
+	switch (q_ptr->type)
+	{
+		case QUEST_TYPE_FIND_ITEM:
+		{
+			if (q_ptr->status == QUEST_STATUS_FINISHED)
+			{
+				msgf("You can keep it if you like.");
+				
+				/* Allow another quest to be selected */
+				q_ptr->place = 0;
+				q_ptr->shop = 0;
+			}
+			else
+			{
+				msgf("Still looking?");
+			}
+		}
+		
+		default:
+		{
+		
+		}
+	}
+#if 0
+
 	/* Quest is completed */
 	if (q_ptr->status == QUEST_STATUS_COMPLETED)
 	{
@@ -1099,12 +1178,108 @@ void reward_quest(quest_type *q_ptr)
 		msgf("You haven't completed the quest yet!");
 		message_flush();
 	}
+#endif /* 0 */
+}
+
+static const store_type *curr_build;
+
+/* Save the quest giver (current town + building) */
+static void set_quest_giver(quest_type *q_ptr)
+{
+	place_type *pl_ptr = &place[p_ptr->place_num];
+
+	q_ptr->place = p_ptr->place_num;
+			
+	q_ptr->shop = GET_ARRAY_INDEX(pl_ptr->store, curr_build);
+}
+
+static bool request_find_item(int dummy)
+{
+	int i;
+	
+	quest_type *q_ptr;
+	place_type *pl_ptr;
+
+	cptr town_name, town_dir;
+
+	/* Hack - ignore parameter */
+	(void) dummy;
+
+	/* Scan for the first item-search quest on the list */
+	for (i = 0; i < q_max; i++)
+	{
+		q_ptr = &quest[i];
+		
+		if (q_ptr->type == QUEST_TYPE_FIND_ITEM)
+		{
+			if (q_ptr->status != QUEST_STATUS_UNTAKEN) continue;
+			
+			/* Notice the quest */
+			q_ptr->status = QUEST_STATUS_TAKEN;
+			
+			/* Show it on the screen? */
+			
+			/* Where is it? */
+			pl_ptr = &place[q_ptr->data.fit.place];
+			
+			/* Get name of closest town + direction away from it */
+			town_name = describe_quest_location(&town_dir, pl_ptr->x, pl_ptr->y);
+			
+			/* Display a helpful message. */
+			msgf("%s.  I've heard it is hidden %s of %s.",
+				  q_ptr->name, town_dir, town_name);
+				  
+			message_flush();
+			
+			/* Remember who gave us the quest */
+			set_quest_giver(q_ptr);
+			
+			/* Exit */
+			return (TRUE);
+		}
+	}
+	
+	msgf("Sorry, I don't know of any other missing relics to find.");
+	
+	message_flush();
+	
+	/* XXX XXX No available quests, unfortunately. */
+	return (FALSE);
+}
+
+static bool request_bounty(int dummy)
+{
+	/* Hack - ignore parameter */
+	(void) dummy;
+	
+	/* XXX XXX XXX Hack - we need dynamic quests, so abort */
+	msgf("Sorry - disabled due to non dynamic quest allocation.");
+	
+	message_flush();
+	
+	return (FALSE);
 }
 
 
+#define QUEST_MENU_MAX		3
+
+/* The quest selection menu */
+static menu_type quest_menu[QUEST_MENU_MAX] =
+{
+	{"To fund a lost relic", NULL, request_find_item, MN_ACTIVE},
+	{"To hunt down a bounty of monsters", NULL, request_bounty, MN_ACTIVE},
+	MENU_END
+};
+
 void request_quest(const store_type *b_ptr, int scale)
 {
-	/* Hack - do nothing now. */
+	/* Hack - ignore quest scale for now */
+	(void) scale;
+
+	/* Save building so we can remember the quest giver */
+	curr_build = b_ptr;
+
+	display_menu(quest_menu, -1, FALSE, NULL, "What type of quest would you like?");
 }
 
 
@@ -1122,6 +1297,8 @@ bool do_cmd_knowledge_quests(int dummy)
 	quest_type *q_ptr;
 	int i;
 	
+	bool taken;
+	
 	/* Hack - ignore parameter */
 	(void) dummy;
 
@@ -1137,6 +1314,8 @@ bool do_cmd_knowledge_quests(int dummy)
 
 		/* Do we know about it? */
 		if (!(q_ptr->flags & QUEST_FLAG_KNOWN)) continue;
+		
+		taken = (q_ptr->status == QUEST_STATUS_TAKEN);
 
 		/* See what type of quest it is */
 		switch (q_ptr->type)
@@ -1173,7 +1352,7 @@ bool do_cmd_knowledge_quests(int dummy)
 					strnfmt(level, 20, "%3d", (int)q_ptr->data.dun.level);
 				}
 
-				if (q_ptr->status == QUEST_STATUS_TAKEN)
+				if (taken)
 				{
 					/* Hack - assume kill n monsters of type m */
 					if (q_ptr->data.dun.max_num > 1)
@@ -1202,10 +1381,24 @@ bool do_cmd_knowledge_quests(int dummy)
 
 				break;
 			}
+			
+			case QUEST_TYPE_FIND_ITEM:
+			{
+				if (taken)
+				{
+					/* Hack - this is simple */
+					strnfmt(tmp_str, 256, "%s\n\n", q_ptr->name);
+				}
+				else
+				{
+					/* Hack - this is simple */
+					strnfmt(tmp_str, 256, "%s (Found)\n", q_ptr->name);
+				}
+			}
 
 			case QUEST_TYPE_WILD:
 			{
-				if (q_ptr->status == QUEST_STATUS_TAKEN)
+				if (taken)
 				{
 					/* Hack - this is simple */
 					strnfmt(tmp_str, 256, "%s\n\n", q_ptr->name);
@@ -1536,8 +1729,6 @@ bool create_quest(int x, int y, int place_num)
 {
 	int i, j;
 	int q_num, qtype;
-	int best_town, best_dist;
-	int dx, dy;
 	cptr town_name, town_dir;
 
 	wild_type *w_ptr = &wild[y][x];
@@ -1602,59 +1793,9 @@ bool create_quest(int x, int y, int place_num)
 
 	/* We need to trigger when the player enters the wilderness block */
 	q_ptr->x_type = QX_WILD_ENTER;
-
-	/* Find the nearest town */
-	best_dist = 99999;
-	best_town = 0;
-	for (i = 0; i < place_count; i++)
-	{
-		int d;
-
-		/* Only real towns */
-		if (place[i].type != TOWN_FRACT)
-			continue;
-
-		/* Find closest town */
-		d = distance(pl_ptr->x, pl_ptr->y, place[i].x, place[i].y);
-		if (d < best_dist)
-		{
-			best_dist = d;
-			best_town = i;
-		}
-	}
-
-	town_name = place[best_town].name;
-	dx = pl_ptr->x - place[best_town].x;
-	dy = pl_ptr->y - place[best_town].y;
-
-	if (ABS(dy) > ABS(dx) * 3)
-	{
-		if (dy > 0)
-			town_dir = "south";
-		else
-			town_dir = "north";
-	}
-	else if (ABS(dx) > ABS(dy) * 3)
-	{
-		if (dx > 0)
-			town_dir = "east";
-		else
-			town_dir = "west";
-	}
-	else if (dx > 0)
-	{
-		if (dy > 0)
-			town_dir = "south-east";
-		else
-			town_dir = "north-east";
-	}
-	else
-	{
-		if (dy > 0)
-			town_dir = "south-west";
-		else
-			town_dir = "north-west";
-	}
+	
+	/* Get name and direction of closest town to quest */
+	town_name = describe_quest_location(&town_dir, pl_ptr->x, pl_ptr->y);
 
 	/* Create quest name */
 	(void)strnfmt(q_ptr->name, 60, "Defeat the %s camp %s of %s.",
