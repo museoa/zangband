@@ -1817,12 +1817,12 @@ static int objcmd_icon(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *
 		"gettypes", "validate", "size", "ascii",
 		"gamma", "makeicon", "depth",
 		"rle", "height", "width", "duplicate",
-		"transparent", "flags", NULL};
+		"transparent", NULL};
 	enum {IDX_CREATETYPE, IDX_COUNT,
 		IDX_GETTYPES, IDX_VALIDATE, IDX_SIZE, IDX_ASCII,
 		IDX_GAMMA, IDX_MAKEICON, IDX_DEPTH,
 		IDX_RLE, IDX_HEIGHT, IDX_WIDTH, IDX_DUPLICATE,
-		IDX_TRANSPARENT, IDX_FLAGS} option;
+		IDX_TRANSPARENT} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 	int index;
 
@@ -2349,57 +2349,6 @@ wrongCreateArgs:
 			Tcl_SetBooleanObj(resultPtr, trans);
 			break;
 		}
-
-		case IDX_FLAGS: /* flags */
-		{
-			static cptr flags[] = {"left", "right", "isohack", NULL};
-			int flag;
-			
-			if (objc < 4 || objc > 6)
-			{
-				Tcl_WrongNumArgs(interp, 2, objv, (char *) "type index ?flag? ?boolean?");
-				return TCL_ERROR;
-			}
-		
-			/* Lookup the icon type by name */
-			if (Icon_GetTypeFromObj(interp, &iconDataPtr, objv[2]) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-
-			/* Get the icon index */
-			if (Icon_GetIndexFromObj(interp, &index, objv[3], iconDataPtr)
-				!= TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-
-			/* Return value of all flags */
-			if (objc == 4)
-			{
-				break;
-			}
-
-		    if (Tcl_GetIndexFromObj(interp, objv[4], (char **) flags, (char *) "flag", 0, 
-				(int *) &flag) != TCL_OK)
-			{
-				return TCL_ERROR;
-		    }
-		    ++flag;
-
-			/* Return value of one flag */
-			if (objc == 5)
-			{
-				Tcl_SetBooleanObj(resultPtr,
-					(iconDataPtr->flags[index] & (1L << flag)) != 0);
-				break;
-			}
-
-			/* Set value of one flag */
-			iconDataPtr->flags[index] |= (1L << flag);
-
-			break;
-		}
 	}
 
 	/* Success */
@@ -2636,15 +2585,6 @@ void Icon_AddType(t_icon_data *data)
 	icon_data_ptr->length = data->length;
 	icon_data_ptr->pixels = data->pixels;
 
-	/* Could be dynamic */
-	if (data->icon_count)
-	{
-		icon_data_ptr->flags = (short *) Tcl_Alloc(
-			sizeof(short) * icon_data_ptr->icon_count);
-		memset(icon_data_ptr->flags, 0,
-			sizeof(short) * icon_data_ptr->icon_count);
-	}
-
 	g_icon_data = Array_Append(g_icon_data, &g_icon_data_count,
 		sizeof(t_icon_data), icon_data_ptr);
 	
@@ -2786,9 +2726,6 @@ void Icon_Exit(Tcl_Interp *interp)
 			Tcl_Free((void *) iconDataPtr->rle_len);
 			Tcl_Free((void *) iconDataPtr->rle_bounds);
 		}
-
-		/* Help the memory debugger */
-		Tcl_Free((void *) iconDataPtr->flags);
 
 		/* Help the memory debugger */
 		Tcl_Free((void *) iconDataPtr->gamma[0]);
