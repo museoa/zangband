@@ -333,6 +333,28 @@ F:6:0x80/0x96
 # down staircase
 F:7:0x80/0x99
 
+# Sand
+F:8:0xBB/0x9D
+
+# N:9:salt XXX
+
+# Wet mud
+F:10:0xBB/0x9A
+
+# Dry mud
+F:11:0xBB/0x97
+
+# Tiled floor
+F:12:0xBB/0x85
+
+# Wooden floor
+F:13:0xBB/0x88
+
+# Pebbles
+F:14:0xBB/0x8B
+
+# N:15:solidified lava XXX
+
 # visible trap -- trap door
 F:16:0x81/0x8C
 
@@ -546,17 +568,92 @@ F:85:0xB6/0x9D
 # Shallow Lava
 F:86:0xB6/0x9A
 
+# Dark pit
+F:87:0xBD/0x97
+
 # Dirt
 F:88:0xB6/0x94
 
 # Grass
 F:89:0xB6/0x97
 
+# compact rune (XXX - tile from teleport rune)
+F:90:0x81/0x92
+
+# invisible wall
+F:91:0x80/0x81
+
+# Ocean
+F:92:0xBC/0x8E
+
+# deep acid
+F:93:0xBC/0x8B
+
+# shallow acid
+F:94:0xBC/0x88
+
+# submerged tree
+F:95:0xBC/0x91
+
 # Trees
 F:96:0x82/0x9A
 
-# Mountain
-F:97:0x8D/0x98
+# Rock face
+F:97:0xBD/0x8E
+
+# Snow covered rock face
+F:98:0xBD/0x91
+
+# N:99:boulder XXX
+
+# Pine tree
+F:100:0xBC/0x94
+
+# Snow covered pine tree
+F:101:0xBC/0x947
+
+# Obelisk
+F:102:0xBD/0x82
+
+# Pillar
+F:103:0xBB/0x82
+
+# N:112:stone fence XXX
+
+# Well
+F:113:0xBD/0x9A
+
+# Fountain (114) XXX
+
+# Jungle
+F:115:0xBC/0x85
+
+# Bush
+F:128:0xBC/0x9D
+
+# N:129:dead bush XXX
+
+# Long grass
+F:130:0xBB/0x91
+
+# Rock (on general terrain)
+F:131:0xBD/0x85
+
+# Rock (on snow)
+F:132:0xBD/0x88
+
+# Dead tree (on general terrain)
+F:133:0xBC/0x9A
+
+# Dead tree (on snow)
+F:134:0xBD/0x9D
+
+# Snow
+F:135:0xBC/0x82
+
+# N:136:thick swamp XXX
+
+# N:137:swamp XXX
 
 
 ##### Object attr/char definitions #####
