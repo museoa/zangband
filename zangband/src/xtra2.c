@@ -401,9 +401,11 @@ void monster_death(int m_idx)
 			case QUEST_TYPE_RANDOM:
 			{
 				/* Only count valid monsters */
-				if (quest[i].r_idx != m_ptr->r_idx)
-					break;
+				if (quest[i].r_idx != m_ptr->r_idx)	break;
 
+				/* Do not count clones */
+				if (m_ptr->smart & SM_CLONED) break;
+				
 				quest[i].cur_num++;
 
 				if (quest[i].cur_num >= quest[i].max_num)
