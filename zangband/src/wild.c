@@ -366,7 +366,8 @@ static void town_gen_hack(u16b town_num, int *xx, int *yy)
 		*xx = rand_range(3, SCREEN_WID - 4);
 
 		/* Require a floor grid */
-		if (cave[*yy][*xx].feat == FEAT_PEBBLES) break;
+		if ((cave[*yy][*xx].feat == FEAT_PEBBLES) ||
+			(cave[*yy][*xx].feat == FEAT_FLOOR)) break;
 	}
 
 	/* Put dungeon floor next to stairs so they are easy to find. */
@@ -425,23 +426,31 @@ static void town_gen(u16b town_num, int *xx, int *yy)
 	}
 
 	/* Place some floors */
-	for (y = 1; y < SCREEN_HGT-1; y++)
+	for (y = 1; y < SCREEN_HGT - 1; y++)
 	{
-		for (x = 1; x < SCREEN_WID-1; x++)
+		for (x = 1; x < SCREEN_WID - 1; x++)
 		{
-			/* Create empty floor */
-			cave[y][x].feat = FEAT_PEBBLES;
-			
-			/* Create Dirt */
-			if (!rand_int(5))
+			if(vanilla_town)
 			{
-				cave[y][x].feat = FEAT_DIRT;
+				cave[y][x].feat = FEAT_FLOOR;
+			
 			}
+			else
+			{			
+				/* Create empty floor */
+				cave[y][x].feat = FEAT_PEBBLES;
 			
-			/* Create see-through terrain */
-			else if (!rand_int(5))
-			{
-				cave[y][x].feat = FEAT_NONE;
+				/* Create Dirt */
+				if (!rand_int(5))
+				{
+					cave[y][x].feat = FEAT_DIRT;
+				}
+			
+				/* Create see-through terrain */
+				else if (!rand_int(5))
+				{
+					cave[y][x].feat = FEAT_NONE;
+				}
 			}
 		}
 	}
@@ -2944,9 +2953,9 @@ void gen_block_helper(blk_ptr block_ptr, byte *data, int gen_type)
 }
 
 /*
- * Fill the block with grass.  This is only used by the vanilla town option.
+ * Fill the block with perm. wall  This is only used by the vanilla town option.
  */
-static void	fill_grass(blk_ptr block_ptr)
+static void fill_perm_wall(blk_ptr block_ptr)
 {
 	int i, j;
 	/* Overlay the block with grass */
@@ -2954,7 +2963,7 @@ static void	fill_grass(blk_ptr block_ptr)
 	{
 		for(j = 0; j < WILD_BLOCK_SIZE; j++)
 		{
-			block_ptr[j][i].feat = FEAT_GRASS;
+			block_ptr[j][i].feat = FEAT_PERM_OUTER;
 		}
 	}
 }
@@ -3091,7 +3100,7 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 	else if(w_type == 0)
 	{
 		/* Fill the block with grass */
-		fill_grass(block_ptr);	
+		fill_perm_wall(block_ptr);	
 	}
 	else
 	{
