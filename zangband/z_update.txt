@@ -160,6 +160,11 @@ Zangband 2.7.2:
   menu, and display the available options all the time.
 - Fixed off-by one bug in object allocation code.
 - Fixed major bug when objects in the players pack combine.
+- Fixed a bug where non-passable fields weren't working as planned.
+- Selling items was giving free identify for the rest of the pile.
+  This doesn't make sense for wands.
+- Prevent towns from having blank names. 
+- Display the starting town name properly when the game begins.
 
 Zangband 2.7.1:
 - Split off the graphics-specific code in util.c and moved it into
