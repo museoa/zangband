@@ -29,6 +29,9 @@ AC_ARG_WITH(tkdir,
                           is in a different place from tcl directory
 						  and is not auto-detected properly])
 
+AC_ARG_WITH(gtk,
+[  --with-gtk=yes          Use gtk support (you'll need to turn of sgid flag)])
+
 AC_LANG([C])
 
 dnl Checks for programs.
@@ -89,28 +92,31 @@ else
   dnl Check for the Athena widget set
   AC_CHECK_LIB(Xaw, XawInitializeWidgetSet, [AC_DEFINE(USE_XAW, 1, [XAW port]) LIBS="$LIBS -lXaw"])
   
-  dnl Check for the gtk widget set
-  AC_CHECK_PROG(GTK_OLD, pkg-config, "true", "false")
+  if test "$with_gtk" != "no"; then
   
-  if test "$GTK_NEW" != "false"; then
-     CFLAGS="$CFLAGS `pkg-config --cflags gtk+`"
-     LIBS="$LIBS `pkg-config --libs gtk+`"
-	 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include "gtk/gtk.h"]], [[GtkWidget x;]])],[
-	   AC_DEFINE(USE_GTK, 1, [Gtk port])
-     ],[])
-  else
-     AC_CHECK_PROG(GTK_OLD, gtk-config, "true", "false")
+     dnl Check for the gtk widget set
+     AC_CHECK_PROG(GTK_OLD, pkg-config, "true", "false")
   
-     if test "$GTK_OLD" != "false"; then
-        CFLAGS="$CFLAGS `gtk-config --cflags`"
-        LIBS="$LIBS `gtk-config --libs`"
+     if test "$GTK_NEW" != "false"; then
+        CFLAGS="$CFLAGS `pkg-config --cflags gtk+`"
+        LIBS="$LIBS `pkg-config --libs gtk+`"
 	    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include "gtk/gtk.h"]], [[GtkWidget x;]])],[
-   	   AC_DEFINE(USE_GTK, 1, [Gtk port])
-     ],[])
-	 fi
+	      AC_DEFINE(USE_GTK, 1, [Gtk port])
+        ],[])
+     else
+        AC_CHECK_PROG(GTK_OLD, gtk-config, "true", "false")
+  
+        if test "$GTK_OLD" != "false"; then
+           CFLAGS="$CFLAGS `gtk-config --cflags`"
+           LIBS="$LIBS `gtk-config --libs`"
+   	         AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include "gtk/gtk.h"]], [[GtkWidget x;]])],[
+              AC_DEFINE(USE_GTK, 1, [Gtk port])
+           ],[])
+	    fi
+     fi
   fi
   
-  if test "$with_tcltk" != no; then
+  if test "$with_tcltk" != "no"; then
   
     dnl We need to check in lots of places for the tk port. :-/
     if test -z "$with_tcltk" || test "$with_tcltk" = yes; then
