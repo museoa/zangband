@@ -2505,6 +2505,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 				s2 = "in ";
 			}
 
+#if 0 /* XXX FF_OBJECT doesn't seem to be defined anywhere... fix this -RML- */
 			if (f_info[feat].flags & FF_OBJECT)
 			{
 				/* Pick proper indefinite article */
@@ -2514,7 +2515,9 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 			{
 				s3 = "";
 			}
-			
+#endif
+			s3 = "";
+
 			/* Display a message */
 			if (p_ptr->wizard)
 				sprintf(out_val, "%s%s%s%s [%s] (%d:%d)", s1, s2, s3, name,
