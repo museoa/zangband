@@ -4671,7 +4671,7 @@ static __inline void COPY_FLAG_AUX(const u32b *flags1, u32b *flags2, int num, u3
 #define path_make(B, P, F) \
 	do \
 	{ \
-		assert(sizeof(B) > 20); \
+		assert(sizeof(B) > sizeof(void*)); \
 		path_build((B), sizeof(B), (P), (F)); \
 	} \
 	while (FALSE)
