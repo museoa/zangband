@@ -59,12 +59,6 @@ proc Platform {args} {
 	}
 
 	foreach name $args {
-		if {$::DEBUG} {
-			set platformList [list macintosh unix windows]
-			if {[lsearch -exact $platformList $name] == -1} {
-				tk_messageBox -message "unknown platform \"$name\""
-			}
-		}
 		if {[string equal $name $Angband(platform)]} {
 			return 1
 		}
@@ -851,32 +845,17 @@ proc NSInitStartup::InitStartup {} {
 	# Internationalization
 	Source msgcat.tcl
 	
+	update
+	Debug "testing2"
+	
 	# Internationalization
 	MsgCatInit startup
 		
 	# Global copyright blurb
 	set Angband(copy) [mc original-z]
 	
-	# The Tk console!
-	if {[llength [info commands console]]} {
-		console hide
-		console title "Console - ZAngband"
-		bind all <Control-KeyPress-C> {console show}
-
-		# Hack -- Change the font
-		console eval ".console configure -font {Courier 9}"
-
-		# Hack -- Show initial prompt (picky me)
-		console eval tkConsolePrompt
-
-		# Hack -- Add a "Clear" menu item
-		console eval {.menubar.edit add command -label "Clear" -underline 4 \
-			-command {.console delete 1.0 end ; tkConsolePrompt}}
-
-		proc ::evalclip {} {
-			uplevel #0 [selection get -selection CLIPBOARD]
-		}
-	}
+	update
+	Debug "testing3"
 
 	# Hack -- Require WindowPosition() command
 	Source library utils.tcl
@@ -950,7 +929,7 @@ proc NSInitStartup::InitStartup {} {
 		option add *selectForeground [Global SystemHighlightText] 100
 		option add *selectBackground [Global SystemHighlight] 
 	}
-	
+		
 	Source term.tcl
 
 	# If a new character is created, this is set to 1
@@ -958,97 +937,16 @@ proc NSInitStartup::InitStartup {} {
 
 	# Value Manager (needed for Birth Options Window)
 	Source value-manager.tcl
+	
 	NSValueManager::InitModule
 	
 	# Turn on keyboard	
 #	Source keyboard.tcl
 
 	InitStartupScreen
-
+	
 	return
 }
 
 # Begin
 NSInitStartup::InitStartup
-
-if {$DEBUG} {
-	raise .
-	focus .
-	if {[winfo exists .errors]} { wm iconify .errors }
-	if {[winfo exists .command]} { wm iconify .command }
-}
-
-# init_askfor_display --
-#
-#	Creates the window that is used to ask the user for information
-#	when importing old savefiles.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc init_askfor_display {} {
-
-	global AngbandPriv
-	
-	set win .askfor
-	toplevel $win
-	wm transient $win $AngbandPriv(load,win)
-
-	set label $win.prompt
-	label $label \
-		-font "{MS Sans Serif} 10 bold underline"
-
-	set label $win.info
-	message $label \
-		-width 350
-
-	set frame $win.content
-	frame $frame \
-		-borderwidth 0
-
-	MakeDivider $win.divider1 x
-
-	set frame $win.buttons
-	frame $frame \
-		-borderwidth 0
-	button $frame.ok \
-		-command "set AngbandPriv(askfor_quest,result) 1" -text "OK" \
-		-underline 0 -width 9 -default active
-	button $frame.cancel \
-		-command "angband game abort" -text "Quit" -underline 0 \
-		-width 9
-
-	pack $frame.cancel \
-		-side right -pady 5 -padx 5
-	pack $frame.ok \
-		-side right -pady 5 -padx 5
-
-	grid rowconfigure $win 0 -weight 0
-	grid rowconfigure $win 1 -weight 0
-	grid rowconfigure $win 2 -weight 1
-	grid rowconfigure $win 3 -weight 0
-	grid rowconfigure $win 4 -weight 0
-	grid columnconfigure $win 0 -weight 1
-
-	grid $win.prompt \
-		-row 0 -col 0 -rowspan 1 -columnspan 1 -sticky w -padx 5 -pady 5
-	grid $win.info \
-		-row 1 -col 0 -rowspan 1 -columnspan 1 -sticky w -padx 10 -pady 5
-	grid $win.content \
-		-row 2 -col 0 -rowspan 1 -columnspan 1 -sticky news -padx 10 -pady 5
-	grid $win.divider1 \
-		-row 3 -col 0 -rowspan 1 -columnspan 1 -sticky ew -padx 10
-	grid $win.buttons \
-		-row 4 -col 0 -rowspan 1 -columnspan 1 -sticky ew -padx 5 -pady 5
-
-	NSUtils::SetDefaultButton $win $win.buttons.ok
-
-	bind $win <KeyPress-Return> \
-		"NSUtils::InvokeDefaultButton $win"
-
-	return $win
-}
-

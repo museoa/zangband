@@ -153,3 +153,4 @@ proc Debug {what} {
 
 tracesetup
 
+wm iconify .errors
