@@ -2529,7 +2529,7 @@ static errr Term_xtra_mac(int n, int v)
 		case TERM_XTRA_BORED:
 		{
 			/* Process an event */
-			(void)CheckEvents(0);
+			(void)CheckEvents(FALSE);
 
 			/* Success */
 			return (0);
@@ -2549,7 +2549,7 @@ static errr Term_xtra_mac(int n, int v)
 		case TERM_XTRA_FLUSH:
 		{
 			/* Hack -- flush all events */
-			while (CheckEvents(TRUE)) /* loop */;
+			while (CheckEvents(FALSE)) /* loop */;
 
 			/* Success */
 			return (0);
@@ -2616,10 +2616,14 @@ static errr Term_xtra_mac(int n, int v)
 			/* If needed */
 			if (v > 0)
 			{
-				long m = TickCount() + (v * 60L) / 1000;
-
-				/* Wait for it */
-				while (TickCount() < m) /* loop */;
+				EventRecord tmp;
+				UInt32 ticks;
+				
+				/* Convert milliseconds to ticks */
+				ticks = (v * 60L) / 1000;
+				
+				/* Hack - block for those ticks */
+				WaitNextEvent(~everyEvent, &tmp, ticks, nil);
 			}
 
 			/* Success */
@@ -5381,6 +5385,10 @@ static bool CheckEvents(bool wait)
 
 	term_data *td = NULL;
 
+	UInt32 sleep_ticks;
+
+#ifndef TARGET_CARBON
+
 	huge curTicks;
 
 	static huge lastTicks = 0L;
@@ -5395,19 +5403,28 @@ static bool CheckEvents(bool wait)
 	/* Timestamp last check */
 	lastTicks = curTicks;
 
-#ifndef TARGET_CARBON
 	/* Let the "system" run */
 	SystemTask();
-#endif
 
 	if( use_sound )
 	{
 		check_music();
 	}
-			
+	
+	/* Blocking call to WaitNextEvent - Should use MAX_INT XXX XXX XXX */
+	if (wait)
+	{
+		sleep_ticks = 0x7FFFFFFFL;
+	}
+	else
+	{
+		/* Non-blocking call */
+		sleep_ticks = 0L;
+	}
+		
 	/* Get an event (or null) */
-	GetNextEvent(everyEvent, &event);
-
+	WaitNextEvent(everyEvent, &event, sleep_ticks, nil);
+ 
 	/* Hack -- Nothing is ready yet */
 	if (event.what == nullEvent) return (FALSE);
 
@@ -6235,9 +6252,8 @@ int main(void)
 	/* Prepare the windows */
 	init_windows();
 	
-	
 	/* Hack -- process all events */
-	while (CheckEvents(TRUE)) /* loop */;
+	while (CheckEvents(FALSE)) /* loop */;
 
 	/* Reset the cursor */
 #ifdef TARGET_CARBON
@@ -6265,7 +6281,7 @@ int main(void)
 
 
 	/* Hack -- process all events */
-	while (CheckEvents(TRUE)) /* loop */;
+	while (CheckEvents(FALSE)) /* loop */;
 
 
 	/* We are now initialized */
