@@ -2824,6 +2824,9 @@ void do_cmd_view_map(void)
 			/* Hilite the player */
 			move_cursor(cy, cx);
 
+			/* Draw it */
+			Term_fresh();
+			
 			/* Get a response */
 			d = get_keymap_dir(inkey());
 
