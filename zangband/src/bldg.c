@@ -473,8 +473,10 @@ static void display_build(field_type *f_ptr, store_type *b_ptr)
 		case BLDG_RECHARGE:
 		{
 			sprintf(tmp_str, " R) Recharge Items");
+			c_put_str(TERM_YELLOW, tmp_str, 19, 0);
+			sprintf(tmp_str, " I) Identify Items (%dgp)",
+			f_ptr->data[2] * bo_ptr->inflate);
 			c_put_str(TERM_YELLOW, tmp_str, 19, 35);
-			
 			break;
 		}
 	}
@@ -1902,9 +1904,9 @@ static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
 				if (test_gold(&cost))
 				{
 					compare_weapons();
-					
-					done = TRUE;
 				}
+				
+				done = TRUE;
 			}
 			
 			break;
@@ -1918,6 +1920,26 @@ static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
 				
 				done = TRUE;
 			}
+			
+			if (p_ptr->command_cmd == 'I')
+			{
+				cost = f_ptr->data[2] * bo_ptr->inflate;
+				
+				if (test_gold(&cost))
+				{
+					identify_pack();
+
+					/* Combine / Reorder the pack (later) */
+					p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
+					msg_print("Your posessions have been identified.");
+					msg_print(NULL);
+				}
+								
+				done = TRUE;
+			}
+
+			break;			
 		}
 	}
 	
