@@ -54,7 +54,7 @@
  */
 static cptr f_info_flags[] =
 {
-	"BLOCK_LOS",
+	"BLOCK",
 	"HALF_LOS",
 	"USE_TRANS",
 	"DUMMY1",
