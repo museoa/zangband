@@ -4420,7 +4420,7 @@ D:A strange creature that disguises itself as discarded objects to lure
 D:unsuspecting adventurers within reach of its venomous claws.
 
 N:353:Chest mimic
-G:W:s
+G:&:W
 I:110:10d14:30:40:0
 W:21:6:0:70
 B:GAZE:CONFUSE:2d3
