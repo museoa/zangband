@@ -4270,6 +4270,11 @@ static void add_outer_wall(int x, int y, int light,
 		cave[y][x].feat = FEAT_WALL_OUTER;
 		if (light == TRUE) cave[y][x].info |= CAVE_GLOW;
 	}
+	else if (cave[y][x].feat == FEAT_PERM_OUTER)
+	{
+		/* Set bounding walls */
+		if (light == TRUE) cave[y][x].info |= CAVE_GLOW;
+	}
 }
 
 
