@@ -3976,11 +3976,11 @@ F:INSTA_ART
 
 N:565:& Diamond Edge~
 G:|:w
-I:23:31:4
+I:23:31:0
 W:90:0:150:10000
 A:90/16
 P:0:7d5:0:0:0
-F:SHOW_MODS | VORPAL | TUNNEL
+F:SHOW_MODS | VORPAL 
 
 N:566:Mundanity
 G:?:d
