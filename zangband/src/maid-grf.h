@@ -32,7 +32,6 @@
 #define MAP_GLOW	0x02	/* CAVE_GLOW equivalent */
 #define MAP_LITE	0x04	/* GRID_LITE equivalent */
 #define MAP_ONCE    0x08	/* This block has ever been seen */
-#define MAP_KEEP    0x10	/* Keep this block in cache even if not seen */
 
 /*
  * Make an itterator, so we can scan the map quickly

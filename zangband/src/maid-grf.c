@@ -549,7 +549,7 @@ bool map_in_bounds(int x, int y)
 {
     if (x < 0 || x >= WILD_BLOCK_SIZE * WILD_SIZE) return (FALSE);
     if (y < 0 || y >= WILD_BLOCK_SIZE * WILD_SIZE) return (FALSE);
-	return (map_refcount[y / 16][x / 16] ? TRUE : FALSE);
+	return (map_refcount[y >> 4][x >> 4] ? TRUE : FALSE);
 }
 
 
@@ -589,22 +589,19 @@ static void save_map_location(int x, int y, term_map *map)
 	mb_ptr = &mbp_ptr[y & 15][x & 15];
 
 	/* Increment refcount depending on visibility */
-	if (map->flags & MAP_SEEN)
+	if (map->flags & MAP_ONCE)
 	{
 		/* Wasn't seen, and now is */
-		if (!(mb_ptr->flags & (MAP_SEEN | MAP_KEEP)))
+		if (!(mb_ptr->flags & (MAP_ONCE)))
 		{
             map_cache_refcount[block_num]++;
             map_refcount[y1][x1]++;
-
-            /* Save the fact that this block has been seen */
-            mb_ptr->flags |= MAP_ONCE;
 		}
 	}
-	else if (!(mb_ptr->flags & MAP_KEEP))
+	else if (!(mb_ptr->flags & MAP_ONCE))
 	{
 		/* Was seen, and now is not */
-		if (mb_ptr->flags & MAP_SEEN)
+		if (mb_ptr->flags & MAP_ONCE)
 		{
 			/* Paranoia */
             if (!map_cache_refcount[block_num])
@@ -622,8 +619,7 @@ static void save_map_location(int x, int y, term_map *map)
 	}
 
     /* Save the flags */
-    mb_ptr->flags &= (MAP_ONCE | MAP_KEEP);
-	mb_ptr->flags |= map->flags;
+	mb_ptr->flags = map->flags;
 
 	/* XXX XXX Hack */
 	player_x = p_ptr->px;
@@ -673,7 +669,7 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 		/* Save known data */
 		map.terrain = pc_ptr->feat;
 		
-		map.flags = MAP_SEEN;
+		map.flags = MAP_SEEN | MAP_ONCE;
 
 		if (glow) map.flags |= MAP_GLOW;
 		if (lite) map.flags |= MAP_LITE;
@@ -691,6 +687,9 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 			if (m_ptr->ml)
 			{
 				map.monster = m_ptr->r_idx;
+				
+				/* Keep this grid */
+				map.flags |= MAP_ONCE;
 			}
 		}
 
@@ -708,6 +707,11 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 				(FIELD_INFO_MARK | FIELD_INFO_VIS))
 			{
 				map.field = fld_ptr->t_idx;
+				
+				/* Keep this grid */
+				map.flags |= MAP_ONCE;
+				
+				/* Stop looking */
 				break;
 			}
 		}
@@ -724,6 +728,11 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 			if (o_ptr->marked)
 			{
 				map.object = o_ptr->k_idx;
+				
+				/* Keep this grid */
+				map.flags |= MAP_ONCE;
+				
+				/* Stop looking */
 				break;
 			}
 		}
