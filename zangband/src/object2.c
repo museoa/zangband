@@ -418,7 +418,7 @@ void wipe_objects(int rg_idx)
 
 
 /* Current object counter */
-static s16b o_cur = 0;
+static s16b o_cur = 1;
 
 /*
  * Acquires and returns the index of a "free" object.
@@ -448,7 +448,7 @@ static s16b o_pop(void)
 	 *
 	 * Feel free to tune this parameter.
 	 */
-	if ((o_max - o_cur) * 3 < o_max || !o_cur)
+	if ((o_max - o_cur) * 3 < o_max)
 	{
 		/* Initial allocation */
 		if (o_max < z_info->o_max)
