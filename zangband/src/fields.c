@@ -1400,7 +1400,7 @@ void field_action_glyph_warding(s16b *field_ptr, void *input)
 
 	monster_type *m_ptr = mon_enter->m_ptr;
 	
-	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+	monster_race *r_ptr;
 	
 	/* Hack: No monster - just test for existance of glyph */
 	if (!m_ptr)
@@ -1411,6 +1411,9 @@ void field_action_glyph_warding(s16b *field_ptr, void *input)
 		/* Done */
 		return;
 	}
+	
+	/* Get race */
+	r_ptr = &r_info[m_ptr->r_idx];
 	
 	if (mon_enter->do_move && !(r_ptr->flags1 & RF1_NEVER_BLOW) && 
 		(randint(BREAK_GLYPH) < r_ptr->level)) 
@@ -1447,7 +1450,7 @@ void field_action_glyph_explode(s16b *field_ptr, void *input)
 
 	monster_type *m_ptr = mon_enter->m_ptr;
 	
-	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+	monster_race *r_ptr;
 	
 	bool do_move = mon_enter->do_move;
 	
@@ -1460,6 +1463,9 @@ void field_action_glyph_explode(s16b *field_ptr, void *input)
 		/* Done */
 		return;
 	}
+	
+	/* Get race */
+	r_ptr = &r_info[m_ptr->r_idx];
 	
 	if (do_move && !(r_ptr->flags1 & RF1_NEVER_BLOW) && 
 		(randint(BREAK_GLYPH) < r_ptr->level)) 
@@ -3198,7 +3204,7 @@ void field_action_door_lock_monster(s16b *field_ptr, void *input)
 	
 	monster_type *m_ptr = mon_enter->m_ptr;
 	
-	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+	monster_race *r_ptr;
 	
 	/* Hack: No monster - cannot enter the grid */
 	if (!m_ptr)
@@ -3208,7 +3214,10 @@ void field_action_door_lock_monster(s16b *field_ptr, void *input)
 		
 		/* Done */
 		return;
-	}	
+	}
+	
+	/* Get race */
+	r_ptr = &r_info[m_ptr->r_idx];
 	
 	if (!mon_enter->do_move)
 	{
@@ -3254,7 +3263,7 @@ void field_action_door_jam_monster(s16b *field_ptr, void *input)
 	
 	monster_type *m_ptr = mon_enter->m_ptr;
 	
-	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+	monster_race *r_ptr;
 	
 	/* Hack: No monster - cannot enter the grid */
 	if (!m_ptr)
@@ -3265,6 +3274,9 @@ void field_action_door_jam_monster(s16b *field_ptr, void *input)
 		/* Done */
 		return;
 	}
+	
+	/* Get race */
+	r_ptr = &r_info[m_ptr->r_idx];
 	
 	if (!mon_enter->do_move)
 	{
