@@ -2265,10 +2265,7 @@ static void del_block(int x, int y)
 	
 	/* Don't do anything if someone else is here */
 	if (wild_refcount[y][x]) return;
-	
-	/* Paranoia */
-	if (wild_refcount[y][x] > 3) quit("Del wild cache error.");
-	
+		
 	/* Time to delete it - get block pointer */
 	block_ptr = wild_grid[y][x];
 	
@@ -2316,11 +2313,8 @@ static void allocate_block(int x, int y)
 	/* Increment refcount */
 	wild_refcount[y][x]++;
 	
-	/* Paranoia */
-	if (wild_refcount[y][x] > 3) quit("Alloc wild cache error.");
-	
 	/* Don't do anything if someone else is here */
-	if (wild_refcount[y][x] != 1) return;
+	if (wild_grid[y][x]) return;
 
 	/* Paranoia */
 	if (wc_cnt >= WILD_CACHE) quit("Out of wilderness cache!!");
