@@ -18,7 +18,8 @@
 #include "zborg4.h"
 
 
-
+extern int borg_danger_aux(int x, int y, int c, int i, bool average);
+extern int borg_danger(int x, int y, int c, bool average);
 extern s32b borg_power(void);
 extern cptr borg_restock(int depth);
 extern cptr borg_prepared(int depth);

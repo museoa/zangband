@@ -44,8 +44,6 @@ extern list_item *look_up_equip_slot(int slot);
 extern void borg_notice(void);
 extern void borg_notice_home(void);
 extern s32b borg_power_home(void);
-extern int borg_danger_aux(int x, int y, int c, int i, bool average);
-extern int borg_danger(int x, int y, int c, bool average);
 
 
 /*
