@@ -490,7 +490,7 @@ proc CPath {args} {
 
 # CPathTk --
 #
-#	Create a path relative to Angband(dir,common,tk)
+#	Create a path relative to Angband(dirTK)
 #
 # Arguments:
 #	arg1					about arg1
@@ -502,7 +502,7 @@ proc CPathTk {args} {
 
 	global Angband
 
-	return [eval file join [list $Angband(dir,common,tk)] $args]
+	return [eval file join [list $Angband(dirTK)] $args]
 }
 
 # PathUser --

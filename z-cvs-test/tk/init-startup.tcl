@@ -113,7 +113,7 @@ proc Source {args} {
 
 	global Angband
 
-	set path [eval file join [list $Angband(dir,common,tk)] $args]
+	set path [eval file join [list $Angband(dirTK)] $args]
 	if {![file exists $path]} {
 		error "file not found:\n$path"
 	}
@@ -1027,8 +1027,6 @@ proc NSInitStartup::InitStartup {} {
 	# The Common directory, and Common\tk
 	set Angband(dir,common) [angband game directory ANGBAND_DIR_COMMON]
 	set Angband(dir,common) [LongName $Angband(dir,common)]
-	set Angband(dir,common,tk) [angband game directory ANGBAND_DIR_COMMON_TK]
-	set Angband(dir,common,tk) [LongName $Angband(dir,common,tk)]
 
 	# The msgs directory (message catalog)
 	set Angband(dir,msgs) [file join $Angband(dir,common) msgs]
@@ -1051,7 +1049,7 @@ proc NSInitStartup::InitStartup {} {
 	# Tell Tcl where to find our packages. Make sure Tcl loads packages from
 	# our CommonTk\lib directory before looking anywhere else, in case external
 	# packages with the same name exist.
-	set auto_path [concat [list [file join $Angband(dir,common,tk) lib]] $auto_path]
+	set auto_path [concat [list [file join $Angband(dirTK) lib]] $auto_path]
 	
 	# This call makes sure Tcl reads in info about all available packages.
 	# Without this call, the "package names" command returns an empty list.
@@ -1077,12 +1075,12 @@ Global tclCompiler 0
 	if {$Angband(platform) == "windows"} {
 		# Set the default window icon
 		if {[string compare 8.3.3 [info patchlevel]] >= 0} {
-			wm iconbitmap . -default [file join $Angband(dir,common,tk) image angbandtk.ico]
+			wm iconbitmap . -default [file join $Angband(dirTK) image angbandtk.ico]
 		}
 	}
 
 	# Development debug support
-	set path [file join $Angband(dir,common,tk) errorInfo.tcl]
+	set path [file join $Angband(dirTK) errorInfo.tcl]
 	if {[file exists $path]} {
 	
 		set DEBUG 1
