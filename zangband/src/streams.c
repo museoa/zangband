@@ -423,7 +423,7 @@ void destroy_level(void)
 					else
 					{
 						/* Create floor */
-						set_feat_grid(c_ptr, FEAT_FLOOR);
+						set_feat_grid(c_ptr, dun->feat_floor);
 					}
 
 					/* No longer part of a room or vault */
@@ -475,7 +475,7 @@ void build_cavern(void)
 		/* Convert to normal format+ clean up */
 		done = generate_lake(x0 + 1, y0 + 1, xsize, ysize,
 							 cutoff, cutoff, cutoff,
-							 FEAT_FLOOR, FEAT_FLOOR, FEAT_FLOOR);
+							 dun->feat_floor, dun->feat_floor, dun->feat_floor);
 	}
 }
 

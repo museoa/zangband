@@ -57,7 +57,7 @@ static void build_small_room(int x0, int y0)
 	generate_door(x0 - 1, y0 - 1, x0 + 1, y0 + 1, TRUE);
 
 	/* Add inner open space */
-	set_feat_bold(x0, y0, FEAT_FLOOR);
+	set_feat_bold(x0, y0, dun->feat_floor);
 }
 
 /*
@@ -292,7 +292,7 @@ static void build_type1(int bx0, int by0)
 	generate_draw(x1 - 1, y1 - 1, x2 + 1, y2 + 1, FEAT_WALL_OUTER);
 
 	/* Generate inner floors */
-	generate_fill(x1, y1, x2, y2, FEAT_FLOOR);
+	generate_fill(x1, y1, x2, y2, dun->feat_floor);
 
 	/* Hack -- Occasional pillar room */
 	if (one_in_(20))
@@ -428,7 +428,7 @@ static void build_type2(int bx0, int by0)
 	{
 		/* Generate inner floors */
 		generate_fill(uleft[i].x, uleft[i].y,
-					  lright[i].x, lright[i].y, FEAT_FLOOR);
+					  lright[i].x, lright[i].y, dun->feat_floor);
 	}
 }
 
@@ -496,10 +496,10 @@ static void build_type3(int bx0, int by0)
 	generate_draw(x1b - 1, y1b - 1, x2b + 1, y2b + 1, FEAT_WALL_OUTER);
 
 	/* Generate inner floors (a) */
-	generate_fill(x1a, y1a, x2a, y2a, FEAT_FLOOR);
+	generate_fill(x1a, y1a, x2a, y2a, dun->feat_floor);
 
 	/* Generate inner floors (b) */
-	generate_fill(x1b, y1b, x2b, y2b, FEAT_FLOOR);
+	generate_fill(x1b, y1b, x2b, y2b, dun->feat_floor);
 
 
 	/* Special features (3/4) */
@@ -631,7 +631,7 @@ static void build_type4(int bx0, int by0)
 	generate_draw(x1 - 1, y1 - 1, x2 + 1, y2 + 1, FEAT_WALL_OUTER);
 
 	/* Generate inner floors */
-	generate_fill(x1, y1, x2, y2, FEAT_FLOOR);
+	generate_fill(x1, y1, x2, y2, dun->feat_floor);
 
 
 	/* The inner room */
@@ -1426,7 +1426,7 @@ static void draw_pit(int x1, int y1, int x2, int y2, int xh, int yh)
 	y2--;
 
 	/* Generate inner floor */
-	generate_fill(x1, y1, x2, y2, FEAT_FLOOR);
+	generate_fill(x1, y1, x2, y2, dun->feat_floor);
 
 	/* No pillars? */
 	if (!wid && !hgt) return;
@@ -2010,7 +2010,7 @@ static void build_vault(int xval, int yval, int xmax, int ymax, cptr data,
 			c_ptr = cave_p(x, y);
 
 			/* Lay down a floor */
-			set_feat_grid(c_ptr, FEAT_FLOOR);
+			set_feat_grid(c_ptr, dun->feat_floor);
 
 			/* Part of a vault */
 			c_ptr->info |= (CAVE_ROOM | CAVE_ICKY);
@@ -2468,8 +2468,8 @@ static bool add_door(int x, int y)
 	 *  .=floor, #=wall
 	 */
 
-	if ((cave_p(x, y - 1)->feat == FEAT_FLOOR) &&
-		(cave_p(x, y + 1)->feat == FEAT_FLOOR) &&
+	if ((cave_p(x, y - 1)->feat == dun->feat_floor) &&
+		(cave_p(x, y + 1)->feat == dun->feat_floor) &&
 		(cave_p(x - 1, y)->feat == FEAT_WALL_OUTER) &&
 		(cave_p(x + 1, y)->feat == FEAT_WALL_OUTER))
 	{
@@ -2493,8 +2493,8 @@ static bool add_door(int x, int y)
 	 */
 	if ((cave_p(x, y - 1)->feat == FEAT_WALL_OUTER) &&
 		(cave_p(x, y + 1)->feat == FEAT_WALL_OUTER) &&
-		(cave_p(x - 1, y)->feat == FEAT_FLOOR) &&
-		(cave_p(x + 1, y)->feat == FEAT_FLOOR))
+		(cave_p(x - 1, y)->feat == dun->feat_floor) &&
+		(cave_p(x + 1, y)->feat == dun->feat_floor))
 	{
 		place_random_door(x, y);
 
@@ -2543,7 +2543,7 @@ static void fill_treasure(int x1, int y1, int x2, int y2, int difficulty)
 			c_ptr = cave_p(x, y);
 
 			/* if floor, shallow water and lava */
-			if ((c_ptr->feat == FEAT_FLOOR) ||
+			if ((c_ptr->feat == dun->feat_floor) ||
 				(c_ptr->feat == FEAT_SHAL_WATER) ||
 				(c_ptr->feat == FEAT_SHAL_LAVA))
 			{
@@ -2730,7 +2730,7 @@ static void build_bubble_vault(int x0, int y0, int xsize, int ysize)
 			else
 			{
 				/* middle of a bubble */
-				set_feat_grid(c_ptr, FEAT_FLOOR);
+				set_feat_grid(c_ptr, dun->feat_floor);
 			}
 		}
 	}
@@ -2802,7 +2802,7 @@ static void build_room(int x1, int y1, int x2, int y2)
 			if (c_ptr->feat == FEAT_WALL_EXTRA)
 			{
 				/* Clear the untouched region */
-				set_feat_grid(c_ptr, FEAT_FLOOR);
+				set_feat_grid(c_ptr, dun->feat_floor);
 			}
 		}
 	}
@@ -2905,7 +2905,7 @@ static void build_cave_vault(int x0, int y0, int xsiz, int ysiz)
 			c_ptr = cave_p(x, y);
 
 			/* Is it a floor? */
-			if (c_ptr->feat == FEAT_FLOOR)
+			if (c_ptr->feat == dun->feat_floor)
 			{
 				/* Set the icky flag */
 				c_ptr->info |= CAVE_ICKY;
@@ -2952,7 +2952,7 @@ static void r_visit(int x1, int y1, int x2, int y2,
 
 	x = 2 * (node % m) + x1;
 	y = 2 * (node / m) + y1;
-	set_feat_bold(x, y, FEAT_FLOOR);
+	set_feat_bold(x, y, dun->feat_floor);
 
 	/* setup order of adjacent node visits */
 	if (one_in_(3))
@@ -3004,7 +3004,7 @@ static void r_visit(int x1, int y1, int x2, int y2,
 				/* (0,+) - check for bottom boundary */
 				if ((node / m < n - 1) && (visited[node + m] == 0))
 				{
-					set_feat_bold(x, y + 1, FEAT_FLOOR);
+					set_feat_bold(x, y + 1, dun->feat_floor);
 					r_visit(x1, y1, x2, y2, node + m, dir, visited);
 				}
 				break;
@@ -3015,7 +3015,7 @@ static void r_visit(int x1, int y1, int x2, int y2,
 				/* (0,-) - check for top boundary */
 				if ((node / m > 0) && (visited[node - m] == 0))
 				{
-					set_feat_bold(x, y - 1, FEAT_FLOOR);
+					set_feat_bold(x, y - 1, dun->feat_floor);
 					r_visit(x1, y1, x2, y2, node - m, dir, visited);
 				}
 				break;
@@ -3026,7 +3026,7 @@ static void r_visit(int x1, int y1, int x2, int y2,
 				/* (+,0) - check for right boundary */
 				if ((node % m < m - 1) && (visited[node + 1] == 0))
 				{
-					set_feat_bold(x + 1, y, FEAT_FLOOR);
+					set_feat_bold(x + 1, y, dun->feat_floor);
 					r_visit(x1, y1, x2, y2, node + 1, dir, visited);
 				}
 				break;
@@ -3037,7 +3037,7 @@ static void r_visit(int x1, int y1, int x2, int y2,
 				/* (-,0) - check for left boundary */
 				if ((node % m > 0) && (visited[node - 1] == 0))
 				{
-					set_feat_bold(x - 1, y, FEAT_FLOOR);
+					set_feat_bold(x - 1, y, dun->feat_floor);
 					r_visit(x1, y1, x2, y2, node - 1, dir, visited);
 				}
 			}
@@ -3145,7 +3145,7 @@ static void build_mini_c_vault(int x0, int y0, int xsize, int ysize)
 			total = x - x1 + y - y1;
 
 			/* If total is odd- and is a floor then make a wall */
-			if ((total % 2 == 1) && (c_ptr->feat == FEAT_FLOOR))
+			if ((total % 2 == 1) && (c_ptr->feat == dun->feat_floor))
 			{
 				set_feat_grid(c_ptr, FEAT_WALL_INNER);
 			}
@@ -3238,16 +3238,16 @@ static void build_recursive_room(int x1, int y1, int x2, int y2, int power)
 				/* left and right */
 				y = randint1(ysize) + y1;
 
-				set_feat_bold(x1, y, FEAT_FLOOR);
-				set_feat_bold(x2, y, FEAT_FLOOR);
+				set_feat_bold(x1, y, dun->feat_floor);
+				set_feat_bold(x2, y, dun->feat_floor);
 			}
 			else
 			{
 				/* top and bottom */
 				x = randint1(xsize) + x1;
 
-				set_feat_bold(x, y1, FEAT_FLOOR);
-				set_feat_bold(x, y2, FEAT_FLOOR);
+				set_feat_bold(x, y1, dun->feat_floor);
+				set_feat_bold(x, y2, dun->feat_floor);
 			}
 
 			/* Select size of keep */
@@ -3298,12 +3298,12 @@ static void build_recursive_room(int x1, int y1, int x2, int y2, int power)
 			if (one_in_(2))
 			{
 				/* left */
-				set_feat_bold(x1 + 1, y, FEAT_FLOOR);
+				set_feat_bold(x1 + 1, y, dun->feat_floor);
 			}
 			else
 			{
 				/* right */
-				set_feat_bold(x2 - 1, y, FEAT_FLOOR);
+				set_feat_bold(x2 - 1, y, dun->feat_floor);
 			}
 
 			/* Build the room */
@@ -3376,7 +3376,7 @@ static void build_castle_vault(int x0, int y0, int xsize, int ysize)
 	generate_vault(x1 - 1, y1 - 1, x2 + 1, y2 + 1);
 
 	/* Make the whole room floor */
-	generate_fill(x1 - 1, y1 - 1, x2 + 1, y2 + 1, FEAT_FLOOR);
+	generate_fill(x1 - 1, y1 - 1, x2 + 1, y2 + 1, dun->feat_floor);
 
 	/* Make the castle */
 	build_recursive_room(x1, y1, x2, y2, randint1(5));
@@ -3410,7 +3410,7 @@ static void add_outer_wall(int x, int y, int light,
 	/* set room flag */
 	c_ptr->info |= CAVE_ROOM;
 
-	if (c_ptr->feat == FEAT_FLOOR)
+	if (c_ptr->feat == dun->feat_floor)
 	{
 		for (i = -1; i <= 1; i++)
 		{
@@ -3515,7 +3515,7 @@ static void build_target_vault(int x0, int y0, int xsize, int ysize)
 			if (dist2(y0, x0, y, x, h1, h2, h3, h4) <= rad - 1)
 			{
 				/* inside- so is floor */
-				set_feat_grid(c_ptr, FEAT_FLOOR);
+				set_feat_grid(c_ptr, dun->feat_floor);
 			}
 			else
 			{
@@ -3549,7 +3549,7 @@ static void build_target_vault(int x0, int y0, int xsize, int ysize)
 	generate_draw(x0 - 1, y0 - 1, x0 + 1, y0 + 1, FEAT_WALL_INNER);
 
 	/* Make inner room */
-	set_feat_bold(x0, y0, FEAT_FLOOR);
+	set_feat_bold(x0, y0, dun->feat_floor);
 
 
 	/* Add doors to vault */
@@ -3600,15 +3600,15 @@ static void build_elemental_vault(int x0, int y0, int xsiz, int ysiz)
 	{
 		/* Earth vault  (Rubble) */
 		f1 = FEAT_RUBBLE;
-		f2 = FEAT_FLOOR;
+		f2 = dun->feat_floor;
 		f3 = FEAT_RUBBLE;
 	}
 	else if (p_ptr->depth < 50)
 	{
 		/* Air vault (Trees) */
-		f1 = FEAT_FLOOR;
+		f1 = FEAT_GRASS;
 		f2 = FEAT_TREES;
-		f3 = FEAT_FLOOR;
+		f3 = FEAT_GRASS;
 	}
 	else if (p_ptr->depth < 75)
 	{
@@ -3693,7 +3693,7 @@ static void build_micro_room_vault(int x0, int y0, int xsize, int ysize)
 	generate_vault(x1 - 1, y1 - 1, x2 + 1, y2 + 1);
 
 	/* Make the whole room floor */
-	generate_fill(x1, y1, x2, y2, FEAT_FLOOR);
+	generate_fill(x1, y1, x2, y2, dun->feat_floor);
 
 	/* Make outer walls */
 	generate_draw(x1 - 1, y1 - 1, x2 + 1, y2 + 1, FEAT_WALL_OUTER);
@@ -3852,7 +3852,7 @@ static void build_type11(int bx0, int by0)
 			if (distance(x0, y0, x, y) <= rad - 1)
 			{
 				/* inside- so is floor */
-				set_feat_bold(x, y, FEAT_FLOOR);
+				set_feat_bold(x, y, dun->feat_floor);
 			}
 			else if (distance(x0, y0, x, y) <= rad + 1)
 			{
@@ -3932,11 +3932,11 @@ static void build_type12(int bx0, int by0)
 			if (dist2(y0, x0, y, x, h1, h2, h3, h4) <= rad - 1)
 			{
 				/* inside - so is floor */
-				set_feat_grid(c_ptr, FEAT_FLOOR);
+				set_feat_grid(c_ptr, dun->feat_floor);
 			}
 			else if (distance(x0, y0, x, y) < 3)
 			{
-				set_feat_grid(c_ptr, FEAT_FLOOR);
+				set_feat_grid(c_ptr, dun->feat_floor);
 			}
 			else
 			{
@@ -3955,7 +3955,7 @@ static void build_type12(int bx0, int by0)
 	{
 		for (y = y0 - 2; y <= y0 + 2; y++)
 		{
-			if (cave_p(x, y)->feat != FEAT_FLOOR)
+			if (cave_p(x, y)->feat != dun->feat_floor)
 			{
 				/* Wall in the way */
 				emptyflag = FALSE;
@@ -4008,14 +4008,14 @@ static void build_type13(int bx0, int by0)
 	done = FALSE;
 
 	/* Pick the type */
-	switch (randint0(5))
+	switch (randint0(4))
 	{
 		case 0:
 		{
 			/* Water */
 			f1 = FEAT_DEEP_WATER;
 			f2 = FEAT_SHAL_WATER;
-			f3 = FEAT_FLOOR;
+			f3 = dun->feat_floor;
 			break;
 		}
 
@@ -4024,7 +4024,7 @@ static void build_type13(int bx0, int by0)
 			/* Lava */
 			f1 = FEAT_DEEP_LAVA;
 			f2 = FEAT_SHAL_LAVA;
-			f3 = FEAT_FLOOR;
+			f3 = dun->feat_floor;
 			break;
 		}
 
@@ -4033,7 +4033,7 @@ static void build_type13(int bx0, int by0)
 			/* Rock */
 			f1 = FEAT_WALL_INNER;
 			f2 = FEAT_WALL_INNER;
-			f3 = FEAT_FLOOR;
+			f3 = dun->feat_floor;
 			break;
 		}
 
@@ -4042,16 +4042,7 @@ static void build_type13(int bx0, int by0)
 			/* Rubble - oooh treasure */
 			f1 = FEAT_RUBBLE;
 			f2 = FEAT_RUBBLE;
-			f3 = FEAT_FLOOR;
-			break;
-		}
-
-		case 4:
-		{
-			/* Sand */
-			f1 = FEAT_SAND;
-			f2 = FEAT_SAND;
-			f3 = FEAT_FLOOR;
+			f3 = dun->feat_floor;
 			break;
 		}
 	}
@@ -4083,7 +4074,7 @@ static void build_type13(int bx0, int by0)
 
 	/* Make inner passage */
 	generate_draw(x0 - xhsize + 1, y0 - yhsize + 1,
-				  x0 - xhsize + xsize - 2, y0 - yhsize + ysize - 2, FEAT_FLOOR);
+				  x0 - xhsize + xsize - 2, y0 - yhsize + ysize - 2, dun->feat_floor);
 }
 
 
@@ -4122,7 +4113,7 @@ static void build_type14(int bx0, int by0)
 	generate_draw(x1 - 1, y1 - 1, x2 + 1, y2 + 1, FEAT_WALL_OUTER);
 
 	/* Generate inner floors */
-	generate_fill(x1, y1, x2, y2, FEAT_FLOOR);
+	generate_fill(x1, y1, x2, y2, dun->feat_floor);
 
 	/* Add some walls */
 
@@ -4187,7 +4178,7 @@ static void build_type14(int bx0, int by0)
 		{
 			/* Anti-plus */
 			generate_plus(x1, y1, x2, y2, FEAT_WALL_INNER);
-			generate_plus(x1 + 5, y1 + 3, x2 - 5, y2 - 3, FEAT_FLOOR);
+			generate_plus(x1 + 5, y1 + 3, x2 - 5, y2 - 3, dun->feat_floor);
 
 			break;
 		}
@@ -4230,12 +4221,12 @@ static void build_type15(int bx0, int by0)
 			if (type)
 			{
 				/* Sloping down and right */
-				set_feat_bold(x + y, y + y1, FEAT_FLOOR);
+				set_feat_bold(x + y, y + y1, dun->feat_floor);
 			}
 			else
 			{
 				/* Sloping up and right */
-				set_feat_bold(x + h - y, y + y1, FEAT_FLOOR);
+				set_feat_bold(x + h - y, y + y1, dun->feat_floor);
 			}
 		}
 	}
@@ -4283,7 +4274,7 @@ static void build_type16(int bx0, int by0)
 	x2 = xval + (xsize - 1) / 2;
 
 	/* Generate inner floors */
-	generate_fill(x1, y1, x2, y2, FEAT_FLOOR);
+	generate_fill(x1, y1, x2, y2, dun->feat_floor);
 
 	/* Fill boundary with random rectangles */
 
@@ -4400,7 +4391,7 @@ static void connect(int x1, int y1, int x2, int y2)
 		x = x1 + l * (x2 - x1) / length;
 		y = y1 + l * (y2 - y1) / length;
 	
-		set_feat_bold(x, y, FEAT_FLOOR);
+		set_feat_bold(x, y, dun->feat_floor);
 	}
 }
 
@@ -4483,7 +4474,7 @@ static void build_type17(int bx0, int by0)
 			{
 				if (test_tri(x, y, vx1, vy1, vx2, vy2, vx3, vy3, det))
 				{
-					set_feat_bold(x, y, FEAT_FLOOR);
+					set_feat_bold(x, y, dun->feat_floor);
 				}
 			}
 		}
@@ -4531,7 +4522,7 @@ static void build_type18(int bx0, int by0)
 	generate_room(x1 - 1, y1 - 1, x2 + 1, y2 + 1, light);
 
 	/* Generate inner floors */
-	generate_fill(x1, y1, x2, y2, FEAT_FLOOR);
+	generate_fill(x1, y1, x2, y2, dun->feat_floor);
 	
 	for (i = 0; i < 6; i++)
 	{
@@ -4577,7 +4568,7 @@ static void build_type19(int bx0, int by0)
 		generate_draw(x1 - 1, y1 - 1, x2 + 1, y2 + 1, FEAT_WALL_OUTER);
 		
 		/* Generate floor */
-		generate_draw(x1, y1, x2, y2, FEAT_FLOOR);
+		generate_draw(x1, y1, x2, y2, dun->feat_floor);
 		
 		/* Generate liquid */
 		generate_draw(x1, y1 + 1, x2, y2 - 1, dun->feat_shal_liquid);
@@ -4601,7 +4592,7 @@ static void build_type19(int bx0, int by0)
 		generate_draw(x1 - 1, y1 - 1, x2 + 1, y2 + 1, FEAT_WALL_OUTER);
 		
 		/* Generate floor */
-		generate_draw(x1, y1, x2, y2, FEAT_FLOOR);
+		generate_draw(x1, y1, x2, y2, dun->feat_floor);
 		
 		/* Generate liquid */
 		generate_draw(x1 + 1, y1, x2 - 1, y2, dun->feat_shal_liquid);
@@ -4652,7 +4643,7 @@ static void build_type20(int bx0, int by0)
 	generate_draw(x1 - 1, y1 - 1, x2 + 1, y2 + 1, FEAT_WALL_OUTER);
 
 	/* Generate inner floors */
-	generate_fill(x1, y1, x2, y2, FEAT_FLOOR);
+	generate_fill(x1, y1, x2, y2, dun->feat_floor);
 	
 	/* Fill with rock and rubble */
 	for (i = randint1(xsize * ysize / 4); i > 0; i--)
@@ -4707,7 +4698,7 @@ static void build_type21(int bx0, int by0)
 		generate_draw(x1 - 1 + i * 8, y1 - 1, x1 + 5 + i * 8, y1 + 3, FEAT_WALL_OUTER);
 		
 		/* Generate inner floors */
-		generate_fill(x1 + i * 8, y1, x1 + 4 + i * 8, y1 + 2, FEAT_FLOOR);
+		generate_fill(x1 + i * 8, y1, x1 + 4 + i * 8, y1 + 2, dun->feat_floor);
 		
 		
 		/* Bottom room */
@@ -4716,7 +4707,7 @@ static void build_type21(int bx0, int by0)
 		generate_draw(x1 - 1 + i * 8, y2 - 3, x1 + 5 + i * 8, y2 + 1, FEAT_WALL_OUTER);
 		
 		/* Generate inner floors */
-		generate_fill(x1 + i * 8, y2 - 2, x1 + 4 + i * 8, y2, FEAT_FLOOR);
+		generate_fill(x1 + i * 8, y2 - 2, x1 + 4 + i * 8, y2, dun->feat_floor);
 	}
 	
 	/*
@@ -4728,12 +4719,12 @@ static void build_type21(int bx0, int by0)
 	/* Draw the connecting tunnels */
 	for (i = 0; i < 3; i++)
 	{
-		generate_line(x1 + i * 8 + 2, y1 + 3, x1 + i * 8 + 2, y2 - 3, FEAT_FLOOR);
+		generate_line(x1 + i * 8 + 2, y1 + 3, x1 + i * 8 + 2, y2 - 3, dun->feat_floor);
 	}
 
 	
 	/* Finally - connect the chambers */
-	generate_line(x1 - 1, yval, x1 + 21, yval, FEAT_FLOOR);
+	generate_line(x1 - 1, yval, x1 + 21, yval, dun->feat_floor);
 }
 
 
@@ -4781,7 +4772,7 @@ static void build_type22(int bx0, int by0)
 	generate_draw(x1 - 1, y1 - 1, x2 + 1, y2 + 1, FEAT_WALL_OUTER);
 
 	/* Generate inner floors */
-	generate_fill(x1, y1, x2, y2, FEAT_FLOOR);
+	generate_fill(x1, y1, x2, y2, dun->feat_floor);
 
 	/* Work out how many pillars to use in each direction */
 	xcount = xsize / 5;
@@ -4841,7 +4832,7 @@ static void build_type23(int bx0, int by0)
 				if (distance(x0, y0, x, y) <= rad - 1)
 				{
 					/* inside- so is floor */
-					set_feat_bold(x, y, FEAT_FLOOR);
+					set_feat_bold(x, y, dun->feat_floor);
 				}
 					else if (distance(x0, y0, x, y) <= rad + 1)
 				{
@@ -4877,7 +4868,7 @@ static void build_type23(int bx0, int by0)
 				if (distance(x0, y0, x, y) <= rad - 1)
 				{
 					/* inside- so is floor */
-					set_feat_bold(x, y, FEAT_FLOOR);
+					set_feat_bold(x, y, dun->feat_floor);
 				}
 				else if (distance(x0, y0, x, y) <= rad + 1)
 				{
@@ -4923,7 +4914,7 @@ static void build_type24(int bx0, int by0)
 	generate_draw(x1 - 1, y1 - 1, x2 + 1, y2 + 1, FEAT_WALL_OUTER);
 
 	/* Generate inner floors */
-	generate_fill(x1, y1, x2, y2, FEAT_FLOOR);
+	generate_fill(x1, y1, x2, y2, dun->feat_floor);
 	
 	/* Create triangular features */
 	for (i = 1; i < 4; i++)
@@ -4994,7 +4985,7 @@ static void overdraw_room(int x1, int y1, int x2, int y2, bool light)
 			/* There is a room square here */
 			if (c_ptr->info & CAVE_ROOM) continue;
 			
-			cave_set_feat(x, y, FEAT_FLOOR);
+			cave_set_feat(x, y, dun->feat_floor);
 		}
 	}
 	
@@ -5019,7 +5010,7 @@ static void overdraw_room(int x1, int y1, int x2, int y2, bool light)
 							if (!in_bounds(x + i, y + j)) continue;
 							
 							/* Are we next to a floor? */
-							if (cave_p(x + i, y + j)->feat == FEAT_FLOOR)
+							if (cave_p(x + i, y + j)->feat == dun->feat_floor)
 							{
 								/* Outer walls */
 								cave_set_feat(x, y, FEAT_WALL_OUTER);
@@ -5069,7 +5060,7 @@ static void overdraw_room(int x1, int y1, int x2, int y2, bool light)
 					if (!connected && one_in_(wallcount--))
 					{
 						/* Emergency - open passage into room */
-						cave_set_feat(x, y, FEAT_FLOOR);
+						cave_set_feat(x, y, dun->feat_floor);
 						
 						connected = TRUE;
 					}
@@ -5141,7 +5132,7 @@ static void build_type25(int bx0, int by0)
 	generate_draw(xval - 3, yval - 3, xval + 3, yval + 3, FEAT_WALL_OUTER);
 
 	/* Generate inner floors */
-	generate_fill(xval - 2, yval - 2, xval + 2, yval + 2, FEAT_FLOOR);
+	generate_fill(xval - 2, yval - 2, xval + 2, yval + 2, dun->feat_floor);
 
 	/*
 	 * Add other rooms

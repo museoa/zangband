@@ -125,7 +125,7 @@ void place_random_door(int x, int y)
 	if (ironman_nightmare && one_in_(666))
 	{
 		/* Create invisible wall */
-		set_feat_grid(c_ptr, FEAT_FLOOR);
+		set_feat_grid(c_ptr, dun->feat_floor);
 		(void)place_field(x, y, FT_WALL_INVIS);
 		return;
 	}
@@ -172,7 +172,7 @@ void place_closed_door(int x, int y)
 	if (ironman_nightmare && one_in_(666))
 	{
 		/* Create invisible wall */
-		set_feat_bold(x, y, FEAT_FLOOR);
+		set_feat_bold(x, y, dun->feat_floor);
 		(void)place_field(x, y, FT_WALL_INVIS);
 		return;
 	}
@@ -712,7 +712,7 @@ void set_floor(int x, int y)
 	/* Set to be floor if is a wall (don't touch lakes). */
 	if (c_ptr->feat == FEAT_WALL_EXTRA)
 	{
-		set_feat_grid(c_ptr, FEAT_FLOOR);
+		set_feat_grid(c_ptr, dun->feat_floor);
 	}
 }
 
@@ -981,7 +981,7 @@ static bool set_tunnel(int *x, int *y, bool affectwall)
 		return TRUE;
 	}
 
-	if (feat == FEAT_FLOOR)
+	if (feat == dun->feat_floor)
 	{
 		/* Don't do anything */
 		return TRUE;
@@ -1010,7 +1010,7 @@ static bool set_tunnel(int *x, int *y, bool affectwall)
 				}
 			}
 		}
-		set_feat_bold(*x, *y, FEAT_FLOOR);
+		set_feat_bold(*x, *y, dun->feat_floor);
 
 		return TRUE;
 	}
@@ -1304,7 +1304,7 @@ bool build_tunnel2(int x1, int y1, int x2, int y2, int type, int cutoff)
 			midval = cave_p(x3, y3)->feat;
 		}
 
-		if (midval == FEAT_FLOOR)
+		if (midval == dun->feat_floor)
 		{
 			if (build_tunnel2(x1, y1, x3, y3, type, cutoff))
 			{
@@ -1858,9 +1858,9 @@ bool generate_fracave(int x0, int y0, int xsize, int ysize, int cutoff,
 	fill_data.c3 = 0;
 
 	/* features to fill with */
-	fill_data.feat1 = FEAT_FLOOR;
-	fill_data.feat2 = FEAT_FLOOR;
-	fill_data.feat3 = FEAT_FLOOR;
+	fill_data.feat1 = dun->feat_floor;
+	fill_data.feat2 = dun->feat_floor;
+	fill_data.feat3 = dun->feat_floor;
 
 	/* number of filled squares */
 	fill_data.amount = 0;

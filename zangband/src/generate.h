@@ -150,6 +150,9 @@ struct dun_data
 	/* Liquid type for lakes/ rivers etc. */
 	byte feat_shal_liquid;
 	byte feat_deep_liquid;
+	
+	/* Floor terrain */
+	byte feat_floor;
 };
 
 extern dun_data *dun;
@@ -175,6 +178,9 @@ struct dun_gen_type
 	u32b habitat;
 	int level;
 	int chance;
+	
+	/* Floor terrain type */
+	byte floor;
 	
 	/* Liquid type for lakes/ rivers etc. */
 	byte liquid;

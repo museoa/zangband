@@ -2342,7 +2342,7 @@ void update_view(void)
 		{
 			/* Forget memorized floor grids from view_torch_grids */
 			if (!(info & (CAVE_GLOW)) && !view_torch_grids
-				&& (c_ptr->feat == FEAT_FLOOR))
+				&& cave_floor_grid(c_ptr))
 			{
 				forget_grid(pc_ptr);
 			}
@@ -3004,12 +3004,8 @@ void map_area(void)
 			/* All non-walls are "checked" */
 			if (cave_floor_grid(c_ptr))
 			{
-				/* Memorize normal features */
-				if (c_ptr->feat != FEAT_FLOOR)
-				{
-					/* Memorize the grid */
-					remember_grid(c_ptr, pc_ptr);
-				}
+				/* Memorize the grid */
+				remember_grid(c_ptr, pc_ptr);
 
 				/* Memorize known walls */
 				for (i = 0; i < 8; i++)
@@ -3093,12 +3089,8 @@ void wiz_lite(void)
 			cave_type *c_ptr = area(x, y);
 			pcave_type *pc_ptr = parea(x, y);
 
-			/* Memorize normal features */
-			if (c_ptr->feat != FEAT_FLOOR)
-			{
-				/* Memorize the grid */
-				remember_grid(c_ptr, pc_ptr);
-			}
+			/* Memorize the grid */
+			remember_grid(c_ptr, pc_ptr);
 
 			/* Remember items on the grid */
 			OBJ_ITT_START (c_ptr->o_idx, o_ptr)

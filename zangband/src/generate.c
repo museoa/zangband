@@ -273,7 +273,7 @@ static void alloc_object(int set, int typ, int num)
 			case ALLOC_TYP_INVIS:
 			{
 				/* Create invisible wall */
-				set_feat_grid(c_ptr, FEAT_FLOOR);
+				set_feat_grid(c_ptr, dun->feat_floor);
 				(void)place_field(x, y, FT_WALL_INVIS);
 				break;
 			}
@@ -456,7 +456,10 @@ static bool cave_gen(const dun_gen_type *d_type_ptr)
 			/* Count down bits until we get to the one we want */
 			lq_count--;
 		}
-	}	
+	}
+	
+	/* Get floor type */
+	dun->feat_floor = d_type_ptr->floor;
 
 	/* Empty arena levels */
 	if (ironman_empty_levels || (empty_levels && one_in_(EMPTY_LEVEL)))
@@ -475,7 +478,7 @@ static bool cave_gen(const dun_gen_type *d_type_ptr)
 		{
 			if (empty_level)
 			{
-				set_feat_bold(x, y, FEAT_FLOOR);
+				set_feat_bold(x, y, dun->feat_floor);
 			}
 			else
 			{
@@ -491,14 +494,14 @@ static bool cave_gen(const dun_gen_type *d_type_ptr)
 		destroyed = TRUE;
 
 		/* extra rubble around the place looks cool */
-		build_lake(FEAT_FLOOR, FEAT_FLOOR, FEAT_RUBBLE);
+		build_lake(dun->feat_floor, dun->feat_floor, FEAT_RUBBLE);
 	}
 
 	/* Make a lake some of the time */
 	if (one_in_(LAKE_LEVEL) && !empty_level && !destroyed && terrain_streams)
 	{
 		if (cheat_room) msgf("Lake on the level.");
-		build_lake(dun->feat_deep_liquid, dun->feat_shal_liquid, FEAT_FLOOR);
+		build_lake(dun->feat_deep_liquid, dun->feat_shal_liquid, dun->feat_floor);
 	}
 
 	else if (one_in_(DUN_CAV1 / (p_ptr->depth + DUN_CAV2)) && !empty_level &&
@@ -767,7 +770,7 @@ static bool cave_gen(const dun_gen_type *d_type_ptr)
 			/* Clear previous contents if wall, add a floor */
 			if (cave_wall_grid(c_ptr))
 			{
-				set_feat_grid(c_ptr, FEAT_FLOOR);
+				set_feat_grid(c_ptr, dun->feat_floor);
 			}
 		}
 
@@ -785,7 +788,7 @@ static bool cave_gen(const dun_gen_type *d_type_ptr)
 			delete_field_location(c_ptr);
 
 			/* Clear previous contents, add up floor */
-			set_feat_grid(c_ptr, FEAT_FLOOR);
+			set_feat_grid(c_ptr, dun->feat_floor);
 
 			/* Occasional doorway */
 			if (randint0(100) < dun_tun_pen)
@@ -1296,19 +1299,44 @@ int create_region(int x, int y, byte flags)
  */
 static const dun_gen_type dungeons[] =
 {
-	{{0, 10, 0, 40}, RF8_DUN_DARKWATER, 0, 1, LQ_WATER | LQ_MUD | LQ_SWAMP},
-	{{50, 10, 10, 0}, RF8_DUN_LAIR, 0, 1, LQ_WATER | LQ_ACID | LQ_SWAMP | LQ_MUD},
-	{{10, 30, 30, 30}, RF8_DUN_TEMPLE, 20, 1, LQ_WATER | LQ_LAVA},
-	{{20, 0, 80, 0}, RF8_DUN_TOWER, 20, 1, LQ_ACID | LQ_LAVA},
-	{{10, 20, 20, 0}, RF8_DUN_RUIN, 0, 1, LQ_WATER | LQ_LAVA | LQ_SWAMP},
-	{{50, 20, 20, 0}, RF8_DUN_GRAVE, 0, 1, LQ_WATER | LQ_SWAMP},
-	{{30, 30, 30, 10}, RF8_DUN_CAVERN, 40, 1, LQ_WATER | LQ_ACID | LQ_LAVA | LQ_MUD},
-	{{30, 30, 40, 0}, RF8_DUN_PLANAR, 0, 1, LQ_ACID | LQ_LAVA},
-	{{20, 40, 40, 0}, RF8_DUN_HELL, 60, 1, LQ_LAVA | LQ_MUD},
-	{{0, 20, 20, 0}, RF8_DUN_HORROR, 80, 1, LQ_ACID},
-	{{10, 20, 10, 40}, RF8_DUN_MINE, 0, 1, LQ_WATER | LQ_MUD | LQ_LAVA},
-	{{30, 30, 10, 10}, RF8_DUN_CITY, 20, 1, LQ_WATER},
-	{{0, 0, 0, 0}, 0, 0, 0, LQ_NONE},
+	{{0, 10, 0, 40}, RF8_DUN_DARKWATER, 0, 1, FEAT_DRY_MUD,
+		LQ_WATER | LQ_MUD | LQ_SWAMP},
+
+	{{50, 10, 10, 0}, RF8_DUN_LAIR, 0, 1, FEAT_DIRT,
+		LQ_WATER | LQ_ACID | LQ_SWAMP | LQ_MUD},
+
+	{{10, 30, 30, 30}, RF8_DUN_TEMPLE, 20, 1, FEAT_FLOOR_TILE,
+		LQ_WATER | LQ_LAVA},
+
+	{{20, 0, 80, 0}, RF8_DUN_TOWER, 20, 1, FEAT_FLOOR_WOOD,
+		LQ_ACID | LQ_LAVA},
+
+	{{10, 20, 20, 0}, RF8_DUN_RUIN, 0, 1, FEAT_PEBBLES,
+		LQ_WATER | LQ_LAVA | LQ_SWAMP},
+
+	{{50, 20, 20, 0}, RF8_DUN_GRAVE, 0, 1, FEAT_FLOOR_TILE,
+		LQ_WATER | LQ_SWAMP},
+
+	{{30, 30, 30, 10}, RF8_DUN_CAVERN, 40, 1, FEAT_DIRT,
+		LQ_WATER | LQ_ACID | LQ_LAVA | LQ_MUD},
+
+	{{30, 30, 40, 0}, RF8_DUN_PLANAR, 0, 1, FEAT_SAND,
+		LQ_ACID | LQ_LAVA},
+
+	{{20, 40, 40, 0}, RF8_DUN_HELL, 60, 1, FEAT_SOLID_LAVA,
+		LQ_LAVA | LQ_MUD},
+
+	{{0, 20, 20, 0}, RF8_DUN_HORROR, 80, 1, FEAT_SALT,
+		LQ_ACID},
+
+	{{10, 20, 10, 40}, RF8_DUN_MINE, 0, 1, FEAT_DIRT,
+		LQ_WATER | LQ_MUD | LQ_LAVA},
+
+	{{30, 30, 10, 10}, RF8_DUN_CITY, 20, 1, FEAT_FLOOR_TILE,
+		LQ_WATER},
+
+	{{0, 0, 0, 0}, 0, 0, 0, FEAT_NONE,
+		LQ_NONE},
 };
 
 
