@@ -234,7 +234,7 @@ vt100: CFLAGS += -D"USE_CAP" -D"USE_HARDCODE"
 ##
 
 solaris: CFLAGS += -D"USE_X11" -D"USE_GCU" -D"SOLARIS"
-solaris: LIBS := -lX11 -lcurses
+solaris: LIBS := -lX11 -lcurses -L/usr/openwin/lib
 
 ##
 ## Variation -- compile for SGI Indigo runnig Irix
