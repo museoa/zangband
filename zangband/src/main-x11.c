@@ -2415,6 +2415,7 @@ errr init_x11(int argc, char *argv[])
 	/* Try graphics */
 	if (arg_graphics)
 	{
+
 		/* Try the "16x16.bmp" file */
 		path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/16x16.bmp");
 
@@ -2430,12 +2431,14 @@ errr init_x11(int argc, char *argv[])
 
 			ANGBAND_GRAF = "new";
 		}
-		else
-		{
-			/* Try the "8x8.bmp" file */
-			path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/8x8.bmp");
 
-			/* Use the "8x8.bmp" file if it exists */
+		else
+
+		{
+			/* Try the "8X8.bmp" file */
+			path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/8X8.bmp");
+
+			/* Use the "8X8.bmp" file if it exists */
 			if (0 == fd_close(fd_open(filename, O_RDONLY)))
 			{
 				/* Use graphics */
