@@ -847,7 +847,8 @@ bool borg_check_lite_only(void)
 
 
 /*
- * Enchant armor, not including my swap armour
+ * Enchant armor with the lowest AC.  This routine doesn't use the spell when
+ * the borg is in the dungeon because down there he has better things to do.
  */
 static bool borg_enchant_to_a(void)
 {
@@ -860,7 +861,10 @@ static bool borg_enchant_to_a(void)
 	/* Need "enchantment" ability */
 	if ((!amt_enchant_to_a) && (!amt_enchant_armor)) return (FALSE);
 
-
+	/* Don't cast the spell in the dungeon, keep it for town */
+	if (bp_ptr->depth &&
+		amt_enchant_armor == 1000) return (FALSE);
+	
 	/* Look for armor that needs enchanting */
 	for (i = EQUIP_BODY; i < equip_num; i++)
 	{
@@ -875,30 +879,19 @@ static bool borg_enchant_to_a(void)
 		/* Obtain the bonus */
 		a = l_ptr->to_a;
 
-		/* Skip "boring" items */
-		if (borg_spell_okay_fail(REALM_SORCERY, 3, 5, 40) ||
-			amt_enchant_armor >= 1)
-		{
-			if (a >= 15) continue;
-		}
-		else
-		{
-			if (a >= 8) continue;
-		}
-
 		/* Find the least enchanted item */
-		if ((b_i >= 0) && (b_a < a)) continue;
+		if (a >= b_a) continue;
 
 		/* Save the info */
 		b_i = i;
 		b_a = a;
 	}
 
-	/* Nothing */
-	if (b_i < 0) return (FALSE);
+	/* Don't bother to try if the AC is too high */
+	if (b_a >= 15) return (FALSE);
 
 	/* Enchant it */
-	if (borg_spell_fail(REALM_SORCERY, 3, 5, 40) ||
+	if ((!bp_ptr->depth && borg_spell_fail(REALM_SORCERY, 3, 5, 40)) ||
 		borg_read_scroll(SV_SCROLL_STAR_ENCHANT_ARMOR) ||
 		borg_read_scroll(SV_SCROLL_ENCHANT_ARMOR))
 	{
@@ -937,8 +930,8 @@ static bool borg_enchant_to_a(void)
  */
 static bool borg_enchant_to_h(void)
 {
-	int i, b_i = -1;
-	int a, b_a = 99;
+	int i, a_i = -1, b_i = -1;
+	int a, a_a = 99, b_a = 99;
 
 	bool inven = FALSE;
 
@@ -948,6 +941,34 @@ static bool borg_enchant_to_h(void)
 	/* Need "enchantment" ability */
 	if ((!amt_enchant_to_h) && (!amt_enchant_weapon)) return (FALSE);
 
+	/* Don't cast the spell in the dungeon, keep it for town */
+	if (bp_ptr->depth &&
+		amt_enchant_to_h == 1000) return (FALSE);
+	
+	/* look through inventory for ammo */
+	for (i = 0; i < inven_num; i++)
+	{
+		list_item *l_ptr = &inventory[i];
+
+		/* Only enchant if qty >= 5 */
+		if (l_ptr->number < 5) continue;
+
+		/* Skip non-identified items  */
+		if (!borg_obj_known_p(l_ptr)) continue;
+
+		/* Make sure it is the right type if missile */
+		if (l_ptr->tval != my_ammo_tval) continue;
+
+		/* Obtain the bonus  */
+		a = l_ptr->to_h;
+
+		/* Find the least enchanted item */
+		if (a >= a_a) continue;
+
+		/* Save the info  */
+		a_i = i;
+		a_a = a;
+	}
 
 	/* Look for a weapon that needs enchanting */
 	for (i = EQUIP_WIELD; i <= EQUIP_BOW; i++)
@@ -963,73 +984,32 @@ static bool borg_enchant_to_h(void)
 		/* Obtain the bonus */
 		a = l_ptr->to_h;
 
-		/* Skip "boring" items */
-		if (borg_spell_okay_fail(REALM_SORCERY, 3, 4, 40) ||
-			amt_enchant_weapon >= 1)
-		{
-			if (a >= 15) continue;
-		}
-		else
-		{
-			if (a >= 8) continue;
-		}
-
 		/* Find the least enchanted item */
-		if ((b_i >= 0) && (b_a < a)) continue;
+		if (a >= b_a) continue;
 
 		/* Save the info */
 		b_i = i;
 		b_a = a;
 	}
 
-	/* Nothing, check ammo */
-	if (b_i < 0)
+	/*
+	 * If the weapon is high and the ammo is low 
+	 * OR if the weapon is beyond enchanting
+	 */
+	if ((b_a >= 10 && a_a <= 10) ||
+		b_a >= 15)
 	{
-		/* look through inventory for ammo */
-		for (i = 0; i < inven_num; i++)
-		{
-			list_item *l_ptr = &inventory[i];
-
-			/* Only enchant if qty >= 5 */
-			if (l_ptr->number < 5) continue;
-
-			/* Skip non-identified items  */
-			if (!borg_obj_known_p(l_ptr)) continue;
-
-			/* Make sure it is the right type if missile */
-			if (l_ptr->tval != my_ammo_tval) continue;
-
-			/* Obtain the bonus  */
-			a = l_ptr->to_h;
-
-			/* Skip items that are already enchanted */
-			if (borg_spell_okay_fail(REALM_SORCERY, 3, 4, 40) ||
-				amt_enchant_weapon >= 1)
-			{
-				if (a >= 10) continue;
-			}
-			else
-			{
-				if (a >= 8) continue;
-			}
-
-			/* Find the least enchanted item */
-			if ((b_i >= 0) && (b_a < a)) continue;
-
-			/* Save the info  */
-			b_i = i;
-			b_a = a;
-
-			/* Item is in inventory */
-			inven = TRUE;
-		}
+		/* Assign the ammo to be enchanted */
+		b_a = a_a;
+		b_i = a_i;
+		inven = TRUE;
 	}
 
 	/* Nothing */
-	if (b_i < 0) return (FALSE);
+	if (b_a >= 15) return (FALSE);
 
 	/* Enchant it */
-	if (borg_spell_fail(REALM_SORCERY, 3, 4, 40) ||
+	if ((!bp_ptr->depth && borg_spell_fail(REALM_SORCERY, 3, 4, 40)) ||
 		borg_read_scroll(SV_SCROLL_STAR_ENCHANT_WEAPON) ||
 		borg_read_scroll(SV_SCROLL_ENCHANT_WEAPON_TO_HIT))
 	{
@@ -1077,8 +1057,8 @@ static bool borg_enchant_to_h(void)
  */
 static bool borg_enchant_to_d(void)
 {
-	int i, b_i = -1;
-	int a, b_a = 99;
+	int i, a_i = -1, b_i = -1;
+	int a, a_a = 99, b_a = 99;
 
 	bool inven = FALSE;
 
@@ -1088,7 +1068,10 @@ static bool borg_enchant_to_d(void)
 	/* Need "enchantment" ability */
 	if ((!amt_enchant_to_d) && (!amt_enchant_weapon)) return (FALSE);
 
-
+	/* Don't cast the spell in the dungeon, keep it for town */
+	if (bp_ptr->depth &&
+		amt_enchant_to_d == 1000) return (FALSE);
+	
 	/* Look for a weapon that needs enchanting */
 	for (i = EQUIP_WIELD; i <= EQUIP_BOW; i++)
 	{
@@ -1103,70 +1086,58 @@ static bool borg_enchant_to_d(void)
 		/* Obtain the bonus */
 		a = l_ptr->to_d;
 
-		/* Skip "boring" items */
-		if (borg_spell_okay_fail(REALM_SORCERY, 3, 4, 40) ||
-			amt_enchant_weapon >= 1)
-		{
-			if (a >= 15) continue;
-		}
-		else
-		{
-			if (a >= 8) continue;
-		}
-
 		/* Find the least enchanted item */
-		if ((b_i >= 0) && (b_a < a)) continue;
+		if (b_a < a) continue;
 
 		/* Save the info */
 		b_i = i;
 		b_a = a;
 	}
 
-	/* Nothing, check ammo */
-	if (b_i < 0)
+	/* look through inventory for ammo */
+	for (i = 0; i < inven_num; i++)
 	{
-		/* look through inventory for ammo */
-		for (i = 0; i < inven_num; i++)
-		{
-			list_item *l_ptr = &inventory[i];
+		list_item *l_ptr = &inventory[i];
 
-			/* Only enchant if qty >= 5 */
-			if (l_ptr->number < 5) continue;
+		/* Only enchant if qty >= 5 */
+		if (l_ptr->number < 5) continue;
 
-			/* Skip non-identified items  */
-			if (!borg_obj_known_p(l_ptr)) continue;
+		/* Skip non-identified items  */
+		if (!borg_obj_known_p(l_ptr)) continue;
 
-			/* Make sure it is the right type if missile */
-			if (l_ptr->tval != my_ammo_tval) continue;
+		/* Make sure it is the right type if missile */
+		if (l_ptr->tval != my_ammo_tval) continue;
 
-			/* Obtain the bonus  */
-			a = l_ptr->to_d;
+		/* Obtain the bonus  */
+		a = l_ptr->to_d;
 
-			/* Skip items that are already enchanted */
-			if (borg_spell_okay_fail(REALM_SORCERY, 3, 4, 40) ||
-				amt_enchant_weapon >= 1)
-			{
-				if (a >= 10) continue;
-			}
-			else
-			{
-				if (a >= 8) continue;
-			}
 
-			/* Find the least enchanted item */
-			if ((b_i >= 0) && (b_a < a)) continue;
+		/* Find the least enchanted item */
+		if (a_a < a) continue;
 
-			/* Save the info  */
-			b_i = i;
-			b_a = a;
+		/* Save the info  */
+		a_i = i;
+		a_a = a;
 
-			/* Item is in the inventory */
-			inven = TRUE;
-		}
+		/* Item is in the inventory */
+		inven = TRUE;
+	}
+
+	/*
+	 * If the weapon is high and the ammo is low
+	 * OR if the weapon is beyond enchanting
+	 */
+	if ((b_a >= 10 && a_a <= 10) ||
+		b_a >= 15)
+	{
+		/* Assign the ammo to be enchanted */
+		b_a = a_a;
+		b_i = a_i;
+		inven = TRUE;
 	}
 
 	/* Nothing */
-	if (b_i < 0) return (FALSE);
+	if (b_a >= 15) return (FALSE);
 
 	/* Enchant it */
 	if (borg_spell_fail(REALM_SORCERY, 3, 4, 40) ||
@@ -1548,7 +1519,16 @@ static void borg_destroy_item(list_item *l_ptr, int slot, int number)
 
 	/* Destroy that item */
 	if (!(KN_FLAG(l_ptr, TR_INSTA_ART)))
-		borg_keypress('k');
+	{
+		/* Is the Sorcery Alchemy spell available? */
+		if (borg_spell_okay_fail(REALM_SORCERY, 3, 6, 40))
+		{
+			/* Convert the object to money! */
+			borg_spell(REALM_SORCERY, 3, 6);
+		}
+		else
+			borg_keypress('k');
+	}
 	else
 	{
 		int a;

@@ -2408,8 +2408,7 @@ static void borg_notice_aux2(void)
 	 */
 
 	/* Handle "satisfy hunger" -> infinite food */
-	if (borg_spell_legal_fail(REALM_SORCERY, 2, 0, 10) ||
-		borg_spell_legal_fail(REALM_LIFE, 0, 7, 10) ||
+	if (borg_spell_legal_fail(REALM_LIFE, 0, 7, 10) ||
 		borg_spell_legal_fail(REALM_ARCANE, 2, 7, 10) ||
 		borg_spell_legal_fail(REALM_NATURE, 0, 3, 10) ||
 		borg_racial_check(RACE_HOBBIT, TRUE))

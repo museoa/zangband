@@ -501,7 +501,7 @@ static byte borg_magic_rating[8][4][8] =
 	  65 /*   "Clairvoyance" */ ,
 	  55 /*   "Enchant Weap" */ ,
 	  55 /*   "Enchant Armour" */ ,
-	  0 /*   "Alchemy" */ ,
+	  1 /*   "Alchemy" */ ,
 	  95 /*   "GOI" */ }
 	 },							/* end of Sorcery Realm */
 

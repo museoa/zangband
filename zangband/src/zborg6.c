@@ -3851,10 +3851,7 @@ bool borg_caution(void)
 #define	BF_MAX					14
 
 
-/* What sort of distance attacks does the borg have: */
-#define BORG_DISPEL		-3
-#define BORG_BOLT		-2
-#define BORG_BEAM		-1
+/* What is the radius of the borg ball attacks? */
 #define BORG_BALL_RAD0	0
 #define BORG_BALL_RAD1	1
 #define BORG_BALL_RAD2	2
@@ -5017,7 +5014,7 @@ static int borg_launch_aux_hack(int i, int dam, int typ)
 
 
 /* Determine the "reward" of casting a bolt.*/
-static int borg_launch_aux_bolt(int dam, int typ, int max)
+static int borg_launch_bolt(int dam, int typ, int max)
 {
 	int i;
 	int x, y;
@@ -5056,7 +5053,7 @@ static int borg_launch_aux_bolt(int dam, int typ, int max)
 
 
 /* Determine the "reward" of casting a beam. */
-static int borg_launch_aux_beam(int dam, int typ, int max)
+static int borg_launch_beam(int dam, int typ, int max)
 {
 	int i;
 	int x, y;
@@ -5118,7 +5115,7 @@ static int borg_launch_aux_beam(int dam, int typ, int max)
 }
 
 /* Determine the "reward" of casting a dispel */
-static int borg_launch_aux_dispel(int dam, int typ, int rad)
+static int borg_launch_dispel(int dam, int typ, int rad)
 {
 	int i;
 	int x, y;
@@ -5142,6 +5139,10 @@ static int borg_launch_aux_dispel(int dam, int typ, int rad)
 		/* Collect damage */
 		n += borg_launch_aux_hack(mb_ptr->kill, dam, typ);
 	}
+
+	/* Just making sure */
+	g_x = c_x;
+	g_y = c_y;
 
 	/* Result */
 	return (n);
@@ -5241,7 +5242,7 @@ static int borg_launch_ball_zero(int dam, int typ, int max)
  * damage to each of the "affected" monsters.
  *
  */
-static int borg_launch_aux_ball(int rad, int dam, int typ, int max)
+static int borg_launch_ball(int rad, int dam, int typ, int max)
 {
 	int i, j, r;
 	int x, y, x1, y1;
@@ -5302,41 +5303,6 @@ static int borg_launch_aux_ball(int rad, int dam, int typ, int max)
 }
 
 
-/*
- * Simulate/Apply the optimal result of launching a beam/bolt/ball
- */
-static int borg_launch_bolt(int rad, int dam, int typ, int max)
-{
-	/** Examine possible destinations **/
-	switch (rad)
-	{
-		/* Is it a dispel? */
-		case BORG_DISPEL:
-		{
-			/* Return the dispel damage */
-			return (borg_launch_aux_dispel(dam, typ, max));
-		}
-
-		/* Is it a bolt? */
-		case BORG_BOLT:
-		{
-			/* Return the bolt damage */
-			return (borg_launch_aux_bolt(dam, typ, max));
-		}
-
-		/* Is it a beam spell? */
-		case BORG_BEAM:
-		{
-			/* Return the beam damage */
-			return (borg_launch_aux_beam(dam, typ, max));
-		}
-
-		/* Then it must be a ball spell */
-		default: return (borg_launch_aux_ball(rad, dam, typ, max));
-	}
-}
-
-
 /* Simulate/Apply the optimal result of activating an artifact */
 static int borg_attack_aux_artifact(int *b_slot)
 {
@@ -5358,7 +5324,7 @@ static int borg_scroll_damage_monster(int sval)
 			if (FLAG(bp_ptr, TR_RES_COLD))
 			{
 				/* How much damage from a cold ball? */
-				return (borg_launch_bolt(BORG_DISPEL, 150, GF_COLD, BORG_BALL_RAD4));
+				return (borg_launch_dispel(150, GF_COLD, BORG_BALL_RAD4));
 			}
 			return (0);
 		}
@@ -5369,7 +5335,7 @@ static int borg_scroll_damage_monster(int sval)
 			if (FLAG(bp_ptr, TR_RES_FIRE))
 			{
 				/* How much damage from a fire ball? */
-				return (borg_launch_bolt(BORG_DISPEL, 75, GF_FIRE, BORG_BALL_RAD4));
+				return (borg_launch_dispel(75, GF_FIRE, BORG_BALL_RAD4));
 			}
 			return (0);
 		}
@@ -5381,7 +5347,7 @@ static int borg_scroll_damage_monster(int sval)
 			if (FLAG(bp_ptr, TR_RES_CHAOS))
 			{
 				/* How much damage from a chaos ball? */
-				return (borg_launch_bolt(BORG_DISPEL, 225, GF_CHAOS, BORG_BALL_RAD4));
+				return (borg_launch_dispel(225, GF_CHAOS, BORG_BALL_RAD4));
 			}
 			return (0);
 		}
@@ -5389,7 +5355,7 @@ static int borg_scroll_damage_monster(int sval)
 		case SV_SCROLL_DISPEL_UNDEAD:
 		{
 			/* Damage all the undead in LOS. */
-			return (borg_launch_bolt(BORG_DISPEL, 60, GF_DISP_UNDEAD, MAX_SIGHT));
+			return (borg_launch_dispel(60, GF_DISP_UNDEAD, MAX_SIGHT));
 		}
 
 		default:
@@ -5621,7 +5587,7 @@ static int borg_attack_aux_launch(int *b_slot)
 			}
 		
 			/* Find a target */
-			n = borg_launch_bolt(BORG_BOLT, b_d, gf_i, MAX_RANGE);
+			n = borg_launch_bolt(b_d, gf_i, MAX_RANGE);
 					
 			/* Is it better than before? */
 			if (n <= b_n) continue;
@@ -5846,7 +5812,7 @@ static int borg_attack_aux_object(int *b_slot)
 			if (r > 10) r = 10;
 
 			/* Choose optimal location */
-			n = borg_launch_bolt(BORG_BOLT, d, typ, r);
+			n = borg_launch_bolt(d, typ, r);
 
 			if (n <= b_n) continue;
 
@@ -5890,13 +5856,13 @@ static int borg_ring_damage_monster(int sval)
 	switch (sval)
 	{
 		case SV_RING_ICE:
-			return (borg_launch_bolt(BORG_BALL_RAD2, 100, GF_COLD, MAX_RANGE));
+			return (borg_launch_ball(BORG_BALL_RAD2, 100, GF_COLD, MAX_RANGE));
 
 		case SV_RING_ACID:
-			return (borg_launch_bolt(BORG_BALL_RAD2, 100, GF_ACID, MAX_RANGE));
+			return (borg_launch_ball(BORG_BALL_RAD2, 100, GF_ACID, MAX_RANGE));
 
 		case SV_RING_FLAMES:
-			return (borg_launch_bolt(BORG_BALL_RAD2, 100, GF_FIRE, MAX_RANGE));
+			return (borg_launch_ball(BORG_BALL_RAD2, 100, GF_FIRE, MAX_RANGE));
 
 		default:
 			return (0);
@@ -6016,19 +5982,19 @@ static int borg_dragon_damage_monster(int sval)
 	switch (sval)
 	{
 		case SV_DRAGON_BLUE:
-			return (borg_launch_bolt(BORG_BALL_RAD2, 330, GF_ELEC, MAX_RANGE));
+			return (borg_launch_ball(BORG_BALL_RAD2, 330, GF_ELEC, MAX_RANGE));
 
 		case SV_DRAGON_WHITE:
-			return (borg_launch_bolt(BORG_BALL_RAD2, 370, GF_COLD, MAX_RANGE));
+			return (borg_launch_ball(BORG_BALL_RAD2, 370, GF_COLD, MAX_RANGE));
 
 		case SV_DRAGON_BLACK:
-			return (borg_launch_bolt(BORG_BALL_RAD2, 430, GF_ACID, MAX_RANGE));
+			return (borg_launch_ball(BORG_BALL_RAD2, 430, GF_ACID, MAX_RANGE));
 
 		case SV_DRAGON_GREEN:
-			return (borg_launch_bolt(BORG_BALL_RAD2, 500, GF_POIS, MAX_RANGE));
+			return (borg_launch_ball(BORG_BALL_RAD2, 500, GF_POIS, MAX_RANGE));
 
 		case SV_DRAGON_RED:
-			return (borg_launch_bolt(BORG_BALL_RAD2, 670, GF_FIRE, MAX_RANGE));
+			return (borg_launch_ball(BORG_BALL_RAD2, 670, GF_FIRE, MAX_RANGE));
 
 		case SV_DRAGON_MULTIHUED:
 		{
@@ -6038,21 +6004,21 @@ static int borg_dragon_damage_monster(int sval)
 					 ((chance == 2) ? GF_ACID :
 					 ((chance == 3) ? GF_POIS
 									: GF_FIRE)));
-			return (borg_launch_bolt(BORG_BALL_RAD2, 840, gf_typ, MAX_RANGE));
+			return (borg_launch_ball(BORG_BALL_RAD2, 840, gf_typ, MAX_RANGE));
 		}
 
 		case SV_DRAGON_BRONZE:
-			return (borg_launch_bolt(BORG_BALL_RAD2, 400, GF_CONFUSION, MAX_RANGE));
+			return (borg_launch_ball(BORG_BALL_RAD2, 400, GF_CONFUSION, MAX_RANGE));
 
 		case SV_DRAGON_GOLD:
-			return (borg_launch_bolt(BORG_BALL_RAD2, 430, GF_SOUND, MAX_RANGE));
+			return (borg_launch_ball(BORG_BALL_RAD2, 430, GF_SOUND, MAX_RANGE));
 
 		case SV_DRAGON_CHAOS:
 		{
 			chance = randint0(2);
 			gf_typ = (chance == 0) ? GF_CHAOS
 								   : GF_DISENCHANT;
-			return (borg_launch_bolt(BORG_BALL_RAD2, 740, gf_typ, MAX_RANGE));
+			return (borg_launch_ball(BORG_BALL_RAD2, 740, gf_typ, MAX_RANGE));
 		}
 
 		case SV_DRAGON_LAW:
@@ -6060,7 +6026,7 @@ static int borg_dragon_damage_monster(int sval)
 			chance = randint0(2);
 			gf_typ = (chance == 0) ? GF_SOUND
 								   : GF_SHARDS;
-			return (borg_launch_bolt(BORG_BALL_RAD2, 750, gf_typ, MAX_RANGE));
+			return (borg_launch_ball(BORG_BALL_RAD2, 750, gf_typ, MAX_RANGE));
 		}
 
 		case SV_DRAGON_BALANCE:
@@ -6070,7 +6036,7 @@ static int borg_dragon_damage_monster(int sval)
 					 ((chance == 1) ? GF_SOUND :
 					 ((chance == 2) ? GF_SHARDS
 									: GF_DISENCHANT));
-			return (borg_launch_bolt(BORG_BALL_RAD2, 840, gf_typ, MAX_RANGE));
+			return (borg_launch_ball(BORG_BALL_RAD2, 840, gf_typ, MAX_RANGE));
 		}
 
 		case SV_DRAGON_SHINING:
@@ -6078,11 +6044,11 @@ static int borg_dragon_damage_monster(int sval)
 			chance = randint0(2);
 			gf_typ = (chance == 0) ? GF_LITE
 								   : GF_DARK;
-			return (borg_launch_bolt(BORG_BALL_RAD2, 670, gf_typ, MAX_RANGE));
+			return (borg_launch_ball(BORG_BALL_RAD2, 670, gf_typ, MAX_RANGE));
 		}
 
 		case SV_DRAGON_POWER:
-			return (borg_launch_bolt(BORG_BALL_RAD3, 1000, GF_MISSILE, MAX_RANGE));
+			return (borg_launch_ball(BORG_BALL_RAD3, 1000, GF_MISSILE, MAX_RANGE));
 
 		default:
 			return (0);
@@ -6139,50 +6105,50 @@ static int borg_rod_damage_monster(int sval)
 	switch (sval)
 	{
 		case SV_ROD_ELEC_BOLT:
-			return (borg_launch_bolt(BORG_BOLT, 22, GF_ELEC, MAX_RANGE));
+			return (borg_launch_bolt(22, GF_ELEC, MAX_RANGE));
 
 		case SV_ROD_COLD_BOLT:
-			return (borg_launch_bolt(BORG_BOLT, 27, GF_COLD, MAX_RANGE));
+			return (borg_launch_bolt(27, GF_COLD, MAX_RANGE));
 
 		case SV_ROD_ACID_BOLT:
-			return (borg_launch_bolt(BORG_BOLT, 27, GF_ACID, MAX_RANGE));
+			return (borg_launch_bolt(27, GF_ACID, MAX_RANGE));
 
 		case SV_ROD_FIRE_BOLT:
-			return (borg_launch_bolt(BORG_BOLT, 45, GF_OLD_SLEEP, MAX_RANGE));
+			return (borg_launch_bolt(45, GF_OLD_SLEEP, MAX_RANGE));
 
 		case SV_ROD_LITE:
-			return (borg_launch_bolt(BORG_BEAM, 27, GF_LITE_WEAK, MAX_RANGE));
+			return (borg_launch_beam(27, GF_LITE_WEAK, MAX_RANGE));
 
 		case SV_ROD_ILLUMINATION:
-			return (borg_launch_bolt(BORG_DISPEL, 18, GF_LITE_WEAK, BORG_BALL_RAD2));
+			return (borg_launch_dispel(18, GF_LITE_WEAK, BORG_BALL_RAD2));
 
 		case SV_ROD_DRAIN_LIFE:
-			return (borg_launch_bolt(BORG_BOLT, 150, GF_OLD_DRAIN, MAX_RANGE));
+			return (borg_launch_bolt(150, GF_OLD_DRAIN, MAX_RANGE));
 
 		case SV_ROD_ELEC_BALL:
-			return (borg_launch_bolt(BORG_BALL_RAD2, 75, GF_ELEC, MAX_RANGE));
+			return (borg_launch_ball(BORG_BALL_RAD2, 75, GF_ELEC, MAX_RANGE));
 
 		case SV_ROD_COLD_BALL:
-			return (borg_launch_bolt(BORG_BALL_RAD2, 100, GF_COLD, MAX_RANGE));
+			return (borg_launch_ball(BORG_BALL_RAD2, 100, GF_COLD, MAX_RANGE));
 
 		case SV_ROD_ACID_BALL:
-			return (borg_launch_bolt(BORG_BALL_RAD2, 125, GF_ACID, MAX_RANGE));
+			return (borg_launch_ball(BORG_BALL_RAD2, 125, GF_ACID, MAX_RANGE));
 
 		case SV_ROD_FIRE_BALL:
-			return (borg_launch_bolt(BORG_BALL_RAD2, 150, GF_FIRE, MAX_RANGE));
+			return (borg_launch_ball(BORG_BALL_RAD2, 150, GF_FIRE, MAX_RANGE));
 
 		case SV_ROD_SLOW_MONSTER:
-			return (borg_launch_bolt(BORG_BOLT, 10, GF_OLD_SLOW, MAX_RANGE));
+			return (borg_launch_bolt(10, GF_OLD_SLOW, MAX_RANGE));
 
 		case SV_ROD_SLEEP_MONSTER:
-			return (borg_launch_bolt(BORG_BOLT, 10, GF_OLD_SLEEP, MAX_RANGE));
+			return (borg_launch_bolt(10, GF_OLD_SLEEP, MAX_RANGE));
 
 		case SV_ROD_PESTICIDE:
-			return (borg_launch_bolt(BORG_BALL_RAD3, 8, GF_POIS, MAX_RANGE));
+			return (borg_launch_ball(BORG_BALL_RAD3, 8, GF_POIS, MAX_RANGE));
 
 		case SV_ROD_HAVOC:
 			/* This has a random damage type, so just hope it is not resisted */
-			return (borg_launch_bolt(2, 200, GF_MISSILE, MAX_RANGE));
+			return (borg_launch_ball(BORG_BALL_RAD2, 200, GF_MISSILE, MAX_RANGE));
 
 		default:
 			return (0);
@@ -6272,57 +6238,57 @@ static int borg_wand_damage_monster(int sval)
 	switch (sval)
 	{
 		case SV_WAND_MAGIC_MISSILE:
-			return (borg_launch_bolt(BORG_BOLT, 7, GF_MISSILE, MAX_RANGE));
+			return (borg_launch_bolt(7, GF_MISSILE, MAX_RANGE));
 
 		case SV_WAND_COLD_BOLT:
-			return (borg_launch_bolt(BORG_BOLT, 27, GF_COLD, MAX_RANGE));
+			return (borg_launch_bolt(27, GF_COLD, MAX_RANGE));
 
 		case SV_WAND_ACID_BOLT:
-			return (borg_launch_bolt(BORG_BOLT, 27, GF_ACID, MAX_RANGE));
+			return (borg_launch_bolt(27, GF_ACID, MAX_RANGE));
 
 		case SV_WAND_FIRE_BOLT:
-			return (borg_launch_bolt(BORG_BOLT, 45, GF_FIRE, MAX_RANGE));
+			return (borg_launch_bolt(45, GF_FIRE, MAX_RANGE));
 
 		case SV_WAND_SLOW_MONSTER:
-			return (borg_launch_bolt(BORG_BOLT, 10, GF_OLD_SLOW, MAX_RANGE));
+			return (borg_launch_bolt(10, GF_OLD_SLOW, MAX_RANGE));
 
 		case SV_WAND_SLEEP_MONSTER:
-			return (borg_launch_bolt(BORG_BOLT, 10, GF_OLD_SLEEP, MAX_RANGE));
+			return (borg_launch_bolt(10, GF_OLD_SLEEP, MAX_RANGE));
 
 		case SV_WAND_CONFUSE_MONSTER:
-			return (borg_launch_bolt(BORG_BOLT, 7, GF_OLD_CONF, MAX_RANGE));
+			return (borg_launch_bolt(7, GF_OLD_CONF, MAX_RANGE));
 
 		case SV_WAND_FEAR_MONSTER:
-			return (borg_launch_bolt(BORG_BOLT, 7, GF_TURN_ALL, MAX_RANGE));
+			return (borg_launch_bolt(7, GF_TURN_ALL, MAX_RANGE));
 
 		case SV_WAND_ANNIHILATION:
-			return (borg_launch_bolt(BORG_BOLT, 175, GF_OLD_DRAIN, MAX_RANGE));
+			return (borg_launch_bolt(175, GF_OLD_DRAIN, MAX_RANGE));
 
 		case SV_WAND_DRAIN_LIFE:
-			return (borg_launch_bolt(BORG_BOLT, 150, GF_OLD_DRAIN, MAX_RANGE));
+			return (borg_launch_bolt(150, GF_OLD_DRAIN, MAX_RANGE));
 
 		case SV_WAND_LITE:
-			return (borg_launch_bolt(BORG_BEAM, 27, GF_LITE_WEAK, MAX_RANGE));
+			return (borg_launch_beam(27, GF_LITE_WEAK, MAX_RANGE));
 
 		case SV_WAND_STINKING_CLOUD:
-			return (borg_launch_bolt(BORG_BALL_RAD2, 15, GF_POIS, MAX_RANGE));
+			return (borg_launch_ball(BORG_BALL_RAD2, 15, GF_POIS, MAX_RANGE));
 
 		case SV_WAND_ELEC_BALL:
-			return (borg_launch_bolt(BORG_BALL_RAD2, 75, GF_ELEC, MAX_RANGE));
+			return (borg_launch_ball(BORG_BALL_RAD2, 75, GF_ELEC, MAX_RANGE));
 
 		case SV_WAND_COLD_BALL:
-			return (borg_launch_bolt(BORG_BALL_RAD2, 100, GF_COLD, MAX_RANGE));
+			return (borg_launch_ball(BORG_BALL_RAD2, 100, GF_COLD, MAX_RANGE));
 
 		case SV_WAND_ACID_BALL:
-			return (borg_launch_bolt(BORG_BALL_RAD2, 125, GF_ACID, MAX_RANGE));
+			return (borg_launch_ball(BORG_BALL_RAD2, 125, GF_ACID, MAX_RANGE));
 
 		case SV_WAND_FIRE_BALL:
-			return (borg_launch_bolt(BORG_BALL_RAD2, 150, GF_FIRE, MAX_RANGE));
+			return (borg_launch_ball(BORG_BALL_RAD2, 150, GF_FIRE, MAX_RANGE));
 
 		case SV_WAND_WONDER:
 		{
 			/* check the danger */
-			if (borg_launch_bolt(BORG_BOLT, 35, GF_MISSILE, MAX_RANGE) > 0 &&
+			if (borg_launch_bolt(35, GF_MISSILE, MAX_RANGE) > 0 &&
 				borg_danger(c_x, c_y, 1, TRUE) >= (avoidance * 2))
 			{
 				/* note the use of the wand in the emergency */
@@ -6338,13 +6304,13 @@ static int borg_wand_damage_monster(int sval)
 		}
 
 		case SV_WAND_DRAGON_COLD:
-			return (borg_launch_bolt(BORG_BALL_RAD3, 200, GF_COLD, MAX_RANGE));
+			return (borg_launch_ball(BORG_BALL_RAD3, 200, GF_COLD, MAX_RANGE));
 
 		case SV_WAND_DRAGON_FIRE:
-			return (borg_launch_bolt(BORG_BALL_RAD3, 250, GF_FIRE, MAX_RANGE));
+			return (borg_launch_ball(BORG_BALL_RAD3, 250, GF_FIRE, MAX_RANGE));
 
 		case SV_WAND_ROCKETS:
-			return (borg_launch_bolt(BORG_BALL_RAD2, 250, GF_ROCKET, MAX_RANGE));
+			return (borg_launch_ball(BORG_BALL_RAD2, 250, GF_ROCKET, MAX_RANGE));
 
 		default:
 			return (0);
@@ -6588,7 +6554,7 @@ static int borg_attack_aux_racial_thrust(int race, int level, int dam, int *b_sl
 /* Simulate the damage done by the various mutations/raical abilities */
 static int borg_mutate_damage_monster(int race, int *slot)
 {
-	int rad = BORG_BOLT, dam;
+	int rad, dam;
 	switch (race)
 	{
 		case RACE_VAMPIRE:
@@ -6602,14 +6568,14 @@ static int borg_mutate_damage_monster(int race, int *slot)
 		{
 			/* Throw Boulder */
 			dam = bp_ptr->lev * 3 / 2;
-			return (borg_launch_bolt(rad, dam, GF_MISSILE, MAX_RANGE));
+			return (borg_launch_bolt(dam, GF_MISSILE, MAX_RANGE));
 		}
 
 		case RACE_DARK_ELF:
 		{
 			/* Magic Missile */
 			dam = (3 + ((bp_ptr->lev - 1)) / 4) * 5;
-			return (borg_launch_bolt(rad, dam, GF_MISSILE, MAX_RANGE));
+			return (borg_launch_bolt(dam, GF_MISSILE, MAX_RANGE));
 		}
 
 		case RACE_DRACONIAN:
@@ -6617,7 +6583,7 @@ static int borg_mutate_damage_monster(int race, int *slot)
 			/* Draconian Breath */
 			dam = 2 * bp_ptr->lev;
 			rad = 1 + bp_ptr->lev / 15;
-			return (borg_launch_bolt(rad, dam, GF_FIRE, MAX_RANGE));
+			return (borg_launch_ball(rad, dam, GF_FIRE, MAX_RANGE));
 		}
 
 		case RACE_IMP:
@@ -6625,7 +6591,7 @@ static int borg_mutate_damage_monster(int race, int *slot)
 			/* Fireball */
 			dam = bp_ptr->lev;
 			rad = (bp_ptr->lev >= 30) ? BORG_BALL_RAD2 : BORG_BALL_RAD1;
-			return (borg_launch_bolt(rad, dam, GF_FIRE, MAX_RANGE));
+			return (borg_launch_ball(rad, dam, GF_FIRE, MAX_RANGE));
 		}
 
 		case RACE_KLACKON:
@@ -6633,21 +6599,21 @@ static int borg_mutate_damage_monster(int race, int *slot)
 			/* Acidball */
 			dam = bp_ptr->lev;
 			rad = (bp_ptr->lev >= 25) ? BORG_BALL_RAD2 : BORG_BALL_RAD1;
-			return (borg_launch_bolt(rad, dam, GF_ACID, MAX_RANGE));
+			return (borg_launch_ball(rad, dam, GF_ACID, MAX_RANGE));
 		}
 
 		case RACE_KOBOLD:
 		{
 			/* Poison bolt */
 			dam = bp_ptr->lev;
-			return (borg_launch_bolt(rad, dam, GF_POIS, MAX_RANGE));
+			return (borg_launch_bolt(dam, GF_POIS, MAX_RANGE));
 		}
 
 		case RACE_MIND_FLAYER:
 		{
 			/* Mindblast bolt */
 			dam = bp_ptr->lev;
-			return (borg_launch_bolt(rad, dam, GF_PSI, MAX_RANGE));
+			return (borg_launch_bolt(dam, GF_PSI, MAX_RANGE));
 		}
 
 		case RACE_SPRITE:
@@ -6655,14 +6621,14 @@ static int borg_mutate_damage_monster(int race, int *slot)
 			/* Sleep III */
 			dam = bp_ptr->lev;
 			rad = MAX_SIGHT;
-			return (borg_launch_bolt(BORG_DISPEL, dam, GF_OLD_SLEEP, rad));
+			return (borg_launch_dispel(dam, GF_OLD_SLEEP, rad));
 		}
 
 		case RACE_YEEK:
 		{
 			/* Scare Mon */
 			dam = bp_ptr->lev;
-			return (borg_launch_bolt(rad, dam, GF_TURN_ALL, MAX_RANGE));
+			return (borg_launch_bolt(dam, GF_TURN_ALL, MAX_RANGE));
 		}
 	}
 	
@@ -6796,7 +6762,7 @@ static int borg_attack_aux_spell_bolt_reserve(int realm, int book, int what,
 	}
 
 	/* Choose optimal location */
-	b_n = borg_launch_bolt(rad, dam, typ, MAX_RANGE);
+	b_n = borg_launch_bolt(dam, typ, MAX_RANGE);
 
 	/* return the value */
 	if (borg_simulate)
@@ -6845,7 +6811,7 @@ static int borg_mindcrafter_damage_monster(int spell)
 			rad = BORG_BALL_RAD0;
 
 			/* Return the damage */
-			return (borg_launch_bolt(rad, dam, GF_PSI, MAX_RANGE));
+			return (borg_launch_ball(rad, dam, GF_PSI, MAX_RANGE));
 		}
 
 		case MIND_PULVERISE:
@@ -6864,7 +6830,7 @@ static int borg_mindcrafter_damage_monster(int spell)
 			}
 
 			/* Return the damage */
-			return (borg_launch_bolt(rad, dam, GF_SOUND, MAX_RANGE));
+			return (borg_launch_ball(rad, dam, GF_SOUND, MAX_RANGE));
 		}
 
 		case MIND_MIND_WAVE:
@@ -6886,7 +6852,7 @@ static int borg_mindcrafter_damage_monster(int spell)
 			}
 
 			/* Return the damage */
-			return (borg_launch_bolt(BORG_DISPEL, dam, GF_PSI, rad));
+			return (borg_launch_dispel(dam, GF_PSI, rad));
 		}
 
 		case MIND_PSYCHIC_DR:
@@ -6896,7 +6862,7 @@ static int borg_mindcrafter_damage_monster(int spell)
 			rad = BORG_BALL_RAD0;
 
 			/* Return the damage */
-			return (borg_launch_bolt(rad, dam, GF_PSI_DRAIN, MAX_RANGE));
+			return (borg_launch_ball(rad, dam, GF_PSI_DRAIN, MAX_RANGE));
 		}
 
 		case MIND_TELE_WAVE:
@@ -6917,7 +6883,7 @@ static int borg_mindcrafter_damage_monster(int spell)
 			}
 
 			/* Return the damage */
-			return (borg_launch_bolt(BORG_DISPEL, dam, GF_TELEKINESIS, rad));
+			return (borg_launch_dispel(dam, GF_TELEKINESIS, rad));
 		}
 
 		default:
@@ -7000,7 +6966,7 @@ static int borg_attack_mindcrafter_aux(int *b_spell)
 /* This function returns the damage done by life spells */
 static int borg_life_damage_monster(int book, int spell)
 {
-	int rad = BORG_BOLT, dam, typ;
+	int rad, dam, typ;
 
 	switch (book)
 	{
@@ -7017,7 +6983,7 @@ static int borg_life_damage_monster(int book, int spell)
 					typ = GF_LITE_WEAK;
 
 					/* How much damage is that? */
-					return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
+					return (borg_launch_dispel(dam, typ, rad));
 				}
 
 				default: return (0);
@@ -7045,7 +7011,7 @@ static int borg_life_damage_monster(int book, int spell)
 					typ = GF_HOLY_FIRE;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_ball(rad, dam, typ, MAX_RANGE));
 				}
 
 				default: return (0);
@@ -7065,7 +7031,7 @@ static int borg_life_damage_monster(int book, int spell)
 					typ = GF_DISP_UNDEAD_DEMON;
 
 					/* How much damage is that? */
-					return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
+					return (borg_launch_dispel(dam, typ, rad));
 				}
 
 				/* Spell -- Disp Undead & Demon */
@@ -7076,7 +7042,7 @@ static int borg_life_damage_monster(int book, int spell)
 					typ = GF_DISP_UNDEAD_DEMON;
 
 					/* How much damage is that? */
-					return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
+					return (borg_launch_dispel(dam, typ, rad));
 				}
 
 				/* Spell -- Disp Evil */
@@ -7087,7 +7053,7 @@ static int borg_life_damage_monster(int book, int spell)
 					typ = GF_DISP_EVIL;
 
 					/* How much damage is that? */
-					return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
+					return (borg_launch_dispel(dam, typ, rad));
 				}
 
 				/* Holy Word */
@@ -7105,7 +7071,7 @@ static int borg_life_damage_monster(int book, int spell)
 						typ = GF_DISP_EVIL;
 
 						/* Choose optimal location-- */
-						return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
+						return (borg_launch_dispel(dam, typ, rad));
 					}
 					else
 					{
@@ -7148,7 +7114,7 @@ static int borg_life_damage_monster(int book, int spell)
 					}
 
 					/* How much damage is that? */
-					n = borg_launch_bolt(BORG_DISPEL, dam, typ, rad);
+					n = borg_launch_dispel(dam, typ, rad);
 
 					/* If the borg damages a neighbour */
 					if (n > 0)
@@ -7159,7 +7125,7 @@ static int borg_life_damage_monster(int book, int spell)
 						typ = GF_DISP_ALL;
 
 						/* How much damage is that in total? */
-						return (n + borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
+						return (n + borg_launch_dispel(dam, typ, rad));
 					}
 					/* There is no neighbour */
 					else
@@ -7185,7 +7151,7 @@ static int borg_life_damage_monster(int book, int spell)
 /* This function returns the damage done by sorcery spells */
 static int borg_sorcery_damage_monster(int book, int spell)
 {
-	int rad = BORG_BOLT, dam, typ;
+	int rad, dam, typ;
 
 	switch (book)
 	{
@@ -7202,7 +7168,7 @@ static int borg_sorcery_damage_monster(int book, int spell)
 					typ = GF_LITE_WEAK;
 
 					/* How much damage is that? */
-					return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
+					return (borg_launch_dispel(dam, typ, rad));
 				}
 
 				case 4:
@@ -7212,7 +7178,7 @@ static int borg_sorcery_damage_monster(int book, int spell)
 					typ = GF_OLD_CONF;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_bolt(dam, typ, MAX_RANGE));
 				}
 
 				case 6:
@@ -7222,7 +7188,7 @@ static int borg_sorcery_damage_monster(int book, int spell)
 					typ = GF_OLD_SLEEP;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_bolt(dam, typ, MAX_RANGE));
 				}
 
 				default: return (0);
@@ -7241,7 +7207,7 @@ static int borg_sorcery_damage_monster(int book, int spell)
 					typ = GF_OLD_SLOW;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_bolt(dam, typ, MAX_RANGE));
 				}
 
 				/* Spell -- Mass Sleep */
@@ -7252,7 +7218,7 @@ static int borg_sorcery_damage_monster(int book, int spell)
 					typ = GF_OLD_SLEEP;
 
 					/* How much damage is that? */
-					return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
+					return (borg_launch_dispel(dam, typ, rad));
 				}
 
 				default: return (0);
@@ -7274,7 +7240,7 @@ static int borg_sorcery_damage_monster(int book, int spell)
 					typ = GF_STASIS;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_bolt(dam, typ, MAX_RANGE));
 				}
 
 				default: return (0);
@@ -7293,44 +7259,42 @@ static int borg_sorcery_damage_monster(int book, int spell)
 /* Whirlwind--
  * Attacks adjacent monsters
  */
-static int borg_attack_aux_nature_whirlwind(bool cast_by_spell)
+static int borg_attack_whirlwind(void)
 {
 	int y = 0, x = 0;
 	int dir;
-
 	int dam = 0;
 
 	map_block *mb_ptr;
 
-	if (cast_by_spell && !borg_spell_okay_fail(REALM_NATURE, 3, 1, 20)) return 0;
-
-	/* Scan neighboring grids */
-	for (dir = 0; dir <= 9; dir++)
+	if (borg_simulate)
 	{
-		y = c_y + ddy[dir];
-		x = c_x + ddx[dir];
-
-		/* Bounds checking */
-		if (!map_in_bounds(x, y)) continue;
-
-		mb_ptr = map_loc(x, y);
-
-		/* is there a kill next to me */
-		if (mb_ptr->kill)
+		/* Scan neighboring grids */
+		for (dir = 0; dir <= 9; dir++)
 		{
-			/* Calculate "average" damage */
-			dam += borg_thrust_damage_one(mb_ptr->kill);
+			y = c_y + ddy[dir];
+			x = c_x + ddx[dir];
+
+			/* Bounds checking */
+			if (!map_in_bounds(x, y)) continue;
+
+			mb_ptr = map_loc(x, y);
+
+			/* is there a kill next to me */
+			if (mb_ptr->kill)
+			{
+				/* Calculate "average" damage */
+				dam += borg_thrust_damage_one(mb_ptr->kill);
+			}
+
 		}
 
+		/* Return the damage for consideration */
+		return (dam);
 	}
 
-	/* Return the damage for consideration */
-	if (borg_simulate) return (dam);
-
-	/* Cast the spell, perform the attack */
-	if (cast_by_spell) return (borg_spell(REALM_NATURE, 3, 1));
-
-	/* */
+	/* Not supposed to happen */
+	borg_oops("The borg can cast Whirlwind from here");
 	return (0);
 }
 
@@ -7338,7 +7302,7 @@ static int borg_attack_aux_nature_whirlwind(bool cast_by_spell)
 /* This function returns the damage done by nature spells */
 static int borg_nature_damage_monster(int book, int spell)
 {
-	int rad = BORG_BOLT, dam, typ;
+	int rad, dam, typ;
 
 	switch (book)
 	{
@@ -7355,7 +7319,7 @@ static int borg_nature_damage_monster(int book, int spell)
 					typ = GF_LITE_WEAK;
 
 					/* How much damage is that? */
-					return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
+					return (borg_launch_dispel(dam, typ, rad));
 				}
 
 				default: return (0);
@@ -7374,7 +7338,7 @@ static int borg_nature_damage_monster(int book, int spell)
 					typ = GF_KILL_WALL;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_bolt(dam, typ, MAX_RANGE));
 				}
 
 				/* Spell -- lightning bolt */
@@ -7384,7 +7348,7 @@ static int borg_nature_damage_monster(int book, int spell)
 					typ = GF_ELEC;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_bolt(dam, typ, MAX_RANGE));
 				}
 
 				/* Spell -- frost bolt */
@@ -7394,18 +7358,17 @@ static int borg_nature_damage_monster(int book, int spell)
 					typ = GF_COLD;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_bolt(dam, typ, MAX_RANGE));
 				}
 
 				/* Spell -- Sunlight */
 				case 4:
 				{
 					dam = 27;
-					rad = BORG_BEAM;
 					typ = GF_LITE_WEAK;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_beam(dam, typ, MAX_RANGE));
 				}
 
 				/* Spell -- Entangle */
@@ -7416,7 +7379,7 @@ static int borg_nature_damage_monster(int book, int spell)
 					typ = GF_OLD_SLOW;
 
 					/* How much damage is that? */
-					return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
+					return (borg_launch_dispel(dam, typ, rad));
 				}
 
 				default: return (0);
@@ -7434,7 +7397,7 @@ static int borg_nature_damage_monster(int book, int spell)
 				/* Whirlwind */
 				case 1:
 				{
-					return (borg_attack_aux_nature_whirlwind(TRUE));
+					return (borg_attack_whirlwind());
 				}
 
 				/* Blizzard */
@@ -7445,7 +7408,7 @@ static int borg_nature_damage_monster(int book, int spell)
 					typ = GF_COLD;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_ball(rad, dam, typ, MAX_RANGE));
 				}
 
 				/* Elec Storm */
@@ -7456,7 +7419,7 @@ static int borg_nature_damage_monster(int book, int spell)
 					typ = GF_ELEC;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_ball(rad, dam, typ, MAX_RANGE));
 				}
 
 				/* Whirlpool */
@@ -7467,7 +7430,7 @@ static int borg_nature_damage_monster(int book, int spell)
 					typ = GF_WATER;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_ball(rad, dam, typ, MAX_RANGE));
 				}
 
 				/* Call Sunlight */
@@ -7488,7 +7451,7 @@ static int borg_nature_damage_monster(int book, int spell)
 						typ = GF_LITE;
 
 						/* Choose optimal location-- */
-						return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+						return (borg_launch_ball(rad, dam, typ, MAX_RANGE));
 					}
 				}
 
@@ -7503,7 +7466,7 @@ static int borg_nature_damage_monster(int book, int spell)
 					typ = GF_DISP_ALL;
 
 					/* Calculate dispell damage */
-					n = borg_launch_bolt(BORG_DISPEL, dam, typ, rad);
+					n = borg_launch_dispel(dam, typ, rad);
 
 					/* Disintegrate ball centered on self */
 					dam = bp_ptr->lev + 100;
@@ -7511,7 +7474,7 @@ static int borg_nature_damage_monster(int book, int spell)
 					typ = GF_DISINTEGRATE;
 
 					/* Return dispell + ball damage */
-					return (n + borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
+					return (n + borg_launch_dispel(dam, typ, rad));
 				}
 
 				default: return (0);
@@ -7530,7 +7493,7 @@ static int borg_nature_damage_monster(int book, int spell)
 /* This function returns the damage done by chaos spells */
 static int borg_chaos_damage_monster(int book, int spell)
 {
-	int rad = BORG_BOLT, dam, typ;
+	int rad, dam, typ;
 
 	switch (book)
 	{
@@ -7546,7 +7509,7 @@ static int borg_chaos_damage_monster(int book, int spell)
 					typ = GF_MISSILE;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_bolt(dam, typ, MAX_RANGE));
 				}
 
 				/* Flash of Light */
@@ -7557,7 +7520,7 @@ static int borg_chaos_damage_monster(int book, int spell)
 					typ = GF_LITE_WEAK;
 
 					/* How much damage is that? */
-					return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
+					return (borg_launch_dispel(dam, typ, rad));
 				}
 
 				/* Mana Burst */
@@ -7575,7 +7538,7 @@ static int borg_chaos_damage_monster(int book, int spell)
 					typ = GF_MISSILE;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_ball(rad, dam, typ, MAX_RANGE));
 				}
 
 				/* Fire Bolt */
@@ -7585,7 +7548,7 @@ static int borg_chaos_damage_monster(int book, int spell)
 					typ = GF_FIRE;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_bolt(dam, typ, MAX_RANGE));
 				}
 
 				/* Fist of Force */
@@ -7595,7 +7558,7 @@ static int borg_chaos_damage_monster(int book, int spell)
 					typ = GF_DISINTEGRATE;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_bolt(dam, typ, MAX_RANGE));
 				}
 
 				default: return (0);
@@ -7614,7 +7577,7 @@ static int borg_chaos_damage_monster(int book, int spell)
 					typ = GF_CHAOS;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_bolt(dam, typ, MAX_RANGE));
 				}
 
 				/* Sonic Boom */
@@ -7625,18 +7588,17 @@ static int borg_chaos_damage_monster(int book, int spell)
 					typ = GF_SOUND;
 
 					/* How much damage is that? */
-					return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
+					return (borg_launch_dispel(dam, typ, rad));
 				}
 
 				/* Doom Bolt */
 				case 3:
 				{
-					rad = BORG_BEAM;
 					dam = (11 + (bp_ptr->lev - 5) / 4) * 9 / 2;
 					typ = GF_MANA;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_beam(dam, typ, MAX_RANGE));
 				}
 
 				/* Fire ball */
@@ -7647,7 +7609,7 @@ static int borg_chaos_damage_monster(int book, int spell)
 					typ = GF_FIRE;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_ball(rad, dam, typ, MAX_RANGE));
 				}
 
 				/* Invoke Logrus */
@@ -7658,7 +7620,7 @@ static int borg_chaos_damage_monster(int book, int spell)
 					typ = GF_CHAOS;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_ball(rad, dam, typ, MAX_RANGE));
 				}
 
 				default: return (0);
@@ -7677,7 +7639,7 @@ static int borg_chaos_damage_monster(int book, int spell)
 					typ = GF_OLD_POLY;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_bolt(dam, typ, MAX_RANGE));
 				}
 
 				/* Chain Lightning */
@@ -7688,7 +7650,7 @@ static int borg_chaos_damage_monster(int book, int spell)
 					typ = GF_ELEC;
 
 					/* How much damage is that? */
-					return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
+					return (borg_launch_dispel(dam, typ, rad));
 				}
 
 				/* Disintegration */
@@ -7699,7 +7661,7 @@ static int borg_chaos_damage_monster(int book, int spell)
 					typ = GF_DISINTEGRATE;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_ball(rad, dam, typ, MAX_RANGE));
 				}
 
 				default: return (0);
@@ -7714,12 +7676,11 @@ static int borg_chaos_damage_monster(int book, int spell)
 				/* Gravity */
 				case 0:
 				{
-					rad = BORG_BEAM;
 					dam = (9 + ((bp_ptr->lev - 5) / 4)) * 9 / 2;
 					typ = GF_GRAVITY;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_beam(dam, typ, MAX_RANGE));
 				}
 
 				/* Meteor Swarm */
@@ -7730,7 +7691,7 @@ static int borg_chaos_damage_monster(int book, int spell)
 					typ = GF_METEOR;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_ball(rad, dam, typ, MAX_RANGE));
 				}
 
 				/* Flamestrike */
@@ -7741,7 +7702,7 @@ static int borg_chaos_damage_monster(int book, int spell)
 					typ = GF_FIRE;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_ball(rad, dam, typ, MAX_RANGE));
 				}
 
 				/* Rocket */
@@ -7752,7 +7713,7 @@ static int borg_chaos_damage_monster(int book, int spell)
 					typ = GF_SHARDS;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_ball(rad, dam, typ, MAX_RANGE));
 				}
 
 				/* Mana Storm */
@@ -7763,7 +7724,7 @@ static int borg_chaos_damage_monster(int book, int spell)
 					typ = GF_MANA;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_ball(rad, dam, typ, MAX_RANGE));
 				}
 
 				/* Breath Logrus */
@@ -7774,7 +7735,7 @@ static int borg_chaos_damage_monster(int book, int spell)
 					typ = GF_CHAOS;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_ball(rad, dam, typ, MAX_RANGE));
 				}
 
 				/* Call Void */
@@ -7807,13 +7768,17 @@ static int borg_chaos_damage_monster(int book, int spell)
 						}
 						else
 						{
+							/* Set the radius */
+							rad = BORG_BALL_RAD2;
+							dam = 175;
+
 							/* Calculate "average" damage */
-							dam += borg_launch_bolt
-								(BORG_BALL_RAD2, 175, GF_SHARDS, MAX_RANGE);
-							dam += borg_launch_bolt
-								(BORG_BALL_RAD2, 175, GF_MANA, MAX_RANGE);
-							dam += borg_launch_bolt
-								(BORG_BALL_RAD4, 175, GF_NUKE, MAX_RANGE);
+							dam += borg_launch_ball
+								(rad, dam, GF_SHARDS, MAX_RANGE);
+							dam += borg_launch_ball
+								(rad, dam, GF_MANA, MAX_RANGE);
+							dam += borg_launch_ball
+								(BORG_BALL_RAD4, dam, GF_NUKE, MAX_RANGE);
 						}
 
 					}
@@ -7838,7 +7803,7 @@ static int borg_chaos_damage_monster(int book, int spell)
 /* This function returns the damage done by death spells */
 static int borg_death_damage_monster(int book, int spell)
 {
-	int rad = BORG_BOLT, dam, typ;
+	int rad, dam, typ;
 
 	switch (book)
 	{
@@ -7855,7 +7820,7 @@ static int borg_death_damage_monster(int book, int spell)
 					typ = GF_HELL_FIRE;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_ball(rad, dam, typ, MAX_RANGE));
 				}
 
 				/* Poison Ball */
@@ -7866,7 +7831,7 @@ static int borg_death_damage_monster(int book, int spell)
 					typ = GF_POIS;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_ball(rad, dam, typ, MAX_RANGE));
 				}
 
 				/* Black Sleep */
@@ -7876,7 +7841,7 @@ static int borg_death_damage_monster(int book, int spell)
 					typ = GF_OLD_SLEEP;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_bolt(dam, typ, MAX_RANGE));
 				}
 
 				/* Horrify */
@@ -7886,7 +7851,7 @@ static int borg_death_damage_monster(int book, int spell)
 					typ = GF_TURN_ALL;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_bolt(dam, typ, MAX_RANGE));
 				}
 
 				default: return (0);
@@ -7913,7 +7878,7 @@ static int borg_death_damage_monster(int book, int spell)
 					typ = GF_OLD_DRAIN;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_ball(rad, dam, typ, MAX_RANGE));
 				}
 
 				/* Nether Bolt */
@@ -7923,7 +7888,7 @@ static int borg_death_damage_monster(int book, int spell)
 					typ = GF_HELL_FIRE;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_bolt(dam, typ, MAX_RANGE));
 				}
 
 				/* Terror */
@@ -7933,7 +7898,7 @@ static int borg_death_damage_monster(int book, int spell)
 					typ = GF_TURN_ALL;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_bolt(dam, typ, MAX_RANGE));
 				}
 
 				/* Vamp Drain */
@@ -7944,7 +7909,7 @@ static int borg_death_damage_monster(int book, int spell)
 					typ = GF_OLD_DRAIN;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_bolt(dam, typ, MAX_RANGE));
 				}
 
 				/* Dispel Good */
@@ -7955,7 +7920,7 @@ static int borg_death_damage_monster(int book, int spell)
 					typ = GF_DISP_GOOD;
 
 					/* How much damage is that? */
-					return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
+					return (borg_launch_dispel(dam, typ, rad));
 				}
 
 				default: return (0);
@@ -7974,7 +7939,7 @@ static int borg_death_damage_monster(int book, int spell)
 					typ = GF_DARK;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_bolt(dam, typ, MAX_RANGE));
 				}
 
 				/* Vampirism True */
@@ -7984,7 +7949,7 @@ static int borg_death_damage_monster(int book, int spell)
 					typ = GF_OLD_DRAIN;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_bolt(dam, typ, MAX_RANGE));
 				}
 
 				/* DarknessStorm */
@@ -7995,7 +7960,7 @@ static int borg_death_damage_monster(int book, int spell)
 					typ = GF_DARK;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_ball(rad, dam, typ, MAX_RANGE));
 				}
 
 				default: return (0);
@@ -8014,7 +7979,7 @@ static int borg_death_damage_monster(int book, int spell)
 					typ = GF_DEATH_RAY;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_bolt(dam, typ, MAX_RANGE));
 				}
 
 				/* Word of Death */
@@ -8025,7 +7990,7 @@ static int borg_death_damage_monster(int book, int spell)
 					typ = GF_OLD_DRAIN;
 
 					/* How much damage is that? */
-					return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
+					return (borg_launch_dispel(dam, typ, rad));
 				}
 
 				/* Evocation */
@@ -8035,7 +8000,7 @@ static int borg_death_damage_monster(int book, int spell)
 					typ = GF_OLD_DRAIN;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_bolt(dam, typ, MAX_RANGE));
 				}
 
 				/* HellFire */
@@ -8047,7 +8012,7 @@ static int borg_death_damage_monster(int book, int spell)
 					if (bp_ptr->chp < 200) return (0)
 						;
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_bolt(dam, typ, MAX_RANGE));
 				}
 			}
 		}
@@ -8079,7 +8044,7 @@ static int borg_trump_damage_monster(int book, int spell)
 					dam = 6 + 2 * (bp_ptr->lev - 1) / 5;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, GF_PSI, MAX_RANGE));
+					return (borg_launch_ball(rad, dam, GF_PSI, MAX_RANGE));
 				}
 
 				default: return (0);
@@ -8103,7 +8068,7 @@ static int borg_trump_damage_monster(int book, int spell)
 /* This function returns the damage done by arcane spells */
 static int borg_arcane_damage_monster(int book, int spell)
 {
-	int rad = BORG_BOLT, dam, typ;
+	int rad, dam, typ;
 
 	switch (book)
 	{
@@ -8119,7 +8084,7 @@ static int borg_arcane_damage_monster(int book, int spell)
 					typ = GF_ELEC;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_bolt(dam, typ, MAX_RANGE));
 				}
 
 				/* Spell -- Light Area */
@@ -8130,7 +8095,7 @@ static int borg_arcane_damage_monster(int book, int spell)
 					typ = GF_LITE_WEAK;
 
 					/* How much damage is that? */
-					return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
+					return (borg_launch_dispel(dam, typ, rad));
 				}
 
 				default: return (0);
@@ -8152,18 +8117,17 @@ static int borg_arcane_damage_monster(int book, int spell)
 					typ = GF_KILL_WALL;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_bolt(dam, typ, MAX_RANGE));
 				}
 
 				/* Spell -- Light Beam */
 				case 5:
 				{
 					dam = 27;
-					rad = BORG_BEAM;
 					typ = GF_LITE_WEAK;
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_beam(dam, typ, MAX_RANGE));
 				}
 
 				default: return (0);
@@ -8195,7 +8159,7 @@ static int borg_arcane_damage_monster(int book, int spell)
 					}
 
 					/* Choose optimal location-- */
-					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
+					return (borg_launch_ball(rad, dam, typ, MAX_RANGE));
 				}
 
 				default: return (0);
@@ -8433,7 +8397,7 @@ static int borg_staff_damage_monster(int sval)
 	}
 
 	/* Return the damage */
-	return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad) - charge_penalty);
+	return (borg_launch_dispel(dam, typ, rad) - charge_penalty);
 }
 
 
@@ -9139,9 +9103,9 @@ static int borg_defend_aux_speed(int p1)
 		if (borg_simulate) return (p1 - p2 + (borg_goi / 100) * 50);
 
 		/* Do it! */
-		if (borg_spell_fail(REALM_SORCERY, 1, 5, fail_allowed) ||
-			borg_spell_fail(REALM_DEATH, 2, 3, fail_allowed) ||
-			borg_mindcr_fail(MIND_ADRENALINE, 35, fail_allowed))
+		if (borg_spell(REALM_SORCERY, 1, 5) ||
+			borg_spell(REALM_DEATH, 2, 3) ||
+			borg_mindcr(MIND_ADRENALINE, 35))
 			return (p1 - p2);
 
 		if (borg_zap_rod(SV_ROD_SPEED) ||
@@ -9803,7 +9767,7 @@ static int borg_defend_aux_tell_away(int p1)
 
 	/* chose then target a bad guy */
 	/* Hack, its actually a beam but we leave it as bolt for calculations */
-	b_n = borg_launch_bolt(0, 50, GF_AWAY_ALL, MAX_RANGE);
+	b_n = borg_launch_beam(50, GF_AWAY_ALL, MAX_RANGE);
 
 	/* normalize the value */
 	p2 = (p1 - b_n);
@@ -9816,6 +9780,9 @@ static int borg_defend_aux_tell_away(int p1)
 	{
 		/* Simulation */
 		if (borg_simulate) return (b_n);
+
+		/* Set the target */
+		borg_target(g_x, g_y);
 
 		/* Cast the spell */
 		if (borg_spell(REALM_SORCERY, 1, 4) ||
@@ -10291,8 +10258,8 @@ static int borg_defend_aux_mass_genocide(void)
 		if (borg_simulate) return (p1 - p2);
 
 		/* Cast the spell */
-		if (borg_spell(REALM_SORCERY, 2, 7) ||
-			borg_spell(REALM_SORCERY, 3, 6) ||
+		if (borg_spell(REALM_DEATH, 2, 7) ||
+			borg_spell(REALM_DEATH, 3, 6) ||
 			borg_activate_artifact(ART_EONWE, FALSE))
 		{
 			/* Value */
@@ -10329,7 +10296,6 @@ static int borg_defend_aux_genocide(void)
 	char genocide_target = (char)0;
 	int b_threat_id = (char)0;
 
-	bool genocide_spell = FALSE;
 	int fail_allowed = 39;
 
 	/* Obtain initial danger, measured over time */
@@ -10348,15 +10314,10 @@ static int borg_defend_aux_genocide(void)
 	if (p1 < avoidance / 3)
 		fail_allowed += 10;
 
-	if (borg_spell_okay_fail(REALM_DEATH, 1, 6, fail_allowed) ||
-		borg_equips_staff_fail(SV_STAFF_GENOCIDE) ||
-		(borg_slot(TV_SCROLL, SV_SCROLL_GENOCIDE)))
-	{
-		genocide_spell = TRUE;
-	}
-
-	if (genocide_spell == FALSE) return (0);
-
+	/* Is genocide available at all? */
+	if (!borg_spell_okay_fail(REALM_DEATH, 1, 6, fail_allowed) &&
+		!borg_equips_staff_fail(SV_STAFF_GENOCIDE) &&
+		!borg_slot(TV_SCROLL, SV_SCROLL_GENOCIDE)) return (0);
 
 	/* Don't try it if really weak */
 	if (bp_ptr->chp <= 75) return (0);
@@ -10538,10 +10499,7 @@ static int borg_defend_aux_genocide(void)
 static int borg_defend_aux_genocide_hounds(void)
 {
 	int i = 0;
-
 	char genocide_target = 'Z';
-
-	bool genocide_spell = FALSE;
 
 	/* Not if I am weak */
 	if (bp_ptr->chp < bp_ptr->mhp || bp_ptr->chp < 350) return (0);
@@ -10553,13 +10511,9 @@ static int borg_defend_aux_genocide_hounds(void)
 	if (borg_danger(c_x, c_y, 1, TRUE) > avoidance / 3)
 		return (0);
 
-	if (borg_spell_okay_fail(REALM_DEATH, 1, 6, 35) ||
-		borg_equips_staff_fail(SV_STAFF_GENOCIDE))
-	{
-		genocide_spell = TRUE;
-	}
-
-	if (genocide_spell == FALSE) return (0);
+	/* Is the spell available? */
+	if (!borg_spell_okay_fail(REALM_DEATH, 1, 6, 35) &&
+		!borg_equips_staff_fail(SV_STAFF_GENOCIDE)) return (0);
 
 	if (borg_simulate) return (1);
 
@@ -11204,6 +11158,9 @@ bool borg_defend(int p1)
 		}
 	}
 
+	/* Make sure you have the monsters lined correctly */
+	borg_temp_fill(TRUE);
+
 	/* Analyze the possible setup moves */
 	for (g = 0; g < BD_MAX; g++)
 	{
@@ -11611,14 +11568,14 @@ static int borg_perma_aux_speed(void)
 		return (0);
 
 	/* only cast defence spells if fail rate is not too high */
-	if (!borg_spell_okay_fail(REALM_SORCERY, 1, 4, fail_allowed) &&
+	if (!borg_spell_okay_fail(REALM_SORCERY, 1, 5, fail_allowed) &&
 		!borg_spell_okay_fail(REALM_DEATH, 2, 3, fail_allowed))
 		return (0);
 
 	/* Obtain the cost of the spell */
-	if (borg_spell_okay_fail(REALM_SORCERY, 1, 4, fail_allowed))
+	if (borg_spell_okay_fail(REALM_SORCERY, 1, 5, fail_allowed))
 	{
-		as = &borg_magics[REALM_SORCERY][1][4];
+		as = &borg_magics[REALM_SORCERY][1][5];
 		cost = as->power;
 	}
 	else
@@ -11635,13 +11592,15 @@ static int borg_perma_aux_speed(void)
 	if (borg_simulate) return (5);
 
 	/* do it! */
-	if (borg_spell_fail(REALM_SORCERY, 1, 4, fail_allowed) ||
+	if (borg_spell_fail(REALM_SORCERY, 1, 5, fail_allowed) ||
 		borg_spell_fail(REALM_DEATH, 2, 3, fail_allowed))
 		return (5);
 
 	/* default to can't do it. */
 	return (0);
 }
+
+
 static int borg_perma_aux_goi(void)
 {
 	int fail_allowed = 5;
@@ -12420,8 +12379,7 @@ bool borg_recover(void)
 	/* Hack -- satisfy hunger */
 	if ((bp_ptr->status.hungry || bp_ptr->status.weak) && (q < 75))
 	{
-		if (borg_spell_fail(REALM_SORCERY, 2, 0, 65) ||
-			borg_spell_fail(REALM_LIFE, 0, 7, 65) ||
+		if (borg_spell_fail(REALM_LIFE, 0, 7, 65) ||
 			borg_spell_fail(REALM_ARCANE, 2, 7, 65) ||
 			borg_spell_fail(REALM_NATURE, 0, 3, 65) ||
 			borg_racial(RACE_HOBBIT) ||
@@ -12902,10 +12860,10 @@ static bool borg_play_step(int y2, int x2)
 		if (bp_ptr->status.weak) return (FALSE);
 
 		/* Mega-Hack -- allow "stone to mud" */
-		if (borg_spell(REALM_SORCERY, 1, 8) ||
-			borg_spell(REALM_ARCANE, 2, 4) ||
+		if (borg_spell(REALM_ARCANE, 2, 4) ||
 			borg_spell(REALM_NATURE, 1, 0) ||
-			borg_spell(REALM_CHAOS, 2, 3) || borg_racial(RACE_HALF_GIANT))
+			borg_spell(REALM_CHAOS, 2, 3) ||
+			borg_racial(RACE_HALF_GIANT))
 		{
 			borg_note("# Melting a wall");
 			borg_keypress(I2D(dir));
