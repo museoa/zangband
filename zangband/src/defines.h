@@ -75,33 +75,6 @@
  */
 #define BLOCK_WID	11
 
-
-/*
- * Number of grids in each panel (vertically)
- * Must be a multiple of BLOCK_HGT
- */
-#define PANEL_HGT	11
-
-/*
- * Number of grids in each panel (horizontally)
- * Must be a multiple of BLOCK_WID
- */
-#define PANEL_WID	33
-
-
-/*
- * Number of grids used to display the dungeon (vertically).
- * Must be a multiple of 11, probably hard-coded to 22.
- */
-/*#define SCREEN_HGT      22  Complain if these are used.*/
-
-/*
- * Number of grids used to display the dungeon (horizontally).
- * Must be a multiple of 33, probably hard-coded to 66.
- */
-/*#define SCREEN_WID      66*/
-
-
 /*
  * Maximum dungeon height in grids, must be a multiple of SCREEN_HGT,
  * probably hard-coded to SCREEN_HGT * 3.
@@ -390,14 +363,6 @@
  * Setting it below 128 may prevent the creation of some objects.
  */
 #define MAX_DEPTH       128
-
-
-/*
- * Maximum size of the "lite" array (see "cave.c")
- * Note that the "lite radius" will NEVER exceed 5, and even if the "lite"
- * was rectangular, we would never require more than 128 entries in the array.
- */
-#define LITE_MAX 128
 
 /*
  * Maximum size of the "view" array (see "cave.c")
@@ -1425,10 +1390,6 @@
  * This value is the primary means by which items are sorted in the
  * player inventory, followed by "sval" and "cost".
  *
- * Note that a "BOW" with tval = 19 and sval S = 10*N+P takes a missile
- * weapon with tval = 16+N, and does (xP) damage when so combined.  This
- * fact is not actually used in the source, but it kind of interesting.
- *
  * Note that as of 2.7.8, the "item flags" apply to all items, though
  * only armor and weapons and a few other items use any of these flags.
  */
@@ -2094,13 +2055,13 @@
  *      LOOK: Describe grid fully
  *      XTRA: Currently unused flag
  *      GRID: Select from all grids
- *	HOST: Select hostile creatures only.
+ *		HOST: Select hostile creatures only.
  */
 #define TARGET_KILL             0x01
 #define TARGET_LOOK             0x02
 #define TARGET_XTRA             0x04
 #define TARGET_GRID             0x08
-#define TARGET_HOST		0x10
+#define TARGET_HOST				0x10
 
 
 /*
@@ -2914,7 +2875,7 @@
 #define RF8_WILD_SHORE          0x00010000
 #define RF8_WILD_OCEAN          0x00020000
 #define RF8_WILD_GRASS          0x00040000
-#define RF8_WILD_TOWN		0x00080000
+#define RF8_WILD_TOWN           0x00080000
 #define RF8_DUNGEON_01          0x00100000
 #define RF8_DUNGEON_02          0x00200000
 #define RF8_DUNGEON_03          0x00400000
@@ -2934,7 +2895,6 @@
 
 #define RF8_DUNGEON             0xFFF00000
 #define RF8_WILD                0x000700FF
-
 
 
 /*
@@ -3284,7 +3244,6 @@
 
 /*
  * Determines if a map location is currently "on screen" -RAK-
- * Note that "panel_contains(Y,X)" always implies "in_bounds2(Y,X)".
  */
 #define panel_contains(Y,X) \
   (((Y) >= panel_row_min) && ((Y) <= panel_row_max) && \
@@ -3587,15 +3546,6 @@ extern int PlayerUID;
 
 
 /*
- * Road flags
- */
-#define ROAD_NORTH	1
-#define ROAD_SOUTH	2
-#define ROAD_EAST	4
-#define ROAD_WEST	8
-
-
-/*
  * Buildings actions
  */
 #define BACT_NOTHING                 0
@@ -3670,7 +3620,7 @@ extern int PlayerUID;
 /*
  * Quest flags
  */
-#define QUEST_FLAG_SILENT  0x01 /* no messages fro completion */
+#define QUEST_FLAG_SILENT  0x01 /* no messages for completion */
 #define QUEST_FLAG_PRESET  0x02 /* quest is outside the main dungeon */
 #define QUEST_FLAG_ONCE    0x04 /* quest is marked finished after leaving */
 
@@ -3723,11 +3673,11 @@ extern int PlayerUID;
  */
 #define FIELD_INFO_TEMP		0x0001	/* Temporary field - use counter */
 #define FIELD_INFO_FEAT		0x0002	/* Terrain feature based field */
-#define FIELD_INFO_ATTR		0x0004	/* Use attr */
-#define FIELD_INFO_CHAR		0x0008	/* Use char */
+#define FIELD_INFO_INVIS	0x0004	/* No attr / char */
+#define FIELD_INFO_MARK		0x0008	/* Known */
 #define FIELD_INFO_RAND		0x0010	/* Randomize first 4 data values */
-#define FIELD_INFO_DUMMY4	0x0020
-#define FIELD_INFO_DUMMY5	0x0040
+#define FIELD_INFO_NO_LOOK	0x0020	/* Do not describe when looked at */
+#define FIELD_INFO_NFT_LOOK	0x0040  /* Do not describe feat when looked at */
 #define FIELD_INFO_DUMMY6	0x0080
 #define FIELD_INFO_DUMMY7	0x0100
 #define FIELD_INFO_DUMMY8	0x0200
@@ -3761,10 +3711,13 @@ extern int PlayerUID;
 #define FIELD_ACT_OBJECT_ON	9	/* Object is on square */
 #define FIELD_ACT_MAGIC_PASS	10	/* bolt/beam/ball spell tries to pass this field */
 #define FIELD_ACT_MAGIC_TARGET	11	/* Targeting this square */
-#define FIELD_ACT_COMPACT	12	/* Compaction if too many */
+#define FIELD_ACT_COMPACT	12	/* Compaction hook */
 #define FIELD_ACT_EXIT		13	/* Field is destroyed */
+#define FIELD_ACT_MONSTER_AI	14 /* Monster AI hook */
+#define FIELD_ACT_ENTER_TEST	15 /* Monster / player entry test hook */
+#define FIELD_ACT_PLAYER_INTERACT	16 /* The player interacts with grid */
 
-#define FIELD_ACTION_MAX	14	/* The last action + 1 */
+#define FIELD_ACTION_MAX	17	/* The last action + 1 */
 
 
 #define FIELD_ACTION_TYPES  3 /* Number of FIELD_ACT functions */
