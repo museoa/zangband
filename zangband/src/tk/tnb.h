@@ -116,7 +116,6 @@ extern int CommandInfo_ObjCmd(ClientData clientData, Tcl_Interp *interp,
 extern int g_icon_size; /* 16, 24 or 32 */
 extern void init_icons(int size, int depth);
 
-extern void angtk_image_reset(void);
 extern void Icon_Exit(void);
 extern void init_palette(void);
 

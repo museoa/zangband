@@ -90,70 +90,6 @@ static IconPtr SetIconBits(IconPtr bg, IconPtr fg, IconPtr mk, IconPtr b)
 }
 
 
-/*
- * Recalculate the indices used for monsters and objects during
- * hallucination.
- */
-void angtk_image_reset(void)
-{
-	int i;
-
-	/* Randomize monsters */
-	for (i = 1; i < z_info->r_max; i++)
-	{
-		int r_idx;
-		monster_race *r_ptr;
-
-		/* Infinite loop */
-		while (1)
-		{
-			/* Pick a random non-unique */
-			r_idx = randint1(z_info->r_max - 1);
-
-			/* Access the monster race */
-			r_ptr = &r_info[r_idx];
-
-			/* Require real race */
-			if (!r_ptr->name) continue;
-
-			/* Skip uniques */
-			if (r_ptr->flags1 & RF1_UNIQUE) continue;
-
-			/* Stop */
-			break;
-		}
-	}
-
-	/* Randomize objects */
-	for (i = 1; i < z_info->k_max; i++)
-	{
-		int k_idx;
-		object_kind *k_ptr;
-
-		/* Infinite loop */
-		while (1)
-		{
-			/* Pick a random object kind */
-			k_idx = randint1(z_info->k_max - 1);
-
-			/* Access the object kind */
-			k_ptr = &k_info[k_idx];
-
-			/* Require real kind */
-			if (!k_ptr->name) continue;
-
-			/* Skip artifacts */
-			if (k_ptr->flags3 & (TR3_INSTA_ART)) continue;
-			
-			/* Stop */
-			break;
-		}
-	}
-}
-
-
-
-
 char *AssignToString_Icon(char *buf, t_assign_icon *assign)
 {
 	if (assign->ascii == -1)
@@ -383,9 +319,6 @@ void init_icons(int size, int depth)
 
 	if (CanvasWidget_Init(g_interp) != TCL_OK)
 		quit(Tcl_GetStringFromObj(Tcl_GetObjResult(g_interp), NULL));
-
-	/* Randomize the hallucination indices */
-	angtk_image_reset();
 }
 
 
