@@ -1911,7 +1911,7 @@ static void display_player_flag_aux(int col, int row,
 		object_flags_known(o_ptr, &f[0], &f[1], &f[2]);
 
 		/* Default */
-		put_cstr(col, row, CLR_SLATE ".");
+		put_fstr(col, row, CLR_SLATE ".");
 
 		/* Check flags */
 		if (f[n - 1] & flag1) put_fstr(col, row, "+");
@@ -1925,7 +1925,7 @@ static void display_player_flag_aux(int col, int row,
 	player_flags(&f[0], &f[1], &f[2]);
 
 	/* Default */
-	put_cstr(col, row, CLR_SLATE ".");
+	put_fstr(col, row, CLR_SLATE ".");
 
 	/* Check flags */
 	if (f[n - 1] & flag1) put_fstr(col, row, "+");
@@ -2048,10 +2048,10 @@ static void display_player_stat_info(void)
 
 	/* Print out the labels for the columns */
 	put_fstr(stat_col, row - 1, "Stat");
-	put_cstr(stat_col + 5, row - 1, CLR_BLUE "Intrnl");
-	put_cstr(stat_col + 12, row - 1, CLR_L_BLUE "Rce Cls Mod");
-	put_cstr(stat_col + 24, row - 1, CLR_L_GREEN "Actual");
-	put_cstr(stat_col + 31, row - 1, CLR_YELLOW "Currnt");
+	put_fstr(stat_col + 5, row - 1, CLR_BLUE "Intrnl");
+	put_fstr(stat_col + 12, row - 1, CLR_L_BLUE "Rce Cls Mod");
+	put_fstr(stat_col + 24, row - 1, CLR_L_GREEN "Actual");
+	put_fstr(stat_col + 31, row - 1, CLR_YELLOW "Currnt");
 
 	/* Display the stats */
 	for (i = 0; i < A_MAX; i++)
@@ -2098,7 +2098,7 @@ static void display_player_stat_info(void)
 
 	/* Header and Footer */
 	put_fstr(col, row - 1, "abcdefghijkl@");
-	put_cstr(col, row + 6, CLR_L_GREEN "Modifications");
+	put_fstr(col, row + 6, CLR_L_GREEN "Modifications");
 
 	/* Process equipment */
 	for (i = 0; i < EQUIP_MAX; i++)
@@ -2390,7 +2390,7 @@ static void display_player_middle(void)
 	if (p_ptr->lev >= PY_MAX_LEVEL)
 	{
 		put_fstr(COL_VALUE, 12, "Exp to Adv.");
-		put_cstr(COL_VALUE + 11, 12, CLR_L_GREEN "       *****");
+		put_fstr(COL_VALUE + 11, 12, CLR_L_GREEN "       *****");
 	}
 	else if (toggle_xp)
 	{

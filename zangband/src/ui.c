@@ -391,7 +391,7 @@ void screen_load(void)
 /*
  * Put a string with control characters at a given location
  */
-void put_cstr(int col, int row, cptr str)
+static void put_cstr(int col, int row, cptr str)
 {
 	cptr c = str;
 	
