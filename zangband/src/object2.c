@@ -1505,15 +1505,22 @@ bool object_similar(object_type *o_ptr, object_type *j_ptr)
 
 			/* Fall through */
 		}
+		
+		case TV_LITE:
+		{
+			/* Hack - Require identical fuel levels */
+			if (o_ptr->timeout != j_ptr->timeout) return (FALSE);
+			
+			/* Fall through */
+		}
 
 		/* Rings, Amulets, Lites */
 		case TV_RING:
 		case TV_AMULET:
-		case TV_LITE:
+		
 		{
 			/* Require full knowledge of both items */
 			if (!object_known_p(o_ptr) || !object_known_p(j_ptr)) return (FALSE);
-
 			/* Fall through */
 		}
 
@@ -5065,8 +5072,8 @@ s16b inven_carry(object_type *o_ptr)
 			/* Lites sort by decreasing fuel */
 			if (o_ptr->tval == TV_LITE)
 			{
-				if (o_ptr->pval > j_ptr->pval) break;
-				if (o_ptr->pval < j_ptr->pval) continue;
+				if (o_ptr->timeout > j_ptr->timeout) break;
+				if (o_ptr->timeout < j_ptr->timeout) continue;
 			}
 
 			/* Determine the "value" of the pack item */
