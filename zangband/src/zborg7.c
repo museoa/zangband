@@ -614,7 +614,7 @@ bool borg_check_lite(void)
 		mb_ptr = map_loc(x, y);
 
 		/* Location must be known */
-		if (mb_ptr->terrain == FEAT_NONE) corners++;
+		if (!mb_ptr->feat) corners++;
 
 		/* Location must not be a wall/door */
 		if (!borg_cave_floor_grid(mb_ptr)) corners++;
@@ -757,7 +757,7 @@ bool borg_check_lite_only(void)
 		mb_ptr = map_loc(x, y);
 
 		/* Location must be known */
-		if (mb_ptr->terrain == FEAT_NONE) corners++;
+		if (!mb_ptr->feat) corners++;
 
 		/* Location must not be a wall/door */
 		if (!borg_cave_floor_grid(mb_ptr)) corners++;
@@ -856,7 +856,7 @@ bool borg_on_safe_grid(void)
 	map_block *mb_ptr = map_loc(c_x, c_y);
 
 	/* Lava */
-	if (mb_ptr->terrain == FEAT_SHAL_LAVA)
+	if (mb_ptr->feat == FEAT_SHAL_LAVA)
 	{
 		/* Immunity helps */
 		if (borg_skill[BI_IFIRE]) return (TRUE);
@@ -869,7 +869,7 @@ bool borg_on_safe_grid(void)
 	}
 
 	/* Water */
-	if (mb_ptr->terrain == FEAT_SHAL_WATER)
+	if (mb_ptr->feat == FEAT_SHAL_WATER)
 	{
 		/* Levatation helps */
 		if (borg_skill[BI_FEATH]) return (TRUE);

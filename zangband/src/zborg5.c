@@ -2636,14 +2636,10 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 	bool new_wall;
 
 	/* Save the old "wall" or "door" */
-	old_wall = !borg_cave_floor_grid(mb_ptr);
+	old_wall = borg_cave_wall_grid(mb_ptr);
 
 	/* Don't overwrite known info with unknown */
-	/* XXX This needs fixing */
-	if (map->terrain != FEAT_NONE)
-	{
-		mb_ptr->terrain = map->terrain;
-	}
+	if (map->terrain) mb_ptr->feat = map->terrain;
 
 	/*
 	 * Examine monsters
@@ -2686,7 +2682,7 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 	}
 
 	/* Analyze terrain */
-	switch (map->terrain)
+	switch (mb_ptr->feat)
 	{
 			/* Up stairs */
 		case FEAT_LESS:
@@ -2793,7 +2789,7 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 	if (map->field)
 	{
 		/* Get field type */
-		field_thaum *t_ptr = t_info[map->field];
+		field_thaum *t_ptr = &t_info[map->field];
 
 		/* Is it a store or building? */
 		if (t_ptr->type == FTYPE_BUILD)
@@ -2813,15 +2809,14 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 				track_shop_num++;
 			}
 		}
-
 	}
 
-	/* Save the new "wall" or "door" */
-	/*
-	 * XXX This depends in a very unhealthy way on borg_cave_floor grid
-	 * being a macro.
+	/* 
+	 * Save the new "wall" or "door"
+	 *
+	 * Hack - use inline form of borg_cave_wall_grid macro
 	 */
-	new_wall = !borg_cave_floor_grid(map);
+	new_wall = (f_info[map->terrain].flags & FF_BLOCK);
 
 	/* Notice wall changes */
 	if (old_wall != new_wall)

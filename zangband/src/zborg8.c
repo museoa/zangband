@@ -2538,7 +2538,7 @@ static bool borg_think_dungeon_brave(void)
 		map_block *mb_ptr = map_loc(c_x, c_y);
 
 		/* Usable stairs */
-		if (mb_ptr->terrain == FEAT_MORE)
+		if (mb_ptr->feat == FEAT_MORE)
 		{
 			/* Take the stairs */
 			borg_note("# Fleeing town via Stairs.");
@@ -3064,7 +3064,7 @@ bool borg_think_dungeon(void)
 		if (borg_flow_old(GOAL_TOWN)) return (TRUE);
 
 		/* Try to get to town location (town gate for now) */
-		if ((map_loc(c_x, c_y)->terrain == FEAT_MORE)
+		if ((map_loc(c_x, c_y)->feat == FEAT_MORE)
 			&& borg_flow_town_exit(GOAL_TOWN)) return (TRUE);
 
 		/* shop for something that will help us */
@@ -3368,7 +3368,7 @@ bool borg_think_dungeon(void)
 	/*** Deal with shops ***/
 
 	/* Try to get to town location (town gate for now) */
-	if (map_loc(c_x, c_y)->terrain == FEAT_MORE
+	if (map_loc(c_x, c_y)->feat == FEAT_MORE
 		&& borg_flow_town_exit(GOAL_TOWN)) return (TRUE);
 
 	/* Hack -- visit all the shops */

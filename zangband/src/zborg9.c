@@ -1804,7 +1804,7 @@ static void borg_parse_aux(cptr msg, int len)
 				 * He won't see the one under him though.  So a special check
 				 * must be made.
 				 */
-				/* byte feat = mb_ptr->terrain; */
+				/* byte feat = mb_ptr->feat; */
 
 				/* Remove the entire array */
 				for (i = 0; i < track_glyph_num; i++)
@@ -2371,7 +2371,7 @@ static void borg_parse_aux(cptr msg, int len)
 		 * He won't see the one under him though.  So a special check
 		 * must be made.
 		 */
-		/* byte feat = mb_ptr->terrain; */
+		/* byte feat = mb_ptr->feat; */
 
 		/* Remove the entire array */
 		for (i = 0; i < track_glyph_num; i++)
@@ -4078,7 +4078,7 @@ static void borg_display_map_info(byte data, byte type)
 				{
 					case BORG_SHOW_FEAT:
 					{
-						if (mb_ptr->terrain == data)
+						if (mb_ptr->feat == data)
 						{
 							a = TERM_WHITE;
 							c = '*';

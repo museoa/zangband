@@ -7453,8 +7453,8 @@ static int borg_danger_aux2(int i, bool average)
 
 			/* track spaces already protected */
 			if ( /* ag->feat == FEAT_GLYPH || */ mb_ptr->monster ||
-				((mb_ptr->terrain >= FEAT_CLOSED)
-				 && (mb_ptr->terrain <= FEAT_PERM_SOLID)))
+				((mb_ptr->feat >= FEAT_CLOSED)
+				 && (mb_ptr->feat <= FEAT_PERM_SOLID)))
 			{					/* track the safe areas for calculating danger */
 				spot_safe++;
 

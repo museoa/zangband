@@ -48,7 +48,7 @@ struct borg_wank
 	/* Location */
 	byte x;
 	byte y;
-	
+
 	byte type;
 };
 

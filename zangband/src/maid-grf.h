@@ -112,14 +112,17 @@ struct map_block
 #ifdef ALLOW_BORG
 	u16b fear;	/* fear value */
 
+	byte feat;	/* Terrain feature */
 	byte info;	/* info flags */
-	byte xtra;	/* search count */
+
 
 	byte flow;	/* "flow" data */
 	byte cost;	/* "cost" data */
 
 	byte kill;	/* Entry into "kill" list */
 	byte detect;	/* Detection flags */
+
+	byte xtra;	/* search count */
 #endif /* ALLOW_BORG */
 
 	/* We need to save the flags to get the refcounting right. */

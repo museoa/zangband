@@ -861,15 +861,19 @@ bool borg_projectable(int y1, int x1, int y2, int x2)
 
 		if (borg_skill[BI_CURHP] < borg_skill[BI_MAXHP] / 2)
 		{
-			/* Assume all unknow grids more than distance 10 from you */
-			/* are walls--when I am wounded. This will make me more fearful */
-			if ((dist > 10) && (mb_ptr->terrain == FEAT_NONE)) break;
+			/*
+			 * Assume all unknown grids more than distance 10 from you
+			 * are walls--when I am wounded. This will make me more fearful
+			 */
+			if ((dist > 10) && !mb_ptr->feat) break;
 		}
 		else
 		{
-			/* Assume all unknow grids more than distance 3 from you */
-			/* are walls. */
-			if ((dist > 2) && (mb_ptr->terrain == FEAT_NONE)) break;
+			/*
+			 * Assume all unknown grids more than distance 3 from you
+			 * are walls.
+			 */
+			if ((dist > 2) && !mb_ptr->feat) break;
 		}
 		/* Never pass through walls/doors */
 		if (dist && (!borg_cave_floor_grid(mb_ptr))) break;
@@ -913,7 +917,7 @@ bool borg_offset_projectable(int y1, int x1, int y2, int x2)
 		mb_ptr = map_loc(x, y);
 
 		/* Assume all unknown grids are walls. */
-		if ((dist) && (mb_ptr->terrain == FEAT_NONE)) break;
+		if ((dist) && !mb_ptr->feat) break;
 
 		/* Never pass through walls/doors */
 		if (dist && (!borg_cave_floor_grid(mb_ptr))) break;
@@ -956,7 +960,7 @@ bool borg_projectable_pure(int y1, int x1, int y2, int x2)
 		mb_ptr = map_loc(x, y);
 
 		/* Hack -- assume unknown grids are walls */
-		if (dist && (mb_ptr->terrain == FEAT_NONE)) break;
+		if (dist && !mb_ptr->feat) break;
 
 		/* Never pass through walls/doors */
 		if (dist && (!borg_cave_floor_grid(mb_ptr))) break;
