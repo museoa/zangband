@@ -184,6 +184,7 @@ struct borg_shop
 	s32b when;
 
 	/* Is this shop useful? */
+	char type;
 	s16b b_count;
 	s16b u_count;
 };

@@ -2748,7 +2748,67 @@ void borg_map_info(map_block *mb_ptr, const term_map *map, vptr dummy)
 				borg_shops[i].y = y;
 
 				/* Hack that town name in there */
-				strncpy(borg_shops[i].town, place[p_ptr->place_num].name, T_NAME_LEN);
+				strncpy(borg_shops[i].town,
+						place[p_ptr->place_num].name,
+						T_NAME_LEN);
+
+				/* Catch all the funny buildings */
+				if (streq(t_ptr->name, "Weaponmaster"))
+				{
+					borg_shops[i].type = BUILD_WEAPONMASTER;
+				}
+				else if (streq(t_ptr->name, "Zymurgist"))
+				{
+					borg_shops[i].type = BUILD_RECHARGE;
+				}
+				else if (streq(t_ptr->name, "Magesmith (weapons)"))
+				{
+					borg_shops[i].type = BUILD_PLUS_WEAPON;
+				}
+				else if (streq(t_ptr->name, "Magesmith (armor)"))
+				{
+					borg_shops[i].type = BUILD_PLUS_ARMOUR;
+				}
+				else if (streq(t_ptr->name, "Mutatalist"))
+				{
+					borg_shops[i].type = BUILD_MUTATE;
+				}
+				else if (streq(t_ptr->name, "Map Maker"))
+				{
+					borg_shops[i].type = BUILD_MAP;
+				}
+				else if (streq(t_ptr->name, "Library"))
+				{
+					borg_shops[i].type = BUILD_LIBRARY;
+				}
+				else if (streq(t_ptr->name, "Casino"))
+				{
+					borg_shops[i].type = BUILD_CASINO;
+				}
+				else if (streq(t_ptr->name, "Inn"))
+				{
+					borg_shops[i].type = BUILD_INN;
+				}
+				else if (streq(t_ptr->name, "Healer"))
+				{
+					borg_shops[i].type = BUILD_HEALER;
+				}
+				else if (streq(t_ptr->name, "Magetower"))
+				{
+					borg_shops[i].type = BUILD_MAGETOWER0;
+				}
+				else if (streq(t_ptr->name, "Large Magetower"))
+				{
+					borg_shops[i].type = BUILD_MAGETOWER1;
+				}
+				else if (streq(t_ptr->name, "Small Castle"))
+				{
+					borg_shops[i].type = BUILD_CASTLE0;
+				}
+				else if (streq(t_ptr->name, "Large Castle"))
+				{
+					borg_shops[i].type = BUILD_CASTLE1;
+				}
 
 				/* Hack - we have never been here before */
 				borg_shops[i].when = borg_t - 1000;

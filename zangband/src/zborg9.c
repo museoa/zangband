@@ -447,12 +447,11 @@ static bool borg_think(void)
 	/*** Handle stores ***/
 
 	/* Hack -- Check for being in a store */
-	if ((0 == borg_what_text(3, 5, 16, &t_a, buf)) &&
-		(streq(buf, "Item Description")))
+	if ((0 == borg_what_text(53, 19, 14, &t_a, buf) &&
+		streq(buf, "Gold Remaining")) ||
+		(0 == borg_what_text(40, 23, 14, &t_a, buf) &&
+		streq(buf, "Gold Remaining")))
 	{
-		/* Cheat the current gold (unless in home) */
-		borg_gold = p_ptr->au;
-
 		/* Hack -- allow user abort */
 		if (borg_cancel) return (TRUE);
 
@@ -1442,6 +1441,63 @@ static void borg_parse_aux(cptr msg, int len)
 		return;
 	}
 
+	/* When the borg eats */
+	if (streq(msg, "You are full!"))
+	{
+		/* Keep track of this */
+		bp_ptr->status.full = TRUE;
+		bp_ptr->status.weak = FALSE;
+		bp_ptr->status.hungry = FALSE;
+		bp_ptr->status.gorged = FALSE;
+		return;
+	}
+
+	/* When the borg doesn't eat */
+	if (streq(msg, "You are no longer full."))
+	{
+		/* Keep track of this */
+		bp_ptr->status.full = FALSE;
+		bp_ptr->status.weak = FALSE;
+		bp_ptr->status.hungry = FALSE;
+		bp_ptr->status.gorged = FALSE;
+		return;
+	}
+
+	/* When the borg doesn't eat */
+	if (streq(msg, "You are getting hungry."))
+	{
+		/* Keep track of this */
+		bp_ptr->status.full = FALSE;
+		bp_ptr->status.weak = FALSE;
+		bp_ptr->status.hungry = TRUE;
+		bp_ptr->status.gorged = FALSE;
+		return;
+	}
+
+	/* When the borg doesn't eat */
+	if (streq(msg, "You are getting weak from hunger!") ||
+		streq(msg, "You are getting faint from hunger!") ||
+		streq(msg, "You faint from the lack of food."))
+	{
+		/* Keep track of this */
+		bp_ptr->status.full = FALSE;
+		bp_ptr->status.weak = TRUE;
+		bp_ptr->status.hungry = FALSE;
+		bp_ptr->status.gorged = FALSE;
+		return;
+	}
+
+	/* When the borg eats too much */
+	if (streq(msg, "You have gorged yourself!"))
+	{
+		/* Keep track of this */
+		bp_ptr->status.full = FALSE;
+		bp_ptr->status.weak = FALSE;
+		bp_ptr->status.hungry = FALSE;
+		bp_ptr->status.gorged = TRUE;
+		return;
+	}
+
 	/* Wearing Cursed Item */
 	if ((prefix(msg, "There is a malignant black aura surrounding you...")) ||
 		(prefix(msg, "Oops! It feels deathly cold!")) ||
@@ -1846,14 +1902,6 @@ static void borg_parse_aux(cptr msg, int len)
 		prefix(msg, "The fumes poison you!"))
 	{
 		borg_note("# Help! I'm poisoned");
-
-		return;
-	}
-
-	/* Recognize starving */
-	if (prefix(msg, "You faint from the lack of food."))
-	{
-		borg_note("# I need to eat.");
 
 		return;
 	}
@@ -3719,8 +3767,10 @@ void do_cmd_borg(void)
 
 			for (i = 0; i < track_shop_num; i++)
 			{
+				char c = (i < 10) ? i + '0' : '*';
+
 				/* Print */
-				print_rel('*', TERM_RED, borg_shops[i].x, borg_shops[i].y);
+				print_rel(c, TERM_RED, borg_shops[i].x, borg_shops[i].y);
 
 				/* Count */
 				n++;

@@ -164,56 +164,11 @@ void borg_list_info(byte list_type, vptr dummy)
 
 		case LIST_STORE:
 		{
-			/* Notice store inventory changes */
-
-			/* Silly value */
-			shop_num = -1;
-
-			/* Scan for the right shop */
-			for (i = 0; i < track_shop_num; i++)
-			{
-				if ((borg_shops[i].x == c_x) && (borg_shops[i].y == c_y))
-				{
-					shop_num = i;
-					break;
-				}
-			}
-
-			/* Paranoia */
-			if (shop_num == -1) quit("Could not find store!");
-
-			/* Clear the goal */
-			goal = 0;
-
 			break;
 		}
 
 		case LIST_HOME:
 		{
-			/* Notice home inventory changes */
-
-			/* Silly value */
-			shop_num = -1;
-
-			/* Scan for the home */
-			for (i = 0; i < track_shop_num; i++)
-			{
-				if ((borg_shops[i].x == c_x) && (borg_shops[i].y == c_y))
-				{
-					shop_num = i;
-					home_shop = i;
-					break;
-				}
-			}
-
-			/* Paranoia */
-			if (shop_num == -1) quit("Could not find home!");
-
-			/* Clear the goal */
-			goal = 0;
-
-			/* Save items for later... */
-
 			/* Number of items */
 			home_num = cur_num;
 

@@ -1069,56 +1069,601 @@ static bool borg_choose_shop(void)
 }
 
 
+/* Use the weaponmaster to *id* weapons */
+static bool borg_build_weaponmaster(void)
+{
+	int i;
+	list_item *l_ptr;
+
+	/* Not when the borg is broke */
+	if (borg_gold < 2000) return (FALSE);
+
+	/* Loop through the inv */
+	for (i = 0; i < inven_num + 1; i++)
+	{
+		if (i == 0)
+		{
+			/* First try the weapon that is used */
+			l_ptr = look_up_equip_slot(EQUIP_WIELD);
+		}
+		else
+		{
+			/* Then check out the inventory */
+			l_ptr = &inventory[i - 1];
+		}
+
+		/* There is no item */
+		if (!l_ptr) return (FALSE);
+
+		/* It has to be a weapon */
+		if (l_ptr->tval < TV_DIGGING || l_ptr->tval > TV_SWORD) continue;
+
+		/* Are there unid'd items? */
+		if (borg_obj_known_p(l_ptr))
+		{
+			/* Does this weapon need a *id*? */
+			if (borg_obj_known_full(l_ptr) ||
+				!borg_obj_star_id_able(l_ptr)) continue;
+		}
+		else
+		{
+			/* If the sensing shows it is interesting */
+			if (!strstr(l_ptr->o_name, "{excellent") ||
+				!strstr(l_ptr->o_name, "{special")) continue;
+		}
+
+		/* We found a weapon that needs *id*, but is it in the inv? */
+		if (i)
+		{
+			/* wield this weapon */
+			borg_keypress('w');
+			borg_keypress(I2A(i - 1));
+		}
+
+		/* We know enough */
+		break;
+	}
+
+	/* nothing interesting in the inven */
+	if (i == inven_num + 1) return (FALSE);
+
+	/* *id* the weapon */
+	borg_keypress('E');
+
+	/* Make a note */
+	borg_note("# *Identifying* %s at the weaponmaster", l_ptr->o_name);
+
+	return (TRUE);
+}
+
+
+
+/* How to handle the recharging building */
+static bool borg_build_recharge(void)
+{
+	int i, count = 0, max_pval = 0;
+	char buf[4];
+	list_item *l_ptr;
+
+	/* Does the borg have enough gold for an id? */
+	if (borg_gold < 700) return (FALSE);
+
+	/* Loop through the inv */
+	for (i = 0; i < inven_num; i++)
+	{
+		/* Are there unid'd items? */
+		if (!borg_obj_known_p(&inventory[i])) count++;
+	}
+
+	/* Is the id worth it? */
+	if (count >= 4)
+	{
+		/* Identify the pack */
+		borg_keypress('I');
+
+		return (TRUE);
+	}
+
+	/* Does the borg have enough gold for a recharge? */
+	if (borg_gold < 2000) return (FALSE);
+
+	/* Find out if there are wands or staffs in the inv */
+	for (i = 0; i < inven_num; i++)
+	{
+		l_ptr = &inventory[i];
+
+		if (l_ptr->tval == TV_WAND ||
+			l_ptr->tval == TV_STAFF ||
+			l_ptr->tval == TV_ROD) 
+		{
+			/* If the wand is not identified */
+			if (!borg_obj_known_p(l_ptr))
+			{
+				/* Identify it */
+				borg_keypress('R');
+				borg_keypress(I2A(i));
+				borg_keypress('y');
+				borg_keypress(ESCAPE);
+
+				borg_note("# Identifying %s at the zymurgist.", l_ptr->o_name);
+
+				/* Success at doing something */
+				return (TRUE);
+			}
+
+			/* Don't bother to recharge rods */
+			if (l_ptr->tval == TV_ROD) continue;
+
+			/* What is the maximum number of charges for this staff/wand */
+			max_pval = k_info[l_ptr->k_idx].pval;
+
+			/* Find out the max charges */
+			if (l_ptr->tval == TV_STAFF)
+				count = max_pval - l_ptr->pval;
+			else
+				count = l_ptr->number * max_pval - l_ptr->pval;
+
+			if (count > 0) break;
+		}
+	}
+
+	/* Nothing to charge */
+	if (i == inven_num) return (FALSE);
+
+	/* Get string corresponding to number */
+	(void)strnfmt(buf, 4, "%d\n", count);
+
+	/* Say what you do */
+	borg_note("# Recharging %s at the zymurgist.", l_ptr->o_name);
+
+	/* Do what you say */
+	borg_keypress('R');
+	borg_keypress(I2A(i));
+	borg_keypresses(buf);
+
+	return (TRUE);
+}
+
+
+/* The borg may try to enchant his weapon in this building */
+static bool borg_build_weapon(void)
+{
+	int i;
+	list_item *l_ptr = look_up_equip_slot(EQUIP_WIELD);
+
+	/* Does the borg have enough gold? */
+	if (borg_gold < 2000) return (FALSE);
+
+	/* Does the borg have a weapon at all? */
+	if (!l_ptr) return (FALSE);
+
+	/* Is there improvement for the to_hit and to_dam bonus */
+	if (l_ptr->to_h >= bp_ptr->lev / 5 &&
+		l_ptr->to_d >= bp_ptr->lev / 3) return (FALSE);
+
+	/* Let's go for it */
+	borg_keypress('E');
+
+	/* Find out if there are weapons in the inv */
+	for (i = 0; i < inven_num; i++)
+	{
+		l_ptr = &inventory[i];
+
+		if (l_ptr->tval >= TV_DIGGING && l_ptr->tval <= TV_SWORD)
+		{
+			/* skip the inv and go to equip */
+			borg_keypress('/');
+
+			break;
+		}
+	}
+
+	/* And enchant the weapon */
+	borg_keypress('a');
+
+	/* Say so */
+	borg_note("# Enchanting %s at the magesmith.", l_ptr->o_name);
+
+	return (TRUE);
+}
+
+
+/* How to handle the enchant armour building */
+static bool borg_build_armour(void)
+{
+	int i, slot = -1;
+	list_item *l_ptr;
+
+	/* Does the borg have enough gold? */
+	if (borg_gold < 2000) return (FALSE);
+
+	for (i = EQUIP_BODY; i < equip_num; i++)
+	{
+		l_ptr = look_up_equip_slot(i);
+
+		/* Is there armour here? */
+		if (!l_ptr) continue;
+
+		/* Is there improvement for the to_hit and to_dam bonus */
+		if (l_ptr->to_a >= bp_ptr->lev / 5) continue;
+
+		/* Found an armour */
+		slot = i;
+
+		break;
+	}
+
+	/* Was an armour found? */
+	if (slot == -1) return (FALSE);
+
+	/* Let's go for it */
+	borg_keypress('E');
+
+	/* Find out if there are armour in the inv */
+	for (i = 0; i < inven_num; i++)
+	{
+		l_ptr = &inventory[i];
+
+		if (l_ptr->tval >= TV_BOOTS && l_ptr->tval <= TV_DRAG_ARMOR)
+		{
+			/* skip the inv and go to equip */
+			borg_keypress('/');
+
+			break;
+		}
+	}
+
+	/* And enchant the armour */
+	borg_keypress(I2A(slot));
+
+	/* Say so */
+	borg_note("# Enchanting %s at the magesmith.", l_ptr->o_name);
+
+	return (TRUE);
+}
+
+
+/* How to handle the mapmaker building */
+static bool borg_build_map(void)
+{
+	int i, j;
+	int x = c_x / 16, y = c_y / 16;
+	int radius = 20, sum = 0, count = 0;
+
+	/* Check the money */
+	if (borg_gold < 600) return (FALSE);
+
+	/* Map a rough circle around the target position in the wilderness */
+	for (i = x - radius; i < x + radius + 1; i++)
+	{
+		for (j = y - radius; j < y + radius + 1; j++)
+		{
+			/* In bounds? */
+			if ((i >= 0) && (i < max_wild) && (j >= 0) && (j < max_wild))
+			{
+				if (distance(i, j, x, y) >= radius) continue;
+
+				sum++;
+
+				/* Hack!  Check this location */
+				if (wild[j][i].done.info & WILD_INFO_SEEN) count++;
+			}
+		}
+	}
+
+	/* Does the borg already know its way around here? */
+	if (count * 2 > sum) return (FALSE);
+
+	/* Look at the map */
+	borg_keypress('E');
+
+	return (TRUE);
+}
+
+
+/* Even the borg can be irrational */
+static bool borg_build_casino(void)
+{
+	int wager = MIN(borg_gold / 10, bp_ptr->lev * 1000);
+	char buf[7];
+
+	/* No gambling when almost broke */
+	if (borg_gold < 500) return (FALSE);
+
+	/* Get string corresponding to number */
+	(void)strnfmt(buf, 7, "%d\n", wager);
+
+	/* In Between */
+	borg_keypress('I');
+	borg_keypresses(buf);
+	borg_keypress('n');
+
+	/* Craps */
+	borg_keypress('C');
+	borg_keypresses(buf);
+	borg_keypress('n');
+
+	/* Spin the Wheel */
+	borg_keypress('S');
+	borg_keypresses(buf);
+	borg_keypress((char)(randint1(10) + '0'));
+	borg_keypress('\n');
+	borg_keypress('n');
+
+	/* Dice Slots */
+	borg_keypress('D');
+	borg_keypresses(buf);
+	borg_keypress('n');
+
+	/* Hack so the borg won't repeat this building */
+	return (FALSE);
+}
+
+
+
+/* Get food and rest at the inn */
+static bool borg_build_inn(void)
+{
+	int i;
+	list_item *l_ptr;
+	bool rest = TRUE;
+
+	/* Don't do this if the borg is low on cash */
+	if (borg_gold < 200) return (FALSE);
+
+	/* Is it light outside */
+	rest &= ((turn % (10L * TOWN_DAWN)) >= 50000);
+
+	/* This is a respectable place */
+	rest &= !bp_ptr->status.cut && !bp_ptr->status.poisoned;
+
+	/* Check the vampire flag */
+	rest &= !FLAG(bp_ptr, TR_HURT_LITE);
+
+	/* Loop through the equipment */
+	for (i = 0; i < equip_num; i++)
+	{
+		l_ptr = look_up_equip_slot(i);
+
+		/* Check the equipment for that flag */
+		if (l_ptr) rest &= !KN_FLAG(l_ptr, TR_HURT_LITE);
+	}
+
+	/* If the borg wants a rest */
+	if (rest)
+	{
+		/* Wait for daybreak */
+		borg_keypress('R');
+
+		return (TRUE);
+	}
+
+	/* Can the borg use more food? */
+	if (!bp_ptr->status.full)
+	{
+		/* Have dinner */
+		borg_keypress('E');
+
+		return (TRUE);
+	}
+
+	/* no rest or food needed */
+	return (FALSE);
+}
+
+
+/* How to handle the healer building */
+static bool borg_build_healer(void)
+{
+	int i, count = 0;
+
+	/* Expensive here */
+	if (borg_gold < 15000) return (FALSE);
+
+	/* Check the stats (but not CHR) */
+	for (i = 0; i < 5; i++)
+	{
+		/* Count how many stats need fixing */
+		if (bp_ptr->status.fixstat[i]) count++;
+	}
+
+	/* Don't bother for just one stat */
+	if (count < 2) return (FALSE);
+
+	/* Heal me */
+	borg_keypress('R');
+
+	/* success */
+	return (TRUE);
+}
+
+
+/* What to do inside a magetower */
+static bool borg_build_magetower(void)
+{
+	byte t_a;
+	char buf[20];
+
+	/* No need to be here when broke */
+	if (borg_gold < 2000) return (FALSE);
+
+	/* Is the borg registered here? */
+	if (0 == borg_what_text(39, 18, 11, &t_a, buf) &&
+		streq(buf, "Record aura"))
+	{
+		/* Register */
+		borg_keypress('R');
+
+		return (TRUE);
+	}
+
+	return (FALSE);
+}
+
+
+/* What to do inside a castle? */
+static bool borg_build_castle(bool large)
+{
+	byte t_a;
+	char buf[20];
+
+	/* Is the borg registered here? */
+	if (0 == borg_what_text(35, 19, 13, &t_a, buf) &&
+		streq(buf, "Request Quest"))
+	{
+		/* Get a quest */
+		borg_keypress('R');
+
+		if (borg_gold < 30000)
+		{
+			/* Deliver a message */
+			borg_keypress('b');
+		}
+		else
+		{
+			if (large)
+			{
+				/* Find an artifact */
+				borg_keypress('d');
+			}
+			else
+			{
+				/* Kill monster quest */
+				borg_keypress('a');
+			}
+		}
+
+		/* Success */
+		return (TRUE);
+	}
+	/* Try to get a reward */
+	else
+	{
+		/* Get a quest */
+		borg_keypress('R');
+
+		/* To avoid pressing this button again just leave the building */
+		return (FALSE);
+	}
+}
+
+
+/* Handle the buildings that are not stores */
+static bool borg_think_building(void)
+{
+	/* Only the funny buildings have a type */
+	switch (borg_shops[shop_num].type)
+	{
+		case BUILD_WEAPONMASTER: return (borg_build_weaponmaster());
+
+		case BUILD_RECHARGE: return (borg_build_recharge());
+
+		case BUILD_PLUS_WEAPON: return (borg_build_weapon());
+
+		case BUILD_PLUS_ARMOUR: return (borg_build_armour());
+
+		case BUILD_MUTATE: return (FALSE);
+
+		case BUILD_MAP: return (borg_build_map());
+
+		case BUILD_LIBRARY: return (FALSE);
+
+		case BUILD_CASINO: return (borg_build_casino());
+
+		case BUILD_INN: return (borg_build_inn());
+
+		case BUILD_HEALER: return (borg_build_healer());
+
+		case BUILD_MAGETOWER0:
+		case BUILD_MAGETOWER1: return (borg_build_magetower());
+
+		case BUILD_CASTLE0: return (borg_build_castle(FALSE));
+
+		case BUILD_CASTLE1: return (borg_build_castle(TRUE));
+
+		default: return (FALSE);
+	}
+}
+
 /*
  * Deal with being in a store
  */
 bool borg_think_store(void)
 {
-	/* Paranoia */
-	if (shop_num == -1)
+	int i;
+
+	/* Cheat the current gold */
+	borg_gold = p_ptr->au;
+
+	/* Clear goal */
+	goal = 0;
+
+	/* Retrieve the correct place */
+	for (i = 0; i < track_shop_num; i++)
 	{
-		borg_oops("# Entering invalid store.");
+		/* Find the right coords */
+		if (c_x == borg_shops[i].x && c_y == borg_shops[i].y)
+		{
+			/* Get the shop */
+			shop_num = i;
+
+			break;
+		}
+	}
+
+	/* This shop is not known! */
+	if (i == track_shop_num)
+	{
+		borg_oops("Unknown shop entered");
 		return (FALSE);
 	}
-	
+
 	/* Stamp the shop with a time stamp */
 	borg_shops[shop_num].when = borg_t;
-
-	/* Remove "useless" equipment */
-	if (borg_unwear_stuff()) return (TRUE);
-
-	/* Wear good stuff */
-	if (borg_wear_stuff()) return (TRUE);
 
 	/* Increment 'been' count */
 	borg_shops[shop_num].b_count++;
 
-	/* Select what we want to do */
-	if (shop_num == home_shop)
+	if (borg_shops[shop_num].type)
 	{
-		/* Step 1 -- Sell items to the home */
-		if (borg_think_home_sell_aux()) return (TRUE);
-
-		/* Step 4 -- Buy items from the home (for the player) */
-		if (borg_think_home_buy_aux()) return (TRUE);
-
-		/* Step 5 -- Grab items from the home (for the shops) */
-		if (borg_think_home_grab_aux()) return (TRUE);
-
-		borg_note("# Nothing to do at home.");
+		/* Check out the funny shops */
+		if (borg_think_building()) return (TRUE);
 	}
 	else
 	{
-		/* Step 2 -- Sell items to the shops */
-		if (borg_think_shop_sell_aux(shop_num)) return (TRUE);
+		/* Remove "useless" equipment */
+		if (borg_unwear_stuff()) return (TRUE);
 
-		/* Step 3 -- Buy items from the shops (for the player) */
-		if (borg_think_shop_buy_aux(shop_num)) return (TRUE);
+		/* Wear good stuff */
+		if (borg_wear_stuff()) return (TRUE);
 
-		/* Step 6 -- Buy items from the shops (for the home) */
-		if (borg_think_shop_grab_aux(shop_num)) return (TRUE);
+		/* Select what we want to do */
+		if (shop_num == home_shop)
+		{
+			/* Step 1 -- Sell items to the home */
+			if (borg_think_home_sell_aux()) return (TRUE);
 
-		borg_note("# Nothing to do in the store.");
+			/* Step 4 -- Buy items from the home (for the player) */
+			if (borg_think_home_buy_aux()) return (TRUE);
+
+			/* Step 5 -- Grab items from the home (for the shops) */
+			if (borg_think_home_grab_aux()) return (TRUE);
+
+			borg_note("# Nothing to do at home.");
+		}
+		else
+		{
+			/* Step 2 -- Sell items to the shops */
+			if (borg_think_shop_sell_aux(shop_num)) return (TRUE);
+
+			/* Step 3 -- Buy items from the shops (for the player) */
+			if (borg_think_shop_buy_aux(shop_num)) return (TRUE);
+
+			/* Step 6 -- Buy items from the shops (for the home) */
+			if (borg_think_shop_grab_aux(shop_num)) return (TRUE);
+
+			borg_note("# Nothing to do in the store.");
+		}
 	}
 
 	/* Leave the store */
