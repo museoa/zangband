@@ -21,8 +21,7 @@
 #include "widget-dll.h"
 
 char *keyword_widget_style[] = {
-	"icon", "map", "iso",
-	NULL
+	"icon", "map", NULL
 };
 
 /*
@@ -43,7 +42,7 @@ static Tk_OptionSpec optionSpecs[20] = {
 	 "no", -1, Tk_Offset(Widget, setGrid), 0, 0, 0},
     {TK_OPTION_BOOLEAN, "-noupdate", "noUpdate", "NoUpdate",
 	 "no", -1, Tk_Offset(Widget, noUpdate), 0, 0, 0},
-   {TK_OPTION_STRING_TABLE, "-style", "style", "Style",
+	{TK_OPTION_STRING_TABLE, "-style", "style", "Style",
 	 "icon", -1, Tk_Offset(Widget, style), 0, keyword_widget_style, 0},
     {TK_OPTION_END, NULL, NULL, NULL,
      NULL, 0, -1, 0, 0, 0}
