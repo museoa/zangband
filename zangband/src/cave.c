@@ -976,8 +976,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 						}
 						else
 						{
-							/* Use lightened colour */
-							a = lighting_colours[a][0];
+							/* Use a lit tile */
 						}
 					}
 				}
