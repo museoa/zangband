@@ -3505,9 +3505,20 @@ static void a_m_aux_4(object_type *o_ptr)
 				if (o_ptr->pval > 0) o_ptr->timeout = randint1(o_ptr->pval);
 			}
 			
-			/* Hack - remove pval */
-			o_ptr->pval = 0;
-
+			if (o_ptr->sval > SV_LITE_LANTERN)
+			{
+				/* Paranoia - we have an artifact!!! */
+				msg_print("Error - artifact passed to apply_magic");
+				msg_format("Object sval:%d Object flags3:%d",
+					o_ptr->sval, o_ptr->flags3);
+				msg_print("Submit a bugreport please. :-)");
+			}
+			else
+			{
+				/* Hack - remove pval */
+				o_ptr->pval = 0;
+			}
+			
 			break;
 		}
 
