@@ -183,6 +183,11 @@
 /* The number of "patrons" available (for Chaos Warriors) */
 #define MAX_PATRON          16
 
+/* Number of entries in the sanity-blast descriptions */
+#define MAX_SAN_HORROR 20
+#define MAX_SAN_FUNNY 22
+#define MAX_SAN_COMMENT 5
+
 /* Chaos Warrior: Reward types: */
 #define REW_POLY_SLF    1
 #define REW_GAIN_EXP    2

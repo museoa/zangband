@@ -607,6 +607,243 @@ static bool gamble_comm(int cmd)
 }
 
 
+static bool get_nightmare(int r_idx)
+{
+	monster_race *r_ptr = &r_info[r_idx];
+
+	/* Require eldritch horrors */
+	if (!(r_ptr->flags2 & (RF2_ELDRITCH_HORROR))) return (FALSE);
+
+	/* Require high level */
+	if (r_ptr->level <= p_ptr->lev) return (FALSE);
+
+	/* Accept this monster */
+	return (TRUE);
+}
+
+
+static void have_nightmare(int r_idx)
+{
+	bool happened = FALSE;
+
+	int power = 100;
+
+	monster_race *r_ptr = &r_info[r_idx];
+
+	char m_name[80];
+	cptr desc = r_name + r_ptr->name;
+
+	power = r_ptr->level + 10;
+
+	if (!(r_ptr->flags1 & RF1_UNIQUE))
+	{
+		/* Describe it */
+		sprintf(m_name, "%s %s", (is_a_vowel(desc[0]) ? "an" : "a"), desc);
+
+		if (r_ptr->flags1 & RF1_FRIENDS)
+		{
+			power /= 2;
+		}
+	}
+	else
+	{
+		/* Describe it */
+		sprintf(m_name, "%s", desc);
+
+		power *= 2;
+	}
+
+	if (saving_throw(p_ptr->skill_sav * 100 / power))
+	{
+   	msg_format("%^s chases you through your dreams.", m_name);
+
+		/* Safe */
+		return;
+	}
+
+	if (p_ptr->image)
+	{
+		/* Something silly happens... */
+		msg_format("You behold the %s visage of %s!",
+					  funny_desc[rand_int(MAX_SAN_FUNNY)], m_name);
+
+		if (one_in_(3))
+		{
+			msg_print(funny_comments[rand_int(MAX_SAN_COMMENT)]);
+			p_ptr->image = p_ptr->image + randint(r_ptr->level);
+		}
+
+		/* Never mind; we can't see it clearly enough */
+		return;
+	}
+
+	/* Something frightening happens... */
+	msg_format("You behold the %s visage of %s!",
+				  horror_desc[rand_int(MAX_SAN_HORROR)], desc);
+
+	r_ptr->r_flags2 |= RF2_ELDRITCH_HORROR;
+
+	switch(p_ptr->prace)
+	{
+		/* Imps may make a saving throw */
+		case RACE_IMP:
+		{
+			if (saving_throw(20 + p_ptr->lev)) return;
+		}
+		/* Undead may make a saving throw */
+		case RACE_SKELETON:
+		case RACE_ZOMBIE:
+		case RACE_SPECTRE:
+		case RACE_VAMPIRE:
+		{
+			if (saving_throw(10 + p_ptr->lev)) return;
+		}
+	}
+
+	/* Mind blast */
+	if (!saving_throw(p_ptr->skill_sav * 100 / power))
+	{
+		if (!p_ptr->resist_conf)
+		{
+			(void)set_confused(p_ptr->confused + rand_int(4) + 4);
+		}
+		if (!p_ptr->resist_chaos && one_in_(3))
+		{
+			(void)set_image(p_ptr->image + rand_int(250) + 150);
+		}
+		return;
+	}
+
+	/* Lose int & wis */
+	if (!saving_throw(p_ptr->skill_sav * 100 / power))
+	{
+		do_dec_stat(A_INT);
+		do_dec_stat(A_WIS);
+		return;
+	}
+
+	/* Brain smash */
+	if (!saving_throw(p_ptr->skill_sav * 100 / power))
+	{
+		if (!p_ptr->resist_conf)
+		{
+			(void)set_confused(p_ptr->confused + rand_int(4) + 4);
+		}
+		if (!p_ptr->free_act)
+		{
+			(void)set_paralyzed(p_ptr->paralyzed + rand_int(4) + 4);
+		}
+		while (!saving_throw(p_ptr->skill_sav))
+		{
+			(void)do_dec_stat(A_INT);
+		}
+		while (!saving_throw(p_ptr->skill_sav))
+		{
+			(void)do_dec_stat(A_WIS);
+		}
+		if (!p_ptr->resist_chaos)
+		{
+			(void)set_image(p_ptr->image + rand_int(250) + 150);
+		}
+		return;
+	}
+
+	/* Permanent lose int & wis */
+	if (!saving_throw(p_ptr->skill_sav * 100 / power))
+	{
+		if (dec_stat(A_INT, 10, TRUE)) happened = TRUE;
+		if (dec_stat(A_WIS, 10, TRUE)) happened = TRUE;
+		if (happened)
+		{
+			msg_print("You feel much less sane than before.");
+		}
+		return;
+	}
+
+	/* Amnesia */
+	if (!saving_throw(p_ptr->skill_sav * 100 / power))
+	{
+		if (lose_all_info())
+		{
+			msg_print("You forget everything in your utmost terror!");
+		}
+		return;
+	}
+
+	/* Else gain permanent insanity */
+	if ((p_ptr->muta3 & MUT3_MORONIC) && (p_ptr->muta2 & MUT2_BERS_RAGE) &&
+		((p_ptr->muta2 & MUT2_COWARDICE) || (p_ptr->resist_fear)) &&
+		((p_ptr->muta2 & MUT2_HALLU) || (p_ptr->resist_chaos)))
+	{
+		/* The poor bastard already has all possible insanities! */
+		return;
+	}
+
+	while (!happened)
+	{
+		switch (randint(4))
+		{
+			case 1:
+			{
+				if (!(p_ptr->muta3 & MUT3_MORONIC))
+				{
+					msg_print("You turn into an utter moron!");
+					if (p_ptr->muta3 & MUT3_HYPER_INT)
+					{
+						msg_print("Your brain is no longer a living computer.");
+						p_ptr->muta3 &= ~(MUT3_HYPER_INT);
+					}
+					p_ptr->muta3 |= MUT3_MORONIC;
+					happened = TRUE;
+				}
+				break;
+			}
+			case 2:
+			{
+				if (!(p_ptr->muta2 & MUT2_COWARDICE) && !p_ptr->resist_fear)
+				{
+					msg_print("You become paranoid!");
+
+					/* Duh, the following should never happen, but anyway... */
+					if (p_ptr->muta3 & MUT3_FEARLESS)
+					{
+						msg_print("You are no longer fearless.");
+						p_ptr->muta3 &= ~(MUT3_FEARLESS);
+					}
+
+					p_ptr->muta2 |= MUT2_COWARDICE;
+					happened = TRUE;
+				}
+				break;
+			}
+			case 3:
+			{
+				if (!(p_ptr->muta2 & MUT2_HALLU) && !p_ptr->resist_chaos)
+				{
+					msg_print("You are afflicted by a hallucinatory insanity!");
+					p_ptr->muta2 |= MUT2_HALLU;
+					happened = TRUE;
+				}
+				break;
+			}
+			default:
+			{
+				if (!(p_ptr->muta2 & MUT2_BERS_RAGE))
+				{
+					msg_print("You become subject to fits of berserk rage!");
+					p_ptr->muta2 |= MUT2_BERS_RAGE;
+					happened = TRUE;
+				}
+				break;
+			}
+		}
+	}
+
+	p_ptr->update |= PU_BONUS;
+	handle_stuff();
+}
+
+
 /*
  * inn commands
  * Note that resting for the night was a perfect way to avoid player
@@ -643,10 +880,36 @@ static bool inn_comm(int cmd)
 				{
 					turn = ((turn / 50000) + 1) * 50000;
 					p_ptr->chp = p_ptr->mhp;
-					set_blind(0);
-					set_confused(0);
-					p_ptr->stun = 0;
-					msg_print("You awake refreshed for the new day.");
+
+					if (ironman_nightmare)
+					{
+						msg_print("Horrible visions flit through your mind as you sleep.");
+
+						/* Pick a nightmare */
+						get_mon_num_prep(get_nightmare, NULL);
+
+						/* Have some nightmares */
+						while(1)
+						{
+							have_nightmare(get_mon_num(MAX_DEPTH));
+
+							if (!one_in_(3)) break;
+						}
+
+						/* Remove the monster restriction */
+						get_mon_num_prep(NULL, NULL);
+
+						msg_print("You awake screaming.");
+					}
+					else
+					{
+						set_blind(0);
+						set_confused(0);
+						p_ptr->stun = 0;
+
+						msg_print("You awake refreshed for the new day.");
+					}
+
 					msg_print(NULL);
 					p_ptr->leftbldg = TRUE;
 				}

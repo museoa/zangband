@@ -635,6 +635,9 @@ extern void display_roff(int r_idx);
 extern void create_name(int type, char *name);
 
 /* monster2.c */
+extern cptr horror_desc[MAX_SAN_HORROR];
+extern cptr funny_desc[MAX_SAN_FUNNY];
+extern cptr funny_comments[MAX_SAN_COMMENT];
 extern int get_wilderness_flag(void);
 extern void sanity_blast(monster_type *m_ptr, bool necro);
 extern void delete_monster_idx(int i);
