@@ -742,14 +742,6 @@ static cptr *borg_plural_text;	/* Textual prefixes for "plurals" */
 static cptr *borg_sv_plural_text;	/* Save Textual prefixes for "plurals" (in kind order) */
 
 /*
- * Constant "item description parsers" (suffixes)
- */
-static int borg_artego_size;	/* Number of "artegos" */
-static s16b *borg_artego_what;	/* Indexes for "artegos" */
-static cptr *borg_artego_text;	/* Textual prefixes for "artegos" */
-static cptr *borg_sv_art_text;	/* Save textual prefixes for "artifacts" (in kind order) */
-
-/*
  * Return the slot that items of the given type are wielded into
  *
  * Note that "rings" are tough because there are two slots
@@ -2833,9 +2825,6 @@ void borg_clear_3(void)
 	KILL(borg_plural_what);
 	KILL(borg_single_text);
 	KILL(borg_single_what);
-	KILL(borg_artego_text);
-	KILL(borg_sv_art_text);
-	KILL(borg_artego_what);
 }
 
 /*
@@ -3036,68 +3025,6 @@ void borg_init_3(void)
 	/* Save the entries */
 	for (i = 0; i < size; i++) borg_single_text[i] = text[i];
 	for (i = 0; i < size; i++) borg_single_what[i] = what[i];
-
-
-	/*** Artifact and Ego-Item Parsers ***/
-
-	/* No entries yet */
-	size = 0;
-
-	/* Collect the "artifact names" */
-	for (k = 1; k < z_info->a_max; k++)
-	{
-		artifact_type *a_ptr = &a_info[k];
-
-		/* Skip non-items */
-		if (!a_ptr->name) continue;
-
-		/* Extract a string */
-		sprintf(buf, " %s", (a_name + a_ptr->name));
-
-		/* Save an entry */
-		text[size] = string_make(buf);
-		what[size] = k;
-		size++;
-	}
-
-	C_MAKE(borg_sv_art_text, z_info->a_max, cptr);
-	for (i = 0; i < size; i++) borg_sv_art_text[what[i]] = text[i];
-
-	/* Collect the "ego-item names" */
-	for (k = 1; k < z_info->e_max; k++)
-	{
-		ego_item_type *e_ptr = &e_info[k];
-
-		/* Skip non-items */
-		if (!e_ptr->name) continue;
-
-		/* Extract a string */
-		sprintf(buf, " %s", (e_name + e_ptr->name));
-
-		/* Save an entry */
-		text[size] = string_make(buf);
-		what[size] = k + 256;
-		size++;
-	}
-
-	/* Set the sort hooks */
-	ang_sort_comp = ang_sort_comp_hook_string;
-	ang_sort_swap = ang_sort_swap_hook_string;
-
-
-	/* Sort */
-	ang_sort(text, what, size);
-
-	/* Save the size */
-	borg_artego_size = size;
-
-	/* Allocate the "item parsing arrays" (plurals) */
-	C_MAKE(borg_artego_text, borg_artego_size, cptr);
-	C_MAKE(borg_artego_what, borg_artego_size, s16b);
-
-	/* Save the entries */
-	for (i = 0; i < size; i++) borg_artego_text[i] = text[i];
-	for (i = 0; i < size; i++) borg_artego_what[i] = what[i];
 
 	/* Clean up */
 	FREE(what);
