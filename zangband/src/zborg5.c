@@ -3291,7 +3291,7 @@ static s32b borg_power_aux3(void)
 	{
 		if (bp_ptr->flags3 & TR3_FEATHER) value += 50;
 	}
-	if (bp_ptr->britelite) value += 200000L;
+	if (bp_ptr->britelite) value += 10000L;
 	if (bp_ptr->flags3 & TR3_TELEPATHY)
 	{
 		if (bp_ptr->flags3 & TR3_SEE_INVIS) value += 500L;
@@ -3625,16 +3625,12 @@ static s32b borg_power_aux4(void)
 
 	/*
 	 * Reward collecting fuel,
-	 * but not for torches if you wield a torch of 	everburning.
-	 * So if you wield a torch and have a permament light source
-	 * don't count torches.
+	 * if you have a perma light source you get all these points,
+	 * except for a Lantern of Everburning, that still needs fuel
 	 */
-	if (!(bp_ptr->britelite) ||
-		!(k_info[look_up_equip_slot(EQUIP_LITE)->k_idx].sval == SV_LITE_TORCH))
-	{
-		for (k = 0; (k < 5) && (k < bp_ptr->able.fuel); k++) value += 6000L;
-		for (; (k < 10) && (k < bp_ptr->able.fuel); k++) value += 600L;
-	}
+	for (k = 0; (k < 5) && (k < bp_ptr->able.fuel); k++) value += 6000L;
+	for (; (k < 10) && (k < bp_ptr->able.fuel); k++) value += 600L;
+
 
 	/* Reward Food */
 	/* if hungry, food is THE top priority */
