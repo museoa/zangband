@@ -1438,7 +1438,7 @@ static errr Infofnt_text_non(int x, int y, int len)
 	/* Just do a Fill Rectangle */
 	XFillRectangle(Metadpy->dpy, Infowin->win, Infoclr->gc,
 					x1, y1,
-					x2 - 1, y2 + Infofnt->hgt - 1);
+					x2 - x1, y2 - y1 + Infofnt->hgt);
 
 	/* Success */
 	return (0);
@@ -1652,22 +1652,20 @@ static void sort_co_ord(co_ord *min, co_ord *max,
 	min->y = MIN(a->y, b->y);
 	max->x = MAX(a->x, b->x);
 	max->y = MAX(a->y, b->y);
-}
-
-
-/*
- * Remove the selection by redrawing it.
- */
-static void mark_selection_clear(int x1, int y1, int x2, int y2)
-{
-	Term_redraw_section(x1, y1, x2, y2);
+	
+	/* Prevent bigtile wierdness */
+	if (is_bigtiled(min->x, min->y) != is_bigtiled(max->x, max->y))
+	{
+		if (min->y < Term->scr->big_y1) min->y = Term->scr->big_y1;
+		if (max->y > Term->scr->big_y2) max->y = Term->scr->big_y2;
+	}
 }
 
 
 /*
  * Select an area by drawing a grey box around it.
- * NB. These two functions can cause flicker as the selection is modified,
- * as the game redraws the entire marked section.
+ * Since we use XOR, we can undraw the box by using this
+ * routine again. (The XOR method also works best for things like snow)
  */
 static void mark_selection_mark(int x1, int y1, int x2, int y2)
 {
@@ -1675,13 +1673,13 @@ static void mark_selection_mark(int x1, int y1, int x2, int y2)
 	if (is_bigtiled(x2, y2))
 	{
 		square_to_pixel(&x2, &y2, x2, y2);
-		XDrawRectangle(Metadpy->dpy, Infowin->win, clr[2]->gc, x1, y1,
+		XDrawRectangle(Metadpy->dpy, Infowin->win, xor->gc, x1, y1,
 			x2-x1+Infofnt->twid - 1, y2-y1+Infofnt->hgt - 1);
 	}
 	else
 	{
 		square_to_pixel(&x2, &y2, x2, y2);
-		XDrawRectangle(Metadpy->dpy, Infowin->win, clr[2]->gc, x1, y1,
+		XDrawRectangle(Metadpy->dpy, Infowin->win, xor->gc, x1, y1,
 			x2-x1+Infofnt->wid - 1, y2-y1+Infofnt->hgt - 1);
 	}
 }
@@ -1703,7 +1701,7 @@ static void mark_selection(void)
 	if (clear)
 	{
 		sort_co_ord(&min, &max, &x11_selection->init, &x11_selection->old);
-		mark_selection_clear(min.x, min.y, max.x, max.y);
+		mark_selection_mark(min.x, min.y, max.x, max.y);
 	}
 
 	if (draw)
@@ -2387,7 +2385,7 @@ static errr Term_wipe_x11(int x, int y, int n)
 	
 	/* Redraw the selection if any, as it may have been obscured. (later) */
 	x11_selection->drawn = FALSE;
-
+		
 	/* Success */
 	return (0);
 }
@@ -2406,7 +2404,7 @@ static errr Term_text_x11(int x, int y, int n, byte a, cptr s)
 	
 	/* Redraw the selection if any, as it may have been obscured. (later) */
 	x11_selection->drawn = FALSE;
-
+	
 	/* Success */
 	return (0);
 }
