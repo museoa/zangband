@@ -2415,10 +2415,16 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 				query = inkey();
 
 				/* Always stop at "normal" keys */
-				if ((query != '\r') && (query != '\n') && (query != ' ')) break;
+				if ((query != '\r') && (query != '\n') && (query != ' '))
+				{
+					return (query);
+				}
 
 				/* Sometimes stop at "space" key */
-				if ((query == ' ') && !(mode & TARGET_LOOK)) break;
+				if ((query == ' ') && !(mode & TARGET_LOOK))
+				{
+					return (query);
+				}
 
 				/* Change the intro */
 				s1 = "It is ";
