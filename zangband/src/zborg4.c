@@ -142,6 +142,13 @@ void borg_list_info(byte list_type)
 static void borg_notice_player(void)
 {
 	u32b f1, f2, f3;
+	
+	/* Recalc some Variables */
+	borg_skill[BI_ARMOR] = 0;
+	borg_skill[BI_SPEED] = 110;
+
+	/* Start with a single blow per turn */
+	borg_skill[BI_BLOWS] = 1;
 
 	/* Base infravision (purely racial) */
 	borg_skill[BI_INFRA] = rb_ptr->infra;
@@ -229,6 +236,16 @@ static void borg_notice_player(void)
 	if (f2 & (TR2_SUST_DEX)) borg_skill[BI_SDEX] = TRUE;
 	if (f2 & (TR2_SUST_CON)) borg_skill[BI_SCON] = TRUE;
 	if (f2 & (TR2_SUST_CHR)) borg_skill[BI_SCHR] = TRUE;
+	
+	/* Hack -- Reward High Level Warriors with Res Fear */
+	if (borg_class == CLASS_WARRIOR)
+	{
+		/* Resist fear at level 30 */
+		if (borg_skill[BI_CLEVEL] >= 30) borg_skill[BI_RFEAR] = TRUE;
+	}
+	
+	/* Bloating slows the player down (a little) */
+	if (borg_skill[BI_ISGORGED]) borg_skill[BI_SPEED] -= 10;
 }
 
 
@@ -833,166 +850,114 @@ static void borg_notice_skills(void)
 }
 
 
-
 /*
- * Helper function -- notice the player equipment
+ * Monks are special
  */
-static void borg_notice_aux1(void)
+static void borg_recalc_monk(int extra_blows)
 {
-	int i, hold;
+	int monk_arm_wgt = 0;
+	int ma = MAX_MA - 1;
+	const martial_arts *ma_ptr = &ma_blows[MAX_MA];
 
-	int extra_blows = 0;
+	/* Weigh the armor */
+	monk_arm_wgt += equipment[EQUIP_BODY].weight;
+	monk_arm_wgt += equipment[EQUIP_HEAD].weight;
+	monk_arm_wgt += equipment[EQUIP_ARM].weight;
+	monk_arm_wgt += equipment[EQUIP_OUTER].weight;
+	monk_arm_wgt += equipment[EQUIP_HANDS].weight;
+	monk_arm_wgt += equipment[EQUIP_FEET].weight;
 
-	int extra_shots = 0;
-	int extra_might = 0;
-
-	list_item *l_ptr;
-
-	/* Recalc some Variables */
-	borg_skill[BI_ARMOR] = 0;
-	borg_skill[BI_SPEED] = 110;
-
-	/* Start with a single blow per turn */
-	borg_skill[BI_BLOWS] = 1;
-
-	/* Notice player flags */
-	borg_notice_player();
-
-	/* Clear the stat modifiers */
-	for (i = 0; i < 6; i++) my_stat_add[i] = 0;
-
-	/* Notice equipment */
-	borg_notice_equip(&extra_blows, &extra_shots, &extra_might);
-
-	/* Vampires that do not Resist Light are in trouble */
-	if (borg_race == RACE_VAMPIRE && !borg_skill[BI_RLITE])
-		borg_skill[BI_FEAR_LITE] = TRUE;
-
-	
-	/* Bloating slows the player down (a little) */
-	if (borg_skill[BI_ISGORGED]) borg_skill[BI_SPEED] -= 10;
-	
-	/* Recalculate the stats */
-	borg_notice_stats();
-
-	/* Obtain the "hold" value */
-	hold = adj_str_hold[my_stat_ind[A_STR]];
-
-	/* Examine ranged weapon */
-	borg_notice_shooter(hold, extra_might, extra_shots);
-	
-	/* Examine melee weapon */
-	borg_notice_weapon(hold, extra_blows);
-
-
-	/* Hack -- Reward High Level Warriors with Res Fear */
-	if (borg_class == CLASS_WARRIOR)
+	/* Consider the Martial Arts */
+	if (!(equipment[EQUIP_WIELD].k_idx))
 	{
-		/* Resist fear at level 30 */
-		if (borg_skill[BI_CLEVEL] >= 30) borg_skill[BI_RFEAR] = TRUE;
-	}
+		borg_skill[BI_BLOWS] = 2;
 
-	/* Recalculate skills */
-	borg_notice_skills();
+		if (borg_skill[BI_CLEVEL] > 9) borg_skill[BI_BLOWS]++;
+		if (borg_skill[BI_CLEVEL] > 14) borg_skill[BI_BLOWS]++;
+		if (borg_skill[BI_CLEVEL] > 24) borg_skill[BI_BLOWS]++;
+		if (borg_skill[BI_CLEVEL] > 34) borg_skill[BI_BLOWS]++;
+		if (borg_skill[BI_CLEVEL] > 44) borg_skill[BI_BLOWS]++;
+		if (borg_skill[BI_CLEVEL] > 49) borg_skill[BI_BLOWS]++;
 
-	/* Monks get bonus for not using weapon or armour */
-	if (borg_class == CLASS_MONK)
-	{
-		int monk_arm_wgt = 0;
-		int ma = MAX_MA - 1;
-		const martial_arts *ma_ptr = &ma_blows[MAX_MA];
-
-		/* Weight the armor */
-		monk_arm_wgt += equipment[EQUIP_BODY].weight;
-		monk_arm_wgt += equipment[EQUIP_HEAD].weight;
-		monk_arm_wgt += equipment[EQUIP_ARM].weight;
-		monk_arm_wgt += equipment[EQUIP_OUTER].weight;
-		monk_arm_wgt += equipment[EQUIP_HANDS].weight;
-		monk_arm_wgt += equipment[EQUIP_FEET].weight;
-
-		/* Consider the Martial Arts */
-		if (!(equipment[EQUIP_WIELD].k_idx))
-		{
-			borg_skill[BI_BLOWS] = 2;
-
-			if (borg_skill[BI_CLEVEL] > 9) borg_skill[BI_BLOWS]++;
-			if (borg_skill[BI_CLEVEL] > 14) borg_skill[BI_BLOWS]++;
-			if (borg_skill[BI_CLEVEL] > 24) borg_skill[BI_BLOWS]++;
-			if (borg_skill[BI_CLEVEL] > 34) borg_skill[BI_BLOWS]++;
-			if (borg_skill[BI_CLEVEL] > 44) borg_skill[BI_BLOWS]++;
-			if (borg_skill[BI_CLEVEL] > 49) borg_skill[BI_BLOWS]++;
-
-			if (monk_arm_wgt < (100 + (borg_skill[BI_CLEVEL] * 4)))
-			{
-				borg_skill[BI_TOHIT] += (borg_skill[BI_CLEVEL] / 3);
-				borg_skill[BI_TODAM] += (borg_skill[BI_CLEVEL] / 3);
-			}
-			else
-			{
-				borg_skill[BI_BLOWS] /= 2;
-			}
-
-			borg_skill[BI_BLOWS] += extra_blows;
-
-			/* Calculate best Monk Attacks */
-			while (ma != 0)
-			{
-				ma_ptr = &ma_blows[ma];
-
-				/* Can do this attack */
-				if (borg_skill[BI_CLEVEL] >= ma_ptr->min_level)
-					break;
-
-				/* Reduce the ma level and try again */
-				ma--;
-			}
-
-			/* Calculate "max" damage per monk blow  */
-			borg_skill[BI_WMAXDAM] =
-				(ma_ptr->dd * ma_ptr->ds + borg_skill[BI_TODAM]);
-
-			/* Calculate base damage, used to calculating slays */
-			borg_skill[BI_WBASEDAM] = (ma_ptr->dd * ma_ptr->ds);
-		}
-
-		/** Monk Armour **/
-
-		/* Unencumbered Monks become faster every 10 levels */
 		if (monk_arm_wgt < (100 + (borg_skill[BI_CLEVEL] * 4)))
 		{
-			borg_skill[BI_SPEED] += (borg_skill[BI_CLEVEL]) / 10;
-
-			/* Free action if unencumbered at level 25 */
-			if (borg_skill[BI_CLEVEL] > 24) borg_skill[BI_FRACT] = TRUE;
-
-			if (!(equipment[EQUIP_BODY].k_idx))
-			{
-				borg_skill[BI_ARMOR] += (borg_skill[BI_CLEVEL] * 3) / 2;
-			}
-			if (!(equipment[EQUIP_OUTER].k_idx) && (borg_skill[BI_CLEVEL] > 15))
-			{
-				borg_skill[BI_ARMOR] += ((borg_skill[BI_CLEVEL] - 13) / 3);
-			}
-			if (!(equipment[EQUIP_ARM].k_idx) && (borg_skill[BI_CLEVEL] > 10))
-			{
-				borg_skill[BI_ARMOR] += ((borg_skill[BI_CLEVEL] - 8) / 3);
-			}
-			if (!(equipment[EQUIP_HEAD].k_idx) && (borg_skill[BI_CLEVEL] > 4))
-			{
-				borg_skill[BI_ARMOR] += (borg_skill[BI_CLEVEL] - 2) / 3;
-			}
-			if (!(equipment[EQUIP_HANDS].k_idx))
-			{
-				borg_skill[BI_ARMOR] += (borg_skill[BI_CLEVEL] / 2);
-			}
-			if (!(equipment[EQUIP_FEET].k_idx))
-			{
-				borg_skill[BI_ARMOR] += (borg_skill[BI_CLEVEL] / 3);
-			}
+			borg_skill[BI_TOHIT] += (borg_skill[BI_CLEVEL] / 3);
+			borg_skill[BI_TODAM] += (borg_skill[BI_CLEVEL] / 3);
 		}
+		else
+		{
+			borg_skill[BI_BLOWS] /= 2;
+		}
+
+		borg_skill[BI_BLOWS] += extra_blows;
+
+		/* Calculate best Monk Attacks */
+		while (ma != 0)
+		{
+			ma_ptr = &ma_blows[ma];
+
+			/* Can do this attack */
+			if (borg_skill[BI_CLEVEL] >= ma_ptr->min_level)
+				break;
+
+			/* Reduce the ma level and try again */
+			ma--;
+		}
+
+		/* Calculate "max" damage per monk blow  */
+		borg_skill[BI_WMAXDAM] =
+			(ma_ptr->dd * ma_ptr->ds + borg_skill[BI_TODAM]);
+
+		/* Calculate base damage, used to calculating slays */
+		borg_skill[BI_WBASEDAM] = (ma_ptr->dd * ma_ptr->ds);
 	}
 
-	/*** Count needed enchantment ***/
+	/** Monk Armour **/
+
+	/* Unencumbered Monks become faster every 10 levels */
+	if (monk_arm_wgt < (100 + (borg_skill[BI_CLEVEL] * 4)))
+	{
+		borg_skill[BI_SPEED] += (borg_skill[BI_CLEVEL]) / 10;
+
+		/* Free action if unencumbered at level 25 */
+		if (borg_skill[BI_CLEVEL] > 24) borg_skill[BI_FRACT] = TRUE;
+
+		if (!(equipment[EQUIP_BODY].k_idx))
+		{
+			borg_skill[BI_ARMOR] += (borg_skill[BI_CLEVEL] * 3) / 2;
+		}
+		if (!(equipment[EQUIP_OUTER].k_idx) && (borg_skill[BI_CLEVEL] > 15))
+		{
+			borg_skill[BI_ARMOR] += ((borg_skill[BI_CLEVEL] - 13) / 3);
+		}
+		if (!(equipment[EQUIP_ARM].k_idx) && (borg_skill[BI_CLEVEL] > 10))
+		{
+			borg_skill[BI_ARMOR] += ((borg_skill[BI_CLEVEL] - 8) / 3);
+		}
+		if (!(equipment[EQUIP_HEAD].k_idx) && (borg_skill[BI_CLEVEL] > 4))
+		{
+			borg_skill[BI_ARMOR] += (borg_skill[BI_CLEVEL] - 2) / 3;
+		}
+		if (!(equipment[EQUIP_HANDS].k_idx))
+		{
+			borg_skill[BI_ARMOR] += (borg_skill[BI_CLEVEL] / 2);
+		}
+		if (!(equipment[EQUIP_FEET].k_idx))
+		{
+			borg_skill[BI_ARMOR] += (borg_skill[BI_CLEVEL] / 3);
+		}
+	}
+}
+
+
+/*
+ * Recalculate required enchantment levels
+ */
+static void borg_notice_enchant(void)
+{
+	list_item *l_ptr;
+
+	int i;
 
 	/* Assume no enchantment needed */
 	my_need_enchant_to_a = 0;
@@ -1069,7 +1034,15 @@ static void borg_notice_aux1(void)
 			}
 		}
 	}
+}
 
+
+/*
+ * Notice changes in lighting
+ */
+static void borg_notice_lite(void)
+{
+	list_item *l_ptr;
 
 	/* Examine the lite */
 	l_ptr = &equipment[EQUIP_LITE];
@@ -1079,6 +1052,10 @@ static void borg_notice_aux1(void)
 
 	/* Glowing player has light */
 	if (borg_skill[BI_LITE]) borg_skill[BI_CUR_LITE] = 1;
+	
+	/* Vampires that do not Resist Light are in trouble */
+	if (borg_race == RACE_VAMPIRE && !borg_skill[BI_RLITE])
+		borg_skill[BI_FEAR_LITE] = TRUE;
 
 	/* Lite */
 	if (l_ptr->tval == TV_LITE)
@@ -1112,6 +1089,56 @@ static void borg_notice_aux1(void)
 			}
 		}
 	}
+}
+
+
+/*
+ * Helper function -- notice the player equipment
+ */
+static void borg_notice_aux1(void)
+{
+	int i, hold;
+
+	int extra_blows = 0;
+
+	int extra_shots = 0;
+	int extra_might = 0;
+
+	/* Notice player flags */
+	borg_notice_player();
+	
+	/* Clear the stat modifiers */
+	for (i = 0; i < 6; i++) my_stat_add[i] = 0;
+
+	/* Notice equipment */
+	borg_notice_equip(&extra_blows, &extra_shots, &extra_might);
+	
+	/* Recalculate the stats */
+	borg_notice_stats();
+
+	/* Obtain the "hold" value */
+	hold = adj_str_hold[my_stat_ind[A_STR]];
+
+	/* Examine ranged weapon */
+	borg_notice_shooter(hold, extra_might, extra_shots);
+	
+	/* Examine melee weapon */
+	borg_notice_weapon(hold, extra_blows);
+
+	/* Recalculate skills */
+	borg_notice_skills();
+
+	/* Monks get bonus for not using weapon or armour */
+	if (borg_class == CLASS_MONK)
+	{
+		borg_recalc_monk(extra_blows);
+	}
+
+	/* See if we need to enchant anything */
+	borg_notice_enchant();
+
+	/* Examine lite */
+	borg_notice_lite();
 }
 
 
