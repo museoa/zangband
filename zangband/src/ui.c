@@ -440,6 +440,9 @@ void put_cstr(cptr str, int col, int row)
 				
 				/* Paranoia: no more in string? */
 				if (!(*c)) return;
+				
+				/* Hack -- fake monochrome */
+				if (!use_color || ironman_moria) a = TERM_WHITE;
 			}
 		}
 		
