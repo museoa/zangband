@@ -1580,8 +1580,10 @@ void py_attack(int x, int y)
 	/* Attack once for each legal blow */
 	while (num++ < blows)
 	{
+		int progressive = (num - 1) * -15;
+
 		/* Test for hit */
-		if (test_hit_combat(chance + sleeping_bonus,
+		if (test_hit_combat(chance + sleeping_bonus + progressive,
 							r_ptr->ac + terrain_bonus, m_ptr->ml))
 		{
 			int drain_power = 0;

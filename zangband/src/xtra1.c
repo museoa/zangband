@@ -3113,22 +3113,12 @@ static void calc_bonuses(void)
 			/* Use the blows table */
 			p_ptr->num_blow = blows_table[str_index][dex_index];
 
-			/* Get weapon skill */
-			skill = p_ptr->skills[SKILL_THN] + (p_ptr->to_h * BTH_PLUS_ADJ);
+			/* Get weapon skill (not including magical enhancments) */
+			skill = p_ptr->skills[SKILL_THN];
 
 			/* Require high skill to get large number of blows */
-			if ((skill < 100) && (p_ptr->num_blow > 3))
-			{
-				p_ptr->num_blow = 3;
-			}
-			if ((skill < 150) && (p_ptr->num_blow > 4))
-			{
-				p_ptr->num_blow = 4;
-			}
-			if ((skill < 200) && (p_ptr->num_blow > 5))
-			{
-				p_ptr->num_blow = 5;
-			}
+			if (p_ptr->num_blow > 1 + skill / 15)
+				p_ptr->num_blow = 1 + skill / 15;
 
 			/* Paranoia - require at least one blow */
 			if (p_ptr->num_blow < 1) p_ptr->num_blow = 1;
