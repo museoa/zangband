@@ -3174,127 +3174,86 @@ static void do_cmd_knowledge_uniques(void)
 	(void)fd_kill(file_name);
 }
 
+static const cptr plural_table[] =
+{
+    "ex", "ices",
+    "ey", "eys",
+    "y", "ies",
+    "human", "humans",
+    "shaman", "shamans",
+    "man", "men",
+    "ouse", "ice",
+    "ff", "ffs",
+    "f", "ves",
+    "mage", "magi",
+    "geist", "geister",
+    "eraph", "eraphim",
+    "umak", "umakil",
+    "us", "i",
+    "s", "ses",
+    "x", "xes",
+    "sh", "shes",
+    "ch", "ches",
+    /* This last entry must match everything */
+    "", "s"
+};
 
 /*
  * Pluralize a monster name
  */
-void plural_aux(char *Name)
+void plural_aux(char *name)
 {
-	int NameLen = strlen(Name);
+    char *p;
+    char buf[80];
+    char tail[80];
+    int len = strlen(name);
+    int i;
 
-	if (strstr(Name, "Disembodied hand"))
-	{
-		strcpy(Name, "Disembodied hands that strangled people");
-	}
-	else if (strstr(Name, "Colour out of space"))
-	{
-		strcpy(Name, "Colours out of space");
-	}
-	else if (strstr(Name, "stairway to hell"))
-	{
-		strcpy(Name, "stairways to hell");
-	}
-	else if (strstr(Name, "Dweller on the threshold"))
-	{
-		strcpy(Name, "Dwellers on the threshold");
-	}
-	else if (strstr(Name, " of "))
-	{
-		cptr aider = strstr(Name, " of ");
-		char dummy[80];
-		int i = 0;
-		cptr ctr = Name;
+    /* Don't overflow the buffer */
+    if (len > 70) return;
 
-		while (ctr < aider)
-		{
-			dummy[i] = *ctr;
-			ctr++;
-			i++;
-		}
+    strcpy(buf, name);
+    tail[0] = '\0';
 
-		if (dummy[i - 1] == 's')
-		{
-			strcpy(&(dummy[i]), "es");
-			i++;
-		}
-		else
-		{
-			strcpy(&(dummy[i]), "s");
-		}
+    /* Total hack - handle Creeping coins */
+    if (len >= 6 && streq(buf + len - 6, " coins"))
+    {
+        strcpy(buf, "piles of ");
+        strcpy(buf + 9, name);
+        strcpy(name, buf);
+        return;
+    }
 
-		strcpy(&(dummy[i + 1]), aider);
-		strcpy(Name, dummy);
-	}
-	else if (strstr(Name, "coins"))
-	{
-		char dummy[80];
-		strcpy(dummy, "piles of ");
-		strcat(dummy, Name);
-		strcpy(Name, dummy);
-		return;
-	}
-	else if (strstr(Name, "Manes"))
-	{
-		return;
-	}
-	else if (streq(&(Name[NameLen - 2]), "ey"))
-	{
-		strcpy(&(Name[NameLen - 2]), "eys");
-	}
-	else if (Name[NameLen - 1] == 'y')
-	{
-		strcpy(&(Name[NameLen - 1]), "ies");
-	}
-	else if (streq(&(Name[NameLen - 4]), "ouse"))
-	{
-		strcpy(&(Name[NameLen - 4]), "ice");
-	}
-	else if (streq(&(Name[NameLen - 2]), "us"))
-	{
-		strcpy(&(Name[NameLen - 2]), "i");
-	}
-	else if (streq(&(Name[NameLen - 6]), "kelman"))
-	{
-		strcpy(&(Name[NameLen - 6]), "kelmen");
-	}
-	else if (streq(&(Name[NameLen - 8]), "wordsman"))
-	{
-		strcpy(&(Name[NameLen - 8]), "wordsmen");
-	}
-	else if (streq(&(Name[NameLen - 7]), "oodsman"))
-	{
-		strcpy(&(Name[NameLen - 7]), "oodsmen");
-	}
-	else if (streq(&(Name[NameLen - 7]), "eastman"))
-	{
-		strcpy(&(Name[NameLen - 7]), "eastmen");
-	}
-	else if (streq(&(Name[NameLen - 8]), "izardman"))
-	{
-		strcpy(&(Name[NameLen - 8]), "izardmen");
-	}
-	else if (streq(&(Name[NameLen - 5]), "geist"))
-	{
-		strcpy(&(Name[NameLen - 5]), "geister");
-	}
-	else if (streq(&(Name[NameLen - 2]), "ex"))
-	{
-		strcpy(&(Name[NameLen - 2]), "ices");
-	}
-	else if (streq(&(Name[NameLen - 2]), "lf"))
-	{
-		strcpy(&(Name[NameLen - 2]), "lves");
-	}
-	else if (suffix(Name, "ch") ||
-			 suffix(Name, "sh") ||
-			 suffix(Name, "nx") || suffix(Name, "s") || suffix(Name, "o"))
-	{
-		strcpy(&(Name[NameLen]), "es");
-	}
-	else
-	{
-		strcpy(&(Name[NameLen]), "s");
-	}
+    /* Find the trailing part we should ignore, if any */
+    p = strstr(buf, " out ");
+    if (!p) p = strstr(buf, " of ");
+    if (!p) p = strstr(buf, " that ");
+    if (!p) p = strstr(buf, " on ");
+    if (!p) p = strstr(buf, " to ");
+    if (p)
+    {
+        strcpy(tail, p);
+        *p = '\0';
+        len = strlen(buf);
+    }
+
+    /* Find the appropriate plural */
+    for (i = 0; ; i += 2)
+    {
+        if (len >= strlen(plural_table[i]) &&
+            streq(buf + len - strlen(plural_table[i]), plural_table[i]))
+        {
+            strcpy(buf + len - strlen(plural_table[i]), plural_table[i + 1]);
+            break;
+        }
+    }
+
+    /* Put the tail back on */
+    strcat(buf, tail);
+
+    /* Put it where it's expected */
+    strcpy(name, buf);
+    return;
 }
 
 
