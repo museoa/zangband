@@ -36,7 +36,7 @@ dnl generate the installation path for the ./lib/ folder
 if test "$GAMEGROUP" != "games"; then
   game_datadir="$datadir/games/zangband/lib/"
 else
-  game_datadir="$basedir/lib/"
+  game_datadir="./lib/"
   bindir="$basedir"
 fi
 AC_DEFINE_UNQUOTED(DEFAULT_PATH, "$game_datadir", [Default path to game])
@@ -44,7 +44,7 @@ DEFAULT_PATH="$game_datadir"
 AC_SUBST(DEFAULT_PATH)
 
 dnl Checks for programs.
-AC_PROG_CC(gcc-3.2 gcc cc egcs)
+AC_PROG_CC(gcc cc egcs)
 
 
 
@@ -84,16 +84,21 @@ else
 
   dnl Checks for header files.
   AC_PATH_XTRA
-
-  if test "$no_x" != "yes"; then
-    LIBS="$LIBS -lX11"
-    AC_DEFINE(USE_X11, 1, [X11 port])
-    AC_DEFINE(USE_XPJ, 1, [XPJ port])
+  
+  dnl Braindead macro above doesn't add CPP flags for X11.
+  if test -n "$x_includes"; then
+    CPPFLAGS="$CPPFLAGS -I$x_includes"
   fi
 
   LIBS="$X_PRE_LIBS $X_LIBS $X_EXTRA_LIBS $LIBS"
   CFLAGS="$X_CFLAGS $CFLAGS"
   LDFLAGS="$X_LIBS $LDFLAGS"
+  
+  if test "$no_x" != "yes"; then
+    LIBS="$LIBS -lX11"
+    AC_DEFINE(USE_X11, 1, [X11 port])
+    AC_DEFINE(USE_XPJ, 1, [XPJ port])
+  fi
 
   dnl Check for the Athena widget set
   AC_CHECK_LIB(Xaw, XawInitializeWidgetSet, [AC_DEFINE(USE_XAW, 1, [XAW port]) LIBS="$LIBS -lXaw"])

@@ -59,10 +59,11 @@ dirs := lib src
 dirlist := lib
 include $(scandir)
 
-INSTALL = mkdir $(DESTDIR)
+INSTALL =
 
 makedirs:
-	mkdir $(addprefix $(DESTDIR),$(dirlist))
+	-mkdir $(DESTDIR)
+	-mkdir $(addprefix $(DESTDIR),$(dirlist))
 
 install-files: makedirs
 	for i in $(files) ; do \
