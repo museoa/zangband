@@ -1255,6 +1255,13 @@ static void do_cmd_read_scroll_aux(int item)
 			break;
 		}
 
+		case SV_SCROLL_MUNDANITY:
+		{
+			ident = TRUE;
+			if (!mundane_spell()) used_up = FALSE;
+			break;
+		}
+
 		case SV_SCROLL_LIGHT:
 		{
 			if (lite_area(damroll(2, 8), 2)) ident = TRUE;

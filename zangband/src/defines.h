@@ -1803,7 +1803,7 @@
 #define SV_SCROLL_STAR_ENCHANT_ARMOR    20
 #define SV_SCROLL_STAR_ENCHANT_WEAPON   21
 #define SV_SCROLL_RECHARGING            22
-/* xxx */
+#define SV_SCROLL_MUNDANITY             23
 #define SV_SCROLL_LIGHT                 24
 #define SV_SCROLL_MAPPING               25
 #define SV_SCROLL_DETECT_GOLD           26

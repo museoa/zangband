@@ -1776,6 +1776,47 @@ bool ident_spell(void)
 }
 
 
+/*
+ * Mundanify an object in the inventory (or on the floor)
+ * This routine does *not* automatically combine objects.
+ * Returns TRUE if something was mundanified, else FALSE.
+ */
+bool mundane_spell(void)
+{
+	int             item;
+	object_type     *o_ptr;
+	char            o_name[80];
+	cptr            q, s;
+
+
+	/* Get an item */
+	q = "Use which item? ";
+	s = "You have nothing you can use.";
+	if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR))) return (FALSE);
+
+	/* Get the item (in the pack) */
+	if (item >= 0)
+	{
+		o_ptr = &inventory[item];
+	}
+
+	/* Get the item (on the floor) */
+	else
+	{
+		o_ptr = &o_list[0 - item];
+	}
+
+	/* Oops */
+	msg_print("There is a bright flash of light!");
+
+	/* Wipe it clean */
+	object_prep(o_ptr, o_ptr->k_idx);
+
+	/* Something happened */
+	return (TRUE);
+}
+
+
 
 /*
  * Fully "identify" an object in the inventory  -BEN-
