@@ -314,7 +314,7 @@ extern void note_spot(int x, int y);
 extern void display_dungeon(void);
 extern void lite_spot(int x, int y);
 extern void prt_map(void);
-extern void display_map(int *cy, int *cx);
+extern void display_map(int *cx, int *cy);
 extern void do_cmd_view_map(void);
 extern void forget_view(void);
 extern errr vinfo_init(void);

@@ -1414,7 +1414,7 @@ static void fix_overhead(void)
 		cy = 0;
 
 		/* Redraw map */
-		display_map(&cy, &cx);
+		display_map(&cx, &cy);
 
 		/* Fresh */
 		Term_fresh();

@@ -2370,7 +2370,7 @@ static byte priority(byte a, char c)
  * wilderness.  cx and cy return the position of the player on the
  * possibly shifted map.
  */
-void display_map(int *cy, int *cx)
+void display_map(int *cx, int *cy)
 {
 	int py = p_ptr->py;
 	int px = p_ptr->px;
@@ -2756,7 +2756,7 @@ void do_cmd_view_map(void)
 		cy = 0;
 
 		/* Display the map */
-		display_map(&cy, &cx);
+		display_map(&cx, &cy);
 
 		/* Wait for it */
 		put_str("Hit any key to continue", hgt - 1, (wid - COL_MAP) / 2);
@@ -2787,7 +2787,7 @@ void do_cmd_view_map(void)
 			cx = x;
 			cy = y;
 
-			display_map(&cy, &cx);
+			display_map(&cx, &cy);
 
 			/* Wait for it */
 			put_str("Move around, or hit any other key to continue.",
