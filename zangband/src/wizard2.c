@@ -1817,6 +1817,7 @@ void do_cmd_debug(void)
 		/* Hack -- Help */
 		case '?':
 		show_file("wizard.txt", NULL, 0 , 0);
+		do_cmd_redraw();
 		break;
 
 
