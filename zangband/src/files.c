@@ -1312,89 +1312,103 @@ static void prt_num(cptr header, s32b num, int col, int row, cptr color,
 }
 
 
-#define COL_SKILLS1		0
-#define COL_SKILLS2		29
-#define COL_SKILLS3		58
-
-
 /*
  * Returns a "rating" of x depending on y
+ *
+ * Where x is the first parameter in the list,
+ * and y is the second.
  */
-static void likert(int x, int y, char *desc)
-{
-	/* Make the string empty */
-	desc[0] = 0;
 
+static void likert(char *buf, uint max, cptr fmt, va_list *vp)
+{
+	cptr desc;
+	
+    int x, y;
+	
+	/* Unused parameter */
+	(void)fmt;
+	
+	/* Get the first argument */
+	x = va_arg(*vp, int);\
+	
+	/* Get the second argument */
+	y = va_arg(*vp, int);
+	
 	/* Paranoia */
 	if (y <= 0) y = 1;
 
 	/* Negative value */
 	if (x < 0)
 	{
-		strcpy(desc, CLR_L_DARK "Very Bad");
-		return;
+		desc = CLR_L_DARK "Very Bad";
+	}
+	else
+	{
+		/* Analyze the value */
+		switch (x / y)
+		{
+			case 0:
+			case 1:
+			{
+				desc = CLR_RED "Bad";
+				break;
+			}
+			case 2:
+			{
+				desc = CLR_L_RED "Poor";
+				break;
+			}
+			case 3:
+			case 4:
+			{
+				desc = CLR_ORANGE "Fair";
+				break;
+			}
+			case 5:
+			{
+				desc = CLR_YELLOW "Good";
+				break;
+			}
+			case 6:
+			{
+				desc = CLR_YELLOW "Very Good";
+				break;
+			}
+			case 7:
+			case 8:
+			{
+				desc = CLR_YELLOW "Excellent";
+				break;
+			}
+			case 9:
+			case 10:
+			case 11:
+			case 12:
+			case 13:
+			{
+				desc = CLR_GREEN "Superb";
+				break;
+			}
+			case 14:
+			case 15:
+			case 16:
+			case 17:
+			{
+				desc = CLR_BLUE "Chaos Rank";
+				break;
+			}
+			default:
+			{
+				strnfmt(buf, max, CLR_VIOLET "Amber [%d]", (int)((((x / y) - 17) * 5) / 2));
+				return;
+			}
+		}
 	}
 
-	/* Analyze the value */
-	switch ((x / y))
-	{
-		case 0:
-		case 1:
-		{
-			strcpy(desc, CLR_RED "Bad");
-			return;
-		}
-		case 2:
-		{
-			strcpy(desc, CLR_L_RED "Poor");
-			return;
-		}
-		case 3:
-		case 4:
-		{
-			strcpy(desc, CLR_ORANGE "Fair");
-			return;
-		}
-		case 5:
-		{
-			strcpy(desc, CLR_YELLOW "Good");
-			return;
-		}
-		case 6:
-		{
-			strcpy(desc, CLR_YELLOW "Very Good");
-			return;
-		}
-		case 7:
-		case 8:
-		{
-			strcpy(desc, CLR_YELLOW "Excellent");
-			return;
-		}
-		case 9:
-		case 10:
-		case 11:
-		case 12:
-		case 13:
-		{
-			strcpy(desc, CLR_GREEN "Superb");
-			return;
-		}
-		case 14:
-		case 15:
-		case 16:
-		case 17:
-		{
-			strcpy(desc, CLR_BLUE "Chaos Rank");
-			return;
-		}
-		default:
-		{
-			strnfmt(desc, 20, CLR_VIOLET "Amber [%d]", (int)((((x / y) - 17) * 5) / 2));
-			return;
-		}
-	}
+	/* Copy into the buffer */
+	strncpy(buf, desc, max - 1);
 }
+
 
 /* Monk average attack damage - only used here, so not in tables.c */
 static int monk_avg_damage[PY_MAX_LEVEL + 1] =
@@ -1407,6 +1421,10 @@ static int monk_avg_damage[PY_MAX_LEVEL + 1] =
 	1669, 1809, 1836, 1875, 2155, 2190, 2227, 2587, 2769, 2811
 };
 
+#define COL_SKILLS1		0
+#define COL_SKILLS2		29
+#define COL_SKILLS3		58
+
 
 /*
  * Prints ratings on certain abilities
@@ -1416,9 +1434,7 @@ static int monk_avg_damage[PY_MAX_LEVEL + 1] =
 static void display_player_abilities(void)
 {
 	int tmp, damdice, damsides, dambonus, blows;
-	int xthn, xthb, xfos, xsns;
-	int xdis, xdev, xsav, xstl;
-	char desc[20];
+	int xthn, xthb;
 	int muta_att = 0;
 	long avgdam;
 	u32b f1, f2, f3;
@@ -1470,39 +1486,24 @@ static void display_player_abilities(void)
 
 
 	/* Basic abilities */
-
-	xdis = p_ptr->skill_dis;
-	xdev = p_ptr->skill_dev;
-	xsav = p_ptr->skill_sav;
-	xstl = p_ptr->skill_stl;
-	xsns = p_ptr->skill_sns;
-	xfos = p_ptr->skill_fos;
-
-	likert(xthn, 10, desc);
-	put_fstr(COL_SKILLS1, 16, "Fighting    : %s", desc);
-
-	likert(xthb, 10, desc);
-	put_fstr(COL_SKILLS1, 17, "Bows/Throw  : %s", desc);
-
-	likert(xsav, 6, desc);
-	put_fstr(COL_SKILLS1, 18, "Saving Throw: %s", desc);
-
-	likert(xstl, 1, desc);
-	put_fstr(COL_SKILLS1, 19, "Stealth     : %s", desc);
+	put_fstr(COL_SKILLS1, 16, CLR_WHITE "Fighting    : %v\n"
+							  CLR_WHITE "Bows/Throw  : %v\n"
+							  CLR_WHITE "Saving Throw: %v\n"
+							  CLR_WHITE "Stealth     : %v",
+		 					likert, xthn, 10,
+		 					likert, xthb, 10,
+		 					likert, p_ptr->skill_sav, 6,
+		 					likert, p_ptr->skill_stl, 1);
 
 
-	likert(xfos, 6, desc);
-	put_fstr(COL_SKILLS2, 16, "Perception  : %s", desc);
-
-	likert(xsns, 6, desc);
-	put_fstr(COL_SKILLS2, 17, "Sensing     : %s", desc);
-
-	likert(xdis, 8, desc);
-	put_fstr(COL_SKILLS2, 18, "Disarming   : %s", desc);
-
-	likert(xdev, 6, desc);
-	put_fstr(COL_SKILLS2, 19, "Magic Device: %s", desc);
-
+	put_fstr(COL_SKILLS2, 16, CLR_WHITE "Perception  : %v\n"
+							  CLR_WHITE "Sensing     : %v\n"
+							  CLR_WHITE "Disarming   : %v\n"
+							  CLR_WHITE "Magic Device: %v",
+							likert, p_ptr->skill_fos, 6,
+							likert, p_ptr->skill_sns, 6,
+							likert, p_ptr->skill_dis, 8,
+							likert, p_ptr->skill_dev, 6);
 
 	if (!muta_att)
 		put_fstr(COL_SKILLS3, 16, "Blows/Round : %d", p_ptr->num_blow);
