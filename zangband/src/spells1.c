@@ -1732,6 +1732,14 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 		case GF_PSI:
 		{
 			if (seen) obvious = TRUE;
+			
+			/* PSI only works if the monster can see you! -- RG */
+			if (!(los(m_ptr->fy, m_ptr->fx, py, px)))
+			{
+				dam = 0;
+				note = " can't see you, and isn't affected!";
+			}
+			
 			if (r_ptr->flags2 & RF2_EMPTY_MIND)
 			{
 				dam = 0;

@@ -296,7 +296,10 @@ static bool cast_mindcrafter_spell(int spell)
 		{
 			b = detect_monsters_normal();
 			if (plev > 14) b |= detect_monsters_invis();
-			if (plev > 4)  b |= detect_traps();
+			if (plev > 4)  {
+				b |= detect_traps();
+				b |= detect_doors();
+			}
 		}
 		else
 		{
@@ -319,13 +322,9 @@ static bool cast_mindcrafter_spell(int spell)
 		break;
 	case 2:
 		/* Minor displace */
-		if (plev < 25)
+		if (plev < 40)
 		{
 			teleport_player(10);
-		}
-		else if (!munchkin_mindcraft)
-		{
-			teleport_player(20);
 		}
 		else
 		{
@@ -370,7 +369,7 @@ static bool cast_mindcrafter_spell(int spell)
 		break;
 	case 7:
 		/* Psychometry */
-		if (plev < 40)
+		if (plev < 25)
 			return psychometry();
 		else
 			return ident_spell();
@@ -388,7 +387,14 @@ static bool cast_mindcrafter_spell(int spell)
 		/* Adrenaline */
 		set_afraid(0);
 		set_stun(0);
-		hp_player(plev);
+		
+		/* Only heal when Adrenalin Channeling is not active. We check
+		 * that by checking if the player isn't fast and 'heroed' atm. */
+		if (!p_ptr->fast || !(p_ptr->hero || p_ptr->shero))
+		{
+			hp_player(plev);
+		}
+		
 		b = 10 + randint((plev * 3) / 2);
 		if (plev < 35)
 			set_hero(p_ptr->hero + b);
@@ -410,7 +416,9 @@ static bool cast_mindcrafter_spell(int spell)
 		if (!get_aim_dir(&dir)) return FALSE;
 
 		b = damroll(plev / 2, 6);
-		if (fire_ball(GF_PSI_DRAIN, dir, b, 0 + (plev - 25) / 10))
+		
+		/* This is always a radius-0 ball now */
+		if (fire_ball(GF_PSI_DRAIN, dir, b, 0))
 			p_ptr->energy -= randint(150);
 		break;
 	case 11:
