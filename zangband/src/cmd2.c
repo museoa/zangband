@@ -2317,7 +2317,6 @@ void do_cmd_fire_aux(object_type *o_ptr, object_type *j_ptr)
 	int chance2;
 
 	object_type *i_ptr;
-	object_type object_type_body;
 
 	bool hit_body = FALSE;
 
@@ -2351,11 +2350,8 @@ void do_cmd_fire_aux(object_type *o_ptr, object_type *j_ptr)
 	/* Get a direction (or cancel) */
 	if (!get_aim_dir(&dir)) return;
 
-	/* Get local object */
-	i_ptr = &object_type_body;
-
-	/* Obtain a local object */
-	object_copy(i_ptr, o_ptr);
+	/* Duplicate the object */
+	i_ptr = object_dup(o_ptr);
 
 	/* sum all the applicable additions to Deadliness. */
 	total_deadliness = p_ptr->to_d + i_ptr->to_d + j_ptr->to_d;

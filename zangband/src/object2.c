@@ -563,9 +563,9 @@ void move_object(s16b *tgt_list_ptr, s16b *cur_list_ptr, object_type *o_ptr)
 }
 
 /*
- * Swap items in the same list
+ * Swap objects
  */
-static void swap_objects(object_type *o1_ptr, object_type *o2_ptr)
+void swap_objects(object_type *o1_ptr, object_type *o2_ptr)
 {
 	/* Structure copy */
 	object_type temp_obj = *o2_ptr;
@@ -576,6 +576,20 @@ static void swap_objects(object_type *o1_ptr, object_type *o2_ptr)
 	/* Get correct next-object fields */
 	o2_ptr->next_o_idx = temp_obj.next_o_idx;
 	temp_obj.next_o_idx = o1_ptr->next_o_idx;
+	
+	/* Get correct position fields */
+	o2_ptr->ix = temp_obj.ix;
+	temp_obj.ix = o1_ptr->ix;
+	o2_ptr->iy = temp_obj.iy;
+	temp_obj.iy = o1_ptr->iy;
+	
+	/* Get correct region */
+	o2_ptr->region = temp_obj.region;
+	temp_obj.region = o1_ptr->region;
+	
+	/* Get correct allocated value */
+	o2_ptr->allocated = temp_obj.allocated;
+	temp_obj.allocated = o1_ptr->allocated;
 
 	/* Structure copy */
 	*o1_ptr = temp_obj;
@@ -1776,6 +1790,9 @@ s16b lookup_kind(int tval, int sval)
  */
 void object_wipe(object_type *o_ptr)
 {
+	/* Delete the references */
+	delete_static_object(o_ptr);
+
 	/* Wipe the structure */
 	(void)WIPE(o_ptr, object_type);
 }
@@ -1788,6 +1805,24 @@ void object_copy(object_type *o_ptr, const object_type *j_ptr)
 {
 	/* Copy the structure */
 	COPY(o_ptr, j_ptr, object_type);
+}
+
+/*
+ * Duplicate an object, and have the copy stored in the
+ * standard static temp object.
+ */
+object_type *object_dup(const object_type *o_ptr)
+{
+	object_type *q_ptr = &temp_object;
+	
+	/* Delete old static object */
+	delete_static_object(q_ptr);
+	
+	/* Copy it */
+	object_copy(q_ptr, o_ptr);
+
+	/* Return a pointer to the static object */
+	return (q_ptr);
 }
 
 

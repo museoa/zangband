@@ -810,23 +810,15 @@ static void wiz_tweak_item(object_type *o_ptr)
  */
 static void wiz_reroll_item(object_type *o_ptr)
 {
-	object_type forge;
 	object_type *q_ptr;
 
 	char ch;
 
-	bool changed = FALSE;
-
-	s16b *o_list_ptr = look_up_list(o_ptr);
-
 	/* Hack -- leave normal artifacts alone */
 	if ((o_ptr->flags3 & TR3_INSTA_ART) && (o_ptr->activate > 128)) return;
 
-	/* Get local object */
-	q_ptr = &forge;
-
-	/* Copy the object */
-	object_copy(q_ptr, o_ptr);
+	/* Get a duplicate of the object */
+	q_ptr = object_dup(o_ptr);
 
 	/* Main loop. Ask for magification and artifactification */
 	while (TRUE)
@@ -846,15 +838,12 @@ static void wiz_reroll_item(object_type *o_ptr)
 				q_ptr->xtra_name = 0;
 			}
 
-			break;
+			/* Done */
+			return;
 		}
 
 		/* Create/change it! */
-		if (ch == 'A' || ch == 'a')
-		{
-			changed = TRUE;
-			break;
-		}
+		if (ch == 'A' || ch == 'a') break;
 
 		/* Preserve wizard-generated artifacts */
 		if ((q_ptr->flags3 & TR3_INSTA_ART) && (q_ptr->activate > 128))
@@ -871,9 +860,6 @@ static void wiz_reroll_item(object_type *o_ptr)
 		{
 			case 'w':  case 'W':
 			{
-				/* Delete the refcounted information */
-				delete_static_object(q_ptr);
-
 				/* Apply bad magic, but first clear object */
 				q_ptr = object_prep(o_ptr->k_idx);
 				apply_magic(q_ptr, p_ptr->depth, 0, OC_FORCE_BAD);
@@ -881,9 +867,6 @@ static void wiz_reroll_item(object_type *o_ptr)
 			}
 			case 'n':  case 'N':
 			{
-				/* Delete the refcounted information */
-				delete_static_object(q_ptr);
-
 				/* Apply normal magic, but first clear object */
 				q_ptr = object_prep(o_ptr->k_idx);
 				apply_magic(q_ptr, p_ptr->depth, 0, OC_NORMAL);
@@ -891,9 +874,6 @@ static void wiz_reroll_item(object_type *o_ptr)
 			}
 			case 'e':  case 'E':
 			{
-				/* Delete the refcounted information */
-				delete_static_object(q_ptr);
-
 				/* Apply great magic, but first clear object */
 				q_ptr = object_prep(o_ptr->k_idx);
 				apply_magic(q_ptr, p_ptr->depth, 30, OC_FORCE_GOOD);
@@ -901,9 +881,6 @@ static void wiz_reroll_item(object_type *o_ptr)
 			}
 			case 's':  case 'S':
 			{
-				/* Delete the refcounted information */
-				delete_static_object(q_ptr);
-
 				q_ptr = object_prep(o_ptr->k_idx);
 
 				/* Make a random artifact */
@@ -912,48 +889,18 @@ static void wiz_reroll_item(object_type *o_ptr)
 			}
 		}
 	}
+	
+	/* Swap objects */
+	swap_objects(o_ptr, q_ptr);
 
+	/* Recalculate bonuses */
+	p_ptr->update |= (PU_BONUS);
 
-	/* Notice change */
-	if (changed)
-	{
-		/* Restore the position information */
-		q_ptr->iy = o_ptr->iy;
-		q_ptr->ix = o_ptr->ix;
-		q_ptr->next_o_idx = o_ptr->next_o_idx;
-		q_ptr->allocated = o_ptr->allocated;
+	/* Combine / Reorder the pack (later) */
+	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-		/* Is the object in a list? */
-		if (o_list_ptr)
-		{
-			/* Delete the object */
-			if (floor_item(o_ptr))
-			{
-				delete_dungeon_object(o_ptr);
-			}
-			else
-			{
-				delete_held_object(o_list_ptr, o_ptr);
-			}
-
-			/* Add the new object to the list */
-			add_object_list(o_list_ptr, o_ptr);
-		}
-		else
-		{
-			/* Apply changes */
-			object_copy(o_ptr, q_ptr);
-		}
-
-		/* Recalculate bonuses */
-		p_ptr->update |= (PU_BONUS);
-
-		/* Combine / Reorder the pack (later) */
-		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-	}
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
 }
 
 
@@ -1032,13 +979,11 @@ static void wiz_quantity_item(object_type *o_ptr)
 static void do_cmd_wiz_play(void)
 {
 	object_type forge;
-	object_type *q_ptr;
+	object_type *q_ptr, *z_ptr;
 
 	object_type *o_ptr;
 
 	char ch;
-
-	bool changed = FALSE;
 
 	cptr q, s;
 
@@ -1046,15 +991,17 @@ static void do_cmd_wiz_play(void)
 	q = "Play with which object? ";
 	s = "You have nothing to play with.";
 
-	o_ptr = get_item(q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR));
+	z_ptr = get_item(q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR));
 
 	/* Not a valid item */
-	if (!o_ptr) return;
+	if (!z_ptr) return;
 
 	/* Save the screen */
 	screen_save();
 
-
+	/* Duplicate object */
+	o_ptr = object_dup(z_ptr);
+	
 	/* Get local object */
 	q_ptr = &forge;
 
@@ -1077,12 +1024,37 @@ static void do_cmd_wiz_play(void)
 		if (!get_com
 			("[a]ccept [s]tatistics [r]eroll [t]weak [q]uantity? ", &ch))
 		{
+			/* Ignore changes */
+			msg_print("Changes ignored.");
+			
+			/* Delete the references */
+			delete_static_object(q_ptr);
+			
+			/* Done */
 			break;
 		}
 
+		/* Accept changes */
 		if (ch == 'A' || ch == 'a')
 		{
-			changed = TRUE;
+			/* Message */
+			msg_print("Changes accepted.");
+			
+			/* Swap the objects */
+			swap_objects(z_ptr, q_ptr);
+			
+			/* Delete the references */
+			delete_static_object(q_ptr);
+
+			/* Recalculate bonuses */
+			p_ptr->update |= (PU_BONUS);
+
+			/* Combine / Reorder the pack (later) */
+			p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
+			/* Window stuff */
+			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
+			
 			break;
 		}
 
@@ -1107,35 +1079,8 @@ static void do_cmd_wiz_play(void)
 		}
 	}
 
-
 	/* Restore the screen */
 	screen_load();
-
-
-	/* Accept change */
-	if (changed)
-	{
-		/* Message */
-		msg_print("Changes accepted.");
-
-		/* Change */
-		object_copy(o_ptr, q_ptr);
-
-		/* Recalculate bonuses */
-		p_ptr->update |= (PU_BONUS);
-
-		/* Combine / Reorder the pack (later) */
-		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-	}
-
-	/* Ignore change */
-	else
-	{
-		msg_print("Changes ignored.");
-	}
 }
 
 

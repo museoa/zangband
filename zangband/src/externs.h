@@ -624,6 +624,7 @@ extern void wipe_objects(int rg_idx);
 extern object_type *add_object_list(s16b *o_idx_ptr, object_type *o_ptr);
 extern void move_object(s16b *tgt_list_ptr, s16b *cur_list_ptr,
 						object_type *o_ptr);
+extern void swap_objects(object_type *o1_ptr, object_type *o2_ptr);
 extern void get_obj_num_prep(void);
 extern errr get_obj_store_prep(void);
 extern s16b get_obj_num(int level, int min_level);
@@ -641,6 +642,7 @@ extern s16b lookup_kind(int tval, int sval);
 extern void object_wipe(object_type *o_ptr);
 extern object_type *object_prep(int k_idx);
 extern void object_copy(object_type *o_ptr, const object_type *j_ptr);
+extern object_type *object_dup(const object_type *o_ptr);
 extern void add_ego_flags(object_type *o_ptr, byte ego);
 extern void add_ego_power(int power, object_type *o_ptr);
 extern void apply_magic(object_type *o_ptr, int lev, int lev_dif, byte flags);

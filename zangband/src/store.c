@@ -1354,7 +1354,6 @@ static void store_purchase(int *store_top)
 
 	s32b price, best;
 
-	object_type forge;
 	object_type *j_ptr;
 
 	object_type *o_ptr;
@@ -1403,11 +1402,8 @@ static void store_purchase(int *store_top)
 	/* Assume the player wants just one of them */
 	amt = 1;
 
-	/* Get local object */
-	j_ptr = &forge;
-
-	/* Get a copy of the object */
-	object_copy(j_ptr, o_ptr);
+	/* Get a duplicate of the object */
+	j_ptr = object_dup(o_ptr);
 
 	/* Recalculate charges for a single wand/rod */
 	reduce_charges(j_ptr, j_ptr->number - 1);
@@ -1435,11 +1431,8 @@ static void store_purchase(int *store_top)
 		if (amt <= 0) return;
 	}
 
-	/* Get local object */
-	j_ptr = &forge;
-
 	/* Get desired object */
-	object_copy(j_ptr, o_ptr);
+	j_ptr = object_dup(o_ptr);
 
 	/*
 	 * If a rod or wand, allocate total maximum timeouts or charges
@@ -1656,7 +1649,6 @@ static void store_sell(int *store_top)
 	const owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
 	s32b price, value, dummy;
 
-	object_type forge;
 	object_type *q_ptr;
 
 	object_type *o_ptr;
@@ -1715,11 +1707,8 @@ static void store_sell(int *store_top)
 		if (amt <= 0) return;
 	}
 
-	/* Get local object */
-	q_ptr = &forge;
-
-	/* Get a copy of the object */
-	object_copy(q_ptr, o_ptr);
+	/* Duplicate the object */
+	q_ptr = object_dup(o_ptr);
 
 	/* Modify quantity */
 	q_ptr->number = amt;
@@ -1796,11 +1785,8 @@ static void store_sell(int *store_top)
 			/* Identify it */
 			identify_item(o_ptr);
 
-			/* Get local object */
-			q_ptr = &forge;
-
-			/* Get a copy of the object */
-			object_copy(q_ptr, o_ptr);
+			/* Duplicate the object */
+			q_ptr = object_dup(o_ptr);
 
 			/* Modify quantity */
 			q_ptr->number = amt;
