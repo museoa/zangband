@@ -1866,7 +1866,6 @@ void py_attack(int x, int y)
 						}
 
 						/* We get to keep some of it! */
-						drain_heal = (drain_heal * mutant_regenerate_mod) / 100;
 						hp_player(drain_heal);
 					}
 				}

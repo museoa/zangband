@@ -443,9 +443,6 @@ static void player_wipe(void)
 	/* None of the spells have been learned yet */
 	for (i = 0; i < PY_MAX_SPELLS; i++) p_ptr->spell.order[i] = 99;
 
-	/* Clean the mutation count */
-	mutant_regenerate_mod = 100;
-
 	/* Clear "cheat" options */
 	cheat_peek = FALSE;
 	cheat_hear = FALSE;

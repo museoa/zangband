@@ -274,7 +274,6 @@ extern void (*ang_sort_swap) (const vptr u, const vptr v, int a, int b);
 extern s32b max_wild;
 extern cptr gf_color[MAX_GF];
 extern int highscore_fd;
-extern int mutant_regenerate_mod;
 
 /* birth.c */
 extern void player_birth(void);
@@ -1016,7 +1015,6 @@ extern bool lose_mutation(int choose_mut);
 extern void dump_mutations(FILE *OutFile);
 extern bool do_cmd_knowledge_mutations(int dummy);
 extern int count_mutations(void);
-extern int calc_mutant_regenerate_mod(void);
 extern void mutation_power_aux(const mutation_type *mut_ptr);
 extern void mutation_random_aux(const mutation_type *mut_ptr);
 extern void mutation_effect(void);

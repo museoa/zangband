@@ -1343,9 +1343,6 @@ static void rd_extra(void)
 		}
 	}
 
-	/* Calc the regeneration modifier for mutations */
-	mutant_regenerate_mod = calc_mutant_regenerate_mod();
-
 	rd_byte(&p_ptr->state.confusing);
 	rd_byte(&tmp8u);			/* oops */
 	rd_byte(&tmp8u);			/* oops */

@@ -778,6 +778,3 @@ int init_flags;
  */
 int highscore_fd = -1;
 
-
-/* Get rid of this... */
-int mutant_regenerate_mod = 100;
