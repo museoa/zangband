@@ -1513,15 +1513,6 @@ proc NSMainWindow::ButtonPress3 {oop x y X Y} {
 		angband keypress *@$y2\n$x2\n
 	}
 
-	# Popup pet commands
-	if {[string equal $flags INKEY_CMD_PET]} {
-		NSRecall::PopupSelect_CmdPet $win.context $X $Y
-		
-	# Popup racial/mutation power list
-	} elseif {[string equal $flags INKEY_POWER]} {
-		NSRecall::PopupSelect_Power $win.context $X $Y
-	}
-
 	return
 }
 

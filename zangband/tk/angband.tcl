@@ -204,10 +204,6 @@ proc angband_display {window action args} {
 				NSModule::LoadIfNeeded NSPlayerFlags
 			}
 
-			power {
-				NSModule::LoadIfNeeded NSPower
-			}
-
 			store {
 				if {[string equal [Value store,style] new]} {
 					NSModule::LoadIfNeeded NSStore2

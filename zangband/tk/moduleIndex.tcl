@@ -18,7 +18,6 @@ IndexOne NSMessageWindow message-window.tcl
 IndexOne NSMiscPopup misc-popup.tcl
 IndexOne NSMiscWindow misc-window.tcl
 IndexOne NSPets pets.tcl
-IndexOne NSPower power.tcl
 IndexOne NSPlayerFlags player-flags.tcl
 IndexOne NSRecall recall.tcl
 IndexOne NSStore store.tcl
