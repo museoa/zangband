@@ -2327,7 +2327,7 @@
  */
 #define GRID_MARK		0x01	/* Known */
 #define GRID_VIEW		0x02	/* In LOS */
-#define GRID_DUM1		0x04
+#define GRID_SEEN		0x04	/* In LOS + Lit in some way */
 #define GRID_DUM2		0x08
 #define GRID_LITE		0x10	/* Lit by torchlight */
 #define GRID_DUM3		0x20
