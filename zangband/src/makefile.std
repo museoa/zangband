@@ -91,13 +91,6 @@ OBJS = \
 	l-misc.o l-spell.o \
 	$(LUAOBJS)
 
-#
-# Generated .c files
-#
-
-GENERATED = \
-		l-monst.c l-object.c l-player.c l-random.c l-ui.c
-
 ##
 ## Following are some "system" definitions
 ##
@@ -337,7 +330,7 @@ zangband: $(OBJS)
 clean:
 	-rm -f *.bak *.o
 	-rm -f ./lua/*.bak ./lua/*.o
-	-rm -f $(GENERATED)
+	-rm -f ./l-*.c
 	-rm -f ./lua/tolua
 
 #
