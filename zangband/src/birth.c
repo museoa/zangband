@@ -2296,7 +2296,7 @@ static bool player_birth_aux_2(void)
 			int bonus = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
 
 			/* Reset stats */
-			p_ptr->stat_cur[i] = adjust_stat(i, stats[i], bonus);
+			p_ptr->stat_cur[i] = adjust_stat(i, stats[i] * 10, bonus);
 			p_ptr->stat_max[i] = p_ptr->stat_cur[i];
 
 			/* Total cost */
@@ -2401,7 +2401,7 @@ static bool player_birth_aux_2(void)
 		int bonus = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
 
 		/* Apply some randomness */
-		p_ptr->stat_cur[i] = adjust_stat(i, stats[i], bonus);
+        p_ptr->stat_cur[i] = adjust_stat(i, stats[i] * 10, bonus);
 		p_ptr->stat_max[i] = p_ptr->stat_cur[i];
 	}
 
@@ -2771,7 +2771,8 @@ static bool player_birth_aux_3(void)
 
 static bool player_birth_aux(void)
 {
-	char ch;
+    char ch;
+    int i;
 
 	/* Ask questions */
 	if (!player_birth_aux_1()) return FALSE;
@@ -2786,7 +2787,20 @@ static bool player_birth_aux(void)
 	else
 	{
 		if (!player_birth_aux_3()) return FALSE;
-	}
+    }
+
+    /* Apply some randomness */
+    for (i = 0; i < A_MAX; i++)
+    {
+        p_ptr->stat_cur[i] += randint0(10);
+        p_ptr->stat_max[i] = p_ptr->stat_cur[i];
+    }
+
+    /* Calculate the bonuses and hitpoints */
+    p_ptr->update |= (PU_BONUS | PU_HP);
+
+    /* Update stuff */
+    update_stuff();
 
 	/* Get a name, prepare savefile */
 	get_character_name();
