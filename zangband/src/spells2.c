@@ -3189,7 +3189,15 @@ static void cave_temp_room_aux(int y, int x)
 #endif
 	
 	/* Verify this grid */
-	if ((next_to_walls_adj(y, x) > 5) && (next_to_open(y, x) <= 1)) return;
+	/*
+	* The reason why it is ==6 instead of >5 is that 8 is impossible
+	* due to the check for cave_bold above.
+	* 7 lights dead-end corridors (you need to do this for the
+	* checkboard interesting rooms, so that the boundary is lit
+	* properly.
+	* This leaves only a check for 6 bounding walls!
+	*/	
+	if ((next_to_walls_adj(y, x) == 6) && (next_to_open(y, x) <= 1)) return;
 
 	/* Paranoia -- verify space */
 	if (temp_n == TEMP_MAX) return;
