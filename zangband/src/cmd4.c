@@ -3145,8 +3145,7 @@ static void do_cmd_knowledge_pets(void)
 			t_friends++;
 			t_levels += r_info[m_ptr->r_idx].level;
 			monster_desc(pet_name, m_ptr, 0x88);
-			strcat(pet_name, "\n");
-			fprintf(fff, pet_name);
+			fprintf(fff, "%s (%s)\n", pet_name, look_mon_desc(i));
 		}
 	}
 
