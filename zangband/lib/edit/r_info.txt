@@ -547,7 +547,7 @@ D:It is a small lizard with a hardened hide.
 N:34:Grid bug
 G:I:v
 I:110:2d4:10:4:10
-W:1:1:0:1
+W:1:4:0:1
 B:BITE:ELEC:1d4
 F:WILD_DUNGEON_01
 F:RAND_25 | FRIENDS | CAN_FLY |
