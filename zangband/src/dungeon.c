@@ -2760,11 +2760,6 @@ static void process_player(void)
 			handle_stuff();
 		}
 
-
-		/* Hack -- cancel "lurking browse mode" */
-		if (!p_ptr->command_new) p_ptr->command_see = FALSE;
-
-
 		/* Assume free turn */
 		p_ptr->energy_use = 0;
 

@@ -51,19 +51,11 @@ void do_cmd_inven(void)
 	/* Load screen */
 	screen_load();
 
-
 	/* Process "Escape" */
 	if (p_ptr->command_new == ESCAPE)
 	{
 		/* Reset stuff */
 		p_ptr->command_new = 0;
-	}
-
-	/* Process normal keys */
-	else
-	{
-		/* Hack -- Use "display" mode */
-		p_ptr->command_see = TRUE;
 	}
 }
 
@@ -106,18 +98,11 @@ void do_cmd_equip(void)
 	/* Restore the screen */
 	screen_load();
 
-
 	/* Process "Escape" */
 	if (p_ptr->command_new == ESCAPE)
 	{
 		/* Reset stuff */
 		p_ptr->command_new = 0;
-	}
-	/* Process normal keys */
-	else
-	{
-		/* Enter "display" mode */
-		p_ptr->command_see = TRUE;
 	}
 }
 

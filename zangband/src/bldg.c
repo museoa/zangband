@@ -2211,10 +2211,6 @@ void do_cmd_bldg(field_type *f_ptr)
 	/* Hack -- Cancel automatic command */
 	p_ptr->command_new = 0;
 
-	/* Hack -- Cancel "see" mode */
-	p_ptr->command_see = FALSE;
-
-
 	/* Flush messages XXX XXX XXX */
 	message_flush();
 

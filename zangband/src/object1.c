@@ -3008,8 +3008,8 @@ static void show_item_prompt(bool inven, bool equip, bool floor, cptr pmt)
 			/* Extract the legal requests */
 			get_label_bounds(p_ptr->inventory, &n1, &n2);
 
-			/* Redraw if needed */
-			if (p_ptr->command_see) show_list(p_ptr->inventory);
+			/* Redraw */
+			show_list(p_ptr->inventory);
 
 			/* Begin the prompt */
 			sprintf(out_val, "Inven:");
@@ -3019,9 +3019,6 @@ static void show_item_prompt(bool inven, bool equip, bool floor, cptr pmt)
 
 			/* Append */
 			strcat(out_val, tmp_val);
-
-			/* Indicate ability to "view" */
-			if (!p_ptr->command_see) strcat(out_val, " * to see,");
 
 			/* Append */
 			if (equip) strcat(out_val, " / for Equip,");
@@ -3053,8 +3050,8 @@ static void show_item_prompt(bool inven, bool equip, bool floor, cptr pmt)
 				}
 			}
 
-			/* Redraw if needed */
-			if (p_ptr->command_see) show_equip();
+			/* Redraw */
+			show_equip();
 
 			/* Begin the prompt */
 			sprintf(out_val, "Equip:");
@@ -3064,9 +3061,6 @@ static void show_item_prompt(bool inven, bool equip, bool floor, cptr pmt)
 
 			/* Append */
 			strcat(out_val, tmp_val);
-
-			/* Indicate ability to "view" */
-			if (!p_ptr->command_see) strcat(out_val, " * to see,");
 
 			/* Append */
 			if (inven) strcat(out_val, " / for Inven,");
@@ -3086,11 +3080,8 @@ static void show_item_prompt(bool inven, bool equip, bool floor, cptr pmt)
 
 			if (easy_floor)
 			{
-				/* Redraw if needed */
-				if (p_ptr->command_see)
-				{
-					show_list(c_ptr->o_idx);
-				}
+				/* Redraw  */
+				show_list(c_ptr->o_idx);
 
 				/* Begin the prompt */
 				sprintf(out_val, "Floor:");
@@ -3100,9 +3091,6 @@ static void show_item_prompt(bool inven, bool equip, bool floor, cptr pmt)
 
 				/* Append */
 				strcat(out_val, tmp_val);
-
-				/* Indicate ability to "view" */
-				if (!p_ptr->command_see) strcat(out_val, " * to see,");
 
 				/* Append */
 				if (inven)
@@ -3296,9 +3284,6 @@ static object_type *recall_object_choice(void)
  * to allow the user to enter a command while viewing those screens, and
  * also to induce "auto-enter" of stores, and other such stuff.
  *
- * Global "p_ptr->command_see" may be set before calling this function to start
- * out in "browse" mode.  It is cleared before this function returns.
- *
  * Global "p_ptr->command_wrk" is used to choose between equip/inven listings.
  * If it is TRUE then we are viewing inventory, else equipment.
  *
@@ -3378,9 +3363,6 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 	/* Require at least one legal choice */
 	if (!allow_inven && !allow_equip && !allow_floor)
 	{
-		/* Cancel p_ptr->command_see */
-		p_ptr->command_see = FALSE;
-
 		/* Warning if needed */
 		if (str) msg_print(str);
 
@@ -3391,8 +3373,7 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 	/* Analyze choices */
 
 	/* Hack -- Start on equipment if requested */
-	if (p_ptr->command_see && (p_ptr->command_wrk == (USE_EQUIP))
-		&& allow_equip)
+	if ((p_ptr->command_wrk == (USE_EQUIP)) && allow_equip)
 	{
 		/* This line is redundant */
 		p_ptr->command_wrk = (USE_EQUIP);
@@ -3429,11 +3410,9 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 	}
 
 	/* Hack -- start out in "display" mode */
-	if (p_ptr->command_see)
-	{
-		/* Save screen */
-		screen_save();
-	}
+	
+	/* Save screen */
+	screen_save();
 
 	/* Repeat until done */
 	while (!done)
@@ -3453,32 +3432,6 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 			case ESCAPE:
 			{
 				done = TRUE;
-				break;
-			}
-
-			case '*':
-			case '?':
-			case ' ':
-			{
-				/* Hide the list */
-				if (p_ptr->command_see)
-				{
-					/* Flip flag */
-					p_ptr->command_see = FALSE;
-
-					/* Load screen */
-					screen_load();
-				}
-
-				/* Show the list */
-				else
-				{
-					/* Save screen */
-					screen_save();
-
-					/* Flip flag */
-					p_ptr->command_see = TRUE;
-				}
 				break;
 			}
 
@@ -3520,14 +3473,12 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 				}
 
 				/* Hack -- Fix screen */
-				if (p_ptr->command_see)
-				{
-					/* Load screen */
-					screen_load();
 
-					/* Save screen */
-					screen_save();
-				}
+				/* Load screen */
+				screen_load();
+
+				/* Save screen */
+				screen_save();
 
 				/* Need to redraw */
 				break;
@@ -3589,14 +3540,12 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 				}
 
 				/* Hack -- Fix screen */
-				if (p_ptr->command_see)
-				{
-					/* Load screen */
-					screen_load();
+				
+				/* Load screen */
+				screen_load();
 
-					/* Save screen */
-					screen_save();
-				}
+				/* Save screen */
+				screen_save();
 
 				p_ptr->command_wrk = (USE_FLOOR);
 
@@ -3764,16 +3713,10 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 		}
 	}
 
-	/* Fix the screen if necessary */
-	if (p_ptr->command_see)
-	{
-		/* Load screen */
-		screen_load();
+	/* Fix the screen */
 
-		/* Hack -- Cancel "display" */
-		p_ptr->command_see = FALSE;
-	}
-
+	/* Load screen */
+	screen_load();
 
 	/* Forget the item_tester_tval restriction */
 	item_tester_tval = 0;
