@@ -191,7 +191,7 @@ linux_svga: LIBS := -lX11 -lcurses -lncurses -L/usr/X11R6/lib -lz -lvgagl \
 ##
 cygwin: CFLAGS += -W -pedantic -mno-cygwin -DWINDOWS
 cygwin: LIBS := -s -mno-cygwin -mwindows -e _mainCRTStartup -lwinmm
-cygwin: OTHEROBJS += angband.res readdib.o
+cygwin: OTHEROBJS := angband.res readdib.o
 cygwin: INSTALL := mv -f zangband.exe ../zangband.exe
 cygwin: RES := windres
 cygwin: RESCMD = $< -O coff -o $@
@@ -295,7 +295,7 @@ lcc: LIBS := $(LCC_PATH)\lib\winmm.lib -I$(LCC_PATH)\include
 lcc: LDFLAGS := -s -subsystem windows
 lcc: RES := $(LCC_PATH)\bin\lrc.exe
 lcc: RESCMD := -I$(LCC_PATH)\include angband.rc
-lcc: OTHEROBJS += angband.res readdib.o
+lcc: OTHEROBJS := angband.res readdib.o
 lcc: INSTALL := copy zangband ..\zangband.exe
 lcc: LUA := $(subst /, \, $(LUA))
 lcc: EXEC := .exe
