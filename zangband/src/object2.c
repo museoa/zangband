@@ -4949,6 +4949,9 @@ object_type *inven_carry(object_type *o_ptr)
 			/* Window stuff */
 			p_ptr->window |= (PW_INVEN);
 
+			/* Wipe old object */
+			object_wipe(o_ptr);
+
 			/* Success */
 			return (j_ptr);
 		}
