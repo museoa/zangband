@@ -3130,6 +3130,9 @@ static s32b borg_power_aux3(void)
 	/* Hack -- Reward light radius */
 	value += (bp_ptr->cur_lite * 100000L);
 
+	/* Hack -- Reward for wearing a permanent light */
+	if (bp_ptr->able.fuel >= 1000)
+		value += 5000;
 	/* Hack -- Reward speed */
 
 	if (bp_ptr->speed >= 150)
@@ -4063,9 +4066,6 @@ cptr borg_restock(int depth)
 
 	/*** Level 2 and 3 ***/
 
-	/* Must have good lite */
-	if (bp_ptr->cur_lite == 1) return ("rs lite+1");
-
 	/* Must have "fuel" */
 	if (bp_ptr->able.fuel < 3) return ("rs fuel+2");
 
@@ -4083,6 +4083,9 @@ cptr borg_restock(int depth)
 	if (depth <= 5) return (NULL);
 
 	/*** Level 6 to 9 ***/
+
+	/* Must have good lite */
+	if (bp_ptr->cur_lite == 1) return ("rs lite+1");
 
 	/* Potions of Critical Wounds */
 	if (!bp_ptr->able.ccw &&
@@ -4164,9 +4167,6 @@ static cptr borg_prepared_aux2(int depth)
 
 	/*** Essential Items for Level 2 ***/
 
-	/* Require lite (radius two) */
-	if (bp_ptr->cur_lite == 1) return ("2 Lite");
-
 	/* Require fuel */
 	if (bp_ptr->able.fuel < 5) return ("5 Fuel");
 
@@ -4190,6 +4190,9 @@ static cptr borg_prepared_aux2(int depth)
 
 
 	/*** Essential Items for Level 5 to 9 ***/
+
+	/* Require lite (radius two) */
+	if (bp_ptr->cur_lite == 1) return ("2 Lite");
 
 	/* Scrolls of Word of Recall */
 	if (bp_ptr->recall < 4) return ("4 recalls");

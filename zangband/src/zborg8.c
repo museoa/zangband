@@ -231,13 +231,17 @@ static void borg_think_shop_sell(int item, list_item *l_ptr)
 	borg_note_fmt("# Selling %s", l_ptr->o_name);
 
 	/* One item */
+	borg_note_fmt("# Sending key 0");
 	borg_keypress('0');
+	borg_note_fmt("# Sending key 1");
 	borg_keypress('1');
 
 	/* Buy an item */
+	borg_note_fmt("# Sending key s");
 	borg_keypress('s');
 
 	/* Buy the desired item */
+	borg_note_fmt("# Sending key %c", I2A(item));
 	borg_keypress(I2A(item));
 
 	/* Mega-Hack -- Accept the price */
