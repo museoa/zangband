@@ -865,10 +865,6 @@ static s32b object_value_base(const object_type *o_ptr)
 
 		/* Un-aware Amulets */
 		case TV_AMULET: return (45L);
-
-		/* Figurines, relative to monster level */
-		case TV_FIGURINE:
-			return (500L);
 	}
 
 	/* Paranoia -- Oops */
@@ -3590,14 +3586,9 @@ static void a_m_aux_4(object_type *o_ptr)
 
 			o_ptr->pval = i;
 
-			/* Some figurines are cursed */
-			if (one_in_(6)) o_ptr->ident |= IDENT_CURSED;
-
 			if (cheat_peek)
 			{
-				msg_format("Figurine of %s, %s",
-							  r_name + r_ptr->name,
-							  !(o_ptr->ident & IDENT_CURSED) ? "" : " {cursed}");
+				msg_format("Figurine of %s", r_name + r_ptr->name);
 			}
 
 			break;

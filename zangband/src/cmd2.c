@@ -3341,15 +3341,13 @@ void do_cmd_throw_aux(int mult)
 	/* Figurines transform */
 	if (q_ptr->tval == TV_FIGURINE)
 	{
-		bool pet = (cursed_p(q_ptr) ? FALSE : TRUE);
-
 		/* Always break */
 		breakage = 100;
 
-		if (!(summon_named_creature(y, x, q_ptr->pval, FALSE, FALSE, pet)))
+		if (!(summon_named_creature(y, x, q_ptr->pval, FALSE, FALSE, TRUE)))
+		{
 			msg_print("The Figurine writhes and then shatters.");
-		else if (cursed_p(q_ptr))
-			msg_print("You have a bad feeling about this.");
+		}
 	}
 
 	/* Potions smash open */
