@@ -3910,7 +3910,10 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great, 
 				if (randint(4) == 1)
 				{
 					o_ptr->art_flags1 |= TR1_BLOWS;				
-					
+					if (o_ptr->pval>2)
+					{
+						o_ptr->pval-=2;
+					}
 					/* tone down number of attacks*/
 					if (o_ptr->pval>0)
 					{
