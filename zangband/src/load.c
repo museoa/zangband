@@ -2312,7 +2312,11 @@ static errr rd_dungeon(void)
 	 * because monsters carry them.
 	 */
 	wipe_objects(cur_region);
-	wipe_fields(cur_region);
+	
+	/*
+	 * The following line wrecks stores made in create_wilderness()
+	 * above.  (Do we need this line at all?) -SF- 2.7.3
+	/* wipe_fields(cur_region); */
 
 	/*** Objects ***/
 
