@@ -246,6 +246,15 @@
 #include <commdlg.h>
 
 /*
+ * HTML-Help requires htmlhelp.h and htmlhelp.lib from Microsoft's
+ * HTML Workshop < http://www.microsoft.com/workshop/author/htmlhelp/ >.
+ */
+/* #define HTML_HELP */
+#ifdef HTML_HELP
+#include <htmlhelp.h>
+#endif /* HTML_HELP */
+
+/*
  * Include the support for loading bitmaps
  */
 #ifdef USE_GRAPHICS
@@ -3155,6 +3164,20 @@ static void process_menus(WORD wCmd)
 
 		case IDM_HELP_GENERAL:
 		{
+#ifdef HTML_HELP
+			char tmp[1024];
+			path_build(tmp, 1024, ANGBAND_DIR_XTRA_HELP, "angband.chm");
+			if (check_file(tmp))
+			{
+				HtmlHelp(data[0].w, tmp, HH_DISPLAY_TOPIC, 0);
+			}
+			else
+			{
+				plog_fmt("Cannot find help file: %s", tmp);
+				plog("Use the online help files instead.");
+			}
+			break;
+#else /* HTML_HELP */
 			char buf[1024];
 			char tmp[1024];
 			path_build(tmp, 1024, ANGBAND_DIR_XTRA_HELP, "angband.hlp");
@@ -3169,10 +3192,25 @@ static void process_menus(WORD wCmd)
 				plog("Use the online help files instead.");
 			}
 			break;
+#endif /* HTML_HELP */
 		}
 
 		case IDM_HELP_SPOILERS:
 		{
+#ifdef HTML_HELP
+			char tmp[1024];
+			path_build(tmp, 1024, ANGBAND_DIR_XTRA_HELP, "spoilers.chm");
+			if (check_file(tmp))
+			{
+				HtmlHelp(data[0].w, tmp, HH_DISPLAY_TOPIC, 0);
+			}
+			else
+			{
+				plog_fmt("Cannot find help file: %s", tmp);
+				plog("Use the online help files instead.");
+			}
+			break;
+#else /* HTML_HELP */
 			char buf[1024];
 			char tmp[1024];
 			path_build(tmp, 1024, ANGBAND_DIR_XTRA_HELP, "spoilers.hlp");
@@ -3187,6 +3225,7 @@ static void process_menus(WORD wCmd)
 				plog("Use the online help files instead.");
 			}
 			break;
+#endif /* HTML_HELP */
 		}
 	}
 }
