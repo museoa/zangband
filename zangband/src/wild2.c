@@ -1292,7 +1292,7 @@ static bool create_farm(int x, int y, int place_num)
 	place_type *pl_ptr = &place[place_num];
 
 	/* Is the area too hard for a farm? */
-	if (randint0(64) >= w_ptr->trans.law_map) return (FALSE);
+	if (randint0(63) + 192 >= w_ptr->trans.law_map) return (FALSE);
 
 	/* Get a random seed for later */
 	pl_ptr->seed = randint0(0x10000000);
