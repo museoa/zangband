@@ -2290,7 +2290,7 @@ static void add_door(int x, int y)
 /*
  * Routine that fills the empty areas of a room with treasure and monsters.
  */
-static void fill_treasure(int x1, int x2, int y1, int y2, int difficulty)
+static void fill_treasure(int x1, int y1, int x2, int y2, int difficulty)
 {
 	int x, y, cx, cy, size;
 	s32b value;
@@ -2533,8 +2533,8 @@ static void build_bubble_vault(int x0, int y0, int xsize, int ysize)
 	}
 
 	/* Fill with monsters and treasure, low difficulty */
-	fill_treasure(x0 - xhsize + 1, x0 - xhsize + xsize - 2,
-		 y0 - yhsize + 1, y0 - yhsize + ysize - 2, randint1(5));
+	fill_treasure(x0 - xhsize + 1, y0 - yhsize + 1,
+		 x0 - xhsize + xsize - 2, y0 - yhsize + ysize - 2, randint1(5));
 }
 
 
@@ -2637,8 +2637,8 @@ static void build_room_vault(int x0, int y0, int xsize, int ysize)
 	}
 
 	/* Fill with monsters and treasure, high difficulty */
-	fill_treasure(x0 - xhsize + 1, x0 - xhsize + xsize - 1,
-		 y0 - yhsize + 1, y0 - yhsize + ysize - 1, rand_range(5, 10));
+	fill_treasure(x0 - xhsize + 1, y0 - yhsize + 1,
+		x0 - xhsize + xsize - 1, y0 - yhsize + ysize - 1, rand_range(5, 10));
 }
 
 
@@ -2700,8 +2700,8 @@ static void build_cave_vault(int x0, int y0, int xsiz, int ysiz)
 	}
 
 	/* Fill with monsters and treasure, low difficulty */
-	fill_treasure(x0 - xhsize + 1, x0 - xhsize + xsize - 1,
-		 y0 - yhsize + 1, y0 - yhsize + ysize - 1, randint1(5));
+	fill_treasure(x0 - xhsize + 1, y0 - yhsize + 1,
+		x0 - xhsize + xsize - 1, y0 - yhsize + ysize - 1, randint1(5));
 }
 
 
@@ -2869,7 +2869,7 @@ static void build_maze_vault(int x0, int y0, int xsize, int ysize)
 	r_visit(y1, x1, y2, x2, randint0(num_vertices), 0, visited);
 
 	/* Fill with monsters and treasure, low difficulty */
-	fill_treasure(x1, x2, y1, y2, randint1(5));
+	fill_treasure(x1, y1, x2, y2, randint1(5));
 
 	FREE(visited);
 }
@@ -2954,7 +2954,7 @@ static void build_mini_c_vault(int x0, int y0, int xsize, int ysize)
 	}
 
 	/* Fill with monsters and treasure, highest difficulty */
-	fill_treasure(x1, x2, y1, y2, 10);
+	fill_treasure(x1, y1, x2, y2, 10);
 
 	FREE(visited);
 }
@@ -3163,7 +3163,7 @@ static void build_castle_vault(int x0, int y0, int xsize, int ysize)
 	build_recursive_room(x1, y1, x2, y2, randint1(5));
 
 	/* Fill with monsters and treasure, low difficulty */
-	fill_treasure(x1, x2, y1, y2, randint1(3));
+	fill_treasure(x1, y1, x2, y2, randint1(3));
 }
 
 
@@ -3343,7 +3343,7 @@ static void build_target_vault(int x0, int y0, int xsize, int ysize)
 	add_door(x0, y0 - y);
 
 	/* Fill with stuff - medium difficulty */
-	fill_treasure(x0 - rad, x0 + rad, y0 - rad, y0 + rad, rand_range(3, 6));
+	fill_treasure(x0 - rad, y0 - rad, x0 + rad, y0 + rad, rand_range(3, 6));
 }
 
 
@@ -3429,8 +3429,8 @@ static void build_elemental_vault(int x0, int y0, int xsiz, int ysiz)
 	}
 
 	/* Fill with monsters and treasure, low difficulty */
-	fill_treasure(x0 - xhsize + 1, x0 - xhsize + xsize - 1,
-	              y0 - yhsize + 1, y0 - yhsize + ysize - 1, randint1(5));
+	fill_treasure(x0 - xhsize + 1, y0 - yhsize + 1,
+		x0 - xhsize + xsize - 1, y0 - yhsize + ysize - 1, randint1(5));
 }
 
 
@@ -3500,7 +3500,7 @@ static void build_micro_room_vault(int x0, int y0, int xsize, int ysize)
 	}
 	
 	/* Fill with monsters and treasure, low difficulty */
-	fill_treasure(x1, x2, y1, y2, randint1(5));
+	fill_treasure(x1, y1, x2, y2, randint1(5));
 }
 
 
