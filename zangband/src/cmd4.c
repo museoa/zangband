@@ -1220,6 +1220,11 @@ void do_cmd_options(byte flags)
 			case 'D':
 			case 'd':
 			{
+				screen_save();
+
+				/* Clear screen */
+				Term_clear();
+
 				/* Prompt */
 				prt("Command: Base Delay Factor", 18, 0);
 
@@ -1230,11 +1235,18 @@ void do_cmd_options(byte flags)
 					prt(format("Current base delay factor: %d (%d msec)",
 					           delay_factor, msec), 22, 0);
 					prt("Delay Factor (0-9 or ESC to accept): ", 20, 0);
+
 					k = inkey();
-					if (k == ESCAPE) break;
-					if (isdigit(k)) delay_factor = D2I(k);
-					else bell();
+
+					if (k == ESCAPE)
+						break;
+					else if (isdigit(k))
+						delay_factor = D2I(k);
+					else
+						bell();
 				}
+
+				screen_load();
 
 				break;
 			}
