@@ -203,7 +203,6 @@ extern term *angband_term[ANGBAND_TERM_MAX];
 extern char angband_term_name[ANGBAND_TERM_MAX][16];
 extern byte angband_color_table[256][4];
 extern char angband_sound_name[SOUND_MAX][16];
-extern cave_type *cave[MAX_HGT];
 extern cave_type *(*area)(int, int);
 extern pcave_type *(*parea)(int, int);
 extern u16b *temp_block[WILD_BLOCK_SIZE + 1];
@@ -475,9 +474,11 @@ extern void get_character_name(void);
 extern void place_closed_door(int x, int y);
 extern void map_panel_size(void);
 extern void del_region(int rg_idx);
-extern void unref_region(int rg_idx);
+extern int unref_region(int rg_idx);
 extern void incref_region(int rg_idx);
-extern int create_region(int x, int y);
+extern void set_region(int rg_idx);
+extern void wipe_rg_list(void);
+extern int create_region(int x, int y, byte flags);
 extern void generate_cave(void);
 
 /* init1.c */

@@ -28,10 +28,16 @@
 #define LAKE_ROCK		11
 
 /*
- * Access the cave data structure
+ * Access the cave data for the current region
  */
 #define cave_p(X, Y) \
-	(&cave[Y][X])
+	(&cave_data[Y][X])
+	
+/*
+ * Access the cave data for the given region
+ */
+#define access_region(X, Y, R) \
+	(&rg_list[R][Y][X])
 
 /*
  * Set feature on a square
@@ -45,6 +51,7 @@
 #define set_feat_grid(C, F) \
 	((C)->feat=(F))
 
+/* Helpful macros */
 #define place_locked_door(X, Y) \
 	make_lockjam_door((X), (Y), randint1(10) + dun_level / 10, FALSE)
 #define place_secret_door(X,Y) \

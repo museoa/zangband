@@ -1015,6 +1015,13 @@ static bool level_gen(cptr *why)
 		p_ptr->max_wid = MAX_WID;
 	}
 	
+	/* Get the new region */
+	dun_ptr->region = (s16b) create_region(p_ptr->max_wid, p_ptr->max_hgt,
+											 REGION_CAVE);
+	
+	/* Grab the reference to it */
+	incref_region(cur_region);
+	
 	/* Make a dungeon */
 	if (!cave_gen())
 	{
@@ -1090,14 +1097,14 @@ void del_region(int rg_idx)
 	/* Deallocate the cave information */
 	
 	/* Free the cave */
-	for (i = 0; i < ri_ptr->xsize; i++)
+	for (i = 0; i < ri_ptr->ysize; i++)
 	{
 		/* Allocate one row of the cave */
 		FREE(rg_list[rg_idx][i]);
 	}
 	
 	/* Free the region + info */
-	FREE(rg_list[rg_idx]);
+	KILL(rg_list[rg_idx]);
 	WIPE(&ri_list[rg_idx], region_info);
 	
 	/* Decrement counter */
@@ -1107,16 +1114,31 @@ void del_region(int rg_idx)
 /*
  * Decrease refcount on region - deallocate if empty
  */
-void unref_region(int rg_idx)
+int unref_region(int rg_idx)
 {
 	/* Acquire region info */
 	region_info *ri_ptr = &ri_list[rg_idx];
+	
+	/* Paranoia */
+	if (!ri_ptr->refcount) quit("Region refcount missmatch");
 	
 	/* Decrease refcount */
 	ri_ptr->refcount--;
 	
 	/* Delete if just lost final reference */
-	if (!ri_ptr->refcount) del_region(rg_idx);
+	if (!ri_ptr->refcount)
+	{
+		/* Paranoia */
+		if (!rg_list[rg_idx]) quit("Deleting unallocated region");
+		
+		del_region(rg_idx);
+		
+		/* Region no longer exists */
+		return (0);
+	}
+	
+	/* No change */
+	return (rg_idx);
 }
 
 
@@ -1128,9 +1150,55 @@ void incref_region(int rg_idx)
 	/* Acquire region info */
 	region_info *ri_ptr = &ri_list[rg_idx];
 	
+	/* Paranoia */
+	if (!rg_list[rg_idx]) quit("Incrementing unallocated region");
+	
 	/* Increase refcount */
 	ri_ptr->refcount++;
 }
+
+
+/*
+ * Set the global region
+ */
+void set_region(int rg_idx)
+{
+	/* Paranoia */
+	if (rg_idx >= rg_max ) quit("Setting invalid region");
+	
+	/* Set the region */
+	cur_region = rg_idx;
+	
+	/* Set region pointer */
+	cave_data = rg_list[cur_region];
+}
+
+/*
+ * Delete all regions - and everything inside them
+ */
+void wipe_rg_list(void)
+{
+	int i;
+	
+	/* Wipe each active region */
+	for (i = 1; i < rg_max; i++)
+	{
+		/*
+		 * Hack - use del_region rather than unref_region.
+		 *
+		 * This function will not clean up all outstanding
+		 * references to the regions.  Only call this when you
+		 * know no such references exist.
+		 */
+		if (rg_list[i]) del_region(i);
+	}
+	
+	/* Wipe the remaining objects, monsters and fields (in wilderness) */
+	wipe_m_list();
+	wipe_o_list();
+	wipe_f_list();
+}
+
 
 /*
  * Do the actual work of allocating a region
@@ -1146,8 +1214,8 @@ static void allocate_region(int rg_idx, int x, int y)
 	ri_ptr->xsize = x;
 	ri_ptr->ysize = y;
 	
-	/* Hack set the refcount to one - assume caller holds reference */
-	ri_ptr->refcount = 1;
+	/* Hack set the refcount to zero - assume caller increments refcount */
+	ri_ptr->refcount = 0;
 	
 	/* Make the array of pointers to the cave */
 	C_MAKE(rg_list[rg_idx], y, cave_type*);
@@ -1158,6 +1226,9 @@ static void allocate_region(int rg_idx, int x, int y)
 		/* Allocate one row of the cave */
 		C_MAKE(rg_list[rg_idx][i], x, cave_type);
 	}
+	
+	/* Hack - set this region to be the currently used one */
+	set_region(rg_idx);
 }
 
 
@@ -1171,7 +1242,7 @@ static void allocate_region(int rg_idx, int x, int y)
  * This rountine should never fail - but be prepared
  * for when it does.
  */
-int create_region(int x, int y)
+int create_region(int x, int y, byte flags)
 {
 	int rg_idx;
 	int i;
@@ -1190,6 +1261,9 @@ int create_region(int x, int y)
 		/* Allocate the region */
 		allocate_region(rg_idx, x, y);
 		
+		/* Save the flags */
+		ri_list[rg_idx].flags = flags;
+		
 		/* Done */
 		return (rg_idx);
 	}
@@ -1205,6 +1279,9 @@ int create_region(int x, int y)
 		
 		/* Allocate the region */
 		allocate_region(i, x, y);
+		
+		/* Save the flags */
+		ri_list[i].flags = flags;
 
 		/* Use this region */
 		return (i);
@@ -1227,7 +1304,7 @@ int create_region(int x, int y)
  */
 void generate_cave(void)
 {
-	int y, num;
+	int num;
 
 	/* Hack - Reset the object theme */
 	dun_theme.treasure = 20;
@@ -1256,24 +1333,6 @@ void generate_cave(void)
 		bool okay = TRUE;
 
 		cptr why = NULL;
-		
-		/* 
-		 * Start with a blank cave
-		 */
-		for (y = 0; y < MAX_HGT; y++)
-		{
-			(void) C_WIPE(cave[y], MAX_WID, cave_type);
-		}
-		
-		/*
-		 * XXX XXX XXX XXX
-		 * Perhaps we should simply check for no monsters / objects
-		 * and complain if any exist.  That way these two lines
-		 * could eventually be removed.
-		 */
-		o_max = 1;
-		m_max = 1;
-
 		
 		/* Set the base level */
 		base_level = p_ptr->depth;
@@ -1342,15 +1401,9 @@ void generate_cave(void)
 
 		/* Message */
 		if (why) msg_format("Generation restarted (%s)", why);
-
-		/* Wipe the objects */
-		wipe_o_list();
-
-		/* Wipe the monsters */
-		wipe_m_list();
-
-		/* Wipe the fields */
-		wipe_f_list();
+		
+		/* Delete the level - not good enough */
+		dun_ptr->region = unref_region(dun_ptr->region);
 	}
 	
 	/* The dungeon is ready */

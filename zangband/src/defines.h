@@ -94,7 +94,7 @@
  * Defines used by the wilderness data structures
  */
 
-/* Size of blocks - hard coded. */
+/* Size of blocks - hard coded. (Affects size of towns) */
 #define WILD_BLOCK_SIZE	16
 
 /* Number of blocks the player can see at one time */
@@ -2396,8 +2396,11 @@
 /*
  * Region flags
  */
+#define REGION_NULL		0x00
 #define REGION_CAVE		0x01
-#define REGION_
+#define REGION_DUM1		0x02
+#define REGION_DUM2		0x04
+
 
 /*
  * Bit flags for the "project()" function

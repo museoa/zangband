@@ -4045,10 +4045,8 @@ void create_wilderness(void)
 
 	wild_type *w_ptr;
 	
-	/* Delete everything in wilderness */
-	wipe_o_list();
-	wipe_m_list();
-	wipe_f_list();
+	/* Delete everything */
+	wipe_rg_list();
 
 	/* Test wilderness generation information */
 	test_wild_data();

@@ -521,6 +521,7 @@ void wipe_o_list(void)
 	o_cnt = 0;
 }
 
+
 /*
  * Wipe objects in region
  */

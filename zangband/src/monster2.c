@@ -388,6 +388,7 @@ void wipe_m_list(void)
 	p_ptr->window |= PW_VISIBLE;
 }
 
+
 /*
  * Wipe monsters in region
  */

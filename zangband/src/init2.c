@@ -965,24 +965,16 @@ static errr init_other(void)
 	/*** Prepare region list ***/
 	C_MAKE(rg_list, z_info->rg_max, region_type);
 	C_MAKE(ri_list, z_info->rg_max, region_info);
-
-	/*** Prepare dungeon arrays ***/
 	
-	/* Remove this soon.... */	
 
-	/* Allocate and wipe each line of the cave */
-	for (i = 0; i < MAX_HGT; i++)
-	{
-		/* Allocate one row of the cave */
-		C_MAKE(cave[i], MAX_WID, cave_type);
-	}
-	
-	/* Hack - Allocate the player information for each grid */
+	/*** Hack - Allocate the player information for each grid ***/
 	for (i = 0; i < MAX_HGT; i++)
 	{
 		/* Allocate one row of the cave */
 		C_MAKE(p_ptr->pcave[i], MAX_WID, pcave_type);
 	}
+	
+	/*** Prepare wilderness stuff ***/
 
 	/* Allocate temporary wilderness block */
 	for (i = 0; i < WILD_BLOCK_SIZE + 1; i++)
@@ -1584,7 +1576,6 @@ void cleanup_angband(void)
 		/* Allocate one row of the temp_block */
 		FREE(temp_block[i]);
 	}
-#endif /* 0 */
 
 	/* Free the cave */
 	for (i = 0; i < MAX_HGT; i++)
@@ -1592,6 +1583,7 @@ void cleanup_angband(void)
 		/* Allocate one row of the cave */
 		FREE(cave[i]);
 	}
+#endif /* 0 */
 
 	/* Free the messages */
 	messages_free();

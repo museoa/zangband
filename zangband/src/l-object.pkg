@@ -1471,7 +1471,6 @@ extern void delete_object_idx(int o_idx);
 extern void delete_object(int x, int y);
 extern void delete_object_location(cave_type *c_ptr);
 extern void compact_objects(int size);
-extern void wipe_o_list(void);
 extern s16b o_pop(void);
 extern void get_obj_num_prep(void);
 extern errr get_obj_store_prep(void);

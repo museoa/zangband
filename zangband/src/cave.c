@@ -1606,7 +1606,7 @@ static void map_info(cave_type *c_ptr, pcave_type *pc_ptr,
 #endif /* USE_TRANSPARENCY */
 
 	/* Handle "player" */
-	if (c_ptr == area(p_ptr->px, p_ptr->py))
+	if (character_dungeon && (c_ptr == area(p_ptr->px, p_ptr->py)))
 	{
 		monster_race *r_ptr = &r_info[0];
 
@@ -2049,6 +2049,9 @@ void display_dungeon(void)
  */
 void lite_spot(int x, int y)
 {
+	/* Paranoia */
+	if (!character_dungeon) return;
+	
 	/* Redraw if on screen */
 	if (panel_contains(x, y) && in_boundsp(x, y))
 	{

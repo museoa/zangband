@@ -308,7 +308,7 @@ static void strip_bytes(int n)
  * data type.  The new system makes each treatable like the random
  * artifacts.  This increases memory usage, but simplifies large amounts
  * of code.  It also makes some effects possible that would otherwise
- * require slow python hooks.
+ * require slow script hooks.
  */
 static void rd_item(object_type *o_ptr)
 {
@@ -2058,6 +2058,8 @@ static errr rd_dungeon(void)
 	u16b limit;
 	cave_type *c_ptr;
 	u16b dun_level_backup, px_back, py_back;
+	
+	bool ignore_stuff = FALSE;
 
 	s16b cur_wid, cur_hgt;
 	
@@ -2132,12 +2134,12 @@ static errr rd_dungeon(void)
 			py = py_back;
 		}
 
-		/* Remove fields and monsters */
-		wipe_f_list();
-		wipe_m_list();
-
 		/* Hack - do not load data into wilderness */
 		change_level(1);
+		
+		/* Get the new region */
+		dun_ptr->region = (s16b) create_region(cur_wid, cur_hgt, REGION_CAVE);
+		incref_region(cur_region);
 
 		/* Load dungeon map */
 		load_map(0, 0, cur_wid, cur_hgt);
@@ -2162,6 +2164,11 @@ static errr rd_dungeon(void)
 			p_ptr->depth = dun_level_backup;
 			
 			change_level(p_ptr->depth);
+			
+			/* Get the new region */
+			dun_ptr->region = (s16b) create_region(cur_wid, cur_hgt, 
+													REGION_CAVE);
+			incref_region(cur_region);
 			
 			/* Load dungeon map */
 			load_map(0, 0, cur_wid, cur_hgt);
@@ -2198,6 +2205,11 @@ static errr rd_dungeon(void)
 
 		if (p_ptr->depth)
 		{
+			/* Get the new region */
+			dun_ptr->region = (s16b) create_region(cur_wid, cur_hgt, 
+													REGION_CAVE);
+			incref_region(cur_region);
+			
 			/* Load dungeon map */
 			load_map(0, 0, cur_wid, cur_hgt);
 		}
@@ -2210,6 +2222,9 @@ static errr rd_dungeon(void)
 	}
 
 
+	/* Ignore stuff if loading old savefiles */
+	if (sf_version < VERSION_CHANGE_WILD) ignore_stuff = TRUE;
+	
 	/* Hack - restore player position */
 	p_ptr->px = px;
 	p_ptr->py = py;
@@ -2242,6 +2257,9 @@ static errr rd_dungeon(void)
 
 		/* Read the item */
 		rd_item(o_ptr);
+		
+		/* Hack - set region of object */
+		o_ptr->region = cur_region;
 
 
 		/* XXX XXX XXX XXX XXX */
@@ -2271,7 +2289,7 @@ static errr rd_dungeon(void)
 		}
 
 		/* Dungeon */
-		else if (!((sf_version < VERSION_CHANGE_WILD) && (p_ptr->depth == 0)))
+		else if (!ignore_stuff)
 		{
 			/* Oops */
 			if (i != o_idx)
@@ -2323,8 +2341,11 @@ static errr rd_dungeon(void)
 
 		/* Read the monster */
 		rd_monster(m_ptr);
+		
+		/* Hack - set region of monster */
+		m_ptr->region = cur_region;
 
-		if (!((sf_version < VERSION_CHANGE_WILD) && (p_ptr->depth == 0)))
+		if (!ignore_stuff)
 		{
 			/* Oops */
 			if (i != m_idx)
@@ -2372,8 +2393,11 @@ static errr rd_dungeon(void)
 
 			/* Read the field */
 			rd_field(f_ptr);
+			
+			/* Hack - set region of field */
+			f_ptr->region = cur_region;
 
-			if (!((sf_version < VERSION_CHANGE_WILD) && (p_ptr->depth == 0)))
+			if (!ignore_stuff)
 			{
 				/* Access the fields location */
 				c_ptr = area(f_ptr->fx, f_ptr->fy);
@@ -2415,15 +2439,10 @@ static errr rd_dungeon(void)
 			p_ptr->min_hgt = 0;
 			p_ptr->max_wid = cur_wid;
 			p_ptr->min_wid = 0;
-			
-			/* Delete the fields */
-			
 		}
 		else
 		{
 			character_dungeon = FALSE;
-			wipe_o_list();
-			wipe_m_list();
 		}
 		
 		/* enter the level */

@@ -1722,7 +1722,6 @@ struct store_type
 typedef struct town_type town_type;
 struct town_type
 {
-	char        name[T_NAME_LEN];	/* Town name */
 	u32b        seed;		/* Seed for RNG */
 	store_type	*store;		/* The stores[numstores] */
 	
@@ -1736,11 +1735,13 @@ struct town_type
 	
 	byte		pop;		/* population density (from wilderness) */
 	byte		monst_type;	/* Type of population (monsters/people etc.) */
-
-	u32b		refcount;	/* refcount for creation / deletion */
+	
+	s16b		region;		/* Region */
 	
 	byte		gates_x[MAX_GATES];	/* Position of the town gates */
 	byte		gates_y[MAX_GATES];
+	
+	char        name[T_NAME_LEN];	/* Town name */
 };
 
 /* Dungeons */
@@ -1756,6 +1757,8 @@ struct dun_type
 	s16b max_hgt;
 	s16b min_wid;			/* Current x bounds of area() */
 	s16b max_wid;
+	
+	s16b region;			/* Hack - Region for current level */
 	
 	byte feeling;			/* Most recent feeling */
 	bool good_item_flag;	/* True if "Artifact" on this level */

@@ -587,7 +587,6 @@ extern cptr funny_comments[MAX_SAN_COMMENT];
 extern void delete_monster_idx(int i);
 extern void delete_monster(int x, int y);
 extern void compact_monsters(int size);
-extern void wipe_m_list(void);
 extern s16b m_pop(void);
 extern void get_mon_num_prep(monster_hook_type monster_hook, monster_hook_type monster_hook2);
 extern s16b get_mon_num(int level);

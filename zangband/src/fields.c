@@ -30,6 +30,9 @@ static s16b *field_find(s16b fld_idx)
 
 	/* Point to the field */
 	f_ptr = &fld_list[fld_idx];
+	
+	/* Paranoia */
+	if (f_ptr->region != dun_ptr->region) quit("Trying to find unregioned field");
 
 	location = &(area(f_ptr->fx, f_ptr->fy)->fld_idx);
 
@@ -558,6 +561,7 @@ void wipe_f_list(void)
 	/* Reset "fld_cnt" */
 	fld_cnt = 0;
 }
+
 
 /*
  * Wipe fields in region

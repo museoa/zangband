@@ -3593,11 +3593,7 @@ void play_game(bool new_game)
 		/* Handle "quit and save" */
 		if (!p_ptr->playing && !p_ptr->is_dead) break;
 
-		/* Erase the old cave */
-		wipe_o_list();
-		wipe_m_list();
-		wipe_f_list();
-
+		/* Go to the new level */
 		change_level(p_ptr->depth);
 
 		/* XXX XXX XXX */
