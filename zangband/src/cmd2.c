@@ -2399,8 +2399,6 @@ void do_cmd_fire_aux(int mult, object_type *o_ptr, const object_type *j_ptr)
 
 	bool hit_wall = FALSE;
 
-	bool rogue_throw = FALSE;
-
 	cave_type *c_ptr;
 
 	/* This "exception" will have to be added via python. */
@@ -2442,13 +2440,6 @@ void do_cmd_fire_aux(int mult, object_type *o_ptr, const object_type *j_ptr)
 	/* Describe the object */
 	object_desc(o_name, i_ptr, FALSE, 0, 256);
 
-	/* Rogues get a bonus when throwing daggers */
-	if (p_ptr->rp.pclass == CLASS_ROGUE &&
-			i_ptr->tval == TV_SWORD && i_ptr->weight <= 20)
-	{
-		rogue_throw = TRUE;
-	}
-
 	/* Use the proper number of shots */
 	if (j_ptr)
 	{
@@ -2458,8 +2449,12 @@ void do_cmd_fire_aux(int mult, object_type *o_ptr, const object_type *j_ptr)
 	{
 		thits = 1;
 
-		if (rogue_throw && p_ptr->lev >= 10)
-			thits++;
+		if (p_ptr->rp.pclass == CLASS_ROGUE &&
+				i_ptr->tval == TV_SWORD && i_ptr->sval == SV_DAGGER)
+		{
+			if (p_ptr->lev >= 10) thits++;
+			if (p_ptr->lev >= 30) thits++;
+		}
 	}
 
 	/* Actually "fire" the object. */
@@ -2474,16 +2469,12 @@ void do_cmd_fire_aux(int mult, object_type *o_ptr, const object_type *j_ptr)
 	{
 		total_deadliness = p_ptr->to_d + i_ptr->to_d;
 
-		if ((i_ptr->flags2 & (TR2_THROW)) || rogue_throw)
-		{
+		if (i_ptr->flags2 & (TR2_THROW))
 			bonus = p_ptr->to_h + i_ptr->to_h;
-			chance = p_ptr->skill.tht + (bonus * BTH_PLUS_ADJ);
-		}
 		else
-		{
 			bonus = i_ptr->to_h;
-			chance = p_ptr->skill.tht * 3 / 2 + (bonus * BTH_PLUS_ADJ);
-		}
+
+		chance = p_ptr->skill.tht + (bonus * BTH_PLUS_ADJ);
 	}
 
 	/* Cursed arrows tend not to hit anything */
@@ -2502,9 +2493,9 @@ void do_cmd_fire_aux(int mult, object_type *o_ptr, const object_type *j_ptr)
 	{
 		p_ptr->energy_use = 100;
 
-		if ((i_ptr->flags2 & (TR2_THROW)) || rogue_throw)
+		if (i_ptr->flags2 & (TR2_THROW))
 		{
-			tmul = 4 + p_ptr->lev / 6;
+			tmul = 5;
 		}
 		else
 		{

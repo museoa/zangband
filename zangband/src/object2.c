@@ -1671,7 +1671,8 @@ bool object_similar(const object_type *o_ptr, const object_type *j_ptr)
 		case TV_HARD_ARMOR:
 		case TV_DRAG_ARMOR:
 		{
-			/* Weapons and Armor now stack */
+			/* Weapons and Armor stack if throwable */
+			if (!(o_ptr->flags2 & (TR2_THROW))) return (FALSE);
 
 			/* Fall through */
 		}
@@ -1754,16 +1755,6 @@ bool object_similar(const object_type *o_ptr, const object_type *j_ptr)
 
 	/* Maximal "stacking" limit */
 	if (o_ptr->number + j_ptr->number >= MAX_STACK_SIZE) return (FALSE);
-
-	/* 
-	 * Disabled because you can break this by buying stacks in stores... 
-	 * Note that the old code was broken, too!
-	 */
-#if 0
-	/* Maximal "stacking" based on weight */
-	if ((o_ptr->number + j_ptr->number) * o_ptr->weight > MAX_STACK_WEIGHT)
-		return (FALSE);
-#endif
 
 	/* They match, so they must be similar */
 	return (TRUE);
