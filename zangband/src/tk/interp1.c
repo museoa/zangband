@@ -2281,6 +2281,94 @@ static void HandleError(void)
 				Tcl_GetStringResult(g_interp));
 }
 
+/*
+ * Initialize stuff after the character has been generated.
+ */
+static void angtk_character_generated(void)
+{
+	char path[1024];
+	int y, x;
+
+	/* Source a file to create the interface */
+	path_build(path, 1024, ANGBAND_DIR_TK, "init-other.tcl");
+	if (angtk_eval_file(path) == TCL_ERROR)
+	{
+		HandleError();
+	}
+
+	/* The icon environment must be initialized by a script. */
+	if (g_icon_size == 0)
+	{
+		quit_fmt("Fatal error:\nIcons were not initialized.\n"
+			"You must call \"angband init_icons\"");
+	}
+
+#if 1
+	/* Process each grid */
+	for (y = 0; y < MAX_HGT; y++)
+	{
+		for (x = 0; x < MAX_WID; x++)
+		{
+			/* A wall or secret door */
+			if (is_wall(y, x))
+			{
+				/* Note wall */
+				g_grid[y][x].xtra |= GRID_XTRA_WALL;
+			}
+
+			/* Only because not currently saved */
+			if (is_door(y, x))
+			{
+				/* Note wall */
+				g_grid[y][x].xtra |= GRID_XTRA_DOOR;
+			}
+		}
+	}
+#endif
+
+	/*
+	 * If we didn't read the g_grid[].xtra information from a savefile,
+	 * then hack some right here. This gives us door alignment, but not
+	 * pillars.
+	 */
+	if (!g_grid_xtra_init)
+	{
+		/* Process each grid */
+		for (y = 0; y < MAX_HGT; y++)
+		{
+			for (x = 0; x < MAX_WID; x++)
+			{
+				int feat = area(x, y)->feat;
+	
+				/* This is a door (or secret door) */
+				if ((feat == FEAT_OPEN) || (feat == FEAT_BROKEN) ||
+					(feat == FEAT_CLOSED))
+				{
+					/* Note vertical doors */
+					if (door_vertical(y, x))
+					{
+						g_grid[y][x].xtra |= GRID_XTRA_ISVERT;
+					}
+				}
+			}
+		}
+    	
+		/* Note that g_grid[].xtra is initialized. */
+		g_grid_xtra_init = TRUE;
+    }
+
+	/*
+	 * Assign icons to each grid. You have to do this *after* sourcing
+	 * the startup script, because that's where icon types are defined
+	 * and where icon assignments are made.
+	 */
+	g_icon_map_changed = TRUE;
+
+	/* If animation is enabled, start the animation timer */
+	if (allow_animation) angtk_start_timer();
+}
+
+
 static CommandInit commandInit[] = {
 	{0, "angband", 0, 0, NULL, NULL, (ClientData) 0},
 		{1, "a_info", 0, 0, NULL, NULL, (ClientData) 0},
@@ -2337,7 +2425,7 @@ static CommandInit commandInit[] = {
 	{0, "photomask", 2, 3, "imageDst ?imageMask?", objcmd_photo_mask, (ClientData) 0},
 	{0, "fontdesc", 2, 2, "font", objcmd_fontdesc, (ClientData) 0},
 	{0, "term_window", 0, 0, NULL, NULL, (ClientData) 0},
-		{1, "char", 3, 3, "x y???", objcmd_term_char, (ClientData) 0},
+		{1, "char", 3, 3, "x y", objcmd_term_char, (ClientData) 0},
 		{1, "attr", 3, 3, "x y", objcmd_term_attr, (ClientData) 0},
 	{0, NULL, 0, 0, NULL, NULL, (ClientData) 0}
 };
@@ -2425,6 +2513,9 @@ void angtk_angband_initialized(void)
 	{
 		HandleError();
 	}
+	
+	/* Hack - look at more scripts */
+	angtk_character_generated();
 }
 
 /*
@@ -2442,22 +2533,6 @@ int angtk_eval_file(cptr extFileName)
 	return result;
 }
 
-/*
- * XXX Mega-Hack: Let Tcl force dungeon recreation.
- */
-int angtk_generate(void)
-{
-	int i;
-
-	angtk_eval("angband_generate", NULL);
-
-	if (Tcl_GetBooleanFromObj(g_interp, Tcl_GetObjResult(g_interp), &i) == TCL_OK)
-	{
-		return i;
-	}
-
-	return -1;
-}
 
 /*
  * Do stuff after a dungeon is generated.
@@ -2503,93 +2578,6 @@ void angtk_cave_generated(void)
 	g_icon_map_changed = TRUE;
 
 	Bind_Generic(EVENT_DUNGEON, KEYWORD_DUNGEON_GEN + 1);
-}
-
-/*
- * Initialize stuff after the character has been generated.
- */
-void angtk_character_generated(void)
-{
-	char path[1024];
-	int y, x;
-
-	/* Source a file to create the interface */
-	path_build(path, 1024, ANGBAND_DIR_TK, "init-other.tcl");
-	if (angtk_eval_file(path) == TCL_ERROR)
-	{
-		HandleError();
-	}
-
-	/* The icon environment must be initialized by a script. */
-	if (g_icon_size == 0)
-	{
-		quit_fmt("Fatal error:\nIcons were not initialized.\n"
-			"You must call \"angband init_icons\"");
-	}
-
-#if 1
-	/* Process each grid */
-	for (y = 0; y < MAX_HGT; y++)
-	{
-		for (x = 0; x < MAX_WID; x++)
-		{
-			/* A wall or secret door */
-			if (is_wall(y, x))
-			{
-				/* Note wall */
-				g_grid[y][x].xtra |= GRID_XTRA_WALL;
-			}
-
-			/* Only because not currently saved */
-			if (is_door(y, x))
-			{
-				/* Note wall */
-				g_grid[y][x].xtra |= GRID_XTRA_DOOR;
-			}
-		}
-	}
-#endif
-
-	/*
-	 * If we didn't read the g_grid[].xtra information from a savefile,
-	 * then hack some right here. This gives us door alignment, but not
-	 * pillars.
-	 */
-	if (!g_grid_xtra_init)
-	{
-		/* Process each grid */
-		for (y = 0; y < MAX_HGT; y++)
-		{
-			for (x = 0; x < MAX_WID; x++)
-			{
-				int feat = area(x, y)->feat;
-	
-				/* This is a door (or secret door) */
-				if ((feat == FEAT_OPEN) || (feat == FEAT_BROKEN) ||
-					(feat == FEAT_CLOSED))
-				{
-					/* Note vertical doors */
-					if (door_vertical(y, x))
-					{
-						g_grid[y][x].xtra |= GRID_XTRA_ISVERT;
-					}
-				}
-			}
-		}
-    	
-		/* Note that g_grid[].xtra is initialized. */
-		g_grid_xtra_init = TRUE;
-    }
-
-	/*
-	 * Assign icons to each grid. You have to do this *after* sourcing
-	 * the startup script, because that's where icon types are defined
-	 * and where icon assignments are made.
-	 */
-	g_icon_map_changed = TRUE;
-
-	/* If animation is enabled, start the animation timer */
-	if (allow_animation) angtk_start_timer();
 }
 
 

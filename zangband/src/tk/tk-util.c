@@ -738,16 +738,6 @@ if (!linker->count)
 			
 }
 
-void Bitmap_New(Tcl_Interp *interp, BitmapPtr bitmapPtr)
-{
-	Plat_BitmapNew(interp, bitmapPtr);
-}
-
-void Bitmap_Delete(BitmapPtr bitmapPtr)
-{
-	Plat_BitmapDelete(bitmapPtr);
-}
-
 Tcl_Obj *ExtToUtf_NewStringObj(CONST char *bytes, int length)
 {
 	char *utfString;

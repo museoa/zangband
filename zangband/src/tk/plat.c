@@ -29,7 +29,7 @@ struct PlatBitmap
 	TkWinColormap twc; /* Colormap */
 };
 
-void Plat_BitmapNew(Tcl_Interp *interp, BitmapPtr bitmapPtr)
+void Bitmap_New(Tcl_Interp *interp, BitmapPtr bitmapPtr)
 {
 	int depth = bitmapPtr->depth;
 	struct PlatBitmap *platData;
@@ -122,7 +122,7 @@ void Plat_BitmapNew(Tcl_Interp *interp, BitmapPtr bitmapPtr)
 	bitmapPtr->platData = platData;
 }
 
-void Plat_BitmapDelete(BitmapPtr bitmapPtr)
+void Bitmap_Delete(BitmapPtr bitmapPtr)
 {
 	struct PlatBitmap *platData = bitmapPtr->platData;
 
@@ -188,7 +188,7 @@ static int ErrorHandler(ClientData clientData, XErrorEvent *errEventPtr)
     return 0;
 }
 
-void Plat_BitmapNew(Tcl_Interp *interp, BitmapPtr bitmapPtr)
+void Bitmap_New(Tcl_Interp *interp, BitmapPtr bitmapPtr)
 {
 	int depth = bitmapPtr->depth;
 	struct PlatBitmap *platData;
@@ -291,7 +291,7 @@ void Plat_BitmapNew(Tcl_Interp *interp, BitmapPtr bitmapPtr)
 	bitmapPtr->platData = platData;
 }
 
-void Plat_BitmapDelete(BitmapPtr bitmapPtr)
+void Bitmap_Delete(BitmapPtr bitmapPtr)
 {
 	struct PlatBitmap *platData = bitmapPtr->platData;
 	Display *display = platData->display;

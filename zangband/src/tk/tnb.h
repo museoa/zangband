@@ -230,7 +230,6 @@ extern cptr g_attr_str;
 extern int exit_skip_save;
 extern bool command_repeating;
 extern void angtk_angband_initialized(void);
-extern void angtk_character_generated(void);
 extern void angtk_display_info_init(void);
 extern void angtk_display_info_append(cptr s);
 extern void angtk_display_info_done(cptr title);
@@ -238,7 +237,6 @@ extern void angtk_display_info(char *title, char **info, int count);
 extern void angtk_display_info_aux(char *title, Tcl_Obj *listObjPtr);
 extern void angtk_eval(cptr command, ...);
 extern int angtk_eval_file(cptr extFileName);
-extern int angtk_generate(void);
 extern void angtk_cave_generated(void);
 extern void angtk_health(char *buf);
 extern int angtk_tval_string(cptr *str, int tval);
@@ -497,8 +495,6 @@ char *UtfToExt_TranslateFileName(Tcl_Interp *interp, char *utfPath,
 
 
 /* plat.c */
-extern void Plat_BitmapNew(Tcl_Interp *interp, BitmapPtr bitmapPtr);
-extern void Plat_BitmapDelete(BitmapPtr bitmapPtr);
 extern void *Plat_PaletteInit(unsigned char *rgb);
 extern int Plat_XColor2Pixel(XColor *xColorPtr);
 extern void Plat_SyncDisplay(Display *display);
