@@ -140,7 +140,7 @@ void do_cmd_wield(void)
 		if ((p_ptr->equipment[EQUIP_LEFT].k_idx) &&
 			(p_ptr->equipment[EQUIP_RIGHT].k_idx))
 		{
-			if (get_check("Use right hand?")) slot = EQUIP_RIGHT;
+			if (get_check("Use right hand? ")) slot = EQUIP_RIGHT;
 		}
 	}
 
