@@ -408,10 +408,11 @@ bool make_attack_normal(int m_idx)
 					(r_ptr->flags3 & RF3_EVIL))
 				protect = 3;
 
+			/* Protection gets stronger with experience */
+			protect *= p_ptr->lev + 20;
+
 			/* Apply "protection" */
-			if (protect > 0 && 
-					randint1(protect * p_ptr->lev) > 2 * rlev &&
-					!one_in_(20))
+			if (protect > 0 && randint1(protect) > 2 * (rlev + 20))
 			{
 #if 0
 				/* Remember the Evil-ness */
