@@ -515,11 +515,6 @@
 /* #define MONK_HACK */
 
 /*
- * Use a scripting language (required)
- */
-#define USE_SCRIPT
-
-/*
  * Monsters can drop corpses when killed
  */
 #define USE_CORPSES

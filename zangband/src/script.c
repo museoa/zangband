@@ -5,8 +5,6 @@
 #include "script.h"
 
 
-#ifdef USE_SCRIPT
-
 #include "lua/lua.h"
 #include "lua/lualib.h"
 #include "lua/lauxlib.h"
@@ -497,33 +495,4 @@ bool script_do_file(cptr filename)
 
 	return FALSE;
 }
-
-
-#else /* USE_SCRIPT */
-
-errr script_init(void)
-{
-	return 0;
-}
-
-
-errr script_free(void)
-{
-	return 0;
-}
-
-
-bool script_do_string(cptr script)
-{
-	return FALSE;
-}
-
-
-bool script_do_file(cptr filename)
-{
-	return FALSE;
-}
-
-
-#endif /* USE_SCRIPT */
 
