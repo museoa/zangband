@@ -238,11 +238,11 @@ function quaff_potion(object)
 	elseif object.sval == SV_POTION_SPEED then
 		if inc_fast(rand_range(15, 40)) then ident = TRUE end
 	elseif object.sval == SV_POTION_RESIST_HEAT then
-		if set_oppose_fire(player.oppose_fire + rand_range(10, 20)) then
+		if inc_oppose_fire(rand_range(10, 20)) then
 			ident = TRUE
 		end
 	elseif object.sval == SV_POTION_RESIST_COLD then
-		if set_oppose_cold(player.oppose_cold + rand_range(10, 20)) then
+		if inc_oppose_cold(rand_range(10, 20)) then
 			ident = TRUE
 		end
 	elseif object.sval == SV_POTION_HEROISM then
@@ -380,11 +380,11 @@ function quaff_potion(object)
 			ident = TRUE
 		end
 	elseif object.sval == SV_POTION_RESISTANCE then
-		set_oppose_acid(player.oppose_acid + rand_range(20, 40))
-		set_oppose_elec(player.oppose_elec + rand_range(20, 40))
-		set_oppose_fire(player.oppose_fire + rand_range(20, 40))
-		set_oppose_cold(player.oppose_cold + rand_range(20, 40))
-		set_oppose_pois(player.oppose_pois + rand_range(20, 40))
+		inc_oppose_acid(rand_range(20, 40))
+		inc_oppose_elec(rand_range(20, 40))
+		inc_oppose_fire(rand_range(20, 40))
+		inc_oppose_cold(rand_range(20, 40))
+		inc_oppose_pois(rand_range(20, 40))
 		ident = TRUE
 	elseif object.sval == SV_POTION_CURING then
 		if hp_player(150) then ident = TRUE end
