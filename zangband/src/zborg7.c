@@ -538,7 +538,7 @@ bool borg_check_lite(void)
 	/* Hack -- find doors */
 	if (do_door && (!when_detect_doors || (borg_t - when_detect_doors >= 9)))
 	{
-		/* Check for traps */
+		/* Check for doors */
 		if (borg_read_scroll(SV_SCROLL_DETECT_DOOR) ||
 			borg_use_staff(SV_STAFF_DETECT_DOOR) ||
 			borg_zap_rod(SV_ROD_DETECT_DOOR))
@@ -1786,7 +1786,7 @@ bool borg_crush_slow(void)
 	if (!bp_ptr->depth) return (FALSE);
 
 	/* Do not crush items unless we are slow */
-	if (bp_ptr->speed >= 110) return (FALSE);
+	if (!bp_ptr->encumber) return (FALSE);
 
 	/* Scan for junk */
 	for (i = 0; i < inven_num; i++)
