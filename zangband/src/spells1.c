@@ -3585,7 +3585,12 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Lite -- blinding */
 			if (fuzzy) msgf("You are hit by something!");
-			if (p_ptr->flags2 & (TR2_RES_LITE))
+
+			if (p_ptr->flags4 & (TR4_IM_LITE))
+			{
+				dam = 0;
+			}
+			else if (p_ptr->flags2 & (TR2_RES_LITE))
 			{
 				dam *= 4;
 				dam /= rand_range(7, 12);
@@ -3619,16 +3624,24 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Dark -- blinding */
 			if (fuzzy) msgf("You are hit by something!");
-			if (p_ptr->flags2 & (TR2_RES_DARK))
+
+			if (p_ptr->flags4 & (TR4_IM_DARK)) 
+			{
+				dam = 0;
+			}
+			else if (p_ptr->flags2 & (TR2_RES_DARK))
 			{
 				dam *= 4;
 				dam /= rand_range(7, 12);
 
-				if (p_ptr->flags4 & (TR4_IM_DARK)) dam = 0;
 			}
 			else if (!blind && !(p_ptr->flags2 & (TR2_RES_BLIND)))
 			{
 				(void)set_blind(p_ptr->tim.blind + rand_range(2, 7));
+			}
+			if (p_ptr->flags4 & (TR4_HURT_DARK))
+			{
+				dam *= 2;
 			}
 			if (p_ptr->tim.wraith_form) (void)hp_player(dam);
 			else

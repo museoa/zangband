@@ -1017,13 +1017,14 @@ static void process_world(void)
 	if (p_ptr->flags4 & (TR4_HURT_LITE))
 	{
 		if (!p_ptr->depth && !(p_ptr->flags2 & (TR2_RES_LITE)) &&
+			!(p_ptr->flags4 & (TR4_IM_LITE)) &&
 			!p_ptr->tim.invuln &&
 			(!((turn / ((10L * TOWN_DAWN) / 2)) % 2)))
 		{
 			if (c_ptr->info & CAVE_GLOW)
 			{
 				/* Take damage */
-				msgf("The sun's rays scorch your undead flesh!");
+				msgf("The sun's rays scorch your flesh!");
 				take_hit(1, "sunlight");
 				cave_no_regen = TRUE;
 			}
@@ -1033,7 +1034,9 @@ static void process_world(void)
 
 		if (o_ptr->tval &&
 			(o_ptr->sval >= SV_LITE_GALADRIEL) &&
-			(o_ptr->sval < SV_LITE_THRAIN) && !(p_ptr->flags2 & (TR2_RES_LITE)))
+			(o_ptr->sval < SV_LITE_THRAIN) && 
+			!(p_ptr->flags2 & (TR2_RES_LITE)) &&
+			!(p_ptr->flags4 & (TR4_IM_LITE)))
 		{
 			char o_name[256];
 			char ouch[280];

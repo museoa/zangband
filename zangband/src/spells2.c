@@ -360,7 +360,7 @@ void self_knowledge(void)
 	{
 		info[i++] = "You cannot teleport.";
 	}
-	if (p_ptr->flags2 & (TR2_RES_LITE))
+	if (p_ptr->flags3 & (TR3_LITE))
 	{
 		info[i++] = "You have a source of permanent light.";
 	}
@@ -2494,7 +2494,8 @@ bool destroy_area(int x1, int y1, int r)
 
 		/* Blind the player */
 		if (!(p_ptr->flags2 & (TR2_RES_BLIND)) &&
-			!(p_ptr->flags2 & (TR2_RES_LITE)))
+			!(p_ptr->flags2 & (TR2_RES_LITE)) &&
+			!(p_ptr->flags4 & (TR4_IM_LITE)))
 		{
 			/* Become blind */
 			(void)set_blind(p_ptr->tim.blind + rand_range(10, 20));

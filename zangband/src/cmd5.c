@@ -941,7 +941,8 @@ static bool cast_nature_spell(int spell)
 		case 4:				/* Daylight */
 			(void)lite_area(damroll(2, (plev / 2)), (plev / 10) + 1);
 			if ((p_ptr->flags4 & (TR4_HURT_LITE)) &&
-				!(p_ptr->flags2 & (TR2_RES_LITE)))
+				!(p_ptr->flags2 & (TR2_RES_LITE)) &&
+				!(p_ptr->flags4 & (TR4_IM_LITE)))
 			{
 				msgf("The daylight scorches your flesh!");
 				take_hit(damroll(2, 2), "daylight");
@@ -1074,7 +1075,8 @@ static bool cast_nature_spell(int spell)
 			(void)fire_ball(GF_LITE, 0, 150, 8);
 			wiz_lite();
 			if ((p_ptr->flags4 & (TR4_HURT_LITE)) &&
-				!(p_ptr->flags2 & (TR2_RES_LITE)))
+				!(p_ptr->flags2 & (TR2_RES_LITE)) &&
+				!(p_ptr->flags4 & (TR4_IM_LITE)))
 			{
 				msgf("The sunlight scorches your flesh!");
 				take_hit(50, "sunlight");
