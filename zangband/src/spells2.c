@@ -699,7 +699,7 @@ void report_magics(void)
 	if (p_ptr->blessed)
 	{
 		info2[i]  = report_magics_aux(p_ptr->blessed);
-		info[i++] = "You feel rightous";
+		info[i++] = "You feel righteous";
 	}
 	if (p_ptr->hero)
 	{
