@@ -64,7 +64,6 @@ int borg_respawn_wis;
 int borg_respawn_dex;
 int borg_respawn_con;
 int borg_respawn_chr;
-int borg_dump_level;
 bool borg_respawn_winners;
 
 /* dynamic borg stuff */

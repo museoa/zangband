@@ -214,7 +214,6 @@ extern int borg_respawn_wis;
 extern int borg_respawn_dex;
 extern int borg_respawn_con;
 extern int borg_respawn_chr;
-extern int borg_dump_level;
 extern bool borg_respawn_winners;
 
 extern bool borg_plays_risky;

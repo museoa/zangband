@@ -416,7 +416,6 @@ static bool borg_think(void)
 
 	char buf[128];
 	static char svSavefile[1024];
-	static char svSavefile2[1024];
 	static bool justSaved = FALSE;
 
 
@@ -455,35 +454,6 @@ static bool borg_think(void)
 
 		borg_save = FALSE;
 
-		/* Create a scum file */
-		if (borg_skill[BI_CLEVEL] >= borg_dump_level ||
-			strstr(p_ptr->died_from, "starvation"))
-		{
-			memcpy(svSavefile, savefile, sizeof(savefile));
-			/* Process the player name */
-			for (i = 0; player_name[i]; i++)
-			{
-				char c = player_name[i];
-
-				/* No control characters */
-				if (iscntrl(c))
-				{
-					/* Illegal characters */
-					quit_fmt("Illegal control char (0x%02X) in player name", c);
-				}
-
-				/* Convert all non-alphanumeric symbols */
-				if (!isalpha(c) && !isdigit(c)) c = '_';
-
-				/* Build "file_name" */
-				svSavefile2[i] = c;
-			}
-			svSavefile2[i] = 0;
-
-			path_build(savefile, 1024, ANGBAND_DIR_USER, svSavefile2);
-
-			justSaved = TRUE;
-		}
 		return (TRUE);
 	}
 	if (justSaved)
@@ -3251,12 +3221,6 @@ TRUE;
 		{
 			sscanf(buf + strlen("borg_respawn_class =") + 1, "%d",
 				   &borg_respawn_class);
-			continue;
-		}
-		if (prefix(buf, "borg_dump_level ="))
-		{
-			sscanf(buf + strlen("borg_dump_level =") + 1, "%d",
-				   &borg_dump_level);
 			continue;
 		}
 
