@@ -244,9 +244,12 @@ static errr Term_clear_gtk(void)
 	int width, height;
 
 	term_data *td = (term_data*)(Term->data);
+	
+	/* Don't draw to hidden windows */
+	if (!td->shown) return (0);
 
-	g_assert(td->pixmap != NULL);
-	g_assert(td->drawing_area->window != 0);
+	g_assert(td->pixmap);
+	g_assert(td->drawing_area->window);
 
     /* Find proper dimensions for rectangle */
     gdk_window_get_size(td->drawing_area->window, &width, &height);
@@ -709,8 +712,8 @@ static errr Term_wipe_gtk(int x, int y, int n)
 	/* Don't draw to hidden windows */
 	if (!td->shown) return (0);
 
-	g_assert(td->pixmap != NULL);
-	g_assert(td->drawing_area->window != 0);
+	g_assert(td->pixmap);
+	g_assert(td->drawing_area->window);
 
 	gdk_draw_rectangle(td->pixmap, td->drawing_area->style->black_gc,
 					TRUE, x * td->font_wid, y * td->font_hgt,
@@ -742,8 +745,8 @@ static errr Term_text_gtk(int x, int y, int n, byte a, cptr s)
 	/* Create the colour structure */
 	color = colours[a].pixel;
 
-	g_assert(td->pixmap != NULL);
-	g_assert(td->drawing_area->window != 0);
+	g_assert(td->pixmap);
+	g_assert(td->drawing_area->window);
 
 	/* Set the forground colour */
 	gdk_gc_set_foreground(td->gc, &color);
@@ -777,8 +780,8 @@ static errr Term_curs_gtk(int x, int y)
 	/* Don't draw to hidden windows */
 	if (!td->shown) return (0);
 
-	g_assert(td->pixmap != NULL);
-	g_assert(td->drawing_area->window != 0);
+	g_assert(td->pixmap);
+	g_assert(td->drawing_area->window);
 
 	gdk_gc_set_foreground(td->gc, &colours[TERM_YELLOW].pixel);
 
@@ -814,7 +817,6 @@ static errr Term_pict_gtk(int x, int y, int n, const byte *ap, const char *cp)
 	byte a;
 	char c;
 
-
 #ifdef USE_TRANSPARENCY
 	byte ta;
 	char tc;
@@ -829,11 +831,15 @@ static errr Term_pict_gtk(int x, int y, int n, const byte *ap, const char *cp)
 	
 	/* Don't draw to hidden windows */
 	if (!td->shown) return (0);
+	
+	/* Paranoia */
+	g_assert(td->tiles);
+	g_assert(use_graphics);
 
 	y *= td->font_hgt;
 	x *= td->font_wid;
 
-	for (i = 0; i < n; ++i)
+	for (i = 0; i < n; i++)
 	{
 		a = *ap++;
 		c = *cp++;
@@ -852,7 +858,7 @@ static errr Term_pict_gtk(int x, int y, int n, const byte *ap, const char *cp)
 		y2 = (ta&0x7F) * td->font_hgt;
 
 		/* Optimise the common case */
-		if ((x1 == x2) && (y1 == y2))
+		if (!use_transparency || ((x1 == x2) && (y1 == y2)))
 		{
 			/* Draw object / terrain */
 			gdk_draw_image(td->pixmap, td->gc, td->tiles,
@@ -890,8 +896,6 @@ static errr Term_pict_gtk(int x, int y, int n, const byte *ap, const char *cp)
 
 #else /* USE_TRANSPARENCY */
 
-		
-		
 		/* Draw object / terrain */
 		gdk_draw_image(td->pixmap, td->gc, td->tiles,
 				 x1, y1, x, y,
@@ -1001,6 +1005,9 @@ static errr Term_xtra_gtk(int n, int v)
  */
 static void init_pixmap(term_data *td)
 {
+	/* Paranoia */
+	g_assert(td->drawing_area->window);
+	
 	if (td->pixmap)
 	{
 		/* Delete the old pixmap */
@@ -1028,13 +1035,13 @@ static void gtk_message(cptr msg)
 
 	/* Create the widgets */
 	dialog = gtk_dialog_new();
-	g_assert(dialog != NULL);
+	g_assert(dialog);
 
 	label = gtk_label_new(msg);
-	g_assert(label != NULL);
+	g_assert(label);
 
 	ok_button = gtk_button_new_with_label("OK");
-	g_assert(ok_button != NULL);
+	g_assert(ok_button);
 
 	/* Ensure that the dialogue box is destroyed when OK is clicked */
 	gtk_signal_connect_object(GTK_OBJECT(ok_button), "clicked",
@@ -1124,7 +1131,7 @@ static void font_ok_callback(GtkWidget *widget, GtkWidget *font_selector)
 	/* Hack - ignore widget */
 	(void) widget;
 	
-	g_assert(td != NULL);
+	g_assert(td);
 	
 	/* Hack -- activate current term */
 	Term_activate(&td->t);
@@ -1274,7 +1281,7 @@ static void realize_event_handler(GtkWidget *widget, gpointer user_data)
 	term_data *td = (term_data *)user_data;
 	
 	/* Paranoia */
-	g_assert(td->drawing_area->window != 0);
+	g_assert(td->drawing_area->window);
 
 	/* Create graphic context */
 	td->gc = gdk_gc_new(td->drawing_area->window);
@@ -1288,7 +1295,7 @@ static void realize_event_handler(GtkWidget *widget, gpointer user_data)
 	
 
 	/* Clear the window */
-	gdk_draw_rectangle(widget->window, widget->style->black_gc,
+	gdk_draw_rectangle(td->drawing_area->window, widget->style->black_gc,
 		TRUE, 0, 0,
 		td->cols * td->font_wid,
 		td->rows * td->font_hgt);
@@ -1478,11 +1485,27 @@ static bool set_graph_mode(int graphmode)
 		pick_graphics(old_mode, &xsize, &ysize, filename);
 	
 		/* Failed */
-		return FALSE;
+		return (FALSE);
 	}
 	
 	/* Erase the old graphics */
 	graf_nuke();
+	
+	/* Load graphics */
+	if (use_graphics)
+	{
+		/* Read the bitmap */
+		ReadBMP(filename);
+
+		/* Paranoia */
+		if (!tiles_norm)
+		{
+			plog("Could not load tiles properly.");
+			
+			/* No tiles */
+			use_graphics = GRAPHICS_NONE;
+		}
+	}
 	
 	/* Init the new graphics */
 	graf_init();
@@ -1520,11 +1543,11 @@ static void change_graf_mode_event_handler(GtkButton *was_clicked,
 #else /* ANGBAND_2_8_1 */
 			reset_visuals(TRUE);
 #endif /* ANGBAND_2_8_1 */
-			
-			
-			/* Redraw the screen if worked */
-			Term_redraw();
+
+			/* Hack - force redraw */
+			Term_key_push(KTRL('R'));
 		}
+
 	}
 }
 
@@ -1785,9 +1808,6 @@ static gboolean expose_event_handler(GtkWidget *widget, GdkEventExpose *event,
 	/* Check height and width - and then resize */
 	if ((width != td->cols) || (height != td->rows))
 	{
-		/* Delete the old pixmap */
-		gdk_pixmap_unref(td->pixmap);
-	
 		/* Save correct size */
 		td->cols = width;
 		td->rows = height;
@@ -1813,7 +1833,7 @@ static gboolean expose_event_handler(GtkWidget *widget, GdkEventExpose *event,
 	/* Just redraw the exposed part */
 	else if (pixmap)
 	{
-		g_assert(widget->window != 0);
+		g_assert(widget->window);
 
 		gdk_draw_pixmap(widget->window, td->gc, pixmap,
 		                event->area.x, event->area.y,
@@ -1833,15 +1853,15 @@ static GtkWidget *get_widget_from_path(cptr path)
 {
 	GtkItemFactory *item_factory;
 	GtkWidget *widget;
-
+	
 	/* Paranoia */
-	if (path == NULL) return (NULL);
+	g_assert(path);
 
 	/* Look up item factory */
 	item_factory = gtk_item_factory_from_path(path);
 
 	/* Paranoia */
-	g_assert(item_factory != NULL);
+	g_assert(item_factory);
 
 	/* Look up widget */
 	widget = gtk_item_factory_get_widget(item_factory, path);
@@ -1864,7 +1884,7 @@ void enable_menu_item(cptr path, bool enabled)
 	widget = get_widget_from_path(path);
 
 	/* Paranoia */
-	g_assert(widget != NULL);
+	g_assert(widget);
 	g_assert(GTK_IS_MENU_ITEM(widget));
 
 	/*
@@ -1886,7 +1906,7 @@ void check_menu_item(cptr path, bool checked)
 	widget = get_widget_from_path(path);
 
 	/* Paranoia */
-	g_assert(widget != NULL);
+	g_assert(widget);
 	g_assert(GTK_IS_CHECK_MENU_ITEM(widget));
 
 	/* Put/remove check mark
@@ -2013,7 +2033,7 @@ static void add_menu_update_callbacks(void)
 	widget = get_widget_from_path("<Angband>/File");
 
 	/* Paranoia */
-	g_assert(widget != NULL);
+	g_assert(widget);
 	g_assert(GTK_IS_MENU(widget));
 
 	/* Assign callback */
@@ -2024,7 +2044,7 @@ static void add_menu_update_callbacks(void)
 	widget = get_widget_from_path("<Angband>/Terms");
 
 	/* Paranoia */
-	g_assert(widget != NULL);
+	g_assert(widget);
 	g_assert(GTK_IS_MENU(widget));
 
 	/* Assign callback */
@@ -2035,7 +2055,7 @@ static void add_menu_update_callbacks(void)
 	widget = get_widget_from_path("<Angband>/Options/Font");
 
 	/* Paranoia */
-	g_assert(widget != NULL);
+	g_assert(widget);
 	g_assert(GTK_IS_MENU(widget));
 
 	/* Assign callback */
@@ -2048,7 +2068,7 @@ static void add_menu_update_callbacks(void)
 	widget = get_widget_from_path("<Angband>/Options/Graphics");
 
 	/* Paranoia */
-	g_assert(widget != NULL);
+	g_assert(widget);
 	g_assert(GTK_IS_MENU(widget));
 
 	/* Assign callback */
@@ -2327,14 +2347,14 @@ GtkWidget *get_main_menu(term_data *td)
 
 	/* Allocate an accelerator group */
 	accel_group = gtk_accel_group_new();
-	g_assert(accel_group != NULL);
+	g_assert(accel_group);
 
 	/* Initialise the item factory */
 	item_factory = gtk_item_factory_new(
 		GTK_TYPE_MENU_BAR,
 		"<Angband>",
 		accel_group);
-	g_assert(item_factory != NULL);
+	g_assert(item_factory);
 
 	/* Generate the menu items */
 	gtk_item_factory_create_items(
@@ -2550,7 +2570,7 @@ static void init_gtk_window(term_data *td, int i)
 	{
 		/* Build the main menu bar */
 		menu_bar = get_main_menu(td);
-		g_assert(menu_bar != NULL);
+		g_assert(menu_bar);
 
 		/* Since it's tedious to scatter the menu update code around */
 		add_menu_update_callbacks();
@@ -2580,16 +2600,6 @@ static void init_gtk_window(term_data *td, int i)
 		
 	/* Show the widgets - use of td->shown is a dirty hack XXX XXX */
 	if (!td->shown) return;
-	
-	/* Show the widgets */
-	/* gtk_widget_show_all(td->window); */
-	
-	/* g_assert(td->drawing_area->window != 0); */
-	
-	
-
-	/* Create pixmap */
-	/* init_pixmap(td); */
 
 	/* Show the widgets */
 	gtk_widget_show_all(td->window);
