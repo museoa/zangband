@@ -1,12 +1,12 @@
 /*
 ** Lua binding: misc
-** Generated automatically by tolua 4.0a - angband on Sun Dec 30 21:34:42 2001.
+** Generated automatically by tolua 4.0a - angband.
 */
 
 #include "lua/tolua.h"
 
 /* Exported function */
-int tolua_misc_open (lua_State* tolua_S);
+int  tolua_misc_open (lua_State* tolua_S);
 void tolua_misc_close (lua_State* tolua_S);
 
 #include "angband.h"
