@@ -1998,6 +1998,33 @@ void test_decision_tree(void)
 	msg_format("Type returned: %d .", type);
 }
 
+/*
+ * Test to see that there are no null nodes in the decision tree.
+ */
+static void test_wild_data(void)
+{
+	int i;
+	
+	for (i=0; i < d_tree_count; i++)
+	{
+		if ((wild_choice_tree[i].ptrnode1 == 0) || 
+			(wild_choice_tree[i].ptrnode2 == 0))
+		{
+			msg_format("Missing value at %d ", i);
+			msg_format("Cutoff %d ", wild_choice_tree[i].cutoff);
+			
+			/*
+			 * The "missing value" will be close to the error in
+			 * w_info.txt
+			 *
+			 * The cutoff provides a hint as to the lawmax value of
+			 * the error.  (Note - if this is zero - the error is
+			 * in a "leaf" and is a bug in the code.)
+			 */
+		}	
+	}
+}
+
 
 /* Delete a wilderness block */
 static void del_block(blk_ptr block_ptr)
@@ -2508,7 +2535,7 @@ static void make_wild_01(blk_ptr block_ptr, byte *data)
 static void make_wild_02(blk_ptr block_ptr, byte *data)
 {
 	int i, j, k;
-	byte new_feat, feat;
+	byte new_feat, feat, chance;
 	
 	for(i = 0; i < WILD_BLOCK_SIZE; i++)
 	{
@@ -2532,10 +2559,15 @@ static void make_wild_02(blk_ptr block_ptr, byte *data)
 				feat = new_feat;
 				
 				/* Done counting? */
-				if (k == 4) break;
+				if (k == 3) break;
+				
+				chance = data[k * 2 + 1];
+				
+				/* Exit if chance is zero */
+				if (!chance) break;
 				
 				/* Stop if chance fails */
-				if (rand_int(data[k * 2 + 1])) break;
+				if (rand_int(chance + 1)) break;
 				
 				/* Increment counter + loop */
 				k++;
@@ -2647,7 +2679,7 @@ void blend_helper(cave_type *c_ptr, byte *data,int g_type)
 			break;
 					
 		default:
-		quit("Illegal wilderness block type.");
+		msg_format("Illegal wilderness type %d ", g_type);
 	}
 }
 
@@ -3906,6 +3938,9 @@ void create_wilderness(void)
 	u16b sea_level;
 	
 	long hgt, pop, law, hgt_scale, pop_scale, law_scale;
+	
+	/* Test wilderness generation information */
+	test_wild_data();
 	
 	/* Minimal wilderness */
 	if (vanilla_town)

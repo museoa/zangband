@@ -2480,6 +2480,9 @@ errr init_w_info_txt(FILE *fp, char *buf)
 
 	/* Just before the first line */
 	error_line = -1;
+	
+	/* The last index used */
+	error_idx = -1;
 
 	/* Parse */
 	while (0 == my_fgets(fp, buf, 1024))
@@ -2493,6 +2496,27 @@ errr init_w_info_txt(FILE *fp, char *buf)
 		/* Verify correct "colon" format */
 		if (buf[1] != ':') return (1);
 
+		/* Process 'N' for "Number" (one line only) */
+		if (buf[0] == 'N')
+		{
+			/* Get the index */
+			i = atoi(buf+2);
+
+			/* Verify information */
+			if (i < error_idx) return (4);
+			
+			/* Check to see if there is room in array */
+			if (i >= max_w_block) return (7);
+			
+			/* Save the index */
+			error_idx = i;
+			
+			/* point to new position in array */
+			w_ptr = &wild_gen_data[i];
+			
+			continue;		
+		}
+		
 		/* Process 'G' for "Graphics" (one line only) */
 		if (buf[0] == 'G')
 		{
@@ -2508,15 +2532,6 @@ errr init_w_info_txt(FILE *fp, char *buf)
 
 			/* Paranoia */
 			if (tmp < 0) return (1);
-
-			/* Increase the wild. gen. type */
-			i++;
-			
-			/* Check to see if there is room in array */
-			if (i >= max_w_block) return (7);
-			
-			/* point to new position in array */
-			w_ptr = &wild_gen_data[i];
 			
 			/* Save the values */
 			w_ptr->w_attr = tmp;
