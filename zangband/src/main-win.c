@@ -18,8 +18,7 @@
  * make sure to obtain various extra files as described below.
  *
  * The Windows version has been tested to compile with Visual C++ 5.0
- * and 6.0, CygWin 2.01 Beta, Borland C++ 5.5 command line tools, and
- * lcc-win32.
+ * and 6.0, Cygwin 1.0, Borland C++ 5.5 command line tools, and lcc-win32.
  *
  *
  * See also "main-dos.c" and "main-ibm.c".
@@ -246,6 +245,8 @@
  */
 #include <windows.h>
 
+#ifdef USE_SOUND
+
 /*
  * Exclude parts of MMSYSTEM.H that are not needed
  */
@@ -259,14 +260,9 @@
 #define MMNOMMIO         /* Multimedia file I/O support */
 #define MMNOMMSYSTEM     /* General MMSYSTEM functions */
 
-/*
- * Include some more files. Note: the Cygnus Cygwin compiler
- * doesn't use mmsystem.h instead it includes the winmm library
- * which performs a similar function.
- */
-#ifndef __CYGWIN__
-# include <mmsystem.h>
-#endif /* __CYGWIN__ */
+#include <mmsystem.h>
+
+#endif /* USE_SOUND */
 
 #include <commdlg.h>
 
@@ -3817,8 +3813,8 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
 							/* Re-adjust panel borders and redraw map */
 							verify_panel();
 
-							/* HACK - Force complete redraw */
-							do_cmd_redraw();
+							/* Redraw the main window */
+							do_cmd_redraw_term(0);
 						}
 					}
 
