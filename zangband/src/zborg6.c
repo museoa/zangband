@@ -1631,11 +1631,10 @@ bool borg_find_dungeon(void)
 	int p;
 
 	/* Do this only on the surface */
-	if (bp_ptr->depth || !vanilla_town) return (FALSE);
+	if (bp_ptr->depth || vanilla_town) return (FALSE);
 
 	/* No trekking through the wilderness in the dark */
-	if (!vanilla_town &&
-		(bp_ptr->hour < 6 || bp_ptr->hour > 17)) return (FALSE);
+	if (bp_ptr->hour < 6 || bp_ptr->hour > 17) return (FALSE);
 
 	/* Not when the borg is exploring the wilderness */
 	if (goal && goal != GOAL_CAVE) return (FALSE);
