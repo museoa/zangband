@@ -248,7 +248,7 @@ void borg_list_info(byte list_type)
 		default:
 		{
 			/* Paranoia */
-			quit(format("Unrecognised list type %d", list_type));
+			quit_fmt("Unrecognised list type %d", list_type);
 		}
 	}
 

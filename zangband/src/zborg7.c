@@ -1333,7 +1333,7 @@ bool borg_recharging(void)
 			borg_activate_artifact(ART_THINGOL, FALSE))
 		{
 			/* Message */
-			borg_note(format("Recharging %s", l_ptr->o_name));
+			borg_note_fmt("Recharging %s", l_ptr->o_name);
 
 			/* Recharge the item */
 			borg_keypress(I2A(i));
@@ -1472,11 +1472,16 @@ static bool borg_consume(list_item *l_ptr)
  */
 static void borg_destroy_item(list_item *l_ptr, int slot, int number)
 {
+	char buf[4];
+
 	/* Message */
-	borg_note(format("# Destroying %s.", l_ptr->o_name));
+	borg_note_fmt("# Destroying %s.", l_ptr->o_name);
 
 	borg_keypress('0');
-	borg_keypresses(format("%d", number));
+	
+	/* Get string corresponding to number */
+	(void)strnfmt(buf, 4, "%d", number);
+	borg_keypresses(buf);
 
 	/* Destroy that item */
 	if (!(l_ptr->kn_flags3 & TR3_INSTA_ART))
@@ -1499,9 +1504,9 @@ static void borg_destroy_item(list_item *l_ptr, int slot, int number)
 
 			bad_obj_x[a] = c_x;
 			bad_obj_y[a] = c_y;
-			borg_note(format
+			borg_note_fmt
 					  ("# Crappy artifact at %d,%d", bad_obj_x[a],
-					   bad_obj_y[a]));
+					   bad_obj_y[a]);
 			break;
 		}
 	}
@@ -1622,11 +1627,10 @@ bool borg_crush_junk(void)
 		if (strstr(l_ptr->o_name, "{terrible")) continue;
 
 		/* hack check anything interesting */
-		if (borg_obj_is_ego_art(l_ptr) &&
-			!borg_obj_known_full(l_ptr)) continue;
+		if (borg_obj_is_ego_art(l_ptr) && !borg_obj_known_full(l_ptr)) continue;
 
 		/* Message */
-		borg_note(format("# Junking junk (valued at %d)", value));
+		borg_note_fmt("# Junking junk (valued at %d)", value);
 
 		/* Destroy the item */
 		borg_destroy_item(l_ptr, i, 1);
@@ -1691,8 +1695,7 @@ bool borg_crush_hole(void)
 		if (l_ptr->tval == mp_ptr->spell_book) continue;
 
 		/* Hack -- skip artifacts and ego items not fully identified */
-		if (borg_obj_is_ego_art(l_ptr) &&
-			!borg_obj_known_full(l_ptr)) continue;
+		if (borg_obj_is_ego_art(l_ptr) && !borg_obj_known_full(l_ptr)) continue;
 		if (strstr(l_ptr->o_name, "{special")) continue;
 		if (strstr(l_ptr->o_name, "{terrible")) continue;
 
@@ -1804,8 +1807,7 @@ bool borg_crush_slow(void)
 		if (!borg_obj_known_p(l_ptr) && !borg_item_icky(l_ptr)) continue;
 
 		/* Hack -- Skip artifacts */
-		if (borg_obj_is_ego_art(l_ptr) &&
-			!borg_obj_known_full(l_ptr)) continue;
+		if (borg_obj_is_ego_art(l_ptr) && !borg_obj_known_full(l_ptr)) continue;
 		if (strstr(l_ptr->o_name, "{special")) continue;
 		if (strstr(l_ptr->o_name, "{terrible")) continue;
 
@@ -2052,7 +2054,7 @@ bool borg_test_stuff(bool star_id)
 					borg_read_scroll(SV_SCROLL_STAR_IDENTIFY))
 				{
 					/* Log -- may be cancelled */
-					borg_note(format("# *IDENTIFY*ing %s.", l_ptr->o_name));
+					borg_note_fmt("# *IDENTIFY*ing %s.", l_ptr->o_name);
 
 
 					/* Select the item */
@@ -2082,7 +2084,7 @@ bool borg_test_stuff(bool star_id)
 					borg_read_scroll(SV_SCROLL_IDENTIFY))
 				{
 					/* Log -- may be cancelled */
-					borg_note(format("# Identifying %s.", l_ptr->o_name));
+					borg_note_fmt("# Identifying %s.", l_ptr->o_name);
 
 					/* Select the item */
 					borg_keypress(I2A(b_i));
@@ -2106,7 +2108,7 @@ bool borg_test_stuff(bool star_id)
 					borg_read_scroll(SV_SCROLL_STAR_IDENTIFY))
 				{
 					/* Log -- may be cancelled */
-					borg_note(format("# *IDENTIFY*ing %s.", l_ptr->o_name));
+					borg_note_fmt("# *IDENTIFY*ing %s.", l_ptr->o_name);
 
 					/* Select the equipment */
 					borg_keypress('/');
@@ -2145,7 +2147,7 @@ bool borg_test_stuff(bool star_id)
 					borg_read_scroll(SV_SCROLL_IDENTIFY))
 				{
 					/* Log -- may be cancelled */
-					borg_note(format("# Identifying %s.", l_ptr->o_name));
+					borg_note_fmt("# Identifying %s.", l_ptr->o_name);
 
 					/* Select the equipment */
 					borg_keypress('/');
@@ -2282,7 +2284,7 @@ static bool borg_wear_rings(void)
 		borg_note("# Putting on ring.");
 
 		/* Log */
-		borg_note(format("# Wearing %s.", l_ptr->o_name));
+		borg_note_fmt("# Wearing %s.", l_ptr->o_name);
 
 		/* Wear it */
 		borg_keypress('w');
@@ -2386,7 +2388,7 @@ bool borg_remove_stuff(void)
 		l_ptr = &equipment[b_i];
 
 		/* Log */
-		borg_note(format("# Removing %s.", l_ptr->o_name));
+		borg_note_fmt("# Removing %s.", l_ptr->o_name);
 
 		/* Wear it */
 		borg_keypress('t');
@@ -2433,7 +2435,7 @@ bool borg_wear_stuff(void)
 
 	b_p = borg_power();
 
-	borg_note(format("# Trying to pick best, Old Power (%ld)", b_p));
+	borg_note_fmt("# Trying to pick best, Old Power (%ld)", b_p);
 
 	/* Require an empty slot */
 	if (inven_num >= INVEN_PACK - 1) return (FALSE);
@@ -2520,7 +2522,7 @@ bool borg_wear_stuff(void)
 		l_ptr = &inventory[b_i];
 
 		/* Log */
-		borg_note(format("# Wearing %s. New Power (%ld)", l_ptr->o_name, b_p));
+		borg_note_fmt("# Wearing %s. New Power (%ld)", l_ptr->o_name, b_p);
 
 		/* Wear it */
 		borg_keypress('w');
@@ -2610,7 +2612,7 @@ bool borg_play_magic(bool bored)
 		borg_magic *as = &borg_magics[b_realm][b_book][b_spell];
 
 		/* Debugging Info */
-		borg_note(format("# Studying %s spell %s.", as->realm_name, as->name));
+		borg_note_fmt("# Studying %s spell %s.", as->realm_name, as->name);
 
 		/* Learn the spell */
 		borg_keypress('G');
@@ -2916,9 +2918,9 @@ bool borg_leave_level(bool bored)
 				{
 					cptr reason = borg_prepared(borg_skill[BI_MAXDEPTH]);
 					borg_slow_return = TRUE;
-					borg_note(format
+					borg_note_fmt
 							  ("# Way too scary to recall down there!   %s",
-							   reason));
+							   reason);
 					borg_slow_return = FALSE;
 				}
 				else
@@ -2969,8 +2971,8 @@ bool borg_leave_level(bool bored)
 		cptr reason = borg_prepared(borg_skill[BI_CDEPTH] + 1);
 		g = -1;
 		borg_slow_return = TRUE;
-		borg_note(format("# heading up (bored and unable to dive: %s)",
-						 reason));
+		borg_note_fmt("# heading up (bored and unable to dive: %s)",
+						 reason);
 		borg_slow_return = FALSE;
 	}
 
@@ -2983,7 +2985,7 @@ bool borg_leave_level(bool bored)
 		cptr reason = borg_prepared(borg_skill[BI_CDEPTH]);
 
 		borg_slow_return = TRUE;
-		borg_note(format("# heading up (too deep: %s)", reason));
+		borg_note_fmt("# heading up (too deep: %s)", reason);
 		borg_slow_return = FALSE;
 		g = -1;
 
@@ -2992,8 +2994,8 @@ bool borg_leave_level(bool bored)
 		{
 			cptr reason = borg_prepared(borg_skill[BI_CDEPTH]);
 
-			borg_note(format("# returning to town to restock(too deep: %s)",
-							 reason));
+			borg_note_fmt("# returning to town to restock(too deep: %s)",
+							 reason);
 			goal_rising = TRUE;
 		}
 
@@ -3002,7 +3004,7 @@ bool borg_leave_level(bool bored)
 		{
 			cptr reason = borg_prepared(borg_skill[BI_CDEPTH]);
 			borg_slow_return = TRUE;
-			borg_note(format("# returning to town (too deep: %s)", reason));
+			borg_note_fmt("# returning to town (too deep: %s)", reason);
 			goal_rising = TRUE;
 			borg_slow_return = FALSE;
 		}

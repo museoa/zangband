@@ -1307,18 +1307,10 @@ bool borg_projectable_pure(int x1, int y1, int x2, int y2)
  */
 
 /*
- * Old values
- */
-static int o_c_x = -1;	/* Old location */
-static int o_c_y = -1;	/* Old location */
-
-/*
  * Strategy flags -- recalculate things
  */
 
 bool borg_danger_wipe = FALSE;	/* Recalculate danger */
-
-static bool borg_do_update_view = FALSE;	/* Recalculate view */
 
 /*
  * Hack -- message memory
@@ -1429,7 +1421,7 @@ static int borg_guess_race_name(cptr who)
 	if (!prefix(who, "The "))
 	{
 		/* Message */
-		borg_oops(format("# Assuming unknown (%s)", who));
+		borg_oops_fmt("# Assuming unknown (%s)", who);
 
 		/* Oops */
 		return (0);
@@ -1444,7 +1436,7 @@ static int borg_guess_race_name(cptr who)
 		who = partial;
 
 		/* Message */
-		borg_note(format("# Handling offscreen monster (%s)", who));
+		borg_note_fmt("# Handling offscreen monster (%s)", who);
 	}
 
 	/* Skip the prefix */
@@ -1506,7 +1498,7 @@ static int borg_guess_race_name(cptr who)
 
 
 	/* Message */
-	borg_oops(format("# Assuming unknown (%s)", who));
+	borg_oops_fmt("# Assuming unknown (%s)", who);
 
 	/* Oops */
 	return (0);
@@ -1539,8 +1531,8 @@ static void borg_delete_take(int i)
 	}
 
 	/* Note */
-	borg_note(format("# Forgetting an object '%s' at (%d,%d)",
-					 (k_name + k_info[take->k_idx].name), take->x, take->y));
+	borg_note_fmt("# Forgetting an object '%s' at (%d,%d)",
+					 (k_name + k_info[take->k_idx].name), take->x, take->y);
 
 	/* Kill the object */
 	WIPE(take, borg_take);
@@ -1611,7 +1603,7 @@ static int borg_guess_kidx(char unknown)
 	if (b_i != -1) return (b_i);
 
 	/* Didn't find anything */
-	borg_note(format("# Cannot guess object '%c'", unknown));
+	borg_note_fmt("# Cannot guess object '%c'", unknown);
 
 	return (1);
 }
@@ -1682,8 +1674,8 @@ static int borg_new_take(int k_idx, char unknown, int x, int y)
 	take->y = y;
 
 	/* Note */
-	borg_note(format("# Creating an object '%s' at (%d,%d)",
-					 (k_name + k_info[take->k_idx].name), x, y));
+	borg_note_fmt("# Creating an object '%s' at (%d,%d)",
+					 (k_name + k_info[take->k_idx].name), x, y);
 
 	/* Wipe goals */
 	goal = 0;
@@ -1731,9 +1723,9 @@ void borg_delete_kill(int who, cptr reason)
 	if (!kill->r_idx) return;
 
 	/* Note */
-	borg_note(format("# Removing a monster '%s' (%i) at (%d,%d) [%s]",
+	borg_note_fmt("# Removing a monster '%s' (%i) at (%d,%d) [%s]",
 					 (r_name + r_info[kill->r_idx].name), who,
-					 kill->x, kill->y, reason));
+					 kill->x, kill->y, reason);
 
 	/* Kill the monster */
 	WIPE(kill, borg_kill);
@@ -1792,9 +1784,9 @@ static void borg_merge_kill(int who)
 	if (!kill->r_idx) return;
 
 	/* Note */
-	borg_note(format("# Merging a monster '%s' (%i) at (%d,%d)",
+	borg_note_fmt("# Merging a monster '%s' (%i) at (%d,%d)",
 					 (r_name + r_info[kill->r_idx].name), who,
-					 kill->x, kill->y));
+					 kill->x, kill->y);
 
 	/* Kill the monster */
 	WIPE(kill, borg_kill);
@@ -1918,16 +1910,8 @@ static void borg_new_kill(int r_idx, int n, int x, int y)
 	borg_update_kill(n);
 
 	/* Note */
-	borg_note(format("# Creating a monster '%s' (%d)",
-					 (r_name + r_info[kill->r_idx].name), n));
-
-#if 0
-	/* Danger of this monster to its grid (used later) */
-	p = borg_danger(x, y, 1, FALSE);
-
-	/* Add some regional fear (2%) due to this monster */
-	borg_fear_grid(NULL, x, y, p * 2 / 100, TRUE);
-#endif /* 0 */
+	borg_note_fmt("# Creating a monster '%s' (%d)",
+					 (r_name + r_info[kill->r_idx].name), n);
 
 	/* Recalculate danger */
 	borg_danger_wipe = TRUE;
@@ -2060,13 +2044,13 @@ static void observe_kill_move(int new_type, int old_type, int dist)
 
 			/* Move the old monster to the used list */
 			kill1->type = BORG_MON_USED;
+			
+			/* Note */
+			borg_note_fmt("# Tracking monster (%d) from (%d,%d) to (%d,%d)",
+							 i, kill1->x, kill1->y, x, y);
 
 			/* Remove the new monster */
 			borg_merge_kill(j);
-
-			/* Note */
-			borg_note(format("# Tracking monster (%d) from (%d,%d) to (%d,%d)",
-							 i, kill1->x, kill1->y, x, y));
 
 			/* Change the location of the old one */
 			kill1->x = x;
@@ -2111,9 +2095,14 @@ static bool remove_bad_kills(u16b who)
 	}
 
 	/* Are we supposed to see this, but don't? */
-	if (borg_follow_kill_aux(who, ox, oy))
+	if (borg_follow_kill_aux(who, ox, oy) &&
+		(map_loc(ox, oy)->monster != kill->r_idx))
 	{
-		borg_delete_kill(who, "vanished");
+		char buf[100];
+		
+		(void)strnfmt(buf, 100, "vanished : %d, %d",map_loc(ox, oy)->monster, kill->r_idx);
+		
+		borg_delete_kill(who, buf);
 		return (TRUE);
 	}
 
@@ -2226,8 +2215,8 @@ static int borg_locate_kill(cptr who, int x, int y, int r)
 	r_ptr = &r_info[r_idx];
 
 	/* Note */
-	borg_note(format("# There is a monster '%s' within %d grids of %d,%d",
-					 (r_name + r_ptr->name), r, x, y));
+	borg_note_fmt("# There is a monster '%s' within %d grids of %d,%d",
+					 (r_name + r_ptr->name), r, x, y);
 
 	/* Hack -- count racial appearances */
 	if (borg_race_count[r_idx] < MAX_SHORT) borg_race_count[r_idx]++;
@@ -2258,11 +2247,11 @@ static int borg_locate_kill(cptr who, int x, int y, int r)
 		if (kill->r_idx != r_idx) continue;
 
 		/* Distance away */
-		d = distance(kill->y, kill->x, y, x);
+		d = distance(kill->x, kill->y, x, y);
 
 		/* In a darkened room with ESP we can get hit and ignore it */
 		/* Check distance */
-		if (d > r) continue;
+		if (d > r + 1) continue;
 
 		/* Hopefully this will add fear to our grid */
 		if (!borg_projectable(kill->x, kill->y, x, y)) continue;
@@ -2281,9 +2270,9 @@ static int borg_locate_kill(cptr who, int x, int y, int r)
 		kill = &borg_kills[b_i];
 
 		/* Note */
-		borg_note(format("# Matched a monster '%s' at (%d,%d)",
+		borg_note_fmt("# Matched a monster '%s' at (%d,%d)",
 						 (r_name + r_info[kill->r_idx].name),
-						 kill->x, kill->y));
+						 kill->x, kill->y);
 
 
 		/* Index */
@@ -2294,8 +2283,8 @@ static int borg_locate_kill(cptr who, int x, int y, int r)
 	/*** Oops ***/
 
 	/* Note */
-	borg_note(format("# Ignoring a monster '%s' near (%d,%d)",
-					 (r_name + r_ptr->name), x, y));
+	borg_note_fmt("# Ignoring a monster '%s' near (%d,%d)",
+					 (r_name + r_ptr->name), x, y);
 
 	/* Oops */
 	/* this is the case where we know the name of the monster */
@@ -2363,9 +2352,8 @@ static bool borg_handle_self(cptr str)
 	else if (prefix(str, "lite"))
 	{
 		/* Message */
-		borg_note(format("# Called lite at (%d,%d)", o_c_x, o_c_y));
+		borg_note("# Called lite");
 	}
-
 
 	/* Handle "detect walls" */
 	else if (prefix(str, "wall"))
@@ -2538,8 +2526,8 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 			if ((bt_ptr->unknown != map->unknown) ||
 				((bt_ptr->k_idx != map->object) && !map->unknown))
 			{
-				borg_note(format("# The object %d is different! (%d,%d)",
-								 mb_ptr->take, bt_ptr->k_idx, map->object));
+				borg_note_fmt("# The object %d is different! (%d,%d)",
+								 mb_ptr->take, bt_ptr->k_idx, map->object);
 
 				/* The object is different- delete it */
 				borg_delete_take(mb_ptr->take);
@@ -2559,7 +2547,7 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 		/* Do we think there is an object here that we cannot see? */
 		if (mb_ptr->take && (map->flags & MAP_SEEN))
 		{
-			borg_note(format("# Removing missing object (%d)", mb_ptr->take));
+			borg_note_fmt("# Removing missing object (%d)", mb_ptr->take);
 
 			/* The object is no longer here - delete it */
 			borg_delete_take(mb_ptr->take);
@@ -2738,9 +2726,6 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 
 		/* Remove this grid from any flow */
 		mb_ptr->info &= ~(BORG_MAP_ICKY | BORG_MAP_KNOW);
-
-		/* Recalculate the view (if needed) */
-		if (mb_ptr->info & BORG_MAP_VIEW) borg_do_update_view = TRUE;
 	}
 
 	/* Finally - chain into the old hook, if it exists */
@@ -2903,13 +2888,13 @@ static void borg_fear_grid(cptr who, int x, int y, uint k, bool seen_guy)
 	/* Messages */
 	if (seen_guy)
 	{
-		borg_note(format("#   Fearing region value %d.", k));
+		borg_note_fmt("#   Fearing region value %d.", k);
 	}
 	else
 	{
-		borg_note(format
+		borg_note_fmt
 				  ("# Fearing grid (%d,%d) value %d because of a non-LOS %s", x,
-				   y, k, who));
+				   y, k, who);
 	}
 
 	/* Current region */
@@ -3751,8 +3736,46 @@ void borg_update(void)
 	cptr msg;
 
 	cptr what;
+	
+	/*** Update the map ***/
 
-	bool reset = FALSE;
+	/* Update the map */
+	borg_update_map();
+
+	/* Update the objects */
+	delete_dead_objects();
+
+	/* Assume I can shoot here */
+	successful_target = 0;
+
+	/* Update the view */
+	borg_update_view();
+
+	/*** Track monsters ***/
+
+	/* New monsters near 'moved' monsters */
+	observe_kill_move(BORG_MON_NEW, BORG_MON_MOVE, 1);
+	observe_kill_move(BORG_MON_NEW, BORG_MON_MOVE, 2);
+	observe_kill_move(BORG_MON_NEW, BORG_MON_MOVE, 3);
+
+	/* New monsters near 'old forgotten' monsters */
+	observe_kill_move(BORG_MON_NEW, BORG_MON_OLD, 1);
+	observe_kill_move(BORG_MON_NEW, BORG_MON_OLD, 2);
+	observe_kill_move(BORG_MON_NEW, BORG_MON_OLD, 3);
+
+	/* Scan all the remaining 'old' monsters */
+	handle_old_mons(BORG_MON_OLD);
+	handle_old_mons(BORG_MON_MOVE);
+
+	/* Append remaining monsters to used list */
+	borg_append_mon_list(BORG_MON_USED, BORG_MON_NEW);
+	borg_append_mon_list(BORG_MON_USED, BORG_MON_OLD);
+
+	/* Get rid of moved monsters we have not tracked */
+	borg_wipe_mon(BORG_MON_MOVE);
+
+	/* Append used monsters to 'old' list, and delete used monsters */
+	borg_append_mon_list(BORG_MON_OLD, BORG_MON_USED);
 
 	/*** Handle messages ***/
 
@@ -3763,7 +3786,7 @@ void borg_update(void)
 		msg = borg_msg_buf + borg_msg_pos[i];
 
 		/* Note the message */
-		borg_note(format("# %s (+)", msg));
+		borg_note_fmt("# %s (+)", msg);
 	}
 
 	/* Process messages */
@@ -4009,7 +4032,7 @@ void borg_update(void)
 		else if (prefix(msg, "DIED:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, o_c_x, o_c_y, 20)) > 0)
+			if ((k = borg_locate_kill(what, c_x, c_y, 20)) > 0)
 			{
 				borg_count_death(k);
 				borg_delete_kill(k, "died");
@@ -4023,7 +4046,7 @@ void borg_update(void)
 		else if (prefix(msg, "PAIN:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, o_c_x, o_c_y, 20)) > 0)
+			if ((k = borg_locate_kill(what, c_x, c_y, 20)) > 0)
 			{
 				borg_msg_use[i] = 3;
 			}
@@ -4035,7 +4058,7 @@ void borg_update(void)
 		else if (prefix(msg, "HIT_BY:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, o_c_x, o_c_y, 1)) > 0)
+			if ((k = borg_locate_kill(what, c_x, c_y, 1)) > 0)
 			{
 				borg_msg_use[i] = 3;
 			}
@@ -4045,7 +4068,7 @@ void borg_update(void)
 		else if (prefix(msg, "MISS_BY:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, o_c_x, o_c_y, 1)) > 0)
+			if ((k = borg_locate_kill(what, c_x, c_y, 1)) > 0)
 			{
 				borg_msg_use[i] = 3;
 			}
@@ -4063,7 +4086,7 @@ void borg_update(void)
 		else if (prefix(msg, "STATE_AWAKE:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, o_c_x, o_c_y, 20)) > 0)
+			if ((k = borg_locate_kill(what, c_x, c_y, 20)) > 0)
 			{
 				borg_msg_use[i] = 3;
 			}
@@ -4073,7 +4096,7 @@ void borg_update(void)
 		else if (prefix(msg, "STATE__FEAR:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, o_c_x, o_c_y, 20)) > 0)
+			if ((k = borg_locate_kill(what, c_x, c_y, 20)) > 0)
 			{
 				borg_msg_use[i] = 3;
 			}
@@ -4083,7 +4106,7 @@ void borg_update(void)
 		else if (prefix(msg, "STATE__BOLD:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, o_c_x, o_c_y, 20)) > 0)
+			if ((k = borg_locate_kill(what, c_x, c_y, 20)) > 0)
 			{
 				borg_msg_use[i] = 3;
 			}
@@ -4093,27 +4116,13 @@ void borg_update(void)
 		else if (prefix(msg, "SPELL_"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, o_c_x, o_c_y, 20)) > 0)
+			if ((k = borg_locate_kill(what, c_x, c_y, 20)) > 0)
 			{
 				borg_msg_use[i] = 3;
 			}
 		}
 	}
 
-#if 0
-	/* if we didn't successfully target,
-	   mark the first unknown in the path as a wall
-	   If we mark a wall, let the borg shoot again */
-	if (successful_target < 0)
-	{
-		if (successful_target > -10)
-		{
-			successful_target -= 10;
-			if (borg_target_unknown_wall(g_y, g_x))
-				successful_target = 2;
-		}
-	}
-#endif /* 0 */
 	/*** Handle new levels ***/
 
 	/* Hack -- note new levels */
@@ -4153,9 +4162,6 @@ void borg_update(void)
 
 		/* Wipe the danger */
 		borg_danger_wipe = TRUE;
-
-		/* Update some stuff */
-		borg_do_update_view = TRUE;
 
 		/* Examine the world */
 		borg_do_spell = TRUE;
@@ -4232,8 +4238,9 @@ void borg_update(void)
 		/* Hack -- Forget race counters */
 		C_WIPE(borg_race_count, z_info->r_max, s16b);
 
-		/* Reset */
-		reset = TRUE;
+		/* Fake goal location */
+		g_x = c_x;
+		g_y = c_y;
 
 		/* wipe out bad artifacts list */
 		for (i = 0; i < 50; i++)
@@ -4289,73 +4296,6 @@ void borg_update(void)
 			MAP_ITT_END;
 		}
 	}
-
-
-	/*** Update the map ***/
-
-	/* Update the map */
-	borg_update_map();
-
-	/* Update the objects */
-	delete_dead_objects();
-
-	/* Reset */
-	if (reset)
-	{
-		/* Fake old location */
-		o_c_x = c_x;
-		o_c_y = c_y;
-
-		/* Fake goal location */
-		g_x = c_x;
-		g_y = c_y;
-	}
-
-	/* Player moved */
-	if ((o_c_x != c_x) || (o_c_y != c_y))
-	{
-		/* Update view */
-		borg_do_update_view = TRUE;
-
-		/* Assume I can shoot here */
-		successful_target = 0;
-	}
-
-	/* Update the view */
-	if (borg_do_update_view)
-	{
-		/* Update the view */
-		borg_update_view();
-
-		/* Take note */
-		borg_do_update_view = FALSE;
-	}
-
-	/*** Track monsters ***/
-
-	/* New monsters near 'moved' monsters */
-	observe_kill_move(BORG_MON_NEW, BORG_MON_MOVE, 1);
-	observe_kill_move(BORG_MON_NEW, BORG_MON_MOVE, 2);
-	observe_kill_move(BORG_MON_NEW, BORG_MON_MOVE, 3);
-
-	/* New monsters near 'old forgotten' monsters */
-	observe_kill_move(BORG_MON_NEW, BORG_MON_OLD, 1);
-	observe_kill_move(BORG_MON_NEW, BORG_MON_OLD, 2);
-	observe_kill_move(BORG_MON_NEW, BORG_MON_OLD, 3);
-
-	/* Scan all the remaining 'old' monsters */
-	handle_old_mons(BORG_MON_OLD);
-	handle_old_mons(BORG_MON_MOVE);
-
-	/* Append remaining monsters to used list */
-	borg_append_mon_list(BORG_MON_USED, BORG_MON_NEW);
-	borg_append_mon_list(BORG_MON_USED, BORG_MON_OLD);
-
-	/* Get rid of moved monsters we have not tracked */
-	borg_wipe_mon(BORG_MON_MOVE);
-
-	/* Append used monsters to 'old' list, and delete used monsters */
-	borg_append_mon_list(BORG_MON_OLD, BORG_MON_USED);
 
 	/*** Handle messages ***/
 
@@ -4505,7 +4445,7 @@ void borg_update(void)
 		msg = borg_msg_buf + borg_msg_pos[i];
 
 		/* Final message */
-		borg_note(format("# %s (%d)", msg, borg_msg_use[i]));
+		borg_note_fmt("# %s (%d)", msg, borg_msg_use[i]);
 	}
 
 	/*** Various things ***/
@@ -4534,19 +4474,6 @@ void borg_update(void)
 	/* Forget the messages */
 	borg_msg_len = 0;
 	borg_msg_num = 0;
-
-
-	/*** Save old info ***/
-
-	/* Save the old "location" */
-	o_c_x = c_x;
-	o_c_y = c_y;
-
-	/*** Defaults ***/
-
-	/* Default "goal" location */
-	g_x = c_x;
-	g_y = c_y;
 }
 
 
@@ -4563,7 +4490,7 @@ void borg_react(cptr msg, cptr buf)
 		return;
 
 	/* Note actual message */
-	borg_note(format("> %s", msg));
+	borg_note_fmt("> %s", msg);
 
 	/* Extract length of parsed message */
 	len = strlen(buf);

@@ -1670,7 +1670,7 @@ static void borg_parse_aux(cptr msg, int len)
 	/* Hack to protect against clock overflows and errors */
 	if (prefix(msg, "Illegal "))
 	{
-		borg_oops(format("# Borg problem msg: %s", msg));
+		borg_oops_fmt("# Borg problem msg: %s", msg);
 
 		/* Hack -- Oops */
 		borg_keypress(ESCAPE);
@@ -2005,7 +2005,7 @@ static void init_borg_txt_file(void)
 
 	/* Make a shortcut pointers into the array */
 	borg_skill = &borg_has[z_info->k_max];
-	
+
 	/* Make sure we know who and what we are */
 	borg_class = p_ptr->pclass;
 

@@ -225,7 +225,7 @@ static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
 static void borg_think_shop_sell(int item, list_item *l_ptr)
 {
 	/* Log */
-	borg_note(format("# Selling %s", l_ptr->o_name));
+	borg_note_fmt("# Selling %s", l_ptr->o_name);
 
 	/* One item */
 	borg_keypress('0');
@@ -262,7 +262,7 @@ static void borg_think_shop_buy(int item)
 	if (item / 12) borg_keypress(' ');
 
 	/* Log */
-	borg_note(format("# Buying %s (%i gold).", l_ptr->o_name, l_ptr->cost));
+	borg_note_fmt("# Buying %s (%i gold).", l_ptr->o_name, l_ptr->cost);
 
 	/* Buy one item */
 	borg_keypress('0');
@@ -1096,7 +1096,7 @@ static bool borg_choose_shop(void)
 	/* If we are already flowing toward a shop do not check again... */
 	if (goal_shop != -1)
 	{
-		borg_note(format("# Using previous goal shop: %d", goal_shop));
+		borg_note_fmt("# Using previous goal shop: %d", goal_shop);
 		return (TRUE);
 	}
 
@@ -1125,7 +1125,7 @@ static bool borg_choose_shop(void)
 	if (bu > SHOP_SCAN_THRESHOLD)
 	{
 		/* We want to shop */
-		borg_note(format("# Goal shop: %d, use: %d", goal_shop, (int)bu));
+		borg_note_fmt("# Goal shop: %d, use: %d", goal_shop, (int)bu);
 
 		/* Success */
 		return (TRUE);
@@ -1135,7 +1135,7 @@ static bool borg_choose_shop(void)
 	goal_shop = -1;
 
 	/* Let us know what the value is when we fail */
-	borg_note(format("# No more shopping - value: %d", bu));
+	borg_note_fmt("# No more shopping - value: %d", bu);
 
 	/* Failure */
 	return (FALSE);
@@ -1837,8 +1837,8 @@ bool borg_think_dungeon(void)
 		bool done = FALSE;
 
 		/* Note */
-		borg_note(format("# Boosting bravery (1) from %d to %d!",
-						 avoidance, borg_skill[BI_CURHP] * 2));
+		borg_note_fmt("# Boosting bravery (1) from %d to %d!",
+						 avoidance, borg_skill[BI_CURHP] * 2);
 
 		/* Hack -- ignore some danger */
 		avoidance = (borg_skill[BI_CURHP] * 2);
@@ -1891,8 +1891,8 @@ bool borg_think_dungeon(void)
 		bool done = FALSE;
 
 		/* Note */
-		borg_note(format("# Boosting bravery (2) from %d to %d!",
-						 avoidance, borg_skill[BI_MAXHP] * 4));
+		borg_note_fmt("# Boosting bravery (2) from %d to %d!",
+						 avoidance, borg_skill[BI_MAXHP] * 4);
 
 		/* Hack -- ignore some danger */
 		avoidance = (borg_skill[BI_MAXHP] * 4);
@@ -1919,8 +1919,8 @@ bool borg_think_dungeon(void)
 		bool done = FALSE;
 
 		/* Note */
-		borg_note(format("# Boosting bravery (3) from %d to %d!",
-						 avoidance, 30000));
+		borg_note_fmt("# Boosting bravery (3) from %d to %d!",
+						 avoidance, 30000);
 
 		/* Hack -- ignore some danger */
 		avoidance = 30000;

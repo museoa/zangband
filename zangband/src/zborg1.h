@@ -867,13 +867,13 @@ extern void borg_info(cptr what);
  * Log a message, Search it, and Show/Memorize it in pieces
  */
 extern void borg_note(cptr what);
-
+extern void borg_note_fmt(cptr fmt, ...);
 
 /*
  * Abort the Borg, noting the reason
  */
 extern void borg_oops(cptr what);
-
+extern void borg_oops_fmt(cptr fmt, ...);
 
 /*
  * Take a "memory note"

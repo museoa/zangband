@@ -838,7 +838,7 @@ bool borg_refuel_torch(void)
 	}
 
 	/* Log the message */
-	borg_note(format("# Refueling with %s.", l_ptr->o_name));
+	borg_note_fmt("# Refueling with %s.", l_ptr->o_name);
 
 	/* Perform the action */
 	borg_keypress('F');
@@ -875,7 +875,7 @@ bool borg_refuel_lantern(void)
 	}
 
 	/* Log the message */
-	borg_note(format("# Refueling with %s.", l_ptr->o_name));
+	borg_note_fmt("# Refueling with %s.", l_ptr->o_name);
 
 	/* Perform the action */
 	borg_keypress('F');
@@ -902,7 +902,7 @@ bool borg_eat_food(int sval)
 	if (!l_ptr) return (FALSE);
 
 	/* Log the message */
-	borg_note(format("# Eating %s.", l_ptr->o_name));
+	borg_note_fmt("# Eating %s.", l_ptr->o_name);
 
 	/* Perform the action */
 	borg_keypress('E');
@@ -968,7 +968,7 @@ bool borg_quaff_potion(int sval)
 	if (!l_ptr) return (FALSE);
 
 	/* Log the message */
-	borg_note(format("# Quaffing %s.", l_ptr->o_name));
+	borg_note_fmt("# Quaffing %s.", l_ptr->o_name);
 
 	/* Perform the action */
 	borg_keypress('q');
@@ -997,7 +997,7 @@ bool borg_quaff_unknown(void)
 		if (l_ptr->k_idx) continue;
 
 		/* Log the message */
-		borg_note(format("# Quaffing unknown potion %s.", l_ptr->o_name));
+		borg_note_fmt("# Quaffing unknown potion %s.", l_ptr->o_name);
 
 		/* Perform the action */
 		borg_keypress('q');
@@ -1038,7 +1038,7 @@ bool borg_read_unknown(void)
 		if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED]) return (FALSE);
 
 		/* Log the message */
-		borg_note(format("# Reading unknown scroll %s.", l_ptr->o_name));
+		borg_note_fmt("# Reading unknown scroll %s.", l_ptr->o_name);
 
 		/* Perform the action */
 		borg_keypress('r');
@@ -1072,7 +1072,7 @@ bool borg_eat_unknown(void)
 		if (l_ptr->tval != TV_FOOD) continue;
 
 		/* Log the message */
-		borg_note(format("# Eating unknown mushroom %s.", l_ptr->o_name));
+		borg_note_fmt("# Eating unknown mushroom %s.", l_ptr->o_name);
 
 		/* Perform the action */
 		borg_keypress('E');
@@ -1105,7 +1105,7 @@ bool borg_use_unknown(void)
 		if (l_ptr->tval != TV_STAFF) continue;
 
 		/* Log the message */
-		borg_note(format("# Using unknown Staff %s.", l_ptr->o_name));
+		borg_note_fmt("# Using unknown Staff %s.", l_ptr->o_name);
 
 		/* Perform the action */
 		borg_keypress('u');
@@ -1141,7 +1141,7 @@ bool borg_read_scroll(int sval)
 	if (!l_ptr) return (FALSE);
 
 	/* Log the message */
-	borg_note(format("# Reading %s.", l_ptr->o_name));
+	borg_note_fmt("# Reading %s.", l_ptr->o_name);
 
 	/* Perform the action */
 	borg_keypress(ESCAPE);
@@ -1244,7 +1244,7 @@ bool borg_zap_rod(int sval)
 	if (chance < USE_DEVICE + 2) return (FALSE);
 
 	/* Log the message */
-	borg_note(format("# Zapping %s.", l_ptr->o_name));
+	borg_note_fmt("# Zapping %s.", l_ptr->o_name);
 
 	/* Perform the action */
 	borg_keypress('z');
@@ -1272,7 +1272,7 @@ bool borg_aim_wand(int sval)
 	if (!l_ptr->pval) return (FALSE);
 
 	/* Log the message */
-	borg_note(format("# Aiming %s.", l_ptr->o_name));
+	borg_note_fmt("# Aiming %s.", l_ptr->o_name);
 
 	/* Perform the action */
 	borg_keypress('a');
@@ -1300,7 +1300,7 @@ bool borg_use_staff(int sval)
 	if (!l_ptr->pval) return (FALSE);
 
 	/* Log the message */
-	borg_note(format("# Using %s.", l_ptr->o_name));
+	borg_note_fmt("# Using %s.", l_ptr->o_name);
 
 	/* Perform the action */
 	borg_keypress('u');
@@ -1363,7 +1363,7 @@ bool borg_use_staff_fail(int sval)
 	}
 
 	/* Log the message */
-	borg_note(format("# Using %s.", l_ptr->o_name));
+	borg_note_fmt("# Using %s.", l_ptr->o_name);
 
 	/* Perform the action */
 	borg_keypress('u');
@@ -1467,13 +1467,13 @@ bool borg_activate_artifact(int name1, bool secondary)
 		 */
 		if ((i != EQUIP_LITE) && !borg_obj_known_full(l_ptr))
 		{
-			borg_note(format("# %s must be *ID*'d before activation.",
-							 l_ptr->o_name));
+			borg_note_fmt("# %s must be *ID*'d before activation.",
+							 l_ptr->o_name);
 			return (FALSE);
 		}
 
 		/* Log the message */
-		borg_note(format("# Activating artifact %s.", l_ptr->o_name));
+		borg_note_fmt("# Activating artifact %s.", l_ptr->o_name);
 
 		/* Perform the action */
 		borg_keypress('A');
@@ -1580,7 +1580,7 @@ bool borg_activate_dragon(int drag_sval)
 	if (!borg_obj_known_p(l_ptr)) return (FALSE);
 
 	/* Log the message */
-	borg_note(format("# Activating dragon scale %s.", l_ptr->o_name));
+	borg_note_fmt("# Activating dragon scale %s.", l_ptr->o_name);
 
 	/* Perform the action */
 	borg_keypress('A');
@@ -1763,7 +1763,7 @@ bool borg_spell(int realm, int book, int what)
 	if (i < 0) return (FALSE);
 
 	/* Debugging Info */
-	borg_note(format("# Casting %s (%d,%d).", as->name, book, what));
+	borg_note_fmt("# Casting %s (%d,%d).", as->name, book, what);
 
 	/* Cast a spell */
 	borg_keypress('m');
@@ -1780,9 +1780,9 @@ bool borg_spell(int realm, int book, int what)
 		int x1, y1, x2, y2;
 
 		/* Report a little bit */
-		borg_note(format
+		borg_note_fmt
 				  ("# Targetting Landing Zone (%d,%d)", dim_door_x,
-				   dim_door_y));
+				   dim_door_y);
 
 		/* Determine "path" */
 		x1 = c_x;
@@ -1961,8 +1961,8 @@ bool borg_mindcr(int spell, int level)
 	if (borg_skill[BI_CRSNOMAGIC]) return (FALSE);
 
 	/* Debugging Info */
-	borg_note(format
-			  ("# Casting %s (spell: %d, level: %d).", as->name, spell, level));
+	borg_note_fmt
+			  ("# Casting %s (spell: %d, level: %d).", as->name, spell, level);
 
 	/* Cast a spell */
 	borg_keypress('m');
@@ -1977,9 +1977,9 @@ bool borg_mindcr(int spell, int level)
 		int x1, y1, x2, y2;
 
 		/* Report a little bit */
-		borg_note(format
+		borg_note_fmt
 				  ("# Targetting Landing Zone (%d,%d)", dim_door_x,
-				   dim_door_y));
+				   dim_door_y);
 
 		/* Determine "path" */
 		x1 = c_x;

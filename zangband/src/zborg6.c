@@ -803,8 +803,8 @@ static bool borg_surrounded(void)
 	/* I am likely to get surrouned */
 	if (monsters > safe_grids)
 	{
-		borg_note(format("# Possibility of being surrounded (%d/%d)",
-						 monsters, safe_grids));
+		borg_note_fmt("# Possibility of being surrounded (%d/%d)",
+						 monsters, safe_grids);
 
 		/* The borg can get trapped by breeders by continueing to flee
 		 * into a dead-end.  So he needs to be able to trump this
@@ -1379,11 +1379,11 @@ bool borg_caution_phase(int emergency, int turns)
 	/* in an emergency try with extra danger allowed */
 	if (n > emergency)
 	{
-		borg_note(format("# No Phase. scary squares: %d", n));
+		borg_note_fmt("# No Phase. scary squares: %d", n);
 		return (FALSE);
 	}
 	else
-		borg_note(format("# Safe to Phase. scary squares: %d", n));
+		borg_note_fmt("# Safe to Phase. scary squares: %d", n);
 
 	/* Okay */
 	return (TRUE);
@@ -1447,9 +1447,9 @@ static bool borg_dim_door(int emergency, int p1)
 
 
 	/* Dimension Door report */
-	borg_note(format
+	borg_note_fmt
 			  ("# Dim Door: Safest grid: (%d, %d) with %d Danger", b_y, b_x,
-			   b_p));
+			   b_p);
 	dim_door_y = b_y;
 	dim_door_x = b_x;
 
@@ -2027,7 +2027,8 @@ static bool borg_heal(int danger)
 	hp_down = borg_skill[BI_MAXHP] - borg_skill[BI_CURHP];
 
 
-	/* when fighting Morgoth, we want the borg to use Life potion to fix his
+	/*
+	 * When fighting Morgoth, we want the borg to use Life potion to fix his
 	 * stats.  So we need to add up the ones that are dropped.
 	 */
 	if (borg_skill[BI_ISFIXSTR]) stats_needing_fix++;
@@ -2055,9 +2056,12 @@ static bool borg_heal(int danger)
 		stats_needing_fix += 5;
 
 
-	/*  Hack -- heal when confused. This is deadly. */
-	/* This is checked twice, once, here, to see if he is in low danger
-	 * and again at the end of borg_caution, when all other avenues have failed */
+	/*
+	 * Hack -- heal when confused. This is deadly.
+	 *
+	 * This is checked twice, once, here, to see if he is in low danger
+	 * and again at the end of borg_caution, when all other avenues have failed
+	 */
 	if (borg_skill[BI_ISCONFUSED] && (randint0(100) < 85))
 	{
 		if ((hp_down >= 300) && danger - 300 < borg_skill[BI_CURHP] &&
@@ -2078,13 +2082,14 @@ static bool borg_heal(int danger)
 			return (TRUE);
 		}
 
-		/* If my ability to use a teleport staff is really
+		/*
+		 * If my ability to use a teleport staff is really
 		 * bad, then I should heal up then use the staff.
 		 */
 		/* Check for a charged teleport staff */
 		if (borg_equips_staff_fail(SV_STAFF_TELEPORTATION))
 		{
-			/* check my skill, drink a potion */
+			/* Check my skill, drink a potion */
 			if ((borg_skill[BI_DEV] -
 				 k_info[borg_slot(TV_STAFF, SV_STAFF_TELEPORTATION)->k_idx].
 				 level > 7) && (danger < (avoidance + 35) * 15 / 10) &&
@@ -2094,7 +2099,8 @@ static bool borg_heal(int danger)
 				borg_note("# Fixing Confusion. Level 3");
 				return (TRUE);
 			}
-			/* However, if I am in really big trouble and there is no way I am going to be able to
+			/*
+			 * However, if I am in really big trouble and there is no way I am going to be able to
 			 * survive another round, take my chances on the staff.
 			 */
 			else if (danger >= avoidance * 15 / 10)
@@ -2109,7 +2115,8 @@ static bool borg_heal(int danger)
 	/*  Hack -- heal when blind. This is deadly. */
 	if (borg_skill[BI_ISBLIND] && (randint0(100) < 85))
 	{
-		/* if in extreme danger, use teleport then fix the
+		/*
+		 * If in extreme danger, use teleport then fix the
 		 * blindness later.
 		 */
 		if (danger > avoidance * 25 / 10)
@@ -2154,26 +2161,22 @@ static bool borg_heal(int danger)
 	/*  Hack -- rest until healed */
 	if ((!borg_skill[BI_ISBLIND] && !borg_skill[BI_ISPOISONED] &&
 		 !borg_skill[BI_ISCUT] && !borg_goi && !borg_see_inv && !borg_shield &&
-		 (borg_skill
-		  [BI_CDEPTH] !=
-		  100) &&
 		 !borg_skill[BI_ISWEAK] && !borg_skill[BI_ISHUNGRY] &&
-		 danger < avoidance / 5) && (borg_skill[BI_ISCONFUSED] ||
-									 borg_skill[BI_ISIMAGE] ||
-									 borg_skill[BI_ISAFRAID] ||
-									 borg_skill[BI_ISSTUN] ||
-									 borg_skill[BI_ISHEAVYSTUN] ||
-									 borg_skill[BI_CURHP] < borg_skill[BI_MAXHP]
-									 || (borg_skill[BI_CURSP] <
-										 borg_skill[BI_MAXSP] * 6 / 10)) &&
-		borg_check_rest() && !scaryguy_on_level &&
+		 (borg_skill[BI_ISCONFUSED] ||
+		  borg_skill[BI_ISIMAGE] ||
+		  borg_skill[BI_ISAFRAID] ||
+		  borg_skill[BI_ISSTUN] ||
+		  borg_skill[BI_ISHEAVYSTUN] ||
+		  (borg_skill[BI_CURHP] < borg_skill[BI_MAXHP]) ||
+		  (borg_skill[BI_CURSP] < borg_skill[BI_MAXSP] * 6 / 10)) &&
+		 (danger < avoidance / 5)) && borg_check_rest() && !scaryguy_on_level &&
 		(danger <= mb_ptr->fear) && !goal_fleeing)
 	{
 		/* check for then call lite in dark room before resting */
 		if (!borg_check_lite_only())
 		{
 			/* Take note */
-			borg_note(format("# Resting to restore HP/SP..."));
+			borg_note_fmt("# Resting to restore HP/SP...");
 
 			/* Rest until done */
 			borg_keypress('R');
@@ -2188,8 +2191,8 @@ static bool borg_heal(int danger)
 		else
 		{
 			/* Must have been a dark room */
-			borg_note(format
-					  ("# Lighted the darkened room instead of resting."));
+			borg_note_fmt
+					  ("# Lighted the darkened room instead of resting.");
 			return (TRUE);
 		}
 	}
@@ -2198,19 +2201,20 @@ static bool borg_heal(int danger)
 	/* Healing and fighting Morgoth. */
 	if (borg_fighting_unique >= 10)
 	{
-		if (borg_skill[BI_CURHP] <= 625 && borg_fighting_unique >= 10 && ((borg_skill[BI_CURHP] > 250 && borg_spell_fail(REALM_LIFE, 2, 6, 14)) ||	/* Holy Word */
-																		  borg_use_staff_fail(SV_STAFF_HOLINESS) ||	/* Choose Life over *Healing* to fix stats */
-																		  (stats_needing_fix >= 5 &&
-																		   borg_quaff_potion
-																		   (SV_POTION_LIFE))
-																		  ||
-																		  /* Choose Life over Healing if way down on pts */
-																		  (hp_down > 500 && !borg_slot(TV_POTION, SV_POTION_STAR_HEALING) && borg_quaff_potion(SV_POTION_LIFE)) || borg_quaff_potion(SV_POTION_STAR_HEALING) || borg_quaff_potion(SV_POTION_HEALING) || borg_spell_fail(REALM_LIFE, 2, 6, 17) ||	/* Holy Word */
-																		  borg_spell_fail(REALM_LIFE, 3, 4, 15) ||	/* 2000 pts */
-																		  borg_spell_fail(REALM_NATURE, 1, 7, allow_fail + 9) || borg_spell_fail(REALM_LIFE, 1, 7, 15) ||	/* 300 pts */
-/* True Vampirism ? */
-																		  borg_quaff_potion
-																		  (SV_POTION_LIFE)))
+		if ((borg_skill[BI_CURHP] <= 625) && (borg_fighting_unique >= 10) &&
+			(((borg_skill[BI_CURHP] > 250) &&
+			  borg_spell_fail(REALM_LIFE, 2, 6, 14)) ||
+			 borg_use_staff_fail(SV_STAFF_HOLINESS) ||
+			 ((stats_needing_fix >= 5) && borg_quaff_potion(SV_POTION_LIFE)) ||
+			 ((hp_down > 500) && !borg_slot(TV_POTION, SV_POTION_STAR_HEALING)
+			  && borg_quaff_potion(SV_POTION_LIFE)) ||
+			 borg_quaff_potion(SV_POTION_STAR_HEALING) ||
+			 borg_quaff_potion(SV_POTION_HEALING) ||
+			 borg_spell_fail(REALM_LIFE, 2, 6, 17) ||
+			 borg_spell_fail(REALM_LIFE, 3, 4, 15) ||
+			 borg_spell_fail(REALM_NATURE, 1, 7, allow_fail + 9) ||
+			 borg_spell_fail(REALM_LIFE, 1, 7, 15) ||
+			 borg_quaff_potion(SV_POTION_LIFE)))
 		{
 			borg_note("# Healing in Questor Combat.");
 			return (TRUE);
@@ -2843,24 +2847,24 @@ bool borg_caution(void)
 	if (borg_goi || (p > avoidance / 10) || (p > mb_ptr->fear))
 	{
 		/* Describe (briefly) the current situation */
-		borg_note(format
+		borg_note_fmt
 				  ("# Loc:%d,%d Dep:%d Lev:%d HP:%d/%d SP:%d/%d Danger:p=%d",
 				   c_y, c_x, borg_skill[BI_CDEPTH], borg_skill[BI_CLEVEL],
 				   borg_skill[BI_CURHP], borg_skill[BI_MAXHP],
-				   borg_skill[BI_CURSP], borg_skill[BI_MAXSP], p));
+				   borg_skill[BI_CURSP], borg_skill[BI_MAXSP], p);
 		if (borg_goi)
 		{
-			borg_note(format
+			borg_note_fmt
 					  ("# Protected by GOI (borg turns:%d; game turns:%d)",
-					   borg_goi / borg_game_ratio, p_ptr->invuln));
+					   borg_goi / borg_game_ratio, p_ptr->invuln);
 		}
 		if (borg_shield)
 		{
-			borg_note(format("# Protected by Mystic Shield"));
+			borg_note_fmt("# Protected by Mystic Shield");
 		}
 		if (borg_prot_from_evil)
 		{
-			borg_note(format("# Protected by PFE"));
+			borg_note_fmt("# Protected by PFE");
 		}
 	}
 	/* Comment on glyph */
@@ -2873,7 +2877,7 @@ bool borg_caution(void)
 			if ((track_glyph_y[i] == c_y) && (track_glyph_x[i] == c_x))
 			{
 				/* if standing on one */
-				borg_note(format("# Standing on Glyph"));
+				borg_note_fmt("# Standing on Glyph");
 			}
 		}
 	}
@@ -2887,7 +2891,7 @@ bool borg_caution(void)
 			if ((track_less_y[i] == c_y) && (track_less_x[i] == c_x))
 			{
 				/* if standing on one */
-				borg_note(format("# Standing on up-stairs"));
+				borg_note_fmt("# Standing on up-stairs");
 			}
 		}
 	}
@@ -2901,7 +2905,7 @@ bool borg_caution(void)
 			if ((track_more_y[i] == c_y) && (track_more_x[i] == c_x))
 			{
 				/* if standing on one */
-				borg_note(format("# Standing on dn-stairs"));
+				borg_note_fmt("# Standing on dn-stairs");
 			}
 		}
 	}
@@ -2997,9 +3001,9 @@ bool borg_caution(void)
 		if (!goal_leaving)
 		{
 			/* Note */
-			borg_note(format
+			borg_note_fmt
 					  ("# Leaving (restock) %s",
-					   borg_restock(borg_skill[BI_CDEPTH])));
+					   borg_restock(borg_skill[BI_CDEPTH]));
 
 			/* Start leaving */
 			goal_leaving = TRUE;
@@ -3008,9 +3012,9 @@ bool borg_caution(void)
 		if (!goal_fleeing && borg_skill[BI_ACCW] < 2)
 		{
 			/* Flee */
-			borg_note(format
+			borg_note_fmt
 					  ("# Fleeing (restock) %s",
-					   borg_restock(borg_skill[BI_CDEPTH])));
+					   borg_restock(borg_skill[BI_CDEPTH]));
 
 			/* Start fleeing */
 			goal_fleeing = TRUE;
@@ -3476,10 +3480,10 @@ bool borg_caution(void)
 			g_y = c_y + ddy[b_d];
 
 			/* Note */
-			borg_note(format
+			borg_note_fmt
 					  ("# Retreating to %d,%d (distance %d) via %d,%d (%d > %d)",
 					   b_y, b_x, b_r, g_y, g_x, p,
-					   borg_danger(g_x, g_y, 2, TRUE)));
+					   borg_danger(g_x, g_y, 2, TRUE));
 
 			/* Strategic retreat */
 			borg_keypress(I2D(b_d));
@@ -3595,8 +3599,8 @@ bool borg_caution(void)
 			g_y = c_y + ddy_ddd[b_i];
 
 			/* Note */
-			borg_note(format("# Backing up to %d,%d (%d > %d)",
-							 g_x, g_y, p, borg_danger(g_x, g_y, 2, TRUE)));
+			borg_note_fmt("# Backing up to %d,%d (%d > %d)",
+							 g_x, g_y, p, borg_danger(g_x, g_y, 2, TRUE));
 
 			/* Back away from danger */
 			borg_keypress(I2D(ddd[b_i]));
@@ -4254,11 +4258,11 @@ int borg_attack_aux_thrust(void)
 	mb_ptr = map_loc(g_x, g_y);
 
 	/* Note */
-	borg_note(format
+	borg_note_fmt
 			  ("# Facing %s at (%d,%d).",
-			   (r_name + r_info[mb_ptr->monster].name), g_x, g_y));
-	borg_note(format
-			  ("# Attacking with weapon '%s'", equipment[EQUIP_WIELD].o_name));
+			   (r_name + r_info[mb_ptr->monster].name), g_x, g_y);
+	borg_note_fmt
+			  ("# Attacking with weapon '%s'", equipment[EQUIP_WIELD].o_name);
 
 	/* Get a direction for attacking */
 	dir = borg_extract_dir(c_x, c_y, g_x, g_y);
@@ -4293,12 +4297,12 @@ static bool borg_target(int x, int y)
 	/* Report a little bit */
 	if (mb_ptr->monster)
 	{
-		borg_note(format("# Targeting %s.",
-						 (r_name + r_info[mb_ptr->monster].name)));
+		borg_note_fmt("# Targeting %s.",
+						 (r_name + r_info[mb_ptr->monster].name));
 	}
 	else
 	{
-		borg_note(format("# Targetting location (%d,%d)", x, y));
+		borg_note_fmt("# Targetting location (%d,%d)", x, y);
 	}
 
 	/* Target mode */
@@ -5737,7 +5741,7 @@ static int borg_attack_aux_launch(void)
 
 
 	/* Do it */
-	borg_note(format("# Firing standard missile '%s'", inventory[b_k].o_name));
+	borg_note_fmt("# Firing standard missile '%s'", inventory[b_k].o_name);
 
 	/* Fire */
 	borg_keypress('f');
@@ -5813,7 +5817,7 @@ static int borg_attack_aux_launch_seeker(void)
 	if (borg_simulate) return (b_n);
 
 	/* Do it */
-	borg_note(format("# Firing seeker missile '%s'", inventory[b_k].o_name));
+	borg_note_fmt("# Firing seeker missile '%s'", inventory[b_k].o_name);
 
 	/* Fire */
 	borg_keypress('f');
@@ -5888,8 +5892,8 @@ static int borg_attack_aux_launch_flame(void)
 
 
 	/* Do it */
-	borg_note(format("# Firing flame branded missile '%s'",
-					 inventory[b_k].o_name));
+	borg_note_fmt("# Firing flame branded missile '%s'",
+					 inventory[b_k].o_name);
 
 	/* Fire */
 	borg_keypress('f');
@@ -5963,8 +5967,8 @@ static int borg_attack_aux_launch_frost(void)
 
 
 	/* Do it */
-	borg_note(format("# Firing frost branded missile '%s'",
-					 inventory[b_k].o_name));
+	borg_note_fmt("# Firing frost branded missile '%s'",
+					 inventory[b_k].o_name);
 
 	/* Fire */
 	borg_keypress('f');
@@ -6039,7 +6043,7 @@ static int borg_attack_aux_launch_animal(void)
 
 
 	/* Do it */
-	borg_note(format("# Firing animal missile '%s'", inventory[b_k].o_name));
+	borg_note_fmt("# Firing animal missile '%s'", inventory[b_k].o_name);
 
 	/* Fire */
 	borg_keypress('f');
@@ -6114,8 +6118,8 @@ static int borg_attack_aux_launch_evil(void)
 
 
 	/* Do it */
-	borg_note(format("# Firing evil branded missile '%s'",
-					 inventory[b_k].o_name));
+	borg_note_fmt("# Firing evil branded missile '%s'",
+					 inventory[b_k].o_name);
 
 	/* Fire */
 	borg_keypress('f');
@@ -6190,8 +6194,8 @@ static int borg_attack_aux_launch_dragon(void)
 
 
 	/* Do it */
-	borg_note(format("# Firing dragon branded missile '%s'",
-					 inventory[b_k].o_name));
+	borg_note_fmt("# Firing dragon branded missile '%s'",
+					 inventory[b_k].o_name);
 
 	/* Fire */
 	borg_keypress('f');
@@ -6266,8 +6270,8 @@ static int borg_attack_aux_launch_wounding(void)
 
 
 	/* Do it */
-	borg_note(format("# Firing wounding branded missile '%s'",
-					 inventory[b_k].o_name));
+	borg_note_fmt("# Firing wounding branded missile '%s'",
+					 inventory[b_k].o_name);
 
 	/* Fire */
 	borg_keypress('f');
@@ -6360,7 +6364,7 @@ static int borg_attack_aux_object(void)
 
 
 	/* Do it */
-	borg_note(format("# Throwing painful object '%s'", inventory[b_k].o_name));
+	borg_note_fmt("# Throwing painful object '%s'", inventory[b_k].o_name);
 
 	/* Fire */
 	borg_keypress('v');
@@ -6819,7 +6823,7 @@ static int borg_attack_aux_wand_bolt(int sval, int rad, int dam, int typ)
 			b_n = 999;
 
 			/* note the use of the wand in the emergency */
-			borg_note(format("# Emergency use of a Wand of Wonder."));
+			borg_note_fmt("# Emergency use of a Wand of Wonder.");
 		}
 		else
 		{
@@ -7088,10 +7092,10 @@ static int borg_attack_aux_racial_thrust(int race, int level, int dam)
 	mb_ptr = map_loc(g_x, g_y);
 
 	/* Note */
-	borg_note(format
+	borg_note_fmt
 			  ("# Facing %s at (%d,%d).",
-			   (r_name + r_info[mb_ptr->monster].name), g_x, g_y));
-	borg_note(format("# Attacking with Racial Attack '%d'", b_d));
+			   (r_name + r_info[mb_ptr->monster].name), g_x, g_y);
+	borg_note_fmt("# Attacking with Racial Attack '%d'", b_d);
 
 	/* Get a direction for attacking */
 	dir = borg_extract_dir(c_x, c_y, g_x, g_y);
@@ -7130,7 +7134,7 @@ static int borg_attack_aux_racial_bolt(int race, int rad, int dam, int typ)
 
 
 	/* Note */
-	borg_note(format("# Racial Attack -- for '%d'", b_n));
+	borg_note_fmt("# Racial Attack -- for '%d'", b_n);
 
 	/* Activate */
 	borg_keypress('U');
@@ -8587,7 +8591,7 @@ bool borg_attack(bool boosted_bravery)
 
 
 	/* Note */
-	borg_note(format("# Performing attack type %d with value %d.", b_g, b_n));
+	borg_note_fmt("# Performing attack type %d with value %d.", b_g, b_n);
 
 	/* Instantiate */
 	borg_simulate = FALSE;
@@ -10132,10 +10136,10 @@ static int borg_defend_aux_genocide(void)
 		/* report the danger and most dangerous race */
 		if (b_threat_id)
 		{
-			borg_note(format
+			borg_note_fmt
 					  ("# Race '%c' is a real threat with total danger %d from %d individuals.",
 					   b_threat_id, b_threat[b_threat_id],
-					   b_threat_num[b_threat_id]));
+					   b_threat_num[b_threat_id]);
 		}
 
 		/* Genociding this race would reduce the danger of the level */
@@ -10170,9 +10174,9 @@ static int borg_defend_aux_genocide(void)
 		/* Simulation */
 		if (borg_simulate) return (p1 - p2);
 
-		borg_note(format
+		borg_note_fmt
 				  ("# Genociding race '%c' (%d)", genocide_target,
-				   genocide_target));
+				   genocide_target);
 
 		/* do it! ---use scrolls first since they clutter inventory */
 		if (borg_read_scroll(SV_SCROLL_GENOCIDE) ||
@@ -10839,7 +10843,7 @@ static int borg_defend_aux(int what, int p1)
 		}
 	}
 
-	borg_oops(format("# Trying invalid BD type. (%d)", what));
+	borg_oops_fmt("# Trying invalid BD type. (%d)", what);
 
 	return (0);
 }
@@ -10872,9 +10876,9 @@ bool borg_defend(int p1)
 		{
 			if (borg_spell(REALM_ARCANE, 3, 7) || borg_spell(REALM_LIFE, 3, 7))
 			{
-				borg_note(format
+				borg_note_fmt
 						  ("# refreshing GOI.  borg_goi=%d, p_ptr->invuln=%d, (ratio=%d)",
-						   borg_goi, p_ptr->invuln, borg_game_ratio));
+						   borg_goi, p_ptr->invuln, borg_game_ratio);
 				borg_attempting_refresh = TRUE;
 				borg_goi = 12000;
 				return (TRUE);
@@ -10903,7 +10907,7 @@ bool borg_defend(int p1)
 	}
 
 	/* Note */
-	borg_note(format("# Performing defence type %d with value %d", b_g, b_n));
+	borg_note_fmt("# Performing defence type %d with value %d", b_g, b_n);
 
 	/* Instantiate */
 	borg_simulate = FALSE;
@@ -11844,8 +11848,8 @@ bool borg_perma_spell()
 	}
 
 	/* Note */
-	borg_note(format
-			  ("# Performing perma-spell type %d with value %d", b_g, b_n));
+	borg_note_fmt
+			  ("# Performing perma-spell type %d with value %d", b_g, b_n);
 
 	/* Instantiate */
 	borg_simulate = FALSE;
@@ -11865,10 +11869,11 @@ bool borg_perma_spell()
 bool borg_check_rest(void)
 {
 	int i;
-
+	
+	borg_note("# Checking to see if we can rest");
 
 	/* Do not rest in Sunlight */
-	if (borg_skill[BI_FEAR_LITE] && borg_skill[BI_CDEPTH] == 0)
+	if (borg_skill[BI_FEAR_LITE] && (borg_skill[BI_CDEPTH] == 0))
 	{
 		/* day time */
 		if ((borg_skill[BI_HRTIME] >= 5) && (borg_skill[BI_HRTIME] <= 18))
@@ -11884,8 +11889,10 @@ bool borg_check_rest(void)
 		return (FALSE);
 	}
 
-	/* now check the ground to see if safe. */
+	/* Now check the ground to see if safe. */
 	if (borg_on_safe_grid() == FALSE) return (FALSE);
+
+	borg_note("# About to scan for nasty monsters nearby");
 
 	/* Examine all the monsters */
 	for (i = 1; i < borg_kills_nxt; i++)
@@ -11914,7 +11921,7 @@ bool borg_check_rest(void)
 		/* if too close, don't rest */
 		if (d < 2) return (FALSE);
 
-		/* if too close, don't rest */
+		/* If too close, don't rest */
 		if (d < 3 && !(r_ptr->flags1 & RF1_NEVER_MOVE)) return (FALSE);
 
 		/* one call for dangers */
@@ -11942,7 +11949,8 @@ bool borg_check_rest(void)
 		if (r_ptr->flags2 & RF2_PASS_WALL) return FALSE;
 		if (r_ptr->flags2 & RF2_KILL_WALL) return FALSE;
 	}
-
+	
+	borg_note("# No monsters nearby???");
 
 	/* Otherwise ok */
 	return TRUE;
@@ -11986,7 +11994,7 @@ bool borg_recover(void)
 			if (borg_refuel_torch()) return (TRUE);
 
 			/* Take note */
-			borg_note(format("# Need to refuel but cant!", p));
+			borg_note_fmt("# Need to refuel but cant!", p);
 
 			/* Allow Pets to Roam so we dont hit them in the dark. */
 			p_ptr->pet_follow_distance = PET_STAY_AWAY;
@@ -12004,7 +12012,7 @@ bool borg_recover(void)
 			if (borg_refuel_lantern()) return (TRUE);
 
 			/* Take note */
-			borg_note(format("# Need to refuel but cant!", p));
+			borg_note_fmt("# Need to refuel but cant!", p);
 		}
 	}
 
@@ -12041,7 +12049,7 @@ bool borg_recover(void)
 
 		{
 			/* Take note */
-			borg_note(format("# Cure Stun", p));
+			borg_note_fmt("# Cure Stun", p);
 
 			return (TRUE);
 		}
@@ -12054,7 +12062,7 @@ bool borg_recover(void)
 			borg_spell(REALM_LIFE, 1, 2))
 		{
 			/* Take note */
-			borg_note(format("# Cure Heavy Stun", p));
+			borg_note_fmt("# Cure Heavy Stun", p);
 
 			return (TRUE);
 		}
@@ -12068,7 +12076,7 @@ bool borg_recover(void)
 			borg_spell(REALM_NATURE, 0, 7) || borg_spell(REALM_LIFE, 0, 6))
 		{
 			/* Take note */
-			borg_note(format("# Cure Cuts", p));
+			borg_note_fmt("# Cure Cuts", p);
 
 			return (TRUE);
 		}
@@ -12082,7 +12090,7 @@ bool borg_recover(void)
 			borg_spell(REALM_NATURE, 0, 7) || borg_spell(REALM_LIFE, 1, 2))
 		{
 			/* Take note */
-			borg_note(format("# Cure poison", p));
+			borg_note_fmt("# Cure poison", p);
 
 			return (TRUE);
 		}
@@ -12095,7 +12103,7 @@ bool borg_recover(void)
 			borg_spell(REALM_LIFE, 0, 3))
 		{
 			/* Take note */
-			borg_note(format("# Cure fear", p));
+			borg_note_fmt("# Cure fear", p);
 
 			return (TRUE);
 		}
@@ -12123,7 +12131,7 @@ bool borg_recover(void)
 			borg_spell(REALM_LIFE, 1, 6) || borg_spell(REALM_NATURE, 1, 7))
 		{
 			/* Take note */
-			borg_note(format("# heal damage (recovering)"));
+			borg_note("# heal damage (recovering)");
 
 			return (TRUE);
 		}
@@ -12321,18 +12329,15 @@ bool borg_recover(void)
 		 (borg_skill[BI_CURHP] < borg_skill[BI_MAXHP]) ||
 		 (borg_skill[BI_CURSP] < borg_skill[BI_MAXSP] * 6 / 10)) &&
 		(!borg_takes_cnt || !goal_recalling) && !borg_goi && !borg_shield &&
-		(borg_skill
-		 [BI_CDEPTH] !=
-		 100) &&
-		!scaryguy_on_level && (randint0(100) < 90) && borg_check_rest() &&
-		(p <= mb_ptr->fear) && !goal_fleeing)
+		!scaryguy_on_level && borg_check_rest() && (p <= mb_ptr->fear) &&
+		!goal_fleeing)
 	{
 		/* XXX XXX XXX */
 		if (!borg_skill[BI_ISWEAK] && !borg_skill[BI_ISCUT] &&
 			!borg_skill[BI_ISHUNGRY] && !borg_skill[BI_ISPOISONED])
 		{
 			/* Take note */
-			borg_note(format("# Resting (danger %d)...", p));
+			borg_note_fmt("# Resting (danger %d)...", p);
 
 			/* Rest until done */
 			borg_keypress('R');
@@ -12351,7 +12356,7 @@ bool borg_recover(void)
 			!borg_skill[BI_ISHUNGRY] && !borg_skill[BI_ISPOISONED])
 		{
 			/* Take note */
-			borg_note(format("# Resting to gain Mana. (danger %d)...", p));
+			borg_note_fmt("# Resting to gain Mana. (danger %d)...", p);
 
 			/* Rest until done */
 			borg_keypress('R');
@@ -12485,8 +12490,8 @@ static bool borg_play_step(int y2, int x2)
 			return (FALSE);
 
 		/* Message */
-		borg_note(format("# Walking into a '%s' at (%d,%d)",
-						 r_name + r_info[mb_ptr->monster].name, x, y));
+		borg_note_fmt("# Walking into a '%s' at (%d,%d)",
+						 r_name + r_info[mb_ptr->monster].name, x, y);
 
 		/* Walk into it */
 		if (my_no_alter)
@@ -12508,8 +12513,8 @@ static bool borg_play_step(int y2, int x2)
 	{
 		/*** Handle other takes ***/
 		/* Message */
-		borg_note(format("# Walking onto a '%s' at (%d,%d)",
-						 k_name + k_info[mb_ptr->object].name, x, y));
+		borg_note_fmt("# Walking onto a '%s' at (%d,%d)",
+						 k_name + k_info[mb_ptr->object].name, x, y);
 
 		/* Walk onto it */
 		borg_keypress(I2D(dir));
@@ -12722,7 +12727,7 @@ static bool borg_flow_commit(cptr who, int why)
 	if (cost >= 250) return (FALSE);
 
 	/* Message */
-	if (who) borg_note(format("# Flowing toward %s at cost %d", who, cost));
+	if (who) borg_note_fmt("# Flowing toward %s at cost %d", who, cost);
 
 	/* Iterate over all grids */
 	MAP_ITT_START (mb_ptr)
@@ -14769,7 +14774,7 @@ bool borg_flow_spastic(bool bored)
 		spastic_y = 0;
 
 		/* Take note */
-		borg_note(format("# Spastic Searching at (%d,%d)...", c_x, c_y));
+		borg_note_fmt("# Spastic Searching at (%d,%d)...", c_x, c_y);
 
 		/* Count searching */
 		for (i = 0; i < 9; i++)
