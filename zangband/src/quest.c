@@ -1470,10 +1470,7 @@ static quest_type *insert_message_quest(int dist)
 	quest_type *q_ptr;
 	store_type *st_ptr;
 	
-	cptr owner;
-
 	int store;
-	byte owner_num;
 	u16b place_num;
 
 	/* Get a new quest */
@@ -1503,44 +1500,19 @@ static quest_type *insert_message_quest(int dist)
 	pl_ptr = &place[place_num];
 	
 	/* Find a store at that town */
-	while (TRUE)
+	do
 	{
 		store = randint0(pl_ptr->numstores);
 		
 		st_ptr = &pl_ptr->store[store];
 		
 		/* Want a store with an owner */
-		if (st_ptr->owner)
-		{
-			int field_num = wild_build[st_ptr->type].field;
-			
-			/* Hack XXX XXX - not homes */
-			if (field_num == FT_STORE_HOME) continue;
-			
-			owner_num = t_info[field_num].data_init[0];
-			
-			/* Store or building? */
-			if (build_is_store(wild_build[st_ptr->type].type))
-			{
-				/* Store */
-				const owner_type *ot_ptr = &owners[owner_num][st_ptr->owner];
-				
-				owner = ot_ptr->owner_name;
-			}
-			else
-			{
-				/* Building */
-				const b_own_type *bo_ptr = &b_owners[owner_num][st_ptr->owner];
-				
-				owner = bo_ptr->owner_name;
-			}
-		
-			break;
-		}
 	}
-		
+	while (!st_ptr->owner_name);
+
 	/* XXX XXX Create quest name */
-	(void)strnfmt(q_ptr->name, 128, "Carry a message to %s in %s.", owner, pl_ptr->name);
+	(void)strnfmt(q_ptr->name, 128, "Carry a message to %s in %s.",
+					quark_str(st_ptr->owner_name), pl_ptr->name);
 	
 	
 	/* Save the quest data */

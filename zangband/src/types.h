@@ -1626,7 +1626,7 @@ struct mindcraft_power
 	cptr name;
 };
 
-
+#if 0
 /*
  * A store owner
  */
@@ -1639,8 +1639,6 @@ struct owner_type
 	s16b max_cost;	/* Purse limit / 100 */
 
 	byte greed;	/* Greed level */
-
-	byte owner_race;	/* Owner race */
 };
 
 
@@ -1654,9 +1652,9 @@ struct b_own_type
 	cptr owner_name;	/* Name */
 
 	byte inflate;	/* Inflation */
-
-	byte owner_race;	/* Owner race */
 };
+#endif /* 0 */
+
 
 /*
  * A store, with an owner, various state flags, a current stock
@@ -1667,8 +1665,11 @@ typedef struct store_type store_type;
 struct store_type
 {
 	byte type;	/* Store type */
-	byte owner;	/* Owner index */
-
+	
+	byte greed;	/* Greed value */
+	s16b max_cost;	/* Purse limit / 100 */
+	s16b owner_name;	/* Owner name */
+	
 	s16b data;	/* Data used for various things */
 
 	s32b last_visit;	/* Last visited on this turn */

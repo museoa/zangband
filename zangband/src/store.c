@@ -155,7 +155,7 @@ static store_type *st_ptr = NULL;
 /*
  * We store the current field here so that it can be accessed everywhere
  */
-static const field_type *f_ptr = NULL;
+static field_type *f_ptr = NULL;
 
 /* Save info flags for store */
 static byte info_flags;
@@ -187,9 +187,7 @@ s32b price_item(object_type *o_ptr, bool flip)
 	int adjust;
 	s32b price;
 
-	const owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
-
-	int greed = ot_ptr->greed;
+	int greed = st_ptr->greed;
 
 	/* Get the value of one of the items */
 	price = object_value(o_ptr);
@@ -239,9 +237,9 @@ s32b price_item(object_type *o_ptr, bool flip)
 	price = (price * adjust + 50L) / 100L;
 
     /* Cap the price */
-    if (flip && price > ot_ptr->max_cost * 100L)
+    if (flip && price > st_ptr->max_cost * 100L)
     {
-        price = ot_ptr->max_cost * 100L;
+        price = st_ptr->max_cost * 100L;
     }
 
 	/* Note -- Never become "free" */
@@ -585,13 +583,11 @@ static bool store_will_buy(const object_type *o_ptr)
  */
 static bool store_will_stock(const object_type *o_ptr)
 {
-	cave_type *c_ptr = area(p_ptr->px, p_ptr->py);
-
 	/* Default is to reject this rejection */
 	bool result = FALSE;
 
 	/* Will the store !not! buy this item? */
-	field_script(c_ptr, FIELD_ACT_STORE_ACT1, "p:b", LUA_OBJECT(o_ptr), LUA_RETURN(result));
+	field_script_single(f_ptr, FIELD_ACT_STORE_ACT1, "p:b", LUA_OBJECT(o_ptr), LUA_RETURN(result));
 
 	/* We don't want this item type? */
 	if (result == TRUE) return (FALSE);
@@ -600,7 +596,7 @@ static bool store_will_stock(const object_type *o_ptr)
 	result = TRUE;
 
 	/* Will the store buy this item? */
-	field_script(c_ptr, FIELD_ACT_STORE_ACT2, "p:b", LUA_OBJECT(o_ptr), LUA_RETURN(result));
+	field_script_single(f_ptr, FIELD_ACT_STORE_ACT2, "p:b", LUA_OBJECT(o_ptr), LUA_RETURN(result));
 
 	/* Finally check to see if we will buy the item */
 	return (result && store_will_buy(o_ptr));
@@ -1069,8 +1065,6 @@ static void store_prt_gold(void)
  */
 static void display_store(void)
 {
-	const owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
-	
 	int wid, hgt;
 
 	/* Get size */
@@ -1099,14 +1093,13 @@ static void display_store(void)
 	else
 	{
 		cptr store_name = field_name(f_ptr);
-		cptr owner_name = ot_ptr->owner_name;
-		cptr race_name = race_info[ot_ptr->owner_race].title;
+		cptr owner_name = quark_str(st_ptr->owner_name);
 
-		/* Put the owner name and race */
-		put_fstr(5, 3, "%s (%s)", owner_name, race_name);
+		/* Put the owner name */
+		put_fstr(5, 3, "%s", owner_name);
 
 		/* Show the max price in the store (above prices) */
-		put_fstr(45, 3, "%s (%ld)", store_name, (long)(ot_ptr->max_cost) * 100);
+		put_fstr(45, 3, "%s (%ld)", store_name, (long)(st_ptr->max_cost) * 100);
 
 		/* Label the item descriptions */
 		put_fstr(3, 5, "Item Description");
@@ -1219,7 +1212,8 @@ static void store_maint(void)
  */
 static void store_shuffle(store_type *st_ptr)
 {
-	int j;
+	cptr own_name = owner_names[randint0(owner_names_max)];
+	cptr own_suffix = owner_suffix[randint0(owner_suffix_max)];
 
 	object_type *o_ptr;
 
@@ -1227,10 +1221,18 @@ static void store_shuffle(store_type *st_ptr)
 	if (st_ptr->type == BUILD_STORE_HOME) return;
 
 	/* Pick a new owner */
-	for (j = st_ptr->owner; j == st_ptr->owner;)
-	{
-		st_ptr->owner = (byte)randint0(MAX_OWNERS);
-	}
+	st_ptr->owner_name = quark_fmt("%s %s", own_name, own_suffix);
+	
+	/* These are set in place_sb() via the lua hook below */
+	st_ptr->greed = 0;
+	st_ptr->max_cost = 0;
+		
+	/*
+	 * Hack - Init store
+	 *
+	 * Note that this assumes the player is in this store
+	 */
+	field_script_single(f_ptr, FIELD_ACT_SB_INIT, "");
 
 	/* Reset the owner data */
 	st_ptr->data = 0;
@@ -2364,7 +2366,7 @@ store_type *get_current_store(void)
  * into other commands, normally, we convert "p" (pray) and "m"
  * (cast magic) into "g" (get), and "s" (search) into "d" (drop).
  */
-void do_cmd_store(const field_type *f1_ptr)
+void do_cmd_store(field_type *f1_ptr)
 {
 	int maintain_num;
 	int tmp_chr;
@@ -2384,12 +2386,14 @@ void do_cmd_store(const field_type *f1_ptr)
 	/* Paranoia */
 	if (!st_ptr) return;
 	
+	/* Init store if required */
+	field_script_single(f1_ptr, FIELD_ACT_SB_INIT, "");
+	
 	/* Some quests are finished by finding a shop */
 	trigger_quest_complete(QX_FIND_SHOP, (vptr)st_ptr);
 
 	/* Hack - save interesting flags for later */
 	info_flags = f_ptr->data[7];
-
 
 	/* Hack -- Check the "locked doors" */
 	if (ironman_shops)
@@ -2400,7 +2404,6 @@ void do_cmd_store(const field_type *f1_ptr)
 		
 	/* Calculate the number of store maintainances since the last visit */
 	maintain_num = (turn - st_ptr->last_visit) / (10L * STORE_TURNS);
-
 
 	/* Recalculate maximum number of items in store */
 	if (f_ptr->data[7] & ST_HALF_INVEN)
@@ -2639,11 +2642,18 @@ void do_cmd_store(const field_type *f1_ptr)
  */
 void store_init(int town_num, int store_num, byte store)
 {
-	/* Activate that store */
-	st_ptr = &place[town_num].store[store_num];
+	cptr own_name = owner_names[randint0(owner_names_max)];
+	cptr own_suffix = owner_suffix[randint0(owner_suffix_max)];
+
+	/* Activate that building */
+	store_type *st_ptr = &place[town_num].store[store_num];
 
 	/* Pick an owner */
-	st_ptr->owner = (byte)randint0(MAX_OWNERS);
+	st_ptr->owner_name = quark_fmt("%s %s", own_name, own_suffix);
+	
+	/* These are set in place_sb() via lua hooks */
+	st_ptr->greed = 0;
+	st_ptr->max_cost = 0;
 
 	/* Do not allocate the stock yet. */
 	st_ptr->stock = 0;
@@ -2670,4 +2680,16 @@ void store_init(int town_num, int store_num, byte store)
 	 * BEFORE player birth to enable store restocking
 	 */
 	st_ptr->last_visit = -100L * STORE_TURNS;
+}
+
+void place_sb(int greed, int max_cost)
+{
+	store_type *st_ptr = get_current_store();
+
+	/* Set greed / max_cost values if unset */
+	if (!st_ptr->greed)
+	{
+		st_ptr->greed = greed;
+		st_ptr->max_cost = max_cost;
+	}
 }

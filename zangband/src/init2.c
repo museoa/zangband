@@ -1126,6 +1126,19 @@ static errr init_other(void)
 	/* Allocate the towns */
 	C_MAKE(place, z_info->wp_max, place_type);
 
+	/* Get size of shop owner name arrays */
+	for (i = 0; owner_names[i]; i++)
+	{
+		/* Do nothing */
+	}
+	owner_names_max = i;
+	
+	for (i = 0; owner_suffix[i]; i++)
+	{
+		/* Do nothing */
+	}
+	owner_suffix_max = i;
+
 
 	/* Success */
 	return (0);

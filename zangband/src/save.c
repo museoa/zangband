@@ -744,7 +744,17 @@ static void wr_store(const store_type *st_ptr)
 	wr_s16b(st_ptr->data);
 
 	/* Save the current owner */
-	wr_byte(st_ptr->owner);
+	
+	if (quark_str(st_ptr->owner_name))
+	{
+		wr_string(quark_str(st_ptr->owner_name));
+	}
+	else
+	{
+		wr_string("");
+	}
+	wr_s16b(st_ptr->max_cost);
+	wr_byte(st_ptr->greed);
 
 	/* Hack - Save whether or not we have stock */
 	wr_byte(st_ptr->stock ? TRUE : FALSE);

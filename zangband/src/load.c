@@ -957,7 +957,11 @@ static void rd_store(int town_num, int store_num)
 
 	s16b data;
 
-	byte allocated, owner, type = 0;
+	byte allocated, type = 0, owner = -1;
+	s16b max_cost;
+	byte greed;
+
+	char buf[256];
 
 	/* Read the basic info */
 	if (sf_version < 34)
@@ -966,7 +970,18 @@ static void rd_store(int town_num, int store_num)
 	}
 
 	rd_s16b(&data);
-	rd_byte(&owner);
+	if (sf_version < 49)
+	{
+		rd_byte(&owner);
+	}
+	else
+	{
+		rd_string(buf, 256);
+		st_ptr->owner_name = quark_add(buf);
+		rd_s16b(&max_cost);
+		rd_byte(&greed);
+	}
+	
 	rd_byte(&allocated);
 
 	if (sf_version < 34)
@@ -986,11 +1001,17 @@ static void rd_store(int town_num, int store_num)
 
 	/* Hack - Initialise the store (even if not really a store) */
 	store_init(town_num, store_num, type);
-
+	
+	/* Finish initialisation */
+	if (sf_version >= 49)
+	{
+		st_ptr->owner_name = quark_add(buf);
+		st_ptr->max_cost = max_cost;
+		st_ptr->greed = greed;
+	}
 
 	/* Restore the saved parameters */
 	st_ptr->data = data;
-	st_ptr->owner = owner;
 
 	/* Read last visit */
 	rd_s32b(&st_ptr->last_visit);

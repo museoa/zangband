@@ -746,6 +746,11 @@ void (*ang_sort_swap) (const vptr u, const vptr v, int a, int b);
 cptr gf_color[MAX_GF];
 
 
+/*
+ * Store owner table sizes
+ */
+int owner_names_max;
+int owner_suffix_max;
 
 /* Get rid of this? */
 

@@ -712,10 +712,8 @@ static cptr t_info_triggers[] =
 	"LOAD",
 	"PENTER",
 	"PON",
-	"DUMMY1",
 	"MENTER",
 	"MON",
-	"DUMMY2",
 	"OBDROP",
 	"OBON",
 	"INTER",
@@ -730,6 +728,7 @@ static cptr t_info_triggers[] =
 	"BUILD2",
 	"STORE1",
 	"STORE2",
+	"SBINIT",
 	NULL
 };
 

@@ -332,21 +332,18 @@ void build_cmd_quest(int level)
  */
 void display_build(field_type *f_ptr)
 {
-	const b_own_type *bo_ptr = &b_owners[f_ptr->data[0]][build_ptr->owner];
-
 	int factor;
 
 	cptr build_name = field_name(f_ptr);
-	cptr owner_name = (bo_ptr->owner_name);
-	cptr race_name = race_info[bo_ptr->owner_race].title;
+	cptr owner_name = quark_str(build_ptr->owner_name);
 
 	/* The charisma factor */
 	factor = adj_chr_gold[p_ptr->stat[A_CHR].ind];
 
-	factor = ((factor + 200) * bo_ptr->inflate) / 400;
+	factor = ((factor + 200) * build_ptr->greed) / 400;
 
 	Term_clear();
-	prtf(1, 2, "%s (%s) %s", owner_name, race_name, build_name);
+	prtf(1, 2, "%s %s", owner_name, build_name);
 	prtf(0, 19, "You may:");
 
 	/* Display building-specific information */
@@ -1713,21 +1710,24 @@ bool building_magetower(int factor, bool display)
 
 static bool process_build_hook(field_type *f_ptr)
 {
-	const b_own_type *bo_ptr = &b_owners[f_ptr->data[0]][build_ptr->owner];
-
 	int factor;
+	
+	char command[2];
 	
 	bool done = FALSE;
 
 	/* The charisma factor */
 	factor = adj_chr_gold[p_ptr->stat[A_CHR].ind];
 
-	factor = ((factor + 200) * bo_ptr->inflate) / 400;
+	factor = ((factor + 200) * build_ptr->greed) / 400;
+	
+	/* Hack - lua expects a string instead of a character */
+	command[0] = (byte) p_ptr->cmd.cmd;
+	command[1] = '\0';
 
-	field_script_single(f_ptr, FIELD_ACT_BUILD_ACT2, "ii:b",
-						LUA_VAR(factor),
-						LUA_VAR_NAMED(p_ptr->cmd.cmd, "command"),
-						LUA_VAR(done));
+	field_script_single(f_ptr, FIELD_ACT_BUILD_ACT2, "is:b",
+						LUA_VAR(factor), LUA_VAR(command),
+						LUA_RETURN(done));
 	
 	/* Redraw screen */
 	display_build(f_ptr);
@@ -1945,6 +1945,9 @@ void do_cmd_bldg(field_type *f_ptr)
 	/* Save building pointer for lua hook */
 	build_ptr = b_ptr;
 	
+	/* Init building if required */
+	field_script_single(f_ptr, FIELD_ACT_SB_INIT, "");
+	
 	/* Some quests are finished by finding a building */
 	trigger_quest_complete(QX_FIND_SHOP, (vptr)b_ptr);
 	
@@ -2037,11 +2040,18 @@ void do_cmd_bldg(field_type *f_ptr)
  */
 void build_init(int town_num, int build_num, byte build_type)
 {
+	cptr own_name = owner_names[randint0(owner_names_max)];
+	cptr own_suffix = owner_suffix[randint0(owner_suffix_max)];
+
 	/* Activate that building */
 	store_type *st_ptr = &place[town_num].store[build_num];
 
 	/* Pick an owner */
-	st_ptr->owner = (byte)randint0(MAX_B_OWN);
+	st_ptr->owner_name = quark_fmt("%s %s", own_name, own_suffix);
+	
+	/* These are set in place_sb() via lua hooks */
+	st_ptr->greed = 0;
+	st_ptr->max_cost = 0;
 
 	/* Set the type */
 	st_ptr->type = build_type;

@@ -32,7 +32,7 @@
 #define VERSION_NAME "ZAngband"
 
 /* Savefile version */
-#define SAVEFILE_VERSION 48
+#define SAVEFILE_VERSION 49
 
 /* User-visible version */
 #define VER_MAJOR 2
@@ -5008,27 +5008,24 @@ extern int PlayerUID;
 #define FIELD_ACT_LOAD			1	/* Loading Initialisation */
 #define FIELD_ACT_PLAYER_ENTER	2	/* Player walks onto square */
 #define FIELD_ACT_PLAYER_ON		3	/* Player is on square */
-#define FIELD_ACT_DUMMY1		4
-#define FIELD_ACT_MONSTER_ENTER	5	/* Monster walks onto square */
-#define FIELD_ACT_MONSTER_ON	6	/* Monster is on square */
-#define FIELD_ACT_DUMMY2		7
-#define FIELD_ACT_OBJECT_DROP	8	/* Object lands on square */
-#define FIELD_ACT_OBJECT_ON		9	/* Object is on square */
-#define FIELD_ACT_INTERACT		10	/* Type-specific interation */
-#define FIELD_ACT_MAGIC_TARGET	11	/* Targeting this square */
-#define FIELD_ACT_LOOK			12	/* Hook for name of field when looking */
-#define FIELD_ACT_EXIT			13	/* Field is destroyed */
-#define FIELD_ACT_MONSTER_AI	14	/* Monster AI hook */
-#define FIELD_ACT_SPECIAL		15	/* Special, type specific action */
-#define FIELD_ACT_INTERACT_TEST	16	/* Test for type of player interaction */
-#define FIELD_ACT_MON_ENTER_TEST 17	/* Monster attempts to enter grid */
-#define FIELD_ACT_BUILD_ACT1	18	/* Building prelimiary action */
-#define FIELD_ACT_BUILD_ACT2	19	/* Building final action */
-#define FIELD_ACT_STORE_ACT1	20	/* Store object antiselection action */
-#define FIELD_ACT_STORE_ACT2	21	/* Store object selection action */
-
-
-#define FIELD_ACTION_MAX		22
+#define FIELD_ACT_MONSTER_ENTER	4	/* Monster walks onto square */
+#define FIELD_ACT_MONSTER_ON	5	/* Monster is on square */
+#define FIELD_ACT_OBJECT_DROP	6	/* Object lands on square */
+#define FIELD_ACT_OBJECT_ON		7	/* Object is on square */
+#define FIELD_ACT_INTERACT		8	/* Type-specific interation */
+#define FIELD_ACT_MAGIC_TARGET	9	/* Targeting this square */
+#define FIELD_ACT_LOOK			10	/* Hook for name of field when looking */
+#define FIELD_ACT_EXIT			11	/* Field is destroyed */
+#define FIELD_ACT_MONSTER_AI	12	/* Monster AI hook */
+#define FIELD_ACT_SPECIAL		13	/* Special, type specific action */
+#define FIELD_ACT_INTERACT_TEST	14	/* Test for type of player interaction */
+#define FIELD_ACT_MON_ENTER_TEST 15	/* Monster attempts to enter grid */
+#define FIELD_ACT_BUILD_ACT1	16	/* Building prelimiary action */
+#define FIELD_ACT_BUILD_ACT2	17	/* Building final action */
+#define FIELD_ACT_STORE_ACT1	18	/* Store object antiselection action */
+#define FIELD_ACT_STORE_ACT2	19	/* Store object selection action */
+#define FIELD_ACT_SB_INIT		20	/* Initialize a store / building */
+#define FIELD_ACTION_MAX		21
 
 #define ACT_TUNNEL		0
 #define ACT_DISARM		1

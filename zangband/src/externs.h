@@ -44,8 +44,8 @@ extern const byte adj_dex_safe[];
 extern const byte adj_con_fix[];
 extern const byte adj_con_mhp[];
 extern const byte blows_table[12][12];
-extern const owner_type owners[MAX_STORES][MAX_OWNERS];
-extern const b_own_type b_owners[MAX_BLDG][MAX_B_OWN];
+extern cptr owner_names[];
+extern cptr owner_suffix[];
 extern const byte extract_energy[200];
 extern const s32b player_exp[PY_MAX_LEVEL];
 extern player_sex sex_info[MAX_SEXES];
@@ -264,6 +264,8 @@ extern void (*ang_sort_swap) (const vptr u, const vptr v, int a, int b);
 extern s32b max_wild;
 extern cptr gf_color[MAX_GF];
 extern int highscore_fd;
+extern int owner_names_max;
+extern int owner_suffix_max;
 
 /* birth.c */
 extern void player_birth(void);
@@ -816,8 +818,9 @@ extern void sanity_blast(const monster_type *m_ptr);
 extern s32b price_item(object_type *o_ptr, bool flip);
 extern bool allocate_store(store_type *st_ptr);
 extern store_type *get_current_store(void);
-extern void do_cmd_store(const field_type *f_ptr);
+extern void do_cmd_store(field_type *f_ptr);
 extern void store_init(int town_num, int store_num, byte store);
+extern void place_sb(int greed, int max_cost);
 
 /* bldg.c */
 extern bool get_nightmare(int r_idx);
