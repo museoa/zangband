@@ -9399,11 +9399,7 @@ static int borg_defend_aux_glyph(int p1)
 	 * broken doors, so he won't loop.
 	 */
 
-	if ((mb_ptr->object)		/* ||
-								   (mb_ptr->feat == FEAT_MINOR_GLYPH) ||
-								   (mb_ptr->feat == FEAT_GLYPH) ||
-								   ((mb_ptr->feat >= FEAT_TRAP_TRAPDOOR) && (mb_ptr->feat <= FEAT_TRAP_SLEEP)) */
-		||
+	if ((mb_ptr->object) || (mb_ptr->m_effect) || (mb_ptr->trap) ||
 		(mb_ptr->feat == FEAT_CLOSED) || (mb_ptr->feat == FEAT_LESS) ||
 		(mb_ptr->feat == FEAT_MORE) || (mb_ptr->feat == FEAT_OPEN) ||
 		(mb_ptr->feat == FEAT_BROKEN))
