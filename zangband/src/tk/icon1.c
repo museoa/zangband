@@ -32,98 +32,6 @@ bool g_icon_map_changed = FALSE;
 int *g_image_monster, *g_image_object;
 bool g_daytime; /* Day or night */
 
-/*
- * Calculate the light radius for this floor grid
- */
-void angtk_view_floor(int y, int x, int info, int torch)
-{
-	/* Special lighting effects */
-	if (view_special_lite)
-	{
-		/* Handle "blind" */
-		if (p_ptr->blind)
-		{
-			/* Use "dark gray" */
-			g_grid[y][x].dark = GRID_LITE_DARK;
-		}
-
-		/* Handle "seen" grids */
-		else if (info & (GRID_VIEW))
-		{
-			/* Only lit by "torch" lite */
-			if (view_yellow_lite && torch)
-			{
-				/* Use "yellow" */
-				g_grid[y][x].dark = GRID_LITE_TORCH;
-			}
-
-			else
-			{
-				g_grid[y][x].dark = GRID_LITE_NORMAL;
-			}
-		}
-
-		/* Handle "dark" grids */
-		else if (!(info & (CAVE_GLOW)))
-		{
-			/* Use "dark gray" */
-			g_grid[y][x].dark = GRID_LITE_DARK;
-		}
-
-		/* Handle "view_bright_lite" */
-		else if (view_bright_lite)
-		{
-			/* Use "gray" */
-			g_grid[y][x].dark = GRID_LITE_DARK;
-		}
-	}
-	else
-	{
-		g_grid[y][x].dark = GRID_LITE_TORCH;
-	}
-}
-
-/*
- * Calculate the light radius for this wall grid
- */
-void angtk_view_wall(int y, int x, int info, int torch)
-{
-	/* Special lighting effects (walls only) */
-	if (view_granite_lite)
-	{
-		/* Handle "blind" */
-		if (p_ptr->blind)
-		{
-			/* Use "dark gray" */
-			g_grid[y][x].dark = GRID_LITE_DARK;
-		}
-
-		/* Handle "seen" grids */
-		else if (info & (GRID_VIEW))
-		{
-			if (view_yellow_lite && torch)
-			{
-				g_grid[y][x].dark = GRID_LITE_TORCH;
-			}
-
-			else
-			{
-				g_grid[y][x].dark = GRID_LITE_NORMAL;
-			}
-		}
-
-		/* Handle "view_bright_lite" */
-		else if (view_bright_lite)
-		{
-			/* Use "gray" */
-			g_grid[y][x].dark = GRID_LITE_DARK;
-		}
-	}
-	else
-	{
-		g_grid[y][x].dark = GRID_LITE_TORCH;
-	}
-}
 
 /*
  * This routine fills the given t_grid struct with the indices of
@@ -214,7 +122,7 @@ void get_display_info(int y, int x, t_display *displayPtr)
 	t_grid *gridPtr = &g_grid[y][x];
 
 	/* Get the darkness factor */
-	int dark = gridPtr->dark;
+	int dark = 0;
 
 	/* Determine if there is daylight in the town */
 	int daytime = !p_ptr->depth && g_daytime;

@@ -191,7 +191,6 @@ void map_symbol_set(int y, int x)
 /* ExWidget.symbolProc() */
 int map_symbol_proc(Widget *widgetPtr, int y, int x)
 {
-	int night = (p_ptr->depth || !g_daytime);
 	int symbol = -1;
 	
 	/* Hack - ignore parameter */
@@ -200,11 +199,6 @@ int map_symbol_proc(Widget *widgetPtr, int y, int x)
 	if (in_bounds2 && in_bounds2(x, y))
 	{
 		symbol = g_map_symbol[y][x];
-#if USE_MAP_MIMIC
-		symbol = g_symbol[symbol]->mimic;
-#endif
-		if (night && g_symbol[symbol]->light)
-			symbol += g_grid[y][x].dark;
 	}
 
 	return symbol;

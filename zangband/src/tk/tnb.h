@@ -135,7 +135,7 @@ extern void angtk_flavor_swap(int n, int a, int b);
  * Memory of what is seen at a cave location for the entire cave.
  */
 typedef struct t_grid {
-	int dark; /* GRID_LITE_XXX flags */
+	/* int dark; */ /* GRID_LITE_XXX flags */
 	int f_idx; /* Feature */
 	object_type *o_ptr; /* Object */
 	int m_idx; /* Character/Monster */
@@ -149,8 +149,6 @@ extern bool g_daytime; /* Day or night */
 extern void get_grid_info(int y, int x, t_grid *gridPtr);
 
 extern void angtk_image_reset(void);
-extern void angtk_view_floor(int y, int x, int info, int torch);
-extern void angtk_view_wall(int y, int x, int info, int torch);
 extern void set_grid_assign(int y, int x);
 extern void free_icons(void);
 extern void init_palette(void);
