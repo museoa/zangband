@@ -4618,7 +4618,7 @@ D:A strong and cunning orc warrior, Lugdush sneers as he insults your mother.
 
 N:357:Arch-vile
 G:u:W
-I:130:8d11:100:15:0
+I:120:8d11:100:15:0
 W:35:1:0:368
 B:CLAW:HURT:3d9
 B:CLAW:HURT:3d9
@@ -4626,7 +4626,7 @@ F:WILD_DUNGEON_01
 F:RAND_50 | EVIL | DEMON | FORCE_SLEEP | FORCE_MAXHP |
 F:OPEN_DOOR | BASH_DOOR | POWERFUL | COLD_BLOOD |
 F:IM_FIRE | RES_NETH | NO_CONF | NO_SLEEP | NONLIVING | NO_STUN
-S:1_IN_3 |
+S:1_IN_4 |
 S:BA_FIRE | ANIM_DEAD
 D:A pale, corpse-like lesser demon, who moves very fast and spawns evil 
 D:everywhere.
