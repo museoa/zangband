@@ -34,8 +34,8 @@ static byte value_check_aux1(const object_type *o_ptr)
 	/* Ego-Items */
 	if (ego_item_p(o_ptr))
 	{
-		/* Cursed / Worthless */
-		if (FLAG(o_ptr, TR_CURSED) || !o_ptr->cost)
+		/* Ego items with negative pvals or flags like aggravate or teleport */
+		if (!o_ptr->cost)
 		{
 			return FEEL_WORTHLESS;
 		}
