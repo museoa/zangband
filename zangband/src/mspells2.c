@@ -2397,9 +2397,13 @@ bool monst_spell_monst(int m_idx)
 				break;
 			}
 
-			/* RF6_XXX6X6 */
+			/* RF6_RAISE_DEAD */
 			case 160+15:
 			{
+				if (raise_dead(m_ptr->fy, m_ptr->fx, !is_hostile(m_ptr)) && known && see_m)
+				{
+					msg_format("%^s mutters quietly.", m_name);				
+				}
 				break;
 			}
 

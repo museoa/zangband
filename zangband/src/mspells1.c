@@ -2120,6 +2120,10 @@ bool make_attack_spell(int m_idx)
 		/* RF6_RAISE_DEAD */
 		case 160+15:
 		{
+			disturb(1, 0);
+			msg_format("%^s mutters quietly.", m_name);		
+			
+			raise_dead(m_ptr->fy, m_ptr->fx, FALSE);
 			break;
 		}
 
