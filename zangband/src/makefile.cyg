@@ -1,11 +1,6 @@
-# This is a makefile for the Cygwin 1.0 release which may
+# This is a makefile for the Cygwin tools which may
 # be downloaded by following the links from the url:
 # http://sources.redhat.com/cygwin/
-
-#
-# File locations - change these as appropriate
-#
-CYGDIR  = c:/cygwin
 
 #
 # Standard defines
@@ -13,8 +8,6 @@ CYGDIR  = c:/cygwin
 
 CC      =       gcc
 WRES    =       windres
-LIBDIRS =       -L$(CYGDIR)/lib
-INCDIRS =       -I$(CYGDIR)/usr/include/mingw32
 LIBS    =       -s -mwindows -e _mainCRTStartup -lwinmm
 CFLAGS  =       -Wall -O2 -fno-strength-reduce -DUSE_TRANSPARENCY -DWINDOWS
 
