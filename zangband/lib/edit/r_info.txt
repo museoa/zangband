@@ -1401,7 +1401,7 @@ D:It is a large pile of pulsing green flesh.
 N:102:Large kobold
 G:k:w
 I:110:10d9:20:20:30
-W:9:1:0:80
+W:8:1:0:80
 O:0:90:0
 B:HIT:HURT:1d10
 F:DROP_90 | WILD_DUNGEON_01
@@ -2209,7 +2209,7 @@ D:its scales a pale blue.
 N:164:Baby white dragon
 G:d:W
 I:110:7d10:20:15:70
-W:14:2:0:550
+W:13:2:0:400
 O:50:50:0
 B:CLAW:HURT:1d3
 B:CLAW:HURT:1d3
@@ -2227,7 +2227,7 @@ D:its scales a pale white.
 N:165:Baby green dragon
 G:d:G
 I:110:7d10:20:15:70
-W:14:2:0:630
+W:14:2:0:500
 O:50:50:0
 B:CLAW:HURT:1d3
 B:CLAW:HURT:1d3
@@ -2245,7 +2245,7 @@ D:its scales a sickly green.
 N:166:Baby black dragon
 G:d:s
 I:110:7d10:20:15:70
-W:13:2:0:470
+W:13:2:0:400
 O:50:50:0
 B:CLAW:HURT:1d3
 B:CLAW:HURT:1d3
@@ -2263,7 +2263,7 @@ D:its scales a dull black.
 N:167:Baby red dragon
 G:d:R
 I:110:8d10:20:15:70
-W:13:2:0:470
+W:14:2:0:470
 O:50:50:0
 B:CLAW:HURT:1d3
 B:CLAW:HURT:1d3
@@ -2335,7 +2335,7 @@ D:It is a large snake with a hooded face.
 N:172:Eagle
 G:B:u
 I:120:7d8:30:20:10
-W:1:2:0:6
+W:3:2:0:12
 O:0:0:0
 B:CLAW:HURT:1d3
 B:CLAW:HURT:1d3
@@ -3363,7 +3363,7 @@ D:rests on.
 N:246:Software bug
 G:I:r
 I:120:1d4:8:6:10
-W:20:1:0:150
+W:10:1:0:150
 O:0:0:0
 B:BITE:HURT:1d2
 F:RAND_50 | RAND_25 |
@@ -3654,7 +3654,7 @@ D:It doesn't move very fast, but when it does - watch out!
 N:267:Magic mushroom patch
 G:,:B
 I:130:1d1:40:10:0
-W:23:2:0:1100
+W:23:2:0:250
 O:0:0:0
 F:WILD_DUNGEON_01 | WILD_FOREST2
 F:FORCE_SLEEP | NEVER_MOVE | NEVER_BLOW | FRIENDS | 
@@ -3814,7 +3814,7 @@ D:seeks to taste your juicy insides.
 N:278:Frost giant
 G:P:w
 I:110:12d10:20:25:50
-W:20:1:0:1070
+W:24:1:0:1070
 O:20:80:0
 B:HIT:COLD:3d6
 B:HIT:HURT:2d8
@@ -3880,7 +3880,7 @@ D:A completely translucent hound.
 N:283:Umber hulk
 G:X:u
 I:110:14d10:20:25:10
-W:27:1:0:3700
+W:29:1:0:3700
 O:0:0:0
 B:GAZE:CONFUSE
 B:HIT:HURT:1d6
@@ -4157,7 +4157,7 @@ D:A creature that was once human, but is now as green as moss.
 N:303:Water spirit
 G:E:b
 I:120:9d8:12:15:40
-W:25:1:0:840
+W:19:1:0:840
 O:0:0:0
 B:HIT:HURT:2d4
 B:HIT:HURT:2d4
@@ -4181,7 +4181,7 @@ D:It is fast and poisonous.
 N:305:Earth spirit
 G:E:U
 I:120:10d8:10:25:50
-W:25:2:0:2000
+W:20:2:0:2000
 O:0:0:0
 B:HIT:HURT:1d8
 B:HIT:HURT:1d8
@@ -4195,7 +4195,7 @@ D:A whirling form of sentient rock.
 N:306:Fire spirit
 G:E:R
 I:120:7d9:16:15:20
-W:25:2:0:790
+W:18:2:0:790
 O:0:0:0
 B:HIT:FIRE:2d6
 B:HIT:FIRE:2d6
@@ -4359,7 +4359,7 @@ D:powerful arms flex menacingly as he advances.
 N:316:Shambling mound
 G:,:g
 I:110:15d6:20:8:40
-W:23:2:0:220
+W:23:2:0:550
 O:100:0:0
 B:HIT:HURT:1d8
 B:HIT:HURT:1d8
@@ -4633,7 +4633,7 @@ D:A fast-moving and deadly dragonian animal. Beware its poisonous sting!
 N:335:Great eagle
 G:B:u
 I:120:75d5:20:65:20
-W:21:2:0:1500
+W:23:2:0:1500
 O:0:0:0
 B:CLAW:HURT:6d3
 B:CLAW:HURT:6d3
@@ -4991,7 +4991,7 @@ D:A twisting whirlpool of frost.
 N:359:Energy vortex
 G:v:y
 I:110:8d12:100:12:0
-W:25:1:0:2900
+W:34:1:0:2900
 O:0:0:0
 B:ENGULF:ELEC:5d5
 F:WILD_DUNGEON_01
@@ -5339,7 +5339,7 @@ D:This tiny night dwarf is as greedy for gold as his brother, Alberich.
 N:383:Hagen, son of Alberich
 G:h:o
 I:110:82d7:20:40:10
-W:38:2:0:26000
+W:35:2:0:26000
 O:50:50:0
 B:HIT:HURT:3d7
 B:HIT:HURT:3d7
@@ -5752,7 +5752,7 @@ D:He is out to have a revenge on you who have desecrated his tomb.
 N:410:Gwaihir the Windlord
 G:B:u
 I:130:64d10:20:65:20
-W:19:5:0:2150
+W:26:5:0:2150
 O:0:0:0
 B:CLAW:HURT:15d2
 B:CLAW:HURT:15d2
@@ -5881,7 +5881,7 @@ D:Flesh is falling off in chunks from this decaying abomination.
 N:419:Alberich the Nibelung King
 G:h:D
 I:120:56d11:20:40:20
-W:37:4:0:22500
+W:39:4:0:22500
 O:90:0:10
 B:HIT:UN_BONUS:3d12
 B:HIT:UN_BONUS:3d12
@@ -6219,7 +6219,7 @@ D:Often found in graveyards.
 N:440:5-headed hydra
 G:M:g
 I:120:70d8:20:40:20
-W:44:2:0:20000
+W:40:2:0:20000
 O:0:0:0
 B:BITE:POISON:4d4
 B:BITE:POISON:4d4
@@ -6537,7 +6537,7 @@ D:It is a floor tile corrupted by chaos.
 N:459:Young blue dragon
 G:d:b
 I:110:22d7:20:30:70
-W:41:1:0:6300
+W:41:1:0:7500
 O:50:50:0
 B:CLAW:HURT:1d4
 B:CLAW:HURT:1d4
@@ -6591,7 +6591,7 @@ D:deep green in hue.  Foul gas seeps through its scales.
 N:462:Young bronze dragon
 G:d:U
 I:110:25d7:20:30:150
-W:41:3:0:8500
+W:44:3:0:10500
 O:50:50:0
 B:CLAW:HURT:1d4
 B:CLAW:HURT:1d4
@@ -6729,7 +6729,7 @@ D:It is a ghostly form with eyes that haunt you.
 N:471:Shadow drake
 G:d:D
 I:110:35d7:25:30:30
-W:44:2:0:16000
+W:47:2:0:16000
 O:50:50:0
 B:BITE:COLD:1d6
 B:BITE:COLD:1d6
@@ -6849,7 +6849,7 @@ D:It is a giant beetle that produces a chilling sound.
 N:479:Ogre shaman
 G:O:b
 I:110:14d7:20:26:30
-W:50:2:0:9800
+W:42:2:0:9800
 O:0:0:80
 B:HIT:HURT:3d6
 B:HIT:HURT:3d6
@@ -7954,7 +7954,7 @@ D:It is a towering mass of filth, an eyesore of ooze.
 N:546:Young black dragon
 G:d:D
 I:110:22d7:20:30:50
-W:50:1:0:14000
+W:41:1:0:7500
 O:50:50:0
 B:CLAW:HURT:1d5
 B:CLAW:HURT:1d5
@@ -8119,7 +8119,7 @@ D:skeletal figure wearing a ruined plate mail.
 N:556:Young multi-hued dragon
 G:d:v
 I:110:24d7:20:35:50
-W:50:1:0:63000
+W:45:1:0:21000
 O:50:50:0
 B:CLAW:HURT:1d9
 B:CLAW:HURT:1d9
@@ -8173,7 +8173,7 @@ D:power.
 N:559:Young gold dragon
 G:d:y
 I:110:25d7:20:35:150
-W:52:2:0:20000
+W:44:2:0:15000
 O:50:50:0
 B:CLAW:HURT:1d8
 B:CLAW:HURT:1d8
@@ -8242,7 +8242,7 @@ D:A large dragon with scales of rich bronze.
 N:563:Young red dragon
 G:d:r
 I:110:25d7:20:30:50
-W:55:1:0:19500
+W:41:1:0:7500
 O:50:50:0
 B:CLAW:HURT:1d8
 B:CLAW:HURT:1d8
@@ -8681,7 +8681,7 @@ D:A whirlpool of intense flame, charring the stones at your feet.
 N:589:Mature red dragon
 G:d:r
 I:110:38d10:20:40:30
-W:61:1:0:77000
+W:54:1:0:77000
 O:50:50:0
 B:CLAW:HURT:1d4
 B:CLAW:HURT:1d10
@@ -8733,7 +8733,7 @@ D:your eyes with spectrums of colour.
 N:592:Mature black dragon
 G:d:D
 I:110:35d10:20:40:30
-W:56:1:0:31000
+W:54:1:0:31000
 O:50:50:0
 B:CLAW:HURT:1d8
 B:CLAW:HURT:1d8
@@ -8894,7 +8894,7 @@ D:waking monsters from their slumber.
 N:601:Ancient blue dragon
 G:D:b
 I:120:42d15:20:40:80
-W:60:1:0:78000
+W:55:1:0:78000
 O:50:50:0
 B:CLAW:HURT:4d8
 B:CLAW:HURT:4d8
@@ -8911,7 +8911,7 @@ D:A huge draconic form.  Lightning crackles along its length.
 N:602:Ancient bronze dragon
 G:D:U
 I:120:44d15:20:45:200
-W:55:2:0:102000
+W:57:2:0:102000
 O:50:50:0
 B:CLAW:HURT:4d8
 B:CLAW:HURT:4d8
@@ -9135,7 +9135,7 @@ D:creature touches.
 N:614:7-headed hydra
 G:M:G
 I:120:100d7:20:45:20
-W:59:2:0:56000
+W:50:2:0:56000
 O:100:0:0
 B:BITE:POISON:3d9
 B:BITE:POISON:3d9
@@ -9205,7 +9205,7 @@ D:look for prey, but each with its own deadly breath weapon.
 N:617:Ancient white dragon
 G:D:w
 I:120:42d15:20:40:80
-W:63:1:0:160000
+W:55:1:0:160000
 O:50:50:0
 B:CLAW:HURT:4d9
 B:CLAW:HURT:4d9
@@ -9222,7 +9222,7 @@ D:A huge draconic form.  Frost covers it from head to tail.
 N:618:Ancient green dragon
 G:D:g
 I:120:42d15:20:40:80
-W:58:1:0:135000
+W:55:1:0:135000
 O:50:50:0
 B:CLAW:HURT:4d8
 B:CLAW:HURT:4d8
@@ -9325,7 +9325,7 @@ D:A foul wind chills your bones as this ghastly figure approaches.
 N:624:Ancient black dragon
 G:D:D
 I:120:43d15:20:40:70
-W:62:1:0:115000
+W:57:1:0:115000
 O:50:50:0
 B:CLAW:HURT:4d9
 B:CLAW:HURT:4d9
@@ -9806,7 +9806,7 @@ D:extending far out behind it'.
 N:652:Fallen angel
 G:A:D
 I:130:70d35:30:70:255
-W:60:6:0:600000
+W:70:6:0:600000
 O:0:50:50
 B:GAZE:EXP_VAMP:4d4
 B:GAZE:EXP_VAMP:4d4
@@ -9984,7 +9984,7 @@ D:menace as his father.
 N:661:Archon
 G:A:y
 I:130:70d35:30:70:255
-W:61:6:0:560000
+W:68:6:0:560000
 O:0:100:0
 B:GAZE:TERRIFY:4d4
 B:GAZE:TERRIFY:4d4
@@ -11701,7 +11701,7 @@ D:dreadful fury... melting basaltic rocks like butter under a blowtorch."
 N:748:Hand druj
 G:s:D
 I:130:60d7:20:55:10
-W:79:4:0:390000
+W:69:4:0:390000
 O:0:0:0
 F:WILD_DUNGEON_01
 F:FORCE_SLEEP | FORCE_MAXHP | NEVER_MOVE | NEVER_BLOW | RES_TELE
@@ -12480,7 +12480,7 @@ D:stay real.  Its very existence distorts the universe around it.
 N:784:Great Wyrm of Law
 G:D:W
 I:120:45d70:40:85:255
-W:94:2:0:3400000
+W:85:2:0:3400000
 O:50:50:0
 B:CLAW:HURT:5d12
 B:CLAW:HURT:5d12
@@ -12502,7 +12502,7 @@ D:insects to be crushed underfoot.
 N:785:Great Wyrm of Balance
 G:D:s
 I:120:49d70:40:85:255
-W:82:4:0:1400000
+W:91:4:0:1400000
 O:50:50:0
 B:CLAW:HURT:5d12
 B:CLAW:HURT:5d12
@@ -13313,7 +13313,7 @@ D:colour then the next, it knows only it must bring help to protect itself.
 N:822:Qlzqqlzuup, the Lord of Flesh
 G:Q:B
 I:130:38d100:30:1:0
-W:93:3:0:3700000
+W:83:3:0:3700000
 O:25:25:25
 F:UNIQUE | CAN_SPEAK | RES_TELE
 F:FORCE_SLEEP | FORCE_MAXHP | NEVER_MOVE | NEVER_BLOW | WILD_DUNGEON_01
@@ -14371,7 +14371,7 @@ D: in the darkness until some unfortunate creature wanders too close.
 N:867:Culverin
 G:I:U
 I:110:6d5:20:7:40
-W:14:2:0:1160
+W:19:2:0:1160
 O:0:0:0
 F:NEVER_BLOW | RAND_25 | ANIMAL | WILD_FOREST1 | WILD_DUNGEON_01
 S:1_IN_1
