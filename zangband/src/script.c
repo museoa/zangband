@@ -146,7 +146,7 @@ bool use_object(object_type *o_ptr, bool *ident)
 	*ident = tolua_getbool(L, 1, FALSE);
 	used_up = tolua_getbool(L, 2, FALSE);
 
-	/* Remove the two return values from stack */
+	/* Remove the results */
 	lua_pop(L, 2);
 
 	return (used_up);
@@ -163,6 +163,10 @@ extern int tolua_random_open(lua_State* tolua_S);
 extern void tolua_random_close(lua_State* tolua_S);
 extern int tolua_ui_open(lua_State* tolua_S);
 extern void tolua_ui_close(lua_State* tolua_S);
+extern int tolua_misc_open(lua_State* tolua_S);
+extern void tolua_misc_close(lua_State* tolua_S);
+extern int tolua_spell_open(lua_State* tolua_S);
+extern void tolua_spell_close(lua_State* tolua_S);
 
 
 /*
@@ -192,6 +196,8 @@ errr script_init(void)
 	tolua_monster_open(L);
 	tolua_random_open(L);
 	tolua_ui_open(L);
+	tolua_misc_open(L);
+	tolua_spell_open(L);
 
 	/* Initialization code */
 	path_build(buf, 1024, ANGBAND_DIR_SCRIPT, "init.lua");

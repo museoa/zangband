@@ -43,6 +43,7 @@ OBJS = \
   z-util.o z-virt.o \
   script.o \
   l-monst.o l-object.o l-player.o l-random.o l-ui.o \
+  l-misc.o l-spell.o \
   $(LUAOBJS)
 
 
@@ -106,6 +107,12 @@ l-random.c: lua\tolua l-random.pkg
 
 l-ui.c: lua\tolua l-ui.pkg
 	lua\tolua -n ui -o l-ui.c l-ui.pkg
+
+l-misc.c: lua\tolua l-misc.pkg
+	lua\tolua -n misc -o l-misc.c l-misc.pkg
+
+l-spell.c: lua\tolua l-spell.pkg
+	lua\tolua -n spell -o l-spell.c l-spell.pkg
 
 #
 # Clean up

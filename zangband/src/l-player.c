@@ -1,6 +1,6 @@
 /*
 ** Lua binding: player
-** Generated automatically by tolua 4.0a - angband on Thu Nov  1 17:38:25 2001.
+** Generated automatically by tolua 4.0a - angband on Sat Nov  3 00:58:49 2001.
 */
 
 #include "lua/tolua.h"
@@ -5644,14 +5644,14 @@ static int toluaI_get_player_mp_ptr(lua_State* tolua_S)
 }
 
 /* get function: p_ptr */
-static int toluaI_get_player_p_ptr(lua_State* tolua_S)
+static int toluaI_get_player_player(lua_State* tolua_S)
 {
  tolua_pushusertype(tolua_S,(void*)p_ptr,tolua_tag(tolua_S,"player_type"));
  return 1;
 }
 
 /* set function: p_ptr */
-static int toluaI_set_player_p_ptr(lua_State* tolua_S)
+static int toluaI_set_player_player(lua_State* tolua_S)
 {
  if (!tolua_istype(tolua_S,1,tolua_tag(tolua_S,"player_type"),0))
  TOLUA_ERR_ASSIGN;
@@ -6429,6 +6429,46 @@ tolua_lerror:
  return 0;
 }
 
+/* function: lose_all_info */
+static int toluaI_player_lose_all_info00(lua_State* tolua_S)
+{
+ if (
+ !tolua_isnoobj(tolua_S,1)
+ )
+ goto tolua_lerror;
+ else
+ {
+ {
+  bool toluaI_ret = (bool)  lose_all_info();
+ tolua_pushbool(tolua_S,(int)toluaI_ret);
+ }
+ }
+ return 1;
+tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'lose_all_info'.");
+ return 0;
+}
+
+/* function: restore_level */
+static int toluaI_player_restore_level00(lua_State* tolua_S)
+{
+ if (
+ !tolua_isnoobj(tolua_S,1)
+ )
+ goto tolua_lerror;
+ else
+ {
+ {
+  bool toluaI_ret = (bool)  restore_level();
+ tolua_pushbool(tolua_S,(int)toluaI_ret);
+ }
+ }
+ return 1;
+tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'restore_level'.");
+ return 0;
+}
+
 /* Open function */
 int tolua_player_open (lua_State* tolua_S)
 {
@@ -6733,7 +6773,7 @@ int tolua_player_open (lua_State* tolua_S)
  tolua_globalvar(tolua_S,"rp_ptr",toluaI_get_player_rp_ptr,NULL);
  tolua_globalvar(tolua_S,"cp_ptr",toluaI_get_player_cp_ptr,NULL);
  tolua_globalvar(tolua_S,"mp_ptr",toluaI_get_player_mp_ptr,NULL);
- tolua_globalvar(tolua_S,"p_ptr",toluaI_get_player_p_ptr,toluaI_set_player_p_ptr);
+ tolua_globalvar(tolua_S,"player",toluaI_get_player_player,toluaI_set_player_player);
  tolua_function(tolua_S,NULL,"set_blind",toluaI_player_set_blind00);
  tolua_function(tolua_S,NULL,"set_confused",toluaI_player_set_confused00);
  tolua_function(tolua_S,NULL,"set_poisoned",toluaI_player_set_poisoned00);
@@ -6769,6 +6809,8 @@ int tolua_player_open (lua_State* tolua_S)
  tolua_function(tolua_S,NULL,"inc_stat",toluaI_player_inc_stat00);
  tolua_function(tolua_S,NULL,"dec_stat",toluaI_player_dec_stat00);
  tolua_function(tolua_S,NULL,"res_stat",toluaI_player_res_stat00);
+ tolua_function(tolua_S,NULL,"lose_all_info",toluaI_player_lose_all_info00);
+ tolua_function(tolua_S,NULL,"restore_level",toluaI_player_restore_level00);
  return 1;
 }
 /* Close function */
@@ -6813,7 +6855,7 @@ void tolua_player_close (lua_State* tolua_S)
  lua_pushstring(tolua_S,"mp_ptr"); lua_pushnil(tolua_S); lua_rawset(tolua_S,-3);
  lua_pop(tolua_S,1);
  lua_getglobals(tolua_S);
- lua_pushstring(tolua_S,"p_ptr"); lua_pushnil(tolua_S); lua_rawset(tolua_S,-3);
+ lua_pushstring(tolua_S,"player"); lua_pushnil(tolua_S); lua_rawset(tolua_S,-3);
  lua_pop(tolua_S,1);
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"set_blind");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"set_confused");
@@ -6850,4 +6892,6 @@ void tolua_player_close (lua_State* tolua_S)
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"inc_stat");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"dec_stat");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"res_stat");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"lose_all_info");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"restore_level");
 }

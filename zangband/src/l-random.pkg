@@ -27,3 +27,6 @@ extern u32b Rand_div(u32b m);
 extern s16b Rand_normal(int mean, int stand);
 extern u32b Rand_simple(u32b m);
 
+extern u32b one_in_(u32b m);
+extern bool saving_throw(s32b m);
+

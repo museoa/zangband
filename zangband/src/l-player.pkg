@@ -442,7 +442,7 @@ extern const player_sex *sp_ptr;
 extern const player_race *rp_ptr;
 extern const player_class *cp_ptr;
 extern const player_magic *mp_ptr;
-extern player_type *p_ptr;
+extern player_type *p_ptr @ player;
 
 
 /***** Functions *****/
@@ -482,4 +482,6 @@ extern void take_hit(int dam, cptr kb_str);
 extern bool inc_stat(int stat);
 extern bool dec_stat(int stat, int amount, int permanent);
 extern bool res_stat(int stat);
+extern bool lose_all_info(void);
+extern bool restore_level(void);
 

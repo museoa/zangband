@@ -121,6 +121,7 @@ OBJ = \
 	artifact.obj \
 	script.obj \
 	l-monst.obj l-object.obj l-player.obj l-random.obj l-ui.obj \
+	l-misc.obj l-spell.obj \
 	$(LUAOBJS)
 
 
@@ -164,6 +165,13 @@ l-random.c: lua\tolua.exe l-random.pkg
 
 l-ui.c: lua\tolua.exe l-ui.pkg
 	lua\tolua.exe -n ui -o l-ui.c l-ui.pkg
+
+l-misc.c: lua\tolua.exe l-misc.pkg
+	lua\tolua.exe -n misc -o l-misc.c l-misc.pkg
+
+l-spell.c: lua\tolua.exe l-spell.pkg
+	lua\tolua.exe -n spell -o l-spell.c l-spell.pkg
+
 
 ########################### Implicit Rules ########################
 .c.obj:

@@ -1,6 +1,6 @@
 /*
 ** Lua binding: random
-** Generated automatically by tolua 4.0a - angband on Thu Nov  1 17:38:38 2001.
+** Generated automatically by tolua 4.0a - angband on Sat Nov  3 00:59:02 2001.
 */
 
 #include "lua/tolua.h"
@@ -331,6 +331,50 @@ tolua_lerror:
  return 0;
 }
 
+/* function: one_in_ */
+static int toluaI_random_one_in_00(lua_State* tolua_S)
+{
+ if (
+ !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+ !tolua_isnoobj(tolua_S,2)
+ )
+ goto tolua_lerror;
+ else
+ {
+  u32b m = ((u32b)  tolua_getnumber(tolua_S,1,0));
+ {
+  u32b toluaI_ret = (u32b)  one_in_(m);
+ tolua_pushnumber(tolua_S,(long)toluaI_ret);
+ }
+ }
+ return 1;
+tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'one_in_'.");
+ return 0;
+}
+
+/* function: saving_throw */
+static int toluaI_random_saving_throw00(lua_State* tolua_S)
+{
+ if (
+ !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+ !tolua_isnoobj(tolua_S,2)
+ )
+ goto tolua_lerror;
+ else
+ {
+  s32b m = ((s32b)  tolua_getnumber(tolua_S,1,0));
+ {
+  bool toluaI_ret = (bool)  saving_throw(m);
+ tolua_pushbool(tolua_S,(int)toluaI_ret);
+ }
+ }
+ return 1;
+tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'saving_throw'.");
+ return 0;
+}
+
 /* Open function */
 int tolua_random_open (lua_State* tolua_S)
 {
@@ -350,6 +394,8 @@ int tolua_random_open (lua_State* tolua_S)
  tolua_function(tolua_S,NULL,"Rand_div",toluaI_random_Rand_div00);
  tolua_function(tolua_S,NULL,"Rand_normal",toluaI_random_Rand_normal00);
  tolua_function(tolua_S,NULL,"Rand_simple",toluaI_random_Rand_simple00);
+ tolua_function(tolua_S,NULL,"one_in_",toluaI_random_one_in_00);
+ tolua_function(tolua_S,NULL,"saving_throw",toluaI_random_saving_throw00);
  return 1;
 }
 /* Close function */
@@ -371,4 +417,6 @@ void tolua_random_close (lua_State* tolua_S)
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"Rand_div");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"Rand_normal");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"Rand_simple");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"one_in_");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"saving_throw");
 }
