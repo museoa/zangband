@@ -45,12 +45,6 @@ static Tk_OptionSpec optionSpecs[20] = {
 	 "no", -1, Tk_Offset(Widget, noUpdate), 0, 0, 0},
    {TK_OPTION_STRING_TABLE, "-style", "style", "Style",
 	 "icon", -1, Tk_Offset(Widget, style), 0, keyword_widget_style, 0},
-    {TK_OPTION_INT, "-hit", "", "",
-     "-1", -1, Tk_Offset(Widget, hit), 0, 0, 0},
-    {TK_OPTION_INT, "-hitx", "", "",
-     "-1", -1, Tk_Offset(Widget, hitx), 0, 0, 0},
-    {TK_OPTION_INT, "-hity", "", "",
-     "-1", -1, Tk_Offset(Widget, hity), 0, 0, 0},
     {TK_OPTION_END, NULL, NULL, NULL,
      NULL, 0, -1, 0, 0, 0}
 };
