@@ -303,7 +303,7 @@ static u16b find_good_town(int *dist)
 /*
  * This function returns the closest name of the closest town and the
  * direction to that town.  If known == TRUE then the player must have
- * seen the closest town to, in order not to give away clues to the map.
+ * seen the closest town too, in order not to give away clues to the map.
  */
 cptr describe_quest_location(cptr * dirn, int x, int y, bool known)
 {
