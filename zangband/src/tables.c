@@ -6092,7 +6092,7 @@ option_type option_info[] =
 	
 	/*** Display Options ***/
 
-	{ &depth_in_feet,               FALSE, 5, 4, 1,
+	{ &depth_in_feet,               FALSE, 5, 0, 7,
 	"depth_in_feet",                "Show dungeon level in feet" },
 
         { &show_labels,                 TRUE, 5, 0, 10,
