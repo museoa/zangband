@@ -68,7 +68,7 @@ bool borg_cancel;	/* Being cancelled */
 
 bool borg_stop_king = TRUE;
 bool borg_dont_react = FALSE;
-int successful_target = 0;
+int successful_target = BORG_TARGET;
 
 /*
  * Various silly flags
@@ -399,9 +399,21 @@ s16b borg_view_y[AUTO_VIEW_MAX];
  */
 
 s16b borg_temp_n = 0;
-
 s16b borg_temp_x[AUTO_TEMP_MAX];
 s16b borg_temp_y[AUTO_TEMP_MAX];
+
+s16b borg_bolt_n = 0;
+s16b borg_bolt_x[AUTO_TEMP_MAX];
+s16b borg_bolt_y[AUTO_TEMP_MAX];
+
+s16b borg_beam_n = 0;
+s16b borg_beam_x[AUTO_TEMP_MAX];
+s16b borg_beam_y[AUTO_TEMP_MAX];
+
+s16b borg_ball_n = 0;
+s16b borg_ball_x[AUTO_TEMP_MAX];
+s16b borg_ball_y[AUTO_TEMP_MAX];
+
 
 /*
  * Maintain a circular queue of grids

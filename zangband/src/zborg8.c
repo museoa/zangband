@@ -279,15 +279,16 @@ static void borg_think_shop_buy(int item)
 
 	byte t_a;
 	char buf[2];
-	
-	buf[2] = '\0';
+
+	/* Keep it small */
+	buf[1] = '\0';
 
 	/* Grab the page number of the screen*/
 	if (0 == borg_what_text(26, 5, 1, &t_a, buf))
 	{
 		/* If you are on the wrong page of the shop */
-		if ((streq(buf, "1") && (item >= (STORE_INVEN_MAX /2))) ||
-			(streq(buf, "2") && (item < (STORE_INVEN_MAX /2))))
+		if ((streq(buf, "1") && item >= (STORE_INVEN_MAX / 2)) ||
+			(streq(buf, "2") && item <  (STORE_INVEN_MAX / 2)))
 		{
 			/* Goto the other page */
 			borg_keypress(' ');
@@ -1918,7 +1919,9 @@ bool borg_think_dungeon(void)
 		borg_note("# Teleport (twitchy)");
 
 		/* Teleport */
-		if (borg_spell_fail(REALM_ARCANE, 2, 3, 45) ||
+		if (borg_activate_artifact(ART_COLANNON, FALSE) ||
+			borg_activate_artifact(ART_ANGUIREL, FALSE) ||
+			borg_spell_fail(REALM_ARCANE, 2, 3, 45) ||
 			borg_spell_fail(REALM_TRUMP, 0, 4, 45) ||
 			borg_spell_fail(REALM_CHAOS, 0, 7, 45) ||
 			borg_spell_fail(REALM_SORCERY, 0, 5, 45) ||

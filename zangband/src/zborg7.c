@@ -567,7 +567,9 @@ bool borg_check_lite(void)
 		if (borg_activate_artifact(ART_ELENDIL, FALSE) ||
 			borg_read_scroll(SV_SCROLL_MAPPING) ||
 			borg_use_staff(SV_STAFF_MAPPING) ||
-			borg_zap_rod(SV_ROD_MAPPING) || borg_spell(REALM_NATURE, 1, 2))
+			borg_zap_rod(SV_ROD_MAPPING) ||
+			borg_spell(REALM_NATURE, 1, 2) ||
+			borg_mindcr(MIND_PRECOGNIT, 20))
 		{
 			borg_note("# Checking for walls.");
 

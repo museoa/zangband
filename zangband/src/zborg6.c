@@ -13,8 +13,6 @@
 #include "zborg6.h"
 
 static bool borg_desperate = FALSE;
-static int g_slot;
-static int g_spell;
 
 
 
@@ -3833,27 +3831,28 @@ bool borg_caution(void)
  *   Elemental Rings
  */
 
-#define BF_MIN					-4
+#define BF_MIN					0
 
-#define BF_ROD					-4
-#define BF_DRAGON_ARMOUR		-3
-#define BF_RING					-2
-#define BF_ARTIFACT				-1
-#define BF_THRUST				0
-#define BF_OBJECT				1
-#define BF_SPELLCASTER			2
-#define BF_MINDCRAFTER			3
-#define BF_STAFF				4
-#define BF_WAND					5
-#define BF_SCROLL				6
-#define BF_LAUNCH				7
-#define BF_MUTATE				8
-#define BF_SPELL_RESERVE		9
+#define BF_MUTATE				0
+#define BF_ROD					1
+#define BF_DRAGON_ARMOUR		2
+#define BF_RING					3
+#define BF_ARTIFACT				4
+#define BF_THRUST				5
+#define BF_OBJECT				6
+#define BF_SPELLCASTER			7
+#define BF_MINDCRAFTER			8
+#define BF_STAFF				9
+#define BF_WAND					10
+#define BF_SCROLL				11
+#define BF_LAUNCH				12
+#define BF_SPELL_RESERVE		13
 
-#define	BF_MAX					10
+#define	BF_MAX					14
 
 
 /* What sort of distance attacks does the borg have: */
+#define BORG_DISPEL		-3
 #define BORG_BOLT		-2
 #define BORG_BEAM		-1
 #define BORG_BALL_RAD0	0
@@ -3862,7 +3861,6 @@ bool borg_caution(void)
 #define BORG_BALL_RAD3	3
 #define BORG_BALL_RAD4	4
 #define BORG_BALL_RAD8	8
-#define BORG_DISPEL		0
 
 
 /*
@@ -4016,89 +4014,87 @@ static int borg_thrust_damage_one(int i)
 /*
  * Simulate/Apply the optimal result of making a physical attack
  */
-int borg_attack_aux_thrust(void)
+static int borg_attack_aux_thrust(int *b_i)
 {
 	int p, dir;
 
-	int i, b_i = -1;
-	int d, b_d = -1;
+	int i;
+	int d, b_d = 0;
 
 	map_block *mb_ptr;
-
 	borg_kill *kill;
 
-	/* Too afraid to attack */
-	if (bp_ptr->status.afraid) return (0);
-
-
-	/* Examine possible destinations */
-	for (i = 0; i < borg_temp_n; i++)
+	if (borg_simulate)
 	{
-		int x = borg_temp_x[i];
-		int y = borg_temp_y[i];
+		/* Too afraid to attack */
+		if (bp_ptr->status.afraid) return (0);
 
-		/* Require "adjacent" */
-		if (distance(c_y, c_x, y, x) > 1) continue;
-
-		/* Bounds checking */
-		if (!map_in_bounds(x, y)) continue;
-
-		/* Acquire grid */
-		mb_ptr = map_loc(x, y);
-
-		/* Calculate "average" damage */
-		d = borg_thrust_damage_one(mb_ptr->kill);
-
-		/* No damage */
-		if (d <= 0) continue;
-
-		/* Obtain the monster */
-		kill = &borg_kills[mb_ptr->kill];
-
-		/* Hack -- avoid waking most "hard" sleeping monsters */
-		if ((kill->m_flags & MONST_ASLEEP) && (d <= kill->power))
+		/* Examine possible destinations */
+		for (i = 0; i < borg_bolt_n; i++)
 		{
-			/* Calculate danger */
+			int x = borg_bolt_x[i];
+			int y = borg_bolt_y[i];
+
+			/* Require "adjacent" */
+			if (distance(c_y, c_x, y, x) > 1) continue;
+
+			/* Bounds checking */
+			if (!map_in_bounds(x, y)) continue;
+
+			/* Acquire grid */
+			mb_ptr = map_loc(x, y);
+
+			/* Calculate "average" damage */
+			d = borg_thrust_damage_one(mb_ptr->kill);
+
+			/* No damage */
+			if (d <= 0) continue;
+
+			/* Obtain the monster */
+			kill = &borg_kills[mb_ptr->kill];
+
+			/* Hack -- avoid waking most "hard" sleeping monsters */
+			if ((kill->m_flags & MONST_ASLEEP) && (d <= kill->power))
+			{
+				/* Calculate danger */
+				borg_full_damage = TRUE;
+				p = borg_danger_aux(x, y, 1, mb_ptr->kill, TRUE);
+				borg_full_damage = FALSE;
+
+				if (p > avoidance / 2)
+					continue;
+			}
+
+			/* Hack -- ignore sleeping town monsters */
+			if (!bp_ptr->depth && (kill->m_flags & MONST_ASLEEP)) continue;
+
+
+			/* Calculate "danger" to player */
 			borg_full_damage = TRUE;
-			p = borg_danger_aux(x, y, 1, mb_ptr->kill, TRUE);
+			p = borg_danger_aux(c_x, c_y, 2, mb_ptr->kill, TRUE);
 			borg_full_damage = FALSE;
 
-			if (p > avoidance / 2)
-				continue;
+			/* Reduce "bonus" of partial kills */
+			if (d <= kill->power) p = p / 10;
+
+			/* Add the danger to the damage */
+			d += p;
+
+			/* Ignore lower damage */
+			if (d < b_d) continue;
+
+			/* Save the info */
+			*b_i = i;
+			b_d = d;
 		}
 
-		/* Hack -- ignore sleeping town monsters */
-		if (!bp_ptr->depth && (kill->m_flags & MONST_ASLEEP)) continue;
-
-
-		/* Calculate "danger" to player */
-		borg_full_damage = TRUE;
-		p = borg_danger_aux(c_x, c_y, 2, mb_ptr->kill, TRUE);
-		borg_full_damage = FALSE;
-
-		/* Reduce "bonus" of partial kills */
-		if (d <= kill->power) p = p / 10;
-
-		/* Add the danger to the damage */
-		d += p;
-
-		/* Ignore lower damage */
-		if ((b_i >= 0) && (d < b_d)) continue;
-
-		/* Save the info */
-		b_i = i;
-		b_d = d;
+		/* End of simulation */
+		return (b_d);
 	}
 
-	/* Nothing to attack */
-	if (b_i < 0) return (0);
-
-	/* Simulation */
-	if (borg_simulate) return (b_d);
-
 	/* Save the location */
-	g_x = borg_temp_x[b_i];
-	g_y = borg_temp_y[b_i];
+	g_x = borg_bolt_x[*b_i];
+	g_y = borg_bolt_y[*b_i];
 
 	mb_ptr = map_loc(g_x, g_y);
 
@@ -4126,19 +4122,21 @@ int borg_attack_aux_thrust(void)
  *
  * Warning -- This will only work for locations on the current panel
  */
-static bool borg_target(int x, int y)
+static void borg_target(int x, int y)
 {
 	int x1, y1, x2, y2;
-
 	map_block *mb_ptr;
 
 	/* Bounds checking */
-	if (!map_in_bounds(x, y)) return (FALSE);
+	if (!map_in_bounds(x, y))
+	{
+		borg_oops_fmt("Untargettable location (%d, %d)", x, y);
+		return;
+	}
 
+	/* Get the grid */
 	mb_ptr = map_loc(x, y);
 
-
-	/* Log */
 	/* Report a little bit */
 	if (mb_ptr->monster)
 	{
@@ -4147,7 +4145,8 @@ static bool borg_target(int x, int y)
 	}
 	else
 	{
-		borg_note_fmt("# Targetting location (%d,%d)", x, y);
+		borg_note_fmt("# Targetting location from (%d, %d) to (%d,%d)",
+					  c_x, c_y, x, y);
 	}
 
 	/* Target mode */
@@ -4178,7 +4177,7 @@ static bool borg_target(int x, int y)
 	borg_keypress('5');
 
 	/* Success */
-	return (TRUE);
+	return;
 }
 
 /*
@@ -4201,18 +4200,14 @@ int borg_launch_damage_one(int i, int dam, int typ)
 	int p1, p2 = 0;
 	bool borg_use_missile = FALSE;
 
-	borg_kill *kill;
-
-	monster_race *r_ptr;
-
 	/* Monster record */
-	kill = &borg_kills[i];
+	borg_kill *kill = &borg_kills[i];
+
+	/* Monster race */
+	monster_race *r_ptr = &r_info[kill->r_idx];
 
 	/* all danger checks are with maximal damage */
 	borg_full_damage = TRUE;
-
-	/* Monster race */
-	r_ptr = &r_info[kill->r_idx];
 
 	/* Analyze the damage type */
 	switch (typ)
@@ -4939,42 +4934,31 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		dam += ((dam * 3) / 2);
 
 	/* Try to conserve missiles. */
-	if (typ < BF_THRUST)
+	if ((!borg_use_missile) &&
+		(typ == GF_ARROW ||
+		(typ >= GF_ARROW_FLAME && typ <= GF_ARROW_DRAGON)))
 	{
-		if (!borg_use_missile)
-		{
-			/* Set damage to zero, force borg to melee attack */
-			dam = 0;
-		}
+		/* Set damage to zero, force borg to melee attack */
+		dam = 0;
 	}
 
 	/* Damage */
 	return (dam);
 }
 
-/*
- * Simulate / Invoke the launching of a bolt at a monster
- */
-static int borg_launch_bolt_aux_hack(int i, int dam, int typ)
+
+/* Simulate the launching of a bolt at a monster */
+static int borg_launch_aux_hack(int i, int dam, int typ)
 {
 	int d, p, x, y;
-	int o_y = 0;
-	int o_x = 0;
-	int walls = 0;
-	int unknown = 0;
 
 	map_block *mb_ptr;
 
-	borg_kill *kill;
-
-	monster_race *r_ptr;
-
 	/* Monster */
-	kill = &borg_kills[i];
+	borg_kill *kill = &borg_kills[i];
 
-	/* monster race */
-	r_ptr = &r_info[kill->r_idx];
-
+	/* Monster race */
+	monster_race *r_ptr = &r_info[kill->r_idx];
 
 	/* Skip dead monsters */
 	if (!kill->r_idx) return (0);
@@ -4991,47 +4975,6 @@ static int borg_launch_bolt_aux_hack(int i, int dam, int typ)
 
 	/* Acquire the grid */
 	mb_ptr = map_loc(x, y);
-
-	/* Never shoot walls/doors */
-	if (borg_cave_wall_grid(mb_ptr)) return (0);
-
-#if 0
-	/* Hack -- Unknown grids should be avoided some of the time */
-	if (!mb_ptr->feat && ((borg_t % 8) == 0)) return (0);
-
-#endif
-
-	/* dont shoot at ghosts in walls, not perfect */
-	if (FLAG(r_ptr, RF_PASS_WALL))
-	{
-		/* if 2 walls and 1 unknown skip this monster */
-		/* Acquire location */
-		x = kill->x;
-		y = kill->y;
-
-		/* Get grid */
-		for (o_x = -1; o_x <= 1; o_x++)
-		{
-			for (o_y = -1; o_y <= 1; o_y++)
-			{
-				/* Acquire location */
-				x = kill->x + o_x;
-				y = kill->y + o_y;
-
-				/* Bounds checking */
-				if (!map_in_bounds(x, y)) continue;
-
-				mb_ptr = map_loc(x, y);
-
-				if (mb_ptr->feat >= FEAT_MAGMA &&
-					mb_ptr->feat <= FEAT_PERM_SOLID) walls++;
-			}
-		}
-		/* Is the ghost likely in a wall? */
-		if (walls >= 2 && unknown >= 1) return (0);
-	}
-
-
 
 	/* Calculate damage */
 	d = borg_launch_damage_one(i, dam, typ);
@@ -5076,424 +5019,329 @@ static int borg_launch_bolt_aux_hack(int i, int dam, int typ)
 }
 
 
-/*
- * Determine the "reward" of launching a beam/bolt/ball at a location
- *
- * An "unreachable" location always has zero reward.
- *
- * Basically, we sum the "rewards" of doing the appropriate amount of
- * damage to each of the "affected" monsters.
- *
- * We will attempt to apply the offset-ball attack here
- */
-static int borg_launch_bolt_aux(int x, int y, int rad, int dam, int typ,
-                                int max)
+/* Determine the "reward" of casting a bolt.*/
+static int borg_launch_aux_bolt(int dam, int typ, int max)
 {
 	int i;
-
-	int x1, y1;
-	int x2, y2;
-
-	int dist;
-
-	int r, n;
+	int x, y;
+	int n, b_n = 0;
 
 	map_block *mb_ptr;
 
-	monster_race *r_ptr;
-
-	/* Reset damage */
-	n = 0;
-
-	/* Initial location */
-	x1 = c_x;
-	y1 = c_y;
-
-	/* Bounds checking */
-	if (!map_in_bounds(x, y)) return (0);
-
-	/* Final location */
-	x2 = x;
-	y2 = y;
-
-	/* Start over */
-	x = x1;
-	y = y1;
-
-	/* Get the grid */
-	mb_ptr = map_loc(x2, y2);
-
-	r_ptr = &r_info[mb_ptr->monster];
-
-	/* Initialise multi-move */
-	borg_mmove_init(x1, y1, x2, y2);
-
-	/* Simulate the spell/missile path */
-	for (dist = 0; dist < max; dist++)
-	{
-		/* Bounds checking */
-		if (!map_in_bounds(x, y)) return (0);
-
-		mb_ptr = map_loc(x, y);
-
-		/* Stop at walls */
-		/* note: beams end at walls.  */
-		if (dist)
-		{
-			/* Stop at walls */
-			/* note if beam, this is the end of the beam */
-			/* dispel spells act like beams (sort of) */
-			if (borg_cave_wall_grid(mb_ptr))
-			{
-				/* Is this a bolt */
-				if (rad != -1)
-				{
-					/* A bolt that ends in a wall results in 0 damage */
-					return (0);
-				}
-				else
-				{
-					/* A beam that ends in a wall results in n damage */
-					return (n);
-				}
-			}
-		}
-
-		/* Collect damage (bolts/beams) */
-		if (rad <= 0) n += borg_launch_bolt_aux_hack(mb_ptr->kill, dam, typ);
-
-		/* Check for arrival at "final target" */
-		/* except beams, which keep going. */
-		if (rad != -1 && x == x2 && y == y2) break;
-
-		/* Stop bolts at monsters  */
-		if (!rad && mb_ptr->monster) return (0);
-
-		/* The missile path can be complicated.  There are several checks
-		 * which need to be made.  First we assume that we targetting
-		 * a monster.  That monster could be known from either sight or
-		 * ESP.  If the entire pathway from us to the monster is known,
-		 * then there is no concern.  But if the borg is shooting through
-		 * unknown grids, then there is a concern when he has ESP; without
-		 * ESP he would not see that monster if the unknown grids
-		 * contained walls or closed doors.
-		 *
-		 * 1.  ESP Inactive
-		 *   A.  No Infravision
-		 *       -Then the monster must be in a lit grid.
-		 *   B.  Yes Infravision
-		 *       -Then the monster must be projectable()
-		 * 2.  ESP Active
-		 *   A. No Infravision
-		 *       -Then the monster could be in a lit grid.
-		 *       -Or I detect it with ESP and it's not projectable().
-		 *   B.  Yes Infravision
-		 *       -Then the monster could be projectable()
-		 *       -Or I detect it with ESP and it's not projectable().
-		 *   -In the cases of ESP Active, the borg will test fire a missile.
-		 *    Then wait for a 'painful ouch' from the monster.
-		 */
-
-		/* dont do the check if esp */
-		if (!(FLAG(bp_ptr, TR_TELEPATHY)))
-		{
-			/* Check the missile path */
-			if (dist && !bp_ptr->see_infra)
-			{
-				/* Stop at unknown grids (see above) */
-				/* note if beam, dispel, this is the end of the beam */
-				if (!mb_ptr->feat)
-				{
-					if (rad != -1)
-						return (0);
-					else
-						return (n);
-				}
-
-				/* Stop at unseen walls */
-				/* We just shot and missed, this is our next shot */
-				if (successful_target < 0)
-				{
-					/* When throwing things, it is common to just 'miss' */
-					/* Skip only one round in this case */
-					if (successful_target == -12)
-						successful_target = 0;
-					if (rad != -1)
-						return (0);
-					else
-						return (n);
-				}
-			}
-			else				/* I do have infravision or it's a lite monster */
-			{
-				/* Stop at unseen walls */
-				/* We just shot and missed, this is our next shot */
-				if (successful_target < 0)
-				{
-					/* When throwing things, it is common to just 'miss' */
-					/* Skip only one round in this case */
-					if (successful_target == -12)
-						successful_target = 0;
-					if (rad != -1)
-						return (0);
-					else
-						return (n);
-				}
-			}
-		}
-		else					/* I do have ESP */
-		{
-			/* Check the missile path */
-			if (dist)
-			{
-				/* if this area has been magic mapped,
-				   * ok to shoot in the dark
-				 */
-				if (mb_ptr->detect & BORG_DETECT_WALL)
-				{
-					/* Stop at unknown grids (see above) */
-					/* note if beam, dispel, this is the end of the beam */
-					if (!mb_ptr->feat)
-					{
-						if (rad != -1)
-							return (0);
-						else
-							return (n);
-					}
-					/* Stop at unseen walls */
-					/* We just shot and missed, this is our next shot */
-					if (successful_target < 0)
-					{
-						/* When throwing things, it is common to just 'miss' */
-						/* Skip only one round in this case */
-						if (successful_target == -12)
-							successful_target = 0;
-						if (rad != -1)
-							return (0);
-						else
-							return (n);
-					}
-				}
-
-				/* Stop at unseen walls */
-				/* We just shot and missed, this is our next shot */
-				if (successful_target < 0)
-				{
-					/* When throwing things, it is common to just 'miss' */
-					/* Skip only one round in this case */
-					if (successful_target == -12)
-						successful_target = 0;
-
-					if (rad != -1)
-						return (0);
-					else
-						return (n);
-				}
-			}
-		}
-
-		/* Calculate the new location */
-		borg_mmove(&x, &y, x1, y1);
-	}
-
-	/* Bolt/Beam attack */
-	if (rad <= 0) return (n);
-
-	/* Excessive distance */
-	if (dist >= MAX_RANGE) return (0);
-
-	/* Check monsters in blast radius  And apply Dispel type
-	 * spells or spells which center on the player with a
-	 * particular radius
-	 */
-	for (i = 0; i < borg_temp_n; i++)
+	/* Loop through all the boltable monsters */
+	for (i = 0; i < borg_bolt_n; i++)
 	{
 		/* Acquire location */
-		x = borg_temp_x[i];
-		y = borg_temp_y[i];
+		x = borg_bolt_x[i];
+		y = borg_bolt_y[i];
 
-		/* Bounds checking */
-		if (!map_in_bounds(x, y)) continue;
+		/* Maximal distance */
+		if (distance(c_x, c_y, x, y) > max) break;
 
 		/* Get the grid */
 		mb_ptr = map_loc(x, y);
 
-		/* Check distance */
-		r = distance(y2, x2, y, x);
+		/* Collect damage */
+		n = borg_launch_aux_hack(mb_ptr->kill, dam, typ);
 
-		/* Maximal distance */
-		if (r > rad) continue;
+		/* Is it better than before? */
+		if (n <= b_n) continue;
 
-		/* Never pass through walls */
-		if (!borg_los(x2, y2, x, y)) continue;
-
-		/*  dispel spells should hurt the same no matter the rad: make r= y  and x */
-		if (max == 0) r = 0;
-
-		/* Collect damage, lowered by distance */
-		n += borg_launch_bolt_aux_hack(mb_ptr->kill, dam / (r + 1), typ);
-
-		/* probable damage int was just changed by b_l_b_a_h */
-
-		/* check destroyed stuff. */
-		if (mb_ptr->object)
-		{
-			object_kind *k_ptr = &k_info[mb_ptr->object];
-
-			switch (typ)
-			{
-				case GF_ACID:
-				{
-					/* rings/boots cost extra (might be speed!) */
-					if (k_ptr->tval == TV_BOOTS)
-					{
-						n -= 200;
-					}
-					break;
-				}
-				case GF_ELEC:
-				{
-					/* rings/boots cost extra (might be speed!) */
-					if (k_ptr->tval == TV_RING)
-					{
-						n -= 200;
-					}
-					break;
-				}
-
-				case GF_FIRE:
-				{
-					/* rings/boots cost extra (might be speed!) */
-					if (k_ptr->tval == TV_BOOTS)
-					{
-						n -= 200;
-					}
-					break;
-				}
-				case GF_COLD:
-				{
-					if (k_ptr->tval == TV_POTION)
-					{
-						n -= 200;
-					}
-					break;
-				}
-				case GF_MANA:
-				{
-					/* Used against uniques, allow the stuff to burn */
-					break;
-				}
-			}
-		}
+		/* Track this location */
+		b_n = n;
+		g_x = x;
+		g_y = y;
 	}
-	/* Result */
-	return (n);
-}
-
-
-/*
- * Simulate/Apply the optimal result of launching a beam/bolt/ball
- *
- * Note that "beams" have a "rad" of "-1", "bolts" have a "rad" of "0",
- * and "balls" have a "rad" of 2, 3 or 4, depending on "blast radius".
- *  dispel spells have a rad  of 10 or greater
- */
-static int borg_launch_bolt(int rad, int dam, int typ, int max)
-{
-	int num = 0;
-
-	int i, b_i = -1;
-	int n = 0, b_n = 0;
-	int b_o_y = 0, b_o_x = 0;
-	int o_y = 0, o_x = 0;
-
-
-	/** Examine possible destinations **/
-
-	/* Dispel Spells and Special Ball Spells centered on Player */
-	if (max == 0)
-	{
-		/* Consider it centered on Player */
-		return (borg_launch_bolt_aux(c_x, c_y, rad, dam, typ, max));
-	}
-
-	/* This will allow the borg to target places adjacent to a monster
-	 * in order to exploit that ball spells do damage to creatures next
-	 * to the target location.  For example:
-	 * ######################
-	 * #####@..........######
-	 * ############x.........
-	 * ############P.........
-	 * ######################
-	 * In order to damage P, the borg must target x.  You get half of the
-	 * full damage this way.
-	 */
-	for (i = 0; i < borg_temp_n; i++)
-	{
-		int x = borg_temp_x[i];
-		int y = borg_temp_y[i];
-
-
-		/* Consider each adjacent spot to and on top of the monster */
-		for (o_x = -1; o_x <= 1; o_x++)
-		{
-			for (o_y = -1; o_y <= 1; o_y++)
-			{
-				/* Acquire location */
-				x = borg_temp_x[i] + o_x;
-				y = borg_temp_y[i] + o_y;
-
-				/* Reset N */
-				n = 0;
-
-				/* Consider it if its a ball spell or right on top of it */
-				if (rad >= 2 || (y == borg_temp_y[i] && x == borg_temp_x[i]))
-				{
-					n = borg_launch_bolt_aux(x, y, rad, dam, typ, max);
-				}
-
-				/* Skip useless attacks */
-				if (n <= 0) continue;
-#if 0
-				/* The game forbids targetting the outside walls */
-				if (x == 0 || y == 0 || x == MAX_WID - 1 || y == MAX_HGT - 1)
-					continue;
-#endif /* 0 */
-				/* Collect best attack */
-				if ((b_i >= 0) && (n < b_n)) continue;
-
-				/* Hack -- reset chooser */
-				if ((b_i >= 0) && (n > b_n)) num = 0;
-
-				/* Apply the randomizer */
-				if ((num > 1) && (randint0(num))) continue;
-
-				/* Track it */
-				b_i = i;
-				b_n = n;
-				b_o_y = o_y;
-				b_o_x = o_x;
-			}
-		}
-	}
-
-	/* Save the location */
-	g_x = borg_temp_x[b_i] + b_o_x;
-	g_y = borg_temp_y[b_i] + b_o_y;
-
-	/* Simulation */
-	if (borg_simulate) return (b_n);
-
-	/* Target the location */
-	(void)borg_target(g_x, g_y);
 
 	/* Result */
 	return (b_n);
 }
 
 
+/* Determine the "reward" of casting a beam. */
+static int borg_launch_aux_beam(int dam, int typ, int max)
+{
+	int i;
+	int x, y;
+	int n, b_n = 0;
+
+	map_block *mb_ptr;
+
+	/* Loop through all the beamable monsters */
+	for (i = 0; i < borg_beam_n; i++)
+	{
+		/* Acquire location of the beamable monsters */
+		x = borg_beam_x[i];
+		y = borg_beam_y[i];
+
+		/* Maximal distance */
+		if (distance(c_x, c_y, x, y) > max) break;
+
+		/* Check the path for the beam */
+		borg_mmove_init(c_x, c_y, x, y);
+
+		/* Reset Counters */
+		x = c_x;
+		y = c_y;
+		n = 0;
+
+		/* Loop through the possible grids on the path */
+		while (TRUE)
+		{
+			/* Get the grid */
+			mb_ptr = map_loc(x, y);
+
+			/* Bounds checking */
+			if (!map_in_bounds(x, y)) break;
+
+			/* Maximal distance */
+			if (distance(c_x, c_y, x, y) > max) break;
+
+			/* Collect damage */
+			n = borg_launch_aux_hack(mb_ptr->kill, dam, typ);
+
+			/* Stop beaming when the beam hits a wall */
+			if (borg_cave_wall_grid(mb_ptr)) break;
+
+			/* Get next grid */
+			borg_mmove(&x, &y, c_x, c_y);
+		}
+
+		/* Is it better than before? */
+		if (n <= b_n) continue;
+
+		/* Track this location */
+		b_n = n;
+		g_x = x;
+		g_y = y;
+	}
+
+	/* Result */
+	return (b_n);
+}
+
+/* Determine the "reward" of casting a dispel */
+static int borg_launch_aux_dispel(int dam, int typ, int rad)
+{
+	int i;
+	int x, y;
+	int n = 0;
+
+	map_block *mb_ptr;
+
+	/* Loop through all the monsters in LOS */
+	for (i = 0; i < borg_beam_n; i++)
+	{
+		/* Acquire location */
+		x = borg_beam_x[i];
+		y = borg_beam_y[i];
+
+		/* Maximal distance */
+		if (distance(c_x, c_y, x, y) > rad) continue;
+
+		/* Get the grid */
+		mb_ptr = map_loc(x, y);
+
+		/* Collect damage */
+		n += borg_launch_aux_hack(mb_ptr->kill, dam, typ);
+	}
+
+	/* Result */
+	return (n);
+}
+
+
+static int borg_ball_item(map_block *mb_ptr, int typ)
+{
+	object_kind *k_ptr = &k_info[mb_ptr->object];
+
+	/* check destroyed stuff. */
+	if (!mb_ptr->object) return (0);
+
+	switch (typ)
+	{
+		case GF_ACID:
+		{
+			/* rings/boots cost extra (might be speed!) */
+			if (k_ptr->tval == TV_BOOTS) return (-200);
+		}
+
+		case GF_ELEC:
+		{
+			/* rings/boots cost extra (might be speed!) */
+			if (k_ptr->tval == TV_RING) return (-200);
+		}
+
+		case GF_FIRE:
+		{
+			/* rings/boots cost extra (might be speed!) */
+			if (k_ptr->tval == TV_BOOTS) return (-200);
+		}
+
+		case GF_COLD:
+		{
+			/* So many nice potions to be missed */
+			if (k_ptr->tval == TV_POTION) return (-200);
+		}
+
+		case GF_MANA:
+		{
+			/* Used against uniques, allow the stuff to burn */
+			return (0);
+		}
+
+		default: return (0);
+	}
+}
+
+
+/* Determine the "reward" of casting a ball with radius = 0.*/
+static int borg_launch_ball_zero(int dam, int typ, int max)
+{
+	int i;
+	int x, y;
+	int n, b_n = 0;
+
+	map_block *mb_ptr;
+
+	/* Loop through all the ballable monsters in LOS */
+	for (i = 0; i < borg_beam_n; i++)
+	{
+		/* Acquire location */
+		x = borg_beam_x[i];
+		y = borg_beam_y[i];
+
+		/* Maximal distance */
+		if (distance(c_x, c_y, x, y) > max) continue;
+
+		/* Get the grid */
+		mb_ptr = map_loc(x, y);
+
+		/* Collect damage */
+		n = borg_launch_aux_hack(mb_ptr->kill, dam, typ);
+
+		/* Does this cost me items? */
+		n += borg_ball_item(mb_ptr, typ);
+
+		/* Is it better than before? */
+		if (n <= b_n) continue;
+
+		/* Track this location */
+		b_n = n;
+		g_x = x;
+		g_y = y;
+	}
+
+	/* Result */
+	return (b_n);
+}
+
+
+/*
+ * Determine the "reward" of casting a ball
+ *
+ * Basically, we sum the "rewards" of doing the appropriate amount of
+ * damage to each of the "affected" monsters.
+ *
+ */
+static int borg_launch_aux_ball(int rad, int dam, int typ, int max)
+{
+	int i, j, r;
+	int x, y, x1, y1;
+	int n, b_n = 0;
+
+	map_block *mb_ptr;
+
+	/* Balls with rad = 0 get special treatment */
+	if (rad == BORG_BALL_RAD0) return (borg_launch_ball_zero(dam, typ, max));
+
+	/* Loop through all the grids with a monster or monster next to it */
+	for (i = 0; i < borg_ball_n; i++)
+	{
+		/* Acquire location */
+		x = borg_ball_x[i];
+		y = borg_ball_y[i];
+
+		/* Maximal distance */
+		if (distance(c_x, c_y, x, y) > max) continue;
+
+		/* Reset counter */
+		n = 0;
+
+		/* loop through all close monsters to find the ones hit by the ball */
+		for (j = 0; j < borg_temp_n; j++)
+		{
+			/* Acquire location */
+			x1 = borg_temp_x[j];
+			y1 = borg_temp_y[j];
+
+			/* Get the distance */
+			r = distance(x, y, x1, y1);
+
+			/* Is it within blast radius */
+			if (r > rad) continue;
+
+			/* Get the grid */
+			mb_ptr = map_loc(x1, y1);
+
+			/* Collect damage, lowered by distance */
+			n += borg_launch_aux_hack(mb_ptr->kill, dam / (r +1), typ);
+
+			/* Does this cost me items? */
+			n += borg_ball_item(mb_ptr, typ);
+		}
+
+		/* Is it a better location than before? */
+		if (n <= b_n) continue;
+
+		/* Track it */
+		b_n = n;
+		g_x = x;
+		g_y = y;
+	}
+
+	/* Result */
+	return (b_n);
+}
+
+
+/*
+ * Simulate/Apply the optimal result of launching a beam/bolt/ball
+ */
+static int borg_launch_bolt(int rad, int dam, int typ, int max)
+{
+	/** Examine possible destinations **/
+	switch (rad)
+	{
+		/* Is it a dispel? */
+		case BORG_DISPEL:
+		{
+			/* Return the dispel damage */
+			return (borg_launch_aux_dispel(dam, typ, max));
+		}
+
+		/* Is it a bolt? */
+		case BORG_BOLT:
+		{
+			/* Return the bolt damage */
+			return (borg_launch_aux_bolt(dam, typ, max));
+		}
+
+		/* Is it a beam spell? */
+		case BORG_BEAM:
+		{
+			/* Return the beam damage */
+			return (borg_launch_aux_beam(dam, typ, max));
+		}
+
+		/* Then it must be a ball spell */
+		default: return (borg_launch_aux_ball(rad, dam, typ, max));
+	}
+}
+
+
 /* Simulate/Apply the optimal result of activating an artifact */
-static int borg_attack_aux_artifact(void)
+static int borg_attack_aux_artifact(int *b_slot)
 {
 	/* Yeah well, how do I find out what the activation is */
 	return (0);
@@ -5510,7 +5358,7 @@ static int borg_scroll_damage_monster(int sval)
 			if (FLAG(bp_ptr, TR_RES_COLD))
 			{
 				/* How much damage from a cold ball? */
-				return (borg_launch_bolt(4, 150, GF_COLD, 0));
+				return (borg_launch_bolt(BORG_DISPEL, 150, GF_COLD, BORG_BALL_RAD4));
 			}
 			return (0);
 		}
@@ -5521,7 +5369,7 @@ static int borg_scroll_damage_monster(int sval)
 			if (FLAG(bp_ptr, TR_RES_FIRE))
 			{
 				/* How much damage from a fire ball? */
-				return (borg_launch_bolt(4, 75, GF_FIRE, 0));
+				return (borg_launch_bolt(BORG_DISPEL, 75, GF_FIRE, BORG_BALL_RAD4));
 			}
 			return (0);
 		}
@@ -5533,7 +5381,7 @@ static int borg_scroll_damage_monster(int sval)
 			if (FLAG(bp_ptr, TR_RES_CHAOS))
 			{
 				/* How much damage from a chaos ball? */
-				return (borg_launch_bolt(4, 225, GF_CHAOS, 0));
+				return (borg_launch_bolt(BORG_DISPEL, 225, GF_CHAOS, BORG_BALL_RAD4));
 			}
 			return (0);
 		}
@@ -5541,7 +5389,7 @@ static int borg_scroll_damage_monster(int sval)
 		case SV_SCROLL_DISPEL_UNDEAD:
 		{
 			/* Damage all the undead in LOS. */
-			return (borg_launch_bolt(MAX_SIGHT, 60, GF_DISP_UNDEAD, 0));
+			return (borg_launch_bolt(BORG_DISPEL, 60, GF_DISP_UNDEAD, MAX_SIGHT));
 		}
 
 		default:
@@ -5557,10 +5405,10 @@ static int borg_scroll_damage_monster(int sval)
  * Simulate/Apply the optimal result of reading a scroll
  *
  */
-static int borg_attack_aux_scroll(void)
+static int borg_attack_aux_scroll(int *b_slot)
 {
 	int n, b_n = 0;
-	int k, b_k = -1;
+	int k;
 
 	/* Simulation */
 	if (borg_simulate)
@@ -5584,25 +5432,22 @@ static int borg_attack_aux_scroll(void)
 			if (n <= b_n) continue;
 
 			/* Keep track of the scroll */
-			b_k = k;
+			*b_slot = k;
 			b_n = n;
 		}
-
-		/* Set the slot global */
-		g_slot = b_k;
-
 		/* Return the value of the simulation */
 		return (b_n);
 	}
 
 	/* Do it */
-	borg_note_fmt("# Reading scroll '%s'", inventory[g_slot].o_name);
+	borg_note_fmt("# Reading scroll '%s'", inventory[*b_slot].o_name);
 
-	/* Read */
+	/* Read the scroll */
 	borg_keypress('r');
+	borg_keypress(I2A(*b_slot));
 
-	/* the scroll */
-	borg_keypress(I2A(g_slot));
+	/* Set our shooting flag */
+	successful_target = BORG_FRESH_TARGET;
 
 	/* Value */
 	return (b_n);
@@ -5709,7 +5554,7 @@ static bool borg_missile_type(list_item *l_ptr)
  * Check out which ammo is available and then call the apropriate routine for it
  *
  */
-static int borg_attack_aux_launch(void)
+static int borg_attack_aux_launch(int *b_slot)
 {
 	int n, b_n = 0;
 	int b_x = 0, b_y = 0;
@@ -5776,12 +5621,12 @@ static int borg_attack_aux_launch(void)
 			}
 		
 			/* Find a target */
-			n = borg_launch_bolt(0, b_d, gf_i, MAX_RANGE);
+			n = borg_launch_bolt(BORG_BOLT, b_d, gf_i, MAX_RANGE);
 					
 			/* Is it better than before? */
 			if (n <= b_n) continue;
 
-			g_slot = b_k;
+			*b_slot = b_k;
 			b_n = n;
 			b_x = g_x;
 			b_y = g_y;
@@ -5799,16 +5644,27 @@ static int borg_attack_aux_launch(void)
 	borg_target(g_x, g_y);
 
 	/* Do it */
-	borg_note_fmt("# Firing missile '%s'", inventory[g_slot].o_name);
+	borg_note_fmt("# Firing missile '%s'", inventory[*b_slot].o_name);
 
 	/* Fire */
 	borg_keypress('f');
 
 	/* Use the missile */
-	borg_keypress(I2A(g_slot));
+	borg_keypress(I2A(*b_slot));
 
-	/* Set our shooting flag */
-	successful_target = -2;
+	/* Reset our shooting flag */
+	if (successful_target == BORG_TARGET)
+	{
+		successful_target = BORG_ARROW_TARGET;
+	}
+
+	/*
+	 * Arrows tend to miss so there is a count down. BORG_ARROW_TARGET is a bit
+	 * larger then BORG_FRESH_TARGET.  This has as a result that the borg has
+	 * five shots to hit a monster across unknown terrain.  After that he'll
+	 * stick to monsters in known terrain
+	 */
+	successful_target = successful_target - 1;
 
 	/* Value */
 	return (b_n);
@@ -5816,81 +5672,66 @@ static int borg_attack_aux_launch(void)
 
 
 /*
- * Simulate/Apply the optimal result of throwing an object
- *
- * First choose the "best" object to throw, then check targets.
+ * This procedure determines the damage that an object can do when thrown.
+ * If you want to avoid a certain object to be thrown then it should appear
+ * in the switch.
  */
-static int borg_attack_aux_object(void)
+static int borg_throw_damage(list_item *l_ptr, int *typ)
 {
-	int n = 0, b_n = 0;
-	int k, b_k = 0;
+	int tval = l_ptr->tval;
+	int d;
 
-	int d, gf, r;
-	int div, mul;
+	/* Determine average damage from object */
+	d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
 
+	/* Set the damage type */
+	*typ = GF_ARROW;
 
-	/* No firing while blind, confused, or hallucinating */
-	if (bp_ptr->status.blind || bp_ptr->status.confused ||
-		bp_ptr->status.image) return (0);
+	/* Skip un-identified, non-average, objects */
+	if (!borg_obj_known_p(l_ptr) &&
+		!strstr(l_ptr->o_name, "{average") &&
+		!strstr(l_ptr->o_name, "{cursed") &&
+		!strstr(l_ptr->o_name, "{dubious")) return (0);
 
-	/* Scan the pack */
-	for (k = 0; k < inven_num; k++)
+	/* What sort of object have we here? */
+	switch (tval)
 	{
-		list_item *l_ptr = &inventory[k];
-
-		/* Skip un-identified, non-average, objects */
-		if (!borg_obj_known_p(l_ptr) &&
-			!strstr(l_ptr->o_name, "{average") &&
-			!strstr(l_ptr->o_name, "{cursed") &&
-			!strstr(l_ptr->o_name, "{dubious")) continue;
-
-		/* Don't throw practical things */
-		if (l_ptr->tval == TV_STAFF ||
-			l_ptr->tval == TV_WAND ||
-			l_ptr->tval == TV_ROD ||
-			l_ptr->tval == TV_SCROLL ||
-			l_ptr->tval == TV_FOOD ||
-			(l_ptr->tval >= TV_BOOKS_MIN &&
-			 l_ptr->tval <= TV_BOOKS_MAX)) continue;
-
 		/* Don't throw all the flasks when wearing a lantern */
-		if (l_ptr->tval == TV_FLASK)
+		case TV_FLASK:
 		{
 			list_item* k_ptr = look_up_equip_slot(EQUIP_LITE);
 
 			/*
-			 * Don't throw the flask if the borg wields a lantern
-			 * and he has only a few flasks. 
+			 * Don't throw the flask if the borg wields a lantern and
+			 * he has only a few flasks. 
 			 * Throw it anyway if he is fighting a unique
 			 */
 			if (k_ptr &&
 				k_info[k_ptr->k_idx].sval == SV_LITE_LANTERN &&
 				bp_ptr->able.fuel <= 7 &&
-				!borg_fighting_unique) continue;
+				!borg_fighting_unique) return (0);
+
+			/* Throw the flask */
+			return (d);
 		}
 
-		/* Don't throw lites too often */
-		if (l_ptr->tval == TV_LITE)
+		case TV_LITE:
 		{
 			list_item* k_ptr = look_up_equip_slot(EQUIP_LITE);
 
-			/* Don't throw away too many torches */
+			/* If it is not a torch don't throw it */
+			if (k_info[l_ptr->k_idx].sval != SV_LITE_TORCH) return (0);
+
+			/* It the borg is wielding a torch keep 7 in reserve for light */
 			if (k_ptr &&
 				k_info[k_ptr->k_idx].sval == SV_LITE_TORCH &&
-				bp_ptr->able.fuel <= 7) continue;
+				bp_ptr->able.fuel <= 7) return (0);
 
-			/* Don't throw away the Phial! */
-			if (KN_FLAG(l_ptr, TR_INSTA_ART)) continue;
+			/* Throw the torch */
+			return (d);
 		}
 
-		/* Determine average damage from object */
-		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
-
-		/* Set the damage type */
-		gf = GF_ARROW;
-
-		/* Some potions do special damage when thrown */
-		if (l_ptr->tval == TV_POTION)
+		case TV_POTION:
 		{
 			/* Which potion is this? */
 			switch (k_info[l_ptr->k_idx].sval)
@@ -5899,15 +5740,20 @@ static int borg_attack_aux_object(void)
 				case SV_POTION_DETONATIONS:
 				{
 					/* Set damage and damage type */
-					d  = 25 * (25 + 1) / 2;
-					gf = GF_SHARDS;
-					break;
+					*typ = GF_SHARDS;
+					return (25 * (25 + 1) / 2);
 				}
 				case SV_POTION_DEATH:
 				{
 					/* Set damage and damage type */
-					d  = 25 * (25 + 1) / 2;
-					gf = GF_DEATH_RAY;
+					*typ = GF_DEATH_RAY;
+					return (25 * (25 + 1) / 2);
+				}
+				case SV_POTION_POISON:
+				{
+					/* Set damage and damage type */
+					*typ = GF_POIS;
+					return (3 * (6 + 1) / 2);
 					break;
 				}
 				case SV_POTION_RESTORE_MANA:
@@ -5916,102 +5762,156 @@ static int borg_attack_aux_object(void)
 					if (borg_class == CLASS_WARRIOR)
 					{
 						/* Set damage and damage type */
-						d  = 10 * (10 + 1) / 2;
-						gf = GF_MANA;
+						*typ = GF_MANA;
+						return (10 * (10 + 1) / 2);
 					}
-					else
-					{
-						/* no damage for non-warriors */
-						d = 0;
-					}
-
-					break;
-				}
-				case SV_POTION_POISON:
-				{
-					/* Set damage and damage type */
-					d  = 3 * (6 + 1) / 2;
-					gf = GF_POIS;
-					break;
 				}
 				default:
 				{
 					/* Don't throw any other potion */
-					d = 0;
+					return (0);
 				}
 			}
 		}
 
-		/* Ignore 0 damage */
-		if (d <= 0) continue;
+		case TV_FOOD:
+		case TV_SCROLL:
+		case TV_ROD:
+		case TV_WAND:
+		case TV_STAFF:
+		case TV_AMULET:
+		case TV_RING:
+		case TV_LIFE_BOOK:
+		case TV_SORCERY_BOOK:
+		case TV_NATURE_BOOK:
+		case TV_CHAOS_BOOK:
+		case TV_DEATH_BOOK:
+		case TV_TRUMP_BOOK:
+		case TV_ARCANE_BOOK:
+		{
+			/* Don't throw these, they have better uses */
+			return (0);
+		}
 
-		/* Extract a "distance multiplier" */
-		mul = 10;
+		default:
+		{
+			/* Anything else can go */
+			return (d);
+		}
+	}
+}
 
-		/* Enforce a minimum "weight" of one pound */
-		div = ((l_ptr->weight > 10) ? l_ptr->weight : 10);
 
-		/* Hack -- Distance -- Reward strength, penalize weight */
-		r = (adj_str_blow[my_stat_ind[A_STR]] + 20) * mul / div;
+/*
+ * Simulate/Apply the optimal result of throwing an object
+ *
+ * First choose the "best" object to throw, then check targets.
+ */
+static int borg_attack_aux_object(int *b_slot)
+{
+	int n, b_n = 0;
+	int b_x, b_y;
+	int slot;
 
-		/* Max distance of 10 */
-		if (r > 10) r = 10;
+	int d, typ, r;
+	int div, mul;
 
-		/* Choose optimal location */
-		n = borg_launch_bolt(0, d, gf, r);
 
-		if (n < b_n) continue;
+	if (borg_simulate)
+	{
+		/* No firing while blind, confused, or hallucinating */
+		if (bp_ptr->status.blind || bp_ptr->status.confused ||
+			bp_ptr->status.image) return (0);
 
-		/* Track */
-		b_k = k;
-		b_n = n;
+		/* Scan the pack */
+		for (slot = 0; slot < inven_num; slot++)
+		{
+			list_item *l_ptr = &inventory[slot];
+
+			d = borg_throw_damage(l_ptr, &typ);
+
+			/* Ignore 0 damage */
+			if (d <= 0) continue;
+
+			/* Extract a "distance multiplier" */
+			mul = 10;
+
+			/* Enforce a minimum "weight" of one pound */
+			div = ((l_ptr->weight > 10) ? l_ptr->weight : 10);
+
+			/* Hack -- Distance -- Reward strength, penalize weight */
+			r = (adj_str_blow[my_stat_ind[A_STR]] + 20) * mul / div;
+
+			/* Max distance of 10 */
+			if (r > 10) r = 10;
+
+			/* Choose optimal location */
+			n = borg_launch_bolt(BORG_BOLT, d, typ, r);
+
+			if (n <= b_n) continue;
+
+			/* Track */
+			*b_slot = slot;
+			b_n = n;
+			b_x = g_x;
+			b_y = g_y;
+		}
+
+		/* Set globals */
+		g_x = b_x;
+		g_y = b_y;
+
+		/* Simulation */
+		return (b_n);
 	}
 
-	/* Nothing to use */
-	if (n <= 0) return (0);
-
-	/* Simulation */
-	if (borg_simulate) return (b_n);
-
 	/* Do it */
-	borg_note_fmt("# Throwing painful object '%s'", inventory[b_k].o_name);
+	borg_note_fmt("# Throwing painful object '%s'", inventory[*b_slot].o_name);
 
+	/* Set the target */
+	borg_target(g_x, g_y);
+	
 	/* Fire */
 	borg_keypress('v');
 
 	/* Use the object */
-	borg_keypress(I2A(b_k));
+	borg_keypress(I2A(*b_slot));
 
 	/* Set our shooting flag */
-	successful_target = -2;
+	successful_target = BORG_FRESH_TARGET;
 
 	/* Value */
 	return (b_n);
 }
+
+
 static int borg_ring_damage_monster(int sval)
 {
 	switch (sval)
 	{
 		case SV_RING_ICE:
-			return (borg_launch_bolt(2, 100, GF_COLD, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BALL_RAD2, 100, GF_COLD, MAX_RANGE));
 
 		case SV_RING_ACID:
-			return (borg_launch_bolt(2, 100, GF_ACID, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BALL_RAD2, 100, GF_ACID, MAX_RANGE));
 
 		case SV_RING_FLAMES:
-			return (borg_launch_bolt(2, 100, GF_FIRE, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BALL_RAD2, 100, GF_FIRE, MAX_RANGE));
 
 		default:
 			return (0);
 	}
 }
+
+
 /*
  * Simulate/Apply the optimal result of Activating a ring
  */
-static int borg_attack_ring_aux(void)
+static int borg_attack_ring_aux(int *b_slot)
 {
 	int sval_l = -1, sval_r;
 	int n = 0, b_n = 0;
+	int b_x = c_x, b_y = c_y;
 
 	if (borg_simulate)
 	{
@@ -6034,7 +5934,11 @@ static int borg_attack_ring_aux(void)
 					b_n = borg_ring_damage_monster(sval_l);
 
 					/* Make a note this is the left finger */
-					g_slot = EQUIP_LEFT;
+					*b_slot = EQUIP_LEFT;
+
+					/* Keep track of the target */
+					b_x = g_x;
+					b_y = g_y;
 				}
 			}
 		}
@@ -6068,12 +5972,17 @@ static int borg_attack_ring_aux(void)
 		if (n > b_n)
 		{
 			/* So it is the right finger */
-			g_slot = EQUIP_RIGHT;
+			*b_slot = EQUIP_RIGHT;
 
-			/* Switch over the damage */
+			/* Switch over the damage and the target */
 			b_n = n;
-
+			b_x = g_x;
+			b_y = g_y;
 		}
+
+		/* Set the target global */
+		g_x = b_x;
+		g_y = b_y;
 
 		/* Return damage */
 		return (b_n);
@@ -6083,14 +5992,14 @@ static int borg_attack_ring_aux(void)
 	borg_target(g_x, g_y);
 
 	/* Do it */
-	borg_note_fmt("# Activating %s", equipment[g_slot].o_name);
+	borg_note_fmt("# Activating %s", equipment[*b_slot].o_name);
 
 	/* Activate the ring*/
 	borg_keypress('A');
-	borg_keypress(I2A(g_slot));
+	borg_keypress(I2A(*b_slot));
 
 	/* Set our shooting flag */
-	successful_target = -2;
+	successful_target = BORG_FRESH_TARGET;
 
 	/* Value */
 	return (0);
@@ -6107,19 +6016,19 @@ static int borg_dragon_damage_monster(int sval)
 	switch (sval)
 	{
 		case SV_DRAGON_BLUE:
-			return (borg_launch_bolt(2, 330, GF_ELEC, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BALL_RAD2, 330, GF_ELEC, MAX_RANGE));
 
 		case SV_DRAGON_WHITE:
-			return (borg_launch_bolt(2, 370, GF_COLD, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BALL_RAD2, 370, GF_COLD, MAX_RANGE));
 
 		case SV_DRAGON_BLACK:
-			return (borg_launch_bolt(2, 430, GF_ACID, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BALL_RAD2, 430, GF_ACID, MAX_RANGE));
 
 		case SV_DRAGON_GREEN:
-			return (borg_launch_bolt(2, 500, GF_POIS, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BALL_RAD2, 500, GF_POIS, MAX_RANGE));
 
 		case SV_DRAGON_RED:
-			return (borg_launch_bolt(2, 670, GF_FIRE, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BALL_RAD2, 670, GF_FIRE, MAX_RANGE));
 
 		case SV_DRAGON_MULTIHUED:
 		{
@@ -6129,21 +6038,21 @@ static int borg_dragon_damage_monster(int sval)
 					 ((chance == 2) ? GF_ACID :
 					 ((chance == 3) ? GF_POIS
 									: GF_FIRE)));
-			return (borg_launch_bolt(2, 840, gf_typ, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BALL_RAD2, 840, gf_typ, MAX_RANGE));
 		}
 
 		case SV_DRAGON_BRONZE:
-			return (borg_launch_bolt(2, 400, GF_CONFUSION, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BALL_RAD2, 400, GF_CONFUSION, MAX_RANGE));
 
 		case SV_DRAGON_GOLD:
-			return (borg_launch_bolt(2, 430, GF_SOUND, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BALL_RAD2, 430, GF_SOUND, MAX_RANGE));
 
 		case SV_DRAGON_CHAOS:
 		{
 			chance = randint0(2);
 			gf_typ = (chance == 0) ? GF_CHAOS
 								   : GF_DISENCHANT;
-			return (borg_launch_bolt(2, 740, gf_typ, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BALL_RAD2, 740, gf_typ, MAX_RANGE));
 		}
 
 		case SV_DRAGON_LAW:
@@ -6151,7 +6060,7 @@ static int borg_dragon_damage_monster(int sval)
 			chance = randint0(2);
 			gf_typ = (chance == 0) ? GF_SOUND
 								   : GF_SHARDS;
-			return (borg_launch_bolt(2, 750, gf_typ, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BALL_RAD2, 750, gf_typ, MAX_RANGE));
 		}
 
 		case SV_DRAGON_BALANCE:
@@ -6161,7 +6070,7 @@ static int borg_dragon_damage_monster(int sval)
 					 ((chance == 1) ? GF_SOUND :
 					 ((chance == 2) ? GF_SHARDS
 									: GF_DISENCHANT));
-			return (borg_launch_bolt(2, 840, gf_typ, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BALL_RAD2, 840, gf_typ, MAX_RANGE));
 		}
 
 		case SV_DRAGON_SHINING:
@@ -6169,11 +6078,11 @@ static int borg_dragon_damage_monster(int sval)
 			chance = randint0(2);
 			gf_typ = (chance == 0) ? GF_LITE
 								   : GF_DARK;
-			return (borg_launch_bolt(2, 670, gf_typ, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BALL_RAD2, 670, gf_typ, MAX_RANGE));
 		}
 
 		case SV_DRAGON_POWER:
-			return (borg_launch_bolt(3, 1000, GF_MISSILE, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BALL_RAD3, 1000, GF_MISSILE, MAX_RANGE));
 
 		default:
 			return (0);
@@ -6218,7 +6127,7 @@ static int borg_attack_dragon_aux(void)
 	borg_keypress(I2A(EQUIP_BODY));
 
 	/* Set our shooting flag */
-	successful_target = -2;
+	successful_target = BORG_FRESH_TARGET;
 
 	/* Value */
 	return (0);
@@ -6230,46 +6139,46 @@ static int borg_rod_damage_monster(int sval)
 	switch (sval)
 	{
 		case SV_ROD_ELEC_BOLT:
-			return (borg_launch_bolt(0, 22, GF_ELEC, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BOLT, 22, GF_ELEC, MAX_RANGE));
 
 		case SV_ROD_COLD_BOLT:
-			return (borg_launch_bolt(0, 27, GF_COLD, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BOLT, 27, GF_COLD, MAX_RANGE));
 
 		case SV_ROD_ACID_BOLT:
-			return (borg_launch_bolt(0, 27, GF_ACID, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BOLT, 27, GF_ACID, MAX_RANGE));
 
 		case SV_ROD_FIRE_BOLT:
-			return (borg_launch_bolt(0, 45, GF_OLD_SLEEP, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BOLT, 45, GF_OLD_SLEEP, MAX_RANGE));
 
 		case SV_ROD_LITE:
-			return (borg_launch_bolt(-1, 27, GF_LITE_WEAK, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BEAM, 27, GF_LITE_WEAK, MAX_RANGE));
 
 		case SV_ROD_ILLUMINATION:
-			return (borg_launch_bolt(2, 18, GF_LITE_WEAK, 0));
+			return (borg_launch_bolt(BORG_DISPEL, 18, GF_LITE_WEAK, BORG_BALL_RAD2));
 
 		case SV_ROD_DRAIN_LIFE:
-			return (borg_launch_bolt(0, 150, GF_OLD_DRAIN, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BOLT, 150, GF_OLD_DRAIN, MAX_RANGE));
 
 		case SV_ROD_ELEC_BALL:
-			return (borg_launch_bolt(2, 75, GF_ELEC, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BALL_RAD2, 75, GF_ELEC, MAX_RANGE));
 
 		case SV_ROD_COLD_BALL:
-			return (borg_launch_bolt(2, 100, GF_COLD, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BALL_RAD2, 100, GF_COLD, MAX_RANGE));
 
 		case SV_ROD_ACID_BALL:
-			return (borg_launch_bolt(2, 125, GF_ACID, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BALL_RAD2, 125, GF_ACID, MAX_RANGE));
 
 		case SV_ROD_FIRE_BALL:
-			return (borg_launch_bolt(2, 150, GF_FIRE, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BALL_RAD2, 150, GF_FIRE, MAX_RANGE));
 
 		case SV_ROD_SLOW_MONSTER:
-			return (borg_launch_bolt(0, 10, GF_OLD_SLOW, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BOLT, 10, GF_OLD_SLOW, MAX_RANGE));
 
 		case SV_ROD_SLEEP_MONSTER:
-			return (borg_launch_bolt(0, 10, GF_OLD_SLEEP, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BOLT, 10, GF_OLD_SLEEP, MAX_RANGE));
 
 		case SV_ROD_PESTICIDE:
-			return (borg_launch_bolt(3, 8, GF_POIS, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BALL_RAD3, 8, GF_POIS, MAX_RANGE));
 
 		case SV_ROD_HAVOC:
 			/* This has a random damage type, so just hope it is not resisted */
@@ -6284,7 +6193,7 @@ static int borg_rod_damage_monster(int sval)
 /*
  * Simulate/Apply the optimal result of using an attack rod
  */
-static int borg_attack_rod_aux(void)
+static int borg_attack_rod_aux(int *b_slot)
 {
 	int n, b_n = -1;
 	int k, b_k = 0;
@@ -6323,7 +6232,7 @@ static int borg_attack_rod_aux(void)
 
 			/* Track this rod */
 			b_n = n;
-			b_k = k;
+			*b_slot = k;
 
 			/* Track the target */
 			b_x = g_x;
@@ -6333,26 +6242,22 @@ static int borg_attack_rod_aux(void)
 		/* Set the globals */
 		g_x = b_x;
 		g_y = b_y;
-		g_slot = b_k;
 
 		return (b_n);
 	}
-
-	/* Which rod was that? */
-	l_ptr = &inventory[g_slot];
 
 	/* Set the target */
 	borg_target(g_x, g_y);
 
 	/* Tell what is zapped */
-	borg_note_fmt("# Zapping %s", l_ptr->o_name);
+	borg_note_fmt("# Zapping %s", inventory[*b_slot].o_name);
 
 	/* Zap the rod */
 	borg_keypress('z');
-	borg_keypress(I2A(g_slot));
+	borg_keypress(I2A(*b_slot));
 
 	/* Set our shooting flag */
-	successful_target = -1;
+	successful_target = BORG_FRESH_TARGET;
 
 	/* Value */
 	return (b_n);
@@ -6367,57 +6272,57 @@ static int borg_wand_damage_monster(int sval)
 	switch (sval)
 	{
 		case SV_WAND_MAGIC_MISSILE:
-			return (borg_launch_bolt(0, 7, GF_MISSILE, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BOLT, 7, GF_MISSILE, MAX_RANGE));
 
 		case SV_WAND_COLD_BOLT:
-			return (borg_launch_bolt(0, 27, GF_COLD, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BOLT, 27, GF_COLD, MAX_RANGE));
 
 		case SV_WAND_ACID_BOLT:
-			return (borg_launch_bolt(0, 27, GF_ACID, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BOLT, 27, GF_ACID, MAX_RANGE));
 
 		case SV_WAND_FIRE_BOLT:
-			return (borg_launch_bolt(0, 45, GF_FIRE, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BOLT, 45, GF_FIRE, MAX_RANGE));
 
 		case SV_WAND_SLOW_MONSTER:
-			return (borg_launch_bolt(0, 10, GF_OLD_SLOW, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BOLT, 10, GF_OLD_SLOW, MAX_RANGE));
 
 		case SV_WAND_SLEEP_MONSTER:
-			return (borg_launch_bolt(0, 10, GF_OLD_SLEEP, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BOLT, 10, GF_OLD_SLEEP, MAX_RANGE));
 
 		case SV_WAND_CONFUSE_MONSTER:
-			return (borg_launch_bolt(0, 7, GF_OLD_CONF, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BOLT, 7, GF_OLD_CONF, MAX_RANGE));
 
 		case SV_WAND_FEAR_MONSTER:
-			return (borg_launch_bolt(0, 7, GF_TURN_ALL, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BOLT, 7, GF_TURN_ALL, MAX_RANGE));
 
 		case SV_WAND_ANNIHILATION:
-			return (borg_launch_bolt(0, 175, GF_OLD_DRAIN, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BOLT, 175, GF_OLD_DRAIN, MAX_RANGE));
 
 		case SV_WAND_DRAIN_LIFE:
-			return (borg_launch_bolt(0, 150, GF_OLD_DRAIN, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BOLT, 150, GF_OLD_DRAIN, MAX_RANGE));
 
 		case SV_WAND_LITE:
-			return (borg_launch_bolt(-1, 27, GF_LITE_WEAK, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BEAM, 27, GF_LITE_WEAK, MAX_RANGE));
 
 		case SV_WAND_STINKING_CLOUD:
-			return (borg_launch_bolt(2, 15, GF_POIS, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BALL_RAD2, 15, GF_POIS, MAX_RANGE));
 
 		case SV_WAND_ELEC_BALL:
-			return (borg_launch_bolt(2, 75, GF_ELEC, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BALL_RAD2, 75, GF_ELEC, MAX_RANGE));
 
 		case SV_WAND_COLD_BALL:
-			return (borg_launch_bolt(2, 100, GF_COLD, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BALL_RAD2, 100, GF_COLD, MAX_RANGE));
 
 		case SV_WAND_ACID_BALL:
-			return (borg_launch_bolt(2, 125, GF_ACID, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BALL_RAD2, 125, GF_ACID, MAX_RANGE));
 
 		case SV_WAND_FIRE_BALL:
-			return (borg_launch_bolt(2, 150, GF_FIRE, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BALL_RAD2, 150, GF_FIRE, MAX_RANGE));
 
 		case SV_WAND_WONDER:
 		{
 			/* check the danger */
-			if (borg_launch_bolt(0, 35, GF_MISSILE, MAX_RANGE) > 0 &&
+			if (borg_launch_bolt(BORG_BOLT, 35, GF_MISSILE, MAX_RANGE) > 0 &&
 				borg_danger(c_x, c_y, 1, TRUE) >= (avoidance * 2))
 			{
 				/* note the use of the wand in the emergency */
@@ -6433,13 +6338,13 @@ static int borg_wand_damage_monster(int sval)
 		}
 
 		case SV_WAND_DRAGON_COLD:
-			return (borg_launch_bolt(3, 200, GF_COLD, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BALL_RAD3, 200, GF_COLD, MAX_RANGE));
 
 		case SV_WAND_DRAGON_FIRE:
-			return (borg_launch_bolt(3, 250, GF_FIRE, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BALL_RAD3, 250, GF_FIRE, MAX_RANGE));
 
 		case SV_WAND_ROCKETS:
-			return (borg_launch_bolt(2, 250, GF_ROCKET, MAX_RANGE));
+			return (borg_launch_bolt(BORG_BALL_RAD2, 250, GF_ROCKET, MAX_RANGE));
 
 		default:
 			return (0);
@@ -6453,7 +6358,7 @@ static int borg_wand_damage_monster(int sval)
  * Check out which wand is available and then call the apropriate routine for it
  *
  */
-static int borg_attack_wand_aux(void)
+static int borg_attack_wand_aux(int *b_slot)
 {
 	int n, b_n = 0;
 	int b_x = 0, b_y = 0;
@@ -6511,7 +6416,7 @@ static int borg_attack_wand_aux(void)
 			/* Is it better than before? */
 			if (n <= b_n) continue;
 
-			b_k = k;
+			*b_slot = k;
 			b_n = n;
 			b_x = g_x;
 			b_y = g_y;
@@ -6520,7 +6425,6 @@ static int borg_attack_wand_aux(void)
 		/* Set the targetting globals */
 		g_x = b_x;
 		g_y = b_y;
-		g_slot = b_k;
 
 		/* Return the value of the simulation */
 		return (b_n);
@@ -6530,16 +6434,16 @@ static int borg_attack_wand_aux(void)
 	borg_target(g_x, g_y);
 
 	/* Do it */
-	borg_note_fmt("# Aiming %s", inventory[g_slot].o_name);
+	borg_note_fmt("# Aiming %s", inventory[*b_slot].o_name);
 
 	/* Fire */
 	borg_keypress('a');
 
 	/* Use the wand */
-	borg_keypress(I2A(g_slot));
+	borg_keypress(I2A(*b_slot));
 
 	/* Set our shooting flag */
-	successful_target = -2;
+	successful_target = BORG_FRESH_TARGET;
 
 	/* Value */
 	return (b_n);
@@ -6549,7 +6453,7 @@ static int borg_attack_wand_aux(void)
 /*
  * Simulate/Apply the optimal result of making a racial physical attack
  */
-static int borg_attack_aux_racial_thrust(int race, int level, int dam)
+static int borg_attack_aux_racial_thrust(int race, int level, int dam, int *b_slot)
 {
 	int p, dir;
 
@@ -6656,7 +6560,7 @@ static int borg_attack_aux_racial_thrust(int race, int level, int dam)
 	dir = borg_extract_dir(c_x, c_y, g_x, g_y);
 
 	/* Keep this dir for later */
-	g_slot = dir;
+	*b_slot = dir;
 	
 	/* Simulation */
 	if (borg_simulate) return (b_d);
@@ -6682,16 +6586,16 @@ static int borg_attack_aux_racial_thrust(int race, int level, int dam)
 
 
 /* Simulate the damage done by the various mutations/raical abilities */
-static int borg_mutate_damage_monster(int race)
+static int borg_mutate_damage_monster(int race, int *slot)
 {
-	int rad = 0, dam;
+	int rad = BORG_BOLT, dam;
 	switch (race)
 	{
 		case RACE_VAMPIRE:
 		{
 			/* Suck Blood */
 			dam = bp_ptr->lev + ((bp_ptr->lev / 2) * MAX(1, bp_ptr->lev / 10));	/* Dmg */
-			return (borg_attack_aux_racial_thrust(RACE_VAMPIRE, 2, dam));
+			return (borg_attack_aux_racial_thrust(RACE_VAMPIRE, 2, dam, slot));
 		}
 
 		case RACE_CYCLOPS:
@@ -6720,7 +6624,7 @@ static int borg_mutate_damage_monster(int race)
 		{
 			/* Fireball */
 			dam = bp_ptr->lev;
-			rad = (bp_ptr->lev >= 30) ? 2 : 1;
+			rad = (bp_ptr->lev >= 30) ? BORG_BALL_RAD2 : BORG_BALL_RAD1;
 			return (borg_launch_bolt(rad, dam, GF_FIRE, MAX_RANGE));
 		}
 
@@ -6728,7 +6632,7 @@ static int borg_mutate_damage_monster(int race)
 		{
 			/* Acidball */
 			dam = bp_ptr->lev;
-			rad = (bp_ptr->lev >= 25) ? 2 : 1;
+			rad = (bp_ptr->lev >= 25) ? BORG_BALL_RAD2 : BORG_BALL_RAD1;
 			return (borg_launch_bolt(rad, dam, GF_ACID, MAX_RANGE));
 		}
 
@@ -6751,7 +6655,7 @@ static int borg_mutate_damage_monster(int race)
 			/* Sleep III */
 			dam = bp_ptr->lev;
 			rad = MAX_SIGHT;
-			return (borg_launch_bolt(rad, dam, GF_OLD_SLEEP, 0));
+			return (borg_launch_bolt(BORG_DISPEL, dam, GF_OLD_SLEEP, rad));
 		}
 
 		case RACE_YEEK:
@@ -6771,7 +6675,7 @@ static int borg_mutate_damage_monster(int race)
  * I don't know yet how to do this, just the racial powers are here.
  * These are garanteed to have the first spot.
  */
-static int borg_attack_mutate_aux(void)
+static int borg_attack_mutate_aux(int *b_slot, int *b_spell)
 {
 	if (borg_simulate)
 	{
@@ -6779,10 +6683,10 @@ static int borg_attack_mutate_aux(void)
 		if (!borg_racial_check(borg_race, TRUE)) return (FALSE);
 
 		/* Which mutation / racial is this */
-		g_slot = 0;
+		*b_spell = 0;
 
 		/* What is the damage? */
-		return (borg_mutate_damage_monster(borg_race));
+		return (borg_mutate_damage_monster(borg_race, b_slot));
 	}
 
 	/* Note */
@@ -6799,13 +6703,13 @@ static int borg_attack_mutate_aux(void)
 	/* Activate */
 	borg_keypress('U');
 
-	/* Racial is always 'a' */
-	borg_keypress('a');
+	/* Select the power */
+	borg_keypress(I2A(*b_spell));
 
 	if (borg_race == RACE_VAMPIRE)
 	{
 		/* Thrust to the grid next to the borg */
-		borg_keypress(I2D(g_slot));
+		borg_keypress(I2D(*b_slot));
 	}
 	else
 	{
@@ -6813,7 +6717,7 @@ static int borg_attack_mutate_aux(void)
 		if (borg_race != RACE_SPRITE)
 		{
 			/* Set our shooting flag */
-			successful_target = -1;
+			successful_target = BORG_FRESH_TARGET;
 		}
 	}
 
@@ -6915,7 +6819,7 @@ static int borg_attack_aux_spell_bolt_reserve(int realm, int book, int what,
 	}
 
 	/* Set our shooting flag */
-	successful_target = -1;
+	successful_target = BORG_FRESH_TARGET;
 
 	/* restore true mana */
 	bp_ptr->csp = 0;
@@ -6924,6 +6828,7 @@ static int borg_attack_aux_spell_bolt_reserve(int realm, int book, int what,
 	return (b_n);
 }
 #endif /* UNUSED_FUNC */
+
 
 /* Figure out how much damage mindcrafter spells do */
 static int borg_mindcrafter_damage_monster(int spell)
@@ -6937,7 +6842,7 @@ static int borg_mindcrafter_damage_monster(int spell)
 		{
 			/* Set damage and radius */
 			dam = 3 + ((bp_ptr->lev - 1) / 4) * (3 + (bp_ptr->lev / 15)) / 2;
-			rad = 1;
+			rad = BORG_BALL_RAD0;
 
 			/* Return the damage */
 			return (borg_launch_bolt(rad, dam, GF_PSI, MAX_RANGE));
@@ -6951,7 +6856,7 @@ static int borg_mindcrafter_damage_monster(int spell)
 			/* Is the borg grown up? */
 			if (bp_ptr->lev < 20)
 			{
-				rad = 1;
+				rad = BORG_BALL_RAD0;
 			}
 			else
 			{
@@ -6981,14 +6886,14 @@ static int borg_mindcrafter_damage_monster(int spell)
 			}
 
 			/* Return the damage */
-			return (borg_launch_bolt(rad, dam, GF_PSI, 0));
+			return (borg_launch_bolt(BORG_DISPEL, dam, GF_PSI, rad));
 		}
 
 		case MIND_PSYCHIC_DR:
 		{
 			/* Set damage and radius */
 			dam = 7 * bp_ptr->lev / 4;
-			rad = 1;
+			rad = BORG_BALL_RAD0;
 
 			/* Return the damage */
 			return (borg_launch_bolt(rad, dam, GF_PSI_DRAIN, MAX_RANGE));
@@ -7012,7 +6917,7 @@ static int borg_mindcrafter_damage_monster(int spell)
 			}
 
 			/* Return the damage */
-			return (borg_launch_bolt(rad, dam, GF_TELEKINESIS, MAX_RANGE));
+			return (borg_launch_bolt(BORG_DISPEL, dam, GF_TELEKINESIS, rad));
 		}
 
 		default:
@@ -7024,7 +6929,7 @@ static int borg_mindcrafter_damage_monster(int spell)
 }
 
 /* Check the mindcrafter spells for damage */
-static int borg_attack_mindcrafter_aux(void)
+static int borg_attack_mindcrafter_aux(int *b_spell)
 {
 	int spell;
 	int n, b_n = 0;
@@ -7063,7 +6968,7 @@ static int borg_attack_mindcrafter_aux(void)
 
 			/* Track this spell */
 			b_n = n;
-			g_spell = spell;
+			*b_spell = spell;
 			b_x = g_x;
 			b_y = g_y;
 		}
@@ -7076,15 +6981,16 @@ static int borg_attack_mindcrafter_aux(void)
 		return (b_n);
 	}
 
-	/* Set target for mindblast and pulverise */
-	if (g_spell == MIND_NEURAL_BL ||
-		g_spell == MIND_PULVERISE) (void)borg_target(g_x, g_y);
+	/* Set target for some spells */
+	if (*b_spell == MIND_NEURAL_BL ||
+		*b_spell == MIND_PULVERISE ||
+		*b_spell == MIND_PSYCHIC_DR) borg_target(g_x, g_y);
 
 	/* Cast the spell */
-	(void)borg_mindcr(g_spell, borg_minds[g_spell].level);
+	(void)borg_mindcr(*b_spell, borg_minds[*b_spell].level);
 
 	/* Set our shooting flag */
-	successful_target = -1;
+	successful_target = BORG_FRESH_TARGET;
 
 	/* Value */
 	return (b_n);
@@ -7094,7 +7000,7 @@ static int borg_attack_mindcrafter_aux(void)
 /* This function returns the damage done by life spells */
 static int borg_life_damage_monster(int book, int spell)
 {
-	int rad, dam, typ;
+	int rad = BORG_BOLT, dam, typ;
 
 	switch (book)
 	{
@@ -7111,7 +7017,7 @@ static int borg_life_damage_monster(int book, int spell)
 					typ = GF_LITE_WEAK;
 
 					/* How much damage is that? */
-					return (borg_launch_bolt(rad, dam, typ, 0));
+					return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
 				}
 
 				default: return (0);
@@ -7134,7 +7040,7 @@ static int borg_life_damage_monster(int book, int spell)
 						borg_class == CLASS_HIGH_MAGE) dam += bp_ptr->lev / 4;
 
 					/* High levels get a higher radius */
-					rad = (bp_ptr->lev < 30) ? 2 : 3;
+					rad = (bp_ptr->lev < 30) ? BORG_BALL_RAD2 : BORG_BALL_RAD3;
 
 					typ = GF_HOLY_FIRE;
 
@@ -7159,7 +7065,7 @@ static int borg_life_damage_monster(int book, int spell)
 					typ = GF_DISP_UNDEAD_DEMON;
 
 					/* How much damage is that? */
-					return (borg_launch_bolt(rad, dam, typ, 0));
+					return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
 				}
 
 				/* Spell -- Disp Undead & Demon */
@@ -7170,7 +7076,7 @@ static int borg_life_damage_monster(int book, int spell)
 					typ = GF_DISP_UNDEAD_DEMON;
 
 					/* How much damage is that? */
-					return (borg_launch_bolt(rad, dam, typ, 0));
+					return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
 				}
 
 				/* Spell -- Disp Evil */
@@ -7181,7 +7087,7 @@ static int borg_life_damage_monster(int book, int spell)
 					typ = GF_DISP_EVIL;
 
 					/* How much damage is that? */
-					return (borg_launch_bolt(rad, dam, typ, 0));
+					return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
 				}
 
 				/* Holy Word */
@@ -7199,7 +7105,7 @@ static int borg_life_damage_monster(int book, int spell)
 						typ = GF_DISP_EVIL;
 
 						/* Choose optimal location-- */
-						return (borg_launch_bolt(rad, dam, typ, 0));
+						return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
 					}
 					else
 					{
@@ -7223,7 +7129,7 @@ static int borg_life_damage_monster(int book, int spell)
 					int n;
 
 					dam = 777;
-					rad = 1;
+					rad = BORG_BALL_RAD1;
 					typ = GF_HOLY_FIRE;
 
 					/* if hurting, add bonus */
@@ -7242,10 +7148,10 @@ static int borg_life_damage_monster(int book, int spell)
 					}
 
 					/* How much damage is that? */
-					n = borg_launch_bolt(rad, dam, typ, 0);
+					n = borg_launch_bolt(BORG_DISPEL, dam, typ, rad);
 
 					/* If the borg damages a neighbour */
-					if (n)
+					if (n > 0)
 					{
 						/* There is a neighbour.  Now add in the other damage */
 						dam = bp_ptr->lev * 4;
@@ -7253,8 +7159,9 @@ static int borg_life_damage_monster(int book, int spell)
 						typ = GF_DISP_ALL;
 
 						/* How much damage is that in total? */
-						return (n + borg_launch_bolt(rad, dam, typ, 0));
+						return (n + borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
 					}
+					/* There is no neighbour */
 					else
 					{
 						/* why bother with this expensive spell */
@@ -7269,18 +7176,16 @@ static int borg_life_damage_monster(int book, int spell)
 		default:
 		{
 			borg_oops_fmt("Trying to cast from life book = %d", book);
+			return (0);
 		}
 	}
-
-	/* Paranoia */
-	return (0);
 }
 
 
 /* This function returns the damage done by sorcery spells */
 static int borg_sorcery_damage_monster(int book, int spell)
 {
-	int rad = 0, dam, typ;
+	int rad = BORG_BOLT, dam, typ;
 
 	switch (book)
 	{
@@ -7297,7 +7202,7 @@ static int borg_sorcery_damage_monster(int book, int spell)
 					typ = GF_LITE_WEAK;
 
 					/* How much damage is that? */
-					return (borg_launch_bolt(rad, dam, typ, 0));
+					return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
 				}
 
 				case 4:
@@ -7347,7 +7252,7 @@ static int borg_sorcery_damage_monster(int book, int spell)
 					typ = GF_OLD_SLEEP;
 
 					/* How much damage is that? */
-					return (borg_launch_bolt(rad, dam, typ, 0));
+					return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
 				}
 
 				default: return (0);
@@ -7376,11 +7281,12 @@ static int borg_sorcery_damage_monster(int book, int spell)
 			}
 		}
 
-		default: borg_oops_fmt("Is book %d really a sorcery book?", book);
+		default:
+		{
+			borg_oops_fmt("Is book %d really a sorcery book?", book);
+			return (0);
+		}
 	}
-
-	/* Paranoia */
-	return (0);
 }
 
 
@@ -7432,7 +7338,7 @@ static int borg_attack_aux_nature_whirlwind(bool cast_by_spell)
 /* This function returns the damage done by nature spells */
 static int borg_nature_damage_monster(int book, int spell)
 {
-	int rad = 0, dam, typ;
+	int rad = BORG_BOLT, dam, typ;
 
 	switch (book)
 	{
@@ -7449,7 +7355,7 @@ static int borg_nature_damage_monster(int book, int spell)
 					typ = GF_LITE_WEAK;
 
 					/* How much damage is that? */
-					return (borg_launch_bolt(rad, dam, typ, 0));
+					return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
 				}
 
 				default: return (0);
@@ -7495,7 +7401,7 @@ static int borg_nature_damage_monster(int book, int spell)
 				case 4:
 				{
 					dam = 27;
-					rad = -1;
+					rad = BORG_BEAM;
 					typ = GF_LITE_WEAK;
 
 					/* Choose optimal location-- */
@@ -7510,7 +7416,7 @@ static int borg_nature_damage_monster(int book, int spell)
 					typ = GF_OLD_SLOW;
 
 					/* How much damage is that? */
-					return (borg_launch_bolt(rad, dam, typ, 0));
+					return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
 				}
 
 				default: return (0);
@@ -7568,9 +7474,9 @@ static int borg_nature_damage_monster(int book, int spell)
 				case 5:
 				{
 					/* Does light hurt? */
-					if ((bp_ptr->flags[3] & (TR3_HURT_LITE)) &&
-						!(bp_ptr->flags[1] & (TR1_RES_LITE)) &&
-						!(bp_ptr->flags[3] & (TR3_IM_LITE)))
+					if (FLAG(bp_ptr, TR_HURT_LITE) &&
+						!FLAG(bp_ptr, TR_RES_LITE) &&
+						!FLAG(bp_ptr, TR_IM_LITE))
 					{
 						/* Don't cast this */
 						return (0);
@@ -7578,7 +7484,7 @@ static int borg_nature_damage_monster(int book, int spell)
 					else
 					{
 						dam = 150;
-						rad = 8;
+						rad = BORG_BALL_RAD8;
 						typ = GF_LITE;
 
 						/* Choose optimal location-- */
@@ -7597,7 +7503,7 @@ static int borg_nature_damage_monster(int book, int spell)
 					typ = GF_DISP_ALL;
 
 					/* Calculate dispell damage */
-					n = borg_launch_bolt(rad, dam, typ, 0);
+					n = borg_launch_bolt(BORG_DISPEL, dam, typ, rad);
 
 					/* Disintegrate ball centered on self */
 					dam = bp_ptr->lev + 100;
@@ -7605,23 +7511,26 @@ static int borg_nature_damage_monster(int book, int spell)
 					typ = GF_DISINTEGRATE;
 
 					/* Return dispell + ball damage */
-					return (n + borg_launch_bolt(rad, dam, typ, 0));
+					return (n + borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
 				}
 
 				default: return (0);
 			}
 		}
-	}
 
-	/* Paranoia */
-	return (0);
+		default:
+		{
+			borg_oops_fmt("Is book %d really a Nature book?", book);
+			return (0);
+		}
+	}
 }
 
 
 /* This function returns the damage done by chaos spells */
 static int borg_chaos_damage_monster(int book, int spell)
 {
-	int rad = 0, dam, typ;
+	int rad = BORG_BOLT, dam, typ;
 
 	switch (book)
 	{
@@ -7648,7 +7557,7 @@ static int borg_chaos_damage_monster(int book, int spell)
 					typ = GF_LITE_WEAK;
 
 					/* How much damage is that? */
-					return (borg_launch_bolt(rad, dam, typ, 0));
+					return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
 				}
 
 				/* Mana Burst */
@@ -7662,7 +7571,7 @@ static int borg_chaos_damage_monster(int book, int spell)
 						borg_class == CLASS_HIGH_MAGE) dam += bp_ptr->lev / 4;
 
 					/* Set radius and type */
-					rad = ((bp_ptr->lev < 30) ? 2 : 3);
+					rad = ((bp_ptr->lev < 30) ? BORG_BALL_RAD2 : BORG_BALL_RAD3);
 					typ = GF_MISSILE;
 
 					/* Choose optimal location-- */
@@ -7716,13 +7625,13 @@ static int borg_chaos_damage_monster(int book, int spell)
 					typ = GF_SOUND;
 
 					/* How much damage is that? */
-					return (borg_launch_bolt(rad, dam, typ, 0));
+					return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
 				}
 
 				/* Doom Bolt */
 				case 3:
 				{
-					rad = -1;
+					rad = BORG_BEAM;
 					dam = (11 + (bp_ptr->lev - 5) / 4) * 9 / 2;
 					typ = GF_MANA;
 
@@ -7733,7 +7642,7 @@ static int borg_chaos_damage_monster(int book, int spell)
 				/* Fire ball */
 				case 4:
 				{
-					rad = 2;
+					rad = BORG_BALL_RAD2;
 					dam = bp_ptr->lev + 55;
 					typ = GF_FIRE;
 
@@ -7741,7 +7650,7 @@ static int borg_chaos_damage_monster(int book, int spell)
 					return (borg_launch_bolt(rad, dam, typ, MAX_RANGE));
 				}
 
-				/* Invoke Lorgrus */
+				/* Invoke Logrus */
 				case 7:
 				{
 					rad = bp_ptr->lev / 5;
@@ -7774,18 +7683,18 @@ static int borg_chaos_damage_monster(int book, int spell)
 				/* Chain Lightning */
 				case 1:
 				{
-					rad = 10;
+					rad = BORG_BALL_RAD8;
 					dam = (5 + (bp_ptr->lev / 10)) * 9 / 2;
 					typ = GF_ELEC;
 
 					/* How much damage is that? */
-					return (borg_launch_bolt(rad, dam, typ, 0));
+					return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
 				}
 
 				/* Disintegration */
 				case 3:
 				{
-					rad = (bp_ptr->lev < 40) ? 3 : 4;
+					rad = (bp_ptr->lev < 40) ? BORG_BALL_RAD3 : BORG_BALL_RAD4;
 					dam = bp_ptr->lev + 80;
 					typ = GF_DISINTEGRATE;
 
@@ -7805,7 +7714,7 @@ static int borg_chaos_damage_monster(int book, int spell)
 				/* Gravity */
 				case 0:
 				{
-					rad = -1;
+					rad = BORG_BEAM;
 					dam = (9 + ((bp_ptr->lev - 5) / 4)) * 9 / 2;
 					typ = GF_GRAVITY;
 
@@ -7816,7 +7725,7 @@ static int borg_chaos_damage_monster(int book, int spell)
 				/* Meteor Swarm */
 				case 1:
 				{
-					rad = 3;
+					rad = BORG_BALL_RAD3;
 					dam = bp_ptr->lev + 65;
 					typ = GF_METEOR;
 
@@ -7827,7 +7736,7 @@ static int borg_chaos_damage_monster(int book, int spell)
 				/* Flamestrike */
 				case 2:
 				{
-					rad = 8;
+					rad = BORG_BALL_RAD8;
 					dam = 150 + bp_ptr->lev * 2;
 					typ = GF_FIRE;
 
@@ -7838,7 +7747,7 @@ static int borg_chaos_damage_monster(int book, int spell)
 				/* Rocket */
 				case 4:
 				{
-					rad = 2;
+					rad = BORG_BALL_RAD2;
 					dam = 120 + bp_ptr->lev;
 					typ = GF_SHARDS;
 
@@ -7849,7 +7758,7 @@ static int borg_chaos_damage_monster(int book, int spell)
 				/* Mana Storm */
 				case 5:
 				{
-					rad = 4;
+					rad = BORG_BALL_RAD4;
 					dam = 300 + bp_ptr->lev * 2;
 					typ = GF_MANA;
 
@@ -7860,7 +7769,7 @@ static int borg_chaos_damage_monster(int book, int spell)
 				/* Breath Logrus */
 				case 6:
 				{
-					rad = 2;
+					rad = BORG_BALL_RAD2;
 					dam = bp_ptr->chp;
 					typ = GF_CHAOS;
 
@@ -7878,8 +7787,6 @@ static int borg_chaos_damage_monster(int book, int spell)
 
 					dam = 0;
 
-					if (!borg_spell_okay_fail(REALM_CHAOS, 3, 7, 20)) return (0);
-
 					/* Scan neighboring grids */
 					for (dir = 0; dir <= 9; dir++)
 					{
@@ -7891,17 +7798,22 @@ static int borg_chaos_damage_monster(int book, int spell)
 
 						mb_ptr = map_loc(x, y);
 
-						/* is there a kill next to me */
-						if (mb_ptr->feat >= FEAT_MAGMA && mb_ptr->feat <= FEAT_PERM_SOLID)
+						/* is there a wall next to me */
+						if (mb_ptr->feat >= FEAT_MAGMA &&
+							mb_ptr->feat <= FEAT_PERM_SOLID)
 						{
+							/* Don't cast it when the borg is next to a wall */
 							return (0);
 						}
 						else
 						{
 							/* Calculate "average" damage */
-							dam += borg_launch_bolt(10 + 2, 175, GF_SHARDS, MAX_RANGE);
-							dam += borg_launch_bolt(10 + 2, 175, GF_MANA, MAX_RANGE);
-							dam += borg_launch_bolt(10 + 4, 175, GF_NUKE, MAX_RANGE);
+							dam += borg_launch_bolt
+								(BORG_BALL_RAD2, 175, GF_SHARDS, MAX_RANGE);
+							dam += borg_launch_bolt
+								(BORG_BALL_RAD2, 175, GF_MANA, MAX_RANGE);
+							dam += borg_launch_bolt
+								(BORG_BALL_RAD4, 175, GF_NUKE, MAX_RANGE);
 						}
 
 					}
@@ -7913,17 +7825,20 @@ static int borg_chaos_damage_monster(int book, int spell)
 				default: return (0);
 			}
 		}
+
+		default:
+		{
+			borg_oops_fmt("Is book %d really a sorcery book?", book);
+			return (0);
+		}
 	}
-	
-	/* Paranoia */
-	return (0);
 }
 
 
 /* This function returns the damage done by death spells */
 static int borg_death_damage_monster(int book, int spell)
 {
-	int rad = 0, dam, typ;
+	int rad = BORG_BOLT, dam, typ;
 
 	switch (book)
 	{
@@ -7935,7 +7850,7 @@ static int borg_death_damage_monster(int book, int spell)
 				/* Malediction */
 				case 1:
 				{
-					rad = 1;
+					rad = BORG_BALL_RAD1;
 					dam = (3 + ((bp_ptr->lev - 1) / 5)) / 2;
 					typ = GF_HELL_FIRE;
 
@@ -7946,7 +7861,7 @@ static int borg_death_damage_monster(int book, int spell)
 				/* Poison Ball */
 				case 4:
 				{
-					rad = 2;
+					rad = BORG_BALL_RAD2;
 					dam = 10 + bp_ptr->lev / 2;
 					typ = GF_POIS;
 
@@ -7986,7 +7901,7 @@ static int borg_death_damage_monster(int book, int spell)
 				/* Entropy */
 				case 0:
 				{
-					rad = (bp_ptr->lev < 30) ? 2 : 3;
+					rad = (bp_ptr->lev < 30) ? BORG_BALL_RAD2 : BORG_BALL_RAD3;
 
 					/* Set basic damage */
 					dam = 10 + bp_ptr->lev + bp_ptr->lev / 4;
@@ -8040,7 +7955,7 @@ static int borg_death_damage_monster(int book, int spell)
 					typ = GF_DISP_GOOD;
 
 					/* How much damage is that? */
-					return (borg_launch_bolt(rad, dam, typ, 0));
+					return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
 				}
 
 				default: return (0);
@@ -8076,7 +7991,7 @@ static int borg_death_damage_monster(int book, int spell)
 				case 6:
 				{
 					dam = 120;
-					rad = 4;
+					rad = BORG_BALL_RAD4;
 					typ = GF_DARK;
 
 					/* Choose optimal location-- */
@@ -8110,7 +8025,7 @@ static int borg_death_damage_monster(int book, int spell)
 					typ = GF_OLD_DRAIN;
 
 					/* How much damage is that? */
-					return (borg_launch_bolt(rad, dam, typ, 0));
+					return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
 				}
 
 				/* Evocation */
@@ -8136,10 +8051,12 @@ static int borg_death_damage_monster(int book, int spell)
 				}
 			}
 		}
+		default:
+		{
+			borg_oops_fmt("Is book %d really a death book?", book);
+			return (0);
+		}
 	}
-
-	/* Paranoia */
-	return (0);
 }
 
 
@@ -8158,7 +8075,7 @@ static int borg_trump_damage_monster(int book, int spell)
 				/* Spell -- Mind Blast */
 				case 1:
 				{
-					rad = 0;
+					rad = BORG_BALL_RAD0;
 					dam = 6 + 2 * (bp_ptr->lev - 1) / 5;
 
 					/* Choose optimal location-- */
@@ -8186,7 +8103,7 @@ static int borg_trump_damage_monster(int book, int spell)
 /* This function returns the damage done by arcane spells */
 static int borg_arcane_damage_monster(int book, int spell)
 {
-	int rad, dam, typ;
+	int rad = BORG_BOLT, dam, typ;
 
 	switch (book)
 	{
@@ -8199,7 +8116,6 @@ static int borg_arcane_damage_monster(int book, int spell)
 				case 0:
 				{
 					dam = (3 + (bp_ptr->lev - 1) / 5) / 2;
-					rad = 0;
 					typ = GF_ELEC;
 
 					/* Choose optimal location-- */
@@ -8214,7 +8130,7 @@ static int borg_arcane_damage_monster(int book, int spell)
 					typ = GF_LITE_WEAK;
 
 					/* How much damage is that? */
-					return (borg_launch_bolt(rad, dam, typ, 0));
+					return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad));
 				}
 
 				default: return (0);
@@ -8233,7 +8149,6 @@ static int borg_arcane_damage_monster(int book, int spell)
 				case 4:
 				{
 					dam = 35;
-					rad = 0;
 					typ = GF_KILL_WALL;
 
 					/* Choose optimal location-- */
@@ -8244,7 +8159,7 @@ static int borg_arcane_damage_monster(int book, int spell)
 				case 5:
 				{
 					dam = 27;
-					rad = -1;
+					rad = BORG_BEAM;
 					typ = GF_LITE_WEAK;
 
 					/* Choose optimal location-- */
@@ -8264,7 +8179,7 @@ static int borg_arcane_damage_monster(int book, int spell)
 				case 4:
 				{
 					dam = 75 + bp_ptr->lev;
-					rad = 2;
+					rad = BORG_BALL_RAD2;
 
 					/* Guess which type it will be */
 					switch (randint1(4))
@@ -8347,7 +8262,7 @@ static int borg_spell_damage_monster(int realm, int book, int spell)
 
 
 /* Check the spells for damage */
-static int borg_attack_spellcaster_aux(void)
+static int borg_attack_spellcaster_aux(int *b_slot, int *b_spell)
 {
 	int realm, book, spell;
 	int k, n, b_n = 0;
@@ -8406,8 +8321,8 @@ static int borg_attack_spellcaster_aux(void)
 
 				/* Track this spell */
 				b_n = n;
-				g_slot = k;
-				g_spell = spell;
+				*b_slot = k;
+				*b_spell = spell;
 				b_x = g_x;
 				b_y = g_y;
 			}
@@ -8422,20 +8337,20 @@ static int borg_attack_spellcaster_aux(void)
 	}
 
 	/* Get the book */
-	l_ptr = &inventory[g_slot];
+	l_ptr = &inventory[*b_slot];
 
 	/* Find out the realm and the book */
 	realm = l_ptr->tval - TV_BOOKS_MIN + 1;
 	book = k_info[l_ptr->k_idx].sval;
 
 	/* Set the target (Okay if it is a dud target) */
-	(void)borg_target(g_x, g_y);
+	borg_target(g_x, g_y);
 
 	/* Cast the spell */
-	(void)borg_spell(realm, book, g_spell);
+	(void)borg_spell(realm, book, *b_spell);
 
 	/* Set our shooting flag */
-	successful_target = -1;
+	successful_target = BORG_FRESH_TARGET;
 
 	/* Value */
 	return (b_n);
@@ -8443,7 +8358,7 @@ static int borg_attack_spellcaster_aux(void)
 
 
 /* Try to use the reserve mana for attacking anyway if there is one monster */
-static int borg_attack_spell_reserve_aux(void)
+static int borg_attack_spell_reserve_aux(int *b_slot, int *b_spell)
 {
 	/* Leave this one for later */
 	return (0);
@@ -8454,7 +8369,7 @@ static int borg_attack_spell_reserve_aux(void)
 static int borg_staff_damage_monster(int sval)
 {
 	int charge_penalty = 20;
-	int rad = MAX_SIGHT + 10;
+	int rad = MAX_SIGHT;
 	int dam = 60;
 	int typ;
 
@@ -8465,8 +8380,7 @@ static int borg_staff_damage_monster(int sval)
 			/* Set the type */
 			typ = GF_OLD_SLEEP;
 
-			/* Return the damage */
-			return (borg_launch_bolt(rad, dam, typ, MAX_RANGE) - charge_penalty);
+			break;
 		}
 
 		case SV_STAFF_SLOW_MONSTERS:
@@ -8474,8 +8388,7 @@ static int borg_staff_damage_monster(int sval)
 			/* Set the type */
 			typ = GF_OLD_SLOW;
 
-			/* Return the damage */
-			return (borg_launch_bolt(rad, dam, typ, MAX_RANGE) - charge_penalty);
+			break;
 		}
 
 		case SV_STAFF_DISPEL_EVIL:
@@ -8483,8 +8396,7 @@ static int borg_staff_damage_monster(int sval)
 			/* Set the type */
 			typ = GF_DISP_EVIL;
 
-			/* Return the damage */
-			return (borg_launch_bolt(rad, dam, typ, MAX_RANGE) - charge_penalty);
+			break;
 		}
 
 		case SV_STAFF_POWER:
@@ -8494,8 +8406,7 @@ static int borg_staff_damage_monster(int sval)
 			typ = GF_DISP_ALL;
 			charge_penalty = 50;
 
-			/* Return the damage */
-			return (borg_launch_bolt(rad, dam, typ, MAX_RANGE) - charge_penalty);
+			break;
 		}
 
 		case SV_STAFF_HOLINESS:
@@ -8508,8 +8419,7 @@ static int borg_staff_damage_monster(int sval)
 			/* If you are low on HP take 200 bonus for healing */
 			if (bp_ptr->chp < bp_ptr->mhp / 2) dam += 200;
 			
-			/* Return the damage */
-			return (borg_launch_bolt(rad, dam, typ, MAX_RANGE) - charge_penalty);
+			break;
 		}
 		default:
 		{
@@ -8517,13 +8427,16 @@ static int borg_staff_damage_monster(int sval)
 			return (0);
 		}
 	}
+
+	/* Return the damage */
+	return (borg_launch_bolt(BORG_DISPEL, dam, typ, rad) - charge_penalty);
 }
 
 
 /*
  *  Simulate/Apply the optimal result of using a "dispel" staff
  */
-static int borg_attack_staff_aux(void)
+static int borg_attack_staff_aux(int *b_slot)
 {
 	int i, k;
 	int n, b_n = 0;
@@ -8590,7 +8503,7 @@ static int borg_attack_staff_aux(void)
 
 			/* Track it */
 			b_n = n;
-			g_slot = k;
+			*b_slot = k;
 		}
 
 		/* Simulation */
@@ -8598,11 +8511,14 @@ static int borg_attack_staff_aux(void)
 	}
 
 	/* Make a note */
-	borg_note_fmt("Using a %s", inventory[g_slot].o_name);
+	borg_note_fmt("Using a %s", inventory[*b_slot].o_name);
 
 	/* Use the staff */
 	borg_keypress('u');
-	borg_keypress(I2A(g_slot));
+	borg_keypress(I2A(*b_slot));
+
+	/* Set our shooting flag */
+	successful_target = BORG_FRESH_TARGET;
 
 	/* Finished */
 	return (0);
@@ -8612,7 +8528,7 @@ static int borg_attack_staff_aux(void)
 /*
  * Simulate/Apply the optimal result of using the given "type" of attack
  */
-static int borg_attack_aux(int what)
+static int borg_attack_aux(int what, int *slot, int *spell)
 {
 	/* Analyze */
 	switch (what)
@@ -8620,31 +8536,31 @@ static int borg_attack_aux(int what)
 		case BF_SPELLCASTER:
 		{
 			/* Check the spells for damage */
-			return (borg_attack_spellcaster_aux());
+			return (borg_attack_spellcaster_aux(slot, spell));
 		}
 
 		case BF_SPELL_RESERVE:
 		{
 			/* Check the spells again if in trouble */
-			return (borg_attack_spell_reserve_aux());
+			return (borg_attack_spell_reserve_aux(slot, spell));
 		}
 
 		case BF_MINDCRAFTER:
 		{
 			/* Check the Mindcrafter spells for damage */
-			return (borg_attack_mindcrafter_aux());
+			return (borg_attack_mindcrafter_aux(spell));
 		}
 
 		case BF_STAFF:
 		{
 			/* Any damage inducing staff */
-			return (borg_attack_staff_aux());
+			return (borg_attack_staff_aux(slot));
 		}
 
 		case BF_RING:
 		{
 			/* Any damage inducing ring */
-			return (borg_attack_ring_aux());
+			return (borg_attack_ring_aux(slot));
 		}
 
 		case BF_DRAGON_ARMOUR:
@@ -8656,49 +8572,49 @@ static int borg_attack_aux(int what)
 		case BF_MUTATE:
 		{
 			/* Any damage inducing mutation */
-			return (borg_attack_mutate_aux());
+			return (borg_attack_mutate_aux(slot, spell));
 		}
 
 		case BF_ROD:
 		{
 			/* Any damage inducing rod */
-			return (borg_attack_rod_aux());
+			return (borg_attack_rod_aux(slot));
 		}
 
 		case BF_WAND:
 		{
 			/* Any damage inducing wand */
-			return (borg_attack_wand_aux());
+			return (borg_attack_wand_aux(slot));
 		}
 
 		case BF_ARTIFACT:
 		{
 			/* Any damage inducing artifact */
-			return (borg_attack_aux_artifact());
+			return (borg_attack_aux_artifact(slot));
 		}
 
 		case BF_SCROLL:
 		{
 			/* Read some scroll that is nasty */
-			return (borg_attack_aux_scroll());
+			return (borg_attack_aux_scroll(slot));
 		}
 
 		case BF_LAUNCH:
 		{
 			/* Fire something with your launcher */
-			return (borg_attack_aux_launch());
+			return (borg_attack_aux_launch(slot));
 		}
 
 		case BF_OBJECT:
 		{
 			/* Object attack */
-			return (borg_attack_aux_object());
+			return (borg_attack_aux_object(slot));
 		}
 
 		case BF_THRUST:
 		{
 			/* Physical attack */
-			return (borg_attack_aux_thrust());
+			return (borg_attack_aux_thrust(slot));
 		}
 	}
 
@@ -8708,14 +8624,80 @@ static int borg_attack_aux(int what)
 	return (0);
 }
 
-static int borg_temp_fill(bool boosted_bravery)
+
+/* This procedure adds a grid coords to borg_ball */
+static void borg_add_temp_ball(int x, int y)
 {
-	int i, x, y;
-	map_block *mb_ptr;
+	int k;
+
+	/* Check the grid array */
+	for (k = 0; k < borg_ball_n; k++)
+		{
+		/* Has this grid been used already? */
+		if ((borg_ball_x[k] == x) && (borg_ball_y[k] == y))
+		{
+			/* Don't stick in doubles */
+			return;
+		}
+	}
+
+	/* Stick this grid in the temp_grid array */
+	borg_ball_x[borg_ball_n] = x;
+	borg_ball_y[borg_ball_n] = y;
+	borg_ball_n++;
+}
 
 
-	/* Reset list */
+/* This procedure adds a grid coords to borg_beam */
+static void borg_add_temp_beam(int x, int y, int dx, int dy)
+{
+	/* Stick this monster in the temp ball array */
+	borg_beam_x[borg_beam_n] = x;
+	borg_beam_y[borg_beam_n] = y;
+	borg_beam_n++;
+}
+
+
+/* This procedure adds a grid coords to borg_bolt */
+static void borg_add_temp_bolt(int x, int y, int dx, int dy)
+{
+	/* Stick this monster in the temp bolt array */
+	borg_bolt_x[borg_bolt_n] = x;
+	borg_bolt_y[borg_bolt_n] = y;
+	borg_bolt_n++;
+}
+
+
+/*
+ * This procedure fills the temp monster arrays with coords of monsters in LOS.
+ * 
+ * borg_temp contains all the monsters within range, as in the old situation.
+ * borg_bolt contains all the monsters that can be hit by a bolt.
+ * borg_beam contains all the monsters than can be hit by a beam.
+ * borg_ball contains all the coords where you can target a ball and hit a
+ *		monster directly and also the targetable grids next to any monster.
+ *
+ * If the borg has ESP then this routine will deliver monsters that are not in
+ * LOS, because they are hidden by walls on unknown terrain.  This is where
+ * successful_target comes in.  If the borg attempted a distance attack in the
+ * previous move then then suc_target is set.  If the borg hit something then
+ * apparently there is no wall in the way and succ_target is cleared.  Then the
+ * borg can use borg_los and borg_bolt_los for this turn.  However, if the
+ * borg failed to hit the target then there must be a wall in the way and the
+ * borg will use borg_los_pure and borg_bolt_los_pure.
+ */
+static void borg_temp_fill(bool all_monsters)
+{
+	int i;
+	int dist;
+	int x, y, dx, dy;
+	int x1, y1;
+
+	/* Reset lists */
 	borg_temp_n = 0;
+	borg_bolt_n = 0;
+	borg_beam_n = 0;
+	borg_ball_n = 0;
 
 	/* Find "nearby" monsters */
 	for (i = 1; i < borg_kills_nxt; i++)
@@ -8735,52 +8717,99 @@ static int borg_temp_fill(bool boosted_bravery)
 		if (goal_ignoring && !bp_ptr->status.afraid &&
 			(FLAG(&r_info[kill->r_idx], RF_MULTIPLY))) continue;
 
-		/* no attacking most scaryguys, try to get off the level */
-		if (scaryguy_on_level)
-		{
-
-			/* probably Grip or Fang. */
-			if (bp_ptr->depth <= 5 && bp_ptr->depth != 0 &&
-				borg_fighting_unique)
-			{
-				/* Try to fight Grip and Fang. */
-			}
-			else if (boosted_bravery)
-			{
-				/* Try to fight if being Boosted */
-			}
-			else
-			{
-				/* Flee from other scary guys */
-				continue;
-			}
-
-		}
-
 		/* Acquire location */
 		x = kill->x;
 		y = kill->y;
 
+		/* How far is this monster? */
+		dist = distance(c_x, c_y, x, y);
+
+		/* Not too far away */
+		if (dist > MAX_RANGE) continue;
+
 		/* Bounds checking */
 		if (!map_in_bounds(x, y)) continue;
-
-		/* Get grid */
-		mb_ptr = map_loc(x, y);
-
-		/* Never shoot through walls */
-		if (!(mb_ptr->info & BORG_MAP_VIEW)) continue;
-
-		/* Check the distance XXX XXX XXX */
-		if (distance(c_y, c_x, y, x) > 16) continue;
 
 		/* Save the location (careful) */
 		borg_temp_x[borg_temp_n] = x;
 		borg_temp_y[borg_temp_n] = y;
 		borg_temp_n++;
-	}
 
-	/* Say how many monsters there are */
-	return (borg_temp_n);
+		/* Keep the coords of the monster */
+		x1 = x;
+		y1 = y;
+
+		for (dx = -1; dx <= 1; dx++)
+		{
+			for (dy = -1; dy <= 1; dy++)
+			{
+				/* Keep the coords of the target grid */
+				x = x1 + dx;
+				y = y1 + dy;
+
+				/* How far is this grid */
+				dist = distance(c_x, c_y, x, y);
+
+				/* Is this grid out of range? */
+				if (dist > MAX_RANGE) continue;
+
+				/* If the borg has no ESP
+				 * or the borg has ESP and has just hit his target
+				 * assume there is no wall in the way
+				 * OR
+				 * If the borg has ESP and has just missed his target
+				 * assume there is a wall in the way
+				 */
+				if (((!FLAG(bp_ptr, TR_TELEPATHY) ||
+					(FLAG(bp_ptr, TR_TELEPATHY) && successful_target)) &&
+					borg_los(c_x, c_y, x, y))
+					||
+					(FLAG(bp_ptr, TR_TELEPATHY) && !successful_target &&
+					borg_los_pure(c_x, c_y, x, y)))
+				{
+					/* If it is not a wall it is OK for a ball */
+					if (!borg_cave_wall_grid(map_loc(x, y)))
+					{
+						/* Add the coords to the ball array */
+						borg_add_temp_ball(x, y);
+					}
+
+					/* is this square on the monster? */
+					if (!dx && !dy)
+					{
+						/* Add the coords to the beam array */
+						borg_add_temp_beam(x1, y1, dx, dy);
+					}
+				}
+
+				/* Is this monster targetable without going through a monster? */
+				if (!dx && !dy)
+				{
+					/*
+					 * If the borg has no ESP or
+					 * the borg has ESP and has just hit his target
+					 * then assume unknown terrain is not a wall
+					 * OR
+					 * If the borg has ESP and has just missed his target
+					 * then assume unknown terrain is a wall
+					 */
+					if (((!FLAG(bp_ptr, TR_TELEPATHY) ||
+						(FLAG(bp_ptr, TR_TELEPATHY) && successful_target)) &&
+						borg_bolt_los(c_x, c_y, x, y))
+						||
+						(FLAG(bp_ptr, TR_TELEPATHY) &&
+						!successful_target &&
+						borg_bolt_los_pure(c_x, c_y, x, y)))
+					{
+						/* Add the coords to the bolt array */
+						borg_add_temp_bolt(x1, y1, dx, dy);
+					}
+				}
+				/* Are we looking for a token monster or for all of them? */
+				if (!all_monsters && borg_ball_n) return;
+			}
+		}
+	}
 }
 
 
@@ -8809,8 +8838,10 @@ static int borg_temp_fill(bool boosted_bravery)
 bool borg_attack(bool boosted_bravery)
 {
 	int n, b_n = 0;
+	int b_x = 0, b_y = 0;
 	int g, b_g = -1;
-	int b_x = 0, b_y = 0, b_slot = -1, b_spell = -1;
+	int slot, b_slot = -1;
+	int spell, b_spell = -1;
 
 	/* Nobody around */
 	if (!borg_kills_cnt) return (FALSE);
@@ -8819,8 +8850,32 @@ bool borg_attack(bool boosted_bravery)
 	/* we want to attack first. */
 	borg_attacking = TRUE;
 
+	/* no attacking most scaryguys, try to get off the level */
+	if (scaryguy_on_level)
+	{
+		/* probably Grip or Fang. */
+		if (bp_ptr->depth <= 5 && bp_ptr->depth != 0 &&
+			borg_fighting_unique)
+		{
+			/* Try to fight Grip and Fang. */
+		}
+		else if (boosted_bravery)
+		{
+			/* Try to fight if being Boosted */
+		}
+		else
+		{
+			/* Flee from other scary guys */
+			borg_attacking = FALSE;
+			return (FALSE);
+		}
+	}
+
+	/* Check the surroundings for monsters */
+	borg_temp_fill(TRUE);
+
 	/* Are there monsters to kill? */
-	if (!borg_temp_fill(boosted_bravery))
+	if (!borg_ball_n)
 	{
 		borg_attacking = FALSE;
 		return (FALSE);
@@ -8829,11 +8884,19 @@ bool borg_attack(bool boosted_bravery)
 	/* Simulate */
 	borg_simulate = TRUE;
 
+	/* Set default target */
+	g_x = c_x;
+	g_y = c_y;
+
 	/* Analyze the possible attacks */
 	for (g = BF_MIN; g < BF_MAX; g++)
 	{
+		/* Clear the parameters */
+		slot = -1;
+		spell = -1;
+
 		/* Simulate */
-		n = borg_attack_aux(g);
+		n = borg_attack_aux(g, &slot, &spell);
 
 		/* Track "best" attack  <= */
 		if (n <= b_n) continue;
@@ -8845,8 +8908,8 @@ bool borg_attack(bool boosted_bravery)
 		/* Track the globals */
 		b_x = g_x;
 		b_y = g_y;
-		b_slot = g_slot;
-		b_spell = g_spell;
+		b_slot = slot;
+		b_spell = spell;
 	}
 
 	/* Nothing good */
@@ -8866,17 +8929,16 @@ bool borg_attack(bool boosted_bravery)
 	/* set globals back for this attack */
 	g_x = b_x;
 	g_y = b_y;
-	g_slot = b_slot;
-	g_spell = b_spell;
 
 	/* Instantiate */
-	(void)borg_attack_aux(b_g);
+	(void)borg_attack_aux(b_g, &b_slot, &b_spell);
 
 	borg_attacking = FALSE;
 
 	/* Success */
 	return (TRUE);
 }
+
 
 /*
  *
@@ -9759,7 +9821,7 @@ static int borg_defend_aux_tell_away(int p1)
 			borg_aim_wand(SV_WAND_TELEPORT_AWAY))
 		{
 			/* Set our shooting flag */
-			successful_target = -1;
+			successful_target = BORG_FRESH_TARGET;
 
 			/* Value */
 			return (b_n);
@@ -10786,8 +10848,10 @@ static int borg_defend_aux_inviso(int p1)
 	map_block *mb_ptr = map_loc(c_x, c_y);
 
 	/* No need? */
-	if (bp_ptr->status.blind || bp_ptr->status.confused ||
-		(bp_ptr->flags[2] & TR2_SEE_INVIS) || borg_see_inv)
+	if (bp_ptr->status.blind ||
+		bp_ptr->status.confused ||
+		FLAG(bp_ptr, TR_SEE_INVIS) ||
+		borg_see_inv)
 		return (0);
 
 	/* not recent */
@@ -11353,7 +11417,7 @@ static int borg_perma_aux_resist_c(void)
 	if (my_oppose_cold || !unique_on_level)
 		return (0);
 
-	if (bp_ptr->flags[1] & TR1_IM_COLD) return (0);
+	if (FLAG(bp_ptr, TR_IM_COLD)) return (0);
 
 	/* Not needed if GOI is on */
 	if (borg_goi) return (0);
@@ -11491,8 +11555,8 @@ static int borg_perma_aux_resist_fce(void)
 
 	/* no need if immune */
 	if (FLAG(bp_ptr, TR_IM_FIRE) &&
-		bp_ptr->flags[1] & TR1_IM_COLD &&
-		bp_ptr->flags[1] & TR1_IM_ELEC) return (0);
+		FLAG(bp_ptr, TR_IM_COLD) &&
+		FLAG(bp_ptr, TR_IM_ELEC)) return (0);
 
 	/* Not needed if GOI is on */
 	if (borg_goi) return (0);
@@ -13395,27 +13459,6 @@ bool borg_flow_shop_entry(int i)
 	return (TRUE);
 }
 
-/*
- * The borg can take a shot from a distance
- *
- */
-static bool borg_has_distance_attack(void)
-{
-	int i;
-
-	borg_simulate = TRUE;
-
-	/* Try the various attacks */
-	for (i = BF_MIN; i < BF_MAX; i++)
-	{
-		/* Is there an attack from this position? */
-		if (borg_attack_aux(i) > 0) return TRUE;
-	}
-
-	/* No attack possible from here */
-	return FALSE;
-}
-
 
 /*
  * Take a couple of steps to line up a shot
@@ -13428,11 +13471,11 @@ bool borg_flow_kill_aim(bool viewable)
 	int s_c_x = c_x;
 	int i;
 
-	/* Efficiency -- Nothing to kill */
-	if (!borg_kills_cnt) return (FALSE);
+	/* Check the surroundings for monsters */
+	borg_temp_fill(FALSE);
 
 	/* If you can shoot from where you are, don't bother reaiming */
-	if (borg_has_distance_attack()) return (FALSE);
+	if (borg_ball_n) return (FALSE);
 
 	/* Consider each adjacent spot */
 	for (o_x = -2; o_x <= 2; o_x++)
@@ -13454,16 +13497,19 @@ bool borg_flow_kill_aim(bool viewable)
 			if (!map_in_bounds(c_x - 2, c_y - 2)) continue;
 
 			/* Make sure we do not end up next to a monster */
-			for (i = 0; i < borg_temp_n; i++)
+			for (i = 0; i < borg_bolt_n; i++)
 			{
-				if (distance(c_y, c_x, borg_temp_y[i], borg_temp_x[i]) == 1)
+				if (distance(c_y, c_x, borg_bolt_y[i], borg_bolt_x[i]) == 1)
 					break;
 			}
-			if (i != borg_temp_n)
+			if (i != borg_bolt_n)
 				continue;
 
-			/* Check for a distance attack from here */
-			if (borg_has_distance_attack())
+			/* Check the surroundings for monsters */
+			borg_temp_fill(FALSE);
+
+			/* Is there a possible target? */
+			if (borg_ball_n)
 			{
 				/* Clear the flow codes */
 				borg_flow_clear();

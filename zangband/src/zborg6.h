@@ -18,8 +18,6 @@
 #include "zborg3.h"
 
 
-
-
 /*
  * Determine "twice" the distance between two points
  * This results in "diagonals" being "correctly" ranged,
@@ -97,10 +95,6 @@ extern bool borg_flow_dark(bool neer);
  * Search for secret doors
  */
 extern bool borg_flow_spastic(bool bored);
-
-extern int borg_launch_damage_one(int i, int dam, int typ);
-extern int borg_attack_aux_thrust(void);
-
 
 extern bool borg_lite_beam(bool simulation);
 extern bool borg_caution_phase(int emergency, int turns);

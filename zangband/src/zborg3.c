@@ -1268,13 +1268,16 @@ bool borg_use_item_fail(list_item *l_ptr, bool risky)
 /* To zap a rod or not */
 static bool borg_rod_aux(int sval, bool zap)
 {
+	int slot;
 	list_item *l_ptr;
 
 	/* Look for that rod */
-	l_ptr = borg_slot(TV_ROD, sval);
+	slot = borg_slot_from(TV_ROD, sval, 0);
 
 	/* None available */
-	if (!l_ptr) return (FALSE);
+	if (slot == -1) return (FALSE);
+
+	l_ptr = &inventory[slot];
 
 	/* Still charging */
 	if (l_ptr->timeout == l_ptr->number) return (FALSE);
@@ -1290,7 +1293,7 @@ static bool borg_rod_aux(int sval, bool zap)
 
 		/* Perform the action */
 		borg_keypress('z');
-		borg_keypress(I2A(look_up_index(l_ptr)));
+		borg_keypress(I2A(slot));
 	}
 
 	/* Success */
@@ -1806,10 +1809,12 @@ static bool borg_reserve_allow(int realm, int book, int what)
 			/* others are rejected */
 			return (FALSE);
 		}
+		default:
+		{
+			borg_oops("Unknown Realm used in borg_reserve_allow");
+			return(0);
+		}
 	}
-
-	/* Paranoia */
-	return (FALSE);
 }
 
 

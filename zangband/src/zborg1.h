@@ -81,7 +81,6 @@
 /*
  * Some assistance with the borg_attack and magic arrows
  */
-#define GF_ARROW_2			92
 #define GF_ARROW_FLAME		93
 #define GF_ARROW_FROST		94
 #define GF_ARROW_SHOCKING	95
@@ -89,9 +88,6 @@
 #define GF_ARROW_DRAGON		97
 #define GF_ARROW_EVIL		98
 #define GF_ARROW_EXPLOSION	99
-
-#define BORG_ARROW_FIRST	GF_ARROW_2
-#define BORG_ARROW_LAST		GF_ARROW_EXPLOSION
 
 #define GF_HOLY_WORD		100
 #define GF_DISP_UNDEAD_DEMON 101	/* effect both */
@@ -101,6 +97,10 @@
 /* the Z randarts are considered #127 by the borg */
 #define ART_RANDART  127
 
+/* values for the successful_target global */
+#define BORG_TARGET			-1
+#define BORG_FRESH_TARGET	0
+#define BORG_ARROW_TARGET	5
 
 
 /*
@@ -706,6 +706,18 @@ extern s16b borg_view_x[AUTO_VIEW_MAX];
 extern s16b borg_temp_n;
 extern s16b borg_temp_y[AUTO_TEMP_MAX];
 extern s16b borg_temp_x[AUTO_TEMP_MAX];
+
+extern s16b borg_bolt_n;
+extern s16b borg_bolt_y[AUTO_TEMP_MAX];
+extern s16b borg_bolt_x[AUTO_TEMP_MAX];
+
+extern s16b borg_beam_n;
+extern s16b borg_beam_y[AUTO_TEMP_MAX];
+extern s16b borg_beam_x[AUTO_TEMP_MAX];
+
+extern s16b borg_ball_n;
+extern s16b borg_ball_y[AUTO_TEMP_MAX];
+extern s16b borg_ball_x[AUTO_TEMP_MAX];
 
 
 /*

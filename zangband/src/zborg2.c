@@ -956,8 +956,9 @@ static bool los_general(int x1, int y1, int x2, int y2, map_hook_type mb_hook)
 
 
 /*
- * Hack - a function to pass to los_general() used
- * to simulate the old los()
+ * A function to pass to los_general()
+ * to do borg_los().
+ * we stop at walls
  */
 static bool map_stop_wall(map_block *mb_ptr)
 {
@@ -966,6 +967,59 @@ static bool map_stop_wall(map_block *mb_ptr)
 
 	/* Seems ok */
 	return (TRUE);
+}
+
+/*
+ * a function to pass to los_general().
+ * to do borg_bolt_los().
+ * we stop at unknown grids and walls
+ */
+static bool map_stop_wall_pure(map_block *mb_ptr)
+{
+	/* Do not allow unknown grids */
+	if (!mb_ptr->feat) return (FALSE);
+
+	/* Is it passable? */
+	if (borg_cave_los_grid(mb_ptr)) return (FALSE);
+
+	/* Seems ok */
+	return (TRUE);
+}
+/*
+ * Hack - a function to pass to los_general() used
+ * to do borg_bolt_los().
+ * we stop at known monsters and walls
+ */
+static bool map_stop_bolt(map_block *mb_ptr)
+{
+	/* Walls block projections */
+	if (borg_cave_wall_grid(mb_ptr)) return (TRUE);
+
+	/* Stop at monsters */
+	if (mb_ptr->monster) return (TRUE);
+
+	/* Seems ok */
+	return (FALSE);
+}
+
+/*
+ * Hack - a function to pass to los_general() used
+ * to do borg_bolt_los_pure().
+ * we stop at known monsters, walls and unknown grids
+ */
+static bool map_stop_bolt_pure(map_block *mb_ptr)
+{
+	/* Unknown area is probably a wall */
+	if (!mb_ptr->feat) return (TRUE);
+
+	/* Walls block projections */
+	if (borg_cave_wall_grid(mb_ptr)) return (TRUE);
+
+	/* Stop at monsters */
+	if (mb_ptr->monster) return (TRUE);
+
+	/* Seems ok */
+	return (FALSE);
 }
 
 /*
@@ -992,6 +1046,24 @@ static bool map_stop_wall(map_block *mb_ptr)
 bool borg_los(int x1, int y1, int x2, int y2)
 {
 	return (los_general(x1, y1, x2, y2, map_stop_wall));
+}
+
+
+bool borg_los_pure(int x1, int y1, int x2, int y2)
+{
+	return (los_general(x1, y1, x2, y2, map_stop_wall_pure));
+}
+
+
+bool borg_bolt_los(int x1, int y1, int x2, int y2)
+{
+	return (los_general(x1, y1, x2, y2, map_stop_bolt));
+}
+
+
+bool borg_bolt_los_pure(int x1, int y1, int x2, int y2)
+{
+	return (los_general(x1, y1, x2, y2, map_stop_bolt_pure));
 }
 
 
@@ -1231,52 +1303,18 @@ static bool map_stop_project(map_block *mb_ptr)
 }
 
 
-/*
- * Hack - a function to pass to los_general() used
- * to do borg_projectable().
- * Hack -- we stop at known monsters
- */
-static bool map_pure_stop_project(map_block *mb_ptr)
-{
-	/* Unknown area is probably a wall */
-	if (!mb_ptr->feat) return (TRUE);
-
-	/* Walls block projections */
-	if (borg_cave_wall_grid(mb_ptr)) return (TRUE);
-
-	/* Stop at monsters */
-	if (mb_ptr->monster) return (TRUE);
-
-	/* Seems ok */
-	return (FALSE);
-}
-
-
 
 
 /*
  * Check the projection from (x1,y1) to (x2,y2).
  * Assume that there is no monster in the way.
- * Hack -- we refuse to assume that unknown grids are floors
+ * Hack -- we assume that unknown grids are floors
  * Adapted from "projectable()" in "spells1.c".
  */
 bool borg_projectable(int x1, int y1, int x2, int y2)
 {
 	/* Are we projectable? */
 	return (los_general(x1, y1, x2, y2, map_stop_project));
-}
-
-
-/*
- * Check the projection from (x1,y1) to (x2,y2).
- * Assume that monsters in the way will stop the projection
- * Hack -- we refuse to assume that unknown grids are floors
- * Adapted from "projectable()" in "spells1.c".
- */
-bool borg_projectable_pure(int x1, int y1, int x2, int y2)
-{
-	/* Are we projectable? */
-	return (los_general(x1, y1, x2, y2, map_pure_stop_project));
 }
 
 
@@ -3726,7 +3764,7 @@ void borg_update(void)
 	delete_dead_objects();
 
 	/* Assume I can shoot here */
-	successful_target = 0;
+	successful_target = BORG_TARGET;
 
 	/* Update the view */
 	borg_update_view();
@@ -3835,8 +3873,8 @@ void borg_update(void)
 
 			borg_msg_use[i] = 2;
 
-			/* Shooting through darkness worked */
-			if (successful_target < 0) successful_target = 2;
+			/* Shooting (through darkness maybe) worked */
+			successful_target = BORG_TARGET;
 		}
 
 		/* Handle "The xxx disappears!"  via teleport other, and blinks away */
@@ -3848,8 +3886,8 @@ void borg_update(void)
 				borg_delete_kill(k, "blinked");
 				borg_msg_use[i] = 2;
 			}
-			/* Shooting through darkness worked */
-			if (successful_target < 0) successful_target = 2;
+			/* Shooting (through darkness maybe) worked */
+			successful_target = BORG_TARGET;
 		}
 
 		/* Handle "xxx dies." */
@@ -3859,8 +3897,8 @@ void borg_update(void)
 
 			borg_msg_use[i] = 2;
 
-			/* Shooting through darkness worked */
-			if (successful_target < 0) successful_target = 2;
+			/* Shooting (through darkness maybe) worked */
+			successful_target = BORG_TARGET;
 		}
 
 		/* Handle "xxx screams in pain." */
@@ -3871,8 +3909,8 @@ void borg_update(void)
 			{
 				borg_msg_use[i] = 2;
 			}
-			/* Shooting through darkness worked */
-			if (successful_target < 0) successful_target = 2;
+			/* Shooting (through darkness maybe) worked */
+			successful_target = BORG_TARGET;
 		}
 
 		/* Handle "sleep" */
@@ -3896,18 +3934,18 @@ void borg_update(void)
 		}
 		else if (prefix(msg, "STATE_SLEEP:"))
 		{
-			/* Shooting through darkness worked */
-			if (successful_target < 0) successful_target = 2;
+			/* Shooting (through darkness maybe) worked */
+			successful_target = BORG_TARGET;
 		}
 		else if (prefix(msg, "STATE__FEAR:"))
 		{
-			/* Shooting through darkness worked */
-			if (successful_target < 0) successful_target = 2;
+			/* Shooting (through darkness maybe) worked */
+			successful_target = BORG_TARGET;
 		}
 		else if (prefix(msg, "STATE_CONFUSED:"))
 		{
-			/* Shooting through darkness worked */
-			if (successful_target < 0) successful_target = 2;
+			/* Shooting (through darkness maybe) worked */
+			successful_target = BORG_TARGET;
 		}
 
 
@@ -3979,8 +4017,8 @@ void borg_update(void)
 
 			borg_msg_use[i] = 3;
 
-			/* Shooting through darkness worked */
-			if (successful_target == -1) successful_target = 2;
+			/* Shooting (through darkness maybe) worked */
+			successful_target = BORG_TARGET;
 		}
 
 		/* Handle "The xxx disappears!"  via teleport other, and blinks away */
@@ -3992,8 +4030,8 @@ void borg_update(void)
 				borg_delete_kill(k, "blinked");
 				borg_msg_use[i] = 3;
 			}
-			/* Shooting through darkness worked */
-			if (successful_target == -1) successful_target = 2;
+			/* Shooting (through darkness maybe) worked */
+			successful_target = BORG_TARGET;
 		}
 
 
@@ -4004,8 +4042,8 @@ void borg_update(void)
 
 			borg_msg_use[i] = 3;
 
-			/* Shooting through darkness worked */
-			if (successful_target == -1) successful_target = 2;
+			/* Shooting (through darkness maybe) worked */
+			successful_target = BORG_TARGET;
 		}
 
 		/* Handle "xxx screams in pain." */
@@ -4016,8 +4054,8 @@ void borg_update(void)
 			{
 				borg_msg_use[i] = 3;
 			}
-			/* Shooting through darkness worked */
-			if (successful_target == -1) successful_target = 2;
+			/* Shooting (through darkness maybe) worked */
+			successful_target = BORG_TARGET;
 		}
 
 		/* Handle "xxx hits you." */
@@ -4115,7 +4153,7 @@ void borg_update(void)
 		need_see_inviso = 1;
 
 		/* reset our 'shoot in the dark' flag */
-		successful_target = 0;
+		successful_target = BORG_TARGET;
 
 		/* When level was begun */
 		borg_began = borg_t;

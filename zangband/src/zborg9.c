@@ -914,7 +914,7 @@ static void borg_parse_aux(cptr msg, int len)
 
 		/* If we were casting a targetted spell and failed */
 		/* it does not mean we can't target that location */
-		successful_target = 0;
+		successful_target = BORG_TARGET;
 
 		return;
 	}
@@ -3608,7 +3608,6 @@ void do_cmd_borg(void)
 		}
 
 		case 'k':
-		case 'K':
 		{
 			/* Command: show "monsters" */
 			int i, n = 0;
@@ -3617,23 +3616,50 @@ void do_cmd_borg(void)
 			for (i = 1; i < borg_kills_nxt; i++)
 			{
 				borg_kill *kill = &borg_kills[i];
+				int x, y;
 
 				/* Still alive */
-				if (kill->r_idx)
-				{
-					int x = kill->x;
-					int y = kill->y;
+				if (!kill->r_idx) continue;
 
-					/* Display */
-					print_rel('*', TERM_RED, x, y);
+					/* Require current knowledge */
+				if (kill->when < borg_t) continue;
 
-					/* Count */
-					n++;
-				}
+				x = kill->x;
+				y = kill->y;
+
+				/* Display */
+				print_rel('*', TERM_RED, x, y);
+
+				/* Count */
+				n++;
 			}
 
 			/* Get keypress */
 			msgf("There are %d known monsters.", n);
+			message_flush();
+
+			/* Redraw map */
+			prt_map();
+			break;
+		}
+
+		case 'K':
+		{
+			/* Command: show "monsters" */
+			int i, n = 0;
+
+			/* Scan the monsters */
+			for (i = 0; i < borg_ball_n; i++)
+			{
+				int x = borg_ball_x[i];
+				int y = borg_ball_y[i];
+
+				/* Display */
+				print_rel('*', TERM_RED, x, y);
+			}
+
+			/* Get keypress */
+			msgf("There are %d grids.", borg_ball_n);
 			message_flush();
 
 			/* Redraw map */
