@@ -2523,13 +2523,13 @@ static bool player_birth_aux_2(void)
 		/* Prev stat */
 		if (ch == '8')
 		{
-			stat = (stat + 5) % 6;
+			stat = (stat + A_MAX - 1) % A_MAX;
 		}
 
 		/* Next stat */
 		if (ch == '2')
 		{
-			stat = (stat + 1) % 6;
+			stat = (stat + 1) % A_MAX;
 		}
 
 		/* Decrease stat */
