@@ -1206,7 +1206,7 @@ bool monst_spell_monst(int m_idx)
 				}
 
 				monst_breath_monst(m_idx, x, y, GF_ACID,
-								   randint1(rlev * 3) + 15, 2, FALSE);
+					damroll(r_ptr->hdice, 6), 2, FALSE);
 
 				break;
 			}
@@ -1237,7 +1237,7 @@ bool monst_spell_monst(int m_idx)
 				}
 
 				monst_breath_monst(m_idx, x, y, GF_ELEC,
-								   randint1(rlev * 3) / 2 + 8, 2, FALSE);
+					damroll(r_ptr->hdice, 6), 2, FALSE);
 
 				break;
 			}
@@ -1268,7 +1268,7 @@ bool monst_spell_monst(int m_idx)
 				}
 
 				monst_breath_monst(m_idx, x, y, GF_FIRE,
-								   randint1(rlev * 7 / 2) + 10, 2, FALSE);
+					damroll(r_ptr->hdice, 6), 2, FALSE);
 
 				break;
 			}
@@ -1299,7 +1299,7 @@ bool monst_spell_monst(int m_idx)
 				}
 
 				monst_breath_monst(m_idx, x, y, GF_COLD,
-								   randint1(rlev * 3) / 2 + 10, 2, FALSE);
+					damroll(r_ptr->hdice, 6), 2, FALSE);
 
 				break;
 			}
@@ -1394,7 +1394,7 @@ bool monst_spell_monst(int m_idx)
 				}
 
 				monst_breath_monst(m_idx, x, y, GF_WATER,
-								   randint1(rlev * 5 / 2) + 50, 4, FALSE);
+					damroll(r_ptr->hdice, 8), 4, FALSE);
 
 				break;
 			}
@@ -1877,7 +1877,7 @@ bool monst_spell_monst(int m_idx)
 				}
 
 				monst_bolt_monst(m_idx, x, y, GF_MANA,
-								 randint1(rlev * 7 / 2) + 50);
+					damroll(r_ptr->hdice, 10));
 
 				break;
 			}

@@ -1282,7 +1282,7 @@ bool make_attack_spell(int m_idx)
 			if (blind) msgf("%^s mumbles.", m_name);
 			else
 				msgf("%^s casts a lightning ball.", m_name);
-			breath(m_idx, GF_ELEC, damroll(r_ptr->hdice, 4), 2, FALSE);
+			breath(m_idx, GF_ELEC, damroll(r_ptr->hdice, 6), 2, FALSE);
 			update_smart_learn(m_idx, DRS_ELEC);
 			break;
 		}
@@ -1294,7 +1294,7 @@ bool make_attack_spell(int m_idx)
 			if (blind) msgf("%^s mumbles.", m_name);
 			else
 				msgf("%^s casts a fire ball.", m_name);
-			breath(m_idx, GF_FIRE, damroll(r_ptr->hdice, 8), 2, FALSE);
+			breath(m_idx, GF_FIRE, damroll(r_ptr->hdice, 6), 2, FALSE);
 			update_smart_learn(m_idx, DRS_FIRE);
 			break;
 		}
@@ -1306,7 +1306,7 @@ bool make_attack_spell(int m_idx)
 			if (blind) msgf("%^s mumbles.", m_name);
 			else
 				msgf("%^s casts a frost ball.", m_name);
-			breath(m_idx, GF_COLD, damroll(r_ptr->hdice, 4), 2, FALSE);
+			breath(m_idx, GF_COLD, damroll(r_ptr->hdice, 6), 2, FALSE);
 			update_smart_learn(m_idx, DRS_COLD);
 			break;
 		}
