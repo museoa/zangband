@@ -4641,15 +4641,18 @@ D:It is a giant scorpion with a sharp stinger.
 
 N:370:Jade monk
 G:p:G
-I:120:15d15:22:45:5
-W:23:1:0:100
-B:HIT:HURT:4d1
-B:HIT:HURT:4d1
-B:KICK:HURT:4d5
-F:OPEN_DOOR | BASH_DOOR | NO_FEAR | NO_CONF | NO_SLEEP |
-F:MALE | DROP_60 | DROP_1D2 | IM_FIRE | IM_COLD | IM_POIS
-F:DROP_SKELETON | DROP_CORPSE
-D:A monk trained in martial arts.
+I:120:54d12:30:46:10
+W:30:2:0:800
+B:KICK:HURT:5d2
+B:HIT:HURT:5d1
+B:KICK:HURT:5d5
+B:HIT:HURT:5d1
+F:MALE | DROP_60 | DROP_1D2 | OPEN_DOOR | BASH_DOOR | IM_ELEC | 
+F:IM_FIRE | IM_COLD | IM_POIS | NO_FEAR | NO_CONF | NO_SLEEP | 
+F:DROP_CORPSE | DROP_SKELETON
+S:1_IN_6 | 
+S:BO_ELEC
+D:A green-garbed monk, trained in martial arts.
 
 N:371:Black ooze
 G:j:D
@@ -6399,15 +6402,18 @@ D:A huge, ugly, half-human in search of plunder.
 
 N:492:Ivory monk
 G:p:w
-I:120:40d10:22:55:5
+I:120:42d13:25:51:7
 W:33:1:0:900
 B:KICK:HURT:8d1
 B:HIT:HURT:8d1
 B:KICK:HURT:8d4
 B:HIT:HURT:8d1
-F:OPEN_DOOR | BASH_DOOR | NO_FEAR | NO_CONF | NO_SLEEP | DROP_SKELETON |
-F:DROP_CORPSE | MALE | DROP_60 | DROP_1D2 | IM_FIRE | IM_COLD | IM_POIS
-D:A monk trained in the most lethal martial arts.
+F:MALE | DROP_60 | DROP_1D2 | OPEN_DOOR | BASH_DOOR | IM_FIRE | 
+F:IM_POIS | NO_FEAR | NO_CONF | NO_SLEEP | DROP_CORPSE | 
+F:DROP_SKELETON
+S:1_IN_7 | 
+S:HEAL
+D:A monk in white robes.  He is skilled in martial arts.
 
 N:493:Bert the Stone Troll
 G:T:W
@@ -13264,3 +13270,18 @@ D:"...Head something like a croc's, only bigger. Around forty
 D: feet long. Able to roll itself into a big beachball with teeth.
 D:  Fast on land or in water - and a hell of a lot of little legs
 D: on each side."
+
+N:870:Ebony monk
+G:p:D
+I:120:63d11:20:57:5
+W:36:3:0:1100
+B:KICK:HURT:7d1
+B:HIT:EXP_10:7d2
+B:KICK:HURT:7d4
+B:HIT:EXP_10:7d2
+F:MALE | DROP_60 | DROP_1D2 | OPEN_DOOR | BASH_DOOR | IM_COLD | 
+F:IM_POIS | RES_NETH | NO_FEAR | NO_CONF | NO_SLEEP | 
+F:DROP_CORPSE | DROP_SKELETON
+S:1_IN_9 | 
+S:BO_NETH
+D:A monk in dusky robes trained in the most lethal martial arts.
