@@ -103,7 +103,7 @@ static byte amulet_col[MAX_AMULETS] =
 static cptr staff_adj[MAX_WOODS] =
 {
 	"Aspen", "Balsa", "Banyan", "Birch", "Cedar",
-	"Cottonwood", "Cypress", "Dogwood", "Elm", "Eucalyptus",
+	"Cottonwood", "Cypress", "Dogwood", "Elm", "Willow",
 	"Hemlock", "Hickory", "Ironwood", "Locust", "Mahogany",
 	"Maple", "Mulberry", "Oak", "Pine", "Redwood",
 	"Rosewood", "Spruce", "Sycamore", "Teak", "Walnut",
