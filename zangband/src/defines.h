@@ -3146,6 +3146,22 @@
 	  (cave[Y][X].feat == FEAT_DIRT)) && \
 	  (cave[Y][X].o_idx == 0))
 
+/*
+ * Determine if a "legal" grid is a "gen" floor grid
+ *
+ * Line 1 -- forbid non-floors
+ * Line 2 -- forbid water -KMW-
+ * Line 3 -- forbid lava -KMW-
+ * Line 4 -- forbid normal objects
+ *  This function describes grids that can hold any object.
+ *  Note: The *_SHAL_* possibilities are removed.
+ */
+#define cave_gen_bold(Y,X) \
+	(((cave[Y][X].feat == FEAT_FLOOR) || \
+	  (cave[Y][X].feat == FEAT_GRASS) || \
+	  (cave[Y][X].feat == FEAT_DIRT)) && \
+	  (cave[Y][X].o_idx == 0))
+
 
 /*
  * Determine if a "legal" grid is an "empty" floor grid

@@ -4253,7 +4253,7 @@ void place_object(int y, int x, bool good, bool great)
 	if (!in_bounds(y, x)) return;
 
 	/* Require clean floor space */
-	if (!cave_clean_bold(y, x)) return;
+	if (!cave_gen_bold(y, x)) return;
 
 
 	/* Get local object */
@@ -4641,9 +4641,51 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 		flag = TRUE;
 	}
 
-
 	/* Grid */
-	c_ptr = &cave[by][bx];
+	c_ptr = &cave[by][bx];	
+	
+	/* Hack - artifacts will not be affected by terrain*/
+	if (!(artifact_p(j_ptr) || j_ptr->art_name))
+	{
+		/* Check to see if the object will burn on contact with lava. */
+		if ((c_ptr->feat==FEAT_SHAL_LAVA) && 
+			((j_ptr->tval==TV_STAFF) || (j_ptr->tval==TV_SCROLL)
+			|| (j_ptr->tval==TV_WAND)))
+		{
+			/* only display messages if player thows */
+			if (!chance)
+			{
+				/* Message */
+				msg_format("The %s%s burns in the lava.",
+					o_name, (plural ? "" : "s"));
+			}
+			
+			/* Debug */
+			if (wizard) msg_print("(contact with lava)");
+
+			/* Failure */
+			return (0);
+		}
+		
+		/* Check to see if the object will disappear in water. */
+		if ((c_ptr->feat==FEAT_SHAL_WATER) && (j_ptr->tval==TV_RING))
+		
+		{
+			/* only display messages if player thows */
+			if (!chance)
+			{
+				/* Message */
+				msg_format("The %s disappears%.",
+					o_name, (plural ? "" : "s"));
+			}
+			
+			/* Debug */
+			if (wizard) msg_print("(contact with water)");
+
+			/* Failure */
+			return (0);
+		}
+	}
 
 	/* Scan objects in that grid for combination */
 	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
