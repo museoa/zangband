@@ -1541,7 +1541,7 @@ static void spoil_out(cptr str)
 static void spoil_mon_info(cptr fname)
 {
 	char buf[1024];
-	int msex, vn, i, j, k, n=0;
+	int msex, vn, i, j, k, n, count = 0;
 	bool breath, magic, sin;
 	cptr p, q;
 	cptr vp[64];
@@ -1589,7 +1589,7 @@ static void spoil_mon_info(cptr fname)
 		monster_race *r_ptr = &r_info[i];
 
 		/* Use that monster */
-		if (r_ptr->name) who[n++] = i;
+		if (r_ptr->name) who[count++] = i;
 	}
 
 	/* Select the sort method */
@@ -1597,13 +1597,13 @@ static void spoil_mon_info(cptr fname)
 	ang_sort_swap = ang_sort_swap_hook;
 
 	/* Sort the array by dungeon depth of monsters */
-	ang_sort(who, &why, n);
+	ang_sort(who, &why, count);
 
 
 	/* Scan again */
-	for (i = 0; i < n; i++)
+	for (n = 0; n < count; n++)
 	{
-		monster_race *r_ptr = &r_info[who[i]];
+		monster_race *r_ptr = &r_info[who[n]];
 
 		/* Extract the flags */
 		flags1 = r_ptr->flags1;
@@ -1652,7 +1652,7 @@ static void spoil_mon_info(cptr fname)
 		spoil_out(buf);
 
 		/* Number */
-		sprintf(buf, "Num:%d  ", n);
+		sprintf(buf, "Num:%d  ", who[n]);
 		spoil_out(buf);
 
 		/* Level */
