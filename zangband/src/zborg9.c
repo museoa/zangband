@@ -2657,7 +2657,7 @@ static void borg_display_item(object_type *item2)
 	prt(format("pval = %-5d  toac = %-5d  tohit = %-4d  todam = %-4d",
 			   item->pval, item->to_a, item->to_h, item->to_d), j, 6);
 
-	prt(format("xtra_name = %s, item->xtra_name, j, 7);
+	prt(format("xtra_name = %s", item->xtra_name), j, 7);
 
 	prt(format("able = %d      fully_id = %d  timeout = %-d",
 			   item->able, item->fully_identified, item->timeout), j, 8);

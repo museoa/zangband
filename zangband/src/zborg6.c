@@ -13368,7 +13368,7 @@ bool borg_flow_shop_entry(int i)
 	/* Obtain the location */
 	x = borg_shops[i].x;
 	y = borg_shops[i].y;
-	
+
 	/* Hack -- Must be known */
 	if (!x || !y) return (FALSE);
 

@@ -2282,24 +2282,24 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 				/* Stop if we already knew about this shop */
 				if ((borg_shops[i].x == x) && (borg_shops[i].y == y)) break;
 			}
-			
+
 			/* Do we need to increase the size of the shop array? */
 			if (i == track_shop_size)
 			{
 				borg_shop *temp;
-				
+
 				/* Double size of arrays */
 				track_shop_size *= 2;
-				
+
 				/* Make new (bigger) array */
 				C_MAKE(temp, track_shop_size, borg_shop);
-				
+
 				/* Copy into new array */
 				C_COPY(temp, borg_shops, track_shop_num, borg_shop);
-				
+
 				/* Get rid of old array */
 				FREE(borg_shops);
-				
+
 				/* Use new array */
 				borg_shops = temp;
 			}

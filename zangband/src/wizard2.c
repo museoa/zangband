@@ -216,8 +216,8 @@ static void get_obj_dist(int min_level, int obj_num, u32b rarity[MAX_DEPTH])
 
 			if (table[i].index == obj_num)
 			{
-				p += pow4((u64b) 0x1000000L * (value1 + table[i].prob2) / total) -
-					pow4((u64b) 0x1000000L * value1 / total);
+				p += pow4((u64b) 0x1000000L * (value1 + table[i].prob2) /
+						  total) - pow4((u64b) 0x1000000L * value1 / total);
 			}
 
 			/* Increment */

@@ -178,58 +178,56 @@ void borg_list_info(byte list_type)
 		case LIST_STORE:
 		{
 			/* Notice store inventory changes */
-			
+
 			/* Silly value */
 			shop_num = -1;
-	
+
 			/* Scan for the right shop */
 			for (i = 0; i < track_shop_num; i++)
 			{
-				if ((borg_shops[i].x == c_x) &&
-					(borg_shops[i].y == c_y))
+				if ((borg_shops[i].x == c_x) && (borg_shops[i].y == c_y))
 				{
 					shop_num = i;
 					break;
 				}
 			}
-						
+
 			/* Clear the goal */
 			goal = 0;
-			
+
 			/* Save items for later? ... */
-			
+
 			break;
 		}
-		
+
 		case LIST_HOME:
 		{
 			/* Notice home inventory changes */
-			
+
 			/* Silly value */
 			shop_num = -1;
-	
+
 			/* Scan for the home */
 			for (i = 0; i < track_shop_num; i++)
 			{
-				if ((borg_shops[i].x == c_x) &&
-					(borg_shops[i].y == c_y))
+				if ((borg_shops[i].x == c_x) && (borg_shops[i].y == c_y))
 				{
 					shop_num = i;
 					break;
 				}
 			}
-			
+
 			/* Clear the goal */
 			goal = 0;
-			
+
 			/* Save items for later... */
-			
+
 			/* Number of items */
 			home_num = cur_num;
-			
+
 			/* copy into the borg-home */
 			C_COPY(borg_home, cur_list, cur_num, list_item);
-			
+
 			break;
 		}
 	}
@@ -409,21 +407,21 @@ static void borg_notice_player(void)
 static list_item *look_up_equip_slot(int slot)
 {
 	list_item *l_ptr;
-	
+
 	int i;
-	
+
 	/* Look in equipment */
 	l_ptr = &equipment[slot];
-	
+
 	/* Does it exist and are we aware? */
 	if (l_ptr->k_idx)
 	{
 		/* Normal item? */
 		if (l_ptr->treat_as == TREAT_AS_NORM) return (l_ptr);
-		
+
 		/* Missing item? */
 		if (l_ptr->treat_as == TREAT_AS_GONE) return (NULL);
-		
+
 		/* Assume TREAT_AS_SWAP */
 	}
 	else
@@ -431,12 +429,12 @@ static list_item *look_up_equip_slot(int slot)
 		/* Optimise common case of empty slot */
 		if (l_ptr->treat_as != TREAT_AS_SWAP) return (NULL);
 	}
-	
+
 	/* Otherwise, scan the inventory */
 	for (i = 0; i < inven_num; i++)
 	{
 		l_ptr = &inventory[i];
-		
+
 		/* Does it exist and are we aware? */
 		if (l_ptr->k_idx)
 		{
@@ -444,7 +442,7 @@ static list_item *look_up_equip_slot(int slot)
 			if (l_ptr->treat_as == TREAT_AS_SWAP) return (l_ptr);
 		}
 	}
-	
+
 	/* No match! */
 	return (NULL);
 }
@@ -712,7 +710,7 @@ static void borg_notice_shooter(int hold, int extra_might, int extra_shots)
 
 	/* Examine the "current bow" */
 	l_ptr = look_up_equip_slot(EQUIP_BOW);
-	
+
 	/* No bow? */
 	if (!l_ptr) return;
 
@@ -821,7 +819,7 @@ static void borg_notice_weapon(int hold, int extra_blows)
 
 	/* Examine the "main weapon" */
 	l_ptr = look_up_equip_slot(EQUIP_WIELD);
-	
+
 	/* No weapon? */
 	if (!l_ptr) return;
 
@@ -1052,16 +1050,16 @@ static void borg_recalc_monk(int extra_blows)
 	int monk_arm_wgt = 0;
 	int ma = MAX_MA - 1;
 	const martial_arts *ma_ptr = &ma_blows[MAX_MA];
-	
+
 	int i;
-	
+
 	list_item *l_ptr;
 
 	/* Weigh the armor */
 	for (i = EQUIP_BODY; i <= EQUIP_FEET; i++)
 	{
 		l_ptr = look_up_equip_slot(i);
-		
+
 		/* Add up the total */
 		if (l_ptr) monk_arm_wgt += l_ptr->weight;
 	}
@@ -1167,7 +1165,7 @@ static void borg_notice_enchant(void)
 	for (i = 0; i <= EQUIP_BOW; i++)
 	{
 		l_ptr = look_up_equip_slot(i);
-		
+
 		/* Skip missing items */
 		if (!l_ptr) continue;
 
@@ -1251,13 +1249,13 @@ static void borg_notice_lite(void)
 	/* Vampires that do not Resist Light are in trouble */
 	if (borg_race == RACE_VAMPIRE && !borg_skill[BI_RLITE])
 		borg_skill[BI_FEAR_LITE] = TRUE;
-	
+
 	/* Examine the lite */
 	l_ptr = look_up_equip_slot(EQUIP_LITE);
-	
+
 	/* Item missing? */
 	if (!l_ptr) return;
-	
+
 	/* No need for fuel */
 	if (l_ptr->kn_flags3 & TR3_LITE) borg_skill[BI_AFUEL] += 1000;
 
@@ -1265,7 +1263,7 @@ static void borg_notice_lite(void)
 	if (l_ptr->tval == TV_LITE)
 	{
 		object_kind *k_ptr = &k_info[l_ptr->k_idx];
-		
+
 		/* No fuel means no radius */
 		if (l_ptr->timeout)
 		{
@@ -1808,11 +1806,11 @@ static void borg_notice_staves(list_item *l_ptr, int number)
 static void borg_notice_inven_item(list_item *l_ptr)
 {
 	int number;
-	
+
 	object_kind *k_ptr;
-	
+
 	if ((l_ptr->treat_as == TREAT_AS_LESS) ||
-		 (l_ptr->treat_as == TREAT_AS_SWAP))
+		(l_ptr->treat_as == TREAT_AS_SWAP))
 	{
 		/* Pretend we have less items */
 		number = l_ptr->number - 1;
@@ -1933,12 +1931,10 @@ static void borg_notice_inven_item(list_item *l_ptr)
 			/* Flasks */
 
 			/* Use as fuel if we equip a lantern */
-			if (borg_skill[BI_CUR_LITE] == 2) borg_skill[BI_AFUEL] +=
-					number;
+			if (borg_skill[BI_CUR_LITE] == 2) borg_skill[BI_AFUEL] += number;
 
 			/* Count as Missiles */
-			if (borg_skill[BI_CLEVEL] < 15) borg_skill[BI_AMISSILES] +=
-					number;
+			if (borg_skill[BI_CLEVEL] < 15) borg_skill[BI_AMISSILES] += number;
 
 			break;
 		}
@@ -2000,8 +1996,7 @@ static void borg_notice_inven_item(list_item *l_ptr)
 			/* Enchant missiles if have lots of cash */
 			if (borg_skill[BI_CLEVEL] > 35)
 			{
-				if (borg_spell_okay_fail(REALM_LIFE, 7, 3, 40) &&
-					number >= 5)
+				if (borg_spell_okay_fail(REALM_LIFE, 7, 3, 40) && number >= 5)
 				{
 					if (l_ptr->to_h < 8)
 					{
@@ -2041,7 +2036,7 @@ static void borg_notice_inven(void)
 	list_item *l_ptr;
 
 	int i;
-	
+
 	/* Scan the inventory */
 	for (i = 0; i < inven_num; i++)
 	{
@@ -2049,23 +2044,23 @@ static void borg_notice_inven(void)
 
 		/* Pretend item isn't there */
 		if (l_ptr->treat_as == TREAT_AS_GONE) continue;
-		
+
 		/* Item is swapped into equipment */
 		if ((l_ptr->treat_as == TREAT_AS_SWAP) &&
 			(l_ptr->number == 1)) continue;
-		
+
 		/* Unaware item? */
 		if (!l_ptr->k_idx) continue;
-		
+
 		/* Examine the item */
 		borg_notice_inven_item(l_ptr);
 	}
-	
+
 	/* Search equipment for swapped items */
 	for (i = 0; i < equip_num; i++)
 	{
 		l_ptr = &equipment[i];
-	
+
 		/* A known item? */
 		if (l_ptr->k_idx)
 		{
@@ -2073,7 +2068,7 @@ static void borg_notice_inven(void)
 			{
 				/* Examine the item */
 				borg_notice_inven_item(l_ptr);
-				
+
 				/* Done (Only one extra item) */
 				return;
 			}
@@ -2345,7 +2340,7 @@ static void borg_notice_aux2(void)
 	}
 
 	/*** Process the Needs ***/
-	
+
 	/* No need to *buy* stat increase potions */
 	if (my_stat_cur[A_STR] >= (18 + 100) + 10 *
 		(rp_ptr->r_adj[A_STR] + cp_ptr->c_adj[A_STR]))
@@ -2700,7 +2695,7 @@ static void borg_notice_home_dupe(list_item *l_ptr, bool check_sval, int i)
 				/* Svals don't match when required */
 				continue;
 			}
-			
+
 			if (streq(l_ptr->xtra_name, w_ptr->xtra_name))
 			{
 				/* Count duplicate items */
@@ -2722,7 +2717,7 @@ static void borg_notice_home_dupe(list_item *l_ptr, bool check_sval, int i)
 static void borg_notice_home_weapon(list_item *l_ptr)
 {
 	s16b num_blow;
-	
+
 	int str_index, dex_index;
 	int num = 0, wgt = 0, mul = 0, div = 0;
 
@@ -2870,8 +2865,7 @@ static void borg_notice_home_weapon(list_item *l_ptr)
 	if (l_ptr->to_d > 8 || borg_skill[BI_CLEVEL] < 15)
 	{
 		home_damage += num_blow * (l_ptr->dd * l_ptr->ds +
-								   (borg_skill[BI_TODAM] +
-									l_ptr->to_d));
+								   (borg_skill[BI_TODAM] + l_ptr->to_d));
 	}
 	else
 	{
@@ -3136,9 +3130,9 @@ static void borg_notice_home_spells(void)
 		borg_spell_legal_fail(REALM_SORCERY, 2, 7, 40) ||
 		borg_spell_legal_fail(REALM_TRUMP, 1, 6, 40) ||
 		(borg_skill[BI_CDEPTH] == 100 &&
-			(borg_spell_legal(REALM_LIFE, 3, 6) ||
-			borg_spell_legal(REALM_SORCERY, 2, 7) ||
-			borg_spell_legal(REALM_TRUMP, 1, 6))))
+		 (borg_spell_legal(REALM_LIFE, 3, 6) ||
+		  borg_spell_legal(REALM_SORCERY, 2, 7) ||
+		  borg_spell_legal(REALM_TRUMP, 1, 6))))
 	{
 		num_recall += 1000;
 	}
@@ -3362,7 +3356,8 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 			/* Count good books */
 			if (borg_skill[BI_REALM1] == REALM_LIFE ||
 				borg_skill[BI_REALM2] == REALM_LIFE)
-				num_book[REALM_LIFE][k_info[l_ptr->k_idx].sval] += l_ptr->number;
+				num_book[REALM_LIFE][k_info[l_ptr->k_idx].sval] +=
+					l_ptr->number;
 			break;
 		}
 
@@ -3371,7 +3366,8 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 			/* Count good books */
 			if (borg_skill[BI_REALM1] == REALM_SORCERY ||
 				borg_skill[BI_REALM2] == REALM_SORCERY)
-				num_book[REALM_SORCERY][k_info[l_ptr->k_idx].sval] += l_ptr->number;
+				num_book[REALM_SORCERY][k_info[l_ptr->k_idx].sval] +=
+					l_ptr->number;
 			break;
 		}
 
@@ -3380,7 +3376,8 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 			/* Count good books */
 			if (borg_skill[BI_REALM1] == REALM_NATURE ||
 				borg_skill[BI_REALM2] == REALM_NATURE)
-				num_book[REALM_NATURE][k_info[l_ptr->k_idx].sval] += l_ptr->number;
+				num_book[REALM_NATURE][k_info[l_ptr->k_idx].sval] +=
+					l_ptr->number;
 			break;
 		}
 		case TV_CHAOS_BOOK:
@@ -3388,7 +3385,8 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 			/* Count good books */
 			if (borg_skill[BI_REALM1] == REALM_CHAOS ||
 				borg_skill[BI_REALM2] == REALM_CHAOS)
-				num_book[REALM_CHAOS][k_info[l_ptr->k_idx].sval] += l_ptr->number;
+				num_book[REALM_CHAOS][k_info[l_ptr->k_idx].sval] +=
+					l_ptr->number;
 			break;
 		}
 		case TV_DEATH_BOOK:
@@ -3396,7 +3394,8 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 			/* Count good books */
 			if (borg_skill[BI_REALM1] == REALM_DEATH ||
 				borg_skill[BI_REALM2] == REALM_DEATH)
-				num_book[REALM_DEATH][k_info[l_ptr->k_idx].sval] += l_ptr->number;
+				num_book[REALM_DEATH][k_info[l_ptr->k_idx].sval] +=
+					l_ptr->number;
 			break;
 		}
 		case TV_TRUMP_BOOK:
@@ -3404,7 +3403,8 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 			/* Count good books */
 			if (borg_skill[BI_REALM1] == REALM_TRUMP ||
 				borg_skill[BI_REALM2] == REALM_TRUMP)
-				num_book[REALM_TRUMP][k_info[l_ptr->k_idx].sval] += l_ptr->number;
+				num_book[REALM_TRUMP][k_info[l_ptr->k_idx].sval] +=
+					l_ptr->number;
 			break;
 		}
 		case TV_ARCANE_BOOK:
@@ -3412,7 +3412,8 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 			/* Count good books */
 			if (borg_skill[BI_REALM1] == REALM_ARCANE ||
 				borg_skill[BI_REALM2] == REALM_ARCANE)
-				num_book[REALM_ARCANE][k_info[l_ptr->k_idx].sval] += l_ptr->number;
+				num_book[REALM_ARCANE][k_info[l_ptr->k_idx].sval] +=
+					l_ptr->number;
 			break;
 		}
 
@@ -3475,7 +3476,7 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 		{
 			/* Scrolls */
 			borg_notice_home_scroll(l_ptr);
-			
+
 			break;
 		}
 
@@ -3543,7 +3544,7 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 		case TV_BOLT:
 		{
 			/* Missiles */
-		
+
 			/* Hack -- ignore invalid missiles */
 			if (l_ptr->tval != my_ammo_tval) break;
 
@@ -3577,10 +3578,10 @@ static void borg_notice_home_aux(void)
 
 		/* Skip empty / unaware items */
 		if (!l_ptr->k_idx) continue;
-		
+
 		/* Notice item flags */
 		borg_notice_home_flags(l_ptr);
-		
+
 		/* Notice the item itself */
 		borg_notice_home_item(l_ptr, i);
 	}
@@ -3746,7 +3747,7 @@ static s32b borg_power_aux3(void)
 
 	/*** Analyze bow ***/
 	l_ptr = look_up_equip_slot(EQUIP_BOW);
-	
+
 	/* Examine current bow */
 	if (l_ptr)
 	{
@@ -3761,8 +3762,7 @@ static s32b borg_power_aux3(void)
 
 		/* AJG - slings force you to carry heavy ammo.  Penalty for that unles you have lots of str  */
 		if (k_info[l_ptr->k_idx].sval == SV_SLING &&
-			 !(l_ptr->xtra_name && *l_ptr->xtra_name) &&
-			my_stat_ind[A_STR] < 14)
+			!(l_ptr->xtra_name && *l_ptr->xtra_name) && my_stat_ind[A_STR] < 14)
 		{
 			value -= 5000L;
 		}
@@ -3774,7 +3774,8 @@ static s32b borg_power_aux3(void)
 			value += ((borg_skill[BI_TOHIT] + 8) * 7L);
 
 		/* Prefer bows */
-		if (borg_class == CLASS_RANGER && my_ammo_tval == TV_ARROW) value += 30000L;
+		if (borg_class == CLASS_RANGER &&
+			my_ammo_tval == TV_ARROW) value += 30000L;
 
 		/* Hack -- It is hard to hold a heavy weapon */
 		if (hold < l_ptr->weight / 10) value -= 500000L;
@@ -4160,13 +4161,13 @@ my_stat_ind[A_INT] * 35000L;
 	{
 		l_ptr = look_up_equip_slot(EQUIP_BODY);
 		if (l_ptr && (l_ptr->weight > 200)) value -= (l_ptr->weight - 200) * 15;
-		
+
 		l_ptr = look_up_equip_slot(EQUIP_HEAD);
 		if (l_ptr && (l_ptr->weight > 30)) value -= 250;
-		
+
 		l_ptr = look_up_equip_slot(EQUIP_ARM);
 		if (l_ptr && (l_ptr->weight > 10)) value -= 250;
-		
+
 		l_ptr = look_up_equip_slot(EQUIP_FEET);
 		if (l_ptr && (l_ptr->weight > 50)) value -= 250;
 	}
@@ -4189,7 +4190,7 @@ my_stat_ind[A_INT] * 35000L;
 		/* Mega-Hack -- Penalize heavy armor which hurts mana */
 		value -= (((cur_wgt - max_wgt) / 10) * 3600L);
 	}
-	
+
 	/*** Penalize bad magic ***/
 
 	/* Hack -- most gloves hurt magic for spell-casters */
@@ -4213,8 +4214,8 @@ my_stat_ind[A_INT] * 35000L;
 
 		/* Penalize non-blessed edged weapons */
 		if (l_ptr && (((l_ptr->tval == TV_SWORD) ||
-			 (l_ptr->tval == TV_POLEARM)) &&
-			!(l_ptr->kn_flags3 & TR3_BLESSED)))
+					   (l_ptr->tval == TV_POLEARM)) &&
+					  !(l_ptr->kn_flags3 & TR3_BLESSED)))
 		{
 			/* Hack -- Major penalty */
 			value -= 75000L;
@@ -4394,7 +4395,8 @@ static s32b borg_power_aux4(void)
 	/* Reward Teleport Level scrolls */
 	if (borg_skill[BI_MAXDEPTH] >= 99)
 	{
-		for (k = 0; k < 5 && k < borg_skill[BI_ATELEPORTLVL]; k++) value += 5000L;
+		for (k = 0; k < 5 && k < borg_skill[BI_ATELEPORTLVL];
+			 k++) value += 5000L;
 	}
 
 
@@ -4668,7 +4670,7 @@ static s32b borg_power_aux4(void)
 				}
 				if (borg_skill[BI_MAXDEPTH] > 50)
 				{
-					for (; k < 3 && k < amt_book[realm][book];  k++)
+					for (; k < 3 && k < amt_book[realm][book]; k++)
 					{
 						value += 2500L;
 					}
@@ -4682,10 +4684,10 @@ static s32b borg_power_aux4(void)
 	{
 		value -= (borg_skill[BI_ENCUMBERD] * 500L);
 	}
-	
+
 	/* Being too heavy is really bad */
 	value -= borg_skill[BI_WEIGHT] * borg_skill[BI_WEIGHT] * 1000
-		 / (adj_str_wgt[my_stat_ind[A_STR]] * adj_str_wgt[my_stat_ind[A_STR]]);
+		/ (adj_str_wgt[my_stat_ind[A_STR]] * adj_str_wgt[my_stat_ind[A_STR]]);
 
 
 	/* Reward empty slots */
@@ -5149,7 +5151,7 @@ static s32b borg_power_home_aux2(void)
 
 	/* Collect cure serious - but they aren't as good */
 	for (k = 0; k < 99 && k < num_cure_serious; k++) value += 750L - k * 100L;
-	
+
 	/*** Various ***/
 
 	/* Fixing Stats */
@@ -8663,7 +8665,8 @@ static cptr borg_prepared_aux2(int depth)
 	if (borg_stat[A_CON] < 18 + 60) return ("low CON");
 
 	/* Hold Life */
-	if (!borg_skill[BI_HLIFE] && (borg_skill[BI_MAXCLEVEL] < 50)) return ("hold life");
+	if (!borg_skill[BI_HLIFE] &&
+		(borg_skill[BI_MAXCLEVEL] < 50)) return ("hold life");
 
 	/* Usually ready for level 46 to 55 */
 	if (depth <= 55) return ((cptr)NULL);

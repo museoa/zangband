@@ -1688,29 +1688,29 @@ static void store_sell(int *store_top)
 
 	/* Get an item */
 	s = "You have nothing that I want.";
-	
+
 	/* Update player inventory information */
 #ifdef TERM_USE_LIST
-	OBJ_ITT_START(p_ptr->inventory, o_ptr)
+	OBJ_ITT_START (p_ptr->inventory, o_ptr)
 	{
 		/* Not right type of item? */
 		if (!item_tester_hook(o_ptr))
 		{
 			/* Hack - cannot sell item */
 			o_ptr->temp_cost = 0;
-			
+
 			continue;
 		}
-		
+
 		/* Not enough room? */
 		if (!store_check_num(o_ptr))
 		{
 			/* Hack - cannot sell item */
 			o_ptr->temp_cost = 0;
-			
+
 			continue;
 		}
-		
+
 		if (st_ptr->type == BUILD_STORE_HOME)
 		{
 			/* Hack - you can 'sell' anything to your home if there is room */
@@ -1723,7 +1723,7 @@ static void store_sell(int *store_top)
 			 * for one item into o_ptr->temp_cost.
 			 * (This is set inside price_item().)
 			 */
-			(void) price_item(o_ptr, ot_ptr->min_inflate, FALSE);
+			(void)price_item(o_ptr, ot_ptr->min_inflate, FALSE);
 		}
 	}
 	OBJ_ITT_END;
@@ -2543,7 +2543,7 @@ void do_cmd_store(field_type *f1_ptr)
 
 		/* Clear */
 		clear_from(21);
-		
+
 		/* Update store inventory information */
 #ifdef TERM_USE_LIST
 		if (st_ptr->type == BUILD_STORE_HOME)

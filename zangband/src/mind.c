@@ -446,8 +446,8 @@ static bool cast_mindcrafter_spell(int spell)
 			else
 				(void)set_shero(p_ptr->shero + b);
 
-            /* Haste */
-            (void)set_fast(p_ptr->fast + b);
+			/* Haste */
+			(void)set_fast(p_ptr->fast + b);
 
 			break;
 		case MINDCRAFT_PSYCHIC_DRAIN:

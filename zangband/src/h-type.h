@@ -150,7 +150,7 @@ typedef unsigned long u32b;
 #define ANG_U64B u_int64_t
 #define ANG_S64B int64_t
 
-#endif  /* HAS_SYS_TYPES */
+#endif /* HAS_SYS_TYPES */
 
 /* Attempt to use "long long" which is semi-standard for older compilers */
 #ifndef ANG_U64B

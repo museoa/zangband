@@ -291,7 +291,7 @@ bool borg_use_things(void)
 
 						/* Try quaffing the potion */
 						if (borg_quaff_potion(k_info[l_ptr->k_idx].sval))
-								return (TRUE);
+							return (TRUE);
 
 						break;
 					}
@@ -320,7 +320,7 @@ bool borg_use_things(void)
 
 						/* Try reading the scroll */
 						if (borg_read_scroll(k_info[l_ptr->k_idx].sval))
-								return (TRUE);
+							return (TRUE);
 						break;
 					}
 				}
@@ -1394,7 +1394,7 @@ static bool borg_consume(list_item *l_ptr)
 
 					/* Try quaffing the potion */
 					if (borg_quaff_potion(k_info[l_ptr->k_idx].sval))
-							return (TRUE);
+						return (TRUE);
 				}
 			}
 
@@ -1424,7 +1424,7 @@ static bool borg_consume(list_item *l_ptr)
 
 					/* Try reading the scroll */
 					if (borg_read_scroll(k_info[l_ptr->k_idx].sval))
-							return (TRUE);
+						return (TRUE);
 				}
 			}
 
@@ -1617,7 +1617,8 @@ bool borg_crush_junk(void)
 		if (strstr(l_ptr->o_name, "{terrible")) continue;
 
 		/* hack check anything interesting */
-		if (l_ptr->xtra_name && *l_ptr->xtra_name && !(l_ptr->info & OB_MENTAL)) continue;
+		if (l_ptr->xtra_name && *l_ptr->xtra_name &&
+			!(l_ptr->info & OB_MENTAL)) continue;
 
 		/* Message */
 		borg_note(format("# Junking junk (valued at %d)", value));
@@ -1718,7 +1719,8 @@ bool borg_crush_hole(void)
 		if (l_ptr->tval == mp_ptr->spell_book) continue;
 
 		/* Hack -- skip artifacts and ego items not fully identified */
-		if (l_ptr->xtra_name && *l_ptr->xtra_name && !(l_ptr->info & OB_MENTAL)) continue;
+		if (l_ptr->xtra_name && *l_ptr->xtra_name &&
+			!(l_ptr->info & OB_MENTAL)) continue;
 		if (strstr(l_ptr->o_name, "{special")) continue;
 		if (strstr(l_ptr->o_name, "{terrible")) continue;
 
@@ -1840,7 +1842,8 @@ bool borg_crush_slow(void)
 		if (!(l_ptr->info & OB_KNOWN) && !borg_item_icky(l_ptr)) continue;
 
 		/* Hack -- Skip artifacts */
-		if (l_ptr->xtra_name && *l_ptr->xtra_name && !(l_ptr->info & OB_MENTAL)) continue;
+		if (l_ptr->xtra_name && *l_ptr->xtra_name &&
+			!(l_ptr->info & OB_MENTAL)) continue;
 		if (strstr(l_ptr->o_name, "{special")) continue;
 		if (strstr(l_ptr->o_name, "{terrible")) continue;
 
@@ -2247,7 +2250,7 @@ static bool borg_wear_rings(void)
 	s32b p, b_p = my_power;
 
 	int i, b_i = -1;
-	
+
 	bool hand = FALSE;
 
 	list_item *l_ptr;
@@ -2309,7 +2312,7 @@ static bool borg_wear_rings(void)
 			/* Maintain the "best" */
 			b_i = i;
 			b_p = p;
-			
+
 			/* On right hand? */
 			if (slot == EQUIP_RIGHT)
 			{
@@ -2336,11 +2339,11 @@ static bool borg_wear_rings(void)
 
 		/* Log */
 		borg_note(format("# Wearing %s.", l_ptr->o_name));
-		
+
 		/* Wear it */
 		borg_keypress('w');
 		borg_keypress(I2A(b_i));
-		
+
 		/* Check for two rings */
 		if (equipment[EQUIP_LEFT].number && equipment[EQUIP_RIGHT].number)
 		{
@@ -2406,7 +2409,7 @@ bool borg_remove_stuff(void)
 		/* skip it if it has not been decursed */
 		if ((l_ptr->kn_flags3 & TR3_CURSED) ||
 			(l_ptr->kn_flags3 & TR3_HEAVY_CURSE)) continue;
-		
+
 		/* Take it off */
 		l_ptr->treat_as = TREAT_AS_SWAP;
 
@@ -2418,7 +2421,7 @@ bool borg_remove_stuff(void)
 
 		/* Evaluate the inventory */
 		p = borg_power();
-		
+
 		/* Put it back on */
 		l_ptr->treat_as = TREAT_AS_NORM;
 
@@ -2504,10 +2507,12 @@ bool borg_wear_stuff(void)
 			!strstr(l_ptr->o_name, "{special")) continue;
 
 		/* apw do not wear not *idd* artifacts */
-		if (!(l_ptr->info & OB_MENTAL) && l_ptr->xtra_name && *l_ptr->xtra_name) continue;
+		if (!(l_ptr->info & OB_MENTAL) && l_ptr->xtra_name &&
+			*l_ptr->xtra_name) continue;
 
 		/* skip it if it has not been decursed */
-		if ((l_ptr->kn_flags3 & TR3_CURSED) || (l_ptr->kn_flags3 & TR3_HEAVY_CURSE)) continue;
+		if ((l_ptr->kn_flags3 & TR3_CURSED) ||
+			(l_ptr->kn_flags3 & TR3_HEAVY_CURSE)) continue;
 
 		/* Where does it go */
 		slot = borg_wield_slot(l_ptr);
@@ -2539,7 +2544,7 @@ bool borg_wear_stuff(void)
 
 			/* Evaluate local danger */
 			d = borg_danger(c_x, c_y, 1, TRUE);
-			
+
 			/* Restore items */
 			equipment[slot].treat_as = TREAT_AS_NORM;
 			l_ptr->treat_as = TREAT_AS_NORM;
@@ -2558,7 +2563,7 @@ bool borg_wear_stuff(void)
 			b_p = p;
 		}
 	}
-	
+
 	/* Restore bonuses */
 	if (fix) borg_notice();
 
@@ -2668,7 +2673,7 @@ static void borg_best_stuff_aux(int n, byte *test, byte *best, s32b *vp)
 	{
 		list_item *l_ptr;
 
-		l_ptr = &inventory[i]; /* This needs to be fixed */
+		l_ptr = &inventory[i];	/* This needs to be fixed */
 
 		/* Require item to exist + be aware */
 		if (!l_ptr->k_idx) continue;
@@ -2724,7 +2729,7 @@ bool borg_best_stuff(void)
 
 	byte test[12];
 	byte best[12];
-	
+
 	/* Hack -- Initialize */
 	for (k = 0; k < 12; k++)
 	{
@@ -3036,7 +3041,7 @@ static int borg_count_sell(void)
 		/* Skip cheap "known" (or "average") items */
 		if ((price * l_ptr->number < greed) &&
 			((l_ptr->info & OB_KNOWN) ||
-				strstr(l_ptr->o_name, "{average"))) continue;
+			 strstr(l_ptr->o_name, "{average"))) continue;
 
 		/* Count remaining items */
 		k++;
@@ -3066,7 +3071,7 @@ bool borg_wear_recharge(void)
 	for (i = 0; i < inven_num; i++)
 	{
 		list_item *l_ptr = &inventory[i];
-		
+
 		/* Skip empty / unaware items */
 		if (!l_ptr->k_idx) continue;
 
@@ -3084,7 +3089,7 @@ bool borg_wear_recharge(void)
 
 		/* note this one */
 		b_i = i;
-		
+
 		break;
 	}
 

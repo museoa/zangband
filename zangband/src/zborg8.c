@@ -41,7 +41,7 @@ static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
 {
 	/* NOTE: This assumes the giving of one item at a time */
 	int total = l_ptr->number + 1;
-	
+
 	/* Maximal "stacking" limit */
 	if (total >= MAX_STACK_SIZE) return (FALSE);
 
@@ -76,7 +76,8 @@ static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
 			/* Staffs and Wands */
 
 			/* Require knowledge */
-			if (!(l_ptr->info & OB_KNOWN) || !(q_ptr->info & OB_KNOWN)) return (FALSE);
+			if (!(l_ptr->info & OB_KNOWN) ||
+				!(q_ptr->info & OB_KNOWN)) return (FALSE);
 
 			/* Fall through */
 		}
@@ -119,7 +120,8 @@ static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
 			/* Rings, Amulets, Lites */
 
 			/* Require full knowledge of both items */
-			if (!(l_ptr->info & OB_KNOWN) || !(q_ptr->info & OB_KNOWN)) return (FALSE);
+			if (!(l_ptr->info & OB_KNOWN) ||
+				!(q_ptr->info & OB_KNOWN)) return (FALSE);
 
 			/* Fall through */
 		}
@@ -176,7 +178,8 @@ static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
 	if ((l_ptr->info & OB_MENTAL) != (q_ptr->info & OB_MENTAL)) return (FALSE);
 
 	/* Hack -- normally require matching "inscriptions" */
-	if (!stack_force_notes && (!streq(l_ptr->o_name, q_ptr->o_name))) return (FALSE);
+	if (!stack_force_notes &&
+		(!streq(l_ptr->o_name, q_ptr->o_name))) return (FALSE);
 
 	/* They match, so they must be similar */
 	return (TRUE);
@@ -227,7 +230,7 @@ static void borg_think_home_sell_aux2(void)
 	s32b home_power;
 	int i, k, n;
 	bool stacked = FALSE;
-	
+
 	s32b old_home_power;
 
 	/* get the starting best (current) */
@@ -247,7 +250,7 @@ static void borg_think_home_sell_aux2(void)
 
 			/* Require "aware" */
 			if (!l_ptr->k_idx) continue;
-			
+
 			/* Require "known" */
 			if (!(l_ptr->info & OB_KNOWN)) continue;
 
@@ -256,7 +259,7 @@ static void borg_think_home_sell_aux2(void)
 			 * This is good with random artifacts.
 			 */
 			if (!(l_ptr->info & OB_MENTAL) &&
-				 l_ptr->xtra_name && *l_ptr->xtra_name) continue;
+				l_ptr->xtra_name && *l_ptr->xtra_name) continue;
 
 			/* stacking? */
 			if (borg_object_similar(item2, item))
@@ -594,7 +597,8 @@ static bool borg_good_sell(list_item *l_ptr, int who)
 			if (strstr(l_ptr->o_name, "{average")) break;
 
 			/* Only sell "known" items (unless "icky") */
-			if (!(l_ptr->info & OB_KNOWN) && !borg_item_icky(l_ptr)) return (FALSE);
+			if (!(l_ptr->info & OB_KNOWN) &&
+				!borg_item_icky(l_ptr)) return (FALSE);
 
 			break;
 		}
@@ -664,7 +668,7 @@ static bool borg_think_shop_sell_aux(void)
 
 			/* Skip "bad" sales */
 			if (!borg_good_sell(l_ptr, k)) continue;
-			
+
 			/* Give the item to the shop */
 			if (l_ptr->number == 1)
 			{

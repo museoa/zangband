@@ -29,10 +29,10 @@ struct borg_shop
 	/* Location */
 	int x;
 	int y;
-	
+
 	/* Time stamp */
 	s16b when;
-	
+
 	/* Is this shop useful? */
 	s16b b_count;
 	s16b u_count;

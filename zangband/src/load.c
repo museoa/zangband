@@ -1155,21 +1155,21 @@ static void rd_extra(void)
 
 	/* Read the stat info */
 	for (i = 0; i < 6; i++) rd_s16b(&p_ptr->stat_max[i]);
-    for (i = 0; i < 6; i++) rd_s16b(&p_ptr->stat_cur[i]);
+	for (i = 0; i < 6; i++) rd_s16b(&p_ptr->stat_cur[i]);
 
-    /* Fix up stats for old savefiles */
-    if (sf_version < 39)
-    {
-        for (i = 0; i < 6; i++)
-        {
-            int bonus = race_info[p_ptr->prace].r_adj[i] +
-                class_info[p_ptr->pclass].c_adj[i];
+	/* Fix up stats for old savefiles */
+	if (sf_version < 39)
+	{
+		for (i = 0; i < 6; i++)
+		{
+			int bonus = race_info[p_ptr->prace].r_adj[i] +
+				class_info[p_ptr->pclass].c_adj[i];
 
-            p_ptr->stat_max[i] = adjust_stat(i, p_ptr->stat_max[i], bonus);
-            /* Hack - Restore all stats... */
-            p_ptr->stat_cur[i] = p_ptr->stat_max[i];
-        }
-    }
+			p_ptr->stat_max[i] = adjust_stat(i, p_ptr->stat_max[i], bonus);
+			/* Hack - Restore all stats... */
+			p_ptr->stat_cur[i] = p_ptr->stat_max[i];
+		}
+	}
 
 	strip_bytes(24);			/* oops */
 

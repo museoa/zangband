@@ -138,7 +138,7 @@ void do_cmd_wield(void)
 
 	/* Check the slot */
 	slot = wield_slot(q_ptr);
-	
+
 	/* Hack - rings are special */
 	if (slot == EQUIP_LEFT)
 	{
