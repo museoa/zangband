@@ -2590,7 +2590,7 @@ static void display_player_middle(void)
 
 	/*** Bonuses ***/
 
-	prt_num("+ To Hit    ", show_tohit, 9, COL_BONUS, TERM_L_BLUE, 3);
+	prt_num("+ Skill     ", show_tohit, 9, COL_BONUS, TERM_L_BLUE, 3);
 	prt_num("% Deadliness", percentdam, 10, COL_BONUS, TERM_L_BLUE, 3);
 	prt_num("+ To AC     ", p_ptr->dis_to_a, 11, COL_BONUS, TERM_L_BLUE, 3);
 	prt_num("  Base AC   ", p_ptr->dis_ac, 12, COL_BONUS, TERM_L_BLUE, 3);
