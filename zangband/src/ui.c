@@ -1298,7 +1298,7 @@ bool askfor_aux(char *buf, int len)
 
 		/* Update the entry */
 		Term_erase(x, y, len);
-		put_fstr(x, y, buf);
+		put_fstr(x, y, "%s", buf);
 	}
 
 	/* Aborted */
