@@ -4660,6 +4660,8 @@ void close_game(void)
 	/* Still alive */
 	else
 	{
+		int wid, hgt;
+	
 		/* Save the game */
 		do_cmd_save_game(FALSE);
 
@@ -4668,9 +4670,12 @@ void close_game(void)
 		{
 			add_note_type(NOTE_SAVE_GAME);
 		}
+		
+		/* Get size */
+		Term_get_size(&wid, &hgt);
 
 		/* Prompt for scores XXX XXX XXX */
-		prtf(0, 40, "Press Return (or Escape).");
+		prtf(0, hgt - 1, "Press Return (or Escape).");
 
 		/* Predict score (or ESCAPE) */
 		if (inkey() != ESCAPE) predict_score();
