@@ -732,7 +732,7 @@ static int wiz_create_itemtype(void)
 		}
 	}
 
-	/* Me need to know the maximal possible remembered object_index */
+	/* We need to know the maximal possible remembered object_index */
 	max_num = num;
 
 	/* Choose! */
