@@ -1804,9 +1804,9 @@ void object_desc_store(char *buf, const object_type *o_ptr, int pref,
 	byte hack_flavor;
 	bool hack_aware;
 	byte info;
-	
+
 	/* Hack - we will reset the object to exactly like it was */
-	object_type *q_ptr = (object_type *) o_ptr;
+	object_type *q_ptr = (object_type *)o_ptr;
 
 	/* Save the "flavor" */
 	hack_flavor = k_info[o_ptr->k_idx].flavor;

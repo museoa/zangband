@@ -294,7 +294,7 @@ static void vault_trap_aux(int x, int y, int xd, int yd)
 			{
 				msg_print("Warning! Could not place vault trap!");
 			}
-			
+
 			return;
 		}
 
@@ -304,7 +304,7 @@ static void vault_trap_aux(int x, int y, int xd, int yd)
 		{
 			/* Place the trap */
 			place_trap(x1, y1);
-			
+
 			/* Done ('return' seems to give a warning.) */
 			count = 6;
 		}

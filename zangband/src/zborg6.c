@@ -5859,7 +5859,7 @@ static int borg_attack_aux_launch_flame(void)
 
 		/* Determine average damage */
 		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
-		d = d + ( 100 + (l_ptr->to_d + bow->to_d) * 3) / 100;
+		d = d + (100 + (l_ptr->to_d + bow->to_d) * 3) / 100;
 		d = d * borg_skill[BI_BMAXDAM] / 6;
 
 

@@ -2716,13 +2716,13 @@ void do_cmd_fire(void)
  * thrown item.
  */
 static void throw_item_effect(object_type *o_ptr, bool hit_body, bool hit_wall,
-							 int x, int y)
+                              int x, int y)
 {
 	char o_name[256];
 
 	/* Chance of breakage (during attacks) */
 	int breakage = (hit_body ? breakage_chance(o_ptr) : 0);
-	
+
 	/* Description */
 	object_desc(o_name, o_ptr, FALSE, 3, 256);
 
@@ -2797,7 +2797,7 @@ void do_cmd_throw_aux(int mult)
 	int y, x, ny, nx, ty, tx;
 
 	int chance, chance2, tdis;
-	
+
 	int mul, div;
 	int cur_dis;
 
@@ -2998,7 +2998,7 @@ void do_cmd_throw_aux(int mult)
 
 			/* The item hits the monster */
 			throw_item_effect(q_ptr, TRUE, FALSE, x, y);
-		
+
 			/* Look to see if we've spotted a mimic */
 			if ((m_ptr->smart & SM_MIMIC) && m_ptr->ml)
 			{

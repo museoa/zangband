@@ -908,7 +908,7 @@ struct field_thaum
 
 	u16b info;	/* Information flags */
 
-	
+
 };
 
 
@@ -1703,7 +1703,7 @@ struct store_type
 
 	u16b x;	/* Location x coord. */
 	u16b y;	/* Location y coord. */
-	
+
 	byte max_stock;	/* Stock -- Max number of entries */
 };
 

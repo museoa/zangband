@@ -403,7 +403,8 @@ static void mass_produce(object_type *o_ptr)
  *
  * See "object_similar()" for the same function for the "player"
  */
-static bool store_object_similar(const object_type *o_ptr, const object_type *j_ptr)
+static bool store_object_similar(const object_type *o_ptr,
+                                 const object_type *j_ptr)
 {
 	/* Hack -- Identical items cannot be stacked */
 	if (o_ptr == j_ptr) return (FALSE);
@@ -614,7 +615,8 @@ static bool store_will_stock(const object_type *o_ptr)
 /*
  * Compare two items to see if they are in store-order.
  */
-static bool reorder_store_comp(const object_type *o1_ptr, const object_type *o2_ptr)
+static bool reorder_store_comp(const object_type *o1_ptr,
+                               const object_type *o2_ptr)
 {
 	/* Hack -- readable books always come first */
 	if ((o1_ptr->tval == mp_ptr->spell_book) &&
@@ -2026,7 +2028,7 @@ static void store_process_command(int *store_top)
 			/* Ignore return */
 			break;
 		}
-		
+
 		case ESCAPE:
 		{
 			/* Leave */
@@ -2071,7 +2073,7 @@ static void store_process_command(int *store_top)
 			store_sell(store_top);
 			break;
 		}
-		
+
 
 		case 'x':
 		{

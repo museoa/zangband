@@ -870,28 +870,28 @@ static void borg_notice_shooter(int hold, int extra_might, int extra_shots)
 
 			/* Extra shot at level 30 */
 			if (borg_skill[BI_CLEVEL] >= 30) my_num_fire++;
-			
+
 			/* Extra shot at level 45 */
 			if (borg_skill[BI_CLEVEL] >= 45) my_num_fire++;
 		}
-		
+
 		/* Hack -- Reward High Level Rangers using XBows */
 		if ((borg_class == CLASS_RANGER) && (my_ammo_tval == TV_BOLT))
 		{
 			/* Extra shot at level 30 */
 			if (borg_skill[BI_CLEVEL] >= 30) my_num_fire++;
 		}
-		
+
 		/* Hack -- Reward High Level Rogues using Slings */
 		if ((borg_class == CLASS_RANGER) && (my_ammo_tval == TV_SHOT))
 		{
 			/* Extra shot at level 20 */
 			if (borg_skill[BI_CLEVEL] >= 20) my_num_fire++;
-			
+
 			/* Extra shot at level 40 */
 			if (borg_skill[BI_CLEVEL] >= 40) my_num_fire++;
 		}
-		
+
 		/* Hack -- Reward High Level Warriors */
 		if (borg_class == CLASS_WARRIOR)
 		{
@@ -909,7 +909,7 @@ static void borg_notice_shooter(int hold, int extra_might, int extra_shots)
 
 	/* Calculate "average" damage per "normal" shot (times 2) */
 	borg_skill[BI_BMAXDAM] = my_ammo_power *
-								(borg_skill[BI_BTODAM] + 100) * 3 / 100;
+		(borg_skill[BI_BTODAM] + 100) * 3 / 100;
 	borg_skill[BI_BMAXDAM] *= (my_num_fire + 1) / 2;
 }
 

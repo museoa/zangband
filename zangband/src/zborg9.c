@@ -3181,8 +3181,8 @@ void borg_status(void)
 void borg_log_battle(bool keep_log)
 {
 	/* char buf[80]; */
-	
-	(void) keep_log;
+
+	(void)keep_log;
 
 /* for now the log is deactivated */
 	return;

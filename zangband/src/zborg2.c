@@ -1559,7 +1559,7 @@ static void borg_delete_take(int i)
 static int borg_guess_kidx(char unknown)
 {
 	int i, b_i = -1;
-	
+
 	int s, b_s = 0;
 
 	for (i = 1; i < z_info->k_max; i++)
@@ -1577,36 +1577,36 @@ static int borg_guess_kidx(char unknown)
 
 		/* Valueless items are boring */
 		if (k_ptr->cost <= 0) continue;
-		
+
 		/* Base score */
-        s = 10000;
-		
+		s = 10000;
+
 		/* Hack -- penalize "extremely" out of depth */
-        if (k_ptr->level > borg_skill[BI_CDEPTH] + 50) s = s - 500;
+		if (k_ptr->level > borg_skill[BI_CDEPTH] + 50) s = s - 500;
 
-        /* Hack -- penalize "very" out of depth */
-        if (k_ptr->level > borg_skill[BI_CDEPTH] + 15) s = s - 100;
+		/* Hack -- penalize "very" out of depth */
+		if (k_ptr->level > borg_skill[BI_CDEPTH] + 15) s = s - 100;
 
-        /* Hack -- penalize "rather" out of depth */
-        if (k_ptr->level > borg_skill[BI_CDEPTH] + 5) s = s - 50;
+		/* Hack -- penalize "rather" out of depth */
+		if (k_ptr->level > borg_skill[BI_CDEPTH] + 5) s = s - 50;
 
-        /* Hack -- penalize "somewhat" out of depth */
-        if (k_ptr->level > borg_skill[BI_CDEPTH]) s = s - 10;
+		/* Hack -- penalize "somewhat" out of depth */
+		if (k_ptr->level > borg_skill[BI_CDEPTH]) s = s - 10;
 
-        /* Hack -- Penalize "depth miss" */
-        s = s - ABS(k_ptr->level - borg_skill[BI_CDEPTH]);
+		/* Hack -- Penalize "depth miss" */
+		s = s - ABS(k_ptr->level - borg_skill[BI_CDEPTH]);
 
-        /* Hack -- Penalize INSTA_ART items */
-        if (k_ptr->flags3 & TR3_INSTA_ART) s = s - 1000;
+		/* Hack -- Penalize INSTA_ART items */
+		if (k_ptr->flags3 & TR3_INSTA_ART) s = s - 1000;
 
 		/* Desire "best" possible score */
-        if (b_i && (s < b_s)) continue;
+		if (b_i && (s < b_s)) continue;
 
-        /* Track it */
-        b_i = i;
+		/* Track it */
+		b_i = i;
 		b_s = s;
 	}
-	
+
 	/* Found a match? */
 	if (b_i != -1) return (b_i);
 

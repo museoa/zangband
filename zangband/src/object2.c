@@ -1623,7 +1623,7 @@ bool object_similar(const object_type *o_ptr, const object_type *j_ptr)
 		{
 			/* Weapons and Armor never stack */
 
-			 return (FALSE);
+			return (FALSE);
 		}
 
 		case TV_LITE:
@@ -4348,10 +4348,10 @@ static bool put_object(object_type *o_ptr, int x, int y)
 {
 	/* Acquire grid */
 	cave_type *c_ptr = area(x, y);
-	
+
 	/* Require nice floor space */
 	if (!cave_nice_grid(c_ptr)) return (FALSE);
-	
+
 	/* Paranoia */
 	if (!o_ptr) return (FALSE);
 
@@ -4370,17 +4370,17 @@ static bool put_object(object_type *o_ptr, int x, int y)
 
 		/* Notice + Redraw */
 		note_spot(x, y);
-		
+
 		return (TRUE);
 	}
-	
+
 	/* Paranoia - preserve artifacts */
 	if ((preserve_mode) && (o_ptr->flags3 & TR3_INSTA_ART) &&
 		(o_ptr->activate > 127))
 	{
 		a_info[o_ptr->activate - 128].cur_num = 0;
-	}	
-	
+	}
+
 	/* Failure */
 	return (FALSE);
 }
@@ -4402,7 +4402,7 @@ void place_specific_object(int x, int y, int level, int k_idx)
 
 	/* Create the item */
 	o_ptr = object_prep(k_idx);
-	
+
 	/* Failure? */
 	if (!o_ptr) return;
 
@@ -4425,7 +4425,7 @@ void place_specific_object(int x, int y, int level, int k_idx)
 				create_named_art(i, x, y);
 			}
 		}
-		
+
 		/* Exit */
 		return;
 	}
@@ -4433,7 +4433,7 @@ void place_specific_object(int x, int y, int level, int k_idx)
 	{
 		/* Apply magic */
 		apply_magic(o_ptr, level, 0, OC_NORMAL);
-		
+
 		/* Hack -- generate multiple spikes/missiles/ mushrooms */
 		switch (o_ptr->tval)
 		{
@@ -4445,7 +4445,7 @@ void place_specific_object(int x, int y, int level, int k_idx)
 				o_ptr->number = (byte)damroll(6, 7);
 				break;
 			}
-			
+
 			case TV_FOOD:
 			{
 				if (o_ptr->sval < SV_FOOD_BISCUIT)
@@ -4453,12 +4453,12 @@ void place_specific_object(int x, int y, int level, int k_idx)
 					/* Mushrooms appear in clumps */
 					o_ptr->number = (byte)randint1(6);
 				}
-				
+
 				break;
 			}
 		}
 	}
-	
+
 	/* Add the object to the ground */
 	put_object(o_ptr, x, y);
 }
@@ -4494,9 +4494,9 @@ void place_object(int x, int y, bool good, bool great)
 
 	/* Make an object (if possible) */
 	o_ptr = make_object((u16b)((good ? 15 : 0) + (great ? 15 : 0)), dun_theme);
-	
+
 	/* Put it on the ground */
-	(void) put_object(o_ptr, x, y);
+	(void)put_object(o_ptr, x, y);
 }
 
 
@@ -4558,9 +4558,9 @@ void place_gold(int x, int y)
 
 	/* Make some gold */
 	o_ptr = make_gold(0);
-	
+
 	/* Put it on the ground */
-	(void) put_object(o_ptr, x, y);
+	(void)put_object(o_ptr, x, y);
 }
 
 
@@ -5311,7 +5311,8 @@ bool inven_carry_okay(const object_type *o_ptr)
 /*
  * Compare two items to see if they are in pack-order.
  */
-static bool reorder_pack_comp(const object_type *o1_ptr, const object_type *o2_ptr)
+static bool reorder_pack_comp(const object_type *o1_ptr,
+                              const object_type *o2_ptr)
 {
 	/* Hack -- readable books always come first */
 	if ((o1_ptr->tval == REALM1_BOOK) &&

@@ -2652,7 +2652,7 @@ static void process_player(void)
 	}
 
 	/*** Handle "abort" ***/
-	
+
 	/* Check for "player abort" */
 	if (p_ptr->running || p_ptr->command_rep || p_ptr->resting)
 	{

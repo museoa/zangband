@@ -594,7 +594,7 @@ static void prt_hp(void)
 
 	/* Hack - only change the colour if in character mode */
 	if (r_ptr->x_char != '@') return;
-	
+
 	/* Only change colour if asked */
 	if (!view_player_colour)
 	{
@@ -605,11 +605,11 @@ static void prt_hp(void)
 	{
 		/* Normal colour is white */
 		if (color == TERM_L_GREEN) color = TERM_WHITE;
-	
+
 		/* Orange is better than yellow */
 		if (color == TERM_YELLOW) color = TERM_ORANGE;
 	}
-	
+
 	/* Redraw the player ? */
 	if (old_attr != color)
 	{

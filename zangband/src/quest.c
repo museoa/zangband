@@ -1111,11 +1111,11 @@ void do_cmd_knowledge_quests(void)
 			case QUEST_TYPE_DUNGEON:
 			{
 				monster_race *r_ptr = &r_info[q_ptr->data.dun.r_idx];
-				
+
 				char level[20];
 
 				strncpy(name, r_name + r_ptr->name, 80);
-				
+
 				/* In feet, or in levels */
 				if (depth_in_feet)
 				{
@@ -1126,7 +1126,7 @@ void do_cmd_knowledge_quests(void)
 				{
 					strnfmt(level, 20, "%3d", (int)q_ptr->data.dun.level);
 				}
-				
+
 				if (q_ptr->status == QUEST_STATUS_TAKEN)
 				{
 					/* Hack - assume kill n monsters of type m */

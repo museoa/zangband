@@ -1664,7 +1664,7 @@ static void variable_player_graph(byte *a, char *c)
  * to be "scrambled" in various ways.
  */
 static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
-					 byte *ap, char *cp, byte *tap, char *tcp)
+                     byte *ap, char *cp, byte *tap, char *tcp)
 {
 	feature_type *f_ptr;
 
@@ -2457,11 +2457,11 @@ static int display_map_info(int x, int y, char *c, byte *a, char *tc, byte *ta)
 
 	byte feat;
 	feature_type *f_ptr;
-	
+
 	object_type *o_ptr;
 	field_type *fld_ptr;
 	monster_type *m_ptr;
-	
+
 	s16b this_f_idx, next_f_idx;
 
 	cave_type *c_ptr = area(x, y);
@@ -2469,17 +2469,17 @@ static int display_map_info(int x, int y, char *c, byte *a, char *tc, byte *ta)
 
 	/* Tell the world about this square */
 	Term_write_map(x, y, c_ptr, pc_ptr);
-				
+
 	/* Get terrain feature */
 	feat = pc_ptr->feat;
 	f_ptr = &f_info[feat];
 
 	/* Extract the priority of that attr/char */
 	tp = priority(feat);
-				
+
 	*a = f_ptr->x_attr;
 	*c = f_ptr->x_char;
-				
+
 	if (f_ptr->w_attr)
 	{
 		/*
@@ -2508,7 +2508,7 @@ static int display_map_info(int x, int y, char *c, byte *a, char *tc, byte *ta)
 
 			/* Hack -- hallucination */
 			if (p_ptr->image) image_object(a, c);
-			
+
 			/* High priority */
 			tp = 30;
 
@@ -2561,7 +2561,7 @@ static int display_map_info(int x, int y, char *c, byte *a, char *tc, byte *ta)
 					*a = fld_ptr->f_attr;
 				}
 			}
-			
+
 			/* Set high priority */
 			tp = 30;
 			break;
@@ -2590,12 +2590,12 @@ static int display_map_info(int x, int y, char *c, byte *a, char *tc, byte *ta)
 			{
 				*c = r_ptr->x_char;
 			}
-			
+
 			/* High priority */
 			tp = 40;
 		}
 	}
-	
+
 	/* Finally - use the player */
 	if ((x == p_ptr->px) && (y == p_ptr->py))
 	{
@@ -2610,11 +2610,10 @@ static int display_map_info(int x, int y, char *c, byte *a, char *tc, byte *ta)
 
 		variable_player_graph(a, c)
 #endif /* VARIABLE_PLAYER_GRAPH */
-
-		/* Highest priority */
-		tp = 50;
+			/* Highest priority */
+			tp = 50;
 	}
-	
+
 	/* Return priority */
 	return (tp);
 }
@@ -2901,7 +2900,7 @@ void display_map(int *cx, int *cy)
 
 				/* Get priority and symbol */
 				tp = display_map_info(i, j, &tc, &ta, &ttc, &tta);
-								
+
 				/* Save "best" */
 				if (mp[y][x] < tp)
 				{
