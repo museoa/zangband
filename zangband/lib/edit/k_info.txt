@@ -2717,7 +2717,7 @@ W:5:0:50:50
 A:9/1
 P:0:1d2:0:0:0
 L:USE:	ident = detect_treasure()
-L:USE:	if detect_objects_gold() then ident = TRUE
+L:USE:	if detect_objects_gold() then ident = TRUE end
 
 N:302:Object Location
 G:_:d
