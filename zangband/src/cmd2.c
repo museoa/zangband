@@ -2745,6 +2745,8 @@ void do_cmd_fire_aux(int mult, object_type *o_ptr, const object_type *j_ptr)
 					tdam *= critical_shot(chance2, sleeping_bonus,
 										  o_name, m_name, m_ptr->ml);
 				}
+				else
+					tdam *= 10;
 
 				/*
 				 * Convert total Deadliness into a percentage, and apply
