@@ -288,9 +288,14 @@ aix: LIBS := -lX11 -ltermcap -lcurses -lbsd -lXm -lXmu -lXaw -lXt
 ## Variation -- Dos using "main-dos.c" and the allegro library, with djgpp
 ##
 
-dos: CFLAGS := -Wall -O2 -g -DUSE_DOS -DUSE_IBM -D"USE_BACKGROUND"
+dos: CFLAGS := -Wall -O2 -fno-strength-reduce -s -DUSE_DOS -DUSE_IBM -D"USE_BACKGROUND"
 dos: LIBS := -lpc -lalleg
 dos: INSTALL := copy zangband ..\zangband.exe
+dos_clean:
+	-del *.o
+	-del lua\*.o
+	-del l-*.c
+	-del lua\tolua
 
 ##
 ## Variation -- Compile using the main-ibm.c port with djgpp
