@@ -207,40 +207,6 @@ proc NSMiscPopup::InitWindow {oop} {
 	Info $oop canvas [Global misc,toolbar]
 
 	#
-	# Buttons
-	#
-
-	set x 1
-	NewButton $oop -image Image_ButtonActivate -popup 1 -hook item \
-		-args [list equipment A -activate yes] \
-		-message [mc "Activate an equipment item"]
-	NewButton $oop -image Image_ButtonFood -popup 1 -hook item \
-		-args [list inventory E -tval TV_FOOD] \
-		-message [mc "Eat an inventory item"]
-	NewButton $oop -image Image_ButtonPotion -popup 1 -hook item \
-		-args [list inventory q -tval TV_POTION] \
-		-message [mc "Drink a potion in inventory"]
-	NewButton $oop -image Image_ButtonScroll -popup 1 -hook item \
-		-args [list inventory r -tval TV_SCROLL] \
-		-message [mc "Read a scroll in inventory"]
-	NewButton $oop -image Image_ButtonRod -popup 1 -hook item \
-		-args [list inventory z -tval TV_ROD] \
-		-message [mc "Zap a rod in inventory"]
-	NewButton $oop -image Image_ButtonWand -popup 1 -hook item \
-		-args [list inventory a -tval TV_WAND] \
-		-message [mc "Aim a wand in inventory"]
-	NewButton $oop -image Image_ButtonStaff -popup 1 -hook item \
-		-args [list inventory u -tval TV_STAFF] \
-		-message [mc "Use a staff in inventory"]
-
-	NewButton $oop -image Image_ButtonUp -popup 0 \
-		-command "DoUnderlyingCommand <" \
-		-message [mc "Go up a dungeon level"]
-	NewButton $oop -image Image_ButtonDown -popup 0 \
-		-command "DoUnderlyingCommand >" \
-		-message [mc "Go down a dungeon level"]
-
-	#
 	# Popup window of choices
 	#
 

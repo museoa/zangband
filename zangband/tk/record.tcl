@@ -1049,21 +1049,7 @@ proc NSRecord::MatchRecordsToScores {scoreList} {
 
 proc NSRecord::ExamineCmd {oop photoId y x} {
 
-	global NSPhoto
-	
-	if {[info exists NSPhoto($photoId,examine,$y,$x)]} {
-		StatusBar $oop [NSPhoto::Info $photoId examine,$y,$x] 0
-		switch -- [NSPhoto::Info $photoId what,$y,$x] {
-			monster {
-				NSRecall::RecallMonster [NSPhoto::Info $photoId idx,$y,$x]
-			}
-			object {
-				NSRecall::RecallObjectKind [NSPhoto::Info $photoId idx,$y,$x]
-			}
-		}
-	} else {
-		StatusBar $oop "" 0
-	}
+	StatusBar $oop "" 0
 
 	return
 }

@@ -1268,20 +1268,6 @@ proc NSStore::ContextMenu {oop menu x y} {
 	# Clear the menu
 	$menu delete 0 end
 
-	# Waiting for an inventory item
-	if {[string equal [angband inkey_flags] INKEY_ITEM]} {
-
-		# Hack -- PopupSelect_Item() changes the show_flavors option,
-		# which calls SettingChaged(), which we don't want.
-		Info $oop toolbar,match {}
-
-		# Display equipment/inventory items
-		NSRecall::PopupSelect_Item $menu $x $y
-
-		# Done
-		return
-	}
-
 	set charBuy p
 	set charSell s
 	if {[angband store ishome]} {

@@ -74,8 +74,7 @@ proc NSChoiceWindow::CloseModule {} {
 		set win [Window choice]
 		qebind NSChoiceWindow <Choose> {}
 		qebind NSChoiceWindow <Term-fresh> {}
-		qebind NSChoiceWindow <Track> {}
-qebind NSChoiceWindow <Setting-show_flavors> {}
+		qebind NSChoiceWindow <Setting-show_flavors> {}
 		destroy $win
 	}
 
@@ -107,10 +106,6 @@ proc NSChoiceWindow::NSChoiceWindow {oop} {
 	qebind NSChoiceWindow <Choose> \
 		"NSChoiceWindow::Choose $oop %d %s %o"
 
-	qebind NSChoiceWindow <Track> \
-		"NSChoiceWindow::Track $oop %d"
-	qeconfigure NSChoiceWindow <Track> -active no
-
 	qebind NSChoiceWindow <Term-fresh> \
 		"NSChoiceWindow::Fresh_Display $oop"
 	qeconfigure NSChoiceWindow <Term-fresh> -active no
@@ -134,7 +129,7 @@ proc NSChoiceWindow::NSChoiceWindow {oop} {
 	Info $oop current ""
 	Info $oop choosing 0
 	Info $oop choosing,what ""
-	Info $oop default,hook hook_item
+#	Info $oop default,hook hook_item
 	Info $oop default,what inventory
 	Info $oop display,what inventory
 	Info $oop inConfigure 0
@@ -393,7 +388,7 @@ proc NSChoiceWindow::DisplayCmd {oop message first args} {
 			if {[Info $oop choosing]} {
 				set hook hook_[Info $oop choosing,what]
 			} else {
-				set hook hook_item
+				#set hook hook_item
 			}
 			SetHook $oop $hook
 			CallHook $oop fresh
@@ -490,12 +485,10 @@ proc NSChoiceWindow::SetHook {oop hook} {
 		Info $oop hook $hook
 		CallHook $oop open
 		qeconfigure NSChoiceWindow <Term-fresh> -active yes
-		qeconfigure NSChoiceWindow <Track> -active yes
-qeconfigure NSChoiceWindow <Setting-show_flavors> -active yes
+		qeconfigure NSChoiceWindow <Setting-show_flavors> -active yes
 	} elseif {[string length [Info $oop hook]]} {
 		Info $oop hook ""
-		qeconfigure NSChoiceWindow <Track> -active no
-qeconfigure NSChoiceWindow <Setting-show_flavors> -active no
+		qeconfigure NSChoiceWindow <Setting-show_flavors> -active no
 	}
 
 	return
@@ -708,51 +701,6 @@ proc NSChoiceWindow::UnhighlightItem {oop index} {
 	return
 }
 
-# NSChoiceWindow::ShowItems --
-#
-#	Description. 
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSChoiceWindow::ShowItems {oop args} {
-
-	set textBox [Info $oop text]
-
-	$textBox delete 1.0 end
-
-	# Get the list of matching item indexes
-	set invOrEquip inventory
-	set itemList [angband $invOrEquip find]
-
-	# Process each item
-	foreach index $itemList {
-
-		# Get item info
-		angband $invOrEquip info $index attrib
-
-		if {[string equal $invOrEquip floor]} {
-			set attrib(char) [string index "abcdefghijklmnopqrstuvw" \
-				[lsearch -exact $itemList $index]]
-		}
-
-		# Get the color
-		set color [default_tval_to_attr $attrib(tval)]
-
-		# Append the character and description
-		$textBox insert end "$attrib(char) $attrib(name)" \
-			ITEM_$index "\n"
-		$textBox tag configure ITEM_$index -foreground $color
-	}
-
-	# Delete trailing newline
-	$textBox delete "end - 1 chars"
-
-	return
-}
 
 # NSChoiceWindow::GetItemCommand --
 #
@@ -1578,10 +1526,6 @@ proc NSChoiceWindow::Choose {oop what show args} {
 		ele_attack {
 			SetHook $oop hook_ele_attack
 		}
-		item {
-			Info $oop display,what [lindex $args 0]
-			SetHook $oop hook_item
-		}
 		mindcraft {
 			SetHook $oop hook_mindcraft
 		}
@@ -1597,32 +1541,6 @@ proc NSChoiceWindow::Choose {oop what show args} {
 	return
 }
 
-# NSChoiceWindow::Track --
-#
-#	Handle <Track> quasi-event.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSChoiceWindow::Track {oop what} {
-
-	if {[Info $oop choosing]} return
-
-	switch -- $what {
-		equipment -
-		inventory {
-			if {[string equal [Info $oop hook] hook_item] && \
-				[string equal [Info $oop display,what] $what]} {
-				qeconfigure NSChoiceWindow <Term-fresh> -active yes
-			}
-		}
-	}
-
-	return
-}
 
 # NSChoiceWindow::Configure --
 #

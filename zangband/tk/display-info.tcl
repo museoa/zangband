@@ -234,8 +234,6 @@ proc NSDisplayInfo::DisplayCmd {oop message first args} {
 				monster {
 					DisplayMonster $oop [lindex $args 1]
 				}
-				object {
-					DisplayObject $oop [lindex $args 1] [lindex $args 2]
 				}
 				warrior_probe_desc {
 					DisplayWPD $oop [lindex $args 1]
@@ -328,43 +326,7 @@ proc NSDisplayInfo::DisplayMonster {oop r_idx} {
 	return
 }
 
-# NSDisplayInfo::DisplayObject --
-#
-#	Description.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
 
-proc NSDisplayInfo::DisplayObject {oop location index} {
-
-	set win [Info $oop win]
-	set text [Info $oop text]
-
-	# Set the window title
-	wm title $win "Object Memory"
-	
-	# angband equipment/floor/inventory/store info $index attrib
-	angband $location info $index attrib
-
-	set icon $attrib(icon)
-	set name $attrib(name):
-	set tval $attrib(tval)
-
-	set color [default_tval_to_attr $tval]
-	set memory [angband $location memory $index]
-
-	$win.recall.icon itemconfigure icon -assign $icon
-
-	$text delete 1.0 end
-	$text insert end $name TAG_STYLE
-	$text tag configure TAG_STYLE -foreground $color
-	$text insert end \n$memory
-
-	return
-}
 
 # NSDisplayInfo::DisplayWPD --
 #

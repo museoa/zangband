@@ -287,7 +287,6 @@ proc NSMainWindow::InitWindow {oop} {
 
 	set widgetId [NSObject::New NSWidget $win.mainframe \
 		$width $height $gsize $gsize]
-	NSWidget::Info $widgetId examineCmd NSMainWindow::ExamineLocation
 	NSWidget::Info $widgetId leaveCmd NSMainWindow::Leave
 	set widget [NSWidget::Info $widgetId widget]
 
@@ -327,10 +326,6 @@ proc NSMainWindow::InitWindow {oop} {
 	# Do something when the character position changes.
 	qebind $widget <Position> {NSMainWindow::PositionChanged %W %y %x}
 
-	# Describe what is seen when grids are highlighted.
-	qebind $widget <Track-grid> \
-		"NSMainWindow::ExamineLocation $widgetId %y %x"
-
 	# Remember the center of the Main Window Widget.
 	Global main,widget,center [angband player position]
 
@@ -359,47 +354,8 @@ proc ::wipespot {y x} {
 }
 bind $widget <Shift-ButtonPress-3> "wipespot %y %x"
 
-if {0} {
-	set isoview $win.mainframe.isoview
-	widget $isoview -width $width -height $height -style iso
 
-	bind $isoview <ButtonPress-1> "NSMainWindow::TrackPress $oop %x %y"
-	bind $isoview <Button1-Motion> "NSMainWindow::TrackMotion $oop %x %y"
-	bind $isoview <ButtonRelease-1> "NSMainWindow::TrackRelease $oop"
-
-	bind $isoview <Control-ButtonPress-1> "NSMainWindow::MouseCommand $oop %x %y +"
-	bind $isoview <Shift-ButtonPress-1> "NSMainWindow::MouseCommand $oop %x %y ."
-
-	bind $isoview <ButtonPress-3> \
-		"NSMainWindow::ButtonPress3 $oop %x %y %X %Y"
-	bind $isoview <Control-ButtonPress-3> \
-		"NSRecall::PopupSelect_Use $win.context %X %Y"
-
-	qebind $isoview <Position> "%W center %y %x ; set PYPX {%y %x}"
-	bind $isoview <Configure> "%W configure -width %w -height %h ; %W wipe"
-	qebind $isoview <Dungeon-enter> {
-		%W center $PYPX
-	}
-	
-	Global main,isoview $isoview
-}
-
-proc hittest {w x y} {
-	variable HT
-	set ht [$w hittest $x $y]
-	if {[string compare $ht $HT]} {
-		if {[scan $ht "%d %d %d" hity hitx layer] == 3} {
-			NSMainWindow::ExamineLocation [Global main,widgetId] $hity $hitx
-			if {0 && ![Global cursor,visible]} {
-				$w configure -hit $layer -hitx $hitx -hity $hity
-				$w wipe
-			}
-		}
-		set HT $ht
-	}
-}
 	variable HT ""
-#	bind $widget <Motion> {+NSMainWindow::hittest %W %x %y}
 
 	# The "big map", the map of the entire cave with scroll bars.
 	# The user can change the scale via a popup menu, so we save
@@ -412,8 +368,6 @@ proc hittest {w x y} {
 
 	NSMap::Info $mapId scaleCmd \
 		"Value bigmap,scale \[NSWidget::Info [NSMap::Info $mapId widgetId] scale]"
-
-	NSWidget::Info [NSMap::Info $mapId widgetId] examineCmd BigMapExamine
 
 	bind $widget2 <Leave> {+
 		[Global mapdetail,widget] center -100 -100
@@ -2361,90 +2315,7 @@ proc NSMainWindow::TrackRelease {oop} {
 	return
 }
 
-# NSMainWindow::ExamineLocation --
-#
-#	Display a description of what the character sees at a given cave
-#	location. Called as NSWidget(OOP,examineCmd).
-#
-# Arguments:
-#	oop					OOP ID NSWidget.
-#	y					y cave location.
-#	x					x cave location.
-#
-# Results:
-#	What happened.
 
-proc NSMainWindow::ExamineLocation {oop y x} {
-
-	# Prevent error if a -more- prompt appears during level generation
-	if {![angband cave exists]} return
-
-	# Unused: PROJECT_HINT
-	if {0 && [string equal [angband inkey_flags] INKEY_TARGET]} {
-
-		# Show effected grids
-		angband keypress &$y\n$x\n
-	
-		# Don't bother describing the location, because it is overriden by
-		# the <Track-grid> binding.
-		return
-	}
-
-	# I notice a big slowdown when running, so avoid it
-	if {[angband player running]} return
-
-	# Describe the location
-	set desc [angband cave examine $y $x]
-
-	# Debug: Show the coordinates
-	if {$::DEBUG} {
-		if {[string length $desc]} {
-			append desc "   "
-		}
-		append desc "@$y,$x"
-	}
-
-	# Set the statusbar text
-	StatusText [Global main,oop] $desc
-
-	# Require valid location
-	if {![angband cave in_bounds_fully $y $x]} return
-	
-	# Mega-Hack -- If the Recall Window is displaying a list of
-	# choices, then we must not display anything.
-	if {[string length [NSRecall::Info [Global recall,oop] hook]]} {
-		return
-	}
-
-	# Get info about this cave location
-	angband cave info $y $x attrib
-
-	# A pile of objects is here
-	if {[string match "*a pile of * items*" $desc]} {
-		NSRecall::RecallStack $y $x
-
-	# A quest entrance is here
-	} elseif {[string match "*a quest entrance*" $desc]} {
-		NSRecall::RecallQuest $attrib(special)
-	} else {
-
-		set m_idx $attrib(m_idx)
-		set o_idx $attrib(o_idx)
-		
-		# A monster is here
-		if {($m_idx > 0) && [angband m_list set $m_idx ml]} {
-
-			set r_idx [angband m_list set $m_idx r_idx]
-			set friend [angband m_list info $m_idx friend]
-			angband player health_who $m_idx
-			angband player monster_race_idx $r_idx
-			qegenerate <Track-health> -w $m_idx -f $friend
-			NSRecall::RecallMonster $r_idx
-		}
-	}
-
-	return
-}
 
 # NSMainWindow::Leave --
 #
@@ -2605,12 +2476,8 @@ proc NSMainWindow::ButtonPress3 {oop x y X Y} {
 
 	set flags [angband inkey_flags]
 
-	# Popup item list
-	if {[string equal $flags INKEY_ITEM]} {
-		NSRecall::PopupSelect_Item $win.context $X $Y
-
 	# Popup spell list
-	} elseif {[string equal $flags INKEY_SPELL]} {
+	if {[string equal $flags INKEY_SPELL]} {
 		NSBookMenu::PopupSelect $win.context $X $Y
 
 	# Run
@@ -2878,16 +2745,6 @@ proc NSMainWindow::PositionChanged {widget y x} {
 
 	# This global is read in various places
 	set PYPX "$y $x"
-
-	# Option: Recall objects under the character
-	variable tracking
-	variable trackStepping
-	if {!$tracking || $trackStepping} {
-		angband cave info $y $x attrib
-		if {$attrib(o_idx)} {
-			ExamineLocation [Global main,widgetId] $y $x
-		}
-	}
 	
 	return
 }
@@ -3088,33 +2945,6 @@ proc TestRedrawSpeed {} {
 	return
 }
 
-# BigMapExamine --
-#
-#	Called as NSWidget(OOP,examineCmd). Display a description of what the
-#	character sees at a given cave location. Center the Widget in the
-#	MicroMap window at the location also.
-#
-# Arguments:
-#	oop					OOP ID of NSWidget.
-#	y					y cave location.
-#	x					x cave location.
-#
-# Results:
-#	What happened.
-
-proc BigMapExamine {oop y x} {
-
-	# Center the detail widget at the given location
-	[Global mapdetail,widget] center $y $x
-
-	# Position the cursor in the detail widget
-	[Global mapdetail,widget] itemconfigure [Global mapdetail,cursor] -y $y -x $x
-	
-	# Describe what is seen
-	NSMainWindow::ExamineLocation [Global main,widgetId] $y $x
-
-	return
-}
 
 # NSMainWindow::ContextMenu_StatusBar --
 #

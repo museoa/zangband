@@ -918,9 +918,6 @@ proc NSInitStartup::InitStartup {} {
 	# The msgs directory (message catalog)
 	set Angband(dirTk,msgs) [list [file join $Angband(dirTk) msgs]]
 	
-	# List of object tval's.
-	set Angband(tval) [angband info tval]
-
 	# Remember the platform
 	switch -- $::tcl_platform(platform) {
 		macintosh -
