@@ -1,0 +1,112 @@
+=== Zangband Monsters ===
+
+There are hundreds of different creatures in Zangband each of which
+poses a unique challenge to the adventurer. As you progress deeper into
+the dungeon, the creatures will become progressively more difficult to
+defeat.
+
+
+***** <MonsterSymbols>
+=== Monster Symbols ===
+
+Many monsters have the same letter symbol and sometimes color on the
+screen. The exact species or type of creature can be discovered by
+'l'ooking at it (see commdesc.txt#Looking [1]). 
+ 
+  $   Creeping Coins                  ,   Mushroom Patch
+  a   Giant Ant                       A   Angelic being
+  b   Giant Bat                       B   Bird
+  c   Giant Centipede                 C   Canine
+  d   Dragon                          D   Ancient Dragon
+  e   Floating Eye                    E   Elemental
+  f   Feline                          F   Dragon Fly
+  g   Golem                           G   Ghost
+  h   Humanoids                       H   Hybrid
+  i   Icky-Thing                      I   Insect
+  j   Jelly                           J   Snake
+  k   Kobold                          K   Killer Beetle
+  l   Giant Louse                     L   Lich
+  m   Mold                            M   Multi-Headed Hydra
+  n   Naga                            N   (unused)
+  o   Orc                             O   Ogre
+  p   Human                           P   Giant Human(oid)
+  q   Quadruped                       Q   Quylthulg
+  r   Rodent                          R   Reptile/Amphibian
+  s   Skeleton                        S   Spider/Scorpion/Tick
+  t   Townsperson                     T   Troll
+  u   Minor demon                     U   Major demon
+  v   Vortex                          V   Vampire
+  w   Worm or Worm Mass               W   Wight/Wraith
+  x   (unused)                        X   Xorn/Xaren
+  y   Yeek                            Y   Yeti
+  z   Zombie/Mummy                    Z   Zephyr Hound
+  ~   Aquatic monsters
+
+Note that some monsters disguise themselves by assuming the shape (ie.
+symbol) of common objects found in the dungeon. These include the
+|, ), ?, !, &, $ and * symbols.
+
+
+***** <MonsterColors>
+=== Monster Colors ===
+
+You can often determine some information about a monster based solely
+on the color it is described as having, like 'a White Dragon'. In
+general, 'White' monsters are cold-based, 'Red' are fire-based, 'Blue'
+are electrical, 'Black' are acidic, and 'Green' are poisonous and a
+'Multi-Hued' monster is all of these. By being cold-based, we mean that
+the monster has either melee, magical or breath attacks that are cold
+based.
+
+Unfortunately this rule is applied somewhat inconsistently and there
+are several notable exceptions so don't be surprised. If that 'Green'
+monster spits acid at you. Note that this rule cannot be applied to the
+actual color a creature is displayed as but only to a color in its
+name.
+
+Other color and attack-type relationships are 'Bronze' and confusion
+and 'Gold' and sound. Over time the inconsistencies referred to above
+will probably get cleaned up.
+
+
+***** <MonsterMemory>
+=== Monster Memories ===
+
+Because there are so many monsters and because often different monsters
+share similar colors and symbols, it is very difficult to keep track of
+the capabilities of various creatures. Luckily, Zangband automatically
+keeps track of your experiences with a particular creature.
+ 
+This feature is called the monster memory. Your monster memory recalls
+the particular attacks of each creature (whether or not technically a
+monster) which you have suffered, as well as recalling if you have
+observed them to multiply or move erratically, or drop treasure, etc.
+Similary if you attack a creature with a magical attack and it resists,
+that fact is noted. 
+
+If you have killed enough of a particular creature, or suffered enough
+attacks, recalling the monster memory may also provide you with
+information not otherwise available, such as a armor class or hit dice.
+These are not explained, but may be useful to give the relative danger
+of each creature.
+ 
+Your monster memory may be accessed by pressing '/' and then entering
+the symbol you wish to research. Each monster with that symbol of which
+you have some knowledge will displayed in turn beginning with the
+deepest. Alternatively, you may enter targetting mode by pressing '*'
+and, with the curser over the creature in question, press 'r' to
+recall details.
+
+The best feature about your monster memory is that it can be passed on
+to a new character even after you die by means of a reduced save file.
+Simply use your old savefile as the base for creating your new
+character.
+
+--
+Original   : (??)
+Updated    : (??)
+Updated    : Zangband DevTeam
+Last update: February 10, 2000
+
+***** Begin Hyperlinks
+***** [1] commdesc.txt#Looking
