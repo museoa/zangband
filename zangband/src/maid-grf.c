@@ -2095,10 +2095,16 @@ static byte breath_attr(const monster_race *r_ptr)
  * various "special" pictures in some versions, and certain situations,
  * such as "multi-hued" or "clear" monsters, cause the attr/char codes
  * to be "scrambled" in various ways.
+ *
+ *
+ * Hack - we also save some slow to calculate data into the term_map
+ * struct for this square, so we don't have to redo the list-scanning
+ * in Term_note_map()
  */
 
 static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
-                     byte *ap, char *cp, byte *tap, char *tcp)
+                     byte *ap, char *cp, byte *tap, char *tcp,
+					 term_map *map)
 {
 	feature_type *f_ptr;
 
@@ -2124,84 +2130,86 @@ static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 
 	/* Get the memorized feature */
 	feat = pc_ptr->feat;
-
+	
 	/* Pointer to the feature */
 	f_ptr = &f_info[feat];
-
-	/* The feats attr */
-	a = f_ptr->x_attr;
-
-	/* The feats char */
-	c = f_ptr->x_char;
-
-	/*
-	 * Look for lighting effects.
-	 *
-	 * Need to have lighting on and the player is not blind.
-	 * We then need to have a grid that is allowed to be lit.
-	 */
-	if (view_bright_lite && !p_ptr->tim.blind
-		&& (!(f_ptr->flags & FF_BLOCK)
-			|| (view_granite_lite && !view_torch_grids)))
-	{
-		/* It's not in view or no lighting effects? */
-		if (((!(player & (GRID_VIEW))) && view_special_lite)
-			|| !(player & (GRID_SEEN)))
-		{
-			/* If is ascii graphics */
-			if (a < 16)
-			{
-				/* Use darkened colour */
-				a = darking_colours[a];
-			}
-			else if ((use_graphics == GRAPHICS_ADAM_BOLT)
-					 && (f_ptr->flags & FF_USE_TRANS))
-			{
-				/* Use a dark tile */
-				c++;
-			}
-		}
-		else if (((c_ptr->info & (CAVE_MNLT)) || (player & (GRID_LITE)))
-				 && view_yellow_lite)
-		{
-			/* Use the torch effect */
-			if (a < 16)
-			{
-				/* Use bright colour */
-				a = lighting_colours[a];
-			}
-			else if ((use_graphics == GRAPHICS_ADAM_BOLT)
-					 && (f_ptr->flags & FF_USE_TRANS))
-			{
-				/* Use a light tile */
-				c += 2;
-			}
-		}
-	}
-
+	
 	/* Hack -- rare random hallucination, except on outer dungeon walls */
 	if (halluc && !p_ptr->tim.blind && (feat != FEAT_PERM_SOLID) && one_in_(256))
 	{
 		/* Hallucinate */
 		image_random(&a, &c);
 	}
-
-	/* Save the terrain info for the transparency effects */
-
-	/* Does the feature have "extended terrain" information? */
-	if (f_ptr->w_attr)
-	{
-		/*
-		 * Store extended terrain information. 
-		 * Note hack to get lighting right.
-		 */
-		(*tap) = f_ptr->w_attr + a - f_ptr->x_attr;
-		(*tcp) = f_ptr->w_char + c - f_ptr->x_char;
-	}
 	else
 	{
-		(*tap) = a;
-		(*tcp) = c;
+		/* The feats attr */
+		a = f_ptr->x_attr;
+
+		/* The feats char */
+		c = f_ptr->x_char;
+
+		/*
+		 * Look for lighting effects.
+		 *
+		 * Need to have lighting on and the player is not blind.
+		 * We then need to have a grid that is allowed to be lit.
+		 */
+		if (view_bright_lite && !p_ptr->tim.blind
+			&& (!(f_ptr->flags & FF_BLOCK)
+				|| (view_granite_lite && !view_torch_grids)))
+		{
+			/* It's not in view or no lighting effects? */
+			if (((!(player & (GRID_VIEW))) && view_special_lite)
+				|| !(player & (GRID_SEEN)))
+			{
+				/* If is ascii graphics */
+				if (a < 16)
+				{
+					/* Use darkened colour */
+					a = darking_colours[a];
+				}
+				else if ((use_graphics == GRAPHICS_ADAM_BOLT)
+						 && (f_ptr->flags & FF_USE_TRANS))
+				{
+					/* Use a dark tile */
+					c++;
+				}
+			}
+			else if (((c_ptr->info & (CAVE_MNLT)) || (player & (GRID_LITE)))
+					 && view_yellow_lite)
+			{
+				/* Use the torch effect */
+				if (a < 16)
+				{
+					/* Use bright colour */
+					a = lighting_colours[a];
+				}
+				else if ((use_graphics == GRAPHICS_ADAM_BOLT)
+						 && (f_ptr->flags & FF_USE_TRANS))
+				{
+					/* Use a light tile */
+					c += 2;
+				}
+			}
+		}
+		
+		/* Save the terrain info for the transparency effects */
+
+		/* Does the feature have "extended terrain" information? */
+		if (f_ptr->w_attr)
+		{
+			/*
+			 * Store extended terrain information. 
+			 * Note hack to get lighting right.
+			 */
+			(*tap) = f_ptr->w_attr + a - f_ptr->x_attr;
+			(*tcp) = f_ptr->w_char + c - f_ptr->x_char;
+		}
+		else
+		{
+			(*tap) = a;
+			(*tcp) = c;
+		}
 	}
 
 	/* Handle "player" */
@@ -2231,74 +2239,76 @@ static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 		if (m_ptr->ml)
 		{
 			monster_race *r_ptr = &r_info[m_ptr->r_idx];
-
-			feat_not_ascii = (a & 0x80);
-
-			/* Desired attr */
-			if (!(r_ptr->flags1 & (RF1_ATTR_CLEAR)) || feat_not_ascii)
-			{
-				a = r_ptr->x_attr;
-			}
-
-			/* Desired char */
-			if (!(r_ptr->flags1 & (RF1_CHAR_CLEAR)) || feat_not_ascii)
-			{
-				c = r_ptr->x_char;
-			}
-
-			/* Ignore weird codes + graphics */
-			if (a & 0x80)
-			{
-				/* Do nothing */
-			}
-
-			/* Multi-hued monster */
-			else if (r_ptr->flags1 & (RF1_ATTR_MULTI))
-			{
-				/* Is it a shapechanger? */
-				if (r_ptr->flags2 & (RF2_SHAPECHANGER))
-				{
-					if (use_graphics)
-					{
-						c = r_info[randint1(z_info->r_max - 1)].x_char;
-						a = r_info[randint1(z_info->r_max - 1)].x_attr;
-					}
-					else
-					{
-						c = (one_in_(25) ?
-							 image_object_hack[randint0
-											   (strlen(image_object_hack))] :
-							 image_monster_hack[randint0
-												(strlen(image_monster_hack))]);
-					}
-				}
-
-				/* Multi-hued attr */
-				if (r_ptr->flags2 & RF2_ATTR_ANY)
-					a = randint1(15);
-				else
-				{
-					/* Pick colour based on breaths */
-					a = breath_attr(r_ptr);
-				}
-			}
-			/* Mimics' colors vary */
-			else if (((c == '\"') || (c == '!') || (c == '='))
-					 && !(r_ptr->flags1 & RF1_UNIQUE))
-			{
-				/* Use char */ ;
-
-				/* Use semi-random attr */
-				a = c_ptr->m_idx % 15 + 1;
-			}
-
+			
 			/* Hack -- hallucination */
 			if (halluc)
 			{
 				/* Hallucinatory monster */
 				image_monster(&a, &c);
 			}
+			else
+			{		
+				feat_not_ascii = (a & 0x80);
 
+				/* Desired attr */
+				if (!(r_ptr->flags1 & (RF1_ATTR_CLEAR)) || feat_not_ascii)
+				{
+					a = r_ptr->x_attr;
+				}
+
+				/* Desired char */
+				if (!(r_ptr->flags1 & (RF1_CHAR_CLEAR)) || feat_not_ascii)
+				{
+					c = r_ptr->x_char;
+				}
+
+				/* Ignore weird codes + graphics */
+				if (a & 0x80)
+				{
+					/* Do nothing */
+				}
+
+				/* Multi-hued monster */
+				else if (r_ptr->flags1 & (RF1_ATTR_MULTI))
+				{
+					/* Is it a shapechanger? */
+					if (r_ptr->flags2 & (RF2_SHAPECHANGER))
+					{
+						if (use_graphics)
+						{
+							c = r_info[randint1(z_info->r_max - 1)].x_char;
+							a = r_info[randint1(z_info->r_max - 1)].x_attr;
+						}
+						else
+						{
+							c = (one_in_(25) ?
+								 image_object_hack[randint0
+											   (strlen(image_object_hack))] :
+								 image_monster_hack[randint0
+												(strlen(image_monster_hack))]);
+						}
+					}
+
+					/* Multi-hued attr */
+					if (r_ptr->flags2 & RF2_ATTR_ANY)
+						a = randint1(15);
+					else
+					{
+						/* Pick colour based on breaths */
+						a = breath_attr(r_ptr);
+					}
+				}
+				/* Mimics' colors vary */
+				else if (((c == '\"') || (c == '!') || (c == '='))
+						 && !(r_ptr->flags1 & RF1_UNIQUE))
+				{
+					/* Use char */ ;
+
+					/* Use semi-random attr */
+					a = c_ptr->m_idx % 15 + 1;
+				}
+			}
+	
 
 			/* Hack -- fake monochrome */
 			if (fake_monochrome)
@@ -2391,14 +2401,19 @@ static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 		/* Memorized objects */
 		if (o_ptr->info & (OB_SEEN))
 		{
-			/* Normal char */
-			c = object_char(o_ptr);
-
-			/* Normal attr */
-			a = object_attr(o_ptr);
-
 			/* Hack -- hallucination */
-			if (halluc) image_object(&a, &c);
+			if (halluc)
+			{
+				image_object(&a, &c);
+			}
+			else
+			{
+				/* Normal char */
+				c = object_char(o_ptr);
+
+				/* Normal attr */
+				a = object_attr(o_ptr);
+			}
 
 			/* Done */
 			break;
@@ -2451,14 +2466,14 @@ static void Term_note_map(int x, int y, byte *a, char *c, byte *ta, char *tc)
 	bool glow = c_ptr->info & CAVE_GLOW;
 	bool lite = (c_ptr->info & CAVE_MNLT) || (pc_ptr->player & GRID_LITE);
 	
+	/* clear map info */
+	(void)WIPE(&map, term_map);
+	
 	/* Get the map_info() information */
-	map_info(c_ptr, pc_ptr, a, c, ta, tc);
+	map_info(c_ptr, pc_ptr, a, c, ta, tc, &map);
 
 	/* Paranoia - no overhead map initialised, just return. */
 	if (!map_init) return;
-	
-	/* clear map info */
-	(void)WIPE(&map, term_map);
 	
 	/* Save tile information */
 	map.a = *a;
@@ -2468,19 +2483,23 @@ static void Term_note_map(int x, int y, byte *a, char *c, byte *ta, char *tc)
 
 	/* Save known data */
 	map.terrain = pc_ptr->feat;
-
-	/* Visible, and not hallucinating */
-	if (visible && !p_ptr->tim.image)
-	{
-		map.flags = MAP_SEEN | MAP_ONCE;
-
-		if (glow) map.flags |= MAP_GLOW;
-		if (lite) map.flags |= MAP_LITE;
-	}
+	
+	/* Save location */
+	map.x = x;
+	map.y = y;
 
 	/* Not hallucinating */
 	if (!p_ptr->tim.image)
 	{
+		/* Visible */
+		if (visible)
+		{
+			map.flags = MAP_SEEN | MAP_ONCE;
+
+			if (glow) map.flags |= MAP_GLOW;
+			if (lite) map.flags |= MAP_LITE;
+		}
+	
 		/* Save known monsters */
 		if (c_ptr->m_idx)
 		{
@@ -2574,14 +2593,16 @@ static void Term_note_map(int x, int y, byte *a, char *c, byte *ta, char *tc)
 		}
 		OBJ_ITT_END;
 	}
-	else
+	/*
+	 * Can't get much information if hallucinating...
+	 *
+	 * This is a horible hack which breaks the tk port.
+	 * We need some way of outputing "random" data.
+	 */
+	else if (glow)
 	{
-		map.flags = glow ? MAP_GLOW : 0;
+		map.flags = MAP_GLOW;
 	}
-
-	/* Save location */
-	map.x = x;
-	map.y = y;
 
 	/* Save information in map */
 	save_map_location(x, y, &map);
