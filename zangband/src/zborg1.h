@@ -436,8 +436,6 @@ extern u32b borg_rand_local;	/* Save personal setting */
 extern s16b borg_t;	/* Current "time" */
 extern s16b need_see_inviso;	/* To tell me to cast it */
 extern s16b borg_see_inv;
-extern bool need_shift_panel;	/* to spot offscreeners */
-extern s16b when_shift_panel;
 extern bool vault_on_level;	/* borg will search for a vault */
 extern bool unique_on_level;
 extern bool scaryguy_on_level;

@@ -112,8 +112,6 @@ u32b borg_rand_local;	/* Save personal setting */
 s16b borg_t = 0L;	/* Current "time" */
 s16b need_see_inviso = 0;	/* cast this when required */
 s16b borg_see_inv = 0;
-bool need_shift_panel = FALSE;	/* to spot offscreens */
-s16b when_shift_panel = 0L;
 bool vault_on_level;	/* Borg will search for a vault */
 bool unique_on_level;
 bool scaryguy_on_level;	/* flee from certain guys */

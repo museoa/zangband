@@ -3201,9 +3201,6 @@ bool borg_best_stuff(void)
 
 
 
-
-
-
 /*
  * Study and/or Test spells/prayers
  */

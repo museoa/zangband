@@ -8741,7 +8741,6 @@ enum
 	BD_BANISHMENT,
 	BD_DETECT_INVISO,
 	BD_LIGHT_BEAM,
-	BD_SHIFT_PANEL,
 	BD_TRUMP_SERVANT,
 
 	BD_MAX
@@ -10768,129 +10767,6 @@ static int borg_defend_aux_lbeam(void)
 	return (0);
 }
 
-/* Shift the panel to locate offscreen monsters */
-static int borg_defend_aux_panel_shift(void)
-{
-	int dir = 0;
-
-	int x, y;
-
-	int wx, wy;
-
-	/* Get size */
-	Term_get_size(&x, &y);
-
-	/* Remove map offset */
-	x -= COL_MAP + 1;
-	y -= ROW_MAP + 1;
-
-	/* Get panel */
-	wx = ((c_x - x / 4) / (x / 2));
-	wy = ((c_y - y / 4) / (y / 2));
-
-	/* no need */
-	if (!need_shift_panel && borg_skill[BI_CDEPTH] < 70)
-		return (0);
-
-	/* Determine our current panel */
-
-	/* Which direction do we need to move? */
-	/* Shift panel to the right */
-	if (c_x >= 52 && c_x <= 60 && wx == 0) dir = 6;
-	if (c_x >= 84 && c_x <= 94 && wx == 1) dir = 6;
-	if (c_x >= 116 && c_x <= 123 && wx == 2) dir = 6;
-	if (c_x >= 148 && c_x <= 159 && wx == 3) dir = 6;
-	/* Shift panel to the left */
-	if (c_x <= 142 && c_x >= 136 && wx == 4) dir = 4;
-	if (c_x <= 110 && c_x >= 103 && wx == 3) dir = 4;
-	if (c_x <= 78 && c_x >= 70 && wx == 2) dir = 4;
-	if (c_x <= 46 && c_x >= 37 && wx == 1) dir = 4;
-
-	/* Shift panel down */
-	if (c_y >= 15 && c_y <= 19 && wy == 0) dir = 2;
-	if (c_y >= 25 && c_y <= 30 && wy == 1) dir = 2;
-	if (c_y >= 36 && c_y <= 41 && wy == 2) dir = 2;
-	if (c_y >= 48 && c_y <= 52 && wy == 3) dir = 2;
-	/* Shift panel up */
-	if (c_y <= 51 && c_y >= 47 && wy == 4) dir = 8;
-	if (c_y <= 39 && c_y >= 35 && wy == 3) dir = 8;
-	if (c_y <= 28 && c_y >= 24 && wy == 2) dir = 8;
-	if (c_y <= 17 && c_y >= 13 && wy == 1) dir = 8;
-
-	/* Do the Shift if needed, then note it,  reset the flag */
-	if (need_shift_panel == TRUE)
-	{
-		/* Send action (view panel info) */
-		borg_keypress('L');
-
-		if (dir) borg_keypress(I2D(dir));
-		borg_keypress(ESCAPE);
-
-		borg_note("# Shifted panel to locate offscreen monster.");
-		need_shift_panel = FALSE;
-	}
-	else
-		/* check to make sure its appropriate */
-	{
-
-		/* Hack Not if I just did one */
-		if (when_shift_panel && (borg_t - when_shift_panel) <= 7)
-		{
-			/* do nothing */
-		}
-		else
-			/* shift up? only if a north corridor */
-		if (dir == 8 && borg_projectable_pure(c_x, c_y, c_x, c_y - 2) &&
-				track_step_y[track_step_num - 1] != c_y - 1)
-		{
-			/* Send action (view panel info) */
-			borg_keypress('L');
-			if (dir) borg_keypress(I2D(dir));
-			borg_note("# Shifted panel as a precaution.");
-			/* Mark the time to avoid loops */
-			when_shift_panel = borg_t;
-		}
-		/* shift down? only if a south corridor */
-		else if (dir == 2 && borg_projectable_pure(c_x, c_y, c_x, c_y + 2) &&
-				 track_step_y[track_step_num - 1] != c_y + 1)
-		{
-			/* Send action (view panel info) */
-			borg_keypress('L');
-			borg_keypress(I2D(dir));
-			borg_note("# Shifted panel as a precaution.");
-			/* Mark the time to avoid loops */
-			when_shift_panel = borg_t;
-		}
-		/* shift Left? only if a west corridor */
-		else if (dir == 4 && borg_projectable_pure(c_x, c_y, c_x - 2, c_y) &&
-				 track_step_x[track_step_num - 1] != c_x - 1)
-		{
-			/* Send action (view panel info) */
-			borg_keypress('L');
-			if (dir) borg_keypress(I2D(dir));
-			borg_note("# Shifted panel as a precaution.");
-			/* Mark the time to avoid loops */
-			when_shift_panel = borg_t;
-		}
-		/* shift Right? only if a east corridor */
-		else if (dir == 6 && borg_projectable_pure(c_x, c_y, c_x + 2, c_y) &&
-				 track_step_x[track_step_num - 1] != c_x + 1)
-		{
-			/* Send action (view panel info) */
-			borg_keypress('L');
-			if (dir) borg_keypress(I2D(dir));
-			borg_note("# Shifted panel as a precaution.");
-			/* Mark the time to avoid loops */
-			when_shift_panel = borg_t;
-		}
-
-		/* Leave the panel shift mode */
-		borg_keypress(ESCAPE);
-
-	}
-	/* This uses no energy */
-	return (0);
-}
 
 /*
  * Phantasmal Servant.
@@ -11059,10 +10935,6 @@ static int borg_defend_aux(int what, int p1)
 		case BD_LIGHT_BEAM:
 		{
 			return (borg_defend_aux_lbeam());
-		}
-		case BD_SHIFT_PANEL:
-		{
-			return (borg_defend_aux_panel_shift());
 		}
 		case BD_TRUMP_SERVANT:
 		{
