@@ -849,7 +849,7 @@ static void rd_store(int town_num, int store_num)
 
 	s16b data;
 
-	byte num, owner, type = 0;
+	byte allocated, owner, type = 0;
 
 	/* Read the basic info */
 	if (sf_version < 34)
@@ -859,7 +859,7 @@ static void rd_store(int town_num, int store_num)
 
 	rd_s16b(&data);
 	rd_byte(&owner);
-	rd_byte(&num);
+	rd_byte(&allocated);
 
 	if (sf_version < 34)
 	{
@@ -894,7 +894,7 @@ static void rd_store(int town_num, int store_num)
 	 * The resulting list can be sorted... but it
 	 * doesn't really matter.
 	 */
-	if (num)
+	if (allocated)
 	{
 		(void)allocate_store(st_ptr);
 	}
@@ -902,7 +902,7 @@ static void rd_store(int town_num, int store_num)
 	if (sf_version < 38)
     {
 		/* Read the items */
-		for (j = 0; j < num; j++)
+		for (j = 0; j < allocated; j++)
 		{
 			object_type forge;
 			object_type *q_ptr;

@@ -1700,7 +1700,6 @@ struct store_type
 	s32b last_visit;	/* Last visited on this turn */
 
 	byte max_stock;	/* Stock -- Max number of entries */
-	byte stock_num;	/* Stock -- Number of entries */
 	s16b stock;	/* Stock -- list of items in o_list[] */
 
 	u16b x;	/* Location x coord. */

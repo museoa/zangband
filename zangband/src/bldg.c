@@ -2254,6 +2254,5 @@ void build_init(int town_num, int build_num, byte build_type)
 
 	/* Initialize */
 	st_ptr->data = 0;
-	st_ptr->stock_num = 0;
 	st_ptr->last_visit = 0;
 }

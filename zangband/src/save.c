@@ -731,8 +731,8 @@ static void wr_store(const store_type *st_ptr)
 	/* Save the current owner */
 	wr_byte(st_ptr->owner);
 
-	/* Save the stock size */
-	wr_byte(st_ptr->stock_num);
+	/* Hack - Save whether or not we have stock */
+	wr_byte(st_ptr->stock ? TRUE : FALSE);
 
 	/* Position in the town */
 	wr_u16b(st_ptr->x);

@@ -4262,7 +4262,7 @@ static void show_info(void)
 			if (st_ptr->type == BUILD_STORE_HOME)
 			{
 				/* Home -- if anything there */
-				if (st_ptr->stock_num)
+				if (st_ptr->stock)
 				{
 					char tmp_val[10];
 					char o_name[256];
@@ -4274,7 +4274,7 @@ static void show_info(void)
 					Term_clear();
 				
 					/* Display contents of the home */
-					OBJ_ITT_START(st_ptr->stock , o_ptr)
+					OBJ_ITT_START(st_ptr->stock, o_ptr)
 					{
 						/* Print header, clear line */
 						sprintf(tmp_val, "%c) ", I2A(j));

@@ -484,7 +484,7 @@ static bool store_check_num(object_type *o_ptr)
 	object_type *j_ptr;
 
 	/* Free space is always usable */
-	if (st_ptr->stock_num < st_ptr->max_stock) return TRUE;
+	if (get_list_length(st_ptr->stock) < st_ptr->max_stock) return TRUE;
 
 	/* The "home" acts like the player */
 	if (st_ptr->type == BUILD_STORE_HOME)
@@ -673,7 +673,7 @@ static object_type *home_carry(object_type *o_ptr)
 	OBJ_ITT_END;
 
 	/* No space? */
-	if (st_ptr->stock_num >= st_ptr->max_stock) return (NULL);
+	if (get_list_length(st_ptr->stock) >= st_ptr->max_stock) return (NULL);
 
 	/* Add the item to the store */
 	o_ptr = add_object_list(&st_ptr->stock, o_ptr);
@@ -689,9 +689,6 @@ static object_type *home_carry(object_type *o_ptr)
 
 	/* Reorder the items */
 	o_ptr = reorder_objects_aux(o_ptr, reorder_store_comp, st_ptr->stock);
-
-	/* More stuff now */
-	st_ptr->stock_num++;
 
 	chg_virtue(V_SACRIFICE, -1);
 
@@ -752,7 +749,7 @@ static object_type *store_carry(object_type *o_ptr)
 	OBJ_ITT_END;
 
 	/* No space? */
-	if (st_ptr->stock_num >= st_ptr->max_stock) return (NULL);
+	if (get_list_length(st_ptr->stock) >= st_ptr->max_stock) return (NULL);
 	
 	/* Add the item to the store */
 	o_ptr = add_object_list(&st_ptr->stock, o_ptr);
@@ -769,9 +766,6 @@ static object_type *store_carry(object_type *o_ptr)
 	/* Reorder the items */
 	o_ptr = reorder_objects_aux(o_ptr, reorder_store_comp, st_ptr->stock);
 
-	/* More stuff now */
-	st_ptr->stock_num++;
-
 	/* Return the location */
 	return (o_ptr);
 }
@@ -783,15 +777,8 @@ static object_type *store_carry(object_type *o_ptr)
  */
 static void store_item_increase(object_type *o_ptr, int num)
 {
-
-
-	/* One less item? */
-	if (num >= o_ptr->number) st_ptr->stock_num--;
-
 	/* Simply call standard list... */
 	item_increase(o_ptr, num);
-	
-	st_ptr->stock_num = get_list_length(st_ptr->stock);
 }
 
 
@@ -806,7 +793,7 @@ static void store_delete(void)
 	object_type *o_ptr;
 
 	/* Pick a random slot */
-	what = randint0(st_ptr->stock_num);
+	what = randint0(get_list_length(st_ptr->stock));
 	
 	/* Get the item */
 	o_ptr = get_list_item(st_ptr->stock, what);
@@ -849,7 +836,7 @@ static void store_create(void)
 	byte restricted = f_ptr->data[7];
 
 	/* Paranoia -- no room left */
-	if (st_ptr->stock_num >= st_ptr->max_stock) return;
+	if (get_list_length(st_ptr->stock) >= st_ptr->max_stock) return;
 
 	/* Set theme */
 	theme.treasure = f_ptr->data[3];
@@ -1046,11 +1033,13 @@ static void display_inventory(int store_top)
 {
 	int i, k;
 	
+	int stocknum = get_list_length(st_ptr->stock);
+	
 	/* Display the next 12 items */
 	for (k = 0; k < 12; k++)
 	{
 		/* Do not display "dead" items */
-		if (store_top + k >= st_ptr->stock_num) break;
+		if (store_top + k >= stocknum) break;
 
 		/* Display that line */
 		display_entry(store_top + k);
@@ -1063,7 +1052,7 @@ static void display_inventory(int store_top)
 	put_str("        ", 20, 5);
 
 	/* Visual reminder of "more items" */
-	if (st_ptr->stock_num > 12)
+	if (stocknum > 12)
 	{
 		/* Show "more" reminder (after the last item) */
 		prt("-more-", 3, k + 6);
@@ -1165,7 +1154,7 @@ static void store_maint(void)
 	if (st_ptr->type == BUILD_STORE_HOME) return;
 
 	/* Choose the number of slots to keep */
-	j = st_ptr->stock_num;
+	j = get_list_length(st_ptr->stock);
 
 	/* Sell a few items */
 	j = j - randint1(STORE_TURNOVER);
@@ -1193,11 +1182,11 @@ static void store_maint(void)
 	if (j < 0) j = 0;
 
 	/* Destroy objects until only "j" slots are left */
-	while (st_ptr->stock_num > j) store_delete();
+	while (get_list_length(st_ptr->stock) > j) store_delete();
 
 
 	/* Choose the number of slots to fill */
-	j = st_ptr->stock_num;
+	j = get_list_length(st_ptr->stock);
 
 	/* Buy some more items */
 	j = j + randint1(STORE_TURNOVER);
@@ -1225,7 +1214,7 @@ static void store_maint(void)
 	if (j >= st_ptr->max_stock) j = st_ptr->max_stock - 1;
 
 	/* Acquire some new items */
-	while ((st_ptr->stock_num < j) && (i < 30))
+	while ((get_list_length(st_ptr->stock) < j) && (i < 30))
 	{
 		/* Increment counter so we avoid taking too long */
 		i++;
@@ -1456,7 +1445,7 @@ static void store_purchase(int *store_top)
 	const owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
 
 	/* Empty? */
-	if (st_ptr->stock_num <= 0)
+	if (!st_ptr->stock)
 	{
 		if (st_ptr->type == BUILD_STORE_HOME)
 			msg_print("Your home is empty.");
@@ -1466,7 +1455,7 @@ static void store_purchase(int *store_top)
 	}
 
 	/* Find the number of objects on this and following pages */
-	i = (st_ptr->stock_num - *store_top);
+	i = (get_list_length(st_ptr->stock) - *store_top);
 
 	/* And then restrict it to the current page */
 	if (i > 12) i = 12;
@@ -1615,13 +1604,13 @@ static void store_purchase(int *store_top)
 				handle_stuff();
 
 				/* Note how many slots the store used to have */
-				i = st_ptr->stock_num;
+				i = get_list_length(st_ptr->stock);
 
 				/* Remove the bought items from the store */
 				store_item_increase(o_ptr, -amt);
 
 				/* Store is empty */
-				if (st_ptr->stock_num == 0)
+				if (!st_ptr->stock)
 				{
 					/* Shuffle */
 					if (one_in_(STORE_SHUFFLE))
@@ -1655,11 +1644,14 @@ static void store_purchase(int *store_top)
 				}
 
 				/* The item is gone */
-				else if (st_ptr->stock_num != i)
+				else if (get_list_length(st_ptr->stock) != i)
 				{
 					/* Pick the correct screen */
-					if (*store_top >= st_ptr->stock_num) *store_top -= 12;
-
+					if (*store_top >= get_list_length(st_ptr->stock))
+					{
+						*store_top -= 12;
+					}
+					
 					/* Redraw everything */
 					display_inventory(*store_top);
 				}
@@ -1703,13 +1695,13 @@ static void store_purchase(int *store_top)
 		handle_stuff();
 
 		/* Take note if we take the last one */
-		i = st_ptr->stock_num;
+		i = get_list_length(st_ptr->stock);
 
 		/* Remove the items from the home */
 		store_item_increase(o_ptr, -amt);
 
 		/* Hack -- Item is still here */
-		if (i == st_ptr->stock_num)
+		if (i == get_list_length(st_ptr->stock))
 		{
 			/* Redraw the item */
 			display_entry(item);
@@ -1719,11 +1711,14 @@ static void store_purchase(int *store_top)
 		else
 		{
 			/* Nothing left */
-			if (st_ptr->stock_num == 0) *store_top = 0;
+			if (!st_ptr->stock) *store_top = 0;
 
 			/* Nothing left on that screen */
-			else if (*store_top >= st_ptr->stock_num) *store_top -= 12;
-
+			else if (*store_top >= get_list_length(st_ptr->stock))
+			{
+				*store_top -= 12;
+			}
+			
 			/* Redraw everything */
 			display_inventory(*store_top);
 
@@ -2025,7 +2020,7 @@ static void store_examine(int store_top)
 
 
 	/* Empty? */
-	if (st_ptr->stock_num <= 0)
+	if (!st_ptr->stock)
 	{
 		if (st_ptr->type == BUILD_STORE_HOME)
 			msg_print("Your home is empty.");
@@ -2036,7 +2031,7 @@ static void store_examine(int store_top)
 
 
 	/* Find the number of objects on this and following pages */
-	i = (st_ptr->stock_num - store_top);
+	i = (get_list_length(st_ptr->stock) - store_top);
 
 	/* And then restrict it to the current page */
 	if (i > 12) i = 12;
@@ -2091,6 +2086,8 @@ static bool leave_store = FALSE;
  */
 static void store_process_command(int *store_top)
 {
+	int stocknum = get_list_length(st_ptr->stock);
+
 	/* Handle repeating the last command */
 	repeat_check();
 
@@ -2112,14 +2109,14 @@ static void store_process_command(int *store_top)
 		case ' ':
 		{
 			/* Browse */
-			if (st_ptr->stock_num <= 12)
+			if (stocknum <= 12)
 			{
 				msg_print("Entire inventory is shown.");
 			}
 			else
 			{
 				*store_top += 12;
-				if (*store_top >= st_ptr->stock_num) *store_top = 0;
+				if (*store_top >= stocknum) *store_top = 0;
 				display_inventory(*store_top);
 			}
 			break;
@@ -2413,9 +2410,6 @@ static void deallocate_store(void)
 	/* Delete store least used. */
 	delete_object_list(&store_cache[0]->stock);
 
-	/* No stock */
-	store_cache[0]->stock_num = 0;
-
 	/* Shift all other stores down the cache to fill the gap */
 	for (i = 1; i < store_cache_num; i++)
 	{
@@ -2536,9 +2530,6 @@ void do_cmd_store(field_type *f1_ptr)
 	/* Save the store pointer */
 	st_ptr = get_current_store();
 	
-	/* Hack - get current amount of stock */
-	st_ptr->stock_num = get_list_length(st_ptr->stock);
-
 	/* Paranoia */
 	if (!st_ptr) return;
 
@@ -2633,7 +2624,7 @@ void do_cmd_store(field_type *f1_ptr)
 		prt(" ESC) Exit from Building.", 0, 22);
 
 		/* Browse if necessary */
-		if (st_ptr->stock_num > 12)
+		if (get_list_length(st_ptr->stock) > 12)
 		{
 			prt(" SPACE) Next page of stock", 0, 23);
 		}
@@ -2762,9 +2753,6 @@ void store_init(int town_num, int store_num, byte store_type)
 
 	/* Initialize the store */
 	st_ptr->data = 0;
-
-	/* Nothing in stock */
-	st_ptr->stock_num = 0;
 
 	/*
 	 * Hack - maximum items in stock
