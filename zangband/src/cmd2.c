@@ -2215,18 +2215,11 @@ void do_cmd_stay(int pickup)
 	/* Handle "objects" */
 	carry(pickup);
 
-#if 0
-	/* Hack -- enter a building if we are on one -KMW- */
-	else if ((c_ptr->feat >= FEAT_BLDG_HEAD) &&
-	    (c_ptr->feat <= FEAT_BLDG_TAIL))
-	{
-		/* Disturb */
-		disturb(0, 0);
+	/* 
+	 * Fields you are standing on may do something.
+	 */
+	field_hook(&area(p_ptr->py, p_ptr->px)->fld_idx, FIELD_ACT_PLAYER_ON, NULL);
 
-		/* Hack -- enter building */
-		p_ptr->command_new = ']';
-	}
-#endif
 #if 0
 
 	/* Exit a quest if reach the quest exit */
