@@ -654,6 +654,9 @@ static int count_dt(int *y, int *x, bool (*test)(int feat), bool under)
 		/* Extract adjacent (legal) location */
 		yy = py + ddy_ddd[d];
 		xx = px + ddx_ddd[d];
+		
+		/* paranoia */
+		if(!in_bounds2(yy, xx)) continue;
 
 		/* Must have knowledge */
 		if (!(area(yy,xx)->info & (CAVE_MARK))) continue;
@@ -908,6 +911,9 @@ void do_cmd_open(void)
 		}
 #endif /* USE_SCRIPT */
 
+		/* paranoia */
+		if(!in_bounds2(y, x)) return;
+
 		/* Get requested grid */
 		c_ptr = area(y,x);
 
@@ -1048,6 +1054,16 @@ void do_cmd_close(void)
 		/* Get requested location */
 		y = py + ddy[dir];
 		x = px + ddx[dir];
+
+		/* paranoia */
+		if(!in_bounds2(y, x))
+		{
+			/* Message */
+			msg_print("You see nothing there to close.");
+			
+			disturb(0, 0);
+			return;
+		}
 
 		/* Get grid and contents */
 		c_ptr = area(y,x);
@@ -1871,6 +1887,16 @@ void do_cmd_disarm(void)
 		/* Get location */
 		y = py + ddy[dir];
 		x = px + ddx[dir];
+		
+		/* paranoia */
+		if(!in_bounds2(y, x))
+		{
+			/* Message */
+			msg_print("You see nothing there to disarm.");
+			
+			disturb(0, 0);
+			return;
+		}
 
 		/* Get grid and contents */
 		c_ptr = area(y,x);
@@ -2052,6 +2078,16 @@ void do_cmd_bash(void)
 		/* Bash location */
 		y = py + ddy[dir];
 		x = px + ddx[dir];
+		
+		if(!in_bounds2(y, x))
+		{
+			/* Message */
+			msg_print("You see nothing there to bash.");
+			
+			disturb(0, 0);
+			return;
+		
+		}
 
 		/* Get grid */
 		c_ptr = area(y,x);
@@ -2128,6 +2164,16 @@ void do_cmd_alter(void)
 		/* Get location */
 		y = py + ddy[dir];
 		x = px + ddx[dir];
+		
+		/* paranoia */
+		if(!in_bounds2(y, x))
+		{
+			/* Oops */
+			msg_print("You attack the empty air.");
+			
+			disturb(0, 0);
+			return;
+		}
 
 		/* Get grid */
 		c_ptr = area(y,x);
@@ -2250,6 +2296,17 @@ void do_cmd_spike(void)
 		/* Get location */
 		y = py + ddy[dir];
 		x = px + ddx[dir];
+		
+		/* paranoia */
+		if (!in_bounds2(y, x))
+		{
+			/* Message */
+			msg_print("You see nothing there to spike.");
+			
+			disturb(0, 0);
+			return;
+		
+		}
 
 		/* Get grid and contents */
 		c_ptr = area(y,x);
