@@ -27,21 +27,18 @@ class event_class:
 #		del self.hooks[key]
 
 	# Add a new hook
-	def append(self, hook, priority = 0):
-		import bisect
-		bisect.insort(self.hooks, (priority, hook))
+	def append(self, hook):
+		self.hooks.append(hook)
 
 	# Remove a hook
 	def remove(self, hook):
-		for priority, a_hook in self.hooks:
-			if hook == a_hook:
-				try:
-					self.hooks.remove((priority, hook))
-				except:
-					import traceback
-					traceback.print_exc()
-					print "in event %s while removing hook %s" % (self.method, hook)
-				break
+		try:
+			self.hooks.remove(hook)
+		except:
+			import traceback
+			traceback.print_exc()
+			print "in event %s while removing hook %s" % (self.method, hook)
+			break
 		else:
 			print "%s is not in event %s" % (hook, self.method)
 
@@ -51,7 +48,7 @@ class event_class:
 			end_result = None
 
 			# Go through all hooked-in objects
-			for priority, hook in self.hooks:
+			for hook in self.hooks:
 				my_hook = getattr(hook, self.method)
 				result = my_hook(args)
 				# Stop when a function returns -1
@@ -127,7 +124,7 @@ class save_event_class(event_class):
 		try:
 			dict = {}
 			dict["version"] = 1
-			for priority, hook in self.hooks:
+			for hook in self.hooks:
 				my_hook = getattr(hook, self.method)
 				try:
 					tag, data = my_hook()
@@ -156,7 +153,7 @@ class load_event_class(event_class):
 			dict = pickle.loads(args)
 
 			version = dict["version"]
-			for priority, hook in self.hooks:
+			for hook in self.hooks:
 				my_hook = getattr(hook, self.method)
 				my_hook(dict)
 		except:
