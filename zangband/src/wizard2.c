@@ -810,7 +810,9 @@ static void wiz_tweak_item(object_type *o_ptr)
  */
 static bool wiz_reroll_item(object_type *o_ptr)
 {
-	char ch;
+    return (TRUE);
+#if 0 /* XXX This code is broken -RML- */
+    char ch;
 
 	/* Hack -- leave normal artifacts alone */
 	if ((o_ptr->flags3 & TR3_INSTA_ART) && (o_ptr->activate > 128)) return(TRUE);
@@ -818,7 +820,10 @@ static bool wiz_reroll_item(object_type *o_ptr)
 	/* Main loop. Ask for magification and artifactification */
 	while (TRUE)
 	{
-		/* Display full item debug information */
+        /* Display full item debug information */
+        /* XXX wiz_display_item() calls something that clobbers the temp
+         object - which this function uses to hold the object being played
+         with. This results in strange things happening. -RML- */
 		wiz_display_item(o_ptr);
 
 		/* Ask wizard what to do. */
@@ -883,7 +888,15 @@ static bool wiz_reroll_item(object_type *o_ptr)
 				break;
 			}
 		}
-	}
+    }
+
+    /* XXX We somehow need to copy the object being played with back.
+     The only way to do this seems to be using swap_objects. But this doesn't
+     really matter until we find some way to keep the copy of the object
+     being played with safe even as functions that may clobber the temp
+     object are called.
+     (This is the point where being able to create a local buffer object
+     would be really useful...) -RML- */
 	
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -895,7 +908,8 @@ static bool wiz_reroll_item(object_type *o_ptr)
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
 	
 	/* Success */
-	return (TRUE);
+    return (TRUE);
+#endif
 }
 
 
