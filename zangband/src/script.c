@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: script.c */
 
 /* Purpose: Script interface */
@@ -91,17 +90,19 @@ errr init_script(void)
 
 	Py_SetProgramName((char*)argv0);
 
-	/* XXX XXX Set the environment variables (non-ANSI) */
-	putenv(format("PYTHONPATH=%s", ANGBAND_DIR_SCRIPT));
-	putenv(format("PYTHONHOME=%s", ANGBAND_DIR_SCRIPT));
+#ifdef __djgpp__
+	/* Set the enviroment variables */
+	setenv("PYTHONPATH", ANGBAND_DIR_SCRIPT, 1);
+	setenv("PYTHONHOME", ANGBAND_DIR_SCRIPT, 1);
+#endif /* __djgpp__ */
 
 	/* Initialize the Python interpreter */
 	Py_Initialize();
 
 	/* Define sys.argv.  It is up to the application if you
-		want this; you can also let it undefined (since the Python
-		code is generally not a main program it has no business
-		touching sys.argv...) */
+	   want this; you can also let it undefined (since the Python
+	   code is generally not a main program it has no business
+	   touching sys.argv...) */
 	PySys_SetArgv(1, (char **)program_name);
 
 
