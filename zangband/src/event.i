@@ -270,6 +270,40 @@ bool cmd_feeling_callback(int feeling)
 }
 
 
+bool use_skill_callback(void)
+{
+	PyObject *func, *arglist;
+	PyObject *result;
+	bool res = FALSE;
+
+	/* Get the Python object */
+	func = python_callbacks[USE_SKILL_EVENT];
+
+	/* Callback installed */
+	if (func)
+	{
+		/* Build the argument-list */
+		arglist = Py_BuildValue("(())");
+
+		/* Call the object with the correct arguments */
+		result = PyEval_CallObject(func, arglist);
+
+		/* Free the arguments */
+		Py_DECREF(arglist);
+
+		if (result && PyInt_Check(result) && PyInt_AsLong(result))
+		{
+			res = TRUE;
+		}
+
+		/* Free the result */
+		Py_XDECREF(result);
+	}
+
+	return res;
+}
+
+
 bool cmd_go_up_callback(void)
 {
 	PyObject *func, *arglist;

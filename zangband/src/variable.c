@@ -42,6 +42,7 @@ byte sf_major;			/* Savefile's "version_major" */
 byte sf_minor;			/* Savefile's "version_minor" */
 byte sf_patch;			/* Savefile's "version_patch" */
 byte sf_extra;			/* Savefile's "version_extra" */
+u32b sf_version;		/* Savefile's "version" */
 
 byte z_major;           /* Savefile version for Zangband */
 byte z_minor;

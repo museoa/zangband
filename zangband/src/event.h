@@ -74,6 +74,8 @@ extern bool get_object_tried_callback(object_type *o_ptr);
 extern bool free_object_kind_list_callback(void);
 extern bool init_object_kind_list_callback(void);
 
+extern bool use_skill_callback(void);
+
 
 #define CMD_EAT_EVENT                1
 #define PLAYER_MOVE_EVENT            2
@@ -113,5 +115,6 @@ extern bool init_object_kind_list_callback(void);
 #define GET_PLAYER_REALMS_EVENT     36
 #define GET_WORLD_EVENT             37
 #define COPY_MONSTER_EVENT          38
+#define USE_SKILL_EVENT             39
 
-#define MAX_EVENT                   39
+#define MAX_EVENT                   40

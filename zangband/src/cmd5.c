@@ -2513,6 +2513,9 @@ static bool cast_arcane_spell(int spell)
  */
 void do_cmd_cast(void)
 {
+#ifdef USE_SCRIPT
+	use_skill_callback();
+#else /* USE_SCRIPT */
 	int	item, sval, spell, realm;
 	int	chance;
 	int	increment = 0;
@@ -2754,6 +2757,7 @@ void do_cmd_cast(void)
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
 	p_ptr->window |= (PW_SPELL);
+#endif /* USE_SCRIPT */
 }
 
 

@@ -1964,8 +1964,7 @@ bool place_monster(int y, int x, bool slp, bool grp)
 bool alloc_horde(int y, int x)
 {
 	int r_idx;
-	monster_race * r_ptr;
-	monster_type * m_ptr;
+	monster_race *r_ptr;
 	int attempts = 1000;
 	int cy = y;
 	int cx = x;
@@ -1983,10 +1982,7 @@ bool alloc_horde(int y, int x)
 
 		r_ptr = &r_info[r_idx];
 
-		if (!(r_ptr->flags1 & RF1_UNIQUE))
-		{
-			break;
-	}
+		if (!(r_ptr->flags1 & RF1_UNIQUE)) break;
 	}
 
 	if (attempts < 1) return FALSE;

@@ -1347,6 +1347,10 @@ static bool wr_savefile_new(void)
 	v_stamp = 0L;
 	x_stamp = 0L;
 
+#if SAVEFILE_VERSION
+	/* Write the savefile version */
+	wr_u32b(SAVEFILE_VERSION);
+#endif /* SAVEFILE_VERSION */
 
 	/* Operating system */
 	wr_u32b(sf_xtra);

@@ -40,6 +40,8 @@
 #define VERSION_MINOR   8
 #define VERSION_PATCH   1
 
+#define SAVEFILE_VERSION 0
+
 /* Added for ZAngband */
 #ifdef USE_SCRIPT
 #define FAKE_VERSION   0

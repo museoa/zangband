@@ -82,6 +82,7 @@ extern byte sf_major;
 extern byte sf_minor;
 extern byte sf_patch;
 extern byte sf_extra;
+extern u32b sf_version;
 extern u32b sf_xtra;
 extern byte z_major;
 extern byte z_minor;
@@ -616,7 +617,7 @@ extern u32b fake_name_size;
 extern u32b fake_text_size;
 #endif /* ALLOW_TEMPLATES */
 
-/* load2.c */
+/* load.c */
 extern errr rd_savefile_new(void);
 
 /* melee1.c */

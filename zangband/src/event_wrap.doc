@@ -1,4 +1,4 @@
-D:\z-2.3\src\event_wrap.c
+.\src\event_wrap.c
 
 [ Python Module : event ]
 
@@ -162,6 +162,9 @@ free_object_kind_list_callback()
 init_object_kind_list_callback()
         [ returns bool  ]
 
+use_skill_callback()
+        [ returns bool  ]
+
 CMD_EAT_EVENT = 1
         [ Constant: int  ]
 
@@ -276,7 +279,10 @@ GET_WORLD_EVENT = 37
 COPY_MONSTER_EVENT = 38
         [ Constant: int  ]
 
-MAX_EVENT = 39
+USE_SKILL_EVENT = 39
+        [ Constant: int  ]
+
+MAX_EVENT = 40
         [ Constant: int  ]
 
 set_callback(event,PyFunc)
