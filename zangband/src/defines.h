@@ -2893,7 +2893,7 @@
 #define RF7_CAN_SWIM            0x00000002  /* Monster can swim */
 #define RF7_CAN_FLY             0x00000004  /* Monster can fly */
 #define RF7_FRIENDLY            0x00000008  /* Monster is friendly */
-
+#define RF7_SILLY               0x00000010  /* Monster is "silly" */
 
 /*
  * Monster race wilderness flags

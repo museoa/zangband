@@ -360,7 +360,7 @@ static cptr r_info_flags7[] =
 	"CAN_SWIM",
 	"CAN_FLY",
 	"FRIENDLY",
-	"XXX7X4",
+	"SILLY",
 	"XXX7X5",
 	"XXX7X6",
 	"XXX7X7",
