@@ -150,7 +150,7 @@ static void check_room_boundary(int x1, int y1, int x2, int y2)
  * xx, yy are the returned center of the allocated room in coordinates for
  * cave.feat and cave.info etc.
  */
-static bool room_alloc(int x, int y, bool crowded, int by0, int bx0, int *xx,
+static bool room_alloc(int x, int y, bool crowded, int bx0, int by0, int *xx,
                        int *yy)
 {
 	int temp, bx1, bx2, by1, by2, by, bx;
@@ -271,7 +271,7 @@ static void build_type1(int bx0, int by0)
 	ysize = y1 + y2 + 1;
 
 	/* Try to allocate space for room.  If fails, exit */
-	if (!room_alloc(xsize + 2, ysize + 2, FALSE, by0, bx0, &xval, &yval))
+	if (!room_alloc(xsize + 2, ysize + 2, FALSE, bx0, by0, &xval, &yval))
 		return;
 
 	/* Choose lite or dark */
@@ -393,7 +393,7 @@ static void build_type2(int bx0, int by0)
 
 
 	/* Try to allocate space for room. If fails, exit */
-	if (!room_alloc(25, 11, FALSE, by0, bx0, &xval, &yval)) return;
+	if (!room_alloc(25, 11, FALSE, bx0, by0, &xval, &yval)) return;
 
 	/* Choose lite or dark */
 	light = (p_ptr->depth <= randint1(25));
@@ -455,7 +455,7 @@ static void build_type3(int bx0, int by0)
 	bool light;
 
 	/* Try to allocate space for room. */
-	if (!room_alloc(25, 11, FALSE, by0, bx0, &xval, &yval)) return;
+	if (!room_alloc(25, 11, FALSE, bx0, by0, &xval, &yval)) return;
 
 	/* Choose lite or dark */
 	light = (p_ptr->depth <= randint1(25));
@@ -613,7 +613,7 @@ static void build_type4(int bx0, int by0)
 	bool light;
 
 	/* Try to allocate space for room. */
-	if (!room_alloc(25, 11, FALSE, by0, bx0, &xval, &yval)) return;
+	if (!room_alloc(25, 11, FALSE, bx0, by0, &xval, &yval)) return;
 
 	/* Choose lite or dark */
 	light = (p_ptr->depth <= randint1(25));
@@ -1427,7 +1427,7 @@ static void build_type5(int bx0, int by0)
 	
 	/* Try to allocate space for room. */
 	if (!room_alloc(2 * (x_hall + x_var + 2) + 1, 2 * (y_hall + y_var + 2) + 1,
-		 TRUE, by0, bx0, &xval, &yval))
+		 TRUE, bx0, by0, &xval, &yval))
 	{
 		return;
 	}
@@ -1605,7 +1605,7 @@ static void build_type6(int bx0, int by0)
 	
 	/* Try to allocate space for room. */
 	if (!room_alloc(2 * (x_hall + x_var + 2) + 1, 2 * (y_hall + y_var + 2) + 1,
-		 TRUE, by0, bx0, &xval, &yval))
+		 TRUE, bx0, by0, &xval, &yval))
 	{
 		return;
 	}
@@ -2102,7 +2102,7 @@ static void build_type7(int bx0, int by0)
 	}
 
 	/* Try to allocate space for room. */
-	if (!room_alloc(ABS(x), ABS(y), FALSE, by0, bx0, &xval, &yval)) return;
+	if (!room_alloc(ABS(x), ABS(y), FALSE, bx0, by0, &xval, &yval)) return;
 
 	if (dummy >= SAFE_MAX_ATTEMPTS)
 	{
@@ -2199,7 +2199,7 @@ static void build_type8(int bx0, int by0)
 	}
 
 	/* Try to allocate space for room.  If fails, exit */
-	if (!room_alloc(ABS(x), ABS(y), FALSE, by0, bx0, &xval, &yval)) return;
+	if (!room_alloc(ABS(x), ABS(y), FALSE, bx0, by0, &xval, &yval)) return;
 
 	if (dummy >= SAFE_MAX_ATTEMPTS)
 	{
@@ -2254,7 +2254,7 @@ static void build_type9(int bx0, int by0)
 	ysize = yhsize * 2;
 
 	/* Try to allocate space for room.  If fails, exit */
-	if (!room_alloc(xsize + 1, ysize + 1, FALSE, by0, bx0, &x0, &y0)) return;
+	if (!room_alloc(xsize + 1, ysize + 1, FALSE, bx0, by0, &x0, &y0)) return;
 
 	light = done = FALSE;
 
@@ -3591,7 +3591,7 @@ static void build_type10(int bx0, int by0)
 	ysize = rand_range(11, 22);
 
 	/* Allocate in room_map.  If will not fit, exit */
-	if (!room_alloc(xsize + 1, ysize + 1, FALSE, by0, bx0, &x0, &y0)) return;
+	if (!room_alloc(xsize + 1, ysize + 1, FALSE, bx0, by0, &x0, &y0)) return;
 
 	/*
 	 * Boost the rating- higher than lesser vaults
@@ -3679,7 +3679,7 @@ static void build_type11(int bx0, int by0)
 	rad = randint0(9);
 
 	/* Allocate in room_map.  If will not fit, exit */
-	if (!room_alloc(rad * 2 + 1, rad * 2 + 1, FALSE, by0, bx0, &x0, &y0))
+	if (!room_alloc(rad * 2 + 1, rad * 2 + 1, FALSE, bx0, by0, &x0, &y0))
 		return;
 
 	/* Make circular floor */
@@ -3733,7 +3733,7 @@ static void build_type12(int bx0, int by0)
 	rad = randint1(9);
 
 	/* Allocate in room_map.  If will not fit, exit */
-	if (!room_alloc(rad * 2 + 3, rad * 2 + 3, FALSE, by0, bx0, &x0, &y0))
+	if (!room_alloc(rad * 2 + 3, rad * 2 + 3, FALSE, bx0, by0, &x0, &y0))
 		return;
 
 	/* Add outer wall */
@@ -3823,7 +3823,7 @@ static void build_type13(int bx0, int by0)
 	ysize = yhsize * 2;
 
 	/* Try to allocate space for room.  If fails, exit */
-	if (!room_alloc(xsize + 1, ysize + 1, FALSE, by0, bx0, &x0, &y0)) return;
+	if (!room_alloc(xsize + 1, ysize + 1, FALSE, bx0, by0, &x0, &y0)) return;
 
 	done = FALSE;
 
@@ -3914,7 +3914,7 @@ static void build_type14(int bx0, int by0)
 	bool light;
 
 	/* Try to allocate space for room. */
-	if (!room_alloc(25, 11, FALSE, by0, bx0, &xval, &yval)) return;
+	if (!room_alloc(25, 11, FALSE, bx0, by0, &xval, &yval)) return;
 
 	/* Choose lite or dark */
 	light = (p_ptr->depth <= randint1(25));
@@ -4020,7 +4020,7 @@ static void build_type15(int bx0, int by0)
 
 
 	/* Try to allocate space for room. */
-	if (!room_alloc(w + h, h, FALSE, by0, bx0, &xval, &yval)) return;
+	if (!room_alloc(w + h, h, FALSE, bx0, by0, &xval, &yval)) return;
 
 	/* Choose lite or dark */
 	light = (p_ptr->depth <= randint1(25));
