@@ -841,6 +841,13 @@ static errr rd_store(int town_number, int store_number)
 	rd_byte(&num);
 	rd_s16b(&st_ptr->good_buy);
 	rd_s16b(&st_ptr->bad_buy);
+	
+	if (sf_version > 20)
+	{
+		rd_u16b(&st_ptr->x);
+		rd_u16b(&st_ptr->y);
+		rd_byte(&st_ptr->type);
+	}
 
 	if (!z_older_than(2, 1, 3))
 	{
@@ -1993,7 +2000,7 @@ static errr rd_dungeon(void)
 		/* Load dungeon map */
 		load_map(cur_hgt, 0, cur_wid, 0);
 	}
-	else if (sf_version < 20)
+	else if (sf_version < 21)
 	{
 		/* Load wilderness data */
 		load_wild_data();
@@ -2145,7 +2152,7 @@ static errr rd_dungeon(void)
 		}
 
 		/* Dungeon */
-		else if (!((sf_version < 20) && (p_ptr->depth == 0)))
+		else if (!((sf_version < 21) && (p_ptr->depth == 0)))
 		{
 			/* Access the item location */
 			c_ptr = area(o_ptr->iy,o_ptr->ix);
@@ -2198,7 +2205,7 @@ static errr rd_dungeon(void)
 		/* Read the monster */
 		rd_monster(m_ptr);
 
-		if (!((sf_version < 20) && (p_ptr->depth == 0)))
+		if (!((sf_version < 21) && (p_ptr->depth == 0)))
 		{
 			/* Access grid */
 			c_ptr = area(m_ptr->fy,m_ptr->fx);
@@ -2240,7 +2247,7 @@ static errr rd_dungeon(void)
 			/* Read the field */
 			rd_field(f_ptr);
 
-			if (!((sf_version < 20) && (p_ptr->depth == 0)))
+			if (!((sf_version < 21) && (p_ptr->depth == 0)))
 			{
 				/* Access the fields location */
 				c_ptr = area(f_ptr->fy, f_ptr->fx);
@@ -2273,7 +2280,7 @@ static errr rd_dungeon(void)
 	}
 
 	/* Hack - make new level only after objects + monsters are loaded */
-	if (sf_version < 20)
+	if (sf_version < 21)
 	{
 		/* enter the level */
 		change_level(p_ptr->depth);
@@ -3029,6 +3036,9 @@ static errr rd_savefile_new_aux(void)
 
 			/* Name */
 			rd_string(town[i].name, 32);
+			
+			/* Allocate the stores */
+			C_MAKE(town[i].store, town[i].numstores, store_type);
 
 			/* Get the stores of all towns */
 			for (j = 0; j < town[i].numstores; j++)

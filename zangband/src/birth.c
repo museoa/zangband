@@ -3010,9 +3010,6 @@ static bool player_birth_aux(void)
  */
 void player_birth(void)
 {
-	int i, j;
-
-
 	/* Create a new character */
 	while (1)
 	{
@@ -3038,16 +3035,6 @@ void player_birth(void)
 
 	/* Hack -- outfit the player */
 	player_outfit();
-
-	/* Init the shops */
-	for (i = 1; i < max_towns; i++)
-	{
-		for (j = 0; j < MAX_STORES; j++)
-		{
-			/* Initialize */
-			store_init(i, j);
-		}
-	}
 
 	/* Set the message window flag as default */
 	if (!window_flag[1])

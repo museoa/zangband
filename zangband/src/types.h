@@ -1107,9 +1107,7 @@ typedef struct store_type store_type;
 struct store_type
 {
 	byte type;				/* Store type */
-
 	byte owner;				/* Owner index */
-	byte extra;				/* Unused for now */
 
 	s16b insult_cur;		/* Insult counter */
 
@@ -1125,8 +1123,10 @@ struct store_type
 	s16b *table;			/* Table -- Legal item kinds */
 
 	byte stock_num;			/* Stock -- Number of entries */
-	s16b stock_size;		/* Stock -- Total Size of Array */
 	object_type *stock;		/* Stock -- Actual stock items */
+	
+	u16b x;					/* Location x coord. */
+	u16b y;					/* Location y coord. */
 };
 
 typedef store_type *store_ptr;

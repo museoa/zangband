@@ -166,7 +166,7 @@ static cave_type *access_wild(int y, int x)
  * Note the use of "town_illuminate()" to handle all "illumination"
  * and "memorization" issues.
  */
-static void build_store(int n, int yy, int xx)
+static void build_store(int yy, int xx, store_type *st_ptr)
 {
 	int y, x, y0, x0, y1, x1, y2, x2, tmp;
 
@@ -242,7 +242,11 @@ static void build_store(int n, int yy, int xx)
 
 	/* Clear previous contents, add a store door */
 	cave[y][x].feat = FEAT_FLOOR;
-	cave[y][x].fld_idx = FT_STORE_GENERAL + n;
+	cave[y][x].fld_idx = FT_STORE_GENERAL + st_ptr->type;
+	
+	/* Save location of store door */
+	st_ptr->x = x;
+	st_ptr->y = y;
 }
 
 /* Dodgy replacement for SCREEN_WID and SCREEN_HGT */
@@ -313,7 +317,6 @@ static void town_gen_hack(u16b town_num, int *xx, int *yy)
 	int rooms[MAX_STORES];
 	byte feat;
 
-
 	/* Prepare an Array of "remaining stores", and count them */
 	for (n = 0; n < MAX_STORES; n++) rooms[n] = n;
 
@@ -327,7 +330,7 @@ static void town_gen_hack(u16b town_num, int *xx, int *yy)
 			k = ((n <= 1) ? 0 : randint0(n));
 
 			/* Build that store at the proper location */
-			build_store(rooms[k], y, x);
+			build_store(y, x, &town[town_num].store[k]);
 
 			/* Shift the stores down, remove one store */
 			rooms[k] = rooms[--n];
@@ -638,6 +641,16 @@ static void init_towns(void)
 		town[town_count].x = x;
 		town[town_count].y = y;
 
+		/* Allocate the stores */
+		C_MAKE(town[town_count].store, MAX_STORES, store_type);
+
+		for (j = 0; j < MAX_STORES; j++)
+		{
+			/* Initialize */
+			store_init(town_count, j, j);
+		}
+
+		
 		/* Place town on wilderness */
 		for (j = 0; j < (TOWN_HGT / 16 + 1); j++)
 		{

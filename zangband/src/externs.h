@@ -849,12 +849,11 @@ extern bool polymorph_monster(int y, int x);
 extern bool dimension_door(void);
 
 /* store.c */
+extern bool allocate_store(store_type *st_ptr);
 extern void do_cmd_store(field_type *f_ptr);
 extern void store_shuffle(int which);
-extern void store_maint(int town_num, int store_num);
-extern void deallocate_store(void);
-extern bool allocate_store(store_type *store);
-extern void store_init(int town_num, int store_num);
+extern void store_maint(town_type *twn_ptr);
+extern void store_init(int town_num, int store_num, byte store_type);
 extern void move_to_black_market(object_type * o_ptr);
 
 /* bldg.c */

@@ -328,25 +328,10 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
 }
 
 
-
-/*
- * We store the current "store page" here so everyone can access it
- */
-static int store_top = 0;
-
 /*
  * We store the current "store pointer" here so everyone can access it
  */
 static store_type *st_ptr = NULL;
-
-/*
- * We store the current "owner type" here so everyone can access it
- */
-static owner_type *ot_ptr = NULL;
-
-
-
-
 
 
 /*
@@ -541,6 +526,7 @@ static s32b price_item(object_type *o_ptr, int greed, bool flip)
 	int 	adjust;
 	s32b	price;
 
+	owner_type *ot_ptr = &owners[st_ptr->type][st_ptr->owner];
 
 	/* Get the value of one of the items */
 	price = object_value(o_ptr);
@@ -679,16 +665,11 @@ static void mass_produce(object_type *o_ptr)
 			break;
 		}
 
-		/*
-		 * Because many rods (and a few wands and staffs) are useful mainly
-		 * in quantity, the Black Market will occasionally have a bunch of
-		 * one kind. -LM-
-		 */
 		case TV_ROD:
 		case TV_WAND:
 		case TV_STAFF:
 		{
-			if ((st_ptr->type == STORE_BLACK) && (randint1(3) == 1))
+			if (randint1(3) == 1)
 			{
 				if (cost < 1601L) size += damroll(1, 5);
 				else if (cost < 3201L) size += damroll(1, 3);
@@ -843,7 +824,7 @@ static bool store_check_num(object_type *o_ptr)
 	object_type *j_ptr;
 
 	/* Free space is always usable */
-	if (st_ptr->stock_num < st_ptr->stock_size) return TRUE;
+	if (st_ptr->stock_num < STORE_INVEN_MAX) return TRUE;
 
 	/* The "home" acts like the player */
 	if (st_ptr->type == STORE_HOME)
@@ -1113,7 +1094,7 @@ static int home_carry(object_type *o_ptr)
 	}
 
 	/* No space? */
-	if (st_ptr->stock_num >= st_ptr->stock_size) return (-1);
+	if (st_ptr->stock_num >= STORE_INVEN_MAX) return (-1);
 
 
 	/* Determine the "value" of the item */
@@ -1239,7 +1220,7 @@ static int store_carry(object_type *o_ptr)
 	}
 
 	/* No space? */
-	if (st_ptr->stock_num >= st_ptr->stock_size) return (-1);
+	if (st_ptr->stock_num >= STORE_INVEN_MAX) return (-1);
 
 
 	/* Check existing slots to see if we must "slide" */
@@ -1354,9 +1335,10 @@ static void store_item_optimize(int item)
  * Crap is defined as any item that is "available" elsewhere
  * Based on a suggestion by "Lee Vogt" <lvogt@cig.mcel.mot.com>
  */
-static bool black_market_crap(object_type *o_ptr)
+static bool black_market_crap(object_type *o_ptr, town_type *twn_ptr)
 {
 	int 	i, j;
+	store_type *s_ptr;
 
 	/* Ego items + artifacts are never crap */
 	if (o_ptr->xtra_name) return (FALSE);
@@ -1367,14 +1349,16 @@ static bool black_market_crap(object_type *o_ptr)
 	if (o_ptr->to_d > 0) return (FALSE);
 
 	/* Check all stores */
-	for (i = 0; i < MAX_STORES; i++)
+	for (i = 0; i < twn_ptr->numstores; i++)
 	{
-		if (i == STORE_HOME) continue;
+		s_ptr = &twn_ptr->store[i];
+		
+		if (s_ptr->type == STORE_HOME) continue;
 
 		/* Check every item in the store */
-		for (j = 0; j < town[p_ptr->town_num].store[i].stock_num; j++)
+		for (j = 0; j < s_ptr->stock_num; j++)
 		{
-			object_type *j_ptr = &town[p_ptr->town_num].store[i].stock[j];
+			object_type *j_ptr = &s_ptr->stock[j];
 
 			/* Duplicate item "type", assume crappy */
 			if (o_ptr->k_idx == j_ptr->k_idx) return (TRUE);
@@ -1434,7 +1418,7 @@ static void store_delete(void)
  *
  * Should we check for "permission" to have the given item?
  */
-static void store_create(void)
+static void store_create(town_type *twn_ptr)
 {
 	int i, tries, level;
 
@@ -1443,7 +1427,7 @@ static void store_create(void)
 
 
 	/* Paranoia -- no room left */
-	if (st_ptr->stock_num >= st_ptr->stock_size) return;
+	if (st_ptr->stock_num >= STORE_INVEN_MAX) return;
 
 
 	/* Hack -- consider up to four items */
@@ -1506,7 +1490,7 @@ static void store_create(void)
 		if (st_ptr->type == STORE_BLACK)
 		{
 			/* Hack -- No "crappy" items */
-			if (black_market_crap(q_ptr)) continue;
+			if (black_market_crap(q_ptr, twn_ptr)) continue;
 
 			/* Hack -- No "cheap" items */
 			if (object_value(q_ptr) < 10) continue;
@@ -1612,6 +1596,8 @@ static void display_entry(int pos)
 	char		c;
 
 	int maxwid;
+	
+	owner_type *ot_ptr = &owners[st_ptr->type][st_ptr->owner];
 
 	/* Get the item */
 	o_ptr = &st_ptr->stock[pos];
@@ -1722,7 +1708,7 @@ static void display_entry(int pos)
  * Displays a store's inventory 		-RAK-
  * All prices are listed as "per individual object".  -BEN-
  */
-static void display_inventory(void)
+static void display_inventory(int store_top)
 {
 	int i, k;
 
@@ -1771,10 +1757,11 @@ static void store_prt_gold(void)
 /*
  * Displays store (after clearing screen)		-RAK-
  */
-static void display_store(field_type *f_ptr)
+static void display_store(field_type *f_ptr, int store_top)
 {
 	char buf[80];
-
+	
+	owner_type *ot_ptr = &owners[st_ptr->type][st_ptr->owner];
 
 	/* Clear screen */
 	Term_clear();
@@ -1827,7 +1814,7 @@ static void display_store(field_type *f_ptr)
 	store_prt_gold();
 
 	/* Draw in the inventory */
-	display_inventory();
+	display_inventory(store_top);
 }
 
 
@@ -1901,8 +1888,10 @@ static int get_stock(int *com_val, cptr pmt, int i, int j)
 /*
  * Increase the insult counter and get angry if too many -RAK-
  */
-static int increase_insults(void)
+static bool increase_insults(void)
 {
+	owner_type *ot_ptr = &owners[st_ptr->type][st_ptr->owner];
+	
 	/* Increase insults */
 	st_ptr->insult_cur++;
 
@@ -2087,8 +2076,7 @@ static int get_haggle(cptr pmt, s32b *poffer, s32b price, int final)
  *
  * Return TRUE if offer is NOT okay
  */
-static bool receive_offer(cptr pmt, s32b *poffer,
-                          s32b last_offer, int factor,
+static bool receive_offer(cptr pmt, s32b *poffer, s32b last_offer, int factor,
                           s32b price, int final)
 {
 	/* Haggle till done */
@@ -2132,9 +2120,9 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 
 	char		out_val[160];
 
+	owner_type *ot_ptr = &owners[st_ptr->type][st_ptr->owner];
 
 	*price = 0;
-
 
 	/* Extract the starting offer and the final offer */
 	cur_ask = price_item(o_ptr, ot_ptr->max_inflate, FALSE);
@@ -2203,8 +2191,8 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 		{
 			(void)sprintf(out_val, "%s :  %ld", pmt, (long)cur_ask);
 			put_str(out_val, 1, 0);
-			cancel = receive_offer("What do you offer? ",
-			                       &offer, last_offer, 1, cur_ask, final);
+			cancel = receive_offer("What do you offer? ", &offer, last_offer,
+					 1, cur_ask, final);
 
 			if (cancel)
 			{
@@ -2308,10 +2296,10 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 	bool    cancel = FALSE;
 	cptr    pmt = "Offer";
 	char    out_val[160];
+	
+	owner_type *ot_ptr = &owners[st_ptr->type][st_ptr->owner];
 
-
-	*price = 0;
-
+	*price = 0;	
 
 	/* Obtain the starting offer and the final offer */
 	cur_ask = price_item(o_ptr, ot_ptr->max_inflate, TRUE);
@@ -2394,8 +2382,8 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 
 			(void)sprintf(out_val, "%s :  %ld", pmt, (long)cur_ask);
 			put_str(out_val, 1, 0);
-			cancel = receive_offer("What price do you ask? ",
-								   &offer, last_offer, -1, cur_ask, final);
+			cancel = receive_offer("What price do you ask? ", &offer,
+				 last_offer, -1, cur_ask, final);
 
 			if (cancel)
 			{
@@ -2488,7 +2476,7 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 /*
  * Buy an item from a store 			-RAK-
  */
-static void store_purchase(void)
+static void store_purchase(int store_top, town_type *twn_ptr)
 {
 	int i, amt, choice;
 	int item, item_new;
@@ -2503,7 +2491,8 @@ static void store_purchase(void)
 	char o_name[80];
 
 	char out_val[160];
-
+	
+	owner_type *ot_ptr = &owners[st_ptr->type][st_ptr->owner];
 
 	/* Empty? */
 	if (st_ptr->stock_num <= 0)
@@ -2737,14 +2726,14 @@ static void store_purchase(void)
 					for (i = 0; i < 10; i++)
 					{
 						/* Maintain the store */
-						store_maint(p_ptr->town_num, st_ptr->type);
+						store_maint(twn_ptr);
 					}
 
 					/* Start over */
 					store_top = 0;
 
 					/* Redraw everything */
-					display_inventory();
+					display_inventory(store_top);
 				}
 
 				/* The item is gone */
@@ -2754,7 +2743,7 @@ static void store_purchase(void)
 					if (store_top >= st_ptr->stock_num) store_top -= 12;
 
 					/* Redraw everything */
-					display_inventory();
+					display_inventory(store_top);
 				}
 
 				/* Item is still here */
@@ -2816,7 +2805,7 @@ static void store_purchase(void)
 			else if (store_top >= st_ptr->stock_num) store_top -= 12;
 
 			/* Redraw everything */
-			display_inventory();
+			display_inventory(store_top);
 
 			chg_virtue(V_SACRIFICE, 1);
 		}
@@ -2830,7 +2819,7 @@ static void store_purchase(void)
 /*
  * Sell an item to the store (or home)
  */
-static void store_sell(void)
+static void store_sell(int store_top)
 {
 	int choice;
 	int item, item_pos;
@@ -3052,7 +3041,7 @@ static void store_sell(void)
 			if (item_pos >= 0)
 			{
 				store_top = (item_pos / 12) * 12;
-				display_inventory();
+				display_inventory(store_top);
 			}
 		}
 	}
@@ -3081,7 +3070,7 @@ static void store_sell(void)
 		if (item_pos >= 0)
 		{
 			store_top = (item_pos / 12) * 12;
-			display_inventory();
+			display_inventory(store_top);
 		}
 	}
 }
@@ -3090,7 +3079,7 @@ static void store_sell(void)
 /*
  * Examine an item in a store			   -JDL-
  */
-static void store_examine(void)
+static void store_examine(int store_top)
 {
 	int         i;
 	int         item;
@@ -3170,7 +3159,8 @@ static bool leave_store = FALSE;
  * must disable some commands which are allowed in the dungeon
  * but not in the stores, to prevent chaos.
  */
-static void store_process_command(field_type *f_ptr)
+static void store_process_command(field_type *f_ptr, town_type *twn_ptr,
+	 int store_top)
 {
 	/* Handle repeating the last command */
 	repeat_check();
@@ -3201,7 +3191,7 @@ static void store_process_command(field_type *f_ptr)
 			{
 				store_top += 12;
 				if (store_top >= st_ptr->stock_num) store_top = 0;
-				display_inventory();
+				display_inventory(store_top);
 			}
 			break;
 		}
@@ -3210,28 +3200,28 @@ static void store_process_command(field_type *f_ptr)
 		case KTRL('R'):
 		{
 			do_cmd_redraw();
-			display_store(f_ptr);
+			display_store(f_ptr, store_top);
 			break;
 		}
 
 		/* Get (purchase) */
 		case 'g':
 		{
-			store_purchase();
+			store_purchase(store_top, twn_ptr);
 			break;
 		}
 
 		/* Drop (Sell) */
 		case 'd':
 		{
-			store_sell();
+			store_sell(store_top);
 			break;
 		}
 
 		/* Examine */
 		case 'x':
 		{
-			store_examine();
+			store_examine(store_top);
 			break;
 		}
 
@@ -3342,7 +3332,7 @@ static void store_process_command(field_type *f_ptr)
 		case 'C':
 		{
 			do_cmd_character();
-			display_store(f_ptr);
+			display_store(f_ptr, store_top);
 			break;
 		}
 
@@ -3466,7 +3456,7 @@ static void store_process_command(field_type *f_ptr)
  * This routine is used to deallocate the first store in the
  * store stock cache.  This is done to save memory.
  */
-void deallocate_store(void)
+static void deallocate_store(void)
 {
 	int i;
 	store_type *home;
@@ -3493,7 +3483,7 @@ void deallocate_store(void)
 	}
 
 	/* Delete store least used. */
-	C_FREE(store_cache[0]->stock, store_cache[0]->stock_size, object_type);
+	C_FREE(store_cache[0]->stock, STORE_INVEN_MAX, object_type);
 
 	/* No stock */
 	store_cache[0]->stock_num = 0;
@@ -3517,18 +3507,18 @@ void deallocate_store(void)
  * what is in every store in every town in the wilderness.  This
  * allocates the required array if the stockpointer is NULL.
  */
-bool allocate_store(store_type *store)
+bool allocate_store(store_type *st_ptr)
 {
 	int i, n = 0;
 
 	/* See if store has stock. */
-	if (store->stock != NULL)
+	if (st_ptr->stock != NULL)
 	{
 		/* Find the location in the cache */
 		for (i = 0; i < store_cache_num; i++)
 		{
 			/* See if cache location matches */
-			if (store == store_cache[i])
+			if (st_ptr == store_cache[i])
 			{
 				/* note location */
 				n = i;
@@ -3543,7 +3533,7 @@ bool allocate_store(store_type *store)
 		}
 
 		/* Move current one to end */
-		store_cache[store_cache_num-1] = store;
+		store_cache[store_cache_num-1] = st_ptr;
 
 		/* (No need to maintain store) */
 		return FALSE;
@@ -3559,9 +3549,9 @@ bool allocate_store(store_type *store)
 	}
 
 	/* Add store to end of cache */
-	store_cache[store_cache_num] = store;
+	store_cache[store_cache_num] = st_ptr;
 
-	C_MAKE(store->stock, store->stock_size, object_type);
+	C_MAKE(st_ptr->stock, STORE_INVEN_MAX, object_type);
 
 	/* The number in the cache has increased */
 	store_cache_num++;
@@ -3583,29 +3573,42 @@ bool allocate_store(store_type *store)
  */
 void do_cmd_store(field_type *f_ptr)
 {
-	int			which = f_ptr->data[0];
-	int         maintain_num;
-	int         tmp_chr;
-	int         i;
+	int which = 0;
+	int maintain_num;
+	int tmp_chr;
+	int i;
+	int store_top;
+	
+	owner_type *ot_ptr;
+	
+	town_type	*twn_ptr = &town[p_ptr->town_num];
+	
+	/* Get the store the player is on */
+	for (i = 0; i < twn_ptr->numstores; i++)
+	{
+		if ((p_ptr->py - twn_ptr->y == twn_ptr->store[i].y) && 
+		 (p_ptr->px - twn_ptr->x == twn_ptr->store[i].x))
+		{
+			which = i;
+		}
+	}
+
+	/* Save the store and owner pointers */
+	st_ptr = &twn_ptr->store[which];
+	ot_ptr = &owners[st_ptr->type][st_ptr->owner];
 
 	/* Hack -- Check the "locked doors" */
-	if ((town[p_ptr->town_num].store[which].store_open >= turn) ||
-	    (ironman_shops))
+	if ((st_ptr->store_open >= turn) || (ironman_shops))
 	{
 		msg_print("The doors are locked.");
 		return;
 	}
-	
-	/* Save the store and owner pointers */
-	st_ptr = &town[p_ptr->town_num].store[which];
-	ot_ptr = &owners[which][st_ptr->owner];
 
 	/* Calculate the number of store maintainances since the last visit */
-	maintain_num = (turn - town[p_ptr->town_num].store[which].last_visit) /
-		 (10L * STORE_TURNS);
+	maintain_num = (turn - st_ptr->last_visit) / (10L * STORE_TURNS);
 
 	/* Allocate object storage if required */
-	if (allocate_store(&town[p_ptr->town_num].store[which]))
+	if (allocate_store(st_ptr))
 	{
 		/* Hack - Maintain store if it is just allocated. */
 		maintain_num++;
@@ -3616,15 +3619,14 @@ void do_cmd_store(field_type *f_ptr)
 
 	if (maintain_num)
 	{
-		/* Store the type */
-		town[p_ptr->town_num].store[which].type = which;
-		
 		/* Maintain the store */
 		for (i = 0; i < maintain_num; i++)
-			store_maint(p_ptr->town_num, which);
-
+		{
+			store_maint(twn_ptr);
+		}
+		
 		/* Save the visit */
-		town[p_ptr->town_num].store[which].last_visit = turn;
+		st_ptr->last_visit = turn;
 	}
 
 	/* Forget the view */
@@ -3649,7 +3651,7 @@ void do_cmd_store(field_type *f_ptr)
 	store_top = 0;
 
 	/* Display the store */
-	display_store(f_ptr);
+	display_store(f_ptr, store_top);
 
 	/* Do not leave */
 	leave_store = FALSE;
@@ -3700,7 +3702,7 @@ void do_cmd_store(field_type *f_ptr)
 		request_command(TRUE);
 
 		/* Process the command */
-		store_process_command(f_ptr);
+		store_process_command(f_ptr, twn_ptr, store_top);
 
 		/* Hack -- Character is still in "icky" mode */
 		character_icky = TRUE;
@@ -3779,14 +3781,17 @@ void do_cmd_store(field_type *f_ptr)
 				if (item_pos >= 0)
 				{
 					store_top = (item_pos / 12) * 12;
-					display_inventory();
+					display_inventory(store_top);
 				}
 			}
 		}
 
 		/* Hack -- Redisplay store prices if charisma changes */
-		if (tmp_chr != p_ptr->stat_use[A_CHR]) display_inventory();
-
+		if (tmp_chr != p_ptr->stat_use[A_CHR])
+		{
+			display_inventory(store_top);
+		}
+		
 		/* Hack -- get kicked out of the store */
 		if (st_ptr->store_open >= turn) leave_store = TRUE;
 	}
@@ -3838,22 +3843,17 @@ void store_shuffle(int which)
 {
 	int i, j;
 
-
-	/* Ignore home */
-	if (which == STORE_HOME) return;
-
 	/* Activate that store */
 	st_ptr = &town[p_ptr->town_num].store[which];
+
+	/* Ignore home */
+	if (st_ptr->type == STORE_HOME) return;
 
 	/* Pick a new owner */
 	for (j = st_ptr->owner; j == st_ptr->owner; )
 	{
 		st_ptr->owner = (byte)randint0(MAX_OWNERS);
 	}
-
-	/* Activate the new owner */
-	ot_ptr = &owners[which][st_ptr->owner];
-
 
 	/* Reset the owner data */
 	st_ptr->insult_cur = 0;
@@ -3888,26 +3888,20 @@ void store_shuffle(int which)
 /*
  * Maintain the inventory at the stores.
  */
-void store_maint(int town_num, int store_num)
+void store_maint(town_type *twn_ptr)
 {
 	int 		j;
 
 	int 	old_rating = rating;
 
 	/* Ignore home */
-	if (store_num == STORE_HOME) return;
-
-	/* Activate that store */
-	st_ptr = &town[town_num].store[store_num];
-
-	/* Activate the owner */
-	ot_ptr = &owners[store_num][st_ptr->owner];
+	if (st_ptr->type == STORE_HOME) return;
 
 	/* Store keeper forgives the player */
 	st_ptr->insult_cur = 0;
 
 	/* Mega-Hack -- prune the black market */
-	if (store_num == STORE_BLACK)
+	if (st_ptr->type == STORE_BLACK)
 	{
 		/* Destroy crappy black market items */
 		for (j = st_ptr->stock_num - 1; j >= 0; j--)
@@ -3915,7 +3909,7 @@ void store_maint(int town_num, int store_num)
 			object_type *o_ptr = &st_ptr->stock[j];
 
 			/* Destroy crappy items */
-			if (black_market_crap(o_ptr))
+			if (black_market_crap(o_ptr, twn_ptr))
 			{
 				/* Destroy the item */
 				store_item_increase(j, 0 - o_ptr->number);
@@ -3957,31 +3951,571 @@ void store_maint(int town_num, int store_num)
 	if (j < STORE_MIN_KEEP) j = STORE_MIN_KEEP;
 
 	/* Hack -- prevent "overflow" */
-	if (j >= st_ptr->stock_size) j = st_ptr->stock_size - 1;
+	if (j >= STORE_INVEN_MAX) j = STORE_INVEN_MAX - 1;
 
 	/* Acquire some new items */
-	while (st_ptr->stock_num < j) store_create();
+	while (st_ptr->stock_num < j) store_create(twn_ptr);
 
 
 	/* Hack -- Restore the rating */
 	rating = old_rating;
 }
 
+/*
+ * Hack -- Objects sold in the stores -- by tval/sval pair.
+ */
+static byte store_table[MAX_STORES][STORE_CHOICES][2] =
+{
+	{
+		/* General Store */
+
+		{ TV_FOOD, SV_FOOD_RATION },
+		{ TV_FOOD, SV_FOOD_RATION },
+		{ TV_FOOD, SV_FOOD_RATION },
+		{ TV_FOOD, SV_FOOD_RATION },
+
+		{ TV_FOOD, SV_FOOD_RATION },
+		{ TV_FOOD, SV_FOOD_BISCUIT },
+		{ TV_FOOD, SV_FOOD_JERKY },
+		{ TV_FOOD, SV_FOOD_JERKY },
+
+		{ TV_FOOD, SV_FOOD_PINT_OF_WINE },
+		{ TV_FOOD, SV_FOOD_PINT_OF_ALE },
+		{ TV_LITE, SV_LITE_TORCH },
+		{ TV_LITE, SV_LITE_TORCH },
+
+		{ TV_LITE, SV_LITE_TORCH },
+		{ TV_LITE, SV_LITE_TORCH },
+		{ TV_LITE, SV_LITE_LANTERN },
+		{ TV_LITE, SV_LITE_LANTERN },
+
+		{ TV_FLASK, 0 },
+		{ TV_FLASK, 0 },
+		{ TV_FLASK, 0 },
+		{ TV_FLASK, 0 },
+
+		{ TV_FLASK, 0 },
+		{ TV_FLASK, 0 },
+		{ TV_SPIKE, 0 },
+		{ TV_SPIKE, 0 },
+
+		{ TV_SHOT, SV_AMMO_NORMAL },
+		{ TV_ARROW, SV_AMMO_LIGHT },
+		{ TV_BOLT, SV_AMMO_LIGHT },
+		{ TV_DIGGING, SV_SHOVEL },
+
+		{ TV_DIGGING, SV_PICK },
+		{ TV_CLOAK, SV_CLOAK },
+		{ TV_CLOAK, SV_CLOAK },
+		{ TV_CLOAK, SV_FUR_CLOAK },
+
+		{ TV_FOOD, SV_FOOD_RATION },
+		{ TV_FOOD, SV_FOOD_RATION },
+		{ TV_FOOD, SV_FOOD_RATION },
+		{ TV_FOOD, SV_FOOD_RATION },
+
+		{ TV_LITE, SV_LITE_TORCH },
+		{ TV_LITE, SV_LITE_TORCH },
+		{ TV_LITE, SV_LITE_LANTERN },
+		{ TV_LITE, SV_LITE_LANTERN },
+
+		{ TV_FLASK, 0 },
+		{ TV_FLASK, 0 },
+		{ TV_FLASK, 0 },
+
+		{ TV_FIGURINE, 0 },
+
+		{ TV_SHOT, SV_AMMO_LIGHT },
+		{ TV_ARROW, SV_AMMO_LIGHT },
+		{ TV_BOLT, SV_AMMO_LIGHT },
+		{ TV_DIGGING, SV_SHOVEL }
+	},
+
+	{
+		/* Armoury */
+
+		{ TV_BOOTS, SV_PAIR_OF_SOFT_LEATHER_BOOTS },
+		{ TV_BOOTS, SV_PAIR_OF_SOFT_LEATHER_BOOTS },
+		{ TV_BOOTS, SV_PAIR_OF_HARD_LEATHER_BOOTS },
+		{ TV_BOOTS, SV_PAIR_OF_HARD_LEATHER_BOOTS },
+
+		{ TV_HELM, SV_HARD_LEATHER_CAP },
+		{ TV_HELM, SV_HARD_LEATHER_CAP },
+		{ TV_HELM, SV_METAL_CAP },
+		{ TV_HELM, SV_IRON_HELM },
+
+		{ TV_SOFT_ARMOR, SV_ROBE },
+		{ TV_SOFT_ARMOR, SV_ROBE },
+		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR },
+		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR },
+
+		{ TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR },
+		{ TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR },
+		{ TV_SOFT_ARMOR, SV_HARD_STUDDED_LEATHER },
+		{ TV_SOFT_ARMOR, SV_HARD_STUDDED_LEATHER },
+
+		{ TV_SOFT_ARMOR, SV_RHINO_HIDE_ARMOR },
+		{ TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL },
+		{ TV_HARD_ARMOR, SV_METAL_SCALE_MAIL },
+		{ TV_HARD_ARMOR, SV_CHAIN_MAIL },
+
+		{ TV_HARD_ARMOR, SV_DOUBLE_RING_MAIL },
+		{ TV_HARD_ARMOR, SV_AUGMENTED_CHAIN_MAIL },
+		{ TV_HARD_ARMOR, SV_BAR_CHAIN_MAIL },
+		{ TV_HARD_ARMOR, SV_DOUBLE_CHAIN_MAIL },
+
+		{ TV_HARD_ARMOR, SV_METAL_BRIGANDINE_ARMOUR },
+		{ TV_HARD_ARMOR, SV_SPLINT_MAIL },
+		{ TV_GLOVES, SV_SET_OF_LEATHER_GLOVES },
+		{ TV_GLOVES, SV_SET_OF_LEATHER_GLOVES },
+
+		{ TV_GLOVES, SV_SET_OF_GAUNTLETS },
+		{ TV_SHIELD, SV_SMALL_LEATHER_SHIELD },
+		{ TV_SHIELD, SV_LARGE_LEATHER_SHIELD },
+		{ TV_SHIELD, SV_SMALL_METAL_SHIELD },
+
+		{ TV_BOOTS, SV_PAIR_OF_HARD_LEATHER_BOOTS },
+		{ TV_BOOTS, SV_PAIR_OF_HARD_LEATHER_BOOTS },
+		{ TV_HELM, SV_HARD_LEATHER_CAP },
+		{ TV_HELM, SV_HARD_LEATHER_CAP },
+
+		{ TV_SOFT_ARMOR, SV_ROBE },
+		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR },
+		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR },
+		{ TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR },
+
+		{ TV_SOFT_ARMOR, SV_LEATHER_JACK },
+		{ TV_HARD_ARMOR, SV_METAL_SCALE_MAIL },
+		{ TV_HARD_ARMOR, SV_CHAIN_MAIL },
+		{ TV_HARD_ARMOR, SV_CHAIN_MAIL },
+
+		{ TV_GLOVES, SV_SET_OF_LEATHER_GLOVES },
+		{ TV_GLOVES, SV_SET_OF_GAUNTLETS },
+		{ TV_SHIELD, SV_SMALL_LEATHER_SHIELD },
+		{ TV_SHIELD, SV_SMALL_LEATHER_SHIELD }
+	},
+
+	{
+		/* Weaponsmith */
+
+		{ TV_SWORD, SV_DAGGER },
+		{ TV_SWORD, SV_MAIN_GAUCHE },
+		{ TV_SWORD, SV_RAPIER },
+		{ TV_SWORD, SV_SMALL_SWORD },
+
+		{ TV_SWORD, SV_SHORT_SWORD },
+		{ TV_SWORD, SV_SABRE },
+		{ TV_SWORD, SV_CUTLASS },
+		{ TV_SWORD, SV_TULWAR },
+
+		{ TV_SWORD, SV_BROAD_SWORD },
+		{ TV_SWORD, SV_LONG_SWORD },
+		{ TV_SWORD, SV_SCIMITAR },
+		{ TV_SWORD, SV_KATANA },
+
+		{ TV_SWORD, SV_BASTARD_SWORD },
+		{ TV_POLEARM, SV_SPEAR },
+		{ TV_POLEARM, SV_AWL_PIKE },
+		{ TV_POLEARM, SV_TRIDENT },
+
+		{ TV_POLEARM, SV_PIKE },
+		{ TV_POLEARM, SV_BEAKED_AXE },
+		{ TV_POLEARM, SV_BROAD_AXE },
+		{ TV_POLEARM, SV_LANCE },
+
+		{ TV_POLEARM, SV_BATTLE_AXE },
+		{ TV_POLEARM, SV_HATCHET },
+		{ TV_BOW, SV_SLING },
+		{ TV_BOW, SV_SHORT_BOW },
+
+		{ TV_BOW, SV_LONG_BOW },
+		{ TV_BOW, SV_LIGHT_XBOW },
+		{ TV_SHOT, SV_AMMO_NORMAL },
+		{ TV_SHOT, SV_AMMO_NORMAL },
+
+		{ TV_ARROW, SV_AMMO_LIGHT },
+		{ TV_ARROW, SV_AMMO_LIGHT },
+		{ TV_BOLT, SV_AMMO_LIGHT },
+		{ TV_BOLT, SV_AMMO_LIGHT },
+
+		{ TV_BOW, SV_LONG_BOW },
+		{ TV_BOW, SV_LIGHT_XBOW },
+		{ TV_ARROW, SV_AMMO_LIGHT },
+		{ TV_ARROW, SV_AMMO_LIGHT },
+
+		{ TV_BOLT, SV_AMMO_LIGHT },
+		{ TV_BOLT, SV_AMMO_LIGHT },
+		{ TV_BOW, SV_SHORT_BOW },
+		{ TV_SWORD, SV_DAGGER },
+
+		{ TV_SWORD, SV_TANTO },
+		{ TV_SWORD, SV_RAPIER },
+		{ TV_SWORD, SV_SMALL_SWORD },
+		{ TV_SWORD, SV_SHORT_SWORD },
+
+		{ TV_HAFTED, SV_WHIP },
+		{ TV_SWORD, SV_BROAD_SWORD },
+		{ TV_SWORD, SV_LONG_SWORD },
+		{ TV_SWORD, SV_SCIMITAR }
+	},
+
+	{
+		/* Temple */
+
+		{ TV_HAFTED, SV_NUNCHAKU },
+		{ TV_HAFTED, SV_QUARTERSTAFF },
+		{ TV_HAFTED, SV_MACE },
+		{ TV_HAFTED, SV_BO_STAFF },
+
+		{ TV_HAFTED, SV_WAR_HAMMER },
+		{ TV_HAFTED, SV_WAR_HAMMER },
+		{ TV_HAFTED, SV_MORNING_STAR },
+		{ TV_HAFTED, SV_FLAIL },
+
+		{ TV_HAFTED, SV_LEAD_FILLED_MACE },
+		{ TV_SCROLL, SV_SCROLL_REMOVE_CURSE },
+		{ TV_SCROLL, SV_SCROLL_BLESSING },
+		{ TV_SCROLL, SV_SCROLL_HOLY_CHANT },
+
+		{ TV_POTION, SV_POTION_HEROISM },
+		{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
+		{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
+		{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
+
+		{ TV_POTION, SV_POTION_CURE_LIGHT },
+		{ TV_POTION, SV_POTION_CURE_SERIOUS },
+		{ TV_POTION, SV_POTION_CURE_SERIOUS },
+		{ TV_POTION, SV_POTION_CURE_CRITICAL },
+
+		{ TV_POTION, SV_POTION_CURE_CRITICAL },
+		{ TV_POTION, SV_POTION_RESTORE_EXP },
+		{ TV_POTION, SV_POTION_RESTORE_EXP },
+		{ TV_POTION, SV_POTION_RESTORE_EXP },
+
+		{ TV_LIFE_BOOK, 0 },
+		{ TV_LIFE_BOOK, 0 },
+		{ TV_LIFE_BOOK, 0 },
+		{ TV_LIFE_BOOK, 0 },
+
+		{ TV_LIFE_BOOK, 1 },
+		{ TV_LIFE_BOOK, 1 },
+		{ TV_LIFE_BOOK, 1 },
+		{ TV_LIFE_BOOK, 1 },
+
+		{ TV_HAFTED, SV_WHIP },
+		{ TV_HAFTED, SV_MACE },
+		{ TV_HAFTED, SV_BALL_AND_CHAIN },
+		{ TV_HAFTED, SV_WAR_HAMMER },
+
+		{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
+		{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
+		{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
+		{ TV_POTION, SV_POTION_CURE_CRITICAL },
+
+		{ TV_POTION, SV_POTION_CURE_CRITICAL },
+		{ TV_POTION, SV_POTION_RESTORE_EXP },
+
+		{ TV_FIGURINE, 0 },
+		{ TV_STATUE, SV_ANY },
+
+		{ TV_SCROLL, SV_SCROLL_REMOVE_CURSE },
+		{ TV_SCROLL, SV_SCROLL_REMOVE_CURSE },
+		{ TV_SCROLL, SV_SCROLL_STAR_REMOVE_CURSE },
+		{ TV_SCROLL, SV_SCROLL_STAR_REMOVE_CURSE }
+	},
+
+	{
+		/* Alchemy shop */
+
+		{ TV_SCROLL, SV_SCROLL_ENCHANT_WEAPON_TO_HIT },
+		{ TV_SCROLL, SV_SCROLL_ENCHANT_WEAPON_TO_DAM },
+		{ TV_SCROLL, SV_SCROLL_ENCHANT_ARMOR },
+		{ TV_SCROLL, SV_SCROLL_IDENTIFY },
+
+		{ TV_SCROLL, SV_SCROLL_IDENTIFY },
+		{ TV_SCROLL, SV_SCROLL_IDENTIFY },
+		{ TV_SCROLL, SV_SCROLL_IDENTIFY },
+		{ TV_SCROLL, SV_SCROLL_LIGHT },
+
+		{ TV_SCROLL, SV_SCROLL_PHASE_DOOR },
+		{ TV_SCROLL, SV_SCROLL_PHASE_DOOR },
+		{ TV_SCROLL, SV_SCROLL_TELEPORT },
+		{ TV_SCROLL, SV_SCROLL_MONSTER_CONFUSION },
+
+		{ TV_SCROLL, SV_SCROLL_MAPPING },
+		{ TV_SCROLL, SV_SCROLL_DETECT_GOLD },
+		{ TV_SCROLL, SV_SCROLL_DETECT_ITEM },
+		{ TV_SCROLL, SV_SCROLL_DETECT_TRAP },
+
+		{ TV_SCROLL, SV_SCROLL_DETECT_INVIS },
+		{ TV_SCROLL, SV_SCROLL_RECHARGING },
+		{ TV_SCROLL, SV_SCROLL_SATISFY_HUNGER },
+		{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
+
+		{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
+		{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
+		{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
+		{ TV_SCROLL, SV_SCROLL_TELEPORT },
+
+		{ TV_SCROLL, SV_SCROLL_TELEPORT },
+		{ TV_POTION, SV_POTION_RES_STR },
+		{ TV_POTION, SV_POTION_RES_INT },
+		{ TV_POTION, SV_POTION_RES_WIS },
+
+		{ TV_POTION, SV_POTION_RES_DEX },
+		{ TV_POTION, SV_POTION_RES_CON },
+		{ TV_POTION, SV_POTION_RES_CHR },
+		{ TV_SCROLL, SV_SCROLL_IDENTIFY },
+
+		{ TV_SCROLL, SV_SCROLL_IDENTIFY },
+		{ TV_SCROLL, SV_SCROLL_STAR_IDENTIFY },  /* Yep, occasionally! */
+		{ TV_SCROLL, SV_SCROLL_STAR_IDENTIFY },
+		{ TV_SCROLL, SV_SCROLL_LIGHT },
+
+		{ TV_POTION, SV_POTION_RES_STR },
+		{ TV_POTION, SV_POTION_RES_INT },
+		{ TV_POTION, SV_POTION_RES_WIS },
+		{ TV_POTION, SV_POTION_RES_DEX },
+
+		{ TV_POTION, SV_POTION_RES_CON },
+		{ TV_POTION, SV_POTION_RES_CHR },
+		{ TV_SCROLL, SV_SCROLL_ENCHANT_ARMOR },
+		{ TV_SCROLL, SV_SCROLL_ENCHANT_ARMOR },
+
+		{ TV_SCROLL, SV_SCROLL_RECHARGING },
+		{ TV_SCROLL, SV_SCROLL_SATISFY_HUNGER },
+		{ TV_SCROLL, SV_SCROLL_SATISFY_HUNGER },
+		{ TV_SCROLL, SV_SCROLL_SATISFY_HUNGER }
+
+	},
+
+	{
+		/* Magic-User store */
+
+		{ TV_RING, SV_RING_PROTECTION },
+		{ TV_RING, SV_RING_FEATHER_FALL },
+		{ TV_RING, SV_RING_PROTECTION },
+		{ TV_RING, SV_RING_RESIST_FIRE },
+
+		{ TV_RING, SV_RING_RESIST_COLD },
+		{ TV_AMULET, SV_AMULET_CHARISMA },
+		{ TV_AMULET, SV_AMULET_SLOW_DIGEST },
+		{ TV_AMULET, SV_AMULET_RESIST_ACID },
+
+		{ TV_AMULET, SV_AMULET_SEARCHING },
+		{ TV_WAND, SV_WAND_SLOW_MONSTER },
+		{ TV_WAND, SV_WAND_CONFUSE_MONSTER },
+		{ TV_WAND, SV_WAND_SLEEP_MONSTER },
+
+		{ TV_WAND, SV_WAND_MAGIC_MISSILE },
+		{ TV_WAND, SV_WAND_STINKING_CLOUD },
+		{ TV_WAND, SV_WAND_WONDER },
+		{ TV_WAND, SV_WAND_DISARMING },
+
+		{ TV_STAFF, SV_STAFF_LITE },
+		{ TV_STAFF, SV_STAFF_MAPPING },
+		{ TV_STAFF, SV_STAFF_DETECT_TRAP },
+		{ TV_STAFF, SV_STAFF_DETECT_DOOR },
+
+		{ TV_STAFF, SV_STAFF_DETECT_GOLD },
+		{ TV_STAFF, SV_STAFF_DETECT_ITEM },
+		{ TV_STAFF, SV_STAFF_DETECT_INVIS },
+		{ TV_STAFF, SV_STAFF_DETECT_EVIL },
+
+		{ TV_STAFF, SV_STAFF_TELEPORTATION },
+		{ TV_STAFF, SV_STAFF_TELEPORTATION },
+		{ TV_STAFF, SV_STAFF_TELEPORTATION },
+		{ TV_STAFF, SV_STAFF_TELEPORTATION },
+
+		{ TV_STAFF, SV_STAFF_IDENTIFY },
+		{ TV_STAFF, SV_STAFF_IDENTIFY },
+		{ TV_STAFF, SV_STAFF_IDENTIFY },
+
+		{ TV_STAFF, SV_STAFF_IDENTIFY },
+		{ TV_STAFF, SV_STAFF_REMOVE_CURSE },
+		{ TV_STAFF, SV_STAFF_CURE_LIGHT },
+		{ TV_STAFF, SV_STAFF_PROBING },
+
+		{ TV_FIGURINE, 0 },
+
+		{ TV_SORCERY_BOOK, 0 },
+		{ TV_SORCERY_BOOK, 0 },
+		{ TV_SORCERY_BOOK, 1 },
+		{ TV_SORCERY_BOOK, 1 },
+
+		{ TV_ARCANE_BOOK, 0 },
+		{ TV_ARCANE_BOOK, 0 },
+		{ TV_ARCANE_BOOK, 1 },
+		{ TV_ARCANE_BOOK, 1 },
+
+		{ TV_ARCANE_BOOK, 2 },
+		{ TV_ARCANE_BOOK, 2 },
+		{ TV_ARCANE_BOOK, 3 },
+		{ TV_ARCANE_BOOK, 3 },
+
+	},
+
+	{
+		/* Black Market (unused) */
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 }
+	},
+
+	{
+		/* Home (unused) */
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 }
+	},
+
+	{
+		/* Bookstore */
+		{ TV_SORCERY_BOOK, 0 },
+		{ TV_SORCERY_BOOK, 0 },
+		{ TV_SORCERY_BOOK, 1 },
+		{ TV_SORCERY_BOOK, 1 },
+
+		{ TV_NATURE_BOOK, 0 },
+		{ TV_NATURE_BOOK, 0 },
+		{ TV_NATURE_BOOK, 1 },
+		{ TV_NATURE_BOOK, 1 },
+
+		{ TV_CHAOS_BOOK, 0 },
+		{ TV_CHAOS_BOOK, 0 },
+		{ TV_CHAOS_BOOK, 1 },
+		{ TV_CHAOS_BOOK, 1 },
+
+		{ TV_DEATH_BOOK, 0 },
+		{ TV_DEATH_BOOK, 0 },
+		{ TV_DEATH_BOOK, 1 },
+		{ TV_DEATH_BOOK, 1 },
+
+		{ TV_TRUMP_BOOK, 0 },		/* +16 */
+		{ TV_TRUMP_BOOK, 0 },
+		{ TV_TRUMP_BOOK, 1 },
+		{ TV_TRUMP_BOOK, 1 },
+
+		{ TV_ARCANE_BOOK, 0 },
+		{ TV_ARCANE_BOOK, 0 },
+		{ TV_ARCANE_BOOK, 1 },
+		{ TV_ARCANE_BOOK, 1 },
+
+		{ TV_ARCANE_BOOK, 2 },
+		{ TV_ARCANE_BOOK, 2 },
+		{ TV_ARCANE_BOOK, 3 },
+		{ TV_ARCANE_BOOK, 3 },
+
+		{ TV_LIFE_BOOK, 0 },
+		{ TV_LIFE_BOOK, 0 },
+		{ TV_LIFE_BOOK, 0 },
+		{ TV_LIFE_BOOK, 0 },
+
+		{ TV_LIFE_BOOK, 1 },
+		{ TV_LIFE_BOOK, 1 },
+		{ TV_LIFE_BOOK, 1 },
+		{ TV_LIFE_BOOK, 1 },
+	}
+};
+
 
 /*
  * Initialize the stores
  */
-void store_init(int town_num, int store_num)
+void store_init(int town_num, int store_num, byte store_type)
 {
+	int k;
+	
 	/* Activate that store */
 	st_ptr = &town[town_num].store[store_num];
 
 	/* Pick an owner */
 	st_ptr->owner = (byte)randint0(MAX_OWNERS);
 
-	/* Activate the new owner */
-	ot_ptr = &owners[store_num][st_ptr->owner];
+	/* Do not allocate the stock yet. */
+	st_ptr->stock = NULL;
+	
+	/* Set the store type */
+	st_ptr->type = store_type;
+	
+	/* Fill in table if required */
+	if (!((store_type == STORE_BLACK) || (store_type == STORE_HOME)))
+	{
+		/* Assume full table */
+		st_ptr->table_size = STORE_CHOICES;
+		
+		/* Allocate the stock */
+		C_MAKE(st_ptr->table, st_ptr->table_size, s16b);
 
+		/* Scan the choices */
+		for (k = 0; k < STORE_CHOICES; k++)
+		{
+			/* Extract the tval/sval codes */
+			int tv = store_table[store_type][k][0];
+			int sv = store_table[store_type][k][1];
+
+			/* Add that item index to the table */
+			st_ptr->table[st_ptr->table_num++] = lookup_kind(tv, sv);
+		}
+	}
 
 	/* Initialize the store */
 	st_ptr->store_open = 0;
@@ -4005,15 +4539,17 @@ void move_to_black_market(object_type *o_ptr)
 	/* Not in town */
 	if (!p_ptr->town_num) return;
 
+
+#if 0
+	/* Some towns may not have black markets... */
+	/* This hack is turned off for now -SF- */
+
 	st_ptr = &town[p_ptr->town_num].store[STORE_BLACK];
 
 	/* Make sure the black market has stock */
 	if (allocate_store(st_ptr))
 	{
 		store_maint(p_ptr->town_num, STORE_BLACK);
-
-		/* Store the type */
-		town[p_ptr->town_num].store[STORE_BLACK].type = STORE_BLACK;
 	}
 
 	o_ptr->ident |= IDENT_STOREB;
@@ -4023,6 +4559,8 @@ void move_to_black_market(object_type *o_ptr)
 #ifdef USE_SCRIPT
 	object_delete_callback(o_ptr);
 #endif /* USE_SCRIPT */
+
+#endif /* 0 */
 
 	object_wipe(o_ptr); /* Don't leave a bogus object behind... */
 }

@@ -600,7 +600,7 @@ errr process_pref_file_aux(char *buf)
 			if (streq(gf_desc[i].name, buf + 2))
 			{
 				/* Wipe old strings */
-				if (!gf_color[gf_desc[i].num])
+				if (gf_color[gf_desc[i].num])
 				{
 					string_free(gf_color[gf_desc[i].num]);
 				}

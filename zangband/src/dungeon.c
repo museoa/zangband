@@ -1885,7 +1885,7 @@ static void process_world(void)
 			if (!p_ptr->depth && p_ptr->town_num)
 			{
 				msg_print("You see one of the shopkeepers running for the hills!");
-				store_shuffle(randint0(MAX_STORES));
+				store_shuffle(randint0(town[p_ptr->town_num].numstores));
 			}
 			msg_print(NULL);
 		}
