@@ -356,8 +356,8 @@ struct _term_data
 
 	uint keys;
 
-	uint rows;
-	uint cols;
+	int rows;
+	int cols;
 
 	uint pos_x;
 	uint pos_y;
@@ -1072,9 +1072,6 @@ static int new_palette(void)
 	if (!paletted) return (TRUE);
 
 
-	/* No palette */
-	hBmPal = NULL;
-
 	/* No bitmap */
 	lppeSize = 0;
 	lppe = NULL;
@@ -1104,7 +1101,7 @@ static int new_palette(void)
 		}
 	}
 
-#endif
+#endif /* USE_GRAPHICS */
 
 	/* Size of palette */
 	pLogPalSize = sizeof(LOGPALETTE) + (nEntries + 16) * sizeof(PALETTEENTRY);
@@ -1801,10 +1798,12 @@ static errr Term_xtra_win_sound(int v)
 
 #endif /* WIN32 */
 
-#endif /* USE_SOUND */
+#else /* USE_SOUND */
 
 	/* Oops */
 	return (1);
+
+#endif /* USE_SOUND */
 }
 
 
@@ -2663,16 +2662,10 @@ static void setup_menus(void)
  */
 static void check_for_save_file(LPSTR cmd_line)
 {
-	char *s, *p;
+	char *s;
 
 	/* First arg */
 	s = cmd_line;
-
-	/* Second arg */
-	p = strchr(s, ' ');
-
-	/* Tokenize, advance */
-	if (p) *p++ = '\0';
 
 	/* No args */
 	if (!*s) return;
@@ -3302,8 +3295,6 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
 		case WM_SYSKEYDOWN:
 		case WM_KEYDOWN:
 		{
-			BYTE KeyState = 0x00;
-
 			bool mc = FALSE;
 			bool ms = FALSE;
 			bool ma = FALSE;
@@ -3642,8 +3633,6 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg,
 		case WM_SYSKEYDOWN:
 		case WM_KEYDOWN:
 		{
-			BYTE KeyState = 0x00;
-
 			bool mc = FALSE;
 			bool ms = FALSE;
 			bool ma = FALSE;

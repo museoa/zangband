@@ -107,33 +107,18 @@ static bool know_damage(int r_idx, int i)
 static void roff_aux(int r_idx, int remem)
 {
 	monster_race    *r_ptr = &r_info[r_idx];
-
 	bool            old = FALSE;
 	bool            sin = FALSE;
-
 	int             m, n, r;
-
 	cptr            p, q;
-
 	int             msex = 0;
-
-	int speed = (ironman_nightmare) ? r_ptr->speed + 5 : r_ptr->speed;
-
+	int             speed = (ironman_nightmare) ? r_ptr->speed + 5 : r_ptr->speed;
 	bool            breath = FALSE;
 	bool            magic = FALSE;
-
-	u32b		flags1;
-	u32b		flags2;
-	u32b		flags3;
-	u32b		flags4;
-	u32b		flags5;
-	u32b		flags6;
-
-	int		vn = 0;
-	cptr		vp[64];
-
+	u32b            flags1, flags2, flags3, flags4, flags5, flags6;
+	int             vn = 0;
+	cptr            vp[64];
 	monster_race    save_mem;
-
 
 
 #if 0
@@ -643,7 +628,6 @@ static void roff_aux(int r_idx, int remem)
 
 
 	/* Collect inate attacks */
-	vn = 0;
 	if (flags4 & RF4_SHRIEK)  vp[vn++] = "shriek for help";
 	if (flags4 & RF4_XXX3)    vp[vn++] = "do something";
 	if (flags4 & RF4_ROCKET)  vp[vn++] = "shoot a rocket";

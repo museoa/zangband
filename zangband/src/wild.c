@@ -424,7 +424,7 @@ static void init_towns(void)
 	int i, j;
 	u16b town_num;
 
-	town_num = 1;
+
 	for (town_num = 1; town_num <= 4; town_num++)
 	{
 		strcpy(town[town_num].name, "town");

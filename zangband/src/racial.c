@@ -508,7 +508,7 @@ static void cmd_racial_power_aux(s32b command)
 		case RACE_VAMPIRE:
 			if (racial_aux(2, (1 + (plev / 3)), A_CON, 9))
 			{
-				int y, x, dummy = 0;
+				int y, x, dummy;
 				cave_type *c_ptr;
 
 				/* Only works on adjacent monsters */

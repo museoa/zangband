@@ -1587,7 +1587,7 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 bool activate_random_artifact(object_type * o_ptr)
 {
 	int plev = p_ptr->lev;
-	int k, dir, dummy = 0;
+	int k, dir, dummy;
 
 	if (!o_ptr->art_name) return FALSE; /* oops? */
 
@@ -1762,7 +1762,7 @@ bool activate_random_artifact(object_type * o_ptr)
 		case ACT_WHIRLWIND:
 		{
 			{
-				int y = 0, x = 0;
+				int y, x;
 				cave_type       *c_ptr;
 				monster_type    *m_ptr;
 

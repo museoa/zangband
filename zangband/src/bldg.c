@@ -624,16 +624,12 @@ bool get_nightmare(int r_idx)
 
 void have_nightmare(int r_idx)
 {
-	bool happened = FALSE;
-
-	int power = 100;
-
 	monster_race *r_ptr = &r_info[r_idx];
-
 	char m_name[80];
+	bool happened = FALSE;
+	int power = r_ptr->level + 10;
 	cptr desc = r_name + r_ptr->name;
 
-	power = r_ptr->level + 10;
 
 	if (!(r_ptr->flags1 & RF1_UNIQUE))
 	{
@@ -1577,7 +1573,6 @@ static void building_recharge(void)
 		else
 		{
 			/* No recharge necessary */
-			price = 0;
 			msg_format("That doesn't need to be recharged.");
 			msg_print(NULL);
 			return;
@@ -1690,7 +1685,6 @@ static void bldg_process_command(building_type *bldg, int i)
 	int bact = bldg->actions[i];
 	int bcost;
 	bool paid = FALSE;
-	bool set_reward = FALSE;
 	int amt;
 
 	if (is_owner(bldg))
@@ -1716,8 +1710,6 @@ static void bldg_process_command(building_type *bldg, int i)
 		msg_print(NULL);
 		return;
 	}
-
-	if (!bcost) set_reward = TRUE;
 
 #ifdef USE_SCRIPT
 

@@ -390,14 +390,13 @@ static bool summon_possible(int y1, int x1)
  * no equally friendly monster is
  * between the attacker and target.
  */
+/* Must be the same as projectable() */
 bool clean_shot(int y1, int x1, int y2, int x2, bool friend)
 {
-	/* Must be the same as projectable() */
-
 	int i, y, x;
-
-	int grid_n = 0;
+	int grid_n;
 	u16b grid_g[512];
+
 
 	/* Check the projection path */
 	grid_n = project_path(grid_g, MAX_RANGE, y1, x1, y2, x2, 0);
