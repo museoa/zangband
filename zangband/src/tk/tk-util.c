@@ -19,7 +19,7 @@
 #define USHRT_MAX 65535
 #endif
 
-#define MAX_DELTA 195076 /* 255^2 + 255^2 + 255^2 + 1 */
+#define MAX_DELTA (255 * 6)
 #define MAX_COLOR_ENTRY 1021
 
 /* Structure for a hash table used by rgb2index() */
@@ -136,7 +136,7 @@ static void IndexedColor_ResetHash(IndexedColor *idc)
  */
 static int IndexedColor_RGB2Index(IndexedColor *idc, unsigned char r, unsigned char g, unsigned char b)
 {
-	int i, delta, index, sum, max;
+	int i, diff, index, max;
 	unsigned char *col;
 	unsigned long pixel;
 	t_color_entry *entry;
@@ -162,22 +162,28 @@ static int IndexedColor_RGB2Index(IndexedColor *idc, unsigned char r, unsigned c
 	/* Check each palette entry */
 	for (i = 0; i < 256; i++)
 	{
-		/*
-		 * Calculate the minimum difference between the given RGB value
-		 * and each of the palette entries
-		 */
-		delta = r - *col++; sum = delta * delta;
-		delta = g - *col++; sum += delta * delta;
-		delta = b - *col++; sum += delta * delta;
+		/* Work out the 'difference' between the colours */
+
+		diff = abs(r - col[0]);
+		diff += abs(g - col[1]);
+		diff += abs(b - col[2]);
+
+		/* Multiply by the 'colour factor' */
+		diff *= 3;
+
+		/* Add in the effects of brightness */
+		diff += abs(b + r + g - col[0] - col[1] - col[2]);
+		
+		col += 3;
 
 		/* This palette entry is a better match than any other so far */
-		if (sum < max)
+		if (diff < max)
 		{
 			/* Remember the palette index */
 			index = i;
 
 			/* Remember the minimum difference */
-			max = sum;
+			max = diff;
 		}
 	}
 
@@ -657,9 +663,9 @@ int Colormap_Init(Tcl_Interp *interp)
 			XQueryColor(display, colormap, &xColor);
 	
 			/* Convert RGB values to 0-255 */
-			r = ((double) xColor.red) / USHRT_MAX * 255;
-			g = ((double) xColor.green) / USHRT_MAX * 255;
-			b = ((double) xColor.blue) / USHRT_MAX * 255;
+			r = xColor.red / 255;
+			g = xColor.green / 255;
+			b = xColor.blue / 255;
 		}
 #endif /* PLATFORM_X11 */
 
