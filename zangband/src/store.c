@@ -1425,7 +1425,7 @@ static void store_purchase(int *store_top)
 	 * his pack.  I suppose we could make an extension to
 	 * inven_carry_okay() to do this properly.
 	 */
-	if ((j_ptr->tval < TV_DIGGING) && (j_ptr->tval > TV_DRAG_ARMOR))
+	if ((j_ptr->tval < TV_BOW) || (j_ptr->tval > TV_DRAG_ARMOR))
 	{
 		/* Find out how many the player wants */
 		if (o_ptr->number > 1)
