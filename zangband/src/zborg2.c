@@ -641,9 +641,7 @@ void borg_update_view(void)
 	int py = c_y;
     int px = c_x;
 	
-	borg_grid *bg_ptr;
-	
-	/* map_block *mp_ptr; */
+	map_block *mb_ptr;
 
 	byte info;
 
@@ -657,10 +655,10 @@ void borg_update_view(void)
 
 		if (!map_in_bounds(x, y)) continue;
 		
-		bg_ptr = &borg_grids[y][x];
+		mb_ptr = map_loc(x, y);
 		
 		/* Clear "BORG_VIEW" flag */
-		bg_ptr->info &= ~(BORG_VIEW);
+		mb_ptr->info &= ~(BORG_MAP_VIEW);
 	}
 
 	/* empty the viewable list */
@@ -671,10 +669,10 @@ void borg_update_view(void)
 	/* Player grid */
 
 	/* Get grid info */
-	bg_ptr = &borg_grids[py][px];
+	mb_ptr = map_loc(px, py);
 
 	/* Assume viewable */
-	bg_ptr->info |= (BORG_VIEW);
+	mb_ptr->info |= (BORG_MAP_VIEW);
 
 	/* Save in array */
 	borg_view_y[view_n] = py;
@@ -740,12 +738,12 @@ void borg_update_view(void)
 				}
 
 				/* Point to the location on the map */
-				bg_ptr = &borg_grids[y][x];
+				mb_ptr = map_loc(x, y);
 
 				/* Get current info flags for the square */
-				info = bg_ptr->info;
+				info = mb_ptr->info;
 
-				if (borg_cave_los_grid(bg_ptr))
+				if (borg_cave_los_grid(mb_ptr))
 				{
 					/* Floor or semi-blocking terrain like trees */
 
@@ -773,13 +771,13 @@ void borg_update_view(void)
 				}
 				
 				/* All ready seen.  Next... */
-				if (info & BORG_VIEW) continue;
+				if (info & BORG_MAP_VIEW) continue;
 
 				/* Mark as viewable */
-				info |= (BORG_VIEW);
+				info |= (BORG_MAP_VIEW);
 
 				/* Save cave info */
-				bg_ptr->info = info;
+				mb_ptr->info = info;
 
 				/* Save in array */
 				borg_view_y[view_n] = y;
@@ -791,7 +789,34 @@ void borg_update_view(void)
 }
 
 
+/*
+ * Clear the viewable space
+ */
+void borg_forget_view(void)
+{
+    int i;
 
+    map_block *mb_ptr;
+
+    /* None to forget */
+    if (!borg_view_n) return;
+
+    /* Clear them all */
+    for (i = 0; i < borg_view_n; i++)
+    {
+        int y = borg_view_y[i];
+        int x = borg_view_x[i];
+
+        /* Access the grid */
+        mb_ptr = map_loc(x, y);
+
+        /* Forget that the grid is viewable */
+        mb_ptr->info &= ~BORG_MAP_VIEW;
+    }
+
+    /* None left */
+    borg_view_n = 0;
+}
 
 
 
@@ -822,7 +847,7 @@ bool borg_projectable(int y1, int x1, int y2, int x2)
 {
     int dist, y, x;
 
-    borg_grid *ag;
+    map_block *mb_ptr;
 
     /* Start at the initial location */
     y = y1; x = x1;
@@ -831,22 +856,22 @@ bool borg_projectable(int y1, int x1, int y2, int x2)
     for (dist = 0; dist <= MAX_RANGE; dist++)
     {
         /* Get the grid */
-        ag = &borg_grids[y][x];
+        mb_ptr = map_loc(x, y);
 
         if (borg_skill[BI_CURHP] < borg_skill[BI_MAXHP] / 2)
         {
             /* Assume all unknow grids more than distance 10 from you */
             /* are walls--when I am wounded. This will make me more fearful */
-            if ((dist > 10) && (ag->feat == FEAT_NONE)) break;
+            if ((dist > 10) && (mb_ptr->terrain == FEAT_NONE)) break;
         }
         else
         {
             /* Assume all unknow grids more than distance 3 from you */
             /* are walls. */
-            if ((dist > 2) && (ag->feat == FEAT_NONE)) break;
+            if ((dist > 2) && (mb_ptr->terrain == FEAT_NONE)) break;
         }
         /* Never pass through walls/doors */
-        if (dist && (!borg_cave_floor_grid(ag))) break;
+        if (dist && (!borg_cave_floor_grid(mb_ptr))) break;
 
         /* Check for arrival at "final target" */
         if ((x == x2) && (y == y2)) return (TRUE);
@@ -871,7 +896,7 @@ bool borg_offset_projectable(int y1, int x1, int y2, int x2)
 {
     int dist, y, x;
 
-    borg_grid *ag;
+    map_block *mb_ptr;
 
     /* Start at the initial location */
     y = y1; x = x1;
@@ -880,13 +905,13 @@ bool borg_offset_projectable(int y1, int x1, int y2, int x2)
     for (dist = 0; dist <= MAX_RANGE; dist++)
     {
         /* Get the grid */
-        ag = &borg_grids[y][x];
+        mb_ptr = map_loc(x, y);
 
         /* Assume all unknown grids are walls. */
-        if ((dist) && (ag->feat == FEAT_NONE)) break;
+        if ((dist) && (mb_ptr->terrain == FEAT_NONE)) break;
 
         /* Never pass through walls/doors */
-        if (dist && (!borg_cave_floor_grid(ag))) break;
+        if (dist && (!borg_cave_floor_grid(mb_ptr))) break;
 
         /* Check for arrival at "final target" */
         if ((x == x2) && (y == y2)) return (TRUE);
@@ -909,7 +934,8 @@ bool borg_offset_projectable(int y1, int x1, int y2, int x2)
 bool borg_projectable_pure(int y1, int x1, int y2, int x2)
 {
     int dist, y, x;
-    borg_grid *ag;
+   
+	map_block *mb_ptr;
 
     /* Start at the initial location */
     y = y1; x = x1;
@@ -918,19 +944,19 @@ bool borg_projectable_pure(int y1, int x1, int y2, int x2)
     for (dist = 0; dist <= MAX_RANGE; dist++)
     {
         /* Get the grid */
-        ag = &borg_grids[y][x];
+        mb_ptr = map_loc(x, y);
 
         /* Hack -- assume unknown grids are walls */
-        if (dist && (ag->feat == FEAT_NONE)) break;
+        if (dist && (mb_ptr->terrain == FEAT_NONE)) break;
 
         /* Never pass through walls/doors */
-        if (dist && (!borg_cave_floor_grid(ag))) break;
+        if (dist && (!borg_cave_floor_grid(mb_ptr))) break;
 
         /* Check for arrival at "final target" */
         if ((x == x2) && (y == y2)) return (TRUE);
 
         /* Stop at monsters */
-        if (ag->kill) break;
+        if (mb_ptr->monster) break;
 
         /* Calculate the new location */
         borgmove2(&y, &x, y1, x1, y2, x2);
@@ -938,36 +964,6 @@ bool borg_projectable_pure(int y1, int x1, int y2, int x2)
 
     /* Assume obstruction */
     return (FALSE);
-}
-
-
-/*
- * Clear the viewable space
- */
-void borg_forget_view(void)
-{
-    int i;
-
-    borg_grid *ag;
-
-    /* None to forget */
-    if (!borg_view_n) return;
-
-    /* Clear them all */
-    for (i = 0; i < borg_view_n; i++)
-    {
-        int y = borg_view_y[i];
-        int x = borg_view_x[i];
-
-        /* Access the grid */
-        ag = &borg_grids[y][x];
-
-        /* Forget that the grid is viewable */
-        ag->info &= ~BORG_VIEW;
-    }
-
-    /* None left */
-    borg_view_n = 0;
 }
 
 

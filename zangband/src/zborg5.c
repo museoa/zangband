@@ -910,7 +910,7 @@ static bool borg_follow_kill_aux(int i, int y, int x)
 	mb_ptr = map_loc(x, y);
 
     /* Line of sight */
-    if (ag->info & BORG_VIEW)
+    if (mb_ptr->info & BORG_MAP_VIEW)
     {
         /* Use "illumination" */
         if (mb_ptr->flags & MAP_SEEN)
@@ -976,6 +976,7 @@ static void borg_follow_kill(int i)
     int dy, b_dy = 0;
 
     borg_grid *ag;
+	map_block *mb_ptr;
 
     borg_kill *kill = &borg_kills[i];
 
@@ -1052,9 +1053,10 @@ static void borg_follow_kill(int i)
 
         /* Access the grid */
         ag = &borg_grids[y][x];
+		mb_ptr = map_loc(x, y);
 
         /* Skip known walls and doors */
-        if (!borg_cave_floor_grid(ag)) continue;
+        if (!borg_cave_floor_grid(mb_ptr)) continue;
 
         /* Skip known monsters */
         if (ag->kill) continue;
@@ -1083,9 +1085,10 @@ static void borg_follow_kill(int i)
 
     /* Access the grid */
     ag = &borg_grids[y][x];
+	mb_ptr = map_loc(x, y);
 
     /* Avoid walls and doors */
-    if (!borg_cave_floor_grid(ag))
+    if (!borg_cave_floor_grid(mb_ptr))
     {
         /* Just delete the monster */
         borg_delete_kill(i);
@@ -2571,112 +2574,65 @@ static void borg_update_map(void)
             }
 
             /* Save the old "wall" or "door" */
-            old_wall = !borg_cave_floor_grid(ag);
-
-            /* Analyze symbol */
-            /* AJG Adjust for funky graphics */
-            switch (Get_f_info_number[t_c])
+            old_wall = !borg_cave_floor_grid(mb_ptr);
+			
+			/* Save terrain */
+			ag->feat = mb_ptr->terrain;
+			
+			/*
+			 * Examine monsters
+			 */
+			if (mb_ptr->monster)
 			{
+				borg_wank *wank;
 
-                /* Floors */
-                case FEAT_FLOOR:
-                case FEAT_DIRT:
-                case FEAT_GRASS:
-                {
-					/* Cheat.  Unfortunately, monsters look like this.
-					 * So Zborg has to check to make sure this '.' is indeed
-					 * a floor and not item or a wacko monster.
-					 */
-					if (mb_ptr->monster)
-					{
-						monster_race *r_ptr = &r_info[mb_ptr->monster];
+		        /* Check for memory overflow */
+		        if (borg_wank_num == AUTO_VIEW_MAX) borg_oops("too many objects");
 
-						/* Only check monsters that look just like this */
-						if (r_ptr->d_char == 46) /* '.' */
-						{
-		                    borg_wank *wank;
+		        /* Access next wank, advance */
+		        wank = &borg_wanks[borg_wank_num++];
 
-		                     /* Check for memory overflow */
-		                    if (borg_wank_num == AUTO_VIEW_MAX)
-		                        borg_oops("too many objects");
+		        /* Save some information */
+		        wank->x = x;
+		        wank->y = y;
+		        wank->t_a = t_a;
+		        wank->t_c = t_c;
+		        wank->is_kill = TRUE;
+			}
+			
+			/*
+			 * Examine objects
+			 */
+			if (mb_ptr->object)
+			{
+				borg_wank *wank;
 
-		                    /* Access next wank, advance */
-		                    wank = &borg_wanks[borg_wank_num++];
+		        /* Check for memory overflow */
+		        if (borg_wank_num == AUTO_VIEW_MAX) borg_oops("too many objects");
 
-		                    /* Save some information */
-		                    wank->x = x;
-		                    wank->y = y;
-		                    wank->t_a = t_a;
-		                    wank->t_c = t_c;
-		                    wank->is_kill = TRUE;
+		        /* Access next wank, advance */
+		        wank = &borg_wanks[borg_wank_num++];
 
-		                    /* mark old unknow squares as possible floor grids */
-		                    if (ag->feat == FEAT_NONE)
-		                        ag->feat = FEAT_INVIS;
+		        /* Save some information */
+		        wank->x = x;
+		        wank->y = y;
+		        wank->t_a = t_a;
+		        wank->t_c = t_c;
+		        wank->is_take = TRUE;
+			}
 
-		                    /* Mark old wall/door grids as probable floor grids */
-		                    if (!borg_cave_floor_grid(ag))
-		                        ag->feat = FEAT_INVIS;
+			if (borg_cave_floor_grid(mb_ptr))
+			{
+				/* Track "lit" floors */
+                borg_temp_y[borg_temp_n] = y;
+                borg_temp_x[borg_temp_n] = x;
+               	borg_temp_n++;
+			}
 
-							break;
-						} /* right char */
-					}
-
-                    /* Handle "blind" */
-                    if (borg_skill[BI_ISBLIND])
-                    {
-                        /* Nothing */
-                    }
-
-                    /* Handle "dark" floors */
-                    else if (t_a == TERM_L_DARK)
-                    {
-                        /* Dark floor grid */
-                    }
-
-                    /* Handle "lit" floors */
-                    else
-                    {
-                        /* Track "lit" floors */
-                        borg_temp_y[borg_temp_n] = y;
-                        borg_temp_x[borg_temp_n] = x;
-                        borg_temp_n++;
-                    }
-
-                    /* Known floor */
-                    ag->feat = FEAT_FLOOR;
-
-                    /* Done */
-                    break;
-                }
-
-                /* Open doors */
-                case FEAT_OPEN:
-                case FEAT_BROKEN:
-                {
-                    /* The borg cannot distinguish at a glance which is
-                       which so the actual cave_feat is plugged in */
-                    byte feat = mb_ptr->terrain;
-
-                    /* Accept broken */
-                    if (ag->feat == FEAT_BROKEN) break;
-
-                    /* Hack- cheat the broken into memory */
-                    if (feat == FEAT_BROKEN)
-                    {
-                        ag->feat = FEAT_BROKEN;
-                        break;
-                    }
-
-                    /* Assume normal */
-                    ag->feat = FEAT_OPEN;
-
-                    /* Done */
-                    break;
-                }
-
-
-                /* Up stairs */
+            /* Analyze terrain */
+            switch (mb_ptr->terrain)
+			{
+               /* Up stairs */
                 case FEAT_LESS:
                 {
                     /* Obvious */
@@ -2727,9 +2683,6 @@ static void borg_update_map(void)
                     /* Done */
                     break;
                 }
-
-				/* Quest Stuff -- cheated in elsewhere*/
-
 
 #if 0  /* Need to use fields */
 				/* Traps */
@@ -2794,300 +2747,8 @@ static void borg_update_map(void)
                 }
 #endif /* 0 */
 
-                /* Doors */
-                case FEAT_CLOSED:
-               {
-                    /* Accept closed and locked and jammed doors */
-                    /* if ((ag->feat >= FEAT_DOOR_HEAD) && (ag->feat <= FEAT_DOOR_TAIL)) break; */
+ 
 
-                    /* Assume easy */
-                    ag->feat = FEAT_CLOSED;
-
-                    /* Done */
-                    break;
-                }
-
-                /* Rubble */
-                case FEAT_RUBBLE:
-                {
-                    /* Assume rubble */
-                    ag->feat = FEAT_RUBBLE;
-
-                    /* Done */
-                    break;
-                }
-
-                /* Seams */
-                case FEAT_MAGMA:
-                case FEAT_QUARTZ:
-                {
-                    /* Accept quartz */
-                    if (ag->feat == FEAT_QUARTZ) break;
-
-                    /* Assume magma */
-                    ag->feat = FEAT_MAGMA;
-
-                    /* Done */
-                    break;
-                }
-
-                /* Hidden */
-                case FEAT_MAGMA_K:
-                case FEAT_QUARTZ_K:
-                {
-					/* Cheat.  Unfortunately, items and monsters look like this.
-					 * So Zborg has to check to make sure this '*' is indeed
-					 * a quartz and not the Star or Jewel or a wacko monster.
-					 */
-					if (mb_ptr->monster)
-					{
-						monster_race *r_ptr = &r_info[mb_ptr->monster];
-
-						/* Only check monsters that look just like this */
-						if (r_ptr->d_char == 42)  /* '*' */
-						{
-		                    borg_wank *wank;
-
-		                     /* Check for memory overflow */
-		                    if (borg_wank_num == AUTO_VIEW_MAX)
-		                        borg_oops("too many objects");
-
-		                    /* Access next wank, advance */
-		                    wank = &borg_wanks[borg_wank_num++];
-
-		                    /* Save some information */
-		                    wank->x = x;
-		                    wank->y = y;
-		                    wank->t_a = t_a;
-		                    wank->t_c = t_c;
-		                    wank->is_kill = TRUE;
-
-		                    /* mark old unknow squares as possible floor grids */
-		                    if (ag->feat == FEAT_NONE)
-		                        ag->feat = FEAT_INVIS;
-
-		                    /* Mark old wall/door grids as probable floor grids */
-		                    if (!borg_cave_floor_grid(ag))
-		                        ag->feat = FEAT_INVIS;
-
-							break;
-						} /* right char */
-					}
-					/* Now cheat the objects look like '*' */
-					if (mb_ptr->object)
-					{
-				        object_kind *k_ptr = &k_info[mb_ptr->object];
-
-						/* Only check monsters that look just like this */
-						if (k_ptr->d_char == 42)  /* '*' */
-						{
-		                    borg_wank *wank;
-
-		                     /* Check for memory overflow */
-		                    if (borg_wank_num == AUTO_VIEW_MAX)
-		                        borg_oops("too many objects");
-
-		                    /* Access next wank, advance */
-		                    wank = &borg_wanks[borg_wank_num++];
-
-		                    /* Save some information */
-		                    wank->x = x;
-		                    wank->y = y;
-		                    wank->t_a = t_a;
-		                    wank->t_c = t_c;
-		                    wank->is_take = TRUE;
-
-		                    /* mark old unknow squares as possible floor grids */
-		                    if (ag->feat == FEAT_NONE)
-		                        ag->feat = FEAT_INVIS;
-
-		                    /* Mark old wall/door grids as probable floor grids */
-		                    if (!borg_cave_floor_grid(ag))
-		                        ag->feat = FEAT_INVIS;
-
-							break;
-						}
-					}
-
-                    /* Accept quartz */
-                    if (ag->feat == FEAT_QUARTZ_K) break;
-
-                    /* Assume magma */
-                    ag->feat = FEAT_MAGMA_K;
-
-                    /* Done */
-                    break;
-                }
-
-
-                /* Walls */
-                case FEAT_WALL_EXTRA:
-                case FEAT_WALL_INNER:
-                case FEAT_WALL_OUTER:
-                case FEAT_WALL_SOLID:
-                case FEAT_PERM_SOLID:
-                case FEAT_PERM_EXTRA:
-                case FEAT_PERM_INNER:
-                case FEAT_PERM_OUTER:
-                {
-                    byte feat = mb_ptr->terrain;
-
-					/* Cheat.  Unfortunately, items and monsters look like this.
-					 * So Zborg has to check to make sure this '#' is indeed
-					 * a wall and not item or a wacko monster.
-					 */
-					if (mb_ptr->monster)
-					{
-						monster_race *r_ptr = &r_info[mb_ptr->monster];
-
-						/* Only check monsters that look just like this */
-						if (r_ptr->d_char == 35)  /* '#' */
-						{
-		                    borg_wank *wank;
-
-		                     /* Check for memory overflow */
-		                    if (borg_wank_num == AUTO_VIEW_MAX)
-		                        borg_oops("too many objects");
-
-		                    /* Access next wank, advance */
-		                    wank = &borg_wanks[borg_wank_num++];
-
-		                    /* Save some information */
-		                    wank->x = x;
-		                    wank->y = y;
-		                    wank->t_a = t_a;
-		                    wank->t_c = t_c;
-		                    wank->is_kill = TRUE;
-
-		                    /* mark old unknow squares as possible floor grids */
-		                    if (ag->feat == FEAT_NONE)
-		                        ag->feat = FEAT_INVIS;
-
-		                    /* Mark old wall/door grids as probable floor grids */
-		                    if (!borg_cave_floor_grid(ag))
-		                        ag->feat = FEAT_INVIS;
-
-							break;
-						} /* right char */
-					}
-
-                    /* ok this is a humongo cheat.  He is pulling the
-                     * grid information from the game rather than from
-                     * his memory.  He is going to see if the wall is perm.
-                     * This is a cheat. May the Lord have mercy on my soul.
-                     *
-                     * The only other option is to have him "dig" on each
-                     * and every granite wall to see if it is perm.  Then he
-                     * can mark it as a non-perm.  However, he would only have
-                     * to dig once and only in a range of spaces near the
-                     * center of the map.  Since perma-walls are located in
-                     * vaults and vaults have a minimum size.  So he can avoid
-                     * digging on walls that are, say, 10 spaces from the edge
-                     * of the map.  He can also limit the dig by his depth.
-                     * Vaults are found below certain levels and with certain
-                     * "feelings."  Can be told not to dig on boring levels
-                     * and not before level 50 or whatever.
-                     *
-                     * Since the code to dig slows the borg down a lot.
-                     * (Found in borg6.c in _flow_dark_interesting()) We will
-                     * limit his capacity to search.  We will set a flag on
-                     * the level is perma grids are found.
-                     *
-                     * Also the Zborg will mis read what a Tree is, since the
-                     * graphic for wall is the same for tree, lava, water.
-                     */
-
-                    /* forget previously located walls */
-                    if (ag->feat == FEAT_PERM_INNER) break;
-
-                    /* is it a perma grid? */
-                    if (feat == FEAT_PERM_INNER)
-                    {
-                        ag->feat = FEAT_PERM_INNER;
-                        vault_on_level = TRUE;
-                        break;
-                    }
-                    /* is it a non perma grid? */
-                    if (feat >= FEAT_PERM_EXTRA &&
-                        feat <= FEAT_PERM_SOLID)
-                    {
-                        ag->feat = FEAT_PERM_SOLID;
-                        break;
-                    }
-
-                    /* Accept non-granite */
-                    if (ag->feat >= FEAT_WALL_EXTRA &&
-                        ag->feat <= FEAT_PERM_EXTRA) break;
-
-					/** Zang  Terrains. **/
-					if (mb_ptr->terrain == FEAT_DEEP_WATER)
-					{
-						/* Make it known */
-						ag->feat = FEAT_SHAL_WATER;
-						break;
-					}
-					if (mb_ptr->terrain == FEAT_SHAL_WATER)
-					{
-						/* Make it known */
-						ag->feat = FEAT_SHAL_WATER;
-						break;
-					}
-
-					if (mb_ptr->terrain == FEAT_DEEP_LAVA ||
-					    mb_ptr->terrain == FEAT_SHAL_LAVA)
-					{
-						/* Make it known */
-						ag->feat = FEAT_SHAL_LAVA;
-						break;
-					}
-					if (mb_ptr->terrain == FEAT_TREES)
-					{
-						/* Make it known */
-						ag->feat = FEAT_TREES;
-						break;
-					}
-
-                    /* Assume granite */
-                    ag->feat = FEAT_WALL_EXTRA;
-
-                    /* Done */
-                    break;
-                }
-
-				/* Impassible Terrains. */
-				case FEAT_MOUNTAIN: /* might be seen as a trap */
-				{
-					/* Make it known */
-					ag->feat = FEAT_MOUNTAIN;
-					break;
-				}
-
-				/* Zang  Terrains. */
-				case FEAT_DEEP_WATER:
-				{
-					/* Make it known */
-					ag->feat = FEAT_SHAL_WATER;
-					break;
-				}
-				case FEAT_SHAL_WATER:
-				{
-					/* Make it known */
-					ag->feat = FEAT_SHAL_WATER;
-					break;
-				}
-				case FEAT_DEEP_LAVA:
-				case FEAT_SHAL_LAVA:
-				{
-					/* Make it known */
-					ag->feat = FEAT_SHAL_LAVA;
-					break;
-				}
-				case FEAT_TREES:
-				{
-					/* Make it known */
-					ag->feat = FEAT_TREES;
-					break;
-				}
 #if 0  /* Need to parse fields */
                 /* glyph of warding stuff here */
                 case FEAT_MINOR_GLYPH:
@@ -3115,42 +2776,10 @@ static void borg_update_map(void)
                 }
 #endif /* 0 */
 
-                /* Monsters/Objects */
-                default:
-                {
-                    borg_wank *wank;
-
-                     /* Check for memory overflow */
-                    if (borg_wank_num == AUTO_VIEW_MAX)
-                        borg_oops("too many objects");
-
-                    /* Access next wank, advance */
-                    wank = &borg_wanks[borg_wank_num++];
-
-                    /* Save some information */
-                    wank->x = x;
-                    wank->y = y;
-                    wank->t_a = t_a;
-                    wank->t_c = t_c;
-                    wank->is_take = borg_is_take[(byte)(t_c)];
-                    wank->is_kill = borg_is_kill[(byte)(t_c)];
-
-                    /* mark old unknow squares as possible floor grids */
-                    if (ag->feat == FEAT_NONE)
-                        ag->feat = FEAT_INVIS;
-
-                    /* Mark old wall/door grids as probable floor grids */
-                    if (!borg_cave_floor_grid(ag))
-                        ag->feat = FEAT_INVIS;
-
-                    /* Done */
-                    break;
-                }
-
 			}
 
             /* Save the new "wall" or "door" */
-            new_wall = !borg_cave_floor_grid(ag);
+            new_wall = !borg_cave_floor_grid(mb_ptr);
 
             /* Notice wall changes */
             if (old_wall != new_wall)
@@ -3165,7 +2794,7 @@ static void borg_update_map(void)
                 borg_data_icky->data[y][x] = FALSE;
 
                 /* Recalculate the view (if needed) */
-                if (ag->info & BORG_VIEW) borg_do_update_view = TRUE;
+                if (mb_ptr->info & BORG_MAP_VIEW) borg_do_update_view = TRUE;
             }
         }
     }

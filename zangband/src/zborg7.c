@@ -629,13 +629,13 @@ bool borg_check_lite(void)
         y = c_y + ddy_ddd[i];
 
         /* Get grid */
-        ag = &borg_grids[y][x];
+		mb_ptr = map_loc(x, y);
 
         /* Location must be known */
-        if (ag->feat == FEAT_NONE) corners ++;
+        if (mb_ptr->terrain == FEAT_NONE) corners++;
 
         /* Location must not be a wall/door */
-        if (!borg_cave_floor_grid(ag)) corners ++;
+        if (!borg_cave_floor_grid(mb_ptr)) corners++;
 
      }
      /* Add them up */
@@ -656,7 +656,6 @@ bool borg_check_lite(void)
             for (x = c_x - 2; x <= c_x + 2; x++)
             {
                 /* Get grid */
-                ag = &borg_grids[y][x];
 				mb_ptr = map_loc(x, y);
 
                 /* Location must be a lit floor */
@@ -666,7 +665,7 @@ bool borg_check_lite(void)
                 if (mb_ptr->flags & MAP_GLOW) floors--;
 
                 /* Location must not be a wall/door */
-                if (!borg_cave_floor_grid(ag)) floors--;
+                if (!borg_cave_floor_grid(mb_ptr)) floors--;
 
             }
         }
@@ -778,13 +777,13 @@ bool borg_check_lite_only(void)
         y = c_y + ddy_ddd[i];
 
         /* Get grid */
-        ag = &borg_grids[y][x];
+		mb_ptr = map_loc(x, y);
 
         /* Location must be known */
-        if (ag->feat == FEAT_NONE) corners ++;
+        if (mb_ptr->terrain == FEAT_NONE) corners++;
 
         /* Location must not be a wall/door */
-        if (!borg_cave_floor_grid(ag)) corners ++;
+        if (!borg_cave_floor_grid(mb_ptr)) corners++;
 
      }
      /* Add them up ..2*/
@@ -805,7 +804,6 @@ bool borg_check_lite_only(void)
             for (x = c_x - 2; x <= c_x + 2; x++)
             {
                 /* Get grid */
-                ag = &borg_grids[y][x];
 				mb_ptr = map_loc(x, y);
 
                 /* Location must be a lit floor */
@@ -815,7 +813,7 @@ bool borg_check_lite_only(void)
                 if (mb_ptr->flags & MAP_GLOW) floors--;
 
                 /* Location must not be a wall/door */
-                if (!borg_cave_floor_grid(ag)) floors--;
+                if (!borg_cave_floor_grid(mb_ptr)) floors--;
 
             }
         }
