@@ -1262,12 +1262,13 @@ bool borg_escape(int b_q)
 			borg_racial(RACE_GNOME) ||
 			borg_mutation(MUT1_VTELEPORT) ||
 			/* Attempt Teleport Level */
-			borg_activate(BORG_ACT_TELEPORT_LEVEL) ||
+			(bp_ptr->depth &&
+			(borg_activate(BORG_ACT_TELEPORT_LEVEL) ||
 			borg_spell_fail(REALM_SORCERY, 2, 6, allow_fail + 9) ||
 			borg_spell_fail(REALM_TRUMP, 1, 5, allow_fail + 9) ||
 			borg_spell_fail(REALM_ARCANE, 3, 1, allow_fail + 9) ||
 			borg_racial(RACE_AMBERITE) ||
-			borg_read_scroll(SV_SCROLL_TELEPORT_LEVEL) ||
+			borg_read_scroll(SV_SCROLL_TELEPORT_LEVEL))) ||
 			/* try Dimension Door */
 			(amt_dim_door && borg_dim_door(TRUE, b_q) &&
 			  (borg_activate(BORG_ACT_DIM_DOOR) ||
