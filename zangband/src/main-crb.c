@@ -1043,7 +1043,7 @@ errr check_modification_date(int fd, cptr template_file)
 	char buf[1024];
 
 	/* Build the file name */
-	path_build(buf, sizeof(buf), ANGBAND_DIR_EDIT, template_file);
+	path_make(buf, ANGBAND_DIR_EDIT, template_file);
 
 	/* XXX XXX XXX */
 	convert_pathname(buf);
@@ -1064,7 +1064,7 @@ errr check_modification_date(int fd, cptr template_file)
 	strcpy(p, ".raw");
 
 	/* Build the file name of the raw file */
-	path_build(buf, sizeof(buf), ANGBAND_DIR_DATA, fname);
+	path_make(buf, ANGBAND_DIR_DATA, fname);
 
 	/* XXX XXX XXX */
 	convert_pathname(buf);
@@ -4919,8 +4919,7 @@ static void menu(long mc)
 					}
 
 					/* Build the pathname of the score file */
-					path_build(buf, sizeof(buf), ANGBAND_DIR_APEX,
-						"scores.raw");
+					path_make(buf, ANGBAND_DIR_APEX, "scores.raw");
 
 					/* Hack - open the score file for reading */
 					highscore_fd = fd_open(buf, O_RDONLY);
@@ -6261,7 +6260,7 @@ static void init_stuff(void)
 		init_file_paths(path);
 
 		/* Build the filename */
-		path_build(path, sizeof(path), ANGBAND_DIR_FILE, "news.txt");
+		path_make(path, ANGBAND_DIR_FILE, "news.txt");
 
 		/* Attempt to open and close that file */
 		if (0 == fd_close(fd_open(path, O_RDONLY))) break;

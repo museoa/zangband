@@ -468,7 +468,7 @@ static void term_load_bitmap(void)
 	int bw, bh;
 	
 	/* Build the "graf" path */
-	path_build(path, 1024, ANGBAND_DIR_XTRA, "graf");
+	path_make(path, ANGBAND_DIR_XTRA, "graf");
 
 	strnfmt(path, 1024, "%s/8x13.bmp", path);
   

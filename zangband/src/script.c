@@ -49,7 +49,7 @@ static int xxx_build_script_path(lua_State *L)
 
 	filename = tolua_getstring(L, 1, 0);
 
-	path_build(buf, 1024, ANGBAND_DIR_SCRIPT, filename);
+	path_make(buf, ANGBAND_DIR_SCRIPT, filename);
 
 	tolua_pushstring(L, buf);
 
@@ -727,7 +727,7 @@ static void line_hook(lua_State *L, lua_Debug *ar)
 			/* Activate */
 			Term_activate(angband_term[j]);
 
-			path_build(buf, 1024, ANGBAND_DIR_SCRIPT, "trace.lua");
+			path_make(buf, ANGBAND_DIR_SCRIPT, "trace.lua");
 
 			/* Execute the file */
 			script_do_file(buf);
@@ -807,7 +807,7 @@ void do_cmd_script(void)
 			/* Clear the prompt */
 			clear_msg();
 
-			path_build(buf, 1024, ANGBAND_DIR_SCRIPT, tmp);
+			path_make(buf, ANGBAND_DIR_SCRIPT, tmp);
 
 			/* Execute the file */
 			script_do_file(buf);
@@ -850,7 +850,7 @@ void do_cmd_script(void)
 			char buf[1024];
 
 			/* Initialization code */
-			path_build(buf, 1024, ANGBAND_DIR_SCRIPT, "init.lua");
+			path_make(buf, ANGBAND_DIR_SCRIPT, "init.lua");
 			script_do_file(buf);
 
 			break;
@@ -909,7 +909,7 @@ errr script_init(void)
 	tolua_field_open(L);
 
 	/* Initialization code */
-	path_build(buf, 1024, ANGBAND_DIR_SCRIPT, "init.lua");
+	path_make(buf, ANGBAND_DIR_SCRIPT, "init.lua");
 	script_do_file(buf);
 
 	return 0;

@@ -3579,7 +3579,7 @@ errr init_xpj(int argc, char *argv[])
 	pj_cur_row = -255;
 	
 	/* Try the "16x16.bmp" file */
-	path_build(filename, 1024, ANGBAND_DIR_XTRA, "font/16x16.txt");
+	path_make(filename, ANGBAND_DIR_XTRA, "font/16x16.txt");
 	
 	/* Use the "16x16.bmp" file if it exists */
 	if (0 == fd_close(fd_open(filename, O_RDONLY)))

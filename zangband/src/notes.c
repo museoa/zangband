@@ -28,7 +28,7 @@ cptr notes_file(void)
 	 */
 	(void)strnfmt(fname, 15, "%.8s.txt", player_base);
 
-	path_build(buf, 1024, ANGBAND_DIR_USER, fname);
+	path_make(buf, ANGBAND_DIR_USER, fname);
 
 	/* return the filename */
 	return buf;

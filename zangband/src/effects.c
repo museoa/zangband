@@ -3419,8 +3419,14 @@ void make_noise(byte amount)
 	p_ptr->state.noise_level = (byte)total;
 }
 
+
 /*
  * Various notice 'blah' functions
+ */
+
+
+/*
+ * Change an item in the inventory
  */
 void notice_inven(void)
 {
@@ -3431,12 +3437,20 @@ void notice_inven(void)
 	p_ptr->window |= (PW_INVEN);
 }
 
+
+/*
+ * Change an item in the equipment
+ */
 void notice_equip(void)
 {
 	/* Window stuff */
 	p_ptr->window |= (PW_EQUIP);
 }
 
+
+/*
+ * Change an item somewhere
+ */
 void notice_item(void)
 {
 	notice_inven();

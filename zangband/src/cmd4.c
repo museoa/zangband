@@ -1128,7 +1128,7 @@ static bool do_cmd_options_dump(int dummy)
 	screen_save();
 
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_USER, "pref-opt.prf");
+	path_make(buf, ANGBAND_DIR_USER, "pref-opt.prf");
 
 	/* Open the file */
 	fff = my_fopen(buf, "w");
@@ -1248,7 +1248,7 @@ errr macro_dump(cptr fname)
 
 
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_USER, fname);
+	path_make(buf, ANGBAND_DIR_USER, fname);
 
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);
@@ -1413,7 +1413,7 @@ errr keymap_dump(cptr fname)
 
 
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_USER, fname);
+	path_make(buf, ANGBAND_DIR_USER, fname);
 
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);
@@ -2019,7 +2019,7 @@ static bool do_cmd_dump_monster(int dummy)
 	}
 	
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_USER, tmp);
+	path_make(buf, ANGBAND_DIR_USER, tmp);
 
 	/* Append to the file */
 	fff = my_fopen(buf, "a");
@@ -2093,7 +2093,7 @@ static bool do_cmd_dump_object(int dummy)
 	}
 	
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_USER, tmp);
+	path_make(buf, ANGBAND_DIR_USER, tmp);
 
 	/* Append to the file */
 	fff = my_fopen(buf, "a");
@@ -2168,7 +2168,7 @@ static bool do_cmd_dump_feature(int dummy)
 	}
 	
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_USER, tmp);
+	path_make(buf, ANGBAND_DIR_USER, tmp);
 
 	/* Append to the file */
 	fff = my_fopen(buf, "a");
@@ -2243,7 +2243,7 @@ static bool do_cmd_dump_field(int dummy)
 	}
 	
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_USER, tmp);
+	path_make(buf, ANGBAND_DIR_USER, tmp);
 
 	/* Append to the file */
 	fff = my_fopen(buf, "a");
@@ -2677,7 +2677,7 @@ static bool do_cmd_dump_colour(int dummy)
 	}
 
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_USER, tmp);
+	path_make(buf, ANGBAND_DIR_USER, tmp);
 
 	/* Append to the file */
 	fff = my_fopen(buf, "a");
@@ -2762,7 +2762,7 @@ static bool do_cmd_dump_message(int dummy)
 	}
 
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_USER, tmp);
+	path_make(buf, ANGBAND_DIR_USER, tmp);
 
 	/* Append to the file */
 	fff = my_fopen(buf, "a");
@@ -3107,7 +3107,7 @@ void do_cmd_load_screen(void)
 
 
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_USER, "dump.txt");
+	path_make(buf, ANGBAND_DIR_USER, "dump.txt");
 
 	/* Append to the file */
 	fff = my_fopen(buf, "r");
@@ -3217,7 +3217,7 @@ void do_cmd_save_screen(void)
 
 
 		/* Build the filename */
-		path_build(buf, 1024, ANGBAND_DIR_USER, "dump.txt");
+		path_make(buf, ANGBAND_DIR_USER, "dump.txt");
 
 		/* File type is "TEXT" */
 		FILE_TYPE(FILE_TYPE_TEXT);
@@ -4087,11 +4087,11 @@ void do_cmd_time(void)
 	/* Find the path */
 	if (one_in_(10) || p_ptr->tim.image)
 	{
-		path_build(buf, 1024, ANGBAND_DIR_FILE, "timefun.txt");
+		path_make(buf, ANGBAND_DIR_FILE, "timefun.txt");
 	}
 	else
 	{
-		path_build(buf, 1024, ANGBAND_DIR_FILE, "timenorm.txt");
+		path_make(buf, ANGBAND_DIR_FILE, "timenorm.txt");
 	}
 
 	/* Open this file */

@@ -151,7 +151,7 @@ static void create_user_dir(void)
 	mkdir(dirpath, 0700);
 
 	/* Build the path to the variant-specific sub-directory */
-	path_build(subdirpath, 1024, dirpath, VERSION_NAME);
+	path_make(subdirpath, dirpath, VERSION_NAME);
 
 	/* Create the directory */
 	mkdir(subdirpath, 0700);
@@ -227,7 +227,7 @@ static void init_stuff(void)
 		int fd = -1;
 		
 		/* Look for "news" file - see init2.c */
-		path_build(buf, 1024, path, "file/news.txt");
+		path_make(buf, path, "file/news.txt");
 		
 		fd = fd_open(buf, O_RDONLY);
 

@@ -308,13 +308,13 @@ int init_tnb(int argc, cptr *argv)
 	(void) argc;
 	
 	/* Save the "tk" directory */
-	path_build(ANGBAND_DIR_TK, 1024, ANGBAND_DIR_SCRIPT, "tk");
+	path_make(ANGBAND_DIR_TK, ANGBAND_DIR_SCRIPT, "tk");
 
 	/* Use graphics */
 	pick_graphics(GRAPHICS_ADAM_BOLT, &tnb_tile_x, &tnb_tile_y, tnb_tile_file);
 
 	/* Try the "16x16.bmp" file */
-	path_build(tnb_font_file, 1024, ANGBAND_DIR_XTRA, "font/16x16.txt");
+	path_make(tnb_font_file, ANGBAND_DIR_XTRA, "font/16x16.txt");
 	
 	/* Use the "16x16.bmp" file if it exists */
 	if (fd_close(fd_open(tnb_font_file, O_RDONLY)))

@@ -1378,7 +1378,7 @@ static void open_event_handler(GtkButton *was_clicked, gpointer user_data)
 	if (!game_in_progress)
 	{
 		/* Prepare the savefile path */
-		path_build(buf, 1024, ANGBAND_DIR_SAVE, "*");
+		path_make(buf, ANGBAND_DIR_SAVE, "*");
 
 		file_selector = gtk_file_selection_new("Select a savefile");
 		gtk_file_selection_set_filename(GTK_FILE_SELECTION(file_selector), buf);

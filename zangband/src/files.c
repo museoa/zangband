@@ -1043,7 +1043,7 @@ errr process_pref_file(cptr fmt, ...)
 	va_end(vp);
 
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_PREF, name);
+	path_make(buf, ANGBAND_DIR_PREF, name);
 
 	/* Process the pref file */
 	err = process_pref_file_aux(buf);
@@ -1052,7 +1052,7 @@ errr process_pref_file(cptr fmt, ...)
 	if (err < 1)
 	{
 		/* Build the filename */
-		path_build(buf, 1024, ANGBAND_DIR_USER, name);
+		path_make(buf, ANGBAND_DIR_USER, name);
 
 		/* Process the pref file */
 		err = process_pref_file_aux(buf);
@@ -1130,9 +1130,8 @@ errr check_time_init(void)
 
 	char buf[1024];
 
-
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_FILE, "time.txt");
+	path_make(buf, ANGBAND_DIR_FILE, "time.txt");
 
 	/* Open the file */
 	fp = my_fopen(buf, "r");
@@ -1254,9 +1253,8 @@ errr check_load_init(void)
 	char temphost[MAXHOSTNAMELEN + 1];
 	char thishost[MAXHOSTNAMELEN + 1];
 
-
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_FILE, "load.txt");
+	path_make(buf, ANGBAND_DIR_FILE, "load.txt");
 
 	/* Open the "load" file */
 	fp = my_fopen(buf, "r");
@@ -2982,9 +2980,8 @@ errr file_character(cptr name, bool full)
 
 	object_type *o_ptr;
 
-
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_USER, name);
+	path_make(buf, ANGBAND_DIR_USER, name);
 
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);
@@ -3479,7 +3476,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 		strnfmt(caption, 128, "Help file '%s'", name);
 
 		/* Build the filename */
-		path_build(path, 1024, ANGBAND_DIR_HELP, name);
+		path_make(path, ANGBAND_DIR_HELP, name);
 
 		/* Open the file */
 		fff = my_fopen(path, "r");
@@ -3492,7 +3489,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 		strnfmt(caption, 128, "Info file '%s'", name);
 
 		/* Build the filename */
-		path_build(path, 1024, ANGBAND_DIR_INFO, name);
+		path_make(path, ANGBAND_DIR_INFO, name);
 
 		/* Open the file */
 		fff = my_fopen(path, "r");
@@ -3857,7 +3854,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 			if (!(xtmp[0] && (xtmp[0] != ' '))) continue;
 
 			/* Build the filename */
-			path_build(outfile, 1024, ANGBAND_DIR_USER, xtmp);
+			path_make(outfile, ANGBAND_DIR_USER, xtmp);
 
 			/* Close the input file */
 			my_fclose(fff);
@@ -4016,7 +4013,7 @@ void process_player_name(bool sf)
 #endif /* VM */
 
 		/* Build the filename */
-		path_build(savefile, 1024, ANGBAND_DIR_SAVE, temp);
+		path_make(savefile, ANGBAND_DIR_SAVE, temp);
 	}
 }
 
@@ -4284,12 +4281,11 @@ static void print_tomb(void)
 
 		time_t ct = time((time_t) 0);
 
-
 		/* Clear screen */
 		Term_clear();
 
 		/* Build the filename */
-		path_build(buf, 1024, ANGBAND_DIR_FILE, "dead.txt");
+		path_make(buf, ANGBAND_DIR_FILE, "dead.txt");
 
 		/* Open the News file */
 		fp = my_fopen(buf, "r");
@@ -4699,7 +4695,7 @@ void close_game(void)
 
 
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_APEX, "scores.raw");
+	path_make(buf, ANGBAND_DIR_APEX, "scores.raw");
 
 	/* Grab permissions */
 	safe_setuid_grab();
@@ -4806,7 +4802,7 @@ errr get_rnd_line(cptr file_name, int entry, char *output)
 	int line, counter, test, numentries;
 
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_FILE, file_name);
+	path_make(buf, ANGBAND_DIR_FILE, file_name);
 
 	/* Open the file */
 	fp = my_fopen(buf, "r");

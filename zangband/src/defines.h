@@ -4665,6 +4665,18 @@ static __inline void COPY_FLAG_AUX(const u32b *flags1, u32b *flags2, int num, u3
 	 ((bool)(!(is_pet(T) || is_friendly(T))))
 
 
+/*
+ * Helper macro so call path_build() with correct buffer size.
+ */
+#define path_make(B, P, F) \
+	do \
+	{ \
+		assert(sizeof(B) > 20); \
+		path_build((B), sizeof(B), (P), (F)); \
+	} \
+	while (FALSE)
+
+
 
 /*
  * Hack -- Prepare to use the "Secure" routines
@@ -4926,11 +4938,12 @@ extern int PlayerUID;
 /*
  * Available graphic modes
  */
-#define GRAPHICS_NONE		0
-#define GRAPHICS_ORIGINAL	1
-#define GRAPHICS_ADAM_BOLT	2
-#define GRAPHICS_ANY		3
-#define GRAPHICS_HALF_3D	4
+#define GRAPHICS_NONE			0
+#define GRAPHICS_ORIGINAL		1
+#define GRAPHICS_ADAM_BOLT		2
+#define GRAPHICS_DAVID_GERVAIS	3
+#define GRAPHICS_ANY			4
+#define GRAPHICS_HALF_3D		5
 
 /*
  * Modes for the random name generator

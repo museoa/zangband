@@ -224,6 +224,11 @@ cptr get_default_font(int term_num)
 }
 
 #ifdef USE_GRAPHICS
+/*
+ * Make sure the graphical tiles we want are available.
+ *
+ * Note - we _must_ be passed an array 1024 in size for the filename.
+ */
 bool pick_graphics(int graphics, int *xsize, int *ysize, char *filename)
 {
 	int old_graphics = use_graphics;

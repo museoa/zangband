@@ -1967,7 +1967,7 @@ static void borg_log_death(void)
 	FILE *borg_log_file;
 	time_t death_time;
 
-	path_build(buf, 1024, ANGBAND_DIR_USER, "borg-log.txt");
+	path_make(buf, ANGBAND_DIR_USER, "borg-log.txt");
 
 	/* Hack -- drop permissions */
 	safe_setuid_drop();
@@ -2010,7 +2010,7 @@ static void borg_log_death_data(void)
 	FILE *borg_log_file;
 	time_t death_time;
 
-	path_build(buf, 1024, ANGBAND_DIR_USER, "zborg.dat");
+	path_make(buf, ANGBAND_DIR_USER, "zborg.dat");
 
 	/* Hack -- drop permissions */
 	safe_setuid_drop();

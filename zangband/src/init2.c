@@ -77,7 +77,8 @@
  * In general, the initial path should end in the appropriate "PATH_SEP"
  * string.  All of the "sub-directory" paths (created below or supplied
  * by the user) will NOT end in the "PATH_SEP" string, see the special
- * "path_build()" function in "util.c" for more information.
+ * "path_build()" function in "util.c" for more information.  (Note that
+ * we call this via the path_make() macro in defines.h)
  *
  * Mega-Hack -- support fat raw files under NEXTSTEP, using special
  * "suffixed" directories for the "ANGBAND_DIR_DATA" directory, but
@@ -194,7 +195,7 @@ void init_file_paths(char *path)
 #ifdef PRIVATE_USER_PATH
 
 	/* Build the path to the user specific directory */
-	path_build(buf, 1024, PRIVATE_USER_PATH, VERSION_NAME);
+	path_make(buf, PRIVATE_USER_PATH, VERSION_NAME);
 
 	/* Build a relative path name */
 	ANGBAND_DIR_USER = string_make(buf);
@@ -262,7 +263,7 @@ extern errr check_modification_date(int fd, cptr template_file)
 	struct stat txt_stat, raw_stat;
 
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_EDIT, template_file);
+	path_make(buf, ANGBAND_DIR_EDIT, template_file);
 
 	/* Access stats on text file */
 	if (stat(buf, &txt_stat))
@@ -471,7 +472,7 @@ static errr init_info(cptr filename, header *head,
 	/*** Load the binary image file ***/
 
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_DATA, format("%s.raw", filename));
+	path_make(buf, ANGBAND_DIR_DATA, format("%s.raw", filename));
 
 	/* Attempt to open the "raw" file */
 	fd = fd_open(buf, O_RDONLY);
@@ -515,7 +516,7 @@ static errr init_info(cptr filename, header *head,
 		/*** Load the ascii template file ***/
 
 		/* Build the filename */
-		path_build(buf, 1024, ANGBAND_DIR_EDIT, format("%s.txt", filename));
+		path_make(buf, ANGBAND_DIR_EDIT, format("%s.txt", filename));
 
 		/* Open the file */
 		fp = my_fopen(buf, "r");
@@ -539,7 +540,7 @@ static errr init_info(cptr filename, header *head,
 		FILE_TYPE(FILE_TYPE_DATA);
 
 		/* Build the filename */
-		path_build(buf, 1024, ANGBAND_DIR_DATA, format("%s.raw", filename));
+		path_make(buf, ANGBAND_DIR_DATA, format("%s.raw", filename));
 
 
 		/* Attempt to open the file */
@@ -617,7 +618,7 @@ static errr init_info(cptr filename, header *head,
 		/*** Load the binary image file ***/
 
 		/* Build the filename */
-		path_build(buf, 1024, ANGBAND_DIR_DATA, format("%s.raw", filename));
+		path_make(buf, ANGBAND_DIR_DATA, format("%s.raw", filename));
 
 		/* Attempt to open the "raw" file */
 		fd = fd_open(buf, O_RDONLY);
@@ -850,7 +851,7 @@ errr init_w_info(void)
 	/*** Load the ascii template file ***/
 
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_EDIT, "w_info.txt");
+	path_make(buf, ANGBAND_DIR_EDIT, "w_info.txt");
 
 	/* Open the file */
 	fp = my_fopen(buf, "r");
@@ -907,7 +908,7 @@ errr init_t_info(void)
 	/*** Load the ascii template file ***/
 
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_EDIT, "t_info.txt");
+	path_make(buf, ANGBAND_DIR_EDIT, "t_info.txt");
 
 	/* Open the file */
 	fp = my_fopen(buf, "r");
@@ -1344,7 +1345,7 @@ void init_angband(void)
 	/*** Verify the "news" file ***/
 
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_FILE, "news.txt");
+	path_make(buf, ANGBAND_DIR_FILE, "news.txt");
 
 	/* Attempt to open the file */
 	fd = fd_open(buf, O_RDONLY);
@@ -1369,7 +1370,7 @@ void init_angband(void)
 	Term_clear();
 
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_FILE, "news.txt");
+	path_make(buf, ANGBAND_DIR_FILE, "news.txt");
 
 	/* Open the News file */
 	fp = my_fopen(buf, "r");
@@ -1400,7 +1401,7 @@ void init_angband(void)
 	/*** Verify (or create) the "high score" file ***/
 
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_APEX, "scores.raw");
+	path_make(buf, ANGBAND_DIR_APEX, "scores.raw");
 
 	/* Attempt to open the high score file */
 	fd = fd_open(buf, O_RDONLY);
