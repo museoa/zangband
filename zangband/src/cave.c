@@ -3618,8 +3618,8 @@ void update_mon_lite(void)
 			if ((c_ptr->info & (CAVE_VIEW | CAVE_TEMP)) == CAVE_VIEW)
 			{
 				/* It is now lit */
-				note_spot(fy, fx);
 				lite_spot(fy, fx);
+				note_spot(fy, fx);
 			}
 
 			/* Save in the monster lit array */
