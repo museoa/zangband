@@ -757,13 +757,13 @@ static bool store_will_buy(const object_type *o_ptr)
  * By combining different action functions, lots of different
  * types of store can be made.
  */
-static bool store_will_stock(object_type *o_ptr)
+static bool store_will_stock(const object_type *o_ptr)
 {
 	/* Thing to pass to the action functions */
 	field_obj_test f_o_t;
 
 	/* Save information to pass to the field action function */
-	f_o_t.o_ptr = o_ptr;
+	f_o_t.o_ptr = (object_type *)o_ptr;
 
 	/* Default is to reject this rejection */
 	f_o_t.result = FALSE;
@@ -2671,7 +2671,7 @@ static void store_sell(int *store_top)
 		q = "Sell which item? ";
 
 		/* Only allow items the store will buy */
-		item_tester_hook = store_will_buy;
+		item_tester_hook = store_will_stock;
 	}
 
 
