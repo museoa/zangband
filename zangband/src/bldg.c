@@ -290,7 +290,9 @@ void quest_discovery(int q_idx)
 	else
 	{
 		/* Normal monsters */
-		plural_aux(name);
+		if (q_num > 1)
+			plural_aux(name);
+
 		msg_format("Be warned, this level is guarded by %d %s!", q_num, name);
 	}
 }
