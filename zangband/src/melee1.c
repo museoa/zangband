@@ -234,9 +234,8 @@ bool make_attack_normal(int m_idx)
 
 			/* Hack -- Apply "protection from evil" */
 			if ((p_ptr->protevil > 0) &&
-			    (r_ptr->flags3 & RF3_EVIL) &&
-			    (p_ptr->lev >= rlev) &&
-			    ((randint0(100) + p_ptr->lev) > 50))
+				(r_ptr->flags3 & RF3_EVIL) &&
+				(p_ptr->lev >= rlev) && ((randint0(100) + p_ptr->lev) > 50))
 			{
 				/* Remember the Evil-ness */
 				if (m_ptr->ml)
@@ -348,7 +347,7 @@ bool make_attack_normal(int m_idx)
 				{
 					act = "charges you.";
 					touched = TRUE;
-					sound(SOUND_BUY); /* Note! This is "charges", not "charges at". */
+					sound(SOUND_BUY);	/* Note! This is "charges", not "charges at". */
 					break;
 				}
 
@@ -445,7 +444,7 @@ bool make_attack_normal(int m_idx)
 				if ((p_ptr->image) && one_in_(3))
 				{
 					msg_format("%^s %s you.", m_name,
-					           silly_attacks[randint0(MAX_SILLY_ATTACK)]);
+							   silly_attacks[randint0(MAX_SILLY_ATTACK)]);
 				}
 				else
 					msg_format("%^s %s", m_name, act);
@@ -499,7 +498,8 @@ bool make_attack_normal(int m_idx)
 						/* Take "poison" effect */
 						if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
 						{
-							if (set_poisoned(p_ptr->poisoned + randint1(rlev) + 5))
+							if (set_poisoned
+								(p_ptr->poisoned + randint1(rlev) + 5))
 							{
 								obvious = TRUE;
 							}
@@ -520,7 +520,7 @@ bool make_attack_normal(int m_idx)
 						if (!p_ptr->resist_disen)
 						{
 							/* Apply disenchantment */
-							if (apply_disenchant()) obvious = TRUE;
+							if (apply_disenchant())obvious = TRUE;
 						}
 
 						/* Learn about the player */
@@ -548,8 +548,7 @@ bool make_attack_normal(int m_idx)
 
 							/* Drain charged wands/staffs */
 							if (((o_ptr->tval == TV_STAFF) ||
-								 (o_ptr->tval == TV_WAND)) &&
-								(o_ptr->pval))
+								 (o_ptr->tval == TV_WAND)) && (o_ptr->pval))
 							{
 								/* Calculate healed hitpoints */
 								int heal = rlev * o_ptr->pval * o_ptr->number;
@@ -567,7 +566,8 @@ bool make_attack_normal(int m_idx)
 								m_ptr->hp += heal;
 
 								/* Redraw (later) if needed */
-								if (p_ptr->health_who == m_idx) p_ptr->redraw |= (PR_HEALTH);
+								if (p_ptr->health_who == m_idx) p_ptr->redraw |=
+										(PR_HEALTH);
 
 								/* Uncharge */
 								if (o_ptr->tval == TV_WAND)
@@ -595,7 +595,7 @@ bool make_attack_normal(int m_idx)
 						/* Take some damage */
 						take_hit(damage, ddesc);
 
-						/* Confused monsters cannot steal successfully. -LM-*/
+						/* Confused monsters cannot steal successfully. -LM- */
 						if (m_ptr->confused) break;
 
 						/* Obvious */
@@ -603,8 +603,9 @@ bool make_attack_normal(int m_idx)
 
 						/* Saving throw (unless paralyzed) based on dex and level */
 						if (!p_ptr->paralyzed &&
-							(randint0(100) < (adj_dex_safe[p_ptr->stat_ind[A_DEX]] +
-											  p_ptr->lev)))
+							(randint0(100) <
+							 (adj_dex_safe[p_ptr->stat_ind[A_DEX]] +
+							  p_ptr->lev)))
 						{
 							/* Saving throw message */
 							msg_print("You quickly protect your money pouch!");
@@ -618,7 +619,8 @@ bool make_attack_normal(int m_idx)
 						{
 							gold = (p_ptr->au / 10) + randint1(25);
 							if (gold < 2) gold = 2;
-							if (gold > 5000) gold = (p_ptr->au / 20) + randint1(3000);
+							if (gold > 5000) gold =
+									(p_ptr->au / 20) + randint1(3000);
 							if (gold > p_ptr->au) gold = p_ptr->au;
 							p_ptr->au -= gold;
 							if (gold <= 0)
@@ -628,7 +630,8 @@ bool make_attack_normal(int m_idx)
 							else if (p_ptr->au)
 							{
 								msg_print("Your purse feels lighter.");
-								msg_format("%ld coins were stolen!", (long)gold);
+								msg_format("%ld coins were stolen!",
+										   (long) gold);
 
 								chg_virtue(V_SACRIFICE, 1);
 							}
@@ -658,13 +661,14 @@ bool make_attack_normal(int m_idx)
 						/* Take some damage */
 						take_hit(damage, ddesc);
 
-						/* Confused monsters cannot steal successfully. -LM-*/
+						/* Confused monsters cannot steal successfully. -LM- */
 						if (m_ptr->confused) break;
 
 						/* Saving throw (unless paralyzed) based on dex and level */
 						if (!p_ptr->paralyzed &&
-							(randint0(100) < (adj_dex_safe[p_ptr->stat_ind[A_DEX]] +
-											  p_ptr->lev)))
+							(randint0(100) <
+							 (adj_dex_safe[p_ptr->stat_ind[A_DEX]] +
+							  p_ptr->lev)))
 						{
 							/* Saving throw message */
 							msg_print("You grab hold of your backpack!");
@@ -683,7 +687,7 @@ bool make_attack_normal(int m_idx)
 						for (k = 0; k < 10; k++)
 						{
 							s16b o_idx;
-							
+
 							/* Pick an item */
 							i = randint0(INVEN_PACK);
 
@@ -716,16 +720,16 @@ bool make_attack_normal(int m_idx)
 
 								/* Get new object */
 								j_ptr = &o_list[o_idx];
-								
+
 								/* Copy object */
 								object_copy(j_ptr, o_ptr);
 
 								/* Modify number */
 								j_ptr->number = 1;
-									
+
 								/* Wand / rod stacking */
 								distribute_charges(o_ptr, j_ptr,
-									 --o_ptr->number);
+												   --o_ptr->number);
 
 								/* Forget mark */
 								j_ptr->marked = FALSE;
@@ -809,10 +813,10 @@ bool make_attack_normal(int m_idx)
 
 						/* Drain fuel */
 						if ((o_ptr->pval > 0) &&
-							 (!(o_ptr->flags3 & TR3_INSTA_ART)))
+							(!(o_ptr->flags3 & TR3_INSTA_ART)))
 						{
 							/* Reduce fuel */
-							o_ptr->pval -= (s16b)rand_range(250, 500);
+							o_ptr->pval -= (s16b) rand_range(250, 500);
 							if (o_ptr->pval < 1) o_ptr->pval = 1;
 
 							/* Notice */
@@ -925,7 +929,8 @@ bool make_attack_normal(int m_idx)
 						/* Increase "confused" */
 						if (!p_ptr->resist_confu)
 						{
-							if (set_confused(p_ptr->confused + 3 + randint1(rlev)))
+							if (set_confused
+								(p_ptr->confused + 3 + randint1(rlev)))
 							{
 								obvious = TRUE;
 							}
@@ -988,7 +993,8 @@ bool make_attack_normal(int m_idx)
 						}
 						else
 						{
-							if (set_paralyzed(p_ptr->paralyzed + 3 + randint1(rlev)))
+							if (set_paralyzed
+								(p_ptr->paralyzed + 3 + randint1(rlev)))
 							{
 								obvious = TRUE;
 							}
@@ -1096,7 +1102,7 @@ bool make_attack_normal(int m_idx)
 						/* Radius 8 earthquake centered at the monster */
 						if (damage > 23)
 						{
-							(void)earthquake(m_ptr->fx, m_ptr->fy, 8);
+							(void) earthquake(m_ptr->fx, m_ptr->fy, 8);
 						}
 
 						break;
@@ -1322,11 +1328,11 @@ bool make_attack_normal(int m_idx)
 
 						/* Heal the attacker? */
 						if (!(p_ptr->prace == RACE_ZOMBIE ||
-						      p_ptr->prace == RACE_VAMPIRE ||
-						      p_ptr->prace == RACE_SPECTRE ||
-						      p_ptr->prace == RACE_SKELETON ||
-						      p_ptr->prace == RACE_GOLEM ||
-						      p_ptr->prace == RACE_GHOUL) &&
+							  p_ptr->prace == RACE_VAMPIRE ||
+							  p_ptr->prace == RACE_SPECTRE ||
+							  p_ptr->prace == RACE_SKELETON ||
+							  p_ptr->prace == RACE_GOLEM ||
+							  p_ptr->prace == RACE_GHOUL) &&
 							(damage > 2) && !(resist_drain))
 						{
 							bool did_heal = FALSE;
@@ -1335,10 +1341,12 @@ bool make_attack_normal(int m_idx)
 
 							/* Heal */
 							m_ptr->hp += damroll(4, damage / 6);
-							if (m_ptr->hp > m_ptr->maxhp) m_ptr->hp = m_ptr->maxhp;
+							if (m_ptr->hp > m_ptr->maxhp) m_ptr->hp =
+									m_ptr->maxhp;
 
 							/* Redraw (later) if needed */
-							if (p_ptr->health_who == m_idx) p_ptr->redraw |= (PR_HEALTH);
+							if (p_ptr->health_who == m_idx) p_ptr->redraw |=
+									(PR_HEALTH);
 
 							/* Special message */
 							if ((m_ptr->ml) && (did_heal))
@@ -1437,7 +1445,7 @@ bool make_attack_normal(int m_idx)
 						msg_format("%^s is suddenly very hot!", m_name);
 
 						if (mon_take_hit(m_idx, dam, &fear,
-						    " turns into a pile of ash."))
+										 " turns into a pile of ash."))
 						{
 							blinked = FALSE;
 							alive = FALSE;
@@ -1462,7 +1470,7 @@ bool make_attack_normal(int m_idx)
 						msg_format("%^s gets zapped!", m_name);
 
 						if (mon_take_hit(m_idx, dam, &fear,
-						    " turns into a pile of cinder."))
+										 " turns into a pile of cinder."))
 						{
 							blinked = FALSE;
 							alive = FALSE;
@@ -1523,13 +1531,13 @@ bool make_attack_normal(int m_idx)
 				{
 					r_ptr->r_blows[ap_cnt]++;
 				}
-				
+
 				/* Look to see if we've spotted a mimic */
 				if (m_ptr->smart & SM_MIMIC)
 				{
 					/* Toggle flag */
 					m_ptr->smart &= ~(SM_MIMIC);
-					
+
 					/* It is in the monster list now */
 					update_mon_vis(m_ptr->r_idx, 1);
 				}
@@ -1542,7 +1550,7 @@ bool make_attack_normal(int m_idx)
 	if (blinked && alive)
 	{
 		msg_print("The thief flees laughing!");
-		(void)teleport_away(m_idx, MAX_SIGHT * 2 + 5);
+		(void) teleport_away(m_idx, MAX_SIGHT * 2 + 5);
 	}
 
 
@@ -1561,5 +1569,3 @@ bool make_attack_normal(int m_idx)
 	/* Assume we attacked */
 	return (TRUE);
 }
-
-

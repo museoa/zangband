@@ -39,7 +39,7 @@ void reset_visuals(void)
 		/* Assume we will use the underlying values */
 		f_ptr->x_attr = f_ptr->d_attr;
 		f_ptr->x_char = f_ptr->d_char;
-		
+
 		/* No extra information */
 		f_ptr->w_attr = 0;
 		f_ptr->w_char = 0;
@@ -64,7 +64,7 @@ void reset_visuals(void)
 		r_ptr->x_attr = r_ptr->d_attr;
 		r_ptr->x_char = r_ptr->d_char;
 	}
-	
+
 	/* Extract default attr/char code for fields */
 	for (i = 0; i < z_info->t_max; i++)
 	{
@@ -79,19 +79,20 @@ void reset_visuals(void)
 	if (use_graphics)
 	{
 		/* Process "graf.prf" */
-		(void)process_pref_file("graf.prf");
+		(void) process_pref_file("graf.prf");
 	}
 
 	/* Normal symbols */
 	else
 	{
 		/* Process "font.prf" */
-		(void)process_pref_file("font.prf");
+		(void) process_pref_file("font.prf");
 	}
 
 	/* Reset the fake monochrome flag */
-	fake_monochrome = (!use_graphics || streq(ANGBAND_SYS, "ibm")) ? TRUE:FALSE;
-	
+	fake_monochrome = (!use_graphics
+					   || streq(ANGBAND_SYS, "ibm")) ? TRUE : FALSE;
+
 	/* Fields have to notice the change of visuals. */
 	init_fields();
 }
@@ -139,7 +140,7 @@ void object_flags_known(const object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 
 	/* Show modifications to stats */
 	(*f1) |= (o_ptr->flags1 &
-		(TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR));
+			  (TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR));
 
 
 	/* Identified? */
@@ -149,12 +150,12 @@ void object_flags_known(const object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 		 * *Identify* sets these flags,
 		 * and ego items have some set on creation.
 		 */
-		
+
 		(*f1) |= o_ptr->kn_flags1;
 		(*f2) |= o_ptr->kn_flags2;
 		(*f3) |= o_ptr->kn_flags3;
 	}
-	
+
 	/* Remove the Moria flags */
 	if (ironman_moria)
 	{
@@ -489,7 +490,7 @@ cptr item_activation(const object_type *o_ptr)
 				break;
 			}
 		}
-	}	
+	}
 	else
 	{
 		/* Some artifacts can be activated */
@@ -677,7 +678,8 @@ cptr item_activation(const object_type *o_ptr)
 			}
 			case ART_BLADETURNER:
 			{
-				return "breathe elements (1500), berserk rage, bless, and resistance";
+				return
+					"breathe elements (1500), berserk rage, bless, and resistance";
 			}
 			case ART_GALADRIEL:
 			{
@@ -727,7 +729,7 @@ cptr item_activation(const object_type *o_ptr)
 			{
 				return "the elements (400) every 250+d250 turns";
 			}
-			case ART_DOR: case ART_TERROR:
+			case ART_DOR:  case ART_TERROR:
 			{
 				return "rays of fear in every direction";
 			}
@@ -819,7 +821,7 @@ cptr item_activation(const object_type *o_ptr)
  */
 bool identify_fully_aux(const object_type *o_ptr)
 {
-	int	i = 0, j, k;
+	int i = 0, j, k;
 
 	u32b f1, f2, f3;
 
@@ -835,7 +837,7 @@ bool identify_fully_aux(const object_type *o_ptr)
 	{
 		info[i++] = "You have full knowledge of this item.";
 	}
-	
+
 	/* Mega-Hack -- describe activation if item is identified */
 	if ((o_ptr->flags3 & (TR3_ACTIVATE)) && object_known_p(o_ptr))
 	{
@@ -1349,21 +1351,21 @@ bool identify_fully_aux(const object_type *o_ptr)
 		prt(info[j], 15, k++);
 
 		/* Every 20 entries (lines 2 to 21), start over */
-		if ((k == 22) && (j+1 < i))
+		if ((k == 22) && (j + 1 < i))
 		{
 			prt("-- more --", 15, k);
-			(void)inkey();
+			(void) inkey();
 			for (; k > 2; k--) prt("", 15, k);
 		}
 	}
 
 	/* Wait for it */
 	prt("[Press any key to continue]", 15, k);
-	(void)inkey();
+	(void) inkey();
 
 	/* Restore the screen */
 	screen_load();
-	
+
 	/* Reclaim the used memory */
 	for (i = 0; i < num_reclaim; i++) string_free(reclaim[i]);
 
@@ -1902,13 +1904,14 @@ bool item_tester_hook_is_blessed(const object_type *o_ptr)
 {
 	u32b f1, f2, f3;
 	object_flags_known(o_ptr, &f1, &f2, &f3);
-	
+
 	/* Is it blessed? */
 	if (f3 & TR3_BLESSED) return (TRUE);
-	
+
 	/* Check for unallowable weapons */
-	if ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM)) return (FALSE);
-	
+	if ((o_ptr->tval == TV_SWORD)
+		|| (o_ptr->tval == TV_POLEARM)) return (FALSE);
+
 	/* Everthing else is ok */
 	return (TRUE);
 }
@@ -1917,18 +1920,18 @@ bool item_tester_hook_is_good(const object_type *o_ptr)
 {
 	/* Check to see if we have identified the item */
 	if (!object_known_p(o_ptr)) return (FALSE);
-	
+
 	if (cursed_p(o_ptr)) return (FALSE);
-	
+
 	/* Ego item or artifact */
 	if (o_ptr->xtra_name) return (TRUE);
-	
+
 	/* Positve AC bonus */
 	if (o_ptr->to_a > 0) return (TRUE);
-	
+
 	/* Good attack + defence */
 	if (o_ptr->to_h + o_ptr->to_d > 0) return (TRUE);
-	
+
 	/* Everthing else isn't good */
 	return (FALSE);
 }
@@ -1938,12 +1941,12 @@ bool item_tester_hook_is_great(const object_type *o_ptr)
 {
 	/* Check to see if we have identified the item */
 	if (!object_known_p(o_ptr)) return (FALSE);
-	
+
 	if (cursed_p(o_ptr)) return (FALSE);
-	
+
 	/* Ego item or artifact */
 	if (o_ptr->xtra_name) return (TRUE);
-	
+
 	/* Everthing else isn't great */
 	return (FALSE);
 }
@@ -1960,11 +1963,11 @@ bool item_tester_hook_is_book(const object_type *o_ptr)
 		case TV_TRUMP_BOOK:
 		case TV_ARCANE_BOOK:
 		case TV_LIFE_BOOK:
-		
-		/* It is a book */	
-		return (TRUE);
+
+			/* It is a book */
+			return (TRUE);
 	}
-	
+
 	/* It isn't a book */
 	return (FALSE);
 }
@@ -1999,14 +2002,13 @@ bool item_tester_okay(const object_type *o_ptr)
 		if ((item_tester_tval <= TV_DEATH_BOOK) &&
 			(item_tester_tval >= TV_LIFE_BOOK))
 			return check_book_realm(o_ptr->tval);
-		else
-			if (item_tester_tval != o_ptr->tval) return (FALSE);
+		else if (item_tester_tval != o_ptr->tval) return (FALSE);
 	}
 
 	/* Check the hook */
 	if (item_tester_hook)
 	{
-		if (!(*item_tester_hook)(o_ptr)) return (FALSE);
+		if (!(*item_tester_hook) (o_ptr)) return (FALSE);
 	}
 
 	/* Assume okay */
@@ -2022,16 +2024,16 @@ void display_inven(void)
 	int i, n, z = 0;
 	object_type *o_ptr;
 	byte attr;
-	
+
 	char tmp_val[80];
 	char o_name[256];
-	
+
 	int wid, hgt;
 
 	/* Get size */
 	Term_get_size(&wid, &hgt);
-	
-	
+
+
 	/* Find the "final" slot */
 	for (i = 0; i < INVEN_PACK; i++)
 	{
@@ -2076,7 +2078,7 @@ void display_inven(void)
 		attr = tval_to_attr[o_ptr->tval % 128];
 
 		/* Grey out charging items */
-		if (o_ptr->timeout && 
+		if (o_ptr->timeout &&
 			((o_ptr->tval != TV_LITE) || (o_ptr->flags3 & TR3_INSTA_ART)))
 		{
 			attr = TERM_L_DARK;
@@ -2125,7 +2127,7 @@ void display_equip(void)
 
 	/* Get size */
 	Term_get_size(&wid, &hgt);
-	
+
 	/* Display the equipment */
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
 	{
@@ -2158,7 +2160,7 @@ void display_equip(void)
 		attr = tval_to_attr[o_ptr->tval % 128];
 
 		/* Grey out charging items */
-		if (o_ptr->timeout && 
+		if (o_ptr->timeout &&
 			((o_ptr->tval != TV_LITE) || (o_ptr->flags3 & TR3_INSTA_ART)))
 		{
 			attr = TERM_L_DARK;
@@ -2177,7 +2179,8 @@ void display_equip(void)
 		if (show_labels)
 		{
 			Term_putstr(wid - 19, i - INVEN_WIELD, -1, TERM_WHITE, "<--");
-			Term_putstr(wid - 15, i - INVEN_WIELD, -1, TERM_WHITE, mention_use(i));
+			Term_putstr(wid - 15, i - INVEN_WIELD, -1, TERM_WHITE,
+						mention_use(i));
 		}
 
 		/* Display the weight (if needed) */
@@ -2268,19 +2271,19 @@ void show_inven(void)
 		out_color[k] = tval_to_attr[o_ptr->tval % 128];
 
 		/* Grey out charging items */
-		if (o_ptr->timeout && 
+		if (o_ptr->timeout &&
 			((o_ptr->tval != TV_LITE) || (o_ptr->flags3 & TR3_INSTA_ART)))
 		{
 			out_color[k] = TERM_L_DARK;
 		}
-		
+
 		/* Fake monochrome */
 		if (!use_color || ironman_moria)
 		{
 			out_color[k] = TERM_WHITE;
 		}
 
-		(void)strcpy(out_desc[k], o_name);
+		(void) strcpy(out_desc[k], o_name);
 
 		/* Find the predicted "line length" */
 		l = strlen(out_desc[k]) + 5;
@@ -2344,7 +2347,7 @@ void show_inven(void)
 		if (show_weights)
 		{
 			int wgt = o_ptr->weight * o_ptr->number;
-			(void)sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
+			(void) sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
 			put_str(tmp_val, wid - 9, j + 1);
 		}
 	}
@@ -2361,15 +2364,15 @@ void show_equip(void)
 {
 	int i, j, k, l;
 	int col, len, lim;
-	
+
 	object_type *o_ptr;
-	
+
 	char tmp_val[80];
 	char o_name[256];
 	int out_index[23];
 	byte out_color[23];
 	char out_desc[23][256];
-	
+
 	byte a;
 	char c;
 
@@ -2413,19 +2416,19 @@ void show_equip(void)
 		out_color[k] = tval_to_attr[o_ptr->tval % 128];
 
 		/* Grey out charging items */
-		if (o_ptr->timeout && 
+		if (o_ptr->timeout &&
 			((o_ptr->tval != TV_LITE) || (o_ptr->flags3 & TR3_INSTA_ART)))
 		{
 			out_color[k] = TERM_L_DARK;
 		}
-		
+
 		/* Fake monochrome */
 		if (!use_color || ironman_moria)
 		{
 			out_color[k] = TERM_WHITE;
 		}
 
-		(void)strcpy(out_desc[k], o_name);
+		(void) strcpy(out_desc[k], o_name);
 
 		/* Extract the maximal length (see below) */
 		l = strlen(out_desc[k]) + (2 + 3);
@@ -2490,7 +2493,7 @@ void show_equip(void)
 		if (show_labels)
 		{
 			/* Mention the use */
-			(void)sprintf(tmp_val, "%-14s: ", mention_use(i));
+			(void) sprintf(tmp_val, "%-14s: ", mention_use(i));
 			put_str(tmp_val, col + 5, j + 1);
 
 			/* Display the entry itself */
@@ -2508,7 +2511,7 @@ void show_equip(void)
 		if (show_weights)
 		{
 			int wgt = o_ptr->weight * o_ptr->number;
-			(void)sprintf(tmp_val, "%3d.%d lb", wgt / 10, wgt % 10);
+			(void) sprintf(tmp_val, "%3d.%d lb", wgt / 10, wgt % 10);
 			put_str(tmp_val, wid - 9, j + 1);
 		}
 	}
@@ -2564,8 +2567,8 @@ void toggle_inven_equip(void)
  */
 static bool verify(cptr prompt, int item)
 {
-	char        o_name[256];
-	char        out_val[512];
+	char o_name[256];
+	char out_val[512];
 	object_type *o_ptr;
 
 
@@ -2585,7 +2588,7 @@ static bool verify(cptr prompt, int item)
 	object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 	/* Prompt */
-	(void)sprintf(out_val, "%s %s? ", prompt, o_name);
+	(void) sprintf(out_val, "%s %s? ", prompt, o_name);
 
 	/* Query */
 	return (get_check(out_val));
@@ -2799,7 +2802,7 @@ void show_floor(int x, int y)
 
 	/* Get size */
 	Term_get_size(&wid, &hgt);
-	
+
 	/* Default length */
 	len = wid - 51;
 
@@ -2810,7 +2813,7 @@ void show_floor(int x, int y)
 	if (show_weights) lim -= 9;
 
 	/* Scan for objects in the grid, using item_tester_okay() */
-	(void)scan_floor(floor_list, &floor_num, x, y, 0x01);
+	(void) scan_floor(floor_list, &floor_num, x, y, 0x01);
 
 	/* Display the inventory */
 	for (k = 0, i = 0; i < floor_num; i++)
@@ -3003,7 +3006,7 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 			/* Success */
 			return (TRUE);
 		}
-		
+
 		/* Invalid repeat - reset it */
 		repeat_clear();
 	}
@@ -3056,7 +3059,7 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 	if (floor)
 	{
 		/* Scan all objects in the grid */
-		(void)scan_floor(floor_list, &floor_num, px, py, 0x01);
+		(void) scan_floor(floor_list, &floor_num, px, py, 0x01);
 	}
 
 	/* Accept inventory */
@@ -3085,7 +3088,8 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 	else
 	{
 		/* Hack -- Start on equipment if requested */
-		if (p_ptr->command_see && (p_ptr->command_wrk == (USE_EQUIP)) && allow_equip)
+		if (p_ptr->command_see && (p_ptr->command_wrk == (USE_EQUIP))
+			&& allow_equip)
 		{
 			/* This line is redundant */
 			p_ptr->command_wrk = (USE_EQUIP);
@@ -3196,8 +3200,7 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 			sprintf(out_val, "Inven:");
 
 			/* Build the prompt */
-			sprintf(tmp_val, " %c-%c,",
-			        index_to_label(i1), index_to_label(i2));
+			sprintf(tmp_val, " %c-%c,", index_to_label(i1), index_to_label(i2));
 
 			/* Append */
 			strcat(out_val, tmp_val);
@@ -3219,8 +3222,7 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 			sprintf(out_val, "Equip:");
 
 			/* Build the prompt */
-			sprintf(tmp_val, " %c-%c,",
-			        index_to_label(e1), index_to_label(e2));
+			sprintf(tmp_val, " %c-%c,", index_to_label(e1), index_to_label(e2));
 
 			/* Append */
 			strcat(out_val, tmp_val);
@@ -3403,7 +3405,8 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 				 */
 				else if (floor_num == 1)
 				{
-					if ((p_ptr->command_wrk == (USE_FLOOR)) || (!carry_query_flag))
+					if ((p_ptr->command_wrk == (USE_FLOOR))
+						|| (!carry_query_flag))
 					{
 						/* Special index */
 						k = 0 - floor_list[0];
@@ -3440,9 +3443,9 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 			}
 
 			case '0':
-			case '1': case '2': case '3':
-			case '4': case '5': case '6':
-			case '7': case '8': case '9':
+			case '1':  case '2':  case '3':
+			case '4':  case '5':  case '6':
+			case '7':  case '8':  case '9':
 			{
 				/* Look up the tag */
 				if (!get_tag(&k, which))

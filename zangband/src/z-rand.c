@@ -91,7 +91,7 @@ void Rand_state_init(u32b seed)
 	Rand_state[0] = seed;
 
 	/* Propagate the seed */
-	for (i = 1; i < RAND_DEG; i++) Rand_state[i] = LCRNG(Rand_state[i-1]);
+	for (i = 1; i < RAND_DEG; i++) Rand_state[i] = LCRNG(Rand_state[i - 1]);
 
 	/* Cycle the table ten times per degree */
 	for (i = 0; i < RAND_DEG * 10; i++)
@@ -316,7 +316,7 @@ s16b Rand_normal(int mean, int stand)
 	if (stand < 1) return (mean);
 
 	/* Roll for probability */
-	tmp = (s16b)randint0(32768);
+	tmp = (s16b) randint0(32768);
 
 	/* Binary Search */
 	while (low < high)
@@ -337,7 +337,7 @@ s16b Rand_normal(int mean, int stand)
 	}
 
 	/* Convert the index into an offset */
-	offset = (long)stand * (long)low / RANDNOR_STD;
+	offset = (long) stand *(long) low / RANDNOR_STD;
 
 	/* One half should be negative */
 	if (randint0(100) < 50) return (mean - offset);
@@ -482,4 +482,3 @@ void quick_rand_add(void)
 {
 	qrand_table[quick_rand_place++] = (!randint0(2));
 }
-

@@ -134,7 +134,7 @@ void do_cmd_go_down(void)
 
 			/* Create a way back */
 			p_ptr->create_up_stair = TRUE;
-			
+
 			/*
 			 * Hack XXX XXX Take some time
 			 *
@@ -276,7 +276,7 @@ static void chest_death(int x, int y, s16b o_idx)
 		{
 			/* Swords */
 			tval = TV_SWORD;
-			sval = SV_ANY;		
+			sval = SV_ANY;
 			break;
 		}
 		case 2:
@@ -286,15 +286,15 @@ static void chest_death(int x, int y, s16b o_idx)
 			sval = SV_ANY;
 			break;
 		}
-		
+
 		case 3:
 		{
 			/* Rings */
 			tval = TV_RING;
-			sval = SV_ANY;	
+			sval = SV_ANY;
 			break;
 		}
-		
+
 		case 4:
 		{
 			/* Staves */
@@ -302,28 +302,28 @@ static void chest_death(int x, int y, s16b o_idx)
 			sval = SV_ANY;
 			break;
 		}
-		
+
 		case 5:
 		{
 			/* Potions */
 			tval = TV_POTION;
-			sval = SV_ANY;	
+			sval = SV_ANY;
 			break;
 		}
-		
+
 		case 6:
 		{
 			/* Cloaks */
 			tval = TV_CLOAK;
-			sval = SV_ANY;	
+			sval = SV_ANY;
 			break;
 		}
-		
+
 		case 7:
 		{
 			/* Rods */
 			tval = TV_ROD;
-			sval = SV_ANY;	
+			sval = SV_ANY;
 			break;
 		}
 		default:
@@ -379,7 +379,7 @@ static void chest_death(int x, int y, s16b o_idx)
 		}
 
 		/* Drop it in the dungeon */
-		(void)drop_near(q_ptr, -1, x, y);
+		(void) drop_near(q_ptr, -1, x, y);
 	}
 
 	/* Reset the object level */
@@ -409,7 +409,7 @@ static void chest_death(int x, int y, s16b o_idx)
  */
 static void chest_trap(int x, int y, s16b o_idx)
 {
-	int  i, trap;
+	int i, trap;
 
 	object_type *o_ptr = &o_list[o_idx];
 
@@ -425,7 +425,7 @@ static void chest_trap(int x, int y, s16b o_idx)
 	{
 		msg_print("A small needle has pricked you!");
 		take_hit(damroll(1, 4), "a poison needle");
-		(void)do_dec_stat(A_STR);
+		(void) do_dec_stat(A_STR);
 	}
 
 	/* Lose constitution */
@@ -433,7 +433,7 @@ static void chest_trap(int x, int y, s16b o_idx)
 	{
 		msg_print("A small needle has pricked you!");
 		take_hit(damroll(1, 4), "a poison needle");
-		(void)do_dec_stat(A_CON);
+		(void) do_dec_stat(A_CON);
 	}
 
 	/* Poison */
@@ -442,7 +442,7 @@ static void chest_trap(int x, int y, s16b o_idx)
 		msg_print("A puff of green gas surrounds you!");
 		if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
 		{
-			(void)set_poisoned(p_ptr->poisoned + rand_range(10, 30));
+			(void) set_poisoned(p_ptr->poisoned + rand_range(10, 30));
 		}
 	}
 
@@ -453,7 +453,7 @@ static void chest_trap(int x, int y, s16b o_idx)
 
 		if (!p_ptr->free_act)
 		{
-			(void)set_paralyzed(p_ptr->paralyzed + rand_range(10, 30));
+			(void) set_paralyzed(p_ptr->paralyzed + rand_range(10, 30));
 		}
 	}
 
@@ -466,9 +466,10 @@ static void chest_trap(int x, int y, s16b o_idx)
 		for (i = 0; i < num; i++)
 		{
 			if (randint1(100) < p_ptr->depth)
-				(void)activate_hi_summon();
+				(void) activate_hi_summon();
 			else
-				(void)summon_specific(0, x, y, p_ptr->depth, 0, TRUE, FALSE, FALSE);
+				(void) summon_specific(0, x, y, p_ptr->depth, 0, TRUE, FALSE,
+									   FALSE);
 		}
 	}
 
@@ -517,7 +518,7 @@ static bool do_cmd_open_chest(int x, int y, s16b o_idx)
 		i = p_ptr->skill_dis;
 
 		/* Penalize some conditions */
-		if (p_ptr->blind || no_lite()) i = i / 10;
+		if (p_ptr->blind || no_lite())i = i / 10;
 		if (p_ptr->confused || p_ptr->image) i = i / 10;
 
 		/* Extract the difficulty */
@@ -584,7 +585,7 @@ int count_traps(int *x, int *y, bool under)
 {
 	int d;
 	int xx, yy;
-	int count = 0; /* Count how many matches */
+	int count = 0;				/* Count how many matches */
 
 	/* Check around (and under) the character */
 	for (d = 0; d < 9; d++)
@@ -618,11 +619,11 @@ int count_traps(int *x, int *y, bool under)
 /*
  * Return the number of doors around (or under) the character.
  */
-static int count_doors(int *x, int *y, bool (*test)(int feat), bool under)
+static int count_doors(int *x, int *y, bool(*test) (int feat), bool under)
 {
 	int d;
 	int xx, yy;
-	int count = 0; /* Count how many matches */
+	int count = 0;				/* Count how many matches */
 
 	/* Check around (and under) the character */
 	for (d = 0; d < 9; d++)
@@ -641,7 +642,7 @@ static int count_doors(int *x, int *y, bool (*test)(int feat), bool under)
 		if (!(parea(xx, yy)->feat)) continue;
 
 		/* Not looking for this feature */
-		if (!((*test)(area(xx, yy)->feat))) continue;
+		if (!((*test) (area(xx, yy)->feat))) continue;
 
 		/* OK */
 		++count;
@@ -689,7 +690,7 @@ static int count_chests(int *x, int *y, bool trapped)
 
 		/* No (known) traps here */
 		if (trapped && (!object_known_p(o_ptr) ||
-			!chest_traps[o_ptr->pval])) continue;
+						!chest_traps[o_ptr->pval])) continue;
 
 		/* OK */
 		++count;
@@ -734,7 +735,7 @@ bool do_cmd_open_aux(int x, int y)
 	int i;
 
 	cave_type *c_ptr;
-	
+
 	s16b *fld_ptr;
 
 	/* Take a turn */
@@ -742,17 +743,17 @@ bool do_cmd_open_aux(int x, int y)
 
 	/* Get requested grid */
 	c_ptr = area(x, y);
-	
+
 	/* Must be a closed door */
 	if (c_ptr->feat != FEAT_CLOSED)
 	{
 		/* Nope */
 		return (FALSE);
 	}
-	
+
 	/* Get fields */
 	fld_ptr = field_is_type(&c_ptr->fld_idx, FTYPE_DOOR);
-	
+
 	/* If the door is locked / jammed */
 	if (*fld_ptr)
 	{
@@ -760,7 +761,7 @@ bool do_cmd_open_aux(int x, int y)
 		i = p_ptr->skill_dis;
 
 		/* Penalize some conditions */
-		if (p_ptr->blind || no_lite()) i = i / 10;
+		if (p_ptr->blind || no_lite())i = i / 10;
 		if (p_ptr->confused || p_ptr->image) i = i / 10;
 
 		/* Success? */
@@ -792,7 +793,7 @@ bool do_cmd_open_aux(int x, int y)
 
 		/* Sound */
 		sound(SOUND_OPENDOOR);
-	
+
 		make_noise(3);
 	}
 
@@ -915,20 +916,20 @@ void do_cmd_open(void)
  */
 static bool do_cmd_close_aux(int x, int y)
 {
-	cave_type	*c_ptr;
+	cave_type *c_ptr;
 
-	bool		more = FALSE;
+	bool more = FALSE;
 
 
 	if ((x == p_ptr->px) && (y == p_ptr->py))
 	{
 		/* You cannot close a door beneith yourself */
 		msg_print("You cannot close it now.");
-		
+
 		/* No more */
 		return (more);
 	}
-	
+
 	/* Take a turn */
 	p_ptr->energy_use = 100;
 
@@ -950,7 +951,7 @@ static bool do_cmd_close_aux(int x, int y)
 
 		/* Sound */
 		sound(SOUND_SHUTDOOR);
-	
+
 		make_noise(3);
 	}
 
@@ -1077,20 +1078,20 @@ static bool twall(int x, int y, byte feat)
 static bool do_cmd_tunnel_aux(int x, int y)
 {
 	bool more = FALSE;
-	
+
 	cave_type *c_ptr = area(x, y);
 	pcave_type *pc_ptr = parea(x, y);
-	
+
 	int action;
-	
+
 	int dig = p_ptr->skill_dig;
-	
+
 	s16b *fld_ptr = field_hook_find(&c_ptr->fld_idx,
-			 FIELD_ACT_INTERACT_TEST, (vptr) &action);
-			 
+									FIELD_ACT_INTERACT_TEST, (vptr) &action);
+
 	/* Take a turn */
 	p_ptr->energy_use = 100;
-	
+
 	/* Sound */
 	sound(SOUND_DIG);
 
@@ -1106,12 +1107,12 @@ static bool do_cmd_tunnel_aux(int x, int y)
 
 	if (*fld_ptr && (action == 0))
 	{
-		if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, (vptr)&dig))
+		if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, (vptr) &dig))
 		{
 			/* Finished tunneling */
 			return (FALSE);
 		}
-		
+
 		/* Keep on tunneling */
 		return (TRUE);
 	}
@@ -1127,14 +1128,12 @@ static bool do_cmd_tunnel_aux(int x, int y)
 	}
 
 	/* Titanium */
-	if ((c_ptr->feat >= FEAT_PERM_EXTRA) &&
-	    (c_ptr->feat <= FEAT_PERM_SOLID))
+	if ((c_ptr->feat >= FEAT_PERM_EXTRA) && (c_ptr->feat <= FEAT_PERM_SOLID))
 	{
 		msg_print("This seems to be permanent rock.");
 	}
 
-	else if ((c_ptr->feat == FEAT_TREES) ||
-	         (c_ptr->feat == FEAT_PINE_TREE))
+	else if ((c_ptr->feat == FEAT_TREES) || (c_ptr->feat == FEAT_PINE_TREE))
 	{
 		/* Chop Down */
 		if ((p_ptr->skill_dig > 10 + randint0(400)) && twall(x, y, FEAT_GRASS))
@@ -1206,9 +1205,9 @@ static bool do_cmd_tunnel_aux(int x, int y)
 
 	/* Granite + mountain side */
 	else if (((c_ptr->feat >= FEAT_WALL_EXTRA) &&
-	          (c_ptr->feat <= FEAT_WALL_SOLID)) ||
-	         (c_ptr->feat == FEAT_MOUNTAIN) ||
-	         (c_ptr->feat == FEAT_SNOW_MOUNTAIN) ||
+			  (c_ptr->feat <= FEAT_WALL_SOLID)) ||
+			 (c_ptr->feat == FEAT_MOUNTAIN) ||
+			 (c_ptr->feat == FEAT_SNOW_MOUNTAIN) ||
 			 (c_ptr->feat == FEAT_PILLAR))
 	{
 		/* Tunnel */
@@ -1230,8 +1229,7 @@ static bool do_cmd_tunnel_aux(int x, int y)
 	}
 
 	/* Quartz / Magma */
-	else if ((c_ptr->feat >= FEAT_MAGMA) &&
-	         (c_ptr->feat <= FEAT_QUARTZ_K))
+	else if ((c_ptr->feat >= FEAT_MAGMA) && (c_ptr->feat <= FEAT_QUARTZ_K))
 	{
 		bool okay;
 		bool gold = FALSE;
@@ -1349,7 +1347,7 @@ static bool do_cmd_tunnel_aux(int x, int y)
 	}
 
 	make_noise(4);
-	
+
 	/* Result */
 	return (more);
 }
@@ -1366,11 +1364,11 @@ static bool do_cmd_tunnel_aux(int x, int y)
  */
 void do_cmd_tunnel(void)
 {
-	int			y, x, dir;
+	int y, x, dir;
 
-	cave_type	*c_ptr;
+	cave_type *c_ptr;
 
-	bool		more = FALSE;
+	bool more = FALSE;
 
 
 	/* Allow repeated command */
@@ -1418,8 +1416,8 @@ void do_cmd_tunnel(void)
 
 		/* No tunnelling through air */
 		else if (cave_floor_grid(c_ptr) ||
-		         ((c_ptr->feat >= FEAT_PATTERN_START) &&
-		          (c_ptr->feat <= FEAT_PATTERN_XTRA2)))
+				 ((c_ptr->feat >= FEAT_PATTERN_START) &&
+				  (c_ptr->feat <= FEAT_PATTERN_XTRA2)))
 		{
 			/* Message */
 			msg_print("You cannot tunnel through air.");
@@ -1559,40 +1557,40 @@ bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
 	s16b *fld_ptr;
 
 	bool more = FALSE;
-	
+
 	int xp;
-	
+
 	/* Get trap */
 	fld_ptr = field_first_known(&c_ptr->fld_idx, FTYPE_TRAP);
-	
+
 	/* This should never happen - no trap here to disarm */
 	if (!(*fld_ptr))
 	{
-		msg_print("Error condition:  Trying to disarm a non-existant trap.");	
+		msg_print("Error condition:  Trying to disarm a non-existant trap.");
 		return (FALSE);
 	}
-	
+
 	/* Take a turn */
 	p_ptr->energy_use = 100;
-	
+
 	/* Point to field */
 	f_ptr = &fld_list[*fld_ptr];
-	
+
 	/* Get amount of xp for a successful disarm */
 	xp = f_ptr->data[0] * f_ptr->data[0];
-	
+
 	/* Get type of trap */
 	t_ptr = &t_info[f_ptr->t_idx];
-	 
+
 	/* Get the "disarm" factor */
 	i = p_ptr->skill_dis;
 
 	/* Penalize some conditions */
-	if (p_ptr->blind || no_lite()) i = i / 10;
+	if (p_ptr->blind || no_lite())i = i / 10;
 	if (p_ptr->confused || p_ptr->image) i = i / 10;
 
 	/* Success */
-	if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, (vptr)&i))
+	if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, (vptr) &i))
 	{
 		/* Message */
 		msg_format("You have disarmed the %s.", t_ptr->name);
@@ -1747,12 +1745,12 @@ void do_cmd_disarm(void)
  */
 void do_cmd_alter(void)
 {
-	int			y, x, dir;
-	int			action;
+	int y, x, dir;
+	int action;
 
-	cave_type	*c_ptr;
+	cave_type *c_ptr;
 
-	bool		more = FALSE;
+	bool more = FALSE;
 
 
 	/* Allow repeated command */
@@ -1799,7 +1797,7 @@ void do_cmd_alter(void)
 		}
 
 		else if (*field_hook_find(&c_ptr->fld_idx, FIELD_ACT_INTERACT_TEST,
-		                          (vptr)&action))
+								  (vptr) &action))
 		{
 			switch (action)
 			{
@@ -1809,14 +1807,14 @@ void do_cmd_alter(void)
 					more = do_cmd_tunnel_aux(x, y);
 					break;
 				}
-				
+
 				case 1:
 				{
 					/* Disarm */
 					more = do_cmd_disarm_aux(c_ptr, dir);
 					break;
 				}
-				
+
 				case 2:
 				{
 					/* Unlock / open */
@@ -1828,14 +1826,13 @@ void do_cmd_alter(void)
 
 		/* Tunnel through walls */
 		else if (((c_ptr->feat >= FEAT_SECRET) &&
-		          (c_ptr->feat <= FEAT_PERM_SOLID)) ||
-		         ((c_ptr->feat == FEAT_TREES) ||
-		          (c_ptr->feat == FEAT_MOUNTAIN) ||
-		          (c_ptr->feat == FEAT_SNOW_MOUNTAIN) ||
-		          (c_ptr->feat == FEAT_PINE_TREE) ||
-		          (c_ptr->feat == FEAT_SNOW_TREE) ||
-		          (c_ptr->feat == FEAT_JUNGLE) ||
-				  (c_ptr->feat == FEAT_PILLAR)))
+				  (c_ptr->feat <= FEAT_PERM_SOLID)) ||
+				 ((c_ptr->feat == FEAT_TREES) ||
+				  (c_ptr->feat == FEAT_MOUNTAIN) ||
+				  (c_ptr->feat == FEAT_SNOW_MOUNTAIN) ||
+				  (c_ptr->feat == FEAT_PINE_TREE) ||
+				  (c_ptr->feat == FEAT_SNOW_TREE) ||
+				  (c_ptr->feat == FEAT_JUNGLE) || (c_ptr->feat == FEAT_PILLAR)))
 		{
 			/* Tunnel */
 			more = do_cmd_tunnel_aux(x, y);
@@ -1849,8 +1846,7 @@ void do_cmd_alter(void)
 		}
 
 		/* Close open doors */
-		else if ((c_ptr->feat == FEAT_OPEN) ||
-		         (c_ptr->feat == FEAT_BROKEN))
+		else if ((c_ptr->feat == FEAT_OPEN) || (c_ptr->feat == FEAT_BROKEN))
 		{
 			/* close */
 			more = do_cmd_close_aux(x, y);
@@ -1970,7 +1966,7 @@ void do_cmd_spike(void)
 
 			/* Successful jamming */
 			msg_print("You jam the door with a spike.");
-			
+
 			/* Make a jammed door on the square */
 			make_lockjam_door(x, y, 1, TRUE);
 
@@ -2098,7 +2094,8 @@ void do_cmd_stay(int pickup)
 	/* 
 	 * Fields you are standing on may do something.
 	 */
-	field_hook(&area(p_ptr->px, p_ptr->py)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);
+	field_hook(&area(p_ptr->px, p_ptr->py)->fld_idx, FIELD_ACT_PLAYER_ENTER,
+			   NULL);
 }
 
 
@@ -2148,7 +2145,7 @@ void do_cmd_rest(void)
 	if (p_ptr->command_arg > 100)
 		chg_virtue(V_DILIGENCE, -1);
 
-	/* Why are you sleeping when there's no need?  WAKE UP!*/
+	/* Why are you sleeping when there's no need?  WAKE UP! */
 	if ((p_ptr->chp == p_ptr->mhp) &&
 		(p_ptr->csp == p_ptr->msp) &&
 		!p_ptr->blind && !p_ptr->confused &&
@@ -2156,7 +2153,7 @@ void do_cmd_rest(void)
 		!p_ptr->stun && !p_ptr->cut &&
 		!p_ptr->slow && !p_ptr->paralyzed &&
 		!p_ptr->image && !p_ptr->word_recall)
-			chg_virtue(V_DILIGENCE, -1);
+		chg_virtue(V_DILIGENCE, -1);
 
 	/* Take a turn XXX XXX XXX (?) */
 	p_ptr->energy_use = 100;
@@ -2191,7 +2188,7 @@ static int breakage_chance(object_type *o_ptr)
 	/* Examine the item type */
 	switch (o_ptr->tval)
 	{
-		/* Always break */
+			/* Always break */
 		case TV_FLASK:
 		case TV_POTION:
 		case TV_BOTTLE:
@@ -2199,19 +2196,19 @@ static int breakage_chance(object_type *o_ptr)
 		case TV_JUNK:
 			return (100);
 
-		/* Often break */
+			/* Often break */
 		case TV_LITE:
 		case TV_SCROLL:
 		case TV_SKELETON:
 			return (50);
 
-		/* Sometimes break */
+			/* Sometimes break */
 		case TV_WAND:
 		case TV_SPIKE:
 		case TV_ARROW:
 			return (25);
 
-		/* Rarely break */
+			/* Rarely break */
 		case TV_SHOT:
 		case TV_BOLT:
 		default:
@@ -2224,7 +2221,7 @@ static int breakage_chance(object_type *o_ptr)
  * Calculation of critical hits for objects fired or thrown by the player. -LM-
  */
 static int critical_shot(int chance, int sleeping_bonus, cptr o_name,
-	 cptr m_name, int visible)
+						 cptr m_name, int visible)
 {
 	int power = (chance + sleeping_bonus);
 	int mult_a_crit;
@@ -2245,14 +2242,15 @@ static int critical_shot(int chance, int sleeping_bonus, cptr o_name,
 		{
 			msg_print("You rudely awaken the monster!");
 		}
-		
+
 		/* Determine level of critical hit x 10. */
-		if		(randint0(100) == 0) mult_a_crit = 50;
-		if      (randint0(40) == 0)  mult_a_crit = 36;
-		else if (randint0(12) == 0)  mult_a_crit = 27;
-		else if (randint0(3)  == 0)  mult_a_crit = 20;
-		else                         mult_a_crit = 15;
-		
+		if (randint0(100) == 0) mult_a_crit = 50;
+		if (randint0(40) == 0) mult_a_crit = 36;
+		else if (randint0(12) == 0) mult_a_crit = 27;
+		else if (randint0(3) == 0) mult_a_crit = 20;
+		else
+			mult_a_crit = 15;
+
 		/* Only give a message if we see it hit. */
 		if (visible)
 		{
@@ -2276,9 +2274,9 @@ static int critical_shot(int chance, int sleeping_bonus, cptr o_name,
 			{
 				msg_format("The %s *smites* %s!", o_name, m_name);
 			}
-		}	
+		}
 	}
-	
+
 	/*
 	 * If the blow is not a critical hit, display the default attack
 	 * message and apply the standard multiplier.
@@ -2286,7 +2284,7 @@ static int critical_shot(int chance, int sleeping_bonus, cptr o_name,
 	else
 	{
 		mult_a_crit = 10;
-		
+
 		if (visible)
 		{
 			msg_format("The %s hits %s.", o_name, m_name);
@@ -2444,7 +2442,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 
 	/* Cursed arrows tend not to hit anything */
 	if (cursed_p(i_ptr)) chance = chance / 2;
-	
+
 	/* Shooter properties */
 	p_ptr->energy_use = p_ptr->bow_energy;
 	tmul = p_ptr->ammo_mult;
@@ -2459,7 +2457,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	if (tdis > MAX_RANGE) tdis = MAX_RANGE;
 
 	/* Take a (partial) turn - note strange formula. */
-	
+
 	/* The real number of shots per round is (1 + n)/2 */
 	p_ptr->energy_use = (2 * p_ptr->energy_use / (1 + thits));
 
@@ -2505,7 +2503,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 
 
 	/* Travel until stopped */
-	for (cur_dis = 0; cur_dis <= tdis; )
+	for (cur_dis = 0; cur_dis <= tdis;)
 	{
 		/* Hack -- Stop at the target */
 		if ((y == ty) && (x == tx)) break;
@@ -2603,16 +2601,16 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 			if ((m_ptr->smart & SM_MIMIC) && m_ptr->ml)
 			{
 				char m_name2[80];
-		
+
 				/* Get name */
-				monster_desc (m_name2, m_ptr, 0x88);
-				
+				monster_desc(m_name2, m_ptr, 0x88);
+
 				/* Toggle flag */
 				m_ptr->smart &= ~(SM_MIMIC);
-				
+
 				/* It is in the monster list now */
 				update_mon_vis(m_ptr->r_idx, 1);
-		
+
 				/* We've spotted it */
 				msg_format("You've found %s!", m_name2);
 			}
@@ -2663,7 +2661,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 				 * (10x inflation) + level damage bonus
 				 */
 				tdam *= critical_shot(chance2, sleeping_bonus,
-					o_name, m_name, m_ptr->ml);
+									  o_name, m_name, m_ptr->ml);
 
 				/*
 				 * Convert total Deadliness into a percentage, and apply
@@ -2676,8 +2674,8 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 				 * Get the whole number of dice sides by deflating,
 				 * and then get total dice damage.
 				 */
-				tdam = damroll(i_ptr->dd, tdam / 10000 + 
-				        (randint0(10000) < (tdam % 10000) ? 1 : 0));
+				tdam = damroll(i_ptr->dd, tdam / 10000 +
+							   (randint0(10000) < (tdam % 10000) ? 1 : 0));
 
 				/* Add in extra effect due to slays */
 				tdam += (slay - 10);
@@ -2700,7 +2698,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 				if (p_ptr->wizard)
 				{
 					msg_format("You do %d (out of %d) damage.",
-					           tdam, m_ptr->hp);
+							   tdam, m_ptr->hp);
 				}
 
 				/* Hit the monster, check for death */
@@ -2726,7 +2724,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 
 						/* Message */
 						message_format(MSG_FLEE, m_ptr->r_idx,
-						               "%^s flees in terror!", m_name);
+									   "%^s flees in terror!", m_name);
 					}
 				}
 			}
@@ -2740,7 +2738,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	j = (hit_body ? breakage_chance(i_ptr) : 0);
 
 	/* Drop (or break) near that location */
-	(void)drop_near(i_ptr, j, x, y);
+	(void) drop_near(i_ptr, j, x, y);
 
 	make_noise(3);
 }
@@ -3012,7 +3010,7 @@ void do_cmd_throw_aux(int mult)
 			 * except from rangers.
 			 */
 			else if ((c_ptr->feat == FEAT_TREES) &&
-			         (p_ptr->pclass != CLASS_RANGER))
+					 (p_ptr->pclass != CLASS_RANGER))
 			{
 				terrain_bonus = r_ptr->ac / 5 + 5;
 			}
@@ -3029,22 +3027,23 @@ void do_cmd_throw_aux(int mult)
 			if ((m_ptr->smart & SM_MIMIC) && m_ptr->ml)
 			{
 				char m_name2[80];
-		
+
 				/* Get name */
-				monster_desc (m_name2, m_ptr, 0x88);
-				
+				monster_desc(m_name2, m_ptr, 0x88);
+
 				/* Toggle flag */
 				m_ptr->smart &= ~(SM_MIMIC);
-				
+
 				/* It is in the monster list now */
 				update_mon_vis(m_ptr->r_idx, 1);
-		
+
 				/* We've spotted it */
 				msg_format("You've found %s!", m_name2);
 			}
-			
+
 			/* Did we hit it (penalize range) */
-			if (test_hit_fire(chance - cur_dis, r_ptr->ac + terrain_bonus, m_ptr->ml))
+			if (test_hit_fire
+				(chance - cur_dis, r_ptr->ac + terrain_bonus, m_ptr->ml))
 			{
 				bool fear = FALSE;
 
@@ -3101,9 +3100,10 @@ void do_cmd_throw_aux(int mult)
 				if (f2 & (TR2_THROW))
 				{
 					tdam *= critical_shot(chance2, sleeping_bonus, o_name,
-												 m_name, m_ptr->ml);
+										  m_name, m_ptr->ml);
 				}
-				else tdam *= 10;
+				else
+					tdam *= 10;
 
 				/*
 				 * Convert total or object-only Deadliness into a percen-
@@ -3122,9 +3122,9 @@ void do_cmd_throw_aux(int mult)
 				 * Get the whole number of dice sides by deflating,
 				 * and then get total dice damage.
 				 */
-				tdam = damroll(q_ptr->dd, tdam / 10000 + 
-				        (randint0(10000) < (tdam % 10000) ? 1 : 0));
-				
+				tdam = damroll(q_ptr->dd, tdam / 10000 +
+							   (randint0(10000) < (tdam % 10000) ? 1 : 0));
+
 				/* Add in extra effect due to slays */
 				tdam += (slay - 10);
 
@@ -3138,7 +3138,7 @@ void do_cmd_throw_aux(int mult)
 				if (p_ptr->wizard)
 				{
 					msg_format("You do %d (out of %d) damage.",
-					           tdam, m_ptr->hp);
+							   tdam, m_ptr->hp);
 				}
 
 				/* Hit the monster, check for death */
@@ -3165,7 +3165,7 @@ void do_cmd_throw_aux(int mult)
 
 						/* Message */
 						message_format(MSG_FLEE, m_ptr->r_idx,
-						               "%^s flees in terror!", m_name);
+									   "%^s flees in terror!", m_name);
 					}
 				}
 			}
@@ -3204,8 +3204,8 @@ void do_cmd_throw_aux(int mult)
 
 				/* ToDo (Robert): fix the invulnerability */
 				if (area(x, y)->m_idx &&
-				    !is_hostile(&m_list[area(x, y)->m_idx]) &&
-				    !(m_ptr->invulner))
+					!is_hostile(&m_list[area(x, y)->m_idx]) &&
+					!(m_ptr->invulner))
 				{
 					char m_name2[80];
 					monster_desc(m_name2, &m_list[area(x, y)->m_idx], 0);
@@ -3223,7 +3223,7 @@ void do_cmd_throw_aux(int mult)
 	}
 
 	/* Drop (or break) near that location */
-	(void)drop_near(q_ptr, breakage, x, y);
+	(void) drop_near(q_ptr, breakage, x, y);
 
 	p_ptr->redraw |= (PR_EQUIPPY);
 

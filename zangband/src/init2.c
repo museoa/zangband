@@ -17,10 +17,10 @@
 
 #ifdef CHECK_MODIFICATION_TIME
 #ifdef MACINTOSH
-	#include <stat.h>
+#include <stat.h>
 #else
-	#include <sys/types.h>
-	#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #endif /* MACINTOSH */
 #endif /* CHECK_MODIFICATION_TIME */
 
@@ -262,8 +262,7 @@ int error_line;
 /*
  * Standard error message text
  */
-cptr err_str[PARSE_ERROR_MAX] =
-{
+cptr err_str[PARSE_ERROR_MAX] = {
 	NULL,
 	"parse error",
 	"obsolete file",
@@ -342,21 +341,21 @@ header r_head;
 /*
  * Initialize a "*_info" array, by parsing a binary "image" file
  */
-static errr init_info_raw(int fd, header *head)
+static errr init_info_raw(int fd, header * head)
 {
 	header test;
 
 
 	/* Read and verify the header */
-	if (fd_read(fd, (char*)(&test), sizeof(header)) ||
-	    (test.v_major != head->v_major) ||
-	    (test.v_minor != head->v_minor) ||
-	    (test.v_patch != head->v_patch) ||
-	    (test.v_extra != head->v_extra) ||
-	    (test.info_num != head->info_num) ||
-	    (test.info_len != head->info_len) ||
-	    (test.head_size != head->head_size) ||
-	    (test.info_size != head->info_size))
+	if (fd_read(fd, (char *) (&test), sizeof(header)) ||
+		(test.v_major != head->v_major) ||
+		(test.v_minor != head->v_minor) ||
+		(test.v_patch != head->v_patch) ||
+		(test.v_extra != head->v_extra) ||
+		(test.info_num != head->info_num) ||
+		(test.info_len != head->info_len) ||
+		(test.head_size != head->head_size) ||
+		(test.info_size != head->info_size))
 	{
 		/* Error */
 		return (-1);
@@ -449,7 +448,7 @@ static void display_parse_error(cptr filename, errr err, cptr buf)
  * even if the string happens to be empty (everyone has a unique '\0').
  */
 static errr init_info(cptr filename, header *head,
-                      void **info, char **name, char **text)
+					  void **info, char **name, char **text)
 {
 	int fd;
 
@@ -583,7 +582,7 @@ static errr init_info(cptr filename, header *head,
 		if (fd >= 0)
 		{
 			/* Dump it */
-			fd_write(fd, (cptr)head, head->head_size);
+			fd_write(fd, (cptr) head, head->head_size);
 
 			/* Dump the "*_info" array */
 			fd_write(fd, head->info_ptr, head->info_size);
@@ -681,8 +680,7 @@ static errr init_z_info(void)
 
 #endif /* ALLOW_TEMPLATES */
 
-	return init_info("misc", &z_head,
-	                 (void*)&z_info, NULL, NULL);
+	return init_info("misc", &z_head, (void *) &z_info, NULL, NULL);
 }
 
 
@@ -702,7 +700,7 @@ static errr init_f_info(void)
 #endif /* ALLOW_TEMPLATES */
 
 	return init_info("f_info", &f_head,
-	                 (void*)&f_info, (void*)&f_name, (void*)&f_text);
+					 (void *) &f_info, (void *) &f_name, (void *) &f_text);
 }
 
 
@@ -723,7 +721,7 @@ static errr init_k_info(void)
 #endif /* ALLOW_TEMPLATES */
 
 	return init_info("k_info", &k_head,
-	                 (void*)&k_info, (void*)&k_name, (void*)&k_text);
+					 (void *) &k_info, (void *) &k_name, (void *) &k_text);
 }
 
 
@@ -744,7 +742,7 @@ static errr init_a_info(void)
 #endif /* ALLOW_TEMPLATES */
 
 	return init_info("a_info", &a_head,
-	                 (void*)&a_info, (void*)&a_name, (void*)&a_text);
+					 (void *) &a_info, (void *) &a_name, (void *) &a_text);
 }
 
 
@@ -765,7 +763,7 @@ static errr init_e_info(void)
 #endif /* ALLOW_TEMPLATES */
 
 	return init_info("e_info", &e_head,
-	                 (void*)&e_info, (void*)&e_name, (void*)&e_text);
+					 (void *) &e_info, (void *) &e_name, (void *) &e_text);
 }
 
 
@@ -786,7 +784,7 @@ static errr init_r_info(void)
 #endif /* ALLOW_TEMPLATES */
 
 	return init_info("r_info", &r_head,
-	                 (void*)&r_info, (void*)&r_name, (void*)&r_text);
+					 (void *) &r_info, (void *) &r_name, (void *) &r_text);
 }
 
 
@@ -807,7 +805,7 @@ static errr init_v_info(void)
 #endif /* ALLOW_TEMPLATES */
 
 	return init_info("v_info", &v_head,
-	                 (void*)&v_info, (void*)&v_name, (void*)&v_text);
+					 (void *) &v_info, (void *) &v_name, (void *) &v_text);
 }
 
 
@@ -860,7 +858,8 @@ errr init_w_info(void)
 		cptr oops;
 
 		/* Error string */
-		oops = (((err > 0) && (err < PARSE_ERROR_MAX)) ? err_str[err] : "unknown");
+		oops =
+			(((err > 0) && (err < PARSE_ERROR_MAX)) ? err_str[err] : "unknown");
 
 		/* Oops */
 		msg_format("Error %d at line %d of 'w_info.txt'.", err, error_line);
@@ -891,7 +890,7 @@ errr init_t_info(void)
 	/* Later must add in python support. */
 	C_MAKE(t_info, z_info->t_max, field_thaum);
 	C_MAKE(fld_list, z_info->fld_max, field_type);
-	
+
 
 	/*** Load the ascii template file ***/
 
@@ -916,7 +915,8 @@ errr init_t_info(void)
 		cptr oops;
 
 		/* Error string */
-		oops = (((err > 0) && (err < PARSE_ERROR_MAX)) ? err_str[err] : "unknown");
+		oops =
+			(((err > 0) && (err < PARSE_ERROR_MAX)) ? err_str[err] : "unknown");
 
 		/* Oops */
 		msg_format("Error %d at line %d of 't_info.txt'.", err, error_line);
@@ -952,20 +952,20 @@ static errr init_other(void)
 
 
 	/* Clear the spell colour strings */
-	(void)C_WIPE(gf_color, MAX_GF, cptr);
+	(void) C_WIPE(gf_color, MAX_GF, cptr);
 
 
 	/* Initialize the "quark" package */
-	(void)quarks_init();
+	(void) quarks_init();
 
 	/* Initialize the "message" package */
-	(void)messages_init();
-	
-	
+	(void) messages_init();
+
+
 	/*** Prepare region list ***/
 	C_MAKE(rg_list, z_info->rg_max, region_type);
 	C_MAKE(ri_list, z_info->rg_max, region_info);
-	
+
 
 	/*** Hack - Allocate the player information for each grid ***/
 	for (i = 0; i < MAX_HGT; i++)
@@ -973,7 +973,7 @@ static errr init_other(void)
 		/* Allocate one row of the cave */
 		C_MAKE(p_ptr->pcave[i], MAX_WID, pcave_type);
 	}
-	
+
 	/*** Prepare wilderness stuff ***/
 
 	/* Allocate temporary wilderness block */
@@ -990,7 +990,7 @@ static errr init_other(void)
 	for (i = 0; i < WILD_CACHE; i++)
 	{
 		/* Allocate block */
-		C_MAKE(wild_cache[i], WILD_BLOCK_SIZE, cave_type*);
+		C_MAKE(wild_cache[i], WILD_BLOCK_SIZE, cave_type *);
 
 		/* Allocate rows of a block */
 		for (j = 0; j < WILD_BLOCK_SIZE; j++)
@@ -1000,19 +1000,19 @@ static errr init_other(void)
 	}
 
 	/* Allocate the player information for each grid (wilderness) */
-	
+
 	/* Allocate WILD_VIEW by WILD_VIEW blocks */
-	C_MAKE(p_ptr->pwild, WILD_VIEW, pblk_ptr*);
-	
+	C_MAKE(p_ptr->pwild, WILD_VIEW, pblk_ptr *);
+
 	for (i = 0; i < WILD_VIEW; i++)
 	{
 		C_MAKE(p_ptr->pwild[i], WILD_VIEW, pblk_ptr);
-		
+
 		/* Allocate each block */
 		for (j = 0; j < WILD_VIEW; j++)
 		{
-			C_MAKE(p_ptr->pwild[i][j], WILD_BLOCK_SIZE, pcave_type*);
-			
+			C_MAKE(p_ptr->pwild[i][j], WILD_BLOCK_SIZE, pcave_type *);
+
 			for (k = 0; k < WILD_BLOCK_SIZE; k++)
 			{
 				C_MAKE(p_ptr->pwild[i][j][k], WILD_BLOCK_SIZE, pcave_type);
@@ -1021,9 +1021,9 @@ static errr init_other(void)
 	}
 
 	/* Allocate the wilderness itself */
-	C_MAKE(wild, z_info->ws_max, wild_type*);
-	C_MAKE(wild_grid, z_info->ws_max, blk_ptr*);
-	C_MAKE(wild_refcount, z_info->ws_max, int*);
+	C_MAKE(wild, z_info->ws_max, wild_type *);
+	C_MAKE(wild_grid, z_info->ws_max, blk_ptr *);
+	C_MAKE(wild_refcount, z_info->ws_max, int *);
 
 	for (i = 0; i < z_info->ws_max; i++)
 	{
@@ -1036,7 +1036,7 @@ static errr init_other(void)
 	/*** Prepare "vinfo" array ***/
 
 	/* Used by "update_view()" */
-	(void)vinfo_init();
+	(void) vinfo_init();
 
 
 	/*** Prepare entity arrays ***/
@@ -1058,7 +1058,7 @@ static errr init_other(void)
 
 
 	init_options(OPT_FLAG_BIRTH | OPT_FLAG_SERVER | OPT_FLAG_PLAYER);
-	
+
 	/* Initialize the options */
 	for (i = 0; i < OPT_MAX; i++)
 	{
@@ -1069,7 +1069,7 @@ static errr init_other(void)
 		}
 	}
 
-	
+
 	/* Initialize the window flags */
 	for (n = 0; n < ANGBAND_TERM_MAX; n++)
 	{
@@ -1088,16 +1088,16 @@ static errr init_other(void)
 
 	/*** Make store stock cache ***/
 
-	C_MAKE(store_cache, STORE_CACHE_AMNT, store_type*);
+	C_MAKE(store_cache, STORE_CACHE_AMNT, store_type *);
 
 	/* Allocate the towns */
 	C_MAKE(place, z_info->wp_max, place_type);
-	
-	
+
+
 	/*** Pre-allocate space for the "format()" buffer ***/
 
 	/* Hack -- Just call the "format()" function */
-	(void)format("%s (%s).", "Robert Ruehlmann", MAINTAINER);
+	(void) format("%s (%s).", "Steven Fuerst", MAINTAINER);
 
 
 	/* Success */
@@ -1121,10 +1121,10 @@ static errr init_alloc(void)
 	/*** Analyze monster allocation info ***/
 
 	/* Clear the "aux" array */
-	(void)C_WIPE(&aux, MAX_DEPTH, s16b);
+	(void) C_WIPE(&aux, MAX_DEPTH, s16b);
 
 	/* Clear the "num" array */
-	(void)C_WIPE(&num, MAX_DEPTH, s16b);
+	(void) C_WIPE(&num, MAX_DEPTH, s16b);
 
 	/* Size of "alloc_race_table" */
 	alloc_race_size = 0;
@@ -1150,7 +1150,7 @@ static errr init_alloc(void)
 	for (i = 1; i < MAX_DEPTH; i++)
 	{
 		/* Group by level */
-		num[i] += num[i-1];
+		num[i] += num[i - 1];
 	}
 
 	/* Paranoia */
@@ -1183,7 +1183,7 @@ static errr init_alloc(void)
 			p = (100 / r_ptr->rarity);
 
 			/* Skip entries preceding our locale */
-			y = (x > 0) ? num[x-1] : 0;
+			y = (x > 0) ? num[x - 1] : 0;
 
 			/* Skip previous entries at this locale */
 			z = y + aux[x];
@@ -1201,7 +1201,7 @@ static errr init_alloc(void)
 	}
 
 	/* Init "alloc_kind_table" and "alloc_ego_table" */
-	(void)init_object_alloc();
+	(void) init_object_alloc();
 
 	/* Success */
 	return (0);
@@ -1325,7 +1325,7 @@ void init_angband(void)
 	}
 
 	/* Close it */
-	(void)fd_close(fd);
+	(void) fd_close(fd);
 
 
 	/*** Display the "news" file ***/
@@ -1396,54 +1396,54 @@ void init_angband(void)
 	}
 
 	/* Close it */
-	(void)fd_close(fd);
+	(void) fd_close(fd);
 
 
 	/*** Initialize some arrays ***/
 
 	/* Initialize size info */
 	note("[Initializing array sizes...]");
-	if (init_z_info()) quit("Cannot initialize sizes");
+	if (init_z_info())quit("Cannot initialize sizes");
 
 	/* Initialize scripting */
 	note("[Initializing scripts... (scripts)]");
-	if (script_init()) quit("Cannot initialize scripts");
+	if (script_init())quit("Cannot initialize scripts");
 
 	/* Initialize feature info */
 	note("[Initializing arrays... (features)]");
-	if (init_f_info()) quit("Cannot initialize features");
+	if (init_f_info())quit("Cannot initialize features");
 
 	/* Initialize object info */
 	note("[Initializing arrays... (objects)]");
-	if (init_k_info()) quit("Cannot initialize objects");
+	if (init_k_info())quit("Cannot initialize objects");
 
 	/* Initialize artifact info */
 	note("[Initializing arrays... (artifacts)]");
-	if (init_a_info()) quit("Cannot initialize artifacts");
+	if (init_a_info())quit("Cannot initialize artifacts");
 
 	/* Initialize ego-item info */
 	note("[Initializing arrays... (ego-items)]");
-	if (init_e_info()) quit("Cannot initialize ego-items");
+	if (init_e_info())quit("Cannot initialize ego-items");
 
 	/* Initialize monster info */
 	note("[Initializing arrays... (monsters)]");
-	if (init_r_info()) quit("Cannot initialize monsters");
+	if (init_r_info())quit("Cannot initialize monsters");
 
 	/* Initialize feature info */
 	note("[Initializing arrays... (vaults)]");
-	if (init_v_info()) quit("Cannot initialize vaults");
+	if (init_v_info())quit("Cannot initialize vaults");
 
 	/* Initialize quest array */
 	note("[Initializing arrays... (quests)]");
-	if (init_quests()) quit("Cannot initialize quests");
+	if (init_quests())quit("Cannot initialize quests");
 
 	/* Initialize some other arrays */
 	note("[Initializing arrays... (other)]");
-	if (init_other()) quit("Cannot initialize other stuff");
+	if (init_other())quit("Cannot initialize other stuff");
 
 	/* Initialize some other arrays */
 	note("[Initializing arrays... (alloc)]");
-	if (init_alloc()) quit("Cannot initialize alloc stuff");
+	if (init_alloc())quit("Cannot initialize alloc stuff");
 
 
 	/*** Load default user pref files ***/
@@ -1455,29 +1455,30 @@ void init_angband(void)
 	strcpy(buf, "pref.prf");
 
 	/* Process that file */
-	(void)process_pref_file(buf);
+	(void) process_pref_file(buf);
 
 	/* Access the "user" pref file */
 	sprintf(buf, "user.prf");
 
 	/* Process that file */
-	(void)process_pref_file(buf);
+	(void) process_pref_file(buf);
 
 	/* Access the "basic" system pref file */
 	sprintf(buf, "pref-%s.prf", ANGBAND_SYS);
 
 	/* Process that file */
-	(void)process_pref_file(buf);
+	(void) process_pref_file(buf);
 
 	/* Access the "user" system pref file */
 	sprintf(buf, "user-%s.prf", ANGBAND_SYS);
 
 	/* Process that file */
-	(void)process_pref_file(buf);
+	(void) process_pref_file(buf);
 
 	/* Initialise the fake monochrome flag */
-	fake_monochrome = (!use_graphics || streq(ANGBAND_SYS, "ibm")) ? TRUE:FALSE;
-	
+	fake_monochrome = (!use_graphics
+					   || streq(ANGBAND_SYS, "ibm")) ? TRUE : FALSE;
+
 	/* Done */
 	note("[Initialization complete]");
 }
@@ -1496,8 +1497,8 @@ void cleanup_angband(void)
 		string_free(macro__act[i]);
 	}
 
-	FREE((void*)macro__pat);
-	FREE((void*)macro__act);
+	FREE((void *) macro__pat);
+	FREE((void *) macro__act);
 
 	/* Free the keymaps */
 	for (i = 0; i < KEYMAP_MODES; ++i)
@@ -1544,9 +1545,8 @@ void cleanup_angband(void)
  */
 #if 0
 
-	This code is wrong - the wilderness works differently now. -SF-
-
-	/* Free the wilderness */
+	This code is wrong - the wilderness works differently now. - SF -
+		/* Free the wilderness */
 	for (i = 0; i < z_info->ws_max; i++)
 	{
 		/* Free one row of the wilderness */
@@ -1618,4 +1618,3 @@ void cleanup_angband(void)
 	string_free(ANGBAND_DIR_USER);
 	string_free(ANGBAND_DIR_XTRA);
 }
-

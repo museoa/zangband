@@ -152,7 +152,7 @@
 /*
  * The "type" of the "user defined print routine" pointer
  */
-typedef uint (*vstrnfmt_aux_func)(char *buf, uint max, cptr fmt, vptr arg);
+typedef uint(*vstrnfmt_aux_func) (char *buf, uint max, cptr fmt, vptr arg);
 
 /*
  * The "default" user defined print routine.  Ignore the "fmt" string.
@@ -164,7 +164,7 @@ static uint vstrnfmt_aux_dflt(char *buf, uint max, cptr fmt, vptr arg)
 
 
 	/* Unused parameter */
-	(void)fmt;
+	(void) fmt;
 
 	/* Pointer display */
 	sprintf(tmp, "<<%p>>", arg);
@@ -279,7 +279,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 		if (*s != '%')
 		{
 			/* Check total length */
-			if (n == max-1) break;
+			if (n == max - 1) break;
 
 			/* Save the character */
 			buf[n++] = *s++;
@@ -295,7 +295,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 		if (*s == '%')
 		{
 			/* Check total length */
-			if (n == max-1) break;
+			if (n == max - 1) break;
 
 			/* Save the percent */
 			buf[n++] = '%';
@@ -456,7 +456,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 		tmp[0] = '\0';
 
 		/* Process the "format" char */
-		switch (aux[q-1])
+		switch (aux[q - 1])
 		{
 			/* Simple Character -- standard format */
 			case 'c':
@@ -474,7 +474,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 			}
 
 			/* Signed Integers -- standard format */
-			case 'd': case 'i':
+			case 'd':  case 'i':
 			{
 				if (do_long)
 				{
@@ -502,7 +502,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 			}
 
 			/* Unsigned Integers -- various formats */
-			case 'u': case 'o': case 'x': case 'X':
+			case 'u':  case 'o':  case 'x':  case 'X':
 			{
 				if (do_long)
 				{
@@ -531,8 +531,8 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 
 			/* Floating Point -- various formats */
 			case 'f':
-			case 'e': case 'E':
-			case 'g': case 'G':
+			case 'e':  case 'E':
+			case 'g':  case 'G':
 			{
 				double arg;
 
@@ -594,7 +594,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				arg = va_arg(vp, vptr);
 
 				/* Format the "user data" */
-				(void)vstrnfmt_aux(tmp, 1000, aux, arg);
+				(void) vstrnfmt_aux(tmp, 1000, aux, arg);
 
 				/* Done */
 				break;
@@ -635,7 +635,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 		for (q = 0; tmp[q]; q++)
 		{
 			/* Check total length */
-			if (n == max-1) break;
+			if (n == max - 1) break;
 
 			/* Save the character */
 			buf[n++] = tmp[q];
@@ -680,7 +680,7 @@ char *vformat(cptr fmt, va_list vp)
 		len = vstrnfmt(format_buf, format_len, fmt, vp);
 
 		/* Success */
-		if (len < format_len-1) break;
+		if (len < format_len - 1) break;
 
 		/* Grow the buffer */
 		KILL(format_buf);
@@ -840,5 +840,3 @@ void core_fmt(cptr fmt, ...)
 	/* Call core() */
 	core(res);
 }
-
-

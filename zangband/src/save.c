@@ -98,16 +98,16 @@ static errr wr_block(void)
 	byte fake[4];
 
 	/* Save the type and size */
-	fake[0] = (byte)(data_type);
-	fake[1] = (byte)(data_type >> 8);
-	fake[2] = (byte)(data_size);
-	fake[3] = (byte)(data_size >> 8);
+	fake[0] = (byte) (data_type);
+	fake[1] = (byte) (data_type >> 8);
+	fake[2] = (byte) (data_size);
+	fake[3] = (byte) (data_size >> 8);
 
 	/* Dump the head */
-	err = fd_write(data_fd, (char*)&fake, 4);
+	err = fd_write(data_fd, (char *) &fake, 4);
 
 	/* Dump the actual data */
-	err = fd_write(data_fd, (char*)data_head, data_size);
+	err = fd_write(data_fd, (char *) data_head, data_size);
 
 	/* XXX XXX XXX */
 	fake[0] = 0;
@@ -116,7 +116,7 @@ static errr wr_block(void)
 	fake[3] = 0;
 
 	/* Dump the tail */
-	err = fd_write(data_fd, (char*)&fake, 4);
+	err = fd_write(data_fd, (char *) &fake, 4);
 
 	/* Hack -- reset */
 	data_next = data_head;
@@ -143,7 +143,7 @@ static void put_byte(byte v)
  */
 static void put_char(char v)
 {
-	put_byte((byte)(v));
+	put_byte((byte) (v));
 }
 
 /*
@@ -151,8 +151,8 @@ static void put_char(char v)
  */
 static void put_u16b(u16b v)
 {
-	*data_next++ = (byte)(v);
-	*data_next++ = (byte)(v >> 8);
+	*data_next++ = (byte) (v);
+	*data_next++ = (byte) (v >> 8);
 }
 
 /*
@@ -160,7 +160,7 @@ static void put_u16b(u16b v)
  */
 static void put_s16b(s16b v)
 {
-	put_u16b((u16b)(v));
+	put_u16b((u16b) (v));
 }
 
 /*
@@ -168,10 +168,10 @@ static void put_s16b(s16b v)
  */
 static void put_u32b(u32b v)
 {
-	*data_next++ = (byte)(v);
-	*data_next++ = (byte)(v >> 8);
-	*data_next++ = (byte)(v >> 16);
-	*data_next++ = (byte)(v >> 24);
+	*data_next++ = (byte) (v);
+	*data_next++ = (byte) (v >> 8);
+	*data_next++ = (byte) (v >> 16);
+	*data_next++ = (byte) (v >> 24);
 }
 
 /*
@@ -179,7 +179,7 @@ static void put_u32b(u32b v)
  */
 static void put_s32b(s32b v)
 {
-	put_u32b((u32b)(v));
+	put_u32b((u32b) (v));
 }
 
 /*
@@ -197,22 +197,22 @@ static void put_string(char *str)
  */
 static errr wr_savefile(void)
 {
-	int     i;
+	int i;
 
-	u32b    now;
+	u32b now;
 
-	byte    tmp8u;
-	u16b    tmp16u;
+	byte tmp8u;
+	u16b tmp16u;
 
-	errr    err;
+	errr err;
 
-	byte    fake[4];
+	byte fake[4];
 
 
 	/*** Hack -- extract some data ***/
 
 	/* Hack -- Acquire the current time */
-	now = time((time_t*)(NULL));
+	now = time((time_t *) (NULL));
 
 	/* Note the operating system */
 	sf_xtra = 0L;
@@ -230,14 +230,14 @@ static errr wr_savefile(void)
 	data_fd = -1;
 
 	/* Dump the version */
-	fake[0] = (byte)(FAKE_VER_MAJOR);
-	fake[1] = (byte)(FAKE_VER_MINOR);
-	fake[2] = (byte)(FAKE_VER_PATCH);
-	fake[3] = (byte)(VERSION_EXTRA);
+	fake[0] = (byte) (FAKE_VER_MAJOR);
+	fake[1] = (byte) (FAKE_VER_MINOR);
+	fake[2] = (byte) (FAKE_VER_PATCH);
+	fake[3] = (byte) (VERSION_EXTRA);
 
 
 	/* Dump the data */
-	err = fd_write(data_fd, (char*)&fake, 4);
+	err = fd_write(data_fd, (char *) &fake, 4);
 
 
 	/* Make array XXX XXX XXX */
@@ -289,20 +289,20 @@ static errr rd_block(void)
 	byte fake[4];
 
 	/* Read the head data */
-	err = fd_read(data_fd, (char*)&fake, 4);
+	err = fd_read(data_fd, (char *) &fake, 4);
 
 	/* Extract the type and size */
-	data_type = (fake[0] | ((u16b)fake[1] << 8));
-	data_size = (fake[2] | ((u16b)fake[3] << 8));
+	data_type = (fake[0] | ((u16b) fake[1] << 8));
+	data_size = (fake[2] | ((u16b) fake[3] << 8));
 
 	/* Wipe the data block */
 	C_WIPE(data_head, 65535, byte);
 
 	/* Read the actual data */
-	err = fd_read(data_fd, (char*)data_head, data_size);
+	err = fd_read(data_fd, (char *) data_head, data_size);
 
 	/* Read the tail data */
-	err = fd_read(data_fd, (char*)&fake, 4);
+	err = fd_read(data_fd, (char *) &fake, 4);
 
 	/* XXX XXX XXX Verify */
 
@@ -329,7 +329,7 @@ static void get_byte(byte *ip)
  */
 static void get_char(char *ip)
 {
-	get_byte((byte*)ip);
+	get_byte((byte *) ip);
 }
 
 /*
@@ -348,7 +348,7 @@ static void get_u16b(u16b *ip)
  */
 static void get_s16b(s16b *ip)
 {
-	get_u16b((u16b*)ip);
+	get_u16b((u16b *) ip);
 }
 
 /*
@@ -369,7 +369,7 @@ static void get_u32b(u32b *ip)
  */
 static void get_s32b(s32b *ip)
 {
-	get_u32b((u32b*)ip);
+	get_u32b((u32b *) ip);
 }
 
 
@@ -379,9 +379,9 @@ static void get_s32b(s32b *ip)
  */
 static errr rd_savefile(void)
 {
-	bool    done = FALSE;
+	bool done = FALSE;
 
-	byte    fake[4];
+	byte fake[4];
 
 
 	/* Open the savefile */
@@ -391,7 +391,7 @@ static errr rd_savefile(void)
 	if (data_fd < 0) return (1);
 
 	/* Strip the first four bytes (see below) */
-	if (fd_read(data_fd, (char*)(fake), 4)) return (1);
+	if (fd_read(data_fd, (char *) (fake), 4)) return (1);
 
 
 	/* Make array XXX XXX XXX */
@@ -405,22 +405,22 @@ static errr rd_savefile(void)
 	while (!done)
 	{
 		/* Read the block */
-		if (rd_block()) break;
+		if (rd_block())break;
 
 		/* Analyze the type */
 		switch (data_type)
 		{
-			/* Done XXX XXX XXX */
+				/* Done XXX XXX XXX */
 			case 0:
 			{
 				done = TRUE;
 				break;
 			}
 
-			/* Grab the options */
+				/* Grab the options */
 			case TYPE_OPTIONS:
 			{
-				if (get_options()) err = -1;
+				if (get_options())err = -1;
 				break;
 			}
 		}
@@ -451,12 +451,12 @@ static errr rd_savefile(void)
  * Some "local" parameters, used to help write savefiles
  */
 
-static FILE     *fff;           /* Current save "file" */
+static FILE *fff;				/* Current save "file" */
 
-static byte     xor_byte;       /* Simple encryption */
+static byte xor_byte;			/* Simple encryption */
 
-static u32b     v_stamp = 0L;   /* A simple "checksum" on the actual values */
-static u32b     x_stamp = 0L;   /* A simple "checksum" on the encoded bytes */
+static u32b v_stamp = 0L;		/* A simple "checksum" on the actual values */
+static u32b x_stamp = 0L;		/* A simple "checksum" on the encoded bytes */
 
 
 
@@ -468,7 +468,7 @@ static void sf_put(byte v)
 {
 	/* Encode the value, write a character */
 	xor_byte ^= v;
-	(void)putc((int)xor_byte, fff);
+	(void) putc((int) xor_byte, fff);
 
 	/* Maintain the checksum info */
 	v_stamp += v;
@@ -482,26 +482,26 @@ static void wr_byte(byte v)
 
 static void wr_u16b(u16b v)
 {
-	sf_put((byte)(v & 0xFF));
-	sf_put((byte)((v >> 8) & 0xFF));
+	sf_put((byte) (v & 0xFF));
+	sf_put((byte) ((v >> 8) & 0xFF));
 }
 
 static void wr_s16b(s16b v)
 {
-	wr_u16b((u16b)v);
+	wr_u16b((u16b) v);
 }
 
 static void wr_u32b(u32b v)
 {
-	sf_put((byte)(v & 0xFF));
-	sf_put((byte)((v >> 8) & 0xFF));
-	sf_put((byte)((v >> 16) & 0xFF));
-	sf_put((byte)((v >> 24) & 0xFF));
+	sf_put((byte) (v & 0xFF));
+	sf_put((byte) ((v >> 8) & 0xFF));
+	sf_put((byte) ((v >> 16) & 0xFF));
+	sf_put((byte) ((v >> 24) & 0xFF));
 }
 
 static void wr_s32b(s32b v)
 {
-	wr_u32b((u32b)v);
+	wr_u32b((u32b) v);
 }
 
 static void wr_string(cptr str)
@@ -587,9 +587,9 @@ static void wr_item(const object_type *o_ptr)
 
 	/* The new flags */
 	wr_s32b(o_ptr->cost);
-	
+
 	wr_byte(o_ptr->activate);
-	
+
 	wr_u32b(o_ptr->kn_flags1);
 	wr_u32b(o_ptr->kn_flags2);
 	wr_u32b(o_ptr->kn_flags3);
@@ -722,7 +722,7 @@ static void wr_xtra(int k_idx)
 /*
  * Write a "store" record
  */
-static void wr_store(const store_type *st_ptr)
+static void wr_store(const store_type * st_ptr)
 {
 	int j;
 
@@ -745,7 +745,7 @@ static void wr_store(const store_type *st_ptr)
 	/* Position in the town */
 	wr_u16b(st_ptr->x);
 	wr_u16b(st_ptr->y);
-	
+
 	/* Type of store */
 	wr_byte(st_ptr->type);
 
@@ -827,7 +827,7 @@ static void wr_options(void)
 	wr_s16b(autosave_freq);
 
 	/*** Normal options ***/
-	
+
 	/* Analyze the options */
 	for (n = 0; n < 8; n++)
 	{
@@ -845,11 +845,11 @@ static void wr_options(void)
 				flag &= ~(1L << i);
 			}
 		}
-		
+
 		/* Dump the flag */
 		wr_u32b(flag);
 	}
-	
+
 	/* Oops */
 	for (i = 0; i < 8; i++) wr_u32b(option_mask[i]);
 
@@ -901,7 +901,7 @@ static void wr_extra(void)
 	wr_byte(p_ptr->psex);
 	wr_byte(p_ptr->realm1);
 	wr_byte(p_ptr->realm2);
-	wr_byte(0);	/* oops */
+	wr_byte(0);					/* oops */
 
 	wr_byte(p_ptr->hitdie);
 	wr_u16b(p_ptr->expfact);
@@ -953,20 +953,20 @@ static void wr_extra(void)
 	wr_s16b(p_ptr->max_depth);
 
 	/* More info */
-	wr_s16b(0);     /* oops */
-	wr_s16b(0);     /* oops */
-	wr_s16b(0);     /* oops */
-	wr_s16b(0);     /* oops */
+	wr_s16b(0);					/* oops */
+	wr_s16b(0);					/* oops */
+	wr_s16b(0);					/* oops */
+	wr_s16b(0);					/* oops */
 	wr_s16b(p_ptr->sc);
-	wr_s16b(0);     /* oops */
+	wr_s16b(0);					/* oops */
 
-	wr_s16b(0);             /* old "rest" */
+	wr_s16b(0);					/* old "rest" */
 	wr_s16b(p_ptr->blind);
 	wr_s16b(p_ptr->paralyzed);
 	wr_s16b(p_ptr->confused);
 	wr_s16b(p_ptr->food);
-	wr_s16b(0);     /* old "food_digested" */
-	wr_s16b(0);     /* old "protection" */
+	wr_s16b(0);					/* old "food_digested" */
+	wr_s16b(0);					/* old "protection" */
 	wr_s16b(p_ptr->energy);
 	wr_s16b(p_ptr->fast);
 	wr_s16b(p_ptr->slow);
@@ -1018,21 +1018,21 @@ static void wr_extra(void)
 	}
 
 	wr_byte(p_ptr->confusing);
-	wr_byte(0);     /* oops */
-	wr_byte(0);     /* oops */
-	wr_byte(0);     /* oops */
+	wr_byte(0);					/* oops */
+	wr_byte(0);					/* oops */
+	wr_byte(0);					/* oops */
 	wr_byte(p_ptr->searching);
-	wr_byte(0);		/* oops */
-	wr_byte(0);		/* oops */
-	wr_byte(0);		/* oops */
+	wr_byte(0);					/* oops */
+	wr_byte(0);					/* oops */
+	wr_byte(0);					/* oops */
 
 	/* Future use */
 	for (i = 0; i < 12; i++) wr_u32b(0L);
 
 	/* Ignore some flags */
-	wr_u32b(0L);    /* oops */
-	wr_u32b(0L);    /* oops */
-	wr_u32b(0L);    /* oops */
+	wr_u32b(0L);				/* oops */
+	wr_u32b(0L);				/* oops */
+	wr_u32b(0L);				/* oops */
 
 
 	/* Write the "object seeds" */
@@ -1056,10 +1056,10 @@ static void wr_extra(void)
 
 	/* Current turn */
 	wr_s32b(turn);
-	
+
 	/* Trap detection status */
 	wr_byte(p_ptr->detected);
-	
+
 	/* Old Coords of last trap detection spell */
 	wr_s16b(0);
 	wr_s16b(0);
@@ -1098,11 +1098,11 @@ static void save_map(int xmin, int ymin, int xmax, int ymax)
 			/* Extract a byte */
 			tmp8u = c_ptr->info;
 
-			/* If the run is broken, or too full, flush it 	*/
+			/* If the run is broken, or too full, flush it  */
 			if ((tmp8u != prev_char) || (count == MAX_UCHAR))
 			{
-				wr_byte((byte)count);
-				wr_byte((byte)prev_char);
+				wr_byte((byte) count);
+				wr_byte((byte) prev_char);
 				prev_char = tmp8u;
 				count = 1;
 			}
@@ -1118,15 +1118,15 @@ static void save_map(int xmin, int ymin, int xmax, int ymax)
 	/* Flush the data (if any) */
 	if (count)
 	{
-		wr_byte((byte)count);
-		wr_byte((byte)prev_char);
+		wr_byte((byte) count);
+		wr_byte((byte) prev_char);
 	}
 
-	
+
 	/* Note that this will induce two wasted bytes */
 	count = 0;
 	prev_char = 0;
-	
+
 	/* Dump the cave */
 	for (y = ymin; y < ymax; y++)
 	{
@@ -1138,11 +1138,11 @@ static void save_map(int xmin, int ymin, int xmax, int ymax)
 			/* Extract a byte */
 			tmp8u = pc_ptr->player;
 
-			/* If the run is broken, or too full, flush it 	*/
+			/* If the run is broken, or too full, flush it  */
 			if ((tmp8u != prev_char) || (count == MAX_UCHAR))
 			{
-				wr_byte((byte)count);
-				wr_byte((byte)prev_char);
+				wr_byte((byte) count);
+				wr_byte((byte) prev_char);
 				prev_char = tmp8u;
 				count = 1;
 			}
@@ -1158,15 +1158,15 @@ static void save_map(int xmin, int ymin, int xmax, int ymax)
 	/* Flush the data (if any) */
 	if (count)
 	{
-		wr_byte((byte)count);
-		wr_byte((byte)prev_char);
+		wr_byte((byte) count);
+		wr_byte((byte) prev_char);
 	}
 
 
 	/* Note that this will induce two wasted bytes */
 	count = 0;
 	prev_char = 0;
-	
+
 	/* Dump the cave */
 	for (y = ymin; y < ymax; y++)
 	{
@@ -1178,11 +1178,11 @@ static void save_map(int xmin, int ymin, int xmax, int ymax)
 			/* Extract a byte */
 			tmp8u = pc_ptr->feat;
 
-			/* If the run is broken, or too full, flush it 	*/
+			/* If the run is broken, or too full, flush it  */
 			if ((tmp8u != prev_char) || (count == MAX_UCHAR))
 			{
-				wr_byte((byte)count);
-				wr_byte((byte)prev_char);
+				wr_byte((byte) count);
+				wr_byte((byte) prev_char);
 				prev_char = tmp8u;
 				count = 1;
 			}
@@ -1198,8 +1198,8 @@ static void save_map(int xmin, int ymin, int xmax, int ymax)
 	/* Flush the data (if any) */
 	if (count)
 	{
-		wr_byte((byte)count);
-		wr_byte((byte)prev_char);
+		wr_byte((byte) count);
+		wr_byte((byte) prev_char);
 	}
 
 
@@ -1224,8 +1224,8 @@ static void save_map(int xmin, int ymin, int xmax, int ymax)
 			/* If the run is broken, or too full, flush it */
 			if ((tmp8u != prev_char) || (count == MAX_UCHAR))
 			{
-				wr_byte((byte)count);
-				wr_byte((byte)prev_char);
+				wr_byte((byte) count);
+				wr_byte((byte) prev_char);
 				prev_char = tmp8u;
 				count = 1;
 			}
@@ -1241,8 +1241,8 @@ static void save_map(int xmin, int ymin, int xmax, int ymax)
 	/* Flush the data (if any) */
 	if (count)
 	{
-		wr_byte((byte)count);
-		wr_byte((byte)prev_char);
+		wr_byte((byte) count);
+		wr_byte((byte) prev_char);
 	}
 }
 
@@ -1285,7 +1285,7 @@ static void save_wild_data(void)
 static void wr_dungeon(void)
 {
 	int i;
-	
+
 	/*** Basic info ***/
 
 	/* Dungeon specific info follows */
@@ -1305,22 +1305,23 @@ static void wr_dungeon(void)
 	if (p_ptr->depth)
 	{
 		/* Save dungeon map */
-		save_map(p_ptr->min_wid, p_ptr->min_hgt, p_ptr->max_wid, p_ptr->max_hgt);
+		save_map(p_ptr->min_wid, p_ptr->min_hgt, p_ptr->max_wid,
+				 p_ptr->max_hgt);
 #if 0
 		/* Hack - the player is not in this dungeon */
 		character_dungeon = FALSE;
-		
+
 		/* Save wilderness map */
 		change_level(0);
 
 		save_map(wild_grid.y_max, wild_grid.y_min,
-		         wild_grid.x_max, wild_grid.x_min);
+				 wild_grid.x_max, wild_grid.x_min);
 
 		change_level(p_ptr->depth);
-		
+
 		/* The character is back in the dungeon */
 		character_dungeon = TRUE;
-		
+
 		/* Restore bounds */
 		max_hgt = cur_hgt;
 		max_wid = cur_wid;
@@ -1329,7 +1330,8 @@ static void wr_dungeon(void)
 	else
 	{
 		/* Save wilderness map */
-		save_map(p_ptr->min_wid, p_ptr->min_hgt, p_ptr->max_wid, p_ptr->max_hgt);
+		save_map(p_ptr->min_wid, p_ptr->min_hgt, p_ptr->max_wid,
+				 p_ptr->max_hgt);
 	}
 
 
@@ -1394,16 +1396,16 @@ static void wr_dungeon(void)
  */
 static bool wr_savefile_new(void)
 {
-	int        i, j;
+	int i, j;
 
-	u32b              now;
+	u32b now;
 
-	byte            tmp8u;
-	u16b            tmp16u;
+	byte tmp8u;
+	u16b tmp16u;
 
 
 	/* Guess at the current time */
-	now = time((time_t *)0);
+	now = time((time_t *) 0);
 
 
 	/* Note the operating system */
@@ -1427,7 +1429,7 @@ static bool wr_savefile_new(void)
 	wr_byte(FAKE_VER_PATCH);
 	xor_byte = 0;
 
-	tmp8u = (byte)randint0(256);
+	tmp8u = (byte) randint0(256);
 	wr_byte(tmp8u);
 
 
@@ -1473,8 +1475,8 @@ static bool wr_savefile_new(void)
 	/* Dump the messages and colors (oldest first!) */
 	for (i = tmp16u - 1; i >= 0; i--)
 	{
-		wr_string(message_str((s16b)i));
-		wr_byte(message_color((s16b)i));
+		wr_string(message_str((s16b) i));
+		wr_byte(message_color((s16b) i));
 	}
 
 
@@ -1502,22 +1504,22 @@ static bool wr_savefile_new(void)
 		wr_byte(quest[i].flags);
 		wr_byte(quest[i].type);
 		wr_byte(quest[i].item);
-		
+
 		wr_u16b(quest[i].place);
 		wr_u16b(quest[i].shop);
 		wr_u16b(quest[i].reward);
-		
+
 		wr_byte(quest[i].c_type);
 		wr_byte(quest[i].x_type);
-		
+
 		wr_u32b(quest[i].timeout);
 		wr_string(quest[i].name);
-		
+
 		/* Data - quest-type specific */
 		switch (quest[i].type)
 		{
 			case QUEST_TYPE_UNKNOWN: break;
-			
+
 			case QUEST_TYPE_GENERAL:
 			{
 				wr_u16b(quest[i].data.gen.place);
@@ -1527,18 +1529,18 @@ static bool wr_savefile_new(void)
 				wr_u16b(quest[i].data.gen.max_num);
 				break;
 			}
-			
+
 			case QUEST_TYPE_DUNGEON:
 			{
 				wr_u16b(quest[i].data.dun.r_idx);
 				wr_u16b(quest[i].data.dun.level);
-				
+
 				wr_s16b(quest[i].data.dun.cur_num);
 				wr_s16b(quest[i].data.dun.max_num);
 				wr_s16b(quest[i].data.dun.num_mon);
 				break;
 			}
-			
+
 			case QUEST_TYPE_WILD:
 			{
 				wr_u16b(quest[i].data.wld.place);
@@ -1546,7 +1548,7 @@ static bool wr_savefile_new(void)
 				wr_byte(quest[i].data.wld.depth);
 				break;
 			}
-		
+
 			default:
 			{
 				/* Unknown quest type... panic */
@@ -1611,7 +1613,7 @@ static bool wr_savefile_new(void)
 		if (!o_ptr->k_idx) continue;
 
 		/* Dump index */
-		wr_u16b((u16b)i);
+		wr_u16b((u16b) i);
 
 		/* Dump object */
 		wr_item(o_ptr);
@@ -1628,7 +1630,7 @@ static bool wr_savefile_new(void)
 	for (i = 1; i < place_count; i++)
 	{
 		place_type *pl_ptr = &place[i];
-		
+
 		/* RNG seed */
 		wr_u32b(pl_ptr->seed);
 
@@ -1638,13 +1640,13 @@ static bool wr_savefile_new(void)
 		/* Type */
 		wr_u16b(pl_ptr->type);
 		wr_byte(pl_ptr->data);
-		
+
 		/* Gates */
 		wr_byte(pl_ptr->gates_x[0]);
 		wr_byte(pl_ptr->gates_x[1]);
 		wr_byte(pl_ptr->gates_x[2]);
 		wr_byte(pl_ptr->gates_x[3]);
-		
+
 		wr_byte(pl_ptr->gates_y[0]);
 		wr_byte(pl_ptr->gates_y[1]);
 		wr_byte(pl_ptr->gates_y[2]);
@@ -1653,11 +1655,11 @@ static bool wr_savefile_new(void)
 		/* Location */
 		wr_byte(pl_ptr->x);
 		wr_byte(pl_ptr->y);
-		
+
 		/* Size */
 		wr_byte(pl_ptr->xsize);
 		wr_byte(pl_ptr->ysize);
-		
+
 		wr_u16b(pl_ptr->quest_num);
 		wr_byte(pl_ptr->monst_type);
 
@@ -1712,9 +1714,9 @@ static bool wr_savefile_new(void)
  */
 static bool save_player_aux(char *name)
 {
-	bool    ok = FALSE;
-	int     fd;
-	int     mode = 0644;
+	bool ok = FALSE;
+	int fd;
+	int mode = 0644;
 
 
 	/* No file yet */
@@ -1738,7 +1740,7 @@ static bool save_player_aux(char *name)
 	if (fd >= 0)
 	{
 		/* Close the "fd" */
-		(void)fd_close(fd);
+		(void) fd_close(fd);
 
 		/* Grab permissions */
 		safe_setuid_grab();
@@ -1753,7 +1755,7 @@ static bool save_player_aux(char *name)
 		if (fff)
 		{
 			/* Write the savefile */
-			if (wr_savefile_new()) ok = TRUE;
+			if (wr_savefile_new())ok = TRUE;
 
 			/* Attempt to close it */
 			my_fclose(fff);
@@ -1763,7 +1765,7 @@ static bool save_player_aux(char *name)
 		safe_setuid_grab();
 
 		/* Remove "broken" files */
-		if (!ok) (void)fd_kill(name);
+		if (!ok) (void) fd_kill(name);
 
 		/* Drop permissions */
 		safe_setuid_drop();
@@ -1787,9 +1789,9 @@ static bool save_player_aux(char *name)
  */
 bool save_player(void)
 {
-	int             result = FALSE;
+	int result = FALSE;
 
-	char    safe[1024];
+	char safe[1024];
 
 
 #ifdef SET_UID
@@ -1818,7 +1820,7 @@ bool save_player(void)
 	safe_setuid_grab();
 
 	/* Remove it */
-	(void)fd_kill(safe);
+	(void) fd_kill(safe);
 
 	/* Drop permissions */
 	safe_setuid_drop();
@@ -1842,16 +1844,16 @@ bool save_player(void)
 		safe_setuid_grab();
 
 		/* Remove it */
-		(void)fd_kill(temp);
+		(void) fd_kill(temp);
 
 		/* Preserve old savefile */
-		(void)fd_move(savefile, temp);
+		(void) fd_move(savefile, temp);
 
 		/* Activate new savefile */
-		(void)fd_move(safe, savefile);
+		(void) fd_move(safe, savefile);
 
 		/* Remove preserved savefile */
-		(void)fd_kill(temp);
+		(void) fd_kill(temp);
 
 		/* Drop permissions */
 		safe_setuid_drop();
@@ -1916,17 +1918,17 @@ bool save_player(void)
  */
 bool load_player(void)
 {
-	int             fd = -1;
+	int fd = -1;
 
-	errr    err = 0;
+	errr err = 0;
 
-	byte    vvv[4];
+	byte vvv[4];
 
 #ifdef VERIFY_TIMESTAMP
-	struct stat     statbuf;
+	struct stat statbuf;
 #endif
 
-	cptr    what = "generic";
+	cptr what = "generic";
 
 
 	/* Paranoia */
@@ -1960,7 +1962,7 @@ bool load_player(void)
 	}
 
 	/* Close the file */
-	(void)fd_close(fd);
+	(void) fd_close(fd);
 
 
 #ifdef VERIFY_SAVEFILE
@@ -2047,7 +2049,7 @@ bool load_player(void)
 		safe_setuid_grab();
 
 		/* Get the timestamp */
-		(void)fstat(fd, &statbuf);
+		(void) fstat(fd, &statbuf);
 
 		/* Drop permissions */
 		safe_setuid_drop();
@@ -2055,13 +2057,13 @@ bool load_player(void)
 #endif
 
 		/* Read the first four bytes */
-		if (fd_read(fd, (char*)(vvv), 4)) err = -1;
+		if (fd_read(fd, (char *) (vvv), 4)) err = -1;
 
 		/* What */
 		if (err) what = "Cannot read savefile";
 
 		/* Close the file */
-		(void)fd_close(fd);
+		(void) fd_close(fd);
 	}
 
 	/* Process file */
@@ -2079,8 +2081,7 @@ bool load_player(void)
 
 		/* Pre-2.1.0: Assume 2.0.6 (same as 2.0.0 - 2.0.5) */
 		if ((z_major == sf_major) &&
-		    (z_minor == sf_minor) &&
-		    (z_patch == sf_patch))
+			(z_minor == sf_minor) && (z_patch == sf_patch))
 		{
 			z_major = 2;
 			z_minor = 0;
@@ -2137,7 +2138,7 @@ bool load_player(void)
 	{
 		/* Hack -- Verify the timestamp */
 		if (sf_when > (statbuf.st_ctime + 100) ||
-		    sf_when < (statbuf.st_ctime - 100))
+			sf_when < (statbuf.st_ctime - 100))
 		{
 			/* Message */
 			what = "Invalid timestamp";
@@ -2154,8 +2155,7 @@ bool load_player(void)
 	{
 		/* Give a conversion warning */
 		if ((FAKE_VER_MAJOR != z_major) ||
-		    (FAKE_VER_MINOR != z_minor) ||
-		    (FAKE_VER_PATCH != z_patch))
+			(FAKE_VER_MINOR != z_minor) || (FAKE_VER_PATCH != z_patch))
 		{
 			if (z_major == 2 && z_minor == 0 && z_patch == 6)
 			{
@@ -2165,7 +2165,7 @@ bool load_player(void)
 			{
 				/* Message */
 				msg_format("Converted a %d.%d.%d savefile.",
-				    z_major, z_minor, z_patch);
+						   z_major, z_minor, z_patch);
 			}
 			message_flush();
 		}
@@ -2203,7 +2203,7 @@ bool load_player(void)
 		if (p_ptr->chp >= 0)
 		{
 			/* Reset cause of death */
-			(void)strcpy(p_ptr->died_from, "(alive and well)");
+			(void) strcpy(p_ptr->died_from, "(alive and well)");
 		}
 
 		/* Success */
@@ -2237,7 +2237,7 @@ bool load_player(void)
 
 	/* Message */
 	msg_format("Error (%s) reading %d.%d.%d savefile.",
-		   what, z_major, z_minor, z_patch);
+			   what, z_major, z_minor, z_patch);
 	message_flush();
 
 	/* Oops */
@@ -2257,7 +2257,7 @@ void remove_loc(void)
 	/* Get "games" permissions */
 	beGames();
 
-# endif /* SECURE */
+# endif	/* SECURE */
 #endif /* SET_UID */
 
 #ifdef VERIFY_SAVEFILE
@@ -2277,7 +2277,7 @@ void remove_loc(void)
 	/* Drop "games" permissions */
 	bePlayer();
 
-# endif /* SECURE */
+# endif	/* SECURE */
 #endif /* SET_UID */
 
 }

@@ -167,17 +167,17 @@ static int wild_first_town[START_STORE_NUM] =
 static void place_player_start(s32b *x, s32b *y, u16b this_town)
 {
 	int tempx, tempy;
-	
+
 	tempx = (int) place[this_town].x + wild_stairs_x / 16;
 	tempy = (int) place[this_town].y + wild_stairs_y / 16;
-	
+
 	/* Get corner of visible region */
 	shift_in_bounds(&tempx, &tempy);
-	
+
 	/* Set corner of visible region */
 	p_ptr->old_wild_x = tempx;
 	p_ptr->old_wild_y = tempy;
-	
+
 	/* Hack - Reset player position to be on the stairs in town */
 	*x = place[this_town].x * 16 + wild_stairs_x;
 	*y = place[this_town].y * 16 + wild_stairs_y;
@@ -189,13 +189,13 @@ void select_town_name(char *name, int pop)
 {
 	char buf[T_NAME_LEN + 1];
 	int len;
-	
+
 	/* Get a normal 'elvish' name */
 	get_table_name(buf, FALSE);
-	
+
 	/* Get length */
 	len = strlen(buf) - 1;
-	
+
 	if (pop < T_SIZE_SMALL)
 	{
 		/* Hamlet */
@@ -245,22 +245,22 @@ void select_town_name(char *name, int pop)
 		/* Castle */
 		if ((len < T_NAME_LEN - 7) && one_in_(2))
 		{
-			strcat(buf, " Castle");	
+			strcat(buf, " Castle");
 		}
 		else if ((len < T_NAME_LEN - 5) && one_in_(2))
 		{
 			strcat(buf, " Keep");
 		}
 	}
-	
+
 	/* Copy into result */
 	strcpy(name, buf);
-} 
+}
 
 
 /* Select a store or building "appropriate" for a given position */
 static u16b select_building(byte pop, byte magic, byte law, u16b *build,
-	 int build_num)
+							int build_num)
 {
 	int i;
 
@@ -274,21 +274,21 @@ static u16b select_building(byte pop, byte magic, byte law, u16b *build,
 	{
 		/* Work out total effects due to location */
 		total = (ABS(pop - wild_build[i].pop) +
-				ABS(magic - wild_build[i].magic) +
-				ABS(law - wild_build[i].law)) / 5 + 1;
+				 ABS(magic - wild_build[i].magic) +
+				 ABS(law - wild_build[i].law)) / 5 + 1;
 
 		/* Effect due to rarity */
 		total += wild_build[i].rarity;
-		
+
 		/* Effect due to total count */
-		total +=  build[i] * 20;
+		total += build[i] * 20;
 
 		/* calculate probability based on location */
-		wild_build[i].gen = (u16b)(MAX_SHORT / total);
+		wild_build[i].gen = (u16b) (MAX_SHORT / total);
 	}
 
 	/* Note that cities of size 11 have a small chance to have stairs. */
-	
+
 	/* Effects for cities */
 	if (build_num > 11)
 	{
@@ -398,7 +398,7 @@ static void general_init(int town_num, int store_num, byte general_type)
 static void build_store(int xx, int yy, store_type *st_ptr)
 {
 	int y, x, y0, x0, y1, x1, y2, x2, tmp;
-	
+
 	cave_type *c_ptr;
 
 	/* Find the "center" of the store */
@@ -426,9 +426,8 @@ static void build_store(int xx, int yy, store_type *st_ptr)
 
 	/* Re-roll "annoying" doors */
 	if (((tmp == 0) && (yy == 2)) ||
-	    ((tmp == 1) && (yy == 0)) ||
-	    ((tmp == 2) && (xx == 2)) ||
-	    ((tmp == 3) && (xx == 0)))
+		((tmp == 1) && (yy == 0)) ||
+		((tmp == 2) && (xx == 2)) || ((tmp == 3) && (xx == 0)))
 	{
 		/* Pick a new direction */
 		tmp = randint0(4);
@@ -437,7 +436,7 @@ static void build_store(int xx, int yy, store_type *st_ptr)
 	/* Extract a "door location" */
 	switch (tmp)
 	{
-		/* Bottom side */
+			/* Bottom side */
 		case 0:
 		{
 			y = y2;
@@ -445,7 +444,7 @@ static void build_store(int xx, int yy, store_type *st_ptr)
 			break;
 		}
 
-		/* Top side */
+			/* Top side */
 		case 1:
 		{
 			y = y1;
@@ -453,7 +452,7 @@ static void build_store(int xx, int yy, store_type *st_ptr)
 			break;
 		}
 
-		/* Right side */
+			/* Right side */
 		case 2:
 		{
 			y = rand_range(y1, y2);
@@ -461,7 +460,7 @@ static void build_store(int xx, int yy, store_type *st_ptr)
 			break;
 		}
 
-		/* Left side */
+			/* Left side */
 		default:
 		{
 			y = rand_range(y1, y2);
@@ -532,7 +531,7 @@ static void fill_town(byte x, byte y)
 static void find_walls(void)
 {
 	int i, j, k, l;
-	
+
 	/* Copy the temp block to the town block */
 	for (i = 0; i < WILD_BLOCK_SIZE + 1; i++)
 	{
@@ -545,7 +544,7 @@ static void find_walls(void)
 			}
 		}
 	}
-	
+
 	/* Find walls */
 	for (i = 0; i < WILD_BLOCK_SIZE; i++)
 	{
@@ -609,7 +608,7 @@ static void remove_islands(void)
 {
 	int i, j, k, l;
 	bool city_block;
-	
+
 	/* Rescan walls to avoid "islands" */
 	for (i = 0; i < WILD_BLOCK_SIZE; i++)
 	{
@@ -676,14 +675,14 @@ static bool create_city(int x, int y, int town_num)
 
 	/* Hack - the first town is special */
 	if (town_num == 1)
-	{ 
+	{
 		/* Use a low pop - we don't want too many blank buildings */
 		pop = 32 + 128;
 	}
-		
+
 	/* Wipe the list of allocated buildings */
-	(void)C_WIPE(build, MAX_CITY_BUILD, u16b);
-	(void)C_WIPE(build_list, (WILD_BLOCK_SIZE * WILD_BLOCK_SIZE), u16b);
+	(void) C_WIPE(build, MAX_CITY_BUILD, u16b);
+	(void) C_WIPE(build_list, (WILD_BLOCK_SIZE * WILD_BLOCK_SIZE), u16b);
 
 	/* Add town */
 	select_town_name(pl_ptr->name, pop);
@@ -696,7 +695,7 @@ static bool create_city(int x, int y, int town_num)
 
 	/* Save the population value in the 'data' value */
 	pl_ptr->data = pop;
-	
+
 	/* Hack - the size is constant... */
 	pl_ptr->xsize = 8;
 	pl_ptr->ysize = 8;
@@ -727,11 +726,11 @@ static bool create_city(int x, int y, int town_num)
 
 	/* Make sure the city is self-connected properly */
 	remove_islands();
-	
+
 	/* Clear the gates locations */
-	(void)C_WIPE(pl_ptr->gates_x, MAX_GATES, byte);
-	(void)C_WIPE(pl_ptr->gates_y, MAX_GATES, byte);
-	(void)C_WIPE(gate_num, MAX_GATES, byte);
+	(void) C_WIPE(pl_ptr->gates_x, MAX_GATES, byte);
+	(void) C_WIPE(pl_ptr->gates_y, MAX_GATES, byte);
+	(void) C_WIPE(gate_num, MAX_GATES, byte);
 
 
 	/* Initialise min and max values */
@@ -754,13 +753,13 @@ static bool create_city(int x, int y, int town_num)
 			/* Is it a city block? */
 			if (temp_block[j][i])
 			{
-				w_ptr =	&wild[y + j / 2][x + i / 2].trans;
+				w_ptr = &wild[y + j / 2][x + i / 2].trans;
 
 				/*
 				 * Add city to wilderness
 				 * Note: only 255 towns can be stored currently.
 				 */
-				w_ptr->place = (byte)town_num;
+				w_ptr->place = (byte) town_num;
 
 				/* Hack - make a flat area around the town */
 				w_ptr->info |= WILD_INFO_ROAD;
@@ -946,7 +945,7 @@ static bool town_blank(int x, int y, int xsize, int ysize, int town_num)
 		{
 			/* Hack - Not next to boundary */
 			if ((i <= 0) || (i >= max_wild - 1) ||
-			    (j <= 0) || (j >= max_wild - 1))
+				(j <= 0) || (j >= max_wild - 1))
 			{
 				return (FALSE);
 			}
@@ -957,8 +956,9 @@ static bool town_blank(int x, int y, int xsize, int ysize, int town_num)
 			if (w_ptr->place) return (FALSE);
 
 			/* No water or lava or acid */
-			if (w_ptr->info & (WILD_INFO_WATER | WILD_INFO_LAVA | WILD_INFO_ACID))
-				 return (FALSE);
+			if (w_ptr->
+				info & (WILD_INFO_WATER | WILD_INFO_LAVA | WILD_INFO_ACID))
+				return (FALSE);
 
 			/* No Ocean */
 			if (w_ptr->hgt_map < (256 / SEA_FRACTION)) return (FALSE);
@@ -988,7 +988,7 @@ static void draw_gates(byte i, byte j, place_type *pl_ptr)
 	int k;
 	int x = i * 8, y = j * 8;
 	int xx = x, yy = y;
-	
+
 	cave_type *c_ptr;
 
 	/* Draw gates if visible */
@@ -1015,7 +1015,7 @@ static void draw_gates(byte i, byte j, place_type *pl_ptr)
 					c_ptr = cave_p(x + 4, y + 3);
 					c_ptr->fld_idx = FT_LOCK_DOOR;
 					set_feat_grid(c_ptr, FEAT_CLOSED);
-					
+
 					c_ptr = cave_p(x + 4, y + 4);
 					c_ptr->fld_idx = FT_LOCK_DOOR;
 					set_feat_grid(c_ptr, FEAT_CLOSED);
@@ -1038,7 +1038,7 @@ static void draw_gates(byte i, byte j, place_type *pl_ptr)
 					c_ptr = cave_p(x + 3, y + 3);
 					c_ptr->fld_idx = FT_LOCK_DOOR;
 					set_feat_grid(c_ptr, FEAT_CLOSED);
-					
+
 					c_ptr = cave_p(x + 3, y + 4);
 					c_ptr->fld_idx = FT_LOCK_DOOR;
 					set_feat_grid(c_ptr, FEAT_CLOSED);
@@ -1061,7 +1061,7 @@ static void draw_gates(byte i, byte j, place_type *pl_ptr)
 					c_ptr = cave_p(x + 3, y + 4);
 					c_ptr->fld_idx = FT_LOCK_DOOR;
 					set_feat_grid(c_ptr, FEAT_CLOSED);
-					
+
 					c_ptr = cave_p(x + 4, y + 4);
 					c_ptr->fld_idx = FT_LOCK_DOOR;
 					set_feat_grid(c_ptr, FEAT_CLOSED);
@@ -1084,7 +1084,7 @@ static void draw_gates(byte i, byte j, place_type *pl_ptr)
 					c_ptr = cave_p(x + 3, y + 3);
 					c_ptr->fld_idx = FT_LOCK_DOOR;
 					set_feat_grid(c_ptr, FEAT_CLOSED);
-					
+
 					c_ptr = cave_p(x + 4, y + 3);
 					c_ptr->fld_idx = FT_LOCK_DOOR;
 					set_feat_grid(c_ptr, FEAT_CLOSED);
@@ -1102,7 +1102,7 @@ static void draw_store(int x0, int y0, store_type *st_ptr, int x, int y)
 	int x1, y1, x2, y2;
 	int i, j;
 	int tmp;
-	
+
 	cave_type *c_ptr;
 
 	/* Determine the store boundaries */
@@ -1120,7 +1120,7 @@ static void draw_store(int x0, int y0, store_type *st_ptr, int x, int y)
 	/* Extract a "door location" */
 	switch (tmp)
 	{
-		/* Bottom side */
+			/* Bottom side */
 		case 0:
 		{
 			i = rand_range(x1, x2);
@@ -1128,7 +1128,7 @@ static void draw_store(int x0, int y0, store_type *st_ptr, int x, int y)
 			break;
 		}
 
-		/* Top side */
+			/* Top side */
 		case 1:
 		{
 			i = rand_range(x1, x2);
@@ -1136,7 +1136,7 @@ static void draw_store(int x0, int y0, store_type *st_ptr, int x, int y)
 			break;
 		}
 
-		/* Right side */
+			/* Right side */
 		case 2:
 		{
 			i = x2;
@@ -1144,7 +1144,7 @@ static void draw_store(int x0, int y0, store_type *st_ptr, int x, int y)
 			break;
 		}
 
-		/* Left side */
+			/* Left side */
 		default:
 		{
 			i = x1;
@@ -1154,7 +1154,7 @@ static void draw_store(int x0, int y0, store_type *st_ptr, int x, int y)
 	}
 
 	c_ptr = cave_p(i, j);
-	
+
 	/* Clear previous contents, add a store door */
 	set_feat_grid(c_ptr, FEAT_FLOOR);
 
@@ -1282,14 +1282,15 @@ static void draw_city(u16b town_num)
 
 
 	place_type *pl_ptr = &place[town_num];
-		
+
 	/* Paranoia */
 	if (pl_ptr->region) quit("Town already has region during creation.");
-	
+
 	/* Get region */
 	pl_ptr->region = (s16b) create_region(pl_ptr->xsize * WILD_BLOCK_SIZE,
-			 pl_ptr->ysize * WILD_BLOCK_SIZE, REGION_NULL);
-	
+										  pl_ptr->ysize * WILD_BLOCK_SIZE,
+										  REGION_NULL);
+
 	/* Hack - do not increment refcount here - let allocate_block do that */
 
 	/* Hack -- Use the "simple" RNG */
@@ -1299,14 +1300,14 @@ static void draw_city(u16b town_num)
 	Rand_value = place[town_num].seed;
 
 	/* Get value of "magic" level of buildings */
-	magic = (byte)randint0(256);
+	magic = (byte) randint0(256);
 
 	/* Generate plasma factal */
 	clear_temp_block();
 	set_temp_corner_val(WILD_BLOCK_SIZE * 64);
-	
+
 	/* Use population value saved in data. */
-	set_temp_mid((u16b)(WILD_BLOCK_SIZE * place[town_num].data));
+	set_temp_mid((u16b) (WILD_BLOCK_SIZE * place[town_num].data));
 	frac_block();
 
 	/* Locate the walls */
@@ -1314,7 +1315,7 @@ static void draw_city(u16b town_num)
 
 	/* 'Fill' the town with buildings */
 	count = fill_town_driver();
-	
+
 	/* Make sure the city is self-connected properly */
 	remove_islands();
 
@@ -1344,13 +1345,13 @@ static void draw_city(u16b town_num)
 				}
 
 				/* Wall goes right */
-				if ((i < WILD_BLOCK_SIZE-1) && (temp_block[j][i + 1] == 1))
+				if ((i < WILD_BLOCK_SIZE - 1) && (temp_block[j][i + 1] == 1))
 				{
 					generate_fill(x + 3, y + 3, x + 7, y + 4, FEAT_PERM_SOLID);
 				}
 
 				/* Wall goes down */
-				if ((j < WILD_BLOCK_SIZE-1) && (temp_block[j + 1][i] == 1))
+				if ((j < WILD_BLOCK_SIZE - 1) && (temp_block[j + 1][i] == 1))
 				{
 					generate_fill(x + 3, y + 3, x + 4, y + 7, FEAT_PERM_SOLID);
 				}
@@ -1365,7 +1366,7 @@ static void draw_city(u16b town_num)
 	for (build = 0; count; build++)
 	{
 		/* Pick a square */
-		i = (byte)randint0(count);
+		i = (byte) randint0(count);
 
 		/* Draw the building */
 		draw_building(0, build_x[i], build_y[i], build, town_num);
@@ -1418,7 +1419,7 @@ bool init_places(int xx, int yy)
 			/* Try the "easiest" spot in the wilderness */
 			x = xx;
 			y = yy;
-			
+
 			/* Only try once here */
 			first_try = FALSE;
 		}
@@ -1428,7 +1429,7 @@ bool init_places(int xx, int yy)
 			x = randint0(max_wild);
 			y = randint0(max_wild);
 		}
-		
+
 		if (place_count < z_info->wp_max / TOWN_FRACTION)
 		{
 			/*
@@ -1470,22 +1471,22 @@ bool init_places(int xx, int yy)
 		{
 			int xsize, ysize;
 			byte flags;
-			
+
 			/* Pick quest size / type */
 			pick_wild_quest(&xsize, &ysize, &flags);
-			
+
 			/* See if a quest will fit */
 			if (!quest_blank(x, y, xsize, ysize, place_count, flags)) continue;
-			
+
 			/* Build it */
 			if (!create_quest(x, y, place_count)) continue;
 		}
-		
+
 
 		/* Increment number of places */
 		place_count++;
 	}
-	
+
 	/* Hack - the starting town uses pre-defined stores */
 	for (i = 0; i < place[best_town].numstores; i++)
 	{
@@ -1505,7 +1506,7 @@ bool init_places(int xx, int yy)
 			general_init(best_town, i, BUILD_NONE);
 		}
 	}
-	
+
 	/* Paranoia */
 	if (!best_town) return (FALSE);
 
@@ -1513,7 +1514,7 @@ bool init_places(int xx, int yy)
 	draw_city(best_town);
 
 	place_player_start(&p_ptr->wilderness_x, &p_ptr->wilderness_y, best_town);
-	
+
 	/* Hack - No current region */
 	set_region(0);
 
@@ -1538,7 +1539,7 @@ static void town_gen_hack(u16b town_num)
 	byte feat;
 
 	cave_type *c_ptr;
-	
+
 	/* Prepare an array of "remaining stores", and count them */
 	for (n = 0; n < MAX_STORES; n++) rooms[n] = n;
 
@@ -1614,21 +1615,21 @@ static void town_gen_hack(u16b town_num)
  *
  * (Vanilla town only now.)
  */
-void van_town_gen(u16b town_num)
+static void van_town_gen(u16b town_num)
 {
 	int y, x;
-	
+
 	cave_type *c_ptr;
-	
+
 	place_type *pl_ptr = &place[town_num];
-	
+
 	/* Paranoia */
 	if (pl_ptr->region) quit("Town already has region during creation.");
-	
+
 	/* Get region */
 	pl_ptr->region = (s16b) create_region(V_TOWN_BLOCK_WID, V_TOWN_BLOCK_HGT,
-											 REGION_NULL);
-	
+										  REGION_NULL);
+
 	/* Hack - do not increment refcount here - let allocate_block do that */
 
 	/* Place transparent area */
@@ -1637,7 +1638,7 @@ void van_town_gen(u16b town_num)
 		for (x = 0; x < V_TOWN_BLOCK_WID; x++)
 		{
 			c_ptr = cave_p(x, y);
-			
+
 			/* Create empty area */
 			set_feat_grid(c_ptr, FEAT_PERM_EXTRA);
 		}
@@ -1673,7 +1674,7 @@ void van_town_gen(u16b town_num)
 void init_vanilla_town(void)
 {
 	int i, j;
-	
+
 	place_type *pl_ptr = &place[1];
 
 	/* Only one town */
@@ -1693,7 +1694,7 @@ void init_vanilla_town(void)
 	for (i = 0; i < MAX_STORES; i++)
 	{
 		/* Initialize */
-		store_init(1, i, (byte)i);
+		store_init(1, i, (byte) i);
 	}
 
 	/* Place town on wilderness */
@@ -1710,9 +1711,9 @@ void init_vanilla_town(void)
 
 	place_player_start(&p_ptr->wilderness_x, &p_ptr->wilderness_y, 1);
 
-	/* One town + 1 for bounds*/
+	/* One town + 1 for bounds */
 	place_count = 2;
-	
+
 	/* Hack - set global region back to wilderness value */
 	set_region(0);
 }
@@ -1745,20 +1746,20 @@ static void overlay_place(int x, int y, u16b w_place, blk_ptr block_ptr)
 	int i, j, x1, y1, x2, y2;
 
 	int fld_idx, type;
-	
+
 	/* Generation level for monsters and objects */
 	int level = wild[y][x].done.mon_gen;
-	
+
 	cave_type *c_ptr;
 	place_type *pl_ptr = &place[w_place];
-	
+
 	/* Check that place region exists */
 	if (!pl_ptr->region)
 	{
 		/* Create the place */
 		place_gen(w_place);
 	}
-	
+
 	/* Paranoia */
 	if (!pl_ptr->region) quit("Could not get a region for the town/quest");
 
@@ -1773,14 +1774,14 @@ static void overlay_place(int x, int y, u16b w_place, blk_ptr block_ptr)
 		{
 			/* Get pointer to overlay info */
 			c_ptr = access_region(x1 + i, y1 + j, pl_ptr->region);
-			
+
 			/* Get destination */
 			x2 = x * WILD_BLOCK_SIZE + i;
 			y2 = y * WILD_BLOCK_SIZE + j;
 
 			/* Only copy if there is something there. */
 			if (c_ptr->feat == FEAT_NONE) continue;
-			
+
 			/* Copy the terrain */
 			block_ptr[j][i].feat = c_ptr->feat;
 
@@ -1788,7 +1789,7 @@ static void overlay_place(int x, int y, u16b w_place, blk_ptr block_ptr)
 			 * Instantiate object
 			 */
 			place_specific_object(x2, y2, level, c_ptr->o_idx);
-			
+
 			/*
 			 * Instantiate monster
 			 */
@@ -1796,7 +1797,7 @@ static void overlay_place(int x, int y, u16b w_place, blk_ptr block_ptr)
 			{
 				place_monster_one(x2, y2, c_ptr->m_idx, FALSE, FALSE, FALSE);
 			}
-			
+
 			/*
 			 * Instantiate field
 			 *
@@ -1806,7 +1807,7 @@ static void overlay_place(int x, int y, u16b w_place, blk_ptr block_ptr)
 			 * are all that are in this list.
 			 */
 			fld_idx = c_ptr->fld_idx;
-			
+
 			if (fld_idx)
 			{
 				type = t_info[c_ptr->fld_idx].type;
@@ -2162,7 +2163,7 @@ static void smooth_block(void)
 				{
 					/* Average of left and right points */
 					temp_block[j][i] = ((temp_block[j][i - hstep] +
-					                     temp_block[j][i + hstep]) / 2);
+										 temp_block[j][i + hstep]) / 2);
 				}
 			}
 		}
@@ -2178,7 +2179,7 @@ static void smooth_block(void)
 				{
 					/* Average of up and down points */
 					temp_block[j][i] = ((temp_block[j - hstep][i] +
-					                     temp_block[j + hstep][i]) / 2);
+										 temp_block[j + hstep][i]) / 2);
 				}
 			}
 		}
@@ -2193,9 +2194,9 @@ static void smooth_block(void)
 				{
 					/* Average of corner points */
 					temp_block[j][i] = ((temp_block[j - hstep][i - hstep] +
-					                     temp_block[j + hstep][i - hstep] +
-					                     temp_block[j - hstep][i + hstep] +
-					                     temp_block[j + hstep][i + hstep]) / 4);
+										 temp_block[j + hstep][i - hstep] +
+										 temp_block[j - hstep][i + hstep] +
+										 temp_block[j + hstep][i + hstep]) / 4);
 				}
 			}
 		}
@@ -2213,8 +2214,7 @@ static void smooth_block(void)
  * so that choices can be made with less than 4 features.
  */
 static byte pick_feat(byte feat1, byte feat2, byte feat3, byte feat4,
-                      byte prob1, byte prob2, byte prob3, byte prob4,
-                      byte prob)
+					  byte prob1, byte prob2, byte prob3, byte prob4, byte prob)
 {
 	/* Chance factors */
 	u32b c1, c2, c3, c4, choice;
@@ -2232,7 +2232,7 @@ static byte pick_feat(byte feat1, byte feat2, byte feat3, byte feat4,
 		}
 		else
 		{
-			c1 = 0x1000000 / ABS((long)prob1 - prob);
+			c1 = 0x1000000 / ABS((long) prob1 - prob);
 		}
 	}
 	if (feat2)
@@ -2302,7 +2302,8 @@ static void make_wild_sea(blk_ptr block_ptr, byte sea_type)
 		for (i = 0; i < WILD_BLOCK_SIZE; i++)
 		{
 			block_ptr[j][i].feat = pick_feat(FEAT_SHAL_WATER, FEAT_DEEP_WATER,
-					FEAT_OCEAN_WATER, FEAT_NONE, 0, 10, 20, 40, sea_type);
+											 FEAT_OCEAN_WATER, FEAT_NONE, 0, 10,
+											 20, 40, sea_type);
 			block_ptr[j][i].info = 0;
 		}
 	}
@@ -2564,7 +2565,7 @@ static void make_wild_01(blk_ptr block_ptr, byte *data)
 
 			/* Work out terrain feature to use */
 			new_feat = pick_feat(data[0], data[2], data[4], data[6],
-				data[1], data[3], data[5], data[7], element);
+								 data[1], data[3], data[5], data[7], element);
 
 			block_ptr[j][i].feat = new_feat;
 			block_ptr[j][i].info = 0;
@@ -2651,7 +2652,7 @@ static void make_wild_03(blk_ptr block_ptr, byte *data)
 
 	/* Call the other routine to make the "base" terrain. */
 	gen_block_helper(block_ptr, wild_gen_data[data[0]].data,
-	                 wild_gen_data[data[0]].gen_routine);
+					 wild_gen_data[data[0]].gen_routine);
 
 	/* Initialise temporary block */
 	clear_temp_block();
@@ -2700,7 +2701,8 @@ static void make_wild_03(blk_ptr block_ptr, byte *data)
 static void blend_sea(cave_type *c_ptr, byte sea_type)
 {
 	c_ptr->feat = pick_feat(FEAT_SHAL_WATER, FEAT_DEEP_WATER,
-					FEAT_OCEAN_WATER, FEAT_NONE, 0, 10, 20, 40, sea_type);
+							FEAT_OCEAN_WATER, FEAT_NONE, 0, 10, 20, 40,
+							sea_type);
 }
 
 
@@ -2711,7 +2713,7 @@ static void blend_wild_01(cave_type *c_ptr, byte *data)
 {
 	/* Store an "average" terrain feature */
 	c_ptr->feat = pick_feat(data[0], data[2], data[4], data[6],
-	                        data[1], data[3], data[5], data[7], 128);
+							data[1], data[3], data[5], data[7], 128);
 }
 
 
@@ -2743,11 +2745,11 @@ static void blend_helper(cave_type *c_ptr, byte *data, int g_type)
 		case 3:
 			/* Use the other terrain's blend function */
 			blend_helper(c_ptr, wild_gen_data[data[0]].data,
-			             wild_gen_data[data[0]].gen_routine);
+						 wild_gen_data[data[0]].gen_routine);
 			break;
 
 		default:
-		msg_format("Illegal wilderness type %d ", g_type);
+			msg_format("Illegal wilderness type %d ", g_type);
 	}
 }
 
@@ -2768,7 +2770,7 @@ static void blend_block(int x, int y, blk_ptr block_ptr, u16b type)
 		for (i = 0; i < WILD_BLOCK_SIZE; i++)
 		{
 			/* Chance to blend is 1 in 2 */
-			if (quick_rand()) continue;
+			if (quick_rand())continue;
 
 			/* Work out adjacent block */
 			if (i < WILD_BLOCK_SIZE / 4)
@@ -2799,7 +2801,7 @@ static void blend_block(int x, int y, blk_ptr block_ptr, u16b type)
 
 			/* Check to see if adjacent square is not in bounds */
 			if (((y + dy) < 0) || ((y + dy) >= max_wild) ||
-			    ((x + dx) < 0) || ((x + dx) >= max_wild)) continue;
+				((x + dx) < 0) || ((x + dx) >= max_wild)) continue;
 
 			/* Don't blend with yourself */
 			if ((dx == 0) && (dy == 0)) continue;
@@ -2814,7 +2816,7 @@ static void blend_block(int x, int y, blk_ptr block_ptr, u16b type)
 			{
 				if (type >= WILD_SEA)
 				{
-					blend_sea(&block_ptr[j][i], (byte)(w_type - WILD_SEA));
+					blend_sea(&block_ptr[j][i], (byte) (w_type - WILD_SEA));
 				}
 				else
 				{
@@ -2826,7 +2828,7 @@ static void blend_block(int x, int y, blk_ptr block_ptr, u16b type)
 
 			/* Blend with generation type specified by gen_routine */
 			blend_helper(&block_ptr[j][i], wild_gen_data[w_type].data,
-			             wild_gen_data[w_type].gen_routine);
+						 wild_gen_data[w_type].gen_routine);
 		}
 	}
 }
@@ -2916,12 +2918,12 @@ static void add_monsters_block(int x, int y)
 				if (one_in_(2))
 				{
 					/* Monsters are awake */
-					(void)place_monster(xx + i, yy + j, FALSE, TRUE);
+					(void) place_monster(xx + i, yy + j, FALSE, TRUE);
 				}
 				else
 				{
 					/* Monsters are asleep */
-					(void)place_monster(xx + i, yy + j, TRUE, TRUE);
+					(void) place_monster(xx + i, yy + j, TRUE, TRUE);
 				}
 			}
 		}
@@ -2932,10 +2934,10 @@ void light_dark_square(int x, int y, bool daytime)
 {
 	cave_type *c_ptr = area(x, y);
 	pcave_type *pc_ptr = parea(x, y);
-	
+
 	/* Hack -- Notice spot */
 	note_spot(x, y);
-	
+
 	if (daytime)
 	{
 		/* Assume lit */
@@ -2948,9 +2950,9 @@ void light_dark_square(int x, int y, bool daytime)
 	{
 		/* Darken "boring" features */
 		if (!(((c_ptr->feat >= FEAT_OPEN) &&
-		    (c_ptr->feat <= FEAT_MORE)) ||
-		    ((c_ptr->feat >= FEAT_CLOSED) &&
-			(c_ptr->feat <= FEAT_PERM_SOLID))))
+			   (c_ptr->feat <= FEAT_MORE)) ||
+			  ((c_ptr->feat >= FEAT_CLOSED) &&
+			   (c_ptr->feat <= FEAT_PERM_SOLID))))
 		{
 			/* Hack - Forget the grid */
 			c_ptr->info &= ~(CAVE_GLOW);
@@ -2989,8 +2991,8 @@ static void light_dark_block(int x, int y)
 	{
 		for (i = 0; i < WILD_BLOCK_SIZE; i++)
 		{
-			light_dark_square( x * WILD_BLOCK_SIZE + i,y * WILD_BLOCK_SIZE + j,
-				daytime);
+			light_dark_square(x * WILD_BLOCK_SIZE + i, y * WILD_BLOCK_SIZE + j,
+							  daytime);
 		}
 	}
 }
@@ -3018,7 +3020,7 @@ static void gen_block(int x, int y)
 	/* Create sea terrains if type >= WILD_SEA */
 	if (w_type >= WILD_SEA)
 	{
-		make_wild_sea(block_ptr, (byte)(w_type - WILD_SEA));
+		make_wild_sea(block_ptr, (byte) (w_type - WILD_SEA));
 	}
 
 	/* Hack -Check for the vanilla town wall option. */
@@ -3031,7 +3033,7 @@ static void gen_block(int x, int y)
 	{
 		/* Make terrain based on wilderness generation type */
 		gen_block_helper(block_ptr, wild_gen_data[w_type].data,
-			wild_gen_data[w_type].gen_routine);
+						 wild_gen_data[w_type].gen_routine);
 
 		/* Blend with adjacent terrains */
 		blend_block(x, y, block_ptr, w_type);
@@ -3060,7 +3062,7 @@ static void gen_block(int x, int y)
 			wild_add_gradient(block_ptr, FEAT_SHAL_LAVA, FEAT_DEEP_LAVA);
 		}
 
-		/* Add acid boundary effects.*/
+		/* Add acid boundary effects. */
 		if (wild_info_bounds(x, y, WILD_INFO_ACID))
 		{
 			/* Hack, above function sets bounds */
@@ -3078,7 +3080,7 @@ static void gen_block(int x, int y)
 
 	/* Hack -- Use the "complex" RNG */
 	Rand_quick = FALSE;
-	
+
 	/* Overlay place */
 	w_place = wild[y][x].done.place;
 
@@ -3101,7 +3103,7 @@ static void gen_block(int x, int y)
 	object_level = wild[y][x].done.mon_gen;
 
 	/* Add monsters */
-	add_monsters_block(x, y);	
+	add_monsters_block(x, y);
 }
 
 
@@ -3111,17 +3113,17 @@ static void gen_block(int x, int y)
 static void erase_grids(pblk_ptr block_ptr)
 {
 	int i, j;
-	
+
 	for (i = 0; i < WILD_BLOCK_SIZE; i++)
 	{
 		for (j = 0; j < WILD_BLOCK_SIZE; j++)
 		{
 			/* No memorised feature */
 			block_ptr[i][j].feat = FEAT_NONE;
-			
+
 			/* All flags off */
 			block_ptr[i][j].player = 0x00;
-		} 
+		}
 	}
 }
 
@@ -3135,7 +3137,7 @@ static void shift_down(void)
 {
 	u16b i, j;
 	pblk_ptr block_ptr;
-	
+
 	for (i = 0; i < WILD_VIEW; i++)
 	{
 		/* The block on the edge */
@@ -3160,7 +3162,7 @@ static void shift_up(void)
 {
 	u16b i, j;
 	pblk_ptr block_ptr;
-	
+
 	for (i = 0; i < WILD_VIEW; i++)
 	{
 		/* The block on the edge */
@@ -3185,7 +3187,7 @@ static void shift_right(void)
 {
 	u16b i, j;
 	pblk_ptr block_ptr;
-	
+
 	for (j = 0; j < WILD_VIEW; j++)
 	{
 		/* The block on the edge */
@@ -3210,7 +3212,7 @@ static void shift_left(void)
 {
 	u16b i, j;
 	pblk_ptr block_ptr;
-	
+
 	for (j = 0; j < WILD_VIEW; j++)
 	{
 		/* The block on the edge */
@@ -3237,36 +3239,36 @@ static void del_block(int x, int y)
 	blk_ptr block_ptr;
 	int xx, yy;
 	int m_idx;
-	
+
 	wild_type *w_ptr = &wild[y][x];
 	place_type *pl_ptr = &place[w_ptr->done.place];
-	
+
 	if (!wild_refcount[y][x]) quit("Dead wilderness cache!");
 
 	/* Decrement refcount */
 	wild_refcount[y][x]--;
-	
+
 	/* Don't do anything if someone else is here */
 	if (wild_refcount[y][x]) return;
-	
+
 	/* Is there a place? */
 	if (w_ptr->done.place)
 	{
 		/* Decrease refcount region */
 		pl_ptr->region = unref_region(pl_ptr->region);
-		
+
 		/* Unref quest? */
 		if ((!pl_ptr->region) && (pl_ptr->quest_num))
 		{
 			/* No longer active or created */
 			quest[pl_ptr->quest_num].flags &= ~(QUEST_FLAG_ACTIVE
-				 | QUEST_FLAG_CREATED);
+												| QUEST_FLAG_CREATED);
 		}
 	}
-		
+
 	/* Time to delete it - get block pointer */
 	block_ptr = wild_grid[y][x];
-	
+
 	for (xx = 0; xx < WILD_BLOCK_SIZE; xx++)
 	{
 		for (yy = 0; yy < WILD_BLOCK_SIZE; yy++)
@@ -3274,7 +3276,7 @@ static void del_block(int x, int y)
 			/* Clear old terrain data */
 			block_ptr[yy][xx].info = 0;
 			block_ptr[yy][xx].feat = 0;
-			
+
 			/* Delete monster on the square */
 			m_idx = block_ptr[yy][xx].m_idx;
 
@@ -3292,10 +3294,10 @@ static void del_block(int x, int y)
 			delete_field_aux(&block_ptr[yy][xx].fld_idx);
 		}
 	}
-	
+
 	/* Clear old reference */
 	wild_grid[y][x] = NULL;
-	
+
 	/* Attach to head of the list */
 	wild_cache[--wc_cnt] = block_ptr;
 }
@@ -3306,22 +3308,22 @@ static void del_block(int x, int y)
 static void allocate_block(int x, int y)
 {
 	byte place_num = wild[y][x].done.place;
-	
+
 	/* Increment refcount */
 	wild_refcount[y][x]++;
-	
+
 	/* Need to make the block if it doesn't exist */
 	if (!wild_grid[y][x])
 	{
 		/* Paranoia */
 		if (wc_cnt >= WILD_CACHE) quit("Out of wilderness cache");
-	
+
 		/* Get new block */
 		wild_grid[y][x] = wild_cache[wc_cnt++];
-		
+
 		/* Generate the block */
 		gen_block(x, y);
-		
+
 		if (place_num)
 		{
 			/* Increase refcount for region */
@@ -3362,38 +3364,38 @@ void move_wild(void)
 	int x, y;
 	int ox = p_ptr->old_wild_x, oy = p_ptr->old_wild_y;
 	int i, j;
-	
+
 	quest_type *q_ptr;
 	place_type *pl_ptr;
 
 	/* Get upper left hand block in grid. */
 
 	/* Divide by WILD_BLOCK_SIZE to get block from (x,y) coord */
-	x = ((u16b)p_ptr->wilderness_x / WILD_BLOCK_SIZE);
-	y = ((u16b)p_ptr->wilderness_y / WILD_BLOCK_SIZE);
+	x = ((u16b) p_ptr->wilderness_x / WILD_BLOCK_SIZE);
+	y = ((u16b) p_ptr->wilderness_y / WILD_BLOCK_SIZE);
 
 	/* The player sees the wilderness block he is on. */
 	wild[y][x].done.info |= WILD_INFO_SEEN;
-	
+
 	/* Hack - set place */
 	p_ptr->place_num = wild[y][x].done.place;
-	
+
 	pl_ptr = &place[p_ptr->place_num];
-	
+
 	/* Check for wilderness quests */
 	if (pl_ptr->quest_num)
 	{
 		q_ptr = &quest[pl_ptr->quest_num];
-		
+
 		/* Some quests are completed by walking on them */
 		if (q_ptr->x_type == QX_WILD_ENTER)
 		{
 			/* Remove town block from wilderness */
 			wild[y][x].done.place = 0;
-			
+
 			/* Decrement active block counter */
 			pl_ptr->data--;
-			
+
 			/* Done? */
 			if (!pl_ptr->data)
 			{
@@ -3401,38 +3403,38 @@ void move_wild(void)
 			}
 		}
 	}
-	
+
 	/* Move boundary */
 	shift_in_bounds(&x, &y);
-	
+
 	/* If we haven't moved block - exit */
 	if ((ox == x) && (oy == y)) return;
-	
+
 	/* Shift the player information */
-	while(ox < x)
+	while (ox < x)
 	{
 		ox++;
 		shift_right();
 	}
 
-	while(ox > x)
+	while (ox > x)
 	{
 		ox--;
 		shift_left();
 	}
-	
-	while(oy < y)
+
+	while (oy < y)
 	{
 		oy++;
 		shift_down();
 	}
-	
-	while(oy > y)
+
+	while (oy > y)
 	{
 		oy--;
 		shift_up();
 	}
-	
+
 	/* Reset bounds */
 	p_ptr->min_wid = x * WILD_BLOCK_SIZE;
 	p_ptr->min_hgt = y * WILD_BLOCK_SIZE;
@@ -3447,7 +3449,7 @@ void move_wild(void)
 			allocate_block(x + i, y + j);
 		}
 	}
-		
+
 	/* Deallocate old blocks */
 	for (i = 0; i < WILD_VIEW; i++)
 	{
@@ -3462,7 +3464,7 @@ void move_wild(void)
 
 	/* Save the new location */
 	p_ptr->old_wild_x = x;
-	p_ptr->old_wild_y = y;	
+	p_ptr->old_wild_y = y;
 }
 
 
@@ -3506,7 +3508,7 @@ static pcave_type *access_pwild(int x, int y)
 	 * Logical AND with 15 to get location within block.
 	 */
 	return (&p_ptr->pwild[(y - p_ptr->min_hgt) / WILD_BLOCK_SIZE]
-		[(x - p_ptr->min_wid) / WILD_BLOCK_SIZE][y & 15][x & 15]);
+			[(x - p_ptr->min_wid) / WILD_BLOCK_SIZE][y & 15][x & 15]);
 }
 
 
@@ -3520,35 +3522,35 @@ static bool in_bounds_wild(int x, int y)
 {
 	/* Make sure we are inside the wilderness */
 	if ((y < 0) || (x < 0) ||
-		 (y >= max_wild * WILD_BLOCK_SIZE) || (x >= max_wild * WILD_BLOCK_SIZE))
+		(y >= max_wild * WILD_BLOCK_SIZE) || (x >= max_wild * WILD_BLOCK_SIZE))
 	{
 		return (FALSE);
 	}
-	
+
 	/* Return TRUE if block is in use */
 	return (wild_refcount[y / WILD_BLOCK_SIZE][x / WILD_BLOCK_SIZE] != 0);
 }
 
 static bool in_bounds_cave(int x, int y)
 {
-	return((y > p_ptr->min_hgt) && (x > p_ptr->min_wid)
-		 && (y < p_ptr->max_hgt - 1) && (x < p_ptr->max_wid - 1));
+	return ((y > p_ptr->min_hgt) && (x > p_ptr->min_wid)
+			&& (y < p_ptr->max_hgt - 1) && (x < p_ptr->max_wid - 1));
 }
 
 static bool in_bounds2_cave(int x, int y)
 {
-	return((y >= p_ptr->min_hgt) && (x >= p_ptr->min_wid)
-		 && (y < p_ptr->max_hgt) && (x < p_ptr->max_wid));
+	return ((y >= p_ptr->min_hgt) && (x >= p_ptr->min_wid)
+			&& (y < p_ptr->max_hgt) && (x < p_ptr->max_wid));
 }
 
 /*
  * In bounds for the player information?
  */
-static bool in_bounds_wild_player (int x, int y)
+static bool in_bounds_wild_player(int x, int y)
 {
 	/* Use the same player bounds information as in_bounds_cave() */
-	return((y > p_ptr->min_hgt) && (x > p_ptr->min_wid)
-		 && (y < p_ptr->max_hgt - 1) && (x < p_ptr->max_wid - 1));
+	return ((y > p_ptr->min_hgt) && (x > p_ptr->min_wid)
+			&& (y < p_ptr->max_hgt - 1) && (x < p_ptr->max_wid - 1));
 }
 
 
@@ -3557,9 +3559,9 @@ void init_wild_cache(void)
 {
 	int x = p_ptr->old_wild_x, y = p_ptr->old_wild_y;
 	int i, j;
-	
+
 	pblk_ptr block_ptr;
-		
+
 	/* Allocate blocks around player */
 	for (i = 0; i < WILD_VIEW; i++)
 	{
@@ -3568,7 +3570,7 @@ void init_wild_cache(void)
 			/* Hack - erase the player knowledge */
 			block_ptr = p_ptr->pwild[j][i];
 			erase_grids(block_ptr);
-			
+
 			allocate_block(x + i, y + j);
 		}
 	}
@@ -3579,12 +3581,12 @@ static void del_wild_cache(void)
 {
 	int x = p_ptr->old_wild_x, y = p_ptr->old_wild_y;
 	int i, j;
-		
+
 	if (!wc_cnt) quit("Deleting empty wilderness cache!");
-	
+
 	/* The player no longer is in the wilderness */
 	character_dungeon = FALSE;
-	
+
 	/* Deallocate blocks around player */
 	for (i = 0; i < WILD_VIEW; i++)
 	{
@@ -3611,10 +3613,10 @@ void change_level(int level)
 
 	/* Hack - reset trap detection flag */
 	p_ptr->detected = FALSE;
-	
+
 	/* Clear the monster lights */
 	clear_mon_lite();
-	
+
 	/* Toggle list of active quests */
 	activate_quests(level);
 
@@ -3625,18 +3627,18 @@ void change_level(int level)
 			/* Delete dungeon */
 			dun_ptr->region = unref_region(dun_ptr->region);
 		}
-		
+
 		/* In the wilderness */
-		p_ptr->px = (s16b)p_ptr->wilderness_x;
-		p_ptr->py = (s16b)p_ptr->wilderness_y;
-		
+		p_ptr->px = (s16b) p_ptr->wilderness_x;
+		p_ptr->py = (s16b) p_ptr->wilderness_y;
+
 		/* Used to be in the dungeon? */
 		if (area != access_wild) switched = TRUE;
-		
+
 		/* Access the wilderness */
 		area = access_wild;
 		parea = access_pwild;
-		
+
 		/* Bounds checking rountine */
 		in_bounds = in_bounds_wild;
 		in_bounds2 = in_bounds_wild;
@@ -3671,15 +3673,15 @@ void change_level(int level)
 		{
 			/* Delete old dungeon */
 			dun_ptr->region = unref_region(dun_ptr->region);
-			
+
 			/* New dungeon is created in generate.c */
 		}
-		
+
 		/* Used to be in the wilderness? */
 		if (area == access_wild) switched = TRUE;
-		
+
 		/* Change dun_ptr? */
-		
+
 		/* 
 		 * Zero bounds - allocated in generate.c
 		 *
@@ -3693,28 +3695,28 @@ void change_level(int level)
 		/* Access the cave */
 		area = access_cave;
 		parea = access_pcave;
-		
-		
+
+
 		for (i = 0; i < MAX_WID; i++)
 		{
 			for (j = 0; j < MAX_HGT; j++)
 			{
 				pc_ptr = parea(i, j);
-				
+
 				/* Clear the player dungeon memory */
 				forget_grid(pc_ptr);
-				
+
 				/* Clear the player dungeon flags */
 				pc_ptr->player = 0x00;
 			}
 		}
-		
+
 		/* Bounds checking */
 		in_bounds = in_bounds_cave;
 		in_bounds2 = in_bounds2_cave;
 		in_boundsp = in_bounds2_cave;
-		
-		
+
+
 		if (switched)
 		{
 			/* Hack XXX XXX Delete the wilderness cache */
@@ -3742,11 +3744,11 @@ void wipe_all_list(void)
 		/* In the wilderness - delete cache if it exists */
 		if (wc_cnt) del_wild_cache();
 	}
-	
+
 	/* reset function pointers */
 	area = NULL;
 	parea = NULL;
-	
+
 	in_bounds = NULL;
 	in_bounds2 = NULL;
 	in_boundsp = NULL;

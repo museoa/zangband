@@ -77,7 +77,7 @@ static u16b get_gen_type(byte hgt, byte pop, byte law)
 		{
 			/* randomly choose branch */
 			if (randint1(tree_ptr->chance1 + tree_ptr->chance2) >
-			   tree_ptr->chance2)
+				tree_ptr->chance2)
 			{
 				/* Chance1 of going "left" */
 				branch = TRUE;
@@ -209,7 +209,7 @@ static u16b create_node(u16b node, bool branch)
 {
 	u16b new_node;
 
-	wild_choice_tree_type	*tree_ptr;
+	wild_choice_tree_type *tree_ptr;
 
 	if (d_tree_count >= z_info->wn_max)
 	{
@@ -225,7 +225,7 @@ static u16b create_node(u16b node, bool branch)
 		 * ranges in w_info.txt are in a "nice" order, the
 		 * coefficient for this algorithmic complexity is fairly small.
 		 */
-		 return (0);
+		return (0);
 	}
 
 	/* Get location of new node */
@@ -317,7 +317,7 @@ static u16b add_node_chance(u16b type, u16b node, bool branch)
 		if (old_node == 0)
 		{
 			/* Easy - just replace with data */
-		 	tree_ptr->ptrnode1 = type;
+			tree_ptr->ptrnode1 = type;
 
 			/* Return current node. */
 			return (node);
@@ -334,7 +334,7 @@ static u16b add_node_chance(u16b type, u16b node, bool branch)
 		if (old_node == 0)
 		{
 			/* Easy - just replace with data */
-		 	tree_ptr->ptrnode2 = type;
+			tree_ptr->ptrnode2 = type;
 
 			/* Return current node. */
 			return (node);
@@ -431,8 +431,8 @@ static u16b copy_branch(u16b node1, bool branch1, u16b node2, bool branch2)
 	u16b new_node;
 	u16b temp_node;
 
-	wild_choice_tree_type	*tree_ptr1;
-	wild_choice_tree_type	*tree_ptr2;
+	wild_choice_tree_type *tree_ptr1;
+	wild_choice_tree_type *tree_ptr2;
 
 	/* point to node to be copied from */
 	tree_ptr1 = &wild_choice_tree[node1];
@@ -608,11 +608,11 @@ static u16b copy_branch(u16b node1, bool branch1, u16b node2, bool branch2)
  */
 
 static u16b add_node_inside(u16b node, u16b type1, wild_bound_box_type *bound1,
-                            u16b type2, wild_bound_box_type *bound2)
+							u16b type2, wild_bound_box_type *bound2)
 {
 	/* The node inserted into the decision tree */
 	u16b new_node;
-	wild_choice_tree_type	*tree_ptr;
+	wild_choice_tree_type *tree_ptr;
 
 	tree_ptr = &wild_choice_tree[node];
 
@@ -839,7 +839,7 @@ static u16b add_node_inside(u16b node, u16b type1, wild_bound_box_type *bound1,
 	tree_ptr->ptrnode1 = type1;
 	tree_ptr->ptrnode2 = type2;
 
-	/* Set info flag to show both branches are "leaves"*/
+	/* Set info flag to show both branches are "leaves" */
 	tree_ptr->info = DT_LEFT | DT_RIGHT;
 
 	/* Look up chances and add to node. */
@@ -855,16 +855,15 @@ static u16b add_node_inside(u16b node, u16b type1, wild_bound_box_type *bound1,
  * This routine compares two bounding boxes
  * and returns true if they are the same.
  */
-static bool compare_bounds(wild_bound_box_type *bound1, wild_bound_box_type *bound2)
+static bool compare_bounds(wild_bound_box_type *bound1,
+						   wild_bound_box_type *bound2)
 {
 	return ((bound2->hgtmin == bound1->hgtmin) &&
-		(bound2->hgtmax == bound1->hgtmax) &&
-
-		(bound2->popmin == bound1->popmin) &&
-		(bound2->popmax == bound1->popmax) &&
-
-		(bound2->lawmin == bound1->lawmin) &&
-		(bound2->lawmax == bound1->lawmax));
+			(bound2->hgtmax == bound1->hgtmax) &&
+			(bound2->popmin == bound1->popmin) &&
+			(bound2->popmax == bound1->popmax) &&
+			(bound2->lawmin == bound1->lawmin) &&
+			(bound2->lawmax == bound1->lawmax));
 }
 
 /*
@@ -877,7 +876,7 @@ static bool compare_bounds(wild_bound_box_type *bound1, wild_bound_box_type *bou
  * function.)
  */
 static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
-                        wild_bound_box_type *bound2, bool branch)
+						wild_bound_box_type *bound2, bool branch)
 {
 	/* The node inserted into the decision tree */
 	u16b new_node;
@@ -1101,7 +1100,7 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
  * This function copies the parameter bounds from one variable to another.
  */
 static void copy_bounds(wild_bound_box_type *bound1,
-                        wild_bound_box_type *bound2)
+						wild_bound_box_type *bound2)
 {
 	bound2->hgtmin = bound1->hgtmin;
 	bound2->hgtmax = bound1->hgtmax;
@@ -1130,7 +1129,7 @@ static void copy_bounds(wild_bound_box_type *bound1,
  * current "reach" of the tree.
  */
 static u16b add_node(wild_bound_box_type *bound,
-                     wild_bound_box_type *cur_bound, u16b type, u16b node)
+					 wild_bound_box_type *cur_bound, u16b type, u16b node)
 {
 	/*
 	 * Temp storage of the current bounds and current type bounds
@@ -1143,7 +1142,7 @@ static u16b add_node(wild_bound_box_type *bound,
 
 	bool branch = FALSE;
 
-	wild_choice_tree_type	*tree_ptr;
+	wild_choice_tree_type *tree_ptr;
 
 
 	/* Scan tree until hit a leaf or split required region */
@@ -1210,7 +1209,8 @@ static u16b add_node(wild_bound_box_type *bound,
 						temp_bound2.hgtmin = tree_ptr->cutoff;
 
 						/* rescan with smaller domain */
-						return (add_node(&temp_bound1, &temp_bound2, type, node));
+						return (add_node
+								(&temp_bound1, &temp_bound2, type, node));
 					}
 					break;
 				}
@@ -1252,7 +1252,8 @@ static u16b add_node(wild_bound_box_type *bound,
 						temp_bound2.popmin = tree_ptr->cutoff;
 
 						/* rescan with smaller domain */
-						return (add_node(&temp_bound1, &temp_bound2, type, node));
+						return (add_node
+								(&temp_bound1, &temp_bound2, type, node));
 					}
 					break;
 				}
@@ -1294,7 +1295,8 @@ static u16b add_node(wild_bound_box_type *bound,
 						temp_bound2.lawmin = tree_ptr->cutoff;
 
 						/* rescan with smaller domain */
-						return (add_node(&temp_bound1, &temp_bound2, type, node));
+						return (add_node
+								(&temp_bound1, &temp_bound2, type, node));
 					}
 					break;
 				}
@@ -1455,15 +1457,15 @@ void test_decision_tree(void)
 	/* get parameters */
 	msg_print("Type in hgt");
 
-	hgt = (byte)get_quantity(NULL, 255);
+	hgt = (byte) get_quantity(NULL, 255);
 
 	msg_print("Type in pop");
 
-	pop = (byte)get_quantity(NULL, 255);
+	pop = (byte) get_quantity(NULL, 255);
 
 	msg_print("Type in law");
 
-	law = (byte)get_quantity(NULL, 255);
+	law = (byte) get_quantity(NULL, 255);
 
 	/* Get value from decision tree */
 	type = get_gen_type(hgt, pop, law);
@@ -1517,8 +1519,8 @@ void test_mon_wild_integrity(void)
 			if ((m_ptr->fy != j) || (m_ptr->fx != i))
 			{
 				msg_print("Monster location inconsistancy.");
-				msg_format("Monster x, cave x,%d,%d",m_ptr->fx, i);
-				msg_format("Monster y, cave y,%d,%d",m_ptr->fy, j);
+				msg_format("Monster x, cave x,%d,%d", m_ptr->fx, i);
+				msg_format("Monster y, cave y,%d,%d", m_ptr->fy, j);
 			}
 		}
 	}
@@ -1536,7 +1538,7 @@ static void test_wild_data(void)
 	for (i = 0; i < d_tree_count; i++)
 	{
 		if ((wild_choice_tree[i].ptrnode1 == 0) ||
-		    (wild_choice_tree[i].ptrnode2 == 0))
+			(wild_choice_tree[i].ptrnode2 == 0))
 		{
 			msg_format("Missing value at %d ", i);
 			msg_format("Cutoff %d ", wild_choice_tree[i].cutoff);
@@ -1568,10 +1570,10 @@ static void test_wild_data(void)
 static bool is_road_place(u16b place_num)
 {
 	place_type *pl_ptr = &place[place_num];
-	
+
 	/* No roads to wilderness quests */
 	if (pl_ptr->quest_num) return (FALSE);
-	
+
 	/* Default to true otherwise */
 	return (TRUE);
 }
@@ -1688,7 +1690,7 @@ static void road_connect(u16b *x, u16b *y, u16b place_num)
 		{
 			/* Get distance from gate to target square */
 			cdist = distance(x1, y1, pl_ptr->x + pl_ptr->gates_x[k] / 2,
-				 pl_ptr->y + pl_ptr->gates_y[k] / 2);
+							 pl_ptr->y + pl_ptr->gates_y[k] / 2);
 
 			if (cdist < dist)
 			{
@@ -1770,7 +1772,7 @@ static void create_roads(void)
 	}
 
 	/* Make places x places array of u16b's */
-	C_MAKE(link_list, places, u16b*);
+	C_MAKE(link_list, places, u16b *);
 
 	for (i = 0; i < places; i++)
 	{
@@ -1801,7 +1803,7 @@ static void create_roads(void)
 		{
 			/* Get distance */
 			dist = distance(place[place_number[i]].x, place[place_number[i]].y,
-			                place[place_number[j]].x, place[place_number[j]].y);
+							place[place_number[j]].x, place[place_number[j]].y);
 
 			/* Only save it if the distance is smaller than ROAD_DIST */
 			if (dist < ROAD_DIST)
@@ -1869,17 +1871,17 @@ static void create_roads(void)
 			if (!dist2) continue;
 
 			if ((dist2 == ROAD_DIST * 2 + 1) &&
-			    (link_list[i][place1] != ROAD_DIST * 2 + 1))
+				(link_list[i][place1] != ROAD_DIST * 2 + 1))
 			{
 				/* Prevent "overlinking" with third place */
 				link_list[i][place1] = ROAD_DIST * 2 + 1;
 				link_list[place1][i] = ROAD_DIST * 2 + 1;
 
-				links -=2;
+				links -= 2;
 			}
 
 			if ((dist == ROAD_DIST * 2 + 1) &&
-			    (link_list[i][place2] != ROAD_DIST * 2 + 1))
+				(link_list[i][place2] != ROAD_DIST * 2 + 1))
 			{
 				/* Prevent "overlinking" with third place */
 				link_list[i][place2] = ROAD_DIST * 2 + 1;
@@ -2014,7 +2016,7 @@ static void create_roads(void)
 			{
 				x1 = place[place2].x;
 				y1 = place[place2].y;
-				
+
 				/* Get connection square for place1 */
 				road_connect(&x1, &y1, place1);
 
@@ -2052,8 +2054,8 @@ static void create_roads(void)
  */
 static bool ang_sort_comp_height(vptr u, vptr v, int a, int b)
 {
-	s16b *x = (s16b*)(u);
-	s16b *y = (s16b*)(v);
+	s16b *x = (s16b *) (u);
+	s16b *y = (s16b *) (v);
 
 	int ha, hb;
 
@@ -2074,8 +2076,8 @@ static bool ang_sort_comp_height(vptr u, vptr v, int a, int b)
  */
 static void ang_sort_swap_height(vptr u, vptr v, int a, int b)
 {
-	s16b *x = (s16b*)(u);
-	s16b *y = (s16b*)(v);
+	s16b *x = (s16b *) (u);
+	s16b *y = (s16b *) (v);
 
 	s16b temp;
 
@@ -2188,12 +2190,12 @@ static void create_rivers(void)
 		r1 = ((i % RIVER_NUM) * max_wild) / RIVER_NUM;
 		r2 = r1 + (max_wild / RIVER_NUM);
 
-		temp_y[i] = (s16b)rand_range(r1, r2);
+		temp_y[i] = (s16b) rand_range(r1, r2);
 
 		r1 = ((i / RIVER_NUM) * max_wild) / RIVER_NUM;;
 		r2 = r1 + (max_wild / RIVER_NUM);
 
-		temp_x[i] = (s16b)rand_range(r1, r2);
+		temp_x[i] = (s16b) rand_range(r1, r2);
 	}
 
 	temp_n = river_start;
@@ -2239,7 +2241,7 @@ static void create_rivers(void)
 			dh = ch - wild[temp_y[i]][temp_x[i]].trans.hgt_map;
 
 			/* Small val for close high positions */
-			/*val = dh + distance(cx, cy, temp_x[i], temp_y[i]);*/
+			/*val = dh + distance(cx, cy, temp_x[i], temp_y[i]); */
 			val = distance(cx, cy, temp_x[i], temp_y[i]);
 
 			/* Is this position better than previous best? */
@@ -2261,7 +2263,7 @@ static void create_rivers(void)
 		 * to stop "deltas" being made.
 		 */
 		if (wild[temp_y[high_posn]][temp_x[high_posn]].trans.hgt_map <
-			 (256 / SEA_FRACTION))
+			(256 / SEA_FRACTION))
 		{
 			temp_x[high_posn] = -1;
 			temp_y[high_posn] = -1;
@@ -2954,17 +2956,17 @@ static void create_law_map(u16b sea)
  */
 static void wild_done(void)
 {
-	p_ptr->px = (s16b)p_ptr->wilderness_x;
-	p_ptr->py = (s16b)p_ptr->wilderness_y;
+	p_ptr->px = (s16b) p_ptr->wilderness_x;
+	p_ptr->py = (s16b) p_ptr->wilderness_y;
 
 	map_panel_size();
 
 	/* Refresh random number seed */
 	wild_seed = randint0(0x10000000);
-	
+
 	/* We now are in the wilderness */
 	character_dungeon = TRUE;
-	
+
 	/* Change back to inside wilderness */
 	p_ptr->depth = 0;
 
@@ -2979,9 +2981,9 @@ static void wild_done(void)
 static void create_vanilla_wilderness(void)
 {
 	int i, j;
-	
+
 	wild_type *w_ptr;
-	
+
 	/* Tiny wilderness */
 	max_wild = WILD_VIEW + 1;
 
@@ -3036,7 +3038,7 @@ static void set_mon_wild_values(byte town_type, wild_done_type *w_ptr)
 			w_ptr->mon_prob = 64;
 			break;
 		}
-		
+
 		case TOWN_MONST_ABANDONED:
 		{
 			/* Monsters are moderately difficult */
@@ -3046,18 +3048,18 @@ static void set_mon_wild_values(byte town_type, wild_done_type *w_ptr)
 			w_ptr->mon_prob = 0;
 			break;
 		}
-		
+
 		case TOWN_MONST_MONST:
 		{
 			/* Do nothing - keep defaults */
 			break;
 		}
 
-		/*
-		 * Add in other probabilities in here for the
-		 * other TOWN_MONST_XXX types
-		 */
-		 
+			/*
+			 * Add in other probabilities in here for the
+			 * other TOWN_MONST_XXX types
+			 */
+
 		default:
 		{
 			/* Monsters are easy */
@@ -3076,33 +3078,33 @@ static void set_mon_wild_values(byte town_type, wild_done_type *w_ptr)
 static void wipe_wilderness(void)
 {
 	int i, j;
-	
+
 	place_type *pl_ptr;
 	wild_type *w_ptr;
-	
+
 	/* Erase all places */
 	for (i = 1; i < z_info->wp_max; i++)
 	{
 		pl_ptr = &place[i];
-	
+
 		/* Do we have any stores? */
 		if (pl_ptr->numstores)
 		{
 			/* Free the stores */
 			FREE(pl_ptr->store);
 		}
-		
+
 		/* Wipe the place */
 		(void) WIPE(pl_ptr, place_type);
 	}
-	
+
 	/* Wipe the wild info */
 	for (i = 0; i < max_wild; i++)
 	{
 		for (j = 0; j < max_wild; j++)
 		{
 			w_ptr = &wild[j][i];
-			
+
 			/* Wipe the block */
 			(void) WIPE(w_ptr, wild_type);
 		}
@@ -3121,13 +3123,13 @@ static void create_wild_info(int *bestx, int *besty)
 {
 	int i, j;
 	int x, y;
-	
+
 	byte hgt, pop, law;
 	u16b hgt_min, hgt_max, pop_min, pop_max, law_min, law_max;
 	byte sea_level;
 
 	long hgt_scale, pop_scale, law_scale;
-	
+
 	wild_type *w_ptr;
 
 	/* Huge wilderness */
@@ -3230,7 +3232,7 @@ static void create_wild_info(int *bestx, int *besty)
 
 	/* Rescale minimum. */
 	law_min *= 16;
-	
+
 	/* Best place in wilderness for starting town */
 	x = -1;
 	y = -1;
@@ -3277,11 +3279,11 @@ static void create_wild_info(int *bestx, int *besty)
 			}
 		}
 	}
-	
+
 	/* Save best town location */
 	*bestx = x;
 	*besty = y;
-	
+
 	/* Free the temp data */
 	FREE(wild_temp_dist);
 }
@@ -3301,7 +3303,7 @@ static void create_terrain(void)
 	byte hgt, pop, law;
 
 	wild_type *w_ptr;
-	
+
 	/* Fill wilderness with terrain */
 	for (i = 0; i < max_wild; i++)
 	{
@@ -3353,7 +3355,7 @@ static void create_terrain(void)
 			if (!place_num)
 			{
 				/* Set wilderness monsters to default values */
-				
+
 				/* Toughness (level 0 - 64) */
 				w_ptr->done.mon_gen = (256 - law) / 4;
 				w_ptr->done.mon_gen = MAX(1, w_ptr->done.mon_gen - 5);
@@ -3386,7 +3388,7 @@ static void create_terrain(void)
 
 					/* Must be in bounds */
 					if ((x < 0) || (x >= max_wild) ||
-						 (y < 0) || (y >= max_wild))
+						(y < 0) || (y >= max_wild))
 					{
 						continue;
 					}
@@ -3448,7 +3450,7 @@ void create_wilderness(void)
 		create_vanilla_wilderness();
 		return;
 	}
-	
+
 	/*
 	 * Try to make the wilderness until we
 	 * get one that works.
@@ -3456,12 +3458,12 @@ void create_wilderness(void)
 	 * Keep track of how long it takes - and
 	 * if it takes too long, bail out.
 	 */
-	while(!done)
+	while (!done)
 	{
 		count++;
-		
+
 		if (count > 10) quit("Cannot make wilderness, adjust constraints.");
-		
+
 		/* Clear the wilderness */
 		wipe_wilderness();
 
@@ -3477,14 +3479,14 @@ void create_wilderness(void)
 
 		/* Add in lakes... */
 		create_lakes();
-	
+
 		/* Add towns + dungeons etc */
 		done = init_places(x, y);
 	}
-	
+
 	/* Connect the places with roads */
 	create_roads();
-	
+
 	/*
 	 * Finish everything off
 	 */
@@ -3497,10 +3499,10 @@ void create_wilderness(void)
 	 * So don't delete them in that case...
 	 */
 #ifndef DEBUG
-	
+
 	/* Free up memory used to create the wilderness */
 	FREE(wild_choice_tree);
-	
+
 #endif /* !DEBUG */
 
 	/* Done */

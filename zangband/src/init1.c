@@ -642,8 +642,8 @@ static cptr t_info_flags[] =
 /*
  * Initialize an "*_info" array, by parsing an ascii "template" file
  */
-errr init_info_txt(FILE *fp, char *buf, header *head,
-                   parse_info_txt_func parse_info_txt_line)
+errr init_info_txt(FILE * fp, char *buf, header * head,
+				   parse_info_txt_func parse_info_txt_line)
 {
 	errr err;
 
@@ -680,10 +680,9 @@ errr init_info_txt(FILE *fp, char *buf, header *head,
 			int v1, v2, v3;
 
 			/* Scan for the values */
-			if ((3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) ||
+			if ((3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) ||
 				(v1 != head->v_major) ||
-				(v2 != head->v_minor) ||
-				(v3 != head->v_patch))
+				(v2 != head->v_minor) || (v3 != head->v_patch))
 			{
 				return (PARSE_ERROR_OBSOLETE_FILE);
 			}
@@ -699,7 +698,7 @@ errr init_info_txt(FILE *fp, char *buf, header *head,
 		if (!okay) return (PARSE_ERROR_OBSOLETE_FILE);
 
 		/* Parse the line */
-		if ((err = (*parse_info_txt_line)(buf, head)) != 0)
+		if ((err = (*parse_info_txt_line) (buf, head)) != 0)
 			return (err);
 	}
 
@@ -724,7 +723,7 @@ errr init_info_txt(FILE *fp, char *buf, header *head,
  * Returns FALSE when there isn't enough space available to store
  * the text.
  */
-static bool add_text(u32b *offset, header *head, cptr buf)
+static bool add_text(u32b *offset, header * head, cptr buf)
 {
 	/* Hack -- Verify space */
 	if (head->text_size + strlen(buf) + 8 > z_info->fake_text_size)
@@ -734,7 +733,7 @@ static bool add_text(u32b *offset, header *head, cptr buf)
 	if (*offset == 0)
 	{
 		/* Advance and save the text index */
-		*offset = ++head->text_size;	
+		*offset = ++head->text_size;
 	}
 
 	/* Append chars to the text */
@@ -754,7 +753,7 @@ static bool add_text(u32b *offset, header *head, cptr buf)
  * Returns 0 when there isn't enough space available to store
  * the name.
  */
-static u32b add_name(header *head, cptr buf)
+static u32b add_name(header * head, cptr buf)
 {
 	u32b index;
 
@@ -770,7 +769,7 @@ static u32b add_name(header *head, cptr buf)
 
 	/* Advance the index */
 	head->name_size += strlen(buf);
-	
+
 	/* Return the name index */
 	return (index);
 }
@@ -779,10 +778,10 @@ static u32b add_name(header *head, cptr buf)
 /*
  * Initialize the "z_info" structure, by parsing an ascii "template" file
  */
-errr parse_z_info(char *buf, header *head)
+errr parse_z_info(char *buf, header * head)
 {
 	/* Unused parameter */
-	(void)head;
+	(void) head;
 
 	/* Hack - Verify 'M:x:' format */
 	if (buf[0] != 'M') return (PARSE_ERROR_UNDEFINED_DIRECTIVE);
@@ -796,7 +795,7 @@ errr parse_z_info(char *buf, header *head)
 		int max;
 
 		/* Scan for the value */
-		if (1 != sscanf(buf+4, "%d", &max)) return (PARSE_ERROR_GENERIC);
+		if (1 != sscanf(buf + 4, "%d", &max)) return (PARSE_ERROR_GENERIC);
 
 		/* Save the value */
 		z_info->f_max = max;
@@ -808,7 +807,7 @@ errr parse_z_info(char *buf, header *head)
 		int max;
 
 		/* Scan for the value */
-		if (1 != sscanf(buf+4, "%d", &max)) return (PARSE_ERROR_GENERIC);
+		if (1 != sscanf(buf + 4, "%d", &max)) return (PARSE_ERROR_GENERIC);
 
 		/* Save the value */
 		z_info->k_max = max;
@@ -820,7 +819,7 @@ errr parse_z_info(char *buf, header *head)
 		int max;
 
 		/* Scan for the value */
-		if (1 != sscanf(buf+4, "%d", &max)) return (PARSE_ERROR_GENERIC);
+		if (1 != sscanf(buf + 4, "%d", &max)) return (PARSE_ERROR_GENERIC);
 
 		/* Save the value */
 		z_info->a_max = max;
@@ -832,7 +831,7 @@ errr parse_z_info(char *buf, header *head)
 		int max;
 
 		/* Scan for the value */
-		if (1 != sscanf(buf+4, "%d", &max)) return (PARSE_ERROR_GENERIC);
+		if (1 != sscanf(buf + 4, "%d", &max)) return (PARSE_ERROR_GENERIC);
 
 		/* Save the value */
 		z_info->e_max = max;
@@ -844,7 +843,7 @@ errr parse_z_info(char *buf, header *head)
 		int max;
 
 		/* Scan for the value */
-		if (1 != sscanf(buf+4, "%d", &max)) return (PARSE_ERROR_GENERIC);
+		if (1 != sscanf(buf + 4, "%d", &max)) return (PARSE_ERROR_GENERIC);
 
 		/* Save the value */
 		z_info->r_max = max;
@@ -856,7 +855,7 @@ errr parse_z_info(char *buf, header *head)
 		int max;
 
 		/* Scan for the value */
-		if (1 != sscanf(buf+4, "%d", &max)) return (PARSE_ERROR_GENERIC);
+		if (1 != sscanf(buf + 4, "%d", &max)) return (PARSE_ERROR_GENERIC);
 
 		/* Save the value */
 		z_info->v_max = max;
@@ -868,7 +867,7 @@ errr parse_z_info(char *buf, header *head)
 		int max;
 
 		/* Scan for the value */
-		if (1 != sscanf(buf+4, "%d", &max)) return (PARSE_ERROR_GENERIC);
+		if (1 != sscanf(buf + 4, "%d", &max)) return (PARSE_ERROR_GENERIC);
 
 		/* Save the value */
 		z_info->o_max = max;
@@ -880,7 +879,7 @@ errr parse_z_info(char *buf, header *head)
 		int max;
 
 		/* Scan for the value */
-		if (1 != sscanf(buf+4, "%d", &max)) return (PARSE_ERROR_GENERIC);
+		if (1 != sscanf(buf + 4, "%d", &max)) return (PARSE_ERROR_GENERIC);
 
 		/* Save the value */
 		z_info->m_max = max;
@@ -892,7 +891,7 @@ errr parse_z_info(char *buf, header *head)
 		long max;
 
 		/* Scan for the value */
-		if (1 != sscanf(buf+4, "%ld", &max)) return (PARSE_ERROR_GENERIC);
+		if (1 != sscanf(buf + 4, "%ld", &max)) return (PARSE_ERROR_GENERIC);
 
 		/* Save the value */
 		z_info->fake_name_size = max;
@@ -904,7 +903,7 @@ errr parse_z_info(char *buf, header *head)
 		long max;
 
 		/* Scan for the value */
-		if (1 != sscanf(buf+4, "%ld", &max)) return (PARSE_ERROR_GENERIC);
+		if (1 != sscanf(buf + 4, "%ld", &max)) return (PARSE_ERROR_GENERIC);
 
 		/* Save the value */
 		z_info->fake_text_size = max;
@@ -916,7 +915,7 @@ errr parse_z_info(char *buf, header *head)
 		int max;
 
 		/* Scan for the value */
-		if (1 != sscanf(buf+4, "%d", &max)) return (PARSE_ERROR_GENERIC);
+		if (1 != sscanf(buf + 4, "%d", &max)) return (PARSE_ERROR_GENERIC);
 
 		/* Save the value */
 		z_info->q_max = max;
@@ -928,7 +927,7 @@ errr parse_z_info(char *buf, header *head)
 		int max;
 
 		/* Scan for the value */
-		if (1 != sscanf(buf+4, "%d", &max)) return (PARSE_ERROR_GENERIC);
+		if (1 != sscanf(buf + 4, "%d", &max)) return (PARSE_ERROR_GENERIC);
 
 		/* Save the value */
 		z_info->t_max = max;
@@ -940,19 +939,19 @@ errr parse_z_info(char *buf, header *head)
 		int max;
 
 		/* Scan for the value */
-		if (1 != sscanf(buf+4, "%d", &max)) return (PARSE_ERROR_GENERIC);
+		if (1 != sscanf(buf + 4, "%d", &max)) return (PARSE_ERROR_GENERIC);
 
 		/* Save the value */
 		z_info->fld_max = max;
 	}
-	
+
 	/* Process 'G' for "Maximum region list" */
 	else if (buf[2] == 'G')
 	{
 		int max;
 
 		/* Scan for the value */
-		if (1 != sscanf(buf+4, "%d", &max)) return (PARSE_ERROR_GENERIC);
+		if (1 != sscanf(buf + 4, "%d", &max)) return (PARSE_ERROR_GENERIC);
 
 		/* Save the value */
 		z_info->rg_max = max;
@@ -966,11 +965,11 @@ errr parse_z_info(char *buf, header *head)
 
 		/* Process 'S' for "Maximum wilderness size" */
 		if (buf[4] == 'S')
-		{	
+		{
 			int max;
 
 			/* Scan for the value */
-			if (1 != sscanf(buf+6, "%d", &max)) return (PARSE_ERROR_GENERIC);
+			if (1 != sscanf(buf + 6, "%d", &max)) return (PARSE_ERROR_GENERIC);
 
 			/* Save the value */
 			z_info->ws_max = max;
@@ -978,11 +977,11 @@ errr parse_z_info(char *buf, header *head)
 
 		/* Process 'N' for "Maximum wilderness tree nodes" */
 		else if (buf[4] == 'N')
-		{	
+		{
 			int max;
 
 			/* Scan for the value */
-			if (1 != sscanf(buf+6, "%d", &max)) return (PARSE_ERROR_GENERIC);
+			if (1 != sscanf(buf + 6, "%d", &max)) return (PARSE_ERROR_GENERIC);
 
 			/* Save the value */
 			z_info->wn_max = max;
@@ -990,11 +989,11 @@ errr parse_z_info(char *buf, header *head)
 
 		/* Process 'T' for "Maximum wilderness gen types" */
 		else if (buf[4] == 'T')
-		{	
+		{
 			int max;
 
 			/* Scan for the value */
-			if (1 != sscanf(buf+6, "%d", &max)) return (PARSE_ERROR_GENERIC);
+			if (1 != sscanf(buf + 6, "%d", &max)) return (PARSE_ERROR_GENERIC);
 
 			/* Save the value */
 			z_info->wt_max = max;
@@ -1002,11 +1001,11 @@ errr parse_z_info(char *buf, header *head)
 
 		/* Process 'P' for "Maximum towns" */
 		else if (buf[4] == 'P')
-		{	
+		{
 			int max;
 
 			/* Scan for the value */
-			if (1 != sscanf(buf+6, "%d", &max)) return (PARSE_ERROR_GENERIC);
+			if (1 != sscanf(buf + 6, "%d", &max)) return (PARSE_ERROR_GENERIC);
 
 			/* Save the value */
 			z_info->wp_max = max;
@@ -1041,7 +1040,7 @@ errr parse_v_info(char *buf, header *head)
 	if (buf[0] == 'N')
 	{
 		/* Find the colon before the name */
-		s = strchr(buf+2, ':');
+		s = strchr(buf + 2, ':');
 
 		/* Verify that colon */
 		if (!s) return (PARSE_ERROR_GENERIC);
@@ -1053,7 +1052,7 @@ errr parse_v_info(char *buf, header *head)
 		if (!*s) return (PARSE_ERROR_GENERIC);
 
 		/* Get the index */
-		i = atoi(buf+2);
+		i = atoi(buf + 2);
 
 		/* Verify information */
 		if (i <= error_idx) return (PARSE_ERROR_NON_SEQUENTIAL_RECORDS);
@@ -1079,7 +1078,7 @@ errr parse_v_info(char *buf, header *head)
 		if (!v_ptr) return (PARSE_ERROR_MISSING_RECORD_HEADER);
 
 		/* Get the text */
-		s = buf+2;
+		s = buf + 2;
 
 		/* Store the text */
 		if (!add_text(&v_ptr->text, head, s))
@@ -1095,8 +1094,8 @@ errr parse_v_info(char *buf, header *head)
 		if (!v_ptr) return (PARSE_ERROR_MISSING_RECORD_HEADER);
 
 		/* Scan for the values */
-		if (4 != sscanf(buf+2, "%d:%d:%d:%d",
-			            &typ, &rat, &hgt, &wid)) return (PARSE_ERROR_GENERIC);
+		if (4 != sscanf(buf + 2, "%d:%d:%d:%d",
+						&typ, &rat, &hgt, &wid)) return (PARSE_ERROR_GENERIC);
 
 		/* Save the values */
 		v_ptr->typ = typ;
@@ -1119,7 +1118,7 @@ errr parse_v_info(char *buf, header *head)
 /*
  * Initialize the "f_info" array, by parsing an ascii "template" file
  */
-errr parse_f_info(char *buf, header *head)
+errr parse_f_info(char *buf, header * head)
 {
 	int i;
 
@@ -1133,7 +1132,7 @@ errr parse_f_info(char *buf, header *head)
 	if (buf[0] == 'N')
 	{
 		/* Find the colon before the name */
-		s = strchr(buf+2, ':');
+		s = strchr(buf + 2, ':');
 
 		/* Verify that colon */
 		if (!s) return (PARSE_ERROR_GENERIC);
@@ -1145,7 +1144,7 @@ errr parse_f_info(char *buf, header *head)
 		if (!*s) return (PARSE_ERROR_GENERIC);
 
 		/* Get the index */
-		i = atoi(buf+2);
+		i = atoi(buf + 2);
 
 		/* Verify information */
 		if (i <= error_idx) return (PARSE_ERROR_NON_SEQUENTIAL_RECORDS);
@@ -1259,7 +1258,7 @@ errr parse_k_info(char *buf, header *head)
 	if (buf[0] == 'N')
 	{
 		/* Find the colon before the name */
-		s = strchr(buf+2, ':');
+		s = strchr(buf + 2, ':');
 
 		/* Verify that colon */
 		if (!s) return (PARSE_ERROR_GENERIC);
@@ -1271,7 +1270,7 @@ errr parse_k_info(char *buf, header *head)
 		if (!*s) return (PARSE_ERROR_GENERIC);
 
 		/* Get the index */
-		i = atoi(buf+2);
+		i = atoi(buf + 2);
 
 		/* Verify information */
 		if (i <= error_idx) return (PARSE_ERROR_NON_SEQUENTIAL_RECORDS);
@@ -1327,8 +1326,8 @@ errr parse_k_info(char *buf, header *head)
 		if (!k_ptr) return (PARSE_ERROR_MISSING_RECORD_HEADER);
 
 		/* Scan for the values */
-		if (3 != sscanf(buf+2, "%d:%d:%d",
-			            &tval, &sval, &pval)) return (PARSE_ERROR_GENERIC);
+		if (3 != sscanf(buf + 2, "%d:%d:%d",
+						&tval, &sval, &pval)) return (PARSE_ERROR_GENERIC);
 
 		/* Save the values */
 		k_ptr->tval = tval;
@@ -1346,8 +1345,9 @@ errr parse_k_info(char *buf, header *head)
 		if (!k_ptr) return (PARSE_ERROR_MISSING_RECORD_HEADER);
 
 		/* Scan for the values */
-		if (4 != sscanf(buf+2, "%d:%d:%d:%ld",
-			            &level, &extra, &wgt, &cost)) return (PARSE_ERROR_GENERIC);
+		if (4 != sscanf(buf + 2, "%d:%d:%d:%ld",
+						&level, &extra, &wgt,
+						&cost)) return (PARSE_ERROR_GENERIC);
 
 		/* Save the values */
 		k_ptr->level = level;
@@ -1365,7 +1365,7 @@ errr parse_k_info(char *buf, header *head)
 		if (!k_ptr) return (PARSE_ERROR_MISSING_RECORD_HEADER);
 
 		/* XXX Simply read each number following a colon */
-		for (i = 0, s = buf+1; s && (s[0] == ':') && s[1]; ++i)
+		for (i = 0, s = buf + 1; s && (s[0] == ':') && s[1]; ++i)
 		{
 			/* Sanity check */
 			if (i > 3) return (PARSE_ERROR_TOO_MANY_ALLOCATIONS);
@@ -1374,18 +1374,18 @@ errr parse_k_info(char *buf, header *head)
 			k_ptr->chance[i] = 1;
 
 			/* Store the attack damage index */
-			k_ptr->locale[i] = atoi(s+1);
+			k_ptr->locale[i] = atoi(s + 1);
 
 			/* Find the slash */
-			t = strchr(s+1, '/');
+			t = strchr(s + 1, '/');
 
 			/* Find the next colon */
-			s = strchr(s+1, ':');
+			s = strchr(s + 1, ':');
 
 			/* If the slash is "nearby", use it */
 			if (t && (!s || t < s))
 			{
-				int chance = atoi(t+1);
+				int chance = atoi(t + 1);
 				if (chance > 0) k_ptr->chance[i] = chance;
 			}
 		}
@@ -1400,15 +1400,16 @@ errr parse_k_info(char *buf, header *head)
 		if (!k_ptr) return (PARSE_ERROR_MISSING_RECORD_HEADER);
 
 		/* Scan for the values */
-		if (6 != sscanf(buf+2, "%d:%dd%d:%d:%d:%d",
-			            &ac, &hd1, &hd2, &th, &td, &ta)) return (PARSE_ERROR_GENERIC);
+		if (6 != sscanf(buf + 2, "%d:%dd%d:%d:%d:%d",
+						&ac, &hd1, &hd2, &th, &td,
+						&ta)) return (PARSE_ERROR_GENERIC);
 
 		k_ptr->ac = ac;
 		k_ptr->dd = hd1;
 		k_ptr->ds = hd2;
 		k_ptr->to_h = th;
 		k_ptr->to_d = td;
-		k_ptr->to_a =  ta;
+		k_ptr->to_a = ta;
 	}
 
 	/* Hack -- Process 'F' for flags */
@@ -1418,10 +1419,10 @@ errr parse_k_info(char *buf, header *head)
 		if (!k_ptr) return (PARSE_ERROR_MISSING_RECORD_HEADER);
 
 		/* Parse every entry textually */
-		for (s = buf + 2; *s; )
+		for (s = buf + 2; *s;)
 		{
 			/* Find the end of this entry */
-			for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */;
+			for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */ ;
 
 			/* Nuke and skip any dividers */
 			if (*t)
@@ -1431,7 +1432,8 @@ errr parse_k_info(char *buf, header *head)
 			}
 
 			/* Parse this entry */
-			if (0 != grab_one_kind_flag(k_ptr, s)) return (PARSE_ERROR_INVALID_FLAG);
+			if (0 !=
+				grab_one_kind_flag(k_ptr, s)) return (PARSE_ERROR_INVALID_FLAG);
 
 			/* Start the next entry */
 			s = t;
@@ -1487,7 +1489,7 @@ errr parse_a_info(char *buf, header *head)
 	if (buf[0] == 'N')
 	{
 		/* Find the colon before the name */
-		s = strchr(buf+2, ':');
+		s = strchr(buf + 2, ':');
 
 		/* Verify that colon */
 		if (!s) return (PARSE_ERROR_GENERIC);
@@ -1499,7 +1501,7 @@ errr parse_a_info(char *buf, header *head)
 		if (!*s) return (PARSE_ERROR_GENERIC);
 
 		/* Get the index */
-		i = atoi(buf+2);
+		i = atoi(buf + 2);
 
 		/* Verify information */
 		if (i <= error_idx) return (PARSE_ERROR_NON_SEQUENTIAL_RECORDS);
@@ -1530,8 +1532,8 @@ errr parse_a_info(char *buf, header *head)
 		if (!a_ptr) return (PARSE_ERROR_MISSING_RECORD_HEADER);
 
 		/* Scan for the values */
-		if (3 != sscanf(buf+2, "%d:%d:%d",
-			            &tval, &sval, &pval)) return (PARSE_ERROR_GENERIC);
+		if (3 != sscanf(buf + 2, "%d:%d:%d",
+						&tval, &sval, &pval)) return (PARSE_ERROR_GENERIC);
 
 		/* Save the values */
 		a_ptr->tval = tval;
@@ -1549,8 +1551,9 @@ errr parse_a_info(char *buf, header *head)
 		if (!a_ptr) return (PARSE_ERROR_MISSING_RECORD_HEADER);
 
 		/* Scan for the values */
-		if (4 != sscanf(buf+2, "%d:%d:%d:%ld",
-			            &level, &rarity, &wgt, &cost)) return (PARSE_ERROR_GENERIC);
+		if (4 != sscanf(buf + 2, "%d:%d:%d:%ld",
+						&level, &rarity, &wgt,
+						&cost)) return (PARSE_ERROR_GENERIC);
 
 		/* Save the values */
 		a_ptr->level = level;
@@ -1568,8 +1571,9 @@ errr parse_a_info(char *buf, header *head)
 		if (!a_ptr) return (PARSE_ERROR_MISSING_RECORD_HEADER);
 
 		/* Scan for the values */
-		if (6 != sscanf(buf+2, "%d:%dd%d:%d:%d:%d",
-			            &ac, &hd1, &hd2, &th, &td, &ta)) return (PARSE_ERROR_GENERIC);
+		if (6 != sscanf(buf + 2, "%d:%dd%d:%d:%d:%d",
+						&ac, &hd1, &hd2, &th, &td,
+						&ta)) return (PARSE_ERROR_GENERIC);
 
 		a_ptr->ac = ac;
 		a_ptr->dd = hd1;
@@ -1586,10 +1590,10 @@ errr parse_a_info(char *buf, header *head)
 		if (!a_ptr) return (PARSE_ERROR_MISSING_RECORD_HEADER);
 
 		/* Parse every entry textually */
-		for (s = buf + 2; *s; )
+		for (s = buf + 2; *s;)
 		{
 			/* Find the end of this entry */
-			for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */;
+			for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */ ;
 
 			/* Nuke and skip any dividers */
 			if (*t)
@@ -1599,7 +1603,9 @@ errr parse_a_info(char *buf, header *head)
 			}
 
 			/* Parse this entry */
-			if (0 != grab_one_artifact_flag(a_ptr, s)) return (PARSE_ERROR_INVALID_FLAG);
+			if (0 !=
+				grab_one_artifact_flag(a_ptr,
+									   s)) return (PARSE_ERROR_INVALID_FLAG);
 
 			/* Start the next entry */
 			s = t;
@@ -1660,7 +1666,7 @@ errr parse_e_info(char *buf, header *head)
 	if (buf[0] == 'N')
 	{
 		/* Find the colon before the name */
-		s = strchr(buf+2, ':');
+		s = strchr(buf + 2, ':');
 
 		/* Verify that colon */
 		if (!s) return (PARSE_ERROR_GENERIC);
@@ -1672,7 +1678,7 @@ errr parse_e_info(char *buf, header *head)
 		if (!*s) return (PARSE_ERROR_GENERIC);
 
 		/* Get the index */
-		i = atoi(buf+2);
+		i = atoi(buf + 2);
 
 		/* Verify information */
 		if (i <= error_idx) return (PARSE_ERROR_NON_SEQUENTIAL_RECORDS);
@@ -1704,8 +1710,9 @@ errr parse_e_info(char *buf, header *head)
 		if (!e_ptr) return (PARSE_ERROR_MISSING_RECORD_HEADER);
 
 		/* Scan for the values */
-		if (4 != sscanf(buf+2, "%d:%d:%d:%ld",
-			            &level, &rarity, &pad2, &cost)) return (PARSE_ERROR_GENERIC);
+		if (4 != sscanf(buf + 2, "%d:%d:%d:%ld",
+						&level, &rarity, &pad2,
+						&cost)) return (PARSE_ERROR_GENERIC);
 
 		/* Save the values */
 		e_ptr->level = level;
@@ -1723,8 +1730,8 @@ errr parse_e_info(char *buf, header *head)
 		if (!e_ptr) return (PARSE_ERROR_MISSING_RECORD_HEADER);
 
 		/* Scan for the values */
-		if (2 != sscanf(buf+2, "%d:%d",
-			            &slot, &rating)) return (PARSE_ERROR_GENERIC);
+		if (2 != sscanf(buf + 2, "%d:%d",
+						&slot, &rating)) return (PARSE_ERROR_GENERIC);
 
 		/* Save the values */
 		e_ptr->slot = slot;
@@ -1740,8 +1747,8 @@ errr parse_e_info(char *buf, header *head)
 		if (!e_ptr) return (PARSE_ERROR_MISSING_RECORD_HEADER);
 
 		/* Scan for the values */
-		if (4 != sscanf(buf+2, "%d:%d:%d:%d",
-			            &th, &td, &ta, &pv)) return (PARSE_ERROR_GENERIC);
+		if (4 != sscanf(buf + 2, "%d:%d:%d:%d",
+						&th, &td, &ta, &pv)) return (PARSE_ERROR_GENERIC);
 
 		e_ptr->max_to_h = th;
 		e_ptr->max_to_d = td;
@@ -1756,10 +1763,10 @@ errr parse_e_info(char *buf, header *head)
 		if (!e_ptr) return (PARSE_ERROR_MISSING_RECORD_HEADER);
 
 		/* Parse every entry textually */
-		for (s = buf + 2; *s; )
+		for (s = buf + 2; *s;)
 		{
 			/* Find the end of this entry */
-			for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */;
+			for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */ ;
 
 			/* Nuke and skip any dividers */
 			if (*t)
@@ -1769,7 +1776,9 @@ errr parse_e_info(char *buf, header *head)
 			}
 
 			/* Parse this entry */
-			if (0 != grab_one_ego_item_flag(e_ptr, s)) return (PARSE_ERROR_INVALID_FLAG);
+			if (0 !=
+				grab_one_ego_item_flag(e_ptr,
+									   s)) return (PARSE_ERROR_INVALID_FLAG);
 
 			/* Start the next entry */
 			s = t;
@@ -1858,7 +1867,7 @@ errr parse_r_info(char *buf, header *head)
 	if (buf[0] == 'N')
 	{
 		/* Find the colon before the name */
-		s = strchr(buf+2, ':');
+		s = strchr(buf + 2, ':');
 
 		/* Verify that colon */
 		if (!s) return (PARSE_ERROR_GENERIC);
@@ -1870,7 +1879,7 @@ errr parse_r_info(char *buf, header *head)
 		if (!*s) return (PARSE_ERROR_GENERIC);
 
 		/* Get the index */
-		i = atoi(buf+2);
+		i = atoi(buf + 2);
 
 		/* Verify information */
 		if (i <= error_idx) return (PARSE_ERROR_NON_SEQUENTIAL_RECORDS);
@@ -1896,7 +1905,7 @@ errr parse_r_info(char *buf, header *head)
 		if (!r_ptr) return (PARSE_ERROR_MISSING_RECORD_HEADER);
 
 		/* Get the text */
-		s = buf+2;
+		s = buf + 2;
 
 		/* Store the text */
 		if (!add_text(&(r_ptr->text), head, s))
@@ -1944,8 +1953,9 @@ errr parse_r_info(char *buf, header *head)
 		if (!r_ptr) return (PARSE_ERROR_MISSING_RECORD_HEADER);
 
 		/* Scan for the other values */
-		if (6 != sscanf(buf+2, "%d:%dd%d:%d:%d:%d",
-			            &spd, &hp1, &hp2, &aaf, &ac, &slp)) return (PARSE_ERROR_GENERIC);
+		if (6 != sscanf(buf + 2, "%d:%dd%d:%d:%d:%d",
+						&spd, &hp1, &hp2, &aaf, &ac,
+						&slp)) return (PARSE_ERROR_GENERIC);
 
 		/* Save the values */
 		r_ptr->speed = spd;
@@ -1966,8 +1976,8 @@ errr parse_r_info(char *buf, header *head)
 		if (!r_ptr) return (PARSE_ERROR_MISSING_RECORD_HEADER);
 
 		/* Scan for the values */
-		if (4 != sscanf(buf+2, "%d:%d:%d:%ld",
-			            &lev, &rar, &pad, &exp)) return (PARSE_ERROR_GENERIC);
+		if (4 != sscanf(buf + 2, "%d:%d:%d:%ld",
+						&lev, &rar, &pad, &exp)) return (PARSE_ERROR_GENERIC);
 
 		/* Save the values */
 		r_ptr->level = lev;
@@ -1985,14 +1995,15 @@ errr parse_r_info(char *buf, header *head)
 		if (!r_ptr) return (PARSE_ERROR_MISSING_RECORD_HEADER);
 
 		/* Scan for the values */
-		if (3 != sscanf(buf+2, "%d:%d:%d",
-			            &treasure, &combat, &magic)) return (PARSE_ERROR_GENERIC);
+		if (3 != sscanf(buf + 2, "%d:%d:%d",
+						&treasure, &combat,
+						&magic)) return (PARSE_ERROR_GENERIC);
 
 		/* Save the values */
 		r_ptr->obj_drop.treasure = (byte) treasure;
 		r_ptr->obj_drop.combat = (byte) combat;
 		r_ptr->obj_drop.magic = (byte) magic;
-			
+
 		/* 
 		 * Since monsters do not drop junk,
 		 * this value is defined in terms of the others
@@ -2009,13 +2020,13 @@ errr parse_r_info(char *buf, header *head)
 		if (!r_ptr) return (PARSE_ERROR_MISSING_RECORD_HEADER);
 
 		/* Find the next empty blow slot (if any) */
-		for (i = 0; i < 4; i++) if (!r_ptr->blow[i].method) break;
+			for (i = 0; i < 4; i++) if (!r_ptr->blow[i].method) break;
 
 		/* Oops, no more slots */
 		if (i == 4) return (PARSE_ERROR_GENERIC);
 
 		/* Analyze the first field */
-		for (s = t = buf+2; *t && (*t != ':'); t++) /* loop */;
+		for (s = t = buf + 2; *t && (*t != ':'); t++) /* loop */ ;
 
 		/* Terminate the field (if necessary) */
 		if (*t == ':') *t++ = '\0';
@@ -2030,7 +2041,7 @@ errr parse_r_info(char *buf, header *head)
 		if (!r_info_blow_method[n1]) return (PARSE_ERROR_GENERIC);
 
 		/* Analyze the second field */
-		for (s = t; *t && (*t != ':'); t++) /* loop */;
+		for (s = t; *t && (*t != ':'); t++) /* loop */ ;
 
 		/* Terminate the field (if necessary) */
 		if (*t == ':') *t++ = '\0';
@@ -2045,7 +2056,7 @@ errr parse_r_info(char *buf, header *head)
 		if (!r_info_blow_effect[n2]) return (PARSE_ERROR_GENERIC);
 
 		/* Analyze the third field */
-		for (s = t; *t && (*t != 'd'); t++) /* loop */;
+		for (s = t; *t && (*t != 'd'); t++) /* loop */ ;
 
 		/* Terminate the field (if necessary) */
 		if (*t == 'd') *t++ = '\0';
@@ -2068,10 +2079,10 @@ errr parse_r_info(char *buf, header *head)
 		if (!r_ptr) return (PARSE_ERROR_MISSING_RECORD_HEADER);
 
 		/* Parse every entry */
-		for (s = buf + 2; *s; )
+		for (s = buf + 2; *s;)
 		{
 			/* Find the end of this entry */
-			for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */;
+			for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */ ;
 
 			/* Nuke and skip any dividers */
 			if (*t)
@@ -2081,7 +2092,9 @@ errr parse_r_info(char *buf, header *head)
 			}
 
 			/* Parse this entry */
-			if (0 != grab_one_basic_flag(r_ptr, s)) return (PARSE_ERROR_INVALID_FLAG);
+			if (0 !=
+				grab_one_basic_flag(r_ptr,
+									s)) return (PARSE_ERROR_INVALID_FLAG);
 
 			/* Start the next entry */
 			s = t;
@@ -2095,10 +2108,10 @@ errr parse_r_info(char *buf, header *head)
 		if (!r_ptr) return (PARSE_ERROR_MISSING_RECORD_HEADER);
 
 		/* Parse every entry */
-		for (s = buf + 2; *s; )
+		for (s = buf + 2; *s;)
 		{
 			/* Find the end of this entry */
-			for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */;
+			for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */ ;
 
 			/* Nuke and skip any dividers */
 			if (*t)
@@ -2208,7 +2221,7 @@ errr init_w_info_txt(FILE *fp, char *buf)
 		if (buf[0] == 'N')
 		{
 			/* Get the index */
-			i = atoi(buf+2);
+			i = atoi(buf + 2);
 
 			/* Verify information */
 			if (i <= error_idx) return (PARSE_ERROR_NON_SEQUENTIAL_RECORDS);
@@ -2227,16 +2240,17 @@ errr init_w_info_txt(FILE *fp, char *buf)
 
 		/* There better be a current w_ptr */
 		if (!w_ptr) return (PARSE_ERROR_MISSING_RECORD_HEADER);
-		
+
 		/* Process 'M' for "Map" (one line only) */
 		if (buf[0] == 'M')
 		{
 			int tmp;
 
-			if (1 != sscanf(buf+2, "%d", &tmp)) return (PARSE_ERROR_GENERIC);
+			if (1 != sscanf(buf + 2, "%d", &tmp)) return (PARSE_ERROR_GENERIC);
 
 			/* Paranoia */
-			if ((tmp >= z_info->f_max) || (tmp < 0)) return (PARSE_ERROR_GENERIC);
+			if ((tmp >= z_info->f_max)
+				|| (tmp < 0)) return (PARSE_ERROR_GENERIC);
 
 			/* Save the value */
 			w_ptr->feat = (byte) tmp;
@@ -2251,9 +2265,9 @@ errr init_w_info_txt(FILE *fp, char *buf)
 			int hgtmin, hgtmax, popmin, popmax, lawmin, lawmax;
 
 			/* Scan for the values */
-			if (6 != sscanf(buf+2, "%d:%d:%d:%d:%d:%d",
-				&hgtmin, &hgtmax, &popmin, &popmax,
-					&lawmin, &lawmax)) return (PARSE_ERROR_GENERIC);
+			if (6 != sscanf(buf + 2, "%d:%d:%d:%d:%d:%d",
+							&hgtmin, &hgtmax, &popmin, &popmax,
+							&lawmin, &lawmax)) return (PARSE_ERROR_GENERIC);
 
 			/* Save the values into bounds */
 			bound.hgtmin = hgtmin;
@@ -2275,8 +2289,8 @@ errr init_w_info_txt(FILE *fp, char *buf)
 			int routine, chance;
 
 			/* Scan for the values */
-			if (2 != sscanf(buf+2, "%d:%d",
-				&routine, &chance)) return (PARSE_ERROR_GENERIC);
+			if (2 != sscanf(buf + 2, "%d:%d",
+							&routine, &chance)) return (PARSE_ERROR_GENERIC);
 
 			/* Save the values */
 			w_ptr->gen_routine = routine;
@@ -2290,10 +2304,10 @@ errr init_w_info_txt(FILE *fp, char *buf)
 		if (buf[0] == 'F')
 		{
 			/* Parse every entry */
-			for (s = buf + 2; *s; )
+			for (s = buf + 2; *s;)
 			{
 				/* Find the end of this entry */
-				for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */;
+				for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */ ;
 
 				/* Nuke and skip any dividers */
 				if (*t)
@@ -2303,7 +2317,9 @@ errr init_w_info_txt(FILE *fp, char *buf)
 				}
 
 				/* Parse this entry */
-				if (0 != grab_one_wild_flag(w_ptr, s)) return (PARSE_ERROR_INVALID_FLAG);
+				if (0 !=
+					grab_one_wild_flag(w_ptr,
+									   s)) return (PARSE_ERROR_INVALID_FLAG);
 
 				/* Start the next entry */
 				s = t;
@@ -2319,9 +2335,9 @@ errr init_w_info_txt(FILE *fp, char *buf)
 			int d0, d1, d2, d3, d4, d5, d6, d7;
 
 			/* Scan for the values */
-			if (8 != sscanf(buf+2, "%d:%d:%d:%d:%d:%d:%d:%d",
-				&d0, &d1, &d2, &d3, &d4, &d5, &d6, &d7))
-					return (PARSE_ERROR_GENERIC);
+			if (8 != sscanf(buf + 2, "%d:%d:%d:%d:%d:%d:%d:%d",
+							&d0, &d1, &d2, &d3, &d4, &d5, &d6, &d7))
+				return (PARSE_ERROR_GENERIC);
 
 			/* Save the values */
 			w_ptr->data[0] = d0;
@@ -2337,7 +2353,7 @@ errr init_w_info_txt(FILE *fp, char *buf)
 			if (i == 1)
 			{
 				/* Initialise */
-				(void)init_choice_tree(&bound, i);
+				(void) init_choice_tree(&bound, i);
 			}
 			else
 			{
@@ -2484,7 +2500,7 @@ errr init_t_info_txt(FILE *fp, char *buf)
 			u16b length;
 
 			/* Get the index */
-			i = atoi(buf+2);
+			i = atoi(buf + 2);
 
 			/* Verify information */
 			if (i <= error_idx) return (PARSE_ERROR_NON_SEQUENTIAL_RECORDS);
@@ -2500,7 +2516,7 @@ errr init_t_info_txt(FILE *fp, char *buf)
 
 
 			/* Find the colon before the name */
-			s = strchr(buf+2, ':');
+			s = strchr(buf + 2, ':');
 
 			/* Verify that colon */
 			if (!s) return (PARSE_ERROR_GENERIC);
@@ -2517,7 +2533,7 @@ errr init_t_info_txt(FILE *fp, char *buf)
 			/* Make some room */
 			C_MAKE(t, length, char);
 
-			if (!t) return (PARSE_ERROR_OUT_OF_MEMORY); /* Out of memory */
+			if (!t) return (PARSE_ERROR_OUT_OF_MEMORY);	/* Out of memory */
 
 			/* Add the name */
 			t_ptr->name = strcpy(t, s);
@@ -2554,8 +2570,9 @@ errr init_t_info_txt(FILE *fp, char *buf)
 			int priority, type, counter;
 
 			/* Scan for the values */
-			if (3 != sscanf(buf+2, "%d:%d:%d",
-				&priority, &type, &counter)) return (PARSE_ERROR_GENERIC);
+			if (3 != sscanf(buf + 2, "%d:%d:%d",
+							&priority, &type,
+							&counter)) return (PARSE_ERROR_GENERIC);
 
 			/* Save the values */
 			t_ptr->priority = (byte) priority;
@@ -2570,10 +2587,10 @@ errr init_t_info_txt(FILE *fp, char *buf)
 		if (buf[0] == 'I')
 		{
 			/* Parse every entry */
-			for (s = buf + 2; *s; )
+			for (s = buf + 2; *s;)
 			{
 				/* Find the end of this entry */
-				for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */;
+				for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */ ;
 
 				/* Nuke and skip any dividers */
 				if (*t)
@@ -2583,7 +2600,9 @@ errr init_t_info_txt(FILE *fp, char *buf)
 				}
 
 				/* Parse this entry */
-				if (0 != grab_one_info_flag(t_ptr, s)) return (PARSE_ERROR_INVALID_FLAG);
+				if (0 !=
+					grab_one_info_flag(t_ptr,
+									   s)) return (PARSE_ERROR_INVALID_FLAG);
 
 				/* Start the next entry */
 				s = t;
@@ -2599,9 +2618,9 @@ errr init_t_info_txt(FILE *fp, char *buf)
 			int d0, d1, d2, d3, d4, d5, d6, d7;
 
 			/* Scan for the values */
-			if (8 != sscanf(buf+2, "%d:%d:%d:%d:%d:%d:%d:%d",
-				&d0, &d1, &d2, &d3, &d4, &d5, &d6, &d7))
-					return (PARSE_ERROR_GENERIC);
+			if (8 != sscanf(buf + 2, "%d:%d:%d:%d:%d:%d:%d:%d",
+							&d0, &d1, &d2, &d3, &d4, &d5, &d6, &d7))
+				return (PARSE_ERROR_GENERIC);
 
 			/* Save the values */
 			t_ptr->data_init[0] = d0;
@@ -2622,10 +2641,10 @@ errr init_t_info_txt(FILE *fp, char *buf)
 		if (buf[0] == 'F')
 		{
 			/* Parse every entry */
-			for (s = buf + 2; *s; )
+			for (s = buf + 2; *s;)
 			{
 				/* Find the end of this entry */
-				for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */;
+				for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */ ;
 
 				/* Nuke and skip any dividers */
 				if (*t)
@@ -2635,7 +2654,9 @@ errr init_t_info_txt(FILE *fp, char *buf)
 				}
 
 				/* Parse this entry */
-				if (0 != grab_one_action_flag(t_ptr, s)) return (PARSE_ERROR_INVALID_FLAG);
+				if (0 !=
+					grab_one_action_flag(t_ptr,
+										 s)) return (PARSE_ERROR_INVALID_FLAG);
 
 				/* Start the next entry */
 				s = t;
@@ -2655,5 +2676,4 @@ errr init_t_info_txt(FILE *fp, char *buf)
 	return (0);
 }
 
-#endif	/* ALLOW_TEMPLATES */
-
+#endif /* ALLOW_TEMPLATES */

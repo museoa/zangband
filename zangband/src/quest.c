@@ -68,20 +68,20 @@ static void quest_wipe(int q_idx)
 	/* No quest-giver */
 	q_ptr->place = 0;
 	q_ptr->shop = 0;
-		
+
 	/* No reward */
 	q_ptr->reward = 0;
 
 	/* Types of creation and trigger hooks */
 	q_ptr->c_type = QC_NONE;
 	q_ptr->x_type = QX_NONE;
-		
+
 	/* Timeout */
 	q_ptr->timeout = 0;
-		
+
 	/* No name */
 	q_ptr->name[0] = '\0';
-		
+
 	/*
 	 * Do not need to clear the extra data
 	 * - it is ignored since q_ptr->type = UNKNOWN
@@ -98,7 +98,7 @@ static void quest_copy(int src, int dst)
 {
 	/* Copy the structure */
 	COPY(&quest[src], &quest[dst], quest_type);
-	
+
 	/* Insert other needed copy code here - ie fixing info / item array */
 }
 
@@ -109,22 +109,22 @@ static void quest_copy(int src, int dst)
 static void quest_remove(int q_idx)
 {
 	int i;
-	
+
 	/* Paranoia */
 	if ((q_idx < 0) || (q_idx >= q_max)) return;
-	
+
 	/* Shift quests down */
 	for (i = q_idx + 1; i < q_max; i++)
 	{
 		quest_copy(i, i - 1);
 	}
-	
+
 	/* Paranoia */
 	if (!q_max) return;
-	
+
 	/* Wipe empty slot */
 	quest_wipe(q_max);
-	
+
 	/* Decrease total number of quests */
 	q_max--;
 }
@@ -136,13 +136,13 @@ static void quest_remove(int q_idx)
 static void prune_quests(void)
 {
 	int i;
-	
+
 	quest_type *q_ptr;
-	
+
 	for (i = 0; i < q_max; i++)
 	{
 		q_ptr = &quest[i];
-		
+
 		/*
 		 * Remove 'completed' quests.
 		 *
@@ -167,21 +167,21 @@ u16b insert_dungeon_monster_quest(u16b r_idx, u16b num, u16b level)
 	int q_num;
 	quest_type *q_ptr;
 	monster_race *r_ptr = &r_info[r_idx];
-	
+
 	/* get a new quest */
 	q_num = q_pop();
 
 	/* Paranoia */
 	if (!q_num) return (0);
-	
+
 	q_ptr = &quest[q_num];
-	
+
 	/* Store in information */
-	q_ptr->type =  QUEST_TYPE_DUNGEON;
+	q_ptr->type = QUEST_TYPE_DUNGEON;
 
 	/* We need to place the monster(s) when the dungeon is made */
 	q_ptr->c_type = QC_DUN_MONST;
-	
+
 	/* We need to trigger when the monsters are killed */
 	if (r_ptr->flags1 & RF1_UNIQUE)
 	{
@@ -196,23 +196,23 @@ u16b insert_dungeon_monster_quest(u16b r_idx, u16b num, u16b level)
 	{
 
 		/* XXX XXX Create quest name */
-		(void)strnfmt(q_ptr->name, 60, "Kill %d %s on level %d.",
-			 (int) num, r_name + r_ptr->name, (int) level);
+		(void) strnfmt(q_ptr->name, 60, "Kill %d %s on level %d.",
+					   (int) num, r_name + r_ptr->name, (int) level);
 	}
 	else
 	{
 		/* XXX XXX Create quest name */
-		(void)strnfmt(q_ptr->name, 60, "Kill %s on level %d.",
-			 (int) r_name + r_ptr->name, (int) level);
+		(void) strnfmt(q_ptr->name, 60, "Kill %s on level %d.",
+					   (int) r_name + r_ptr->name, (int) level);
 	}
-	
+
 	/* Save the quest data */
 	q_ptr->data.dun.r_idx = r_idx;
 	q_ptr->data.dun.level = level;
 	q_ptr->data.dun.cur_num = 0;
 	q_ptr->data.dun.max_num = num;
 	q_ptr->data.dun.num_mon = 0;
-	
+
 	/* Return number of quest */
 	return (q_num);
 }
@@ -224,19 +224,19 @@ u16b insert_dungeon_monster_quest(u16b r_idx, u16b num, u16b level)
 errr init_quests(void)
 {
 	int i;
-	
+
 	/* Make the quest array */
 	C_MAKE(quest, z_info->q_max, quest_type);
-	
+
 	/* Reset number of quests */
 	q_max = 1;
-	
+
 	/* Wipe the quests */
 	for (i = 0; i < z_info->q_max; i++)
 	{
 		quest_wipe(i);
 	}
-	
+
 	return (0);
 }
 
@@ -250,16 +250,16 @@ void get_player_quests(void)
 
 	monster_race *r_ptr;
 
-	int	r_idx;
-	int	i, j, v, level;
-	
+	int r_idx;
+	int i, j, v, level;
+
 	int best_level, best_r_idx;
 	int num;
 	int q_idx;
-	
+
 	/* Reset number of quests */
 	q_max = 1;
-	
+
 	/* Clear all the quests */
 	for (i = 0; i < z_info->q_max; i++)
 	{
@@ -268,14 +268,14 @@ void get_player_quests(void)
 
 	/* Extra info */
 	Term_putstr(5, 15, -1, TERM_WHITE,
-		"You can enter the number of quests you'd like to perform in addition");
+				"You can enter the number of quests you'd like to perform in addition");
 	Term_putstr(5, 16, -1, TERM_WHITE,
-		"to the two obligatory ones ( Oberon and the Serpent of Chaos )");
+				"to the two obligatory ones ( Oberon and the Serpent of Chaos )");
 	Term_putstr(5, 17, -1, TERM_WHITE,
-		"In case you do not want any additional quests, just enter 0");
+				"In case you do not want any additional quests, just enter 0");
 
 	Term_putstr(5, 18, -1, TERM_WHITE,
-		"If you want a random number of random quests, just enter *");
+				"If you want a random number of random quests, just enter *");
 
 	/* Ask the number of additional quests */
 	while (TRUE)
@@ -317,7 +317,7 @@ void get_player_quests(void)
 	 * we get the quest-giver stores working.
 	 */
 	v = 20;
-	
+
 #endif /* 0 */
 
 	/* Prepare allocation table */
@@ -326,11 +326,11 @@ void get_player_quests(void)
 	/* Generate quests */
 	for (i = 0; i < v; i++)
 	{
-		level = (i * 96 + 48) / v  + 1;
-		
+		level = (i * 96 + 48) / v + 1;
+
 		best_r_idx = 1;
 		best_level = 1;
-		
+
 		/* Get monster */
 		for (j = 0; j < MAX_TRIES; j++)
 		{
@@ -338,9 +338,9 @@ void get_player_quests(void)
 			 * Random monster out of depth
 			 * (depending on level + number of quests)
 			 */
-			r_idx = get_mon_num(level + 6 + 
-					randint1(level * v / 200 + 1) +
-			        randint1(level * v / 200 + 1));
+			r_idx = get_mon_num(level + 6 +
+								randint1(level * v / 200 + 1) +
+								randint1(level * v / 200 + 1));
 
 			r_ptr = &r_info[r_idx];
 
@@ -357,9 +357,9 @@ void get_player_quests(void)
 			/* Accept monsters that are a few levels out of depth */
 			if (best_level > (level + (level / 20) + 1)) break;
 		}
-		
+
 		r_ptr = &r_info[best_r_idx];
-		
+
 		/* Get the number of monsters */
 		if (r_ptr->flags1 & RF1_UNIQUE)
 		{
@@ -377,21 +377,21 @@ void get_player_quests(void)
 		}
 		else
 		{
-			num = 5 + (s16b)randint0(level / 3 + 5) / r_ptr->rarity;
+			num = 5 + (s16b) randint0(level / 3 + 5) / r_ptr->rarity;
 		}
-		
+
 		/* Create the quest */
 		insert_dungeon_monster_quest(best_r_idx, num, level);
 	}
-	
+
 	/* Add the winner quests */
-	
+
 	/* Hack XXX XXX Oberon, hard coded */
 	q_idx = insert_dungeon_monster_quest(QW_OBERON, 1, 98);
 	quest[q_idx].x_type = QX_KILL_WINNER;
 	quest[q_idx].flags |= QUEST_FLAG_KNOWN;
 	quest[q_idx].status = QUEST_STATUS_TAKEN;
-	
+
 	/* Hack XXX XXX Serpent, hard coded */
 	q_idx = insert_dungeon_monster_quest(QW_SERPENT, 1, 100);
 	quest[q_idx].x_type = QX_KILL_WINNER;
@@ -418,27 +418,27 @@ static cptr find_quest[] =
 void quest_discovery(void)
 {
 	int i;
-	
+
 	quest_type *q_ptr;
-	
+
 	char name[80];
-	
+
 	for (i = 0; i < q_max; i++)
 	{
-	 	q_ptr = &quest[i];
-		
+		q_ptr = &quest[i];
+
 		/* Quest needs to be taken. */
 		if (q_ptr->status != QUEST_STATUS_TAKEN) continue;
 
 		/* Is the quest active? */
 		if (!(q_ptr->flags & QUEST_FLAG_ACTIVE)) continue;
-		
+
 		/* Is the quest known already? */
 		if (q_ptr->flags & QUEST_FLAG_KNOWN) continue;
-		
+
 		/* Hack - The quest is now known */
 		q_ptr->flags |= QUEST_FLAG_KNOWN;
-	
+
 		/* See what type of quest it is */
 		switch (q_ptr->type)
 		{
@@ -447,19 +447,19 @@ void quest_discovery(void)
 				/* Paranoia */
 				continue;
 			}
-		
+
 			case QUEST_TYPE_GENERAL:
 			{
-			
+
 				/* Paranoia */
 				continue;
 			}
-		
+
 			case QUEST_TYPE_DUNGEON:
 			{
 				monster_race *r_ptr = &r_info[q_ptr->data.dun.r_idx];
 				int q_num = q_ptr->data.dun.max_num - q_ptr->data.dun.cur_num;
-			
+
 				/* Assume the quest is a 'kill n monsters quest' for now. */
 				strcpy(name, (r_name + r_ptr->name));
 
@@ -467,7 +467,7 @@ void quest_discovery(void)
 				{
 					/* Unique */
 					msg_format("%s: Beware, this level is protected by %s!",
-						 find_quest[rand_range(0, 5)], name);
+							   find_quest[rand_range(0, 5)], name);
 				}
 				else
 				{
@@ -475,26 +475,26 @@ void quest_discovery(void)
 					if (q_num > 1) plural_aux(name);
 
 					msg_format("%s: Be warned, this level is guarded by %d %s!",
-						 find_quest[rand_range(0, 5)], q_num, name);
+							   find_quest[rand_range(0, 5)], q_num, name);
 				}
-				
+
 				/* Disturb */
 				disturb(FALSE);
-				
+
 				continue;
 			}
-		
+
 			case QUEST_TYPE_WILD:
 			{
 				msg_print("You discover something unusual in the wilderness.");
-				
+
 				/* Disturb */
 				disturb(FALSE);
-		
+
 				/* Paranoia */
 				continue;
 			}
-		
+
 			default:
 			{
 				/* Paranoia */
@@ -516,17 +516,17 @@ bool is_quest_level(int level)
 	for (i = 0; i < q_max; i++)
 	{
 		q_ptr = &quest[i];
-		
+
 		/* Must be dungeon quest */
 		if (q_ptr->type != QUEST_TYPE_DUNGEON) continue;
-		
+
 		/* Is the quest still there? */
 		if (q_ptr->status > QUEST_STATUS_TAKEN) continue;
-		
+
 		/* Does the level match? */
 		if (q_ptr->data.dun.level == level) return (TRUE);
 	}
-	
+
 	return (FALSE);
 }
 
@@ -536,25 +536,25 @@ bool is_quest_level(int level)
 void activate_quests(int level)
 {
 	int i;
-	
+
 	quest_type *q_ptr;
-	
+
 	for (i = 0; i < q_max; i++)
 	{
 		q_ptr = &quest[i];
-		
+
 		/* Is the quest relevant? */
 		if ((q_ptr->type == QUEST_TYPE_GENERAL)
 			|| ((q_ptr->type == QUEST_TYPE_DUNGEON)
-				 && (q_ptr->data.dun.level == level)))
+				&& (q_ptr->data.dun.level == level)))
 		{
 			q_ptr->flags |= QUEST_FLAG_ACTIVE;
-			
+
 			/* Hack - toggle QUESTOR flag */
 			if (q_ptr->type == QUEST_TYPE_DUNGEON)
 			{
 				r_info[q_ptr->data.dun.r_idx].flags1 |= RF1_QUESTOR;
-				
+
 				/* Hack - we notice the dungeon quest */
 				if (q_ptr->status == QUEST_STATUS_UNTAKEN)
 				{
@@ -577,7 +577,7 @@ void activate_quests(int level)
 int number_of_quests(void)
 {
 	int i;
-	
+
 	int count = 0;
 
 	for (i = 0; i < q_max; i++)
@@ -600,11 +600,11 @@ int number_of_quests(void)
 static void create_stairs(int x, int y)
 {
 	int i = 0;
-	
+
 	int ny, nx;
-	
+
 	cave_type *c_ptr = area(x, y);
-	
+
 	/* Stagger around */
 	while ((cave_perma_grid(c_ptr) || c_ptr->o_idx) && !(i > 100))
 	{
@@ -612,7 +612,8 @@ static void create_stairs(int x, int y)
 		scatter(&nx, &ny, x, y, 1);
 
 		/* Stagger */
-		y = ny; x = nx;
+		y = ny;
+		x = nx;
 
 		/* paranoia - increment counter */
 		i++;
@@ -636,10 +637,10 @@ static void create_stairs(int x, int y)
 static void quest_reward(int num, int x, int y)
 {
 	object_type forge, *o_ptr;
-	
+
 	/* Ignore num for now */
 	(void) num;
-	
+
 	while (TRUE)
 	{
 		/* Get local object */
@@ -652,23 +653,23 @@ static void quest_reward(int num, int x, int y)
 		if (randint0(number_of_quests()) < 20)
 		{
 			/* Make a great object */
-			(void)make_object(o_ptr, 30, dun_theme);
+			(void) make_object(o_ptr, 30, dun_theme);
 		}
 		else
 		{
 			/* Make a good object */
-			(void)make_object(o_ptr, 15, dun_theme);
+			(void) make_object(o_ptr, 15, dun_theme);
 		}
-		
+
 		/* We need a 'good' item - so check the price */
 		if (object_value_real(o_ptr) > 100 * p_ptr->depth) break;
 	}
-	
+
 	/* We need to be given a location... */
-	
-	
+
+
 	/* Drop it in the dungeon */
-	(void)drop_near(o_ptr, -1, x, y);
+	(void) drop_near(o_ptr, -1, x, y);
 }
 
 
@@ -680,23 +681,23 @@ void trigger_quest_create(byte c_type, vptr data)
 	int i, j, k;
 	quest_type *q_ptr;
 	cave_type *c_ptr;
-	
+
 	/* Ignore data - it may be unused */
 	(void) data;
 
 	for (i = 0; i < q_max; i++)
 	{
 		q_ptr = &quest[i];
-		
+
 		/* Quest must be chosen */
 		if (q_ptr->status != QUEST_STATUS_TAKEN) continue;
-		
+
 		/* Quest must be active */
 		if (!(q_ptr->flags & QUEST_FLAG_ACTIVE)) continue;
-		
+
 		/* Must be relevant */
 		if (q_ptr->c_type != c_type) continue;
-		
+
 		/* Handle the trigger */
 		switch (c_type)
 		{
@@ -705,13 +706,13 @@ void trigger_quest_create(byte c_type, vptr data)
 				/* Paranoia */
 				continue;
 			}
-			
+
 			case QC_DUN_MONST:
 			{
 				int x, y;
-				
+
 				monster_race *r_ptr = &r_info[q_ptr->data.dun.r_idx];
-				
+
 				/* Hack -- "unique" monsters must be "unique" */
 				if ((r_ptr->flags1 & RF1_UNIQUE) &&
 					(r_ptr->cur_num >= r_ptr->max_num))
@@ -729,22 +730,29 @@ void trigger_quest_create(byte c_type, vptr data)
 						q_ptr->data.dun.cur_num = 0;
 					}
 
-					for (j = 0; j < (q_ptr->data.dun.max_num - q_ptr->data.dun.cur_num); j++)
+					for (j = 0;
+						 j <
+						 (q_ptr->data.dun.max_num - q_ptr->data.dun.cur_num);
+						 j++)
 					{
 						for (k = 0; k < 5000; k++)
 						{
 							/* Find an empty grid */
 							while (TRUE)
 							{
-								y = rand_range(p_ptr->min_hgt + 1, p_ptr->max_hgt - 2);
-								x = rand_range(p_ptr->min_wid + 1, p_ptr->max_wid - 2);
+								y = rand_range(p_ptr->min_hgt + 1,
+											   p_ptr->max_hgt - 2);
+								x = rand_range(p_ptr->min_wid + 1,
+											   p_ptr->max_wid - 2);
 
 								/* Access the grid */
 								c_ptr = area(x, y);
 
 								if (!cave_naked_grid(c_ptr)) continue;
-								if (distance(x, y, p_ptr->px, p_ptr->py) < 10) continue;
-								else break;
+								if (distance(x, y, p_ptr->px, p_ptr->py) <
+									10) continue;
+								else
+									break;
 							}
 
 							if (r_ptr->flags1 & RF1_FRIENDS)
@@ -753,7 +761,9 @@ void trigger_quest_create(byte c_type, vptr data)
 								group = TRUE;
 
 							/* Try to place the monster */
-							if (place_monster_aux(x, y, q_ptr->data.dun.r_idx, FALSE, group, FALSE, FALSE))
+							if (place_monster_aux
+								(x, y, q_ptr->data.dun.r_idx, FALSE, group,
+								 FALSE, FALSE))
 							{
 								/* Success */
 								break;
@@ -768,7 +778,7 @@ void trigger_quest_create(byte c_type, vptr data)
 				}
 			}
 		}
-		
+
 		/* The quest is created */
 		q_ptr->flags |= QUEST_FLAG_CREATED;
 	}
@@ -782,21 +792,21 @@ void trigger_quest_complete(byte x_type, vptr data)
 {
 	int i;
 	quest_type *q_ptr;
-	
-	
+
+
 	for (i = 0; i < q_max; i++)
 	{
 		q_ptr = &quest[i];
-		
+
 		/* Quest must be chosen */
 		if (q_ptr->status != QUEST_STATUS_TAKEN) continue;
-		
+
 		/* Quest must be active */
 		if (!(q_ptr->flags & QUEST_FLAG_ACTIVE)) continue;
-		
+
 		/* Must be relevant */
 		if (q_ptr->x_type != x_type) continue;
-		
+
 		/* Handle the trigger */
 		switch (x_type)
 		{
@@ -805,44 +815,44 @@ void trigger_quest_complete(byte x_type, vptr data)
 				/* Paranoia */
 				break;
 			}
-			
+
 			case QX_KILL_MONST:
 			case QX_KILL_UNIQUE:
 			{
-				monster_type *m_ptr = ((monster_type *)data);
-				
+				monster_type *m_ptr = ((monster_type *) data);
+
 				if (q_ptr->data.dun.r_idx == m_ptr->r_idx)
 				{
 					/* Don't count clones */
 					if (m_ptr->smart & SM_CLONED) break;
-					
+
 					/* Increment number killed */
 					q_ptr->data.dun.cur_num++;
-					
+
 					if (q_ptr->data.dun.cur_num >= q_ptr->data.dun.max_num)
 					{
 						/* Complete the quest */
 						q_ptr->status = QUEST_STATUS_COMPLETED;
-						
+
 						/* Create some stairs */
 						create_stairs(m_ptr->fx, m_ptr->fy);
-						
+
 						/* Drop the reward */
 						quest_reward(q_ptr->reward, m_ptr->fx, m_ptr->fy);
-						
+
 						/* Monster is no longer 'QUESTOR' */
 						r_info[q_ptr->data.dun.r_idx].flags1 &= ~(RF1_QUESTOR);
 					}
 				}
-				
+
 				break;
 			}
-			
+
 			case QX_KILL_WINNER:
 			{
-				monster_type *m_ptr = ((monster_type *)data);
+				monster_type *m_ptr = ((monster_type *) data);
 				monster_race *r_ptr = &r_info[m_ptr->r_idx];
-				
+
 				if (q_ptr->data.dun.r_idx == m_ptr->r_idx)
 				{
 					/* Winner? */
@@ -853,44 +863,46 @@ void trigger_quest_complete(byte x_type, vptr data)
 
 						/* Redraw the "title" */
 						p_ptr->redraw |= (PR_TITLE);
-			
+
 						/* Congratulations */
 						msg_print("*** CONGRATULATIONS ***");
 						msg_print("You have won the game!");
-						msg_print("You may retire (commit suicide) when you are ready.");
+						msg_print
+							("You may retire (commit suicide) when you are ready.");
 					}
 					else
 					{
 						/* Oberon */
-						
+
 						/* A message */
 						msg_print("Well done!");
 						msg_print("You have beaten Oberon.");
-						msg_print("You now can meet the final challenge of the Serpent of Chaos.");
+						msg_print
+							("You now can meet the final challenge of the Serpent of Chaos.");
 					}
-					
+
 					/* Complete the quest */
 					q_ptr->status = QUEST_STATUS_FINISHED;
-					
+
 					/* Mega-hack */
 					create_stairs(m_ptr->fx, m_ptr->fy);
 				}
-				
+
 				break;
 			}
-			
+
 			case QX_WILD_ENTER:
 			{
 				/* Only trigger for the correct quest */
 				if (q_ptr != data) continue;
-				
+
 				/* Complete the quest */
 				q_ptr->status = QUEST_STATUS_FINISHED;
-			
+
 				break;
 			}
 		}
-		
+
 		/*
 		 * Hack - Give a message for 'completed' quests.
 		 * XXX XXX XXX (Not yet - no quest-givers)
@@ -903,10 +915,11 @@ void trigger_quest_complete(byte x_type, vptr data)
 			if (auto_notes)
 			{
 				char note[80];
-				
+
 				sprintf(note, "Finished quest: %d %s",
-					 quest[i].max_num, (r_name + r_info[quest[i].r_idx].name));
-				
+						quest[i].max_num,
+						(r_name + r_info[quest[i].r_idx].name));
+
 				add_note(note, 'Q');
 			}
 #endif /* 0 */
@@ -923,9 +936,9 @@ void trigger_quest_complete(byte x_type, vptr data)
  */
 static void get_questinfo(int questnum)
 {
-	int     i;
-	int     old_quest;
-	char    tmp_str[80];
+	int i;
+	int old_quest;
+	char tmp_str[80];
 
 
 	/* Clear the text */
@@ -936,7 +949,8 @@ static void get_questinfo(int questnum)
 
 
 	/* Print the quest info */
-	sprintf(tmp_str, "Quest Information (Danger level: %d)", quest[questnum].level);
+	sprintf(tmp_str, "Quest Information (Danger level: %d)",
+			quest[questnum].level);
 	prt(tmp_str, 0, 5);
 
 	prt(quest[questnum].name, 0, 7);
@@ -956,10 +970,10 @@ static void castle_quest(void)
 	int px = p_ptr->px;
 	int py = p_ptr->py;
 
-	int             q_index = 0;
-	monster_race    *r_ptr;
-	quest_type      *q_ptr;
-	cptr            name;
+	int q_index = 0;
+	monster_race *r_ptr;
+	quest_type *q_ptr;
+	cptr name;
 
 
 	clear_bldg(7, 18);
@@ -1054,10 +1068,10 @@ void do_cmd_knowledge_quests(void)
 	char file_name[1024];
 	char name[80];
 	char tmp_str[256];
-	
+
 	quest_type *q_ptr;
 	int i;
-	
+
 	/* Open a temporary file */
 	fff = my_fopen_temp(file_name, 1024);
 
@@ -1067,10 +1081,10 @@ void do_cmd_knowledge_quests(void)
 	for (i = 0; i < q_max; i++)
 	{
 		q_ptr = &quest[i];
-		
+
 		/* Do we know about it? */
 		if (!(q_ptr->flags & QUEST_FLAG_KNOWN)) continue;
-		
+
 		/* See what type of quest it is */
 		switch (q_ptr->type)
 		{
@@ -1079,20 +1093,20 @@ void do_cmd_knowledge_quests(void)
 				/* Paranoia */
 				continue;
 			}
-		
+
 			case QUEST_TYPE_GENERAL:
 			{
-				
+
 				/* Paranoia */
 				continue;
 			}
-		
+
 			case QUEST_TYPE_DUNGEON:
 			{
 				monster_race *r_ptr = &r_info[q_ptr->data.dun.r_idx];
-								
+
 				strncpy(name, r_name + r_ptr->name, 80);
-				
+
 				if (q_ptr->status == QUEST_STATUS_TAKEN)
 				{
 					/* Hack - assume kill n monsters of type m */
@@ -1100,26 +1114,29 @@ void do_cmd_knowledge_quests(void)
 					{
 						plural_aux(name);
 
-						strnfmt(tmp_str, 256, "%s (Dungeon level: %d)\n\n  Kill %d %s, have killed %d.\n\n",
-							q_ptr->name, (int) q_ptr->data.dun.level,
-							(int) q_ptr->data.dun.max_num, name, (int) q_ptr->data.dun.cur_num);
+						strnfmt(tmp_str, 256,
+								"%s (Dungeon level: %d)\n\n  Kill %d %s, have killed %d.\n\n",
+								q_ptr->name, (int) q_ptr->data.dun.level,
+								(int) q_ptr->data.dun.max_num, name,
+								(int) q_ptr->data.dun.cur_num);
 					}
 					else
 					{
 						strnfmt(tmp_str, 256, "%s (Dungeon level: %d)\n\n",
-							q_ptr->name, (int) q_ptr->data.dun.level, name);
+								q_ptr->name, (int) q_ptr->data.dun.level, name);
 					}
 				}
 				else
 				{
 					/* Assume we've completed it for now */
-					strnfmt(tmp_str, 256, "%s (Completed on dungeon level %d). \n",
-						q_ptr->name, (int) q_ptr->data.dun.level, name);
+					strnfmt(tmp_str, 256,
+							"%s (Completed on dungeon level %d). \n",
+							q_ptr->name, (int) q_ptr->data.dun.level, name);
 				}
-				
+
 				break;
 			}
-		
+
 			case QUEST_TYPE_WILD:
 			{
 				if (q_ptr->status == QUEST_STATUS_TAKEN)
@@ -1132,17 +1149,17 @@ void do_cmd_knowledge_quests(void)
 					/* Hack - this is simple */
 					strnfmt(tmp_str, 256, "%s (Completed)\n", q_ptr->name);
 				}
-				
+
 				break;
 			}
-		
+
 			default:
 			{
 				/* Paranoia */
 				return;
 			}
 		}
-		
+
 		/* Copy to the file */
 		fprintf(fff, "%s", tmp_str);
 	}
@@ -1151,10 +1168,10 @@ void do_cmd_knowledge_quests(void)
 	my_fclose(fff);
 
 	/* Display the file contents */
-	(void)show_file(file_name, "Quest status", 0, 0);
+	(void) show_file(file_name, "Quest status", 0, 0);
 
 	/* Remove the file */
-	(void)fd_kill(file_name);
+	(void) fd_kill(file_name);
 }
 
 
@@ -1293,10 +1310,10 @@ static bool quest_aux_dragon(int r_idx)
 	return (TRUE);
 }
 
-static int pick_quest_type(quest_aux_type *l_ptr, int level)
+static int pick_quest_type(quest_aux_type * l_ptr, int level)
 {
 	int tmp, total;
-	
+
 	quest_aux_type *n_ptr;
 
 	int i;
@@ -1305,7 +1322,7 @@ static int pick_quest_type(quest_aux_type *l_ptr, int level)
 	for (i = 0, total = 0; TRUE; i++)
 	{
 		n_ptr = &l_ptr[i];
-		
+
 		/* Note end */
 		if (!n_ptr->hook_func) break;
 
@@ -1315,7 +1332,7 @@ static int pick_quest_type(quest_aux_type *l_ptr, int level)
 		/* Count this possibility */
 		total += n_ptr->chance * MAX_DEPTH / (level - n_ptr->level + 5);
 	}
-	
+
 	if (!total) return (-1);
 
 	/* Pick a random type */
@@ -1325,7 +1342,7 @@ static int pick_quest_type(quest_aux_type *l_ptr, int level)
 	for (i = 0, total = 0; TRUE; i++)
 	{
 		n_ptr = &l_ptr[i];
-		
+
 		/* Note end */
 		if (!n_ptr->hook_func) break;
 
@@ -1362,13 +1379,13 @@ static quest_aux_type camp_types[] =
 void pick_wild_quest(int *xsize, int *ysize, byte *flags)
 {
 	/* Hack - don't worry too much now, we only have one type of quest */
-	
+
 	/* Random size */
 	*xsize = randint1(5);
 	*ysize = randint1(5);
-	
+
 	/* On normal terrain */
-	*flags =  Q_GEN_PICKY;
+	*flags = Q_GEN_PICKY;
 }
 
 /*
@@ -1390,7 +1407,7 @@ bool quest_blank(int x, int y, int xsize, int ysize, int place_num, byte flags)
 		{
 			/* Hack - Not next to boundary */
 			if ((i <= 0) || (i >= max_wild - 1) ||
-			    (j <= 0) || (j >= max_wild - 1))
+				(j <= 0) || (j >= max_wild - 1))
 			{
 				return (FALSE);
 			}
@@ -1404,12 +1421,13 @@ bool quest_blank(int x, int y, int xsize, int ysize, int place_num, byte flags)
 			if (flags & Q_GEN_PICKY)
 			{
 				/* No water or lava or acid */
-				if (w_ptr->info & (WILD_INFO_WATER | WILD_INFO_LAVA | WILD_INFO_ACID))
+				if (w_ptr->
+					info & (WILD_INFO_WATER | WILD_INFO_LAVA | WILD_INFO_ACID))
 				{
-					 return (FALSE);
+					return (FALSE);
 				}
 			}
-			
+
 			/* Ocean quests must be on water */
 			if (flags & Q_GEN_OCEAN)
 			{
@@ -1433,7 +1451,7 @@ bool quest_blank(int x, int y, int xsize, int ysize, int place_num, byte flags)
 			return (FALSE);
 		}
 	}
-	
+
 	/* Save size */
 	pl_ptr->xsize = xsize;
 	pl_ptr->ysize = ysize;
@@ -1450,25 +1468,25 @@ bool create_quest(int x, int y, int place_num)
 {
 	int i, j;
 	int q_num, qtype;
-	
+
 	wild_type *w_ptr = &wild[y][x];
-	
+
 	place_type *pl_ptr = &place[place_num];
-	
+
 	quest_type *q_ptr;
-	
+
 	/* Select type of monster to place in the camp */
 	qtype = pick_quest_type(camp_types, (255 - w_ptr->trans.law_map) / 3);
-	
+
 	/* Is the area too easy for the quests? */
 	if (qtype == -1) return (FALSE);
-	
+
 	/* Get a new quest */
 	q_num = q_pop();
 
 	/* Paranoia */
 	if (!q_num) return (FALSE);
-	
+
 	/* Get a random seed for later */
 	pl_ptr->seed = randint0(0x10000000);
 
@@ -1481,48 +1499,48 @@ bool create_quest(int x, int y, int place_num)
 
 	/* Data value is used as a counter of "active" blocks */
 	pl_ptr->data = 0;
-	
+
 	if ((!pl_ptr->xsize) || (!pl_ptr->ysize)) quit("Zero quest size");
-	
+
 	/* Link wilderness to quest */
 	for (i = 0; i < pl_ptr->xsize; i++)
 	{
 		for (j = 0; j < pl_ptr->ysize; j++)
 		{
 			w_ptr = &wild[y + j][x + i];
-			
+
 			/*
 			 * Add quest to wilderness
 			 * Note: only 255 can be stored currently.
 			 */
-			w_ptr->trans.place = (byte)place_num;
-			
+			w_ptr->trans.place = (byte) place_num;
+
 			/* Increment "active block" counter */
 			pl_ptr->data++;
 		}
 	}
-	
+
 	/* Set up quest */
 	q_ptr = &quest[q_num];
-	
+
 	/* Store in information */
-	q_ptr->type =  QUEST_TYPE_WILD;
+	q_ptr->type = QUEST_TYPE_WILD;
 
 	/* We don't need a special generator */
 	q_ptr->c_type = QC_NONE;
-	
+
 	/* We need to trigger when the player enters the wilderness block */
 	q_ptr->x_type = QX_WILD_ENTER;
-	
+
 	/* XXX XXX Create quest name */
-	(void)strnfmt(q_ptr->name, 60, "Defeat the %s camp.",
-		 camp_types[qtype].name);
-	
+	(void) strnfmt(q_ptr->name, 60, "Defeat the %s camp.",
+				   camp_types[qtype].name);
+
 	/* Save the quest data */
 	q_ptr->data.wld.place = place_num;
 	q_ptr->data.wld.data = qtype;
 	/* q_ptr->data.wld.depth = (255 - w_ptr->trans.law_map) / 3; */
-	
+
 	return (TRUE);
 }
 
@@ -1534,31 +1552,32 @@ void draw_quest(u16b place_num)
 {
 	int x, y, n;
 	int i, j;
-	
+
 	place_type *pl_ptr = &place[place_num];
-	
+
 	wild_type *w_ptr = &wild[pl_ptr->y][pl_ptr->x];
-	
+
 	quest_type *q_ptr = &quest[pl_ptr->quest_num];
-	
+
 	cave_type *c_ptr;
-	
+
 	/* Save generation levels */
 	s16b temp_m_level = monster_level;
 	s16b temp_o_level = object_level;
-	
+
 	/* Object theme */
 	obj_theme theme;
-		
+
 	int depth = w_ptr->done.mon_gen;
-	
+
 	/* Paranoia */
 	if (pl_ptr->region) quit("Quest already has region during creation.");
-	
+
 	/* Get region */
 	pl_ptr->region = (s16b) create_region(pl_ptr->xsize * WILD_BLOCK_SIZE,
-		 pl_ptr->ysize * WILD_BLOCK_SIZE, REGION_NULL);
-	
+										  pl_ptr->ysize * WILD_BLOCK_SIZE,
+										  REGION_NULL);
+
 	/* Hack - do not increment refcount here - let allocate_block do that */
 
 	/* Hack -- Use the "simple" RNG */
@@ -1566,16 +1585,16 @@ void draw_quest(u16b place_num)
 
 	/* Hack -- Induce consistant quest layout */
 	Rand_value = place[place_num].seed;
-	
+
 	/* Hack - change to monster level of wilderness */
 	monster_level = w_ptr->done.mon_gen;
-	
+
 	/* Change object level */
 	object_level = w_ptr->done.mon_gen;
-	
+
 	/* Apply the monster restriction */
 	get_mon_num_prep(camp_types[q_ptr->data.wld.data].hook_func, NULL);
-	
+
 	/* Set theme for weapons / armour */
 	theme.treasure = 0;
 	theme.combat = 100;
@@ -1583,25 +1602,25 @@ void draw_quest(u16b place_num)
 	theme.tools = 0;
 
 	init_match_theme(theme);
-	
+
 	/* Activate restriction */
 	get_obj_num_hook = kind_is_theme;
 
 	/* Prepare allocation table */
 	get_obj_num_prep();
-	
+
 	/* Pick number random spots within region */
 	n = (pl_ptr->xsize * pl_ptr->ysize) / 4;
-	
+
 	while (n != 0)
 	{
 		/* Decrement counter */
 		n--;
-		
+
 		/* Get spot */
 		x = randint0(pl_ptr->xsize * 2);
 		y = randint0(pl_ptr->ysize * 2);
-		
+
 		/* Place ground */
 		for (i = 0; i < 8; i++)
 		{
@@ -1609,7 +1628,7 @@ void draw_quest(u16b place_num)
 			{
 				/* Get location */
 				c_ptr = cave_p(x * 8 + i, y * 8 + j);
-				
+
 				/* Draw a roughly circular blob */
 				if (randint0(distance(0, 0, i, j)) < 4)
 				{
@@ -1621,14 +1640,14 @@ void draw_quest(u16b place_num)
 					{
 						c_ptr->feat = FEAT_DIRT;
 					}
-					
+
 					/* Place monsters on spots */
 					if (one_in_(QUEST_CAMP_MON))
 					{
 						/* Pick a race to clone */
 						c_ptr->m_idx = get_mon_num(depth);
 					}
-				
+
 					/* Place weapons + armour around the spots */
 					if (one_in_(QUEST_CAMP_OBJ))
 					{
@@ -1638,19 +1657,19 @@ void draw_quest(u16b place_num)
 			}
 		}
 	}
-	
-	
+
+
 	/* Set theme for junk */
 	theme.treasure = 5;
 	theme.combat = 0;
 	theme.magic = 0;
 	theme.tools = 5;
-	
+
 	init_match_theme(theme);
-	
+
 	/* Prepare allocation table */
 	get_obj_num_prep();
-	
+
 	/* Scatter stuff over the region */
 	for (i = 0; i < pl_ptr->xsize * WILD_BLOCK_SIZE; i++)
 	{
@@ -1658,13 +1677,13 @@ void draw_quest(u16b place_num)
 		{
 			/* Only on some squares */
 			if (!one_in_(QUEST_CAMP_SCATTER)) continue;
-			
+
 			/* Get location */
 			c_ptr = cave_p(i, j);
-			
+
 			/* Not on allocated squares */
 			if (c_ptr->feat) continue;
-			
+
 			if (one_in_(3))
 			{
 				c_ptr->feat = FEAT_PEBBLES;
@@ -1673,13 +1692,13 @@ void draw_quest(u16b place_num)
 			{
 				c_ptr->feat = FEAT_DIRT;
 			}
-					
+
 			/* Place monsters on spots */
 			if (one_in_(QUEST_CAMP_MON))
 			{
- 				/* Pick a race to clone */
+				/* Pick a race to clone */
 				c_ptr->m_idx = get_mon_num(depth);
-				
+
 				/* Place junk under monsters */
 				if (one_in_(QUEST_CAMP_OBJ))
 				{
@@ -1688,35 +1707,34 @@ void draw_quest(u16b place_num)
 			}
 		}
 	}
-	
+
 	/* Activate quest + create quest + we know about the quest */
 	q_ptr->flags |= (QUEST_FLAG_ACTIVE | QUEST_FLAG_CREATED);
-	
+
 	/* Hack - we now take this quest */
 	if (q_ptr->status == QUEST_STATUS_UNTAKEN)
 	{
 		q_ptr->status = QUEST_STATUS_TAKEN;
 	}
-	
+
 	/* Mega-hack Give a message if we "discover" it */
 	quest_discovery();
-	
+
 	/* We know about it now */
 	q_ptr->flags |= QUEST_FLAG_KNOWN;
-	
+
 	/* Hack XXX XXX (No quest-giving store yet) */
-	
+
 	/* Hack -- use the "complex" RNG */
 	Rand_quick = FALSE;
-	
+
 	/* Remove the monster restriction */
 	get_mon_num_prep(NULL, NULL);
-	
+
 	/* Clear restriction */
 	get_obj_num_hook = NULL;
-	
+
 	/* Hack - Restore levels */
 	monster_level = temp_m_level;
 	object_level = temp_o_level;
 }
-

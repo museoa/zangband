@@ -22,7 +22,8 @@
 /*
  * Recursive fractal algorithm to place water through the dungeon.
  */
-static void recursive_river(int x1, int y1, int x2, int y2, int feat1, int feat2, int width)
+static void recursive_river(int x1, int y1, int x2, int y2, int feat1,
+							int feat2, int width)
 {
 	int dx, dy, length, l, x, y;
 	int changex, changey;
@@ -68,15 +69,17 @@ static void recursive_river(int x1, int y1, int x2, int y2, int feat1, int feat2
 		}
 
 		/* construct river out of two smaller ones */
-		recursive_river(x1, y1, x1 + dx + changex, y1 + dy + changey, feat1, feat2, width);
-		recursive_river(x1 + dx + changex, y1 + dy + changey, x2, y2, feat1, feat2, width);
+		recursive_river(x1, y1, x1 + dx + changex, y1 + dy + changey, feat1,
+						feat2, width);
+		recursive_river(x1 + dx + changex, y1 + dy + changey, x2, y2, feat1,
+						feat2, width);
 
 		/* Split the river some of the time - junctions look cool */
 		if (one_in_(DUN_WAT_CHG) && (width > 0))
 		{
 			recursive_river(x1 + dx + changex, y1 + dy + changey,
-			                x1 + 8 * (dx + changex), y1 + 8 * (dy + changey),
-			                feat1, feat2, width - 1);
+							x1 + 8 * (dx + changex), y1 + 8 * (dy + changey),
+							feat1, feat2, width - 1);
 		}
 	}
 	else
@@ -102,14 +105,15 @@ static void recursive_river(int x1, int y1, int x2, int y2, int feat1, int feat2
 						if (c_ptr->feat == feat1) continue;
 						if (c_ptr->feat == feat2) continue;
 
-						if (distance(tx, ty, x, y) > rand_spread(width, 1)) continue;
+						if (distance(tx, ty, x, y) >
+							rand_spread(width, 1)) continue;
 
 						/* Do not convert permanent features */
 						if (cave_perma_grid(c_ptr)) continue;
 
 						/* Making a door on top of fields is problematical */
 						delete_field_location(c_ptr);
-						
+
 						/*
 						 * Clear previous contents, add feature
 						 * The border mainly gets feat2, while the center gets feat1
@@ -120,7 +124,8 @@ static void recursive_river(int x1, int y1, int x2, int y2, int feat1, int feat2
 							set_feat_grid(c_ptr, feat1);
 
 						/* Lava terrain glows */
-						if ((feat1 == FEAT_DEEP_LAVA) ||  (feat1 == FEAT_SHAL_LAVA))
+						if ((feat1 == FEAT_DEEP_LAVA)
+							|| (feat1 == FEAT_SHAL_LAVA))
 						{
 							c_ptr->info |= CAVE_GLOW;
 						}
@@ -207,17 +212,17 @@ void add_river(int feat1, int feat2)
  */
 void build_streamer(int feat, int chance)
 {
-	int		i, tx, ty;
-	int		y, x, dir;
+	int i, tx, ty;
+	int y, x, dir;
 	int dummy = 0;
 
 	cave_type *c_ptr;
 
 	/* Hack -- Choose starting point */
 	y = rand_spread(p_ptr->max_hgt / 2, (p_ptr->max_hgt / 2 > 10 ?
-		 10: p_ptr->max_hgt / 2));
+										 10 : p_ptr->max_hgt / 2));
 	x = rand_spread(p_ptr->max_wid / 2, (p_ptr->max_wid / 2 > 15 ?
-		 15: p_ptr->max_wid / 2));
+										 15 : p_ptr->max_wid / 2));
 
 	/* Choose a random compass direction */
 	dir = ddd[randint0(8)];
@@ -250,10 +255,10 @@ void build_streamer(int feat, int chance)
 
 			/* Clear previous contents, add proper vein type */
 			set_feat_grid(c_ptr, feat);
-			
+
 			/* Hack XXX XXX -- Add some (known) treasure */
 			if (one_in_(chance)) c_ptr->feat += 0x04;
-			
+
 			/*
 			 * So this means that all the treasure is known as soon as it is
 			 * seen or detected...  Why do the FEAT_MAGMA_H and FEAT_QUARTZ_H
@@ -299,7 +304,7 @@ void place_trees(int x, int y)
 		{
 			/* Paranoia */
 			if (!in_bounds(i, j)) continue;
-			
+
 			c_ptr = cave_p(i, j);
 
 			/* Want square to be in the circle and accessable. */
@@ -307,7 +312,7 @@ void place_trees(int x, int y)
 			{
 				/* Adding to grids with fields is problematical */
 				delete_field_location(c_ptr);
-				
+
 				/*
 				 * Clear previous contents, add feature
 				 * The border mainly gets trees, while the center gets rubble
@@ -386,7 +391,7 @@ void destroy_level(void)
 				{
 					/* Delete objects */
 					delete_object(x, y);
-					
+
 					/* Delete all fields */
 					delete_field_location(c_ptr);
 
@@ -464,12 +469,12 @@ void build_cavern(void)
 		/* about size/2 */
 		cutoff = xsize / 2;
 
-		 /* make it */
+		/* make it */
 		generate_hmap(x0 + 1, y0 + 1, xsize, ysize, grd, roug, cutoff);
 
 		/* Convert to normal format+ clean up */
 		done = generate_lake(x0 + 1, y0 + 1, xsize, ysize,
-			 cutoff, cutoff, cutoff, LAKE_CAVERN);
+							 cutoff, cutoff, cutoff, LAKE_CAVERN);
 	}
 }
 

@@ -18,7 +18,7 @@
 /*
  * Optional auxiliary "rnfree" function
  */
-vptr (*rnfree_aux)(vptr) = NULL;
+vptr (*rnfree_aux) (vptr) = NULL;
 
 /*
  * Free some memory (allocated by ralloc), return NULL
@@ -29,10 +29,10 @@ vptr rnfree(vptr p)
 	if (!p) return (NULL);
 
 	/* Use the "aux" function */
-	if (rnfree_aux) return ((*rnfree_aux)(p));
+	if (rnfree_aux) return ((*rnfree_aux) (p));
 
 	/* Use "free" */
-	free((char*)(p));
+	free((char *) (p));
 
 	/* Done */
 	return (NULL);
@@ -42,7 +42,7 @@ vptr rnfree(vptr p)
 /*
  * Optional auxiliary "rpanic" function
  */
-vptr (*rpanic_aux)(huge) = NULL;
+vptr (*rpanic_aux) (huge) = NULL;
 
 /*
  * The system is out of memory, so panic.  If "rpanic_aux" is set,
@@ -53,20 +53,20 @@ vptr (*rpanic_aux)(huge) = NULL;
 vptr rpanic(huge len)
 {
 	/* Hopefully, we have a real "panic" function */
-	if (rpanic_aux) return ((*rpanic_aux)(len));
+	if (rpanic_aux) return ((*rpanic_aux) (len));
 
 	/* Attempt to crash before icky things happen */
 	core("Out of Memory!");
 
 	/* Paranoia */
-	return ((vptr)(NULL));
+	return ((vptr) (NULL));
 }
 
 
 /*
  * Optional auxiliary "ralloc" function
  */
-vptr (*ralloc_aux)(huge) = NULL;
+vptr (*ralloc_aux) (huge) = NULL;
 
 
 /*
@@ -77,13 +77,14 @@ vptr ralloc(huge len)
 	vptr mem;
 
 	/* Allow allocation of "zero bytes" */
-	if (len == 0) return ((vptr)(NULL));
+	if (len == 0) return ((vptr) (NULL));
 
 	/* Use the aux function if set */
-	if (ralloc_aux) mem = (*ralloc_aux)(len);
+	if (ralloc_aux) mem = (*ralloc_aux) (len);
 
 	/* Use malloc() to allocate some memory */
-	else mem = ((vptr)(malloc((size_t)(len))));
+	else
+		mem = ((vptr) (malloc((size_t) (len))));
 
 	/* We were able to acquire memory */
 	if (!mem) mem = rpanic(len);
@@ -108,13 +109,13 @@ cptr string_make(cptr str)
 	if (!str) return (str);
 
 	/* Get the number of chars in the string, including terminator */
-	while (str[len++]) /* loop */;
+	while (str[len++]) /* loop */ ;
 
 	/* Allocate space for the string */
-	s = res = (char*)(ralloc(len));
+	s = res = (char *) (ralloc(len));
 
 	/* Copy the string (with terminator) */
-	while ((*s++ = *t++) != 0) /* loop */;
+	while ((*s++ = *t++) != 0) /* loop */ ;
 
 	/* Return the allocated, initialized, string */
 	return (res);
@@ -131,7 +132,7 @@ errr string_free(cptr str)
 	if (!str) return (0);
 
 	/* Kill the buffer of chars we must have allocated above */
-	rnfree((vptr)str);
+	rnfree((vptr) str);
 
 	/* Success */
 	return (0);

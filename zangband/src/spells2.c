@@ -49,9 +49,9 @@ void self_knowledge(void)
 	strcpy(Dummy, "");
 	strcpy(Liferating, "");
 
-	percent = (int)(((long)p_ptr->player_hp[PY_MAX_LEVEL - 1] * 200L) /
-		(2 * p_ptr->hitdie +
-		((PY_MAX_LEVEL - 1) * (p_ptr->hitdie + 1))));
+	percent = (int) (((long) p_ptr->player_hp[PY_MAX_LEVEL - 1] * 200L) /
+					 (2 * p_ptr->hitdie +
+					  ((PY_MAX_LEVEL - 1) * (p_ptr->hitdie + 1))));
 
 	sprintf(Liferating, "Your current Life Rating is %d/100.", percent);
 	info[i++] = Liferating;
@@ -89,43 +89,42 @@ void self_knowledge(void)
 		sprintf(vir_desc, "Oops. No info about %s.", virt_name);
 		if (tester < -100)
 			sprintf(vir_desc, "You are the polar opposite of %s (%d).",
-				virt_name, tester);
+					virt_name, tester);
 		else if (tester < -80)
 			sprintf(vir_desc, "You are an arch-enemy of %s (%d).",
-				virt_name, tester);
+					virt_name, tester);
 		else if (tester < -60)
 			sprintf(vir_desc, "You are a bitter enemy of %s (%d).",
-				virt_name, tester);
+					virt_name, tester);
 		else if (tester < -40)
 			sprintf(vir_desc, "You are an enemy of %s (%d).",
-				virt_name, tester);
+					virt_name, tester);
 		else if (tester < -20)
 			sprintf(vir_desc, "You have sinned against %s (%d).",
-				virt_name, tester);
+					virt_name, tester);
 		else if (tester < 0)
 			sprintf(vir_desc, "You have strayed from the path of %s (%d).",
-				virt_name, tester);
+					virt_name, tester);
 		else if (tester == 0)
-			sprintf(vir_desc,"You are neutral to %s (%d).",
-				virt_name, tester);
+			sprintf(vir_desc, "You are neutral to %s (%d).", virt_name, tester);
 		else if (tester < 20)
-			sprintf(vir_desc,"You are somewhat virtuous in %s (%d).",
-				virt_name, tester);
+			sprintf(vir_desc, "You are somewhat virtuous in %s (%d).",
+					virt_name, tester);
 		else if (tester < 40)
-			sprintf(vir_desc,"You are virtuous in %s (%d).",
-				virt_name, tester);
+			sprintf(vir_desc, "You are virtuous in %s (%d).",
+					virt_name, tester);
 		else if (tester < 60)
-			sprintf(vir_desc,"You are very virtuous in %s (%d).",
-				virt_name, tester);
+			sprintf(vir_desc, "You are very virtuous in %s (%d).",
+					virt_name, tester);
 		else if (tester < 80)
-			sprintf(vir_desc,"You are a champion of %s (%d).",
-				virt_name, tester);
+			sprintf(vir_desc, "You are a champion of %s (%d).",
+					virt_name, tester);
 		else if (tester < 100)
-			sprintf(vir_desc,"You are a great champion of %s (%d).",
-				virt_name, tester);
+			sprintf(vir_desc, "You are a great champion of %s (%d).",
+					virt_name, tester);
 		else
-			sprintf(vir_desc,"You are the living embodiment of %s (%d).",
-		virt_name, tester);
+			sprintf(vir_desc, "You are the living embodiment of %s (%d).",
+					virt_name, tester);
 
 		strcpy(v_string[v_nr], vir_desc);
 
@@ -137,7 +136,7 @@ void self_knowledge(void)
 	{
 		mut_ptr = &race_powers[x];
 
-		if ((mut_ptr->which == p_ptr->prace) &&	(plev >= mut_ptr->level))
+		if ((mut_ptr->which == p_ptr->prace) && (plev >= mut_ptr->level))
 		{
 			info[i++] = mut_ptr->desc_text;
 		}
@@ -147,7 +146,7 @@ void self_knowledge(void)
 	for (x = 0; x < MUT_PER_SET * 3; x++)
 	{
 		mut_ptr = &mutations[x];
-		
+
 		/*
 		 * Only show activatable mutations if we
 		 * are of sufficiently high level
@@ -598,17 +597,17 @@ void self_knowledge(void)
 		prt(info[j], 15, k++);
 
 		/* Every 20 entries (lines 2 to 21), start over */
-		if ((k == 22) && (j+1 < i))
+		if ((k == 22) && (j + 1 < i))
 		{
 			prt("-- more --", 15, k);
-			(void)inkey();
+			(void) inkey();
 			for (; k > 2; k--) prt("", 15, k);
 		}
 	}
 
 	/* Pause */
 	prt("[Press any key to continue]", 13, k);
-	(void)inkey();
+	(void) inkey();
 
 	/* Restore the screen */
 	screen_load();
@@ -665,105 +664,105 @@ static cptr report_magic_durations[] =
  */
 void report_magics(void)
 {
-	int     i = 0, j, k;
-	char    Dummy[80];
-	cptr    info[128];
-	int     info2[128];
+	int i = 0, j, k;
+	char Dummy[80];
+	cptr info[128];
+	int info2[128];
 
 
 	if (p_ptr->blind)
 	{
-		info2[i]  = report_magics_aux(p_ptr->blind);
+		info2[i] = report_magics_aux(p_ptr->blind);
 		info[i++] = "You cannot see";
 	}
 	if (p_ptr->confused)
 	{
-		info2[i]  = report_magics_aux(p_ptr->confused);
+		info2[i] = report_magics_aux(p_ptr->confused);
 		info[i++] = "You are confused";
 	}
 	if (p_ptr->afraid)
 	{
-		info2[i]  = report_magics_aux(p_ptr->afraid);
+		info2[i] = report_magics_aux(p_ptr->afraid);
 		info[i++] = "You are terrified";
 	}
 	if (p_ptr->poisoned)
 	{
-		info2[i]  = report_magics_aux(p_ptr->poisoned);
+		info2[i] = report_magics_aux(p_ptr->poisoned);
 		info[i++] = "You are poisoned";
 	}
 	if (p_ptr->image)
 	{
-		info2[i]  = report_magics_aux(p_ptr->image);
+		info2[i] = report_magics_aux(p_ptr->image);
 		info[i++] = "You are hallucinating";
 	}
 	if (p_ptr->blessed)
 	{
-		info2[i]  = report_magics_aux(p_ptr->blessed);
+		info2[i] = report_magics_aux(p_ptr->blessed);
 		info[i++] = "You feel righteous";
 	}
 	if (p_ptr->hero)
 	{
-		info2[i]  = report_magics_aux(p_ptr->hero);
+		info2[i] = report_magics_aux(p_ptr->hero);
 		info[i++] = "You feel heroic";
 	}
 	if (p_ptr->shero)
 	{
-		info2[i]  = report_magics_aux(p_ptr->shero);
+		info2[i] = report_magics_aux(p_ptr->shero);
 		info[i++] = "You are in a battle rage";
 	}
 	if (p_ptr->protevil)
 	{
-		info2[i]  = report_magics_aux(p_ptr->protevil);
+		info2[i] = report_magics_aux(p_ptr->protevil);
 		info[i++] = "You are protected from evil";
 	}
 	if (p_ptr->shield)
 	{
-		info2[i]  = report_magics_aux(p_ptr->shield);
+		info2[i] = report_magics_aux(p_ptr->shield);
 		info[i++] = "You are protected by a mystic shield";
 	}
 	if (p_ptr->invuln)
 	{
-		info2[i]  = report_magics_aux(p_ptr->invuln);
+		info2[i] = report_magics_aux(p_ptr->invuln);
 		info[i++] = "You are invulnerable";
 	}
 	if (p_ptr->wraith_form)
 	{
-		info2[i]  = report_magics_aux(p_ptr->wraith_form);
+		info2[i] = report_magics_aux(p_ptr->wraith_form);
 		info[i++] = "You are incorporeal";
 	}
 	if (p_ptr->confusing)
 	{
-		info2[i]  = 7;
+		info2[i] = 7;
 		info[i++] = "Your hands are glowing dull red.";
 	}
 	if (p_ptr->word_recall)
 	{
-		info2[i]  = report_magics_aux(p_ptr->word_recall);
+		info2[i] = report_magics_aux(p_ptr->word_recall);
 		info[i++] = "You are waiting to be recalled";
 	}
 	if (p_ptr->oppose_acid)
 	{
-		info2[i]  = report_magics_aux(p_ptr->oppose_acid);
+		info2[i] = report_magics_aux(p_ptr->oppose_acid);
 		info[i++] = "You are resistant to acid";
 	}
 	if (p_ptr->oppose_elec)
 	{
-		info2[i]  = report_magics_aux(p_ptr->oppose_elec);
+		info2[i] = report_magics_aux(p_ptr->oppose_elec);
 		info[i++] = "You are resistant to lightning";
 	}
 	if (p_ptr->oppose_fire)
 	{
-		info2[i]  = report_magics_aux(p_ptr->oppose_fire);
+		info2[i] = report_magics_aux(p_ptr->oppose_fire);
 		info[i++] = "You are resistant to fire";
 	}
 	if (p_ptr->oppose_cold)
 	{
-		info2[i]  = report_magics_aux(p_ptr->oppose_cold);
+		info2[i] = report_magics_aux(p_ptr->oppose_cold);
 		info[i++] = "You are resistant to cold";
 	}
 	if (p_ptr->oppose_pois)
 	{
-		info2[i]  = report_magics_aux(p_ptr->oppose_pois);
+		info2[i] = report_magics_aux(p_ptr->oppose_pois);
 		info[i++] = "You are resistant to poison";
 	}
 
@@ -780,22 +779,21 @@ void report_magics(void)
 	for (k = 2, j = 0; j < i; j++)
 	{
 		/* Show the info */
-		sprintf(Dummy, "%s %s.", info[j],
-			report_magic_durations[info2[j]]);
+		sprintf(Dummy, "%s %s.", info[j], report_magic_durations[info2[j]]);
 		prt(Dummy, 15, k++);
 
 		/* Every 20 entries (lines 2 to 21), start over */
 		if ((k == 22) && (j + 1 < i))
 		{
 			prt("-- more --", 15, k);
-			(void)inkey();
+			(void) inkey();
 			for (; k > 2; k--) prt("", 15, k);
 		}
 	}
 
 	/* Pause */
 	prt("[Press any key to continue]", 13, k);
-	(void)inkey();
+	(void) inkey();
 
 	/* Restore the screen */
 	screen_load();
@@ -810,10 +808,10 @@ bool detect_traps(void)
 	int px = p_ptr->px;
 	int py = p_ptr->py;
 
-	int             x, y;
-	bool            detect = FALSE;
-	cave_type       *c_ptr;
-	pcave_type		*pc_ptr;
+	int x, y;
+	bool detect = FALSE;
+	cave_type *c_ptr;
+	pcave_type *pc_ptr;
 
 	/* Have detected traps on this level */
 	p_ptr->detected = TRUE;
@@ -838,7 +836,7 @@ bool detect_traps(void)
 				/* Obvious */
 				detect = TRUE;
 			}
-			
+
 			/* Save the 'detected' status for this square */
 			pc_ptr->player |= GRID_DTCT;
 		}
@@ -868,13 +866,13 @@ void create_closed_door(int x, int y)
 	{
 		/* Create invisible wall */
 		cave_set_feat(x, y, FEAT_FLOOR);
-		(void)place_field(x, y, FT_WALL_INVIS);
+		(void) place_field(x, y, FT_WALL_INVIS);
 		return;
 	}
 
 	/* Choose an object */
 	tmp = randint0(400);
-	
+
 	/* Closed doors (300/400) */
 	if (tmp < 300)
 	{
@@ -935,8 +933,7 @@ bool detect_doors(void)
 
 			/* Detect doors */
 			if ((c_ptr->feat == FEAT_CLOSED) ||
-			    (c_ptr->feat == FEAT_OPEN) ||
-			     (c_ptr->feat == FEAT_BROKEN))
+				(c_ptr->feat == FEAT_OPEN) || (c_ptr->feat == FEAT_BROKEN))
 			{
 				/* Hack -- Memorize */
 				remember_grid(c_ptr, pc_ptr);
@@ -989,8 +986,7 @@ bool detect_stairs(void)
 			pc_ptr = parea(x, y);
 
 			/* Detect stairs */
-			if ((c_ptr->feat == FEAT_LESS) ||
-			    (c_ptr->feat == FEAT_MORE))
+			if ((c_ptr->feat == FEAT_LESS) || (c_ptr->feat == FEAT_MORE))
 			{
 				/* Hack -- Memorize */
 				remember_grid(c_ptr, pc_ptr);
@@ -1043,8 +1039,7 @@ bool detect_treasure(void)
 			pc_ptr = parea(x, y);
 
 			/* Magma/Quartz + Known Gold */
-			if ((c_ptr->feat == FEAT_MAGMA_K) ||
-			    (c_ptr->feat == FEAT_QUARTZ_K))
+			if ((c_ptr->feat == FEAT_MAGMA_K) || (c_ptr->feat == FEAT_QUARTZ_K))
 			{
 				/* Hack -- Memorize */
 				remember_grid(c_ptr, pc_ptr);
@@ -1232,21 +1227,21 @@ bool detect_objects_magic(void)
 
 		/* Artifacts, misc magic items, or enchanted wearables */
 		if (o_ptr->xtra_name ||
-		    (tv == TV_AMULET) ||
+			(tv == TV_AMULET) ||
 			(tv == TV_RING) ||
-		    (tv == TV_STAFF) ||
+			(tv == TV_STAFF) ||
 			(tv == TV_WAND) ||
 			(tv == TV_ROD) ||
-		    (tv == TV_SCROLL) ||
+			(tv == TV_SCROLL) ||
 			(tv == TV_POTION) ||
-		    (tv == TV_LIFE_BOOK) ||
+			(tv == TV_LIFE_BOOK) ||
 			(tv == TV_SORCERY_BOOK) ||
-		    (tv == TV_NATURE_BOOK) ||
+			(tv == TV_NATURE_BOOK) ||
 			(tv == TV_CHAOS_BOOK) ||
-		    (tv == TV_DEATH_BOOK) ||
-		    (tv == TV_TRUMP_BOOK) ||
+			(tv == TV_DEATH_BOOK) ||
+			(tv == TV_TRUMP_BOOK) ||
 			(tv == TV_ARCANE_BOOK) ||
-		    ((o_ptr->to_a > 0) || (o_ptr->to_h + o_ptr->to_d > 0)))
+			((o_ptr->to_a > 0) || (o_ptr->to_h + o_ptr->to_d > 0)))
 		{
 			/* Memorize the item */
 			o_ptr->marked = TRUE;
@@ -1300,10 +1295,10 @@ bool detect_monsters_normal(void)
 
 		/* Do not detect mimics */
 		if (m_ptr->smart & (SM_MIMIC)) continue;
-		
+
 		/* Detect all non-invisible monsters */
 		if ((!(r_ptr->flags2 & RF2_INVISIBLE)) ||
-		    p_ptr->see_inv || p_ptr->tim_invis)
+			p_ptr->see_inv || p_ptr->tim_invis)
 		{
 			/* Repair visibility later */
 			repair_monsters = TRUE;
@@ -1468,8 +1463,8 @@ bool detect_monsters_nonliving(void)
 	int px = p_ptr->px;
 	int py = p_ptr->py;
 
-	int     i, y, x;
-	bool    flag = FALSE;
+	int i, y, x;
+	bool flag = FALSE;
 
 	/* Scan monsters */
 	for (i = 1; i < m_max; i++)
@@ -1531,8 +1526,8 @@ bool detect_monsters_living(void)
 	int px = p_ptr->px;
 	int py = p_ptr->py;
 
-	int     i, y, x;
-	bool    flag = FALSE;
+	int i, y, x;
+	bool flag = FALSE;
 
 	/* Scan monsters */
 	for (i = 1; i < m_max; i++)
@@ -1657,7 +1652,7 @@ bool detect_monsters_xxx(u32b match_flag)
 	int px = p_ptr->px;
 	int py = p_ptr->py;
 
-	int  i, y, x;
+	int i, y, x;
 	bool flag = FALSE;
 	cptr desc_monsters = "weird monsters";
 
@@ -1759,9 +1754,9 @@ bool detect_all(void)
  */
 bool project_hack(int typ, int dam)
 {
-	int     i, x, y;
-	u16b    flg = PROJECT_JUMP | PROJECT_KILL | PROJECT_HIDE;
-	bool    obvious = FALSE;
+	int i, x, y;
+	u16b flg = PROJECT_JUMP | PROJECT_KILL | PROJECT_HIDE;
+	bool obvious = FALSE;
 
 	/* Mark all (nearby) monsters */
 	for (i = 1; i < m_max; i++)
@@ -1912,7 +1907,7 @@ bool raise_dead(int x, int y, bool pet)
 	s16b i;
 	int fx, fy;
 
-	bool    obvious = FALSE;
+	bool obvious = FALSE;
 
 	cave_type *c_ptr;
 
@@ -1926,7 +1921,7 @@ bool raise_dead(int x, int y, bool pet)
 
 		/* Want a corpse / skeleton */
 		if (!(f_ptr->t_idx == FT_CORPSE ||
-		      f_ptr->t_idx == FT_SKELETON)) continue;
+			  f_ptr->t_idx == FT_SKELETON)) continue;
 
 		/* Location */
 		fy = f_ptr->fy;
@@ -1955,15 +1950,15 @@ bool raise_dead(int x, int y, bool pet)
  */
 void aggravate_monsters(int who)
 {
-	int     i;
-	bool    sleep = FALSE;
-	bool    speed = FALSE;
+	int i;
+	bool sleep = FALSE;
+	bool speed = FALSE;
 
 	/* Aggravate everyone nearby */
 	for (i = 1; i < m_max; i++)
 	{
-		monster_type    *m_ptr = &m_list[i];
-		monster_race    *r_ptr = &r_info[m_ptr->r_idx];
+		monster_type *m_ptr = &m_list[i];
+		monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
@@ -1983,7 +1978,7 @@ void aggravate_monsters(int who)
 
 				/* Redraw (later) if needed */
 				if (p_ptr->health_who == i)
-						p_ptr->redraw |= (PR_HEALTH);
+					p_ptr->redraw |= (PR_HEALTH);
 			}
 		}
 
@@ -2012,10 +2007,10 @@ void aggravate_monsters(int who)
  */
 bool genocide(int player_cast)
 {
-	int     i;
-	char    typ;
-	bool    result = FALSE;
-	int     msec = delay_factor * delay_factor * delay_factor;
+	int i;
+	char typ;
+	bool result = FALSE;
+	int msec = delay_factor * delay_factor * delay_factor;
 
 	/* Need a better way to control this... (wilderness is a major problem) */
 #if 0
@@ -2027,13 +2022,13 @@ bool genocide(int player_cast)
 #endif /* 0 */
 
 	/* Mega-Hack -- Get a monster symbol */
-	(void)(get_com("Choose a monster race (by symbol) to genocide: ", &typ));
+	(void) (get_com("Choose a monster race (by symbol) to genocide: ", &typ));
 
 	/* Delete the monsters of that "type" */
 	for (i = 1; i < m_max; i++)
 	{
-		monster_type    *m_ptr = &m_list[i];
-		monster_race    *r_ptr = &r_info[m_ptr->r_idx];
+		monster_type *m_ptr = &m_list[i];
+		monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
@@ -2097,9 +2092,9 @@ bool genocide(int player_cast)
  */
 bool mass_genocide(int player_cast)
 {
-	int     i;
-	bool    result = FALSE;
-	int     msec = delay_factor * delay_factor * delay_factor;
+	int i;
+	bool result = FALSE;
+	int msec = delay_factor * delay_factor * delay_factor;
 
 	/* This needs to be rethought - the wilderness is a problem... */
 #if 0
@@ -2113,8 +2108,8 @@ bool mass_genocide(int player_cast)
 	/* Delete the (nearby) monsters */
 	for (i = 1; i < m_max; i++)
 	{
-		monster_type    *m_ptr = &m_list[i];
-		monster_race    *r_ptr = &r_info[m_ptr->r_idx];
+		monster_type *m_ptr = &m_list[i];
+		monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
@@ -2178,8 +2173,8 @@ bool mass_genocide(int player_cast)
  */
 bool probing(void)
 {
-	int     i;
-	bool    probe = FALSE;
+	int i;
+	bool probe = FALSE;
 
 	/* Probe all (nearby) monsters */
 	for (i = 1; i < m_max; i++)
@@ -2240,9 +2235,9 @@ bool probing(void)
  */
 bool destroy_area(int x1, int y1, int r)
 {
-	int       y, x, k, t;
-	bool      flag = FALSE;
-	
+	int y, x, k, t;
+	bool flag = FALSE;
+
 	cave_type *c_ptr;
 	pcave_type *pc_ptr;
 
@@ -2346,7 +2341,7 @@ bool destroy_area(int x1, int y1, int r)
 					cave_set_feat(x, y, FEAT_FLOOR);
 				}
 			}
-			
+
 			/* Hack - forget the square */
 			forget_grid(pc_ptr);
 		}
@@ -2363,7 +2358,7 @@ bool destroy_area(int x1, int y1, int r)
 		if (!p_ptr->resist_blind && !p_ptr->resist_lite)
 		{
 			/* Become blind */
-			(void)set_blind(p_ptr->blind + rand_range(10, 20));
+			(void) set_blind(p_ptr->blind + rand_range(10, 20));
 		}
 	}
 
@@ -2395,16 +2390,16 @@ bool earthquake(int cx, int cy, int r)
 	int py = p_ptr->py;
 	int px = p_ptr->px;
 
-	int             i, t, y, x, yy, xx, dy, dx, oy, ox;
-	int             damage = 0;
-	int             sn = 0, sy = 0, sx = 0;
-	bool            hurt = FALSE;
-	
-	cave_type       *c_ptr;
-	pcave_type		*pc_ptr;
-	
-	bool            map[32][32];
-	field_mon_test	mon_enter_test;
+	int i, t, y, x, yy, xx, dy, dx, oy, ox;
+	int damage = 0;
+	int sn = 0, sy = 0, sx = 0;
+	bool hurt = FALSE;
+
+	cave_type *c_ptr;
+	pcave_type *pc_ptr;
+
+	bool map[32][32];
+	field_mon_test mon_enter_test;
 
 	/* Prevent destruction of quest levels and town */
 	if (!p_ptr->depth || is_quest_level(p_ptr->depth))
@@ -2456,7 +2451,7 @@ bool earthquake(int cx, int cy, int r)
 			if (randint0(100) < 85) continue;
 
 			/* Damage this grid */
-			map[16+yy-cy][16+xx-cx] = TRUE;
+			map[16 + yy - cy][16 + xx - cx] = TRUE;
 
 			/* Hack -- Take note of player damage */
 			if ((yy == py) && (xx == px)) hurt = TRUE;
@@ -2482,7 +2477,7 @@ bool earthquake(int cx, int cy, int r)
 			if (!cave_empty_grid(c_ptr)) continue;
 
 			/* Important -- Skip "quake" grids */
-			if (map[16+y-cy][16+x-cx]) continue;
+			if (map[16 + y - cy][16 + x - cx]) continue;
 
 			/* Check for a field that blocks movement */
 			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_ENTER))
@@ -2497,7 +2492,8 @@ bool earthquake(int cx, int cy, int r)
 			if (randint0(sn) > 0) continue;
 
 			/* Save the safe location */
-			sy = y; sx = x;
+			sy = y;
+			sx = x;
 		}
 
 		/* Random message */
@@ -2544,14 +2540,14 @@ bool earthquake(int cx, int cy, int r)
 				{
 					msg_print("You are bashed by rubble!");
 					damage = damroll(10, 4);
-					(void)set_stun(p_ptr->stun + randint1(50));
+					(void) set_stun(p_ptr->stun + randint1(50));
 					break;
 				}
 				case 3:
 				{
 					msg_print("You are crushed between the floor and ceiling!");
 					damage = damroll(10, 4);
-					(void)set_stun(p_ptr->stun + randint1(50));
+					(void) set_stun(p_ptr->stun + randint1(50));
 					break;
 				}
 			}
@@ -2561,8 +2557,7 @@ bool earthquake(int cx, int cy, int r)
 			ox = px;
 
 			/* Process fields under the player. */
-			field_hook(&area(px, py)->fld_idx,
-				 FIELD_ACT_PLAYER_LEAVE, NULL);
+			field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_LEAVE, NULL);
 
 			/* Move the player */
 			py = sy;
@@ -2579,7 +2574,7 @@ bool earthquake(int cx, int cy, int r)
 				p_ptr->wilderness_y = py;
 				move_wild();
 			}
-			
+
 			/* Redraw the old spot */
 			lite_spot(ox, oy);
 
@@ -2628,14 +2623,14 @@ bool earthquake(int cx, int cy, int r)
 				if (r_ptr->flags1 & RF1_QUESTOR)
 				{
 					/* No wall on quest monsters */
-					map[16+yy-cy][16+xx-cx] = FALSE;
+					map[16 + yy - cy][16 + xx - cx] = FALSE;
 
 					continue;
 				}
 
 				/* Most monsters cannot co-exist with rock */
 				if (!(r_ptr->flags2 & (RF2_KILL_WALL)) &&
-				    !(r_ptr->flags2 & (RF2_PASS_WALL)))
+					!(r_ptr->flags2 & (RF2_PASS_WALL)))
 				{
 					char m_name[80];
 
@@ -2659,13 +2654,14 @@ bool earthquake(int cx, int cy, int r)
 
 							/* Skip non-empty grids */
 							if (!cave_empty_grid(c_ptr)) continue;
-							
+
 							/* Not on player */
-							if ((y == py) && (x == px)) continue;							
+							if ((y == py) && (x == px)) continue;
 
 							/* Check for a field that blocks movement */
 							if (fields_have_flags(c_ptr->fld_idx,
-									 FIELD_INFO_NO_ENTER)) continue;
+												  FIELD_INFO_NO_ENTER))
+									continue;
 
 							/*
 							 * Test for fields that will not allow this
@@ -2678,19 +2674,19 @@ bool earthquake(int cx, int cy, int r)
 
 							/* Call the hook */
 							field_hook(&c_ptr->fld_idx,
-								 FIELD_ACT_MON_ENTER_TEST,
-								 (vptr) &mon_enter_test);
+									   FIELD_ACT_MON_ENTER_TEST,
+									   (vptr) &mon_enter_test);
 
 							/* Get result */
 							if (!(mon_enter_test.flags & MEG_DO_MOVE)) continue;
 
 							/* ... nor on the Pattern */
 							if ((c_ptr->feat <= FEAT_PATTERN_XTRA2) &&
-							    (c_ptr->feat >= FEAT_PATTERN_START))
+								(c_ptr->feat >= FEAT_PATTERN_START))
 								continue;
 
 							/* Important -- Skip "quake" grids */
-							if (map[16+y-cy][16+x-cx]) continue;
+							if (map[16 + y - cy][16 + x - cx]) continue;
 
 							/* Count "safe" grids */
 							sn++;
@@ -2699,7 +2695,8 @@ bool earthquake(int cx, int cy, int r)
 							if (randint0(sn) > 0) continue;
 
 							/* Save the safe grid */
-							sy = y; sx = x;
+							sy = y;
+							sx = x;
 						}
 					}
 
@@ -2771,7 +2768,7 @@ bool earthquake(int cx, int cy, int r)
 			xx = cx + dx;
 
 			/* Skip unaffected grids */
-			if (!map[16+yy-cy][16+xx-cx]) continue;
+			if (!map[16 + yy - cy][16 + xx - cx]) continue;
 
 			if (!in_bounds2(xx, yy)) continue;
 
@@ -2787,7 +2784,7 @@ bool earthquake(int cx, int cy, int r)
 
 			/* Destroy the fields on the square */
 			delete_field(xx, yy);
-			
+
 			/* Destroy location (if valid) */
 			if (cave_valid_grid(c_ptr))
 			{
@@ -2827,7 +2824,7 @@ bool earthquake(int cx, int cy, int r)
 					cave_set_feat(xx, yy, FEAT_FLOOR);
 				}
 			}
-			
+
 			/* Hack - forget square */
 			forget_grid(pc_ptr);
 		}
@@ -2887,9 +2884,9 @@ static void cave_temp_room_lite(void)
 			{
 				int chance = 25;
 
-				monster_type    *m_ptr = &m_list[c_ptr->m_idx];
+				monster_type *m_ptr = &m_list[c_ptr->m_idx];
 
-				monster_race    *r_ptr = &r_info[m_ptr->r_idx];
+				monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 				/* Stupid monsters rarely wake up */
 				if (r_ptr->flags2 & (RF2_STUPID)) chance = 10;
@@ -2925,7 +2922,7 @@ static void cave_temp_room_lite(void)
 			note_spot(x, y);
 		}
 	}
-	
+
 	/*
 	 * Hack - recalculate the view
 	 *
@@ -2934,11 +2931,11 @@ static void cave_temp_room_lite(void)
 	 * are lit until the effect has completed
 	 */
 	p_ptr->update |= PU_VIEW | PU_MONSTERS;
-	
-	
+
+
 	/* Window stuff */
 	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
-	
+
 	/* None left */
 	temp_n = 0;
 }
@@ -2973,7 +2970,7 @@ static void cave_temp_room_unlite(void)
 
 			/* Verify */
 			if (!in_boundsp(x, y)) continue;
-			
+
 			c_ptr = area(x, y);
 			pc_ptr = parea(x, y);
 
@@ -3008,14 +3005,14 @@ static void cave_temp_room_unlite(void)
 	 * are unlit until the effect has completed.
 	 */
 	p_ptr->update |= PU_VIEW | PU_MONSTERS;
-	
-	
+
+
 	/* Window stuff */
 	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
-	
+
 	/* None left */
 	temp_n = 0;
-	
+
 	/* None left */
 	temp_n = 0;
 }
@@ -3235,7 +3232,7 @@ bool lite_area(int dam, int rad)
 	}
 
 	/* Hook into the "project()" function */
-	(void)project(0, rad, p_ptr->px, p_ptr->py, dam, GF_LITE_WEAK, flg);
+	(void) project(0, rad, p_ptr->px, p_ptr->py, dam, GF_LITE_WEAK, flg);
 
 	/* Lite up the room */
 	lite_room(p_ptr->px, p_ptr->py);
@@ -3260,7 +3257,7 @@ bool unlite_area(int dam, int rad)
 	}
 
 	/* Hook into the "project()" function */
-	(void)project(0, rad, p_ptr->px, p_ptr->py, dam, GF_DARK_WEAK, flg);
+	(void) project(0, rad, p_ptr->px, p_ptr->py, dam, GF_DARK_WEAK, flg);
 
 	/* Lite up the room */
 	unlite_room(p_ptr->px, p_ptr->py);
@@ -3311,9 +3308,9 @@ bool teleport_swap(int dir)
 	int py = p_ptr->py;
 
 	int tx, ty;
-	cave_type * c_ptr;
-	monster_type * m_ptr;
-	monster_race * r_ptr;
+	cave_type *c_ptr;
+	monster_type *m_ptr;
+	monster_race *r_ptr;
 
 	if (!ironman_moria && (dir == 5) && target_okay())
 	{
@@ -3362,7 +3359,7 @@ bool teleport_swap(int dir)
 
 	/* Process fields under the monster. */
 	field_hook(&area(m_ptr->fx, m_ptr->fy)->fld_idx,
-		 FIELD_ACT_MONSTER_LEAVE, m_ptr);
+			   FIELD_ACT_MONSTER_LEAVE, m_ptr);
 
 	/* Move monster */
 	area(px, py)->m_idx = c_ptr->m_idx;
@@ -3392,10 +3389,10 @@ bool teleport_swap(int dir)
 		p_ptr->wilderness_y = py;
 		move_wild();
 	}
-	
+
 	/* Update the monster (new location) */
 	update_mon(area(tx, ty)->m_idx, TRUE);
-	
+
 	/* Redraw the old grid */
 	lite_spot(tx, ty);
 
@@ -3407,7 +3404,7 @@ bool teleport_swap(int dir)
 
 	/* Process fields under the monster. */
 	field_hook(&area(m_ptr->fx, m_ptr->fy)->fld_idx,
-		FIELD_ACT_MONSTER_ENTER, (vptr) m_ptr);
+			   FIELD_ACT_MONSTER_ENTER, (vptr) m_ptr);
 
 	/* Check for new panel (redraw map) */
 	verify_panel();
@@ -3730,23 +3727,23 @@ void call_chaos(void)
 			if (dummy - 5)
 			{
 				if (line_chaos)
-					(void)fire_beam(Chaos_type, dummy, 75);
+					(void) fire_beam(Chaos_type, dummy, 75);
 				else
-					(void)fire_ball(Chaos_type, dummy, 75, 2);
+					(void) fire_ball(Chaos_type, dummy, 75, 2);
 			}
 		}
 	}
 	else if (one_in_(3))
 	{
-		(void)fire_ball(Chaos_type, 0, 300, 8);
+		(void) fire_ball(Chaos_type, 0, 300, 8);
 	}
 	else
 	{
 		if (!get_aim_dir(&dir)) return;
 		if (line_chaos)
-			(void)fire_beam(Chaos_type, dir, 150);
+			(void) fire_beam(Chaos_type, dir, 150);
 		else
-			(void)fire_ball(Chaos_type, dir, 150, 3 + (plev / 35));
+			(void) fire_ball(Chaos_type, dir, 150, 3 + (plev / 35));
 	}
 }
 
@@ -3767,30 +3764,30 @@ bool activate_ty_curse(bool stop_ty, int *count)
 	{
 		switch (randint1(34))
 		{
-			case 28: case 29:
+			case 28:  case 29:
 			{
 				if (!(*count))
 				{
 					msg_print("The ground trembles...");
-					(void)earthquake(px, py, rand_range(5, 15));
+					(void) earthquake(px, py, rand_range(5, 15));
 					if (!one_in_(6)) break;
 				}
-				
+
 				/* Fall through */
 			}
-			case 30: case 31:
+			case 30:  case 31:
 			{
 				if (!(*count))
 				{
 					msg_print("A portal opens to a plane of raw mana!");
-					(void)destroy_area(px, py, 20);
+					(void) destroy_area(px, py, 20);
 					project(1, 3, px, py, damroll(10, 5), GF_MANA, flg);
 					if (!one_in_(6)) break;
 				}
-				
+
 				/* Fall through */
 			}
-			case 32: case 33:
+			case 32:  case 33:
 			{
 				if (!(*count))
 				{
@@ -3799,7 +3796,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 					if (!one_in_(13)) (*count) += activate_hi_summon();
 					if (!one_in_(6)) break;
 				}
-				
+
 				/* Fall through */
 			}
 			case 34:
@@ -3808,44 +3805,47 @@ bool activate_ty_curse(bool stop_ty, int *count)
 				wall_breaker();
 				if (one_in_(7))
 				{
-					(void)project(1, 7, px, py, 50, GF_KILL_WALL, flg);
+					(void) project(1, 7, px, py, 50, GF_KILL_WALL, flg);
 				}
 				if (!one_in_(6)) break;
-				
+
 				/* Fall through */
 			}
-			case 1: case 2: case 3: case 16: case 17:
+			case 1:  case 2:  case 3:  case 16:  case 17:
 			{
 				aggravate_monsters(0);
 				if (!one_in_(6)) break;
-				
+
 				/* Fall through */
 			}
-			case 4: case 5: case 6:
+			case 4:  case 5:  case 6:
 			{
 				(*count) += activate_hi_summon();
 				if (!one_in_(6)) break;
-				
+
 				/* Fall through */
 			}
-			case 7: case 8: case 9: case 18:
+			case 7:  case 8:  case 9:  case 18:
 			{
-				(*count) += summon_specific(0, px, py, p_ptr->depth, 0, TRUE, FALSE, FALSE);
+				(*count) +=
+					summon_specific(0, px, py, p_ptr->depth, 0, TRUE, FALSE,
+									FALSE);
 				if (!one_in_(6)) break;
-				
+
 				/* Fall through */
 			}
-			case 10: case 11: case 12:
+			case 10:  case 11:  case 12:
 			{
 				msg_print("You feel your life draining away...");
 				lose_exp(p_ptr->exp / 16);
 				if (!one_in_(6)) break;
-				
+
 				/* Fall through */
 			}
-			case 13: case 14: case 15: case 19: case 20:
+			case 13:  case 14:  case 15:  case 19:  case 20:
 			{
-				if (stop_ty || (p_ptr->free_act && (randint1(100) < p_ptr->skill_sav)))
+				if (stop_ty
+					|| (p_ptr->free_act && (randint1(100) < p_ptr->skill_sav)))
 				{
 					/* Do nothing */ ;
 				}
@@ -3854,31 +3854,31 @@ bool activate_ty_curse(bool stop_ty, int *count)
 					msg_print("You feel like a statue!");
 					if (p_ptr->free_act)
 					{
-						(void)set_paralyzed(p_ptr->paralyzed + randint1(3));
+						(void) set_paralyzed(p_ptr->paralyzed + randint1(3));
 					}
 					else
 					{
-						(void)set_paralyzed(p_ptr->paralyzed + randint1(13));
+						(void) set_paralyzed(p_ptr->paralyzed + randint1(13));
 					}
 					stop_ty = TRUE;
 				}
 				if (!one_in_(6)) break;
-				
+
 				/* Fall through */
 			}
-			case 21: case 22: case 23:
+			case 21:  case 22:  case 23:
 			{
-				(void)do_dec_stat(randint0(6));
+				(void) do_dec_stat(randint0(6));
 				if (!one_in_(6)) break;
-				
+
 				/* Fall through */
 			}
 			case 24:
 			{
 				msg_print("Huh? Who am I? What am I doing here?");
-				(void)lose_all_info();
+				(void) lose_all_info();
 				if (!one_in_(6)) break;
-				
+
 				/* Fall through */
 			}
 			case 25:
@@ -3893,7 +3893,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 					break;
 				}
 				if (!one_in_(6)) break;
-				
+
 				/* Fall through */
 			}
 			default:
@@ -3904,7 +3904,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 				{
 					do
 					{
-						(void)do_dec_stat(stat);
+						(void) do_dec_stat(stat);
 					}
 					while (one_in_(2));
 
@@ -4024,12 +4024,13 @@ void wall_breaker(void)
 			if ((y != py) || (x != px)) break;
 		}
 
-		(void)project(0, 0, x, y, rand_range(20, 50), GF_KILL_WALL,
-				  (PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL));
+		(void) project(0, 0, x, y, rand_range(20, 50), GF_KILL_WALL,
+					   (PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID |
+						PROJECT_ITEM | PROJECT_KILL));
 	}
 	else if (randint1(100) > 30)
 	{
-		(void)earthquake(px, py, 1);
+		(void) earthquake(px, py, 1);
 	}
 	else
 	{
@@ -4044,8 +4045,9 @@ void wall_breaker(void)
 				if ((y != py) || (x != px)) break;
 			}
 
-			(void)project(0, 0, x, y, rand_range(20, 50), GF_KILL_WALL,
-					  (PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL));
+			(void) project(0, 0, x, y, rand_range(20, 50), GF_KILL_WALL,
+						   (PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID |
+							PROJECT_ITEM | PROJECT_KILL));
 		}
 	}
 }
@@ -4189,8 +4191,9 @@ bool starlite(void)
 			if ((y != p_ptr->py) || (x != p_ptr->px)) break;
 		}
 
-		(void)project(0, 0, x, y, damroll(6, 8), GF_LITE_WEAK,
-				  (PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID | PROJECT_KILL));
+		(void) project(0, 0, x, y, damroll(6, 8), GF_LITE_WEAK,
+					   (PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID |
+						PROJECT_KILL));
 	}
 
 	return (TRUE);

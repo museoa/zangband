@@ -65,7 +65,7 @@ void k_info_reset(void)
 
 
 /* Add a new object template */
-object_kind *k_info_add(object_kind *k_info_entry)
+object_kind *k_info_add(object_kind * k_info_entry)
 {
 	/* Resize if necessary */
 	while (k_info_size <= z_info->k_max)
@@ -73,23 +73,25 @@ object_kind *k_info_add(object_kind *k_info_entry)
 		k_info_size += K_INFO_RESIZE;
 
 		/* Reallocate the extra memory */
-		k_info = (object_kind*)realloc(k_info, k_info_size * sizeof(object_kind));
+		k_info =
+			(object_kind *) realloc(k_info, k_info_size * sizeof(object_kind));
 
 		/* Failure */
 		if (!k_info) quit("Out of memory!");
 
 		/* Wipe the new memory */
-		(void)C_WIPE(&k_info[(k_info_size - K_INFO_RESIZE)], K_INFO_RESIZE, object_kind);
+		(void) C_WIPE(&k_info[(k_info_size - K_INFO_RESIZE)], K_INFO_RESIZE,
+					  object_kind);
 	}
 
 	/* Increase the maximum index of the array */
 	z_info->k_max++;
 
 	/* Copy the new object_kind */
-	COPY(&k_info[z_info->k_max-1], k_info_entry, object_kind);
+	COPY(&k_info[z_info->k_max - 1], k_info_entry, object_kind);
 
 	/* Success */
-	return (&k_info[z_info->k_max-1]);
+	return (&k_info[z_info->k_max - 1]);
 }
 
 
@@ -109,10 +111,10 @@ errr init_object_alloc(void)
 	/*** Analyze object allocation info ***/
 
 	/* Clear the "aux" array */
-	(void)C_WIPE(aux, MAX_DEPTH, s16b);
+	(void) C_WIPE(aux, MAX_DEPTH, s16b);
 
 	/* Clear the "num" array */
-	(void)C_WIPE(num, MAX_DEPTH, s16b);
+	(void) C_WIPE(num, MAX_DEPTH, s16b);
 
 	/* Free the old "alloc_kind_table" (if it exists) */
 	if (alloc_kind_table)
@@ -147,7 +149,7 @@ errr init_object_alloc(void)
 	for (i = 1; i < MAX_DEPTH; i++)
 	{
 		/* Group by level */
-		num[i] += num[i-1];
+		num[i] += num[i - 1];
 	}
 
 	/* Paranoia */
@@ -180,7 +182,7 @@ errr init_object_alloc(void)
 				p = (255 / k_ptr->chance[j]);
 
 				/* Skip entries preceding our locale */
-				y = (x > 0) ? num[x-1] : 0;
+				y = (x > 0) ? num[x - 1] : 0;
 
 				/* Skip previous entries at this locale */
 				z = y + aux[x];
@@ -196,81 +198,81 @@ errr init_object_alloc(void)
 			}
 		}
 	}
-	
+
 	/* Clear the temp arrays */
-	(void)C_WIPE(aux, MAX_DEPTH, s16b);
-	(void)C_WIPE(num, MAX_DEPTH, s16b);
-	
+	(void) C_WIPE(aux, MAX_DEPTH, s16b);
+	(void) C_WIPE(num, MAX_DEPTH, s16b);
+
 	/* Free the old ego item allocation table (if it exists) */
 	if (alloc_ego_table)
 	{
 		KILL(alloc_ego_table);
 	}
-	
+
 	/* Create the ego item allocation table */
 	C_MAKE(alloc_ego_table, z_info->e_max, alloc_entry);
-	
+
 	/* Access the table */
 	table = alloc_ego_table;
-	
+
 	/* No ego items in the table yet */
 	alloc_ego_size = 0;
-	
+
 	/* Count the number of legal entries */
 	for (i = 1; i < z_info->e_max; i++)
 	{
 		e_ptr = &e_info[i];
-		
+
 		if (e_ptr->slot)
 		{
 			/* Count the item */
 			alloc_ego_size++;
-			
+
 			/* Group by level */
 			num[e_ptr->level]++;
 		}
 	}
-	
+
 	/* Collect the level indexes */
 	for (i = 1; i < MAX_DEPTH; i++)
 	{
 		/* Group by level */
-		num[i] += num[i-1];
+		num[i] += num[i - 1];
 	}
-	
-	
+
+
 	/* Scan the ego items */
 	for (i = 1; i < z_info->e_max; i++)
 	{
 		e_ptr = &e_info[i];
-		
+
 		if (e_ptr->slot)
 		{
-		
+
 			/* Extract the base level */
 			x = e_ptr->level;
-			
+
 			/* Extract the base probability */
 			p = (255 / e_ptr->rarity);
-			
+
 			/* Skip entries preceding our locale */
-			y = (x > 0) ? num[x-1] : 0;
-			
+			y = (x > 0) ? num[x - 1] : 0;
+
 			/* Skip previous entries at this locale */
 			z = y + aux[x];
-			
+
 			/* Load the entry */
 			table[z].index = i;
 			table[z].level = x;
 			table[z].prob1 = p;
 			table[z].prob2 = p;
-			
+
 			/* Another entry complete for this locale */
 			aux[x]++;
 		}
 	}
-	
-		
+
+
 	/* Success */
 	return (0);
 }
@@ -279,7 +281,7 @@ errr init_object_alloc(void)
 byte get_object_level(const object_type *o_ptr)
 {
 #if 0
-	return (byte)get_object_level_callback(o_ptr);
+	return (byte) get_object_level_callback(o_ptr);
 #else
 	return k_info[o_ptr->k_idx].level;
 #endif

@@ -19,14 +19,14 @@
  */
 int usleep(huge usecs)
 {
-	struct timeval      Timer;
+	struct timeval Timer;
 
-	int                 nfds = 0;
+	int nfds = 0;
 
 #ifdef FD_SET
-	fd_set		*no_fds = NULL;
+	fd_set *no_fds = NULL;
 #else
-	int			*no_fds = NULL;
+	int *no_fds = NULL;
 #endif
 
 
@@ -75,7 +75,7 @@ void user_name(char *buf, int id)
 	if ((pw = getpwuid(id)))
 	{
 		/* Get the first 15 characters of the user name */
-		(void)strncpy(buf, pw->pw_name, 16);
+		(void) strncpy(buf, pw->pw_name, 16);
 		buf[15] = '\0';
 
 #ifdef CAPITALIZE_USER_NAME
@@ -148,9 +148,9 @@ void user_name(char *buf, int id)
  */
 errr path_parse(char *buf, int max, cptr file)
 {
-	cptr		u, s;
-	struct passwd	*pw;
-	char		user[128];
+	cptr u, s;
+	struct passwd *pw;
+	char user[128];
 
 
 	/* Assume no result */
@@ -167,7 +167,7 @@ errr path_parse(char *buf, int max, cptr file)
 	}
 
 	/* Point at the user */
-	u = file+1;
+	u = file + 1;
 
 	/* Look for non-user portion of the file */
 	s = strstr(u, PATH_SEP);
@@ -189,16 +189,17 @@ errr path_parse(char *buf, int max, cptr file)
 
 	/* Look up a user (or "current" user) */
 	if (u) pw = getpwnam(u);
-	else pw = getpwuid(getuid());
+	else
+		pw = getpwuid(getuid());
 
 	/* Nothing found? */
 	if (!pw) return (1);
 
 	/* Make use of the info */
-	(void)strncpy(buf, pw->pw_dir, max);
+	(void) strncpy(buf, pw->pw_dir, max);
 
 	/* Append the rest of the filename, if any */
-	if (s) (void)strncat(buf, s, max);
+	if (s) (void) strncat(buf, s, max);
 
 	/* Success */
 	return (0);
@@ -217,7 +218,7 @@ errr path_parse(char *buf, int max, cptr file)
 errr path_parse(char *buf, int max, cptr file)
 {
 	/* Accept the filename */
-	(void)strnfmt(buf, max, "%s", file);
+	(void) strnfmt(buf, max, "%s", file);
 
 	/* Success */
 	return (0);
@@ -250,7 +251,7 @@ static errr path_temp(char *buf, int max)
 	if (!s) return (-1);
 
 	/* Format to length */
-	(void)strnfmt(buf, max, "%s", s);
+	(void) strnfmt(buf, max, "%s", s);
 
 	/* Success */
 	return (0);
@@ -278,28 +279,28 @@ void path_build(char *buf, int max, cptr path, cptr file)
 	if (file[0] == '~')
 	{
 		/* Use the file itself */
-		(void)strnfmt(buf, max, "%s", file);
+		(void) strnfmt(buf, max, "%s", file);
 	}
 
 	/* Absolute file, on "normal" systems */
 	else if (prefix(file, PATH_SEP) && !streq(PATH_SEP, ""))
 	{
 		/* Use the file itself */
-		(void)strnfmt(buf, max, "%s", file);
+		(void) strnfmt(buf, max, "%s", file);
 	}
 
 	/* No path given */
 	else if (!path[0])
 	{
 		/* Use the file itself */
-		(void)strnfmt(buf, max, "%s", file);
+		(void) strnfmt(buf, max, "%s", file);
 	}
 
 	/* Path and File */
 	else
 	{
 		/* Build the new path */
-		(void)strnfmt(buf, max, "%s%s%s", path, PATH_SEP, file);
+		(void) strnfmt(buf, max, "%s%s%s", path, PATH_SEP, file);
 	}
 }
 
@@ -328,7 +329,7 @@ void my_fclose(FILE *fff)
 	if (!fff) return;
 
 	/* Close, check for error */
-	(void)fclose(fff);
+	(void) fclose(fff);
 }
 
 
@@ -442,10 +443,10 @@ errr my_fgets(FILE *fff, char *buf, huge n)
 errr my_fputs(FILE *fff, cptr buf, huge n)
 {
 	/* Unused parameter */
-	(void)n;
+	(void) n;
 
 	/* Dump, ignore errors */
-	(void)fprintf(fff, "%s\n", buf);
+	(void) fprintf(fff, "%s\n", buf);
 
 	/* Success */
 	return (0);
@@ -508,7 +509,7 @@ errr fd_kill(cptr file)
 	if (path_parse(buf, 1024, file)) return (-1);
 
 	/* Remove */
-	(void)remove(buf);
+	(void) remove(buf);
 
 	/* Assume success XXX XXX XXX */
 	return (0);
@@ -530,7 +531,7 @@ errr fd_move(cptr file, cptr what)
 	if (path_parse(aux, 1024, what)) return (-1);
 
 	/* Rename */
-	(void)rename(buf, aux);
+	(void) rename(buf, aux);
 
 	/* Assume success XXX XXX XXX */
 	return (0);
@@ -585,7 +586,7 @@ int fd_make(cptr file, int mode)
 	/* if (fd_close(fd_open(file, O_RDONLY | O_BINARY))) return (1); */
 
 	/* Mega-Hack -- Create the file */
-	(void)my_fclose(my_fopen(file, "wb"));
+	(void) my_fclose(my_fopen(file, "wb"));
 
 	/* Re-open the file for writing */
 	return (open(buf, O_WRONLY | O_BINARY, mode));
@@ -660,7 +661,7 @@ errr fd_lock(int fd, int what)
 	if (what == F_UNLCK)
 	{
 		/* Unlock it, Ignore errors */
-		(void)flock(fd, LOCK_UN);
+		(void) flock(fd, LOCK_UN);
 	}
 
 	/* Lock */
@@ -749,7 +750,7 @@ errr fd_read(int fd, char *buf, huge n)
 #endif
 
 	/* Read the final piece */
-	if (read(fd, buf, n) != (int)n) return (1);
+	if (read(fd, buf, n) != (int) n) return (1);
 
 	/* Success */
 	return (0);
@@ -782,7 +783,7 @@ errr fd_write(int fd, cptr buf, huge n)
 #endif
 
 	/* Write the final piece */
-	if (write(fd, buf, n) != (int)n) return (1);
+	if (write(fd, buf, n) != (int) n) return (1);
 
 	/* Success */
 	return (0);
@@ -798,7 +799,7 @@ errr fd_close(int fd)
 	if (fd < 0) return (-1);
 
 	/* Close */
-	(void)close(fd);
+	(void) close(fd);
 
 	/* XXX XXX XXX */
 	return (0);
@@ -814,7 +815,7 @@ errr fd_close(int fd)
  */
 static char hexify(uint i)
 {
-	return (hexsym[i%16]);
+	return (hexsym[i % 16]);
 }
 
 
@@ -938,7 +939,7 @@ void ascii_to_text(char *buf, cptr str)
 	/* Analyze the "ascii" string */
 	while (*str)
 	{
-		byte i = (byte)(*str++);
+		byte i = (byte) (*str++);
 
 		if (i == ESCAPE)
 		{
@@ -1028,7 +1029,7 @@ sint macro_find_exact(cptr pat)
 	int i;
 
 	/* Nothing possible */
-	if (!macro__use[(byte)(pat[0])])
+	if (!macro__use[(byte) (pat[0])])
 	{
 		return (-1);
 	}
@@ -1056,7 +1057,7 @@ static sint macro_find_check(cptr pat)
 	int i;
 
 	/* Nothing possible */
-	if (!macro__use[(byte)(pat[0])])
+	if (!macro__use[(byte) (pat[0])])
 	{
 		return (-1);
 	}
@@ -1084,7 +1085,7 @@ static sint macro_find_maybe(cptr pat)
 	int i;
 
 	/* Nothing possible */
-	if (!macro__use[(byte)(pat[0])])
+	if (!macro__use[(byte) (pat[0])])
 	{
 		return (-1);
 	}
@@ -1115,7 +1116,7 @@ static sint macro_find_ready(cptr pat)
 	int i, t, n = -1, s = -1;
 
 	/* Nothing possible */
-	if (!macro__use[(byte)(pat[0])])
+	if (!macro__use[(byte) (pat[0])])
 	{
 		return (-1);
 	}
@@ -1188,7 +1189,7 @@ void macro_add(cptr pat, cptr act)
 	macro__act[n] = string_make(act);
 
 	/* Efficiency */
-	macro__use[(byte)(pat[0])] = TRUE;
+	macro__use[(byte) (pat[0])] = TRUE;
 }
 
 /* This is never used. */
@@ -1275,7 +1276,7 @@ static char inkey_aux(void)
 
 
 	/* Wait for a keypress */
-	(void)(Term_inkey(&ch, TRUE, TRUE));
+	(void) (Term_inkey(&ch, TRUE, TRUE));
 
 
 	/* End "macro action" */
@@ -1352,7 +1353,7 @@ static char inkey_aux(void)
 		}
 
 		/* Wait for (and remove) a pending key */
-		(void)Term_inkey(&ch, TRUE, TRUE);
+		(void) Term_inkey(&ch, TRUE, TRUE);
 
 		/* Return the key */
 		return (ch);
@@ -1418,7 +1419,7 @@ static cptr inkey_next = NULL;
  * This special function hook allows the "Borg" (see elsewhere) to take
  * control of the "inkey()" function, and substitute in fake keypresses.
  */
-char (*inkey_hack)(int flush_first) = NULL;
+char (*inkey_hack) (int flush_first) = NULL;
 
 #endif /* ALLOW_BORG */
 
@@ -1514,7 +1515,7 @@ char inkey(void)
 #ifdef ALLOW_BORG
 
 	/* Mega-Hack -- Use the special hook */
-	if (inkey_hack && ((ch = (*inkey_hack)(inkey_xtra)) != 0))
+	if (inkey_hack && ((ch = (*inkey_hack) (inkey_xtra)) != 0))
 	{
 		/* Cancel the various "global parameters" */
 		inkey_base = inkey_xtra = inkey_flag = inkey_scan = FALSE;
@@ -1540,13 +1541,13 @@ char inkey(void)
 
 
 	/* Access cursor state */
-	(void)Term_get_cursor(&v);
+	(void) Term_get_cursor(&v);
 
 	/* Show the cursor if waiting, except sometimes in "command" mode */
 	if (!inkey_scan && (!inkey_flag || hilite_player || character_icky))
 	{
 		/* Show the cursor */
-		(void)Term_set_cursor(1);
+		(void) Term_set_cursor(1);
 	}
 
 
@@ -1558,8 +1559,7 @@ char inkey(void)
 	while (!ch)
 	{
 		/* Hack -- Handle "inkey_scan" */
-		if (!inkey_base && inkey_scan &&
-			(0 != Term_inkey(&kk, FALSE, FALSE)))
+		if (!inkey_base && inkey_scan && (0 != Term_inkey(&kk, FALSE, FALSE)))
 		{
 			break;
 		}
@@ -1697,7 +1697,7 @@ char inkey(void)
 
 
 	/* Restore the cursor */
-	(void)Term_set_cursor(v);
+	(void) Term_set_cursor(v);
 
 
 	/* Cancel the various "global parameters" */
@@ -1770,9 +1770,9 @@ void sound(int val)
 static s16b compact_quarks(void)
 {
 	s16b i, empty = 1;
-	
+
 	u16b min_use = quark__use[quark__num - 1];
-	
+
 	/* Find least recently used quark */
 	for (i = 1; i < quark__num; i++)
 	{
@@ -1783,7 +1783,7 @@ static s16b compact_quarks(void)
 			min_use = quark__use[i];
 		}
 	}
-		
+
 	/* Reset all the times to something "smaller" */
 	for (i = 1; i < quark__num; i++)
 	{
@@ -1821,10 +1821,10 @@ s16b quark_add(cptr str)
 	if (quark__num == QUARK_MAX)
 	{
 		i = compact_quarks();
-		
+
 		/* Paranoia - no room? */
 		if (!i) return (0);
-		
+
 		/* Delete the old quark */
 		string_free(quark__str[i]);
 	}
@@ -1833,7 +1833,7 @@ s16b quark_add(cptr str)
 		/* New maximal quark */
 		quark__num = i + 1;
 	}
-	
+
 	/* Add a new quark */
 	quark__str[i] = string_make(str);
 
@@ -1857,14 +1857,14 @@ cptr quark_str(s16b i)
 
 	/* Get the quark */
 	q = quark__str[i];
-	
+
 	/* Save the access time */
 	quark__use[i] = ++quark__tim;
-	
+
 	/* Compact from time to time */
 	if (quark__tim > QUARK_COMPACT * QUARK_MAX)
 	{
-		(void)compact_quarks();
+		(void) compact_quarks();
 	}
 
 	/* Return the quark */
@@ -1901,8 +1901,8 @@ errr quarks_free(void)
 	}
 
 	/* Free the list of "quarks" */
-	FREE((void*)quark__use);
-	FREE((void*)quark__str);
+	FREE((void *) quark__use);
+	FREE((void *) quark__str);
 
 	/* Success */
 	return (0);
@@ -2013,7 +2013,7 @@ cptr message_str(s16b age)
 	cptr s;
 
 	/* Forgotten messages have no text */
-	if ((age < 0) || (age >= message_num())) return ("");
+	if ((age < 0) || (age >= message_num()))return ("");
 
 	/* Get the "logical" index */
 	x = (message__next + MESSAGE_MAX - (age + 1)) % MESSAGE_MAX;
@@ -2037,7 +2037,7 @@ u16b message_type(s16b age)
 	s16b x;
 
 	/* Forgotten messages have no special color */
-	if ((age < 0) || (age >= message_num())) return (TERM_WHITE);
+	if ((age < 0) || (age >= message_num()))return (TERM_WHITE);
 
 	/* Get the "logical" index */
 	x = (message__next + MESSAGE_MAX - (age + 1)) % MESSAGE_MAX;
@@ -2117,7 +2117,7 @@ void message_add(cptr str, u16b type)
 	if (k > 32) k = 32;
 
 	/* Check previous message */
-	for(i = message__next; m; m--)
+	for (i = message__next; m; m--)
 	{
 		int j = 1;
 
@@ -2180,7 +2180,7 @@ void message_add(cptr str, u16b type)
 	i = message__next;
 
 	/* Check the last few messages for duplication */
-	for ( ; k; k--)
+	for (; k; k--)
 	{
 		u16b q;
 
@@ -2317,7 +2317,7 @@ void message_add(cptr str, u16b type)
 
 	/* Inline 'strcpy(message__buf + message__head, str)' */
 	v = message__buf + message__head;
-	for (u = str; *u; ) *v++ = *u++;
+	for (u = str; *u;) *v++ = *u++;
 	*v = '\0';
 
 	/* Advance the "head" pointer */
@@ -2339,7 +2339,7 @@ errr messages_init(void)
 	C_MAKE(message__type, MESSAGE_MAX, u16b);
 
 	/* Init the message colors to white */
-	(void)C_BSET(message__color, TERM_WHITE, MSG_MAX, byte);
+	(void) C_BSET(message__color, TERM_WHITE, MSG_MAX, byte);
 
 	/* Hack -- No messages yet */
 	message__tail = MESSAGE_BUF;
@@ -2381,10 +2381,10 @@ static void msg_flush(int x)
 		{
 			int cmd = inkey();
 
-                        if (cmd == ESCAPE)
+			if (cmd == ESCAPE)
 			{
 				/* Skip all the prompt until player's turn */
-				p_ptr->skip_more = TRUE;	
+				p_ptr->skip_more = TRUE;
 				break;
 			}
 
@@ -2523,7 +2523,8 @@ static void msg_print_aux(u16b type, cptr msg)
 		t[--split] = ' ';
 
 		/* Prepare to recurse on the rest of "buf" */
-		t += split; n -= split;
+		t += split;
+		n -= split;
 	}
 
 	/* Display the tail of the message */
@@ -2562,7 +2563,7 @@ void msg_format(cptr fmt, ...)
 	va_start(vp, fmt);
 
 	/* Format the args, save the length */
-	(void)vstrnfmt(buf, 1024, fmt, vp);
+	(void) vstrnfmt(buf, 1024, fmt, vp);
 
 	/* End the Varargs Stuff */
 	va_end(vp);
@@ -2580,7 +2581,7 @@ void msg_format(cptr fmt, ...)
 void message(u16b message_type, s16b extra, cptr message)
 {
 	/* Unused parameter */
-	(void)extra;
+	(void) extra;
 
 	sound(message_type);
 
@@ -2604,7 +2605,7 @@ void message_format(u16b message_type, s16b extra, cptr fmt, ...)
 	va_start(vp, fmt);
 
 	/* Format the args, save the length */
-	(void)vstrnfmt(buf, 1024, fmt, vp);
+	(void) vstrnfmt(buf, 1024, fmt, vp);
 
 	/* End the Varargs Stuff */
 	va_end(vp);
@@ -2764,10 +2765,10 @@ void c_roff(byte a, cptr str)
 
 
 	/* Obtain the size */
-	(void)Term_get_size(&w, &h);
+	(void) Term_get_size(&w, &h);
 
 	/* Obtain the cursor */
-	(void)Term_locate(&x, &y);
+	(void) Term_locate(&x, &y);
 
 	/* Process the string */
 	for (s = str; *s; s++)
@@ -2805,7 +2806,7 @@ void c_roff(byte a, cptr str)
 				for (i = w - 2; i >= 0; i--)
 				{
 					/* Grab existing attr/char */
-					(void)Term_what(i, y, &av[i], &cv[i]);
+					(void) Term_what(i, y, &av[i], &cv[i]);
 
 					/* Break on space */
 					if (cv[i] == ' ') break;
@@ -2902,7 +2903,7 @@ bool askfor_aux(char *buf, int len)
 	bool done = FALSE;
 
 	/* Locate the cursor */
-	(void)Term_locate(&x, &y);
+	(void) Term_locate(&x, &y);
 
 
 	/* Paranoia -- check len */
@@ -2916,12 +2917,12 @@ bool askfor_aux(char *buf, int len)
 
 
 	/* Paranoia -- Clip the default entry */
-	buf[len-1] = '\0';
+	buf[len - 1] = '\0';
 
 
 	/* Display the default answer */
 	Term_erase(x, y, len);
-	
+
 	/* Fake monochrome */
 	if (!use_color || ironman_moria)
 	{
@@ -2944,32 +2945,32 @@ bool askfor_aux(char *buf, int len)
 		/* Analyze the key */
 		switch (i)
 		{
-		case ESCAPE:
-			k = 0;
-			done = TRUE;
-			break;
+			case ESCAPE:
+				k = 0;
+				done = TRUE;
+				break;
 
-		case '\n':
-		case '\r':
-			k = strlen(buf);
-			done = TRUE;
-			break;
+			case '\n':
+			case '\r':
+				k = strlen(buf);
+				done = TRUE;
+				break;
 
-		case 0x7F:
-		case '\010':
-			if (k > 0) k--;
-			break;
+			case 0x7F:
+			case '\010':
+				if (k > 0) k--;
+				break;
 
-		default:
-			if ((k < len-1) && (isprint(i)))
-			{
-				buf[k++] = i;
-			}
-			else
-			{
-				bell("Illegal edit key!");
-			}
-			break;
+			default:
+				if ((k < len - 1) && (isprint(i)))
+				{
+					buf[k++] = i;
+				}
+				else
+				{
+					bell("Illegal edit key!");
+				}
+				break;
 		}
 
 		/* Terminate */
@@ -3039,7 +3040,7 @@ bool get_check(cptr prompt)
 	message_flush();
 
 	/* Hack -- Build a "useful" prompt */
-	(void)strnfmt(buf, 78, "%.70s[y/n] ", prompt);
+	(void) strnfmt(buf, 78, "%.70s[y/n] ", prompt);
 
 	/* Prompt for it */
 	prt(buf, 0, 0);
@@ -3259,7 +3260,7 @@ void request_command(int shopping)
 			message_flush();
 
 			/* Use auto-command */
-			cmd = (char)p_ptr->command_new;
+			cmd = (char) p_ptr->command_new;
 
 			/* Forget it */
 			p_ptr->command_new = 0;
@@ -3383,7 +3384,7 @@ void request_command(int shopping)
 		if (cmd == '\\')
 		{
 			/* Get a real command */
-			(void)get_com("Command: ", &cmd);
+			(void) get_com("Command: ", &cmd);
 
 			/* Hack -- bypass keymaps */
 			if (!inkey_next) inkey_next = "";
@@ -3399,13 +3400,13 @@ void request_command(int shopping)
 
 
 		/* Look up applicable keymap */
-		act = keymap_act[mode][(byte)(cmd)];
+		act = keymap_act[mode][(byte) (cmd)];
 
 		/* Apply keymap if not inside a keymap already */
 		if (act && !inkey_next)
 		{
 			/* Install the keymap (limited buffer size) */
-			(void)strnfmt(request_command_buffer, 256, "%s", act);
+			(void) strnfmt(request_command_buffer, 256, "%s", act);
 
 			/* Start using the buffer */
 			inkey_next = request_command_buffer;
@@ -3443,14 +3444,17 @@ void request_command(int shopping)
 		/* Convert */
 		switch (p_ptr->command_cmd)
 		{
-			/* Command "p" -> "purchase" (get) */
-			case 'p': p_ptr->command_cmd = 'g'; break;
+				/* Command "p" -> "purchase" (get) */
+			case 'p': p_ptr->command_cmd = 'g';
+				break;
 
-			/* Command "m" -> "purchase" (get) */
-			case 'm': p_ptr->command_cmd = 'g'; break;
+				/* Command "m" -> "purchase" (get) */
+			case 'm': p_ptr->command_cmd = 'g';
+				break;
 
-			/* Command "s" -> "sell" (drop) */
-			case 's': p_ptr->command_cmd = 'd'; break;
+				/* Command "s" -> "sell" (drop) */
+			case 's': p_ptr->command_cmd = 'd';
+				break;
 		}
 	}
 
@@ -3507,17 +3511,17 @@ bool is_a_vowel(int ch)
 {
 	switch (ch)
 	{
-	case 'a':
-	case 'e':
-	case 'i':
-	case 'o':
-	case 'u':
-	case 'A':
-	case 'E':
-	case 'I':
-	case 'O':
-	case 'U':
-		return (TRUE);
+		case 'a':
+		case 'e':
+		case 'i':
+		case 'o':
+		case 'u':
+		case 'A':
+		case 'E':
+		case 'I':
+		case 'O':
+		case 'U':
+			return (TRUE);
 	}
 
 	return (FALSE);
@@ -3568,8 +3572,8 @@ int color_char_to_attr(char c)
  */
 static bool insert_str(char *buf, cptr target, cptr insert)
 {
-	int   i, len;
-	int		   b_len, t_len, i_len;
+	int i, len;
+	int b_len, t_len, i_len;
 
 	/* Attempt to find the target (modify "buf") */
 	buf = strstr(buf, target);
@@ -3591,17 +3595,17 @@ static bool insert_str(char *buf, cptr target, cptr insert)
 	/* We need less space (for insert) */
 	if (len < 0)
 	{
-		for (i = t_len; i < b_len; ++i) buf[i+len] = buf[i];
+		for (i = t_len; i < b_len; ++i) buf[i + len] = buf[i];
 	}
 
 	/* We need more space (for insert) */
 	else if (len > 0)
 	{
-		for (i = b_len-1; i >= t_len; --i) buf[i+len] = buf[i];
+		for (i = b_len - 1; i >= t_len; --i) buf[i + len] = buf[i];
 	}
 
 	/* If movement occured, we need a new terminator */
-	if (len) buf[b_len+len] = '\0';
+	if (len) buf[b_len + len] = '\0';
 
 	/* Now copy the insertion string */
 	for (i = 0; i < i_len; ++i) buf[i] = insert[i];
@@ -3635,11 +3639,11 @@ int get_keymap_dir(char ch)
 	{
 		if (rogue_like_commands)
 		{
-			act = keymap_act[KEYMAP_MODE_ROGUE][(byte)ch];
+			act = keymap_act[KEYMAP_MODE_ROGUE][(byte) ch];
 		}
 		else
 		{
-			act = keymap_act[KEYMAP_MODE_ORIG][(byte)ch];
+			act = keymap_act[KEYMAP_MODE_ORIG][(byte) ch];
 		}
 
 		if (act)
@@ -3688,7 +3692,7 @@ void repeat_clear(void)
 		/* Decrease the number of characters */
 		--repeat__idx;
 	}
-	
+
 	/* Set the counter */
 	repeat__cnt = repeat__idx;
 }
@@ -3708,7 +3712,7 @@ bool repeat_pull(int *what)
 
 void repeat_check(void)
 {
-	int		what;
+	int what;
 
 	/* Ignore some commands */
 	if (p_ptr->command_cmd == ESCAPE) return;
@@ -3806,7 +3810,7 @@ void build_gamma_table(int gamma)
 	 * diff is the new term to add to the series.
 	 */
 	long value, diff;
-	
+
 	/* Paranoia */
 	if (gamma < 0) gamma = 0;
 	if (gamma > 255) gamma = 255;
@@ -3825,7 +3829,7 @@ void build_gamma_table(int gamma)
 
 		n = 1;
 		value = 256 * 256;
-		diff = ((long)gamma_helper[i]) * (gamma - 256);
+		diff = ((long) gamma_helper[i]) * (gamma - 256);
 
 		while (diff)
 		{
@@ -3853,14 +3857,14 @@ void build_gamma_table(int gamma)
 			 * the original power series.
 			 */
 			diff = (((diff / 256) * gamma_helper[i]) *
-				 (gamma - 256)) / (256 * n);
+					(gamma - 256)) / (256 * n);
 		}
 
 		/*
 		 * Store the value in the table so that the
 		 * floating point pow function isn't needed.
 		 */
-		gamma_table[i] = ((long)(value / 256) * i) / 256;
+		gamma_table[i] = ((long) (value / 256) * i) / 256;
 	}
 }
 
@@ -3872,9 +3876,9 @@ void build_gamma_table(int gamma)
 cptr get_default_font(int term_num)
 {
 	cptr font;
-	
+
 	char buf[80];
-	
+
 	/* Window specific font name */
 	sprintf(buf, "ANGBAND_X11_FONT_%d", term_num);
 
@@ -3943,13 +3947,12 @@ cptr get_default_font(int term_num)
 bool pick_graphics(int graphics, int *xsize, int *ysize, char *filename)
 {
 	int old_graphics = use_graphics;
-	
+
 	use_graphics = GRAPHICS_NONE;
 	use_transparency = FALSE;
-		
+
 	if ((graphics == GRAPHICS_ANY)
-		 || (graphics == GRAPHICS_ADAM_BOLT)
-		 || (graphics == GRAPHICS_HALF_3D))
+		|| (graphics == GRAPHICS_ADAM_BOLT) || (graphics == GRAPHICS_HALF_3D))
 	{
 		/* Try the "16x16.bmp" file */
 		path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/16x16.bmp");
@@ -3961,7 +3964,7 @@ bool pick_graphics(int graphics, int *xsize, int *ysize, char *filename)
 
 			*xsize = 16;
 			*ysize = 16;
-			
+
 			/* Use graphics */
 			if (graphics == GRAPHICS_HALF_3D)
 			{
@@ -3973,9 +3976,10 @@ bool pick_graphics(int graphics, int *xsize, int *ysize, char *filename)
 			}
 		}
 	}
-		
+
 	/* We failed, or we want 8x8 graphics */
-	if (!use_graphics && ((graphics == GRAPHICS_ANY) || (graphics == GRAPHICS_ORIGINAL)))
+	if (!use_graphics
+		&& ((graphics == GRAPHICS_ANY) || (graphics == GRAPHICS_ORIGINAL)))
 	{
 		/* Try the "8x8.bmp" file */
 		path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/8x8.bmp");
@@ -3990,10 +3994,10 @@ bool pick_graphics(int graphics, int *xsize, int *ysize, char *filename)
 			*ysize = 8;
 		}
 	}
-	
+
 	/* Did we change the graphics? */
 	if (old_graphics == use_graphics) return (FALSE);
-	
+
 	/* Success */
 	return (TRUE);
 }
