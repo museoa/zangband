@@ -1533,7 +1533,6 @@ byte res_acid_lvl(void)
 {
 	byte level = 9;
 	
-	if (p_ptr->tim.invuln) return (0);
 	if (FLAG(p_ptr, TR_IM_ACID)) return (0);
 	if (FLAG(p_ptr, TR_RES_ACID)) level /= 3;
 	if (p_ptr->tim.oppose_acid) level /= 3;
@@ -1549,7 +1548,6 @@ byte res_elec_lvl(void)
 {
 	byte level = 9;
 	
-	if (p_ptr->tim.invuln) return (0);
 	if (FLAG(p_ptr, TR_IM_ELEC)) return (0);
 	if (FLAG(p_ptr, TR_RES_ELEC)) level /= 3;
 	if (p_ptr->tim.oppose_elec) level /= 3;
@@ -1565,7 +1563,6 @@ byte res_fire_lvl(void)
 {
 	byte level = 9;
 	
-	if (p_ptr->tim.invuln) return (0);
 	if (FLAG(p_ptr, TR_IM_FIRE)) return (0);
 	if (FLAG(p_ptr, TR_RES_FIRE)) level /= 3;
 	if (p_ptr->tim.oppose_fire) level /= 3;
@@ -1581,7 +1578,6 @@ byte res_cold_lvl(void)
 {
 	byte level = 9;
 	
-	if (p_ptr->tim.invuln) return (0);
 	if (FLAG(p_ptr, TR_IM_COLD)) return (0);
 	if (FLAG(p_ptr, TR_RES_COLD)) level /= 3;
 	if (p_ptr->tim.oppose_cold) level /= 3;
@@ -1597,9 +1593,8 @@ byte res_pois_lvl(void)
 {
 	byte level = 9;
 	
-	if (p_ptr->tim.invuln) return (0);
-	if (FLAG(p_ptr, TR_RES_POIS)) return(0);
-	if (p_ptr->tim.oppose_pois) return(0);
+	if (FLAG(p_ptr, TR_RES_POIS)) level /= 3;
+	if (p_ptr->tim.oppose_pois) level /= 3;
 
 	return (level);
 }
@@ -1609,6 +1604,9 @@ byte res_pois_lvl(void)
  */
 int resist(int dam, byte (*f_func) (void))
 {
+	/* Invulnerability */
+	if (p_ptr->tim.invuln) return (0);
+
 	/* Use the function we were passed, and round up the damage */
 	return ((dam * f_func() + 8) / 9);
 }
