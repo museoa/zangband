@@ -27,3 +27,4 @@ extern u32b Rand_simple(u32b m);
 extern u32b one_in_(u32b m);
 extern bool saving_throw(s32b m);
 
+extern s16b m_bonus(int max, int level);
