@@ -1788,8 +1788,9 @@ static bool place_monster_group(int y, int x, int r_idx, bool slp, bool friendly
 		/* Check each direction, up to total */
 		for (i = 0; (i < 8) && (hack_n < total); i++)
 		{
-			int mx = hx + ddx_ddd[i];
-			int my = hy + ddy_ddd[i];
+			int mx, my;
+
+			scatter(&my, &mx, hy, hx, 4, 0);
 
 			/* Walls and Monsters block flow */
 			if (!cave_empty_bold(my, mx)) continue;
@@ -1958,59 +1959,6 @@ bool place_monster(int y, int x, bool slp, bool grp)
 }
 
 
-
-/*
- * XXX XXX XXX Player Ghosts are such a hack, they have been completely
- * removed until Angband 2.8.0, in which there will actually be a small
- * number of "unique" monsters which will serve as the "player ghosts".
- * Each will have a place holder for the "name" of a deceased player,
- * which will be extracted from a "bone" file, or replaced with a
- * "default" name if a real name is not available.  Each ghost will
- * appear exactly once and will not induce a special feeling.
- *
- * Possible methods:
- *   (s) 1 Skeleton
- *   (z) 1 Zombie
- *   (M) 1 Mummy
- *   (G) 1 Polterguiest, 1 Spirit, 1 Ghost, 1 Shadow, 1 Phantom
- *   (W) 1 Wraith
- *   (V) 1 Vampire, 1 Vampire Lord
- *   (L) 1 Lich
- *
- * Possible change: Lose 1 ghost, Add "Master Lich"
- *
- * Possible change: Lose 2 ghosts, Add "Wraith", Add "Master Lich"
- *
- * Possible change: Lose 4 ghosts, lose 1 vampire lord
- *
- * Note that ghosts should never sleep, should be very attentive, should
- * have maximal hitpoints, drop only good (or great) items, should be
- * cold blooded, evil, undead, immune to poison, sleep, confusion, fear.
- *
- * Base monsters:
- *   Skeleton
- *   Zombie
- *   Mummy
- *   Poltergeist
- *   Spirit
- *   Ghost
- *   Vampire
- *   Wraith
- *   Vampire Lord
- *   Shadow
- *   Phantom
- *   Lich
- *
- * This routine will simply extract ghost names from files, and
- * attempt to allocate a player ghost somewhere in the dungeon,
- * note that normal allocation may also attempt to place ghosts,
- * so we must work with some form of default names.
- *
- * XXX XXX XXX
- */
-
-
-
 #ifdef MONSTER_HORDES
 
 bool alloc_horde(int y, int x)
@@ -2019,6 +1967,8 @@ bool alloc_horde(int y, int x)
 	monster_race * r_ptr;
 	monster_type * m_ptr;
 	int attempts = 1000;
+	int cy = y;
+	int cx = x;
 
 	/* Prepare allocation table */
 	get_mon_num_prep(get_monster_hook(), get_monster_hook2(y, x));
@@ -2033,9 +1983,10 @@ bool alloc_horde(int y, int x)
 
 		r_ptr = &r_info[r_idx];
 
-		if (!(r_ptr->flags1 & RF1_UNIQUE)
-		 && !(r_ptr->flags1 & RF1_ESCORTS))
+		if (!(r_ptr->flags1 & RF1_UNIQUE))
+		{
 			break;
+	}
 	}
 
 	if (attempts < 1) return FALSE;
@@ -2050,14 +2001,16 @@ bool alloc_horde(int y, int x)
 
 	if (attempts < 1) return FALSE;
 
-
-	m_ptr = &m_list[hack_m_idx_ii];
-
 	summon_kin_type = r_ptr->d_char;
 
 	for (attempts = randint(10) + 5; attempts; attempts--)
 	{
-		(void)summon_specific(m_ptr->fy, m_ptr->fx, dun_level, SUMMON_KIN, TRUE, FALSE, FALSE);
+		scatter(&cy, &cx, y, x, 5, 0);
+
+		(void)summon_specific(cy, cx, dun_level + 5, SUMMON_KIN, TRUE, FALSE, FALSE);
+
+		y = cy;
+		x = cx;
 	}
 
 	return TRUE;
