@@ -2600,7 +2600,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	sound(SOUND_SHOOT);
 
 	/* Describe the object */
-	object_desc(o_name, i_ptr, FALSE, 3);
+	object_desc(o_name, i_ptr, FALSE, 0);
 
 	/* Use the proper number of shots */
 	thits = p_ptr->num_fire;
