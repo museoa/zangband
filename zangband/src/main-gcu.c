@@ -942,8 +942,6 @@ static errr term_data_init_gcu(term_data *td, int rows, int cols, int y, int x, 
 
 		/* Reset the panels */
 		map_panel_size();
-
-		verify_panel();
 	}
 
 	/* Success */

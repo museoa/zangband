@@ -1073,8 +1073,6 @@ errr init_cap(void)
 	/* Reset the panels */
 	map_panel_size();
 
-	verify_panel();
-
 	/* Success */
 	return (0);
 }

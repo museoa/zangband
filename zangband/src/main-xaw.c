@@ -729,8 +729,11 @@ static void Resize_term(AngbandWidget wnew)
 
 		/* Reset the panels */
 		map_panel_size();
-
-		verify_panel();
+		
+		if (character_dungeon)
+		{
+			verify_panel();
+		}
 	}
 
 	/* Only redraw if everything is initialised */

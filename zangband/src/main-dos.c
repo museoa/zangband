@@ -1755,8 +1755,6 @@ static bool init_windows(void)
 
 			/* Reset the panels */
 			map_panel_size();
-
-			verify_panel();
 		}
 	}
 
