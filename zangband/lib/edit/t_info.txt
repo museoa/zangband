@@ -61,10 +61,19 @@ I:FEAT | NO_LOOK | NO_ENTER | NO_MAGIC | NO_OBJECT
 D:0:0:0:0:0:0:0:0
 F:12,field_action_compact_basic
 
+# Glyph of Warding
+N:2:& Glyph of warding~
+G:;:y
+W:100:4:0
+I:FEAT | VIS | NO_OBJECT
+D:0:0:0:0:0:0:0:0
+F:12,field_action_compact_basic
+F:17,field_action_glyph_warding
+
 # Trap
-N:2:& trap~
+N:3:& trap~
 G:^:w
-W:240:1:0
+W:240:6:0
 I:FEAT
 D:0:0:0:0:0:0:0:0
 F:0,field_action_nothing | 13,field_action_nothing
