@@ -143,6 +143,16 @@ wild_building_type wild_build[MAX_CITY_BUILD] =
 	{0, FT_BUILD_HEALER,		BT_BUILD,	250, 250, 200, 20},
 };
 
+/* The stores in the starting town */
+static int wild_first_town[START_STORE_NUM] =
+{
+	BUILD_STAIRS,
+	BUILD_STORE_HOME,
+	BUILD_SUPPLIES0,
+	BUILD_WARHALL0,
+	BUILD_STORE_TEMPLE,
+	BUILD_STORE_MAGIC
+};
 
 /* Find a place for the player */
 static void place_player_start(s32b *x, s32b *y, u16b this_town)
@@ -812,13 +822,21 @@ static void init_towns(int xx, int yy)
 	/* Hack - add a supplies store to the starting town */
 	for (i = 0; i < town[best_town].numstores; i++)
 	{
-		/* We need to have stairs */
-		if (town[best_town].store[i].type == BUILD_STAIRS) continue;
-
-		/* Hack - make a supplies store */
-		store_init(best_town, i, BUILD_SUPPLIES0);
-
-		break;
+		if (i == 0)
+		{
+			/* Hack - make stairs */
+			store_init(best_town, i, wild_first_town[i]);
+		}
+		else if (i < START_STORE_NUM)
+		{
+			/* Hack - use the pre-defined stores */
+			store_init(best_town, i, wild_first_town[i]);
+		}
+		else
+		{
+			/* Blank spot */
+			general_init(best_town, i, BUILD_NONE);
+		}
 	}
 
 	/* Build starting city / town */
