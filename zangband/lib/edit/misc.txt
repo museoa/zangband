@@ -14,13 +14,13 @@ M:WX:10
 M:WY:10
 
 # Maximum number of monsters in r_info.txt
-M:R:874
+M:R:876
 
 # Maximum number of items in k_info.txt
 M:K:581
 
 # Maximum number of vaults in v_info.txt
-M:V:115
+M:V:116
 
 # Maximum number of terrain features in f_info.txt
 M:F:160

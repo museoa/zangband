@@ -13359,3 +13359,41 @@ F:EMPTY_MIND | BASH_DOOR | IM_COLD | IM_ELEC | IM_POIS
 F:NO_FEAR | NO_CONF | NO_SLEEP | NONLIVING | WILD_WASTE
 D:It is a streamlined metal demon, moving under its own power to crush you.
 D:  It rumbles hungrily.
+
+N:873:Shallow puddle
+G:#:B
+I:115:9d6:10:17:0
+W:11:6:0:70
+B:TOUCH:ACID:2d3
+B:TOUCH:ACID:2d3
+F:NEVER_MOVE | COLD_BLOOD | 
+F:CAN_SWIM | IM_ELEC | IM_ACID | IM_POIS |
+F:NO_FEAR | NO_CONF | NO_SLEEP | NONLIVING | 
+F:EMPTY_MIND
+D:It is a placid watery pool.
+
+N:874:Deep puddle
+G:#:b
+I:125:17d6:15:40:0
+W:23:6:0:70
+B:TOUCH:ACID:4d3
+B:TOUCH:ACID:3d3
+F:NEVER_MOVE | COLD_BLOOD | 
+F:CAN_SWIM | IM_ELEC | IM_ACID | IM_POIS |
+F:NO_FEAR | NO_CONF | NO_SLEEP | NONLIVING | 
+F:EMPTY_MIND
+D:It is a large, rippling watery pool.
+
+N:875:Noxious fume
+G:#:y
+I:90:3d3:20:37:30
+W:20:4:0:30
+B:TOUCH:POISON:3d3
+F:RAND_25 | RAND_50 | INVISIBLE | MULTIPLY | 
+F:CAN_FLY | CAN_SWIM | PASS_WALL | KILL_BODY | 
+F:IM_FIRE | IM_COLD | IM_ACID | IM_ELEC | IM_POIS | 
+F:NONLIVING | EMPTY_MIND | COLD_BLOOD | 
+F:WILD_VOLCANO | WILD_SWAMP | 
+F:NO_FEAR | NO_CONF | NO_SLEEP | NO_STUN | 
+D:It is a swirling cloud of yellowish gas.
+
