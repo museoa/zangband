@@ -481,34 +481,44 @@ static void borg_notice_aux1(void)
         switch (item->sval)
         {
             case SV_SLING:
-            my_ammo_tval = TV_SHOT;
-            my_ammo_sides = 3;
-            my_ammo_power = 2;
-            break;
+			{
+	            my_ammo_tval = TV_SHOT;
+    	        my_ammo_sides = 3;
+        	    my_ammo_power = 2;
+            	break;
+			}
 
             case SV_SHORT_BOW:
-            my_ammo_tval = TV_ARROW;
-            my_ammo_sides = 4;
-            my_ammo_power = 2;
-            break;
+			{
+           		my_ammo_tval = TV_ARROW;
+            	my_ammo_sides = 4;
+            	my_ammo_power = 2;
+            	break;
+			}
 
             case SV_LONG_BOW:
-            my_ammo_tval = TV_ARROW;
-            my_ammo_sides = 4;
-            my_ammo_power = 3;
-            break;
+			{
+            	my_ammo_tval = TV_ARROW;
+            	my_ammo_sides = 4;
+            	my_ammo_power = 3;
+            	break;
+			}
 
             case SV_LIGHT_XBOW:
-            my_ammo_tval = TV_BOLT;
-            my_ammo_sides = 5;
-            my_ammo_power = 3;
-            break;
+            {
+				my_ammo_tval = TV_BOLT;
+            	my_ammo_sides = 5;
+            	my_ammo_power = 3;
+            	break;
+			}
 
             case SV_HEAVY_XBOW:
-            my_ammo_tval = TV_BOLT;
-            my_ammo_sides = 5;
-            my_ammo_power = 4;
-            break;
+			{
+            	my_ammo_tval = TV_BOLT;
+            	my_ammo_sides = 5;
+            	my_ammo_power = 4;
+            	break;
+			}
         }
 
         /* Add in extra power */
@@ -578,43 +588,88 @@ static void borg_notice_aux1(void)
 		/* Analyze the class */
 		switch (borg_class)
 		{
-			/* Warrior */
 			case CLASS_WARRIOR:
-				num = 5; wgt = 30; mul = 5; break;
+			{
+				/* Warrior */
+				num = 5;
+				wgt = 30;
+				mul = 5;
+				break;
+			}
 
-			/* Mage */
 			case CLASS_MAGE:
 			case CLASS_HIGH_MAGE:
-				num = 2; wgt = 40; mul = 2; break;
-
-			/* Priest, Mindcrafter */
+			{
+				/* Mage */
+				num = 2;
+				wgt = 40;
+				mul = 2;
+				break;
+			}
+			
 			case CLASS_PRIEST:
 			case CLASS_MINDCRAFTER:
-				num = 4; wgt = 35; mul = 3; break;
-
-			/* Rogue */
+			{
+				/* Priest, Mindcrafter */
+				num = 4;
+				wgt = 35;
+				mul = 3;
+				break;
+			}
+			
 			case CLASS_ROGUE:
-				num = 4; wgt = 30; mul = 3; break;
+			{
+				/* Rogue */
+				num = 4;
+				wgt = 30;
+				mul = 3;
+				break;
+			}
 
-			/* Ranger */
 			case CLASS_RANGER:
-				num = 4; wgt = 35; mul = 4; break;
+			{
+				/* Ranger */
+				num = 4;
+				wgt = 35;
+				mul = 4;
+				break;
+			}
 
-			/* Paladin */
 			case CLASS_PALADIN:
-				num = 4; wgt = 30; mul = 4; break;
+			{
+				/* Paladin */
+				num = 4;
+				wgt = 30;
+				mul = 4;
+				break;
+			}
 
-			/* Warrior-Mage */
 			case CLASS_WARRIOR_MAGE:
-				num = 4; wgt = 35; mul = 3; break;
+			{
+				/* Warrior-Mage */
+				num = 4;
+				wgt = 35;
+				mul = 3;
+				break;
+			}
 
-			/* Chaos Warrior */
 			case CLASS_CHAOS_WARRIOR:
-				num = 4; wgt = 30; mul = 4; break;
+			{
+				/* Chaos Warrior */
+				num = 4;
+				wgt = 30;
+				mul = 4;
+				break;
+			}
 
-			/* Monk */
 			case CLASS_MONK:
-				num = ((p_ptr->lev < 40) ? 2 : 3); wgt = 40; mul = 4; break;
+			{
+				/* Monk */
+				num = ((p_ptr->lev < 40) ? 2 : 3);
+				wgt = 40;
+				mul = 4;
+				break;
+			}
 		}
 
         /* Enforce a minimum "weight" (tenth pounds) */
@@ -1033,79 +1088,107 @@ static void borg_notice_aux2(void)
         /* Analyze the item */
         switch (item->tval)
         {
-            /* Books */
 			case TV_LIFE_BOOK:
+			{
 	            /* Count good books*/
 	            if (borg_skill[BI_REALM1] ==  REALM_LIFE ||
 	                borg_skill[BI_REALM2] == REALM_LIFE)
             		amt_book[REALM_LIFE][item->sval] += item->iqty;
 	            break;
+			}
 			case TV_SORCERY_BOOK:
+			{
 	            /* Count good books*/
 	            if (borg_skill[BI_REALM1] ==  REALM_SORCERY ||
 	                borg_skill[BI_REALM2] == REALM_SORCERY)
             		amt_book[REALM_SORCERY][item->sval] += item->iqty;
 	            break;
+			}
 			case TV_NATURE_BOOK:
+			{
 	            /* Count good books*/
 	            if (borg_skill[BI_REALM1] ==  REALM_NATURE ||
 	                borg_skill[BI_REALM2] == REALM_NATURE)
             		amt_book[REALM_NATURE][item->sval] += item->iqty;
 	            break;
+			}
 			case TV_CHAOS_BOOK:
+			{
 	            /* Count good books*/
 	            if (borg_skill[BI_REALM1] ==  REALM_CHAOS ||
 	                borg_skill[BI_REALM2] == REALM_CHAOS)
             		amt_book[REALM_CHAOS][item->sval] += item->iqty;
 	            break;
+			}
 			case TV_DEATH_BOOK:
+			{
 	            /* Count good books*/
 	            if (borg_skill[BI_REALM1] ==  REALM_DEATH ||
                 borg_skill[BI_REALM2] == REALM_DEATH)
             		amt_book[REALM_DEATH][item->sval] += item->iqty;
 	            break;
+			}
 			case TV_TRUMP_BOOK:
+			{
 	            /* Count good books*/
 	            if (borg_skill[BI_REALM1] ==  REALM_TRUMP ||
 	                borg_skill[BI_REALM2] == REALM_TRUMP)
             		amt_book[REALM_TRUMP][item->sval] += item->iqty;
 	            break;
+			}
 			case TV_ARCANE_BOOK:
+			{
 	            /* Count good books*/
 	            if (borg_skill[BI_REALM1] ==  REALM_ARCANE ||
 	                borg_skill[BI_REALM2] == REALM_ARCANE)
             		amt_book[REALM_ARCANE][item->sval] += item->iqty;
 	            break;
+			}
 
 
-            /* Food */
             case TV_FOOD:
-            /* Analyze */
-            switch (item->sval)
-            {
-				case SV_FOOD_WAYBREAD:
-                    amt_food_hical += item->iqty;
-                    break;
+			{
+            	/* Analyze */
+           		switch (item->sval)
+            	{
+					case SV_FOOD_WAYBREAD:
+					{
+                    	amt_food_hical += item->iqty;
+                    	break;
+					}
                 case SV_FOOD_RATION:
+				{
                     amt_food_hical += item->iqty;
                     break;
+				}
                 case SV_FOOD_JERKY:
+				{
                     amt_food_lowcal += item->iqty;
                     break;
+				}
                 case SV_FOOD_BISCUIT:
+				{
                     amt_food_lowcal += item->iqty;
                     break;
+				}
                 case SV_FOOD_SLIME_MOLD:
+				{
                     amt_food_lowcal += item->iqty;
                     break;
+				}
 
                 case SV_FOOD_RESTORE_STR:
+				{
                     amt_fix_stat[A_STR] += item->iqty;
                     break;
+				}
                 case SV_FOOD_RESTORE_CON:
+				{
                     amt_fix_stat[A_CON] += item->iqty;
                     break;
+				}
                 case SV_FOOD_RESTORING:
+				{
                     amt_fix_stat[A_STR] += item->iqty;
                     amt_fix_stat[A_INT] += item->iqty;
                     amt_fix_stat[A_WIS] += item->iqty;
@@ -1114,189 +1197,248 @@ static void borg_notice_aux2(void)
                     amt_fix_stat[A_CHR] += item->iqty;
                     amt_fix_stat[6]     += item->iqty;
                     break;
+				}
 
                 case SV_FOOD_CURE_CONFUSION:
+				{
                 amt_cure_confusion += item->iqty;
                 break;
+				}
 
                 case SV_FOOD_CURE_BLINDNESS:
+				{
                 amt_cure_blind += item->iqty;
                 break;
+				}
 
                 case SV_FOOD_CURE_POISON:
-                borg_skill[BI_ACUREPOIS] += item->iqty;
-                break;
+				{
+	                borg_skill[BI_ACUREPOIS] += item->iqty;
+                	break;
+				}
 
             }
             break;
-
+			}
 
             /* Potions */
             case TV_POTION:
+			{
             /* Analyze */
             switch (item->sval)
             {
                 case SV_POTION_HEALING:
+				{
                 borg_skill[BI_AHEAL] += item->iqty;
                 break;
+				}
                 case SV_POTION_STAR_HEALING:
                 case SV_POTION_LIFE:
+				{
                 borg_skill[BI_AEZHEAL] += item->iqty;
                 break;
+				}
                 case SV_POTION_CURE_CRITICAL:
+				{
                 borg_skill[BI_ACCW] += item->iqty;
                 break;
+				}
                 case SV_POTION_CURE_SERIOUS:
+				{
                 borg_skill[BI_ACSW] += item->iqty;
                 break;
+				}
                 case SV_POTION_CURE_LIGHT:
+				{
                 if (borg_skill[BI_ISCUT]) borg_skill[BI_ACSW] += item->iqty;
                 break;
+				}
                 case SV_POTION_CURE_POISON:
+				{
                 borg_skill[BI_ACUREPOIS] += item->iqty;
                 break;
+				}
                 case SV_POTION_SLOW_POISON:
+				{
                 amt_slow_poison += item->iqty;
                 break;
-
+				}
                 case SV_POTION_RESIST_HEAT:
+				{
                 borg_skill[BI_ARESHEAT] += item->iqty;
                 break;
+				}
                 case SV_POTION_RESIST_COLD:
+				{
                 borg_skill[BI_ARESCOLD] += item->iqty;
                 break;
-
+				}
                 case SV_POTION_INC_STR:
+				{
                 amt_add_stat[A_STR] += item->iqty;
                 break;
+				}
                 case SV_POTION_INC_INT:
+				{
                 amt_add_stat[A_INT] += item->iqty;
                 break;
+				}
                 case SV_POTION_INC_WIS:
+				{
                 amt_add_stat[A_WIS] += item->iqty;
                 break;
+				}
                 case SV_POTION_INC_DEX:
+				{
                 amt_add_stat[A_DEX] += item->iqty;
                 break;
+				}
                 case SV_POTION_INC_CON:
+				{
                 amt_add_stat[A_CON] += item->iqty;
                 break;
-
+				}
                 case SV_POTION_INC_CHR:
+				{
                 amt_add_stat[A_CHR] += item->iqty;
                 break;
-
+				}
                 case SV_POTION_RES_STR:
+				{
                 amt_fix_stat[A_STR] += item->iqty;
                 break;
-
+				}
                 case SV_POTION_RES_INT:
+				{
                 amt_fix_stat[A_INT] += item->iqty;
                 break;
-
+				}
                 case SV_POTION_RES_WIS:
+				{
                 amt_fix_stat[A_WIS] += item->iqty;
                 break;
-
+				}
                 case SV_POTION_RES_DEX:
+				{
                 amt_fix_stat[A_DEX] += item->iqty;
                 break;
-
+				}
                 case SV_POTION_RES_CON:
+				{
                 amt_fix_stat[A_CON] += item->iqty;
                 break;
-
+				}
                 case SV_POTION_RES_CHR:
+				{
                 amt_fix_stat[A_CHR] += item->iqty;
                 break;
-
+				}
                 case SV_POTION_RESTORE_EXP:
+				{
                 amt_fix_exp += item->iqty;
                 break;
-
+				}
                 case SV_POTION_SPEED:
+				{
                 borg_skill[BI_ASPEED] += item->iqty;
                 break;
+				}
             }
-
             break;
-
+			}
 
 
             /* Scrolls */
             case TV_SCROLL:
+			{
 
             /* Analyze the scroll */
             switch (item->sval)
             {
                 case SV_SCROLL_IDENTIFY:
+				{
                 borg_skill[BI_AID] += item->iqty;
                 break;
-
+				}
                 case SV_SCROLL_RECHARGING:
+				{
                 borg_skill[BI_ARECHARGE] += item->iqty;
                 break;
-
+				}
                 case SV_SCROLL_PHASE_DOOR:
+				{
                 amt_phase += item->iqty;
                 break;
-
+				}
                 case SV_SCROLL_TELEPORT:
+				{
                 borg_skill[BI_AESCAPE] += item->iqty;
                 borg_skill[BI_ATELEPORT] += item->iqty;
                 break;
-
+				}
                 case SV_SCROLL_WORD_OF_RECALL:
+				{
                 borg_skill[BI_RECALL] += item->iqty;
                 break;
-
+				}
                 case SV_SCROLL_ENCHANT_ARMOR:
+				{
                 amt_enchant_to_a += item->iqty;
                 break;
-
+				}
                 case SV_SCROLL_ENCHANT_WEAPON_TO_HIT:
+				{
                 amt_enchant_to_h += item->iqty;
                 break;
-
+				}
                 case SV_SCROLL_ENCHANT_WEAPON_TO_DAM:
+				{
                 amt_enchant_to_d += item->iqty;
                 break;
-
+				}
                 case SV_SCROLL_STAR_ENCHANT_WEAPON:
+				{
                 amt_enchant_weapon += item->iqty;
                 break;
-
+				}
                 case SV_SCROLL_PROTECTION_FROM_EVIL:
+				{
                 borg_skill[BI_APFE] += item->iqty;
                 break;
-
+				}
                 case SV_SCROLL_STAR_ENCHANT_ARMOR:
+				{
                 amt_enchant_armor += item->iqty;
                 break;
-
+				}
                 case SV_SCROLL_RUNE_OF_PROTECTION:
+				{
                 borg_skill[BI_AGLYPH] += item->iqty;
                 break;
-
+				}
                 case SV_SCROLL_TELEPORT_LEVEL:
+				{
                 borg_skill[BI_ATELEPORTLVL] += item->iqty;
                 break;
-
+				}
                 case SV_SCROLL_SATISFY_HUNGER:
+				{
                 borg_skill[BI_FOOD] += item->iqty;
                 break;
+				}
             }
             break;
-
+			}
 
             /* Rods */
             case TV_ROD:
 
-
+			{
             /* Analyze */
             switch (item->sval)
             {
                 case SV_ROD_IDENTIFY:
+				{
                 if (borg_skill[BI_DEV] - item->level > 7)
                 {
                     borg_skill[BI_AID] += item->iqty * 100;
@@ -1306,8 +1448,10 @@ static void borg_notice_aux2(void)
                     borg_skill[BI_AID] += item->iqty;
                 }
                 break;
+				}
 
                 case SV_ROD_RECALL:
+				{
                 /* Don't count on it if I suck at activations */
                 if (borg_skill[BI_DEV] - item->level > 7)
                 {
@@ -1318,22 +1462,30 @@ static void borg_notice_aux2(void)
                     borg_skill[BI_RECALL] += item->iqty;
                 }
                 break;
+				}
 
                 case SV_ROD_DETECT_TRAP:
+				{
                 borg_skill[BI_ADETTRAP] += item->iqty * 100;
                 break;
+				}
 
                 case SV_ROD_DETECT_DOOR:
+				{
                 borg_skill[BI_ADETDOOR] += item->iqty * 100;
                 break;
+				}
 
                 case SV_ROD_DETECTION:
+				{
                 borg_skill[BI_ADETTRAP] += item->iqty * 100;
                 borg_skill[BI_ADETDOOR] += item->iqty * 100;
                 borg_skill[BI_ADETEVIL] += item->iqty * 100;
                 break;
+				}
 
                 case SV_ROD_SPEED:
+				{
                 /* Don't count on it if I suck at activations */
                 if (borg_skill[BI_DEV] - item->level > 7)
                 {
@@ -1344,12 +1496,16 @@ static void borg_notice_aux2(void)
                     borg_skill[BI_ASPEED] += item->iqty;
                 }
                 break;
+				}
 
                 case SV_ROD_MAPPING:
+				{
                 borg_skill[BI_AMAGICMAP] += item->iqty * 100;
                 break;
+				}
 
                 case SV_ROD_HEALING:
+				{
                 /* only +2 per rod because of long charge time. */
                 /* Don't count on it if I suck at activations */
                 if (borg_skill[BI_DEV] - item->level > 7)
@@ -1361,15 +1517,16 @@ static void borg_notice_aux2(void)
                     borg_skill[BI_AHEAL] += item->iqty;
                 }
                 break;
+				}
             }
-
             break;
-
+			}
 
             /* Staffs */
             case TV_STAFF:
+			{
             /* Staves should not be carried to Morgoth, he drains
-             * them to heal himself- not goo at all
+             * them to heal himself- not good at all
              */
             if (borg_skill[BI_MAXDEPTH] >= 99 && !borg_skill[BI_KING])
             {
@@ -1380,45 +1537,56 @@ static void borg_notice_aux2(void)
             switch (item->sval)
             {
                 case SV_STAFF_IDENTIFY:
+				{
                 borg_skill[BI_AID] += item->iqty * item->pval;
                 break;
-
+				}
                 case SV_STAFF_TELEPORTATION:
+				{
                 borg_skill[BI_ATELEPORT] += item->iqty * item->pval;
                 break;
-
+				}
                 case SV_STAFF_SPEED:
+				{
                 borg_skill[BI_ASPEED] += item->iqty * item->pval;
                 break;
-
+				}
                 case SV_STAFF_HEALING:
+				{
                 borg_skill[BI_AHEAL] += item->iqty * item->pval;
                 break;
-
+				}
                 case SV_STAFF_THE_MAGI:
+				{
                 borg_skill[BI_ASTFMAGI] += item->iqty * item->pval;
                 break;
-
+				}
                 case SV_STAFF_DESTRUCTION:
+				{
                 borg_skill[BI_ASTFDEST] +=item->iqty * item->pval;
                 break;
-
+				}
                 case SV_STAFF_POWER:
+				{
                 amt_cool_staff +=item->iqty;
                 break;
-
+				}
                 case SV_STAFF_HOLINESS:
+				{
                 amt_cool_staff +=item->iqty;
                 borg_skill[BI_AHEAL] +=item->iqty * item->pval;
                 break;
+				}
             }
 
             break;
+			}
 
-
-            /* Flasks */
+            
             case TV_FLASK:
-
+			{
+			/* Flasks */
+			
             /* Use as fuel if we equip a lantern */
             if (borg_skill[BI_CUR_LITE] == 2) borg_skill[BI_AFUEL] += item->iqty;
 
@@ -1426,12 +1594,13 @@ static void borg_notice_aux2(void)
             if (borg_skill[BI_CLEVEL] < 15 ) borg_skill[BI_AMISSILES] += item->iqty;
 
             break;
+			}
 
-
-            /* Torches */
             case TV_LITE:
 
-
+			{
+			/* Torches */
+			
             /* Use as fuel if it is a torch and we carry a torch */
             if ((item->sval == SV_LITE_TORCH) &&
                (borg_skill[BI_CUR_LITE] <= 1) )
@@ -1439,19 +1608,25 @@ static void borg_notice_aux2(void)
                 borg_skill[BI_AFUEL] += item->iqty;
             }
             break;
+			}
 
 
-            /* Weapons */
             case TV_HAFTED:
             case TV_POLEARM:
             case TV_SWORD:
+			{
+				/* Weapons */
+				
+			
                 /* These items are checked a bit later in a sub routine
                  * to notice the flags.  It is done outside this switch.
                  */
                  break;
+			}
 
-            /* Shovels and such */
             case TV_DIGGING:
+			{
+				/* Shovels and such */
 
                 /* Hack -- ignore worthless ones (including cursed) */
                 if (item->value <= 0) break;
@@ -1462,12 +1637,14 @@ static void borg_notice_aux2(void)
 
                 amt_digger += item->iqty;
                break;
-
-            /* Missiles */
+			}
 
             case TV_SHOT:
             case TV_ARROW:
             case TV_BOLT:
+			{
+			/* Missiles */
+			
             /* Hack -- ignore invalid missiles */
             if (item->tval != my_ammo_tval) break;
 
@@ -1518,6 +1695,7 @@ static void borg_notice_aux2(void)
             }
 
             break;
+			}
         }
     }
 
@@ -1931,14 +2109,13 @@ static void borg_notice_weapon_swap(void)
         /* Analyze the item */
         switch (item->tval)
         {
-
-            /* weapons */
             case TV_HAFTED:
             case TV_POLEARM:
             case TV_SWORD:
             case TV_DIGGING:
             {
-
+			/* Weapons */
+			
             /* Digging */
             if (item->flags1 & TR1_TUNNEL)
             {
@@ -2427,7 +2604,6 @@ static void borg_notice_armour_swap(void)
         /* Analyze the item */
         switch (item->tval)
         {
-            /* ARMOUR TYPE STUFF */
             case TV_RING:
             case TV_AMULET:
             case TV_BOOTS:
@@ -2439,6 +2615,8 @@ static void borg_notice_armour_swap(void)
             case TV_HARD_ARMOR:
             case TV_DRAG_ARMOR:
             {
+			/* ARMOUR TYPE STUFF */
+			
             /* various slays */
             /* as of 280, armours dont have slays but random artifacts might.
              */
@@ -3027,45 +3205,6 @@ static void borg_notice_home_dupe(borg_item *item, bool check_sval, int i)
     int dupe_count, x;
     borg_item *item2;
 
-#if 0
-
-    /* check for a duplicate.  */
-    /* be carefull about extra powers (elvenkind/magi) */
-    switch (item->name2)
-    {
-        /* Weapon (Blessed) */
-        case EGO_BLESS_BLADE:
-        /* Armor of Permanence */
-        case EGO_PERMANENCE:
-        /* Armor of Elvenkind */
-        case EGO_ELVENKIND:
-        /* Crown of the Magi */
-        case EGO_MAGI:
-        /* Cloak of Aman */
-        case EGO_AMAN:
-        /* Weapon (Holy Avenger) */
-        case EGO_HA:
-        /* Weapon (Defender) */
-        case EGO_DF:
-        /* Trump weapons */
-		case EGO_TRUMP:
-		/* Chaotic weapon */
-		case EGO_CHAOTIC:
-		/* Resistance items */
-		case EGO_RESISTANCE:
-		/* of Might */
-		case EGO_MIGHT:
-		/* of Lordliness */
-		case EGO_LORDLINESS:
-             return;
-             break;
-        /* anything else */
-        default:
-            break;
-       }
-
-#endif /* 0 */
-
     /* if this is a stack of items then all after the first are a */
     /* duplicate */
     dupe_count = item->iqty-1;
@@ -3247,44 +3386,55 @@ static void borg_notice_home_aux2(borg_item *in_item, bool no_items)
         {
             case TV_SOFT_ARMOR:
             case TV_HARD_ARMOR:
+			{
                 num_armor += item->iqty;
 
                 /* see if this item is duplicated */
                 borg_notice_home_dupe( item, FALSE, i );
                 break;
+			}
 
             case TV_DRAG_ARMOR:
+			{
                 num_armor += item->iqty;
 
                 /* see if this item is duplicated */
                 borg_notice_home_dupe( item, TRUE, i );
                 break;
+			}
 
             case TV_CLOAK:
+			{
                 num_cloaks += item->iqty;
 
                 /* see if this item is duplicated */
                 borg_notice_home_dupe( item, FALSE, i );
 
                 break;
-
+			}
+			
             case TV_SHIELD:
+			{
                 num_shields += item->iqty;
 
                 /* see if this item is duplicated */
                 borg_notice_home_dupe( item, FALSE, i );
                 break;
+			}
 
             case TV_HELM:
             case TV_CROWN:
+			{
                 num_hats += item->iqty;
 
                 /* see if this item is duplicated */
                 borg_notice_home_dupe( item, FALSE, i );
 
                 break;
+			}
 
             case TV_GLOVES:
+			{
                 num_gloves += item->iqty;
 
                 /* most gloves hurt magic for spell-casters */
@@ -3306,20 +3456,25 @@ static void borg_notice_home_aux2(borg_item *in_item, bool no_items)
                 borg_notice_home_dupe( item, FALSE, i );
 
                 break;
+			}
 
             case TV_LITE:
+			{
                 if (item->xtra_name)
                 {
                     num_lite += item->iqty;
                 }
                 break;
+			}
 
             case TV_BOOTS:
+			{
                 num_boots += item->iqty;
 
                 /* see if this item is duplicated */
                 borg_notice_home_dupe( item, FALSE, i );
                 break;
+			}
 
             case TV_SWORD:
             case TV_POLEARM:
@@ -3354,43 +3509,88 @@ static void borg_notice_home_aux2(borg_item *in_item, bool no_items)
                     /* Analyze the class */
                     switch (borg_class)
                     {
-						/* Warrior */
 						case CLASS_WARRIOR:
-							num = 5; wgt = 30; mul = 5; break;
-
-						/* Mage */
+						{
+							/* Warrior */
+							num = 5;
+							wgt = 30;
+							mul = 5;
+							break;
+						}
+						
 						case CLASS_MAGE:
 						case CLASS_HIGH_MAGE:
-							num = 2; wgt = 40; mul = 2; break;
-
-						/* Priest, Mindcrafter */
+						{
+							/* Mage */
+							num = 2;
+							wgt = 40;
+							mul = 2;
+							break;
+						}
+						
 						case CLASS_PRIEST:
 						case CLASS_MINDCRAFTER:
-							num = 4; wgt = 35; mul = 3; break;
-
-						/* Rogue */
+						{
+							/* Priest, Mindcrafter */
+							num = 4;
+							wgt = 35;
+							mul = 3;
+							break;
+						}
+						
 						case CLASS_ROGUE:
-							num = 4; wgt = 30; mul = 3; break;
+						{
+							/* Rogue */
+							num = 4;
+							wgt = 30;
+							mul = 3;
+							break;
+						}
 
-						/* Ranger */
 						case CLASS_RANGER:
-							num = 4; wgt = 35; mul = 4; break;
+						{
+							/* Ranger */
+							num = 4;
+							wgt = 35;
+							mul = 4;
+							break;
+						}
 
-						/* Paladin */
 						case CLASS_PALADIN:
-							num = 4; wgt = 30; mul = 4; break;
-
-						/* Warrior-Mage */
+						{
+							/* Paladin */
+							num = 4;
+							wgt = 30;
+							mul = 4;
+							break;
+						}
+						
 						case CLASS_WARRIOR_MAGE:
-							num = 4; wgt = 35; mul = 3; break;
+						{
+							/* Warrior-Mage */
+							num = 4;
+							wgt = 35;
+							mul = 3;
+							break;
+						}
 
-						/* Chaos Warrior */
 						case CLASS_CHAOS_WARRIOR:
-							num = 4; wgt = 30; mul = 4; break;
+						{
+							/* Chaos Warrior */
+							num = 4;
+							wgt = 30;
+							mul = 4;
+							break;
+						}
 
-						/* Monk */
 						case CLASS_MONK:
-							num = ((p_ptr->lev < 40) ? 2 : 3); wgt = 40; mul = 4; break;
+						{
+							/* Monk */
+							num = ((p_ptr->lev < 40) ? 2 : 3);
+							wgt = 40;
+							mul = 4;
+							break;
+						}
 					}
 
                     /* Enforce a minimum "weight" */
@@ -3439,117 +3639,154 @@ static void borg_notice_home_aux2(borg_item *in_item, bool no_items)
             }
 
             case TV_BOW:
+			{
                 num_bow += item->iqty;
 
                 /* see if this item is a duplicate */
                 borg_notice_home_dupe( item, FALSE, i );
                 break;
+			}
 
             case TV_RING:
+			{
                 num_rings += item->iqty;
 
                 /* see if this item is a duplicate */
                 borg_notice_home_dupe( item, TRUE, i );
 
                 break;
+			}
 
             case TV_AMULET:
+			{
                 num_neck += item->iqty;
 
                 /* see if this item is a duplicate */
                 borg_notice_home_dupe( item, TRUE, i );
                 break;
+			}
 
-
-            /* Books */
 			case TV_LIFE_BOOK:
+			{
 	            /* Count good books*/
 	            if (borg_skill[BI_REALM1] ==  REALM_LIFE ||
                 borg_skill[BI_REALM2] == REALM_LIFE)
             		num_book[REALM_LIFE][item->sval] += item->iqty;
 	            break;
+			}
+			
 			case TV_SORCERY_BOOK:
+			{
 	            /* Count good books*/
 	            if (borg_skill[BI_REALM1] ==  REALM_SORCERY ||
                 borg_skill[BI_REALM2] == REALM_SORCERY)
             		num_book[REALM_SORCERY][item->sval] += item->iqty;
 	            break;
+			}
+			
 			case TV_NATURE_BOOK:
+			{
 	            /* Count good books*/
 	            if (borg_skill[BI_REALM1] ==  REALM_NATURE ||
                 borg_skill[BI_REALM2] == REALM_NATURE)
             		num_book[REALM_NATURE][item->sval] += item->iqty;
 	            break;
+			}
 			case TV_CHAOS_BOOK:
+			{
 	            /* Count good books*/
 	            if (borg_skill[BI_REALM1] ==  REALM_CHAOS ||
 	                borg_skill[BI_REALM2] == REALM_CHAOS)
             		num_book[REALM_CHAOS][item->sval] += item->iqty;
 	            break;
+			}
 			case TV_DEATH_BOOK:
+			{
 	            /* Count good books*/
 	            if (borg_skill[BI_REALM1] ==  REALM_DEATH ||
                 borg_skill[BI_REALM2] == REALM_DEATH)
             		num_book[REALM_DEATH][item->sval] += item->iqty;
 	            break;
+			}
 			case TV_TRUMP_BOOK:
+			{
 	            /* Count good books*/
 	            if (borg_skill[BI_REALM1] ==  REALM_TRUMP ||
 	                borg_skill[BI_REALM2] == REALM_TRUMP)
             		num_book[REALM_TRUMP][item->sval] += item->iqty;
 	            break;
+			}
 			case TV_ARCANE_BOOK:
+			{
 	            /* Count good books*/
 	            if (borg_skill[BI_REALM1] ==  REALM_ARCANE ||
 	                borg_skill[BI_REALM2] == REALM_ARCANE)
             		num_book[REALM_ARCANE][item->sval] += item->iqty;
 	            break;
+			}
 
 
-            /* Food */
+            
             case TV_FOOD:
+			{
+			/* Food */
 
             /* Analyze */
             switch (item->sval)
             {
                 case SV_FOOD_WAYBREAD:
+				{
 				if (borg_race >= RACE_SPRITE && borg_race <= RACE_IMP)
 				{
 					num_food += item->iqty;
 				}
                 break;
+				}
 
                 case SV_FOOD_RATION:
+				{
 				if (borg_race >= RACE_SPRITE && borg_race <= RACE_IMP)
 				{
 					num_food += item->iqty;
 				}
                 break;
+				}
 
                 case SV_FOOD_SLIME_MOLD:
+				{
                 num_mold += item->iqty;
                 break;
+				}
 
 #if 0
-                /* dont clutter the house with these low calorie foods */
+                
                 case SV_FOOD_JERKY:
+				{
                     num_food += item->iqty;
                 break;
-                /* dont clutter the house with these low calorie foods */
+				}
+
                 case SV_FOOD_BISCUIT:
+				{
                     num_food += item->iqty;
                 break;
+				}
 #endif
 
                 case SV_FOOD_RESTORE_STR:
+				{
                 num_fix_stat[A_STR] += item->iqty;
                 break;
+				}
 
                 case SV_FOOD_RESTORE_CON:
+				{
                 num_fix_stat[A_CON] += item->iqty;
                 break;
+				}
 
                 case SV_FOOD_RESTORING:
+				{
                 num_fix_stat[A_STR] += item->iqty;
                 num_fix_stat[A_INT] += item->iqty;
                 num_fix_stat[A_WIS] += item->iqty;
@@ -3558,182 +3795,254 @@ static void borg_notice_home_aux2(borg_item *in_item, bool no_items)
                 num_fix_stat[A_CHR] += item->iqty;
                 num_fix_stat[6]     += item->iqty;
                 break;
+				}
             }
 
             break;
+			}
 
-
-            /* Potions */
+            
             case TV_POTION:
+			{
+			/* Potions */
 
             /* Analyze */
             switch (item->sval)
             {
                 case SV_POTION_CURE_CRITICAL:
+				{
                 num_cure_critical += item->iqty;
                 break;
+				}
 
                 case SV_POTION_CURE_SERIOUS:
+				{
                 num_cure_serious += item->iqty;
                 break;
+				}
 
                 case SV_POTION_RESIST_HEAT:
+				{
                 num_pot_rheat += item->iqty;
                 break;
+				}
+				
                 case SV_POTION_RESIST_COLD:
+				{
                 num_pot_rcold += item->iqty;
                 break;
+				}
 
                 case SV_POTION_RES_STR:
+				{
                 num_fix_stat[A_STR] += item->iqty;
                 break;
+				}
 
                 case SV_POTION_RES_INT:
+				{
                 num_fix_stat[A_INT] += item->iqty;
                 break;
+				}
 
                 case SV_POTION_RES_WIS:
+				{
                 num_fix_stat[A_WIS] += item->iqty;
                 break;
+				}
 
                 case SV_POTION_RES_DEX:
+				{
                 num_fix_stat[A_DEX] += item->iqty;
                 break;
+				}
 
                 case SV_POTION_RES_CON:
+				{
                 num_fix_stat[A_CON] += item->iqty;
                 break;
+				}
 
                 case SV_POTION_RES_CHR:
+				{
                 num_fix_stat[A_CHR] += item->iqty;
                 break;
+				}
 
                 case SV_POTION_RESTORE_EXP:
+				{
                 num_fix_exp += item->iqty;
                 break;
+				}
 
                 case SV_POTION_RESTORE_MANA:
+				{
                 num_mana += item->iqty;
                 break;
+				}
 
                 case SV_POTION_HEALING:
+				{
                 num_heal += item->iqty;
                 if (!in_item && !no_items) num_heal_true += item->iqty;
                 break;
+				}
 
                 case SV_POTION_STAR_HEALING:
+				{
                 num_ez_heal += item->iqty;
                 if (!in_item && !no_items) num_ez_heal_true += item->iqty;
                 break;
+				}
 
                 case SV_POTION_LIFE:
+				{
                 num_ez_heal += item->iqty;
                 if (!in_item && !no_items) num_ez_heal_true += item->iqty;
                 break;
+				}
 
                 case SV_POTION_BERSERK_STRENGTH:
+				{
                 num_berserk += item->iqty;
                 break;
+				}
 
                 case SV_POTION_SPEED:
+				{
                 num_speed += item->iqty;
                 break;
+				}
 
                 case SV_POTION_INVULNERABILITY:
+				{
                 num_goi_pot += item->iqty;
                 break;
+				}
 
                 case SV_POTION_RESISTANCE:
+				{
                 num_resist_pot += item->iqty;
                 break;
-
+				}
             }
 
             break;
+			}
 
-
-            /* Scrolls */
+            
             case TV_SCROLL:
+			{
+			/* Scrolls */
 
             /* Analyze the scroll */
             switch (item->sval)
             {
                 case SV_SCROLL_IDENTIFY:
+				{
                 num_ident += item->iqty;
                 break;
+				}
 
                 case SV_SCROLL_STAR_IDENTIFY:
+				{
                 num_star_ident += item->iqty;
                 break;
+				}
 
                 case SV_SCROLL_PHASE_DOOR:
+				{
                 num_phase += item->iqty;
                 break;
+				}
 
                 case SV_SCROLL_TELEPORT:
+				{
                 num_escape += item->iqty;
                 break;
+				}
 
                 case SV_SCROLL_WORD_OF_RECALL:
+				{
                 num_recall += item->iqty;
                 break;
+				}
 
                 case SV_SCROLL_ENCHANT_ARMOR:
+				{
                 num_enchant_to_a += item->iqty;
                 break;
+				}
 
                 case SV_SCROLL_ENCHANT_WEAPON_TO_HIT:
+				{
                 num_enchant_to_h += item->iqty;
                 break;
+				}
 
                 case SV_SCROLL_ENCHANT_WEAPON_TO_DAM:
+				{
                 num_enchant_to_d += item->iqty;
                 break;
+				}
 
-                /* apw */
                 case SV_SCROLL_PROTECTION_FROM_EVIL:
+				{
                 num_pfe += item->iqty;
                 break;
+				}
 
-                /* apw */
                 case SV_SCROLL_RUNE_OF_PROTECTION:
+				{
                 num_glyph += item->iqty;
                 break;
+				}
 
-                /* apw */
                 case SV_SCROLL_TELEPORT_LEVEL:
+				{
                 num_teleport_level += item->iqty;
                 break;
+				}
 
                 case SV_SCROLL_SATISFY_HUNGER:
+				{
                 num_food += item->iqty;
                 break;
-
+				}
             }
 
             break;
+			}
 
-
-            /* Rods */
+            
             case TV_ROD:
+			{
+			/* Rods */
 
             /* Analyze */
             switch (item->sval)
             {
                 case SV_ROD_IDENTIFY:
+				{
                 num_ident += item->iqty * 100;
                 break;
+				}
 
                 case SV_ROD_RECALL:
+				{
                 num_recall += item->iqty * 100;
                 break;
+				}
             }
 
             break;
+			}
 
 
-            /* Staffs */
+            
             case TV_STAFF:
+			{
+			/* Staffs */
 
             /* only collect staves with more than 3 charges at high level */
             if (item->pval <= 3 && borg_skill[BI_CLEVEL] > 30)
@@ -3743,10 +4052,13 @@ static void borg_notice_home_aux2(borg_item *in_item, bool no_items)
             switch (item->sval)
             {
                 case SV_STAFF_IDENTIFY:
+				{
                 num_ident += item->iqty * item->pval;
                 break;
+				}
 
                 case SV_STAFF_TELEPORTATION:
+				{
                 /* Don't use them deep in the dungeon because the
                  * charges will get drained and he wont have any
                  * scrolls left to read
@@ -3756,16 +4068,17 @@ static void borg_notice_home_aux2(borg_item *in_item, bool no_items)
                     num_teleport += item->iqty * item->pval;
                 }
                 break;
+				}
             }
 
             break;
-
+			}
 
             /* Missiles */
             case TV_SHOT:
             case TV_ARROW:
             case TV_BOLT:
-
+			{
             /* Hack -- ignore invalid missiles */
             if (item->tval != my_ammo_tval) break;
 
@@ -3776,6 +4089,7 @@ static void borg_notice_home_aux2(borg_item *in_item, bool no_items)
             num_missile += item->iqty;
 
             break;
+			}
         }
 
         /* if only doing one item, break. */
@@ -4685,14 +4999,20 @@ static s32b borg_power_aux3(void)
               case SV_DRAGON_BLUE:
               case SV_DRAGON_WHITE:
               case SV_DRAGON_RED:
+			  {
                   value += 1100;
                   break;
+			  }
               case SV_DRAGON_GREEN:
+			  {
                   value += 2750;
                   break;
+			  }
               case SV_DRAGON_MULTIHUED:
+			  {
                   value += 3250;
                   break;
+				 }
               case SV_DRAGON_SHINING:
               case SV_DRAGON_LAW:
               case SV_DRAGON_BRONZE:
@@ -4700,7 +5020,9 @@ static s32b borg_power_aux3(void)
               case SV_DRAGON_CHAOS:
               case SV_DRAGON_BALANCE:
               case SV_DRAGON_POWER:
+			  {
                   value += 5150;
+		      }
           }
       }
 
@@ -5248,254 +5570,6 @@ static s32b borg_power_aux3(void)
                ((item->flags2 & TR2_RES_DISEN)!= 0));
 
 		if (multibonus >= 2) value += 15000 * multibonus;
-#if 0
-        /* This needs to be changed */
-        switch (item->name1)
-        {
-        /* Artifact -- Narthanc- fire bolt 9d8*/
-        case ART_NARTHANC:
-        value +=(500+(9*(8+1)/2));
-        break;
-
-        /* Artifact -- Nimthanc- frost bolt 6d8*/
-        case ART_NIMTHANC:
-        value +=(500+(6*(8+1)/2));
-        break;
-
-        /* Artifact -- Dethanc- electric bolt 4d8*/
-        case ART_DETHANC:
-        value +=(500+(4*(8+1)/2));
-        break;
-
-
-        /* Artifact -- Rilia- poison gas 12*/
-        case ART_RILIA:
-        value +=(500+(24));
-        break;
-
-        /* Artifact -- Belangil- frost ball 48*/
-        case ART_BELANGIL:
-        value +=(500+(96));
-        break;
-
-
-        /* Artifact -- Arunruth- frost bolt 12d8*/
-
-        /* Artifact -- Ringil- frost ball 100*/
-        case ART_RINGIL:
-        value +=(500+(200));
-        /* extra boost for speed */
-        /* if (!adult_rand_artifacts ) */
-            value +=25000L;
-        break;
-
-
-        /* Artifact -- Anduril- fire ball 72*/
-        case ART_ANDURIL:
-        value +=(500+(144));
-        break;
-
-
-        /* Artifact -- Theoden- drain Life 120*/
-        case ART_THEODEN:
-        value +=(500+120);
-        break;
-
-
-        /* Artifact -- Aeglos- frost ball 100*/
-        case ART_AEGLOS:
-        value +=(500+200);
-        break;
-
-
-        /* Artifact -- Totila- confusion */
-        case ART_TOTILA:
-        value +=(500+(200));
-        break;
-
-
-        /* Artifact -- Firestar- fire ball 72 */
-        case ART_FIRESTAR:
-        value +=(500+(144));
-        break;
-
-
-        /* Artifact -- TURMIL- drain life 90 */
-        case ART_TURMIL:
-        value +=(500+90);
-        break;
-
-
-        /* Artifact -- Razorback- spikes 150 */
-        case ART_RAZORBACK:
-        value +=(500+(300));
-        break;
-
-
-        /* Artifact -- Cammithrim- Magic Missile 2d6 */
-        case ART_CAMMITHRIM:
-        value +=(500+(2*(6+1)/2));
-        break;
-
-        /* Artifact -- Paurhach- fire bolt 9d8 */
-        case ART_PAURHACH:
-        value +=(500+(9*(8+1)/2));
-        break;
-
-        /* Artifact -- Paurnimmen- frost bolt 6d8 */
-
-        /* Artifact -- Pauraegen- lightning bolt 4d8 */
-        case ART_PAURAEGEN:
-        value +=(500+(4*(8+1)/2));
-        break;
-
-        /* Artifact -- PaurNEN- ACID bolt 5d8 */
-        case ART_PAURNEN:
-        value +=(500+(5*(8+1)/2));
-        break;
-
-        /* Artifact -- FINGOLFIN- MISSILE 150 (bonus for TH TD)*/
-        case ART_FINGOLFIN:
-        value +=(500+(150));
-        /* if (!adult_rand_artifacts ) */
-            value +=5000;
-        break;
-
-        /* Artifact -- INGWE- DISPEL EVIL X5 */
-        case ART_INGWE:
-        value +=(500+(10 + (borg_skill[BI_CLEVEL]*5)/2));
-        break;
-
-        /* Artifact -- NARYA- FIRE BALL 120 */
-        case ART_NARYA:
-        value +=(500+(240));
-        break;
-
-        /* Artifact -- NENYA- COLD BALL 200 */
-        case ART_NENYA:
-        value +=(500+(400));
-        break;
-
-        /* Artifact -- VILYA- ELEC BALL 250 */
-        case ART_VILYA:
-        value +=(500+(500));
-        break;
-
-        /* Artifact -- POWER One Ring-*/
-        case ART_POWER:
-        value +=(999999);
-        break;
-
-        /* Artifact -- Ulmo- tele way */
-        case ART_ULMO:
-        if (borg_class == CLASS_MAGE)
-        {
-            value +=500;
-        }
-        else
-            value +=(500+(500));
-        break;
-
-        /* Artifact -- Colluin - bladturner Resistance */
-        case ART_COLLUIN: case ART_BLADETURNER:
-        value +=(500+(150));
-        /* extra bonus for the non spell guys */
-        if (borg_class == CLASS_WARRIOR || borg_class == CLASS_ROGUE ||
-            borg_class == CLASS_PALADIN) value +=25000;
-        break;
-
-        /* Artifact -- Holcolleth -- Sleep II */
-        case ART_HOLCOLLETH:
-        if ((borg_class == CLASS_MAGE) || (borg_class == CLASS_PRIEST) )
-        {
-            value +=500;
-        }
-        else
-            value +=(500+(200));
-        break;
-
-        /* Artifact -- Thingol recharge */
-        case ART_THINGOL:
-        if (borg_class == CLASS_MAGE)
-        {
-            value +=500;
-        }
-        else
-            value +=(500+(100));
-        break;
-
-        /* Artifact -- Holehenth detection */
-
-        /* Artifact -- Dal fear and poison */
-        case ART_DAL:
-        if (borg_class == CLASS_MAGE || borg_class == CLASS_PRIEST)
-        {
-            value +=500;
-        }
-        else
-            value +=(500+(200));
-        break;
-
-        /* Artifact -- Carlammas PFE*/
-
-        /* Artifact -- Lotharang- cure light */
-
-        /* Artifact -- Eriril id */
-
-        /* Artifact -- Cubragol brand bolts, bonus for speed */
-        case ART_BRAND:
-        value +=(500+(300));
-        /* extra boost for speed */
-        /* if (!adult_rand_artifacts ) */
-            value +=25000L;
-        break;
-
-        /* Artifact -- Avavir WoR */
-
-        /* Artifact -- Taratol, feanor, tulkas speed */
-
-        /* Artifact -- Soulkeeper, Gondor heal */
-
-        /* Artifact -- Belegonnon   phase */
-
-        /* Artifact -- Colannon teleport */
-
-        /* Artifact -- Luthien RLL */
-
-        /* Artifact -- Celegorm */
-        case ART_CELEGORM:
-        value +=(500);
-        break;
-
-        /* Artifact -- Phial */
-        case ART_GALADRIEL:
-        if (!borg_skill[BI_FEAR_LITE])
-        {
-			if (borg_class == CLASS_WARRIOR) value +=1500;
-        	value +=(500);
-		}
-        break;
-
-        /* Artifact -- Star */
-        case ART_ELENDIL:
-        if (!borg_skill[BI_FEAR_LITE])
-        {
-	        value +=(1200);
-		}
-        break;
-
-        /* Artifact -- Arkstone */
-        case ART_THRAIN:
-        if (!borg_skill[BI_FEAR_LITE])
-        {
-	        value +=(2000);
-		}
-        break;
-
-
-        }
-
-#endif /* 0 */
     }
 
      /* Result */
@@ -6662,6 +6736,7 @@ static int borg_danger_aux1(int i)
         switch (b_ptr->effect)
         {
             case RBE_HURT:
+			{
             z = (b_ptr->d_dice * b_ptr->d_side);
             z -= (z * ((ac < 150) ? ac : 150) / 250);
             /* if invulnurable (or PFE), no damage (carried through)*/
@@ -6678,8 +6753,10 @@ static int borg_danger_aux1(int i)
                 n += borg_goi ? 400 * 20 : 400; /* If GOI is on, take that into account */
             power = 60;
             break;
+			}
 
             case RBE_POISON:
+			{
             z = (b_ptr->d_dice * b_ptr->d_side);
             power = 5;
             if (borg_skill[BI_RPOIS]) break;
@@ -6689,8 +6766,10 @@ static int borg_danger_aux1(int i)
             if ((pfe) && !borg_attacking)
                 z /= 2;
             break;
+			}
 
             case RBE_UN_BONUS:
+			{
             z = (b_ptr->d_dice * b_ptr->d_side);
             power = 20;
             if ((borg_goi) && !borg_attacking)
@@ -6702,8 +6781,10 @@ static int borg_danger_aux1(int i)
             if ((pfe) && !borg_attacking)
                 z /= 2;
             break;
+			}
 
             case RBE_UN_POWER:
+			{
             z = (b_ptr->d_dice * b_ptr->d_side);
             /* if invulnurable, no damage */
             if ((borg_goi) && !borg_attacking)
@@ -6714,8 +6795,10 @@ static int borg_danger_aux1(int i)
                 z /= 2;
             power = 15;
             break;
+			}
 
             case RBE_EAT_GOLD:
+			{
             z = (b_ptr->d_dice * b_ptr->d_side);
             /* if in town and low level avoid them stupid urchins */
             if (borg_skill[BI_CLEVEL] < 5) z += 50;
@@ -6731,8 +6814,10 @@ static int borg_danger_aux1(int i)
             if ((pfe) && !borg_attacking)
                 z /= 2;
             break;
+			}
 
             case RBE_EAT_ITEM:
+			{
             z = (b_ptr->d_dice * b_ptr->d_side);
             /* if invulnurable, no damage */
             power = 5;
@@ -6744,8 +6829,10 @@ static int borg_danger_aux1(int i)
             if ((pfe) && !borg_attacking)
                 z /= 2;
             break;
+			}
 
             case RBE_EAT_FOOD:
+			{
             z = (b_ptr->d_dice * b_ptr->d_side);
             power = 5;
             /* if invulnurable, no damage */
@@ -6757,8 +6844,10 @@ static int borg_danger_aux1(int i)
             if ((pfe) && !borg_attacking)
                 z /= 2;
             break;
+			}
 
             case RBE_EAT_LITE:
+			{
             z = (b_ptr->d_dice * b_ptr->d_side);
             power = 5;
             /* if invulnurable, no damage */
@@ -6771,8 +6860,10 @@ static int borg_danger_aux1(int i)
             if ((pfe) && !borg_attacking)
                 z /= 2;
             break;
+			}
 
             case RBE_ACID:
+			{
             if (borg_skill[BI_IACID]) break;
             z = (b_ptr->d_dice * b_ptr->d_side);
             if (borg_skill[BI_RACID]) z = (z + 2) / 3;
@@ -6785,8 +6876,10 @@ static int borg_danger_aux1(int i)
             if ((pfe) && !borg_attacking)
                 z /= 2;
             break;
+			}
 
             case RBE_ELEC:
+			{
             if (borg_skill[BI_IELEC]) break;
             z = (b_ptr->d_dice * b_ptr->d_side);
             power = 10;
@@ -6800,8 +6893,10 @@ static int borg_danger_aux1(int i)
             if ((pfe) && !borg_attacking)
                 z /= 2;
             break;
+			}
 
             case RBE_FIRE:
+			{
             if (borg_skill[BI_IFIRE]) break;
             z = (b_ptr->d_dice * b_ptr->d_side);
             power = 10;
@@ -6815,8 +6910,10 @@ static int borg_danger_aux1(int i)
             if ((pfe) && !borg_attacking)
                 z /= 2;
             break;
+			}
 
             case RBE_COLD:
+			{
             if (borg_skill[BI_ICOLD]) break;
             z = (b_ptr->d_dice * b_ptr->d_side);
             power = 10;
@@ -6830,8 +6927,10 @@ static int borg_danger_aux1(int i)
             if ((pfe) && !borg_attacking)
                 z /= 2;
             break;
+			}
 
             case RBE_BLIND:
+			{
             z = (b_ptr->d_dice * b_ptr->d_side);
             power = 2;
             /* if invulnurable, no damage */
@@ -6843,8 +6942,10 @@ static int borg_danger_aux1(int i)
             if ((pfe) && !borg_attacking)
                 z /= 2;
             break;
+			}
 
             case RBE_CONFUSE:
+			{
             z = (b_ptr->d_dice * b_ptr->d_side);
             power = 10;
             /* if invulnurable, no damage */
@@ -6856,8 +6957,10 @@ static int borg_danger_aux1(int i)
             if ((pfe) && !borg_attacking)
                 z /= 2;
             break;
+			}
 
             case RBE_TERRIFY:
+			{
             z = (b_ptr->d_dice * b_ptr->d_side);
             power = 10;
             /* if invulnurable, no damage */
@@ -6869,8 +6972,10 @@ static int borg_danger_aux1(int i)
             if ((pfe) && !borg_attacking)
                 z /= 2;
             break;
+			}
 
             case RBE_PARALYZE:
+			{
             z = (b_ptr->d_dice * b_ptr->d_side);
             power = 2;
             /* if invulnurable, no damage */
@@ -6881,8 +6986,10 @@ static int borg_danger_aux1(int i)
             if ((pfe) && !borg_attacking)
                 z /= 2;
             break;
+			}
 
             case RBE_LOSE_STR:
+			{
             z = (b_ptr->d_dice * b_ptr->d_side);
             /* if invulnurable, no damage */
             if ((borg_goi) && !borg_attacking)
@@ -6897,8 +7004,10 @@ static int borg_danger_aux1(int i)
             if ((pfe) && !borg_attacking)
                 z /= 2;
             break;
+			}
 
             case RBE_LOSE_DEX:
+			{
             z = (b_ptr->d_dice * b_ptr->d_side);
             /* if invulnurable, no damage */
             if ((borg_goi) && !borg_attacking)
@@ -6913,8 +7022,10 @@ static int borg_danger_aux1(int i)
             if ((pfe) && !borg_attacking)
                 z /= 2;
             break;
+			}
 
             case RBE_LOSE_CON:
+			{
             z = (b_ptr->d_dice * b_ptr->d_side);
             /* if invulnurable, no damage */
             if ((borg_goi) && !borg_attacking)
@@ -6930,8 +7041,10 @@ static int borg_danger_aux1(int i)
             if ((pfe) && !borg_attacking)
                 z /= 2;
             break;
+			}
 
             case RBE_LOSE_INT:
+			{
             z = (b_ptr->d_dice * b_ptr->d_side);
             /* if invulnurable, no damage */
             if ((borg_goi) && !borg_attacking)
@@ -6946,8 +7059,10 @@ static int borg_danger_aux1(int i)
             if ((pfe) && !borg_attacking)
                 z /= 2;
             break;
+			}
 
             case RBE_LOSE_WIS:
+			{
             z = (b_ptr->d_dice * b_ptr->d_side);
             /* if invulnurable, no damage */
             if ((borg_goi) && !borg_attacking)
@@ -6962,8 +7077,10 @@ static int borg_danger_aux1(int i)
             if ((pfe) && !borg_attacking)
                 z /= 2;
             break;
+			}
 
             case RBE_LOSE_CHR:
+			{
             z = (b_ptr->d_dice * b_ptr->d_side);
             /* if invulnurable, no damage */
             if ((borg_goi) && !borg_attacking)
@@ -6975,8 +7092,10 @@ static int borg_danger_aux1(int i)
             if ((pfe) && !borg_attacking)
                 z /= 2;
             break;
+			}
 
             case RBE_LOSE_ALL:
+			{
             z = (b_ptr->d_dice * b_ptr->d_side);
             power = 2;
             /* if invulnurable, no damage */
@@ -6984,8 +7103,10 @@ static int borg_danger_aux1(int i)
                 z /= 25;
             /* only morgoth. HACK to make it easier to fight him */
             break;
+			}
 
             case RBE_SHATTER:
+			{
             z = (b_ptr->d_dice * b_ptr->d_side);
             z -= (z * ((ac < 150) ? ac : 150) / 250);
             power = 60;
@@ -6997,8 +7118,10 @@ static int borg_danger_aux1(int i)
             if ((pfe) && !borg_attacking)
                 z /= 2;
             break;
+			}
 
             case RBE_EXP_10:
+			{
             z = (b_ptr->d_dice * b_ptr->d_side);
             /* if invulnurable, no damage */
             if ((borg_goi) && !borg_attacking)
@@ -7013,8 +7136,10 @@ static int borg_danger_aux1(int i)
             if ((pfe) && !borg_attacking)
                 z /= 2;
             break;
+			}
 
             case RBE_EXP_20:
+			{
             z = (b_ptr->d_dice * b_ptr->d_side);
             /* if invulnurable, no damage */
             if ((borg_goi) && !borg_attacking)
@@ -7029,8 +7154,10 @@ static int borg_danger_aux1(int i)
             if ((pfe) && !borg_attacking)
                 z /= 2;
             break;
+			}
 
             case RBE_EXP_40:
+			{
             z = (b_ptr->d_dice * b_ptr->d_side);
             /* if invulnurable, no damage */
             if ((borg_goi) && !borg_attacking)
@@ -7045,8 +7172,10 @@ static int borg_danger_aux1(int i)
             if ((pfe) && !borg_attacking)
                 z /= 2;
             break;
+			}
 
             case RBE_EXP_80:
+			{
             z = (b_ptr->d_dice * b_ptr->d_side);
             /* if invulnurable, no damage */
             if ((borg_goi) && !borg_attacking)
@@ -7061,8 +7190,10 @@ static int borg_danger_aux1(int i)
             if ((pfe) && !borg_attacking)
                 z /= 2;
             break;
+			}
 
             case RBE_DISEASE:
+			{
             z = (b_ptr->d_dice * b_ptr->d_side);
             /* if invulnurable, no damage */
             if ((borg_goi) && !borg_attacking)
@@ -7076,8 +7207,10 @@ static int borg_danger_aux1(int i)
             if ((pfe) && !borg_attacking)
                 z /= 2;
             break;
+			}
 
             case RBE_TIME:
+			{
             z = (b_ptr->d_dice * b_ptr->d_side);
             /* if invulnurable, no damage */
             if ((borg_goi) && !borg_attacking)
@@ -7092,8 +7225,10 @@ static int borg_danger_aux1(int i)
             if ((pfe) && !borg_attacking)
                 z /= 2;
             break;
+			}
 
             case RBE_EXP_VAMP:
+			{
             z = (b_ptr->d_dice * b_ptr->d_side);
             /* if invulnurable, no damage */
             if ((borg_goi) && !borg_attacking)
@@ -7107,7 +7242,7 @@ static int borg_danger_aux1(int i)
             if ((pfe) && !borg_attacking)
                 z /= 2;
             break;
-
+			}
         }
 
         /* if we are doing partial damage reduce for % chance that it will */
@@ -7287,23 +7422,34 @@ static int borg_danger_aux2(int i, bool average)
         /* Cast the spell. */
         switch (spell[q])
         {
-            case 96+0:    /* RF4_SHRIEK */
+            case 96+0:
+			{
+			    /* RF4_SHRIEK */
             /* if looking at full damage, things that are just annoying */
             /* do not count.*/
             if (!borg_full_damage)
                 p += 10;
             break;
+			}
 
-            case 96+1:    /* RF4_XXX2X4 */
+            case 96+1:
+			{
+			    /* RF4_XXX2X4 */
             /* this is now a failed spell attempt for monsters */
             /* used to recognize invisible/ hidden monsters */
                 p += 10;
             break;
+			}
 
-            case 96+2:    /* RF4_XXX3X4 */
+            case 96+2:
+			{
+			    /* RF4_XXX3X4 */
             break;
+			}
 
-            case 96+3:    /* RF4_ROCKETS */
+            case 96+3:
+			{
+			    /* RF4_ROCKETS */
             z = (hp / 4);
             /* max damage */
             if (z > 600)
@@ -7315,32 +7461,47 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 40;
             break;
+			}
 
-            case 96+4:    /* RF4_ARROW_1 */
+            case 96+4:
+			{
+			    /* RF4_ARROW_1 */
             z = (1 * 6);
             if (borg_goi) {z /=25; break;}
             if (borg_skill[BI_REFLECT]) z = (z + 2) / 3;
             break;
+			}
 
-            case 96+5:    /* RF4_ARROW_2 */
+            case 96+5:
+			{
+			    /* RF4_ARROW_2 */
             z = (3 * 6);
             if (borg_goi) {z /=25; break;}
             if (borg_skill[BI_REFLECT]) z = (z + 2) / 3;
             break;
+			}
 
-            case 96+6:    /* RF4_ARROW_3 */
+            case 96+6:
+			{
+			    /* RF4_ARROW_3 */
             z = (5 * 6);
             if (borg_goi) {z /=25; break;}
             if (borg_skill[BI_REFLECT]) z = (z + 2) / 3;
             break;
+			}
 
-            case 96+7:    /* RF4_ARROW_4 */
+            case 96+7:
+			{
+			    /* RF4_ARROW_4 */
             z = (7 * 6);
             if (borg_goi) {z /=25; break;}
             if (borg_skill[BI_REFLECT]) z = (z + 2) / 3;
             break;
+			}
 
-            case 96+8:    /* RF4_BR_ACID */
+            case 96+8:
+			{
+			    /* RF4_BR_ACID */
             if (borg_skill[BI_IACID]) break;
             z = (hp / 3);
             /* max damage */
@@ -7354,8 +7515,11 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 40;
             break;
+			}
 
-            case 96+9:    /* RF4_BR_ELEC */
+            case 96+9:
+			{
+			    /* RF4_BR_ELEC */
             if (borg_skill[BI_IELEC]) break;
             z = (hp / 3);
             /* max damage */
@@ -7369,8 +7533,11 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 20;
             break;
+			}
 
-            case 96+10:    /* RF4_BR_FIRE */
+            case 96+10:
+			{
+			    /* RF4_BR_FIRE */
             if (borg_skill[BI_IFIRE]) break;
             z = (hp / 3);
             /* max damage */
@@ -7384,8 +7551,11 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 40;
             break;
+			}
 
-            case 96+11:    /* RF4_BR_COLD */
+            case 96+11:
+			{
+			    /* RF4_BR_COLD */
             if (borg_skill[BI_ICOLD]) break;
             z = (hp / 3);
             /* max damage */
@@ -7399,8 +7569,11 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 20;
             break;
+			}
 
-            case 96+12:    /* RF4_BR_POIS */
+            case 96+12:
+			{
+			    /* RF4_BR_POIS */
             z = (hp / 3);
             /* max damage */
             if (z > 600)
@@ -7415,8 +7588,11 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 20;
             break;
+			}
 
-            case 96+13:    /* RF4_BR_NETH */
+            case 96+13:
+			{
+			    /* RF4_BR_NETH */
             z = (hp / 6);
             /* max damage */
             if (z > 450)
@@ -7430,8 +7606,11 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 125;
             break;
+			}
 
-            case 96+14:    /* RF4_BR_LITE */
+            case 96+14:
+			{
+			    /* RF4_BR_LITE */
             z = (hp / 4);
             /* max damage */
             if (z > 350)
@@ -7448,8 +7627,11 @@ static int borg_danger_aux2(int i, bool average)
             if (borg_skill[BI_RBLIND]) break;
             p += 20;
             break;
+			}
 
-            case 96+15:    /* RF4_BR_DARK */
+            case 96+15:
+			{
+			    /* RF4_BR_DARK */
             z = (hp / 4);
             /* max damage */
             if (z > 350)
@@ -7460,8 +7642,11 @@ static int borg_danger_aux2(int i, bool average)
             if (borg_skill[BI_RBLIND]) break;
             p += 20;
             break;
+			}
 
-            case 96+16:    /* RF4_BR_CONF */
+            case 96+16:
+			{
+			    /* RF4_BR_CONF */
             z = (hp / 4);
             /* max damage */
             if (z > 350)
@@ -7474,8 +7659,11 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 300;
             break;
+			}
 
-            case 96+17:    /* RF4_BR_SOUN */
+            case 96+17:
+			{
+			    /* RF4_BR_SOUN */
             z = (hp / 4);
             /* max damage */
             if (z > 350)
@@ -7493,8 +7681,11 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 50;
             break;
+			}
 
-            case 96+18:    /* RF4_BR_CHAO */
+            case 96+18:
+			{
+			    /* RF4_BR_CHAO */
             z = (hp / 4);
             /* max damage */
             if (z > 500)
@@ -7506,8 +7697,11 @@ static int borg_danger_aux2(int i, bool average)
             if (borg_skill[BI_RKAOS]) break;
             p += 200;
             break;
+			}
 
-            case 96+19:    /* RF4_BR_DISE */
+            case 96+19:
+			{
+			    /* RF4_BR_DISE */
             z = (hp / 4);
             /* max damage */
             if (z > 400)
@@ -7517,8 +7711,11 @@ static int borg_danger_aux2(int i, bool average)
             if (borg_skill[BI_RDIS]) break;
             p += 500;
             break;
+			}
 
-            case 96+20:    /* RF4_BR_NEXU */
+            case 96+20:
+			{
+			    /* RF4_BR_NEXU */
             z = (hp / 3);
             /* max damage */
             if (z > 250)
@@ -7531,8 +7728,11 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 100;
             break;
+			}
 
-            case 96+21:    /* RF4_BR_TIME */
+            case 96+21:
+			{
+			    /* RF4_BR_TIME */
             z = (hp / 3);
             /* max damage */
             if (z > 150)
@@ -7543,8 +7743,11 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 250;
             break;
+			}
 
-            case 96+22:    /* RF4_BR_INER */
+            case 96+22:
+			{
+			    /* RF4_BR_INER */
             z = (hp / 4);
             /* max damage */
             if (z > 200)
@@ -7555,8 +7758,11 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 100;
             break;
+			}
 
-            case 96+23:    /* RF4_BR_GRAV */
+            case 96+23:
+			{
+			    /* RF4_BR_GRAV */
             z = (hp / 3);
             /* max damage */
             if (z > 200)
@@ -7579,8 +7785,11 @@ static int borg_danger_aux2(int i, bool average)
             if (borg_skill[BI_ISHEAVYSTUN])
                 p += 1000;
             break;
+			}
 
-            case 96+24:    /* RF4_BR_SHAR */
+            case 96+24:
+			{
+			    /* RF4_BR_SHAR */
             z = (hp / 4);
             /* max damage */
             if (z > 400)
@@ -7593,8 +7802,11 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 50;
             break;
+			}
 
-            case 96+25:    /* RF4_BR_PLAS */
+            case 96+25:
+			{
+			    /* RF4_BR_PLAS */
             z = (hp / 4);
             /* max damage */
             if (z > 200)
@@ -7613,8 +7825,11 @@ static int borg_danger_aux2(int i, bool average)
             if (borg_skill[BI_ISHEAVYSTUN])
                 p += 1000;
             break;
+			}
 
-            case 96+26:    /* RF4_BR_WALL */
+            case 96+26:
+			{
+			    /* RF4_BR_WALL */
             z = (hp / 4);
             /* max damage */
             if (z > 200)
@@ -7629,8 +7844,11 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 50;
             break;
+			}
 
-            case 96+27:    /* RF4_MANA */
+            case 96+27:
+			{
+			    /* RF4_MANA */
             z = (hp / 3);
             /* max damage */
             if (z > 250)
@@ -7641,16 +7859,22 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 50;
             break;
+			}
 
-            case 96+28:    /* RF4_BA_NUKE */
+            case 96+28:
+			{
+			    /* RF4_BA_NUKE */
 			z = (lev + (10 * 6));
             if (borg_goi) {z /=25; break;}
             if (!borg_skill[BI_RPOIS]) p += 25;
             if (!borg_full_damage)
                 p += 50;
             break;
+			}
 
-            case 96+29:    /* RF4_BR_NUKE */
+            case 96+29:
+			{
+			    /* RF4_BR_NUKE */
             z = (hp / 2);
             /* max damage */
             if (z > 600)
@@ -7662,8 +7886,11 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 75;
             break;
+			}
 
-            case 96+30:    /* RF4_BA_CHAOS */
+            case 96+30:
+			{
+			    /* RF4_BA_CHAOS */
             z = ((lev * 2) + 75);
             if (borg_goi) {z /=25; break;}
             if (borg_skill[BI_RKAOS]) z = (z + 2) / 3;
@@ -7672,8 +7899,11 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 40;
             break;
+			}
 
-            case 96+31:    /* RF4_BA_DISI */
+            case 96+31:
+			{
+			    /* RF4_BA_DISI */
             z = (hp / 3);
             if (z >= 300) z = 300;
             if (borg_goi) {z /=25; break;}
@@ -7682,8 +7912,11 @@ static int borg_danger_aux2(int i, bool average)
             /* do not count. */
             if (!borg_full_damage)
                 p += 40;
+			}
 
-            case 128+0:    /* RF5_BA_ACID */
+            case 128+0:
+			{
+			    /* RF5_BA_ACID */
             if (borg_skill[BI_IACID]) break;
             z = (lev * 3) / 2 + 15;
             if (borg_goi) {z /=25; break;}
@@ -7694,8 +7927,11 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 40;
             break;
+			}
 
-            case 128+1:    /* RF5_BA_ELEC */
+            case 128+1:
+			{
+			    /* RF5_BA_ELEC */
             if (borg_skill[BI_IELEC]) break;
             z = (lev * 3) / 2 + 8;
             if (borg_goi) {z /=25; break;}
@@ -7706,8 +7942,11 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 20;
             break;
+			}
 
-            case 128+2:    /* RF5_BA_FIRE */
+            case 128+2:
+			{
+			    /* RF5_BA_FIRE */
             if (borg_skill[BI_IFIRE]) break;
             z = (lev * 7) / 2 + 10;
             if (borg_goi) {z /=25; break;}
@@ -7718,8 +7957,11 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 40;
             break;
+			}
 
-            case 128+3:    /* RF5_BA_COLD */
+            case 128+3:
+			{
+			    /* RF5_BA_COLD */
             if (borg_skill[BI_ICOLD]) break;
             z = (lev * 3) / 2 + 10;
             if (borg_goi) {z /=25; break;}
@@ -7730,8 +7972,11 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 20;
             break;
+			}
 
-            case 128+4:    /* RF5_BA_POIS */
+            case 128+4:
+			{
+			    /* RF5_BA_POIS */
             z = (12 * 2);
             if (borg_goi) {z /=25; break;}
             if (borg_skill[BI_RPOIS]) z = (z + 2) / 3;
@@ -7743,8 +7988,11 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 20;
             break;
+			}
 
-            case 128+5:    /* RF5_BA_NETH */
+            case 128+5:
+			{
+			    /* RF5_BA_NETH */
             z = (lev + (75) + 50);
             if (borg_goi) {z /=25; break;}
             if (borg_skill[BI_RNTHR]) z = (z*6)/8;
@@ -7754,8 +8002,11 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 250;
             break;
+			}
 
-            case 128+6:    /* RF5_BA_WATE */
+            case 128+6:
+			{
+			    /* RF5_BA_WATE */
             z = ((lev * 5) / 2) + 50;
             if (borg_goi) {z /=25; break;}
             if (borg_skill[BI_RSND]) break;
@@ -7770,15 +8021,21 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 50;
             break;
+			}
 
-            case 128+7:    /* RF5_BA_MANA */
+            case 128+7:
+			{
+			    /* RF5_BA_MANA */
             z = ((lev * 4) + 75);
             if (!borg_full_damage)
                 p += 50;
             if (borg_goi) {z /=25; break;}
             break;
+			}
 
-            case 128+8:    /* RF5_BA_DARK */
+            case 128+8:
+			{
+			    /* RF5_BA_DARK */
             z = (((lev * 4)) + (75));
             if (borg_goi) {z /=25;}
             if (borg_skill[BI_RDARK]) z = (z*6)/9;
@@ -7789,23 +8046,35 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 20;
             break;
+			}
 
-            case 128+9:    /* RF5_DRAIN_MANA */
+            case 128+9:
+			{
+			    /* RF5_DRAIN_MANA */
             if (borg_skill[BI_MAXSP]) p += 10;
             break;
+			}
 
-            case 128+10:    /* RF5_MIND_BLAST */
+            case 128+10:
+			{
+			    /* RF5_MIND_BLAST */
             if (borg_skill[BI_SAV] < 100)
                 z = 35;
             break;
+			}
 
-            case 128+11:    /* RF5_BRAIN_SMASH */
+            case 128+11:
+			{
+			    /* RF5_BRAIN_SMASH */
             z = (12 * 15);
             p += 200 - 2 * borg_skill[BI_SAV];
             if (p < 0) p =0;
             break;
+			}
 
-            case 128+12:    /* RF5_CAUSE_1 */
+            case 128+12:
+			{
+			    /* RF5_CAUSE_1 */
             if (borg_skill[BI_SAV] >= 100) break;
             z = (3 * 8);
             /* if looking at full damage, things that are just annoying */
@@ -7814,8 +8083,11 @@ static int borg_danger_aux2(int i, bool average)
                 /* reduce by % chance of save  (add 20% for fudge) */
                 z = z * (120 - borg_skill[BI_SAV]) / 100;
             break;
+			}
 
-            case 128+13:    /* RF5_CAUSE_2 */
+            case 128+13:
+			{
+			    /* RF5_CAUSE_2 */
             if (borg_skill[BI_SAV] >= 100) break;
             z = (8 * 8);
             /* if looking at full damage, things that are just annoying */
@@ -7824,8 +8096,11 @@ static int borg_danger_aux2(int i, bool average)
                 /* reduce by % chance of save  (add 20% for fudge) */
                 z = z * (120 - borg_skill[BI_SAV]) / 100;
             break;
+			}
 
-            case 128+14:    /* RF5_CAUSE_3 */
+            case 128+14:
+			{
+			    /* RF5_CAUSE_3 */
             if (borg_skill[BI_SAV] >= 100) break;
             z = (10 * 15);
             /* if looking at full damage, things that are just annoying */
@@ -7834,8 +8109,11 @@ static int borg_danger_aux2(int i, bool average)
                 /* reduce by % chance of save  (add 20% for fudge) */
                 z = z * (120 - borg_skill[BI_SAV]) / 100;
             break;
+			}
 
-            case 128+15:    /* RF5_CAUSE_4 */
+            case 128+15:
+			{
+			    /* RF5_CAUSE_4 */
             if (borg_skill[BI_SAV] >= 100) break;
             z = (15 * 15);
             /* if looking at full damage, things that are just annoying */
@@ -7848,8 +8126,11 @@ static int borg_danger_aux2(int i, bool average)
                 /* reduce by % chance of save  (add 40% for fudge) */
                 z = z * (120 - borg_skill[BI_SAV]) / 100;
             break;
+			}
 
-            case 128+16:    /* RF5_BO_ACID */
+            case 128+16:
+			{
+			    /* RF5_BO_ACID */
             if (borg_skill[BI_IACID]) break;
             z = ((7 * 8) + (lev / 3));
             if (borg_goi) {z /=25; break;}
@@ -7860,8 +8141,11 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 40;
             break;
+			}
 
-            case 128+17:    /* RF5_BO_ELEC */
+            case 128+17:
+			{
+			    /* RF5_BO_ELEC */
             if (borg_skill[BI_IELEC]) break;
             z = ((4 * 8) + (lev / 3));
             if (borg_goi) {z /=25; break;}
@@ -7872,8 +8156,11 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 20;
             break;
+			}
 
-            case 128+18:    /* RF5_BO_FIRE */
+            case 128+18:
+			{
+			    /* RF5_BO_FIRE */
             if (borg_skill[BI_IFIRE]) break;
             z = ((9 * 8) + (lev / 3));
             if (borg_goi) {z /=25; break;}
@@ -7884,8 +8171,11 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 40;
             break;
+			}
 
-            case 128+19:    /* RF5_BO_COLD */
+            case 128+19:
+			{
+			    /* RF5_BO_COLD */
             if (borg_skill[BI_ICOLD]) break;
             z = ((6 * 8) + (lev / 3));
             if (borg_goi) {z /=25; break;}
@@ -7896,12 +8186,18 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 20;
             break;
+			}
 
-            case 128+20:    /* RF5_BO_POIS */
+            case 128+20:
+			{
+			    /* RF5_BO_POIS */
             /* XXX XXX XXX */
             break;
+			}
 
-            case 128+21:    /* RF5_BO_NETH */
+            case 128+21:
+			{
+			    /* RF5_BO_NETH */
             z = (50 + 30 + (5 * 5) + (lev * 3) / 2);
             if (borg_goi) {z /=25; break;}
             if (borg_skill[BI_RNTHR]) z = (z*6)/8;
@@ -7911,8 +8207,11 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 200;
             break;
+			}
 
-            case 128+22:    /* RF5_BO_WATE */
+            case 128+22:
+			{
+			    /* RF5_BO_WATE */
             z = ((10 * 10) + (lev));
             if (borg_goi) {z /=25; break;}
             if (borg_skill[BI_RSND]) break;
@@ -7927,15 +8226,21 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 20;
             break;
+			}
 
-            case 128+23:    /* RF5_BO_MANA */
+            case 128+23:
+			{
+			    /* RF5_BO_MANA */
             z = ((lev * 7) / 2) + 50;
             if (!borg_full_damage)
                 p += 50;
             if (borg_goi) {z /=25; break;}
             break;
+			}
 
-            case 128+24:    /* RF5_BO_PLAS */
+            case 128+24:
+			{
+			    /* RF5_BO_PLAS */
             z = (10 + (8 * 7) + (lev));
             if (borg_goi) {z /=25; break;}
             if (borg_skill[BI_RSND]) break;
@@ -7945,8 +8250,11 @@ static int borg_danger_aux2(int i, bool average)
             if (borg_skill[BI_ISHEAVYSTUN])
                 p += 1000;
             break;
+			}
 
-            case 128+25:    /* RF5_BO_ICEE */
+            case 128+25:
+			{
+			    /* RF5_BO_ICEE */
             z = ((6 * 6) + (lev));
             if (borg_goi) {z /=25; break;}
             /* if looking at full damage, things that are just annoying */
@@ -7960,37 +8268,52 @@ static int borg_danger_aux2(int i, bool average)
             if (borg_skill[BI_ISHEAVYSTUN])
                 p += 1000;
             break;
+			}
 
-            case 128+26:    /* RF5_MISSILE */
+            case 128+26:
+			{
+			    /* RF5_MISSILE */
             z = ((2 * 6) + (lev / 3));
             if (borg_goi) {z /=25; break;}
             break;
+			}
 
-            case 128+27:    /* RF5_SCARE */
+            case 128+27:
+			{
+			    /* RF5_SCARE */
             if (borg_skill[BI_SAV] >= 100) break;
             /* if looking at full damage, things that are just annoying */
             /* do not count. */
             if (!borg_full_damage)
                 p += 10;
             break;
+			}
 
-            case 128+28:    /* RF5_BLIND */
+            case 128+28:
+			{
+			    /* RF5_BLIND */
             if (borg_skill[BI_SAV] >= 100) break;
             /* if looking at full damage, things that are just annoying */
             /* do not count. */
             if (!borg_full_damage)
                 p += 10;
             break;
+			}
 
-            case 128+29:    /* RF5_CONF */
+            case 128+29:
+			{
+			    /* RF5_CONF */
             if (borg_skill[BI_SAV] >= 100) break;
             /* if looking at full damage, things that are just annoying */
             /* do not count. */
             if (!borg_full_damage)
                 p += 10;
             break;
+			}
 
-            case 128+30:    /* RF5_SLOW */
+            case 128+30:
+			{
+			    /* RF5_SLOW */
             if (borg_skill[BI_FRACT]) break;
             if (borg_skill[BI_SAV] >= 100) break;
             /* if looking at full damage, things that are just annoying */
@@ -7998,14 +8321,20 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 5;
             break;
+			}
 
-            case 128+31:    /* RF5_HOLD */
+            case 128+31:
+			{
+			    /* RF5_HOLD */
             if (borg_skill[BI_FRACT]) break;
             if (borg_skill[BI_SAV] >= 100) break;
             p += 150;
             break;
+			}
 
-            case 160+0:    /* RF6_HASTE */
+            case 160+0:
+			{
+			    /* RF6_HASTE */
             if (borg_skill[BI_SAV] >= 100) break;
             z += (90 * borg_skill[BI_CURHP] / 100);
             p += 150;
@@ -8014,72 +8343,114 @@ static int borg_danger_aux2(int i, bool average)
             if (!borg_full_damage)
                 p += 10;
             break;
+			}
 
-            case 160+1:    /* RF6_HAND_OF_DOOM */
+            case 160+1:
+			{
+			    /* RF6_HAND_OF_DOOM */
             break;
+			}
 
-            case 160+2:    /* RF6_HEAL */
+            case 160+2:
+			{
+			    /* RF6_HEAL */
             /* if looking at full damage, things that are just annoying */
             /* do not count. */
             if (!borg_full_damage)
                 p += 10;
             break;
+			}
 
-            case 160+3:    /* RF6_INVULNER */
+            case 160+3:
+			{
+			    /* RF6_INVULNER */
             break;
+			}
 
-            case 160+4:    /* RF6_BLINK */
+            case 160+4:
+			{
+			    /* RF6_BLINK */
             break;
+			}
 
-            case 160+5:    /* RF6_TPORT */
+            case 160+5:
+			{
+			    /* RF6_TPORT */
             break;
+			}
 
-            case 160+6:    /* RF6_XXX3X6 */
+            case 160+6:
+			{
+			    /* RF6_XXX3X6 */
             break;
+			}
 
-            case 160+7:    /* RF6_XXX4X6 */
+            case 160+7:
+			{
+			    /* RF6_XXX4X6 */
             break;
+			}
 
-            case 160+8:    /* RF6_TELE_TO */
+            case 160+8:
+			{
+			    /* RF6_TELE_TO */
             /* if looking at full damage, things that are just annoying */
             /* do not count. */
             if (!borg_full_damage)
                 p += 20;
             break;
+			}
 
-            case 160+9:    /* RF6_TELE_AWAY */
+            case 160+9:
+			{
+			    /* RF6_TELE_AWAY */
             /* if looking at full damage, things that are just annoying */
             /* do not count. */
             if (!borg_full_damage)
                 p += 10;
             break;
+			}
 
-            case 160+10:    /* RF6_TELE_LEVEL */
+            case 160+10:
+			{
+			    /* RF6_TELE_LEVEL */
             if (borg_skill[BI_SAV] >= 100) break;
             /* if looking at full damage, things that are just annoying */
             /* do not count. */
             if (!borg_full_damage)
                 p += 50;
             break;
+			}
 
-            case 160+11:    /* RF6_XXX5 */
+            case 160+11:
+			{
+			    /* RF6_XXX5 */
             break;
+			}
 
-            case 160+12:    /* RF6_DARKNESS */
+            case 160+12:
+			{
+			    /* RF6_DARKNESS */
             /* if looking at full damage, things that are just annoying */
             /* do not count. */
             if (!borg_full_damage)
                 p += 5;
             break;
+			}
 
-            case 160+13:    /* RF6_TRAPS */
+            case 160+13:
+			{
+			    /* RF6_TRAPS */
             /* if looking at full damage, things that are just annoying */
             /* do not count. */
             if (!borg_full_damage)
                 p += 50;
             break;
+			}
 
-            case 160+14:    /* RF6_FORGET */
+            case 160+14:
+			{
+			    /* RF6_FORGET */
             if (borg_skill[BI_SAV] >= 100) break;
             /* if looking at full damage, things that are just annoying */
             /* do not count. */
@@ -8097,19 +8468,25 @@ static int borg_danger_aux2(int i, bool average)
                 }
             }
             break;
+			}
 
-            case 160+15:    /* RF6_RAISE_DEAD */
+            case 160+15:
+			{
+			    /* RF6_RAISE_DEAD */
             break;
+			}
 
-            /* Summoning is only as dangerous as the monster that is
+            case 160+16:
+			{
+			/* Summoning is only as dangerous as the monster that is
              * actually summoned but the monsters that summon are a priority
              * to kill.  PFE reduces danger from some evil summoned monsters
              * One Problem with GOI and Create Door is that the GOI reduces
              * the fear so much that the borg won't cast the Create Door,
              * eventhough it would be a good idea.
              */
-
-            case 160+16:    /* S_KIN */
+			
+			    /* S_KIN */
             if (pfe )
             {    p +=(lev);
                 p = p / spot_safe;
@@ -8130,8 +8507,11 @@ static int borg_danger_aux2(int i, bool average)
             if (r_info->flags1 & RF1_UNIQUE) p = p * 75/100;
 
             break;
+			}
 
-            case 160+17:    /* S_HI_DEMON */
+            case 160+17:
+			{
+			    /* S_HI_DEMON */
             if (pfe )
             {    p +=(lev);
                 p = p / spot_safe;
@@ -8151,9 +8531,12 @@ static int borg_danger_aux2(int i, bool average)
             /* reduce the fear if it is a unique */
             if (r_info->flags1 & RF1_UNIQUE) p = p * 75/100;
             break;
+			}
 
 
-            case 160+18:    /* RF6_S_MONSTER */
+            case 160+18:
+			{
+			    /* RF6_S_MONSTER */
             if (borg_goi || pfe || glyph || borg_create_door || borg_fighting_unique)
                 p +=0;
             else
@@ -8161,8 +8544,11 @@ static int borg_danger_aux2(int i, bool average)
                 p = p / spot_safe;
             }
             break;
+			}
 
-            case 160+19:    /* RF6_S_MONSTERS */
+            case 160+19:
+			{
+			    /* RF6_S_MONSTERS */
             if (borg_goi || pfe || glyph || borg_create_door || borg_fighting_unique)
                 p +=0;
             else
@@ -8172,8 +8558,11 @@ static int borg_danger_aux2(int i, bool average)
             /* reduce the fear if it is a unique */
             if (r_info->flags1 & RF1_UNIQUE) p = p * 75/100;
             break;
+			}
 
-            case 160+20:   /* RF6_S_ANT */
+            case 160+20:
+			{
+			   /* RF6_S_ANT */
             if (borg_goi || pfe || glyph || borg_create_door || borg_fighting_unique)
                 p +=0;
             else
@@ -8183,8 +8572,11 @@ static int borg_danger_aux2(int i, bool average)
             /* reduce the fear if it is a unique */
             if (r_info->flags1 & RF1_UNIQUE) p = p * 75/100;
             break;
+			}
 
-            case 160+21:    /* RF6_S_SPIDER */
+            case 160+21:
+			{
+			    /* RF6_S_SPIDER */
             if (borg_goi || pfe || glyph || borg_create_door || borg_fighting_unique)
                 p +=0;
             else
@@ -8194,8 +8586,11 @@ static int borg_danger_aux2(int i, bool average)
             /* reduce the fear if it is a unique */
             if (r_info->flags1 & RF1_UNIQUE) p = p * 75/100;
             break;
+			}
 
-            case 160+22:    /* RF6_S_HOUND */
+            case 160+22:
+			{
+			    /* RF6_S_HOUND */
             if (borg_goi || pfe || glyph || borg_create_door || borg_fighting_unique)
                 p +=0;
             else
@@ -8205,8 +8600,11 @@ static int borg_danger_aux2(int i, bool average)
             /* reduce the fear if it is a unique */
             if (r_info->flags1 & RF1_UNIQUE) p = p * 75/100;
             break;
+			}
 
-            case 160+23:    /* RF6_S_HYDRA */
+            case 160+23:
+			{
+			    /* RF6_S_HYDRA */
             if (pfe )
             {    p +=(lev);
                 p = p / spot_safe;
@@ -8226,8 +8624,11 @@ static int borg_danger_aux2(int i, bool average)
             /* reduce the fear if it is a unique */
             if (r_info->flags1 & RF1_UNIQUE) p = p * 75/100;
             break;
+			}
 
-            case 160+24:    /* RF6_S_ANGEL */
+            case 160+24:
+			{
+			    /* RF6_S_ANGEL */
             if (pfe  || borg_fighting_unique)
             {    p +=(lev);
                 p = p / spot_safe;
@@ -8247,8 +8648,11 @@ static int borg_danger_aux2(int i, bool average)
             /* reduce the fear if it is a unique */
             if (r_info->flags1 & RF1_UNIQUE) p = p * 75/100;
             break;
+			}
 
-            case 160+25:    /* RF6_S_DEMON */
+            case 160+25:
+			{
+			    /* RF6_S_DEMON */
             if (pfe )
             {    p +=(lev);
                 p = p / spot_safe;
@@ -8268,8 +8672,11 @@ static int borg_danger_aux2(int i, bool average)
             /* reduce the fear if it is a unique */
             if (r_info->flags1 & RF1_UNIQUE) p = p * 75/100;
             break;
+			}
 
-            case 160+26:    /* RF6_S_UNDEAD */
+            case 160+26:
+			{
+			    /* RF6_S_UNDEAD */
             if (pfe )
             {    p +=(lev);
                 p = p / spot_safe;
@@ -8289,8 +8696,11 @@ static int borg_danger_aux2(int i, bool average)
             /* reduce the fear if it is a unique */
             if (r_info->flags1 & RF1_UNIQUE) p = p * 75/100;
             break;
+			}
 
-            case 160+27:    /* RF6_S_DRAGON */
+            case 160+27:
+			{
+			    /* RF6_S_DRAGON */
             if (pfe )
             {    p +=(lev);
                 p = p / spot_safe;
@@ -8310,8 +8720,11 @@ static int borg_danger_aux2(int i, bool average)
             /* reduce the fear if it is a unique */
             if (r_info->flags1 & RF1_UNIQUE) p = p * 75/100;
             break;
+			}
 
-            case 160+28:    /* RF6_S_HI_UNDEAD */
+            case 160+28:
+			{
+			    /* RF6_S_HI_UNDEAD */
             if (pfe )
             {    p +=(lev);
                 p = p / spot_safe;
@@ -8331,8 +8744,11 @@ static int borg_danger_aux2(int i, bool average)
             /* reduce the fear if it is a unique */
             if (r_info->flags1 & RF1_UNIQUE) p = p * 75/100;
             break;
+			}
 
-            case 160+29:    /* RF6_S_HI_DRAGON */
+            case 160+29:
+			{
+			    /* RF6_S_HI_DRAGON */
             if (pfe )
             {
                 p = p / spot_safe;
@@ -8352,8 +8768,11 @@ static int borg_danger_aux2(int i, bool average)
             /* reduce the fear if it is a unique */
             if (r_info->flags1 & RF1_UNIQUE) p = p * 75/100;
             break;
+			}
 
-            case 160+30:    /* RF6_S_AMBERITES */
+            case 160+30:
+			{
+			    /* RF6_S_AMBERITES */
             if (pfe )
             {    p +=(lev);
                 p = p / spot_safe;
@@ -8373,8 +8792,11 @@ static int borg_danger_aux2(int i, bool average)
             /* reduce the fear if it is a unique */
             if (r_info->flags1 & RF1_UNIQUE) p = p * 75/100;
             break;
+			}
 
-            case 160+31:    /* RF6_S_UNIQUE */
+            case 160+31:
+			{
+			    /* RF6_S_UNIQUE */
             if (pfe )
             {    p +=(lev);
                 p = p / spot_safe;
@@ -8394,6 +8816,7 @@ static int borg_danger_aux2(int i, bool average)
             /* reduce the fear if it is a unique */
             if (r_info->flags1 & RF1_UNIQUE) p = p * 75/100;
             break;
+			}
         }
 
         /* Notice damage */
@@ -9187,35 +9610,50 @@ static cptr borg_prepared_aux2(int depth)
         switch (borg_class)
         {
             case CLASS_WARRIOR:
+			{
                 if (borg_skill[BI_MAXHP] < 50) return ("50 hp");
                 if (borg_skill[BI_MAXCLEVEL] < 4) return ("4 clevel");
                 break;
+			}
             case CLASS_ROGUE:
+			{
                 if (borg_skill[BI_MAXHP] < 50) return ("50 hp");
                 if (borg_skill[BI_MAXCLEVEL] < 8) return ("8 clevel");
                 break;
+			}
             case CLASS_PRIEST:
+			{
                 if (borg_skill[BI_MAXHP] < 40) return ("40 hp");
                 if (borg_skill[BI_MAXCLEVEL] < 9) return ("9 level");
                 break;
+			}
             case CLASS_PALADIN:
+			{
                 if (borg_skill[BI_MAXHP] < 50) return ("50 hp");
                 if (borg_skill[BI_MAXCLEVEL] < 4) return ("4 clevel");
                 break;
+			}
             case CLASS_RANGER:
+			{
                 if (borg_skill[BI_MAXHP] < 50) return ("50 hp");
                 if (borg_skill[BI_MAXCLEVEL] < 4) return ("4 clevel");
                 break;
+			}
             case CLASS_MAGE:
+			{
                 if (borg_skill[BI_MAXHP] < 60) return ("60 hp");
                 if (borg_skill[BI_MAXCLEVEL] < 11) return ("11 clevel");
                 break;
+			}
             default:
+			{
                 if (borg_skill[BI_MAXHP] < 50) return ("50 hp");
                 if (borg_skill[BI_MAXCLEVEL] < 8) return ("8 clevel");
                 break;
+			}
         }
     }
+
     /* Scrolls of Word of Recall */
     if (borg_skill[BI_RECALL] < 3) return ("3 recall");
 
@@ -9239,33 +9677,47 @@ static cptr borg_prepared_aux2(int depth)
             switch (borg_class)
             {
                 case CLASS_WARRIOR:
+				{
                     if (borg_skill[BI_MAXHP] < 60) return ("60 hp");
                     if (borg_skill[BI_MAXCLEVEL] < 6) return ("6 clevel");
                     break;
+				}
                 case CLASS_ROGUE:
+				{
                     if (borg_skill[BI_MAXHP] < 60) return ("60 hp");
                     if (borg_skill[BI_MAXCLEVEL] < 10) return ("10 clevel");
                     break;
+				}
                 case CLASS_PRIEST:
+				{
                     if (borg_skill[BI_MAXHP] < 60) return ("60 hp");
                     if (borg_skill[BI_MAXCLEVEL] < 15) return ("15 clevel");
                     break;
+				}
                 case CLASS_PALADIN:
+				{
                     if (borg_skill[BI_MAXHP] < 60) return ("60 hp");
                     if (borg_skill[BI_MAXCLEVEL] < 6) return ("6 clevel");
                     break;
+				}
                 case CLASS_RANGER:
+				{
                     if (borg_skill[BI_MAXHP] < 60) return ("60 hp");
                     if (borg_skill[BI_MAXCLEVEL] < 6) return ("6 clevel");
                     break;
+				}
                 case CLASS_MAGE:
+				{
                     if (borg_skill[BI_MAXHP] < 80) return ("80 hp");
                     if (borg_skill[BI_MAXCLEVEL] < 15) return ("15 level");
                     break;
+				}
                 default:
+				{
                     if (borg_skill[BI_MAXHP] < 60) return ("60 hp");
                     if (borg_skill[BI_MAXCLEVEL] < 10) return ("10 clevel");
                     break;
+				}
             }
         }
     }
@@ -9282,7 +9734,6 @@ static cptr borg_prepared_aux2(int depth)
     /* Usually ready for level 5 to 9 */
     if (depth <= 9) return ((cptr)NULL);
 
-
     /*** Essential Items for Level 10 to 19 ***/
 
 
@@ -9295,29 +9746,42 @@ static cptr borg_prepared_aux2(int depth)
         switch (borg_class)
         {
             case CLASS_WARRIOR:
+			{
                 if (borg_skill[BI_MAXCLEVEL] < (depth - 4) && depth <= 19)
                     return ("dlevel - 4 >= clevel");
                 break;
+			}
             case CLASS_ROGUE:
+			{
                 if (borg_skill[BI_MAXCLEVEL] < depth && depth <= 19) return ("dlevel >= clevel" );
                 break;
+			}
             case CLASS_PRIEST:
+			{
                 if (borg_skill[BI_MAXCLEVEL] < depth && depth <= 19) return ("dlevel >= clevel" );
                 break;
+			}
             case CLASS_PALADIN:
+			{
                 if (borg_skill[BI_MAXCLEVEL] < depth && depth <= 19) return ("dlevel >= clevel" );
                 break;
+			}
             case CLASS_RANGER:
+			{
                 if (borg_skill[BI_MAXCLEVEL] < depth && depth <= 19) return ("dlevel >= clevel" );
                 break;
+			}
             case CLASS_MAGE:
+			{
                 if (borg_skill[BI_MAXCLEVEL] < (depth + 5) && borg_skill[BI_MAXCLEVEL] <= 28)
                     return ("dlevel + 5 > = clevel" );
                 break;
+			}
             default:
+			{
                 if (borg_skill[BI_MAXCLEVEL] < depth && depth <= 19) return ("dlevel >= clevel" );
                 break;
-
+			}
         }
     }
 #if 0
@@ -9374,26 +9838,37 @@ static cptr borg_prepared_aux2(int depth)
         switch (borg_class)
         {
             case CLASS_WARRIOR:
+			{
                 if (borg_skill[BI_MAXCLEVEL] < (depth + 5) && borg_skill[BI_MAXCLEVEL] <= 38)
                     return ("dlevel + 5 >= clevel" );
                 break;
+			}
             case CLASS_ROGUE:
+			{
                 if (borg_skill[BI_MAXCLEVEL] < (depth + 10) && borg_skill[BI_MAXCLEVEL] <= 43)
                     return ("dlevel + 10 >= clevel" );
                 break;
+			}
             case CLASS_PRIEST:
+			{
                 if (borg_skill[BI_MAXCLEVEL] < (depth + 13) && borg_skill[BI_MAXCLEVEL] <= 46)
                     return ("dlevel + 13 >= clevel" );
                 break;
+			}
             case CLASS_PALADIN:
+			{
                 if (borg_skill[BI_MAXCLEVEL] < (depth + 7) && borg_skill[BI_MAXCLEVEL] <= 40)
                     return ("dlevel + 7 >= clevel" );
                 break;
+			}
             case CLASS_RANGER:
+			{
                 if (borg_skill[BI_MAXCLEVEL] < (depth + 8) && borg_skill[BI_MAXCLEVEL] <= 41 && borg_skill[BI_MAXCLEVEL] > 28)
                     return ("dlevel + 8 >= clevel" );
                 break;
+			}
             case CLASS_MAGE:
+			{
                 if (borg_skill[BI_MAXCLEVEL] < (depth + 8) && borg_skill[BI_MAXCLEVEL] <= 38)
                     return ("dlevel + 8 >= clevel" );
                 if (((borg_skill[BI_MAXCLEVEL]-38) * 2 + 30) < depth &&
@@ -9401,11 +9876,13 @@ static cptr borg_prepared_aux2(int depth)
                     borg_skill[BI_MAXCLEVEL] > 38)
                     return ("(clevel-38)*2+30 < dlevel" );
                 break;
+			}
             default:
+			{
                 if (borg_skill[BI_MAXCLEVEL] < (depth + 10) && borg_skill[BI_MAXCLEVEL] <= 43)
                     return ("dlevel + 10 >= clevel" );
                 break;
-
+			}
         }
     }
 
