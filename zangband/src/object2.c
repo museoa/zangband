@@ -172,6 +172,14 @@ void delete_object_list(s16b *o_idx_ptr)
 {
 	object_type *o_ptr;
 
+	/*
+	 * Special exception: if the first object is (nothing),
+	 * just zero the index.
+	 * This happens when loading savefiles.
+	 */
+	if (!o_list[*o_idx_ptr].k_idx)
+		*o_idx_ptr = 0;
+
 	/* Scan all objects in the grid */
 	OBJ_ITT_START (*o_idx_ptr, o_ptr)
 	{
