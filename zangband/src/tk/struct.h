@@ -95,11 +95,6 @@ struct StructType {
 
 extern int Struct_Init(Tcl_Interp *interp);
 extern int Struct_AddType(Tcl_Interp *interp, StructType *data);
-extern int Struct_GetTypeFromObj(Tcl_Interp *interp, StructType **typePtrPtr,
-	Tcl_Obj *objPtr);
-extern int Struct_GetArrayIndexFromObj(Tcl_Interp *interp, StructType *typePtr,
-	int *elemIndex, Tcl_Obj *objPtr);
-extern StructType *Struct_Lookup(Tcl_Interp *interp, char *name);
 
 #endif /* INCLUDED_STRUCT_H */
 

@@ -353,7 +353,7 @@ static int Struct_FindTypeByName(Tcl_Interp *interp, char *typeName, Tcl_HashTab
 	return TCL_OK;
 }
 
-int Struct_GetTypeFromObj(Tcl_Interp *interp, StructType **typePtrPtr,
+static int Struct_GetTypeFromObj(Tcl_Interp *interp, StructType **typePtrPtr,
 	Tcl_Obj *objPtr)
 {
 	char *t;
@@ -368,7 +368,7 @@ int Struct_GetTypeFromObj(Tcl_Interp *interp, StructType **typePtrPtr,
 	return TCL_OK;
 }
 
-int Struct_GetArrayIndexFromObj(Tcl_Interp *interp, StructType *typePtr,
+static int Struct_GetArrayIndexFromObj(Tcl_Interp *interp, StructType *typePtr,
 	int *elemIndex, Tcl_Obj *objPtr)
 {
 	char errorMsg[128];
@@ -392,17 +392,6 @@ int Struct_GetArrayIndexFromObj(Tcl_Interp *interp, StructType *typePtr,
 	}
 
 	return TCL_OK;
-}
-
-StructType *Struct_Lookup(Tcl_Interp *interp, char *name)
-{
-	int i;
-
-	if (Struct_FindTypeByName(interp, name, &g_struct_hash, &i) != TCL_OK)
-	{
-		return NULL;
-	}
-	return &g_struct[i];
 }
 
 int Struct_AddType(Tcl_Interp *interp, StructType *data)
