@@ -177,7 +177,7 @@ linux: LIBS := -lX11 -lcurses -lncurses -L/usr/X11R6/lib \
 ##
 ## Linux with the (depreciated) svga port.
 ##
-linux_svga: CFLAGS += -std=gnu99 -D"USE_GCU" -D"USE_VCS" -D"USE_XPJ"\
+linux_svga: CFLAGS += -Wno-long-long -D"USE_GCU" -D"USE_VCS" -D"USE_XPJ"\
                  -D"USE_X11" -D"USE_XAW" -D"USE_LSL"\
                   `gtk-config --cflags` -D"USE_GTK" \
                  -pedantic -W -Wmissing-prototypes -Wmissing-declarations
