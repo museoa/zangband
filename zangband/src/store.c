@@ -3472,6 +3472,114 @@ static void store_process_command(void)
 	}
 }
 
+/* 
+ * Deallocate stores stock.
+ *
+ * This routine is used to deallocate the first store in the
+ * store stock cache.  This is done to save memory.
+ */
+void deallocate_store(void)
+{
+	int i;
+	store_type *home;
+	
+	/* Return if there are no stores with stock */
+	if (store_cache_num == 0) return;
+	
+	/* Do not deallocate homes */
+	while (store_cache[0]->type == STORE_HOME)
+	{
+		/* Hack - move home to end of cache */
+		
+		/* Keep track of stuff in home */
+		home = store_cache[0];
+		
+		/* Resort the rest of the stores */
+		for (i = 1; i < store_cache_num; i++)
+		{
+			store_cache[i-1] = store_cache[i];
+		}
+		
+		/* Move home to the end */
+		store_cache[store_cache_num-1] = home;	
+	}
+	
+	/* Delete store least used. */
+	C_FREE(store_cache[0]->stock, store_cache[0]->stock_size, object_type);
+	
+	/* No stock */
+	store_cache[0]->stock_num = 0;
+	store_cache[0]->stock = NULL;
+		
+	/* Shift all other stores down the cache to fill the gap */
+	for (i = 1; i < store_cache_num; i++)
+	{
+		store_cache[i-1] = store_cache[i];
+	}
+	
+	/* Decrease number of stores with stock */
+	store_cache_num--;
+}
+
+/*
+ * Allocate memory for a stores stock.
+ *
+ * This routine is used to save memory.  It is a waste to record
+ * what is in every store in every town in the wilderness.  This
+ * allocates the required array if the stockpointer is NULL.
+ */
+bool allocate_store(store_type *store)
+{
+	int i, n = 0;
+	
+	/* See if store has stock. */
+	if (store->stock != NULL)
+	{
+		/* Find the location in the cache */
+		for (i = 0; i < store_cache_num; i++)
+		{
+			/* See if cache location matches */
+			if (store == store_cache[i])
+			{
+				/* note location */
+				n = i;
+				break;
+			}
+		}
+		
+		/* Resort order based on last_visit */
+		for (i = n + 1; i < store_cache_num; i++)
+		{
+			store_cache[i-1] = store_cache[i];
+		}
+		
+		/* Move current one to end */
+		store_cache[store_cache_num-1] = store;
+		
+		/* (No need to maintain store) */
+		return FALSE;	
+	}
+	
+	/* Store does not have stock - so need to allocate. */
+	
+	/* See if cache is full */
+	if (store_cache_num == STORE_CACHE_AMNT)
+	{
+		/* Delete least used store */
+		deallocate_store();	
+	}
+	
+	/* Add store to end of cache */
+	store_cache[store_cache_num] = store;
+	
+	C_MAKE(store->stock, store->stock_size, object_type);
+	
+	/* The number in the cache has increased */
+	store_cache_num++;
+	
+	/* (Need to maintain stores) */
+	return TRUE; 
+}
 
 /*
  * Enter a store, and interact with it.
@@ -3504,6 +3612,12 @@ void do_cmd_store(void)
 	}
 
 	/* Extract the store code */
+	
+	/* Later will have to modify data structures so multiple stores
+	 * of same type can exist in a town.
+	 * (Need to wait for python though - will probably be with "hotspot"
+	 * code.
+	 */
 	which = (c_ptr->feat - FEAT_SHOP_HEAD);
 
 	/* Hack -- Check the "locked doors" */
@@ -3517,8 +3631,16 @@ void do_cmd_store(void)
 	/* Calculate the number of store maintainances since the last visit */
 	maintain_num = (turn - town[p_ptr->town_num].store[which].last_visit) / (10L * STORE_TURNS);
 
-	/* Maintain the store max. 10 times */
-	if (maintain_num > 10) maintain_num = 10;
+	/* Allocate object storage if required */
+	if (allocate_store(&town[p_ptr->town_num].store[which]))
+	{
+		/* Hack - Maintain store if it is just allocated. */
+		maintain_num++;
+	}
+		
+
+	/* Maintain the store max. 20 times */
+	if (maintain_num > 20) maintain_num = 20;
 
 	if (maintain_num)
 	{
@@ -3891,8 +4013,6 @@ void store_maint(int town_num, int store_num)
  */
 void store_init(int town_num, int store_num)
 {
-	int 		k;
-
 	cur_store_num = store_num;
 
 	/* Activate that store */
@@ -3920,7 +4040,7 @@ void store_init(int town_num, int store_num)
 	 * BEFORE player birth to enable store restocking
 	 */
 	st_ptr->last_visit = -100L * STORE_TURNS;
-
+#if 0
 	/* Clear any old items */
 	for (k = 0; k < st_ptr->stock_size; k++)
 	{
@@ -3930,6 +4050,7 @@ void store_init(int town_num, int store_num)
 
 		object_wipe(&st_ptr->stock[k]);
 	}
+#endif 0
 }
 
 
@@ -3940,6 +4061,12 @@ void move_to_black_market(object_type *o_ptr)
 
 	st_ptr = &town[p_ptr->town_num].store[STORE_BLACK];
 
+	/* Make sure the black market has stock */
+	if (allocate_store(st_ptr))
+	{
+		store_maint(p_ptr->town_num, STORE_BLACK);
+	}
+	
 	o_ptr->ident |= IDENT_STOREB;
 
 	(void)store_carry(o_ptr);

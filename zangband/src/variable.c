@@ -174,6 +174,8 @@ s32b friend_align = 0;
 
 int leaving_quest = 0;
 
+s16b store_cache_num = 0;	/* Number of stores with stock */
+store_type **store_cache;	/* The cache of store stocks */
 
 /*
  * Software options (set via the '=' command).  See "tables.c"

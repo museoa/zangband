@@ -878,8 +878,7 @@ static void process_world(void)
 
 	/* Announce the level feeling */
 	if ((turn - old_turn == 1000) && (dun_level)) do_cmd_feeling();
-
-
+	
 	/* Every 10 game turns */
 	if (turn % 10) return;
 

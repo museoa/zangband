@@ -157,6 +157,11 @@
 #define MAX_STORES      9
 
 /*
+ * Total number of stores with stock (see "store.c", etc)
+ */
+#define STORE_CACHE_AMNT 20
+
+/*
  * Number of buildings
  */
 #define MAX_BLDG		32

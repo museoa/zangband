@@ -2408,6 +2408,9 @@ static errr init_towns(void)
 {
 	int i, j, k;
 
+	/*** Make store stock cache ***/
+	C_MAKE(store_cache, STORE_CACHE_AMNT, store_ptr);
+	
 	/*** Prepare the Towns ***/
 
 	/* Allocate the towns */
@@ -2419,7 +2422,7 @@ static errr init_towns(void)
 
 		/* Allocate the stores */
 		C_MAKE(town[i].store, MAX_STORES, store_type);
-
+		
 		/* Fill in each store */
 		for (j = 0; j < MAX_STORES; j++)
 		{
@@ -2429,8 +2432,8 @@ static errr init_towns(void)
 			/* Assume full stock */
 			st_ptr->stock_size = STORE_INVEN_MAX;
 
-			/* Allocate the stock */
-			C_MAKE(st_ptr->stock, st_ptr->stock_size, object_type);
+			/* Do not allocate the stock yet.*/
+			st_ptr->stock = NULL;
 
 			/* No table for the black market or home */
 			if ((j == STORE_BLACK) || (j == STORE_HOME)) continue;

@@ -163,6 +163,8 @@ extern int total_friends;
 extern s32b total_friend_levels;
 extern s32b friend_align;
 extern int leaving_quest;
+extern s16b store_cache_num;
+extern store_type **store_cache;
 extern bool multi_rew;
 extern char summon_kin_type;
 extern bool hack_mind;
@@ -941,6 +943,8 @@ extern bool dimension_door(void);
 extern void do_cmd_store(void);
 extern void store_shuffle(int which);
 extern void store_maint(int town_num, int store_num);
+extern void deallocate_store(void);
+extern bool allocate_store(store_type *store);
 extern void store_init(int town_num, int store_num);
 extern void move_to_black_market(object_type * o_ptr);
 

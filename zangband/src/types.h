@@ -870,6 +870,7 @@ struct store_type
 	object_type *stock;		/* Stock -- Actual stock items */
 };
 
+typedef store_type *store_ptr;
 
 /*
  * The "name" of spell 'N' is stored as spell_names[X][N],
@@ -1340,21 +1341,6 @@ struct building_type
 	s16b member_class[MAX_CLASS];   /* which classes are part of guild */
 	s16b member_race[MAX_RACES];    /* which classes are part of guild */
 	s16b member_realm[MAX_REALM+1]; /* which realms are part of guild */
-};
-
-
-/* Border */
-typedef struct border_type border_type;
-struct border_type
-{
-	byte 	north[MAX_WID];
-	byte 	south[MAX_WID];
-	byte 	east[MAX_HGT];
-	byte 	west[MAX_HGT];
-	byte	north_west;
-	byte	north_east;
-	byte	south_west;
-	byte	south_east;
 };
 
 

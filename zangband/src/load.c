@@ -1146,6 +1146,18 @@ static errr rd_store(int town_number, int store_number)
 	/* Extract the owner (see above) */
 	st_ptr->owner = (older_than(2, 7, 8) ? convert_owner[own] : own);
 
+	/* 
+	 * Hack - allocate store if it has stock 
+	 * Note that this will change the order that
+	 * stores are removed from the cache. 
+	 * The resulting list can be sorted... but it
+	 * doesn't really matter.
+	 */
+	if (num) 
+	{
+		(void) allocate_store(st_ptr);
+	}
+
 	/* Read the items */
 	for (j = 0; j < num; j++)
 	{
@@ -3611,6 +3623,9 @@ static errr rd_savefile_new_aux(void)
 		/* Only one town */
 		town_count = 2;
 	}
+
+	/* Empty the store stock cache */
+	store_cache_num = 0;
 
 	/* Read the stores */
 	rd_u16b(&tmp16u);
