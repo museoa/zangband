@@ -2692,7 +2692,7 @@ static int objcmd_icon(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *
 	int i;
 	t_icon_data iconData, *iconDataPtr;
 	IconSpec iconSpec = {-1, -1, -1, 0};
-
+	
 	/* Required number of arguments */
     if (objc < 2)
     {
@@ -3069,7 +3069,9 @@ wrongCreateArgs:
 			return objcmd_icon_photo(dummy, interp, objc, objv);
 
 		case IDX_MAKEICON: /* makeicon */
+		{		
 			return objcmd_makeicon(dummy, interp, objc - 1, objv + 1);
+		}
 
 		case IDX_DEPTH: /* depth */
 			Tcl_SetIntObj(resultPtr, g_icon_depth);
@@ -3599,18 +3601,6 @@ int Icon_Init(Tcl_Interp *interp, int size, int depth)
 {
 	/* Only initialize once */
 	if (g_icon_size != 0) return TCL_OK;
-
-#ifdef USE_TCL_STUBS
-	if (Tcl_InitStubs(interp, "8.2", 0) == NULL)
-	{
-		return TCL_ERROR;
-	}
-	
-	if (Tk_InitStubs(interp, "8.2", 0) == NULL)
-	{
-		return TCL_ERROR;
-	}
-#endif /* USE_TCL_STUBS */
 
 	/* Require a known icon size */
 	if ((size != 16) && (size != 24) && (size != 32))

@@ -11,7 +11,6 @@
  */
 
 #include "tnb.h"
-#include "icon.h" /* FIXME: only for allow_animation */
 
 /*
  * These constants define the commands which can be passed to a
@@ -131,22 +130,6 @@ static int SettingProc_bool(SettingParam *param)
 	}
 
 	return TCL_OK;
-}
-
-/* Setting callback for allow_animation option */
-static int SettingProc_allow_animation(SettingParam *param)
-{
-	int result = SettingProc_bool(param);
-
-	if (param->cmd == SETTING_SET)
-	{
-		if (allow_animation)
-			angtk_start_timer();
-		else
-			angtk_stop_timer();
-	}
-
-	return result;
 }
 
 /* Setting callback for delay_factor */
@@ -385,12 +368,6 @@ void init_settings(void)
 	setting.desc = "Base hitpoint warning";
 	setting.proc = SettingProc_hitpoint_warn;
 	setting.data = 0;
-	Setting_Add(g_setting, &setting);
-
-	setting.name = "allow_animation";
-	setting.desc = "Allow animation";
-	setting.proc = SettingProc_allow_animation;
-	setting.data = (void *) &allow_animation;
 	Setting_Add(g_setting, &setting);
 
 	setting.name = "autosave_l";

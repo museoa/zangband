@@ -371,10 +371,6 @@ extern TintTable g_yellow;
 /* Recalculate g_icon_map[] */
 extern bool g_icon_map_changed;
 
-extern bool allow_animation; /* Option: Animation */
-extern void angtk_start_timer(void);
-extern void angtk_stop_timer(void);
-
 extern void init_icons(int size, int depth);
 
 /* t_grid -> t_display */

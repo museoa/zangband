@@ -2324,7 +2324,6 @@ static void angtk_character_generated(void)
 			}
 		}
 	}
-#endif
 
 	/*
 	 * If we didn't read the g_grid[].xtra information from a savefile,
@@ -2356,6 +2355,7 @@ static void angtk_character_generated(void)
 		/* Note that g_grid[].xtra is initialized. */
 		g_grid_xtra_init = TRUE;
     }
+#endif /* 0 */
 
 	/*
 	 * Assign icons to each grid. You have to do this *after* sourcing
@@ -2363,9 +2363,6 @@ static void angtk_character_generated(void)
 	 * and where icon assignments are made.
 	 */
 	g_icon_map_changed = TRUE;
-
-	/* If animation is enabled, start the animation timer */
-	if (allow_animation) angtk_start_timer();
 }
 
 
