@@ -143,7 +143,6 @@ proc NSValueManager::InitModule {} {
 
 	Manage show_icons 1
 	Manage ambient_delay 120
-	Manage scroll_follow 1
 
 	Manage tip,current 1000
 	Manage tip,show 1
@@ -662,7 +661,6 @@ proc Setting {keyword args} {
 	if {[llength $args]} {
 		set value [lindex $args 0]
 		switch -- $keyword {
-			scroll_follow -
 			show_icons {
 				Value $keyword [NSUtils::GetBoolean $value]
 			}
@@ -675,7 +673,6 @@ proc Setting {keyword args} {
 	} else {
 		switch -- $keyword {
 			ambient_delay -
-			scroll_follow -
 			show_icons {
 				return [Value $keyword]
 			}
@@ -701,9 +698,6 @@ proc Setting {keyword args} {
 proc SettingDesc {keyword} {
 
 	switch -- $keyword {
-		scroll_follow {
-			return "Keep character centered in the display"
-		}
 		show_icons {
 			return "Show icons in inventory/store list"
 		}

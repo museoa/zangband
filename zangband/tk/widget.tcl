@@ -854,10 +854,8 @@ proc NSWidget::TrackOnce {oop x y} {
 # WidgetCenter --
 #
 #	When the character goes to a new level (or WOR back to a level) this
-#	routine sets the center of the given widget. When scroll_follow is
-#	FALSE and the dungeon is smaller horizontally than the widget is
-#	wide, the dungeon is displayed centered within the widget.
-#	Otherwise the widget is centered on the character position.
+#	routine sets the center of the given widget. The widget is centered
+#   on the character position.
 #
 # Arguments:
 #	widget					Widget to center 
@@ -868,25 +866,6 @@ proc NSWidget::TrackOnce {oop x y} {
 proc WidgetCenter {widget} {
 
 	scan [angband player position] "%d %d" y x
-
-	if {![Value scroll_follow]} {
-
-		scan [$widget bounds] "%d %d %d %d" y_min x_min y_max x_max
-		set height [expr {$y_max - $y_min + 1}]
-		set width [expr {$x_max - $x_min + 1}]
-
-		set units [angband cave height]
-		set units2 $height
-		if {$units <= $units2} {
-			set y [expr {($units - $units2) / 2 + $units2 / 2}]
-		}
-	
-		set units [angband cave width]
-		set units2 $width
-		if {$units <= $units2} {
-			set x [expr {($units - $units2) / 2 + $units2 / 2}]
-		}
-	}
 
 	$widget center $y $x
 

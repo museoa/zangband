@@ -1426,8 +1426,7 @@ proc NSMiscWindow::bind_Py_level {cur max} {
 # NSMiscWindow::PositionChanged --
 #
 #	Called as a qebind <Position> script. Update the Micro Map Window
-#	when the character's position changes. Handles the "scroll_follow"
-#	option.
+#	when the character's position changes.
 #
 # Arguments:
 #	arg1					about arg1
@@ -1441,30 +1440,8 @@ proc NSMiscWindow::PositionChanged {y x} {
 
 	set widget [Global micromap,widget]
 
-	# Option: Keep character centered in the display
-	if {[Value scroll_follow]} {
-		$widget center $y $x
-
-	# Scroll when character crosses the edges of the display
-	} else {
-		scan [$widget center] "%d %d" oy ox
-
-		set ny $y
-		set yscroll [ClipCenter ny $oy [angband cave height] [$widget cget -height]]
-
-		set nx $x
-		set xscroll [ClipCenter nx $ox [angband cave width] [$widget cget -width]]
-
-		# Center the widget if needed
-		if {$xscroll || $yscroll} {
-			scan $PYPX "%d %d" opy opx
-			if {abs($y - $opy) > 1 || abs($x - $opx) > 1} {
-				set ny $y
-				set nx $x
-			}
-		}
-		$widget center $ny $nx
-	}
+	# Keep character centered in the display
+	$widget center $y $x
 
 	return
 }
