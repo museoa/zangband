@@ -2521,20 +2521,11 @@ static void borg_display_map_info(byte data, byte type)
 	char c = ' ';
 	byte a = TERM_DARK;
 
-	int wid, hgt;
-
 	map_block *mb_ptr;
 
-	/* Get size */
-	Term_get_size(&wid, &hgt);
-
-	/* Remove map offset */
-	wid -= COL_MAP + 1;
-	hgt -= ROW_MAP + 1;
-
-	for (x = panel_col_min; x < panel_col_max; x++)
+	for (x = p_ptr->panel_x1; x < p_ptr->panel_x2; x++)
 	{
-		for (y = panel_row_min; y < panel_row_max; y++)
+		for (y = p_ptr->panel_y1; y < p_ptr->panel_y2; y++)
 		{
 			a = TERM_DARK;
 			c = ' ';
@@ -2655,8 +2646,7 @@ static void borg_display_map_info(byte data, byte type)
 			if (c != ' ')
 			{
 				/* Hack -- Queue it */
-				Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c,
-								a, c);
+				print_rel(c, a, x, y);
 			}
 		}
 	}

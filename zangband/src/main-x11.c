@@ -245,11 +245,6 @@ struct metadpy
  *	- Bit Flag: This window has been resized
  *
  *	- Bit Flag: We should nuke 'win' when done with it
- *
- *	- Bit Flag: 1st extra flag
- *	- Bit Flag: 2nd extra flag
- *	- Bit Flag: 3rd extra flag
- *	- Bit Flag: 4th extra flag
  */
 struct infowin
 {
@@ -264,16 +259,11 @@ struct infowin
 
 	byte byte1;
 
-	uint mapped:1;
-	uint redraw:1;
-	uint resize:1;
+	bool mapped;
+	bool redraw;
+	bool resize;
 
-	uint nuke:1;
-
-	uint flag1:1;
-	uint flag2:1;
-	uint flag3:1;
-	uint flag4:1;
+	bool nuke;
 };
 
 
@@ -407,15 +397,6 @@ struct infofnt
 /* Set the current infofnt */
 #define Infofnt_set(I) \
 	(Infofnt = (I))
-
-
-/* Errr: Expose Infowin */
-#define Infowin_expose() \
-	(!(Infowin->redraw = 1))
-
-/* Errr: Unxpose Infowin */
-#define Infowin_unexpose() \
-	(Infowin->redraw = 0)
 
 
 
@@ -672,9 +653,6 @@ static errr Infowin_prepare(Window xid)
 	/* Apply the above info */
 	iwin->mask = xwa.your_event_mask;
 	iwin->mapped = ((xwa.map_state == IsUnmapped) ? 0 : 1);
-
-	/* And assume that we are exposed */
-	iwin->redraw = 1;
 
 	/* Success */
 	return (0);
@@ -1346,7 +1324,7 @@ static void pixel_to_square(int *x, int *y, int ox, int oy)
 		&& ((*y) <= Term->scr->big_y2)
 		&& ((*x) >= Term->scr->big_x1))
 	{
-		(*x) -= ((*x) - Term->scr->big_x1) / 2;
+		(*x) -= ((*x) - Term->scr->big_x1 + 1) / 2;
 	}
 }
 
@@ -1715,9 +1693,18 @@ static void mark_selection_clear(int x1, int y1, int x2, int y2)
 static void mark_selection_mark(int x1, int y1, int x2, int y2)
 {
 	square_to_pixel(&x1, &y1, x1, y1);
-	square_to_pixel(&x2, &y2, x2, y2);
-	XDrawRectangle(Metadpy->dpy, Infowin->win, clr[2]->gc, x1, y1,
-		x2-x1+Infofnt->wid - 1, y2-y1+Infofnt->hgt - 1);
+	if (is_bigtiled(x2, y2))
+	{
+		square_to_pixel(&x2, &y2, x2, y2);
+		XDrawRectangle(Metadpy->dpy, Infowin->win, clr[2]->gc, x1, y1,
+			x2-x1+Infofnt->twid - 1, y2-y1+Infofnt->hgt - 1);
+	}
+	else
+	{
+		square_to_pixel(&x2, &y2, x2, y2);
+		XDrawRectangle(Metadpy->dpy, Infowin->win, clr[2]->gc, x1, y1,
+			x2-x1+Infofnt->wid - 1, y2-y1+Infofnt->hgt - 1);
+	}
 }
 
 
@@ -1943,6 +1930,93 @@ static void handle_button(Time time, int x, int y, int button, bool press)
 
 
 /*
+ * Delay resizing/redrawing windows so that don't waste cpu
+ */
+static bool event_pending = FALSE;
+
+static void scan_pending_windows(void)
+{
+	term_data *old_td = (term_data*)(Term->data);
+	term_data *td;
+	
+	int i;
+	
+	/* Unset flag */
+	event_pending = FALSE;
+	
+	/* Scan the windows */
+	for (i = 0; i < MAX_TERM_DATA; i++)
+	{
+		td = &data[i];
+		
+		/* Skip nonexistant terms */
+		if (!td->win) continue;
+	
+		/* Hack -- activate the Term */
+		Term_activate(&td->t);
+		
+		/* Need to resize? */
+		if (td->win->resize == TRUE)
+		{
+			int cols, rows, wid, hgt;
+
+			int ox = Infowin->ox;
+			int oy = Infowin->oy;
+		
+			/* Unset flags */
+			td->win->resize = FALSE;
+			td->win->redraw = FALSE;
+			
+			/* Hack -- activate the window */
+			Infowin_set(td->win);
+			
+			/* Determine "proper" number of rows/cols */
+			cols = ((Infowin->w - (ox + ox)) / td->fnt->wid);
+			rows = ((Infowin->h - (oy + oy)) / td->fnt->hgt);
+			
+			/* Hack -- minimal size */
+			if (cols < 1) cols = 1;
+			if (rows < 1) rows = 1;
+
+			/* Hack the main window must be at least 80x24 */
+			if (i == 0)
+			{
+				if (cols < 80) cols = 80;
+				if (rows < 24) rows = 24;
+			}
+			
+			/* Desired size of window */
+			wid = cols * td->fnt->wid + (ox + ox);
+			hgt = rows * td->fnt->hgt + (oy + oy);
+
+			/* Resize the Term (if needed) */
+			(void)Term_resize(cols, rows);
+
+			/* Resize the windows if any "change" is needed */
+			if ((Infowin->w != wid) || (Infowin->h != hgt))
+			{
+				/* Resize window */
+				Infowin_set(td->win);
+				Infowin_resize(wid, hgt);
+			}
+		}
+		else if (td->win->redraw == TRUE)
+		{
+			/* Unset flag */
+			td->win->redraw = FALSE;
+			
+			Term_redraw();
+		}
+	}
+	
+	/* Hack -- Activate the old term */
+	Term_activate(&old_td->t);
+
+	/* Hack -- Activate the proper window */
+	Infowin_set(old_td->win);
+}
+
+/*
  * Process events
  */
 static errr CheckEvent(bool wait)
@@ -1957,8 +2031,15 @@ static errr CheckEvent(bool wait)
 	int i;
 	int window = 0;
 
-	/* Do not wait unless requested */
-	if (!wait && !XPending(Metadpy->dpy)) return (1);
+	/* No pending events? */
+	if (!XPending(Metadpy->dpy))
+	{
+		/* Need to resize/redraw? */
+		if (event_pending) scan_pending_windows();
+	
+		/* Do not wait unless requested */
+		if (!wait) return (1);
+	}
 	
 	/*
 	 * Hack - redraw the selection, if needed.
@@ -2080,13 +2161,20 @@ static errr CheckEvent(bool wait)
 		{
 			int x1, x2, y1, y2;
 			
-			x1 = (xev->xexpose.x - Infowin->ox) / Infofnt->wid;
-			x2 = (xev->xexpose.x + xev->xexpose.width - Infowin->ox) / Infofnt->wid;
+			/* Hack - if we have a pending resize, ignore */
+			if (!event_pending)
+			{
+				pixel_to_square(&x1, &y1, xev->xexpose.x, xev->xexpose.y);
+				pixel_to_square(&x2, &y2, xev->xexpose.x + xev->xexpose.width,
+										xev->xexpose.y + xev->xexpose.height);
 
-			y1 = (xev->xexpose.y - Infowin->oy) / Infofnt->hgt;
-			y2 = (xev->xexpose.y + xev->xexpose.height - Infowin->oy) / Infofnt->hgt;
-
-			Term_redraw_section(x1, y1, x2, y2);
+				Term_redraw_section(x1, y1, x2, y2);
+			}
+			else
+			{
+				/* Make sure to redraw later */
+				Infowin->redraw = TRUE;
+			}
 
 			break;
 		}
@@ -2108,46 +2196,15 @@ static errr CheckEvent(bool wait)
 		/* Move and/or Resize */
 		case ConfigureNotify:
 		{
-			int cols, rows, wid, hgt;
-
-			int ox = Infowin->ox;
-			int oy = Infowin->oy;
-
 			/* Save the new Window Parms */
 			Infowin->x = xev->xconfigure.x;
 			Infowin->y = xev->xconfigure.y;
 			Infowin->w = xev->xconfigure.width;
 			Infowin->h = xev->xconfigure.height;
-
-			/* Determine "proper" number of rows/cols */
-			cols = ((Infowin->w - (ox + ox)) / td->fnt->wid);
-			rows = ((Infowin->h - (oy + oy)) / td->fnt->hgt);
-
-			/* Hack -- minimal size */
-			if (cols < 1) cols = 1;
-			if (rows < 1) rows = 1;
-
-			if (window == 0)
-			{
-				/* Hack the main window must be at least 80x24 */
-				if (cols < 80) cols = 80;
-				if (rows < 24) rows = 24;
-			}
-
-			/* Desired size of window */
-			wid = cols * td->fnt->wid + (ox + ox);
-			hgt = rows * td->fnt->hgt + (oy + oy);
-
-			/* Resize the Term (if needed) */
-			(void)Term_resize(cols, rows);
-
-			/* Resize the windows if any "change" is needed */
-			if ((Infowin->w != wid) || (Infowin->h != hgt))
-			{
-				/* Resize window */
-				Infowin_set(td->win);
-				Infowin_resize(wid, hgt);
-			}
+			
+			/* We need to resize this window (later) */
+			Infowin->resize = TRUE;
+			event_pending = TRUE;
 
 			break;
 		}

@@ -369,9 +369,6 @@ AngbandClassRec angbandClassRec =
  */
 #undef superclass
 
-/* Hack - this isn't used in [Z] yet */
-static bool use_bigtile = FALSE;
-
 
 /*
  * Class record pointer
