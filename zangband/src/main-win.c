@@ -882,8 +882,8 @@ static void term_getsize(term_data *td)
 	if (td->rows < 1) td->rows = 1;
 
 	/* Paranoia */
-	if (td->cols > 80) td->cols = 80;
-	if (td->rows > 24) td->rows = 24;
+	if (td->cols > 255) td->cols = 255;
+	if (td->rows > 255) td->rows = 255;
 
 	/* Window sizes */
 	wid = td->cols * td->tile_wid + td->size_ow1 + td->size_ow2;
@@ -2740,6 +2740,24 @@ static void init_windows(void)
 
 	term_data_link(td);
 	angband_term[0] = &td->t;
+
+	/*
+	 * Reset map size if required
+	 */
+
+	/* Recalculate map size */
+	map_hgt = td->rows - 2;
+	map_wid = td->cols - 14;
+
+	/* Mega-Hack -- no panel yet */
+	panel_row_min = 0;
+	panel_row_max = 0;
+	panel_col_min = 0;
+	panel_col_max = 0;
+
+	/* Reset the panels */
+	map_panel_size();
+
 
 	/* Activate the main window */
 	SetActiveWindow(td->w);
