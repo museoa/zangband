@@ -940,7 +940,9 @@ static bool dump_home_info(FILE *fff, int town)
 					/* Clean formatting escape sequences */
 					fmt_clean(o_name);
 				
-					froff(fff, "%c) %s\n", I2A(k), o_name);
+					/* List the item, inlcuding its colour */
+					froff(fff, " %s" CLR_SET_DEFAULT " %s\n",
+						color_seq[tval_to_attr[o_ptr->tval]], o_name);
 
 					/* Increment counter */
 					k++;
