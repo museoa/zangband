@@ -205,7 +205,6 @@ struct term_list
 	s16b pval;	/* Particular value */
 	
 	byte tval;	/* Item type (from kind) */
-	byte slot;	/* Equipment slot - if applicable */
 };
 
 
@@ -239,8 +238,6 @@ struct list_item
 	
 	s16b pval;	/* Particular value */
 	byte tval;	/* Item type (from kind) */
-	
-	byte slot;	/* Equipment slot */
 
 	/* Save the glyph to use */
 #ifdef TERM_OBJ_GLYPH

@@ -941,9 +941,6 @@ static void copy_list(term_list *t_ptr, int num1, list_item **l_ptr_ptr,
 		/* Duplicate info */
 		l_ptr->info = tl_ptr->info;
 		
-		/* Duplicate equipment slot */
-		l_ptr->slot = tl_ptr->slot;
-		
 		/* Duplicate pval /tval */
 		l_ptr->pval = tl_ptr->pval;
 		l_ptr->tval = tl_ptr->tval;
@@ -1118,27 +1115,12 @@ void Term_write_equipment(void)
 {
 	term_list *list, *l_ptr;
 	
-	int i, j = 0;
+	int i;
 	object_type *o_ptr;
 	char o_name[256];
 	
-	int num = 0;
-	
-	/* Get list length */
-	for (i = 0; i < EQUIP_MAX; i++)
-	{
-		/* Get object */
-		o_ptr = &p_ptr->equipment[i];
-		
-		/* Count objects */
-		if (o_ptr->k_idx) num++;
-	}
-	
-	/* Paranoia */
-	if (!num) return;
-	
 	/* Create the list */
-	C_MAKE(list, num, term_list);
+	C_MAKE(list, EQUIP_MAX, term_list);
 	
 	/* Fill with information */
 	for (i = 0; i < EQUIP_MAX; i++)
@@ -1149,28 +1131,21 @@ void Term_write_equipment(void)
 		if (!o_ptr->k_idx) continue;
 	
 		/* Get object list element */
-		l_ptr = &list[j];
+		l_ptr = &list[i];
 		
 		/* Set object flags */
 		set_basic_flags(l_ptr, o_ptr);
-				
-		/* Save slot */
-		l_ptr->slot = (byte) i;
-		
-
+						
 		/* Describe the object */
 		object_desc(o_name, o_ptr, TRUE, 3, 256);
 		
 		l_ptr->o_name = string_make(o_name);
-
-		/* Increment counter */
-		j++;
 	}
 	
 	/* Save for later */
-	save_object_list(list, num, LIST_EQUIP);
+	save_object_list(list, EQUIP_MAX, LIST_EQUIP);
 	
-	for (i = 0; i < num ; i++)
+	for (i = 0; i < EQUIP_MAX; i++)
 	{
 		l_ptr = &list[i];
 	
