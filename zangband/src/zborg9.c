@@ -2565,13 +2565,6 @@ static void init_borg_txt_file(void)
 	/* Make sure we know who and what we are */
 	borg_class = p_ptr->pclass;
 
-	for (i = 0; i < MAX_CLASS; i++)
-	{
-		if (i != borg_class) continue;
-
-		C_MAKE(borg_power_item[i], 400, power_item);	/* externalize the 400 later */
-		n_pwr[i] = 0;
-	}
 	C_MAKE(borg_has, size_obj, int);
 
 	/* make some shortcut pointers into the array */
@@ -4008,10 +4001,7 @@ void do_cmd_borg(void)
 
 			/* Message */
 			borg_note("Reloading the Borg rules... (zborg.txt)");
-			for (i = 0; i < MAX_CLASS; i++)
-			{
-				KILL(borg_power_item[i]);
-			}
+
 			KILL(borg_has);
 			for (i = 0; i < 1000; i++)
 			{

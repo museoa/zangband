@@ -215,21 +215,6 @@ extern bool borg_engage_cloak;
 /*         I am just being lazy */
 extern bool borg_slow_return;
 
-typedef struct power_item
-{
-	int depth;
-	int cnd;
-	int item;
-	int from;
-	int to;
-	int power;
-	bool each;
-}
-power_item;
-
-
-extern power_item *borg_power_item[MAX_CLASS];
-extern int n_pwr[MAX_CLASS];
 extern int *borg_has;
 extern int *borg_has_on;
 extern int *borg_artifact;
