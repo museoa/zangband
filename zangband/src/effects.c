@@ -310,6 +310,9 @@ bool set_image(int v)
 		{
 			msg_print("Oh, wow! Everything looks so cosmic now!");
 			notice = TRUE;
+			
+			/* Update the monster vis window */
+			p_ptr->window |= PW_VISIBLE;
 		}
 	}
 
@@ -320,6 +323,9 @@ bool set_image(int v)
 		{
 			msg_print("You can see clearly again.");
 			notice = TRUE;
+			
+			/* Update the monster vis window */
+			p_ptr->window |= PW_VISIBLE;
 		}
 	}
 
