@@ -443,12 +443,13 @@ static s16b o_pop(void)
 	/*
 	 * If the number remaining is less than one third of the
 	 * total number of allocated objects, then add a new object
-	 * to the end of the list.  Also if the current number of 
-	 * objects is 0 we can create a new object.
+     * to the end of the list.
+     *
+     * We add 1 to o_cnt because object 0 is unusable.
 	 *
 	 * Feel free to tune this parameter.
 	 */
-	if ((o_max - o_cur) * 3 < o_max)
+	if ((o_max - (o_cnt + 1)) * 3 < o_max)
 	{
 		/* Initial allocation */
 		if (o_max < z_info->o_max)
@@ -479,7 +480,7 @@ static s16b o_pop(void)
 			o_cur++;
 			
 			/* Wrap counter */
-			if (o_cur >= o_max) o_cur = 1;
+            if (o_cur >= o_max) o_cur = 1;
 			
 			continue;
 		}
