@@ -1,7 +1,7 @@
 # This is a makefile for the Cygwin 2.01 Beta release which may
 # be downloaded by following the links from the url:
 # http://sourceware.cygnus.com/cygwin/download.html. The file
-# you want is full.exe which is roughly 14Mb in size.
+# you want is full.exe which is roughly 14 Mb in size.
 #
 # In order for the makefile to work you must install Cygwin
 # into your chosen directory and make sure your path points to
@@ -11,16 +11,14 @@
 # The following changes to the source are required to make the
 # compile work:
 #
-# In z-config.h, comment out the defines for 'USE_GRAPHICS'
-# and 'USE_SOUND'. (Note that I have not as yet got sound and
-# graphics working)
+# In lines 325 and 326 of readdib.c, remove the '(HPALETTE)'
+# and '(HBITMAP)' respectively so the the lines read as follows:
+# 
+# if (!MakeBitmapAndPalette(hDC, pInfo->hDIB, &(pInfo->hPalette),
+#                           &(pInfo->hBitmap)))
 #
-# In main-win.c, comment out lines 245
-# 245:  #include <mmsystems.h> 
 #
-# In main-win.c, comment out lines 3917 and 3918 ie.
-# 3917: if (infGraph.hPalette) DeleteObject(infGraph.hPalette);
-# 3918: if (infGraph.hBitmap) DeleteObject(infGraph.hBitmap);
+
 
 
 #
@@ -28,9 +26,9 @@
 #
 
 CYGDIR	=	d:/cygnus/cygwin-b20/h-i586-cygwin32
+SRCDIR	=	d:/zangband/src
 OBJDIR	=	d:/zangband/src
 BINDIR	=	d:/zangband/src
-SRCDIR	=	d:/zangband/src
 
 
 #
@@ -41,8 +39,8 @@ CC		=	gcc
 WRES		=	windres
 LIBDIRS	=	-L$(CYGDIR)/lib
 INCDIRS	=	-I$(CYGDIR)/i586-cygwin32/include/mingw32
-LIBS		=	-s -mno-cygwin -mwindows -e _mainCRTStartup
-CFLAGS	=	-Wall -O2 -fno-strength-reduce
+LIBS		=	-s -mno-cygwin -mwindows -e _mainCRTStartup -lwinmm
+CFLAGS	=	-Wall -O2 -fno-strength-reduce -DNEAR=
 
 
 SRCS		= \
@@ -81,6 +79,7 @@ SRCS		= \
 	$(SRCDIR)/object1.c \
 	$(SRCDIR)/object2.c \
 	$(SRCDIR)/racial.c \
+	$(SRCDIR)/readdib.c \
 	$(SRCDIR)/rooms.c \
 	$(SRCDIR)/save.c \
 	$(SRCDIR)/scores.c \
@@ -101,10 +100,7 @@ SRCS		= \
 	$(SRCDIR)/z-rand.c \
 	$(SRCDIR)/z-term.c \
 	$(SRCDIR)/z-util.c \
-	$(SRCDIR)/z-virt.c
-
-# Readdib doesn't compile (hence no use of graphics)
-#       $(SRCDIR)/readdib.c
+	$(SRCDIR)/z-virt.c 
 
 
 EXOBJS	= \
@@ -143,6 +139,7 @@ EXOBJS	= \
 	$(OBJDIR)/object1.o \
 	$(OBJDIR)/object2.o \
 	$(OBJDIR)/racial.o \
+	$(OBJDIR)/readdib.o \
 	$(OBJDIR)/rooms.o \
 	$(OBJDIR)/save.o \
 	$(OBJDIR)/scores.o \
@@ -163,10 +160,7 @@ EXOBJS	= \
 	$(OBJDIR)/z-rand.o \
 	$(OBJDIR)/z-term.o \
 	$(OBJDIR)/z-util.o \
-	$(OBJDIR)/z-virt.o
-
-# Readdib doesn't compile (hence no use of graphics)
-#       $(OBJDIR)/readdib.o
+	$(OBJDIR)/z-virt.o 
 
 
 HDRS		= \
@@ -204,7 +198,6 @@ cleanbin:
 		rm -f $(ALLBIN)
 
 clean:	cleanobjs cleanbin
-
 
 
 #
@@ -334,6 +327,9 @@ $(OBJDIR)/obj_kind.o: $(SRCDIR)/obj_kind.c $(INCS)
 $(OBJDIR)/racial.o: $(SRCDIR)/racial.c $(INCS)
 	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $<
 
+$(OBJDIR)/readdib.o: $(SRCDIR)/readdib.c $(INCS) readdib.h
+	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $<
+
 $(OBJDIR)/rooms.o: $(SRCDIR)/rooms.c $(INCS) grid.h rooms.h generate.h
 	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $<
 
@@ -397,6 +393,3 @@ $(OBJDIR)/z-util.o: $(SRCDIR)/z-util.c $(HDRS) z-util.h
 $(OBJDIR)/z-virt.o: $(SRCDIR)/z-virt.c $(HDRS) z-virt.h z-util.h
 	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $<
 
-# Readdib not compiled
-# $(OBJDIR)/readdib.o: $(SRCDIR)/readdib.c $(INCS) readdib.h
-#	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $<
