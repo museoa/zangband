@@ -27,7 +27,7 @@
 # To stop a certain monster from having unique lines, put a # in front of
 # its N: line.
 #
-# Entries by Matt Graham, Andrew Hill, and Topi Ylinen
+# Entries by Eric Bock, Matt Graham, Andrew Hill, and Topi Ylinen
 
 N:8:Farmer Maggot
 2
@@ -38,6 +38,14 @@ N:19:Martti Ihrasaari
 2
 yells, 'I'm a head of state!  You can't *do* this!'
 yells, 'Help! Psycho on the loose!'
+
+N:39:Topi Ylinen, the Cute, Furry Bunny
+5
+shouts, 'Stop, or I'll TY_CURSE you!'
+shouts, 'Hey look!  It's a Cyberdemon!'
+hops about frantically. 
+protests, 'I'm not evil!' 
+pleads, 'What would Zangband be like without me?'
 
 N:53:Grip, Farmer Maggot's dog
 N:54:Wolf, Farmer Maggot's dog
