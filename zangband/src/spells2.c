@@ -28,7 +28,7 @@
  */
 void self_knowledge(void)
 {
-	int i = 0, j, k, x;
+	int i = 0, j, k, x, height;
 
 	int v_nr;
 	char v_string[8][128];
@@ -730,8 +730,11 @@ void self_knowledge(void)
 	/* Save the screen */
 	screen_save();
 
+	/* Calculate how much lines we can put on a page */
+	height = MIN(Term->hgt - 3, i + 2);
+
 	/* Erase the screen */
-    clear_region(13, 1, 23);
+    clear_region(13, 1, height + 1);
 
 	/* Label the information */
 	prtf(15, 1, "     Your Attributes:");
@@ -742,8 +745,8 @@ void self_knowledge(void)
 		/* Show the info */
 		prtf(15, k++, info[j]);
 
-		/* Every 20 entries (lines 2 to 21), start over */
-		if ((k == 22) && (j + 1 < i))
+		/* Every heightth entry, start a new page */
+		if ((k == height) && (j + 1 < i))
 		{
 			prtf(15, k, "-- more --");
 			(void)inkey();
