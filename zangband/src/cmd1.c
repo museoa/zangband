@@ -664,6 +664,8 @@ void py_pickup_aux(int o_idx)
 	delete_object_idx(o_idx);
 }
 
+#if 0
+
 /*
  * Automatically destroy items in this grid.
  */
@@ -713,6 +715,8 @@ static void auto_destroy_items(cave_type *c_ptr)
 	}
 }
 
+#endif /* 0 */
+
 
 /*
  * Player "wants" to pick up an object or gold.
@@ -754,9 +758,17 @@ void carry(int pickup)
 	
 	/* Handle stuff */
 	handle_stuff();
+
+#if 0	
+	/*
+	 * This has been disabled - the object distribution has
+	 * changed to remove the large amount of junk.
+	 */
 	
 	/* Destroy worthless items below the player */
 	auto_destroy_items(area(py, px));
+
+#endif /* 0 */
 
 	/* Scan the pile of objects */
 	for (this_o_idx = area(py, px)->o_idx; this_o_idx; this_o_idx = next_o_idx)
@@ -1755,7 +1767,7 @@ void py_attack(int y, int x)
 			/* Bare hands and not a monk */
 			else
 			{
-				msg_format("You punch %s.", m_name); break;			
+				msg_format("You punch %s", m_name); break;			
 			}
 
 			/* No negative damage */
@@ -2217,7 +2229,7 @@ void move_player(int dir, int do_pickup)
 	}
 
 	/* Examine the destination */
-	c_ptr = area(y, x);
+	c_ptr = area(y,x);
 
 	/* Get the monster */
 	m_ptr = &m_list[c_ptr->m_idx];
@@ -2233,7 +2245,6 @@ void move_player(int dir, int do_pickup)
 	/* unless in Shadow Form */
 	if (p_ptr->wraith_form || p_ptr->pass_wall)
 		p_can_pass_walls = TRUE;
-
 	if ((c_ptr->feat >= FEAT_PERM_EXTRA) &&
 	    (c_ptr->feat <= FEAT_PERM_SOLID))
 	{
