@@ -5021,7 +5021,7 @@ void do_cmd_borg(void)
 
 			/* Get a "Borg command", or abort */
 			if (!get_com
-				("Dynamic Borg Has What: ((i)nv/(w)orn/(a)rtifact/(s)kill) ",
+				("Dynamic Borg Has What: ((i)nv/(w)orn/(a)rtifact) ",
 				 &cmd)) return;
 
 			switch (cmd)
@@ -5045,12 +5045,6 @@ void do_cmd_borg(void)
 				{
 					item = z_info->k_max * 2;
 					to = z_info->k_max * 2 + z_info->a_max;
-					break;
-				}
-				default:
-				{
-					item = z_info->k_max * 2 + z_info->a_max;
-					to = z_info->k_max * 2 + z_info->a_max + BI_MAX;
 					break;
 				}
 			}
@@ -5079,28 +5073,28 @@ void do_cmd_borg(void)
 				{
 					case 'i':
 					case 'I':
+					{
 						borg_note(format
 								  ("Item%03d value= %d.", item,
 								   borg_has[item]));
 						break;
+					}
 					case 'w':
 					case 'W':
+					{
 						borg_note(format
 								  ("WItem%03d value= %d.", item - z_info->k_max,
 								   borg_has[item]));
 						break;
+					}
 					case 'a':
 					case 'A':
+					{
 						borg_note(format
 								  ("Artifact%03d value= %d.",
 								   item - z_info->k_max * 2, borg_has[item]));
 						break;
-					default:
-						borg_note(format("skill %d (%s) value= %d.", item,
-										 prefix_pref[item - z_info->k_max * 2 -
-													 z_info->a_max],
-										 borg_has[item]));
-						break;
+					}
 				}
 			}
 

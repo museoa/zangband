@@ -450,7 +450,6 @@ enum
 };
 
 extern int *formula[1000];
-extern cptr prefix_pref[];
 
 /*
  * Hack -- optional cheating flags
