@@ -2865,6 +2865,53 @@ errr file_character(cptr name, bool full)
 			fprintf(fff, "\n You have defeated %lu enemies.\n", Total);
 	}
 
+    /* Top kills */
+    {
+        u16b *who;
+        int n;
+        u16b why = 0;
+
+        /* Allocate the "who" array */
+        C_MAKE(who, z_info->r_max, u16b);
+
+        /* Collect matching monsters */
+        for (n = 0, i = 1; i < z_info->r_max; i++)
+        {
+            monster_race *r_ptr = &r_info[i];
+    
+            /* Require killed monsters */
+            if (!r_ptr->r_pkills) continue;
+
+            /* Collect monsters */
+            who[n++] = i;
+        }
+
+        if (n)
+        {
+            fprintf(fff, "\n\n  [Top %i deepest kills]\n\n", n >= 10 ? 10 : n);
+
+            why = 2;
+        
+            /* Select the sort method */
+            ang_sort_comp = ang_sort_comp_hook;
+            ang_sort_swap = ang_sort_swap_hook;
+        
+            /* Sort the array */
+            ang_sort(who, &why, n);
+
+            for (i = n - 1; i >= 0 && i >= n - 10; i--)
+            {
+                monster_race *r_ptr = &r_info[who[i]];
+
+                fprintf(fff, "%2i %-36s Level %i (%i')\n", r_ptr->r_pkills,
+                        (r_ptr->name + r_name), r_ptr->level, r_ptr->level * 50);
+            }
+        }
+
+        /* Free the "who" array */
+        KILL(who);
+    }
+
 #if 0
 	fprintf(fff, "\n\n  [Virtues]\n\n");
 	dump_virtues(fff);
