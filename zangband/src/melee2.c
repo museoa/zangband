@@ -1567,6 +1567,11 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 				/* Look to see if we've spotted a mimic */
 				if ((m_ptr->smart & SM_MIMIC) && see_m)
 				{
+					char m_name2[80];
+		
+					/* Get name */
+					monster_desc (m_name2, m_ptr, 0x88);
+		
 					/* Toggle flag */
 					m_ptr->smart &= ~(SM_MIMIC);
 					
@@ -1574,12 +1579,17 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 					update_mon_vis(m_ptr->r_idx, 1);
 		
 					/* We've spotted it */
-					msg_format("You see a %s!", m_name);
+					msg_format("You see %s!", m_name2);
 				}
 
 				/* Look to see if we've spotted a mimic */
 				if ((t_ptr->smart & SM_MIMIC) && see_t)
 				{
+					char t_name2[80];
+		
+					/* Get name */
+					monster_desc (t_name2, t_ptr, 0x88);
+					
 					/* Toggle flag */
 					t_ptr->smart &= ~(SM_MIMIC);
 
@@ -1587,7 +1597,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 					update_mon_vis(t_ptr->r_idx, 1);
 		
 					/* We've spotted it */
-					msg_format("You see a %s!", t_name);
+					msg_format("You see %s!", t_name2);
 				}
 
 				if ((p_ptr->image) && one_in_(3))
@@ -2725,17 +2735,19 @@ static void process_monster(int m_idx)
 			/* Look to see if we've spotted a mimic */
 			if ((m_ptr->smart & SM_MIMIC) && m_ptr->ml)
 			{
+				char m_name2[80];
+		
+				/* Get name */
+				monster_desc (m_name2, m_ptr, 0x88);
+				
 				/* Toggle flag */
 				m_ptr->smart &= ~(SM_MIMIC);
 		
 				/* It is in the monster list now */
 				update_mon_vis(m_ptr->r_idx, 1);
-		
-				/* Acquire the monster name */
-				monster_desc(m_name, m_ptr, 0x04);
-				
+						
 				/* We've spotted it */
-				msg_format("You see a %s!", m_name);
+				msg_format("You see %s!", m_name2);
 			}
 
 			/* Process fields under the monster. */

@@ -1572,6 +1572,11 @@ void py_attack(int y, int x)
 	/* Look to see if we've spotted a mimic */
 	if (m_ptr->smart & SM_MIMIC)
 	{
+		char m_name2[80];
+		
+		/* Get name */
+		monster_desc (m_name2, m_ptr, 0x88);
+		
 		/* Toggle flag */
 		m_ptr->smart &= ~(SM_MIMIC);
 		
@@ -1579,7 +1584,7 @@ void py_attack(int y, int x)
 		update_mon_vis(m_ptr->r_idx, 1);
 		
 		/* We've spotted it */
-		msg_format("You've found a %s!", m_name);
+		msg_format("You've found %s!", m_name2);
 	}
 
 	/* Stop if friendly */

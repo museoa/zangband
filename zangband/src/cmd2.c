@@ -2758,6 +2758,11 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 			/* Look to see if we've spotted a mimic */
 			if ((m_ptr->smart & SM_MIMIC) && m_ptr->ml)
 			{
+				char m_name2[80];
+		
+				/* Get name */
+				monster_desc (m_name2, m_ptr, 0x88);
+				
 				/* Toggle flag */
 				m_ptr->smart &= ~(SM_MIMIC);
 				
@@ -2765,7 +2770,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 				update_mon_vis(m_ptr->r_idx, 1);
 		
 				/* We've spotted it */
-				msg_format("You've found a %s!", m_name);
+				msg_format("You've found %s!", m_name2);
 			}
 
 			/* Did we hit it (penalize range) */
@@ -3175,6 +3180,11 @@ void do_cmd_throw_aux(int mult)
 			/* Look to see if we've spotted a mimic */
 			if ((m_ptr->smart & SM_MIMIC) && m_ptr->ml)
 			{
+				char m_name2[80];
+		
+				/* Get name */
+				monster_desc (m_name2, m_ptr, 0x88);
+				
 				/* Toggle flag */
 				m_ptr->smart &= ~(SM_MIMIC);
 				
@@ -3182,7 +3192,7 @@ void do_cmd_throw_aux(int mult)
 				update_mon_vis(m_ptr->r_idx, 1);
 		
 				/* We've spotted it */
-				msg_format("You've found a %s!", m_name);
+				msg_format("You've found %s!", m_name2);
 			}
 			
 			/* Did we hit it (penalize range) */
