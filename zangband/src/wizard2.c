@@ -673,7 +673,7 @@ static int wiz_create_itemtype(void)
 
 	/* Bail out if choice is "illegal" */
 	if (num >= max_num) return (0);
-
+	
 	/* And return successful */
 	return (choice[num]);
 }
