@@ -8,6 +8,7 @@
 
 
 from variable import events, player
+from base.skill import skill
 
 
 # Stat Table (INT/WIS) -- Various things
@@ -96,13 +97,18 @@ adj_mag_fail = [
 ]
 
 
-class spell:
+class spell(skill):
 	info = ""
+	active = 1
+
 	def __init__(self, level=0, mana=0, fail=0, exp=0):
 		self.level = level
 		self.mana = mana
 		self.fail = fail
 		self.exp = exp
+
+	def use(self):
+		self.cast()
 
 	# Cast the spell
 	# Returns 1 on successful cast and 0 when failing
@@ -158,10 +164,32 @@ class spell:
 			io.sound(io.SOUND_FAIL)
 			return
 
-		print "cast", self.name
 		self.effect()
 
 
 class realm:
+	spell_distribution = [
+		( 0,  0,  0,  0,  0,  0), #  0
+		( 0,  4,  0,  0,  0,  0), #  1
+		( 1,  8,  0,  0,  0,  0), #  2
+		( 2, 12,  0,  0,  0,  0), #  3
+		( 0, 16,  0,  1,  0,  0), #  4
+		( 0, 16,  1,  2,  0,  1), #  5
+		( 0, 16,  2,  4,  0,  1), #  6
+		( 0, 16,  2,  6,  0,  2), #  7
+		( 0, 16,  3,  8,  3,  8), #  8
+		( 0, 16,  3, 10,  3, 10), #  9
+		( 0, 16,  4, 12,  4, 12), # 10
+		( 0, 16,  4, 14,  5, 14), # 11
+		( 0, 16,  5, 16,  5, 16), # 12
+		( 0, 16,  6, 18,  6, 18), # 13
+		( 0, 16,  7, 20,  7, 20), # 14
+		( 0, 16,  8, 21,  8, 21), # 15
+		( 0, 16,  9, 22,  9, 22)] # 16
+
 	spells = []
+
+	def __init__(self):
+		self.picks = 0
+		self.player_picks = 0
 
