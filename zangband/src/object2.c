@@ -5177,28 +5177,31 @@ bool can_player_destroy_object(object_type *o_ptr)
 	 * Artifacts cannot be destroyed
 	 * However only notice if we have not *id'ed* it.
 	 */
-	if (FLAG(o_ptr, TR_INSTA_ART) && !(o_ptr->info & OB_MENTAL))
+	if (FLAG(o_ptr, TR_INSTA_ART))
 	{
-		byte feel = FEEL_SPECIAL;
+		if (!(o_ptr->info & OB_MENTAL))
+		{
+			byte feel = FEEL_SPECIAL;
+	
+			/* Hack -- Handle icky artifacts */
+			if (cursed_p(o_ptr) || !o_ptr->cost) feel = FEEL_TERRIBLE;
 
-		/* Hack -- Handle icky artifacts */
-		if (cursed_p(o_ptr) || !o_ptr->cost) feel = FEEL_TERRIBLE;
+			/* Hack -- inscribe the artifact */
+			o_ptr->feeling = feel;
 
-		/* Hack -- inscribe the artifact */
-		o_ptr->feeling = feel;
+			/* We have "felt" it (again) */
+			o_ptr->info |= (OB_SENSE);
 
-		/* We have "felt" it (again) */
-		o_ptr->info |= (OB_SENSE);
+			/* Combine the pack */
+			p_ptr->notice |= (PN_COMBINE);
 
-		/* Combine the pack */
-		p_ptr->notice |= (PN_COMBINE);
+			/* Redraw equippy chars */
+			p_ptr->redraw |= (PR_EQUIPPY);
 
-		/* Redraw equippy chars */
-		p_ptr->redraw |= (PR_EQUIPPY);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP);
-
+			/* Window stuff */
+			p_ptr->window |= (PW_INVEN | PW_EQUIP);
+		}
+		
 		/* Done */
 		return FALSE;
 	}
