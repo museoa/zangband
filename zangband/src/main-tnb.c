@@ -16,11 +16,10 @@
 #include <tcl.h>
 #include "tnb.h"
 #include "interp.h"
-#include "tcltk-dll.h"
+#include "tcltk.h"
 
 #ifdef PLATFORM_WIN
 #include <windows.h>
-#define INVALID_FILE_NAME (DWORD)0xFFFFFFFF
 #endif
 
 static term data;
@@ -32,7 +31,6 @@ cptr ANGBAND_DIR_TK;
 cptr ANGBAND_DIR_COMMON;
 cptr ANGBAND_DIR_COMMON_TK;
 Tcl_Interp *g_interp;
-static char *gGameDir, *gVariantDir;
 
 #ifdef PLATFORM_X11
 
@@ -88,12 +86,15 @@ static void validate_dir(cptr s)
 	}
 }
 
-/* static */ errr Term_user_win(int n)
+static errr Term_user_tnb(int n)
 {
+	/* Hack - ignore parameters for now */
+	(void) n;
+
 	return (0);
 }
 
-static errr Term_xtra_win_react(void)
+static errr Term_xtra_tnb_react(void)
 {
 	return 0;
 }
@@ -101,7 +102,7 @@ static errr Term_xtra_win_react(void)
 /*
  * Process at least one event
  */
-static errr Term_xtra_win_event(int v)
+static errr Term_xtra_tnb_event(int v)
 {
 	int flags;
 
@@ -128,7 +129,7 @@ static errr Term_xtra_win_event(int v)
 /*
  * Process all pending events
  */
-static errr Term_xtra_win_flush(void)
+static errr Term_xtra_tnb_flush(void)
 {
 	int flags = TCL_ALL_EVENTS | TCL_DONT_WAIT;
 
@@ -138,7 +139,7 @@ static errr Term_xtra_win_flush(void)
 	return (0);
 }
 
-static errr Term_xtra_win_clear(void)
+static errr Term_xtra_tnb_clear(void)
 {
 	return 0;
 }
@@ -146,7 +147,7 @@ static errr Term_xtra_win_clear(void)
 /*
  * Hack -- make a noise
  */
-static errr Term_xtra_win_noise(void)
+static errr Term_xtra_tnb_noise(void)
 {
 #ifdef PLATFORM_WIN
 	MessageBeep(MB_ICONASTERISK);
@@ -158,15 +159,18 @@ static errr Term_xtra_win_noise(void)
 /*
  * Hack -- make a sound
  */
-static errr Term_xtra_win_sound(int v)
+static errr Term_xtra_tnb_sound(int v)
 {
+	/* Hack - ignore parameters for now */
+	(void) v;
+
 	return (0);
 }
 
 /*
  * Delay for "x" milliseconds
  */
-static int Term_xtra_win_delay(int v)
+static int Term_xtra_tnb_delay(int v)
 {
 	if (v <= 0)
 		return (0);
@@ -191,7 +195,7 @@ static int Term_xtra_win_delay(int v)
 /*
  * Do a "special thing"
  */
-/* static */ errr Term_xtra_win(int n, int v)
+static errr Term_xtra_tnb(int n, int v)
 {
 	/* Handle a subset of the legal requests */
 	switch (n)
@@ -199,49 +203,62 @@ static int Term_xtra_win_delay(int v)
 		/* Make a bell sound */
 		case TERM_XTRA_NOISE:
 		{
-			return (Term_xtra_win_noise());
+			return (Term_xtra_tnb_noise());
 		}
 
 		/* Make a special sound */
 		case TERM_XTRA_SOUND:
 		{
-			return (Term_xtra_win_sound(v));
+			return (Term_xtra_tnb_sound(v));
 		}
 
 		/* Process random events */
 		case TERM_XTRA_BORED:
 		{
-			return (Term_xtra_win_event(0));
+			return (Term_xtra_tnb_event(0));
 		}
 
 		/* Process an event */
 		case TERM_XTRA_EVENT:
 		{
-			return (Term_xtra_win_event(v));
+			return (Term_xtra_tnb_event(v));
 		}
 
 		/* Flush all events */
 		case TERM_XTRA_FLUSH:
 		{
-			return (Term_xtra_win_flush());
+			return (Term_xtra_tnb_flush());
 		}
 
 		/* Clear the screen */
 		case TERM_XTRA_CLEAR:
 		{
-			return (Term_xtra_win_clear());
+			return (Term_xtra_tnb_clear());
 		}
 
 		/* React to global changes */
 		case TERM_XTRA_REACT:
 		{
-			return (Term_xtra_win_react());
+			return (Term_xtra_tnb_react());
 		}
 
 		/* Delay for some milliseconds */
 		case TERM_XTRA_DELAY:
 		{
-			return (Term_xtra_win_delay(v));
+			return (Term_xtra_tnb_delay(v));
+		}
+		
+		/* Flush the output XXX XXX */
+		case TERM_XTRA_FRESH:
+		{
+			int flags = TCL_WINDOW_EVENTS | TCL_IDLE_EVENTS | TCL_DONT_WAIT;
+
+			Bind_Generic(EVENT_TERM, KEYWORD_TERM_FRESH + 1);
+
+			while (Tcl_DoOneEvent(flags) != 0)
+				;
+
+			return (0);
 		}
 	}
 
@@ -249,40 +266,51 @@ static int Term_xtra_win_delay(int v)
 	return 1;
 }
 
-static errr Term_curs_win(int x, int y)
+static errr Term_curs_tnb(int x, int y)
 {
+	/* Hack - ignore parameters for now */
+	(void) x;
+	(void) y;
+
 	return 0;
 }
 
-static errr Term_wipe_win(int x, int y, int n)
+static errr Term_wipe_tnb(int x, int y, int n)
 {
+	/* Hack - ignore parameters for now */
+	(void) x;
+	(void) y;
+	(void) n;
+
 	return 0;
 }
 
-static errr Term_text_win(int x, int y, int n, byte a, const char *s)
+static errr Term_text_tnb(int x, int y, int n, byte a, const char *s)
 {
+	/* Hack - ignore parameters for now */
+	(void) x;
+	(void) y;
+	(void) n;
+	(void) a;
+	(void) s;
+
 	return 0;
 }
 
-static errr Term_pict_win(int x, int y, int n, const byte *ap, const char *cp)
+static errr Term_pict_tnb(int x, int y, int n, const byte *ap, const char *cp, const byte *tap, const char *tcp)
 {
+	/* Hack - ignore parameters for now */
+	(void) x;
+	(void) y;
+	(void) n;
+	(void) ap;
+	(void) cp;
+	(void) tap;
+	(void) tcp;
+
 	return 0;
 }
 
-/*
- * From z-term.c
- */
-errr Term_fresh(void)
-{	
-	int flags = TCL_WINDOW_EVENTS | TCL_IDLE_EVENTS | TCL_DONT_WAIT;
-
-	Bind_Generic(EVENT_TERM, KEYWORD_TERM_FRESH + 1);
-
-	while (Tcl_DoOneEvent(flags) != 0)
-		;
-
-	return (0);
-}
 
 static void term_data_link(term *t)
 {
@@ -300,12 +328,12 @@ static void term_data_link(term *t)
 	t->char_blank = ' ';
 
 	/* Prepare the template hooks */
-	t->user_hook = Term_user_win;
-	t->xtra_hook = Term_xtra_win;
-	t->curs_hook = Term_curs_win;
-	t->wipe_hook = Term_wipe_win;
-	t->text_hook = Term_text_win;
-	t->pict_hook = Term_pict_win;
+	t->user_hook = Term_user_tnb;
+	t->xtra_hook = Term_xtra_tnb;
+	t->curs_hook = Term_curs_tnb;
+	t->wipe_hook = Term_wipe_tnb;
+	t->text_hook = Term_text_tnb;
+	t->pict_hook = Term_pict_tnb;
 
 	/* Remember where we came from */
 	t->data = NULL;
@@ -328,132 +356,6 @@ static void init_windows(void)
 	}
 
 	Term_activate(t);
-}
-
-/*
- * Check for double clicked (or dragged) savefile
- *
- * Apparently, Windows copies the entire filename into the first
- * piece of the "command line string".  Perhaps we should extract
- * the "basename" of that filename and append it to the "save" dir.
- */
-static void check_for_save_file(int argc, char **argv)
-{
-#if 1
-	int i;
-
-	for (i = 1; i < argc; i++)
-	{
-		if (!strcmp(argv[i], "-savefile"))
-		{
-			(void) strcpy(savefile, argv[i + 1]);
-			break;
-		}
-	}
-	if (i == argc)
-		return;
-	
-#else
-	char *s, *p;
-
-	/* First arg */
-	s = cmd_line;
-
-	/* Second arg */
-	p = strchr(s, ' ');
-
-	/* Tokenize, advance */
-	if (p) *p++ = '\0';
-
-	/* No args */
-	if (!*s) return;
-
-	/* Extract filename */
-	(void) strcpy(savefile, s);
-#endif
-
-	/* Okay if no such file */
-	if (!check_file(savefile))
-	{
-/* FIXME: Try ANGBAND_DIR\save\savefile too */
-
-		/* Forget the file */
-		savefile[0] = '\0';
-
-		/* Done */
-		return;
-	}
-
-	/* Game in progress */
-	game_in_progress = TRUE;
-
-	/* Play game */
-	play_game(FALSE);
-
-	/* Bye! */
-	quit(NULL);
-}
-
-/*
- * Display warning message (see "z-util.c")
- */
-static void hack_plog(cptr str)
-{
-	/* Give a warning */
-	if (str)
-	{
-#if 1
-		angtk_eval("tk_messageBox", "-icon", "warning", "-message", str,
-			"-title", "Warning", "-type", "ok", NULL);
-#else
-		MessageBox(NULL, str, "Warning",
-			MB_ICONEXCLAMATION | MB_OK);
-#endif
-	}
-}
-
-/*
- * Display error message and quit (see "z-util.c")
- */
-static void hack_quit(cptr str)
-{
-	/* Give a warning */
-	if (str)
-	{
-#if 1
-		angtk_eval("tk_messageBox", "-icon", "warning", "-message", str,
-			"-title", "Warning", "-type", "ok", NULL);
-#else
-		MessageBox(NULL, str, "Error",
-			MB_ICONEXCLAMATION | MB_OK | MB_ICONSTOP);
-#endif
-	}
-
-	/* Cleanup Tcl and Tk (this exits via Tcl_Exit()) */
-	TclTk_Exit(g_interp);
-
-	/* Exit */
-	exit(0);
-}
-
-/*
- * Display warning message (see "z-util.c")
- */
-static void hook_plog(cptr str)
-{
-	/* Warning */
-	if (str)
-	{
-#if 1
-		angtk_eval("tk_messageBox", "-icon", "warning", "-message", str,
-			"-title", "Warning", "-type", "ok", NULL);
-#else
-		int oldMode = Tcl_SetServiceMode(TCL_SERVICE_ALL);
-		(void) MessageBox(NULL, str, "Warning",
-			MB_ICONEXCLAMATION | MB_OK);
-		(void) Tcl_SetServiceMode(oldMode);
-#endif
-	}
 }
 
 
@@ -508,35 +410,6 @@ static void hook_quit(cptr str)
 	exit(0);
 }
 
-#ifdef PRIVATE_USER_PATH
-
-/*
- * Create an ".angband/" directory in the users home directory.
- *
- * ToDo: Add error handling.
- * ToDo: Only create the directories when actually writing files.
- */
-static void create_user_dir(void)
-{
-	char dirpath[1024];
-	char subdirpath[1024];
-
-
-	/* Get an absolute path from the filename */
-	path_parse(dirpath, 1024, PRIVATE_USER_PATH);
-
-	/* Create the ~/.angband/ directory */
-	mkdir(dirpath, 0700);
-
-	/* Build the path to the variant-specific sub-directory */
-	path_build(subdirpath, 1024, dirpath, VERSION_NAME);
-
-	/* Create the directory */
-	mkdir(subdirpath, 0700);
-}
-
-#endif /* PRIVATE_USER_PATH */
-
 /* /home/tnb/AngbandTk/./angband --> /home/tnb/AngbandTk/angband */
 /* /home/./tnb/foo/../bar --> /home/tnb/bar */
 static char *clean_path(char *inp, char *outp)
@@ -586,7 +459,7 @@ static char *clean_path(char *inp, char *outp)
 /*
  * Init some stuff
  */
-static void init_stuff(int argc, char **argv)
+static void init_stuff(char **argv)
 {
 	char path[1024];
 
@@ -685,10 +558,10 @@ static void init_stuff(int argc, char **argv)
 
 int main(int argc, char **argv)
 {
-	char path[1024], *t;
+	char *t;
 
 	/* Prepare the filepaths */
-	init_stuff(argc, argv);
+	init_stuff(argv);
 
 #ifdef SET_UID
 
@@ -720,7 +593,7 @@ int main(int argc, char **argv)
 	g_interp = TclTk_Init(argc, argv);
 
 	/* Sanity: Require same Tcl version as common.dll */
-	t = Tcl_GetVar(g_interp, "tcl_patchLevel", TCL_GLOBAL_ONLY);
+	t = Tcl_GetVar(g_interp, (char *) "tcl_patchLevel", TCL_GLOBAL_ONLY);
 	if (!t || strcmp(t, TCL_PATCH_LEVEL))
 	{
 		quit_fmt("The game was compiled with Tcl version %s, "
