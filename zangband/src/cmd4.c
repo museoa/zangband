@@ -3830,12 +3830,11 @@ static void do_cmd_knowledge_wild(void)
 
 	FILE *fff;
 
-	char place_info[1024];
-	char stores_info[2048] = "";
+	char stores_info[2048];
 
 	char file_name[1024];
-
-	char build_name[80];
+	
+	cptr build_name;
 
 	bool stairs_exist = FALSE;
 
@@ -3850,7 +3849,6 @@ static void do_cmd_knowledge_wild(void)
 	/* Cycle through the places */
 	for (k = 1; k < place_count; k++)
 	{
-
 		/* Is this a town? */
 		if (!place[k].quest_num)
 		{
@@ -3863,34 +3861,28 @@ static void do_cmd_knowledge_wild(void)
 				if (place[k].store[j].x != 0 && place[k].store[j].y != 0)
 				{
 					visited = TRUE;
+					break;
 				}
 			}
 
 			/* Build a buffer with information (if visited, and if it is a town) */
 			if (visited)
 			{
-
 				/* Clear stores and place information */
-				memset(stores_info, 0, 2048);
-				memset(place_info, 0, 1024);
+				stores_info[0] = '\0';
 				stairs_exist = FALSE;
 
 				/* Build stores information */
 				for (j = 0; j < place[k].numstores; j++)
 				{
-
-					/* Clear building */
-					memset(build_name, 0, 80);
-
-					/* Extract name of building */
-					strcpy(build_name, building_name(place[k].store[j].type));
-
+					build_name = building_name(place[k].store[j].type);
+				
 					/* Make a string, but only if this is a real building */
 					if (!streq(build_name, "Nothing"))
 					{
-						strcat(stores_info, "     ");
-						strcat(stores_info, build_name);
-						strcat(stores_info, "\n");
+						/* Append information about store */
+						strnfmt(stores_info, 2048, "%s     %s\n",
+								stores_info, build_name);
 					}
 
 					/* Note if there are stairs in this town */
@@ -3898,21 +3890,19 @@ static void do_cmd_knowledge_wild(void)
 					{
 						stairs_exist = TRUE;
 					}
-
 				}
-
-				/* Build town information */
+				
+				/* Write stairs information to file */
 				if (stairs_exist)
 				{
-					sprintf(place_info, "%s -- Stairs\n", place[k].name);
+					fprintf(fff, "%s -- Stairs\n", place[k].name);
 				}
 				else
 				{
-					sprintf(place_info, "%s\n", place[k].name);
+					fprintf(fff, "%s\n", place[k].name);
 				}
 
 				/* Write to file */
-				fprintf(fff, place_info);
 				fprintf(fff, stores_info);
 				fprintf(fff, "\n");
 			}
@@ -3927,7 +3917,6 @@ static void do_cmd_knowledge_wild(void)
 
 	/* Remove the file */
 	(void)fd_kill(file_name);
-
 }
 
 /*

@@ -168,6 +168,21 @@ static int wild_first_town[START_STORE_NUM] =
 };
 
 
+/*
+ * Return the building name given a building "type"
+ */
+cptr building_name(byte build_type)
+{
+	u16b field_num;
+
+	/* Look up the field type */
+	field_num = wild_build[build_type].field;
+
+	/* Return the name of the building */
+	return (t_info[field_num].name);
+}
+
+
 /* Find a place for the player */
 static void place_player_start(s32b *x, s32b *y, u16b this_town)
 {
@@ -3978,25 +3993,3 @@ void wipe_all_list(void)
 	in_boundsp = NULL;
 }
 
-/*
- * Return the building name given a building "type"
- */
-cptr building_name(byte build_type)
-{
-	/* Must be static so we can return it */
-	static char name[80];
-
-	u16b field_num;
-
-	/* Start off by clearing the name from previous calls */
-	memset(name, 0, 80);
-
-	/* Look up the field type */
-	field_num = wild_build[build_type].field;
-
-	/* Find the name of the building */
-	strcpy(name, t_info[field_num].name);
-
-	return name;
-
-}
