@@ -85,8 +85,6 @@ TkClassProcs widgetProcs = {
     NULL							/* modalProc. */ 
 };
 
-int debug_widgets = 0;
-
 /* List of existing widgets let us iterate over them */
 DoubleLinker WidgetList;
 

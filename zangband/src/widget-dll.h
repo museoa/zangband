@@ -185,13 +185,6 @@ typedef struct t_widget_color
 extern t_widget_color *WidgetColor_Alloc(int color, int opacity);
 extern void WidgetColor_Deref(t_widget_color *color_ptr);
 
-#define DEBUG_WIDGET_CONFIG 0x0001
-#define DEBUG_WIDGET_DRAW 0x0002
-#define DEBUG_WIDGET_ITEM 0x0004
-#define DEBUG_WIDGET_ISO 0x0008
-#define DEBUG_WIDGET_ALL 0xFFFF
-extern int debug_widgets;
-
 extern DoubleLinker WidgetList;
 extern DoubleLinker WidgetListMap;
 int Widget_Init(Tcl_Interp *interp, Widget_CreateProc *proc);
