@@ -1796,4 +1796,13 @@ struct mutation_type
  * and will return TRUE if the selection works, and FALSE
  * if the menu should stay up.
  */
-typedef bool (*menu_select_type) (cptr option);
+typedef bool (*menu_select_type) (int option);
+
+typedef struct menu_type menu_type;
+
+struct menu_type
+{
+	cptr text;	/* Option text */
+	menu_select_type action; /* Action to do */
+	bool available;	/* Is this action available? */
+};

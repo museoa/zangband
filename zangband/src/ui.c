@@ -331,6 +331,33 @@ int get_player_sort_choice(cptr *choices, int num, int col, int wid,
 	return (choice);
 }
 
+/*
+ * Display a menu of choices on the screen
+ *;
+ * We return the number of active options.
+ */
+static int show_menu(int num, menu_type *options, int select)
+{
+	int cnt = 0;
+	int i;
+	
+	for (i = 0; i < num; i++)
+	{
+		if (options[i].available)
+		{
+			prtf(0, i + 2, "%c%c) %s", (i == select) ? '*' : ' ', I2A(cnt),
+				 options[i].text);
+			cnt++;
+		}
+		else
+		{
+			prtf(0, i + 2, "    %s", options[i].text);
+		}
+	}
+	
+	return (cnt);
+}
+
 
 /*
  * Display a menu, and get a choice.
@@ -343,32 +370,27 @@ int get_player_sort_choice(cptr *choices, int num, int col, int wid,
  * 'select' shows the default/current option.
  *       If negative, it is ignored.
  */
-bool display_menu(int num, cptr *options, menu_select_type *cmd, int select)
+bool display_menu(int num, menu_type *options, int select)
 {
-	int i;
+	int i = -1, j, k, cnt;
 	int ask = 0;
 	char choice;
-	byte x = 0;
                   
     /* Paranoia XXX XXX XXX */
 	message_flush();
 
 	/* Save the screen */
 	Term_save();
-    
-    /* Display the prompt */
-	prtf(0, 0, "(Command (a-%c), ESC=exit) Select a command: ",
-				  I2A(num - 1));
 
 	/* Border on top of menu */
 	clear_row(1);
     
 	/* Show the list */
-	for (i = 0; i < num; i++)
-	{
-		prtf(x, i + 2, "%c%c) %s", (i == select) ? '*' : ' ', I2A(i),
-				options[i]);
-	}
+	cnt = show_menu(num, options, select);
+	
+	/* Display the prompt */
+	prtf(0, 0, "(Command (a-%c), ESC=exit) Select a command: ",
+				  I2A(cnt));
 
 	/* Border below menu */
 	clear_row(num + 1);
@@ -388,11 +410,11 @@ bool display_menu(int num, cptr *options, menu_select_type *cmd, int select)
 			/* Default options */
         	if (num == 1)
         	{
-				choice = 1;
+				i = 1;
             }
             else
 			{
-				choice = select;
+				i = select;
 			}
 		}
 		else if (isalpha(choice))
@@ -408,7 +430,7 @@ bool display_menu(int num, cptr *options, menu_select_type *cmd, int select)
 		}
 
 		/* Totally Illegal */
-		if ((i < 0) || (i > num))
+		if ((i < 0) || (i >= cnt))
 		{
 			bell("Illegal command!");
 			continue;
@@ -418,17 +440,41 @@ bool display_menu(int num, cptr *options, menu_select_type *cmd, int select)
 		if (ask)
 		{
 			/* Belay that order */
-			if (!get_check("Use %s? ", options[i])) continue;
+			if (!get_check("Use %s? ", options[i].text)) continue;
 		}
-
-		/* Call the function */
-		if (cmd[i](options[i]))
+		
+		/* Find the action to call */
+		k = 0;
+		for (j = 0; j < num; j++)
 		{
-			/* Restore the screen */
-			Term_load();
+			if (options[j].available)
+			{
+				if (k == i)
+				{
+					if (options[i].action(i))
+					{
+						/* Restore the screen */
+						Term_load();
 	
-			/* Success */
-			return (TRUE);
+						/* Success */
+						return (TRUE);
+					}
+					else
+					{
+						/* Select this option for next time */
+						select = i;
+						
+						/* Show the list */
+						show_menu(num, options, select);
+						
+						/* Get a new command */
+						break;
+					}
+				}
+				
+				/* Increment count of available options */
+				k++;
+			}
 		}
 	}
 
