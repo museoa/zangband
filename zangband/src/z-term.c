@@ -1236,7 +1236,7 @@ static void Term_fresh_row_text(int y, int x1, int x2)
  * hook, which can draw these pairs in whatever way it would like.
  *
  * Normally, the "Term_wipe()" function is used only to display "blanks"
- * that were induced by "Term_clear()" or "Term_erase()", and then only
+ * that were induced by "Term_clear()" or "()", and then only
  * if the "attr_blank" and "char_blank" fields have not been redefined
  * to use "white space" instead of the default "black space".  Actually,
  * the "Term_wipe()" function is used to display all "black" text, such
@@ -1775,7 +1775,7 @@ void Term_erase(int x, int y, int n)
 	int i;
 
 	int w = Term->wid;
-	/* int h = Term->hgt; */
+	int h = Term->hgt;
 
 	int x1 = -1;
 	int x2 = -1;
@@ -1793,6 +1793,11 @@ void Term_erase(int x, int y, int n)
 
 	/* Place cursor */
 	Term_gotoxy(x, y);
+
+	/* Paranoia */
+	if (n < 0) n = 0;
+	if ((x >= w) || (y >= h)) return;
+
 
 	/* Force legal size */
 	if (x + n > w) n = w - x;
