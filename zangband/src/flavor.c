@@ -1739,6 +1739,12 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		strcpy(tmp_val2, game_inscriptions[o_ptr->feeling]);
 	}
 
+	/* Note "cursed" if the item is known to be cursed */
+	else if (cursed_p(o_ptr) && (known || (o_ptr->ident & (IDENT_SENSE))))
+	{
+		strcpy(tmp_val2, "cursed");
+	}
+
 	/* Mega-Hack -- note empty wands/staffs */
 	else if (!known && (o_ptr->ident & (IDENT_EMPTY)))
 	{
