@@ -1070,6 +1070,11 @@ static void store_prt_gold(void)
 static void display_store(int store_top)
 {
 	const owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
+	
+	int wid, hgt;
+
+	/* Get size */
+	Term_get_size(&wid, &hgt);
 
 	/* Clear screen */
 	Term_clear();
@@ -1109,11 +1114,11 @@ static void display_store(int store_top)
 		/* If showing weights, show label */
 		if (show_weights)
 		{
-			put_fstr(60, 5, "Weight");
+			put_fstr(wid - 20, 5, "Weight");
 		}
 
 		/* Label the asking price (in stores) */
-		put_fstr(72, 5, "Price");
+		put_fstr(wid - 8, 5, "Price");
 	}
 
 	/* Display the current gold */
