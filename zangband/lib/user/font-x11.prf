@@ -102,6 +102,9 @@ F:61:1/0x02
 F:62:1/0x02
 F:63:1/0x02
 
+# Pillar
+F:63:1/0x01
+
 # Space monster
 R:144:0x00:0xB7
 
