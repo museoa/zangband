@@ -988,13 +988,12 @@
 #define FEAT_BOULDER		0x63
 #define FEAT_PINE_TREE		0x64
 #define FEAT_SNOW_TREE		0x65
-#define FEAT_OBLISK		0x66
+#define FEAT_OBELISK		0x66
 #define FEAT_PILLAR		0x67
 
 /* Feature 0x68 - 0x6F unused */
-/
-* Impassible terrains */
 
+/* Impassible terrains */
 #define FEAT_FENCE		0x70
 #define FEAT_WELL		0x71
 #define FEAT_FOUNTAIN		0x72
@@ -3152,12 +3151,16 @@
  * Line 2 -- forbid deep water -KMW-
  * Line 3 -- forbid deep lava -KMW-
  * Line 4 -- forbid normal objects
+ * Allow passable floors + snow
  */
 #define cave_clean_bold(Y,X) \
 	(((area(Y,X)->feat == FEAT_FLOOR) || \
 	  (area(Y,X)->feat == FEAT_SHAL_WATER) || \
 	  (area(Y,X)->feat == FEAT_SHAL_LAVA) || \
+	  (area(Y,X)->feat == FEAT_SHAL_ACID) || \
 	  (area(Y,X)->feat == FEAT_GRASS) || \
+	  (area(Y,X)->feat == FEAT_SNOW) || \
+	  ((area(Y,X)->feat & 0xF8) == 0x08) || \
 	  (area(Y,X)->feat == FEAT_DIRT)) && \
 	  (area(Y,X)->o_idx == 0))
 
@@ -3174,6 +3177,8 @@
 #define cave_gen_bold(Y,X) \
 	(((area(Y,X)->feat == FEAT_FLOOR) || \
 	  (area(Y,X)->feat == FEAT_GRASS) || \
+	  (area(Y,X)->feat == FEAT_SNOW) || \
+	  ((area(Y,X)->feat & 0xF8) == 0x08) || \
 	  (area(Y,X)->feat == FEAT_DIRT)) && \
 	  (area(Y,X)->o_idx == 0))
 
@@ -3202,6 +3207,9 @@
 	(((area(Y,X)->feat == FEAT_FLOOR) || \
 	  (area(Y,X)->feat == FEAT_SHAL_WATER) || \
 	  (area(Y,X)->feat == FEAT_SHAL_LAVA) || \
+	  (area(Y,X)->feat == FEAT_SHAL_ACID) || \
+	  (area(Y,X)->feat == FEAT_SNOW) || \
+	  ((area(Y,X)->feat & 0xF8) == 0x08) || \
 	  (area(Y,X)->feat == FEAT_GRASS) || \
 	  (area(Y,X)->feat == FEAT_DIRT)) && \
 	  (area(Y,X)->o_idx == 0) && \
@@ -3221,6 +3229,7 @@
 	((area(Y,X)->feat >= FEAT_PERM_EXTRA) || \
 	((area(Y,X)->feat == FEAT_LESS) || \
 	 (area(Y,X)->feat == FEAT_MORE)) || \
+	((area(Y,X)->feat & 0x70) == 0x70) || \
 	((area(Y,X)->feat >= FEAT_SHOP_HEAD) && \
 	 (area(Y,X)->feat <= FEAT_SHOP_TAIL)))
 

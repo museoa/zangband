@@ -1686,7 +1686,7 @@ static void ang_sort_swap_distance(vptr u, vptr v, int a, int b)
 	s16b *x = (s16b*)(u);
 	s16b *y = (s16b*)(v);
 
-	byte temp;
+	s16b temp;
 
 	/* Swap "x" */
 	temp = x[a];
