@@ -47,7 +47,7 @@
 
 /* main-tnb.c */
 extern bool game_in_progress;
-extern cptr ANGBAND_DIR_TK;
+extern char ANGBAND_DIR_TK[1024];
 
 extern Tcl_Interp *g_interp;
 

@@ -21,42 +21,11 @@ cptr help_tnb[] =
 	NULL
 };
 
-#ifdef PLATFORM_WIN
-#include <windows.h>
-#endif
 
 static term data;
 bool game_in_progress = FALSE;
-cptr ANGBAND_DIR_TK;
+char ANGBAND_DIR_TK[1024];
 Tcl_Interp *g_interp;
-
-#ifdef PLATFORM_X11
-
-/*
- * Check for existance of a directory
- */
-static bool check_dir(cptr s)
-{
-	struct stat statBuf;
-
-	if (stat(s, &statBuf)) return (FALSE);
-	if (!S_ISDIR(statBuf.st_mode)) return (FALSE);
-	return (TRUE);
-}
-
-#endif /* PLATFORM_X11 */
-
-/*
- * Validate a directory
- */
-static void validate_dir(cptr s)
-{
-	/* Verify or fail */
-	if (!check_dir(s))
-	{
-		quit_fmt("Cannot find required directory:\n%s", s);
-	}
-}
 
 
 int
@@ -464,10 +433,8 @@ int init_tnb(int argc, cptr *argv)
 	/* Hack -ignore parameter */
 	(void) argc;
 	
-	ANGBAND_DIR_TK = DEFAULT_TK_PATH;
-
-	/* Validate the "tk" directory */
-	validate_dir(ANGBAND_DIR_TK);
+	/* Save the "tk" directory */
+	path_build(ANGBAND_DIR_TK, 1024, ANGBAND_DIR_SCRIPT, "tk");
 
 	/* Use graphics */
 	use_graphics = 1;
