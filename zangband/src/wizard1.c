@@ -1188,10 +1188,12 @@ static bool make_fake_artifact(object_type *o_ptr, int a_idx)
 	/* Create the artifact */
 	object_prep(o_ptr, i);
 
-	/* Save the activation */
-	o_ptr->activate = a_idx + 128;
+	/* Save the artifact flags */
+	o_ptr->flags1 |= a_ptr->flags1;
+	o_ptr->flags2 |= a_ptr->flags2;
+	o_ptr->flags3 |= a_ptr->flags3;
 
-	/* Extract the fields */
+	/* Set the fields */
 	o_ptr->pval = a_ptr->pval;
 	o_ptr->ac = a_ptr->ac;
 	o_ptr->dd = a_ptr->dd;
@@ -1201,9 +1203,15 @@ static bool make_fake_artifact(object_type *o_ptr, int a_idx)
 	o_ptr->to_d = a_ptr->to_d;
 	o_ptr->weight = a_ptr->weight;
 
+	/* Mega-Hack -- set activation */
+	o_ptr->activate = i + 128;
+
 	/* Do not make another one */
 	a_ptr->cur_num = 1;
 
+	/* Hack: Some artifacts get random extra powers */
+	random_artifact_resistance(o_ptr);
+	
 	/* Save the inscription */
 	o_ptr->xtra_name = quark_add(a_name + a_ptr->name);
 
