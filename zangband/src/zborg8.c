@@ -1395,7 +1395,7 @@ bool borg_think_dungeon(void)
 {
 	int i, j;
 
-	int msec = (delay_factor * delay_factor);
+	int msec = (delay_factor * delay_factor * delay_factor);
 
 	/* Hack -- prevent clock wrapping */
 	if (borg_t >= 20000000)
