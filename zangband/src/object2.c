@@ -2194,6 +2194,9 @@ void add_ego_flags(object_type *o_ptr, byte ego)
 
 	/* Add in cost of ego item */
 	o_ptr->cost = k_info[o_ptr->k_idx].cost + e_ptr->cost;
+	
+	/* Lose information */
+	o_ptr->info &= ~(OB_MENTAL | OB_KNOWN);
 }
 
 

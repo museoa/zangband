@@ -2377,6 +2377,9 @@ bool recharge(int power)
 				/* Never less than zero */
 				if (o_ptr->ac < 0) o_ptr->ac = 0;
 			}
+			
+			/* Hack -- we no longer "memorize" the item */
+			o_ptr->info &= ~(OB_MENTAL);
 
 			/* Hack -- we no longer "know" the item */
 			o_ptr->info &= ~(OB_KNOWN);
@@ -4023,6 +4026,7 @@ bool rustproof(void)
 	if (!o_ptr) return (FALSE);
 
 	SET_FLAG(o_ptr, TR_IGNORE_ACID);
+	o_ptr->kn_flags[2] |= TR2_IGNORE_ACID;
 
 	if ((o_ptr->to_a < 0) && !(cursed_p(o_ptr)))
 	{
@@ -4080,7 +4084,7 @@ bool curse_armor(void)
 		o_ptr->flags[1] = 0;
 		o_ptr->flags[2] = 0;
 		o_ptr->flags[3] = 0;
-
+		
 		/* Lose your feeling */
 		o_ptr->feeling = FEEL_NONE;
 
