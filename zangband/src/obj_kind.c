@@ -192,14 +192,19 @@ errr init_object_alloc(void)
 				table[z].level = x;
 				table[z].prob1 = p;
 				table[z].prob2 = p;
-				table[z].prob3 = p;
 
 				/* Another entry complete for this locale */
 				aux[x]++;
 			}
 		}
 	}
+	
+	/* Erase the "aux" array */
+	(void)C_FREE(&aux, MAX_DEPTH, s16b);
 
+	/* Erase the "num" array */
+	(void)C_FREE(&num, MAX_DEPTH, s16b);
+	
 	/* Success */
 	return (0);
 }

@@ -650,10 +650,8 @@ errr get_obj_num_prep(void)
  */
 s16b get_obj_num(int level)
 {
-	int             i, j, p;
-	int             k_idx;
-	long            value, total;
-	object_kind     *k_ptr;
+	int             i, p;
+	long            value1, value2, total;
 	alloc_entry     *table = alloc_kind_table;
 
 
@@ -678,23 +676,8 @@ s16b get_obj_num(int level)
 		/* Objects are sorted by depth */
 		if (table[i].level > level) break;
 
-		/* Default */
-		table[i].prob3 = 0;
-
-		/* Access the index */
-		k_idx = table[i].index;
-
-		/* Access the actual kind */
-		k_ptr = &k_info[k_idx];
-
-		/* Hack -- prevent embedded chests */
-		if (opening_chest && (k_ptr->tval == TV_CHEST)) continue;
-
-		/* Accept */
-		table[i].prob3 = table[i].prob2;
-
 		/* Total */
-		total += table[i].prob3;
+		total += table[i].prob2;
 	}
 
 	/* No legal objects */
@@ -702,18 +685,7 @@ s16b get_obj_num(int level)
 
 
 	/* Pick an object */
-	value = randint0(total);
-
-	/* Find the object */
-	for (i = 0; i < alloc_kind_size; i++)
-	{
-		/* Found the entry */
-		if (value < table[i].prob3) break;
-
-		/* Decrement */
-		value = value - table[i].prob3;
-	}
-
+	value1 = randint0(total);
 
 	/* Power boost */
 	p = randint0(100);
@@ -721,49 +693,38 @@ s16b get_obj_num(int level)
 	/* Try for a "better" object once (50%) or twice (10%) */
 	if (p < 60)
 	{
-		/* Save old */
-		j = i;
-
-		/* Pick a object */
-		value = randint0(total);
-
-		/* Find the object */
-		for (i = 0; i < alloc_kind_size; i++)
+		value2 = randint0(total);
+		
+		/* Is it better? */
+		if (value2 > value1)
 		{
-			/* Found the entry */
-			if (value < table[i].prob3) break;
-
-			/* Decrement */
-			value = value - table[i].prob3;
+			/* This hack works because the object table is sorted by depth */
+			value1 = value2;
 		}
-
-		/* Keep the "best" one */
-		if (table[i].level < table[j].level) i = j;
 	}
-
+	
 	/* Try for a "better" object twice (10%) */
 	if (p < 10)
 	{
-		/* Save old */
-		j = i;
-
-		/* Pick a object */
-		value = randint0(total);
-
-		/* Find the object */
-		for (i = 0; i < alloc_kind_size; i++)
+		value2 = randint0(total);
+		
+		/* Is it better? */
+		if (value2 > value1)
 		{
-			/* Found the entry */
-			if (value < table[i].prob3) break;
-
-			/* Decrement */
-			value = value - table[i].prob3;
+			/* This hack works because the object table is sorted by depth */
+			value1 = value2;
 		}
-
-		/* Keep the "best" one */
-		if (table[i].level < table[j].level) i = j;
 	}
 
+	/* Find the object */
+	for (i = 0; i < alloc_kind_size; i++)
+	{
+		/* Found the entry */
+		if (value1 < table[i].prob2) break;
+
+		/* Decrement */
+		value1 = value1 - table[i].prob2;
+	}
 
 	/* Result */
 	return (table[i].index);
@@ -881,7 +842,7 @@ static s32b object_value_base(object_type *o_ptr)
 static s32b sqvalue(s32b x)
 {
 	if (x < 0) return (-x * x);
-	return (x *x);
+	return (x * x);
 }
 
 
@@ -905,10 +866,8 @@ s32b flag_cost(object_type * o_ptr, int plusses)
 	if (f1 & TR1_SEARCH) total += (50 * plusses);
 	if (f1 & TR1_INFRA) total += (30 * plusses);
 	if (f1 & TR1_TUNNEL) total += (20 * plusses);
-	if ((f1 & TR1_SPEED) && (plusses > 0))
-		total += (500 * sqvalue(plusses));
-	if ((f1 & TR1_BLOWS) && (plusses > 0))
-		total += (500 * sqvalue(plusses));
+	if ((f1 & TR1_SPEED) && (plusses > 0)) total += (500 * sqvalue(plusses));
+	if ((f1 & TR1_BLOWS) && (plusses > 0)) total += (500 * sqvalue(plusses));
 	if (f1 & TR1_XXX1) total += 0;
 	if (f1 & TR1_XXX2) total += 0;
 	if (f1 & TR1_SLAY_ANIMAL) total += 750;
@@ -1101,7 +1060,6 @@ s32b flag_cost(object_type * o_ptr, int plusses)
  * and "brand" and "ignore" variety.
  *
  * Armor with a negative armor bonus is worthless.
- * Weapons with negative hit+damage bonuses are worthless.
  *
  * Every wearable item with a "pval" bonus is worth extra (see below).
  */
@@ -1826,7 +1784,7 @@ void object_prep(object_type *o_ptr, int k_idx)
  * and whose values are forced to lie between zero and the max, inclusive.
  *
  * Since the "level" rarely passes 100 before Morgoth is dead, it is very
- * rare to get the "full" enchantment on an object, even a deep levels.
+ * rare to get the "full" enchantment on an object, even at deep levels.
  *
  * It is always possible (albeit unlikely) to get the "full" enchantment.
  *
@@ -4016,9 +3974,6 @@ void add_ego_power(int power, object_type *o_ptr)
  * finishing touches on ego-items and artifacts, giving charges to wands and
  * staffs, giving fuel to lites, and placing traps on chests.
  *
- * In particular, note that "Instant Artifacts", if "created" by an external
- * routine, must pass through this function to complete the actual creation.
- *
  * The base "chance" of the item being "good" increases with the "level"
  * parameter, which is usually derived from the dungeon level, being equal
  * to the level plus 10, up to a maximum of 75.  If "good" is true, then
@@ -4311,6 +4266,33 @@ static bool kind_is_good(int k_idx)
 	return (FALSE);
 }
 
+/* The tval / sval pair to match */
+static byte match_tv;
+static byte match_sv;
+
+void init_match_hook(byte tval, byte sval)
+{
+	/* Save the tval/ sval pair to match */
+	match_tv = tval;
+	match_sv = sval;
+}
+
+/*
+ * Hack -- match a certain types of object only
+ */
+bool kind_is_match(int k_idx)
+{
+	object_kind *k_ptr = &k_info[k_idx];
+
+	/* Does the tval match? */
+	if (k_ptr->tval != match_tv) return (FALSE);
+	
+	/* Does the sval match? */
+	if ((match_sv == SV_ANY) || (k_ptr->sval == match_sv)) return (TRUE);
+
+	/* Not a match */
+	return (FALSE);
+}
 
 /*
  * Attempt to make an object (normal or good/great)
@@ -5705,7 +5687,7 @@ void reorder_pack(void)
 	/* Re-order the pack (forwards) */
 	for (i = 0; i < INVEN_PACK; i++)
 	{
-		/* Mega-Hack -- allow "proper" over-flow */
+		/* Mega-Hack -- allow "proper" overflow slot*/
 		if ((i == INVEN_PACK) && (inven_cnt == INVEN_PACK)) break;
 
 		/* Get the item */
@@ -5753,8 +5735,10 @@ void reorder_pack(void)
 			if (!object_known_p(o_ptr)) continue;
 			if (!object_known_p(j_ptr)) break;
 
-			/* Hack:  otherwise identical rods sort by
-			increasing recharge time --dsb */
+			/* 
+			 * Hack:  otherwise identical rods sort by
+			 * increasing recharge time -DSB-
+			 */
 			if (o_ptr->tval == TV_ROD)
 			{
 				if (o_ptr->pval < j_ptr->pval) break;
@@ -5763,8 +5747,6 @@ void reorder_pack(void)
 
 			/* Determine the "value" of the pack item */
 			j_value = object_value(j_ptr);
-
-
 
 			/* Objects sort by decreasing value */
 			if (o_value > j_value) break;

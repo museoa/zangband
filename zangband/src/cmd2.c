@@ -371,6 +371,8 @@ static void chest_death(int y, int x, s16b o_idx)
 {
 	int number;
 
+	byte sval, tval;
+
 	bool small;
 
 	object_type forge;
@@ -378,6 +380,84 @@ static void chest_death(int y, int x, s16b o_idx)
 
 	object_type *o_ptr = &o_list[o_idx];
 
+	/* 
+	 * Pick type of item to find in the chest.
+	 *
+	 * Hack - chests are not on this list...
+	 * this prevents chests from nesting.
+	 */
+	switch (randint1(7))
+	{
+		case 1:
+		{
+			/* Swords */
+			tval = TV_SWORD;
+			sval = SV_ANY;		
+			break;
+		}
+		case 2:
+		{
+			/* Boots */
+			tval = TV_BOOTS;
+			sval = SV_ANY;
+			break;
+		}
+		
+		case 3:
+		{
+			/* Rings */
+			tval = TV_RING;
+			sval = SV_ANY;	
+			break;
+		}
+		
+		case 4:
+		{
+			/* Staves */
+			tval = TV_STAFF;
+			sval = SV_ANY;
+			break;
+		}
+		
+		case 5:
+		{
+			/* Potions */
+			tval = TV_POTION;
+			sval = SV_ANY;	
+			break;
+		}
+		
+		case 6:
+		{
+			/* Cloaks */
+			tval = TV_CLOAK;
+			sval = SV_ANY;	
+			break;
+		}
+		
+		case 7:
+		{
+			/* Rods */
+			tval = TV_ROD;
+			sval = SV_ANY;	
+			break;
+		}
+		default:
+		{
+			/* Junk - this shouldn't happen */
+			tval = TV_JUNK;
+			sval = SV_ANY;
+		}
+	}
+
+	/* Select only those types of object */
+	init_match_hook(tval, sval);
+
+	/* Activate restriction */
+	get_obj_num_hook = kind_is_match;
+
+	/* Prepare allocation table */
+	get_obj_num_prep();
 
 	/* Small chests often hold "gold" */
 	small = (o_ptr->sval < SV_CHEST_MIN_LARGE);
@@ -387,9 +467,6 @@ static void chest_death(int y, int x, s16b o_idx)
 
 	/* Zero pval means empty chest */
 	if (!o_ptr->pval) number = 0;
-
-	/* Opening a chest */
-	opening_chest = TRUE;
 
 	/* Determine the "value" of the items */
 	object_level = ABS(o_ptr->pval) + 10;
@@ -428,8 +505,11 @@ static void chest_death(int y, int x, s16b o_idx)
 	/* Reset the object level */
 	object_level = base_level;
 
-	/* No longer opening a chest */
-	opening_chest = FALSE;
+	/* Clear restriction */
+	get_obj_num_hook = NULL;
+
+	/* Prepare allocation table */
+	get_obj_num_prep();
 
 	/* Empty */
 	o_ptr->pval = 0;

@@ -143,8 +143,6 @@ bool inkey_flag;		/* See the "inkey()" function */
 
 s16b coin_type;			/* Hack -- force coin type */
 
-bool opening_chest;		/* Hack -- prevent chest generation */
-
 bool shimmer_monsters;	/* Hack -- optimize multi-hued monsters */
 
 bool repair_monsters;	/* Hack -- optimize detect monsters */
