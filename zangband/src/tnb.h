@@ -326,6 +326,7 @@ extern int map_symbol_feature(int f_idx);
 
 /* setting.c */
 extern void init_settings(void);
+extern void *g_setting;
 
 /* struct.c */
 extern void init_struct(void);

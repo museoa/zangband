@@ -107,6 +107,8 @@ extern int *g_feat_lite;
  */
 extern int g_torchlite;
 
+extern int *g_image_object;
+
 /* Feature index for masked features */
 extern int *g_background;
 

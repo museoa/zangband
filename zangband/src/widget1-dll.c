@@ -26,6 +26,7 @@
 #include <tkInt.h>
 #include "util-dll.h"
 #include "plat-dll.h"
+#include "icon-dll.h"
 #include "widget-dll.h"
 
 cptr keyword_widget_style[] = {
@@ -1386,8 +1387,6 @@ void Widget_Calc(Widget *widgetPtr)
  */
 static void Widget_CreateBitmap(Widget *widgetPtr)
 {
-	extern int g_icon_size, g_icon_depth;
-
 	/* Calculate the bitmap dimensions in pixels */
 	widgetPtr->bitmap.width = widgetPtr->bw;
 	widgetPtr->bitmap.height = widgetPtr->bh;
@@ -1407,12 +1406,6 @@ static void Widget_DeleteBitmap(Widget *widgetPtr)
 
 /* List of all Widget item types */
 WidgetItemType *typeList = NULL;
-
-/* Forward delcarations (static?) */
-extern WidgetItemType ProgressType;
-extern WidgetItemType TextType;
-extern WidgetItemType CursorType;
-extern WidgetItemType RectType;
 
 /*
  * Initialize the Widget item package

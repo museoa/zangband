@@ -28,4 +28,3 @@ typedef struct ExWidget {
 	int (*symbolProc)(Widget *widgetPtr, int y, int x); /* For micro-map */
 } ExWidget;
 
-

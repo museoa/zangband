@@ -13,13 +13,12 @@
 #include "angband.h"
 #include "util-dll.h"
 #include "plat-dll.h"
+#include "icon-dll.h"
 
 #include <limits.h>
 #ifndef USHRT_MAX
 #define USHRT_MAX 65535
 #endif
-
-extern int g_icon_depth;
 
 #ifdef PLATFORM_WIN
 

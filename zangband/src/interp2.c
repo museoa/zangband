@@ -506,9 +506,6 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 	{
 		case IDX_FIND: /* find */
 		{
-			extern bool item_tester_hook_cast(const object_type *o_ptr);
-			extern bool item_tester_hook_study(const object_type *o_ptr);
-
 			bool (*old_tester_hook)(const object_type *) = item_tester_hook;
 			bool (*temp_tester_hook)(const object_type *) = NULL;
 			

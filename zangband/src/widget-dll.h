@@ -206,4 +206,9 @@ void Widget_DrawInvalid(Widget *widgetPtr);
 void Widget_EventuallyRedraw(Widget *widgetPtr);
 int Widget_CaveToView(Widget *widgetPtr, int y, int x, int *rowPtr, int *colPtr);
 
+extern WidgetItemType ProgressType;
+extern WidgetItemType TextType;
+extern WidgetItemType CursorType;
+extern WidgetItemType RectType;
+
 #endif /* _INCLUDE_WIDGETDLL_H_*/

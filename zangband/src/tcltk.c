@@ -21,13 +21,6 @@
 
 #define ALLOW_TK_CONSOLE
 
-#ifdef ALLOW_TK_CONSOLE
-extern void TkConsoleCreate_ _ANSI_ARGS_((void));
-EXTERN int		TkConsoleInit(Tcl_Interp *interp);
-#endif /* */
-/*
-static void		setargv _ANSI_ARGS_((int *argcPtr, char ***argvPtr));
-*/
 static void		WishPanic _ANSI_ARGS_(TCL_VARARGS(char *,format));
 
 /* The interpreter. The app can call TclTk_Interp() to get it */

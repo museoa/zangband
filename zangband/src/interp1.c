@@ -2130,9 +2130,6 @@ static void init_keyword_misc(void)
 	keyword_race[MAX_RACES] = NULL;
 }
 
-/* store.c */
-extern char *store_cost(object_type *o_ptr);
-
 
 /*
  *--------------------------------------------------------------
@@ -2371,7 +2368,6 @@ void angtk_init(void)
 	{
 		if (streq(commandInit[i].name, "setting"))
 		{
-			extern void *g_setting;
 			commandInit[i].clientData = g_setting;
 			break;
 		}

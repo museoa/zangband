@@ -21,8 +21,6 @@
 #define USHRT_MAX 65535
 #endif
 
-extern int debug_widgets;
-
 #define MAX_DELTA 195076 /* 255^2 + 255^2 + 255^2 + 1 */
 #define MAX_COLOR_ENTRY 1021
 

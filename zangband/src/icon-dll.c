@@ -23,8 +23,6 @@
 int PixelPtrToLong(IconPtr p, int bypp);
 void PixelLongToPtr(IconPtr dst, int pixel, int bypp);
 
-extern int objcmd_makeicon _ANSI_ARGS_((ClientData clientData,
-		    Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]));
 static int init_ascii_data(Tcl_Interp *interp, t_icon_data *icon_data_ptr);
 
 t_icon_data *g_icon_data; /* Array of icon types */
@@ -2497,6 +2495,180 @@ static int objcmd_icon_dynamic(ClientData dummy, Tcl_Interp *interp, int objc,
 }
 
 /*
+ * objcmd_makeicon --
+ *
+ * makeicon ?-makemask? ?-scaleup? ?--? iconSize imageFile dataFile
+ */
+static int objcmd_makeicon(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+	Tcl_Obj *CONST *objPtr;
+	char buf[1024];
+	int index;
+
+	Tk_PhotoHandle photoH = NULL;
+	char *imageFile = NULL, *dataFile = NULL;
+	char *imageName = (char *) "MakeIconImage";
+	int imageW, imageH;
+	int length;
+	t_icon_data iconData;
+	XColor *xColorPtr = NULL;
+	int result = TCL_ERROR;
+
+	/* Hack - ignore parameter */
+	(void) dummy;
+
+	iconData.icon_data = NULL;
+	iconData.depth = g_icon_depth;
+	iconData.bypp = g_pixel_size;
+	iconData.height = iconData.width = 0;
+	imageW = imageH = 0;
+
+	objPtr = objv + 1;
+	objc -= 1;
+	
+	/* Scan arguments for options */
+	while (objc > 0)
+	{
+		static cptr switches[] = {"-datafile", "-iconheight", "-iconwidth",
+			"-imagefile", "-imageheight", "-imagewidth", "-transparent", NULL};
+		int n = 2;
+
+		/* Get the sub-option */
+	    if (Tcl_GetIndexFromObj(interp, objPtr[0], (char **) switches, (char *) "switch",
+			0, &index) != TCL_OK)
+		{
+			goto error;
+	    }
+
+		switch (index)
+		{
+			case 0: /* -datafile */
+				dataFile = Tcl_GetStringFromObj(objPtr[1], NULL);
+				break;
+
+			case 1: /* -iconheight */
+				if (Tcl_GetIntFromObj(interp, objPtr[1], &iconData.height) != TCL_OK)
+				{
+					goto error;
+				}
+				break;
+
+			case 2: /* -iconwidth */
+				if (Tcl_GetIntFromObj(interp, objPtr[1], &iconData.width) != TCL_OK)
+				{
+					goto error;
+				}
+				break;
+
+			case 3: /* -imagefile */
+				imageFile = Tcl_GetStringFromObj(objPtr[1], NULL);
+				break;
+
+			case 4: /* -imageheight */
+				if (Tcl_GetIntFromObj(interp, objPtr[1], &imageH) != TCL_OK)
+				{
+					goto error;
+				}
+				break;
+
+			case 5: /* -imagewidth */
+				if (Tcl_GetIntFromObj(interp, objPtr[1], &imageW) != TCL_OK)
+				{
+					goto error;
+				}
+				break;
+
+			case 6: /* -transparent */
+			{
+				Tk_Window tkwin = Tk_MainWindow(interp);
+				if (xColorPtr)
+					Tk_FreeColor(xColorPtr);
+				xColorPtr = Tk_AllocColorFromObj(interp, tkwin, objPtr[1]);
+				if (xColorPtr == NULL)
+				{
+					goto error;
+				}
+				break;
+			}
+		}
+
+		objc -= n;
+		objPtr += n;
+	}
+
+    if (objc || (dataFile == NULL) || (imageFile == NULL))
+    {
+		Tcl_WrongNumArgs(interp, 1, objv, NULL);
+		goto error;
+    }
+
+	if ((iconData.width <= 0) || (iconData.height <= 0))
+	{
+		Tcl_SetStringObj(Tcl_GetObjResult(interp),
+			format("invalid icon size \"%d x %d\"",
+			iconData.width, iconData.height), -1);
+		goto error;
+	}
+
+	iconData.length = iconData.width * iconData.height * g_pixel_size;
+
+	if (imageW <= 0)
+		imageW = iconData.width;
+	if (imageH <= 0)
+		imageH = iconData.height;
+
+	/* FIXME */
+	if ((imageW != iconData.width) && (imageW != 16))
+	{
+		Tcl_SetResult(interp, (char *) "can only scale a 16x16 image", TCL_STATIC);
+		goto error;
+	}
+
+	/* Read the image file */
+	length = sprintf(buf, "image create photo %s -file \"%s\"",
+		imageName, imageFile);
+	if (Tcl_EvalEx(interp, buf, length, TCL_EVAL_GLOBAL) != TCL_OK)
+	{
+		goto error;
+	}
+
+	/* Lookup the photo by name */
+	photoH = Tk_FindPhoto(interp, imageName);
+
+	/* The photo was not found */
+	if (photoH == NULL)
+	{
+		goto error;
+	}
+
+	/* Convert 24-bit image to g_icon_depth-bit data */
+	if (Image2Bits(interp, &iconData, photoH, imageW, imageH, xColorPtr) != TCL_OK)
+	{
+		goto error;
+	}
+
+	if (WriteIconFile(interp, dataFile, &iconData) != TCL_OK)
+	{
+		goto error;
+	}
+
+	result = TCL_OK;
+
+error:
+	if (xColorPtr)
+		Tk_FreeColor(xColorPtr);
+	if (iconData.icon_data)
+		Tcl_FreeDebug((char *) iconData.icon_data);
+	if (photoH)
+	{
+		length = sprintf(buf, "image delete %s", imageName);
+		(void) Tcl_EvalEx(interp, buf, length, TCL_EVAL_GLOBAL);
+	}
+	return result;
+}
+
+
+/*
  * objcmd_icon --
  */
 static int objcmd_icon(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
@@ -3176,178 +3348,6 @@ wrongCreateArgs:
 	return TCL_OK;
 }
 
-/*
- * objcmd_makeicon --
- *
- * makeicon ?-makemask? ?-scaleup? ?--? iconSize imageFile dataFile
- */
-int objcmd_makeicon(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
-{
-	Tcl_Obj *CONST *objPtr;
-	char buf[1024];
-	int index;
-
-	Tk_PhotoHandle photoH = NULL;
-	char *imageFile = NULL, *dataFile = NULL;
-	char *imageName = (char *) "MakeIconImage";
-	int imageW, imageH;
-	int length;
-	t_icon_data iconData;
-	XColor *xColorPtr = NULL;
-	int result = TCL_ERROR;
-
-	/* Hack - ignore parameter */
-	(void) dummy;
-
-	iconData.icon_data = NULL;
-	iconData.depth = g_icon_depth;
-	iconData.bypp = g_pixel_size;
-	iconData.height = iconData.width = 0;
-	imageW = imageH = 0;
-
-	objPtr = objv + 1;
-	objc -= 1;
-	
-	/* Scan arguments for options */
-	while (objc > 0)
-	{
-		static cptr switches[] = {"-datafile", "-iconheight", "-iconwidth",
-			"-imagefile", "-imageheight", "-imagewidth", "-transparent", NULL};
-		int n = 2;
-
-		/* Get the sub-option */
-	    if (Tcl_GetIndexFromObj(interp, objPtr[0], (char **) switches, (char *) "switch",
-			0, &index) != TCL_OK)
-		{
-			goto error;
-	    }
-
-		switch (index)
-		{
-			case 0: /* -datafile */
-				dataFile = Tcl_GetStringFromObj(objPtr[1], NULL);
-				break;
-
-			case 1: /* -iconheight */
-				if (Tcl_GetIntFromObj(interp, objPtr[1], &iconData.height) != TCL_OK)
-				{
-					goto error;
-				}
-				break;
-
-			case 2: /* -iconwidth */
-				if (Tcl_GetIntFromObj(interp, objPtr[1], &iconData.width) != TCL_OK)
-				{
-					goto error;
-				}
-				break;
-
-			case 3: /* -imagefile */
-				imageFile = Tcl_GetStringFromObj(objPtr[1], NULL);
-				break;
-
-			case 4: /* -imageheight */
-				if (Tcl_GetIntFromObj(interp, objPtr[1], &imageH) != TCL_OK)
-				{
-					goto error;
-				}
-				break;
-
-			case 5: /* -imagewidth */
-				if (Tcl_GetIntFromObj(interp, objPtr[1], &imageW) != TCL_OK)
-				{
-					goto error;
-				}
-				break;
-
-			case 6: /* -transparent */
-			{
-				Tk_Window tkwin = Tk_MainWindow(interp);
-				if (xColorPtr)
-					Tk_FreeColor(xColorPtr);
-				xColorPtr = Tk_AllocColorFromObj(interp, tkwin, objPtr[1]);
-				if (xColorPtr == NULL)
-				{
-					goto error;
-				}
-				break;
-			}
-		}
-
-		objc -= n;
-		objPtr += n;
-	}
-
-    if (objc || (dataFile == NULL) || (imageFile == NULL))
-    {
-		Tcl_WrongNumArgs(interp, 1, objv, NULL);
-		goto error;
-    }
-
-	if ((iconData.width <= 0) || (iconData.height <= 0))
-	{
-		Tcl_SetStringObj(Tcl_GetObjResult(interp),
-			format("invalid icon size \"%d x %d\"",
-			iconData.width, iconData.height), -1);
-		goto error;
-	}
-
-	iconData.length = iconData.width * iconData.height * g_pixel_size;
-
-	if (imageW <= 0)
-		imageW = iconData.width;
-	if (imageH <= 0)
-		imageH = iconData.height;
-
-	/* FIXME */
-	if ((imageW != iconData.width) && (imageW != 16))
-	{
-		Tcl_SetResult(interp, (char *) "can only scale a 16x16 image", TCL_STATIC);
-		goto error;
-	}
-
-	/* Read the image file */
-	length = sprintf(buf, "image create photo %s -file \"%s\"",
-		imageName, imageFile);
-	if (Tcl_EvalEx(interp, buf, length, TCL_EVAL_GLOBAL) != TCL_OK)
-	{
-		goto error;
-	}
-
-	/* Lookup the photo by name */
-	photoH = Tk_FindPhoto(interp, imageName);
-
-	/* The photo was not found */
-	if (photoH == NULL)
-	{
-		goto error;
-	}
-
-	/* Convert 24-bit image to g_icon_depth-bit data */
-	if (Image2Bits(interp, &iconData, photoH, imageW, imageH, xColorPtr) != TCL_OK)
-	{
-		goto error;
-	}
-
-	if (WriteIconFile(interp, dataFile, &iconData) != TCL_OK)
-	{
-		goto error;
-	}
-
-	result = TCL_OK;
-
-error:
-	if (xColorPtr)
-		Tk_FreeColor(xColorPtr);
-	if (iconData.icon_data)
-		Tcl_FreeDebug((char *) iconData.icon_data);
-	if (photoH)
-	{
-		length = sprintf(buf, "image delete %s", imageName);
-		(void) Tcl_EvalEx(interp, buf, length, TCL_EVAL_GLOBAL);
-	}
-	return result;
-}
 
 int Icon_FindTypeByName(Tcl_Interp *interp, int *typeIndexPtr, char *typeName)
 {
