@@ -1788,6 +1788,9 @@ static void do_cmd_use_staff_aux(int item)
 				{
 					scatter(&y, &x, py, px, 4, 0);
 
+					/* paranoia */
+					if(!in_bounds2(y, x)) continue;
+					
 					c_ptr = area(y, x);
 					if (!cave_floor_grid(c_ptr)) continue;
 
@@ -3160,6 +3163,9 @@ static void do_cmd_activate_aux(int item)
 					{
 						scatter(&y, &x, py, px, 4, 0);
 
+						/* paranoia */
+						if (!in_bounds2(y, x)) continue;
+						
 						c_ptr = area(y, x);
 						if (!cave_floor_grid(c_ptr)) continue;
 
