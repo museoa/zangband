@@ -4026,7 +4026,7 @@ static int borg_attack_aux_thrust(void)
 {
 	int p, dir;
 
-	int i, b_i;
+	int i, b_i = 0;
 	int d, b_d = 0;
 
 	map_block *mb_ptr;
