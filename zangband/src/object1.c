@@ -752,6 +752,9 @@ static void roff_obj_aux(const object_type *o_ptr)
 			roff(".  ");
 		}
 	}
+	
+	/* Final blank line */
+	roff("\n");
 }
 
 bool identify_fully_aux(const object_type *o_ptr)
