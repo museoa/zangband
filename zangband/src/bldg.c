@@ -479,6 +479,22 @@ static void display_build(field_type *f_ptr, store_type *b_ptr)
 			c_put_str(TERM_YELLOW, tmp_str, 19, 35);
 			break;
 		}
+		
+		case BLDG_PLUS_WEAPON:
+		{
+			sprintf(tmp_str, " E) Enchant Weapons (%dgp)",
+				 f_ptr->data[1] * bo_ptr->inflate);
+			c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+			break;
+		}
+		
+		case BLDG_PLUS_ARMOUR:
+		{
+			sprintf(tmp_str, " E) Enchant Armour (%dgp)",
+				 f_ptr->data[1] * bo_ptr->inflate);
+			c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+			break;
+		}
 	}
 
 
@@ -1346,7 +1362,6 @@ static void compare_weapons(void)
 }
 
 
-#if 0
 
 /*
  * Enchant item
@@ -1446,7 +1461,7 @@ static bool enchant_item(int cost, int to_hit, int to_dam, int to_ac)
 	}
 }
 
-#endif /* 0 */
+
 
 /*
  * Recharge rods, wands and staves
@@ -1939,7 +1954,35 @@ static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
 				done = TRUE;
 			}
 
-			break;			
+			break;	
+		}
+		
+		case BLDG_PLUS_WEAPON:
+		{
+			if (p_ptr->command_cmd == 'E')
+			{
+				item_tester_hook = item_tester_hook_melee_weapon;
+				
+				enchant_item(f_ptr->data[1] * bo_ptr->inflate, 1, 1, 0);
+				
+				done = TRUE;
+			}		
+		
+			break;
+		}
+		
+		case BLDG_PLUS_ARMOUR:
+		{
+			if (p_ptr->command_cmd == 'E')
+			{
+				item_tester_hook = item_tester_hook_armour;
+				
+				enchant_item(f_ptr->data[1] * bo_ptr->inflate, 0, 0, 1);
+				
+				done = TRUE;
+			}
+		
+			break;
 		}
 	}
 	

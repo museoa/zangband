@@ -42,9 +42,11 @@
 #define BUILD_STAIRS			9
 #define BUILD_WEAPONMASTER		10
 #define BUILD_RECHARGE			11
+#define BUILD_PLUS_WEAPON		12
+#define BUILD_PLUS_ARMOUR		13
 
 /* Maximum number of "building" types in a city */
-#define MAX_CITY_BUILD			12
+#define MAX_CITY_BUILD			14
 
 
 /* Dodgy replacement for SCREEN_WID and SCREEN_HGT */
@@ -70,6 +72,3 @@ extern bool town_blank(int x, int y, int xsize, int ysize);
 extern void draw_city(u16b town_num);
 extern void van_town_gen(u16b town_num);
 extern void init_wild_cache(void);
-
-
-

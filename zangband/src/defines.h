@@ -147,11 +147,13 @@
 /* The building types */
 #define BLDG_WEAPONMASTER	0
 #define BLDG_RECHARGE		1
+#define BLDG_PLUS_WEAPON	2
+#define BLDG_PLUS_ARMOUR	3
 
 /*
  * Total number of buildings (see "bldg.c", etc)
  */
-#define MAX_BLDG		2
+#define MAX_BLDG		4
 
 
 
@@ -986,51 +988,52 @@
 #define WILD_INFO_DUMMY2	0x80
 
 /*** Field Thaumatergical types - (see "fields.c" and t_info.txt) ***/
-#define FT_WALL_INVIS		0x0001
-#define FT_GLYPH_WARDING	0x0002
-#define FT_GLYPH_EXPLODE	0x0003
-#define FT_CORPSE			0x0004
-#define FT_SKELETON			0x0005
-#define FT_TRAP_DOOR		0x0006
-#define FT_TRAP_PIT			0x0007
-#define FT_TRAP_SPIKE_PIT	0x0008
-#define FT_TRAP_POISON_PIT	0x0009
-#define FT_TRAP_CURSE		0x000A
-#define FT_TRAP_TELEPORT	0x000B
-#define FT_TRAP_ELEMENT		0x000C
-#define FT_TRAP_BA_ELEMENT	0x000D
-#define FT_TRAP_GAS			0x000E
-#define FT_TRAP_TRAPS		0x000F
-#define FT_TRAP_TEMP_STAT	0x0010
-#define FT_TRAP_PERM_STAT	0x0011
-#define FT_TRAP_LOSE_XP		0x0012
-#define FT_TRAP_DISENCHANT	0x0013
-#define FT_TRAP_DROP_ITEM	0x0014
-#define FT_TRAP_MUTATE		0x0015
-#define FT_TRAP_NEW_LIFE	0x0016
-#define FT_TRAP_NO_LITE		0x0017
-#define FT_TRAP_HUNGER		0x0018
-#define FT_TRAP_NO_GOLD		0x0019
-#define FT_TRAP_HASTE_MON	0x001A
-#define FT_TRAP_RAISE_MON	0x001B
-#define FT_TRAP_DRAIN_MAGIC	0x001C
-#define FT_TRAP_AGGRAVATE	0x001D
-#define FT_TRAP_SUMMON		0x001E
-#define FT_TRAP_LOSE_MEMORY	0x001F
-#define FT_LOCK_DOOR		0x0020
-#define FT_JAM_DOOR			0x0021
-#define FT_STORE_GENERAL	0x0022
-#define FT_STORE_ARMOURY	0x0023
-#define FT_STORE_WEAPON		0x0024
-#define FT_STORE_TEMPLE		0x0025
-#define FT_STORE_ALCHEMIST	0x0026
-#define FT_STORE_MAGIC		0x0027
-#define FT_STORE_BLACK		0x0028
-#define FT_STORE_HOME		0x0029
-#define FT_STORE_BOOK		0x002A
-#define FT_BUILD_WEAPON		0x002B
-#define FT_BUILD_RECHARGE	0x002C
-
+#define FT_WALL_INVIS			0x0001
+#define FT_GLYPH_WARDING		0x0002
+#define FT_GLYPH_EXPLODE		0x0003
+#define FT_CORPSE				0x0004
+#define FT_SKELETON				0x0005
+#define FT_TRAP_DOOR			0x0006
+#define FT_TRAP_PIT				0x0007
+#define FT_TRAP_SPIKE_PIT		0x0008
+#define FT_TRAP_POISON_PIT		0x0009
+#define FT_TRAP_CURSE			0x000A
+#define FT_TRAP_TELEPORT		0x000B
+#define FT_TRAP_ELEMENT			0x000C
+#define FT_TRAP_BA_ELEMENT		0x000D
+#define FT_TRAP_GAS				0x000E
+#define FT_TRAP_TRAPS			0x000F
+#define FT_TRAP_TEMP_STAT		0x0010
+#define FT_TRAP_PERM_STAT		0x0011
+#define FT_TRAP_LOSE_XP			0x0012
+#define FT_TRAP_DISENCHANT		0x0013
+#define FT_TRAP_DROP_ITEM		0x0014
+#define FT_TRAP_MUTATE			0x0015
+#define FT_TRAP_NEW_LIFE		0x0016
+#define FT_TRAP_NO_LITE			0x0017
+#define FT_TRAP_HUNGER			0x0018
+#define FT_TRAP_NO_GOLD			0x0019
+#define FT_TRAP_HASTE_MON		0x001A
+#define FT_TRAP_RAISE_MON		0x001B
+#define FT_TRAP_DRAIN_MAGIC		0x001C
+#define FT_TRAP_AGGRAVATE		0x001D
+#define FT_TRAP_SUMMON			0x001E
+#define FT_TRAP_LOSE_MEMORY		0x001F
+#define FT_LOCK_DOOR			0x0020
+#define FT_JAM_DOOR				0x0021
+#define FT_STORE_GENERAL		0x0022
+#define FT_STORE_ARMOURY		0x0023
+#define FT_STORE_WEAPON			0x0024
+#define FT_STORE_TEMPLE			0x0025
+#define FT_STORE_ALCHEMIST		0x0026
+#define FT_STORE_MAGIC			0x0027
+#define FT_STORE_BLACK			0x0028
+#define FT_STORE_HOME			0x0029
+#define FT_STORE_BOOK			0x002A
+#define FT_BUILD_WEAPON			0x002B
+#define FT_BUILD_RECHARGE		0x002C
+#define FT_BUILD_PLUS_WEAPON	0x002D
+#define FT_BUILD_PLUS_ARMOUR	0x002E
 
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
 
@@ -4092,7 +4095,7 @@ extern int PlayerUID;
 #define FIELD_ACTION_MAX		18	/* The last action + 1 */
 
 
-#define FIELD_ACTION_TYPES  52 /* Number of FIELD_ACT functions in tables.c */
+#define FIELD_ACTION_TYPES  54 /* Number of FIELD_ACT functions in tables.c */
 
 
 

@@ -1421,13 +1421,23 @@ b_own_type b_owners[MAX_BLDG][MAX_B_OWN] =
 {
 	{
 		/* Weaponmaster */
-		{ "Suiyan",			150,			RACE_HUMAN},
+		{ "Suiyan",				150,			RACE_HUMAN},
 	},
 	
 	{
 		/* Zymurgist */
 		{ "Tanistil",			100,			RACE_ELF},
-	}
+	},
+	
+	{
+		/* Magesmith Weapons */
+		{ "Aotnron",			100,			RACE_HALF_ORC},
+	},
+	
+	{
+		/* Magesmith Armour */
+		{ "Paoingth",			100,			RACE_DARK_ELF},
+	},
 };
 
 
