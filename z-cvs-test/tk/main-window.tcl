@@ -359,31 +359,6 @@ proc ::wipespot {y x} {
 }
 bind $widget <Shift-ButtonPress-3> "wipespot %y %x"
 
-if {0} {
-	set isoview $win.mainframe.isoview
-	widget $isoview -width $width -height $height -style iso
-
-	bind $isoview <ButtonPress-1> "NSMainWindow::TrackPress $oop %x %y"
-	bind $isoview <Button1-Motion> "NSMainWindow::TrackMotion $oop %x %y"
-	bind $isoview <ButtonRelease-1> "NSMainWindow::TrackRelease $oop"
-
-	bind $isoview <Control-ButtonPress-1> "NSMainWindow::MouseCommand $oop %x %y +"
-	bind $isoview <Shift-ButtonPress-1> "NSMainWindow::MouseCommand $oop %x %y ."
-
-	bind $isoview <ButtonPress-3> \
-		"NSMainWindow::ButtonPress3 $oop %x %y %X %Y"
-	bind $isoview <Control-ButtonPress-3> \
-		"NSRecall::PopupSelect_Use $win.context %X %Y"
-
-	qebind $isoview <Position> "%W center %y %x ; set PYPX {%y %x}"
-	bind $isoview <Configure> "%W configure -width %w -height %h ; %W wipe"
-	qebind $isoview <Dungeon-enter> {
-		%W center $PYPX
-	}
-	
-	Global main,isoview $isoview
-}
-
 proc hittest {w x y} {
 	variable HT
 	set ht [$w hittest $x $y]
@@ -446,13 +421,6 @@ proc hittest {w x y} {
 		"NSMainWindow::Configure $oop %w %h"
 
 	pack $widget -expand yes -fill both
-
-if {0} {
-	qebind $widget <Position> {}
-	$widget configure -noupdate yes
-	grid forget $widget
-	pack $isoview -expand yes -fill both
-}
 
 	#
 	# Geometry
@@ -1785,18 +1753,6 @@ proc NSMainWindow::ProgressSynch {name option} {
 #	What happened.
 
 proc NSMainWindow::DisplayCursor {oop show x y} {
-
-	if {0} {
-		set isoview [Global main,isoview]
-		if {$show} {
-			$isoview configure -hit 1 -hitx $x -hity $y
-		} else {
-			$isoview configure -hit -1
-		}
-		$isoview wipe
-		Global cursor,visible $show
-		return
-	}
 
 	set widget [Global main,widget]
 
