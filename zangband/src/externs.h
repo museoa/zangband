@@ -921,7 +921,7 @@ extern void build_gamma_table(int gamma);
 extern cptr get_default_font(int term_num);
 
 #ifdef USE_GRAPHICS
-extern bool pick_graphics(int graphics, int *tile_size, char *filename);
+extern bool pick_graphics(int graphics, int *xsize, int *ysize, char *filename);
 #endif /* USE_GRAPHICS */
 
 /* xtra1.c */

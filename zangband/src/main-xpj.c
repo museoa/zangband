@@ -3190,6 +3190,8 @@ errr init_xpj(int argc, char *argv[])
 
 	int pict_wid = 0;
 	int pict_hgt = 0;
+	
+	int graphmode;
 
 	char *TmpData;
 
@@ -3293,36 +3295,22 @@ errr init_xpj(int argc, char *argv[])
 
 	/* Activate the "Angband" window screen */
 	Term_activate(&data[0].t);
-
-	/* Try the "16x16.bmp" file */
-	path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/16x16.bmp");
-
-	/* Use the "16x16.bmp" file if it exists */
-	if (0 == fd_close(fd_open(filename, O_RDONLY)))
+	
+	if (arg_graphics)
 	{
-		if (arg_graphics)
-		{
-			/* Use graphics */
-			use_graphics = TRUE;
-			
-			/* And use tiles */
-			ANGBAND_GRAF = "new";
-		}
-		else
-		{
-			/* Use graphics */
-			use_graphics = TRUE;
-			arg_graphics = TRUE;
-			
-			/* But not for monsters / items */
-			ANGBAND_GRAF = "none";
-		}
-		
-		use_transparency = TRUE;
-
-		pict_wid = pict_hgt = 16;
+		/* And use tiles */
+		graphmode = GRAPHICS_ADAM_BOLT;
+		ANGBAND_GRAF = "new";
 	}
 	else
+	{
+		/* But not for monsters / items */
+		graphmode = GRAPHICS_HALF_3D;
+		ANGBAND_GRAF = "none";
+	}
+	
+	/* Try graphics */
+	if  (!pick_graphics(graphmode, &pict_wid, &pict_hgt, filename))
 	{
 		quit("Could not initialise graphics!  (Need 16x16.bmp)");
 	}

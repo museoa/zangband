@@ -3935,14 +3935,16 @@ cptr get_default_font(int term_num)
 }
 
 #ifdef USE_GRAPHICS
-bool pick_graphics(int graphics, int *tile_size, char *filename)
+bool pick_graphics(int graphics, int *xsize, int *ysize, char *filename)
 {
 	int old_graphics = use_graphics;
 	
 	use_graphics = GRAPHICS_NONE;
 	use_transparency = FALSE;
 		
-	if ((graphics == GRAPHICS_ANY) || (graphics == GRAPHICS_ADAM_BOLT))
+	if ((graphics == GRAPHICS_ANY)
+		 || (graphics == GRAPHICS_ADAM_BOLT)
+		 || (graphics == GRAPHICS_HALF_3D))
 	{
 		/* Try the "16x16.bmp" file */
 		path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/16x16.bmp");
@@ -3950,14 +3952,22 @@ bool pick_graphics(int graphics, int *tile_size, char *filename)
 		/* Use the "16x16.bmp" file if it exists */
 		if (0 == fd_close(fd_open(filename, O_RDONLY)))
 		{
-			/* Use graphics */
-			use_graphics = GRAPHICS_ADAM_BOLT;
-
 			use_transparency = TRUE;
 
-			*tile_size = 16;
-
-			ANGBAND_GRAF = "new";
+			*xsize = 16;
+			*ysize = 16;
+			
+			/* Use graphics */
+			if (graphics == GRAPHICS_HALF_3D)
+			{
+				ANGBAND_GRAF = "none";
+				use_graphics = GRAPHICS_HALF_3D;
+			}
+			else
+			{
+				ANGBAND_GRAF = "new";
+				use_graphics = GRAPHICS_ADAM_BOLT;
+			}
 		}
 	}
 		
@@ -3973,7 +3983,8 @@ bool pick_graphics(int graphics, int *tile_size, char *filename)
 			/* Use graphics */
 			use_graphics = GRAPHICS_ORIGINAL;
 
-			*tile_size = 8;
+			*xsize = 8;
+			*ysize = 8;
 
 			ANGBAND_GRAF = "old";
 		}
