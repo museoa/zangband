@@ -282,7 +282,7 @@ void get_player_quests(void)
 	/* Ask the number of additional quests */
 	while (TRUE)
 	{
-		put_str("Number of additional quests? (<99) ", 2, 20);
+		put_str("Number of additional quests? (<50) ", 2, 20);
 
 		/* Get a the number of additional quest */
 		while (TRUE)
@@ -308,7 +308,7 @@ void get_player_quests(void)
 			}
 
 			/* Break on valid input */
-			if ((v < 99) && (v >= 0)) break;
+			if ((v < 50) && (v >= 0)) break;
 		}
 		break;
 	}
@@ -328,12 +328,7 @@ void get_player_quests(void)
 	/* Generate quests */
 	for (i = 0; i < v; i++)
     {
-        if (v <= 96)
-            level = (i * 96 + 48) / v + 1;
-        else if (level <= 96)
-            level = i + 1;
-        else
-            level = 2 * (i - 96) + 97;
+        level = (i * 96 + 48) / v + 1;
 
 		best_r_idx = 1;
 		best_level = 1;
