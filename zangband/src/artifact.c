@@ -1529,7 +1529,7 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 
 	if (o_ptr->dd && o_ptr->ds)
 	{
-		while (one_in_(10L * o_ptr->dd * o_ptr->ds) && (o_ptr->dd < 10))
+		while (one_in_(10L * o_ptr->dd * o_ptr->ds) && (o_ptr->ds < 10))
 		{
 			o_ptr->dd++;
 		}
