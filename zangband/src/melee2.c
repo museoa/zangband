@@ -167,17 +167,21 @@ static bool get_enemy_target(monster_type *m_ptr)
 	/* Do we already have a nice enemy? */
 	if (m_ptr->tx || m_ptr->ty)
 	{
-		c_ptr = area(m_ptr->tx, m_ptr->ty);
-
-		/* Is there a monster on our target? */
-		if (c_ptr->m_idx)
+		/* paranoia */
+		if (in_bounds(m_ptr->tx, m_ptr->ty))
 		{
-			t_ptr = &m_list[c_ptr->m_idx];
+			c_ptr = area(m_ptr->tx, m_ptr->ty);
 
-			/* Is it a a good monster to target? */
-			if (nice_target(m_ptr, r_ptr, t_ptr)) return (TRUE);
+			/* Is there a monster on our target? */
+			if (c_ptr->m_idx)
+			{
+				t_ptr = &m_list[c_ptr->m_idx];
+	
+				/* Is it a a good monster to target? */
+				if (nice_target(m_ptr, r_ptr, t_ptr)) return (TRUE);
+			}
 		}
-
+		
 		/* Forget target */
 		m_ptr->tx = 0;
 		m_ptr->ty = 0;
