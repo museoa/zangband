@@ -2118,7 +2118,7 @@ bool borg_heal(int danger)
 			borg_quaff_potion(SV_POTION_CURE_POISON) ||
 			borg_activate(BORG_ACT_CURE_POISON) ||
 			borg_use_staff(SV_STAFF_CURING) ||
-			borg_eat_food(SV_FOOD_CURE_POISON) ||
+			borg_eat_cure_poison() ||
 			borg_racial(RACE_AMBERITE_POWER2) ||
 			/* buy time */
 			borg_quaff_crit(TRUE) ||

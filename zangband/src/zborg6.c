@@ -13,6 +13,22 @@
 #include "zborg6.h"
 #include "zbmagic.h"
 
+
+/* Helper function to cure poison when not full/gorged */
+bool borg_eat_cure_poison(void)
+{
+	/* Only when poisoned */
+	if (!bp_ptr->status.poisoned) return (FALSE);
+
+	/* Only allow when not too full or really low hp */
+	if ((bp_ptr->status.full ||
+		bp_ptr->status.gorged) &&
+		bp_ptr->chp > 3) return (FALSE);
+
+	return (borg_eat_food(SV_FOOD_CURE_POISON) ||
+			borg_eat_food(SV_FOOD_WAYBREAD));
+}
+
 /*
  * Attempt to recover from damage and such after a battle
  *
@@ -268,8 +284,7 @@ bool borg_recover(void)
 	{
 		if (borg_quaff_potion(SV_POTION_CURE_POISON) ||
 			borg_quaff_potion(SV_POTION_SLOW_POISON) ||
-			borg_eat_food(SV_FOOD_CURE_POISON) ||
-			borg_eat_food(SV_FOOD_WAYBREAD) ||
+			borg_eat_cure_poison() ||
 			borg_quaff_crit((bool) (bp_ptr->chp < 10)) ||
 			borg_use_staff_fail(SV_STAFF_CURING) ||
 			borg_zap_rod(SV_ROD_CURING) ||
