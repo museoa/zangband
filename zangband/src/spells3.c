@@ -3114,8 +3114,10 @@ s16b spell_chance(int spell, int realm)
 		chance += 10;
 	}
 
-	if (p_ptr->muta3 & MUT3_VULN_ELEM)
-		chance -= 15;
+	if (p_ptr->muta3 & MUT3_SILLY_VOI)
+	{
+		chance += s_ptr->slevel;
+	}
 
 	/* Extract the minimum failure rate */
 	minfail = adj_mag_fail[p_ptr->stat[mp_ptr->spell_stat].ind];

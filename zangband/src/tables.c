@@ -7950,7 +7950,7 @@ const mutation_type mutations[MUT_SETS_MAX * MUT_PER_SET] =
 
 	{
 	    MUT3_SHORT_LEG,
-	    "Your legs are short stubs (+2 STR, +2 CON, -3 speed).",
+	    "Your legs are short stubs (+1 CON, -3 speed).",
 	    "Your legs turn into short stubs!",
 	    "Your legs lengthen to normal.",
 	    "(nothing)",

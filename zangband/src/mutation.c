@@ -146,7 +146,11 @@ static bool select_mutation(int choose_mut, bool gain, int *mutation)
 				break;
 			case 47:  case 48:
 				/* Midas */
-				num = 18;
+				/* Only rich characters can get this */
+				if (p_ptr->au >= p_ptr->lev * 1000L)
+				{
+					num = 18;
+				}
 				break;
 			case 49:
 				/* Mold */
@@ -366,7 +370,11 @@ static bool select_mutation(int choose_mut, bool gain, int *mutation)
 				break;
 			case 141:  case 142:
 				/* Squeak */
-				num = 72;
+				/* Restricted to chars with several muts already */
+				if (count_mutations() >= 3)
+				{
+					num = 72;
+				}
 				break;
 			case 143:  case 144:
 				/* Blank face */
@@ -450,7 +458,11 @@ static bool select_mutation(int choose_mut, bool gain, int *mutation)
 				break;
 			case 189:
 				/* Bad element */
-				num = 93;
+				/* Restricted to chars with several muts already */
+				if (count_mutations() >= 3)
+				{
+					num = 93;
+				}
 				break;
 			case 190:  case 191:  case 192:
 				/* Stealth */
@@ -462,6 +474,13 @@ static bool select_mutation(int choose_mut, bool gain, int *mutation)
 				break;
 			default:
 				num = -1;
+		}
+
+		/* Lower chance of getting an unusable mutation */
+		if (num >= 0 && mutations[num].level > p_ptr->lev &&
+				!one_in_(mutations[num].level - p_ptr->lev + 1))
+		{
+			num = -1;
 		}
 
 		/* Have we picked anything? */
@@ -2007,8 +2026,7 @@ void mutation_effect(void)
 
 	if (p_ptr->muta3 & MUT3_SHORT_LEG)
 	{
-		p_ptr->stat[A_CON].add += 2;
-		p_ptr->stat[A_STR].add += 2;
+		p_ptr->stat[A_CON].add += 1;
 		p_ptr->pspeed -= 3;
 	}
 
