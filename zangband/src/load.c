@@ -517,8 +517,8 @@ static void rd_item(object_type *o_ptr)
 
 		/* Reset flags */
 		o_ptr->flags1 = k_ptr->flags1;
-		o_ptr->flags2 = k_ptr->flags1;
-		o_ptr->flags3 = k_ptr->flags1;
+		o_ptr->flags2 = k_ptr->flags2;
+		o_ptr->flags3 = k_ptr->flags3;
 
 		/* All done */
 		return;
