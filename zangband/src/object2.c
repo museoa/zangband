@@ -3360,7 +3360,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 				case SV_AMULET_WISDOM:
 				case SV_AMULET_CHARISMA:
 				{
-					o_ptr->pval = 1 + m_bonus(5, level);
+					o_ptr->pval = 1 + m_bonus(2, level);
 
 					/* Cursed */
 					if (flags & OC_FORCE_BAD)
