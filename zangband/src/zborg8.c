@@ -286,7 +286,7 @@ static void borg_think_shop_buy(int item)
 	goal_shop = -1;
 }
 
-
+#if 0
 
 /*
  * Test to see if the item can be merged with anything in the home.
@@ -312,7 +312,6 @@ static list_item *borg_can_merge_home(list_item *l_ptr)
 	return (NULL);
 }
 
-#if 0
 
 /*
  * This will see what single addition/substitution is best for the home.
