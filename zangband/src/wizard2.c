@@ -162,8 +162,8 @@ static void prt_binary(u32b flags, int row, int col)
 
 /*
  * Output a rarity graph for a type of object.
- * This function is very out of date.
- * It doesn't print the correct distribution.
+ *
+ * Use a monte-carlo method to calculate the probabilities.
  */
 static void prt_alloc(object_type *o_ptr, int row, int col, u32b monte)
 {
@@ -1027,8 +1027,8 @@ static void do_cmd_wiz_play(void)
 	/* Display the item */
 	wiz_display_item(q_ptr);
 
-	/* Display the rarity graph */
-	prt_alloc(o_ptr, 2, 0, 1000);
+	/* Display the rarity graph - turned off for now (too slow).*/
+	/* prt_alloc(o_ptr, 2, 0, 1000); */
 
 	/* The main loop */
 	while (TRUE)
