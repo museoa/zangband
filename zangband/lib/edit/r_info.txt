@@ -1417,7 +1417,7 @@ D:He looks inexperienced but tough.
 N:111:Nibelung
 G:h:D
 I:110:6d4:20:15:5
-W:8:1:0:7
+W:8:2:0:7
 B:HIT:HURT:1d6
 B:TOUCH:EAT_GOLD
 F:MALE | 
