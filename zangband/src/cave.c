@@ -1885,36 +1885,39 @@ void display_map(int *cy, int *cx)
 
 	bool old_view_special_lite = view_special_lite;
 	bool old_view_granite_lite = view_granite_lite;
-	
-	int yrat = cur_hgt / map_hgt;
-	int xrat = cur_wid / map_wid;
+
+	int hgt = Term->hgt - 2;
+	int wid = Term->wid - 14;
+
+	int yrat = cur_hgt / hgt;
+	int xrat = cur_wid / wid;
 
 	/* Take care of rounding */
-	if (cur_hgt % map_hgt) yrat++;
-	if (cur_wid % map_wid) xrat++;
+	if (cur_hgt % hgt) yrat++;
+	if (cur_wid % wid) xrat++;
 
 	/* Disable lighting effects */
 	view_special_lite = FALSE;
 	view_granite_lite = FALSE;
 
 	/* Allocate the maps */
-	C_MAKE(ma, (map_hgt + 2), byte_ptr);
-	C_MAKE(mc, (map_hgt + 2), char_ptr);
-	C_MAKE(mp, (map_hgt + 2), byte_ptr);
+	C_MAKE(ma, (hgt + 2), byte_ptr);
+	C_MAKE(mc, (hgt + 2), char_ptr);
+	C_MAKE(mp, (hgt + 2), byte_ptr);
 
 	/* Allocate and wipe each line map */
-	for (i = 0; i < (map_hgt + 2); i++)
+	for (i = 0; i < (hgt + 2); i++)
 	{
 		/* Allocate one row each array */
-		C_MAKE(ma[i], (map_wid + 2), byte);
-		C_MAKE(mc[i], (map_wid + 2), char);
-		C_MAKE(mp[i], (map_wid + 2), byte);
+		C_MAKE(ma[i], (wid + 2), byte);
+		C_MAKE(mc[i], (wid + 2), char);
+		C_MAKE(mp[i], (wid + 2), byte);
 	}
 
 	/* Clear the chars and attributes */
-	for (y = 0; y < map_hgt + 2; ++y)
+	for (y = 0; y < hgt + 2; ++y)
 	{
-		for (x = 0; x < map_wid + 2; ++x)
+		for (x = 0; x < wid + 2; ++x)
 		{
 			/* Nothing here */
 			ma[y][x] = TERM_WHITE;
@@ -1934,10 +1937,10 @@ void display_map(int *cy, int *cx)
 		y = py / 16 + *cy;
 
 		/* recenter */
-		x = x - map_wid / 2;
+		x = x - wid / 2;
 		if (x < 0) x = 0;
 
-		y = y - map_hgt / 2;
+		y = y - hgt / 2;
 		if (y < 0) y = 0;
 
 		/* Player location in wilderness */
@@ -1945,9 +1948,9 @@ void display_map(int *cy, int *cx)
 		(*cx) += px / 16 - x + 1 + COL_MAP;
 
 		/* Fill in the map */
-		for (i = 0; i < map_wid; ++i)
+		for (i = 0; i < wid; ++i)
 		{
-			for (j = 0; j < map_hgt; ++j)
+			for (j = 0; j < hgt; ++j)
 			{
 				/* Only draw blocks inside map */
 				if (((x + i + 1) >= max_wild) || ((y + j + 1) >= max_wild)) continue;
@@ -2051,27 +2054,27 @@ void display_map(int *cy, int *cx)
 	}
 
 	/* Corners */
-	i = map_wid + 1;
-	j = map_hgt + 1;
+	i = wid + 1;
+	j = hgt + 1;
 
 	/* Draw the corners */
 	mc[0][0] = mc[0][i] = mc[j][0] = mc[j][i] = '+';
 
 	/* Draw the horizontal edges */
-	for (i = 1; i <= map_wid; i++) mc[0][i] = mc[j][i] = '-';
+	for (i = 1; i <= wid; i++) mc[0][i] = mc[j][i] = '-';
 
 	/* Draw the vertical edges */
-	for (j = 1; j <= map_hgt; j++) mc[j][0] = mc[j][i] = '|';
+	for (j = 1; j <= hgt; j++) mc[j][0] = mc[j][i] = '|';
 
 
 	/* Display each map line in order */
-	for (j = 0; j < map_hgt + 2; ++j)
+	for (j = 0; j < hgt + 2; ++j)
 	{
 		/* Start a new line */
 		Term_gotoxy(COL_MAP, j);
 
 		/* Display the line */
-		for (i = 0; i < map_wid + 2; ++i)
+		for (i = 0; i < wid + 2; ++i)
 		{
 			ta = ma[j][i];
 			tc = mc[j][i];
@@ -2087,18 +2090,18 @@ void display_map(int *cy, int *cx)
 	view_granite_lite = old_view_granite_lite;
 
 	/* Free each line map */
-	for (i = 0; i < (map_hgt + 2); i++)
+	for (i = 0; i < (hgt + 2); i++)
 	{
 		/* Free one row each array */
-		C_FREE(ma[i], (map_wid + 2), byte);
-		C_FREE(mc[i], (map_wid + 2), char);
-		C_FREE(mp[i], (map_wid + 2), byte);
+		C_FREE(ma[i], (wid + 2), byte);
+		C_FREE(mc[i], (wid + 2), char);
+		C_FREE(mp[i], (wid + 2), byte);
 	}
 
 	/* Free the maps */
-	C_FREE(ma, (map_hgt + 2), byte_ptr);
-	C_FREE(mc, (map_hgt + 2), char_ptr);
-	C_FREE(mp, (map_hgt + 2), byte_ptr);
+	C_FREE(ma, (hgt + 2), byte_ptr);
+	C_FREE(mc, (hgt + 2), char_ptr);
+	C_FREE(mp, (hgt + 2), byte_ptr);
 }
 
 
