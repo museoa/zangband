@@ -4298,8 +4298,6 @@ static bool CheckEvents(bool wait)
 				{
 					int x, y;
 
-					bool redraw_it = TRUE;
-
 					term *old = Term;
 
 					/* Oops */
@@ -4332,40 +4330,10 @@ static bool CheckEvents(bool wait)
 					Term_activate(td->t);
 
 					/* Hack -- Resize the term */
-					if (Term_resize(td->cols, td->rows) == 1) redraw_it = FALSE;
+					(void) Term_resize(td->cols, td->rows);
 
 					/* Resize and Redraw */
 					term_data_resize(td);
-
-					/* Reset map size if required */
-					if (window == 0)
-					{
-						/* Mega-Hack -- no panel yet */
-						panel_row_min = 0;
-						panel_row_max = 0;
-						panel_col_min = 0;
-						panel_col_max = 0;
-
-						/* Reset the panels */
-						map_panel_size();
-
-						if (character_dungeon)
-						{
-							verify_panel();
-						}
-					}
-
-					/* Only redraw if everything is initialised */
-					if (character_dungeon && redraw_it)
-					{
-						/* Activate term zero for the redraw */
-						Term_activate(data[0].t);
-
-						/* redraw */
-						do_cmd_redraw_term(window);
-					}
-
-					term_data_redraw(td);
 
 					/* Restore */
 					Term_activate(old);

@@ -1639,17 +1639,7 @@ errr init_xaw(int argc, char *argv[])
 		               TERM_FALLBACKS, i);
 
 		angband_term[i] = Term;
-	}
-	
-	/* Add in resizing for map */
-	angband_term[0]->resize_hook = resize_map;
-
-	/* Add in redraw hooks */
-	for (i = 1; i < num_term; i++)
-	{
-		angband_term[i]->resize_hook = redraw_window;
-	}
-	
+	}	
 
 	/* Activate the "Angband" window screen */
 	Term_activate(&data[0].t);

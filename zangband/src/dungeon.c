@@ -4098,6 +4098,19 @@ void play_game(bool new_game)
 	/* Make sure main term is active */
 	Term_activate(angband_term[0]);
 
+	/* Initialise the resize hooks */
+	angband_term[0]->resize_hook = resize_map;
+	
+	for (i = 1; i < 8; i++)
+	{
+		/* Does the term exist? */
+		if (angband_term[i])
+		{
+			/* Add the redraw on resize hook */
+			angband_term[i]->resize_hook = redraw_window;
+		}
+	}	
+
 	/* Verify minimum size */
 	if ((Term->hgt < 24) || (Term->wid < 80))
 	{

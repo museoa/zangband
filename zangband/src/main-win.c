@@ -2618,9 +2618,6 @@ static void init_windows(void)
 	td->pos_x = 7 * 30;
 	td->pos_y = 7 * 20;
 	
-	/* Add in resizing for map */
-	angband_term[0]->resize_hook = resize_map;
-
 	/* Sub windows */
 	for (i = 1; i < MAX_TERM_DATA; i++)
 	{
@@ -2637,9 +2634,6 @@ static void init_windows(void)
 		td->size_oh2 = 1;
 		td->pos_x = (7 - i) * 30;
 		td->pos_y = (7 - i) * 20;
-		
-		/* Add in redraw hooks */
-		angband_term[i]->resize_hook = redraw_window;
 	}
 
 
