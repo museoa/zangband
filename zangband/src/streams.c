@@ -252,6 +252,14 @@ void build_streamer(int feat, int chance)
 
 			/* Hack -- Add some (known) treasure */
 			if (randint0(chance) == 0) c_ptr->feat += 0x04;
+			
+			/*
+			 * So this means that all the treasure is known as soon as it is
+			 * seen or detected...  Why do the FEAT_MAGMA_H and FEAT_QUARTZ_H
+			 * terrain types exist?  If they are never made, then the "mimic"
+			 * feature struct field can be removed, and so can some code in
+			 * map_info() - which will speed the game up significantly.
+			 */
 		}
 
 		if (dummy >= SAFE_MAX_ATTEMPTS)
