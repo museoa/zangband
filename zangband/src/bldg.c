@@ -559,7 +559,7 @@ static void display_fruit(int row, int col, int fruit)
 			prt(                   " Orange ", row + 8, col);
 			break;
 		case 2: /* sword */
-			c_put_str(TERM_SLATE, "   /\\  " , row, col);
+			c_put_str(TERM_SLATE, "   /\\   " , row, col);
 			c_put_str(TERM_SLATE, "   ##   " , row + 1, col);
 			c_put_str(TERM_SLATE, "   ##   " , row + 2, col);
 			c_put_str(TERM_SLATE, "   ##   " , row + 3, col);
@@ -1382,9 +1382,9 @@ static void compare_weapons(void)
 /*
  * Enchant item
  */
-static bool enchant_item(int cost, int to_hit, int to_dam, int to_ac)
+static bool enchant_item(int cost, bool to_hit, bool to_dam, bool to_ac)
 {
-	int         i, item;
+	int         item;
 	bool        okay = FALSE;
 	object_type *o_ptr;
 	cptr        q, s;
@@ -1413,43 +1413,27 @@ static bool enchant_item(int cost, int to_hit, int to_dam, int to_ac)
 		return (FALSE);
 	}
 
+	/* Note that enchanting something a negative number of times will fail */
+
 	/* Enchant to hit */
-	for (i = 0; i < to_hit; i++)
+	if ((to_hit) && (enchant(o_ptr,  maxenchant - o_ptr->to_h,
+		(ENCH_TOHIT | ENCH_FORCE))))
 	{
-		if (o_ptr->to_h < maxenchant)
-		{
-			if (enchant(o_ptr, 1, (ENCH_TOHIT | ENCH_FORCE)))
-			{
-				okay = TRUE;
-				break;
-			}
-		}
+		okay = TRUE;
 	}
 
 	/* Enchant to damage */
-	for (i = 0; i < to_dam; i++)
+	if ((to_dam) && (enchant(o_ptr, maxenchant - o_ptr->to_d,
+		(ENCH_TODAM | ENCH_FORCE))))
 	{
-		if (o_ptr->to_d < maxenchant)
-		{
-			if (enchant(o_ptr, 1, (ENCH_TODAM | ENCH_FORCE)))
-			{
-				okay = TRUE;
-				break;
-			}
-		}
+		okay = TRUE;
 	}
 
 	/* Enchant to AC */
-	for (i = 0; i < to_ac; i++)
+	if ((to_ac) && (enchant(o_ptr, maxenchant - o_ptr->to_a,
+		(ENCH_TOAC | ENCH_FORCE))))
 	{
-		if (o_ptr->to_a < maxenchant)
-		{
-			if (enchant(o_ptr, 1, (ENCH_TOAC | ENCH_FORCE)))
-			{
-				okay = TRUE;
-				break;
-			}
-		}
+		okay = TRUE;
 	}
 
 	/* Failure */
@@ -1990,7 +1974,7 @@ static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
 			{
 				item_tester_hook = item_tester_hook_melee_weapon;
 				
-				enchant_item(f_ptr->data[1] * factor, 1, 1, 0);
+				enchant_item(f_ptr->data[1] * factor, TRUE, TRUE, FALSE);
 				
 				done = TRUE;
 			}		
@@ -2004,7 +1988,7 @@ static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
 			{
 				item_tester_hook = item_tester_hook_armour;
 				
-				enchant_item(f_ptr->data[1] * factor, 0, 0, 1);
+				enchant_item(f_ptr->data[1] * factor, FALSE, FALSE, TRUE);
 				
 				done = TRUE;
 			}
