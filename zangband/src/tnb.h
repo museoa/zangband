@@ -52,6 +52,8 @@ extern bool g_initialized;
 extern bool game_in_progress;
 extern cptr ANGBAND_DIR_ROOT;
 extern cptr ANGBAND_DIR_TK;
+extern bool check_dir(cptr s);
+extern void validate_file(cptr s, cptr fmt);
 
 /* canv-widget.c */
 extern void CanvasWidget_Idle(void);

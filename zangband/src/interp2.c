@@ -810,8 +810,6 @@ static bool s_edit_path[] = {
 	TRUE
 };
 
-extern bool check_dir(cptr s);
-
 int
 objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {

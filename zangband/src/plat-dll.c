@@ -172,6 +172,20 @@ void *Plat_PaletteInit(unsigned char *rgb)
 #include <X11/Xutil.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+
+/* Hack - prevent warnings from tk headers */
+#if defined errno
+#	undef errno
+#	define errno errno_hack
+#endif /* errno */
+
+
+#define HAVE_LIMITS_H
+#define HAVE_UNISTD_H
+#define _TCLINTDECLS
+#include <tkInt.h>
+#include <tkIntPlatDecls.h>
+
 #include "tcltk.h"
 
 struct PlatBitmap
@@ -355,4 +369,11 @@ int Plat_XColor2Pixel(XColor *xColorPtr)
 #endif /* PLATFORM_WIN */
 
 	return 0;
+}
+
+void Plat_SyncDisplay(Display *display)
+{
+#ifdef PLATFORM_X11
+	TkpSync(display);
+#endif
 }

@@ -703,7 +703,7 @@ void Bind_Setting(int detail, int value)
 void Bind_Status(int detail)
 {
 	QE_Event event;
-	struct {char *format; int value;} clientData;
+	struct {cptr format; int value;} clientData;
 
 	clientData.format = player_status(detail - 1, &clientData.value);
 

@@ -510,7 +510,7 @@ static void widget_changed(Widget *widgetPtr)
 	/*  */
 	if ((widgetPtr->style != WIDGET_STYLE_MAP) && (exPtr->effect == NULL))
 	{
-		exPtr->effect = Tcl_AllocDebug(sizeof(IconSpec) * widgetPtr->tc);
+		exPtr->effect = (IconSpec *) Tcl_AllocDebug(sizeof(IconSpec) * widgetPtr->tc);
 
 		for (i = 0; i < widgetPtr->tc; i++)
 		{

@@ -17,5 +17,6 @@ extern void Plat_BitmapNew(Tcl_Interp *interp, BitmapPtr bitmapPtr);
 extern void Plat_BitmapDelete(BitmapPtr bitmapPtr);
 extern void *Plat_PaletteInit(unsigned char *rgb);
 int Plat_XColor2Pixel(XColor *xColorPtr);
+extern void Plat_SyncDisplay(Display *display);
 
 #endif /* INCLUDED_PLATDLL_H */

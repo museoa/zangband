@@ -927,15 +927,15 @@ static void Widget_Destroy(Widget *widgetPtr)
 		widgetPtr->tkwin);
 
 	if (widgetPtr->anim)
-		Tcl_FreeDebug(widgetPtr->anim);
+		Tcl_FreeDebug((void *) widgetPtr->anim);
 	if (widgetPtr->info)
-		Tcl_FreeDebug(widgetPtr->info);
+		Tcl_FreeDebug((void *) widgetPtr->info);
 	if (widgetPtr->invalid)
-		Tcl_FreeDebug(widgetPtr->invalid);
+		Tcl_FreeDebug((void *) widgetPtr->invalid);
 	if (widgetPtr->yp)
-		Tcl_FreeDebug(widgetPtr->yp);
+		Tcl_FreeDebug((void *) widgetPtr->yp);
 	if (widgetPtr->xp)
-		Tcl_FreeDebug(widgetPtr->xp);
+		Tcl_FreeDebug((void *) widgetPtr->xp);
 
 	widgetPtr->tkwin = NULL;
 
@@ -1308,10 +1308,7 @@ void Widget_Display(ClientData clientData)
 		widgetPtr->dy - widgetPtr->by /* dest top-left */
 	);
 
-#ifdef PLATFORM_X11
-	/* Sync the display */
-	TkpSync(widgetPtr->display);
-#endif
+	Plat_SyncDisplay(widgetPtr->display);
 
 	/* Reset dirty bounds to entire window */
 	widgetPtr->dx = widgetPtr->bx;

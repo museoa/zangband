@@ -2575,8 +2575,6 @@ static CommandInit commandInit[] = {
 	{0, NULL, 0, 0, NULL, NULL, (ClientData) 0}
 };
 
-extern void validate_file(cptr s, cptr fmt);
-
 /*
  * Initialize stuff after Tcl/Tk but before a game is started.
  */

@@ -562,7 +562,7 @@ void Icon_MakeRLE(t_icon_data *iconDataPtr)
 		total += len;
 	}
 
-	Tcl_FreeDebug(iconDataPtr->icon_data);
+	Tcl_FreeDebug((char *) iconDataPtr->icon_data);
 	iconDataPtr->icon_data = NULL;
 }
 
@@ -2207,7 +2207,7 @@ static int objcmd_icon_dark(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_
 		if ((iconDataPtr->dark_data != NULL) &&
 			(iconDataPtr->dark_data[index] != NULL))
 		{
-			Tcl_FreeDebug(iconDataPtr->dark_data[index]);
+			Tcl_FreeDebug((char *) iconDataPtr->dark_data[index]);
 			iconDataPtr->dark_data[index] = NULL;
 		}
 		if (iconDataPtr->gamma[0])
@@ -3050,7 +3050,7 @@ wrongCreateArgs:
 				break;
 
 			/* Allocate more space */
-			iconDataPtr->icon_data = Tcl_ReallocDebug(iconDataPtr->icon_data,
+			iconDataPtr->icon_data = (unsigned char *) Tcl_Realloc((char *) iconDataPtr->icon_data,
 				(iconDataPtr->icon_count + count) * iconDataPtr->length);
 
 			/* Move following icons down */
@@ -3568,13 +3568,7 @@ void Icon_AddType(t_icon_data *data)
 	int new;
 	t_icon_data iconData, *icon_data_ptr = &iconData;
 	Tcl_HashEntry *hPtr;
-#if 1
 	memset(icon_data_ptr, 0, sizeof(t_icon_data));
-#else
-	g_icon_data = Array_Insert(g_icon_data, &g_icon_data_count,
-		sizeof(t_icon_data), g_icon_data_count);
-	icon_data_ptr = &g_icon_data[g_icon_data_count - 1];
-#endif
 	icon_data_ptr->desc = string_make(data->desc);
 	icon_data_ptr->icon_count = data->icon_count;
 	icon_data_ptr->icon_data = data->icon_data;
@@ -3592,7 +3586,7 @@ void Icon_AddType(t_icon_data *data)
 	/* Could be dynamic */
 	if (data->icon_count)
 	{
-		icon_data_ptr->flags = Tcl_AllocDebug(
+		icon_data_ptr->flags = (short *) Tcl_AllocDebug(
 			sizeof(short) * icon_data_ptr->icon_count);
 		memset(icon_data_ptr->flags, 0,
 			sizeof(short) * icon_data_ptr->icon_count);
@@ -3745,7 +3739,7 @@ void Icon_Exit(Tcl_Interp *interp)
 
 		/* Help the memory debugger */
 		if (iconDataPtr->icon_data)
-			Tcl_FreeDebug(iconDataPtr->icon_data);
+			Tcl_FreeDebug((char *) iconDataPtr->icon_data);
 
 		/* Help the memory debugger */
 		if (iconDataPtr->rle_data)
@@ -3755,22 +3749,22 @@ void Icon_Exit(Tcl_Interp *interp)
 				IconPtr *mem = (IconPtr *) iconDataPtr->rle_data;
 				for (j = 0; j < iconDataPtr->icon_count; j++)
 					if (mem[j])
-						Tcl_FreeDebug(mem[j]);
+						Tcl_FreeDebug((char *) mem[j]);
 			}
 			else
 			{
-				Tcl_FreeDebug(iconDataPtr->rle_offset);
-				Tcl_FreeDebug(iconDataPtr->rle_len);
+				Tcl_FreeDebug((void *) iconDataPtr->rle_offset);
+				Tcl_FreeDebug((void *) iconDataPtr->rle_len);
 			}
-			Tcl_FreeDebug(iconDataPtr->rle_bounds);
+			Tcl_FreeDebug((void *) iconDataPtr->rle_bounds);
 		}
 
 		/* Help the memory debugger */
-		Tcl_FreeDebug((char *) iconDataPtr->flags);
+		Tcl_FreeDebug((void *) iconDataPtr->flags);
 
 		/* Help the memory debugger */
-		Tcl_FreeDebug((char *) iconDataPtr->gamma[0]);
-		Tcl_FreeDebug((char *) iconDataPtr->gamma[1]);
+		Tcl_FreeDebug((void *) iconDataPtr->gamma[0]);
+		Tcl_FreeDebug((void *) iconDataPtr->gamma[1]);
 
 		if (iconDataPtr->dark_data)
 		{
