@@ -1766,6 +1766,7 @@ void player_flags(u32b *f1, u32b *f2, u32b *f3, u32b *f4)
 			(*f2) |= (TR2_RES_POIS);
 			(*f3) |= (TR3_SLOW_DIGEST);
 			(*f4) |= (TR4_CANT_EAT);
+			(*f4) |= (TR4_PASS_WALL);
 			/* XXX pass_wall */
 			if (p_ptr->lev > 34)
 				(*f3) |= TR3_TELEPATHY;
@@ -1802,11 +1803,13 @@ void player_flags(u32b *f1, u32b *f2, u32b *f3, u32b *f4)
 			(*f3) &= ~(TR3_REGEN);
 		}
 
+#if 0
 		if ((p_ptr->muta3 & MUT3_XTRA_FAT) ||
 			(p_ptr->muta3 & MUT3_XTRA_LEGS) || (p_ptr->muta3 & MUT3_SHORT_LEG))
 		{
 			(*f1) |= TR1_SPEED;
 		}
+#endif
 
 		if (p_ptr->muta3 & MUT3_ELEC_TOUC)
 		{

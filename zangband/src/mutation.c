@@ -1799,7 +1799,11 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 	}
 }
 
-/* Constant mutation effects */
+/* 
+ * Constant mutation effects 
+ *
+ * Note that the commented out effects are actually handled in player_flags().
+ */
 void mutation_effect(void)
 {
 	/* Hyper Strength */
@@ -1848,7 +1852,7 @@ void mutation_effect(void)
 	{
 		p_ptr->stat[A_CON].add -= 2;
 		p_ptr->stat[A_CHR].add -= 1;
-		p_ptr->flags3 &= ~(TR3_REGEN);
+		/* p_ptr->flags3 &= ~(TR3_REGEN); */
 		/* Cancel innate regeneration */
 	}
 
@@ -1895,13 +1899,13 @@ void mutation_effect(void)
 
 	if (p_ptr->muta3 & MUT3_ELEC_TOUC)
 	{
-		p_ptr->flags3 |= (TR3_SH_ELEC);
+		/* p_ptr->flags3 |= (TR3_SH_ELEC); */
 	}
 
 	if (p_ptr->muta3 & MUT3_FIRE_BODY)
 	{
-		p_ptr->flags3 |= (TR3_SH_FIRE);
-		p_ptr->flags3 |= (TR3_LITE);
+		/* p_ptr->flags3 |= (TR3_SH_FIRE); */
+		/* p_ptr->flags3 |= (TR3_LITE); */
 	}
 
 	if (p_ptr->muta3 & MUT3_WART_SKIN)
@@ -1927,37 +1931,37 @@ void mutation_effect(void)
 
 	if (p_ptr->muta3 & MUT3_WINGS)
 	{
-		p_ptr->flags3 |= (TR3_FEATHER);
+		/* p_ptr->flags3 |= (TR3_FEATHER); */
 	}
 
 	if (p_ptr->muta3 & MUT3_FEARLESS)
 	{
-		p_ptr->flags2 |= (TR2_RES_FEAR);
+		/* p_ptr->flags2 |= (TR2_RES_FEAR); */
 	}
 
 	if (p_ptr->muta3 & MUT3_REGEN)
 	{
-		p_ptr->flags3 |= (TR3_REGEN);
+		/* p_ptr->flags3 |= (TR3_REGEN); */
 	}
 
 	if (p_ptr->muta3 & MUT3_ESP)
 	{
-		p_ptr->flags3 |= (TR3_TELEPATHY);
+		/* p_ptr->flags3 |= (TR3_TELEPATHY); */
 	}
 
 	if (p_ptr->muta3 & MUT3_LIMBER)
 	{
-		p_ptr->stat[A_DEX].add += 3;
+		/* p_ptr->stat[A_DEX].add += 3; */
 	}
 
 	if (p_ptr->muta3 & MUT3_ARTHRITIS)
 	{
-		p_ptr->stat[A_DEX].add -= 3;
+		/* p_ptr->stat[A_DEX].add -= 3; */
 	}
 
 	if (p_ptr->muta3 & MUT3_MOTION)
 	{
-		p_ptr->flags2 |= (TR2_FREE_ACT);
+		/* p_ptr->flags2 |= (TR2_FREE_ACT); */
 		p_ptr->skill.stl += 1;
 	}
 
