@@ -856,7 +856,7 @@ void identify_fully_aux(const object_type *o_ptr)
 	screen_save();
 
 	/* Show the item in a message including its pack letter */
-	put_fstr(0, 0, "Examining %v:", OBJECT_STORE_FMT(o_ptr, TRUE, 3));
+	msgf("Examining %v:", OBJECT_STORE_FMT(o_ptr, TRUE, 3));
 
 	/* Begin recall */
 	clear_row(1);
@@ -865,7 +865,7 @@ void identify_fully_aux(const object_type *o_ptr)
 	roff_obj_aux(o_ptr);
 
 	/* Wait for the player to read the info */
-	(void)inkey();
+	if (auto_more) (void)inkey();
 
 	/* Restore the screen */
 	screen_load();

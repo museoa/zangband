@@ -573,14 +573,14 @@ static bool gamble_again(bool win, int odds, s32b wager)
 	{
 		prtf(37, 16, "YOU WON\n"
 					 "Payoff: %ld\n"
-                     "Again(Y/N)?", odds * wager);
+                     "Again(y/n)?", odds * wager);
         p_ptr->au += odds * wager;
 	}
 	else
 	{
 		prtf(37, 16, "You Lost\n"
 					 "\n"
-                     "Again(Y/N)?");
+                     "Again(y/n)?");
         p_ptr->au -= wager;
 	}
 
@@ -1193,9 +1193,6 @@ bool compare_weapons(void)
 		return (FALSE);
 	}
 
-	put_fstr(2, 4, 
-			"Based on your current abilities, here is what your weapon will do:");
-
 	/* Identify the weapon */
 	identify_item(o_ptr);
 	object_mental(o_ptr);
@@ -1214,8 +1211,13 @@ bool compare_weapons(void)
 	list_weapon(o_ptr);
 	compare_weapon_aux1(o_ptr);
 
-	put_fstr(0, 20,
+	put_fstr(0, 19,
 			"(Only highest damage applies per monster. Special damage not cumulative.)");
+
+	msgf("Based on your current abilities, here is what your weapon will do: ");
+
+	/* Give the player a chance to see it all */
+	if (auto_more) (void)inkey();
 
 	/* Done */
 	return (TRUE);
@@ -1243,14 +1245,6 @@ bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac, bool weap)
 		/* Select armour */
 		item_tester_hook = item_tester_hook_armour;
 	}
-
-    clear_region(0, 5, 18);
-    
-	if (to_dam)
-		prtf(0, 5, "  Based on your skill, we can improve up to +%d,+%d%%.", maxenchant, maxenchant_d * 3);
-	else
-		prtf(0, 5, "  Based on your skill, we can improve up to +%d.", maxenchant);
-	prtf(0, 7, "  The price for the service is %d gold per item.", cost);
 
 	/* Get an item */
 	q = "Improve which item? ";
@@ -1341,10 +1335,6 @@ void building_recharge(s32b cost)
 	int charges;
 	int max_charges;
 
-
-	/* Display some info */
-    clear_region(0, 5, 18);
-	prtf(0, 6, "  The prices of recharge depend on the type.");
 
 	/* Only accept legal items */
 	item_tester_hook = item_tester_hook_recharge;
