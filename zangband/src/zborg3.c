@@ -11,37 +11,12 @@
 #include "zborg3.h"
 
 
-
 /*
  * This file helps the Borg analyze "objects" and "shops", and to
  * deal with objects and spells.
  */
 
 
-
-/*
- * Some variables
- */
-borg_shop *borg_shops;	/* Current "shops" */
-
-/*
- * Remember items in the home.  (Only one home at a time)
- */
-list_item *borg_home;
-int home_num;
-
-/*
- * Locate the store doors
- */
-
-s16b track_shop_num;
-s16b track_shop_size;
-
-
-/*
- * Hack -- current shop index
- */
-s16b shop_num = -1;	/* Current shop index */
 
 
 /*

@@ -17,17 +17,6 @@
 #include "zborg2.h"
 #include "zborg3.h"
 
-/*
- * Possible values of "goal"
- */
-#define GOAL_KILL   1			/* Monsters */
-#define GOAL_TAKE   2			/* Objects */
-#define GOAL_MISC   3			/* Stores */
-#define GOAL_DARK   4			/* Exploring */
-#define GOAL_XTRA   5			/* Searching */
-#define GOAL_BORE   6			/* Leaving */
-#define GOAL_FLEE   7			/* Fleeing */
-#define GOAL_TOWN	8			/* Town Special Grid */
 
 
 

@@ -46,8 +46,24 @@
     (map_in_bounds((X),(Y)) && \
 	 borg_cave_floor_grid(map_loc((X),(Y))))
 
+/* Hack - this is a field, so define it here */
+#define FEAT_INVIS	0x02
+
+/* Types of monster list */
+#define BORG_MON_USED	1
+#define BORG_MON_NEW	2
+#define BORG_MON_OLD	3
+#define BORG_MON_MOVE	4
+
 /* Useful typedef for los_general() */
 typedef bool (*map_hook_type) (map_block *mb_ptr);
+
+/* Map hooks */
+extern map_info_hook_type old_info_hook;
+extern map_erase_hook_type old_erase_hook;
+
+/* Recalculate danger */
+extern bool borg_danger_wipe;
 
 
 extern void borg_mmove_init(int x1, int y1, int x2, int y2);
@@ -57,7 +73,11 @@ extern bool borg_projectable(int x1, int y1, int x2, int y2);
 extern bool borg_projectable_pure(int x1, int y1, int x2, int y2);
 extern void borg_forget_view(void);
 extern void borg_update_view(void);
-
+extern void borg_delete_kill(int i, cptr reason);
+extern void borg_map_info(map_block *mb_ptr, term_map *map);
+extern void borg_map_erase(void);
+extern void borg_update(void);
+extern void borg_react(cptr msg, cptr buf);
 
 /*
  * Initialize this file

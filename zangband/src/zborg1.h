@@ -31,6 +31,17 @@
 
 /*** Some constants ***/
 
+/*
+ * Possible values of "goal"
+ */
+#define GOAL_KILL   1			/* Monsters */
+#define GOAL_TAKE   2			/* Objects */
+#define GOAL_MISC   3			/* Stores */
+#define GOAL_DARK   4			/* Exploring */
+#define GOAL_XTRA   5			/* Searching */
+#define GOAL_BORE   6			/* Leaving */
+#define GOAL_FLEE   7			/* Fleeing */
+#define GOAL_TOWN	8			/* Town Special Grid */
 
 
 /*
@@ -166,6 +177,27 @@ struct borg_kill
 	byte m_flags;
 
 	byte type;	/* Type of kill */
+};
+
+
+/*
+ * A store
+ */
+
+typedef struct borg_shop borg_shop;
+
+struct borg_shop
+{
+	/* Location */
+	int x;
+	int y;
+
+	/* Time stamp */
+	s16b when;
+
+	/* Is this shop useful? */
+	s16b b_count;
+	s16b u_count;
 };
 
 
@@ -515,6 +547,25 @@ extern bool borg_fear_mon_spell;
  */
 
 extern s16b goal_shop;	/* Next shop to visit */
+
+/*
+ * Hack -- current shop index
+ */
+extern s16b shop_num;
+
+/* Current "shops" */
+extern borg_shop *borg_shops;
+
+/*
+ * Number of allocated stores...
+ */
+extern s16b track_shop_num;
+extern s16b track_shop_size;
+
+
+extern list_item *borg_home;	/* Current home items - (only remember one.) */
+extern int home_num;	/* Number of items in the home */
+
 
 /*
  * Other variables

@@ -15,28 +15,6 @@
 #include "zborg1.h"
 
 
-/*
- * Forward declare
- */
-typedef struct borg_shop borg_shop;
-typedef struct borg_mind borg_mind;
-
-/*
- * A store
- */
-struct borg_shop
-{
-	/* Location */
-	int x;
-	int y;
-
-	/* Time stamp */
-	s16b when;
-
-	/* Is this shop useful? */
-	s16b b_count;
-	s16b u_count;
-};
 
 
 /*
@@ -116,6 +94,9 @@ struct borg_magic
 /*
  * A spell/prayer in a book
  */
+
+typedef struct borg_mind borg_mind;
+
 struct borg_mind
 {
 	cptr name;	/* Textual name */
@@ -130,28 +111,6 @@ struct borg_mind
 
 	s32b times;	/* Times this spell was cast */
 };
-
-
-/*
- * Some variables
- */
-
-extern borg_shop *borg_shops;	/* Current "shops" */
-
-extern list_item *borg_home;	/* Current home items - (only remember one.) */
-extern int home_num;	/* Number of items in the home */
-
-/*
- * Number of allocated stores...
- */
-extern s16b track_shop_num;
-extern s16b track_shop_size;
-
-/*
- * Hack -- current shop index
- */
-extern s16b shop_num;	/* Current shop index */
-
 
 /*
  * Spell casting information

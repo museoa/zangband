@@ -199,6 +199,26 @@ bool borg_fear_mon_spell;
 
 s16b goal_shop = -1;	/* Next shop to visit */
 
+
+
+/* Current "shops" */
+borg_shop *borg_shops;
+
+s16b track_shop_num;
+s16b track_shop_size;
+
+/*
+ * Hack -- current shop index
+ */
+s16b shop_num = -1;
+
+/*
+ * Remember items in the home.  (Only one home at a time)
+ */
+list_item *borg_home;
+int home_num;
+
+
 /*
  * Location variables
  */
