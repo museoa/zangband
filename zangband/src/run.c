@@ -200,10 +200,11 @@ static int see_interesting(int x, int y)
 #define RUN_W  (RUN_W_SW  | RUN_W_W  | RUN_W_NW)
 #define RUN_NW (RUN_NW_SW | RUN_NW_W | RUN_NW_NW | RUN_NW_N | RUN_NW_NE)
 
-#define TEST_NONE   0
-#define TEST_WALL   1
-#define TEST_UNSEEN 2
-#define TEST_FLOOR  3
+#define TEST_NONE     0
+#define TEST_WALL     1
+#define TEST_UNSEEN   2
+#define TEST_FLOOR    3
+#define TEST_FLOOR_S  4
 
 /*
  * The tests.
@@ -253,10 +254,10 @@ static const struct
  * This test is done *before* removing impossible moves, because
  * we need to know which direction the player came from.
  */
-{TEST_FLOOR,  0, -1, RUN_S, RUN_NE | RUN_NW},
-{TEST_FLOOR,  1,  0, RUN_W, RUN_NE | RUN_SE},
-{TEST_FLOOR,  0,  1, RUN_N, RUN_SE | RUN_SW},
-{TEST_FLOOR, -1,  0, RUN_E, RUN_NW | RUN_SW},
+{TEST_FLOOR_S,  0, -1, RUN_S, RUN_NE | RUN_NW},
+{TEST_FLOOR_S,  1,  0, RUN_W, RUN_NE | RUN_SE},
+{TEST_FLOOR_S,  0,  1, RUN_N, RUN_SE | RUN_SW},
+{TEST_FLOOR_S, -1,  0, RUN_E, RUN_NW | RUN_SW},
 
 /* Eliminate impossible moves */
 {TEST_WALL, -2, -2, 0,        RUN_NW_NW},
@@ -494,7 +495,7 @@ static int check_interesting(void)
  * See run_checks[] for more detailed comments on some of the situations we
  * test for.
  */
-static void run_follow(void)
+static void run_follow(int starting)
 {
 	int px = p_ptr->px;
 	int py = p_ptr->py;
@@ -549,6 +550,12 @@ static void run_follow(void)
 
 				case TEST_FLOOR:
 					ok = !see_wall(px + dx, py + dy) &&
+					     !see_nothing(px + dx, py + dy);
+					break;
+
+				case TEST_FLOOR_S:
+					ok = starting &&
+					     !see_wall(px + dx, py + dy) &&
 					     !see_nothing(px + dx, py + dy);
 					break;
 				}
@@ -652,9 +659,14 @@ void run_step(int dir)
 	}
 	else
 	{
+		int starting = FALSE;
+		
 		/* If we've just started our run, determine the algorithm now */
 		if (p_ptr->run.mode == RUN_MODE_START)
+		{
+			starting = TRUE;
 			run_choose_mode();
+		}
 
 		/* Use the selected algorithm */
 		switch (p_ptr->run.mode)
@@ -664,7 +676,7 @@ void run_step(int dir)
 			break;
 
 		case RUN_MODE_FOLLOW:
-			run_follow();
+			run_follow(starting);
 			break;
 
 		case RUN_MODE_FINISH:
