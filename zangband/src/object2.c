@@ -650,7 +650,7 @@ errr get_obj_num_prep(void)
  */
 s16b get_obj_num(int level, int min_level)
 {
-	int             i, l;
+	int             i;
 	long            value1, value2, total;
 	alloc_entry     *table = alloc_kind_table;
 
@@ -672,13 +672,11 @@ s16b get_obj_num(int level, int min_level)
 	/* Process probabilities */
 	for (i = 0; i < alloc_kind_size; i++)
 	{
-		l = table[i].level;
-		
 		/* Objects are sorted by depth */
-		if (l > level) break;
+		if (table[i].level > level) break;
 
 		/* What John West rejects, makes John West the best. */
-		if (l < min_level) continue;
+		if (k_info[table[i].index].level < min_level) continue;
 
 		/* Total */
 		total += table[i].prob2;
@@ -708,13 +706,13 @@ s16b get_obj_num(int level, int min_level)
 	for (i = 0; i < alloc_kind_size; i++)
 	{
 		/* What John West rejects, makes John West the best. */
-		if (table[i].level < min_level) continue;
+		if (k_info[table[i].index].level < min_level) continue;
 		
 		/* Found the entry */
 		if (value1 < table[i].prob2) break;
 
 		/* Decrement */
-		value1 = value1 - table[i].prob2;
+		value1 -= table[i].prob2;
 	}
 
 	/* Result */
@@ -4178,7 +4176,7 @@ bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme)
 	{
 		flags = OC_FORCE_GOOD;
 		
-		min_level = base / 4;
+		min_level = base / 2;
 	}
 	else
 	{
@@ -4839,9 +4837,9 @@ void acquirement(int y1, int x1, int num, bool great, bool known)
 	obj_theme theme;
 	
 	/* Set theme - more weapons than normal */
-	theme.treasure = 25;
-	theme.combat = 50;
-	theme.magic = 25;
+	theme.treasure = 10;
+	theme.combat = 80;
+	theme.magic = 10;
 	theme.tools = 0;
 
 	/* Acquirement */
