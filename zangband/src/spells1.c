@@ -210,7 +210,7 @@ static int project_m_y;
  * XXX XXX XXX Bounds checking is broken - we can affect grids out of
  *				view of the player, causing a crash...
  */
-static bool project_f(int who, int r, int y, int x, int dam, int typ)
+static bool project_f(int who, int r, int x, int y, int dam, int typ)
 {
 	cave_type       *c_ptr = area(y, x);
 
@@ -606,7 +606,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
  *
  * We return "TRUE" if the effect of the projection is "obvious".
  */
-static bool project_o(int who, int r, int y, int x, int dam, int typ)
+static bool project_o(int who, int r, int x, int y, int dam, int typ)
 {
 	cave_type *c_ptr = area(y,x);
 
@@ -932,7 +932,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
  *
  * We attempt to return "TRUE" if the player saw anything "useful" happen.
  */
-static bool project_m(int who, int r, int y, int x, int dam, int typ)
+static bool project_m(int who, int r, int x, int y, int dam, int typ)
 {
 	int tmp;
 
@@ -3100,7 +3100,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
  * We return "TRUE" if any "obvious" effects were observed.  XXX XXX Actually,
  * we just assume that the effects were obvious, for historical reasons.
  */
-static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
+static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 {
 	int k = 0;
 
@@ -4561,7 +4561,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 				int d = dist_to_line(y, x, y1, x1, y2, x2);
 
 				/* Affect the grid */
-				if (project_f(who, d, y, x, dam, typ)) notice = TRUE;
+				if (project_f(who, d, x, y, dam, typ)) notice = TRUE;
 				
 				/* Store information into structure to pass to action */
 				f_m_t.who = who;
@@ -4581,7 +4581,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 			else
 			{
 				/* Affect the grid */
-				if (project_f(who, dist, y, x, dam, typ)) notice = TRUE;
+				if (project_f(who, dist, x, y, dam, typ)) notice = TRUE;
 				
 				/* Store information into structure to pass to action */
 				f_m_t.who = who;
@@ -4627,12 +4627,12 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 				int d = dist_to_line(y, x, y1, x1, y2, x2);
 
 				/* Affect the object in the grid */
-				if (project_o(who, d, y, x, dam, typ)) notice = TRUE;
+				if (project_o(who, d, x, y, dam, typ)) notice = TRUE;
 			}
 			else
 			{
 				/* Affect the object in the grid */
-				if (project_o(who, dist, y, x, dam, typ)) notice = TRUE;
+				if (project_o(who, dist, x, y, dam, typ)) notice = TRUE;
 			}
 		}
 	}
@@ -4667,12 +4667,12 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 					int d = dist_to_line(y, x, y1, x1, y2, x2);
 
 					/* Affect the monster in the grid */
-					if (project_m(who, d, y, x, dam, typ)) notice = TRUE;
+					if (project_m(who, d, x, y, dam, typ)) notice = TRUE;
 				}
 				else
 				{
 					/* Affect the monster in the grid */
-					if (project_m(who, dist, y, x, dam, typ)) notice = TRUE;
+					if (project_m(who, dist, x, y, dam, typ)) notice = TRUE;
 				}
 			}
 			else
@@ -4713,7 +4713,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 				}
 				else
 				{
-					if (project_m(who, dist, y, x, dam, typ)) notice = TRUE;
+					if (project_m(who, dist, x, y, dam, typ)) notice = TRUE;
 				}
 			}
 		}
@@ -4762,12 +4762,12 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 				int d = dist_to_line(y, x, y1, x1, y2, x2);
 
 				/* Affect the player */
-				if (project_p(who, d, y, x, dam, typ, rad)) notice = TRUE;
+				if (project_p(who, d, x, y, dam, typ, rad)) notice = TRUE;
 			}
 			else
 			{
 				/* Affect the player */
-				if (project_p(who, dist, y, x, dam, typ, rad)) notice = TRUE;
+				if (project_p(who, dist, x, y, dam, typ, rad)) notice = TRUE;
 			}
 		}
 	}
