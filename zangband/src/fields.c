@@ -2747,8 +2747,15 @@ void field_action_hit_trap_disenchant(s16b *field_ptr, vptr nothing)
 	/* Saving throw */
 	if (!check_save(f_ptr->data[1])) return;
 	
-	msg_print("There is a bright flash of light!");
-	(void)apply_disenchant();
+	if (!p_ptr->resist_disen)
+	{
+		msg_print("There is a bright flash of light!");
+		(void)apply_disenchant();
+	}
+	else
+	{
+		msg_print("You feel the air throb.");
+	}
 }
 
 
