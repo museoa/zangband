@@ -1,5 +1,5 @@
 /* CVS: Last edit by $Author$ on $Date$ */
-/* File: config.h */
+/* File: z-config.h */
 
 /* Purpose: Angband specific configuration stuff */
 

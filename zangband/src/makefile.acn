@@ -8,7 +8,7 @@
 ## GCC or Easy C, or whatever.
 ##
 ## If you want to alter the behaviour of the game,
-## then fiddle with config.h
+## then fiddle with z-config.h
 ##
 
 #

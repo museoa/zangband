@@ -46,7 +46,7 @@
  *
  * When you complete a port to a new system, you should email any
  * newly created files, and any changes made to existing files,
- * including "h-config.h", "config.h", and any of the "Makefile"
+ * including "h-config.h", "z-config.h", and any of the "Makefile"
  * files, to "benh@phial.com" for inclusion in the next version.
  *
  * Try to stick to a "three letter" naming scheme for "main-xxx.c"
