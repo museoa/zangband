@@ -2253,6 +2253,78 @@ static int critical_shot(int chance, int sleeping_bonus, cptr o_name,
 
 
 /*
+ * Process the effect of hitting something with a
+ * thrown item.
+ */
+static void throw_item_effect(object_type *o_ptr, bool hit_body, bool hit_wall,
+                              int x, int y)
+{
+	/* Chance of breakage (during attacks) */
+	int breakage = (hit_body ? breakage_chance(o_ptr) : 0);
+
+	/* Figurines transform */
+	if (o_ptr->tval == TV_FIGURINE)
+	{
+		/* Always break */
+		breakage = 100;
+
+		if (!(summon_named_creature(x, y, o_ptr->pval, FALSE, FALSE, TRUE)))
+		{
+			msgf("The Figurine writhes and then shatters.");
+		}
+	}
+
+	if ((o_ptr->flags4 & TR4_RETURN) && randint0(100) < 95)
+	{
+		msgf("The %v returns to your hand.", OBJECT_FMT(o_ptr, FALSE, 3));
+
+		inven_carry(o_ptr);
+
+		return;
+	}
+
+	/* Potions smash open */
+	if (object_is_potion(o_ptr))
+	{
+		if (hit_body || hit_wall || (randint1(100) < breakage))
+		{
+			/* Message */
+			msgf("The %v shatters!", OBJECT_FMT(o_ptr, FALSE, 3));
+
+			if (potion_smash_effect(0, x, y, o_ptr->k_idx))
+			{
+				monster_type *m_ptr = &m_list[area(x, y)->m_idx];
+
+				/* ToDo (Robert): fix the invulnerability */
+				if (area(x, y)->m_idx &&
+					!is_hostile(&m_list[area(x, y)->m_idx]) &&
+					!(m_ptr->invulner))
+				{
+					monster_type *m2_ptr = &m_list[area(x, y)->m_idx];
+				
+					msgf("%^v gets angry!", MONSTER_FMT(m2_ptr, 0));
+					set_hostile(m2_ptr);
+				}
+			}
+
+			return;
+		}
+		else
+		{
+			breakage = 0;
+		}
+	}
+
+	/* Drop (or break) near that location */
+	drop_near(o_ptr, breakage, x, y);
+
+	p_ptr->redraw |= (PR_EQUIPPY);
+
+	make_noise(3);
+}
+
+
+/*
  * Fire an object from the pack or floor.
  *
  * You may only fire items that "match" your missile launcher.
@@ -2313,6 +2385,8 @@ void do_cmd_fire_aux(object_type *o_ptr, const object_type *j_ptr)
 	char m_name[80];
 
 	int msec = delay_factor * delay_factor * delay_factor;
+
+	bool hit_wall = FALSE;
 
 	cave_type *c_ptr;
 
@@ -2439,11 +2513,19 @@ void do_cmd_fire_aux(object_type *o_ptr, const object_type *j_ptr)
 		mmove(&nx, &ny, px, py);
 
 		/* Stopped by wilderness boundary */
-		if (!in_bounds2(nx, ny)) break;
+		if (!in_bounds2(nx, ny)) 
+		{
+			hit_wall = TRUE;
+			break;
+		}
 
 		/* Stopped by walls/doors */
 		c_ptr = area(nx, ny);
-		if (cave_wall_grid(c_ptr)) break;
+		if (cave_wall_grid(c_ptr)) 
+		{
+			hit_wall = TRUE;
+			break;
+		}
 
 		/* Advance the distance */
 		cur_dis++;
@@ -2612,9 +2694,7 @@ void do_cmd_fire_aux(object_type *o_ptr, const object_type *j_ptr)
 				tdam = mon_damage_mod(m_ptr, tdam, 0);
 
 				/* Drop (or break) near that location (i_ptr is now invalid) */
-				drop_near(i_ptr, breakage_chance(i_ptr), x, y);
-
-				make_noise(3);
+				throw_item_effect(i_ptr, TRUE, FALSE, x, y);
 
 				/* Complex message */
 				if (p_ptr->state.wizard)
@@ -2648,7 +2728,7 @@ void do_cmd_fire_aux(object_type *o_ptr, const object_type *j_ptr)
 			else
 			{
 				/* Drop (or break) near that location (i_ptr is now invalid) */
-				drop_near(i_ptr, breakage_chance(i_ptr), x, y);
+				throw_item_effect(i_ptr, TRUE, FALSE, x, y);
 			}
 
 			/* Stop looking */
@@ -2657,7 +2737,7 @@ void do_cmd_fire_aux(object_type *o_ptr, const object_type *j_ptr)
 	}
 
 	/* Drop (or break) near that location (i_ptr is now invalid) */
-	drop_near(i_ptr, 0, x, y);
+	throw_item_effect(i_ptr, FALSE, hit_wall, x, y);
 
 	make_noise(3);
 }
@@ -2694,69 +2774,6 @@ void do_cmd_fire(void)
 	/* Fire the item */
 	do_cmd_fire_aux(o_ptr, j_ptr);
 }
-
-/*
- * Process the effect of hitting something with a
- * thrown item.
- */
-static void throw_item_effect(object_type *o_ptr, bool hit_body, bool hit_wall,
-                              int x, int y)
-{
-	/* Chance of breakage (during attacks) */
-	int breakage = (hit_body ? breakage_chance(o_ptr) : 0);
-
-	/* Figurines transform */
-	if (o_ptr->tval == TV_FIGURINE)
-	{
-		/* Always break */
-		breakage = 100;
-
-		if (!(summon_named_creature(x, y, o_ptr->pval, FALSE, FALSE, TRUE)))
-		{
-			msgf("The Figurine writhes and then shatters.");
-		}
-	}
-
-	/* Potions smash open */
-	if (object_is_potion(o_ptr))
-	{
-		if (hit_body || hit_wall || (randint1(100) < breakage))
-		{
-			/* Message */
-			msgf("The %v shatters!", OBJECT_FMT(o_ptr, FALSE, 3));
-
-			if (potion_smash_effect(0, x, y, o_ptr->k_idx))
-			{
-				monster_type *m_ptr = &m_list[area(x, y)->m_idx];
-
-				/* ToDo (Robert): fix the invulnerability */
-				if (area(x, y)->m_idx &&
-					!is_hostile(&m_list[area(x, y)->m_idx]) &&
-					!(m_ptr->invulner))
-				{
-					monster_type *m2_ptr = &m_list[area(x, y)->m_idx];
-				
-					msgf("%^v gets angry!", MONSTER_FMT(m2_ptr, 0));
-					set_hostile(m2_ptr);
-				}
-			}
-
-			return;
-		}
-		else
-		{
-			breakage = 0;
-		}
-	}
-
-	/* Drop (or break) near that location */
-	drop_near(o_ptr, breakage, x, y);
-
-	p_ptr->redraw |= (PR_EQUIPPY);
-
-	make_noise(3);
-}
-
 
 /*
  * Throw an object from the pack or floor.

@@ -2972,7 +2972,7 @@
 #define TR4_PASS_WALL           0x00008000L
 #define TR4_GHOUL_TOUCH         0x00010000L
 #define TR4_PSI_CRIT            0x00020000L
-#define TR4_XXX19               0x00040000L
+#define TR4_RETURN              0x00040000L
 #define TR4_XXX20               0x00080000L
 #define TR4_HURT_ACID           0x00100000L
 #define TR4_HURT_ELEC           0x00200000L

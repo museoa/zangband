@@ -631,7 +631,7 @@ static cptr k_info_flags4[] =
 	"PASS_WALL",
 	"GHOUL_TOUCH",
 	"PSI_CRIT",
-	"XXX19",
+	"RETURN",
 	"XXX20",
 	"HURT_ACID",
 	"HURT_ELEC",
