@@ -197,8 +197,9 @@ cygwin: LIBS := -s -mno-cygwin -mwindows -e _mainCRTStartup -lwinmm
 cygwin: ANGOBJS += angband.res readdib.o
 cygwin: INSTALL := mv -f zangband.exe ../zangband.exe
 cygwin: RES := windres
-cygwin: EXEC := .exe
 cygwin: RESCMD = $< -O coff -o $@
+cygwin: LUA := lua\# Dos has different path seperators
+cygwin: EXEC := .exe
 
 ##
 ## Variation -- OpenBSD 
