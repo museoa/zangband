@@ -563,6 +563,10 @@ object_type *add_object_list(s16b *o_idx_ptr, const object_type *o_ptr)
 
 	/* Copy */
 	object_copy(j_ptr, o_ptr);
+	
+	/* Allocate quarks */
+	quark_dup(o_ptr->xtra_name);
+	quark_dup(o_ptr->inscription);
 
 	/* Add to the list */
 	j_ptr->next_o_idx = *o_idx_ptr;
