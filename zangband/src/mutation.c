@@ -1381,7 +1381,7 @@ void mutation_random_aux(mutation_type *mut_ptr)
 	
 	if (mut_ptr->which == MUT2_BERS_RAGE)
 	{
-		disturb(0, 0);
+		disturb(FALSE);
 		msg_print("RAAAAGHH!");
 		msg_print("You feel a fit of rage coming over you!");
 		(void)set_shero(p_ptr->shero + 10 + randint1(p_ptr->lev));
@@ -1391,7 +1391,7 @@ void mutation_random_aux(mutation_type *mut_ptr)
 	{
 		if (!(p_ptr->resist_fear || p_ptr->hero || p_ptr->shero))
 		{
-			disturb(0, 0);
+			disturb(FALSE);
 			msg_print("It's so dark... so scary!");
 			set_afraid(p_ptr->afraid + 13 + randint1(26));
 		}
@@ -1402,7 +1402,7 @@ void mutation_random_aux(mutation_type *mut_ptr)
 		if (!p_ptr->resist_nexus && !p_ptr->muta1 & MUT1_VTELEPORT &&
 		    !p_ptr->anti_tele)
 		{
-			disturb(0, 0);				
+			disturb(FALSE);				
 			
 			/* Teleport player */
 			msg_print("Your position suddenly seems very uncertain...");
@@ -1415,7 +1415,7 @@ void mutation_random_aux(mutation_type *mut_ptr)
 	{
 		if (!p_ptr->resist_confu && !p_ptr->resist_chaos)
 		{
-			disturb(0, 0);
+			disturb(FALSE);
 			p_ptr->redraw |= PR_EXTRA;
 			msg_print("You feel a SSSCHtupor cOmINg over yOu... *HIC*!");
 		}			
@@ -1452,7 +1452,7 @@ void mutation_random_aux(mutation_type *mut_ptr)
 	{
 		if (!p_ptr->resist_chaos)
 		{
-			disturb(0, 0);
+			disturb(FALSE);
 			p_ptr->redraw |= PR_EXTRA;
 			(void)set_image(p_ptr->image + randint0(50) + 20);
 		}
@@ -1460,7 +1460,7 @@ void mutation_random_aux(mutation_type *mut_ptr)
 				
 	else if (mut_ptr->which == MUT2_FLATULENT)
 	{
-		disturb(0, 0);
+		disturb(FALSE);
 
 		msg_print("BRRAAAP! Oops.");
 		msg_print(NULL);
@@ -1470,7 +1470,7 @@ void mutation_random_aux(mutation_type *mut_ptr)
 	else if ((mut_ptr->which == MUT2_PROD_MANA) && !p_ptr->anti_magic)
 	{
 		int dire = 0;
-		disturb(0, 0);
+		disturb(FALSE);
 		msg_print("Magical energy flows through you! You must release it!");
 		flush();
 		msg_print(NULL);
@@ -1486,13 +1486,13 @@ void mutation_random_aux(mutation_type *mut_ptr)
 				 p_ptr->depth, SUMMON_DEMON, TRUE, FALSE, pet))
 		{
 			msg_print("You have attracted a demon!");
-			disturb(0, 0);
+			disturb(FALSE);
 		}
 	}
 
 	else if (mut_ptr->which == MUT2_SPEED_FLUX)
 	{
-		disturb(0, 0);
+		disturb(FALSE);
 		if (randint1(2) == 1)
 		{
 			msg_print("You feel less energetic.");
@@ -1522,7 +1522,7 @@ void mutation_random_aux(mutation_type *mut_ptr)
 
 	else if (mut_ptr->which == MUT2_BANISH_ALL)
 	{
-		disturb(0, 0);
+		disturb(FALSE);
 		msg_print("You suddenly feel almost lonely.");
 		banish_monsters(100);
 		if (!p_ptr->depth && p_ptr->town_num)
@@ -1583,13 +1583,13 @@ void mutation_random_aux(mutation_type *mut_ptr)
 			 p_ptr->depth, SUMMON_ANIMAL, TRUE, FALSE, pet))
 		{
 			msg_print("You have attracted an animal!");
-			disturb(0, 0);
+			disturb(FALSE);
 		}
 	}
 
 	else if ((mut_ptr->which == MUT2_RAW_CHAOS) && !p_ptr->anti_magic)
 	{
-		disturb(0, 0);
+		disturb(FALSE);
 		msg_print("You feel the world warping around you!");
 		msg_print(NULL);
 		fire_ball(GF_CHAOS, 0, p_ptr->lev, 8);
@@ -1605,7 +1605,7 @@ void mutation_random_aux(mutation_type *mut_ptr)
 
 	else if ((mut_ptr->which == MUT2_WRAITH) && !p_ptr->anti_magic)
 	{
-		disturb(0, 0);
+		disturb(FALSE);
 		msg_print("You feel insubstantial!");
 		msg_print(NULL);
 		set_wraith_form(p_ptr->wraith_form + randint1(p_ptr->lev / 2) + (p_ptr->lev / 2));
@@ -1648,7 +1648,7 @@ void mutation_random_aux(mutation_type *mut_ptr)
 
 		if (!sustained)
 		{
-			disturb(0, 0);
+			disturb(FALSE);
 			msg_print("You can feel yourself wasting away!");
 			msg_print(NULL);
 #if 0
@@ -1667,7 +1667,7 @@ void mutation_random_aux(mutation_type *mut_ptr)
 			 p_ptr->depth, SUMMON_DRAGON, TRUE, FALSE, pet))
 		{
 			msg_print("You have attracted a dragon!");
-			disturb(0, 0);
+			disturb(FALSE);
 		}
 	}
 
@@ -1687,7 +1687,7 @@ void mutation_random_aux(mutation_type *mut_ptr)
 
 	else if ((mut_ptr->which == MUT2_NAUSEA) && !p_ptr->slow_digest)
 	{
-		disturb(0, 0);
+		disturb(FALSE);
 		msg_print("Your stomach roils, and you lose your lunch!");
 		msg_print(NULL);
 		set_food(PY_FOOD_WEAK);
@@ -1733,7 +1733,7 @@ void mutation_random_aux(mutation_type *mut_ptr)
 
 	else if ((mut_ptr->which == MUT2_INVULN) && !p_ptr->anti_magic)
 	{
-		disturb(0, 0);
+		disturb(FALSE);
 		msg_print("You feel invincible!");
 		msg_print(NULL);
 		(void)set_invuln(p_ptr->invuln + randint1(8) + 8);
@@ -1779,7 +1779,7 @@ void mutation_random_aux(mutation_type *mut_ptr)
 	{
 		object_type *o_ptr;
 
-		disturb(0, 0);
+		disturb(FALSE);
 		msg_print("You trip over your own feet!");
 		take_hit(randint1(p_ptr->wt / 6), "tripping");
 

@@ -552,7 +552,7 @@ void search(void)
 				if (player_search_grid_callback(y, x))
 				{
 					/* Disturb */
-					disturb(0, 0);
+					disturb(FALSE);
 
 					return;
 				}
@@ -579,7 +579,7 @@ void search(void)
 						msg_print("You have found a trap.");
 
 						/* Disturb */
-						disturb(0, 0);
+						disturb(FALSE);
 					}
 				}
 
@@ -596,7 +596,7 @@ void search(void)
 					note_spot(y, x);
 
 					/* Disturb */
-					disturb(0, 0);
+					disturb(FALSE);
 				}
 
 				/* Scan all objects in the grid */
@@ -626,7 +626,7 @@ void search(void)
 						object_known(o_ptr);
 
 						/* Notice it */
-						disturb(0, 0);
+						disturb(FALSE);
 					}
 				}
 			}
@@ -820,7 +820,7 @@ void carry(int pickup)
 		next_o_idx = o_ptr->next_o_idx;
 
 		/* Hack -- disturb */
-		disturb(0, 0);
+		disturb(FALSE);
 
 		/* Pick up gold */
 		if (o_ptr->tval == TV_GOLD)
@@ -1543,7 +1543,7 @@ void py_attack(int y, int x)
 
 
 	/* Disturb the player */
-	disturb(0, 0);
+	disturb(FALSE);
 
 	/* Initial blows available. */
 	blows = p_ptr->num_blow;
@@ -2432,7 +2432,7 @@ void move_player(int dir, int do_pickup)
 				oktomove = FALSE;
 
 				/* Disturb the player */
-				disturb(0, 0);
+				disturb(FALSE);
 			}
 		}
 		else
@@ -2440,7 +2440,7 @@ void move_player(int dir, int do_pickup)
 			oktomove = FALSE;
 
 			/* Disturb the player */
-			disturb(0, 0);
+			disturb(FALSE);
 
 			/* Notice things in the dark */
 			if ((!(c_ptr->info & CAVE_MARK)) &&
@@ -2485,7 +2485,7 @@ void move_player(int dir, int do_pickup)
 		oktomove = FALSE;
 
 		/* Disturb the player */
-		disturb(0, 0);
+		disturb(FALSE);
 
 		/* Notice things in the dark */
 		if ((!(c_ptr->info & (CAVE_MARK))) &&
@@ -2554,7 +2554,7 @@ void move_player(int dir, int do_pickup)
 		}
 
 		/* To avoid a loop with running */
-		disturb(0, 0);
+		disturb(FALSE);
 
 		oktomove = FALSE;
 	}
@@ -2629,7 +2629,7 @@ void move_player(int dir, int do_pickup)
 			/* We are out of range */
 				
 			/* Disturb */
-			disturb(0, 0);
+			disturb(FALSE);
 				
 			/* Reset the detection flag */
 			p_ptr->detected = FALSE;
@@ -2657,7 +2657,7 @@ void move_player(int dir, int do_pickup)
 		else if (area(y,x)->feat == FEAT_QUEST_ENTER)
 		{
 			/* Disturb */
-			disturb(0, 0);
+			disturb(FALSE);
 
 			/* Hack -- Enter quest level */
 			p_ptr->command_new = '[';
@@ -3493,7 +3493,7 @@ void run_step(int dir)
 			msg_print("You cannot run in that direction.");
 
 			/* Disturb */
-			disturb(0, 0);
+			disturb(FALSE);
 
 			/* Done */
 			return;
@@ -3513,7 +3513,7 @@ void run_step(int dir)
 		if (run_test())
 		{
 			/* Disturb */
-			disturb(0, 0);
+			disturb(FALSE);
 
 			/* Done */
 			return;

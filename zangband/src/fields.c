@@ -1354,6 +1354,11 @@ void test_field_data_integrity(void)
 /* Simple function that does nothing */
 void field_action_nothing(s16b *field_ptr, void *nothing)
 {
+	/* Hack - ignore 'field_ptr' */
+	(void) field_ptr;
+
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
 
 	/* Action: Do nothing at all */
 	return;
@@ -1363,6 +1368,9 @@ void field_action_nothing(s16b *field_ptr, void *nothing)
 /* Simple function that deletes the field */
 void field_action_delete(s16b *field_ptr, void *nothing)
 {		
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
+	
 	/* Delete the field */
 	delete_field_ptr(field_ptr);
 
@@ -1497,13 +1505,17 @@ void field_action_corpse_decay(s16b *field_ptr, void *nothing)
 	field_type *f_ptr = &fld_list[*field_ptr];
 
 	field_thaum *t_ptr = &t_info[f_ptr->t_idx];
-	
+		
 	/*
 	 * Data[1] * 256 + Data[2] = r_idx of monster.
 	 */
 	
 	/* Monster race */
 	u16b r_idx = ((u16b) f_ptr->data[1]) * 256 + f_ptr->data[2];
+	
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
+
 	
 	if (ironman_nightmare)
 	{
@@ -1655,6 +1667,9 @@ void field_action_corpse_load(s16b *field_ptr, void *nothing)
 	
 	monster_race	*r_ptr = &r_info[r_idx];
 	
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
+	
 	/* Initialise the graphic */
 	if (streq(ANGBAND_GRAF, "new"))
 	{
@@ -1773,6 +1788,9 @@ void field_action_wall_gf(s16b *field_ptr, void *input)
 void field_action_interact_tunnel(s16b *field_ptr, void *output)
 {
 	int *action = (int *)output;
+
+	/* Hack - ignore field_ptr */
+	(void) field_ptr;
 	
 	/* Tunnel flag */
 	*action = 0;
@@ -1785,6 +1803,9 @@ void field_action_interact_disarm(s16b *field_ptr, void *output)
 {
 	int *action = (int *)output;
 	
+	/* Hack - ignore field_ptr */
+	(void) field_ptr;
+
 	/* Disarm flag */
 	*action = 1;
 
@@ -1795,6 +1816,9 @@ void field_action_interact_disarm(s16b *field_ptr, void *output)
 void field_action_interact_open(s16b *field_ptr, void *output)
 {
 	int *action = (int *)output;
+	
+	/* Hack - ignore field_ptr */
+	(void) field_ptr;
 	
 	/* Open flag */
 	*action = 2;
@@ -2003,6 +2027,9 @@ void field_action_trap_init(s16b *field_ptr, void *nothing)
 {
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
+	
 	/*
 	 * Data[3] is equal to randint0(rand)
 	 */
@@ -2112,7 +2139,7 @@ static void hit_trap(field_type *f_ptr)
 	}
 
 	/* Disturb the player */
-	disturb(0, 0);
+	disturb(FALSE);
 }
 
 
@@ -2128,6 +2155,9 @@ void field_action_hit_trap_door(s16b *field_ptr, void *nothing)
 	cptr name;
 	
 	field_type *f_ptr = &fld_list[*field_ptr];
+	
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
 	
 	/* Hit the trap */
 	hit_trap(f_ptr);
@@ -2167,6 +2197,10 @@ void field_action_hit_trap_pit(s16b *field_ptr, void *nothing)
 	
 	cptr name;
 	
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
+	
+	
 	/* Hit the trap */
 	hit_trap(f_ptr);
 	
@@ -2191,6 +2225,9 @@ void field_action_hit_trap_spike(s16b *field_ptr, void *nothing)
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
 	cptr name;
+	
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
 	
 	/* Hit the trap */
 	hit_trap(f_ptr);
@@ -2230,6 +2267,9 @@ void field_action_hit_trap_poison_pit(s16b *field_ptr, void *nothing)
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
 	cptr name;
+	
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
 	
 	/* Hit the trap */
 	hit_trap(f_ptr);
@@ -2278,6 +2318,9 @@ void field_action_hit_trap_curse(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
+	
 	/* Hit the trap */
 	hit_trap(f_ptr);
 	
@@ -2323,6 +2366,9 @@ void field_action_hit_trap_teleport(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
+	
 	/* Hit the trap */
 	hit_trap(f_ptr);
 	
@@ -2339,6 +2385,9 @@ void field_action_hit_trap_element(s16b *field_ptr, void *nothing)
 	int dam;
 	
 	field_type *f_ptr = &fld_list[*field_ptr];
+	
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
 	
 	/* Hit the trap */
 	hit_trap(f_ptr);
@@ -2394,6 +2443,9 @@ void field_action_hit_trap_element(s16b *field_ptr, void *nothing)
 void field_action_hit_trap_ba_element(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
+	
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
 	
 	/* Hit the trap */
 	hit_trap(f_ptr);
@@ -2455,6 +2507,9 @@ void field_action_hit_trap_ba_element(s16b *field_ptr, void *nothing)
 void field_action_hit_trap_gas(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
+	
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
 	
 	/* Hit the trap */
 	hit_trap(f_ptr);
@@ -2534,6 +2589,9 @@ void field_action_hit_trap_traps(s16b *field_ptr, void *nothing)
 
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
+	
 	/* Hit the trap */
 	hit_trap(f_ptr);
 	
@@ -2556,6 +2614,9 @@ void field_action_hit_trap_temp_stat(s16b *field_ptr, void *nothing)
 	int dam;
 	
 	field_type *f_ptr = &fld_list[*field_ptr];
+	
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
 	
 	/* Hit the trap */
 	hit_trap(f_ptr);
@@ -2620,6 +2681,9 @@ void field_action_hit_trap_perm_stat(s16b *field_ptr, void *nothing)
 	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
+	
 	/* Hit the trap */
 	hit_trap(f_ptr);
 		
@@ -2641,6 +2705,9 @@ void field_action_hit_trap_lose_xp(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
+	
 	/* Saving throw */
 	if (!check_save(f_ptr->data[1])) return;
 	
@@ -2656,6 +2723,9 @@ void field_action_hit_trap_disenchant(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
+	
 	/* Hit the trap */
 	hit_trap(f_ptr);
 		
@@ -2663,7 +2733,7 @@ void field_action_hit_trap_disenchant(s16b *field_ptr, void *nothing)
 	if (!check_save(f_ptr->data[1])) return;
 	
 	msg_print("There is a bright flash of light!");
-	(void)apply_disenchant(0);
+	(void)apply_disenchant();
 }
 
 
@@ -2672,6 +2742,9 @@ void field_action_hit_trap_drop_item(s16b *field_ptr, void *nothing)
 	int item;
 	
 	field_type *f_ptr = &fld_list[*field_ptr];
+	
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
 	
 	/* Hit the trap */
 	hit_trap(f_ptr);
@@ -2700,6 +2773,9 @@ void field_action_hit_trap_mutate(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
+	
 	/* Hit the trap */
 	hit_trap(f_ptr);
 	
@@ -2713,6 +2789,9 @@ void field_action_hit_trap_mutate(s16b *field_ptr, void *nothing)
 void field_action_hit_trap_new_life(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
+	
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
 	
 	/* Hit the trap */
 	hit_trap(f_ptr);
@@ -2741,6 +2820,9 @@ void field_action_hit_trap_no_lite(s16b *field_ptr, void *nothing)
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
 	object_type *o_ptr;
+	
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
 	
 	/* Hit the trap */
 	hit_trap(f_ptr);
@@ -2774,7 +2856,10 @@ void field_action_hit_trap_no_lite(s16b *field_ptr, void *nothing)
 void field_action_hit_trap_hunger(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
-		
+	
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
+	
 	/* Hit the trap */
 	hit_trap(f_ptr);
 	
@@ -2798,7 +2883,10 @@ void field_action_hit_trap_hunger(s16b *field_ptr, void *nothing)
 void field_action_hit_trap_no_gold(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
-		
+	
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
+	
 	/* Hit the trap */
 	hit_trap(f_ptr);
 	
@@ -2822,6 +2910,9 @@ void field_action_hit_trap_haste_mon(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
+	
 	/* Hit the trap */
 	hit_trap(f_ptr);
 	
@@ -2844,6 +2935,9 @@ void field_action_hit_trap_raise_mon(s16b *field_ptr, void *nothing)
 
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
+	
 	/* Hit the trap */
 	hit_trap(f_ptr);
 	
@@ -2862,6 +2956,9 @@ void field_action_hit_trap_drain_magic(s16b *field_ptr, void *nothing)
 	
 	int i, k;
 	object_type *o_ptr;
+	
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
 	
 	/* Hit the trap */
 	hit_trap(f_ptr);
@@ -2906,6 +3003,9 @@ void field_action_hit_trap_aggravate(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
+	
 	/* Hit the trap */
 	hit_trap(f_ptr);
 	
@@ -2924,6 +3024,9 @@ void field_action_hit_trap_summon(s16b *field_ptr, void *nothing)
 	int py = p_ptr->py;
 
 	field_type *f_ptr = &fld_list[*field_ptr];
+	
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
 	
 	/* Hit the trap */
 	hit_trap(f_ptr);
@@ -2945,8 +3048,11 @@ void field_action_hit_trap_lose_memory(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
+	
 	/* Disturb the player */
-	disturb(0, 0);
+	disturb(FALSE);
 	
 	/* Saving throw */
 	if (!check_save(f_ptr->data[1]))
@@ -3258,7 +3364,7 @@ void field_action_door_jam_monster(s16b *field_ptr, void *input)
 			msg_print("You hear a door burst open!");
 
 			/* Disturb (sometimes) */
-			if (disturb_minor) disturb(0, 0);
+			if (disturb_minor) disturb(FALSE);
 
 			/* Break down the door */
 			if (randint0(100) < 50)
@@ -3370,9 +3476,12 @@ void field_action_door_gf(s16b *field_ptr, void *input)
 void field_action_door_store(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
-
+	
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
+	
 	/* Disturb */
-	disturb(0, 0);
+	disturb(FALSE);
 
 	/*
 	 * data[0] contains the type of store.
@@ -3387,9 +3496,12 @@ void field_action_door_store(s16b *field_ptr, void *nothing)
 void field_action_door_build(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
+	
+	/* Hack - ignore 'nothing' */
+	(void) nothing;
 
 	/* Disturb */
-	disturb(0, 0);
+	disturb(FALSE);
 
 	/*
 	 * data[0] contains the type of building.

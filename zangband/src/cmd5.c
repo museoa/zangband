@@ -614,7 +614,7 @@ static void wild_magic(int spell)
 		case 29:
 		case 30:
 		{
-			apply_disenchant(0);
+			apply_disenchant();
 			break;
 		}
 		case 31:
@@ -1279,7 +1279,7 @@ static bool cast_chaos_spell(int spell)
 			}
 			else if (die < 106)
 			{
-				destroy_area(py, px, 15, TRUE);
+				destroy_area(py, px, 15);
 			}
 			else if (die < 108)
 			{
@@ -1322,7 +1322,7 @@ static bool cast_chaos_spell(int spell)
 		(void)fire_beam(GF_AWAY_ALL, dir, plev);
 		break;
 	case 14: /* Word of Destruction */
-		destroy_area(py, px, 15, TRUE);
+		destroy_area(py, px, 15);
 		break;
 	case 15: /* Invoke Logrus */
 		if (!get_aim_dir(&dir)) return FALSE;
@@ -1671,7 +1671,7 @@ static bool cast_death_spell(int spell)
 			}
 			else if (die < 106)
 			{
-				destroy_area(py, px, 15, TRUE);
+				destroy_area(py, px, 15);
 			}
 			else if (die < 108)
 			{

@@ -372,7 +372,7 @@ static void sense_inventory(void)
 		}
 
 		/* Stop everything */
-		if (disturb_minor) disturb(0, 0);
+		if (disturb_minor) disturb(FALSE);
 
 		/* Get an object description */
 		object_desc(o_name, o_ptr, FALSE, 0);
@@ -746,14 +746,14 @@ void notice_lite_change(object_type *o_ptr)
 	/* The light is now out */
 	else if (o_ptr->pval == 0)
 	{
-		disturb(0, 0);
+		disturb(FALSE);
 		msg_print("Your light has gone out!");
 	}
 
 	/* The light is getting dim */
 	else if ((o_ptr->pval < 100) && (!(o_ptr->pval % 10)))
 	{
-		if (disturb_minor) disturb(0, 0);
+		if (disturb_minor) disturb(FALSE);
 		msg_print("Your light is growing faint.");
 	}
 }
@@ -915,7 +915,7 @@ static void process_world(void)
 			if (closing_flag <= 2)
 			{
 				/* Disturb */
-				disturb(0, 0);
+				disturb(FALSE);
 
 				/* Count warnings */
 				closing_flag++;
@@ -1302,7 +1302,7 @@ static void process_world(void)
 			if ((hour == 23) && !(min % 15))
 			{
 				/* Disturbing */
-				disturb(0, 0);
+				disturb(FALSE);
 
 				switch (min / 15)
 				{
@@ -1334,7 +1334,7 @@ static void process_world(void)
 			{
 				int count = 0;
 
-				disturb(1, 0);
+				disturb(TRUE);
 				msg_print("A distant bell tolls many times, fading into an deathly silence.");
 				activate_ty_curse(FALSE, &count);
 			}
@@ -1441,7 +1441,7 @@ static void process_world(void)
 			{
 				/* Message */
 				msg_print("You faint from the lack of food.");
-				disturb(1, 0);
+				disturb(TRUE);
 
 				/* Hack -- faint (bypass free action) */
 				(void)set_paralyzed(p_ptr->paralyzed + 1 + randint0(5));
@@ -1790,7 +1790,7 @@ static void process_world(void)
 			char noise[1024];
 			if (!get_rnd_line("chainswd.txt", 0, noise))
 				msg_print(noise);
-			disturb(FALSE, FALSE);
+			disturb(FALSE);
 		}
 
 		/*
@@ -1801,7 +1801,7 @@ static void process_world(void)
 		{
 			if (cursed_p(o_ptr) && !p_ptr->anti_tele)
 			{
-				disturb(0, 0);
+				disturb(FALSE);
 
 				/* Teleport player */
 				teleport_player(40);
@@ -1816,7 +1816,7 @@ static void process_world(void)
 				}
 				else if (get_check("Teleport? "))
 				{
-					disturb(0, 0);
+					disturb(FALSE);
 					teleport_player(50);
 				}
 			}
@@ -1956,7 +1956,7 @@ static void process_world(void)
 		if (!p_ptr->word_recall)
 		{
 			/* Disturbing! */
-			disturb(0, 0);
+			disturb(FALSE);
 
 			/* Determine the level */
 			if (p_ptr->depth || p_ptr->inside_quest)
@@ -2826,7 +2826,7 @@ static void process_player(void)
 			if ((p_ptr->chp == p_ptr->mhp) &&
 			    (p_ptr->csp >= p_ptr->msp))
 			{
-				disturb(0, 0);
+				disturb(FALSE);
 			}
 		}
 
@@ -2842,7 +2842,7 @@ static void process_player(void)
 			    !p_ptr->slow && !p_ptr->paralyzed &&
 			    !p_ptr->image && !p_ptr->word_recall)
 			{
-				disturb(0, 0);
+				disturb(FALSE);
 			}
 		}
 	}
@@ -2865,7 +2865,7 @@ static void process_player(void)
 				flush();
 
 				/* Disturb */
-				disturb(0, 0);
+				disturb(FALSE);
 
 				/* Hack -- Show a Message */
 				msg_print("Cancelled.");
@@ -2912,7 +2912,7 @@ static void process_player(void)
 			o_ptr = &inventory[item];
 
 			/* Disturbing */
-			disturb(0, 0);
+			disturb(FALSE);
 
 			/* Warning */
 			msg_print("Your pack overflows!");
@@ -3240,7 +3240,7 @@ static void dungeon(void)
 	repair_monsters = TRUE;
 
 	/* Disturb */
-	disturb(1, 0);
+	disturb(TRUE);
 
 	/* Get index of current quest (if any) */
 	quest_num = quest_number(p_ptr->depth);

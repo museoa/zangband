@@ -62,7 +62,7 @@ bool build_is_general(byte type)
 }
 
 /* Find a place for the player */
-static void place_player_start(u32b *x, u32b *y, u16b this_town)
+static void place_player_start(s32b *x, s32b *y, u16b this_town)
 {
 	/* Hack - Reset player position to be on the stairs in town */
 	*x = town[this_town].x * 16 + wild_stairs_x;
@@ -79,6 +79,11 @@ static u16b select_building(byte pop, byte magic, byte law, u16b *build,
 	u16b b_select[MAX_CITY_BUILD];
 
 	s32b total = 0;
+	
+	/* Hack - ignore the extra parameters for now */
+	(void) pop;
+	(void) magic;
+	(void) law;
 	
 	/* Draw stairs first for small towns */
 	if ((build_num < 10) && (!build[BUILD_STAIRS])) return(BUILD_STAIRS);
@@ -2224,6 +2229,9 @@ static void test_wild_data(void)
  */
 static bool is_road_town(u16b town_num)
 {
+	/* Hack - ignore the parameter for now */
+	(void) town_num;
+	
 	/* Hack - change this when we implement other things */
 
 	return (TRUE);

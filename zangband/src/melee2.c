@@ -1497,7 +1497,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 
 			case RBM_EXPLODE:
 				{
-					if (see_either) disturb(1, 0);
+					if (see_either) disturb(TRUE);
 					act = "explodes.";
 					explode = TRUE;
 					touched = FALSE;
@@ -2751,7 +2751,7 @@ static void process_monster(int m_idx)
 			{
 				/* Disturb */
 				if (is_hostile(m_ptr))
-					disturb(0, 0);
+					disturb(FALSE);
 			}
 
 			/* Scan all objects in the grid */

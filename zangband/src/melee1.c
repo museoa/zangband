@@ -231,7 +231,7 @@ bool make_attack_normal(int m_idx)
 		if (!effect || check_hit(power, rlev))
 		{
 			/* Always disturbing */
-			disturb(1, 0);
+			disturb(TRUE);
 
 
 			/* Hack -- Apply "protection from evil" */
@@ -522,7 +522,7 @@ bool make_attack_normal(int m_idx)
 						if (!p_ptr->resist_disen)
 						{
 							/* Apply disenchantment */
-							if (apply_disenchant(0)) obvious = TRUE;
+							if (apply_disenchant()) obvious = TRUE;
 						}
 
 						/* Learn about the player */
@@ -1545,7 +1545,7 @@ bool make_attack_normal(int m_idx)
 				if (m_ptr->ml)
 				{
 					/* Disturbing */
-					disturb(1, 0);
+					disturb(TRUE);
 
 					/* Message */
 					msg_format("%^s misses you.", m_name);

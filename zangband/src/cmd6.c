@@ -1411,7 +1411,7 @@ static void do_cmd_read_scroll_aux(int item)
 
 		case SV_SCROLL_STAR_DESTRUCTION:
 		{
-			if (destroy_area(py, px, 15, TRUE))
+			if (destroy_area(py, px, 15))
 				ident = TRUE;
 			else
 				msg_print("The dungeon trembles...");
@@ -1980,7 +1980,7 @@ static void do_cmd_use_staff_aux(int item)
 
 		case SV_STAFF_DESTRUCTION:
 		{
-			if (destroy_area(py, px, 15, TRUE))
+			if (destroy_area(py, px, 15))
 				ident = TRUE;
 
 			break;

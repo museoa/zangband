@@ -967,6 +967,9 @@ bool monster_death(int m_idx)
  */
 int mon_damage_mod(monster_type *m_ptr, int dam, int type)
 {
+	/* Hack - ignore type for now */
+	(void) type;
+	
 	if (m_ptr->invulner && !(randint1(PENETRATE_INVULNERABILITY) == 1))
 		return (0);
 	else
@@ -1539,7 +1542,7 @@ void verify_panel(void)
 	panel_col_min = pcol_min;
 
 	/* Hack -- optional disturb on "panel change" */
-	if (disturb_panel && !center_player) disturb(0, 0);
+	if (disturb_panel && !center_player) disturb(FALSE);
 
 	/* Recalculate the boundaries */
 	panel_recalc_bounds();
@@ -1602,7 +1605,7 @@ void panel_center(void)
 	panel_col_min = new_panel_col;
 
 	/* Hack -- optional disturb on "panel change" */
-	if (disturb_panel && !center_player) disturb(0, 0);
+	if (disturb_panel && !center_player) disturb(FALSE);
 
 	/* Recalculate the boundaries */
 	panel_recalc_bounds();
@@ -3652,7 +3655,7 @@ void gain_level_reward(int chosen_reward)
 			msg_format("The voice of %s booms out:",
 				chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Death and destruction! This pleaseth me!'");
-			destroy_area(py, px, 25, TRUE);
+			destroy_area(py, px, 25);
 			break;
 		case REW_GENOCIDE:
 			msg_format("The voice of %s booms out:",

@@ -3769,7 +3769,7 @@ void do_cmd_save_game(int is_autosave)
 	else
 	{
 		/* Disturb the player */
-		disturb(1, 0);
+		disturb(TRUE);
 	}
 
 	/* Clear messages */
@@ -4432,7 +4432,7 @@ void exit_game_panic(void)
 	prt("", 0, 0);
 
 	/* Hack -- turn off some things */
-	disturb(1, 0);
+	disturb(TRUE);
 
 	/* Mega-Hack -- Delay death */
 	if (p_ptr->chp < 0) p_ptr->is_dead = FALSE;

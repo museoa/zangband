@@ -967,7 +967,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 	byte info;
 
 	byte a;
-	byte c;
+	char c;
 
 	bool feat_not_ascii;
 	s16b halluc = p_ptr->image;
@@ -2660,6 +2660,9 @@ static bool ang_sort_comp_hook_longs(vptr u, vptr v, int a, int b)
 {
 	long *x = (long*)(u);
 
+	/* Hack - ignore v */
+	(void) v;
+	
 	return (x[a] <= x[b]);
 }
 
@@ -2675,6 +2678,9 @@ static void ang_sort_swap_hook_longs(vptr u, vptr v, int a, int b)
 
 	long temp;
 
+	/* Hack - ignore v */
+	(void) v;
+	
 	/* Swap */
 	temp = x[a];
 	x[a] = x[b];
@@ -4380,7 +4386,7 @@ void object_kind_track(int k_idx)
  *
  * All disturbance cancels repeated commands, resting, and running.
  */
-void disturb(int stop_search, int unused_flag)
+void disturb(bool stop_search)
 {
 	/* Cancel repeated commands */
 	if (p_ptr->command_rep)

@@ -279,7 +279,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -425,7 +425,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -457,7 +457,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -489,7 +489,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -521,7 +521,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -552,7 +552,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -584,7 +584,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -616,7 +616,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -648,7 +648,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -680,7 +680,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -712,7 +712,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -744,7 +744,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -776,7 +776,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -808,7 +808,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -840,7 +840,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -872,7 +872,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -904,7 +904,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -936,7 +936,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -968,7 +968,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -1000,7 +1000,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -1032,7 +1032,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -1064,7 +1064,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -1094,7 +1094,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -1126,7 +1126,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -1156,7 +1156,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -1188,7 +1188,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -1217,7 +1217,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -1246,7 +1246,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -1275,7 +1275,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -1304,7 +1304,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -1333,7 +1333,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -1362,7 +1362,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -1392,7 +1392,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -1421,7 +1421,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						if (blind)
 						{
@@ -2233,7 +2233,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_m)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 						msg_format("%^s casts a Globe of Invulnerability.", m_name);
 					}
 					else
@@ -2412,7 +2412,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						msg_format("%^s magically summons %s %s.", m_name, m_poss,
 									  ((r_ptr->flags1 & RF1_UNIQUE) ? "minions" : "kin"));
@@ -2445,7 +2445,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						msg_format("%^s magically summons Cyberdemons!", m_name);
 					}
@@ -2474,7 +2474,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						msg_format("%^s magically summons help!", m_name);
 					}
@@ -2503,7 +2503,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						msg_format("%^s magically summons monsters!", m_name);
 					}
@@ -2533,7 +2533,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						msg_format("%^s magically summons ants.", m_name);
 					}
@@ -2563,7 +2563,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						msg_format("%^s magically summons spiders.", m_name);
 					}
@@ -2593,7 +2593,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						msg_format("%^s magically summons hounds.", m_name);
 					}
@@ -2623,7 +2623,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						msg_format("%^s magically summons hydras.", m_name);
 					}
@@ -2653,7 +2653,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						msg_format("%^s magically summons an angel!", m_name);
 					}
@@ -2683,7 +2683,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						msg_format("%^s magically summons a demon from the Courts of Chaos!", m_name);
 					}
@@ -2713,7 +2713,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						msg_format("%^s magically summons undead.", m_name);
 					}
@@ -2743,7 +2743,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						msg_format("%^s magically summons a dragon!", m_name);
 					}
@@ -2775,7 +2775,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						msg_format("%^s magically summons undead.", m_name);
 					}
@@ -2807,7 +2807,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						msg_format("%^s magically summons ancient dragons!", m_name);
 					}
@@ -2837,7 +2837,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						msg_format("%^s magically summons Lords of Amber!", m_name);
 					}
@@ -2867,7 +2867,7 @@ bool monst_spell_monst(int m_idx)
 				{
 					if (see_either)
 					{
-						disturb(1, 0);
+						disturb(TRUE);
 
 						msg_format("%^s magically summons special opponents!", m_name);
 					}

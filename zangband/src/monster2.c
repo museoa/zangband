@@ -1416,7 +1416,7 @@ void update_mon(int m_idx, bool full)
 			if (disturb_move)
 			{
 				if (is_hostile(m_ptr))
-					disturb(1, 0);
+					disturb(TRUE);
 			}
 		}
 	}
@@ -1443,7 +1443,7 @@ void update_mon(int m_idx, bool full)
 			if (disturb_move)
 			{
 				if (is_hostile(m_ptr))
-					disturb(1, 0);
+					disturb(TRUE);
 			}
 		}
 	}
@@ -1462,7 +1462,7 @@ void update_mon(int m_idx, bool full)
 			if (disturb_move)
 			{
 				if (is_hostile(m_ptr))
-					disturb(1, 0);
+					disturb(TRUE);
 			}
 		}
 	}
@@ -1480,7 +1480,7 @@ void update_mon(int m_idx, bool full)
 			if (disturb_move)
 			{
 				if (is_hostile(m_ptr))
-					disturb(1, 0);
+					disturb(TRUE);
 			}
 		}
 	}

@@ -3418,7 +3418,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 
 		project(0, 0, t_y, t_x, dam, typ, (PROJECT_STOP | PROJECT_KILL));
 
-		disturb(1, 0);
+		disturb(TRUE);
 		return TRUE;
 	}
 
@@ -3771,7 +3771,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			}
 			else
 			{
-				(void)apply_disenchant(0);
+				apply_disenchant();
 			}
 			take_hit(dam, killer);
 			break;
@@ -4112,7 +4112,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 
 
 	/* Disturb */
-	disturb(1, 0);
+	disturb(TRUE);
 
 
 	/* Return "Anything seen?" */

@@ -211,10 +211,10 @@ errr path_parse(char *buf, int max, cptr file)
 	if (!pw) return (1);
 
 	/* Make use of the info */
-	(void)strcpy(buf, pw->pw_dir);
+	(void)strncpy(buf, pw->pw_dir, max);
 
 	/* Append the rest of the filename, if any */
-	if (s) (void)strcat(buf, s);
+	if (s) (void)strncat(buf, s, max);
 
 	/* Success */
 	return (0);
@@ -1899,6 +1899,9 @@ char inkey(void)
 static bool ang_sort_comp_a_time(vptr u, vptr v, int a, int b)
 {
 	s16b *y = (s16b*)(v);
+	
+	/* Hack - ignore u */
+	(void) u;
 
 	/* Compare them */
 	return (y[a] <= y[b]);

@@ -769,15 +769,15 @@ void word_of_recall(void)
  *
  * XXX XXX XXX This function is also called from the "melee" code
  *
- * The "mode" is currently unused.
- *
  * Return "TRUE" if the player notices anything
  */
-bool apply_disenchant(int mode)
+bool apply_disenchant(void)
 {
 	int             t = 0;
 	object_type     *o_ptr;
 	char            o_name[80];
+
+
 
 
 	/* Pick a random slot */
@@ -1095,7 +1095,7 @@ void call_the_(void)
 			((mp_ptr->spell_book == TV_LIFE_BOOK) ? "prayer" : "spell"));
 		msg_print("There is a loud explosion!");
 
-		if (destroy_area(py, px, 20 + p_ptr->lev, TRUE))
+		if (destroy_area(py, px, 20 + p_ptr->lev))
 			msg_print("The dungeon collapses...");
 		else
 			msg_print("The dungeon trembles.");

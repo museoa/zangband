@@ -442,6 +442,10 @@ static void draw_general(int x0, int y0, store_type *st_ptr, int x, int y)
 {
 	int i, j;
 	
+	/* Ignore currently unused parameters */
+	(void) x;
+	(void) y;
+	
 	switch (st_ptr->type)
 	{
 		case BUILD_STAIRS:
@@ -669,6 +673,9 @@ static void draw_building(byte type, byte x, byte y, u16b store, u16b town_num)
 	
 	store_type *st_ptr = &town[town_num].store[store];
 
+	/* Hack, ignore building draw type for now */
+	(void) type;
+	
 	/* Save location */
 	xx = x;
 	yy = y;

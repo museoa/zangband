@@ -368,7 +368,7 @@ extern void scatter(int *yp, int *xp, int y, int x, int d);
 extern void health_track(int m_idx);
 extern void monster_race_track(int r_idx);
 extern void object_kind_track(int k_idx);
-extern void disturb(int stop_search, int flush_output);
+extern void disturb(bool stop_search);
 
 /* cmd1.c */
 extern int deadliness_calc(int attack_power);
@@ -734,7 +734,7 @@ extern bool dispel_living(int dam);
 extern bool dispel_demons(int dam);
 extern bool raise_dead(int y, int x, bool pet);
 extern bool turn_undead(void);
-extern bool destroy_area(int y1, int x1, int r, int full);
+extern bool destroy_area(int y1, int x1, int r);
 extern bool earthquake(int cy, int cx, int r);
 extern void lite_room(int y1, int x1);
 extern void unlite_room(int y1, int x1);
@@ -803,7 +803,7 @@ extern void teleport_player_level(void);
 extern bool check_down_wild(void);
 extern void recall_player(int turns);
 extern void word_of_recall(void);
-extern bool apply_disenchant(int mode);
+extern bool apply_disenchant(void);
 extern void mutate_player(void);
 extern void apply_nexus(monster_type *m_ptr);
 extern void phlogiston(void);

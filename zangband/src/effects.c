@@ -59,7 +59,7 @@ bool set_blind(int v)
 	if (!notice) return (FALSE);
 
 	/* Disturb */
-	if (disturb_state) disturb(0, 0);
+	if (disturb_state) disturb(FALSE);
 
 	/* Fully update the visuals - hack set torch to be radius 0 */
 	p_ptr->update |= (PU_UN_VIEW | PU_VIEW | PU_MONSTERS | PU_TORCH);
@@ -123,7 +123,7 @@ bool set_confused(int v)
 	if (!notice) return (FALSE);
 
 	/* Disturb */
-	if (disturb_state) disturb(0, 0);
+	if (disturb_state) disturb(FALSE);
 
 	/* Redraw the "confused" */
 	p_ptr->redraw |= (PR_CONFUSED);
@@ -173,7 +173,7 @@ bool set_poisoned(int v)
 	if (!notice) return (FALSE);
 
 	/* Disturb */
-	if (disturb_state) disturb(0, 0);
+	if (disturb_state) disturb(FALSE);
 
 	/* Redraw the "poisoned" */
 	p_ptr->redraw |= (PR_POISONED);
@@ -225,7 +225,7 @@ bool set_afraid(int v)
 	if (!notice) return (FALSE);
 
 	/* Disturb */
-	if (disturb_state) disturb(0, 0);
+	if (disturb_state) disturb(FALSE);
 
 	/* Redraw the "afraid" */
 	p_ptr->redraw |= (PR_AFRAID);
@@ -278,7 +278,7 @@ bool set_paralyzed(int v)
 	if (!notice) return (FALSE);
 
 	/* Disturb */
-	if (disturb_state) disturb(0, 0);
+	if (disturb_state) disturb(FALSE);
 
 	/* Redraw the state */
 	p_ptr->redraw |= (PR_STATE);
@@ -333,7 +333,7 @@ bool set_image(int v)
 	if (!notice) return (FALSE);
 
 	/* Disturb */
-	if (disturb_state) disturb(0, 0);
+	if (disturb_state) disturb(FALSE);
 
 	/* Redraw map */
 	p_ptr->redraw |= (PR_MAP);
@@ -395,7 +395,7 @@ bool set_fast(int v)
 	if (!notice) return (FALSE);
 
 	/* Disturb */
-	if (disturb_state) disturb(0, 0);
+	if (disturb_state) disturb(FALSE);
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -448,7 +448,7 @@ bool set_slow(int v)
 	if (!notice) return (FALSE);
 
 	/* Disturb */
-	if (disturb_state) disturb(0, 0);
+	if (disturb_state) disturb(FALSE);
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -501,7 +501,7 @@ bool set_shield(int v)
 	if (!notice) return (FALSE);
 
 	/* Disturb */
-	if (disturb_state) disturb(0, 0);
+	if (disturb_state) disturb(FALSE);
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -555,7 +555,7 @@ bool set_blessed(int v)
 	if (!notice) return (FALSE);
 
 	/* Disturb */
-	if (disturb_state) disturb(0, 0);
+	if (disturb_state) disturb(FALSE);
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -608,7 +608,7 @@ bool set_hero(int v)
 	if (!notice) return (FALSE);
 
 	/* Disturb */
-	if (disturb_state) disturb(0, 0);
+	if (disturb_state) disturb(FALSE);
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -664,7 +664,7 @@ bool set_shero(int v)
 	if (!notice) return (FALSE);
 
 	/* Disturb */
-	if (disturb_state) disturb(0, 0);
+	if (disturb_state) disturb(FALSE);
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -720,7 +720,7 @@ bool set_protevil(int v)
 	if (!notice) return (FALSE);
 
 	/* Disturb */
-	if (disturb_state) disturb(0, 0);
+	if (disturb_state) disturb(FALSE);
 
 	/* Handle stuff */
 	handle_stuff();
@@ -787,7 +787,7 @@ bool set_wraith_form(int v)
 	if (!notice) return (FALSE);
 
 	/* Disturb */
-	if (disturb_state) disturb(0, 0);
+	if (disturb_state) disturb(FALSE);
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -864,7 +864,7 @@ bool set_invuln(int v)
 	if (!notice) return (FALSE);
 
 	/* Disturb */
-	if (disturb_state) disturb(0, 0);
+	if (disturb_state) disturb(FALSE);
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -917,7 +917,7 @@ bool set_tim_esp(int v)
 	if (!notice) return (FALSE);
 
 	/* Disturb */
-	if (disturb_state) disturb(0, 0);
+	if (disturb_state) disturb(FALSE);
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -973,7 +973,7 @@ bool set_tim_invis(int v)
 	if (!notice) return (FALSE);
 
 	/* Disturb */
-	if (disturb_state) disturb(0, 0);
+	if (disturb_state) disturb(FALSE);
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -1029,7 +1029,7 @@ bool set_tim_infra(int v)
 	if (!notice) return (FALSE);
 
 	/* Disturb */
-	if (disturb_state) disturb(0, 0);
+	if (disturb_state) disturb(FALSE);
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -1085,7 +1085,7 @@ bool set_oppose_acid(int v)
 	if (!notice) return (FALSE);
 
 	/* Disturb */
-	if (disturb_state) disturb(0, 0);
+	if (disturb_state) disturb(FALSE);
 
 	/* Handle stuff */
 	handle_stuff();
@@ -1135,7 +1135,7 @@ bool set_oppose_elec(int v)
 	if (!notice) return (FALSE);
 
 	/* Disturb */
-	if (disturb_state) disturb(0, 0);
+	if (disturb_state) disturb(FALSE);
 
 	/* Handle stuff */
 	handle_stuff();
@@ -1185,7 +1185,7 @@ bool set_oppose_fire(int v)
 	if (!notice) return (FALSE);
 
 	/* Disturb */
-	if (disturb_state) disturb(0, 0);
+	if (disturb_state) disturb(FALSE);
 
 	/* Handle stuff */
 	handle_stuff();
@@ -1235,7 +1235,7 @@ bool set_oppose_cold(int v)
 	if (!notice) return (FALSE);
 
 	/* Disturb */
-	if (disturb_state) disturb(0, 0);
+	if (disturb_state) disturb(FALSE);
 
 	/* Handle stuff */
 	handle_stuff();
@@ -1285,7 +1285,7 @@ bool set_oppose_pois(int v)
 	if (!notice) return (FALSE);
 
 	/* Disturb */
-	if (disturb_state) disturb(0, 0);
+	if (disturb_state) disturb(FALSE);
 
 	/* Handle stuff */
 	handle_stuff();
@@ -1434,7 +1434,7 @@ bool set_stun(int v)
 			/* None */
 			case 0:
 			msg_print("You are no longer stunned.");
-			if (disturb_state) disturb(0, 0);
+			if (disturb_state) disturb(FALSE);
 			break;
 		}
 
@@ -1449,7 +1449,7 @@ bool set_stun(int v)
 	if (!notice) return (FALSE);
 
 	/* Disturb */
-	if (disturb_state) disturb(0, 0);
+	if (disturb_state) disturb(FALSE);
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -1646,7 +1646,7 @@ bool set_cut(int v)
 			/* None */
 			case 0:
 			msg_print("You are no longer bleeding.");
-			if (disturb_state) disturb(0, 0);
+			if (disturb_state) disturb(FALSE);
 			break;
 		}
 
@@ -1661,7 +1661,7 @@ bool set_cut(int v)
 	if (!notice) return (FALSE);
 
 	/* Disturb */
-	if (disturb_state) disturb(0, 0);
+	if (disturb_state) disturb(FALSE);
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -1872,7 +1872,7 @@ bool set_food(int v)
 	if (!notice) return (FALSE);
 
 	/* Disturb */
-	if (disturb_state) disturb(0, 0);
+	if (disturb_state) disturb(FALSE);
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -2618,7 +2618,7 @@ void take_hit(int damage, cptr hit_from)
 	if (p_ptr->is_dead) return;
 
 	/* Disturb */
-	disturb(1, 0);
+	disturb(TRUE);
 
 	/* Mega-Hack -- Apply "invulnerability" */
 	if (p_ptr->invuln && (damage < 9000))

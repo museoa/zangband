@@ -2261,7 +2261,7 @@ static sint add_special_melee_skill(byte pclass, s16b weight, object_type *o_ptr
 /*
  * Calculate all class and race-based bonuses and penalties to missile skill -LM-
  */
-static sint add_special_missile_skill(byte pclass, s16b weight)
+static sint add_special_missile_skill(byte pclass)
 {
 	int add_skill = 0;
 
@@ -3268,8 +3268,7 @@ void calc_bonuses(void)
 		}
 	}
 	/* Add all class and race-specific adjustments to missile Skill. -LM- */
-	p_ptr->skill_thb += add_special_missile_skill (p_ptr->pclass,
-		 o_ptr->weight);
+	p_ptr->skill_thb += add_special_missile_skill (p_ptr->pclass);
 
 
 	/* Examine the "main weapon" */

@@ -947,6 +947,9 @@ static errr term_data_init_gcu(term_data *td, int rows, int cols, int y, int x, 
 /* The hook to exit curses on a failure */
 static void hook_quit(cptr str)
 {
+	/* Ignore parameter */
+	(void) str;
+	
 	/* Exit curses */
 	endwin();
 }

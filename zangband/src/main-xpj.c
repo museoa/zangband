@@ -2605,14 +2605,16 @@ static errr Term_wipe_xpj(int x, int y, int n)
 	/* Mega-Hack -- Erase some space */
 	Infofnt_text_non(x, y, "", n);
 	
-#endif 0
+#endif /* 0 */
 
 	byte dummy[3] = {0x80, 0x80, 0x80};
 	int i;
 	
 	for (i = 0; i < n; i++)
 	{
-		Term_pict_xpj(x, y, 1, &dummy[1], &dummy[1], &dummy[1], &dummy[1]);
+		/* Mega-hack */
+		Term_pict_xpj(x, y, 1, &dummy[1], (char *) &dummy[1],
+			 &dummy[1], (char *) &dummy[1]);
 	}
 	
 	/* Success */

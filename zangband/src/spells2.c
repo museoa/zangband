@@ -2080,9 +2080,10 @@ bool probing(void)
  * This spell "deletes" monsters (instead of "killing" them).
  *
  * Later we may use one function for both "destruction" and
- * "earthquake" by using the "full" to select "destruction".
+ * "earthquake" by using the (removed) "full" parameter 
+ * to select "destruction".
  */
-bool destroy_area(int y1, int x1, int r, int full)
+bool destroy_area(int y1, int x1, int r)
 {
 	int       y, x, k, t;
 	cave_type *c_ptr;
@@ -3615,7 +3616,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 				if (!(*count))
 				{
 					msg_print("A portal opens to a plane of raw mana!");
-					destroy_area(py, px, 20, TRUE);
+					destroy_area(py, px, 20);
 					project(1, 3, py, px, damroll(10, 5), GF_MANA, flg);
 					if (randint1(6) != 1) break;
 				}

@@ -262,7 +262,7 @@ void do_cmd_search(void)
 	if (cmd_search_callback(p_ptr->py, p_ptr->px))
 	{
 		/* Disturb */
-		disturb(0, 0);
+		disturb(FALSE);
 
 		return;
 	}
@@ -958,7 +958,7 @@ void do_cmd_open(void)
 		if (cmd_open_callback(y, x))
 		{
 			/* Don't repeat the action */
-			disturb(0, 0);
+			disturb(FALSE);
 			return;
 		}
 #endif /* USE_SCRIPT */
@@ -1008,7 +1008,7 @@ void do_cmd_open(void)
 	}
 
 	/* Cancel repeat unless we may continue */
-	if (!more) disturb(0, 0);
+	if (!more) disturb(FALSE);
 }
 
 
@@ -1107,7 +1107,7 @@ void do_cmd_close(void)
 			/* Message */
 			msg_print("You see nothing there to close.");
 
-			disturb(0, 0);
+			disturb(FALSE);
 			return;
 		}
 
@@ -1143,7 +1143,7 @@ void do_cmd_close(void)
 	}
 
 	/* Cancel repeat unless we may continue */
-	if (!more) disturb(0, 0);
+	if (!more) disturb(FALSE);
 }
 
 
@@ -1524,7 +1524,7 @@ void do_cmd_tunnel(void)
 			msg_print("You cannot tunnel outside the wilderness.");
 
 			/* Do not repeat */
-			disturb(0, 0);
+			disturb(FALSE);
 
 			/* exit */
 			return;
@@ -1578,7 +1578,7 @@ void do_cmd_tunnel(void)
 	}
 
 	/* Cancel repetition unless we can continue */
-	if (!more) disturb(0, 0);
+	if (!more) disturb(FALSE);
 }
 
 
@@ -1812,7 +1812,7 @@ void do_cmd_disarm(void)
 			/* Message */
 			msg_print("You see nothing there to disarm.");
 
-			disturb(0, 0);
+			disturb(FALSE);
 			return;
 		}
 
@@ -1855,7 +1855,7 @@ void do_cmd_disarm(void)
 	}
 
 	/* Cancel repeat unless told not to */
-	if (!more) disturb(0, 0);
+	if (!more) disturb(FALSE);
 }
 
 
@@ -1905,7 +1905,7 @@ void do_cmd_alter(void)
 			/* Oops */
 			msg_print("You attack the empty air.");
 
-			disturb(0, 0);
+			disturb(FALSE);
 			return;
 		}
 
@@ -1989,7 +1989,7 @@ void do_cmd_alter(void)
 	}
 
 	/* Cancel repetition unless we can continue */
-	if (!more) disturb(0, 0);
+	if (!more) disturb(FALSE);
 }
 
 
@@ -2052,7 +2052,7 @@ void do_cmd_spike(void)
 			/* Message */
 			msg_print("You see nothing there to spike.");
 
-			disturb(0, 0);
+			disturb(FALSE);
 			return;
 		}
 
@@ -2145,7 +2145,7 @@ void do_cmd_walk(int pickup)
 	}
 
 	/* Cancel repeat unless we may continue */
-	if (!more) disturb(0, 0);
+	if (!more) disturb(FALSE);
 }
 
 
