@@ -659,7 +659,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 		"blows_per_round", "icon", "died_from",
 		"exp", "food", "gold", "height", "history", "hitpoints",
 		"infravision", "level", "mana", "max_depth", "position",
-		"sex", "shots_per_round", "social_class", "spell_book",
+		"sex", "shots_per_round", "social_class",
 		"title", "to_dam", "to_hit", "weight",
 		"total_weight", "preserve", "base_name",
 		"is_dead", "turn", "max_level", "disturb", "new_spells",
@@ -671,7 +671,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 		IDX_BLOWS_PER_ROUND, IDX_ICON, IDX_DIED_FROM,
 		IDX_EXP, IDX_FOOD, IDX_GOLD, IDX_HEIGHT, IDX_HISTORY, IDX_HITPOINTS,
 		IDX_INFRAVISION, IDX_LEVEL, IDX_MANA, IDX_MAX_DEPTH, IDX_POSITION,
-		IDX_SEX, IDX_SHOTS_PER_ROUND, IDX_SOCIAL_CLASS, IDX_SPELL_BOOK,
+		IDX_SEX, IDX_SHOTS_PER_ROUND, IDX_SOCIAL_CLASS,
 		IDX_TITLE, IDX_TO_DAM, IDX_TO_HIT, IDX_WEIGHT,
 		IDX_TOTAL_WEIGHT, IDX_PRESERVE, IDX_BASE_NAME,
 		IDX_IS_DEAD, IDX_TURN, IDX_MAX_LEVEL, IDX_DISTURB, IDX_NEW_SPELLS,
@@ -682,14 +682,12 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 	int index;
 
-	cptr cstr;
 	object_type *o_ptr;
 	int i, tmp;
 	long expadv;
 	double pct;
 	char buf[512];
 	cptr t;
-	Tcl_Obj *listObjPtr;
 
 	static cptr abilityOptions[] = {"fighting", "bows_throw", "saving_throw",
 		"stealth", "perception", "searching", "disarming", "magic_device",
@@ -871,23 +869,6 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 
 		case IDX_SOCIAL_CLASS: /* social_class */
 			Tcl_SetIntObj(resultPtr, p_ptr->sc);
-			break;
-
-		case IDX_SPELL_BOOK: /* spell_book */
-			listObjPtr = Tcl_NewListObj(0, NULL);
-			if (p_ptr->realm1)
-			{
-				(void) angtk_tval_string(&cstr, p_ptr->realm1 + TV_LIFE_BOOK - 1);
-				Tcl_ListObjAppendElement(interp, listObjPtr,
-					Tcl_NewStringObj(cstr, -1));
-			}
-			if (p_ptr->realm2)
-			{
-				(void) angtk_tval_string(&cstr, p_ptr->realm2 + TV_LIFE_BOOK - 1);
-				Tcl_ListObjAppendElement(interp, listObjPtr,
-					Tcl_NewStringObj(cstr, -1));
-			}
-			Tcl_SetObjResult(interp, listObjPtr);
 			break;
 
 		case IDX_TITLE: /* title */

@@ -116,8 +116,8 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 	int index;
 
 	Tcl_Obj *listObjPtr;
-	char *buffer, *t;
-	int i, tval;
+	char *buffer;
+	int i;
 	long length;
 	object_type *o_ptr;
 	int fy, fx;
@@ -157,8 +157,7 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 			/* Scan arguments for options */
 			for (i = 2; i < objC; )
 			{
-				static cptr cmdOptions[] = {"-limit", "-tester",
-					"-tval", NULL};
+				static cptr cmdOptions[] = {"-limit", "-tester", NULL};
 
 				/* Get the sub-option */
 				if (Tcl_GetIndexFromObj(interp, objV[i], cmdOptions, "option",
@@ -170,6 +169,7 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 				switch (index)
 				{
 					case 0: /* Limit */
+					{
 						if (Tcl_GetIntFromObj(interp, objV[i+1], &match_limit)
 							!= TCL_OK)
 						{
@@ -178,8 +178,10 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 						request_limit = 1;
 						i += 2;
 						break;
+					}
 
 					case 1: /* Tester */
+					{
 						if (Tcl_GetBooleanFromObj(interp, objV[i+1],
 							&match_tester) != TCL_OK)
 						{
@@ -188,17 +190,7 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 						request_tester = 1;
 						i += 2;
 						break;
-		
-					case 2: /* Tval */
-						t = Tcl_GetStringFromObj(objV[i+1], NULL);
-						if (angtk_tval_const(&tval, t) != TCL_OK)
-						{
-							return TCL_ERROR;
-						}
-						match_tval[tval_cnt++] = tval;
-						request_tval = 1;
-						i += 2;
-						break;
+					}
 				}
 			}
 
