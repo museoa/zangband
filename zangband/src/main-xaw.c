@@ -196,6 +196,7 @@ struct AngbandPart
 
 	/* Tiles */
 	XImage *tiles;
+	XImage *b_tiles;
 
 	/* Tempory storage for overlaying tiles. */
 	XImage *TmpImage;
@@ -380,23 +381,61 @@ WidgetClass angbandWidgetClass = (WidgetClass) &angbandClassRec;
  * Public procedures
  */
 
+#if 0 
+/*
+ * Find the square a particular pixel is part of.
+ */
+static void pixel_to_square(AngbandWidget widget, int *x, int *y, int ox, int oy)
+{
+	(*x) = (ox - widget->angband.internal_border) / widget->angband.fontwidth;
+	(*y) = (oy - widget->angband.internal_border) / widget->angband.fontheight;
+	
+	if ((use_bigtile) && ((*y) >= Term->scr->big_y1)
+		&& ((*y) <= Term->scr->big_y2)
+		&& ((*x) >= Term->scr->big_x1))
+	{
+		(*x) -= ((*x) - Term->scr->big_x1 + 1) / 2;
+	}
+}
+#endif /* 0 */
+
+/*
+ * Find the pixel at the top-left corner of a square.
+ */
+static void square_to_pixel(AngbandWidget widget, int *x, int *y, int ox, int oy)
+{
+	(*y) = oy * widget->angband.fontheight + widget->angband.internal_border;
+	
+	if ((use_bigtile) && (oy >= Term->scr->big_y1)
+			&& (oy <= Term->scr->big_y2)
+			&& (ox > Term->scr->big_x1))
+	{
+		(*x) = ox * widget->angband.tilewidth + widget->angband.internal_border -
+				Term->scr->big_x1 * widget->angband.fontwidth;
+	}
+	else
+	{
+		(*x) = ox * widget->angband.fontwidth + widget->angband.internal_border;
+	}
+}
+
 
 /*
  * Clear an area
  */
-static void AngbandClearArea(AngbandWidget widget,
-                             int x, int y, int w, int h, int a)
+static void AngbandClearArea(AngbandWidget widget, int x, int y, int w)
 {
-	/* Figure out which area to clear */
-	y = y * widget->angband.fontheight + widget->angband.internal_border;
-	x = x * widget->angband.fontwidth + widget->angband.internal_border;
+	int x1, y1, x2, y2;
 
+	/*** Find the dimensions ***/
+	square_to_pixel(widget, &x1, &y1, x, y);
+	square_to_pixel(widget, &x2, &y2, x + w, y);
+	
 	/* Clear the area */
 	XFillRectangle(XtDisplay(widget), XtWindow(widget),
-	               widget->angband.gc[a],
-	               x, y,
-	               widget->angband.fontwidth * w,
-	               widget->angband.fontheight * h);
+					widget->angband.gc[0],
+					x1, y1,
+					x2 - x1, y2 - y1 + widget->angband.fontheight);
 }
 
 
@@ -404,9 +443,12 @@ static void AngbandClearArea(AngbandWidget widget,
 /*
  * Output some text
  */
-static void AngbandOutputText(AngbandWidget widget, int x, int y,
+static void AngbandOutputText(AngbandWidget widget, int cx, int cy,
                               String txt, int len, int a)
 {
+	int x, y;
+	int i;
+	
 	/* Do nothing if the string is null */
 	if (!txt || !*txt) return;
 
@@ -414,13 +456,41 @@ static void AngbandOutputText(AngbandWidget widget, int x, int y,
 	if (len < 0) len = strlen(txt);
 
 	/* Figure out where to place the text */
-	y = (y * widget->angband.fontheight + widget->angband.fontascent +
-	     widget->angband.internal_border);
-	x = (x * widget->angband.fontwidth + widget->angband.internal_border);
+	square_to_pixel(widget, &x, &y, cx, cy);
+	
+	/* Ignore Vertical Justifications */
+	y += widget->angband.fontascent;
+	
+	/* Monotize the font if required */
+	if (is_bigtiled(cx + len - 1, cy))
+	{
+		/* Do each character */
+		for (i = 0; i < len; ++i)
+		{
+			if (is_bigtiled(cx + i, cy))
+			{
+				/* Place a character */
+				XDrawImageString(XtDisplay(widget), XtWindow(widget),
+	                 			widget->angband.gc[a], x, y, txt, 1);
+				x += widget->angband.tilewidth;
+			}
+			else
+			{
+				/* Place a character */
+				XDrawImageString(XtDisplay(widget), XtWindow(widget),
+								widget->angband.gc[a], x, y, txt, 1);
+				x += widget->angband.fontwidth;
+			}
+		}
+	}
 
-	/* Place the string */
-	XDrawImageString(XtDisplay(widget), XtWindow(widget),
-	                 widget->angband.gc[a], x, y, txt, len);
+	/* Assume monoospaced font */
+	else
+	{
+		/* Place the string */
+		XDrawImageString(XtDisplay(widget), XtWindow(widget),
+	                 	widget->angband.gc[a], x, y, txt, len);
+	}
 }
 
 
@@ -429,7 +499,7 @@ static void AngbandOutputText(AngbandWidget widget, int x, int y,
 /*
  * Draw some graphical characters.
  */
-static void AngbandOutputPict(AngbandWidget widget, int x, int y, int n,
+static void AngbandOutputPict(AngbandWidget widget, int ox, int oy, int n,
                               const byte *ap, const char *cp,
                               const byte *tap, const char *tcp)
 {
@@ -439,33 +509,45 @@ static void AngbandOutputPict(AngbandWidget widget, int x, int y, int n,
 	char c;
 	byte ta;
 	char tc;
-
+	
+	int x, y;
 	int x2, y2;
 	int k,l;
 
 	unsigned long pixel, blank;
 
+	int wid, hgt = widget->angband.fontheight;
+	XImage *tiles;
 
-	/* Figure out where to place the text */
-	y = (y * widget->angband.fontheight + widget->angband.internal_border);
-	x = (x * widget->angband.fontwidth + widget->angband.internal_border);
+	/* Starting point */
+	square_to_pixel(widget, &x, &y, ox, oy);
 
 	for (i = 0; i < n; ++i)
 	{
 		a = *ap++;
 		c = *cp++;
 
-
 		ta = *tap++;
 		tc = *tcp++;
+		
+		if (is_bigtiled(ox + i, oy))
+		{
+			tiles = widget->angband.b_tiles;
+			wid = widget->angband.tilewidth;
+		}
+		else
+		{
+			tiles = widget->angband.tiles;
+			wid = widget->angband.fontwidth;
+		}
 
 		/* For extra speed - cache these values */
-		x1 = (c & 0x7F) * widget->angband.tilewidth;
-		y1 = (a & 0x7F) * widget->angband.fontheight;
+		x1 = (c & 0x7F) * wid;
+		y1 = (a & 0x7F) * hgt;
 
 		/* For extra speed - cache these values */
-		x2 = (tc & 0x7F) * widget->angband.tilewidth;
-		y2 = (ta & 0x7F) * widget->angband.fontheight;
+		x2 = (tc & 0x7F) * wid;
+		y2 = (ta & 0x7F) * hgt;
 
 		/* Optimise the common case */
 		if (((x1 == x2) && (y1 == y2)) ||
@@ -474,30 +556,29 @@ static void AngbandOutputPict(AngbandWidget widget, int x, int y, int n,
 			/* Draw object / terrain */
 			XPutImage(XtDisplay(widget), XtWindow(widget),
 			          widget->angband.gc[0],
-			          widget->angband.tiles,
+			          tiles,
 			          x1, y1,
 			          x, y,
-			          widget->angband.tilewidth,
-			          widget->angband.fontheight);
+			          wid, hgt);
 		}
 		else
 		{
 			/* Mega Hack^2 - assume the top left corner is "blank" */
 			if (arg_graphics == GRAPHICS_DAVID_GERVAIS)
-				blank = XGetPixel(widget->angband.tiles, 0, 0);
+				blank = XGetPixel(tiles, 0, 0);
 			else
-				blank = XGetPixel(widget->angband.tiles,
+				blank = XGetPixel(tiles,
 				                  0, widget->angband.fontheight * 6);
 
-			for (k = 0; k < widget->angband.tilewidth; k++)
+			for (k = 0; k < wid; k++)
 			{
-				for (l = 0; l < widget->angband.fontheight; l++)
+				for (l = 0; l < hgt; l++)
 				{
 					/* If mask set... */
-					if ((pixel = XGetPixel(widget->angband.tiles, x1 + k, y1 + l)) == blank)
+					if ((pixel = XGetPixel(tiles, x1 + k, y1 + l)) == blank)
 					{
 						/* Output from the terrain */
-						pixel = XGetPixel(widget->angband.tiles, x2 + k, y2 + l);
+						pixel = XGetPixel(tiles, x2 + k, y2 + l);
 
 						if (pixel == blank)
 							pixel = 0L;
@@ -517,11 +598,10 @@ static void AngbandOutputPict(AngbandWidget widget, int x, int y, int n,
 			          widget->angband.TmpImage,
 			          0, 0,
 			          x, y,
-			          widget->angband.tilewidth,
-			          widget->angband.fontheight);
+			          wid, hgt);
 		}
 
-		x += widget->angband.fontwidth;
+		x += wid;
 	}
 }
 
@@ -1392,7 +1472,7 @@ static errr Term_wipe_xaw(int x, int y, int n)
 	term_data *td = (term_data*)(Term->data);
 	
 	/* Erase using color 0 */
-	AngbandClearArea(td->widget, x, y, n, 1, 0);
+	AngbandClearArea(td->widget, x, y, n);
 
 	/* Success */
 	return (0);
@@ -1407,35 +1487,28 @@ static errr Term_curs_xaw(int x, int y)
 {
 	term_data *td = (term_data*)(Term->data);
 	
+	int x1, y1;
+	
+	/* Top left hand corner of cursor */
+	square_to_pixel(td->widget, &x1, &y1, x, y);
+	
 	/* Hilite the cursor character with a box */
-	XDrawRectangle(XtDisplay(td->widget), XtWindow(td->widget),
-		td->widget->angband.gc[COLOR_XOR],
-		x * td->widget->angband.fontwidth + 
-			td->widget->angband.internal_border,
-		y * td->widget->angband.fontheight +
-			td->widget->angband.internal_border,
-		td->widget->angband.fontwidth - 1, td->widget->angband.fontheight - 1);
-
-	/* Success */
-	return (0);
-}
-
-
-/*
- * Draw the double width cursor as a rectangle outline
- */
-static errr Term_bigcurs_xaw(int x, int y)
-{
-	term_data *td = (term_data*)(Term->data);
-
-	/* Hilite the cursor character with a box */
-	XDrawRectangle(XtDisplay(td->widget), XtWindow(td->widget),
-		td->widget->angband.gc[COLOR_XOR],
-		x * td->widget->angband.fontwidth +
-			td->widget->angband.internal_border,
-		y * td->widget->angband.fontheight +
-			td->widget->angband.internal_border,
-		td->widget->angband.tilewidth - 1, td->widget->angband.fontheight - 1);
+	if (is_bigtiled(x, y))
+	{
+		XDrawRectangle(XtDisplay(td->widget), XtWindow(td->widget),
+						td->widget->angband.gc[COLOR_XOR],
+						x1, y1,
+						td->widget->angband.tilewidth - 1,
+						td->widget->angband.fontheight - 1);
+	}
+	else
+	{
+		XDrawRectangle(XtDisplay(td->widget), XtWindow(td->widget),
+						td->widget->angband.gc[COLOR_XOR],
+						x1, y1,
+						td->widget->angband.fontwidth - 1,
+						td->widget->angband.fontheight - 1);
+	}
 
 	/* Success */
 	return (0);
@@ -1735,6 +1808,10 @@ errr init_xaw(int argc, char *argv[])
 	/* Close the local display */
 	XCloseDisplay(dpy);
 
+#ifdef USE_GRAPHICS
+	/* We support bigtile mode */
+	if (arg_bigtile && arg_graphics) use_bigtile = TRUE;
+#endif /* USE_GRAPHICS */
 
 #ifdef USE_XAW_LANG
 
@@ -1761,11 +1838,7 @@ errr init_xaw(int argc, char *argv[])
 		angband_term[i] = Term;
 	}	
 
-	/* Activate the "Angband" window screen */
-	Term_activate(&data[0].t);
-
-	/* Raise the "Angband" window */
-	term_raise(&data[0]);
+	
 
 
 #ifdef USE_GRAPHICS
@@ -1816,11 +1889,12 @@ errr init_xaw(int argc, char *argv[])
 				{
 					o_td = &data[j];
 
-					if ((td->widget->angband.tilewidth == o_td->widget->angband.tilewidth) &&
+					if ((td->widget->angband.fontwidth == o_td->widget->angband.fontwidth) &&
 					    (td->widget->angband.fontheight == o_td->widget->angband.fontheight))
 					{
 						/* Use same graphics */
 						td->widget->angband.tiles = o_td->widget->angband.tiles;
+						td->widget->angband.b_tiles = o_td->widget->angband.b_tiles;
 						break;
 					}
 				}
@@ -1828,9 +1902,20 @@ errr init_xaw(int argc, char *argv[])
 				if (!td->widget->angband.tiles)
 				{
 					/* Resize tiles */
+					if (arg_bigtile)
+					{
+						td->widget->angband.b_tiles = ResizeImage(dpy, tiles_raw,
+													pict_wid, pict_hgt,
+													td->widget->angband.tilewidth,
+													td->widget->angband.fontheight);
+					}
+					else
+					{
+						td->widget->angband.b_tiles = NULL;
+					}
 					td->widget->angband.tiles = ResizeImage(dpy, tiles_raw,
 					                                        pict_wid, pict_hgt,
-					                                        td->widget->angband.tilewidth,
+					                                        td->widget->angband.fontwidth,
 					                                        td->widget->angband.fontheight);
 				}
 			}
@@ -1869,6 +1954,12 @@ errr init_xaw(int argc, char *argv[])
 	}
 
 #endif /* USE_GRAPHICS */
+
+	/* Activate the "Angband" window screen */
+	Term_activate(&data[0].t);
+
+	/* Raise the "Angband" window */
+	term_raise(&data[0]);
 
 	/* Success */
 	return (0);

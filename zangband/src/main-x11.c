@@ -2337,9 +2337,6 @@ static errr Term_xtra_x11(int n, int v)
 
 		/* React to changes */
 		case TERM_XTRA_REACT: return (Term_xtra_x11_react());
-
-		/* Bigtile mode */
-		case TERM_XTRA_SETBG: use_bigtile = v; return (0);
 	}
 
 	/* Unknown */
@@ -2808,7 +2805,7 @@ errr init_x11(int argc, char *argv[])
 #ifdef USE_GRAPHICS
 	/* We support bigtile mode */
 	if (arg_bigtile && arg_graphics) use_bigtile = TRUE;
-#endif /* USE_GRAPHICS */	
+#endif /* USE_GRAPHICS */
 
 	/* Prepare cursor color */
 	MAKE(xor, infoclr);

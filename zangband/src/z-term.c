@@ -1706,13 +1706,17 @@ errr Term_redraw_section(int x1, int y1, int x2, int y2)
 {
 	int i;
 	
+	bool redraw_cursor = FALSE;
+	
 	term_win *old = Term->old;
 	
-	bool total_erase;
+	/* Hack - make bigtile work */
+	if (Term->scr->big_x1 != -1)
+	{
+		x1 = (x1 - 1) / 2;
+		x2 = x2 * 2;
+	}
 	
-	x1 = (x1 - 1) / 2;
-	x2 = x2 * 2;
-
 	/* Bounds checking */
 	if (y2 >= Term->hgt) y2 = Term->hgt - 1;
 	if (x2 >= Term->wid) x2 = Term->wid - 1;
@@ -1730,24 +1734,24 @@ errr Term_redraw_section(int x1, int y1, int x2, int y2)
 		if (Term->x2[i] < x2) Term->x2[i] = x2;
 	}
 	
-	/* Refresh */
-	total_erase = Term->total_erase;
-	Term->total_erase = TRUE;
-	Term_fresh_section();
-	Term->total_erase = FALSE;
-	
-	if ((old->cx >= x1) && (old->cx <= x2) &&
-		(old->cy >= y1) && (old->cy <= y2))
+	if ((old->cx >= Term->x1[old->cy]) && (old->cx <= Term->x2[old->cy]) &&
+		(old->cy >= Term->y1) && (old->cy <= Term->y2))
 	{
 		/* Hack -- clear all "cursor" data */
 		old->cv = 0;
 		old->cu = 0;
 		old->cx = 0;
 		old->cy = 0;
-	
-		/* Redraw cursor */
-		Term_fresh_cursor();
+		
+		redraw_cursor = TRUE;
 	}
+	
+	/* Refresh */
+	Term->total_erase = TRUE;
+	Term_fresh_section();
+	Term->total_erase = FALSE;
+	
+	if (redraw_cursor) Term_fresh_cursor();
 
 	/* Actually flush the output */
 	Term_xtra(TERM_XTRA_FRESH, 0);
@@ -2299,21 +2303,11 @@ errr term_init(term *t, int w, int h, int k)
  */
 errr Term_bigregion(int x1, int y1, int y2)
 {
-	/* Verify the hook */
-	if (!Term->xtra_hook) return (1);
+    /* Save region */
+	Term->scr->big_x1 = x1;
+	Term->scr->big_y1 = y1;
+	Term->scr->big_y2 = y2;
 
-	/* Call the hook */
-	if (!(*Term->xtra_hook) (TERM_XTRA_SETBG, TRUE))
-	{
-    	/* Save region */
-		Term->scr->big_x1 = x1;
-		Term->scr->big_y1 = y1;
-		Term->scr->big_y2 = y2;
-
-    	/* Success */
-		return (0);
-	}
-
-	/* Failure */
-	return (1);
+    /* Success */
+	return (0);
 }
