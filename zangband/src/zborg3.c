@@ -3210,7 +3210,7 @@ bool borg_racial(int race)
 /*
  * Inscribe food and Slime Molds
  */
-extern bool borg_inscribe_food(void)
+bool borg_inscribe_food(void)
 {
 	int ii;
 	char name[80];
