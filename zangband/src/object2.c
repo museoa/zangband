@@ -433,7 +433,8 @@ void compact_objects(int size)
 			}
 
 			/* Nearby objects start out "immune" */
-			if ((cur_dis > 0) && (distance(p_ptr->py, p_ptr->px, y, x) < cur_dis)) continue;
+			if ((cur_dis > 0) &&
+				 (distance(p_ptr->py, p_ptr->px, y, x) < cur_dis)) continue;
 
 			/* Saving throw */
 			chance = 90;
@@ -3606,7 +3607,8 @@ static void a_m_aux_3(object_type *o_ptr, int level, int lev_dif, byte flags)
 					break;
 				}
 
-				case SV_AMULET_NO_MAGIC: case SV_AMULET_NO_TELE:
+				case SV_AMULET_NO_MAGIC:
+				case SV_AMULET_NO_TELE:
 				{
 					if (flags & OC_FORCE_BAD)
 					{
