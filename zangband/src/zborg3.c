@@ -2741,60 +2741,6 @@ void prepare_race_class_info(void)
 }
 
 
-
-/*
- * Sorting hook -- comp function -- see below
- *
- * We use "u" to point to an array of strings, and "v" to point to
- * an array of indexes, and we sort them together by the strings.
- */
-static bool ang_sort_comp_hook_string(vptr u, vptr v, int a, int b)
-{
-	cptr *text = (cptr *)(u);
-	s16b *what = (s16b *)(v);
-
-	int cmp;
-
-	/* Compare the two strings */
-	cmp = (strcmp(text[a], text[b]));
-
-	/* Strictly less */
-	if (cmp < 0) return (TRUE);
-
-	/* Strictly more */
-	if (cmp > 0) return (FALSE);
-
-	/* Enforce "stable" sort */
-	return (what[a] <= what[b]);
-}
-
-
-/*
- * Sorting hook -- swap function -- see below
- *
- * We use "u" to point to an array of strings, and "v" to point to
- * an array of indexes, and we sort them together by the strings.
- */
-static void ang_sort_swap_hook_string(vptr u, vptr v, int a, int b)
-{
-	cptr *text = (cptr *)(u);
-	s16b *what = (s16b *)(v);
-
-	cptr texttmp;
-	s16b whattmp;
-
-	/* Swap "text" */
-	texttmp = text[a];
-	text[a] = text[b];
-	text[b] = texttmp;
-
-	/* Swap "what" */
-	whattmp = what[a];
-	what[a] = what[b];
-	what[b] = whattmp;
-}
-
-
 void borg_clear_3(void)
 {
 	KILL(borg_items);
@@ -2823,25 +2769,10 @@ void borg_clear_3(void)
  */
 void borg_init_3(void)
 {
-	int i, k, n;
-
-	int size = 0;
-
-	s16b *what;
-	cptr *text;
-
-	char buf[256];
-
-	/* Create buffers */
-	C_MAKE(what, z_info->k_max + z_info->a_max, s16b);
-	C_MAKE(text, z_info->k_max + z_info->a_max, cptr);
-
-
 	/*** Item/Ware arrays ***/
 
 	/* Make the stores in the town */
 	C_MAKE(borg_shops, track_shop_size, borg_shop);
-
 
 	/*** Item/Ware arrays (simulation) ***/
 
@@ -2850,10 +2781,6 @@ void borg_init_3(void)
 
 	/* Make the "safe" stores in the town */
 	C_MAKE(safe_shops, track_shop_size, borg_shop);
-
-	/* Clean up */
-	FREE(what);
-	FREE(text);
 }
 
 #else
