@@ -2152,13 +2152,13 @@ void field_action_hit_trap_curse(s16b *field_ptr, void *nothing)
 	}
 	
 	/* Blast weapon */
-	if (dun_level > randint1(200)) /* No nasty effect for low levels */
+	if (dun_level > randint1(500)) /* No nasty effect for low levels */
 	{
 		(void) curse_weapon();
 	}
 	
 	/* Blast armour */
-	if (dun_level > randint1(200)) /* No nasty effect for low levels */
+	if (dun_level > randint1(500)) /* No nasty effect for low levels */
 	{
 		(void) curse_armor();
 	}
