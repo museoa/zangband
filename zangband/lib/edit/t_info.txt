@@ -1262,18 +1262,18 @@ N:130:Supplies Store
 G:1:u
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:0:0:10:0:25:50:25:0
+D:0:0:10:0:10:40:50:0
 F:2,field_action_door_store
-F:18,field_action_isrecharge_tester
+F:18,field_action_issupplies_tester
 
 # Supplies store
 N:131:Dungeon Supplies Store
 G:1:U
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:0:0:20:0:25:50:25:0
+D:0:0:20:0:10:40:50:0
 F:2,field_action_door_store
-F:18,field_action_isrecharge_tester
+F:18,field_action_issupplies_tester
 
 # Black Market
 N:132:Large Black Market
