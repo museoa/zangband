@@ -1808,6 +1808,12 @@ void display_inven(void)
 		/* Get a color */
 		attr = tval_to_attr[o_ptr->tval % 128];
 
+		/* Grey out charging items */
+		if (o_ptr->timeout)
+		{
+			attr = TERM_L_DARK;
+		}
+
 		/* Hack -- fake monochrome */
 		if (!use_color) attr = TERM_WHITE;
 
@@ -1878,6 +1884,12 @@ void display_equip(void)
 
 		/* Get the color */
 		attr = tval_to_attr[o_ptr->tval % 128];
+
+		/* Grey out charging items */
+		if (o_ptr->timeout)
+		{
+			attr = TERM_L_DARK;
+		}
 
 		/* Hack -- fake monochrome */
 		if (!use_color) attr = TERM_WHITE;
@@ -1979,6 +1991,13 @@ void show_inven(void)
 		/* Save the object index, color, and description */
 		out_index[k] = i;
 		out_color[k] = tval_to_attr[o_ptr->tval % 128];
+
+		/* Grey out charging items */
+		if (o_ptr->timeout)
+		{
+			out_color[k] = TERM_L_DARK;
+		}
+
 		(void)strcpy(out_desc[k], o_name);
 
 		/* Find the predicted "line length" */
@@ -2102,6 +2121,13 @@ void show_equip(void)
 		/* Save the color */
 		out_index[k] = i;
 		out_color[k] = tval_to_attr[o_ptr->tval % 128];
+
+		/* Grey out charging items */
+		if (o_ptr->timeout)
+		{
+			out_color[k] = TERM_L_DARK;
+		}
+
 		(void)strcpy(out_desc[k], o_name);
 
 		/* Extract the maximal length (see below) */
