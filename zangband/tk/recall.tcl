@@ -709,31 +709,6 @@ proc NSRecall::DisplayKnowledge {oop} {
 	return
 }
 
-# NSRecall::SettingChanged_depth_in_feet --
-#
-#	Called when the depth_in_feet option changes.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSRecall::SettingChanged_depth_in_feet {oop} {
-
-	variable Priv
-
-	# Hack -- Not a monster/artifact
-	if {!$Priv(icon,valid)} return
-
-	# Hack -- Not a monster
-	if {[string compare $Priv(icon,to) monster]} return
-
-	# Hack -- Redisplay
-	RecallMonster $Priv(icon,toindex)
-
-	return
-}
 
 # NSRecall::SetHook --
 #

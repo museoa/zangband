@@ -221,20 +221,6 @@ proc NSMainWindow::InitWindow {oop} {
 		NSMainWindow::StatusText $oop {}
 	"
 
-	# When the depth display in the Main Window statusbar is clicked,
-	# we toggle the "depth_in_feet" option.
-	bind $win.statusBar.depth <ButtonPress-1> {
-		angband setting set depth_in_feet [expr {![angband setting set depth_in_feet]}]
-	}
-	bind $win.statusBar.depth <Enter> "
-		%W configure -foreground gray60
-		NSMainWindow::StatusText $oop {Click to toggle depth_in_feet.}
-	"
-	bind $win.statusBar.depth <Leave> "
-		%W configure -foreground White
-		NSMainWindow::StatusText $oop {}
-	"
-
 	# Update ourself when the font,statusBar value changes
 	NSValueManager::AddClient font,statusBar \
 		"NSMainWindow::ValueChanged_font_statusBar"
@@ -2223,12 +2209,8 @@ proc NSMainWindow::DisplayDepth {label depth} {
 		set depthStr [mc Quest]
 	} elseif {$depth == 0} {
 		set depthStr [angband cave wild_name]
-	} else {
-		if {[angband setting set depth_in_feet]} {
-			set depthStr [format [mc "%d feet"] [expr {$depth * 50}]]
-		} else {
-			set depthStr [format [mc "Level %d"] $depth]
-		}
+	} else
+		set depthStr [format [mc "Level %d"] $depth]
 	}
 	$label configure -text $depthStr
 
