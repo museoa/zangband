@@ -351,7 +351,7 @@ void chg_virtue(int virtue, int amount)
 }
 
 
-void dump_virtues(FILE * OutFile)
+void dump_virtues(FILE *OutFile)
 {
 	int v_nr;
 

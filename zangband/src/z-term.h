@@ -217,7 +217,7 @@ struct term
 	errr (*wipe_hook)(int x, int y, int n);
 
 	errr (*text_hook)(int x, int y, int n, byte a, cptr s);
-	
+
 	void (*resize_hook)(void);
 
 #ifdef USE_TRANSPARENCY

@@ -512,8 +512,8 @@ void Term_queue_char(int x, int y, byte a, char c, byte ta, char tc)
 void Term_queue_char(int x, int y, byte a, char c)
 #endif /* USE_TRANSPARENCY */
 {
-	term_win *scrn = Term->scr; 
-	
+	term_win *scrn = Term->scr;
+
 	byte *scr_aa = &scrn->a[y][x];
 	char *scr_cc = &scrn->c[y][x];
 
