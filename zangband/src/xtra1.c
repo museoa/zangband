@@ -1323,7 +1323,7 @@ static void fix_message(void)
 			            message_str(i));
 
 			/* Cursor */
-			Term_locate(&x, &y);
+			(void)Term_locate(&x, &y);
 
 			/* Clear to end of line */
 			Term_erase(x, y, 255);

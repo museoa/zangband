@@ -791,7 +791,7 @@ static void wiz_tweak_item(object_type *o_ptr)
 	wiz_display_item(o_ptr);
 
 	p = "Enter new 'activate' setting: ";
-	sprintf(tmp_val, "%d", o_ptr->activate);
+	sprintf(tmp_val, "%d", (int) o_ptr->activate);
 	if (!get_string(p, tmp_val, 5)) return;
 	o_ptr->activate = atoi(tmp_val);
 	wiz_display_item(o_ptr);
@@ -887,7 +887,7 @@ static void wiz_reroll_item(object_type *o_ptr)
 				object_prep(q_ptr, o_ptr->k_idx);
 
 				/* Make a random artifact */
-				create_artifact(q_ptr, FALSE);
+				(void)create_artifact(q_ptr, FALSE);
 				break;
 			}
 		}
@@ -931,7 +931,7 @@ static void wiz_statistics(object_type *o_ptr)
 	cptr p = "Enter number of items to roll: ";
 	char tmp_val[80];
 
-	sprintf(tmp_val, "%ld", test_roll);
+	sprintf(tmp_val, "%ld", (long) test_roll);
 	if (get_string(p, tmp_val, 10)) test_roll = atol(tmp_val);
 	test_roll = MAX(1, test_roll);
 
@@ -957,7 +957,7 @@ static void wiz_quantity_item(object_type *o_ptr)
 	tmp_qnt = o_ptr->number;
 
 	/* Default */
-	sprintf(tmp_val, "%d", o_ptr->number);
+	sprintf(tmp_val, "%d", (int)o_ptr->number);
 
 	/* Query */
 	if (get_string("Quantity: ", tmp_val, 2))
@@ -1784,7 +1784,7 @@ void do_cmd_debug(void)
 
 
 	/* Get a "debug command" */
-	get_com("Debug Command: ", &cmd);
+	(void)get_com("Debug Command: ", &cmd);
 
 	/* Analyze the command */
 	switch (cmd)
@@ -1815,7 +1815,7 @@ void do_cmd_debug(void)
 		/* Hack -- Help */
 		case '?':
 			screen_save();
-			show_file("wizard.txt", NULL, 0 , 0);
+			(void)show_file("wizard.txt", NULL, 0 , 0);
 			screen_load();
 		break;
 
@@ -1847,7 +1847,7 @@ void do_cmd_debug(void)
 
 		/* Detect everything */
 		case 'd':
-			detect_all();
+			(void)detect_all();
 		break;
 
 		/* Edit character */
@@ -1857,7 +1857,7 @@ void do_cmd_debug(void)
 
 		/* View item info */
 		case 'f':
-			identify_fully();
+			(void)identify_fully();
 		break;
 
 		/* Create feature */

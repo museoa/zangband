@@ -432,7 +432,7 @@ void Term_xtra(int n, int v)
 	if (!Term->xtra_hook) return;
 	
 	/* Call the hook */
-	(*Term->xtra_hook)(n, v);
+	(void)(*Term->xtra_hook)(n, v);
 	
 	/* Done */
 	return;
@@ -2185,11 +2185,11 @@ void Term_save(void)
 		MAKE(Term->mem, term_win);
 
 		/* Initialize window */
-		term_win_init(Term->mem, w, h);
+		(void)term_win_init(Term->mem, w, h);
 	}
 
 	/* Grab */
-	term_win_copy(Term->mem, Term->scr, w, h);
+	(void)term_win_copy(Term->mem, Term->scr, w, h);
 }
 
 
@@ -2212,11 +2212,11 @@ void Term_load(void)
 		MAKE(Term->mem, term_win);
 
 		/* Initialize window */
-		term_win_init(Term->mem, w, h);
+		(void)term_win_init(Term->mem, w, h);
 	}
 
 	/* Load */
-	term_win_copy(Term->scr, Term->mem, w, h);
+	(void)term_win_copy(Term->scr, Term->mem, w, h);
 
 	/* Assume change */
 	for (y = 0; y < h; y++)
@@ -2252,7 +2252,7 @@ errr Term_exchange(void)
 		MAKE(Term->tmp, term_win);
 
 		/* Initialize window */
-		term_win_init(Term->tmp, w, h);
+		(void)term_win_init(Term->tmp, w, h);
 	}
 
 	/* Swap */
@@ -2332,19 +2332,19 @@ errr Term_resize(int w, int h)
 	MAKE(Term->old, term_win);
 
 	/* Initialize new window */
-	term_win_init(Term->old, w, h);
+	(void)term_win_init(Term->old, w, h);
 
 	/* Save the contents */
-	term_win_copy(Term->old, hold_old, wid, hgt);
+	(void)term_win_copy(Term->old, hold_old, wid, hgt);
 
 	/* Create new window */
 	MAKE(Term->scr, term_win);
 
 	/* Initialize new window */
-	term_win_init(Term->scr, w, h);
+	(void)term_win_init(Term->scr, w, h);
 
 	/* Save the contents */
-	term_win_copy(Term->scr, hold_scr, wid, hgt);
+	(void)term_win_copy(Term->scr, hold_scr, wid, hgt);
 
 	/* If needed */
 	if (hold_mem)
@@ -2353,10 +2353,10 @@ errr Term_resize(int w, int h)
 		MAKE(Term->mem, term_win);
 
 		/* Initialize new window */
-		term_win_init(Term->mem, w, h);
+		(void)term_win_init(Term->mem, w, h);
 
 		/* Save the contents */
-		term_win_copy(Term->mem, hold_mem, wid, hgt);
+		(void)term_win_copy(Term->mem, hold_mem, wid, hgt);
 	}
 
 	/* If needed */
@@ -2366,10 +2366,10 @@ errr Term_resize(int w, int h)
 		MAKE(Term->tmp, term_win);
 
 		/* Initialize new window */
-		term_win_init(Term->tmp, w, h);
+		(void)term_win_init(Term->tmp, w, h);
 
 		/* Save the contents */
-		term_win_copy(Term->tmp, hold_tmp, wid, hgt);
+		(void)term_win_copy(Term->tmp, hold_tmp, wid, hgt);
 	}
 
 	/* Free some arrays */
@@ -2377,7 +2377,7 @@ errr Term_resize(int w, int h)
 	C_KILL(hold_x2, Term->hgt, byte);
 
 	/* Nuke */
-	term_win_nuke(hold_old, Term->wid, Term->hgt);
+	(void)term_win_nuke(hold_old, Term->wid, Term->hgt);
 
 	/* Kill */
 	KILL(hold_old, term_win);
@@ -2387,7 +2387,7 @@ errr Term_resize(int w, int h)
 	if (Term->old->cy >= h) Term->old->cu = 1;
 
 	/* Nuke */
-	term_win_nuke(hold_scr, Term->wid, Term->hgt);
+	(void)term_win_nuke(hold_scr, Term->wid, Term->hgt);
 
 	/* Kill */
 	KILL(hold_scr, term_win);
@@ -2400,7 +2400,7 @@ errr Term_resize(int w, int h)
 	if (hold_mem)
 	{
 		/* Nuke */
-		term_win_nuke(hold_mem, Term->wid, Term->hgt);
+		(void)term_win_nuke(hold_mem, Term->wid, Term->hgt);
 
 		/* Kill */
 		KILL(hold_mem, term_win);
@@ -2414,7 +2414,7 @@ errr Term_resize(int w, int h)
 	if (hold_tmp)
 	{
 		/* Nuke */
-		term_win_nuke(hold_tmp, Term->wid, Term->hgt);
+		(void)term_win_nuke(hold_tmp, Term->wid, Term->hgt);
 
 		/* Kill */
 		KILL(hold_tmp, term_win);
@@ -2518,13 +2518,13 @@ errr term_nuke(term *t)
 
 
 	/* Nuke "displayed" */
-	term_win_nuke(t->old, w, h);
+	(void)term_win_nuke(t->old, w, h);
 
 	/* Kill "displayed" */
 	KILL(t->old, term_win);
 
 	/* Nuke "requested" */
-	term_win_nuke(t->scr, w, h);
+	(void)term_win_nuke(t->scr, w, h);
 
 	/* Kill "requested" */
 	KILL(t->scr, term_win);
@@ -2533,7 +2533,7 @@ errr term_nuke(term *t)
 	if (t->mem)
 	{
 		/* Nuke "memorized" */
-		term_win_nuke(t->mem, w, h);
+		(void)term_win_nuke(t->mem, w, h);
 
 		/* Kill "memorized" */
 		KILL(t->mem, term_win);
@@ -2543,7 +2543,7 @@ errr term_nuke(term *t)
 	if (t->tmp)
 	{
 		/* Nuke "temporary" */
-		term_win_nuke(t->tmp, w, h);
+		(void)term_win_nuke(t->tmp, w, h);
 
 		/* Kill "temporary" */
 		KILL(t->tmp, term_win);
@@ -2599,14 +2599,14 @@ errr term_init(term *t, int w, int h, int k)
 	MAKE(t->old, term_win);
 
 	/* Initialize "displayed" */
-	term_win_init(t->old, w, h);
+	(void)term_win_init(t->old, w, h);
 
 
 	/* Allocate "requested" */
 	MAKE(t->scr, term_win);
 
 	/* Initialize "requested" */
-	term_win_init(t->scr, w, h);
+	(void)term_win_init(t->scr, w, h);
 
 
 	/* Assume change */
