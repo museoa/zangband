@@ -175,8 +175,8 @@
 #define IDM_OPTIONS_SOUND		410
 #define IDM_OPTIONS_SAVER		420
 
-#define IDM_HELP_GENERAL		901
-#define IDM_HELP_SPOILERS		902
+#define IDM_HELP_CONTENTS       901
+
 
 
 /*
@@ -247,9 +247,10 @@
 
 /*
  * HTML-Help requires htmlhelp.h and htmlhelp.lib from Microsoft's
- * HTML Workshop < http://www.microsoft.com/workshop/author/htmlhelp/ >.
+ * HTML Workshop < http://msdn.microsoft.com/workshop/author/htmlhelp/ >.
  */
 /* #define HTML_HELP */
+
 #ifdef HTML_HELP
 #include <htmlhelp.h>
 #endif /* HTML_HELP */
@@ -2632,19 +2633,18 @@ static void setup_menus(void)
 	EnableMenuItem(hm, IDM_OPTIONS_OLD_GRAPHICS, MF_ENABLED);
 	/* Menu "Options", Item "Graphics" */
 	EnableMenuItem(hm, IDM_OPTIONS_NEW_GRAPHICS, MF_ENABLED);
-#endif
+#endif /* USE_GRAPHICS */
 
 #ifdef USE_SOUND
 	/* Menu "Options", Item "Sound" */
 	EnableMenuItem(hm, IDM_OPTIONS_SOUND, MF_ENABLED);
-#endif
+#endif /* USE_SOUND */
 
 #ifdef USE_SAVER
 	/* Menu "Options", Item "ScreenSaver" */
 	EnableMenuItem(hm, IDM_OPTIONS_SAVER,
 	               MF_BYCOMMAND | MF_ENABLED);
-#endif
-
+#endif /* USE_SAVER */
 }
 
 
@@ -3165,7 +3165,7 @@ static void process_menus(WORD wCmd)
 
 #endif
 
-		case IDM_HELP_GENERAL:
+		case IDM_HELP_CONTENTS:
 		{
 #ifdef HTML_HELP
 			char tmp[1024];
@@ -3183,40 +3183,7 @@ static void process_menus(WORD wCmd)
 #else /* HTML_HELP */
 			char buf[1024];
 			char tmp[1024];
-			path_build(tmp, 1024, ANGBAND_DIR_XTRA_HELP, "angband.hlp");
-			if (check_file(tmp))
-			{
-				sprintf(buf, "winhelp.exe %s", tmp);
-				WinExec(buf, SW_NORMAL);
-			}
-			else
-			{
-				plog_fmt("Cannot find help file: %s", tmp);
-				plog("Use the online help files instead.");
-			}
-			break;
-#endif /* HTML_HELP */
-		}
-
-		case IDM_HELP_SPOILERS:
-		{
-#ifdef HTML_HELP
-			char tmp[1024];
-			path_build(tmp, 1024, ANGBAND_DIR_XTRA_HELP, "zkb.chm");
-			if (check_file(tmp))
-			{
-				HtmlHelp(data[0].w, tmp, HH_DISPLAY_TOPIC, 0);
-			}
-			else
-			{
-				plog_fmt("Cannot find help file: %s", tmp);
-				plog("Use the online help files instead.");
-			}
-			break;
-#else /* HTML_HELP */
-			char buf[1024];
-			char tmp[1024];
-			path_build(tmp, 1024, ANGBAND_DIR_XTRA_HELP, "spoilers.hlp");
+			path_build(tmp, 1024, ANGBAND_DIR_XTRA_HELP, "zangband.hlp");
 			if (check_file(tmp))
 			{
 				sprintf(buf, "winhelp.exe %s", tmp);
