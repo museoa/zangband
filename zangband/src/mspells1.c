@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: mspells1.c */
 
 /* Purpose: Monster spells (attack player) */
@@ -814,29 +813,13 @@ bool make_attack_spell(int m_idx)
 	chance = (r_ptr->freq_inate + r_ptr->freq_spell) / 2;
 
 	/* Not allowed to cast spells */
-	if (!chance) return (FALSE);	
-	
+	if (!chance) return (FALSE);
+
 	/* Stop if player is dead or gone */
 	if (!alive || death) return (FALSE);
 
 	/* Stop if player is leaving */
 	if (p_ptr->leaving) return (FALSE);
-	
-	/* Calculate spell failure rate */
-	failrate = 25 - (rlev + 3) / 4;
-
-	/* Hack -- Stupid monsters will never fail (for jellies and such) */
-	if (r_ptr->flags2 & RF2_STUPID) failrate = 0;
-
-	/* Check for spell failure (inate attacks never fail) */
-	if ((thrown_spell >= 128) && (rand_int(100) < failrate))
-	{
-		/* Message */
-		msg_format("%^s tries to cast a spell, but fails.", m_name);
-
-		return (TRUE);
-	}
-
 
 	if (stupid_monsters)
 	{
@@ -863,9 +846,6 @@ bool make_attack_spell(int m_idx)
 		/* Check path */
 		if (!projectable(m_ptr->fy, m_ptr->fx, py, px)) return (FALSE);
 	}
-
-	/* Extract the monster level */
-	rlev = ((r_ptr->level >= 1) ? r_ptr->level : 1);
 
 	/* Extract the racial spell flags */
 	f4 = r_ptr->flags4;
@@ -943,6 +923,24 @@ bool make_attack_spell(int m_idx)
 
 	/* Abort if no spell was chosen */
 	if (!thrown_spell) return (FALSE);
+
+	/* Extract the monster level */
+	rlev = ((r_ptr->level >= 1) ? r_ptr->level : 1);
+
+	/* Calculate spell failure rate */
+	failrate = 25 - (rlev + 3) / 4;
+
+	/* Hack -- Stupid monsters will never fail (for jellies and such) */
+	if (r_ptr->flags2 & RF2_STUPID) failrate = 0;
+
+	/* Check for spell failure (inate attacks never fail) */
+	if ((thrown_spell >= 128) && (rand_int(100) < failrate))
+	{
+		/* Message */
+		msg_format("%^s tries to cast a spell, but fails.", m_name);
+
+		return (TRUE);
+	}
 
 	/* Cast the spell. */
 	switch (thrown_spell)
