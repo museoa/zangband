@@ -937,12 +937,12 @@ void lore_treasure(int m_idx, int num_item, int num_gold)
 
 void sanity_blast(monster_type *m_ptr, bool necro)
 {
-
 #if 0
 	/* This variable is only needed for the (disabled) 
 	insanity mutations */
 	bool happened = FALSE;
 #endif 
+
 	int power = 100;
 
 	if (!necro)
@@ -1054,18 +1054,13 @@ void sanity_blast(monster_type *m_ptr, bool necro)
 		{
 			(void)set_image(p_ptr->image + rand_int(250) + 150);
 		}
-		return;
 	}
 
 	/* Permanent stat drains *REMOVED* completely. They sucked. --ty */
-
 	else 
-
 	{
-
 		if (lose_all_info())
 			msg_print("You forget everything in your utmost terror!");
-		return;
 	}
 
 #if 0

@@ -378,7 +378,7 @@ extern monster_race *r_info;
 extern char *r_name;
 extern char *r_text;
 extern field_thaum *t_info;
-extern field_action *f_action;
+extern field_action_type *f_action;
 extern cptr ANGBAND_SYS;
 extern cptr ANGBAND_GRAF;
 extern cptr ANGBAND_DIR;
