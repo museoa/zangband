@@ -89,6 +89,9 @@ void reset_visuals(void)
 		process_pref_file("font.prf");
 	}
 
+	/* Reset the fake monochrome flag */
+	fake_monochrome = (!use_graphics || streq(ANGBAND_SYS, "ibm")) ? TRUE:FALSE;
+	
 	/* Fields have to notice the change of visuals. */
 	init_fields();
 }
