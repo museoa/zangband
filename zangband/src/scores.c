@@ -306,21 +306,18 @@ void display_scores_aux(int from, int to, int note, const high_score *score)
 			/* Dump the first line */
 			c_put_str(attr, out_val, 0, n*4 + 2);
 
-			/* Another line of info */
-			sprintf(out_val, "               Killed by %s on %s %d",
-			        the_score.how, "Dungeon Level", cdun);
-
-
 			/* Some people die outside of the dungeon */
-			if (!cdun)
+			if (cdun)
 			{
-				/* Died in town */
-				if (p_ptr->town_num)
-					sprintf(out_val, "               Killed by %s in the Town",
-					        the_score.how);
-				/* Died in the wilderness */
-				else
-					sprintf(out_val, "               Killed by %s in the Wilderness",
+				/* Another line of info */
+				sprintf(out_val, "               Killed by %s on %s %d",
+			     	   the_score.how, "Dungeon Level", cdun);
+			
+			}
+			else
+			{
+				/* Died outside */
+				sprintf(out_val, "               Killed by %s in the outside world.",
 					        the_score.how);
 			}
 

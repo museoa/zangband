@@ -924,7 +924,7 @@ static void wr_extra(void)
 	wr_u16b(p_ptr->exp_frac);
 	wr_s16b(p_ptr->lev);
 
-	wr_s16b(p_ptr->town_num); /* -KMW- */
+	wr_s16b(p_ptr->place_num);
 
 	/* Write arena and rewards information -KMW- */
 	wr_s16b(0);
@@ -1264,8 +1264,8 @@ static void save_wild_data(void)
 			/* Terrain */
 			wr_u16b(wild[j][i].done.wild);
 
-			/* Town / Dungeon / Specials */
-			wr_byte(wild[j][i].done.town);
+			/* Places */
+			wr_byte(wild[j][i].done.place);
 
 			/* Info flag */
 			wr_byte(wild[j][i].done.info);
@@ -1503,7 +1503,7 @@ static bool wr_savefile_new(void)
 		wr_byte(quest[i].type);
 		wr_byte(quest[i].item);
 		
-		wr_u16b(quest[i].town);
+		wr_u16b(quest[i].place);
 		wr_u16b(quest[i].shop);
 		wr_u16b(quest[i].reward);
 		
@@ -1520,7 +1520,7 @@ static bool wr_savefile_new(void)
 			
 			case QUEST_TYPE_GENERAL:
 			{
-				wr_u16b(quest[i].data.gen.town);
+				wr_u16b(quest[i].data.gen.place);
 				wr_u16b(quest[i].data.gen.shop);
 				wr_u16b(quest[i].data.gen.r_idx);
 				wr_u16b(quest[i].data.gen.cur_num);
@@ -1541,7 +1541,7 @@ static bool wr_savefile_new(void)
 			
 			case QUEST_TYPE_WILD:
 			{
-				wr_u16b(quest[i].data.wld.town);
+				wr_u16b(quest[i].data.wld.place);
 				wr_u16b(quest[i].data.wld.data);
 				wr_byte(quest[i].data.wld.depth);
 				break;
@@ -1627,45 +1627,47 @@ static bool wr_savefile_new(void)
 	/* Dump the town data */
 	for (i = 1; i < place_count; i++)
 	{
+		place_type *pl_ptr = &place[i];
+		
 		/* RNG seed */
-		wr_u32b(town[i].seed);
+		wr_u32b(pl_ptr->seed);
 
 		/* Number of stores */
-		wr_byte(town[i].numstores);
+		wr_byte(pl_ptr->numstores);
 
 		/* Type */
-		wr_u16b(town[i].type);
-		wr_byte(town[i].data);
+		wr_u16b(pl_ptr->type);
+		wr_byte(pl_ptr->data);
 		
 		/* Gates */
-		wr_byte(town[i].gates_x[0]);
-		wr_byte(town[i].gates_x[1]);
-		wr_byte(town[i].gates_x[2]);
-		wr_byte(town[i].gates_x[3]);
+		wr_byte(pl_ptr->gates_x[0]);
+		wr_byte(pl_ptr->gates_x[1]);
+		wr_byte(pl_ptr->gates_x[2]);
+		wr_byte(pl_ptr->gates_x[3]);
 		
-		wr_byte(town[i].gates_y[0]);
-		wr_byte(town[i].gates_y[1]);
-		wr_byte(town[i].gates_y[2]);
-		wr_byte(town[i].gates_y[3]);
+		wr_byte(pl_ptr->gates_y[0]);
+		wr_byte(pl_ptr->gates_y[1]);
+		wr_byte(pl_ptr->gates_y[2]);
+		wr_byte(pl_ptr->gates_y[3]);
 
 		/* Location */
-		wr_byte(town[i].x);
-		wr_byte(town[i].y);
+		wr_byte(pl_ptr->x);
+		wr_byte(pl_ptr->y);
 		
 		/* Size */
-		wr_byte(town[i].xsize);
-		wr_byte(town[i].ysize);
+		wr_byte(pl_ptr->xsize);
+		wr_byte(pl_ptr->ysize);
 		
-		wr_u16b(town[i].quest_num);
-		wr_byte(town[i].monst_type);
+		wr_u16b(pl_ptr->quest_num);
+		wr_byte(pl_ptr->monst_type);
 
 		/* Name */
-		wr_string(town[i].name);
+		wr_string(pl_ptr->name);
 
 		/* Dump the stores of all towns */
-		for (j = 0; j < town[i].numstores; j++)
+		for (j = 0; j < pl_ptr->numstores; j++)
 		{
-			wr_store(&town[i].store[j]);
+			wr_store(&pl_ptr->store[j]);
 		}
 	}
 

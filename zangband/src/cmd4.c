@@ -2818,10 +2818,19 @@ void do_cmd_feeling(void)
 	/* Verify the feeling */
 	if (dun_ptr->feeling > 10) dun_ptr->feeling = 10;
 
-	/* No useful feeling in town */
-	if (p_ptr->town_num && !p_ptr->depth)
+	if (p_ptr->place_num && !p_ptr->depth)
 	{
-		msg_print("Looks like a typical town.");
+		if (place[p_ptr->place_num].quest_num)
+		{
+			/* No useful feeling in a wilderness quest */
+			msg_print("Looks like a typical quest.");
+		}
+		else
+		{
+			/* No useful feeling in town */
+			msg_print("Looks like a typical town.");
+		}
+	
 		return;
 	}
 

@@ -72,7 +72,7 @@ struct maxima
 	u16b ws_max;	/* Max size for wilderness */
 	u16b wn_max;	/* Max size for wilderness tree nodes */
 	u16b wt_max;	/* Max size for wilderness gen types */
-	u16b wp_max;	/* Max towns */
+	u16b wp_max;	/* Max places in the wilderness */
 
 	u16b o_max;		/* Max size for "o_list[]" */
 	u16b m_max;		/* Max size for "m_list[]" */
@@ -585,7 +585,7 @@ struct wild_gen2_type
 	byte	hgt_map;
 	byte	pop_map;
 	byte	law_map;
-	byte	town;
+	byte	place;
 	byte	dummy;
 	byte	info;
 };
@@ -598,7 +598,7 @@ typedef struct wild_done_type wild_done_type;
 struct wild_done_type
 {
 	u16b	wild;
-	byte	town;
+	byte	place;
 	byte	info;
 	byte	mon_gen;
 	byte	mon_prob;
@@ -1061,7 +1061,7 @@ typedef struct quest_gen quest_gen;
 struct quest_gen
 {
 	/* Mail quests */
-	u16b town;	
+	u16b place;	
 	u16b shop;		/* Owner to bring item */
 	
 	/* Bounty quests */
@@ -1089,7 +1089,7 @@ typedef struct quest_wld quest_wld;
 struct quest_wld
 {
 	u16b refcount;			/* Refcount for wilderness code */
-	u16b town;				/* Equivalent "town number" */
+	u16b place;				/* Equivalent "place number" */
 	
 	u16b data;				/* Data so can choose completion */
 	byte depth;				/* Power of monsters */
@@ -1119,7 +1119,7 @@ struct quest_type
 
 	byte item;				/* Artificial quest item number */
 	
-	u16b town;				/* Town where given */
+	u16b place;				/* Town where given */
 	u16b shop;				/* Quest-giver */
 	u16b reward;			/* Reward level */
 	
@@ -1199,7 +1199,7 @@ struct player_race
 	s16b r_dev;			/* magic devices */
 	s16b r_sav;			/* saving throw */
 	s16b r_stl;			/* stealth */
-	s16b r_srh;			/* search ability */
+	s16b r_sns;			/* sensing ability */
 	s16b r_fos;			/* search frequency */
 	s16b r_thn;			/* combat (normal) */
 	s16b r_thb;			/* combat (shooting) */
@@ -1242,7 +1242,7 @@ struct player_class
 	s16b c_dev;			/* class magic devices */
 	s16b c_sav;			/* class saving throws */
 	s16b c_stl;			/* class stealth */
-	s16b c_srh;			/* class searching ability */
+	s16b c_sns;			/* class sensing ability */
 	s16b c_fos;			/* class searching frequency */
 	s16b c_thn;			/* class to hit (normal) */
 	s16b c_thb;			/* class to hit (bows) */
@@ -1251,7 +1251,7 @@ struct player_class
 	s16b x_dev;			/* extra magic devices */
 	s16b x_sav;			/* extra saving throws */
 	s16b x_stl;			/* extra stealth */
-	s16b x_srh;			/* extra searching ability */
+	s16b x_sns;			/* extra sensing ability */
 	s16b x_fos;			/* extra searching frequency */
 	s16b x_thn;			/* extra to hit (normal) */
 	s16b x_thb;			/* extra to hit (bows) */
@@ -1309,7 +1309,7 @@ struct player_type
 	
 	s32b au;			/* Current Gold */
 
-	s16b town_num;		/* Current town number */
+	s16b place_num;		/* Current place number in the wilderness */
 
 	s32b wilderness_x;	/* Coordinates in the wilderness */
 	s32b wilderness_y;
@@ -1565,7 +1565,7 @@ struct player_type
 	s16b skill_dev;		/* Skill: Magic Devices */
 	s16b skill_sav;		/* Skill: Saving throw */
 	s16b skill_stl;		/* Skill: Stealth factor */
-	s16b skill_srh;		/* Skill: Searching ability */
+	s16b skill_sns;		/* Skill: Sensing ability */
 	s16b skill_fos;		/* Skill: Searching frequency */
 	s16b skill_thn;		/* Skill: To hit (normal) */
 	s16b skill_thb;		/* Skill: To hit (shooting) */
@@ -1726,7 +1726,7 @@ struct place_type
 	u32b        seed;		/* Seed for RNG */
 	store_type	*store;		/* The stores[numstores] */
 	
-	byte 	    type;		/* Type of town / dungeon / special */
+	byte 	    type;		/* Type of place */
 	
 	byte        numstores;
 	u16b		quest_num;	/* Quest number if is special */

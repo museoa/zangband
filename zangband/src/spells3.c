@@ -690,7 +690,7 @@ void teleport_player_level(void)
 bool check_down_wild(void)
 {
 	/* Hack - no recalling in the middle of the wilderness */
-	if ((!p_ptr->depth) && (!p_ptr->town_num))
+	if ((!p_ptr->depth) && (!p_ptr->place_num))
 	{
 		msg_print("Nothing happens.");
 		return (FALSE);
@@ -703,9 +703,9 @@ bool check_down_wild(void)
 		int i;
 		
 		/* Look for stairs */
-		for (i = 0; i < town[p_ptr->town_num].numstores; i++)
+		for (i = 0; i < place[p_ptr->place_num].numstores; i++)
 		{
-			if (town[p_ptr->town_num].store[i].type == BUILD_STAIRS)
+			if (place[p_ptr->place_num].store[i].type == BUILD_STAIRS)
 			{
 				found = TRUE;
 				break;

@@ -520,7 +520,7 @@ u16b place_count;
 /*
  * Places in the wilderness [z_info->wp_max]
  */
-place_type *town;
+place_type *place;
 
 
 /*

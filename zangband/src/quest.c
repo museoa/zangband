@@ -66,7 +66,7 @@ static void quest_wipe(int q_idx)
 	q_ptr->item = 0;
 
 	/* No quest-giver */
-	q_ptr->town = 0;
+	q_ptr->place = 0;
 	q_ptr->shop = 0;
 		
 	/* No reward */
@@ -1179,6 +1179,7 @@ void do_cmd_knowledge_quests(void)
 	 !(r_info[I].flags7 & RF7_AQUATIC))
 
 
+#ifdef UNUSED_FUNC
 /*
  * Helper monster selection function
  */
@@ -1187,6 +1188,8 @@ static bool quest_aux_simple(int r_idx)
 	/* Okay */
 	return (quest_monster_okay(r_idx));
 }
+
+#endif /* UNUSED_FUNC */
 
 
 /*
@@ -1372,11 +1375,11 @@ void pick_wild_quest(int *xsize, int *ysize, byte *flags)
  * Look to see if a wilderness block is able to have
  * a quest overlayed on top.
  */
-bool quest_blank(int x, int y, int xsize, int ysize, int town_num, byte flags)
+bool quest_blank(int x, int y, int xsize, int ysize, int place_num, byte flags)
 {
 	int i, j;
 	wild_gen2_type *w_ptr;
-	place_type *pl_ptr = &town[town_num];
+	place_type *pl_ptr = &place[place_num];
 
 	/* Hack - Population check */
 	if (randint0(256) > wild[y][x].trans.pop_map) return (FALSE);
@@ -1394,8 +1397,8 @@ bool quest_blank(int x, int y, int xsize, int ysize, int town_num, byte flags)
 
 			w_ptr = &wild[j][i].trans;
 
-			/* No town/quest already */
-			if (w_ptr->town) return (FALSE);
+			/* No place already */
+			if (w_ptr->place) return (FALSE);
 
 			/* Picky quests require "normal terrain" */
 			if (flags & Q_GEN_PICKY)
@@ -1422,9 +1425,9 @@ bool quest_blank(int x, int y, int xsize, int ysize, int town_num, byte flags)
 	}
 
 	/* Look to see if another town / quest is too close */
-	for (i = 1; i < town_num; i++)
+	for (i = 1; i < place_num; i++)
 	{
-		if (distance(town[i].x, town[i].y, x, y) < QUEST_MIN_DIST)
+		if (distance(place[i].x, place[i].y, x, y) < QUEST_MIN_DIST)
 		{
 			/* Too close? */
 			return (FALSE);
@@ -1443,14 +1446,14 @@ bool quest_blank(int x, int y, int xsize, int ysize, int town_num, byte flags)
 /*
  * Create a quest in the wilderness
  */
-bool create_quest(int x, int y, int town_num)
+bool create_quest(int x, int y, int place_num)
 {
 	int i, j;
 	int q_num, qtype;
 	
 	wild_type *w_ptr = &wild[y][x];
 	
-	place_type *pl_ptr = &town[town_num];
+	place_type *pl_ptr = &place[place_num];
 	
 	quest_type *q_ptr;
 	
@@ -1492,7 +1495,7 @@ bool create_quest(int x, int y, int town_num)
 			 * Add quest to wilderness
 			 * Note: only 255 can be stored currently.
 			 */
-			w_ptr->trans.town = (byte)town_num;
+			w_ptr->trans.place = (byte)place_num;
 			
 			/* Increment "active block" counter */
 			pl_ptr->data++;
@@ -1516,7 +1519,7 @@ bool create_quest(int x, int y, int town_num)
 		 camp_types[qtype].name);
 	
 	/* Save the quest data */
-	q_ptr->data.wld.town = town_num;
+	q_ptr->data.wld.place = place_num;
 	q_ptr->data.wld.data = qtype;
 	/* q_ptr->data.wld.depth = (255 - w_ptr->trans.law_map) / 3; */
 	
@@ -1527,12 +1530,12 @@ bool create_quest(int x, int y, int town_num)
 /*
  * Draw the quest onto its region
  */
-void draw_quest(u16b town_num)
+void draw_quest(u16b place_num)
 {
 	int x, y, n;
 	int i, j;
 	
-	place_type *pl_ptr = &town[town_num];
+	place_type *pl_ptr = &place[place_num];
 	
 	wild_type *w_ptr = &wild[pl_ptr->y][pl_ptr->x];
 	
@@ -1562,7 +1565,7 @@ void draw_quest(u16b town_num)
 	Rand_quick = TRUE;
 
 	/* Hack -- Induce consistant quest layout */
-	Rand_value = town[town_num].seed;
+	Rand_value = place[place_num].seed;
 	
 	/* Hack - change to monster level of wilderness */
 	monster_level = w_ptr->done.mon_gen;

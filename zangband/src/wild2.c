@@ -168,8 +168,8 @@ static void place_player_start(s32b *x, s32b *y, u16b this_town)
 {
 	int tempx, tempy;
 	
-	tempx = (int) town[this_town].x + wild_stairs_x / 16;
-	tempy = (int) town[this_town].y + wild_stairs_y / 16;
+	tempx = (int) place[this_town].x + wild_stairs_x / 16;
+	tempy = (int) place[this_town].y + wild_stairs_y / 16;
 	
 	/* Get corner of visible region */
 	shift_in_bounds(&tempx, &tempy);
@@ -179,8 +179,8 @@ static void place_player_start(s32b *x, s32b *y, u16b this_town)
 	p_ptr->old_wild_y = tempy;
 	
 	/* Hack - Reset player position to be on the stairs in town */
-	*x = town[this_town].x * 16 + wild_stairs_x;
-	*y = town[this_town].y * 16 + wild_stairs_y;
+	*x = place[this_town].x * 16 + wild_stairs_x;
+	*y = place[this_town].y * 16 + wild_stairs_y;
 }
 
 
@@ -357,7 +357,7 @@ static u16b select_building(byte pop, byte magic, byte law, u16b *build,
 static void general_init(int town_num, int store_num, byte general_type)
 {
 	/* Activate that feature */
-	store_type *st_ptr = &town[town_num].store[store_num];
+	store_type *st_ptr = &place[town_num].store[store_num];
 
 	/* Set the type */
 	st_ptr->type = general_type;
@@ -528,10 +528,65 @@ static void fill_town(byte x, byte y)
 }
 
 
+/* Work out where the walls are */
+static void find_walls(void)
+{
+	int i, j, k, l;
+	
+	/* Copy the temp block to the town block */
+	for (i = 0; i < WILD_BLOCK_SIZE + 1; i++)
+	{
+		for (j = 0; j < WILD_BLOCK_SIZE + 1; j++)
+		{
+			if (temp_block[j][i] < WILD_BLOCK_SIZE * 128)
+			{
+				/* Outside the town */
+				temp_block[j][i] = 0;
+			}
+		}
+	}
+	
+	/* Find walls */
+	for (i = 0; i < WILD_BLOCK_SIZE; i++)
+	{
+		for (j = 0; j < WILD_BLOCK_SIZE; j++)
+		{
+			/* Is a "city block" */
+			if (temp_block[j][i])
+			{
+				/* Scan around */
+				for (k = -1; k <= 1; k++)
+				{
+					for (l = -1; l <= 1; l++)
+					{
+						/* In bounds? */
+						if ((i + k >= 0) && (i + k < WILD_BLOCK_SIZE) &&
+							(j + l >= 0) && (j + l < WILD_BLOCK_SIZE))
+						{
+							/* Is it outside? */
+							if (!temp_block[j + l][i + k])
+							{
+								/* Make a wall */
+								temp_block[j][i] = 1;
+							}
+						}
+						else
+						{
+							/* Make a wall */
+							temp_block[j][i] = 1;
+						}
+					}
+				}
+			}
+		}
+	}
+
+}
+
 /*
  * Driver function for the fill_town() routine
  */
-byte fill_town_driver(void)
+static byte fill_town_driver(void)
 {
 	/* Paranoia - middle square must be in the town */
 	if (!temp_block[WILD_BLOCK_SIZE / 2][WILD_BLOCK_SIZE / 2]) return (0);
@@ -545,13 +600,59 @@ byte fill_town_driver(void)
 	return (build_count);
 }
 
+/*
+ * Remove "islands" from cities.
+ *
+ * Check that the city is fully connected...
+ */
+static void remove_islands(void)
+{
+	int i, j, k, l;
+	bool city_block;
+	
+	/* Rescan walls to avoid "islands" */
+	for (i = 0; i < WILD_BLOCK_SIZE; i++)
+	{
+		for (j = 0; j < WILD_BLOCK_SIZE; j++)
+		{
+			/* Is a "wall block" */
+			if (temp_block[j][i] == 1)
+			{
+				city_block = FALSE;
+
+				/* Scan around */
+				for (k = -1; k <= 1; k++)
+				{
+					for (l = -1; l <= 1; l++)
+					{
+						/* In bounds? */
+						if ((i + k >= 0) && (i + k < WILD_BLOCK_SIZE) &&
+							(j + l >= 0) && (j + l < WILD_BLOCK_SIZE))
+						{
+							/* Is it a city block? */
+							if (temp_block[j + l][i + k] == 2)
+							{
+								/* We are next to a city */
+								city_block = TRUE;
+							}
+						}
+					}
+				}
+
+				/* No islands */
+				if (!city_block) temp_block[j][i] = 0;
+			}
+		}
+	}
+}
+
 
 /*
  * Create a city + contained stores and buildings
  */
 static bool create_city(int x, int y, int town_num)
 {
-	int i, j, k, l;
+	int i, j;
 
 	/* Hack - fix this XXX XXX */
 
@@ -565,11 +666,10 @@ static bool create_city(int x, int y, int town_num)
 	byte gate_value[MAX_GATES];
 	byte gate_num[MAX_GATES];
 
-	bool city_block;
 	u32b rng_seed_save;
 
 	wild_gen2_type *w_ptr;
-	place_type *pl_ptr = &town[town_num];
+	place_type *pl_ptr = &place[town_num];
 
 	u16b build[MAX_CITY_BUILD];
 	u16b build_list[WILD_BLOCK_SIZE * WILD_BLOCK_SIZE];
@@ -616,53 +716,8 @@ static bool create_city(int x, int y, int town_num)
 	set_temp_mid(WILD_BLOCK_SIZE * pop);
 	frac_block();
 
-	/* Copy the temp block to the town block */
-	for (i = 0; i < WILD_BLOCK_SIZE + 1; i++)
-	{
-		for (j = 0; j < WILD_BLOCK_SIZE + 1; j++)
-		{
-			if (temp_block[j][i] < WILD_BLOCK_SIZE * 128)
-			{
-				/* Outside the town */
-				temp_block[j][i] = 0;
-			}
-		}
-	}
-
-	/* Find walls */
-	for (i = 0; i < WILD_BLOCK_SIZE; i++)
-	{
-		for (j = 0; j < WILD_BLOCK_SIZE; j++)
-		{
-			/* Is a "city block" */
-			if (temp_block[j][i])
-			{
-				/* Scan around */
-				for (k = -1; k <= 1; k++)
-				{
-					for (l = -1; l <= 1; l++)
-					{
-						/* In bounds? */
-						if ((i + k >= 0) && (i + k < WILD_BLOCK_SIZE) &&
-							(j + l >= 0) && (j + l < WILD_BLOCK_SIZE))
-						{
-							/* Is it outside? */
-							if (!temp_block[j + l][i + k])
-							{
-								/* Make a wall */
-								temp_block[j][i] = 1;
-							}
-						}
-						else
-						{
-							/* Make a wall */
-							temp_block[j][i] = 1;
-						}
-					}
-				}
-			}
-		}
-	}
+	/* Locate the walls */
+	find_walls();
 
 	/* 'Fill' the town with buildings */
 	count = fill_town_driver();
@@ -670,41 +725,9 @@ static bool create_city(int x, int y, int town_num)
 	/* Too few squares??? */
 	if (count < 6) return (FALSE);
 
-	/* Rescan walls to avoid "islands" */
-	for (i = 0; i < WILD_BLOCK_SIZE; i++)
-	{
-		for (j = 0; j < WILD_BLOCK_SIZE; j++)
-		{
-			/* Is a "wall block" */
-			if (temp_block[j][i] == 1)
-			{
-				city_block = FALSE;
-
-				/* Scan around */
-				for (k = -1; k <= 1; k++)
-				{
-					for (l = -1; l <= 1; l++)
-					{
-						/* In bounds? */
-						if ((i + k >= 0) && (i + k < WILD_BLOCK_SIZE) &&
-							(j + l >= 0) && (j + l < WILD_BLOCK_SIZE))
-						{
-							/* Is it a city block? */
-							if (temp_block[j + l][i + k] == 2)
-							{
-								/* We are next to a city */
-								city_block = TRUE;
-							}
-						}
-					}
-				}
-
-				/* No islands */
-				if (!city_block) temp_block[j][i] = 0;
-			}
-		}
-	}
-
+	/* Make sure the city is self-connected properly */
+	remove_islands();
+	
 	/* Clear the gates locations */
 	(void)C_WIPE(pl_ptr->gates_x, MAX_GATES, byte);
 	(void)C_WIPE(pl_ptr->gates_y, MAX_GATES, byte);
@@ -737,7 +760,7 @@ static bool create_city(int x, int y, int town_num)
 				 * Add city to wilderness
 				 * Note: only 255 towns can be stored currently.
 				 */
-				w_ptr->town = (byte)town_num;
+				w_ptr->place = (byte)town_num;
 
 				/* Hack - make a flat area around the town */
 				w_ptr->info |= WILD_INFO_ROAD;
@@ -930,8 +953,8 @@ static bool town_blank(int x, int y, int xsize, int ysize, int town_num)
 
 			w_ptr = &wild[j][i].trans;
 
-			/* No town already */
-			if (w_ptr->town) return (FALSE);
+			/* No place already */
+			if (w_ptr->place) return (FALSE);
 
 			/* No water or lava or acid */
 			if (w_ptr->info & (WILD_INFO_WATER | WILD_INFO_LAVA | WILD_INFO_ACID))
@@ -946,7 +969,7 @@ static bool town_blank(int x, int y, int xsize, int ysize, int town_num)
 	/* Look to see if another town is too close */
 	for (i = 1; i < town_num; i++)
 	{
-		if (distance(town[i].x, town[i].y, x, y) < TOWN_MIN_DIST)
+		if (distance(place[i].x, place[i].y, x, y) < TOWN_MIN_DIST)
 		{
 			/* Too close? */
 			return (FALSE);
@@ -1210,7 +1233,7 @@ static void draw_building(byte type, byte x, byte y, u16b store, u16b town_num)
 	/* Hack - save the rng seed */
 	u32b rng_save_seed = Rand_value;
 
-	store_type *st_ptr = &town[town_num].store[store];
+	store_type *st_ptr = &place[town_num].store[store];
 
 	/* Hack, ignore building draw type for now */
 	(void) type;
@@ -1251,15 +1274,14 @@ static void draw_building(byte type, byte x, byte y, u16b store, u16b town_num)
 /* Actually draw the city in the region */
 static void draw_city(u16b town_num)
 {
-	int x, y, k, l;
+	int x, y;
 	int count = 0;
 	byte i, j;
 	byte magic;
 	u16b build;
 
-	bool city_block;
 
-	place_type *pl_ptr = &town[town_num];
+	place_type *pl_ptr = &place[town_num];
 		
 	/* Paranoia */
 	if (pl_ptr->region) quit("Town already has region during creation.");
@@ -1274,7 +1296,7 @@ static void draw_city(u16b town_num)
 	Rand_quick = TRUE;
 
 	/* Hack -- Induce consistant town layout */
-	Rand_value = town[town_num].seed;
+	Rand_value = place[town_num].seed;
 
 	/* Get value of "magic" level of buildings */
 	magic = (byte)randint0(256);
@@ -1284,94 +1306,17 @@ static void draw_city(u16b town_num)
 	set_temp_corner_val(WILD_BLOCK_SIZE * 64);
 	
 	/* Use population value saved in data. */
-	set_temp_mid((u16b)(WILD_BLOCK_SIZE * town[town_num].data));
+	set_temp_mid((u16b)(WILD_BLOCK_SIZE * place[town_num].data));
 	frac_block();
 
-	/* Find area outside the city */
-	for (i = 0; i < WILD_BLOCK_SIZE; i++)
-	{
-		for (j = 0; j < WILD_BLOCK_SIZE; j++)
-		{
-			if (temp_block[j][i] < WILD_BLOCK_SIZE * 128)
-			{
-				/* Outside the city */
-				temp_block[j][i] = 0;
-			}
-		}
-	}
-
-	/* Find walls */
-	for (i = 0; i < WILD_BLOCK_SIZE; i++)
-	{
-		for (j = 0; j < WILD_BLOCK_SIZE; j++)
-		{
-			/* Is a "city block" */
-			if (temp_block[j][i])
-			{
-				/* Scan around */
-				for (k = -1; k <= 1; k++)
-				{
-					for (l = -1; l <= 1; l++)
-					{
-						/* In bounds? */
-						if ((i + k >= 0) && (i + k < WILD_BLOCK_SIZE) &&
-							(j + l >= 0) && (j + l < WILD_BLOCK_SIZE))
-						{
-							/* Is it outside? */
-							if (!temp_block[j + l][i + k])
-							{
-								/* Make a wall */
-								temp_block[j][i] = 1;
-							}
-						}
-						else
-						{
-							/* Make a wall */
-							temp_block[j][i] = 1;
-						}
-					}
-				}
-			}
-		}
-	}
+	/* Locate the walls */
+	find_walls();
 
 	/* 'Fill' the town with buildings */
 	count = fill_town_driver();
-
-	/* Rescan walls to avoid "islands" */
-	for (i = 0; i < WILD_BLOCK_SIZE; i++)
-	{
-		for (j = 0; j < WILD_BLOCK_SIZE; j++)
-		{
-			/* Is a "wall block" */
-			if (temp_block[j][i] == 1)
-			{
-				city_block = FALSE;
-
-				/* Scan around */
-				for (k = -1; k <= 1; k++)
-				{
-					for (l = -1; l <= 1; l++)
-					{
-						/* In bounds? */
-						if ((i + k >= 0) && (i + k < WILD_BLOCK_SIZE) &&
-							(j + l >= 0) && (j + l < WILD_BLOCK_SIZE))
-						{
-							/* Is it a city block? */
-							if (temp_block[j + l][i + k] == 2)
-							{
-								/* We are next to a city */
-								city_block = TRUE;
-							}
-						}
-					}
-				}
-
-				/* No islands */
-				if (!city_block) temp_block[j][i] = 0;
-			}
-		}
-	}
+	
+	/* Make sure the city is self-connected properly */
+	remove_islands();
 
 	/* Draw walls */
 	for (i = 0; i < WILD_BLOCK_SIZE; i++)
@@ -1443,11 +1388,14 @@ static void draw_city(u16b town_num)
 
 
 /*
- * Initialise the town structures
+ * Initialise the place structures
  *
- * We have cities now...
+ * There are currently, cities and quests.
+ *
+ * Soon there will be:
+ * Ruins, barracks, towers etc.
  */
-void init_towns(int xx, int yy)
+bool init_places(int xx, int yy)
 {
 	int x, y, i;
 	bool first_try = TRUE;
@@ -1498,9 +1446,9 @@ void init_towns(int xx, int yy)
 				if (w_ptr->law_map > town_value)
 				{
 					/* Check to see if the town has stairs */
-					for (i = 0; i < town[place_count].numstores; i++)
+					for (i = 0; i < place[place_count].numstores; i++)
 					{
-						if (town[place_count].store[i].type == BUILD_STAIRS)
+						if (place[place_count].store[i].type == BUILD_STAIRS)
 						{
 							/* Save this town */
 							town_value = w_ptr->law_map;
@@ -1539,7 +1487,7 @@ void init_towns(int xx, int yy)
 	}
 	
 	/* Hack - the starting town uses pre-defined stores */
-	for (i = 0; i < town[best_town].numstores; i++)
+	for (i = 0; i < place[best_town].numstores; i++)
 	{
 		if (i == 0)
 		{
@@ -1557,6 +1505,9 @@ void init_towns(int xx, int yy)
 			general_init(best_town, i, BUILD_NONE);
 		}
 	}
+	
+	/* Paranoia */
+	if (!best_town) return (FALSE);
 
 	/* Build starting city / town */
 	draw_city(best_town);
@@ -1565,6 +1516,9 @@ void init_towns(int xx, int yy)
 	
 	/* Hack - No current region */
 	set_region(0);
+
+	/* Done */
+	return (TRUE);
 }
 
 
@@ -1598,7 +1552,7 @@ static void town_gen_hack(u16b town_num)
 			k = ((n <= 1) ? 0 : randint0(n));
 
 			/* Build that store at the proper location */
-			build_store(x, y, &town[town_num].store[rooms[k]]);
+			build_store(x, y, &place[town_num].store[rooms[k]]);
 
 			/* Shift the stores down, remove one store */
 			rooms[k] = rooms[--n];
@@ -1666,7 +1620,7 @@ void van_town_gen(u16b town_num)
 	
 	cave_type *c_ptr;
 	
-	place_type *pl_ptr = &town[town_num];
+	place_type *pl_ptr = &place[town_num];
 	
 	/* Paranoia */
 	if (pl_ptr->region) quit("Town already has region during creation.");
@@ -1693,7 +1647,7 @@ void van_town_gen(u16b town_num)
 	Rand_quick = TRUE;
 
 	/* Hack -- Induce consistant town layout */
-	Rand_value = town[town_num].seed;
+	Rand_value = place[town_num].seed;
 
 	/* Place some floors */
 	for (y = 1; y < TOWN_HGT - 1; y++)
@@ -1720,7 +1674,7 @@ void init_vanilla_town(void)
 {
 	int i, j;
 	
-	place_type *pl_ptr = &town[1];
+	place_type *pl_ptr = &place[1];
 
 	/* Only one town */
 	strcpy(pl_ptr->name, "Town");
@@ -1733,7 +1687,7 @@ void init_vanilla_town(void)
 	pl_ptr->ysize = V_TOWN_BLOCK_HGT / WILD_BLOCK_SIZE;
 
 	/* Allocate the stores */
-	C_MAKE(town[1].store, MAX_STORES, store_type);
+	C_MAKE(place[1].store, MAX_STORES, store_type);
 
 	/* Init the stores */
 	for (i = 0; i < MAX_STORES; i++)
@@ -1747,7 +1701,7 @@ void init_vanilla_town(void)
 	{
 		for (j = pl_ptr->y; j < pl_ptr->y + pl_ptr->ysize; j++)
 		{
-			wild[j][i].done.town = 1;
+			wild[j][i].done.place = 1;
 		}
 	}
 
@@ -1765,15 +1719,15 @@ void init_vanilla_town(void)
 
 
 /*
- * Generate the selected town
+ * Generate the selected place
  */
-static void town_gen(u16b town_num)
+static void place_gen(u16b place_num)
 {
-	switch(town[town_num].type)
+	switch(place[place_num].type)
 	{
-		case TOWN_OLD: van_town_gen(town_num); break;
-		case TOWN_FRACT: draw_city(town_num); break;
-		case TOWN_QUEST: draw_quest(town_num); break;
+		case TOWN_OLD: van_town_gen(place_num); break;
+		case TOWN_FRACT: draw_city(place_num); break;
+		case TOWN_QUEST: draw_quest(place_num); break;
 		default: quit("Unknown town/quest type in wilderness");
 	}
 	
@@ -1786,7 +1740,7 @@ static void town_gen(u16b town_num)
  * Overlay the town block
  * If the town is not built correctly, build it
  */
-static void overlay_town(int x, int y, u16b w_town, blk_ptr block_ptr)
+static void overlay_place(int x, int y, u16b w_place, blk_ptr block_ptr)
 {
 	int i, j, x1, y1, x2, y2;
 
@@ -1796,21 +1750,21 @@ static void overlay_town(int x, int y, u16b w_town, blk_ptr block_ptr)
 	int level = wild[y][x].done.mon_gen;
 	
 	cave_type *c_ptr;
-	place_type *pl_ptr = &town[w_town];
+	place_type *pl_ptr = &place[w_place];
 	
-	/* Check that town/quest region exists */
+	/* Check that place region exists */
 	if (!pl_ptr->region)
 	{
-		/* Create the town/quest */
-		town_gen(w_town);
+		/* Create the place */
+		place_gen(w_place);
 	}
 	
 	/* Paranoia */
 	if (!pl_ptr->region) quit("Could not get a region for the town/quest");
 
 	/* Find block to copy */
-	x1 = (x - town[w_town].x) * WILD_BLOCK_SIZE;
-	y1 = (y - town[w_town].y) * WILD_BLOCK_SIZE;
+	x1 = (x - place[w_place].x) * WILD_BLOCK_SIZE;
+	y1 = (y - place[w_place].y) * WILD_BLOCK_SIZE;
 
 	/* copy 16x16 block from the region */
 	for (j = 0; j < WILD_BLOCK_SIZE; j++)
@@ -3047,7 +3001,7 @@ static void light_dark_block(int x, int y)
  */
 static void gen_block(int x, int y)
 {
-	u16b w_town, w_type;
+	u16b w_place, w_type;
 	blk_ptr block_ptr = wild_grid[y][x];
 
 	/* Hack -- Use the "simple" RNG */
@@ -3125,17 +3079,17 @@ static void gen_block(int x, int y)
 	/* Hack -- Use the "complex" RNG */
 	Rand_quick = FALSE;
 	
-	/* Overlay town */
-	w_town = wild[y][x].done.town;
+	/* Overlay place */
+	w_place = wild[y][x].done.place;
 
-	/* Is there a town? */
-	if (w_town)
+	/* Is there a place? */
+	if (w_place)
 	{
-		/* overlay town/quest on wilderness */
-		overlay_town(x, y, w_town, block_ptr);
+		/* overlay place on wilderness */
+		overlay_place(x, y, w_place, block_ptr);
 
 		/* Paranoia */
-		if (!town[w_town].region) quit("Unallocated town region");
+		if (!place[w_place].region) quit("Unallocated place region");
 	}
 
 	/* Day / Night - lighten or darken the new block */
@@ -3285,7 +3239,7 @@ static void del_block(int x, int y)
 	int m_idx;
 	
 	wild_type *w_ptr = &wild[y][x];
-	place_type *pl_ptr = &town[w_ptr->done.town];
+	place_type *pl_ptr = &place[w_ptr->done.place];
 	
 	if (!wild_refcount[y][x]) quit("Dead wilderness cache!");
 
@@ -3295,8 +3249,8 @@ static void del_block(int x, int y)
 	/* Don't do anything if someone else is here */
 	if (wild_refcount[y][x]) return;
 	
-	/* Is there a town? */
-	if (w_ptr->done.town)
+	/* Is there a place? */
+	if (w_ptr->done.place)
 	{
 		/* Decrease refcount region */
 		pl_ptr->region = unref_region(pl_ptr->region);
@@ -3351,7 +3305,7 @@ static void del_block(int x, int y)
  */
 static void allocate_block(int x, int y)
 {
-	byte town_num = wild[y][x].done.town;
+	byte place_num = wild[y][x].done.place;
 	
 	/* Increment refcount */
 	wild_refcount[y][x]++;
@@ -3368,10 +3322,10 @@ static void allocate_block(int x, int y)
 		/* Generate the block */
 		gen_block(x, y);
 		
-		if (town_num)
+		if (place_num)
 		{
 			/* Increase refcount for region */
-			incref_region(town[town_num].region);
+			incref_region(place[place_num].region);
 		}
 	}
 }
@@ -3421,10 +3375,10 @@ void move_wild(void)
 	/* The player sees the wilderness block he is on. */
 	wild[y][x].done.info |= WILD_INFO_SEEN;
 	
-	/* Hack - set town */
-	p_ptr->town_num = wild[y][x].done.town;
+	/* Hack - set place */
+	p_ptr->place_num = wild[y][x].done.place;
 	
-	pl_ptr = &town[p_ptr->town_num];
+	pl_ptr = &place[p_ptr->place_num];
 	
 	/* Check for wilderness quests */
 	if (pl_ptr->quest_num)
@@ -3435,7 +3389,7 @@ void move_wild(void)
 		if (q_ptr->x_type == QX_WILD_ENTER)
 		{
 			/* Remove town block from wilderness */
-			wild[y][x].done.town = 0;
+			wild[y][x].done.place = 0;
 			
 			/* Decrement active block counter */
 			pl_ptr->data--;

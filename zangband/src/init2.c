@@ -1091,7 +1091,7 @@ static errr init_other(void)
 	C_MAKE(store_cache, STORE_CACHE_AMNT, store_type*);
 
 	/* Allocate the towns */
-	C_MAKE(town, z_info->wp_max, place_type);
+	C_MAKE(place, z_info->wp_max, place_type);
 	
 	
 	/*** Pre-allocate space for the "format()" buffer ***/
@@ -1514,7 +1514,7 @@ void cleanup_angband(void)
 	FREE(alloc_kind_table);
 
 	/* Free the towns */
-	FREE(town);
+	FREE(place);
 
 	/* Free the stores */
 	FREE(store_cache);

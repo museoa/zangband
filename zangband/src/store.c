@@ -3400,7 +3400,7 @@ void do_cmd_store(field_type *f1_ptr)
 	int i;
 	int store_top;
 	
-	place_type *pl_ptr = &town[p_ptr->town_num];
+	place_type *pl_ptr = &place[p_ptr->place_num];
 	
 	/* Get the store the player is on */
 	for (i = 0; i < pl_ptr->numstores; i++)
@@ -3684,7 +3684,7 @@ void do_cmd_store(field_type *f1_ptr)
 void store_init(int town_num, int store_num, byte store_type)
 {
 	/* Activate that store */
-	st_ptr = &town[town_num].store[store_num];
+	st_ptr = &place[town_num].store[store_num];
 
 	/* Pick an owner */
 	st_ptr->owner = (byte)randint0(MAX_OWNERS);

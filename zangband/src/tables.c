@@ -1783,7 +1783,7 @@ player_sex sex_info[MAX_SEXES] =
  *
  *      Title,
  *      {STR,INT,WIS,DEX,CON,CHR},
- *      r_dis, r_dev, r_sav, r_stl, r_srh, r_fos, r_thn, r_thb,
+ *      r_dis, r_dev, r_sav, r_stl, r_sns, r_fos, r_thn, r_thb,
  *      hitdie, exp base,
  *      Age (Base, Mod),
  *      Male (Hgt, Wgt),
@@ -2142,8 +2142,8 @@ player_race race_info[MAX_RACES] =
  *
  *      Title,
  *      {STR,INT,WIS,DEX,CON,CHR},
- *      c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
- *      x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
+ *      c_dis, c_dev, c_sav, c_stl, c_sns, c_fos, c_thn, c_thb,
+ *      x_dis, x_dev, x_sav, x_stl, x_sns, x_fos, x_thn, x_thb,
  *      HD, Exp, pet_upkeep_div
  */
 player_class class_info[MAX_CLASS] =
@@ -2215,7 +2215,7 @@ player_class class_info[MAX_CLASS] =
 	{
 		"Monk",
 		{ 2, -1, 1, 3, 2, 1},
-		45, 32, 28, 5, 32, 24, 12, 14,
+		45, 32, 28, 5, 16, 24, 12, 14,
 		15, 11, 10, 0,  0,  0, 30, 25,
 		6, 40, 20
 	},

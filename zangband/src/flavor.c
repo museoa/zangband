@@ -16,11 +16,11 @@
 /*
  * Max sizes of the following arrays
  */
-#define MAX_ROCKS      56       /* Used with rings (min 38) */
-#define MAX_AMULETS    17       /* Used with amulets (min 13) */
+#define MAX_ROCKS      56       /* Used with rings (min 51) */
+#define MAX_AMULETS    17       /* Used with amulets (min 16) */
 #define MAX_WOODS      32       /* Used with staffs (min 30) */
-#define MAX_METALS     39       /* Used with wands/rods (min 29/28) */
-#define MAX_COLORS     66       /* Used with potions (min 60) */
+#define MAX_METALS     39       /* Used with wands/rods (min 30/29) */
+#define MAX_COLORS     66       /* Used with potions (min 64) */
 #define MAX_SHROOM     20       /* Used with mushrooms (min 20) */
 #define MAX_TITLES     54       /* Used with scrolls (min 48) */
 #define MAX_SYLLABLES 164       /* Used with scrolls (see below) */
@@ -96,7 +96,7 @@ static cptr staff_adj[MAX_WOODS] =
 	"Maple", "Mulberry", "Oak", "Pine", "Redwood",
 	"Rosewood", "Spruce", "Sycamore", "Teak", "Walnut",
 	"Mistletoe", "Hawthorn", "Bamboo", "Silver", "Runed",
-	"Golden", "Ashen"/*,"Gnarled","Ivory","Willow"*/
+	"Golden", "Ashen"/*,"Gnarled","Ivory","Sandlewood"*/
 };
 
 static byte staff_col[MAX_WOODS] =

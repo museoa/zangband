@@ -837,9 +837,9 @@ static void rd_lore(int r_idx)
 /*
  * Read a store
  */
-static void rd_store(int town_number, int store_number)
+static void rd_store(int town_num, int store_num)
 {
-	store_type *st_ptr = &town[town_number].store[store_number];
+	store_type *st_ptr = &place[town_num].store[store_num];
 
 	int j;
 
@@ -867,7 +867,7 @@ static void rd_store(int town_number, int store_number)
 	
 	
 	/* Hack - Initialise the store (even if not really a store) */
-	store_init(town_number, store_number, type);
+	store_init(town_num, store_num, type);
 
 	
 	/* Restore the saved parameters */
@@ -1183,7 +1183,7 @@ static void rd_extra(void)
 	/* Current version */
 	if (!z_older_than(2, 1, 3))
 	{
-		rd_s16b(&p_ptr->town_num);
+		rd_s16b(&p_ptr->place_num);
 
 		/* Read arena and rewards information */
 		strip_bytes(12); /* oops */
@@ -1197,7 +1197,7 @@ static void rd_extra(void)
 	{
 		/* Town index */
 		rd_s16b(&tmp16s);
-		p_ptr->town_num = 1;
+		p_ptr->place_num = 1;
 
 		strip_bytes(8); /* oops */
 
@@ -1210,7 +1210,7 @@ static void rd_extra(void)
 	}
 	else /* 2.1.0 or older */
 	{
-		p_ptr->town_num = 1;
+		p_ptr->place_num = 1;
 	}
 
 	rd_s16b(&p_ptr->mhp);
@@ -2006,9 +2006,9 @@ static void load_wild_data(void)
 				/* Terrain */
 				rd_u16b(&wild[j][i].done.wild);
 
-				/* Town / Dungeon / Specials */
+				/* Places */
 				rd_u16b(&tmp_u16b);
-				wild[j][i].done.town = (byte)tmp_u16b;
+				wild[j][i].done.place = (byte)tmp_u16b;
 
 				/* Info flag */
 				rd_byte(&wild[j][i].done.info);
@@ -2024,8 +2024,8 @@ static void load_wild_data(void)
 				/* Terrain */
 				rd_u16b(&wild[j][i].done.wild);
 
-				/* Town / Dungeon / Specials */
-				rd_byte(&wild[j][i].done.town);
+				/* Places */
+				rd_byte(&wild[j][i].done.place);
 
 				/* Info flag */
 				rd_byte(&wild[j][i].done.info);
@@ -2623,7 +2623,7 @@ static void rd_quests(int max_quests)
 		rd_byte(&q_ptr->type);
 		rd_byte(&q_ptr->item);
 		
-		rd_u16b(&q_ptr->town);
+		rd_u16b(&q_ptr->place);
 		rd_u16b(&q_ptr->shop);
 		rd_u16b(&q_ptr->reward);
 		
@@ -2642,7 +2642,7 @@ static void rd_quests(int max_quests)
 			/* General quests */
 			case QUEST_TYPE_GENERAL:
 			{
-				rd_u16b(&q_ptr->data.gen.town);
+				rd_u16b(&q_ptr->data.gen.place);
 				rd_u16b(&q_ptr->data.gen.shop);
 				rd_u16b(&q_ptr->data.gen.r_idx);
 				rd_u16b(&q_ptr->data.gen.cur_num);
@@ -2665,7 +2665,7 @@ static void rd_quests(int max_quests)
 			/* Wilderness quests */
 			case QUEST_TYPE_WILD:
 			{
-				rd_u16b(&q_ptr->data.wld.town);
+				rd_u16b(&q_ptr->data.wld.place);
 				rd_u16b(&q_ptr->data.wld.data);
 				rd_byte(&q_ptr->data.wld.depth);
 				break;
@@ -3154,10 +3154,10 @@ static errr rd_savefile_new_aux(void)
 		
 		for (i = 1; i < place_count; i++)
 		{
-			town[i].numstores = tmp16u;
+			place[i].numstores = tmp16u;
 		
 			/* Allocate the stores */
-			C_MAKE(town[i].store, town[i].numstores, store_type);
+			C_MAKE(place[i].store, place[i].numstores, store_type);
 			
 			/* HACK - ignore the empty towns */
 			if (z_older_than(2, 2, 3) && (i >= 6))
@@ -3182,55 +3182,57 @@ static errr rd_savefile_new_aux(void)
 		/* Get the town data */
 		for (i = 1; i < place_count; i++)
 		{
+			place_type *pl_ptr = &place[i];
+			
 			/* RNG seed */
-			rd_u32b(&town[i].seed);
+			rd_u32b(&pl_ptr->seed);
 
 			/* Number of stores */
-			rd_byte(&town[i].numstores);
+			rd_byte(&pl_ptr->numstores);
 
 			/* Type */
 			rd_u16b(&tmp16u);
 			
 			/* Hack.... used to be a u16b, but only ever used a bytes worth */
-			town[i].type = (byte) tmp16u;
+			pl_ptr->type = (byte) tmp16u;
 			
 			if (sf_version > 21)
 			{
-				rd_byte(&town[i].data);
+				rd_byte(&pl_ptr->data);
 			}
 
 			/* Gates */
 			if (sf_version > 22)
 			{
-				rd_byte(&town[i].gates_x[0]);
-				rd_byte(&town[i].gates_x[1]);
-				rd_byte(&town[i].gates_x[2]);
-				rd_byte(&town[i].gates_x[3]);
+				rd_byte(&pl_ptr->gates_x[0]);
+				rd_byte(&pl_ptr->gates_x[1]);
+				rd_byte(&pl_ptr->gates_x[2]);
+				rd_byte(&pl_ptr->gates_x[3]);
 				
-				rd_byte(&town[i].gates_y[0]);
-				rd_byte(&town[i].gates_y[1]);
-				rd_byte(&town[i].gates_y[2]);
-				rd_byte(&town[i].gates_y[3]);
+				rd_byte(&pl_ptr->gates_y[0]);
+				rd_byte(&pl_ptr->gates_y[1]);
+				rd_byte(&pl_ptr->gates_y[2]);
+				rd_byte(&pl_ptr->gates_y[3]);
 			}
 
 			/* Locatation */
-			rd_byte(&town[i].x);
-			rd_byte(&town[i].y);
+			rd_byte(&pl_ptr->x);
+			rd_byte(&pl_ptr->y);
 				
 			/* Size */
 			if (sf_version > 29)
 			{
-				rd_byte(&town[i].xsize);
-				rd_byte(&town[i].ysize);
+				rd_byte(&pl_ptr->xsize);
+				rd_byte(&pl_ptr->ysize);
 				
-				rd_u16b(&town[i].quest_num);
-				rd_byte(&town[i].monst_type);
+				rd_u16b(&pl_ptr->quest_num);
+				rd_byte(&pl_ptr->monst_type);
 			}
 			else
 			{
 				/* Need to create town size as default */
-				town[i].xsize = 8;
-				town[i].ysize = 8;
+				pl_ptr->xsize = 8;
+				pl_ptr->ysize = 8;
 			}
 
 			/* Name */
@@ -3243,23 +3245,23 @@ static errr rd_savefile_new_aux(void)
 				/* Get a new name */
 				if (vanilla_town)
 				{
-					strcpy(town[i].name, "Town");
+					strcpy(pl_ptr->name, "Town");
 				}
 				else
 				{
-					select_town_name(town[i].name, town[i].data);
+					select_town_name(pl_ptr->name, pl_ptr->data);
 				}
 			}
 			else
 			{
-				rd_string(town[i].name, T_NAME_LEN);
+				rd_string(pl_ptr->name, T_NAME_LEN);
 			}
 			
 			/* Allocate the stores */
-			C_MAKE(town[i].store, town[i].numstores, store_type);
+			C_MAKE(pl_ptr->store, pl_ptr->numstores, store_type);
 
 			/* Get the stores of all towns */
-			for (j = 0; j < town[i].numstores; j++)
+			for (j = 0; j < pl_ptr->numstores; j++)
 			{
 				rd_store(i, j);
 			}

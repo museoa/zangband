@@ -163,7 +163,7 @@ struct quest_aux_type
 
 /* wild1.c */
 extern void init_vanilla_town(void);
-extern void init_towns(int xx, int yy);
+extern bool init_places(int xx, int yy);
 extern void clear_temp_block(void);
 extern void set_temp_corner_val(u16b val);
 extern void set_temp_mid(u16b val);
@@ -171,7 +171,7 @@ extern void frac_block(void);
 
 /* quest.c */
 extern void pick_wild_quest(int *xsize, int *ysize, byte *flags);
-extern bool quest_blank(int x, int y, int xsize, int ysize, int town_num,
+extern bool quest_blank(int x, int y, int xsize, int ysize, int place_num,
 	 byte flags);
-extern bool create_quest(int x, int y, int town_num);
-extern void draw_quest(u16b town_num);
+extern bool create_quest(int x, int y, int place_num);
+extern void draw_quest(u16b place_num);

@@ -118,12 +118,15 @@ static byte value_check_aux2(const object_type *o_ptr)
  */
 static void sense_inventory(void)
 {
-	int         i;
-	int         plev = p_ptr->lev;
-	bool        heavy = FALSE;
-	byte        feel;
+	int i;
+	int plev = p_ptr->lev;
+	bool heavy;
+	byte feel;
+	
 	object_type *o_ptr;
 	char        o_name[256];
+	
+	long difficulty;
 
 
 	/*** Check for "sensing" ***/
@@ -136,10 +139,8 @@ static void sense_inventory(void)
 	{
 		case CLASS_WARRIOR:
 		{
-			/* Good sensing */
-			if (!one_in_(9000L / (plev * plev + 40))) return;
-
-			/* Heavy sensing */
+			/* Good (heavy) sensing */
+			difficulty = 9000L;
 			heavy = TRUE;
 
 			/* Done */
@@ -150,7 +151,8 @@ static void sense_inventory(void)
 		case CLASS_HIGH_MAGE:
 		{
 			/* Very bad (light) sensing */
-			if (!one_in_(240000L / (plev + 5))) return;
+			difficulty = 240000L;
+			heavy = FALSE;
 
 			/* Done */
 			break;
@@ -159,7 +161,8 @@ static void sense_inventory(void)
 		case CLASS_PRIEST:
 		{
 			/* Good (light) sensing */
-			if (!one_in_(10000L / (plev * plev + 40))) return;
+			difficulty = 10000L;
+			heavy = FALSE;
 
 			/* Done */
 			break;
@@ -168,9 +171,7 @@ static void sense_inventory(void)
 		case CLASS_ROGUE:
 		{
 			/* Okay sensing */
-			if (!one_in_(20000L / (plev * plev + 40))) return;
-
-			/* Heavy sensing */
+			difficulty = 20000L;
 			heavy = TRUE;
 
 			/* Done */
@@ -179,10 +180,8 @@ static void sense_inventory(void)
 
 		case CLASS_RANGER:
 		{
-			/* Bad sensing */
-			if (!one_in_(95000L / (plev * plev + 40))) return;
-
-			/* Changed! */
+			/* Bad (heavy) sensing */
+			difficulty = 95000L;
 			heavy = TRUE;
 
 			/* Done */
@@ -191,10 +190,8 @@ static void sense_inventory(void)
 
 		case CLASS_PALADIN:
 		{
-			/* Bad sensing */
-			if (!one_in_(77777L / (plev * plev + 40))) return;
-
-			/* Heavy sensing */
+			/* Bad (heavy) sensing */
+			difficulty = 77777L;
 			heavy = TRUE;
 
 			/* Done */
@@ -204,7 +201,8 @@ static void sense_inventory(void)
 		case CLASS_WARRIOR_MAGE:
 		{
 			/* Bad sensing */
-			if (!one_in_(75000L / (plev * plev + 40))) return;
+			difficulty = 75000L;
+			heavy = FALSE;
 
 			/* Done */
 			break;
@@ -213,7 +211,8 @@ static void sense_inventory(void)
 		case CLASS_MINDCRAFTER:
 		{
 			/* Bad sensing */
-			if (!one_in_(55000L / (plev * plev + 40))) return;
+			difficulty = 55000L;
+			heavy = FALSE;
 
 			/* Done */
 			break;
@@ -221,10 +220,8 @@ static void sense_inventory(void)
 
 		case CLASS_CHAOS_WARRIOR:
 		{
-			/* Bad sensing */
-			if (!one_in_(80000L / (plev * plev + 40))) return;
-
-			/* Changed! */
+			/* Bad (heavy) sensing */
+			difficulty = 80000L;
 			heavy = TRUE;
 
 			/* Done */
@@ -234,12 +231,35 @@ static void sense_inventory(void)
 		case CLASS_MONK:
 		{
 			/* Okay sensing */
-			if (!one_in_(20000L / (plev * plev + 40))) return;
+			difficulty = 20000L;
+			heavy = FALSE;
 
 			/* Done */
 			break;
 		}
+		
+		default:
+		{
+			/* Paranoia */
+			difficulty = 0;
+			heavy = FALSE;
+		}
 	}
+	
+	/*
+	 * Scale difficulty depending on sensing ability 
+	 * This can be affected by objects.
+	 */
+	difficulty /= (p_ptr->skill_sns > 0 ? p_ptr->skill_sns : 1);
+	
+	/* Rescale larger by a facter of 25 */
+	difficulty *= 25;
+	
+	/* Sensing gets better as you get more experienced */
+	difficulty /= plev * plev + 40;
+	
+	/* Does it work? */
+	if (!(one_in_(difficulty))) return;
 
 
 	/*** Sense everything ***/

@@ -489,7 +489,7 @@ void search(void)
 
 
 	/* Start with base search ability */
-	chance = p_ptr->skill_srh;
+	chance = p_ptr->skill_sns;
 
 	/* Penalize various conditions */
 	if (p_ptr->blind || no_lite()) chance = chance / 10;

@@ -657,10 +657,17 @@ static void prt_depth(void)
 
 	if (!p_ptr->depth)
 	{
-		if (p_ptr->town_num)
+		if (p_ptr->place_num)
 		{
-			strncpy(depths, town[p_ptr->town_num].name, T_NAME_LEN);
-			depths[T_NAME_LEN - 1] = '\0';
+			if (place[p_ptr->place_num].quest_num)
+			{
+				strcpy(depths, "Quest");
+			}
+			else
+			{
+				strncpy(depths, place[p_ptr->place_num].name, T_NAME_LEN);
+				depths[T_NAME_LEN - 1] = '\0';
+			}
 		}
 		else
 			strcpy(depths, "Wilderness");
@@ -2522,8 +2529,8 @@ static void calc_bonuses(void)
 	/* Base skill -- stealth */
 	p_ptr->skill_stl = rp_ptr->r_stl + cp_ptr->c_stl;
 
-	/* Base skill -- searching ability */
-	p_ptr->skill_srh = rp_ptr->r_srh + cp_ptr->c_srh;
+	/* Base skill -- sensing ability */
+	p_ptr->skill_sns = rp_ptr->r_sns + cp_ptr->c_sns;
 
 	/* Base skill -- searching frequency */
 	p_ptr->skill_fos = rp_ptr->r_fos + cp_ptr->c_fos;
@@ -2800,8 +2807,8 @@ static void calc_bonuses(void)
 		/* Affect stealth */
 		if (f1 & (TR1_STEALTH)) p_ptr->skill_stl += o_ptr->pval;
 
-		/* Affect searching ability (factor of five) */
-		if (f1 & (TR1_SEARCH)) p_ptr->skill_srh += (o_ptr->pval * 5);
+		/* Affect sensing ability (factor of five) */
+		if (f1 & (TR1_SEARCH)) p_ptr->skill_sns += (o_ptr->pval * 5);
 
 		/* Affect searching frequency (factor of five) */
 		if (f1 & (TR1_SEARCH)) p_ptr->skill_fos += (o_ptr->pval * 5);
@@ -3494,8 +3501,8 @@ static void calc_bonuses(void)
 	/* Affect Skill -- stealth (Level, by Class) */
 	p_ptr->skill_stl += (cp_ptr->x_stl * p_ptr->lev / 10);
 
-	/* Affect Skill -- search ability (Level, by Class) */
-	p_ptr->skill_srh += (cp_ptr->x_srh * p_ptr->lev / 10);
+	/* Affect Skill -- sensing ability (Level, by Class) */
+	p_ptr->skill_sns += (cp_ptr->x_sns * p_ptr->lev / 10);
 
 	/* Affect Skill -- search frequency (Level, by Class) */
 	p_ptr->skill_fos += (cp_ptr->x_fos * p_ptr->lev / 10);

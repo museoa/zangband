@@ -1904,7 +1904,7 @@ void do_cmd_bldg(field_type *f_ptr)
 	store_type   *b_ptr;
 	bool	leave_build = FALSE;
 
-	place_type	*pl_ptr = &town[p_ptr->town_num];
+	place_type	*pl_ptr = &place[p_ptr->place_num];
 	
 	/* Get the building the player is on */
 	for (i = 0; i < pl_ptr->numstores; i++)
@@ -2017,7 +2017,7 @@ void do_cmd_bldg(field_type *f_ptr)
 void build_init(int town_num, int build_num, byte build_type)
 {
 	/* Activate that building */
-	store_type *st_ptr = &town[town_num].store[build_num];
+	store_type *st_ptr = &place[town_num].store[build_num];
 
 	/* Pick an owner */
 	st_ptr->owner = (byte)randint0(MAX_B_OWN);

@@ -1420,7 +1420,7 @@ static int monk_avg_damage[PY_MAX_LEVEL+1] =
 static void display_player_abilities(void)
 {
 	int         tmp, damdice, damsides, dambonus, blows;
-	int			xthn, xthb, xfos, xsrh;
+	int			xthn, xthb, xfos, xsns;
 	int			xdis, xdev, xsav, xstl;
 	char		desc[20];
 	int         muta_att = 0;
@@ -1479,7 +1479,7 @@ static void display_player_abilities(void)
 	xdev = p_ptr->skill_dev;
 	xsav = p_ptr->skill_sav;
 	xstl = p_ptr->skill_stl;
-	xsrh = p_ptr->skill_srh;
+	xsns = p_ptr->skill_sns;
 	xfos = p_ptr->skill_fos;
 
 
@@ -1504,8 +1504,8 @@ static void display_player_abilities(void)
 	likert(xfos, 6, desc);
 	c_put_str(likert_color, desc, COL_SKILLS2 + WID_SKILLS, 16);
 
-	put_str("Searching   :", COL_SKILLS2, 17);
-	likert(xsrh, 6, desc);
+	put_str("Sensing     :", COL_SKILLS2, 17);
+	likert(xsns, 6, desc);
 	c_put_str(likert_color, desc, COL_SKILLS2 + WID_SKILLS, 17);
 
 	put_str("Disarming   :", COL_SKILLS2, 18);
@@ -3019,9 +3019,9 @@ errr file_character(cptr name, bool full)
 	/* Print all homes in the different towns */
 	for (i = 1; i < z_info->wp_max; i++)
 	{
-		for (j = 0; j < town[i].numstores; j++)
+		for (j = 0; j < place[i].numstores; j++)
 		{
-			st_ptr = &town[i].store[j];
+			st_ptr = &place[i].store[j];
 			
 			if (st_ptr->type == BUILD_STORE_HOME)
 			{
@@ -3029,7 +3029,7 @@ errr file_character(cptr name, bool full)
 				if (st_ptr->stock_num)
 				{
 					/* Header with name of the town */
-					fprintf(fff, "  [Home Inventory - %s]\n\n", town[i].name);
+					fprintf(fff, "  [Home Inventory - %s]\n\n", place[i].name);
 
 					/* Dump all available items */
 					for (k = 0; k < st_ptr->stock_num; k++)
@@ -4151,9 +4151,9 @@ static void show_info(void)
 
 	for (i = 1; i < z_info->wp_max; i++)
 	{
-		for (j = 0; j < town[i].numstores; j++)
+		for (j = 0; j < place[i].numstores; j++)
 		{
-			st_ptr = &town[i].store[j];
+			st_ptr = &place[i].store[j];
 			
 			if (st_ptr->type == BUILD_STORE_HOME)
 			{
@@ -4234,9 +4234,9 @@ static void show_info(void)
 	
 	for (i = 1; i < z_info->wp_max; i++)
 	{
-		for (l = 0; l < town[i].numstores; l++)
+		for (l = 0; l < place[i].numstores; l++)
 		{
-			st_ptr = &town[i].store[l];
+			st_ptr = &place[i].store[l];
 			
 			if (st_ptr->type == BUILD_STORE_HOME)
 			{

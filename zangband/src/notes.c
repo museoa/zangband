@@ -73,9 +73,16 @@ void add_note(cptr note, char code)
 	/* Get depth */
 	if (!p_ptr->depth)
 	{
-		if (p_ptr->town_num)
+		if (p_ptr->place_num)
 		{
-			(void)strnfmt(depths, 32, "  Town");
+			if (place[p_ptr->place_num].quest_num)
+			{
+				(void)strnfmt(depths, 32, " Quest");
+			}
+			else
+			{
+				(void)strnfmt(depths, 32, "  Town");
+			}
 		}
 		else
 		{

@@ -492,7 +492,7 @@ static cptr k_info_flags1[] =
 	"XXX1",
 	"XXX2",
 	"STEALTH",
-	"SEARCH",
+	"SENSE",
 	"INFRA",
 	"TUNNEL",
 	"SPEED",

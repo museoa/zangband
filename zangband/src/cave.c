@@ -2540,21 +2540,23 @@ void display_map(int *cx, int *cy)
 					mc[j + 1][i + 1] = '+';
 				}
 
-				/* Hack - draw towns/specials */
-				/* Eventually will get attr,char from town data structure. */
+				/* Hack - draw places */
+				/* Eventually will get attr,char from place data structure. */
 
-				twn = wild[j + y][i + x].done.town;
+				twn = wild[j + y][i + x].done.place;
 
-				/* If there is a town... */
+				/* If there is a place... */
 				if (twn)
 				{
 					/* Hack make a char /attr */
-					if (town[twn].quest_num)
+					if (place[twn].quest_num)
 					{
+						/* Quests are red */
 						ma[j + 1][i + 1] = TERM_RED;
 					}
 					else
 					{
+						/* Towns are white */
 						ma[j + 1][i + 1] = TERM_WHITE;
 					}
 					
