@@ -2334,6 +2334,14 @@ static errr rd_dungeon(void)
 
 		/* Get a new record */
 		o_idx = o_pop();
+		
+		/* Oops */
+		if (i != o_idx)
+		{
+			note(format("Object allocation error (%d <> %d)", i, o_idx));
+			return (152);
+		}
+
 
 		/* Acquire place */
 		o_ptr = &o_list[o_idx];
@@ -2343,36 +2351,9 @@ static errr rd_dungeon(void)
 
 		/* XXX XXX XXX XXX XXX */
 
-		/* Monster */
-		if (o_ptr->held_m_idx)
+		/* Dungeon items */
+		if (!o_ptr->held_m_idx && !ignore_stuff)
 		{
-			monster_type *m_ptr;
-
-			/* Monster */
-			m_ptr = &m_list[o_ptr->held_m_idx];
-
-			/* Paranoia */
-			if (!m_ptr->r_idx)
-			{
-				/* The monster does not exist any more! */
-				o_ptr->held_m_idx = 0;
-
-				/* Hack - get rid of item - will crash otherwise */
-				o_ptr->k_idx = 0;
-			}
-		}
-
-		/* Dungeon */
-		else if (!ignore_stuff)
-		{
-			/* Oops */
-			if (i != o_idx)
-			{
-				note(format("Object allocation error (%d <> %d)", i, o_idx));
-				return (152);
-			}
-
-
 			/* Access the item location */
 			c_ptr = area(o_ptr->ix, o_ptr->iy);
 
