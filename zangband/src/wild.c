@@ -866,6 +866,9 @@ static u16b get_gen_type(byte hgt, byte pop, byte law)
 			}
 		}
 	}
+	
+	/* For some dumb compilers */
+	return(0);
 }
 
 /* The number of allocated nodes in the decsion tree */
