@@ -214,10 +214,6 @@ proc NSBookWindow::InitWindow {oop} {
 	scrollbar $frameBook.yscroll \
 		-command "$canvas yview" -orient vert
 
-	# When a book is selected, display the spells
-	NSCanvist::Info $canvistId selectionCmd \
-		"NSBookWindow::SelectionChanged_Book $oop"
-
 	pack $frameBook.yscroll -side right -fill y
 	pack $canvas -side left -expand yes -fill both
 
@@ -238,10 +234,6 @@ proc NSBookWindow::InitWindow {oop} {
 		"NSBookWindow::NewItemCmd_Spell $oop" "NSBookWindow::HighlightItemCmd_Spell $oop"]
 	set canvas [NSCanvist::Info $canvistId canvas]
 	$canvas configure -background $color
-
-	# When a spell is selected, display the info
-	NSCanvist::Info $canvistId selectionCmd \
-		"NSBookWindow::SelectionChanged_Spell $oop"
 
 	# Double-click to select spell
 	NSCanvist::Info $canvistId invokeCmd \
@@ -347,182 +339,6 @@ proc NSBookWindow::InitWindow {oop} {
 	return
 }
 
-# NSBookWindow::DisplayCmd --
-#
-#	Called by NSWindowManager::Display().
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSBookWindow::DisplayCmd {oop message first {bookNum 0}} {
-
-	switch -- $message {
-		preDisplay {
-			SetList_Book $oop $bookNum
-
-			# This fixes a bug, but the window should never be
-			# displayed if there are no books.
-			set canvistId [Info $oop book,canvistId]
-			if {[NSCanvist::Info $canvistId count]} {
-				NSCanvist::UpdateSelection $canvistId 0 {}
-			}
-		}
-		postDisplay {
-		}
-	}
-
-	return
-}
-
-# NSBookWindow::Close --
-#
-#	Description.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSBookWindow::Close {oop} {
-
-	angband keypress \033
-
-	return
-}
-
-# NSBookWindow::SetList_Book --
-#
-#	Display a list of browesable books.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSBookWindow::SetList_Book {oop requestedBook} {
-
-	variable Priv
-
-	set canvistId [Info $oop book,canvistId]
-
-	# Clear the list
-	NSCanvist::DeleteAll $canvistId
-
-	# Check each book type
-	foreach book_tval [angband player spell_book] {
-
-		# Remember displayed book indexes
-		set books($book_tval) {}
-
-		# Check each book in the inventory
-		foreach book [angband inventory find -tval $book_tval] {
-
-			# Get info for this item
-			angband inventory info $book attrib
-
-			# Sometimes display a specific book
-			if {$requestedBook && ($requestedBook != $attrib(k_idx))} continue
-
-			# Only display one of each book
-#			if {[lsearch -exact $books($book_tval) $attrib(k_idx)] != -1} continue
-
-			# Remember displayed book indexes
-			lappend books($book_tval) $attrib(k_idx)
-		}
-
-		# Check each book on the ground
-		foreach book [angband floor find -tval $book_tval] {
-
-			# Get info for this item
-			angband floor info $book attrib
-
-			# Sometimes display a specific book
-			if {$requestedBook && ($requestedBook != $attrib(k_idx))} continue
-
-			# Only display one of each book
-#			if {[lsearch -exact $books($book_tval) $attrib(k_idx)] != -1} continue
-
-			# Remember displayed book indexes
-			lappend books($book_tval) $attrib(k_idx)			
-		}
-	}
-
-	# Now we sort book indexes by tval and increasing sval.
-	# Make sure only one of each book is added to the list.
-	# XXX Hack -- Assume the sval increases with k_idx
-	set match {}
-	foreach book_tval [angband player spell_book] {
-		set match [concat $match [lsort -integer -unique $books($book_tval)]]
-	}
-
-	# We are going to calculate the maximum column width for each
-	# column, and must consider the width of the column titles
-	# in some cases
-	set font [Value font,magic]
-	set Priv(width,char) 0
-	set Priv(width,desc) 0
-	set Priv(width,level) [font measure $font "ABLevel"]
-	set Priv(width,mana) [font measure $font "ABMana"]
-	set Priv(width,fail) [font measure $font "ABFail"]
-
-	# Check each book
-	foreach k_idx $match {
-
-		# Get the icon
-		set assign [angband k_info info $k_idx icon]
-
-		# Add this book to the list
-		NSCanvist::Insert $canvistId end $assign
-
-		# Calculate the min width of each column
-		CalcColumnWidths $oop $k_idx
-	}
-
-	# Remember displayed book indexes
-	Info $oop book,match $match
-
-	# Hack -- Clear the spell list
-	NSCanvist::DeleteAll [Info $oop spell,canvistId]
-
-	# Hack -- Handle no books
-	if {![llength $match]} {
-
-		set header [Info $oop header,canvas]
-		
-		set font [Value font,magic]
-		set offset [expr {4 + [font measure $font "a) "]}]
-
-		# Position description
-		$header coords header,Name $offset 3
-		incr offset [font measure $font "Description"]
-	
-		# Position level
-		incr offset [font measure $font "ABLevel"]
-		$header coords header,Level $offset 3
-	
-		# Position mana
-		incr offset [font measure $font "ABMana"]
-		$header coords header,Mana $offset 3
-	
-		# Position fail
-		incr offset [font measure $font "ABFail"]
-		$header coords header,Fail $offset 3
-	
-		# Position comment
-		incr offset [font measure $font "AB"]
-		$header coords header,Comment $offset 3
-
-		# Set window title
-		wm title [Info $oop win] [mc "Book"]
-	}
-
-	return
-}
 
 # NSBookWindow::CalcColumnWidths --
 #
@@ -583,72 +399,6 @@ proc NSBookWindow::CalcColumnWidths {oop bookNum} {
 	return
 }
 
-# NSBookWindow::SetList_Spell --
-#
-#	Fill the list with spells from the given book.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSBookWindow::SetList_Spell {oop bookNum} {
-
-	set win [Info $oop win]
-	set canvistId [Info $oop spell,canvistId]
-	set canvas [NSCanvist::Info $canvistId canvas]
-
-	# Cleare the list
-	NSCanvist::DeleteAll $canvistId
-
-	set unknown 0
-
-	# Keep a list of spell indexes
-	set match {}
-	
-	# Get a list of spell indexes
-	set spells [angband spell find $bookNum -tester yes]
-
-	# Check each spell
-	foreach spell $spells {
-
-		# Get information about this spell
-		angband spell info $bookNum $spell attrib
-		
-		# Append the spell to the list
-		NSCanvist::Insert $canvistId end $attrib(char) $attrib(name) \
-			$attrib(level) $attrib(mana) $attrib(chance) $attrib(info)
-
-		# Count unknown spells
-		if {!$attrib(known)} {
-			incr unknown
-		}
-
-		# Keep a list of spell index
-		lappend match $spell
-	}
-
-	# Keep a list of spell index
-	Info $oop spell,match $match
-
-	# Arrange all the items
-	PositionItems $oop
-
-	# Get info about this book
-	set name [angband k_info info $bookNum name]
-	set tval [angband k_info set $bookNum tval]
-
-	# TV_MAGIC_BOOK --> Magic
-	regexp {TV_(.*)_BOOK} $tval ignore bookType
-	set bookType [string totitle $bookType]
-
-	# Set window title
-	set name [string trim $name \[\]]
-	wm title $win [format [mc "%s Book - %s"] [mc $bookType] $name]
-
-	return
-}
 
 # NSBookWindow::NewItemCmd_Book --
 #
@@ -912,68 +662,7 @@ proc NSBookWindow::PositionItems {oop} {
 	return
 }
 
-# NSBookWindow::SelectionChanged_Book --
-#
-#	Called when the book selection changes.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
 
-proc NSBookWindow::SelectionChanged_Book {oop canvistId select deselect} {
-
-	# Nothing was selected
-	if {![llength $select]} {
-		NSCanvist::DeleteAll [Info $oop spell,canvistId]
-		Info $oop book,current -1
-		return
-	}
-
-	# Get the (first) row
-	set row [lindex $select 0]
-
-	set bookNum [lindex [Info $oop book,match] $row]
-	Info $oop book,current $bookNum
-
-	SetList_Spell $oop $bookNum
-
-	return
-}
-
-# NSBookWindow::SelectionChanged_Spell --
-#
-#	Called when the spell selection changes.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSBookWindow::SelectionChanged_Spell {oop canvistId select deselect} {
-
-	# Nothing was selected
-	if {![llength $select]} {
-		Info $oop spell,current -1
-		return
-	}
-
-	# Get the (first) row
-	set row [lindex $select 0]
-
-	# Get the book number
-	set bookNum [Info $oop book,current]
-
-	# Get the spell index
-	set spellIndex [lindex [Info $oop spell,match] $row]
-	Info $oop spell,current $row
-
-	NSRecall::RecallSpell $bookNum $spellIndex
-
-	return
-}
 
 # NSBookWindow::InvokeRow --
 #
