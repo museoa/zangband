@@ -488,36 +488,36 @@ static void random_slay(object_type *o_ptr)
 
 
 static cptr activation_text[] = {
-	"The %s glows extremely brightly...",
-	"The %s throbs deep green...",
-	"The %s glows an intense red...",
-	"The %s glows black...",
-	"The %s glows an intense blue...",
-	"The %s throbs red...",
-	"The %s glows deep red...",
-	"The %s glows bright white...",
-	"The %s glows deep blue...",
-	"The %s glows in scintillating colours...",
-	"The %s vibrates...",
-	"The %s glows violet...",
-	"The %s lets out a long, shrill note...",
-	"The %s twists in your hands...",
-	"The %s shudders...",
-	"The %s fades in and out...",
-	"The %s hums softly...",
-	"The %s blinks in and out...",
-	"The %s radiates light blue...",
-	"The %s radiates deep purple...",
-	"The %s glows deep green...",
-	"The %s lets out a shrill wail...",
-	"The %s glows brightly...",
-	"The %s shines brightly...",
-	"The %s glows yellow...",
-	"The %s glows light blue...",
-	"The %s glows brown...",
-	"The %s pulsates...",
-	"The %s hums...",
-	"The %s glows bright yellow..."
+	"The %v glows extremely brightly...",
+	"The %v throbs deep green...",
+	"The %v glows an intense red...",
+	"The %v glows black...",
+	"The %v glows an intense blue...",
+	"The %v throbs red...",
+	"The %v glows deep red...",
+	"The %v glows bright white...",
+	"The %v glows deep blue...",
+	"The %v glows in scintillating colours...",
+	"The %v vibrates...",
+	"The %v glows violet...",
+	"The %v lets out a long, shrill note...",
+	"The %v twists in your hands...",
+	"The %v shudders...",
+	"The %v fades in and out...",
+	"The %v hums softly...",
+	"The %v blinks in and out...",
+	"The %v radiates light blue...",
+	"The %v radiates deep purple...",
+	"The %v glows deep green...",
+	"The %v lets out a shrill wail...",
+	"The %v glows brightly...",
+	"The %v shines brightly...",
+	"The %v glows yellow...",
+	"The %v glows light blue...",
+	"The %v glows brown...",
+	"The %v pulsates...",
+	"The %v hums...",
+	"The %v glows bright yellow..."
 };
 
 static void apply_activation_power(object_type *o_ptr, int type, int level)
@@ -536,14 +536,9 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 	char dice_buf[40];
 	char radius_buf[40];
 	
-	char o_name[256];
 	char xtra_buf[256];
 
-	/* Get the basic name of the object */
-	object_desc(o_name, o_ptr, FALSE, 0, 256);
-
-	text = activation_text[randint0(sizeof(activation_text) /
-			sizeof(activation_text[0]))];
+	text = activation_text[randint0(NUM_ELEMENTS(activation_text))];
 
 	switch (type)
 	{
@@ -558,7 +553,7 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 			break;
 
 		case ACT_BO_MISS_1:
-			text = "The %s glows extremely brightly...";
+			text = "The %v glows extremely brightly...";
 			desc = "magic missile";
 			effect = "fire_bolt(GF_MISSILE, dir, dam)";
 			charge_max = charge_min = 2;
@@ -567,7 +562,7 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 			break;
 
 		case ACT_BA_POIS_1:
-			text = "The %s throbs deep green...";
+			text = "The %v throbs deep green...";
 			desc = "stinking cloud";
 			effect = "fire_ball(GF_POIS, dir, dam, rad)";
 			radius = (level >= 15 ? 3 : 2);
@@ -576,7 +571,7 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 			break;
 
 		case ACT_BO_ELEC_1:
-			text = "The %s is covered in sparks...";
+			text = "The %v is covered in sparks...";
 			desc = "lightning bolt";
 			effect = "fire_bolt(GF_ELEC, dir, dam)";
 			charge_min = rand_range(4, 8);
@@ -585,7 +580,7 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 			break;
 
 		case ACT_BO_ACID_1:
-			text = "The %s is covered in acid...";
+			text = "The %v is covered in acid...";
 			desc = "acid bolt";
 			effect = "fire_bolt(GF_ACID, dir, dam)";
 			charge_min = rand_range(4, 8);
@@ -594,7 +589,7 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 			break;
 
 		case ACT_BO_COLD_1:
-			text = "The %s is covered in frost...";
+			text = "The %v is covered in frost...";
 			desc = "frost bolt";
 			effect = "fire_bolt(GF_COLD, dir, dam)";
 			charge_min = rand_range(4, 8);
@@ -603,7 +598,7 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 			break;
 
 		case ACT_BO_FIRE_1:
-			text = "The %s is covered in fire...";
+			text = "The %v is covered in fire...";
 			desc = "fire bolt";
 			effect = "fire_bolt(GF_FIRE, dir, dam)";
 			charge_min = rand_range(4, 8);
@@ -614,7 +609,7 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 		case ACT_BA_COLD_1:
 		case ACT_BA_COLD_2:
 		case ACT_BA_COLD_3:
-			text = "The %s glows an intense blue...";
+			text = "The %v glows an intense blue...";
 			desc = "ball of cold";
 			effect = "fire_ball(GF_COLD, dir, dam, rad)";
 			radius = (level > 70 ? 3 : 2);
@@ -624,7 +619,7 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 
 		case ACT_BA_FIRE_1:
 		case ACT_BA_FIRE_2:
-			text = "The %s glows an intense red...";
+			text = "The %v glows an intense red...";
 			desc = "ball of fire";
 			effect = "fire_ball(GF_FIRE, dir, dam, rad)";
 			radius = (level >= 60 ? 3 : 2);
@@ -634,7 +629,7 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 
 		case ACT_BA_ELEC_2:
 		case ACT_BA_ELEC_3:
-			text = "The %s crackles with electricity...";
+			text = "The %v crackles with electricity...";
 			desc = "ball of lightning";
 			effect = "fire_ball(GF_ELEC, dir, dam, rad)";
 			radius = (level >= 40 ? 3 : 2);
@@ -644,7 +639,7 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 
 		case ACT_DRAIN_1:
 		case ACT_DRAIN_2:
-			text = "The %s glows black...";
+			text = "The %v glows black...";
 			desc = "drain life";
 			effect = "drain_life(dir, dam)";
 			charge_min = 50 + 25 * randint0(5);
@@ -654,7 +649,7 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 		case ACT_VAMPIRE_1:
 		case ACT_VAMPIRE_2:
 			/* XXX Is there a reason to do 3 seperate bolts? */
-			text = "The %s throbs red...";
+			text = "The %v throbs red...";
 			desc = "vampiric drain";
 			effect = "drain_gain_life(dir, dam)";
 			charge_min = 200 + 100 * randint0(4);
@@ -662,7 +657,7 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 			break;
 
 		case ACT_BO_MISS_2:
-			text = "The %s grows magical spikes...";
+			text = "The %v grows magical spikes...";
 			desc = "arrows";
 			effect = "fire_bolt(GF_ARROW, dir, dam)";
 			charge_min = 60 + 5 * randint0(10);
@@ -674,7 +669,7 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 			break;
 
 		case ACT_WHIRLWIND:
-			text = "The %s emits a blast of air...";
+			text = "The %v emits a blast of air...";
 			desc = "whirlwind attack";
 			effect = "whirlwind_attack()";
 			aimed = FALSE;
@@ -682,7 +677,7 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 			break;
 
 		case ACT_CALL_CHAOS:
-			text = "The %s glows in scintillating colours...";
+			text = "The %v glows in scintillating colours...";
 			desc = "call chaos";
 			effect = "call_chaos()";
 			aimed = FALSE;
@@ -698,7 +693,7 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 			break;
 
 		case ACT_DISP_EVIL:
-			text = "The %s floods the area with goodness...";
+			text = "The %v floods the area with goodness...";
 			desc = "dispel evil";
 			effect = "dispel_evil(dam)";
 			aimed = FALSE;
@@ -707,7 +702,7 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 			break;
 
 		case ACT_DISP_GOOD:
-			text = "The %s floods the area with evil...";
+			text = "The %v floods the area with evil...";
 			desc = "dispel good";
 			effect = "dispel_good(dam)";
 			aimed = FALSE;
@@ -740,7 +735,7 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 			break;
 
 		case ACT_QUAKE:
-			text = "The %s vibrates...";
+			text = "The %v vibrates...";
 			desc = "earthquake";
 			effect = "earthquake(px, py, rad)";
 			aimed = FALSE;
@@ -749,7 +744,7 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 			break;
 
 		case ACT_TERROR:
-			text = "The %s emits a loud blast...";
+			text = "The %v emits a loud blast...";
 			desc = "terror";
 			effect = "turn_monsters(40 + player.lev)";
 			aimed = FALSE;
@@ -928,7 +923,7 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 			break;
 
 		case ACT_ESP:
-			text = "The %s enters your thoughts...";
+			text = "The %v enters your thoughts...";
 			desc = "telepathy";
 			effect = "inc_tim_esp(dam)";
 			aimed = FALSE;
@@ -938,7 +933,7 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 			break;
 
 		case ACT_BERSERK:
-			text = "The %s drives you into a berserk rage...";
+			text = "The %v drives you into a berserk rage...";
 			desc = "heroism and berserk";
 			effect = "inc_shero(dam); inc_blessed(dam)";
 			aimed = FALSE;
@@ -957,7 +952,7 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 			break;
 
 		case ACT_RESIST_ALL:
-			text = "The %s glows many colours...";
+			text = "The %v glows many colours...";
 			desc = "resist elements";
 			effect = "inc_oppose_acid(dam); inc_oppose_elec(dam); "
 				"inc_oppose_fire(dam); inc_oppose_cold(dam); "
@@ -979,7 +974,7 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 			break;
 
 		case ACT_WRAITH:
-			text = "The %s fades out...";
+			text = "The %v fades out...";
 			desc = "wraith form";
 			effect = "inc_wraith_form(dam)";
 			aimed = FALSE;
@@ -989,7 +984,7 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 			break;
 
 		case ACT_INVULN:
-			text = "The %s fires a beam of bright light at you...";
+			text = "The %v fires a beam of bright light at you...";
 			desc = "invulnerability";
 			effect = "inc_invuln(dam)";
 			aimed = FALSE;
@@ -1000,7 +995,7 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 
 		case ACT_TELEPORT_1:
 		case ACT_TELEPORT_2:
-			text = "The %s twists space around you...";
+			text = "The %v twists space around you...";
 			desc = "teleport";
 			effect = "teleport_player(dam)";
 			aimed = FALSE;
@@ -1009,7 +1004,7 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 			break;
 
 		case ACT_LIGHT:
-			text = "The %s wells with clear light...";
+			text = "The %v wells with clear light...";
 			desc = "light area";
 			effect = "lite_area(dam, 3)";
 			aimed = FALSE;
@@ -1020,7 +1015,7 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 			break;
 
 		case ACT_MAP_LIGHT:
-			text = "The %s shines brightly...";
+			text = "The %v shines brightly...";
 			desc = "map & light area";
 			effect = "map_area(); lite_area(dam, 3)";
 			aimed = FALSE;
@@ -1060,7 +1055,7 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 			break;
 
 		case ACT_RUNE_EXPLO:
-			text = "The %s glows bright red...";
+			text = "The %v glows bright red...";
 			desc = "explosive rune";
 			effect = "explosive_rune()";
 			aimed = FALSE;
@@ -1134,58 +1129,59 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 
 
 	if (charge_min != charge_max)
-		sprintf(turns_buf, "rand_range(%i, %i)", charge_min, charge_max);
+		strnfmt(turns_buf, 40, "rand_range(%i, %i)", charge_min, charge_max);
 	else
-		sprintf(turns_buf, "%i", charge_min);
+		strnfmt(turns_buf, 40, "%i", charge_min);
 
 	if (sides > 1)
-		sprintf(dice_buf, "local dam = damroll(%i, %i); ", dice, sides);
+		strnfmt(dice_buf, 40, "local dam = damroll(%i, %i); ", dice, sides);
 	else if (sides < 0)
-		sprintf(dice_buf, "local dam = rand_range(%i, %i); ", dice, dice + -sides);
+		strnfmt(dice_buf, 40, "local dam = rand_range(%i, %i); ", dice, dice + -sides);
 	else if (dice > 0)
-		sprintf(dice_buf, "local dam = %i; ", dice);
+		strnfmt(dice_buf, 40, "local dam = %i; ", dice);
 	else
-		strcpy(dice_buf, "");
+		strnfmt(dice_buf, 40, "");
 
 	if (radius > 0 && radius != 2)
-		sprintf(radius_buf, "local rad = %i; ", radius);
+		strnfmt(radius_buf, 40, "local rad = %i; ", radius);
 	else
-		strcpy(radius_buf, "");
-
-	sprintf(xtra_buf, text, o_name);
+		strnfmt(radius_buf, 40, "");
+		
+	/* Get the basic name of the object in the description */
+	strnfmt(xtra_buf, 256, text, OBJECT_FMT(o_ptr, FALSE, 0));
 	
-	o_ptr->trigger[TRIGGER_USE] = quark_add(format(
+	o_ptr->trigger[TRIGGER_USE] = quark_fmt(
 			"msgf(\"%s\"); "
 			"%s%s%s%s; object.timeout = %s",
 			xtra_buf, aimed ? 
 				"local success; local dir; "
 				"success, dir = get_aim_dir(); "
 				"if not success then return; end; " : "",
-			dice_buf, radius_buf, effect, turns_buf));
+			dice_buf, radius_buf, effect, turns_buf);
 
 	
 	if (charge_min != charge_max)
-		sprintf(turns_buf, "%i-%i", charge_min, charge_max);
+		strnfmt(turns_buf, 40, "%i-%i", charge_min, charge_max);
 	else
-		sprintf(turns_buf, "%i", charge_min);
+		strnfmt(turns_buf, 40, "%i", charge_min);
 	
 	if (sides > 1)
-		sprintf(dice_buf, " (%id%i)", dice, sides);
+		strnfmt(dice_buf, 40, " (%id%i)", dice, sides);
 	else if (sides < 0)
-		sprintf(dice_buf, " (%i-%i)", dice, dice + -sides);
+		strnfmt(dice_buf, 40, " (%i-%i)", dice, dice + -sides);
 	else if (dice > 0)
-		sprintf(dice_buf, " (%i)", dice);
+		strnfmt(dice_buf, 40, " (%i)", dice);
 	else
-		strcpy(dice_buf, "");
+		strnfmt(dice_buf, 40, "");
 
 	if (radius > 0)
-		sprintf(radius_buf, ", rad. %i,", radius);
+		strnfmt(radius_buf, 40, ", rad. %i,", radius);
 	else
-		strcpy(radius_buf, "");
+		strnfmt(radius_buf, 40, "");
 	
-	o_ptr->trigger[TRIGGER_DESC] = quark_add(format(
+	o_ptr->trigger[TRIGGER_DESC] = quark_fmt(
 		"return \"%s%s%s every %s turns\"", desc, dice_buf, 
-		radius_buf, turns_buf));
+		radius_buf, turns_buf);
 		
 
 	o_ptr->flags3 |= TR3_ACTIVATE;
@@ -2367,8 +2363,7 @@ bool activate_effect(object_type *o_ptr)
 	int px = p_ptr->px;
 	int py = p_ptr->py;
 
-	int plev = p_ptr->lev;
-	int k, dir, dummy;
+	int k, dir;
 	byte activate;
 
 	char o_name[256];
