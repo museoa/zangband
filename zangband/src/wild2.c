@@ -372,116 +372,6 @@ static void general_init(int town_num, int store_num, byte general_type)
 }
 
 
-/*
- * Builds a store at a given pseudo-location
- *
- * As of Z 2.5.0 the town is moved back to (0,0) - and is overlayed
- * on top of the wilderness.
- *
- * As of 2.8.1 (?) the town is actually centered in the middle of a
- * complete level, and thus the top left corner of the town itself
- * is no longer at (0,0), but rather, at (qy,qx), so the constants
- * in the comments below should be mentally modified accordingly.
- *
- * As of 2.7.4 (?) the stores are placed in a more "user friendly"
- * configuration, such that the four "center" buildings always
- * have at least four grids between them, to allow easy running,
- * and the store doors tend to face the middle of town.
- *
- * The stores now lie inside boxes from 3-9 and 12-18 vertically,
- * and from 7-17, 21-31, 35-45, 49-59.  Note that there are thus
- * always at least 2 open grids between any disconnected walls.
- *
- * Note the use of "town_illuminate()" to handle all "illumination"
- * and "memorization" issues.
- */
-static void build_store(int xx, int yy, store_type *st_ptr)
-{
-	int y, x, y0, x0, y1, x1, y2, x2, tmp;
-
-	cave_type *c_ptr;
-
-	/* Find the "center" of the store */
-	y0 = yy * 6 + 4;
-	x0 = xx * 17 + 8;
-
-	/* Determine the store boundaries */
-	y1 = y0 - randint1(2);
-	y2 = y0 + randint1(2);
-	x1 = x0 - randint1(5);
-	x2 = x0 + randint1(5);
-
-	/* Build an invulnerable rectangular building */
-	for (y = y1; y <= y2; y++)
-	{
-		for (x = x1; x <= x2; x++)
-		{
-			/* Create the building */
-			set_feat_bold(x, y, FEAT_PERM_EXTRA);
-		}
-	}
-
-	/* Pick a door direction (S,N,E,W) */
-	tmp = randint0(4);
-
-	/* Re-roll "annoying" doors */
-	if (((tmp == 0) && (yy == 2)) ||
-		((tmp == 1) && (yy == 0)) ||
-		((tmp == 2) && (xx == 2)) || ((tmp == 3) && (xx == 0)))
-	{
-		/* Pick a new direction */
-		tmp = randint0(4);
-	}
-
-	/* Extract a "door location" */
-	switch (tmp)
-	{
-		case 0:
-		{
-			/* Bottom side */
-			y = y2;
-			x = rand_range(x1, x2);
-			break;
-		}
-
-		case 1:
-		{
-			/* Top side */
-			y = y1;
-			x = rand_range(x1, x2);
-			break;
-		}
-
-		case 2:
-		{
-			/* Right side */
-			y = rand_range(y1, y2);
-			x = x2;
-			break;
-		}
-
-		default:
-		{
-			/* Left side */
-			y = rand_range(y1, y2);
-			x = x1;
-			break;
-		}
-	}
-
-	c_ptr = cave_p(x, y);
-
-	/* Clear previous contents, add a store door */
-	set_feat_grid(c_ptr, FEAT_FLOOR);
-	c_ptr->fld_idx = wild_build[st_ptr->type].field;
-
-	/* Save location of store door */
-	st_ptr->x = x;
-	st_ptr->y = y;
-}
-
-
-
 static byte build_x[WILD_BLOCK_SIZE * WILD_BLOCK_SIZE];
 static byte build_y[WILD_BLOCK_SIZE * WILD_BLOCK_SIZE];
 static byte build_pop[WILD_BLOCK_SIZE * WILD_BLOCK_SIZE];
@@ -1520,6 +1410,115 @@ bool init_places(int xx, int yy)
 
 	/* Done */
 	return (TRUE);
+}
+
+
+/*
+ * Builds a store at a given pseudo-location
+ *
+ * As of Z 2.5.0 the town is moved back to (0,0) - and is overlayed
+ * on top of the wilderness.
+ *
+ * As of 2.8.1 (?) the town is actually centered in the middle of a
+ * complete level, and thus the top left corner of the town itself
+ * is no longer at (0,0), but rather, at (qy,qx), so the constants
+ * in the comments below should be mentally modified accordingly.
+ *
+ * As of 2.7.4 (?) the stores are placed in a more "user friendly"
+ * configuration, such that the four "center" buildings always
+ * have at least four grids between them, to allow easy running,
+ * and the store doors tend to face the middle of town.
+ *
+ * The stores now lie inside boxes from 3-9 and 12-18 vertically,
+ * and from 7-17, 21-31, 35-45, 49-59.  Note that there are thus
+ * always at least 2 open grids between any disconnected walls.
+ *
+ * Note the use of "town_illuminate()" to handle all "illumination"
+ * and "memorization" issues.
+ */
+static void build_store(int xx, int yy, store_type *st_ptr)
+{
+	int y, x, y0, x0, y1, x1, y2, x2, tmp;
+
+	cave_type *c_ptr;
+
+	/* Find the "center" of the store */
+	y0 = yy * 6 + 4;
+	x0 = xx * 17 + 8;
+
+	/* Determine the store boundaries */
+	y1 = y0 - randint1(2);
+	y2 = y0 + randint1(2);
+	x1 = x0 - randint1(5);
+	x2 = x0 + randint1(5);
+
+	/* Build an invulnerable rectangular building */
+	for (y = y1; y <= y2; y++)
+	{
+		for (x = x1; x <= x2; x++)
+		{
+			/* Create the building */
+			set_feat_bold(x, y, FEAT_PERM_EXTRA);
+		}
+	}
+
+	/* Pick a door direction (S,N,E,W) */
+	tmp = randint0(4);
+
+	/* Re-roll "annoying" doors */
+	if (((tmp == 0) && (yy == 2)) ||
+		((tmp == 1) && (yy == 0)) ||
+		((tmp == 2) && (xx == 2)) || ((tmp == 3) && (xx == 0)))
+	{
+		/* Pick a new direction */
+		tmp = randint0(4);
+	}
+
+	/* Extract a "door location" */
+	switch (tmp)
+	{
+		case 0:
+		{
+			/* Bottom side */
+			y = y2;
+			x = rand_range(x1, x2);
+			break;
+		}
+
+		case 1:
+		{
+			/* Top side */
+			y = y1;
+			x = rand_range(x1, x2);
+			break;
+		}
+
+		case 2:
+		{
+			/* Right side */
+			y = rand_range(y1, y2);
+			x = x2;
+			break;
+		}
+
+		default:
+		{
+			/* Left side */
+			y = rand_range(y1, y2);
+			x = x1;
+			break;
+		}
+	}
+
+	c_ptr = cave_p(x, y);
+
+	/* Clear previous contents, add a store door */
+	set_feat_grid(c_ptr, FEAT_FLOOR);
+	c_ptr->fld_idx = wild_build[st_ptr->type].field;
+
+	/* Save location of store door */
+	st_ptr->x = x;
+	st_ptr->y = y;
 }
 
 
