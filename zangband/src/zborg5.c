@@ -520,7 +520,7 @@ static void borg_fear_grid(cptr who, int y, int x, uint k, bool seen_guy)
 			mb_ptr = map_loc(i + x, j + y);
 			
 			/* Add some fear */
-			mb_ptr->fear += 2 * k /(8 + i + j);
+			mb_ptr->fear += 2 * k /(8 + ABS(i) + ABS(j));
 		}
 	}
 
