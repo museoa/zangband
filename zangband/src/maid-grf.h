@@ -27,7 +27,20 @@
  */
 typedef void (*callback_type) (void);
 
-extern callback_type set_callback(callback_type call_func, int number);
+/*
+ * Linked list for callbacks
+ */
+typedef struct callback_list callback_list;
+
+struct callback_list
+{
+	callback_type func;	/* Function to call */
+	callback_list *next;	/* Next callback in list */
+	vptr data;	/* Data for callbacks so can use same function multiple times */
+};
+
+extern void set_callback(callback_type call_func, int number, vptr data);
+extern void del_callback(int number, vptr data);
 
 #endif /* TERM_USE_CALLBACKS */
 
@@ -128,6 +141,13 @@ struct term_map
 
 	/* Rough measure of monster hp */
 	byte m_hp;
+	
+#ifdef TERM_MAP_INFO
+	byte a;
+	char c;
+	byte ta;
+	char tc;
+#endif /* TERM_MAP_INFO */
 };
 
 typedef struct map_block map_block;
@@ -139,6 +159,8 @@ struct map_block
 #ifdef TERM_MAP_GLYPH
 	byte a;
 	char c;
+	byte ta;
+	char tc;
 #endif /* TERM_MAP_GLYPH */
 
 	/* Save the cave info itself - used by the borg */
@@ -182,9 +204,9 @@ struct map_block
 typedef map_block *map_blk_ptr;
 typedef map_block **map_blk_ptr_ptr;
 
-typedef void (*map_info_hook_type) (map_block *mb_ptr, term_map *map);
-typedef void (*map_erase_hook_type) (void);
-typedef void (*player_move_hook_type) (int x, int y);
+typedef void (*map_info_hook_type) (map_block *mb_ptr, term_map *map, vptr data);
+typedef void (*map_erase_hook_type) (vptr data);
+typedef void (*player_move_hook_type) (int x, int y, vptr data);
 
 #endif /* TERM_USE_MAP */
 
@@ -273,7 +295,7 @@ struct list_item
 #endif /* ALLOW_BORG */
 };
 
-typedef void (*list_notice_hook_type) (byte);
+typedef void (*list_notice_hook_type) (byte, vptr data);
 
 
 #endif /* TERM_USE_LIST */

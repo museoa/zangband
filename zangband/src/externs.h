@@ -302,6 +302,10 @@ extern bool in_disintegration_range(int x1, int y1, int x2, int y2);
 extern void scatter(int *xp, int *yp, int x, int y, int d);
 extern bool player_can_see_bold(int x, int y);
 extern bool cave_valid_grid(const cave_type *c_ptr);
+#ifdef TERM_MAP_INFO
+extern void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
+                     byte *ap, char *cp, byte *tap, char *tcp);
+#endif /* TERM_MAP_INFO */
 extern bool no_lite(void);
 extern void move_cursor_relative(int col, int row);
 extern void print_rel(char c, byte a, int x, int y);

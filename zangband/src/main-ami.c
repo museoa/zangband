@@ -589,11 +589,8 @@ static void amiga_gfx(int type);
 static int find_menuitem(int *rmenu, int *item, void *ud);
 static void quick_BltBitMapRastPort( struct BitMap *src, int x, int y, struct RastPort *rp, int dx, int dy, int dw, int dh, int mode);
 static void quick_Text(struct RastPort *rp, int col, char *s, int n, int dx, int dy);
-
-static callback_type old_info_hook = NULL;
-static callback_type old_move_hook = NULL;
-static void ami_map_info(map_block *mb_ptr, term_map *map);
-static void ami_player_move(int x, int y);
+static void ami_map_info(map_block *mb_ptr, term_map *map, vptr dummy);
+static void ami_player_move(int x, int y, vptr dummy);
 
 errr init_ami( void )
 {
@@ -1162,11 +1159,10 @@ errr init_ami( void )
     init_overhead_map();
     
     /* Save the ami hooks into the overhead map */
-    old_info_hook = set_callback((callback_type) ami_map_info, CALL_MAP_INFO);
+    set_callback((callback_type) ami_map_info, CALL_MAP_INFO, NULL);
 
 	/* Save old player movement hook */
-	old_move_hook = set_callback((callback_type) ami_player_move,
-								 CALL_PLAYER_MOVE);
+	set_callback((callback_type) ami_player_move, CALL_PLAYER_MOVE, NULL);
 
 	/* Success */
 	return ( 0 );
@@ -4054,17 +4050,14 @@ static int player_y;
 /*
  * Notice that the player has moved
  */
-static void ami_player_move(int x, int y)
+static void ami_player_move(int x, int y, vptr dummy)
 {
+	/* Hack - ignore parameter */
+	(void) dummy;
+
 	/* Save for later */
 	player_x = x;
 	player_y = y;
-    
-	/* Call the next function in the chain if it exists */
-	if (old_move_hook)
-	{
-		((player_move_hook_type) old_move_hook) (x, y);
-	}
 }
 
 
@@ -4072,8 +4065,11 @@ static void ami_player_move(int x, int y)
 /*
  * Save the information so we can access it later
  */
-static void ami_map_info(map_block *mb_ptr, term_map *map)
+static void ami_map_info(map_block *mb_ptr, term_map *map, vptr dummy)
 {
+	/* Hack -- ignore parameter */
+	(void) dummy;
+
     /* Store feature code for later */
     if (map->terrain) 
     {
@@ -4085,9 +4081,6 @@ static void ami_map_info(map_block *mb_ptr, term_map *map)
     	mb_ptr->a = 0;
 		mb_ptr->c = 0;
     }
-
-	/* Finally - chain into the old hook, if it exists */
-	if (old_info_hook) ((map_info_hook_type)old_info_hook) (mb_ptr, map);
 }
 
 static void amiga_map( void )

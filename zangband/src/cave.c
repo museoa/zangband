@@ -1050,8 +1050,6 @@ bool cave_valid_grid(const cave_type *c_ptr)
 }
 
 
-
-
 /*
  * Hack -- Legal monster codes
  */
@@ -1663,7 +1661,13 @@ static void variable_player_graph(byte *a, char *c)
  * such as "multi-hued" or "clear" monsters, cause the attr/char codes
  * to be "scrambled" in various ways.
  */
-static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
+
+/* This function needs to be available in maid-grf.c sometimes */
+#ifndef TERM_MAP_INFO
+static
+#endif /* !TERM_MAP_INFO */
+
+void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
                      byte *ap, char *cp, byte *tap, char *tcp)
 {
 	feature_type *f_ptr;

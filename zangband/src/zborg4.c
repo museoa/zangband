@@ -122,25 +122,16 @@ int home_shop = -1;
 /* Include shop items in power calculation */
 int use_shop;
 
-/*
- * Hack - save old hook for object lists.
- *
- * We chain into this after storing our information.
- * (This is so multiple sub-systems can hook into
- * object changes.)
- */
-callback_type old_list_hook = NULL;
-
-void borg_list_info(byte list_type)
+void borg_list_info(byte list_type, vptr dummy)
 {
 	int i;
+	
+	/* Hack - ignore parameter */
+	(void) dummy;
 
 	/* Don't do anything if the borg is inactive */
 	if (!borg_active)
 	{
-		/* Chain into the old hook, if it exists */
-		if (old_list_hook) ((list_notice_hook_type)old_list_hook) (list_type);
-
 		/* Done */
 		return;
 	}
@@ -245,9 +236,6 @@ void borg_list_info(byte list_type)
 			quit_fmt("Unrecognised list type %d", list_type);
 		}
 	}
-
-	/* Finally - chain into the old hook, if it exists */
-	if (old_list_hook) ((list_notice_hook_type)old_list_hook) (list_type);
 }
 
 

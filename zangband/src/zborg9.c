@@ -2479,17 +2479,14 @@ void borg_init_9(void)
 	init_overhead_map();
 
 	/* Save the borg hooks into the overhead map */
-	old_info_hook = set_callback((callback_type) borg_map_info, CALL_MAP_INFO);
-	old_erase_hook = set_callback((callback_type) borg_map_erase,
-								  CALL_MAP_ERASE);
+	set_callback((callback_type) borg_map_info, CALL_MAP_INFO, NULL);
+	set_callback((callback_type) borg_map_erase, CALL_MAP_ERASE, NULL);
 
 	/* Save old player movement hook */
-	old_move_hook = set_callback((callback_type) borg_player_move,
-								 CALL_PLAYER_MOVE);
+	set_callback((callback_type) borg_player_move, CALL_PLAYER_MOVE, NULL);
 
 	/* Save the borg hooks for object lists */
-	old_list_hook = set_callback((callback_type) borg_list_info,
-								 CALL_OBJECT_LIST);
+	set_callback((callback_type) borg_list_info, CALL_OBJECT_LIST, NULL);
 
 	/*** Redraw ***/
 
