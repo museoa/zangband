@@ -550,29 +550,6 @@ void activate_quests(int level)
 
 
 /*
- * Count the number of quests chosen so far
- */
-static int number_of_quests(void)
-{
-	int i;
-
-	int count = 0;
-
-	for (i = 0; i < q_max; i++)
-	{
-		if (quest[i].status != QUEST_STATUS_UNTAKEN)
-		{
-			/* Increment count of quests taken. */
-			count++;
-		}
-	}
-
-	/* Return the number of quests taken */
-	return (count);
-}
-
-
-/*
  * Create a magical staircase
  */
 static void create_stairs(int x, int y)
@@ -614,45 +591,6 @@ static void create_stairs(int x, int y)
 	/* Create stairs down */
 	cave_set_feat(x, y, FEAT_MORE);
 }
-
-/*
- * Give the reward for the indicated quest
- */
-static void quest_reward(int num, int x, int y)
-{
-	object_type *o_ptr;
-	
-	dun_type *dundata = place[p_ptr->place_num].dungeon;
-	
-	obj_theme *o_theme = &dundata->theme;
-
-	/* Ignore num for now */
-	(void)num;
-
-	while (TRUE)
-	{
-		/* Average of 20 great objects per game */
-		if (randint0(number_of_quests()) < 20)
-		{
-			/* Make a great object */
-			o_ptr = make_object(base_level(), 30, o_theme);
-		}
-		else
-		{
-			/* Make a good object */
-			o_ptr = make_object(base_level(), 15, o_theme);
-		}
-
-		if (!o_ptr) continue;
-
-		/* We need a 'good' item - so check the price */
-		if (object_value_real(o_ptr) > 100 * p_ptr->depth) break;
-	}
-
-	/* Drop it in the dungeon */
-	drop_near(o_ptr, -1, x, y);
-}
-
 
 
 static void display_monster_quest(quest_type *q_ptr)
@@ -831,9 +769,6 @@ void trigger_quest_complete(byte x_type, vptr data)
 						/* Complete the quest */
 						q_ptr->status = QUEST_STATUS_COMPLETED;
 
-						/* Drop the reward */
-						quest_reward(q_ptr->reward, m_ptr->fx, m_ptr->fy);
-
 						/* Monster is no longer 'QUESTOR' */
 						r_info[q_ptr->data.bnt.r_idx].flags[0] &= ~(RF0_QUESTOR);
 					}
@@ -968,6 +903,12 @@ void reward_quest(quest_type *q_ptr)
 				
 				/* Allow this quest to be deleted if needed */
 				q_ptr->status = QUEST_STATUS_FINISHED;
+				
+				/* Take note */
+				if (auto_notes)
+				{
+					add_note('Q', "Finished quest: %s", q_ptr->name);
+				}
 			}
 			else
 			{
@@ -975,37 +916,46 @@ void reward_quest(quest_type *q_ptr)
 			}
 		}
 		
+		case QUEST_TYPE_BOUNTY:
+		{
+			if (q_ptr->status == QUEST_STATUS_COMPLETED)
+			{
+				/* Work out reward */
+				long reward = q_ptr->reward;
+				reward *= reward * 100;
+				
+				/* Give to player */
+				p_ptr->au += reward;
+				
+				msgf("You are given %ld gold pieces for your efforts.", reward);
+				
+				/* Allow another quest to be selected */
+				q_ptr->place = 0;
+				q_ptr->shop = 0;
+				
+				/* Allow this quest to be deleted if needed */
+				q_ptr->status = QUEST_STATUS_FINISHED;
+				
+				/* Take note */
+				if (auto_notes)
+				{
+					add_note('Q', "Finished quest: %s", q_ptr->name);
+				}
+			}
+			else
+			{
+				msgf("Still looking for them?");
+			}
+		}
+
+		
 		default:
 		{
 		
 		}
 	}
-#if 0
 
-	/* Quest is completed */
-	if (q_ptr->status == QUEST_STATUS_COMPLETED)
-	{
-		/* Give reward */
-		p_ptr->au += q_ptr->reward * 100;
-		
-		msgf("You are given %ld gold pieces for your efforts.",
-				(long) q_ptr->reward * 100);
-	
-		/* Rewarded quest */
-		q_ptr->status = QUEST_STATUS_FINISHED;
-		
-		/* Take note */
-		if (auto_notes)
-		{
-			add_note('Q', "Finished quest: %s", q_ptr->name);
-		}
-	}
-	else
-	{
-		msgf("You haven't completed the quest yet!");
-		message_flush();
-	}
-#endif /* 0 */
+	message_flush();
 }
 
 static const store_type *curr_build;
@@ -1180,7 +1130,7 @@ static quest_type *insert_bounty_quest(u16b r_idx, u16b num)
 	
 	/* We have taken the quest */
 	q_ptr->status = QUEST_STATUS_TAKEN;
-	
+
 	if (num != 1)
 	{
 		char buf[80];
@@ -1213,6 +1163,7 @@ static quest_type *insert_bounty_quest(u16b r_idx, u16b num)
 	q_ptr->data.bnt.r_idx = r_idx;
 	q_ptr->data.bnt.cur_num = 0;
 	q_ptr->data.bnt.max_num = num;
+	q_ptr->reward = r_ptr->level;
 
 	/* Done */
 	return (q_ptr);
@@ -1370,6 +1321,16 @@ bool do_cmd_knowledge_quests(int dummy)
 
 			case QUEST_TYPE_BOUNTY:
 			{
+				if (taken)
+				{
+					/* Hack - this is simple */
+					strnfmt(tmp_str, 256, "%s\n\n", q_ptr->name);
+				}
+				else
+				{
+					/* Hack - this is simple */
+					strnfmt(tmp_str, 256, "%s (Killed)\n", q_ptr->name);
+				}
 
 				/* Paranoia */
 				continue;
