@@ -485,7 +485,7 @@ void monster_death(int m_idx)
 		/* Get local object */
 		q_ptr = &forge;
 
-		/* Prepare to make a Blade of Chaos */
+		/* Prepare to make a corpse */
 		object_prep(q_ptr, lookup_kind(TV_CORPSE, (corpse ? SV_CORPSE : SV_SKELETON)));
 
 		apply_magic(q_ptr, object_level, FALSE, FALSE, FALSE, FALSE);
