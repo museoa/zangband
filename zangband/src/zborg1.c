@@ -396,18 +396,27 @@ s16b borg_view_y[AUTO_VIEW_MAX];
  * Maintain a temporary set of grids
  */
 
+/* For any monster within MAX_RANGE */
 s16b borg_temp_n = 0;
 s16b borg_temp_x[AUTO_TEMP_MAX];
 s16b borg_temp_y[AUTO_TEMP_MAX];
 
+/* For the monsters immediately surrounding the borg */
+s16b borg_next_n = 0;
+s16b borg_next_x[AUTO_HIT_MAX];
+s16b borg_next_y[AUTO_HIT_MAX];
+
+/* For the monsters that can be hit by a bolt */
 s16b borg_bolt_n = 0;
 s16b borg_bolt_x[AUTO_TEMP_MAX];
 s16b borg_bolt_y[AUTO_TEMP_MAX];
 
+/* For the monsters that can be hit by a beam, basically any monster in LOS */
 s16b borg_beam_n = 0;
 s16b borg_beam_x[AUTO_TEMP_MAX];
 s16b borg_beam_y[AUTO_TEMP_MAX];
 
+/* For the monsters that can be hit by a ball with radius > 1 */
 s16b borg_ball_n = 0;
 s16b borg_ball_x[AUTO_TEMP_MAX];
 s16b borg_ball_y[AUTO_TEMP_MAX];

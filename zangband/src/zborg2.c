@@ -2092,6 +2092,10 @@ static void observe_kill_move(int new_type, int old_type, int dist)
 
 		x = kill1->x;
 		y = kill1->y;
+
+		/* Check the bounds */
+		if (!map_in_bounds(x, y)) continue;
+
 		mb_ptr1 = map_loc(x, y);
 
 		for (j = 1; j < borg_kills_nxt; j++)
@@ -2115,6 +2119,9 @@ static void observe_kill_move(int new_type, int old_type, int dist)
 
 			/* Too far away */
 			if (d > dist) continue;
+
+			/* Check the bounds */
+			if (!map_in_bounds(kill2->x, kill2->y)) continue;
 
 			mb_ptr2 = map_loc(kill2->x, kill2->y);
 
@@ -4657,7 +4664,7 @@ void borg_init_2(void)
 	ang_sort_swap = ang_sort_swap_hook_strings;
 
 	/* Sort */
-	ang_sort(text, what, size);
+	ang_sort((void *) text, what, size);
 
 	/* Save the size */
 	borg_unique_size = size;
@@ -4698,7 +4705,7 @@ void borg_init_2(void)
 	ang_sort_swap = ang_sort_swap_hook_strings;
 
 	/* Sort */
-	ang_sort(text, what, size);
+	ang_sort((void *) text, what, size);
 
 	/* Save the size */
 	borg_normal_size = size;
@@ -4713,7 +4720,7 @@ void borg_init_2(void)
 
 	/* Free the arrays */
 	FREE(what);
-	FREE(text);
+	FREE((void *)text);
 }
 
 

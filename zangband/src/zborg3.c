@@ -876,44 +876,43 @@ int look_up_index(list_item *l_ptr)
  */
 bool borg_refuel_torch(void)
 {
+	int slot, b_slot = -1, fuel = 9999;
 	list_item *l_ptr;
 
-	/* Look for a torch */
-	l_ptr = borg_slot(TV_LITE, SV_LITE_TORCH);
-
-	/* None available */
-	if (!l_ptr) return (FALSE);
-
 	/* Must first wield before one can refuel */
-	if (!equipment[EQUIP_LITE].k_idx)
-	{
-		return (FALSE);
-	}
+	if (!equipment[EQUIP_LITE].k_idx) return (FALSE);
 
 	/* Must wield torch */
-	if (k_info[equipment[EQUIP_LITE].k_idx].sval != SV_LITE_TORCH)
+	if (k_info[equipment[EQUIP_LITE].k_idx].sval != SV_LITE_TORCH) return (FALSE);
+
+	/* Look for the minimal torch */
+	for (slot = 0; slot < inven_num; slot++)
 	{
-		return (FALSE);
+		l_ptr = &inventory[slot];
+
+		/* Must be a light */
+		if (l_ptr->tval != TV_LITE) continue;
+
+		/* Must be a torch */
+		if (k_info[l_ptr->k_idx].sval != SV_LITE_TORCH) continue;
+
+		/* Ignore torches with the most fuel */
+		if (l_ptr->timeout >= fuel) continue;
+		
+		/* My favorite torch */
+		b_slot = slot;
+		fuel = l_ptr->timeout;
 	}
 
-	/* Dont bother with empty */
-	if (l_ptr->timeout == 0)
-	{
-		return (FALSE);
-	}
-
-	/* Cant refuel nothing */
-	if (l_ptr->number == 0)
-	{
-		return (FALSE);
-	}
+	/* None available */
+	if (b_slot == -1) return (FALSE);
 
 	/* Log the message */
-	borg_note_fmt("# Refueling with %s.", l_ptr->o_name);
+	borg_note_fmt("# Refueling with %s.", inventory[b_slot].o_name);
 
 	/* Perform the action */
 	borg_keypress('F');
-	borg_keypress(I2A(look_up_index(l_ptr)));
+	borg_keypress(I2A(b_slot));
 
 	/* Success */
 	return (TRUE);

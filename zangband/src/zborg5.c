@@ -3454,12 +3454,22 @@ static s32b borg_power_aux3(void)
 
 	/*** Penalize various things ***/
 
-	/* Penalize various flags */
+	/* Heavily penalize various flags */
 	if (FLAG(bp_ptr, TR_TELEPORT)) value -= 1000000L;
-	if (FLAG(bp_ptr, TR_AGGRAVATE)) value -= 8000L;
 	if (FLAG(bp_ptr, TR_TY_CURSE)) value -= 1000000L;
 	if (FLAG(bp_ptr, TR_NO_TELE)) value -= 1000000L;
-	if ((FLAG(bp_ptr, TR_NO_MAGIC)) && bp_ptr->realm1) value -= 1000000L;
+	if (FLAG(bp_ptr, TR_NO_MAGIC) && bp_ptr->realm1) value -= 1000000L;
+	if (FLAG(bp_ptr, TR_HURT_LITE) &&
+		!FLAG(bp_ptr, TR_RES_LITE)) value -= 1000000L;
+
+	/* Slightly penalize some flags */
+	if (FLAG(bp_ptr, TR_AGGRAVATE)) value -= 2000L;
+	if (FLAG(bp_ptr, TR_HURT_COLD)) value -= 2000L;
+	if (FLAG(bp_ptr, TR_HURT_FIRE)) value -= 2000L;
+	if (FLAG(bp_ptr, TR_HURT_ACID)) value -= 2000L;
+	if (FLAG(bp_ptr, TR_HURT_ELEC)) value -= 2000L;
+	if (FLAG(bp_ptr, TR_HURT_LITE)) value -= 2000L;
+	if (FLAG(bp_ptr, TR_HURT_DARK)) value -= 2000L;
 
 	/*** Penalize armor weight ***/
 	if (my_stat_ind[A_STR] < 15)

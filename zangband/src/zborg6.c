@@ -4043,16 +4043,10 @@ static int borg_attack_thrust(void)
 		if (bp_ptr->status.afraid) return (0);
 
 		/* Examine possible destinations */
-		for (i = 0; i < borg_bolt_n; i++)
+		for (i = 0; i < borg_next_n; i++)
 		{
-			int x = borg_bolt_x[i];
-			int y = borg_bolt_y[i];
-
-			/* Require "adjacent" */
-			if (distance(c_y, c_x, y, x) > 1) continue;
-
-			/* Bounds checking */
-			if (!map_in_bounds(x, y)) continue;
+			int x = borg_next_x[i];
+			int y = borg_next_y[i];
 
 			/* Acquire grid */
 			mb_ptr = map_loc(x, y);
@@ -4105,8 +4099,14 @@ static int borg_attack_thrust(void)
 		if (b_d)
 		{
 			/* Save the location */
-			g_x = borg_bolt_x[b_i];
-			g_y = borg_bolt_y[b_i];
+			g_x = borg_next_x[b_i];
+			g_y = borg_next_y[b_i];
+		}
+		/* Better safe than sorry */
+		else
+		{
+			g_x = c_x;
+			g_y = c_y;
 		}
 
 		/* End of simulation */
@@ -4138,7 +4138,8 @@ static int borg_attack_thrust(void)
 /*
  * Target a location.  Can be used alone or at "Direction?" prompt.
  *
- * Warning -- This will only work for locations on the current panel
+ * Warning -- This will only work for locations on the current panel.
+ * So before you call this be sure there was a call to map_in_bounds.
  */
 static void borg_target(int x, int y)
 {
@@ -5103,11 +5104,11 @@ static int borg_launch_beam(int dam, int typ, int max)
 		/* Loop through the possible grids on the path */
 		while (TRUE)
 		{
-			/* Get the grid */
-			mb_ptr = map_loc(x, y);
-
 			/* Bounds checking */
 			if (!map_in_bounds(x, y)) break;
+
+			/* Get the grid */
+			mb_ptr = map_loc(x, y);
 
 			/* Maximal distance */
 			if (distance(c_x, c_y, x, y) > max) break;
@@ -5299,6 +5300,9 @@ static int borg_launch_ball(int rad, int dam, int typ, int max)
 
 			/* Is it within blast radius */
 			if (r > rad) continue;
+
+			/* Bounds checking */
+			if (!map_in_bounds(x1, y1)) continue;
 
 			/* Get the grid */
 			mb_ptr = map_loc(x1, y1);
@@ -6461,16 +6465,10 @@ static int borg_vampire_damage_monster(int dam)
 	if (bp_ptr->status.hungry) dam = dam * 13 / 10;
 
 	/* Examine possible destinations */
-	for (i = 0; i < borg_bolt_n; i++)
+	for (i = 0; i < borg_next_n; i++)
 	{
-		x = borg_bolt_x[i];
-		y = borg_bolt_y[i];
-
-		/* Require "adjacent" */
-		if (distance(c_y, c_x, y, x) > 1) continue;
-
-		/* Bounds checking */
-		if (!map_in_bounds(x, y)) continue;
+		x = borg_next_x[i];
+		y = borg_next_y[i];
 
 		/* Acquire grid */
 		mb_ptr = map_loc(x, y);
@@ -7458,7 +7456,7 @@ static int borg_sorcery_damage_monster(int book, int spell)
 static int borg_attack_whirlwind(void)
 {
 	int y = 0, x = 0;
-	int dir;
+	int i;
 	int dam = 0;
 
 	map_block *mb_ptr;
@@ -7466,14 +7464,13 @@ static int borg_attack_whirlwind(void)
 	if (borg_simulate)
 	{
 		/* Scan neighboring grids */
-		for (dir = 0; dir <= 9; dir++)
+		for (i = 0; i <= borg_next_n; i++)
 		{
-			y = c_y + ddy[dir];
-			x = c_x + ddx[dir];
+			/* Fetch the coords */
+			y = borg_next_y[i];
+			x = borg_next_x[i];
 
-			/* Bounds checking */
-			if (!map_in_bounds(x, y)) continue;
-
+			/* Fetch the spot on the map */
 			mb_ptr = map_loc(x, y);
 
 			/* is there a kill next to me */
@@ -7490,7 +7487,7 @@ static int borg_attack_whirlwind(void)
 	}
 
 	/* Not supposed to happen */
-	borg_oops("The borg can cast Whirlwind from here");
+	borg_oops("The borg can't cast Whirlwind from here");
 	return (0);
 }
 
@@ -7938,20 +7935,18 @@ static int borg_chaos_damage_monster(int book, int spell)
 				case 7:
 				{
 					int y = 0, x = 0;
-					int dir;
+					int i;
 
 					map_block *mb_ptr;
 
 					dam = 0;
 
 					/* Scan neighboring grids */
-					for (dir = 0; dir <= 9; dir++)
+					for (i = 0; i <= borg_next_n; i++)
 					{
-						y = c_y + ddy[dir];
-						x = c_x + ddx[dir];
-
-						/* Bounds checking */
-						if (!map_in_bounds(x, y)) continue;
+						/* Fetch the coords */
+						y = borg_next_y[i];
+						x = borg_next_x[i];
 
 						mb_ptr = map_loc(x, y);
 
@@ -9016,8 +9011,21 @@ static void borg_add_temp_bolt(int x, int y)
 }
 
 
+/* This procedure adds a grid coords to borg_bolt */
+static void borg_add_temp_next(int x, int y)
+{
+	/* Stick this monster in the temp bolt array */
+	borg_next_x[borg_next_n] = x;
+	borg_next_y[borg_next_n] = y;
+	borg_next_n++;
+}
+
+
 /*
  * This procedure fills the temp monster arrays with coords of monsters in LOS.
+ * The basic idea behind these arrays is that they are all checked beforehand
+ * so if a procdure wants to use them there is no need for checking for walls,
+ * LOS, walls, etc.
  * 
  * borg_temp contains all the monsters within range, as in the old situation.
  * borg_bolt contains all the monsters that can be hit by a bolt.
@@ -9028,9 +9036,9 @@ static void borg_add_temp_bolt(int x, int y)
  * If the borg has ESP then this routine will deliver monsters that are not in
  * LOS, because they are hidden by walls on unknown terrain.  This is where
  * successful_target comes in.  If the borg attempted a distance attack in the
- * previous move then then suc_target is set.  If the borg hit something then
- * apparently there is no wall in the way and succ_target is cleared.  Then the
- * borg can use borg_los and borg_bolt_los for this turn.  However, if the
+ * previous move then then suc_target is set to FALSE.  If the borg hit something
+ * apparently there is no wall in the way and succ_target is set to TRUE.  Then
+ * the borg can use borg_los and borg_bolt_los for this turn.  However, if the
  * borg failed to hit the target then there must be a wall in the way and the
  * borg will use borg_los_pure and borg_bolt_los_pure.
  */
@@ -9043,6 +9051,7 @@ static void borg_temp_fill(bool all_monsters)
 
 	/* Reset lists */
 	borg_temp_n = 0;
+	borg_next_n = 0;
 	borg_bolt_n = 0;
 	borg_beam_n = 0;
 	borg_ball_n = 0;
@@ -9095,8 +9104,14 @@ static void borg_temp_fill(bool all_monsters)
 				x = x1 + dx;
 				y = y1 + dy;
 
+				/* Bounds checking */
+				if (!map_in_bounds(x, y)) continue;
+
 				/* How far is this grid */
 				dist = distance(c_x, c_y, x, y);
+
+				/* Is the monster next to the borg? */
+				if (dist == 1) borg_add_temp_next(x1, y1);
 
 				/* Is this grid out of range? */
 				if (dist > MAX_RANGE) continue;
@@ -9143,11 +9158,11 @@ static void borg_temp_fill(bool all_monsters)
 					 */
 					if (((!FLAG(bp_ptr, TR_TELEPATHY) ||
 						(FLAG(bp_ptr, TR_TELEPATHY) && successful_target)) &&
-						borg_bolt_los(c_x, c_y, x, y))
+						borg_bolt_los(c_x, c_y, x1, y1))
 						||
 						(FLAG(bp_ptr, TR_TELEPATHY) &&
 						!successful_target &&
-						borg_bolt_los_pure(c_x, c_y, x, y)))
+						borg_bolt_los_pure(c_x, c_y, x1, y1)))
 					{
 						/* Add the coords to the bolt array */
 						borg_add_temp_bolt(x1, y1);
