@@ -844,6 +844,9 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			/* Require a "naked" floor grid */
 			if ((c_ptr->o_idx != 0) || (c_ptr->m_idx != 0)) break;
 
+			/* Require not a wall grid */
+			if (!cave_los_grid(c_ptr)) break;
+
 			/* Place a trap */
 			place_trap(y, x);
 
