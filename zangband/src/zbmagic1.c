@@ -3363,9 +3363,9 @@ bool borg_caution(void)
 
 	/* Cure hallucination as soon as possible! */
 	if (bp_ptr->status.image &&
-		borg_quaff_potion(SV_POTION_CURING) ||
-		borg_use_staff(SV_STAFF_CURING) ||
-		borg_zap_rod(SV_ROD_CURING))
+		(borg_quaff_potion(SV_POTION_CURING) ||
+		 borg_use_staff(SV_STAFF_CURING) ||
+		 borg_zap_rod(SV_ROD_CURING)))
 	{
 		/* Tried to stop the visions */
 		return (TRUE);
