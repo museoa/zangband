@@ -415,6 +415,7 @@ extern u16b max_a_idx;
 extern u16b max_e_idx;
 extern u16b max_o_idx;
 extern u16b max_m_idx;
+extern s32b max_wild_size;
 extern s32b max_wild;
 extern u16b max_w_node;
 extern u16b max_w_block;

@@ -1887,7 +1887,7 @@ errr init_w_info(bool new_game)
 	/* Later must add in raw file support later. */
 	C_MAKE(wild_choice_tree, max_w_node, wild_choice_tree_type);
 	C_MAKE(wild_gen_data, max_w_block, wild_gen_data_type);
-	C_MAKE(wild_temp_dist, max_wild, byte);
+	C_MAKE(wild_temp_dist, max_wild_size, byte);
 	
 	/*
 	 * Hack XXX XXXX
@@ -1933,6 +1933,13 @@ errr init_w_info(bool new_game)
 		quit("Error in 'w_info.txt' file.");
 	}
 	
+	
+	/* 
+	 * Make wilderness type 0 have a char/attr
+	 * so the overhead map looks good in vanilla town mode.
+	 */
+	wild_gen_data[0].w_attr = TERM_GREEN;
+	wild_gen_data[0].w_char = '.';
 	
 	/* Create the random wilderness */
 	if (new_game)
@@ -2667,12 +2674,12 @@ static errr init_other(void)
 	 */
 
 	/* Allocate the wilderness itself */
-	C_MAKE(wild, max_wild, wild_tp_ptr);
+	C_MAKE(wild, max_wild_size, wild_tp_ptr);
 	
-	for (i = 0; i < max_wild ; i++)
+	for (i = 0; i < max_wild_size ; i++)
 	{
 		/* Allocate one row of the wilderness */
-		C_MAKE(wild[i], max_wild, wild_type);
+		C_MAKE(wild[i], max_wild_size, wild_type);
 	}
 
 

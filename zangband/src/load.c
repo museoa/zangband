@@ -3289,14 +3289,14 @@ static errr rd_savefile_new_aux(void)
 			}
 
 			/* Inverted "Wilderness" flag */
-			rd_byte(&lite_town);
-			lite_town = !lite_town;
+			rd_byte(&vanilla_town);
+			vanilla_town = !vanilla_town;
 
 			/****** HACK ******/
-			if (lite_town)
+			if (vanilla_town)
 			{
 				/* Set the option by hand */
-				option_flag[6] |= (1L << 1);
+				option_flag[6] |= (1L);
 			}
 		}
 
@@ -3309,19 +3309,21 @@ static errr rd_savefile_new_aux(void)
 		rd_s32b(&wild_y_size);
 
 		/* Incompatible save files */
-		if ((wild_x_size > 16 * max_wild) || (wild_y_size > 16 * max_wild))
+		if ((wild_x_size > max_wild_size) || (wild_y_size > max_wild_size))
 		{
 			note(format("Wilderness is too big (%u/%u)!", wild_x_size, wild_y_size));
 			return (23);
 		}
 
-		/* Hack - if size is zero - set to max_wild */
+		/* Hack - if size is zero - set to max_wild_size */
 		if ((wild_x_size == 0) && (wild_y_size == 0))
 		{			
-			wild_x_size = max_wild;
-			wild_y_size = max_wild;
+			wild_x_size = max_wild_size;
+			wild_y_size = max_wild_size;
 		}
-
+		
+		/* Hack - set size of wilderness to x size only */
+		max_wild = wild_x_size;
 
 		/* Ignore the seeds from old versions */
 		if (sf_version < 9)
@@ -3595,7 +3597,7 @@ static errr rd_savefile_new_aux(void)
 		}
 
 		/* Set "wilderness" mode */
-		lite_town = (c == 'y');
+		vanilla_town = (c == 'y');
 
 		/* Clear */
 		clear_from(14);

@@ -3390,7 +3390,7 @@ static errr process_dungeon_file_aux(char *buf, int ymin, int xmin, int ymax, in
 			{
 				/* Maximum wild_size */
 				if (zz[0][1] == 'S')
-					max_wild = atoi(zz[1]);
+					max_wild_size = atoi(zz[1]);
 				
 				/* Maximum wild d_tree nodes */
 				if (zz[0][1] == 'N')
@@ -3673,8 +3673,6 @@ static cptr process_dungeon_file_expr(char **sp, char *fp)
 			{
 				if (vanilla_town)
 					sprintf(tmp, "NONE");
-				else if (lite_town)
-					sprintf(tmp, "LITE");
 				else
 					sprintf(tmp, "NORMAL");
 				v = tmp;

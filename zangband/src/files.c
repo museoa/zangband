@@ -3011,8 +3011,6 @@ errr file_character(cptr name, bool full)
 
 	if (vanilla_town)
 		fprintf(fff, "\n Vanilla Town:       ON");
-	else if (lite_town)
-		fprintf(fff, "\n Lite Town:          ON");
 
 	if (ironman_shops)
 		fprintf(fff, "\n No Shops:           ON");

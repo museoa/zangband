@@ -6155,14 +6155,19 @@ option_type option_info[] =
 	"easy_floor",                   "Display floor stacks in a list" },
 #endif /* ALLOW_EASY_FLOOR -- TNB */
 
-        /*** Startup options ***/
+	{ &use_command,                 FALSE, 5, 5, 10,
+	"use_command",                  "Allow unified use command" },
 
+	{ &center_player,               FALSE, 5, 5, 11,
+	"center_player",                "Always center on the player (*slow*)" },
+
+	{ &avoid_center,                FALSE, 5, 5, 12,
+	"avoid_center",                 "Avoid centering while running" },
+
+	{ &pillar_tunnels,              FALSE, 5, 5, 13,
+	"pillar_tunnels",               "Allow pillared tunnels in the dungeon" },
 	{ &vanilla_town,                FALSE, 6, 5, 0,
 	"vanilla_town",                 "Use 'vanilla' town without quests and wilderness" },
-
-	{ &lite_town,                   FALSE, 6, 5, 1,
-	"lite_town",                    "Use 'lite' town without a wilderness" },
-
 	{ &ironman_shops,               FALSE, 6, 5, 2,
 	"ironman_shops",                "Stores are permanently closed" },
 

@@ -1054,6 +1054,11 @@ u16b max_m_idx;
 /*
  * Maximum size of the wilderness
  */
+s32b max_wild_size;
+
+/*
+ * Current size of the wilderness
+ */
 s32b max_wild;
 
 /*
@@ -1113,7 +1118,6 @@ bool ironman_small_levels;    /* Always create unusually small dungeon levels */
 bool ironman_downward;        /* Don't allow climbing upwards/recalling */
 bool ironman_autoscum;        /* Permanently enable the autoscummer */
 bool ironman_hard_quests;     /* Quest monsters get reinforcements */
-bool lite_town;               /* Use "lite" town without wilderness */
 bool ironman_empty_levels;    /* Always create empty 'arena' levels */
 bool terrain_streams;         /* Create terrain 'streamers' in the dungeon */
 bool munchkin_death;          /* Ask for saving death */

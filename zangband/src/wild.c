@@ -14,9 +14,6 @@
 
 #include "angband.h"
 
-/* Number of river starting points - must be less than TEMP_MAX */
-#define WILD_RIVER_START	10
-
 /* 
  * Helper functions that can be called recursively.  (Need function prototypes.)
  * See make_wild_03() for an instance of this.
@@ -69,8 +66,10 @@ void light_dark_block(blk_ptr block_ptr, u16b x, u16b y)
 			else
 			{
 				/* Darken "boring" features */
-				if ((c_ptr->feat <= FEAT_INVIS) ||
-				    (c_ptr->feat >= FEAT_DEEP_WATER))
+				if (!(((c_ptr->feat >= FEAT_GLYPH) &&
+				    (c_ptr->feat <= FEAT_MORE)) ||
+				    ((c_ptr->feat >= FEAT_TRAP_TRAPDOOR) &&
+				    (c_ptr->feat <= FEAT_SHOP_TAIL))))
 				{
 					/* Forget the grid */
 					c_ptr->info &= ~(CAVE_GLOW | CAVE_MARK);
@@ -481,8 +480,8 @@ static void init_towns(void)
 		town[town_num].seed = rand_int(0x10000000);
 		town[town_num].numstores = 9;
 		town[town_num].type = 1;
-		town[town_num].x = 32 + ((town_num - 1) % 2) * (SCREEN_WID / 16 + 1);
-		town[town_num].y = 32 + ((town_num - 1) / 2) * (SCREEN_HGT / 16 + 1);
+		town[town_num].x = max_wild / 2 + ((town_num - 1) % 2) * (SCREEN_WID / 16 + 1);
+		town[town_num].y = max_wild / 2 + ((town_num - 1) / 2) * (SCREEN_HGT / 16 + 1);
 
 		/* Place town on wilderness */
 		for (j = 0; j < (SCREEN_HGT / 16 + 1); j++)
@@ -497,8 +496,41 @@ static void init_towns(void)
 
 	/* No current town in cave[][] */
 	cur_town = 0;
+	
+	/* Hack - Reset player position to just next to town 1 */
+	p_ptr->wilderness_x = town[1].x * 16 - 1;
+	p_ptr->wilderness_y = town[1].y * 16 - 1;
 }
 
+/* Place a single town in the middle of the tiny wilderness */
+static void init_vanilla_town(void)
+{
+	int i, j;
+	
+	/* Only one town */
+	strcpy(town[1].name, "town");
+	town[1].seed = rand_int(0x10000000);
+	town[1].numstores = 9;
+	town[1].type = 1;
+	town[1].x = max_wild / 2 - SCREEN_WID / 32 - 1;
+	town[1].y = max_wild / 2 - SCREEN_HGT / 32 - 1;
+
+	/* Place town on wilderness */
+	for (j = 0; j < (SCREEN_HGT / 16 + 1); j++)
+	{
+		for (i = 0; i < (SCREEN_WID / 16 + 1); i++)
+		{
+			wild[town[1].y + j][town[1].x + i].done.town = 1;
+		}
+	}
+
+	/* No current town in cave[][] */
+	cur_town = 0;
+	
+	/* Hack - Reset player position to just next to town 1 */
+	p_ptr->wilderness_x = town[1].x * 16 - 1;
+	p_ptr->wilderness_y = town[1].y * 16 - 1;
+}
 
 /*
  * Set cur_town = 0
@@ -2724,7 +2756,21 @@ void gen_block_helper(blk_ptr block_ptr, byte *data, int gen_type)
 	}
 }
 
-
+/*
+ * Fill the block with grass.  This is only used by the vanilla town option.
+ */
+static void	fill_grass(blk_ptr block_ptr)
+{
+	int i, j;
+	/* Overlay the block with grass */
+	for(i = 0; i < WILD_BLOCK_SIZE; i++)
+	{
+		for(j = 0; j < WILD_BLOCK_SIZE; j++)
+		{
+			block_ptr[j][i].feat = FEAT_GRASS;
+		}
+	}
+}
 
 /* Make a new block based on the terrain type */
 static void gen_block(int x, int y, blk_ptr block_ptr)
@@ -2750,6 +2796,13 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 	if (w_type >= WILD_SEA)
 	{
 		make_wild_sea(block_ptr, w_type - WILD_SEA);
+	}
+	
+	/* Hack -Check for the vanilla town grass option. */
+	else if(w_type == 0)
+	{
+		/* Fill the block with grass */
+		fill_grass(block_ptr);	
 	}
 	else
 	{
@@ -3196,16 +3249,22 @@ static void create_rivers(int sea_level)
 {
 	int i, cur_posn, high_posn, dh;
 	int cx, cy, ch;
-	long dist, dx, dy, val, h_val;
+	long dist, dx, dy, val, h_val, river_start;
+	
+	/* Number of river starting points. */
+	river_start = max_wild * max_wild / 400;
+	
+	/* paranoia - bounds checking */
+	if (river_start > TEMP_MAX) river_start = TEMP_MAX;
 	
 	/* Make some random starting positions */
-	for (i = 0; i < WILD_RIVER_START; i++)
+	for (i = 0; i < river_start; i++)
 	{
 		temp_y[i] = rand_int(max_wild);
 		temp_x[i] = rand_int(max_wild);	
 	}
 
-	temp_n = WILD_RIVER_START;
+	temp_n = river_start;
 
 	
 	/* Set the sort hooks */
@@ -3252,7 +3311,7 @@ static void create_rivers(int sea_level)
 		else
 		{
 			/* Small val for close high positions */
-			h_val = dh / dist;
+			h_val = dh * dist;
 		}
 		
 		/* Check the other positions in the array */
@@ -3791,6 +3850,46 @@ static void create_law_map(u16b sea)
 		}
 	}
 }
+
+/* Finish making the wilderness - recenter the screen around the player. */
+void wild_done(void)
+{	
+	if (!dun_level)
+	{
+		px = p_ptr->wilderness_x;
+		py = p_ptr->wilderness_y;
+
+		/* Determine number of panels */
+		max_panel_rows = max_wild * 16 * 2 - 2;
+		max_panel_cols = max_wild * 16 * 2 - 2;
+
+		/* Assume illegal panel */
+		panel_row = max_panel_rows;
+		panel_col = max_panel_cols;
+
+		/* Hack - delete all items / monsters in wilderness */
+		wipe_o_list();
+		wipe_m_list();
+	}
+
+	/* Clear cache */
+	wild_grid.cache_count = 0;
+
+	/* Fix location of grid */
+
+	/* 
+	 * Hack - set the coords to crazy values so move_wild() works 
+	 * when change_level is called to make the player actually enter the
+	 * new wilderness.
+	 */ 
+	 
+	wild_grid.x = max_wild + 1;
+	wild_grid.y = max_wild + 1;
+
+	/* Refresh random number seed */
+	wild_grid.wild_seed = rand_int(0x10000000);
+}
+
 /*
  * Create the wilderness - dodgy function now.  Much to be done.
  * Later this will use a fractal method to make the wilderness.
@@ -3807,6 +3906,42 @@ void create_wilderness(void)
 	u16b sea_level;
 	
 	long hgt, pop, law, hgt_scale, pop_scale, law_scale;
+	
+	/* Minimal wilderness */
+	if (vanilla_town)
+	{
+		/* Tiny wilderness */
+		max_wild = WILD_GRID_SIZE + 1;
+		
+		/* Mega Hack - make an "empty" wilderness (all ocean). */
+		for (i = 0; i < max_wild; i++)
+		{
+			for (j = 0; j < max_wild; j++)
+			{
+				/* Mega Hack - Use the 0 value (normally empty) to denote grass. */
+				wild[j][i].done.wild = 0;
+				
+				/* Nothing interesting here */
+				wild[j][i].done.info = 0;
+				
+				/* No town yet */
+				wild[j][i].done.town = 0;
+
+				/* No monsters */
+				wild[j][i].done.mon_gen = 0;
+			}
+		}
+		
+		/* Make a single vanilla town. */
+		init_vanilla_town();
+		
+		/* Done */
+		wild_done();
+		return;
+	}
+	
+	/* Huge wilderness */
+	max_wild = max_wild_size;
 	
 	/* Create "height" information of wilderness */
 	create_hgt_map();
@@ -3834,8 +3969,8 @@ void create_wilderness(void)
 		}
 	}
 		
-	/* The sea covers 1/3 of the wilderness */
-	sea_level = hgt_min + (hgt_max - hgt_min) / 3;
+	/* The sea covers 1/4 of the wilderness */
+	sea_level = hgt_min + (hgt_max - hgt_min) / 4;
 	
 	/* Height scale factor */
 	hgt_scale = (hgt_max - sea_level);
@@ -3958,52 +4093,16 @@ void create_wilderness(void)
 			wild[j][i].done.mon_gen = 0;
 		}
 	}
-
-	/* Hack - Reset player position to centre. */
-	p_ptr->wilderness_x = 32 * 16;
-	p_ptr->wilderness_y = 32 * 16;
-
-	if (!dun_level)
-	{
-		px = p_ptr->wilderness_x;
-		py = p_ptr->wilderness_y;
-
-		/* Determine number of panels */
-		max_panel_rows = max_wild * 16 * 2 - 2;
-		max_panel_cols = max_wild * 16 * 2 - 2;
-
-		/* Assume illegal panel */
-		panel_row = max_panel_rows;
-		panel_col = max_panel_cols;
-
-		/* Hack - delete all items / monsters in wilderness */
-		wipe_o_list();
-		wipe_m_list();
-	}
-
-	/* Clear cache */
-	wild_grid.cache_count = 0;
-
-	/* Fix location of grid */
-
-	/* 
-	 * Hack - set the coords to crazy values so move_wild() works 
-	 * when change_level is called to make the player actually enter the
-	 * new wilderness.
-	 */ 
-	 
-	wild_grid.x = max_wild + 1;
-	wild_grid.y = max_wild + 1;
-
+		
 	/* A dodgy town */
 	init_towns();
-
-	/* Refresh random number seed */
-	wild_grid.wild_seed = rand_int(0x10000000);
 	
 	/* Free up memory used to create the wilderness */
 	#if 0
 	C_FREE(wild_choice_tree, max_w_node, wild_choice_tree_type);
 	C_FREE(wild_temp_dist, max_wild, byte);
 	#endif
+	
+	/* Done */
+	wild_done();
 }
