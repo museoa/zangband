@@ -445,9 +445,9 @@ N:39:Magic Wares
 G:6:r
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:5:5:30:0:0:100:0:0
-F:2,field_action_door_store
-F:18,field_action_isbook_tester
+D:5:20:40:0:0:100:0:0
+F:2,field_action_door_store 
+F:18,field_action_ispotion_tester
 
 # Black Market
 N:40:Black Market
@@ -1262,7 +1262,7 @@ N:130:Supplies Store
 G:1:u
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:0:0:9:0:5:40:55:0
+D:0:0:9:0:0:40:60:0
 F:2,field_action_door_store
 F:18,field_action_issupplies_tester
 
