@@ -1926,7 +1926,11 @@ static bool get_player_race(void)
 		"charattr.txt#TheRaces");
 	
 	/* No selection? */
-	if (p_ptr->prace == 255) return (FALSE);
+	if (p_ptr->prace == 255)
+	{
+		p_ptr->prace = 0;
+		return (FALSE);
+	}
 	
 	/* Give beastman a mutation at character birth */
 	if (p_ptr->prace == RACE_BEASTMAN)
@@ -1985,12 +1989,14 @@ static bool get_player_class(void)
 	/* No selection? */
 	if (p_ptr->pclass == 255)
 	{
+		p_ptr->pclass = 0;
+		
 		for (i = 0; i < MAX_RACES; i++)
 		{
 			/* Free the strings */
 			string_free(classes[i]);
-		}	
-
+		}
+		
 		return (FALSE);
 	}
 
