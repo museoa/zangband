@@ -2383,6 +2383,14 @@
 
 
 /*
+ * Feature flags
+ */
+#define FF_BLOCK_LOS	0x01
+#define FF_HALF_LOS		0x02
+#define FF_USE_TRANS	0x04
+
+
+/*
  * Bit flags for the "project()" function
  *
  *   JUMP: Jump directly to the target location (this is a hack)

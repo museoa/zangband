@@ -50,6 +50,22 @@
 /*** Helper arrays for parsing ascii template files ***/
 
 /*
+ * Feature flag types
+ */
+static cptr f_info_flags[] =
+{
+	"BLOCK_LOS",
+	"HALF_LOS",
+	"USE_TRANS",
+	"DUMMY1",
+	"DUMMY2",
+	"DUMMY3",
+	"DUMMY4",
+	"DUMMY5"
+};
+
+
+/*
  * Monster Blow Methods
  */
 static cptr r_info_blow_method[] =
@@ -1103,6 +1119,26 @@ errr parse_v_info(char *buf, header *head)
 }
 
 
+/*
+ * Grab one flag from a textual string
+ */
+static errr grab_one_feat_flag(byte *flags, cptr names[], cptr what)
+{
+	int i;
+
+	/* Check flags */
+	for (i = 0; i < 8; i++)
+	{
+		if (streq(what, names[i]))
+		{
+			*flags |= (1L << i);
+			return (0);
+		}
+	}
+
+	return (-1);
+}
+
 
 /*
  * Initialize the "f_info" array, by parsing an ascii "template" file
@@ -1111,7 +1147,7 @@ errr parse_f_info(char *buf, header *head)
 {
 	int i;
 
-	char *s;
+	char *s, *t;
 
 	/* Current entry */
 	static feature_type *f_ptr = NULL;
@@ -1174,6 +1210,34 @@ errr parse_f_info(char *buf, header *head)
 		/* Save the values */
 		f_ptr->d_attr = tmp;
 		f_ptr->d_char = buf[2];
+	}
+	else if (buf[0] == 'F')
+	{
+		/* There better be a current f_ptr */
+		if (!f_ptr) return (PARSE_ERROR_MISSING_RECORD_HEADER);
+
+		/* Parse every entry textually */
+		for (s = buf + 2; *s;)
+		{
+			/* Find the end of this entry */
+			for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */ ;
+
+			/* Nuke and skip any dividers */
+			if (*t)
+			{
+				*t++ = '\0';
+				while (*t == ' ' || *t == '|') t++;
+			}
+
+			/* Parse this entry */
+			if (0 != grab_one_feat_flag(&f_ptr->flags, f_info_flags, s))
+			{
+				return (PARSE_ERROR_INVALID_FLAG);
+			}
+			
+			/* Start the next entry */
+			s = t;
+		}
 	}
 	else
 	{
@@ -1421,9 +1485,11 @@ errr parse_k_info(char *buf, header *head)
 			}
 
 			/* Parse this entry */
-			if (0 !=
-				grab_one_kind_flag(k_ptr, s)) return (PARSE_ERROR_INVALID_FLAG);
-
+			if (0 != grab_one_kind_flag(k_ptr, s))
+			{
+				return (PARSE_ERROR_INVALID_FLAG);
+			}
+			
 			/* Start the next entry */
 			s = t;
 		}
