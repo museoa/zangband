@@ -1258,7 +1258,7 @@ static int critical_prob_aux(int x, int r)
 	 */
 	int n = x + 1 - (r - 100);
 
-	if (n <= 0) return(100 * x);
+	if (n <= 0) return (100 * x);
 
 	if (n <= 100) return (100 * x - n * (n - 1) / 2);
 
@@ -1301,7 +1301,7 @@ static int critical_prob(int to_h, int r1, int r2)
 	int prob1, prob2;
 	int chance = p_ptr->skill_thn + (p_ptr->to_h + to_h) * BTH_PLUS_ADJ;
 
-	if (chance <= 0) return(0);
+	if (chance <= 0) return (0);
 	
 	prob1 = critical_prob_aux(chance, r1);
 	
@@ -1966,7 +1966,7 @@ static bool build_process_command(field_type *f_ptr, store_type *b_ptr)
 	}
 
 	/* Process the building-specific commands */
-	if (process_build_hook(f_ptr, b_ptr)) return(FALSE);
+	if (process_build_hook(f_ptr, b_ptr)) return (FALSE);
 	
 	/* Parse the command */
 	switch (p_ptr->command_cmd)

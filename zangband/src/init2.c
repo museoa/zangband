@@ -2072,13 +2072,13 @@ static errr init_other(void)
 	}
 
 	/* Allocate cache of wilderness blocks */
-	for (i = 0; i < WILD_BLOCKS ; i++)
+	for (i = 0; i < WILD_BLOCKS; i++)
 	{
 		/* Allocate block */
 		C_MAKE(wild_cache[i], WILD_BLOCK_SIZE, cave_type*);
 
 		/* Allocate rows of a block */
-		for (j = 0; j < WILD_BLOCK_SIZE ; j++)
+		for (j = 0; j < WILD_BLOCK_SIZE; j++)
 		{
 			C_MAKE(wild_cache[i][j], WILD_BLOCK_SIZE, cave_type);
 		}
@@ -2092,7 +2092,7 @@ static errr init_other(void)
 	/* Allocate the wilderness itself */
 	C_MAKE(wild, max_wild_size, wild_type*);
 
-	for (i = 0; i < max_wild_size ; i++)
+	for (i = 0; i < max_wild_size; i++)
 	{
 		/* Allocate one row of the wilderness */
 		C_MAKE(wild[i], max_wild_size, wild_type);

@@ -1947,7 +1947,7 @@ s16b quark_add(cptr str)
 		i = compact_quarks();
 		
 		/* Paranoia - no room? */
-		if (!i) return(0);
+		if (!i) return (0);
 		
 		/* Delete the old quark */
 		string_free(quark__str[i]);

@@ -816,7 +816,7 @@ static int random_slay(object_type *o_ptr, int artifact_bias)
 			break;
 			
 		case BIAS_PRIESTLY:
-			if((o_ptr->tval == TV_SWORD || o_ptr->tval == TV_POLEARM) &&
+			if ((o_ptr->tval == TV_SWORD || o_ptr->tval == TV_POLEARM) &&
 			  !(o_ptr->flags3 & TR3_BLESSED))
 	  		{
 				/* A free power for "priestly" random artifacts */
