@@ -247,20 +247,20 @@ bool los(int y1, int x1, int y2, int x2)
 	if (ax >= ay)
 	{
 		/* Let m = dy / dx * 2 * (dy * dx) = 2 * dy * dy */
-		qy = ay * ay;
-		m = qy << 1;
+		m = ay * ay << 1;
 
 		tx = x1 + sx;
 
 		/* Consider the special case where slope == 1. */
-		if (qy == f2)
+		if (ax == ay)
 		{
 			ty = y1 + sy;
-			qy -= f1;
+			qy = -f2;
 		}
 		else
 		{
 			ty = y1;
+			qy = f2;
 		}
 
 		/* Note (below) the case (qy == f2), where */
@@ -295,19 +295,19 @@ bool los(int y1, int x1, int y2, int x2)
 	else
 	{
 		/* Let m = dx / dy * 2 * (dx * dy) = 2 * dx * dx */
-		qx = ax * ax;
-		m = qx << 1;
+		m = ax * ax << 1;
 
 		ty = y1 + sy;
 
-		if (qx == f2)
+		if (ax == ay)
 		{
 			tx = x1 + sx;
-			qx -= f1;
+			qx = -f2;
 		}
 		else
 		{
 			tx = x1;
+			qx = f2;
 		}
 
 		/* Note (below) the case (qx == f2), where */
