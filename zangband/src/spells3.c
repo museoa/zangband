@@ -4493,6 +4493,9 @@ bool curse_armor(void)
 		o_ptr->flags2 = 0;
 		o_ptr->flags3 = 0;
 
+		/* Lose your feeling */
+		o_ptr->feeling = FEEL_NONE;
+
 		add_ego_flags(o_ptr, EGO_BLASTED);
 
 		/* Recalculate bonuses */
@@ -4555,6 +4558,9 @@ bool curse_weapon(void)
 		o_ptr->flags1 = 0;
 		o_ptr->flags2 = 0;
 		o_ptr->flags3 = 0;
+		
+		/* Lose your feeling */
+		o_ptr->feeling = FEEL_NONE;
 
 		add_ego_flags(o_ptr, EGO_SHATTERED);
 
