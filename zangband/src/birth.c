@@ -890,7 +890,7 @@ static void get_extra(void)
 
 #ifdef SHOW_LIFE_RATE
 	int percent;
-#endif
+#endif /* SHOW_LIFE_RATE */
 
 	/* Level one */
 	p_ptr->max_lev = p_ptr->lev = 1;
@@ -1633,9 +1633,10 @@ static void player_outfit(void)
 
 /* Locations of the tables on the screen */
 #define HEADER_ROW		1
-#define QUESTION_ROW	6
-#define TABLE_ROW		9
+#define QUESTION_ROW	7
+#define TABLE_ROW		10
 
+#define QUESTION_COL	3	
 #define SEX_COL			0
 #define RACE_COL		12
 #define CLASS_COL		27
@@ -1666,7 +1667,7 @@ static void clear_question(void)
 static int get_player_choice(cptr *choices, int num, int col, int wid,
 	 cptr helpfile)
 {
-	int top = 0, bot = 14, cur = 0;
+	int top = 0, bot = 13, cur = 0;
 	int i, dir;
 	char c;
 	char buf[80];
@@ -1713,12 +1714,13 @@ static int get_player_choice(cptr *choices, int num, int col, int wid,
 		if (done) return (cur);
 
 		c = inkey();
-		if (c == 'Q')
+
+		if (c == KTRL('X'))
 		{
 			remove_loc();
 			quit(NULL);
 		}
-		if ((c == 'S') || (c == ESCAPE))
+		if (c == ESCAPE)
 		{
 			/* Mega Hack - go back. */
 			return (INVALID_CHOICE);
@@ -1942,12 +1944,8 @@ static bool get_player_sex(void)
 	cptr genders[MAX_SEXES];
 
 	/* Extra info */
-	Term_putstr(5, QUESTION_ROW, -1, TERM_WHITE,
+	Term_putstr(QUESTION_COL, QUESTION_ROW, -1, TERM_WHITE,
 		"Your 'sex' does not have any significant gameplay effects.");
-	Term_putstr(5, QUESTION_ROW + 1, -1, TERM_WHITE,
-		"Use movement keys to scroll the menu.");
-	Term_putstr(5, QUESTION_ROW + 2, -1, TERM_WHITE,
-		"Use enter to select.  Other commands: (Q, S, Esc, *, ?, =)");
 
 	/* Tabulate genders */
 	for (i = 0; i < MAX_SEXES; i++)
@@ -1981,12 +1979,8 @@ static bool get_player_race(void)
 	cptr races[MAX_RACES];
 
 	/* Extra info */
-	Term_putstr(5, QUESTION_ROW, -1, TERM_WHITE,
+	Term_putstr(QUESTION_COL, QUESTION_ROW, -1, TERM_WHITE,
 		"Your 'race' determines various intrinsic factors and bonuses.");
-	Term_putstr(5, QUESTION_ROW + 1, -1, TERM_WHITE,
-		"Use movement keys to scroll the menu.  Part of it is off-screen.");
-	Term_putstr(5, QUESTION_ROW + 2, -1, TERM_WHITE,
-		"Use enter to select.  Other commands: (Q, S, Esc, *, ?, =)");
 
 	/* Tabulate races */
 	for (i = 0; i < MAX_RACES; i++)
@@ -2033,9 +2027,9 @@ static bool get_player_class(void)
 
 
 	/* Extra info */
-	Term_putstr(5, QUESTION_ROW, -1, TERM_WHITE,
+	Term_putstr(QUESTION_COL, QUESTION_ROW, -1, TERM_WHITE,
 		"Your 'class' determines various intrinsic abilities and bonuses.");
-	Term_putstr(5, QUESTION_ROW + 1, -1, TERM_WHITE,
+	Term_putstr(QUESTION_COL, QUESTION_ROW + 1, -1, TERM_WHITE,
 	    "Any entries in parentheses should only be used by advanced players.");
 
 	/* Tabulate races */
@@ -2119,11 +2113,9 @@ static bool get_player_realms(void)
 	if (!count) return (TRUE);
 
 	/* Extra info */
-	Term_putstr(5, QUESTION_ROW, -1, TERM_WHITE,
-		"Choose a realm of magic, * for random, or = for options");
-	Term_putstr(5, QUESTION_ROW + 1, -1, TERM_WHITE,
+	Term_putstr(QUESTION_COL, QUESTION_ROW, -1, TERM_WHITE,
 		"Life and Sorcery are protective, Chaos and Death are destructive.");
-	Term_putstr(5, QUESTION_ROW + 2, -1, TERM_WHITE,
+	Term_putstr(QUESTION_COL, QUESTION_ROW + 1, -1, TERM_WHITE,
 		"Nature has both defensive and offensive spells.");
 
 	choose = get_player_choice(realms, count, REALM1_COL, 10,
@@ -2345,14 +2337,14 @@ static bool player_birth_aux_1(void)
 	Term_clear();
 
 	/* Display some helpful information */
-	Term_putstr(5, HEADER_ROW, -1, TERM_WHITE,
-	            "Please answer the following questions.  Most of the questions");
-	Term_putstr(5, HEADER_ROW + 1, -1, TERM_WHITE,
-	            "display a set of standard answers, and many will also accept");
-	Term_putstr(5, HEADER_ROW + 2, -1, TERM_WHITE,
-	            "some special responses, including 'Q' to quit, 'S' to restart,");
-	Term_putstr(5, HEADER_ROW + 3, -1, TERM_WHITE,
-	            "and '?' for help.  Note that 'Q' and 'S' must be capitalized.");
+	Term_putstr(QUESTION_COL, HEADER_ROW, -1, TERM_WHITE,
+	            "Please select your character from the menu below.");
+	Term_putstr(QUESTION_COL, HEADER_ROW + 2, -1, TERM_WHITE,
+	            "Use the movement keys to scroll the menu, 'enter' to select the current");
+	Term_putstr(QUESTION_COL, HEADER_ROW + 3, -1, TERM_WHITE,
+	            "menu item, '*' for a random menu item, 'ESC' to restart the character");
+	Term_putstr(QUESTION_COL, HEADER_ROW + 4, -1, TERM_WHITE,
+	            "selection, '=' for the birth options, '?' for help, or 'Ctrl-X' to quit.");
 
 	if (!get_player_sex()) return (FALSE);
 
