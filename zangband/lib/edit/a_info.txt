@@ -15,11 +15,6 @@
 # Artifacts 1-15 are "special", 16-63 are "armor", and 64-127 are
 # "weapons".
 
-# Hack -- "Grond" and "Morgoth" MUST have a rarity of one, or they might
-# not be dropped when Morgoth is killed.  Note that they, like the
-# "special"
-# artifacts, are never created "accidentally".
-
 # === Understanding a_info.txt ===
 
 # N: serial number : item name
@@ -385,7 +380,7 @@ F:STR | INT | WIS | DEX | CON | CHR | INFRA | HIDE_TYPE |
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_POIS |
 F:RES_LITE | RES_DARK | RES_CONF | RES_NEXUS |
 F:LITE | SEE_INVIS | TELEPATHY |
-F:CURSED | HEAVY_CURSE | PERMA_CURSE | NO_TELE | INSTA_ART
+F:CURSED | HEAVY_CURSE | PERMA_CURSE | NO_TELE | INSTA_ART | QUESTITEM
 
 # The Iron Crown of Beruthiel
 
@@ -1181,6 +1176,7 @@ P:0:9d9:5:25:10
 F:KILL_DRAGON | SLAY_ANIMAL | SLAY_EVIL | IMPACT | SLAY_UNDEAD | NO_MAGIC |
 F:SLAY_DEMON | SLAY_TROLL | SLAY_ORC | RES_ACID | RES_ELEC | RES_FIRE |
 F:RES_COLD | SEE_INVIS | TELEPATHY | AGGRAVATE | SHOW_MODS | INSTA_ART
+F:QUESTITEM
 
 
 # The Flail 'Totila'
