@@ -20,7 +20,7 @@
  * See make_wild_03() for an instance of this.
  * This ability will also be used by other routines in the future.
  */
-static void gen_block_helper(blk_ptr block_ptr, byte *data, int gen_type);
+static void gen_block_helper(blk_ptr block_ptr, byte *data, int gen_type, bool road);
 static void blend_helper(cave_type *c_ptr, byte *data, int g_type);
 
 /* The starting position of the player */
@@ -2567,11 +2567,13 @@ static void wild_add_gradient(blk_ptr block_ptr, byte feat1, byte feat2)
  * The even fields are the region of the hieght-map where
  * those features are most common.
  */
-static void make_wild_01(blk_ptr block_ptr, byte *data)
+static void make_wild_01(blk_ptr block_ptr, byte *data, bool road)
 {
 	int i, j;
 	byte new_feat, element;
 
+	/* Ignore road for now */
+	(void) road;
 
 	/* Initialise temporary block */
 	clear_temp_block();
@@ -2613,10 +2615,13 @@ static void make_wild_01(blk_ptr block_ptr, byte *data)
  *
  * This is good for making "flat density" regions like grasslands etc.
  */
-static void make_wild_02(blk_ptr block_ptr, byte *data)
+static void make_wild_02(blk_ptr block_ptr, byte *data, bool road)
 {
 	int i, j, k;
 	byte new_feat, feat, chance;
+	
+	/* Ignore road for now */
+	(void) road;
 
 	for (i = 0; i < WILD_BLOCK_SIZE; i++)
 	{
@@ -2672,13 +2677,13 @@ static void make_wild_02(blk_ptr block_ptr, byte *data)
  * These include:  Tiny lakes of water, lava, acid.  Craters.  Rock pillars.
  *   Bogs.  Clumps of trees. etc.
  */
-static void make_wild_03(blk_ptr block_ptr, byte *data)
+static void make_wild_03(blk_ptr block_ptr, byte *data, bool road)
 {
 	int i, j, element;
 
 	/* Call the other routine to make the "base" terrain. */
 	gen_block_helper(block_ptr, wild_gen_data[data[0]].data,
-					 wild_gen_data[data[0]].gen_routine);
+					 wild_gen_data[data[0]].gen_routine, road);
 
 	/* Initialise temporary block */
 	clear_temp_block();
@@ -2724,7 +2729,7 @@ static void make_wild_03(blk_ptr block_ptr, byte *data)
 /*
  * Draw a pleasant field (farm)
  */
-static void make_wild_04(blk_ptr block_ptr, byte *data)
+static void make_wild_04(blk_ptr block_ptr, byte *data, bool road)
 {
 	int x, y, x1, y1, x2, y2, i, j;
 	int type;
@@ -2765,7 +2770,7 @@ static void make_wild_04(blk_ptr block_ptr, byte *data)
         {
             /* Use "underlying" type */
             gen_block_helper(block_ptr, wild_gen_data[data[0]].data,
-                             wild_gen_data[data[0]].gen_routine);
+                             wild_gen_data[data[0]].gen_routine, road);
             return;
         }
 #endif
@@ -2796,11 +2801,11 @@ static void make_wild_04(blk_ptr block_ptr, byte *data)
     }
 
     /*
-     * XXX If there is a road or river going through here we should
-     * use type 2 (dirt), but we can't find out if there's a road
-     * now. The current code tends to result in roads running through
+     * If there is a road or river going through here we should
+     * use types 1 or 2 because we don't want roads running through
      * buildings and other weirdness.
      */
+	if (road && (type > 2)) type = rand_range(1, 2);
 
 	for (i = 0; i < WILD_BLOCK_SIZE; i++)
 	{
@@ -2995,7 +3000,7 @@ static void blend_block(int x, int y, blk_ptr block_ptr, u16b type)
 /*
  * Make the specified terrain type at a wilderness block
  */
-static void gen_block_helper(blk_ptr block_ptr, byte *data, int gen_type)
+static void gen_block_helper(blk_ptr block_ptr, byte *data, int gen_type, bool road)
 {
 	/* Based on type - choose wilderness block generation function */
 	switch (gen_type)
@@ -3003,25 +3008,25 @@ static void gen_block_helper(blk_ptr block_ptr, byte *data, int gen_type)
 		case 1:
 		{
 			/* Fractal plasma with weighted terrain probabilites */
-			make_wild_01(block_ptr, data);
+			make_wild_01(block_ptr, data, road);
 			break;
 		}
 		case 2:
 		{
 			/* Uniform field + rare "out-crops" */
-			make_wild_02(block_ptr, data);
+			make_wild_02(block_ptr, data, road);
 			break;
 		}
 		case 3:
 		{
 			/* Use another type + overlay a "circle" of terrain. */
-			make_wild_03(block_ptr, data);
+			make_wild_03(block_ptr, data, road);
 			break;
 		}
 		case 4:
 		{
 			/* Draw a farm. */
-			make_wild_04(block_ptr, data);
+			make_wild_04(block_ptr, data, road);
 			break;
 		}
 		default:
@@ -3174,6 +3179,7 @@ static void gen_block(int x, int y)
 {
 	u16b w_place, w_type;
 	blk_ptr block_ptr = wild_grid[y][x];
+	bool road = FALSE;
 
 	/* Hack -- Use the "simple" RNG */
 	Rand_quick = TRUE;
@@ -3185,6 +3191,12 @@ static void gen_block(int x, int y)
 
 	/* Get wilderness type */
 	w_type = wild[y][x].done.wild;
+	
+	/* Is there a road here? */
+	if (wild[y][x].done.info & (WILD_INFO_TRACK | WILD_INFO_ROAD))
+	{
+		road = TRUE;
+	}
 
 	/* Create sea terrains if type >= WILD_SEA */
 	if (w_type >= WILD_SEA)
@@ -3202,7 +3214,7 @@ static void gen_block(int x, int y)
 	{
 		/* Make terrain based on wilderness generation type */
 		gen_block_helper(block_ptr, wild_gen_data[w_type].data,
-						 wild_gen_data[w_type].gen_routine);
+						 wild_gen_data[w_type].gen_routine, road);
 
 		/* Blend with adjacent terrains */
 		blend_block(x, y, block_ptr, w_type);
