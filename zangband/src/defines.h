@@ -2531,6 +2531,7 @@
 #define PU_MANA         0x00000020L	/* Calculate csp and msp */
 #define PU_SPELLS       0x00000040L	/* Calculate spells */
 /* xxx (many) */
+#define PU_WEIGHT		0x00000100L	/* Calculate weight of inventory */
 /* xxx (many) */
 /* xxx (many) */
 #define PU_VIEW         0x00100000L	/* Update view */

@@ -5103,11 +5103,8 @@ void item_increase(object_type *o_ptr, int num)
 	/* Change the number and weight */
 	if (num && !floor_item(o_ptr))
 	{
-		/* Add the weight */
-		p_ptr->total_weight += (num * o_ptr->weight);
-
-		/* Recalculate bonuses */
-		p_ptr->update |= (PU_BONUS);
+		/* Recalculate bonuses and weight */
+		p_ptr->update |= (PU_BONUS | PU_WEIGHT);
 
 		/* Recalculate mana */
 		p_ptr->update |= (PU_MANA);
@@ -5319,11 +5316,8 @@ object_type *inven_carry(object_type *o_ptr)
 			/* Combine the items */
 			object_absorb(j_ptr, o_ptr);
 
-			/* Increase the weight */
-			p_ptr->total_weight += (o_ptr->number * o_ptr->weight);
-
-			/* Recalculate bonuses */
-			p_ptr->update |= (PU_BONUS);
+			/* Recalculate bonuses and weight */
+			p_ptr->update |= (PU_BONUS | PU_WEIGHT);
 
 			/* Window stuff */
 			p_ptr->window |= (PW_INVEN);
@@ -5336,9 +5330,6 @@ object_type *inven_carry(object_type *o_ptr)
 
 	/* Paranoia */
 	if (get_list_length(p_ptr->inventory) > INVEN_PACK) return (NULL);
-
-	/* Increase the weight */
-	p_ptr->total_weight += (o_ptr->number * o_ptr->weight);
 
 	/* Add the item to the pack */
 	o_ptr = add_object_list(&p_ptr->inventory, o_ptr);
@@ -5358,8 +5349,8 @@ object_type *inven_carry(object_type *o_ptr)
 	/* Reorder the pack */
 	reorder_pack_aux(&o_ptr);
 
-	/* Recalculate bonuses */
-	p_ptr->update |= (PU_BONUS);
+	/* Recalculate bonuses and weight */
+	p_ptr->update |= (PU_BONUS | PU_WEIGHT);
 
 	/* Combine and Reorder pack */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -5516,6 +5507,9 @@ void inven_drop(object_type *o_ptr, int amt)
 	item_increase(o_ptr, -amt);
 	item_describe(o_ptr);
 	item_optimize(o_ptr);
+	
+	/* Update total weight */
+	p_ptr->update |= PU_WEIGHT;
 }
 
 

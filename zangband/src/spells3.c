@@ -1940,10 +1940,10 @@ bool artifact_scroll(void)
 			msg_format("%d of your %s %s destroyed!", (o_ptr->number) - 1,
 					   o_name, ((o_ptr->number > 2) ? "were" : "was"));
 
-			/* Change the weight */
-			p_ptr->total_weight -= ((o_ptr->number - 1) * o_ptr->weight);
-
 			o_ptr->number = 1;
+			
+			/* Notice weight changes */
+			p_ptr->update |= PU_WEIGHT;
 		}
 
 		okay = create_artifact(o_ptr, TRUE);

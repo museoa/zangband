@@ -1360,9 +1360,6 @@ static errr rd_inventory(void)
 	object_type forge;
 	object_type *q_ptr;
 
-	/* No weight */
-	p_ptr->total_weight = 0;
-
 	/* Read until done */
 	while (1)
 	{
@@ -1393,9 +1390,6 @@ static errr rd_inventory(void)
 			{
 				/* Copy object */
 				object_copy(&p_ptr->equipment[n], q_ptr);
-
-				/* Add the weight */
-				p_ptr->total_weight += (q_ptr->number * q_ptr->weight);
 			}
 		}
 		else
@@ -1405,9 +1399,6 @@ static errr rd_inventory(void)
 			{
 				/* Copy object */
 				object_copy(&p_ptr->equipment[n - 24], q_ptr);
-
-				/* Add the weight */
-				p_ptr->total_weight += (q_ptr->number * q_ptr->weight);
 			}
 
 			/* Carry inventory */
@@ -1415,9 +1406,6 @@ static errr rd_inventory(void)
 			{
 				/* Copy object into temp structure */
 				object_copy(&old_inventory[n], q_ptr);
-
-				/* Add the weight */
-				p_ptr->total_weight += (q_ptr->number * q_ptr->weight);
 			}
 		}
 	}
@@ -2323,20 +2311,6 @@ static errr rd_dungeon(void)
 				(void)inven_carry(o_ptr);
 			}
 		}
-	}
-	else
-	{
-		/* Delete this code when total_weight is removed */
-
-		object_type *o_ptr;
-
-		/* Repair information */
-		OBJ_ITT_START (p_ptr->inventory, o_ptr)
-		{
-			/* Add the weight */
-			p_ptr->total_weight += (o_ptr->number * o_ptr->weight);
-		}
-		OBJ_ITT_END;
 	}
 
 	/*** Monsters ***/

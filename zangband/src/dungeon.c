@@ -3543,7 +3543,7 @@ void play_game(bool new_game)
 	character_xtra = TRUE;
 
 	/* Need to recalculate some transient things */
-	p_ptr->update |= (PU_BONUS | PU_SPELLS);
+	p_ptr->update |= (PU_BONUS | PU_SPELLS | PU_WEIGHT);
 
 	/* Update some stuff not stored in the savefile any more */
 	p_ptr->update |= (PU_VIEW | PU_MON_LITE);

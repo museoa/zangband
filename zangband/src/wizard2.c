@@ -1008,15 +1008,15 @@ static void wiz_quantity_item(object_type *o_ptr)
 		if (tmp_int < 1) tmp_int = 1;
 		if (tmp_int > 99) tmp_int = 99;
 
-		/* Add the weight */
-		p_ptr->total_weight += ((tmp_int - o_ptr->number) * o_ptr->weight);
-
 		/* Accept modifications */
 		o_ptr->number = tmp_int;
 
 		/* Hack -- rod pvals must change if the number in the stack does. -LM- */
 		if (o_ptr->tval == TV_ROD)
 			o_ptr->pval = o_ptr->pval * o_ptr->number / tmp_qnt;
+			
+		/* Notice weight changes */
+		p_ptr->update |= PU_WEIGHT;
 	}
 }
 

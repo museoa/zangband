@@ -499,11 +499,13 @@ static void do_cmd_use_staff_aux(object_type *o_ptr)
 
 		/* Unstack the used item */
 		o_ptr->number--;
-		p_ptr->total_weight -= q_ptr->weight;
 		o_ptr = inven_carry(q_ptr);
 
 		/* Message */
 		msg_print("You unstack your staff.");
+		
+		/* Notice weight changes */
+		p_ptr->update |= PU_WEIGHT;
 	}
 
 	/* Describe charges in the pack */

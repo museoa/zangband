@@ -221,9 +221,6 @@ void do_cmd_wield(void)
 	/* Forget Region */
 	o_ptr->region = 0;
 
-	/* Increase the weight */
-	p_ptr->total_weight += q_ptr->weight;
-
 	/* Where is the item now */
 	if (slot == EQUIP_WIELD)
 	{
@@ -263,8 +260,8 @@ void do_cmd_wield(void)
 	/* Learn some "obvious" things about the item */
 	o_ptr->kn_flags1 |= (o_ptr->flags1 & TR1_EASY_MASK);
 
-	/* Recalculate bonuses */
-	p_ptr->update |= (PU_BONUS);
+	/* Recalculate bonuses and weight */
+	p_ptr->update |= (PU_BONUS | PU_WEIGHT);
 
 	/* Recalculate torch */
 	p_ptr->update |= (PU_TORCH);
