@@ -4194,7 +4194,7 @@ static void init_stuff(void)
 /*
  * Macintosh Main loop
  */
-void main(void)
+int main(void)
 {
 	EventRecord tempEvent;
 	int numberOfMasters = 10;

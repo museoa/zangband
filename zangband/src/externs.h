@@ -1147,7 +1147,7 @@ extern int usleep(huge usecs);
 
 #ifdef MACINTOSH
 /* main-mac.c */
-/* extern void main(void); */
+/* extern int main(void); */
 #endif
 
 #ifdef WINDOWS
