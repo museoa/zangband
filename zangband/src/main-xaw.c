@@ -381,7 +381,6 @@ WidgetClass angbandWidgetClass = (WidgetClass) &angbandClassRec;
  * Public procedures
  */
 
-#if 0 
 /*
  * Find the square a particular pixel is part of.
  */
@@ -397,7 +396,6 @@ static void pixel_to_square(AngbandWidget widget, int *x, int *y, int ox, int oy
 		(*x) -= ((*x) - Term->scr->big_x1 + 1) / 2;
 	}
 }
-#endif /* 0 */
 
 /*
  * Find the pixel at the top-left corner of a square.
@@ -833,20 +831,9 @@ static void Redisplay(AngbandWidget wnew, XEvent *xev, Region region)
 	Term_activate(&td->t);
 
 	/* Find the bounds of the exposed region */
-
-	/*
-	 * This probably could be obtained from the Region parameter -
-	 * but I don't know anything about XAW.
-	 */
-	x1 = (xev->xexpose.x - wnew->angband.internal_border)
-		/wnew->angband.fontwidth;
-	x2 = (xev->xexpose.x + xev->xexpose.width -
-		wnew->angband.internal_border)/wnew->angband.fontwidth;
-
-	y1 = (xev->xexpose.y - wnew->angband.internal_border)
-		/wnew->angband.fontheight;
-	y2 = (xev->xexpose.y + xev->xexpose.height -
-		wnew->angband.internal_border)/wnew->angband.fontheight;
+	pixel_to_square(wnew, &x1, &y1, xev->xexpose.x, xev->xexpose.y);
+	pixel_to_square(wnew, &x2, &y2, xev->xexpose.x + xev->xexpose.width,
+						xev->xexpose.y + xev->xexpose.height);
 
 	Term_redraw_section(x1, y1, x2, y2);
 
