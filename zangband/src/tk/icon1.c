@@ -121,12 +121,6 @@ void get_display_info(int y, int x, t_display *displayPtr)
 	/* Access the global cave memory */
 	t_grid *gridPtr = &g_grid[y][x];
 
-	/* Get the darkness factor */
-	int dark = 0;
-
-	/* Determine if there is daylight in the town */
-	int daytime = !p_ptr->depth && g_daytime;
-
 	int layer;
 
 	t_assign assign;
@@ -268,7 +262,6 @@ void get_display_info(int y, int x, t_display *displayPtr)
 	}
 
 	/* Set the foreground icon */
-	iconSpec.dark = 0;
 	displayPtr->fg = iconSpec;
 	
 	/* Don't bother calculating background if foreground is not masked */
@@ -305,13 +298,6 @@ void get_display_info(int y, int x, t_display *displayPtr)
 		g_icon_map_changed = FALSE;
 	}
 
-	/* In the Town */
-	if (daytime)
-	{
-		/* Use bright light */
-		dark = 0;
-	}
-
 	/*
 	 * Get the icon from the global icon map. The g_icon_map[]
 	 * array allows us to use different icons for the same
@@ -331,18 +317,6 @@ void get_display_info(int y, int x, t_display *displayPtr)
 		{
 			displayPtr->bg[layer] = iconSpec;
 			break;
-		}
-
-		/* A darkened copy of the icon exists, or will exist */
-		if ((g_icon_data[iconSpec.type].dark_data &&
-			g_icon_data[iconSpec.type].dark_data[iconSpec.index]) ||
-			(g_icon_data[iconSpec.type].flags[iconSpec.index] & ICON_FLAG_DARK))
-		{
-			iconSpec.dark = dark;
-		}
-		else
-		{
-			iconSpec.dark = 0;
 		}
 
 		displayPtr->bg[layer] = iconSpec;
@@ -776,7 +750,7 @@ static int init_flavor_aux(int n, cptr desc, int tval, int count,
 	Tcl_HashEntry *hPtr;
 	t_flavor flavor;
 	int i, dummy;
-	IconSpec defaultIcon = {ICON_TYPE_DEFAULT, 0, -1, 0};
+	IconSpec defaultIcon = {ICON_TYPE_DEFAULT, 0, -1};
 
 	flavor.desc = (char *) string_make(desc);
 	flavor.tval = tval;

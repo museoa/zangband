@@ -135,7 +135,6 @@ extern void angtk_flavor_swap(int n, int a, int b);
  * Memory of what is seen at a cave location for the entire cave.
  */
 typedef struct t_grid {
-	/* int dark; */ /* GRID_LITE_XXX flags */
 	int f_idx; /* Feature */
 	object_type *o_ptr; /* Object */
 	int m_idx; /* Character/Monster */
@@ -320,7 +319,6 @@ struct RGBInfo
 };
 extern RGBInfo g_rgbi;
 
-void GetPix16(unsigned char *p, int *r, int *g, int *b);
 void SetPix16(unsigned char *p, int r, int g, int b);
 
 void *Array_New(int count, int elem_size);

@@ -1377,7 +1377,7 @@ void init_icons(int size, int depth)
 	int i, n, y, x, y2, x2;
 	t_assign assign;
 	t_icon_data icon_data, *icon_data_ptr = &icon_data;
-	IconSpec iconDefault = {ICON_TYPE_DEFAULT, 0, -1, 0};
+	IconSpec iconDefault = {ICON_TYPE_DEFAULT, 0, -1};
 	unsigned char *rgb = Colormap_GetRGB();
 
 	/* Initialize the Icon library */

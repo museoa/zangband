@@ -84,9 +84,6 @@ int symbol_find(Tcl_Interp *interp, Tcl_Obj *objName, char *strName,
 	return TCL_OK;
 }
 
-#define SetPix24(p,r,g,b) \
-	(p)[0] = b; (p)[1] = g; (p)[2] = r;
-
 /* ?-option value...? */
 static int symbol_configure(Tcl_Interp *interp, t_symbol *symbolPtr, int objc,
 	Tcl_Obj *CONST objv[], int objOffset)
@@ -142,89 +139,6 @@ static int symbol_configure(Tcl_Interp *interp, t_symbol *symbolPtr, int objc,
 				}
 				/* VERIFY inner */
 				break;
-
-			case 3: /* -data */
-			{
-				Tk_Window tkwin = Tk_MainWindow(interp);
-				Tcl_Obj *listObjPtr;
-				int row, col, dataHeight, dataWidth;
-				IconPtr dstPtr;
-
-				listObjPtr = objPtr[1];
-				if (Tcl_ListObjLength(interp, listObjPtr, &dataHeight)
-					!= TCL_OK)
-				{
-					return TCL_ERROR;
-				}
-				if ((dataHeight < 4) || (dataHeight > 8))
-				{
-					/* "illegal height" */
-					return TCL_ERROR;
-				}
-				dstPtr = symbolPtr->bits[dataHeight - 4];
-				for (row = 0; row < dataHeight; row++)
-				{
-					Tcl_Obj *rowPtr;
-
-					if (Tcl_ListObjIndex(interp, listObjPtr, row,
-						&rowPtr) != TCL_OK)
-					{
-						return TCL_ERROR;
-					}
-					if (Tcl_ListObjLength(interp, rowPtr, &dataWidth)
-						!= TCL_OK)
-					{
-						return TCL_ERROR;
-					}
-					if (dataWidth != dataHeight)
-					{
-						/* "illegal width" */
-						return TCL_ERROR;
-					}
-					for (col = 0; col < dataWidth; col++)
-					{
-						Tcl_Obj *colorPtr;
-						XColor *xColorPtr;
-						int r, g, b;
-
-						if (Tcl_ListObjIndex(interp, rowPtr, col, &colorPtr)
-							!= TCL_OK)
-						{
-							return TCL_ERROR;
-						}
-						if ((xColorPtr = Tk_AllocColorFromObj(interp, tkwin,
-							colorPtr)) == NULL)
-						{
-							return TCL_ERROR;
-						}
-						r = ((double) xColorPtr->red / USHRT_MAX) * 255,
-						g = ((double) xColorPtr->green / USHRT_MAX) * 255,
-						b = ((double) xColorPtr->blue / USHRT_MAX) * 255;
-						switch (g_pixel_size)
-						{
-							case 1:
-#ifdef PLATFORM_X11
-								*dstPtr++ = xColorPtr->pixel; /* only on X (?) */
-#endif
-#ifdef PLATFORM_WIN
-								*dstPtr++ = Colormap_RGB2Index(r, g, b);
-#endif
-								break;
-							case 2:
-								SetPix16(dstPtr, r, g, b); /* use pixel directly (?) */
-								dstPtr += 2;
-								break;
-							case 3:
-							case 4:
-								SetPix24(dstPtr, r, g, b);
-								dstPtr += g_pixel_size;
-								break;
-						}
-						Tk_FreeColor(xColorPtr);
-					}
-				}
-				break;
-			}
 		}
 		objPtr += 2;
 		objC -= 2;
@@ -307,85 +221,6 @@ static int objcmd_symbol_configure(ClientData clientData, Tcl_Interp *interp,
 
 	return (symbol_configure(interp, symbolPtr, objc, objv,
 		infoCmd->depth + 2));
-}
-
-static void Pixel2RGB(unsigned char *p, int size, int *r, int *g, int *b)
-{
-	switch (size)
-	{
-		case 1:
-		{
-			unsigned char *rgb = Colormap_GetRGB();
-			*r = rgb[*p * 3 + 0];
-			*g = rgb[*p * 3 + 1];
-			*b = rgb[*p * 3 + 2];
-			break;
-		}
-		case 2:
-		{
-			GetPix16(p, r, g, b);
-			break;
-		}
-		case 3:
-		case 4:
-		{
-			*b = *p++;
-			*g = *p++;
-			*r = *p;
-			break;
-		}
-	}
-}
-
-/* data $name $size */
-static int objcmd_symbol_data(ClientData clientData, Tcl_Interp *interp,
-	int objc, Tcl_Obj *CONST objv[])
-{
-	CommandInfo *infoCmd = (CommandInfo *) clientData;
-	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
-	t_symbol *symbolPtr;
-	int size, row, col;
-	Tcl_Obj *listObjPtr, *rowPtr;
-	IconPtr bits;
-	
-	/* Hack - ignore parameter */
-	(void) objc;
-
-	if (symbol_find(interp, objV[1], NULL, &symbolPtr, NULL) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	if (Tcl_GetIntFromObj(interp, objV[2], &size) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-	if ((size < 4) || (size > 8))
-	{
-		/* REPORT */
-		return TCL_ERROR;
-	}
-	bits = symbolPtr->bits[size - 4];
-
-	listObjPtr = Tcl_NewListObj(0, NULL);
-	for (row = 0; row < size; row++)
-	{
-		rowPtr = Tcl_NewListObj(0, NULL);
-		for (col = 0; col < size; col++)
-		{
-			int r, g, b;
-			char buf[24];
-			Pixel2RGB(bits, g_pixel_size, &r, &g, &b);
-			(void) sprintf(buf, "#%02x%02x%02x", r, g, b);
-			Tcl_ListObjAppendElement(interp, rowPtr,
-				Tcl_NewStringObj(buf, -1));
-			bits += g_pixel_size;
-		}
-		Tcl_ListObjAppendElement(interp, listObjPtr, rowPtr);
-	}
-	Tcl_SetObjResult(interp, listObjPtr);
-
-	return TCL_OK;
 }
 
 /* image2bits $imageFile $size $symbolList */
@@ -1066,7 +901,6 @@ static CommandInit commandInit[] = {
 	{0, "symbol", 0, 0, NULL, NULL, (ClientData) 0},
 		{1, "cget", 3, 3, "name option", objcmd_symbol_cget, (ClientData) 0},
 		{1, "configure", 4, 0, "symbol option value ?option value ...?", objcmd_symbol_configure, (ClientData) 0},
-		{1, "data", 3, 3, "name size", objcmd_symbol_data, (ClientData) 0},
 		{1, "image2bits", 4, 4, "imageName size symbolList", objcmd_symbol_image2bits, (ClientData) 0},
 		{1, "names", 1, 1, NULL, objcmd_symbol_names, (ClientData) 0},
 		{1, "new", 2, 0, "name ?option value ...?", objcmd_symbol_new, (ClientData) 0},

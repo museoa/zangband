@@ -59,7 +59,6 @@ static void DrawIconSpec(int y, int x, IconSpec iconSpec, BitmapPtr bitmapPtr)
 		iconSpec.type = ICON_TYPE_DEFAULT;
 		iconSpec.index = 0;
 		iconSpec.ascii = -1;
-		iconSpec.dark = 0;
 	}
 
 	/* Access the icon type */
@@ -72,7 +71,6 @@ static void DrawIconSpec(int y, int x, IconSpec iconSpec, BitmapPtr bitmapPtr)
 		iconSpec.type = ICON_TYPE_DEFAULT;
 		iconSpec.index = 0;
 		iconSpec.ascii = -1;
-		iconSpec.dark = 0;
 
 		/* Access the DEFAULT icon type */
 		iconDataPtr = &g_icon_data[iconSpec.type];
@@ -86,7 +84,6 @@ static void DrawIconSpec(int y, int x, IconSpec iconSpec, BitmapPtr bitmapPtr)
 			iconSpec.type = ICON_TYPE_DEFAULT;
 			iconSpec.index = 0;
 			iconSpec.ascii = -1;
-			iconSpec.dark = 0;
 
 			/* Access the DEFAULT icon type */
 			iconDataPtr = &g_icon_data[iconSpec.type];
@@ -110,28 +107,6 @@ static void DrawIconSpec(int y, int x, IconSpec iconSpec, BitmapPtr bitmapPtr)
 		}
 	}
 
-	/* Verify darkness */
-	if (iconSpec.dark)
-	{
-		if ((iconSpec.dark < 0) || (iconSpec.dark > 2))
-		{
-			/* Use "default" icon */
-			iconSpec.type = ICON_TYPE_DEFAULT;
-			iconSpec.index = 0;
-			iconSpec.ascii = -1;
-			iconSpec.dark = 0;
-
-			/* Access the DEFAULT icon type */
-			iconDataPtr = &g_icon_data[iconSpec.type];
-		}
-	}
-
-	/* Create dark_data if needed */
-	if (iconSpec.dark && (iconDataPtr->flags[iconSpec.index] & ICON_FLAG_DARK))
-	{
-		Icon_MakeDark(iconDataPtr, iconSpec.index);
-	}
-
 	/* Transparent */
 	if (iconDataPtr->rle_data)
 	{
@@ -139,16 +114,7 @@ static void DrawIconSpec(int y, int x, IconSpec iconSpec, BitmapPtr bitmapPtr)
 		int w = bounds[2];
 		int h = bounds[3];
 		int col = 0;
-		IconPtr rlePtr;
-
-		if (iconSpec.dark)
-		{
-			rlePtr = iconDataPtr->dark_data[iconSpec.index] + (iconSpec.dark - 1) * iconDataPtr->rle_len[iconSpec.index];
-		}
-		else
-		{
-			rlePtr = iconDataPtr->rle_data + iconDataPtr->rle_offset[iconSpec.index];
-		}
+		IconPtr rlePtr = iconDataPtr->rle_data + iconDataPtr->rle_offset[iconSpec.index];
 
 		dstPtr = bitmapPtr->pixelPtr +
 			x * bypp +
@@ -188,11 +154,6 @@ static void DrawIconSpec(int y, int x, IconSpec iconSpec, BitmapPtr bitmapPtr)
 		return;
 	}
 
-if (iconSpec.dark)
-{
-	srcPtr = iconDataPtr->dark_data[iconSpec.index] + (iconSpec.dark - 1) * iconDataPtr->length;
-}
-else
 	/* FIXME: tint */
 	srcPtr = iconDataPtr->icon_data + iconSpec.index * iconDataPtr->length;
 
@@ -645,9 +606,6 @@ static bool angtk_effect_aux(int y, int x, IconSpec *iconSpecPtr)
 	DoubleLink *link;
 	int row, col;
 	bool drawn = FALSE;
-
-	/* Paranoia */
-	iconSpecPtr->dark = 0;
 
 	/* Check each Widget */
 	for (link = WidgetListMap.head; link; link = link->next)

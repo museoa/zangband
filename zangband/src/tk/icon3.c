@@ -625,26 +625,11 @@ static void InitRGBInfo(Tcl_Interp *interp)
 	g_rgbi.extra = ~(g_rgbi.red_mask | g_rgbi.green_mask | g_rgbi.blue_mask);
 }
 
-static void GetPix8(unsigned char *p, int *r, int *g, int *b)
-{
-	unsigned char *rgbPtr = &g_palette_rgb[*p * 3]; /* FIXME: colormap */
-	*r = *rgbPtr++;
-	*g = *rgbPtr++;
-	*b = *rgbPtr++;
-}
 
 static void SetPix8(unsigned char *p, int r, int g, int b)
 {
 	/* NOTE: Not Colormap */
 	*p = Palette_RGB2Index(r, g, b);
-}
-
-void GetPix16(unsigned char *p, int *r, int *g, int *b)
-{
-	unsigned short pix16 = *(unsigned short *) p;
-	*r = (pix16 & g_rgbi.red_mask) >> g_rgbi.red_shift;
-	*g = (pix16 & g_rgbi.green_mask) >> g_rgbi.green_shift;
-	*b = (pix16 & g_rgbi.blue_mask) << g_rgbi.blue_shift;
 }
 
 void SetPix16(unsigned char *p, int r, int g, int b)
@@ -656,14 +641,6 @@ void SetPix16(unsigned char *p, int r, int g, int b)
 	*((unsigned short *) p) = g_rgbi.extra | r2 | g2 | b2;
 }
 
-static void GetPix24(unsigned char *p, int *r, int *g, int *b)
-{
-	*b = *p++;
-	*g = *p++;
-	*r = *p++;
-}
-
-#if 1
 static void SetPix24(unsigned char *p, int r, int g, int b)
 {
 	*p++ = b;
@@ -672,10 +649,6 @@ static void SetPix24(unsigned char *p, int r, int g, int b)
 	if (g_pixel_size == 4)
 		*p++ = 0xFF;
 }
-#else
-#define SetPix24(p,r,g,b) \
-	(p)[0] = b; (p)[1] = g; (p)[2] = r;
-#endif
 
 void PixelSet_RGB(IconPtr dst, int r, int g, int b, int bypp)
 {
@@ -690,23 +663,6 @@ void PixelSet_RGB(IconPtr dst, int r, int g, int b, int bypp)
 		case 3:
 		case 4:
 			SetPix24(dst, r, g, b);
-			break;
-	}
-}
-
-static void PixelPtrToRGB(IconPtr src, int *r, int *g, int *b, int bypp)
-{
-	switch (bypp)
-	{
-		case 1:
-			GetPix8(src, r, g, b);
-			break;
-		case 2:
-			GetPix16(src, r, g, b);
-			break;
-		case 3:
-		case 4:
-			GetPix24(src, r, g, b);
 			break;
 	}
 }
@@ -1678,211 +1634,6 @@ static int objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj 
 }
 
 
-void Icon_MakeDark(t_icon_data *iconDataPtr, int index)
-{
-	int i, j, length;
-	IconPtr srcPtr;
-	double gamma[2];
-
-	if (iconDataPtr->dark_data == NULL)
-	{
-		iconDataPtr->dark_data = (IconPtr *)
-			Tcl_Alloc(iconDataPtr->icon_count * sizeof(IconPtr));
-		for (i = 0; i < iconDataPtr->icon_count; i++)
-		{
-			iconDataPtr->dark_data[i] = NULL;
-		}
-	}
-
-	if (iconDataPtr->rle_data)
-	{
-		length = iconDataPtr->rle_len[index];
-		srcPtr = iconDataPtr->rle_data + iconDataPtr->rle_offset[index];
-	}
-	else
-	{
-		length = iconDataPtr->length;
-		srcPtr = iconDataPtr->icon_data + index * iconDataPtr->length;
-	}
-
-	if (iconDataPtr->dark_data[index] == NULL)
-	{
-		iconDataPtr->dark_data[index] =
-			(IconPtr) Tcl_Alloc(2 * length);
-	}
-
-	gamma[0] = iconDataPtr->gamma[0][index] / 100.0;
-	gamma[1] = iconDataPtr->gamma[1][index] / 100.0;
-	
-	for (i = 0; i < 2; i++)
-	{
-		IconPtr darkData = iconDataPtr->dark_data[index] + i * length;
-		int bypp = iconDataPtr->bypp;
-	
-		/* Copy the original icon */
-		memcpy(darkData, srcPtr, length);
-
-		/* Transparent */
-		if (iconDataPtr->rle_data)
-		{
-			IconPtr rlePtr = darkData;
-
-			/* Apply gamma-correction */
-			while (1)
-			{
-				int trans, opaq;
-				trans = rlePtr[0];
-				opaq = rlePtr[1];
-				if (!trans && !opaq)
-					break;
-				rlePtr += 2;
-				for (j = 0; j < opaq; j++)
-				{
-					int r, g, b;
-		
-					PixelPtrToRGB(rlePtr + j * bypp, &r, &g, &b, bypp);
-		
-					/* Gamma-correct each RGB intensity */
-					r = gamma_correct(r, gamma[i]);
-					g = gamma_correct(g, gamma[i]);
-					b = gamma_correct(b, gamma[i]);
-
-					PixelSet_RGB(rlePtr + j * bypp, r, g, b, bypp);
-				}
-				rlePtr += opaq * bypp;
-			}
-
-			continue;
-		}
-
-		/* Darken */
-		for (j = 0; j < iconDataPtr->pixels; j++)
-		{
-			int r, g, b;
-
-			PixelPtrToRGB(darkData + j * iconDataPtr->bypp,
-				&r, &g, &b, iconDataPtr->bypp);
-
-			/* Gamma-correct each RGB intensity */
-			r = gamma_correct(r, gamma[i]);
-			g = gamma_correct(g, gamma[i]);
-			b = gamma_correct(b, gamma[i]);
-
-			PixelSet_RGB(darkData + j * iconDataPtr->bypp,
-				r, g, b, iconDataPtr->bypp);
-		}
-	}
-
-	/* Dark data created */
-	iconDataPtr->flags[index] &= ~ICON_FLAG_DARK;
-}
-
-/*
- * objcmd_icon_dark --
- * (icon) dark $type $index ?$gamma $gamma?
- */
-static int objcmd_icon_dark(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
-{
-	int index, g1, g2, i;
-	t_icon_data *iconDataPtr;
-	double gamma[2];
-	char buf[64];
-
-	/* Ignore parameter */
-	(void) dummy;
-
-	/* Required number of arguments */
-    if (objc != 4 && objc != 6)
-    {
-		Tcl_WrongNumArgs(interp, 2, objv, (char *) "$type $index ?$gamma $gamma?");
-		return TCL_ERROR;
-    }
-
-	if (Icon_GetTypeFromObj(interp, &iconDataPtr, objv[2]) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	if (Icon_GetIndexFromObj(interp, &index, objv[3], iconDataPtr) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	if (objc == 4)
-	{
-		if (iconDataPtr->gamma[0] == NULL)
-		{
-			/* Empty string as result */
-			return TCL_OK;
-		}
-		g1 = iconDataPtr->gamma[0][index];
-		g2 = iconDataPtr->gamma[1][index];
-		(void) sprintf(buf, "%d.%d %d.%d", g1 / 100, g1 % 100,
-			g2 / 100, g2 % 100);
-		Tcl_SetResult(interp, buf, TCL_VOLATILE);
-		return TCL_OK;
-	}
-
-	/* Get the desired gamma value */
-	if (Tcl_GetDoubleFromObj(interp, objv[4], &gamma[0]) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* Get the desired gamma value */
-	if (Tcl_GetDoubleFromObj(interp, objv[5], &gamma[1]) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	if (gamma[0] < 0.0 || gamma[0] > 2.0)
-	{
-		return TCL_ERROR;
-	}
-	if (gamma[1] < 0.0 || gamma[1] > 2.0)
-	{
-		return TCL_ERROR;
-	}
-
-	/* Pass 1.0 to free it */
-	if (gamma[0] == 1.0)
-	{
-		if ((iconDataPtr->dark_data != NULL) &&
-			(iconDataPtr->dark_data[index] != NULL))
-		{
-			Tcl_Free((char *) iconDataPtr->dark_data[index]);
-			iconDataPtr->dark_data[index] = NULL;
-		}
-		if (iconDataPtr->gamma[0])
-		{
-			iconDataPtr->gamma[0][index] = 100;
-			iconDataPtr->gamma[1][index] = 100;
-		}
-		iconDataPtr->flags[index] &= ~ICON_FLAG_DARK;
-		return TCL_OK;
-	}
-
-	if (iconDataPtr->gamma[0] == NULL)
-	{
-		iconDataPtr->gamma[0] = (unsigned char *)
-			Tcl_Alloc(iconDataPtr->icon_count * sizeof(unsigned char));
-		iconDataPtr->gamma[1] = (unsigned char *)
-			Tcl_Alloc(iconDataPtr->icon_count * sizeof(unsigned char));
-		for (i = 0; i < iconDataPtr->icon_count; i++)
-		{
-			iconDataPtr->gamma[0][i] = 100;
-			iconDataPtr->gamma[1][i] = 100;
-		}
-	}
-
-	iconDataPtr->gamma[0][index] = gamma[0] * 100;
-	iconDataPtr->gamma[1][index] = gamma[1] * 100;
-	iconDataPtr->flags[index] |= ICON_FLAG_DARK;
-
-	return TCL_OK;
-}
-
-
 /*
  * objcmd_makeicon --
  *
@@ -2066,12 +1817,12 @@ static int objcmd_icon(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *
 		"gettypes", "validate", "size", "ascii",
 		"gamma", "makeicon", "depth",
 		"rle", "height", "width", "duplicate",
-		"transparent", "dark", "flags", NULL};
+		"transparent", "flags", NULL};
 	enum {IDX_CREATETYPE, IDX_COUNT,
 		IDX_GETTYPES, IDX_VALIDATE, IDX_SIZE, IDX_ASCII,
 		IDX_GAMMA, IDX_MAKEICON, IDX_DEPTH,
 		IDX_RLE, IDX_HEIGHT, IDX_WIDTH, IDX_DUPLICATE,
-		IDX_TRANSPARENT, IDX_DARK, IDX_FLAGS} option;
+		IDX_TRANSPARENT, IDX_FLAGS} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 	int index;
 
@@ -2083,7 +1834,7 @@ static int objcmd_icon(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *
 	Tcl_HashEntry *hPtr;
 	int i;
 	t_icon_data iconData, *iconDataPtr;
-	IconSpec iconSpec = {-1, -1, -1, 0};
+	IconSpec iconSpec = {-1, -1, -1};
 	
 	/* Required number of arguments */
     if (objc < 2)
@@ -2599,9 +2350,6 @@ wrongCreateArgs:
 			break;
 		}
 
-		case IDX_DARK: /* dark */
-			return objcmd_icon_dark(dummy, interp, objc, objv);
-
 		case IDX_FLAGS: /* flags */
 		{
 			static cptr flags[] = {"left", "right", "isohack", NULL};
@@ -3008,8 +2756,8 @@ int Icon_Init(Tcl_Interp *interp, int size, int depth)
 
 void Icon_Exit(Tcl_Interp *interp)
 {
-	int i, j;
-
+	int i;
+	
 	/* Hack - ignore parameter */
 	(void) interp;
 
@@ -3045,12 +2793,5 @@ void Icon_Exit(Tcl_Interp *interp)
 		/* Help the memory debugger */
 		Tcl_Free((void *) iconDataPtr->gamma[0]);
 		Tcl_Free((void *) iconDataPtr->gamma[1]);
-
-		if (iconDataPtr->dark_data)
-		{
-			for (j = 0; j < iconDataPtr->icon_count; j++)
-				if (iconDataPtr->dark_data[j])
-					Tcl_Free((char *) iconDataPtr->dark_data[j]);
-		}
 	}
 }

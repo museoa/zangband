@@ -17,7 +17,6 @@ typedef struct IconSpec {
 	int type;
 	int index;
 	int ascii;
-	int dark;
 } IconSpec;
 
 extern long g_icon_length; /* size x size x pixel_size */
@@ -50,12 +49,8 @@ typedef struct t_icon_data {
 	int icon_count; /* Number of icons */
 	Tk_Font font; /* Font for ascii icons */
 	int *char_table; /* Table of chars for ascii icons */
-	IconPtr *dark_data; /* Darkened copies */
 	unsigned char *gamma[2]; /* Per-icon gamma for dark_data. Value 0-200 */
 
-#define ICON_FLAG_DARK 0x0001 /* Recalculate dark_data before display */
-#define ICON_FLAG_LEFT 0x0002 /* back2front */
-#define ICON_FLAG_RIGHT 0x0004 /* back2front */
 	short *flags; /* Per-icon flags */
 
 	IconPtr rle_data; /* Address of RLE data */

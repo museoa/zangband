@@ -58,8 +58,6 @@ void Widget_EventProc _ANSI_ARGS_((ClientData clientData,
   XEvent *eventPtr));
 int Widget_WidgetObjCmd _ANSI_ARGS_((ClientData clientData,
   Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]));
-int Widget_Photo(ClientData clientData, Tcl_Interp *interp,
-	int objc, Tcl_Obj *CONST objv[]);
 void Widget_Calc(Widget *widgetPtr);
 
 static void Widget_CreateBitmap(Widget *widgetPtr);
@@ -386,12 +384,10 @@ int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl
 {
 	static cptr commandNames[] = {"caveyx", "center", "cget", "configure",
 		"coloralloc", "colorderef", "create", "itemcget", "itemconfigure",
-		"photo", "wipe", "bounds", "visible", "wipespot",
-		"hittest", NULL};
+		"wipe", "bounds", "visible", "wipespot", "hittest", NULL};
 	enum {IDX_CAVEYX, IDX_CENTER, IDX_CGET, IDX_CONFIGURE,
 		IDX_COLORALLOC, IDX_COLORDEREF, IDX_CREATE, IDX_ITEMCGET, IDX_ITEMCONFIGURE,
-		IDX_PHOTO, IDX_WIPE, IDX_BOUNDS, IDX_VISIBLE,
-		IDX_WIPESPOT, IDX_HITTEST} option;
+		IDX_WIPE, IDX_BOUNDS, IDX_VISIBLE, IDX_WIPESPOT, IDX_HITTEST} option;
 	Widget *widgetPtr = (Widget *) clientData;
 	int result;
     Tcl_Obj *objPtr;
@@ -690,13 +686,6 @@ int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl
 		{
 			/* Configure a Widget item */
 			result = WidgetItem_Configure(interp, widgetPtr, objc, objv);
-			break;
-		}
-
-		case IDX_PHOTO: /* photo */
-		{
-			/* Set a photo image with the widget contents */
-			result = Widget_Photo(clientData, interp, objc, objv);
 			break;
 		}
 
@@ -1782,121 +1771,6 @@ void WidgetItem_Delete(Widget *widgetPtr, WidgetItem *itemPtr)
 
 	/* Free the item memory */
 	Tcl_Free((char *) itemPtr);
-}
-
-/*
- * Dumps the current contents of the offscreen bitmap for the given
- * Widget into a photo image.
- */
-int Widget_Photo(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
-{
-	Widget *widgetPtr = (Widget *) clientData;
-	Tk_PhotoHandle photoH;
-	Tk_PhotoImageBlock photoBlock;
-	char *imageName;
-	int x, y;
-	unsigned char *srcPtr, *dstPtr, *rgbPtr;
-	unsigned char *rgb = Colormap_GetRGB();
-
-	/* Requred number of arguments */
-	if (objc < 3)
-	{
-		/* Set the error */
-		Tcl_WrongNumArgs(interp, 2, objv, (char *) "imageName ?x1 y1 x2 y2?");
-
-		/* Failure */
-		return TCL_ERROR;
-	}
-
-	/* Get the name of the Tk photo image. It must already exist */
-	imageName = Tcl_GetStringFromObj(objv[2], NULL);
-
-	/* Lookup the photo by name */
-	photoH = Tk_FindPhoto(interp, imageName);
-
-	/* The photo was not found */
-	if (photoH == NULL)
-	{
-		return TCL_ERROR;
-	}
-
-	/*
-	 * Tk_PhotoPutBlock() grows the image as needed as image data
-	 * is added. Since I already know how large the image must be,
-	 * I set the image dimensions here.
-	 */
-	Tk_PhotoSetSize(photoH, widgetPtr->width, widgetPtr->height);
-
-	/*
-	 * Set the fields for the Tk_PhotoPutBlock() call. We allocate
-	 * a single row of 3 bytes per RGB pixel.
-	 */
-	photoBlock.pixelPtr = (unsigned char *) Tcl_Alloc(widgetPtr->width * 3);
-	photoBlock.width = widgetPtr->width;
-	photoBlock.height = 1;
-	photoBlock.pitch = photoBlock.width * 3;
-	photoBlock.pixelSize = 3;
-	photoBlock.offset[0] = 0;
-	photoBlock.offset[1] = 1;
-	photoBlock.offset[2] = 2;
-
-	/* Check each row */
-	for (y = 0; y < widgetPtr->height; y++)
-	{
-		/* Read from the row */
-		srcPtr = widgetPtr->bitmap.pixelPtr +
-			widgetPtr->bx * widgetPtr->bitmap.pixelSize +
-			(widgetPtr->by + y) * widgetPtr->bitmap.pitch;
-
-		/* Write to the photoBlock */
-		dstPtr = photoBlock.pixelPtr;
-
-		/* Check each column */
-		for (x = 0; x < widgetPtr->width; x++)
-		{
-			switch (widgetPtr->bitmap.depth)
-			{
-				case 8:
-				{
-					/* Get the rgb color for this pixel */
-					rgbPtr = &rgb[*srcPtr * 3];
-					srcPtr++;
-					*dstPtr++ = *rgbPtr++; /* r */
-					*dstPtr++ = *rgbPtr++; /* g */
-					*dstPtr++ = *rgbPtr++; /* b */
-					break;
-				}
-				case 16:
-				{
-					int r, g, b;
-					GetPix16(srcPtr, &r, &g, &b);
-					srcPtr += 2;
-					*dstPtr++ = r;
-					*dstPtr++ = g;
-					*dstPtr++ = b;
-					break;
-				}
-				case 24:
-				{
-					*dstPtr++ = srcPtr[2]; /* r */
-					*dstPtr++ = srcPtr[1]; /* g */
-					*dstPtr++ = srcPtr[0]; /* b */
-					srcPtr += widgetPtr->bitmap.pixelSize;
-					break;
-				}
-			}
-		}
-
-		/* Add the data to the photo image */
-		Tk_PhotoPutBlock(photoH, &photoBlock, 0, y, photoBlock.width,
-			photoBlock.height);
-	}
-
-	/* Clean up */
-	Tcl_Free((char *) photoBlock.pixelPtr);
-
-	/* Sucess */
-	return TCL_OK;
 }
 
 int Widget_AddOptions(Tcl_Interp *interp, Tk_OptionSpec *option)
