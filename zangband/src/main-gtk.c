@@ -42,11 +42,13 @@ struct term_data
 
 	int font_wid;
 	int font_hgt;
+	
 
 	int rows;
 	int cols;
 
 	cptr name;
+	cptr fontname;
 };
 
 
@@ -405,6 +407,7 @@ static void new_event_handler(GtkButton *was_clicked, gpointer user_data)
 static void load_font(term_data *td, cptr fontname)
 {
 	td->font = gdk_font_load(fontname);
+	td->fontname = fontname;
 
 	/* Calculate the size of the font XXX */
 	td->font_wid = gdk_char_width(td->font, '@');
@@ -416,8 +419,7 @@ static void font_ok_callback(GtkWidget *widget, GtkWidget *font_selector)
 {
 	gchar *fontname;
 	
-	term_data *td = gtk_object_get_data(GTK_OBJECT(font_selector),
-													 "term_data");
+	term_data *td = gtk_object_get_data(GTK_OBJECT(font_selector), "term_data");
 
 	/* Hack - ignore widget */
 	(void) widget;
@@ -427,7 +429,8 @@ static void font_ok_callback(GtkWidget *widget, GtkWidget *font_selector)
 	fontname = gtk_font_selection_dialog_get_font_name(
 						GTK_FONT_SELECTION_DIALOG(font_selector));
 
-	g_assert(fontname != NULL);
+	/* The user hasn't selected a font? */
+	if (fontname == NULL) return;
 
 	load_font(td, fontname);
 }
@@ -435,14 +438,15 @@ static void font_ok_callback(GtkWidget *widget, GtkWidget *font_selector)
 
 static void change_font_event_handler(GtkWidget *widget, gpointer user_data)
 {
-	GtkWidget *font_selector;
+	GtkWidget *font_selector = gtk_font_selection_dialog_new("Select font");
 
+	term_data *td = user_data;
+	gchar *foundery[] = { "misc", NULL};
 	gchar *spacings[] = { "c", "m", NULL };
+	gchar *charsets[] = { "iso8859-1", NULL};
 
 	/* Hack - ignore widget */
 	(void) widget;
-	
-	font_selector = gtk_font_selection_dialog_new("Select font");
 
 	gtk_object_set_data(GTK_OBJECT(font_selector), "term_data", user_data);
 
@@ -450,7 +454,12 @@ static void change_font_event_handler(GtkWidget *widget, gpointer user_data)
 	gtk_font_selection_dialog_set_filter(
 					GTK_FONT_SELECTION_DIALOG(font_selector),
 					GTK_FONT_FILTER_BASE, GTK_FONT_ALL,
-					NULL, NULL, NULL, NULL, spacings, NULL);
+					foundery, NULL, NULL, NULL, spacings, charsets);
+					
+	/* Show the current font in the dialog */
+	gtk_font_selection_dialog_set_font_name(
+					GTK_FONT_SELECTION_DIALOG(font_selector), 
+					td->fontname);
 
 	gtk_signal_connect(
 			GTK_OBJECT(GTK_FONT_SELECTION_DIALOG(font_selector)->ok_button),
@@ -466,7 +475,7 @@ static void change_font_event_handler(GtkWidget *widget, gpointer user_data)
 			GTK_OBJECT(GTK_FONT_SELECTION_DIALOG(font_selector)->cancel_button),
 			"clicked", GTK_SIGNAL_FUNC(gtk_widget_destroy),
 			(gpointer)font_selector);
-
+	
 	gtk_widget_show(GTK_WIDGET(font_selector));
 }
 
@@ -824,7 +833,7 @@ static void init_gtk_window(term_data *td, int i)
 		gtk_container_add(GTK_CONTAINER(td->window), box);
 		gtk_box_pack_start_defaults(GTK_BOX(box), td->drawing_area);
 	}
-
+	
 	/* Show the widgets */
 	gtk_widget_show_all(td->window);
 
@@ -843,6 +852,9 @@ static void init_gtk_window(term_data *td, int i)
 	gdk_draw_pixmap(td->drawing_area->window, td->gc, td->pixmap,
 	                0, 0, 0, 0,
 					td->cols * td->font_wid, td->rows * td->font_hgt);
+	
+	/* Show the widgets */
+	gtk_widget_show_all(td->window);
 }
 
 
