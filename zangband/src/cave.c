@@ -2731,7 +2731,7 @@ void do_cmd_view_map(void)
 		display_map(&cx, &cy);
 
 		/* Wait for it */
-		put_str("Hit any key to continue", hgt - 1, (wid - COL_MAP) / 2);
+		put_str("Hit any key to continue", (wid - COL_MAP) / 2, hgt - 1);
 
 		/* Hilite the player */
 		Term_gotoxy(cx, cy);

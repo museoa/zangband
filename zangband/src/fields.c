@@ -3567,7 +3567,7 @@ bool field_action_recharge1(field_type *f_ptr, vptr input)
 	char tmp_str[80];
 
 	sprintf(tmp_str, " R) Recharge Items");
-	c_put_str(TERM_YELLOW, tmp_str, 0, 19);
+	c_put_str(TERM_YELLOW, tmp_str, 30, 19);
 	sprintf(tmp_str, " I) Identify Items (%dgp)",
 	f_ptr->data[2] * factor);
 	c_put_str(TERM_YELLOW, tmp_str, 35, 19);
