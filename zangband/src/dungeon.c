@@ -2283,9 +2283,14 @@ static void process_world(void)
 				if (ironman_nightmare)
 				{
 					/* Make a monster nearby if possible */
-					if (!(summon_named_creature(py, px,
-						 o_ptr->pval, FALSE, FALSE, FALSE)))
+					if (summon_named_creature(py, px,
+						 o_ptr->pval, FALSE, FALSE, FALSE))
+					{
 						msg_format("The %s rises.");
+						
+						/* Set the cloned flag, so no treasure is dropped */
+						m_list[hack_m_idx_ii].smart |= SM_CLONED;
+					}
 				}
 				else
 				{			
@@ -2357,16 +2362,26 @@ static void process_world(void)
 				if (ironman_nightmare)
 				{
 					/* Make a monster nearby if possible */
-					summon_named_creature(o_ptr->iy, o_ptr->ix,
-						 o_ptr->pval, FALSE, FALSE, FALSE);
+					if (summon_named_creature(o_ptr->iy, o_ptr->ix,
+						 o_ptr->pval, FALSE, FALSE, FALSE))
+					{
+						monster_type *m_ptr = &m_list[hack_m_idx_ii];
+						
+						if (player_can_see_bold(m_ptr->fy, m_ptr->fx))
+						{
+							msg_format("The %s rises.");
+						}
+						
+						/* Set the cloned flag, so no treasure is dropped */
+						m_ptr->smart |= SM_CLONED;
+					}
 				}
+				
+				/* Assume that no corpse is in a monsters inventory. */
 				
 				/* The corpse/skeleton is destroyed */
 				floor_item_increase(i, -1);
 				floor_item_optimize(i);
-				
-				/* Hack, decrease counter properly */
-				i--;
 			}
 		}
 	}
