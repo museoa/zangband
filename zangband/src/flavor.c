@@ -845,6 +845,17 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 	char            tmp_val2[90];
 
 	u32b            f1, f2, f3;
+	
+	object_type	*bow_ptr;
+	
+	/* describe what type of ammo item is. (0=none)*/
+	byte		ammotype=0;
+	
+	/* damage dice, damage sides, damage bonus, energy */
+	int		dd,ds,db,energy_use;
+	int		tmul;
+	long		avgdam;
+	
 
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
@@ -1450,7 +1461,6 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 	/* Display the item like armour */
 	if (o_ptr->ac) show_armour = TRUE;
 
-
 	/* Dump base weapon info */
 	switch (o_ptr->tval)
 	{
@@ -1470,7 +1480,15 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		t = object_desc_chr(t, 'd');
 		t = object_desc_num(t, o_ptr->ds);
 		t = object_desc_chr(t, p2);
-
+		
+		/* Set ammotype - used later to show avg damages */
+		if (o_ptr->tval==TV_SHOT)
+			ammotype=1;	
+		if (o_ptr->tval==TV_ARROW)
+			ammotype=2;
+		if (o_ptr->tval==TV_BOLT)
+			ammotype=3;
+		
 		/* All done */
 		break;
 
@@ -1561,8 +1579,146 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 			t = object_desc_chr(t, p2);
 		}
 	}
+	
+	bow_ptr=&inventory[INVEN_BOW];
+	
+	/* if have a firing weapon + ammo matches bow*/
+	if ((bow_ptr->k_idx) && 	
+		
+		(((bow_ptr->sval==SV_SLING) && (ammotype==1)) ||
+		
+		 (((bow_ptr->sval==SV_SHORT_BOW)
+		|| (bow_ptr->sval==SV_LONG_BOW)) && (ammotype==2)) ||
+		
+		(((bow_ptr->sval==SV_LIGHT_XBOW)
+		|| (bow_ptr->sval==SV_HEAVY_XBOW)) && (ammotype==3))))
+	{
+		/* See if the bow is "known" - then set damage bonus*/
+		if (object_known_p(bow_ptr))
+		{
+			db=bow_ptr->to_d;		
+		}
+		else
+		{
+			db=0;
+		}
+		
+		/* effect of player */
+		db+=p_ptr->dis_to_d;
+		
+		/* effect of ammo */
+		if (known) db += o_ptr->to_d;
+		
+		dd = o_ptr->dd;
+		ds = o_ptr->ds;
+		
+		if (db > 0)
+			avgdam = (100 + deadliness_conversion[db]);
+		else if (db > -31)
+			avgdam = (100 - deadliness_conversion[ABS(db)]);
+		else
+			avgdam = 0;
+		
+		/* effect of damage dice x2 */
+		avgdam *= dd*(ds+1);
+		
+		/* Stop compiler warnings */
+		energy_use=100;
+		tmul=1;
 
+		/* Analyze the launcher */
+		switch (bow_ptr->sval)
+		{
+			/* Sling and ammo */
+			case SV_SLING:
+			{
+				tmul = 2;
+				energy_use = 50;
+				break;
+			}
 
+			/* Short Bow and Arrow */
+			case SV_SHORT_BOW:
+			{
+				tmul = 2;
+				energy_use = 100;
+				break;
+			}
+
+			/* Long Bow and Arrow */
+			case SV_LONG_BOW:
+			{
+				if (p_ptr->stat_use[A_STR] >= 16)
+				{
+					tmul = 3;
+				}
+				else
+				{
+					/* weak players cannot use a longbow well */
+					tmul = 2;
+				}
+				energy_use = 100;
+				break;
+			}
+
+			/* Light Crossbow and Bolt */
+			case SV_LIGHT_XBOW:
+			{
+				tmul = 4;
+				energy_use = 120;
+				break;
+			}
+
+			/* Heavy Crossbow and Bolt */
+			case SV_HEAVY_XBOW:
+			{
+				tmul = 5;
+				if (p_ptr->stat_use[A_DEX] >= 16)
+				{
+					energy_use = 150;
+				}
+				else
+				{
+					/* players with low dex will take longer to load */
+					energy_use = 200;
+				}
+			break;
+			}
+		}
+		
+		/* Get extra "power" from "extra might" */
+		if (p_ptr->xtra_might) tmul++;
+		
+		/* launcher multiplier */
+		avgdam *= tmul;
+		
+			
+		/* display (shot damage/ avg damage) */
+		t = object_desc_chr(t, ' ');
+		t = object_desc_chr(t, p1);
+		t = object_desc_num(t, avgdam / 200);
+		t = object_desc_chr(t, '/');
+		
+		tmul=p_ptr->num_fire;
+		if (tmul==0)
+		{
+			t = object_desc_chr(t, '0');
+		}
+		else		
+		{
+			/* calc effects of energy */
+			avgdam *= p_ptr->num_fire;
+			
+			/*rescale */
+			avgdam /= 2*energy_use;
+			t = object_desc_num(t,avgdam);
+		}
+			
+		t = object_desc_chr(t, p2);
+	}
+
+	
+	
 	/* Add the armor bonuses */
 	if (known)
 	{
