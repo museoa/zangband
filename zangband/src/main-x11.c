@@ -2815,7 +2815,7 @@ errr init_x11(int argc, char *argv[])
 	
 #ifdef USE_GRAPHICS
 	/* We support bigtile mode */
-	if (arg_bigtile) use_bigtile = TRUE;
+	if (arg_bigtile && arg_graphics) use_bigtile = TRUE;
 #endif /* USE_GRAPHICS */	
 
 	/* Prepare cursor color */
