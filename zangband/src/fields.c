@@ -1155,13 +1155,13 @@ bool field_hook_single(s16b *fld_ptr, int action, ...)
  */
 void field_hook(s16b *field_ptr, int action, ...)
 {
-	va_list vp;
-	
 	field_type *f_ptr;
 	field_thaum *t_ptr;
 
 	while (*field_ptr)
 	{
+		va_list vp;
+	
 		/* Point to the field */
 		f_ptr = &fld_list[*field_ptr];
 		t_ptr = &t_info[f_ptr->t_idx];

@@ -97,7 +97,7 @@ ANGOBJS := $(LUAWOBJS) \
 	effects.o quest.o racial.o script.o \
 	artifact.o mutation.o flavor.o spells3.o \
 	mspells1.o mspells2.o scores.o mind.o maid-x11.o\
-	bldg.o obj_kind.o wild1.o wild2.o avatar.o notes.o\
+	bldg.o obj_kind.o wild1.o wild2.o wild3.o avatar.o notes.o\
 	main-cap.o main-gcu.o main-x11.o main-xaw.o main-xpj.o\
 	main-lsl.o main-vcs.o main-gtk.o main-win.o main.o \
 	maid-grf.o main-dos.o main-ibm.o main-emx.o \
@@ -619,6 +619,7 @@ quest.o: wild.h grid.h
 readdib.o: readdib.h
 wild1.o: wild.h grid.h
 wild2.o: wild.h grid.h
+wild3.o: wild.h grid.h
 wizard2.o: script.h
 z-form.o: z-form.h z-util.h z-virt.h
 z-rand.o: z-rand.h
