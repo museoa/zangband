@@ -54,3 +54,10 @@ extern void set_floor(int x, int y);
 
 extern void build_tunnel(int row1, int col1, int row2, int col2);
 extern bool build_tunnel2(int x1, int y1, int x2, int y2, int type, int cutoff);
+
+extern void generate_hmap(int y0, int x0, int xsiz, int ysiz, int grd,
+	 int roug, int cutoff);
+extern bool generate_fracave(int y0, int x0, int xsize, int ysize, int cutoff,
+	 bool light, bool room);
+extern bool generate_lake(int y0, int x0, int xsize, int ysize,
+	 int c1, int c2, int c3, int type);

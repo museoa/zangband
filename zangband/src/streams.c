@@ -414,3 +414,96 @@ void destroy_level(void)
 		}
 	}
 }
+
+
+/*
+ * Builds a cave system in the center of the dungeon.
+ */
+void build_cavern(void)
+{
+	int grd, roug, cutoff, xsize, ysize, x0, y0;
+	bool done, light;
+
+	light = done = FALSE;
+	if (dun_level <= randint(50)) light = TRUE;
+
+	/* Make a cave the size of the dungeon */
+	xsize = max_wid - 1;
+	ysize = max_hgt - 1;
+	x0 = xsize / 2;
+	y0 = ysize / 2;
+
+	/* Paranoia: make size even */
+	xsize = x0 * 2;
+	ysize = y0 * 2;
+
+	while (!done)
+	{
+		/* testing values for these parameters: feel free to adjust */
+		grd = randint(4) + 4;
+
+		/* want average of about 16 */
+		roug = randint(8) * randint(4);
+
+		/* about size/2 */
+		cutoff = xsize / 2;
+
+		 /* make it */
+		generate_hmap(y0 + 1, x0 + 1, xsize, ysize, grd, roug, cutoff);
+
+		/* Convert to normal format+ clean up */
+		done = generate_fracave(y0 + 1, x0 + 1, xsize, ysize, cutoff, light, FALSE);
+	}
+}
+
+/*
+ * makes a lake/collapsed cave system in the center of the dungeon
+ */
+void build_lake(int type)
+{
+	int grd, roug, xsize, ysize, x0, y0;
+	bool done = FALSE;
+	int c1, c2, c3;
+
+	/* paranoia - exit if lake type out of range. */
+	if ((type < 1) || (type > 7))
+	{
+		msg_format("Invalid lake type (%d)", type);
+		return;
+	}
+
+	/* Make the size of the dungeon */
+	xsize = max_wid - 1;
+	ysize = max_hgt - 1;
+	x0 = xsize / 2;
+	y0 = ysize / 2;
+
+	/* Paranoia: make size even */
+	xsize = x0 * 2;
+	ysize = y0 * 2;
+
+	while (!done)
+	{
+		/* testing values for these parameters: feel free to adjust */
+		grd = randint(3) + 4;
+
+		/* want average of about 16 */
+		roug = randint(8) * randint(4);
+
+		/* Make up size of various componants */
+		/* Floor */
+		c3 = 3 * xsize / 4;
+
+		/* Deep water/lava */
+		c1 = rand_int(c3 / 2) + rand_int(c3 / 2) - 5;
+
+		/* Shallow boundary */
+		c2 = (c1 + c3) / 2;
+
+		/* make it */
+		generate_hmap(y0 + 1, x0 + 1, xsize, ysize, grd, roug, c3);
+
+		/* Convert to normal format+ clean up */
+		done = generate_lake(y0 + 1, x0 + 1, xsize, ysize, c1, c2, c3, type);
+	}
+}

@@ -445,7 +445,6 @@ static bool cave_gen(void)
 		}
 	}
 
-#ifdef ALLOW_CAVERNS_AND_LAKES
 	/* Possible "destroyed" level */
 	if ((dun_level > 15) && (rand_int(DUN_DEST) == 0) && (small_levels))
 	{
@@ -484,7 +483,6 @@ static bool cave_gen(void)
 
 		build_cavern();
 	}
-#endif /* ALLOW_CAVERNS_AND_LAKES */
 
 	/* Hack -- No destroyed "quest" levels */
 	if (quest_number(dun_level)) destroyed = FALSE;
