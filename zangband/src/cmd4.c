@@ -1609,6 +1609,7 @@ static bool do_cmd_macro_query(int dummy)
 static bool do_cmd_macro_create(int dummy)
 {
 	char tmp[1024];
+	char buf[1024];
 
 	/* Hack - ignore parameter */
 	(void) dummy;
@@ -1617,23 +1618,23 @@ static bool do_cmd_macro_create(int dummy)
 	prtf(0, 16, "Command: Create a macro\n\n"
 				"Trigger: ");
 
-	/* Clear */
-	clear_from(20);
-
-	/* Prompt */
-	prtf(0, 20, "Action: ");
-	
 	/* Get a macro trigger */
 	do_cmd_macro_aux(tmp);
+	
+	/* Clear */
+	clear_from(20);
+	
+	/* Prompt */
+	prtf(0, 20, "Action: ");
 
 	/* Convert to text */
-	ascii_to_text(tmp, macro__buf);
+	ascii_to_text(buf, macro__buf);
 
 	/* Get an encoded action */
-	if (askfor_aux(tmp, 80))
+	if (askfor_aux(buf, 80))
 	{
 		/* Convert to ascii */
-		text_to_ascii(macro__buf, tmp);
+		text_to_ascii(macro__buf, buf);
 
 		/* Link the macro */
 		macro_add(tmp, macro__buf);
@@ -1798,14 +1799,14 @@ static bool do_cmd_keymap_create(int dummy)
 	prtf(0, 16, "Command: Create a keymap\n\n"
 				"Keypress: ");
 
-	/* Clear */
-	clear_from(20);
-
-	/* Prompt */
-	prtf(0, 20, "Action: ");
-	
 	/* Get a keymap trigger */
 	do_cmd_macro_aux_keymap(buf);
+	
+	/* Clear */
+	clear_from(20);
+	
+	/* Prompt */
+	prtf(0, 20, "Action: ");
 
 	/* Convert to text */
 	ascii_to_text(tmp, macro__buf);
