@@ -34,7 +34,7 @@ zangband_SOURCES = \
   h-system.h h-type.h maid-x11.h readdib.h rooms.h \
   streams.h types.h wild.h z-config.h z-form.h \
   z-rand.h z-term.h z-util.h z-virt.h \
-  script.c script.h \
+  script.c script.h maid-grf.c maid-grf.h \
   l-monst.c l-object.c l-player.c l-random.c l-ui.c \
   l-misc.c l-spell.c
 
