@@ -506,6 +506,7 @@ bool display_menu(int num, menu_type *options, int select)
 
 	/* Paranoia for dumb compilers */
 	quit("Unreachable code in display_menu");
+	return (FALSE);
 }
 
 
