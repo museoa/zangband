@@ -187,9 +187,6 @@ proc SetWindowIcon {win} {
 	global WindowIcon
 
 	if {![info exists WindowIcon($win)]} {
-		if {0 && ![string length [wm transient $win]]} {
-			angband system windowicon $win
-		}
 		set WindowIcon($win) 1
 	}
 
@@ -409,23 +406,6 @@ proc MakeDivider {divider orient} {
 	return [frame $divider -borderwidth 1 $option 2 -relief $relief]
 }
 
-# Path --
-#
-#	Create a path relative to Angband(dir)
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-if 0 {
-proc Path {args} {
-
-	global Angband
-
-	return [eval file join [list $Angband(dir)] $args]
-}
-}
 
 # PathTk --
 #
