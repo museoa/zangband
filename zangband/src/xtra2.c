@@ -199,9 +199,6 @@ static int get_coin_type(const monster_race *r_ptr)
  *
  * Check for "Quest" completion when a quest monster is killed.
  *
- * Note that only the player can induce "monster_death()" on Uniques.
- * Thus (for now) all Quest monsters should be Uniques.
- *
  * Note that monsters can now carry objects, and when a monster dies,
  * it drops all of its objects, which may disappear in crowded rooms.
  *
@@ -209,12 +206,10 @@ static int get_coin_type(const monster_race *r_ptr)
  */
 bool monster_death(int m_idx, bool explode)
 {
-	int i, j, y, x, ny, nx, i2, j2;
+	int i, j, y, x;
 
 	int dump_item = 0;
 	int dump_gold = 0;
-
-	int number_mon;
 
 	int number = 0;
 
@@ -230,17 +225,11 @@ bool monster_death(int m_idx, bool explode)
 	bool do_gold = (!(r_ptr->flags1 & RF1_ONLY_ITEM));
 	bool do_item = (!(r_ptr->flags1 & RF1_ONLY_GOLD));
 	bool cloned = FALSE;
-	bool create_stairs = FALSE;
-	bool reward = FALSE;
 	bool dropped_corpse = FALSE;
 	int force_coin = get_coin_type(r_ptr);
 
-	int quest_num;
-
 	object_type forge;
 	object_type *q_ptr;
-
-	cave_type *c_ptr;
 
 	/* Notice changes in view */
 	if (r_ptr->flags7 & (RF7_LITE_1 | RF7_LITE_2))
@@ -306,215 +295,32 @@ bool monster_death(int m_idx, bool explode)
 			break;
 		}
 	}
-
-	/* Inside a quest */
-	quest_num = p_ptr->inside_quest;
-
-	/* Search for an active quest on this dungeon level */
-	if (!quest_num)
+	
+	/* Complete quests */
+	if (r_ptr->flags1 & RF1_UNIQUE)
 	{
-		for (i = z_info->q_max - 1; i > 0; i--)
-		{
-			/* Quest is not active */
-			if (quest[i].status != QUEST_STATUS_TAKEN)
-				continue;
-
-			/* Quest is not a dungeon quest */
-			if (quest[i].flags & QUEST_FLAG_PRESET)
-				continue;
-
-			/* Quest is not on this level */
-			if ((quest[i].level != p_ptr->depth) &&
-				 (quest[i].type != QUEST_TYPE_KILL_ANY_LEVEL))
-				continue;
-
-			/* Not a "kill monster" quest */
-			if ((quest[i].type == QUEST_TYPE_FIND_ARTIFACT) ||
-			    (quest[i].type == QUEST_TYPE_FIND_EXIT))
-				continue;
-
-			/* Interesting quest */
-			if ((quest[i].type == QUEST_TYPE_KILL_NUMBER) ||
-			    (quest[i].type == QUEST_TYPE_KILL_ALL))
-				break;
-
-			/* Interesting quest */
-			if (((quest[i].type == QUEST_TYPE_KILL_LEVEL) ||
-			     (quest[i].type == QUEST_TYPE_KILL_ANY_LEVEL) ||
-			     (quest[i].type == QUEST_TYPE_RANDOM)) &&
-			     (quest[i].r_idx == m_ptr->r_idx))
-				break;
-		}
-
-		quest_num = i;
+		trigger_quest_complete(QX_KILL_UNIQUE, (vptr) m_ptr);
+	}
+	else
+	{
+		trigger_quest_complete(QX_KILL_MONST, (vptr) m_ptr);
+	}
+	
+	/* Hack XXX XXX - trigger on killing winner */
+	if ((m_ptr->r_idx == QW_OBERON) || (m_ptr->r_idx == QW_SERPENT))
+	{
+		trigger_quest_complete(QX_KILL_WINNER, (vptr) m_ptr);
 	}
 
-	/* Handle the current quest */
-	if (quest_num && (quest[quest_num].status == QUEST_STATUS_TAKEN))
-	{
-		/* Current quest */
-		i = quest_num;
-
-		switch (quest[i].type)
-		{
-			case QUEST_TYPE_KILL_NUMBER:
-			{
-				quest[i].cur_num++;
-
-				if (quest[i].cur_num >= quest[i].num_mon)
-				{
-					/* completed quest */
-					quest[i].status = QUEST_STATUS_COMPLETED;
-
-					if (!(quest[i].flags & QUEST_FLAG_SILENT))
-					{
-						msg_print("You just completed your quest!");
-						message_flush();
-					}
-
-					quest[i].cur_num = 0;
-				}
-				break;
-			}
-			case QUEST_TYPE_KILL_ALL:
-			{
-				number_mon = 0;
-
-				/* This only happens in the dungeon I hope. */
-
-				/* Count all hostile monsters */
-				for (i2 = p_ptr->min_wid; i2 < p_ptr->max_wid; ++i2)
-					for (j2 = p_ptr->min_hgt; j2 < p_ptr->max_hgt; j2++)
-						if (area(j2,i2)->m_idx > 0)
-							if (is_hostile(&m_list[area(j2,i2)->m_idx]) &&
-								area(j2,i2)->m_idx != m_idx)
-									number_mon++;
-
-				if (number_mon == 0)
-				{
-					/* completed */
-					if (quest[i].flags & QUEST_FLAG_SILENT)
-					{
-						quest[i].status = QUEST_STATUS_FINISHED;
-					}
-					else
-					{
-						quest[i].status = QUEST_STATUS_COMPLETED;
-						msg_print("You just completed your quest!");
-						message_flush();
-					}
-				}
-				break;
-			}
-			case QUEST_TYPE_KILL_LEVEL:
-			case QUEST_TYPE_RANDOM:
-			{
-				/* Only count valid monsters */
-				if (quest[i].r_idx != m_ptr->r_idx)	break;
-
-				/* Do not count clones */
-				if (m_ptr->smart & SM_CLONED) break;
-				
-				quest[i].cur_num++;
-
-				if (quest[i].cur_num >= quest[i].max_num)
-				{
-					/* completed quest */
-					quest[i].status = QUEST_STATUS_COMPLETED;
-
-					if (!p_ptr->inside_quest)
-						create_stairs = TRUE;
-
-					/* Take note */
-					if (auto_notes)
-					{
-						char note[80];
-
-						sprintf(note, "Finished quest: %d %s", quest[i].max_num, (r_name + r_info[quest[i].r_idx].name));
-
-						add_note(note, 'Q');
-					}
-
-					if (!(quest[i].flags & QUEST_FLAG_SILENT))
-					{
-						msg_print("You just completed your quest!");
-						message_flush();
-					}
-
-					/* Finish the two main quests without rewarding */
-					if ((i == QUEST_OBERON) || (i == QUEST_SERPENT))
-					{
-						quest[i].status = QUEST_STATUS_FINISHED;
-					}
-
-					if (quest[i].type == QUEST_TYPE_RANDOM)
-					{
-						reward = TRUE;
-						quest[i].status = QUEST_STATUS_FINISHED;
-					}
-				}
-				break;
-			}
-			case QUEST_TYPE_KILL_ANY_LEVEL:
-			{
-				quest[i].cur_num++;
-				if (quest[i].cur_num >= quest[i].max_num)
-				{
-					 /* completed quest */
-					quest[i].status = QUEST_STATUS_COMPLETED;
-
-					if (!(quest[i].flags & QUEST_FLAG_SILENT))
-					{
-						msg_print("You just completed your quest!");
-						message_flush();
-					}
-					quest[i].cur_num = 0;
-				}
-				break;
-			}
-		}
-	}
-
-	/* Create a magical staircase */
-	if (create_stairs)
-	{
-		/* Stagger around */
-		c_ptr = area(y, x);
-		i = 0;
-		while ((cave_perma_grid(c_ptr) || c_ptr->o_idx) && !(i > 100))
-		{
-			/* Pick a location */
-			scatter(&ny, &nx, y, x, 1);
-
-			/* Stagger */
-			y = ny; x = nx;
-
-			/* paranoia - increment counter */
-			i++;
-
-			/* paranoia */
-			if (!in_bounds(y, x)) continue;
-
-			c_ptr = area(y, x);
-		}
-
-		/* Explain the staircase */
-		msg_print("A magical staircase appears...");
-
-		/* Create stairs down */
-		cave_set_feat(y, x, FEAT_MORE);
-
-		/* Remember to update everything */
-		p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS);
-	}
-
+	
 #ifdef USE_CORPSES
 	/* Drop a dead corpse? */
 
-	/* Hack: Do not drop a corpse in a random quest.  (reward is set) */
+	/* Hack: Do not drop a corpse in a random quest.  */
 	if ((one_in_(r_ptr->flags1 & RF1_UNIQUE ? 1 : 2) &&
 	    ((r_ptr->flags9 & RF9_DROP_CORPSE) ||
-	    (r_ptr->flags9 & RF9_DROP_SKELETON))) && !reward)
+	    (r_ptr->flags9 & RF9_DROP_SKELETON)))
+		&& !(r_ptr->flags1 & RF1_QUESTOR))
 	{
 		/* Assume skeleton */
 		bool corpse = FALSE;
@@ -884,59 +690,9 @@ bool monster_death(int m_idx, bool explode)
 		lore_treasure(m_idx, dump_item, dump_gold);
 	}
 
-	/*
-	 * Drop random quest reward
-	 */
-	if (reward)
-	{
-		while (TRUE)
-		{
-			/* Get local object */
-			q_ptr = &forge;
-
-			/* Wipe the object */
-			object_wipe(q_ptr);
-
-			/* Average of 20 great objects per game */
-			if (randint0(number_of_quests()) < 20)
-			{
-				/* Make a great object */
-				(void)make_object(q_ptr, 30, dun_theme);
-			}
-			else
-			{
-				/* Make a good object */
-				(void)make_object(q_ptr, 15, dun_theme);
-			}
-		
-			/* We need a 'good' item - so check the price */
-			if (object_value_real(q_ptr) > 100 * p_ptr->depth) break;
-		}
-		
-		/* Drop it in the dungeon */
-		(void)drop_near(q_ptr, -1, y, x);
-	}
 	
 	/* Reset the object level */
 	object_level = base_level;
-
-	/* Only process "Quest Monsters" */
-	if (!(r_ptr->flags1 & RF1_QUESTOR)) return (dropped_corpse);
-
-	/* Winner? */
-	if (strstr((r_name + r_ptr->name), "Serpent of Chaos"))
-	{
-		/* Total winner */
-		p_ptr->total_winner = TRUE;
-
-		/* Redraw the "title" */
-		p_ptr->redraw |= (PR_TITLE);
-
-		/* Congratulations */
-		msg_print("*** CONGRATULATIONS ***");
-		msg_print("You have won the game!");
-		msg_print("You may retire (commit suicide) when you are ready.");
-	}
 	
 	/* Return TRUE if we dropped a corpse for the player to see */
 	return (dropped_corpse);

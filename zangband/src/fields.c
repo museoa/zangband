@@ -574,7 +574,6 @@ s16b f_pop(void)
 {
 	int i;
 
-
 	/* Initial allocation */
 	if (fld_max < z_info->fld_max)
 	{
@@ -2008,7 +2007,7 @@ void place_trap(int y, int x)
 		if (t_idx != FT_TRAP_DOOR) break;
 
 		/* Hack -- no trap doors on special levels */
-		if (quest_number(p_ptr->depth)) continue;
+		if (quest_number()) continue;
 
 		/* Hack -- no trap doors on the deepest level */
 		if (p_ptr->depth >= MAX_DEPTH-1) continue;

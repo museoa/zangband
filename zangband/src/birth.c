@@ -871,9 +871,6 @@ static void get_extra(void)
 	/* Experience factor */
 	p_ptr->expfact = rp_ptr->r_exp + cp_ptr->c_exp;
 
-	/* Initialize rewards information -KMW- */
-	p_ptr->inside_quest = 0;
-
 	/* Hitdice */
 	p_ptr->hitdie = rp_ptr->r_mhp + cp_ptr->c_mhp;
 
@@ -1284,18 +1281,6 @@ static void player_wipe(void)
 	for (i = 0; i < 4; i++)
 	{
 		strcpy(p_ptr->history[i], "");
-	}
-
-	/* Wipe the quests */
-	for (i = 0; i < z_info->q_max; i++)
-	{
-		quest[i].status = QUEST_STATUS_UNTAKEN;
-
-		quest[i].cur_num = 0;
-		quest[i].max_num = 0;
-		quest[i].type = 0;
-		quest[i].level = 0;
-		quest[i].r_idx = 0;
 	}
 
 	/* Clear the inventory */
@@ -2221,149 +2206,6 @@ static bool get_player_realms(void)
 
 
 /*
- * Quests
- */
-static bool get_player_quests(void)
-{
-	char inp[80];
-
-	monster_race *r_ptr, *quest_r_ptr;
-	quest_type *q_ptr;
-
-	int	r_idx;
-	int	i, j, v, level;
-
-	/*** User enters number of quests ***/
-	/* Heino Vander Sanden and Jimmy De Laet */
-
-	/* Extra info */
-	Term_putstr(5, 15, -1, TERM_WHITE,
-		"You can enter the number of quests you'd like to perform in addition");
-	Term_putstr(5, 16, -1, TERM_WHITE,
-		"to the two obligatory ones ( Oberon and the Serpent of Chaos )");
-	Term_putstr(5, 17, -1, TERM_WHITE,
-		"In case you do not want any additional quests, just enter 0");
-
-	Term_putstr(5, 18, -1, TERM_WHITE,
-		"If you want a random number of random quests, just enter *");
-
-	/* Ask the number of additional quests */
-	while (TRUE)
-	{
-		put_str(format("Number of additional quests? (<%u) ", MAX_RANDOM_QUEST - MIN_RANDOM_QUEST + 2), 20, 2);
-
-		/* Get a the number of additional quest */
-		while (TRUE)
-		{
-			/* Move the cursor */
-			put_str("", 20, 37);
-
-			/* Default */
-			strcpy(inp, "20");
-
-			/* Get a response (or escape) */
-			if (!askfor_aux(inp, 3)) inp[0] = '\0';
-
-			/* Check for random number of quests */
-			if (inp[0] == '*')
-			{
-				/* 0 to 49 random quests */
-				v = randint0(50);
-			}
-			else
-			{
-				v = atoi(inp);
-			}
-
-			/* Break on valid input */
-			if ((v <= MAX_RANDOM_QUEST - MIN_RANDOM_QUEST + 1) && (v >= 0)) break;
-		}
-		break;
-	}
-
-	/* Init the random quests */
-	p_ptr->inside_quest = MIN_RANDOM_QUEST;
-	(void)process_dungeon_file("q_info.txt", INIT_ASSIGN);
-	p_ptr->inside_quest = 0;
-
-	/* Prepare allocation table */
-	get_mon_num_prep(monster_quest, NULL);
-
-	/* Generate quests */
-	for (i = MIN_RANDOM_QUEST + v - 1; i >= MIN_RANDOM_QUEST; i--)
-	{
-		q_ptr = &quest[i];
-
-		q_ptr->status = QUEST_STATUS_TAKEN;
-
-		for (j = 0; j < MAX_TRIES; j++)
-		{
-			/*
-			 * Random monster out of depth
-			 * (depending on level + number of quests)
-			 */
-			level = q_ptr->level + 6 +
-			        randint1(q_ptr->level * v / 200 + 1) +
-			        randint1(q_ptr->level * v / 200 + 1);
-
-			r_idx = get_mon_num(level);
-			r_ptr = &r_info[r_idx];
-
-			/* Look at the monster - only "hard" monsters for quests */
-			if (r_ptr->flags1 & (RF1_NEVER_MOVE | RF1_FRIENDS)) continue;
-
-			/* Save the index if the monster is deeper than current monster */
-			if (!q_ptr->r_idx || (r_info[r_idx].level > r_info[q_ptr->r_idx].level))
-			{
-				q_ptr->r_idx = r_idx;
-			}
-
-			/*
-			 * Accept monsters that are 2 - 6 levels
-			 * out of depth depending on the quest level
-			 */
-			if (r_ptr->level > (q_ptr->level + (q_ptr->level / 20) + 1)) break;
-		}
-
-		quest_r_ptr = &r_info[q_ptr->r_idx];
-
-		/* Get the number of monsters */
-		if (quest_r_ptr->flags1 & RF1_UNIQUE)
-		{
-			/* Mark uniques */
-			quest_r_ptr->flags1 |= RF1_QUESTOR;
-
-			q_ptr->max_num = 1;
-		}
-		else if (quest_r_ptr->flags3 & RF3_UNIQUE_7)
-		{
-			/* Mark uniques */
-			quest_r_ptr->flags1 |= RF1_QUESTOR;
-
-			q_ptr->max_num = randint1(quest_r_ptr->max_num);
-		}
-		else
-		{
-			q_ptr->max_num = 5 + (s16b)randint0(q_ptr->level / 3 + 5) /
-									quest_r_ptr->rarity;
-		}
-	}
-
-	/* Init the two main quests (Oberon + Serpent) */
-	p_ptr->inside_quest = QUEST_OBERON;
-	(void)process_dungeon_file("q_info.txt", INIT_ASSIGN);
-	quest[QUEST_OBERON].status = QUEST_STATUS_TAKEN;
-
-	p_ptr->inside_quest = QUEST_SERPENT;
-	(void)process_dungeon_file("q_info.txt", INIT_ASSIGN);
-	quest[QUEST_SERPENT].status = QUEST_STATUS_TAKEN;
-	p_ptr->inside_quest = 0;
-
-	return (TRUE);
-}
-
-
-/*
  * Helper function for 'player_birth()'.
  *
  * This function allows the player to select a sex, race, and class, and
@@ -2438,7 +2280,8 @@ static bool player_birth_aux_1(void)
 		c_put_str(TERM_L_BLUE, realm_names[p_ptr->realm2], 7, 11);
 	}
 
-	if (!get_player_quests()) return (FALSE);
+	/* And finally, get the number of random quests */
+	get_player_quests();
 
 	/* Clear */
 	clear_from(15);

@@ -86,7 +86,7 @@ void place_random_stairs(int y, int x)
 		down_stairs = FALSE;
 
 	/* Quest-level */
-	if (quest_number(p_ptr->depth) && (p_ptr->depth > 1))
+	if (quest_number() && (p_ptr->depth > 1))
 		down_stairs = FALSE;
 
 	/* We can't place both */

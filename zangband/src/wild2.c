@@ -766,14 +766,11 @@ void draw_city(u16b town_num)
  */
 static void town_gen(u16b town_num)
 {
-	/* Mega - hack */
-	if (town[town_num].type == 1)
+	switch(town[town_num].type)
 	{
-		van_town_gen(town_num);
-	}
-	else
-	{
-		draw_city(town_num);
+		case TOWN_OLD: van_town_gen(town_num); break;
+		case TOWN_FRACT: draw_city(town_num); break;
+		default: quit("Unknown town type in wilderness");
 	}
 }
 
@@ -2607,6 +2604,9 @@ void change_level(int level)
 
 	/* Clear the monster lights */
 	clear_mon_lite();
+	
+	/* Toggle list of active quests */
+	activate_quests(level);
 
 	if (level == 0)
 	{

@@ -929,7 +929,7 @@ static void wr_extra(void)
 	/* Write arena and rewards information -KMW- */
 	wr_s16b(0);
 	wr_s16b(0);
-	wr_s16b(p_ptr->inside_quest);
+	wr_s16b(0);
 	wr_byte(0);
 	wr_byte(0);
 
@@ -1494,18 +1494,17 @@ static bool wr_savefile_new(void)
 	wr_u16b(tmp16u);
 
 	/* Dump the quests */
-	tmp16u = z_info->q_max;
-	wr_u16b(tmp16u);
+	wr_s16b(q_max);
 
-	for (i = 0; i < z_info->q_max; i++)
+	for (i = 0; i < q_max; i++)
 	{
 		/* Save status for every quest */
-		wr_s16b(quest[i].status);
+		wr_s16b(0);
 
 		/* And the dungeon level too */
 		/* (prevents problems with multi-level quests) */
-		wr_s16b(quest[i].level);
-
+		wr_s16b(0);
+#if 0
 		/* Save quest status if quest is running */
 		if (quest[i].status == QUEST_STATUS_TAKEN)
 		{
@@ -1516,6 +1515,7 @@ static bool wr_savefile_new(void)
 			wr_s16b(quest[i].k_idx);
 			wr_byte(quest[i].flags);
 		}
+#endif /* 0 */
 	}
 
 	/* Dump the position in the wilderness */

@@ -116,8 +116,10 @@ s16b o_cnt = 0;			/* Number of live objects */
 s16b m_max = 1;			/* Number of allocated monsters */
 s16b m_cnt = 0;			/* Number of live monsters */
 
-s16b fld_max = 1;			/* Number of allocated fields */
-s16b fld_cnt = 0;			/* Number of live fields */
+s16b fld_max = 1;		/* Number of allocated fields */
+s16b fld_cnt = 0;		/* Number of live fields */
+
+s16b q_max = 0;			/* Number of allocated quests */
 
 s16b hack_m_idx = 0;	/* Hack -- see "process_monsters()" */
 s16b hack_m_idx_ii = 0;
@@ -130,9 +132,6 @@ char summon_kin_type;   /* Hack, by Julian Lighton: summon 'relatives' */
 int total_friends = 0;
 s32b total_friend_levels = 0;
 s32b friend_align = 0;
-
-/* Is this needed? */
-int leaving_quest = 0;
 
 s16b store_cache_num = 0;	/* Number of stores with stock */
 store_type **store_cache;	/* The cache of store stocks */
@@ -653,6 +652,11 @@ char *r_text;
 field_thaum *t_info;
 
 /*
+ * Quest data array
+ */
+quest_type *quest;
+
+/*
  * Hack -- The special Angband "System Suffix"
  * This variable is used to choose an appropriate "pref-xxx" file
  */
@@ -800,21 +804,6 @@ byte (*get_obj_num_hook)(int k_idx);
 s32b max_wild;
 
 /* Get rid of the quest stuff? */
-
-/*
- * Quest info
- */
-quest_type *quest;
-
-/*
- * Quest text
- */
-char quest_text[10][80];
-
-/*
- * Current line of the quest text
- */
-int quest_text_line;
 
 /*
  * Default spell color table (quark index)

@@ -469,7 +469,8 @@ static bool create_city(int x, int y, int town_num)
 	select_town_name(t_ptr->name, pop);
 	t_ptr->seed = randint0(0x10000000);
 
-	t_ptr->type = 2;
+	t_ptr->type = TOWN_FRACT;
+	t_ptr->monst_type = TOWN_MONST_VILLAGER;
 	t_ptr->x = x;
 	t_ptr->y = y;
 
@@ -941,7 +942,7 @@ static void set_mon_wild_values(byte town_type, wild_done_type *w_ptr)
 	/* One and only one type of monster distribution */
 	switch (town_type)
 	{
-		case 0:
+		case TOWN_MONST_VILLAGER:
 		{
 			/* Monsters are easy */
 			w_ptr->mon_gen = 0;
@@ -950,7 +951,22 @@ static void set_mon_wild_values(byte town_type, wild_done_type *w_ptr)
 			w_ptr->mon_prob = 64;
 			break;
 		}
+		
+		case TOWN_MONST_ABANDONED:
+		{
+			/* Monsters are moderately difficult */
+			w_ptr->mon_gen = 30;
 
+			/* Monsters are rare */
+			w_ptr->mon_prob = 0;
+			break;
+		}
+
+		/*
+		 * Add in other probabilities in here for the
+		 * other TOWN_MONST_XXX types
+		 */
+		 
 		default:
 		{
 			/* Monsters are easy */
@@ -974,7 +990,7 @@ static void init_vanilla_town(void)
 	strcpy(town[1].name, "Town");
 	town[1].seed = randint0(0x10000000);
 	town[1].numstores = 9;
-	town[1].type = 1;
+	town[1].type = TOWN_OLD;
 	town[1].x = (max_wild / 2) - TOWN_WID / (WILD_BLOCK_SIZE * 2) - 1;
 	town[1].y = (max_wild / 2) - TOWN_HGT / (WILD_BLOCK_SIZE * 2) - 1;
 
@@ -2432,8 +2448,9 @@ u16b add_node_tree_root(wild_bound_box_type *bound, u16b type)
 
 
 /*
- * Testing code - remove later.
+ * Debug code for the wilderness decision tree.
  */
+#ifdef DEBUG
 void test_decision_tree(void)
 {
 	byte hgt, pop, law;
@@ -2458,6 +2475,8 @@ void test_decision_tree(void)
 
 	msg_format("Type returned: %d .", type);
 }
+
+#endif /* DEBUG */
 
 
 #if 0
@@ -3447,13 +3466,16 @@ static void create_hgt_map(void)
 	int grd;
 
 	/*
-	 * fixed point variables- these are stored as 16 x normal value
-	 * this gives 4 binary places of fractional part + 12 places of normal part
+	 * Fixed point variables- these are stored as 16 x normal value
+	 * This gives 4 binary places of fractional part + 12 places of normal part
 	 */
 
 	int lstep, hstep, i, j, ii, jj, size;
 
-	/* Size is one bigger than normal blocks for speed of algorithm with 2^n + 1 */
+	/*
+	 * Size is one bigger than normal blocks
+	 * because of speed of algorithm with size = 2^n + 1
+	 */
 	size = max_wild - 1;
 
 	/* Clear the section */
@@ -3948,6 +3970,49 @@ static void wild_done(void)
 
 
 /*
+ * Make the vanilla wilderness with only the 'standard' town
+ */
+void create_vanilla_wilderness(void)
+{
+	int i, j;
+	
+	wild_type *w_ptr;
+	
+	/* Tiny wilderness */
+	max_wild = WILD_VIEW + 1;
+
+	/* Mega Hack - make an "empty" wilderness. */
+	for (i = 0; i < max_wild; i++)
+	{
+		for (j = 0; j < max_wild; j++)
+		{
+			/* Mega Hack - Use the 0 value (normally empty) to denote grass. */
+			w_ptr = &wild[j][i];
+
+			w_ptr->done.wild = 0;
+
+			/* Nothing interesting here */
+			w_ptr->done.info = 0;
+
+			/* No town yet */
+			w_ptr->done.town = 0;
+
+			/* Monsters are easy */
+			w_ptr->done.mon_gen = 0;
+
+			/* Monsters are fairly common */
+			w_ptr->done.mon_prob = 64;
+		}
+	}
+
+	/* Make a single vanilla town. */
+	init_vanilla_town();
+
+	/* Done */
+	wild_done();
+}
+
+/*
  * Create the wilderness
  *
  * This is done by making three plasma fractals
@@ -3991,38 +4056,7 @@ void create_wilderness(void)
 	/* Minimal wilderness */
 	if (vanilla_town)
 	{
-		/* Tiny wilderness */
-		max_wild = WILD_VIEW + 1;
-
-		/* Mega Hack - make an "empty" wilderness. */
-		for (i = 0; i < max_wild; i++)
-		{
-			for (j = 0; j < max_wild; j++)
-			{
-				/* Mega Hack - Use the 0 value (normally empty) to denote grass. */
-				w_ptr = &wild[j][i];
-
-				w_ptr->done.wild = 0;
-
-				/* Nothing interesting here */
-				w_ptr->done.info = 0;
-
-				/* No town yet */
-				w_ptr->done.town = 0;
-
-				/* Monsters are easy */
-				w_ptr->done.mon_gen = 0;
-
-				/* Monsters are fairly common */
-				w_ptr->done.mon_prob = 64;
-			}
-		}
-
-		/* Make a single vanilla town. */
-		init_vanilla_town();
-
-		/* Done */
-		wild_done();
+		create_vanilla_wilderness();
 		return;
 	}
 
@@ -4158,9 +4192,6 @@ void create_wilderness(void)
 			/* No town yet */
 			w_ptr->trans.town = 0;
 
-			/* Type of town */
-			w_ptr->trans.town_type = 0;
-
 			/* No info flags set yet */
 			w_ptr->trans.info = 0;
 
@@ -4201,14 +4232,13 @@ void create_wilderness(void)
 	{
 		for (j = 0; j < max_wild; j++)
 		{
-			byte twn, info, town_type;
+			byte twn, info;
 
 			/* Get wilderness grid */
 			w_ptr = &wild[j][i];
 
 			/* Save town and info status */
 			twn = w_ptr->trans.town;
-			town_type = w_ptr->trans.town_type;
 			info = w_ptr->trans.info;
 
 			/* Get HPL of grid */
@@ -4258,7 +4288,7 @@ void create_wilderness(void)
 			else
 			{
 				/* Set values depending on type of town */
-				set_mon_wild_values(town_type, &w_ptr->done);
+				set_mon_wild_values(town[twn].monst_type, &w_ptr->done);
 			}
 
 			/* Info flags */
@@ -4298,11 +4328,16 @@ void create_wilderness(void)
 	}
 
 
+	/*
+	 * We can check the wilderness structures in debug mode - 
+	 * So don't delete them in that case...
+	 */
+#ifndef DEBUG
+	
 	/* Free up memory used to create the wilderness */
-#if 0
 	FREE(wild_choice_tree);
 	FREE(wild_temp_dist);
-#endif
+#endif /* !DEBUG */
 
 	/* Done */
 	wild_done();

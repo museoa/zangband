@@ -134,7 +134,7 @@ static bool alloc_stairs(int feat, int num, int walls)
 	else if (feat == FEAT_MORE)
 	{
 		/* No downstairs on quest levels */
-		if ((p_ptr->depth > 1) && quest_number(p_ptr->depth)) return TRUE;
+		if ((p_ptr->depth > 1) && quest_number()) return TRUE;
 
 		/* No downstairs at the bottom */
 		if (p_ptr->depth >= MAX_DEPTH - 1) return TRUE;
@@ -489,7 +489,7 @@ static bool cave_gen(void)
 	}
 
 	/* Hack -- No destroyed "quest" levels */
-	if (quest_number(p_ptr->depth)) destroyed = FALSE;
+	if (quest_number()) destroyed = FALSE;
 
 	/* Actual maximum number of rooms on this level */
 	dun->row_rooms = (p_ptr->max_hgt - p_ptr->min_hgt) / BLOCK_HGT;
@@ -831,76 +831,9 @@ static bool cave_gen(void)
 
 	/* Place 1 or 2 up stairs near some walls */
 	if (!alloc_stairs(FEAT_LESS, rand_range(1, 2), 3)) return FALSE;
-
-	/* Handle the quest monster placements */
-	for (i = 0; i < z_info->q_max; i++)
-	{
-		if ((quest[i].status == QUEST_STATUS_TAKEN) &&
-		    ((quest[i].type == QUEST_TYPE_KILL_LEVEL) ||
-		    (quest[i].type == QUEST_TYPE_RANDOM)) &&
-		    (quest[i].level == p_ptr->depth) &&
-			!(quest[i].flags & QUEST_FLAG_PRESET))
-		{
-			monster_race *r_ptr = &r_info[quest[i].r_idx];
-
-			/* Hack -- "unique" monsters must be "unique" */
-			if ((r_ptr->flags1 & RF1_UNIQUE) &&
-			    (r_ptr->cur_num >= r_ptr->max_num))
-			{
-				/* The unique is already dead */
-				quest[i].status = QUEST_STATUS_FINISHED;
-			}
-			else
-			{
-				bool group;
-
-				/* Hard quests -> revive all monsters */
-				if (ironman_hard_quests)
-				{
-					quest[i].cur_num = 0;
-				}
-
-				for (j = 0; j < (quest[i].max_num - quest[i].cur_num); j++)
-				{
-					for (k = 0; k < SAFE_MAX_ATTEMPTS; k++)
-					{
-						/* Find an empty grid */
-						while (TRUE)
-						{
-							y = rand_range(p_ptr->min_hgt + 1,
-									 p_ptr->max_hgt - 2);
-							x = rand_range(p_ptr->min_wid + 1,
-									 p_ptr->max_wid - 2);
-
-							/* Access the grid */
-							c_ptr = &cave[y][x];
-
-							if (!cave_naked_grid(c_ptr)) continue;
-							if (distance(y, x, p_ptr->py, p_ptr->px) < 10) continue;
-							else break;
-						}
-
-						if (r_ptr->flags1 & RF1_FRIENDS)
-							group = FALSE;
-						else
-							group = TRUE;
-
-						/* Try to place the monster */
-						if (place_monster_aux(y, x, quest[i].r_idx, FALSE, group, FALSE, FALSE))
-						{
-							/* Success */
-							break;
-						}
-						else
-						{
-							/* Failure - Try again */
-							continue;
-						}
-					}
-				}
-			}
-		}
-	}
+	
+	/* Place quest monsters in the dungeon */
+	trigger_quest_create(QC_DUN_MONST, NULL);
 
 	/* Basic "amount" */
 	k = (p_ptr->depth / 3);
@@ -1210,8 +1143,7 @@ void generate_cave(void)
 		}
 
 		/* Mega-Hack -- "auto-scum" */
-		else if ((auto_scum || ironman_autoscum) && (num < 100) &&
-				 !p_ptr->inside_quest)
+		else if ((auto_scum || ironman_autoscum) && (num < 100))
 		{
 			/* Require "goodness" */
 			if ((dun_ptr->feeling > 9) ||

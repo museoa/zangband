@@ -113,8 +113,7 @@ bool teleport_away(int m_idx, int dis)
 			if (!mon_enter_test.do_move) continue;
 
 			/* No teleporting into vaults and such */
-			if (!(p_ptr->inside_quest))
-				if (c_ptr->info & CAVE_ICKY) continue;
+			if (c_ptr->info & CAVE_ICKY) continue;
 
 			/* This grid looks good */
 			look = FALSE;
@@ -623,8 +622,7 @@ void teleport_player_to(int ny, int nx)
 void teleport_player_level(void)
 {
 	/* No effect in quest */
-	if (p_ptr->inside_quest ||
-	    (quest_number(p_ptr->depth) && (p_ptr->depth > 1) && ironman_downward))
+	if (quest_number() && (p_ptr->depth > 1) && ironman_downward)
 	{
 		msg_print("There is no effect.");
 		return;
@@ -649,7 +647,7 @@ void teleport_player_level(void)
 		/* Leaving */
 		p_ptr->leaving = TRUE;
 	}
-	else if (quest_number(p_ptr->depth) || (p_ptr->depth >= MAX_DEPTH - 1))
+	else if (quest_number() || (p_ptr->depth >= MAX_DEPTH - 1))
 	{
 		message(MSG_TPLEVEL, 0, "You rise up through the ceiling.");
 
@@ -743,8 +741,7 @@ void recall_player(int turns)
 
 	if (!check_down_wild()) return;	
 	
-	if (p_ptr->depth && (p_ptr->max_depth > p_ptr->depth) &&
-		 !p_ptr->inside_quest)
+	if (p_ptr->depth && (p_ptr->max_depth > p_ptr->depth))
 	{
 		if (get_check("Reset recall depth? "))
 			p_ptr->max_depth = p_ptr->depth;
@@ -1233,7 +1230,7 @@ void fetch(int dir, int wgt, bool require_los)
 
 void alter_reality(void)
 {
-	if (!quest_number(p_ptr->depth) && p_ptr->depth)
+	if (!quest_number() && p_ptr->depth)
 	{
 		msg_print("The world changes!");
 
@@ -1580,18 +1577,22 @@ void stair_creation(void)
 	/* XXX XXX XXX */
 	delete_object(py, px);
 
+#if 0
 	/* Create a staircase */
 	if (p_ptr->inside_quest)
 	{
-		/* arena or quest */
+		/* Quest? */
 		msg_print("There is no effect!");
+		return;
 	}
-	else if (!p_ptr->depth || ironman_downward)
+#endif /* 0 */
+	
+	if (!p_ptr->depth || ironman_downward)
 	{
 		/* Town/wilderness or Ironman */
 		cave_set_feat(py, px, FEAT_MORE);
 	}
-	else if (quest_number(p_ptr->depth) || (p_ptr->depth >= MAX_DEPTH - 1))
+	else if (quest_number() || (p_ptr->depth >= MAX_DEPTH - 1))
 	{
 		/* Quest level */
 		cave_set_feat(py, px, FEAT_LESS);

@@ -933,29 +933,6 @@ errr init_t_info(void)
 }
 
 
-
-/*
- * Initialize quest array
- */
-static errr init_quests(void)
-{
-	int i;
-
-	/*** Prepare the quests ***/
-
-	/* Allocate the quests */
-	C_MAKE(quest, z_info->q_max, quest_type);
-
-	/* Set all quest to "untaken" */
-	for (i = 0; i < z_info->q_max; i++)
-	{
-		quest[i].status = QUEST_STATUS_UNTAKEN;
-	}
-
-	return 0;
-}
-
-
 /*
  * Initialize some other arrays
  */

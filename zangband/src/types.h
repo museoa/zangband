@@ -549,7 +549,7 @@ struct wild_gen2_type
 	byte	pop_map;
 	byte	law_map;
 	byte	town;
-	byte	town_type;
+	byte	dummy;
 	byte	info;
 };
 
@@ -1003,27 +1003,90 @@ struct option_type
 
 
 /*
+ * There are three types of quest:
+ * General quests, Dungeon and wilderness quests.
+ * Each has its own type of data it needs to store
+ */
+
+/*
+ * Quest type-specific data.
+ */
+
+/* General */
+typedef struct quest_gen quest_gen;
+
+struct quest_gen
+{
+	/* Mail quests */
+	u16b town;	
+	u16b shop;		/* Owner to bring item */
+	
+	/* Bounty quests */
+	u16b r_idx;		/* Monster */
+	u16b cur_num;	/* Number killed */
+	u16b max_num;	/* Number required */
+};
+
+/* Dungeon */
+typedef struct quest_dun quest_dun;
+
+struct quest_dun
+{
+	u16b r_idx;             /* Monster race */
+	u16b level;             /* Dungeon level */
+	
+	s16b cur_num;           /* Number killed */
+	s16b max_num;           /* Number required */
+	s16b num_mon;			/* Number on the level */
+};
+
+/* Wilderness */
+typedef struct quest_wld quest_wld;
+
+struct quest_wld
+{
+	u16b refcount;			/* Refcount for wilderness code */
+	u16b town;				/* Equivalent "town number" */
+	
+	u16b complete_data;		/* Data so can choose completion */
+};
+
+
+/* The union holding the quest-specific data */
+typedef union quest_data_type quest_data_type;
+union quest_data_type
+{
+	quest_gen	gen;
+	quest_dun	dun;
+	quest_wld	wld;
+};
+
+/*
  * Structure for the "quests"
  */
 typedef struct quest_type quest_type;
 
 struct quest_type
 {
-	s16b status;            /* Is the quest taken, completed, finished? */
+	byte status;            /* Is the quest taken, completed, finished? */
 
-	s16b type;              /* The quest type */
+	byte flags;             /* Quest flags */
+	byte type;              /* The quest type (gen/dun/wild) */
 
+	byte item;				/* Artificial quest item number */
+	
+	u16b town;				/* Town where given */
+	u16b shop;				/* Quest-giver */
+	u16b reward;			/* Reward level */
+	
+	byte c_type;			/* Type of creation trigger */
+	byte x_type;			/* Type of action trigger*/
+	
+	u32b timeout;			/* Time limits */
+	
 	char name[60];          /* Quest name */
-	s16b level;             /* Dungeon level */
-	s16b r_idx;             /* Monster race */
 
-	s16b cur_num;           /* Number killed */
-	s16b max_num;           /* Number required */
-
-	s16b k_idx;             /* object index */
-	s16b num_mon;           /* number of monsters on level */
-
-	byte flags;             /* quest flags */
+	quest_data_type data;	/* Quest-specific data */
 };
 
 
@@ -1203,8 +1266,6 @@ struct player_type
 	s32b au;			/* Current Gold */
 
 	s16b town_num;		/* Current town number */
-
-	s16b inside_quest;	/* Inside quest level */
 
 	s32b wilderness_x;	/* Coordinates in the wilderness */
 	s32b wilderness_y;
@@ -1627,14 +1688,16 @@ struct town_type
 	u32b        seed;		/* Seed for RNG */
 	store_type	*store;		/* The stores[numstores] */
 	
-	u16b 	    type;		/* Type of town / dungeon / special */
+	byte 	    type;		/* Type of town / dungeon / special */
 	
 	byte        numstores;
+	u16b		quest_num;	/* Quest number if is special */
 	
 	byte		x;			/* Location mod 16 in wilderness */
 	byte		y;
 	
 	byte		pop;		/* population density (from wilderness) */
+	byte		monst_type;	/* Type of population (monsters/people etc.) */
 	
 	byte		gates_x[MAX_GATES];	/* Position of the town gates */
 	byte		gates_y[MAX_GATES];

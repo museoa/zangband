@@ -85,6 +85,7 @@ OBJ = \
 	rooms.obj \
 	readdib.obj \
 	racial.obj \
+	quest.obj \
 	object2.obj \
 	object1.obj \
 	obj_kind.obj \

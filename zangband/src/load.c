@@ -1014,9 +1014,6 @@ static void rd_options(void)
 	cheat_know = (c & 0x1000) ? TRUE : FALSE;
 	cheat_live = (c & 0x2000) ? TRUE : FALSE;
 
-	/* Pre-2.8.0 savefiles are done */
-	if (older_than(2, 8, 0)) return;
-
 	if (z_older_than(2, 1, 0))
 	{
 		autosave_t = autosave_l = 0;
@@ -1189,9 +1186,7 @@ static void rd_extra(void)
 		rd_s16b(&p_ptr->town_num);
 
 		/* Read arena and rewards information */
-		strip_bytes(4); /* oops */
-		rd_s16b(&p_ptr->inside_quest);
-		strip_bytes(6); /* oops */
+		strip_bytes(12); /* oops */
 
 		rd_s16b(&tmp16s);
 
@@ -1204,9 +1199,7 @@ static void rd_extra(void)
 		rd_s16b(&tmp16s);
 		p_ptr->town_num = 1;
 
-		strip_bytes(4); /* oops */
-		rd_s16b(&p_ptr->inside_quest);
-		strip_bytes(2); /* oops */
+		strip_bytes(8); /* oops */
 
 		/* Throw away old quest informations */
 		for (i = 0; i < 100; i++) rd_s16b(&tmp16s);
@@ -1218,9 +1211,6 @@ static void rd_extra(void)
 	else /* 2.1.0 or older */
 	{
 		p_ptr->town_num = 1;
-
-		/* Initialize quest information -KMW- */
-		p_ptr->inside_quest = 0;
 	}
 
 	rd_s16b(&p_ptr->mhp);
@@ -2453,6 +2443,74 @@ static errr rd_dungeon(void)
 	return (0);
 }
 
+/*
+ * Strip old (Pre 2.7.0) quest info from the savefile
+ */
+static void strip_quests(u16b num)
+{
+	int i;
+	s16b status;
+	
+	for (i = 0; i <num; i++)
+	{
+		if (i < z_info->q_max)
+		{
+			rd_s16b(&status);
+
+			if (!z_older_than(2, 2, 0))
+			{
+				strip_bytes(2);
+			}
+
+			/* Load quest status if quest is running */
+			if (status == QUEST_STATUS_TAKEN)
+			{
+				strip_bytes(6);
+
+				if (z_older_than(2, 2, 0))
+				{
+					strip_bytes(2);
+				}
+					
+				strip_bytes(2);
+
+				/* Load quest item index */
+				if (!z_older_than(2, 2, 1))
+				{
+					strip_bytes(2);
+				}
+
+				/* Load quest flags */
+				if (!z_older_than(2, 2, 3))
+				{
+					strip_bytes(1);
+				}
+
+				if (z_older_than(2, 2, 0))
+				{
+					strip_bytes(40);
+				}
+			}
+		}
+		/* Ignore the empty quests from old versions */
+		else
+		{
+			/* Ignore quest status */
+			strip_bytes(2);
+
+			/* Ignore quest level */
+			if (!z_older_than(2, 2, 0))
+			{
+				strip_bytes(2);
+			}
+
+			/*
+			 * We don't have to care about the other info,
+			 * since status should be 0 for these quests anyway
+			 */
+		}
+	}
+}
 
 
 /*
@@ -2639,7 +2697,10 @@ static errr rd_savefile_new_aux(void)
 
 		/* Number of quests */
 		rd_u16b(&max_quests_load);
+		
+		strip_quests(max_quests_load);
 
+#if 0
 		/* 2.2.3 or newer version */
 		if (!z_older_than(2, 2, 3))
 		{
@@ -2650,76 +2711,8 @@ static errr rd_savefile_new_aux(void)
 				return (23);
 			}
 		}
-
-		for (i = 0; i < max_quests_load; i++)
-		{
-			if (i < z_info->q_max)
-			{
-				rd_s16b(&quest[i].status);
-
-				if (!z_older_than(2, 2, 0))
-				{
-					rd_s16b(&quest[i].level);
-				}
-
-				/* Load quest status if quest is running */
-				if (quest[i].status == QUEST_STATUS_TAKEN)
-				{
-					rd_s16b(&quest[i].cur_num);
-					rd_s16b(&quest[i].max_num);
-					rd_s16b(&quest[i].type);
-
-					if (z_older_than(2, 2, 0))
-					{
-						strip_bytes(2);
-					}
-
-					/* Load quest monster index */
-					rd_s16b(&quest[i].r_idx);
-
-					/* Load quest item index */
-					if (!z_older_than(2, 2, 1))
-					{
-						rd_s16b(&quest[i].k_idx);
-
-						if (quest[i].k_idx)
-							a_info[quest[i].k_idx].flags3 |= TR3_QUESTITEM;
-					}
-
-					/* Load quest flags */
-					if (!z_older_than(2, 2, 3))
-					{
-						rd_byte(&quest[i].flags);
-					}
-
-					if (z_older_than(2, 2, 0))
-					{
-						strip_bytes(40);
-					}
-
-					/* Mark uniques */
-					if (r_info[quest[i].r_idx].flags1 & RF1_UNIQUE)
-							r_info[quest[i].r_idx].flags1 |= RF1_QUESTOR;
-				}
-			}
-			/* Ignore the empty quests from old versions */
-			else
-			{
-				/* Ignore quest status */
-				strip_bytes(2);
-
-				/* Ignore quest level */
-				if (!z_older_than(2, 2, 0))
-				{
-					strip_bytes(2);
-				}
-
-				/*
-				 * We don't have to care about the other info,
-				 * since status should be 0 for these quests anyway
-				 */
-			}
-		}
+		
+#endif /* 0 */
 
 		/* Only in 2.2.1 and 2.2.2 */
 		if (!z_older_than(2, 2, 1) && z_older_than(2, 2, 3))
@@ -2832,196 +2825,11 @@ static errr rd_savefile_new_aux(void)
 	 * Select the number of random quests
 	 * when importing old savefiles.
 	 */
-	if (z_older_than(2, 2, 0))
+#if 0
+	if (z_older_than(2, 2, 0)) (Update this to 2.7.0 soon)
+#endif /* 0 */
 	{
-		char inp[80];
-		int v;
-
-		/* Wipe the quests */
-		for (i = 0; i < z_info->q_max; i++)
-		{
-			quest[i].status = QUEST_STATUS_UNTAKEN;
-
-			quest[i].cur_num = 0;
-			quest[i].max_num = 0;
-			quest[i].type = 0;
-			quest[i].level = 0;
-			quest[i].r_idx = 0;
-		}
-
-		/* Clean up */
-		clear_from(10);
-
-		/*** User enters number of quests ***/
-		/* Heino Vander Sanden and Jimmy De Laet */
-
-		/* Extra info */
-		Term_putstr(5, 15, -1, TERM_WHITE,
-			"You can input yourself the number of quest you'd like to");
-		Term_putstr(5, 16, -1, TERM_WHITE,
-			"perform next to two obligatory ones ( Oberon and the Serpent of Chaos )");
-		Term_putstr(5, 17, -1, TERM_WHITE,
-			"In case you do not want any additional quest, just enter 0");
-
-		/* Ask the number of additional quests */
-		while (TRUE)
-		{
-			put_str(format("Number of additional quest? (<%u) ", MAX_RANDOM_QUEST - MIN_RANDOM_QUEST + 2), 20, 2);
-
-			/* Get a the number of additional quest */
-			while (TRUE)
-			{
-				/* Move the cursor */
-				put_str("", 20, 37);
-
-				/* Default */
-				strcpy(inp, "20");
-
-				/* Get a response (or escape) */
-				if (!askfor_aux(inp, 3)) inp[0] = '\0';
-				v = atoi(inp);
-
-				/* Break on valid input */
-				if ((v <= MAX_RANDOM_QUEST - MIN_RANDOM_QUEST + 1) && (v >= 0)) break;
-			}
-			break;
-		}
-
-		/* Clear */
-		clear_from(15);
-
-		/* Init the random quests */
-		p_ptr->inside_quest = MIN_RANDOM_QUEST;
-		(void)process_dungeon_file("q_info.txt", INIT_ASSIGN);
-		p_ptr->inside_quest = 0;
-
-		/* Prepare allocation table */
-		get_mon_num_prep(monster_quest, NULL);
-
-		/* Generate quests */
-		for (i = MIN_RANDOM_QUEST + v - 1; i >= MIN_RANDOM_QUEST; i--)
-		{
-			quest_type      *q_ptr = &quest[i];
-			monster_race    *r_ptr;
-			monster_race    *quest_r_ptr;
-			int             level, r_idx;
-
-			q_ptr->status = QUEST_STATUS_TAKEN;
-
-			for (j = 0; j < MAX_TRIES; j++)
-			{
-				/*
-				 * Random monster out of depth
-				 * (depending on level + number of quests)
-				 */
-				level = q_ptr->level + 6 +
-				        randint(q_ptr->level * v / 200 + 1) +
-				        randint(q_ptr->level * v / 200 + 1);
-
-				r_idx = get_mon_num(level);
-				r_ptr = &r_info[r_idx];
-
-				/* Look at the monster - only "hard" monsters for quests */
-				if (r_ptr->flags1 & (RF1_NEVER_MOVE | RF1_FRIENDS)) continue;
-
-				/* Save the index if the monster is deeper than current monster */
-				if (!q_ptr->r_idx || (r_info[r_idx].level > r_info[q_ptr->r_idx].level))
-				{
-					q_ptr->r_idx = r_idx;
-				}
-
-				/*
-				 * Accept monsters that are 2 - 6 levels
-				 * out of depth depending on the quest level
-				 */
-				if (r_ptr->level > (q_ptr->level + (q_ptr->level / 20) + 1)) break;
-			}
-
-			quest_r_ptr = &r_info[q_ptr->r_idx];
-
-			/* Get the number of monsters */
-			if (quest_r_ptr->flags1 & RF1_UNIQUE)
-			{
-				/* Mark uniques */
-				quest_r_ptr->flags1 |= RF1_QUESTOR;
-
-				q_ptr->max_num = 1;
-			}
-			else if (quest_r_ptr->flags3 & RF3_UNIQUE_7)
-			{
-				/* Mark uniques */
-				quest_r_ptr->flags1 |= RF1_QUESTOR;
-
-				q_ptr->max_num = randint(quest_r_ptr->max_num);
-			}
-			else
-			{
-				q_ptr->max_num = 5 + (s16b)rand_int(q_ptr->level / 3 + 5) /
-										quest_r_ptr->rarity;
-			}
-		}
-
-		/* Init the two main quests (Oberon + Serpent) */
-		p_ptr->inside_quest = QUEST_OBERON;
-		(void)process_dungeon_file("q_info.txt", INIT_ASSIGN);
-		quest[QUEST_OBERON].status = QUEST_STATUS_TAKEN;
-
-		p_ptr->inside_quest = QUEST_SERPENT;
-		(void)process_dungeon_file("q_info.txt", INIT_ASSIGN);
-		quest[QUEST_SERPENT].status = QUEST_STATUS_TAKEN;
-		p_ptr->inside_quest = 0;
-	}
-
-	/*
-	 * Select 'hard random quests mode'
-	 * when importing old savefiles.
-	 */
-	if (z_older_than(2, 2, 1))
-	{
-		char c;
-
-		/* Clear */
-		clear_from(15);
-
-		/*** Hard quests mode ***/
-
-		/* Extra info */
-		Term_putstr(5, 14, -1, TERM_WHITE,
-			"Using 'hard quests' mode makes the random quests harder, because");
-		Term_putstr(5, 15, -1, TERM_WHITE,
-			"you have to kill all monsters at the same visit to the quest level.");
-		Term_putstr(5, 16, -1, TERM_WHITE,
-			"If you leave the level while some quest monsters are still alive,");
-		Term_putstr(5, 17, -1, TERM_WHITE,
-			"then all killed quest monsters are revived on your next visit");
-		Term_putstr(5, 18, -1, TERM_WHITE,
-			"to this level.");
-
-		/* Ask about "hard quests" mode */
-		while (1)
-		{
-			put_str("Use 'Hard quests'? (y/n/*) ", 20, 2);
-			c = inkey();
-			if (c == 'Q') quit(NULL);
-			if (c == 'S') return (FALSE);
-			if (c == '*')
-			{
-				c = 'y';
-				if (one_in_(2))
-					c = 'n';
-				break;
-			}
-			if (c == ESCAPE) break;
-			if ((c == 'y') || (c == 'n')) break;
-			if (c == '?') do_cmd_help();
-			else bell("Illegal answer!");
-		}
-
-		/* Set "hard quests" mode */
-		ironman_hard_quests = (c == 'y');
-
-		/* Clear */
-		clear_from(15);
+		(void) get_player_quests();		
 	}
 
 	if (arg_fiddle) note("Loaded Quests");
@@ -3213,7 +3021,10 @@ static errr rd_savefile_new_aux(void)
 			rd_byte(&town[i].numstores);
 
 			/* Type */
-			rd_u16b(&town[i].type);
+			rd_u16b(&tmp16u);
+			
+			/* Hack.... used to be a u16b, but only ever used a bytes worth */
+			town[i].type = (byte) tmp16u;
 			
 			if (sf_version > 21)
 			{

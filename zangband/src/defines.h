@@ -108,17 +108,54 @@
 #define WILD_SEA	65471
 
 /*
- * Quest constants
+ * Quest status
  */
-#define MAX_MON_QUEST       10
-#define MAX_ITEM_QUEST       5
+#define QUEST_STATUS_UNTAKEN		0
+#define QUEST_STATUS_TAKEN			1
+#define QUEST_STATUS_COMPLETED		2
+#define QUEST_STATUS_REWARDED		3
+#define QUEST_STATUS_FINISHED		4
+#define QUEST_STATUS_FAILED			5
+#define QUEST_STATUS_FAILED_DONE	6
 
-#define MIN_RANDOM_QUEST    40
-#define MAX_RANDOM_QUEST    88
+/*
+ * Quest type
+ */
+#define QUEST_TYPE_UNKNOWN			0
+#define QUEST_TYPE_GENERAL			1
+#define QUEST_TYPE_DUNGEON			2
+#define QUEST_TYPE_WILD				3
 
-#define QUEST_OBERON         8
-#define QUEST_SERPENT        9
+/*
+ * Quest flags
+ */
+#define QUEST_FLAG_ACTIVE		0x01	/* Quest triggers have effect */
+#define QUEST_FLAG_TIME			0x02	/* Quest has timeout */
+#define QUEST_FLAG_ITEM			0x04	/* Player has art. quest item */
+#define QUEST_FLAG_KNOWN		0x10	/* Player knows about this quest */
 
+
+/*
+ * Quest creation types
+ */
+#define QC_NONE					0
+#define QC_DUN_MONST			1
+
+
+/*
+ * Quest action triggers
+ */
+#define QX_NONE					0
+#define QX_KILL_MONST			1
+#define QX_KILL_UNIQUE			2
+#define QX_KILL_WINNER			3
+
+
+/*
+ * Mega Hack XXX XXX Info for winner quest
+ */
+#define QW_OBERON				860
+#define QW_SERPENT				862
 
 
 /* Number of gates in the city */
@@ -126,6 +163,20 @@
 
 /* Maximum length of town name + '/0' */
 #define T_NAME_LEN	18
+
+/* Town types */
+#define TOWN_OLD		1
+#define TOWN_FRACT		2
+#define TOWN_QUEST		3
+
+/* Town monster types */
+#define TOWN_MONST_VILLAGER		1
+#define TOWN_MONST_ELVES		2
+#define TOWN_MONST_DWARF		3
+#define TOWN_MONST_LIZARD		4
+#define TOWN_MONST_MONST		5
+#define TOWN_MONST_ABANDONED	6
+
 
 /* Building types */
 #define BT_GENERAL		0
@@ -1031,18 +1082,16 @@
 #define FEAT_LESS               0x06
 #define FEAT_MORE               0x07
 
-/* Quest features are gone - use "fields" from now on if required. */
-
 /* Passable floors */
 
-#define FEAT_SAND			0x08
-#define FEAT_SALT			0x09
-#define FEAT_WET_MUD		0x0A
-#define FEAT_DRY_MUD		0x0B
-#define FEAT_FLOOR_TILE		0x0C
-#define FEAT_FLOOR_WOOD		0x0D
-#define FEAT_PEBBLES		0x0E
-#define FEAT_SOLID_LAVA		0x0F
+#define FEAT_SAND				0x08
+#define FEAT_SALT				0x09
+#define FEAT_WET_MUD			0x0A
+#define FEAT_DRY_MUD			0x0B
+#define FEAT_FLOOR_TILE			0x0C
+#define FEAT_FLOOR_WOOD			0x0D
+#define FEAT_PEBBLES			0x0E
+#define FEAT_SOLID_LAVA			0x0F
 
 /* Gap where the traps were */
 
@@ -1100,41 +1149,41 @@
 
 /* Gap */
 
-#define FEAT_OCEAN_WATER	0x5C
-#define FEAT_DEEP_ACID		0x5D
-#define FEAT_SHAL_ACID		0x5E
-#define FEAT_TREE_WATER		0x5F
+#define FEAT_OCEAN_WATER		0x5C
+#define FEAT_DEEP_ACID			0x5D
+#define FEAT_SHAL_ACID			0x5E
+#define FEAT_TREE_WATER			0x5F
 
 /* Terrain semi-transparent*/
-#define FEAT_TREES          0x60
-#define FEAT_MOUNTAIN       0x61
-#define FEAT_SNOW_MOUNTAIN	0x62
-#define FEAT_BOULDER		0x63
-#define FEAT_PINE_TREE		0x64
-#define FEAT_SNOW_TREE		0x65
-#define FEAT_OBELISK		0x66
+#define FEAT_TREES          	0x60
+#define FEAT_MOUNTAIN       	0x61
+#define FEAT_SNOW_MOUNTAIN		0x62
+#define FEAT_BOULDER			0x63
+#define FEAT_PINE_TREE			0x64
+#define FEAT_SNOW_TREE			0x65
+#define FEAT_OBELISK			0x66
 
 /* Gap */
 
 /* Impassible terrains */
-#define FEAT_FENCE		    0x70
-#define FEAT_WELL		    0x71
-#define FEAT_FOUNTAIN       0x72
-#define FEAT_JUNGLE		    0x73
+#define FEAT_FENCE				0x70
+#define FEAT_WELL				0x71
+#define FEAT_FOUNTAIN			0x72
+#define FEAT_JUNGLE				0x73
 
 /* Gap */
 
 /* Slow "floor" terrains */
-#define FEAT_BUSH		    0x80
-#define FEAT_DEAD_BUSH		0x81
-#define FEAT_GRASS_LONG		0x82
-#define FEAT_ROCK_GEN		0x83
-#define FEAT_ROCK_SNOW		0x84
-#define FEAT_TREE_GEN		0x85
-#define FEAT_TREE_SNOW		0x86
-#define FEAT_SNOW		    0x87
-#define FEAT_DEEP_SWAMP		0x88
-#define FEAT_SHAL_SWAMP		0x89
+#define FEAT_BUSH				0x80
+#define FEAT_DEAD_BUSH			0x81
+#define FEAT_GRASS_LONG			0x82
+#define FEAT_ROCK_GEN			0x83
+#define FEAT_ROCK_SNOW			0x84
+#define FEAT_TREE_GEN			0x85
+#define FEAT_TREE_SNOW			0x86
+#define FEAT_SNOW				0x87
+#define FEAT_DEEP_SWAMP			0x88
+#define FEAT_SHAL_SWAMP			0x89
 
 
 /*** Wilderness Info flags - (see "wild.c") ***/
@@ -1146,7 +1195,7 @@
 #define WILD_INFO_OBJECT	0x10
 #define WILD_INFO_SEEN		0x20
 #define WILD_INFO_ACID		0x40
-#define WILD_INFO_DUMMY2	0x80
+#define WILD_INFO_QUEST		0x80
 
 /*** Field Thaumatergical types - (see "fields.c" and t_info.txt) ***/
 #define FT_WALL_INVIS			0x0001
@@ -4207,84 +4256,6 @@ extern int PlayerUID;
 # define MESSAGE_BUF    4096
 #endif
 
-
-/*
- * Buildings actions
- */
-#define BACT_NOTHING                 0
-#define BACT_RESEARCH_ITEM			 1
-#define BACT_TOWN_HISTORY            2
-#define BACT_RACE_LEGENDS            3
-#define BACT_GREET_KING              4
-#define BACT_KING_LEGENDS            5
-#define BACT_QUEST                   6
-#define BACT_GOLD                    7
-#define BACT_POSTER                  8
-#define BACT_ARENA_RULES             9
-#define BACT_ARENA                  10
-#define BACT_ARENA_LEGENDS          11
-#define BACT_IN_BETWEEN             12
-#define BACT_GAMBLE_RULES           13
-#define BACT_CRAPS                  14
-#define BACT_SPIN_WHEEL             15
-#define BACT_DICE_SLOTS             16
-#define BACT_REST                   17
-#define BACT_FOOD                   18
-#define BACT_RUMORS                 19
-#define BACT_RESEARCH_MONSTER       20
-#define BACT_COMPARE_WEAPONS        21
-#define BACT_LEGENDS                22
-#define BACT_ENCHANT_WEAPON         23
-#define BACT_ENCHANT_ARMOR          24
-#define BACT_RECHARGE               25
-#define BACT_IDENTS                 26
-#define BACT_LEARN                  27
-#define BACT_HEALING                28
-#define BACT_RESTORE                29
-#define BACT_ENCHANT_ARROWS         30
-#define BACT_ENCHANT_BOW            31
-#define BACT_GREET                  32
-#define BACT_RECALL                 33
-#define BACT_TELEPORT_LEVEL         34
-#define BACT_LOSE_MUTATION          35
-#define MAX_BACT                    36
-
-/*
- * Quest status
- */
-#define QUEST_STATUS_UNTAKEN         0
-#define QUEST_STATUS_TAKEN           1
-#define QUEST_STATUS_COMPLETED       2
-#define QUEST_STATUS_REWARDED        3
-#define QUEST_STATUS_FINISHED        4
-#define QUEST_STATUS_FAILED          5
-#define QUEST_STATUS_FAILED_DONE     6
-
-/*
- * Quest type
- */
-#define QUEST_TYPE_KILL_LEVEL                1
-#define QUEST_TYPE_KILL_ANY_LEVEL            2
-#define QUEST_TYPE_FIND_ARTIFACT             3
-#define QUEST_TYPE_FIND_EXIT                 4
-#define QUEST_TYPE_KILL_NUMBER               5
-#define QUEST_TYPE_KILL_ALL                  6
-#define QUEST_TYPE_RANDOM                    7
-
-/*
- * Initialization flags
- */
-#define INIT_NORMAL				0x00
-#define INIT_SHOW_TEXT          0x01
-#define INIT_ASSIGN             0x02
-
-
-/*
- * Quest flags
- */
-#define QUEST_FLAG_SILENT  0x01 /* no messages for completion */
-#define QUEST_FLAG_PRESET  0x02 /* quest is outside the main dungeon */
-#define QUEST_FLAG_ONCE    0x04 /* quest is marked finished after leaving */
 
 /*
  * Available graphic modes

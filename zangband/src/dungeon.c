@@ -979,7 +979,7 @@ static void process_world(void)
 	/*** Process the monsters ***/
 
 	/* Check for creature generation. */
-	if (one_in_(MAX_M_ALLOC_CHANCE) && !p_ptr->inside_quest)
+	if (one_in_(MAX_M_ALLOC_CHANCE))
 	{
 		/* Make a new monster */
 		(void)alloc_monster(MAX_SIGHT + 5, FALSE);
@@ -1768,24 +1768,11 @@ static void process_world(void)
 			disturb(FALSE);
 
 			/* Determine the level */
-			if (p_ptr->depth || p_ptr->inside_quest)
+			if (p_ptr->depth)
 			{
 				msg_print("You feel yourself yanked upwards!");
 
 				p_ptr->depth = 0;
-
-				leaving_quest = p_ptr->inside_quest;
-
-				/* Leaving an 'only once' quest marks it as failed */
-				if (leaving_quest &&
-					(quest[leaving_quest].flags & QUEST_FLAG_ONCE) &&
-					(quest[leaving_quest].status == QUEST_STATUS_TAKEN))
-				{
-					quest[leaving_quest].status = QUEST_STATUS_FAILED;
-				}
-
-				p_ptr->inside_quest = 0;
-				p_ptr->leaving = TRUE;
 			}
 			else
 			{
@@ -2987,8 +2974,6 @@ static void process_energy(void)
  */
 static void dungeon(void)
 {
-	int quest_num;
-
 	cave_type *c_ptr;
 
 	/* Set the base level */
@@ -3019,31 +3004,20 @@ static void dungeon(void)
 	/* Disturb */
 	disturb(TRUE);
 
-	/* Get index of current quest (if any) */
-	quest_num = quest_number(p_ptr->depth);
-
-	/* Inside a quest? */
-	if (quest_num)
-	{
-		/* Mark the quest monster */
-		r_info[quest[quest_num].r_idx].flags1 |= RF1_QUESTOR;
-	}
-
 	/* Track maximum player level */
 	if (p_ptr->max_lev < p_ptr->lev)
 	{
 		p_ptr->max_lev = p_ptr->lev;
 	}
 
-
-	/* Track maximum dungeon level (if not in quest -KMW-) */
-	if ((p_ptr->max_depth < p_ptr->depth) && !p_ptr->inside_quest)
+	/* Track maximum dungeon level */
+	if (p_ptr->max_depth < p_ptr->depth)
 	{
 		p_ptr->max_depth = p_ptr->depth;
 	}
 
 	/* No stairs down from Quest */
-	if (quest_number(p_ptr->depth))
+	if (quest_number())
 	{
 		p_ptr->create_down_stair = FALSE;
 	}
@@ -3166,8 +3140,7 @@ static void dungeon(void)
 	if (!p_ptr->playing || p_ptr->is_dead) return;
 
 	/* Print quest message if appropriate */
-	if (!p_ptr->inside_quest)
-		quest_discovery(random_quest_number(p_ptr->depth));
+	quest_discovery();
 
 	/*** Process this dungeon level ***/
 
@@ -3301,13 +3274,6 @@ static void dungeon(void)
 
 		/* Count game turns */
 		turn++;
-	}
-
-	/* Inside a quest and non-unique questor? */
-	if (quest_num && !(r_info[quest[quest_num].r_idx].flags1 & RF1_UNIQUE))
-	{
-		/* Un-mark the quest monster */
-		r_info[quest[quest_num].r_idx].flags1 &= ~RF1_QUESTOR;
 	}
 }
 
@@ -3496,9 +3462,6 @@ void play_game(bool new_game)
 
 		/* Create a new wilderness for the player */
 		create_wilderness();
-
-		/* Start in town */
-		p_ptr->inside_quest = 0;
 
 		/* The dungeon is ready */
 		character_dungeon = TRUE;
@@ -3703,9 +3666,6 @@ void play_game(bool new_game)
 
 				p_ptr->depth = 0;
 				change_level(p_ptr->depth);
-
-				leaving_quest = 0;
-				p_ptr->inside_quest = 0;
 
 				/* Leaving */
 				p_ptr->leaving = TRUE;

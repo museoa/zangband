@@ -289,7 +289,7 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 				else if (mut_ptr->level == 30)
 				{
 					/* No effect in arena or quest */
-					if (p_ptr->inside_quest)
+					if (quest_number())
 					{
 						msg_print("There is no effect.");
 					}

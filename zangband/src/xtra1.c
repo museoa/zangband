@@ -627,11 +627,7 @@ static void prt_depth(void)
 {
 	char depths[T_NAME_LEN];
 
-	if (p_ptr->inside_quest)
-	{
-		strcpy(depths, "Quest");
-	}
-	else if (!p_ptr->depth)
+	if (!p_ptr->depth)
 	{
 		if (p_ptr->town_num)
 		{

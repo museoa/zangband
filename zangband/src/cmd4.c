@@ -2821,24 +2821,24 @@ void do_cmd_feeling(void)
 	/* Verify the feeling */
 	if (dun_ptr->feeling > 10) dun_ptr->feeling = 10;
 
-	/* No useful feeling in quests */
-	if (p_ptr->inside_quest)
-	{
-		msg_print("Looks like a typical quest level.");
-		return;
-	}
-
 	/* No useful feeling in town */
-	else if (p_ptr->town_num && !p_ptr->depth)
+	if (p_ptr->town_num && !p_ptr->depth)
 	{
 		msg_print("Looks like a typical town.");
 		return;
 	}
 
 	/* No useful feeling in the wilderness */
-	else if (!p_ptr->depth)
+	if (!p_ptr->depth)
 	{
 		msg_print("Looks like a typical wilderness.");
+		return;
+	}
+	
+	/* No useful feeling in quests */
+	if (quest_number())
+	{
+		msg_print("Looks like a typical quest level.");
 		return;
 	}
 
@@ -3608,121 +3608,6 @@ static void do_cmd_knowledge_virtues(void)
 
 	/* Display the file contents */
 	(void)show_file(file_name, "Virtues", 0, 0);
-
-	/* Remove the file */
-	(void)fd_kill(file_name);
-}
-
-
-/*
- * Print quest status of all active quests
- */
-static void do_cmd_knowledge_quests(void)
-{
-	FILE *fff;
-	char file_name[1024];
-	char tmp_str[80];
-	char rand_tmp_str[110] = "\0";
-	char name[80];
-	monster_race *r_ptr;
-	int i;
-	int rand_level = 100;
-
-	
-	/* Open a temporary file */
-	fff = my_fopen_temp(file_name, 1024);
-
-	/* Failure */
-	if (!fff) return;
-
-	for (i = 1; i < z_info->q_max; i++)
-	{
-		/* No info from "silent" quests */
-		if (quest[i].flags & QUEST_FLAG_SILENT) continue;
-
-		if (quest[i].status == QUEST_STATUS_TAKEN)
-		{
-			int old_quest;
-			int j;
-
-			/* Clear the text */
-			for (j = 0; j < 10; j++)
-			{
-				quest_text[j][0] = '\0';
-			}
-
-			quest_text_line = 0;
-
-			/* Set the quest number temporary */
-			old_quest = p_ptr->inside_quest;
-			p_ptr->inside_quest = i;
-
-			/* Get the quest text */
-			(void)process_dungeon_file("q_info.txt", INIT_SHOW_TEXT);
-
-			/* Reset the old quest number */
-			p_ptr->inside_quest = old_quest;
-
-			if (quest[i].type != QUEST_TYPE_RANDOM)
-			{
-				/* Print the quest info */
-				sprintf(tmp_str, "%s (Danger level: %d)\n",
-					quest[i].name, quest[i].level);
-
-				fprintf(fff, "%s", tmp_str);
-
-				j = 0;
-
-				while (quest_text[j][0])
-				{
-					fprintf(fff, "  %s\n", quest_text[j]);
-					j++;
-				}
-			}
-			else if ((quest[i].type == QUEST_TYPE_RANDOM) &&
-			         (quest[i].level < rand_level))
-			{
-				/* New random */
-				rand_level = quest[i].level;
-
-				if (p_ptr->max_depth >= rand_level)
-				{
-					/* Print the quest info */
-					r_ptr = &r_info[quest[i].r_idx];
-					strcpy(name, r_name + r_ptr->name);
-
-					if (quest[i].max_num > 1)
-					{
-						plural_aux(name);
-
-						sprintf(rand_tmp_str, "%s (Dungeon level: %d)\n  Kill %d %s, have killed %d.\n",
-							quest[i].name, quest[i].level,
-							quest[i].max_num, name, quest[i].cur_num);
-					}
-					else
-					{
-						sprintf(rand_tmp_str, "%s (Dungeon level: %d)\n  Kill %s.\n",
-							quest[i].name, quest[i].level, name);
-					}
-				}
-			}
-		}
-		else if (quest[i].status == QUEST_STATUS_COMPLETED)
-		{
-			sprintf(tmp_str, "Quest Completed - Unrewarded\n");
-
-			fprintf(fff, "%s", tmp_str);
-		}
-	}
-
-	/* Print the current random quest */
-	fprintf(fff, "%s", rand_tmp_str);
-
-	/* Close the file */
-	my_fclose(fff);
-
-	/* Display the file contents */
-	(void)show_file(file_name, "Quest status", 0, 0);
 
 	/* Remove the file */
 	(void)fd_kill(file_name);

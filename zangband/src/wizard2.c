@@ -1280,17 +1280,6 @@ static void do_cmd_wiz_jump(void)
 
 	/* Change level */
 	p_ptr->depth = p_ptr->command_arg;
-	leaving_quest = p_ptr->inside_quest;
-
-	/* Leaving an 'only once' quest marks it as failed */
-	if (leaving_quest &&
-		(quest[leaving_quest].flags & QUEST_FLAG_ONCE) &&
-		(quest[leaving_quest].status == QUEST_STATUS_TAKEN))
-	{
-		quest[leaving_quest].status = QUEST_STATUS_FAILED;
-	}
-
-	p_ptr->inside_quest = 0;
 
 	/* Leaving */
 	p_ptr->leaving = TRUE;
@@ -1947,29 +1936,6 @@ void do_cmd_debug(void)
 			teleport_player(10);
 		break;
 
-#if 0
-		/* Complete a Quest -KMW- */
-		case 'q':
-		{
-			for (i = 0; i < z_info->q_max; i++)
-			{
-				if (p_ptr->quest[i].status == QUEST_STATUS_TAKEN)
-				{
-					p_ptr->quest[i].status++;
-					msg_print("Completed Quest");
-					message_flush();
-					break;
-				}
-			}
-			if (i == z_info->q_max)
-			{
-				msg_print("No current quest");
-				message_flush();
-			}
-			break;
-		}
-#endif
-
 		/* Make every dungeon square "known" to test streamers -KMW- */
 		case 'u':
 		{
@@ -2014,10 +1980,12 @@ void do_cmd_debug(void)
 				learn_map();
 			}
 		break;
-
+		
+#ifdef DEBUG
 		case 'W':
 			test_decision_tree();
 		break;
+#endif /* DEBUG */
 
 		/* Increase Experience */
 		case 'x':

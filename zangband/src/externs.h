@@ -131,6 +131,7 @@ extern s16b o_max;
 extern s16b o_cnt;
 extern s16b m_max;
 extern s16b m_cnt;
+extern s16b q_max;
 extern s16b fld_max;
 extern s16b fld_cnt;
 extern s16b hack_m_idx;
@@ -139,7 +140,6 @@ extern s16b *hack_fld_ptr;
 extern int total_friends;
 extern s32b total_friend_levels;
 extern s32b friend_align;
-extern int leaving_quest;
 extern s16b store_cache_num;
 extern store_type **store_cache;
 extern char summon_kin_type;
@@ -260,6 +260,7 @@ extern monster_race *r_info;
 extern char *r_name;
 extern char *r_text;
 extern field_thaum *t_info;
+extern quest_type *quest;
 extern cptr ANGBAND_SYS;
 extern cptr ANGBAND_GRAF;
 extern cptr ANGBAND_DIR;
@@ -284,9 +285,6 @@ extern monster_hook_type get_mon_num_hook;
 extern monster_hook_type get_mon_num2_hook;
 extern byte (*get_obj_num_hook)(int k_idx);
 extern s32b max_wild;
-extern quest_type *quest;
-extern char quest_text[10][80];
-extern int quest_text_line;
 extern cptr gf_color[MAX_GF];
 extern int highscore_fd;
 extern bool monster_terrain_sensitive;
@@ -482,7 +480,6 @@ extern void generate_cave(void);
 /* init1.c */
 extern errr init_w_info_txt(FILE *fp, char *buf);
 extern errr init_t_info_txt(FILE *fp, char *buf);
-extern errr process_dungeon_file(cptr name, int init_flags);
 
 /* init2.c */
 extern errr init_w_info(void);
@@ -847,11 +844,6 @@ extern bool compare_weapons(void);
 extern bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac);
 extern void building_recharge(s32b cost);
 extern bool building_healer(void);
-extern void do_cmd_quest(void);
-extern void quest_discovery(int q_idx);
-extern int quest_number(int level);
-extern int random_quest_number(int level);
-extern int number_of_quests(void);
 extern void gamble_help(void);
 extern void gamble_in_between(void);
 extern void gamble_craps(void);
@@ -1222,6 +1214,17 @@ extern bool field_action_issupplies_tester(field_type *f_ptr, vptr input);
 /* compress.c */
 extern void test_compress_module(void);
 
+/* quest.c */
+extern u16b insert_dungeon_monster_quest(u16b r_idx, u16b num, u16b level);
+extern errr init_quests(void);
+extern void get_player_quests(void);
+extern void quest_discovery(void);
+extern int quest_number(void);
+extern void activate_quests(int level);
+extern int number_of_quests(void);
+extern void trigger_quest_create(byte c_type, void *data);
+extern void trigger_quest_complete(byte x_type, void *data);
+extern void do_cmd_knowledge_quests(void);
 
 /*
  * Hack -- conditional (or "bizarre") externs

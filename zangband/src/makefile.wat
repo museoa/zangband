@@ -19,7 +19,7 @@ OBJS = &
   load.obj save.obj files.obj fields.obj &
   cmd1.obj cmd2.obj cmd3.obj cmd4.obj cmd5.obj cmd6.obj &
   store.obj birth.obj wizard1.obj wizard2.obj &
-  generate.obj dungeon.obj init1.obj init2.obj &
+  generate.obj dungeon.obj init1.obj init2.obj quest.obj &
   effects.obj racial.obj grid.obj streams.obj rooms.obj &
   artifact.obj mutation.obj flavor.obj spells3.obj &
   mspells1.obj mspells2.obj scores.obj mind.obj &
