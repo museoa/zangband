@@ -22,7 +22,6 @@
 void gen_block_helper(blk_ptr block_ptr, byte *data, int gen_type);
 void blend_helper(cave_type *c_ptr, byte *data,int g_type);
 
-#define WALL_BREAK	50	/* Chance to get a break in town wall */
 
 /* Lighten / Darken new block depending on Day/ Night */
 void light_dark_block(blk_ptr block_ptr, u16b x, u16b y)
@@ -320,28 +319,37 @@ static void add_town_wall(void)
 	/* Upper and lower walls */
 	for (i = 0; i < SCREEN_WID; i++)
 	{
-		/* Occasional break (but not in corners - it looks bad.) */
-		if (i == SCREEN_WID / 2) continue;
-		if (!(rand_int(WALL_BREAK) || (i == 0) || (i == SCREEN_WID)))
+		/* Wall with doors in middle */
+		if (i == SCREEN_WID / 2)
 		{
-			continue;
+			/* Make town gates */
+			cave[0][i].feat = FEAT_DOOR_HEAD;
+			cave[SCREEN_HGT - 1][i].feat = FEAT_DOOR_HEAD;
 		}
-		
-		/* Make walls */
-		cave[0][i].feat = FEAT_PERM_OUTER;
-		cave[SCREEN_HGT - 1][i].feat = FEAT_PERM_OUTER;	
+		else
+		{
+			/* Make walls */
+			cave[0][i].feat = FEAT_PERM_OUTER;
+			cave[SCREEN_HGT - 1][i].feat = FEAT_PERM_OUTER;	
+		}
 	}
 	
 	/* Left and right walls */
 	for (i = 1; i < SCREEN_HGT - 1; i++)
 	{
-		/* Occasional break */
-		if (i == SCREEN_HGT / 2) continue;
-		if (!rand_int(WALL_BREAK)) continue;
-		
-		/* Make walls */
-		cave[i][0].feat = FEAT_PERM_OUTER;
-		cave[i][SCREEN_WID - 1].feat = FEAT_PERM_OUTER;
+		/* Walls with doors in middle. */
+		if (i == SCREEN_HGT / 2)
+		{
+			/* Make town gates */
+			cave[i][0].feat = FEAT_DOOR_HEAD;
+			cave[i][SCREEN_WID - 1].feat = FEAT_DOOR_HEAD;		
+		}
+		else
+		{		
+			/* Make walls */
+			cave[i][0].feat = FEAT_PERM_OUTER;
+			cave[i][SCREEN_WID - 1].feat = FEAT_PERM_OUTER;
+		}
 	}
 }
 
