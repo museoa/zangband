@@ -148,7 +148,7 @@ L:INTERT:action = ACT_DISARM
 L:INTER:trap_disarm(6)
 L:TARGET:trap_gf()
 L:PENTER:hit_trap(field)
-L:PENTER:if (player.flags[1] bAnd TR1_FEATHER ~= 0) then
+L:PENTER:if (bAnd(player.flags[2], TR2_FEATHER) ~= 0) then
 L:PENTER:	msgf("You fly over a trap door.")
 L:PENTER:else
 L:PENTER:	msgf("You have fallen through a trap door!")
@@ -167,7 +167,7 @@ L:INTERT:action = ACT_DISARM
 L:INTER:trap_disarm(5)
 L:TARGET:trap_gf()
 L:PENTER:hit_trap(field)
-L:PENTER:if (player.flags[1] bAnd TR1_FEATHER ~= 0) then
+L:PENTER:if (bAnd(player.flags[2], TR2_FEATHER) ~= 0) then
 L:PENTER:	msgf("You fly over a pit trap.")
 L:PENTER:else
 L:PENTER:	msgf("You have fallen into a pit!")
@@ -185,7 +185,7 @@ L:INTER:trap_disarm(5)
 L:TARGET:trap_gf()
 L:PENTER:local dam
 L:PENTER:hit_trap(field)
-L:PENTER:if (player.flags[1] bAnd TR1_FEATHER ~= 0) then
+L:PENTER:if (bAnd(player.flags[2], TR2_FEATHER) ~= 0) then
 L:PENTER:	msgf("You fly over a spiked pit.")
 L:PENTER:else
 L:PENTER:	msgf("You fall into a spiked pit!")
@@ -210,7 +210,7 @@ L:INTER:trap_disarm(10)
 L:TARGET:trap_gf()
 L:PENTER:local dam
 L:PENTER:hit_trap(field)
-L:PENTER:if (player.flags[1] bAnd TR2_FEATHER ~= 0) then
+L:PENTER:if (bAnd(player.flags[2], TR2_FEATHER) ~= 0) then
 L:PENTER:	msgf("You fly over a spiked pit.")
 L:PENTER:else
 L:PENTER:	msgf("You fall into a spiked pit!")
@@ -509,14 +509,7 @@ L:INTER:trap_disarm(50)
 L:TARGET:trap_gf()
 L:PENTER:hit_trap(field)
 L:PENTER:if (dont_save(125) == TRUE) then
-L:PENTER:	if (player.muta1 or player.muta2 or player.muta3) then
-L:PENTER:		msgf("You are cured of all mutations.")
-L:PENTER:		player.muta1 = 0
-L:PENTER:		player.muta2 = 0
-L:PENTER:		player.muta3 = 0
-L:PENTER:		player.update = bOr(player.upate, PU_BONUS)
-L:PENTER:		handle_stuff()
-L:PENTER:	end
+L:PENTER:	cure_all_mutations()
 L:PENTER:end
 
 # faded rune
