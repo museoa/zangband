@@ -6,7 +6,7 @@
 #
 #####################################################################
 
-from angband import io
+import ioc
 from util.string import I2A, A2I
 import string
 from base.ui import ui
@@ -24,7 +24,7 @@ class ui_standard(ui, ui_birth):
 	# Select spells at player birth
 	#####################################################################
 	def birth_select_spells(self, realm):
-		io.clear_from(0)
+		ioc.clear_from(0)
 
 		from list import double_list
 		list = double_list(realm.spells)
@@ -52,24 +52,24 @@ class ui_standard(ui, ui_birth):
 	def print_quest_info(self, text):
 		y = 6
 		for line in text:
-			io.put_str(line, y, 0)
+			ioc.put_str(line, y, 0)
 			y = y + 1
-		io.inkey()
+		ioc.inkey()
 
 	#####################################################################
 	# Select realms
 	#####################################################################
 	def birth_select_realms(self, realms, picks):
-		from angband import io
-		from angband import commands
+		import ioc
+		import commands
 		import string
 		from util.string import I2A, A2I
 
-#		io.Term_putstr(5, 15, -1, io.TERM_WHITE,
+#		ioc.Term_putstr(5, 15, -1, ioc.TERM_WHITE,
 #			"The realm of magic will determine which spells you can learn.")
-#		io.Term_putstr(5, 16, -1, io.TERM_WHITE,
+#		ioc.Term_putstr(5, 16, -1, ioc.TERM_WHITE,
 #			"Life and Sorcery are protective, Chaos and Death are destructive.")
-#		io.Term_putstr(5, 17, -1, io.TERM_WHITE,
+#		ioc.Term_putstr(5, 17, -1, ioc.TERM_WHITE,
 #			"Nature has both defensive and offensive spells.")
 
 		# Current cursor position
@@ -88,32 +88,32 @@ class ui_standard(ui, ui_birth):
 
 		while 1:
 			# Print the header
-			io.Term_putstr( 5, row, -1, io.TERM_WHITE, "Realm")
-			io.Term_putstr(30, row, -1, io.TERM_WHITE, "Picks")
-			io.Term_putstr(40, row, -1, io.TERM_WHITE, "Common")
-			io.Term_putstr(50, row, -1, io.TERM_WHITE, "Uncommon")
-			io.Term_putstr(60, row, -1, io.TERM_WHITE, "Rare")
+			ioc.Term_putstr( 5, row, -1, ioc.TERM_WHITE, "Realm")
+			ioc.Term_putstr(30, row, -1, ioc.TERM_WHITE, "Picks")
+			ioc.Term_putstr(40, row, -1, ioc.TERM_WHITE, "Common")
+			ioc.Term_putstr(50, row, -1, ioc.TERM_WHITE, "Uncommon")
+			ioc.Term_putstr(60, row, -1, ioc.TERM_WHITE, "Rare")
 
 			# Print the table
 			i = 0
 			for realm in realms.values():
 				letter = "%c" % (I2A(i))			
 				if i == current_index:
-					color = io.TERM_YELLOW
+					color = ioc.TERM_YELLOW
 				else:
-					color = io.TERM_WHITE
+					color = ioc.TERM_WHITE
 				c1, c2, u1, u2, r1, r2 = realm.spell_distribution[realm.picks]
-				io.Term_putstr( 1, row + 1 + i, -1, color, "%c/%c" % (letter, string.upper(letter)))
-				io.Term_putstr( 5, row + 1 + i, -1, color, realm.name)
-				io.Term_putstr(30, row + 1 + i, -1, color, "%2d" % (realm.picks))
-				io.Term_putstr(40, row + 1 + i, -1, color, "%2d+%2d" % (c1, c2))
-				io.Term_putstr(50, row + 1 + i, -1, color, "%2d+%2d" % (u1, u2))
-				io.Term_putstr(60, row + 1 + i, -1, color, "%2d+%2d" % (r1, r2))
+				ioc.Term_putstr( 1, row + 1 + i, -1, color, "%c/%c" % (letter, string.upper(letter)))
+				ioc.Term_putstr( 5, row + 1 + i, -1, color, realm.name)
+				ioc.Term_putstr(30, row + 1 + i, -1, color, "%2d" % (realm.picks))
+				ioc.Term_putstr(40, row + 1 + i, -1, color, "%2d+%2d" % (c1, c2))
+				ioc.Term_putstr(50, row + 1 + i, -1, color, "%2d+%2d" % (u1, u2))
+				ioc.Term_putstr(60, row + 1 + i, -1, color, "%2d+%2d" % (r1, r2))
 				i = i + 1
 
-			io.move_cursor(row + 1 + current_index, 1)
+			ioc.move_cursor(row + 1 + current_index, 1)
 
-			c = io.inkey()
+			c = ioc.inkey()
 
 			if letters.has_key(c):
 				realm = letters[c]
@@ -154,17 +154,17 @@ class ui_standard(ui, ui_birth):
 				commands.do_cmd_help()
 			# Startup-options
 			elif c == '=':
-				io.screen_save()
+				ioc.screen_save()
 				commands.do_cmd_options_aux(6, "Startup Options")
-				io.screen_load()
+				ioc.screen_load()
 			# Escape or Return
 			elif ord(c) in (27, 13):
 				break
 			# Error
 			else:
-				io.bell()
+				ioc.bell()
 
-		io.clear_from(row)
+		ioc.clear_from(row)
 
 		return realms
 
