@@ -2,7 +2,7 @@ This is a document file listing the changes in Zangband (compared to
 the standard Angband 2.8.1.) No long explanations, just a list. See
 code for details. In reversed chronological order (more or less):
 
-Zangband 2.5.3b:
+Zangband 2.5.4:
 - Tweaked the initial towns and their surroundings to make them more
   hospitable to staring characters.
 - Tweaked item distribution to make weapons more common in the deeper
