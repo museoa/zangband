@@ -172,8 +172,6 @@ proc NSMacros::InitWindow {oop} {
 	#
 
 	set toolId [NSObject::New NSToolbar 20 $win]
-	NSToolbar::AddTool $toolId -image Image_Open -label [mc Open] \
-		-showlabel yes -command "NSMacros::MacroLoad $oop"
 	NSToolbar::AddTool $toolId -image Image_Save -label [mc Save] \
 		-showlabel yes -command "NSMacros::MacroDump $oop"
 
@@ -369,8 +367,6 @@ proc NSMacros::InitMenus {oop} {
 		-underline 0 -accelerator n -identifier E_MACRO_NEW]
 	lappend entries [list -type command -label [mc "Dump Macros"] \
 		-underline 0 -identifier E_MACRO_DUMP]
-	lappend entries [list -type command -label [mc "Load Pref File"] \
-		-underline 0 -identifier E_MACRO_LOAD]
 	lappend entries [list -type separator]
 	lappend entries [list -type command -label [mc Close] \
 		-underline 0 -accelerator $mod+W -identifier E_CLOSE]
@@ -383,8 +379,6 @@ proc NSMacros::InitMenus {oop} {
 		"Creates a new macro."
 	set MenuString(E_MACRO_DUMP) \
 		"Appends macros to a new or existing preferences file."
-	set MenuString(E_MACRO_LOAD) \
-		"Read settings from an existing preferences file."
 	set MenuString(E_CLOSE) \
 		"Closes the window."
 
@@ -405,7 +399,7 @@ proc NSMacros::SetupMenus {oop mbarId} {
 
 	set canvistId [Info $oop canvistId]
 
-	lappend identList E_MACRO_NEW E_MACRO_DUMP E_MACRO_LOAD E_CLOSE
+	lappend identList E_MACRO_NEW E_MACRO_DUMP E_CLOSE
 
 	if {[llength [NSCanvist::Selection $canvistId]]} {
 		lappend identList E_MACRO_ACTION
@@ -475,7 +469,6 @@ proc NSMacros::MenuInvoke {oop menuId ident} {
 	switch -glob -- $ident {
 		E_MACRO_NEW {CreateMacro $oop}
 		E_MACRO_DUMP {MacroDump $oop}
-		E_MACRO_LOAD {MacroLoad $oop}
 		E_CLOSE {Close $oop}
 	}
 
@@ -896,27 +889,6 @@ proc NSMacros::MacroDump {oop} {
 	if {[catch {angband game macro_dump $filename} result]} {
 		tk_messageBox -title "Pref File Error" -icon error -message $result
 	}
-
-	return
-}
-
-# NSMacros::MacroLoad --
-#
-#	Get a filename from the user then read in the given pref file.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSMacros::MacroLoad {oop} {
-
-	# Let the user choose a file, and read it
-	if {[ProcessPrefFile [Info $oop win]]} return
-
-	# Update the list
-	SetList $oop
 
 	return
 }

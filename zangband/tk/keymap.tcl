@@ -172,8 +172,6 @@ proc NSKeymap::InitWindow {oop} {
 	#
 
 	set toolId [NSObject::New NSToolbar 20 $win]
-	NSToolbar::AddTool $toolId -image Image_Open -label [mc Open] \
-		-showlabel yes -command "NSKeymap::KeymapLoad $oop"
 	NSToolbar::AddTool $toolId -image Image_Save -label [mc Save] \
 		-showlabel yes -command "NSKeymap::KeymapDump $oop"
 
@@ -338,8 +336,6 @@ proc NSKeymap::InitMenus {oop} {
 	set entries {}
 	lappend entries [list -type command -label [mc "Dump Keymaps"] \
 		-underline 0 -identifier E_KEYMAP_DUMP]
-	lappend entries [list -type command -label [mc "Load Pref File"] \
-		-underline 0 -identifier E_KEYMAP_LOAD]
 	lappend entries [list -type separator]
 	lappend entries [list -type command -label [mc Close] \
 		-underline 0 -accelerator $mod+W -identifier E_CLOSE]
@@ -350,8 +346,6 @@ proc NSKeymap::InitMenus {oop} {
 		"Contains commands for saving and reading keymaps."
 	set MenuString(E_KEYMAP_DUMP) \
 		"Appends keymaps to a new or existing preferences file."
-	set MenuString(E_KEYMAP_LOAD) \
-		"Read settings from an existing preferences file."
 	set MenuString(E_CLOSE) \
 		"Closes the window."
 
@@ -370,7 +364,7 @@ proc NSKeymap::InitMenus {oop} {
 
 proc NSKeymap::SetupMenus {oop mbarId} {
 
-	lappend identList E_KEYMAP_DUMP E_KEYMAP_LOAD E_CLOSE
+	lappend identList E_KEYMAP_DUMP E_CLOSE
 
 	NSMenu::MenuEnable $mbarId $identList
 
@@ -432,7 +426,6 @@ proc NSKeymap::MenuInvoke {oop menuId ident} {
 
 	switch -glob -- $ident {
 		E_KEYMAP_DUMP {KeymapDump $oop}
-		E_KEYMAP_LOAD {KeymapLoad $oop}
 		E_CLOSE {Close $oop}
 	}
 
@@ -550,23 +543,6 @@ proc NSKeymap::UpdateKeymap {oop} {
 	return
 }
 
-# NSKeymap::KeymapLoad --
-#
-#	Read a preferences file from lib/user.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSKeymap::KeymapLoad {oop} {
-
-	if {[ProcessPrefFile [Info $oop win]]} return
-	UpdateKeymap $oop
-
-	return
-}
 
 # NSKeymap::KeymapDump --
 #

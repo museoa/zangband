@@ -778,41 +778,6 @@ proc GetDefaultGeometry {win reqWidth reqHeight} {
 	return ${width}x$height+$x+$y
 }
 
-# ProcessPrefFile --
-#
-#	Get a filename from the user then read in the given pref file.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc ProcessPrefFile {parent} {
-
-	global Angband
-
-	set filename [tk_getOpenFile -initialdir [PathUser] \
-		-parent $parent]
-	if {![string length $filename]} {
-		return 1
-	}
-
-	if {![IsUserFile $filename]} {
-		tk_messageBox -title "Pref File Error" -icon info -message \
-			"Pref files must be located in the lib/user directory."
-		return 1
-	}
-
-	set filename [file tail $filename]
-	if {[catch {angband game process_pref_file $filename} result]} {
-		tk_messageBox -title "Pref File Error" -icon error -message $result
-		return 1
-	}
-
-	# Success
-	return 0
-}
 
 # StripCommon --
 #
