@@ -1669,7 +1669,8 @@ static void clear_question(void)
 static int get_player_choice(cptr *choices, int num, int col, int wid,
                              cptr helpfile, void (*hook)(cptr))
 {
-	int top = 0, bot = 13, cur = 0;
+	int top = 0, cur = 0;
+	/* int bot = 13; */
 	int i, dir;
 	char c;
 	char buf[80];
