@@ -2046,10 +2046,9 @@ static byte breath_attr(const monster_race *r_ptr)
  * when in (semi) graphics mode, where either the monster
  * or the floor it is standing on is non-ascii.
  */
-static void map_mon_info(monster_type *m_ptr, byte *a, char *c, term_map *map)
+static void map_mon_info(monster_type *m_ptr, monster_race *r_ptr, byte *a, char *c,
+						term_map *map)
 {
-	monster_race *r_ptr;
-	
 	byte feat_not_ascii;
 
 	byte ma = *a;
@@ -2058,8 +2057,6 @@ static void map_mon_info(monster_type *m_ptr, byte *a, char *c, term_map *map)
 	/* Visible monster */
 	if (m_ptr->ml)
 	{
-		r_ptr = &r_info[m_ptr->r_idx];
-		
 		/* Visible monster */
 		map->monster = m_ptr->r_idx;
 
@@ -2227,38 +2224,60 @@ static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 	object_kind *k_ptr;
 
 	monster_type *m_ptr;
+	monster_race *r_ptr;
 
 	field_type *fld_ptr;
 
 	s16b this_f_idx, next_f_idx;
 
-	byte feat;
-	byte player;
+	/* Get the memorized feature */
+	byte feat = pc_ptr->feat;
+	
+	/* Info flags */
+	byte player = pc_ptr->player;
 
 	byte a;
 	char c;
 
 	s16b halluc = p_ptr->tim.image;
+	bool visible = player & GRID_SEEN;
+	bool glow = c_ptr->info & CAVE_GLOW;
+	bool lite = (c_ptr->info & CAVE_MNLT) || (player & GRID_LITE);
 	
 	bool float_field = FALSE;
 
-	/* Info flags */
-	player = pc_ptr->player;
-
-	/* Get the memorized feature */
-	feat = pc_ptr->feat;
 	
 	/* Pointer to the feature */
 	f_ptr = &f_info[feat];
-	
+		
 	/* Hack -- rare random hallucination, except on outer dungeon walls */
 	if (halluc && !p_ptr->tim.blind && (feat != FEAT_PERM_SOLID) && one_in_(256))
 	{
 		/* Hallucinate */
 		image_random(&a, &c);
+		
+		/*
+		 * Can't get much information if hallucinating...
+		 *
+		 * This is a horible hack which breaks the tk port.
+		 * We need some way of outputing "random" data.
+		 */
+		if (glow)
+		{
+			map->flags = MAP_GLOW;
+		}
 	}
 	else
 	{
+		/* Visible */
+		if (visible)
+		{
+			map->flags = MAP_SEEN | MAP_ONCE;
+
+			if (glow) map->flags |= MAP_GLOW;
+			if (lite) map->flags |= MAP_LITE;
+		}
+	
 		/* The feats attr */
 		a = f_ptr->x_attr;
 
@@ -2277,7 +2296,7 @@ static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 		{
 			/* It's not in view or no lighting effects? */
 			if (((!(player & (GRID_VIEW))) && view_special_lite)
-				|| !(player & (GRID_SEEN)))
+				|| !visible)
 			{
 				/* If is ascii graphics */
 				if (a < 16)
@@ -2292,8 +2311,7 @@ static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 					c++;
 				}
 			}
-			else if (((c_ptr->info & (CAVE_MNLT)) || (player & (GRID_LITE)))
-					 && view_yellow_lite)
+			else if (lite && view_yellow_lite)
 			{
 				/* Use the torch effect */
 				if (a < 16)
@@ -2442,9 +2460,20 @@ static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 	if (c_ptr->m_idx)
 	{
 		m_ptr = &m_list[c_ptr->m_idx];
+		r_ptr = &r_info[m_ptr->r_idx];
 
 		/* Get monster tile info */
-		map_mon_info(m_ptr, &a, &c, map);
+		map_mon_info(m_ptr, r_ptr, &a, &c, map);
+		
+		/* Not hallucinating and Mimic in los? */
+		if (!halluc && visible && !m_ptr->ml && (r_ptr->flags1 & RF1_CHAR_MIMIC))
+		{
+			/* Keep this grid */
+			map->flags |= MAP_ONCE;
+
+			/* Save mimic character */
+			map->unknown = r_ptr->d_char;
+		}
 	}
 
 	/* Hack -- fake monochrome */
@@ -2494,14 +2523,6 @@ static void Term_note_map(int x, int y, byte *a, char *c, byte *ta, char *tc)
 	pcave_type *pc_ptr = parea(x, y);
 	
 	term_map map;
-
-	monster_type *m_ptr;
-
-	monster_race *r_ptr;
-
-	bool visible = pc_ptr->player & GRID_SEEN;
-	bool glow = c_ptr->info & CAVE_GLOW;
-	bool lite = (c_ptr->info & CAVE_MNLT) || (pc_ptr->player & GRID_LITE);
 	
 	/* clear map info */
 	(void)WIPE(&map, term_map);
@@ -2525,49 +2546,7 @@ static void Term_note_map(int x, int y, byte *a, char *c, byte *ta, char *tc)
 	map.x = x;
 	map.y = y;
 
-	/* Not hallucinating */
-	if (!p_ptr->tim.image)
-	{
-		/* Visible */
-		if (visible)
-		{
-			map.flags = MAP_SEEN | MAP_ONCE;
-
-			if (glow) map.flags |= MAP_GLOW;
-			if (lite) map.flags |= MAP_LITE;
-		}
 	
-		/* Save known monsters */
-		if (c_ptr->m_idx)
-		{
-			m_ptr = &m_list[c_ptr->m_idx];
-
-			/* Mimic in los? */
-			if (visible && !m_ptr->ml)
-			{
-				r_ptr = &r_info[m_ptr->r_idx];
-
-				if (r_ptr->flags1 & RF1_CHAR_MIMIC)
-				{
-					/* Keep this grid */
-					map.flags |= MAP_ONCE;
-
-					/* Save mimic character */
-					map.unknown = r_ptr->d_char;
-				}
-			}
-		}
-	}
-	/*
-	 * Can't get much information if hallucinating...
-	 *
-	 * This is a horible hack which breaks the tk port.
-	 * We need some way of outputing "random" data.
-	 */
-	else if (glow)
-	{
-		map.flags = MAP_GLOW;
-	}
 
 	/* Save information in map */
 	save_map_location(x, y, &map);
