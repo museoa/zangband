@@ -96,8 +96,6 @@ typedef struct WidgetItem
 					 * contain every pixel drawn in item. Item area
 					 * includes x1 and y1 but not x2 and y2. */
 	int minX, minY, maxX, maxY; /* Rows/Columns clobbered in widget */
-	DoubleLink link; /* Linked list of items */
-	DoubleLink linkVis; /* Linked list of visible items */
 } WidgetItem;
 
 typedef int	WidgetItem_CreateProc _ANSI_ARGS_((Tcl_Interp *interp,
