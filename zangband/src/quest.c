@@ -302,7 +302,7 @@ static void insert_artifact_quest(u16b a_idx)
 	q_ptr->x_type = QX_KNOW_ARTIFACT;
 	
 	/* XXX XXX Create quest name */
-	(void)strnfmt(q_ptr->name, 60, "Find the relic %s.", a_ptr->name);
+	(void)strnfmt(q_ptr->name, 60, "Find the relic %s.", a_name + a_ptr->name);
 	
 	/* Find an available dungeon to place it in */
 	
