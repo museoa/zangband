@@ -2273,6 +2273,9 @@ static bool player_birth_aux_1(void)
 	Term_putstr(5, 17, -1, TERM_WHITE,
 		"In case you do not want any additional quests, just enter 0");
 
+	Term_putstr(5, 18, -1, TERM_WHITE,
+		"If you want a random number of random quests, just enter *");
+	
 	/* Ask the number of additional quests */
 	while (TRUE)
 	{
@@ -2290,7 +2293,17 @@ static bool player_birth_aux_1(void)
 
 			/* Get a response (or escape) */
 			if (!askfor_aux(inp, 2)) inp[0] = '\0';
-			v = atoi(inp);
+			
+			/* Check for random number of quests */
+			if (inp[0] == '*')
+			{
+				/* 0 to 49 random quests */
+				v = rand_int(50);
+			}
+			else
+			{
+				v = atoi(inp);
+			}
 
 			/* Break on valid input */
 			if ((v <= MAX_RANDOM_QUEST - MIN_RANDOM_QUEST + 1) && (v >= 0)) break;
