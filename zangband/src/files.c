@@ -1449,12 +1449,12 @@ static void display_player_abilities(void)
 	/* Fighting Skill (with current weapon) */
 	o_ptr = &p_ptr->equipment[EQUIP_WIELD];
 	tmp = p_ptr->to_h + o_ptr->to_h;
-	xthn = p_ptr->skill_thn + (tmp * BTH_PLUS_ADJ);
+	xthn = p_ptr->skill.thn + (tmp * BTH_PLUS_ADJ);
 
 	/* Shooting Skill (with current bow and normal missile) */
 	o_ptr = &p_ptr->equipment[EQUIP_BOW];
 	tmp = p_ptr->to_h + o_ptr->to_h;
-	xthb = p_ptr->skill_thb + (tmp * BTH_PLUS_ADJ);
+	xthb = p_ptr->skill.thb + (tmp * BTH_PLUS_ADJ);
 
 	/* Is the player is wielding a shooter? */
 	if (o_ptr->k_idx)
@@ -1489,18 +1489,18 @@ static void display_player_abilities(void)
 							  CLR_WHITE "Stealth     : %v",
 		 					likert, xthn, 10,
 		 					likert, xthb, 10,
-		 					likert, p_ptr->skill_sav, 6,
-		 					likert, p_ptr->skill_stl, 1);
+		 					likert, p_ptr->skill.sav, 6,
+		 					likert, p_ptr->skill.stl, 1);
 
 
 	put_fstr(COL_SKILLS2, 16, CLR_WHITE "Perception  : %v\n"
 							  CLR_WHITE "Sensing     : %v\n"
 							  CLR_WHITE "Disarming   : %v\n"
 							  CLR_WHITE "Magic Device: %v",
-							likert, p_ptr->skill_fos, 6,
-							likert, p_ptr->skill_sns, 6,
-							likert, p_ptr->skill_dis, 8,
-							likert, p_ptr->skill_dev, 6);
+							likert, p_ptr->skill.fos, 6,
+							likert, p_ptr->skill.sns, 6,
+							likert, p_ptr->skill.dis, 8,
+							likert, p_ptr->skill.dev, 6);
 
 	if (!muta_att)
 		put_fstr(COL_SKILLS3, 16, "Blows/Round : %d", p_ptr->num_blow);
@@ -2828,7 +2828,7 @@ errr file_character(cptr name, bool full)
 	fprintf(fff, "\n Recall Depth:       Level %d (%d')\n", p_ptr->max_depth,
 			50 * p_ptr->max_depth);
 
-	if (p_ptr->noscore)
+	if (p_ptr->state.noscore)
 		fprintf(fff, "\n You have done something illegal.");
 
 	if (stupid_monsters)
@@ -3800,7 +3800,7 @@ void do_cmd_suicide(void)
 	flush();
 
 	/* Verify Retirement */
-	if (p_ptr->total_winner)
+	if (p_ptr->state.total_winner)
 	{
 		/* Verify */
 		if (!get_check("Do you want to retire? ")) return;
@@ -3812,7 +3812,7 @@ void do_cmd_suicide(void)
 		/* Verify */
 		if (!get_check("Do you really want to commit suicide? ")) return;
 
-		if (!p_ptr->noscore)
+		if (!p_ptr->state.noscore)
 		{
 			/* Special Verification for suicide */
 			prtf(0, 0, "Please verify SUICIDE by typing the '@' sign: ");
@@ -3824,16 +3824,16 @@ void do_cmd_suicide(void)
 	}
 
 	/* Stop playing */
-	p_ptr->playing = FALSE;
+	p_ptr->state.playing = FALSE;
 
 	/* Kill the player */
-	p_ptr->is_dead = TRUE;
+	p_ptr->state.is_dead = TRUE;
 
 	/* Leaving */
-	p_ptr->leaving = TRUE;
+	p_ptr->state.leaving = TRUE;
 
 	/* Cause of death */
-	(void)strcpy(p_ptr->died_from, "Quitting");
+	(void)strcpy(p_ptr->state.died_from, "Quitting");
 }
 
 
@@ -3866,7 +3866,7 @@ void do_cmd_save_game(int is_autosave)
 	Term_fresh();
 
 	/* The player is not dead */
-	(void)strcpy(p_ptr->died_from, "(saved)");
+	(void)strcpy(p_ptr->state.died_from, "(saved)");
 
 	/* Forbid suspend */
 	signals_ignore_tstp();
@@ -3896,7 +3896,7 @@ void do_cmd_save_game(int is_autosave)
 	clear_msg();
 
 	/* Note that the player is not dead */
-	(void)strcpy(p_ptr->died_from, "(alive and well)");
+	(void)strcpy(p_ptr->state.died_from, "(alive and well)");
 }
 
 
@@ -3905,10 +3905,10 @@ void do_cmd_save_game(int is_autosave)
  */
 void do_cmd_save_and_exit(void)
 {
-	p_ptr->playing = FALSE;
+	p_ptr->state.playing = FALSE;
 
 	/* Leaving */
-	p_ptr->leaving = TRUE;
+	p_ptr->state.leaving = TRUE;
 }
 
 /*
@@ -4018,7 +4018,7 @@ static void print_tomb(void)
 
 		
 		/* King or Queen */
-		if (p_ptr->total_winner || (p_ptr->lev > PY_MAX_LEVEL))
+		if (p_ptr->state.total_winner || (p_ptr->lev > PY_MAX_LEVEL))
 		{
 			put_fstr(11, 8, "%v", center_string, 31, "Magnificent");
 		}
@@ -4041,13 +4041,13 @@ static void print_tomb(void)
 		put_fstr(11, 14, "%v", center_string, 31, "Killed on Level %d", p_ptr->depth);
 
 
-		if (strlen(p_ptr->died_from) > 24)
+		if (strlen(p_ptr->state.died_from) > 24)
 		{
-			put_fstr(11, 15, "%v", center_string, 31, "by %.24s.", p_ptr->died_from);
+			put_fstr(11, 15, "%v", center_string, 31, "by %.24s.", p_ptr->state.died_from);
 		}
 		else
 		{
-			put_fstr(11, 15, "%v", center_string, 31, "by %s.", p_ptr->died_from);
+			put_fstr(11, 15, "%v", center_string, 31, "by %s.", p_ptr->state.died_from);
 		}
 
 		put_fstr(11, 17, "%v", center_string, 31, "%-.24s", ctime(&ct));
@@ -4233,7 +4233,7 @@ static void close_game_handle_death(void)
 	char ch;
 
 	/* Handle retirement */
-	if (p_ptr->total_winner)
+	if (p_ptr->state.total_winner)
 	{
 		/* Save winning message to notes file. */
 		if (take_notes)
@@ -4266,7 +4266,7 @@ static void close_game_handle_death(void)
 
 		/* Output to the notes file */
 		output_note("\n%s was killed by %s on %s\n", player_name,
-				p_ptr->died_from, long_day);
+				p_ptr->state.died_from, long_day);
 	}
 
 	/* Enter player in high score list */
@@ -4411,7 +4411,7 @@ void close_game(void)
 	/* Drop permissions */
 	safe_setuid_drop();
 
-	if (p_ptr->is_dead)
+	if (p_ptr->state.is_dead)
 	{
 		/* Handle death */
 		close_game_handle_death();
@@ -4472,16 +4472,16 @@ void exit_game_panic(void)
 	disturb(TRUE);
 
 	/* Mega-Hack -- Delay death */
-	if (p_ptr->chp < 0) p_ptr->is_dead = FALSE;
+	if (p_ptr->chp < 0) p_ptr->state.is_dead = FALSE;
 
 	/* Hardcode panic save */
-	p_ptr->panic_save = 1;
+	p_ptr->state.panic_save = 1;
 
 	/* Forbid suspend */
 	signals_ignore_tstp();
 
 	/* Indicate panic save */
-	(void)strcpy(p_ptr->died_from, "(panic save)");
+	(void)strcpy(p_ptr->state.died_from, "(panic save)");
 
 	/* Panic save, or get worried */
 	if (!save_player()) quit("panic save failed!");
@@ -4687,10 +4687,10 @@ static void handle_signal_simple(int sig)
 
 
 	/* Terminate dead characters */
-	if (p_ptr->is_dead)
+	if (p_ptr->state.is_dead)
 	{
 		/* Mark the savefile */
-		(void)strcpy(p_ptr->died_from, "Abortion");
+		(void)strcpy(p_ptr->state.died_from, "Abortion");
 
 		/* Close stuff */
 		close_game();
@@ -4703,16 +4703,16 @@ static void handle_signal_simple(int sig)
 	else if (signal_count >= 5)
 	{
 		/* Cause of "death" */
-		(void)strcpy(p_ptr->died_from, "Interrupting");
+		(void)strcpy(p_ptr->state.died_from, "Interrupting");
 
 		/* Stop playing */
-		p_ptr->playing = FALSE;
+		p_ptr->state.playing = FALSE;
 
 		/* Suicide */
-		p_ptr->is_dead = TRUE;
+		p_ptr->state.is_dead = TRUE;
 
 		/* Leaving */
-		p_ptr->leaving = TRUE;
+		p_ptr->state.leaving = TRUE;
 
 		/* Close stuff */
 		close_game();
@@ -4768,10 +4768,10 @@ static void handle_signal_abort(int sig)
 	Term_fresh();
 
 	/* Panic Save */
-	p_ptr->panic_save = 1;
+	p_ptr->state.panic_save = 1;
 
 	/* Panic save */
-	(void)strcpy(p_ptr->died_from, "(panic save)");
+	(void)strcpy(p_ptr->state.died_from, "(panic save)");
 
 	/* Forbid suspend */
 	signals_ignore_tstp();

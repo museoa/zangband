@@ -571,19 +571,19 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			/* Fighting Skill (with current weapon) */
 			o_ptr = &p_ptr->equipment[EQUIP_WIELD];
 			tmp = p_ptr->to_h + o_ptr->to_h;
-			ability[0].rating = p_ptr->skill_thn + (tmp * BTH_PLUS_ADJ);
+			ability[0].rating = p_ptr->skill.thn + (tmp * BTH_PLUS_ADJ);
 	
 			/* Shooting Skill (with current bow and normal missile) */
 			o_ptr = &p_ptr->equipment[EQUIP_BOW];
 			tmp = p_ptr->to_h + o_ptr->to_h;
-			ability[1].rating = p_ptr->skill_thb + (tmp * BTH_PLUS_ADJ);
+			ability[1].rating = p_ptr->skill.thb + (tmp * BTH_PLUS_ADJ);
 	
-			ability[2].rating = p_ptr->skill_sav;
-			ability[3].rating = p_ptr->skill_stl;
-			ability[4].rating = p_ptr->skill_fos;
-			ability[5].rating = p_ptr->skill_sns;
-			ability[6].rating = p_ptr->skill_dis;
-			ability[7].rating = p_ptr->skill_dev;
+			ability[2].rating = p_ptr->skill.sav;
+			ability[3].rating = p_ptr->skill.stl;
+			ability[4].rating = p_ptr->skill.fos;
+			ability[5].rating = p_ptr->skill.sns;
+			ability[6].rating = p_ptr->skill.dis;
+			ability[7].rating = p_ptr->skill.dev;
 			 
 			Tcl_SetStringObj(resultPtr, format("%d %d",
 				ability[index].rating, ability[index].max), -1);

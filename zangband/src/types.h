@@ -1343,6 +1343,21 @@ struct player_state
 };
 
 /*
+ * Information about the player state for the running code
+ */
+typedef struct player_run player_run;
+
+struct player_run
+{
+	s16b cur_dir;	/* Direction we are running */
+	s16b old_dir;	/* Direction we came from */
+	bool unused;	/* Unused (padding field) */
+	bool open_area;	/* Looking for an open area */
+	bool break_right;	/* Looking for a break (right) */
+	bool break_left;	/* Looking for a break (left) */
+};
+
+/*
  * The player skills
  */
 typedef struct player_skill player_skill;
@@ -1456,7 +1471,6 @@ struct player_type
 
 	/*** Temporary fields ***/
 
-
 	s32b align;	/* Good/evil/neutral */
 
 	s16b total_weight;	/* Total weight being carried */
@@ -1476,13 +1490,8 @@ struct player_type
 	s16b object_kind_idx;	/* Object kind trackee */
 
 	s16b energy_use;	/* Energy use this turn */
-
-	s16b run_cur_dir;	/* Direction we are running */
-	s16b run_old_dir;	/* Direction we came from */
-	bool run_unused;	/* Unused (padding field) */
-	bool run_open_area;	/* Looking for an open area */
-	bool run_break_right;	/* Looking for a break (right) */
-	bool run_break_left;	/* Looking for a break (left) */
+	
+	player_run run;		/* Current stat of the running routine */
 
 	s16b command_cmd;	/* Gives identity of current command */
 	s16b command_arg;	/* Gives argument of current command */

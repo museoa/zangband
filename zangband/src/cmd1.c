@@ -2830,17 +2830,17 @@ static void run_init(int dir)
 	}
 
 	/* Save the direction */
-	p_ptr->run_cur_dir = dir;
+	p_ptr->run.cur_dir = dir;
 
 	/* Assume running straight */
-	p_ptr->run_old_dir = dir;
+	p_ptr->run.old_dir = dir;
 
 	/* Assume looking for open area */
-	p_ptr->run_open_area = TRUE;
+	p_ptr->run.open_area = TRUE;
 
 	/* Assume not looking for breaks */
-	p_ptr->run_break_right = FALSE;
-	p_ptr->run_break_left = FALSE;
+	p_ptr->run.break_right = FALSE;
+	p_ptr->run.break_left = FALSE;
 
 	/* Assume no nearby walls */
 	deepleft = deepright = FALSE;
@@ -2856,43 +2856,43 @@ static void run_init(int dir)
 	/* Check for nearby wall */
 	if (see_wall(cycle[i + 1], px, py))
 	{
-		p_ptr->run_break_left = TRUE;
+		p_ptr->run.break_left = TRUE;
 		shortleft = TRUE;
 	}
 	else if (see_wall(cycle[i + 1], col, row))
 	{
-		p_ptr->run_break_left = TRUE;
+		p_ptr->run.break_left = TRUE;
 		deepleft = TRUE;
 	}
 
 	/* Check for nearby wall */
 	if (see_wall(cycle[i - 1], px, py))
 	{
-		p_ptr->run_break_right = TRUE;
+		p_ptr->run.break_right = TRUE;
 		shortright = TRUE;
 	}
 	else if (see_wall(cycle[i - 1], col, row))
 	{
-		p_ptr->run_break_right = TRUE;
+		p_ptr->run.break_right = TRUE;
 		deepright = TRUE;
 	}
 
 	/* Looking for a break */
-	if (p_ptr->run_break_left && p_ptr->run_break_right)
+	if (p_ptr->run.break_left && p_ptr->run.break_right)
 	{
 		/* Not looking for open area */
-		p_ptr->run_open_area = FALSE;
+		p_ptr->run.open_area = FALSE;
 
 		/* Hack -- allow angled corridor entry */
 		if (dir & 0x01)
 		{
 			if (deepleft && !deepright)
 			{
-				p_ptr->run_old_dir = cycle[i - 1];
+				p_ptr->run.old_dir = cycle[i - 1];
 			}
 			else if (deepright && !deepleft)
 			{
-				p_ptr->run_old_dir = cycle[i + 1];
+				p_ptr->run.old_dir = cycle[i + 1];
 			}
 		}
 
@@ -2901,11 +2901,11 @@ static void run_init(int dir)
 		{
 			if (shortleft && !shortright)
 			{
-				p_ptr->run_old_dir = cycle[i - 2];
+				p_ptr->run.old_dir = cycle[i - 2];
 			}
 			else if (shortright && !shortleft)
 			{
-				p_ptr->run_old_dir = cycle[i + 2];
+				p_ptr->run.old_dir = cycle[i + 2];
 			}
 		}
 	}
@@ -2933,7 +2933,7 @@ static bool run_test(void)
 	pcave_type *pc_ptr;
 
 	/* Where we came from */
-	prev_dir = p_ptr->run_old_dir;
+	prev_dir = p_ptr->run.old_dir;
 
 	/* Range of newly adjacent grids */
 	max = (prev_dir & 0x01) + 1;
@@ -3114,7 +3114,7 @@ static bool run_test(void)
 		if (inv || cave_floor_grid(c_ptr))
 		{
 			/* Looking for open area */
-			if (p_ptr->run_open_area)
+			if (p_ptr->run.open_area)
 			{
 				/* Nothing */
 			}
@@ -3156,18 +3156,18 @@ static bool run_test(void)
 		/* Obstacle, while looking for open area */
 		else
 		{
-			if (p_ptr->run_open_area)
+			if (p_ptr->run.open_area)
 			{
 				if (i < 0)
 				{
 					/* Break to the right */
-					p_ptr->run_break_right = TRUE;
+					p_ptr->run.break_right = TRUE;
 				}
 
 				else if (i > 0)
 				{
 					/* Break to the left */
-					p_ptr->run_break_left = TRUE;
+					p_ptr->run.break_left = TRUE;
 				}
 			}
 		}
@@ -3175,7 +3175,7 @@ static bool run_test(void)
 
 
 	/* Looking for open area */
-	if (p_ptr->run_open_area)
+	if (p_ptr->run.open_area)
 	{
 		/* Hack -- look again */
 		for (i = -max; i < 0; i++)
@@ -3192,7 +3192,7 @@ static bool run_test(void)
 
 			{
 				/* Looking to break right */
-				if (p_ptr->run_break_right)
+				if (p_ptr->run.break_right)
 				{
 					return (TRUE);
 				}
@@ -3202,7 +3202,7 @@ static bool run_test(void)
 			else
 			{
 				/* Looking to break left */
-				if (p_ptr->run_break_left)
+				if (p_ptr->run.break_left)
 				{
 					return (TRUE);
 				}
@@ -3227,7 +3227,7 @@ static bool run_test(void)
 
 			{
 				/* Looking to break left */
-				if (p_ptr->run_break_left)
+				if (p_ptr->run.break_left)
 				{
 					return (TRUE);
 				}
@@ -3237,7 +3237,7 @@ static bool run_test(void)
 			else
 			{
 				/* Looking to break right */
-				if (p_ptr->run_break_right)
+				if (p_ptr->run.break_right)
 				{
 					return (TRUE);
 				}
@@ -3259,20 +3259,20 @@ static bool run_test(void)
 		else if (!option2)
 		{
 			/* Primary option */
-			p_ptr->run_cur_dir = option;
+			p_ptr->run.cur_dir = option;
 
 			/* No other options */
-			p_ptr->run_old_dir = option;
+			p_ptr->run.old_dir = option;
 		}
 
 		/* Two options, examining corners */
 		else if (find_examine && !find_cut)
 		{
 			/* Primary option */
-			p_ptr->run_cur_dir = option;
+			p_ptr->run.cur_dir = option;
 
 			/* Hack -- allow curving */
-			p_ptr->run_old_dir = option2;
+			p_ptr->run.old_dir = option2;
 		}
 
 		/* Two options, pick one */
@@ -3292,8 +3292,8 @@ static bool run_test(void)
 					see_nothing(option, col, row) &&
 					see_nothing(option2, col, row))
 				{
-					p_ptr->run_cur_dir = option;
-					p_ptr->run_old_dir = option2;
+					p_ptr->run.cur_dir = option;
+					p_ptr->run.old_dir = option2;
 				}
 
 				/* STOP: we are next to an intersection or a room */
@@ -3306,23 +3306,23 @@ static bool run_test(void)
 			/* This corner is seen to be enclosed; we cut the corner. */
 			else if (find_cut)
 			{
-				p_ptr->run_cur_dir = option2;
-				p_ptr->run_old_dir = option2;
+				p_ptr->run.cur_dir = option2;
+				p_ptr->run.old_dir = option2;
 			}
 
 			/* This corner is seen to be enclosed, and we */
 			/* deliberately go the long way. */
 			else
 			{
-				p_ptr->run_cur_dir = option;
-				p_ptr->run_old_dir = option2;
+				p_ptr->run.cur_dir = option;
+				p_ptr->run.old_dir = option2;
 			}
 		}
 	}
 
 
 	/* About to hit a known wall, stop */
-	if (see_wall(p_ptr->run_cur_dir, px, py))
+	if (see_wall(p_ptr->run.cur_dir, px, py))
 	{
 		return (TRUE);
 	}
@@ -3382,5 +3382,5 @@ void run_step(int dir)
 	p_ptr->energy_use = 100;
 
 	/* Move the player, using the "pickup" flag */
-	move_player(p_ptr->run_cur_dir, FALSE);
+	move_player(p_ptr->run.cur_dir, FALSE);
 }
