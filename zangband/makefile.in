@@ -29,6 +29,22 @@ datadir = @datadir@
 cygwin = @cygwin@
 TK_PORT = @TK_PORT@
 
+subdir = $(dir $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST)))
+scandir = $(addprefix $(subdir),$(addsuffix /makefile.zb,$(dirs)))
+
+files = angdos.cfg readme z_faq.txt z_update.txt
+
+# The executable itself
+files += zangband
+
+extra_files = acconfig.h
+clean-files = zangband
+
+dirs := lib src
+dirlist := lib
+include $(scandir)
+
+INSTALL =
 
 ##
 ## Default target
@@ -47,18 +63,6 @@ makefile: configure makefile.in
 configure: configure.in
 	autoheader
 	autoconf
-
-subdir = $(dir $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST)))
-scandir = $(addprefix $(subdir),$(addsuffix /makefile.zb,$(dirs)))
-
-files = angdos.cfg readme z_faq.txt z_update.txt
-extra_files = acconfig.h
-
-dirs := lib src
-dirlist := lib
-include $(scandir)
-
-INSTALL =
 
 makedirs:
 	-mkdir $(DESTDIR)

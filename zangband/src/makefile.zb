@@ -187,7 +187,4 @@ $(LUAWSRCS): %.c: %.pkg src/lua/tolua
 dirs := lua tk
 include $(scandir)
 
-# The executable itself
-files += zangband
-
-clean-files += src/*.bak src/*.o src/l-*.c src/zangband
+clean-files += src/*.bak src/*.o src/l-*.c
