@@ -3671,11 +3671,15 @@ void gain_level_reward(int chosen_reward)
 			(void)set_image(0);
 			(void)set_stun(0);
 			(void)set_cut(0);
-			(void)hp_player(5000);
 			for (i = 0; i < A_MAX; i++)
 			{
 				(void)do_res_stat(i);
 			}
+
+			/* Recalculate max. hitpoints */
+			update_stuff();
+
+			(void)hp_player(5000);
 			break;
 		case REW_CURSE_WP:
 			msg_format("The voice of %s booms out:",
