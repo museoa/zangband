@@ -38,8 +38,6 @@ proc NSDebug::InitModule {} {
 
 	MsgCatInit
 
-	lappend Priv(hook) debug_hook_character Character
-
 	# Create the Debug Window
 	NSObject::New NSDebug
 
@@ -337,10 +335,6 @@ proc NSDebug::InitMenus {oop} {
 	lappend entries [list -type command -label "Teleport To Location" \
 		-command "debug command teleport_to_location" \
 		-identifier E_TELEPORT_TO_LOCATION]
-	lappend entries [list -type separator]
-	lappend entries [list -type command -label "Edit" \
-		-command "NSDebug::SetHook $oop debug_hook_character" \
-		-identifier E_EDIT_CHARACTER]
 	
 	NSMenu::MenuInsertEntries $mbar -end MENU_CHARACTER $entries
 
@@ -803,19 +797,6 @@ proc NSDebug::ListInvOrEquip {oop invOrEquip} {
 	return
 }
 
-proc NSDebug::EditField {oop type index field} {
-
-	set value [struct set $type $index $field]
-	set value [NSUtils::StringBox -title "Edit Field" -initial $value \
-		-prompt Value -buttons [list [mc OK] [mc Cancel]] \
-		-parent [Info $oop win]]
-	if {[string length $value]} {
-		struct set $type $index $field $value
-		SetList_Detail $oop
-	}
-
-	return
-}
 
 proc NSDebug::AcceptValue {oop} {
 
@@ -827,63 +808,6 @@ proc NSDebug::AcceptValue {oop} {
 
 	return
 }
-
-proc NSDebug::debug_hook_character {oop message args} {
-
-	switch -- $message {
-
-		open {
-			SetList_Display $oop 
-		}
-
-		close {
-		}
-
-		set_list_display {
-
-			set canvistId [Info $oop display,canvistId]
-
-			lappend colorList White
-			lappend textList "Name of player"
-			NSTexist::SetList $canvistId $textList $colorList
-		}
-
-		set_list_detail {
-			set row [Info $oop display,current]
-			set canvistId [Info $oop detail,canvistId]
-			set colorList {}
-			set textList {}
-			foreach {title value} [struct set player_type $row] {
-				lappend textList [format "%-22s%22s" $title $value]
-				lappend colorList White
-			}
-			NSTexist::SetList $canvistId $textList $colorList
-		}
-
-		select_display {
-			SetList_Detail $oop
-		}
-
-		select_detail {
-			set row [lindex $args 0]
-			[Info $oop valueEntry] delete 0 end
-			[Info $oop valueEntry] insert end [struct set player_type 0 $row]
-		}
-
-		accept_value {
-			set value [lindex $args 0]
-			set row [Info $oop detail,current]
-			struct set player_type 0 $row $value
-
-			set title [lindex [struct set player_type 0] [expr {$row * 2}]]
-			set text [format "%-22s%22s" $title $value]
-			UpdateList_Detail $oop $row $text White
-		}
-	}
-
-	return
-}
-
 
 proc NSDebug::debug_hook_XXX {oop message args} {
 
