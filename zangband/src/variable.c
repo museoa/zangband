@@ -943,3 +943,8 @@ bool monster_terrain_sensitive = TRUE;
 
 int mutant_regenerate_mod = 100;
 
+/*
+ * A flag for skipping the "--more--" prompt
+ */
+bool skip_more = FALSE;
+

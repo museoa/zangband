@@ -325,7 +325,7 @@ extern int init_flags;
 extern int highscore_fd;
 extern bool monster_terrain_sensitive;
 extern int mutant_regenerate_mod;
-
+extern bool skip_more;
 
 /* birth.c */
 extern void player_birth(void);
