@@ -3727,12 +3727,6 @@ void forget_flow(void)
 #ifdef MONSTER_FLOW
 
 /*
- * Hack -- Allow us to treat the "seen" array as a queue
- */
-static int flow_head = 0;
-static int flow_tail = 0;
-
-/*
  * Hack - speed up the update_flow algorithm by only doing
  * it everytime the player moves out of LOS of the last
  * "way-point".
@@ -3740,49 +3734,6 @@ static int flow_tail = 0;
 static u16b flow_x = 0;
 static u16b flow_y = 0;
 
-
-/*
- * Take note of a reachable grid.  Assume grid is legal.
- */
-static void update_flow_aux(int y, int x, int n)
-{
-	cave_type *c_ptr;
-	
-	byte feat;
-
-	int old_head = flow_head;
-
-	/* Get the grid */
-	c_ptr = area(y,x);
-	
-	feat = c_ptr->feat;
-
-	/* Ignore "pre-stamped" entries */
-	if (c_ptr->when == flow_n) return;
-
-	/* Ignore all "walls" except doors */
-	if (!(((feat >= FEAT_DOOR_HEAD) && (feat <= FEAT_DOOR_TAIL))
-		 || (feat & 0x20))) return;
-
-	/* Save the time-stamp */
-	c_ptr->when = flow_n;
-
-	/* Save the flow cost */
-	c_ptr->cost = n;
-
-	/* Hack -- limit flow depth */
-	if (n == MONSTER_FLOW_DEPTH) return;
-
-	/* Enqueue that entry */
-	temp_y[flow_head] = y;
-	temp_x[flow_head] = x;
-	
-	/* Advance the queue */
-	if (++flow_head == TEMP_MAX) flow_head = 0;
-
-	/* Hack -- notice overflow by forgetting new entry */
-	if (flow_head == flow_tail) flow_head = old_head;
-}
 
 #endif /* MONSTER_FLOW */
 
@@ -3805,8 +3756,14 @@ void update_flow(void)
 
 #ifdef MONSTER_FLOW
 
-	int x, y, d, w;
+	int x, y, d, w, n;
+	int ty, tx;
+		
+	int flow_tail = 1;
+	int flow_head = 0;
+	
 	cave_type *c_ptr;
+	byte feat;
 
 	/* Hack -- disabled */
 	if (!flow_by_sound) return;
@@ -3826,7 +3783,7 @@ void update_flow(void)
 	flow_x = px;	
 	
 	/* Cycle the old entries (once per 128 updates) */
-	if (flow_n == 255)
+	if (flow_n++ == 255)
 	{
 		if (!dun_level)
 		{
@@ -3856,41 +3813,78 @@ void update_flow(void)
 		}
 
 		/* Restart */
-		flow_n = 127;
+		flow_n = 128;
 	}
 
-	/* Start a new flow (never use "zero") */
-	flow_n++;
+	
+	/*** Player Grid ***/
+	c_ptr = area(py, px);	
 
+	/* Save the time-stamp */
+	c_ptr->when = flow_n;
 
-	/* Reset the "queue" */
-	flow_head = flow_tail = 0;
+	/* Save the flow cost */
+	c_ptr->cost = 0;
 
-	/* Add the player's grid to the queue */
-	update_flow_aux(py, px, 0);
-
+	/* Enqueue that entry */
+	temp_y[0] = py;
+	temp_x[0] = px;
+	
+	
 	/* Now process the queue */
 	while (flow_head != flow_tail)
 	{
 		/* Extract the next entry */
-		y = temp_y[flow_tail];
-		x = temp_x[flow_tail];
+		ty = temp_y[flow_head];
+		tx = temp_x[flow_head];
 
 		/* Forget that entry */
-		if (++flow_tail == TEMP_MAX) flow_tail = 0;
+		if (++flow_head == TEMP_MAX) flow_head = 0;
+
+		/* Child cost */
+		n = area(ty, tx)->cost + 1;
+
+		/* Hack -- Limit flow depth */
+		if (n == MONSTER_FLOW_DEPTH) continue;
 
 		/* Add the "children" */
 		for (d = 0; d < 8; d++)
 		{
-			/* Add that child if "legal" */
-			if (!in_bounds2(y + ddy_ddd[d], x + ddx_ddd[d])) continue;
+			int old_head = flow_tail;
 
-			update_flow_aux(y + ddy_ddd[d], x + ddx_ddd[d], area(y, x)->cost + 1);
+			/* Child location */
+			y = ty + ddy_ddd[d];
+			x = tx + ddx_ddd[d];
+
+			c_ptr = area(y, x);
+			
+			feat = c_ptr->feat;
+			
+			/* Ignore "pre-stamped" entries */
+			if (c_ptr->when == flow_n) continue;
+
+			/* Ignore all "walls" except doors */
+			if (!(((feat >= FEAT_DOOR_HEAD) && (feat <= FEAT_DOOR_TAIL))
+		 		|| (feat & 0x20))) continue;
+
+			/* Save the time-stamp */
+			c_ptr->when = flow_n;
+
+			/* Save the flow cost */
+			c_ptr->cost = n;
+
+
+			/* Enqueue that entry */
+			temp_y[flow_tail] = y;
+			temp_x[flow_tail] = x;
+
+			/* Advance the queue */
+			if (++flow_tail == TEMP_MAX) flow_tail = 0;
+
+			/* Hack -- Overflow by forgetting new entry */
+			if (flow_tail == flow_head) flow_tail = old_head;
 		}
 	}
-
-	/* Forget the flow info */
-	flow_head = flow_tail = 0;
 
 #endif /* MONSTER_FLOW */
 
