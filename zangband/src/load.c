@@ -2288,7 +2288,17 @@ static errr rd_dungeon(void)
 	/* Hack - restore player position */
 	p_ptr->px = px;
 	p_ptr->py = py;
-
+	
+	/* Hack -  wipe the stuff on this level... */
+	wipe_monsters(cur_region);
+		
+	/*
+	 * Objects are deleted after the monsters,
+	 * because monsters carry them.
+	 */
+	wipe_objects(cur_region);
+	wipe_fields(cur_region);
+	
 	/*** Objects ***/
 
 	/* Read the item count */
@@ -2370,7 +2380,6 @@ static errr rd_dungeon(void)
 		}
 	}
 
-
 	/*** Monsters ***/
 
 	/* Read the monster count */
@@ -2427,7 +2436,7 @@ static errr rd_dungeon(void)
 		/* Count XXX XXX XXX */
 		r_ptr->cur_num++;
 	}
-
+	
 	if (sf_version > 11)
 	{
 
