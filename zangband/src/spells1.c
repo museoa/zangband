@@ -593,11 +593,8 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			if (is_trap(c_ptr))
 			{
 				/* Check line of sight */
-				
-				/* The !obvious check is to avoid two messages */
-				if (known && !obvious)
+				if (known)
 				{
-					msg_print("There is a bright flash of light!");
 					obvious = TRUE;
 				}
 

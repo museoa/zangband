@@ -1969,6 +1969,8 @@ void field_action_trap_disarm(s16b *field_ptr, void *input)
 		
 		/* Delete the field */
 		delete_field_ptr(field_ptr);
+		
+		msg_print("There is a bright flash of light!");
 	}
 }
 
