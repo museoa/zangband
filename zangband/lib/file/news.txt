@@ -1,7 +1,7 @@
 
 
                           ***************************
-                          **  Zangband 2.3.3 BETA  **
+                          **  Zangband 2.3.4 BETA  **
                           ***************************
 
           Based on Moria:    Copyright (c) 1985 Robert Alan Koeneke
