@@ -436,10 +436,15 @@ errr my_fgets(FILE *fff, char *buf, huge n)
 				/* Append some more spaces */
 				while (!(i % 8)) buf[i++] = ' ';
 			}
-
-			/* Handle printables */
-			else if (isprint(*s))
+			else
 			{
+				/*
+				 * Hack - removed the isprint() test so
+				 * that extended ascii displays properly.
+				 *
+				 * If needed, that should be at a higher level.
+				 */
+			
 				/* Copy */
 				buf[i++] = *s;
 

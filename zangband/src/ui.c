@@ -1189,7 +1189,6 @@ void roff(cptr str, ...)
  * However, print them to a file like fprintf().
  *
  * froff() is smarter than fprintf() though.
- * It will prune out the '$' colour escape codes.
  * It will also understand the '%v' format control sequence.
  */
 void froff(FILE *fff, cptr str, ...)
@@ -1197,7 +1196,6 @@ void froff(FILE *fff, cptr str, ...)
 	va_list vp;
 
 	char buf[1024];
-	char *p1 = buf, *p2 = buf;
 
 	/* Begin the Varargs Stuff */
 	va_start(vp, str);
@@ -1207,41 +1205,7 @@ void froff(FILE *fff, cptr str, ...)
 
 	/* End the Varargs Stuff */
 	va_end(vp);
-	
-	/* Scan list, deleting '$' colour escape sequences */
-	while(*p1)
-	{
-		if (*p1 == '$')
-		{
-			/* Scan the next character */
-			p1++;
-			
-			/* Is it a colour specifier? */
-			if ((*p1 >= 'A') && (*p1 <= 'R'))
-			{
-				/* Skip it - and overwrite it later */
-				p1++;
-				
-				continue;
-			}
-			
-			/* Stop if now reach null */
-			else if (*p1 == 0) break;
-			
-			/*
-			 * Hack XXX XXX - otherwise, ignore the dollar sign
-			 *
-			 * This makes "$$" turn into just "$".
-			 */
-		}
 		
-		/* Copy a character */
-		*p2++ = *p1++;
-	}
-	
-	/* Terminate the array */
-	*p2 = 0;
-	
 	/* Output it to the file */
 	fprintf(fff, "%s", buf);
 }

@@ -3548,6 +3548,39 @@ bool do_cmd_knowledge_pets(int dummy)
 
 
 /*
+ * Print a monster string, taking into account the strange
+ * formatting of the '$' and '#' characters, as well as
+ * doing colour correctly.
+ */
+static void print_monster_string(FILE *fff, byte a, char c, cptr name, int num)
+{
+	if (c == '$')
+	{
+		/* Hack - no unique coins */
+		froff(fff, "%s$$" CLR_WHITE "     %d pile of %s\n", color_seq[a], num, name);
+	}
+#if 0
+	else if (c == '#')
+	{
+	
+	
+	}
+#endif
+	else
+	{
+		if (num)
+		{
+			froff(fff, "%s%c" CLR_WHITE "     %d %s\n", color_seq[a], c, num, name);
+		}
+		else
+		{
+			froff(fff, "%s%c" CLR_WHITE "     %s\n", color_seq[a], c, name);
+		}
+	}
+}
+
+
+/*
  * Total kill count
  */
 static bool do_cmd_knowledge_kill_count(int dummy)
@@ -3556,7 +3589,7 @@ static bool do_cmd_knowledge_kill_count(int dummy)
 
 	char file_name[1024];
 
-	u32b Total = 0;
+	u32b total = 0;
 	u32b temp;
 
 	int i, n;
@@ -3627,32 +3660,32 @@ static bool do_cmd_knowledge_kill_count(int dummy)
 
 			if (dead)
 			{
-				Total++;
+				total++;
 			}
 		}
 		else
 		{
-			s16b This = r_ptr->r_pkills;
+			s16b this = r_ptr->r_pkills;
 
-			if (This > 0)
+			if (this > 0)
 			{
-				Total += This;
+				total += this;
 			}
 		}
 	}
 
-	if (Total < 1)
+	if (total < 1)
 		froff(fff, "You have defeated no enemies yet.\n\n");
-	else if (Total == 1)
+	else if (total == 1)
 		froff(fff, "You have defeated one enemy.\n\n");
 	else
-		froff(fff, "You have defeated %lu enemies.\n\n", Total);
+		froff(fff, "You have defeated %lu enemies.\n\n", total);
 
 	/* Save total kills for later */
-	temp = Total;
+	temp = total;
 
 	/* Zero out total so we can calculate kills of known monsters */
-	Total = 0;
+	total = 0;
 
 	/* Scan the monster races */
 	for (i = 0; i < n; i++)
@@ -3665,51 +3698,39 @@ static bool do_cmd_knowledge_kill_count(int dummy)
 
 			if (dead)
 			{
-				/* Print a message */
-				froff(fff, "%c     %s\n", r_ptr->x_char,
-						(r_name + r_ptr->name));
-				Total++;
+				print_monster_string(fff, r_ptr->x_attr, r_ptr->x_char, (r_name + r_ptr->name), 0);
+				total++;
 			}
 		}
 		else
 		{
-			s16b This = r_ptr->r_pkills;
+			s16b this = r_ptr->r_pkills;
 
-			if (This > 0)
+			if (this > 0)
 			{
-				if (This < 2)
+				if (this < 2)
 				{
-					if (strstr(r_name + r_ptr->name, "coins"))
-					{
-						froff(fff, "%c     1 pile of %s\n", r_ptr->x_char,
-								(r_name + r_ptr->name));
-					}
-					else
-					{
-						froff(fff, "%c     1 %s\n", r_ptr->x_char,
-								(r_name + r_ptr->name));
-					}
+					print_monster_string(fff, r_ptr->x_attr, r_ptr->x_char, (r_name + r_ptr->name), 1);
 				}
 				else
 				{
 					char ToPlural[80];
 					strcpy(ToPlural, (r_name + r_ptr->name));
 					plural_aux(ToPlural);
-					froff(fff, "%c     %d %s\n", r_ptr->x_char, This,
-							ToPlural);
+					print_monster_string(fff, r_ptr->x_attr, r_ptr->x_char, ToPlural, this);
 				}
 
-				Total += This;
+				total += this;
 			}
 		}
 	}
 
 	froff(fff, "----------------------------------------------\n");
 	froff(fff, "   Total: %lu creature%s killed.\n",
-			Total, (Total == 1 ? "" : "s"));
+			total, (total == 1 ? "" : "s"));
 
 	/* Subtract off monsters you know you have killed */
-	temp -= Total;
+	temp -= total;
 
 	/* Have we killed any monsters we did not see? */
 	if (temp)
