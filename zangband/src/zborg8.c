@@ -1593,6 +1593,7 @@ bool borg_think_store(void)
 	/* Stamp the shop with a time stamp */
 	borg_shops[shop_num].when = borg_t;
 	borg_shops[shop_num].visit = TRUE;
+	borg_towns[borg_shops[shop_num].town_num].visit = TRUE;
 
 	/* Increment 'been' count */
 	borg_shops[shop_num].b_count++;

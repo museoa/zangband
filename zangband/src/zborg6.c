@@ -1413,8 +1413,8 @@ bool borg_find_town(void)
 		}
 	}
 
-	/* All towns were visited since last dungeon crawl, go home, drop stuff */
-	if (b_i == -1) return (borg_find_home());
+	/* All towns were visited since last dungeon crawl */
+	if (b_i == -1) return (FALSE);
 
 	/* More or less in town */
 	if (b_d < 30)
@@ -1463,6 +1463,7 @@ bool borg_find_dungeon(void)
 	if (goal_dungeon != -1)
 	{
 		b_i = goal_dungeon;
+		b_d = distance(c_x, c_y, borg_dungeons[b_i].x, borg_dungeons[b_i].y);
 	}
 	/* Find the closest non-visited dungeon */
 	else
@@ -1863,46 +1864,6 @@ bool borg_flow_shop_entry(int i)
 
 	/* Success */
 	return (TRUE);
-}
-
-
-/* When it is dark and the borg is outside, find an inn */
-bool borg_find_home(void)
-{
-	int i, b_i = -1;
-	int d, b_d = BORG_MAX_DISTANCE;
-
-	/* Is there a wilderness? */
-	if (vanilla_town) return (FALSE);
-
-	/* Is the borg at the surface? */
-	if (bp_ptr->depth) return (FALSE);
-
-	/* Find the closest home */
-	for (i = 0; i < borg_shop_num; i++)
-	{
-		if (borg_shops[i].type != BUILD_STORE_HOME) continue;
-
-		/* How far away is this? */
-		d = distance(c_x, c_y, borg_dungeons[i].x, borg_dungeons[i].y);
-
-		/* Ignore homes far away */
-		if (d > b_d) continue;
-
-		/* Remember this one */
-		b_i = i;
-		b_d = d;
-	}
-
-	/* Go to that inn */
-	if (b_i != -1 && borg_flow_shop_entry(b_i))
-	{
-		borg_note("# Looking for a home to drop all the stuff.");
-
-		return (TRUE);
-	}
-
-	return (FALSE);
 }
 
 
