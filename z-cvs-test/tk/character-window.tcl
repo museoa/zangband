@@ -317,8 +317,6 @@ proc NSCharacterWindow::InitMenus {oop} {
 		-underline 0 -identifier E_ICON]
 	lappend entries [list -type command -label [mc "Change Name"] \
 		-underline 0 -identifier E_NAME]
-	lappend entries [list -type command -label [mc "File Character"] \
-		-underline 0 -identifier E_DUMP]
 	lappend entries [list -type separator]
 	lappend entries [list -type command -label [mc Close] \
 		-underline 0 -accelerator $mod+W -identifier E_CLOSE]
@@ -331,8 +329,6 @@ proc NSCharacterWindow::InitMenus {oop} {
 		"Changes the character's icon."
 	set MenuString(E_NAME) \
 		"Changes the character's name."
-	set MenuString(E_DUMP) \
-		"Dumps a character record to a text file."
 	set MenuString(E_CLOSE) \
 		"Closes the window."
 
@@ -359,7 +355,7 @@ proc NSCharacterWindow::SetupMenus {oop mbarID} {
 	}
 
 	lappend identList E_NAME E_ICON
-	lappend identList E_DUMP E_CLOSE
+	lappend identList E_CLOSE
 
 	NSMenu::MenuEnable $mbarID $identList
 
@@ -434,7 +430,6 @@ proc NSCharacterWindow::MenuInvoke {oop menuId ident} {
 			NSWindowManager::Display assign character
 		}
 		E_NAME {ChangeCharacterName [Info $oop win]}
-		E_DUMP {FileCharacter [Info $oop win]}
 		E_CLOSE {Close $oop}
 	}
 

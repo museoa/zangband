@@ -372,8 +372,6 @@ proc NSHighScore::InitMenus {oop} {
 		-identifier M_SCORE
 
 	set entries {}
-	lappend entries [list -type command -label [mc "Dump Scores"] \
-		-underline 0 -identifier E_DUMP]
 	lappend entries [list -type command -label [mc "Show Record"] \
 		-underline 5 -accelerator r -identifier E_RECORD]
 	lappend entries [list -type separator]
@@ -407,8 +405,6 @@ proc NSHighScore::InitMenus {oop} {
 
 	set MenuString(M_SCORE) \
 		"Contains commands for displaying and searching scores."
-	set MenuString(E_DUMP) \
-		"Writes the scores to a text file."
 	set MenuString(E_RECORD) \
 		"Displays the record for the selected score."
 	set MenuString(E_FIND) \
@@ -448,7 +444,7 @@ proc NSHighScore::SetupMenus {oop mbarId} {
 
 	variable highscore_record
 
-	lappend identList E_DUMP E_FIND E_FIND_AGAIN E_CLOSE
+	lappend identList E_FIND E_FIND_AGAIN E_CLOSE
 
 	set row [Info $oop current]
 	if {$row != -1} {
@@ -518,7 +514,6 @@ proc NSHighScore::MenuInvoke {oop menuId ident} {
 	set win [Info $oop win]
 	
 	switch -glob -- $ident {
-		E_DUMP {Dump $oop $win}
 		E_RECORD {InvokeRow $oop [Info $oop current]}
 		E_FIND {Find $oop 0}
 		E_FIND_AGAIN {Find $oop 1}

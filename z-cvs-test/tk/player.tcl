@@ -201,7 +201,6 @@ proc NSPlayer::InitWindow {oop} {
 	}
 
 	bind $win <KeyPress-c> "NSPlayer::ChangeName $oop"
-	bind $win <KeyPress-f> "FileCharacter $win"
 	bind $win <KeyPress-h> {
 		angband_display playerflags show
 	}

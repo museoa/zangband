@@ -317,8 +317,6 @@ proc NSMessageHistory::InitMenus {oop} {
 		-identifier M_MESSAGE
 
 	set entries {}
-	lappend entries [list -type command -label [mc "Dump Messages"] \
-		-underline 0 -identifier E_DUMP]
 	lappend entries [list -type separator]
 	lappend entries [list -type command -label [mc Find...] \
 		-accelerator f -underline 0 -identifier E_FIND]
@@ -335,8 +333,6 @@ proc NSMessageHistory::InitMenus {oop} {
 
 	set MenuString(M_MESSAGE) \
 		"Contains commands for displaying and searching messages."
-	set MenuString(E_DUMP) \
-		"Writes all the messages to a text file."
 	set MenuString(E_FIND) \
 		"Searches for a message containing a given string."
 	set MenuString(E_FIND_AGAIN) \
@@ -363,7 +359,7 @@ proc NSMessageHistory::SetupMenus {oop mbarId} {
 
 	variable Priv
 
-	lappend identList E_DUMP E_COMBINE E_MAX E_FIND E_FIND_AGAIN E_CLOSE
+	lappend identList E_COMBINE E_MAX E_FIND E_FIND_AGAIN E_CLOSE
 		
 	NSMenu::MenuEnable $mbarId $identList
 
@@ -433,7 +429,6 @@ proc NSMessageHistory::MenuInvoke {oop menuId ident} {
 	set win [Info $oop win]
 
 	switch -glob -- $ident {
-		E_DUMP {MessageDump $win}
 		E_FIND {Find $oop 0}
 		E_FIND_AGAIN {Find $oop 1}
 		E_COMBINE {CombineMessages $oop}

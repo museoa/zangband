@@ -291,8 +291,6 @@ proc NSTomb::TombWindow {} {
 
 	button $win.messages \
 		-text [mc Messages] -width 9 -command "MessageDump $win"
-	button $win.file \
-		-text [mc File] -width 9 -command "FileCharacter $win"
 	button $win.continue \
 		-text [mc Continue] -width 11  -default active \
 		-command "set AngbandPriv(result) 1"
