@@ -2732,7 +2732,22 @@ static void make_wild_04(blk_ptr block_ptr, byte *data)
 	cave_type *c_ptr;
 
 	/* Hack - ignore parameter */
-	(void)data;
+    (void)data;
+
+    /* Hack - generate and throw away a few random numbers */
+    randint0(100);
+    randint0(100);
+    randint0(100);
+
+	/* Get location of building */
+	x = rand_range(4, 11);
+	y = rand_range(3, 12);
+
+    /* Get size of building */
+    x1 = x - randint1(3);
+    x2 = x + randint1(3);
+    y1 = y - randint1(2);
+    y2 = y + randint1(2);
 
 	/* Get type of ground */
 	switch (randint0(8))
@@ -2755,10 +2770,15 @@ static void make_wild_04(blk_ptr block_ptr, byte *data)
         }
 #endif
         case 4:
-        case 5:
 		{
             /* Alternating grass & dirt */
             type = 3;
+			break;
+        }
+        case 5:
+		{
+            /* Dirt */
+            type = 2;
 			break;
         }
         case 6:
@@ -2773,17 +2793,14 @@ static void make_wild_04(blk_ptr block_ptr, byte *data)
             type = 5;
 			break;
 		}
-	}
+    }
 
-	/* Get location of building */
-	x = rand_range(4, 11);
-	y = rand_range(3, 12);
-
-    /* Get size of building */
-    x1 = x - randint1(3);
-    x2 = x + randint1(3);
-    y1 = y - randint1(2);
-    y2 = y + randint1(2);
+    /*
+     * XXX If there is a road or river going through here we should
+     * use type 2 (dirt), but we can't find out if there's a road
+     * now. The current code tends to result in roads running through
+     * buildings and other weirdness.
+     */
 
 	for (i = 0; i < WILD_BLOCK_SIZE; i++)
 	{
@@ -2797,7 +2814,7 @@ static void make_wild_04(blk_ptr block_ptr, byte *data)
 			{
 				c_ptr->feat = FEAT_GRASS;
 			}
-			else if (type > 2)
+			else
 			{
 				c_ptr->feat = FEAT_DIRT;
 			}
