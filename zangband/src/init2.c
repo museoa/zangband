@@ -1923,7 +1923,7 @@ errr init_w_info(void)
 		/* Quit */
 		quit("Error in 'w_info.txt' file.");
 	}
-
+#if 0 /* Hack no longer required as overhead map doesn't work in vanilla town */
 
 	/*
 	 * Make wilderness type 0 have a char/attr
@@ -1931,10 +1931,69 @@ errr init_w_info(void)
 	 */
 	wild_gen_data[0].w_attr = TERM_GREEN;
 	wild_gen_data[0].w_char = '.';
+#endif /* 0 */
 
 	/* Success */
 	return (0);
 }
+
+/*
+ * Initialize the field data structures
+ */
+errr init_t_info(void)
+{
+	errr err;
+
+	FILE *fp;
+
+	/* General buffer */
+	char buf[1024];
+
+
+	/* Later must add in python support later. */
+	C_MAKE(f_action, FIELD_ACTION_MAX, field_action);
+	C_MAKE(f_info, max_fld_idx, field_type);
+	
+
+	/*** Load the ascii template file ***/
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_EDIT, "t_info.txt");
+
+	/* Open the file */
+	fp = my_fopen(buf, "r");
+
+	/* Parse it */
+	if (!fp) quit("Cannot open 't_info.txt' file.");
+
+	/* Parse the file */
+	err = init_t_info_txt(fp, buf);
+
+	/* Close it */
+	my_fclose(fp);
+
+	/* Errors */
+	if (err)
+	{
+		cptr oops;
+
+		/* Error string */
+		oops = (((err > 0) && (err < PARSE_ERROR_MAX)) ? err_str[err] : "unknown");
+
+		/* Oops */
+		msg_format("Error %d at line %d of 't_info.txt'.", err, error_line);
+		msg_format("Record %d contains a '%s' error.", error_idx, oops);
+		msg_format("Parsing '%s'.", buf);
+		msg_print(NULL);
+
+		/* Quit */
+		quit("Error in 't_info.txt' file.");
+	}
+
+	/* Success */
+	return (0);
+}
+
 
 
 
