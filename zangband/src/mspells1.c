@@ -1278,7 +1278,7 @@ bool make_attack_spell(int m_idx)
 		{
 			disturb(1, 0);
 			if (blind) msg_format("%^s mumbles frighteningly.", m_name);
-			else msg_format("%^s invokes a raw Logrus.", m_name);
+			else msg_format("%^s invokes raw Logrus.", m_name);
 			breath(m_idx, GF_CHAOS, (rlev * 2) + damroll(10, 10), 4, FALSE);
 			update_smart_learn(m_idx, DRS_CHAOS);
 			break;
