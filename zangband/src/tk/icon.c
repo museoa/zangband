@@ -2644,14 +2644,9 @@ error:
  */
 static int objcmd_icon(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
-	static cptr cmdOption[] = {"createtype", "count",
-		"gettypes", "validate", "size", "ascii",
-		"makeicon", "depth",
-		"height", "width", "duplicate", NULL};
-	enum {IDX_CREATETYPE, IDX_COUNT,
-		IDX_GETTYPES, IDX_VALIDATE, IDX_SIZE, IDX_ASCII,
-		IDX_MAKEICON, IDX_DEPTH,
-		IDX_HEIGHT, IDX_WIDTH, IDX_DUPLICATE} option;
+	static cptr cmdOption[] = {"count", "size",
+		"depth", "height", "width", NULL};
+	enum {IDX_COUNT, IDX_SIZE, IDX_DEPTH, IDX_HEIGHT, IDX_WIDTH} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 	int index;
 
@@ -2681,199 +2676,6 @@ static int objcmd_icon(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *
 
 	switch (option)
 	{
-		case IDX_CREATETYPE: /* createtype */
-			if (objc < 5)
-			{
-wrongCreateArgs:
-				Tcl_WrongNumArgs(interp, 2, objv,
-				 "typeName -file fileName ?-maskfile fileName?");
-				return TCL_ERROR;
-			}
-
-			/* Get the name of the new icon type */
-			typeName = Tcl_GetStringFromObj(objv[2], NULL);
-
-			/* Lookup the icon type by name */
-			hPtr = Tcl_FindHashEntry(&g_icon_table, typeName);
-
-			/* The icon type already exists */
-			if (hPtr != NULL)
-			{
-				/* Set the error */
-				Tcl_AppendStringsToObj(resultPtr, "icon type \"",
-					typeName, "\" already exists", NULL);
-
-				/* Failure */
-				return TCL_ERROR;
-			}
-
-			/* Point to the first configuration option */
-			objPtr = objv + 3;
-			objc -= 3;
-
-			iconData.icon_count = 0;
-			iconData.icon_data = NULL;
-			iconData.char_table = NULL;
-			
-			iconData.height = g_icon_size;
-			iconData.width = g_icon_size;
-			iconData.depth = g_icon_depth;
-			iconData.bypp = g_pixel_size;
-
-			/* Scan all option/value pairs */
-			while (objc > 1)
-			{
-				static cptr createSwitch[] = {"-charset", "-file", "-font",
-					"-height", "-width", NULL};
-
-			    if (Tcl_GetIndexFromObj(interp, objPtr[0], createSwitch,
-					"switch", 0, &index) != TCL_OK)
-				{
-					return TCL_ERROR;
-			    }
-
-				switch (index)
-				{
-					case 0: /* -charset */
-						charSet = Tcl_GetStringFromObj(objPtr[1], NULL);
-						break;
-						
-					case 1: /* -file */
-						if (iconFile != NULL) goto wrongCreateArgs;
-						iconFile = Tcl_GetStringFromObj(objPtr[1], NULL);
-						break;
-						
-					case 2: /* -font */
-						fontName = Tcl_GetStringFromObj(objPtr[1], NULL);
-						break;
-
-					case 3: /* -height */
-						if (Tcl_GetIntFromObj(interp, objPtr[1], &iconData.height) != TCL_OK)
-						{
-							return TCL_ERROR;
-						}
-						break;
-
-					case 4: /* -width */
-						if (Tcl_GetIntFromObj(interp, objPtr[1], &iconData.width) != TCL_OK)
-						{
-							return TCL_ERROR;
-						}
-						break;
-				}
-
-				/* Next option/value pair */
-				objPtr += 2;
-				objc -= 2;
-			}
-
-			/* Required number of arguments */
-			if ((objc != 0) ||
-				((iconFile == NULL) && (fontName == NULL)) ||
-				(iconData.height <= 0) || (iconData.width <= 0))
-			{
-				goto wrongCreateArgs;
-			}
-
-			/* Calculate some values */
-			iconData.pitch = iconData.width * iconData.bypp;
-			iconData.length = iconData.height * iconData.pitch;
-			iconData.pixels = iconData.width * iconData.height;
-
-			/* An icon file was specified */
-			if (iconFile != NULL)
-			{
-				/* Read the data file */
-				if (ReadIconFile(interp, iconFile, &iconData.icon_data,
-					&iconData.icon_count) != TCL_OK)
-				{
-					/* Failure */
-					return TCL_ERROR;
-				}
-
-				/* 256-color icons */
-				if (iconData.depth == 8)
-				{
-					int j;
-
-					/* Check each icon */
-					for (i = 0; i < iconData.icon_count; i++)
-					{
-						/* Access the icon */
-						IconPtr iconPtr = iconData.icon_data + i * iconData.length;
-
-						/* Convert palette index to colormap index */
-						for (j = 0; j < iconData.length; j++)
-						{
-							/* Convert palette index to colormap index */
-							iconPtr[j] = g_palette2colormap[iconPtr[j]];
-						}
-					}
-				}
-			}
-
-			/*
-			 * A font description was given, meaning we are going to
-			 * create a brand-new set of ascii type icons.
-			 */
-			if (fontName != NULL)
-			{
-				/* Get the requested font */
-				iconData.font = Tk_GetFont(interp, Tk_MainWindow(interp),
-					fontName);
-
-				/* The font could not be created */
-				if (iconData.font == NULL)
-				{
-					return TCL_ERROR;
-				}
-
-				/* A set of characters was specified */
-				if (charSet != NULL)
-				{
-					/* The number of icons is the number of characters */
-					iconData.icon_count = strlen(charSet);
-
-					/*
-					 * The char_table is used to remember
-					 * which characters each icon represents.
-					 */
-					C_MAKE(iconData.char_table, iconData.icon_count, int);
-
-					/* Check each icon */
-					for (i = 0; i < iconData.icon_count; i++)
-					{
-						/* Remember the character the i'th icon represents */
-						iconData.char_table[i] = charSet[i];
-					}
-				}
-
-				/* No character set specified, so use full printable set */
-				else
-				{
-					iconData.icon_count = 126 - 32 + 1; /* printable only */
-				}
-
-				/* Allocate the icon data buffer */
-				C_MAKE(iconData.icon_data, iconData.icon_count * iconData.length, byte);
-
-				/* Set the icon data using the desired font */
-				if (init_ascii_data(interp, &iconData) != TCL_OK)
-				{
-					return TCL_ERROR;
-				}
-			}
-
-			/* No font was specified */
-			else
-			{
-				iconData.font = NULL;
-			}
-
-			iconData.desc = typeName;
-			Icon_AddType(&iconData);	
-			break;
-
 		case IDX_COUNT: /* count */
 			if (objc != 3)
 			{
@@ -2890,53 +2692,10 @@ wrongCreateArgs:
 			/* Return the number of icons */
 			Tcl_SetIntObj(resultPtr, iconDataPtr->icon_count);
 			break;
-
-		case IDX_GETTYPES: /* gettypes */
-			if (objc != 2)
-			{
-				Tcl_WrongNumArgs(interp, 2, objv, NULL);
-				return TCL_ERROR;
-			}
-
-			/* Create a new Tcl list object */
-			listObjPtr = Tcl_NewListObj(0, NULL);
-
-			/* Check each icon type */
-			for (i = 0; i < g_icon_data_count; i++)
-			{
-				/* Append icon type name as a string to the list object */
-				Tcl_ListObjAppendElement(interp, listObjPtr,
-					Tcl_NewStringObj(g_icon_data[i].desc, -1));
-			}
-
-			/* Return the list object */
-			Tcl_SetObjResult(interp, listObjPtr);
-			break;
-
-		case IDX_VALIDATE: /* validate */
-			if (objc < 6)
-			{
-				Tcl_WrongNumArgs(interp, 2, objv,
-				 "-type iconType -index iconIndex ?-ascii asciiIndex?");
-				return TCL_ERROR;
-			}
-			if (Icon_ParseArgs(interp, objc, objv, 2, &iconSpec) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			break;
 			
 		case IDX_SIZE: /* size */
 			Tcl_SetIntObj(resultPtr, g_icon_size);
 			break;
-
-		case IDX_ASCII: /* ascii */
-			return objcmd_ascii(dummy, interp, objc - 1, objv + 1);
-
-		case IDX_MAKEICON: /* makeicon */
-		{		
-			return objcmd_makeicon(dummy, interp, objc - 1, objv + 1);
-		}
 
 		case IDX_DEPTH: /* depth */
 			Tcl_SetIntObj(resultPtr, g_icon_depth);
@@ -2963,65 +2722,6 @@ wrongCreateArgs:
 			}
 
 			Tcl_SetIntObj(resultPtr, iconDataPtr->width);
-			break;
-		}
-
-		case IDX_DUPLICATE: /* duplicate */
-		{
-			int index, count;
-
-			if (objc != 5)
-			{
-				Tcl_WrongNumArgs(interp, 2, objv, "type index count");
-				return TCL_ERROR;
-			}
-		
-			/* Lookup the icon type by name */
-			if (Icon_GetTypeFromObj(interp, &iconDataPtr, objv[2]) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			if (iconDataPtr->rle_data || iconDataPtr->font)
-				return TCL_ERROR;
-
-			/* Get the icon index */
-			if (Icon_GetIndexFromObj(interp, &index, objv[3], iconDataPtr)
-				!= TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-
-			/* Get the number of duplicates */
-			if (Tcl_GetIntFromObj(interp, objv[4], &count) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			if (count < 0)
-				return TCL_ERROR;
-			if (!count)
-				break;
-
-			/* Allocate more space */
-			iconDataPtr->icon_data = (unsigned char *) Tcl_Realloc((char *) iconDataPtr->icon_data,
-				(iconDataPtr->icon_count + count) * iconDataPtr->length);
-
-			/* Move following icons down */
-			memcpy(
-				iconDataPtr->icon_data + (index + 1 + count) * iconDataPtr->length,
-				iconDataPtr->icon_data + (index + 1) * iconDataPtr->length,
-				(iconDataPtr->icon_count - index - 1) * iconDataPtr->length);
-
-			/* Copy icon */
-			for (i = 0; i < count; i++)
-			{
-				memcpy(
-					iconDataPtr->icon_data + (index + 1 + i) * iconDataPtr->length,
-					iconDataPtr->icon_data + index * iconDataPtr->length,
-					iconDataPtr->length);
-			}
-					
-			/* New number of icons */
-			iconDataPtr->icon_count += count;
 			break;
 		}
 	}
