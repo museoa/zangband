@@ -156,7 +156,7 @@ test:
 
 # Hack to remake files depending on DEFAULT_PATH
 .default_path: makefile
-	if [ ! -r .default_path -o x"$(DESTDIR)" != x`cat .default_path` ]; then \
+	@if [ ! -r .default_path -o x"$(DESTDIR)" != x`cat .default_path` ]; then \
 		echo "$(DESTDIR)" > .default_path; \
 	fi
 
