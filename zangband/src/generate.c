@@ -600,9 +600,6 @@ static bool cave_gen(dun_type *d_ptr)
 		}
 	}
 
-	/* Destroy the level if necessary */
-	if (destroyed) destroy_level();
-
 	/* Hack -- Add some rivers */
 	if (one_in_(3) && (randint1(p_ptr->depth) > 5) && terrain_streams)
 	{
