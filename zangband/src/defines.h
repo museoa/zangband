@@ -166,7 +166,7 @@
 /*
  * Total number of owners per store (see "store.c", etc)
  */
-#define MAX_OWNERS      4
+#define MAX_OWNERS      32
 
 /*
  * Maximum number of player "sex" types (see "table.c", etc)
