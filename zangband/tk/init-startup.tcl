@@ -653,9 +653,6 @@ proc HandleArgv {} {
 proc angband_display {args} {
 }
 
-proc angband_generate {args} {
-	return 1
-}
 
 # angband_birth --
 #

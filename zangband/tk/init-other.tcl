@@ -941,8 +941,6 @@ proc InitOther {} {
 
 	global Angband
 	
-	Source object.tcl
-	
 	InitLoadWindow
 	
 	angband_load progress 0.25
@@ -950,13 +948,6 @@ proc InitOther {} {
 	
 	Source keypress.tcl
 	Source angband.tcl
-
-	# Set some options here. This is not a good thing.
-	angband setting set hilite_player no
-	angband setting set view_yellow_lite yes
-	angband setting set view_bright_lite yes
-	angband setting set view_granite_lite yes
-	angband setting set view_special_lite yes
 
 	angband_load progress 0.45
 	angband_load note "Initializing icons..."
@@ -988,8 +979,8 @@ proc InitOther {} {
 	angband_load prompt "Initializing: Recall"
 	NSModule::LoadIfNeeded NSRecall
 	
-#	angband_load prompt "Initializing: Info"
-#	NSObject::New NSInfoWindow
+	angband_load prompt "Initializing: Info"
+	NSObject::New NSInfoWindow
 
 	# Synch windows with options
 	if {[Value message,float]} {
@@ -1051,12 +1042,12 @@ proc InitOther {} {
 	}
 	update idletasks
 
-	if {$::DEBUG} {
-		NSModule::AddModule NSDebug [PathTk debug.tcl]
-		NSModule::AddModule NSDebugAlloc [PathTk debug-alloc.tcl]
-		NSModule::LoadIfNeeded NSDebug
-		NSModule::LoadIfNeeded NSDebugAlloc
-	}
+#	if {$::DEBUG} {
+#		NSModule::AddModule NSDebug [PathTk debug.tcl]
+#		NSModule::AddModule NSDebugAlloc [PathTk debug-alloc.tcl]
+#		NSModule::LoadIfNeeded NSDebug
+#		NSModule::LoadIfNeeded NSDebugAlloc
+#	}
 
 	# The load window is obscured below
 	angband_load progress 1.0
