@@ -862,8 +862,8 @@ void mutate_player(void)
 	int max1, cur1, max2, cur2, ii, jj;
 
 	/* Pick a pair of stats */
-	ii = randint0(6);
-	for (jj = ii; jj == ii; jj = randint0(6)) /* loop */;
+	ii = randint0(A_MAX);
+	for (jj = ii; jj == ii; jj = randint0(A_MAX)) /* loop */;
 
 	max1 = p_ptr->stat_max[ii];
 	cur1 = p_ptr->stat_cur[ii];
