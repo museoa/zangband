@@ -514,36 +514,32 @@ static void prt_sp(void)
  */
 static void prt_depth(void)
 {
-	char depths[T_NAME_LEN];
-
 	if (!p_ptr->depth)
 	{
 		if (p_ptr->place_num)
 		{
 			if (place[p_ptr->place_num].quest_num)
 			{
-				strcpy(depths, "Quest");
+				prtf(COL_DEPTH, Term->hgt - 1, "Quest");
 			}
 			else
 			{
-				strncpy(depths, place[p_ptr->place_num].name, T_NAME_LEN);
-				depths[T_NAME_LEN - 1] = '\0';
+				prtf(COL_DEPTH, Term->hgt - 1, "%17s", place[p_ptr->place_num].name);
 			}
 		}
 		else
-			strcpy(depths, "Wilderness");
+		{
+			prtf(COL_DEPTH, Term->hgt - 1, "Wilderness");
+		}
 	}
 	else if (depth_in_feet)
 	{
-		(void)sprintf(depths, "%d ft", p_ptr->depth * 50);
+		prtf(COL_DEPTH, Term->hgt - 1, "%d ft", p_ptr->depth * 50);
 	}
 	else
 	{
-		(void)sprintf(depths, "Lev %d", p_ptr->depth);
+		prtf(COL_DEPTH, Term->hgt - 1, "Lev %d", p_ptr->depth);
 	}
-
-	/* Right-Adjust the "depth", and clear old values */
-	prtf(COL_DEPTH, Term->hgt - 1, "%17s", depths);
 }
 
 
@@ -726,6 +722,9 @@ static void prt_state(void)
 		{
 			text[1] = text[2] = text[3] = text[4] = text[5] = '&';
 		}
+		
+		/* Display the info (or blanks) */
+		put_fstr(COL_STATE, Term->hgt - 1, text);
 	}
 
 	/* Repeating */
@@ -733,39 +732,36 @@ static void prt_state(void)
 	{
 		if (p_ptr->command_rep > 999)
 		{
-			(void)sprintf(text, "C%3d00", p_ptr->command_rep / 100);
+			put_fstr(COL_STATE, Term->hgt - 1, "C%3d00", p_ptr->command_rep / 100);
 		}
 		else
 		{
-			(void)sprintf(text, "C  %3d", p_ptr->command_rep);
+			put_fstr(COL_STATE, Term->hgt - 1, "C  %3d", p_ptr->command_rep);
 		}
 	}
 
 	/* Searching */
 	else if (p_ptr->searching)
 	{
-		strcpy(text, "Search");
+		put_fstr(COL_STATE, Term->hgt - 1, "Search");
 	}
 
 	/* Nothing interesting */
 	else
 	{
-		strcpy(text, "      ");
+		put_fstr(COL_STATE, Term->hgt - 1, "      ");
 	}
-
-	/* Display the info (or blanks) */
-	put_fstr(COL_STATE, Term->hgt - 1, text);
 }
 
 
 /*
- * Prints the speed or paralysis of a character.		-CJS-
+ * Prints the speed or paralysis of a character.
+ *
+ * Note that the strings must be exactly 10 chars long.
  */
 static void prt_speed(void)
 {
 	int i = p_ptr->pspeed;
-
-	char buf[32] = "";
 
 	/* Hack -- Visually "undo" the Search Mode Slowdown */
 	if (p_ptr->searching) i += 10;
@@ -773,41 +769,53 @@ static void prt_speed(void)
 	/* Paralysis */
 	if (p_ptr->paralyzed)
 	{
-		strcpy(buf, CLR_RED "Paralyzed!");
+		put_fstr(COL_SPEED, Term->hgt - 1, CLR_RED "Paralyzed!");
 	}
 
 	/* Fast */
 	else if (i > 110)
 	{
-		if (i <= 110 + 99)
+		if (i <= 110 + 9)
+		{
+			/* One digit */
+			put_fstr(COL_SPEED, Term->hgt - 1, CLR_L_GREEN "Fast (+%d) ", (i - 110));
+		}
+		else if (i <= 110 + 99)
 		{
 			/* Two digits */
-			sprintf(buf, CLR_L_GREEN "Fast (+%d)", (i - 110));
+			put_fstr(COL_SPEED, Term->hgt - 1, CLR_L_GREEN "Fast (+%d)", (i - 110));
 		}
 		else
 		{
 			/* Hack - save space */
-			sprintf(buf, CLR_L_GREEN "Fast (***)");
+			put_fstr(COL_SPEED, Term->hgt - 1, CLR_L_GREEN "Fast (***)");
 		}
 	}
 
 	/* Slow */
 	else if (i < 110)
 	{
-		if (i >= 110 - 99)
+		if (i >= 110 - 9)
+		{
+			/* One digit */
+			put_fstr(COL_SPEED, Term->hgt - 1, CLR_L_UMBER "Slow (-%d) ", (110 - i));
+		}
+		else if (i >= 110 - 99)
 		{
 			/* Two digits */
-			sprintf(buf, CLR_L_UMBER "Slow (-%d)", (110 - i));
+			put_fstr(COL_SPEED, Term->hgt - 1, CLR_L_UMBER "Slow (-%d)", (110 - i));
 		}
 		else
 		{
 			/* Hack - save space */
-			sprintf(buf, CLR_L_UMBER "Slow (***)");
+			put_fstr(COL_SPEED, Term->hgt - 1, CLR_L_UMBER "Slow (***)");
 		}
 	}
-
-	/* Display the speed */
-	put_fstr(COL_SPEED, Term->hgt - 1, "%-10s", buf);
+	else
+	{
+		/* Nothing to print */
+		put_fstr(COL_SPEED, Term->hgt - 1, CLR_L_UMBER "          ");
+	}
 }
 
 
