@@ -4040,6 +4040,8 @@ static void dungeon(void)
 		/* Hack -- Notice death or departure */
 		if (!alive || death) break;
 
+		/* Handle "leaving" */
+		if (p_ptr->leaving) break;
 
 		/* Process the world */
 		process_world();

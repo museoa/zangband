@@ -3577,7 +3577,7 @@ static void build_bubble_vault(int x0, int y0, int xsize, int ysize)
 			for (j = 0; j < i; j++)
 			{
 				/* rough test to see if there is an overlap */
-				if ((x == center[j].x) || (y == center[j].y)) done = FALSE;
+				if ((x == center[j].x) && (y == center[j].y)) done = FALSE;
 			}
 		}
 

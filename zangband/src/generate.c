@@ -122,7 +122,7 @@ dun_data *dun;
 /*
  * Places some staircases near walls
  */
-static void alloc_stairs(int feat, int num, int walls)
+static bool alloc_stairs(int feat, int num, int walls)
 {
 	int         y, x, i, j, flag;
 	cave_type   *c_ptr;
@@ -130,15 +130,15 @@ static void alloc_stairs(int feat, int num, int walls)
 	if (feat == FEAT_LESS)
 	{
 		/* No up stairs in town or in ironman mode */
-		if (ironman_downward || !dun_level) return;
+		if (ironman_downward || !dun_level) return TRUE;
 	}
 	else if (feat == FEAT_MORE)
 	{
 		/* No downstairs on quest levels */
-		if ((dun_level > 1) && quest_number(dun_level)) return;
+		if ((dun_level > 1) && quest_number(dun_level)) return TRUE;
 
 		/* No downstairs at the bottom */
-		if (dun_level >= MAX_DEPTH - 1) return;
+		if (dun_level >= MAX_DEPTH - 1) return TRUE;
 	}
 
 	/* Place "num" stairs */
@@ -148,7 +148,7 @@ static void alloc_stairs(int feat, int num, int walls)
 		for (flag = FALSE; !flag; )
 		{
 			/* Try several times, then decrease "walls" */
-			for (j = 0; !flag && j <= 3000; j++)
+			for (j = 0; !flag && j <= 10000; j++)
 			{
 				/* Pick a random grid */
 				y = rand_int(cur_hgt);
@@ -173,10 +173,23 @@ static void alloc_stairs(int feat, int num, int walls)
 				flag = TRUE;
 			}
 
+			/* If cannot find a blank spot - exit */
+			if (!walls)
+			{
+				/* Placed at least one. */
+				if(i > 0) return TRUE;
+				
+				/* Couldn't place any stairs */
+				return FALSE;
+			}
+			
 			/* Require fewer walls */
-			if (walls) walls--;
+			walls--;
 		}
 	}
+	
+	/* Done */
+	return TRUE;
 }
 
 
@@ -517,10 +530,11 @@ static bool cave_gen(void)
 		if (ironman_rooms || (rand_int(DUN_UNUSUAL) < dun_level))
 		{
 			/* Roll for room type */
-			k = (ironman_rooms ? 0 : rand_int(100));
+			k = rand_int(100);
 
 			/* Attempt a very unusual room */
-			if (ironman_rooms || (rand_int(DUN_UNUSUAL) < dun_level))
+			if((ironman_rooms && (rand_int(DUN_UNUSUAL) < dun_level * 2))
+				 || (rand_int(DUN_UNUSUAL) < dun_level))
 			{
 #ifdef FORCE_V_IDX
 				if (room_build(y, x, 8)) continue;
@@ -791,10 +805,10 @@ static bool cave_gen(void)
 	}
 
 	/* Place 3 or 4 down stairs near some walls */
-	alloc_stairs(FEAT_MORE, rand_range(3, 4), 3);
+	if (!alloc_stairs(FEAT_MORE, rand_range(3, 4), 3)) return FALSE;
 
 	/* Place 1 or 2 up stairs near some walls */
-	alloc_stairs(FEAT_LESS, rand_range(1, 2), 3);
+	if (!alloc_stairs(FEAT_LESS, rand_range(1, 2), 3)) return FALSE;
 
 	/* Handle the quest monster placements */
 	for (i = 0; i < max_quests; i++)
