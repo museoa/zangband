@@ -155,8 +155,6 @@ extern bool g_daytime; /* Day or night */
 extern void get_grid_info(int y, int x, t_grid *gridPtr);
 
 extern void angtk_image_reset(void);
-extern void angtk_cave_changed(void);
-extern void angtk_feat_changed(int y, int x);
 extern void angtk_view_floor(int y, int x, int info, int torch);
 extern void angtk_view_wall(int y, int x, int info, int torch);
 extern void set_grid_assign(int y, int x);

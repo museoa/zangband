@@ -602,36 +602,6 @@ void get_display_info(int y, int x, t_display *displayPtr)
 
 
 /*
- * Called when knowledge about many grids changes.
- */
-void angtk_cave_changed(void)
-{
-	int y, x;
-
-	/* Do not use g_cave_hgt/_wid */
-
-	for (y = 0; y < MAX_HGT; y++)
-	{
-		for (x = 0; x < MAX_WID; x++)
-		{
-			get_grid_info(y, x, &g_grid[y][x]);
-			set_grid_assign(y, x);
-			map_symbol_set(y, x);
-		}
-	}
-}
-
-/*
- * Updates knowledge about a grid, including shape.
- * Called when a dungeon feature changes.
- */
-void angtk_feat_changed(int y, int x)
-{
-	set_grid_assign(y, x);
-}
-
-
-/*
  * This routine determines the icon to use for the given cave
  * location. It is called after the dungeon is created or loaded
  * from the savefile, and whenever a feature changes. It handles

@@ -220,7 +220,6 @@ extern int *g_image_object;
 extern int *g_background;
 
 /* One icon for each feature, for each shape */
-extern t_assign *g_assignshape[GRID_SHAPE_MAX];
 extern cptr keyword_wall[];
 
 /* Layers of feature icons */
