@@ -648,9 +648,9 @@ errr get_obj_num_prep(void)
  * Note that if no objects are "appropriate", then this function will
  * fail, and return zero, but this should *almost* never happen.
  */
-s16b get_obj_num(int level)
+s16b get_obj_num(int level, int min_level)
 {
-	int             i;
+	int             i, l;
 	long            value1, value2, total;
 	alloc_entry     *table = alloc_kind_table;
 
@@ -672,8 +672,13 @@ s16b get_obj_num(int level)
 	/* Process probabilities */
 	for (i = 0; i < alloc_kind_size; i++)
 	{
+		l = table[i].level;
+		
 		/* Objects are sorted by depth */
-		if (table[i].level > level) break;
+		if (l > level) break;
+
+		/* What John West rejects, makes John West the best. */
+		if (l < min_level) continue;
 
 		/* Total */
 		total += table[i].prob2;
@@ -702,6 +707,9 @@ s16b get_obj_num(int level)
 	/* Find the object */
 	for (i = 0; i < alloc_kind_size; i++)
 	{
+		/* What John West rejects, makes John West the best. */
+		if (table[i].level < min_level) continue;
+		
 		/* Found the entry */
 		if (value1 < table[i].prob2) break;
 
@@ -4143,7 +4151,7 @@ bool kind_is_theme(int k_idx)
  */
 bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme)
 {
-	int prob, base;
+	int prob, base, min_level;
 	byte obj_level;
 	byte flags;
 	int k_idx;
@@ -4169,14 +4177,13 @@ bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme)
 	if (delta_level > 20)
 	{
 		flags = OC_FORCE_GOOD;
-	}
-	else if (delta_level < -10)
-	{
-		flags = OC_FORCE_BAD;
+		
+		min_level = base / 4;
 	}
 	else
 	{
 		flags = OC_NORMAL;
+		min_level = 0;
 	}
 
 	/* Make an artifact */
@@ -4195,7 +4202,7 @@ bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme)
 		get_obj_num_prep();
 	
 		/* Pick a random object */
-		k_idx = get_obj_num(base);
+		k_idx = get_obj_num(base, min_level);
 	
 		/* Clear restriction */
 		get_obj_num_hook = NULL;
@@ -4206,7 +4213,7 @@ bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme)
 	else
 	{
 		/* Pick a random object using the current restriction */
-		k_idx = get_obj_num(base);
+		k_idx = get_obj_num(base, 0);
 	}
 
 	/* Handle failure */
@@ -4829,6 +4836,14 @@ void acquirement(int y1, int x1, int num, bool great, bool known)
 	object_type *i_ptr;
 	object_type object_type_body;
 
+	obj_theme theme;
+	
+	/* Set theme - more weapons than normal */
+	theme.treasure = 25;
+	theme.combat = 50;
+	theme.magic = 25;
+	theme.tools = 0;
+
 	/* Acquirement */
 	while (num--)
 	{
@@ -4841,12 +4856,12 @@ void acquirement(int y1, int x1, int num, bool great, bool known)
 		if (great)
 		{
 			/* Make a great object (if possible) */
-			if (!make_object(i_ptr, 40, dun_theme)) continue;
+			if (!make_object(i_ptr, 40, theme)) continue;
 		}
 		else
 		{
 			/* Make a good object (if possible) */
-			if (!make_object(i_ptr, 20, dun_theme)) continue;
+			if (!make_object(i_ptr, 20, theme)) continue;
 		}
 
 		if (known)

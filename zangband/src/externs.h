@@ -771,7 +771,7 @@ extern void compact_objects(int size);
 extern void wipe_o_list(void);
 extern s16b o_pop(void);
 extern errr get_obj_num_prep(void);
-extern s16b get_obj_num(int level);
+extern s16b get_obj_num(int level, int min_level);
 extern void object_known(object_type *o_ptr);
 extern void object_aware(object_type *o_ptr);
 extern void object_tried(object_type *o_ptr);
