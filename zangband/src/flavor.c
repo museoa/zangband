@@ -1701,27 +1701,6 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 			if (ABS(o_ptr->pval) != 1) t = object_desc_chr(t, 's');
 		}
 
-		/* Stealth */
-		else if (f1 & (TR1_STEALTH))
-		{
-			/* Dump " to stealth" */
-			t = object_desc_str(t, " to stealth");
-		}
-
-		/* Search */
-		else if (f1 & (TR1_SEARCH))
-		{
-			/* Dump " to searching" */
-			t = object_desc_str(t, " to sensing");
-		}
-
-		/* Infravision */
-		else if (f1 & (TR1_INFRA))
-		{
-			/* Dump " to infravision" */
-			t = object_desc_str(t, " to infravision");
-		}
-
 		/* Finish the display */
 		t = object_desc_chr(t, p2);
 	}
