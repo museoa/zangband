@@ -874,7 +874,7 @@ static s32b object_value_base(object_type *o_ptr)
 		/* Figurines, relative to monster level */
 		case TV_FIGURINE:
 			return (r_info[o_ptr->pval].level 
-				* r_info[o_ptr->pval].level * 10L);
+				* r_info[o_ptr->pval].level * 5L);
 	}
 
 	/* Paranoia -- Oops */
