@@ -535,12 +535,12 @@ D:them here!
 
 N:39:Topi Ylinen, the Cute, Furry Bunny
 G:r:U
-I:100:1d10:10:1:99
-W:1:100:0:25
-B:GAZE
-F:UNIQUE | CAN_SPEAK | WILD_ONLY | WILD_WOOD | FRIENDLY
+I:100:1d129:10:3:43
+W:1:100:0:66
+B:GAZE:TERRIFY
+F:FORCE_MAXHP | UNIQUE | CAN_SPEAK | WILD_ONLY | WILD_WOOD | FRIENDLY
 D:Aw, it's a cute widdle bunny wabbit.  You get a vague feeling of
-D:uneasiness from it. 
+D: uneasiness from it. 
 
 N:40:Shrieker mushroom patch
 G:,:R
