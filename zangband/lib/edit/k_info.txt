@@ -3193,7 +3193,7 @@ I:55:1:17
 W:30:0:50:0
 A:50/4
 P:0:1d2:0:0:0
-L:USE:	ident = inc_slow(rand_range(15, 45)
+L:USE:	ident = inc_slow(rand_range(15, 45))
 D:This staff temporarily decreases your speed.
 
 N:316:Door/Stair Location
@@ -4913,7 +4913,7 @@ D:A gray spellbook with a mixture of common medium-level spells.
 N:519:[Manual of Mastery]
 G:?:s
 I:96:3:0
-W:20:0:30:2500
+W:30:0:30:2500
 A:35/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
@@ -5463,7 +5463,7 @@ G:=:d
 I:45:53:0
 W:15:0:2:500
 A:15/5:30/5
-F:STRANGE_LUCK
+F:STRANGE_LUCK | EASY_KNOW
 D:Odd things happen to the wearer of this ring.
 
 N:586:Wizardry
