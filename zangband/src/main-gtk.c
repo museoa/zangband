@@ -2688,6 +2688,20 @@ errr init_gtk(unsigned char *new_game, int argc, char **argv)
 
 		plog_fmt("Ignoring option: %s", argv[i]);
 	}
+	
+	/*
+	 * Initialize the terms
+	 */
+	for (i = 0; i < MAX_TERM_DATA; i++)
+	{
+		term_data *td = &data[i];
+		
+		/* Initialize the term_data */
+		term_data_init(td, i);
+
+		/* Save global entry */
+		angband_term[i] = Term;
+	}
 
 #ifdef USE_GRAPHICS
 
@@ -2703,13 +2717,7 @@ errr init_gtk(unsigned char *new_game, int argc, char **argv)
 	for (i = MAX_TERM_DATA - 1; i >= 0; i--)
 	{
 		term_data *td = &data[i];
-		
-		/* Initialize the term_data */
-		term_data_init(td, i);
 
-		/* Save global entry */
-		angband_term[i] = Term;
-		
 		/* Hack - Set the shown flag */
 		if (i < num_term)
 		{
