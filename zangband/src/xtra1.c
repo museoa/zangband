@@ -2589,9 +2589,9 @@ static void calc_bonuses(void)
 		p_ptr->dis_ac += o_ptr->ac;
 
 		/* Apply bonuses to stats */
-		for (i = 0; i < 6; i++)
+		for (j = 0; j < 6; j++)
 		{
-			p_ptr->stat[i].add += b.stat[6];
+			p_ptr->stat[j].add += b.stat[6];
 		}
 		
 		p_ptr->sp_bonus += b.sp_bonus;
@@ -2601,9 +2601,9 @@ static void calc_bonuses(void)
 		extra_shots += b.extra_shots;
 
 		/* Apply bonuses to skills */
-		for (i = 0; i < MAX_SKILL; i++)
+		for (j = 0; j < MAX_SKILL; j++)
 		{
-			p_ptr->skills[i] += b.skills[i];
+			p_ptr->skills[j] += b.skills[j];
 		}
 
 		/* Apply the bonuses to armor class */
