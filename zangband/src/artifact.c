@@ -2514,6 +2514,18 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 	{
 		char dummy_name[80];
 		dummy_name[0] = 0;
+
+		/* Identify it fully */
+		object_aware(o_ptr);
+		object_known(o_ptr);
+		object_mental(o_ptr);
+
+		/* Save all the known flags */
+		o_ptr->kn_flags[0] = o_ptr->flags[0];
+		o_ptr->kn_flags[1] = o_ptr->flags[1];
+		o_ptr->kn_flags[2] = o_ptr->flags[2];
+		o_ptr->kn_flags[3] = o_ptr->flags[3];
+
 		(void)identify_fully_aux(o_ptr);
 		o_ptr->info |= OB_STOREB;
 
@@ -2526,16 +2538,6 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 		{
 			strnfmt(new_name, 1024, "'%s'", dummy_name);
 		}
-		/* Identify it fully */
-		object_aware(o_ptr);
-		object_known(o_ptr);
-		object_mental(o_ptr);
-
-		/* Save all the known flags */
-		o_ptr->kn_flags[0] = o_ptr->flags[0];
-		o_ptr->kn_flags[1] = o_ptr->flags[1];
-		o_ptr->kn_flags[2] = o_ptr->flags[2];
-		o_ptr->kn_flags[3] = o_ptr->flags[3];
 	}
 	else
 	{
