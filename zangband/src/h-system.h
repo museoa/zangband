@@ -202,9 +202,9 @@ typedef struct module_type module_type;
 
 struct module_type
 {
-        cptr name;
-        cptr *help;
-        errr (*init)(int argc, char **argv, unsigned char *new_game);
+	cptr name;
+	cptr *help;
+	errr (*init) (int argc, char **argv, unsigned char *new_game);
 };
 
 

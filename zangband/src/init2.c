@@ -1394,7 +1394,7 @@ void init_angband(void)
 
 
 	/*** Initialize some arrays ***/
-	
+
 	/* Init the interface callbacks */
 	init_term_callbacks();
 
@@ -1596,7 +1596,7 @@ void cleanup_angband(void)
 
 	/* Free the format() buffer */
 	vformat_kill();
-	
+
 	/* Free the interface callbacks */
 	free_term_callbacks();
 

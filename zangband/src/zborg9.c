@@ -398,8 +398,7 @@ static bool borg_think(void)
 		for (ii = 1; ii < MAX_REALM; ii++)
 		{
 			/* skip non my realms */
-			if ((ii != bp_ptr->realm1) &&
-				(ii != bp_ptr->realm2)) continue;
+			if ((ii != bp_ptr->realm1) && (ii != bp_ptr->realm2)) continue;
 
 			for (i = 0; i < inven_num; i++)
 			{
@@ -899,7 +898,7 @@ static void borg_parse_aux(cptr msg, int len)
 		/* If we were casting a targetted spell and failed */
 		/* it does not mean we can't target that location */
 		successful_target = 0;
-		
+
 		return;
 	}
 
@@ -2530,14 +2529,14 @@ void borg_init_9(void)
 	old_info_hook = set_callback((callback_type) borg_map_info, CALL_MAP_INFO);
 	old_erase_hook = set_callback((callback_type) borg_map_erase,
 								  CALL_MAP_ERASE);
-	
+
 	/* Save old player movement hook */
 	old_move_hook = set_callback((callback_type) borg_player_move,
-								  CALL_PLAYER_MOVE);
+								 CALL_PLAYER_MOVE);
 
 	/* Save the borg hooks for object lists */
 	old_list_hook = set_callback((callback_type) borg_list_info,
-								  CALL_OBJECT_LIST);
+								 CALL_OBJECT_LIST);
 
 	/*** Redraw ***/
 
@@ -3135,8 +3134,7 @@ void borg_status(void)
 			attr = TERM_SLATE;
 			Term_putstr(42, 8, -1, attr, "Maximal Depth:");
 			attr = TERM_WHITE;
-			Term_putstr(56, 8, -1, attr,
-						format("%d    ", bp_ptr->max_depth));
+			Term_putstr(56, 8, -1, attr, format("%d    ", bp_ptr->max_depth));
 
 			/* Fresh */
 			Term_fresh();
@@ -3248,7 +3246,7 @@ void do_cmd_borg(void)
 		Term_putstr(42, i, -1, TERM_WHITE, "Command 'y' Last 75 steps.");
 		Term_putstr(2, i++, -1, TERM_WHITE, "Command '^' Flow Pathway.");
 		Term_putstr(42, i, -1, TERM_WHITE, "Command 'o' Examine Inven Item.");
-		
+
 
 
 		/* Prompt for key */
@@ -4147,8 +4145,7 @@ void do_cmd_borg(void)
 				int i = 0, j;
 
 				/* skip wrong realms */
-				if ((k != bp_ptr->realm1) &&
-					(k != bp_ptr->realm2)) continue;
+				if ((k != bp_ptr->realm1) && (k != bp_ptr->realm2)) continue;
 
 				ii++;
 
@@ -4164,8 +4161,7 @@ void do_cmd_borg(void)
 									   &borg_magics[k][0][0].realm_name));
 					for (j = 0; j < 8; j++)
 					{
-						borg_magic *as =
-							&borg_magics[bp_ptr->realm1][i][j];
+						borg_magic *as = &borg_magics[bp_ptr->realm1][i][j];
 						cptr legal = NULL;
 
 						if (as->level < 99)

@@ -2680,7 +2680,7 @@ void show_equip(void)
 		/* Show_equip_graph perm. on. */
 		a = object_attr(o_ptr);
 		c = object_char(o_ptr);
-		
+
 		/* Hack - if no object, don't display the 'nothing' symbol */
 		if (!o_ptr->number) c = ' ';
 
@@ -3185,7 +3185,7 @@ static object_type *recall_object_choice(int *command_wrk)
 		/* Not a valid repeat - return invalid object */
 		return (NULL);
 	}
-	
+
 	/* Paranoia */
 	if (type == -1)
 	{
@@ -3193,7 +3193,7 @@ static object_type *recall_object_choice(int *command_wrk)
 		repeat_clear();
 		return (NULL);
 	}
-	
+
 	/* Set type of prompt */
 	*command_wrk = type;
 
@@ -3203,7 +3203,7 @@ static object_type *recall_object_choice(int *command_wrk)
 		/* Not a valid repeat - return invalid object */
 		return (NULL);
 	}
-	
+
 	/* Paranoia */
 	if (index == -1)
 	{

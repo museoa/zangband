@@ -2366,7 +2366,7 @@ static void take_move(int m_idx, int *mm)
 
 		/* Not over the pattern */
 		if (cave_pattern_grid(c_ptr) && !do_turn &&
-			 !(r_ptr->flags7 & RF7_CAN_FLY))
+			!(r_ptr->flags7 & RF7_CAN_FLY))
 		{
 			do_move = FALSE;
 		}

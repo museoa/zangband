@@ -2607,8 +2607,8 @@ static int display_map_info(int x, int y, char *c, byte *a, char *tc, byte *ta)
 
 		variable_player_graph(a, c);
 #endif /* VARIABLE_PLAYER_GRAPH */
-			/* Highest priority */
-			tp = 50;
+		/* Highest priority */
+		tp = 50;
 	}
 
 	/* Return priority */

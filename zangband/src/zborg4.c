@@ -139,7 +139,7 @@ void borg_list_info(byte list_type)
 	if (!borg_active)
 	{
 		/* Chain into the old hook, if it exists */
-		if (old_list_hook) ((list_notice_hook_type) old_list_hook) (list_type);
+		if (old_list_hook) ((list_notice_hook_type)old_list_hook) (list_type);
 
 		/* Done */
 		return;
@@ -247,7 +247,7 @@ void borg_list_info(byte list_type)
 	}
 
 	/* Finally - chain into the old hook, if it exists */
-	if (old_list_hook) ((list_notice_hook_type) old_list_hook) (list_type);
+	if (old_list_hook) ((list_notice_hook_type)old_list_hook) (list_type);
 }
 
 
@@ -344,7 +344,7 @@ static void borg_notice_player(void)
 
 	/* Extract the player flags */
 	player_flags(&f1, &f2, &f3);
-	
+
 	bp_ptr->flags1 |= f1;
 	bp_ptr->flags2 |= f2;
 	bp_ptr->flags3 |= f3;
@@ -460,7 +460,7 @@ static void borg_notice_equip(int *extra_blows, int *extra_shots,
 		if (l_ptr->kn_flags1 & TR1_DEX) my_stat_add[A_DEX] += l_ptr->pval;
 		if (l_ptr->kn_flags1 & TR1_CON) my_stat_add[A_CON] += l_ptr->pval;
 		if (l_ptr->kn_flags1 & TR1_CHR) my_stat_add[A_CHR] += l_ptr->pval;
-		
+
 		/* Affect flags */
 		bp_ptr->flags1 |= l_ptr->kn_flags1;
 		bp_ptr->flags2 |= l_ptr->kn_flags2;
@@ -1786,8 +1786,7 @@ static void borg_notice_inven_item(list_item *l_ptr)
 		case TV_LIFE_BOOK:
 		{
 			/* Count good books */
-			if (bp_ptr->realm1 == REALM_LIFE ||
-				bp_ptr->realm2 == REALM_LIFE)
+			if (bp_ptr->realm1 == REALM_LIFE || bp_ptr->realm2 == REALM_LIFE)
 				amt_book[REALM_LIFE][k_ptr->sval] += number;
 			break;
 		}
@@ -1810,24 +1809,21 @@ static void borg_notice_inven_item(list_item *l_ptr)
 		case TV_CHAOS_BOOK:
 		{
 			/* Count good books */
-			if (bp_ptr->realm1 == REALM_CHAOS ||
-				bp_ptr->realm2 == REALM_CHAOS)
+			if (bp_ptr->realm1 == REALM_CHAOS || bp_ptr->realm2 == REALM_CHAOS)
 				amt_book[REALM_CHAOS][k_ptr->sval] += number;
 			break;
 		}
 		case TV_DEATH_BOOK:
 		{
 			/* Count good books */
-			if (bp_ptr->realm1 == REALM_DEATH ||
-				bp_ptr->realm2 == REALM_DEATH)
+			if (bp_ptr->realm1 == REALM_DEATH || bp_ptr->realm2 == REALM_DEATH)
 				amt_book[REALM_DEATH][k_ptr->sval] += number;
 			break;
 		}
 		case TV_TRUMP_BOOK:
 		{
 			/* Count good books */
-			if (bp_ptr->realm1 == REALM_TRUMP ||
-				bp_ptr->realm2 == REALM_TRUMP)
+			if (bp_ptr->realm1 == REALM_TRUMP || bp_ptr->realm2 == REALM_TRUMP)
 				amt_book[REALM_TRUMP][k_ptr->sval] += number;
 			break;
 		}
@@ -2016,7 +2012,7 @@ static void borg_notice_inven(void)
 		if (l_ptr->k_idx)
 		{
 			if ((l_ptr->treat_as == TREAT_AS_SWAP) ||
-				 (l_ptr->treat_as == TREAT_AS_GONE))
+				(l_ptr->treat_as == TREAT_AS_GONE))
 			{
 				/* Examine the item */
 				borg_notice_inven_item(l_ptr);
@@ -3196,7 +3192,7 @@ static void borg_notice_home_spells(void)
 static void borg_notice_home_player(void)
 {
 	u32b f1, f2, f3;
-	
+
 	int i;
 
 	/* Hack -- No need for stat repair */
@@ -3398,8 +3394,7 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 		case TV_LIFE_BOOK:
 		{
 			/* Count good books */
-			if (bp_ptr->realm1 == REALM_LIFE ||
-				bp_ptr->realm2 == REALM_LIFE)
+			if (bp_ptr->realm1 == REALM_LIFE || bp_ptr->realm2 == REALM_LIFE)
 				num_book[REALM_LIFE][k_info[l_ptr->k_idx].sval] +=
 					l_ptr->number;
 			break;
@@ -3427,8 +3422,7 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 		case TV_CHAOS_BOOK:
 		{
 			/* Count good books */
-			if (bp_ptr->realm1 == REALM_CHAOS ||
-				bp_ptr->realm2 == REALM_CHAOS)
+			if (bp_ptr->realm1 == REALM_CHAOS || bp_ptr->realm2 == REALM_CHAOS)
 				num_book[REALM_CHAOS][k_info[l_ptr->k_idx].sval] +=
 					l_ptr->number;
 			break;
@@ -3436,8 +3430,7 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 		case TV_DEATH_BOOK:
 		{
 			/* Count good books */
-			if (bp_ptr->realm1 == REALM_DEATH ||
-				bp_ptr->realm2 == REALM_DEATH)
+			if (bp_ptr->realm1 == REALM_DEATH || bp_ptr->realm2 == REALM_DEATH)
 				num_book[REALM_DEATH][k_info[l_ptr->k_idx].sval] +=
 					l_ptr->number;
 			break;
@@ -3445,8 +3438,7 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 		case TV_TRUMP_BOOK:
 		{
 			/* Count good books */
-			if (bp_ptr->realm1 == REALM_TRUMP ||
-				bp_ptr->realm2 == REALM_TRUMP)
+			if (bp_ptr->realm1 == REALM_TRUMP || bp_ptr->realm2 == REALM_TRUMP)
 				num_book[REALM_TRUMP][k_info[l_ptr->k_idx].sval] +=
 					l_ptr->number;
 			break;
@@ -4161,8 +4153,7 @@ static s32b borg_power_home_aux2(void)
 	for (realm = 0; realm < MAX_REALM; realm++)
 	{
 		/* Only my realms */
-		if ((realm != bp_ptr->realm1) &&
-			(realm != bp_ptr->realm2)) continue;
+		if ((realm != bp_ptr->realm1) && (realm != bp_ptr->realm2)) continue;
 
 		/* Scan Books */
 		for (book = 0; book < 4; book++)
@@ -4199,7 +4190,7 @@ static s32b borg_power_home_aux2(void)
 s32b borg_power_home(void)
 {
 	s32b value = 0L;
-	
+
 	/* Notice changes to the home */
 	borg_notice_home();
 

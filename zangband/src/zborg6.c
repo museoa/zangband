@@ -404,7 +404,8 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid,
 
 			/* Avoid Water if dangerous */
 			if (mb_ptr->feat == FEAT_SHAL_WATER &&
-				(borg_skill[BI_ENCUMBERD] && !(bp_ptr->flags3 & TR3_FEATHER))) continue;
+				(borg_skill[BI_ENCUMBERD] &&
+				 !(bp_ptr->flags3 & TR3_FEATHER))) continue;
 
 			/* Avoid Mountains */
 			if (mb_ptr->feat == FEAT_MOUNTAIN) continue;
@@ -427,10 +428,8 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid,
 				if (bp_ptr->chp < 60) continue;
 
 				/* Do not disarm when clumsy */
-				if (borg_skill[BI_DIS] < 30 &&
-					bp_ptr->lev < 20) continue;
-				if (borg_skill[BI_DIS] < 45 &&
-					bp_ptr->lev < 10) continue;
+				if (borg_skill[BI_DIS] < 30 && bp_ptr->lev < 20) continue;
+				if (borg_skill[BI_DIS] < 45 && bp_ptr->lev < 10) continue;
 			}
 #endif /* 0 */
 
@@ -1637,8 +1636,7 @@ static bool borg_escape(int b_q)
 		/* if we got this far we tried to escape but couldn't... */
 		/* time to flee */
 		if (!goal_fleeing &&
-			(!borg_fighting_unique || bp_ptr->lev < 35) &&
-			!vault_on_level)
+			(!borg_fighting_unique || bp_ptr->lev < 35) && !vault_on_level)
 		{
 			/* Note */
 			borg_note("# Fleeing (failed to teleport)");
@@ -1649,8 +1647,7 @@ static bool borg_escape(int b_q)
 
 		/* Flee now */
 		if (!goal_leaving &&
-			(!borg_fighting_unique || bp_ptr->lev < 35) &&
-			!vault_on_level)
+			(!borg_fighting_unique || bp_ptr->lev < 35) && !vault_on_level)
 		{
 			/* Flee! */
 			borg_note("# Leaving (failed to teleport)");
@@ -1845,8 +1842,7 @@ static bool borg_escape(int b_q)
 		(b_q >= avoidance * (6 + risky_boost) / 10 ||
 		 (b_q >= avoidance * (8 + risky_boost) / 10 && borg_fighting_unique >= 1
 		  && borg_fighting_unique <= 8)) &&
-		(bp_ptr->csp <= (bp_ptr->msp * 1 / 10) &&
-		 bp_ptr->msp >= 100))
+		(bp_ptr->csp <= (bp_ptr->msp * 1 / 10) && bp_ptr->msp >= 100))
 	{
 		/* Dimension Door, if useful */
 		if ((amt_dim_door && borg_dim_door(TRUE, b_q) &&
@@ -1931,10 +1927,8 @@ static bool borg_heal(int danger)
 		borg_skill[BI_ISFIXWIS]) stats_needing_fix++;
 	if (borg_class == CLASS_WARRIOR &&
 		borg_skill[BI_ISFIXCON]) stats_needing_fix++;
-	if (bp_ptr->mhp <= 850 &&
-		borg_skill[BI_ISFIXCON]) stats_needing_fix++;
-	if (bp_ptr->mhp <= 700 &&
-		borg_skill[BI_ISFIXCON]) stats_needing_fix += 3;
+	if (bp_ptr->mhp <= 850 && borg_skill[BI_ISFIXCON]) stats_needing_fix++;
+	if (bp_ptr->mhp <= 700 && borg_skill[BI_ISFIXCON]) stats_needing_fix += 3;
 	if (borg_class == CLASS_PRIEST && bp_ptr->msp < 100 &&
 		borg_skill[BI_ISFIXWIS])
 		stats_needing_fix += 5;
@@ -2018,8 +2012,8 @@ static bool borg_heal(int danger)
 		}
 		/* Warriors with ESP won't need it so quickly */
 		if (!(borg_class == CLASS_WARRIOR &&
-			 bp_ptr->chp > bp_ptr->mhp / 4 &&
-			 (bp_ptr->flags3 & TR3_TELEPATHY)))
+			  bp_ptr->chp > bp_ptr->mhp / 4 &&
+			  (bp_ptr->flags3 & TR3_TELEPATHY)))
 		{
 			if (borg_eat_food(SV_FOOD_CURE_BLINDNESS) ||
 				borg_quaff_potion(SV_POTION_CURE_SERIOUS) ||
@@ -2109,8 +2103,7 @@ static bool borg_heal(int danger)
 
 	/* restore Mana */
 	/* note, blow the staff charges easy because the staff will not last. */
-	if (bp_ptr->csp < (bp_ptr->msp / 5) &&
-		(randint0(100) < 50))
+	if (bp_ptr->csp < (bp_ptr->msp / 5) && (randint0(100) < 50))
 	{
 		if (borg_use_staff_fail(SV_STAFF_THE_MAGI))
 		{
@@ -2294,15 +2287,29 @@ static bool borg_heal(int danger)
 	/* Heal step two (300hp) */
 	if (hp_down < 350 && danger / 2 < bp_ptr->chp + 300 && (borg_use_staff_fail(SV_STAFF_HEALING) || (borg_fighting_evil_unique && borg_spell_fail(REALM_LIFE, 2, 6, allow_fail)) ||	/* holy word */
 /* Vamp Drain ? */
-																	 borg_use_staff_fail
-																	 (SV_STAFF_HOLINESS)
-																	 ||
-																	 borg_spell_fail
-																	 (REALM_LIFE,
-																	  1, 6,
-																	  allow_fail)
-																	 ||
-																	 ((!borg_skill[BI_ATELEPORT] || borg_skill[BI_DEV] - borg_get_kind(TV_ROD, SV_ROD_HEALING)->level > 7) && borg_zap_rod(SV_ROD_HEALING)) || borg_zap_rod(SV_ROD_HEALING) || borg_quaff_potion(SV_POTION_HEALING)))
+															borg_use_staff_fail
+															(SV_STAFF_HOLINESS)
+															||
+															borg_spell_fail
+															(REALM_LIFE,
+															 1, 6,
+															 allow_fail)
+															||
+															((!borg_skill
+															  [BI_ATELEPORT] ||
+															  borg_skill[BI_DEV]
+															  -
+															  borg_get_kind
+															  (TV_ROD,
+															   SV_ROD_HEALING)->
+															  level > 7) &&
+															 borg_zap_rod
+															 (SV_ROD_HEALING))
+															||
+															borg_zap_rod
+															(SV_ROD_HEALING) ||
+															borg_quaff_potion
+															(SV_POTION_HEALING)))
 	{
 		borg_note("# Healing Level 7.");
 		return (TRUE);
@@ -2311,7 +2318,38 @@ static bool borg_heal(int danger)
 	/* Healing step three (300hp).  */
 	if (hp_down < 650 && danger / 2 < bp_ptr->chp + 300 && ((borg_fighting_evil_unique && borg_spell_fail(REALM_LIFE, 2, 6, allow_fail)) ||	/* holy word */
 /* Vamp Drain ? */
-																	 ((!borg_skill[BI_ATELEPORT] || borg_skill[BI_DEV] - borg_get_kind(TV_ROD, SV_ROD_HEALING)->level > 7) && borg_zap_rod(SV_ROD_HEALING)) || borg_spell_fail(REALM_LIFE, 1, 6, allow_fail) || borg_spell_fail(REALM_NATURE, 1, 7, allow_fail) || borg_use_staff_fail(SV_STAFF_HOLINESS) || borg_use_staff_fail(SV_STAFF_HEALING) || borg_quaff_potion(SV_POTION_HEALING) || borg_activate_artifact(ART_SOULKEEPER, FALSE) || borg_activate_artifact(ART_GONDOR, FALSE)))
+															((!borg_skill
+															  [BI_ATELEPORT] ||
+															  borg_skill[BI_DEV]
+															  -
+															  borg_get_kind
+															  (TV_ROD,
+															   SV_ROD_HEALING)->
+															  level > 7) &&
+															 borg_zap_rod
+															 (SV_ROD_HEALING))
+															||
+															borg_spell_fail
+															(REALM_LIFE, 1, 6,
+															 allow_fail) ||
+															borg_spell_fail
+															(REALM_NATURE, 1, 7,
+															 allow_fail) ||
+															borg_use_staff_fail
+															(SV_STAFF_HOLINESS)
+															||
+															borg_use_staff_fail
+															(SV_STAFF_HEALING)
+															||
+															borg_quaff_potion
+															(SV_POTION_HEALING)
+															||
+															borg_activate_artifact
+															(ART_SOULKEEPER,
+															 FALSE) ||
+															borg_activate_artifact
+															(ART_GONDOR,
+															 FALSE)))
 	{
 		borg_note("# Healing Level 8.");
 		return (TRUE);
@@ -2323,15 +2361,42 @@ static bool borg_heal(int danger)
 	 */
 	if (hp_down >= 650 && (danger / 2 < bp_ptr->chp + 500) && ((borg_fighting_evil_unique && borg_spell_fail(REALM_LIFE, 2, 6, allow_fail)) ||	/* holy word */
 /* Vamp Drain ? */
-																		borg_spell_fail(REALM_LIFE, 3, 4, allow_fail) ||	/* 2000 */
-																		borg_spell_fail(REALM_NATURE, 1, 7, allow_fail) ||	/* 1000 */
-																		borg_use_staff_fail
-																		(SV_STAFF_HOLINESS)
-																		||
-																		borg_use_staff_fail
-																		(SV_STAFF_HEALING)
-																		||
-																		((!borg_skill[BI_ATELEPORT] || borg_skill[BI_DEV] - borg_get_kind(TV_ROD, SV_ROD_HEALING)->level > 7) && borg_zap_rod(SV_ROD_HEALING)) || borg_quaff_potion(SV_POTION_HEALING) || borg_activate_artifact(ART_SOULKEEPER, FALSE) || borg_activate_artifact(ART_GONDOR, FALSE) || (borg_fighting_unique && (borg_quaff_potion(SV_POTION_HEALING) || borg_quaff_potion(SV_POTION_LIFE)))))
+															   borg_spell_fail(REALM_LIFE, 3, 4, allow_fail) ||	/* 2000 */
+															   borg_spell_fail(REALM_NATURE, 1, 7, allow_fail) ||	/* 1000 */
+															   borg_use_staff_fail
+															   (SV_STAFF_HOLINESS)
+															   ||
+															   borg_use_staff_fail
+															   (SV_STAFF_HEALING)
+															   ||
+															   ((!borg_skill
+																 [BI_ATELEPORT]
+																 ||
+																 borg_skill
+																 [BI_DEV] -
+																 borg_get_kind
+																 (TV_ROD,
+																  SV_ROD_HEALING)->
+																 level > 7) &&
+																borg_zap_rod
+																(SV_ROD_HEALING))
+															   ||
+															   borg_quaff_potion
+															   (SV_POTION_HEALING)
+															   ||
+															   borg_activate_artifact
+															   (ART_SOULKEEPER,
+																FALSE) ||
+															   borg_activate_artifact
+															   (ART_GONDOR,
+																FALSE) ||
+															   (borg_fighting_unique
+																&&
+																(borg_quaff_potion
+																 (SV_POTION_HEALING)
+																 ||
+																 borg_quaff_potion
+																 (SV_POTION_LIFE)))))
 	{
 		borg_note("# Healing Level 9.");
 		return (TRUE);
@@ -2345,8 +2410,7 @@ static bool borg_heal(int danger)
 	/* Hack -- cure poison when poisoned
 	 * This was moved from borg_caution.
 	 */
-	if (borg_skill[BI_ISPOISONED] &&
-		(bp_ptr->chp < bp_ptr->mhp / 2))
+	if (borg_skill[BI_ISPOISONED] && (bp_ptr->chp < bp_ptr->mhp / 2))
 	{
 		if (borg_spell_fail(REALM_LIFE, 1, 1, 60) ||
 			borg_spell_fail(REALM_ARCANE, 1, 5, 60) ||
@@ -2383,8 +2447,7 @@ static bool borg_heal(int danger)
 	/* Hack -- cure poison when poisoned CRITICAL CHECK
 	 */
 	if (borg_skill[BI_ISPOISONED] &&
-		(bp_ptr->chp < 2 ||
-		 bp_ptr->chp < bp_ptr->mhp / 20))
+		(bp_ptr->chp < 2 || bp_ptr->chp < bp_ptr->mhp / 20))
 	{
 		int sv_mana = bp_ptr->csp;
 
@@ -2453,8 +2516,7 @@ static bool borg_heal(int danger)
 	}
 	/* bleeding and about to die CRITICAL CHECK */
 	if (borg_skill[BI_ISCUT] &&
-		((bp_ptr->chp < 2) ||
-		 bp_ptr->chp < bp_ptr->mhp / 20))
+		((bp_ptr->chp < 2) || bp_ptr->chp < bp_ptr->mhp / 20))
 	{
 		int sv_mana = bp_ptr->csp;
 
@@ -2645,8 +2707,7 @@ bool borg_caution(void)
 	/*** Notice "nasty" situations ***/
 
 	/* About to run out of light is extremely nasty */
-	if (!bp_ptr->britelite &&
-		equipment[EQUIP_LITE].timeout < 250) nasty = TRUE;
+	if (!bp_ptr->britelite && equipment[EQUIP_LITE].timeout < 250) nasty = TRUE;
 
 	/* Starvation is nasty */
 	if (borg_skill[BI_ISWEAK]) nasty = TRUE;
@@ -2733,8 +2794,7 @@ bool borg_caution(void)
 		borg_note_fmt
 			("# Loc:%d,%d Dep:%d Lev:%d HP:%d/%d SP:%d/%d Danger:p=%d",
 			 c_y, c_x, bp_ptr->depth, bp_ptr->lev,
-			 bp_ptr->chp, bp_ptr->mhp,
-			 bp_ptr->csp, bp_ptr->msp, p);
+			 bp_ptr->chp, bp_ptr->mhp, bp_ptr->csp, bp_ptr->msp, p);
 		if (borg_goi)
 		{
 			borg_note_fmt
@@ -2906,8 +2966,7 @@ bool borg_caution(void)
 	{
 		/* Start fleeing */
 		if (!goal_fleeing && !borg_fighting_unique &&
-			(bp_ptr->lev < 50) && !vault_on_level &&
-			(bp_ptr->depth < 100))
+			(bp_ptr->lev < 50) && !vault_on_level && (bp_ptr->depth < 100))
 		{
 			/* Note */
 			borg_note("# Fleeing (excessive danger)");
@@ -2917,8 +2976,7 @@ bool borg_caution(void)
 		}
 	}
 	/* Potential danger (near death) in town */
-	else if (!bp_ptr->depth && (p > bp_ptr->chp) &&
-			 (bp_ptr->lev < 50))
+	else if (!bp_ptr->depth && (p > bp_ptr->chp) && (bp_ptr->lev < 50))
 	{
 		/* Flee now */
 		if (!goal_leaving)
@@ -3141,8 +3199,7 @@ bool borg_caution(void)
 	/* If you are low level and near the stairs and you can */
 	/* hop onto them in very few steps, try to head to them */
 	/* out of desperation */
-	if (track_less_num &&
-		(goal_fleeing || (p > avoidance && bp_ptr->lev < 35)))
+	if (track_less_num && (goal_fleeing || (p > avoidance && bp_ptr->lev < 35)))
 	{
 		int y, x, i;
 		int b_j = -1;
@@ -3454,8 +3511,7 @@ bool borg_caution(void)
 			{
 				/* If I am low level, reward backing-up if safe */
 				if (bp_ptr->lev <= 3 &&
-					(bp_ptr->chp < bp_ptr->mhp ||
-					 bp_ptr->csp < bp_ptr->msp))
+					(bp_ptr->chp < bp_ptr->mhp || bp_ptr->csp < bp_ptr->msp))
 				{
 					/* do consider the retreat */
 				}
@@ -3603,10 +3659,14 @@ bool borg_caution(void)
 	 * ourself have failed.  Use the ez_heal if I have it.
 	 */
 	if ((bp_ptr->chp < bp_ptr->mhp / 10 ||
-		 (borg_skill[BI_ATELEPORT] + borg_skill[BI_AESCAPE] == 0 && bp_ptr->chp < bp_ptr->mhp / 4)) &&
-		(p > bp_ptr->chp * 2 ||
-		 (p > bp_ptr->chp && borg_skill[BI_AEZHEAL] > 5) ||
-		 (p > bp_ptr->chp * 12 / 10 && bp_ptr->mhp - bp_ptr->chp >= 400 && borg_fighting_unique && bp_ptr->depth >= 85)) &&	
+		 (borg_skill[BI_ATELEPORT] + borg_skill[BI_AESCAPE] == 0 &&
+		  bp_ptr->chp < bp_ptr->mhp / 4)) && (p > bp_ptr->chp * 2 ||
+											  (p > bp_ptr->chp &&
+											   borg_skill[BI_AEZHEAL] > 5) ||
+											  (p > bp_ptr->chp * 12 / 10 &&
+											   bp_ptr->mhp - bp_ptr->chp >= 400
+											   && borg_fighting_unique &&
+											   bp_ptr->depth >= 85)) &&
 		(borg_quaff_potion(SV_POTION_HEALING) ||
 		 borg_quaff_potion(SV_POTION_STAR_HEALING) ||
 		 borg_quaff_potion(SV_POTION_LIFE)))
@@ -3679,8 +3739,7 @@ bool borg_caution(void)
 	/* if I am gonna die next round, and I have no way to escape
 	 * use the unknown stuff (if I am low level).
 	 */
-	if (p > (bp_ptr->chp * 4) && bp_ptr->lev < 20 &&
-		!bp_ptr->msp)
+	if (p > (bp_ptr->chp * 4) && bp_ptr->lev < 20 && !bp_ptr->msp)
 	{
 		if (borg_use_unknown()) return (TRUE);
 		if (borg_quaff_unknown()) return (TRUE);
@@ -3982,8 +4041,7 @@ static int borg_thrust_damage_one(int i)
 	if (dam > kill->power * 2) dam = kill->power * 2;
 
 	/* Reduce the damage if a mage, they should not melee if they can avoid it */
-	if (borg_class == CLASS_MAGE &&
-		bp_ptr->max_lev < 40) dam = dam * 6 / 10;
+	if (borg_class == CLASS_MAGE && bp_ptr->max_lev < 40) dam = dam * 6 / 10;
 
 	/*
 	 * Enhance the preceived damage on Uniques.  This way we target them
@@ -3993,8 +4051,7 @@ static int borg_thrust_damage_one(int i)
 	 * the town uniques (maggot does no damage)
 	 *
 	 */
-	if ((r_ptr->flags1 & RF1_UNIQUE) &&
-		bp_ptr->depth >= 1) dam += (dam * 5);
+	if ((r_ptr->flags1 & RF1_UNIQUE) && bp_ptr->depth >= 1) dam += (dam * 5);
 
 	/* Hack -- ignore Maggot until later.  Player will chase Maggot
 	 * down all accross the screen waking up all the monsters.  Then
@@ -4757,7 +4814,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 			if ((r_ptr->level >=
 				 (bp_ptr->lev <
 				  13) ? bp_ptr->lev : (((bp_ptr->lev - 10) /
-												  4) * 3) + 10)) break;
+										4) * 3) + 10)) break;
 			dam = -999;
 			if (r_ptr->flags1 & RF1_UNIQUE) break;
 			borg_confuse_spell = FALSE;
@@ -4778,7 +4835,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 			if ((r_ptr->level >=
 				 (bp_ptr->lev <
 				  13) ? bp_ptr->lev : (((bp_ptr->lev - 10) /
-												  4) * 3) + 10)) break;
+										4) * 3) + 10)) break;
 			dam = -999;
 			if (r_ptr->flags1 & RF1_UNIQUE) break;
 			borg_fear_mon_spell = FALSE;
@@ -4798,7 +4855,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 			if ((r_ptr->level >=
 				 (bp_ptr->lev <
 				  13) ? bp_ptr->lev : (((bp_ptr->lev - 10) /
-												  4) * 3) + 10)) break;
+										4) * 3) + 10)) break;
 			dam = -999;
 			if (r_ptr->flags1 & RF1_UNIQUE) break;
 			borg_slow_spell = FALSE;
@@ -4820,7 +4877,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 			if ((r_ptr->level >=
 				 (bp_ptr->lev <
 				  13) ? bp_ptr->lev : (((bp_ptr->lev - 10) /
-												  4) * 3) + 10)) break;
+										4) * 3) + 10)) break;
 			dam = -999;
 			if (r_ptr->flags1 & RF1_UNIQUE) break;
 			borg_sleep_spell = FALSE;
@@ -4838,7 +4895,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 			if ((r_ptr->level >=
 				 (bp_ptr->lev <
 				  13) ? bp_ptr->lev : (((bp_ptr->lev - 10) /
-												  4) * 3) + 10)) break;
+										4) * 3) + 10)) break;
 			dam = -999;
 			if (r_ptr->flags1 & RF1_UNIQUE) break;
 			dam = borg_danger_aux(c_x, c_y, 2, i, TRUE);
@@ -6284,12 +6341,10 @@ static int borg_attack_aux_spell_bolt(int realm, int book, int what, int rad,
 	b_n = b_n - as->power;
 
 	/* Penalize use of reserve mana */
-	if (bp_ptr->csp - as->power < bp_ptr->msp / 2) b_n =
-			b_n - (as->power * 10);
+	if (bp_ptr->csp - as->power < bp_ptr->msp / 2) b_n = b_n - (as->power * 10);
 
 	/* Penalize use of deep reserve mana */
-	if (bp_ptr->csp - as->power < bp_ptr->msp / 3) b_n =
-			b_n - (as->power * 20);
+	if (bp_ptr->csp - as->power < bp_ptr->msp / 3) b_n = b_n - (as->power * 20);
 
 	/* Really penalize use of mana needed for final teleport */
 	if (borg_class == CLASS_MAGE) penalty = 6;
@@ -6297,8 +6352,7 @@ static int borg_attack_aux_spell_bolt(int realm, int book, int what, int rad,
 	if (borg_class == CLASS_ROGUE) penalty = 20;
 	if (borg_class == CLASS_PRIEST) penalty = 8;
 	if (borg_class == CLASS_PALADIN) penalty = 20;
-	if ((bp_ptr->msp > 30) &&
-		(bp_ptr->csp - as->power) < penalty)
+	if ((bp_ptr->msp > 30) && (bp_ptr->csp - as->power) < penalty)
 		b_n = b_n - (as->power * 750);
 
 
@@ -6447,12 +6501,10 @@ static int borg_attack_aux_spell_dispel(int realm, int book, int what, int rad,
 	b_n = b_n - as->power;
 
 	/* Penalize use of reserve mana */
-	if (bp_ptr->csp - as->power < bp_ptr->msp / 2) b_n =
-			b_n - (as->power * 10);
+	if (bp_ptr->csp - as->power < bp_ptr->msp / 2) b_n = b_n - (as->power * 10);
 
 	/* Penalize use of deep reserve mana */
-	if (bp_ptr->csp - as->power < bp_ptr->msp / 3) b_n =
-			b_n - (as->power * 20);
+	if (bp_ptr->csp - as->power < bp_ptr->msp / 3) b_n = b_n - (as->power * 20);
 
 	/* Really penalize use of mana needed for final teleport */
 	if (borg_class == CLASS_MAGE) penalty = 6;
@@ -6460,8 +6512,7 @@ static int borg_attack_aux_spell_dispel(int realm, int book, int what, int rad,
 	if (borg_class == CLASS_ROGUE) penalty = 20;
 	if (borg_class == CLASS_PRIEST) penalty = 8;
 	if (borg_class == CLASS_PALADIN) penalty = 20;
-	if ((bp_ptr->msp > 30) &&
-		(bp_ptr->csp - as->power) < penalty)
+	if ((bp_ptr->msp > 30) && (bp_ptr->csp - as->power) < penalty)
 		b_n = b_n - (as->power * 750);
 
 	/* Simulation */
@@ -6513,17 +6564,14 @@ static int borg_attack_aux_mind_bolt(int spell, int level, int rad, int dam,
 	b_n = b_n - as->power;
 
 	/* Penalize use of reserve mana */
-	if (bp_ptr->csp - as->power < bp_ptr->msp / 2) b_n =
-			b_n - (as->power * 10);
+	if (bp_ptr->csp - as->power < bp_ptr->msp / 2) b_n = b_n - (as->power * 10);
 
 	/* Penalize use of deep reserve mana */
-	if (bp_ptr->csp - as->power < bp_ptr->msp / 3) b_n =
-			b_n - (as->power * 20);
+	if (bp_ptr->csp - as->power < bp_ptr->msp / 3) b_n = b_n - (as->power * 20);
 
 	/* Really penalize use of mana needed for final teleport */
 	penalty = 6;
-	if ((bp_ptr->msp > 30) &&
-		(bp_ptr->csp - as->power) < penalty)
+	if ((bp_ptr->msp > 30) && (bp_ptr->csp - as->power) < penalty)
 		b_n = b_n - (as->power * 750);
 
 	/* Simulation */
@@ -7087,8 +7135,7 @@ static int borg_attack_aux(int what)
 		case BF_LIFE_HOLY_ORB:
 		{
 			/* Spell -- Holy Orb */
-			dam =
-				((3 * 3) + bp_ptr->lev + (bp_ptr->lev / 3));
+			dam = ((3 * 3) + bp_ptr->lev + (bp_ptr->lev / 3));
 			rad = 2;
 			return (borg_attack_aux_spell_bolt
 					(REALM_LIFE, 1, 4, rad, dam, GF_HOLY_FIRE));
@@ -7154,8 +7201,7 @@ static int borg_attack_aux(int what)
 			rad = MAX_SIGHT + 10;
 
 			/* if hurting, add bonus */
-			if (bp_ptr->mhp - bp_ptr->chp >= 200) dam =
-					(dam * 12) / 10;
+			if (bp_ptr->mhp - bp_ptr->chp >= 200) dam = (dam * 12) / 10;
 
 			/* if no speedy, add bonus */
 			if (!borg_speed) dam = (dam * 13) / 10;
@@ -7636,9 +7682,7 @@ static int borg_attack_aux(int what)
 		{
 			/* Vamp Drain */
 			dam =
-				(bp_ptr->lev +
-				 (bp_ptr->lev / 2 *
-				  (MAX(1, bp_ptr->lev / 10))));
+				(bp_ptr->lev + (bp_ptr->lev / 2 * (MAX(1, bp_ptr->lev / 10))));
 			return (borg_attack_aux_spell_bolt
 					(REALM_DEATH, 1, 3, rad, dam, GF_OLD_DRAIN));
 		}
@@ -7714,10 +7758,7 @@ static int borg_attack_aux(int what)
 		case BF_MIND_NEURAL:
 		{
 			/* Mind-- Neural Blast */
-			dam =
-				3 + ((bp_ptr->lev - 1) / 4) * (3 +
-														 (bp_ptr->lev
-														  / 15)) / 2;
+			dam = 3 + ((bp_ptr->lev - 1) / 4) * (3 + (bp_ptr->lev / 15)) / 2;
 			rad = -1;
 			return (borg_attack_aux_mind_bolt
 					(MIND_NEURAL_BL, 2, rad, dam, GF_PSI));
@@ -7742,8 +7783,7 @@ static int borg_attack_aux(int what)
 			}
 			else
 			{
-				dam =
-					bp_ptr->lev * ((bp_ptr->lev - 5) / 11);
+				dam = bp_ptr->lev * ((bp_ptr->lev - 5) / 11);
 				rad = 10 + MAX_SIGHT;
 			}
 			return (borg_attack_aux_mind_bolt
@@ -9967,8 +10007,7 @@ static int borg_defend_aux_genocide(void)
 	if (b_threat_id)
 	{
 		/* Not if I am weak (should have 400 HP really in case of a Pit) */
-		if (bp_ptr->chp < bp_ptr->mhp ||
-			bp_ptr->chp < 375) b_threat_id = 0;
+		if (bp_ptr->chp < bp_ptr->mhp || bp_ptr->chp < 375) b_threat_id = 0;
 
 		/* Do not perform in Danger */
 		if (borg_danger(c_x, c_y, 1, TRUE) > avoidance / 5) b_threat_id = 0;
@@ -9977,8 +10016,7 @@ static int borg_defend_aux_genocide(void)
 		if (b_threat[b_threat_id] < bp_ptr->mhp * 10) b_threat_id = 0;
 
 		/* Too painful to cast it (padded to be safe incase of unknown monsters) */
-		if ((b_num[b_threat_id] * 4) * 11 / 10 >=
-			bp_ptr->chp) b_threat_id = 0;
+		if ((b_num[b_threat_id] * 4) * 11 / 10 >= bp_ptr->chp) b_threat_id = 0;
 
 		/* report the danger and most dangerous race */
 		if (b_threat_id)
@@ -10068,8 +10106,7 @@ static int borg_defend_aux_genocide_hounds(void)
 	bool genocide_spell = FALSE;
 
 	/* Not if I am weak */
-	if (bp_ptr->chp < bp_ptr->mhp ||
-		bp_ptr->chp < 350) return (0);
+	if (bp_ptr->chp < bp_ptr->mhp || bp_ptr->chp < 350) return (0);
 
 	/* only do it when deep, */
 	if (bp_ptr->depth < 50) return (0);
@@ -10829,8 +10866,7 @@ static int borg_perma_aux_bless(void)
 	cost = as->power;
 	/* If its cheap, go ahead */
 	if (cost >=
-		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp /
-		 10)) return (0);
+		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp / 10)) return (0);
 
 	/* Simulation */
 	/* bless is a low priority */
@@ -10871,8 +10907,7 @@ static int borg_perma_aux_resist(void)
 
 	/* If its cheap, go ahead */
 	if (cost >=
-		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp /
-		 10)) return (0);
+		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp / 10)) return (0);
 
 	/* Simulation */
 	if (borg_simulate) return (2);
@@ -11099,8 +11134,7 @@ static int borg_perma_aux_resist_fce(void)
 
 	/* If its cheap, go ahead */
 	if (cost >=
-		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp /
-		 10)) return (0);
+		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp / 10)) return (0);
 
 	/* Simulation */
 	if (borg_simulate) return (2);
@@ -11155,8 +11189,7 @@ static int borg_perma_aux_speed(void)
 
 	/* If its cheap, go ahead */
 	if (cost >=
-		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp /
-		 10)) return (0);
+		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp / 10)) return (0);
 
 	/* Simulation */
 	if (borg_simulate) return (5);
@@ -11204,8 +11237,7 @@ static int borg_perma_aux_goi(void)
 
 	/* If its cheap, go ahead */
 	if (cost >=
-		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp /
-		 10)) return (0);
+		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp / 10)) return (0);
 
 	/* Simulation */
 	if (borg_simulate) return (3);
@@ -11255,8 +11287,7 @@ static int borg_perma_aux_telepathy(void)
 
 	/* If its cheap, go ahead */
 	if (cost >=
-		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp /
-		 10)) return (0);
+		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp / 10)) return (0);
 
 	/* Simulation */
 	if (borg_simulate) return (1);
@@ -11292,8 +11323,7 @@ static int borg_perma_aux_shield(void)
 
 	/* If its cheap, go ahead */
 	if (cost >=
-		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp /
-		 10)) return (0);
+		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp / 10)) return (0);
 
 	/* Simulation */
 	if (borg_simulate) return (2);
@@ -11328,8 +11358,7 @@ static int borg_perma_aux_prot_evil(void)
 
 	/* If its cheap, go ahead */
 	if (cost >=
-		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp /
-		 10)) return (0);
+		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp / 10)) return (0);
 
 	/* Simulation */
 	if (borg_simulate) return (3);
@@ -11384,8 +11413,7 @@ static int borg_perma_aux_hero(void)
 
 	/* If its cheap, go ahead */
 	if (cost >=
-		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp /
-		 10)) return (0);
+		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp / 10)) return (0);
 
 	/* Simulation */
 	/* hero is a low priority */
@@ -11430,8 +11458,7 @@ static int borg_perma_aux_berserk(void)
 
 	/* If its cheap, go ahead */
 	if (cost >=
-		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp /
-		 10)) return (0);
+		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp / 10)) return (0);
 
 	/* Simulation */
 	/* Berserk is a low priority */
@@ -11710,7 +11737,7 @@ bool borg_perma_spell()
 bool borg_check_rest(void)
 {
 	int i;
-	
+
 	if ((borg_race == RACE_VAMPIRE) && !(bp_ptr->flags2 & TR2_RES_LITE))
 	{
 		/* Do not rest in Sunlight */
@@ -11781,8 +11808,7 @@ bool borg_check_rest(void)
 		/* Perhaps borg should check and see if the previous grid was los */
 
 		/* if absorbs mana, not safe */
-		if ((r_ptr->flags5 & RF5_DRAIN_MANA) &&
-			(bp_ptr->msp > 1)) return FALSE;
+		if ((r_ptr->flags5 & RF5_DRAIN_MANA) && (bp_ptr->msp > 1)) return FALSE;
 
 		/* if it walks through walls, not safe */
 		if (r_ptr->flags2 & RF2_PASS_WALL) return FALSE;
@@ -12130,7 +12156,8 @@ bool borg_recover(void)
 		/* Step 1.  Recharge just 1 rod. */
 		if ((borg_slot(TV_ROD, SV_ROD_HEALING) &&
 			 !borg_slot(TV_ROD, SV_ROD_HEALING)->pval) ||
-			(borg_slot(TV_ROD, SV_ROD_RECALL) && !borg_slot(TV_ROD, SV_ROD_RECALL)->pval))
+			(borg_slot(TV_ROD, SV_ROD_RECALL) &&
+			 !borg_slot(TV_ROD, SV_ROD_RECALL)->pval))
 		{
 			/* Mages can cast the recharge spell */
 
@@ -12186,8 +12213,7 @@ bool borg_recover(void)
 	}
 
 	/* Hack to recharge mana if a low level mage or priest */
-	if (bp_ptr->msp && bp_ptr->lev < 25 &&
-		bp_ptr->csp < bp_ptr->msp && p == 0)
+	if (bp_ptr->msp && bp_ptr->lev < 25 && bp_ptr->csp < bp_ptr->msp && p == 0)
 	{
 		if (!borg_skill[BI_ISWEAK] && !borg_skill[BI_ISCUT] &&
 			!borg_skill[BI_ISHUNGRY] && !borg_skill[BI_ISPOISONED])
@@ -12442,8 +12468,7 @@ static bool borg_play_step(int y2, int x2)
 		}
 
 		/* No tunneling if in danger */
-		if (borg_danger(c_x, c_y, 1, TRUE) >=
-			bp_ptr->chp / 4) return (FALSE);
+		if (borg_danger(c_x, c_y, 1, TRUE) >= bp_ptr->chp / 4) return (FALSE);
 
 		/* Tunnel */
 		borg_note("# Digging through wall/etc");
@@ -13278,8 +13303,7 @@ bool borg_flow_kill(bool viewable, int nearness)
 
 	/* YOU ARE NOT A WARRIOR!! DON'T ACT LIKE ONE!! */
 	if (borg_class == CLASS_MAGE &&
-		bp_ptr->lev <
-		(bp_ptr->depth ? 35 : 5)) return (FALSE);
+		bp_ptr->lev < (bp_ptr->depth ? 35 : 5)) return (FALSE);
 
 
 	/* Nothing found */
@@ -13842,10 +13866,8 @@ static bool borg_flow_dark_interesting(int x, int y, int b_stair)
 		if (bp_ptr->chp < 60) return (FALSE);
 
 		/* Do not disarm when clumsy */
-		if (borg_skill[BI_DIS] < 30 &&
-			bp_ptr->lev < 20) return (FALSE);
-		if (borg_skill[BI_DIS] < 45 &&
-			bp_ptr->lev < 10) return (FALSE);
+		if (borg_skill[BI_DIS] < 30 && bp_ptr->lev < 20) return (FALSE);
+		if (borg_skill[BI_DIS] < 45 && bp_ptr->lev < 10) return (FALSE);
 
 		/* NOTE: the flow code allows a borg to flow through a trap and so he may
 		 * still try to disarm one on his way to the other interesting grid.  If mods
@@ -13900,7 +13922,8 @@ static bool borg_flow_dark_reachable(int x, int y)
 
 		/* Accept Water if not drowning */
 		if (mb_ptr->feat == FEAT_SHAL_WATER &&
-			(!borg_skill[BI_ENCUMBERD] || (bp_ptr->flags3 & TR3_FEATHER))) return (TRUE);
+			(!borg_skill[BI_ENCUMBERD] ||
+			 (bp_ptr->flags3 & TR3_FEATHER))) return (TRUE);
 
 		/* I can push pass friendly monsters */
 		if (mb_ptr->kill &&
@@ -14032,7 +14055,8 @@ void borg_flow_direct(int x, int y)
 		if ((mb_ptr->feat == FEAT_SHAL_WATER &&
 			 (!borg_skill[BI_ENCUMBERD] &&
 			  !(bp_ptr->flags3 & TR3_FEATHER))) ||
-			(mb_ptr->feat == FEAT_SHAL_LAVA && !(bp_ptr->flags2 & TR2_IM_FIRE))) return;
+			(mb_ptr->feat == FEAT_SHAL_LAVA &&
+			 !(bp_ptr->flags2 & TR2_IM_FIRE))) return;
 
 		/* Abort at "icky" grids */
 		if (mb_ptr->info & BORG_MAP_ICKY) return;

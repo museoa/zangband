@@ -306,7 +306,7 @@ void free_term_callbacks(void)
 {
 	/* Deallocate the array */
 	FREE(callbacks);
-} 
+}
 
 /*
  * Register a callback
@@ -315,15 +315,15 @@ callback_type set_callback(callback_type call_func, int number)
 {
 	/* Save the old callback */
 	callback_type temp = callbacks[number];
-	
+
 	/* Register the new callback */
 	callbacks[number] = call_func;
-	
+
 	/* Return the old callback to chain into */
 	return (temp);
 }
 
-#else /* TERM_USE_CALLBACKS */
+#else  /* TERM_USE_CALLBACKS */
 
 /*
  * Initialise the callbacks
@@ -339,7 +339,7 @@ void init_term_callbacks(void)
 void free_term_callbacks(void)
 {
 	/* Do nothing */
-} 
+}
 
 
 #endif /* TERM_USE_CALLBACKS */
@@ -653,7 +653,7 @@ static void save_map_location(int x, int y, term_map *map)
 	if (callbacks[CALL_MAP_INFO])
 	{
 		/* Execute the callback */
-		((map_info_hook_type) callbacks[CALL_MAP_INFO])(mb_ptr, map);
+		((map_info_hook_type)callbacks[CALL_MAP_INFO]) (mb_ptr, map);
 	}
 
 	/* Save the flags */
@@ -682,13 +682,13 @@ static void set_player_location(int x, int y)
 {
 	player_x = x;
 	player_y = y;
-	
+
 	/* Tell the port that the player has moved */
 	/* Remember info by calling hook */
 	if (callbacks[CALL_PLAYER_MOVE])
 	{
 		/* Execute the callback */
-		((player_move_hook_type) callbacks[CALL_PLAYER_MOVE])(x, y);
+		((player_move_hook_type) callbacks[CALL_PLAYER_MOVE]) (x, y);
 	}
 }
 
@@ -865,9 +865,9 @@ void Term_erase_map(void)
 	if (callbacks[CALL_MAP_ERASE])
 	{
 		/* Execute the callback */
-		((map_erase_hook_type) callbacks[CALL_MAP_ERASE])();
+		((map_erase_hook_type)callbacks[CALL_MAP_ERASE]) ();
 	}
-	
+
 	/* Actually clear the map */
 	clear_map();
 }
@@ -1060,7 +1060,7 @@ static void save_object_list(term_list *l_ptr, int num, byte list_type)
 	if (callbacks[CALL_OBJECT_LIST])
 	{
 		/* Execute the callback */
-		((list_notice_hook_type) callbacks[CALL_OBJECT_LIST])(list_type);
+		((list_notice_hook_type)callbacks[CALL_OBJECT_LIST]) (list_type);
 	}
 }
 
@@ -1312,4 +1312,3 @@ void Term_write_list(s16b o_idx, byte list_type)
 }
 
 #endif /* TERM_USE_LIST */
-

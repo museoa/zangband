@@ -23,7 +23,7 @@
 /*
  * List of available modules in the order they are tried.
  */
-static const module_type modules[]=
+static const module_type modules[] =
 {
 #ifdef USE_GTK
 	INIT_MODULE(gtk),
@@ -344,7 +344,7 @@ static void change_path(cptr info)
 static void game_usage(void)
 {
 	int i, j;
-	
+
 	/* Dump usage information */
 	puts("Usage: angband [options] [-- subopts]");
 	puts("  -n       Start a new character");
@@ -358,13 +358,13 @@ static void game_usage(void)
 	puts("  -s<num>  Show <num> high scores (default 10)");
 	puts("  -u<who>  Use your <who> savefile");
 	puts("  -d<def>  Define a 'lib' dir sub-path");
-	
+
 	/* Print the name and help for each available module */
-	for (i = 0; i < (int) NUM_ELEMENTS(modules); i++)
+	for (i = 0; i < (int)NUM_ELEMENTS(modules); i++)
 	{
 		/* Spacer */
 		puts("");
-		
+
 		for (j = 0; modules[i].help[j]; j++)
 		{
 			if (j)
@@ -374,7 +374,7 @@ static void game_usage(void)
 				{
 					puts("  --       Sub options");
 				}
-		
+
 				puts(format("  -- %s", modules[i].help[j]));
 			}
 			else
@@ -659,8 +659,8 @@ int main(int argc, char *argv[])
 
 	/* Install "quit" hook */
 	quit_aux = quit_hook;
-	
-	for (i = 0; i < (int) NUM_ELEMENTS(modules); i++)
+
+	for (i = 0; i < (int)NUM_ELEMENTS(modules); i++)
 	{
 		if (!mstr || (streq(mstr, modules[i].name)))
 		{

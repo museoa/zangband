@@ -610,16 +610,16 @@ void py_pickup_aux(object_type *o_ptr)
 	int slot;
 
 	char o_name[256];
-	
+
 	/* Duplicate the object */
 	j_ptr = object_dup(o_ptr);
-	
+
 	/* Delete the old object */
 	delete_dungeon_object(o_ptr);
 
 	/* Carry the object */
 	j_ptr = inven_carry(j_ptr);
-	
+
 	/*
 	 * Note: we have just made an empty slot in o_list
 	 * so j_ptr should never be NULL after inven_carry()
@@ -632,7 +632,7 @@ void py_pickup_aux(object_type *o_ptr)
 	slot = get_item_position(p_ptr->inventory, j_ptr);
 
 	/* Message */
-	msg_format("You have %s (%c).", o_name, I2A(slot));	
+	msg_format("You have %s (%c).", o_name, I2A(slot));
 }
 
 

@@ -200,7 +200,7 @@ void drop_object_list(s16b *o_idx_ptr, int x, int y)
 	{
 		/* Duplicate object */
 		q_ptr = object_dup(o_ptr);
-		
+
 		/* Delete held object */
 		delete_held_object(o_idx_ptr, o_ptr);
 
@@ -4347,7 +4347,7 @@ static bool put_object(object_type *o_ptr, int x, int y)
 {
 	/* Acquire grid */
 	cave_type *c_ptr = area(x, y);
-	
+
 	object_type *j_ptr;
 
 	/* Require nice floor space */
@@ -4431,7 +4431,7 @@ void place_specific_object(int x, int y, int level, int k_idx)
 	{
 		/* Create the item */
 		o_ptr = object_prep(k_idx);
-	
+
 		/* Apply magic */
 		apply_magic(o_ptr, level, 0, OC_NORMAL);
 
@@ -5341,7 +5341,7 @@ static bool reorder_pack_comp(const object_type *o1_ptr,
 	/* Unidentified objects always come last */
 	if (!object_known_p(o2_ptr)) return (TRUE);
 	if (!object_known_p(o1_ptr)) return (FALSE);
-	
+
 	/* Lites sort by increasing timeout */
 	if (o1_ptr->tval == TV_LITE)
 	{
@@ -5376,9 +5376,9 @@ object_type *reorder_objects_aux(object_type *q_ptr, object_comp comp_func,
                                  u16b o_idx)
 {
 	object_type *o_ptr, *j_ptr;
-	
+
 	int i;
-	
+
 	/*
 	 * Hack - Do this twice because we invert the order
 	 * of 'similar' objects on the first pass
@@ -5408,7 +5408,7 @@ object_type *reorder_objects_aux(object_type *q_ptr, object_comp comp_func,
 		}
 		OBJ_ITT_END;
 	}
-	
+
 	return (q_ptr);
 }
 
@@ -5457,7 +5457,7 @@ object_type *inven_carry(object_type *o_ptr)
 
 	/* Add the item to the pack */
 	o_ptr = add_object_list(&p_ptr->inventory, o_ptr);
-	
+
 	/* Paranoia */
 	if (!o_ptr) return (NULL);
 
@@ -5538,7 +5538,7 @@ object_type *inven_takeoff(object_type *o_ptr)
 
 	/* Carry the object */
 	q_ptr = inven_carry(o_ptr);
-	
+
 	/* Paranoia */
 	if (!q_ptr)
 	{
@@ -5551,7 +5551,7 @@ object_type *inven_takeoff(object_type *o_ptr)
 
 	/* Wipe the old object */
 	object_wipe(o_ptr);
-	
+
 	/* Recalculate bonuses and weight */
 	p_ptr->update |= (PU_BONUS | PU_WEIGHT);
 
@@ -5600,11 +5600,11 @@ void inven_drop(object_type *o_ptr, int amt)
 	{
 		/* Take off first */
 		o_ptr = inven_takeoff(o_ptr);
-		
+
 		/* Paranoia */
 		if (!o_ptr) return;
 	}
-	
+
 	/* Get item slot */
 	slot = get_item_position(p_ptr->inventory, o_ptr);
 

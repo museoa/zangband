@@ -683,7 +683,7 @@ static object_type *home_carry(object_type *o_ptr)
 
 	/* Add the item to the store */
 	o_ptr = add_object_list(&st_ptr->stock, o_ptr);
-	
+
 	/* Paranoia */
 	if (!o_ptr) return (NULL);
 
@@ -763,7 +763,7 @@ static object_type *store_carry(object_type *o_ptr)
 
 	/* Add the item to the store */
 	o_ptr = add_object_list(&st_ptr->stock, o_ptr);
-	
+
 	/* Paranoia */
 	if (!o_ptr) return (NULL);
 
@@ -1512,7 +1512,7 @@ static void store_purchase(int *store_top)
 
 			/* Give it to the player */
 			j_ptr = inven_carry(j_ptr);
-			
+
 			/* Paranoia */
 			if (!j_ptr)
 			{
@@ -1611,7 +1611,7 @@ static void store_purchase(int *store_top)
 
 		/* Give it to the player */
 		j_ptr = inven_carry(j_ptr);
-		
+
 		/* Paranoia */
 		if (!j_ptr)
 		{

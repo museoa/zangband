@@ -1008,8 +1008,8 @@ void borg_update_frame(void)
 
 	/* cheat the max clevel */
 	bp_ptr->max_lev = p_ptr->max_lev;
-	
-	
+
+
 
 	/* Note "Winner" */
 	borg_skill[BI_KING] = p_ptr->total_winner;
@@ -1223,7 +1223,7 @@ void borg_init_1(void)
 
 	/* Array of monsters */
 	C_MAKE(borg_kills, BORG_KILLS_MAX, borg_kill);
-	
+
 	/* Struct for the player information */
 	MAKE(bp_ptr, borg_player);
 }

@@ -192,7 +192,7 @@
 #  error Your compiler does not seem to have a 64bit type.
 # else /* !_INTEGRAL_MAX_BITS && _INTEGRAL_MAX_BITS > 64 */
 #  define MSDEV
-# endif /* !_INTEGRAL_MAX_BITS && _INTEGRAL_MAX_BITS > 64 */
+# endif	/* !_INTEGRAL_MAX_BITS && _INTEGRAL_MAX_BITS > 64 */
 #endif /* __MSVC__ */
 
 

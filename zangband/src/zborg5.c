@@ -137,8 +137,7 @@ static int borg_danger_aux1(int r_idx)
 				if ((borg_goi) && !borg_attacking)
 					z = 0;
 				if (100 <=
-					adj_dex_safe[my_stat_ind[A_DEX]] +
-					bp_ptr->lev) break;
+					adj_dex_safe[my_stat_ind[A_DEX]] + bp_ptr->lev) break;
 				if (borg_gold < 100) break;
 				if (borg_gold > 100000) break;
 				if (!borg_full_damage)
@@ -156,8 +155,7 @@ static int borg_danger_aux1(int r_idx)
 				if ((borg_goi) && !borg_attacking)
 					z = 0;
 				if (100 <=
-					adj_dex_safe[my_stat_ind[A_DEX]] +
-					bp_ptr->lev) break;
+					adj_dex_safe[my_stat_ind[A_DEX]] + bp_ptr->lev) break;
 				if (!borg_full_damage)
 					z += 20;
 				if ((pfe) && !borg_attacking)
@@ -532,7 +530,8 @@ static int borg_danger_aux1(int r_idx)
 				/* if invulnurable, no damage */
 				if ((borg_goi) && !borg_attacking)
 					z = 0;
-				if (!(bp_ptr->flags2 & TR2_RES_POIS) && !my_oppose_pois) z += 50;
+				if (!(bp_ptr->flags2 & TR2_RES_POIS) &&
+					!my_oppose_pois) z += 50;
 				/* there is a 10% chance to suffer CON loss */
 				if (!bp_ptr->sust[A_CON]) z += 50;
 				if (!borg_full_damage)
@@ -2762,8 +2761,7 @@ int borg_danger_aux(int x, int y, int c, int i, bool average)
 				(!(r_ptr->flags1 & RF1_UNIQUE)) &&
 				(r_ptr->level <=
 				 ((bp_ptr->lev <
-				   15) ? bp_ptr->lev : (((bp_ptr->lev - 10)
-												   / 4) * 3) + 10)))
+				   15) ? bp_ptr->lev : (((bp_ptr->lev - 10) / 4) * 3) + 10)))
 			{
 				v2 = v2 / 3;
 			}
@@ -3062,7 +3060,7 @@ static s32b borg_power_aux3(void)
 		}
 
 	}
-	
+
 	/* It is only on Grond */
 	if (borg_skill[BI_W_IMPACT]) value += 5000L;
 
@@ -3174,8 +3172,7 @@ static s32b borg_power_aux3(void)
 		value += (my_stat_ind[A_INT] * 500L);
 
 		/* Bonus for sp. */
-		value += ((adj_mag_mana[my_stat_ind[A_INT]] *
-				   bp_ptr->lev) / 2) * 155L;
+		value += ((adj_mag_mana[my_stat_ind[A_INT]] * bp_ptr->lev) / 2) * 155L;
 
 		/* bonus for fail rate */
 		value += adj_mag_stat[my_stat_ind[A_INT]] * 5010L;
@@ -3203,9 +3200,7 @@ static s32b borg_power_aux3(void)
 		value += (my_stat_ind[A_WIS] * 200L);
 
 		/* Bonus for sp. */
-		value +=
-			((adj_mag_mana[my_stat_ind[A_WIS]] * bp_ptr->lev) / 2) *
-			150L;
+		value += ((adj_mag_mana[my_stat_ind[A_WIS]] * bp_ptr->lev) / 2) * 150L;
 
 		/* bonus for fail rate */
 		value += adj_mag_stat[my_stat_ind[A_WIS]] * 3000L;
@@ -3347,7 +3342,8 @@ static s32b borg_power_aux3(void)
 	if (bp_ptr->flags2 & TR2_RES_CONF) value += 80000L;
 
 	/* mages need a slight boost for this */
-	if (borg_class == CLASS_MAGE && (bp_ptr->flags2 & TR2_RES_CONF)) value += 2000L;
+	if (borg_class == CLASS_MAGE &&
+		(bp_ptr->flags2 & TR2_RES_CONF)) value += 2000L;
 
 	if (bp_ptr->flags2 & TR2_RES_DISEN) value += 5000L;
 	if (bp_ptr->flags2 & TR2_RES_SHARDS) value += 100L;
@@ -3372,8 +3368,8 @@ static s32b borg_power_aux3(void)
 	/*** XXX XXX XXX Reward "necessary" flags ***/
 
 	/* Mega-Hack -- See invisible (level 10) */
-	if (((bp_ptr->flags3 & TR3_SEE_INVIS) || (bp_ptr->flags3 & TR3_TELEPATHY)) &&
-		(bp_ptr->max_depth + 1 >= 10)) value += 100000L;
+	if (((bp_ptr->flags3 & TR3_SEE_INVIS) || (bp_ptr->flags3 & TR3_TELEPATHY))
+		&& (bp_ptr->max_depth + 1 >= 10)) value += 100000L;
 
 
 	/* Mega-Hack -- Free action (level 20) */
@@ -3536,8 +3532,7 @@ static s32b borg_power_aux3(void)
 	for (realm = 0; realm < MAX_REALM; realm++)
 	{
 		/* My realm only */
-		if ((realm != bp_ptr->realm1) &&
-			(realm != bp_ptr->realm2)) continue;
+		if ((realm != bp_ptr->realm1) && (realm != bp_ptr->realm2)) continue;
 
 		for (book = 0; book < 4; book++)
 		{
@@ -3568,8 +3563,7 @@ static s32b borg_power_aux3(void)
 				}
 
 				/* Hack -- Ignore "difficult" normal books */
-				if ((when > 5) &&
-					(when >= bp_ptr->max_lev + 2)) continue;
+				if ((when > 5) && (when >= bp_ptr->max_lev + 2)) continue;
 
 				/* Reward the book */
 				k = 0;
@@ -3929,8 +3923,7 @@ static s32b borg_power_aux4(void)
 	for (realm = 0; realm < MAX_REALM; realm++)
 	{
 		/* My realm only */
-		if ((realm != bp_ptr->realm1) &&
-			(realm != bp_ptr->realm2)) continue;
+		if ((realm != bp_ptr->realm1) && (realm != bp_ptr->realm2)) continue;
 
 		for (book = 0; book < 4; book++)
 		{
@@ -3962,8 +3955,7 @@ static s32b borg_power_aux4(void)
 				}
 
 				/* Hack -- Ignore "difficult" normal books */
-				if ((when > 5) &&
-					(when >= bp_ptr->max_lev + 2)) continue;
+				if ((when > 5) && (when >= bp_ptr->max_lev + 2)) continue;
 
 				/* Reward the book */
 				for (k = 0; k < 1 && k < amt_book[realm][book]; k++)
@@ -4019,16 +4011,16 @@ s32b borg_power(void)
 {
 	int i = 1;
 	s32b value = 0L;
-	
+
 	/* Notice the inventory and equipment */
 	borg_notice();
 
 	/* Process the equipment */
 	value += borg_power_aux3();
-	
+
 	/* Process the inventory */
 	value += borg_power_aux4();
-	
+
 	/* Add a bonus for deep level prep */
 	/* Dump prep codes */
 	for (i = 1; i <= bp_ptr->max_depth + 10; i++)
@@ -4056,8 +4048,7 @@ cptr borg_restock(int depth)
 	if (!depth) return (NULL);
 
 	/* Always spend time on a level unless 100 */
-	if ((borg_t - borg_began < 100) &&
-		(bp_ptr->depth != 100)) return (NULL);
+	if ((borg_t - borg_began < 100) && (bp_ptr->depth != 100)) return (NULL);
 
 
 	/*** Level 1 ***/
@@ -4290,13 +4281,11 @@ static cptr borg_prepared_aux2(int depth)
 
 	if (borg_stat[A_STR] < 16) return ("low STR");
 
-	if ((bp_ptr->realm1 >= REALM_SORCERY ||
-		 bp_ptr->realm2 >= REALM_SORCERY))
+	if ((bp_ptr->realm1 >= REALM_SORCERY || bp_ptr->realm2 >= REALM_SORCERY))
 	{
 		if (borg_stat[A_INT] < 16) return ("low INT");
 	}
-	if ((bp_ptr->realm1 == REALM_LIFE ||
-		 bp_ptr->realm2 == REALM_LIFE))
+	if ((bp_ptr->realm1 == REALM_LIFE || bp_ptr->realm2 == REALM_LIFE))
 	{
 		if (borg_stat[A_WIS] < 16) return ("low WIS");
 	}
@@ -4318,13 +4307,11 @@ static cptr borg_prepared_aux2(int depth)
 	/* High stats XXX XXX XXX */
 	if (borg_stat[A_STR] < 18 + 40) return ("low STR");
 
-	if ((bp_ptr->realm1 >= REALM_SORCERY ||
-		 bp_ptr->realm2 >= REALM_SORCERY))
+	if ((bp_ptr->realm1 >= REALM_SORCERY || bp_ptr->realm2 >= REALM_SORCERY))
 	{
 		if (borg_stat[A_INT] < 18 + 100) return ("low INT");
 	}
-	if ((bp_ptr->realm1 == REALM_LIFE ||
-		 bp_ptr->realm2 == REALM_LIFE))
+	if ((bp_ptr->realm1 == REALM_LIFE || bp_ptr->realm2 == REALM_LIFE))
 	{
 		if (borg_stat[A_WIS] < 18 + 100) return ("low WIS");
 	}
@@ -4379,8 +4366,7 @@ static cptr borg_prepared_aux2(int depth)
 	/* must have lots of restore mana to go after MORGOTH */
 	if (!borg_skill[BI_KING])
 	{
-		if ((bp_ptr->msp > 100) &&
-			(borg_has[266] < 15)) return ("15ResMana");
+		if ((bp_ptr->msp > 100) && (borg_has[266] < 15)) return ("15ResMana");
 
 		/* must have lots of heal */
 		if (borg_has[242] < 15 &&

@@ -77,7 +77,7 @@ extern void borg_map_info(map_block *mb_ptr, term_map *map);
 extern void borg_map_erase(void);
 extern void borg_update(void);
 extern void borg_react(cptr msg, cptr buf);
-extern void borg_player_move(int x, int y);   
+extern void borg_player_move(int x, int y);
 
 /*
  * Initialize this file

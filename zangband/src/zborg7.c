@@ -1528,8 +1528,7 @@ bool borg_crush_junk(void)
 	if (!borg_do_crush_junk) return (FALSE);
 
 	/* No crush if even slightly dangerous */
-	if (borg_danger(c_x, c_y, 1, TRUE) >
-		bp_ptr->chp / 10) return (FALSE);
+	if (borg_danger(c_x, c_y, 1, TRUE) > bp_ptr->chp / 10) return (FALSE);
 
 	my_power = borg_power();
 
@@ -1753,8 +1752,7 @@ bool borg_crush_slow(void)
 	s32b p, b_p = 0L;
 
 	/* No crush if even slightly dangerous */
-	if (borg_danger(c_x, c_y, 1, TRUE) >
-		bp_ptr->chp / 20) return (FALSE);
+	if (borg_danger(c_x, c_y, 1, TRUE) > bp_ptr->chp / 20) return (FALSE);
 
 	/* Hack -- never in town */
 	if (!bp_ptr->depth) return (FALSE);
@@ -1857,7 +1855,7 @@ bool borg_crush_slow(void)
 bool borg_test_stuff(bool star_id)
 {
 	/* Hack - ignore parameter */
-	(void) star_id;
+	(void)star_id;
 #if 0
 
 	int i, b_i = -1;
@@ -2297,10 +2295,10 @@ bool borg_remove_stuff(void)
 
 	/* Require an empty slot */
 	if (inven_num >= INVEN_PACK - 1) return (FALSE);
-	
+
 	/* Start with good power */
 	b_p = borg_power();
-	
+
 	/* Scan equip */
 	for (i = 0; i < equip_num; i++)
 	{
@@ -2325,7 +2323,7 @@ bool borg_remove_stuff(void)
 
 		/* Evaluate the inventory */
 		p = borg_power();
-		
+
 		/* Put it back on */
 		l_ptr->treat_as = TREAT_AS_NORM;
 
@@ -2499,8 +2497,7 @@ bool borg_play_magic(bool bored)
 	for (realm = MAX_REALM; realm > 0; realm--)
 	{
 		/* skip non my realms */
-		if ((realm != bp_ptr->realm1) &&
-			(realm != bp_ptr->realm2)) continue;
+		if ((realm != bp_ptr->realm1) && (realm != bp_ptr->realm2)) continue;
 
 
 		/* Check each book (backwards) */
@@ -2962,8 +2959,7 @@ bool borg_leave_level(bool bored)
 
 	/* return to town if been scumming for a bit */
 	if (bp_ptr->max_depth >= bp_ptr->depth + 25 &&
-		bp_ptr->depth < 9 &&
-		borg_time_town + borg_t - borg_began > 3500)
+		bp_ptr->depth < 9 && borg_time_town + borg_t - borg_began > 3500)
 	{
 		borg_note("# Going to town (scumming check).");
 		goal_rising = TRUE;

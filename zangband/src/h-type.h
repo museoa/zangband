@@ -126,26 +126,26 @@ typedef unsigned long u32b;
 #  include <stdint.h>
 #  define ANG_U64B uint64_t
 #  define ANG_S64B int64_t
-# endif /* __STDC__ && __STDC_VERSION__ */
+# endif	/* __STDC__ && __STDC_VERSION__ */
 
 /* Define this for Microsoft Dev Studio C++ 6.0 */
 # ifdef MSDEV
 #  define ANG_U64B unsigned __int64
 #  define ANG_S64B __int64
-# endif /* MSDEV */
+# endif	/* MSDEV */
 
 /* Define this if you have <sys/types.h> with an old compiler */
 # if defined HAS_SYS_TYPES && !defined ANG_U64B
 #  include <sys/types.h>
 #  define ANG_U64B u_int64_t
 #  define ANG_S64B int64_t
-# endif /* HAS_SYS_TYPES */
+# endif	/* HAS_SYS_TYPES */
 
 /* Attempt to use "long long" which is semi-standard for older compilers */
 # ifndef ANG_U64B
 #  define ANG_U64B unsigned long long
 #  define ANG_S64B long long
-# endif /* ANG_U64B */
+# endif	/* ANG_U64B */
 
 /* Define the 64bit types */
 typedef ANG_U64B u64b;

@@ -218,34 +218,34 @@ struct borg_player
 
 	bool intmana;
 	bool wismana;
-	
+
 	bool britelite;
-	
+
 	/* Hitpoints */
 	int chp;
 	int mhp;
 	int oldhp;
-	
+
 	/* Spellpoints */
 	int csp;
 	int msp;
-	
-	byte realm1; /* First magic realm */
-	byte realm2; /* Second magic realm */
-	
-	s16b lev; /* Cur level */
+
+	byte realm1;	/* First magic realm */
+	byte realm2;	/* Second magic realm */
+
+	s16b lev;	/* Cur level */
 	s16b max_lev;	/* Max level */
-	
+
 	s16b depth;	/* Cur depth */
 	s16b max_depth;	/* Max depth */
-	
+
 	/* Combined object flags */
 	u32b flags1;
 	u32b flags2;
 	u32b flags3;
-	
-	
-	
+
+
+
 };
 
 extern borg_player *bp_ptr;
@@ -584,7 +584,7 @@ extern int borg_feeling;	/* Current level "feeling" */
 /*
  * State variables extracted from the screen
  */
- 
+
 extern s32b borg_gold;	/* Current gold */
 
 extern int borg_stat[6];	/* Current stats */

@@ -1535,7 +1535,7 @@ static void borg_delete_take(int i)
 				  (k_name + k_info[take->k_idx].name), take->x, take->y);
 
 	/* Kill the object */
-	(void) WIPE(take, borg_take);
+	(void)WIPE(take, borg_take);
 
 	/* One less object */
 	borg_takes_cnt--;
@@ -1735,7 +1735,7 @@ void borg_delete_kill(int who, cptr reason)
 				  kill->x, kill->y, reason);
 
 	/* Kill the monster */
-	(void) WIPE(kill, borg_kill);
+	(void)WIPE(kill, borg_kill);
 
 	/* One less monster */
 	borg_kills_cnt--;
@@ -1798,7 +1798,7 @@ static void borg_merge_kill(int who)
 	}
 
 	/* Kill the monster */
-	(void) WIPE(kill, borg_kill);
+	(void)WIPE(kill, borg_kill);
 
 	/* One less monster */
 	borg_kills_cnt--;
@@ -2474,7 +2474,7 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 	if (!borg_active)
 	{
 		/* Chain into the old hook, if it exists */
-		if (old_info_hook) ((map_info_hook_type) old_info_hook)(mb_ptr, map);
+		if (old_info_hook) ((map_info_hook_type)old_info_hook) (mb_ptr, map);
 
 		/* Done */
 		return;
@@ -2772,7 +2772,7 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 	}
 
 	/* Finally - chain into the old hook, if it exists */
-	if (old_info_hook) ((map_info_hook_type) old_info_hook)(mb_ptr, map);
+	if (old_info_hook) ((map_info_hook_type)old_info_hook) (mb_ptr, map);
 }
 
 /*
@@ -2797,13 +2797,13 @@ void borg_map_erase(void)
 	borg_takes_nxt = 1;
 
 	/* Forget old objects */
-	(void) C_WIPE(borg_takes, BORG_TAKES_MAX, borg_take);
+	(void)C_WIPE(borg_takes, BORG_TAKES_MAX, borg_take);
 
 	/* Forget old monsters */
-	(void) C_WIPE(borg_kills, BORG_KILLS_MAX, borg_kill);
-	
+	(void)C_WIPE(borg_kills, BORG_KILLS_MAX, borg_kill);
+
 	/* Call the next one in the chain */
-	if (old_erase_hook) ((map_erase_hook_type) old_erase_hook)();
+	if (old_erase_hook) ((map_erase_hook_type)old_erase_hook) ();
 }
 
 
@@ -2960,8 +2960,7 @@ static int borg_fear_spell(int i)
 
 
 	/* Damage taken */
-	if (bp_ptr->oldhp > bp_ptr->chp) ouch =
-			(bp_ptr->oldhp - bp_ptr->chp) * 2;
+	if (bp_ptr->oldhp > bp_ptr->chp) ouch = (bp_ptr->oldhp - bp_ptr->chp) * 2;
 
 
 	/* Check the spell */
@@ -4243,7 +4242,7 @@ void borg_update(void)
 		borg_kills_nxt = 1;
 
 		/* Forget old monsters */
-		(void) C_WIPE(borg_kills, BORG_KILLS_MAX, borg_kill);
+		(void)C_WIPE(borg_kills, BORG_KILLS_MAX, borg_kill);
 
 		/* Fake goal location */
 		g_x = c_x;
@@ -4538,11 +4537,11 @@ void borg_player_move(int x, int y)
 {
 	c_x = x;
 	c_y = y;
-	
+
 	/* Call the next function in the chain if it exists */
 	if (old_move_hook)
 	{
-		((player_move_hook_type) old_move_hook)(x, y);
+		((player_move_hook_type) old_move_hook) (x, y);
 	}
 }
 

@@ -309,4 +309,3 @@ extern void del_overhead_map(void);
 extern bool map_in_bounds(int x, int y);
 extern map_block *map_loc(int dx, int dy);
 #endif /* TERM_USE_MAP */
-

@@ -473,23 +473,23 @@ static void do_cmd_use_staff_aux(object_type *o_ptr)
 	{
 		/* Split object */
 		o_ptr = item_split(o_ptr, 1);
-		
+
 		/* Use a single charge */
 		o_ptr->pval--;
 
 		/* Unstack the used item */
 		o_ptr = inven_carry(o_ptr);
-		
+
 		/* Notice weight changes */
 		p_ptr->update |= PU_WEIGHT;
-		
+
 		/* Paranoia */
 		if (!o_ptr)
 		{
 			msg_print("Too many dungeon objects - staff lost!");
-			
+
 			make_noise(1);
-			
+
 			/* Exit */
 			return;
 		}
@@ -502,7 +502,7 @@ static void do_cmd_use_staff_aux(object_type *o_ptr)
 		/* Use a single charge */
 		o_ptr->pval--;
 	}
-	
+
 	/* Describe charges in the pack */
 	if (o_ptr) item_charges(o_ptr);
 
@@ -663,7 +663,7 @@ static void do_cmd_zap_rod_aux(object_type *o_ptr)
 		msg_print("You must first pick up the rods.");
 		return;
 	}
-	
+
 	/* A single rod is still charging */
 	if ((o_ptr->number == 1) && (o_ptr->timeout))
 	{

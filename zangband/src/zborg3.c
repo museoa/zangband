@@ -773,7 +773,7 @@ object_kind *borg_get_kind(int tval, int sval)
 		/* Use this value */
 		kb_ptr = k_ptr;
 	}
-	
+
 	/* Failure? */
 	if (sval != SV_ANY)
 	{
@@ -1638,8 +1638,7 @@ bool borg_spell_legal(int realm, int book, int what)
 	borg_magic *as = &borg_magics[realm][book][what];
 
 	/* The borg must be able to "cast" spells this realm */
-	if (bp_ptr->realm1 != realm &&
-		bp_ptr->realm2 != realm) return (FALSE);
+	if (bp_ptr->realm1 != realm && bp_ptr->realm2 != realm) return (FALSE);
 
 	/* Make sure we have this realm book */
 	if (amt_book[realm][book] <= 0) return (FALSE);
@@ -1688,8 +1687,7 @@ bool borg_spell_okay(int realm, int book, int what)
 	if (as->power > bp_ptr->csp) return (FALSE);
 
 	/* Do not cut into reserve mana (for final teleport) */
-	if (bp_ptr->csp - as->power < reserve_mana &&
-		realm == REALM_SORCERY)
+	if (bp_ptr->csp - as->power < reserve_mana && realm == REALM_SORCERY)
 	{
 		/* Phase spells ok */
 		if (book == 0 && what == 2) return (TRUE);
