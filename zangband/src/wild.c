@@ -2039,8 +2039,6 @@ static void set_temp_mid(u16b val)
 
 static void frac_block(void)
 {
-	int grd;
-
 	/* fixed point variables- these are stored as 256 x normal value
 	* this gives 8 binary places of fractional part + 8 places of normal part*/
 
@@ -2075,19 +2073,11 @@ static void frac_block(void)
 				/* only write to points that are "blank" */
 				if (temp_block[jj][ii] == MAX_SHORT)
 				{
-					if (hstep > grd)
-					{
-						/* If greater than 'grid' level then is random */
-						temp_block[jj][ii] = randint(WILD_BLOCK_SIZE * 256);
-					}
-			   		else
-					{
-						/* Average of left and right points +random bit */
-						temp_block[jj][ii] =
-						((temp_block[jj][(i - hstep) >> 8] +
-						temp_block[jj][(i + hstep) >>8]) >> 1) +
-						((randint(lstep) - hstep) >> 1);
-					}
+					/* Average of left and right points +random bit */
+					temp_block[jj][ii] =
+					((temp_block[jj][(i - hstep) >> 8] +
+					temp_block[jj][(i + hstep) >>8]) >> 1) +
+					((randint(lstep) - hstep) >> 1);
 				}
 			}
 		}
@@ -2105,19 +2095,11 @@ static void frac_block(void)
 				/* only write to points that are "blank" */
 				if (temp_block[jj][ii] == MAX_SHORT)
 				{				
-					if (hstep > grd)
-					{
-						/* If greater than 'grid' level then is random */
-						temp_block[jj][ii] = randint(WILD_BLOCK_SIZE * 256);
-					}
-		   			else
-					{
-						/* Average of up and down points +random bit */
-						temp_block[jj][ii] =
-						((temp_block[(j - hstep) >> 8][ii]
-						+ temp_block[(j + hstep) >> 8][ii]) >> 1)
-						+ ((randint(lstep) - hstep) >> 1);
-					}
+					/* Average of up and down points +random bit */
+					temp_block[jj][ii] =
+					((temp_block[(j - hstep) >> 8][ii]
+					+ temp_block[(j + hstep) >> 8][ii]) >> 1)
+					+ ((randint(lstep) - hstep) >> 1);
 				}
 			}
 		}
@@ -2134,22 +2116,14 @@ static void frac_block(void)
 				/* only write to points that are "blank" */
 				if (temp_block[jj][ii] == MAX_SHORT)		
 				{
-					if (hstep > grd)
-					{
-						/* If greater than 'grid' level then is random */
-						temp_block[jj][ii] = randint(WILD_BLOCK_SIZE * 256);
-					}
-		   			else
-					{
-						/* average over all four corners + scale by 181 to
-						 * reduce the effect of the square grid on the shape of the fractal */
-						temp_block[jj][ii] =
-						((temp_block[(j - hstep) >> 8][(i - hstep) >> 8]
-						+ temp_block[(j + hstep) >> 8][(i - hstep) >> 8]
-						+ temp_block[(j - hstep) >> 8][(i + hstep) >> 8]
-						+ temp_block[(j + hstep) >> 8][(i + hstep) >> 8]) >> 2)
-						+ (((randint(lstep) - hstep) * 181) >> 8);
-					}
+					/* average over all four corners + scale by 181 to
+					 * reduce the effect of the square grid on the shape of the fractal */
+					temp_block[jj][ii] =
+					((temp_block[(j - hstep) >> 8][(i - hstep) >> 8]
+					+ temp_block[(j + hstep) >> 8][(i - hstep) >> 8]
+					+ temp_block[(j - hstep) >> 8][(i + hstep) >> 8]
+					+ temp_block[(j + hstep) >> 8][(i + hstep) >> 8]) >> 2)
+					+ (((randint(lstep) - hstep) * 181) >> 8);
 				}
 			}
 		}
