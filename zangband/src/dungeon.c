@@ -3048,7 +3048,7 @@ static void dungeon(void)
 		if (cave_valid_grid(c_ptr))
 		{
 			/* XXX XXX XXX */
-			delete_object(p_ptr->py, p_ptr->px);
+			delete_object(p_ptr->px, p_ptr->py);
 
 			/* Make stairs */
 			if (p_ptr->create_down_stair)

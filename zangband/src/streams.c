@@ -382,7 +382,7 @@ void destroy_level(void)
 				if (cave_valid_grid(c_ptr))
 				{
 					/* Delete objects */
-					delete_object(y, x);
+					delete_object(x, y);
 					
 					/* Delete all fields */
 					delete_field_location(c_ptr);

@@ -1575,7 +1575,7 @@ void stair_creation(void)
 	if (!check_down_wild()) return;
 
 	/* XXX XXX XXX */
-	delete_object(py, px);
+	delete_object(px, py);
 
 #if 0
 	/* Create a staircase */

@@ -181,7 +181,7 @@ void delete_object_idx(int o_idx)
 /*
  * Deletes all objects at given location
  */
-void delete_object(int y, int x)
+void delete_object(int x, int y)
 {
 	cave_type *c_ptr;
 

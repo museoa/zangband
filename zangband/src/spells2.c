@@ -2280,7 +2280,7 @@ bool destroy_area(int y1, int x1, int r)
 			if (cave_valid_grid(c_ptr))
 			{
 				/* Delete objects */
-				delete_object(y, x);
+				delete_object(x, y);
 
 				/* Wall (or floor) type */
 				t = randint0(200);
@@ -2773,7 +2773,7 @@ bool earthquake(int cy, int cx, int r)
 				bool floor = cave_floor_grid(c_ptr);
 
 				/* Delete objects */
-				delete_object(yy, xx);
+				delete_object(xx, yy);
 
 				/* Wall (or floor) type */
 				t = (floor ? randint0(100) : 200);
