@@ -194,8 +194,6 @@ class event_data:
 		self._set_callback(PLAYER_OUTFIT_EVENT, "player_outfit")
 		self._set_callback(SENSE_INVENTORY_EVENT, "sense_inventory")
 		self._set_callback(DESTROY_OBJECT_EVENT, "destroy_object")
-		self._set_callback(OBJECT_CREATE_EVENT, "object_create")
-		self._set_callback(OBJECT_LOAD_EVENT, "object_load")
 		self._set_callback(WILDERNESS_INIT_EVENT, "wilderness_init")
 		self._set_callback(CREATE_MONSTER_EVENT, "create_monster")
 		self._set_callback(DELETE_MONSTER_EVENT, "delete_monster")

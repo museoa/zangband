@@ -55,4 +55,3 @@ class nexus(world):
 	           proxy("Monk", "data.player.pclass.monk", "monk"),
 	           proxy("Mindcrafter", "data.player.pclass.mindcraf", "mindcrafter"),
 	           proxy("High Mage", "data.player.pclass.highmage", "highmage")]
-

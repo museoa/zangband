@@ -34,4 +34,3 @@ class vampire(player_race):
 		scroll.number = rand_range(2, 5)
 		player.give(scroll)
 		return 1
-
