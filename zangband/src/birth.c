@@ -733,6 +733,7 @@ static byte choose_realm(byte choices)
 			remove_loc();
 			quit(NULL);
 		}
+		if (c == 'S') return (REALM_NONE);
 		if (c == '*')
 		{
 			k = randint0(n);
@@ -788,7 +789,17 @@ static bool get_player_realms(void)
 
 		/* Print the realm */
 		if (p_ptr->realm2)
+		{
 			c_put_str(TERM_L_BLUE, realm_names[p_ptr->realm2], 7, 15);
+		}
+		else
+		{
+			return (FALSE);
+		}
+	}
+	else
+	{
+		return (FALSE);
 	}
 
 	return (TRUE);
