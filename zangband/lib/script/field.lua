@@ -177,7 +177,10 @@ function trap_disarm(level)
 	if (power < 2) then power = 2 end
 	
 	-- Delete the trap if successful
-	if (randint0(100) < power) then deleteme() end
+	if (randint0(100) < power) then
+		deleteme()
+		gain_xp(level * level)
+		end
 end
 
 --
