@@ -2143,8 +2143,8 @@ bool borg_flow_kill_corridor(bool viewable)
 			if (borg_spell_legal(REALM_ARCANE, 2, 4) ||
 				borg_spell_legal(REALM_NATURE, 1, 0) ||
 				borg_spell_legal(REALM_CHAOS, 2, 3) ||
-				borg_mutation_check(MUT1_EAT_ROCK) ||
-				borg_racial_check(RACE_HALF_GIANT) ||
+				borg_mutation_check(MUT1_EAT_ROCK, TRUE) ||
+				borg_racial_check(RACE_HALF_GIANT, TRUE) ||
 				(bp_ptr->skill_dig > (bp_ptr->depth > 80 ? 30 : 40)))
 			{
 				/* digging ought to work */
@@ -2811,8 +2811,8 @@ static bool borg_flow_dark_interesting(int x, int y, int b_stair)
 		if (borg_spell_legal(REALM_ARCANE, 2, 4) ||
 			borg_spell_legal(REALM_NATURE, 1, 0) ||
 			borg_spell_legal(REALM_CHAOS, 2, 3) ||
-			borg_mutation(MUT1_EAT_ROCK) ||
-			borg_racial(RACE_HALF_GIANT)) return (TRUE);
+			borg_mutation_check(MUT1_EAT_ROCK, TRUE) ||
+			borg_racial_check(RACE_HALF_GIANT, TRUE)) return (TRUE);
 
 		/*
 		 * Do not dig unless we appear strong

@@ -3019,7 +3019,6 @@ static bool borg_power_check(bool race, u32b which, bool check_fail,
  * -or-
  * with a reasonable degree of difficulty with Check_fail
  *
- * Ghoul and Amberite have a second power but that is ignored
  * The values for borg_power_check come from tables.c
  */
 bool borg_racial_check(int race, bool check_fail)
