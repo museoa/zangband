@@ -181,25 +181,25 @@ z-virt.o: z-virt.c $(HDRS) z-virt.h z-util.h
 # Build wrappers
 #
 
-l-monst.c: lua/tolua l-monst.pkg $(INCS)
+l-monst.c: l-monst.pkg $(INCS) lua/tolua
 	lua/tolua -n $(subst l-,,$*) -o $@ $<
 
-l-object.c: lua/tolua l-object.pkg $(INCS)
+l-object.c: l-object.pkg $(INCS) lua/tolua
 	lua/tolua -n $(subst l-,,$*) -o $@ $<
 
-l-player.c: lua/tolua l-player.pkg $(INCS)
+l-player.c: l-player.pkg $(INCS) lua/tolua
 	lua/tolua -n $(subst l-,,$*) -o $@ $<
 
-l-random.c: lua/tolua l-random.pkg $(INCS)
+l-random.c: l-random.pkg $(INCS) lua/tolua
 	lua/tolua -n $(subst l-,,$*) -o $@ $<
 
-l-ui.c: lua/tolua l-ui.pkg $(INCS)
+l-ui.c: l-ui.pkg $(INCS) lua/tolua
 	lua/tolua -n $(subst l-,,$*) -o $@ $<
 
-l-misc.c: lua/tolua l-misc.pkg $(INCS)
+l-misc.c: l-misc.pkg $(INCS) lua/tolua
 	lua/tolua -n $(subst l-,,$*) -o $@ $<
 
-l-spell.c: lua/tolua l-spell.pkg $(INCS)
+l-spell.c: l-spell.pkg $(INCS) lua/tolua
 	lua/tolua -n $(subst l-,,$*) -o $@ $<
 
 # Each borg file depends on the one before it.
