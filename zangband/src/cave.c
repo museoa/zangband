@@ -2618,17 +2618,12 @@ void display_map(int *cx, int *cy)
                         mc[j + 1][i + 1] = '0' + twn % 10;
                         feat = FEAT_NONE;
 					}
-					else if (place[twn].type != TOWN_FARM)
+					else
 					{
 						/* Towns are white */
                         ma[j + 1][i + 1] = TERM_WHITE;
                         mc[j + 1][i + 1] = '0' + twn % 10;
                         feat = FEAT_NONE;
-                    }
-                    else
-                    {
-                        /* Farms look like grass */
-                        feat = FEAT_GRASS;
                     }
 				}
 

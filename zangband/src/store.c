@@ -762,8 +762,14 @@ static bool store_will_stock(const object_type *o_ptr)
 	/* Thing to pass to the action functions */
 	field_obj_test f_o_t;
 
-	/* Save information to pass to the field action function */
-	f_o_t.o_ptr = (object_type *)o_ptr;
+	/*
+	 * Save information to pass to the field action function
+	 *
+	 * Hack - remove const specifier...
+	 * (store_will_stock needs const due to the item_hook
+	 * which is really annoying.)
+	 */
+	f_o_t.o_ptr = (object_type *) o_ptr;
 
 	/* Default is to reject this rejection */
 	f_o_t.result = FALSE;

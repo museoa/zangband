@@ -1279,54 +1279,6 @@ static void draw_city(u16b town_num)
 	Rand_quick = FALSE;
 }
 
-
-/*
- * Create a farm in the wilderness
- */
-static bool create_farm(int x, int y, int place_num)
-{
-	int i, j;
-
-	wild_type *w_ptr = &wild[y][x];
-
-	place_type *pl_ptr = &place[place_num];
-
-	/* Is the area too hard for a farm? */
-	if (randint0(63) + 192 >= w_ptr->trans.law_map) return (FALSE);
-
-	/* Get a random seed for later */
-	pl_ptr->seed = randint0(0x10000000);
-
-	/* Quest */
-	pl_ptr->type = TOWN_FARM;
-	pl_ptr->x = x;
-	pl_ptr->y = y;
-
-	/* Data value is 0 to distinguish from a town */
-	pl_ptr->data = 0;
-
-	if ((!pl_ptr->xsize) || (!pl_ptr->ysize)) quit("Zero farm size");
-
-	/* Link wilderness to farm */
-	for (i = 0; i < pl_ptr->xsize; i++)
-	{
-		for (j = 0; j < pl_ptr->ysize; j++)
-		{
-			w_ptr = &wild[y + j][x + i];
-
-			/*
-			 * Add quest to wilderness
-			 * Note: only 255 can be stored currently.
-			 */
-			w_ptr->trans.place = (byte)place_num;
-
-			/* Increment "active block" counter */
-			pl_ptr->data++;
-		}
-	}
-
-	return (TRUE);
-}
 /*
  * Initialise the place structures
  *
@@ -1406,22 +1358,6 @@ bool init_places(int xx, int yy)
 				continue;
 			}
 		}
-        else if (place_count < z_info->wp_max / TOWN_FRACTION +
-                               z_info->wp_max / FARM_FRACTION)
-        {
-			int xsize, ysize;
-			byte flags;
-
-            xsize = randint1(6);
-            ysize = randint1(6);
-            flags = Q_GEN_PICKY;
-
-			/* See if a farm will fit */
-			if (!quest_blank(x, y, xsize, ysize, place_count, flags)) continue;
-
-            /* Build it */
-			if (!create_farm(x, y, place_count)) continue;
-        }
 		else
 		{
 			int xsize, ysize;
@@ -1787,82 +1723,6 @@ void init_vanilla_town(void)
 }
 
 
-/* Draw a pleasant field */
-static void draw_farm(u16b place_num)
-{
-    int x, y, i, j;
-    int x1, x2, y1, y2;
-    int type;
-
-    place_type *pl_ptr = &place[place_num];
-
-	cave_type *c_ptr;
-
-	/* Paranoia */
-	if (pl_ptr->region) quit("Farm already has region during creation.");
-
-	/* Get region */
-	pl_ptr->region = (s16b)create_region(pl_ptr->xsize * WILD_BLOCK_SIZE,
-										 pl_ptr->ysize * WILD_BLOCK_SIZE,
-										 REGION_NULL);
-
-	/* Hack - do not increment refcount here - let allocate_block do that */
-
-	/* Hack -- Use the "simple" RNG */
-	Rand_quick = TRUE;
-
-	/* Hack -- Induce consistant farm layout */
-	Rand_value = place[place_num].seed;
-
-    for (x = 0; x < pl_ptr->xsize; x++)
-    {
-        for (y = 0; y < pl_ptr->ysize; y++)
-        {
-            if (randint0(8) < 5)
-                type = 1;
-            else if (randint0(5) < 3)
-                type = 2;
-            else if (randint0(3) < 2)
-                type = 3;
-            else
-                type = 4;
-
-            for (i = 0; i < 16; i++)
-            {
-                for (j = 0; j < 16; j++)
-                {
-                    /* Get location */
-                    c_ptr = cave_p(x * 16 + i, y * 16 + j);
-
-                    if (type == 1 || (type == 3 && j % 2 == 0))
-                    {
-                        c_ptr->feat = FEAT_GRASS;
-                    }
-                    else if (type == 2 || type == 3)
-                    {
-                        c_ptr->feat = FEAT_DIRT;
-                    }
-                }
-            }
-        }
-    }
-
-    x = randint0(pl_ptr->xsize * WILD_BLOCK_SIZE - 17) + 8;
-    y = randint0(pl_ptr->ysize * WILD_BLOCK_SIZE - 17) + 7;
-    x1 = x - 1 - randint1(5);
-    x2 = x + 1 + randint1(5);
-    y1 = y - 1 - randint1(4);
-    y2 = y + 1 + randint1(4);
-
-    /* Put down some dirt */
-    generate_fill(x1 - 2, y1 - 2, x2 + 2, y2 + 2, FEAT_DIRT);
-
-    /* Build an invulnerable rectangular building */
-    generate_fill(x1, y1, x2, y2, FEAT_PERM_EXTRA);
-
-	/* Hack -- use the "complex" RNG */
-	Rand_quick = FALSE;
-}
 
 /*
  * Generate the selected place
@@ -1885,11 +1745,6 @@ static void place_gen(u16b place_num)
 		{
 			draw_quest(place_num);
 			break;
-        }
-        case TOWN_FARM:
-        {
-            draw_farm(place_num);
-            break;
         }
         default:
 		{
@@ -2865,6 +2720,80 @@ static void make_wild_03(blk_ptr block_ptr, byte *data)
 	}
 }
 
+
+/*
+ * Draw a pleasant field (farm)
+ */
+static void make_wild_04(blk_ptr block_ptr, byte *data)
+{
+    int x, y, i, j;
+    int type;
+
+	cave_type *c_ptr;
+	
+	/* Hack - ignore parameter */
+	(void) data;
+
+	/* Get type of ground */
+	switch (randint0(8))
+	{
+		case 0:
+		case 1:
+		{
+			type = 1;
+			break;
+		}
+		case 4:
+		{
+			type = 2;
+			break;
+		}
+		case 5:
+		{
+			type = 3;
+			break;
+		}
+		default:
+		{
+			type = 4;
+			break;
+		}
+	}
+	
+	/* Get location of building */
+	x = rand_range(6, 10);
+    y = rand_range(6, 10);
+
+
+   	for (i = 0; i < WILD_BLOCK_SIZE; i++)
+	{
+	    for (j = 0; j < WILD_BLOCK_SIZE; j++)
+    	{
+	        /* Get location */
+    	    c_ptr = &block_ptr[j][i];
+
+			/* Place ground */
+    	    if (type == 1 || (type == 3 && j % 2 == 0))
+	        {
+    	        c_ptr->feat = FEAT_GRASS;
+        	}
+	        else if (type > 2)
+    	    {
+        	    c_ptr->feat = FEAT_DIRT;
+	        }
+			
+			if ((i >= x - 1) && (i <= x + 1) &&
+				 (i >= y - 1) && (i <= y + 1) && (type == 4))
+			{
+				/* Build an invulnerable rectangular building */
+				c_ptr->feat = FEAT_PERM_EXTRA;
+			}
+    	}
+	}
+}
+
+
+
 /*
  * This function blends adjacent sea blocks
  * (by picking the feat type to use)
@@ -2922,6 +2851,11 @@ static void blend_helper(cave_type *c_ptr, byte *data, int g_type)
 						 wild_gen_data[data[0]].gen_routine);
 			break;
 		}
+		case 4:
+		{
+			/* Don't do anything */
+			break;
+		}
 		default:
 		{
 			msg_format("Illegal wilderness type %d ", g_type);
@@ -2939,6 +2873,12 @@ static void blend_block(int x, int y, blk_ptr block_ptr, u16b type)
 	int i, j, dx, dy;
 
 	u16b w_type;
+	
+	/* Get current location */
+	w_type = wild[y][x].done.wild;
+			
+	/* Farms do not blend */
+	if (wild_gen_data[w_type].gen_routine == 4) return;
 
 	/* Blend based on height map */
 	for (j = 0; j < WILD_BLOCK_SIZE; j++)
@@ -3034,6 +2974,12 @@ static void gen_block_helper(blk_ptr block_ptr, byte *data, int gen_type)
 		{
 			/* Use another type + overlay a "circle" of terrain. */
 			make_wild_03(block_ptr, data);
+			break;
+		}
+		case 4:
+		{
+			/* Draw a farm. */
+			make_wild_04(block_ptr, data);
 			break;
 		}
 		default:
