@@ -57,7 +57,7 @@ G:.:w
 W:0:4:0
 I:FEAT | NO_LOOK | NO_ENTER | NO_MAGIC | NO_OBJECT
 D:0:0:0:0:0:0:0:0
-F:10,field_action_wall_tunnel | 11,field_action_delete
+F:10,field_action_wall_tunnel | 11,field_action_wall_gf
 F:16,field_action_interact_tunnel
 
 # Glyph of Warding
