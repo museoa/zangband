@@ -61,7 +61,7 @@ static int racial_chance(s16b min_level, int use_stat, int difficulty)
 }
 
 /* 
- * Helper function for ghouls, hacked from the raise dead function.
+ * Helper function for ghouls.
  * I realize it is somewhat illogical to have this as a "power" rather
  * than an extension of the "eat" command, but I could not think of
  * a handy solution to the conceptual/UI problem of having food objects AND
@@ -70,69 +70,51 @@ static int racial_chance(s16b min_level, int use_stat, int difficulty)
  * (OTOH, you can swap your full-plate armour for a dragonscalemail in
  * 1 turn *shrug*) 
  */
-
-void eat_corpse(void)
+static void eat_corpse(void)
 {
-
-	s16b i;
-	int fx, fy;
-	bool corpse_here = FALSE;
-	field_type *f_ptr = NULL;
-
-	/* Find the field in the player square */
-	for (i = 1; i < fld_max; i++)
+	s16b fld_idx;
+	field_type *f_ptr;
+	
+	fld_idx = area(p_ptr->px, p_ptr->py)->fld_idx;
+	
+	/* While there are fields in the linked list */
+	while (fld_idx)
 	{
-	 
-	        f_ptr = &fld_list[i]; 
-
-		/* Paranoia -- Skip missing objects */
-		if (!f_ptr->t_idx) continue;
-
-		/* Location */
-		fy = f_ptr->fy;
-		fx = f_ptr->fx;
-
-		/* Is it in the player square? */
-		if (!(fy == p_ptr->py && fx == p_ptr->px))
-		{
-		  continue;
-		}
+		f_ptr = &fld_list[fld_idx];
 
 		/* Want a corpse / skeleton */
-		if (!(f_ptr->t_idx == FT_CORPSE ||
-		    f_ptr->t_idx == FT_SKELETON)) continue;
-		else
+		if ((f_ptr->t_idx == FT_CORPSE || f_ptr->t_idx == FT_SKELETON))
 		{
-		  corpse_here = TRUE;
-		  break;
+			if(f_ptr->t_idx == FT_CORPSE)
+			{
+				msg_print("The corpse tastes delicious!");
+				(void)set_food(p_ptr->food + 2000);
+			}
+			else
+			{
+				msg_print("The bones taste delicious!");
+				(void)set_food(p_ptr->food + 1000);
+			}
+
+			/* Sound */
+			sound(SOUND_EAT);
+
+			delete_field_idx(fld_idx);
+				
+			/* Done */
+			return;
 		}
-	}
 
-	if (!corpse_here)
-	{
-	  msg_print("There is no fresh skeleton or corpse here!");
-	  p_ptr->energy_use = 0;
-	  return;
-	}
+		/* Get next field in list */
+		fld_idx = f_ptr->next_f_idx;
+	} 
 
-	if(f_ptr->t_idx == FT_CORPSE)
-	{
-	  msg_print("The corpse tastes delicious!");
-	  (void)set_food(p_ptr->food + 2000);
-	}
-	else
-	{
-	  msg_print("The bones taste delicious!");
-	  (void)set_food(p_ptr->food + 1000);
-	}
-
-	/* Sound */
-	sound(SOUND_EAT);
-
-	delete_field_idx(i);
-
-        return;
-
+	/* Nothing to eat */
+	msg_print("There is no fresh skeleton or corpse here!");
+	p_ptr->energy_use = 0;
+	
+	/* Done */
+    return;
 }
 
 
