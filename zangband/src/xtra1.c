@@ -3115,15 +3115,10 @@ static void calc_bonuses(void)
 		}
 
 
-		/* Values: 3, 4, ..., 17 */
-		if (use <= 18) ind = (use - 3);
-
-		/* Ranges: 18/00-18/09, ..., 18/210-18/219 */
-		else if (use <= 18 + 219) ind = (15 + (use - 18) / 10);
-
-		/* Range: 18/220+ */
-		else
-			ind = (37);
+        if (use < 400)
+            ind = use / 10 - 3;
+        else
+            ind = 37;
 
 		/* Notice changes */
 		if (p_ptr->stat_ind[i] != ind)
