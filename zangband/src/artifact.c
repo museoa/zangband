@@ -508,11 +508,17 @@ int random_resistance(object_type *o_ptr, int specific, int artifact_bias)
 				artifact_bias = BIAS_WARRIOR;
 			break;
 		case 21:
-			o_ptr->flags2 |= TR2_RES_LITE;
+			if (!one_in_(WEIRD_LUCK))
+				o_ptr->flags2 |= TR2_RES_LITE;
+			else
+				o_ptr->flags4 |= TR4_IM_LITE;
 
 			break;
 		case 22:
-			o_ptr->flags2 |= TR2_RES_DARK;
+			if (!one_in_(WEIRD_LUCK))
+				o_ptr->flags2 |= TR2_RES_DARK;
+			else
+				o_ptr->flags4 |= TR4_IM_DARK;
 
 			break;
 		case 23:

@@ -606,7 +606,7 @@ static void wiz_display_item(const object_type *o_ptr)
 			   o_ptr->info, o_ptr->timeout);
 
 	prtf(j, 10, "+------------FLAGS1------------+\n"
-				"AFFECT........SLAY........BRAND.\n"
+	    		"AFFECT........SLAY........BRAND.\n"
 	    		"              cvae      xsqpaefc\n"
 	    		"siwdcc  ssidsahanvudotgddhuoclio\n"
 	    		"tnieoh  trnipttmiinmrrnrrraiierl\n"
@@ -614,7 +614,7 @@ static void wiz_display_item(const object_type *o_ptr)
                 "%v", binary_fmt, o_ptr->flags1);
 
 	prtf(j, 17, "+------------FLAGS2------------+\n"
-				"SUST...IMMUN..RESIST............\n"
+	    		"SUST...IMMUN..RESIST............\n"
 	    		"        aefctrpsaefcpfldbc sn   \n"
 	    		"siwdcc  clioheatcliooeialoshtncd\n"
 	    		"tnieoh  ierlrfraierliatrnnnrhehi\n"
@@ -622,15 +622,21 @@ static void wiz_display_item(const object_type *o_ptr)
                 "%v", binary_fmt, o_ptr->flags2);
 
 	prtf(j + 32, 10,"+------------FLAGS3------------+\n"
-					"fe      ehsi  st    iiiiadta  hp\n"
-				    "il   n taihnf ee    ggggcregb vr\n"
-				    "re  no ysdose eld   nnnntalrl ym\n"
-				    "ec  om cyewta ieirmsrrrriieaeccc\n"
-				    "aa  ta uktmatlnpgeihaefcvnpvsuuu\n"
-				    "uu  eg rnyoahivaeggoclioaeoasrrr\n"
-				    "rr  li sopdretitsehtierltxrtesss\n"
-				    "aa  ec ewestreshtntsdcedeptedeee\n"
+			"SH  NO tehsif itdrmsIGNRadtabchp\n"
+			"fe  tm yzdhnelneieihaefccrpgluvr\n"
+			"il  ea cktmaticlgggocliotnorrrym\n"
+			"re  lg rnyorhtiesehtierlvxrvdscc\n"
+			"ec  ec swpdtresptntsdcedtpttders\n"
                     "%v", binary_fmt, o_ptr->flags3);
+
+	prtf(j + 32, 17,"+------------FLAGS4-------------\n"
+			"PROT....IMSH  xppp  HURT..  adns\n"
+			"ae      ldac plwas  aefcld  urol\n"
+			"nvudotgdiacomtuati  clioia  tnew\n"
+			"iinmrrnrtrilurclcc  ierltr  osah\n"
+			"mldncltgekddtnklhr  dcedek  cttl\n"
+		    "%v", binary_fmt, o_ptr->flags4);
+
 }
 
 
