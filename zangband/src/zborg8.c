@@ -238,6 +238,9 @@ static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
  */
 static void borg_think_shop_sell(int item, list_item *l_ptr, bool home)
 {
+	/* Ignore parameter */
+	(void) home;
+
 	/* Log */
 	borg_note_fmt("# Selling %s", l_ptr->o_name);
 
@@ -272,6 +275,9 @@ static void borg_think_shop_buy(int item, bool home)
 
 	byte t_a;
 	char buf[2];
+
+	/* Ignore unused parameter */
+	(void) home;
 
 	/* Keep it small */
 	buf[1] = '\0';
