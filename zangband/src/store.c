@@ -1950,14 +1950,6 @@ static void store_examine(int store_top)
 	/* Get the actual item */
 	o_ptr = get_list_item(st_ptr->stock, item);
 
-	/* Require full knowledge */
-	if (!object_known_full(o_ptr))
-	{
-		/* This can only happen in the home */
-		msg_print("You have no special knowledge about that item.");
-		return;
-	}
-
 	/* Description */
 	object_desc(o_name, o_ptr, TRUE, 3, 256);
 
