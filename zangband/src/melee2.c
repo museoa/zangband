@@ -779,8 +779,7 @@ static bool get_moves(int m_idx, int *mm)
 				int y = py + ddy_ddd[i];
 
 				/* Check grid */
-				if (cave_floor_bold(y, x) ||
-					(cave[y][x].feat == FEAT_TREES))
+				if (monster_can_cross_terrain(cave[y][x].feat, r_ptr))
 				{
 					/* One more room grid */
 					room++;
@@ -788,7 +787,8 @@ static bool get_moves(int m_idx, int *mm)
 			}
 
 			/* Not in a room and strong player */
-			if ((room < 8) && (p_ptr->chp > ((p_ptr->mhp * 3) / 4)))
+			if ((room <= (8 * (p_ptr->chp + p_ptr->csp))/
+			 (p_ptr->mhp + p_ptr->msp)) && (room != 7))
 			{
 				/* Find hiding place */
 				if (find_hiding(m_idx, &y, &x)) done = TRUE;
