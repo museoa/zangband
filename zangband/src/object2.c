@@ -3947,11 +3947,11 @@ bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme)
 	base = object_level + delta_level;
 
 	/* Hack - Set flags based on delta_level */
-	if (delta_level > 20)
+	if (delta_level > 15)
 	{
 		flags = OC_FORCE_GOOD;
 
-		min_level = base / 2;
+		min_level = object_level + delta_level / 2;
 	}
 	else
 	{
