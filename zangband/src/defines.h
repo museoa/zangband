@@ -158,7 +158,7 @@
 /*
  * Total number of stores with stock (see "store.c", etc)
  */
-#define STORE_CACHE_AMNT 20
+#define STORE_CACHE_AMNT 50
 
 /*
  * Number of buildings
