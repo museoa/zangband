@@ -1058,23 +1058,27 @@ static bool set_tim_esp(int v)
 	/* Hack -- Force good values */
 	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
 
-	/* Open */
-	if (v)
+	/* Don't notice if we have permanent telepathy */
+	if (!(p_ptr->flags3 & TR3_TELEPATHY))
 	{
-		if (!p_ptr->tim.esp)
+		/* Open */
+		if (v)
 		{
-			msgf("You feel your consciousness expand!");
-			notice = TRUE;
+			if (!p_ptr->tim.esp)
+			{
+				msgf("You feel your consciousness expand!");
+				notice = TRUE;
+			}
 		}
-	}
 
-	/* Shut */
-	else
-	{
-		if (p_ptr->tim.esp)
+		/* Shut */
+		else
 		{
-			msgf("Your consciousness contracts again.");
-			notice = TRUE;
+			if (p_ptr->tim.esp)
+			{
+				msgf("Your consciousness contracts again.");
+				notice = TRUE;
+			}
 		}
 	}
 
