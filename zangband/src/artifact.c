@@ -1774,7 +1774,7 @@ bool activate_effect(object_type *o_ptr)
 						if ((y != py) || (x != px)) break;
 					}
 
-					(void)project(0, 3, y, x, 1000, GF_ELEC,
+					(void)project(0, 3, x, y, 1000, GF_ELEC,
 							  (PROJECT_THRU | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL));
 				}
 

@@ -1761,7 +1761,7 @@ bool project_hack(int typ, int dam)
 		m_ptr->mflag &= ~(MFLAG_TEMP);
 
 		/* Jump directly to the target monster */
-		if (project(0, 0, m_ptr->fy, m_ptr->fx, dam, typ, flg)) obvious = TRUE;
+		if (project(0, 0, m_ptr->fx, m_ptr->fy, dam, typ, flg)) obvious = TRUE;
 	}
 
 	/* Result */
@@ -3208,7 +3208,7 @@ bool lite_area(int dam, int rad)
 	}
 
 	/* Hook into the "project()" function */
-	(void)project(0, rad, p_ptr->py, p_ptr->px, dam, GF_LITE_WEAK, flg);
+	(void)project(0, rad, p_ptr->px, p_ptr->py, dam, GF_LITE_WEAK, flg);
 
 	/* Lite up the room */
 	lite_room(p_ptr->py, p_ptr->px);
@@ -3233,7 +3233,7 @@ bool unlite_area(int dam, int rad)
 	}
 
 	/* Hook into the "project()" function */
-	(void)project(0, rad, p_ptr->py, p_ptr->px, dam, GF_DARK_WEAK, flg);
+	(void)project(0, rad, p_ptr->px, p_ptr->py, dam, GF_DARK_WEAK, flg);
 
 	/* Lite up the room */
 	unlite_room(p_ptr->py, p_ptr->px);
@@ -3269,7 +3269,7 @@ bool fire_ball(int typ, int dir, int dam, int rad)
 	}
 
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */
-	return (project(0, rad, ty, tx, dam, typ, flg));
+	return (project(0, rad, tx, ty, dam, typ, flg));
 }
 
 
@@ -3431,7 +3431,7 @@ bool project_hook(int typ, int dir, int dam, u16b flg)
 	}
 
 	/* Analyze the "dir" and the "target", do NOT explode */
-	return (project(0, 0, ty, tx, dam, typ, flg));
+	return (project(0, 0, tx, ty, dam, typ, flg));
 }
 
 
@@ -3621,21 +3621,21 @@ bool teleport_monster(int dir)
 bool door_creation(void)
 {
 	u16b flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
-	return (project(0, 1, p_ptr->py, p_ptr->px, 0, GF_MAKE_DOOR, flg));
+	return (project(0, 1, p_ptr->px, p_ptr->py, 0, GF_MAKE_DOOR, flg));
 }
 
 
 bool trap_creation(void)
 {
 	u16b flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
-	return (project(0, 1, p_ptr->py, p_ptr->px, 0, GF_MAKE_TRAP, flg));
+	return (project(0, 1, p_ptr->px, p_ptr->py, 0, GF_MAKE_TRAP, flg));
 }
 
 
 bool glyph_creation(void)
 {
 	u16b flg = PROJECT_GRID | PROJECT_ITEM;
-	return (project(0, 1, p_ptr->py, p_ptr->px, 0, GF_MAKE_GLYPH, flg));
+	return (project(0, 1, p_ptr->px, p_ptr->py, 0, GF_MAKE_GLYPH, flg));
 }
 
 
@@ -3643,7 +3643,7 @@ bool wall_stone(void)
 {
 	u16b flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
 
-	bool dummy = (project(0, 1, p_ptr->py, p_ptr->px, 0, GF_STONE_WALL, flg));
+	bool dummy = (project(0, 1, p_ptr->px, p_ptr->py, 0, GF_STONE_WALL, flg));
 
 	/* Update stuff */
 	p_ptr->update |= (PU_VIEW | PU_FLOW);
@@ -3664,14 +3664,14 @@ bool wall_stone(void)
 bool destroy_doors_touch(void)
 {
 	u16b flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
-	return (project(0, 1, p_ptr->py, p_ptr->px, 60, GF_KILL_DOOR, flg));
+	return (project(0, 1, p_ptr->px, p_ptr->py, 60, GF_KILL_DOOR, flg));
 }
 
 
 bool sleep_monsters_touch(void)
 {
 	u16b flg = PROJECT_KILL | PROJECT_HIDE;
-	return (project(0, 1, p_ptr->py, p_ptr->px, p_ptr->lev, GF_OLD_SLEEP, flg));
+	return (project(0, 1, p_ptr->px, p_ptr->py, p_ptr->lev, GF_OLD_SLEEP, flg));
 }
 
 
@@ -3757,7 +3757,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 				{
 					msg_print("A portal opens to a plane of raw mana!");
 					(void)destroy_area(py, px, 20);
-					project(1, 3, py, px, damroll(10, 5), GF_MANA, flg);
+					project(1, 3, px, py, damroll(10, 5), GF_MANA, flg);
 					if (!one_in_(6)) break;
 				}
 				
@@ -3781,7 +3781,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 				wall_breaker();
 				if (one_in_(7))
 				{
-					(void)project(1, 7, py, px, 50, GF_KILL_WALL, flg);
+					(void)project(1, 7, px, py, 50, GF_KILL_WALL, flg);
 				}
 				if (!one_in_(6)) break;
 				
@@ -3997,7 +3997,7 @@ void wall_breaker(void)
 			if ((y != py) || (x != px)) break;
 		}
 
-		(void)project(0, 0, y, x, rand_range(20, 50), GF_KILL_WALL,
+		(void)project(0, 0, x, y, rand_range(20, 50), GF_KILL_WALL,
 				  (PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL));
 	}
 	else if (randint1(100) > 30)
@@ -4017,7 +4017,7 @@ void wall_breaker(void)
 				if ((y != py) || (x != px)) break;
 			}
 
-			(void)project(0, 0, y, x, rand_range(20, 50), GF_KILL_WALL,
+			(void)project(0, 0, x, y, rand_range(20, 50), GF_KILL_WALL,
 					  (PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL));
 		}
 	}
@@ -4162,7 +4162,7 @@ bool starlite(void)
 			if ((y != p_ptr->py) || (x != p_ptr->px)) break;
 		}
 
-		(void)project(0, 0, y, x, damroll(6, 8), GF_LITE_WEAK,
+		(void)project(0, 0, x, y, damroll(6, 8), GF_LITE_WEAK,
 				  (PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID | PROJECT_KILL));
 	}
 

@@ -428,7 +428,7 @@ static void bolt(int m_idx, int typ, int dam_hp)
 	u16b flg = PROJECT_STOP | PROJECT_KILL;
 
 	/* Target the player with a bolt attack */
-	(void)project(m_idx, 0, py, px, dam_hp, typ, flg);
+	(void)project(m_idx, 0, px, py, dam_hp, typ, flg);
 }
 
 
@@ -454,7 +454,7 @@ static void breath(int m_idx, int typ, int dam_hp, int rad, bool breath)
 	if (breath) rad = 0 - rad;
 
 	/* Target the player with a ball attack */
-	(void)project(m_idx, rad, py, px, dam_hp, typ, flg);
+	(void)project(m_idx, rad, px, py, dam_hp, typ, flg);
 }
 
 

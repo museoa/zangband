@@ -3164,7 +3164,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			t_x = m_list[who].fx;
 		}
 
-		(void)project(0, 0, t_y, t_x, dam, typ, (PROJECT_STOP | PROJECT_KILL));
+		(void)project(0, 0, t_x, t_y, dam, typ, (PROJECT_STOP | PROJECT_KILL));
 
 		disturb(TRUE);
 		return TRUE;
@@ -4036,7 +4036,7 @@ int dist_to_line(int x, int y, int x1, int y1, int x2, int y2)
  * in the blast radius, in case the "illumination" of the grid was changed,
  * and "update_view()" and "update_monsters()" need to be called.
  */
-bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
+bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 {
 	int i, j, t, dist;
 
@@ -4709,7 +4709,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 					}
 
 					/* Recursion... */
-					(void)project(area(y, x)->m_idx, 0, t_y, t_x,  dam, typ, flg);
+					(void)project(area(y, x)->m_idx, 0, t_x, t_y,  dam, typ, flg);
 				}
 				else
 				{

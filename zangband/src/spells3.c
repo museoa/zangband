@@ -2940,7 +2940,7 @@ bool potion_smash_effect(int who, int y, int x, int k_idx)
 			/* Do nothing */  ;
 	}
 
-	(void)project(who, radius, y, x, dam, dt,
+	(void)project(who, radius, x, y, dam, dt,
 	    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL));
 
 	/* An identification was made */

@@ -1724,7 +1724,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 				/* Do damage if not exploding */
 				if (!explode)
 				{
-					(void)project(m_idx, 0, t_ptr->fy, t_ptr->fx,
+					(void)project(m_idx, 0, t_ptr->fx, t_ptr->fy,
 						(pt == GF_OLD_SLEEP ? r_ptr->level : damage), pt, PROJECT_KILL | PROJECT_STOP);
 				}
 
@@ -1764,7 +1764,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 							if (see_t)
 								tr_ptr->r_flags2 |= RF2_AURA_FIRE;
 						}
-						(void)project(t_idx, 0, m_ptr->fy, m_ptr->fx,
+						(void)project(t_idx, 0, m_ptr->fx, m_ptr->fy,
 							damroll (1 + ((tr_ptr->level) / 26),
 							1 + ((tr_ptr->level) / 17)),
 							GF_FIRE, PROJECT_KILL | PROJECT_STOP);
@@ -1781,7 +1781,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 							if (see_t)
 								tr_ptr->r_flags3 |= RF3_AURA_COLD;
 						}
-						(void)project(t_idx, 0, m_ptr->fy, m_ptr->fx,
+						(void)project(t_idx, 0, m_ptr->fx, m_ptr->fy,
 							damroll (1 + ((tr_ptr->level) / 26),
 							1 + ((tr_ptr->level) / 17)),
 							GF_COLD, PROJECT_KILL | PROJECT_STOP);
@@ -1797,7 +1797,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 							if (see_t)
 								tr_ptr->r_flags2 |= RF2_AURA_ELEC;
 						}
-						(void)project(t_idx, 0, m_ptr->fy, m_ptr->fx,
+						(void)project(t_idx, 0, m_ptr->fx, m_ptr->fy,
 							damroll (1 + ((tr_ptr->level) / 26),
 							1 + ((tr_ptr->level) / 17)),
 							GF_ELEC, PROJECT_KILL | PROJECT_STOP);

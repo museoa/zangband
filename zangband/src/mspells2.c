@@ -31,7 +31,7 @@ static void monst_breath_monst(int m_idx, int x, int y, int typ, int dam_hp, int
 	/* Handle breath attacks */
 	if (breath) rad = 0 - rad;
 
-	(void)project(m_idx, rad, y, x, dam_hp, typ, flg);
+	(void)project(m_idx, rad, x, y, dam_hp, typ, flg);
 }
 
 
@@ -44,7 +44,7 @@ static void monst_bolt_monst(int m_idx, int x, int y, int typ, int dam_hp)
 {
 	u16b flg = PROJECT_STOP | PROJECT_KILL;
 
-	(void)project(m_idx, 0, y, x, dam_hp, typ, flg);
+	(void)project(m_idx, 0, x, y, dam_hp, typ, flg);
 }
 
 
@@ -2387,7 +2387,7 @@ bool monst_spell_monst(int m_idx)
 					}
 				}
 
-				(void)project(m_idx, 3, y, x, 0, GF_DARK_WEAK, PROJECT_GRID | PROJECT_KILL);
+				(void)project(m_idx, 3, x, y, 0, GF_DARK_WEAK, PROJECT_GRID | PROJECT_KILL);
 
 				unlite_room(y, x);
 

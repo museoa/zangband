@@ -791,7 +791,7 @@ static bool cast_life_spell(int spell)
 	case 29: /* Holy Vision */
 		return identify_fully();
 	case 30: /* Divine Intervention */
-		(void)project(0, 1, py, px, 777, GF_HOLY_FIRE, PROJECT_KILL);
+		(void)project(0, 1, px, py, 777, GF_HOLY_FIRE, PROJECT_KILL);
 		(void)dispel_monsters(plev * 4);
 		(void)slow_monsters();
 		(void)stun_monsters(plev * 4);
@@ -1141,7 +1141,7 @@ static bool cast_nature_spell(int spell)
 	case 31: /* Nature's Wrath */
 		(void)dispel_monsters(plev * 4);
 		(void)earthquake(py, px, 20 + (plev / 2));
-		(void)project(0, 1 + plev / 12, py, px,
+		(void)project(0, 1 + plev / 12, px, py,
 			100 + plev, GF_DISINTEGRATE, PROJECT_KILL | PROJECT_ITEM);
 		break;
 	default:
@@ -1294,7 +1294,7 @@ static bool cast_chaos_spell(int spell)
 		break;
 	case 10: /* Sonic Boom */
 		msg_print("BOOM! Shake the room!");
-		(void)project(0, plev / 10 + 2, py, px,
+		(void)project(0, plev / 10 + 2, px, py,
 			45 + plev, GF_SOUND, PROJECT_KILL | PROJECT_ITEM);
 		break;
 	case 11: /* Doom Bolt -- always beam in 2.0.7 or later */
@@ -1393,7 +1393,7 @@ static bool cast_chaos_spell(int spell)
 
 				if (count >= 1000) break;
 
-				(void)project(0, 2, y, x, (plev * 3) / 2, GF_METEOR, PROJECT_KILL | PROJECT_JUMP | PROJECT_ITEM);
+				(void)project(0, 2, x, y, (plev * 3) / 2, GF_METEOR, PROJECT_KILL | PROJECT_JUMP | PROJECT_ITEM);
 			}
 		}
 		break;

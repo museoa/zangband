@@ -291,7 +291,7 @@ bool monster_death(int m_idx, bool explode)
 				case RBE_EXP_VAMP:  typ = GF_MISSILE; break;
 			}
 
-			(void)project(m_idx, 3, y, x, damage, typ, flg);
+			(void)project(m_idx, 3, x, y, damage, typ, flg);
 			break;
 		}
 	}
@@ -482,7 +482,7 @@ bool monster_death(int m_idx, bool explode)
 	else if (strstr((r_name + r_ptr->name), "Unmaker") && explode)
 	{
 		u16b flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
-		(void)project(m_idx, 6, y, x, 100, GF_CHAOS, flg);
+		(void)project(m_idx, 6, x, y, 100, GF_CHAOS, flg);
 	}
 
 	/* Bloodletters of Khorne may drop a blade of chaos */

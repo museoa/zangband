@@ -2611,7 +2611,7 @@ bool field_action_hit_trap_traps(field_type *f_ptr, vptr nothing)
 	msg_print("There is a bright flash of light!");
 
 	/* Make some new traps */
-	(void)project(0, 1, p_ptr->py, p_ptr->px, 0, GF_MAKE_TRAP,
+	(void)project(0, 1, p_ptr->px, p_ptr->py, 0, GF_MAKE_TRAP,
 	        PROJECT_HIDE | PROJECT_JUMP | PROJECT_GRID);
 
 	/* Delete the field */
