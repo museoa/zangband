@@ -1672,11 +1672,11 @@ void dump_mutations(FILE *OutFile)
 #endif /* MUT3_SUS_STATS */
 		if (p_ptr->muta3 & MUT3_GOOD_LUCK)
 		{
-			fprintf(OutFile, "There is a white aura surrounding you.");
+			fprintf(OutFile, " There is a white aura surrounding you.\n");
 		}
 		if (p_ptr->muta3 & MUT3_BAD_LUCK)
 		{
-			fprintf(OutFile, "There is a black aura surrounding you.");
+			fprintf(OutFile, " There is a black aura surrounding you.\n");
 		}
 
 	}
