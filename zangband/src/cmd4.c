@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: cmd4.c */
 
 /* Purpose: Interface commands */
@@ -3753,9 +3752,9 @@ static void do_cmd_knowledge_quests(void)
  */
 static void do_cmd_knowledge_notes(void)
 {
-	char fname[80];
+	char fname[1024];
 
-	strcpy(fname, notes_file());
+	strncpy(fname, notes_file(), 1024);
 
 	show_file(fname, "Notes", 0, 0);
 }
