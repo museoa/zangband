@@ -1178,10 +1178,11 @@ bool borg_worthless_item(list_item *l_ptr)
 		/* Is the equipped item an ego or artifact? */
 		if (q_ptr->k_idx &&
 			(borg_obj_is_ego_art(q_ptr) ||
-			strstr(q_ptr->o_name, "{special") ||
-			strstr(q_ptr->o_name, "{terrible") ||
-			strstr(q_ptr->o_name, "{excellent") ||
-			strstr(q_ptr->o_name, "{tainted"))) return (TRUE);
+			 (streq(q_ptr->o_name, "") &&
+			  (strstr(q_ptr->o_name, "{special") ||
+			   strstr(q_ptr->o_name, "{terrible") ||
+			   strstr(q_ptr->o_name, "{excellent") ||
+			   strstr(q_ptr->o_name, "{tainted"))))) return (TRUE);
 	}
 
 	/* Is there something known about this item? */
