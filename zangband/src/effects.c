@@ -1099,6 +1099,16 @@ static bool set_tim_esp(int v)
 
 	/* Update the monsters */
 	p_ptr->update |= (PU_MONSTERS);
+	
+	/* Fully update the view */
+	p_ptr->update |= (PU_VIEW);
+
+	/* Redraw map */
+	p_ptr->redraw |= (PR_MAP);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
+
 
 	/* Handle stuff */
 	handle_stuff();
