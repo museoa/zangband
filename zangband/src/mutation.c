@@ -2113,11 +2113,11 @@ void mutation_power_aux(u32b power)
 			break;
 
 		case MUT1_STERILITY:
-			if (racial_aux(20, 40, A_CHR, 18))
+			if (racial_aux(12, 23, A_CHR, 15))
 			{
 				/* Fake a population explosion. */
 				msg_print("You suddenly have a headache!");
-				take_hit(randint(30) + 30, "the strain of forcing abstinence");
+				take_hit(randint(17) + 17, "the strain of forcing abstinence");
 				num_repro += MAX_REPRO;
 			}
 			break;

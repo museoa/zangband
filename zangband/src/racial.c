@@ -1035,9 +1035,9 @@ void do_cmd_racial_power(void)
 		if (p_ptr->muta1 & MUT1_STERILITY)
 		{
 			strcpy(power_desc[num].name, "sterilize");
-			power_desc[num].level = 20;
-			power_desc[num].cost = 40;
-			power_desc[num].fail = 100 - racial_chance(20, A_CHR, 18);
+			power_desc[num].level = 12;
+			power_desc[num].cost = 23;
+			power_desc[num].fail = 100 - racial_chance(12, A_CHR, 15);
 			power_desc[num++].number = MUT1_STERILITY;
 		}
 
