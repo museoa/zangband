@@ -828,11 +828,7 @@ bool player_can_see_bold(int x, int y)
 	pc_ptr = parea(x, y);
 
 	/* Require line of sight to the grid + lit grid */
-	if (pc_ptr->player & (GRID_SEEN)) return (TRUE);
-
-
-	/* Assume not visible */
-	return (FALSE);
+	return (player_can_see_grid(pc_ptr));
 }
 
 
@@ -1943,7 +1939,7 @@ void note_spot(int x, int y)
 		pc_ptr->player |= (GRID_SEEN);
 			
 		/* Memorize feature */
-		pc_ptr->feat = c_ptr->feat;
+		remember_grid(c_ptr, pc_ptr);
 
 		/* Hack -- memorize objects */
 		for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
@@ -3670,7 +3666,7 @@ void update_view(void)
 		pc_ptr = parea(x, y);
 		
 		/* Save "GRID_VIEW" grids */
-		if (pc_ptr->player & (GRID_VIEW))
+		if (player_has_los_grid(pc_ptr))
 		{
 			/* Set "CAVE_TEMP" flag */
 			c_ptr->info |= (CAVE_TEMP);
@@ -3702,7 +3698,7 @@ void update_view(void)
 	player |= (GRID_VIEW);
 	
 	/* Remember square under player */
-	pc_ptr->feat = c_ptr->feat;
+	remember_grid(c_ptr, pc_ptr);
 
 	/* Torch-lit grid */
 	if (0 < radius)
@@ -3922,7 +3918,7 @@ void update_view(void)
 		if ((p_ptr->blind) && !(info & CAVE_XTRA))
 		{
 			/* Grid cannot be memorised (wasn't before) */
-			pc_ptr->feat = FEAT_NONE;
+			forget_grid(pc_ptr);
 
 			/* Don't do anything else */
 			continue;
@@ -3980,7 +3976,7 @@ void update_view(void)
 			}
 			
 			/* Memorise grid */
-			pc_ptr->feat = c_ptr->feat;
+			remember_grid(c_ptr, pc_ptr);
 
 			/* Must note the new information on the screen */
 			if (!(info & CAVE_TEMP))
@@ -4015,7 +4011,7 @@ void update_view(void)
 			if (!(info & (CAVE_GLOW)) && !view_torch_grids
 				 && (c_ptr->feat == FEAT_FLOOR))
 			{
-				pc_ptr->feat = FEAT_NONE;
+				forget_grid(pc_ptr);
 			}
 
 			/* Clear the GRID_LITE flag */
@@ -4076,7 +4072,7 @@ static void mon_lite_hack(int x, int y)
 	if (player_has_los_grid(pc_ptr)) pc_ptr->player |= GRID_SEEN;
 	
 	/* Remember it if view_monster_grids is set. */
-	if (view_monster_grids) pc_ptr->feat = c_ptr->feat;
+	if (view_monster_grids) remember_grid(c_ptr, pc_ptr);
 }
 
 
@@ -4180,7 +4176,7 @@ void update_mon_lite(void)
 		fy = m_ptr->fy;
 
 		/* Is the monster visible? */
-		mon_invis = !(parea(fx, fy)->player & GRID_VIEW);
+		mon_invis = !player_has_los_grid(parea(fx, fy));
 
 		/* The square it is on */
 		mon_lite_hack(fx, fy);
@@ -4335,7 +4331,7 @@ void update_mon_lite(void)
 			/* Clear the temp flag for the old lit grids */
 			c_ptr->info &= ~(CAVE_TEMP);
 			
-			if (parea(fx, fy)->player & (GRID_VIEW))
+			if (player_has_los_grid(parea(fx, fy)))
 			{
 				/* Do we have a monster on this square? */
 				if (c_ptr->m_idx)
@@ -4501,7 +4497,7 @@ void update_flow(void)
 	{
 		/* Check to see if the player is too close and in los */
 		if ((distance(px, py, flow_x, flow_y) < FLOW_DIST_MAX)
-			&& (parea(flow_x, flow_y)->player & (GRID_VIEW))
+			&& player_has_los_grid(parea(flow_x, flow_y))
 			&& (p_ptr->noise_level < MONSTER_FLOW_DEPTH / 4)) return;
 	}	
 	
@@ -4656,7 +4652,7 @@ void map_area(void)
 				if (c_ptr->feat >= FEAT_OPEN)
 				{
 					/* Memorize the grid */
-					pc_ptr->feat = c_ptr->feat;
+					remember_grid(c_ptr, pc_ptr);
 				}
 
 				/* Memorize known walls */
@@ -4668,7 +4664,7 @@ void map_area(void)
 					if (c_ptr->feat >= FEAT_SECRET)
 					{
 						/* Memorize the walls */
-						pc_ptr->feat = c_ptr->feat;
+						remember_grid(c_ptr, pc_ptr);
 					}
 				}
 			}
@@ -4752,7 +4748,7 @@ void wiz_lite(void)
 			if (c_ptr->feat >= FEAT_OPEN)
 			{
 				/* Memorize the grid */
-				pc_ptr->feat = c_ptr->feat;
+				remember_grid(c_ptr, pc_ptr);
 			}
 		}
 	}
@@ -4784,7 +4780,7 @@ void wiz_dark(void)
 			pcave_type *pc_ptr = parea(x, y);
 
 			/* Process the grid */
-			pc_ptr->feat = FEAT_NONE;
+			forget_grid(pc_ptr);
 		}
 	}
 

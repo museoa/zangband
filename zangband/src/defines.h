@@ -4050,7 +4050,24 @@
 #define player_can_see_grid(C) \
 	(((C)->player & (GRID_SEEN)) != 0)
 
+/*
+ * Forget square
+ */
+#define forget_grid(C) \
+	((C)->feat = FEAT_NONE)
 
+/*
+ * Memorise square
+ *
+ * Hack XXX XXX - we test C1->info and C2->player
+ *  so we have the correct types.
+ * (Without this check - it would be quite easy
+ * to get the two pointers the wrong way around.)
+ */
+#define remember_grid(C1, C2) \
+	(((C2)->feat = (C1)->feat), \
+	(void) ((C1)->info), \
+	(void) ((C2)->player))
 
 /*
  * Is the monster a pet of the player?

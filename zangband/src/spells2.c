@@ -896,7 +896,7 @@ bool detect_doors(void)
 			     (c_ptr->feat == FEAT_BROKEN))
 			{
 				/* Hack -- Memorize */
-				pc_ptr->feat = c_ptr->feat;
+				remember_grid(c_ptr, pc_ptr);
 
 				/* Redraw */
 				lite_spot(x, y);
@@ -950,7 +950,7 @@ bool detect_stairs(void)
 			    (c_ptr->feat == FEAT_MORE))
 			{
 				/* Hack -- Memorize */
-				pc_ptr->feat = c_ptr->feat;
+				remember_grid(c_ptr, pc_ptr);
 
 				/* Redraw */
 				lite_spot(x, y);
@@ -1004,7 +1004,7 @@ bool detect_treasure(void)
 			    (c_ptr->feat == FEAT_QUARTZ_K))
 			{
 				/* Hack -- Memorize */
-				pc_ptr->feat = c_ptr->feat;
+				remember_grid(c_ptr, pc_ptr);
 
 				/* Redraw */
 				lite_spot(x, y);
@@ -2305,7 +2305,7 @@ bool destroy_area(int x1, int y1, int r)
 			}
 			
 			/* Hack - forget the square */
-			pc_ptr->feat = FEAT_NONE;
+			forget_grid(pc_ptr);
 		}
 	}
 
@@ -2786,7 +2786,7 @@ bool earthquake(int cx, int cy, int r)
 			}
 			
 			/* Hack - forget square */
-			pc_ptr->feat = FEAT_NONE;
+			forget_grid(pc_ptr);
 		}
 	}
 
@@ -2941,7 +2941,7 @@ static void cave_temp_room_unlite(void)
 			if (c_ptr->feat == FEAT_FLOOR)
 			{
 				/* Forget the grid */
-				pc_ptr->feat = FEAT_NONE;
+				forget_grid(pc_ptr);
 
 				/* Notice + Redraw */
 				note_spot(x, y);

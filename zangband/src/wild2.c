@@ -1999,7 +1999,7 @@ void light_dark_square(int x, int y, bool daytime)
 		c_ptr->info |= (CAVE_GLOW);
 
 		/* Hack -- Memorize lit grids if allowed */
-		if (view_perma_grids) pc_ptr->feat = c_ptr->feat;
+		if (view_perma_grids) remember_grid(c_ptr, pc_ptr);
 	}
 	else
 	{
@@ -2011,7 +2011,7 @@ void light_dark_square(int x, int y, bool daytime)
 		{
 			/* Hack - Forget the grid */
 			c_ptr->info &= ~(CAVE_GLOW);
-			pc_ptr->feat = FEAT_NONE;
+			forget_grid(pc_ptr);
 		}
 		else
 		{
@@ -2019,7 +2019,7 @@ void light_dark_square(int x, int y, bool daytime)
 			c_ptr->info |= (CAVE_GLOW);
 
 			/* Hack -- Memorize lit grids if allowed */
-			if (view_perma_grids) pc_ptr->feat = c_ptr->feat;
+			if (view_perma_grids) remember_grid(c_ptr, pc_ptr);
 		}
 	}
 }
@@ -2713,7 +2713,7 @@ void change_level(int level)
 				pc_ptr = parea(i, j);
 				
 				/* Clear the player dungeon memory */
-				pc_ptr->feat = FEAT_NONE;
+				forget_grid(pc_ptr);
 				
 				/* Clear the player dungeon flags */
 				pc_ptr->player = 0x00;
