@@ -31,9 +31,7 @@ extern bool borg_check_lite(void);
 
 extern bool borg_enchanting(void);
 extern bool borg_recharging(void);
-extern bool borg_crush_junk(void);
-extern bool borg_crush_hole(void);
-extern bool borg_crush_slow(void);
+extern bool borg_destroy(void);
 extern bool borg_obj_star_id_able(list_item *l_ptr);
 extern bool borg_test_stuff(void);
 extern bool borg_test_stuff_pseudo(void);

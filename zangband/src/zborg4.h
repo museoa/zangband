@@ -55,8 +55,7 @@ extern s32b borg_power_home(void);
  * if a <= c return a - b
  * if a > c return c - b
  */
-#define MIN_FLOOR(a,b,c)	(MIN(MAX((a), (b)), (c)) - (b))
-#define MIN_BLOOR(a,b,c)	(((b) < (c)) ? (MIN(MAX((a), (b)), (c)) - (b)) : 0)
+#define MIN_FLOOR(a,b,c)	(((b) < (c)) ? (MIN(MAX((a), (b)), (c)) - (b)) : 0)
 
 /*
  * Initialize this file

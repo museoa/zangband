@@ -144,9 +144,7 @@ void borg_list_info(byte list_type, vptr dummy)
 			goal_shop = -1;
 
 			/* Note changed inventory */
-			borg_do_crush_junk = TRUE;
-			borg_do_crush_hole = TRUE;
-			borg_do_crush_slow = TRUE;
+			borg_do_destroy = TRUE;
 			break;
 		}
 
@@ -156,10 +154,7 @@ void borg_list_info(byte list_type, vptr dummy)
 			goal_shop = -1;
 
 			/* Note changed inventory */
-			borg_do_crush_junk = TRUE;
-			borg_do_crush_hole = TRUE;
-			borg_do_crush_slow = TRUE;
-
+			borg_do_destroy = TRUE;
 			break;
 		}
 
@@ -500,6 +495,7 @@ static void borg_notice_equip(int *extra_blows, int *extra_shots,
 		if (KN_FLAG(l_ptr, TR_IM_ACID)) my_oppose_elec = TRUE;
 		if (KN_FLAG(l_ptr, TR_IM_COLD)) my_oppose_elec = TRUE;
 		if (KN_FLAG(l_ptr, TR_IM_ELEC)) my_oppose_elec = TRUE;
+		if (KN_FLAG(l_ptr, TR_SLAY_EVIL)) bp_ptr->able.pfe = 1000;
 
 		/* Sustain flags */
 		if (KN_FLAG(l_ptr, TR_SUST_STR)) bp_ptr->sust[A_STR] = TRUE;
@@ -1178,8 +1174,10 @@ static void borg_notice_lite(void)
 				/* Lanterns -- radius two */
 				bp_ptr->cur_lite += 2;
 			}
+			/* No fuel */
 			else
 			{
+				/* Is it everburning? */
 				if (KN_FLAG(l_ptr, TR_LITE))
 				{
 					/* Unfueled Lantern of Everburning still has radius 1 */
@@ -1285,13 +1283,13 @@ static void borg_notice_food(list_item *l_ptr, int number)
 	{
 		case SV_FOOD_WAYBREAD:
 		{
-			amt_food_hical += number;
-			bp_ptr->able.curepois += number;
+			bp_ptr->food += number;
+			bp_ptr->able.cure_pois += number;
 			break;
 		}
 		case SV_FOOD_RATION:
 		{
-			amt_food_hical += number;
+			bp_ptr->food += number;
 			break;
 		}
 		case SV_FOOD_JERKY:
@@ -1334,19 +1332,19 @@ static void borg_notice_food(list_item *l_ptr, int number)
 
 		case SV_FOOD_CURE_CONFUSION:
 		{
-			amt_cure_confusion += number;
+			bp_ptr->able.cure_conf += number;
 			break;
 		}
 
 		case SV_FOOD_CURE_BLINDNESS:
 		{
-			amt_cure_blind += number;
+			bp_ptr->able.cure_blind += number;
 			break;
 		}
 
 		case SV_FOOD_CURE_POISON:
 		{
-			bp_ptr->able.curepois += number;
+			bp_ptr->able.cure_pois += number;
 			break;
 		}
 	}
@@ -1380,28 +1378,34 @@ static void borg_notice_potions(list_item *l_ptr, int number)
 		}
 		case SV_POTION_CURING:
 		{
-			bp_ptr->able.ccw += number;
 			amt_pot_curing += number;
-			break;
+
+			/* Fall through */
 		}
 		case SV_POTION_CURE_CRITICAL:
 		{
 			bp_ptr->able.ccw += number;
+			bp_ptr->able.cure_pois += number;
+			bp_ptr->able.cure_blind += number;
+			bp_ptr->able.cure_conf += number;
 			break;
 		}
 		case SV_POTION_CURE_SERIOUS:
 		{
 			bp_ptr->able.csw += number;
+			bp_ptr->able.cure_conf += number;
+			bp_ptr->able.cure_blind += number;
 			break;
 		}
 		case SV_POTION_CURE_LIGHT:
 		{
 			if (bp_ptr->status.cut) bp_ptr->able.csw += number;
+			bp_ptr->able.cure_blind += number;
 			break;
 		}
 		case SV_POTION_CURE_POISON:
 		{
-			bp_ptr->able.curepois += number;
+			bp_ptr->able.cure_pois += number;
 			break;
 		}
 		case SV_POTION_SLOW_POISON:
@@ -1626,7 +1630,7 @@ static void borg_notice_scrolls(list_item *l_ptr, int number)
 		case SV_SCROLL_SATISFY_HUNGER:
 		{
 			amt_food_scroll += number;
-			bp_ptr->food += number * 5;
+			bp_ptr->food += number;
 			break;
 		}
 		case SV_SCROLL_ICE:
@@ -2338,7 +2342,6 @@ static void borg_notice_aux2(void)
 
 	/* Reset basic */
 	amt_food_scroll = 0;
-	amt_food_hical = 0;
 	amt_food_lowcal = 0;
 	amt_torch = 0;
 	amt_lantern = 0;
@@ -2346,8 +2349,6 @@ static void borg_notice_aux2(void)
 
 	/* Reset healing */
 	amt_slow_poison = 0;
-	amt_cure_confusion = 0;
-	amt_cure_blind = 0;
 	amt_pot_curing = 0;
 	amt_star_heal = 0;
 	amt_life = 0;
@@ -2411,7 +2412,8 @@ static void borg_notice_aux2(void)
 	 */
 
 	/* Handle "satisfy hunger" -> infinite food */
-	if (borg_spell_legal_fail(REALM_LIFE, 0, 7, 40) ||
+	if (borg_spell_legal_fail(REALM_SORCERY, 2, 0, 40) ||
+		borg_spell_legal_fail(REALM_LIFE, 0, 7, 40) ||
 		borg_spell_legal_fail(REALM_ARCANE, 2, 7, 40) ||
 		borg_spell_legal_fail(REALM_NATURE, 0, 3, 40) ||
 		borg_racial_check(RACE_HOBBIT, TRUE))
@@ -2654,31 +2656,8 @@ static void borg_notice_aux2(void)
 		(rp_ptr->r_adj[A_CHR] + cp_ptr->c_adj[A_CHR]))
 		amt_add_stat[A_CHR] += 1000;
 
-	/* No need to *buy* stat repair potions */
-	for (i = 0; i < A_MAX; i++)
-	{
-		if (!bp_ptr->status.fixstat[i]) amt_fix_stat[i] += 1000;
-	}
-
-	/* No need for experience repair */
-	if (!bp_ptr->status.fixexp) amt_fix_exp += 1000;
-
-	/*
-	 * Correct the high and low calorie foods for the correct
-	 * races.
-	 */
-
 	/* Add star_healing and life potions into easy_heal */
 	bp_ptr->able.easy_heal = amt_star_heal + amt_life;
-
-	if (!FLAG(bp_ptr, TR_CANT_EAT))
-	{
-		bp_ptr->food += amt_food_hical * 3;
-		if (bp_ptr->food <= 30)
-		{
-			bp_ptr->food += amt_food_lowcal;
-		}
-	}
 
 	/* If weak, do not count food spells */
 	if (bp_ptr->status.weak && (bp_ptr->food >= 1000))
@@ -2691,15 +2670,8 @@ static void borg_notice_aux2(void)
 	/* Extract the "weight limit" (in tenth pounds) */
 	carry_capacity = (adj_str_wgt[my_stat_ind[A_STR]] * 100) / 2;
 
-	/* over or under the limit */
-	if (bp_ptr->weight > carry_capacity)
-	{
-		bp_ptr->encumber = (bp_ptr->weight - carry_capacity);
-	}
-	else
-	{
-		bp_ptr->encumber = 0;
-	}
+	/* 0 if not encumbered, otherwise the encumberment */
+	bp_ptr->encumber = MAX(0, bp_ptr->weight - carry_capacity);
 }
 
 
@@ -2932,6 +2904,7 @@ static void borg_notice_home_clear(void)
 	num_food_scroll = 0;
 	num_ident = 0;
 	num_star_ident = 0;
+	num_star_remove_curse = 0;
 	num_recall = 0;
 	num_phase = 0;
 	num_escape = 0;
@@ -3602,10 +3575,10 @@ static void borg_notice_home_scroll(list_item *l_ptr)
 static void borg_notice_home_spells(void)
 {
 	/* Handle "satisfy hunger" -> infinite food */
-	if (borg_spell_legal_fail(REALM_SORCERY, 2, 0, 10) ||
-		borg_spell_legal_fail(REALM_LIFE, 0, 7, 10) ||
-		borg_spell_legal_fail(REALM_ARCANE, 2, 7, 10) ||
-		borg_spell_legal_fail(REALM_NATURE, 0, 3, 10))
+	if (borg_spell_legal_fail(REALM_SORCERY, 2, 0, 40) ||
+		borg_spell_legal_fail(REALM_LIFE, 0, 7, 40) ||
+		borg_spell_legal_fail(REALM_ARCANE, 2, 7, 40) ||
+		borg_spell_legal_fail(REALM_NATURE, 0, 3, 40))
 	{
 		num_food += 1000;
 		num_food_scroll += 1000;
@@ -3948,10 +3921,8 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 				case SV_FOOD_WAYBREAD:
 				case SV_FOOD_RATION:
 				{
-					if (!FLAG(bp_ptr, TR_CANT_EAT))
-					{
-						num_food += l_ptr->number;
-					}
+					/* If the borg can digest food collect some at home */
+					if (!FLAG(bp_ptr, TR_CANT_EAT)) num_food += l_ptr->number;
 					break;
 				}
 
@@ -4023,7 +3994,7 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 
 				case SV_ROD_CURING:
 				{
-					num_cure_critical += l_ptr->number * 50;
+					num_cure_critical += l_ptr->number * 20;
 					break;
 				}
 			}
@@ -4543,10 +4514,10 @@ static s32b borg_power_home_aux1(void)
 	value += home_damage;
 
 	/* If edged and priest, dump it   */
-	value -= num_edged_weapon * 3000L;
+	value -= num_edged_weapon * 100000L;
 
 	/* If gloves and mage or ranger and not FA/Dex, dump it. */
-	value -= num_bad_gloves * 3000L;
+	value -= num_bad_gloves * 100000L;
 
 	/* Do not allow duplication of items. */
 	value -= num_duplicate_items * 5000L;
@@ -4557,7 +4528,19 @@ static s32b borg_power_home_aux1(void)
 
 
 /*
- * Helper function -- calculate power of items in the home
+ * Helper function -- calculate power of items in the home.
+ * If the value here is higher than the value for the same item in the
+ * the borg will drop it at home.  So this way the borg collects things at home
+ * There are two values for most items.  The idea here is that once the borg
+ * has stockpiled a bit at home he can carry more of these items in his inv.
+ * Look at num_food below.  That corresponds to bp_ptr->food that counts the
+ * amount of food in the inv.  Having food in the inv is very important so the
+ * borg gets 10000 per food item in the inv, but only for the first five.  Then
+ * the borg collects some for the home and once he 10 at home he takes along
+ * more in the inv.
+ * The usage of home_max is a try to keep the home not too full, otherwise the
+ * borg may spend all his money on building stock for boring items.  Otherwise
+ * he'd only go down to lvl 5 when he has 99 scrolls of Word of Recall.
  */
 static s32b borg_power_home_aux2(void)
 {
@@ -4568,51 +4551,51 @@ static s32b borg_power_home_aux2(void)
 	/*** Basic abilities ***/
 
 	/* Collect food */
-	value += 8000 * MIN(num_food, 20);
-	value += 800 * MIN_FLOOR(num_food, 20, 2 * bp_ptr->lev - 1);
+	value += 500 * MIN(num_food, 10);
+	value += 50 * MIN_FLOOR(num_food, 10, 2 * bp_ptr->lev - 1);
 
 	/* Emphasize on collecting scrolls of food above mere rations */
-	value += 10 * MIN(num_food_scroll, MAX(20, bp_ptr->lev * 2 - 1));
+	value += 10 * MIN(num_food_scroll, 2 * bp_ptr->lev - 1);
 
 	/* Collect ident */
-	value += 2000 * MIN(num_ident, 20);
-	value += 200 * MIN_FLOOR(num_ident, 20, 2 * bp_ptr->lev - 1);
+	value += 1500 * MIN(num_ident, 20);
+	value += 150 * MIN_FLOOR(num_ident, 20, 2 * bp_ptr->lev - 1);
 
 	/* Collect *id*ent */
-	value += 1500 * MIN(num_star_ident, 10);
-	value += 500 * MIN_FLOOR(num_star_ident, 10, 2 * bp_ptr->lev - 1);
+	value += 1700 * MIN(num_star_ident, 10);
+	value += 170 * MIN_FLOOR(num_star_ident, 10, 2 * bp_ptr->lev - 1);
 
 	/* Collect *remove curse* */
 	value += 5000 * MIN(num_star_remove_curse, 5);
-	value += 50 * MIN_FLOOR(num_star_remove_curse, 5, bp_ptr->lev * 2 - 1);
+	value += 750 * MIN_FLOOR(num_star_remove_curse, 5, bp_ptr->lev * 2 - 1);
 
 	/* apw Collect pfe */
-	value += 2000 * MIN(num_pfe, 5);
-	value += 200 * MIN_FLOOR(num_pfe, 5, bp_ptr->lev * 2 - 1);
+	value += 300 * MIN(num_pfe, bp_ptr->lev * 2 - 1);
 
 	/* apw Collect glyphs */
-	value += 5000 * MIN(num_glyph, bp_ptr->lev * 2 - 1);
+	value += 1000 * MIN(num_glyph, bp_ptr->lev * 2 - 1);
 
 	/* Reward Genocide scrolls. Just scrolls, mainly used for the Serpent */
-	value += 5000 * MIN(num_genocide, bp_ptr->lev * 2 - 1);
+	value += 1000 * MIN(num_genocide, bp_ptr->lev * 2 - 1);
 
 	/* Reward Mass Genocide scrolls. Just scrolls, mainly used for Serpent */
-	value += 5000 * MIN(num_mass_genocide, bp_ptr->lev * 2 - 1);
+	value += 1000 * MIN(num_mass_genocide, bp_ptr->lev * 2 - 1);
 
 	/* Reward Resistance Potions for Warriors */
 	if (borg_class == CLASS_WARRIOR)
 	{
-		value += 1000 * MIN(num_pot_rheat, 20);
-		value += 100 * MIN_FLOOR(num_pot_rheat, 20, bp_ptr->lev * 2 - 1);
-		value += 1000 * MIN(num_pot_rcold, 20);
-		value += 100 * MIN_FLOOR(num_pot_rcold, 20, bp_ptr->lev * 2 - 1);
-		value += 200 * MIN(num_pot_resist, 20);
-		value += 20 * MIN_FLOOR(num_pot_resist, 20, bp_ptr->lev * 2 - 1);
+		value += 200 * MIN(num_pot_rheat, bp_ptr->lev * 2 - 1);
+		value += 200 * MIN(num_pot_rcold, bp_ptr->lev * 2 - 1);
+		value += 200 * MIN(num_pot_resist, bp_ptr->lev * 2 - 1);
 	}
 
 	/* Collect recall */
-	value += 3000 * MIN(num_recall, 20);
-	value += 300 * MIN_FLOOR(num_recall, 20, bp_ptr->lev * 2 - 1);
+	value += 1700 * MIN(num_recall, 20);
+	value += 70 * MIN_FLOOR(num_recall, 20, bp_ptr->lev * 2 - 1);
+
+	/* Collect phase door */
+	value += 1700 * MIN(num_phase, 20);
+	value += 70 * MIN_FLOOR(num_phase, 20, bp_ptr->lev * 2 - 1);
 
 	/* Collect escape */
 	value += 3000 * MIN(num_escape, 20);
@@ -4627,8 +4610,8 @@ static s32b borg_power_home_aux2(void)
 	value += 100 * MIN_FLOOR(num_teleport_level, 20, bp_ptr->lev * 2 - 1);
 
 	/* Collect Speed */
-	value += 4000 * MIN(num_speed, 20);
-	value += 400 * MIN_FLOOR(num_speed, 20, bp_ptr->lev * 2 - 1);
+	value += 3000 * MIN(num_speed, 20);
+	value += 300 * MIN_FLOOR(num_speed, 20, bp_ptr->lev * 2 - 1);
 
 	/* Collect Berserk */
 	value += 400 * MIN(num_berserk, 20);
@@ -4638,25 +4621,20 @@ static s32b borg_power_home_aux2(void)
 	value += 5000 * MIN(num_goi_pot, bp_ptr->lev * 2 - 1);
 
 	/* Collect heal */
-	value += 3000 * MIN(num_heal, 20);
-	value += 300 * MIN_FLOOR(num_heal, 20, bp_ptr->lev * 2 - 1);
-	value += 8000 * MIN(num_ez_heal, 20);
-	value += 800 * MIN_FLOOR(num_ez_heal, 20, bp_ptr->lev * 2 - 1);
+	value += 3000 * MIN(num_heal, 99);
+	value += 8000 * MIN(num_ez_heal, 99);
 
 	/* Potion of Mana */
 	if (borg_class != CLASS_WARRIOR)
 	{
-		value += 2000 * MIN(num_mana, 20);
-		value += 200 * MIN_FLOOR(num_mana, 20, bp_ptr->lev * 2 - 1);
+		value += 2000 * MIN(num_mana, 99);
 	}
 
 	/* Collect cure critical */
-	value += 3500 * MIN(num_cure_critical, 50);
-	value += 350 * MIN_FLOOR(num_cure_critical, 50, bp_ptr->lev * 2 - 1);
+	value += 3500 * MIN(num_cure_critical, 99);
 
 	/* Collect cure serious - but they aren't as good */
-	value += 750 * MIN(num_cure_serious, 20);
-	value += 75 * MIN_FLOOR(num_cure_serious, 20, bp_ptr->lev * 2 - 1);
+	value += 400 * MIN(num_cure_serious, 99);
 
 	/*** Various ***/
 
@@ -4682,8 +4660,6 @@ static s32b borg_power_home_aux2(void)
 		/* Scan town books */
 		for (book = 0; book < 4; book++)
 		{
-			int min_book = 0;
-
 			/* Does the borg have this book yet? */
 			if (!num_book[realm][book]) continue;
 
@@ -4691,22 +4667,14 @@ static s32b borg_power_home_aux2(void)
 			if (!borg_uses_book(realm, book))
 			{
 				/* Reward keeping the first unused book in the house */
-				value += 50000 * MIN(num_book[realm][book], 1);
-
-				/* Remember that you've valued 1 book */
-				min_book = 1;
+				value += 5000 * MIN(num_book[realm][book], 1);
 			}
 
 			/* Is this a town book? */
 			if (book < 2 || realm == REALM_ARCANE)
 			{
-				/* Assign value to the extra books */
-				value += 4000 * MIN_FLOOR(num_book[realm][book],
-										  min_book,
-										  (bp_ptr->lev + 1) / 2);
-				value += 400 * MIN_FLOOR(num_book[realm][book],
-										  (bp_ptr->lev + 1) / 2,
-										  bp_ptr->lev * 2 - 1);
+				/* Assign value to keep extra books */
+				value += 100 * MIN(num_book[realm][book], bp_ptr->lev * 2 - 1);
 			}
 		}
 	}

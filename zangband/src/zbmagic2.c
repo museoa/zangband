@@ -1772,6 +1772,9 @@ static int borg_attack_launch(int *b_slot)
 				/* Is it better than the previous missile */
 				if (d <= b_d) continue;
 
+				/* Missiles tend to miss a lot, let's assume 50% */
+				d = d / 2;
+
 				/* Track this missile */
 				b_d = d;
 				b_k = k;

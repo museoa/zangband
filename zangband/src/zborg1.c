@@ -93,6 +93,7 @@ s32b need_see_inviso = 0;	/* cast this when required */
 s32b borg_see_inv = 0;
 bool vault_on_level;	/* Borg will search for a vault */
 bool unique_on_level;
+int  unique_r_idx;
 bool scaryguy_on_level;	/* flee from certain guys */
 
 bool breeder_level = FALSE;	/* Borg will shut door */
@@ -252,15 +253,12 @@ bool my_need_enchant_to_d;	/* Need some enchantment */
  */
 
 s16b amt_food_scroll;
-s16b amt_food_hical;
 s16b amt_food_lowcal;
 s16b amt_torch;
 s16b amt_lantern;
 s16b amt_flask;
 
 s16b amt_slow_poison;
-s16b amt_cure_confusion;
-s16b amt_cure_blind;
 s16b amt_pot_curing;
 s16b amt_star_heal;
 s16b amt_life;
@@ -459,11 +457,7 @@ bool borg_do_spell = TRUE;	/* Acquire "spell" info */
  * Strategy flags -- run certain functions
  */
 
-bool borg_do_crush_junk = FALSE;
-
-bool borg_do_crush_hole = FALSE;
-
-bool borg_do_crush_slow = FALSE;
+bool borg_do_destroy = FALSE;
 
 /* am I fighting a unique? */
 int borg_fighting_unique;

@@ -2439,9 +2439,6 @@ void borg_init_9(void)
 	/* We must pick items up without verification */
 	carry_query_flag = FALSE;
 
-	/* We repeat by hand: Note this flag has been removed... */
-	/* always_repeat = FALSE; */
-
 	/* We need space */
 	show_labels = FALSE;
 	show_weights = FALSE;
@@ -3067,7 +3064,7 @@ void borg_status_window(void)
 			else
 				attr = CLR_SLATE;
 			prtf(42, 2, "%sUnique on level", attr);
-			if (unique_on_level) prtf(58, 2, "(%s)",																	 mon_race_name(&r_info[(int)unique_on_level]));
+			if (unique_on_level) prtf(58, 2, "(%s)", mon_race_name(&r_info[unique_r_idx]));
 			else
 				prtf(58, 2, "");
 			if (breeder_level) attr = CLR_WHITE;

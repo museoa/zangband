@@ -3566,13 +3566,21 @@ static s32b borg_power_aux3(void)
 
 /*
  * Helper function -- calculate power of inventory
- * Dynamic Calcs off
+ * Items can appear multiple times.  This is to allow that item to be destroyed.
+ * Use MIN_FLOOR to start counting from higher numbers of items onwards.
+ * So 
+ * value += 2000 * MIN(amt_book, 2);
+ * value += 500  * MIN_FLOOR(amt_book, 2, 3);
+ * means that the borg counts 2000 per book for the first two books and 500 for
+ * the third.  If the borg needs to destroy items it might pick the third book
+ * If the item is also collected at home be sure that the values for the home 
+ * and the inv accomplish what you want.
  */
 static s32b borg_power_aux4(void)
 {
 	int book, realm;
-	int max_carry;
-	list_item *l_ptr = look_up_equip_slot(EQUIP_LITE);
+	int i, max_carry;
+	list_item *l_ptr;
 
 	s32b value = 0L;
 
@@ -3581,6 +3589,9 @@ static s32b borg_power_aux4(void)
 	/* Reward collecting fuel,	 */
 	value += 6000 * MIN(bp_ptr->able.fuel, 3);
 	value += 600 * MIN_FLOOR(bp_ptr->able.fuel, 3, 7);
+
+	/* Get the current light source */
+	l_ptr = l_ptr = look_up_equip_slot(EQUIP_LITE);
 
 	if (!l_ptr)
 	{
@@ -3623,37 +3634,46 @@ static s32b borg_power_aux4(void)
 	if ((FLAG(bp_ptr, TR_REGEN)) && !(FLAG(bp_ptr, TR_SLOW_DIGEST)))
 	{
 		/* take more food */
-		max_carry = 50;
+		max_carry = 15;
 	}
 	else
-		max_carry = 35;
+		max_carry = 10;
 
 	/* if hungry, food is THE top priority */
 	if ((bp_ptr->status.hungry || bp_ptr->status.weak) && bp_ptr->food)
 		value += 100000;
 
-	/* Take some food along */
-	value += 10000 * MIN(bp_ptr->food, 25);
-	value += 1000 * MIN_FLOOR(bp_ptr->food, 25, max_carry);
-
-	/* If you can digest food */
-	if (!FLAG(bp_ptr, TR_CANT_EAT) && bp_ptr->food < 1000)
+	/* If you can't digest food */
+	if (FLAG(bp_ptr, TR_CANT_EAT))
 	{
-		/* Prefer to buy HiCalorie foods over LowCalorie */
-		value += 20 * MIN(5 * amt_food_hical, max_carry);
-
-		/* Prefer to buy scrolls over foodstuffs */
-		value += 50 * MIN(5 * amt_food_scroll, max_carry);
+		/* Take some scrolls along */
+		value += 10000 * MIN(amt_food_scroll, 5);
+		value += 200 * MIN_FLOOR(amt_food_scroll, 5, max_carry);
 	}
+	/* If the borg can digest food */
+	else
+	{
+		/* Take some food along */
+		value += 10000 * MIN(bp_ptr->food, 5);
+		value += 200 * MIN_FLOOR(bp_ptr->food, 5, max_carry);
+
+		/* Prefer to buy scrolls over rations */
+		value += 30 * MIN(amt_food_scroll, max_carry);
+
+		/* Take small foodstuffs along if the borg is low on food */
+		value += 1000 * MIN_FLOOR(amt_food_lowcal, 0, 3 * (5 - bp_ptr->food));
+		value += 50 * MIN_FLOOR(amt_food_lowcal, 0, 3 * (max_carry - bp_ptr->food));
+	}
+
 
 	/* Reward throwing potions of poison for low level borgs */
 	if (bp_ptr->lev < 16) value += 50 * MIN(bp_ptr->able.poison, 20);
 
 	/* Reward potions you can throw for damage */
-	value += bp_ptr->able.death * 1000;
+	value += bp_ptr->able.death * 200;
 
 	/* Reward scrolls you can read for damage */
-	value += bp_ptr->able.logrus * 1000;
+	value += bp_ptr->able.logrus * 200;
 
 	/* Reward Cure Poison and Cuts */
 	if ((bp_ptr->status.cut || bp_ptr->status.poisoned) &&
@@ -3665,7 +3685,7 @@ static s32b borg_power_aux4(void)
 		/* Reward cure serious wounds if needed */
 		value += 25000 * MIN(bp_ptr->able.csw, 5);
 	}
-	if (bp_ptr->status.poisoned && bp_ptr->able.curepois) value += 15000;
+	if (bp_ptr->status.poisoned && bp_ptr->able.cure_pois) value += 15000;
 	if (bp_ptr->status.poisoned && amt_slow_poison) value += 5000;
 
 	/* Reward potion of curing when the borg is hallucinating */
@@ -3674,9 +3694,14 @@ static s32b borg_power_aux4(void)
 	/* Reward Resistance Potions for Warriors */
 	if (borg_class == CLASS_WARRIOR)
 	{
-		value += 1500 * MIN(bp_ptr->able.res_heat, 5);
-		value += 1500 * MIN(bp_ptr->able.res_cold, 5);
-		value += 300 * MIN(bp_ptr->able.res_all, 5);
+		value += 250 * MIN(bp_ptr->able.res_heat, 5);
+		value += 50 * MIN_FLOOR(bp_ptr->able.res_heat, 5, 20);
+		value += 250 * MIN(bp_ptr->able.res_cold, 5);
+		value += 50 * MIN_FLOOR(bp_ptr->able.res_cold, 5, 20);
+
+		/* It is counted as res_heas & cold too */
+		value += 250 * MIN(bp_ptr->able.res_all, 5);
+		value += 50 * MIN_FLOOR(bp_ptr->able.res_all, 5, 20);
 	}
 
 	/* Reward ident */
@@ -3687,28 +3712,40 @@ static s32b borg_power_aux4(void)
 	if (bp_ptr->lev > 20)
 	{
 		/* *identify* scrolls */
-		value += 5000 * MIN(bp_ptr->able.star_id, 7);
-		value += 2000 * MIN_FLOOR(bp_ptr->able.star_id, 7, 15);
+		value += 5000 * MIN(bp_ptr->able.star_id, 5);
+		value += 500 * MIN_FLOOR(bp_ptr->able.star_id, 5, 10);
 
-		/*  Reward PFE  carry lots of these */
-		value += 10000 * MIN(bp_ptr->able.pfe, 10);
-		value += 2000 * MIN_FLOOR(bp_ptr->able.pfe, 10, 25);
+		/*  Reward PFE */
+		value += 300 * MIN(bp_ptr->able.pfe, 10);
+	}
+	else
+	{
+		/* Take them home */
+		value += 100 * bp_ptr->able.star_id;
+		value += 100 * bp_ptr->able.pfe;
+	}
 
-		if (bp_ptr->lev > 40)
-		{
-			/*  Reward Glyph- Rune of Protection-  carry lots of these */
-			value += 10000 * MIN(bp_ptr->able.glyph, 10);
-			value += 2000 * MIN_FLOOR(bp_ptr->able.glyph, 10, 25);
-		}
+	if (bp_ptr->lev > 40)
+	{
+		/*  Reward Glyph- Rune of Protection-  carry lots of these */
+		value += 10000 * MIN(bp_ptr->able.glyph, 10);
+		value += 2000 * MIN_FLOOR(bp_ptr->able.glyph, 10, 25);
+	}
+	else
+	{
+		/* Take them home */
+		value += 100 * bp_ptr->able.glyph;
 	}
 
 	/* Reward recall */
-	value += 50000 * MIN(bp_ptr->recall, 3);
-	value += 5000 * MIN_FLOOR(bp_ptr->recall, 3, 7);
+	value += 50000 * MIN(bp_ptr->recall, 1);
+	value += 2000 * MIN_FLOOR(bp_ptr->recall, 1, 5);
+	value += 800 * MIN_FLOOR(bp_ptr->recall, 5, 7);
 
 	/* first phase door is very important */
 	value += 50000 * MIN(bp_ptr->able.phase, 1);
-	value += 5000 * MIN_FLOOR(bp_ptr->able.phase, 1, 15);
+	value += 2000 * MIN_FLOOR(bp_ptr->able.phase, 1, 5);
+	value += 800 * MIN_FLOOR(bp_ptr->able.phase, 5, 15);
 
 	/* Reward escape */
 	value += 10000 * MIN(bp_ptr->able.escape, 5);
@@ -3726,22 +3763,33 @@ static s32b borg_power_aux4(void)
 	/* Reward teleport */
 	value += 10000 * MIN(bp_ptr->able.teleport, 10);
 
+	/* reset quantity */
+	max_carry = 0;
+
 	/* If the borg has lots of hitpoints */
 	if (bp_ptr->mhp > 800)
 	{
-		/* Carry some big healers:  Potion of *Healing* or Life */
-		value += 10000 * MIN(bp_ptr->able.easy_heal, 2);
-
-		/* Prefer to take *healing* over life */
-		value += 50 * MIN(amt_star_heal, 2);
-
+		/* If the borg is big and up to dangerous things */
 		if (bp_ptr->lev == 50)
 		{
 			/* Carry more */
-			value += 10000 * MIN_FLOOR(bp_ptr->able.easy_heal, 2, 10);
-			value += 50 * MIN_FLOOR(amt_star_heal, 2, 10);
+			max_carry = 10;
 		}
+		else
+		{
+			/* Carry a few */
+			max_carry = 2;
+		}
+
+		/* Carry some big healers:  Potion of *Healing* or Life */
+		value += 10000 * MIN(bp_ptr->able.easy_heal, max_carry);
+
+		/* Prefer to take *healing* over life */
+		value += 50 * MIN(amt_star_heal, max_carry);
 	}
+
+	/* Collect big heals for at home */
+	value += 2000 * MIN_FLOOR(bp_ptr->able.easy_heal, max_carry, 99);
 
 	/* If the borg has a reliable healing spell */
 	if (borg_spell_legal_fail(REALM_LIFE, 3, 4, 5) ||
@@ -3749,17 +3797,20 @@ static s32b borg_power_aux4(void)
 		borg_spell_legal_fail(REALM_NATURE, 1, 6, 5))
 	{
 		/* Still take some potions along */
-		value += 2000 * MIN(bp_ptr->able.heal, 10);
+		max_carry = 5;
 	}
 	/* This borg needs potions to heal */
 	else
 	{
-		/* Reward healing */
-		value += 8000 * MIN(bp_ptr->able.heal, 15);
+		/* Take some more */
+		max_carry = 10;
 	}
 
+	/* Reward healing */
+	value += 8000 * MIN(bp_ptr->able.heal, max_carry);
+
 	/* Rods of Healing are preferred to potions */
-	value += 50 * MIN(amt_rod_heal, 10);
+	value += 50 * MIN(amt_rod_heal, max_carry);
 
 	/* Restore Mana */
 	if (bp_ptr->msp > 100)
@@ -3771,8 +3822,8 @@ static s32b borg_power_aux4(void)
 	else if (borg_class != CLASS_WARRIOR)
 	{
 		/* reward carrying potions/staffs of mana to bring home */
-		value += 1000 * MIN(bp_ptr->able.mana, 99);
-		value += 1000 * MIN(bp_ptr->able.staff_magi, 99);
+		value += 500 * MIN(bp_ptr->able.mana, 99);
+		value += 500 * MIN(bp_ptr->able.staff_magi, 99);
 	}
 
 	/* Reward cure critical.  Heavy reward on first 10 */
@@ -3781,40 +3832,38 @@ static s32b borg_power_aux4(void)
 	/* potions of curing and of ccw are basically the same:  prefer curing */
 	value += 50 * MIN(amt_pot_curing, 10);
 
-	/* If the borg has no confusion resist */
-	if (!FLAG(bp_ptr, TR_RES_CONF))
-	{
-		/* Carry some more cure criticals */
-		value += 500 * MIN_FLOOR(bp_ptr->able.csw, 10, 15);
-	}
+	/* Take them home too */
+	value += 500 * MIN_FLOOR(bp_ptr->able.ccw, 10, 20);
 
-	/* If the borg is low on cure critical or is low level */
-	if (bp_ptr->able.ccw < 10 || bp_ptr->lev < 15)
-	{
-		/* Reward cure serious */
-		value += 250 * MIN(bp_ptr->able.csw, 5);
-		value += 55 * MIN_FLOOR(bp_ptr->able.csw, 5, 10);
-	}
-	
+	/* Reward cure serious relative to how many cure crits the borg has */
+	value += 400 * MIN_FLOOR(bp_ptr->able.csw, bp_ptr->able.ccw, 5);
+	value += 400 * MIN_FLOOR(bp_ptr->able.csw, bp_ptr->able.ccw, 10);
+
+	/* Take them home too */
+	value += 100 * MIN_FLOOR(bp_ptr->able.csw, 0, 20);
+
 	/* If the borg has no confucius resist */
 	if (!FLAG(bp_ptr, TR_RES_CONF))
 	{
-		/* Reward cure blindness */
-		value += 400 * MIN(amt_cure_confusion, 10);
+		/* Reward cure confusion */
+		value += 2000 * MIN(bp_ptr->able.cure_conf, 2);
+		value += 200 * MIN_FLOOR(bp_ptr->able.cure_conf, 2, 5);
 	}
 
 	/* If the borg has no blindness resist */
 	if (!FLAG(bp_ptr, TR_RES_BLIND))
 	{
 		/* Reward cure blindness */
-		value += 300 * MIN(amt_cure_blind, 5);
+		value += 3000 * MIN(bp_ptr->able.cure_blind, 2);
+		value += 300 * MIN_FLOOR(bp_ptr->able.cure_blind, 2, 5);
 	}
 
 	/* If the borg has no poison resist */
 	if (!FLAG(bp_ptr, TR_RES_POIS))
 	{
 		/* Reward cure poison */
-		value += 250 * MIN(bp_ptr->able.curepois, 5);
+		value += 2500 * MIN(bp_ptr->able.cure_pois, 2);
+		value += 250 * MIN_FLOOR(bp_ptr->able.cure_pois, 2, 5);
 	}
 
 	/*** Detection ***/
@@ -3850,12 +3899,23 @@ static s32b borg_power_aux4(void)
 		value += 2000 * MIN_FLOOR(bp_ptr->able.mass_genocide, 10, 25);
 
 		/* Invulnerability Potions */
-		value += 10000 * MIN(bp_ptr->able.invulnerability, 15);
-		value += 2000 * MIN_FLOOR(bp_ptr->able.invulnerability, 15, 99);
+		value += 10000 * MIN(bp_ptr->able.invulnerability, 99);
+	}
+	else
+	{
+		/* Genocide scrolls */
+		value += 900 * MIN(bp_ptr->able.genocide, 10);
+	
+		/* Mass Genocide scrolls */
+		value += 900 * MIN(bp_ptr->able.mass_genocide, 10);
+
+		/* Invulnerability Potions */
+		value += 1000 * MIN(bp_ptr->able.invulnerability, 99);
 	}
 
 	/* Reward speed potions/staves */
-	value += 5000 * MIN(bp_ptr->able.speed, 20);
+	value += 5000 * MIN(bp_ptr->able.speed, 4);
+	value += 1500 * MIN_FLOOR(bp_ptr->able.speed, 4, 8);
 
 	/* Reward berserk strength */
 	value += 500 * MIN(bp_ptr->able.berserk, 5);
@@ -3911,26 +3971,29 @@ static s32b borg_power_aux4(void)
 	if (amt_add_stat[A_CON]) value += 50000;
 	if (amt_add_stat[A_CHR]) value += 10000;
 
-	/* Hack -- Reward fix stat */
-	if (amt_fix_stat[A_STR]) value += 10000;
-	if (amt_fix_stat[A_INT]) value += 10000;
-	if (amt_fix_stat[A_WIS]) value += 10000;
-	if (amt_fix_stat[A_DEX]) value += 10000;
-	if (amt_fix_stat[A_CON]) value += 10000;
-	if (amt_fix_stat[A_CHR]) value += 10000;
-
 	/* Reward Remove Curse */
 	if (borg_wearing_cursed && bp_ptr->able.remove_curse) value += 90000;
 
-	/* Reward *Remove Curse* */
+	/* Reward *Remove Curse* (Pick them up from home) */
 	if (borg_heavy_curse && bp_ptr->able.star_remove_curse) value += 90000;
+
+	/* Bring them home */
 	if (bp_ptr->able.star_remove_curse < 1000)
 	{
-		value += bp_ptr->able.star_remove_curse * 100;
+		value += bp_ptr->able.star_remove_curse * 500;
 	}
 
-	/* Hack -- Restore experience */
-	if (amt_fix_exp) value += 500000;
+	/* Reward restore experience */
+	if (bp_ptr->lev < bp_ptr->max_lev && bp_ptr->status.fixexp) value += 50000;
+
+	/* Collect them to take them home */
+	value += 200 * MIN_FLOOR(bp_ptr->status.fixexp, 0, 20);
+
+	/* Reward getting stat restore potions when needed */
+	for (i = 0; i < A_MAX; i++)
+	{
+		if (bp_ptr->status.fixstat[i] && amt_fix_stat[i]) value += 10000;
+	}
 
 	/*** Enchantment ***/
 
@@ -3971,7 +4034,7 @@ static s32b borg_power_aux4(void)
 
 					/* Reward the third book */
 					if (bp_ptr->lev > 35)
-						value += 5000 * MIN_FLOOR(amt_book[realm][book], 2, 3);
+						value += 1000 * MIN_FLOOR(amt_book[realm][book], 2, 3);
 				}
 			}
 			/* This is a book the borg can not use yet */
@@ -3982,12 +4045,16 @@ static s32b borg_power_aux4(void)
 			}
 		}
 	}
- 
-	/* Hack -- Apply "encumbrance" from weight */
-	value -= bp_ptr->encumber * 500L;
 
-	/* Being too heavy is really bad */
-	value -= bp_ptr->weight / adj_str_wgt[my_stat_ind[A_STR]];
+	/* If the borg is carrying 120% of capacity or more */
+	if (2 * bp_ptr->weight / adj_str_wgt[my_stat_ind[A_STR]] >= 120)
+	{
+		/* How much plus weight can the borg have before being slowed */
+		int plus = (adj_str_wgt[my_stat_ind[A_STR]] * 100) / 10;
+
+		/* Punish the borg for dropping speed */
+		value -= (bp_ptr->encumber - plus) * 500L;
+	}
 
 	/* Return the value */
 	return (value);

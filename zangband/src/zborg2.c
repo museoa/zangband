@@ -4179,9 +4179,7 @@ void borg_update(void)
 		borg_do_frame = TRUE;
 
 		/* Enable some functions */
-		borg_do_crush_junk = TRUE;
-		borg_do_crush_hole = TRUE;
-		borg_do_crush_slow = TRUE;
+		borg_do_destroy = TRUE;
 
 		/* Allow Pets to stick close */
 		p_ptr->pet_follow_distance = PET_FOLLOW_ME;

@@ -25,8 +25,6 @@
  *
  * Note that rods/staffs/wands are then unstacked when they are used.
  *
- * If permitted, we allow weapons/armor to stack, if they both known.
- *
  * Food, potions, scrolls, and "easy know" items always stack.
  *
  * Chests never stack (for various reasons).
@@ -40,14 +38,11 @@
  */
 static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
 {
-	/* NOTE: This assumes the giving of one item at a time */
-	int total = l_ptr->number + 1;
-
-	/* Maximal "stacking" limit */
-	if (total >= MAX_STACK_SIZE) return (FALSE);
-
 	/* Require identical object types */
 	if (l_ptr->k_idx != q_ptr->k_idx) return (FALSE);
+
+	/* Maximal "stacking" limit */
+	if (q_ptr->number + 1 >= MAX_STACK_SIZE) return (FALSE);
 
 
 	/* Analyze the items */
@@ -309,51 +304,37 @@ static void borg_think_shop_buy(int item)
 }
 
 
-/*
- * Test to see if the item can be merged with anything in the home.
- *
- * Return a pointer to the item it merges with.
- */
-static list_item *borg_can_merge_home(list_item *l_ptr)
+/* Test to see if the item can be merged with anything in the home. */
+static bool borg_can_merge_home(list_item *l_ptr)
 {
 	int i;
-
-	list_item *q_ptr;
 
 	/* Scan the home for matching items */
 	for (i = 0; i < home_num; i++)
 	{
-		q_ptr = &borg_home[i];
-
 		/* Can they stack? */
-		if (borg_object_similar(l_ptr, q_ptr)) return (q_ptr);
+		if (borg_object_similar(l_ptr, &borg_home[i])) return (TRUE);
 	}
 
 	/* No match */
-	return (NULL);
+	return (FALSE);
 }
 
 
 /*
- * This will see what single addition/substitution is best for the home.
+ * This will see what single addition is best for the home.
  */
 static int borg_think_home_sell_aux2(void)
 {
 	list_item *l_ptr;
-	list_item *q_ptr;
-	int item = -1;
+	int i, b_i = -1;
 
-	s32b power;
-	s32b best_power;
-
-	int i;
-
-	/**** Get the starting best (current) ****/
+	s32b p, b_p;
 
 	/* Evaluate the home  */
-	best_power = borg_power_home() + borg_power();
+	b_p = borg_power_home() + borg_power();
 
-	/* Try merges */
+	/* Loop through all the items */
 	for (i = 0; i < inven_num; i++)
 	{
 		l_ptr = &inventory[i];
@@ -370,92 +351,28 @@ static int borg_think_home_sell_aux2(void)
 		 */
 		if (!borg_obj_known_full(l_ptr) && borg_obj_star_id_able(l_ptr)) continue;
 
-		/* Can we merge with other items in the home? */
-		q_ptr = borg_can_merge_home(l_ptr);
+		/* Is there room for this item at home? */
+		if (home_num >= STORE_INVEN_MAX && !borg_can_merge_home(l_ptr)) continue;
 
-		/* No item to merge with? */
-		if (!q_ptr) continue;
-
-		if (l_ptr->number == 1)
-		{
-			l_ptr->treat_as = TREAT_AS_SWAP;
-		}
-		else
-		{
-			l_ptr->treat_as = TREAT_AS_LESS;
-		}
-
-		/* Test to see if this is a good move. */
+		/* Chuck item out of the inv */
+		l_ptr->treat_as = TREAT_AS_LESS;
 
 		/* Evaluate the new power  */
-		power = borg_power_home() + borg_power();
+		p = borg_power_home() + borg_power();
+
+		/* Restore item */
+		l_ptr->treat_as = TREAT_AS_NORM;
 
 		/* Track best */
-		if (power > best_power)
-		{
-			/* Save the results */
-			item = i;
+		if (b_p >= p) continue;
 
-			/* Use it */
-			best_power = power;
-		}
-
-		/* Restore stuff */
-		q_ptr->treat_as = TREAT_AS_NORM;
-		l_ptr->treat_as = TREAT_AS_NORM;
-	}
-
-	/* We have an addition? */
-	if (item != -1) return (item);
-
-	/* Do we have enough room to add items? */
-	if (home_num >= STORE_INVEN_MAX - 1) return (-1);
-
-	/* Try additions. */
-	for (i = 0; i < inven_num; i++)
-	{
-		l_ptr = &inventory[i];
-
-		/* Require "aware" */
-		if (!l_ptr->k_idx) continue;
-
-		/* Require "known" */
-		if (!borg_obj_known_p(l_ptr)) continue;
-
-		/*
-		 * Do not dump stuff at home that is not fully id'd and should be
-		 * This is good with random artifacts.
-		 */
-		if (!borg_obj_known_full(l_ptr) && borg_obj_star_id_able(l_ptr)) continue;
-
-		if (l_ptr->number == 1)
-		{
-			l_ptr->treat_as = TREAT_AS_SWAP;
-		}
-		else
-		{
-			l_ptr->treat_as = TREAT_AS_LESS;
-		}
-
-		/* Evaluate the new power  */
-		power = borg_power_home() + borg_power();
-
-		/* Track best */
-		if (power > best_power)
-		{
-			/* Save the results */
-			item = i;
-
-			/* Use it */
-			best_power = power;
-		}
-
-		/* Restore stuff */
-		l_ptr->treat_as = TREAT_AS_NORM;
+		/* Save the results */
+		b_i = i;
+		b_p = p;
 	}
 
 	/* Item to give to home, if any. */
-	return (item);
+	return (b_i);
 }
 
 
@@ -468,10 +385,6 @@ static bool borg_think_home_sell_aux(void)
 
 	/* Hack - we need to have visited the home before */
 	if (home_shop == -1) return (FALSE);
-
-	/* Hack -- the home is full and pack is full */
-	if ((home_num >= STORE_INVEN_MAX - 1) && (inven_num >= INVEN_PACK - 1))
-		return (FALSE);
 
 	/* Find best item to give to home. */
 	index = borg_think_home_sell_aux2();
@@ -704,9 +617,7 @@ static bool borg_spends_gold_okay(list_item *l_ptr)
 	return (TRUE);
 }
 
-	/*
- * Step 3 -- buy "useful" things from a shop (to be used)
- */
+/* Step 3 -- buy "useful" things from a shop (to be used) */
 static bool borg_think_shop_buy_aux(int shop)
 {
 	int slot;
@@ -1523,7 +1434,7 @@ bool borg_think_dungeon(void)
 		}
 
 		/* attempt to refuel */
-		if (borg_refuel_torch() || borg_refuel_lantern()) return (TRUE);
+		if (borg_refuel()) return (TRUE);
 
 		/* wear stuff and see if it glows */
 		if (borg_wear_stuff()) return (TRUE);
@@ -1561,7 +1472,7 @@ bool borg_think_dungeon(void)
 		if (!bp_ptr->cur_lite)
 		{
 			/* attempt to refuel */
-			if (borg_refuel_torch() || borg_refuel_lantern()) return (TRUE);
+			if (borg_refuel()) return (TRUE);
 
 			/* wear stuff and see if it glows */
 			if (borg_wear_stuff()) return (TRUE);
@@ -1658,7 +1569,8 @@ bool borg_think_dungeon(void)
 	if (borg_flow_kill(TRUE, 250)) return (TRUE);
 
 	/* Find a viewable monster and line up a shot on him */
-	if (borg_flow_kill_aim(TRUE)) return (TRUE);
+	/* Disabled because it is buggy, causing live-lock.
+	if (borg_flow_kill_aim(TRUE)) return (TRUE); */
 
 	/* Dig an anti-summon corridor */
 	if (borg_flow_kill_corridor(TRUE)) return (TRUE);
@@ -1683,14 +1595,8 @@ bool borg_think_dungeon(void)
 	/* Recharge things */
 	if (borg_recharging()) return (TRUE);
 
-	/* Destroy junk */
-	if (borg_crush_junk()) return (TRUE);
-
-	/* Destroy items to make space */
-	if (borg_crush_hole()) return (TRUE);
-
-	/* Destroy items if we are slow */
-	if (borg_crush_slow()) return (TRUE);
+	/* Maybe destroy an item */
+	if (borg_destroy()) return (TRUE);
 
 
 	/*** Flow towards objects ***/

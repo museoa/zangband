@@ -222,7 +222,10 @@ struct borg_ability
 	s16b staff_dest;
 	s16b staff_cool;
 	s16b missile;
-	s16b curepois;
+
+	s16b cure_pois;
+	s16b cure_blind;
+	s16b cure_conf;
 
 	s16b det_trap;
 	s16b det_door;
@@ -404,6 +407,7 @@ extern s32b need_see_inviso;	/* To tell me to cast it */
 extern s32b borg_see_inv;
 extern bool vault_on_level;	/* borg will search for a vault */
 extern bool unique_on_level;
+extern int  unique_r_idx;
 extern bool scaryguy_on_level;
 
 extern bool breeder_level;	/* Borg will shut doors */
@@ -559,15 +563,12 @@ extern bool my_need_enchant_to_d;	/* Need some enchantment */
  */
 
 extern s16b amt_food_scroll;
-extern s16b amt_food_hical;
 extern s16b amt_food_lowcal;
 extern s16b amt_torch;
 extern s16b amt_lantern;
 extern s16b amt_flask;
 
 extern s16b amt_slow_poison;
-extern s16b amt_cure_confusion;
-extern s16b amt_cure_blind;
 extern s16b amt_pot_curing;
 extern s16b amt_star_heal;
 extern s16b amt_life;
@@ -768,11 +769,7 @@ extern bool borg_do_spell;	/* Acquire "spell" info */
  * Strategy flags -- run certain functions
  */
 
-extern bool borg_do_crush_junk;
-
-extern bool borg_do_crush_hole;
-
-extern bool borg_do_crush_slow;
+extern bool borg_do_destroy;
 
 /* am I fighting a unique */
 extern int borg_fighting_unique;

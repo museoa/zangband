@@ -871,19 +871,10 @@ int look_up_index(list_item *l_ptr)
 }
 
 
-/*
- * Hack -- refuel a torch with the minimal torch
- */
-bool borg_refuel_torch(void)
+/* Refuel a torch with the minimal torch */
+static bool borg_refuel_torch(void)
 {
-	int slot, b_slot = -1, fuel = 9999;
-	list_item *l_ptr;
-
-	/* Must first wield before one can refuel */
-	if (!equipment[EQUIP_LITE].k_idx) return (FALSE);
-
- 	/* Must wield torch */
-	if (k_info[equipment[EQUIP_LITE].k_idx].sval != SV_LITE_TORCH) return (FALSE);
+	int slot, b_slot = -1, fuel = 5001;
 
 	/* Cast phlogiston */
 	if (borg_spell_fail(REALM_ARCANE, 1, 1, 40)) return (TRUE);
@@ -891,7 +882,7 @@ bool borg_refuel_torch(void)
 	/* Look for the minimal torch */
 	for (slot = 0; slot < inven_num; slot++)
 	{
-		l_ptr = &inventory[slot];
+		list_item *l_ptr = &inventory[slot];
 
 		/* Must be a light */
 		if (l_ptr->tval != TV_LITE) continue;
@@ -925,20 +916,10 @@ bool borg_refuel_torch(void)
 }
 
 
-/*
- * Hack -- refuel a lantern
- */
-bool borg_refuel_lantern(void)
+/* Refuel a lantern */
+static bool borg_refuel_lantern(void)
 {
-	int slot, b_slot = -1, fuel = 14999;
-	list_item *l_ptr;
-
-	/* Must first wield before one can refuel */
-	if (!equipment[EQUIP_LITE].k_idx) return (FALSE);
-
- 	/* Must wield lantern */
-	if (k_info[equipment[EQUIP_LITE].k_idx].sval != SV_LITE_LANTERN)
-		return (FALSE);
+	int slot, b_slot = -1, fuel = 15001;
 
 	/* Cast phlogiston */
 	if (borg_spell_fail(REALM_ARCANE, 1, 1, 40)) return (TRUE);
@@ -946,12 +927,15 @@ bool borg_refuel_lantern(void)
 	/* Loop through the inventory backwards */
 	for (slot = inven_num - 1; slot >= 0; slot--)
 	{
-		l_ptr = &inventory[slot];
+		list_item *l_ptr = &inventory[slot];
 
 		/* Maybe fuel with a Lantern? */
 		if (l_ptr->tval == TV_LITE &&
 			k_info[l_ptr->k_idx].sval == SV_LITE_LANTERN)
 		{
+			/* Ignore lanterns with no fuel */
+			if (l_ptr->timeout == 0) continue;
+
 			/* Ignore lanterns with the most fuel */
 			if (l_ptr->timeout >= fuel) continue;
 
@@ -970,7 +954,7 @@ bool borg_refuel_lantern(void)
 		}
 	}
 
-	/* b_slot holds best lantern, slot holds flask, let's see if there is one */
+	/* b_slot holds best lantern, slot holds flask, is there one of either? */
 	if (b_slot == -1 && slot == -1) return (FALSE);
 
 	/* Found no lantern but a flask */
@@ -985,6 +969,33 @@ bool borg_refuel_lantern(void)
 
 	/* Success */
 	return (TRUE);
+}
+
+
+/*
+ * Determines whether the borg has a refuelable lightsource and calls the
+ * appropriate subroutine
+ */
+bool borg_refuel(void)
+{
+	list_item *l_ptr = &equipment[EQUIP_LITE];
+
+	/* Must first wield something before one can refuel */
+	if (!l_ptr->k_idx) return (FALSE);
+
+	/* Is there the need to refuel? */
+	if (l_ptr->timeout > 1000) return (FALSE);
+
+	/* What sort of light is this */
+	switch (k_info[l_ptr->k_idx].sval)
+	{
+		case SV_LITE_LANTERN: return (borg_refuel_lantern());
+
+		case SV_LITE_TORCH: return (borg_refuel_torch());
+
+		/* Whatever it is, the borg can't light it */
+		default: return (FALSE);
+	}
 }
 
 
@@ -1423,9 +1434,7 @@ static bool borg_wand_aux(int sval, bool aim, bool fail)
 }
 
 
-/*
- * Hack -- attempt to aim the given (charged) wand (by sval)
- */
+/* Attempt to aim the given (charged) wand (by sval) */
 bool borg_aim_wand(int sval)
 {
 	/* aim that wand without a fail check */
@@ -1433,13 +1442,19 @@ bool borg_aim_wand(int sval)
 }
 
 
-/*
- * Hack -- attempt to aim the given (charged) wand (by sval)
- */
+/* Does the borg have this wand with charges and can it be aimed? */
 bool borg_equips_wand_fail(int sval)
 {
 	/* Search for that wand with a fail check */
 	return (borg_wand_aux(sval, FALSE, TRUE));
+}
+
+
+/* Does the borg have this wand with charges? */
+bool borg_equips_wand(int sval)
+{
+	/* Search for that wand */
+	return (borg_wand_aux(sval, FALSE, FALSE));
 }
 
 
@@ -1674,7 +1689,7 @@ byte borg_spell_mana(int realm, int book, int spell)
 	power = borg_magics[realm][book][spell].power;
 
 	/* If this is a chaos spell and the borg has a chaos patron */
-	if (realm == REALM_CHAOS && FLAG(p_ptr, TR_PATRON))
+	if (realm == REALM_CHAOS && FLAG(bp_ptr, TR_PATRON))
 	{
 		/* Reduce the spell cost */
 		power = (2 * power + 2) / 3;
@@ -2140,6 +2155,7 @@ bool borg_spell(int realm, int book, int what)
 	/* Success */
 	return (TRUE);
 }
+
 
 /* Determines if a book contains spells that can be reliably cast */
 bool borg_uses_book(int realm, int book)

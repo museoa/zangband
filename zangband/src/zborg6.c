@@ -38,47 +38,34 @@ bool borg_recover(void)
 	int q;
 
 	map_block *mb_ptr = map_loc(c_x, c_y);
+	list_item *l_ptr = look_up_equip_slot(EQUIP_LITE);
 
 	/*** Handle annoying situations ***/
-	
-	/* Refuel torch, excluding Torch of Everburning */
-	if ((!bp_ptr->britelite) &&
-		(equipment[EQUIP_LITE].tval == TV_LITE) &&
-		(k_info[equipment[EQUIP_LITE].k_idx].sval == SV_LITE_TORCH))
-	{
-		/* Refuel the torch if needed */
-		if (equipment[EQUIP_LITE].timeout < 250)
-		{
-			if (borg_refuel_torch()) return (TRUE);
 
+	/* If the borg has a torch or lantern */
+	if (l_ptr &&
+		l_ptr->tval == TV_LITE &&
+		(k_info[l_ptr->k_idx].sval == SV_LITE_LANTERN ||
+		k_info[l_ptr->k_idx].sval == SV_LITE_TORCH))
+	{
+		/* Try to refuel torch or lantern */
+		if (borg_refuel()) return (TRUE);
+
+		/* If it is not everburning and low on fuel */
+		if (!bp_ptr->britelite &&
+			l_ptr->timeout < 1000)
+		{
 			/* Take note */
 			borg_note_fmt("# Need to refuel but can't!", p);
+
+			/* Go to town */
+			goal_rising = TRUE;
 
 			/* Allow Pets to Roam so we dont hit them in the dark. */
 			p_ptr->pet_follow_distance = PET_STAY_AWAY;
 		}
 	}
 	
-	/* Refuel current lantern, including Lanterns of Everburning */
-	if ((equipment[EQUIP_LITE].tval == TV_LITE) &&
-		(k_info[equipment[EQUIP_LITE].k_idx].sval == SV_LITE_LANTERN))
-	{
-		/* Refuel the lantern if needed */
-		if (equipment[EQUIP_LITE].timeout < 500)
-		{
-			if (borg_refuel_lantern()) return (TRUE);
-		
-			if (!bp_ptr->britelite)	
-			{
-				/* Take note */
-				borg_note_fmt("# Need to refuel but can't!", p);
-				
-				/* Allow Pets to Roam so we dont hit them in the dark. */
-				p_ptr->pet_follow_distance = PET_STAY_AWAY;
-			}
-		}
-	}
-
 	/*** Do not recover when in danger ***/
 
 	/* Look around for danger */
@@ -273,8 +260,8 @@ bool borg_recover(void)
 	{
 		if (borg_quaff_potion(SV_POTION_CURE_POISON) ||
 			borg_quaff_potion(SV_POTION_SLOW_POISON) ||
-			borg_eat_food(SV_FOOD_WAYBREAD) ||
 			borg_eat_food(SV_FOOD_CURE_POISON) ||
+			borg_eat_food(SV_FOOD_WAYBREAD) ||
 			borg_quaff_crit((bool) (bp_ptr->chp < 10)) ||
 			borg_use_staff_fail(SV_STAFF_CURING) ||
 			borg_zap_rod(SV_ROD_CURING) ||
@@ -360,7 +347,7 @@ bool borg_recover(void)
 		/* Rest until at least one recharges */
 		if (!bp_ptr->status.weak && !bp_ptr->status.cut &&
 			!bp_ptr->status.hungry && !bp_ptr->status.poisoned &&
-			borg_check_rest())
+			borg_check_rest() && borg_on_safe_feat(map_loc(c_x, c_y)->feat))
 		{
 			/* Take note */
 			borg_note("# Resting to recharge a rod...");
@@ -387,7 +374,7 @@ bool borg_recover(void)
 		 (bp_ptr->csp < bp_ptr->msp * 6 / 10)) &&
 		(!borg_takes_cnt || !goal_recalling) && !borg_goi && !borg_shield &&
 		!scaryguy_on_level && borg_check_rest() && (p <= mb_ptr->fear) &&
-		!goal_fleeing)
+		!goal_fleeing && borg_on_safe_feat(map_loc(c_x, c_y)->feat))
 	{
 		/* XXX XXX XXX */
 		if (!bp_ptr->status.weak && !bp_ptr->status.cut &&
@@ -409,7 +396,8 @@ bool borg_recover(void)
 	if (bp_ptr->msp && bp_ptr->lev < 25 && bp_ptr->csp < bp_ptr->msp && p == 0)
 	{
 		if (!bp_ptr->status.weak && !bp_ptr->status.cut &&
-			!bp_ptr->status.hungry && !bp_ptr->status.poisoned)
+			!bp_ptr->status.hungry && !bp_ptr->status.poisoned &&
+			borg_on_safe_feat(map_loc(c_x, c_y)->feat))
 		{
 			/* Take note */
 			borg_note_fmt("# Resting to gain Mana. (danger %d)...", p);
@@ -455,6 +443,38 @@ int borg_extract_dir(int x1, int y1, int x2, int y2)
 
 	/* Paranoia */
 	return (5);
+}
+
+
+/*
+ * Clear the "flow" information
+ *
+ * This function was once a major bottleneck, so we now use several
+ * slightly bizarre, but highly optimized, memory copying methods.
+ */
+static void borg_flow_clear(void)
+{
+	map_block *mb_ptr;
+
+	/* Iterate over the map */
+	MAP_ITT_START (mb_ptr)
+	{
+		mb_ptr->cost = 255;
+
+		if (borg_danger_wipe)
+		{
+			/* Clear the "icky" + "know" flags */
+			mb_ptr->info &= ~(BORG_MAP_ICKY | BORG_MAP_KNOW);
+		}
+	}
+	MAP_ITT_END;
+
+	/* Wipe complete */
+	borg_danger_wipe = FALSE;
+
+	/* Start over */
+	flow_head = 0;
+	flow_tail = 0;
 }
 
 
@@ -588,7 +608,7 @@ static bool borg_play_step(int y2, int x2)
 
 		/* Message */
 		borg_note_fmt("# Walking into a '%s' at (%d,%d)",
-					  mon_race_name(&r_info[mb_ptr->monster]), x, y);
+					  r_name + r_info[mb_ptr->monster].name, x, y);
 
 		/* Walk into it */
 		if (my_no_alter)
@@ -710,21 +730,29 @@ static bool borg_play_step(int y2, int x2)
 		/* Not if hungry */
 		if (bp_ptr->status.weak) return (FALSE);
 
-		/* Lose old target */
-		borg_keypress('*');
-		borg_keypress(ESCAPE);
-
 		/* Mega-Hack -- allow "stone to mud" */
 		if (mb_ptr->feat != FEAT_RUBBLE &&
-			(borg_spell_fail(REALM_ARCANE, 2, 4, 60) ||
-			borg_spell_fail(REALM_NATURE, 1, 0, 60) ||
-			borg_spell_fail(REALM_CHAOS, 2, 3, 60) ||
-			borg_mutation(MUT1_EAT_ROCK) ||
-			borg_racial(RACE_HALF_GIANT)))
+			(borg_spell_okay_fail(REALM_ARCANE, 2, 4, 60) ||
+			borg_spell_okay_fail(REALM_NATURE, 1, 0, 60) ||
+			borg_spell_okay_fail(REALM_CHAOS, 2, 3, 60) ||
+			borg_mutation_check(MUT1_EAT_ROCK, TRUE) ||
+			borg_racial_check(RACE_HALF_GIANT, TRUE)))
 		{
-			borg_note("# Melting a wall");
-			borg_keypress(I2D(dir));
-			return (TRUE);
+			/* Lose old target */
+			borg_keypress('*');
+			borg_keypress(ESCAPE);
+
+			/* Mega-Hack -- allow "stone to mud" */
+			if (borg_spell(REALM_ARCANE, 2, 4) ||
+				borg_spell(REALM_NATURE, 1, 0) ||
+				borg_spell(REALM_CHAOS, 2, 3) ||
+				borg_mutation(MUT1_EAT_ROCK) ||
+				borg_racial(RACE_HALF_GIANT))
+			{
+				borg_note("# Melting a wall");
+				borg_keypress(I2D(dir));
+				return (TRUE);
+			}
 		}
 
 		/* No tunneling if in danger */
@@ -752,6 +780,14 @@ static bool borg_play_step(int y2, int x2)
 	if (!borg_needs_searching && bp_ptr->status.search)
 	{
 		borg_keypress('S');
+	}
+
+	/* Don't step on scary floors */
+	if (!borg_on_safe_feat(mb_ptr->feat))
+	{
+		/* Don't let the borg step on a painful floor */
+		borg_flow_clear();
+		return (FALSE);
 	}
 
 	/* Walk in that direction */
@@ -1110,38 +1146,6 @@ static void borg_flow_enqueue_grid(int x, int y)
 
 }
 
-
-
-/*
- * Clear the "flow" information
- *
- * This function was once a major bottleneck, so we now use several
- * slightly bizarre, but highly optimized, memory copying methods.
- */
-static void borg_flow_clear(void)
-{
-	map_block *mb_ptr;
-
-	/* Iterate over the map */
-	MAP_ITT_START (mb_ptr)
-	{
-		mb_ptr->cost = 255;
-
-		if (borg_danger_wipe)
-		{
-			/* Clear the "icky" + "know" flags */
-			mb_ptr->info &= ~(BORG_MAP_ICKY | BORG_MAP_KNOW);
-		}
-	}
-	MAP_ITT_END;
-
-	/* Wipe complete */
-	borg_danger_wipe = FALSE;
-
-	/* Start over */
-	flow_head = 0;
-	flow_tail = 0;
-}
 
 
 /*
@@ -1807,8 +1811,8 @@ bool borg_flow_kill_corridor(bool viewable)
 			if (borg_spell_legal(REALM_ARCANE, 2, 4) ||
 				borg_spell_legal(REALM_NATURE, 1, 0) ||
 				borg_spell_legal(REALM_CHAOS, 2, 3) ||
-				borg_mutation_check(MUT1_EAT_ROCK, TRUE) ||
-				borg_racial_check(RACE_HALF_GIANT, TRUE) ||
+				borg_mutation_check(MUT1_EAT_ROCK) ||
+				borg_racial_check(RACE_HALF_GIANT) ||
 				(bp_ptr->skill_dig > (bp_ptr->depth > 80 ? 30 : 40)))
 			{
 				/* digging ought to work */
@@ -2360,8 +2364,8 @@ static bool borg_flow_dark_interesting(int x, int y, int b_stair)
 					if (borg_spell_legal(REALM_ARCANE, 2, 4) ||
 						borg_spell_legal(REALM_NATURE, 1, 0) ||
 						borg_spell_legal(REALM_CHAOS, 0, 6) ||
-						borg_mutation_check(MUT1_EAT_ROCK, TRUE) ||
-						borg_racial_check(RACE_HALF_GIANT, TRUE)) return (TRUE);
+						borg_mutation_check(MUT1_EAT_ROCK) ||
+						borg_racial_check(RACE_HALF_GIANT)) return (TRUE);
 
 					/*
 					 * Do not dig unless we appear strong

@@ -203,11 +203,25 @@ int borg_goto_dir(int x1, int y1, int x2, int y2)
  * Lava can hurt the borg unless he is IFire.
  * Water can hurt if it is deep/ocean and encumbered.
  * Acid can hurt the borg unless he is IAcid.
- * Swamp can hurt the borg unless he is ResPoison.
+ * Swamp can hurt the borg unless he is IPoison.
  * Levitation item can reduce the effect of nasty grids.
  */
 bool borg_on_safe_feat(byte feat)
 {
+	/* Water */
+	if (feat == FEAT_DEEP_WATER ||
+	 	 feat == FEAT_OCEAN_WATER)
+	{
+		/* Levitation helps */
+		if (FLAG(bp_ptr, TR_FEATHER)) return (TRUE);
+
+		/* Being non-encumbered helps */
+		if (!bp_ptr->encumber) return (TRUE);
+
+		/* Everything else hurts */
+		return (FALSE);
+	}
+
 	/* Nothing hurts when Invulnerable */
 	if (borg_goi) return (TRUE);
 
@@ -233,20 +247,6 @@ bool borg_on_safe_feat(byte feat)
 		return (FALSE);
 	}
 
-	/* Water */
-	if (feat == FEAT_DEEP_WATER ||
-	 	 feat == FEAT_OCEAN_WATER)
-	{
-		/* Levitation helps */
-		if (FLAG(bp_ptr, TR_FEATHER)) return (TRUE);
-
-		/* Being non-encumbered helps */
-		if (!bp_ptr->encumber) return (TRUE);
-
-		/* Everything else hurts */
-		return (FALSE);
-	}
-
 	/* Swamp */
 	if (feat == FEAT_DEEP_SWAMP)
 	{
@@ -255,6 +255,7 @@ bool borg_on_safe_feat(byte feat)
 
 		return (FALSE);
 	}
+
 	if (feat == FEAT_SHAL_SWAMP)
 	{
 		/* (temp) Resistance helps */
@@ -263,8 +264,8 @@ bool borg_on_safe_feat(byte feat)
 		/* Levitation helps */
 		if (FLAG(bp_ptr, TR_FEATHER)) return (TRUE);
 
-		/* Everything else hurts */
-		return (FALSE);
+		/* Shallow swamp never hurts */
+		return (TRUE);
 	}
 
 	/* Acid */
@@ -972,6 +973,9 @@ void borg_near_monster_type(int dist)
 			/* Set a flag for use with certain types of spells */
 			unique_on_level = TRUE;
 
+			/* Remember which unique */
+			unique_r_idx = kill->r_idx;
+
 			/* return 1 if not Serpent, +101 if it is Serpent or Oberon */
 			if (FLAG(r_ptr, RF_QUESTOR))
 			{
@@ -1149,7 +1153,6 @@ static bool borg_dim_door(int emergency, int p1)
 /* Just in case the key changes again */
 void borg_press_faint_accept(void)
 {
-	borg_keypress(' ');
 	borg_keypress('y');
 }
 
@@ -1262,8 +1265,6 @@ bool borg_escape(int b_q)
 			return (TRUE);
 		}
 
-		bp_ptr->csp = bp_ptr->msp;
-
 		/* try to teleport, get far away from here */
 		if (borg_use_staff_fail(SV_STAFF_TELEPORTATION) ||
 			borg_activate_artifact(ART_COLANNON, FALSE) ||
@@ -1273,6 +1274,8 @@ bool borg_escape(int b_q)
 			borg_note("# Danger Level 1.1  Critical Attempt");
 			return (TRUE);
 		}
+
+		bp_ptr->csp = bp_ptr->msp;
 
 		if (borg_spell(REALM_ARCANE, 2, 3) ||
 			borg_spell(REALM_TRUMP, 0, 4) ||
@@ -1887,7 +1890,8 @@ bool borg_heal(int danger)
 		  (bp_ptr->chp < bp_ptr->mhp) ||
 		  (bp_ptr->csp < bp_ptr->msp * 6 / 10)) &&
 		 (danger < avoidance / 5)) && borg_check_rest() && !scaryguy_on_level &&
-		(danger <= mb_ptr->fear) && !goal_fleeing)
+		(danger <= mb_ptr->fear) && !goal_fleeing &&
+		borg_on_safe_feat(map_loc(c_x, c_y)->feat))
 	{
 		/* check for then call lite in dark room before resting */
 		if (!borg_check_lite_only())
@@ -2662,7 +2666,8 @@ bool borg_caution(void)
 	}
 
 	/* If I am waiting for recall,  & safe, then stay put. */
-	if (goal_recalling && borg_check_rest() && bp_ptr->depth)
+	if (goal_recalling && borg_check_rest() &&
+		bp_ptr->depth && borg_on_safe_feat(map_loc(c_x, c_y)->feat))
 	{
 		/* note the resting */
 		borg_note("# Resting here, waiting for Recall.");
@@ -2893,29 +2898,8 @@ bool borg_caution(void)
 	{
 		list_item *l_ptr = look_up_equip_slot(EQUIP_LITE);
 
-		/* If there is something in the lite slot */
-		if (l_ptr)
-		{
-			object_kind *k_ptr = &k_info[l_ptr->k_idx];
-
-			/* If the light source is getting low */
-			if (l_ptr->timeout < 1000)
-			{
-				/* Try to refuel the torch */
-				if (k_ptr->sval == SV_LITE_TORCH && borg_refuel_torch())
-				{
-					/* success */
-					return (TRUE);
-				}
-
-				/* Try to refuel the lantern */
-				if (k_ptr->sval == SV_LITE_LANTERN && borg_refuel_lantern())
-				{
-					/* success */
-					return (TRUE);
-				}
-			}
-		}
+		/* If the borg manages to refuel */
+		if (borg_refuel()) return (TRUE);
 
 		/* Flee for fuel */
 		if (bp_ptr->depth && (!l_ptr || l_ptr->timeout < 1000))
