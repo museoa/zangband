@@ -1117,7 +1117,7 @@ proc NSRecall::ContentChanged {oop} {
 
 proc NSRecall::Choose {oop what show args} {
 
-	if {[lsearch -exact [list cmd_pet ele_attack item power spell] \
+	if {[lsearch -exact [list cmd_pet ele_attack item] \
 		$what] == -1} return
 
 	if {!$show} {
@@ -1131,13 +1131,6 @@ proc NSRecall::Choose {oop what show args} {
 		}
 		ele_attack {
 			SetHook $oop hook_ele_attack
-		}
-		power {
-			SetHook $oop hook_power
-		}
-		spell {
-			Info $oop display,what [lindex $args 0]
-			SetHook $oop hook_spell
 		}
 	}
 
@@ -1330,84 +1323,6 @@ proc NSRecall::PopupSelect_CmdPet {menu x y} {
 	return
 }
 
-proc NSRecall::hook_power {oop message args} {
-
-	set powerChars "abcdefghijklmnopqrstuvwxyz0123456789"
-
-	switch -- $message {
-
-		open {
-		}
-
-		fresh {
-			SetList $oop
-		}
-
-		close {
-		}
-
-		set_list {
-		
-			set textBox [Info $oop text]
-		
-			# Get the list powers
-			set powerList [angband power get]
-
-			set i 0
-
-			# Check each power
-			foreach power $powerList {
-
-				# Get information about this power
-				angband power info $power attrib
-
-				# Get the power char
-				set attrib(char) [string index $powerChars $i]
-
-				set fill White
-				if {$attrib(chance) == 100} {
-					set fill gray70
-				}
-
-				# Append the character and description
-				$textBox insert end "$attrib(char)\) " TEXT \
-					$attrib(name) [list POWER_$attrib(char) TEXT] "\n"
-				$textBox tag configure POWER_$attrib(char) -foreground $fill
-
-				incr i
-			}
-		
-			# Delete trailing newline
-			$textBox delete "end - 1 chars"
-		
-			# Keep a list of inventory indexes
-			Info $oop match $powerList
-		}
-
-		get_color {
-
-			set row [lindex $args 0]
-			set index [lindex [Info $oop match] $row]
-			angband power info $index attrib
-			set fill White
-			if {$attrib(chance) == 100} {
-				set fill gray70
-			}
-			return $fill
-		}
-
-		invoke {
-
-			set row [lindex $args 0]
-			angband keypress [string index $powerChars $row]
-		}
-
-		highlight {
-		}
-	}
-
-	return
-}
 
 # NSRecall::PopupSelect_Power --
 #
@@ -1475,83 +1390,6 @@ proc NSRecall::PopupSelect_Power {menu x y} {
 	return
 }
 
-proc NSRecall::hook_spell {oop message args} {
-
-	switch -- $message {
-
-		open {
-		}
-
-		fresh {
-			SetList $oop
-		}
-
-		close {
-		}
-
-		set_list {
-		
-			set textBox [Info $oop text]
-		
-			# Get the book number
-			set bookNum [Info $oop display,what]
-
-			# Get a list of legal spells
-			set spellList [angband spell find $bookNum -tester yes]
-
-			# Keep a list of spell chars
-			set match {}
-
-			# Process each spell
-			foreach spell $spellList {
-
-				# Get information about this spell
-				angband spell info $bookNum $spell attrib
-		
-				# Append the character and description
-				$textBox insert end "$attrib(char)\) " TEXT \
-					$attrib(name) [list SPELL_$attrib(char) TEXT] "\n"
-				$textBox tag configure SPELL_$attrib(char) -foreground White
-
-				# Keep a list of spell chars
-				lappend match $attrib(char)
-			}
-		
-			# Delete trailing newline
-			$textBox delete "end - 1 chars"
-		
-			# Keep a list of spell chars
-			Info $oop match $match
-		}
-
-		get_color {
-
-			return White
-		}
-
-		invoke {
-
-			set row [lindex $args 0]
-			set char [lindex [Info $oop match] $row]
-			angband keypress $char
-		}
-
-		highlight {
-		}
-
-		menu_select {
-			set menu [lindex $args 0]
-			set index [lindex $args 1]
-			set bookNum $::Popup(book,$menu)
-			set match $::Popup(match,$menu)
-			if {$index < [llength $match]} {
-				RecallSpell $bookNum [lindex $match $index]
-			}
-		}
-	}
-
-	return
-}
 
 proc NSRecall::hook_xxx {oop message args} {
 

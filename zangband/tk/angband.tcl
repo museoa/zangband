@@ -137,12 +137,6 @@ proc angband_display {window action args} {
 				return
 			}
 
-			book {
-				NSModule::LoadIfNeeded NSBookWindow
-#eval RequestDisplay $window $action $args
-#return
-			}
-
 			building {
 				NSModule::LoadIfNeeded NSBuilding
 			}
