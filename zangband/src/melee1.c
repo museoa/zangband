@@ -523,20 +523,11 @@ bool make_attack_normal(int m_idx)
 
 					case RBE_POISON:
 					{
-						/* Obvious */
-						obvious = TRUE;
-					
 						/* Message */
 						msgf("You receive a dose of poison!");
 
 						/* Special damage */
-						pois_dam(damage, ddesc);
-
-						if (res_pois_lvl())
-						{
-							/* Take "poison" effect */
-							inc_poisoned(randint1(rlev) + 5);
-						}
+						obvious = pois_dam(damage, ddesc, randint1(rlev) + 5);
 						
 						/* Learn about the player */
 						update_smart_learn(m_idx, DRS_POIS);
@@ -816,14 +807,11 @@ bool make_attack_normal(int m_idx)
 
 					case RBE_ACID:
 					{
-						/* Obvious */
-						obvious = TRUE;
-
 						/* Message */
 						msgf("You are covered in acid!");
 
 						/* Special damage */
-						acid_dam(damage, ddesc);
+						obvious = acid_dam(damage, ddesc);
 
 						/* Learn about the player */
 						update_smart_learn(m_idx, DRS_ACID);
@@ -833,14 +821,11 @@ bool make_attack_normal(int m_idx)
 
 					case RBE_ELEC:
 					{
-						/* Obvious */
-						obvious = TRUE;
-
 						/* Message */
 						msgf("You are struck by electricity!");
 
 						/* Special damage */
-						elec_dam(damage, ddesc);
+						obvious = elec_dam(damage, ddesc);
 
 						/* Learn about the player */
 						update_smart_learn(m_idx, DRS_ELEC);
@@ -850,14 +835,11 @@ bool make_attack_normal(int m_idx)
 
 					case RBE_FIRE:
 					{
-						/* Obvious */
-						obvious = TRUE;
-
 						/* Message */
 						msgf("You are enveloped in flames!");
 
 						/* Special damage */
-						fire_dam(damage, ddesc);
+						obvious = fire_dam(damage, ddesc);
 
 						/* Learn about the player */
 						update_smart_learn(m_idx, DRS_FIRE);
@@ -867,14 +849,11 @@ bool make_attack_normal(int m_idx)
 
 					case RBE_COLD:
 					{
-						/* Obvious */
-						obvious = TRUE;
-
 						/* Message */
 						msgf("You are covered with frost!");
 
 						/* Special damage */
-						cold_dam(damage, ddesc);
+						obvious = cold_dam(damage, ddesc);
 
 						/* Learn about the player */
 						update_smart_learn(m_idx, DRS_COLD);
@@ -1220,13 +1199,7 @@ bool make_attack_normal(int m_idx)
 						take_hit(damage, ddesc);
 
 						/* Take "poison" effect */
-						if (res_pois_lvl() > 3)
-						{
-							if (inc_poisoned(randint1(rlev) + 5))
-							{
-								obvious = TRUE;
-							}
-						}
+						obvious = pois_dam(10, "disease", randint1(rlev) + 5);
 
 						/* Damage CON (10% chance) */
 						if (randint0(100) < 10)

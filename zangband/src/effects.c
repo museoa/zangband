@@ -1694,14 +1694,14 @@ static int minus_ac(void)
 /*
  * Hurt the player with Acid
  */
-void acid_dam(int dam, cptr kb_str)
+bool acid_dam(int dam, cptr kb_str)
 {
 	int inv;
 	
 	dam = resist(dam, res_acid_lvl);
 
 	/* Total Immunity? */
-	if (dam <= 0) return;
+	if (dam <= 0) return (FALSE);
 
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
@@ -1717,20 +1717,23 @@ void acid_dam(int dam, cptr kb_str)
 	/* Inventory damage */
 	if (res_acid_lvl() > 3)
 		(void)inven_damage(set_acid_destroy, inv);
+	
+	/* Obvious */
+	return (TRUE);
 }
 
 
 /*
  * Hurt the player with electricity
  */
-void elec_dam(int dam, cptr kb_str)
+bool elec_dam(int dam, cptr kb_str)
 {
 	int inv;
 	
 	dam = resist(dam, res_elec_lvl);
 
 	/* Total immunity */
-	if (dam <= 0) return;
+	if (dam <= 0) return (FALSE);
 
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
@@ -1743,20 +1746,23 @@ void elec_dam(int dam, cptr kb_str)
 	/* Inventory damage */
 	if (res_acid_lvl() > 3)
 		(void)inven_damage(set_elec_destroy, inv);
+
+	/* Obvious */
+	return (TRUE);
 }
 
 
 /*
  * Hurt the player with Fire
  */
-void fire_dam(int dam, cptr kb_str)
+bool fire_dam(int dam, cptr kb_str)
 {
 	int inv;
 	
 	dam = resist(dam, res_fire_lvl);
 
 	/* Totally immune? */
-	if (dam <= 0) return;
+	if (dam <= 0) return (FALSE);
 
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
@@ -1769,20 +1775,23 @@ void fire_dam(int dam, cptr kb_str)
 	/* Inventory damage */
 	if (res_fire_lvl() > 3)
 		(void)inven_damage(set_fire_destroy, inv);
+
+	/* Obvious */
+	return (TRUE);
 }
 
 
 /*
  * Hurt the player with Cold
  */
-void cold_dam(int dam, cptr kb_str)
+bool cold_dam(int dam, cptr kb_str)
 {
 	int inv;
 	
 	dam = resist(dam, res_cold_lvl);
 
 	/* Total immunity? */
-	if (dam <= 0) return;
+	if (dam <= 0) return (FALSE);
 
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
@@ -1795,6 +1804,9 @@ void cold_dam(int dam, cptr kb_str)
 	/* Inventory damage */
 	if (res_cold_lvl() > 3)
 		(void)inven_damage(set_cold_destroy, inv);
+
+	/* Obvious */
+	return (TRUE);
 }
 
 
@@ -1804,18 +1816,24 @@ void cold_dam(int dam, cptr kb_str)
  * Hack - this should probably take a second argument
  * to add to the poison counter
  */
-void pois_dam(int dam, cptr kb_str)
+bool pois_dam(int dam, cptr kb_str, int pois)
 {
 	dam = resist(dam, res_pois_lvl);
 
 	/* Totally immune? */
-	if (dam <= 0) return;
+	if (dam <= 0) return (FALSE);
 
 	if ((res_pois_lvl() > 3) && one_in_(HURT_CHANCE))
 		(void)do_dec_stat(A_CON);
 
 	/* Take damage */
 	take_hit(dam, kb_str);
+
+	/* Add poison to counter */
+	inc_poisoned(pois);
+	
+	/* Obvious */
+	return (TRUE);
 }
 
 

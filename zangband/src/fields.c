@@ -2255,7 +2255,7 @@ bool field_action_hit_trap_poison_pit(field_type *f_ptr, va_list vp)
 			else
 			{
 				dam *= 2;
-				(void)inc_poisoned(randint1(dam));
+				(void)pois_dam(10, "poison", randint1(dam));
 			}
 		}
 
@@ -2350,7 +2350,7 @@ bool field_action_hit_trap_element(field_type *f_ptr, va_list vp)
 		{
 			msgf("You are enveloped in flames!");
 			dam = damroll(4, 6);
-			fire_dam(dam, "a fire trap");
+			(void)fire_dam(dam, "a fire trap");
 			break;
 		}
 
@@ -2358,17 +2358,14 @@ bool field_action_hit_trap_element(field_type *f_ptr, va_list vp)
 		{
 			msgf("You are splashed with acid!");
 			dam = damroll(4, 6);
-			acid_dam(dam, "an acid trap");
+			(void)acid_dam(dam, "an acid trap");
 			break;
 		}
 
 		case 2:
 		{
 			msgf("A pungent green gas surrounds you!");
-			if (res_pois_lvl() > 3)
-			{
-				(void)inc_poisoned(rand_range(10, 30));
-			}
+			(void) pois_dam(10, "poison", rand_range(10, 30));
 			break;
 		}
 
@@ -2376,7 +2373,7 @@ bool field_action_hit_trap_element(field_type *f_ptr, va_list vp)
 		{
 			msgf("You are splashed with freezing liquid!");
 			dam = damroll(4, 6);
-			cold_dam(dam, "a cold trap");
+			(void)cold_dam(dam, "a cold trap");
 			break;
 		}
 
@@ -2384,7 +2381,7 @@ bool field_action_hit_trap_element(field_type *f_ptr, va_list vp)
 		{
 			msgf("You are hit by a spark!");
 			dam = damroll(4, 6);
-			elec_dam(dam, "an electric trap");
+			(void)elec_dam(dam, "an electric trap");
 			break;
 		}
 	}
@@ -2410,7 +2407,7 @@ bool field_action_hit_trap_ba_element(field_type *f_ptr, va_list vp)
 			msgf("You are enveloped in a ball of flames!");
 			(void)fire_ball(GF_FIRE, 0, 350, 4);
 
-			fire_dam(150, "a fire trap");
+			(void)fire_dam(150, "a fire trap");
 			break;
 		}
 
@@ -2419,7 +2416,7 @@ bool field_action_hit_trap_ba_element(field_type *f_ptr, va_list vp)
 			msgf("You are soaked with acid!");
 			(void)fire_ball(GF_ACID, 0, 350, 4);
 
-			acid_dam(150, "an acid trap");
+			(void)acid_dam(150, "an acid trap");
 			break;
 		}
 
@@ -2428,10 +2425,8 @@ bool field_action_hit_trap_ba_element(field_type *f_ptr, va_list vp)
 			msgf("A pungent grey gas surrounds you!");
 			(void)fire_ball(GF_POIS, 0, 350, 4);
 
-			if (res_pois_lvl() > 3)
-			{
-				(void)inc_poisoned(rand_range(100, 150));
-			}
+			/* Special damage */
+			(void)pois_dam(10, "poison", rand_range(100, 150));
 			break;
 		}
 
@@ -2440,7 +2435,7 @@ bool field_action_hit_trap_ba_element(field_type *f_ptr, va_list vp)
 			msgf("You are soaked with freezing liquid!");
 			(void)fire_ball(GF_ICE, 0, 350, 4);
 
-			cold_dam(150, "a cold trap");
+			(void)cold_dam(150, "a cold trap");
 			break;
 		}
 
@@ -2449,7 +2444,7 @@ bool field_action_hit_trap_ba_element(field_type *f_ptr, va_list vp)
 			msgf("You are hit by lightning!");
 			(void)fire_ball(GF_ELEC, 0, 350, 4);
 
-			elec_dam(150, "a lightning trap");
+			(void)elec_dam(150, "a lightning trap");
 			break;
 		}
 	}

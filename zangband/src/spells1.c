@@ -3163,7 +3163,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Standard damage -- hurts inventory too */
 			if (blind) msgf("You are hit by acid!");
-			acid_dam(dam, killer);
+			(void)acid_dam(dam, killer);
 			break;
 		}
 
@@ -3171,7 +3171,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Standard damage -- hurts inventory too */
 			if (blind) msgf("You are hit by fire!");
-			fire_dam(dam, killer);
+			(void)fire_dam(dam, killer);
 			break;
 		}
 
@@ -3179,7 +3179,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Standard damage -- hurts inventory too */
 			if (blind) msgf("You are hit by cold!");
-			cold_dam(dam, killer);
+			(void)cold_dam(dam, killer);
 			break;
 		}
 
@@ -3187,28 +3187,15 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Standard damage -- hurts inventory too */
 			if (blind) msgf("You are hit by lightning!");
-			elec_dam(dam, killer);
+			(void)elec_dam(dam, killer);
 			break;
 		}
 
-			/* Standard damage -- also poisons player */
 		case GF_POIS:
 		{
+			/* Standard damage -- also poisons player */
 			if (blind) msgf("You are hit by poison!");
-			
-			dam = resist(dam, res_pois_lvl);
-
-			if (res_pois_lvl() && one_in_(HURT_CHANCE))
-			{
-				(void)do_dec_stat(A_CON);
-			}
-
-			take_hit(dam, killer);
-
-			if (res_pois_lvl())
-			{
-				(void)inc_poisoned(randint0(dam) + 10);
-			}
+			(void)pois_dam(dam, killer, randint0(dam) + 10);
 			break;
 		}
 
@@ -3219,10 +3206,8 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			dam = resist(dam, res_pois_lvl);
 
 			take_hit(dam, killer);
-			if (res_pois_lvl())
+			if (pois_dam(10, killer, randint0(dam) + 10))
 			{
-				(void)inc_poisoned(randint0(dam) + 10);
-
 				if (one_in_(5))
 				{
 					msgf("You undergo a freakish metamorphosis!");
@@ -3825,7 +3810,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Ice -- cold plus stun plus cuts */
 			if (blind) msgf("You are hit by something sharp and cold!");
-			cold_dam(dam, killer);
+			(void)cold_dam(dam, killer);
 			if (!(FLAG(p_ptr, TR_RES_SHARDS)))
 			{
 				(void)inc_cut(damroll(5, 8));
