@@ -4344,8 +4344,6 @@ extern int borg_attack_aux_thrust(void)
 }
 
 
-
-
 /*
  * Target a location.  Can be used alone or at "Direction?" prompt.
  *
@@ -5314,7 +5312,7 @@ static int borg_launch_bolt_aux_hack(int i, int dam, int typ)
  *
  * We will attempt to apply the offset-ball attack here
  */
-static int borg_launch_bolt_aux(int y, int x, int rad, int dam, int typ,
+static int borg_launch_bolt_aux(int x, int y, int rad, int dam, int typ,
                                 int max)
 {
 	int i;
@@ -5663,7 +5661,7 @@ static int borg_launch_bolt(int rad, int dam, int typ, int max)
 	if (rad >= 10)
 	{
 		/* Consider it centered on Player */
-		return (borg_launch_bolt_aux(c_y, c_x, rad - 10, dam, typ, max));
+		return (borg_launch_bolt_aux(c_x, c_y, rad - 10, dam, typ, max));
 	}
 
 	/* This will allow the borg to target places adjacent to a monster
@@ -5701,7 +5699,7 @@ static int borg_launch_bolt(int rad, int dam, int typ, int max)
 				/* Consider it if its a ball spell or right on top of it */
 				if (rad >= 2 || (y == borg_temp_y[i] && x == borg_temp_x[i]))
 				{
-					n = borg_launch_bolt_aux(y, x, rad, dam, typ, max);
+					n = borg_launch_bolt_aux(x, y, rad, dam, typ, max);
 				}
 
 				/* Skip useless attacks */
