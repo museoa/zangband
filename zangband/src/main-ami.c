@@ -4269,7 +4269,7 @@ static void amiga_map( void )
 		/* Draw all "interesting" features */
 		for ( i = xoffset; i < xoffset + MAX_WID; i++ )
 		{
-			for ( j = yoffset; j < yoffset + MAX_WID; j++ )
+			for ( j = yoffset; j < yoffset + MAX_HGT; j++ )
 			{
 				/* Get frame tile */
 				if ( (i == xoffset) || (i == xoffset + MAX_WID - 1) ||
