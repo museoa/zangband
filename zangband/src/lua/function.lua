@@ -58,31 +58,43 @@ function classFunction:supcode ()
  output("{")
 
  -- check types
- output(' if (\n')
+ output(' if (')
  -- check self
  local narg
+ local count = 0
  if class then narg=2 else narg=1 end
  if class and self.name~='new' and static==nil then
   if self.const == 'const' then
-   output('     !tolua_istype(tolua_S,1,',self.parent.ctag,',0) ||\n') 
+   output('!tolua_istype(tolua_S,1,',self.parent.ctag,',0) ||\n') 
   else
-   output('     !tolua_istype(tolua_S,1,',self.parent.tag,',0) ||\n') 
+   output('!tolua_istype(tolua_S,1,',self.parent.tag,',0) ||\n') 
   end
+  count = 1
  end
  -- check args
  if self.args[1].type ~= 'void' then
   local i=1
   while self.args[i] do
    if isbasic(self.args[i].type) ~= 'value' then
-    output('     !'..self.args[i]:outchecktype(narg)..' ||\n')
+    if count == 0 then
+     output('!'..self.args[i]:outchecktype(narg)..' ||\n')
+	 count=1
+	else
+	 output('     !'..self.args[i]:outchecktype(narg)..' ||\n')
+	end
    end
    narg = narg+1
    i = i+1
   end
  end
 
- -- check end of list 
- output('     !tolua_isnoobj(tolua_S,'..narg..')\n )\n')
+ -- check end of list
+ if count == 0 then
+  output('!tolua_isnoobj(tolua_S,'..narg..'))\n')
+  count=1
+ else
+  output('     !tolua_isnoobj(tolua_S,'..narg..'))\n')
+ end
  output(' {')
  -- call overloaded function or generate error
  local overload = strsub(self.cname,-2,-1) - 1
@@ -135,12 +147,11 @@ function classFunction:supcode ()
  elseif class and self.name == 'operator&[]' then
   output('  self->operator[](',self.args[1].name,') = ',self.args[2].name,';')
  else
-  output('  {')
   if self.type ~= '' and self.type ~= 'void' then
-   output('  ',self.mod,self.type,self.ptr,'toluaI_ret = ')
+   output(' ',self.mod,self.type,self.ptr,'toluaI_ret = ')
    output('(',self.mod,self.type,self.ptr,') ')
   else
-   output('  ')
+   output(' ')
   end
   if class and self.name=='new' then
    output('new',class,'(')
@@ -169,7 +180,7 @@ function classFunction:supcode ()
    nret = nret + 1
    local t,ct = isbasic(self.type)
    if t then
-    output('   tolua_push'..t..'(tolua_S,(',ct,')toluaI_ret);')
+    output('  tolua_push'..t..'(tolua_S,(',ct,')toluaI_ret);')
    else
     if self.ptr == '' then
      output('   {')
@@ -193,7 +204,6 @@ function classFunction:supcode ()
    nret = nret + self.args[i]:retvalue()
    i = i+1
   end
-  output('  }')
 
   -- set array element values
   if class then narg=2 else narg=1 end
