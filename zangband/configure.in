@@ -58,7 +58,7 @@ fi
 # Find X11 path
 AC_PATH_X
 if test -n "$x_includes" ; then
-	CFLAGS="$CFLAGS -I$x_includes"
+	CPPFLAGS="-I$x_includes $CPPFLAGS"
 fi
 if test -n "$x_libraries" ; then
 	LDFLAGS="$LDFLAGS -L$x_libraries"
@@ -90,7 +90,7 @@ AC_DEFUN(AC_SEARCH_HEADERS,
         [AC_CHECK_HEADER($search_header,
 		    [$2=`AS_DIRNAME($search_header)`]
 			
-			[if test "$2" != "/usr/include"; then
+			[if test "$$2" != "/usr/include"; then
 			   CPPFLAGS="-I$$2 $CPPFLAGS"
 			fi
 			break]
