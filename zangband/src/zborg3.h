@@ -18,10 +18,12 @@
  * Determine if a given inventory item is "known"
  * Test One -- Check for special "known" tag
  * Test Two -- Check for "Easy Know" + "Aware"
+ * Test Three -- Check for Mind Blast attack, which loses 'awareness'.
  */
 #define borg_obj_known_p(T) \
-    (((T)->info & (OB_KNOWN)) || \
-     ((T)->k_idx && k_info[(T)->k_idx].easy_know))
+    ((((T)->info & (OB_KNOWN)) || \
+     ((T)->k_idx && k_info[(T)->k_idx].easy_know)) && \
+	 !((T)->k_idx && k_info[(T)->k_idx].flavor && !k_info[(T)->k_idx].aware))
 
 /*
  * Is the object fully known?
