@@ -322,68 +322,80 @@ static u16b pj_table2[16][8];
 
 /* Bitflags used in the tables */
 
-/* Floor */
-#define PJ_T_FLOOR1		0x0001
-#define PJ_T_FLOOR2		0x0002
+/* Transparent diagonal walls */
+#define PJ_T_WALL1_T	0x0001
+#define PJ_T_WALL2_T	0x0002
 
 /* Transparent Top */
 #define PJ_T_TOP_T1		0x0004
 #define PJ_T_TOP_T2		0x0008
 
+/* Floor */
+#define PJ_T_FLOOR1		0x0010
+#define PJ_T_FLOOR2		0x0020
+
 /* Diagonal walls "behind" everything */
-#define PJ_T_WALL1		0x0010
-#define PJ_T_WALL2		0x0020
+#define PJ_T_WALL1		0x0040
 
 /* Overlaying tiles */
-#define PJ_T_OVER1		0x0040
-#define PJ_T_OVER3		0x0080
+#define PJ_T_OVER1		0x0080
+#define PJ_T_OVER3		0x0100
 
 /* Horizontal walls in front of overlays */
-#define PJ_T_WALLF		0x0100
-#define PJ_T_WALLB		0x0200
+#define PJ_T_WALLF		0x0200
+#define PJ_T_WALLB		0x0400
+
+/* Diagonal walls in front of everything */
+#define PJ_T_WALL2		0x0800
 
 /* Overlaying tiles */
-#define PJ_T_OVER2		0x0400
-#define PJ_T_OVER4		0x0800
+#define PJ_T_OVER2		0x1000
+#define PJ_T_OVER4		0x2000
 
 /* Ceiling */
-#define PJ_T_TOP1		0x1000
-#define PJ_T_TOP2		0x2000
+#define PJ_T_TOP1		0x4000
+#define PJ_T_TOP2		0x8000
 
 
 
 /**** Bit numbers ****/
 
-/* Floor */
-#define PJ_FLOOR1		0
-#define PJ_FLOOR2		1
+/* Transparent diagonal walls */
+#define PJ_WALL1_T		0
+#define PJ_WALL2_T		1
 
 /* Transparent Top */
 #define PJ_TOP_T1		2
 #define PJ_TOP_T2		3
 
+/* Floor */
+#define PJ_FLOOR1		4
+#define PJ_FLOOR2		5
+
 /* Diagonal walls "behind" everything */
-#define PJ_WALL1		4
-#define PJ_WALL2		5
+#define PJ_WALL1		6
 
 /* Overlaying tiles */
-#define PJ_OVER1		6
-#define PJ_OVER3		7
+#define PJ_OVER1		7
+#define PJ_OVER3		8
 
 /* Horizontal walls in front of overlays */
-#define PJ_WALLF		8
-#define PJ_WALLB		9
+#define PJ_WALLF		9
+#define PJ_WALLB		10
+
+/* Diagonal walls in front of everything */
+#define PJ_WALL2		11
 
 /* Overlaying tiles */
-#define PJ_OVER2		10
-#define PJ_OVER4		11
+#define PJ_OVER2		12
+#define PJ_OVER4		13
 
 /* Ceiling */
-#define PJ_TOP1			12
-#define PJ_TOP2			13
+#define PJ_TOP1			14
+#define PJ_TOP2			15
 
 /* Number of bits used */
-#define PJ_MAX			14
+#define PJ_MAX			16
 
 static byte bit_high_lookup[256] =
 {
@@ -424,15 +436,17 @@ static byte bit_high_lookup[256] =
 static int t_offsetx1[PJ_MAX] =
 {
 	0,
-	P_TILE_SIZE,
+	0,
 	P_TILE_SIZE / 2,
 	P_TILE_SIZE / 2,
 	0,
+	P_TILE_SIZE,
 	0,
 	-P_TILE_SIZE / 4,
 	(3 * P_TILE_SIZE) / 4,
 	P_TILE_SIZE / 2,
 	P_TILE_SIZE / 2,
+	0,
 	P_TILE_SIZE / 4,
 	0,
 	P_TILE_SIZE / 2,
@@ -441,16 +455,18 @@ static int t_offsetx1[PJ_MAX] =
 
 static int t_offsety1[PJ_MAX] =
 {
+	P_TILE_SIZE,
+	P_TILE_SIZE,
 	0,
 	0,
 	0,
 	0,
 	P_TILE_SIZE,
-	0,
 	P_TILE_SIZE / 2,
 	P_TILE_SIZE / 2,
 	0,
 	0,
+	P_TILE_SIZE,
 	-P_TILE_SIZE / 2,
 	0,
 	0,
@@ -459,6 +475,8 @@ static int t_offsety1[PJ_MAX] =
 
 static int t_xscale[PJ_MAX] =
 {
+	0,
+	0,
 	-1,
 	-1,
 	-1,
@@ -477,13 +495,15 @@ static int t_xscale[PJ_MAX] =
 
 static int t_offsetx2[PJ_MAX] =
 {
-	P_TILE_SIZE / 2,
+	0,
 	0,
 	0,
 	P_TILE_SIZE,
+	P_TILE_SIZE / 2,
 	0,
 	0,
 	P_TILE_SIZE / 4,
+	0,
 	0,
 	0,
 	0,
@@ -499,9 +519,11 @@ static int t_offsety2[PJ_MAX] =
 	0,
 	0,
 	0,
-	P_TILE_SIZE,
+	0,
+	0,
 	0,
 	P_TILE_SIZE / 2,
+	0,
 	0,
 	0,
 	0,
@@ -513,16 +535,18 @@ static int t_offsety2[PJ_MAX] =
 
 static bool wall_flip[PJ_MAX] =
 {
-	0,
-	0,
-	0,
-	0,
 	1,
 	1,
 	0,
 	0,
 	0,
 	0,
+	1,
+	0,
+	0,
+	0,
+	0,
+	1,
 	0,
 	0,
 	0,
@@ -1978,11 +2002,13 @@ static errr draw_rect_t1(int x, int y, term_data *td, int xp, int yp)
 		/* Solid wall? */
 		if (tc & 0x40)
 		{
-			mask |= (PJ_T_WALLF | PJ_T_WALL2);
+			mask |= (PJ_T_WALLF | PJ_T_WALL1 | PJ_T_WALL1_T);
 			xt[PJ_WALLF] = tc & 0x3F;
 			yt[PJ_WALLF] = ta & 0x7F;
-			xt[PJ_WALL2] = tc & 0x3F;
-			yt[PJ_WALL2] = ta & 0x7F;
+			xt[PJ_WALL1] = tc & 0x3F;
+			yt[PJ_WALL1] = ta & 0x7F;
+			xt[PJ_WALL1_T] = tc & 0x3F;
+			yt[PJ_WALL1_T] = ta & 0x7F;
 		}
 		
 		/* Is the terrain null? */
@@ -2016,9 +2042,18 @@ static errr draw_rect_t1(int x, int y, term_data *td, int xp, int yp)
 		/* Solid wall? */
 		if (tc & 0x40)
 		{
-			mask |= PJ_T_WALL1;
-			xt[PJ_WALL1] = tc & 0x3F;
-			yt[PJ_WALL1] = ta & 0x7F;
+			if (mask & PJ_T_WALL1)
+			{
+				mask &= ~(PJ_T_WALL1 | PJ_T_WALL1_T);
+			}
+			else
+			{
+				mask |= (PJ_T_WALL1 | PJ_T_WALL1_T);
+				xt[PJ_WALL1] = tc & 0x3F;
+				yt[PJ_WALL1] = ta & 0x7F;
+				xt[PJ_WALL1_T] = tc & 0x3F;
+				yt[PJ_WALL1_T] = ta & 0x7F;
+			}
 		}
 		
 		/* Is the terrain null? */
@@ -2053,15 +2088,23 @@ static errr draw_rect_t1(int x, int y, term_data *td, int xp, int yp)
 		/* Solid wall? */
 		if (tc & 0x40)
 		{
-			mask |= PJ_T_WALLB | PJ_T_TOP1 | PJ_T_TOP_T1;
-			xt[PJ_WALLB] = tc & 0x3F;
-			yt[PJ_WALLB] = ta & 0x7F;
+			mask |= PJ_T_TOP1 | PJ_T_TOP_T1;
+			
 			xt[PJ_TOP1] = tc & 0x3F;
 			yt[PJ_TOP1] = ta & 0x7F;
 			xt[PJ_TOP_T1] = tc & 0x3F;
 			yt[PJ_TOP_T1] = ta & 0x7F;
 
-			mask &= (~PJ_T_WALLF);
+			if (mask & PJ_T_WALLF)
+			{
+				mask &= (~PJ_T_WALLF);
+			}
+			else
+			{
+				mask |= PJ_T_WALLB;
+				xt[PJ_WALLB] = tc & 0x3F;
+				yt[PJ_WALLB] = ta & 0x7F;
+			}
 		}
 		
 		/* Are we overlaying anything? */
@@ -2071,7 +2114,7 @@ static errr draw_rect_t1(int x, int y, term_data *td, int xp, int yp)
 			xt[PJ_OVER2] = c & 0x3F;
 			yt[PJ_OVER2] = a & 0x7F;
 		}
-	}
+	}	
 
 	/* Plot the pixels onto the bitmap */
 	for (i = 0; i < P_TILE_SIZE / 2; i++)
@@ -2236,7 +2279,11 @@ static errr draw_rect_t2(int x, int y, term_data *td, int xp, int yp)
 		/* Solid wall? */
 		if (tc & 0x40)
 		{
-			mask |= (PJ_T_TOP2 | PJ_T_TOP_T2);
+			mask |= (PJ_T_WALL2 | PJ_T_WALL2_T | PJ_T_TOP2 | PJ_T_TOP_T2);
+			xt[PJ_WALL2] = tc & 0x3F;
+			yt[PJ_WALL2] = ta & 0x7F;
+			xt[PJ_WALL2_T] = tc & 0x3F;
+			yt[PJ_WALL2_T] = ta & 0x7F;
 			xt[PJ_TOP2] = tc & 0x3F;
 			yt[PJ_TOP2] = ta & 0x7F;
 			xt[PJ_TOP_T2] = tc & 0x3F;
@@ -2265,17 +2312,36 @@ static errr draw_rect_t2(int x, int y, term_data *td, int xp, int yp)
 		/* Solid wall? */
 		if (tc & 0x40)
 		{
-			mask |= PJ_T_WALLB | PJ_T_WALL2 | PJ_T_TOP1 | PJ_T_TOP_T1;
-			xt[PJ_WALLB] = tc & 0x3F;
-			yt[PJ_WALLB] = ta & 0x7F;
+			mask |= PJ_T_TOP1 | PJ_T_TOP_T1;
+			
 			xt[PJ_TOP1] = tc & 0x3F;
 			yt[PJ_TOP1] = ta & 0x7F;
 			xt[PJ_TOP_T1] = tc & 0x3F;
 			yt[PJ_TOP_T1] = ta & 0x7F;
-			xt[PJ_WALL2] = tc & 0x3F;
-			yt[PJ_WALL2] = ta & 0x7F;
-
-			mask &= (~PJ_T_WALLF);
+			
+			if (mask & PJ_T_WALL2)
+			{
+				mask &= ~(PJ_T_WALL2 | PJ_T_WALL2_T);
+			}
+			else
+			{
+				mask |= (PJ_T_WALL2 | PJ_T_WALL2_T);
+				xt[PJ_WALL2] = tc & 0x3F;
+				yt[PJ_WALL2] = ta & 0x7F;
+				xt[PJ_WALL2_T] = tc & 0x3F;
+				yt[PJ_WALL2_T] = ta & 0x7F;
+			}
+			
+			if (mask & PJ_T_WALLF)
+			{
+				mask &= (~PJ_T_WALLF);
+			}
+			else
+			{
+				mask |= PJ_T_WALLB;
+				xt[PJ_WALLB] = tc & 0x3F;
+				yt[PJ_WALLB] = ta & 0x7F;
+			}
 		}
 		
 		/* Are we overlaying anything? */
@@ -2332,8 +2398,9 @@ static errr draw_rect_t2(int x, int y, term_data *td, int xp, int yp)
 				/* Pick the pixel to use */
 				pixel = XGetPixel(td->tiles,
 					xt[val] * P_TILE_SIZE + i + t_offsetx2[val] +
-						 t_xscale[val] * j / 2,
-					yt[val] * P_TILE_SIZE + j + t_offsety2[val]);
+						 t_xscale[val] * j / 2 + i * wall_flip[val],
+					yt[val] * P_TILE_SIZE + j + t_offsety2[val]
+						 - 2 * i * wall_flip[val]);
 			}
 			
 			XPutPixel(td->SkewImage, i, j, pixel);
@@ -3037,17 +3104,13 @@ errr init_xpj(int argc, char *argv[])
 			if ((j + i) % 2)
 			{
 				pj_table1[j][i] |= PJ_T_TOP1;
+				pj_table1[j][i] |= PJ_T_WALLB;
 			}
 			else
 			{
 				pj_table1[j][i] |= PJ_T_TOP_T1;
 			}
-			
-			if ((j + i) % 3)
-			{
-				pj_table1[j][i] |= PJ_T_WALLB;
-			}
-			
+					
 			if (j >= 8)
 			{
 				pj_table1[j][i] |= PJ_T_OVER2;
@@ -3063,18 +3126,27 @@ errr init_xpj(int argc, char *argv[])
 			
 			if (i - j / 2 >= 0)
 			{
-				pj_table1[j][i] |= (PJ_T_WALL1 | PJ_T_FLOOR1);
+				pj_table1[j][i] |= PJ_T_FLOOR1;
+
+				if ((i + j) % 2)
+				{
+					pj_table1[j][i] |= PJ_T_WALL1;
+				}
+				else
+				{
+					pj_table1[j][i] |= PJ_T_WALL1_T;
+				}
 			}
 			else
 			{
-				pj_table1[j][i] |= (PJ_T_WALL2 | PJ_T_FLOOR2);
+				pj_table1[j][i] |= PJ_T_FLOOR2;
 			}
 			
 			
 			/* Table 2 */
 			pj_table2[j][i] = PJ_T_FLOOR1 | PJ_T_WALLF;
 			
-			if ((j + i) % 3)
+			if ((j + i) % 2)
 			{
 				pj_table2[j][i] |= PJ_T_WALLB;
 			}
@@ -3107,14 +3179,12 @@ errr init_xpj(int argc, char *argv[])
 			{
 				if ((i + j) % 2)
 				{
-					pj_table2[j][i] |= PJ_T_TOP2;
+					pj_table2[j][i] |= PJ_T_TOP2 | PJ_T_WALL2;
 				}
 				else
 				{
-					pj_table2[j][i] |= PJ_T_TOP_T2;
+					pj_table2[j][i] |= PJ_T_TOP_T2 | PJ_T_WALL2_T;
 				}
-				
-				pj_table2[j][i] |= PJ_T_WALL1 | PJ_T_WALL2;
 			}
 		}
 	}
