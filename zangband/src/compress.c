@@ -20,8 +20,8 @@
 
 #include "angband.h"
 
-/* 4k for each block_type */
-#define BLOCK_DATA_SIZE ((int)(4096 - sizeof(u16b) - sizeof(void *)))
+/* 256k for each block_type */
+#define BLOCK_DATA_SIZE ((int)((1<<18) - sizeof(u16b) - sizeof(void *)))
  
 #define HI_BIT_16		0x8000
 #define NEXT_BIT_16		0x4000
@@ -1380,36 +1380,72 @@ static void ibw_blocks_trans(block_handle *h1_ptr)
 /* Data modeling */
 
 /* Variables for move-to-front probability model */
-static byte mtf_table[256];
-static u16b mtf_prob_table[257];
+static int mtf_table[256];
+static int inverse_mtf_table[256];
+static u16b mtf_prob_table[256];
 
 static void init_compress_mtf(u16b *prob_table)
 {
 	int i;
-	u32b value;
+	u16b value;
 	
 	/* Reset the move-to-front table */
 	for (i = 0; i < 255; i++)
 	{
 		mtf_table[i] = i;
+		inverse_mtf_table[i] = i;
 	}
 
 	/* Reset the probability table */
-	for (i = 0; i < 255; i++)
+	
+	prob_table[0] = 0;
+	for (i = 0; i < 256; i++)
 	{
 		/* Hack - we are going to assume fixed probabilities for now */
-		if (i > 128) value = 1;
-		else if (i > 64) value = 2;
-		else if (i > 32) value = 4;
+		if (i > 128)		value = 1;
+		else if (i > 64)	value = 2;
+		else if (i > 32)	value = 4;
+		else if (i > 16)	value = 8;
+		else if (i > 8)		value = 16;
+		else if (i == 4)	value = 32;
+		else if (i == 3)	value = 50;
+		else if (i == 2)	value = 64;
+		else if (i == 1)	value = 128;
+		else				value = 256;
 	
-	
+		/* Save table of probs for later */
+		mtf_prob_table[i] = value;
+		
+		/* Set up probability table */
+		prob_table[i + 1] = prob_table[i] + value;
 	}
-
 }
 
 static void calc_prob_mtf(byte symbol, u16b *prob_table)
 {
-
+	int i;
+	
+	/* The position of the symbol in the table */
+	int symbol_val = mtf_table[symbol];
+	
+	/* Shift the symbol to half its current position */
+	for (i = symbol_val; i > symbol_val / 2; i--)
+	{
+		/* Shift everything over */
+		inverse_mtf_table[i] = inverse_mtf_table[i - 1];
+		mtf_table[inverse_mtf_table[i]] = i;
+	}
+	
+	/* Move the symbol into location */
+	inverse_mtf_table[symbol_val / 2] = symbol;
+	mtf_table[symbol] = symbol_val / 2;
+	
+	/* Recalculate the probability table */
+	for (i = 0; i < 256; i++)
+	{
+		/* Get the new cumulative probabilities */
+		prob_table[i + 1] = prob_table[i] + mtf_prob_table[mtf_table[i]];
+	}
 }
 
 static void init_mtf_model(void)
@@ -1582,7 +1618,7 @@ void test_compress_module(void)
 {
 	block_handle handle, *h_ptr = &handle;
 	cptr infile = "test"; 
-	cptr outfile =  "bwt";
+	cptr outfile =  "comp";
 	cptr outfile2 = "result";
 	char buf[1024];
 	
@@ -1593,10 +1629,18 @@ void test_compress_module(void)
 	
 	bw_blocks_trans(h_ptr);
 	
+	init_mtf_model();
+	
+	arth_blocks_encode(h_ptr);
+	
 	/* Build the filename */
 	(void) path_build(buf, 1024, ANGBAND_DIR, outfile);
 
 	(void) write_file(h_ptr, buf);
+	
+	init_mtf_model();
+	
+	arth_blocks_decode(h_ptr);
 	
 	ibw_blocks_trans(h_ptr);
 	
