@@ -322,6 +322,14 @@ void place_trees(int x, int y)
 		/* up stair */
 		cave[y][x].feat = FEAT_LESS;
 	}
+
+	/* Hack - Save the location as a "room" */
+	if (dun->cent_n < CENT_MAX)
+	{
+		dun->cent[dun->cent_n].y = y;
+		dun->cent[dun->cent_n].x = x;
+		dun->cent_n++;
+	}
 }
 
 
