@@ -852,9 +852,41 @@ static void recharged_notice(const object_type *o_ptr)
 		/* Find another '!' */
 		if (s[1] == '!')
 		{
-			/* Notify the player */
-			msgf("Your %v %s recharged.", OBJECT_FMT(o_ptr, FALSE, 0),
-				(o_ptr->number > 1) ? "are" : "is");
+			/* Count the item */
+			if (o_ptr->number == 1)
+			{
+				/* One item has recharged */
+				msgf("Your %v has recharged.", OBJECT_FMT(o_ptr, FALSE, 0));
+			}
+			else
+			{
+				object_kind *k_ptr = &k_info[o_ptr->k_idx];
+
+				/* Find out how many are recharging still */
+				int power = (o_ptr->timeout + (k_ptr->pval - 1)) / k_ptr->pval;
+
+				/* Watch the top */
+				if (power > o_ptr->number) power = o_ptr->number;
+
+				/* All are charged now */
+				if (power == 0)
+				{
+					msgf("All %d of your %v are charged.", o_ptr->number,
+						OBJECT_FMT(o_ptr, FALSE, 0));
+				}
+				/* One is charged */
+				else if (o_ptr->number - power == 1)
+				{
+					msgf("One of your %v is charged.", 
+						OBJECT_FMT(o_ptr, FALSE, 0));
+				}
+				/* Some are charged, some are recharging */
+				else
+				{
+					msgf("%d of your %v are charged.", o_ptr->number - power,
+						OBJECT_FMT(o_ptr, FALSE, 0));
+				}
+			}
 
 			/* Done. */
 			return;
