@@ -302,4 +302,33 @@
 
 
 
+/* Include maid-grf.c stuff */
+#ifdef ALLOW_BORG
+#define TERM_USE_MAP
+#define TERM_CAVE_MAP
+#define TERM_USE_LIST
+#endif /* ALLOW_BORG */
+
+#ifdef USE_AMI
+#define TERM_USE_MAP
+#define TERM_MAP_GLYPH
+#endif /* USE_AMI */
+
+#ifdef USE_TNB
+#define TERM_USE_MAP
+#define TERM_MAP_GLYPH
+#define TERM_CAVE_MAP
+#define TERM_MAP_INFO
+#endif /* USE_TNB */
+
+
+/*
+ * Defining parts of the new term interface requires
+ * the callbacks api
+ */
+#if defined TERM_USE_MAP || defined TERM_USE_LIST
+#define TERM_USE_CALLBACKS
+#endif /* TERM_USE_MAP || TERM_USE_LIST */
+
+
 #endif
