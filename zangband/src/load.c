@@ -1888,6 +1888,9 @@ static void rd_messages(void)
 
 static void clean_square(int y, int x, cave_type *c_ptr)
 {
+	/* Hack - the wilderness is cleaned in the fix_tile() function */
+	if (!dun_level) return;
+	
 	/* Get rid of pre-fields terrain */
 	if (sf_version < 17)
 	{
