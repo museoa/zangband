@@ -329,7 +329,7 @@ static void chest_death(int x, int y, s16b o_idx)
 		default:
 		{
 			/* Match anything */
-			tval = TV_ANY;
+			tval = TV_GLOVES;
 			sval = SV_ANY;
 		}
 	}
