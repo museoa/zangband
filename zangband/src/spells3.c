@@ -785,8 +785,6 @@ bool apply_disenchant(void)
 	char            o_name[80];
 
 
-
-
 	/* Pick a random slot */
 	switch (randint1(8))
 	{
@@ -834,15 +832,15 @@ bool apply_disenchant(void)
 
 	/* Disenchant tohit */
 	if (o_ptr->to_h > 0) o_ptr->to_h--;
-	if ((o_ptr->to_h > 5) && (randint0(100) < 20)) o_ptr->to_h--;
+	if ((o_ptr->to_h > 10) && (randint0(100) < 20)) o_ptr->to_h--;
 
 	/* Disenchant todam */
 	if (o_ptr->to_d > 0) o_ptr->to_d--;
-	if ((o_ptr->to_d > 5) && (randint0(100) < 20)) o_ptr->to_d--;
+	if ((o_ptr->to_d > 10) && (randint0(100) < 20)) o_ptr->to_d--;
 
 	/* Disenchant toac */
 	if (o_ptr->to_a > 0) o_ptr->to_a--;
-	if ((o_ptr->to_a > 5) && (randint0(100) < 20)) o_ptr->to_a--;
+	if ((o_ptr->to_a > 10) && (randint0(100) < 20)) o_ptr->to_a--;
 
 	/* Message */
 	msg_format("Your %s (%c) %s disenchanted!",
@@ -1320,16 +1318,20 @@ void identify_pack(void)
 	}
 }
 
+#define ENCHANT_MAX 25
 
 /*
  * Used by the "enchant" function (chance of failure)
- * (modified for Zangband, we need better stuff there...) -- TY
+ *
+ * Formula: 1000-0.064x^3
  */
-static int enchant_table[16] =
+static int enchant_table[ENCHANT_MAX + 1] =
 {
-	0, 10,  50, 100, 200,
-	300, 400, 500, 650, 800,
-	950, 987, 993, 995, 998,
+	0,   115, 221, 319, 407,
+	488, 561, 627, 686, 738,
+	784, 824, 859, 889, 914,
+	936, 953, 967, 978, 986,
+	992, 996, 998, 999, 999,
 	1000
 };
 
@@ -1658,7 +1660,7 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 		if (eflag & ENCH_TOHIT)
 		{
 			if (o_ptr->to_h < 0) chance = 0;
-			else if (o_ptr->to_h > 15) chance = 1000;
+			else if (o_ptr->to_h > ENCHANT_MAX) chance = 1000;
 			else chance = enchant_table[o_ptr->to_h];
 
 			if (force || ((randint1(1000) > chance) && (!a || one_in_(2))))
@@ -1681,7 +1683,7 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 		if (eflag & ENCH_TODAM)
 		{
 			if (o_ptr->to_d < 0) chance = 0;
-			else if (o_ptr->to_d > 15) chance = 1000;
+			else if (o_ptr->to_d > ENCHANT_MAX) chance = 1000;
 			else chance = enchant_table[o_ptr->to_d];
 
 			if (force || ((randint1(1000) > chance) && (!a || one_in_(2))))
@@ -1704,7 +1706,7 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 		if (eflag & ENCH_TOAC)
 		{
 			if (o_ptr->to_a < 0) chance = 0;
-			else if (o_ptr->to_a > 15) chance = 1000;
+			else if (o_ptr->to_a > ENCHANT_MAX) chance = 1000;
 			else chance = enchant_table[o_ptr->to_a];
 
 			if (force || ((randint1(1000) > chance) && (!a || one_in_(2))))
