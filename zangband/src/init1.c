@@ -1078,7 +1078,7 @@ static errr grab_one_kind_flag(object_kind *k_ptr, cptr what)
  */
 errr init_k_info_txt(FILE *fp, char *buf)
 {
-	int i, j;
+	int i;
 
 	char *s, *t;
 
