@@ -12871,7 +12871,7 @@ S:TELE_AWAY | TELE_TO | TELE_LEVEL | TPORT |
 S:BO_MANA | BA_MANA | S_MONSTERS | HEAL |
 S:CAUSE_4 | HASTE | HAND_DOOM | 
 S:S_ANGEL | S_UNIQUE
-D:The hoary Lord of the Great Abyss seems a wizened man, but appearances
+D:The hoary Lord of the Great Abyss seems a wizened man, but appearances 
 D:can be deceiving.
 
 N:850:Carcharoth, the Jaws of Thirst
