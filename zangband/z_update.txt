@@ -2,9 +2,37 @@ This is a document file listing the changes in Zangband (compared to
 the standard Angband 2.8.1.) No long explanations, just a list. See
 code for details. In reversed chronological order (more or less):
 
-ZAngband 2.3.4c:
+ZAngband 2.3.5:
 -Cleaned up monster fighting messages.
+-Quest entrances show now the name of the quest.
+-Added player alignment based on pet alignment and virtues; this
+ determines the alignment of monsters the player can summon.
 -Monsters may no longer summon their enemies.
+-Added an "autodestroy worthless objects" option.
+-Lowered the pet upkeep slightly.
+-Made pets able to locate the player from a greater distance.
+-Restored the mana of all classes to pre-2.3.4 levels.
+-Made 'trump cyberdemon' less difficult to cast successfully.
+-Added an invisible wall for nightmare mode.
+-Disintegration balls are now stopped by permanent walls.
+-Corrected a bug which prevented monsters from casting non-bolt
+ spells at monsters when a friend is between.
+-Shattered weapons are now 1d1 instead of 0d0.  This fixes the 'division
+ by zero' error when getting a critical hit with such a weapon.
+-The EMPTY_MIND flag of monsters is now remembered by the player when
+ an attack shows that the monster is immune to psi-powers.
+-Exploding monsters no longer hurt the player twice when exploding.
+-Fixed a bug that could crash the game when generating fractal caves.
+-Fixed a typo when a ring disappears in shallow water.
+-Removed the CAN_SWIM flag from mushrooms, molds, and most jellies.
+-Fixed a bug with the 'NOT' operator of the *.prf files parser.
+-Added a new main-x11.c file by Uwe Siems. The improvements include
+ better graphic-scaling on systems with HiColor/TrueColor mode
+ (can be switched off with -s).
+-Added a new main-mac-carbon.c file by Ron Anderson. It supports PPC,
+ CarbonPPC, and 68k and implements the 16x16 tiles.
+
+ZAngband 2.3.4c:
 -Fixed a bug that could crash the game when lighting/darkening the
  dungeon.
 -The mindcrafter 'domination' spell no longer affects quest monsters.
