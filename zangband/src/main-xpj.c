@@ -561,6 +561,8 @@ static u32b pj_row1[64];
 static u32b pj_row2[64];
 static int pj_cur_row;
 
+/* Font data */
+static XImage *font_raw;
 
 /*
  * Hack -- cursor color
@@ -1808,6 +1810,8 @@ static errr Term_xtra_xpj_react(void)
 {
 	int i;
 
+	int j, k;
+
 	if (Metadpy->color)
 	{
 		/* Check the colors */
@@ -1835,6 +1839,19 @@ static errr Term_xtra_xpj_react(void)
 				/* Change the foreground */
 				Infoclr_set(clr[i]);
 				Infoclr_change_fg(pixel);
+								
+				/* Need to redo the font metrics */
+				for (j = 0; j < 16; j++)
+				{
+					for (k = 0; k < 128; k++)
+					{
+						/* Recolour the changed pixels */
+						if (XGetPixel(font_raw, i * 16 + j, k) != pix_blank)
+						{
+							XPutPixel(font_raw, i * 16 + j, k, pixel);
+						}
+					}
+				}
 			}
 		}
 	}
@@ -2622,6 +2639,184 @@ static errr Term_wipe_xpj(int x, int y, int n)
 }
 
 
+/* Load the font data */
+static XImage *ReadFONT(Display *dpy, char *Name)
+{
+	Visual *visual = DefaultVisual(dpy, DefaultScreen(dpy));
+
+	int depth = DefaultDepth(dpy, DefaultScreen(dpy));
+
+	FILE *fp;
+
+	XImage *Res = NULL;
+
+	Pixell pixel;
+	
+	char *Data;
+	char buf[1024];
+
+	char line[16];
+
+	char tmp_string[100];
+
+	int i, j, k, m, total;
+	int num = 0, error_idx = -1;
+
+	/* Determine total bytes needed for image */
+	i = 1;
+	j = (depth - 1) >> 2;
+	while (j >>= 1) i <<= 1;
+	total = 32 * 16 * 128 * 16 * i;
+	
+	
+	/* Open the BMP file */
+	fp = fopen(Name, "r");
+
+	/* No such file */
+	if (fp == NULL)
+	{
+		return (NULL);
+	}
+	
+	/* Allocate image memory */
+	C_MAKE(Data, total, char);
+
+	Res = XCreateImage(dpy, visual, depth, ZPixmap, 0,
+	                   Data, 16 * 32, 128 * 16,
+	                   32, 0);
+					   
+	/* Failure */
+	if (Res == NULL)
+	{
+		C_KILL(Data, total, char);
+		fclose(fp);
+		
+		return (NULL);
+	}
+
+	/* Reset the counters for use in parsing the font data */
+	i = 0;
+	j = 16;
+	
+	/* Process the file */
+	while (0 == my_fgets(fp, buf, 1024))
+	{
+		/* Count lines */
+		num++;
+
+		/* Skip "empty" lines */
+		if (!buf[0]) continue;
+
+		/* Skip "blank" lines */
+		if (isspace(buf[0])) continue;
+
+		/* Skip comments */
+		if (buf[0] == '#') continue;
+
+		/* Look at the line */
+		
+		/* Verify correct "colon" format */
+		if (buf[1] != ':')
+		{
+			sprintf(tmp_string, "Incorrect font file format on line %d", num);
+			quit(tmp_string);
+		}
+
+		/* Get number */
+		if (buf[0] == 'N')
+		{
+			/* Get the index */
+			i = atoi(buf+2);
+		
+			/* Verify information */
+			if (i <= error_idx)
+			{
+				sprintf(tmp_string, 
+					"Incorrect font file numbering on line %d", num);
+				quit(tmp_string);
+			}
+
+			error_idx = i;
+			
+			/* Verify information */
+			if (i >= 128)
+			{
+				sprintf(tmp_string, 
+					"Incorrect font file numbering on line %d", num);
+				quit(tmp_string);
+			}
+			
+			/* Verify information */
+			if (j != 16)
+			{
+				sprintf(tmp_string, 
+					"Incorrect font size on line %d", num);
+				quit(tmp_string);
+			}
+			
+			/* Start from the top */
+			j = 0;
+		}
+		
+		/* Get font data */
+		if (buf[0] == 'F')
+		{
+			/* Verify information */
+			if (j >= 16)
+			{
+				sprintf(tmp_string, 
+					"Incorrect font size length on line %d", num);
+				quit(tmp_string);
+			}
+			
+			if (strlen(buf) != 18)
+			{
+				sprintf(tmp_string, 
+					"Incorrect font size width on line %d", num);
+				quit(tmp_string);
+			}
+			
+			/* Create the line */
+			for (k = 0; k < 16; k++)
+			{
+				line[k] = buf[k + 2];
+			}
+			
+			/* Copy it to the 32 coloured locations */
+			for (k = 0; k < 32; k++)
+			{
+				pixel = clr[k]->fg;
+				
+				for (m = 0; m < 16; m++)
+				{
+					if (line[m] == '*')
+					{
+						/* Coloured pixel */
+						XPutPixel(Res, k * 16 + m, i * 16 + j, pixel);
+					}
+					else
+					{
+						/* Blank pixel */
+						XPutPixel(Res, k * 16 + m, i * 16 + j, pix_blank);
+					}
+				}
+			}
+			
+			/* Next line of the character */
+			j++;
+		}
+	}
+
+	/* Close the file */
+	my_fclose(fp);
+
+	/* Paranoia - does the file end early? */
+	if ((i != 127) || (j != 16)) return (NULL);
+	
+	return (Res);
+}
+
+
 /*
  * Initialize a term_data
  */
@@ -3224,6 +3419,23 @@ errr init_xpj(int argc, char *argv[])
 	/* Hack - use crazy row to mark "nothing entered yet" */
 	pj_cur_row = -255;
 	
+	/* Try the "16x16.bmp" file */
+	path_build(filename, 1024, ANGBAND_DIR_XTRA, "font/16x16.txt");
+	
+	/* Use the "16x16.bmp" file if it exists */
+	if (0 == fd_close(fd_open(filename, O_RDONLY)))
+	{
+		Display *dpy = Metadpy->dpy;
+
+		/* Load the graphical tiles */
+		font_raw = ReadFONT(dpy, filename);
+		
+		if (!font_raw) quit("Could not allocate font metrics!");
+	}
+	else
+	{
+		quit("Could not initialise font metrics!");
+	}
 
 	/* Success */
 	return (0);
