@@ -66,6 +66,29 @@ ZAngband 2.5.6:
   are not possible.  (Every shot is a 'trick shot'.)
 - The amnesia attack is more powerful.  You will forget the tried status, and
   flavor of objects.
+- The formula used for monster fear ignores attacks that do zero damage.
+- Fixed bug that was preventing the rarity value of stores from having any
+  effect on their distribution in towns.
+- Moved the platform-specific externs to h-system.h, and out of main.c
+- Made the cursor a rectangle instead of a filled box, on xwindows ports.
+- Fixed a crash with some beaming spells.
+- The projected view port now has an ascii mode (controlled by the '-g' 
+  startup option.)
+- Things are no longer always invisible in doorways in the projected view.
+- Reduced bonuses to slaying ego-items in some cases where they were too large.
+- Lights are yellow in your inventory, not grey.
+- Fixed quest message being on two lines instead of one.
+- If a message is displayed while the dungeon was generated, you won't see
+  half the dungeon lit.
+- Cloaks and boots count as armour now.  (Not 'tools')
+- The XAW port is now smart enough to understand the fonts defined in
+  environment variables, and in z-config.h  (As well as in .Xdefaults)
+- Fixed a bug with the monster lighting not lighting other monsters properly.
+- Stopped the projection routine being too smart, and not hitting monsters
+  you are aiming at.
+- Reordered some of the shop attr/feats.  '0' now stands for 'other'.
+  Warrior halls are now '0', and lots of the old '0' stores have changed.
+- Made the vanilla town shops look like the vanilla versions used to.
 
 ZAngband 2.5.5:
 - Items of Curing now heal hp as well as removing bad effects.
