@@ -2630,16 +2630,7 @@ void do_poly_self(void)
 		/* Adjust the stats */
 		for (i = 0; i < A_MAX; i++)
 		{
-			int drain;
 			int change;
-
-			/* Calculate the amount the stat is drained */
-			if (p_ptr->stat_cur[i] > 180)
-				drain = (p_ptr->stat_max[i] - p_ptr->stat_cur[i] + 9) / 10;
-			else if (p_ptr->stat_max[i] > 180)
-				drain = (180 - p_ptr->stat_cur[i] + 9) / 10 + (p_ptr->stat_max[i] - 18 + 9) / 10;
-			else
-				drain = p_ptr->stat_max[i] - p_ptr->stat_cur[i];
 
 			/* Calculate the difference between the races */
 			change = rp_ptr->r_adj[i] - race_info[old_race].r_adj[i];
@@ -2647,8 +2638,8 @@ void do_poly_self(void)
 			/* Adjust current stat */
 			p_ptr->stat_cur[i] = adjust_stat(i, p_ptr->stat_cur[i], change);
 
-			/* Set maximum stat based on current stat and drainage */
-			p_ptr->stat_max[i] = adjust_stat(i, p_ptr->stat_cur[i], change);
+			/* Adjust maximum stat */
+			p_ptr->stat_max[i] = adjust_stat(i, p_ptr->stat_max[i], change);
 		}
 
 		/* Experience factor */

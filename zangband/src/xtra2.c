@@ -3915,11 +3915,9 @@ int stat_cap(int stat)
 	int bonus = rp_ptr->r_adj[stat] + cp_ptr->c_adj[stat];
 
 	if (bonus > 12)
-		return 180 + 220;
-	else if (bonus > -9)
-		return 180 + 100 + 10 * bonus;
+		return 4000;
 	else
-		return 180 + 10;
+		return 280 + 10 * bonus;
 }
 
 
@@ -3929,46 +3927,12 @@ int adjust_stat(int stat, int value, int amount)
 
 	int cap = stat_cap(stat);
 
-	/* Negative amounts */
-	if (amount < 0)
-	{
-		/* Apply penalty */
-		for (i = 0; i < (0 - amount); i++)
-		{
-			if (value >= 180 + 10)
-			{
-				value -= 10;
-			}
-			else if (value > 180)
-			{
-				value = 180;
-			}
-			else if (value > 30)
-			{
-				value -= 10;
-			}
-		}
-	}
-
-	/* Positive amounts */
-	else if (amount > 0)
-	{
-		/* Apply reward */
-		for (i = 0; i < amount; i++)
-		{
-			if (value < 180)
-			{
-				value += 10;
-			}
-			else
-			{
-				value += 10;
-			}
-		}
-	}
+    /* Apply bonus/penalty */
+    value += amount * 10;
 
 	/* Cap value */
-	if (value > cap) value = cap;
+    if (value > cap) value = cap;
+    if (value < 30)  value = 30;
 
 	/* Return the result */
 	return (value);
