@@ -163,7 +163,7 @@ static void DrawBlank(int x, int y, Widget *widgetPtr)
 	/* Clear the area */
 	for (y2 = 0; y2 < widgetPtr->gheight; y2++)
 	{
-		C_WIPE(dstPtr, length, byte);
+		(void) C_WIPE(dstPtr, length, byte);
 		dstPtr += bitmapPtr->pitch;
 	}
 }
