@@ -665,7 +665,6 @@ extern void item_charges(object_type *o_ptr);
 extern void item_describe(object_type *o_ptr);
 extern object_type *item_split(object_type *o_ptr, int num);
 extern void item_increase(object_type *o_ptr, int num);
-extern void item_optimize(object_type *o_ptr);
 extern bool inven_carry_okay(const object_type *o_ptr);
 extern object_type *inven_carry(object_type *o_ptr);
 extern object_type *inven_takeoff(object_type *o_ptr);

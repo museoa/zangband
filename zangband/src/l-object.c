@@ -2461,27 +2461,6 @@ tolua_lerror:
  return 0;
 }
 
-/* function: item_optimize */
-static int toluaI_object_item_optimize00(lua_State* tolua_S)
-{
- if (
-     !tolua_istype(tolua_S,1,tolua_tag(tolua_S,"object_type"),0) ||
-     !tolua_isnoobj(tolua_S,2)
- )
-  goto tolua_lerror;
- else
- {
-  object_type* o_ptr = ((object_type*)  tolua_getusertype(tolua_S,1,0));
-  {
-   item_optimize(o_ptr);
-  }
- }
- return 0;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'item_optimize'.");
- return 0;
-}
-
 /* function: inven_carry_okay */
 static int toluaI_object_inven_carry_okay00(lua_State* tolua_S)
 {
@@ -5529,7 +5508,6 @@ int tolua_object_open (lua_State* tolua_S)
  tolua_function(tolua_S,NULL,"item_describe",toluaI_object_item_describe00);
  tolua_function(tolua_S,NULL,"item_split",toluaI_object_item_split00);
  tolua_function(tolua_S,NULL,"item_increase",toluaI_object_item_increase00);
- tolua_function(tolua_S,NULL,"item_optimize",toluaI_object_item_optimize00);
  tolua_function(tolua_S,NULL,"inven_carry_okay",toluaI_object_inven_carry_okay00);
  tolua_function(tolua_S,NULL,"inven_carry",toluaI_object_inven_carry00);
  tolua_function(tolua_S,NULL,"inven_takeoff",toluaI_object_inven_takeoff00);
@@ -6609,7 +6587,6 @@ void tolua_object_close (lua_State* tolua_S)
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"item_describe");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"item_split");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"item_increase");
- lua_pushnil(tolua_S); lua_setglobal(tolua_S,"item_optimize");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"inven_carry_okay");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"inven_carry");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"inven_takeoff");

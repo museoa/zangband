@@ -5011,57 +5011,11 @@ void item_describe(object_type *o_ptr)
 
 }
 
-/*
- * Split a pile into two bits.  Return a pointer to
- * the split off piece.  This piece will not be in the
- * original pile's list, but will be in the static
- * temp_object defined above. 
- */
-object_type *item_split(object_type *o_ptr, int num)
-{
-	object_type *q_ptr = &temp_object;
-
-	/* Paranoia */
-	if (o_ptr->number < num) num = o_ptr->number;
-
-	/* Obtain a local object */
-	object_copy(q_ptr, o_ptr);
-
-	/* Update item totals */
-	o_ptr->number -= num;
-	q_ptr->number = num;
-
-	/* Notice the change */
-	if (num && !floor_item(o_ptr))
-	{
-		/* Recalculate bonuses and weight */
-		p_ptr->update |= (PU_BONUS | PU_WEIGHT);
-
-		/* Recalculate mana */
-		p_ptr->update |= (PU_MANA);
-
-		/* Combine the pack */
-		p_ptr->notice |= (PN_COMBINE);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP);
-	}
-
-	/* Distribute charges of wands or rods */
-	distribute_charges(o_ptr, q_ptr, num);
-
-	/* Fill in holes... */
-	item_optimize(o_ptr);
-
-	/* Done - return new item */
-	return (q_ptr);
-}
-
 
 /*
  * Erase an inventory slot if it has no more items
  */
-void item_optimize(object_type *o_ptr)
+static void item_optimize(object_type *o_ptr)
 {
 	s16b *list;
 
@@ -5110,6 +5064,53 @@ void item_optimize(object_type *o_ptr)
 
 	/* Window stuff */
 	p_ptr->window |= (PW_SPELL);
+}
+
+
+/*
+ * Split a pile into two bits.  Return a pointer to
+ * the split off piece.  This piece will not be in the
+ * original pile's list, but will be in the static
+ * temp_object defined above. 
+ */
+object_type *item_split(object_type *o_ptr, int num)
+{
+	object_type *q_ptr = &temp_object;
+
+	/* Paranoia */
+	if (o_ptr->number < num) num = o_ptr->number;
+
+	/* Obtain a local object */
+	object_copy(q_ptr, o_ptr);
+
+	/* Update item totals */
+	o_ptr->number -= num;
+	q_ptr->number = num;
+
+	/* Notice the change */
+	if (num && !floor_item(o_ptr))
+	{
+		/* Recalculate bonuses and weight */
+		p_ptr->update |= (PU_BONUS | PU_WEIGHT);
+
+		/* Recalculate mana */
+		p_ptr->update |= (PU_MANA);
+
+		/* Combine the pack */
+		p_ptr->notice |= (PN_COMBINE);
+
+		/* Window stuff */
+		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+	}
+
+	/* Distribute charges of wands or rods */
+	distribute_charges(o_ptr, q_ptr, num);
+
+	/* Fill in holes... */
+	item_optimize(o_ptr);
+
+	/* Done - return new item */
+	return (q_ptr);
 }
 
 
