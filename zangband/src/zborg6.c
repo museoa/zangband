@@ -497,7 +497,7 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid,
 /*
  * Enqueue a fresh (legal) starting grid, if it is safe
  */
-static void borg_flow_enqueue_grid(int y, int x)
+static void borg_flow_enqueue_grid(int x, int y)
 {
 	int old_head;
 
@@ -563,7 +563,7 @@ static void borg_flow_reverse(void)
 	borg_flow_clear();
 
 	/* Enqueue the player's grid */
-	borg_flow_enqueue_grid(c_y, c_x);
+	borg_flow_enqueue_grid(c_x, c_y);
 
 	/* Spread, but do NOT optimize */
 	borg_flow_spread(250, FALSE, FALSE, FALSE);
@@ -13519,14 +13519,14 @@ bool borg_flow_stair_both(int why)
 	for (i = 0; i < track_less_num; i++)
 	{
 		/* Enqueue the grid */
-		borg_flow_enqueue_grid(track_less_y[i], track_less_x[i]);
+		borg_flow_enqueue_grid(track_less_x[i], track_less_y[i]);
 	}
 
 	/* Enqueue useful grids */
 	for (i = 0; i < track_more_num; i++)
 	{
 		/* Enqueue the grid */
-		borg_flow_enqueue_grid(track_more_y[i], track_more_x[i]);
+		borg_flow_enqueue_grid(track_more_x[i], track_more_y[i]);
 	}
 
 	/* Spread the flow */
@@ -13565,7 +13565,7 @@ bool borg_flow_stair_less(int why)
 	for (i = 0; i < track_less_num; i++)
 	{
 		/* Enqueue the grid */
-		borg_flow_enqueue_grid(track_less_y[i], track_less_x[i]);
+		borg_flow_enqueue_grid(track_less_x[i], track_less_y[i]);
 	}
 
 	if (borg_skill[BI_CLEVEL] > 35 || borg_skill[BI_CUR_LITE] == 0)
@@ -13625,7 +13625,7 @@ bool borg_flow_stair_more(int why)
 	for (i = 0; i < track_more_num; i++)
 	{
 		/* Enqueue the grid */
-		borg_flow_enqueue_grid(track_more_y[i], track_more_x[i]);
+		borg_flow_enqueue_grid(track_more_x[i], track_more_y[i]);
 	}
 
 	/* Spread the flow */
@@ -13658,7 +13658,7 @@ bool borg_flow_glyph(int why)
 	for (i = 0; i < track_glyph_num; i++)
 	{
 		/* Enqueue the grid */
-		borg_flow_enqueue_grid(track_glyph_y[i], track_glyph_x[i]);
+		borg_flow_enqueue_grid(track_glyph_x[i], track_glyph_y[i]);
 	}
 
 	/* Spread the flow */
@@ -13681,27 +13681,8 @@ bool borg_flow_town_exit(int why)
 {
 	/* Clear the flow codes */
 	borg_flow_clear();
-
-	/* Enqueue the grid */
-	if (borg_skill[BI_TOWN_NUM] == 1)
-	{
-		/* Main town gate is 33, 130 */
-		borg_flow_enqueue_grid(33, 130);
-	}
-
-	/* Enqueue the grid */
-	if (borg_skill[BI_TOWN_NUM] == 2)
-	{
-		/* Main town gate, just outside of town */
-		borg_flow_enqueue_grid(33, 112);
-	}
-
-	if (borg_skill[BI_TOWN_NUM] == 3)
-	{
-		/* Main town gate is */
-		borg_flow_enqueue_grid(39, 77);
-	}
-
+	
+	/* Do something here */
 
 /* This routine can be used to flow to any town special
  * such as the mayors office or the Whitehorse Inn or even
@@ -13760,7 +13741,7 @@ bool borg_flow_light(int why)
 	for (i = 0; i < borg_glow_n; i++)
 	{
 		/* Enqueue the grid */
-		borg_flow_enqueue_grid(borg_glow_y[i], borg_glow_x[i]);
+		borg_flow_enqueue_grid(borg_glow_x[i], borg_glow_y[i]);
 	}
 
 	/* Spread the flow */
@@ -13817,7 +13798,7 @@ bool borg_flow_shop_visit(void)
 		if (!x || !y || ((c_x == x) && (c_y == y))) continue;
 
 		/* Enqueue the grid */
-		borg_flow_enqueue_grid(y, x);
+		borg_flow_enqueue_grid(x, y);
 	}
 
 	/* Spread the flow */
@@ -13870,7 +13851,7 @@ bool borg_flow_shop_entry(int i)
 	borg_flow_clear();
 
 	/* Enqueue the grid */
-	borg_flow_enqueue_grid(y, x);
+	borg_flow_enqueue_grid(x, y);
 
 	/* Spread the flow */
 	borg_flow_spread(250, TRUE, FALSE, FALSE);
@@ -13962,7 +13943,7 @@ bool borg_flow_kill_aim(bool viewable)
 				borg_flow_clear();
 
 				/* Enqueue the grid */
-				borg_flow_enqueue_grid(c_y, c_x);
+				borg_flow_enqueue_grid(c_x, c_y);
 
 				/* restore the saved player position */
 				c_x = s_c_x;
@@ -14132,7 +14113,7 @@ bool borg_flow_kill_corridor(bool viewable)
 		borg_flow_clear();
 
 		/* Enqueue the grid */
-		borg_flow_enqueue_grid(m_y, m_x);
+		borg_flow_enqueue_grid(m_x, m_y);
 
 		/* Spread the flow */
 		borg_flow_spread(15, TRUE, FALSE, TRUE);
@@ -14368,7 +14349,7 @@ bool borg_flow_kill(bool viewable, int nearness)
 	for (i = 0; i < borg_temp_n; i++)
 	{
 		/* Enqueue the grid */
-		borg_flow_enqueue_grid(borg_temp_y[i], borg_temp_x[i]);
+		borg_flow_enqueue_grid(borg_temp_x[i], borg_temp_y[i]);
 	}
 
 	/* Spread the flow */
@@ -14497,7 +14478,7 @@ bool borg_flow_take(bool viewable, int nearness)
 	for (i = 0; i < borg_temp_n; i++)
 	{
 		/* Enqueue the grid */
-		borg_flow_enqueue_grid(borg_temp_y[i], borg_temp_x[i]);
+		borg_flow_enqueue_grid(borg_temp_x[i], borg_temp_y[i]);
 	}
 
 	/* Spread the flow */
@@ -15200,7 +15181,7 @@ static bool borg_flow_dark_1(int b_stair)
 		borg_flow_direct(y, x);
 #endif /* 0 */
 
-		borg_flow_enqueue_grid(y, x);
+		borg_flow_enqueue_grid(x, y);
 
 	}
 
@@ -15295,7 +15276,7 @@ static bool borg_flow_dark_2(void)
 		/* Create a path */
 		borg_flow_direct(y, x);
 #endif /* 0 */
-		borg_flow_enqueue_grid(y, x);
+		borg_flow_enqueue_grid(x, y);
 	}
 
 	/* Spread the flow */
@@ -15383,7 +15364,7 @@ static bool borg_flow_dark_3(int b_stair)
 		x = borg_temp_x[i];
 
 		/* Enqueue the grid */
-		borg_flow_enqueue_grid(y, x);
+		borg_flow_enqueue_grid(x, y);
 	}
 
 	/* Spread the flow (limit depth) */
@@ -15471,7 +15452,7 @@ static bool borg_flow_dark_4(int b_stair)
 		x = borg_temp_x[i];
 
 		/* Enqueue the grid */
-		borg_flow_enqueue_grid(y, x);
+		borg_flow_enqueue_grid(x, y);
 	}
 
 
@@ -15553,7 +15534,7 @@ static bool borg_flow_dark_5(int b_stair)
 		x = borg_temp_x[i];
 
 		/* Enqueue the grid */
-		borg_flow_enqueue_grid(y, x);
+		borg_flow_enqueue_grid(x, y);
 	}
 
 	/* Spread the flow */
@@ -15889,7 +15870,7 @@ bool borg_flow_spastic(bool bored)
 
 
 	/* Enqueue the grid */
-	borg_flow_enqueue_grid(b_y, b_x);
+	borg_flow_enqueue_grid(b_x, b_y);
 
 	/* Spread the flow */
 	borg_flow_spread(250, TRUE, FALSE, FALSE);
