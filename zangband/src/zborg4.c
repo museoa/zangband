@@ -358,7 +358,7 @@ static void borg_notice_player(void)
 	if (f2 & (TR2_SUST_CHR)) bp_ptr->sust[A_CHR] = TRUE;
 
 	/* Bloating slows the player down (a little) */
-	if (borg_skill[BI_ISGORGED]) bp_ptr->speed -= 10;
+	if (bp_ptr->status.gorged) bp_ptr->speed -= 10;
 }
 
 /*
@@ -473,8 +473,7 @@ static void borg_notice_equip(int *extra_blows, int *extra_shots,
 		if (l_ptr->kn_flags1 & TR1_STEALTH) bp_ptr->skill_stl += l_ptr->pval;
 
 		/* Affect searching ability (factor of five) */
-		if (l_ptr->kn_flags1 & TR1_SEARCH) bp_ptr->skill_sns +=
-				l_ptr->pval * 5;
+		if (l_ptr->kn_flags1 & TR1_SEARCH) bp_ptr->skill_sns += l_ptr->pval * 5;
 
 		/* Affect searching frequency (factor of five) */
 		if (l_ptr->kn_flags1 & TR1_SEARCH) bp_ptr->skill_fos +=
@@ -1405,7 +1404,7 @@ static void borg_notice_potions(list_item *l_ptr, int number)
 		}
 		case SV_POTION_CURE_LIGHT:
 		{
-			if (borg_skill[BI_ISCUT]) bp_ptr->able.csw += number;
+			if (bp_ptr->status.cut) bp_ptr->able.csw += number;
 			break;
 		}
 		case SV_POTION_CURE_POISON:
@@ -2362,16 +2361,13 @@ static void borg_notice_aux2(void)
 		amt_add_stat[A_CHR] += 1000;
 
 	/* No need to *buy* stat repair potions */
-	if (!borg_skill[BI_ISFIXSTR]) amt_fix_stat[A_STR] += 1000;
-	if (!borg_skill[BI_ISFIXINT]) amt_fix_stat[A_INT] += 1000;
-	if (!borg_skill[BI_ISFIXWIS]) amt_fix_stat[A_WIS] += 1000;
-	if (!borg_skill[BI_ISFIXDEX]) amt_fix_stat[A_DEX] += 1000;
-	if (!borg_skill[BI_ISFIXCON]) amt_fix_stat[A_CON] += 1000;
-	if (!borg_skill[BI_ISFIXCHR]) amt_fix_stat[A_CHR] += 1000;
-
+	for (i = 0; i < A_MAX; i++)
+	{
+		if (!bp_ptr->status.fixstat[i]) amt_fix_stat[i] += 1000;
+	}
 
 	/* No need for experience repair */
-	if (!borg_skill[BI_ISFIXEXP]) amt_fix_exp += 1000;
+	if (!bp_ptr->status.fixexp) amt_fix_exp += 1000;
 
 	/*
 	 * Correct the high and low calorie foods for the correct
@@ -2387,7 +2383,7 @@ static void borg_notice_aux2(void)
 	}
 
 	/* If weak, do not count food spells */
-	if (borg_skill[BI_ISWEAK] && (bp_ptr->food >= 1000))
+	if (bp_ptr->status.weak && (bp_ptr->food >= 1000))
 		bp_ptr->food -= 1000;
 
 	/*

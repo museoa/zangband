@@ -20,7 +20,7 @@
 /*
  * This file provides support for "borg9.c".
  */
-extern void borg_status(void);
+extern void borg_status_window(void);
 
 /*
  * Initialize this file

@@ -4453,13 +4453,13 @@ void borg_update(void)
 	/*** Various things ***/
 
 	/* Forget goals while "impaired" in any way */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
-		borg_skill[BI_ISAFRAID] || borg_skill[BI_ISIMAGE]) goal = 0;
+	if (bp_ptr->status.blind || bp_ptr->status.confused ||
+		bp_ptr->status.afraid || bp_ptr->status.image) goal = 0;
 
 	/* Forget goals while "bleeding" in any way */
-	if (borg_skill[BI_ISWEAK] || borg_skill[BI_ISPOISONED] ||
-		borg_skill[BI_ISCUT] || borg_skill[BI_ISSTUN] ||
-		borg_skill[BI_ISHEAVYSTUN]) goal = 0;
+	if (bp_ptr->status.weak || bp_ptr->status.poisoned ||
+		bp_ptr->status.cut || bp_ptr->status.stun ||
+		bp_ptr->status.heavy_stun) goal = 0;
 
 	/* Forget goals when HP changes */
 	if (bp_ptr->chp < bp_ptr->oldhp) goal = 0;

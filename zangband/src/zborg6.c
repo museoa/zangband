@@ -404,8 +404,7 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid,
 
 			/* Avoid Water if dangerous */
 			if (mb_ptr->feat == FEAT_SHAL_WATER &&
-				(bp_ptr->encumber &&
-				 !(bp_ptr->flags3 & TR3_FEATHER))) continue;
+				(bp_ptr->encumber && !(bp_ptr->flags3 & TR3_FEATHER))) continue;
 
 			/* Avoid Mountains */
 			if (mb_ptr->feat == FEAT_MOUNTAIN) continue;
@@ -896,7 +895,7 @@ static bool borg_happy_grid_bold(int x, int y)
 #endif /* 0 */
 
 	/* Hack -- weak/dark is very unhappy */
-	if (borg_skill[BI_ISWEAK] || !bp_ptr->cur_lite) return (FALSE);
+	if (bp_ptr->status.weak || !bp_ptr->cur_lite) return (FALSE);
 
 	/* Apply a control effect so that he does not get stuck in a loop */
 	if ((borg_t - borg_began) >= 2000) return (FALSE);
@@ -1076,7 +1075,7 @@ bool borg_lite_beam(bool simulation)
 	bool spell_ok = FALSE;
 
 	/* Hack -- weak/dark is very unhappy */
-	if (borg_skill[BI_ISWEAK] || !bp_ptr->cur_lite) return (FALSE);
+	if (bp_ptr->status.weak || !bp_ptr->cur_lite) return (FALSE);
 
 	/* Apply a control effect so that he does not get stuck in a loop */
 	if ((borg_t - borg_began) >= 2000) return (FALSE);
@@ -1377,7 +1376,7 @@ static bool borg_escape(int b_q)
 		allow_fail = 10;
 
 	/* comprimised, get out of the fight */
-	if (borg_skill[BI_ISHEAVYSTUN])
+	if (bp_ptr->status.heavy_stun)
 		allow_fail = 35;
 
 	/* for emergencies */
@@ -1390,15 +1389,15 @@ static bool borg_escape(int b_q)
 	 * particular circumstances.
 	 */
 	if (!bp_ptr->depth &&
-		(borg_skill[BI_ISPOISONED] || borg_skill[BI_ISWEAK] ||
-		 borg_skill[BI_ISCUT])) return (FALSE);
+		(bp_ptr->status.poisoned || bp_ptr->status.weak ||
+		 bp_ptr->status.cut)) return (FALSE);
 
 	/* Borgs with GOI should not escape until the GOI falls */
 	if (borg_goi) return (FALSE);
 
 	/* 1. really scary, I'm about to die */
 	/* Try an emergency teleport, or phase door as last resort */
-	if (borg_skill[BI_ISHEAVYSTUN] ||
+	if (bp_ptr->status.heavy_stun ||
 		(b_q >= avoidance * (45 + risky_boost) / 10) ||
 		((b_q >= avoidance * (40 + risky_boost) / 10) &&
 		 borg_fighting_unique >= 10 && bp_ptr->depth == 100 &&
@@ -1512,7 +1511,7 @@ static bool borg_escape(int b_q)
 	/* 2 - a bit more scary */
 	/* Attempt to teleport (usually) */
 	/* do not escape from uniques so quick */
-	if (borg_skill[BI_ISHEAVYSTUN] ||
+	if (bp_ptr->status.heavy_stun ||
 		((b_q >= avoidance * (15 + risky_boost) / 10) &&
 		 borg_fighting_unique >= 1 && borg_fighting_unique <= 8 &&
 		 bp_ptr->depth != 99) ||
@@ -1566,13 +1565,13 @@ static bool borg_escape(int b_q)
 
 	/* 3- not too bad */
 	/* also run if stunned or it is scary here */
-	if (borg_skill[BI_ISHEAVYSTUN] ||
+	if (bp_ptr->status.heavy_stun ||
 		((b_q >= avoidance * (13 + risky_boost) / 10) &&
 		 borg_fighting_unique >= 2 && borg_fighting_unique <= 8) ||
 		((b_q >= avoidance * (10 + risky_boost) / 10) && !borg_fighting_unique)
 		|| ((b_q >= avoidance * (10 + risky_boost) / 10) &&
-			borg_skill[BI_ISAFRAID] && !bp_ptr->able.missile &&
-										(borg_class == CLASS_WARRIOR)))
+			bp_ptr->status.afraid && !bp_ptr->able.missile &&
+			(borg_class == CLASS_WARRIOR)))
 	{
 		/* try Dimension Door */
 		if ((amt_dim_door && borg_dim_door(TRUE, b_q) &&
@@ -1904,36 +1903,43 @@ static bool borg_heal(int danger)
 	int chance;
 
 	int stats_needing_fix = 0;
+	int i;
 
 	map_block *mb_ptr = map_loc(c_x, c_y);
 
 	hp_down = bp_ptr->mhp - bp_ptr->chp;
 
 
+
 	/*
 	 * When fighting Morgoth, we want the borg to use Life potion to fix his
 	 * stats.  So we need to add up the ones that are dropped.
 	 */
-	if (borg_skill[BI_ISFIXSTR]) stats_needing_fix++;
-	if (borg_skill[BI_ISFIXINT]) stats_needing_fix++;
-	if (borg_skill[BI_ISFIXWIS]) stats_needing_fix++;
-	if (borg_skill[BI_ISFIXDEX]) stats_needing_fix++;
-	if (borg_skill[BI_ISFIXCON]) stats_needing_fix++;
+	for (i = 0; i < A_MAX; i++)
+	{
+		if (bp_ptr->status.fixstat[i]) stats_needing_fix++;
+	}
 
 	/* Special cases get a second vote */
 	if (borg_class == CLASS_MAGE &&
-		borg_skill[BI_ISFIXINT]) stats_needing_fix++;
+		bp_ptr->status.fixstat[A_INT]) stats_needing_fix++;
 	if (borg_class == CLASS_PRIEST &&
-		borg_skill[BI_ISFIXWIS]) stats_needing_fix++;
+		bp_ptr->status.fixstat[A_WIS]) stats_needing_fix++;
 	if (borg_class == CLASS_WARRIOR &&
-		borg_skill[BI_ISFIXCON]) stats_needing_fix++;
-	if (bp_ptr->mhp <= 850 && borg_skill[BI_ISFIXCON]) stats_needing_fix++;
-	if (bp_ptr->mhp <= 700 && borg_skill[BI_ISFIXCON]) stats_needing_fix += 3;
+		bp_ptr->status.fixstat[A_CON]) stats_needing_fix++;
+	if (bp_ptr->mhp <= 850 && bp_ptr->status.fixstat[A_CON])
+	{
+		stats_needing_fix++;
+	}
+	if (bp_ptr->mhp <= 700 && bp_ptr->status.fixstat[A_CON])
+	{
+		stats_needing_fix += 3;
+	}
 	if (borg_class == CLASS_PRIEST && bp_ptr->msp < 100 &&
-		borg_skill[BI_ISFIXWIS])
+		bp_ptr->status.fixstat[A_WIS])
 		stats_needing_fix += 5;
 	if (borg_class == CLASS_MAGE && bp_ptr->msp < 100 &&
-		borg_skill[BI_ISFIXINT])
+		bp_ptr->status.fixstat[A_INT])
 		stats_needing_fix += 5;
 
 
@@ -1943,7 +1949,7 @@ static bool borg_heal(int danger)
 	 * This is checked twice, once, here, to see if he is in low danger
 	 * and again at the end of borg_caution, when all other avenues have failed
 	 */
-	if (borg_skill[BI_ISCONFUSED] && (randint0(100) < 85))
+	if (bp_ptr->status.confused && (randint0(100) < 85))
 	{
 		if ((hp_down >= 300) && danger - 300 < bp_ptr->chp &&
 			borg_quaff_potion(SV_POTION_HEALING))
@@ -1995,7 +2001,7 @@ static bool borg_heal(int danger)
 
 	}
 	/*  Hack -- heal when blind. This is deadly. */
-	if (borg_skill[BI_ISBLIND] && (randint0(100) < 85))
+	if (bp_ptr->status.blind && (randint0(100) < 85))
 	{
 		/*
 		 * If in extreme danger, use teleport then fix the
@@ -2030,7 +2036,7 @@ static bool borg_heal(int danger)
 
 
 	/* We generally try to conserve ez-heal pots */
-	if ((borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED]) &&
+	if ((bp_ptr->status.blind || bp_ptr->status.confused) &&
 		((hp_down >= 400) ||
 		 (danger > bp_ptr->chp * 5 && hp_down > 100)) &&
 		borg_quaff_potion(SV_POTION_STAR_HEALING))
@@ -2040,14 +2046,14 @@ static bool borg_heal(int danger)
 	}
 
 	/*  Hack -- rest until healed */
-	if ((!borg_skill[BI_ISBLIND] && !borg_skill[BI_ISPOISONED] &&
-		 !borg_skill[BI_ISCUT] && !borg_goi && !borg_see_inv && !borg_shield &&
-		 !borg_skill[BI_ISWEAK] && !borg_skill[BI_ISHUNGRY] &&
-		 (borg_skill[BI_ISCONFUSED] ||
-		  borg_skill[BI_ISIMAGE] ||
-		  borg_skill[BI_ISAFRAID] ||
-		  borg_skill[BI_ISSTUN] ||
-		  borg_skill[BI_ISHEAVYSTUN] ||
+	if ((!bp_ptr->status.blind && !bp_ptr->status.poisoned &&
+		 !bp_ptr->status.cut && !borg_goi && !borg_see_inv && !borg_shield &&
+		 !bp_ptr->status.weak && !bp_ptr->status.hungry &&
+		 (bp_ptr->status.confused ||
+		  bp_ptr->status.image ||
+		  bp_ptr->status.afraid ||
+		  bp_ptr->status.stun ||
+		  bp_ptr->status.heavy_stun ||
 		  (bp_ptr->chp < bp_ptr->mhp) ||
 		  (bp_ptr->csp < bp_ptr->msp * 6 / 10)) &&
 		 (danger < avoidance / 5)) && borg_check_rest() && !scaryguy_on_level &&
@@ -2136,7 +2142,7 @@ static bool borg_heal(int danger)
 		return FALSE;
 
 	/* Don't bother healing if not in danger */
-	if (danger == 0 && !borg_skill[BI_ISPOISONED] && !borg_skill[BI_ISCUT])
+	if (danger == 0 && !bp_ptr->status.poisoned && !bp_ptr->status.cut)
 		return (FALSE);
 
 	/* Restoring while fighting Morgoth */
@@ -2189,8 +2195,8 @@ static bool borg_heal(int danger)
 		 || ((bp_ptr->chp <= (bp_ptr->mhp / 3)) &&
 			 (chance < 75)) ||
 		 (bp_ptr->chp <= (bp_ptr->mhp / 4)) ||
-		 borg_skill[BI_ISHEAVYSTUN] || borg_skill[BI_ISSTUN] ||
-		 borg_skill[BI_ISPOISONED] || borg_skill[BI_ISCUT]))
+		 bp_ptr->status.heavy_stun || bp_ptr->status.stun ||
+		 bp_ptr->status.poisoned || bp_ptr->status.cut))
 		return FALSE;
 
 
@@ -2272,7 +2278,7 @@ static bool borg_heal(int danger)
 		danger / 2 < bp_ptr->chp + 200 &&
 		(((!bp_ptr->able.teleport ||
 		   (bp_ptr->skill_dev -
-		   borg_get_kind(TV_ROD, SV_ROD_HEALING)->level > 7)) &&
+			borg_get_kind(TV_ROD, SV_ROD_HEALING)->level > 7)) &&
 		  borg_zap_rod(SV_ROD_HEALING)) ||
 		 borg_activate_artifact(ART_SOULKEEPER, FALSE) ||
 		 borg_activate_artifact(ART_GONDOR, FALSE) ||
@@ -2355,7 +2361,7 @@ static bool borg_heal(int danger)
 	/* Hack -- cure poison when poisoned
 	 * This was moved from borg_caution.
 	 */
-	if (borg_skill[BI_ISPOISONED] && (bp_ptr->chp < bp_ptr->mhp / 2))
+	if (bp_ptr->status.poisoned && (bp_ptr->chp < bp_ptr->mhp / 2))
 	{
 		if (borg_spell_fail(REALM_LIFE, 1, 1, 60) ||
 			borg_spell_fail(REALM_ARCANE, 1, 5, 60) ||
@@ -2391,7 +2397,7 @@ static bool borg_heal(int danger)
 
 	/* Hack -- cure poison when poisoned CRITICAL CHECK
 	 */
-	if (borg_skill[BI_ISPOISONED] &&
+	if (bp_ptr->status.poisoned &&
 		(bp_ptr->chp < 2 || bp_ptr->chp < bp_ptr->mhp / 20))
 	{
 		int sv_mana = bp_ptr->csp;
@@ -2442,7 +2448,7 @@ static bool borg_heal(int danger)
 	}
 
 	/* Hack -- cure wounds when bleeding, also critical check */
-	if (borg_skill[BI_ISCUT] &&
+	if (bp_ptr->status.cut &&
 		(bp_ptr->chp < bp_ptr->mhp / 3 || randint0(100) < 20))
 	{
 		if (borg_quaff_potion(SV_POTION_CURE_SERIOUS) ||
@@ -2460,7 +2466,7 @@ static bool borg_heal(int danger)
 		}
 	}
 	/* bleeding and about to die CRITICAL CHECK */
-	if (borg_skill[BI_ISCUT] &&
+	if (bp_ptr->status.cut &&
 		((bp_ptr->chp < 2) || bp_ptr->chp < bp_ptr->mhp / 20))
 	{
 		int sv_mana = bp_ptr->csp;
@@ -2655,16 +2661,16 @@ bool borg_caution(void)
 	if (!bp_ptr->britelite && equipment[EQUIP_LITE].timeout < 250) nasty = TRUE;
 
 	/* Starvation is nasty */
-	if (borg_skill[BI_ISWEAK]) nasty = TRUE;
+	if (bp_ptr->status.weak) nasty = TRUE;
 
 	/* Blind-ness is nasty */
-	if (borg_skill[BI_ISBLIND]) nasty = TRUE;
+	if (bp_ptr->status.blind) nasty = TRUE;
 
 	/* Confusion is nasty */
-	if (borg_skill[BI_ISCONFUSED]) nasty = TRUE;
+	if (bp_ptr->status.confused) nasty = TRUE;
 
 	/* Hallucination is nasty */
-	if (borg_skill[BI_ISIMAGE]) nasty = TRUE;
+	if (bp_ptr->status.image) nasty = TRUE;
 
 	/*** Evaluate local danger ***/
 
@@ -2956,8 +2962,8 @@ bool borg_caution(void)
 		/* Its ok to go one level deep if evading scary guy */
 		if (scaryguy_on_level) stair_more = TRUE;
 
-		if (!bp_ptr->cur_lite || borg_skill[BI_ISHUNGRY] ||
-			borg_skill[BI_ISWEAK] || (bp_ptr->food < 2))
+		if (!bp_ptr->cur_lite || bp_ptr->status.hungry ||
+			bp_ptr->status.weak || (bp_ptr->food < 2))
 			stair_more = FALSE;
 
 		/* if fleeing town, then dive */
@@ -3082,7 +3088,7 @@ bool borg_caution(void)
 	}
 
 	/* Hack -- prevent starvation */
-	if (borg_skill[BI_ISWEAK])
+	if (bp_ptr->status.weak)
 	{
 		/* Attempt to satisfy hunger */
 		if (borg_eat_food_any() ||
@@ -3238,7 +3244,7 @@ bool borg_caution(void)
 			int y2 = borg_view_y[j];
 
 			/* Cant if confused: no way to predict motion */
-			if (borg_skill[BI_ISCONFUSED]) continue;
+			if (bp_ptr->status.confused) continue;
 
 			/* Require "floor" grids */
 			if (!borg_cave_floor_bold(y2, x2)) continue;
@@ -3424,7 +3430,7 @@ bool borg_caution(void)
 			mb_ptr = map_loc(x, y);
 
 			/* Cant if confused: no way to predict motion */
-			if (borg_skill[BI_ISCONFUSED]) continue;
+			if (bp_ptr->status.confused) continue;
 
 			/* Skip walls/doors */
 			if (borg_cave_wall_grid(mb_ptr)) continue;
@@ -3498,7 +3504,7 @@ bool borg_caution(void)
 	/*** Cures ***/
 
 	/* cure confusion, second check, first (slightly different) in borg_heal */
-	if (borg_skill[BI_ISCONFUSED])
+	if (bp_ptr->status.confused)
 	{
 		if (bp_ptr->mhp - bp_ptr->chp >= 300 &&
 			(borg_quaff_potion(SV_POTION_HEALING) ||
@@ -3518,7 +3524,7 @@ bool borg_caution(void)
 	}
 
 	/* Hack -- cure fear when afraid */
-	if (borg_skill[BI_ISAFRAID] &&
+	if (bp_ptr->status.afraid &&
 		(randint0(100) < 70 ||
 		 ((borg_class == CLASS_WARRIOR) && !bp_ptr->able.missile)))
 	{
@@ -3570,7 +3576,7 @@ bool borg_caution(void)
 	}
 
 	/* Flee from bleeding wounds or poison and no heals */
-	if ((borg_skill[BI_ISCUT] || borg_skill[BI_ISPOISONED]) &&
+	if ((bp_ptr->status.cut || bp_ptr->status.poisoned) &&
 		(bp_ptr->chp < bp_ptr->mhp / 2))
 	{
 		/* Flee from bleeding wounds */
@@ -3633,7 +3639,7 @@ bool borg_caution(void)
 	 */
 	if (goal_recalling && (p > avoidance * 2))
 	{
-		if (!borg_skill[BI_ISCONFUSED] && !borg_skill[BI_ISBLIND] &&
+		if (!bp_ptr->status.confused && !bp_ptr->status.blind &&
 			bp_ptr->msp > 60 &&
 			bp_ptr->csp < (bp_ptr->msp / 4) &&
 			borg_quaff_potion(SV_POTION_RESTORE_MANA))
@@ -4066,7 +4072,7 @@ int borg_attack_aux_thrust(void)
 	borg_kill *kill;
 
 	/* Too afraid to attack */
-	if (borg_skill[BI_ISAFRAID]) return (0);
+	if (bp_ptr->status.afraid) return (0);
 
 
 	/* Examine possible destinations */
@@ -5586,8 +5592,8 @@ static int borg_attack_aux_launch(void)
 
 
 	/* No firing while blind, confused, or hallucinating */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
-		borg_skill[BI_ISIMAGE]) return (0);
+	if (bp_ptr->status.blind || bp_ptr->status.confused ||
+		bp_ptr->status.image) return (0);
 
 	/* Choose optimal type of bolt */
 	b_n = borg_launch_bolt(0, b_d, GF_ARROW, MAX_RANGE);
@@ -5663,8 +5669,8 @@ static int borg_attack_aux_launch_seeker(void)
 
 
 	/* No firing while blind, confused, or hallucinating */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
-		borg_skill[BI_ISIMAGE]) return (0);
+	if (bp_ptr->status.blind || bp_ptr->status.confused ||
+		bp_ptr->status.image) return (0);
 
 	/* Choose optimal type of bolt */
 	b_n = borg_launch_bolt(0, b_d, GF_ARROW_SEEKER, MAX_RANGE);
@@ -5737,8 +5743,8 @@ static int borg_attack_aux_launch_flame(void)
 
 
 	/* No firing while blind, confused, or hallucinating */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
-		borg_skill[BI_ISIMAGE]) return (0);
+	if (bp_ptr->status.blind || bp_ptr->status.confused ||
+		bp_ptr->status.image) return (0);
 
 	/* Choose optimal type of bolt */
 	b_n = borg_launch_bolt(0, b_d, GF_ARROW_FLAME, MAX_RANGE);
@@ -5811,8 +5817,8 @@ static int borg_attack_aux_launch_frost(void)
 
 
 	/* No firing while blind, confused, or hallucinating */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
-		borg_skill[BI_ISIMAGE]) return (0);
+	if (bp_ptr->status.blind || bp_ptr->status.confused ||
+		bp_ptr->status.image) return (0);
 
 	/* Choose optimal type of bolt */
 	b_n = borg_launch_bolt(0, b_d, GF_ARROW_FROST, MAX_RANGE);
@@ -5886,8 +5892,8 @@ static int borg_attack_aux_launch_animal(void)
 
 
 	/* No firing while blind, confused, or hallucinating */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
-		borg_skill[BI_ISIMAGE]) return (0);
+	if (bp_ptr->status.blind || bp_ptr->status.confused ||
+		bp_ptr->status.image) return (0);
 
 	/* Choose optimal type of bolt */
 	b_n = borg_launch_bolt(0, b_d, GF_ARROW_ANIMAL, MAX_RANGE);
@@ -5961,8 +5967,8 @@ static int borg_attack_aux_launch_evil(void)
 
 
 	/* No firing while blind, confused, or hallucinating */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
-		borg_skill[BI_ISIMAGE]) return (0);
+	if (bp_ptr->status.blind || bp_ptr->status.confused ||
+		bp_ptr->status.image) return (0);
 
 	/* Choose optimal type of bolt */
 	b_n = borg_launch_bolt(0, b_d, GF_ARROW_EVIL, MAX_RANGE);
@@ -6036,8 +6042,8 @@ static int borg_attack_aux_launch_dragon(void)
 
 
 	/* No firing while blind, confused, or hallucinating */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
-		borg_skill[BI_ISIMAGE]) return (0);
+	if (bp_ptr->status.blind || bp_ptr->status.confused ||
+		bp_ptr->status.image) return (0);
 
 	/* Choose optimal type of bolt */
 	b_n = borg_launch_bolt(0, b_d, GF_ARROW_DRAGON, MAX_RANGE);
@@ -6112,8 +6118,8 @@ static int borg_attack_aux_launch_wounding(void)
 
 
 	/* No firing while blind, confused, or hallucinating */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
-		borg_skill[BI_ISIMAGE]) return (0);
+	if (bp_ptr->status.blind || bp_ptr->status.confused ||
+		bp_ptr->status.image) return (0);
 
 	/* Choose optimal type of bolt */
 	b_n = borg_launch_bolt(0, b_d, GF_ARROW_WOUNDING, MAX_RANGE);
@@ -6205,8 +6211,8 @@ static int borg_attack_aux_object(void)
 
 
 	/* No firing while blind, confused, or hallucinating */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
-		borg_skill[BI_ISIMAGE]) return (0);
+	if (bp_ptr->status.blind || bp_ptr->status.confused ||
+		bp_ptr->status.image) return (0);
 
 
 	/* Choose optimal location */
@@ -6253,8 +6259,8 @@ static int borg_attack_aux_spell_bolt(int realm, int book, int what, int rad,
 
 
 	/* No firing while blind, confused, or hallucinating */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
-		borg_skill[BI_ISIMAGE]) return (0);
+	if (bp_ptr->status.blind || bp_ptr->status.confused ||
+		bp_ptr->status.image) return (0);
 
 	/* make sure I am powerfull enough to do another goi if this one falls */
 	if (borg_goi && ((bp_ptr->csp - as->power) < 70)) return (0);
@@ -6328,8 +6334,8 @@ static int borg_attack_aux_spell_bolt_reserve(int realm, int book, int what,
 	if (bp_ptr->lev >= 15) return (0);
 
 	/* No firing while blind, confused, or hallucinating */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
-		borg_skill[BI_ISIMAGE]) return (0);
+	if (bp_ptr->status.blind || bp_ptr->status.confused ||
+		bp_ptr->status.image) return (0);
 
 	/* Must not have enough mana right now */
 	if (borg_spell_okay_fail(realm, book, what, 25)) return (0);
@@ -6422,8 +6428,8 @@ static int borg_attack_aux_spell_dispel(int realm, int book, int what, int rad,
 	borg_magic *as = &borg_magics[realm][book][what];
 
 	/* No firing while blind, confused, or hallucinating */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
-		borg_skill[BI_ISIMAGE]) return (0);
+	if (bp_ptr->status.blind || bp_ptr->status.confused ||
+		bp_ptr->status.image) return (0);
 
 
 	/* Paranoia */
@@ -6479,8 +6485,8 @@ static int borg_attack_aux_mind_bolt(int spell, int level, int rad, int dam,
 	borg_mind *as = &borg_minds[spell];
 
 	/* No firing while blind, confused, or hallucinating */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
-		borg_skill[BI_ISIMAGE]) return (0);
+	if (bp_ptr->status.blind || bp_ptr->status.confused ||
+		bp_ptr->status.image) return (0);
 
 	/* Paranoia */
 	if (borg_simulate && (randint0(100) < 5)) return (0);
@@ -6543,8 +6549,8 @@ static int borg_attack_aux_staff_dispel(int sval, int rad, int dam, int typ)
 	(void)rad;
 
 	/* No firing while blind, confused, or hallucinating */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
-		borg_skill[BI_ISIMAGE]) return (0);
+	if (bp_ptr->status.blind || bp_ptr->status.confused ||
+		bp_ptr->status.image) return (0);
 
 
 	/* Paranoia */
@@ -6580,8 +6586,8 @@ static int borg_attack_aux_rod_bolt(int sval, int rad, int dam, int typ)
 
 
 	/* No firing while blind, confused, or hallucinating */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
-		borg_skill[BI_ISIMAGE]) return (0);
+	if (bp_ptr->status.blind || bp_ptr->status.confused ||
+		bp_ptr->status.image) return (0);
 
 
 	/* Paranoia */
@@ -6623,8 +6629,8 @@ static int borg_attack_aux_wand_bolt(int sval, int rad, int dam, int typ)
 
 
 	/* No firing while blind, confused, or hallucinating */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
-		borg_skill[BI_ISIMAGE]) return (0);
+	if (bp_ptr->status.blind || bp_ptr->status.confused ||
+		bp_ptr->status.image) return (0);
 
 
 	/* Paranoia */
@@ -6696,8 +6702,8 @@ static int borg_attack_aux_dragon(int sval, int rad, int dam, int typ)
 
 
 	/* No firing while blind, confused, or hallucinating */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
-		borg_skill[BI_ISIMAGE]) return (0);
+	if (bp_ptr->status.blind || bp_ptr->status.confused ||
+		bp_ptr->status.image) return (0);
 
 
 	/* Paranoia */
@@ -6838,7 +6844,7 @@ static int borg_attack_aux_racial_thrust(int race, int level, int dam)
 	monster_race *r_ptr;
 
 	/* Too afraid to attack */
-	if (borg_skill[BI_ISAFRAID]) return (0);
+	if (bp_ptr->status.afraid) return (0);
 
 	/* must be right race */
 	if (borg_race != race) return (0);
@@ -6876,8 +6882,8 @@ static int borg_attack_aux_racial_thrust(int race, int level, int dam)
 		/* Vampire Drain */
 		if (race == RACE_VAMPIRE)
 		{
-			if (!borg_skill[BI_ISFULL]) d = d * 13 / 10;
-			if (borg_skill[BI_ISHUNGRY]) d = d * 13 / 10;
+			if (!bp_ptr->status.full) d = d * 13 / 10;
+			if (bp_ptr->status.hungry) d = d * 13 / 10;
 
 			/* Drain gives food */
 			if (!monster_living(r_ptr)) continue;
@@ -8342,7 +8348,7 @@ bool borg_attack(bool boosted_bravery)
 		if (kill->when < borg_t) continue;
 
 		/* Ignore multiplying monsters and when fleeing from scaries */
-		if (goal_ignoring && !borg_skill[BI_ISAFRAID] &&
+		if (goal_ignoring && !bp_ptr->status.afraid &&
 			(r_info[kill->r_idx].flags2 & RF2_MULTIPLY)) continue;
 
 		/* no attacking most scaryguys, try to get off the level */
@@ -8499,7 +8505,7 @@ static int borg_defend_aux_bless(int p1)
 		return (0);
 
 	/* Cant when Blind */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED]) return (0);
+	if (bp_ptr->status.blind || bp_ptr->status.confused) return (0);
 
 	/* Dark */
 	if (!(mb_ptr->flags & MAP_GLOW) && !bp_ptr->cur_lite) return (0);
@@ -9166,8 +9172,7 @@ static int borg_defend_aux_prot_evil(int p1)
 
 	if (borg_slot(TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL)) pfe_spell = TRUE;
 
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
-		borg_skill[BI_ISIMAGE])
+	if (bp_ptr->status.blind || bp_ptr->status.confused || bp_ptr->status.image)
 		pfe_spell = FALSE;
 	if (!(mb_ptr->flags & MAP_GLOW) && !bp_ptr->cur_lite) pfe_spell = FALSE;
 
@@ -9445,8 +9450,8 @@ static int borg_defend_aux_glyph(int p1)
 
 	if (borg_slot(TV_SCROLL, SV_SCROLL_RUNE_OF_PROTECTION)) glyph_spell = TRUE;
 
-	if ((borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
-		 borg_skill[BI_ISIMAGE]) && glyph_spell)
+	if ((bp_ptr->status.blind || bp_ptr->status.confused ||
+		 bp_ptr->status.image) && glyph_spell)
 		glyph_spell = FALSE;
 	if (!(mb_ptr->flags & MAP_GLOW) && !bp_ptr->cur_lite) glyph_spell = FALSE;
 
@@ -10196,8 +10201,8 @@ static int borg_defend_aux_destruction(void)
 	 * instead of using the scrolls.
 	 */
 	/* Use teleport scrolls instead of WoD */
-	if (bp_ptr->able.escape && !borg_skill[BI_ISBLIND] &&
-		!borg_skill[BI_ISCONFUSED]) return (0);
+	if (bp_ptr->able.escape && !bp_ptr->status.blind &&
+		!bp_ptr->status.confused) return (0);
 
 	/* Obtain initial danger */
 	p1 = borg_danger(c_x, c_y, 1, TRUE);
@@ -10350,7 +10355,7 @@ static int borg_defend_aux_inviso(int p1)
 	map_block *mb_ptr = map_loc(c_x, c_y);
 
 	/* No need? */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
+	if (bp_ptr->status.blind || bp_ptr->status.confused ||
 		(bp_ptr->flags3 & TR3_SEE_INVIS) || borg_see_inv)
 		return (0);
 
@@ -10418,13 +10423,11 @@ static int borg_defend_aux_lbeam(void)
 
 
 	/* no need */
-	if (borg_skill[BI_ISBLIND])
-		return (0);
+	if (bp_ptr->status.blind) return (0);
 
 	/* Light Beam section to spot non seen guys */
 	/* not recent, dont bother */
-	if (borg_t > (need_see_inviso + 2))
-		return (0);
+	if (borg_t > (need_see_inviso + 2)) return (0);
 
 	/* Check to see if I am in a hallway */
 	/* Case 1a: north-south corridor */
@@ -10791,7 +10794,7 @@ static int borg_perma_aux_bless(void)
 		return (0);
 
 	/* Cant when Blind */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED]) return (0);
+	if (bp_ptr->status.blind || bp_ptr->status.confused) return (0);
 
 	/* XXX Dark */
 
@@ -11328,7 +11331,7 @@ static int borg_perma_aux_hero(void)
 		return (0);
 
 	/* Cant when Blind */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED]) return (0);
+	if (bp_ptr->status.blind || bp_ptr->status.confused) return (0);
 
 	/* XXX Dark */
 
@@ -11382,7 +11385,7 @@ static int borg_perma_aux_berserk(void)
 		return (0);
 
 	/* Cant when Blind */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED]) return (0);
+	if (bp_ptr->status.blind || bp_ptr->status.confused) return (0);
 
 	/* XXX Dark */
 
@@ -11841,7 +11844,7 @@ bool borg_recover(void)
 	/*** Use "cheap" cures ***/
 
 	/* Hack -- cure stun */
-	if (borg_skill[BI_ISSTUN] && (q < 75))
+	if (bp_ptr->status.stun && (q < 75))
 	{
 		if (borg_activate_artifact(ART_LOTHARANG, FALSE) ||
 			borg_spell(REALM_LIFE, 0, 1) ||
@@ -11856,7 +11859,7 @@ bool borg_recover(void)
 	}
 
 	/* Hack -- cure stun */
-	if (borg_skill[BI_ISHEAVYSTUN])
+	if (bp_ptr->status.heavy_stun)
 	{
 		if (borg_activate_artifact(ART_LOTHARANG, FALSE) ||
 			borg_spell(REALM_LIFE, 1, 2))
@@ -11869,7 +11872,7 @@ bool borg_recover(void)
 	}
 
 	/* Hack -- cure cuts */
-	if (borg_skill[BI_ISCUT] && (q < 75))
+	if (bp_ptr->status.cut && (q < 75))
 	{
 		if (borg_activate_artifact(ART_LOTHARANG, FALSE) ||
 			borg_spell(REALM_LIFE, 1, 2) ||
@@ -11883,7 +11886,7 @@ bool borg_recover(void)
 	}
 
 	/* Hack -- cure poison */
-	if (borg_skill[BI_ISPOISONED] && (q < 75))
+	if (bp_ptr->status.poisoned && (q < 75))
 	{
 		if (borg_activate_artifact(ART_DAL, FALSE) ||
 			borg_spell(REALM_ARCANE, 1, 7) ||
@@ -11897,7 +11900,7 @@ bool borg_recover(void)
 	}
 
 	/* Hack -- cure fear */
-	if (borg_skill[BI_ISAFRAID] && (q < 75))
+	if (bp_ptr->status.afraid && (q < 75))
 	{
 		if (borg_activate_artifact(ART_DAL, FALSE) ||
 			borg_spell(REALM_LIFE, 0, 3))
@@ -11910,7 +11913,7 @@ bool borg_recover(void)
 	}
 
 	/* Hack -- satisfy hunger */
-	if ((borg_skill[BI_ISHUNGRY] || borg_skill[BI_ISWEAK]) && (q < 75))
+	if ((bp_ptr->status.hungry || bp_ptr->status.weak) && (q < 75))
 	{
 		if (borg_spell_fail(REALM_SORCERY, 2, 0, 65) ||
 			borg_spell_fail(REALM_LIFE, 0, 7, 65) ||
@@ -11938,7 +11941,7 @@ bool borg_recover(void)
 	}
 
 	/* cure experience loss with prayer */
-	if (borg_skill[BI_ISFIXEXP] &&
+	if (bp_ptr->status.fixexp &&
 		(borg_activate_artifact(ART_LUTHIEN, FALSE) ||
 		 borg_spell(REALM_LIFE, 3, 3) ||
 		 borg_spell(REALM_DEATH, 1, 7) ||
@@ -11948,13 +11951,12 @@ bool borg_recover(void)
 	}
 
 	/* cure stat drain with prayer */
-	if ((borg_skill[BI_ISFIXSTR] ||
-		 borg_skill[BI_ISFIXINT] ||
-		 borg_skill[BI_ISFIXWIS] ||
-		 borg_skill[BI_ISFIXDEX] ||
-		 borg_skill[BI_ISFIXCON] ||
-		 borg_skill[BI_ISFIXCHR] ||
-		 borg_skill[BI_ISFIXALL]) && borg_spell(REALM_LIFE, 3, 3))
+	if ((bp_ptr->status.fixstat[A_STR] ||
+		 bp_ptr->status.fixstat[A_INT] ||
+		 bp_ptr->status.fixstat[A_WIS] ||
+		 bp_ptr->status.fixstat[A_DEX] ||
+		 bp_ptr->status.fixstat[A_CON] ||
+		 bp_ptr->status.fixstat[A_CHR]) && borg_spell(REALM_LIFE, 3, 3))
 	{
 		return (TRUE);
 	}
@@ -11962,7 +11964,7 @@ bool borg_recover(void)
 	/*** Use "expensive" cures ***/
 
 	/* Hack -- cure stun */
-	if (borg_skill[BI_ISSTUN] && (q < 25))
+	if (bp_ptr->status.stun && (q < 25))
 	{
 		if (borg_use_staff_fail(SV_STAFF_CURING) ||
 			borg_zap_rod(SV_ROD_CURING) ||
@@ -11976,7 +11978,7 @@ bool borg_recover(void)
 	}
 
 	/* Hack -- cure heavy stun */
-	if (borg_skill[BI_ISHEAVYSTUN] && (q < 95))
+	if (bp_ptr->status.heavy_stun && (q < 95))
 	{
 		if (borg_quaff_crit(TRUE) ||
 			borg_quaff_potion(SV_POTION_CURING) ||
@@ -11991,7 +11993,7 @@ bool borg_recover(void)
 	}
 
 	/* Hack -- cure cuts */
-	if (borg_skill[BI_ISCUT] && (q < 25))
+	if (bp_ptr->status.cut && (q < 25))
 	{
 		if (borg_use_staff_fail(SV_STAFF_CURING) ||
 			borg_zap_rod(SV_ROD_CURING) ||
@@ -12006,7 +12008,7 @@ bool borg_recover(void)
 	}
 
 	/* Hack -- cure poison */
-	if (borg_skill[BI_ISPOISONED] && (q < 25))
+	if (bp_ptr->status.poisoned && (q < 25))
 	{
 		if (borg_quaff_potion(SV_POTION_CURE_POISON) ||
 			borg_quaff_potion(SV_POTION_SLOW_POISON) ||
@@ -12023,7 +12025,7 @@ bool borg_recover(void)
 	}
 
 	/* Hack -- cure blindness */
-	if (borg_skill[BI_ISBLIND] && (q < 25))
+	if (bp_ptr->status.blind && (q < 25))
 	{
 		if (borg_eat_food(SV_FOOD_CURE_BLINDNESS) ||
 			borg_quaff_potion(SV_POTION_CURE_LIGHT) ||
@@ -12037,7 +12039,7 @@ bool borg_recover(void)
 	}
 
 	/* Hack -- cure confusion */
-	if (borg_skill[BI_ISCONFUSED] && (q < 25))
+	if (bp_ptr->status.confused && (q < 25))
 	{
 		if (borg_eat_food(SV_FOOD_CURE_CONFUSION) ||
 			borg_quaff_potion(SV_POTION_CURE_SERIOUS) ||
@@ -12050,7 +12052,7 @@ bool borg_recover(void)
 	}
 
 	/* Hack -- cure fear */
-	if (borg_skill[BI_ISAFRAID] && (q < 25))
+	if (bp_ptr->status.afraid && (q < 25))
 	{
 		if (borg_eat_food(SV_FOOD_CURE_PARANOIA) ||
 			borg_quaff_potion(SV_POTION_BOLDNESS) ||
@@ -12064,7 +12066,7 @@ bool borg_recover(void)
 	}
 
 	/* Hack -- satisfy hunger */
-	if ((borg_skill[BI_ISHUNGRY] || borg_skill[BI_ISWEAK]) && (q < 25))
+	if ((bp_ptr->status.hungry || bp_ptr->status.weak) && (q < 25))
 	{
 		if (borg_read_scroll(SV_SCROLL_SATISFY_HUNGER))
 		{
@@ -12101,8 +12103,8 @@ bool borg_recover(void)
 
 
 			/* Rest until at least one recharges */
-			if (!borg_skill[BI_ISWEAK] && !borg_skill[BI_ISCUT] &&
-				!borg_skill[BI_ISHUNGRY] && !borg_skill[BI_ISPOISONED] &&
+			if (!bp_ptr->status.weak && !bp_ptr->status.cut &&
+				!bp_ptr->status.hungry && !bp_ptr->status.poisoned &&
 				borg_check_rest() && !borg_spell_okay(REALM_SORCERY, 6, 2))
 			{
 				/* Take note */
@@ -12124,9 +12126,9 @@ bool borg_recover(void)
 	/*** Just Rest ***/
 
 	/* Hack -- rest until healed */
-	if ((borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
-		 borg_skill[BI_ISIMAGE] || borg_skill[BI_ISAFRAID] ||
-		 borg_skill[BI_ISSTUN] || borg_skill[BI_ISHEAVYSTUN] ||
+	if ((bp_ptr->status.blind || bp_ptr->status.confused ||
+		 bp_ptr->status.image || bp_ptr->status.afraid ||
+		 bp_ptr->status.stun || bp_ptr->status.heavy_stun ||
 		 (bp_ptr->chp < bp_ptr->mhp) ||
 		 (bp_ptr->csp < bp_ptr->msp * 6 / 10)) &&
 		(!borg_takes_cnt || !goal_recalling) && !borg_goi && !borg_shield &&
@@ -12134,8 +12136,8 @@ bool borg_recover(void)
 		!goal_fleeing)
 	{
 		/* XXX XXX XXX */
-		if (!borg_skill[BI_ISWEAK] && !borg_skill[BI_ISCUT] &&
-			!borg_skill[BI_ISHUNGRY] && !borg_skill[BI_ISPOISONED])
+		if (!bp_ptr->status.weak && !bp_ptr->status.cut &&
+			!bp_ptr->status.hungry && !bp_ptr->status.poisoned)
 		{
 			/* Take note */
 			borg_note_fmt("# Resting (danger %d)...", p);
@@ -12152,8 +12154,8 @@ bool borg_recover(void)
 	/* Hack to recharge mana if a low level mage or priest */
 	if (bp_ptr->msp && bp_ptr->lev < 25 && bp_ptr->csp < bp_ptr->msp && p == 0)
 	{
-		if (!borg_skill[BI_ISWEAK] && !borg_skill[BI_ISCUT] &&
-			!borg_skill[BI_ISHUNGRY] && !borg_skill[BI_ISPOISONED])
+		if (!bp_ptr->status.weak && !bp_ptr->status.cut &&
+			!bp_ptr->status.hungry && !bp_ptr->status.poisoned)
 		{
 			/* Take note */
 			borg_note_fmt("# Resting to gain Mana. (danger %d)...", p);
@@ -12281,7 +12283,7 @@ static bool borg_play_step(int y2, int x2)
 	if (mb_ptr->kill)
 	{
 		/* Can't attack someone if afraid! */
-		if (borg_skill[BI_ISAFRAID])
+		if (bp_ptr->status.afraid)
 			return (FALSE);
 
 		/* Hack -- ignore Maggot until later.  */
@@ -12323,8 +12325,8 @@ static bool borg_play_step(int y2, int x2)
 
 #if 0
 	/* Traps -- disarm -- */
-	if (bp_ptr->cur_lite && !borg_skill[BI_ISBLIND] &&
-		!borg_skill[BI_ISCONFUSED] && !scaryguy_on_level &&
+	if (bp_ptr->cur_lite && !bp_ptr->status.blind &&
+		!bp_ptr->status.confused && !scaryguy_on_level &&
 		(mb_ptr->feat >= FEAT_TRAP_TRAPDOOR) &&
 		(mb_ptr->feat <= FEAT_TRAP_SLEEP))
 	{
@@ -12391,7 +12393,7 @@ static bool borg_play_step(int y2, int x2)
 		if (randint0(100) < 10) return (FALSE);
 
 		/* Not if hungry */
-		if (borg_skill[BI_ISWEAK]) return (FALSE);
+		if (bp_ptr->status.weak) return (FALSE);
 
 		/* Mega-Hack -- allow "stone to mud" */
 		if (borg_spell(REALM_SORCERY, 1, 8) ||
@@ -12420,13 +12422,13 @@ static bool borg_play_step(int y2, int x2)
 
 	/* Perhaps the borg could search for traps as he walks around level one. */
 	if ((bp_ptr->max_lev <= 3) && bp_ptr->depth &&
-		!borg_skill[BI_ISSEARCHING] && borg_needs_searching)
+		!bp_ptr->status.search && borg_needs_searching)
 	{
 		borg_keypress('S');
 	}
 
 	/* Turn off the searching if needed */
-	if (!borg_needs_searching && borg_skill[BI_ISSEARCHING])
+	if (!borg_needs_searching && bp_ptr->status.search)
 	{
 		borg_keypress('S');
 	}
@@ -12659,8 +12661,8 @@ bool borg_flow_stair_both(int why)
 
 	/* dont go down if hungry or low on food, unless fleeing a scary town */
 	if ((!goal_fleeing && !bp_ptr->depth) &&
-		(!bp_ptr->cur_lite || borg_skill[BI_ISWEAK] ||
-		 borg_skill[BI_ISHUNGRY] || (bp_ptr->food < 2)))
+		(!bp_ptr->cur_lite || bp_ptr->status.weak ||
+		 bp_ptr->status.hungry || (bp_ptr->food < 2)))
 		return (FALSE);
 
 	/* clear the possible searching flag */
@@ -12758,8 +12760,7 @@ bool borg_flow_stair_more(int why)
 
 	/* dont go down if hungry or low on food, unless fleeing a scary town */
 	if (bp_ptr->depth &&
-		(borg_skill[BI_ISWEAK] || borg_skill[BI_ISHUNGRY] ||
-		 (bp_ptr->food < 2)))
+		(bp_ptr->status.weak || bp_ptr->status.hungry || (bp_ptr->food < 2)))
 		return (FALSE);
 
 	/* No diving if no light */
@@ -13102,7 +13103,7 @@ bool borg_flow_kill_corridor(bool viewable)
 	if (my_stat_ind[A_STR] < 17) return (FALSE);
 
 	/* Do not dig when confused */
-	if (borg_skill[BI_ISCONFUSED]) return (FALSE);
+	if (bp_ptr->status.confused) return (FALSE);
 
 	/* Not when darkened */
 	if (!bp_ptr->cur_lite) return (FALSE);
@@ -13303,7 +13304,7 @@ bool borg_flow_kill(bool viewable, int nearness)
 		if (!kill->r_idx) continue;
 
 		/* Ignore multiplying monsters */
-		if (goal_ignoring && !borg_skill[BI_ISAFRAID] &&
+		if (goal_ignoring && !bp_ptr->status.afraid &&
 			(r_info[kill->r_idx].flags2 & RF2_MULTIPLY)) continue;
 
 		/* Avoid fighting if a scary guy is on the level */
@@ -13634,7 +13635,7 @@ static bool borg_flow_dark_interesting(int x, int y, int b_stair)
 	if ((mb_ptr->feat == FEAT_MAGMA_K) || (mb_ptr->feat == FEAT_QUARTZ_K))
 	{
 		/* Do not disarm when confused */
-		if (borg_skill[BI_ISCONFUSED]) return (FALSE);
+		if (bp_ptr->status.confused) return (FALSE);
 
 		/* Do not bother if super rich */
 		if (borg_gold >= 1000000) return (FALSE);
@@ -13672,7 +13673,7 @@ static bool borg_flow_dark_interesting(int x, int y, int b_stair)
 		mb_ptr->feat == FEAT_QUARTZ)
 	{
 		/* Do not attempt when confused */
-		if (borg_skill[BI_ISCONFUSED]) return (FALSE);
+		if (bp_ptr->status.confused) return (FALSE);
 
 		/* hack and cheat.  No vaults  on this level */
 		if (!vault_on_level) return (FALSE);
@@ -13790,13 +13791,13 @@ static bool borg_flow_dark_interesting(int x, int y, int b_stair)
 		(mb_ptr->feat <= FEAT_TRAP_SLEEP))
 	{
 		/* Do not disarm when blind */
-		if (borg_skill[BI_ISBLIND]) return (FALSE);
+		if (bp_ptr->status.blind) return (FALSE);
 
 		/* Do not disarm when confused */
-		if (borg_skill[BI_ISCONFUSED]) return (FALSE);
+		if (bp_ptr->status.confused) return (FALSE);
 
 		/* Do not disarm when hallucinating */
-		if (borg_skill[BI_ISIMAGE]) return (FALSE);
+		if (bp_ptr->status.image) return (FALSE);
 
 		/* Do not flow without lite */
 		if (!bp_ptr->cur_lite) return (FALSE);

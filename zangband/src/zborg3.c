@@ -1073,7 +1073,7 @@ bool borg_read_unknown(void)
 		if (!(mb_ptr->flags & MAP_GLOW) && !bp_ptr->cur_lite) return (FALSE);
 
 		/* Blind or Confused */
-		if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED]) return (FALSE);
+		if (bp_ptr->status.blind || bp_ptr->status.confused) return (FALSE);
 
 		/* Log the message */
 		borg_note_fmt("# Reading unknown scroll %s.", l_ptr->o_name);
@@ -1170,7 +1170,7 @@ bool borg_read_scroll(int sval)
 	if (!(mb_ptr->flags & MAP_GLOW) && !bp_ptr->cur_lite) return (FALSE);
 
 	/* Blind or Confused */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED]) return (FALSE);
+	if (bp_ptr->status.blind || bp_ptr->status.confused) return (FALSE);
 
 	/* Look for that scroll */
 	l_ptr = borg_slot(TV_SCROLL, sval);
@@ -1229,7 +1229,7 @@ bool borg_equips_rod(int sval)
 	chance = bp_ptr->skill_dev;
 
 	/* Confusion hurts skill */
-	if (borg_skill[BI_ISCONFUSED]) chance = chance / 2;
+	if (bp_ptr->status.confused) chance = chance / 2;
 
 	/* High level objects are harder */
 	chance = chance - ((lev > 50) ? 50 : lev);
@@ -1272,7 +1272,7 @@ bool borg_zap_rod(int sval)
 	chance = bp_ptr->skill_dev;
 
 	/* Confusion hurts skill */
-	if (borg_skill[BI_ISCONFUSED]) chance = chance / 2;
+	if (bp_ptr->status.confused) chance = chance / 2;
 
 	/* High level objects are harder */
 	chance = chance - ((lev > 50) ? 50 : lev);
@@ -1377,7 +1377,7 @@ bool borg_use_staff_fail(int sval)
 	chance = bp_ptr->skill_dev;
 
 	/* Confusion hurts skill */
-	if (borg_skill[BI_ISCONFUSED]) chance = chance / 2;
+	if (bp_ptr->status.confused) chance = chance / 2;
 
 	/* High level objects are harder */
 	chance = chance - ((lev > 50) ? 50 : lev);
@@ -1391,7 +1391,7 @@ bool borg_use_staff_fail(int sval)
 		}
 
 		/* We need to give some "desparation attempt to teleport staff" */
-		if (!borg_skill[BI_ISCONFUSED] && !borg_skill[BI_ISBLIND])	/* Dark? */
+		if (!bp_ptr->status.confused && !bp_ptr->status.blind)
 		{
 			/* We really have no chance, return false, attempt the scroll */
 			if (chance < USE_DEVICE) return (FALSE);
@@ -1440,7 +1440,7 @@ bool borg_equips_staff_fail(int sval)
 	chance = bp_ptr->skill_dev;
 
 	/* Confusion hurts skill */
-	if (borg_skill[BI_ISCONFUSED]) chance = chance / 2;
+	if (bp_ptr->status.confused) chance = chance / 2;
 
 	/* High level objects are harder */
 	chance = chance - ((lev > 50) ? 50 : lev);
@@ -1454,7 +1454,7 @@ bool borg_equips_staff_fail(int sval)
 		}
 
 		/* We need to give some "desparation attempt to teleport staff" */
-		if (!borg_skill[BI_ISCONFUSED])
+		if (!bp_ptr->status.confused)
 		{
 			/* We really have no chance, return false, attempt the scroll */
 			if (chance < USE_DEVICE) return (FALSE);
@@ -1580,7 +1580,7 @@ bool borg_equips_dragon(int drag_sval)
 	chance = bp_ptr->skill_dev;
 
 	/* Confusion hurts skill */
-	if (borg_skill[BI_ISCONFUSED]) chance = chance / 2;
+	if (bp_ptr->status.confused) chance = chance / 2;
 
 	/* High level objects are harder */
 	chance = chance - ((lev > 50) ? 50 : lev);
@@ -1678,7 +1678,7 @@ bool borg_spell_okay(int realm, int book, int what)
 	if (!borg_spell_legal(realm, book, what)) return (FALSE);
 
 	/* Hack -- blind/confused */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED]) return (FALSE);
+	if (bp_ptr->status.blind || bp_ptr->status.confused) return (FALSE);
 
 
 	/* The spell must be affordable (now) */
@@ -1734,8 +1734,8 @@ static int borg_spell_fail_rate(int realm, int book, int what)
 	if (chance < minfail) chance = minfail;
 
 	/* Stunning makes spells harder */
-	if (borg_skill[BI_ISHEAVYSTUN]) chance += 25;
-	if (borg_skill[BI_ISSTUN]) chance += 15;
+	if (bp_ptr->status.heavy_stun) chance += 25;
+	if (bp_ptr->status.stun) chance += 15;
 
 	/* Always a 5 percent chance of working */
 	if (chance > 95) chance = 95;
@@ -1891,7 +1891,7 @@ bool borg_mindcr_okay(int spell, int level)
 	if (!borg_mindcr_legal(spell, level)) return (FALSE);
 
 	/* Hack -- blind/confused */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED]) return (FALSE);
+	if (bp_ptr->status.blind || bp_ptr->status.confused) return (FALSE);
 
 
 	/* The spell must be affordable (now) */
@@ -1941,8 +1941,8 @@ static int borg_mindcr_fail_rate(int spell, int level)
 	if (chance < minfail) chance = minfail;
 
 	/* Stunning makes spells harder */
-	if (borg_skill[BI_ISHEAVYSTUN]) chance += 25;
-	if (borg_skill[BI_ISSTUN]) chance += 15;
+	if (bp_ptr->status.heavy_stun) chance += 25;
+	if (bp_ptr->status.stun) chance += 15;
 
 	/* Always a 5 percent chance of working */
 	if (chance > 95) chance = 95;
@@ -2296,7 +2296,7 @@ bool borg_racial_check(int race, bool check_fail)
 	if (bp_ptr->msp < cost) use_hp = TRUE;
 
 	/* Too confused */
-	if (borg_skill[BI_ISCONFUSED]) return FALSE;
+	if (bp_ptr->status.confused) return FALSE;
 
 	/* Cost -- dont go into debt */
 	if (use_hp && (cost > bp_ptr->chp * 7 / 10)) return (FALSE);
@@ -2310,7 +2310,7 @@ bool borg_racial_check(int race, bool check_fail)
 	stat = my_stat_cur[use_stat];
 
 	/* Stun makes it more difficult */
-	if (borg_skill[BI_ISSTUN])
+	if (bp_ptr->status.stun)
 	{
 		difficulty += 10;
 	}

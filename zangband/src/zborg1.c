@@ -998,10 +998,10 @@ void borg_update_frame(void)
 	borg_skill[BI_MNTIME] = min;
 
 	/* Assume level is fine */
-	borg_skill[BI_ISFIXLEV] = FALSE;
+	bp_ptr->status.fixlvl = FALSE;
 
 	/* Note "Lev" vs "LEV" */
-	if (p_ptr->lev < p_ptr->max_lev) borg_skill[BI_ISFIXLEV] = TRUE;
+	if (p_ptr->lev < p_ptr->max_lev) bp_ptr->status.fixlvl = TRUE;
 
 	/* Extract "LEVEL xxxxxx" */
 	bp_ptr->lev = p_ptr->lev;
@@ -1015,11 +1015,11 @@ void borg_update_frame(void)
 	bp_ptr->winner = p_ptr->total_winner;
 
 	/* Assume experience is fine */
-	borg_skill[BI_ISFIXEXP] = FALSE;
+	bp_ptr->status.fixexp = FALSE;
 
 	/* Note "Exp" vs "EXP" and am I lower than level 50 */
 	if ((p_ptr->exp < p_ptr->max_exp) &&
-		(bp_ptr->lev != 50)) borg_skill[BI_ISFIXEXP] = TRUE;
+		(bp_ptr->lev != 50)) bp_ptr->status.fixexp = TRUE;
 
 	/* Extract "AU xxxxxxxxx" */
 	borg_gold = p_ptr->au;
@@ -1043,8 +1043,7 @@ void borg_update_frame(void)
 	 * If hasting, it doesn't count as 'borg_speed'.
 	 * The speed gained from hasting is counted seperately.
 	 */
-	if (borg_speed)
-		bp_ptr->speed -= 10;
+	if (borg_speed) bp_ptr->speed -= 10;
 
 	/* Extract "Cur AC xxxxx" */
 	borg_skill[BI_ARMOR] = p_ptr->dis_ac + p_ptr->dis_to_a;
@@ -1062,63 +1061,78 @@ void borg_update_frame(void)
 	bp_ptr->msp = p_ptr->msp;
 
 	/* Clear all the "state flags" */
-	borg_skill[BI_ISWEAK] = borg_skill[BI_ISHUNGRY] = borg_skill[BI_ISFULL] =
-		borg_skill[BI_ISGORGED] = FALSE;
-	borg_skill[BI_ISBLIND] = borg_skill[BI_ISCONFUSED] =
-		borg_skill[BI_ISAFRAID] = borg_skill[BI_ISPOISONED] = FALSE;
-	borg_skill[BI_ISCUT] = borg_skill[BI_ISSTUN] = borg_skill[BI_ISHEAVYSTUN] =
-		borg_skill[BI_ISIMAGE] = borg_skill[BI_ISSTUDY] = FALSE;
-	borg_skill[BI_ISSEARCHING] = FALSE;
+	bp_ptr->status.weak = FALSE;
+	bp_ptr->status.hungry = FALSE;
+	bp_ptr->status.full = FALSE;
+	bp_ptr->status.gorged = FALSE;
+	bp_ptr->status.blind = FALSE;
+	bp_ptr->status.confused = FALSE;
+	bp_ptr->status.afraid = FALSE;
+	bp_ptr->status.poisoned = FALSE;
+	bp_ptr->status.cut = FALSE;
+	bp_ptr->status.stun = FALSE;
+	bp_ptr->status.heavy_stun = FALSE;
+	bp_ptr->status.image = FALSE;
+	bp_ptr->status.study = FALSE;
+	bp_ptr->status.search = FALSE;
 
 	/* Check for "Weak" */
-	if (p_ptr->food < PY_FOOD_WEAK) borg_skill[BI_ISWEAK] =
-			borg_skill[BI_ISHUNGRY] = TRUE;
+	if (p_ptr->food < PY_FOOD_WEAK)
+	{
+		bp_ptr->status.weak = TRUE;
+		bp_ptr->status.hungry = TRUE;
+	}
 
 	/* Check for "Hungry" */
-	else if (p_ptr->food < PY_FOOD_ALERT) borg_skill[BI_ISHUNGRY] = TRUE;
+	else if (p_ptr->food < PY_FOOD_ALERT) bp_ptr->status.hungry = TRUE;
 
 	/* Check for "Normal" */
 	else if (p_ptr->food < PY_FOOD_FULL) /* Nothing */ ;
 
 	/* Check for "Full" */
-	else if (p_ptr->food < PY_FOOD_MAX) borg_skill[BI_ISFULL] = TRUE;
+	else if (p_ptr->food < PY_FOOD_MAX) bp_ptr->status.full = TRUE;
 
 	/* Check for "Gorged" */
 	else
-		borg_skill[BI_ISGORGED] = borg_skill[BI_ISFULL] = TRUE;
+	{
+		bp_ptr->status.gorged = TRUE;
+		bp_ptr->status.full = TRUE;
+	}
 
 	/* Check for "Blind" */
-	if (p_ptr->blind) borg_skill[BI_ISBLIND] = TRUE;
+	if (p_ptr->blind) bp_ptr->status.blind = TRUE;
 
 	/* Check for "Confused" */
-	if (p_ptr->confused) borg_skill[BI_ISCONFUSED] = TRUE;
+	if (p_ptr->confused) bp_ptr->status.confused = TRUE;
 
 	/* Check for "Afraid" */
-	if (p_ptr->afraid) borg_skill[BI_ISAFRAID] = TRUE;
+	if (p_ptr->afraid) bp_ptr->status.afraid = TRUE;
 
 	/* Check for "Poisoned" */
-	if (p_ptr->poisoned) borg_skill[BI_ISPOISONED] = TRUE;
+	if (p_ptr->poisoned) bp_ptr->status.poisoned = TRUE;
 
 	/* Check for any text */
-	if (p_ptr->cut) borg_skill[BI_ISCUT] = TRUE;
+	if (p_ptr->cut) bp_ptr->status.cut = TRUE;
 
 	/* Check for Stun */
-	if (p_ptr->stun && (p_ptr->stun <= 50)) borg_skill[BI_ISSTUN] = TRUE;
+	if (p_ptr->stun && (p_ptr->stun <= 50)) bp_ptr->status.stun = TRUE;
 
 	/* Check for Heavy Stun */
-	if (p_ptr->stun > 50) borg_skill[BI_ISHEAVYSTUN] = TRUE;
+	if (p_ptr->stun > 50) bp_ptr->status.heavy_stun = TRUE;
 
 	/* XXX XXX XXX Parse "State" */
-	if (p_ptr->searching) borg_skill[BI_ISSEARCHING] = TRUE;
+	if (p_ptr->searching) bp_ptr->status.search = TRUE;
 
 	/* Check for "Study" */
-	if (p_ptr->new_spells) borg_skill[BI_ISSTUDY] = TRUE;
+	if (p_ptr->new_spells) bp_ptr->status.study = TRUE;
+
+	/* Check for hallucination */
+	if (p_ptr->image) bp_ptr->status.image = TRUE;
 
 	/* Parse stats */
-	for (i = 0; i < 6; i++)
+	for (i = 0; i < A_MAX; i++)
 	{
-		borg_skill[BI_ISFIXSTR + i] =
-			p_ptr->stat_cur[A_STR + i] < p_ptr->stat_max[A_STR + i];
+		bp_ptr->status.fixstat[i] = (p_ptr->stat_cur[i] < p_ptr->stat_max[i]);
 
 		borg_stat[i] = p_ptr->stat_cur[i];
 	}

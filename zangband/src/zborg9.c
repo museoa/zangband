@@ -420,10 +420,6 @@ static bool borg_think(void)
 	/* Hack -- Warriors never browse */
 	if (borg_class == CLASS_WARRIOR) borg_do_spell = FALSE;
 
-	/* Hack -- Blind or Confused prevents browsing */
-	if (borg_skill[BI_ISBLIND] ||
-		borg_skill[BI_ISCONFUSED]) borg_do_spell = FALSE;
-
 	/* XXX XXX XXX Dark */
 
 	/* Cheat */
@@ -1576,7 +1572,7 @@ static void borg_parse_aux(cptr msg, int len)
 	}
 
 	/* check for wall blocking but not when confused */
-	if ((prefix(msg, "There is a wall ") && (!borg_skill[BI_ISCONFUSED])))
+	if ((prefix(msg, "There is a wall ") && !bp_ptr->status.confused))
 	{
 		my_need_alter = TRUE;
 		goal = 0;
@@ -1586,7 +1582,7 @@ static void borg_parse_aux(cptr msg, int len)
 
 	/* check for closed door but not when confused */
 	if ((prefix(msg, "There is a closed door blocking your way.") &&
-		 (!borg_skill[BI_ISCONFUSED])))
+		 !bp_ptr->status.confused))
 	{
 		my_need_alter = TRUE;
 		goal = 0;
@@ -1594,7 +1590,7 @@ static void borg_parse_aux(cptr msg, int len)
 	}
 
 	/* check for mis-alter command.  Sometime induced by never_move guys */
-	if (streq(msg, "You spin around.") && !borg_skill[BI_ISCONFUSED])
+	if (streq(msg, "You spin around.") && !bp_ptr->status.confused)
 	{
 
 		/* Examine all the monsters */
@@ -2294,7 +2290,7 @@ static char borg_inkey_hack(int flush_first)
 	while (!borg_think()) /* loop */ ;
 
 	/* DVE- Update the status screen */
-	borg_status();
+	borg_status_window();
 
 	/* Save the local random info */
 	borg_rand_local = Rand_value;
@@ -2732,7 +2728,7 @@ static void borg_display_map_info(byte data, byte type)
 
 /* DVE's function for displaying the status of various info */
 /* Display what the borg is thinking DvE*/
-void borg_status(void)
+void borg_status_window(void)
 {
 	int j;
 
@@ -2962,32 +2958,32 @@ void borg_status(void)
 				attr = TERM_SLATE;
 			Term_putstr(29, 11, -1, attr, "Cursed");
 
-			if (borg_skill[BI_ISWEAK]) attr = TERM_BLUE;
+			if (bp_ptr->status.weak) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(36, 11, -1, attr, "Weak");
 
-			if (borg_skill[BI_ISPOISONED]) attr = TERM_BLUE;
+			if (bp_ptr->status.poisoned) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(43, 11, -1, attr, "Poison");
 
-			if (borg_skill[BI_ISCUT]) attr = TERM_BLUE;
+			if (bp_ptr->status.cut) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(29, 12, -1, attr, "Cut");
 
-			if (borg_skill[BI_ISSTUN]) attr = TERM_BLUE;
+			if (bp_ptr->status.stun) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(36, 12, -1, attr, "Stun");
 
-			if (borg_skill[BI_ISCONFUSED]) attr = TERM_BLUE;
+			if (bp_ptr->status.confused) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(43, 12, -1, attr, "Confused");
 
-			if (borg_skill[BI_ISFIXEXP]) attr = TERM_BLUE;
+			if (bp_ptr->status.fixexp) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(43, 13, -1, attr, "Exp Drain");

@@ -208,7 +208,7 @@ bool borg_use_things(void)
 	int i;
 
 	/* Quaff experience restoration potion */
-	if (borg_skill[BI_ISFIXEXP] &&
+	if (bp_ptr->status.fixexp &&
 		(borg_spell(REALM_LIFE, 3, 3) ||
 		 borg_spell(REALM_DEATH, 1, 7) ||
 		 borg_activate_artifact(ART_LUTHIEN, FALSE) ||
@@ -229,29 +229,29 @@ bool borg_use_things(void)
 	}
 
 	/* Quaff potions of "restore" stat if needed */
-	if ((borg_skill[BI_ISFIXSTR] &&
+	if ((bp_ptr->status.fixstat[A_STR] &&
 		 (borg_quaff_potion(SV_POTION_RES_STR) ||
 		  borg_quaff_potion(SV_POTION_INC_STR) ||
 		  borg_eat_food(SV_FOOD_RESTORE_STR) ||
 		  borg_eat_food(SV_FOOD_RESTORING))) ||
-		(borg_skill[BI_ISFIXINT] &&
+		(bp_ptr->status.fixstat[A_INT] &&
 		 (borg_quaff_potion(SV_POTION_RES_INT) ||
 		  borg_quaff_potion(SV_POTION_INC_INT) ||
 		  borg_eat_food(SV_FOOD_RESTORING))) ||
-		(borg_skill[BI_ISFIXWIS] &&
+		(bp_ptr->status.fixstat[A_WIS] &&
 		 (borg_quaff_potion(SV_POTION_RES_WIS) ||
 		  borg_quaff_potion(SV_POTION_INC_WIS) ||
 		  borg_eat_food(SV_FOOD_RESTORING))) ||
-		(borg_skill[BI_ISFIXDEX] &&
+		(bp_ptr->status.fixstat[A_DEX] &&
 		 (borg_quaff_potion(SV_POTION_RES_DEX) ||
 		  borg_quaff_potion(SV_POTION_INC_DEX) ||
 		  borg_eat_food(SV_FOOD_RESTORING))) ||
-		(borg_skill[BI_ISFIXCON] &&
+		(bp_ptr->status.fixstat[A_CON] &&
 		 (borg_quaff_potion(SV_POTION_RES_CON) ||
 		  borg_quaff_potion(SV_POTION_INC_CON) ||
 		  borg_eat_food(SV_FOOD_RESTORE_CON) ||
 		  borg_eat_food(SV_FOOD_RESTORING))) ||
-		((borg_skill[BI_ISFIXCHR]) &&
+		(bp_ptr->status.fixstat[A_CHR] &&
 		 (borg_quaff_potion(SV_POTION_RES_CHR) ||
 		  borg_quaff_potion(SV_POTION_INC_CHR) ||
 		  borg_eat_food(SV_FOOD_RESTORING))))
@@ -302,7 +302,7 @@ bool borg_use_things(void)
 			case TV_SCROLL:
 			{
 				/* Hack -- check Blind/Confused */
-				if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED]) break;
+				if (bp_ptr->status.blind || bp_ptr->status.confused) break;
 
 				/* XXX XXX XXX Dark */
 
@@ -331,7 +331,7 @@ bool borg_use_things(void)
 	}
 
 	/* Eat food */
-	if (borg_skill[BI_ISHUNGRY])
+	if (bp_ptr->status.hungry)
 	{
 		/* Attempt to satisfy hunger */
 		if (borg_eat_food(SV_FOOD_BISCUIT) ||
@@ -404,9 +404,9 @@ bool borg_check_lite(void)
 	if (!bp_ptr->depth) return (FALSE);
 
 	/* Never when comprimised, save your mana */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
-		borg_skill[BI_ISIMAGE] || borg_skill[BI_ISPOISONED] ||
-		borg_skill[BI_ISCUT] || borg_skill[BI_ISWEAK]) return (FALSE);
+	if (bp_ptr->status.blind || bp_ptr->status.confused ||
+		bp_ptr->status.image || bp_ptr->status.poisoned ||
+		bp_ptr->status.cut || bp_ptr->status.weak) return (FALSE);
 
 	/* XXX XXX XXX Dark */
 
@@ -719,7 +719,7 @@ bool borg_check_lite_only(void)
 	if (!bp_ptr->depth) return (FALSE);
 
 	/* Never when blind or hallucinating */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISIMAGE]) return (FALSE);
+	if (bp_ptr->status.blind || bp_ptr->status.image) return (FALSE);
 
 	/* XXX XXX XXX Dark */
 
@@ -1233,7 +1233,7 @@ static bool borg_decurse(void)
 bool borg_enchanting(void)
 {
 	/* Forbid blind/confused */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED]) return (FALSE);
+	if (bp_ptr->status.blind || bp_ptr->status.confused) return (FALSE);
 
 	/*apw Forbid if been sitting on level forever */
 	/*    Just come back and finish the job later */
@@ -1264,7 +1264,7 @@ bool borg_recharging(void)
 	bool charge = FALSE;
 
 	/* Forbid blind/confused */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED]) return (FALSE);
+	if (bp_ptr->status.blind || bp_ptr->status.confused) return (FALSE);
 
 	/* XXX XXX XXX Dark */
 
@@ -1446,7 +1446,7 @@ static bool borg_consume(list_item *l_ptr)
 				case SV_FOOD_PINT_OF_WINE:
 				{
 					/* Try eating the food (unless Bloated) */
-					if (!borg_skill[BI_ISFULL] &&
+					if (!bp_ptr->status.full &&
 						borg_eat_food(k_info[l_ptr->k_idx].sval)) return (TRUE);
 				}
 			}
@@ -2488,7 +2488,7 @@ bool borg_play_magic(bool bored)
 	if (!mp_ptr->spell_book) return (FALSE);
 
 	/* Hack -- blind/confused */
-	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED]) return (FALSE);
+	if (bp_ptr->status.blind || bp_ptr->status.confused) return (FALSE);
 
 	/* Dark */
 	if (!bp_ptr->cur_lite) return (FALSE);
@@ -2536,11 +2536,11 @@ bool borg_play_magic(bool bored)
 				b_book = book;
 				b_spell = spell;
 			}
-		}						/* book */
-	}							/* realm  */
+		}
+	}
 
 	/* Study */
-	if (borg_skill[BI_ISSTUDY] && (b_rate > 0))
+	if (bp_ptr->status.study && (b_rate > 0))
 	{
 
 		/* Realm */
@@ -2637,9 +2637,9 @@ bool borg_play_magic(bool bored)
 					/* Success */
 					return (TRUE);
 				}
-			}					/* spells */
-		}						/* books */
-	}							/* realm */
+			}
+		}
+	}
 
 	/* Nope */
 	return (FALSE);
@@ -2710,7 +2710,7 @@ bool borg_wear_recharge(void)
 	if (!borg_check_rest()) return (FALSE);
 
 	/* Not if hungry */
-	if (borg_skill[BI_ISWEAK]) return (FALSE);
+	if (bp_ptr->status.weak) return (FALSE);
 
 	/* Look for an (wearable- non rod) item to recharge */
 	for (i = 0; i < inven_num; i++)
@@ -2862,7 +2862,7 @@ bool borg_leave_level(bool bored)
 	if (g && (k >= 12)) g = 0;
 
 	/* Do not dive when drained */
-	if (g && borg_skill[BI_ISFIXEXP]) g = 0;
+	if (g && bp_ptr->status.fixexp) g = 0;
 
 
 	/* Hack -- Stay on each level for a minimal amount of time */
@@ -2933,14 +2933,14 @@ bool borg_leave_level(bool bored)
 	}
 
 	/* Return to town when level drained */
-	if (borg_skill[BI_ISFIXLEV])
+	if (bp_ptr->status.fixlvl)
 	{
 		borg_note("# Going to town (Fix Level).");
 		goal_rising = TRUE;
 	}
 
 	/* Return to town to restore experience */
-	if (bored && borg_skill[BI_ISFIXEXP] && (bp_ptr->lev != 50))
+	if (bored && bp_ptr->status.fixexp && (bp_ptr->lev != 50))
 	{
 		borg_note("# Going to town (Fix Experience).");
 		goal_rising = TRUE;

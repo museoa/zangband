@@ -1052,9 +1052,9 @@ static int borg_danger_aux2(int i, bool average)
 					break;
 				}
 				/* if already stunned be REALLY nervous about this */
-				if (borg_skill[BI_ISSTUN])
+				if (bp_ptr->status.stun)
 					p += 500;
-				if (borg_skill[BI_ISHEAVYSTUN])
+				if (bp_ptr->status.heavy_stun)
 					p += 1000;
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
@@ -1186,9 +1186,9 @@ static int borg_danger_aux2(int i, bool average)
 				else
 					p += 75;
 				/* if already stunned be REALLY nervous about this */
-				if (borg_skill[BI_ISSTUN])
+				if (bp_ptr->status.stun)
 					p += 500;
-				if (borg_skill[BI_ISHEAVYSTUN])
+				if (bp_ptr->status.heavy_stun)
 					p += 1000;
 				break;
 			}
@@ -1237,9 +1237,9 @@ static int borg_danger_aux2(int i, bool average)
 				else
 					p += 100;
 				/* if already stunned be REALLY nervous about this */
-				if (borg_skill[BI_ISSTUN])
+				if (bp_ptr->status.stun)
 					p += 500;
-				if (borg_skill[BI_ISHEAVYSTUN])
+				if (bp_ptr->status.heavy_stun)
 					p += 1000;
 				break;
 			}
@@ -1258,9 +1258,9 @@ static int borg_danger_aux2(int i, bool average)
 				}
 				if (bp_ptr->flags2 & TR2_RES_SOUND) break;
 				/* if already stunned be REALLY nervous about this */
-				if (borg_skill[BI_ISSTUN])
+				if (bp_ptr->status.stun)
 					p += 100;
-				if (borg_skill[BI_ISHEAVYSTUN])
+				if (bp_ptr->status.heavy_stun)
 					p += 500;
 				if (!borg_full_damage)
 					p += 50;
@@ -1482,9 +1482,9 @@ static int borg_danger_aux2(int i, bool average)
 				}
 				if (bp_ptr->flags2 & TR2_RES_SOUND) break;
 				/* if already stunned be REALLY nervous about this */
-				if (borg_skill[BI_ISSTUN])
+				if (bp_ptr->status.stun)
 					p += 500;
-				if (borg_skill[BI_ISHEAVYSTUN])
+				if (bp_ptr->status.heavy_stun)
 					p += 1000;
 				if (bp_ptr->flags2 & TR2_RES_CONF) break;
 				/* if looking at full damage, things that are just annoying */
@@ -1724,9 +1724,9 @@ static int borg_danger_aux2(int i, bool average)
 				}
 				if (bp_ptr->flags2 & TR2_RES_SOUND) break;
 				/* if already stunned be REALLY nervous about this */
-				if (borg_skill[BI_ISSTUN])
+				if (bp_ptr->status.stun)
 					p += 500;
-				if (borg_skill[BI_ISHEAVYSTUN])
+				if (bp_ptr->status.heavy_stun)
 					p += 1000;
 				if (bp_ptr->flags2 & TR2_RES_CONF) break;
 				/* if looking at full damage, things that are just annoying */
@@ -1761,9 +1761,9 @@ static int borg_danger_aux2(int i, bool average)
 				}
 				if (bp_ptr->flags2 & TR2_RES_SOUND) break;
 				/* if already stunned be REALLY nervous about this */
-				if (borg_skill[BI_ISSTUN])
+				if (bp_ptr->status.stun)
 					p += 500;
-				if (borg_skill[BI_ISHEAVYSTUN])
+				if (bp_ptr->status.heavy_stun)
 					p += 1000;
 				break;
 			}
@@ -1783,9 +1783,9 @@ static int borg_danger_aux2(int i, bool average)
 					p += 20;
 				if (bp_ptr->flags2 & TR2_RES_SOUND) break;
 				/* if already stunned be REALLY nervous about this */
-				if (borg_skill[BI_ISSTUN])
+				if (bp_ptr->status.stun)
 					p += 50;
-				if (borg_skill[BI_ISHEAVYSTUN])
+				if (bp_ptr->status.heavy_stun)
 					p += 1000;
 				break;
 			}
@@ -3628,11 +3628,11 @@ static s32b borg_power_aux4(void)
 
 	/* Reward Food */
 	/* if hungry, food is THE top priority */
-	if ((borg_skill[BI_ISHUNGRY] || borg_skill[BI_ISWEAK]) &&
+	if ((bp_ptr->status.hungry || bp_ptr->status.weak) &&
 		bp_ptr->food) value += 100000;
 
 	for (k = 0; (k < 25) && (k < bp_ptr->food); k++) value += 10000L;
-	for (; (k < 35) && k < (bp_ptr->food); k++) value += 200L;
+	for (; (k < 35) && (k < bp_ptr->food); k++) value += 200L;
 
 	if ((bp_ptr->flags3 & TR3_REGEN) && !(bp_ptr->flags3 & TR3_SLOW_DIGEST))
 	{
@@ -3642,17 +3642,16 @@ static s32b borg_power_aux4(void)
 	if (amt_food_hical <= 5) value += amt_food_hical * 50;
 
 	/* Reward Cure Poison and Cuts */
-	if ((borg_skill[BI_ISCUT] || borg_skill[BI_ISPOISONED]) &&
+	if ((bp_ptr->status.cut || bp_ptr->status.poisoned) &&
 		bp_ptr->able.ccw) value += 100000;
-	if ((borg_skill[BI_ISCUT] || borg_skill[BI_ISPOISONED]) &&
+	if ((bp_ptr->status.cut || bp_ptr->status.poisoned) &&
 		bp_ptr->able.heal) value += 50000;
-	if ((borg_skill[BI_ISCUT] || borg_skill[BI_ISPOISONED]) &&
-		bp_ptr->able.csw)
+	if ((bp_ptr->status.cut || bp_ptr->status.poisoned) && bp_ptr->able.csw)
 	{
 		for (k = 0; (k < 5) && (k < bp_ptr->able.csw); k++) value += 25000L;
 	}
-	if (borg_skill[BI_ISPOISONED] && bp_ptr->able.curepois) value += 15000;
-	if (borg_skill[BI_ISPOISONED] && amt_slow_poison) value += 5000;
+	if (bp_ptr->status.poisoned && bp_ptr->able.curepois) value += 15000;
+	if (bp_ptr->status.poisoned && amt_slow_poison) value += 5000;
 
 	/* Reward Resistance Potions for Warriors */
 	if (borg_class == CLASS_WARRIOR)
@@ -3750,7 +3749,8 @@ static s32b borg_power_aux4(void)
 	if (bp_ptr->msp > 100)
 	{
 		for (k = 0; k < 10 && k < borg_has[266]; k++) value += 4000L;
-		for (k = 0; (k < 100) && (k < bp_ptr->able.staff_magi); k++) value += 4000L;
+		for (k = 0; (k < 100) && (k < bp_ptr->able.staff_magi);
+			 k++) value += 4000L;
 	}
 
 	/* Reward cure critical.  Heavy reward on first 5 */

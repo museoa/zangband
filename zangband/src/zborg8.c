@@ -1490,8 +1490,8 @@ bool borg_think_dungeon(void)
 	if (borg_caution()) return (TRUE);
 
 	/*** if returning from dungeon in bad shape...***/
-	if (!bp_ptr->cur_lite || borg_skill[BI_ISCUT] ||
-		borg_skill[BI_ISPOISONED] || borg_skill[BI_ISWEAK])
+	if (!bp_ptr->cur_lite || bp_ptr->status.cut ||
+		bp_ptr->status.poisoned || bp_ptr->status.weak)
 	{
 		/* First try to wear something */
 		if (!bp_ptr->cur_lite)

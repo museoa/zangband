@@ -217,31 +217,65 @@ struct borg_ability
 	s16b teleport_level;
 	s16b escape;
 	s16b fuel;
-	
+
 	s16b heal;
 	s16b easy_heal;
 	s16b id;
 	s16b speed;
-	
+
 	s16b staff_magi;
 	s16b staff_dest;
 	s16b missile;
 	s16b curepois;
-	
+
 	s16b det_trap;
 	s16b det_door;
 	s16b det_evil;
 	s16b magic_map;
-	
+
 	s16b recharge;
 	s16b pfe;
 	s16b glyph;
 	s16b ccw;
-	
+
 	s16b csw;
 	s16b res_heat;
 	s16b res_cold;
 };
+
+/*
+ * Borg status
+ */
+typedef struct borg_status borg_status;
+
+struct borg_status
+{
+	/* Food status */
+	bool weak;
+	bool hungry;
+	bool full;
+	bool gorged;
+
+	/* Various status */
+	bool blind;
+	bool afraid;
+	bool confused;
+	bool poisoned;
+	bool cut;
+	bool image;
+	bool study;
+	bool search;
+
+	/* Stun */
+	bool stun;
+	bool heavy_stun;
+
+	/* Draining */
+	bool fixlvl;
+	bool fixexp;
+	bool fixstat[A_MAX];	/* Fix stats */
+};
+
 
 /*
  * Borg-player information
@@ -253,6 +287,9 @@ struct borg_player
 	/* Abilities */
 	borg_ability able;
 
+	/* Status */
+	borg_status status;
+
 	/* Sustains */
 	bool sust[A_MAX];
 
@@ -261,7 +298,7 @@ struct borg_player
 
 	bool britelite;	/* Lite does not require fuel */
 	byte cur_lite;	/* Current light radius */
-	
+
 	bool winner;	/* Have we killed the Serpent? */
 
 	/* Hitpoints */
@@ -294,10 +331,10 @@ struct borg_player
 
 
 	u32b value;	/* Cost of items we are carrying */
-	
+
 	s16b weight;	/* Weight of items we are carrying */
 	s16b encumber;	/* Weight of encumberance */
-	
+
 	s16b see_infra;	/* Infravision range */
 
 	s16b skill_dis;	/* Skill: Disarming */
@@ -314,54 +351,32 @@ struct borg_player
 
 extern borg_player *bp_ptr;
 
-#define BI_ISWEAK 	100
-#define BI_ISHUNGRY	101
-#define BI_ISFULL	102
-#define BI_ISGORGED	103
-#define BI_ISBLIND	104
-#define BI_ISAFRAID	105
-#define BI_ISCONFUSED	106
-#define BI_ISPOISONED	107
-#define BI_ISCUT	108
-#define BI_ISSTUN	109
-#define BI_ISHEAVYSTUN	110
-#define BI_ISIMAGE	111
-#define BI_ISSTUDY	112
-#define BI_ISSEARCHING	113
-#define BI_ISFIXLEV	114
-#define BI_ISFIXEXP	115
-#define BI_ISFIXSTR	116
-#define BI_ISFIXINT	117
-#define BI_ISFIXWIS	118
-#define BI_ISFIXDEX	119
-#define BI_ISFIXCON	120
-#define BI_ISFIXCHR	121
-#define BI_ISFIXALL	122
-#define BI_HRTIME	123
-#define BI_MNTIME	124
+#
+#define BI_HRTIME	23
+#define BI_MNTIME	24
 
-#define BI_ARMOR	125
-#define BI_TOHIT	126
-#define BI_TODAM	127
-#define BI_WTOHIT	128
-#define BI_WTODAM	129
-#define BI_BTOHIT	130
-#define BI_BTODAM	131
-#define BI_BLOWS	132
-#define BI_SHOTS	133
-#define BI_WMAXDAM	134
-#define BI_WBASEDAM	135
-#define BI_BMAXDAM	136
-#define BI_HEAVYWEPON	137
-#define BI_HEAVYBOW	138
-#define BI_CRSTELE	139
-#define BI_CRSAGRV	140
-#define BI_CRSTY	141
-#define BI_CRSNOTELE	142		/* no teleport */
-#define BI_CRSNOMAGIC	143		/* no magic */
+#define BI_ARMOR	25
+#define BI_TOHIT	26
+#define BI_TODAM	27
+#define BI_WTOHIT	28
+#define BI_WTODAM	29
+#define BI_BTOHIT	30
+#define BI_BTODAM	31
+#define BI_BLOWS	32
+#define BI_SHOTS	33
+#define BI_WMAXDAM	34
+#define BI_WBASEDAM	35
+#define BI_BMAXDAM	36
+#define BI_HEAVYWEPON	37
+#define BI_HEAVYBOW	38
+#define BI_CRSTELE	39
+#define BI_CRSAGRV	40
+#define BI_CRSTY	41
+#define BI_CRSNOTELE	42		/* no teleport */
+#define BI_CRSNOMAGIC	43		/* no magic */
 
 
-#define BI_MAX		144
+#define BI_MAX		44
 
 
 /*
