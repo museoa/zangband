@@ -441,13 +441,13 @@ function read_scroll(object)
 		if curse_weapon() then ident = TRUE end
 	elseif object.sval == SV_SCROLL_SUMMON_MONSTER then
 		for k = 0, randint1(3) do
-			if summon_specific(0, player.py, player.px, player.depth, 0, TRUE, FALSE, FALSE) then
+			if summon_specific(0, player.px, player.py, player.depth, 0, TRUE, FALSE, FALSE) then
 				ident = TRUE
 			end
 		end
 	elseif object.sval == SV_SCROLL_SUMMON_UNDEAD then
 		for k = 0, randint1(3) do
-			if summon_specific(0, player.py, player.px, player.depth, SUMMON_UNDEAD, TRUE, FALSE, FALSE) then
+			if summon_specific(0, player.px, player.py, player.depth, SUMMON_UNDEAD, TRUE, FALSE, FALSE) then
 				ident = TRUE
 			end
 		end
@@ -541,7 +541,7 @@ function read_scroll(object)
 	elseif object.sval == SV_SCROLL_TRAP_DOOR_DESTRUCTION then
 		if destroy_doors_touch() then ident = TRUE end
 	elseif object.sval == SV_SCROLL_STAR_DESTRUCTION then
-		if destroy_area(player.py, player.px, 15) then
+		if destroy_area(player.px, player.py, 15) then
 			ident = TRUE
 		else
 			msg_print("The dungeon trembles...")
@@ -555,10 +555,10 @@ function read_scroll(object)
 		mass_genocide(TRUE)
 		ident = TRUE
 	elseif object.sval == SV_SCROLL_ACQUIREMENT then
-		acquirement(player.py, player.px, 1, TRUE, FALSE)
+		acquirement(player.px, player.py, 1, TRUE, FALSE)
 		ident = TRUE
 	elseif object.sval == SV_SCROLL_STAR_ACQUIREMENT then
-		acquirement(player.py, player.px, rand_range(2, 3), TRUE, FALSE)
+		acquirement(player.px, player.py, rand_range(2, 3), TRUE, FALSE)
 		ident = TRUE
 	elseif object.sval == SV_SCROLL_FIRE then
 		fire_ball(GF_FIRE, 0, 300, 4)
@@ -611,7 +611,7 @@ function use_staff(object)
 		if speed_monsters() then ident = TRUE end
 	elseif sval == SV_STAFF_SUMMONING then
 		for k = 0, randint1(4) do
-			if summon_specific(0, player.py, player.px, player.depth, 0, TRUE, FALSE, FALSE) then
+			if summon_specific(0, player.px, player.py, player.depth, 0, TRUE, FALSE, FALSE) then
 				ident = TRUE
 			end
 		end
@@ -708,13 +708,13 @@ function use_staff(object)
 		genocide(TRUE)
 		ident = TRUE
 	elseif sval == SV_STAFF_EARTHQUAKES then
-		if earthquake(player.py, player.px, 10) then
+		if earthquake(player.px, player.py, 10) then
 			ident = TRUE
 		else
 			msg_print("The dungeon trembles.")
 		end
 	elseif sval == SV_STAFF_DESTRUCTION then
-		if destroy_area(player.py, player.px, 15) then ident = TRUE end
+		if destroy_area(player.px, player.py, 15) then ident = TRUE end
 	end
 
 	return ident, use_charge
