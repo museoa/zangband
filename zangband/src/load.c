@@ -2760,9 +2760,6 @@ static errr rd_dungeon(void)
 	rd_s16b(&max_panel_rows);
 	rd_s16b(&max_panel_cols);
 
-	/* There is no town stored in cave[][] */
-	set_no_town();
-
 	/* Old method */
 	if (older_than(2, 8, 0))
 	{

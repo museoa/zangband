@@ -691,18 +691,6 @@ static void init_vanilla_town(void)
 }
 
 /*
- * Set cur_town = 0
- * This function exists so that this variable remains hidden.
- * This is only used after a game is loaded - when cave[][]
- * is blank.
- */
-void set_no_town(void)
-{
-	cur_town = 0;
-}
-
-
-/*
  * This section deals with wilderness generation
  * - both at the start of the game, and sorting
  * out what routines are used to make things as

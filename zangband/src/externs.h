@@ -1240,7 +1240,6 @@ extern void k_info_reset(void);
 /* wild.c */
 extern void light_dark_block(blk_ptr block_ptr, u16b x, u16b y);
 extern void change_level(int);
-extern void set_no_town(void);
 extern u16b init_choice_tree(wild_bound_box_type *bound, u16b type);
 extern u16b add_node_tree_root(wild_bound_box_type *bound, u16b type);
 extern void test_mon_wild_integrity(void);
