@@ -1661,7 +1661,7 @@ F:RES_DARK | RES_LITE | LITE | SEE_INVIS | ACTIVATE | SHOW_MODS | INSTA_ART
 L:USE:	msgf("Your quarterstaff glows yellow...")
 L:USE:	if ident_spell() then object.timeout = 10 end
 L:DESC:	return "identify every 10 turns"
-D:This quarterstaff has been owned by many different mages. Each owner
+D:This quarterstaff has been owned by many different mages. Each owner 
 D:has become a noteworthy mage, but none has kept the staff, choosing 
 D:to instead pass it to a new keeper.
 
