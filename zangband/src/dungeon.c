@@ -883,7 +883,7 @@ static void recharged_notice(object_type *o_ptr)
  */
 static void process_world(void)
 {
-	int i, j;
+	int i;
 	s32b regen_amount;
 	bool cave_no_regen = FALSE;
 	int upkeep_factor = 0;
@@ -1747,7 +1747,7 @@ static void process_world(void)
 
 
 	/* Process equipment */
-	for (j = 0, i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
 	{
 		/* Get the object */
 		o_ptr = &inventory[i];
@@ -1814,16 +1814,11 @@ static void process_world(void)
 			if (!o_ptr->timeout)
 			{
 				recharged_notice(o_ptr);
-				j++;
+				
+				/* Window stuff */
+				p_ptr->window |= (PW_EQUIP);
 			}
 		}
-	}
-
-	/* Notice changes */
-	if (j)
-	{
-		/* Window stuff */
-		p_ptr->window |= (PW_EQUIP);
 	}
 
 	/*
@@ -1831,7 +1826,7 @@ static void process_world(void)
 	 * and each charging rod in a stack decreases the stack's timeout by
 	 * one per turn. -LM-
 	 */
-	for (j = 0, i = 0; i < INVEN_PACK; i++)
+	for (i = 0; i < INVEN_PACK; i++)
 	{
 		o_ptr = &inventory[i];
 		k_ptr = &k_info[o_ptr->k_idx];
@@ -1856,22 +1851,17 @@ static void process_world(void)
 			if (o_ptr->timeout < 0) o_ptr->timeout = 0;
 
 			/* Notice changes, provide message if object is inscribed. */
-			if (!(o_ptr->timeout))
+			if (temp > (o_ptr->timeout + (k_ptr->pval - 1)) / k_ptr->pval)
 			{
 				recharged_notice(o_ptr);
-				j++;
+				
+				/* Combine pack */
+				p_ptr->notice |= (PN_COMBINE);
+
+				/* Window stuff */
+				p_ptr->window |= (PW_INVEN);
 			}
 		}
-	}
-
-	/* Notice changes */
-	if (j)
-	{
-		/* Combine pack */
-		p_ptr->notice |= (PN_COMBINE);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN);
 	}
 
 	/* Feel the inventory */
