@@ -1656,6 +1656,11 @@ static int get_stock(int *com_val, cptr pmt, int i, int j)
 			return (TRUE);
 		}
 	}
+	else
+	{
+		/* Invalid repeat - reset it */
+		repeat_clear();
+	}
 
 	/* Paranoia XXX XXX XXX */
 	message_flush();

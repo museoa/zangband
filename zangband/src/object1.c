@@ -2870,6 +2870,9 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 			/* Success */
 			return (TRUE);
 		}
+		
+		/* Invalid repeat - reset it */
+		repeat_clear();
 	}
 
 	/* Extract args */

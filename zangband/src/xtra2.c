@@ -3208,6 +3208,11 @@ bool get_aim_dir(int *dp)
 			/* Store direction */
 			dir = *dp;
 		}
+		else
+		{
+			/* Invalid repeat - reset it */
+			repeat_clear();
+		}
 	}
 
 	/* Ask until satisfied */

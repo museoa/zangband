@@ -927,6 +927,7 @@ extern int color_char_to_attr(char c);
 extern int get_keymap_dir(char ch);
 extern void repeat_push(int what);
 extern bool repeat_pull(int *what);
+extern void repeat_clear(void);
 extern void repeat_check(void);
 
 #ifdef SUPPORT_GAMMA

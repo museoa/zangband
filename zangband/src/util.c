@@ -3784,6 +3784,19 @@ void repeat_push(int what)
 	++repeat__idx;
 }
 
+void repeat_clear(void)
+{
+	/* Start over from the failed pull */
+	if (repeat__idx)
+	{
+		/* Decrease the number of characters */
+		--repeat__idx;
+	}
+	
+	/* Set the counter */
+	repeat__cnt = repeat__idx;
+}
+
 
 bool repeat_pull(int *what)
 {

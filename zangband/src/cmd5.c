@@ -46,6 +46,11 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, bool realm_2)
 			/* Success */
 			return (TRUE);
 		}
+		else
+		{
+			/* Invalid repeat - reset it */
+			repeat_clear();
+		}
 	}
 
 	/* Extract spells */
