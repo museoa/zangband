@@ -57,23 +57,21 @@ static void prt_stat(int stat)
 	/* Display "injured" stat */
 	if (p_ptr->stat_cur[stat] < p_ptr->stat_max[stat])
 	{
-		put_fstr(0, ROW_STAT + stat, stat_names_reduced[stat]);
-		put_fstr(COL_STAT + 6, ROW_STAT + stat, CLR_YELLOW "%t",
-				 p_ptr->stat_use[stat]);
+		put_fstr(COL_STAT, ROW_STAT + stat, "%5s" CLR_YELLOW " %t",
+				 stat_names_reduced[stat], p_ptr->stat_use[stat]);
 	}
 
 	/* Display "healthy" stat */
 	else
 	{
-		put_fstr(0, ROW_STAT + stat, stat_names[stat]);
-		put_fstr(COL_STAT + 6, ROW_STAT + stat, CLR_L_GREEN "%t",
-				 p_ptr->stat_use[stat]);
+		put_fstr(COL_STAT, ROW_STAT + stat, "%5s" CLR_L_GREEN " %t",
+				 stat_names[stat], p_ptr->stat_use[stat]);
 	}
 
 	/* Indicate natural maximum */
 	if (p_ptr->stat_max[stat] == stat_cap(stat))
 	{
-		put_fstr(3, ROW_STAT + stat, "!");
+		put_fstr(COL_STAT + 3, ROW_STAT + stat, "!");
 	}
 }
 
@@ -351,13 +349,11 @@ static void prt_level(void)
 {
 	if (p_ptr->lev >= p_ptr->max_lev)
 	{
-		put_fstr(0, ROW_LEVEL, "LEVEL ");
-		put_fstr(COL_LEVEL + 6, ROW_LEVEL, CLR_L_GREEN "%6d", p_ptr->lev);
+		put_fstr(COL_LEVEL, ROW_LEVEL, "LEVEL " CLR_L_GREEN "%6d", p_ptr->lev);
 	}
 	else
 	{
-		put_fstr(0, ROW_LEVEL, "Level ");
-		put_fstr(COL_LEVEL + 6, ROW_LEVEL, CLR_YELLOW "%6d", p_ptr->lev);
+		put_fstr(COL_LEVEL, ROW_LEVEL, "Level " CLR_YELLOW "%6d", p_ptr->lev);
 	}
 }
 
@@ -380,17 +376,14 @@ static void prt_exp(void)
 
 	if (toggle_xp)
 	{
-
-		put_fstr(0, ROW_EXP, "NEED ");
-
 		if (p_ptr->lev >= PY_MAX_LEVEL)
 		{
-			put_fstr(COL_EXP + 4, ROW_EXP, "%s********", attr);
+			put_fstr(COL_EXP, ROW_EXP, "NEED %s********", attr);
 		}
 		else
 		{
 			/* Print the amount of experience to go until the next level */
-			put_fstr(COL_EXP + 4, ROW_EXP, "%s%8ld", attr,
+			put_fstr(COL_EXP, ROW_EXP, "NEED %s%8ld", attr,
 						  (long)(player_exp[p_ptr->lev - 1] * p_ptr->expfact /
 								 100L) - (long)p_ptr->exp);
 		}
@@ -440,8 +433,6 @@ static void prt_hp(void)
 
 	put_fstr(COL_MAXHP, ROW_MAXHP, "Max HP " CLR_L_GREEN "%5d", p_ptr->mhp);
 
-	put_fstr(COL_CURHP, ROW_CURHP, "Cur HP ");
-
 	color = CLR_L_GREEN;
 	
 	if (p_ptr->chp >= p_ptr->mhp)
@@ -460,7 +451,7 @@ static void prt_hp(void)
 		color_player = TERM_RED;
 	}
 
-	put_fstr(COL_CURHP + 7, ROW_CURHP, "%s%5d", color, p_ptr->chp);
+	put_fstr(COL_CURHP, ROW_CURHP, "Cur HP %s%5d", color, p_ptr->chp);
 
 #ifndef VARIABLE_PLAYER_GRAPH
 
@@ -501,8 +492,6 @@ static void prt_sp(void)
 
 	put_fstr(COL_MAXSP, ROW_MAXSP, "Max SP " CLR_L_GREEN "%5d", p_ptr->msp);
 
-	put_fstr(COL_CURSP, ROW_CURSP, "Cur SP ");
-
 	color = CLR_L_GREEN;
 
 	if (p_ptr->csp >= p_ptr->msp)
@@ -519,7 +508,7 @@ static void prt_sp(void)
 	}
 
 	/* Show mana */
-	put_fstr(COL_CURSP + 7, ROW_CURSP, "%s%5d", color, p_ptr->csp);
+	put_fstr(COL_CURSP, ROW_CURSP, "Cur SP %s%5d", color, p_ptr->csp);
 }
 
 
@@ -984,9 +973,6 @@ static void health_redraw(void)
 
 		/* Default to "unknown" */
 		put_fstr(COL_INFO, ROW_INFO, "[----------]");
-
-		/* Hack -- fake monochrome */
-		if (!use_color || ironman_moria) attr = CLR_WHITE;
 
 		/* Dump the current "health" (use '*' symbols) */
 		put_fstr(COL_INFO + 1, ROW_INFO, "%s**********", attr);

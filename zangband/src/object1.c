@@ -2609,12 +2609,6 @@ void show_equip(void)
 		/* Grey out charging items */
 		if (item_is_recharging(o_ptr)) out_color[k] = TERM_L_DARK;
 
-		/* Fake monochrome */
-		if (!use_color || ironman_moria)
-		{
-			out_color[k] = TERM_WHITE;
-		}
-
 		(void)strcpy(out_desc[k], o_name);
 
 		/* Extract the maximal length (see below) */
