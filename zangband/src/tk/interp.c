@@ -102,7 +102,7 @@ static cptr state_hunger(void)
  */
 static cptr state_blind(void)
 {
-	if (p_ptr->blind)
+	if (p_ptr->tim.blind)
 	{
 		return "Blind";
 	}
@@ -117,7 +117,7 @@ static cptr state_blind(void)
  */
 static cptr state_confused(void)
 {
-	if (p_ptr->confused)
+	if (p_ptr->tim.confused)
 	{
 		return "Confused";
 	}
@@ -132,7 +132,7 @@ static cptr state_confused(void)
  */
 static cptr state_afraid(void)
 {
-	if (p_ptr->afraid)
+	if (p_ptr->tim.afraid)
 	{
 		return "Afraid";
 	}
@@ -147,7 +147,7 @@ static cptr state_afraid(void)
  */
 static cptr state_poisoned(void)
 {
-	if (p_ptr->poisoned)
+	if (p_ptr->tim.poisoned)
 	{
 		return "Poisoned";
 	}
@@ -194,7 +194,7 @@ static int trunc_num(int n)
 static cptr state_state(void)
 {
 	/* Paralysis */
-	if (p_ptr->paralyzed)
+	if (p_ptr->tim.paralyzed)
 	{
 		return "Paralyzed!";
 	}
@@ -294,7 +294,7 @@ static cptr state_study(void)
 
 static cptr state_cut(void)
 {
-	int c = p_ptr->cut;
+	int c = p_ptr->tim.cut;
 
 	if (c > 1000)
 	{
@@ -332,7 +332,7 @@ static cptr state_cut(void)
 
 static cptr state_stun(void)
 {
-	int s = p_ptr->stun;
+	int s = p_ptr->tim.stun;
 
 	if (s > 100)
 	{
