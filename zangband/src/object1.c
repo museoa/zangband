@@ -379,7 +379,7 @@ cptr item_activation(object_type *o_ptr)
 	object_flags(o_ptr, &f1, &f2, &f3);
 
 	/* Require activation ability */
-	if (!(f3 & (TR3_ACTIVATE))) return (NULL);
+	if (!(f3 & (TR3_ACTIVATE))) return ("nothing");
 
 
 	/*
@@ -390,9 +390,9 @@ cptr item_activation(object_type *o_ptr)
 	 */
 
 	if (!(o_ptr->name1) &&
-	    !(o_ptr->name2) &&
-	    !(o_ptr->xtra1) &&
-	     (o_ptr->xtra2))
+		 !(o_ptr->name2) &&
+		 !(o_ptr->xtra1) &&
+		  (o_ptr->xtra2))
 	{
 		switch (o_ptr->xtra2)
 		{
@@ -950,7 +950,7 @@ cptr item_activation(object_type *o_ptr)
 	}
 
 	/* Require dragon scale mail */
-	if (o_ptr->tval != TV_DRAG_ARMOR) return (NULL);
+	if (o_ptr->tval != TV_DRAG_ARMOR) return ("a strange glow");
 
 	/* Branch on the sub-type */
 	switch (o_ptr->sval)
@@ -1010,7 +1010,7 @@ cptr item_activation(object_type *o_ptr)
 	}
 
 	/* Oops */
-	return NULL;
+	return "breathe air";
 }
 
 
