@@ -120,7 +120,7 @@ level and 'reset' the recall depth to that level (instead of the
 deepest level).
 
 A more complete description of Zangband objects is found elsewhere in
-the documetnation (see objects.txt [2]).
+the documentation (see objects.txt [2]).
 
 
 ***** <Mining>
@@ -237,8 +237,8 @@ and press 'Ctrl-F', you will be given the prompt:
 
      'Looks like any other level.'
 
-If you are playing in preserve mode, you may also occasionally receive
-the following prompt:
+If you are playing in non-preserve mode, you may also occasionally
+receive the following prompt:
 
      'You feel there is something special about this level.'
 
@@ -247,9 +247,9 @@ room or vault on the level or there is an artifact on the level. As you
 get deeper on the dungeon, special feelings become increasingly less
 common for special room and vaults and are only commonly given when an
 artifact has been generated. Note it is possible that there could be
-both a vaut and an artifact or more than one artifac on a special level
-so you should never leave a special level without fully exploring it
-unles your character's continued survival is in question.
+both a vault and an artifact or more than one artifact on a special
+level so you should never leave a special level without fully exploring
+it unless your character's continued survival is in question.
 
 
 ***** <RandomQuests>
@@ -302,8 +302,9 @@ and should be noted in any 'winner' post to the newsgroup.
 Original   : (??)
 Updated    : (??)
 Updated    : Zangband DevTeam
-Last update: February 22, 2000
+Last update: March 20, 2000
 
 ***** Begin Hyperlinks
 ***** [1] command.txt
 ***** [2] objects.txt
+
