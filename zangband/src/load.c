@@ -487,6 +487,13 @@ static void rd_item(object_type *o_ptr)
 		rd_u32b(&o_ptr->kn_flags1);
 		rd_u32b(&o_ptr->kn_flags2);
 		rd_u32b(&o_ptr->kn_flags3);
+
+		/* 
+		 * XXX Some older buggy versions set TR3_PERMA_CURSE
+		 * on items where it shouldn't have been set.
+		 */
+		o_ptr->kn_flags3 &= o_ptr->flags3 |
+			~(TR3_HEAVY_CURSE | TR3_PERMA_CURSE);
 	}
 	else
 	{

@@ -1423,14 +1423,21 @@ static bool uncurse_item(object_type *o_ptr, bool all)
 	if (!all && (f3 & TR3_HEAVY_CURSE))
 	{
 		/* Let the player know */
-		o_ptr->kn_flags3 |= TR3_PERMA_CURSE;
+		o_ptr->kn_flags3 |= TR3_HEAVY_CURSE;
 
 		/* Done */
 		return (FALSE);
 	}
 
 	/* Perma-Cursed Items can NEVER be uncursed */
-	if (f3 & TR3_PERMA_CURSE) return (FALSE);
+	if (f3 & TR3_PERMA_CURSE) 
+	{
+		/* Let the player know */
+		o_ptr->kn_flags3 |= TR3_PERMA_CURSE;
+		
+		/* Done */
+		return (FALSE);
+	}
 
 	/* Hack -- Assume felt */
 	o_ptr->info |= (OB_SENSE);
