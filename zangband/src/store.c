@@ -935,8 +935,6 @@ static void display_entry(int pos)
 
 	int maxwid;
 
-	const owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
-
 	int wid, hgt;
 
 	/* Get size */
@@ -1376,8 +1374,6 @@ static void store_purchase(int *store_top)
 
 	char out_val[160];
 
-	const owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
-
 	/* Empty? */
 	if (!st_ptr->stock)
 	{
@@ -1660,7 +1656,6 @@ static void store_sell(int *store_top)
 	int item_pos;
 	int amt;
 
-	const owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
 	s32b price, value, dummy;
 
 	object_type *q_ptr;
