@@ -319,10 +319,14 @@ static void do_cmd_read_scroll_aux(object_type *o_ptr)
 	if (!used_up) return;
 
 	sound(SOUND_SCROLL);
-
-	/* Destroy a scroll */
-	item_increase(o_ptr, -1);
-
+	
+	/* Hack - the scroll may already be destroyed by its effect */
+	if (o_ptr->k_idx)
+	{
+		/* Destroy a scroll */
+		item_increase(o_ptr, -1);
+	}
+	
 	make_noise(1);
 }
 
