@@ -2460,7 +2460,7 @@ void show_list(s16b o_list_ptr)
 
 		/* Is this item acceptable? */
 		if (!item_tester_okay(o_ptr)) continue;
-		
+
 		/* Advance to next "line" */
 		k++;
 
@@ -2493,7 +2493,7 @@ void show_list(s16b o_list_ptr)
 		if (l > len) len = l;
 	}
 	OBJ_ITT_END;
-	
+
 	/* Hack -- Find a column to start in and to put weights */
 	if (len > wid - 4)
 	{
@@ -3127,7 +3127,7 @@ static void save_object_choice(object_type *o_ptr)
 	int index = -1;
 
 	cave_type *c_ptr;
-	
+
 	/* Paranoia */
 	if (!o_ptr) return;
 
@@ -3406,7 +3406,7 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 	}
 
 	/* Hack -- start out in "display" mode */
-	
+
 	/* Save screen */
 	screen_save();
 
@@ -3536,7 +3536,7 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 				}
 
 				/* Hack -- Fix screen */
-				
+
 				/* Load screen */
 				screen_load();
 
@@ -3568,7 +3568,7 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 				if (was_inven ? !inven : !equip)
 				{
 					bell("Illegal object choice (tag)!");
-					
+
 					/* Invalid item */
 					o_ptr = NULL;
 					break;
@@ -3578,7 +3578,7 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 				if (!item_tester_okay(o_ptr))
 				{
 					bell("Illegal object choice (tag)!");
-					
+
 					/* Invalid item */
 					o_ptr = NULL;
 					break;
@@ -3627,7 +3627,7 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 				if (!o_ptr || !item_tester_okay(o_ptr))
 				{
 					bell("Illegal object choice (default)!");
-					
+
 					/* Invalid item */
 					o_ptr = NULL;
 					break;
@@ -3682,7 +3682,7 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 				if (!item_tester_okay(o_ptr))
 				{
 					bell("Illegal object choice (normal)!");
-					
+
 					/* Invalid item */
 					o_ptr = NULL;
 					break;

@@ -547,7 +547,7 @@ static void do_cmd_aim_wand_aux(object_type *o_ptr)
 		msg_print("You must first pick up the wands.");
 		return;
 	}
-	
+
 	/* Notice empty wandss */
 	if (o_ptr->pval <= 0)
 	{
@@ -563,7 +563,7 @@ static void do_cmd_aim_wand_aux(object_type *o_ptr)
 
 		return;
 	}
-	
+
 	/* Sound */
 	sound(SOUND_ZAP);
 

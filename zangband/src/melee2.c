@@ -2607,7 +2607,7 @@ static void take_move(int m_idx, int *mm)
 					}
 				}
 			}
-  			OBJ_ITT_END;
+			OBJ_ITT_END;
 		}
 
 		/* Stop when done */

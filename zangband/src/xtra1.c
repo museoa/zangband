@@ -1216,7 +1216,7 @@ static void prt_frame_extra(void)
 static void fix_inven(void)
 {
 	int j;
-	
+
 	/* Update inventory information */
 #ifdef TERM_USE_LIST
 	Term_write_list(p_ptr->inventory, LIST_INVEN);

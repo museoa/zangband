@@ -3036,16 +3036,16 @@ errr file_character(cptr name, bool full)
 				{
 					/* Header with name of the town */
 					fprintf(fff, "  [Home Inventory - %s]\n\n", place[i].name);
-					
+
 					/* Initialise counter */
 					k = 0;
 
 					/* Dump all available items */
-					OBJ_ITT_START(st_ptr->stock, o_ptr)
+					OBJ_ITT_START (st_ptr->stock, o_ptr)
 					{
 						object_desc(o_name, o_ptr, TRUE, 3, 256);
 						fprintf(fff, "%c%s %s\n", I2A(k), paren, o_name);
-						
+
 						/* Increment counter */
 						k++;
 					}
@@ -4187,7 +4187,7 @@ static void show_info(void)
 			if (st_ptr->type == BUILD_STORE_HOME)
 			{
 				/* Hack -- Know everything in the home */
-				OBJ_ITT_START(st_ptr->stock, o_ptr)
+				OBJ_ITT_START (st_ptr->stock, o_ptr)
 				{
 					/* Aware and Known */
 					object_aware(o_ptr);
@@ -4265,15 +4265,15 @@ static void show_info(void)
 				{
 					char tmp_val[10];
 					char o_name[256];
-					
+
 					/* Initialise counter */
 					j = 0;
-					
+
 					/* Clear screen */
 					Term_clear();
-				
+
 					/* Display contents of the home */
-					OBJ_ITT_START(st_ptr->stock, o_ptr)
+					OBJ_ITT_START (st_ptr->stock, o_ptr)
 					{
 						/* Print header, clear line */
 						sprintf(tmp_val, "%c) ", I2A(j));
@@ -4282,25 +4282,27 @@ static void show_info(void)
 						/* Display object description */
 						object_desc(o_name, o_ptr, TRUE, 3, 256);
 						c_put_str(tval_to_attr[o_ptr->tval], o_name, 7, j + 2);
-								  
+
 						/* Show 12 items at a time */
 						if (j == 12)
 						{
 							/* Caption */
-							prt(format("Your home in %s: -more-", place[i].name), 0, 0);
+							prt(format
+								("Your home in %s: -more-", place[i].name), 0,
+								0);
 
 							/* Flush keys */
 							flush();
 
 							/* Wait for it */
 							if (inkey() == ESCAPE) return;
-							
+
 							/* Restart counter */
 							j = 0;
-							
+
 							/* Clear screen */
 							Term_clear();
-						}	
+						}
 					}
 					OBJ_ITT_END;
 				}

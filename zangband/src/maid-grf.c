@@ -875,22 +875,22 @@ list_notice_hook_type set_list_notice_hook(list_notice_hook_type hook_func)
 static void delete_list(list_item **l_ptr_ptr, int *num)
 {
 	int i;
-	
+
 	list_item *l_ptr;
-	
+
 	for (i = 0; i < *num; i++)
 	{
 		/* Get item */
 		l_ptr = &((*l_ptr_ptr)[i]);
-	
+
 		/* Delete strings */
 		string_free(l_ptr->o_name);
 		string_free(l_ptr->xtra_name);
 	}
-	
+
 	/* No more items */
 	*num = 0;
-	
+
 	/* Kill list */
 	KILL(*l_ptr_ptr);
 }
@@ -904,7 +904,7 @@ static void delete_list(list_item **l_ptr_ptr, int *num)
  * We assume l_ptr_ptr points to a NULL pointer.
  */
 static void copy_list(term_list *t_ptr, int num1, list_item **l_ptr_ptr,
-	int *num2)
+                      int *num2)
 {
 	list_item *l_ptr;
 	term_list *tl_ptr;
@@ -924,42 +924,42 @@ static void copy_list(term_list *t_ptr, int num1, list_item **l_ptr_ptr,
 	{
 		l_ptr = &((*l_ptr_ptr)[i]);
 		tl_ptr = &t_ptr[i];
-	
+
 		/* Duplicate flags */
 		l_ptr->kn_flags1 = tl_ptr->kn_flags1;
 		l_ptr->kn_flags2 = tl_ptr->kn_flags2;
 		l_ptr->kn_flags3 = tl_ptr->kn_flags3;
-	
+
 		/* Duplicate cost */
 		l_ptr->cost = tl_ptr->cost;
-	
+
 		/* Duplicate item type and weight */
 		l_ptr->k_idx = tl_ptr->k_idx;
 		l_ptr->weight = tl_ptr->weight;
 		l_ptr->number = tl_ptr->number;
-		
+
 		/* Duplicate info */
 		l_ptr->info = tl_ptr->info;
-		
+
 		/* Duplicate pval /tval */
 		l_ptr->pval = tl_ptr->pval;
 		l_ptr->tval = tl_ptr->tval;
-		
+
 		/* Duplicate timeout */
 		l_ptr->timeout = tl_ptr->timeout;
-		
+
 		/* Duplicate bonuses */
 		l_ptr->to_h = tl_ptr->to_h;
 		l_ptr->to_d = tl_ptr->to_d;
 		l_ptr->to_a = tl_ptr->to_a;
-		
+
 		/* Duplicate AC */
 		l_ptr->ac = tl_ptr->ac;
 
 		/* Duplicate Dice */
 		l_ptr->dd = tl_ptr->dd;
 		l_ptr->ds = tl_ptr->ds;
-		
+
 		/* Duplicate strings */
 		l_ptr->o_name = string_make(tl_ptr->o_name);
 		l_ptr->xtra_name = string_make(tl_ptr->xtra_name);
@@ -973,7 +973,7 @@ static void save_object_list(term_list *l_ptr, int num, byte list_type)
 {
 	/* Delete the old current list */
 	delete_list(&cur_list, &cur_num);
-	
+
 	/* Copy over with the new list */
 	copy_list(l_ptr, num, &cur_list, &cur_num);
 
@@ -981,20 +981,20 @@ static void save_object_list(term_list *l_ptr, int num, byte list_type)
 	{
 		/* Delete old inventory list */
 		delete_list(&inventory, &inven_num);
-		
+
 		/* Copy over with the new list */
 		copy_list(l_ptr, num, &inventory, &inven_num);
 	}
-	
+
 	if (list_type == LIST_EQUIP)
 	{
 		/* Delete old equipment list */
 		delete_list(&equipment, &equip_num);
-		
+
 		/* Copy over with the new list */
 		copy_list(l_ptr, num, &equipment, &equip_num);
 	}
-	
+
 	/* Notify port */
 	if (list_notice_hook)
 	{
@@ -1017,7 +1017,7 @@ static void set_basic_flags(term_list *l_ptr, object_type *o_ptr)
 	{
 		l_ptr->k_idx = o_ptr->k_idx;
 	}
-	
+
 	/* Weight and number */
 	l_ptr->weight = o_ptr->weight;
 	l_ptr->number = o_ptr->number;
@@ -1037,17 +1037,17 @@ static void set_basic_flags(term_list *l_ptr, object_type *o_ptr)
 	{
 		l_ptr->xtra_name = NULL;
 	}
-	
+
 	/* Damage dice */
 	l_ptr->dd = o_ptr->dd;
 	l_ptr->ds = o_ptr->ds;
-	
+
 	/* Hack - only send AC information if isn't a wand */
 	if (o_ptr->tval != TV_WAND)
 	{
 		l_ptr->ac = o_ptr->ac;
 	}
-	
+
 	/* Identified items yield extra information */
 	if (object_known_p(o_ptr))
 	{
@@ -1055,7 +1055,7 @@ static void set_basic_flags(term_list *l_ptr, object_type *o_ptr)
 		l_ptr->to_h = o_ptr->to_h;
 		l_ptr->to_d = o_ptr->to_d;
 		l_ptr->to_a = o_ptr->to_a;
-		
+
 		/* Pval */
 		if ((o_ptr->tval == TV_WAND) || (o_ptr->tval == TV_STAFF))
 		{
@@ -1063,17 +1063,17 @@ static void set_basic_flags(term_list *l_ptr, object_type *o_ptr)
 			l_ptr->pval = o_ptr->pval;
 		}
 	}
-	
+
 	/* Pval */
 	if (o_ptr->kn_flags1 & (TR1_PVAL_MASK))
 	{
 		/* Normal items with noticable pval */
 		l_ptr->pval = o_ptr->pval;
 	}
-	
+
 	/* Tval */
 	l_ptr->tval = o_ptr->tval;
-	
+
 	/* Timeout */
 	if (o_ptr->tval == TV_LITE)
 	{
@@ -1087,13 +1087,13 @@ static void set_basic_flags(term_list *l_ptr, object_type *o_ptr)
 		{
 			int power;
 			object_kind *k_ptr = &k_info[o_ptr->k_idx];
-		
+
 			/*
 			 * Find out how many rods are charging.
 			 */
 			power = (o_ptr->timeout + (k_ptr->pval - 1)) / k_ptr->pval;
 			if (power > o_ptr->number) power = o_ptr->number;
-			
+
 			/* Hack - Set timeout to number of charging items */
 			l_ptr->timeout = power;
 		}
@@ -1114,46 +1114,46 @@ static void set_basic_flags(term_list *l_ptr, object_type *o_ptr)
 void Term_write_equipment(void)
 {
 	term_list *list, *l_ptr;
-	
+
 	int i;
 	object_type *o_ptr;
 	char o_name[256];
-	
+
 	/* Create the list */
 	C_MAKE(list, EQUIP_MAX, term_list);
-	
+
 	/* Fill with information */
 	for (i = 0; i < EQUIP_MAX; i++)
 	{
 		/* Get object */
 		o_ptr = &p_ptr->equipment[i];
-	
+
 		if (!o_ptr->k_idx) continue;
-	
+
 		/* Get object list element */
 		l_ptr = &list[i];
-		
+
 		/* Set object flags */
 		set_basic_flags(l_ptr, o_ptr);
-						
+
 		/* Describe the object */
 		object_desc(o_name, o_ptr, TRUE, 3, 256);
-		
+
 		l_ptr->o_name = string_make(o_name);
 	}
-	
+
 	/* Save for later */
 	save_object_list(list, EQUIP_MAX, LIST_EQUIP);
-	
+
 	for (i = 0; i < EQUIP_MAX; i++)
 	{
 		l_ptr = &list[i];
-	
+
 		/* Free the strings */
 		string_free(l_ptr->o_name);
 		string_free(l_ptr->xtra_name);
-	} 
-	
+	}
+
 	/* Free the list */
 	FREE(list);
 }
@@ -1168,29 +1168,29 @@ void Term_write_equipment(void)
 void Term_write_list(s16b o_idx, byte list_type)
 {
 	term_list *list, *l_ptr;
-	
+
 	int i = 0;
 	object_type *o_ptr;
 	char o_name[256];
-	
+
 	/* Get list length */
 	int num = get_list_length(o_idx);
-	
+
 	/* Paranoia */
 	if (!num) return;
-	
+
 	/* Create the list */
 	C_MAKE(list, num, term_list);
-	
+
 	/* Fill with information */
 	OBJ_ITT_START (o_idx, o_ptr)
 	{
 		/* Get object list element */
 		l_ptr = &list[i];
-		
+
 		/* Set object flags */
 		set_basic_flags(l_ptr, o_ptr);
-		
+
 		/* Stores are special */
 		if (list_type == LIST_STORE_SELL)
 		{
@@ -1202,27 +1202,27 @@ void Term_write_list(s16b o_idx, byte list_type)
 			/* Describe the object */
 			object_desc(o_name, o_ptr, TRUE, 3, 256);
 		}
-		
+
 		l_ptr->o_name = string_make(o_name);
-	
+
 		/* Increment counter */
 		i++;
 	}
 	OBJ_ITT_END;
-	
+
 	/* Save for later */
 	save_object_list(list, num, list_type);
-	
-	
-	for (i = 0; i < num ; i++)
+
+
+	for (i = 0; i < num; i++)
 	{
 		l_ptr = &list[i];
-		
+
 		/* Free the strings */
 		string_free(l_ptr->o_name);
 		string_free(l_ptr->xtra_name);
-	} 
-	
+	}
+
 	/* Free the list */
 	FREE(list);
 }

@@ -1173,7 +1173,7 @@ static void spoiler_print_art(obj_desc_list *art_ptr)
 static object_type *make_fake_artifact(int a_idx)
 {
 	int i;
-	
+
 	object_type *o_ptr;
 
 	artifact_type *a_ptr = &a_info[a_idx];
@@ -1276,7 +1276,7 @@ static void spoil_artifact(cptr fname)
 
 			/* Attempt to "forge" the artifact */
 			q_ptr = make_fake_artifact(j);
-			
+
 			if (!q_ptr) continue;
 
 			/* Analyze the artifact */

@@ -4360,4 +4360,3 @@ extern int PlayerUID;
 #define LIST_FLOOR			3
 #define LIST_STORE_BUY		4
 #define LIST_STORE_SELL		5
-

@@ -900,7 +900,7 @@ static void rd_store(int town_num, int store_num)
 	}
 
 	if (sf_version < 38)
-    {
+	{
 		/* Read the items */
 		for (j = 0; j < allocated; j++)
 		{
@@ -914,9 +914,9 @@ static void rd_store(int town_num, int store_num)
 			object_wipe(q_ptr);
 
 			/* Read the item */
-            rd_item(q_ptr);
+			rd_item(q_ptr);
 
-            /* Ignore the item */
+			/* Ignore the item */
 		}
 	}
 	else
@@ -2083,7 +2083,7 @@ static errr rd_dungeon(void)
 
 		/* Load dungeon map */
 		load_map(0, 0, cur_wid, cur_hgt);
-		
+
 		/* Restore the bounds */
 		p_ptr->max_hgt = cur_hgt;
 		p_ptr->min_hgt = 0;
@@ -2103,7 +2103,7 @@ static errr rd_dungeon(void)
 			int min_hgt = p_ptr->min_hgt;
 			int max_wid = p_ptr->max_wid;
 			int max_hgt = p_ptr->max_hgt;
-			
+
 			dun_level_backup = p_ptr->depth;
 
 			change_level(p_ptr->depth);
@@ -2470,7 +2470,7 @@ static errr rd_dungeon(void)
 	{
 		/* enter the level */
 		change_level(p_ptr->depth);
-		
+
 		if (p_ptr->depth)
 		{
 			/* Restore the bounds */

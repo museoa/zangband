@@ -161,88 +161,87 @@ static void prt_binary(u32b flags, int col, int row)
 	}
 }
 
-typedef u64b ufix40_24;  /* Fixed point: 40 bits integer 24 bits fractional */
+typedef u64b ufix40_24;	/* Fixed point: 40 bits integer 24 bits fractional */
 
 static ufix40_24 pow4(ufix40_24 n)
 {
-    ufix40_24 pow2 = (n * n) >> 24;
-    return (pow2 * pow2) >> 24;
+	ufix40_24 pow2 = (n * n) >> 24;
+	return (pow2 * pow2) >> 24;
 }
 
 static void get_obj_dist(int min_level, int obj_num, u32b rarity[MAX_DEPTH])
 {
 	int i;
 	long value1, total;
-    alloc_entry *table = alloc_kind_table;
-    ufix40_24 p;
+	alloc_entry *table = alloc_kind_table;
+	ufix40_24 p;
 
-    int level;
+	int level;
 
-    for (i = 0; i < MAX_DEPTH; i++)
-        rarity[i] = 0;
+	for (i = 0; i < MAX_DEPTH; i++)
+		rarity[i] = 0;
 
-    for (level = 0; level < MAX_DEPTH * 2; level++)
-    {
-        /* Reset total */
-        total = 0L;
+	for (level = 0; level < MAX_DEPTH * 2; level++)
+	{
+		/* Reset total */
+		total = 0L;
 
-        /* Process probabilities */
-        for (i = 0; i < alloc_kind_size; i++)
-        {
-            /* Objects are sorted by depth */
-            if (table[i].level > level) break;
+		/* Process probabilities */
+		for (i = 0; i < alloc_kind_size; i++)
+		{
+			/* Objects are sorted by depth */
+			if (table[i].level > level) break;
 
-            /* What John West rejects, makes John West the best. */
-            if (table[i].level < min_level) continue;
+			/* What John West rejects, makes John West the best. */
+			if (table[i].level < min_level) continue;
 
-            /* Total */
-            total += table[i].prob2;
-        }
+			/* Total */
+			total += table[i].prob2;
+		}
 
-        /* No legal objects */
-        if (total <= 0) continue;
+		/* No legal objects */
+		if (total <= 0) continue;
 
-        value1 = 0;
-        p = 0;
+		value1 = 0;
+		p = 0;
 
-        /* Find the object */
-        for (i = 0; i < alloc_kind_size; i++)
-        {
-            /* Objects are sorted by depth */
-            if (table[i].level > level) break;
+		/* Find the object */
+		for (i = 0; i < alloc_kind_size; i++)
+		{
+			/* Objects are sorted by depth */
+			if (table[i].level > level) break;
 
-            /* What John West rejects, makes John West the best. */
-            if (table[i].level < min_level) continue;
+			/* What John West rejects, makes John West the best. */
+			if (table[i].level < min_level) continue;
 
-            if (table[i].index == obj_num)
-            {
-                p += pow4(0x1000000LL * (value1 + table[i].prob2) / total) -
-                    pow4(0x1000000LL * value1 / total);
-            }
+			if (table[i].index == obj_num)
+			{
+				p += pow4(0x1000000LL * (value1 + table[i].prob2) / total) -
+					pow4(0x1000000LL * value1 / total);
+			}
 
-            /* Increment */
-            value1 += table[i].prob2;
-        }
+			/* Increment */
+			value1 += table[i].prob2;
+		}
 
-        /* Add base probability */
-        if (level < MAX_DEPTH)
-            rarity[level] += (u32b)(p * (GREAT_OBJ - 1) / GREAT_OBJ);
+		/* Add base probability */
+		if (level < MAX_DEPTH)
+			rarity[level] += (u32b)(p * (GREAT_OBJ - 1) / GREAT_OBJ);
 
-        /* Add the probability for out-of-depth objects */
-        for (i = 1; i <= MAX_DEPTH; i++)
-        {
-            if (level - MAX_DEPTH / i >= 0 &&
-                level - MAX_DEPTH / i < MAX_DEPTH)
-            {
-                rarity[level - MAX_DEPTH / i] +=
-                    (u32b)((p / MAX_DEPTH) / GREAT_OBJ);
-            }
-        }
-    }
+		/* Add the probability for out-of-depth objects */
+		for (i = 1; i <= MAX_DEPTH; i++)
+		{
+			if (level - MAX_DEPTH / i >= 0 && level - MAX_DEPTH / i < MAX_DEPTH)
+			{
+				rarity[level - MAX_DEPTH / i] +=
+					(u32b)((p / MAX_DEPTH) / GREAT_OBJ);
+			}
+		}
+	}
 
-    /* Scale down the final result */
-    for (i = 0; i < MAX_DEPTH; i++)
-        rarity[i] /= 0x100;
+	/* Scale down the final result */
+	for (i = 0; i < MAX_DEPTH; i++)
+		rarity[i] /= 0x100;
 }
 
 /*
@@ -273,27 +272,27 @@ static void prt_alloc(const object_type *o_ptr, int col, int row, u32b monte)
 	/* Refresh */
 	Term_fresh();
 
-    if (monte > 0)
-    {
-        /* Scan all entries */
-        for (i = 0; i < MAX_DEPTH; i++)
-        {
-            for (j = 0; j < monte; j++)
-            {
-                if (get_obj_num(i, 0) == kind) rarity[i]++;
-            }
+	if (monte > 0)
+	{
+		/* Scan all entries */
+		for (i = 0; i < MAX_DEPTH; i++)
+		{
+			for (j = 0; j < monte; j++)
+			{
+				if (get_obj_num(i, 0) == kind) rarity[i]++;
+			}
 
-            total[i] = monte;
-        }
-    }
-    else
-    {
-        /* Calculate */
-        get_obj_dist(0, kind, rarity);
+			total[i] = monte;
+		}
+	}
+	else
+	{
+		/* Calculate */
+		get_obj_dist(0, kind, rarity);
 
-        for (i = 0; i < MAX_DEPTH; i++)
-            total[i] = 0x10000;
-    }
+		for (i = 0; i < MAX_DEPTH; i++)
+			total[i] = 0x10000;
+	}
 
 	/* Find maxima */
 	for (i = 0; i < MAX_DEPTH; i++)
@@ -904,15 +903,16 @@ static void wiz_tweak_item(object_type *o_ptr)
  */
 static object_type *wiz_reroll_item(object_type *o_ptr)
 {
-    char ch;
+	char ch;
 
 	/* Hack -- leave normal artifacts alone */
-	if ((o_ptr->flags3 & TR3_INSTA_ART) && (o_ptr->activate > 128)) return(o_ptr);
+	if ((o_ptr->flags3 & TR3_INSTA_ART) &&
+		(o_ptr->activate > 128)) return (o_ptr);
 
 	/* Main loop. Ask for magification and artifactification */
 	while (TRUE)
 	{
-        /* Display full item debug information */
+		/* Display full item debug information */
 		wiz_display_item(o_ptr);
 
 		/* Ask wizard what to do. */
@@ -976,8 +976,8 @@ static object_type *wiz_reroll_item(object_type *o_ptr)
 				break;
 			}
 		}
-    }
-	
+	}
+
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
 
@@ -986,9 +986,9 @@ static object_type *wiz_reroll_item(object_type *o_ptr)
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-	
+
 	/* Success */
-    return (o_ptr);
+	return (o_ptr);
 }
 
 
@@ -1088,7 +1088,7 @@ static void do_cmd_wiz_play(void)
 
 	/* Duplicate object */
 	o_ptr = object_dup(q_ptr);
-	
+
 	/* Display the item */
 	wiz_display_item(o_ptr);
 
@@ -1098,7 +1098,7 @@ static void do_cmd_wiz_play(void)
 	/* The main loop */
 	while (TRUE)
 	{
-        /* Display the item */
+		/* Display the item */
 		wiz_display_item(o_ptr);
 
 		/* Get choice */
@@ -1107,7 +1107,7 @@ static void do_cmd_wiz_play(void)
 		{
 			/* Ignore changes */
 			msg_print("Changes ignored.");
-			
+
 			/* Done */
 			break;
 		}
@@ -1117,10 +1117,10 @@ static void do_cmd_wiz_play(void)
 		{
 			/* Message */
 			msg_print("Changes accepted.");
-			
+
 			/* Swap the objects */
 			swap_objects(q_ptr, o_ptr);
-			
+
 			/* Recalculate bonuses */
 			p_ptr->update |= (PU_BONUS);
 
@@ -1129,7 +1129,7 @@ static void do_cmd_wiz_play(void)
 
 			/* Window stuff */
 			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			
+
 			break;
 		}
 
@@ -1139,9 +1139,9 @@ static void do_cmd_wiz_play(void)
 		}
 
 		if (ch == 'r' || ch == 'r')
-        {
+		{
 			o_ptr = wiz_reroll_item(o_ptr);
-		
+
 			/* Failure - get old item */
 			if (!o_ptr)
 			{
@@ -1960,14 +1960,14 @@ void do_cmd_debug(void)
 			/* Phase Door */
 			teleport_player(10);
 			break;
-        }
+		}
 
-        case 'P':
-        {
-            /* Polymorph self */
-            do_poly_self();
-            break;
-        }
+		case 'P':
+		{
+			/* Polymorph self */
+			do_poly_self();
+			break;
+		}
 
 		case 'u':
 		{

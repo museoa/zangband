@@ -881,8 +881,8 @@ bool apply_disenchant(void)
 
 void mutate_player(void)
 {
-    int max1, cur1, max2, cur2, ii, jj;
-    int bonus1, bonus2;
+	int max1, cur1, max2, cur2, ii, jj;
+	int bonus1, bonus2;
 
 	/* Pick a pair of stats */
 	ii = randint0(A_MAX);
@@ -891,18 +891,18 @@ void mutate_player(void)
 	max1 = p_ptr->stat_max[ii];
 	cur1 = p_ptr->stat_cur[ii];
 	max2 = p_ptr->stat_max[jj];
-    cur2 = p_ptr->stat_cur[jj];
+	cur2 = p_ptr->stat_cur[jj];
 
-    /* Adjust the swapped stats... */
-    bonus1 = rp_ptr->r_adj[ii] + cp_ptr->c_adj[ii];
-    bonus2 = rp_ptr->r_adj[jj] + cp_ptr->c_adj[jj];
+	/* Adjust the swapped stats... */
+	bonus1 = rp_ptr->r_adj[ii] + cp_ptr->c_adj[ii];
+	bonus2 = rp_ptr->r_adj[jj] + cp_ptr->c_adj[jj];
 
-    max1 = adjust_stat(jj, max1, bonus2 - bonus1, FALSE);
-    max2 = adjust_stat(ii, max2, bonus1 - bonus2, FALSE);
+	max1 = adjust_stat(jj, max1, bonus2 - bonus1, FALSE);
+	max2 = adjust_stat(ii, max2, bonus1 - bonus2, FALSE);
 
-    /* Hack - restore both stats rather than figure try to swap drainage */
-    cur1 = max1;
-    cur2 = max2;
+	/* Hack - restore both stats rather than figure try to swap drainage */
+	cur1 = max1;
+	cur2 = max2;
 
 	p_ptr->stat_max[ii] = max2;
 	p_ptr->stat_cur[ii] = cur2;
@@ -1983,7 +1983,7 @@ bool artifact_scroll(void)
 static void bad_luck(object_type *o_ptr)
 {
 	bool is_art = ((o_ptr->flags3 & TR3_INSTA_ART) ? TRUE : FALSE);
-	
+
 	object_type *q_ptr;
 
 	/* Do not curse unwieldable items */
@@ -2001,7 +2001,7 @@ static void bad_luck(object_type *o_ptr)
 
 			/* Prepare it */
 			q_ptr = object_prep(o_ptr->k_idx);
-			
+
 			/* Swap it */
 			swap_objects(o_ptr, q_ptr);
 

@@ -180,30 +180,30 @@ struct term_list
 {
 	cptr o_name;	/* Name */
 	cptr xtra_name;	/* Extra Name (Artifacts and ego items) */
-	
+
 	u32b kn_flags1;	/* Known Flags, set 1 */
 	u32b kn_flags2;	/* Known Flags, set 2 */
 	u32b kn_flags3;	/* Known Flags, set 3 */
-	
+
 	s32b cost;	/* Object "base cost" */
-	
+
 	s16b k_idx;	/* Kind index (zero if "unknown") */
 	s16b weight;	/* Item weight */
-	
+
 	s16b to_h;	/* Bonus to hit */
 	s16b to_d;	/* Bonus to dam */
 	s16b to_a;	/* Bonus to ac */
 	s16b ac;	/* Armor class */
 	byte dd;	/* Damage dice */
 	byte ds;	/* Damage sides */
-	
+
 	byte number;	/* Number of items */
 	byte info;	/* Special flags */
-	
+
 	s16b timeout;	/* Timeout Counter */
-	
+
 	s16b pval;	/* Particular value */
-	
+
 	byte tval;	/* Item type (from kind) */
 };
 
@@ -214,28 +214,28 @@ struct list_item
 {
 	cptr o_name;	/* Name */
 	cptr xtra_name;	/* Extra Name (Artifacts and ego items) */
-	
+
 	u32b kn_flags1;	/* Known Flags, set 1 */
 	u32b kn_flags2;	/* Known Flags, set 2 */
 	u32b kn_flags3;	/* Known Flags, set 3 */
-	
+
 	s32b cost;	/* Object "base cost" */
-	
+
 	s16b k_idx;	/* Kind index (zero if "dead") */
 	s16b weight;	/* Item weight */
-	
+
 	s16b to_h;	/* Bonus to hit */
 	s16b to_d;	/* Bonus to dam */
 	s16b to_a;	/* Bonus to ac */
 	s16b ac;	/* Armor class */
 	byte dd;	/* Damage dice */
 	byte ds;	/* Damage sides */
-	
+
 	byte number;	/* Number of items */
 	byte info;	/* Special flags */
-	
+
 	s16b timeout;	/* Timeout Counter */
-	
+
 	s16b pval;	/* Particular value */
 	byte tval;	/* Item type (from kind) */
 
@@ -290,5 +290,5 @@ extern map_block *map_loc(int dx, int dy);
 
 #ifdef TERM_USE_LIST
 extern list_notice_hook_type set_list_notice_hook(list_notice_hook_type
-												 hook_func);
+												  hook_func);
 #endif /* TERM_USE_LIST */

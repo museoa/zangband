@@ -201,10 +201,10 @@ void drop_object_list(s16b *o_idx_ptr, int x, int y)
 	{
 		/* Duplicate object */
 		q_ptr = object_dup(o_ptr);
-	
+
 		/* Drop object */
 		drop_near(q_ptr, -1, x, y);
-		
+
 		/* Delete held object */
 		delete_held_object(o_idx_ptr, o_ptr);
 	}
@@ -517,7 +517,7 @@ static s16b o_pop(void)
 			{
 				/* Infinite loop protection */
 				if (wrapped) break;
-				
+
 				o_cur = 1;
 				wrapped = TRUE;
 			}
@@ -564,7 +564,7 @@ object_type *add_object_list(s16b *o_idx_ptr, object_type *o_ptr)
 	j_ptr = &o_list[o_idx];
 
 	/* Move to the list */
-    swap_objects(j_ptr, o_ptr);
+	swap_objects(j_ptr, o_ptr);
 
 	/* Add to the list */
 	j_ptr->next_o_idx = *o_idx_ptr;
@@ -598,9 +598,9 @@ void move_object(s16b *tgt_list_ptr, s16b *cur_list_ptr, object_type *o_ptr)
 void swap_objects(object_type *o1_ptr, object_type *o2_ptr)
 {
 	object_type temp;
-	
+
 	/* Copy the objcet */
-	object_copy (&temp, o2_ptr);
+	object_copy(&temp, o2_ptr);
 
 	/* Copy the object */
 	object_copy(o2_ptr, o1_ptr);
@@ -608,17 +608,17 @@ void swap_objects(object_type *o1_ptr, object_type *o2_ptr)
 	/* Get correct next-object fields */
 	o2_ptr->next_o_idx = temp.next_o_idx;
 	temp.next_o_idx = o1_ptr->next_o_idx;
-	
+
 	/* Get correct position fields */
 	o2_ptr->ix = temp.ix;
 	temp.ix = o1_ptr->ix;
 	o2_ptr->iy = temp.iy;
 	temp.iy = o1_ptr->iy;
-	
+
 	/* Get correct region */
 	o2_ptr->region = temp.region;
 	temp.region = o1_ptr->region;
-	
+
 	/* Get correct allocated value */
 	o2_ptr->allocated = temp.allocated;
 	temp.allocated = o1_ptr->allocated;
@@ -1842,13 +1842,13 @@ void object_wipe(object_type *o_ptr)
 object_type *object_dup(const object_type *o_ptr)
 {
 	object_type *q_ptr = &temp_object;
-	
+
 	/* Delete old static object */
 	delete_static_object(q_ptr);
-	
+
 	/* Copy it */
 	object_copy(q_ptr, o_ptr);
-	
+
 	/* Allocate quarks */
 	quark_dup(o_ptr->xtra_name);
 	quark_dup(o_ptr->inscription);
@@ -2424,22 +2424,22 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 		case TV_POLEARM:
 		case TV_SWORD:
 		{
-            /* Elfblades are always special */
-            if (o_ptr->sval == SV_ELFBLADE)
-            {
-                char new_name[1024];
+			/* Elfblades are always special */
+			if (o_ptr->sval == SV_ELFBLADE)
+			{
+				char new_name[1024];
 
-                (void)create_artifact(o_ptr, FALSE);
+				(void)create_artifact(o_ptr, FALSE);
 
-                /* Hack - always use name made of random syllables */
-                quark_remove(&o_ptr->xtra_name);
-                get_table_name(new_name, TRUE);
-                o_ptr->xtra_name = quark_add(new_name);
+				/* Hack - always use name made of random syllables */
+				quark_remove(&o_ptr->xtra_name);
+				get_table_name(new_name, TRUE);
+				o_ptr->xtra_name = quark_add(new_name);
 
-                break;
-            }
+				break;
+			}
 
-            /* Very Good */
+			/* Very Good */
 			else if (flags & OC_FORCE_GOOD)
 			{
 				/* Roll for a random artifact */
@@ -4426,7 +4426,7 @@ void place_object(int x, int y, bool good, bool great)
 
 	/* Failure? */
 	if (!o_ptr) return;
-	
+
 	/* Add the object to the ground */
 	o_ptr = add_object_list(&c_ptr->o_idx, o_ptr);
 
@@ -4520,10 +4520,10 @@ void place_gold(int x, int y)
 
 	/* Require nice floor space */
 	if (!cave_nice_grid(c_ptr)) return;
-	
+
 	/* Make some gold */
 	o_ptr = make_gold(0);
-	
+
 	/* Add the object to the ground */
 	o_ptr = add_object_list(&c_ptr->o_idx, o_ptr);
 
@@ -4827,7 +4827,7 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 			/* Location */
 			o_ptr->iy = by;
 			o_ptr->ix = bx;
-	
+
 			/* Region */
 			o_ptr->region = cur_region;
 		}
@@ -4932,9 +4932,9 @@ s16b *look_up_list(object_type *o_ptr)
 	object_type *j_ptr;
 
 	cave_type *c_ptr;
-	
+
 	place_type *pl_ptr = &place[p_ptr->place_num];
-	
+
 	int i;
 
 	/* Some objects have no list */
@@ -4952,14 +4952,14 @@ s16b *look_up_list(object_type *o_ptr)
 		}
 		OBJ_ITT_END;
 	}
-	
+
 	/* Scan player inventory */
 	OBJ_ITT_START (p_ptr->inventory, j_ptr)
 	{
 		if (o_ptr == j_ptr) return (&p_ptr->inventory);
 	}
 	OBJ_ITT_END;
-	
+
 	/* Scan stores */
 	for (i = 0; i < pl_ptr->numstores; i++)
 	{
@@ -5045,7 +5045,7 @@ int get_list_length(s16b list_start)
 bool floor_item(object_type *o_ptr)
 {
 	s16b *o_list = look_up_list(o_ptr);
-	
+
 	cave_type *c_ptr = area(p_ptr->px, p_ptr->py);
 
 	/* On floor? */
@@ -5059,7 +5059,7 @@ bool floor_item(object_type *o_ptr)
 bool player_item(object_type *o_ptr)
 {
 	s16b *o_list = look_up_list(o_ptr);
-	
+
 	/* Equipment? */
 	if (!o_list) return (TRUE);
 
@@ -5101,7 +5101,7 @@ void item_describe(object_type *o_ptr)
 
 	/* Get list */
 	s16b *list = look_up_list(o_ptr);
-	
+
 	cave_type *c_ptr = area(p_ptr->px, p_ptr->py);
 
 	/* Get a description */
@@ -5125,7 +5125,7 @@ void item_describe(object_type *o_ptr)
 	{
 		msg_format("On the ground: %s.", o_name);
 	}
-	
+
 	/* Elsewhere??? */
 }
 
@@ -5136,7 +5136,7 @@ void item_describe(object_type *o_ptr)
 static void item_optimize(object_type *o_ptr)
 {
 	s16b *list;
-	
+
 	cave_type *c_ptr = area(p_ptr->px, p_ptr->py);
 
 	/* Only optimize real items */
@@ -5360,7 +5360,8 @@ static bool reorder_pack_comp(object_type *o1_ptr, object_type *o2_ptr)
  *
  * Usually we only need to make a few swaps.
  */
-object_type *reorder_objects_aux(object_type *q_ptr, object_comp comp_func, u16b o_idx)
+object_type *reorder_objects_aux(object_type *q_ptr, object_comp comp_func,
+                                 u16b o_idx)
 {
 	object_type *o_ptr, *j_ptr;
 
@@ -5386,7 +5387,7 @@ object_type *reorder_objects_aux(object_type *q_ptr, object_comp comp_func, u16b
 		OBJ_ITT_END;
 	}
 	OBJ_ITT_END;
-	
+
 	return (q_ptr);
 }
 
@@ -5519,7 +5520,7 @@ object_type *inven_takeoff(object_type *o_ptr)
 
 	/* Message */
 	msg_format("%s %s (%c).", act, o_name, I2A(item));
-	
+
 	/* Wipe the old object */
 	object_wipe(o_ptr);
 
@@ -5628,7 +5629,7 @@ void combine_pack(void)
  */
 void reorder_pack(void)
 {
-	(void) reorder_objects_aux(NULL, reorder_pack_comp, p_ptr->inventory);
+	(void)reorder_objects_aux(NULL, reorder_pack_comp, p_ptr->inventory);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN);

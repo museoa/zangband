@@ -768,7 +768,7 @@ int borg_wield_slot(list_item *l_ptr)
 list_item *borg_slot(int tval, int sval)
 {
 	int i;
-	
+
 	object_kind *k_ptr;
 
 	/* Scan the pack */
@@ -778,7 +778,7 @@ list_item *borg_slot(int tval, int sval)
 
 		/* Skip un-aware items */
 		if (!l_ptr->k_idx) continue;
-		
+
 		k_ptr = &k_info[l_ptr->k_idx];
 
 		/* Require correct tval */
@@ -801,13 +801,13 @@ list_item *borg_slot(int tval, int sval)
 int look_up_index(list_item *l_ptr)
 {
 	int i;
-	
+
 	/* Scan inventory */
 	for (i = 0; i < inven_num; i++)
 	{
 		if (&inventory[i] == l_ptr) return (i);
 	}
-		
+
 	/* Paranoia */
 	borg_oops("Trying to find invalid object!");
 
@@ -986,18 +986,18 @@ bool borg_quaff_potion(int sval)
 bool borg_quaff_unknown(void)
 {
 	int i;
-	
+
 	/* Scan the pack */
 	for (i = 0; i < inven_num; i++)
 	{
 		list_item *l_ptr = &inventory[i];
-		
+
 		/* Require correct tval */
 		if (l_ptr->tval != TV_POTION) continue;
 
 		/* Skip aware items */
 		if (l_ptr->k_idx) continue;
-		
+
 		/* Log the message */
 		borg_note(format("# Quaffing unknown potion %s.", l_ptr->o_name));
 
@@ -1025,7 +1025,7 @@ bool borg_read_unknown(void)
 	for (i = 0; i < inven_num; i++)
 	{
 		list_item *l_ptr = &inventory[i];
-		
+
 		/* Skip aware items */
 		if (l_ptr->k_idx) continue;
 
@@ -1033,13 +1033,14 @@ bool borg_read_unknown(void)
 		if (l_ptr->tval != TV_SCROLL) continue;
 
 		/* Not when dark */
-		if (!(mb_ptr->flags & MAP_GLOW) && !borg_skill[BI_CUR_LITE]) return (FALSE);
+		if (!(mb_ptr->flags & MAP_GLOW) &&
+			!borg_skill[BI_CUR_LITE]) return (FALSE);
 
 		/* Blind or Confused */
 		if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED]) return (FALSE);
 
 		/* Log the message */
-		borg_note(format("# Reading unknown scroll %s.",l_ptr->o_name));
+		borg_note(format("# Reading unknown scroll %s.", l_ptr->o_name));
 
 		/* Perform the action */
 		borg_keypress('r');
@@ -1065,7 +1066,7 @@ bool borg_eat_unknown(void)
 	for (i = 0; i < inven_num; i++)
 	{
 		list_item *l_ptr = &inventory[i];
-		
+
 		/* Skip aware items */
 		if (l_ptr->k_idx) continue;
 
@@ -1182,7 +1183,7 @@ bool borg_equips_rod(int sval)
 
 	/* No charges */
 	if (!l_ptr->pval) return (FALSE);
-	
+
 	/* Get item type */
 	k_ptr = &k_info[l_ptr->k_idx];
 
@@ -1214,7 +1215,7 @@ bool borg_zap_rod(int sval)
 {
 	list_item *l_ptr;
 	object_kind *k_ptr;
-	
+
 	int lev, chance;
 
 	/* Look for that rod */
@@ -1393,7 +1394,7 @@ bool borg_equips_staff_fail(int sval)
 
 	/* No charges */
 	if (!l_ptr->pval) return (FALSE);
-	
+
 	/* Get item type */
 	k_ptr = &k_info[l_ptr->k_idx];
 
@@ -1591,12 +1592,12 @@ bool borg_equips_artifact(int name1, int location)
 bool borg_equips_dragon(int drag_sval)
 {
 	int lev, chance;
-	
+
 	object_kind *k_ptr;
 
 	/* Check the equipment */
 	list_item *l_ptr = &equipment[EQUIP_BODY];
-	
+
 	/* Get object type */
 	k_ptr = &k_info[l_ptr->k_idx];
 
@@ -1648,7 +1649,7 @@ bool borg_activate_dragon(int drag_sval)
 
 	/* Check the equipment */
 	list_item *l_ptr = &equipment[EQUIP_BODY];
-	
+
 	/* Get object type */
 	k_ptr = &k_info[l_ptr->k_idx];
 

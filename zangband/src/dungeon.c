@@ -3058,8 +3058,9 @@ static void dungeon(void)
 			FALSE;
 
 	/* Option -- no connected stairs */
-	if (!dungeon_stair || ironman_moria) p_ptr->create_down_stair = p_ptr->create_up_stair =
-			FALSE;
+	if (!dungeon_stair ||
+		ironman_moria) p_ptr->create_down_stair = p_ptr->create_up_stair =
+FALSE;
 
 	/* Nightmare mode is no fun... */
 	if (ironman_nightmare) p_ptr->create_down_stair = p_ptr->create_up_stair =

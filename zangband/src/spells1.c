@@ -492,8 +492,8 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 		case GF_STONE_WALL:
 		{
 			/* Require a "naked" floor grid */
-            if ((c_ptr->o_idx != 0) || (c_ptr->m_idx != 0)) break;
-            if (!cave_floor_grid(c_ptr)) break;
+			if ((c_ptr->o_idx != 0) || (c_ptr->m_idx != 0)) break;
+			if (!cave_floor_grid(c_ptr)) break;
 
 			/* Place a wall */
 			cave_set_feat(x, y, FEAT_WALL_EXTRA);

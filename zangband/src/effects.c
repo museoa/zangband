@@ -1942,9 +1942,9 @@ bool set_food(int v)
  */
 bool inc_stat(int stat)
 {
-    int value, gain;
+	int value, gain;
 
-    int cap = stat_cap(stat);
+	int cap = stat_cap(stat);
 
 	/* Then augment the current/max stat */
 	value = p_ptr->stat_cur[stat];
@@ -2516,7 +2516,7 @@ void do_poly_wounds(void)
 
 void do_poly_self(void)
 {
-    int i;
+	int i;
 	int power = p_ptr->lev;
 
 	msg_print("You feel a change coming over you...");
@@ -2623,33 +2623,37 @@ void do_poly_self(void)
 
 		chg_virtue(V_CHANCE, 2);
 
-        old_race = p_ptr->prace;
+		old_race = p_ptr->prace;
 		p_ptr->prace = new_race;
-        rp_ptr = &race_info[p_ptr->prace];
+		rp_ptr = &race_info[p_ptr->prace];
 
-        /* Adjust the stats */
-        for (i = 0; i < A_MAX; i++)
-        {
-            int drain;
-            int change;
+		/* Adjust the stats */
+		for (i = 0; i < A_MAX; i++)
+		{
+			int drain;
+			int change;
 
-            /* Calculate the amount the stat is drained */
-            if (p_ptr->stat_cur[i] > 18)
-                drain = (p_ptr->stat_max[i] - p_ptr->stat_cur[i] + 9) / 10;
-            else if (p_ptr->stat_max[i] > 18)
-                drain = (18 - p_ptr->stat_cur[i]) + (p_ptr->stat_max[i] - 18 + 9) / 10;
-            else
-                drain = p_ptr->stat_max[i] - p_ptr->stat_cur[i];
+			/* Calculate the amount the stat is drained */
+			if (p_ptr->stat_cur[i] > 18)
+				drain = (p_ptr->stat_max[i] - p_ptr->stat_cur[i] + 9) / 10;
+			else if (p_ptr->stat_max[i] > 18)
+				drain =
+					(18 - p_ptr->stat_cur[i]) + (p_ptr->stat_max[i] - 18 +
+												 9) / 10;
+			else
+				drain = p_ptr->stat_max[i] - p_ptr->stat_cur[i];
 
-            /* Calculate the difference between the races */
-            change = rp_ptr->r_adj[i] - race_info[old_race].r_adj[i];
+			/* Calculate the difference between the races */
+			change = rp_ptr->r_adj[i] - race_info[old_race].r_adj[i];
 
-            /* Adjust current stat */
-            p_ptr->stat_cur[i] = adjust_stat(i, p_ptr->stat_cur[i], change, FALSE);
+			/* Adjust current stat */
+			p_ptr->stat_cur[i] =
+				adjust_stat(i, p_ptr->stat_cur[i], change, FALSE);
 
-            /* Set maximum stat based on current stat and drainage */
-            p_ptr->stat_max[i] = adjust_stat(i, p_ptr->stat_cur[i], change, FALSE);
-        }
+			/* Set maximum stat based on current stat and drainage */
+			p_ptr->stat_max[i] =
+				adjust_stat(i, p_ptr->stat_cur[i], change, FALSE);
+		}
 
 		/* Experience factor */
 		p_ptr->expfact = rp_ptr->r_exp + cp_ptr->c_exp;

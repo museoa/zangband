@@ -175,7 +175,8 @@ bool borg_item_icky(list_item *l_ptr)
 	 * Process other classes which do get pseudo ID
 	 * things that are good/excelent/special/no P-ID
 	 */
-	if (strstr(l_ptr->o_name, "{special") || strstr(l_ptr->o_name, "{terrible") || strstr(l_ptr->o_name, "{excellent"))
+	if (strstr(l_ptr->o_name, "{special") || strstr(l_ptr->o_name, "{terrible")
+		|| strstr(l_ptr->o_name, "{excellent"))
 		return (FALSE);
 
 
@@ -184,7 +185,7 @@ bool borg_item_icky(list_item *l_ptr)
 	if (strstr(l_ptr->o_name, "{good"))
 	{
 		int slot;
-	
+
 		/* Obtain the slot of the suspect item */
 		slot = borg_wield_slot(l_ptr);
 
@@ -289,7 +290,8 @@ bool borg_use_things(void)
 					{
 
 						/* Try quaffing the potion */
-						if (borg_quaff_potion(k_info[l_ptr->k_idx].sval)) return (TRUE);
+						if (borg_quaff_potion(k_info[l_ptr->k_idx].sval))
+								return (TRUE);
 
 						break;
 					}
@@ -317,7 +319,8 @@ bool borg_use_things(void)
 						if (!borg_skill[BI_CDEPTH]) break;
 
 						/* Try reading the scroll */
-						if (borg_read_scroll(k_info[l_ptr->k_idx].sval)) return (TRUE);
+						if (borg_read_scroll(k_info[l_ptr->k_idx].sval))
+								return (TRUE);
 						break;
 					}
 				}
@@ -1005,11 +1008,11 @@ static bool borg_enchant_to_h(void)
 		b_i = i;
 		b_a = a;
 	}
-	
+
 	if (weapon_swap > 1)
 	{
 		list_item *l_ptr = &inventory[weapon_swap];
-		
+
 		/* Only identified items */
 		if (l_ptr->info & OB_KNOWN)
 		{
@@ -1022,13 +1025,13 @@ static bool borg_enchant_to_h(void)
 				/* Save the info */
 				b_i = weapon_swap;
 				b_a = s_a;
-		
+
 				/* Item is in inventory */
 				inven = TRUE;
 			}
 		}
 	}
-	
+
 	/* Nothing, check ammo */
 	if (b_i < 0)
 	{
@@ -1066,7 +1069,7 @@ static bool borg_enchant_to_h(void)
 			/* Save the info  */
 			b_i = i;
 			b_a = a;
-			
+
 			/* Item is in inventory */
 			inven = TRUE;
 		}
@@ -1080,7 +1083,7 @@ static bool borg_enchant_to_h(void)
 		borg_read_scroll(SV_SCROLL_STAR_ENCHANT_WEAPON) ||
 		borg_read_scroll(SV_SCROLL_ENCHANT_WEAPON_TO_HIT))
 	{
-		
+
 		if (inven)
 		{
 			/* choose the swap or ammo */
@@ -1111,7 +1114,7 @@ static bool borg_enchant_to_d(void)
 {
 	int i, b_i = -1;
 	int a, s_a, b_a = 99;
-	
+
 	bool inven = FALSE;
 
 
@@ -1154,11 +1157,11 @@ static bool borg_enchant_to_d(void)
 		b_i = i;
 		b_a = a;
 	}
-		
+
 	if (weapon_swap > 1)
 	{
 		list_item *l_ptr = &inventory[weapon_swap];
-		
+
 		/* Only identified items */
 		if (l_ptr->info & OB_KNOWN)
 		{
@@ -1171,13 +1174,13 @@ static bool borg_enchant_to_d(void)
 				/* Save the info */
 				b_i = weapon_swap;
 				b_a = s_a;
-		
+
 				/* Item is in inventory */
 				inven = TRUE;
 			}
 		}
 	}
-	
+
 	/* Nothing, check ammo */
 	if (b_i < 0)
 	{
@@ -1620,7 +1623,8 @@ static bool borg_consume(list_item *l_ptr)
 				{
 
 					/* Try quaffing the potion */
-					if (borg_quaff_potion(k_info[l_ptr->k_idx].sval)) return (TRUE);
+					if (borg_quaff_potion(k_info[l_ptr->k_idx].sval))
+							return (TRUE);
 				}
 			}
 
@@ -1649,7 +1653,8 @@ static bool borg_consume(list_item *l_ptr)
 					/* XXX maybe consume Enchant scrolls on items */
 
 					/* Try reading the scroll */
-					if (borg_read_scroll(k_info[l_ptr->k_idx].sval)) return (TRUE);
+					if (borg_read_scroll(k_info[l_ptr->k_idx].sval))
+							return (TRUE);
 				}
 			}
 
@@ -1703,7 +1708,7 @@ bool borg_crush_junk(void)
 	bool fix = FALSE;
 	s32b p;
 	s32b value;
-	
+
 	/* Hack -- no need */
 	if (!borg_do_crush_junk) return (FALSE);
 
@@ -1728,7 +1733,7 @@ bool borg_crush_junk(void)
 
 		/* save the items value */
 		/* value = item->value; */
-		
+
 		/* Hack - we need to work this out properly */
 		value = 0;
 
@@ -1739,7 +1744,8 @@ bool borg_crush_junk(void)
 		if (l_ptr->tval >= TV_FIGURINE)
 		{
 			/* unknown? */
-			if (!(l_ptr->info & OB_KNOWN) && !strstr(l_ptr->o_name, "{average")) continue;
+			if (!(l_ptr->info & OB_KNOWN) &&
+				!strstr(l_ptr->o_name, "{average")) continue;
 
 #if 0
 
@@ -1748,14 +1754,13 @@ bool borg_crush_junk(void)
 
 			/* if the item gives a bonus to a stat, boost its value */
 			if ((l_ptr->flags1 & TR1_STR) ||
-				 (l_ptr->flags1 & TR1_INT) ||
-				 (l_ptr->flags1 & TR1_WIS) ||
-				 (l_ptr->flags1 & TR1_DEX) ||
-				 (l_ptr->flags1 & TR1_CON))
+				(l_ptr->flags1 & TR1_INT) ||
+				(l_ptr->flags1 & TR1_WIS) ||
+				(l_ptr->flags1 & TR1_DEX) || (l_ptr->flags1 & TR1_CON))
 			{
 				value += 2000L;
 			}
-			
+
 			/* Get sval */
 			sval = k_info[l_ptr->k_idx].sval;
 
@@ -1764,7 +1769,7 @@ bool borg_crush_junk(void)
 				  sval == SV_POTION_RESTORE_MANA) &&
 				 (borg_skill[BI_MAXSP] >= 1)) || (l_ptr->tval == TV_POTION &&
 												  (sval ==
-												  SV_POTION_HEALING)) ||
+												   SV_POTION_HEALING)) ||
 				(l_ptr->tval == TV_POTION &&
 				 sval == SV_POTION_STAR_HEALING) ||
 				(l_ptr->tval == TV_POTION && sval == SV_POTION_LIFE) ||
@@ -1781,14 +1786,14 @@ bool borg_crush_junk(void)
 				(l_ptr->tval == TV_WAND && sval == SV_WAND_ANNIHILATION) ||
 				(l_ptr->tval == TV_SCROLL &&
 				 sval == SV_SCROLL_TELEPORT_LEVEL &&
-				 borg_skill[BI_ATELEPORTLVL] < 1000) || (l_ptr->tval == TV_SCROLL
-														 && sval ==
-														 SV_SCROLL_PROTECTION_FROM_EVIL))
+				 borg_skill[BI_ATELEPORTLVL] < 1000) ||
+				(l_ptr->tval == TV_SCROLL &&
+				 sval == SV_SCROLL_PROTECTION_FROM_EVIL))
 			{
 				value += 5000L;
 			}
 
-			
+
 #endif /* 0 */
 
 			/* Pretend item isn't there */
@@ -1802,13 +1807,13 @@ bool borg_crush_junk(void)
 
 			/* Evaluate the inventory */
 			p = borg_power();
-			
+
 			/* Restore item */
 			l_ptr->treat_as = TREAT_AS_NORM;
 
 			/* Hack - set value */
 			value = my_power - p;
-			
+
 			/* up to level 5, keep anything of any value */
 			if (borg_skill[BI_CDEPTH] < 5 && value > 0)
 				continue;
@@ -1955,15 +1960,14 @@ bool borg_crush_hole(void)
 		if (l_ptr->xtra_name && !(l_ptr->info & OB_MENTAL)) continue;
 		if (strstr(l_ptr->o_name, "{special")) continue;
 		if (strstr(l_ptr->o_name, "{terrible")) continue;
-		
+
 		/* Get sval */
 		sval = k_info[l_ptr->k_idx].sval;
 
 		/* never crush cool stuff that we might be needing later */
 		if ((l_ptr->tval == TV_POTION && sval == SV_POTION_RESTORE_MANA) &&
 			(borg_skill[BI_MAXSP] >= 1)) continue;
-		if ((l_ptr->tval == TV_POTION) &&
-			(sval == SV_POTION_HEALING)) continue;
+		if ((l_ptr->tval == TV_POTION) && (sval == SV_POTION_HEALING)) continue;
 		if ((l_ptr->tval == TV_POTION) &&
 			(sval == SV_POTION_STAR_HEALING)) continue;
 		if (l_ptr->tval == TV_POTION && sval == SV_POTION_LIFE) continue;
@@ -1975,7 +1979,7 @@ bool borg_crush_hole(void)
 		if (l_ptr->tval == TV_SCROLL && sval == SV_SCROLL_TELEPORT_LEVEL &&
 			borg_skill[BI_ATELEPORTLVL] < 1000) continue;
 		if (l_ptr->tval == TV_ROD && (sval == SV_ROD_HEALING ||
-									 sval == SV_ROD_MAPPING) &&
+									  sval == SV_ROD_MAPPING) &&
 			borg_class == CLASS_WARRIOR && l_ptr->number <= 5) continue;
 
 
@@ -1990,7 +1994,7 @@ bool borg_crush_hole(void)
 
 		/* Evaluate the inventory */
 		p = borg_power();
-		
+
 		/* Restore item */
 		l_ptr->treat_as = TREAT_AS_NORM;
 
@@ -2082,7 +2086,7 @@ bool borg_crush_slow(void)
 		if (l_ptr->xtra_name && !(l_ptr->info & OB_MENTAL)) continue;
 		if (strstr(l_ptr->o_name, "{special")) continue;
 		if (strstr(l_ptr->o_name, "{terrible")) continue;
-		
+
 		if (l_ptr->number > 1)
 		{
 			/* Pretend item is less */
@@ -2102,7 +2106,7 @@ bool borg_crush_slow(void)
 
 		/* Evaluate the inventory */
 		p = borg_power();
-		
+
 		/* Restore item */
 		l_ptr->treat_as = TREAT_AS_NORM;
 
@@ -2189,7 +2193,7 @@ bool borg_test_stuff(bool star_id)
 {
 	int i, b_i = -1;
 	s32b v, b_v = -1;
-	
+
 	bool inven = FALSE;
 
 	/* don't ID stuff when you can't recover spent spell point immediately */
@@ -2225,7 +2229,7 @@ bool borg_test_stuff(bool star_id)
 		/* Track it */
 		b_i = i;
 		b_v = 50000L;
-		
+
 		break;
 	}
 
@@ -2251,15 +2255,15 @@ bool borg_test_stuff(bool star_id)
 		/* Identify "good" (and "terrible") items */
 		/* weak pseudo id */
 		if (strstr(l_ptr->o_name, "{good") && (borg_class == CLASS_MAGE ||
-											borg_class == CLASS_PRIEST ||
-											borg_class == CLASS_RANGER)) v = 10000L;
+											   borg_class == CLASS_PRIEST ||
+											   borg_class == CLASS_RANGER)) v =
+				10000L;
 		/* heavy pseudo id */
-		else if (strstr(l_ptr->o_name, "{good") &&
-				 borg_gold < 10000) v = 1000L;
+		else if (strstr(l_ptr->o_name, "{good") && borg_gold < 10000) v = 1000L;
 		else if (strstr(l_ptr->o_name, "{excellent")) v = 20000L;
 		else if (strstr(l_ptr->o_name, "{special")) v = 50000L;
 		else if (strstr(l_ptr->o_name, "{terrible")) v = 50000L;
-		
+
 		/* Hack -- reward "unaware" items */
 		if (!l_ptr->k_idx && !star_id)
 		{
@@ -2362,7 +2366,7 @@ bool borg_test_stuff(bool star_id)
 		/* Track it */
 		b_i = i;
 		b_v = v;
-		
+
 		inven = TRUE;
 	}
 
@@ -2372,7 +2376,7 @@ bool borg_test_stuff(bool star_id)
 		if (inven)
 		{
 			list_item *l_ptr = &inventory[b_i];
-		
+
 			if (star_id)
 			{
 				if (borg_spell(REALM_SORCERY, 1, 7) ||
@@ -2417,7 +2421,7 @@ bool borg_test_stuff(bool star_id)
 					borg_keypress(I2A(b_i));
 
 					borg_keypress(ESCAPE);
-				
+
 					/* Success */
 					return (TRUE);
 				}
@@ -2426,7 +2430,7 @@ bool borg_test_stuff(bool star_id)
 		else
 		{
 			list_item *l_ptr = &equipment[b_i];
-	
+
 			if (star_id)
 			{
 				if (borg_spell(REALM_SORCERY, 1, 7) ||
@@ -2516,9 +2520,6 @@ bool borg_test_stuff(bool star_id)
  */
 bool borg_swap_rings(void)
 {
-	int hole = INVEN_PACK - 1;
-	int icky = INVEN_PACK - 2;
-
 	s32b v1, v2;
 
 	bool fix = FALSE;
@@ -2526,27 +2527,22 @@ bool borg_swap_rings(void)
 	/*** Check conditions ***/
 
 	/* Require two empty slots */
-	if (borg_items[icky].iqty) return (FALSE);
+	if (inven_num > INVEN_PACK - 2) return (FALSE);
 
-	/*apw Forbid if been sitting on level forever */
-	/*    Just come back and work through the loop later */
-	if (borg_t - borg_began > 2000) return (FALSE);
-	if (time_this_panel > 350) return (FALSE);
-
-	if (borg_items[INVEN_LEFT].cursed ||
-		borg_items[INVEN_RIGHT].cursed) return (FALSE);
+	if ((equipment[EQUIP_LEFT].kn_flags3 & TR3_CURSED) ||
+		(equipment[EQUIP_RIGHT].kn_flags3 & TR3_CURSED)) return (FALSE);
 
 	/*** Remove naked "loose" rings ***/
 
 	/* Remove any naked loose ring */
-	if (borg_items[INVEN_LEFT].iqty && !borg_items[INVEN_RIGHT].iqty)
+	if (equipment[EQUIP_LEFT].number && !equipment[EQUIP_RIGHT].number)
 	{
 		/* Log */
 		borg_note("# Taking off naked loose ring.");
 
 		/* Remove it */
 		borg_keypress('t');
-		borg_keypress(I2A(INVEN_LEFT - INVEN_WIELD));
+		borg_keypress(I2A(EQUIP_LEFT));
 
 		/* Success */
 		return (TRUE);
@@ -2555,27 +2551,19 @@ bool borg_swap_rings(void)
 
 	/*** Check conditions ***/
 
+	/*
+	 * Currently this is a major hack.
+	 * We probably should add the rings to the inventory
+	 * in some way.
+	 *
+	 * (The current method only works in the linear approximation)
+	 */
+
 	/* Require "tight" ring */
-	if (!borg_items[INVEN_RIGHT].iqty) return (FALSE);
-
-
-	/* Cannot remove the One Ring */
-	/* if (!borg_items[INVEN_RIGHT].name1 == ART_POWER) return (FALSE); */
-
+	if (!equipment[EQUIP_RIGHT].k_idx) return (FALSE);
 
 	/*** Remove nasty "tight" rings ***/
-
-	/* Save the hole */
-	COPY(&safe_items[hole], &borg_items[hole], borg_item);
-
-	/* Save the ring */
-	COPY(&safe_items[INVEN_LEFT], &borg_items[INVEN_LEFT], borg_item);
-
-	/* Take off the ring */
-	COPY(&borg_items[hole], &borg_items[INVEN_LEFT], borg_item);
-
-	/* Erase left ring */
-	WIPE(&borg_items[INVEN_LEFT], borg_item);
+	equipment[EQUIP_LEFT].treat_as = TREAT_AS_GONE;
 
 	/* Fix later */
 	fix = TRUE;
@@ -2586,26 +2574,11 @@ bool borg_swap_rings(void)
 	/* Evaluate the inventory */
 	v1 = borg_power();
 
-	/* Restore the ring */
-	COPY(&borg_items[INVEN_LEFT], &safe_items[INVEN_LEFT], borg_item);
-
-	/* Restore the hole */
-	COPY(&borg_items[hole], &safe_items[hole], borg_item);
-
+	/* Restore ring */
+	equipment[EQUIP_LEFT].treat_as = TREAT_AS_NORM;
 
 	/*** Consider taking off the "right" ring ***/
-
-	/* Save the hole */
-	COPY(&safe_items[hole], &borg_items[hole], borg_item);
-
-	/* Save the ring */
-	COPY(&safe_items[INVEN_RIGHT], &borg_items[INVEN_RIGHT], borg_item);
-
-	/* Take off the ring */
-	COPY(&borg_items[hole], &borg_items[INVEN_RIGHT], borg_item);
-
-	/* Erase the ring */
-	WIPE(&borg_items[INVEN_RIGHT], borg_item);
+	equipment[EQUIP_RIGHT].treat_as = TREAT_AS_GONE;
 
 	/* Fix later */
 	fix = TRUE;
@@ -2616,12 +2589,8 @@ bool borg_swap_rings(void)
 	/* Evaluate the inventory */
 	v2 = borg_power();
 
-	/* Restore the ring */
-	COPY(&borg_items[INVEN_RIGHT], &safe_items[INVEN_RIGHT], borg_item);
-
-	/* Restore the hole */
-	COPY(&borg_items[hole], &safe_items[hole], borg_item);
-
+	/* Restore ring */
+	equipment[EQUIP_LEFT].treat_as = TREAT_AS_NORM;
 
 	/*** Swap rings if necessary ***/
 
@@ -2636,7 +2605,7 @@ bool borg_swap_rings(void)
 
 		/* Take it off */
 		borg_keypress('t');
-		borg_keypress(I2A(INVEN_RIGHT - INVEN_WIELD));
+		borg_keypress(I2A(INVEN_RIGHT));
 
 		/* Success */
 		return (TRUE);
@@ -2667,71 +2636,49 @@ bool borg_swap_rings(void)
 bool borg_wear_rings(void)
 {
 	int slot;
-	int hole = INVEN_PACK - 1;
 
 	s32b p, b_p = my_power;
 
 	int i, b_i = -1;
 
-	borg_item *item;
+	list_item *l_ptr;
 
 	bool fix = FALSE;
 
 
 	/* Require no rings */
-	if (borg_items[INVEN_LEFT].iqty) return (FALSE);
-	if (borg_items[INVEN_RIGHT].iqty) return (FALSE);
+	if (equipment[EQUIP_LEFT].number) return (FALSE);
+	if (equipment[EQUIP_RIGHT].number) return (FALSE);
 
 	/* Require two empty slots */
-	if (borg_items[hole - 1].iqty) return (FALSE);
-
-	/* hack prevent the swap till you drop loop */
-	if (borg_skill[BI_ISHUNGRY] || borg_skill[BI_ISWEAK]) return (FALSE);
-
-	/*apw Forbid if been sitting on level forever */
-	/*    Just come back and work through the loop later */
-	if (borg_t - borg_began > 2000) return (FALSE);
-	if (time_this_panel > 300) return (FALSE);
+	if (inven_num >= INVEN_PACK - 2) return (FALSE);
 
 	/* Scan inventory */
-	for (i = 0; i < INVEN_PACK; i++)
+	for (i = 0; i < inven_num; i++)
 	{
-		item = &borg_items[i];
+		l_ptr = &inventory[i];
 
+		/* Skip empty / unaware items */
+		if (!item->k_idx) continue;
 
-		/* Skip empty items */
-		if (!item->iqty) continue;
-
-		/* Require "aware" */
-		if (!item->kind) continue;
-
-		/* Require "known" (or average) */
-		if (!item->able && !strstr(item->desc, "{average")) continue;
-
-		/* Hack -- ignore "worthless" items */
-		if (!item->value) continue;
+		/* Not cursed items */
+		if (l_ptr->kn_flags3 & TR3_CURSED) continue;
 
 		/* skip artifact rings not star id'd  */
-		if (!item->fully_identified && item->xtra_name) continue;
+		if ((l_ptr->kn_flags3 & TR3_INSTA_ART) &&
+			!(l_ptr->info & OB_MENTAL)) continue;
 
 		/* Where does it go */
 		slot = borg_wield_slot(l_ptr);
 
 		/* Only process "rings" */
-		if (slot != INVEN_LEFT) continue;
+		if (slot != EQUIP_LEFT) continue;
 
 		/* Occassionally evaluate swapping into the tight finger */
-		if (randint0(100) > 75 /* || item->name1 == ART_POWER */ )
+		if (randint0(100) > 75)
 		{
-			slot = INVEN_RIGHT;
+			slot = EQUIP_RIGHT;
 		}
-#if 0
-		/* Need to be careful not to put the One Ring onto
-		 * the Left Hand
-		 */
-		if (item->name1 == ART_POWER && (borg_items[INVEN_RIGHT].iqty))
-			continue;
-#endif /* 0 */
 
 		/* Save the old item (empty) */
 		COPY(&safe_items[slot], &borg_items[slot], borg_item);

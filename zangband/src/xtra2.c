@@ -3898,86 +3898,85 @@ bool get_hack_dir(int *dp)
  */
 int stat_cap(int stat)
 {
-    int bonus = rp_ptr->r_adj[stat] + cp_ptr->c_adj[stat];
+	int bonus = rp_ptr->r_adj[stat] + cp_ptr->c_adj[stat];
 
-    if (bonus > 12)
-        return 18+220;
-    else if (bonus > -9)
-        return 18+100 + 10 * bonus;
-    else
-        return 18+10;
+	if (bonus > 12)
+		return 18 + 220;
+	else if (bonus > -9)
+		return 18 + 100 + 10 * bonus;
+	else
+		return 18 + 10;
 }
 
 
 int adjust_stat(int stat, int value, int amount, bool fixed)
 {
-    int i;
+	int i;
 
-    int cap = stat_cap(stat);
+	int cap = stat_cap(stat);
 
-    /* Negative amounts */
-    if (amount < 0)
-    {
-        /* Apply penalty */
-        for (i = 0; i < (0 - amount); i++)
-        {
-            if (value >= 18+10)
-            {
-                value -= 10;
-            }
-            else if (value > 18)
-            {
-                value = 18;
-            }
-            else
-            {
-                value--;
-            }
-        }
-    }
+	/* Negative amounts */
+	if (amount < 0)
+	{
+		/* Apply penalty */
+		for (i = 0; i < (0 - amount); i++)
+		{
+			if (value >= 18 + 10)
+			{
+				value -= 10;
+			}
+			else if (value > 18)
+			{
+				value = 18;
+			}
+			else
+			{
+				value--;
+			}
+		}
+	}
 
-    /* Positive amounts */
-    else if (amount > 0)
-    {
-        /* Apply reward */
-        for (i = 0; i < amount; i++)
-        {
+	/* Positive amounts */
+	else if (amount > 0)
+	{
+		/* Apply reward */
+		for (i = 0; i < amount; i++)
+		{
 #if 0
-            if (value < 18)
-            {
-                value++;
-            }
-            else
-            {
-                if (fixed)
-                    value += 10;
-                else
-                    value += rand_range(5, 15);
-            }
-#else /* 0 */
-            if (value < 17)
-            {
-                value++;
-            }
-            else if (value == 17)
-            {
-                if (fixed)
-                    value++;
-                else
-                    value += rand_range(1, 10);
-            }
-            else
-            {
-                value += 10;
-            }
+			if (value < 18)
+			{
+				value++;
+			}
+			else
+			{
+				if (fixed)
+					value += 10;
+				else
+					value += rand_range(5, 15);
+			}
+#else  /* 0 */
+			if (value < 17)
+			{
+				value++;
+			}
+			else if (value == 17)
+			{
+				if (fixed)
+					value++;
+				else
+					value += rand_range(1, 10);
+			}
+			else
+			{
+				value += 10;
+			}
 #endif /* !0 */
-        }
-    }
+		}
+	}
 
-    /* Cap value */
-    if (value > cap) value = cap;
+	/* Cap value */
+	if (value > cap) value = cap;
 
-    /* Return the result */
-    return (value);
+	/* Return the result */
+	return (value);
 }
-

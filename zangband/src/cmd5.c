@@ -100,8 +100,7 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, bool realm_2)
 	window_stuff();
 
 	/* Build a prompt (accept all spells) */
-	(void)strnfmt(out_val, 78, "(%^ss, ESC=exit) %^s which %s? ",
-				  p, prompt, p);
+	(void)strnfmt(out_val, 78, "(%^ss, ESC=exit) %^s which %s? ", p, prompt, p);
 
 	/* Get a spell from the user */
 	while (get_com(out_val, &choice))
@@ -3052,7 +3051,7 @@ void do_cmd_pet(void)
 	Term_save();
 
 	prt("", x, y++);
-	
+
 	/* Show the list */
 	while (ctr < num)
 	{

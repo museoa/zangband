@@ -241,7 +241,7 @@ static s32b price_item(object_type *o_ptr, int greed, bool flip)
 
 	/* Note -- Never become "free" */
 	if (price <= 0L) return (1L);
-	
+
 	/* Hack - save price for object list code */
 	o_ptr->temp_cost = price;
 
@@ -493,7 +493,7 @@ static bool store_check_num(object_type *o_ptr)
 	if (st_ptr->type == BUILD_STORE_HOME)
 	{
 		/* Check all the items */
-		OBJ_ITT_START(st_ptr->stock, j_ptr)
+		OBJ_ITT_START (st_ptr->stock, j_ptr)
 		{
 			/* Can the new object be combined with the old one? */
 			if (object_similar(j_ptr, o_ptr)) return (TRUE);
@@ -505,7 +505,7 @@ static bool store_check_num(object_type *o_ptr)
 	else
 	{
 		/* Check all the items */
-		OBJ_ITT_START(st_ptr->stock, j_ptr)
+		OBJ_ITT_START (st_ptr->stock, j_ptr)
 		{
 			/* Can the new object be combined with the old one? */
 			if (store_object_similar(j_ptr, o_ptr)) return (TRUE);
@@ -640,7 +640,7 @@ static bool reorder_store_comp(object_type *o1_ptr, object_type *o2_ptr)
 
 	/* Objects sort by decreasing value */
 	if (object_value(o1_ptr) > object_value(o2_ptr)) return (TRUE);
-	
+
 	return (FALSE);
 }
 
@@ -661,7 +661,7 @@ static object_type *home_carry(object_type *o_ptr)
 
 
 	/* Check each existing item (try to combine) */
-	OBJ_ITT_START(st_ptr->stock, j_ptr)
+	OBJ_ITT_START (st_ptr->stock, j_ptr)
 	{
 		/* The home acts just like the player */
 		if (object_similar(j_ptr, o_ptr))
@@ -680,7 +680,7 @@ static object_type *home_carry(object_type *o_ptr)
 
 	/* Add the item to the store */
 	o_ptr = add_object_list(&st_ptr->stock, o_ptr);
-	
+
 	/* Forget location */
 	o_ptr->iy = o_ptr->ix = 0;
 
@@ -725,7 +725,7 @@ static object_type *store_carry(object_type *o_ptr)
 	/* Identify it fully */
 	object_known(o_ptr);
 	object_mental(o_ptr);
-	
+
 	/* Save all the known flags */
 	o_ptr->kn_flags1 = o_ptr->flags1;
 	o_ptr->kn_flags2 = o_ptr->flags2;
@@ -738,7 +738,7 @@ static object_type *store_carry(object_type *o_ptr)
 	o_ptr->feeling = FEEL_NONE;
 
 	/* Check each existing item (try to combine) */
-	OBJ_ITT_START(st_ptr->stock, j_ptr)
+	OBJ_ITT_START (st_ptr->stock, j_ptr)
 	{
 		/* Can the existing items be incremented? */
 		if (store_object_similar(j_ptr, o_ptr))
@@ -754,10 +754,10 @@ static object_type *store_carry(object_type *o_ptr)
 
 	/* No space? */
 	if (get_list_length(st_ptr->stock) >= st_ptr->max_stock) return (NULL);
-	
+
 	/* Add the item to the store */
 	o_ptr = add_object_list(&st_ptr->stock, o_ptr);
-	
+
 	/* Forget location */
 	o_ptr->iy = o_ptr->ix = 0;
 
@@ -786,7 +786,7 @@ static void store_delete(void)
 
 	/* Pick a random slot */
 	what = randint0(get_list_length(st_ptr->stock));
-	
+
 	/* Get the item */
 	o_ptr = get_list_item(st_ptr->stock, what);
 
@@ -803,8 +803,7 @@ static void store_delete(void)
 	 * Hack -- decrement the maximum timeouts and
 	 * total charges of rods and wands. -LM-
 	 */
-	if ((o_ptr->tval == TV_ROD) ||
-		(o_ptr->tval == TV_WAND))
+	if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
 	{
 		o_ptr->pval -= num * o_ptr->pval / o_ptr->number;
 	}
@@ -919,10 +918,10 @@ static void store_create(void)
 static void display_entry(int pos)
 {
 	int i;
-	
+
 	/* Get the object */
 	object_type *o_ptr = get_list_item(st_ptr->stock, pos);
-	
+
 	s32b x;
 
 	char o_name[256];
@@ -1022,9 +1021,9 @@ static void display_entry(int pos)
 static void display_inventory(int store_top)
 {
 	int i, k;
-	
+
 	int stocknum = get_list_length(st_ptr->stock);
-	
+
 	/* Display the next 12 items */
 	for (k = 0; k < 12; k++)
 	{
@@ -1225,7 +1224,7 @@ static void store_maint(void)
 static void store_shuffle(store_type *st_ptr)
 {
 	int j;
-	
+
 	object_type *o_ptr;
 
 	/* Ignore home + locker */
@@ -1241,7 +1240,7 @@ static void store_shuffle(store_type *st_ptr)
 	st_ptr->data = 0;
 
 	/* Hack -- discount all the items */
-	OBJ_ITT_START(st_ptr->stock, o_ptr)
+	OBJ_ITT_START (st_ptr->stock, o_ptr)
 	{
 		/* Hack -- Sell all old items for "half price" */
 		if (!(o_ptr->xtra_name))
@@ -1290,7 +1289,7 @@ static int get_stock(int *com_val, cptr pmt, int maxobj)
 
 	/* Build the prompt */
 	(void)sprintf(out_val, "(Items a-%c, ESC to exit) %s",
-			 I2A(maxobj - 1), pmt);
+				  I2A(maxobj - 1), pmt);
 
 	/* Ask until done */
 	while (TRUE)
@@ -1336,21 +1335,21 @@ static bool store_access_item(object_type *o_ptr, s32b price, bool buy)
 		/* Describe the object (fully) */
 		object_desc_store(o_name, o_ptr, TRUE, 3, 256);
 	}
-	else 
+	else
 	{
 		/* Describe the object (only what we know) */
 		object_desc(o_name, o_ptr, TRUE, 3, 256);
 	}
-	
+
 	(void)sprintf(out_val, "%s %s, offer :  %ld",
-				  (buy) ? "Buying" : "Selling", o_name, (long) price);
+				  (buy) ? "Buying" : "Selling", o_name, (long)price);
 	put_str(out_val, 0, 1);
-	
+
 	(void)sprintf(out_val, "Do you want to %s it? ", (buy) ? "buy" : "sell");
-	
+
 	/* Ask the user for a response */
 	if (!get_check(out_val)) return (FALSE);
-	
+
 
 	/* Chose to make transaction */
 	return (TRUE);
@@ -1467,7 +1466,7 @@ static void store_purchase(int *store_top)
 	{
 		/* Get price */
 		price = price_item(j_ptr, ot_ptr->min_inflate, FALSE) * amt;
-		
+
 		/* Player can afford it */
 		if (p_ptr->au < price)
 		{
@@ -1578,7 +1577,7 @@ static void store_purchase(int *store_top)
 				{
 					*store_top -= 12;
 				}
-				
+
 				/* Redraw everything */
 				display_inventory(*store_top);
 			}
@@ -1637,7 +1636,7 @@ static void store_purchase(int *store_top)
 			{
 				*store_top -= 12;
 			}
-			
+
 			/* Redraw everything */
 			display_inventory(*store_top);
 
@@ -1775,7 +1774,7 @@ static void store_sell(int *store_top)
 	{
 		/* Get price */
 		price = price_item(q_ptr, ot_ptr->min_inflate, FALSE) * amt;
-	
+
 		/* Sold... */
 		if (store_access_item(q_ptr, price, FALSE))
 		{
@@ -1877,7 +1876,7 @@ static void store_sell(int *store_top)
 
 		/* Let the home carry it */
 		q_ptr = home_carry(q_ptr);
-		
+
 		/* Get position */
 		item_pos = get_item_position(st_ptr->stock, q_ptr);
 
@@ -2413,7 +2412,7 @@ void do_cmd_store(field_type *f1_ptr)
 
 	/* Save the store pointer */
 	st_ptr = get_current_store();
-	
+
 	/* Paranoia */
 	if (!st_ptr) return;
 

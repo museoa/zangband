@@ -39,7 +39,7 @@ void borg_list_info(byte list_type)
 		{
 			/* Notice changes */
 			borg_notice(TRUE);
-		
+
 			/* inventory changed so goals must change. */
 			goal_shop = goal_ware = goal_item = -1;
 
@@ -49,43 +49,43 @@ void borg_list_info(byte list_type)
 			borg_do_crush_slow = TRUE;
 			break;
 		}
-		
+
 		case LIST_EQUIP:
 		{
 			/* Notice changes */
 			borg_notice(TRUE);
-			
+
 			goal_shop = goal_ware = goal_item = -1;
 
 			/* Note changed inventory */
 			borg_do_crush_junk = TRUE;
 			borg_do_crush_hole = TRUE;
 			borg_do_crush_slow = TRUE;
-		
+
 			break;
 		}
-	
+
 		case LIST_FLOOR:
 		{
 			/* Notice changes */
 			borg_notice(TRUE);
-			
+
 			break;
 		}
-		
+
 		case LIST_STORE_BUY:
 		{
-		
+
 			break;
 		}
-		
+
 		case LIST_STORE_SELL:
 		{
-		
+
 			break;
 		}
 	}
-	
+
 	/* Finally - chain into the old hook, if it exists */
 	if (old_list_hook) old_list_hook(list_type);
 }
@@ -142,7 +142,7 @@ void borg_list_info(byte list_type)
 static void borg_notice_player(void)
 {
 	u32b f1, f2, f3;
-	
+
 	/* Recalc some Variables */
 	borg_skill[BI_ARMOR] = 0;
 	borg_skill[BI_SPEED] = 110;
@@ -236,14 +236,14 @@ static void borg_notice_player(void)
 	if (f2 & (TR2_SUST_DEX)) borg_skill[BI_SDEX] = TRUE;
 	if (f2 & (TR2_SUST_CON)) borg_skill[BI_SCON] = TRUE;
 	if (f2 & (TR2_SUST_CHR)) borg_skill[BI_SCHR] = TRUE;
-	
+
 	/* Hack -- Reward High Level Warriors with Res Fear */
 	if (borg_class == CLASS_WARRIOR)
 	{
 		/* Resist fear at level 30 */
 		if (borg_skill[BI_CLEVEL] >= 30) borg_skill[BI_RFEAR] = TRUE;
 	}
-	
+
 	/* Bloating slows the player down (a little) */
 	if (borg_skill[BI_ISGORGED]) borg_skill[BI_SPEED] -= 10;
 }
@@ -252,7 +252,8 @@ static void borg_notice_player(void)
 /*
  * Notice the effects of equipment
  */
-static void borg_notice_equip(int *extra_blows, int *extra_shots, int *extra_might)
+static void borg_notice_equip(int *extra_blows, int *extra_shots,
+                              int *extra_might)
 {
 	int i;
 
@@ -262,7 +263,7 @@ static void borg_notice_equip(int *extra_blows, int *extra_shots, int *extra_mig
 	for (i = 0; i < equip_num; i++)
 	{
 		l_ptr = &equipment[i];
-		
+
 		/* Pretend item isn't there */
 		if (l_ptr->treat_as == TREAT_AS_GONE) continue;
 
@@ -318,14 +319,16 @@ static void borg_notice_equip(int *extra_blows, int *extra_shots, int *extra_mig
 		if (l_ptr->kn_flags1 & TR1_STEALTH) borg_skill[BI_STL] += l_ptr->pval;
 
 		/* Affect searching ability (factor of five) */
-		if (l_ptr->kn_flags1 & TR1_SEARCH) borg_skill[BI_SRCH] += l_ptr->pval * 5;
+		if (l_ptr->kn_flags1 & TR1_SEARCH) borg_skill[BI_SRCH] +=
+				l_ptr->pval * 5;
 
 		/* Affect searching frequency (factor of five) */
 		if (l_ptr->kn_flags1 & TR1_SEARCH) borg_skill[BI_SRCHFREQ] +=
 				(l_ptr->pval * 5);
 
 		/* Affect digging (factor of 20) */
-		if (l_ptr->kn_flags1 & TR1_TUNNEL) borg_skill[BI_DIG] += l_ptr->pval * 20;
+		if (l_ptr->kn_flags1 & TR1_TUNNEL) borg_skill[BI_DIG] +=
+				l_ptr->pval * 20;
 
 		/* Affect speed */
 		if (l_ptr->kn_flags1 & TR1_SPEED) borg_skill[BI_SPEED] += l_ptr->pval;
@@ -505,7 +508,7 @@ static void borg_notice_stats(void)
 static void borg_notice_shooter(int hold, int extra_might, int extra_shots)
 {
 	list_item *l_ptr;
-	
+
 	/* Start with a single shot per turn */
 	int my_num_fire = 1;
 
@@ -528,7 +531,7 @@ static void borg_notice_shooter(int hold, int extra_might, int extra_shots)
 	borg_skill[BI_BTOHIT] = l_ptr->to_h;
 	if (borg_skill[BI_BTOHIT] < 8 && borg_skill[BI_CLEVEL] >= 25)
 		borg_skill[BI_BTOHIT] = 8;
-		
+
 	borg_skill[BI_BTODAM] = l_ptr->to_d;
 	if (borg_skill[BI_BTODAM] < 8 && borg_skill[BI_CLEVEL] >= 25)
 		borg_skill[BI_BTODAM] = 8;
@@ -537,7 +540,7 @@ static void borg_notice_shooter(int hold, int extra_might, int extra_shots)
 	if (hold < l_ptr->weight / 10)
 	{
 		borg_skill[BI_HEAVYBOW] = TRUE;
-		
+
 		/* Hard to wield a heavy bow */
 		borg_skill[BI_TOHIT] += 2 * (hold - l_ptr->weight / 10);
 	}
@@ -1052,7 +1055,7 @@ static void borg_notice_lite(void)
 
 	/* Glowing player has light */
 	if (borg_skill[BI_LITE]) borg_skill[BI_CUR_LITE] = 1;
-	
+
 	/* Vampires that do not Resist Light are in trouble */
 	if (borg_race == RACE_VAMPIRE && !borg_skill[BI_RLITE])
 		borg_skill[BI_FEAR_LITE] = TRUE;
@@ -1061,7 +1064,7 @@ static void borg_notice_lite(void)
 	if (l_ptr->tval == TV_LITE)
 	{
 		object_kind *k_ptr = &k_info[l_ptr->k_idx];
-	
+
 		/* Torches -- radius one */
 		if (k_ptr->sval == SV_LITE_TORCH) borg_skill[BI_CUR_LITE] = 1;
 
@@ -1106,13 +1109,13 @@ static void borg_notice_aux1(void)
 
 	/* Notice player flags */
 	borg_notice_player();
-	
+
 	/* Clear the stat modifiers */
 	for (i = 0; i < 6; i++) my_stat_add[i] = 0;
 
 	/* Notice equipment */
 	borg_notice_equip(&extra_blows, &extra_shots, &extra_might);
-	
+
 	/* Recalculate the stats */
 	borg_notice_stats();
 
@@ -1121,7 +1124,7 @@ static void borg_notice_aux1(void)
 
 	/* Examine ranged weapon */
 	borg_notice_shooter(hold, extra_might, extra_shots);
-	
+
 	/* Examine melee weapon */
 	borg_notice_weapon(hold, extra_blows);
 
@@ -1254,8 +1257,7 @@ static void borg_notice_potions(list_item *l_ptr, int number)
 		}
 		case SV_POTION_CURE_LIGHT:
 		{
-			if (borg_skill[BI_ISCUT]) borg_skill[BI_ACSW] +=
-					number;
+			if (borg_skill[BI_ISCUT]) borg_skill[BI_ACSW] += number;
 			break;
 		}
 		case SV_POTION_CURE_POISON:
@@ -1358,7 +1360,7 @@ static void borg_notice_potions(list_item *l_ptr, int number)
 static void borg_notice_scrolls(list_item *l_ptr, int number)
 {
 	int sval = k_info[l_ptr->k_idx].sval;
-	
+
 	/* Analyze the scroll */
 	switch (sval)
 	{
@@ -1444,7 +1446,7 @@ static void borg_notice_rods(list_item *l_ptr, int number)
 {
 	object_kind *k_ptr = &k_info[l_ptr->k_idx];
 	int sval = k_ptr->sval;
-	
+
 	/* Analyze */
 	switch (sval)
 	{
@@ -1549,7 +1551,7 @@ static void borg_notice_staves(list_item *l_ptr, int number)
 		/* skip these */
 		return;
 	}
-	
+
 	/* Analyze */
 	switch (sval)
 	{
@@ -1603,24 +1605,24 @@ static void borg_notice_staves(list_item *l_ptr, int number)
 static void borg_notice_inven(void)
 {
 	list_item *l_ptr;
-	
+
 	int i;
-	
+
 	int number;
 
 	/* Scan the inventory */
 	for (i = 0; i < inven_num; i++)
 	{
 		object_kind *k_ptr;
-	
+
 		l_ptr = &inventory[i];
-		
+
 		/* Pretend item isn't there */
 		if (l_ptr->treat_as == TREAT_AS_GONE) continue;
 
 		/* Skip empty / unaware items */
 		if (!l_ptr->k_idx) continue;
-		
+
 		if (l_ptr->treat_as == TREAT_AS_LESS)
 		{
 			/* Pretend we have less items */
@@ -1630,10 +1632,10 @@ static void borg_notice_inven(void)
 		{
 			number = l_ptr->number;
 		}
-		
+
 		/* count up the items on the borg */
 		borg_has[l_ptr->k_idx] += number;
-			
+
 		/* Keep track of weight */
 		borg_skill[BI_ENCUMBERD] += l_ptr->weight * number;
 
@@ -2024,10 +2026,10 @@ static void borg_notice_aux2(void)
 	if (borg_spell_legal_fail(REALM_ARCANE, 3, 6, 40) ||
 		borg_spell_legal_fail(REALM_SORCERY, 2, 7, 40) ||
 		borg_spell_legal_fail(REALM_TRUMP, 1, 6, 40) ||
-		((borg_skill[BI_CDEPTH] == 100) && (borg_spell_legal(REALM_LIFE, 3, 6) ||
-										  borg_spell_legal(REALM_SORCERY, 2, 7)
-										  || borg_spell_legal(REALM_TRUMP, 1,
-															  6))))
+		((borg_skill[BI_CDEPTH] == 100) &&
+		 (borg_spell_legal(REALM_LIFE, 3, 6) ||
+		  borg_spell_legal(REALM_SORCERY, 2, 7) ||
+		  borg_spell_legal(REALM_TRUMP, 1, 6))))
 	{
 		borg_skill[BI_RECALL] += 1000;
 	}
@@ -2075,7 +2077,9 @@ static void borg_notice_aux2(void)
 	}
 
 	/* speed spells */
-	if (borg_spell_legal(REALM_SORCERY, 1, 5) || borg_spell_legal(REALM_DEATH, 2, 3) || borg_mindcr_legal(MIND_ADRENALINE, 35))
+	if (borg_spell_legal(REALM_SORCERY, 1, 5) ||
+		borg_spell_legal(REALM_DEATH, 2, 3) ||
+		borg_mindcr_legal(MIND_ADRENALINE, 35))
 	{
 		borg_skill[BI_ASPEED] += 1000;
 	}
@@ -2107,7 +2111,7 @@ static void borg_notice_aux2(void)
 
 	/* No need for fuel */
 	if (equipment[EQUIP_LITE].kn_flags3 & TR3_LITE)
-		 borg_skill[BI_AFUEL] += 1000;
+		borg_skill[BI_AFUEL] += 1000;
 
 	/* No need to *buy* stat increase potions */
 	if (my_stat_cur[A_STR] >= (18 + 100) + 10 *
@@ -2201,7 +2205,7 @@ static void borg_notice_weapon_swap(void)
 		v = -1L;
 		dam = 0;
 		damage = 0;
-		
+
 		/* Pretend item isn't there */
 		if (l_ptr->treat_as == TREAT_AS_GONE) continue;
 
@@ -2292,22 +2296,24 @@ static void borg_notice_weapon_swap(void)
 				}
 
 				/* various slays */
-				if (l_ptr->kn_flags1 & TR1_SLAY_ANIMAL) weapon_swap_slay_animal =
+				if (l_ptr->
+					kn_flags1 & TR1_SLAY_ANIMAL) weapon_swap_slay_animal = TRUE;
+				if (l_ptr->kn_flags1 & TR1_SLAY_EVIL) weapon_swap_slay_evil =
 						TRUE;
-				if (l_ptr->kn_flags1 & TR1_SLAY_EVIL) weapon_swap_slay_evil = TRUE;
-				if (l_ptr->kn_flags1 & TR1_SLAY_UNDEAD) weapon_swap_slay_undead =
-						TRUE;
+				if (l_ptr->
+					kn_flags1 & TR1_SLAY_UNDEAD) weapon_swap_slay_undead = TRUE;
 				if (l_ptr->kn_flags1 & TR1_SLAY_DEMON) weapon_swap_slay_demon =
 						TRUE;
-				if (l_ptr->kn_flags1 & TR1_SLAY_ORC) weapon_swap_slay_orc = TRUE;
+				if (l_ptr->kn_flags1 & TR1_SLAY_ORC) weapon_swap_slay_orc =
+						TRUE;
 				if (l_ptr->kn_flags1 & TR1_SLAY_TROLL) weapon_swap_slay_troll =
 						TRUE;
 				if (l_ptr->kn_flags1 & TR1_SLAY_GIANT) weapon_swap_slay_giant =
 						TRUE;
-				if (l_ptr->kn_flags1 & TR1_SLAY_DRAGON) weapon_swap_slay_dragon =
-						TRUE;
-				if (l_ptr->kn_flags1 & TR1_KILL_DRAGON) weapon_swap_kill_dragon =
-						TRUE;
+				if (l_ptr->
+					kn_flags1 & TR1_SLAY_DRAGON) weapon_swap_slay_dragon = TRUE;
+				if (l_ptr->
+					kn_flags1 & TR1_KILL_DRAGON) weapon_swap_kill_dragon = TRUE;
 				if (l_ptr->kn_flags1 & TR1_IMPACT) weapon_swap_impact = TRUE;
 				if (l_ptr->kn_flags1 & TR1_BRAND_ACID) weapon_swap_brand_acid =
 						TRUE;
@@ -2325,17 +2331,23 @@ static void borg_notice_weapon_swap(void)
 				/* Affect speed */
 
 				/* Various flags */
-				if (l_ptr->kn_flags3 & TR3_SLOW_DIGEST) weapon_swap_slow_digest =
+				if (l_ptr->
+					kn_flags3 & TR3_SLOW_DIGEST) weapon_swap_slow_digest = TRUE;
+				if (l_ptr->kn_flags3 & TR3_AGGRAVATE) weapon_swap_aggravate =
 						TRUE;
-				if (l_ptr->kn_flags3 & TR3_AGGRAVATE) weapon_swap_aggravate = TRUE;
-				if (l_ptr->kn_flags3 & TR3_TELEPORT) weapon_swap_teleport = TRUE;
+				if (l_ptr->kn_flags3 & TR3_TELEPORT) weapon_swap_teleport =
+						TRUE;
 				if (l_ptr->kn_flags3 & TR3_REGEN) weapon_swap_regenerate = TRUE;
-				if (l_ptr->kn_flags3 & TR3_TELEPATHY) weapon_swap_telepathy = TRUE;
+				if (l_ptr->kn_flags3 & TR3_TELEPATHY) weapon_swap_telepathy =
+						TRUE;
 				if (l_ptr->kn_flags3 & TR3_LITE) weapon_swap_lite = TRUE;
-				if (l_ptr->kn_flags3 & TR3_SEE_INVIS) weapon_swap_see_invis = TRUE;
+				if (l_ptr->kn_flags3 & TR3_SEE_INVIS) weapon_swap_see_invis =
+						TRUE;
 				if (l_ptr->kn_flags3 & TR3_FEATHER) weapon_swap_ffall = TRUE;
-				if (l_ptr->kn_flags2 & TR2_FREE_ACT) weapon_swap_free_act = TRUE;
-				if (l_ptr->kn_flags2 & TR2_HOLD_LIFE) weapon_swap_hold_life = TRUE;
+				if (l_ptr->kn_flags2 & TR2_FREE_ACT) weapon_swap_free_act =
+						TRUE;
+				if (l_ptr->kn_flags2 & TR2_HOLD_LIFE) weapon_swap_hold_life =
+						TRUE;
 
 				/* Immunity flags */
 				if (l_ptr->kn_flags2 & TR2_IM_FIRE)
@@ -2360,22 +2372,30 @@ static void borg_notice_weapon_swap(void)
 				}
 
 				/* Resistance flags */
-				if (l_ptr->kn_flags2 & TR2_RES_ACID) weapon_swap_resist_acid = TRUE;
-				if (l_ptr->kn_flags2 & TR2_RES_ELEC) weapon_swap_resist_elec = TRUE;
-				if (l_ptr->kn_flags2 & TR2_RES_FIRE) weapon_swap_resist_fire = TRUE;
-				if (l_ptr->kn_flags2 & TR2_RES_COLD) weapon_swap_resist_cold = TRUE;
-				if (l_ptr->kn_flags2 & TR2_RES_POIS) weapon_swap_resist_pois = TRUE;
-				if (l_ptr->kn_flags2 & TR2_RES_CONF) weapon_swap_resist_conf = TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_ACID) weapon_swap_resist_acid =
+						TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_ELEC) weapon_swap_resist_elec =
+						TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_FIRE) weapon_swap_resist_fire =
+						TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_COLD) weapon_swap_resist_cold =
+						TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_POIS) weapon_swap_resist_pois =
+						TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_CONF) weapon_swap_resist_conf =
+						TRUE;
 				if (l_ptr->kn_flags2 & TR2_RES_SOUND) weapon_swap_resist_sound =
 						TRUE;
-				if (l_ptr->kn_flags2 & TR2_RES_LITE) weapon_swap_resist_lite = TRUE;
-				if (l_ptr->kn_flags2 & TR2_RES_DARK) weapon_swap_resist_dark = TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_LITE) weapon_swap_resist_lite =
+						TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_DARK) weapon_swap_resist_dark =
+						TRUE;
 				if (l_ptr->kn_flags2 & TR2_RES_CHAOS) weapon_swap_resist_chaos =
 						TRUE;
 				if (l_ptr->kn_flags2 & TR2_RES_DISEN) weapon_swap_resist_disen =
 						TRUE;
-				if (l_ptr->kn_flags2 & TR2_RES_SHARDS) weapon_swap_resist_shard =
-						TRUE;
+				if (l_ptr->
+					kn_flags2 & TR2_RES_SHARDS) weapon_swap_resist_shard = TRUE;
 				if (l_ptr->kn_flags2 & TR2_RES_NEXUS) weapon_swap_resist_nexus =
 						TRUE;
 				if (l_ptr->kn_flags2 & TR2_RES_BLIND) weapon_swap_resist_blind =
@@ -2404,11 +2424,11 @@ static void borg_notice_weapon_swap(void)
 
 				/* assume 2x base damage for x% of creatures */
 				dam = damage * 2 * borg_skill[BI_BLOWS];
-				
+
 				/* rewared SAnimal if no electric brand */
 				if (!borg_skill[BI_WS_ANIMAL] && !borg_skill[BI_WB_ELEC] &&
 					weapon_swap_slay_animal) v += (dam * 2) / 2;
-				
+
 				if (!borg_skill[BI_WS_EVIL] &&
 					weapon_swap_slay_evil) v += (dam * 7) / 2;
 
@@ -2556,7 +2576,7 @@ static void borg_notice_weapon_swap(void)
 	 * Now that we know who the best swap is lets set our swap
 	 * flags and get a move on
 	 */
-	
+
 	/*** Process the best inven item ***/
 
 	l_ptr = &inventory[b_i];
@@ -2741,7 +2761,7 @@ static void borg_notice_armour_swap(void)
 
 		/* Pretend item isn't there */
 		if (l_ptr->treat_as == TREAT_AS_GONE) continue;
-		
+
 		/* Skip empty / unaware items */
 		if (!l_ptr->k_idx) continue;
 
@@ -2817,17 +2837,23 @@ static void borg_notice_armour_swap(void)
 						l_ptr->pval;
 
 				/* Various flags */
-				if (l_ptr->kn_flags3 & TR3_SLOW_DIGEST) armour_swap_slow_digest =
+				if (l_ptr->
+					kn_flags3 & TR3_SLOW_DIGEST) armour_swap_slow_digest = TRUE;
+				if (l_ptr->kn_flags3 & TR3_AGGRAVATE) armour_swap_aggravate =
 						TRUE;
-				if (l_ptr->kn_flags3 & TR3_AGGRAVATE) armour_swap_aggravate = TRUE;
-				if (l_ptr->kn_flags3 & TR3_TELEPORT) armour_swap_teleport = TRUE;
+				if (l_ptr->kn_flags3 & TR3_TELEPORT) armour_swap_teleport =
+						TRUE;
 				if (l_ptr->kn_flags3 & TR3_REGEN) armour_swap_regenerate = TRUE;
-				if (l_ptr->kn_flags3 & TR3_TELEPATHY) armour_swap_telepathy = TRUE;
+				if (l_ptr->kn_flags3 & TR3_TELEPATHY) armour_swap_telepathy =
+						TRUE;
 				if (l_ptr->kn_flags3 & TR3_LITE) armour_swap_lite = TRUE;
-				if (l_ptr->kn_flags3 & TR3_SEE_INVIS) armour_swap_see_invis = TRUE;
+				if (l_ptr->kn_flags3 & TR3_SEE_INVIS) armour_swap_see_invis =
+						TRUE;
 				if (l_ptr->kn_flags3 & TR3_FEATHER) armour_swap_ffall = TRUE;
-				if (l_ptr->kn_flags2 & TR2_FREE_ACT) armour_swap_free_act = TRUE;
-				if (l_ptr->kn_flags2 & TR2_HOLD_LIFE) armour_swap_hold_life = TRUE;
+				if (l_ptr->kn_flags2 & TR2_FREE_ACT) armour_swap_free_act =
+						TRUE;
+				if (l_ptr->kn_flags2 & TR2_HOLD_LIFE) armour_swap_hold_life =
+						TRUE;
 
 				/* Immunity flags */
 				if (l_ptr->kn_flags2 & TR2_IM_FIRE)
@@ -2852,22 +2878,30 @@ static void borg_notice_armour_swap(void)
 				}
 
 				/* Resistance flags */
-				if (l_ptr->kn_flags2 & TR2_RES_ACID) armour_swap_resist_acid = TRUE;
-				if (l_ptr->kn_flags2 & TR2_RES_ELEC) armour_swap_resist_elec = TRUE;
-				if (l_ptr->kn_flags2 & TR2_RES_FIRE) armour_swap_resist_fire = TRUE;
-				if (l_ptr->kn_flags2 & TR2_RES_COLD) armour_swap_resist_cold = TRUE;
-				if (l_ptr->kn_flags2 & TR2_RES_POIS) armour_swap_resist_pois = TRUE;
-				if (l_ptr->kn_flags2 & TR2_RES_CONF) armour_swap_resist_conf = TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_ACID) armour_swap_resist_acid =
+						TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_ELEC) armour_swap_resist_elec =
+						TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_FIRE) armour_swap_resist_fire =
+						TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_COLD) armour_swap_resist_cold =
+						TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_POIS) armour_swap_resist_pois =
+						TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_CONF) armour_swap_resist_conf =
+						TRUE;
 				if (l_ptr->kn_flags2 & TR2_RES_SOUND) armour_swap_resist_sound =
 						TRUE;
-				if (l_ptr->kn_flags2 & TR2_RES_LITE) armour_swap_resist_lite = TRUE;
-				if (l_ptr->kn_flags2 & TR2_RES_DARK) armour_swap_resist_dark = TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_LITE) armour_swap_resist_lite =
+						TRUE;
+				if (l_ptr->kn_flags2 & TR2_RES_DARK) armour_swap_resist_dark =
+						TRUE;
 				if (l_ptr->kn_flags2 & TR2_RES_CHAOS) armour_swap_resist_chaos =
 						TRUE;
 				if (l_ptr->kn_flags2 & TR2_RES_DISEN) armour_swap_resist_disen =
 						TRUE;
-				if (l_ptr->kn_flags2 & TR2_RES_SHARDS) armour_swap_resist_shard =
-						TRUE;
+				if (l_ptr->
+					kn_flags2 & TR2_RES_SHARDS) armour_swap_resist_shard = TRUE;
 				if (l_ptr->kn_flags2 & TR2_RES_NEXUS) armour_swap_resist_nexus =
 						TRUE;
 				if (l_ptr->kn_flags2 & TR2_RES_BLIND) armour_swap_resist_blind =
@@ -2944,17 +2978,17 @@ static void borg_notice_armour_swap(void)
 					armour_swap_resist_disen) v += 100000L;
 			}
 
-			/* skip usless ones */
-			if (v <= 1000) continue;
+				/* skip usless ones */
+				if (v <= 1000) continue;
 
-			/* collect the best one */
-			if ((b_i >= 0) && (v < b_v)) continue;
+				/* collect the best one */
+				if ((b_i >= 0) && (v < b_v)) continue;
 
-			/* track it */
-			b_i = i;
-			b_v = v;
-			armour_swap_value = v;
-			armour_swap = i;
+				/* track it */
+				b_i = i;
+				b_v = v;
+				armour_swap_value = v;
+				armour_swap = i;
 		}
 	}
 
@@ -2962,7 +2996,7 @@ static void borg_notice_armour_swap(void)
 	 * Now that we know who the best swap is lets set our swap
 	 * flags and get a move on
 	 */
-	
+
 	/*** Process the best inven item ***/
 
 	l_ptr = &inventory[b_i];
@@ -4349,8 +4383,8 @@ static void borg_notice_home_aux2(borg_item *in_item, bool no_items)
 void borg_notice_home(list_item *l_ptr, bool no_items)
 {
 	/* Hack - ignore parameters */
-	(void) l_ptr;
-	(void) no_items;
+	(void)l_ptr;
+	(void)no_items;
 
 #if 0
 	/* Notice the home equipment */
@@ -4516,7 +4550,8 @@ static s32b borg_power_aux3(void)
 	value += (borg_skill[BI_SHOTS] * damage * 9L);
 
 	/* AJG - slings force you to carry heavy ammo.  Penalty for that unles you have lots of str  */
-	if (k_info[l_ptr->k_idx].sval == SV_SLING && !l_ptr->xtra_name && my_stat_ind[A_STR] < 14)
+	if (k_info[l_ptr->k_idx].sval == SV_SLING && !l_ptr->xtra_name &&
+		my_stat_ind[A_STR] < 14)
 	{
 		value -= 5000L;
 	}
@@ -5554,7 +5589,7 @@ static s32b borg_power_aux4(void)
 	{
 		value += 400L * 5;
 	}
-	
+
 	/* Return the value */
 	return (value);
 }

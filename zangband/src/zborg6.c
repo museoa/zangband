@@ -620,7 +620,7 @@ bool borg_recall(void)
 static bool borg_eat_food_any(void)
 {
 	int i;
-	
+
 	list_item *l_ptr;
 	object_kind *k_ptr;
 
@@ -640,7 +640,7 @@ static bool borg_eat_food_any(void)
 
 		/* Skip non-food */
 		if (l_ptr->tval != TV_FOOD) continue;
-		
+
 		/* Get kind */
 		k_ptr = &k_info[l_ptr->k_idx];
 
@@ -661,7 +661,7 @@ static bool borg_eat_food_any(void)
 
 		/* Skip non-food */
 		if (l_ptr->tval != TV_FOOD) continue;
-		
+
 		/* Get kind */
 		k_ptr = &k_info[l_ptr->k_idx];
 
@@ -682,7 +682,7 @@ static bool borg_eat_food_any(void)
 
 		/* Skip non-potion */
 		if (l_ptr->tval != TV_POTION) continue;
-		
+
 		/* Consume in order, when hurting */
 		if (borg_skill[BI_CURHP] < 4 &&
 			(borg_quaff_potion(SV_POTION_CURE_LIGHT) ||
@@ -2089,8 +2089,8 @@ static bool borg_heal(int danger)
 		{
 			/* check my skill, drink a potion */
 			if ((borg_skill[BI_DEV] -
-				 k_info[borg_slot(TV_STAFF, SV_STAFF_TELEPORTATION)->k_idx].level >
-				 7) && (danger < (avoidance + 35) * 15 / 10) &&
+				 k_info[borg_slot(TV_STAFF, SV_STAFF_TELEPORTATION)->k_idx].
+				 level > 7) && (danger < (avoidance + 35) * 15 / 10) &&
 				(borg_quaff_crit(FALSE) ||
 				 borg_quaff_potion(SV_POTION_HEALING)))
 			{
@@ -3206,7 +3206,7 @@ bool borg_caution(void)
 	if (!borg_skill[BI_LITE])
 	{
 		list_item *l_ptr = &equipment[EQUIP_LITE];
-		
+
 		object_kind *k_ptr = &k_info[l_ptr->k_idx];
 
 		/* Must have light -- Refuel current torch */
@@ -5852,7 +5852,8 @@ static int borg_attack_aux_launch_seeker(void)
 		if (l_ptr->tval != my_ammo_tval) continue;
 
 		/* Skip un-identified, non-average, missiles */
-		if (!(l_ptr->info & OB_KNOWN) && !strstr(l_ptr->o_name, "{average")) continue;
+		if (!(l_ptr->info & OB_KNOWN) &&
+			!strstr(l_ptr->o_name, "{average")) continue;
 
 		/* Determine average damage */
 		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
@@ -5924,7 +5925,8 @@ static int borg_attack_aux_launch_flame(void)
 		if (l_ptr->tval != my_ammo_tval) continue;
 
 		/* Skip un-identified, non-average, missiles */
-		if (!(l_ptr->info & OB_KNOWN) && !strstr(l_ptr->o_name, "{average")) continue;
+		if (!(l_ptr->info & OB_KNOWN) &&
+			!strstr(l_ptr->o_name, "{average")) continue;
 
 		/* Determine average damage */
 		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
@@ -5999,7 +6001,8 @@ static int borg_attack_aux_launch_frost(void)
 		if (l_ptr->tval != my_ammo_tval) continue;
 
 		/* Skip un-identified, non-average, missiles */
-		if (!(l_ptr->info & OB_KNOWN) && !strstr(l_ptr->o_name, "{average")) continue;
+		if (!(l_ptr->info & OB_KNOWN) &&
+			!strstr(l_ptr->o_name, "{average")) continue;
 
 		/* Determine average damage */
 		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
@@ -6073,7 +6076,8 @@ static int borg_attack_aux_launch_animal(void)
 		if (l_ptr->tval != my_ammo_tval) continue;
 
 		/* Skip un-identified, non-average, missiles */
-		if (!(l_ptr->info & OB_KNOWN) && !strstr(l_ptr->o_name, "{average")) continue;
+		if (!(l_ptr->info & OB_KNOWN) &&
+			!strstr(l_ptr->o_name, "{average")) continue;
 
 		/* Determine average damage */
 		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
@@ -6147,7 +6151,8 @@ static int borg_attack_aux_launch_evil(void)
 		if (l_ptr->tval != my_ammo_tval) continue;
 
 		/* Skip un-identified, non-average, missiles */
-		if (!(l_ptr->info & OB_KNOWN) && !strstr(l_ptr->o_name, "{average")) continue;
+		if (!(l_ptr->info & OB_KNOWN) &&
+			!strstr(l_ptr->o_name, "{average")) continue;
 
 		/* Determine average damage */
 		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
@@ -6222,7 +6227,8 @@ static int borg_attack_aux_launch_dragon(void)
 		if (l_ptr->tval != my_ammo_tval) continue;
 
 		/* Skip un-identified, non-average, missiles */
-		if (!(l_ptr->info & OB_KNOWN) && !strstr(l_ptr->o_name, "{average")) continue;
+		if (!(l_ptr->info & OB_KNOWN) &&
+			!strstr(l_ptr->o_name, "{average")) continue;
 
 		/* Determine average damage */
 		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
@@ -6297,7 +6303,8 @@ static int borg_attack_aux_launch_wounding(void)
 		if (l_ptr->tval != my_ammo_tval) continue;
 
 		/* Skip un-identified, non-average, missiles */
-		if (!(l_ptr->info & OB_KNOWN) && !strstr(l_ptr->o_name, "{average")) continue;
+		if (!(l_ptr->info & OB_KNOWN) &&
+			!strstr(l_ptr->o_name, "{average")) continue;
 
 		/* Determine average damage */
 		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
@@ -6371,7 +6378,8 @@ static int borg_attack_aux_object(void)
 		list_item *l_ptr = &inventory[k];
 
 		/* Skip un-identified, non-average, objects */
-		if (!(l_ptr->info & OB_KNOWN) && !strstr(l_ptr->o_name, "{average")) continue;
+		if (!(l_ptr->info & OB_KNOWN) &&
+			!strstr(l_ptr->o_name, "{average")) continue;
 
 		/* Skip "equipment" items (not ammo) */
 		if (borg_wield_slot(l_ptr) >= 0) continue;
@@ -8840,7 +8848,8 @@ static int borg_defend_aux_speed(int p1)
 	if (borg_equips_rod(SV_ROD_SPEED))
 		speed_rod = TRUE;
 
-	if (borg_slot(TV_POTION, SV_POTION_SPEED) && !speed_staff && !speed_rod && !speed_spell)
+	if (borg_slot(TV_POTION, SV_POTION_SPEED) && !speed_staff && !speed_rod &&
+		!speed_spell)
 		return (0);
 
 	/* if we have an infinite/large suppy of speed we can */
@@ -9145,7 +9154,7 @@ static int borg_defend_aux_resist_fecap(int p1)
 		fail_allowed += 10;
 
 	/*
- 	 * How about adding the potion of Resistance?
+	 * How about adding the potion of Resistance?
 	 * Won't want to cast it though if only one element is
 	 * down.  Ought to at least wait until 3 of the 4 are down.
 	 */
@@ -9720,8 +9729,7 @@ static int borg_defend_aux_glyph(int p1)
 	if (borg_spell_okay_fail(REALM_LIFE, 1, 7, fail_allowed)) glyph_spell =
 			TRUE;
 
-	if (borg_slot(TV_SCROLL, SV_SCROLL_RUNE_OF_PROTECTION)) glyph_spell =
-			TRUE;
+	if (borg_slot(TV_SCROLL, SV_SCROLL_RUNE_OF_PROTECTION)) glyph_spell = TRUE;
 
 	if ((borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
 		 borg_skill[BI_ISIMAGE]) && glyph_spell)
@@ -12111,7 +12119,8 @@ bool borg_check_rest(void)
 	}
 
 	/* Do not rest with Phial or Star if it hurts */
-	if (borg_skill[BI_FEAR_LITE] && (equipment[EQUIP_LITE].kn_flags3 & TR3_INSTA_ART))
+	if (borg_skill[BI_FEAR_LITE] &&
+		(equipment[EQUIP_LITE].kn_flags3 & TR3_INSTA_ART))
 	{
 		return (FALSE);
 	}
@@ -12532,8 +12541,7 @@ bool borg_recover(void)
 		/* Step 1.  Recharge just 1 rod. */
 		if ((borg_has[374] &&
 			 !borg_slot(TV_ROD, SV_ROD_HEALING)->pval) ||
-			(borg_has[354] &&
-			 !borg_slot(TV_ROD, SV_ROD_RECALL)->pval))
+			(borg_has[354] && !borg_slot(TV_ROD, SV_ROD_RECALL)->pval))
 		{
 			/* Mages can cast the recharge spell */
 

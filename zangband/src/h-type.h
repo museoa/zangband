@@ -121,7 +121,7 @@ typedef unsigned int u32b;
 /* Signed/Unsigned 64bit value */
 typedef long u64b;
 typedef unsigned long s64b;
-#else /* L64 */
+#else  /* L64 */
 typedef signed long s32b;
 typedef unsigned long u32b;
 
@@ -131,7 +131,7 @@ typedef unsigned long u32b;
 #include <stdint.h>
 typedef uint64_t u64b;
 typedef int64_t s64b;
-#else /* __STDC__ && __STDC_VERSION__ */
+#else  /* __STDC__ && __STDC_VERSION__ */
 
 /* Define this if you have <sys/types.h> with an old compiler */
 #ifdef HAS_SYS_TYPES
@@ -140,7 +140,7 @@ typedef int64_t s64b;
 typedef u_int64_t u64b;
 typedef int64_t s64b;
 
-#else /* HAS_SYS_TYPES */
+#else  /* HAS_SYS_TYPES */
 
 /* Attempt to use "long long" which is semi-standard for older compilers */
 
@@ -150,7 +150,7 @@ typedef unsigned long long s64b;
 
 #endif /* HAS_SYS_TYPES */
 #endif /* __STDC__ && __STDC_VERSION__ */
- 
+
 #endif /* L64 */
 
 #endif

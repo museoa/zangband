@@ -1813,10 +1813,10 @@ void object_desc_store(char *buf, object_type *o_ptr, int pref,
 
 	/* Save the "info" */
 	info = o_ptr->info;
-	
+
 	/* Clear the flavor */
 	k_info[o_ptr->k_idx].flavor = FALSE;
-	
+
 	/* Set the "known" flag */
 	o_ptr->info |= (OB_KNOWN);
 
@@ -1831,7 +1831,7 @@ void object_desc_store(char *buf, object_type *o_ptr, int pref,
 
 	/* Restore "aware" flag */
 	k_info[o_ptr->k_idx].aware = hack_aware;
-	
+
 	/* Restore the "info" */
 	o_ptr->info = info;
 }

@@ -785,10 +785,10 @@ static void get_stats(void)
 		j = 5 + dice[3 * i] + dice[3 * i + 1] + dice[3 * i + 2];
 
 		/* Obtain a "bonus" for "race" and "class" */
-        bonus = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
+		bonus = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
 
-        /* Apply the bonus to the stat (somewhat randomly) */
-        stat_use[i] = adjust_stat(i, j, bonus, FALSE);
+		/* Apply the bonus to the stat (somewhat randomly) */
+		stat_use[i] = adjust_stat(i, j, bonus, FALSE);
 
 		/* Start fully healed */
 		p_ptr->stat_cur[i] = p_ptr->stat_max[i] = stat_use[i];
@@ -2292,11 +2292,11 @@ static bool player_birth_aux_2(void)
 
 		/* Process stats */
 		for (i = 0; i < A_MAX; i++)
-        {
-            int bonus = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
+		{
+			int bonus = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
 
-            /* Reset stats */
-            p_ptr->stat_cur[i] = adjust_stat(i, stats[i], bonus, TRUE);
+			/* Reset stats */
+			p_ptr->stat_cur[i] = adjust_stat(i, stats[i], bonus, TRUE);
 			p_ptr->stat_max[i] = p_ptr->stat_cur[i];
 
 			/* Total cost */
@@ -2395,24 +2395,24 @@ static bool player_birth_aux_2(void)
 		}
 	}
 
-    /* Process stats */
-    for (i = 0; i < A_MAX; i++)
-    {
-        int bonus = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
+	/* Process stats */
+	for (i = 0; i < A_MAX; i++)
+	{
+		int bonus = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
 
-        /* Apply some randomness */
-        p_ptr->stat_cur[i] = adjust_stat(i, stats[i], bonus, FALSE);
-        p_ptr->stat_max[i] = p_ptr->stat_cur[i];
-    }
+		/* Apply some randomness */
+		p_ptr->stat_cur[i] = adjust_stat(i, stats[i], bonus, FALSE);
+		p_ptr->stat_max[i] = p_ptr->stat_cur[i];
+	}
 
-    /* Calculate the bonuses and hitpoints */
-    p_ptr->update |= (PU_BONUS | PU_HP);
+	/* Calculate the bonuses and hitpoints */
+	p_ptr->update |= (PU_BONUS | PU_HP);
 
-    /* Update stuff */
-    update_stuff();
+	/* Update stuff */
+	update_stuff();
 
-   	/* Display the player */
-   	display_player(mode);
+	/* Display the player */
+	display_player(mode);
 
 	/* Done */
 	return (TRUE);

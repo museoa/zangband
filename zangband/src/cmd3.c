@@ -116,7 +116,7 @@ void do_cmd_wield(void)
 
 	object_type *q_ptr;
 
-    object_type *o_ptr;
+	object_type *o_ptr;
 
 	cptr act;
 
@@ -171,10 +171,10 @@ void do_cmd_wield(void)
 	}
 
 	/* Take a turn */
-    p_ptr->energy_use = 100;
+	p_ptr->energy_use = 100;
 
 	/* Split object */
-    q_ptr = item_split(q_ptr, 1);
+	q_ptr = item_split(q_ptr, 1);
 
 	/* Take off existing item */
 	if (o_ptr->k_idx)

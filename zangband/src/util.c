@@ -1801,11 +1801,11 @@ s16b quark_add(cptr str)
 		{
 			/* Increase refcount */
 			quark__ref[i]++;
-		
+
 			return (i);
 		}
 	}
-	
+
 	/* Look for an empty quark */
 	for (i = 1; i < quark__num; i++)
 	{
@@ -1829,7 +1829,7 @@ s16b quark_add(cptr str)
 		{
 			/* Use new quark */
 			posn = quark__num;
-		
+
 			/* New maximal quark */
 			quark__num++;
 		}
@@ -1852,19 +1852,19 @@ void quark_remove(s16b *i)
 {
 	/* Only need to remove real quarks */
 	if (!(*i)) return;
-	
+
 	/* Verify */
 	if ((*i < 0) || (*i >= quark__num)) return;
 
 	/* Decrease refcount */
 	quark__ref[*i]--;
-	
+
 	/* Deallocate? */
 	if (!quark__ref[*i])
 	{
 		string_free(quark__str[*i]);
 	}
-	
+
 	/* No longer have a quark here */
 	*i = 0;
 }
@@ -1876,7 +1876,7 @@ void quark_dup(s16b i)
 {
 	/* Verify */
 	if ((i < 0) || (i >= quark__num)) return;
-	
+
 	/* Paranoia */
 	if (!quark__ref[i]) return;
 
