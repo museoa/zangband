@@ -1892,9 +1892,9 @@ static bool player_birth_aux_1(void)
 	/* Display the information so far. */
 	/* Name, Sex, Race, Class */
 	put_fstr(0, 2,
-				"Name     : " CLR_L_BLUE "%s\n"
-				"Sex      : " CLR_L_BLUE "%s\n"
-				"Race     : " CLR_L_BLUE "%s\n"
+				"Name     : " CLR_L_BLUE "%s\n" CLR_WHITE
+				"Sex      : " CLR_L_BLUE "%s\n" CLR_WHITE
+				"Race     : " CLR_L_BLUE "%s\n" CLR_WHITE
 				"Class    : " CLR_L_BLUE "%s\n",
 				player_name, sp_ptr->title, rp_ptr->title, cp_ptr->title);
 

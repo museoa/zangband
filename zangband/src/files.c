@@ -2281,9 +2281,9 @@ static void display_player_top(void)
 	
 	/* Name, Sex, Race, Class */
 	put_fstr(COL_NAME, 2,
-    			"Name     : " CLR_L_BLUE "%s\n"
-				"Sex      : " CLR_L_BLUE "%s\n"
-				"Race     : " CLR_L_BLUE "%s\n"
+    			"Name     : " CLR_L_BLUE "%s\n" CLR_WHITE
+				"Sex      : " CLR_L_BLUE "%s\n" CLR_WHITE
+				"Race     : " CLR_L_BLUE "%s\n" CLR_WHITE
 				"Class    : " CLR_L_BLUE "%s",
                 player_name, sp_ptr->title, rp_ptr->title, cp_ptr->title);
 
