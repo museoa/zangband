@@ -989,8 +989,10 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 	/* Never affect projector */
 	if (who && (c_ptr->m_idx == who)) return (FALSE);
 
-	/* Don't affect already death monsters */
-	/* Prevents problems with chain reactions of exploding monsters */
+	/*
+	 * Don't affect already dead monsters
+	 * This prevents problems with chain reactions of exploding monsters
+	 */
 	if (m_ptr->hp < 0) return (FALSE);
 
 	/* Reduce damage by distance */
