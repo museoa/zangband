@@ -1105,7 +1105,7 @@ void del_region(int rg_idx)
 	
 	/* Free the region + info */
 	KILL(rg_list[rg_idx]);
-	WIPE(&ri_list[rg_idx], region_info);
+	(void) WIPE(&ri_list[rg_idx], region_info);
 	
 	/* Decrement counter */
 	rg_cnt--;
