@@ -2022,10 +2022,7 @@ static errr rd_dungeon(void)
 		py_back = py;
 
 		create_wilderness();
-
-		/* Hack - do not load data into wilderness */
-		change_level(1);
-
+		
 		p_ptr->depth = dun_level_backup;
 
 		/* if in the dungeon - restore the player location */
@@ -2034,6 +2031,11 @@ static errr rd_dungeon(void)
 			px = px_back;
 			py = py_back;
 		}
+		
+		wipe_f_list();
+		
+		/* Hack - do not load data into wilderness */
+		change_level(p_ptr->depth);
 
 		/* Load dungeon map */
 		load_map(cur_hgt, 0, cur_wid, 0);
@@ -2333,6 +2335,9 @@ static errr rd_dungeon(void)
 			min_hgt = 0;
 			max_wid = cur_wid;
 			min_wid = 0;
+			
+			/* Delete the fields */
+			
 		}
 		else
 		{
