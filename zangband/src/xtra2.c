@@ -25,7 +25,6 @@ void check_experience(void)
 	bool level_reward = FALSE;
 	bool level_mutation = FALSE;
 
-
 	/* Note current level */
 	i = p_ptr->lev;
 
@@ -1931,10 +1930,7 @@ static bool target_set_accept(int y, int x)
 		if (c_ptr->feat == FEAT_SHAL_WATER) return (TRUE);
 		if (c_ptr->feat == FEAT_DEEP_LAVA) return (TRUE);
 		if (c_ptr->feat == FEAT_SHAL_LAVA) return (TRUE);
-		if (c_ptr->feat == FEAT_DIRT) return (TRUE);
-		if (c_ptr->feat == FEAT_GRASS) return (TRUE);
 		if (c_ptr->feat == FEAT_DARK_PIT) return (TRUE);
-		if (c_ptr->feat >= FEAT_OCEAN_WATER) return (TRUE);
 	}
 
 	/* Nope */
