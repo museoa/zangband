@@ -2677,7 +2677,7 @@ static void process_player(void)
 		if (p_ptr->running || p_ptr->command_rep || p_ptr->resting)
 		{
 			/* Do not wait */
-			inkey_scan = TRUE;
+			p_ptr->inkey_scan = TRUE;
 
 			/* Check for a key */
 			if (inkey())

@@ -1238,7 +1238,7 @@ static bool parse_under = FALSE;
 void flush(void)
 {
 	/* Do it later */
-	inkey_xtra = TRUE;
+	p_ptr->inkey_xtra = TRUE;
 }
 
 
@@ -1491,13 +1491,16 @@ char inkey(void)
 	term *old = Term;
 
 	/* Hack -- Use the "inkey_next" pointer */
-	if (inkey_next && *inkey_next && !inkey_xtra)
+	if (inkey_next && *inkey_next && !p_ptr->inkey_xtra)
 	{
 		/* Get next character, and advance */
 		ch = *inkey_next++;
 
 		/* Cancel the various "global parameters" */
-		inkey_base = inkey_xtra = inkey_flag = inkey_scan = FALSE;
+		p_ptr->inkey_base = FALSE;
+		p_ptr->inkey_xtra = FALSE;
+		p_ptr->inkey_flag = FALSE;
+		p_ptr->inkey_scan = FALSE;
 
 		/* Accept result */
 		return (ch);
@@ -1510,10 +1513,13 @@ char inkey(void)
 #ifdef ALLOW_BORG
 
 	/* Mega-Hack -- Use the special hook */
-	if (inkey_hack && ((ch = (*inkey_hack) (inkey_xtra)) != 0))
+	if (inkey_hack && ((ch = (*inkey_hack) (p_ptr->inkey_xtra)) != 0))
 	{
 		/* Cancel the various "global parameters" */
-		inkey_base = inkey_xtra = inkey_flag = inkey_scan = FALSE;
+		p_ptr->inkey_base = FALSE;
+		p_ptr->inkey_xtra = FALSE;
+		p_ptr->inkey_flag = FALSE;
+		p_ptr->inkey_scan = FALSE;
 
 		/* Accept result */
 		return (ch);
@@ -1522,7 +1528,7 @@ char inkey(void)
 #endif /* ALLOW_BORG */
 
 	/* Hack -- handle delayed "flush()" */
-	if (inkey_xtra)
+	if (p_ptr->inkey_xtra)
 	{
 		/* End "macro action" */
 		parse_macro = FALSE;
@@ -1539,7 +1545,8 @@ char inkey(void)
 	(void)Term_get_cursor(&v);
 
 	/* Show the cursor if waiting, except sometimes in "command" mode */
-	if (!inkey_scan && (!inkey_flag || hilite_player || character_icky))
+	if (!p_ptr->inkey_scan &&
+		(!p_ptr->inkey_flag || hilite_player || character_icky))
 	{
 		/* Show the cursor */
 		(void)Term_set_cursor(1);
@@ -1554,7 +1561,8 @@ char inkey(void)
 	while (!ch)
 	{
 		/* Hack -- Handle "inkey_scan" */
-		if (!inkey_base && inkey_scan && (0 != Term_inkey(&kk, FALSE, FALSE)))
+		if (!p_ptr->inkey_base && p_ptr->inkey_scan &&
+			(0 != Term_inkey(&kk, FALSE, FALSE)))
 		{
 			break;
 		}
@@ -1584,12 +1592,12 @@ char inkey(void)
 
 
 		/* Hack -- Handle "inkey_base" */
-		if (inkey_base)
+		if (p_ptr->inkey_base)
 		{
 			int w = 0;
 
 			/* Wait forever */
-			if (!inkey_scan)
+			if (!p_ptr->inkey_scan)
 			{
 				/* Wait for (and remove) a pending key */
 				if (0 == Term_inkey(&ch, TRUE, TRUE))
@@ -1696,7 +1704,10 @@ char inkey(void)
 
 
 	/* Cancel the various "global parameters" */
-	inkey_base = inkey_xtra = inkey_flag = inkey_scan = FALSE;
+	p_ptr->inkey_base = FALSE;
+	p_ptr->inkey_xtra = FALSE;
+	p_ptr->inkey_flag = FALSE;
+	p_ptr->inkey_scan = FALSE;
 
 	/* Return the keypress */
 	return (ch);
@@ -3330,7 +3341,7 @@ void request_command(int shopping)
 			p_ptr->skip_more = FALSE;
 
 			/* Activate "command mode" */
-			inkey_flag = TRUE;
+			p_ptr->inkey_flag = TRUE;
 
 			/* Get a command */
 			cmd = inkey();

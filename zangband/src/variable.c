@@ -98,12 +98,6 @@ bool use_transparency = FALSE;	/* Use transparent tiles */
 
 s16b signal_count;	/* Hack -- Count interupts */
 
-/* Move these to util.c soon */
-bool inkey_base;	/* See the "inkey()" function */
-bool inkey_xtra;	/* See the "inkey()" function */
-bool inkey_scan;	/* See the "inkey()" function */
-bool inkey_flag;	/* See the "inkey()" function */
-
 bool shimmer_monsters;	/* Hack -- optimize multi-hued monsters */
 
 bool repair_monsters;	/* Hack -- optimize detect monsters */

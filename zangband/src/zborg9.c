@@ -2777,7 +2777,7 @@ static char borg_inkey_hack(int flush_first)
 	/* And the game does not want a command... */
 	/* And the cursor is on the top line... */
 	/* And the text acquired above is "Die?" */
-	if (borg_prompt && !inkey_flag &&
+	if (borg_prompt && !p_tpr->inkey_flag &&
 		(y == 0) && (x >= 4) && streq(buf, "Die?") && borg_cheat_death)
 	{
 		/* Flush messages */
@@ -2802,7 +2802,7 @@ static char borg_inkey_hack(int flush_first)
 	 * work around the flush
 	 * Attempt to catch "Attempt it anyway? [y/n]"
 	 */
-	if (borg_prompt && !inkey_flag &&
+	if (borg_prompt && !p_ptr->inkey_flag &&
 		(y == 0) && (x >= 4) && streq(buf, "Atte"))
 	{
 		/* Return the confirmation */
@@ -2816,7 +2816,7 @@ static char borg_inkey_hack(int flush_first)
 	 * This is used only with emergency use of spells like Magic Missile
 	 * Attempt to catch "Direction (5 old target"
 	 */
-	if (borg_prompt && !inkey_flag && borg_confirm_target &&
+	if (borg_prompt && !p_ptr->inkey_flag && borg_confirm_target &&
 		(y == 0) && (x >= 4) && streq(buf, "Dire"))
 	{
 		/* reset the flag */
@@ -2849,7 +2849,7 @@ static char borg_inkey_hack(int flush_first)
 	/* And the cursor is on the top line... */
 	/* And there is text before the cursor... */
 	/* And that text is "-more-" */
-	if (borg_prompt && !inkey_flag &&
+	if (borg_prompt && !p_ptr->inkey_flag &&
 		(y == 0) && (x >= 7) &&
 		(0 == borg_what_text(x - 7, y, 7, &t_a, buf)) &&
 		(streq(buf, " -more-")))
@@ -2867,7 +2867,7 @@ static char borg_inkey_hack(int flush_first)
 	/* Mega-Hack -- catch normal messages */
 	/* If there is text on the first line... */
 	/* And the game wants a command */
-	if (borg_prompt && inkey_flag)
+	if (borg_prompt && p_ptr->inkey_flag)
 	{
 		/* Get the message(s) */
 		if (0 == borg_what_text(0, 0, -80, &t_a, buf))

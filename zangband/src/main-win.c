@@ -2722,14 +2722,14 @@ static void setup_menus(void)
 	}
 
 	/* A character available */
-	if (game_in_progress && character_generated && inkey_flag)
+	if (game_in_progress && character_generated && p_ptr->inkey_flag)
 	{
 		/* Menu "File", Item "Save" */
 		EnableMenuItem(hm, IDM_FILE_SAVE, MF_BYCOMMAND | MF_ENABLED);
 	}
 
 	if (!game_in_progress || !character_generated ||
-	    (inkey_flag))
+	    (p_ptr->inkey_flag))
 	{
 		/* Menu "File", Item "Exit" */
 		EnableMenuItem(hm, IDM_FILE_EXIT, MF_BYCOMMAND | MF_ENABLED);
@@ -2873,7 +2873,7 @@ static void setup_menus(void)
 	              (low_priority ? MF_CHECKED : MF_UNCHECKED));
 
 #ifdef USE_GRAPHICS
-	if (inkey_flag && initialized)
+	if (initialized && p_ptr->inkey_flag)
 	{
 		/* Menu "Options", Item "Graphics" */
 		EnableMenuItem(hm, IDM_OPTIONS_NO_GRAPHICS, MF_ENABLED);
@@ -2885,7 +2885,7 @@ static void setup_menus(void)
 #endif /* USE_GRAPHICS */
 
 #ifdef USE_SOUND
-	if (inkey_flag && initialized)
+	if (initialized && inkey_flag)
 	{
 		/* Menu "Options", Item "Sound" */
 		EnableMenuItem(hm, IDM_OPTIONS_SOUND, MF_ENABLED);
@@ -3206,7 +3206,7 @@ static void process_menus(WORD wCmd)
 		case IDM_FILE_SAVE:
 		{
 			if (game_in_progress && character_generated &&
-			    inkey_flag)
+			    p_ptr->inkey_flag)
 			{
 				/* Hack -- Forget messages */
 				msg_flag = FALSE;
@@ -3290,7 +3290,7 @@ static void process_menus(WORD wCmd)
 			if (game_in_progress && character_generated)
 			{
 				/* Paranoia */
-				if (!inkey_flag)
+				if (!p_ptr->inkey_flag)
 				{
 					plog("You may not do that right now.");
 					break;
@@ -3496,7 +3496,7 @@ static void process_menus(WORD wCmd)
 		case IDM_OPTIONS_NO_GRAPHICS:
 		{
 			/* Paranoia */
-			if (!inkey_flag || !initialized)
+			if (!p_ptr->inkey_flag || !initialized)
 			{
 				plog("You may not do that right now.");
 				break;
@@ -3520,7 +3520,7 @@ static void process_menus(WORD wCmd)
 		case IDM_OPTIONS_OLD_GRAPHICS:
 		{
 			/* Paranoia */
-			if (!inkey_flag || !initialized)
+			if (!p_ptr->inkey_flag || !initialized)
 			{
 				plog("You may not do that right now.");
 				break;
@@ -3544,7 +3544,7 @@ static void process_menus(WORD wCmd)
 		case IDM_OPTIONS_NEW_GRAPHICS:
 		{
 			/* Paranoia */
-			if (!inkey_flag || !initialized)
+			if (!p_ptr->inkey_flag || !initialized)
 			{
 				plog("You may not do that right now.");
 				break;
@@ -3568,7 +3568,7 @@ static void process_menus(WORD wCmd)
 		case IDM_OPTIONS_SOUND:
 		{
 			/* Paranoia */
-			if (!inkey_flag || !initialized)
+			if (!p_ptr->inkey_flag || !initialized)
 			{
 				plog("You may not do that right now.");
 				break;
@@ -3892,7 +3892,7 @@ static LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
 		{
 			if (game_in_progress && character_generated)
 			{
-				if (!inkey_flag)
+				if (!p_ptr->inkey_flag)
 				{
 					plog("You may not do that right now.");
 					return 0;

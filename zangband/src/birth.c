@@ -2632,7 +2632,7 @@ static bool player_birth_aux_3(void)
 					if (flag) Term_xtra(TERM_XTRA_DELAY, 100);
 
 					/* Do not wait for a key */
-					inkey_scan = TRUE;
+					p_ptr->inkey_scan = TRUE;
 
 					/* Check for a keypress */
 					if (inkey()) break;
