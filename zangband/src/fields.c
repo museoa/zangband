@@ -13,6 +13,41 @@
 #include "angband.h"
 
 /*
+ * Find the connection to the cave array for the field
+ * fld_list[fld_idx].
+ *
+ * This is used so that an arbitrary field can found.
+ * This routine is fairly fast if there are not too many fields
+ * on a square at one time.  However - it should only be used
+ * by routines in this file.
+ */
+static s16b *field_find(s16b fld_idx)
+{
+	field_type *f_ptr;
+
+	/* pointer to a field index in a list. */
+	s16b *location;
+
+	/* Point to the field */
+	f_ptr = &fld_list[fld_idx];
+
+	location = &(area(f_ptr->fy, f_ptr->fx)->fld_idx);
+
+	while (*location != fld_idx)
+	{
+		/* Paranoia: Is the list broken? */
+		if (!(*location)) return (location);
+
+		/* Get the next field in the chain */
+		location = &(fld_list[*location].next_f_idx);
+	}
+
+	/* Found a pointer to our field */
+	return (location);
+}
+
+
+/*
  * Excise a field from a stacks
  */
 void excise_field_idx(int fld_idx)
@@ -633,7 +668,6 @@ void field_copy(field_type *f_ptr, field_type *j_ptr)
 }
 
 
-
 /*
  * Add a field to a list of fields.
  * The list is sorted so that the field with the highest
@@ -825,8 +859,6 @@ void init_fields(void)
 	field_type *f_ptr;
 	field_thaum *t_ptr;
 	
-	s16b *fld_ptr;
-	
 	for (fld_idx = 0; fld_idx < fld_max; fld_idx++)
 	{
 		/* Point to field */
@@ -842,37 +874,34 @@ void init_fields(void)
 		f_ptr->f_attr = t_ptr->f_attr;
 		f_ptr->f_char = t_ptr->f_char;
 		
-		/* Get pointer to field index */
-		fld_ptr = field_find(fld_idx);
-		
 		/* Call loading routine */
-		(void) field_hook_single(fld_ptr, FIELD_ACT_LOAD, NULL);
+		(void) field_hook_single(field_find(fld_idx), FIELD_ACT_LOAD, NULL);
 	}
 }
 
 /*
  * See if a field of a particular type is on a square.
- * (eg. call with (c_ptr->fld_idx, FTYPE_TRAP) to get traps)
+ * (eg. call with (&c_ptr->fld_idx, FTYPE_TRAP) to get traps)
  */
-s16b field_is_type(s16b fld_idx, byte typ)
+s16b *field_is_type(s16b *fld_ptr, byte typ)
 {
 	field_type *f_ptr;
 
 	/* While the field exists */
-	while (fld_idx)
+	while (*fld_ptr)
 	{
 		/* Get field */
-		f_ptr = &fld_list[fld_idx];
+		f_ptr = &fld_list[*fld_ptr];
 
 		/* Is it the correct type? */
-		if (t_info[f_ptr->t_idx].type == typ) return (fld_idx);
+		if (t_info[f_ptr->t_idx].type == typ) break;
 
 		/* If not, get next one. */
-		fld_idx = f_ptr->next_f_idx;
+		fld_ptr = &f_ptr->next_f_idx;
 	}
 
-	/* Didn't find anything */
-	return (0);
+	/* Return result */
+	return (fld_ptr);
 }
 
 
@@ -880,27 +909,27 @@ s16b field_is_type(s16b fld_idx, byte typ)
  * Return the first known field of the requested type
  * in the list.
  */
-s16b field_first_known(s16b fld_idx, byte typ)
+s16b *field_first_known(s16b *fld_ptr, byte typ)
 {
 	field_type *f_ptr;
 
 	/* While the field exists */
-	while (fld_idx)
+	while (*fld_ptr)
 	{
 		/* Get field */
-		f_ptr = &fld_list[fld_idx];
+		f_ptr = &fld_list[*fld_ptr];
 
 		/* Is it known to be the correct type? */
 		if ((t_info[f_ptr->t_idx].type == typ)
 		 && ((f_ptr->info & (FIELD_INFO_MARK | FIELD_INFO_VIS))
-		 	 == (FIELD_INFO_MARK | FIELD_INFO_VIS))) return fld_idx;
+		 	 == (FIELD_INFO_MARK | FIELD_INFO_VIS))) break;
 
 		/* If not, get next one. */
-		fld_idx = f_ptr->next_f_idx;
+		fld_ptr = &f_ptr->next_f_idx;
 	}
 
-	/* Didn't find anything */
-	return (0);
+	/* Return Result */
+	return (fld_ptr);
 }
 
 
@@ -985,7 +1014,7 @@ void field_destroy_type(s16b fld_idx, byte typ)
 /*
  * See if flags are set in a list of fields
  *
- * This is used to see of a grid blocks LOS or magic
+ * This is used to see of a grid blocks movement or magic
  */
 u16b fields_have_flags(s16b fld_idx, u16b info)
 {
@@ -1008,7 +1037,6 @@ u16b fields_have_flags(s16b fld_idx, u16b info)
 	
 	return (flags & info);
 }
-
 
 
 /*
@@ -1047,43 +1075,6 @@ s16b place_field(int y, int x, s16b t_idx)
 	return (fld_idx);
 }
 
-/*
- * Find the connection to the cave array for the field
- * fld_list[fld_idx].
- *
- * This is used so that an arbitrary field can be deleted.
- * This routine is fairly fast if there are not too many fields
- * on a square at one time.
- *
- * Note that this routine should not be merged with field_hook
- * because most of the time you know where a field is.  Only
- * if you are looking through the fld_list[] one by one will
- * this be needed.
- */
-s16b *field_find(s16b fld_idx)
-{
-	field_type *f_ptr;
-
-	/* pointer to a field index in a list. */
-	s16b *location;
-
-	/* Point to the field */
-	f_ptr = &fld_list[fld_idx];
-
-	location = &(area(f_ptr->fy, f_ptr->fx)->fld_idx);
-
-	while (*location != fld_idx)
-	{
-		/* Paranoia: Is the list broken? */
-		if (!(*location)) return (location);
-
-		/* Get the next field in the chain */
-		location = &(fld_list[*location].next_f_idx);
-	}
-
-	/* Found a pointer to our field */
-	return (location);
-}
 
 /*
  * Call the action function for the field pointed to by *field_ptr.
@@ -1199,7 +1190,7 @@ void field_hook_special(s16b *field_ptr, u16b ftype, void *action_struct)
  * Call the required action function for the first field
  * in the specified list with that function.
  */
-s16b field_hook_find(s16b *field_ptr, int action, void *action_struct)
+s16b *field_hook_find(s16b *field_ptr, int action, void *action_struct)
 {
 	field_type *f_ptr;
 	
@@ -1215,7 +1206,7 @@ s16b field_hook_find(s16b *field_ptr, int action, void *action_struct)
 			f_ptr->action[action](field_ptr, action_struct);
 			
 			/* Done */
-			return (*field_ptr);
+			break;
 		}
 		else
 		{
@@ -1224,8 +1215,8 @@ s16b field_hook_find(s16b *field_ptr, int action, void *action_struct)
 		}
 	}
 	
-	/* No matches */
-	return (0);
+	/* Done */
+	return (field_ptr);
 }
 
 
@@ -1273,10 +1264,9 @@ void process_fields(void)
 
 /*
  * "Testing" function, used to find bugs.
- * It will test the monster-field,
- * object-field, and cave-field data structures.
+ * It will test cave and field data structures.
  * (A similar function was used to detect the
- *  "invisible monster" bug.
+ *  "invisible monster" bug in the wilderness.
  */
 void test_field_data_integrity(void)
 {
@@ -1512,6 +1502,14 @@ void field_action_corpse_decay(s16b *field_ptr, void *nothing)
 			/* Set the cloned flag, so no treasure is dropped */
 			m_list[hack_m_idx_ii].smart |= SM_CLONED;
 		}
+		
+		/* Paranoia */
+		else if (area(f_ptr->fy, f_ptr->fx)->info & CAVE_VIEW)
+		{
+			/* Let player know what happened. */
+			msg_format("The %s decays.", t_ptr->name);
+		}
+		
 	}
 	else
 	{
@@ -1558,10 +1556,10 @@ void field_action_corpse_raise(s16b *field_ptr, void *input)
 }
 
 /*
- * Convert the char of the monster to a corpse type
+ * Hack XXX XXX Convert the char of the monster to a corpse type
+ *
  * There are seven sizes of corpses.
- * 0 is large
- * 6 is small
+ * 0 is large, 6 is small
  */ 
 static char corpse_type(char feat)
 {
@@ -1693,7 +1691,7 @@ void field_action_corpse_look(s16b *field_ptr, void *output)
 	return;
 }
 
-/* Try to disarm a trap - return bool of success or not. */
+/* Try to tunnel into a wall. */
 void field_action_wall_tunnel(s16b *field_ptr, void *input)
 {	
 	int *dig = (int *) input;
@@ -1715,7 +1713,10 @@ void field_action_wall_tunnel(s16b *field_ptr, void *input)
 	}
 }
 
-
+/*
+ * The various types of interaction used by
+ * the "interact with grid" command.
+ */
 void field_action_interact_tunnel(s16b *field_ptr, void *output)
 {
 	int *action = (int *) output;
@@ -1785,8 +1786,8 @@ static int check_hit(int power)
 	return (FALSE);
 }
 
-/* Array used to work out which trap to place */
 
+/* Array used to work out which trap to place */
 static field_trap_type trap_num[] =
 {
 	{FT_TRAP_DOOR, 5, 0},
@@ -1823,10 +1824,6 @@ static field_trap_type trap_num[] =
  * Places a random trap at the given location.
  *
  * The location must be a legal, naked, floor grid.
- *
- * Note that all traps start out as "invisible" and "untyped", and then
- * when they are "discovered" (by detecting them or setting them off),
- * the trap is "instantiated" as a visible, "typed", trap.
  */
 void place_trap(int y, int x)
 {	
@@ -1906,6 +1903,7 @@ void place_trap(int y, int x)
 	}
 }
 
+/* Initialise the trap */
 void field_action_trap_init(s16b *field_ptr, void *input)
 {
 	field_type *f_ptr = &fld_list[*field_ptr];
@@ -1925,7 +1923,7 @@ void field_action_trap_init(s16b *field_ptr, void *input)
 	return;
 }
 
-/* Try to disarm a trap - return bool of success or not. */
+/* Try to disarm a trap. */
 void field_action_trap_disarm(s16b *field_ptr, void *input)
 {
 	field_type *f_ptr = &fld_list[*field_ptr];
@@ -1950,14 +1948,14 @@ void field_action_trap_disarm(s16b *field_ptr, void *input)
 	}
 }
 
-void field_action_hit_trap_door(s16b *field_ptr, void *nothing)
-{	
-	int dam;
-	
-	cptr name;
-	
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
+/*
+ * Common stuff that happens whenever the player
+ * hits a trap.
+ *
+ * The trap is noticed, and the player is disturbed
+ */
+static void hit_trap(field_type *f_ptr)
+{
 	/* Look for invisible traps and detect them.*/
 	if (!(f_ptr->info & FIELD_INFO_VIS))
 	{
@@ -1973,6 +1971,24 @@ void field_action_hit_trap_door(s16b *field_ptr, void *nothing)
 
 	/* Disturb the player */
 	disturb(0, 0);
+}
+
+
+/* 
+ * Trap interaction functions.
+ * What horrible fate awaits the player after stepping
+ * on this particular trap?
+ */
+void field_action_hit_trap_door(s16b *field_ptr, void *nothing)
+{	
+	int dam;
+	
+	cptr name;
+	
+	field_type *f_ptr = &fld_list[*field_ptr];
+	
+	/* Hit the trap */
+	hit_trap(f_ptr);
 	
 	if (p_ptr->ffall)
 	{
@@ -2009,21 +2025,8 @@ void field_action_hit_trap_pit(s16b *field_ptr, void *nothing)
 	
 	cptr name;
 	
-	/* Look for invisible traps and detect them.*/
-	if (!(f_ptr->info & FIELD_INFO_VIS))
-	{
-		/* Detect it. */
-		f_ptr->info |= FIELD_INFO_VIS;
-		
-		/* Message */
-		msg_print("You found a trap!");
-		
-		/* Notice the changes */
-		notice_field(f_ptr);
-	}
-
-	/* Disturb the player */
-	disturb(0, 0);
+	/* Hit the trap */
+	hit_trap(f_ptr);
 	
 	if (p_ptr->ffall)
 	{
@@ -2047,21 +2050,8 @@ void field_action_hit_trap_spike(s16b *field_ptr, void *nothing)
 	
 	cptr name;
 	
-	/* Look for invisible traps and detect them.*/
-	if (!(f_ptr->info & FIELD_INFO_VIS))
-	{
-		/* Detect it. */
-		f_ptr->info |= FIELD_INFO_VIS;
-		
-		/* Message */
-		msg_print("You found a trap!");
-		
-		/* Notice the changes */
-		notice_field(f_ptr);
-	}
-
-	/* Disturb the player */
-	disturb(0, 0);
+	/* Hit the trap */
+	hit_trap(f_ptr);
 	
 	if (p_ptr->ffall)
 	{
@@ -2099,21 +2089,8 @@ void field_action_hit_trap_poison_pit(s16b *field_ptr, void *nothing)
 	
 	cptr name;
 	
-	/* Look for invisible traps and detect them.*/
-	if (!(f_ptr->info & FIELD_INFO_VIS))
-	{
-		/* Detect it. */
-		f_ptr->info |= FIELD_INFO_VIS;
-		
-		/* Message */
-		msg_print("You found a trap!");
-		
-		/* Notice the changes */
-		notice_field(f_ptr);
-	}
-
-	/* Disturb the player */
-	disturb(0, 0);
+	/* Hit the trap */
+	hit_trap(f_ptr);
 	
 	if (p_ptr->ffall)
 	{
@@ -2159,21 +2136,8 @@ void field_action_hit_trap_curse(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
-	/* Look for invisible traps and detect them.*/
-	if (!(f_ptr->info & FIELD_INFO_VIS))
-	{
-		/* Detect it. */
-		f_ptr->info |= FIELD_INFO_VIS;
-		
-		/* Message */
-		msg_print("You found a trap!");
-		
-		/* Notice the changes */
-		notice_field(f_ptr);
-	}
-
-	/* Disturb the player */
-	disturb(0, 0);
+	/* Hit the trap */
+	hit_trap(f_ptr);
 	
 	msg_print("There is a flash of shimmering light!");
 	
@@ -2214,21 +2178,8 @@ void field_action_hit_trap_teleport(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
-	/* Look for invisible traps and detect them.*/
-	if (!(f_ptr->info & FIELD_INFO_VIS))
-	{
-		/* Detect it. */
-		f_ptr->info |= FIELD_INFO_VIS;
-		
-		/* Message */
-		msg_print("You found a trap!");
-		
-		/* Notice the changes */
-		notice_field(f_ptr);
-	}
-
-	/* Disturb the player */
-	disturb(0, 0);
+	/* Hit the trap */
+	hit_trap(f_ptr);
 	
 	msg_print("You hit a teleport trap!");
 	teleport_player(100);
@@ -2241,21 +2192,8 @@ void field_action_hit_trap_element(s16b *field_ptr, void *nothing)
 	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
-	/* Look for invisible traps and detect them.*/
-	if (!(f_ptr->info & FIELD_INFO_VIS))
-	{
-		/* Detect it. */
-		f_ptr->info |= FIELD_INFO_VIS;
-		
-		/* Message */
-		msg_print("You found a trap!");
-		
-		/* Notice the changes */
-		notice_field(f_ptr);
-	}
-
-	/* Disturb the player */
-	disturb(0, 0);
+	/* Hit the trap */
+	hit_trap(f_ptr);
 	
 	/* Analyze type of element */
 	switch (f_ptr->data[3])
@@ -2308,21 +2246,8 @@ void field_action_hit_trap_ba_element(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
-	/* Look for invisible traps and detect them.*/
-	if (!(f_ptr->info & FIELD_INFO_VIS))
-	{
-		/* Detect it. */
-		f_ptr->info |= FIELD_INFO_VIS;
-		
-		/* Message */
-		msg_print("You found a trap!");
-		
-		/* Notice the changes */
-		notice_field(f_ptr);
-	}
-
-	/* Disturb the player */
-	disturb(0, 0);
+	/* Hit the trap */
+	hit_trap(f_ptr);
 	
 	/* Analyze type of element */
 	switch (f_ptr->data[3])
@@ -2382,21 +2307,8 @@ void field_action_hit_trap_gas(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
-	/* Look for invisible traps and detect them.*/
-	if (!(f_ptr->info & FIELD_INFO_VIS))
-	{
-		/* Detect it. */
-		f_ptr->info |= FIELD_INFO_VIS;
-		
-		/* Message */
-		msg_print("You found a trap!");
-		
-		/* Notice the changes */
-		notice_field(f_ptr);
-	}
-
-	/* Disturb the player */
-	disturb(0, 0);
+	/* Hit the trap */
+	hit_trap(f_ptr);
 	
 	/* Analyze type of trap */
 	switch (f_ptr->data[3])
@@ -2469,21 +2381,8 @@ void field_action_hit_trap_traps(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
-	/* Look for invisible traps and detect them.*/
-	if (!(f_ptr->info & FIELD_INFO_VIS))
-	{
-		/* Detect it. */
-		f_ptr->info |= FIELD_INFO_VIS;
-		
-		/* Message */
-		msg_print("You found a trap!");
-		
-		/* Notice the changes */
-		notice_field(f_ptr);
-	}
-
-	/* Disturb the player */
-	disturb(0, 0);
+	/* Hit the trap */
+	hit_trap(f_ptr);
 	
 	msg_print("There is a bright flash of light!");
 
@@ -2502,21 +2401,8 @@ void field_action_hit_trap_temp_stat(s16b *field_ptr, void *nothing)
 	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
-	/* Look for invisible traps and detect them.*/
-	if (!(f_ptr->info & FIELD_INFO_VIS))
-	{
-		/* Detect it. */
-		f_ptr->info |= FIELD_INFO_VIS;
-		
-		/* Message */
-		msg_print("You found a trap!");
-		
-		/* Notice the changes */
-		notice_field(f_ptr);
-	}
-
-	/* Disturb the player */
-	disturb(0, 0);
+	/* Hit the trap */
+	hit_trap(f_ptr);
 	
 	/* Analyze type of trap */
 	switch (f_ptr->data[3])
@@ -2578,21 +2464,8 @@ void field_action_hit_trap_perm_stat(s16b *field_ptr, void *nothing)
 	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
-	/* Look for invisible traps and detect them.*/
-	if (!(f_ptr->info & FIELD_INFO_VIS))
-	{
-		/* Detect it. */
-		f_ptr->info |= FIELD_INFO_VIS;
-		
-		/* Message */
-		msg_print("You found a trap!");
-		
-		/* Notice the changes */
-		notice_field(f_ptr);
-	}
-
-	/* Disturb the player */
-	disturb(0, 0);
+	/* Hit the trap */
+	hit_trap(f_ptr);
 		
 	if (check_hit(f_ptr->data[1]))
 	{
@@ -2612,21 +2485,8 @@ void field_action_hit_trap_lose_xp(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
-	/* Look for invisible traps and detect them.*/
-	if (!(f_ptr->info & FIELD_INFO_VIS))
-	{
-		/* Detect it. */
-		f_ptr->info |= FIELD_INFO_VIS;
-		
-		/* Message */
-		msg_print("You found a trap!");
-		
-		/* Notice the changes */
-		notice_field(f_ptr);
-	}
-
-	/* Disturb the player */
-	disturb(0, 0);
+	/* Hit the trap */
+	hit_trap(f_ptr);
 		
 	msg_print("Your head throbs!");
 	lose_exp(p_ptr->exp / 5);
@@ -2636,21 +2496,8 @@ void field_action_hit_trap_disenchant(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
-	/* Look for invisible traps and detect them.*/
-	if (!(f_ptr->info & FIELD_INFO_VIS))
-	{
-		/* Detect it. */
-		f_ptr->info |= FIELD_INFO_VIS;
-		
-		/* Message */
-		msg_print("You found a trap!");
-		
-		/* Notice the changes */
-		notice_field(f_ptr);
-	}
-
-	/* Disturb the player */
-	disturb(0, 0);
+	/* Hit the trap */
+	hit_trap(f_ptr);
 		
 	msg_print("There is a bright flash of light!");
 	(void) apply_disenchant(0);
@@ -2663,21 +2510,8 @@ void field_action_hit_trap_drop_item(s16b *field_ptr, void *nothing)
 	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
-	/* Look for invisible traps and detect them.*/
-	if (!(f_ptr->info & FIELD_INFO_VIS))
-	{
-		/* Detect it. */
-		f_ptr->info |= FIELD_INFO_VIS;
-		
-		/* Message */
-		msg_print("You found a trap!");
-		
-		/* Notice the changes */
-		notice_field(f_ptr);
-	}
-
-	/* Disturb the player */
-	disturb(0, 0);
+	/* Hit the trap */
+	hit_trap(f_ptr);
 		
 	msg_print("You fumble with your equipment!");
 	
@@ -2696,21 +2530,8 @@ void field_action_hit_trap_mutate(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
-	/* Look for invisible traps and detect them.*/
-	if (!(f_ptr->info & FIELD_INFO_VIS))
-	{
-		/* Detect it. */
-		f_ptr->info |= FIELD_INFO_VIS;
-		
-		/* Message */
-		msg_print("You found a trap!");
-		
-		/* Notice the changes */
-		notice_field(f_ptr);
-	}
-
-	/* Disturb the player */
-	disturb(0, 0);
+	/* Hit the trap */
+	hit_trap(f_ptr);
 		
 	(void) gain_random_mutation(0);
 }
@@ -2720,21 +2541,8 @@ void field_action_hit_trap_new_life(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
-	/* Look for invisible traps and detect them.*/
-	if (!(f_ptr->info & FIELD_INFO_VIS))
-	{
-		/* Detect it. */
-		f_ptr->info |= FIELD_INFO_VIS;
-		
-		/* Message */
-		msg_print("You found a trap!");
-		
-		/* Notice the changes */
-		notice_field(f_ptr);
-	}
-
-	/* Disturb the player */
-	disturb(0, 0);
+	/* Hit the trap */
+	hit_trap(f_ptr);
 		
 	if (p_ptr->muta1 || p_ptr->muta2 || p_ptr->muta3)
 	{
@@ -2754,21 +2562,8 @@ void field_action_hit_trap_no_lite(s16b *field_ptr, void *nothing)
 	
 	object_type *o_ptr;
 	
-	/* Look for invisible traps and detect them.*/
-	if (!(f_ptr->info & FIELD_INFO_VIS))
-	{
-		/* Detect it. */
-		f_ptr->info |= FIELD_INFO_VIS;
-		
-		/* Message */
-		msg_print("You found a trap!");
-		
-		/* Notice the changes */
-		notice_field(f_ptr);
-	}
-
-	/* Disturb the player */
-	disturb(0, 0);
+	/* Hit the trap */
+	hit_trap(f_ptr);
 	
 	msg_print("Darkness surrounds you!");
 	
@@ -2797,21 +2592,8 @@ void field_action_hit_trap_hunger(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 		
-	/* Look for invisible traps and detect them.*/
-	if (!(f_ptr->info & FIELD_INFO_VIS))
-	{
-		/* Detect it. */
-		f_ptr->info |= FIELD_INFO_VIS;
-		
-		/* Message */
-		msg_print("You found a trap!");
-		
-		/* Notice the changes */
-		notice_field(f_ptr);
-	}
-
-	/* Disturb the player */
-	disturb(0, 0);
+	/* Hit the trap */
+	hit_trap(f_ptr);
 	
 	msg_print("You suddenly feel very, very hungry!");
 	
@@ -2827,21 +2609,8 @@ void field_action_hit_trap_no_gold(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 		
-	/* Look for invisible traps and detect them.*/
-	if (!(f_ptr->info & FIELD_INFO_VIS))
-	{
-		/* Detect it. */
-		f_ptr->info |= FIELD_INFO_VIS;
-		
-		/* Message */
-		msg_print("You found a trap!");
-		
-		/* Notice the changes */
-		notice_field(f_ptr);
-	}
-
-	/* Disturb the player */
-	disturb(0, 0);
+	/* Hit the trap */
+	hit_trap(f_ptr);
 	
 	msg_print("Your purse becomes weightless!");
 	
@@ -2860,21 +2629,8 @@ void field_action_hit_trap_haste_mon(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
-	/* Look for invisible traps and detect them.*/
-	if (!(f_ptr->info & FIELD_INFO_VIS))
-	{
-		/* Detect it. */
-		f_ptr->info |= FIELD_INFO_VIS;
-		
-		/* Message */
-		msg_print("You found a trap!");
-		
-		/* Notice the changes */
-		notice_field(f_ptr);
-	}
-
-	/* Disturb the player */
-	disturb(0, 0);
+	/* Hit the trap */
+	hit_trap(f_ptr);
 	
 	msg_print("A shrill note sounds!");
 	
@@ -2889,21 +2645,8 @@ void field_action_hit_trap_raise_mon(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
-	/* Look for invisible traps and detect them.*/
-	if (!(f_ptr->info & FIELD_INFO_VIS))
-	{
-		/* Detect it. */
-		f_ptr->info |= FIELD_INFO_VIS;
-		
-		/* Message */
-		msg_print("You found a trap!");
-		
-		/* Notice the changes */
-		notice_field(f_ptr);
-	}
-
-	/* Disturb the player */
-	disturb(0, 0);
+	/* Hit the trap */
+	hit_trap(f_ptr);
 	
 	msg_print("You smell something musty.");
 	
@@ -2918,21 +2661,8 @@ void field_action_hit_trap_drain_magic(s16b *field_ptr, void *nothing)
 	int i, k;
 	object_type *o_ptr;
 	
-	/* Look for invisible traps and detect them.*/
-	if (!(f_ptr->info & FIELD_INFO_VIS))
-	{
-		/* Detect it. */
-		f_ptr->info |= FIELD_INFO_VIS;
-		
-		/* Message */
-		msg_print("You found a trap!");
-		
-		/* Notice the changes */
-		notice_field(f_ptr);
-	}
-
-	/* Disturb the player */
-	disturb(0, 0);
+	/* Hit the trap */
+	hit_trap(f_ptr);
 	
 	msg_print("Static fills the air.");
 	
@@ -2970,21 +2700,8 @@ void field_action_hit_trap_aggravate(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
-	/* Look for invisible traps and detect them.*/
-	if (!(f_ptr->info & FIELD_INFO_VIS))
-	{
-		/* Detect it. */
-		f_ptr->info |= FIELD_INFO_VIS;
-		
-		/* Message */
-		msg_print("You found a trap!");
-		
-		/* Notice the changes */
-		notice_field(f_ptr);
-	}
-
-	/* Disturb the player */
-	disturb(0, 0);
+	/* Hit the trap */
+	hit_trap(f_ptr);
 	
 	msg_print("Shouts fill the air!");
 	
@@ -2996,21 +2713,8 @@ void field_action_hit_trap_summon(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
-	/* Look for invisible traps and detect them.*/
-	if (!(f_ptr->info & FIELD_INFO_VIS))
-	{
-		/* Detect it. */
-		f_ptr->info |= FIELD_INFO_VIS;
-		
-		/* Message */
-		msg_print("You found a trap!");
-		
-		/* Notice the changes */
-		notice_field(f_ptr);
-	}
-
-	/* Disturb the player */
-	disturb(0, 0);
+	/* Hit the trap */
+	hit_trap(f_ptr);
 	
 	msg_print("Zap!");
 	
@@ -3026,21 +2730,8 @@ void field_action_hit_trap_lose_memory(s16b *field_ptr, void *nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
-	/* Look for invisible traps and detect them.*/
-	if (!(f_ptr->info & FIELD_INFO_VIS))
-	{
-		/* Detect it. */
-		f_ptr->info |= FIELD_INFO_VIS;
-		
-		/* Message */
-		msg_print("You found a trap!");
-		
-		/* Notice the changes */
-		notice_field(f_ptr);
-	}
-
-	/* Disturb the player */
-	disturb(0, 0);
+	/* Hit the trap */
+	hit_trap(f_ptr);
 	
 	msg_print("You are not sure what just happened!");
 	
@@ -3055,7 +2746,7 @@ void make_lockjam_door(int y, int x, int power, bool jam)
 	cave_type *c_ptr = area(y, x);
 	field_type *f_ptr;
 	
-	s16b fld_idx = field_is_type(c_ptr->fld_idx, FTYPE_DOOR);
+	s16b fld_idx = *field_is_type(&c_ptr->fld_idx, FTYPE_DOOR);
 	
 	int old_power = 0;
 	

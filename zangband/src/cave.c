@@ -55,7 +55,7 @@ int distance(int y1, int x1, int y2, int x2)
  */
 bool is_trap(cave_type *c_ptr)
 {
-	return (field_is_type(c_ptr->fld_idx, FTYPE_TRAP) != 0);
+	return (*field_is_type(&c_ptr->fld_idx, FTYPE_TRAP) != 0);
 }
 
 
@@ -64,7 +64,7 @@ bool is_trap(cave_type *c_ptr)
  */
 bool is_visible_trap(cave_type *c_ptr)
 {
-	return (field_first_known(c_ptr->fld_idx, FTYPE_TRAP) != 0 );
+	return (*field_first_known(&c_ptr->fld_idx, FTYPE_TRAP) != 0 );
 }
 
 

@@ -769,7 +769,7 @@ bool do_cmd_open_aux(int y, int x)
 
 	cave_type *c_ptr;
 	
-	s16b fld_idx;
+	s16b *fld_ptr;
 
 	/* Take a turn */
 	energy_use = 100;
@@ -785,10 +785,10 @@ bool do_cmd_open_aux(int y, int x)
 	}
 	
 	/* Get fields */
-	fld_idx = field_is_type(c_ptr->fld_idx, FTYPE_DOOR);
+	fld_ptr = field_is_type(&c_ptr->fld_idx, FTYPE_DOOR);
 	
 	/* If the door is locked / jammed */
-	if (fld_idx)
+	if (*fld_ptr)
 	{
 		/* Get the "disarm" factor */
 		i = p_ptr->skill_dis;
@@ -798,8 +798,7 @@ bool do_cmd_open_aux(int y, int x)
 		if (p_ptr->confused || p_ptr->image) i = i / 10;
 
 		/* Success? */
-		if (!field_hook_single(field_find(fld_idx), FIELD_ACT_INTERACT,
-			 (void *) &i))
+		if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, (void *) &i))
 		{
 			/* Update some things */
 			p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_MON_LITE);
@@ -838,7 +837,6 @@ bool do_cmd_open_aux(int y, int x)
 	/* Done - no more to try. */
 	return (FALSE);
 }
-
 
 
 /*
@@ -1136,7 +1134,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 	
 	int dig = p_ptr->skill_dig;
 	
-	s16b fld_idx = field_hook_find(&c_ptr->fld_idx,
+	s16b *fld_ptr = field_hook_find(&c_ptr->fld_idx,
 			 FIELD_ACT_INTERACT_TEST, (void *) &action);
 			 
 	/* Take a turn */
@@ -1155,10 +1153,9 @@ static bool do_cmd_tunnel_aux(int y, int x)
 		return (FALSE);
 	}
 
-	if (fld_idx && (action == 0))
+	if (*fld_ptr && (action == 0))
 	{
-		if (!field_hook_single(field_find(fld_idx), FIELD_ACT_INTERACT,
-			 (void *) &dig))
+		if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, (void *) &dig))
 		{
 			/* Notice new floor grids */
 			if (!cave_floor_grid(c_ptr))
@@ -1600,23 +1597,23 @@ bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
 
 	field_type *f_ptr;
 	field_thaum *t_ptr;
-	s16b fld_idx;
+	s16b *fld_ptr;
 
 	bool more = FALSE;
 	
 	int xp;
 	
 	/* Get trap */
-	fld_idx = field_first_known(c_ptr->fld_idx, FTYPE_TRAP);
+	fld_ptr = field_first_known(&c_ptr->fld_idx, FTYPE_TRAP);
 	
 	/* This should never happen - no trap here to disarm */
-	if (!fld_idx) return (FALSE);
+	if (!(*fld_ptr)) return (FALSE);
 	
 	/* Take a turn */
 	energy_use = 100;
 	
 	/* Point to field */
-	f_ptr = &fld_list[fld_idx];
+	f_ptr = &fld_list[*fld_ptr];
 	
 	/* Get amount of xp for a successful disarm */
 	xp = f_ptr->data[0] * f_ptr->data[0];
@@ -1632,8 +1629,7 @@ bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
 	if (p_ptr->confused || p_ptr->image) i = i / 10;
 
 	/* Success */
-	if (!field_hook_single(field_find(fld_idx), FIELD_ACT_INTERACT,
-	 (void *) &i))
+	if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, (void *) &i))
 	{
 		/* Message */
 		msg_format("You have disarmed the %s.", t_ptr->name);
@@ -1839,8 +1835,8 @@ void do_cmd_alter(void)
 			py_attack(y, x);
 		}
 
-		else if (field_hook_find(&c_ptr->fld_idx,
-			 FIELD_ACT_INTERACT_TEST, (void *) &action))
+		else if (*field_hook_find(&c_ptr->fld_idx, FIELD_ACT_INTERACT_TEST,
+					 (void *) &action))
 		{
 			switch (action)
 			{

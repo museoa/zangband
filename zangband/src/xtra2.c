@@ -2049,7 +2049,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 	cave_type *c_ptr = area(y, x);
 
 	s16b this_o_idx, next_o_idx = 0;
-	s16b this_f_idx, next_f_idx = 0;
+	s16b *this_f_ptr, *next_f_ptr = NULL;
 
 	cptr s1, s2, s3;
 
@@ -2367,16 +2367,16 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 		if (this_o_idx) break;
 		
 		/* Scan all fields in the grid */
-		for (this_f_idx = c_ptr->fld_idx; this_f_idx; this_f_idx = next_f_idx)
+		for (this_f_ptr = &c_ptr->fld_idx; *this_f_ptr; this_f_ptr = next_f_ptr)
 		{
-			field_type *f_ptr = &fld_list[this_f_idx];
+			field_type *f_ptr = &fld_list[*this_f_ptr];
 			
 			cptr name = t_info[f_ptr->t_idx].name;
 
 			char f_name[40];
 
 			/* Acquire next field */
-			next_f_idx = f_ptr->next_f_idx;
+			next_f_ptr = &f_ptr->next_f_idx;
 			
 			/* Do not describe this field */
 			if (f_ptr->info & FIELD_INFO_NO_LOOK) continue;
@@ -2389,8 +2389,8 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 				if (f_ptr->action[FIELD_ACT_LOOK])
 				{
 					/* Get the name */
-					(void) field_hook_single(field_find(this_f_idx),
-						 FIELD_ACT_LOOK, (void *) f_name);
+					(void) field_hook_single(this_f_ptr, FIELD_ACT_LOOK,
+						 (void *) f_name);
 					
 					/* Point to it */
 					name = f_name;

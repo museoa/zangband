@@ -628,7 +628,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 				if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM)) break;
 
 				/* Get fields */
-				fld_idx = field_is_type(c_ptr->fld_idx, FTYPE_DOOR);
+				fld_idx = *field_is_type(&c_ptr->fld_idx, FTYPE_DOOR);
 								
 				if (fld_idx)
 				{
@@ -669,10 +669,10 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 		{
 			int action;
 			
-			s16b fld_idx = field_hook_find(&c_ptr->fld_idx,
+			s16b *fld_ptr = field_hook_find(&c_ptr->fld_idx,
 			 	FIELD_ACT_INTERACT_TEST, (void *) &action);
 			
-			if (fld_idx)
+			if (*fld_ptr)
 			{
 				if (action == 0)
 				{
@@ -683,8 +683,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 					 * This is a mega-hack... will be fixed later.
 					 */
 					
-					field_hook_single(field_find(fld_idx),
-						 FIELD_ACT_MAGIC_TARGET, NULL);
+					field_hook_single(fld_ptr, FIELD_ACT_MAGIC_TARGET, NULL);
 				}
 			}
 			
