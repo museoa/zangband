@@ -567,7 +567,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 					if (c_ptr->feat == FEAT_CLOSED)
 					{
 						/* Update some things */
-						p_ptr->update |= (PU_VIEW | PU_MONSTERS);
+						p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_MON_LITE);
 					}
 				}
 
@@ -816,7 +816,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			}
 
 			/* Update some things */
-			p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS);
+			p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS | PU_MON_LITE);
 
 			break;
 		}
@@ -834,7 +834,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			if (c_ptr->info & (CAVE_MARK)) obvious = TRUE;
 
 			/* Update some things */
-			p_ptr->update |= (PU_VIEW | PU_MONSTERS);
+			p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_MON_LITE);
 
 			break;
 		}
@@ -871,7 +871,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			cave_set_feat(y, x, FEAT_WALL_EXTRA);
 
 			/* Update some things */
-			p_ptr->update |= (PU_VIEW | PU_MONSTERS);
+			p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_MON_LITE);
 
 			break;
 		}
@@ -5358,7 +5358,8 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 							}
 
 							/* Update some things -- similar to GF_KILL_WALL */
-							p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS);
+							p_ptr->update |= (PU_VIEW | PU_FLOW
+								 | PU_MONSTERS | PU_MON_LITE);
 						}
 						else
 						{

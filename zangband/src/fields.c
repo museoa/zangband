@@ -3240,7 +3240,8 @@ void field_action_door_lock_monster(s16b *field_ptr, void *input)
 			/* Update view */
 			if (player_can_see_bold(f_ptr->fy, f_ptr->fx))
 			{
-				p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS);
+				p_ptr->update |= (PU_VIEW | PU_FLOW 
+					| PU_MONSTERS | PU_MON_LITE);
 			}
 			
 			/* Delete the field */
@@ -3315,7 +3316,8 @@ void field_action_door_jam_monster(s16b *field_ptr, void *input)
 			/* Update view */
 			if (player_can_see_bold(f_ptr->fy, f_ptr->fx))
 			{
-				p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS);
+				p_ptr->update |= (PU_VIEW | PU_FLOW
+					 | PU_MONSTERS | PU_MON_LITE);
 			}
 			
 			/* Delete the field */

@@ -112,7 +112,7 @@ void do_cmd_redraw_term(int window)
 		p_ptr->update |= (PU_UN_VIEW);
 
 		/* Update view */
-		p_ptr->update |= (PU_VIEW);
+		p_ptr->update |= (PU_VIEW | PU_MON_LITE);
 
 		/* Update monsters */
 		p_ptr->update |= (PU_MONSTERS);

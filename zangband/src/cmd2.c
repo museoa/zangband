@@ -813,7 +813,7 @@ bool do_cmd_open_aux(int y, int x)
 			cave_set_feat(y, x, FEAT_OPEN);
 
 			/* Update some things */
-			p_ptr->update |= (PU_VIEW | PU_MONSTERS);
+			p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_MON_LITE);
 
 			/* Sound */
 			sound(SOUND_OPENDOOR);
@@ -840,7 +840,7 @@ bool do_cmd_open_aux(int y, int x)
 		cave_set_feat(y, x, FEAT_OPEN);
 
 		/* Update some things */
-		p_ptr->update |= (PU_VIEW | PU_MONSTERS);
+		p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_MON_LITE);
 
 		/* Sound */
 		sound(SOUND_OPENDOOR);
@@ -1000,7 +1000,7 @@ static bool do_cmd_close_aux(int y, int x)
 		cave_set_feat(y, x, FEAT_CLOSED);
 
 		/* Update some things */
-		p_ptr->update |= (PU_VIEW | PU_MONSTERS);
+		p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_MON_LITE);
 
 		/* Sound */
 		sound(SOUND_SHUTDOOR);
@@ -1119,7 +1119,7 @@ static bool twall(int y, int x, byte feat)
 	cave_set_feat(y, x, feat);
 
 	/* Update some things */
-	p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS);
+	p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS | PU_MON_LITE);
 
 	/* Result */
 	return (TRUE);
@@ -1175,7 +1175,8 @@ static bool do_cmd_tunnel_aux(int y, int x)
 			if (!cave_floor_grid(c_ptr))
 			{
 				/* Update some things */
-				p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS);
+				p_ptr->update |= (PU_VIEW | PU_FLOW |
+					 PU_MONSTERS | PU_MON_LITE);
 			}
 			
 			/* Finished tunneling */
@@ -1401,7 +1402,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 	if (!cave_floor_grid(c_ptr))
 	{
 		/* Update some things */
-		p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS);
+		p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS | PU_MON_LITE);
 	}
 
 	/* Result */

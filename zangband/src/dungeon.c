@@ -3849,7 +3849,7 @@ static void dungeon(void)
 	window_stuff();
 
 	/* Update stuff */
-	p_ptr->update |= (PU_VIEW | PU_FLOW | PU_DISTANCE);
+	p_ptr->update |= (PU_VIEW | PU_FLOW | PU_DISTANCE | PU_MON_LITE);
 
 	/* Update stuff */
 	update_stuff();
