@@ -137,10 +137,6 @@ proc angband_display {window action args} {
 				return
 			}
 
-			building {
-				NSModule::LoadIfNeeded NSBuilding
-			}
-
 			equip {
 				if {[string equal [Value inventory,style] new]} {
 					NSModule::LoadIfNeeded NSInventory2

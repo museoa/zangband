@@ -287,9 +287,6 @@ proc angband_startup {what} {
 		init_wilderness {
 			set prompt "    wilderness"
 		}
-		init_buildings {
-			set prompt "    buildings"
-		}
 		init_quests {
 			set prompt "    quests"
 		}

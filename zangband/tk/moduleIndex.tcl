@@ -1,6 +1,5 @@
 IndexOne NSAbout about.tcl
 IndexOne NSAutobar autobar.tcl
-IndexOne NSBuilding building.tcl
 IndexOne NSCharacterWindow character-window.tcl
 IndexOne NSCharFlagsCanvas charflags-canvas.tcl
 IndexOne NSCharInfoCanvas charinfo-canvas.tcl
