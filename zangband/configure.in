@@ -138,7 +138,7 @@ AC_CHECK_LIB([z], [main])
 
 # Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS([fcntl.h limits.h locale.h memory.h netdb.h stddef.h stdint.h stdlib.h string.h sys/file.h sys/ioctl.h sys/param.h sys/time.h sys/timeb.h termio.h unistd.h])
+AC_CHECK_HEADERS([fcntl.h limits.h locale.h memory.h netdb.h stddef.h stdint.h stdlib.h string.h sys/file.h sys/ioctl.h sys/param.h sys/time.h sys/timeb.h termio.h unistd.h sys/ipc.h sys/shm.h])
 
 AC_CHECK_HEADERS([termios.h], 
 	AC_DEFINE(USE_VCS, 1, [Use termios port]))
@@ -169,8 +169,8 @@ AC_FUNC_STRFTIME
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([floor ftruncate gethostname memchr memmove memset mkdir modf select setlocale strchr strcspn strdup strerror strpbrk strrchr strstr strtol strtoul])
 
-AC_CHECK_FUNCS([Tk_SetClassProcs])
-AC_CHECK_FUNCS([mkstemp usleep])
+AC_CHECK_FUNCS([Tk_SetClassProcs TkpSync])
+AC_CHECK_FUNCS([mkstemp usleep getpwuid getpwnam shmget])
 
 dnl A nice function to test compiler options (like warnings)
 AC_DEFUN(AC_CHECK_CC_OPT,

@@ -59,8 +59,12 @@ int usleep(huge usecs)
  * Hack -- External functions
  */
 #ifndef	_PWD_H
+# ifndef HAVE_GETPWUID
 extern struct passwd *getpwuid();
+# endif
+# ifndef HAVE_GETPWNAM
 extern struct passwd *getpwnam();
+# endif
 #endif /* _PWD_H */
 
 /*
