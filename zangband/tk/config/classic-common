@@ -30,65 +30,14 @@ switch -- [icon size] {
 	}
 }
 
-# Create "ascii" icon type
-icon createtype ascii -font "Courier $size bold"
 
 ### MERGE+ stop
 
 # Standard 16 colors
 set color {255 0 250 17 217 196 199 101 129 247 30 5 35 185 180 52}
 
-###
-### NOTE: Order of attribute creation is assumed in other places
-###
 
-# Create 16 ascii attributes (for monsters)
-set attr(monster) [icon ascii count]
-foreach paletteIndex $color {
-	icon ascii create -foreground [palette set $paletteIndex] \
-		-background [palette set 222]
-}
-
-# Create 16 ascii attributes (for unique monsters)
-set attr(monster,unique) [icon ascii count]
-foreach paletteIndex $color {
-	icon ascii create -foreground [palette set $paletteIndex] \
-		-background [palette set 221]
-}
-
-# Create 16 ascii attributes (for objects)
-set attr(object) [icon ascii count]
-foreach paletteIndex $color {
-	icon ascii create -foreground [palette set $paletteIndex] \
-		-background [palette set 232]
-}
-
-# Create 1 ascii attribute (for character)
-set attr(character) [icon ascii create -foreground [palette set 5] \
-	-background [palette set 252]]
-Global attr,character $attr(character)
-
-# Create 1 ascii attribute (for floor stack)
-set attr(stack) [icon ascii create -foreground [palette set 225] \
-	-background [palette set 232]]
-
-# Create 1 ascii attribute (for multi-hued monster)
-set attr(multi) [icon ascii create -foreground [palette set 0] \
-	-background [palette set 222]]
-
-# Create 1 ascii attribute (for multi-hued unique monster)
-set attr(multi,unique) [icon ascii create -foreground [palette set 0] \
-	-background [palette set 221]]
-
-# Create 1 ascii attribute (for shape-changing monster)
-set attr(shape) [icon ascii create -foreground [palette set 0] \
-	-background [palette set 222]]
-
-# Create 1 ascii attribute (for shape-changing unique monster)
-set attr(shape,unique) [icon ascii create -foreground [palette set 0] \
-	-background [palette set 221]]
 
 # Attribute characters used by monsters and objects
 # set attrStr "dwsorgbuDWvyRGBU"
 
-unset attr

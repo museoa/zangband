@@ -250,7 +250,7 @@ proc NSMainWindow::InitWindow {oop} {
 		set width [expr {13 * 32}]
 		set height [expr {9 * 32}]
 	}
-
+	
 	set widgetId [NSObject::New NSWidget $win.mainframe \
 		$width $height $gsize $gsize]
 	NSWidget::Info $widgetId leaveCmd NSMainWindow::Leave
@@ -285,7 +285,7 @@ proc NSMainWindow::InitWindow {oop} {
 	Global main,widget,center [angband player position]
 
 	variable HT ""
-
+	
 	# The "big map", the map of the entire cave with scroll bars.
 	# The user can change the scale via a popup menu, so we save
 	# the desired scale.

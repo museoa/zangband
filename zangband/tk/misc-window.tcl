@@ -160,6 +160,7 @@ pack $child -expand yes -fill y
 	set child [InitDisplay_Misc $win]
 	pack $child \
 		-expand no
+	
 
 	#
 	# Progress window
@@ -181,7 +182,7 @@ pack $child -expand yes -fill y
 	set child [InitDisplay_Progress $win]
 	pack $child \
 		-expand no
-
+		
 	return
 }
 
