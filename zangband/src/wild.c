@@ -4161,6 +4161,9 @@ void wild_done(void)
 	wild_grid.x = max_wild + 1;
 	wild_grid.y = max_wild + 1;
 	
+	/* Change to the wilderness */
+	change_level(0);
+	
 	/* Make the wilderness block cache. */
 	move_wild();
 
