@@ -809,7 +809,7 @@ static void random_slay(object_type *o_ptr, bool is_scroll)
 			/* Free power for rogues... */
 			o_ptr->art_flags2 |= TR2_THROW;
 		}
-		if ((!(o_ptr->art_flags1 & TR1_BRAND_POIS))&&(randint(2)==1))
+		if ((!(o_ptr->art_flags1 & TR1_BRAND_POIS)) && (randint(2) == 1))
 		{
 			o_ptr->art_flags1 |= TR1_BRAND_POIS;
 			if (randint(2) == 1) return;
@@ -1308,7 +1308,9 @@ static void give_activation_power(object_type *o_ptr)
 
 static void get_random_name(char *return_name, byte tval, int power)
 {
-	if ((randint(100) <= TABLE_NAME)||(tval==TV_AMULET)||(tval==TV_RING))
+	if ((randint(100) <= TABLE_NAME) ||
+	    (tval == TV_AMULET) ||
+	    (tval == TV_RING))
 	{
 		get_table_name(return_name);
 	}
@@ -1469,7 +1471,7 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 
 		if (o_ptr->art_flags1 & TR1_BLOWS)
 		{
-			if (randint(100)==1)
+			if (randint(100) == 1)
 			{
 				o_ptr->pval = 2;
 			}

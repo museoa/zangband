@@ -2707,6 +2707,23 @@ static bool update_view_aux(int y, int x, int y1, int x1, int y2, int x2)
 }
 
 
+/*
+ * Helper function for calculating LOS.
+ */
+static int scan_grid(int y, int x)
+{
+	cave_type *c_ptr = &cave[y][x];
+
+	c_ptr->info |= (CAVE_XTRA);
+	cave_view_hack(c_ptr, y, x);
+
+	/* Is LOS free ? */
+	if (!cave_floor_grid(c_ptr) && !cave_half_grid(c_ptr))
+		return FALSE;
+	else
+		return TRUE;
+}
+
 
 /*
  * Calculate the viewable space
@@ -2887,37 +2904,25 @@ void update_view(void)
 	/* Scan south-east */
 	for (d = 1; d <= z; d++)
 	{
-		c_ptr = &cave[y + d][x + d];
-		c_ptr->info |= (CAVE_XTRA);
-		cave_view_hack(c_ptr, y + d, x + d);
-		if ((!cave_floor_grid(c_ptr)) && (!cave_half_grid(c_ptr))) break;
+		if (!scan_grid(y + d, x + d)) break;
 	}
 
 	/* Scan south-west */
 	for (d = 1; d <= z; d++)
 	{
-		c_ptr = &cave[y + d][x - d];
-		c_ptr->info |= (CAVE_XTRA);
-		cave_view_hack(c_ptr, y + d, x - d);
-		if ((!cave_floor_grid(c_ptr)) && (!cave_half_grid(c_ptr))) break;
+		if (!scan_grid(y + d, x - d)) break;
 	}
 
 	/* Scan north-east */
 	for (d = 1; d <= z; d++)
 	{
-		c_ptr = &cave[y-d][x+d];
-		c_ptr->info |= (CAVE_XTRA);
-		cave_view_hack(c_ptr, y-d, x+d);
-		if ((!cave_floor_grid(c_ptr))&&(!cave_half_grid(c_ptr))) break;
+		if (!scan_grid(y - d, x + d)) break;
 	}
 
 	/* Scan north-west */
 	for (d = 1; d <= z; d++)
 	{
-		c_ptr = &cave[y-d][x-d];
-		c_ptr->info |= (CAVE_XTRA);
-		cave_view_hack(c_ptr, y-d, x-d);
-		if ((!cave_floor_grid(c_ptr))&&(!cave_half_grid(c_ptr))) break;
+		if (!scan_grid(y - d, x - d)) break;
 	}
 
 
@@ -2926,10 +2931,7 @@ void update_view(void)
 	/* Scan south */
 	for (d = 1; d <= full; d++)
 	{
-		c_ptr = &cave[y+d][x];
-		c_ptr->info |= (CAVE_XTRA);
-		cave_view_hack(c_ptr, y+d, x);
-		if ((!cave_floor_grid(c_ptr))&&(!cave_half_grid(c_ptr))) break;
+		if (!scan_grid(y + d, x)) break;
 	}
 
 	/* Initialize the "south strips" */
@@ -2938,10 +2940,7 @@ void update_view(void)
 	/* Scan north */
 	for (d = 1; d <= full; d++)
 	{
-		c_ptr = &cave[y-d][x];
-		c_ptr->info |= (CAVE_XTRA);
-		cave_view_hack(c_ptr, y-d, x);
-		if ((!cave_floor_grid(c_ptr))&&(!cave_half_grid(c_ptr))) break;
+		if (!scan_grid(y - d, x)) break;
 	}
 
 	/* Initialize the "north strips" */
@@ -2950,10 +2949,7 @@ void update_view(void)
 	/* Scan east */
 	for (d = 1; d <= full; d++)
 	{
-		c_ptr = &cave[y][x+d];
-		c_ptr->info |= (CAVE_XTRA);
-		cave_view_hack(c_ptr, y, x+d);
-		if ((!cave_floor_grid(c_ptr))&&(!cave_half_grid(c_ptr))) break;
+		if (!scan_grid(y, x + d)) break;
 	}
 
 	/* Initialize the "east strips" */
@@ -2962,10 +2958,7 @@ void update_view(void)
 	/* Scan west */
 	for (d = 1; d <= full; d++)
 	{
-		c_ptr = &cave[y][x-d];
-		c_ptr->info |= (CAVE_XTRA);
-		cave_view_hack(c_ptr, y, x-d);
-		if ((!cave_floor_grid(c_ptr))&&(!cave_half_grid(c_ptr))) break;
+		if (!scan_grid(y, x - d)) break;
 	}
 
 	/* Initialize the "west strips" */

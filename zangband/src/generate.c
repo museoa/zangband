@@ -433,15 +433,15 @@ static bool cave_gen(void)
 	}
 
 	/* Make a lake some of the time */
-	if ((rand_int(LAKE_LEVEL) == 0)&& (!empty_level)&& (!destroyed))
+	if ((rand_int(LAKE_LEVEL) == 0) && !empty_level && !destroyed)
 	{
 		/* Lake of Water */
-		if (dun_level>30) laketype=2;
+		if (dun_level > 30) laketype = 2;
 
 		/* Lake of Lava */
-		if (dun_level>60) laketype=1;
+		if (dun_level > 60) laketype = 1;
 
-		if (laketype!=0)
+		if (laketype != 0)
 		{
 			if (cheat_room)
 				msg_print("Lake on the level.");
@@ -449,10 +449,10 @@ static bool cave_gen(void)
 		}
 	}
 
-	if ((dun_level>DUN_CAVERN) && (!(empty_level))
-			&& (laketype == 0) && (!(destroyed))&&(randint(200)<dun_level))
+	if ((dun_level > DUN_CAVERN) && !empty_level &&
+	    (laketype == 0) && !destroyed && (randint(200) < dun_level))
 	{
-		cavern=TRUE;
+		cavern = TRUE;
 
 		/* make a large fractal cave in the middle of the dungeon */
 
@@ -688,15 +688,15 @@ static bool cave_gen(void)
 		dun->wall_n = 0;
 
 		/* Connect the room to the previous room */
-		if (pillar_tunnels && (randint(20)>dun_level)&&(randint(100)<25))
+		if (pillar_tunnels && (randint(20) > dun_level) && (randint(100) < 25))
 		{
 			/* make catacomb-like tunnel */
-			build_tunnel2(dun->cent[i].x, dun->cent[i].y, x, y, 3,30);
+			build_tunnel2(dun->cent[i].x, dun->cent[i].y, x, y, 3, 30);
 		}
 		else if (randint(dun_level)>25)
 		{
 			/* make cave-like tunnel */
-			build_tunnel2(dun->cent[i].x, dun->cent[i].y, x, y, 2,2);
+			build_tunnel2(dun->cent[i].x, dun->cent[i].y, x, y, 2, 2);
 		}
 		else
 		{
@@ -715,7 +715,8 @@ static bool cave_gen(void)
 			c_ptr = &cave[y][x];
 
 			/* Clear previous contents (if not a lake), add a floor */
-			if ((c_ptr->feat<FEAT_DEEP_WATER)||(c_ptr->feat>FEAT_SHAL_LAVA))
+			if ((c_ptr->feat < FEAT_DEEP_WATER) ||
+			    (c_ptr->feat > FEAT_SHAL_LAVA))
 			{
 				c_ptr->feat = FEAT_FLOOR;
 			}

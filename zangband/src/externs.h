@@ -904,7 +904,7 @@ extern bool recharge(int num);
 extern bool bless_weapon(void);
 extern bool potion_smash_effect(int who, int y, int x, int k_idx);
 extern void display_spell_list(void);
-extern s16b spell_chance(int spell,int realm);
+extern s16b spell_chance(int spell, int realm);
 extern bool spell_okay(int spell, bool known, int realm);
 extern void print_spells(byte *spells, int num, int y, int x, int realm);
 extern bool hates_acid(object_type *o_ptr);

@@ -1192,7 +1192,7 @@ static void rd_options(void)
 	/* Pre-2.8.0 savefiles are done */
 	if (older_than(2, 8, 0)) return;
 
-	if (z_older_than(2,1,0))
+	if (z_older_than(2, 1, 0))
 	{
 		autosave_t = autosave_l = 0;
 		autosave_freq = 0;

@@ -3668,10 +3668,10 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			}
 			else
 			{
-				(void)set_cut(p_ptr->  cut + ( dam / 2));
+				(void)set_cut(p_ptr->cut + (dam / 2));
 			}
 
-			if ((!p_ptr->resist_shard) || (randint(12) == 1))
+			if (!p_ptr->resist_shard || (randint(12) == 1))
 			{
 				inven_damage(set_cold_destroy, 3);
 			}

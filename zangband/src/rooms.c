@@ -3752,7 +3752,7 @@ static void r_visit(int y1, int x1, int y2, int x2,
 		/* pick a random ordering */
 		for (i = 0; i < 4; i++)
 			adj[i] = i;
-		for ( i = 0; i < 4; i++)
+		for (i = 0; i < 4; i++)
 		{
 			j = rand_int(4);
 			temp = adj[i];
@@ -3767,7 +3767,7 @@ static void r_visit(int y1, int x1, int y2, int x2,
 		adj[0] = dir;
 		for (i = 1; i < 4; i++)
 			adj[i] = i;
-		for ( i = 1; i < 4; i++)
+		for (i = 1; i < 4; i++)
 		{
 			j = 1 + rand_int(3);
 			temp = adj[i];
@@ -3961,7 +3961,7 @@ static void build_mini_c_vault(int x0, int y0, int xsize, int ysize)
 	/* Fill with monsters and treasure, highest difficulty*/
 	fill_treasure(x1, x2, y1, y2, 10);
 
-	/* rnfree( visited, num_vertices * sizeof(int));*/
+	/* rnfree(visited, num_vertices * sizeof(int));*/
 	free(visited);
 }
 

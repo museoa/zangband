@@ -618,7 +618,7 @@ static bool is_open(int feat)
  */
 static bool is_closed(int feat)
 {
-	return ((feat >= FEAT_DOOR_HEAD)&&(feat <= FEAT_DOOR_TAIL));
+	return ((feat >= FEAT_DOOR_HEAD) && (feat <= FEAT_DOOR_TAIL));
 }
 
 /*
@@ -857,7 +857,7 @@ void do_cmd_open(void)
 		num_chests = count_chests(&y, &x, FALSE);
 
 		/* See if only one target */
-		if ((num_doors + num_chests)==1)
+		if ((num_doors + num_chests) == 1)
 		{
 			command_dir = coords_to_dir(y, x);
 		}

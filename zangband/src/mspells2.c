@@ -411,7 +411,7 @@ bool monst_spell_monst(int m_idx)
 				}
 
 				monst_breath_monst(m_idx, y, x, GF_ACID,
-					((m_ptr->hp / 3) > 1600 ? 1600 : (m_ptr->hp / 3)),0, TRUE);
+					((m_ptr->hp / 3) > 1600 ? 1600 : (m_ptr->hp / 3)), 0, TRUE);
 
 				break;
 			}
@@ -443,7 +443,7 @@ bool monst_spell_monst(int m_idx)
 				}
 
 				monst_breath_monst(m_idx, y, x, GF_ELEC,
-					((m_ptr->hp / 3) > 1600 ? 1600 : (m_ptr->hp / 3)),0, TRUE);
+					((m_ptr->hp / 3) > 1600 ? 1600 : (m_ptr->hp / 3)), 0, TRUE);
 
 				break;
 			}
@@ -475,7 +475,7 @@ bool monst_spell_monst(int m_idx)
 				}
 
 				monst_breath_monst(m_idx, y, x, GF_FIRE,
-					((m_ptr->hp / 3) > 1600 ? 1600 : (m_ptr->hp / 3)),0, TRUE);
+					((m_ptr->hp / 3) > 1600 ? 1600 : (m_ptr->hp / 3)), 0, TRUE);
 
 				break;
 			}

@@ -2842,7 +2842,7 @@ void do_cmd_character(void)
  */
 errr file_character(cptr name, bool full)
 {
-	int	  	i,j, x, y;
+	int	  	i, j, x, y;
 	byte		a;
 	char		c;
 	cptr		paren = ")";

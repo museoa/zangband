@@ -1502,7 +1502,7 @@ void do_cmd_query_symbol(void)
 	if (query != 'y') return;
 
 	/* Sort if needed */
-	if (why==4)
+	if (why == 4)
 	{
 		/* Select the sort method */
 		ang_sort_comp = ang_sort_comp_hook;

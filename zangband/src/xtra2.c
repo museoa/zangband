@@ -1291,9 +1291,8 @@ void verify_panel(void)
 		/* Recalculate the boundaries */
 		panel_bounds_center();
 	}
-
 	else
-  	{
+	{
 		int prow = panel_row;
 		int pcol = panel_col;
 

@@ -1580,22 +1580,22 @@ static bool cast_death_spell(int spell)
 			else if (die < 56)
 			{
 				fire_bolt_or_beam(beam - 10, GF_ELEC, dir,
-					damroll(3+((plev-5)/4),8));
+					damroll(3 + ((plev - 5) / 4), 8));
 			}
 			else if (die < 61)
 			{
 				fire_bolt_or_beam(beam - 10, GF_COLD, dir,
-					damroll(5+((plev-5)/4),8));
+					damroll(5 + ((plev - 5) / 4), 8));
 			}
 			else if (die < 66)
 			{
 				fire_bolt_or_beam(beam, GF_ACID, dir,
-					damroll(6+((plev-5)/4),8));
+					damroll(6 + ((plev - 5) / 4), 8));
 			}
 			else if (die < 71)
 			{
 				fire_bolt_or_beam(beam, GF_FIRE, dir,
-					damroll(8+((plev-5)/4),8));
+					damroll(8 + ((plev - 5) / 4), 8));
 			}
 			else if (die < 76)
 			{
