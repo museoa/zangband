@@ -13,36 +13,33 @@
 #include "angband.h"
 
 /*
- * Find the connection to the cave array for the field
- * fld_list[fld_idx].
+ * Find the connection to the cave array for the field.
  *
  * This is used so that an arbitrary field can found.
  * This routine is fairly fast if there are not too many fields
  * on a square at one time.  However - it should only be used
  * by routines in this file.
  */
-static s16b *field_find(s16b fld_idx)
+static s16b *field_find(field_type *f_ptr)
 {
-	field_type *f_ptr;
+	cave_type *c_ptr = area(f_ptr->fx, f_ptr->fy);
+
+	field_type *q_ptr;
 
 	/* pointer to a field index in a list. */
 	s16b *location;
 
-	/* Point to the field */
-	f_ptr = &fld_list[fld_idx];
-
 	/* Paranoia */
 	if (f_ptr->region != cur_region) quit("Trying to find unregioned field");
 
-	location = &(area(f_ptr->fx, f_ptr->fy)->fld_idx);
+	location = &(c_ptr->fld_idx);
+	q_ptr = &fld_list[*location];
 
-	while (*location != fld_idx)
+	while (q_ptr != f_ptr)
 	{
-		/* Paranoia: Is the list broken? */
-		if (!(*location)) return (location);
-
 		/* Get the next field in the chain */
-		location = &(fld_list[*location].next_f_idx);
+		location = &(q_ptr->next_f_idx);
+		q_ptr = &fld_list[*location];
 	}
 
 	/* Found a pointer to our field */
@@ -468,7 +465,7 @@ void compact_fields(int size)
 			/* Apply the saving throw */
 			if (randint0(100) < chance) continue;
 
-			fld_ptr = field_find(i);
+			fld_ptr = field_find(f_ptr);
 
 			/* Call completion routine */
 			if (field_hook_single(fld_ptr, FIELD_ACT_EXIT))
@@ -848,7 +845,7 @@ void init_fields(void)
 		f_ptr->f_char = t_ptr->f_char;
 
 		/* Call loading routine */
-		(void)field_hook_single(field_find(fld_idx), FIELD_ACT_LOAD);
+		(void)field_hook_single(field_find(f_ptr), FIELD_ACT_LOAD);
 	}
 }
 
@@ -969,7 +966,7 @@ void field_destroy_type(s16b fld_idx, byte typ)
 		/* Is it the correct type? */
 		if (t_info[f_ptr->t_idx].type == typ)
 		{
-			fld_ptr = field_find(fld_idx);
+			fld_ptr = field_find(f_ptr);
 
 			/* Call completion routine */
 			if (field_hook_single(fld_ptr, FIELD_ACT_EXIT))
@@ -1290,7 +1287,7 @@ void process_fields(void)
 		if (!f_ptr->t_idx) continue;
 
 		/* Get pointer to field index */
-		fld_ptr = field_find(fld_idx);
+		fld_ptr = field_find(f_ptr);
 
 		/* If it is a temporary field, count down every 10 turns */
 		if ((f_ptr->info & FIELD_INFO_TEMP) && !(turn % 10))
