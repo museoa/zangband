@@ -890,8 +890,6 @@ extern player_magic *pmb_ptr;	/* Player magic info */
  */
 extern u16b borg_step;	/* Step count (if any) */
 
-extern void borgmove2(int *y, int *x, int y1, int x1, int y2, int x2);
-
 
 /*
  * Log file

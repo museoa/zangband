@@ -818,6 +818,224 @@ void borg_forget_view(void)
 
 
 /*
+ * Calculate "incremental motion". Used by project() and shoot().
+ * Assumes that (*y,*x) lies on the path from (y1,x1) to (y2,x2).
+ */
+/* changing this to be more like project_path */
+/* note that this is much slower but much more accurate */
+void borgmove2(int *py, int *px, int y1, int x1, int y2, int x2)
+{
+	int dy, dx;
+	int sy, sx;
+	int y, x;
+
+	/* Scale factors */
+	int full, half;
+
+	/* Fractions */
+	int frac;
+
+	/* Slope */
+	int m;
+
+	/* Distance */
+	int k = 0;
+
+	/* Extract the distance travelled */
+	/* Analyze "dy" */
+	if (y2 < y1)
+	{
+		dy = (y1 - y2);
+		sy = -1;
+	}
+	else
+	{
+		dy = (y2 - y1);
+		sy = 1;
+	}
+
+	/* Analyze "dx" */
+	if (x2 < x1)
+	{
+		dx = (x1 - x2);
+		sx = -1;
+	}
+	else
+	{
+		dx = (x2 - x1);
+		sx = 1;
+	}
+
+	/* Paranoia -- Hack -- no motion */
+	if (!dy && !dx) return;
+
+	/* Number of "units" in one "half" grid */
+	half = (dy * dx);
+
+	/* Number of "units" in one "full" grid */
+	full = half << 1;
+
+	/* First step is fixed */
+	if (*px == x1 && *py == y1)
+	{
+		if (dy > dx)
+		{
+			*py += sy;
+			return;
+		}
+		else if (dx > dy)
+		{
+			*px += sx;
+			return;
+		}
+		else
+		{
+			*px += sx;
+			*py += sy;
+			return;
+		}
+	}
+
+	/* Move mostly vertically */
+	if (dy > dx)
+	{
+		k = dy;
+
+		/* Start at tile edge */
+		frac = dx * dx;
+
+		/* Let m = ((dx/dy) * full) = (dx * dx * 2) = (frac * 2) */
+		m = frac << 1;
+
+		/* Start */
+		y = y1 + sy;
+		x = x1;
+
+		/* Create the projection path */
+		while (1)
+		{
+			if (x == *px && y == *py)
+				k = 1;
+
+			/* Slant */
+			if (m)
+			{
+				/* Advance (X) part 1 */
+				frac += m;
+
+				/* Horizontal change */
+				if (frac >= half)
+				{
+					/* Advance (X) part 2 */
+					x += sx;
+
+					/* Advance (X) part 3 */
+					frac -= full;
+				}
+			}
+
+			/* Advance (Y) */
+			y += sy;
+
+			/* Track distance */
+			k--;
+
+			if (!k)
+			{
+				*px = x;
+				*py = y;
+				return;
+			}
+		}
+	}
+	/* Move mostly horizontally */
+	else if (dx > dy)
+	{
+		/* Start at tile edge */
+		frac = dy * dy;
+
+		/* Let m = ((dy/dx) * full) = (dy * dy * 2) = (frac * 2) */
+		m = frac << 1;
+
+		/* Start */
+		y = y1;
+		x = x1 + sx;
+		k = dx;
+
+		/* Create the projection path */
+		while (1)
+		{
+			if (x == *px && y == *py)
+				k = 1;
+
+			/* Slant */
+			if (m)
+			{
+				/* Advance (Y) part 1 */
+				frac += m;
+
+				/* Vertical change */
+				if (frac >= half)
+				{
+					/* Advance (Y) part 2 */
+					y += sy;
+
+					/* Advance (Y) part 3 */
+					frac -= full;
+				}
+			}
+
+			/* Advance (X) */
+			x += sx;
+
+			/* Track distance */
+			k--;
+
+			if (!k)
+			{
+				*px = x;
+				*py = y;
+				return;
+			}
+		}
+	}
+	/* Diagonal */
+	else
+	{
+		/* Start */
+		k = dy;
+		y = y1 + sy;
+		x = x1 + sx;
+
+		/* Create the projection path */
+		while (1)
+		{
+			if (x == *px && y == *py)
+				k = 1;
+
+			/* Advance (Y) */
+			y += sy;
+
+			/* Advance (X) */
+			x += sx;
+
+			/* Track distance */
+			k--;
+
+			if (!k)
+			{
+				*px = x;
+				*py = y;
+				return;
+			}
+		}
+	}
+}
+
+
+
+
+/*
  * A simple, fast, integer-based line-of-sight algorithm.
  *
  * See "los()" in "cave.c" for complete documentation
