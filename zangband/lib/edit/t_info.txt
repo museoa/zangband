@@ -759,8 +759,8 @@ L:MENTT:end
 # data[7] contains the result of logical-and'ing the ST_XXX bitflags
 #     together for that store.
 #
-#     Note F:18 is not that particular property.
-#          F:19 is that particular property.
+#     Note L:STORE1 selects objects not in the store.
+#          L:STORE2 selects objects in the store.
 #
 # We now use a consistent, and hopefully intuitive, naming scheme 
 # for the advanced stores:
