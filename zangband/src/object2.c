@@ -3948,10 +3948,10 @@ void apply_magic(object_type *o_ptr, int lev, int lev_dif, byte flags)
 	if (lev > MAX_DEPTH - 1) lev = MAX_DEPTH - 1;
 
 	/* Base chance of being "good" */
-	f = (lev * 3) / 7 + 10;
+	f = (lev * 3) / 5 + 10;
 
 	/* Maximal chance of being "good" */
-	if (f > 30) f = 30;
+	if (f > 42) f = 42;
 
 	/* Roll for ego items */
 	if ((flags & OC_NORMAL) && (randint0(100) < f))
