@@ -167,6 +167,8 @@ struct object_kind
 
 	byte extra;	/* Rarity (for special randarts) */
 
+	u32b trigger[MAX_TRIGGER]; /* Special object scripts */
+
 	byte d_attr;	/* Default object attribute */
 	char d_char;	/* Default object character */
 
@@ -793,6 +795,8 @@ struct object_type
 	byte activate;	/* Activation type */
 
 	byte info;	/* Special flags */
+
+	s16b trigger[MAX_TRIGGER]; /* Special object scripts */
 
 	bool allocated;	/* Held in the o_list[] array */
 };

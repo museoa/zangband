@@ -31,6 +31,12 @@ extern bool script_do_string(cptr script);
 extern bool script_do_file(cptr filename);
 
 /*
+ * Execute one of the scripts attached to an object
+ */
+extern bool apply_object_trigger(int trigger_id, object_type *o_ptr, bool *ident, 
+		cptr var1, int val1, cptr var2, int val2, cptr var3, int val3);
+
+/*
  * Callback for using an object
  */
 extern bool use_object(object_type *o_ptr, bool *ident);

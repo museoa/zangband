@@ -157,10 +157,15 @@ void delete_object(int x, int y)
  */
 static void delete_static_object(object_type *o_ptr)
 {
+	int i;
+	
 	/* Deallocate quarks */
 	quark_remove(&o_ptr->xtra_name);
 	quark_remove(&o_ptr->inscription);
 
+	for (i = 0; i < MAX_TRIGGER; i++)
+		quark_remove(&o_ptr->trigger[i]);
+	
 	/* Do nothing */
 	return;
 }
@@ -1579,6 +1584,8 @@ void reduce_charges(object_type *o_ptr, int amt)
  */
 bool object_similar(const object_type *o_ptr, const object_type *j_ptr)
 {
+	int i;
+	
 	/* Require identical object types */
 	if (o_ptr->k_idx != j_ptr->k_idx) return (FALSE);
 
@@ -1748,6 +1755,11 @@ bool object_similar(const object_type *o_ptr, const object_type *j_ptr)
 		(o_ptr->inscription != j_ptr->inscription))
 		return (FALSE);
 
+	/* Require matching scripts */
+	for (i = 0; i < MAX_TRIGGER; i++)
+		if (o_ptr->trigger[i] != j_ptr->trigger[i])
+			return (FALSE);
+
 	/* Hack -- normally require matching "discounts" */
 	if (!stack_force_costs
 		&& (o_ptr->discount != j_ptr->discount)) return (FALSE);
@@ -1885,6 +1897,8 @@ void object_wipe(object_type *o_ptr)
  */
 object_type *object_dup(const object_type *o_ptr)
 {
+	int i;
+	
 	object_type *q_ptr = &temp_object;
 
 	/* Delete old static object */
@@ -1896,6 +1910,9 @@ object_type *object_dup(const object_type *o_ptr)
 	/* Allocate quarks */
 	quark_dup(o_ptr->xtra_name);
 	quark_dup(o_ptr->inscription);
+
+	for (i = 0; i < MAX_TRIGGER; i++)
+		quark_dup(o_ptr->trigger[i]);
 
 	/* Return a pointer to the static object */
 	return (q_ptr);
@@ -1948,6 +1965,21 @@ object_type *object_prep(int k_idx)
 	o_ptr->flags2 = k_ptr->flags2;
 	o_ptr->flags3 = k_ptr->flags3;
 	o_ptr->flags4 = k_ptr->flags4;
+
+#if 0
+	/* 
+	 * Don't add the triggers - apply_object_trigger looks up the object
+	 * kind's trigger if the specific object has none
+	 */
+	for (i = 0; i < MAX_TRIGGER; i++)
+	{
+		if (k_ptr->trigger[i])
+		{
+			o_ptr->trigger[i] = 
+				quark_add(k_text + k_ptr->trigger[i]);
+		}
+	}
+#endif
 
 	return (o_ptr);
 }

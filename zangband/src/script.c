@@ -207,37 +207,91 @@ static const struct luaL_reg intMathLib[] =
 	{"max",    math_max },
 };
 
+bool apply_object_trigger(int trigger_id, object_type *o_ptr, bool *ident, 
+		cptr var1, int val1, cptr var2, int val2, cptr var3, int val3)
+{
+	int status;
+	bool result;
+	
+	object_kind *k_ptr = &k_info[o_ptr->k_idx];
+
+	cptr script = NULL;
+
+	int oldtop = lua_gettop(L);
+
+	if (o_ptr->trigger[trigger_id])
+		script = quark_str(o_ptr->trigger[trigger_id]);
+	else if (k_ptr->trigger[trigger_id])
+		script = k_text + k_ptr->trigger[trigger_id];
+	else
+	{
+		script = "return apply_default_object_trigger(trigger_id, "
+					"object, who, x, y)";
+	}
+
+	/* Set parameters (really globals) */
+	tolua_pushusertype(L, (void*)o_ptr, tolua_tag(L, "object_type"));
+	lua_setglobal(L, "object");
+	lua_pushnumber(L, trigger_id); lua_setglobal(L, "trigger_id");
+	if (var1) { lua_pushnumber(L, val1); lua_setglobal(L, var1); }
+	if (var2) { lua_pushnumber(L, val2); lua_setglobal(L, var2); }
+	if (var3) { lua_pushnumber(L, val3); lua_setglobal(L, var3); }
+
+	/* Set result vars for convenience */
+	if (trigger_id == TRIGGER_USE)
+	{
+		tolua_pushbool(L, TRUE); lua_setglobal(L, "ident");
+		tolua_pushbool(L, TRUE); lua_setglobal(L, "result");
+	}
+	else if (trigger_id == TRIGGER_SMASH)
+	{
+		tolua_pushbool(L, FALSE); lua_setglobal(L, "ident");
+		tolua_pushbool(L, FALSE); lua_setglobal(L, "result");
+	}
+
+	/* Call the script */
+	status = lua_dostring(L, script);
+
+	if (status == 0)
+	{
+		/* Push default result */
+		if (lua_gettop(L) < oldtop + 1)
+			lua_getglobal(L, "result");
+		if (lua_gettop(L) < oldtop + 2)
+			lua_getglobal(L, "ident");
+		
+		*ident = tolua_getbool(L, 1, FALSE);
+		result = tolua_getbool(L, 2, FALSE);
+
+		/* Remove the results */
+		lua_settop(L, oldtop);
+	}
+	else
+	{
+		/* Error */
+		*ident = FALSE;
+		result = FALSE;
+	}
+
+	/* Clear globals */
+	lua_pushnil(L); lua_setglobal(L, "trigger_id");
+	lua_pushnil(L); lua_setglobal(L, "object");
+	lua_pushnil(L); lua_setglobal(L, "ident");
+	lua_pushnil(L); lua_setglobal(L, "result");
+	if (var1) { lua_pushnil(L); lua_setglobal(L, var1); }
+	if (var2) { lua_pushnil(L); lua_setglobal(L, var2); }
+	if (var3) { lua_pushnil(L); lua_setglobal(L, var3); }
+
+	return (result);
+}
 
 /*
  * Callback for using an object
  */
 bool use_object(object_type *o_ptr, bool *ident)
 {
-	bool used_up;
-	int status;
-
-	lua_getglobal(L, "use_object_hook");
-	tolua_pushusertype(L, (void*)o_ptr, tolua_tag(L, "object_type"));
-
-	/* Call the function with 1 argument and 2 results */
-	status = lua_call(L, 1, 2);
-
-	if (status == 0)
-	{
-		*ident = tolua_getbool(L, 1, FALSE);
-		used_up = tolua_getbool(L, 2, FALSE);
-
-		/* Remove the results */
-		lua_pop(L, 2);
-	}
-	else
-	{
-		/* Error */
-		*ident = FALSE;
-		used_up = FALSE;
-	}
-
-	return (used_up);
+	return apply_object_trigger(TRIGGER_USE, o_ptr, ident, 
+			NULL, 0, NULL, 0, NULL, 0);
 }
 
 

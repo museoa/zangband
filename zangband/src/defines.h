@@ -32,7 +32,7 @@
 #define VERSION_NAME "ZAngband"
 
 /* Savefile version */
-#define SAVEFILE_VERSION 44
+#define SAVEFILE_VERSION 45
 
 /* User-visible version */
 #define VER_MAJOR 2
@@ -98,6 +98,17 @@
  * Maximum dungeon width in grids.
  */
 #define MAX_WID         198
+
+
+/*
+ * Script triggers
+ */
+#define MAX_TRIGGER     4
+
+#define TRIGGER_USE     0
+#define TRIGGER_HIT     1
+#define TRIGGER_THROW   2
+#define TRIGGER_SMASH   3
 
 
 /*

@@ -65,6 +65,9 @@
 # lines may be used as are needed to specify all the flags and flags
 # are separated by the '|' symbol.
 
+# 'L' is for lua scripts:
+# USE - self-explanatory. returns used,ident
+# SMASH - potion smash effect. returns angry,ident
 
 # Version stamp (required)
 
@@ -85,6 +88,7 @@ I:80:1:500
 W:9:0:1:0
 A:9/2
 F:EASY_KNOW
+L:USE:	ident = not player_res(TR2_RES_BLIND) and inc_blind(rand_range(200, 400))
 
 N:2:Paranoia
 G:,:d
@@ -92,6 +96,7 @@ I:80:2:500
 W:9:0:1:0
 A:9/2
 F:EASY_KNOW
+L:USE:	ident = not player_res(TR2_RES_FEAR) and inc_afraid(rand_range(10, 20))
 
 N:3:Confusion
 G:,:d
@@ -99,6 +104,7 @@ I:80:3:500
 W:9:0:1:0
 A:9/2
 F:EASY_KNOW
+L:USE:	ident = not player_res(TR2_RES_CONF) and inc_confused(rand_range(10, 20))
 
 N:4:Hallucination
 G:,:d
@@ -106,6 +112,7 @@ I:80:4:500
 W:17:0:1:0
 A:17/2
 F:EASY_KNOW
+L:USE:	ident = not player_res(TR2_RES_CHAOS) and inc_image(rand_range(250, 500))
 
 N:5:Cure Poison
 G:,:d
@@ -113,6 +120,7 @@ I:80:12:500
 W:9:0:1:60
 A:9/1
 F:EASY_KNOW
+L:USE:	ident = clear_poisoned()
 
 N:6:Cure Blindness
 G:,:d
@@ -120,6 +128,7 @@ I:80:13:500
 W:9:0:1:50
 A:9/1
 F:EASY_KNOW
+L:USE:	ident = clear_blind()
 
 N:7:Cure Paranoia
 G:,:d
@@ -127,6 +136,7 @@ I:80:14:500
 W:9:0:1:25
 A:9/1
 F:EASY_KNOW
+L:USE:	ident = clear_afraid()
 
 N:8:Cure Confusion
 G:,:d
@@ -134,6 +144,7 @@ I:80:15:500
 W:9:0:1:50
 A:9/1
 F:EASY_KNOW
+L:USE:	ident = clear_confused()
 
 N:9:Weakness
 G:,:d
@@ -142,6 +153,7 @@ W:9:0:1:0
 A:9/2
 P:0:5d5:0:0:0
 F:EASY_KNOW
+L:USE:	take_hit(damroll(6, 6), "poisonous food"); do_dec_stat(A_STR)
 
 N:10:Unhealth
 G:,:d
@@ -150,6 +162,7 @@ W:26:0:1:100
 A:26/1
 P:0:10d10:0:0:0
 F:EASY_KNOW
+L:USE:	take_hit(damroll(10, 10), "poisonous food"); do_dec_stat(A_CON)
 
 N:11:Restore Constitution
 G:,:d
@@ -157,6 +170,7 @@ I:80:18:500
 W:25:0:1:350
 A:25/1
 F:EASY_KNOW
+L:USE:	ident = do_res_stat(A_CON)
 
 N:12:Restoring
 G:,:d
@@ -164,6 +178,12 @@ I:80:19:500
 W:50:0:1:1000
 A:35/28:52/14:65/4
 F:EASY_KNOW
+L:USE:	if do_res_stat(A_STR) then ident = TRUE end
+L:USE:	if do_res_stat(A_INT) then ident = TRUE end
+L:USE:	if do_res_stat(A_WIS) then ident = TRUE end
+L:USE:	if do_res_stat(A_DEX) then ident = TRUE end
+L:USE:	if do_res_stat(A_CON) then ident = TRUE end
+L:USE:	if do_res_stat(A_CHR) then ident = TRUE end
 
 N:13:Stupidity
 G:,:d
@@ -171,6 +191,7 @@ I:80:8:500
 W:26:0:1:0
 A:26/3
 F:EASY_KNOW
+L:USE:	take_hit(damroll(8, 8), "poisonous food"); do_dec_stat(A_INT)
 
 N:14:Naivety
 G:,:d
@@ -178,6 +199,7 @@ I:80:9:500
 W:26:0:1:0
 A:26/3
 F:EASY_KNOW
+L:USE:	take_hit(damroll(8, 8), "poisonous food"); do_dec_stat(A_WIS)
 
 N:15:Poison
 G:,:d
@@ -186,6 +208,7 @@ W:9:0:1:0
 A:9/2
 P:0:4d4:0:0:0
 F:EASY_KNOW
+L:USE:  ident = res_pois_lvl() ~= 0 and inc_poisoned(rand_range(10, 20))
 
 N:16:Sickness
 G:,:d
@@ -194,6 +217,7 @@ W:17:0:1:0
 A:17/2
 P:0:4d4:0:0:0
 F:EASY_KNOW
+L:USE:	take_hit(damroll(6, 6), "poisonous food"); do_dec_stat(A_CON)
 
 N:17:Paralysis
 G:,:d
@@ -201,6 +225,7 @@ I:80:5:500
 W:35:0:1:0
 A:35/2
 F:EASY_KNOW
+L:USE:	ident = not player_res(TR2_FREE_ACT) and inc_paralyzed(rand_range(10, 20))
 
 N:18:Restore Strength
 G:,:d
@@ -208,6 +233,7 @@ I:80:17:500
 W:25:0:1:350
 A:25/1
 F:EASY_KNOW
+L:USE:	ident = do_res_stat(A_CON);
 
 N:19:Disease
 G:,:d
@@ -216,6 +242,7 @@ W:35:0:1:300
 A:35/2
 P:0:15d15:0:0:0
 F:EASY_KNOW
+L:USE:	take_hit(damroll(10, 10), "poisonous food"); do_dec_stat(A_STR)
 
 N:20:Cure Serious Wounds
 G:,:d
@@ -223,6 +250,7 @@ I:80:16:500
 W:16:0:1:75
 A:16/1
 F:EASY_KNOW
+L:USE:	ident = hp_player(damroll(4, 8))
 
 ##### Normal Food #####
 
@@ -232,6 +260,7 @@ I:80:35:5000
 W:0:0:10:3
 A:1/1:9/1:17/1
 F:EASY_KNOW
+L:USE:	msgf("That tastes good.");
 
 N:22:& Hard Biscuit~
 G:,:U
@@ -239,6 +268,7 @@ I:80:32:500
 W:0:0:2:1
 A:1/1
 F:EASY_KNOW
+L:USE:	msgf("That tastes good.");
 
 N:23:& Strip~ of Venison
 G:,:u
@@ -246,6 +276,7 @@ I:80:33:1500
 W:0:0:2:2
 A:1/1
 F:EASY_KNOW
+L:USE:	msgf("That tastes good.");
 
 N:24:& Slime Mold~
 G:,:g
@@ -253,6 +284,7 @@ I:80:36:3000
 W:1:0:5:2
 A:1/1
 F:EASY_KNOW
+L:USE:	msgf("That tastes good.");
 D:A green, slimy... something.
 
 N:25:& Piece~ of Elvish Waybread
@@ -261,6 +293,7 @@ I:80:37:7500
 W:10:0:3:10
 A:10/1:20/1:30/1:40/1
 F:EASY_KNOW
+L:USE:	msgf("That tastes good."); clear_poisoned(); hp_player(damroll(4, 8))
 
 N:26:& Pint~ of Fine Ale
 G:,:y
@@ -268,6 +301,7 @@ I:80:38:500
 W:0:0:5:1
 A:1/3
 F:EASY_KNOW
+L:USE:	msgf("That tastes good.");
 
 N:27:& Pint~ of Fine Wine
 G:,:r
@@ -275,6 +309,7 @@ I:80:39:1000
 W:0:0:10:2
 A:1/3
 F:EASY_KNOW
+L:USE:	msgf("That tastes good.");
 
 ##### Extra digger #####
 
@@ -1417,6 +1452,7 @@ I:70:17:0
 W:26:0:5:250
 A:26/1
 F:EASY_KNOW
+L:USE:	if not enchant_spell(1, 0, 0) then result = FALSE end
 
 N:174:Enchant Weapon Deadliness
 G:?:d
@@ -1424,6 +1460,7 @@ I:70:18:0
 W:26:0:5:250
 A:26/1
 F:EASY_KNOW
+L:USE:	if not enchant_spell(0, 1, 0) then result = FALSE end
 
 N:175:Enchant Armor
 G:?:d
@@ -1431,6 +1468,7 @@ I:70:16:0
 W:26:0:5:250
 A:26/1
 F:EASY_KNOW
+L:USE:	if not enchant_spell(0, 0, 1) then result = FALSE end
 
 N:176:Identify
 G:?:d
@@ -1438,6 +1476,7 @@ I:70:12:0
 W:5:0:5:50
 A:1/1:9/1:17/1:52/1
 F:EASY_KNOW
+L:USE:	if not ident_spell() then result = FALSE end
 
 N:177:*Identify*
 G:?:d
@@ -1445,6 +1484,7 @@ I:70:13:0
 W:30:0:5:500
 A:30/1:60/1:90/1
 F:EASY_KNOW
+L:USE:	if not identify_fully() then result = FALSE end
 
 N:178:Rumour
 G:?:d
@@ -1452,6 +1492,9 @@ I:70:51:0
 W:1:0:5:10
 A:1/1
 F:EASY_KNOW
+L:USE:	msgf("There is a message on the scroll. It says:"); message_flush()
+L:USE:	msgf(get_rumor()); message_flush()
+L:USE:	msgf("The scroll disappears in a puff of smoke!")
 
 N:179:Logrus
 G:?:d
@@ -1460,6 +1503,9 @@ W:80:0:5:1000
 A:80/1
 F:IGNORE_FIRE | IGNORE_ACID | IGNORE_COLD | IGNORE_ELEC
 F:EASY_KNOW
+L:USE:	fire_ball(GF_CHAOS, 0, 400, 4)
+L:USE:	if not player_res(TR2_RES_CHAOS) then take_hit(rand_range(150, 300),
+L:USE:		"a Scroll of Logrus") end
 D:The chaotic runes on this scroll look very dangerous.
 
 N:180:Remove Curse
@@ -1468,6 +1514,8 @@ I:70:14:0
 W:17:0:5:100
 A:17/1:35/2:65/2
 F:EASY_KNOW
+L:USE:	if remove_curse() then msgf("You feel as if someone is watching over you.");
+L:USE:	else ident = FALSE end
 
 N:181:Light
 G:?:d
@@ -1475,6 +1523,7 @@ I:70:24:0
 W:0:0:5:15
 A:0/1:5/1
 F:EASY_KNOW
+L:USE:	ident = lite_area(damroll(2, 8), 2);
 
 N:182:Fire
 G:?:d
@@ -1482,6 +1531,9 @@ I:70:48:0
 W:75:0:5:500
 A:75/1
 F:IGNORE_FIRE | EASY_KNOW
+L:USE:	fire_ball(GF_FIRE, 0, 300, 4)
+L:USE:	if res_fire_lvl() > 3 then take_hit(rand_range(50, 100),
+L:USE:		"a Scroll of Fire") end
 
 N:183:Ice
 G:?:d
@@ -1489,6 +1541,9 @@ I:70:49:0
 W:75:0:5:600
 A:75/1
 F:IGNORE_COLD | EASY_KNOW
+L:USE:	fire_ball(GF_FIRE, 0, 350, 4)
+L:USE:	if res_fire_lvl() > 3 then take_hit(rand_range(100, 200),
+L:USE:		"a Scroll of Ice") end
 
 N:184:Summon Monster
 G:?:d
@@ -1496,6 +1551,7 @@ I:70:4:0
 W:1:0:5:0
 A:1/1
 F:EASY_KNOW
+L:USE:	ident = summon_monsters(randint1(3), 0)
 
 N:185:Phase Door
 G:?:d
@@ -1503,6 +1559,7 @@ I:70:8:0
 W:1:0:5:15
 A:1/1
 F:EASY_KNOW
+L:USE:	teleport_player(10)
 
 N:186:Teleportation
 G:?:d
@@ -1510,6 +1567,7 @@ I:70:9:0
 W:17:0:5:40
 A:17/1
 F:EASY_KNOW
+L:USE:	teleport_player(100)
 
 N:187:Teleport Level
 G:?:d
@@ -1517,6 +1575,7 @@ I:70:10:0
 W:30:0:5:150
 A:30/1
 F:EASY_KNOW
+L:USE:	teleport_player_level()
 
 N:188:Monster Confusion
 G:?:d
@@ -1524,6 +1583,11 @@ I:70:36:0
 W:9:0:5:30
 A:9/2
 F:EASY_KNOW
+L:USE:	if player.state.confusing == 0 then
+L:USE:		msgf("Your hands begin to glow.")
+L:USE:		player.state.confusing = TRUE
+L:USE:		player.redraw = b0r(player.redraw, PR_STATUS)
+L:USE:	else ident = FALSE end
 
 N:189:Magic Mapping
 G:?:d
@@ -1531,6 +1595,7 @@ I:70:25:0
 W:9:0:5:100
 A:9/2
 F:EASY_KNOW
+L:USE:	map_area()
 
 N:190:Rune of Protection
 G:?:d
@@ -1538,6 +1603,7 @@ I:70:38:0
 W:75:0:5:1000
 A:75/2:100/4
 F:EASY_KNOW
+L:USE:	if not warding_glyph() then result = FALSE end
 
 N:191:*Remove Curse*
 G:?:d
@@ -1545,6 +1611,7 @@ I:70:15:0
 W:75:0:5:8000
 A:75/1:100/1
 F:EASY_KNOW
+L:USE:	remove_all_curse()
 
 N:192:Treasure Detection
 G:?:d
@@ -1552,6 +1619,8 @@ I:70:26:0
 W:0:0:5:5
 A:0/1
 F:EASY_KNOW
+L:USE:	ident = detect_treasure()
+L:USE:	if detect_objects_gold() then ident = TRUE end
 
 N:193:Object Detection
 G:?:d
@@ -1559,6 +1628,7 @@ I:70:27:0
 W:0:0:5:5
 A:0/1
 F:EASY_KNOW
+L:USE:	ident = detect_objects_normal()
 
 N:194:Trap Detection
 G:?:d
@@ -1566,6 +1636,7 @@ I:70:28:0
 W:9:0:5:5
 A:9/1
 F:EASY_KNOW
+L:USE:	ident = detect_traps()
 
 ##### Extra ammunition #####
 
@@ -1593,6 +1664,8 @@ I:70:29:0
 W:9:0:5:35
 A:9/2
 F:EASY_KNOW
+L:USE:	ident = detect_doors()
+L:USE:	if detect_stairs() then ident = TRUE end
 
 N:198:Acquirement
 G:?:d
@@ -1600,6 +1673,7 @@ I:70:46:0
 W:50:0:5:100000
 A:35/8
 F:EASY_KNOW
+L:USE:	acquirement(player.px, player.py, 1, TRUE, FALSE)
 
 N:199:*Acquirement*
 G:?:d
@@ -1607,6 +1681,7 @@ I:70:47:0
 W:90:0:5:200000
 A:90/16
 F:EASY_KNOW
+L:USE:	acquirement(player.px, player.py, rand_range(2, 3), TRUE, FALSE)
 
 N:200:Mass Genocide
 G:?:d
@@ -1614,6 +1689,7 @@ I:70:45:0
 W:75:0:5:5000
 A:75/4:85/4
 F:EASY_KNOW
+L:USE:	mass_genocide(TRUE)
 D:The evil runes on this scroll make you tremble.
 
 N:201:Detect Invisible
@@ -1622,6 +1698,7 @@ I:70:30:0
 W:1:0:5:15
 A:1/2
 F:EASY_KNOW
+L:USE:	ident = detect_monsters_invis()
 
 N:202:Aggravate Monster
 G:?:d
@@ -1629,6 +1706,8 @@ I:70:1:0
 W:9:0:5:0
 A:9/2
 F:EASY_KNOW
+L:USE:	msgf("There is a high pitched humming noise.")
+L:USE:	aggravate_monster(0)
 
 N:203:Trap Creation
 G:?:d
@@ -1636,6 +1715,7 @@ I:70:7:0
 W:5:0:5:0
 A:5/20:17/2
 F:EASY_KNOW
+L:USE:	ident = trap_creation()
 
 N:204:Trap/Door Destruction
 G:?:d
@@ -1643,6 +1723,7 @@ I:70:39:0
 W:10:0:5:50
 A:10/8:17/2
 F:EASY_KNOW
+L:USE:	ident = destroy_doors_touch()
 
 N:205:Artifact Creation
 G:?:d
@@ -1650,6 +1731,7 @@ I:70:52:0
 W:100:0:5:300000
 A:100/16
 F:EASY_KNOW
+L:USE:	if not artifact_scroll() then result = FALSE end
 
 N:206:Recharging
 G:?:d
@@ -1657,6 +1739,7 @@ I:70:22:0
 W:40:0:5:200
 A:40/1
 F:EASY_KNOW
+L:USE:	if not recharge(130) then result = FALSE end
 
 N:207:Genocide
 G:?:d
@@ -1664,6 +1747,7 @@ I:70:44:0
 W:65:0:5:1000
 A:65/1
 F:EASY_KNOW
+L:USE:	genocide(TRUE)
 D:The evil runes on this scroll make you shiver.
 
 N:208:Darkness
@@ -1672,6 +1756,10 @@ I:70:0:0
 W:1:0:5:0
 A:1/2
 F:EASY_KNOW
+L:USE:	if not player_res(TR2_RES_BLIND) and not player_res(TR2_RES_DARK) then
+L:USE:		inc_blind(rand_range(3, 8))
+L:USE:	end
+L:USE:	ident = unlite_area(10, 3)
 
 N:209:Protection from Evil
 G:?:d
@@ -1679,6 +1767,7 @@ I:70:37:0
 W:52:0:5:200
 A:52/1
 F:EASY_KNOW
+L:USE:	ident = inc_protevil(3 * player.lev + randint1(25))
 
 N:210:Satisfy Hunger
 G:?:d
@@ -1686,6 +1775,7 @@ I:70:32:0
 W:5:0:5:10
 A:5/1:20/1:45/1:75/1
 F:EASY_KNOW
+L:USE:	ident = set_food(PY_FOOD_MAX - 1)
 
 N:211:Dispel Undead
 G:?:d
@@ -1693,6 +1783,7 @@ I:70:42:0
 W:65:0:5:300
 A:65/1
 F:EASY_KNOW
+L:USE:	ident = dispel_undead(60)
 
 N:212:*Enchant Weapon*
 G:?:d
@@ -1700,6 +1791,7 @@ I:70:21:0
 W:50:0:5:500
 A:50/5:75/1
 F:EASY_KNOW
+L:USE:	if not enchant_spell(randint1(5), randint1(5), 0) then result = FALSE end
 
 N:213:Curse Weapon
 G:?:d
@@ -1707,6 +1799,7 @@ I:70:3:0
 W:75:0:5:0
 A:75/1
 F:EASY_KNOW
+L:USE:	ident = curse_weapon()
 
 N:214:*Enchant Armor*
 G:?:d
@@ -1714,6 +1807,7 @@ I:70:20:0
 W:50:0:5:500
 A:50/5:75/1:92/1
 F:EASY_KNOW
+L:USE:	if not enchant_spell(0, 0, rand_range(2, 7)) then result = FALSE end
 
 N:215:Curse Armor
 G:?:d
@@ -1721,6 +1815,7 @@ I:70:2:0
 W:75:0:5:0
 A:75/1
 F:EASY_KNOW
+L:USE:	ident = curse_armor()
 
 N:216:Summon Undead
 G:?:d
@@ -1728,6 +1823,7 @@ I:70:5:0
 W:15:0:5:0
 A:26/1
 F:EASY_KNOW
+L:USE:	ident = summon_monsters(randint1(3), SUMMON_UNDEAD)
 
 N:217:Blessing
 G:?:d
@@ -1735,6 +1831,7 @@ I:70:33:0
 W:1:0:5:15
 A:1/2
 F:EASY_KNOW
+L:USE:	ident = inc_blessed(rand_range(6, 18))
 
 N:218:Holy Chant
 G:?:d
@@ -1742,6 +1839,7 @@ I:70:34:0
 W:15:0:5:50
 A:15/2
 F:EASY_KNOW
+L:USE:	ident = inc_blessed(rand_range(12, 36))
 
 N:219:Holy Prayer
 G:?:d
@@ -1749,6 +1847,7 @@ I:70:35:0
 W:30:0:5:120
 A:30/2
 F:EASY_KNOW
+L:USE:	ident = inc_blessed(rand_range(24, 72))
 
 N:220:Word of Recall
 G:?:d
@@ -1756,6 +1855,7 @@ I:70:11:0
 W:5:0:5:70
 A:1/3:7/1
 F:EASY_KNOW
+L:USE:	word_of_recall()
 
 N:221:*Destruction*
 G:?:d
@@ -1763,6 +1863,8 @@ I:70:41:0
 W:65:0:5:500
 A:65/1
 F:EASY_KNOW
+L:USE:	if not destroy_area(player.px, player.py, 15) then
+L:USE:		msgf("The dungeon trembles...") end
 
 ##### Potions #####
 
@@ -1773,6 +1875,8 @@ W:0:0:4:2
 A:0/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	msgf("You feel less thirsty.");
+L:SMASH:result = TRUE
 D:A green liquid that tries to climb out of the bottle.
 
 N:223:Apple Juice
@@ -1782,6 +1886,8 @@ W:0:0:4:1
 A:0/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	msgf("You feel less thirsty.");
+L:SMASH:result = TRUE
 
 N:224:Water
 G:!:d
@@ -1790,6 +1896,8 @@ W:0:0:4:1
 A:0/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	msgf("You feel less thirsty.");
+L:SMASH:result = TRUE
 
 N:225:Strength
 G:!:d
@@ -1798,6 +1906,7 @@ W:40:0:4:10000
 A:33/6:39/6:43/3:53/3
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = do_inc_stat(A_STR)
 
 N:226:Weakness
 G:!:d
@@ -1806,6 +1915,8 @@ W:5:0:4:0
 A:5/2
 P:0:3d12:0:0:0
 F:EASY_KNOW
+L:USE:	ident = do_dec_stat(A_STR)
+L:SMASH:result = TRUE
 
 N:227:Restore Strength
 G:!:d
@@ -1814,6 +1925,7 @@ W:15:0:4:300
 A:15/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = do_res_stat(A_STR)
 
 N:228:Intelligence
 G:!:d
@@ -1822,6 +1934,7 @@ W:40:0:4:10000
 A:33/6:39/6:43/3:53/3
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = do_inc_stat(A_INT)
 
 N:229:Stupidity
 G:!:d
@@ -1830,6 +1943,8 @@ W:35:0:4:0
 A:35/2
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = do_dec_stat(A_INT)
+L:SMASH:result = TRUE
 
 N:230:Restore Intelligence
 G:!:d
@@ -1837,6 +1952,7 @@ I:75:43:0
 W:15:0:4:300
 A:15/1
 P:0:1d1:0:0:0
+L:USE:	ident = do_res_stat(A_INT)
 F:EASY_KNOW
 
 N:231:Wisdom
@@ -1846,6 +1962,7 @@ W:40:0:4:10000
 A:33/6:39/6:43/3:53/3
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = do_inc_stat(A_WIS)
 
 N:232:Naivety
 G:!:d
@@ -1854,6 +1971,8 @@ W:35:0:4:0
 A:35/2
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = do_dec_stat(A_WIS)
+L:SMASH:result = TRUE
 
 N:233:Restore Wisdom
 G:!:d
@@ -1862,6 +1981,7 @@ W:15:0:4:300
 A:15/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = do_res_stat(A_WIS)
 
 N:234:Charisma
 G:!:d
@@ -1870,6 +1990,7 @@ W:35:0:4:5000
 A:29/6:35/6:39/3:49/3
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = do_inc_stat(A_CHR)
 
 N:235:Ugliness
 G:!:d
@@ -1878,6 +1999,8 @@ W:35:0:4:0
 A:35/2
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = do_dec_stat(A_CHR)
+L:SMASH:result = TRUE
 
 N:236:Restore Charisma
 G:!:d
@@ -1886,6 +2009,7 @@ W:15:0:4:300
 A:15/2
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = do_res_stat(A_CHR)
 
 N:237:Curing
 G:!:d
@@ -1894,6 +2018,10 @@ W:18:0:4:100
 A:18/2
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = cure_potion(150, TRUE, TRUE, TRUE)
+L:USE:	if clear_image() then ident = TRUE end
+L:SMASH:project(who, 2, x, y, damroll(6, 3), GF_OLD_HEAL,
+L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return FALSE,TRUE
 
 # Note! Invulnerability decreases your food...
 
@@ -1904,6 +2032,7 @@ W:105:0:4:100000
 A:105/9
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	inc_invuln(rand_range(7, 14))
 
 N:239:New Life
 G:!:d
@@ -1912,6 +2041,7 @@ W:100:0:4:50000
 A:75/20:100/10:115/5
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	do_cmd_rerate(); cure_all_mutations()
 
 N:240:Cure Serious Wounds
 G:!:d
@@ -1920,6 +2050,9 @@ W:5:0:4:75
 A:5/1:15/1:25/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = cure_potion(75, TRUE, TRUE, FALSE)
+L:SMASH:project(who, 2, x, y, damroll(4, 3), GF_OLD_HEAL,
+L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return FALSE,TRUE
 
 N:241:Cure Critical Wounds
 G:!:d
@@ -1928,6 +2061,9 @@ W:20:0:4:300
 A:20/1:30/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = cure_potion(150, TRUE, TRUE, TRUE)
+L:SMASH:project(who, 2, x, y, damroll(6, 3), GF_OLD_HEAL,
+L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return FALSE,TRUE
 
 N:242:Healing
 G:!:d
@@ -1936,6 +2072,9 @@ W:26:0:4:700
 A:26/1:52/1:85/1:100/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = cure_potion(300, TRUE, TRUE, TRUE)
+L:SMASH:project(who, 2, x, y, damroll(10, 10), GF_OLD_HEAL,
+L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return FALSE,TRUE
 
 N:243:Constitution
 G:!:d
@@ -1944,6 +2083,7 @@ W:40:0:4:10000
 A:33/6:39/6:43/3:53/3
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = do_inc_stat(A_CON)
 
 N:244:Experience
 G:!:d
@@ -1952,6 +2092,12 @@ W:75:0:4:50000
 A:75/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	if player.exp < PY_MAX_EXP then
+L:USE:		local ee = (player.exp / 2) + 10
+L:USE:		if ee > 100000 then ee = 100000 end
+L:USE:		msgf("You feel more experienced.")
+L:USE:		gain_exp(ee)
+L:USE:	end
 
 N:245:Sleep
 G:!:d
@@ -1960,6 +2106,9 @@ W:0:0:4:0
 A:0/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	msgf("You fall asleep."); do_dream(); inc_paralyzed(rand_range(4, 8))
+L:SMASH:project(who, 2, x, y, 0, GF_OLD_SLEEP,
+L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return TRUE,TRUE
 
 N:246:Blindness
 G:!:d
@@ -1968,6 +2117,9 @@ W:0:0:4:0
 A:0/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = not player_res(TR2_RES_BLIND) and inc_blind(rand_range(!00, 200))
+L:SMASH:project(who, 2, x, y, 0, GF_DARK,
+L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return TRUE,TRUE
 
 N:247:Booze
 G:!:d
@@ -1976,6 +2128,19 @@ W:0:0:4:1
 A:0/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = not player_res(TR2_RES_CONF) and inc_confused(rand_range(15, 35))
+L:USE:	if not player_res(TR2_RES_CHAOS) and one_in_(2) and
+L:USE:		inc_image(rand_range(150, 300)) then ident = TRUE end
+L:USE:	if not player_res(TR2_RES_CHAOS) and one_in_(13) then
+L:USE:		ident = TRUE
+L:USE:		if one_in_(3) then lose_all_info() else wiz_dark() end
+L:USE:		teleport_player(100)
+L:USE:		wiz_dark()
+L:USE:		msgf("You wake up somewhere with a sore head...")
+L:USE:		msgf("You can't remember a thing, or how you got here!")
+L:USE:	end
+L:SMASH:project(who, 2, x, y, 0, GF_OLD_CONF,
+L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return TRUE,TRUE
 D:A drunken alchemist accidentally poured ale into a potion mix.
 
 N:248:Poison
@@ -1985,6 +2150,9 @@ W:5:0:4:5
 A:5/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = res_pois_lvel() ~= 0 and inc_poisoned(rand_range(10, 25))
+L:SMASH:project(who, 2, x, y, damroll(3, 6), GF_POIS,
+L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return TRUE,TRUE
 
 N:249:Speed
 G:!:d
@@ -1993,6 +2161,9 @@ W:2:0:4:100
 A:2/16:65/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = inc_fast(rand_range(15, 40))
+L:SMASH:project(who, 2, x, y, 0, GF_OLD_SPEED,
+L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return FALSE,TRUE
 
 N:250:Slowness
 G:!:d
@@ -2001,6 +2172,9 @@ W:1:0:4:0
 A:1/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = inc_slow(rand_range(15, 40))
+L:SMASH:project(who, 2, x, y, 5, GF_OLD_SLOW,
+L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return TRUE,TRUE
 
 N:251:Dexterity
 G:!:d
@@ -2009,6 +2183,7 @@ W:40:0:4:10000
 A:33/6:39/6:43/3:53/3
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = do_inc_stat(A_DEX)
 
 N:252:Restore Dexterity
 G:!:d
@@ -2017,6 +2192,7 @@ W:15:0:4:300
 A:15/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = do_res_stat(A_DEX)
 
 N:253:Restore Constitution
 G:!:d
@@ -2025,6 +2201,7 @@ W:15:0:4:300
 A:15/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = do_res_stat(A_CON)
 
 N:254:Lose Memories
 G:!:d
@@ -2033,6 +2210,11 @@ W:17:0:4:0
 A:17/2
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	if not player_res(TR2_HOLD_LIFE) and player.exp > 0 then
+L:USE:		msgf("You feel your memories fade.")
+L:USE:		lose_exp(player.exp / 4)
+L:USE:	else ident = FALSE end
+L:SMASH:angry = TRUE
 
 N:255:Salt Water
 G:!:d
@@ -2041,6 +2223,11 @@ W:0:0:4:1
 A:1/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	msgf("The potion makes you vomit!")
+L:USE:	if player.food > PY_FOOD_STARVE - 1 then set_food(PY_FOOD_STARVE - 1) end
+L:USE:	clear_poisoned()
+L:USE:	inc_paralzyed(4)
+L:SMASH:return TRUE,FALSE
 
 N:256:Enlightenment
 G:!:d
@@ -2049,6 +2236,8 @@ W:43:0:4:800
 A:43/1:75/1:105/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	msgf("An image of your surroundings forms in your mind...")
+L:USE:	wiz_lite()
 
 N:257:Heroism
 G:!:d
@@ -2057,6 +2246,9 @@ W:1:0:4:25
 A:1/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = clear_afraid()
+L:USE:	if inc_hero(rand_range(25, 50)) then ident = TRUE end
+L:USE:	if hp_player(10) then ident = TRUE end
 
 N:258:Berserk Strength
 G:!:d
@@ -2065,6 +2257,9 @@ W:5:0:4:100
 A:5/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = clear_afraid()
+L:USE:	if inc_shero(rand_range(25, 50)) then ident = TRUE end
+L:USE:	if hp_player(30) then ident = TRUE end
 
 N:259:Boldness
 G:!:d
@@ -2073,6 +2268,7 @@ W:1:0:4:10
 A:1/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = clear_afraid()
 
 N:260:Restore Life Levels
 G:!:d
@@ -2081,6 +2277,7 @@ W:45:0:4:1500
 A:45/1:60/1:80/1:100/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = restore_level()
 
 N:261:Resist Heat
 G:!:d
@@ -2089,6 +2286,7 @@ W:4:0:4:30
 A:4/5:15/1:30/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = inc_oppose_fire(rand_range(10, 20))
 
 N:262:Resist Cold
 G:!:d
@@ -2097,6 +2295,7 @@ W:4:0:4:30
 A:4/5:15/1:30/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = inc_oppose_cold(rand_range(10, 20))
 
 N:263:Detect Invisible
 G:!:d
@@ -2105,6 +2304,7 @@ W:3:0:4:50
 A:5/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = inc_tim_invis(rand_range(12, 24))
 
 N:264:Slow Poison
 G:!:d
@@ -2113,6 +2313,7 @@ W:1:0:4:20
 A:1/2
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = inc_poisoned(-player.tim.poisoned / 2)
 
 N:265:Neutralize Poison
 G:!:d
@@ -2121,6 +2322,7 @@ W:5:0:4:75
 A:9/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = clear_poisoned()
 
 N:266:Restore Mana
 G:!:d
@@ -2129,6 +2331,9 @@ W:43:0:4:350
 A:43/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = restore_mana()
+L:SMASH:project(who, 1, x, y, damroll(10, 10), GF_MANA,
+L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return TRUE,TRUE
 D:The liquid in this bottle sparks with flashes of energy.
 
 N:267:Infra-vision
@@ -2138,6 +2343,7 @@ W:5:0:4:20
 A:5/2
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = inc_tim_infra(rand_range(100, 200))
 
 N:268:Resistance
 G:!:d
@@ -2147,6 +2353,11 @@ A:35/1:55/1:85/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 F:EASY_KNOW
+L:USE:	inc_oppose_acid(rand_range(20, 40))
+L:USE:	inc_oppose_elec(rand_range(20, 40))
+L:USE:	inc_oppose_fire(rand_range(20, 40))
+L:USE:	inc_oppose_cold(rand_range(20, 40))
+L:USE:	inc_oppose_pois(rand_range(20, 40))
 
 ##### Wands #####
 
@@ -2156,6 +2367,8 @@ I:65:7:17
 W:3:0:10:200
 A:5/1
 P:0:1d1:0:0:0
+L:USE:	msgf("A line of blue shimmering light appears.")
+L:USE:	lite_line(dir)
 
 N:270:Tame Monster
 G:-:d
@@ -2163,6 +2376,7 @@ I:65:17:9
 W:52:0:10:1000
 A:52/2
 P:0:1d1:0:0:0
+L:USE:	ident = charm_monster(dir, 45)
 
 N:271:Frost Bolts
 G:-:d
@@ -2170,6 +2384,7 @@ I:65:19:12
 W:35:0:10:400
 A:23/2:35/1:50/1
 P:0:1d1:0:0:0
+L:USE:	ident = fire_bolt_or_beam(20, GF_COLD, dir, damroll(6, 8))
 
 N:272:Fire Bolts
 G:-:d
@@ -2177,6 +2392,7 @@ I:65:18:15
 W:50:0:10:500
 A:26/2:52/1:67/1
 P:0:1d1:0:0:0
+L:USE:	ident = fire_bolt_or_beam(20, GF_FIRE, dir, damroll(10, 8))
 
 # More common now...
 N:273:Stone to Mud
@@ -2185,6 +2401,7 @@ I:65:6:12
 W:10:0:10:300
 A:17/1:65/1
 P:0:1d1:0:0:0
+L:USE:	ident = wall_to_mud(dir)
 
 N:274:Polymorph
 G:-:d
@@ -2192,6 +2409,7 @@ I:65:13:15
 W:35:0:10:300
 A:35/2
 P:0:1d1:0:0:0
+L:USE:	ident = poly_monster(dir)
 
 N:275:Heal Monster
 G:-:d
@@ -2199,6 +2417,7 @@ I:65:0:29
 W:2:0:10:50
 A:4/2
 P:0:1d1:0:0:0
+L:USE:	ident = heal_monster(dir)
 
 N:276:Haste Monster
 G:-:d
@@ -2206,6 +2425,7 @@ I:65:1:29
 W:2:0:10:50
 A:4/2
 P:0:1d1:0:0:0
+L:USE:	ident = haste_monster(dir)
 
 N:277:Slow Monster
 G:-:d
@@ -2213,6 +2433,7 @@ I:65:9:17
 W:4:0:10:200
 A:4/2
 P:0:1d1:0:0:0
+L:USE:	ident = slow_monster(dir)
 
 N:278:Confuse Monster
 G:-:d
@@ -2220,6 +2441,7 @@ I:65:10:19
 W:5:0:10:250
 A:5/2
 P:0:1d1:0:0:0
+L:USE:	ident = confuse_monster(dir, 20)
 
 N:279:Sleep Monster
 G:-:d
@@ -2227,6 +2449,7 @@ I:65:8:24
 W:5:0:10:250
 A:9/2
 P:0:1d1:0:0:0
+L:USE:	ident = sleep_monster(dir)
 
 N:280:Drain Life
 G:-:d
@@ -2234,6 +2457,7 @@ I:65:12:7
 W:75:0:10:1200
 A:60/1
 P:0:1d1:0:0:0
+L:USE:	ident = drain_life(dir, 150)
 
 N:281:Trap/Door Destruction
 G:-:d
@@ -2241,6 +2465,7 @@ I:65:5:15
 W:17:0:10:100
 A:17/2
 P:0:1d1:0:0:0
+L:USE:	ident = destroy_door(dir)
 
 N:282:Magic Missile
 G:-:d
@@ -2248,6 +2473,7 @@ I:65:15:17
 W:2:0:10:100
 A:4/1
 P:0:1d1:0:0:0
+L:USE:	ident = fire_bolt_or_beam(20, GF_MISSILE, dir, damroll(2, 6))
 
 N:283:Clone Monster
 G:-:d
@@ -2255,6 +2481,7 @@ I:65:2:9
 W:15:0:10:0
 A:26/1:75/2
 P:0:1d1:0:0:0
+L:USE:	ident = clone_monster(dir)
 
 N:284:Scare Monster
 G:-:d
@@ -2262,6 +2489,7 @@ I:65:11:9
 W:17:0:10:300
 A:17/4
 P:0:1d1:0:0:0
+L:USE:	ident = fear_monster(dir, 20)
 
 N:285:Teleport Other
 G:-:d
@@ -2269,6 +2497,7 @@ I:65:3:12
 W:35:0:10:350
 A:35/1
 P:0:1d1:0:0:0
+L:USE:	ident = teleport_monster(dir)
 
 N:286:Disarming
 G:-:d
@@ -2276,6 +2505,7 @@ I:65:4:10
 W:35:0:10:300
 A:35/1
 P:0:1d1:0:0:0
+L:USE:	ident = disarm_trap(dir)
 
 N:287:Lightning Balls
 G:-:d
@@ -2284,6 +2514,7 @@ W:41:0:10:1200
 A:41/1:61/1
 P:0:1d1:0:0:0
 F:IGNORE_ELEC
+L:USE:	ident = fire_ball(GF_ELEC, dir, 75, 2)
 
 N:288:Cold Balls
 G:-:d
@@ -2292,6 +2523,7 @@ W:45:0:10:1500
 A:45/1:65/1
 P:0:1d1:0:0:0
 F:IGNORE_COLD
+L:USE:	ident = fire_ball(GF_COLD, dir, 100, 2)
 
 N:289:Fire Balls
 G:-:d
@@ -2300,6 +2532,7 @@ W:55:0:10:1800
 A:55/1:75/1
 P:0:1d1:0:0:0
 F:IGNORE_FIRE
+L:USE:	ident = fire_ball(GF_FIRE, dir, 150, 2)
 
 N:290:Stinking Cloud
 G:-:d
@@ -2307,6 +2540,7 @@ I:65:14:15
 W:5:0:10:200
 A:9/1
 P:0:1d1:0:0:0
+L:USE:	ident = fire_ball(GF_POIS, dir, 15, 2)
 
 N:291:Acid Balls
 G:-:d
@@ -2315,6 +2549,7 @@ W:55:0:10:1650
 A:55/1:75/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID
+L:USE:	ident = fire_ball(GF_ACID, dir, 125, 2)
 
 N:292:Wonder
 G:-:d
@@ -2323,6 +2558,7 @@ W:3:0:10:150
 A:5/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+L:USE:	wand_of_wonder(dir)
 
 ##### Extra ammunition #####
 
@@ -2342,6 +2578,7 @@ I:65:16:15
 W:40:0:10:950
 A:35/2:52/1:62/1
 P:0:1d1:0:0:0
+L:USE:	ident = fire_bolt_or_beam(20, GF_ACID, dir, damroll(6, 8))
 
 N:295:Dragon's Flame
 G:-:d
@@ -2350,6 +2587,7 @@ W:75:0:10:5000
 A:75/4:100/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+L:USE:	ident = fire_ball(GF_FIRE, dir, 250, 3)
 
 N:296:Dragon's Frost
 G:-:d
@@ -2358,6 +2596,7 @@ W:75:0:10:5000
 A:75/4:100/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+L:USE:	ident = fire_ball(GF_COLD, dir, 200, 3)
 
 N:297:Dragon's Breath
 G:-:d
@@ -2366,6 +2605,13 @@ W:75:0:10:6000
 A:75/4:100/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+L:USE:	local choice = randint1(5)
+L:USE:	if     choice == 1 then ident = fire_ball(GF_ACID, dir, 250, 3)
+L:USE:	elseif choice == 2 then ident = fire_ball(GF_ELEC, dir, 150, 3)
+L:USE:	elseif choice == 3 then ident = fire_ball(GF_FIRE, dir, 200, 3)
+L:USE:	elseif choice == 4 then ident = fire_ball(GF_COLD, dir, 200, 3)
+L:USE:  else                    ident = fire_ball(GF_POIS, dir, 200, 3)
+L:USE:  end
 
 N:298:Annihilation
 G:-:d
@@ -2374,6 +2620,7 @@ W:85:0:10:8000
 A:85/4
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+L:USE:	ident = fire_ball(GF_DISINTEGRATE, dir, rand_range(125, 225), 2)
 
 N:299:Rockets
 G:-:d
@@ -2382,6 +2629,7 @@ W:95:0:10:20000
 A:95/4
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+L:USE:	msgf("You launch a rocket!"); fire_ball(GF_ROCKET, dir, 250, 2)
 
 
 
@@ -2393,6 +2641,7 @@ I:55:12:12
 W:5:0:50:50
 A:5/1
 P:0:1d2:0:0:0
+L:USE:	ident = detect_traps()
 
 N:301:Treasure Location
 G:_:d
@@ -2400,6 +2649,8 @@ I:55:10:29
 W:5:0:50:50
 A:9/1
 P:0:1d2:0:0:0
+L:USE:	ident = detect_treasure()
+L:USE:	if detect_objects_gold() then ident = TRUE
 
 N:302:Object Location
 G:_:d
@@ -2407,6 +2658,7 @@ I:55:11:22
 W:5:0:50:100
 A:9/2
 P:0:1d2:0:0:0
+L:USE:	ident = detect_objects_normal()
 
 N:303:Teleportation
 G:_:d
@@ -2414,6 +2666,7 @@ I:55:4:10
 W:35:0:50:2000
 A:35/1
 P:0:1d2:0:0:0
+L:USE:	teleport_player(100)
 
 N:304:Earthquakes
 G:_:d
@@ -2421,6 +2674,8 @@ I:55:28:9
 W:65:0:50:350
 A:65/1
 P:0:1d2:0:0:0
+L:USE:	if not earthquake(player.px, player.py, 10) then
+L:USE:		msgf("The dungeon trembles...") end
 
 N:305:Summoning
 G:_:d
@@ -2428,6 +2683,7 @@ I:55:3:5
 W:10:0:50:0
 A:17/4:55/1
 P:0:1d2:0:0:0
+L:USE:	ident = summon_monsters(randint1(4), 0)
 
 N:306:Light
 G:_:d
@@ -2435,6 +2691,7 @@ I:55:8:29
 W:5:0:50:250
 A:7/1
 P:0:1d2:0:0:0
+L:USE:	ident = lite_area(damroll(2, 8), 2)
 
 N:307:*Destruction*
 G:_:d
@@ -2442,6 +2699,7 @@ I:55:29:5
 W:80:0:50:5000
 A:80/1:100/1
 P:0:1d2:0:0:0
+L:USE:	ident = destroy_area(player.px, player.py, 15)
 
 N:308:Starlight
 G:_:d
@@ -2449,6 +2707,10 @@ I:55:7:12
 W:15:0:50:500
 A:15/2
 P:0:1d2:0:0:0
+L:USE:	if player.tim.blind == 0 then 
+L:USE:		msgf("The end of the staff glows brightly...")
+L:USE:	end
+L:USE:	starlite()
 
 N:309:Haste Monsters
 G:_:d
@@ -2456,6 +2718,7 @@ I:55:2:17
 W:10:0:50:0
 A:17/2
 P:0:1d2:0:0:0
+L:USE:	ident = speed_monsters()
 
 N:310:Slow Monsters
 G:_:d
@@ -2463,6 +2726,7 @@ I:55:21:12
 W:17:0:50:400
 A:17/2
 P:0:1d2:0:0:0
+L:USE:	ident = slow_monsters()
 
 N:311:Sleep Monsters
 G:_:d
@@ -2470,6 +2734,7 @@ I:55:20:12
 W:15:0:50:400
 A:15/2
 P:0:1d2:0:0:0
+L:USE:	ident = sleep_monsters()
 
 N:312:Cure Light Wounds
 G:_:d
@@ -2477,6 +2742,7 @@ I:55:16:12
 W:5:0:50:400
 A:9/2
 P:0:1d2:0:0:0
+L:USE:	ident = hp_player(50)
 
 N:313:Detect Invisible
 G:_:d
@@ -2484,6 +2750,7 @@ I:55:14:24
 W:5:0:50:200
 A:9/2
 P:0:1d2:0:0:0
+L:USE:	ident = detect_monsters_invis()
 
 N:314:Speed
 G:_:d
@@ -2491,6 +2758,7 @@ I:55:22:8
 W:50:0:50:5000
 A:50/1
 P:0:1d2:0:0:0
+L:USE:	ident = inc_fast(rand_range(15, 45))
 
 N:315:Slowness
 G:_:d
@@ -2498,6 +2766,7 @@ I:55:1:17
 W:30:0:50:0
 A:50/4
 P:0:1d2:0:0:0
+L:USE:	ident = inc_slow(rand_range(15, 45)
 
 N:316:Door/Stair Location
 G:_:d
@@ -2505,6 +2774,8 @@ I:55:13:15
 W:9:0:50:150
 A:9/2
 P:0:1d2:0:0:0
+L:USE:	ident = detect_doors()
+L:USE:	if detect_stairs() then ident = TRUE end
 
 N:317:Remove Curse
 G:_:d
@@ -2512,6 +2783,10 @@ I:55:6:8
 W:55:0:50:200
 A:55/4
 P:0:1d2:0:0:0
+L:USE:	ident = remove_curse()
+L:USE:	if ident and player.tim.blind == 0 then
+L:USE:		msgf("The staff glows blue for a moment...")
+L:USE:	end
 
 N:318:Detect Evil
 G:_:d
@@ -2519,6 +2794,7 @@ I:55:15:24
 W:15:0:50:150
 A:15/4
 P:0:1d2:0:0:0
+L:USE:	ident = detect_monsters_evil()
 
 N:319:Curing
 G:_:d
@@ -2526,6 +2802,8 @@ I:55:17:8
 W:33:0:50:500
 A:33/4
 P:0:1d2:0:0:0
+L:USE:	ident = cure_potion(150, TRUE, TRUE, TRUE)
+L:USE:	if clear_image() then ident = TRUE end
 
 N:320:Dispel Evil
 G:_:d
@@ -2533,6 +2811,7 @@ I:55:24:8
 W:75:0:50:2000
 A:75/1
 P:0:1d2:0:0:0
+L:USE:	ident = dispel_evil(60)
 
 N:321:Probing
 G:_:d
@@ -2540,6 +2819,7 @@ I:55:23:9
 W:20:0:50:100
 A:20/4
 P:0:1d2:0:0:0
+L:USE:	probing()
 
 N:322:Darkness
 G:_:d
@@ -2547,6 +2827,9 @@ I:55:0:17
 W:5:0:50:50
 A:9/1
 P:0:1d2:0:0:0
+L:USE:	ident = not player_res(TR2_RES_BLIND) and not player_res(TR2_RES_DARK)
+L:USE:		and inc_blind(rand_range(4, 8))
+L:USE:	if unlite_area(10, 3) then ident = TRUE
 
 N:323:Genocide
 G:_:d
@@ -2554,6 +2837,7 @@ I:55:27:4
 W:95:0:50:8000
 A:95/4
 P:0:1d2:0:0:0
+L:USE:	genocide(TRUE)
 
 N:324:Power
 G:_:d
@@ -2561,6 +2845,7 @@ I:55:25:5
 W:95:0:50:10000
 A:95/2
 P:0:1d2:0:0:0
+L:USE:	dispel_monsters(300)
 
 N:325:the Magi
 G:_:d
@@ -2568,6 +2853,8 @@ I:55:19:5
 W:100:0:50:15000
 A:100/2
 P:0:1d2:0:0:0
+L:USE:	ident = do_res_stat(A_INT)
+L:USE:	if restore_mana() then ident = TRUE end
 
 N:326:Perception
 G:_:d
@@ -2575,6 +2862,7 @@ I:55:5:21
 W:17:0:50:400
 A:17/1:35/1:60/1
 P:0:1d2:0:0:0
+L:USE:	result = ident_spell()
 
 N:327:Holiness
 G:_:d
@@ -2582,6 +2870,14 @@ I:55:26:5
 W:100:0:50:10000
 A:100/2
 P:0:1d2:0:0:0
+L:USE:	ident = FALSE
+L:USE:	if dispel_evil(300) then ident = TRUE end
+L:USE:	if inc_protevil(randint1(25) + 3 * player.lev) then ident = TRUE end
+L:USE:	if clear_poisoned() then ident = TRUE end
+L:USE:	if clear_afraid() then ident = TRUE end
+L:USE:	if hp_player(50) then ident = TRUE end
+L:USE:	if clear_stun() then ident = TRUE end
+L:USE:	if clear_cut() then ident = TRUE end
 
 N:328:Enlightenment
 G:_:d
@@ -2589,6 +2885,7 @@ I:55:9:11
 W:22:0:50:750
 A:22/1
 P:0:1d2:0:0:0
+L:USE:	map_area()
 
 N:329:Healing
 G:_:d
@@ -2596,6 +2893,9 @@ I:55:18:4
 W:65:0:50:5000
 A:65/2
 P:0:1d2:0:0:0
+L:USE:	ident = hp_player(300)
+L:USE:	if clear_stun() then ident = TRUE end
+L:USE:	if clear_cut() then ident = TRUE end
 
 
 ##### Basic Books #####
@@ -3329,6 +3629,10 @@ W:85:0:4:0
 A:85/4
 P:0:20d20:0:0:0
 F:EASY_KNOW
+L:USE:	msgf("A feeling of Death flows through your body.")
+L:USE:	take_hit(5000, "a potion of Death")
+L:SMASH:project(who, 1, x, y, damroll(25, 25), GF_DEATH_RAY,
+L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return TRUE,TRUE
 
 N:416:Ruination
 G:!:d
@@ -3337,6 +3641,16 @@ W:70:0:4:0
 A:70/8
 P:0:20d20:0:0:0
 F:EASY_KNOW
+L:USE:	msgf("Your nerves and muscles feel weak and lifeless!")
+L:USE:	take_hit(damroll(10, 10), "a potion of Ruination)
+L:USE:	dec_stat(A_DEX, 25, TRUE)
+L:USE:	dec_stat(A_WIS, 25, TRUE)
+L:USE:	dec_stat(A_CON, 25, TRUE)
+L:USE:	dec_stat(A_STR, 25, TRUE)
+L:USE:	dec_stat(A_CHR, 25, TRUE)
+L:USE:	dec_stat(A_INT, 25, TRUE)
+L:SMASH:project(who, 1, x, y, damroll(25, 25), GF_SHARDS,
+L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return TRUE,TRUE
 
 N:417:Detonations
 G:!:d
@@ -3345,6 +3659,12 @@ W:90:0:4:10000
 A:90/8
 P:0:25d25:0:0:0
 F:EASY_KNOW
+L:USE:	msgf("Massive explosions rupture your body!")
+L:USE:	take_hit(damroll(50, 20), "a potion of Detonations")
+L:USE:	inc_stun(75)
+L:USE:	inc_cut(5000)
+L:SMASH:project(who, 1, x, y, damroll(25, 25), GF_SHARDS,
+L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return TRUE,TRUE
 D:The bottle this potion is in looks very fragile.
 
 N:418:Augmentation
@@ -3354,6 +3674,13 @@ W:50:0:4:20000
 A:45/8
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = FALSE
+L:USE:	if do_inc_stat(A_STR) then ident = TRUE end
+L:USE:	if do_inc_stat(A_INT) then ident = TRUE end
+L:USE:	if do_inc_stat(A_WIS) then ident = TRUE end
+L:USE:	if do_inc_stat(A_DEX) then ident = TRUE end
+L:USE:	if do_inc_stat(A_CON) then ident = TRUE end
+L:USE:	if do_inc_stat(A_CHR) then ident = TRUE end
 
 N:419:*Healing*
 G:!:d
@@ -3362,6 +3689,9 @@ W:65:0:4:1500
 A:65/4:75/2:85/1:95/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = cure_potion(1200, TRUE, TRUE, TRUE)
+L:SMASH:project(who, 2, x, y, damroll(50, 50), GF_OLD_HEAL,
+L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return FALSE,TRUE
 
 N:420:Life
 G:!:d
@@ -3370,6 +3700,9 @@ W:85:0:4:5000
 A:85/4:100/2
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	do_life_potion()
+L:SMASH:project(who, 2, x, y, damroll(50, 50), GF_OLD_HEAL,
+L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return FALSE,TRUE
 
 N:421:Self Knowledge
 G:!:d
@@ -3378,6 +3711,9 @@ W:45:0:4:1000
 A:45/20:65/3
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	msgf("You begin to know yourself a little better...")
+L:USE:	message_flush()
+L:USE:	self_knowledge()
 
 N:422:*Enlightenment*
 G:!:d
@@ -3386,6 +3722,15 @@ W:95:0:4:20000
 A:95/4
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	msgf("You begin to feel more enlightened...")
+L:USE:	message_flush()
+L:USE:	wiz_lite()
+L:USE:	do_inc_stat(A_INT)
+L:USE:	do_inc_stat(A_WIS)
+L:USE:	detect_traps(); detect_doors(); detect_stairs();
+L:USE:	detect_treasure(); detect_objects_gold(); detect_objects_normal();
+L:USE:	identify_pack()
+L:USE:	self_knowledge()
 
 N:423:[Black Channels]
 G:?:v
@@ -3496,6 +3841,9 @@ W:0:0:4:35
 A:0/1:3/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = cure_potion(38, TRUE, FALSE, FALSE)
+L:SMASH:project(who, 2, x, y, damroll(2, 3), GF_OLD_HEAL,
+L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return FALSE,TRUE
 
 N:438:Clumsiness
 G:!:d
@@ -3504,6 +3852,8 @@ W:9:0:4:0
 A:9/2
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = do_dec_stat(A_DEX)
+L:SMASH:return TRUE,FALSE
 
 N:439:Sickliness
 G:!:d
@@ -3512,6 +3862,8 @@ W:17:0:4:0
 A:17/2
 P:0:1d1:0:0:0
 F:EASY_KNOW
+L:USE:	ident = do_dec_stat(A_CON)
+L:SMASH:return TRUE,FALSE
 
 ##### Items 440 to 444 reserved (old "fake" objects) #####
 
@@ -4190,6 +4542,7 @@ I:70:23:0
 W:23:0:5:0
 A:23/10:63/10
 F:EASY_KNOW
+L:USE:	result = mundane_scroll()
 
 N:567:& Magical Figurine~ of #
 G:`:g

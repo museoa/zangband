@@ -11,6 +11,7 @@
  */
 
 #include "angband.h"
+#include "script.h"
 
 /* Maximum number of tries for teleporting */
 #define MAX_TRIES 100
@@ -2752,8 +2753,10 @@ bool bless_weapon(void)
  *          the potion was in her inventory);
  *    k_idx --- type of object.
  */
-bool potion_smash_effect(int who, int x, int y, int k_idx)
+bool potion_smash_effect(int who, int x, int y, object_type *o_ptr)
 {
+	int k_idx = o_ptr->k_idx;
+
 	int radius = 2;
 	int dt = 0;
 	int dam = 0;
@@ -2761,6 +2764,24 @@ bool potion_smash_effect(int who, int x, int y, int k_idx)
 	bool angry = FALSE;
 
 	object_kind *k_ptr = &k_info[k_idx];
+
+	if (o_ptr->trigger[TRIGGER_SMASH])
+	{
+		angry = apply_object_trigger(TRIGGER_SMASH, o_ptr, &ident,
+				"who", who, "x", x, "y", y);
+		
+		/* An identification was made */
+		if (ident && !(k_ptr->aware))
+		{
+			k_ptr->aware = TRUE;
+			gain_exp((k_ptr->level + p_ptr->lev / 2) / p_ptr->lev);
+		}
+
+		/* Window stuff */
+		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+
+		return angry;
+	}
 
 	switch (k_ptr->sval)
 	{
@@ -4208,7 +4229,7 @@ int inven_damage(inven_func typ, int perc)
 					int px = p_ptr->px;
 					int py = p_ptr->py;
 
-					(void)potion_smash_effect(0, px, py, o_ptr->k_idx);
+					(void)potion_smash_effect(0, px, py, o_ptr);
 				}
 
 				/* Reduce the charges of rods/wands */

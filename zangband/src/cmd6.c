@@ -201,7 +201,7 @@ static void do_cmd_quaff_potion_aux(object_type *o_ptr)
 	if (p_ptr->rp.prace == RACE_SKELETON)
 	{
 		msgf("Some of the fluid falls through your jaws!");
-		(void)potion_smash_effect(0, p_ptr->px, p_ptr->py, o_ptr->k_idx);
+		(void)potion_smash_effect(0, p_ptr->px, p_ptr->py, o_ptr);
 	}
 
 	/* Combine / Reorder the pack (later) */
@@ -570,6 +570,7 @@ void do_cmd_use_staff(void)
 static void do_cmd_aim_wand_aux(object_type *o_ptr)
 {
 	bool ident, use_charge;
+	int chance, dir, lev;
 
 	/* Mega-Hack -- refuse to use a pile from the ground */
 	if (floor_item(o_ptr) && (o_ptr->number > 1))
@@ -594,11 +595,45 @@ static void do_cmd_aim_wand_aux(object_type *o_ptr)
 		return;
 	}
 
+	/* Allow direction to be cancelled for free */
+	if (!get_aim_dir(&dir)) return;
+
+	/* Take a turn */
+	p_ptr->energy_use = MIN(75, 200 - 5 * p_ptr->skill.dev / 8);
+
+	/* Get the object level */
+	lev = k_info[o_ptr->k_idx].level;
+
+	/* Base chance of success */
+	chance = p_ptr->skill.dev;
+
+	/* Confusion hurts skill */
+	if (p_ptr->tim.confused) chance /= 2;
+
+	/* Hight level objects are harder */
+	chance = chance - lev / 2;
+
+	/* Give everyone a (slight) chance */
+	if ((chance < USE_DEVICE) && one_in_(USE_DEVICE - chance + 1))
+	{
+		chance = USE_DEVICE;
+	}
+
+	/* Roll for usage */
+	if ((chance < USE_DEVICE) || (randint1(chance) < USE_DEVICE))
+	{
+		if (flush_failure) flush();
+		msgf("You failed to use the wand properly.");
+		sound(SOUND_FAIL);
+		return;
+	}
+
 	/* Sound */
 	sound(SOUND_ZAP);
 
 	/* Aim the wand */
-	use_charge = use_object(o_ptr, &ident);
+	use_charge = apply_object_trigger(TRIGGER_USE, o_ptr, &ident, 
+			"dir", dir, NULL, 0, NULL, 0);
 	
 	/* Hack - wands may destroy themselves if activated on the ground */
 	if (o_ptr->k_idx)

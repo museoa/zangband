@@ -2312,7 +2312,7 @@ static void throw_item_effect(object_type *o_ptr, bool hit_body, bool hit_wall,
 			/* Message */
 			msgf("The %v shatters!", OBJECT_FMT(o_ptr, FALSE, 3));
 
-			if (potion_smash_effect(0, x, y, o_ptr->k_idx))
+			if (potion_smash_effect(0, x, y, o_ptr))
 			{
 				monster_type *m_ptr = &m_list[area(x, y)->m_idx];
 

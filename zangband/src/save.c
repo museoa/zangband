@@ -525,6 +525,8 @@ static void wr_string(cptr str)
  */
 static void wr_item(const object_type *o_ptr)
 {
+	int i;
+	
 	wr_s16b(o_ptr->k_idx);
 
 	/* Location */
@@ -583,6 +585,17 @@ static void wr_item(const object_type *o_ptr)
 	{
 		wr_string("");
 	}
+
+	/* Save attached scripts */
+	for (i = 0; i < MAX_TRIGGER; i++)
+	{
+		if (o_ptr->trigger[i])
+		{
+			wr_byte(i);
+			wr_string(quark_str(o_ptr->trigger[i]));
+		}
+	}
+	wr_byte(255);
 
 	/* No Python object */
 	wr_s32b(0);

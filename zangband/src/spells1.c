@@ -821,6 +821,7 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 			else
 			{
 				bool is_potion = FALSE;
+				object_type *j_ptr;
 			
 				/* Describe if needed */
 				if (known && (o_ptr->info & OB_SEEN) && note_kill)
@@ -831,13 +832,14 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 				k_idx = o_ptr->k_idx;
 				is_potion = object_is_potion(o_ptr);
 
-				/* Delete the object */
+				/* Delete the object, but keep a temp copy */
+				j_ptr = object_dup(o_ptr);
 				delete_dungeon_object(o_ptr);
 
 				/* Potions produce effects when 'shattered' */
 				if (is_potion)
 				{
-					(void)potion_smash_effect(who, x, y, k_idx);
+					(void)potion_smash_effect(who, x, y, j_ptr);
 				}
 
 				/* Redraw */

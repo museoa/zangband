@@ -469,6 +469,28 @@ static void rd_item(object_type *o_ptr)
 	rd_string(buf, 128);
 	if (buf[0]) o_ptr->xtra_name = quark_add(buf);
 
+	/* Attached scripts */
+	if (sf_version >= 45)
+	{
+		rd_byte(&tmpbyte);
+		
+		while (tmpbyte != 255)
+		{
+			rd_string(buf, 128);
+
+			if (tmpbyte < MAX_TRIGGER)
+			{
+				o_ptr->trigger[tmpbyte] = quark_add(buf);
+			}
+			else
+			{
+				/* XXX Error */
+			}
+
+			rd_byte(&tmpbyte);
+		}
+	}
+
 	/* The Python object */
 	if (!z_older_than(2, 2, 4))
 	{

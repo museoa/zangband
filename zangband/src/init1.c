@@ -66,6 +66,19 @@ static cptr f_info_flags[] =
 
 
 /*
+ * Object script triggers
+ */
+static cptr k_info_triggers[] =
+{
+	"USE",
+	"HIT",
+	"THROW",
+	"SMASH",
+	NULL
+};
+
+
+/*
  * Monster Blow Methods
  */
 static cptr r_info_blow_method[] =
@@ -1547,6 +1560,41 @@ errr parse_k_info(char *buf, header *head)
 		if (!add_text(&(k_ptr->text), head, s))
 		{
 			msgf("Icky Description!!");
+			message_flush();
+			return (PARSE_ERROR_OUT_OF_MEMORY);
+		}
+	}
+
+	/* Process 'L' for "Lua script" */
+	else if (buf[0] == 'L')
+	{
+		int n;
+		
+		/* There better be a current k_ptr */
+		if (!k_ptr) return (PARSE_ERROR_MISSING_RECORD_HEADER);
+
+		/* Analyze the first field */
+		for (s = t = buf + 2; *t && (*t != ':'); t++) /* loop */ ;
+
+		/* Terminate the field (if necessary) */
+		if (*t == ':') *t++ = '\0';
+
+		/* Analyze the trigger */
+		for (n = 0; k_info_triggers[n]; n++)
+		{
+			if (streq(s, k_info_triggers[n])) break;
+		}
+
+		/* Invalid trigger */
+		if (!k_info_triggers[n]) return (PARSE_ERROR_GENERIC);
+
+		/* Get the text */
+		s = t;
+
+		/* Store the text */
+		if (!add_text(&(k_ptr->trigger[n]), head, s))
+		{
+			msgf("Icky Trigger!!");
 			message_flush();
 			return (PARSE_ERROR_OUT_OF_MEMORY);
 		}
