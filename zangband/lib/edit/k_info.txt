@@ -4791,6 +4791,7 @@ I:9:0:0
 W:5:0:200:75
 A:9/3
 P:0:1d2:0:0:0
+F:EASY_KNOW
 
 N:569:& Clay Statue~ of #
 G:`:U
@@ -4798,6 +4799,7 @@ I:9:1:0
 W:5:0:500:50
 A:17/3
 P:0:1d3:0:0:0
+F:EASY_KNOW
 
 N:570:& Stone Statue~ of #
 G:`:s
@@ -4805,6 +4807,7 @@ I:9:2:0
 W:5:0:500:100
 A:26/3
 P:0:2d3:0:0:0
+F:EASY_KNOW
 
 N:571:& Iron Statue~ of #
 G:`:D
@@ -4812,6 +4815,7 @@ I:9:3:0
 W:5:0:500:200
 A:35/3
 P:0:2d4:0:0:0
+F:EASY_KNOW
 
 N:572:& Copper Statue~ of #
 G:`:o
@@ -4819,6 +4823,7 @@ I:9:4:0
 W:20:0:500:500
 A:43/3
 P:0:2d4:0:0:0
+F:EASY_KNOW
 
 N:573:& Silver Statue~ of #
 G:`:W
@@ -4826,6 +4831,7 @@ I:9:5:0
 W:32:0:500:1000
 A:52/3
 P:0:2d4:0:0:0
+F:EASY_KNOW
 
 N:574:& Golden Statue~ of #
 G:`:y
@@ -4833,6 +4839,7 @@ I:9:6:0
 W:50:0:500:2500
 A:63/3
 P:0:2d4:0:0:0
+F:EASY_KNOW
 
 N:575:& Ivory Statue~ of #
 G:`:w
@@ -4840,6 +4847,7 @@ I:9:7:0
 W:40:0:500:2000
 A:70/3
 P:0:1d4:0:0:0
+F:EASY_KNOW
 
 N:576:& Mithril Statue~ of #
 G:`:B
@@ -4847,6 +4855,7 @@ I:9:8:0
 W:70:0:500:10000
 A:95/3
 P:0:2d5:0:0:0
+F:EASY_KNOW
 
 N:577:& Ornate Statue~ of #
 G:`:v
@@ -4854,6 +4863,7 @@ I:9:9:0
 W:60:0:500:5000
 A:80/3
 P:0:2d4:0:0:0
+F:EASY_KNOW
 
 #N:578:& Skeleton~
 #G:~:w
@@ -5014,5 +5024,5 @@ W:12:0:3:300
 A:12/5
 F:EASY_KNOW
 D:It prevents hunger.
-L:TIMED:	if player.food < PY_FOOD_FULL + 500 then set_food(player.food + 10) end
+L:TIMED: if player.food < PY_FOOD_FULL + 500 then set_food(player.food + 10) end
 
