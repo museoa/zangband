@@ -24,6 +24,7 @@
 /*
  * Possible values of "goal"
  */
+#define GOAL_NONE   0			/* No goal */
 #define GOAL_KILL   1			/* Monsters */
 #define GOAL_TAKE   2			/* Objects */
 #define GOAL_MISC   3			/* Stores */
@@ -33,7 +34,7 @@
 #define GOAL_FLEE   7			/* Fleeing */
 #define GOAL_TOWN	8			/* Town Special Grid */
 #define GOAL_FEAT	9			/* Getting of painful feat */
-
+#define GOAL_CAVE	10			/* Reach a dungeon */
 
 /*
  * Flags for the "info" field of grids
@@ -229,8 +230,10 @@ struct borg_town
 	bool visit;
 };
 
+/* Max size for the wilderness */
+#define BORG_MAX_WILD_SIZE	(max_wild * WILD_BLOCK_SIZE)
 /* Maximal distance the borg can travel between dungeons */
-#define BORG_MAX_DISTANCE	(max_wild * WILD_BLOCK_SIZE * 3 / 2)
+#define BORG_MAX_DISTANCE	(BORG_MAX_WILD_SIZE * 3 / 2)
 
 /*
  * Some variables
@@ -555,6 +558,8 @@ extern bool borg_fear_mon_spell;
 extern s16b goal_town;
 extern s16b goal_shop;
 extern s16b goal_dungeon;
+extern s16b goal_explore_x;
+extern s16b goal_explore_y;
 
 /* Current shop/dungeon index */
 extern s16b town_num;

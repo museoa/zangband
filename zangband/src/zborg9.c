@@ -2225,7 +2225,7 @@ static void borg_reset_options(void)
 static void borg_read_map(void)
 {
 	int i, j, x, y;
-	int depth;
+	int min_depth, max_depth;
 	place_type *pl_ptr;
 	wild_done_type *w_ptr;
 	u32b prev = 0;
@@ -2255,24 +2255,34 @@ static void borg_read_map(void)
 			/* Is this a dungeon */
 			if (pl_ptr->dungeon)
 			{
-				/* A town dungeon always starts at level 1 */
-				if (pl_ptr->numstores) depth = 1;
-
-				/* In the wilderness the starting depth can vary */
+				if (pl_ptr->dungeon->recall_depth != 0)
+				{
+					min_depth = pl_ptr->dungeon->min_level;
+					max_depth = pl_ptr->dungeon->recall_depth;
+				}
 				else
 				{
-					/* Determine dungeon level */
-					depth = (pl_ptr->dungeon->min_level + 9) / 10;
-					
-					/* You never know */
-					if (depth > 9) depth = 9;
+					/* A town dungeon always starts at level 1 */
+					if (pl_ptr->numstores) min_depth = 1;
 
-					/* Create a possible min level for this dungeon */
-					depth = depth * 10 - 1;
+					/* In the wilderness the starting depth can vary */
+					else
+					{
+						/* Determine dungeon level */
+						min_depth = (pl_ptr->dungeon->min_level + 9) / 10;
+						
+						/* You never know */
+						if (min_depth > 9) min_depth = 9;
+
+						/* Create a possible min level for this dungeon */
+						min_depth = min_depth * 10 - 1;
+					}
+
+					max_depth = min_depth;
 				}
 
 				/* Add dungeon */
-				borg_add_dungeon(x, y, TRUE, depth);
+				borg_add_dungeon(x, y, min_depth, max_depth);
 			}
 		}
 	}

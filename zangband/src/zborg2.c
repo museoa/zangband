@@ -2528,6 +2528,15 @@ int borg_add_town(int x, int y, cptr town_name)
 {
 	int i;
 
+	/* Not quite a town */
+	if (prefix(town_name, "Bottom") ||
+		strstr(town_name, "0 ft") ||
+		prefix(town_name, "Lev "))
+	{
+		borg_oops("Trying to add a dungeon as a town!");
+		return (-1);
+	}
+
 	/* Loop through the towns */
 	for (i = 0; i < borg_town_num; i++)
 	{
@@ -2611,7 +2620,7 @@ static int borg_add_town_screen(int x, int y)
 
 
 /* Add a dungeon to the array, overwrite an old one if it was an estimate */
-void borg_add_dungeon(int x, int y, bool guess, int depth)
+void borg_add_dungeon(int x, int y, int min_depth, int max_depth)
 {
 	int i, b_i = 0;
 	int d, b_d = BORG_MAX_DISTANCE;
@@ -2666,23 +2675,24 @@ void borg_add_dungeon(int x, int y, bool guess, int depth)
 	if (b_d < 6 * WILD_BLOCK_SIZE)
 	{
 		/* The borg knows better already */
-		if (guess) return;
+		if (min_depth) return;
 	}
 	else b_i = borg_dungeon_num++;
 
 	borg_dungeons[b_i].x = x;
 	borg_dungeons[b_i].y = y;
-	borg_dungeons[b_i].guess = guess;
+	borg_dungeons[b_i].guess = min_depth ? TRUE : FALSE;
 
 	/* Add depth if it was given */
-	if (depth)
+	if (min_depth)
 	{
 		/* Assign depth */
-		borg_dungeons[b_i].min_depth = depth;
-		borg_dungeons[b_i].max_depth = depth;
+		borg_dungeons[b_i].min_depth = min_depth;
+		borg_dungeons[b_i].max_depth = max_depth;
 	}
 
-	borg_note("# Adding a dungeon at (%d, %d), depth = %d", x, y, depth);
+	borg_note("# Adding a %d dungeon at (%d, %d), min_depth = %d",
+		(min_depth + 9) / 10, x, y, min_depth);
 }
 
 
@@ -2872,7 +2882,7 @@ void borg_map_info(map_block *mb_ptr, const term_map *map, vptr dummy)
 			if (p_ptr->depth == 0)
 			{
 				/* Add this dungeon maybe */
-				borg_add_dungeon(x, y, FALSE, 0);
+				borg_add_dungeon(x, y, 0, 0);
 			}
 
 			/* Done */

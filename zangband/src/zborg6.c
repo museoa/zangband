@@ -380,14 +380,22 @@ bool borg_recover(void)
 	/*** Just Rest ***/
 
 	/* Hack -- rest until healed */
-	if ((bp_ptr->status.blind || bp_ptr->status.confused ||
-		 bp_ptr->status.image || bp_ptr->status.afraid ||
-		 bp_ptr->status.stun || bp_ptr->status.heavy_stun ||
-		 (bp_ptr->chp < bp_ptr->mhp) ||
-		 (bp_ptr->csp < bp_ptr->msp * 6 / 10)) &&
-		(!borg_takes_cnt || !goal_recalling) && !borg_goi && !borg_shield &&
-		!scaryguy_on_level && borg_check_rest() && (p <= mb_ptr->fear) &&
-		!goal_fleeing && borg_on_safe_feat(map_loc(c_x, c_y)->feat))
+	if ((bp_ptr->status.blind ||
+		 bp_ptr->status.confused ||
+		 bp_ptr->status.image ||
+		 bp_ptr->status.afraid ||
+		 bp_ptr->status.stun ||
+		 bp_ptr->status.heavy_stun ||
+		 bp_ptr->chp < bp_ptr->mhp ||
+		 bp_ptr->csp < bp_ptr->msp * 6 / 10) &&
+		(!borg_takes_cnt || !goal_recalling) &&
+		!borg_goi &&
+		!borg_shield &&
+		!scaryguy_on_level &&
+		borg_check_rest() &&
+		p <= mb_ptr->fear &&
+		!goal_fleeing &&
+		borg_on_safe_feat(map_loc(c_x, c_y)->feat))
 	{
 		/* XXX XXX XXX */
 		if (!bp_ptr->status.weak && !bp_ptr->status.cut &&
@@ -1009,13 +1017,20 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid,
 			/* Skip "reached" grids */
 			if (mb_ptr->cost <= n) continue;
 
-			/* Avoid "wall" grids (not doors) unless tunneling */
-			if (!tunneling &&
-				(mb_ptr->feat >= FEAT_SECRET &&
-				 mb_ptr->feat <= FEAT_WALL_SOLID)) continue;
+			/* If the borg is not ready to tunnel */
+			if (!tunneling)
+			{
+				/* Avoid walls */
+				if (mb_ptr->feat >= FEAT_SECRET &&
+					mb_ptr->feat <= FEAT_WALL_SOLID) continue;
 
-			/* Avoid pillars */
-			if (!tunneling && mb_ptr->feat == FEAT_PILLAR) continue;
+				/* Avoid pillars */
+				if (mb_ptr->feat == FEAT_PILLAR) continue;
+
+				/* Avoid Jungle */
+				if (mb_ptr->feat >= FEAT_FENCE &&
+					mb_ptr->feat <= FEAT_JUNGLE) continue;
+			}
 
 			/* Avoid "perma-wall" grids */
 			if (mb_ptr->feat >= FEAT_PERM_EXTRA &&
@@ -1023,11 +1038,6 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid,
 			
 			/* Sometimes allows painfull feats to be included */
 			if (!feat_hurt && !borg_on_safe_feat(mb_ptr->feat)) continue;
-
-			/* Avoid Jungle */
-			if (mb_ptr->feat == FEAT_JUNGLE) continue;
-
-			/* Avoid some other Zang Terrains */
 
 			/* Avoid unknown grids (if requested or retreating) */
 			if ((avoid || borg_desperate) && !mb_ptr->feat) continue;
@@ -1102,7 +1112,6 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid,
 	/* Forget the flow info */
 	flow_head = flow_tail = 0;
 }
-
 
 
 /*
@@ -1312,19 +1321,18 @@ bool borg_flow_old(int why)
 	return (FALSE);
 }
 
-
 /*
  * Flow closer to a set of coordinates.  This proc aims to get right on those
  * coords.  That is closer than needed for a word of recall, but it is an easy
  * way to make sure that the borg doesn't go down the wrong dungeon.
  */
-bool borg_flow_block(int x, int y, cptr reason)
+static bool borg_flow_block(int x, int y, cptr reason, int aim)
 {
 	/* Don't leave the map */
-	if (x < 0 || x > (max_wild - 1) * WILD_BLOCK_SIZE - 1) return (FALSE);
-
+	if (x < 0 || x > BORG_MAX_WILD_SIZE) return (FALSE);
+ 
 	/* Don't leave the map */
-	if (y < 0 || y > (max_wild - 1) * WILD_BLOCK_SIZE - 1) return (FALSE);
+	if (y < 0 || y > BORG_MAX_WILD_SIZE) return (FALSE);
 
 	/* Flow a block east */
 	if (c_x < x)
@@ -1347,7 +1355,18 @@ bool borg_flow_block(int x, int y, cptr reason)
 		y = c_y;
 
 	/* No need to go where you already are */
-	if (x == c_x && y == c_y) return (FALSE);
+	if (x == c_x && y == c_y)
+	{
+		/* Unflag */
+		goal = GOAL_NONE;
+		goal_town = -1;
+		goal_shop = -1;
+		goal_dungeon = -1;
+		goal_explore_x = -1;
+		goal_explore_y = -1;
+
+		return (FALSE);
+	}
 
 	/* Clear the flow codes */
 	borg_flow_clear();
@@ -1356,13 +1375,13 @@ bool borg_flow_block(int x, int y, cptr reason)
 	borg_flow_enqueue_grid(x, y);
 
 	/* Spread the flow */
-	borg_flow_spread(100, TRUE, TRUE, FALSE, FALSE);
+	borg_flow_spread(250, TRUE, TRUE, FALSE, FALSE);
 
 	/* Attempt to Commit the flow */
-	if (!borg_flow_commit(reason, GOAL_BORE)) return (FALSE);
+	if (!borg_flow_commit(reason, aim)) return (FALSE);
 
 	/* Take one step */
-	if (!borg_flow_old(GOAL_BORE)) return (FALSE);
+	if (!borg_flow_old(aim)) return (FALSE);
 
 	/* Success */
 	return (TRUE);
@@ -1385,7 +1404,7 @@ bool borg_find_town(void)
 	if (borg_prepared_depth() > 20 && borg_gold < 100000) return (FALSE);
 
 	/* Remember previous effort */
-	if (goal_town != -1)
+	if (goal == GOAL_TOWN)
 	{
 		b_i = goal_town;
 
@@ -1432,12 +1451,13 @@ bool borg_find_town(void)
 	/* Go closer */
 	if (borg_flow_block(borg_towns[b_i].x,
 						borg_towns[b_i].y,
-						borg_towns[b_i].name))
+						borg_towns[b_i].name,
+						GOAL_TOWN))
 	{
 		/* Happy */
 		return (TRUE);
 	}
-	
+
 	/* The borg is in that town */
 	return (FALSE);
 }
@@ -1454,14 +1474,23 @@ bool borg_find_dungeon(void)
 	if (bp_ptr->depth) return (FALSE);
 
 	/* No trekking through the wilderness in the dark */
-	if (vanilla_town &&
+	if (!vanilla_town &&
 		(bp_ptr->hour < 6 || bp_ptr->hour > 17)) return (FALSE);
+
+	/* Not when the borg is exploring the wilderness */
+	if (goal && goal == GOAL_DARK) return (FALSE);
 
 	/* Find the target depth */
 	p = borg_prepared_depth();
 
+	/* Not when the borg knows only a few towns */
+	if (p > 20 &&
+		(bp_ptr->lev > 20 && borg_town_num < 5) ||
+		(bp_ptr->lev > 30 && borg_town_num < 13) ||
+		(bp_ptr->lev > 40 && borg_town_num < 19)) return (FALSE);
+
 	/* Remember previous effort */
-	if (goal_dungeon != -1)
+	if (goal == GOAL_CAVE)
 	{
 		b_i = goal_dungeon;
 		b_d = distance(c_x, c_y, borg_dungeons[b_i].x, borg_dungeons[b_i].y);
@@ -1503,6 +1532,7 @@ bool borg_find_dungeon(void)
 		/* If the dungeon was visited and the target depth is not shallow */
 		if (p >= borg_dungeons[b_i].min_depth + 4 &&
 			borg_dungeons[b_i].min_depth != 0 &&
+			borg_dungeons[b_i].min_depth < 5 + borg_dungeons[b_i].max_depth != 0 &&
 			bp_ptr->recall >= 4 && borg_recall())
 		{
 			/* Note */
@@ -1523,7 +1553,8 @@ bool borg_find_dungeon(void)
 	/* Go closer to that dungeon */
 	if (borg_flow_block(borg_dungeons[b_i].x,
 						borg_dungeons[b_i].y,
-						"my dungeon"))
+						"my dungeon",
+						GOAL_CAVE))
 	{
 		goal_dungeon = b_i;
 
@@ -1781,7 +1812,7 @@ bool borg_flow_shop_entry(int i)
 	if (bp_ptr->depth) return (FALSE);
 
 	/* Is it a valid shop? */
-	if (goal_shop < 0 || goal_shop > borg_shop_num) return (FALSE);
+	if (i < 0 || i > borg_shop_num) return (FALSE);
 
 	/* Pick up the new target, but not too far */
 	if (c_x < borg_shops[i].x)
@@ -1872,6 +1903,8 @@ bool borg_waits_daylight(void)
 		b_d = d;
 	}
 
+	goal_shop = b_i;
+
 	/* Go to that inn */
 	if (b_i != -1 && borg_flow_shop_entry(b_i))
 	{
@@ -1879,6 +1912,9 @@ bool borg_waits_daylight(void)
 
 		return (TRUE);
 	}
+
+	/* Don't rest when it hurts */
+	if (!borg_on_safe_feat(map_loc(c_x, c_y)->feat)) return (FALSE);
 
 	/* Wait out the night */
 	borg_keypress('0');
@@ -3585,169 +3621,185 @@ bool borg_flow_dark_wild(void)
 	/* No exploring in the dark */
 	if (bp_ptr->hour < 6 || bp_ptr->hour > 17) return (FALSE);
 
-	/*
-	 * Try to find a dark spot on the overhead map.
-	 * The method is to draw an everwidening square around the current location
-	 * and check the locations on the sides of the square if they are explored.
-	 * To keep this search as quick as possible there is some trickery to
-	 * ensure that every spot on the map in checked only once.
-	 */
-	while (!found)
+	/* Does the borg already know where to go but it isn't there? */
+	if (goal == GOAL_DARK)
 	{
-		/* Enlarge the box */
-		side += 1;
-
-		/* Has the borg explored the whole map? */
-		if (base_x - side < 0 &&
-			base_y - side < 0 &&
-			base_x + side > max_wild - 2 &&
-			base_y + side > max_wild - 2) return (FALSE);
-
-		/* The upper side has a constant y */
-		y = base_y - side;
-
-		/* If the y is on the map */
-		if (y >= 0)
-		{
-			/* Don't go out of bounds */
-			loop_min = MAX(0, base_x - side);
-			loop_max = MIN(base_x + side, max_wild - 2);
-
-			/* Check the upper side from left to right */
-			for (x = loop_min; x < loop_max && !found; x++)
-			{
-				found = borg_flow_wild_check(x, y);
-				if (found) break;
-			}
-		}
-
-		/* Step out */
-		if (found) break;
-
-		/* The right side has a constant x */
-		x = base_x + side;
-
-		/* If the x is on the map */
-		if (x < max_wild - 1)
-		{
-			/* Don't go out of bounds */
-			loop_min = MAX(0, base_y - side);
-			loop_max = MIN(base_y + side, max_wild - 2);
-
-			/* Check the right side from up to down */
-			for (y = loop_min; y < loop_max && !found; y++)
-			{
-				found = borg_flow_wild_check(x, y);
-				if (found) break;
-			}
-		}
-
-		/* Step out */
-		if (found) break;
-
-		/* The lower side has a constant y */
-		y = base_y + side;
-
-		/* If the y is on the map */
-		if (y < max_wild - 1)
-		{
-			/* Don't go out of bounds */
-			loop_min = MAX(0, base_x - side);
-			loop_max = MIN(base_x + side, max_wild - 2);
-
-			/* Check the lower side from right to left */
-			for (x = loop_max; x > loop_min && !found; x--)
-			{
-				found = borg_flow_wild_check(x, y);
-				if (found) break;
-			}
-		}
-
-		/* Step out */
-		if (found) break;
-
-		/* The left side has a constant x */
-		x = base_x - side;
-
-		/* If the x is on the map */
-		if (x >= 0)
-		{
-			/* Don't go out of bounds */
-			loop_min = MAX(0, base_y - side);
-			loop_max = MIN(base_y + side, max_wild - 2);
-
-			/* Check the left side from down to up */
-			for (y = loop_max; y > loop_min && !found; y--)
-			{
-				found = borg_flow_wild_check(x, y);
-				if (found) break;
-			}
-		}
+		x = goal_explore_x;
+		y = goal_explore_y;
 	}
-
-	/* Failure */
-	if (!found) return (FALSE);
-
-	/* Close by? */
-	if (ABS(base_x - x) < 5)
-	{
-		/* keep this c_x */
-		x = c_x;
-	}
-	/* Not close */
 	else
 	{
-		/* West? */
-		if (x < base_x)
+		/*
+		 * Try to find a dark spot on the overhead map.
+		 * The method is to draw an everwidening square around the current location
+		 * and check the locations on the sides of the square if they are explored.
+		 * To keep this search as quick as possible there is some trickery to
+		 * ensure that every spot on the map in checked only once.
+		 */
+		while (!found)
 		{
-			/* Stay at a distance from the known/unknown edge */
-			x = x + 4;
+			/* Enlarge the box */
+			side += 1;
 
-			/* One foot into the new block */
-			x = WILD_BLOCK_SIZE * (x + 1) - 1;
+			/* Has the borg explored the whole map? */
+			if (base_x - side < 0 &&
+				base_y - side < 0 &&
+				base_x + side > max_wild - 2 &&
+				base_y + side > max_wild - 2) return (FALSE);
+
+			/* The upper side has a constant y */
+			y = base_y - side;
+
+			/* If the y is on the map */
+			if (y >= 0)
+			{
+				/* Don't go out of bounds */
+				loop_min = MAX(0, base_x - side);
+				loop_max = MIN(base_x + side, max_wild - 2);
+
+				/* Check the upper side from left to right */
+				for (x = loop_min; x < loop_max && !found; x++)
+				{
+					found = borg_flow_wild_check(x, y);
+					if (found) break;
+				}
+			}
+
+			/* Step out */
+			if (found) break;
+
+			/* The right side has a constant x */
+			x = base_x + side;
+
+			/* If the x is on the map */
+			if (x < max_wild - 1)
+			{
+				/* Don't go out of bounds */
+				loop_min = MAX(0, base_y - side);
+				loop_max = MIN(base_y + side, max_wild - 2);
+
+				/* Check the right side from up to down */
+				for (y = loop_min; y < loop_max && !found; y++)
+				{
+					found = borg_flow_wild_check(x, y);
+					if (found) break;
+				}
+			}
+
+			/* Step out */
+			if (found) break;
+
+			/* The lower side has a constant y */
+			y = base_y + side;
+
+			/* If the y is on the map */
+			if (y < max_wild - 1)
+			{
+				/* Don't go out of bounds */
+				loop_min = MAX(0, base_x - side);
+				loop_max = MIN(base_x + side, max_wild - 2);
+
+				/* Check the lower side from right to left */
+				for (x = loop_max; x > loop_min && !found; x--)
+				{
+					found = borg_flow_wild_check(x, y);
+					if (found) break;
+				}
+			}
+
+			/* Step out */
+			if (found) break;
+
+			/* The left side has a constant x */
+			x = base_x - side;
+
+			/* If the x is on the map */
+			if (x >= 0)
+			{
+				/* Don't go out of bounds */
+				loop_min = MAX(0, base_y - side);
+				loop_max = MIN(base_y + side, max_wild - 2);
+
+				/* Check the left side from down to up */
+				for (y = loop_max; y > loop_min && !found; y--)
+				{
+					found = borg_flow_wild_check(x, y);
+					if (found) break;
+				}
+			}
 		}
-		/* East */
+
+		/* Failure */
+		if (!found) return (FALSE);
+
+		/* Close by? */
+		if (ABS(base_x - x) < 5)
+		{
+			/* keep this c_x */
+			x = c_x;
+		}
+		/* Not close */
 		else
 		{
-			/* Stay at a distance from the known/unknown edge */
-			x = x - 4;
+			/* West? */
+			if (x < base_x)
+			{
+				/* Stay at a distance from the known/unknown edge */
+				x = x + 4;
 
-			/* One foot into the new block */
-			x = WILD_BLOCK_SIZE * x;
+				/* One foot into the new block */
+				x = WILD_BLOCK_SIZE * (x + 1) - 1;
+			}
+			/* East */
+			else
+			{
+				/* Stay at a distance from the known/unknown edge */
+				x = x - 4;
+
+				/* One foot into the new block */
+				x = WILD_BLOCK_SIZE * x;
+			}
 		}
-	}
 
-	/* Close by? */
-	if (ABS(base_y - y) < 5)
-	{
-		/* keep this c_y */
-		y = c_y;
-	}
-	/* Not close */
-	else
-	{
-		/* North? */
-		if (y < base_y)
+		/* Close by? */
+		if (ABS(base_y - y) < 5)
 		{
-			/* Stay at a distance from the known/unknown edge */
-			y = y + 4;
-
-			/* One foot into the new block */
-			y = WILD_BLOCK_SIZE * (y + 1) - 1;
+			/* keep this c_y */
+			y = c_y;
 		}
-		/* South */
+		/* Not close */
 		else
 		{
-			/* Stay at a distance from the known/unknown edge */
-			y = y - 4;
+			/* North? */
+			if (y < base_y)
+			{
+				/* Stay at a distance from the known/unknown edge */
+				y = y + 4;
 
-			/* One foot into the new block */
-			y = WILD_BLOCK_SIZE * y;
+				/* One foot into the new block */
+				y = WILD_BLOCK_SIZE * (y + 1) - 1;
+			}
+			/* South */
+			else
+			{
+				/* Stay at a distance from the known/unknown edge */
+				y = y - 4;
+
+				/* One foot into the new block */
+				y = WILD_BLOCK_SIZE * y;
+			}
 		}
 	}
 
 	/* Enqueue the grid */
-	if (borg_flow_block(x, y, "exploring the wilderness")) return (TRUE);
+	if (borg_flow_block(x, y, "unexplored wilderness", GOAL_DARK))
+	{
+		/* Flag the global */
+		goal_explore_x = x;
+		goal_explore_y = y;
+
+		return (TRUE);
+	}
 
 	/* This flow is not possible */
 	return (FALSE);

@@ -168,6 +168,8 @@ bool borg_fear_mon_spell;
 s16b goal_town = -1;
 s16b goal_shop = -1;
 s16b goal_dungeon = -1;
+s16b goal_explore_x = -1;
+s16b goal_explore_y = -1;
 
 /* Current shop/dungeon index */
 s16b town_num = -1;
@@ -179,11 +181,11 @@ borg_town *borg_towns;
 borg_shop *borg_shops;
 borg_dungeon *borg_dungeons;
 
-/* Number of allocated dungeons */
+/* Number of allocated towns */
 s16b borg_town_num = 0;
 s16b borg_town_size = 20;
 
-/* Number of allocated dungeons */
+/* Number of allocated shops */
 s16b borg_shop_num = 0;
 s16b borg_shop_size = 16;
 
