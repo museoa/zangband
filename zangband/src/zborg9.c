@@ -4044,14 +4044,20 @@ void do_cmd_borg(void)
 			for (inv = 0; (inv < 4 * MAX_REALM) && (inv < inven_num); inv++)
 			{
 				borg_magic *as;
-				int book;
+				int realm, book;
 
 				/* Partly clear the screen */
 				clear_region(0, 1, 12);
 
+				/* On which line do we print? */
 				ii = 4;
-	
-				if (inventory[inv].tval == (bp_ptr->realm1 - 1 + TV_BOOKS_MIN))
+
+				/* Get the realm of this book */
+				realm = inventory[inv].tval + 1 - TV_BOOKS_MIN;
+
+				/* Is this one the possible realms? */
+				if (realm == bp_ptr->realm1 ||
+					realm == bp_ptr->realm2)
 				{
 					/* Display name of the book */
 					put_fstr(1, ii - 2, "%s", inventory[inv].o_name);
@@ -4062,12 +4068,12 @@ void do_cmd_borg(void)
 					for (spell = 0; spell < 8; spell++)
 					{
 						/* pick up spell */
-						as = &borg_magics[bp_ptr->realm1][book][spell];
+						as = &borg_magics[realm][book][spell];
 
 						/*  Can you cast it at all? */
 						if (as->level < 99)
 						{
-							legal = (borg_spell_legal(bp_ptr->realm1, book, spell) ?
+							legal = (borg_spell_legal(realm, book, spell) ?
 								 "Legal" : "Not legal");
 						}
 	
@@ -4076,40 +4082,6 @@ void do_cmd_borg(void)
 						put_fstr(32, ii++, "%s, attempted %d times", legal, as->times);
 
 					}
-					/* Give a chance to look */
-					msgf("Examining spell books.");
-					message_flush();
-				}
-			
-				/* second realm, if it exists */
-				if (bp_ptr->realm2 &&
-					(inventory[inv].tval == (bp_ptr->realm2 - 1 + TV_BOOKS_MIN)))
-				{
-					ii = 4;
-
-					/* Display name of the book */
-					put_fstr(1, ii - 2, "%s", inventory[inv].o_name);
-
-					/* Which book of this realm is it exactly? */
-					book = k_info[inventory[inv].k_idx].sval;
-
-					for (spell = 0; spell < 8; spell++)
-					{
-						/* pick up spell */
-						as = &borg_magics[bp_ptr->realm2][book][spell];
-
-						/* Can you cast it at all? */
-						if (as->level < 99)
-						{
-							legal = (borg_spell_legal(bp_ptr->realm2, book, spell) ?
-								 "Legal" : "Not legal");
-						}
-
-						/* Show spell name, legalility and # of casts */
-						put_fstr(1, ii, "%s",	as->name);
-						put_fstr(32, ii++, "%s, attempted %d times", legal, as->times);
-					}
-
 					/* Give a chance to look */
 					msgf("Examining spell books.");
 					message_flush();
