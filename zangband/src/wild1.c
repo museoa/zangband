@@ -3972,7 +3972,7 @@ static void wild_done(void)
 /*
  * Make the vanilla wilderness with only the 'standard' town
  */
-void create_vanilla_wilderness(void)
+static void create_vanilla_wilderness(void)
 {
 	int i, j;
 	
