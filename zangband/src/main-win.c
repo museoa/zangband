@@ -1197,6 +1197,9 @@ static void load_sound_prefs(void)
 
 	for (i = 0; i < SOUND_MAX; i++)
 	{
+		/* Ignore empty sound strings */
+		if (!angband_sound_name[i][0]) continue;
+	
 		GetPrivateProfileString("Sound", angband_sound_name[i], "", tmp, 1024, ini_path);
 
 		num = tokenize_whitespace(tmp, SAMPLE_MAX, zz);
