@@ -896,7 +896,7 @@ static bool borg_happy_grid_bold(int x, int y)
 #endif /* 0 */
 
 	/* Hack -- weak/dark is very unhappy */
-	if (borg_skill[BI_ISWEAK] || borg_skill[BI_CUR_LITE] == 0) return (FALSE);
+	if (borg_skill[BI_ISWEAK] || !bp_ptr->cur_lite) return (FALSE);
 
 	/* Apply a control effect so that he does not get stuck in a loop */
 	if ((borg_t - borg_began) >= 2000) return (FALSE);
@@ -1076,7 +1076,7 @@ bool borg_lite_beam(bool simulation)
 	bool spell_ok = FALSE;
 
 	/* Hack -- weak/dark is very unhappy */
-	if (borg_skill[BI_ISWEAK] || borg_skill[BI_CUR_LITE] == 0) return (FALSE);
+	if (borg_skill[BI_ISWEAK] || !bp_ptr->cur_lite) return (FALSE);
 
 	/* Apply a control effect so that he does not get stuck in a loop */
 	if ((borg_t - borg_began) >= 2000) return (FALSE);
@@ -1092,16 +1092,16 @@ bool borg_lite_beam(bool simulation)
 	if (!simulation && !spell_ok) return (FALSE);
 
 	/* North */
-	if (test_borg_lite_beam(8, borg_skill[BI_CUR_LITE])) dir = 8;
+	if (test_borg_lite_beam(8, bp_ptr->cur_lite)) dir = 8;
 
 	/* East */
-	else if (test_borg_lite_beam(6, borg_skill[BI_CUR_LITE])) dir = 6;
+	else if (test_borg_lite_beam(6, bp_ptr->cur_lite)) dir = 6;
 
 	/* West */
-	else if (test_borg_lite_beam(4, borg_skill[BI_CUR_LITE])) dir = 4;
+	else if (test_borg_lite_beam(4, bp_ptr->cur_lite)) dir = 4;
 
 	/* South */
-	else if (test_borg_lite_beam(2, borg_skill[BI_CUR_LITE])) dir = 2;
+	else if (test_borg_lite_beam(2, bp_ptr->cur_lite)) dir = 2;
 
 	/* Failure? */
 	if (dir == 5 || spell_ok == FALSE) return (FALSE);
@@ -3011,8 +3011,8 @@ bool borg_caution(void)
 		/* Its ok to go one level deep if evading scary guy */
 		if (scaryguy_on_level) stair_more = TRUE;
 
-		if (borg_skill[BI_CUR_LITE] == 0 || borg_skill[BI_ISHUNGRY] ||
-			borg_skill[BI_ISWEAK] || borg_skill[BI_FOOD] < 2)
+		if (!bp_ptr->cur_lite || borg_skill[BI_ISHUNGRY] ||
+			borg_skill[BI_ISWEAK] || (bp_ptr->food < 2))
 			stair_more = FALSE;
 
 		/* if fleeing town, then dive */
@@ -8563,7 +8563,7 @@ static int borg_defend_aux_bless(int p1)
 	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED]) return (0);
 
 	/* Dark */
-	if (!(mb_ptr->flags & MAP_GLOW) && borg_skill[BI_CUR_LITE] == 0) return (0);
+	if (!(mb_ptr->flags & MAP_GLOW) && !bp_ptr->cur_lite) return (0);
 
 
 	/* no spell */
@@ -9230,8 +9230,7 @@ static int borg_defend_aux_prot_evil(int p1)
 	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
 		borg_skill[BI_ISIMAGE])
 		pfe_spell = FALSE;
-	if (!(mb_ptr->flags & MAP_GLOW) &&
-		borg_skill[BI_CUR_LITE] == 0) pfe_spell = FALSE;
+	if (!(mb_ptr->flags & MAP_GLOW) && !bp_ptr->cur_lite) pfe_spell = FALSE;
 
 	if (!pfe_spell) return (0);
 
@@ -9510,8 +9509,7 @@ static int borg_defend_aux_glyph(int p1)
 	if ((borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
 		 borg_skill[BI_ISIMAGE]) && glyph_spell)
 		glyph_spell = FALSE;
-	if (!(mb_ptr->flags & MAP_GLOW) &&
-		borg_skill[BI_CUR_LITE] == 0) glyph_spell = FALSE;
+	if (!(mb_ptr->flags & MAP_GLOW) && !bp_ptr->cur_lite) glyph_spell = FALSE;
 
 
 	if (!glyph_spell) return (0);
@@ -10434,7 +10432,7 @@ static int borg_defend_aux_inviso(int p1)
 		return (0);
 
 	/* Darkness */
-	if (!(mb_ptr->flags & MAP_GLOW) && !borg_skill[BI_CUR_LITE]) return (0);
+	if (!(mb_ptr->flags & MAP_GLOW) && !bp_ptr->cur_lite) return (0);
 
 	/* No real value known, but lets cast it to find the bad guys. */
 	if (borg_simulate) return (10);
@@ -12386,7 +12384,7 @@ static bool borg_play_step(int y2, int x2)
 
 #if 0
 	/* Traps -- disarm -- */
-	if (borg_skill[BI_CUR_LITE] && !borg_skill[BI_ISBLIND] &&
+	if (bp_ptr->cur_lite && !borg_skill[BI_ISBLIND] &&
 		!borg_skill[BI_ISCONFUSED] && !scaryguy_on_level &&
 		(mb_ptr->feat >= FEAT_TRAP_TRAPDOOR) &&
 		(mb_ptr->feat <= FEAT_TRAP_SLEEP))
@@ -12722,8 +12720,8 @@ bool borg_flow_stair_both(int why)
 
 	/* dont go down if hungry or low on food, unless fleeing a scary town */
 	if ((!goal_fleeing && !bp_ptr->depth) &&
-		(borg_skill[BI_CUR_LITE] == 0 || borg_skill[BI_ISWEAK] ||
-		 borg_skill[BI_ISHUNGRY] || borg_skill[BI_FOOD] < 2))
+		(!bp_ptr->cur_lite || borg_skill[BI_ISWEAK] ||
+		 borg_skill[BI_ISHUNGRY] || (bp_ptr->food < 2)))
 		return (FALSE);
 
 	/* clear the possible searching flag */
@@ -12783,7 +12781,7 @@ bool borg_flow_stair_less(int why)
 		borg_flow_enqueue_grid(track_less_x[i], track_less_y[i]);
 	}
 
-	if (bp_ptr->lev > 35 || borg_skill[BI_CUR_LITE] == 0)
+	if ((bp_ptr->lev > 35) || !bp_ptr->cur_lite)
 	{
 		/* Spread the flow */
 		borg_flow_spread(250, TRUE, FALSE, FALSE);
@@ -12822,11 +12820,11 @@ bool borg_flow_stair_more(int why)
 	/* dont go down if hungry or low on food, unless fleeing a scary town */
 	if (bp_ptr->depth &&
 		(borg_skill[BI_ISWEAK] || borg_skill[BI_ISHUNGRY] ||
-		 borg_skill[BI_FOOD] < 2))
+		 (bp_ptr->food < 2)))
 		return (FALSE);
 
 	/* No diving if no light */
-	if (borg_skill[BI_CUR_LITE] == 0) return (FALSE);
+	if (!bp_ptr->cur_lite) return (FALSE);
 
 	/* don't head for the stairs if you are recalling,  */
 	/* even if you are fleeing. */
@@ -13168,7 +13166,7 @@ bool borg_flow_kill_corridor(bool viewable)
 	if (borg_skill[BI_ISCONFUSED]) return (FALSE);
 
 	/* Not when darkened */
-	if (borg_skill[BI_CUR_LITE] == 0) return (FALSE);
+	if (!bp_ptr->cur_lite) return (FALSE);
 
 	/* get the summoning monster */
 	kill = &borg_kills[borg_kills_summoner];
@@ -13703,7 +13701,7 @@ static bool borg_flow_dark_interesting(int x, int y, int b_stair)
 		if (borg_gold >= 1000000) return (FALSE);
 
 		/* Not when darkened */
-		if (borg_skill[BI_CUR_LITE] == 0) return (FALSE);
+		if (!bp_ptr->cur_lite) return (FALSE);
 
 		/* Allow "stone to mud" ability */
 		if (borg_spell_legal(REALM_SORCERY, 1, 8) ||
@@ -13856,7 +13854,7 @@ static bool borg_flow_dark_interesting(int x, int y, int b_stair)
 		if (borg_skill[BI_ISIMAGE]) return (FALSE);
 
 		/* Do not flow without lite */
-		if (borg_skill[BI_CUR_LITE] == 0) return (FALSE);
+		if (!bp_ptr->cur_lite) return (FALSE);
 
 		/* Do not disarm trap doors on level 99 */
 		if (bp_ptr->depth == 99 &&
@@ -14183,7 +14181,7 @@ static bool borg_flow_dark_2(void)
 	borg_needs_searching = TRUE;
 
 	/* Maximal radius */
-	r = borg_skill[BI_CUR_LITE] + 1;
+	r = bp_ptr->cur_lite + 1;
 
 
 	/* Reset */

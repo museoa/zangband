@@ -1868,7 +1868,7 @@ static void borg_update_kill(int i)
 	map_block *mb_ptr;
 
 	/* Player energy per game turn */
-	e = extract_energy[borg_skill[BI_SPEED]];
+	e = extract_energy[bp_ptr->speed];
 
 	/* Game turns per player move */
 	t = (100 + (e - 1)) / e;

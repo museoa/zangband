@@ -1071,8 +1071,7 @@ bool borg_read_unknown(void)
 		if (l_ptr->tval != TV_SCROLL) continue;
 
 		/* Not when dark */
-		if (!(mb_ptr->flags & MAP_GLOW) &&
-			!borg_skill[BI_CUR_LITE]) return (FALSE);
+		if (!(mb_ptr->flags & MAP_GLOW) && !bp_ptr->cur_lite) return (FALSE);
 
 		/* Blind or Confused */
 		if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED]) return (FALSE);
@@ -1169,7 +1168,7 @@ bool borg_read_scroll(int sval)
 	map_block *mb_ptr = map_loc(c_x, c_y);
 
 	/* Dark */
-	if (!(mb_ptr->flags & MAP_GLOW) && !borg_skill[BI_CUR_LITE]) return (FALSE);
+	if (!(mb_ptr->flags & MAP_GLOW) && !bp_ptr->cur_lite) return (FALSE);
 
 	/* Blind or Confused */
 	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED]) return (FALSE);
@@ -1665,7 +1664,7 @@ bool borg_spell_okay(int realm, int book, int what)
 	map_block *mb_ptr = map_loc(c_x, c_y);
 
 	/* Dark */
-	if (!(mb_ptr->flags & MAP_GLOW) && !borg_skill[BI_CUR_LITE]) return (FALSE);
+	if (!(mb_ptr->flags & MAP_GLOW) && !bp_ptr->cur_lite) return (FALSE);
 
 	/* Define reserve_mana for each class */
 	if (bp_ptr->realm1 == REALM_SORCERY) reserve_mana = 6;
@@ -1880,7 +1879,7 @@ bool borg_mindcr_okay(int spell, int level)
 	map_block *mb_ptr = map_loc(c_x, c_y);
 
 	/* Dark */
-	if (!(mb_ptr->flags & MAP_GLOW) && !borg_skill[BI_CUR_LITE]) return (FALSE);
+	if (!(mb_ptr->flags & MAP_GLOW) && !bp_ptr->cur_lite) return (FALSE);
 
 	/* Define reserve_mana for Displacement */
 	if (bp_ptr->lev >= 3) reserve_mana = 2;

@@ -219,7 +219,8 @@ struct borg_player
 	bool intmana;
 	bool wismana;
 
-	bool britelite;
+	bool britelite;	/* Lite does not require fuel */
+	byte cur_lite; /* Current light radius */
 
 	/* Hitpoints */
 	int chp;
@@ -229,6 +230,8 @@ struct borg_player
 	/* Spellpoints */
 	int csp;
 	int msp;
+	
+	s16b speed; /* Current speed */
 
 	byte realm1;	/* First magic realm */
 	byte realm2;	/* Second magic realm */
@@ -243,6 +246,9 @@ struct borg_player
 	u32b flags1;
 	u32b flags2;
 	u32b flags3;
+	
+	s16b food;	/* Power of food */
+	s16b recall; /* Power of recall */
 
 
 	u32b value;	/* Cost of items we are carrying */
@@ -251,11 +257,6 @@ struct borg_player
 
 extern borg_player *bp_ptr;
 
-
-#define BI_CUR_LITE	36
-#define BI_RECALL	37
-#define BI_FOOD		38
-#define BI_SPEED	39
 
 
 #define BI_INFRA	44

@@ -624,7 +624,7 @@ bool borg_check_lite(void)
 	if (corners <= 2) do_lite = TRUE;
 
 	/* Hack */
-	if (do_lite && (borg_skill[BI_CUR_LITE] >= 2) && (randint0(100) < 90))
+	if (do_lite && (bp_ptr->cur_lite >= 2) && (randint0(100) < 90))
 	{
 		floors = 0;
 
@@ -753,7 +753,7 @@ bool borg_check_lite_only(void)
 	if (corners <= 2) do_lite = TRUE;
 
 	/* Hack */
-	if (do_lite && (borg_skill[BI_CUR_LITE] >= 2) && (randint0(100) < 90))
+	if (do_lite && (bp_ptr->cur_lite >= 2) && (randint0(100) < 90))
 	{
 
 		floors = 0;
@@ -1758,7 +1758,7 @@ bool borg_crush_slow(void)
 	if (!bp_ptr->depth) return (FALSE);
 
 	/* Do not crush items unless we are slow */
-	if (borg_skill[BI_SPEED] >= 110) return (FALSE);
+	if (bp_ptr->speed >= 110) return (FALSE);
 
 	/* Scan for junk */
 	for (i = 0; i < inven_num; i++)
@@ -2491,7 +2491,7 @@ bool borg_play_magic(bool bored)
 	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED]) return (FALSE);
 
 	/* Dark */
-	if (!borg_skill[BI_CUR_LITE]) return (FALSE);
+	if (!bp_ptr->cur_lite) return (FALSE);
 
 	/* Check each realm, backwards */
 	for (realm = MAX_REALM; realm > 0; realm--)
@@ -2806,8 +2806,7 @@ bool borg_leave_level(bool bored)
 		if (!bored) return (FALSE);
 
 		/* Hack -- Recall into dungeon */
-		if ((bp_ptr->max_depth >= 5) &&
-			(borg_skill[BI_RECALL] >= 6) && borg_recall())
+		if ((bp_ptr->max_depth >= 5) && (bp_ptr->recall >= 6) && borg_recall())
 		{
 			/* Note */
 			borg_note("# Recalling into dungeon.");
@@ -2820,7 +2819,7 @@ bool borg_leave_level(bool bored)
 			/* note why we didn't recall. */
 			if (bp_ptr->max_depth < 5)
 				borg_note("# Not deep enough to recall");
-			else if (borg_skill[BI_RECALL] <= 2)
+			else if (bp_ptr->recall <= 2)
 				borg_note("# Not enough recalls to recall");
 			else
 			{

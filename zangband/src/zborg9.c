@@ -1796,22 +1796,9 @@ static void borg_parse_aux(cptr msg, int len)
 		return;
 	}
 
-	/* Removed rubble.  Important when out of lite */
+	/* Removed rubble. */
 	if (prefix(msg, "You have removed the "))
 	{
-		int x, y;
-		/* remove rubbles from array */
-		for (y = c_y - 1; y < c_y + 1; y++)
-		{
-			for (x = c_x - 1; x < c_x + 1; x++)
-			{
-				/* replace all rubble with broken doors, the borg ignores
-				 * broken doors.  This routine is only needed if the borg
-				 * is out of lite and searching in the dark.
-				 */
-				if (borg_skill[BI_CUR_LITE]) continue;
-			}
-		}
 		return;
 	}
 

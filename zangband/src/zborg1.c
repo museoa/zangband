@@ -1026,12 +1026,12 @@ void borg_update_frame(void)
 
 
 	/* Extract "Fast (+x)" or "Slow (-x)" */
-	borg_skill[BI_SPEED] = p_ptr->pspeed;
+	bp_ptr->speed = p_ptr->pspeed;
 
 	/* Check my float for decrementing variables */
-	if (borg_skill[BI_SPEED] > 110)
+	if (bp_ptr->speed > 110)
 	{
-		borg_game_ratio = 100000 / (((borg_skill[BI_SPEED] - 110) * 10) + 100);
+		borg_game_ratio = 100000 / (((bp_ptr->speed - 110) * 10) + 100);
 	}
 	else
 	{
@@ -1039,10 +1039,12 @@ void borg_update_frame(void)
 	}
 
 
-	/* if hasting, it doesn't count as 'borg_speed'.  The speed */
-	/* gained from hasting is counted seperately. */
+	/*
+	 * If hasting, it doesn't count as 'borg_speed'.
+	 * The speed gained from hasting is counted seperately.
+	 */
 	if (borg_speed)
-		borg_skill[BI_SPEED] -= 10;
+		bp_ptr->speed -= 10;
 
 	/* Extract "Cur AC xxxxx" */
 	borg_skill[BI_ARMOR] = p_ptr->dis_ac + p_ptr->dis_to_a;

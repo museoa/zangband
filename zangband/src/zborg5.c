@@ -170,7 +170,7 @@ static int borg_danger_aux1(int r_idx)
 				/* if invulnurable, no damage */
 				if ((borg_goi) && !borg_attacking)
 					z = 0;
-				if (borg_skill[BI_FOOD] > 5) break;
+				if (bp_ptr->food > 5) break;
 				if (!borg_full_damage)
 					z += 5;
 				if ((pfe) && !borg_attacking)
@@ -185,7 +185,7 @@ static int borg_danger_aux1(int r_idx)
 				/* if invulnurable, no damage */
 				if ((borg_goi) && !borg_attacking)
 					z = 0;
-				if (borg_skill[BI_CUR_LITE] == 0) break;
+				if (!bp_ptr->cur_lite) break;
 				if (borg_skill[BI_AFUEL] > 5) break;
 				if (!borg_full_damage)
 					z += 20;
@@ -2487,7 +2487,7 @@ int borg_danger_aux(int x, int y, int c, int i, bool average)
 
 	int glyph = 0;
 
-	int fake_speed = borg_skill[BI_SPEED];
+	int fake_speed = bp_ptr->speed;
 	int monster_speed = r_ptr->speed;
 	int t, e;
 
@@ -2509,8 +2509,7 @@ int borg_danger_aux(int x, int y, int c, int i, bool average)
 	if (d > 20) return (0);
 
 	/* A very speedy borg will miscalculate danger of some monsters */
-	if (borg_skill[BI_SPEED] >= 135) fake_speed =
-			(borg_fighting_unique ? 120 : 125);
+	if (bp_ptr->speed >= 135) fake_speed = (borg_fighting_unique ? 120 : 125);
 
 	/* Consider the character haste and slow monster spells */
 	if (borg_speed)
@@ -3130,38 +3129,38 @@ static s32b borg_power_aux3(void)
 	/*** Reward various things ***/
 
 	/* Hack -- Reward light radius */
-	value += (borg_skill[BI_CUR_LITE] * 1000000L);
+	value += (bp_ptr->cur_lite * 100000L);
 
 	/* Hack -- Reward speed */
 
-	if (borg_skill[BI_SPEED] >= 150)
-		value += (((borg_skill[BI_SPEED] - 120) * 1000L) + 185000L);
+	if (bp_ptr->speed >= 150)
+		value += (((bp_ptr->speed - 120) * 1000L) + 185000L);
 
-	if (borg_skill[BI_SPEED] >= 145 && borg_skill[BI_SPEED] <= 149)
-		value += (((borg_skill[BI_SPEED] - 120) * 1000L) + 180000L);
+	if (bp_ptr->speed >= 145 && bp_ptr->speed <= 149)
+		value += (((bp_ptr->speed - 120) * 1000L) + 180000L);
 
-	if (borg_skill[BI_SPEED] >= 140 && borg_skill[BI_SPEED] <= 144)
-		value += (((borg_skill[BI_SPEED] - 120) * 1000L) + 175000L);
+	if (bp_ptr->speed >= 140 && bp_ptr->speed <= 144)
+		value += (((bp_ptr->speed - 120) * 1000L) + 175000L);
 
-	if (borg_skill[BI_SPEED] >= 135 && borg_skill[BI_SPEED] <= 139)
-		value += (((borg_skill[BI_SPEED] - 120) * 1000L) + 165000L);
+	if (bp_ptr->speed >= 135 && bp_ptr->speed <= 139)
+		value += (((bp_ptr->speed - 120) * 1000L) + 165000L);
 
-	if (borg_skill[BI_SPEED] >= 130 && borg_skill[BI_SPEED] <= 134)
-		value += (((borg_skill[BI_SPEED] - 120) * 1000L) + 150000L);
+	if (bp_ptr->speed >= 130 && bp_ptr->speed <= 134)
+		value += (((bp_ptr->speed - 120) * 1000L) + 150000L);
 
-	if (borg_skill[BI_SPEED] >= 125 && borg_skill[BI_SPEED] <= 129)
-		value += (((borg_skill[BI_SPEED] - 110) * 1000L) + 125000L);
+	if (bp_ptr->speed >= 125 && bp_ptr->speed <= 129)
+		value += (((bp_ptr->speed - 110) * 1000L) + 125000L);
 
-	if (borg_skill[BI_SPEED] >= 120 && borg_skill[BI_SPEED] <= 124)
-		value += (((borg_skill[BI_SPEED] - 110) * 1000L) + 100000L);
+	if (bp_ptr->speed >= 120 && bp_ptr->speed <= 124)
+		value += (((bp_ptr->speed - 110) * 1000L) + 100000L);
 
-	if (borg_skill[BI_SPEED] >= 115 && borg_skill[BI_SPEED] <= 119)
-		value += (((borg_skill[BI_SPEED] - 110) * 1000L) + 75000L);
+	if (bp_ptr->speed >= 115 && bp_ptr->speed <= 119)
+		value += (((bp_ptr->speed - 110) * 1000L) + 75000L);
 
-	if (borg_skill[BI_SPEED] >= 110 && borg_skill[BI_SPEED] <= 114)
-		value += (((borg_skill[BI_SPEED] - 110) * 1000L) + 55000L);
+	if (bp_ptr->speed >= 110 && bp_ptr->speed <= 114)
+		value += (((bp_ptr->speed - 110) * 1000L) + 55000L);
 	else
-		value += (((borg_skill[BI_SPEED] - 110) * 2500L));
+		value += (((bp_ptr->speed - 110) * 2500L));
 
 
 	/* Hack -- Reward strength bonus */
@@ -3397,8 +3396,7 @@ static s32b borg_power_aux3(void)
 	/* APW Mega-Hack -- Speed / Hold Life (level 46) and maxed out */
 	if (((bp_ptr->flags2 & TR2_HOLD_LIFE) && (bp_ptr->max_depth + 1 >= 46) &&
 		 (bp_ptr->max_lev < 50))) value += 100000L;
-	if ((borg_skill[BI_SPEED] >= 115) &&
-		(bp_ptr->max_depth + 1 >= 46)) value += 100000L;
+	if ((bp_ptr->speed >= 115) && (bp_ptr->max_depth + 1 >= 46)) value += 100000L;
 	if ((bp_ptr->flags2 & TR2_RES_CONF) &&
 		(bp_ptr->max_depth + 1 >= 46)) value += 100000L;
 
@@ -3424,12 +3422,10 @@ static s32b borg_power_aux3(void)
 		(bp_ptr->max_depth + 1 >= 60)) value += 104000L;
 	if ((bp_ptr->flags2 & TR2_RES_DISEN) &&
 		(bp_ptr->max_depth + 1 >= 60)) value += 90000L;
-	if ((borg_skill[BI_SPEED] >= 120) &&
-		(bp_ptr->max_depth + 1 >= 60)) value += 100000L;
+	if ((bp_ptr->speed >= 120) && (bp_ptr->max_depth + 1 >= 60)) value += 100000L;
 
 	/*  Must have +20 speed (level 80) */
-	if ((borg_skill[BI_SPEED] >= 130) &&
-		(bp_ptr->max_depth + 1 >= 80)) value += 100000L;
+	if ((bp_ptr->speed >= 130) && (bp_ptr->max_depth + 1 >= 80)) value += 100000L;
 
 	/* Not Req, but a good idea:
 	 * Extra boost to Nether deeper down
@@ -3440,7 +3436,7 @@ static s32b borg_power_aux3(void)
 		(bp_ptr->max_depth + 1 >= 80)) value += 15000L;
 	if ((bp_ptr->flags2 & TR2_RES_DARK) &&
 		(bp_ptr->max_depth + 1 >= 80)) value += 25000L;
-	if ((borg_skill[BI_SPEED] >= 140) && (bp_ptr->max_depth + 1 >= 80) &&
+	if ((bp_ptr->speed >= 140) && (bp_ptr->max_depth + 1 >= 80) &&
 		borg_class == CLASS_WARRIOR) value += 100000L;
 
 
@@ -3630,14 +3626,14 @@ static s32b borg_power_aux4(void)
 	/* Reward Food */
 	/* if hungry, food is THE top priority */
 	if ((borg_skill[BI_ISHUNGRY] || borg_skill[BI_ISWEAK]) &&
-		borg_skill[BI_FOOD]) value += 100000;
+		bp_ptr->food) value += 100000;
 
-	for (k = 0; k < 25 && k < borg_skill[BI_FOOD]; k++) value += 10000L;
-	for (; k < 35 && k < borg_skill[BI_FOOD]; k++) value += 200L;
+	for (k = 0; (k < 25) && (k < bp_ptr->food); k++) value += 10000L;
+	for (; (k < 35) && k < (bp_ptr->food); k++) value += 200L;
 
 	if ((bp_ptr->flags3 & TR3_REGEN) && !(bp_ptr->flags3 & TR3_SLOW_DIGEST))
 	{
-		for (k = 0; k < 10 && k < borg_skill[BI_FOOD]; k++) value += 500L;
+		for (k = 0; (k < 10) && (k < bp_ptr->food); k++) value += 500L;
 	}
 	/* Prefere to buy HiCalorie foods over LowCalorie */
 	if (amt_food_hical <= 5) value += amt_food_hical * 50;
@@ -3679,8 +3675,8 @@ static s32b borg_power_aux4(void)
 	for (; k < 25 && k < borg_skill[BI_AGLYPH]; k++) value += 2000L;
 
 	/* Reward recall */
-	for (k = 0; k < 3 && k < borg_skill[BI_RECALL]; k++) value += 50000L;
-	for (; k < 7 && k < borg_skill[BI_RECALL]; k++) value += 5000L;
+	for (k = 0; (k < 3) && (k < bp_ptr->recall); k++) value += 50000L;
+	for (; (k < 7) && (k < bp_ptr->recall); k++) value += 5000L;
 
 	/* first phase door is very important */
 	if (amt_phase) value += 50000;
@@ -4055,13 +4051,13 @@ cptr borg_restock(int depth)
 	/*** Level 1 ***/
 
 	/* Must have some lite */
-	if (borg_skill[BI_CUR_LITE] < 1) return ("rs my_cur_lite");
+	if (!bp_ptr->cur_lite) return ("rs my_cur_lite");
 
 	/* Must have "fuel" */
 	if (borg_skill[BI_AFUEL] < 1) return ("rs amt_fuel");
 
 	/* Must have "food" */
-	if (borg_skill[BI_FOOD] < 1) return ("rs amt_food");
+	if (!bp_ptr->food) return ("rs amt_food");
 
 	/* Assume happy at level 1 */
 	if (depth <= 1) return (NULL);
@@ -4069,16 +4065,16 @@ cptr borg_restock(int depth)
 	/*** Level 2 and 3 ***/
 
 	/* Must have good lite */
-	if (borg_skill[BI_CUR_LITE] < 2) return ("rs lite+1");
+	if (bp_ptr->cur_lite == 1) return ("rs lite+1");
 
 	/* Must have "fuel" */
 	if (borg_skill[BI_AFUEL] < 3) return ("rs fuel+2");
 
 	/* Must have "food" */
-	if (borg_skill[BI_FOOD] < 3) return ("rs food+2");
+	if (bp_ptr->food < 3) return ("rs food+2");
 
 	/* Must have "recall" */
-	if (borg_skill[BI_RECALL] < 2) return ("rs recall");
+	if (bp_ptr->recall < 2) return ("rs recall");
 
 	/* Assume happy at level 3 */
 	if (depth <= 3) return (NULL);
@@ -4158,10 +4154,10 @@ static cptr borg_prepared_aux2(int depth)
 	/*** Essential Items for Level 1 ***/
 
 	/* Require lite (any) */
-	if (borg_skill[BI_CUR_LITE] < 1) return ("1 Lite");
+	if (!bp_ptr->cur_lite) return ("1 Lite");
 
 	/* Require food */
-	if (borg_skill[BI_FOOD] < 5) return ("5 Food");
+	if (bp_ptr->food < 5) return ("5 Food");
 
 	/* Usually ready for level 1 */
 	if (depth <= 1) return (NULL);
@@ -4170,13 +4166,13 @@ static cptr borg_prepared_aux2(int depth)
 	/*** Essential Items for Level 2 ***/
 
 	/* Require lite (radius two) */
-	if (borg_skill[BI_CUR_LITE] < 2) return ("2 Lite");
+	if (bp_ptr->cur_lite == 1) return ("2 Lite");
 
 	/* Require fuel */
 	if (borg_skill[BI_AFUEL] < 5) return ("5 Fuel");
 
 	/* Require recall */
-	if (borg_skill[BI_RECALL] < 1) return ("1 recall");
+	if (!bp_ptr->recall) return ("1 recall");
 
 	/* Usually ready for level 2 */
 	if (depth <= 2) return (NULL);
@@ -4184,7 +4180,7 @@ static cptr borg_prepared_aux2(int depth)
 	/*** Essential Items for Level 3 and 4 ***/
 
 	/* Scrolls of Word of Recall */
-	if (borg_skill[BI_RECALL] < 3) return ("3 recall");
+	if (bp_ptr->recall < 3) return ("3 recall");
 
 	/* Potions of Cure Serious Wounds */
 	if ((bp_ptr->max_lev < 30) &&
@@ -4197,7 +4193,7 @@ static cptr borg_prepared_aux2(int depth)
 	/*** Essential Items for Level 5 to 9 ***/
 
 	/* Scrolls of Word of Recall */
-	if (borg_skill[BI_RECALL] < 4) return ("4 recalls");
+	if (bp_ptr->recall < 4) return ("4 recalls");
 
 	/* Potions of Cure Serious/Critical Wounds */
 	if ((bp_ptr->max_lev < 30) &&
@@ -4299,7 +4295,7 @@ static cptr borg_prepared_aux2(int depth)
 	/*** Essential Items for Level 46 to 55 ***/
 
 	/*  Must have +5 speed after level 46 */
-	if (borg_skill[BI_SPEED] < 115) return ("+5 speed");
+	if (bp_ptr->speed < 115) return ("+5 speed");
 
 	/* Potions of heal */
 	if (borg_skill[BI_AHEAL] < 1 &&
@@ -4343,14 +4339,14 @@ static cptr borg_prepared_aux2(int depth)
 	/*** Essential Items for Level 61 to 80 ***/
 
 	/* Must have +10 speed */
-	if (borg_skill[BI_SPEED] < 120) return ("+10 speed");
+	if (bp_ptr->speed < 120) return ("+10 speed");
 
 	/* Usually ready for level 61 to 80 */
 	if (depth <= 80) return (NULL);
 
 	/*** Essential Items for Level 81-85 ***/
 	/* Minimal Speed */
-	if (borg_skill[BI_SPEED] < 130) return ("+20 Speed");
+	if (bp_ptr->speed < 130) return ("+20 Speed");
 
 	/* Usually ready for level 81 to 85 */
 	if (depth <= 85) return (NULL);

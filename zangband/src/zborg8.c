@@ -1399,7 +1399,7 @@ bool borg_think_dungeon(void)
 
 	/* Hack -- caution from breeders */
 	if ((j >= MIN(bp_ptr->lev, 5)) &&
-		((borg_skill[BI_RECALL] <= 0) || (bp_ptr->lev < 35)))
+		(!bp_ptr->recall || (bp_ptr->lev < 35)))
 	{
 		/* Ignore monsters from caution */
 		if (!goal_ignoring)
@@ -1448,7 +1448,7 @@ bool borg_think_dungeon(void)
 	borg_notice();
 
 	/* require light-- */
-	if (borg_skill[BI_CUR_LITE] <= 0 && bp_ptr->depth >= 1)
+	if (!bp_ptr->cur_lite && (bp_ptr->depth >= 1))
 	{
 		if (goal_recalling)
 		{
@@ -1475,7 +1475,7 @@ bool borg_think_dungeon(void)
 		}
 
 		/* Try to flow to a lite if I can recall */
-		if (borg_skill[BI_RECALL])
+		if (bp_ptr->recall)
 		{
 			/* Can I recall out with a spell */
 			if (borg_flow_light(GOAL_FLEE)) return (TRUE);
@@ -1491,11 +1491,11 @@ bool borg_think_dungeon(void)
 	if (borg_caution()) return (TRUE);
 
 	/*** if returning from dungeon in bad shape...***/
-	if (borg_skill[BI_CUR_LITE] == 0 || borg_skill[BI_ISCUT] ||
+	if (!bp_ptr->cur_lite || borg_skill[BI_ISCUT] ||
 		borg_skill[BI_ISPOISONED] || borg_skill[BI_ISWEAK])
 	{
 		/* First try to wear something */
-		if (borg_skill[BI_CUR_LITE] == 0)
+		if (!bp_ptr->cur_lite)
 		{
 			/* attempt to refuel */
 			if (borg_refuel_torch() || borg_refuel_lantern()) return (TRUE);

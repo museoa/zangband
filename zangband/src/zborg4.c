@@ -305,7 +305,7 @@ static void borg_notice_player(void)
 
 	/* Recalc some Variables */
 	borg_skill[BI_ARMOR] = 0;
-	borg_skill[BI_SPEED] = 110;
+	bp_ptr->speed = 110;
 
 	/* Start with a single blow per turn */
 	borg_skill[BI_BLOWS] = 1;
@@ -358,7 +358,7 @@ static void borg_notice_player(void)
 	if (f2 & (TR2_SUST_CHR)) bp_ptr->sust[A_CHR] = TRUE;
 
 	/* Bloating slows the player down (a little) */
-	if (borg_skill[BI_ISGORGED]) borg_skill[BI_SPEED] -= 10;
+	if (borg_skill[BI_ISGORGED]) bp_ptr->speed -= 10;
 }
 
 /*
@@ -485,7 +485,7 @@ static void borg_notice_equip(int *extra_blows, int *extra_shots,
 				l_ptr->pval * 20;
 
 		/* Affect speed */
-		if (l_ptr->kn_flags1 & TR1_SPEED) borg_skill[BI_SPEED] += l_ptr->pval;
+		if (l_ptr->kn_flags1 & TR1_SPEED) bp_ptr->speed += l_ptr->pval;
 
 		/* Affect blows */
 		if (l_ptr->kn_flags1 & TR1_BLOWS) *extra_blows += l_ptr->pval;
@@ -1073,7 +1073,7 @@ static void borg_recalc_monk(int extra_blows)
 	/* Unencumbered Monks become faster every 10 levels */
 	if (monk_arm_wgt < (100 + (bp_ptr->lev * 4)))
 	{
-		borg_skill[BI_SPEED] += (bp_ptr->lev) / 10;
+		bp_ptr->speed += (bp_ptr->lev) / 10;
 
 		if (!look_up_equip_slot(EQUIP_BODY))
 		{
@@ -1197,10 +1197,10 @@ static void borg_notice_lite(void)
 	list_item *l_ptr;
 
 	/* Assume normal lite radius */
-	borg_skill[BI_CUR_LITE] = 0;
+	bp_ptr->cur_lite = 0;
 
 	/* Glowing player has light */
-	if (bp_ptr->britelite) borg_skill[BI_CUR_LITE] = 1;
+	if (bp_ptr->britelite) bp_ptr->cur_lite = 1;
 
 	/* Examine the lite */
 	l_ptr = look_up_equip_slot(EQUIP_LITE);
@@ -1220,16 +1220,16 @@ static void borg_notice_lite(void)
 		if (l_ptr->timeout)
 		{
 			/* Torches -- radius one */
-			if (k_ptr->sval == SV_LITE_TORCH) borg_skill[BI_CUR_LITE] += 1;
+			if (k_ptr->sval == SV_LITE_TORCH) bp_ptr->cur_lite += 1;
 
 			/* Lanterns -- radius two */
-			if (k_ptr->sval == SV_LITE_LANTERN) borg_skill[BI_CUR_LITE] += 2;
+			if (k_ptr->sval == SV_LITE_LANTERN) bp_ptr->cur_lite += 2;
 		}
 
 		/* Artifact lites -- radius three */
 		if (l_ptr->kn_flags3 & TR3_INSTA_ART)
 		{
-			borg_skill[BI_CUR_LITE] += 3;
+			bp_ptr->cur_lite += 3;
 
 			/* Artifact lites -- assume glowing */
 			bp_ptr->britelite = TRUE;
@@ -1237,7 +1237,7 @@ static void borg_notice_lite(void)
 			/* Vampires need to be concerned with Artifacts Lites */
 			if ((borg_race == RACE_VAMPIRE) && !(bp_ptr->flags2 & TR2_RES_LITE))
 			{
-				borg_skill[BI_CUR_LITE] = 1;
+				bp_ptr->cur_lite = 1;
 			}
 		}
 	}
@@ -1536,7 +1536,7 @@ static void borg_notice_scrolls(list_item *l_ptr, int number)
 		}
 		case SV_SCROLL_WORD_OF_RECALL:
 		{
-			borg_skill[BI_RECALL] += number;
+			bp_ptr->recall += number;
 			break;
 		}
 		case SV_SCROLL_ENCHANT_ARMOR:
@@ -1581,7 +1581,7 @@ static void borg_notice_scrolls(list_item *l_ptr, int number)
 		}
 		case SV_SCROLL_SATISFY_HUNGER:
 		{
-			borg_skill[BI_FOOD] += number * 5;
+			bp_ptr->food += number * 5;
 			break;
 		}
 	}
@@ -1617,11 +1617,11 @@ static void borg_notice_rods(list_item *l_ptr, int number)
 			/* Don't count on it if I suck at activations */
 			if (borg_skill[BI_DEV] - k_ptr->level > 7)
 			{
-				borg_skill[BI_RECALL] += number * 100;
+				bp_ptr->recall += number * 100;
 			}
 			else
 			{
-				borg_skill[BI_RECALL] += number;
+				bp_ptr->recall += number;
 			}
 			break;
 		}
@@ -1878,7 +1878,7 @@ static void borg_notice_inven_item(list_item *l_ptr)
 			/* Flasks */
 
 			/* Use as fuel if we equip a lantern */
-			if (borg_skill[BI_CUR_LITE] == 2) borg_skill[BI_AFUEL] += number;
+			if (bp_ptr->cur_lite == 2) borg_skill[BI_AFUEL] += number;
 
 			/* Count as (crappy) Missiles */
 			if (bp_ptr->lev < 15)
@@ -1895,7 +1895,7 @@ static void borg_notice_inven_item(list_item *l_ptr)
 
 			/* Use as fuel if it is a torch and we carry a torch */
 			if ((k_ptr->sval == SV_LITE_TORCH) &&
-				(borg_skill[BI_CUR_LITE] <= 1))
+				(bp_ptr->cur_lite <= 1))
 			{
 				borg_skill[BI_AFUEL] += number;
 			}
@@ -2190,7 +2190,7 @@ static void borg_notice_aux2(void)
 		borg_spell_legal_fail(REALM_NATURE, 0, 3, 10) ||
 		borg_racial_check(RACE_HOBBIT, TRUE))
 	{
-		borg_skill[BI_FOOD] += 1000;
+		bp_ptr->food += 1000;
 	}
 
 	/* Handle "identify" -> infinite identifies */
@@ -2288,7 +2288,7 @@ static void borg_notice_aux2(void)
 		  borg_spell_legal(REALM_SORCERY, 2, 7) ||
 		  borg_spell_legal(REALM_TRUMP, 1, 6))))
 	{
-		borg_skill[BI_RECALL] += 1000;
+		bp_ptr->recall += 1000;
 	}
 
 	/* Handle teleport_level */
@@ -2409,16 +2409,16 @@ static void borg_notice_aux2(void)
 	 */
 	if ((borg_race <= RACE_IMP) || (borg_race >= RACE_SPRITE))
 	{
-		borg_skill[BI_FOOD] += amt_food_hical * 5;
-		if (borg_skill[BI_FOOD] <= 30)
+		bp_ptr->food += amt_food_hical * 5;
+		if (bp_ptr->food <= 30)
 		{
-			borg_skill[BI_FOOD] += amt_food_lowcal;
+			bp_ptr->food += amt_food_lowcal;
 		}
 	}
 
 	/* If weak, do not count food spells */
-	if (borg_skill[BI_ISWEAK] && (borg_skill[BI_FOOD] >= 1000))
-		borg_skill[BI_FOOD] -= 1000;
+	if (borg_skill[BI_ISWEAK] && (bp_ptr->food >= 1000))
+		bp_ptr->food -= 1000;
 
 	/*
 	 * Correct BI_ENCUMBERD from total weight to the degree
