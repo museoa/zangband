@@ -1353,14 +1353,14 @@ static void monk_attack(monster_type *m_ptr, long *k, cptr m_name)
 
 	*k = critical_norm(p_ptr->lev * randint1(10), ma_ptr->min_level, *k);
 
-	if ((special_effect == MA_KNEE) && ((*k + p_ptr->to_d) < m_ptr->hp))
+	if ((special_effect == MA_KNEE) && (*k  < m_ptr->hp))
 	{
 		msgf("%^s moans in agony!", m_name);
 		stun_effect = rand_range(8, 20);
 		resist_stun /= 3;
 	}
 
-	else if ((special_effect == MA_SLOW) && ((*k + p_ptr->to_d) < m_ptr->hp))
+	else if ((special_effect == MA_SLOW) && (*k < m_ptr->hp))
 	{
 		if (!(r_ptr->flags1 & RF1_UNIQUE) &&
 			(randint1(p_ptr->lev) > r_ptr->level) && m_ptr->mspeed > 60)
@@ -1370,7 +1370,7 @@ static void monk_attack(monster_type *m_ptr, long *k, cptr m_name)
 		}
 	}
 
-	if (stun_effect && ((*k + p_ptr->to_d) < m_ptr->hp))
+	if (stun_effect && (*k < m_ptr->hp))
 	{
 		if (p_ptr->lev > randint1(r_ptr->level + resist_stun + 10))
 		{
