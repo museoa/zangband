@@ -944,7 +944,8 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		case TV_AMULET:
 		{
 			/* Known artifacts */
-			if ((o_ptr->flags3 & TR3_INSTA_ART) && aware) break;
+			if ((o_ptr->flags3 & TR3_INSTA_ART) && aware &&
+				 (o_ptr->activate > 128)) break;
 
 			/* Color the object */
 			modstr = amulet_adj[indexx];
@@ -961,7 +962,8 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		case TV_RING:
 		{
 			/* Known artifacts */
-			if ((o_ptr->flags3 & TR3_INSTA_ART) && aware) break;
+			if ((o_ptr->flags3 & TR3_INSTA_ART) && aware &&
+				 (o_ptr->activate > 128)) break;
 
 			/* Color the object */
 			modstr = ring_adj[indexx];
