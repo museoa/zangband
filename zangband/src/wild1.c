@@ -624,6 +624,58 @@ static bool create_city(int x, int y, int town_num)
 
 
 /*
+ * Look to see if a wilderness block is able to have
+ * a town overlayed on top.
+ */
+static bool town_blank(int x, int y, int xsize, int ysize, int town_count)
+{
+	int i, j;
+	wild_gen2_type *w_ptr;
+
+	/* Hack - Population check */
+	if (randint0(256) > wild[y][x].trans.pop_map) return (FALSE);
+
+	for (i = x - 1; i < x + xsize + 2; i++)
+	{
+		for (j = y - 1; j < y + ysize + 2; j++)
+		{
+			/* Hack - Not next to boundary */
+			if ((i <= 0) || (i >= max_wild - 1) ||
+			    (j <= 0) || (j >= max_wild - 1))
+			{
+				return (FALSE);
+			}
+
+			w_ptr = &wild[j][i].trans;
+
+			/* No town already */
+			if (w_ptr->town) return (FALSE);
+
+			/* No water or lava or acid */
+			if (w_ptr->info & (WILD_INFO_WATER | WILD_INFO_LAVA | WILD_INFO_ACID))
+				 return (FALSE);
+
+			/* No Ocean */
+			if (w_ptr->hgt_map < (256 / SEA_FRACTION)) return (FALSE);
+		}
+	}
+	
+			
+	/* Look to see if another town is too close */
+	for (i = 1; i < town_count; i++)
+	{
+		if (distance(town[i].x, town[i].y, x, y) < TOWN_MIN_DIST) 
+		{
+			/* Too close? */
+			return (FALSE);
+		}
+	}
+
+	/* Ok then */
+	return (TRUE);
+}
+
+/*
  * Initialise the town structures
  *
  * We have cities now...
@@ -653,7 +705,7 @@ static void init_towns(void)
 		 * See if a city will fit.
 		 * (Need a 8x8 block free.)
 		 */
-		if (!town_blank(x, y, 8, 8)) continue;
+		if (!town_blank(x, y, 8, 8, town_count)) continue;
 	
 		/* Generate it */
 		if (create_city(x, y, town_count))

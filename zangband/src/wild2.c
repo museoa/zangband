@@ -375,49 +375,6 @@ void van_town_gen(u16b town_num)
 }
 
 
-/*
- * Look to see if a wilderness block is able to have
- * a town overlayed on top.
- */
-bool town_blank(int x, int y, int xsize, int ysize)
-{
-	int i, j;
-	wild_gen2_type *w_ptr;
-
-	/* Population check */
-	if (randint0(256) > wild[y][x].trans.pop_map) return (FALSE);
-
-	for (i = x - 1; i < x + xsize + 2; i++)
-	{
-		for (j = y - 1; j < y + ysize + 2; j++)
-		{
-			/* Hack - Not next to boundary */
-			if ((i <= 0) || (i >= max_wild - 1) ||
-			    (j <= 0) || (j >= max_wild - 1))
-			{
-				return (FALSE);
-			}
-
-			w_ptr = &wild[j][i].trans;
-
-			/* No town already */
-			if (w_ptr->town) return (FALSE);
-
-			/* No water or lava or acid */
-			if (w_ptr->info & (WILD_INFO_WATER | WILD_INFO_LAVA | WILD_INFO_ACID))
-				 return (FALSE);
-
-			/* No Ocean */
-			if (w_ptr->hgt_map < (256 / SEA_FRACTION)) return (FALSE);
-		}
-	}
-
-	/* Ok then */
-	return (TRUE);
-}
-
-
-
 
 /*
  * Given a location - convert to a location in cave[][]
