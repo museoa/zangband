@@ -187,7 +187,11 @@ distgz: dist
 	gzip -9 zangband-$(VERSION).tar
 	-rm -rf $(DESTDIR)
 
-clean:
+# Minor cleaning
+dust:
+	-rm -f $(dust-files)
+	
+clean: dust
 	-rm -f $(clean-files)
 
 distclean: clean
@@ -245,4 +249,4 @@ configure.in: .version
 
 
 .PHONY: dirs base installbase install uninstall dist distcheck distgz \
-		 clean distclean test
+		 dust clean distclean test

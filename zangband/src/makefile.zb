@@ -217,6 +217,7 @@ else
 TOLUA = src/lua/tolua
 endif
 
+dust-files += src/*~
 clean-files += src/*.bak src/*.o src/l-*.c
 distclean-files += autoconf.h
 
