@@ -973,13 +973,13 @@ static void display_entry(int pos)
 	a = object_attr(o_ptr);
 	c = object_char(o_ptr);
 
-#ifdef AMIGA
-	if (a & 0x80) a |= 0x40;
-#endif
-
 	/* Hack -- fake monochrome */
-	if (!use_color || ironman_moria) a = TERM_WHITE;
-
+	if (!use_color || ironman_moria)
+    {
+    	a = TERM_WHITE;
+    	c = ' ';
+    }
+    
     if (object_aware_p(o_ptr))
         Term_draw(3, i + 6, a, c);
 

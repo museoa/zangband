@@ -2505,10 +2505,6 @@ void show_list(s16b o_list_ptr)
 		a = object_attr(o_ptr);
 		c = object_char(o_ptr);
 
-#ifdef AMIGA
-		if (a & 0x80) a |= 0x40;
-#endif
-
 		/* Fake monochrome */
 		if (!use_color || ironman_moria)
 		{
@@ -2649,10 +2645,6 @@ void show_equip(void)
 
 		/* Hack - if no object, don't display the 'nothing' symbol */
 		if (!o_ptr->number) c = ' ';
-
-#ifdef AMIGA
-		if (a & 0x80) a |= 0x40;
-#endif
 
 		/* Fake monochrome */
 		if (!use_color || ironman_moria)
