@@ -1724,7 +1724,7 @@ void do_cmd_macros(void)
 			prt("File: ", 0, 18);
 
 			/* Default filename */
-			sprintf(tmp, "%s.prf", player_name);
+			sprintf(tmp, "%s.prf", player_base);
 
 			/* Ask for a file */
 			if (!askfor_aux(tmp, 80)) continue;
@@ -1841,7 +1841,7 @@ void do_cmd_macros(void)
 			prt("File: ", 0, 18);
 
 			/* Default filename */
-			sprintf(tmp, "%s.prf", player_name);
+			sprintf(tmp, "%s.prf", player_base);
 
 			/* Ask for a file */
 			if (!askfor_aux(tmp, 80)) continue;
