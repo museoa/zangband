@@ -95,7 +95,7 @@ bool teleport_away(int m_idx, int dis)
 			flags = MEG_DO_MOVE;
 
 			/* Call the hook */
-			field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
+			field_hook(c_ptr, FIELD_ACT_MON_ENTER_TEST,
 					   (monster_type *) NULL, &flags);
 
 			/* Get result */
@@ -125,7 +125,7 @@ bool teleport_away(int m_idx, int dis)
 	sound(SOUND_TPOTHER);
 
 	/* Process fields under the monster. */
-	field_hook(&c_ptr->fld_idx, FIELD_ACT_MONSTER_LEAVE, m_ptr);
+	field_hook(c_ptr, FIELD_ACT_MONSTER_LEAVE, m_ptr);
 
 	/* Update the new location */
 	area(nx, ny)->m_idx = m_idx;
@@ -141,7 +141,7 @@ bool teleport_away(int m_idx, int dis)
 	update_mon(m_idx, TRUE);
 
 	/* Process fields under the monster. */
-	field_hook(&c_ptr->fld_idx, FIELD_ACT_MONSTER_ENTER, m_ptr);
+	field_hook(c_ptr, FIELD_ACT_MONSTER_ENTER, m_ptr);
 
 	/* Redraw the old grid */
 	lite_spot(ox, oy);
@@ -234,7 +234,7 @@ void teleport_to_player(int m_idx)
 			flags = MEG_DO_MOVE;
 
 			/* Call the hook */
-			field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
+			field_hook(c_ptr, FIELD_ACT_MON_ENTER_TEST,
 					   (monster_type *) NULL, &flags);
 
 			/* Get result */
@@ -272,7 +272,7 @@ void teleport_to_player(int m_idx)
 	sound(SOUND_TPOTHER);
 
 	/* Process fields under the monster. */
-	field_hook(&c_ptr->fld_idx, FIELD_ACT_MONSTER_LEAVE, m_ptr);
+	field_hook(c_ptr, FIELD_ACT_MONSTER_LEAVE, m_ptr);
 
 	/* Update the new location */
 	area(nx, ny)->m_idx = m_idx;
@@ -288,7 +288,7 @@ void teleport_to_player(int m_idx)
 	update_mon(m_idx, TRUE);
 
 	/* Process fields under the monster. */
-	field_hook(&c_ptr->fld_idx, FIELD_ACT_MONSTER_ENTER, m_ptr);
+	field_hook(c_ptr, FIELD_ACT_MONSTER_ENTER, m_ptr);
 
 	/* Redraw the old grid */
 	lite_spot(ox, oy);
@@ -414,7 +414,7 @@ void teleport_player(int dis)
 	ox = px;
 
 	/* Process fields under the player. */
-	field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_LEAVE);
+	field_hook(area(px, py), FIELD_ACT_PLAYER_LEAVE);
 
 	/* Move the player */
 	py = y;
@@ -442,7 +442,7 @@ void teleport_player(int dis)
 	lite_spot(px, py);
 
 	/* Process fields under the player. */
-	field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_ENTER);
+	field_hook(area(px, py), FIELD_ACT_PLAYER_ENTER);
 
 	/* Monsters with teleport ability may follow the player */
 	for (xx = -1; xx <= 1; xx++)
@@ -559,7 +559,7 @@ void teleport_player_to(int nx, int ny)
 	ox = px;
 
 	/* Process fields under the player. */
-	field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_LEAVE);
+	field_hook(area(px, py), FIELD_ACT_PLAYER_LEAVE);
 
 	/* Move the player */
 	py = y;
@@ -587,7 +587,7 @@ void teleport_player_to(int nx, int ny)
 	lite_spot(px, py);
 
 	/* Process fields under the player. */
-	field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_ENTER);
+	field_hook(area(px, py), FIELD_ACT_PLAYER_ENTER);
 
 	/* Check for new panel (redraw map) */
 	verify_panel();

@@ -2305,7 +2305,7 @@ static void take_move(int m_idx, int *mm)
         }
         
 		/* Call the hook */
-		field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST, m_ptr, &flags);
+		field_hook(c_ptr, FIELD_ACT_MON_ENTER_TEST, m_ptr, &flags);
 
 		/* Get result */
 		if (flags & (MEG_DO_MOVE))
@@ -2468,7 +2468,7 @@ static void take_move(int m_idx, int *mm)
 			}
 
 			/* Process fields under the monster. */
-			field_hook(&old_ptr->fld_idx, FIELD_ACT_MONSTER_LEAVE, m_ptr);
+			field_hook(old_ptr, FIELD_ACT_MONSTER_LEAVE, m_ptr);
 
 			/* Hack -- Update the old location */
 			old_ptr->m_idx = c_ptr->m_idx;
@@ -2498,7 +2498,7 @@ static void take_move(int m_idx, int *mm)
 			update_mon(m_idx, TRUE);
 
 			/* Process fields under the monster. */
-			field_hook(&old_ptr->fld_idx, FIELD_ACT_MONSTER_ENTER, m_ptr);
+			field_hook(old_ptr, FIELD_ACT_MONSTER_ENTER, m_ptr);
 
 			/* Redraw the old grid */
 			lite_spot(ox, oy);
@@ -2766,7 +2766,7 @@ static void process_monster(int m_idx)
 	c_ptr = area(ox, oy);
 
 	/* Process fields under the monster. */
-	field_hook(&c_ptr->fld_idx, FIELD_ACT_MONSTER_ON, m_ptr);
+	field_hook(c_ptr, FIELD_ACT_MONSTER_ON, m_ptr);
 
 	/* Handle "sleep" */
 	if (m_ptr->csleep)

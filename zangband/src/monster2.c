@@ -1746,7 +1746,7 @@ bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
 	flags = MEG_DO_MOVE;
 
 	/* Call the hook */
-	field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
+	field_hook(c_ptr, FIELD_ACT_MON_ENTER_TEST,
 			   (monster_type *) NULL, &flags);
 
 	/* Get result */
@@ -2672,7 +2672,7 @@ bool summon_specific(int who, int x1, int y1, int req_lev, int type, bool group,
 		flags = MEG_DO_MOVE;
 
 		/* Call the hook */
-		field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
+		field_hook(c_ptr, FIELD_ACT_MON_ENTER_TEST,
 				   (monster_type *) NULL, &flags);
 
 		/* Get result */

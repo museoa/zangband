@@ -685,8 +685,8 @@ errr get_obj_store_prep(void)
 	object_type dummy_object;
 	object_type *o_ptr = &dummy_object;
 
-	/* The field to use */
-	s16b *fld_ptr = &area(p_ptr->px, p_ptr->py)->fld_idx;
+	/* The field to use is on this square */
+	cave_type *c_ptr = area(p_ptr->px, p_ptr->py);
 
 	/* Thing to pass to the action functions */
 	bool result;
@@ -709,7 +709,7 @@ errr get_obj_store_prep(void)
 		result = FALSE;
 
 		/* Will the store !not! buy this item? */
-		field_hook(fld_ptr, FIELD_ACT_STORE_ACT1, o_ptr, &result);
+		field_hook(c_ptr, FIELD_ACT_STORE_ACT1, o_ptr, &result);
 
 		/* We don't want this item type? */
 		if (result == TRUE)
@@ -723,7 +723,7 @@ errr get_obj_store_prep(void)
 		result = TRUE;
 
 		/* Will the store buy this item? */
-		field_hook(fld_ptr, FIELD_ACT_STORE_ACT2, o_ptr, &result);
+		field_hook(c_ptr, FIELD_ACT_STORE_ACT2, o_ptr, &result);
 
 		/* We don't want this item type? */
 		if (result == FALSE)
@@ -4320,7 +4320,7 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 	}
 
 	/* Fields may interact with an object in some way */
-	field_hook(&area(bx, by)->fld_idx, FIELD_ACT_OBJECT_DROP, o_ptr);
+	field_hook(area(bx, by), FIELD_ACT_OBJECT_DROP, o_ptr);
 }
 
 

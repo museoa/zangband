@@ -334,7 +334,7 @@ static bool summon_possible(int x1, int y1)
 			flags = MEG_DO_MOVE;
 
 			/* Call the hook */
-			field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
+			field_hook(c_ptr, FIELD_ACT_MON_ENTER_TEST,
 					   (monster_type *) NULL, &flags);
 
 			/* Get result */

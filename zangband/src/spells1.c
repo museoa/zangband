@@ -4570,7 +4570,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 
 
 				/* Affect fields on the grid */
-				field_hook(&area(x, y)->fld_idx, FIELD_ACT_MAGIC_TARGET,
+				field_hook(area(x, y), FIELD_ACT_MAGIC_TARGET,
                 			who, d, dam, typ, player_can_see_bold(x, y),
                             &notice);
 			}
@@ -4580,7 +4580,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 				if (project_f(who, dist, x, y, dam, typ)) notice = TRUE;
 
 				/* Affect fields on the grid */
-				field_hook(&area(x, y)->fld_idx, FIELD_ACT_MAGIC_TARGET,
+				field_hook(area(x, y), FIELD_ACT_MAGIC_TARGET,
                 			who, dist, dam, typ, player_can_see_bold(x, y),
                             &notice);
 			}

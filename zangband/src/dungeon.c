@@ -1226,7 +1226,7 @@ static void process_world(void)
 	/* 
 	 * Fields you are standing on may do something.
 	 */
-	field_hook(&c_ptr->fld_idx, FIELD_ACT_PLAYER_ON);
+	field_hook(c_ptr, FIELD_ACT_PLAYER_ON);
 
 	/* Nightmare mode activates the TY_CURSE at midnight */
 	if (ironman_nightmare)
@@ -1740,7 +1740,7 @@ static void process_world(void)
 		/* Exit if not in dungeon */
 		if (!(o_ptr->ix || o_ptr->iy)) continue;
 
-		field_hook(&area(o_ptr->ix, o_ptr->iy)->fld_idx,
+		field_hook(area(o_ptr->ix, o_ptr->iy),
 				   FIELD_ACT_OBJECT_ON, o_ptr);
 
 		if (!o_ptr->timeout) continue;

@@ -1111,27 +1111,26 @@ bool field_hook_single(field_type *f_ptr, int action, ...)
 
 /*
  * Call the specified action routine for each field
- * in the list specified by *field_ptr.
+ * in the list at the square c_ptr
  *
  * Note the code must take into account fields deleting
  * themselves.
  */
-void field_hook(s16b *field_ptr, int action, ...)
+void field_hook(cave_type *c_ptr, int action, ...)
 {
 	field_type *f_ptr;
 	field_thaum *t_ptr;
 
-	while (*field_ptr)
+	FLD_ITT_START (c_ptr->fld_idx, f_ptr);
 	{
-		va_list vp;
-	
 		/* Point to the field */
-		f_ptr = &fld_list[*field_ptr];
 		t_ptr = &t_info[f_ptr->t_idx];
 
 		/* Paranoia - Is there a function to call? */
 		if (t_ptr->action[action])
 		{
+			va_list vp;
+		
 			/* Begin the Varargs Stuff */
 			va_start(vp, action);
 		
@@ -1139,23 +1138,14 @@ void field_hook(s16b *field_ptr, int action, ...)
 			if (t_ptr->action[action] (f_ptr, vp))
 			{
 				/* The field wants to be deleted */
-				delete_field_ptr(field_ptr);
-			}
-			else
-			{
-				/* Get next field in the list */
-				field_ptr = &f_ptr->next_f_idx;
+				delete_field_ptr(field_find(f_ptr));
 			}
 			
 			/* End the Varargs Stuff */
 			va_end(vp);
 		}
-		else
-		{
-			/* Get next field in the list */
-			field_ptr = &f_ptr->next_f_idx;
-		}
 	}
+	FLD_ITT_END;
 }
 
 

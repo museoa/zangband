@@ -2378,7 +2378,7 @@ bool earthquake(int cx, int cy, int r)
 			ox = px;
 
 			/* Process fields under the player. */
-			field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_LEAVE);
+			field_hook(area(px, py), FIELD_ACT_PLAYER_LEAVE);
 
 			/* Move the player */
 			py = sy;
@@ -2406,7 +2406,7 @@ bool earthquake(int cx, int cy, int r)
 			lite_spot(px, py);
 
 			/* Process fields under the player. */
-			field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_ENTER);
+			field_hook(area(px, py), FIELD_ACT_PLAYER_ENTER);
 
 			/* Check for new panel */
 			verify_panel();
@@ -2494,8 +2494,7 @@ bool earthquake(int cx, int cy, int r)
 							flags = MEG_DO_MOVE;
 
 							/* Call the hook */
-							field_hook(&c_ptr->fld_idx,
-									   FIELD_ACT_MON_ENTER_TEST,
+							field_hook(c_ptr, FIELD_ACT_MON_ENTER_TEST,
 									   (monster_type *) NULL, &flags);
 
 							/* Get result */
@@ -3159,10 +3158,10 @@ bool teleport_swap(int dir)
 	sound(SOUND_TELEPORT);
 
 	/* Process fields under the player. */
-	field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_LEAVE);
+	field_hook(area(px, py), FIELD_ACT_PLAYER_LEAVE);
 
 	/* Process fields under the monster. */
-	field_hook(&area(m_ptr->fx, m_ptr->fy)->fld_idx,
+	field_hook(area(m_ptr->fx, m_ptr->fy),
 			   FIELD_ACT_MONSTER_LEAVE, m_ptr);
 
 	/* Move monster */
@@ -3207,10 +3206,10 @@ bool teleport_swap(int dir)
 	lite_spot(px, py);
 
 	/* Process fields under the player. */
-	field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_ENTER);
+	field_hook(area(px, py), FIELD_ACT_PLAYER_ENTER);
 
 	/* Process fields under the monster. */
-	field_hook(&area(m_ptr->fx, m_ptr->fy)->fld_idx,
+	field_hook(area(m_ptr->fx, m_ptr->fy),
 			   FIELD_ACT_MONSTER_ENTER, m_ptr);
 
 	/* Check for new panel (redraw map) */

@@ -585,12 +585,13 @@ static bool store_will_buy(const object_type *o_ptr)
  */
 static bool store_will_stock(const object_type *o_ptr)
 {
+	cave_type *c_ptr = area(p_ptr->px, p_ptr->py);
+
 	/* Default is to reject this rejection */
 	bool result = FALSE;
 
 	/* Will the store !not! buy this item? */
-	field_hook(&area(p_ptr->px, p_ptr->py)->fld_idx,
-			   FIELD_ACT_STORE_ACT1, o_ptr, &result);
+	field_hook(c_ptr, FIELD_ACT_STORE_ACT1, o_ptr, &result);
 
 	/* We don't want this item type? */
 	if (result == TRUE) return (FALSE);
@@ -599,8 +600,7 @@ static bool store_will_stock(const object_type *o_ptr)
 	result = TRUE;
 
 	/* Will the store buy this item? */
-	field_hook(&area(p_ptr->px, p_ptr->py)->fld_idx,
-			   FIELD_ACT_STORE_ACT2, o_ptr, &result);
+	field_hook(c_ptr, FIELD_ACT_STORE_ACT2, o_ptr, &result);
 
 	/* Finally check to see if we will buy the item */
 	return (result && store_will_buy(o_ptr));
