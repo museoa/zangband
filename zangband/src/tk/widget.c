@@ -372,28 +372,6 @@ static void widget_draw_invalid(Widget *widgetPtr)
 }
 
 
-#define BAD_COLOR(c) (((c) < 0) || ((c) > 255))
-
-/* Array of all allocated Widget item colors */
-t_widget_color **g_widget_color;
-
-/* Number of allocated Widget item colors */
-int g_widget_color_count;
-
-/*
- * Initialize the Widget item color package
- */
-static int WidgetColor_Init(Tcl_Interp *interp)
-{
-	/* Hack - ignore parameter */
-	(void) interp;
-
-	MAKE(g_widget_color, t_widget_color *);
-	g_widget_color_count = 0;
-	return TCL_OK;
-}
-
-
 /*
  * Create a bitmap as big as the given Widget. We get the address of
  * the bits so we can write directly into the bitmap. The bitmap is
@@ -762,34 +740,6 @@ static int Widget_Configure(Tcl_Interp *interp, Widget *widgetPtr, int objc, Tcl
 }
 
 
-/*
- * Search for an existing Widget item color of the given properties.
- * Return NULL if no such color was allocated.
- */
-static t_widget_color *WidgetColor_Find(int color, int opacity)
-{
-	int i;
-
-	/* Check each color */
-	for (i = 0; i < g_widget_color_count; i++)
-	{
-		/* Skip free'd colors */
-		if (g_widget_color[i]->ref_cnt == 0) continue;
-		
-		/* This is a match */
-		if ((g_widget_color[i]->color == color) &&
-			(g_widget_color[i]->opacity == opacity))
-		{
-			/* Return address of color */
-			return g_widget_color[i];
-		}
-	}
-
-	/* Not found */
-	return NULL;
-}
-
-
 static int Widget_CaveToView(Widget *widgetPtr, int y, int x, int *rowPtr, int *colPtr)
 {
 	if ((y < widgetPtr->y_min) || (y >= widgetPtr->y_max))
@@ -850,106 +800,13 @@ static void Widget_Center(Widget *widgetPtr, int cy, int cx)
 
 
 /*
- * Decrement the reference count for a Widget item color. We never
- * actually free the memory for a struct with zero references, since
- * we allow them to be reused.
- */
-static void WidgetColor_Deref(t_widget_color *color_ptr)
-{
-	/* Allow NULL color_ptr */
-	if (!color_ptr) return;
-
-	/* Decrement the reference count */
-	if (--color_ptr->ref_cnt <= 0)
-	{
-		/* Mark the color as unused */
-		color_ptr->ref_cnt = 0;
-		color_ptr->color = 0;
-		color_ptr->opacity = 0;
-	}
-}
-
-
-/*
- * Search for an already allocated but unused Widget item color.
- */
-static t_widget_color *WidgetColor_FindFree(void)
-{
-	int i;
-
-	/* Check each color */
-	for (i = 0; i < g_widget_color_count; i++)
-	{
-		/* This is free */
-		if (g_widget_color[i]->ref_cnt == 0)
-		{
-			/* Return the address */
-			return g_widget_color[i];
-		}
-	}
-
-	/* None are free */
-	return NULL;
-}
-
-
-/*
- * Allocates a new Widget item color of the given properties. If such
- * a color already exists, its references count is incremented and
- * the color is returned. Otherwise a new struct is allocated.
- */
-static t_widget_color *WidgetColor_Alloc(int color, int opacity)
-{
-	t_widget_color *color_ptr;
-
-	/* Look for an existing color */
-	if ((color_ptr = WidgetColor_Find(color, opacity)))
-	{
-		/* Increase the reference count */
-		color_ptr->ref_cnt++;
-
-		/* Return the address */
-		return color_ptr;
-	}
-
-	/* Look for a free struct */
-	if (!(color_ptr = WidgetColor_FindFree()))
-	{
-		/* Allocate a struct */
-		MAKE(color_ptr, t_widget_color);
-
-		/* Append pointer to the global array */
-		g_widget_color = Array_Insert(g_widget_color,
-			&g_widget_color_count, sizeof(t_widget_color *),
-			g_widget_color_count);
-
-		/* Remember the new struct */
-		g_widget_color[g_widget_color_count - 1] = color_ptr;
-	}
-
-	/* Set the fields */
-	color_ptr->ref_cnt = 1;
-	color_ptr->color = color;
-	color_ptr->opacity = opacity;
-
-	/* Calculate the tint table */
-	Colormap_TintTable(g_palette2colormap[color], opacity, color_ptr->tint);
-
-	/* Return the address */
-	return color_ptr;
-}
-
-
-/*
  * This is the window-specific command created for each new Widget.
  */
 static int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	static cptr commandNames[] = {"caveyx", "center", "configure",
-		"coloralloc", "colorderef",
 		"wipe", "bounds", "visible", "wipespot", "hittest", NULL};
 	enum {IDX_CAVEYX, IDX_CENTER, IDX_CONFIGURE,
-		IDX_COLORALLOC, IDX_COLORDEREF,
 		IDX_WIPE, IDX_BOUNDS, IDX_VISIBLE, IDX_WIPESPOT, IDX_HITTEST} option;
 	Widget *widgetPtr = (Widget *) clientData;
 	int result;
@@ -1074,133 +931,6 @@ static int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int ob
 			{
 				result = Widget_Configure(interp, widgetPtr, objc - 2,
 					objv + 2);
-			}
-			break;
-		}
-
-		/*
-		 * Each Widget item may have a number of Widget item colors. Sometimes
-		 * it is desireable for a single item to have more than one set of
-		 * colors (for example, a progress bar that has different colors for
-		 * a friendly versus non-friendly monster). Since it would be inefficent
-		 * to calculate the new tint table every time the item colors change,
-		 * we implement reference counts for item colors. The following two
-		 * options allow us to artificially increase or decrease the reference
-		 * count for an arbitrary item color. Note that the item color is not
-		 * item-specific.
-		 */
-		 
-		case IDX_COLORALLOC: /* coloralloc */
-		{
-			int color, opacity;
-	
-			/* Required number of arguments */
-			if (objc != 4)
-			{
-				/* Set the error */
-				Tcl_WrongNumArgs(interp, 2, objv, "paletteIndex opacity");
-	
-				/* Failure */
-				goto error;
-			}
-	
-			/* Get the palette index */
-			if (Tcl_GetIntFromObj(interp, objv[2], &color) != TCL_OK)
-			{
-				goto error;
-			}
-	
-			/* Verify the palette index */
-			if (BAD_COLOR(color))
-			{
-				/* Set the error */
-				Tcl_SetStringObj(Tcl_GetObjResult(interp),
-					format("bad color \"%d\"", color), -1);
-	
-				/* Failure */
-				goto error;
-			}
-	
-			/* Get the opacity */
-			if (Tcl_GetIntFromObj(interp, objv[3], &opacity) != TCL_OK)
-			{
-				goto error;
-			}
-	
-			/* Verify the opacity */
-			if (BAD_COLOR(opacity))
-			{
-				/* Set the error */
-				Tcl_SetStringObj(Tcl_GetObjResult(interp),
-					format("bad opacity \"%d\"", opacity), -1);
-	
-				/* Failure */
-				goto error;
-			}
-	
-			/* Allocate a Widget item color */
-			(void) WidgetColor_Alloc(color, opacity);
-
-			break;
-		}
-
-		case IDX_COLORDEREF: /* colorderef */
-		{
-			int color, opacity;
-			t_widget_color *color_ptr;
-			
-			/* Required number of arguments */
-			if (objc != 4)
-			{
-				/* Set the error */
-				Tcl_WrongNumArgs(interp, 2, objv, "paletteIndex opacity");
-	
-				/* Failure */
-				goto error;
-			}
-	
-			/* Get the palette index */
-			if (Tcl_GetIntFromObj(interp, objv[2], &color) != TCL_OK)
-			{
-				goto error;
-			}
-	
-			/* Verify the palette index */
-			if (BAD_COLOR(color))
-			{
-				/* Set the error */
-				Tcl_SetStringObj(Tcl_GetObjResult(interp),
-					format("bad color \"%d\"", color), -1);
-	
-				/* Failure */
-				goto error;
-			}
-	
-			/* Get the opacity */
-			if (Tcl_GetIntFromObj(interp, objv[3], &opacity) != TCL_OK)
-			{
-				goto error;
-			}
-	
-			/* Verify the opacity */
-			if (BAD_COLOR(opacity))
-			{
-				/* Set the error */
-				Tcl_SetStringObj(Tcl_GetObjResult(interp),
-					format("bad opacity \"%d\"", opacity), -1);
-	
-				/* Failure */
-				goto error;
-			}
-	
-			/* Look for an existing color */
-			color_ptr = WidgetColor_Find(color, opacity);
-	
-			/* We found the color */
-			if (color_ptr)
-			{
-				/* Dereference */
-				WidgetColor_Deref(color_ptr);
 			}
 			break;
 		}
@@ -1658,12 +1388,6 @@ static void Widget_InvalidateArea(Widget *widgetPtr, int top, int left, int bott
  */
 int init_widget(Tcl_Interp *interp)
 {
-	/* Initialize Widget item colors */
-	if (WidgetColor_Init(interp) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
 	/* Create the "widget" interpreter command */
 	Tcl_CreateObjCommand(interp, "widget", Widget_ObjCmd, NULL, NULL);
 

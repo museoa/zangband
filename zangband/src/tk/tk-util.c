@@ -298,97 +298,6 @@ static void IndexedColor_GammaTable(IndexedColor *idc, double gamma, TintTable t
 	}
 }
 
-/*
- * Returns the given value adjusted for brightness.
- * This is usually called on each component of an RGB value.
- */
-static int brightness_value(int intensity, int value)
-{
-	double brightValue = intensity;
-
-	/* Darken */
-	if (brightValue < 0)
-	{
-		return (unsigned char) ((value * (255 + brightValue)) / 255);
-	}
-	
-	/* Lighten */
-	else
-	{
-		return (unsigned char) (value + ((255 - value) * brightValue) / 255);
-	}
-}
-
-/*
- * Adjusts the given 256 palette indices for the given intensity.
- * 'Intensity' can be from -127 to +127 inclusive.
- */
-static void IndexedColor_BrightnessTable(IndexedColor *idc, int intensity, TintTable table)
-{
-	int i, r, g, b;
-	unsigned char *rgb = idc->rgb;
-
-	for (i = 0; i < 256; i++)
-	{
-		/* Get the i'th palette index */
-		int n = table[i];
-
-		/* Get the n'th RGB values */
-		r = rgb[n * 3 + 0];
-		g = rgb[n * 3 + 1];
-		b = rgb[n * 3 + 2];
-
-		/* Adjust brightness */
-		r = brightness_value(intensity, r);
-		g = brightness_value(intensity, g);
-		b = brightness_value(intensity, b);
-		
-		/* Now we have the RGB value, convert it into a palette index */
-		table[i] = IndexedColor_RGB2Index(idc, r, g, b);
-	}
-}
-
-
-/*
- * Adjusts the given 256 palette indices for the given contrast.
- * 'Intensity' can be from -127 to +127 inclusive.
- */
-static void IndexedColor_ContrastTable(IndexedColor *idc, int intensity, TintTable table)
-{
-	int i, r, g, b;
-	unsigned char *rgb = idc->rgb;
-	
-	for (i = 0; i < 256; i++)
-	{
-		/* Get the i'th palette index */
-		int n = table[i];
-
-		/* Get the n'th RGB values */
-		r = rgb[n * 3 + 0];
-		g = rgb[n * 3 + 1];
-		b = rgb[n * 3 + 2];
-
-		/* Ignore unused parameter due to above */
-		(void) intensity;
-	
-		/* Now we have the RGB value, convert it into a palette index */
-		table[i] = IndexedColor_RGB2Index(idc, r, g, b);
-	}
-}
-
-/*
- * Create a tint table that maps to the same palette index
- */
-static void IndexedColor_One2OneTable(TintTable table)
-{
-	int i;
-
-	for (i = 0; i < 256; i++)
-	{
-		table[i] = i;
-	}
-}
-
 /* nearest $color */
 static int objcmd_palette_nearest(ClientData clientData, Tcl_Interp *interp,
 	int objc, Tcl_Obj *CONST objv[])
@@ -722,29 +631,9 @@ int Colormap_RGB2Index(unsigned char r, unsigned char g, unsigned char b)
 	return IndexedColor_RGB2Index(&g_colormap, r, g, b);
 }
 
-void Colormap_GammaTable(double gamma, TintTable table)
-{
-	IndexedColor_GammaTable(&g_colormap, gamma, table);
-}
-
 void Colormap_TintTable(int tint, int opacity, TintTable table)
 {
 	IndexedColor_TintTable(&g_colormap, tint, opacity, table);
-}
-
-void Colormap_BrightnessTable(int intensity, TintTable table)
-{
-	IndexedColor_BrightnessTable(&g_colormap, intensity, table);
-}
-
-void Colormap_ContrastTable(int intensity, TintTable table)
-{
-	IndexedColor_ContrastTable(&g_colormap, intensity, table);
-}
-
-void Colormap_One2OneTable(TintTable table)
-{
-	IndexedColor_One2OneTable(table);
 }
 
 /*

@@ -256,11 +256,7 @@ extern void Palette_GammaTable(double gamma, TintTable table);
 extern int Colormap_Init(Tcl_Interp *interp);
 extern unsigned char *Colormap_GetRGB(void);
 extern int Colormap_RGB2Index(unsigned char r, unsigned char g, unsigned char b);
-extern void Colormap_GammaTable(double gamma, TintTable table);
 extern void Colormap_TintTable(int tint, int opacity, TintTable table);
-extern void Colormap_BrightnessTable(int intensity, TintTable table);
-extern void Colormap_ContrastTable(int intensity, TintTable table);
-extern void Colormap_One2OneTable(TintTable table);
 
 typedef struct RGBInfo RGBInfo;
 struct RGBInfo
