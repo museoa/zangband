@@ -777,7 +777,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 	byte c;
 	
 	bool feat_ascii;
-	bool halluc = p_ptr->image;
+	s16b halluc = p_ptr->image;
 
 	/* Get the cave */
 	c_ptr = area(y,x);
