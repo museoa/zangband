@@ -2,6 +2,12 @@ This is a document file listing the changes in Zangband (compared to
 the standard Angband 2.8.1.) No long explanations, just a list. See
 code for details. In reversed chronological order (more or less):
 
+
+Changes since 2.5.1 Preview I:
+-Removed some compiler warnings.
+-Tweaked the Death Ray spell.
+
+
 ZAngband 2.5.1:
 -Documentation updates.
 -Changed the drive-letters in the Cygwin makefile from d: to c:.
