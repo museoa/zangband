@@ -1765,12 +1765,11 @@ static void store_sell(int *store_top)
 		return;
 	}
 
-
 	/* Real store */
 	if (!(st_ptr->type == BUILD_STORE_HOME))
 	{
 		/* Get price */
-		price = price_item(q_ptr, FALSE) * amt;
+		price = price_item(q_ptr, TRUE) * amt;
 
 		/* Sold... */
 		if (store_access_item(q_ptr, price, FALSE))
@@ -2565,7 +2564,7 @@ void do_cmd_store(const field_type *f1_ptr)
 				 * for one item into o_ptr->temp_cost.
 				 * (This is set inside price_item().)
 				 */
-				(void)price_item(o_ptr, FALSE);
+				(void)price_item(o_ptr, TRUE);
 			}
 		}
 		OBJ_ITT_END;
