@@ -4288,6 +4288,7 @@ void place_specific_object(int x, int y, int level, int k_idx)
 			{
 				/* found it */
 				create_named_art(i, x, y);
+				break;
 			}
 		}
 	}

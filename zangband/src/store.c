@@ -1257,9 +1257,6 @@ static void store_maint(void)
 	/* Ignore home + locker */
 	if (st_ptr->type == BUILD_STORE_HOME) return;
 
-	/* Store keeper forgives the player */
-	st_ptr->insult_cur = 0;
-
 	/* Choose the number of slots to keep */
 	j = st_ptr->stock_num;
 
@@ -1353,11 +1350,7 @@ static void store_shuffle(store_type *st_ptr)
 	}
 
 	/* Reset the owner data */
-	st_ptr->insult_cur = 0;
-	st_ptr->store_open = 0;
-	st_ptr->good_buy = 0;
-	st_ptr->bad_buy = 0;
-
+	st_ptr->data = 0;
 
 	/* Hack -- discount all the items */
 	for (i = 0; i < st_ptr->stock_num; i++)
@@ -2889,10 +2882,7 @@ void store_init(int town_num, int store_num, byte store_type)
 	st_ptr->type = store_type;
 
 	/* Initialize the store */
-	st_ptr->store_open = 0;
-	st_ptr->insult_cur = 0;
-	st_ptr->good_buy = 0;
-	st_ptr->bad_buy = 0;
+	st_ptr->data = 0;
 
 	/* Nothing in stock */
 	st_ptr->stock_num = 0;

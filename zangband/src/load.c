@@ -847,18 +847,24 @@ static void rd_store(int town_num, int store_num)
 
 	int j;
 
-	s16b good_buy, bad_buy, insult_cur;
-	s32b store_open;
+	s16b data;
 
 	byte num, owner, type = 0;
 
 	/* Read the basic info */
-	rd_s32b(&store_open);
-	rd_s16b(&insult_cur);
+	if (sf_version < 34)
+	{
+		strip_bytes(4);
+	}
+	
+	rd_s16b(&data);
 	rd_byte(&owner);
 	rd_byte(&num);
-	rd_s16b(&good_buy);
-	rd_s16b(&bad_buy);
+	
+	if (sf_version < 34)
+	{
+		strip_bytes(4);
+	}
 
 	if (sf_version > 20)
 	{
@@ -875,12 +881,8 @@ static void rd_store(int town_num, int store_num)
 
 
 	/* Restore the saved parameters */
-	st_ptr->store_open = store_open;
-	st_ptr->insult_cur = insult_cur;
+	st_ptr->data = data;
 	st_ptr->owner = owner;
-	st_ptr->good_buy = good_buy;
-	st_ptr->bad_buy = bad_buy;
-
 
 	if (!z_older_than(2, 1, 3))
 	{

@@ -1571,7 +1571,7 @@ static int collect_magetower_links(int n, int *link_p, int *link_w, s32b *cost,
 			if (max_link >= n) return (max_link);
 
 			/* Hack - only allow teleportation to known magetowers */
-			if (!st_ptr->insult_cur) continue;
+			if (!st_ptr->data) continue;
 
 			/* Is it a mage tower? */
 			if ((st_ptr->type == BUILD_MAGETOWER0) ||
@@ -2260,10 +2260,7 @@ void build_init(int town_num, int build_num, byte build_type)
 	st_ptr->type = build_type;
 
 	/* Initialize */
-	st_ptr->store_open = 0;
-	st_ptr->insult_cur = 0;
-	st_ptr->good_buy = 0;
-	st_ptr->bad_buy = 0;
+	st_ptr->data = 0;
 	st_ptr->stock_num = 0;
 	st_ptr->last_visit = 0;
 }

@@ -375,10 +375,7 @@ static void general_init(int town_num, int store_num, byte general_type)
 	st_ptr->type = general_type;
 
 	/* Initialize */
-	st_ptr->store_open = 0;
-	st_ptr->insult_cur = 0;
-	st_ptr->good_buy = 0;
-	st_ptr->bad_buy = 0;
+	st_ptr->data = 0;
 	st_ptr->stock_num = 0;
 	st_ptr->last_visit = 0;
 }

@@ -1693,12 +1693,7 @@ struct store_type
 	byte type;	/* Store type */
 	byte owner;	/* Owner index */
 
-	s16b insult_cur;	/* Insult counter */
-
-	s16b good_buy;	/* Number of "good" buys */
-	s16b bad_buy;	/* Number of "bad" buys */
-
-	s32b store_open;	/* Closed until this turn */
+	s16b data;	/* Data used for various things */
 
 	s32b last_visit;	/* Last visited on this turn */
 

@@ -4113,7 +4113,7 @@ bool field_action_magetower1(field_type *f_ptr, vptr input)
 	st_ptr = get_current_store();
 
 	/* We only need to do this once */
-	if (st_ptr && !st_ptr->insult_cur)
+	if (st_ptr && !st_ptr->data)
 	{
 		sprintf(tmp_str, " E) Enjoin Location (%dgp)", f_ptr->data[1] * factor);
 		c_put_str(TERM_YELLOW, tmp_str, 35, 18);
@@ -4146,14 +4146,14 @@ bool field_action_magetower2(field_type *f_ptr, vptr input)
 		{
 			st_ptr = get_current_store();
 
-			if (st_ptr && !st_ptr->insult_cur)
+			if (st_ptr && !st_ptr->data)
 			{
 				/*
 				 * Hack XXX - save the fact we have "noticed" this tower
 				 * in this variable, which later will have to be removed
 				 * from store_type anyway.
 				 */
-				st_ptr->insult_cur = 1;
+				st_ptr->data = 1;
 
 				/* Subtract off cost */
 				p_ptr->au -= cost;
