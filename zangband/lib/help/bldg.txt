@@ -1,4 +1,5 @@
 === Functional Town Overview ===
+
 The town is composed of both stores and buildings. 
 
 Classical stores:
