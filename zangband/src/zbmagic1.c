@@ -403,8 +403,10 @@ bool borg_eat_food_any(void)
 		/* Consume in order, when hurting */
 		if (bp_ptr->chp < 4 &&
 			(borg_quaff_potion(SV_POTION_CURE_LIGHT) ||
+			 borg_use_staff(SV_STAFF_CURE_LIGHT) ||
 			 borg_quaff_potion(SV_POTION_CURE_SERIOUS) ||
-			 borg_quaff_potion(SV_POTION_CURE_CRITICAL) ||
+			 borg_quaff_crit(TRUE) ||
+			 borg_use_staff(SV_STAFF_CURING) ||
 			 borg_quaff_potion(SV_POTION_RESTORE_MANA) ||
 			 borg_quaff_potion(SV_POTION_HEALING) ||
 			 borg_quaff_potion(SV_POTION_STAR_HEALING) ||
@@ -517,7 +519,7 @@ bool borg_surrounded(void)
 	/* I am likely to get surrouned */
 	if (monsters > safe_grids)
 	{
-		borg_note_fmt("# Possibility of being surrounded (%d/%d)",
+		borg_note("# Possibility of being surrounded (%d/%d)",
 					  monsters, safe_grids);
 
 		/* The borg can get trapped by breeders by continueing to flee
@@ -737,7 +739,7 @@ void borg_target(int x, int y)
 	/* Bounds checking */
 	if (!map_in_bounds(x, y))
 	{
-		borg_oops_fmt("Untargettable location (%d, %d)", x, y);
+		borg_oops("Untargettable location (%d, %d)", x, y);
 		return;
 	}
 
@@ -747,12 +749,12 @@ void borg_target(int x, int y)
 	/* Report a little bit */
 	if (mb_ptr->monster)
 	{
-		borg_note_fmt("# Targeting %s, from (%d, %d) to (%d, %d).",
+		borg_note("# Targeting %s, from (%d, %d) to (%d, %d).",
 					  mon_race_name(&r_info[mb_ptr->monster]), c_x, c_y, x, y);
 	}
 	else
 	{
-		borg_note_fmt("# Targetting location from (%d, %d) to (%d,%d)",
+		borg_note("# Targetting location from (%d, %d) to (%d,%d)",
 					  c_x, c_y, x, y);
 	}
 
@@ -923,7 +925,7 @@ bool borg_lite_beam(bool simulation, int *dir)
 		borg_keypress(I2D(*dir));
 
 		/* Tell what you do */
-		borg_note_fmt("# Illuminating this hallway, dir = %d", *dir);
+		borg_note("# Illuminating this hallway, dir = %d", *dir);
 
 		/* Leave */
 		return (TRUE);
@@ -1086,11 +1088,11 @@ bool borg_caution_phase(int emergency, int turns)
 	/* in an emergency try with extra danger allowed */
 	if (n > emergency)
 	{
-		borg_note_fmt("# No Phase. scary squares: %d", n);
+		borg_note("# No Phase. scary squares: %d", n);
 		return (FALSE);
 	}
 	else
-		borg_note_fmt("# Safe to Phase. scary squares: %d", n);
+		borg_note("# Safe to Phase. scary squares: %d", n);
 
 	/* Okay */
 	return (TRUE);
@@ -1151,7 +1153,7 @@ static bool borg_dim_door(int emergency, int p1)
 
 
 	/* Dimension Door report */
-	borg_note_fmt
+	borg_note
 		("# Dim Door: Safest grid: (%d, %d) with %d Danger", b_y, b_x, b_p);
 	dim_door_y = b_y;
 	dim_door_x = b_x;
@@ -1912,7 +1914,7 @@ bool borg_heal(int danger)
 		if (!borg_check_lite_only())
 		{
 			/* Take note */
-			borg_note_fmt("# Resting to restore HP/SP...");
+			borg_note("# Resting to restore HP/SP...");
 
 			/* Rest until done */
 			borg_keypress('R');
@@ -1927,7 +1929,7 @@ bool borg_heal(int danger)
 		else
 		{
 			/* Must have been a dark room */
-			borg_note_fmt("# Lighted the darkened room instead of resting.");
+			borg_note("# Lighted the darkened room instead of resting.");
 			return (TRUE);
 		}
 	}
@@ -2056,7 +2058,8 @@ bool borg_heal(int danger)
 		(borg_spell_fail(REALM_LIFE, 0, 1, allow_fail) ||
 		 borg_spell_fail(REALM_ARCANE, 0, 7, allow_fail) ||
 		 borg_spell_fail(REALM_NATURE, 0, 1, allow_fail) ||
-		 borg_quaff_potion(SV_POTION_CURE_LIGHT)))
+		 borg_quaff_potion(SV_POTION_CURE_LIGHT) ||
+		 borg_use_staff(SV_STAFF_CURE_LIGHT)))
 	{
 		borg_note("# Healing Level 1.");
 		return (TRUE);
@@ -2260,6 +2263,7 @@ bool borg_heal(int danger)
 
 		/* Quaff healing pots to buy some time- in this emergency.  */
 		if (borg_quaff_potion(SV_POTION_CURE_LIGHT) ||
+			borg_use_staff(SV_STAFF_CURE_LIGHT) ||
 			borg_quaff_potion(SV_POTION_CURE_SERIOUS)) return (TRUE);
 
 		/* Try to Restore Mana */
@@ -2292,8 +2296,9 @@ bool borg_heal(int danger)
 	if (bp_ptr->status.cut &&
 		(bp_ptr->chp < bp_ptr->mhp / 3 || randint0(100) < 20))
 	{
-		if (borg_quaff_potion(SV_POTION_CURE_SERIOUS) ||
-			borg_quaff_potion(SV_POTION_CURE_LIGHT) ||
+		if (borg_quaff_potion(SV_POTION_CURE_LIGHT) ||
+			borg_use_staff(SV_STAFF_CURE_LIGHT) ||
+			borg_quaff_potion(SV_POTION_CURE_SERIOUS) ||
 			borg_quaff_crit((bool) (bp_ptr->chp < 10)) ||
 			borg_spell_fail(REALM_LIFE, 1, 1, 100) ||
 			borg_spell_fail(REALM_LIFE, 0, 6, 100) ||
@@ -2315,6 +2320,7 @@ bool borg_heal(int danger)
 
 		/* Quaff healing pots to buy some time- in this emergency.  */
 		if (borg_quaff_potion(SV_POTION_CURE_LIGHT) ||
+			borg_use_staff(SV_STAFF_CURE_LIGHT) ||
 			borg_quaff_potion(SV_POTION_CURE_SERIOUS)) return (TRUE);
 
 		/* Try to Restore Mana */
@@ -2583,23 +2589,23 @@ bool borg_caution(void)
 	if (borg_goi || (p > avoidance / 10) || (p > mb_ptr->fear))
 	{
 		/* Describe (briefly) the current situation */
-		borg_note_fmt
+		borg_note
 			("# Loc:%d,%d Dep:%d Lev:%d HP:%d/%d SP:%d/%d Danger:p=%d",
 			 c_x, c_y, bp_ptr->depth, bp_ptr->lev,
 			 bp_ptr->chp, bp_ptr->mhp, bp_ptr->csp, bp_ptr->msp, p);
 		if (borg_goi)
 		{
-			borg_note_fmt
+			borg_note
 				("# Protected by GOI (borg turns:%d; game turns:%d)",
 				 borg_goi / borg_game_ratio, p_ptr->tim.invuln);
 		}
 		if (borg_shield)
 		{
-			borg_note_fmt("# Protected by Mystic Shield");
+			borg_note("# Protected by Mystic Shield");
 		}
 		if (borg_prot_from_evil)
 		{
-			borg_note_fmt("# Protected by PFE");
+			borg_note("# Protected by PFE");
 		}
 	}
 	/* Comment on glyph */
@@ -2612,7 +2618,7 @@ bool borg_caution(void)
 			if ((track_glyph_y[i] == c_y) && (track_glyph_x[i] == c_x))
 			{
 				/* if standing on one */
-				borg_note_fmt("# Standing on Glyph");
+				borg_note("# Standing on Glyph");
 			}
 		}
 	}
@@ -2626,7 +2632,7 @@ bool borg_caution(void)
 			if ((track_less_y[i] == c_y) && (track_less_x[i] == c_x))
 			{
 				/* if standing on one */
-				borg_note_fmt("# Standing on up-stairs");
+				borg_note("# Standing on up-stairs");
 			}
 		}
 	}
@@ -2640,7 +2646,7 @@ bool borg_caution(void)
 			if ((track_more_y[i] == c_y) && (track_more_x[i] == c_x))
 			{
 				/* if standing on one */
-				borg_note_fmt("# Standing on dn-stairs");
+				borg_note("# Standing on dn-stairs");
 			}
 		}
 	}
@@ -2739,7 +2745,7 @@ bool borg_caution(void)
 		if (!goal_leaving)
 		{
 			/* Note */
-			borg_note_fmt
+			borg_note
 				("# Leaving (restock) %s", borg_restock(bp_ptr->depth));
 
 			/* Start leaving */
@@ -2749,7 +2755,7 @@ bool borg_caution(void)
 		if (!goal_fleeing && (bp_ptr->able.ccw < 2))
 		{
 			/* Flee */
-			borg_note_fmt
+			borg_note
 				("# Fleeing (restock) %s", borg_restock(bp_ptr->depth));
 
 			/* Start fleeing */
@@ -3200,7 +3206,7 @@ bool borg_caution(void)
 			g_y = c_y + ddy[b_d];
 
 			/* Note */
-			borg_note_fmt
+			borg_note
 				("# Retreating to %d,%d (distance %d) via %d,%d (%d > %d)",
 				 b_y, b_x, b_r, g_y, g_x, p, borg_danger(g_x, g_y, 2, TRUE));
 
@@ -3311,7 +3317,7 @@ bool borg_caution(void)
 			g_y = c_y + ddy_ddd[b_i];
 
 			/* Note */
-			borg_note_fmt("# Backing up to %d,%d (%d > %d)",
+			borg_note("# Backing up to %d,%d (%d > %d)",
 						  g_x, g_y, p, borg_danger(g_x, g_y, 2, TRUE));
 
 			/* Back away from danger */
@@ -3497,22 +3503,30 @@ bool borg_caution(void)
 		}
 
 		if ((bp_ptr->mhp - bp_ptr->chp < 100) &&
-			(borg_quaff_crit(TRUE) ||
+			(borg_quaff_potion(SV_POTION_CURE_LIGHT) ||
+			 borg_use_staff(SV_STAFF_CURE_LIGHT) ||
 			 borg_quaff_potion(SV_POTION_CURE_SERIOUS) ||
-			 borg_quaff_potion(SV_POTION_CURE_LIGHT)))
+			 borg_quaff_crit(FALSE)))
 		{
 			borg_note("# Buying time waiting for Recall.  Step 3.");
 			return (TRUE);
 		}
-		if ((bp_ptr->mhp - bp_ptr->chp > 150) &&
+
+		if ((bp_ptr->mhp - bp_ptr->chp < 300) &&
+			(borg_quaff_crit(FALSE) ||
+			 borg_use_staff(SV_STAFF_CURING)))
+		{
+			borg_note("# Buying time waiting for Recall.  Step 4.");
+			return (TRUE);
+		}
+
+		if ((bp_ptr->mhp - bp_ptr->chp >= 300) &&
 			(borg_quaff_potion(SV_POTION_HEALING) ||
 			 borg_quaff_potion(SV_POTION_STAR_HEALING) ||
 			 borg_quaff_potion(SV_POTION_LIFE) ||
-			 borg_quaff_crit(TRUE) ||
-			 borg_quaff_potion(SV_POTION_CURE_SERIOUS) ||
-			 borg_quaff_potion(SV_POTION_CURE_LIGHT)))
+			 borg_quaff_crit(FALSE)))
 		{
-			borg_note("# Buying time waiting for Recall.  Step 4.");
+			borg_note("# Buying time waiting for Recall.  Step 5.");
 			return (TRUE);
 		}
 
