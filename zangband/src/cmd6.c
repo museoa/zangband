@@ -412,8 +412,6 @@ static void do_cmd_quaff_potion_aux(int item)
 {
 	int         ident, lev;
 	object_type	*o_ptr;
-	object_type forge;
-	object_type *q_ptr;
 
 
 	/* Get the item (in the pack) */
@@ -428,31 +426,6 @@ static void do_cmd_quaff_potion_aux(int item)
 		o_ptr = &o_list[0 - item];
 	}
 
-	/* Get local object */
-	q_ptr = &forge;
-
-	/* Obtain a local object */
-	object_copy(q_ptr, o_ptr);
-
-	/* Single object */
-	q_ptr->number = 1;
-
-	/* Reduce and describe inventory */
-	if (item >= 0)
-	{
-		inven_item_increase(item, -1);
-		inven_item_describe(item);
-		inven_item_optimize(item);
-	}
-
-	/* Reduce and describe floor item */
-	else
-	{
-		floor_item_increase(0 - item, -1);
-		floor_item_describe(0 - item);
-		floor_item_optimize(0 - item);
-	}
-
 	/* Sound */
 	sound(SOUND_QUAFF);
 
@@ -464,10 +437,10 @@ static void do_cmd_quaff_potion_aux(int item)
 	ident = FALSE;
 
 	/* Object level */
-	lev = get_object_level(q_ptr);
+	lev = get_object_level(o_ptr);
 
 	/* Analyze the potion */
-	switch (q_ptr->sval)
+	switch (o_ptr->sval)
 	{
 		case SV_POTION_WATER:
 		case SV_POTION_APPLE_JUICE:
@@ -1032,25 +1005,25 @@ static void do_cmd_quaff_potion_aux(int item)
 	if (p_ptr->prace == RACE_SKELETON)
 	{
 		msg_print("Some of the fluid falls through your jaws!");
-		(void)potion_smash_effect(0, p_ptr->py, p_ptr->px, q_ptr->k_idx);
+		(void)potion_smash_effect(0, p_ptr->py, p_ptr->px, o_ptr->k_idx);
 	}
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-	if (!(object_aware_p(q_ptr)))
+	if (!(object_aware_p(o_ptr)))
 	{
 		chg_virtue(V_PATIENCE, -1);
 		chg_virtue(V_CHANCE, 1);
 	}
 
 	/* The item has been tried */
-	object_tried(q_ptr);
+	object_tried(o_ptr);
 
 	/* An identification was made */
-	if (ident && !object_aware_p(q_ptr))
+	if (ident && !object_aware_p(o_ptr))
 	{
-		object_aware(q_ptr);
+		object_aware(o_ptr);
 		gain_exp((lev + (p_ptr->lev >> 1)) / p_ptr->lev);
 	}
 
@@ -1061,7 +1034,7 @@ static void do_cmd_quaff_potion_aux(int item)
 	switch (p_ptr->prace)
 	{
 		case RACE_VAMPIRE:
-			(void)set_food(p_ptr->food + (q_ptr->pval / 10));
+			(void)set_food(p_ptr->food + (o_ptr->pval / 10));
 			break;
 		case RACE_SKELETON:
 			/* Do nothing */
@@ -1069,10 +1042,26 @@ static void do_cmd_quaff_potion_aux(int item)
 		case RACE_GOLEM:
 		case RACE_ZOMBIE:
 		case RACE_SPECTRE:
-			set_food(p_ptr->food + ((q_ptr->pval) / 20));
+			set_food(p_ptr->food + ((o_ptr->pval) / 20));
 			break;
 		default:
-			(void)set_food(p_ptr->food + q_ptr->pval);
+			(void)set_food(p_ptr->food + o_ptr->pval);
+	}
+	
+	/* Reduce and describe inventory */
+	if (item >= 0)
+	{
+		inven_item_increase(item, -1);
+		inven_item_describe(item);
+		inven_item_optimize(item);
+	}
+
+	/* Reduce and describe floor item */
+	else
+	{
+		floor_item_increase(0 - item, -1);
+		floor_item_describe(0 - item);
+		floor_item_optimize(0 - item);
 	}
 }
 
