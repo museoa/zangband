@@ -117,7 +117,7 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, bool realm_2)
 				screen_save();
 
 				/* Display a list of spells */
-				print_spells(spells, num, 1, 20, use_realm - 1);
+				print_spells(spells, num, 20, 1, use_realm - 1);
 			}
 
 			/* Hide the list */
@@ -252,7 +252,7 @@ void do_cmd_browse_aux(const object_type *o_ptr)
 	screen_save();
 
 	/* Display the spells */
-	print_spells(spells, num, 1, 20, (o_ptr->tval - TV_BOOKS_MIN));
+	print_spells(spells, num, 20, 1, (o_ptr->tval - TV_BOOKS_MIN));
 
 	/* Clear the top line */
 	prt("", 0, 0);

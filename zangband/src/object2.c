@@ -5571,7 +5571,7 @@ void display_koff(int k_idx)
 		}
 
 		/* Print spells */
-		print_spells(spells, num, 2, 0,
+		print_spells(spells, num, 0, 2,
 		    (q_ptr->tval == REALM1_BOOK ? p_ptr->realm1 - 1 : p_ptr->realm2 - 1));
 	}
 }

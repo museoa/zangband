@@ -3415,7 +3415,7 @@ static void spell_info(char *p, int spell, int realm)
 /*
  * Print a list of spells (for browsing or casting or viewing)
  */
-void print_spells(byte *spells, int num, int y, int x, int realm)
+void print_spells(byte *spells, int num, int x, int y, int realm)
 {
 	int             i, spell;
 	const magic_type *s_ptr;

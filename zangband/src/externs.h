@@ -801,7 +801,7 @@ extern bool potion_smash_effect(int who, int x, int y, int k_idx);
 extern void display_spell_list(void);
 extern s16b spell_chance(int spell, int realm);
 extern bool spell_okay(int spell, bool known, int realm);
-extern void print_spells(byte *spells, int num, int y, int x, int realm);
+extern void print_spells(byte *spells, int num, int x, int y, int realm);
 extern bool hates_acid(const object_type *o_ptr);
 extern bool hates_elec(const object_type *o_ptr);
 extern bool hates_fire(const object_type *o_ptr);
