@@ -152,8 +152,6 @@ struct player_type
 
 	s16b town_num;		/* Current town number */
 
-	s16b inside_quest;	/* Inside quest level */
-
 	s32b wilderness_x;	/* Coordinates in the wilderness */
 	s32b wilderness_y;
 

@@ -103,7 +103,7 @@ int main (int argc, char* argv[])
   lua_pop(L,1);
  }
 
-#if 0
+#if 1
  {
   int tolua_tolualua_open(lua_State* L);
   tolua_tolualua_open(L);

@@ -11,6 +11,7 @@
 #include "lua/lualib.h"
 #include "lua/lauxlib.h"
 #include "lua/tolua.h"
+#include "lua/luadebug.h"
 
 
 /*
@@ -242,6 +243,173 @@ bool use_object(object_type *o_ptr, bool *ident)
 }
 
 
+static void line_hook(lua_State *L, lua_Debug *ar)
+{
+	int j;
+
+	/* Scan windows */
+	for (j = 0; j < ANGBAND_TERM_MAX; j++)
+	{
+		term *old = Term;
+
+		/* No window */
+		if (!angband_term[j]) continue;
+
+		/* No relevant flags */
+		if (window_flag[j] & PW_SCRIPT_SOURCE)
+		{
+			/* Activate */
+			Term_activate(angband_term[j]);
+
+			lua_getstack(L, 0, ar);
+			lua_getinfo(L, "S", ar);
+			show_file(ar->source + 1, ar->short_src, ar->currentline - 1, 1);
+
+			/* Fresh */
+			Term_fresh();
+
+			/* Restore */
+			Term_activate(old);
+		}
+		else if (window_flag[j] & PW_SCRIPT_VARS)
+		{
+			char buf[1024];
+
+			/* Activate */
+			Term_activate(angband_term[j]);
+
+			path_build(buf, 1024, ANGBAND_DIR_SCRIPT, "trace.lua");
+
+			/* Execute the file */
+			script_do_file(buf);
+
+			/* Fresh */
+			Term_fresh();
+
+			/* Restore */
+			Term_activate(old);
+		}
+	}
+}
+
+
+static void script_trace_start(void)
+{
+	if (!L) return;
+
+	lua_setlinehook(L, line_hook);
+}
+
+
+static void script_trace_stop(void)
+{
+	if (!L) return;
+
+	lua_setlinehook(L, NULL);
+}
+
+
+void do_cmd_script(void)
+{
+	int ch;
+	char tmp[80];
+
+
+	/* Save screen */
+	screen_save();
+
+	/* Clear screen */
+	Term_clear();
+
+	/* Ask for a choice */
+	prt("Debug scripts", 2, 0);
+
+	/* Give some choices */
+	prt("(1) Execute a script file", 4, 5);
+	prt("(2) Execute a script command", 5, 5);
+	prt("(3) Start tracing scripts", 6, 5);
+	prt("(4) Stop tracing scripts", 7, 5);
+	prt("(5) Re-initialize scripts", 8, 5);
+
+	/* Prompt */
+	prt("Command: ", 15, 0);
+
+	/* Prompt */
+	ch = inkey();
+
+	/* Load screen */
+	screen_load();
+
+	switch (ch)
+	{
+		case '1':
+		{
+			char buf[1024];
+
+			/* Prompt */
+			prt("Lua script: ", 0, 0);
+
+			/* Default filename */
+			sprintf(tmp, "test.lua");
+
+			/* Ask for a file */
+			if (!askfor_aux(tmp, 80)) break;
+
+			/* Clear the prompt */
+			prt("", 0, 0);
+
+			path_build(buf, 1024, ANGBAND_DIR_SCRIPT, tmp);
+
+			/* Execute the file */
+			script_do_file(buf);
+
+			break;
+		}
+		case '2':
+		{
+			/* Prompt */
+			prt("Lua command: ", 0, 0);
+
+			/* Empty default */
+			strcpy(tmp, "");
+
+			/* Ask for a command */
+			if (!askfor_aux(tmp, 80)) break;
+
+			/* Clear the prompt */
+			prt("", 0, 0);
+
+			/* Execute the command */
+			script_do_string(tmp);
+
+			break;
+		}
+		case '3':
+		{
+			script_trace_start();
+
+			break;
+		}
+		case '4':
+		{
+			script_trace_stop();
+
+			break;
+		}
+		case '5':
+		{
+			char buf[1024];
+
+			/* Initialization code */
+			path_build(buf, 1024, ANGBAND_DIR_SCRIPT, "init.lua");
+			script_do_file(buf);
+
+			break;
+		}
+	}
+}
+
+
 extern int tolua_player_open(lua_State* tolua_S);
 extern void tolua_player_close(lua_State* tolua_S);
 extern int tolua_object_open(lua_State* tolua_S);
@@ -298,25 +466,36 @@ errr script_init(void)
 
 errr script_free(void)
 {
-	lua_close(L);
-
-	return 0;
+	if (L)
+	{
+		lua_close(L);
+		return 0;
+	}
+	else
+	{
+		/* Error */
+		return -1;
+	}
 }
 
 
 bool script_do_string(cptr script)
 {
-	lua_dostring(L, script);
+	if (!L) return FALSE;
 
-	return TRUE;
+	if (!lua_dostring(L, script)) return TRUE;
+
+	return FALSE;
 }
 
 
 bool script_do_file(cptr filename)
 {
-	lua_dofile(L, filename);
+	if (!L) return FALSE;
 
-	return TRUE;
+	if (!lua_dofile(L, filename)) return TRUE;
+
+	return FALSE;
 }
 
 
