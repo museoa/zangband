@@ -5179,7 +5179,7 @@ bool room_build(void)
 	do
 	{
 		/* Select room type at random */
-		type = randint(ROOM_TYPES);
+		type = randint0(ROOM_TYPES);
 	}
 	while (!(dun->room_types & room_list[type].flags));
 	
