@@ -4471,6 +4471,9 @@ void field_action_issupplies_tester(s16b *field_ptr, vptr input)
 	/* Restore tval */
 	item_tester_tval = tval_save;
 	
+	/* Check for weapons / armour */
+	f_o_ptr->result |= item_tester_hook_weapon_armour(f_o_ptr->o_ptr);
+	
 	/*
 	 * Trigger on rechargable items, potions, or books
 	 * (We only want scrolls as magic items in the supplies store)
@@ -4478,6 +4481,8 @@ void field_action_issupplies_tester(s16b *field_ptr, vptr input)
 	f_o_ptr->result = (f_o_ptr->result ||
 		item_tester_hook_recharge(f_o_ptr->o_ptr) ||
 		item_tester_hook_is_book(f_o_ptr->o_ptr));
+	
+	/* This leaves the store with scrolls, tools, ammo, and diggers. */
 }
 
 
