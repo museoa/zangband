@@ -3758,22 +3758,6 @@ void angtk_character_generated(void)
 		g_grid_xtra_init = TRUE;
     }
 
-	if (vanilla_town && (p_ptr_depth == 0))
-	{
-		angtk_rebuild_town();
-	}
-
-	/*
-	 * wilderness_gen() calls town_illuminate() but g_feat_flag[] isn't
-	 * initialized yet. This is a problem because Undead characters
-	 * start at night, resulting in incorrect illumination.
-	 */
-	else if (p_ptr_depth == 0 && (turn == (30L * TOWN_DAWN) / 4 + 1))
-	{
-		town_illuminate(FALSE);
-	}
-
-
 	if (!g_cave_hgt)
 	{
 		g_cave_hgt = cur_hgt;

@@ -26,8 +26,6 @@ extern void iso_draw_invalid(Widget *widgetPtr);
 extern void map_draw_all(Widget *widgetPtr);
 extern void map_draw_invalid(Widget *widgetPtr);
 extern int map_symbol_proc(Widget *widgetPtr, int y, int x);
-extern void vault_wtd(Widget *widgetPtr, int y, int x, t_display *wtd);
-extern int vault_symbol_proc(Widget *widgetPtr, int y, int x);
 
 static Tk_OptionSpec extraOptions[] = {
     {TK_OPTION_INT, "-vaultnum", "vaultNum", "VaultNum",
@@ -1207,26 +1205,6 @@ int widget_configure(Tcl_Interp *interp, Widget *widgetPtr)
 		widgetPtr->hitTestProc = iso_hittest;
 		exPtr->whatToDrawProc = iso_wtd;
 		exPtr->symbolProc = NULL;
-	}
-
-	/*
-	 * This allows a widget to display the icons in a vault created
-	 * by the "vault" command. I was thinking about a vault/wilderness
-	 * editor.
-	 */
-	exPtr->vaultPtr = NULL;
-	if ((exPtr->vaultNum > 0) && (widgetPtr->style != WIDGET_STYLE_MAP))
-	{
-		exPtr->whatToDrawProc = vault_wtd;
-		Widget_SetVault(widgetPtr);
-	}
-
-	else if ((exPtr->vaultNum > 0) && (widgetPtr->style == WIDGET_STYLE_MAP))
-	{
-		widgetPtr->drawAllProc = map_draw_all;
-		widgetPtr->drawInvalidProc = map_draw_invalid;
-		exPtr->symbolProc = vault_symbol_proc;
-		Widget_SetVault(widgetPtr);
 	}
 
 	return TCL_OK;

@@ -1259,16 +1259,6 @@ void set_grid_assign(int y, int x)
 
 g_grid[y][x].xtra &= ~0x0001;
 
-	/* If there is a custom vault for this level, use it */
-	if (vault_icon(y, x, TRUE, assignArray))
-	{
-		for (layer = 0; layer < ICON_LAYER_MAX; layer++)
-		{
-			g_icon_map[layer][y][x] = assignArray[layer];
-		}
-		return;
-	}
-
 	/* Get the assignment for this feature */
 	assign = g_assign[ASSIGN_FEATURE].assign[feat];
 
@@ -2484,9 +2474,6 @@ void init_icons(int size, int depth)
 	{
 		g_effect[EFFECT_AMMO].icon[i] = iconDefault;
 	}
-
-	/* Initialize the custom town display stuff */
-	init_vault();
 
 	/* Clear the color hash table */
 	Palette_ResetHash();

@@ -766,23 +766,11 @@ void wilderness_gen(void)
 	/* South east corner */
 	cave[MAX_HGT - 1][MAX_WID - 1].mimic = border.south_east;
 
-#if 1 /* TNB */
-	if (vanilla_town)
-	{
-		/* Try to use any special town layout */
-		angtk_build_town();
-	}
-#endif /* TNB */
-
 	/* Day time */
 	if ((turn % (10L * TOWN_DAWN)) < ((10L * TOWN_DAWN) / 2))
 		daytime = TRUE;
 	else
 		daytime = FALSE;
-
-#if 1 /* TNB */
-	town_illuminate(daytime);
-#else /* not 1 -- TNB */
 
 	/* Light up or darken the area */
 	for (y = 0; y < cur_hgt; y++)
@@ -818,8 +806,6 @@ void wilderness_gen(void)
 			}
 		}
 	}
-
-#endif /* not 1 -- TNB */
 
 	player_place(p_ptr->oldpy, p_ptr->oldpx);
 	p_ptr->leftbldg = FALSE;
