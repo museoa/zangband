@@ -1143,6 +1143,9 @@ static bool player_birth_aux_2(void)
 
 	/* Roll for age/height/weight */
 	get_ahw();
+	
+	/* Dodgy "social class" */
+	p_ptr->rp.sc = randint1(100);
 
 	/* Hack -- get a chaos patron even if you are not a chaos warrior */
 	p_ptr->chaos_patron = (s16b)randint0(MAX_PATRON);
@@ -1514,6 +1517,9 @@ static bool player_birth_aux_3(void)
 
 		/* Roll for age/height/weight */
 		get_ahw();
+		
+		/* Dodgy "social class" */
+		p_ptr->rp.sc = randint1(100);
 
 		/* Roll for gold */
 		get_money();
