@@ -344,7 +344,7 @@ proc NSInitStartup::UpgradeTool {} {
 	$i eval [list set ::argc 2]
 	$i eval [list set ::argv [list -dstdir [Path]]]
 	$i alias exit set ::UpgradeToolExit 1
-	$i eval source [CPath lib UpgradeTool main.tcl]
+	$i eval source [Pathtk lib UpgradeTool main.tcl]
 
 	# Wait for UpgradeTool to exit
 	set ::UpgradeToolExit 0
@@ -399,7 +399,7 @@ proc NSInitStartup::InitStartupScreen {} {
 
 	# Load the "Tcl Powered Logo"
 	image create photo Image_PwrdLogo175 \
-		-file [CPathTk image pwrdLogo175.gif]
+		-file [PathTk image pwrdLogo175.gif]
 
 	# Program name
 	if {[Platform unix]} {
@@ -659,8 +659,8 @@ proc angband_initialized {} {
 	angband_startup "    window-manager.tcl"
 	Source library window-manager.tcl
 
-	NSModule::AddModule NSChooseGame [CPathTk choose-game.tcl]
-	NSModule::IndexLoad [CPathTk library moduleIndex.tcl]
+	NSModule::AddModule NSChooseGame [PathTk choose-game.tcl]
+	NSModule::IndexLoad [PathTk library moduleIndex.tcl]
 
 	NSInitStartup::FinalizeStartupWindow
 
@@ -671,7 +671,7 @@ proc angband_initialized {} {
 
 	NSInitStartup::UpgradeTool
 
-	NSModule::AddModule NSSetup [CPathTk setup.tcl]
+	NSModule::AddModule NSSetup [PathTk setup.tcl]
 
 	# Now process other command-line options
 	HandleArgv
@@ -779,7 +779,7 @@ proc angband_birth {action} {
 		switch -- $action {
 	
 			setup {
-				NSModule::AddModule NSBirth [CPathTk birth.tcl]
+				NSModule::AddModule NSBirth [PathTk birth.tcl]
 				NSModule::LoadIfNeeded NSBirth
 			}
 		}
@@ -1024,12 +1024,8 @@ proc NSInitStartup::InitStartup {} {
 	set Angband(dirTK) [angband game directory ANGBAND_DIR_TK]
 	set Angband(dirTK) [LongName $Angband(dirTK)]
 
-	# The Common directory, and Common\tk
-	set Angband(dir,common) [angband game directory ANGBAND_DIR_COMMON]
-	set Angband(dir,common) [LongName $Angband(dir,common)]
-
 	# The msgs directory (message catalog)
-	set Angband(dir,msgs) [file join $Angband(dir,common) msgs]
+	set Angband(dir,msgs) [file join $Angband(dirTK) msgs]
 	
 	# List of object tval's.
 	set Angband(tval) [angband info tval]
@@ -1061,7 +1057,7 @@ proc NSInitStartup::InitStartup {} {
 
 	# Work around a bug on Windows 95.
 	if {[string equal [angband system osversion] "Windows 95"]} {
-		load [file join $Angband(dir,common) lib \
+		load [file join $Angband(dirTK) lib \
 			tk_chooseDirectory tk_chooseDirectory.dll]
 	}
 

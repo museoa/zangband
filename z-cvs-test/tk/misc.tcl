@@ -109,7 +109,7 @@ proc InitImageIfNeeded {imageName fileName args} {
 	# Look in CommonTk/tk/image and subdirectories, then user-supplied tk
 	# subdirectories
 	foreach elem [concat [list {image} {image dg} {image dg misc-win}] $args] {
-		set path [eval CPathTk $elem [list $fileName]]
+		set path [eval PathTk $elem [list $fileName]]
 		if {[file exists $path]} {
 			image create photo $imageName -file $path
 			return 1
@@ -465,40 +465,6 @@ proc Path {args} {
 #	What happened.
 
 proc PathTk {args} {
-
-	global Angband
-
-	return [eval file join [list $Angband(dirTK)] $args]
-}
-
-# CPath --
-#
-#	Create a path relative to Angband(dir,common)
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc CPath {args} {
-
-	global Angband
-
-	return [eval file join [list $Angband(dir,common)] $args]
-}
-
-# CPathTk --
-#
-#	Create a path relative to Angband(dirTK)
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc CPathTk {args} {
 
 	global Angband
 

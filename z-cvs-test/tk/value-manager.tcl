@@ -525,8 +525,8 @@ proc NSValueManager::Write {name} {
 				set list [StripCommon $path [Path]]
 				return [concat Path $list]
 			} elseif {[IsFileInCPath $path]} {
-				set list [StripCommon $path [CPath]]
-				return [concat CPath $list]
+				set list [StripCommon $path [Pathtk]]
+				return [concat Pathtk $list]
 			}
 		}
 	}
@@ -555,7 +555,7 @@ proc NSValueManager::Read {name} {
 		savefile {
 			if {[lindex $value 0] == "Path"} {
 				Manage $name [file split [eval $value]]
-			} elseif {[lindex $value 0] == "CPath"} {
+			} elseif {[lindex $value 0] == "Pathtk"} {
 				Manage $name [file split [eval $value]]
 			}
 		}

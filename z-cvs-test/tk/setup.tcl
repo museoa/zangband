@@ -501,7 +501,7 @@ proc NSSetup::Preview {oop} {
 	set prefix [lindex $NSConfig::Priv(config) [expr {$row * 2}]]
 
 	# Get the pathname of an appropriate image file
-	set path [CPathTk image preview-$prefix.gif]
+	set path [PathTk image preview-$prefix.gif]
 
 	# The image file exists
 	if {[file exists $path]} {

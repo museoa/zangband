@@ -755,7 +755,7 @@ proc NSMainWindow::InitMenus {oop} {
 	lappend entries [list -type command -label [mc "Load Window Positions"] -identifier E_WINDOW_LOADPOS]
 	lappend entries [list -type checkbutton -label [mc "AutoSave Positions"] \
 		-variable ::NSMainWindow($oop,window,autosave) -identifier E_WINDOW_AUTOSAVE]
-	if {[file exists [CPathTk choice-window.tcl]]} {
+	if {[file exists [PathTk choice-window.tcl]]} {
 		Info $oop choiceWindow [Value choicewindow,show]
 		lappend entries [list -type separator]
 		lappend entries [list -type checkbutton -label [mc "Choice Window"] \

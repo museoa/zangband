@@ -89,7 +89,7 @@ proc HandleError {err {prompt ""}} {
 	set answer [tk_messageBox -title "Error in $Angband(name)" \
 		-message $message -type $type -icon error]
 
-	if {[catch {open [CPath errors.txt] a} fileId]} {
+	if {[catch {open [Pathtk errors.txt] a} fileId]} {
 		if {$::DEBUG} {
 			tk_messageBox -icon error -title Error \
 				-message "Couldn't open [Path errors.txt]\n$fileId"

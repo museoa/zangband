@@ -979,7 +979,7 @@ proc IsUserFile {path} {
 
 proc IsFileInCPath {path} {
 
-	return [IsFileInX $path [CPath]]
+	return [IsFileInX $path [Pathtk]]
 }
 
 # IsFileInPath --
@@ -1000,7 +1000,7 @@ proc IsFileInPath {path} {
 
 proc InitModules {} {
 
-	NSModule::IndexLoad [CPathTk moduleIndex.tcl]
+	NSModule::IndexLoad [PathTk moduleIndex.tcl]
 	
 	return
 }
@@ -1135,7 +1135,7 @@ proc InitOther {} {
 	update idletasks
 
 	if {$::DEBUG} {
-		NSModule::AddModule NSDebugAlloc [CPathTk debug-alloc.tcl]
+		NSModule::AddModule NSDebugAlloc [PathTk debug-alloc.tcl]
 		NSModule::LoadIfNeeded NSDebugAlloc
 	}
 
