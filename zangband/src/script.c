@@ -90,6 +90,26 @@ static int xxx_get_rumor(lua_State *L)
 	return (1);
 }
 
+static int xxx_get_rnd_line(lua_State *L)
+{
+	cptr filename;
+	char buf[1024];
+	int err;
+
+	filename = lua_tostring(L, 1);
+
+	/* Pop off the filename */
+	lua_pop(L, 1);
+
+	err = get_rnd_line(filename, 0, buf);
+
+	/* Check for error */
+	if (err)
+		return 0;
+
+	tolua_pushstring(L, buf);
+	return (1);
+}
 
 static int xxx_get_aim_dir(lua_State *L)
 {
@@ -117,6 +137,7 @@ static int xxx_fire_beam(lua_State *L)
 
 	return 1;
 }
+
 
 #ifdef RISCOS
 extern char *riscosify_name(const char *);
@@ -146,6 +167,7 @@ static const struct luaL_reg anglib[] =
 	{"fire_beam", xxx_fire_beam},
 	{"build_script_path", xxx_build_script_path},
 	{"get_rumor", xxx_get_rumor},
+	{"get_rnd_line", xxx_get_rnd_line},
 #ifdef RISCOS
 	{"dofile", xxx_dofile},
 #endif /* RISCOS */

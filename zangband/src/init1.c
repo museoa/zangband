@@ -75,6 +75,7 @@ static cptr k_info_triggers[] =
 	"BONUS",
 	"SMASH",
 	"DESC",
+	"TIMED",
 	NULL
 };
 

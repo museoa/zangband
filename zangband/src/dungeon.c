@@ -11,6 +11,7 @@
  */
 
 #include "angband.h"
+#include "script.h"
 
 #define TY_CURSE_CHANCE 100
 #define CHAINSWORD_NOISE 100
@@ -1602,6 +1603,9 @@ static void process_world(void)
 		/* Skip non-objects */
 		if (!o_ptr->k_idx) continue;
 
+		/* Apply extra scripts */
+		apply_object_trigger(TRIGGER_TIMED, o_ptr, "");
+
 		/* TY Curse */
 		if ((o_ptr->flags3 & TR3_TY_CURSE) && one_in_(TY_CURSE_CHANCE))
 		{
@@ -1617,16 +1621,6 @@ static void process_world(void)
 			msgf("There is a malignant black aura surrounding you...");;
 			o_ptr->flags3 |= TR3_CURSED;
 			o_ptr->feeling = FEEL_NONE;
-		}
-
-		/* Make a chainsword noise */
-		if ((o_ptr->activate == ART_CHAINSWORD) &&
-			one_in_(CHAINSWORD_NOISE))
-		{
-			char noise[1024];
-			if (!get_rnd_line("chainswd.txt", 0, noise))
-				msgf(noise);
-			disturb(FALSE);
 		}
 
 		/*

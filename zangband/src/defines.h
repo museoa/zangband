@@ -103,13 +103,14 @@
 /*
  * Script triggers
  */
-#define MAX_TRIGGER     5
+#define MAX_TRIGGER     6
 
 #define TRIGGER_USE     0
 #define TRIGGER_MAKE    1
 #define TRIGGER_BONUS   2
 #define TRIGGER_SMASH   3
 #define TRIGGER_DESC	4
+#define TRIGGER_TIMED   5
 
 
 /*

@@ -1187,6 +1187,11 @@ W:52:15:130:66666
 P:0:9d5:-30:7:0
 F:DEX | CHR | HIDE_TYPE | SPEED | AGGRAVATE |
 F:SLAY_TROLL | SLAY_ORC | SEE_INVIS | SHOW_MODS | INSTA_ART
+L:TIMED:	if randint0(10) == 0 then msgf("Boo!") end
+L:TIMED:	if randint0(100) == 0 then
+L:TIMED:		local line = get_rnd_line("chainswd.txt")
+L:TIMED:		if line then msgf(line) end
+L:TIMED:	end
 
 
 # The Rapier 'Forasgil'
