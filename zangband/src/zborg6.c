@@ -955,7 +955,6 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid,
 
 	int player_cost = mb_ptr->cost;
 
-
 	/* Now process the queue */
 	while (flow_head != flow_tail)
 	{
@@ -1021,8 +1020,8 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid,
 			
 			if (!borg_on_safe_feat(mb_ptr->feat)) continue;
 
-			/* Avoid Mountains */
-			if (mb_ptr->feat == FEAT_MOUNTAIN) continue;
+			/* Avoid Jungle */
+			if (mb_ptr->feat == FEAT_JUNGLE) continue;
 
 			/* Avoid some other Zang Terrains */
 
@@ -1176,7 +1175,6 @@ static void borg_flow_reverse(void)
 	/* Spread, but do NOT optimize */
 	borg_flow_spread(250, FALSE, FALSE, FALSE);
 }
-
 
 /*
  * Commit the current "flow"
@@ -2318,9 +2316,6 @@ static bool borg_flow_dark_interesting(int x, int y, int b_stair)
 		/* Do not disarm when confused */
 		if (bp_ptr->status.confused) return (FALSE);
 
-		/* Do not bother if super rich */
-		if (borg_gold >= 1000000) return (FALSE);
-
 		/* Not when darkened */
 		if (!bp_ptr->cur_lite) return (FALSE);
 
@@ -3117,6 +3112,172 @@ static bool borg_flow_dark_5(int b_stair)
 	return (TRUE);
 }
 
+/*
+ * Is this an acceptaple place to flow to?
+ * Should be expanded so the borg can avoid nasty quests and dungeons
+ */
+static bool borg_flow_wild_check(int x, int y)
+{
+	/* Is the x in bounds? */
+	if (x < 0 || x > max_wild - 2) return (FALSE);
+
+	/* Is the y in bounds? */
+	if (y < 0 || y > max_wild - 2) return (FALSE);
+
+	/* Hack!  Check this location */
+	return (!(wild[y][x].done.info & WILD_INFO_SEEN));
+}
+
+
+/* Prepare to flow somewhere in the wilderness */
+static bool borg_flow_dark_wild(void)
+{
+	int x, y, side = 0;
+	int loop_min, loop_max;
+
+	int base_x = c_x / WILD_BLOCK_SIZE;
+	int base_y = c_y / WILD_BLOCK_SIZE;
+
+	bool found = FALSE;
+
+	/* Is the borg in the wilderness? */
+	if (bp_ptr->depth || vanilla_town) return (FALSE);
+
+	/* Don't do this until level 20 */
+	if (bp_ptr->lev < 20) return (FALSE);
+
+	/*
+	 * Try to find a dark spot on the overhead map.
+	 * The method is to draw an everwidening square around the current location
+	 * and check the locations on the sides of the square if they are explored.
+	 * To keep this search as quick as possible there is some trickery to
+	 * ensure that every spot on the map in checked only once.
+	 */
+	while (!found)
+	{
+		/* Enlarge the box */
+		side += 1;
+
+		/* Has the borg explored the whole map? */
+		if (base_x - side < 0 &&
+			base_y - side < 0 &&
+			base_x + side > max_wild - 2 &&
+			base_y + side > max_wild - 2) return (FALSE);
+
+		/* The upper side has a constant y */
+		y = base_y - side;
+
+		/* If the y is on the map */
+		if (y >= 0)
+		{
+			/* Don't go out of bounds */
+			loop_min = MAX(0, base_x - side);
+			loop_max = MIN(base_x + side, max_wild - 2);
+
+			/* Check the upper side from left to right */
+			for (x = loop_min; x < loop_max && !found; x++)
+			{
+				found = borg_flow_wild_check(x, y);
+				if (found) break;
+			}
+		}
+
+		/* Step out */
+		if (found) break;
+
+		/* The right side has a constant x */
+		x = base_x + side;
+
+		/* If the x is on the map */
+		if (x < max_wild - 1)
+		{
+			/* Don't go out of bounds */
+			loop_min = MAX(0, base_y - side);
+			loop_max = MIN(base_y + side, max_wild - 2);
+
+			/* Check the right side from up to down */
+			for (y = loop_min; y < loop_max && !found; y++)
+			{
+				found = borg_flow_wild_check(x, y);
+				if (found) break;
+			}
+		}
+
+		/* Step out */
+		if (found) break;
+
+		/* The lower side has a constant y */
+		y = base_y + side;
+
+		/* If the y is on the map */
+		if (y < max_wild - 1)
+		{
+			/* Don't go out of bounds */
+			loop_min = MAX(0, base_x - side);
+			loop_max = MIN(base_x + side, max_wild - 2);
+
+			/* Check the lower side from right to left */
+			for (x = loop_max; x > loop_min && !found; x--)
+			{
+				found = borg_flow_wild_check(x, y);
+				if (found) break;
+			}
+		}
+
+		/* Step out */
+		if (found) break;
+
+		/* The left side has a constant x */
+		x = base_x - side;
+
+		/* If the x is on the map */
+		if (x >= 0)
+		{
+			/* Don't go out of bounds */
+			loop_min = MAX(0, base_y - side);
+			loop_max = MIN(base_y + side, max_wild - 2);
+
+			/* Check the left side from down to up */
+			for (y = loop_max; y > loop_min && !found; y--)
+			{
+				found = borg_flow_wild_check(x, y);
+				if (found) break;
+			}
+		}
+	}
+
+	/* Failure */
+	if (!found) return (FALSE);
+
+	/* Clear the flow codes */
+	borg_flow_clear();
+
+	/* normalize x and y */
+	if (x == base_x) x = 0;
+	else if (x < base_x) x = -16;
+	else if (x > base_x) x = 16;
+
+	if (y == base_y) y = 0;
+	else if (y < base_y) y = -16;
+	else if (y > base_y) y = 16;
+
+	/* Enqueue the grid */
+	borg_flow_enqueue_grid(c_x + x, c_y + y);
+
+	/* Spread the flow */
+	borg_flow_spread(50, TRUE, TRUE, FALSE);
+
+	/* Attempt to Commit the flow */
+	if (!borg_flow_commit("a dark wild spot", GOAL_DARK)) return (FALSE);
+
+	/* Take one step */
+	if (!borg_flow_old(GOAL_DARK)) return (FALSE);
+
+borg_note("x= %d, y = %d, side = %d", x, y, side);
+
+	/* Success */
+	return (TRUE);
+}
 
 /*
  * Prepare to "flow" towards "interesting" grids
@@ -3173,6 +3334,9 @@ bool borg_flow_dark(bool close)
 		/* Method 5 */
 		if (borg_flow_dark_5(b_stair)) return (TRUE);
 	}
+
+	/* Explore the wilderness */
+	if (borg_flow_dark_wild()) return (TRUE);
 
 	/* Fail */
 	return (FALSE);
