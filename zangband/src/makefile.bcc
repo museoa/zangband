@@ -155,7 +155,7 @@ angband.res: angband.rc
 	$(RC) -r angband.rc
 
 l-monst.c: lua\tolua.exe l-monst.pkg
-	lua\tolua.exe -n monster -o l-monst.c l-monst.pkg
+	lua\tolua.exe -n monst -o l-monst.c l-monst.pkg
 
 l-object.c: lua\tolua.exe l-object.pkg
 	lua\tolua.exe -n object -o l-object.c l-object.pkg

@@ -88,7 +88,7 @@ lua\tolua: $(TOLUAOBJS)
 #
 
 l-monst.c: lua\tolua l-monst.pkg
-	lua\tolua -n monster -o l-monst.c l-monst.pkg
+	lua\tolua -n monst -o l-monst.c l-monst.pkg
 
 l-object.c: lua\tolua l-object.pkg
 	lua\tolua -n object -o l-object.c l-object.pkg

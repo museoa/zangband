@@ -182,25 +182,25 @@ z-virt.o: z-virt.c $(HDRS) z-virt.h z-util.h
 #
 
 l-monst.c: lua/tolua l-monst.pkg $(INCS)
-	lua/tolua -n monster -o l-monst.c l-monst.pkg
+	lua/tolua -n $(subst l-,,$*) -o $@ $<
 
 l-object.c: lua/tolua l-object.pkg $(INCS)
-	lua/tolua -n object -o l-object.c l-object.pkg
+	lua/tolua -n $(subst l-,,$*) -o $@ $<
 
 l-player.c: lua/tolua l-player.pkg $(INCS)
-	lua/tolua -n player -o l-player.c l-player.pkg
+	lua/tolua -n $(subst l-,,$*) -o $@ $<
 
 l-random.c: lua/tolua l-random.pkg $(INCS)
-	lua/tolua -n random -o l-random.c l-random.pkg
+	lua/tolua -n $(subst l-,,$*) -o $@ $<
 
 l-ui.c: lua/tolua l-ui.pkg $(INCS)
-	lua/tolua -n ui -o l-ui.c l-ui.pkg
+	lua/tolua -n $(subst l-,,$*) -o $@ $<
 
 l-misc.c: lua/tolua l-misc.pkg $(INCS)
-	lua/tolua -n misc -o l-misc.c l-misc.pkg
+	lua/tolua -n $(subst l-,,$*) -o $@ $<
 
 l-spell.c: lua/tolua l-spell.pkg $(INCS)
-	lua/tolua -n spell -o l-spell.c l-spell.pkg
+	lua/tolua -n $(subst l-,,$*) -o $@ $<
 
 # Each borg file depends on the one before it.
 # Hack - the dependance on the .o files encodes this.
