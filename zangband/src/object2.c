@@ -5814,7 +5814,7 @@ void display_koff(int k_idx)
 	prtf(0, 0, "%v", OBJECT_STORE_FMT(q_ptr, FALSE, 0));
 
 	/* Warriors are illiterate */
-	if (!(p_ptr->realm1 || p_ptr->realm2)) return;
+	if (!(p_ptr->spell.realm1 || p_ptr->spell.realm2)) return;
 
 	/* Display spells in readible books */
 	if ((q_ptr->tval == REALM1_BOOK) || (q_ptr->tval == REALM2_BOOK))
@@ -5841,7 +5841,7 @@ void display_koff(int k_idx)
 
 		/* Print spells */
 		print_spells(spells, num, 0, 2,
-					 (q_ptr->tval ==
-					  REALM1_BOOK ? p_ptr->realm1 - 1 : p_ptr->realm2 - 1));
+					 ((q_ptr->tval == REALM1_BOOK) ?
+					 	 p_ptr->spell.realm1 - 1 : p_ptr->spell.realm2 - 1));
 	}
 }

@@ -2351,9 +2351,9 @@ static void display_player_top(void)
 				"Class    : " CLR_L_BLUE "%s",
                 player_name, sp_ptr->title, rp_ptr->title, cp_ptr->title);
 
-	if (p_ptr->realm1 || p_ptr->realm2)
+	if (p_ptr->spell.realm1 || p_ptr->spell.realm2)
 	{
-		put_fstr(COL_NAME, 6, "Magic    : " CLR_L_BLUE "%s", realm_names[p_ptr->realm1]);
+		put_fstr(COL_NAME, 6, "Magic    : " CLR_L_BLUE "%s", realm_names[p_ptr->spell.realm1]);
 	}
 
 	if (p_ptr->rp.pclass == CLASS_CHAOS_WARRIOR)
@@ -2362,10 +2362,10 @@ static void display_player_top(void)
 					 chaos_patrons[p_ptr->chaos_patron]);
 	}
 
-	if (p_ptr->realm2)
+	if (p_ptr->spell.realm2)
 	{
 		put_fstr(COL_NAME + WID_NAME, 7, CLR_L_BLUE "%s",
-				 realm_names[p_ptr->realm2]);
+				 realm_names[p_ptr->spell.realm2]);
 	}
 
 	/* Age, Height, Weight, Social */

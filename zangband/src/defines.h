@@ -824,8 +824,8 @@
 /*
  * Magic-books for the realms
  */
-#define REALM1_BOOK     (p_ptr->realm1 + TV_LIFE_BOOK - 1)
-#define REALM2_BOOK     (p_ptr->realm2 + TV_LIFE_BOOK - 1)
+#define REALM1_BOOK     (p_ptr->spell.realm1 + TV_LIFE_BOOK - 1)
+#define REALM2_BOOK     (p_ptr->spell.realm2 + TV_LIFE_BOOK - 1)
 
 
 /*

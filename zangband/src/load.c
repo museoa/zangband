@@ -1174,8 +1174,8 @@ static void rd_extra(void)
 	rd_byte(&p_ptr->rp.prace);
 	rd_byte(&p_ptr->rp.pclass);
 	rd_byte(&p_ptr->rp.psex);
-	rd_byte(&p_ptr->realm1);
-	rd_byte(&p_ptr->realm2);
+	rd_byte(&p_ptr->spell.realm1);
+	rd_byte(&p_ptr->spell.realm2);
 	rd_byte(&tmp8u);			/* oops */
 
 	/* Special Race/Class info */
@@ -3038,16 +3038,16 @@ static errr rd_savefile_new_aux(void)
 
 
 	/* Read spell info */
-	rd_u32b(&p_ptr->spell_learned1);
-	rd_u32b(&p_ptr->spell_learned2);
-	rd_u32b(&p_ptr->spell_worked1);
-	rd_u32b(&p_ptr->spell_worked2);
-	rd_u32b(&p_ptr->spell_forgotten1);
-	rd_u32b(&p_ptr->spell_forgotten2);
+	rd_u32b(&p_ptr->spell.learned1);
+	rd_u32b(&p_ptr->spell.learned2);
+	rd_u32b(&p_ptr->spell.worked1);
+	rd_u32b(&p_ptr->spell.worked2);
+	rd_u32b(&p_ptr->spell.forgotten1);
+	rd_u32b(&p_ptr->spell.forgotten2);
 
 	for (i = 0; i < PY_MAX_SPELLS; i++)
 	{
-		rd_byte(&p_ptr->spell_order[i]);
+		rd_byte(&p_ptr->spell.order[i]);
 	}
 
 

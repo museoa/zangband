@@ -136,15 +136,27 @@ struct player_data
 	byte pclass;	/* Class index */
 };
 
+struct player_spell
+{
+	u32b learned1;	/* Spell flags */
+	u32b learned2;    /* Spell flags */
+	u32b worked1; /* Spell flags */
+	u32b worked2; /* Spell flags */
+	u32b forgotten1;  /* Spell flags */
+	u32b forgotten2;  /* Spell flags */
+
+	byte order[PY_MAX_SPELLS];	/* Spell order */
+	
+	byte realm1;	/* First magic realm */
+	byte realm2;	/* Second magic realm */
+};
+
 struct player_type
 {
 	s16b px;			/* Player location */
 	s16b py;			/* Player location */
 	
 	player_data rp;	/* Role-play information */
-
-	byte realm1;		/* First magic realm */	
-	byte realm2;		/* Second magic realm */
 
 	s16b max_depth;		/* Max depth */
 	s16b depth;			/* Cur depth */
@@ -172,6 +184,8 @@ struct player_type
 
 	s16b stat_max[A_MAX];	/* Current "maximal" stat values */
 	s16b stat_cur[A_MAX];	/* Current "natural" stat values */
+	
+	player_spell spell;	/* Spell information */
 
 	s16b fast;			/* Timed -- Fast */
 	s16b slow;			/* Timed -- Slow */
@@ -215,14 +229,6 @@ struct player_type
 	s16b energy;		/* Current energy */
 	s16b food;			/* Current nutrition */
 
-	u32b spell_learned1;	/* Spell flags */
-	u32b spell_learned2;	/* Spell flags */
-	u32b spell_worked1;	/* Spell flags */
-	u32b spell_worked2;	/* Spell flags */
-	u32b spell_forgotten1;	/* Spell flags */
-	u32b spell_forgotten2;	/* Spell flags */
-
-	byte spell_order[PY_MAX_SPELLS];	/* Spell order */
 
 	s16b player_hp[PY_MAX_LEVEL];	/* HP Array */
 

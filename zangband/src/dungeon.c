@@ -3229,17 +3229,17 @@ static void load_all_pref_files(void)
 	(void)process_pref_file("%s.prf", player_base);
 
 	/* Access the "realm 1" pref file */
-	if (p_ptr->realm1 != REALM_NONE)
+	if (p_ptr->spell.realm1 != REALM_NONE)
 	{
 		/* Process that file */
-		(void)process_pref_file("%s.prf", realm_names[p_ptr->realm1]);
+		(void)process_pref_file("%s.prf", realm_names[p_ptr->spell.realm1]);
 	}
 
 	/* Access the "realm 2" pref file */
-	if (p_ptr->realm2 != REALM_NONE)
+	if (p_ptr->spell.realm2 != REALM_NONE)
 	{
 		/* Process that file */
-		(void)process_pref_file("%s.prf", realm_names[p_ptr->realm2]);
+		(void)process_pref_file("%s.prf", realm_names[p_ptr->spell.realm2]);
 	}
 }
 

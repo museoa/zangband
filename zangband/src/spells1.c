@@ -3271,10 +3271,11 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Holy Orb -- Player only takes partial damage */
 			if (fuzzy) msgf("You are hit by something!");
-			if (p_ptr->realm1 == REALM_LIFE || p_ptr->realm2 == REALM_LIFE)
+			if ((p_ptr->spell.realm1 == REALM_LIFE) ||
+				(p_ptr->spell.realm2 == REALM_LIFE))
 				dam /= 2;
-			else if (p_ptr->realm1 == REALM_DEATH
-					 || p_ptr->realm2 == REALM_DEATH)
+			else if ((p_ptr->spell.realm1 == REALM_DEATH) ||
+					(p_ptr->spell.realm2 == REALM_DEATH))
 				dam *= 2;
 			take_hit(dam, killer);
 			break;
@@ -3283,9 +3284,11 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		case GF_HELL_FIRE:
 		{
 			if (fuzzy) msgf("You are hit by something!");
-			if (p_ptr->realm1 == REALM_DEATH || p_ptr->realm2 == REALM_DEATH)
+			if ((p_ptr->spell.realm1 == REALM_DEATH) ||
+				(p_ptr->spell.realm2 == REALM_DEATH))
 				dam /= 2;
-			else if (p_ptr->realm1 == REALM_LIFE || p_ptr->realm2 == REALM_LIFE)
+			else if ((p_ptr->spell.realm1 == REALM_LIFE) ||
+				(p_ptr->spell.realm2 == REALM_LIFE))
 				dam *= 2;
 			take_hit(dam, killer);
 			break;

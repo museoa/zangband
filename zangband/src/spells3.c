@@ -2918,8 +2918,8 @@ void display_spell_list(void)
 {
 	int i, j;
 	int y = 0, x = 0;
-	int use_realm1 = p_ptr->realm1 - 1;
-	int use_realm2 = p_ptr->realm2 - 1;
+	int use_realm1 = p_ptr->spell.realm1 - 1;
+	int use_realm2 = p_ptr->spell.realm2 - 1;
 	const magic_type *s_ptr;
 	char name[80];
 	char out_val[160];
@@ -3026,8 +3026,8 @@ void display_spell_list(void)
 
 			/* Forgotten */
 			else if ((j < 1) ?
-					 ((p_ptr->spell_forgotten1 & (1L << i))) :
-					 ((p_ptr->spell_forgotten2 & (1L << (i % 32)))))
+					 ((p_ptr->spell.forgotten1 & (1L << i))) :
+					 ((p_ptr->spell.forgotten2 & (1L << (i % 32)))))
 			{
 				/* Forgotten */
 				a = CLR_ORANGE;
@@ -3035,8 +3035,8 @@ void display_spell_list(void)
 
 			/* Unknown */
 			else if (!((j < 1) ?
-					   (p_ptr->spell_learned1 & (1L << i)) :
-					   (p_ptr->spell_learned2 & (1L << (i % 32)))))
+					   (p_ptr->spell.learned1 & (1L << i)) :
+					   (p_ptr->spell.learned2 & (1L << (i % 32)))))
 			{
 				/* Unknown */
 				a = CLR_RED;
@@ -3044,8 +3044,8 @@ void display_spell_list(void)
 
 			/* Untried */
 			else if (!((j < 1) ?
-					   (p_ptr->spell_worked1 & (1L << i)) :
-					   (p_ptr->spell_worked2 & (1L << (i % 32)))))
+					   (p_ptr->spell.worked1 & (1L << i)) :
+					   (p_ptr->spell.worked2 & (1L << (i % 32)))))
 			{
 				/* Untried */
 				a = CLR_YELLOW;
@@ -3157,18 +3157,18 @@ bool spell_okay(int spell, bool known, int realm)
 	if (s_ptr->slevel > p_ptr->lev) return (FALSE);
 
 	/* Spell is forgotten */
-	if ((realm == p_ptr->realm2 - 1) ?
-		(p_ptr->spell_forgotten2 & (1L << spell)) :
-		(p_ptr->spell_forgotten1 & (1L << spell)))
+	if ((realm == p_ptr->spell.realm2 - 1) ?
+		(p_ptr->spell.forgotten2 & (1L << spell)) :
+		(p_ptr->spell.forgotten1 & (1L << spell)))
 	{
 		/* Never okay */
 		return (FALSE);
 	}
 
 	/* Spell is learned */
-	if ((realm == p_ptr->realm2 - 1) ?
-		(p_ptr->spell_learned2 & (1L << spell)) :
-		(p_ptr->spell_learned1 & (1L << spell)))
+	if ((realm == p_ptr->spell.realm2 - 1) ?
+		(p_ptr->spell.learned2 & (1L << spell)) :
+		(p_ptr->spell.learned1 & (1L << spell)))
 	{
 		/* Okay to cast, not to study */
 		return (known);
@@ -3870,27 +3870,27 @@ void print_spells(byte *spells, int num, int x, int y, int realm)
 		comment = info;
 
 		/* Analyze the spell */
-		if ((realm + 1 != p_ptr->realm1) && (realm + 1 != p_ptr->realm2))
+		if ((realm + 1 != p_ptr->spell.realm1) && (realm + 1 != p_ptr->spell.realm2))
 		{
 			comment = CLR_SLATE " uncastable";
 		}
 
 		/* We know these books */
-		else if ((realm + 1 == p_ptr->realm1) ?
-				 ((p_ptr->spell_forgotten1 & (1L << spell))) :
-				 ((p_ptr->spell_forgotten2 & (1L << spell))))
+		else if ((realm + 1 == p_ptr->spell.realm1) ?
+				 ((p_ptr->spell.forgotten1 & (1L << spell))) :
+				 ((p_ptr->spell.forgotten2 & (1L << spell))))
 		{
 			comment = CLR_YELLOW " forgotten";
 		}
-		else if (!((realm + 1 == p_ptr->realm1) ?
-				   (p_ptr->spell_learned1 & (1L << spell)) :
-				   (p_ptr->spell_learned2 & (1L << spell))))
+		else if (!((realm + 1 == p_ptr->spell.realm1) ?
+				   (p_ptr->spell.learned1 & (1L << spell)) :
+				   (p_ptr->spell.learned2 & (1L << spell))))
 		{
 			comment = CLR_L_BLUE " unknown";
 		}
-		else if (!((realm + 1 == p_ptr->realm1) ?
-				   (p_ptr->spell_worked1 & (1L << spell)) :
-				   (p_ptr->spell_worked2 & (1L << spell))))
+		else if (!((realm + 1 == p_ptr->spell.realm1) ?
+				   (p_ptr->spell.worked1 & (1L << spell)) :
+				   (p_ptr->spell.worked2 & (1L << spell))))
 		{
 			comment = CLR_L_GREEN " untried";
 		}

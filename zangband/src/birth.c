@@ -1267,7 +1267,7 @@ static void player_wipe(void)
 
 
 	/* None of the spells have been learned yet */
-	for (i = 0; i < PY_MAX_SPELLS; i++) p_ptr->spell_order[i] = 99;
+	for (i = 0; i < PY_MAX_SPELLS; i++) p_ptr->spell.order[i] = 99;
 
 	/* Clean the mutation count */
 	mutant_regenerate_mod = 100;
@@ -1494,8 +1494,8 @@ static void player_outfit(void)
 		sv = player_init[p_ptr->rp.pclass][i][1];
 
 		/* Hack to initialize spellbooks */
-		if (tv == TV_SORCERY_BOOK) tv = TV_LIFE_BOOK + p_ptr->realm1 - 1;
-		else if (tv == TV_DEATH_BOOK) tv = TV_LIFE_BOOK + p_ptr->realm2 - 1;
+		if (tv == TV_SORCERY_BOOK) tv = TV_LIFE_BOOK + p_ptr->spell.realm1 - 1;
+		else if (tv == TV_DEATH_BOOK) tv = TV_LIFE_BOOK + p_ptr->spell.realm2 - 1;
 
 		else if (tv == TV_RING && sv == SV_RING_RES_FEAR &&
 				 p_ptr->rp.prace == RACE_BARBARIAN)
@@ -1509,7 +1509,7 @@ static void player_outfit(void)
 
 		/* Assassins begin the game with a poisoned dagger */
 		if (tv == TV_SWORD && p_ptr->rp.pclass == CLASS_ROGUE &&
-			p_ptr->realm1 == REALM_DEATH)
+			p_ptr->spell.realm1 == REALM_DEATH)
 		{
 			add_ego_flags(q_ptr, EGO_BRAND_POIS);
 		}
@@ -1804,7 +1804,7 @@ static bool get_player_realms(void)
 	if (choose == INVALID_CHOICE) return (FALSE);
 
 	/* Save the choice */
-	p_ptr->realm1 = select[choose];
+	p_ptr->spell.realm1 = select[choose];
 
 	/* Paranoia - No realms at all? */
 	select[0] = REALM_NONE;
@@ -1817,7 +1817,7 @@ static bool get_player_realms(void)
 	{
 		/* Can we use this realm? */
 		if ((realm_choices2[p_ptr->rp.pclass] & (1 << (i - 1)))
-			&& (i != p_ptr->realm1))
+			&& (i != p_ptr->spell.realm1))
 		{
 			/* Save the information */
 			select[count] = i;
@@ -1838,7 +1838,7 @@ static bool get_player_realms(void)
 	if (choose == INVALID_CHOICE) return (FALSE);
 
 	/* Save the choice */
-	p_ptr->realm2 = select[choose];
+	p_ptr->spell.realm2 = select[choose];
 
 	/* Done */
 	return (TRUE);
@@ -1899,14 +1899,14 @@ static bool player_birth_aux_1(void)
 				"Class    : " CLR_L_BLUE "%s\n",
 				player_name, sp_ptr->title, rp_ptr->title, cp_ptr->title);
 
-	if (p_ptr->realm1 || p_ptr->realm2)
+	if (p_ptr->spell.realm1 || p_ptr->spell.realm2)
 	{
-		put_fstr(0, 6, "Magic    : " CLR_L_BLUE "%s", realm_names[p_ptr->realm1]);
+		put_fstr(0, 6, "Magic    : " CLR_L_BLUE "%s", realm_names[p_ptr->spell.realm1]);
 	}
 
-	if (p_ptr->realm2)
+	if (p_ptr->spell.realm2)
 	{
-		put_fstr(11, 7, CLR_L_BLUE "%s", realm_names[p_ptr->realm2]);
+		put_fstr(11, 7, CLR_L_BLUE "%s", realm_names[p_ptr->spell.realm2]);
 	}
 
 	/* And finally, get the number of random quests */

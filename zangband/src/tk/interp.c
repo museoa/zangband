@@ -746,7 +746,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 		case IDX_NEW_SPELLS: /* new_spells */
-			if (!p_ptr->realm1)
+			if (!p_ptr->spell.realm1)
 			{
 				Tcl_SetStringObj(resultPtr, "character cannot read books", -1);
 				return TCL_ERROR;
@@ -763,7 +763,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 		case IDX_PRAYER_OR_SPELL: /* prayer_or_spell */
-			if (!p_ptr->realm1)
+			if (!p_ptr->spell.realm1)
 			{
 				Tcl_SetStringObj(resultPtr, "character cannot read books", -1);
 				return TCL_ERROR;
@@ -843,12 +843,12 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 
 		case IDX_REALM1: /* realm1 */
 			Tcl_SetStringObj(resultPtr,
-				realm_names[p_ptr->realm1], -1);
+				realm_names[p_ptr->spell.realm1], -1);
 			break;
 
 		case IDX_REALM2: /* realm2 */
 			Tcl_SetStringObj(resultPtr,
-				realm_names[p_ptr->realm2], -1);
+				realm_names[p_ptr->spell.realm2], -1);
 			break;
 
 		case IDX_PATRON: /* patron */

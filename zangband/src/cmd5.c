@@ -34,7 +34,7 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, bool realm_2)
 	char choice;
 	const magic_type *s_ptr;
 	char out_val[160];
-	int use_realm = (realm_2 ? p_ptr->realm2 : p_ptr->realm1);
+	int use_realm = (realm_2 ? p_ptr->spell.realm2 : p_ptr->spell.realm1);
 	cptr p = ((mp_ptr->spell_book == TV_LIFE_BOOK) ? "prayer" : "spell");
 
 	/* Get the spell, if available */
@@ -243,7 +243,7 @@ void do_cmd_browse(void)
 	cptr q, s;
 
 	/* Warriors are illiterate */
-	if (!(p_ptr->realm1 || p_ptr->realm2))
+	if (!(p_ptr->spell.realm1 || p_ptr->spell.realm2))
 	{
 		msgf("You cannot read books!");
 		return;
@@ -283,7 +283,7 @@ void do_cmd_study(void)
 
 	cptr q, s;
 
-	if (!p_ptr->realm1)
+	if (!p_ptr->spell.realm1)
 	{
 		msgf("You cannot read books!");
 		return;
@@ -358,8 +358,7 @@ void do_cmd_study(void)
 			{
 				/* Skip non "okay" prayers */
 				if (!spell_okay(spell, FALSE,
-								(increment ? p_ptr->realm2 - 1 : p_ptr->realm1 -
-								 1)))
+								(increment ? p_ptr->spell.realm2 - 1 : p_ptr->spell.realm1 - 1)))
 					continue;
 
 				/* Hack -- Prepare the randomizer */
@@ -393,27 +392,27 @@ void do_cmd_study(void)
 	/* Learn the spell */
 	if (spell < 32)
 	{
-		p_ptr->spell_learned1 |= (1L << spell);
+		p_ptr->spell.learned1 |= (1L << spell);
 	}
 	else
 	{
-		p_ptr->spell_learned2 |= (1L << (spell - 32));
+		p_ptr->spell.learned2 |= (1L << (spell - 32));
 	}
 
-	/* Find the next open entry in "spell_order[]" */
+	/* Find the next open entry in "spell.order[]" */
 	for (i = 0; i < PY_MAX_SPELLS; i++)
 	{
 		/* Stop at the first empty space */
-		if (p_ptr->spell_order[i] == 99) break;
+		if (p_ptr->spell.order[i] == 99) break;
 	}
 
 	/* Add the spell to the known list */
-	p_ptr->spell_order[i++] = spell;
+	p_ptr->spell.order[i++] = spell;
 
 	/* Mention the result */
 	msgf(MSGT_STUDY, "You have learned the %s of %s.",
 				   p, spell_names
-				   [(increment ? p_ptr->realm2 - 1 : p_ptr->realm1 -
+				   [(increment ? p_ptr->spell.realm2 - 1 : p_ptr->spell.realm1 -
 					 1)][spell % 32]);
 
 	if (mp_ptr->spell_book == TV_LIFE_BOOK)
@@ -2674,7 +2673,7 @@ void do_cmd_cast(void)
 	cptr q, s;
 
 	/* Require spell ability */
-	if (!p_ptr->realm1)
+	if (!p_ptr->spell.realm1)
 	{
 		msgf("You cannot cast spells!");
 		return;
@@ -2718,9 +2717,9 @@ void do_cmd_cast(void)
 	/* Hack -- Handle stuff */
 	handle_stuff();
 
-	if (increment) realm = p_ptr->realm2;
+	if (increment) realm = p_ptr->spell.realm2;
 	else
-		realm = p_ptr->realm1;
+		realm = p_ptr->spell.realm1;
 
 	/* Ask for a spell */
 	if (!get_spell
@@ -2734,7 +2733,7 @@ void do_cmd_cast(void)
 
 
 	/* Access the spell */
-	use_realm = (increment ? p_ptr->realm2 : p_ptr->realm1);
+	use_realm = (increment ? p_ptr->spell.realm2 : p_ptr->spell.realm1);
 
 	s_ptr = &mp_ptr->info[use_realm - 1][spell];
 
@@ -2861,19 +2860,19 @@ void do_cmd_cast(void)
 
 		/* A spell was cast */
 		if (!(increment ?
-			  (p_ptr->spell_worked2 & (1L << spell)) :
-			  (p_ptr->spell_worked1 & (1L << spell))))
+			  (p_ptr->spell.worked2 & (1L << spell)) :
+			  (p_ptr->spell.worked1 & (1L << spell))))
 		{
 			int e = s_ptr->sexp;
 
 			/* The spell worked */
-			if (realm == p_ptr->realm1)
+			if (realm == p_ptr->spell.realm1)
 			{
-				p_ptr->spell_worked1 |= (1L << spell);
+				p_ptr->spell.worked1 |= (1L << spell);
 			}
 			else
 			{
-				p_ptr->spell_worked2 |= (1L << spell);
+				p_ptr->spell.worked2 |= (1L << spell);
 			}
 
 			/* Gain experience */
