@@ -2761,7 +2761,6 @@ static bool player_birth_aux_3(void)
 
 static bool player_birth_aux(void)
 {
-	int i, delta;
 	char ch;
 
 	/* Ask questions */
@@ -2802,25 +2801,6 @@ static bool player_birth_aux(void)
 	if ((ch == 0x7F) || (ch == KTRL('H'))) return (FALSE);
 
 	/* Accepted */
-
-	/*
-	 * Now lets perturb the stats a little 
-	 * so there is some variation at the start of the game.
-	 */
-	for (i = 0; i < A_MAX; i++)
-	{
-		/* Only if above 18, where the percentiles don't matter much */
-		if (p_ptr->stat_use[i] > 18)
-		{
-			/* Get amount to change the stat */
-			delta = randint0(10);
-
-			/* Adjust the stats */
-			p_ptr->stat_use[i] += delta;
-			p_ptr->stat_cur[i] += delta;
-			p_ptr->stat_max[i] += delta;
-		}
-	}
 
 	/* Done */
 	return (TRUE);
