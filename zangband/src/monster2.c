@@ -2412,12 +2412,6 @@ static bool summon_specific_okay(int r_idx)
 			       !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
 		}
-
-		case SUMMON_GHB:
-		{
-			okay = (strstr((r_name + r_ptr->name), "Greater hell-beast") == 0);
-			break;
-		}
 	}
 
 	/* Result */
