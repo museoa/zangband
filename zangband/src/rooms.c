@@ -2149,7 +2149,7 @@ static void build_type9(int by0, int bx0)
 
 	/* get size: note 'Evenness'*/
 	xsize = randint(22) * 2 + 6;
-	ysize = randint(15) * 2 + 6;
+	ysize = randint(10) * 2 + 6;
 	
 	/* round to make sizes even */
 	xhsize = (xsize - 1) / 2;
