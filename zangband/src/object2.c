@@ -3826,7 +3826,7 @@ byte kind_is_match(int k_idx)
 	object_kind *k_ptr = &k_info[k_idx];
 
 	/* Does the tval match? */
-	if (k_ptr->tval != match_tv) return (0);
+	if ((match_tv != TV_ANY) && (k_ptr->tval != match_tv)) return (0);
 
 	/* Does the sval match? */
 	if ((match_sv == SV_ANY) || (k_ptr->sval == match_sv)) return (100);

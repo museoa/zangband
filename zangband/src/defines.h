@@ -1682,6 +1682,7 @@
  * only armor and weapons and a few other items use any of these flags.
  */
 
+#define TV_ANY			 0		/* Used for matching all objects */
 #define TV_SKELETON      1      /* Skeletons ('~') */
 #define TV_BOTTLE        2      /* Empty bottles ('!') */
 #define TV_JUNK          3      /* Sticks, Pottery, etc ('~') */
