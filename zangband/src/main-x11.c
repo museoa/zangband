@@ -1778,12 +1778,6 @@ static errr CheckEvent(bool wait)
 			cols = ((Infowin->w - (ox + ox)) / td->fnt->wid);
 			rows = ((Infowin->h - (oy + oy)) / td->fnt->hgt);
 
-			/* Paranoia */
-#if 0
-			if (td == &data[0]) cols = 80;
-			if (td == &data[0]) rows = 24;
-#endif /* 0 */
-
 			/* Hack -- minimal size */
 			if (cols < 1) cols = 1;
 			if (rows < 1) rows = 1;
