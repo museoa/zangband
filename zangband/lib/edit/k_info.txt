@@ -1247,6 +1247,9 @@ W:75:0:2:1500
 A:75/1
 P:0:0d0:0:0:15
 F:RES_FIRE | IGNORE_FIRE | ACTIVATE
+L:USE:	fire_ball(GF_FIRE, dir, 100, 2)
+L:USE:	inc_oppose_fire(rand_range(20, 40))
+L:USE:	object.timeout = rand_range(25, 50)
 D:It feels warm to the touch.
 
 N:147:Acid
@@ -1256,6 +1259,9 @@ W:75:0:2:1500
 A:75/1
 P:0:0d0:0:0:15
 F:RES_ACID | IGNORE_ACID | ACTIVATE
+L:USE:	fire_ball(GF_ACID, dir, 100, 2)
+L:USE:	inc_oppose_acid(rand_range(20, 40))
+L:USE:	object.timeout = rand_range(25, 50)
 D:It is covered with a strange sheen.
 
 N:148:Ice
@@ -1265,6 +1271,9 @@ W:75:0:2:1500
 A:75/1
 P:0:0d0:0:0:15
 F:RES_COLD | IGNORE_COLD | ACTIVATE
+L:USE:	fire_ball(GF_COLD, dir, 100, 2)
+L:USE:	inc_oppose_cold(rand_range(20, 40))
+L:USE:	object.timeout = rand_range(25, 50)
 D:It feels cool to the touch.
 
 N:149:Woe
@@ -3491,6 +3500,9 @@ A:60/8
 P:30:2d4:-2:0:10
 F:RES_ACID |
 F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+L:USE:	msgf("You breathe acid.")
+L:USE:	fire_ball(GF_ACID, dir, 430, 2)
+L:USE:	object.timeout = rand_range(50, 100)
 
 N:401:Blue Dragon Scale Mail~
 G:[:b
@@ -3500,6 +3512,9 @@ A:40/8
 P:30:2d4:-2:0:10
 F:RES_ELEC |
 F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+L:USE:	msgf("You breathe lightning.")
+L:USE:	fire_ball(GF_ELEC, dir, 330, 2)
+L:USE:	object.timeout = rand_range(50, 100)
 
 N:402:White Dragon Scale Mail~
 G:[:w
@@ -3509,6 +3524,9 @@ A:50/8
 P:30:2d4:-2:0:10
 F:RES_COLD |
 F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+L:USE:	msgf("You breathe frost.")
+L:USE:	fire_ball(GF_COLD, dir, 370, 2)
+L:USE:	object.timeout = rand_range(50, 100)
 
 N:403:Red Dragon Scale Mail~
 G:[:r
@@ -3518,6 +3536,9 @@ A:80/8
 P:30:2d4:-2:0:10
 F:RES_FIRE |
 F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+L:USE:	msgf("You breathe fire.")
+L:USE:	fire_ball(GF_FIRE, dir, 670, 2)
+L:USE:	object.timeout = rand_range(50, 100)
 
 N:404:Green Dragon Scale Mail~
 G:[:g
@@ -3527,6 +3548,9 @@ A:70/8
 P:30:2d4:-2:0:10
 F:RES_POIS |
 F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+L:USE:	msgf("You breathe poison gas.")
+L:USE:	fire_ball(GF_POIS, dir, 500, 2)
+L:USE:	object.timeout = rand_range(50, 100)
 
 N:405:Multi-Hued Dragon Scale Mail~
 G:[:v
@@ -3536,6 +3560,17 @@ A:100/16
 P:30:2d4:-2:0:10
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_POIS
 F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+L:USE:	local chance = randint1(5)
+L:USE:	local damtype; local damname
+L:USE:	if     chance == 1 then damtype = GF_ELEC, damname = "lightning"
+L:USE:	elseif chance == 2 then damtype = GF_COLD, damname = "frost"
+L:USE:	elseif chance == 3 then damtype = GF_ACID, damname = "acid"
+L:USE:	elseif chance == 4 then damtype = GF_FIRE, damname = "fire"
+L:USE:  else                    damtype = GF_POIS, damname = "poison gas"
+L:USE:  end
+L:USE:	msgf("You breathe %s.", damname)
+L:USE:	fire_ball(damtype, dir, 840, 2)
+L:USE:	object.timeout = rand_range(50, 100)
 
 N:406:Pseudo Dragon Scale Mail~
 G:[:v
@@ -3545,6 +3580,13 @@ A:65/16
 P:30:2d4:-2:0:10
 F:RES_LITE | RES_DARK |
 F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+L:USE:	local chance = randint1(2)
+L:USE:	local damtype; local damname
+L:USE:	if chance == 1 then damtype = GF_LITE, damname = "light"
+L:USE:  else                damtype = GF_DARK, damname = "darkness"
+L:USE:  end
+L:USE:	fire_ball(damtype, dir, 670, 2)
+L:USE:	object.timeout = rand_range(30, 60)
 
 N:407:Law Dragon Scale Mail~
 G:[:B
@@ -3554,6 +3596,13 @@ A:80/16
 P:30:2d4:-2:0:10
 F:RES_SOUND | RES_SHARDS |
 F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+L:USE:	local chance = randint1(2)
+L:USE:	local damtype; local damname
+L:USE:	if chance == 1 then damtype = GF_SOUND, damname = "sound"
+L:USE:  else                damtype = GF_SHARDS, damname = "shards"
+L:USE:  end
+L:USE:	fire_ball(damtype, dir, 750, 2)
+L:USE:	object.timeout = rand_range(30, 60)
 
 N:408:Bronze Dragon Scale Mail~
 G:[:U
@@ -3563,6 +3612,9 @@ A:55/8
 P:30:2d4:-2:0:10
 F:RES_CONF |
 F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+L:USE:	msgf("You breathe confusion.")
+L:USE:	fire_ball(GF_CONFUSION, dir, 400, 2)
+L:USE:	object.timeout = rand_range(50, 100)
 
 N:409:Gold Dragon Scale Mail~
 G:[:y
@@ -3572,6 +3624,9 @@ A:65/8
 P:30:2d4:-2:0:10
 F:RES_SOUND |
 F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+L:USE:	msgf("You breathe sound.")
+L:USE:	fire_ball(GF_SOUND, dir, 430, 2)
+L:USE:	object.timeout = rand_range(50, 100)
 
 N:410:Chaos Dragon Scale Mail~
 G:[:v
@@ -3581,6 +3636,13 @@ A:75/16
 P:30:2d4:-2:0:10
 F:RES_CHAOS | RES_DISEN |
 F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+L:USE:	local chance = randint1(2)
+L:USE:	local damtype; local damname
+L:USE:	if chance == 1 then damtype = GF_CHAOS, damname = "chaos"
+L:USE:  else                damtype = GF_DISENCHANT, damname = "disenchantment"
+L:USE:  end
+L:USE:	fire_ball(damtype, dir, 740, 2)
+L:USE:	object.timeout = rand_range(30, 60)
 
 N:411:Balance Dragon Scale Mail~
 G:[:v
@@ -3590,6 +3652,16 @@ A:90/16
 P:30:2d4:-2:0:10
 F:RES_CHAOS | RES_DISEN | RES_SOUND | RES_SHARDS |
 F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+L:USE:	local chance = randint1(4)
+L:USE:	local damtype; local damname
+L:USE:	if     chance == 1 then damtype = GF_SOUND, damname = "sound"
+L:USE:	elseif chance == 2 then damtype = GF_SHARDS, damname = "shards"
+L:USE:	elseif chance == 3 then damtype = GF_CHAOS, damname = "chaos"
+L:USE:  else                    damtype = GF_DISENCHANT, damname = "disenchantment"
+L:USE:  end
+L:USE:	msgf("You breathe %s.", damname)
+L:USE:	fire_ball(damtype, dir, 840, 2)
+L:USE:	object.timeout = rand_range(30, 60)
 
 N:412:Power Dragon Scale Mail~
 G:[:v
@@ -3601,6 +3673,9 @@ F:RES_ACID | RES_FIRE | RES_COLD | RES_ELEC | RES_POIS |
 F:RES_NETHER | RES_NEXUS | RES_CHAOS | RES_LITE | RES_DARK |
 F:RES_SHARDS | RES_SOUND | RES_DISEN | RES_CONF |
 F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+L:USE:	msgf("You breathe the elements.")
+L:USE:	fire_ball(GF_MISSILE, dir, 1000, 2)
+L:USE:	object.timeout = rand_range(30, 60)
 
 ## PDSM has been restored to (almost) its former glory in Zangband
 

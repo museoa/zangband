@@ -1193,6 +1193,19 @@ static void do_cmd_activate_aux(object_type *o_ptr)
 		return;
 	}
 
+	/* Get a direction (or abort) */
+	if (!get_aim_dir(&dir)) return;
+
+	/* Activate the object */
+	apply_object_trigger(TRIGGER_USE, o_ptr, NULL, 
+			"dir", dir, NULL, 0, NULL, 0);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP);
+
+	return;
+
+#if 0
 	/* Hack -- Dragon Scale Mail can be activated as well */
 	if (o_ptr->tval == TV_DRAG_ARMOR)
 	{
@@ -1383,6 +1396,7 @@ static void do_cmd_activate_aux(object_type *o_ptr)
 
 	/* Mistake */
 	msgf("Oops.  That object cannot be activated.");
+#endif
 }
 
 

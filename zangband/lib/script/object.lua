@@ -171,6 +171,8 @@ end
 
 -- This default script is called if an object trigger is undefined
 function apply_default_object_trigger(trigger_id, object, who, x, y)
+	msgf("Oops. Bad object trigger activated.")
+
 	return FALSE, FALSE
 end
 

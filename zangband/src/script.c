@@ -260,7 +260,7 @@ bool apply_object_trigger(int trigger_id, object_type *o_ptr, bool *ident,
 		if (lua_gettop(L) < oldtop + 2)
 			lua_getglobal(L, "ident");
 		
-		*ident = tolua_getbool(L, 1, FALSE);
+		if (ident) *ident = tolua_getbool(L, 1, FALSE);
 		result = tolua_getbool(L, 2, FALSE);
 
 		/* Remove the results */
@@ -269,7 +269,7 @@ bool apply_object_trigger(int trigger_id, object_type *o_ptr, bool *ident,
 	else
 	{
 		/* Error */
-		*ident = FALSE;
+		if (ident) *ident = FALSE;
 		result = FALSE;
 	}
 
