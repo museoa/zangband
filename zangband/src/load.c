@@ -900,6 +900,9 @@ static errr rd_store(int town_number, int store_number)
 		}
 	}
 
+	/* Fill the table of item-types that can be sold */
+	init_store_table(st_ptr);
+
 	/* Success */
 	return (0);
 }

@@ -2799,7 +2799,7 @@ static void store_purchase(int *store_top, town_type *twn_ptr)
 		else
 		{
 			/* Nothing left */
-			if (st_ptr->stock_num == 0) store_top = 0;
+			if (st_ptr->stock_num == 0) *store_top = 0;
 
 			/* Nothing left on that screen */
 			else if (*store_top >= st_ptr->stock_num) *store_top -= 12;
@@ -3160,7 +3160,7 @@ static bool leave_store = FALSE;
  * but not in the stores, to prevent chaos.
  */
 static void store_process_command(field_type *f_ptr, town_type *twn_ptr,
-	 int store_top)
+	 int *store_top)
 {
 	/* Handle repeating the last command */
 	repeat_check();
@@ -3189,9 +3189,9 @@ static void store_process_command(field_type *f_ptr, town_type *twn_ptr,
 			}
 			else
 			{
-				store_top += 12;
-				if (store_top >= st_ptr->stock_num) store_top = 0;
-				display_inventory(store_top);
+				*store_top += 12;
+				if (*store_top >= st_ptr->stock_num) *store_top = 0;
+				display_inventory(*store_top);
 			}
 			break;
 		}
@@ -3200,28 +3200,28 @@ static void store_process_command(field_type *f_ptr, town_type *twn_ptr,
 		case KTRL('R'):
 		{
 			do_cmd_redraw();
-			display_store(f_ptr, store_top);
+			display_store(f_ptr, *store_top);
 			break;
 		}
 
 		/* Get (purchase) */
 		case 'g':
 		{
-			store_purchase(&store_top, twn_ptr);
+			store_purchase(store_top, twn_ptr);
 			break;
 		}
 
 		/* Drop (Sell) */
 		case 'd':
 		{
-			store_sell(&store_top);
+			store_sell(store_top);
 			break;
 		}
 
 		/* Examine */
 		case 'x':
 		{
-			store_examine(store_top);
+			store_examine(*store_top);
 			break;
 		}
 
@@ -3332,7 +3332,7 @@ static void store_process_command(field_type *f_ptr, town_type *twn_ptr,
 		case 'C':
 		{
 			do_cmd_character();
-			display_store(f_ptr, store_top);
+			display_store(f_ptr, *store_top);
 			break;
 		}
 
@@ -3578,16 +3578,15 @@ void do_cmd_store(field_type *f_ptr)
 	int tmp_chr;
 	int i;
 	int store_top;
-	
 	owner_type *ot_ptr;
-	
-	town_type	*twn_ptr = &town[p_ptr->town_num];
-	
+	town_type *twn_ptr = &town[p_ptr->town_num];
+
+
 	/* Get the store the player is on */
 	for (i = 0; i < twn_ptr->numstores; i++)
 	{
 		if ((p_ptr->py - twn_ptr->y * 16 == twn_ptr->store[i].y) && 
-		 (p_ptr->px - twn_ptr->x * 16 == twn_ptr->store[i].x))
+		    (p_ptr->px - twn_ptr->x * 16 == twn_ptr->store[i].x))
 		{
 			which = i;
 		}
@@ -3702,7 +3701,7 @@ void do_cmd_store(field_type *f_ptr)
 		request_command(TRUE);
 
 		/* Process the command */
-		store_process_command(f_ptr, twn_ptr, store_top);
+		store_process_command(f_ptr, twn_ptr, &store_top);
 
 		/* Hack -- Character is still in "icky" mode */
 		character_icky = TRUE;
@@ -4477,13 +4476,34 @@ static byte store_table[MAX_STORES][STORE_CHOICES][2] =
 };
 
 
+void init_store_table(store_type *store)
+{
+	int i;
+
+	/* Assume full table */
+	store->table_size = STORE_CHOICES;
+	
+	/* Allocate the stock */
+	C_MAKE(store->table, store->table_size, s16b);
+
+	/* Scan the choices */
+	for (i = 0; i < STORE_CHOICES; i++)
+	{
+		/* Extract the tval/sval codes */
+		int tv = store_table[store->type][i][0];
+		int sv = store_table[store->type][i][1];
+
+		/* Add that item index to the table */
+		store->table[store->table_num++] = lookup_kind(tv, sv);
+	}
+}
+
+
 /*
  * Initialize the stores
  */
 void store_init(int town_num, int store_num, byte store_type)
 {
-	int k;
-	
 	/* Activate that store */
 	st_ptr = &town[town_num].store[store_num];
 
@@ -4499,22 +4519,8 @@ void store_init(int town_num, int store_num, byte store_type)
 	/* Fill in table if required */
 	if (!((store_type == STORE_BLACK) || (store_type == STORE_HOME)))
 	{
-		/* Assume full table */
-		st_ptr->table_size = STORE_CHOICES;
-		
-		/* Allocate the stock */
-		C_MAKE(st_ptr->table, st_ptr->table_size, s16b);
-
-		/* Scan the choices */
-		for (k = 0; k < STORE_CHOICES; k++)
-		{
-			/* Extract the tval/sval codes */
-			int tv = store_table[store_type][k][0];
-			int sv = store_table[store_type][k][1];
-
-			/* Add that item index to the table */
-			st_ptr->table[st_ptr->table_num++] = lookup_kind(tv, sv);
-		}
+		/* Fill the table of item-types that can be sold */
+		init_store_table(st_ptr);
 	}
 
 	/* Initialize the store */

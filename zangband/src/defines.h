@@ -50,6 +50,8 @@
 
 #define ANGBAND_2_8_1
 #define ZANGBAND
+#define ZANGBAND_BIGSCREEN
+#define ZANGBAND_WILDERNESS
 
 /*
  * This value is not currently used

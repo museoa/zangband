@@ -1980,7 +1980,7 @@ static void calc_torch(void)
 	object_type *o_ptr;
 	u32b f1, f2, f3;
 
-	bool old_lite = p_ptr->cur_lite;
+	s16b old_lite = p_ptr->cur_lite;
 	
 	/* Assume no light */
 	p_ptr->cur_lite = 0;

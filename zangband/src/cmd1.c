@@ -2217,7 +2217,7 @@ void move_player(int dir, int do_pickup)
 	}
 
 	/* Examine the destination */
-	c_ptr = area(y,x);
+	c_ptr = area(y, x);
 
 	/* Get the monster */
 	m_ptr = &m_list[c_ptr->m_idx];
@@ -2233,6 +2233,7 @@ void move_player(int dir, int do_pickup)
 	/* unless in Shadow Form */
 	if (p_ptr->wraith_form || p_ptr->pass_wall)
 		p_can_pass_walls = TRUE;
+
 	if ((c_ptr->feat >= FEAT_PERM_EXTRA) &&
 	    (c_ptr->feat <= FEAT_PERM_SOLID))
 	{

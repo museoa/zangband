@@ -400,6 +400,7 @@ static void town_gen(u16b town_num, int *xx, int *yy)
 {
 	int y, x;
 
+
 	/* Place transparent area */
 	for (y = 0; y < MAX_HGT; y++)
 	{
@@ -407,6 +408,7 @@ static void town_gen(u16b town_num, int *xx, int *yy)
 		{
 			/* Create empty area */
 			cave[y][x].feat = vanilla_town ? FEAT_PERM_EXTRA : FEAT_NONE;
+			cave[y][x].fld_idx = 0;
 		}
 	}
 
@@ -603,7 +605,6 @@ static bool town_blank(int x, int y, int xsize, int ysize)
 /*
  * Initialise the town structures
  * At the moment there is only one type of town generator.
- *
  */
 static void init_towns(void)
 {

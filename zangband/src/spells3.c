@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: spells3.c */
 
 /* Purpose: Spell code (part 3) */
@@ -1642,7 +1641,7 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 {
 	int     i, chance, prob;
 	bool    res = FALSE;
-	bool    a = (o_ptr->flags3 & TR3_INSTA_ART);
+	bool    a = ((o_ptr->flags3 & TR3_INSTA_ART) ? TRUE : FALSE);
 	bool    force = (eflag & ENCH_FORCE);
 
 
@@ -1902,8 +1901,8 @@ bool artifact_scroll(void)
  */
 static void bad_luck(object_type *o_ptr)
 {
-	bool is_art = (o_ptr->flags3 & TR3_INSTA_ART);
-	
+	bool is_art = ((o_ptr->flags3 & TR3_INSTA_ART) ? TRUE : FALSE);
+
 	/* Do not curse unwieldable items */
 	if (wield_slot(o_ptr) == -1) return;
 
