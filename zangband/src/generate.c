@@ -1330,10 +1330,10 @@ void generate_cave(void)
 		{
 			/* Require "goodness" */
 			if ((feeling > 9) ||
-			    ((dun_level >= 5) && (feeling > 8)) ||
-			    ((dun_level >= 10) && (feeling > 7)) ||
-			    ((dun_level >= 20) && (feeling > 6)) ||
-			    ((dun_level >= 40) && (feeling > 5)))
+			    ((dun_level >= 7) && (feeling > 8)) ||
+			    ((dun_level >= 15) && (feeling > 7)) ||
+			    ((dun_level >= 35) && (feeling > 6)) ||
+			    ((dun_level >= 70) && (feeling > 5)))
 			{
 				/* Give message to cheaters */
 				if (cheat_room || cheat_hear ||
