@@ -3001,7 +3001,7 @@ errr file_character(cptr name, bool full)
 				if (st_ptr->stock_num)
 				{
 					/* Header with name of the town */
-					fprintf(fff, "  [Home Inventory - %s]\n\n", town[j].name);
+					fprintf(fff, "  [Home Inventory - %s]\n\n", town[i].name);
 
 					/* Dump all available items */
 					for (k = 0; k < st_ptr->stock_num; k++)
