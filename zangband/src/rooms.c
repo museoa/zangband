@@ -3444,19 +3444,21 @@ static void build_bubble_vault(int x0, int y0, int xsize, int ysize)
 	/* array of center points of bubbles */
 	coord center[BUBBLENUM];
 
-	int i, j, x, y, xhsize, yhsize;
+	int i, j, x, y;
 	u16b min1, min2, temp;
 	bool done;
 
 	/* Offset from center to top left hand corner */
-	xhsize = xsize / 2;
-	yhsize = ysize / 2;
+	int xhsize = xsize / 2;
+	int yhsize = ysize / 2;
+
 
 	if (cheat_room) msg_print("Bubble Vault");
 
-	/* Allocate center of bubbles*/
+	/* Allocate center of bubbles */
 	center[0].x = randint(xsize - 2) + 1;
 	center[0].y = randint(ysize - 2) + 1;
+
 	for (i = 1; i < BUBBLENUM; i++)
 	{
 		done = FALSE;
@@ -3471,7 +3473,7 @@ static void build_bubble_vault(int x0, int y0, int xsize, int ysize)
 
 			for (j = 0; j < i; j++);
 			{
-				/* rough test to see if there is an overlap*/
+				/* rough test to see if there is an overlap */
 				if ((x == center[j].x) || (y == center[j].y)) done = FALSE;
 			}
 		}
@@ -3481,22 +3483,26 @@ static void build_bubble_vault(int x0, int y0, int xsize, int ysize)
 	}
 
 
-	/* Top and bottom boundaries*/
+	/* Top and bottom boundaries */
 	for (i = 0; i <= xsize; i++)
 	{
-		cave[y0 - yhsize + 0][x0 - xhsize + i].feat = FEAT_WALL_OUTER;
-		cave[y0 - yhsize + 0][x0 - xhsize + i].info |= (CAVE_ROOM | CAVE_ICKY);
-		cave[y0 - yhsize + ysize][x0 - xhsize + i].feat = FEAT_WALL_OUTER;
-		cave[y0 - yhsize + ysize][x0 - xhsize + i].info |= (CAVE_ROOM | CAVE_ICKY);
+		int x = x0 - xhsize + i;
+
+		cave[y0 - yhsize + 0][x].feat = FEAT_WALL_OUTER;
+		cave[y0 - yhsize + 0][x].info |= (CAVE_ROOM | CAVE_ICKY);
+		cave[y0 - yhsize + ysize][x].feat = FEAT_WALL_OUTER;
+		cave[y0 - yhsize + ysize][x].info |= (CAVE_ROOM | CAVE_ICKY);
 	}
 
-	/* Left and right boundaries*/
+	/* Left and right boundaries */
 	for (i = 1; i < ysize; i++)
 	{
-		cave[y0 - yhsize + i][x0 - xhsize + 0].feat = FEAT_WALL_OUTER;
-		cave[y0 - yhsize + i][x0 - xhsize + 0].info |= (CAVE_ROOM | CAVE_ICKY);
-		cave[y0 - yhsize + i][x0 - xhsize + xsize].feat = FEAT_WALL_OUTER;
-		cave[y0 - yhsize + i][x0 - xhsize + xsize].info |= (CAVE_ROOM | CAVE_ICKY);
+		int y = y0 - yhsize + i;
+
+		cave[y][x0 - xhsize + 0].feat = FEAT_WALL_OUTER;
+		cave[y][x0 - xhsize + 0].info |= (CAVE_ROOM | CAVE_ICKY);
+		cave[y][x0 - xhsize + xsize].feat = FEAT_WALL_OUTER;
+		cave[y][x0 - xhsize + xsize].info |= (CAVE_ROOM | CAVE_ICKY);
 	}
 
 	/* Fill in middle with bubbles */
@@ -3506,7 +3512,7 @@ static void build_bubble_vault(int x0, int y0, int xsize, int ysize)
 		{
 			/* Get distances to two closest centers */
 
-			/* initialize*/
+			/* initialize */
 			min1 = distance(x, y, center[0].x, center[0].y);
 			min2 = distance(x, y, center[1].x, center[1].y);
 
@@ -3537,21 +3543,21 @@ static void build_bubble_vault(int x0, int y0, int xsize, int ysize)
 			}
 			if (((min2 - min1) <= 2) && (!(min1 < 3)))
 			{
-				/* Boundary at midpoint+ not at inner region of bubble*/
+				/* Boundary at midpoint+ not at inner region of bubble */
 				cave[y0 - yhsize + y][x0 - xhsize + x].feat = FEAT_WALL_OUTER;
 			}
 			else
 			{
-				/* middle of a bubble*/
+				/* middle of a bubble */
 				cave[y0 - yhsize + y][x0 - xhsize + x].feat = FEAT_FLOOR;
 			}
 
-			/* clean up rest of flags*/
+			/* clean up rest of flags */
 			cave[y0 - yhsize + y][x0 - xhsize + x].info |= (CAVE_ROOM | CAVE_ICKY);
 		}
 	}
 
-	/* Try to add some random doors*/
+	/* Try to add some random doors */
 	for (i = 0; i < 500; i++)
 	{
 		x = randint(xsize - 2) - xhsize + x0 + 1;
@@ -3599,7 +3605,7 @@ static void build_room(int x1, int x2, int y1, int y2)
 	ysize = y2 - y1;
 
 
-	/* Top and bottom boundaries*/
+	/* Top and bottom boundaries */
 	for (i = 0; i <= xsize; i++)
 	{
 		cave[y1][x1 + i].feat = FEAT_WALL_OUTER;
@@ -3608,7 +3614,7 @@ static void build_room(int x1, int x2, int y1, int y2)
 		cave[y2][x1 + i].info |= (CAVE_ROOM | CAVE_ICKY);
 	}
 
-	/* Left and right boundaries*/
+	/* Left and right boundaries */
 	for (i = 1; i < ysize; i++)
 	{
 		cave[y1 + i][x1].feat = FEAT_WALL_OUTER;
@@ -3617,20 +3623,20 @@ static void build_room(int x1, int x2, int y1, int y2)
 		cave[y1 + i][x2].info|=(CAVE_ROOM | CAVE_ICKY);
 	}
 
-	/* Middle*/
+	/* Middle */
 	for (x = 1; x < xsize; x++)
 	{
 		for (y = 1; y < ysize; y++)
 		{
 			if (cave[y1 + y][x1 + x].feat == FEAT_WALL_EXTRA)
 			{
-				/* clear the untouched region*/
+				/* clear the untouched region */
 				cave[y1 + y][x1 + x].feat = FEAT_FLOOR;
 				cave[y1 + y][x1 + x].info |= (CAVE_ROOM | CAVE_ICKY);
 			}
 			else
 			{
-				/* make it a room- but don't touch*/
+				/* make it a room- but don't touch */
 				cave[y1 + y][x1 + x].info |= (CAVE_ROOM | CAVE_ICKY);
 			}
 		}
@@ -3653,14 +3659,18 @@ static void build_room_vault(int x0, int y0, int xsize, int ysize)
 	/* fill area so don't get problems with arena levels */
 	for (x1 = 0; x1 <= xsize; x1++)
 	{
+		int x = x0 - xhsize + x1;
+
 		for (y1 = 0; y1 <= ysize; y1++)
 		{
-			cave[y0 - yhsize + y1][x0 - xhsize + x1].feat = FEAT_WALL_EXTRA;
-			cave[y0 - yhsize + y1][x0 - xhsize + x1].info &= (~CAVE_ICKY);
+			int y = y0 - yhsize + y1;
+
+			cave[y][x].feat = FEAT_WALL_EXTRA;
+			cave[y][x].info &= (~CAVE_ICKY);
 		}
 	}
 
-	/* add ten random rooms*/
+	/* add ten random rooms */
 	for (i = 0; i < 10; i++)
 	{
 		x1 = randint(xhsize) * 2 + x0 - xhsize;
@@ -3670,7 +3680,7 @@ static void build_room_vault(int x0, int y0, int xsize, int ysize)
 		build_room(x1, x2, y1, y2);
 	}
 
-	/* Add some random doors*/
+	/* Add some random doors */
 	for (i = 0; i < 500; i++)
 	{
 		x1 = randint(xsize - 2) - xhsize + x0 + 1;
@@ -3684,7 +3694,6 @@ static void build_room_vault(int x0, int y0, int xsize, int ysize)
 
 
 /* Create a random vault out of a fractal cave */
-
 static void build_cave_vault(int x0, int y0, int xsiz, int ysiz)
 {
 	int grd, roug, cutoff, xhsize, yhsize, xsize, ysize, x, y;

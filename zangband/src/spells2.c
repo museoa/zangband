@@ -3269,24 +3269,28 @@ static int next_to_walls_adj(int cy, int cx)
  */
 static void cave_temp_room_aux(int y, int x)
 {
-	cave_type *c_ptr = &cave[y][x];
-
-	/* Avoid infinite recursion */
-	if (c_ptr->info & (CAVE_TEMP)) return;
-
-	/* Do not exceed the maximum spell range */
-	if (distance(py, px, y, x) > MAX_RANGE) return;
+	cave_type *c_ptr;
 
 	/* Verify */
 	if (!in_bounds(y, x)) return;
 
-	/* If a wall, exit */
-	if (!cave_floor_bold(y, x)) return;
+	/* Get the grid */
+	c_ptr = &cave[y][x];
+
+	/* Avoid infinite recursion */
+	if (c_ptr->info & (CAVE_TEMP)) return;
 
 #if 0
 	/* Do not "leave" the current room */
 	if (!(c_ptr->info & (CAVE_ROOM))) return;
 #endif
+
+	/* If a wall, exit */
+	if (!cave_floor_bold(y, x)) return;
+
+	/* Do not exceed the maximum spell range */
+	if (distance(py, px, y, x) > MAX_RANGE) return;
+
 
 	/* Verify this grid */
 	/*
