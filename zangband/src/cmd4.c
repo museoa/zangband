@@ -131,9 +131,6 @@ void resize_map(void)
 
 	/* Hack -- update */
 	handle_stuff();
-	
-	/* Redraw */
-	Term_redraw();
 
 	/* Refresh */
 	Term_fresh();
@@ -163,9 +160,6 @@ void redraw_window(void)
 
 	/* Hack -- update */
 	handle_stuff();
-
-	/* Redraw */
-	Term_redraw();
 
 	/* Refresh */
 	Term_fresh();
