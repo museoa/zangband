@@ -2525,23 +2525,6 @@ static void process_monster(int m_idx)
 			/* This monster cannot walk through walls */
 			do_move = FALSE;
 		}
-
-		/* Some monsters never attack */
-		if (do_move && (ny == p_ptr->py) && (nx == p_ptr->px) &&
-			(r_ptr->flags1 & RF1_NEVER_BLOW))
-		{
-			/* Hack -- memorize lack of attacks */
-			if (m_ptr->ml) r_ptr->r_flags1 |= (RF1_NEVER_BLOW);
-
-			/* Do not move */
-			do_move = FALSE;
-		}
-		
-		/* Require "empty" fields */
-		if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_ENTER))
-		{
-			do_move = FALSE;
-		}
 		
 		/* 
 		 * Test for fields that will not allow this
@@ -2561,6 +2544,23 @@ static void process_monster(int m_idx)
 		
 		/* Get result */
 		do_move = mon_enter_test.do_move;
+
+		/* Some monsters never attack */
+		if (do_move && (ny == p_ptr->py) && (nx == p_ptr->px) &&
+			(r_ptr->flags1 & RF1_NEVER_BLOW))
+		{
+			/* Hack -- memorize lack of attacks */
+			if (m_ptr->ml) r_ptr->r_flags1 |= (RF1_NEVER_BLOW);
+
+			/* Do not move */
+			do_move = FALSE;
+		}
+		
+		/* Require "empty" fields */
+		if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_ENTER))
+		{
+			do_move = FALSE;
+		}
 
 		/* Handle closed doors and secret doors */
 		if (do_move && ((c_ptr->feat == FEAT_CLOSED)

@@ -1421,9 +1421,6 @@ void field_action_glyph_warding(s16b *field_ptr, vptr input)
  */
 void field_action_glyph_explode(s16b *field_ptr, vptr input)
 {
-	int px = p_ptr-> px;
-	int py = p_ptr-> py;
-
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
 	/* Look at input data */
@@ -1449,9 +1446,9 @@ void field_action_glyph_explode(s16b *field_ptr, vptr input)
 	r_ptr = &r_info[m_ptr->r_idx];
 	
 	if (do_move && !(r_ptr->flags1 & RF1_NEVER_BLOW) && 
-	    (randint1(BREAK_GLYPH) < r_ptr->level)) 
+	    (randint1(BREAK_MINOR_GLYPH) < r_ptr->level)) 
 	{
-		if ((f_ptr->fy == py) && (f_ptr->fx == px))
+		if ((f_ptr->fy == p_ptr->py) && (f_ptr->fx == p_ptr->px))
 		{
 			msg_print("The rune explodes!");
 			fire_ball(GF_MANA, 0, 2 * ((p_ptr->lev / 2) + damroll(7, 7)), 2);
