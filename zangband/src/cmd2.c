@@ -2895,8 +2895,6 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 				/* Handle visible monster */
 				else
 				{
-					char m_name[80];
-
 					/* Get "the monster" or "it" */
 					monster_desc(m_name, m_ptr, 0);
 
