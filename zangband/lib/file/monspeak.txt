@@ -390,7 +390,13 @@ says, 'Verily, it is too late for thee.'
 #N:767:Daoloth, the Render of the Veils
 #N:770:Artsi the Champion of Chaos
 #N:771:Saruman of Many Colours
-#N:772:Gandalf the Grey
+
+N:772:Gandalf the Grey
+3
+says, 'I am a Wielder of the Flame of Anor, you cannot pass.'
+says, 'The dark fire will not avail you, Flame of Udun.'
+says, 'Go Back to the Shadow! You cannot pass!'
+
 #N:773:Brand, Mad Visionary of Amber
 #N:777:Bast, Goddess of Cats
 #N:780:Vlad Dracula, Prince of Darkness
