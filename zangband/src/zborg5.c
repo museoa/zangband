@@ -3289,7 +3289,7 @@ static s32b borg_power_aux3(void)
 	{
 		/* See invisible is less important if you have ESP */
 		if (FLAG(bp_ptr, TR_TELEPATHY))
-			value += 500L;
+			value += 2000L;
 		else
 			value += 5000L;
 	}
@@ -3456,7 +3456,7 @@ static s32b borg_power_aux3(void)
 	if (borg_test_bad_curse(&temp)) value -= 1000000L;
 
 	/* Slightly penalize some flags */
-	if (FLAG(bp_ptr, TR_AGGRAVATE)) value -= 2000L;
+	if (FLAG(bp_ptr, TR_AGGRAVATE)) value -= 5000L;
 	if (FLAG(bp_ptr, TR_TELEPORT))  value -= 1000L;
 	if (FLAG(bp_ptr, TR_HEAVY_CURSE))  value -= 5000L;
 
