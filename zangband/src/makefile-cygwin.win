@@ -13,11 +13,11 @@
 # File locations - change these as appropriate
 #
 
-CYGDIR	=	d:/cygnus/cygwin-b20/h-i586-cygwin32
-SRCDIR	=	d:/zangband/src
-OBJDIR	=	d:/zangband/src
-BINDIR	=	d:/zangband/src
-TGTDIR	=	d:/zangband
+CYGDIR	=	c:/cygnus/cygwin-b20/h-i586-cygwin32
+SRCDIR	=	c:/zangband/src
+OBJDIR	=	c:/zangband/src
+BINDIR	=	c:/zangband/src
+TGTDIR	=	c:/zangband
 
 
 #
@@ -309,7 +309,7 @@ $(OBJDIR)/mspells2.o: $(SRCDIR)/mspells2.c $(INCS)
 
 $(OBJDIR)/mutation.o: $(SRCDIR)/mutation.c $(INCS)
 	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $<
-	
+
 $(OBJDIR)/notes.o: $(SRCDIR)/notes.c $(INCS)
 	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $<
 
