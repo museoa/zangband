@@ -3368,15 +3368,29 @@ errr init_xpj(int argc, char *argv[])
 	/* Use the "16x16.bmp" file if it exists */
 	if (0 == fd_close(fd_open(filename, O_RDONLY)))
 	{
-		/* Use graphics */
-		use_graphics = TRUE;
-		arg_graphics = TRUE;
-
+		if (arg_graphics)
+		{
+			/* Use graphics */
+			use_graphics = TRUE;
+			
+			/* And use tiles */
+			ANGBAND_GRAF = "new";
+		}
+		else
+		{
+			/* Use graphics */
+			use_graphics = TRUE;
+			arg_graphics = TRUE;
+			
+			/* But not for monsters / items */
+			ANGBAND_GRAF = "none";
+		}
+		
 		use_transparency = TRUE;
 
 		pict_wid = pict_hgt = 16;
 
-		ANGBAND_GRAF = "new";
+		
 	}
 	else
 	{
