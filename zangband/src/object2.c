@@ -2427,7 +2427,14 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
             /* Elfblades are always special */
             if (o_ptr->sval == SV_ELFBLADE)
             {
+                char new_name[1024];
+
                 (void)create_artifact(o_ptr, FALSE);
+
+                /* Hack - always use name made of random syllables */
+                quark_remove(&o_ptr->xtra_name);
+                get_table_name(new_name, TRUE);
+                o_ptr->xtra_name = quark_add(new_name);
 
                 break;
             }
