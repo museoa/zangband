@@ -2680,6 +2680,9 @@ void show_equip(void)
 		/* Show_equip_graph perm. on. */
 		a = object_attr(o_ptr);
 		c = object_char(o_ptr);
+		
+		/* Hack - if no object, don't display the 'nothing' symbol */
+		if (!o_ptr->number) c = ' ';
 
 #ifdef AMIGA
 		if (a & 0x80) a |= 0x40;
@@ -2715,7 +2718,7 @@ void show_equip(void)
 		}
 
 		/* Display the weight if needed */
-		if (show_weights)
+		if (show_weights && o_ptr->number)
 		{
 			int wgt = o_ptr->weight * o_ptr->number;
 			(void)sprintf(tmp_val, "%3d.%d lb", wgt / 10, wgt % 10);
