@@ -70,8 +70,8 @@ static void roll_em(cptr *vp, int vn, cptr joiner, cptr finish)
         (TR1_SUST_STR | TR1_SUST_INT | TR1_SUST_WIS | TR1_SUST_DEX | \
          TR1_SUST_CON | TR1_SUST_CHR)
 
-#define TR_STAT_MASK	TR, 0, STAT_MASK
-#define TR_SUST_MASK	TR, 1, SUST_MASK
+#define TR_STAT_MASK	0, TR0_STAT_MASK
+#define TR_SUST_MASK	1, TR1_SUST_MASK
 
 /*
  * Write object memory to a buffer
