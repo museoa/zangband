@@ -606,6 +606,9 @@ Redraw Screen (^R)
      redraws all of the windows. This command should be used after
      changing various global properties (options, attr/char mappings,
      color definitions, etc). When in doubt, use it.
+
+Display Time (^T)
+	 This command shows the current day and the time of day in the game.
         
 Load screen dump (left-paren)
      This command loads a "snap-shot" of the current screen from the
