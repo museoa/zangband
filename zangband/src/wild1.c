@@ -3255,7 +3255,7 @@ static void create_wild_info(int *bestx, int *besty)
 	hgt_min *= 16;
 
 	/* Create "population density" information */
-	create_pop_map(sea_level * 16 + hgt_min);
+	create_pop_map((u16b) (sea_level * 16 + hgt_min));
 
 	/* Work out extremes of population so it can be scaled. */
 
@@ -3285,7 +3285,7 @@ static void create_wild_info(int *bestx, int *besty)
 	/* Rescale minimum. */
 	pop_min *= 16;
 
-	create_law_map(sea_level * 16 + hgt_min);
+	create_law_map((u16b) (sea_level * 16 + hgt_min));
 
 	/* Work out extremes of "lawfulness" so it can be scaled. */
 
@@ -3315,7 +3315,7 @@ static void create_wild_info(int *bestx, int *besty)
 
 			hgt = (byte)((w_ptr->gen.hgt_map - hgt_min) * 16 / hgt_scale);
 			pop = (byte)((w_ptr->gen.pop_map - pop_min) * 16 / pop_scale);
-			law = wild_temp_dist[w_ptr->gen.law_map / 16];
+			law = (byte) wild_temp_dist[w_ptr->gen.law_map / 16];
 
 			/*
 			 * Go to transition data structure

@@ -375,6 +375,7 @@ static int show_menu(int num, menu_type *options, int select, bool scroll,
 {
 	int cnt = 0;
 	int i;
+	bool select_me;
 	
 	int x, y;
 	
@@ -393,7 +394,9 @@ static int show_menu(int num, menu_type *options, int select, bool scroll,
 	{
 		for (i = 0; i < num; i++)
 		{
-			if (show_option(0, i + 2 + offset, &options[i], I2A(cnt), scroll, i == select))
+			select_me = i == select;
+
+			if (show_option(0, i + 2 + offset, &options[i], I2A(cnt), scroll, select_me))
 			{
 				cnt++;
 			}
@@ -408,10 +411,12 @@ static int show_menu(int num, menu_type *options, int select, bool scroll,
 	{
 		for (i = 0; i < num; i++)
 		{
+			select_me = i == select;
+
 			x = (i / 18) * 40;
 			y = (i % 18) + 2;
 				
-			if (show_option(x, y + offset, &options[i], listsym[cnt], scroll, i == select))
+			if (show_option(x, y + offset, &options[i], listsym[cnt], scroll, select_me))
 			{
 				cnt++;
 			}
@@ -426,10 +431,12 @@ static int show_menu(int num, menu_type *options, int select, bool scroll,
 	{
 		for (i = 0; i < num; i++)
 		{
+			select_me = i == select;
+
 			x = (i / 20) * 30;
 			y = (i % 20) + 2;
 			
-			if (show_option(x, y + offset, &options[i], listsym[cnt], scroll, i == select))
+			if (show_option(x, y + offset, &options[i], listsym[cnt], scroll, select_me))
 			{
 				cnt++;
 			}

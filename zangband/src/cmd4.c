@@ -3969,6 +3969,120 @@ void dump_town_info(FILE *fff, int town, bool ignore)
 
 
 /*
+ * Dump info about a place if is has a dungeon to the given file
+ */
+static void dump_dungeon_info(FILE *fff, int town, bool ignore)
+{
+	int i;
+
+	bool visited = FALSE;
+	cptr place_name, place_dir;
+	int depth;
+	int x, y, count = 0;
+
+	place_type *p2_ptr, *pl_ptr = &place[town];
+	dun_type *d_ptr = pl_ptr->dungeon;
+	wild_done_type *w_ptr;
+
+	/* A place without a dungeon */
+	if (!d_ptr) return;
+
+	/* Get a shorthand */
+	depth = d_ptr->recall_depth;
+
+	/* Is it a town? */
+	if (pl_ptr->numstores)
+	{
+		/* Hack-- determine the town has been visited */
+		visited = FALSE;
+
+		for (i = 0; i < pl_ptr->numstores; i++)
+		{
+			/* Stores are not given coordinates until you visit a town */
+			if ((pl_ptr->store[i].x != 0) && (pl_ptr->store[i].y != 0))
+			{
+				visited = TRUE;
+				break;
+			}
+		}
+
+		/* Build a buffer with the information (If visited, and if it is a town) */
+		if (visited)
+		{
+			/* Give the dungeon name and location*/
+			froff(fff, "%s dungeon under %s",
+				dungeon_type_name(d_ptr->habitat), pl_ptr->name);
+		}
+	}
+	/* So it is a dungeon */
+	else
+	{
+		/* Fetch closest known town and direction */
+		place_name = describe_quest_location(&place_dir,
+						pl_ptr->x, pl_ptr->y, TRUE);
+
+		/* Check a piece of the map */
+		for (x = 0; x < 3; x++)
+		{
+			for (y = 0; y < 5; y++)
+			{
+				/* Pick up a spot on the map */
+				w_ptr = &wild[pl_ptr->y + y][pl_ptr->x + x].done;
+
+				/* Pick up the place associated with this spot */
+				p2_ptr = (w_ptr->place) ? &place[w_ptr->place] : NULL;
+
+				/* Does this spot contain a place? */
+				if (!p2_ptr) continue;
+
+				/* Has this spot been seen? */
+				if (!(w_ptr->info & WILD_INFO_SEEN)) continue;
+				
+				/* Is this place the same as the one that we started with? */
+				if (p2_ptr == pl_ptr) count++;
+			}
+		}
+
+		/* Skip if the dungeon is unknown */
+		if (!count) return;
+
+		/* Give the dungeon name and location*/
+		froff(fff, "%s dungeon %s of %s",
+			count, dungeon_type_name(d_ptr->habitat), place_dir, place_name);
+
+		/* Did the player go into the dungeon? */
+		if (!depth)
+		{
+			/* It is still guarded by monsters */
+			froff(fff, "  (Guarded)");
+		}
+	}
+
+	/* If the dungeon was attempted, show the depth */
+	if (depth)
+	{
+		/* Show the depth reached */
+		if (depth_in_feet)
+		{
+			froff(fff, ", descended to %d feet", depth * 50);
+		}
+		else
+		{
+			froff(fff, ", descended to level %d", depth);
+		}
+
+		/* All the way down? */
+		if (depth == d_ptr->max_level)
+		{
+			froff(fff, " (Bottom)");
+		}
+	}
+
+	froff(fff, ".\n");
+}
+
+
+/*
  * Display information about wilderness areas
  */
 static bool do_cmd_knowledge_wild(int dummy)
@@ -4007,8 +4121,47 @@ static bool do_cmd_knowledge_wild(int dummy)
 }
 
 
+/*
+ * Display information about wilderness areas
+ */
+static bool do_cmd_knowledge_dungeon(int dummy)
+{
+	int k;
 
-static menu_type knowledge_menu[10] =
+	FILE *fff;
+
+	char file_name[1024];
+	
+	/* Hack - ignore parameter */
+	(void) dummy;
+
+	/* Open a temporary file */
+	fff = my_fopen_temp(file_name, 1024);
+
+	/* Failure */
+	if (!fff) return (FALSE);
+	
+	/* Cycle through the places */
+	for (k = 1; k < place_count; k++)
+	{
+		dump_dungeon_info(fff, k, TRUE);
+	}
+
+	/* Close the file */
+	my_fclose(fff);
+
+	/* Display the file contents */
+	(void)show_file(file_name, "Dungeons", 0, 0);
+
+	/* Remove the file */
+	(void)fd_kill(file_name);
+	
+	return (FALSE);
+}
+
+
+/* Some gaps for options that should not show up always */
+static menu_type knowledge_menu[15] =
 {
 	{"Display known uniques", NULL, do_cmd_knowledge_uniques, MN_ACTIVE | MN_CLEAR},
 	{"Display known objects", NULL, do_cmd_knowledge_objects, MN_ACTIVE | MN_CLEAR},
@@ -4016,9 +4169,14 @@ static menu_type knowledge_menu[10] =
 	{"Display mutations", NULL, do_cmd_knowledge_mutations, MN_ACTIVE | MN_CLEAR},
 	{"Display current pets", NULL, do_cmd_knowledge_pets, MN_ACTIVE | MN_CLEAR},
 	{"Display current quests", NULL, do_cmd_knowledge_quests, MN_ACTIVE | MN_CLEAR},
+	MENU_END,
+	MENU_END,
+	MENU_END,
+	MENU_END,
 	{"Display virtues", NULL, do_cmd_knowledge_virtues, MN_ACTIVE | MN_CLEAR},
-	{NULL, NULL, do_cmd_knowledge_notes, MN_ACTIVE | MN_CLEAR},
-	{NULL, NULL, do_cmd_knowledge_wild, MN_ACTIVE | MN_CLEAR},
+	{"Display notes", NULL, do_cmd_knowledge_notes, MN_ACTIVE | MN_CLEAR},
+	{"Display towns", NULL, do_cmd_knowledge_wild, MN_ACTIVE | MN_CLEAR},
+	{"Display dungeons", NULL, do_cmd_knowledge_dungeon, MN_ACTIVE | MN_CLEAR},
 	MENU_END
 };
 
@@ -4028,40 +4186,38 @@ static menu_type knowledge_menu[10] =
  */
 void do_cmd_knowledge(void)
 {
+	int nr, last_option = 6;
+
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);
+
+	/* start at the first free spot */
+	nr = last_option;
+
+	/*
+	 * Display virtues option is always left out
+	 * if (use_virtues) knowledge_menu[nr++] = knowledge_menu[10];
+	 */
 	
-	/* Turn off unavailable options */
-	
-	/* Hack - turn off virtues */
-	knowledge_menu[6].text = "";
-	knowledge_menu[6].flags &= ~(MN_ACTIVE);
-	
-	if (!take_notes)
+	/* Copy in the display notes */
+	if (take_notes) knowledge_menu[nr++] = knowledge_menu[11];
+
+	/* Copy in the wilderness displays */
+	if (!vanilla_town)
 	{
-		/* Turn off note taking menu */
-		knowledge_menu[7].text = "";
-		knowledge_menu[7].flags &= ~(MN_ACTIVE);
-	}
-	else
-	{
-		knowledge_menu[7].text = "Display notes";
-		knowledge_menu[7].flags |= MN_ACTIVE;
-	}
-	
-	if (vanilla_town)
-	{
-		knowledge_menu[8].text = "";
-		knowledge_menu[8].flags &= ~(MN_ACTIVE);
-	}
-	else
-	{
-		knowledge_menu[8].text = "Display town information";
-		knowledge_menu[8].flags |= MN_ACTIVE;
+		knowledge_menu[nr++] = knowledge_menu[12];
+		knowledge_menu[nr++] = knowledge_menu[13];
 	}
 	
 	/* Display the menu */
 	display_menu(knowledge_menu, -1, FALSE, NULL, "Display current knowledge");
+
+	/* Clear these options again */
+	for (; nr >= last_option; nr--)
+	{
+		/* menu item 14 contains a MENU_END */
+		knowledge_menu[nr] = knowledge_menu[14];
+	}
 }
 
 

@@ -1836,7 +1836,7 @@ static bool request_find_place(int dummy)
 
 
 
-#define QUEST_MENU_MAX		5
+#define QUEST_MENU_MAX		7
 #define QUEST_MENU_RELIC	3
 
 /* The quest selection menu */
@@ -1845,6 +1845,8 @@ static menu_type quest_menu[QUEST_MENU_MAX] =
 	{"To hunt down a bounty of monsters", NULL, request_bounty, MN_ACTIVE},
 	{"To send a message to someone far away", NULL, request_message, MN_ACTIVE},
 	{"To find a lost ruin", NULL, request_find_place, MN_ACTIVE},
+	MENU_END,
+	MENU_END,
 	{"To find a lost relic", NULL, request_find_item, MN_ACTIVE},
 	MENU_END
 };
@@ -1858,16 +1860,17 @@ void request_quest(const store_type *b_ptr, int scale)
 	curr_scale = scale;
 	
 	/* Only allow artifact quests from large castles */
-	if (scale < 20)
+	if (scale >= 20)
 	{
-		quest_menu[QUEST_MENU_RELIC].flags &= ~(MN_ACTIVE);
-	}
-	else
-	{
-		quest_menu[QUEST_MENU_RELIC].flags |= MN_ACTIVE;
+		/* Copy this quest into the menu */
+		quest_menu[QUEST_MENU_RELIC] = quest_menu[QUEST_MENU_RELIC + 2];
 	}
 
 	display_menu(quest_menu, -1, FALSE, NULL, "What type of quest would you like?");
+
+	
+	/* Remove the artifact quest from the menu */
+	quest_menu[QUEST_MENU_RELIC] = quest_menu[QUEST_MENU_RELIC + 1];
 }
 
 /* Show the quest status as a string */
