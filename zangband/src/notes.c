@@ -79,7 +79,14 @@ void add_note(cptr note, char code)
 	/* Get depth */
 	if (!p_ptr->depth)
 	{
-		strnfmt(depths, 32, "  Town");
+		if (p_ptr->town_num)
+		{
+			strnfmt(depths, 32, "  Town");
+		}
+		else
+		{
+			strnfmt(depths, 32, "  Wild");
+		}
 	}
 	else if (depth_in_feet)
 	{
