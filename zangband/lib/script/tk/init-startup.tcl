@@ -335,8 +335,6 @@ proc angband_initialized {} {
 	Source library buttonlabel.tcl
 	angband_startup "    canvist.tcl"
 	Source library canvist.tcl
-	angband_startup "    canvist2.tcl"
-	Source library canvist2.tcl
 	angband_startup "    menu.tcl"
 	Source library menu.tcl
 	angband_startup "    module.tcl"
