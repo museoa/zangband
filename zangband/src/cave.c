@@ -273,6 +273,8 @@ bool los(int x1, int y1, int x2, int y2)
 }
 
 
+
+
 /* Slope and square used by mmove2 */
 static int mmove_slope;
 static int mmove_sq;
@@ -280,6 +282,97 @@ static int mmove_sq;
 /* Direction to move in */
 static int mmove_dx;
 static int mmove_dy;
+
+
+/*
+ * This is a (slow) function that can be used
+ * to test if there is a direct projection
+ * between two squares.
+ *
+ * "Direct" projections tend to look much straighter
+ * on the screen than normal ones.
+ */
+static bool is_direct_projectable(int x1, int y1)
+{
+	int xx, yy;
+
+	int ax, ay, sx, sy;
+	
+	int slope = 0, sq = 0;
+
+	cave_type *c_ptr;
+
+	/* Extract the absolute offset */
+	ay = ABS(mmove_dy);
+	ax = ABS(mmove_dx);
+
+	/* Extract some signs */
+	sx = (mmove_dx < 0) ? -1 : 1;
+	sy = (mmove_dy < 0) ? -1 : 1;
+
+
+	/*
+	 * Start at the first square in the list.
+	 * This is a square adjacent to (x1,y1)
+	 */
+
+	/* Hack - we need to stick to one octant */
+	if (ay < ax)
+	{
+		/* Look up the slope to use */
+		slope = (p_slope_min[ax][ay] + p_slope_max[ax][ay]) / 2;
+
+		while (TRUE)
+		{
+			xx = x1 + sx * project_data[slope][sq].x;
+			yy = y1 + sy * project_data[slope][sq].y;
+
+			/* Done? */
+			if ((xx == x1 + mmove_dx) && (yy == y1 + mmove_dy)) return (TRUE);
+
+			c_ptr = area(xx, yy);
+
+			/* Is the square not occupied by a monster, and passable? */
+			if (!cave_los_grid(c_ptr) || c_ptr->m_idx)
+			{
+				return (FALSE);
+			}
+			else
+			{
+				/* Advance along ray */
+				sq++;
+			}
+		}
+	}
+	else
+	{
+		/* Look up the slope to use */
+		slope = (p_slope_min[ay][ax] + p_slope_max[ay][ax]) / 2;
+
+		while (TRUE)
+		{
+			/* Note that the data offsets have x,y swapped */
+			xx = x1 + sx * project_data[slope][sq].y;
+			yy = y1 + sy * project_data[slope][sq].x;
+
+			/* Done? */
+			if ((xx == x1 + mmove_dx) && (yy == y1 + mmove_dy)) return (TRUE);
+
+			c_ptr = area(xx, yy);
+
+			/* Is the square not occupied by a monster, and passable? */
+			if (!cave_los_grid(c_ptr) || c_ptr->m_idx)
+			{
+				return (FALSE);
+			}
+			else
+			{
+				/* Advance along ray */
+				sq++;
+			}
+		}
+	}
+}
 
 
 /*
@@ -350,6 +443,17 @@ void mmove_init(int x1, int y1, int x2, int y2)
 	/* Hack - we need to stick to one octant */
 	if (ay < ax)
 	{
+		/* Is there a direct line to the target? */
+		if (is_direct_projectable(x1, y1))
+		{
+			/* Set the direct route */
+			mmove_slope = (p_slope_min[ax][ay] + p_slope_max[ax][ay]) / 2;
+			mmove_sq = 0;
+			
+			/* Done */
+			return;
+		}
+
 		/* Look up the slope to use */
 		mmove_slope = p_slope_min[ax][ay];
 
@@ -377,7 +481,7 @@ void mmove_init(int x1, int y1, int x2, int y2)
 			else
 			{
 				/* Advance along ray */
-				(mmove_sq)++;
+				mmove_sq++;
 			}
 		}
 
@@ -389,6 +493,17 @@ void mmove_init(int x1, int y1, int x2, int y2)
 	}
 	else
 	{
+		/* Is there a direct line to the target? */
+		if (is_direct_projectable(x1, y1))
+		{
+			/* Set the direct route */
+			mmove_slope = (p_slope_min[ay][ax] + p_slope_max[ay][ax]) / 2;
+			mmove_sq = 0;
+			
+			/* Done */
+			return;
+		}
+	
 		/* Look up the slope to use */
 		mmove_slope = p_slope_min[ay][ax];
 
@@ -417,7 +532,7 @@ void mmove_init(int x1, int y1, int x2, int y2)
 			else
 			{
 				/* Advance along ray */
-				(mmove_sq)++;
+				mmove_sq++;
 			}
 		}
 
