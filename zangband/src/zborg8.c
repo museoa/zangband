@@ -506,11 +506,10 @@ static bool borg_good_sell(list_item *l_ptr)
 	/* Never sell worthless items */
 	if (l_ptr->cost <= 0) return (FALSE);
 
-#if 0
-
 	/* Analyze the type */
 	switch (l_ptr->tval)
 	{
+		case TV_FOOD:
 		case TV_POTION:
 		case TV_SCROLL:
 		{
@@ -520,7 +519,6 @@ static bool borg_good_sell(list_item *l_ptr)
 			break;
 		}
 
-		case TV_FOOD:
 		case TV_ROD:
 		case TV_WAND:
 		case TV_STAFF:
@@ -562,13 +560,11 @@ static bool borg_good_sell(list_item *l_ptr)
 	}
 
 	/* Do not sell stuff that is not fully id'd and should be  */
-	if (!borg_obj_known_full(l_ptr) && borg_obj_is_ego_art(l_ptr))
+	if (!borg_obj_known_full(l_ptr) && borg_obj_star_id_able(l_ptr))
 	{
-		/* For now check all artifacts */
+		/* *identify* this item first */
 		return (FALSE);
 	}
-
-#endif /* 0 */
 
 	/* Assume we can */
 	return (TRUE);
