@@ -5,15 +5,16 @@ Please choose one of the following online help files:
     (0) General Information            (general.hlp)
     (1) Creating a Character           (birth.hlp)
     (2) Character Attributes           (charattr.hlp)
-    (3) The Town and Dungeon           (dungeon.hlp)
-    (4) Attacking Monsters             (attack.hlp)
-    (5) Defending Youself              (defend.hlp)
-    (6) Zangband Magic System          (magic.hlp)
-    (7) Zangband Commands              (command.hlp)
-    (8) Zangband Options               (option.hlp)
-    (9) User Preference Files          (pref.hlp)
-    (a) The ZAngband Newbie Guide      (tang.txt)
-    (b) Zangband Spoilers              (spoiler.hlp)
+    (3) The Town and Wilderness        (town.hlp)
+    (4) The Dungeon                    (dungeon.hlp)
+    (5) Attacking Monsters             (attack.hlp)
+    (6) Defending Youself              (defend.hlp)
+    (7) Zangband Magic System          (magic.hlp)
+    (8) Zangband Commands              (command.hlp)
+    (9) Zangband Options               (option.hlp)
+    (a) User Preference Files          (pref.hlp)
+    (b) The Zangband Newbie Guide      (tang.txt)
+    (c) Zangband Spoilers              (spoiler.hlp)
 
     (?) Help System Commands           (helpinfo.txt)
 
@@ -21,12 +22,13 @@ Please choose one of the following online help files:
 ***** [0] general.hlp
 ***** [1] birth.hlp
 ***** [2] charattr.hlp
-***** [3] dungeon.hlp
-***** [4] attack.hlp
-***** [5] defend.hlp
-***** [6] magic.hlp
-***** [7] command.hlp
-***** [8] option.hlp
-***** [9] pref.hlp
-***** [a] tang.txt
-***** [b] spoiler.hlp
+***** [3] town.hlp
+***** [4] dungeon.hlp
+***** [5] attack.hlp
+***** [6] defend.hlp
+***** [7] magic.hlp
+***** [8] command.hlp
+***** [9] option.hlp
+***** [a] pref.hlp
+***** [b] tang.txt
+***** [c] spoiler.hlp
