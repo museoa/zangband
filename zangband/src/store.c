@@ -1959,9 +1959,6 @@ static void store_examine(void)
 	/* Get the actual item */
 	o_ptr = get_list_item(st_ptr->stock, item);
 
-	/* Describe */
-	msgf("Examining %v...", OBJECT_FMT(o_ptr, TRUE, 3));
-
 	/* Describe it fully */
 	identify_fully_aux(o_ptr);
 
