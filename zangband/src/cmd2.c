@@ -2804,6 +2804,8 @@ void do_cmd_throw_aux(int mult)
 	int sleeping_bonus = 0;
 	int terrain_bonus = 0;
 
+	bool rogue_throw = FALSE;
+
 	object_type *q_ptr;
 
 	object_type *o_ptr;
@@ -2867,12 +2869,19 @@ void do_cmd_throw_aux(int mult)
 	/* Paranoia */
 	if (tdis > MAX_RANGE) tdis = MAX_RANGE;
 
+	/* Rogues get a bonus when throwing daggers */
+	if (p_ptr->rp.pclass == CLASS_ROGUE && p_ptr->lev >= 10 &&
+			q_ptr->tval == TV_SWORD && q_ptr->weight <= 20)
+	{
+		rogue_throw = TRUE;
+	}
+
 	/*
 	 * Chance of hitting.  Other thrown objects are easier to use, but
 	 * only throwing weapons take advantage of bonuses to Skill from
 	 * other items. -LM-
 	 */
-	if (q_ptr->flags2 & (TR2_THROW))
+	if ((q_ptr->flags2 & (TR2_THROW)) || rogue_throw)
 	{
 		chance = p_ptr->skill.tht + (p_ptr->to_h + q_ptr->to_h) * BTH_PLUS_ADJ;
 	}
@@ -2884,6 +2893,8 @@ void do_cmd_throw_aux(int mult)
 	/* Take a turn */
 	p_ptr->energy_use = 100;
 
+	if (rogue_throw)
+		p_ptr->energy_use = 50;
 
 	/* Start at the player */
 	y = py;
