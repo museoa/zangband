@@ -876,7 +876,7 @@ bool borg_projectable(int y1, int x1, int y2, int x2)
 			if ((dist > 2) && !mb_ptr->feat) break;
 		}
 		/* Never pass through walls/doors */
-		if (dist && (!borg_cave_floor_grid(mb_ptr))) break;
+		if (dist && borg_cave_wall_grid(mb_ptr)) break;
 
 		/* Check for arrival at "final target" */
 		if ((x == x2) && (y == y2)) return (TRUE);
@@ -920,7 +920,7 @@ bool borg_offset_projectable(int y1, int x1, int y2, int x2)
 		if ((dist) && !mb_ptr->feat) break;
 
 		/* Never pass through walls/doors */
-		if (dist && (!borg_cave_floor_grid(mb_ptr))) break;
+		if (dist && borg_cave_wall_grid(mb_ptr)) break;
 
 		/* Check for arrival at "final target" */
 		if ((x == x2) && (y == y2)) return (TRUE);
@@ -963,7 +963,7 @@ bool borg_projectable_pure(int y1, int x1, int y2, int x2)
 		if (dist && !mb_ptr->feat) break;
 
 		/* Never pass through walls/doors */
-		if (dist && (!borg_cave_floor_grid(mb_ptr))) break;
+		if (dist && borg_cave_wall_grid(mb_ptr)) break;
 
 		/* Check for arrival at "final target" */
 		if ((x == x2) && (y == y2)) return (TRUE);

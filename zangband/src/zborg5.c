@@ -1033,7 +1033,7 @@ static void borg_follow_kill(int i)
 
 
 	/* Prevent silliness */
-	if (!borg_cave_floor_grid(mb_ptr))
+	if (borg_cave_wall_grid(mb_ptr))
 	{
 		/* Delete the monster */
 		borg_delete_kill(i);
@@ -1094,7 +1094,7 @@ static void borg_follow_kill(int i)
 		mb_ptr = map_loc(x, y);
 
 		/* Skip known walls and doors */
-		if (!borg_cave_floor_grid(mb_ptr)) continue;
+		if (borg_cave_wall_grid(mb_ptr)) continue;
 
 		/* Skip known monsters */
 		if (mb_ptr->kill) continue;
@@ -1125,7 +1125,7 @@ static void borg_follow_kill(int i)
 	mb_ptr = map_loc(x, y);
 
 	/* Avoid walls and doors */
-	if (!borg_cave_floor_grid(mb_ptr))
+	if (borg_cave_wall_grid(mb_ptr))
 	{
 		/* Just delete the monster */
 		borg_delete_kill(i);

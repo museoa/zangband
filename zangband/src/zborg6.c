@@ -779,13 +779,7 @@ static bool borg_surrounded(void)
 		mb_ptr = map_loc(x, y);
 
 		/* Non Safe grids */
-		if (!borg_cave_floor_grid(mb_ptr) &&
-			(mb_ptr->feat != FEAT_TREES) &&
-			(mb_ptr->feat == FEAT_SHAL_WATER &&
-			 (!borg_skill[BI_ENCUMBERD] &&
-			  !borg_skill[BI_FEATH])) &&
-			(mb_ptr->feat == FEAT_SHAL_LAVA &&
-			 !borg_skill[BI_IFIRE])) non_safe_grids++;
+		if (borg_cave_wall_grid(mb_ptr)) non_safe_grids++;
 
 		/* Skip unknown grids */
 		if (!mb_ptr->feat) non_safe_grids++;
@@ -1352,7 +1346,7 @@ bool borg_caution_phase(int emergency, int turns)
 			if (mb_ptr->feat == FEAT_INVIS) continue;
 
 			/* Skip walls */
-			if (!borg_cave_floor_bold(y, x)) continue;
+			if (borg_cave_wall_grid(mb_ptr)) continue;
 
 			/* Skip monsters */
 			if (mb_ptr->monster) continue;
@@ -1435,7 +1429,7 @@ static bool borg_dim_door(int emergency, int p1)
 			if (mb_ptr->feat == FEAT_INVIS) continue;
 
 			/* Skip walls, trees, water, lava */
-			if (!borg_cave_floor_grid(mb_ptr)) continue;
+			if (borg_cave_wall_grid(mb_ptr)) continue;
 
 			/* Skip monsters */
 			if (mb_ptr->monster) continue;
@@ -3486,7 +3480,7 @@ bool borg_caution(void)
 				mb_ptr = map_loc(x1, y1);
 
 				/* Require floor */
-				if (!borg_cave_floor_grid(mb_ptr)) break;
+				if (borg_cave_wall_grid(mb_ptr)) break;
 
 				/* Require line of sight */
 				if (!borg_los(y1, x1, y2, x2)) break;
@@ -3610,7 +3604,7 @@ bool borg_caution(void)
 			if (borg_skill[BI_ISCONFUSED]) continue;
 
 			/* Skip walls/doors */
-			if (!borg_cave_floor_grid(mb_ptr)) continue;
+			if (borg_cave_wall_grid(mb_ptr)) continue;
 
 			/* Skip monster grids */
 			if (mb_ptr->monster) continue;
@@ -5336,7 +5330,7 @@ static int borg_launch_bolt_aux_hack(int i, int dam, int typ)
 	mb_ptr = map_loc(x, y);
 
 	/* Never shoot walls/doors */
-	if (!borg_cave_floor_grid(mb_ptr)) return (0);
+	if (borg_cave_wall_grid(mb_ptr)) return (0);
 
 #if 0
 	/* Hack -- Unknown grids should be avoided some of the time */
@@ -5487,7 +5481,7 @@ static int borg_launch_bolt_aux(int y, int x, int rad, int dam, int typ,
 			/* Stop at walls */
 			/* note if beam, this is the end of the beam */
 			/* dispel spells act like beams (sort of) */
-			if (!borg_cave_floor_grid(mb_ptr))
+			if (borg_cave_wall_grid(mb_ptr))
 			{
 				if (rad != -1)
 					return (0);
@@ -15821,7 +15815,7 @@ bool borg_flow_spastic(bool bored)
 		if (!mb_ptr->feat) continue;
 
 		/* Skip walls/doors */
-		if (!borg_cave_floor_grid(mb_ptr)) continue;
+		if (borg_cave_wall_grid(mb_ptr)) continue;
 
 		/* Acquire the cost */
 		cost = mb_ptr->cost;

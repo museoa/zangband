@@ -617,7 +617,7 @@ bool borg_check_lite(void)
 		if (!mb_ptr->feat) corners++;
 
 		/* Location must not be a wall/door */
-		if (!borg_cave_floor_grid(mb_ptr)) corners++;
+		if (borg_cave_wall_grid(mb_ptr)) corners++;
 
 	}
 	/* Add them up */
@@ -646,7 +646,7 @@ bool borg_check_lite(void)
 				if (mb_ptr->flags & MAP_GLOW) floors--;
 
 				/* Location must not be a wall/door */
-				if (!borg_cave_floor_grid(mb_ptr)) floors--;
+				if (borg_cave_wall_grid(mb_ptr)) floors--;
 
 			}
 		}
@@ -760,7 +760,7 @@ bool borg_check_lite_only(void)
 		if (!mb_ptr->feat) corners++;
 
 		/* Location must not be a wall/door */
-		if (!borg_cave_floor_grid(mb_ptr)) corners++;
+		if (borg_cave_wall_grid(mb_ptr)) corners++;
 
 	}
 	/* Add them up ..2 */
@@ -789,7 +789,7 @@ bool borg_check_lite_only(void)
 				if (mb_ptr->flags & MAP_GLOW) floors--;
 
 				/* Location must not be a wall/door */
-				if (!borg_cave_floor_grid(mb_ptr)) floors--;
+				if (borg_cave_wall_grid(mb_ptr)) floors--;
 
 			}
 		}
