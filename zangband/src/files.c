@@ -2947,6 +2947,9 @@ errr file_character(cptr name, bool full)
 		}
 	}
 
+	if (limit_messages && msg_max > 50)
+		msg_max = 50;
+
 	fprintf(fff, "  [Message Log (last %d messages)]\n\n", msg_max);
 
 	for (i = msg_max - 1; i >= 0; i--)

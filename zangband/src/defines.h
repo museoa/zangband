@@ -3765,7 +3765,7 @@
 #define center_player			p_ptr->options[154]
 #define avoid_center			p_ptr->options[155]
 /* {TRUE,  0, NULL,					"Number 172" }, p_ptr->options[156] */
-/* {TRUE,  0, NULL,					"Number 173" }, p_ptr->options[157] */
+#define limit_messages			p_ptr->options[157]
 /* {TRUE,  0, NULL,					"Number 174" }, p_ptr->options[158] */
 /* {TRUE,  0, NULL,					"Number 175" }, p_ptr->options[159] */
 /* {TRUE,  0, NULL,					"Number 176" }, p_ptr->options[160] */

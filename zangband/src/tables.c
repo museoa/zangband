@@ -6323,7 +6323,7 @@ option_type option_info[OPT_MAX] =
 	{FALSE, 5, "center_player",			"Always center on the player (*slow*)" },
 	{FALSE, 5, "avoid_center",			"Avoid centering while running" },
 	{TRUE,  0, NULL,					"Number 172" },
-	{TRUE,  0, NULL,					"Number 173" },
+	{TRUE,  5, "limit_messages",			"Only display last 50 messages in dumps" },
 	{TRUE,  0, NULL,					"Number 174" },
 	{TRUE,  0, NULL,					"Number 175" },
 	{TRUE,  0, NULL,					"Number 176" },
