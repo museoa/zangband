@@ -2214,9 +2214,7 @@ static void map_mon_info(monster_type *m_ptr, monster_race *r_ptr, byte *a, char
  * in Term_note_map()
  */
 
-static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
-                     byte *ap, char *cp, byte *tap, char *tcp,
-					 term_map *map)
+static void map_info(int x, int y, byte *ap, char *cp, byte *tap, char *tcp)
 {
 	feature_type *f_ptr;
 
@@ -2230,6 +2228,10 @@ static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 
 	s16b this_f_idx, next_f_idx;
 
+	/* Get location */
+	cave_type *c_ptr = area(x, y);
+	pcave_type *pc_ptr = parea(x, y);
+	
 	/* Get the memorized feature */
 	byte feat = pc_ptr->feat;
 	
@@ -2245,6 +2247,18 @@ static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 	bool lite = (c_ptr->info & CAVE_MNLT) || (player & GRID_LITE);
 	
 	bool float_field = FALSE;
+	
+	term_map map;
+	
+	/* Clear map info */
+	(void)WIPE(&map, term_map);
+	
+	/* Save known data */
+	map.terrain = feat;
+	
+	/* Save location */
+	map.x = x;
+	map.y = y;
 
 	
 	/* Pointer to the feature */
@@ -2264,7 +2278,7 @@ static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 		 */
 		if (glow)
 		{
-			map->flags = MAP_GLOW;
+			map.flags = MAP_GLOW;
 		}
 	}
 	else
@@ -2272,10 +2286,10 @@ static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 		/* Visible */
 		if (visible)
 		{
-			map->flags = MAP_SEEN | MAP_ONCE;
+			map.flags = MAP_SEEN | MAP_ONCE;
 
-			if (glow) map->flags |= MAP_GLOW;
-			if (lite) map->flags |= MAP_LITE;
+			if (glow) map.flags |= MAP_GLOW;
+			if (lite) map.flags |= MAP_LITE;
 		}
 	
 		/* The feats attr */
@@ -2362,10 +2376,10 @@ static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 			(FIELD_INFO_MARK | FIELD_INFO_VIS))
 		{
 			/* Remember field type */
-			map->field = fld_ptr->t_idx;
+			map.field = fld_ptr->t_idx;
 
 			/* Keep this grid */
-			map->flags |= MAP_ONCE;
+			map.flags |= MAP_ONCE;
 		
 			/* Which display level to use? */
 			if (fld_ptr->info & FIELD_INFO_FEAT)
@@ -2421,16 +2435,16 @@ static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 			if (k_ptr->flavor)
 			{
 				/* Save flavor character */
-				map->unknown = k_ptr->d_char;
+				map.unknown = k_ptr->d_char;
 			}
 			else
 			{
 				/* Save object */
-				map->object = o_ptr->k_idx;
+				map.object = o_ptr->k_idx;
 			}
 
 			/* Keep this grid */
-			map->flags |= MAP_ONCE;
+			map.flags |= MAP_ONCE;
 		
 			/* A field is obscuring the view to the object */
 			if (float_field) break;
@@ -2463,16 +2477,16 @@ static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 		r_ptr = &r_info[m_ptr->r_idx];
 
 		/* Get monster tile info */
-		map_mon_info(m_ptr, r_ptr, &a, &c, map);
+		map_mon_info(m_ptr, r_ptr, &a, &c, &map);
 		
 		/* Not hallucinating and Mimic in los? */
 		if (!halluc && visible && !m_ptr->ml && (r_ptr->flags1 & RF1_CHAR_MIMIC))
 		{
 			/* Keep this grid */
-			map->flags |= MAP_ONCE;
+			map.flags |= MAP_ONCE;
 
 			/* Save mimic character */
-			map->unknown = r_ptr->d_char;
+			map.unknown = r_ptr->d_char;
 		}
 	}
 
@@ -2502,6 +2516,19 @@ static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 	/* Save the info */
 	(*ap) = a;
 	(*cp) = c;
+	
+	/* Save tile information */
+	map.a = a;
+	map.c = c;
+	map.ta = (*tap);
+	map.tc = (*tcp);
+	
+	/* Save info into overhead map if required */
+	if (map_init)
+	{
+		/* Save information in map */
+		save_map_location(x, y, &map);
+	}
 }
 
 
@@ -2518,38 +2545,8 @@ static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
  */
 static void Term_note_map(int x, int y, byte *a, char *c, byte *ta, char *tc)
 {
-	/* Get location */
-	cave_type *c_ptr = area(x, y);
-	pcave_type *pc_ptr = parea(x, y);
-	
-	term_map map;
-	
-	/* clear map info */
-	(void)WIPE(&map, term_map);
-	
 	/* Get the map_info() information */
-	map_info(c_ptr, pc_ptr, a, c, ta, tc, &map);
-
-	/* Paranoia - no overhead map initialised, just return. */
-	if (!map_init) return;
-	
-	/* Save tile information */
-	map.a = *a;
-	map.c = *c;
-	map.ta = *ta;
-	map.tc = *tc;
-
-	/* Save known data */
-	map.terrain = pc_ptr->feat;
-	
-	/* Save location */
-	map.x = x;
-	map.y = y;
-
-	
-
-	/* Save information in map */
-	save_map_location(x, y, &map);
+	map_info(x, y, a, c, ta, tc);
 }
 
 
