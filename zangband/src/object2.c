@@ -2340,7 +2340,8 @@ static object_type *make_artifact(void)
 		o_ptr->xtra_name = quark_add(a_name + a_ptr->name);
 
 		/* Apply special scripts */
-		apply_object_trigger(TRIGGER_MAKE, o_ptr, "");
+		apply_object_trigger(TRIGGER_MAKE, o_ptr, "i", "lev",
+				a_ptr->level);
 
 		/* Hack - increase the level rating */
 		inc_rating(30);
@@ -2383,6 +2384,8 @@ static object_type *make_special_randart(void)
 	/* Check the artifact list */
 	for (i = 1; i <= MAX_ART_SPECIAL; i++)
 	{
+		int lev;
+		
 		artifact_type *a_ptr = &a_info[i];
 
 		/* Skip "empty" artifacts */
@@ -2410,11 +2413,14 @@ static object_type *make_special_randart(void)
 		/* Assign the template */
 		o_ptr = object_prep(k_idx);
 
+		/* Use the object kind's depth */
+		lev = k_info[k_idx].level;
+
 		/* Create using the object kind's depth */
-		create_artifact(o_ptr, k_info[k_idx].level, FALSE);
+		create_artifact(o_ptr, lev, FALSE);
 
 		/* Run special scripts */
-		apply_object_trigger(TRIGGER_MAKE, o_ptr, "");
+		apply_object_trigger(TRIGGER_MAKE, o_ptr, "i", LUA_VAR(lev));
 
 		return (o_ptr);
 	}
@@ -2523,182 +2529,13 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 					ego = get_ego_num(level);
 				}
 
-				switch (ego)
-				{
-						/* Extra Powers */
+				/* Only sharp weapons can have sharpness */
+				if (ego == EGO_SHARPNESS && o_ptr->tval != TV_SWORD)
+					ego = 0;
 
-					case EGO_HA:
-					{
-						add_ego_power(EGO_XTRA_SUSTAIN, o_ptr);
-
-						if (one_in_(4))
-						{
-							o_ptr->flags1 |= TR1_BLOWS;
-
-							o_ptr->pval = randint1(4);
-
-							/* tone down number of attacks */
-							o_ptr->pval -= o_ptr->dd / 2;
-
-							if (o_ptr->pval < 1) o_ptr->pval = 1;
-						}
-						break;
-					}
-
-					case EGO_DF:
-					{
-						if (one_in_(3))
-						{
-							o_ptr->flags2 |= TR2_RES_POIS;
-						}
-
-						add_ego_power(EGO_XTRA_HI_RESIST, o_ptr);
-						add_ego_power(EGO_XTRA_SUSTAIN, o_ptr);
-						break;
-					}
-
-					case EGO_SLAY_DRAGON:
-					{
-						add_ego_power(EGO_XTRA_LO_RESIST, o_ptr);
-
-						break;
-					}
-
-					case EGO_KILL_DRAGON:
-					{
-						if (one_in_(3))
-						{
-							o_ptr->flags2 |= TR2_RES_POIS;
-						}
-
-						add_ego_power(EGO_XTRA_LO_RESIST, o_ptr);
-						add_ego_power(EGO_XTRA_LO_RESIST, o_ptr);
-
-						break;
-					}
-
-					case EGO_WEST:
-					{
-						if (one_in_(3))
-						{
-							o_ptr->flags2 |= TR2_RES_FEAR;
-						}
-
-						break;
-					}
-
-					case EGO_BLESS_BLADE:
-					{
-						add_ego_power(EGO_XTRA_ABILITY, o_ptr);
-
-						break;
-					}
-
-					case EGO_ATTACKS:
-					{
-						o_ptr->pval = randint1(3);
-
-						/* tone down number of attacks */
-						o_ptr->pval -= o_ptr->dd / 2;
-
-						if (o_ptr->pval < 1) o_ptr->pval = 1;
-
-						break;
-					}
-
-					case EGO_CHAOTIC:
-					{
-						add_ego_power(EGO_XTRA_ANY_RESIST, o_ptr);
-
-						break;
-					}
-
-					case EGO_SLAYING_WEAPON:
-					{
-						/* Supercharge the damage dice */
-						o_ptr->ds += (o_ptr->ds * randint1(5)) / 5;
-
-						if (one_in_(5))
-						{
-							o_ptr->flags1 |= TR1_BRAND_POIS;
-						}
-
-						break;
-					}
-					case EGO_TRUMP:
-					{
-						if (one_in_(5))
-						{
-							o_ptr->flags1 |= TR1_SLAY_DEMON;
-						}
-
-						if (one_in_(7))
-						{
-							add_ego_power(EGO_XTRA_ABILITY, o_ptr);
-						}
-						add_ego_power(EGO_XTRA_HI_RESIST, o_ptr);
-
-						break;
-					}
-					case EGO_PATTERN:
-					{
-						if (one_in_(3))
-						{
-							o_ptr->flags2 |= TR2_HOLD_LIFE;
-						}
-
-						if (one_in_(3))
-						{
-							o_ptr->flags1 |= TR1_DEX;
-						}
-
-						if (one_in_(5))
-						{
-							o_ptr->flags2 |= TR2_RES_FEAR;
-						}
-
-						add_ego_power(EGO_XTRA_HI_RESIST, o_ptr);
-
-						break;
-					}
-					case EGO_SHARPNESS:
-					{
-						/* Only swords can have this */
-						if (o_ptr->tval != TV_SWORD)
-						{
-							ego = 0;
-						}
-						else
-						{
-							o_ptr->pval = m_bonus(5, level) + 1;
-						}
-
-						break;
-
-					}
-					case EGO_EARTHQUAKES:
-					{
-						/* Only hafted weapons can have this */
-						if (o_ptr->tval != TV_HAFTED)
-						{
-							ego = 0;
-						}
-						else
-						{
-							o_ptr->pval = m_bonus(3, level) + 3;
-
-							if (one_in_(3))
-							{
-								o_ptr->flags1 |= TR1_BLOWS;
-
-								/* tone down number of attacks */
-								o_ptr->pval -= o_ptr->dd / 2;
-
-								if (o_ptr->pval < 1) o_ptr->pval = 1;
-							}
-						}
-					}
-				}
+				/* Only hafted weapons can have earthquakes */
+				if (ego == EGO_EARTHQUAKES && o_ptr->tval != TV_HAFTED)
+					ego = 0;
 
 				/* Hack -- Super-charge the damage dice */
 				if (ego)
@@ -2748,12 +2585,6 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 				{
 					ego = get_ego_num(level);
 				}
-
-				/* Extra powers */
-				if (ego == EGO_EXTRA_MIGHT)
-				{
-					add_ego_power(EGO_XTRA_ANY_RESIST, o_ptr);
-				}
 			}
 
 			break;
@@ -2774,8 +2605,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 				}
 
 				/* Hack -- super-charge the damage dice */
-				if (one_in_(10L * o_ptr->dd * o_ptr->ds) ||
-					(ego == EGO_SLAYING_BOLT))
+				if (one_in_(10L * o_ptr->dd * o_ptr->ds))
 				{
 					o_ptr->ds += (o_ptr->ds * randint1(5)) / 5;
 				}
@@ -2898,44 +2728,10 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 					ego = get_ego_num(level);
 				}
 
-				/* Roll for ego-item */
-				switch (ego)
-				{
-					case EGO_PERMANENCE:
-					{
-						/* Hack - only on robes. */
-						if (!
-							((o_ptr->tval == TV_SOFT_ARMOR)
-							 && (o_ptr->sval == SV_ROBE)))
-						{
-							ego = 0;
-						}
-						else
-						{
-							add_ego_power(EGO_XTRA_HI_RESIST, o_ptr);
-						}
-
-						break;
-					}
-					case EGO_RESISTANCE:
-					{
-						if (one_in_(4))
-						{
-							o_ptr->flags2 |= TR2_RES_POIS;
-						}
-
-						add_ego_power(EGO_XTRA_HI_RESIST, o_ptr);
-
-						break;
-					}
-
-					case EGO_ELVENKIND:
-					{
-						add_ego_power(EGO_XTRA_HI_RESIST, o_ptr);
-
-						break;
-					}
-				}
+				/* Only robes can have permanence */
+				if (ego == EGO_PERMANENCE && (o_ptr->tval != TV_SOFT_ARMOR ||
+							o_ptr->sval != SV_ROBE))
+					ego = 0;
 			}
 
 			break;
@@ -2972,17 +2768,6 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 					{
 						ego = get_ego_num(level);
 					}
-
-					/* Extra powers */
-					if (ego == EGO_ENDURANCE)
-					{
-						add_ego_power(EGO_XTRA_ANY_RESIST, o_ptr);
-
-						if (one_in_(4))
-						{
-							o_ptr->flags2 |= TR2_RES_POIS;
-						}
-					}
 				}
 			}
 			break;
@@ -3005,12 +2790,6 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				if (get_ego_prep(ES_HANDS, TRUE))
 				{
 					ego = get_ego_num(level);
-				}
-
-				/* Extra powers */
-				if (ego == EGO_POWER)
-				{
-					add_ego_power(EGO_XTRA_HI_RESIST, o_ptr);
 				}
 			}
 
@@ -3045,15 +2824,6 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				{
 					ego = get_ego_num(level);
 				}
-
-				/* Extra powers */
-				if (ego == EGO_SLOW_DESCENT)
-				{
-					if (one_in_(2))
-					{
-						add_ego_power(EGO_XTRA_HI_RESIST, o_ptr);
-					}
-				}
 			}
 
 			/* Very cursed */
@@ -3086,39 +2856,6 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				if (get_ego_prep(ES_CROWN, TRUE))
 				{
 					ego = get_ego_num(level);
-				}
-
-				/* Extra powers */
-				switch (ego)
-				{
-					case EGO_MAGI:
-					{
-						add_ego_power(EGO_XTRA_HI_RESIST, o_ptr);
-						add_ego_power(EGO_XTRA_ABILITY, o_ptr);
-
-						break;
-					}
-					case EGO_MIGHT:
-					{
-						add_ego_power(EGO_XTRA_HI_RESIST, o_ptr);
-
-						break;
-					}
-					case EGO_LORDLINESS:
-					{
-						add_ego_power(EGO_XTRA_HI_RESIST, o_ptr);
-
-						break;
-					}
-					case EGO_SEEING:
-					{
-						if (one_in_(3))
-						{
-							o_ptr->flags3 |= TR3_TELEPATHY;
-						}
-
-						break;
-					}
 				}
 			}
 
@@ -3164,15 +2901,6 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 					{
 						ego = get_ego_num(level);
 					}
-
-					/* Extra powers */
-					if (ego == EGO_SEEING)
-					{
-						if (one_in_(7))
-						{
-							o_ptr->flags3 |= TR3_TELEPATHY;
-						}
-					}
 				}
 
 				/* Very cursed */
@@ -3211,12 +2939,6 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				if (get_ego_prep(ES_OUTER, TRUE))
 				{
 					ego = get_ego_num(level);
-				}
-
-				/* Extra powers */
-				if (ego == EGO_AMAN)
-				{
-					add_ego_power(EGO_XTRA_HI_RESIST, o_ptr);
 				}
 			}
 
@@ -4176,7 +3898,7 @@ void apply_magic(object_type *o_ptr, int lev, int lev_dif, byte flags)
 	}
 
 	/* Run any special scripts */
-	apply_object_trigger(TRIGGER_MAKE, o_ptr, "");
+	apply_object_trigger(TRIGGER_MAKE, o_ptr, "i", LUA_VAR(lev));
 
 	/* Change level feeling for random artifacts */
 	if (o_ptr->flags3 & TR3_INSTA_ART) inc_rating(30);

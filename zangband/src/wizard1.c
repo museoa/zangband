@@ -1187,7 +1187,7 @@ static object_type *make_fake_artifact(int a_idx)
 	o_ptr->xtra_name = quark_add(a_name + a_ptr->name);
 
 	/* Apply special scripts */
-	apply_object_trigger(TRIGGER_MAKE, o_ptr, "");
+	apply_object_trigger(TRIGGER_MAKE, o_ptr, "i", "lev", a_ptr->level);
 
 	/* Success */
 	return (o_ptr);

@@ -2410,7 +2410,7 @@ void create_named_art(int a_idx, int x, int y)
 	q_ptr->xtra_name = quark_add(a_name + a_ptr->name);
 
 	/* Apply special scripts */
-	apply_object_trigger(TRIGGER_MAKE, q_ptr, "");
+	apply_object_trigger(TRIGGER_MAKE, q_ptr, "i", "lev", a_ptr->level);
 
 	if (!a_ptr->cost)
 	{
