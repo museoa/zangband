@@ -1077,9 +1077,12 @@ static void set_quest_giver(quest_type *q_ptr)
 {
 	place_type *pl_ptr = &place[p_ptr->place_num];
 
+	/* Remember quest giver for later */
 	q_ptr->place = p_ptr->place_num;
-			
 	q_ptr->shop = GET_ARRAY_INDEX(pl_ptr->store, curr_build);
+	
+	/* We know of this quest */
+	q_ptr->flags |= QUEST_FLAG_KNOWN;
 }
 
 
