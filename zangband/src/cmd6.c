@@ -285,6 +285,7 @@ void do_cmd_quaff_potion(void)
  */
 static void do_cmd_read_scroll_aux(object_type *o_ptr)
 {
+	object_type temp, *j_ptr;
 	bool ident, used_up;
 
 	/* Take a turn */
@@ -293,9 +294,23 @@ static void do_cmd_read_scroll_aux(object_type *o_ptr)
 	/* Is Identity known? */
 	ident = object_aware_p(o_ptr);
 
+	/* Copy item into temp */
+	COPY(&temp, o_ptr, object_type);
+
 	/* Read the scroll */
 	used_up = use_object(o_ptr, &ident, FALSE);
 	
+	/*
+	 * Counter the side effect of use_object on an identify scroll
+	 * by finding the original item
+	 */
+	OBJ_ITT_START (p_ptr->inventory, j_ptr)
+	{
+		/* retrieve the pointer of the original scroll */
+		if (object_equal(&temp, j_ptr)) o_ptr = j_ptr;
+	}
+	OBJ_ITT_END;
+
 	/* Hack - the scroll may already be destroyed by its effect */
 	if (o_ptr->k_idx)
 	{
@@ -318,12 +333,14 @@ static void do_cmd_read_scroll_aux(object_type *o_ptr)
 			gain_exp((lev + p_ptr->lev / 2) / p_ptr->lev);
 		}
 		
-		/* Notice changes */
-		notice_item();
-
 		/* Window stuff */
 		p_ptr->window |= (PW_PLAYER);
 
+		/* Hack.  Do the sorting now */
+		o_ptr = reorder_pack_watch(o_ptr);
+
+		/* Hack.  Do the combining now */
+		o_ptr = combine_pack_watch(o_ptr);
 
 		/* Hack -- allow certain scrolls to be "preserved" */
 		if (!used_up) return;

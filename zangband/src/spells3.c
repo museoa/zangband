@@ -2112,13 +2112,24 @@ static bool item_tester_unknown_star(const object_type *o_ptr)
 
 /*
  * Identify an object in the inventory (or on the floor)
- * This routine does *not* automatically combine objects.
  * Returns TRUE if something was identified, else FALSE.
+ * As a side effect it also sorts and combines the objects in the inventory.
+ *
+ * This has been rewritten so that when the identification was of an inventory
+ * object the correct inv slot (after sorting and combining) is shown in the message.
+ * To do this the routine combines and sorts the objects right after the
+ * identification and before the message is generated.  This way the combined
+ * and sorted object will have the right letter for the slot in the message.
+ * Except in the case where the player had 1 scroll of identify and that scroll
+ * disappeared after use.  So then the letter for the slot in the message is
+ * one too high.  This is solved by determining that the identification was by
+ * scroll, there was only one scroll and so the letter must be one lower.
  */
-bool ident_spell(void)
+static bool ident_spell_aux(int k_idx)
 {
-	object_type *o_ptr;
 	cptr q, s;
+	object_type *o_ptr, *j_ptr;
+	bool disappear = FALSE, back_step = FALSE, skip = FALSE;
 
 	/* Only un-id'ed items */
 	item_tester_hook = item_tester_unknown;
@@ -2135,11 +2146,66 @@ bool ident_spell(void)
 	/* Identify it */
 	identify_item(o_ptr);
 
-	/* Description */
-	item_describe(o_ptr);
+	/* Hack.  Do the sorting now */
+	o_ptr = reorder_pack_watch(o_ptr);
+
+	/* Hack.  Do the combining now */
+	o_ptr = combine_pack_watch(o_ptr);
+
+	/* Find out if the id was by scroll */
+	OBJ_ITT_START (p_ptr->inventory, j_ptr)
+	{
+		/* No need to skip anything now */
+		skip = FALSE;
+
+		/* Was it exactly one scroll? */
+		if (j_ptr->k_idx == k_idx &&
+			j_ptr->number == 1)
+		{
+			/* That will disappear */
+			disappear = TRUE;
+
+			/* If you read the id scroll on itself, list it just once */
+			skip = TRUE;
+		}
+
+		/* Found the original */
+		if (o_ptr == j_ptr)
+		{
+			/* The id scroll is located before object */
+			if (disappear) back_step = TRUE;
+
+			/* We know enough */
+			break;
+		}
+	}
+	OBJ_ITT_END;
+
+	/* Do we need the hack for the right letter in the inventory? */
+	if (back_step)
+	{
+		/* Not quite the description */
+		if (!skip) item_describe_faux(o_ptr);
+	}
+	else
+		/* Description */
+		item_describe(o_ptr);
 
 	/* Something happened */
 	return (TRUE);
+}
+
+
+/* Identify an object by some non-scroll method. */
+bool ident_spell(void)
+{
+	return (ident_spell_aux(0));
+}
+
+/* Identify an object by reading an identify scroll */
+bool ident_scroll(int k_idx)
+{
+	return (ident_spell_aux(k_idx));
 }
 
 
@@ -2259,16 +2325,12 @@ bool identify_fully(void)
 	/* Handle stuff */
 	handle_stuff();
 
-	/* Describe */
-	item_describe(o_ptr);
-
 	/* Describe it fully */
 	identify_fully_aux(o_ptr);
 
 	/* Success */
 	return (TRUE);
 }
-
 
 /*
  * Recharge a wand/staff/rod from the pack or on the floor.

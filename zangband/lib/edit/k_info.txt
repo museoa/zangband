@@ -1663,7 +1663,7 @@ I:70:12:0
 W:5:0:5:50
 A:1/1:9/1:17/1:52/1
 F:EASY_KNOW
-L:USE:	if not ident_spell() then result = FALSE end
+L:USE:	if not ident_scroll(object.k_idx) then result = FALSE end
 L:USE:	ident = TRUE
 D:This scroll identifies one item.
 

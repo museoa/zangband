@@ -1700,6 +1700,92 @@ void object_absorb(object_type *o_ptr, const object_type *j_ptr)
 
 
 /*
+ * Are these objects the same except for next_o_idx?  Originally meant for
+ * matching object in the inventory so there may be some redundancy here.
+ */
+bool object_equal(const object_type *o_ptr, const object_type *j_ptr)
+{
+	int i;
+
+	/* Require identical object types */
+	if (o_ptr->k_idx != j_ptr->k_idx) return (FALSE);
+
+	/* Identical position */
+	if (o_ptr->ix != j_ptr->ix ||
+		o_ptr->iy != j_ptr->iy) return (FALSE);
+
+	/* Require identical weights */
+	if (o_ptr->weight != j_ptr->weight) return (FALSE);
+
+	/* Require identical tval, sval, pval */
+	if (o_ptr->tval != j_ptr->tval ||
+		o_ptr->sval != j_ptr->sval ||
+		o_ptr->pval != j_ptr->pval) return (FALSE);
+
+	/* Require identical discounts */
+	if (o_ptr->discount != j_ptr->discount) return (FALSE);
+
+	/* There is an equal number in the pile */
+	if (o_ptr->number != j_ptr->number) return (FALSE);
+
+	/* Require identical to_h, to_d, to_a, ac */
+	if (o_ptr->to_h != j_ptr->to_h ||
+		o_ptr->to_d != j_ptr->to_d ||
+		o_ptr->to_a != j_ptr->to_a ||
+		o_ptr->ac != j_ptr->ac) return (FALSE);
+
+	/* The timeout is the same */
+	if (o_ptr->timeout != j_ptr->timeout) return (FALSE);
+
+	/* Identical dice */
+	if (o_ptr->dd != j_ptr->dd ||
+		o_ptr->ds != j_ptr->ds) return (FALSE);
+
+	/* Hack -- require semi-matching "inscriptions" */
+	if (o_ptr->inscription && j_ptr->inscription &&
+		(o_ptr->inscription != j_ptr->inscription))
+		return (FALSE);
+
+	/* Need to be identical ego items or artifacts */
+	if (o_ptr->xtra_name != j_ptr->xtra_name) return (FALSE);
+
+	/* Identical flags! */
+	if ((o_ptr->flags[0] != j_ptr->flags[0]) ||
+		(o_ptr->flags[1] != j_ptr->flags[1]) || 
+		(o_ptr->flags[2] != j_ptr->flags[2]) ||
+		(o_ptr->flags[3] != j_ptr->flags[3]))
+		return (FALSE);
+
+	/* Identical kn_flags! */
+	if ((o_ptr->kn_flags[0] != j_ptr->kn_flags[0]) ||
+		(o_ptr->kn_flags[1] != j_ptr->kn_flags[1]) || 
+		(o_ptr->kn_flags[2] != j_ptr->kn_flags[2]) ||
+		(o_ptr->kn_flags[3] != j_ptr->kn_flags[3]))
+		return (FALSE);
+
+	/* Require identical "broken" status */
+	if ((!o_ptr->cost) != (!j_ptr->cost)) return (FALSE);
+
+	/* The feeling is the same */
+	if (o_ptr->feeling != j_ptr->feeling) return (FALSE);
+
+	/* The a_idx is the same */
+	if (o_ptr->a_idx != j_ptr->a_idx) return (FALSE);
+
+	/* The info is the same */
+	if (o_ptr->info != j_ptr->info) return (FALSE);
+
+	/* Require matching scripts */
+	for (i = 0; i < MAX_TRIGGER; i++)
+		if (o_ptr->trigger[i] != j_ptr->trigger[i])
+			return (FALSE);
+
+	/* The objects are the same */
+	return (TRUE);
+}
+
+
+/*
  * Find the index of the object_kind with the given tval and sval
  */
 s16b lookup_kind(int tval, int sval)
@@ -4528,7 +4614,7 @@ void item_charges(object_type *o_ptr)
 /*
  * Describe an item in the inventory.
  */
-void item_describe(object_type *o_ptr)
+static void item_describe_aux(object_type *o_ptr, bool back_step)
 {
 	char o_name[256];
 
@@ -4582,13 +4668,40 @@ void item_describe(object_type *o_ptr)
 			/* Get number of item in inventory */
 			item = get_item_position(p_ptr->inventory, o_ptr);
 
-			msgf("In your pack: %s (%c).", o_name, I2A(item));
+			/* Hack to get that letter correct in case a scroll disappears */
+			if (back_step)
+				msgf("In your pack: %s (%c).", o_name, I2A(item - 1));
+			else
+				msgf("In your pack: %s (%c).", o_name, I2A(item));
 		}
 		else if (list == &c_ptr->o_idx)
 		{
 			msgf("On the ground: %s.", o_name);
 		}
 	}
+}
+
+
+/*
+ * Describe an item in the inventory.
+ */
+void item_describe(object_type *o_ptr)
+{
+	item_describe_aux(o_ptr, FALSE);
+}
+
+
+/*
+ * Describe an item in the inventory and pretend it is one slot lower than it
+ * seems to be.  This is usefull when a the item is being identified by a scroll
+ * of idenitfy and it was the last scroll of identify so there is some shuffling
+ * in the inventory.
+ *
+ * Faux is for faux pas as this is a hack.
+ */
+void item_describe_faux(object_type *o_ptr)
+{
+	item_describe_aux(o_ptr, TRUE);
 }
 
 
@@ -5071,7 +5184,7 @@ void inven_drop(object_type *o_ptr, int amt)
 /*
  * Combine items in the pack
  */
-void combine_pack(void)
+static object_type *combine_pack_aux(object_type *q_ptr)
 {
 	object_type *o_ptr;
 	object_type *j_ptr;
@@ -5088,6 +5201,9 @@ void combine_pack(void)
 			{
 				/* Take note */
 				flag = TRUE;
+
+				/* The original is about to disappear so assign to the new */
+				if (o_ptr == q_ptr) q_ptr = j_ptr;
 
 				/* Add together the item counts */
 				object_absorb(j_ptr, o_ptr);
@@ -5108,8 +5224,26 @@ void combine_pack(void)
 
 	/* Message */
 	if (flag) msgf("You combine some items in your pack.");
+
+	return (q_ptr);
 }
 
+
+/*
+ * Combine items in the pack
+ */
+void combine_pack(void)
+{
+	(void)combine_pack_aux(NULL);
+}
+
+/*
+ * Combine items in the pack and keep track of an object
+ */
+object_type *combine_pack_watch(object_type *q_ptr)
+{
+	return (combine_pack_aux(q_ptr));
+}
 
 /*
  * Reorder items in the pack
@@ -5120,6 +5254,18 @@ void reorder_pack(void)
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN);
+}
+
+
+/*
+ * Reorder items in the pack and return the watched object.
+ */
+object_type *reorder_pack_watch(object_type *o_ptr)
+{
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN);
+
+	return (reorder_objects_aux(o_ptr, reorder_pack_comp, p_ptr->inventory));
 }
 
 
