@@ -5139,8 +5139,8 @@ room_type room_list[ROOM_TYPES] =
 	{1,		build_type2, RT_SIMPLE | RT_CRYPT},	/* Overlapping */
 	{3,		build_type3, RT_SIMPLE},	/* Crossed */
 	{3,		build_type4, RT_BUILDING | RT_CRYPT},	/* Large nested */
-	{10,	build_type5, RT_ANIMAL | RT_CROWDED},	/* Monster nest */
-	{10,	build_type6, RT_DENSE | RT_CROWDED},	/* Monster pit */
+	{10,	build_type5, RT_ANIMAL | RT_TAG_CROWDED},	/* Monster nest */
+	{10,	build_type6, RT_DENSE | RT_TAG_CROWDED},	/* Monster pit */
 	{10,	build_type7, RT_DENSE},	/* Small vault */
 	{20,	build_type8, RT_DENSE},	/* Large vault */
 	{5,		build_type9, RT_NATURAL},	/* Fractal cave */
@@ -5187,7 +5187,7 @@ bool room_build(void)
 	if (p_ptr->depth < room_list[type].depth) return (FALSE);
 
 	/* Restrict "crowded" rooms */
-	if ((dun->crowded >= 2) && (room_list[type].flags & RT_CROWDED)) return (FALSE);
+	if ((dun->crowded >= 2) && (room_list[type].flags & RT_TAG_CROWDED)) return (FALSE);
 	
 	/* Pick a block for the room */
 	x = randint0(dun->col_rooms);

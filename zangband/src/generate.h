@@ -172,7 +172,7 @@ extern dun_data *dun;
 #define LQ_MAX		5
 
 /* Room types */
-#define RT_CROWDED		0x0001
+#define RT_TAG_CROWDED		0x0001 /* Affects "crowded" counter */
 #define RT_NATURAL		0x0002
 #define RT_ANIMAL		0x0004
 #define RT_COMPLEX		0x0008
