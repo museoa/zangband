@@ -3629,6 +3629,7 @@ static s32b borg_power_aux3(void)
 static s32b borg_power_aux4(void)
 {
 	int book, realm;
+	int food_max;
 
 	s32b value = 0L;
 
@@ -3643,25 +3644,32 @@ static s32b borg_power_aux4(void)
 	value += 600 * MIN_FLOOR(bp_ptr->able.fuel, 5, 10);
 
 	/* Reward Food */
-	/* if hungry, food is THE top priority */
-	if ((bp_ptr->status.hungry || bp_ptr->status.weak) &&
-		bp_ptr->food) value += 100000;
-
-	value += 10000 * MIN(bp_ptr->food, 25);
-	value += 200 * MIN_FLOOR(bp_ptr->food, 25, 35);
 
 	/* If you burn more food */
 	if ((FLAG(bp_ptr, TR_REGEN)) && !(FLAG(bp_ptr, TR_SLOW_DIGEST)))
 	{
 		/* take more food */
-		value += 200 * MIN_FLOOR(bp_ptr->food, 35, 45);
+		food_max = 50;
 	}
+	else
+		food_max = 35;
+
+	/* if hungry, food is THE top priority */
+	if ((bp_ptr->status.hungry || bp_ptr->status.weak) && bp_ptr->food)
+		value += 100000;
+
+	/* Give the best value for scrolls of satisfy hunger */
+	value += 10000 * MIN(bp_ptr->food, 25);
+	value += 1000 * MIN_FLOOR(bp_ptr->food, 25, food_max);
 
 	/* If you can digest food */
 	if (!FLAG(bp_ptr, TR_CANT_EAT))
 	{
 		/* Prefer to buy HiCalorie foods over LowCalorie */
-		value += 50 * MIN(amt_food_hical, 5);
+		value += 20 * MIN(5 * amt_food_hical, food_max);
+
+		/* Prefer to buy scrolls over foodstuffs */
+		value += 50 * MIN(5 * amt_food_scroll, food_max);
 	}
 
 	/* Reward throwing potions of poison for low level borgs */

@@ -564,8 +564,9 @@ extern bool my_need_enchant_to_d;	/* Need some enchantment */
  */
 
 extern s16b amt_phase;
-extern s16b amt_food_lowcal;
+extern s16b amt_food_scroll;
 extern s16b amt_food_hical;
+extern s16b amt_food_lowcal;
 
 extern s16b amt_slow_poison;
 extern s16b amt_cure_confusion;

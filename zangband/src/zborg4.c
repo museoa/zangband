@@ -1598,6 +1598,7 @@ static void borg_notice_scrolls(list_item *l_ptr, int number)
 		}
 		case SV_SCROLL_SATISFY_HUNGER:
 		{
+			amt_food_scroll += number;
 			bp_ptr->food += number * 5;
 			break;
 		}
@@ -2317,8 +2318,9 @@ static void borg_notice_aux2(void)
 
 	/* Reset basic */
 	amt_phase = 0;
-	amt_food_lowcal = 0;
+	amt_food_scroll = 0;
 	amt_food_hical = 0;
+	amt_food_lowcal = 0;
 
 	/* Reset healing */
 	amt_slow_poison = 0;

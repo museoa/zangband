@@ -253,6 +253,7 @@ bool my_need_enchant_to_d;	/* Need some enchantment */
  */
 
 s16b amt_phase;
+s16b amt_food_scroll;
 s16b amt_food_hical;
 s16b amt_food_lowcal;
 

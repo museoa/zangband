@@ -40,6 +40,7 @@ extern bool borg_test_stuff_pseudo(void);
 extern bool borg_test_stuff_star(void);
 extern bool borg_takeoff_stuff(void);
 extern bool borg_wear_stuff(void);
+extern bool borg_unwear_stuff(void);
 extern bool borg_wears_cursed(bool heavy);
 extern bool borg_play_magic(bool bored);
 extern bool borg_remove_stuff(void);

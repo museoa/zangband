@@ -1584,6 +1584,9 @@ bool borg_think_dungeon(void)
 	/* Wear things that need to be worn */
 	if (borg_wear_stuff()) return (TRUE);
 
+	/* Take off things that have become useless */
+	if (borg_unwear_stuff()) return (TRUE);
+
 	/* Remove stuff that is useless or detrimental */
 	if (borg_remove_stuff()) return (TRUE);
 

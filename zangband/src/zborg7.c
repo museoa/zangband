@@ -2679,7 +2679,8 @@ bool borg_wear_stuff(void)
 		if (slot < 0) continue;
 
 		/* skip it if it this slot has been decursed */
-		if (KN_FLAG(&equipment[slot], TR_CURSED)) continue;
+		if (KN_FLAG(&equipment[slot], TR_CURSED) ||
+			KN_FLAG(&equipment[slot], TR_HEAVY_CURSE) ) continue;
 
 		/* Obtain danger */
 		danger = borg_danger(c_x, c_y, 1, TRUE);
@@ -2731,6 +2732,73 @@ bool borg_wear_stuff(void)
 
 	/* Nope */
 	return (FALSE);
+}
+
+
+/*
+ * Take off equipment that has become useless
+ * This can happen through mutations, too much acid.
+ */
+bool borg_unwear_stuff(void)
+{
+	int slot, b_slot = -1;
+	int p, b_p, d, b_d;
+	list_item *l_ptr;
+	
+	/* Get the original power */
+	b_p = borg_power();
+
+	/* Get the original danger */
+	b_d = borg_danger(c_x, c_y, 1, TRUE);
+
+	/* Loop through the equipment */
+	for (slot = 0; slot < equip_num; slot++)
+	{
+		/* Get the object from the current slot */
+		l_ptr = &equipment[slot];
+
+		/* Skip empty slots */
+		if (!l_ptr) continue;
+
+		/* skip it if it has not been decursed */
+		if (KN_FLAG(l_ptr, TR_CURSED) ||
+			KN_FLAG(l_ptr, TR_HEAVY_CURSE)) continue;
+
+		/* Pretend it is not there */
+		l_ptr->treat_as = TREAT_AS_SWAP;
+
+		/* Calculate new power */
+		p = borg_power();
+
+		/* Cal;culate the new danger */
+		d = borg_danger(c_x, c_y, 1, TRUE);
+
+		/* Stop pretending */
+		l_ptr->treat_as = TREAT_AS_NORM;
+
+		/* Is the borg better off without? */
+		if (p <= b_p) continue;
+
+		/* Is it more dangerous now */
+		if (d > b_d) continue;
+
+		/* Track this item */
+		b_slot = slot;
+		b_p = p;
+	}
+
+	/* All the equipment is fine */
+	if (b_slot == -1) return (FALSE);
+
+	/* Say you take it off */
+	borg_note_fmt("# Taking off a %s", l_ptr->o_name);
+
+	/* Take it off */
+	borg_keypress('t');
+	borg_keypress(I2A(slot));
+
+	/* Success */
+	return (TRUE);
 }
 
 
