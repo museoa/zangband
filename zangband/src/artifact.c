@@ -15,9 +15,14 @@
 
 /* Chance of using syllables to form the name instead of the "template" files */
 #define TABLE_NAME      45
+
+/* Chance of a random artifact being cursed (1 in 13) */
 #define A_CURSED        13
-#define WEIRD_LUCK      12
-#define BIAS_LUCK       20
+
+/* Chance of getting a 'basic 4' immunity rather than resist (1 in 48) */
+#define LOW_IM_LUCK  	48
+/* Chance of getting a 'high' immunity rather than resist (1 in 12) */
+#define HI_IM_LUCK	12
 
 /*
  * Bias luck needs to be higher than weird luck,
@@ -84,48 +89,40 @@ static void random_resistance(object_type *o_ptr, int specific)
 	switch (specific ? specific : randint1(42))
 	{
 		case 1:
-			if (!one_in_(WEIRD_LUCK))
+		case 5:
+		case 6:
+		case 13:
+			if (!one_in_(LOW_IM_LUCK))
 				SET_FLAG(o_ptr, TR_RES_ACID);
 			else
 				SET_FLAG(o_ptr, TR_IM_ACID);
 			break;
 		case 2:
-			if (!one_in_(WEIRD_LUCK))
+		case 7:
+		case 8:
+		case 14:
+			if (!one_in_(LOW_IM_LUCK))
 				SET_FLAG(o_ptr, TR_RES_ELEC);
 			else
 				SET_FLAG(o_ptr, TR_IM_ELEC);
 			break;
 		case 3:
-			if (!one_in_(WEIRD_LUCK))
+		case 11:
+		case 12:
+		case 16:
+			if (!one_in_(LOW_IM_LUCK))
 				SET_FLAG(o_ptr, TR_RES_COLD);
 			else
 				SET_FLAG(o_ptr, TR_IM_COLD);
 			break;
 		case 4:
-			if (!one_in_(WEIRD_LUCK))
-				SET_FLAG(o_ptr, TR_RES_FIRE);
-			else
-				SET_FLAG(o_ptr, TR_IM_FIRE);
-			break;
-		case 5:
-		case 6:
-		case 13:
-			SET_FLAG(o_ptr, TR_RES_ACID);
-			break;
-		case 7:
-		case 8:
-		case 14:
-			SET_FLAG(o_ptr, TR_RES_ELEC);
-			break;
 		case 9:
 		case 10:
 		case 15:
-			SET_FLAG(o_ptr, TR_RES_FIRE);
-			break;
-		case 11:
-		case 12:
-		case 16:
-			SET_FLAG(o_ptr, TR_RES_COLD);
+			if (!one_in_(LOW_IM_LUCK))
+				SET_FLAG(o_ptr, TR_RES_FIRE);
+			else
+				SET_FLAG(o_ptr, TR_IM_FIRE);
 			break;
 		case 17:
 		case 18:
@@ -136,13 +133,13 @@ static void random_resistance(object_type *o_ptr, int specific)
 			SET_FLAG(o_ptr, TR_RES_FEAR);
 			break;
 		case 21:
-			if (!one_in_(WEIRD_LUCK))
+			if (!one_in_(HI_IM_LUCK))
 				SET_FLAG(o_ptr, TR_RES_LITE);
 			else
 				SET_FLAG(o_ptr, TR_IM_LITE);
 			break;
 		case 22:
-			if (!one_in_(WEIRD_LUCK))
+			if (!one_in_(HI_IM_LUCK))
 				SET_FLAG(o_ptr, TR_RES_DARK);
 			else
 				SET_FLAG(o_ptr, TR_IM_DARK);
@@ -2202,7 +2199,7 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 		powers++;
 
 #if 0
-	if (!a_cursed && one_in_(WEIRD_LUCK))
+	if (!a_cursed && one_in_(12))
 		powers *= 2;
 #endif
 
@@ -2237,7 +2234,7 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 		switch (o_ptr->tval)
 		{
 			case TV_BOOTS:
-				if (one_in_(WEIRD_LUCK))
+				if (one_in_(12))
 					SET_FLAG(o_ptr, TR_SPEED);
 				else if (one_in_(2))
 					SET_FLAG(o_ptr, TR_FREE_ACT);
@@ -2443,7 +2440,7 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 			total_flags = flag_cost(o_ptr, o_ptr->pval);
 		}
 		if (total_flags >= target_flags * 3 && total_flags >= 10000 &&
-				!one_in_(WEIRD_LUCK))
+				!one_in_(12))
 		{
 			random_curse(o_ptr, TRUE);
 			total_flags = flag_cost(o_ptr, o_ptr->pval);
