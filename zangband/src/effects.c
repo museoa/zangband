@@ -1715,7 +1715,7 @@ bool acid_dam(int dam, cptr kb_str)
 	take_hit(dam, kb_str);
 
 	/* Inventory damage */
-	if (res_acid_lvl() > 3)
+	if (res_acid_lvl() > 2)
 		(void)inven_damage(set_acid_destroy, inv);
 	
 	/* Obvious */
@@ -1744,7 +1744,7 @@ bool elec_dam(int dam, cptr kb_str)
 	take_hit(dam, kb_str);
 
 	/* Inventory damage */
-	if (res_acid_lvl() > 3)
+	if (res_acid_lvl() > 2)
 		(void)inven_damage(set_elec_destroy, inv);
 
 	/* Obvious */
@@ -1773,7 +1773,7 @@ bool fire_dam(int dam, cptr kb_str)
 	take_hit(dam, kb_str);
 
 	/* Inventory damage */
-	if (res_fire_lvl() > 3)
+	if (res_fire_lvl() > 2)
 		(void)inven_damage(set_fire_destroy, inv);
 
 	/* Obvious */
@@ -1802,7 +1802,7 @@ bool cold_dam(int dam, cptr kb_str)
 	take_hit(dam, kb_str);
 
 	/* Inventory damage */
-	if (res_cold_lvl() > 3)
+	if (res_cold_lvl() > 2)
 		(void)inven_damage(set_cold_destroy, inv);
 
 	/* Obvious */
@@ -1830,8 +1830,11 @@ bool pois_dam(int dam, cptr kb_str, int pois)
 	take_hit(dam, kb_str);
 
 	/* Add poison to counter */
-	pois = resist(pois, res_pois_lvl);
-	inc_poisoned(pois);
+	if (res_pois_lvl() > 2)
+	{
+		pois = resist(pois, res_pois_lvl);
+		inc_poisoned(pois);
+	}
 	
 	/* Obvious */
 	return (TRUE);
