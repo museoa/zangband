@@ -2894,7 +2894,7 @@ void request_command(int shopping)
 				else if (cmd >= '0' && cmd <= '9')
 				{
 					/* Stop count at 9999 */
-					if (p_ptr->cmd.arg >= 10000)
+					if (p_ptr->cmd.arg >= 1000)
 					{
 						/* Warn */
 						bell("Invalid repeat count!");
