@@ -1830,15 +1830,42 @@ void sound(int val)
 
 
 /*
- * The number of quarks (first quark is NULL)
+ * Out of space - Compact the quarks
  */
-static s16b quark__num = 1;
+static s16b compact_quarks(void)
+{
+	s16b i, empty = 1;
+	
+	u16b min_use = quark__use[quark__num - 1];
+	
+	/* Find least recently used quark */
+	for (i = 1; i < quark__num; i++)
+	{
+		if (quark__use[i] < min_use)
+		{
+			/* Less used than current quark? */
+			empty = i;
+			min_use = quark__use[i];
+		}
+	}
+		
+	/* Reset all the times to something "smaller" */
+	for (i = 1; i < quark__num; i++)
+	{
+		/* Hack XXX XXX - just use old value divided by QUARK_COMPACT */
+		quark__use[i] = quark__use[i] / QUARK_COMPACT;
+	}
 
+	/* 
+	 * Reset the time
+	 *
+	 * Note that QUARK_MAX * QUARK_COMPACT must be less than the
+	 * size of a s16b.
+	 */
+	quark__tim = quark__num + 1;
 
-/*
- * The array[QUARK_MAX] of pointers to the quarks
- */
-static cptr *quark__str;
+	return (empty);
+}
 
 
 /*
@@ -1855,14 +1882,28 @@ s16b quark_add(cptr str)
 		if (streq(quark__str[i], str)) return (i);
 	}
 
-	/* Hack -- Require room XXX XXX XXX */
-	if (quark__num == QUARK_MAX) return (0);
-
-	/* New quark */
-	i = quark__num++;
-
+	/* Paranoia -- Require room */
+	if (quark__num == QUARK_MAX)
+	{
+		i = compact_quarks();
+		
+		/* Paranoia - no room? */
+		if (!i) return (0);
+		
+		/* Delete the old quark */
+		string_free(quark__str[i]);
+	}
+	else
+	{
+		/* New maximal quark */
+		quark__num = i + 1;
+	}
+	
 	/* Add a new quark */
 	quark__str[i] = string_make(str);
+
+	/* Save the time */
+	quark__use[i] = ++quark__tim;
 
 	/* Return the index */
 	return (i);
@@ -1877,10 +1918,19 @@ cptr quark_str(s16b i)
 	cptr q;
 
 	/* Verify */
-	if ((i < 0) || (i >= quark__num)) i = 0;
+	if ((i < 0) || (i >= quark__num)) return (NULL);
 
 	/* Get the quark */
 	q = quark__str[i];
+	
+	/* Save the access time */
+	quark__use[i] = ++quark__tim;
+	
+	/* Compact from time to time */
+	if (quark__tim > QUARK_COMPACT * QUARK_MAX)
+	{
+		(void)compact_quarks();
+	}
 
 	/* Return the quark */
 	return (q);
@@ -2429,11 +2479,11 @@ static int message_column = 0;
  * This should only be done when the user is known to have read the message.
  *
  * We must be very careful about using the "msg_print()" functions without
- * explicitly calling the special "message_flush()" function, since this may
+ * explicitly calling the special "msg_print(NULL)()" function, since this may
  * result in the loss of information if the screen is cleared, or if anything
  * is displayed on the top line.
  *
- * Hack -- Note that "message_flush()" will clear the top line
+ * Hack -- Note that "msg_print(NULL)" will clear the top line
  * even if no messages are pending.  This is probably a hack.
  */
 static void msg_print_aux(u16b type, cptr msg)
