@@ -2083,6 +2083,12 @@ static errr rd_dungeon(void)
 
 		/* Load dungeon map */
 		load_map(0, 0, cur_wid, cur_hgt);
+		
+		/* Restore the bounds */
+		p_ptr->max_hgt = cur_hgt;
+		p_ptr->min_hgt = 0;
+		p_ptr->max_wid = cur_wid;
+		p_ptr->min_wid = 0;
 	}
 	/* The wilderness + dungeon format changed here */
 	else if (sf_version < 28)
@@ -2092,6 +2098,12 @@ static errr rd_dungeon(void)
 
 		if (p_ptr->depth)
 		{
+			/* Hack - save values stomped on by create_wilderness() */
+			int min_wid = p_ptr->min_wid;
+			int min_hgt = p_ptr->min_hgt;
+			int max_wid = p_ptr->max_wid;
+			int max_hgt = p_ptr->max_hgt;
+			
 			dun_level_backup = p_ptr->depth;
 
 			change_level(p_ptr->depth);
@@ -2115,8 +2127,7 @@ static errr rd_dungeon(void)
 			load_map(0, 0, cur_wid, cur_hgt);
 
 			/* Strip the wilderness map */
-			strip_map(p_ptr->min_wid, p_ptr->min_hgt,
-					  p_ptr->max_wid, p_ptr->max_hgt);
+			strip_map(min_wid, min_hgt, max_wid, max_hgt);
 
 			px = px_back;
 			py = py_back;
@@ -2455,8 +2466,11 @@ static errr rd_dungeon(void)
 	}
 
 	/* Hack - make new level only after objects + monsters are loaded */
-	if (sf_version < VERSION_CHANGE_WILD)
+	if (sf_version < 7)
 	{
+		/* enter the level */
+		change_level(p_ptr->depth);
+		
 		if (p_ptr->depth)
 		{
 			/* Restore the bounds */
@@ -2469,9 +2483,6 @@ static errr rd_dungeon(void)
 		{
 			character_dungeon = FALSE;
 		}
-
-		/* enter the level */
-		change_level(p_ptr->depth);
 	}
 
 	/* 
