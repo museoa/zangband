@@ -1787,26 +1787,24 @@ static void process_world(void)
 		{
 			/* Recharge */
 			o_ptr->timeout--;
+			
+			/* Lights are special */
+			if ((o_ptr->tval == TV_LITE) && !(o_ptr->flags3 & TR3_LITE))
+			{
+				/* Notice interesting fuel steps */
+				notice_lite_change(o_ptr);
+
+				/* Calculate torch radius */
+				p_ptr->update |= (PU_TORCH);
+			}
 
 			/* Notice changes */
-			if (!o_ptr->timeout)
+			else if (!o_ptr->timeout)
 			{
-				/* Lights are special */
-				if ((o_ptr->tval == TV_LITE) && !(o_ptr->flags3 & TR3_LITE))
-				{
-					/* Notice interesting fuel steps */
-					notice_lite_change(o_ptr);
-
-					/* Calculate torch radius */
-					p_ptr->update |= (PU_TORCH);
-				}
-				else
-				{
-					recharged_notice(o_ptr);
+				recharged_notice(o_ptr);
 				
-					/* Window stuff */
-					p_ptr->window |= (PW_EQUIP);
-				}
+				/* Window stuff */
+				p_ptr->window |= (PW_EQUIP);
 			}
 		}
 	}
