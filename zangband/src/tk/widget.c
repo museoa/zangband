@@ -106,7 +106,6 @@ static void Widget_Display(ClientData clientData)
 	XClearWindow(widgetPtr->display, Tk_WindowId(tkwin));
 #endif
 
-#if 0
 	XCopyArea(widgetPtr->display,
 		widgetPtr->bitmap->pixmap, /* source drawable */
 		Tk_WindowId(tkwin), /* dest drawable */
@@ -116,18 +115,6 @@ static void Widget_Display(ClientData clientData)
 		(unsigned int) widgetPtr->dh, /* height */
 		widgetPtr->dx - widgetPtr->bx,
 		widgetPtr->dy - widgetPtr->by /* dest top-left */
-	);
-#endif /* 0 */
-
-	XCopyArea(widgetPtr->display,
-		widgetPtr->bitmap->pixmap, /* source drawable */
-		Tk_WindowId(tkwin), /* dest drawable */
-		widgetPtr->copyGC, /* graphics context */
-		0, 0, /* source top-left */
-		(unsigned int) widgetPtr->width, /* width */
-		(unsigned int) widgetPtr->height, /* height */
-		0,
-		0 /* dest top-left */
 	);
 
 	Plat_SyncDisplay(widgetPtr->display);
