@@ -1,4 +1,4 @@
-/* File: tcltk-dll.h */
+/* File: tcltk.h */
 
 /* Purpose: embedded Tcl */
 
@@ -12,10 +12,6 @@
 
 #ifndef INCLUDED_TCLTK_H
 #define INCLUDED_TCLTK_H
-
-#if !defined(PLATFORM_MAC) && !defined(PLATFORM_WIN) && !defined(PLATFORM_X11)
-#error "you must define one of PLATFORM_MAC, PLATFORM_WIN or PLATFORM_X11"
-#endif /* */
 
 Tcl_Interp *TclTk_Init(int argc, char **argv);
 void TclTk_Exit(Tcl_Interp *interp);
