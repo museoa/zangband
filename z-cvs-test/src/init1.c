@@ -3396,8 +3396,6 @@ static errr process_dungeon_file_aux(char *buf, int ymin, int xmin,
 
 
 static char tmp[8];
-static cptr variant = "ZANGBAND";
-
 
 /*
  * Helper function for "process_dungeon_file()"
@@ -3655,12 +3653,6 @@ static cptr process_dungeon_file_expr(char **sp, char *fp)
 				/* "QUEST" uses a special parameter to determine the number of the quest */
 				sprintf(tmp, "%d", quest[atoi(b + 6)].status);
 				v = tmp;
-			}
-
-			/* Variant name */
-			else if (streq(b + 1, "VARIANT"))
-			{
-				v = variant;
 			}
 
 			/* Wilderness */
