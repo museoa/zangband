@@ -790,8 +790,6 @@ bool do_cmd_knowledge_mutations(int dummy)
 	/* Failure */
 	if (!fff) return (FALSE);
 
-	screen_save();
-
 	/* Dump the mutations to file */
 	if (fff) dump_mutations(fff);
 
@@ -803,8 +801,6 @@ bool do_cmd_knowledge_mutations(int dummy)
 
 	/* Remove the file */
 	(void)fd_kill(file_name);
-
-	screen_load();
 	
 	return (FALSE);
 }

@@ -154,15 +154,11 @@ int get_player_choice(cptr *choices, int num, int col, int wid,
 		}
 		else if (c == '?')
 		{
-			screen_save();
 			(void)show_file(helpfile, NULL, 0, 0);
-			screen_load();
 		}
 		else if (c == '=')
 		{
-			screen_save();
 			do_cmd_options(OPT_FLAG_BIRTH | OPT_FLAG_SERVER | OPT_FLAG_PLAYER);
-			screen_load();
 		}
 		else if ((c == '\n') || (c == '\r'))
 		{
@@ -538,11 +534,7 @@ bool display_menu(menu_type *options, int select, bool scroll, void (* disp)(voi
 			{
 				/* Show the information */
 				show_file(options[select].help, NULL, 0, 0);
-				
-				/* Clear the screen */
-				screen_load();
-				screen_save();
-				
+								
 				/* Show the list */
 				show_menu(num, options, select, scroll, disp, prompt);
 				
@@ -606,6 +598,9 @@ bool display_menu(menu_type *options, int select, bool scroll, void (* disp)(voi
 					{
 						select = j;
 					}
+					
+					/* Hack - flush messages */
+					message_flush();
 						
 					/* Show the list */
 					show_menu(num, options, select, scroll, disp, prompt);

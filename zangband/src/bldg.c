@@ -577,12 +577,8 @@ static void gamble_done(void)
 
 void gamble_help(void)
 {
-	screen_save();
-
 	/* Peruse the gambling help file */
 	(void)show_file("gambling.txt", NULL, 0, 0);
-
-	screen_load();
 }
 
 

@@ -1737,9 +1737,7 @@ void do_cmd_debug(void)
 		case '?':
 		{
 			/* Hack -- Help */
-			screen_save();
 			(void)show_file("wizard.txt", NULL, 0, 0);
-			screen_load();
 			break;
 		}
 

@@ -1160,7 +1160,6 @@ static bool do_cmd_options_dump(int dummy)
 
 	/* Success message */
 	msg_print("Saved default options.");
-	message_flush();
 
 	screen_load();
 
@@ -3181,8 +3180,6 @@ void do_cmd_load_screen(void)
 
 	/* Message */
 	msg_print("Screen dump loaded.");
-	message_flush();
-
 
 	/* Restore the screen */
 	screen_load();
@@ -3290,8 +3287,6 @@ void do_cmd_save_screen(void)
 
 		/* Message */
 		msg_print("Screen dump saved.");
-		message_flush();
-
 
 		/* Restore the screen */
 		screen_load();
@@ -3316,8 +3311,6 @@ static bool do_cmd_knowledge_uniques(int dummy)
 	/* Hack - ignore parameter */
 	(void) dummy;
 	
-	screen_save();
-
 	/* Allocate the "who" array */
 	C_MAKE(who, z_info->r_max, u16b);
 
@@ -3341,12 +3334,10 @@ static bool do_cmd_knowledge_uniques(int dummy)
 	{
 		/* No monsters to recall */
 		msg_print("No known uniques.");
-		message_flush();
 
 		/* XXX XXX Free the "who" array */
 		KILL(who);
 
-		screen_load();
 		return (FALSE);
 	}
 
@@ -3366,7 +3357,6 @@ static bool do_cmd_knowledge_uniques(int dummy)
 		/* XXX XXX Free the "who" array */
 		KILL(who);
 
-		screen_load();
 		return (FALSE);
 	}
 
@@ -3392,8 +3382,6 @@ static bool do_cmd_knowledge_uniques(int dummy)
 
 	/* Remove the file */
 	(void)fd_kill(file_name);
-	
-	screen_load();
 	
 	return (FALSE);
 }
@@ -3505,8 +3493,6 @@ static bool do_cmd_knowledge_pets(int dummy)
 	/* Failure */
 	if (!fff) return (FALSE);
 	
-	screen_save();
-
 	/* Process the monsters (backwards) */
 	for (i = m_max - 1; i >= 1; i--)
 	{
@@ -3550,8 +3536,6 @@ static bool do_cmd_knowledge_pets(int dummy)
 
 	/* Remove the file */
 	(void)fd_kill(file_name);
-
-	screen_load();
 	
 	return (FALSE);
 }
@@ -3574,11 +3558,11 @@ static bool do_cmd_knowledge_kill_count(int dummy)
 	u16b why = 2;
 	u16b *who;
 	
+	int kk;
+	
 	/* Hack - ignore parameter */
 	(void) dummy;
 	
-	screen_save();
-
 	/* Allocate the "who" array */
 	C_MAKE(who, z_info->r_max, u16b);
 
@@ -3599,12 +3583,10 @@ static bool do_cmd_knowledge_kill_count(int dummy)
 	{
 		/* No monsters to recall */
 		msg_print("No known monsters!");
-		message_flush();
 
 		/* XXX XXX Free the "who" array */
 		KILL(who);
 
-		screen_load();
 		return (FALSE);
 	}
 
@@ -3624,45 +3606,41 @@ static bool do_cmd_knowledge_kill_count(int dummy)
 		/* XXX XXX Free the "who" array */
 		KILL(who);
 
-		screen_load();
 		return (FALSE);
 	}
 
+
+	/* Monsters slain */
+	for (kk = 1; kk < z_info->r_max; kk++)
 	{
-		/* Monsters slain */
-		int kk;
+		monster_race *r_ptr = &r_info[kk];
 
-		for (kk = 1; kk < z_info->r_max; kk++)
+		if (r_ptr->flags1 & (RF1_UNIQUE))
 		{
-			monster_race *r_ptr = &r_info[kk];
+			bool dead = (r_ptr->max_num == 0);
 
-			if (r_ptr->flags1 & (RF1_UNIQUE))
+			if (dead)
 			{
-				bool dead = (r_ptr->max_num == 0);
-
-				if (dead)
-				{
-					Total++;
-				}
-			}
-			else
-			{
-				s16b This = r_ptr->r_pkills;
-
-				if (This > 0)
-				{
-					Total += This;
-				}
+				Total++;
 			}
 		}
-
-		if (Total < 1)
-			fprintf(fff, "You have defeated no enemies yet.\n\n");
-		else if (Total == 1)
-			fprintf(fff, "You have defeated one enemy.\n\n");
 		else
-			fprintf(fff, "You have defeated %lu enemies.\n\n", Total);
+		{
+			s16b This = r_ptr->r_pkills;
+
+			if (This > 0)
+			{
+				Total += This;
+			}
+		}
 	}
+
+	if (Total < 1)
+		fprintf(fff, "You have defeated no enemies yet.\n\n");
+	else if (Total == 1)
+		fprintf(fff, "You have defeated one enemy.\n\n");
+	else
+		fprintf(fff, "You have defeated %lu enemies.\n\n", Total);
 
 	/* Save total kills for later */
 	temp = Total;
@@ -3747,8 +3725,6 @@ static bool do_cmd_knowledge_kill_count(int dummy)
 	/* Remove the file */
 	(void)fd_kill(file_name);
 	
-	screen_load();
-	
 	return (FALSE);
 }
 
@@ -3774,8 +3750,6 @@ static bool do_cmd_knowledge_objects(int dummy)
 
 	/* Failure */
 	if (!fff) return (FALSE);
-	
-	screen_save();
 
 	/* Scan the object kinds */
 	for (k = 1; k < z_info->k_max; k++)
@@ -3809,8 +3783,6 @@ static bool do_cmd_knowledge_objects(int dummy)
 
 	/* Remove the file */
 	(void)fd_kill(file_name);
-
-	screen_load();
 	
 	return (FALSE);
 }
@@ -3834,8 +3806,6 @@ static bool do_cmd_knowledge_virtues(int dummy)
 	/* Failure */
 	if (!fff) return (FALSE);
 	
-	screen_save();
-
 	dump_virtues(fff);
 
 	/* Close the file */
@@ -3846,8 +3816,6 @@ static bool do_cmd_knowledge_virtues(int dummy)
 
 	/* Remove the file */
 	(void)fd_kill(file_name);
-	
-	screen_load();
 	
 	return (FALSE);
 }
@@ -3865,11 +3833,7 @@ static bool do_cmd_knowledge_notes(int dummy)
 
 	strncpy(fname, notes_file(), 1024);
 	
-	screen_save();
-
 	(void)show_file(fname, "Notes", 0, 0);
-	
-	screen_load();
 	
 	return (FALSE);
 }
@@ -3902,8 +3866,6 @@ static bool do_cmd_knowledge_wild(int dummy)
 	/* Failure */
 	if (!fff) return (FALSE);
 	
-	screen_save();
-
 	/* Cycle through the places */
 	for (k = 1; k < place_count; k++)
 	{
@@ -3975,8 +3937,6 @@ static bool do_cmd_knowledge_wild(int dummy)
 
 	/* Remove the file */
 	(void)fd_kill(file_name);
-	
-	screen_load();
 	
 	return (FALSE);
 }

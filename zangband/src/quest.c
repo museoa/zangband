@@ -1088,8 +1088,6 @@ bool do_cmd_knowledge_quests(int dummy)
 
 	/* Failure */
 	if (!fff) return (FALSE);
-	
-	screen_save();
 
 	for (i = 0; i < q_max; i++)
 	{
@@ -1199,7 +1197,6 @@ bool do_cmd_knowledge_quests(int dummy)
 	/* Remove the file */
 	(void)fd_kill(file_name);
 	
-	screen_load();
 	return (FALSE);
 }
 

@@ -2411,9 +2411,7 @@ static bool player_birth_aux_3(void)
 			/* Help */
 			if (ch == '?')
 			{
-				screen_save();
 				(void)show_file("birth.txt#CharDisplay", NULL, 0, 0);
-				screen_load();
 				continue;
 			}
 			else if (ch == '=')

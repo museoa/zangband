@@ -3112,8 +3112,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 		/* Oops */
 		return (TRUE);
 	}
-
-
+	
 	/* Pre-Parse the file */
 	while (TRUE)
 	{
@@ -3165,6 +3164,8 @@ bool show_file(cptr name, cptr what, int line, int mode)
 		/* Count the "real" lines */
 		next++;
 	}
+	
+	screen_save();
 
 	/* Save the number of "real" lines */
 	size = next;
@@ -3189,8 +3190,12 @@ bool show_file(cptr name, cptr what, int line, int mode)
 			fff = my_fopen(path, "r");
 
 			/* Oops */
-			if (!fff) return (FALSE);
-
+			if (!fff)
+			{
+				screen_load();
+				return (FALSE);
+			}
+			
 			/* File has been restarted */
 			next = 0;
 		}
@@ -3475,6 +3480,9 @@ bool show_file(cptr name, cptr what, int line, int mode)
 		/* Exit on escape */
 		if (k == ESCAPE) break;
 	}
+	
+	/* Restore the screen */
+	screen_load();
 
 	/* Close the file */
 	my_fclose(fff);
@@ -3492,14 +3500,8 @@ bool show_file(cptr name, cptr what, int line, int mode)
  */
 void do_cmd_help(void)
 {
-	/* Save screen */
-	screen_save();
-
 	/* Peruse the main help file */
 	(void)show_file("help.hlp", NULL, 0, 0);
-
-	/* Load screen */
-	screen_load();
 }
 
 
