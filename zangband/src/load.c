@@ -1541,7 +1541,7 @@ static void rd_extra(void)
 		rd_u32b(&p_ptr->muta3);
 		 
 		#ifdef AVATAR
-		if (z_older_than(2,3,4))
+		if (sf_version < 4)
 		{
 			get_virtues();
 		}
