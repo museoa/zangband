@@ -96,7 +96,7 @@ end
 --
 --	Corpses Decay
 --
-function corpse_exit()
+function corpse_decay()
 	local name
 	local r_idx
 	local race
