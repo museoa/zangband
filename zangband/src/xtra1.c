@@ -3788,6 +3788,11 @@ void update_stuff(void)
 	/* Update stuff */
 	if (!p_ptr->update) return;
 
+	if (p_ptr->update & (PU_WEIGHT))
+	{
+		p_ptr->update &= ~(PU_WEIGHT);
+		calc_weight();
+	}
 
 	if (p_ptr->update & (PU_BONUS))
 	{
@@ -3817,12 +3822,6 @@ void update_stuff(void)
 	{
 		p_ptr->update &= ~(PU_SPELLS);
 		calc_spells();
-	}
-
-	if (p_ptr->update & (PU_WEIGHT))
-	{
-		p_ptr->update &= ~(PU_WEIGHT);
-		calc_weight();
 	}
 
 	/* Character is not ready yet, no screen updates */
