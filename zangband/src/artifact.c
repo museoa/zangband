@@ -1520,10 +1520,12 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 		(void)identify_fully_aux(o_ptr);
 		o_ptr->ident |= IDENT_STOREB; /* This will be used later on... */
 		if (!(get_string("What do you want to call the artifact? ", dummy_name, 80)))
-			strcpy(new_name, "(a DIY Artifact)");
+		{
+			get_random_name(new_name, (bool)(o_ptr->tval >= TV_BOOTS), power_level);
+		}
 		else
 		{
-			strcpy(new_name, "called '");
+			strcpy(new_name, "'");
 			strcat(new_name, dummy_name);
 			strcat(new_name, "'");
 		}
