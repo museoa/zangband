@@ -120,6 +120,7 @@ Zangband 2.3.4:
 -Fixed some problems with the 'easy patch' option.
 -Fixed a bug that prevented Sprites from getting food at the inn.
 -Fixed the buffer overrun if players became too fast.
+-Fixed a bug that caused some monsters to cast "cause fear" too often.
 -Fixed the sources of most of the compiler warnings with gcc.
 -Wands and staves will now stack properly when emptied.
 -Made some changes to enhance compatibility with Mac compilers.
