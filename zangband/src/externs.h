@@ -950,10 +950,6 @@ extern void repeat_push(int what);
 extern bool repeat_pull(int *what);
 extern void repeat_check(void);
 
-#ifdef SORT_R_INFO
-extern void tag_sort(tag_type elements[], int number);
-#endif /* SORT_R_INFO */
-
 #ifdef SUPPORT_GAMMA
 extern byte gamma_table[256];
 extern void build_gamma_table(int gamma);

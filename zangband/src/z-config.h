@@ -542,12 +542,6 @@
 #define CHECK_MODIFICATION_TIME
 
 /*
- * Use the new sorting routines for creation
- * of the monster allocation table
- */
-#define SORT_R_INFO
-
-/*
  * Use a scripting language
  */
 /* #define USE_SCRIPT */
