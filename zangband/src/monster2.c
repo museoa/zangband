@@ -642,6 +642,7 @@ static bool test_monster_wild(wild_done_type *w_ptr, monster_race *r_ptr)
 }
 
 
+
 /*
  * Filter the list of creatable monsters based on location
  */
@@ -2638,8 +2639,6 @@ bool summon_specific(int who, int x1, int y1, int req_lev, int type, bool group,
 	cave_type *c_ptr;
 	byte flags;
 
-	int level;
-
 	/* Look for a location */
 	for (i = 0; i < 20; ++i)
 	{
@@ -2698,10 +2697,9 @@ bool summon_specific(int who, int x1, int y1, int req_lev, int type, bool group,
 
 	/* Prepare allocation table */
 	get_mon_num_prep(summon_specific_okay);
-	level = filter_mon_loc(x, y);
 
 	/* Pick a monster, using the level calculation */
-	r_idx = get_mon_num((level + req_lev) / 2 + 5);
+	r_idx = get_mon_num((base_level() + req_lev) / 2 + 5);
 
 	/* Handle failure */
 	if (!r_idx) return (FALSE);
