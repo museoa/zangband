@@ -278,7 +278,6 @@ DECLARE_TK_HOOK(keycount);
 DECLARE_TK_HOOK(keypress);
 DECLARE_TK_HOOK(message);
 DECLARE_TK_HOOK(fontdesc);
-DECLARE_TK_HOOK(menuentrystate);
 DECLARE_TK_HOOK(equipinfo);
 DECLARE_TK_HOOK(inveninfo);
 DECLARE_TK_HOOK(term_char);
