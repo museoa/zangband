@@ -78,18 +78,13 @@ extern t_icon_data *g_icon_data; /* Array of icon types */
 extern int g_icon_data_count; /* Number of icon types */
 extern Tcl_HashTable g_icon_table; /* Hash table for icon types */
 
-#define ASCII_NORMAL 0 /* Colored char */
-#define ASCII_ATTR_MULTI 1 /* Animate color */
-#define ASCII_SHAPECHANGER 2 /* Animate character */
-
 typedef struct t_ascii {
 	int color[2]; /* Foreground/Background palette index */
-	int mode; /* Special behaviour, ASCII_XXX flags */
 } t_ascii;
 
 extern t_ascii *g_ascii; /* Array of "ascii" icon info */
 extern int g_ascii_count; /* Number of elements in g_ascii[] array */
-extern int g_ascii_delay, g_ascii_multi, g_ascii_ticks, g_ascii_char;
+extern int g_ascii_delay, g_ascii_multi, g_ascii_char;
 
 #define ICON_STYLE_ICON 0
 extern int g_icon_style;

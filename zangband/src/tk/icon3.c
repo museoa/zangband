@@ -1100,32 +1100,9 @@ IconPtr Icon_GetAsciiData(IconSpec *specPtr, IconPtr iconPtr)
 	t_icon_data *icon_data_ptr = &g_icon_data[specPtr->type];
 	PixelPtr srcPtr, dstPtr;
 	int *color = g_ascii[k].color;
-	int colors[2];
 
 	srcPtr.pix8 = icon_data_ptr->icon_data + j * icon_data_ptr->length;
 	dstPtr.pix8 = iconPtr;
-
-	/* Multi-hued */
-	if (g_ascii[k].mode == ASCII_ATTR_MULTI)
-	{
-		colors[0] = g_term_colormap[g_ascii_multi];
-		colors[1] = color[1];
-		color = colors;
-	}
-
-	/* Shapechanger */
-	else if (g_ascii[k].mode == ASCII_SHAPECHANGER)
-	{
-		i = g_ascii_char;
-
-		/* Paranoia */
-		if (i >= icon_data_ptr->icon_count)
-		{
-			i = icon_data_ptr->icon_count - 1;
-		}
-		
-		srcPtr.pix8 = icon_data_ptr->icon_data + i * icon_data_ptr->length;
-	}
 
 	if (icon_data_ptr->depth == 8)
 	{
@@ -1353,7 +1330,6 @@ static int init_ascii_data(Tcl_Interp *interp, t_icon_data *icon_data_ptr)
 int g_ascii_multi = 0;
 
 /* The "frame delay" for animated ascii configurations */
-int g_ascii_ticks = 0;
 int g_ascii_delay = 1000;
 
 /* The current character for shapechanging ascii configurations */
@@ -1366,17 +1342,14 @@ static int objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj 
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 	int index;
 
-	static cptr configSwitch[] = {"-background", "-foreground", "-mode",
-		NULL};
-	static cptr asciiMode[] = {"normal", "attr_multi", "shapechanger",
-		NULL};
+	static cptr configSwitch[] = {"-background", "-foreground", NULL};
 
 	char d_char, *t;
 	Tcl_Obj *CONST *objPtr;
 	Tk_Font tkFont;
 	t_icon_data *icon_data_ptr;
 	char *typeName;
-	int fg, bg, mode;
+	int fg, bg;
 	t_ascii *ascii_ptr;
 	int i;
 	
@@ -1411,7 +1384,6 @@ static int objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj 
 			/* Default */
 			fg = COLORMAP_WHITE; /* Only valid on 8-bit! */
 			bg = COLORMAP_BLACK; /* Only valid on 8-bit! */
-			mode = ASCII_NORMAL;
 
 			/* Point to the first option/value pair */
 			objPtr = objv + 2;
@@ -1445,15 +1417,7 @@ static int objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj 
 						}
 						fg = Plat_XColor2Pixel(fgPtr);
 						Tk_FreeColor(fgPtr); /* XXX */
-						break;
-						
-					case 2: /* -mode */
-					    if (Tcl_GetIndexFromObj(interp, objPtr[1], (char **) asciiMode,
-							(char *) "mode", 0, &mode) != TCL_OK)
-						{
-							return TCL_ERROR;
-					    }
-					    break;
+						break;						
 				}
 
 				/* Next option/value pair */
@@ -1471,7 +1435,6 @@ static int objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj 
 			/* Set the fields */
 			ascii_ptr->color[0] = fg;
 			ascii_ptr->color[1] = bg;
-			ascii_ptr->mode = mode;
 
 			/* Return the index of the new ascii configuration */
 			Tcl_SetIntObj(resultPtr, g_ascii_count - 1);
@@ -1674,11 +1637,6 @@ static int objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj 
 					case 1: /* -foreground */
 						Tcl_SetIntObj(resultPtr, ascii_ptr->color[0]);
 						break;
-						
-					case 2: /* -mode */
-						Tcl_SetStringObj(resultPtr,
-							(char *) asciiMode[ascii_ptr->mode], -1);
-					    break;
 				}
 
 				/* Done */
@@ -1716,15 +1674,6 @@ static int objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj 
 						/* VERIFY fg */
 						ascii_ptr->color[0] = fg;
 						break;
-						
-					case 2: /* -mode */
-					    if (Tcl_GetIndexFromObj(interp, objPtr[1], (char **) asciiMode,
-							(char *) "mode", 0, &index) != TCL_OK)
-						{
-							return TCL_ERROR;
-					    }
-					    ascii_ptr->mode = index;
-					    break;
 				}
 
 				/* Next option/value pair */
