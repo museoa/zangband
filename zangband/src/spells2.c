@@ -3847,17 +3847,20 @@ int summon_cyber(void)
 
 void wall_breaker(void)
 {
-	int dummy = 5;
+	int i;
+	int y, x;
 
 	if (randint(80 + p_ptr->lev) < 70)
 	{
-		do
+		while(1)
 		{
-			dummy = randint(9);
-		}
-		while ((dummy == 5) || (dummy == 0));
+			scatter(&y, &x, py, px, 10, 0);
 
-		wall_to_mud(dummy);
+			if ((y != py) && (x != px)) break;
+		}
+
+		project(0, 0, y, x, 20 + randint(30), GF_KILL_WALL,
+				  (PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL));
 	}
 	else if (randint(100) > 30)
 	{
@@ -3865,9 +3868,19 @@ void wall_breaker(void)
 	}
 	else
 	{
-		for (dummy = 1; dummy < 10; dummy++)
+		int num = damroll(5, 3);
+
+		for (i = 0; i < num; i++)
 		{
-			if (dummy - 5) wall_to_mud(dummy);
+			while(1)
+			{
+				scatter(&y, &x, py, px, 10, 0);
+
+				if ((y != py) && (x != px)) break;
+			}
+
+			project(0, 0, y, x, 20 + randint(30), GF_KILL_WALL,
+					  (PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL));
 		}
 	}
 }

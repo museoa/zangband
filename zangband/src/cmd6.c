@@ -1708,11 +1708,25 @@ static void do_cmd_use_staff_aux(int item)
 
 		case SV_STAFF_STARLITE:
 		{
+			int num = damroll(5, 3);
+			int y, x;
+
 			if (!p_ptr->blind)
 			{
 				msg_print("The end of the staff glows brightly...");
 			}
-			for (k = 0; k < 8; k++) (void)lite_line(ddd[k]);
+			for (k = 0; k < num; k++)
+			{
+				while(1)
+				{
+					scatter(&y, &x, py, px, 10, 0);
+
+					if ((y != py) && (x != px)) break;
+				}
+
+				project(0, 0, y, x, damroll(6, 8), GF_LITE,
+						  (PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID | PROJECT_KILL));
+			}
 			ident = TRUE;
 			break;
 		}
@@ -3025,8 +3039,24 @@ static void do_cmd_activate_aux(int item)
 
 			case ART_RAZORBACK:
 			{
+				int num = damroll(5, 3);
+				int y, x;
+
 				msg_print("Your armor is surrounded by lightning...");
-				for (i = 0; i < 8; i++) fire_ball(GF_ELEC, ddd[i], 150, 3);
+
+				for (k = 0; k < num; k++)
+				{
+					while(1)
+					{
+						scatter(&y, &x, py, px, 10, 0);
+
+						if ((y != py) && (x != px)) break;
+					}
+
+					project(0, 3, y, x, 150, GF_ELEC,
+							  (PROJECT_THRU | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL));
+				}
+
 				o_ptr->timeout = 1000;
 				break;
 			}
