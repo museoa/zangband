@@ -1038,6 +1038,7 @@ void do_cmd_options(void)
 				break;
 			}
 
+			/* Dump the current options to file */
 			case '|':
 			{
 				int i;
@@ -1047,8 +1048,14 @@ void do_cmd_options(void)
 				/* Build the filename */
 				path_build(buf, 1024, ANGBAND_DIR_USER, "pref-opt.prf");
 
+				/* Drop priv's */
+				safe_setuid_drop();
+
 				/* Open the file */
 				fff = my_fopen(buf, "w");
+
+				/* Grab priv's */
+				safe_setuid_grab();
 
 				/* Failed */
 				if (!fff) break;
@@ -1060,6 +1067,7 @@ void do_cmd_options(void)
 				/* Scan the options */
 				for (i = 0; option_info[i].o_desc; i++)
 				{
+					/* Dump the option */
 					fprintf(fff, "%c:%s\n",
 					        (*option_info[i].o_var ? 'Y' : 'X'),
 					        option_info[i].o_text);
