@@ -1877,7 +1877,7 @@ static void create_roads(void)
 		/* No third town yet */
 		place3 = -1;
 
-		/* Max distance is 2x the dist between the two places */
+		/* Reset max distance so we can find another town */
 		max_dist = ROAD_DIST;
 
 		/*
