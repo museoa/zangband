@@ -450,7 +450,12 @@ static void call_lua_hook(cptr script, cptr format, va_list vp)
 
 		lua_settop(L, oldtop);
 	}
-
+	else
+	{
+		/* We failed */
+		msgf("Script failed: %s", script);
+	}
+	
 	/* Clear variables */
 	for (i = 0; format[i] && i < 20; i++)
 	{
