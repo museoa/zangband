@@ -6177,6 +6177,9 @@ option_type option_info[] =
         { &auto_notes,                  FALSE, 6, 5, 19,
            "auto_notes",                 "Automatically note important events" },
 
+	{ &point_based,                 FALSE, 6, 5, 20,
+	  "point_based",                 "Generate character using a point system" },
+
         /*** Artificial Intelligence Options ***/
 
 	{ &flow_by_sound,               TRUE, 7, 6, 1,

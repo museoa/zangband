@@ -266,6 +266,8 @@ bool smart_cheat;			/* Monsters exploit player weaknesses */
 bool take_notes;                        /* Allow notes to be added to a file */
 bool auto_notes;                        /* Automatically take notes */
 
+bool point_based;                       /* Point-based generation */
+
 /* Option Set 4 -- Efficiency */
 
 bool view_reduce_lite;		/* Reduce lite-radius when running */
