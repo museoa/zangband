@@ -198,18 +198,15 @@ static s32b price_item(object_type *o_ptr, bool flip)
 	if (price <= 0) return (0L);
 
 
-	/* Compute the racial factor */
-	factor = rgold_adj[ot_ptr->owner_race][p_ptr->rp.prace];
-
-	/* Add in the charisma factor */
-	factor += adj_chr_gold[p_ptr->stat[A_CHR].ind];
+	/* The charisma factor */
+	factor = adj_chr_gold[p_ptr->stat[A_CHR].ind];
 
 
 	/* Shop is buying */
 	if (flip)
 	{
 		/* Adjust for greed */
-		adjust = 100 + (300 - (greed + factor));
+		adjust = 100 + (200 - (greed + factor));
 
 		/* Never get "silly" */
 		if (adjust > 100) adjust = 100;
@@ -225,7 +222,7 @@ static s32b price_item(object_type *o_ptr, bool flip)
 	else
 	{
 		/* Adjust for greed */
-		adjust = 100 + ((greed + factor) - 300);
+		adjust = 100 + ((greed + factor) - 200);
 
 		/* Never get "silly" */
 		if (adjust < 100) adjust = 100;

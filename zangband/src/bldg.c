@@ -299,13 +299,10 @@ static void display_build(const field_type *f_ptr, const store_type *b_ptr)
 	cptr owner_name = (bo_ptr->owner_name);
 	cptr race_name = race_info[bo_ptr->owner_race].title;
 
-	/* Compute the racial factor */
-	factor = rgold_adj[bo_ptr->owner_race][p_ptr->rp.prace];
+	/* The charisma factor */
+	factor = adj_chr_gold[p_ptr->stat[A_CHR].ind];
 
-	/* Add in the charisma factor */
-	factor += adj_chr_gold[p_ptr->stat[A_CHR].ind];
-
-	factor = ((factor + 100) * bo_ptr->inflate) / 400;
+	factor = ((factor + 200) * bo_ptr->inflate) / 400;
 
 	Term_clear();
 	prtf(1, 2, "%s (%s) %s", owner_name, race_name, build_name);
@@ -1787,13 +1784,10 @@ static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
 
 	int factor;
 
-	/* Compute the racial factor */
-	factor = rgold_adj[bo_ptr->owner_race][p_ptr->rp.prace];
+	/* The charisma factor */
+	factor = adj_chr_gold[p_ptr->stat[A_CHR].ind];
 
-	/* Add in the charisma factor */
-	factor += adj_chr_gold[p_ptr->stat[A_CHR].ind];
-
-	factor = ((factor + 100) * bo_ptr->inflate) / 400;
+	factor = ((factor + 200) * bo_ptr->inflate) / 400;
 
 	field_hook(&area(p_ptr->px, p_ptr->py)->fld_idx,
 			   FIELD_ACT_STORE_ACT2, &factor);
