@@ -506,7 +506,8 @@ bool monster_death(int m_idx, bool explode)
 		q_ptr->flags1 |= (TR1_VAMPIRIC | TR1_STR | TR1_CON);
 		q_ptr->flags2 |= (TR2_FREE_ACT | TR2_HOLD_LIFE | TR2_RES_NEXUS | TR2_RES_CHAOS | TR2_RES_NETHER | TR2_RES_CONF);	/* No longer resist_disen */
 		q_ptr->flags3 |= (TR3_IGNORE_ACID | TR3_IGNORE_ELEC |
-						  TR3_IGNORE_FIRE | TR3_IGNORE_COLD);
+						  TR3_IGNORE_FIRE | TR3_IGNORE_COLD |
+						  TR3_INSTA_ART);
 
 		/* Just to be sure */
 		q_ptr->flags3 |= TR3_NO_TELE;	/* How's that for a downside? */
