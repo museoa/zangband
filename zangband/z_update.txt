@@ -2,7 +2,7 @@ This is a document file listing the changes in Zangband (compared to the
 standard Angband 2.8.1.) No long explanations, just a list. See code for
 details. In reversed chronological order (more or less):
 
-Zangband 2.3.2:
+Zangband 2.3.3:
 -Added magical figurines, statues, and corpses.
 -Added a new scroll 'of mundanity'.
 -New weapon type - the 'Diamond Edge' sword which has the vorpal flag.
@@ -22,16 +22,16 @@ Zangband 2.3.2:
 -Added several monsters.
 -Descriptions of certain monsters edited and numerous other tweaks made
  to various monsters.
--Monsters with KILL_BODY now perform an attack on a monster blocking its
- path rather than insta-killing it.
--Added 8x8 graphics tiles for new monsters and items.
+-Monsters with KILL_BODY will now perform an attack on other monsters
+ blocking their path rather than insta-killing them.
+-Added 8x8 graphics tiles for new the monsters and items.
 -You can now teleport into forested areas. This will prevent getting
  trapped in the wilderness.
 -Fixed a bug preventing the loading of 2.2.7 save files.
--Fixed a bug preventing Ravens and Crows from appearing
+-Fixed a bug preventing Ravens and Crows from appearing.
 -Fixed the maximize mode -> nightmare mode bug.
 -Fixed a bug with tunneling.
--Another attempt at fixing the 'more-than-several-Nazguls' bug.
+-Another attempt at fixing the 'more-than-seven-unamed-Nazguls' bug.
 -Fixed a bug which could cause crashes when *id-ing* an object.
 -Fixed a bug that prevented monsters from casting spells correctly.
 -Fixed a bug in the wand/rod selling code.
@@ -49,7 +49,7 @@ Zangband 2.3.2:
 -Separated chaos and confusion resistance and added RES_CONF to several
  artifacts and other objects.
 -Changed the colors on some traps and added a new trap.
--split the dungeon generation code into smaller files (generate.c, grid.c,
+-Split the dungeon generation code into smaller files (generate.c, grid.c,
  rooms.c and streams.c).
 -Removed the requirement that destroyed levels be 'boring'.
 -Added enhanced support for hyperlinks in the help files. Added
@@ -60,18 +60,21 @@ Zangband 2.3.2:
 -Disabled bones file production.
 -Updated the names of certain windows.
 -Made the autoroller a bit friendlier.
--Added support for M$ - HTML help files.
--Reduced the cost and level of the 'sterility' mutation
--Chaos Warriors can no longer get the 'attract the attention of a chaos
- deity' mutation.
+-Added support for HTML help files to the Windows version.
+-Reduced the cost and level of the 'sterility' mutation.
+-Chaos Warriors can no longer get the 'You attract the attention of a
+ chaos deity' mutation.
 -Added a health display to the pet knowledge, extended the pet commands
  and tweaked pet behavior somewhat.
 -Aggravation no longer annoys friendly monsters.
 -Some changes to prevent the player from avoiding some of the nastier
  effects of nightmare mode.
--Tweaked 'star' spells to allow rays to be fired in al directions.
--Added a missing entry to timefun.txt
+-Tweaked 'star' spells to allow rays to be fired in all directions.
+-Added a missing entry to timefun.txt.
 -Made some changes to the wizard commands.
+
+ZAngband 2.3.2
+Internal development version.
 
 ZAngband 2.3.1:
 -Added Tom Morton's 'fake artifact names' patch.  Inscribing "a Foo" with
