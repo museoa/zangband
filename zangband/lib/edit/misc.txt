@@ -31,7 +31,7 @@ M:R:885
 M:V:126
 
 # Maximum number of quests
-M:Q:100
+M:Q:125
 
 # Maximum number of field types
 M:U:145
