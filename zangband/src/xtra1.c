@@ -3430,7 +3430,7 @@ static void calc_bonuses(void)
 	}
 	/* Add all class and race-specific adjustments to missile Skill. -LM- */
 	p_ptr->skill_thb += add_special_missile_skill(p_ptr->pclass);
-	
+
 	/* Examine the "main weapon" */
 	o_ptr = &inventory[INVEN_WIELD];
 

@@ -1842,8 +1842,7 @@ static bool borg_escape(int b_q)
 		}
 
 		/* Flee now */
-		if (!goal_leaving && !borg_fighting_unique &&
-			!vault_on_level)
+		if (!goal_leaving && !borg_fighting_unique && !vault_on_level)
 		{
 			/* Flee! */
 			borg_note("# Leaving (failed to teleport)");
@@ -3071,7 +3070,7 @@ bool borg_caution(void)
 		/* do not flee level if going after Morgoth or fighting a unique */
 		if (!goal_fleeing && !borg_fighting_unique &&
 			(borg_skill[BI_CLEVEL] < 50) && !vault_on_level &&
-			 (borg_skill[BI_CDEPTH] < 100) && (borg_ready_morgoth == 1))
+			(borg_skill[BI_CDEPTH] < 100) && (borg_ready_morgoth == 1))
 		{
 			/* Note */
 			borg_note("# Fleeing (excessive danger)");
@@ -4373,7 +4372,7 @@ bool borg_target(int y, int x)
 	if (mb_ptr->monster)
 	{
 		borg_note(format("# Targeting %s.",
-				   (r_name + r_info[mb_ptr->monster].name)));
+						 (r_name + r_info[mb_ptr->monster].name)));
 	}
 	else
 	{

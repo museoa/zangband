@@ -4681,8 +4681,7 @@ bool borg_leave_level(bool bored)
 	if ((cptr)NULL == borg_prepared(borg_skill[BI_CDEPTH] + 5)) g = 1;
 
 	/* Hack -- Power-climb upwards when needed */
-	if ((cptr)NULL != borg_prepared(borg_skill[BI_CDEPTH]) &&
-		!unique_on_level)
+	if ((cptr)NULL != borg_prepared(borg_skill[BI_CDEPTH]) && !unique_on_level)
 	{
 		cptr reason = borg_prepared(borg_skill[BI_CDEPTH]);
 

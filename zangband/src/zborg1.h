@@ -162,7 +162,7 @@ struct borg_kill
 	bool ranged_attack;	/* can attack from a dx */
 
 	byte m_flags;
-	
+
 	byte type;	/* Type of kill */
 };
 

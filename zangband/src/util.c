@@ -1840,7 +1840,7 @@ static s16b compact_quarks(void)
 
 		/* Find minimally used quark */
 		if (quark__use[quark_locat[i]] == 1) empty = quark_locat[i];
-    }
+	}
 
 	/* Set timer to be greater than any value so far */
 	quark__tim = quark__num + 1;

@@ -469,7 +469,7 @@ static void borg_fear_grid(cptr who, int y, int x, uint k, bool seen_guy)
 static int get_blank_kill(void)
 {
 	int i;
-	
+
 	/* Count the monsters */
 	borg_kills_cnt++;
 
@@ -512,8 +512,8 @@ static void borg_merge_kill(int who)
 
 	/* Note */
 	borg_note(format("# Merging a monster '%s' (%i) at (%d,%d)",
-                     (r_name + r_info[kill->r_idx].name), who,
-                     kill->x, kill->y));
+					 (r_name + r_info[kill->r_idx].name), who,
+					 kill->x, kill->y));
 #if 0
 	/* Reduce the regional fear with this guy dead */
 	borg_fear_grid(NULL, kill->y, kill->x,
@@ -540,8 +540,8 @@ void borg_delete_kill(int who, cptr reason)
 
 	/* Note */
 	borg_note(format("# Removing a monster '%s' (%i) at (%d,%d) [%s]",
-                     (r_name + r_info[kill->r_idx].name), who,
-                     kill->x, kill->y, reason));
+					 (r_name + r_info[kill->r_idx].name), who,
+					 kill->x, kill->y, reason));
 #if 0
 	/* Reduce the regional fear with this guy dead */
 	borg_fear_grid(NULL, kill->y, kill->x,
@@ -568,13 +568,13 @@ void borg_delete_kill(int who, cptr reason)
 static void borg_wipe_mon(byte type)
 {
 	int i;
-	
+
 	borg_kill *kill;
 
 	for (i = 1; i < borg_kills_nxt; i++)
 	{
 		kill = &borg_kills[i];
-		
+
 		if (kill->type == type)
 		{
 			borg_merge_kill(i);
@@ -590,13 +590,13 @@ static void borg_wipe_mon(byte type)
 static void borg_append_mon_list(byte type1, byte type2)
 {
 	int i;
-	
+
 	borg_kill *kill;
 
 	for (i = 1; i < borg_kills_nxt; i++)
 	{
 		kill = &borg_kills[i];
-		
+
 		/* Add kills of type2 to type1 */
 		if (kill->type == type2) kill->type = type1;
 	}
@@ -781,58 +781,58 @@ static void observe_kill_move(int new_type, int old_type, int dist)
 {
 	int i, j;
 	borg_kill *kill1, *kill2;
-	
+
 	int x, y, d;
-	
+
 	for (i = 1; i < borg_kills_nxt; i++)
 	{
 		kill1 = &borg_kills[i];
-	
+
 		/* Paranoia - ignore dead monsters */
 		if (!kill1->r_idx) continue;
-		
+
 		/* Must be correct type */
 		if (kill1->type != old_type) continue;
-	
+
 		x = kill1->x;
 		y = kill1->y;
-	
+
 		for (j = 1; j < borg_kills_nxt; j++)
 		{
 			kill2 = &borg_kills[j];
-			
+
 			/* Paranoia - ignore dead monsters */
 			if (!kill2->r_idx) continue;
-			
+
 			/* Must be correct type */
 			if (kill2->type != new_type) continue;
-			
+
 			/* Must be same race */
 			if (kill2->r_idx != kill1->r_idx) continue;
-			
+
 			/* Calculate distance */
 			d = distance(x, y, kill2->x, kill2->y);
-			
+
 			/* Too far away */
 			if (d > dist) continue;
-			
+
 			/* Move the old monster to the used list */
 			kill1->type = BORG_MON_USED;
-			
+
 			/* Remove the new monster */
 			borg_merge_kill(j);
 
 			/* Note */
 			borg_note(format("# Tracking monster (%d) from (%d,%d) to (%d,%d)",
-							i, kill1->x, kill1->y, x, y));
-			
+							 i, kill1->x, kill1->y, x, y));
+
 			/* Change the location of the old one */
 			kill1->x = x;
 			kill1->y = y;
-			
+
 			/* Save timestamp */
 			kill1->when = borg_t;
-			
+
 			/* Update the monster */
 			borg_update_kill(i);
 
@@ -848,40 +848,40 @@ static void observe_kill_move(int new_type, int old_type, int dist)
 static bool remove_bad_kills(u16b who)
 {
 	int ox, oy;
-	
+
 	borg_kill *kill = &borg_kills[who];
 
 	ox = kill->x;
 	oy = kill->y;
-	
+
 	/* Monster is out of bounds */
 	if (!map_in_bounds(ox, oy))
 	{
 		borg_delete_kill(who, "out of bounds");
 		return (TRUE);
 	}
-	
+
 	/* Is the monster underneith us? */
 	if ((c_x == ox) && (c_y == oy))
 	{
 		borg_delete_kill(who, "where'd it go?");
 		return (TRUE);
 	}
-	
+
 	/* Are we supposed to see this, but don't? */
 	if (borg_follow_kill_aux(who, ox, oy))
 	{
 		borg_delete_kill(who, "vanished");
 		return (TRUE);
 	}
-	
+
 	/* We haven't seen it for ages? */
 	if (borg_t - kill->when > 2000)
 	{
 		borg_delete_kill(who, "expired");
 		return (TRUE);
 	}
-	
+
 	/* Did not remove monster */
 	return (FALSE);
 }
@@ -892,19 +892,19 @@ static bool remove_bad_kills(u16b who)
 static void handle_old_mons(byte type)
 {
 	int i;
-	
+
 	borg_kill *kill;
-		
+
 	for (i = 1; i < borg_kills_nxt; i++)
 	{
 		kill = &borg_kills[i];
-		
+
 		/* Paranoia - ignore dead monsters */
 		if (!kill->r_idx) continue;
-		
+
 		/* Must be of correct type */
 		if (kill->type != type) continue;
-		
+
 		if (remove_bad_kills(i)) continue;
 
 		/* Move the old monster to the used list */
@@ -2072,12 +2072,12 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 	if (map->monster)
 	{
 		borg_kill *kill;
-	
+
 		/* Is the monster known? */
 		if (mb_ptr->kill && (map->monster == mb_ptr->monster))
 		{
 			kill = &borg_kills[mb_ptr->kill];
-		
+
 			/* Remove it from the old list. */
 			kill->type = BORG_MON_USED;
 		}
@@ -2087,19 +2087,19 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 			if (mb_ptr->kill)
 			{
 				kill = &borg_kills[mb_ptr->kill];
-				
+
 				/* Move old entry into "moved" list */
 				kill->type = BORG_MON_MOVE;
 			}
-						
+
 			/* Get new kill */
 			mb_ptr->kill = get_blank_kill();
-	
+
 			kill = &borg_kills[mb_ptr->kill];
-	
+
 			/* Set type */
 			kill->type = BORG_MON_NEW;
-			
+
 			/* Fill in information for new monster */
 			borg_new_kill(map->monster, mb_ptr->kill, x, y);
 		}
@@ -2110,13 +2110,13 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 		{
 			/* Check */
 			borg_kill *kill = &borg_kills[mb_ptr->kill];
-			
-			if ((kill->x == x) && (kill->y == y)) 
+
+			if ((kill->x == x) && (kill->y == y))
 			{
 				/* We need to remove this from the list, it must have moved. */
 				kill->type = BORG_MON_MOVE;
 			}
-			
+
 			/* Clear it */
 			mb_ptr->kill = 0;
 		}
@@ -2340,7 +2340,7 @@ void borg_map_erase(void)
 
 	/* Forget old objects */
 	C_WIPE(borg_takes, BORG_TAKES_MAX, borg_take);
-	
+
 	/* Forget old monsters */
 	C_WIPE(borg_kills, BORG_KILLS_MAX, borg_kill);
 }
@@ -3169,28 +3169,28 @@ void borg_update(void)
 	}
 
 	/*** Track monsters ***/
-	
+
 	/* New monsters near 'moved' monsters */
 	observe_kill_move(BORG_MON_NEW, BORG_MON_MOVE, 1);
 	observe_kill_move(BORG_MON_NEW, BORG_MON_MOVE, 2);
 	observe_kill_move(BORG_MON_NEW, BORG_MON_MOVE, 3);
-	
+
 	/* New monsters near 'old forgotten' monsters */
 	observe_kill_move(BORG_MON_NEW, BORG_MON_OLD, 1);
 	observe_kill_move(BORG_MON_NEW, BORG_MON_OLD, 2);
 	observe_kill_move(BORG_MON_NEW, BORG_MON_OLD, 3);
-	
+
 	/* Scan all the remaining 'old' monsters */
 	handle_old_mons(BORG_MON_OLD);
 	handle_old_mons(BORG_MON_MOVE);
-	
+
 	/* Append remaining monsters to used list */
 	borg_append_mon_list(BORG_MON_USED, BORG_MON_NEW);
 	borg_append_mon_list(BORG_MON_USED, BORG_MON_OLD);
-	
+
 	/* Get rid of moved monsters we have not tracked */
 	borg_wipe_mon(BORG_MON_MOVE);
-	
+
 	/* Append used monsters to 'old' list, and delete used monsters */
 	borg_append_mon_list(BORG_MON_OLD, BORG_MON_USED);
 

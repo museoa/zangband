@@ -295,11 +295,11 @@ void mmove_init(int x1, int y1, int x2, int y2)
 	int dx, dy, ax, ay, sx, sy, dist;
 
 	cave_type *c_ptr;
-	
+
 	/* Clear slope and square */
 	mmove_slope = 0;
 	mmove_sq = 0;
-	
+
 	/* Clear direction */
 	mmove_dx = 0;
 	mmove_dy = 0;
@@ -323,7 +323,7 @@ void mmove_init(int x1, int y1, int x2, int y2)
 		dx = (dx * MAX_SIGHT) / dist;
 		dy = (dy * MAX_SIGHT) / dist;
 	}
-	
+
 	/* Save direction */
 	mmove_dx = dx;
 	mmove_dy = dy;
@@ -415,8 +415,8 @@ void mmove_init(int x1, int y1, int x2, int y2)
 			mmove_slope = (p_slope_min[ay][ax] + p_slope_max[ay][ax]) / 2;
 		}
 	}
-	
-	
+
+
 	/*
 	 * Reset to start.
 	 *

@@ -4370,7 +4370,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 
 			by = y1;
 			bx = x1;
-			
+
 			/* Initialise the multi-move */
 			mmove_init(x1, y1, x2, y2);
 
