@@ -2846,6 +2846,12 @@ static bool item_tester_hook_activate(object_type *o_ptr)
 {
 	u32b f1, f2, f3;
 
+	/* Check statues */
+	if (o_ptr->tval == TV_STATUE) return (TRUE);
+
+	/* Ignore dungeon objects */
+	if (o_ptr->iy || o_ptr->ix) return (FALSE);
+
 	/* Not known */
 	if (!object_known_p(o_ptr)) return (FALSE);
 
@@ -3821,6 +3827,24 @@ static void do_cmd_activate_aux(int item)
 		return;
 	}
 
+	else if (o_ptr->tval == TV_STATUE)
+	{
+		msg_print("You rub the statue carefully.");
+
+		if (rand_int(3) ||
+			 (!summon_specific(0, py, px, 100, SUMMON_CYBER, FALSE, FALSE, FALSE) &&
+			  !summon_specific(0, py, px, dun_level, SUMMON_GHB, FALSE, FALSE, FALSE)))
+		{
+			msg_print("After some time, you discover a message on the base:");
+			msg_print("'Try throwing a figurine instead.'");
+		}
+		else
+		{
+			msg_print("You think you have done something wrong.");
+			return;
+		}
+	}
+
 	/* Mistake */
 	msg_print("Oops.  That object cannot be activated.");
 }
@@ -3838,7 +3862,7 @@ void do_cmd_activate(void)
 	/* Get an item */
 	q = "Activate which item? ";
 	s = "You have nothing to activate.";
-	if (!get_item(&item, q, s, (USE_EQUIP))) return;
+	if (!get_item(&item, q, s, (USE_EQUIP | USE_FLOOR))) return;
 
 	/* Activate the item */
 	do_cmd_activate_aux(item);

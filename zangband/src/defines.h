@@ -2244,6 +2244,7 @@
 #define SUMMON_PHANTOM              47
 #define SUMMON_ELEMENTAL            48
 #define SUMMON_BLUE_HORROR          49
+#define SUMMON_GHB						50
 
 
 
