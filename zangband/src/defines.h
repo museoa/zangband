@@ -2506,7 +2506,6 @@
 #define PU_SPELLS       0x00000040L     /* Calculate spells */
 /* xxx (many) */
 /* xxx (many) */
-#define PU_UN_VIEW      0x00010000L     /* Forget view */
 /* xxx (many) */
 #define PU_VIEW         0x00100000L     /* Update view */
 #define PU_MON_LITE		0x00200000L		/* Monster illumination */
@@ -4042,6 +4041,15 @@
  */
 #define player_has_los_grid(C) \
     (((C)->player & (GRID_VIEW)) != 0)
+
+/*
+ * Determine if the player can see a grid
+ *
+ * (The grid is lit + in view)
+ */
+#define player_can_see_grid(C) \
+	(((C)->player & (GRID_SEEN)) != 0)
+
 
 
 /*

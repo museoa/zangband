@@ -766,9 +766,6 @@ bool do_cmd_open_aux(int x, int y)
 		/* Success? */
 		if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, (vptr) &i))
 		{
-			/* Update some things */
-			p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_MON_LITE);
-
 			/* Sound */
 			sound(SOUND_OPENDOOR);
 
@@ -1111,14 +1108,6 @@ static bool do_cmd_tunnel_aux(int x, int y)
 	{
 		if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, (vptr)&dig))
 		{
-			/* Notice new floor grids */
-			if (!cave_floor_grid(c_ptr))
-			{
-				/* Update some things */
-				p_ptr->update |= (PU_VIEW | PU_FLOW |
-					 PU_MONSTERS | PU_MON_LITE);
-			}
-			
 			/* Finished tunneling */
 			return (FALSE);
 		}
@@ -1323,7 +1312,7 @@ static bool do_cmd_tunnel_aux(int x, int y)
 				place_object(x, y, FALSE, FALSE);
 
 				/* Observe new object */
-				if (player_can_see_bold(x, y))
+				if (player_can_see_grid(pc_ptr))
 				{
 					msg_print("You have found something!");
 				}
@@ -1357,13 +1346,6 @@ static bool do_cmd_tunnel_aux(int x, int y)
 			/* Occasional Search XXX XXX */
 			if (one_in_(4)) search();
 		}
-	}
-
-	/* Notice new floor grids */
-	if (!cave_floor_grid(c_ptr))
-	{
-		/* Update some things */
-		p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS | PU_MON_LITE);
 	}
 
 	make_noise(4);

@@ -819,41 +819,17 @@ void scatter(int *xp, int *yp, int x, int y, int d)
  */
 bool player_can_see_bold(int x, int y)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
-	int xx, yy;
-
 	pcave_type *pc_ptr;
 	
 	/* Needs to be in bounds */
 	if (!in_boundsp(x, y)) return (FALSE);
 
-	/* Blind players see nothing */
-	if (p_ptr->blind) return (FALSE);
-
 	/* Access the cave grid */
 	pc_ptr = parea(x, y);
 
-	/* Note that "torch-lite" yields "illumination" */
-	if (pc_ptr->player & (GRID_LITE)) return (TRUE);
-
 	/* Require line of sight to the grid + lit grid */
-	if (!(pc_ptr->player & (GRID_SEEN))) return (FALSE);
+	if (pc_ptr->player & (GRID_SEEN)) return (TRUE);
 
-	/* Floors are simple */
-	if (cave_floor_grid(area(x, y))) return (TRUE);
-
-	/* Hack -- move towards player */
-	yy = (y < py) ? (y + 1) : (y > py) ? (y - 1) : y;
-	xx = (x < px) ? (x + 1) : (x > px) ? (x - 1) : x;
-
-	/* Check for "local" illumination */
-	if (area(xx, yy)->info & (CAVE_GLOW | CAVE_MNLT))
-	{
-		/* Assume the wall is really illuminated */
-		return (TRUE);
-	}
 
 	/* Assume not visible */
 	return (FALSE);
@@ -4838,9 +4814,6 @@ void wiz_dark(void)
 		/* Forget the object */
 		f_ptr->info &= (~FIELD_INFO_MARK);
 	}
-
-	/* Mega-Hack -- Forget the view */
-	p_ptr->update |= (PU_UN_VIEW);
 
 	/* Update the view */
 	p_ptr->update |= (PU_VIEW);

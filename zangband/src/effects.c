@@ -14,11 +14,6 @@
 
 /*
  * Set "p_ptr->blind", notice observable changes
- *
- * Note the use of "PU_UN_VIEW", which is needed to
- * memorize any terrain features which suddenly become "visible".
- * Note that blindness is currently the only thing which can affect
- * "player_can_see_bold()".
  */
 bool set_blind(int v)
 {
@@ -62,7 +57,7 @@ bool set_blind(int v)
 	if (disturb_state) disturb(FALSE);
 
 	/* Fully update the visuals - hack set torch to be radius 0 */
-	p_ptr->update |= (PU_UN_VIEW | PU_VIEW | PU_MONSTERS | PU_TORCH);
+	p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_TORCH);
 
 	/* Redraw map */
 	p_ptr->redraw |= (PR_MAP);

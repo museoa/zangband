@@ -42,9 +42,6 @@ void do_cmd_redraw(void)
 	/* Update stuff */
 	p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS);
 
-	/* Forget view */
-	p_ptr->update |= (PU_UN_VIEW);
-
 	/* Update view */
 	p_ptr->update |= (PU_VIEW | PU_MON_LITE);
 
@@ -116,9 +113,6 @@ void resize_map(void)
 
 	/* Update stuff */
 	p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS);
-
-	/* Forget view */
-	p_ptr->update |= (PU_UN_VIEW);
 
 	/* Update view */
 	p_ptr->update |= (PU_VIEW | PU_MON_LITE);

@@ -2791,7 +2791,7 @@ static void process_monster(int m_idx)
 							did_take_item = TRUE;
 
 							/* Describe observable situations */
-							if (m_ptr->ml && player_can_see_bold(nx, ny))
+							if (m_ptr->ml && player_can_see_grid(pc_ptr))
 							{
 								/* Dump a message */
 								msg_format("%^s tries to pick up %s, but fails.",
@@ -2807,7 +2807,7 @@ static void process_monster(int m_idx)
 						did_take_item = TRUE;
 
 						/* Describe observable situations */
-						if (player_can_see_bold(nx, ny))
+						if (player_can_see_grid(pc_ptr))
 						{
 							/* Dump a message */
 							msg_format("%^s picks up %s.", m_name, o_name);
@@ -2839,7 +2839,7 @@ static void process_monster(int m_idx)
 						did_kill_item = TRUE;
 
 						/* Describe observable situations */
-						if (player_can_see_bold(nx, ny))
+						if (player_can_see_grid(pc_ptr))
 						{
 							/* Dump a message */
 							msg_format("%^s destroys %s.", m_name, o_name);

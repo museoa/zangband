@@ -505,7 +505,7 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 			note_spot(x, y);
 
 			/* Observe (after lighting) */
-			if (player_can_see_bold(x, y)) obvious = TRUE;
+			if (known) obvious = TRUE;
 
 			/* Mega-Hack -- Update the monster in the affected grid */
 			/* This allows "spear of light" (etc) to work "correctly" */

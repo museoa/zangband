@@ -2656,7 +2656,7 @@ static int see_nothing(int dir, int x, int y)
 	if (!cave_floor_grid(c_ptr)) return (TRUE);
 
 	/* Viewable door/wall grids are known */
-	if (player_can_see_bold(x, y)) return (FALSE);
+	if (player_can_see_grid(pc_ptr)) return (FALSE);
 
 	/* Default */
 	return (TRUE);
