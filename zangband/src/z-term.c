@@ -1083,7 +1083,7 @@ static void Term_fresh_row_text(int y, int x1, int x2)
 /*
  * Actually perform all requested changes to the window
  *
- * If aboslutely nothing has changed, not even temporarily, or if the
+ * If absolutely nothing has changed, not even temporarily, or if the
  * current "Term" is not mapped, then this function will return 1 and
  * do absolutely nothing.
  *
