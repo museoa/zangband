@@ -1459,8 +1459,8 @@ static bool borg_dim_door(int emergency, int p1)
  */
 static bool borg_escape(int b_q)
 {
-
-	int risky_boost = 0;
+	/* Risky borgs are more likely to stay in a fight */
+	int risky_boost = 3;
 
 	bool amt_dim_door = FALSE;
 
@@ -1499,9 +1499,6 @@ static bool borg_escape(int b_q)
 
 	/* Borgs with GOI should not escape until the GOI falls */
 	if (borg_goi) return (FALSE);
-
-	/* Risky borgs are more likely to stay in a fight */
-	if (borg_plays_risky) risky_boost = 3;
 
 	/* 1. really scary, I'm about to die */
 	/* Try an emergency teleport, or phase door as last resort */
@@ -2290,9 +2287,6 @@ static bool borg_heal(int danger)
 			chance -= 25;
 	}
 
-
-	/* Risky Borgs are less likely to heal in the fight */
-	if (borg_plays_risky) chance += 3;
 
 	if (!
 		(((borg_skill[BI_CURHP] <= ((borg_skill[BI_MAXHP] * 4) / 5)) &&

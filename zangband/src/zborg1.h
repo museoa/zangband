@@ -214,7 +214,6 @@ extern bool borg_stop_king;
 extern bool borg_dont_react;
 extern int successful_target;
 
-extern bool borg_plays_risky;
 extern bool borg_scums_uniques;
 
 /* HACK... this should really be a parm into borg_prepared */

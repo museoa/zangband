@@ -4160,66 +4160,10 @@ static cptr borg_prepared_aux2(int depth)
 	/* Require recall */
 	if (borg_skill[BI_RECALL] < 1) return ("1 recall");
 
-	if (!borg_plays_risky)
-	{
-		/* Require 30 hp */
-		if (borg_skill[BI_MAXHP] < 30) return ("30 hp");
-	}
-
 	/* Usually ready for level 2 */
 	if (depth <= 2) return ((cptr)NULL);
 
 	/*** Essential Items for Level 3 and 4 ***/
-
-	if (!borg_plays_risky)
-	{
-		/* class specific requirement */
-		switch (borg_class)
-		{
-			case CLASS_WARRIOR:
-			{
-				if (borg_skill[BI_MAXHP] < 50) return ("50 hp");
-				if (borg_skill[BI_MAXCLEVEL] < 4) return ("4 clevel");
-				break;
-			}
-			case CLASS_ROGUE:
-			{
-				if (borg_skill[BI_MAXHP] < 50) return ("50 hp");
-				if (borg_skill[BI_MAXCLEVEL] < 8) return ("8 clevel");
-				break;
-			}
-			case CLASS_PRIEST:
-			{
-				if (borg_skill[BI_MAXHP] < 40) return ("40 hp");
-				if (borg_skill[BI_MAXCLEVEL] < 9) return ("9 level");
-				break;
-			}
-			case CLASS_PALADIN:
-			{
-				if (borg_skill[BI_MAXHP] < 50) return ("50 hp");
-				if (borg_skill[BI_MAXCLEVEL] < 4) return ("4 clevel");
-				break;
-			}
-			case CLASS_RANGER:
-			{
-				if (borg_skill[BI_MAXHP] < 50) return ("50 hp");
-				if (borg_skill[BI_MAXCLEVEL] < 4) return ("4 clevel");
-				break;
-			}
-			case CLASS_MAGE:
-			{
-				if (borg_skill[BI_MAXHP] < 60) return ("60 hp");
-				if (borg_skill[BI_MAXCLEVEL] < 11) return ("11 clevel");
-				break;
-			}
-			default:
-			{
-				if (borg_skill[BI_MAXHP] < 50) return ("50 hp");
-				if (borg_skill[BI_MAXCLEVEL] < 8) return ("8 clevel");
-				break;
-			}
-		}
-	}
 
 	/* Scrolls of Word of Recall */
 	if (borg_skill[BI_RECALL] < 3) return ("3 recall");
@@ -4234,58 +4178,6 @@ static cptr borg_prepared_aux2(int depth)
 
 	/*** Essential Items for Level 5 to 9 ***/
 
-	if (!borg_plays_risky)
-	{
-		/* class specific requirement */
-		if (borg_skill[BI_CDEPTH])
-		{
-			switch (borg_class)
-			{
-				case CLASS_WARRIOR:
-				{
-					if (borg_skill[BI_MAXHP] < 60) return ("60 hp");
-					if (borg_skill[BI_MAXCLEVEL] < 6) return ("6 clevel");
-					break;
-				}
-				case CLASS_ROGUE:
-				{
-					if (borg_skill[BI_MAXHP] < 60) return ("60 hp");
-					if (borg_skill[BI_MAXCLEVEL] < 10) return ("10 clevel");
-					break;
-				}
-				case CLASS_PRIEST:
-				{
-					if (borg_skill[BI_MAXHP] < 60) return ("60 hp");
-					if (borg_skill[BI_MAXCLEVEL] < 15) return ("15 clevel");
-					break;
-				}
-				case CLASS_PALADIN:
-				{
-					if (borg_skill[BI_MAXHP] < 60) return ("60 hp");
-					if (borg_skill[BI_MAXCLEVEL] < 6) return ("6 clevel");
-					break;
-				}
-				case CLASS_RANGER:
-				{
-					if (borg_skill[BI_MAXHP] < 60) return ("60 hp");
-					if (borg_skill[BI_MAXCLEVEL] < 6) return ("6 clevel");
-					break;
-				}
-				case CLASS_MAGE:
-				{
-					if (borg_skill[BI_MAXHP] < 80) return ("80 hp");
-					if (borg_skill[BI_MAXCLEVEL] < 15) return ("15 level");
-					break;
-				}
-				default:
-				{
-					if (borg_skill[BI_MAXHP] < 60) return ("60 hp");
-					if (borg_skill[BI_MAXCLEVEL] < 10) return ("10 clevel");
-					break;
-				}
-			}
-		}
-	}
 	/* Scrolls of Word of Recall */
 	if (borg_skill[BI_RECALL] < 4) return ("4 recalls");
 
@@ -4296,63 +4188,12 @@ static cptr borg_prepared_aux2(int depth)
 	/* Usually ready for level 5 to 9 */
 	if (depth <= 9) return ((cptr)NULL);
 
-	/*** Essential Items for Level 10 to 19 ***/
 
+	/*** Essential Items for Level 10 to 19 ***/
 
 	/* Escape or Teleport */
 	if (borg_skill[BI_ATELEPORT] + borg_skill[BI_AESCAPE] <
 		2) return ("2 teleports");
-
-	if (!borg_plays_risky)
-	{
-		/* class specific requirement */
-		switch (borg_class)
-		{
-			case CLASS_WARRIOR:
-			{
-				if (borg_skill[BI_MAXCLEVEL] < (depth - 4) && depth <= 19)
-					return ("dlevel - 4 >= clevel");
-				break;
-			}
-			case CLASS_ROGUE:
-			{
-				if (borg_skill[BI_MAXCLEVEL] < depth &&
-					depth <= 19) return ("dlevel >= clevel");
-				break;
-			}
-			case CLASS_PRIEST:
-			{
-				if (borg_skill[BI_MAXCLEVEL] < depth &&
-					depth <= 19) return ("dlevel >= clevel");
-				break;
-			}
-			case CLASS_PALADIN:
-			{
-				if (borg_skill[BI_MAXCLEVEL] < depth &&
-					depth <= 19) return ("dlevel >= clevel");
-				break;
-			}
-			case CLASS_RANGER:
-			{
-				if (borg_skill[BI_MAXCLEVEL] < depth &&
-					depth <= 19) return ("dlevel >= clevel");
-				break;
-			}
-			case CLASS_MAGE:
-			{
-				if (borg_skill[BI_MAXCLEVEL] < (depth + 5) &&
-					borg_skill[BI_MAXCLEVEL] <= 28)
-					return ("dlevel + 5 > = clevel");
-				break;
-			}
-			default:
-			{
-				if (borg_skill[BI_MAXCLEVEL] < depth &&
-					depth <= 19) return ("dlevel >= clevel");
-				break;
-			}
-		}
-	}
 
 	/* Potions of Cure Critical Wounds */
 	if ((borg_skill[BI_MAXCLEVEL] < 30) &&
@@ -4368,7 +4209,6 @@ static cptr borg_prepared_aux2(int depth)
 
 
 	/*** Essential Items for Level 20 ***/
-
 
 	/* Free action */
 	if (!borg_skill[BI_FRACT]) return ("FA");
@@ -4400,68 +4240,6 @@ static cptr borg_prepared_aux2(int depth)
 	}
 	if (borg_stat[A_DEX] < 7) return ("low DEX");
 	if (borg_stat[A_CON] < 7) return ("low CON");
-
-	if (!borg_plays_risky)
-	{
-		/* class specific requirement */
-		switch (borg_class)
-		{
-			case CLASS_WARRIOR:
-			{
-				if (borg_skill[BI_MAXCLEVEL] < (depth + 5) &&
-					borg_skill[BI_MAXCLEVEL] <= 38)
-					return ("dlevel + 5 >= clevel");
-				break;
-			}
-			case CLASS_ROGUE:
-			{
-				if (borg_skill[BI_MAXCLEVEL] < (depth + 10) &&
-					borg_skill[BI_MAXCLEVEL] <= 43)
-					return ("dlevel + 10 >= clevel");
-				break;
-			}
-			case CLASS_PRIEST:
-			{
-				if (borg_skill[BI_MAXCLEVEL] < (depth + 13) &&
-					borg_skill[BI_MAXCLEVEL] <= 46)
-					return ("dlevel + 13 >= clevel");
-				break;
-			}
-			case CLASS_PALADIN:
-			{
-				if (borg_skill[BI_MAXCLEVEL] < (depth + 7) &&
-					borg_skill[BI_MAXCLEVEL] <= 40)
-					return ("dlevel + 7 >= clevel");
-				break;
-			}
-			case CLASS_RANGER:
-			{
-				if (borg_skill[BI_MAXCLEVEL] < (depth + 8) &&
-					borg_skill[BI_MAXCLEVEL] <= 41 &&
-					borg_skill[BI_MAXCLEVEL] > 28)
-					return ("dlevel + 8 >= clevel");
-				break;
-			}
-			case CLASS_MAGE:
-			{
-				if (borg_skill[BI_MAXCLEVEL] < (depth + 8) &&
-					borg_skill[BI_MAXCLEVEL] <= 38)
-					return ("dlevel + 8 >= clevel");
-				if (((borg_skill[BI_MAXCLEVEL] - 38) * 2 + 30) < depth &&
-					borg_skill[BI_MAXCLEVEL] <= 44 &&
-					borg_skill[BI_MAXCLEVEL] > 38)
-					return ("(clevel-38)*2+30 < dlevel");
-				break;
-			}
-			default:
-			{
-				if (borg_skill[BI_MAXCLEVEL] < (depth + 10) &&
-					borg_skill[BI_MAXCLEVEL] <= 43)
-					return ("dlevel + 10 >= clevel");
-				break;
-			}
-		}
-	}
 
 	/* Ready for level 25 */
 	if (depth <= 25) return ((cptr)NULL);
@@ -4513,12 +4291,6 @@ static cptr borg_prepared_aux2(int depth)
 	if (borg_stat[A_DEX] < 16) return ("low DEX");
 	if (borg_stat[A_CON] < 16) return ("low CON");
 
-	if (!borg_plays_risky)
-	{
-		/* Minimal level */
-		if (borg_skill[BI_MAXCLEVEL] < 45) return ("level45");
-	}
-
 	if (depth <= 45) return ((cptr)NULL);
 
 
@@ -4532,12 +4304,6 @@ static cptr borg_prepared_aux2(int depth)
 		(borg_skill[BI_AEZHEAL] < 1)) return ("1heal");
 
 	if (!borg_skill[BI_SRCONF]) return ("RConf");
-
-	if (!borg_plays_risky)
-	{
-		/* Minimal hitpoints */
-		if (borg_skill[BI_MAXHP] < 500) return ("HP 500");
-	}
 
 	/* High stats XXX XXX XXX */
 	if (borg_stat[A_STR] < 18 + 40) return ("low STR");

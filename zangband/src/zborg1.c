@@ -50,8 +50,7 @@
  * This file contains various low level variables and routines.
  */
 
-/* dynamic borg stuff */
-bool borg_plays_risky;
+/* Dynamic borg stuff */
 bool borg_scums_uniques;
 
 /* HACK... this should really be a parm into borg_prepared */

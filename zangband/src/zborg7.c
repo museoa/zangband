@@ -2891,29 +2891,6 @@ bool borg_leave_level(bool bored)
 		/* Wait until bored */
 		if (!bored) return (FALSE);
 
-		/* Case for those who cannot Teleport Level */
-		if (borg_skill[BI_MAXDEPTH] == 100 && !borg_plays_risky)
-		{
-			if (borg_skill[BI_ATELEPORTLVL] == 0)
-			{
-				/* These pple must crawl down to 100, Sorry */
-				goal_fleeing = TRUE;
-				goal_leaving = TRUE;
-				stair_more = TRUE;
-
-				/* Note */
-				borg_note
-					("# Borg must crawl to deep dungeon- no recall to 100.");
-
-				/* Attempt to use those stairs */
-				if (borg_flow_stair_more(GOAL_BORE)) return (TRUE);
-
-				/* Oops */
-				return (FALSE);
-			}
-		}
-
-
 		/* Hack -- Recall into dungeon */
 		if ((borg_skill[BI_MAXDEPTH] >= 5) &&
 			(borg_skill[BI_RECALL] >= 6) && borg_recall())

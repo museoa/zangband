@@ -2010,7 +2010,6 @@ static void init_borg_txt_file(void)
 	borg_class = p_ptr->pclass;
 
 	/* Use default values */
-	borg_plays_risky = FALSE;
 	borg_scums_uniques = TRUE;
 	borg_stop_king = TRUE;
 
