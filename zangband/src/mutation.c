@@ -554,7 +554,6 @@ bool gain_mutation(int choose_mut)
 		muta_which = mut_ptr->which;
 
 		msg_print("You mutate!");
-		msg_print(mut_ptr->desc_text);
 		msg_print(mut_ptr->gain_text);
 		
 		/* Gain the mutation */
