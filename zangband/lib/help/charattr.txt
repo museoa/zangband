@@ -439,12 +439,10 @@ Warrior
     experience for destroying high level spellbooks.
 
     As a warrior's experience increases, he becomes more profficient
-    with his weapons gaining additional attacks per round with both his
-    sword and his missile weapon. As his skill improves, a warrior will
-    become more confident in his ability to defeat his opponents and
-    eventually will become resistant to fear attacks. Warriors also
-    receive a level dependent bonus to their to-hit and to-dam
-    statistics.
+    with his weapons gaining an additional attack per round with his
+    missile weapon. As his skill improves, a warrior will become more
+    confident in his ability to defeat his opponents and eventually
+    will become resistant to fear attacks.
 
 Mage
     A Mage is a spell caster that must live by his wits as he cannot
@@ -519,6 +517,10 @@ Rogue
     feared for it. Finally, there is the Card Shark, who will opt for
     Trump magic, and shuffles the decks with amazing proficiency.
 
+    As a rogue increases in experience, his proficency with the sling
+    improves and he will ultimately gain two additional shots per round
+    with his favorite missile launcher.
+
 Ranger
     A Ranger is a combination of a warrior and a mage who has developed
     a special affinity for the natural world around him. He is a good
@@ -531,9 +533,10 @@ Ranger
     as a fighter, Strength and Constitution are important too. As a
     ranger's experience increases, so does his skill with his primary
     weapon - the bow and he will learn to notch and loose arrows very
-    quickly. Unfortunately, because a ranger is really a dual class
-    character, more experience is required for him to advance through
-    the levels.
+    quickly. His ability with a cross bow will similarly increase but
+    not to the same extent. Unfortunately, because a ranger is really a
+    dual class character, more experience is required for him to
+    advance through the levels.
 
     All rangers are trained in Nature magic, and all Nature spells are
     available to them. They even learn these spells almost as fast as
@@ -969,7 +972,7 @@ High Mage     30+7  36+13 30+9   2    15/20       34+15 20+15 N/A
 Original   : (??)
 Updated    : (??)
 Updated    : Zangband DevTeam
-Last update: December 18, 1999
+Last update: January 5, 1999
 
 ***** Begin Hyperlinks
 ***** [1] birth.txt
