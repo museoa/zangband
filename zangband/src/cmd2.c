@@ -2706,9 +2706,6 @@ void do_cmd_fire_aux(int mult, object_type *o_ptr, const object_type *j_ptr)
 					/* Special note at death */
 					note_dies = " is destroyed.";
 				}
-				
-				/* Drop (or break) near that location (i_ptr is now invalid) */
-				throw_item_effect(i_ptr, TRUE, FALSE, x, y);
 
 				/* Get "the monster" or "it" */
 				monster_desc(m_name, m_ptr, 0, 80);
@@ -2778,6 +2775,9 @@ void do_cmd_fire_aux(int mult, object_type *o_ptr, const object_type *j_ptr)
 
 				/* Modify the damage */
 				tdam = mon_damage_mod(m_ptr, tdam, 0);
+								
+				/* Drop (or break) near that location (i_ptr is now invalid) */
+				throw_item_effect(i_ptr, TRUE, FALSE, x, y);
 
 				/* Complex message */
 				if (p_ptr->state.wizard)
