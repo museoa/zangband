@@ -2288,7 +2288,7 @@ static errr rd_dungeon(void)
 		/* XXX XXX XXX XXX XXX */
 
 		/* Dungeon items */
-		if (!o_ptr->held && !ignore_stuff)
+		if (o_ptr->k_idx && !o_ptr->held && !ignore_stuff)
 		{
             if (!in_bounds(o_ptr->ix, o_ptr->iy))
             {
