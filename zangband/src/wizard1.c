@@ -883,7 +883,7 @@ static void analyze_misc_magic (object_type *o_ptr, cptr *misc_list)
 	/*
 	 * Artifact lights -- large radius light.
 	 */
-	if ((o_ptr->tval == TV_LITE) && (o_ptr->flags3 & TR3_INSTA_ART))
+	if ((o_ptr->tval == TV_LITE) && (o_ptr->flags3 & TR3_LITE))
 	{
 		*misc_list++ = "Permanent Light(3)";
 	}
@@ -891,7 +891,7 @@ static void analyze_misc_magic (object_type *o_ptr, cptr *misc_list)
 	/*
 	 * Glowing artifacts -- small radius light.
 	 */
-	if (f3 & (TR3_LITE))
+	else if (f3 & (TR3_LITE))
 	{
 		*misc_list++ = "Permanent Light(1)";
 	}

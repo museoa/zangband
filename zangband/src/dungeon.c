@@ -730,7 +730,7 @@ static void regen_monsters(void)
 void notice_lite_change(object_type *o_ptr)
 {
 	/* Hack -- notice interesting fuel steps */
-	if ((o_ptr->pval < 100) || (!(o_ptr->pval % 100)))
+	if ((o_ptr->timeout < 100) || (!(o_ptr->timeout % 100)))
 	{
 		/* Window stuff */
 		p_ptr->window |= (PW_EQUIP);
@@ -740,18 +740,18 @@ void notice_lite_change(object_type *o_ptr)
 	if (p_ptr->blind)
 	{
 		/* Hack -- save some light for later */
-		if (o_ptr->pval == 0) o_ptr->pval++;
+		if (o_ptr->timeout == 0) o_ptr->timeout++;
 	}
 
 	/* The light is now out */
-	else if (o_ptr->pval == 0)
+	else if (o_ptr->timeout == 0)
 	{
 		disturb(FALSE);
 		msg_print("Your light has gone out!");
 	}
 
 	/* The light is getting dim */
-	else if ((o_ptr->pval < 100) && (!(o_ptr->pval % 10)))
+	else if ((o_ptr->timeout < 100) && (!(o_ptr->timeout % 10)))
 	{
 		if (disturb_minor) disturb(FALSE);
 		msg_print("Your light is growing faint.");
@@ -1681,30 +1681,6 @@ static void process_world(void)
 		(void)set_cut(p_ptr->cut - adjust);
 	}
 
-
-	/*** Process Light ***/
-
-	/* Check for light being wielded */
-	o_ptr = &inventory[INVEN_LITE];
-
-	/* Burn some fuel in the current lite */
-	if (o_ptr->tval == TV_LITE)
-	{
-		/* Hack -- Use some fuel (except on artifacts) */
-		if (!(o_ptr->flags3 & TR3_INSTA_ART) && (o_ptr->pval > 0))
-		{
-			/* Decrease life-span */
-			o_ptr->pval--;
-
-			/* Notice interesting fuel steps */
-			notice_lite_change(o_ptr);
-		}
-	}
-
-	/* Calculate torch radius */
-	p_ptr->update |= (PU_TORCH);
-
-
 	/*** Process mutation effects ***/
 	for (i = MUT_PER_SET; i < MUT_PER_SET * 2; i++)
 	{
@@ -1813,10 +1789,22 @@ static void process_world(void)
 			/* Notice changes */
 			if (!o_ptr->timeout)
 			{
-				recharged_notice(o_ptr);
+				/* Lights are special */
+				if ((o_ptr->tval == TV_LITE) && !(o_ptr->flags3 & TR3_LITE))
+				{
+					/* Notice interesting fuel steps */
+					notice_lite_change(o_ptr);
+
+					/* Calculate torch radius */
+					p_ptr->update |= (PU_TORCH);
+				}
+				else
+				{
+					recharged_notice(o_ptr);
 				
-				/* Window stuff */
-				p_ptr->window |= (PW_EQUIP);
+					/* Window stuff */
+					p_ptr->window |= (PW_EQUIP);
+				}
 			}
 		}
 	}

@@ -954,22 +954,22 @@ void phlogiston(void)
 		return;
 	}
 
-	if (o_ptr->pval >= max_flog)
+	if (o_ptr->timeout >= max_flog)
 	{
 		msg_print("No more phlogiston can be put in this item.");
 		return;
 	}
 
 	/* Refuel */
-	o_ptr->pval += (max_flog / 2);
+	o_ptr->timeout += (max_flog / 2);
 
 	/* Message */
 	msg_print("You add phlogiston to your light item.");
 
 	/* Comment */
-	if (o_ptr->pval >= max_flog)
+	if (o_ptr->timeout >= max_flog)
 	{
-		o_ptr->pval = max_flog;
+		o_ptr->timeout = max_flog;
 		msg_print("Your light item is full.");
 	}
 

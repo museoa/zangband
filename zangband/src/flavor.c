@@ -1642,7 +1642,7 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 	else if (known && (o_ptr->tval == TV_ROD))
 	{
 		/* Hack -- Dump " (# charging)" if relevant */
-		if (o_ptr->timeout)
+ 		if ((o_ptr->timeout) && (o_ptr->tval != TV_LITE))
 		{
 			/* Stacks of rods display an exact count of charging rods. */
 			if (o_ptr->number > 1)
@@ -1673,11 +1673,11 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 	}
 
 	/* Hack -- Process Lanterns/Torches */
-	else if ((o_ptr->tval == TV_LITE) && (!(o_ptr->flags3 & TR3_INSTA_ART)))
+	else if ((o_ptr->tval == TV_LITE) && (!(o_ptr->flags3 & TR3_LITE)))
 	{
 		/* Hack -- Turns of light for normal lites */
 		t = object_desc_str(t, " (with ");
-		t = object_desc_num(t, o_ptr->pval);
+		t = object_desc_num(t, o_ptr->timeout);
 		t = object_desc_str(t, " turns of light)");
 	}
 
@@ -1741,7 +1741,8 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 	}
 
 	/* Indicate charging objects, but not rods. */
-	if (known && o_ptr->timeout && o_ptr->tval != TV_ROD)
+	if (known && o_ptr->timeout && o_ptr->tval != TV_ROD
+		 && o_ptr->tval != TV_LITE)
 	{
 		/* Hack -- Dump " (charging)" if relevant */
 		t = object_desc_str(t, " (charging)");

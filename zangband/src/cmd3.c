@@ -786,7 +786,7 @@ static bool item_tester_refill_lantern(object_type *o_ptr)
 	/* Laterns are okay */
 	if ((o_ptr->tval == TV_LITE) &&
 	    (o_ptr->sval == SV_LITE_LANTERN) &&
-	    (o_ptr->pval > 0)) return (TRUE);
+	    (o_ptr->timeout > 0)) return (TRUE);
 
 	/* Assume not okay */
 	return (FALSE);
@@ -834,32 +834,40 @@ static void do_cmd_refill_lamp(void)
 	j_ptr = &inventory[INVEN_LITE];
 
 	/* Refuel */
-	j_ptr->pval += o_ptr->pval;
+	j_ptr->timeout += o_ptr->timeout;
 
 	/* Message */
 	msg_print("You fuel your lamp.");
 
 	/* Comment */
-	if (j_ptr->pval >= FUEL_LAMP)
+	if (j_ptr->timeout >= FUEL_LAMP)
 	{
-		j_ptr->pval = FUEL_LAMP;
+		j_ptr->timeout = FUEL_LAMP;
 		msg_print("Your lamp is full.");
 	}
 
 	/* Decrease the item (from the pack) */
-	if (item >= 0)
+	if (o_ptr->tval == TV_FLASK)
 	{
-		inven_item_increase(item, -1);
-		inven_item_describe(item);
-		inven_item_optimize(item);
-	}
+		if (item >= 0)
+		{
+			inven_item_increase(item, -1);
+			inven_item_describe(item);
+			inven_item_optimize(item);
+		}
 
-	/* Decrease the item (from the floor) */
+		/* Decrease the item (from the floor) */
+		else
+		{
+			floor_item_increase(0 - item, -1);
+			floor_item_describe(0 - item);
+			floor_item_optimize(0 - item);
+		}
+	}
 	else
 	{
-		floor_item_increase(0 - item, -1);
-		floor_item_describe(0 - item);
-		floor_item_optimize(0 - item);
+		/* The lantern is empty */
+		o_ptr->timeout = 0;
 	}
 
 	/* Recalculate torch */
@@ -922,15 +930,15 @@ static void do_cmd_refill_torch(void)
 	j_ptr = &inventory[INVEN_LITE];
 
 	/* Refuel */
-	j_ptr->pval += o_ptr->pval + 5;
+	j_ptr->timeout += o_ptr->timeout + 5;
 
 	/* Message */
 	msg_print("You combine the torches.");
 
 	/* Over-fuel message */
-	if (j_ptr->pval >= FUEL_TORCH)
+	if (j_ptr->timeout >= FUEL_TORCH)
 	{
-		j_ptr->pval = FUEL_TORCH;
+		j_ptr->timeout = FUEL_TORCH;
 		msg_print("Your torch is fully fueled.");
 	}
 

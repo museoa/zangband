@@ -381,6 +381,23 @@ static void rd_item(object_type *o_ptr)
 	rd_u32b(&o_ptr->flags2);
 	rd_u32b(&o_ptr->flags3);
 
+	/* Lites changed in [Z] 2.6.0 */
+	if ((sf_version < 25) && (o_ptr->tval == TV_LITE))
+	{
+		/* Torches and lanterns use timeout now */
+		if ((o_ptr->sval == SV_LITE_TORCH) ||
+			(o_ptr->sval == SV_LITE_LANTERN))
+		{
+			o_ptr->timeout = o_ptr->pval;
+			o_ptr->pval = 0;
+		}
+		else
+		{
+			/* Other lites are everburning. */
+			o_ptr->flags3 |= TR3_LITE;		
+		}
+	}
+
 	/* Monster holding object */
 	rd_s16b(&o_ptr->held_m_idx);
 

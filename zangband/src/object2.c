@@ -3502,14 +3502,17 @@ static void a_m_aux_4(object_type *o_ptr)
 			/* Hack -- Torches -- random fuel */
 			if (o_ptr->sval == SV_LITE_TORCH)
 			{
-				if (o_ptr->pval > 0) o_ptr->pval = randint1(o_ptr->pval);
+				if (o_ptr->pval > 0) o_ptr->timeout = randint1(o_ptr->pval);
 			}
 
 			/* Hack -- Lanterns -- random fuel */
 			if (o_ptr->sval == SV_LITE_LANTERN)
 			{
-				if (o_ptr->pval > 0) o_ptr->pval = randint1(o_ptr->pval);
+				if (o_ptr->pval > 0) o_ptr->timeout = randint1(o_ptr->pval);
 			}
+			
+			/* Hack - remove pval */
+			o_ptr->pval = 0;
 
 			break;
 		}

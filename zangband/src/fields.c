@@ -2861,7 +2861,7 @@ void field_action_hit_trap_no_lite(s16b *field_ptr, vptr nothing)
 		((o_ptr->sval == SV_LITE_LANTERN) || (o_ptr->sval == SV_LITE_TORCH)))
 	{
 		/* Drain all light. */
-		o_ptr->pval = 0;
+		o_ptr->timeout = 0;
 	}
 	
 	/* Darkeness */

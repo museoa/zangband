@@ -1184,8 +1184,8 @@ static void store_create(void)
 		/* Hack -- Charge lite's */
 		if (q_ptr->tval == TV_LITE)
 		{
-			if (q_ptr->sval == SV_LITE_TORCH) q_ptr->pval = FUEL_TORCH / 2;
-			if (q_ptr->sval == SV_LITE_LANTERN) q_ptr->pval = FUEL_LAMP / 2;
+			if (q_ptr->sval == SV_LITE_TORCH) q_ptr->timeout = FUEL_TORCH / 2;
+			if (q_ptr->sval == SV_LITE_LANTERN) q_ptr->timeout = FUEL_LAMP / 2;
 		}
 
 		/* The item is "known" */
