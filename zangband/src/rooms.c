@@ -18,30 +18,6 @@
 
 
 /*
- * Array of minimum room depths
- */
-static const s16b roomdep[] =
-{
-	0, /* 0  = Nothing */
-	1, /* 1  = Simple (33x11) */
-	1, /* 2  = Overlapping (33x11) */
-	3, /* 3  = Crossed (33x11) */
-	3, /* 4  = Large (33x11) */
-	10,	/* 5  = Monster nest (33x11) */
-	10,	/* 6  = Monster pit (33x11) */
-	10,	/* 7  = Lesser vault (33x22) */
-	20,	/* 8  = Greater vault (66x44) */
-	5, /* 9  = Fractal cave (52x28) */
-	10,	/* 10 = Random vault (44x22) */
-	3, /* 11 = Circular rooms (22x22) */
-	10,	/* 12 = Crypts (22x22) */
-	5, /* 13 = Large with feature (50x36) */
-	3, /* 14 = Large version 2 (33x11) */
-	3, /* 15 = Parallelogram room (37x15) */
-};
-
-
-/*
  * This funtion makes a very small room centred at (x0, y0)
  * This is used in crypts, and random elemental vaults.
  *
@@ -231,23 +207,6 @@ static bool room_alloc(int x, int y, bool crowded, int bx0, int by0, int *xx,
 
 /*
  * Room building routines.
- *
- * Room types:
- *   1 -- normal
- *   2 -- overlapping
- *   3 -- cross shaped
- *   4 -- large room with features
- *   5 -- monster nests
- *   6 -- monster pits
- *   7 -- simple vaults
- *   8 -- greater vaults
- *   9 -- fractal caves
- *  10 -- random vaults
- *  11 -- circular rooms
- *  12 -- crypts
- *  13 -- Large with feature
- *  14 -- Large version 2
- *  15 -- Parallelogram room
  */
 
 
@@ -5165,38 +5124,47 @@ static void build_type25(int bx0, int by0)
 	}
 }
 
-
 #define ROOM_TYPES	25
 
 typedef void (*room_build_type)(int, int);
 
-room_build_type room_list[ROOM_TYPES] =
+typedef struct room_type room_type;
+
+struct room_type
 {
-	build_type1,
-	build_type2,
-	build_type3,
-	build_type4,
-	build_type5,
-	build_type6,
-	build_type7,
-	build_type8,
-	build_type9,
-	build_type10,
-	build_type11,
-	build_type12,
-	build_type13,
-	build_type14,
-	build_type15,
-	build_type16,
-	build_type17,
-	build_type18,
-	build_type19,
-	build_type20,
-	build_type21,
-	build_type22,
-	build_type23,
-	build_type24,
-	build_type25
+	const int depth;	/* Minimum depth */
+	const room_build_type build_func;	/* Function to build room */
+};
+
+
+room_type room_list[ROOM_TYPES + 1] =
+{
+	{0,		NULL},			/* Nothing */
+	{1,		build_type1},	/* Simple Rectangle */
+	{1,		build_type2},	/* Overlapping */
+	{3,		build_type3},	/* Crossed */
+	{3,		build_type4},	/* Large nested */
+	{10,	build_type5},	/* Monster nest */
+	{10,	build_type6},	/* Monster pit */
+	{10,	build_type7},	/* Small vault */
+	{20,	build_type8},	/* Large vault */
+	{5,		build_type9},	/* Fractal cave */
+	{10,	build_type10},	/* Random vault */
+	{3,		build_type11},	/* Circle */
+	{10,	build_type12},	/* Crypt I */
+	{5,		build_type13},	/* Large with fractal feature */
+	{3,		build_type14},	/* Large with walls */
+	{3,		build_type15},	/* Parallelogram */
+	{3,		build_type16},	/* Rectangle minus inverse overlapping */
+	{3,		build_type17},	/* Triangles */
+	{5,		build_type18},	/* Chambers */
+	{5,		build_type19},	/* Channel */
+	{5,		build_type20},	/* Collapsed */
+	{10,	build_type21},	/* Crypt II */
+	{10,	build_type22},	/* Very large pillared chamber */
+	{3,		build_type23},	/* Semicircle */
+	{3,		build_type24},	/* Hourglass */
+	{3,		build_type25}	/* Connected rooms */
 };
 
 
@@ -5212,13 +5180,13 @@ bool room_build(int bx0, int by0, int typ)
 	if ((typ > ROOM_TYPES) || (typ < 1)) return (FALSE);
 
 	/* Restrict level */
-	if ((p_ptr->depth < roomdep[typ]) && !ironman_rooms) return (FALSE);
+	if ((p_ptr->depth < room_list[typ].depth) && !ironman_rooms) return (FALSE);
 
 	/* Restrict "crowded" rooms */
 	if ((dun->crowded >= 2) && ((typ == 5) || (typ == 6))) return (FALSE);
 	
 	/* Build a room */
-	room_list[typ - 1](bx0, by0);
+	room_list[typ].build_func(bx0, by0);
 
 	return (TRUE);
 }
