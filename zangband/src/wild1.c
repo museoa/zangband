@@ -653,7 +653,7 @@ static void init_towns(void)
 
 
 /* Set wilderness stats depending on town type */
-void set_mon_wild_values(byte town_type, wild_done_type *w_ptr)
+static void set_mon_wild_values(byte town_type, wild_done_type *w_ptr)
 {
 	/* This function is very rudimentary at the moment */
 
@@ -2998,7 +2998,7 @@ static void create_rivers(void)
  * Note the logic used to see that lava and acid lakes do not
  * overlap rivers, and that all lakes are above sea level.
  */
-void create_lakes(void)
+static void create_lakes(void)
 {
 	int count, i, j, x ,y;
 

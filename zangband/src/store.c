@@ -1539,7 +1539,7 @@ static void store_maint(void)
 /*
  * Shuffle one of the stores.
  */
-void store_shuffle(store_type *st_ptr)
+static void store_shuffle(store_type *st_ptr)
 {
 	int i, j;
 

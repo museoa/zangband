@@ -1358,7 +1358,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 /*
  * Calculates current boundaries
  */
-void panel_recalc_bounds(void)
+static void panel_recalc_bounds(void)
 {
 	int wid, hgt;
 

@@ -121,7 +121,7 @@ void excise_field_idx(int fld_idx)
 /*
  * Notice changes to a field
  */
-void notice_field(field_type *f_ptr)
+static void notice_field(field_type *f_ptr)
 {
 	int x = f_ptr->fx;
 	int y = f_ptr->fy;
