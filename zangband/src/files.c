@@ -2857,9 +2857,6 @@ errr file_character(cptr name, bool full)
 	if (stupid_monsters)
 		fprintf(fff, "\n Your opponents are behaving stupidly.");
 
-	if (munchkin_mindcraft)
-		fprintf(fff, "\n You possess munchkinish control over teleportation.");
-
 	if (munchkin_death)
 		fprintf(fff, "\n You possess munchkinish power over death.");
 

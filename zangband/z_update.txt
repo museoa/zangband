@@ -3,7 +3,8 @@ standard Angband 2.8.1.) No long explanations, just a list. See code for
 details. In reversed chronological order (more or less):
 
 Zangband 2.3.3:
--Added magical figurines, statues, and corpses.
+-Added magical figurines, statues, and corpses (corpses are turned off
+ since they can't be resurrected yet).
 -Added a new scroll 'of mundanity'.
 -New weapon type - the 'Diamond Edge' sword which has the vorpal flag.
 -Chests now use the '&' symbol and have more varied colors.
@@ -27,6 +28,16 @@ Zangband 2.3.3:
 -Added 8x8 graphics tiles for the new monsters and items.
 -You can now teleport into forested areas. This will prevent getting
  trapped in the wilderness.
+-Various changes to the Mindcrafter:
+  - Dimension Door is back. At level 40.
+  - Psychometry becomes Identify at level 25, not 40.
+  - PSI damage only affects opponents that can see you (affects
+    neural blast, mind wave, as well as a Trump spell, a mutation
+    and a racial power).
+  - Psychic Drain is always a radius-0 ball, not bigger.
+  - Adrenalin Channeling only heals when the player isn't already
+    'heroed' ('herofied'? 'heroficated'?) and hasted.
+  - Precognition also gives Detect Doors at level 5.
 -Fixed a bug preventing the loading of 2.2.7 save files.
 -Fixed a bug with the {cursed} inscription.
 -Fixed a bug preventing Ravens and Crows from appearing.

@@ -541,7 +541,7 @@ static tval_desc tvals[] =
 	{ TV_CHEST,             "Chest"                },
 	{ TV_FIGURINE,          "Magical Figurine"     },
 	{ TV_STATUE,            "Statue"               },
-	{ TV_CORPSE,		"Corpse"		     },
+	{ TV_CORPSE,            "Corpse"               },
 	{ TV_FOOD,              "Food"                 },
 	{ TV_FLASK,             "Flask"                },
 	{ TV_JUNK,              "Junk"                 },

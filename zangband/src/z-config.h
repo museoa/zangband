@@ -625,3 +625,8 @@
 # define STATIC_PYTHON
 /* # define SCRIPT_OBJ_KIND */
 #endif /* USE_SCRIPT */
+
+/*
+ * Monsters can drop corpses when killed
+ */
+/* #define USE_CORPSES */

@@ -452,6 +452,7 @@ void monster_death(int m_idx)
 		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
 	}
 
+#ifdef USE_CORPSES
 	/* Drop a dead corpse? */
 	if ((randint(r_ptr->flags1 & RF1_UNIQUE ? 1 : 4) == 1) &&
 	    ((r_ptr->flags9 & RF9_DROP_CORPSE) || 
@@ -498,6 +499,7 @@ void monster_death(int m_idx)
 		/* Drop it in the dungeon */
 		(void)drop_near(q_ptr, -1, y, x);
 	}
+#endif /* USE_CORPSES */
 
 	/* Drop objects being carried */
 	monster_drop_carried_objects(m_ptr);

@@ -416,7 +416,6 @@ extern bool ironman_hard_quests;
 extern bool lite_town;
 extern bool ironman_empty_levels;
 extern bool terrain_streams;
-extern bool munchkin_mindcraft;
 extern bool munchkin_death;
 extern bool munchkin_rings;
 extern bool ironman_rooms;

@@ -6207,9 +6207,6 @@ option_type option_info[] =
 	{ &terrain_streams,             TRUE, 6,6,9,
 	"terrain_streams",              "Create terrain 'streamers' in the dungeon" },
 
-	{ &munchkin_mindcraft,          FALSE, 6,6,10,
-	"munchkin_mindcraft",           "Allow the 'Dimension Door' Mindcraft power" },
-
 	{ &munchkin_death,              FALSE, 6,6,11,
 	"munchkin_death",               "Ask for saving death" },
 
