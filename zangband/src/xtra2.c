@@ -753,7 +753,10 @@ bool monster_death(int m_idx, bool explode)
 	if (cloned) number = 0;		/* Clones drop no stuff */
 
 	/* Average dungeon and monster levels */
-	object_level = (p_ptr->depth + r_ptr->level) / 2;
+	if (p_ptr->depth)
+		object_level = (p_ptr->depth + r_ptr->level) / 2;
+	else
+		object_level = r_ptr->level;
 
 	/* Drop some objects */
 	for (j = 0; j < number; j++)
