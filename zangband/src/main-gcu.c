@@ -942,6 +942,13 @@ static errr term_data_init_gcu(term_data *td, int rows, int cols, int y, int x, 
 	return (0);
 }
 
+/* The hook to exit curses on a failure */
+static void hook_quit(cptr str)
+{
+	/* Exit curses */
+	endwin();
+}
+
 
 /*
  * Prepare "curses" for use by the file "term.c"
@@ -969,6 +976,9 @@ errr init_gcu(void)
 	if (initscr() == (WINDOW*)ERR) return (-1);
 #endif
 
+	/* Activate hooks */
+	quit_aux = hook_quit;
+	core_aux = hook_quit;
 
 	/* Hack -- Require large screen, or Quit with message */
 	i = ((LINES < 24) || (COLS < 80));
