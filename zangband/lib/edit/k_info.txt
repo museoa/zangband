@@ -753,8 +753,8 @@ F:SHOW_MODS | TUNNEL
 N:86:& Dwarven Shovel~
 G:\:B
 I:20:3:3
-W:65:0:120:200
-A:65/1
+W:55:0:120:300
+A:55/1
 P:0:1d3:0:0:0
 F:SHOW_MODS | TUNNEL
 
@@ -838,15 +838,15 @@ P:5:1d3:0:0:0
 N:97:& Steel Helm~
 G:]:W
 I:32:6:0
-W:65:0:60:200
-A:65/1
+W:45:0:60:220
+A:45/1
 P:6:1d3:0:0:0
 
 N:98:& Iron Crown~
 G:]:s
 I:33:10:0
-W:70:0:20:200
-A:70/1
+W:60:0:20:200
+A:60/1
 P:0:1d1:0:0:0
 
 N:99:& Golden Crown~
@@ -1064,8 +1064,8 @@ P:2:1d1:0:0:0
 N:127:& Set~ of Cesti
 G:]:W
 I:31:5:0
-W:75:0:40:100
-A:75/1
+W:45:0:40:100
+A:45/1
 P:5:1d1:0:0:0
 
 
@@ -1273,43 +1273,43 @@ F:SEE_INVIS | EASY_KNOW
 N:156:Sustain Strength
 G:=:d
 I:45:10:0
-W:30:0:2:50
-A:30/20:52/8
+W:20:0:2:100
+A:20/8:52/8
 F:SUST_STR | EASY_KNOW
 
 N:157:Sustain Intelligence
 G:=:d
 I:45:11:0
-W:30:0:2:50
-A:30/20:52/8
+W:20:0:2:100
+A:20/8:52/8
 F:SUST_INT | EASY_KNOW
 
 N:158:Sustain Wisdom
 G:=:d
 I:45:12:0
-W:30:0:2:50
-A:30/20:52/8
+W:20:0:2:100
+A:20/8:52/8
 F:SUST_WIS | EASY_KNOW
 
 N:159:Sustain Constitution
 G:=:d
 I:45:13:0
-W:30:0:2:50
-A:30/20:52/8
+W:20:0:2:100
+A:20/8:52/8
 F:SUST_CON | EASY_KNOW
 
 N:160:Sustain Dexterity
 G:=:d
 I:45:14:0
-W:30:0:2:50
-A:30/20:52/8
+W:20:0:2:100
+A:20/8:52/8
 F:SUST_DEX | EASY_KNOW
 
 N:161:Sustain Charisma
 G:=:d
 I:45:15:0
-W:30:0:2:50
-A:30/40:52/16
+W:20:0:2:75
+A:20/16:52/16
 F:SUST_CHR | EASY_KNOW
 
 N:162:Slaying
@@ -1504,8 +1504,8 @@ F:EASY_KNOW
 N:187:Teleport Level
 G:?:d
 I:70:10:0
-W:35:0:5:50
-A:35/1
+W:30:0:5:150
+A:30/1
 F:EASY_KNOW
 
 N:188:Monster Confusion
@@ -1727,15 +1727,15 @@ F:EASY_KNOW
 N:218:Holy Chant
 G:?:d
 I:70:34:0
-W:17:0:5:40
-A:17/2
+W:15:0:5:50
+A:15/2
 F:EASY_KNOW
 
 N:219:Holy Prayer
 G:?:d
 I:70:35:0
-W:43:0:5:80
-A:43/2
+W:30:0:5:120
+A:30/2
 F:EASY_KNOW
 
 N:220:Word of Recall
@@ -1975,8 +1975,8 @@ F:EASY_KNOW
 N:249:Speed
 G:!:d
 I:75:29:0
-W:1:0:4:150
-A:1/16:65/1
+W:2:0:4:100
+A:2/16:65/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
 
@@ -2039,7 +2039,7 @@ F:EASY_KNOW
 N:257:Heroism
 G:!:d
 I:75:32:0
-W:1:0:4:35
+W:1:0:4:25
 A:1/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
@@ -2095,7 +2095,7 @@ F:EASY_KNOW
 N:264:Slow Poison
 G:!:d
 I:75:26:0
-W:1:0:4:25
+W:1:0:4:20
 A:1/2
 P:0:1d1:0:0:0
 F:EASY_KNOW
@@ -2195,7 +2195,7 @@ P:0:1d1:0:0:0
 N:277:Slow Monster
 G:-:d
 I:65:9:17
-W:4:0:10:250
+W:4:0:10:200
 A:4/2
 P:0:1d1:0:0:0
 
@@ -3155,7 +3155,7 @@ F:EASY_KNOW
 N:399:& Great Hammer~
 G:\:D
 I:21:19:0
-W:70:0:300:350
+W:70:0:300:1350
 A:70/1:105/1
 P:0:4d6:0:0:0
 F:SHOW_MODS
@@ -4029,7 +4029,7 @@ F:SHOW_MODS
 N:548:& Great Scimitar~
 G:|:W
 I:23:22:0
-W:85:0:240:500
+W:85:0:240:1050
 A:85/3:98/3
 P:0:4d5:0:0:0
 F:SHOW_MODS
