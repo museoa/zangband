@@ -1579,23 +1579,6 @@ void Term_putch(int x, int y, byte a, char c)
 
 
 /*
- * Move to a location and, using an attr, add a string
- */
-void Term_putstr(int x, int y, int n, byte a, cptr s)
-{
-	/* Move first */
-	Term_gotoxy(x, y);
-
-	/* Then add the string */
-	(void)Term_addstr(n, a, s);
-
-	/* Success */
-	return;
-}
-
-
-
-/*
  * Place cursor at (x,y), and clear the next "n" chars
  */
 void Term_erase(int x, int y, int n)
