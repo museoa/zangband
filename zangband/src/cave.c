@@ -1724,17 +1724,35 @@ void lite_spot(int y, int x)
 void prt_map(void)
 {
 	int     x, y;
-	int     v;
+	int     v, n;
 	bool    fake_monochrome = (!use_graphics || streq(ANGBAND_SYS, "ibm"));
 
 	/* map bounds */
 	s16b	xmin, xmax, ymin, ymax;
-
+	
+	byte *ma, *pa;
+	char *mc, *pc;
+	
+#ifdef USE_TRANSPARENCY
+	byte *mta, *pta;
+	char *mtc, *ptc;
+	
+	/* String of terrain characters along one row of the map */
+	C_MAKE(mta, map_wid, byte);
+	C_MAKE(mtc, map_wid, char);
+	
+#endif /* USE_TRANSPARENCY */	
+	
+	/* String of characters along one row of the map */
+	C_MAKE(ma, map_wid, byte);
+	C_MAKE(mc, map_wid, char);
+	
 	/* Access the cursor state */
 	(void)Term_get_cursor(&v);
 
 	/* Hide the cursor */
 	(void)Term_set_cursor(0);
+	
 	
 	/* Get bounds */
 	if (dun_level)
@@ -1799,46 +1817,64 @@ void prt_map(void)
 	}
 	
 #else /* USE_TRANSPARENCY */
-	/* Clear out of bounds region */
-	for (x = 0; x < map_wid; x++)
+	/* Bottom section of screen */
+	for (y = 1; y < ymin - panel_row_prt; y++)
 	{
-		/* Bottom section of screen */
-		for (y = 1; y < ymin - panel_row_prt; y++)
+		for (x = 13; x < map_wid + 13; x++)
 		{
 			/* Efficiency -- Redraw that grid of the map */
-			Term_queue_char(x + 13, y , TERM_WHITE, ' ');
+			Term_queue_char(x, y , TERM_WHITE, ' ');
 		}
-		
-		/* Top section of screen */
-		for (y = ymax; y < panel_row_max; y++)
+	}
+	
+	/* Top section of screen */
+	for (y = ymax - panel_row_prt; y < map_hgt; y++)
+	{
+		for (x = 13; x < map_wid + 13; x++)
 		{
+			
 			/* Efficiency -- Redraw that grid of the map */
-			Term_queue_char(x + 13, y - panel_row_prt, TERM_WHITE, ' ');
+			Term_queue_char(x, y, TERM_WHITE, ' ');
 		}	
 	}
 	
-	for (y = ymin - panel_row_prt; y < ymax - panel_row_prt; y++)
+	/* Left section of screen */
+	for (x = 13; x < xmin - panel_col_prt; x++)
 	{
-		/* Left section of screen */
-		for (x = xmin; x < panel_col_min; x++)
+		for (y = ymin - panel_row_prt; y < ymax - panel_row_prt; y++)
 		{
 			/* Efficiency -- Redraw that grid of the map */
-			Term_queue_char(x - panel_col_prt, y, TERM_WHITE, ' ');
-		}
-		
-		/* Right section of screen */
-		for (x = xmax ; x < panel_col_max; x++)
-		{
-			/* Efficiency -- Redraw that grid of the map */
-			Term_queue_char(x - panel_col_prt, y, TERM_WHITE, ' ');
+			Term_queue_char(x, y, TERM_WHITE, ' ');
 		}
 	}
 
+	/* Right section of screen */
+	for (x = xmax - panel_col_prt; x < map_wid + 13; x++)
+	{
+		for (y = ymin - panel_row_prt; y < ymax - panel_row_prt; y++)
+		{
+			/* Efficiency -- Redraw that grid of the map */
+			Term_queue_char(x, y, TERM_WHITE, ' ');
+		}
+	}
 #endif /* USE_TRANSPARENCY */
 
+		/* Pointers to current position in the string */
+		pa = ma;
+		pc = mc;
+		
+#ifdef USE_TRANSPARENCY
+		pta = mta;
+		ptc = mtc;
+#endif /* USE_TRANSPARENCY */	
+	
+	
 	/* Dump the map */
 	for (y = ymin; y <= ymax; y++)
-	{
+	{		
+		/* No characters yet */
+		n = 0;
+		
 		/* Scan the columns of row "y" */
 		for (x = xmin; x <= xmax; x++)
 		{
@@ -1859,8 +1895,13 @@ void prt_map(void)
 				else if (p_ptr->wraith_form) a = TERM_L_DARK;
 			}
 
-			/* Efficiency -- Redraw that grid of the map */
-			Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c, ta, tc);
+			/* Queue visible. */
+			*pa++ = a;
+			*pc++ = c;
+			*pta++ = ta;
+			*ptc++ = tc;
+			n++;
+						
 #else /* USE_TRANSPARENCY */
 
 			/* Determine what is there */
@@ -1873,12 +1914,50 @@ void prt_map(void)
 				else if (p_ptr->wraith_form) a = TERM_L_DARK;
 			}
 
-			/* Efficiency -- Redraw that grid of the map */
-			Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c);
+			/* Queue visible. */
+			*pa++ = a;
+			*pc++ = c;
+			n++;
+
+#endif /* USE_TRANSPARENCY */
+		}
+		
+		/* If a square was added */
+		if (n)
+		{
+#ifdef USE_TRANSPARENCY		
+
+			pa = ma;
+			pc = mc;
+			pta = mta;
+			ptc = mtc;
+			
+			/* Efficiency -- Redraw that row of the map */
+			Term_queue_line(xmin - panel_col_prt, y - panel_row_prt, n, pa, pc, pta, ptc);
+		
+#else /* USE_TRANSPARENCY */
+
+			pa = ma;
+			pc = mc;
+			
+			/* Efficiency -- Redraw that row of the map */
+			Term_queue_line(xmin - panel_col_prt, y - panel_row_prt, n, pa, pc);
+		
 #endif /* USE_TRANSPARENCY */
 		}
 	}
 
+#ifdef USE_TRANSPARENCY
+	/* String of terrain characters along one row of the map */
+	C_KILL(mta, map_wid, byte);
+	C_KILL(mtc, map_wid, char);
+	
+#endif /* USE_TRANSPARENCY */	
+	
+	/* String of characters along one row of the map */
+	C_KILL(ma, map_wid, byte);
+	C_KILL(mc, map_wid, char);
+	
 	/* Display player */
 	lite_spot(py, px);
 

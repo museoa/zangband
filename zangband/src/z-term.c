@@ -554,6 +554,93 @@ void Term_queue_char(int x, int y, byte a, char c)
 	if (x > Term->x2[y]) Term->x2[y] = x;
 }
 
+/*
+ * Mentally draw an attr/char at a given location
+ *
+ * Assumes given location and values are valid.
+ */
+#ifdef USE_TRANSPARENCY
+void Term_queue_line(int x, int y, int n, byte *a, char *c, byte *ta, char *tc)
+#else /* USE_TRANSPARENCY */
+void Term_queue_line(int x, int y, int n, byte *a, char *c)
+#endif /* USE_TRANSPARENCY */
+{
+	term_win *scrn = Term->scr;
+	
+	bool flag = TRUE;
+	
+	byte *scr_aa = &scrn->a[y][x];
+	char *scr_cc = &scrn->c[y][x];
+
+#ifdef USE_TRANSPARENCY
+
+	byte *scr_taa = &scrn->ta[y][x];
+	char *scr_tcc = &scrn->tc[y][x];
+
+#endif /* USE_TRANSPARENCY */
+
+	while (n--)
+	{
+#ifdef USE_TRANSPARENCY
+
+		/* Hack -- Ignore non-changes */
+		if ((*scr_aa == *a) && (*scr_cc == *c) &&
+		 	(*scr_taa == *ta) && (*scr_tcc == *tc))
+		{
+			x++;
+			a++;
+			c++;
+			ta++;
+			tc++;
+			scr_aa++;
+			scr_cc++;
+			scr_taa++;
+			scr_tcc++;
+			continue;
+		}
+		
+		/* Save the "literal" information */			
+		*scr_taa++ = *ta++;
+		*scr_tcc++ = *tc++;
+
+#else /* USE_TRANSPARENCY */
+
+		/* Hack -- Ignore non-changes */
+		if ((*scr_aa == *a) && (*scr_cc == *c))
+				{
+			x++;
+			a++;
+			c++;
+			scr_aa++;
+			scr_cc++;
+			continue;
+		}
+
+#endif /* USE_TRANSPARENCY */
+				
+		/* Save the "literal" information */
+		*scr_aa++ = *a++;
+		*scr_cc++ = *c++;
+		
+		/* Check for new min/max col info for this row */
+		if (x < Term->x1[y]) Term->x1[y] = x;
+		if (x > Term->x2[y]) Term->x2[y] = x;
+		
+		x++;
+		
+		/* There was a new character */
+		flag = FALSE;	
+	}
+
+	/* If there were no new characters - exit */
+	if (flag) return;
+	
+	/* Check for new min/max row info */
+	if (y < Term->y1) Term->y1 = y;
+	if (y > Term->y2) Term->y2 = y;
+}
+
+
 
 /*
  * Mentally draw some attr/chars at a given location
