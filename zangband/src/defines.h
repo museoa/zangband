@@ -3550,7 +3550,7 @@
 /*** Option Definitions ***/
 
 /* Number of things in the main options menu */
-#define OPTION_MENU_MAX			14
+#define OPTION_MENU_MAX			17
 
 
 /*
