@@ -1108,7 +1108,6 @@ void update_mon_vis(u16b r_idx, int increment)
  * or viewed directly, but old targets will remain set.  XXX XXX
  *
  * The player can choose to be disturbed by several things, including
- * "disturb_move" (monster which is viewable moves in some way), and
  * "disturb_near" (monster which is "easily" viewable moves in some
  * way).  Note that "moves" includes "appears" and "disappears".
  */
@@ -1302,13 +1301,6 @@ void update_mon(int m_idx, bool full)
 
 			/* Hack -- Count "fresh" sightings */
 			if (r_ptr->r_sights < MAX_SHORT) r_ptr->r_sights++;
-
-			/* Disturb on appearance */
-			if (disturb_move)
-			{
-				if (is_hostile(m_ptr))
-					disturb(TRUE);
-			}
 		}
 	}
 
@@ -1332,13 +1324,6 @@ void update_mon(int m_idx, bool full)
 
 			/* Update health bar as needed */
 			if (p_ptr->health_who == m_idx) p_ptr->redraw |= (PR_HEALTH);
-
-			/* Disturb on disappearance */
-			if (disturb_move)
-			{
-				if (is_hostile(m_ptr))
-					disturb(TRUE);
-			}
 		}
 	}
 
@@ -1351,13 +1336,6 @@ void update_mon(int m_idx, bool full)
 		{
 			/* Mark as easily visible */
 			m_ptr->mflag |= (MFLAG_VIEW);
-
-			/* Disturb on appearance */
-			if (disturb_move)
-			{
-				if (is_hostile(m_ptr))
-					disturb(TRUE);
-			}
 		}
 	}
 
@@ -1369,13 +1347,6 @@ void update_mon(int m_idx, bool full)
 		{
 			/* Mark as not easily visible */
 			m_ptr->mflag &= ~(MFLAG_VIEW);
-
-			/* Disturb on disappearance */
-			if (disturb_move)
-			{
-				if (is_hostile(m_ptr))
-					disturb(TRUE);
-			}
 		}
 	}
 }

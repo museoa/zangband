@@ -2506,8 +2506,7 @@ static void take_move(int m_idx, int *mm)
 			lite_spot(nx, ny);
 
 			/* Possible disturb */
-			if (m_ptr->ml && (disturb_move ||
-							  ((m_ptr->mflag & MFLAG_VIEW) && disturb_near)))
+			if (m_ptr->ml && (m_ptr->mflag & MFLAG_VIEW) && disturb_near)
 			{
 				/* Disturb */
 				if (is_hostile(m_ptr))

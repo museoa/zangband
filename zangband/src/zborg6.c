@@ -11887,9 +11887,6 @@ bool borg_check_rest(void)
 	/* now check the ground to see if safe. */
 	if (borg_on_safe_grid() == FALSE) return (FALSE);
 
-	/* Generally disturb_move is off */
-	disturb_move = FALSE;
-
 	/* Examine all the monsters */
 	for (i = 1; i < borg_kills_nxt; i++)
 	{
@@ -11928,18 +11925,6 @@ bool borg_check_rest(void)
 
 		/* Real scary guys pretty close */
 		if (d < 5 && (p > avoidance / 3)) return (FALSE);
-
-		/* Scary guys kinda close, tinker with disturb near.
-		 * We do not want a borg with ESP stopping his rest
-		 * each round, having only rested one turn. So we set
-		 * disturb_move to true only if some scary guys are
-		 * somewhat close to us.
-		 */
-		if (d < 13 && (p > avoidance) && avoidance < borg_skill[BI_MAXHP] / 2)
-			disturb_move = TRUE;
-		if (d < 8 && (p > avoidance / 2))
-			disturb_move = TRUE;
-
 
 		/* should check LOS... monster to me */
 		if (borg_los(x9, y9, c_x, c_y)) return FALSE;

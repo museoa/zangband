@@ -3579,7 +3579,7 @@
 #define find_ignore_doors		p_ptr->options[17]
 #define find_cut				p_ptr->options[18]
 #define find_examine			p_ptr->options[19]
-#define disturb_move			p_ptr->options[20]
+/* {TRUE,  0, NULL,					"Number 20" }, p_ptr->options[20] */
 #define disturb_near			p_ptr->options[21]
 #define disturb_panel			p_ptr->options[22]
 #define disturb_state			p_ptr->options[23]
