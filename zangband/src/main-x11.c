@@ -2793,6 +2793,8 @@ static errr term_data_init(term_data *td, bool fixed, cptr name, cptr font)
 errr init_x11(int argc, char *argv[])
 {
 	int i;
+	
+	int size = 8;
 
 	cptr dpy_name = "";
 
@@ -2846,13 +2848,32 @@ errr init_x11(int argc, char *argv[])
 	if (arg_graphics)
 	{
 		/* Build the name of the "graf" file */
-		path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/8X8.bmp");
+		path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/16x16.bmp");
 
 		/* Use graphics if bitmap file exists */
 		if (0 == fd_close(fd_open(filename, O_RDONLY)))
 		{
 			/* Use graphics */
 			use_graphics = TRUE;
+			size = 16;
+			
+			ANGBAND_GRAF = "new";
+		}
+		else
+		{
+			/* Try 8x8 file. */
+			/* Build the name of the "graf" file */
+			path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/8X8.bmp");
+	
+			/* Use graphics if bitmap file exists */
+			if (0 == fd_close(fd_open(filename, O_RDONLY)))
+			{
+				/* Use graphics */
+				use_graphics = TRUE;
+				size = 8;
+				
+				ANGBAND_GRAF = "old";
+			}
 		}
 	}
 
@@ -2912,7 +2933,7 @@ errr init_x11(int argc, char *argv[])
 	{
 		XImage *tiles_raw;
 
-		ANGBAND_GRAF = "old";
+		
 
 		/* Load the graphics XXX XXX XXX */
 		tiles_raw = ReadBMP(Metadpy->dpy, filename);
@@ -2921,9 +2942,9 @@ errr init_x11(int argc, char *argv[])
 		for (i = 0; i < num_term; i++)
 		{
 			term_data *td = &data[i];
-
+			
 			/* Resize tiles */
-			td->tiles = ResizeImage(Metadpy->dpy, tiles_raw, 8, 8,
+			td->tiles = ResizeImage(Metadpy->dpy, tiles_raw, size, size,
 			                        td->fnt->wid, td->fnt->hgt);
 		}
 	}
