@@ -6,8 +6,6 @@
 #
 #####################################################################
 
-from variable import events, debug
-
 from base.feature import room
 
 #####################################################################
@@ -29,8 +27,6 @@ class building(room):
 	commands = []
 
 	def __init__(self, level):
-		debug.trace("building.__init__(%s, %s)" % (self, level))
-
 		room.__init__(self, level)
 
 		self.data = []
@@ -43,8 +39,6 @@ class building(room):
 
 	# Enter the building
 	def player_enter(self):
-		debug.trace("building.player_enter(%s)" % (self))
-
 		from angband import io
 		io.screen_save()
 		io.Term_clear()
@@ -72,8 +66,6 @@ class building(room):
 
 	# Leave the building
 	def leave(self):
-		debug.trace("building.leave(%s)" % (self))
-
 		from angband import io
 		io.screen_load()
 
@@ -93,7 +85,7 @@ class building_command:
 
 	# Create the command
 	def __init__(self, building):
-		debug.trace("building_command.__init__(%s, %s)" % (self, building))
+		pass
 
 	# Cost of executing the command
 	def cost(self):
@@ -108,8 +100,6 @@ class quest_command(building_command):
 
 	# Create the command
 	def __init__(self, building):
-		debug.trace("quest_command.__init__(%s, %s)" % (self, building))
-
 		building_command.__init__(self, building)
 
 		# Create the plot for the building
@@ -118,12 +108,10 @@ class quest_command(building_command):
 
 	# Execute the command
 	def execute(self, building):
-		debug.trace("quest_command.__init__(%s, %s)" % (self, building))
-
-		from variable import ui
+		from vars import ui
 
 		# Check the players quests for a quest from this building
-		from variable import player
+		from vars import player
 		for quest in player.quests.values():
 			if quest.quest_giver == building.quest_giver:
 				if quest.unfinished():

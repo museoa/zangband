@@ -1,23 +1,42 @@
-from base.p_class import player_class_class
-from variable import player
-import variable
+from base.p_class import player_class
 
-class mindcrafter_class(player_class_class):
-	name = "Mindcrafter"
+class mindcrafter(player_class):
 	number = 9
-	def __init__(self):
-		player_class_class.__init__(self,
-				self.name,
-				-1, 0, 3, -1, -1, 2,
-				30, 30, 30, 3,  22, 16, 50, 40,
-				10, 10, 10, 0,   0,  0, 20, 30,
-				2, 25, 20)
+
+	title = "Mindcrafter"
+	str_mod = -1
+	int_mod = 0
+	wis_mod = 3
+	dex_mod = -1
+	con_mod = -1
+	chr_mod = 2
+	c_dis = 30
+	c_dev = 30
+	c_sav = 30
+	c_stl = 3
+	c_srh = 22
+	c_fos = 16
+	c_thn = 50
+	c_thb = 40
+	x_dis = 10
+	x_dev = 10
+	x_sav = 10
+	x_stl = 0
+	x_srh = 0
+	x_fos = 0
+	x_thn = 20
+	x_thb = 30
+	c_mhp = 2
+	c_exp = 25
+	pet_upkeep_div = 20
+
 	def player_outfit_hook(self, data):
-		potion = variable.objects.create("potion of restore mana")
+		from vars import objects, player
+		potion = objects.create("potion of restore mana")
 		player.give(potion)
-		armor = variable.objects.create("soft leather armor")
+		armor = objects.create("soft leather armor")
 		player.give(armor)
-		sword = variable.objects.create("small sword")
+		sword = objects.create("small sword")
 		player.give(sword)
 		return 1
 

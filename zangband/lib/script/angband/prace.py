@@ -84,6 +84,41 @@ class player_racePtr(player_race):
 
 
 
+class player_sex:
+    def __init__(self,*args):
+        self.this = apply(pracec.new_player_sex,args)
+        self.thisown = 1
+
+    def __del__(self,pracec=pracec):
+        if self.thisown == 1 :
+            pracec.delete_player_sex(self)
+    __setmethods__ = {
+        "title" : pracec.player_sex_title_set,
+        "winner" : pracec.player_sex_winner_set,
+    }
+    def __setattr__(self,name,value):
+        if (name == "this") or (name == "thisown"): self.__dict__[name] = value; return
+        method = player_sex.__setmethods__.get(name,None)
+        if method: return method(self,value)
+        self.__dict__[name] = value
+    __getmethods__ = {
+        "title" : pracec.player_sex_title_get,
+        "winner" : pracec.player_sex_winner_get,
+    }
+    def __getattr__(self,name):
+        method = player_sex.__getmethods__.get(name,None)
+        if method: return method(self)
+        raise AttributeError,name
+    def __repr__(self):
+        return "<C player_sex instance at %s>" % (self.this,)
+class player_sexPtr(player_sex):
+    def __init__(self,this):
+        self.this = this
+        self.thisown = 0
+        self.__class__ = player_sex
+
+
+
 
 
 #-------------- FUNCTION WRAPPERS ------------------

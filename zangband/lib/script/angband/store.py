@@ -48,7 +48,6 @@ class store_type:
     __setmethods__ = {
         "type" : storec.store_type_type_set,
         "owner" : storec.store_type_owner_set,
-        "extra" : storec.store_type_extra_set,
         "insult_cur" : storec.store_type_insult_cur_set,
         "good_buy" : storec.store_type_good_buy_set,
         "bad_buy" : storec.store_type_bad_buy_set,
@@ -58,8 +57,9 @@ class store_type:
         "table_size" : storec.store_type_table_size_set,
         "table" : storec.store_type_table_set,
         "stock_num" : storec.store_type_stock_num_set,
-        "stock_size" : storec.store_type_stock_size_set,
         "stock" : storec.store_type_stock_set,
+        "x" : storec.store_type_x_set,
+        "y" : storec.store_type_y_set,
     }
     def __setattr__(self,name,value):
         if (name == "this") or (name == "thisown"): self.__dict__[name] = value; return
@@ -69,7 +69,6 @@ class store_type:
     __getmethods__ = {
         "type" : storec.store_type_type_get,
         "owner" : storec.store_type_owner_get,
-        "extra" : storec.store_type_extra_get,
         "insult_cur" : storec.store_type_insult_cur_get,
         "good_buy" : storec.store_type_good_buy_get,
         "bad_buy" : storec.store_type_bad_buy_get,
@@ -79,8 +78,9 @@ class store_type:
         "table_size" : storec.store_type_table_size_get,
         "table" : storec.store_type_table_get,
         "stock_num" : storec.store_type_stock_num_get,
-        "stock_size" : storec.store_type_stock_size_get,
         "stock" : storec.store_type_stock_get,
+        "x" : storec.store_type_x_get,
+        "y" : storec.store_type_y_get,
     }
     def __getattr__(self,name):
         method = store_type.__getmethods__.get(name,None)

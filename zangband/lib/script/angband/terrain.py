@@ -11,9 +11,6 @@ class feature_type:
     __setmethods__ = {
         "name" : terrainc.feature_type_name_set,
         "text" : terrainc.feature_type_text_set,
-        "mimic" : terrainc.feature_type_mimic_set,
-        "extra" : terrainc.feature_type_extra_set,
-        "unused" : terrainc.feature_type_unused_set,
         "d_attr" : terrainc.feature_type_d_attr_set,
         "d_char" : terrainc.feature_type_d_char_set,
         "x_attr" : terrainc.feature_type_x_attr_set,
@@ -27,9 +24,6 @@ class feature_type:
     __getmethods__ = {
         "name" : terrainc.feature_type_name_get,
         "text" : terrainc.feature_type_text_get,
-        "mimic" : terrainc.feature_type_mimic_get,
-        "extra" : terrainc.feature_type_extra_get,
-        "unused" : terrainc.feature_type_unused_get,
         "d_attr" : terrainc.feature_type_d_attr_get,
         "d_char" : terrainc.feature_type_d_char_get,
         "x_attr" : terrainc.feature_type_x_attr_get,

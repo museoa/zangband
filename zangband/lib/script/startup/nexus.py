@@ -1,6 +1,6 @@
-from worlds.nexus import nexus
-import variable
+from base.utils import proxy
 
 # Make "Nexus" known
-variable.worlds.register(nexus)
+import vars
+vars.worlds.register(proxy("Nexus", "worlds.nexus", "nexus"))
 

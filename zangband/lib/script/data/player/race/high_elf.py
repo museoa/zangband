@@ -16,7 +16,7 @@ class high_elf(player_race):
 				0x75F)
 
 	def get_player_flags_hook(self, args):
-		from variable import player
+		from vars import player
 		player.resist_lite = 1
 		player.see_inv = 1
 		return 1

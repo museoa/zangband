@@ -6,7 +6,6 @@
 #
 #####################################################################
 
-from variable import events
 from angband.objects import object_type, object_typePtr
 
 try:
@@ -32,7 +31,7 @@ class object_class(object_type):
 
 	# Delete the object
 	def object_delete_hook(self):
-		global objects
+		from vars import objects
 		objects.data.remove(self)
 
 	# Create a copy of the object
@@ -55,6 +54,7 @@ class object_data_class:
 		self.version = 0
 		self.data = []
 		self.classes = {}
+		from vars import events
 		# We want to know when Angband creates a new object
 		events.object_create.append(self)
 		# And when it loads an object
@@ -73,6 +73,7 @@ class object_data_class:
 				the_object = object()
 				the_object.object_prep(lookup_kind(object.tval, object.sval))
 				return the_object
+		raise "unknown object", name
 
 	# Called when Angband creates a new object
 	def object_create_hook(self, o_ptr):

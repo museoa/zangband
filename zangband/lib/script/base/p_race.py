@@ -1,19 +1,10 @@
-#####################################################################
-#
-# base/p_race.py
-#
-# Generic code for player-races
-#
-#####################################################################
-
+"""Generic code for player-races"""
 
 import angband.prace
 
 #####################################################################
-# Base class for all player-races
-#####################################################################
 class player_race(angband.prace.player_race):
-	version = 0
+	"""Base class for all player races"""
 
 	def __init__(self, title = "", str_mod = 0, int_mod = 0, wis_mod = 0,
 	             dex_mod = 0, con_mod = 0, chr_mod = 0,
@@ -62,7 +53,7 @@ class player_race(angband.prace.player_race):
 		self.infra = infra
 		self.choice = choice
 
-		from variable import events
+		from vars import events
 		events.player_outfit.append(self)
 		events.get_player_flags.append(self)
 
@@ -72,30 +63,34 @@ class player_race(angband.prace.player_race):
 		return 1
 
 	def give_food_rations(self):
-		import variable
+		import vars
 		from angband.random import rand_range
-		food = variable.objects.create("food ration")
+		food = vars.objects.create("food ration")
 		food.number = rand_range(2, 5)
-		variable.player.give(food)
+		vars.player.give(food)
 
 	def give_satisfy_hunger_scrolls(self):
-		import variable
+		import vars
 		from angband.random import rand_range
-		scroll = variable.objects.create("scroll of satisfy hunger")
+		scroll = vars.objects.create("scroll of satisfy hunger")
 		scroll.number = rand_range(2, 5)
-		variable.player.give(scroll)
+		vars.player.give(scroll)
 
 	def give_torches(self):
-		import variable
+		import vars
 		from angband.random import rand_range
-		lite = variable.objects.create("wooden torch")
+		lite = vars.objects.create("wooden torch")
 		lite.number = rand_range(3, 7)
 		lite.pval = rand_range(3, 7) * 500
-		variable.player.give(lite)
+		vars.player.give(lite)
 
 	def get_player_flags_hook(self, args):
 		return 1
 
 	def __str__(self):
 		return self.name
+
+	# Make sure the constructor gets called when unpickling
+	def __getinitargs__(self):
+		return ()
 

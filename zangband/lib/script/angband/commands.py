@@ -74,8 +74,6 @@ do_cmd_message_one = commandsc.do_cmd_message_one
 
 do_cmd_messages = commandsc.do_cmd_messages
 
-do_cmd_options_aux = commandsc.do_cmd_options_aux
-
 do_cmd_options = commandsc.do_cmd_options
 
 do_cmd_pref = commandsc.do_cmd_pref

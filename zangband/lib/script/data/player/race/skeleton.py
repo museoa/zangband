@@ -16,12 +16,12 @@ class skeleton(player_race):
 				0x70F)
 
 	def get_player_flags_hook(self, args):
-		from variable import player
+		from vars import player
 		player.resist_shard = 1
 		player.hold_life = 1
 		player.see_inv = 1
 		player.resist_pois = 1
-		if player.lev > 9:
+		if player.level > 9:
 			player.resist_cold = 1
 		return 1
 

@@ -1,73 +1,88 @@
-#####################################################################
-#
-# base/p_class.py
-#
-# Generic code for player-classes
-#
-#####################################################################
+"""Generic code for player-classes"""
+
+import angband.pclass
 
 
-from variable import events, player
-from angband.pclass import player_class
+class player_class(angband.pclass.player_class):
+	"""Base class for all player-classes"""
 
-
-#####################################################################
-#
-# Base class for all player-classes
-#
-#####################################################################
-class player_class_class(player_class):
 	realm1 = []
 	realm2 = []
 
-	def __init__(self, title = "", str_mod = 0, int_mod = 0, wis_mod = 0,
-	             dex_mod = 0, con_mod = 0, chr_mod = 0,
-	             c_dis = 0, c_dev = 0, c_sav = 0, c_stl = 0, c_srh = 0,
-	             c_fos = 0, c_thn = 0, c_thb = 0, x_dis = 0, x_dev = 0,
-	             x_sav = 0, x_stl = 0, x_srh = 0, x_fos = 0, x_thn = 0,
-	             x_thb = 0, c_mhp = 0, c_exp = 0, pet_upkeep_div = 0):
+	title = ""
+	str_mod = 0
+	int_mod = 0
+	wis_mod = 0
+	dex_mod = 0
+	con_mod = 0
+	chr_mod = 0
+	c_dis = 0
+	c_dev = 0
+	c_sav = 0
+	c_stl = 0
+	c_srh = 0
+	c_fos = 0
+	c_thn = 0
+	c_thb = 0
+	x_dis = 0
+	x_dev = 0
+	x_sav = 0
+	x_stl = 0
+	x_srh = 0
+	x_fos = 0
+	x_thn = 0
+	x_thb = 0
+	c_mhp = 0
+	c_exp = 0
+	pet_upkeep_div = 0
 
+	def __init__(self):
 		# Init the C data
-		player_class.__init__(self)
+		angband.pclass.player_class.__init__(self)
 
 		# Set all values
-		self.title = title
+		self.title = self.title
 		from base.player import A_STR, A_INT, A_WIS, A_DEX, A_CON, A_CHR
-		self.set_c_adj(A_STR, str_mod)
-		self.set_c_adj(A_INT, int_mod)
-		self.set_c_adj(A_WIS, wis_mod)
-		self.set_c_adj(A_DEX, dex_mod)
-		self.set_c_adj(A_CON, con_mod)
-		self.set_c_adj(A_CHR, chr_mod)
+		self.set_c_adj(A_STR, self.str_mod)
+		self.set_c_adj(A_INT, self.int_mod)
+		self.set_c_adj(A_WIS, self.wis_mod)
+		self.set_c_adj(A_DEX, self.dex_mod)
+		self.set_c_adj(A_CON, self.con_mod)
+		self.set_c_adj(A_CHR, self.chr_mod)
 
-		self.c_dis = c_dis
-		self.c_dev = c_dev
-		self.c_sav = c_sav
-		self.c_stl = c_stl
-		self.c_srh = c_srh
-		self.c_fos = c_fos
-		self.c_thn = c_thn
-		self.c_thb = c_thb
+		self.c_dis = self.c_dis
+		self.c_dev = self.c_dev
+		self.c_sav = self.c_sav
+		self.c_stl = self.c_stl
+		self.c_srh = self.c_srh
+		self.c_fos = self.c_fos
+		self.c_thn = self.c_thn
+		self.c_thb = self.c_thb
 
-		self.x_dis = x_dis
-		self.x_dev = x_dev
-		self.x_sav = x_sav
-		self.x_stl = x_stl
-		self.x_srh = x_srh
-		self.x_fos = x_fos
-		self.x_thn = x_thn
-		self.x_thb = x_thb
+		self.x_dis = self.x_dis
+		self.x_dev = self.x_dev
+		self.x_sav = self.x_sav
+		self.x_stl = self.x_stl
+		self.x_srh = self.x_srh
+		self.x_fos = self.x_fos
+		self.x_thn = self.x_thn
+		self.x_thb = self.x_thb
 
-		self.c_mhp = c_mhp
-		self.c_exp = c_exp
-		self.pet_upkeep_div = pet_upkeep_div
+		self.c_mhp = self.c_mhp
+		self.c_exp = self.c_exp
+		self.pet_upkeep_div = self.pet_upkeep_div
 
+		from vars import events
 		events.sense_inventory.append(self)
-		events.player_outfit.append(self)
 		events.get_player_flags.append(self)
 
+	def birth(self):
+		from vars import events
+		events.player_outfit.append(self)
+		return 1
+
 	def get_beam_chance(self):
-		from variable import player
+		from vars import player
 		return player.level / 2
 
 	# Make sure the constructor gets called when unpickling
@@ -84,5 +99,5 @@ class player_class_class(player_class):
 		return 1
 
 	def __str__(self):
-		return self.name
+		return self.title
 

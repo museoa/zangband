@@ -17,13 +17,13 @@ from ioc import msg_print, get_line
 max_text_length = 2048
 
 
-class debug:
+class debug_class:
 	trace_switch = 0
 
 	def __init__(self):
 		self._text = ""
+		import sys
 		sys.stdin = sys.stdout = sys.stderr = self
-#		import sys
 #		sys.settrace(self.trace_dispatch)
 
 

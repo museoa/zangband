@@ -16,7 +16,7 @@ class vampire(player_race):
 				0x7FF)
 
 	def get_player_flags_hook(self, args):
-		from variable import player
+		from vars import player
 		player.resist_dark = 1
 		player.hold_life = 1
 		player.resist_neth = 1
@@ -28,7 +28,7 @@ class vampire(player_race):
 	def player_outfit_hook(self, data):
 		self.give_satisfy_hunger_scrolls()
 
-		from default.objects import objects
+		from vars import objects, player
 		from angband.random import rand_range
 		scroll = objects.create("scroll of darkness")
 		scroll.number = rand_range(2, 5)

@@ -6,8 +6,6 @@
 #
 #####################################################################
 
-from variable import events, debug, ui
-
 
 #####################################################################
 # Base class for the skills
@@ -41,10 +39,9 @@ class racial_power(skill):
 		return self.difficulty
 
 	def use(self):
-		from variable import player
-		from angband.io import msg_print, get_check, PR_HP, PR_MANA, PW_PLAYER, PW_SPELL
+		from vars import player, ui
+		from angband.io import get_check, PR_HP, PR_MANA, PW_PLAYER, PW_SPELL
 		from angband.random import randint
-		from variable import ui
 		from angband.spells import take_hit
 
 		# Not enough mana - use hp
@@ -55,12 +52,12 @@ class racial_power(skill):
 
 		# Power is not available yet
 		if player.level < self.level:
-			msg_print("You need to attain level %d to use this power." % (self.level))
+			ui.msg_print("You need to attain level %d to use this power." % (self.level))
 			energy_use = 0
 			return 0
 		# Too confused
 		elif player.confused:
-			msg_print("You are too confused to use this power.")
+			ui.msg_print("You are too confused to use this power.")
 			energy_use = 0
 			return 0
 		# Risk death?
@@ -97,11 +94,11 @@ class racial_power(skill):
 		player.window = player.window & (PW_PLAYER | PW_SPELL)
 
 		# Success?
-		if randint(player.stat_cur_get(self.use_stat)) >= ((difficulty / 2) + randint(difficulty / 2)):
+		if randint(player.get_stat_cur(self.use_stat)) >= ((difficulty / 2) + randint(difficulty / 2)):
 			self.effect()
 			return
 
-		msg_print("You've failed to concentrate hard enough.")
+		ui.msg_print("You've failed to concentrate hard enough.")
 		return 0
 
 
@@ -117,8 +114,6 @@ class skills:
 	#################################################################
 	def __init__(self):
 		self.data = []
-
-		events.use_skill.append(self)
 
 	#################################################################
 	# Add a skill
@@ -138,18 +133,12 @@ class skills:
 		return self.data[key]
 	def __setitem__(self, key, value):
 		self.data[key] = value
+	def __getslice__(self, low, high):
+		return self.data[low:high]
 	def items(self):
 		return self.data.items()
 	def keys(self):
 		return self.data.keys()
 	def values(self):
 		return self.data.values()
-
-	#################################################################
-	# Use a skill
-	#################################################################
-	def use_skill_hook(self, args):
-		skill = ui.select_skill(self.data)
-		if skill:
-			return skill[0].use()
 

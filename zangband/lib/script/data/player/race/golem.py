@@ -16,12 +16,12 @@ class golem(player_race):
 				0x001)
 
 	def get_player_flags_hook(self, args):
-		from variable import player
+		from vars import player
 		player.slow_digest = 1
 		player.free_act = 1
 		player.see_inv = 1
 		player.resist_pois = 1
-		if player.lev > 34:
+		if player.level > 34:
 			player.hold_life = 1
 		return 1
 

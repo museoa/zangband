@@ -6,7 +6,6 @@
 #
 #####################################################################
 
-from variable import events, debug
 from angband.monster import monster_type
 
 #####################################################################
@@ -22,8 +21,6 @@ class monster(monster_type):
 		monster_type.__init__(self, m_ptr)
 		if m_ptr:
 			self.thisown = 0
-
-		debug.trace("monster.__init__(%s, %s)" % (self, m_ptr))
 
 	def move(self):
 		pass
@@ -109,14 +106,13 @@ class factory:
 #####################################################################
 class monster_data(factory):
 	def __init__(self):
-		debug.trace("monster_data.__init__(%s)" % (self))
-
 		# Inherited
 		factory.__init__(self)
 
 		self.monsters = {}
 		self.races = {}
 
+		from vars import events
 		events.monster_move.append(self)
 		events.kill_monster.append(self)
 		events.create_monster.append(self)
@@ -124,8 +120,6 @@ class monster_data(factory):
 		events.copy_monster.append(self)
 
 	def create_monster_hook(self, index):
-		debug.trace("monster_data.create_monster_hook(%s, %s)" % (self, index))
-
 		from angband.monster import get_monster
 		c_monster = get_monster(index)
 		monster_class = self.races[c_monster.r_idx]
@@ -134,13 +128,10 @@ class monster_data(factory):
 		self.monsters[index] = monster_class(c_monster)
 
 	def delete_monster_hook(self, index):
-		debug.trace("monster_data.delete_monster_hook(%s, %s)" % (self, index))
-
 		del self.monsters[index]
 
 	def copy_monster_hook(self, args):
 		i1, i2 = args
-		debug.trace("monster_data.copy_monster_hook(%s, %s, %s)" % (self, i1, i2))
 
 		if not self.monsters.has_key(i1):
 			print "Copy: Monster %d doesn't exist" % (i1)
@@ -150,11 +141,9 @@ class monster_data(factory):
 		del self.monsters[i1]
 
 	def monster_move_hook(self, index):
-		debug.trace("monster_data.monster_move_hook(%s, %s)" % (self, index))
 		return self.monsters[index].move()
 
 	def kill_monster_hook(self, index):
-		debug.trace("monster_data.kill_monster_hook(%s, %s)" % (self, index))
 		return self.monsters[index].kill()
 
 	# XXX

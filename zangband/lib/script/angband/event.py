@@ -60,13 +60,7 @@ inkey_borg_callback = eventc.inkey_borg_callback
 
 inkey_callback = eventc.inkey_callback
 
-get_world_callback = eventc.get_world_callback
-
-get_player_class_callback = eventc.get_player_class_callback
-
-get_player_realms_callback = eventc.get_player_realms_callback
-
-get_player_race_callback = eventc.get_player_race_callback
+player_birth_callback = eventc.player_birth_callback
 
 get_player_flags_callback = eventc.get_player_flags_callback
 
@@ -124,6 +118,8 @@ field_load_callback = eventc.field_load_callback
 
 use_skill_callback = eventc.use_skill_callback
 
+process_command_callback = eventc.process_command_callback
+
 get_script_window_line = eventc.get_script_window_line
 
 set_callback = eventc.set_callback
@@ -161,22 +157,20 @@ CREATE_MONSTER_EVENT = eventc.CREATE_MONSTER_EVENT
 DELETE_MONSTER_EVENT = eventc.DELETE_MONSTER_EVENT
 INKEY_BORG_EVENT = eventc.INKEY_BORG_EVENT
 INKEY_EVENT = eventc.INKEY_EVENT
-GET_PLAYER_CLASS_EVENT = eventc.GET_PLAYER_CLASS_EVENT
 GET_PLAYER_FLAGS_EVENT = eventc.GET_PLAYER_FLAGS_EVENT
 SENSE_INVENTORY_EVENT = eventc.SENSE_INVENTORY_EVENT
 DESTROY_OBJECT_EVENT = eventc.DESTROY_OBJECT_EVENT
-GET_PLAYER_RACE_EVENT = eventc.GET_PLAYER_RACE_EVENT
 OBJECT_CREATE_EVENT = eventc.OBJECT_CREATE_EVENT
 OBJECT_LOAD_EVENT = eventc.OBJECT_LOAD_EVENT
 PLAYER_OUTFIT_EVENT = eventc.PLAYER_OUTFIT_EVENT
 WILDERNESS_INIT_EVENT = eventc.WILDERNESS_INIT_EVENT
 FREE_OBJECT_KIND_LIST_EVENT = eventc.FREE_OBJECT_KIND_LIST_EVENT
 INIT_OBJECT_KIND_LIST_EVENT = eventc.INIT_OBJECT_KIND_LIST_EVENT
-GET_PLAYER_REALMS_EVENT = eventc.GET_PLAYER_REALMS_EVENT
-GET_WORLD_EVENT = eventc.GET_WORLD_EVENT
 COPY_MONSTER_EVENT = eventc.COPY_MONSTER_EVENT
 USE_SKILL_EVENT = eventc.USE_SKILL_EVENT
 GET_SCRIPT_WINDOW_LINE_EVENT = eventc.GET_SCRIPT_WINDOW_LINE_EVENT
 PLAY_GAME_EVENT = eventc.PLAY_GAME_EVENT
 FIELD_LOAD_EVENT = eventc.FIELD_LOAD_EVENT
+PROCESS_COMMAND_EVENT = eventc.PROCESS_COMMAND_EVENT
+PLAYER_BIRTH_EVENT = eventc.PLAYER_BIRTH_EVENT
 MAX_EVENT = eventc.MAX_EVENT

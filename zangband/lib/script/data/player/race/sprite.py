@@ -16,9 +16,9 @@ class sprite(player_race):
 				0x65E)
 
 	def get_player_flags_hook(self, args):
-		from variable import player
+		from vars import player
 		player.ffall = 1
 		player.resist_lite = 1
-		player.pspeed = player.pspeed + player.lev / 10
+		player.pspeed = player.pspeed + player.level / 10
 		return 1
 

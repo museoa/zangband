@@ -7,7 +7,6 @@
 #####################################################################
 
 
-from variable import events, ui
 from base.skill import skill
 
 
@@ -35,9 +34,11 @@ class realm(skill):
 
 	spells = []
 
-	def __init__(self):
-		self.picks = 0
-		self.player_picks = 0
+	def __init__(self, max_picks = 0, fixed_picks = 0, pick_step = 1):
+		self.max_picks = max_picks
+		self.fixed_picks = fixed_picks
+		self.pick_step = pick_step
+		self.picks = fixed_picks
 
 	def get_common(self):
 		return filter(lambda x: x.common == 1, self.spells)
@@ -85,6 +86,7 @@ class realm(skill):
 
 		# Player-selected spells
 		if c1 + u1 + r1 > 0:
+			from vars import ui
 			spells = ui.birth_select_spells(self)
 
 		# Randomly selected spells

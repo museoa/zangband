@@ -24,7 +24,6 @@
 # 
 #####################################################################
 
-from variable import events, debug
 
 #####################################################################
 # The base class for all quests
@@ -54,24 +53,18 @@ class quest:
 
 	# Constructor
 	def __init__(self):
-		debug.trace("quest.__init__(%s)" % (self))
+		pass
 
 	# Fail to complete the quest
 	def fail(self):
-		debug.trace("quest.fail(%s)" % (self))
-
 		self.status = "failed"
 
 	# Finish the quest
 	def finish(self):
-		debug.trace("quest.finish(%s)" % (self))
-
 		self.status = "finished"
 
 	# Assign the quest to the player
 	def assign(self, quest_giver):
-		debug.trace("quest.assign(%s, %s)" % (self, quest_giver))
-
 		# Note: Class-variable is transformed to normal member data
 		self.status = "taken"
 
@@ -79,14 +72,12 @@ class quest:
 		self.quest_giver = quest_giver
 
 		# Assign the quest to the player
-		from variable import player
+		from vars import player
 		player.quests[self.id] = self
 
 	# Enter a quest
 	def enter(self):
-		debug.trace("quest.enter(%s)" % (self))
-
-		from variable import player
+		from vars import player, events
 		# First add ourself to the event for level generation
 		events.generate_level.append(self)
 		player.leaving = 1
@@ -98,20 +89,14 @@ class quest:
 
 	# Complete a quest
 	def complete(self):
-		debug.trace("quest.complete(%s)" % (self))
-
 		self.status = "completed"
 
 	# Reward a quest
 	def reward(self):
-		debug.trace("quest.reward(%s)" % (self))
-
 		self.status = "finished"
 
 	# Do something with the quest
 	def execute(self):
-		debug.trace("quest.execute(%s)" % (self))
-
 		# Quest completed? -> reward
 		if self.status == "completed":
 			self.reward()
@@ -119,8 +104,6 @@ class quest:
 	# Returns a list of strings containing the description/status message
 	# Ex. ["Kill 15 hill orcs. 13 are already dead."]
 	def get_description(self):
-		debug.trace("quest.get_description(%s)" % (self))
-
 		return [""]
 
 	# Availability check
@@ -130,9 +113,7 @@ class quest:
 	# another one right now)
 	# returns true if available, false otherwise
 	def available(self):
-		debug.trace("quest.available(%s)" % (self))
-
-		from variable import player
+		from vars import player
 
 		# Is the quest already assigned to the player?
 		if player.quests.has_key(self.id):
@@ -144,8 +125,6 @@ class quest:
 			return 1
 
 	def unfinished(self):
-		debug.trace("quest.unfinished(%s)" % (self))
-
 		if self.status == "finished":
 			return 0
 		else:
@@ -167,8 +146,6 @@ class quest:
 class plot(quest):
 	# Constructor
 	def __init__(self):
-		debug.trace("plot.__init__(%s)" % (self))
-
 		# Inherited
 		quest.__init__(self)
 
@@ -176,8 +153,6 @@ class plot(quest):
 		self.sub_quests = []
 
 	def execute(self):
-		debug.trace("plot.execute(%s)" % (self))
-
 		# Sort the quests
 		self.sub_quests.sort()
 
@@ -187,8 +162,6 @@ class plot(quest):
 				return quest
 
 	def add_quest(self, new_quest):
-		debug.trace("plot.add_quest(%s, %s)" % (self, new_quest))
-
 		self.sub_quests.append(new_quest)
 
 
@@ -197,8 +170,6 @@ class plot(quest):
 #####################################################################
 class quests_data:
 	def __init__(self):
-		debug.trace("quest_data.__init__(%s)" % (self))
-
 		# Dictionary of players quests
 		self.quests = {}
 

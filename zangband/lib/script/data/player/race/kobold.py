@@ -16,7 +16,7 @@ class kobold(player_race):
 				0x009)
 
 	def get_player_flags_hook(self, args):
-		from variable import player
+		from vars import player
 		player.resist_pois = 1
 		return 1
 

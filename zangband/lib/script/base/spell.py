@@ -7,7 +7,6 @@
 #####################################################################
 
 
-from variable import events, ui
 from base.skill import skill
 
 # Stat Table (INT/WIS) -- Various things
@@ -114,12 +113,12 @@ class spell(skill):
 	# Cast the spell
 	# Returns 1 on successful cast and 0 when failing
 	def cast(self):
-		from variable import player
+		from vars import player
 
 		if self.mana > player.csp:
 			# XXX
-			from angband import io
-			io.msg_print("You don't have enough mana to cast this spell.")
+			from vars import ui
+			ui.msg_print("You don't have enough mana to cast this spell.")
 			return
 
 		# Extract the base spell failure rate
@@ -129,14 +128,15 @@ class spell(skill):
 		chance = chance - (3 * (player.level - self.level))
 
 		# Reduce failure rate by INT/WIS adjustment
-		chance = chance - 3 * (adj_mag_stat[int(player.stat_ind[player.p_class.spell_stat])] - 1)
+		stat = player.get_stat_ind(player.p_class.spell_stat)
+		chance = chance - 3 * (adj_mag_stat[stat] - 1)
 
 		# Not enough mana to cast
 		if self.mana > player.csp:
 			chance = chance + 5 * (self.mana - player.csp)
 
 		# Extract the minimum failure rate
-		minfail = adj_mag_fail[int(player.stat_ind[player.p_class.spell_stat])]
+		minfail = adj_mag_fail[player.get_stat_ind(player.p_class.spell_stat)]
 
 		# Non mage/priest characters never get too good
 		if minfail < player.p_class.min_fail:
@@ -160,9 +160,14 @@ class spell(skill):
 		# Failed spell ?
 		from angband.random import rand_int
 		if rand_int(100) < chance:
+			# Reduce mana (but not below zero)
+			player.csp = player.csp - self.mana
+			if player.csp < 0: player.csp = 0
+
+			from vars import ui
 			from angband import io
-			io.msg_print("You failed to get the spell off!")
-			io.sound(io.SOUND_FAIL)
+			ui.msg_print("You failed to get the spell off!")
+			ui.sound(io.SOUND_FAIL)
 			return
 
 		if self.effect() == -1:

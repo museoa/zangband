@@ -9,7 +9,6 @@ class cave_type:
         "feat" : cavec.cave_type_feat_set,
         "o_idx" : cavec.cave_type_o_idx_set,
         "m_idx" : cavec.cave_type_m_idx_set,
-        "mimic" : cavec.cave_type_mimic_set,
     }
     def __setattr__(self,name,value):
         if (name == "this") or (name == "thisown"): self.__dict__[name] = value; return
@@ -21,7 +20,6 @@ class cave_type:
         "feat" : cavec.cave_type_feat_get,
         "o_idx" : cavec.cave_type_o_idx_get,
         "m_idx" : cavec.cave_type_m_idx_get,
-        "mimic" : cavec.cave_type_mimic_get,
     }
     def __getattr__(self,name):
         method = cave_type.__getmethods__.get(name,None)
@@ -88,6 +86,12 @@ def tile(*args, **kwargs):
     val = apply(cavec.tile,args,kwargs)
     if val: val = cave_typePtr(val)
     return val
+
+map_area = cavec.map_area
+
+wiz_lite = cavec.wiz_lite
+
+wiz_dark = cavec.wiz_dark
 
 
 

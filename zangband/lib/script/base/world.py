@@ -1,24 +1,12 @@
-#####################################################################
-#
-# base/world.py
-#
-# Initialization of the worlds
-#
-#####################################################################
-
-from variable import events, debug
+"""Initialization of the worlds"""
 
 
-#####################################################################
-#
-# Base class for a world.
-# Contains a "wilderness" as well as the available monsters/items
-# ("object").
-#
-# ABSTRACT CLASS!
-#
-#####################################################################
 class world:
+	"""Base class for a world.
+	Contains a "wilderness" as well as the available monsters/items
+	("object").
+	ABSTRACT CLASS!"""
+
 	# Name of the world
 	name = ""
 
@@ -33,13 +21,11 @@ class world:
 	# Labels
 	labels = {}
 
-	# Constructor
 	def __init__(self):
-		debug.trace("world.__init__(%s)" % (self))
-
 		# Levels of the world
 		self.levels = {}
-
+		
+	def initialize(self):
 		# Run the auto-start scripts
 		from util.autorun import autorun_dir
 		autorun_dir("worlds", self.directory, "startup")
@@ -48,57 +34,80 @@ class world:
 	def get_level(self, name):
 		return self.levels[self.labels[name]]
 
-	def get_player_races(self):
-		return []
+	def get_player_race(self):
+		from vars import ui
 
-	def get_player_classes(self):
-		return []
+		# Select the race
+		selected = ui.birth_select_race(self.races)
+
+		# Restart character generation
+		if not selected: return
+
+		return apply(selected, ())
+
+	def get_player_gender(self):
+		from vars import ui
+
+		# Select the gender
+		selected = ui.birth_select_gender(self.genders)
+
+		# Restart character generation
+		if not selected: return
+
+		return apply(selected, ())
+
+	def get_player_class(self):
+		from vars import ui
+
+		# Select the class
+		selected = ui.birth_select_class(self.classes)
+
+		# Restart character generation
+		if not selected: return
+
+		player_class = apply(selected, ())
+		if not player_class: return
+		if not player_class.birth(): return
+		return player_class
 
 
-#####################################################################
-#
-# World selection at character birth
-#
-#####################################################################
 class world_data:
-	def __init__(self):
-		debug.trace("world_data.__init__(%s)" % (self))
+	"""World selection at character birth"""
 
+	def __init__(self):
 		# Registered world-classes
 		self.data = []
 
 		# Initialized worlds
 		self.worlds = {}
 
-		# Register the birth event
-		events.get_world.append(self)
-
-	# Register a new worlds
 	def register(self, world):
-		debug.trace("world_data.register(%s, %s)" % (self, world))
+		"""Register a new worlds"""
 
 		self.data.append(world)
 
-	def get_world_hook(self, args):
-		debug.trace("world_data.get_world_hook(%s, %s)" % (self, args))
-
+	def get_world(self):
 		# Select the world
-		from variable import ui
-		selected = ui.birth.select_world(self.data)
+		from vars import ui
+		selected = ui.birth_select_world(self.data)
 
-		# Restart character generation
-		if not selected:
-			return -1
+		# Abort
+		if not selected: return
 
-		# Initialize the world
+		# Create the world
 		world = apply(selected, ())
 
-		self.worlds[world.name] = world
+		# Store the world for fast access
+		import vars
+		vars.world = world
 
-		from variable import player
-		player.world = world
+		# Initialize the world data
+		world.initialize()
 
-		return 1
+		# Store the initialized worlds to form a persistent universe
+		self.worlds[world.name] = vars.world
+
+		return world
 
 	# Pretend to be a dictionary
 	def __len__(self):

@@ -16,7 +16,7 @@ class hobbit(player_race):
 				0x40B)
 
 	def get_player_flags_hook(self, args):
-		from variable import player
+		from vars import player
 		player.sustain_dex = 1
 		return 1
 

@@ -1,6 +1,6 @@
 #####################################################################
 #
-# ui/standard/__init__.py
+# ui/standard.py
 #
 # Various functions for the (Graphical) User Interface (UI)
 #
@@ -9,19 +9,16 @@
 from angband import io
 from util.string import I2A, A2I
 import string
-from ui import ui_class
+from base.ui import ui
+from birth import ui_birth
 
 #####################################################################
 #
 # Standard UI
 #
 #####################################################################
-class ui_standard(ui_class):
+class ui_standard(ui, ui_birth):
 	name = "standard"
-
-	def __init__(self):
-		from birth import ui_birth
-		self.birth = ui_birth()
 
 	#####################################################################
 	# Select spells at player birth
@@ -40,7 +37,14 @@ class ui_standard(ui_class):
 		from list import skill_list
 		list = skill_list(skills)
 		return list.execute()
-	
+
+
+	#####################################################################
+	def display_spell_list(self, spells):
+		from list import spell_list
+		list = spell_list(spells)
+		return list.execute()
+
 
 	#####################################################################
 	# Print the quest info
@@ -52,90 +56,115 @@ class ui_standard(ui_class):
 			y = y + 1
 		io.inkey()
 
+	#####################################################################
+	# Select realms
+	#####################################################################
+	def birth_select_realms(self, realms, picks):
+		from angband import io
+		from angband import commands
+		import string
+		from util.string import I2A, A2I
 
+#		io.Term_putstr(5, 15, -1, io.TERM_WHITE,
+#			"The realm of magic will determine which spells you can learn.")
+#		io.Term_putstr(5, 16, -1, io.TERM_WHITE,
+#			"Life and Sorcery are protective, Chaos and Death are destructive.")
+#		io.Term_putstr(5, 17, -1, io.TERM_WHITE,
+#			"Nature has both defensive and offensive spells.")
 
-	def list_spells(self, spells):
-		y = 1
-		x = 20
+		# Current cursor position
+		current_index = 0
 
-		# Heading
-		io.prt("", y, x)
-		io.put_str("Name", y, x + 5)
-		io.put_str("Lv Mana Fail Info", y, x + 35)
-
-		# Spell list
+		# Assign realms to letters
+		letters = {}
 		i = 0
-		for spell in spells:
-			if spell:
-				line = "  %c) %-30s%2d %4d %3d%%%s" % (I2A(i), spell.name, spell.level, spell.mana, spell.fail, spell.info)
-			else:
-				line = "  %c) %-30s" % (I2A(i), "(illegible)")
-
-			io.prt(line, y + i + 1, x)
+		for realm in realms.values():
+			letter = "%c" % (I2A(i))
+			letters[letter] = realm
 			i = i + 1
 
-		# Empty footer
-		io.prt("", y + i + 1, x)
+		# First row
+		row = 15
 
+		while 1:
+			# Print the header
+			io.Term_putstr( 5, row, -1, io.TERM_WHITE, "Realm")
+			io.Term_putstr(30, row, -1, io.TERM_WHITE, "Picks")
+			io.Term_putstr(40, row, -1, io.TERM_WHITE, "Common")
+			io.Term_putstr(50, row, -1, io.TERM_WHITE, "Uncommon")
+			io.Term_putstr(60, row, -1, io.TERM_WHITE, "Rare")
 
-
-	#####################################################################
-	# Browse a book
-	#####################################################################
-	def browse_book(self, spells):
-		io.Term_save()
-
-		self.list_spells(spells)
-
-		# Wait for keypress
-		io.inkey()
-
-		io.Term_load()
-
-
-
-	#####################################################################
-	# Cast a spell
-	#####################################################################
-	def cast_spell(self, spells):
-		done = 0
-		listing = 0
-
-		while not done:
-			# Print the prompt
-			io.prt("(%s %c-%c, *=List, ESC=exit) %s which %s? " % ("Spells", I2A(0), I2A(1), "Cast", "spell"), 0, 0)
-
-			# Wait for keypress
-			key = io.inkey()
-
-			# Clear the prompt
-			io.prt("", 0, 0)
-
-			# Show list
-			if key in '* ?':
-				if not listing:
-					io.Term_save()
-					self.list_spells(spells)
-					listing = 1
+			# Print the table
+			i = 0
+			for realm in realms.values():
+				letter = "%c" % (I2A(i))			
+				if i == current_index:
+					color = io.TERM_YELLOW
 				else:
-					io.Term_load()
-					listing = 0
-			# Escape
-			elif ord(key) == 27:
-				return
-			# Select spell
-			elif key in string.letters:
-				key = string.lower(key)
-				index = A2I(key) - A2I('a')
-				if index >= len(spells):
-					io.bell()
-					io.msg_print("You may not cast that spell.")
-					io.msg_print("")
-				else:
-					done = 1
+					color = io.TERM_WHITE
+				c1, c2, u1, u2, r1, r2 = realm.spell_distribution[realm.picks]
+				io.Term_putstr( 1, row + 1 + i, -1, color, "%c/%c" % (letter, string.upper(letter)))
+				io.Term_putstr( 5, row + 1 + i, -1, color, realm.name)
+				io.Term_putstr(30, row + 1 + i, -1, color, "%2d" % (realm.picks))
+				io.Term_putstr(40, row + 1 + i, -1, color, "%2d+%2d" % (c1, c2))
+				io.Term_putstr(50, row + 1 + i, -1, color, "%2d+%2d" % (u1, u2))
+				io.Term_putstr(60, row + 1 + i, -1, color, "%2d+%2d" % (r1, r2))
+				i = i + 1
 
-		if listing:
-			io.Term_load()
+			io.move_cursor(row + 1 + current_index, 1)
 
-		return spells[index]
+			c = io.inkey()
+
+			if letters.has_key(c):
+				realm = letters[c]
+				if picks > 0 and realm.picks < realm.max_picks:
+					realm.picks = realm.picks + realm.pick_step
+					picks = picks - realm.pick_step
+			elif letters.has_key(string.lower(c)):
+				realm = letters[string.lower(c)]
+				if realm.picks > realm.fixed_picks:
+					realm.picks = realm.picks - realm.pick_step
+					picks = picks + realm.pick_step
+			elif c == '2':
+				if current_index < len(realms) - 1:
+					current_index = current_index + 1
+			elif c == '8':
+				if current_index > 0:
+					current_index = current_index - 1
+			elif c == '6':
+				realm = letters["%c" % (I2A(current_index))]
+				if picks > 0 and realm.picks < realm.max_picks:
+					realm.picks = realm.picks + realm.pick_step
+					picks = picks - realm.pick_step
+			elif c == '4':
+				realm = letters["%c" % (I2A(current_index))]
+				if realm.picks > realm.fixed_picks:
+					realm.picks = realm.picks - realm.pick_step
+					picks = picks + realm.pick_step
+			# Quit
+			elif c == 'Q':
+				from angband import system
+				system.remove_loc()
+				system.quit("")
+			# Restart
+			elif c == 'S':
+				return -1
+			# Help
+			elif c == '?':
+				commands.do_cmd_help()
+			# Startup-options
+			elif c == '=':
+				io.screen_save()
+				commands.do_cmd_options_aux(6, "Startup Options")
+				io.screen_load()
+			# Escape or Return
+			elif ord(c) in (27, 13):
+				break
+			# Error
+			else:
+				io.bell()
+
+		io.clear_from(row)
+
+		return realms
 

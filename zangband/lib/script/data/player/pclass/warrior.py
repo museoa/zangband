@@ -1,25 +1,50 @@
-import variable
-from variable import events, player
-from base.p_class import player_class_class
-from angband import random
+from base.p_class import player_class
 
-class warrior_class(player_class_class):
-	name = "Warrior"
+class warrior(player_class):
 	number = 0
+
+	title = "Warrior"
+	str_mod = 5
+	int_mod = -2
+	wis_mod = -2
+	dex_mod = 2
+	con_mod = 2
+	chr_mod = -1
+	c_dis = 25
+	c_dev = 18
+	c_sav = 18
+	c_stl = 1
+	c_srh = 14
+	c_fos = 2
+	c_thn = 70
+	c_thb = 55
+	x_dis = 12
+	x_dev = 7
+	x_sav = 10
+	x_stl = 0
+	x_srh = 0
+	x_fos = 0
+	x_thn = 45
+	x_thb = 45
+	c_mhp = 9
+	c_exp = 0
+	pet_upkeep_div = 20
+
 	def __init__(self):
-		player_class_class.__init__(self,
-				self.name,
-				5, -2, -2, 2, 2, -1,
-				25, 18, 18, 1, 14, 2, 70, 55,
-				12, 7,  10, 0,  0,  0,  45, 45,
-				9,  0, 20)
+		player_class.__init__(self)
+
+		from vars import events
 		events.destroy_object.append(self)
+
 	def get_player_flags_hook(self, args):
-		if player.lev > 29:
+		from vars import player
+		if player.level > 29:
 			player.resist_fear = 1
 		return 1
+
 	def destroy_object_hook(self, args):
 		object, number = args
+		from vars import player, ui
 		from angband import objects
 		from angband.player import PY_MAX_EXP
 		the_object = objects.object_typePtr(object)
@@ -32,24 +57,26 @@ class warrior_class(player_class_class):
 				if the_object.sval < 3: tester_exp = tester_exp / 4
 				if tester_exp < 1: tester_exp = 1
 
-				from angband.io import msg_print
-				msg_print("You feel more experienced.")
+				ui.msg_print("You feel more experienced.")
 				player.gain_exp(tester_exp * number)
 				return 1
 	def sense_inventory_hook(self, args):
+		from angband import random
+		from vars import player
 		# Good sensing
-		if (0 != random.rand_int(9000 / (player.lev * player.lev + 40))):
+		if (0 != random.rand_int(9000 / (player.level * player.level + 40))):
 			return
 		# Heavy sensing
 		return -1
 
 	# Give the player the usual warrior outfit
 	def player_outfit_hook(self, data):
-		ring = variable.objects.create("ring of fear resistance")
+		from vars import objects, player
+		ring = objects.create("ring of fear resistance")
 		player.give(ring)
-		sword = variable.objects.create("broad sword")
+		sword = objects.create("broad sword")
 		player.give(sword)
-		armor = variable.objects.create("chain mail")
+		armor = objects.create("chain mail")
 		player.give(armor)
 		return 1
 

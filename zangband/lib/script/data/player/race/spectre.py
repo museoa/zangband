@@ -16,7 +16,7 @@ class spectre(player_race):
 				0x74E)
 
 	def get_player_flags_hook(self, args):
-		from variable import player
+		from vars import player
 		player.resist_neth = 1
 		player.hold_life = 1
 		player.see_inv = 1
@@ -24,7 +24,7 @@ class spectre(player_race):
 		player.slow_digest = 1
 		player.resist_cold = 1
 		player.pass_wall = 1
-		if player.lev > 34:
+		if player.level > 34:
 			player.telepathy = 1
 		return 1
 

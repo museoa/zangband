@@ -9,7 +9,7 @@ class berserk(racial_power):
 	use_stat = A_WIS
 
 	def get_difficulty(self):
-		from variable import player
+		from vars import player
 		# XXX XXX XXX
 		if player.p_class.name == "Warrior":
 			return 6
@@ -17,12 +17,12 @@ class berserk(racial_power):
 			return 12
 
 	def effect(self):
-		from angband.io import msg_print
+		from vars import ui
 		from angband.random import randint
-		from variable import player
-		msg_print("Raaagh!")
+		from vars import player
+		ui.msg_print("Raaagh!")
 		player.set_afraid(0)
-		player.set_shero(player.shero + 10 + randint(player.lev))
+		player.set_shero(player.shero + 10 + randint(player.level))
 		player.hp_player(30)
 
 
@@ -43,11 +43,11 @@ class barbarian(player_race):
 				0,
 				0x09D)
 
-		from variable import player
+		from vars import player
 		player.skills.append(berserk())
 
 	def get_player_flags_hook(self, args):
-		from variable import player
+		from vars import player
 		player.resist_fear = 1
 		return 1
 

@@ -274,8 +274,6 @@ update_smart_learn = monsterc.update_smart_learn
 
 place_monster_one = monsterc.place_monster_one
 
-player_place = monsterc.player_place
-
 monster_drop_carried_objects = monsterc.monster_drop_carried_objects
 
 monster_dungeon = monsterc.monster_dungeon

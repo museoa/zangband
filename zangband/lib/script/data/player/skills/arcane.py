@@ -21,9 +21,9 @@ class zap(spell):
 		succ, dir = io.get_aim_dir()
 		if not succ: return -1
 
-		from variable import player
+		from vars import player
 		beam_chance = player.p_class.get_beam_chance() - 10
-		damage = random.damroll(3 + ((player.lev - 1) / 5), 3)
+		damage = random.damroll(3 + ((player.level - 1) / 5), 3)
 
 		spells.fire_bolt_or_beam(beam_chance, spells.GF_ELEC, dir, damage)
 
@@ -55,9 +55,9 @@ class light_area(spell):
 	fail = 40
 
 	def effect(self):
-		from variable import player
-		damage = random.damroll(2, (player.lev / 2))
-		radius = (player.lev / 10) + 1
+		from vars import player
+		damage = random.damroll(2, (player.level / 2))
+		radius = (player.level / 10) + 1
 		spells.lite_area(damage, radius)
 
 class detect_doors_and_traps(spell):
@@ -74,8 +74,8 @@ class teleport(spell):
 	name = "Teleport"
 
 	def effect(self):
-		from variable import player
-		spells.teleport_player(player.lev * 5)
+		from vars import player
+		spells.teleport_player(player.level * 5)
 
 class stone_to_mud(spell):
 	common = 1

@@ -16,10 +16,10 @@ class half_troll(player_race):
 				0x005)
 
 	def get_player_flags_hook(self, args):
-		from variable import player
+		from vars import player
 		player.sustain_str = 1
 
-		if player.lev > 14:
+		if player.level > 14:
 			# High level trolls heal fast...
 			player.regenerate = 1
 

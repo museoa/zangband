@@ -7,7 +7,7 @@
 #####################################################################
 
 
-from ui.list import column, list_selection
+from base.ui import column, list_selection
 
 
 
@@ -35,7 +35,10 @@ class angterm_list_selection(list_selection):
 		return result
 
 	def get_prompt(self):
-		return "%s (%c-%c): " % (self.prompt, I2A(0), I2A(min(len(self.list) - 1, 21)))
+		if len(self.list) > 0:
+			return "%s (%c-%c): " % (self.prompt, I2A(0), I2A(min(len(self.list) - 1, 21)))
+		else:
+			return "%s: " % (self.prompt)
 
 	def display_prompt(self):
 		io.prt(self.get_prompt(), self.start_y, self.start_x)
@@ -205,7 +208,7 @@ class realm_list(angterm_list_selection):
 		# Quit
 		if command == 'Q':
 			system.remove_loc()
-			system.quit(NULL)
+			system.quit("")
 		# Restart
 		elif command == 'S':
 			return -1
@@ -244,7 +247,7 @@ class spell_list(angterm_list_selection):
 		# Quit
 		if command == 'Q':
 			system.remove_loc()
-			system.quit(NULL)
+			system.quit("")
 		# Restart
 		elif command == 'S':
 			return -1

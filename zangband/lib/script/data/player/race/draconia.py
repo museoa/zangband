@@ -16,17 +16,17 @@ class draconian(player_race):
 				0x757)
 
 	def get_player_flags_hook(self, args):
-		from variable import player
+		from vars import player
 		player.ffall = 1
-		if player.lev > 4:
+		if player.level > 4:
 			player.resist_fire = 1
-		if player.lev > 9:
+		if player.level > 9:
 			player.resist_cold = 1
-		if player.lev > 14:
+		if player.level > 14:
 			player.resist_acid = 1
-		if player.lev > 19:
+		if player.level > 19:
 			player.resist_elec = 1
-		if player.lev > 34:
+		if player.level > 34:
 			player.resist_pois = 1
 		return 1
 

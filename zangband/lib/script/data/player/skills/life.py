@@ -24,7 +24,7 @@ class cure_light_wounds(spell):
 	name = "Cure Light Wounds"
 
 	def effect(self):
-		from variable import player
+		from vars import player
 		spells.hp_player(random.damroll(2, 10))
 		spells.set_cut(player.cut - 10)
 
@@ -33,7 +33,7 @@ class bless(spell):
 	name = "Bless"
 
 	def effect(self):
-		from variable import player
+		from vars import player
 		spells.set_blessed(player.blessed + random.randint(12) + 12)
 
 class remove_fear(spell):

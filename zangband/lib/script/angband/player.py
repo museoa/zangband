@@ -4,8 +4,11 @@ class player_type:
     def __init__(self,this):
         self.this = this
 
-    def stat_cur_get(*args):
-        val = apply(playerc.player_type_stat_cur_get,args)
+    def get_stat_ind(*args):
+        val = apply(playerc.player_type_get_stat_ind,args)
+        return val
+    def get_stat_cur(*args):
+        val = apply(playerc.player_type_get_stat_cur,args)
         return val
     def inventory(*args):
         val = apply(playerc.player_type_inventory,args)
@@ -18,9 +21,6 @@ class player_type:
         return val
     def carry(*args):
         val = apply(playerc.player_type_carry,args)
-        return val
-    def place(*args):
-        val = apply(playerc.player_type_place,args)
         return val
     def teleport(*args):
         val = apply(playerc.player_type_teleport,args)
@@ -172,14 +172,11 @@ class player_type:
     __setmethods__ = {
         "px" : playerc.player_type_px_set,
         "py" : playerc.player_type_py_set,
-        "oldpy" : playerc.player_type_oldpy_set,
-        "oldpx" : playerc.player_type_oldpx_set,
         "psex" : playerc.player_type_psex_set,
         "prace" : playerc.player_type_prace_set,
         "pclass" : playerc.player_type_pclass_set,
         "realm1" : playerc.player_type_realm1_set,
         "realm2" : playerc.player_type_realm2_set,
-        "oops" : playerc.player_type_oops_set,
         "hitdie" : playerc.player_type_hitdie_set,
         "expfact" : playerc.player_type_expfact_set,
         "age" : playerc.player_type_age_set,
@@ -190,13 +187,11 @@ class player_type:
         "max_depth" : playerc.player_type_max_depth_set,
         "depth" : playerc.player_type_depth_set,
         "max_lev" : playerc.player_type_max_lev_set,
-        "lev" : playerc.player_type_lev_set,
+        "level" : playerc.player_type_level_set,
         "max_exp" : playerc.player_type_max_exp_set,
         "exp" : playerc.player_type_exp_set,
         "exp_frac" : playerc.player_type_exp_frac_set,
         "town_num" : playerc.player_type_town_num_set,
-        "arena_number" : playerc.player_type_arena_number_set,
-        "inside_arena" : playerc.player_type_inside_arena_set,
         "inside_quest" : playerc.player_type_inside_quest_set,
         "wilderness_x" : playerc.player_type_wilderness_x_set,
         "wilderness_y" : playerc.player_type_wilderness_y_set,
@@ -262,9 +257,6 @@ class player_type:
         "wizard" : playerc.player_type_wizard_set,
         "playing" : playerc.player_type_playing_set,
         "leaving" : playerc.player_type_leaving_set,
-        "leaving_dungeon" : playerc.player_type_leaving_dungeon_set,
-        "exit_bldg" : playerc.player_type_exit_bldg_set,
-        "leftbldg" : playerc.player_type_leftbldg_set,
         "create_up_stair" : playerc.player_type_create_up_stair_set,
         "create_down_stair" : playerc.player_type_create_down_stair_set,
         "align" : playerc.player_type_align_set,
@@ -298,15 +290,6 @@ class player_type:
         "command_wrk" : playerc.player_type_command_wrk_set,
         "command_new" : playerc.player_type_command_new_set,
         "new_spells" : playerc.player_type_new_spells_set,
-        "old_spells" : playerc.player_type_old_spells_set,
-        "old_cumber_armor" : playerc.player_type_old_cumber_armor_set,
-        "old_cumber_glove" : playerc.player_type_old_cumber_glove_set,
-        "old_heavy_wield" : playerc.player_type_old_heavy_wield_set,
-        "old_heavy_shoot" : playerc.player_type_old_heavy_shoot_set,
-        "old_icky_wield" : playerc.player_type_old_icky_wield_set,
-        "old_lite" : playerc.player_type_old_lite_set,
-        "old_view" : playerc.player_type_old_view_set,
-        "old_food_aux" : playerc.player_type_old_food_aux_set,
         "cumber_armor" : playerc.player_type_cumber_armor_set,
         "cumber_glove" : playerc.player_type_cumber_glove_set,
         "heavy_wield" : playerc.player_type_heavy_wield_set,
@@ -385,7 +368,6 @@ class player_type:
         "noise" : playerc.player_type_noise_set,
         "num_blow" : playerc.player_type_num_blow_set,
         "num_fire" : playerc.player_type_num_fire_set,
-        "tval_xtra" : playerc.player_type_tval_xtra_set,
         "ammo_mult" : playerc.player_type_ammo_mult_set,
         "ammo_tval" : playerc.player_type_ammo_tval_set,
         "pspeed" : playerc.player_type_pspeed_set,
@@ -401,14 +383,11 @@ class player_type:
     __getmethods__ = {
         "px" : playerc.player_type_px_get,
         "py" : playerc.player_type_py_get,
-        "oldpy" : playerc.player_type_oldpy_get,
-        "oldpx" : playerc.player_type_oldpx_get,
         "psex" : playerc.player_type_psex_get,
         "prace" : playerc.player_type_prace_get,
         "pclass" : playerc.player_type_pclass_get,
         "realm1" : playerc.player_type_realm1_get,
         "realm2" : playerc.player_type_realm2_get,
-        "oops" : playerc.player_type_oops_get,
         "hitdie" : playerc.player_type_hitdie_get,
         "expfact" : playerc.player_type_expfact_get,
         "age" : playerc.player_type_age_get,
@@ -419,15 +398,12 @@ class player_type:
         "max_depth" : playerc.player_type_max_depth_get,
         "depth" : playerc.player_type_depth_get,
         "max_lev" : playerc.player_type_max_lev_get,
-        "lev" : playerc.player_type_lev_get,
+        "level" : playerc.player_type_level_get,
         "max_exp" : playerc.player_type_max_exp_get,
         "exp" : playerc.player_type_exp_get,
         "exp_frac" : playerc.player_type_exp_frac_get,
         "town_num" : playerc.player_type_town_num_get,
-        "arena_number" : playerc.player_type_arena_number_get,
-        "inside_arena" : playerc.player_type_inside_arena_get,
         "inside_quest" : playerc.player_type_inside_quest_get,
-        "rewards" : playerc.player_type_rewards_get,
         "wilderness_x" : playerc.player_type_wilderness_x_get,
         "wilderness_y" : playerc.player_type_wilderness_y_get,
         "mhp" : playerc.player_type_mhp_get,
@@ -499,9 +475,6 @@ class player_type:
         "wizard" : playerc.player_type_wizard_get,
         "playing" : playerc.player_type_playing_get,
         "leaving" : playerc.player_type_leaving_get,
-        "leaving_dungeon" : playerc.player_type_leaving_dungeon_get,
-        "exit_bldg" : playerc.player_type_exit_bldg_get,
-        "leftbldg" : playerc.player_type_leftbldg_get,
         "create_up_stair" : playerc.player_type_create_up_stair_get,
         "create_down_stair" : playerc.player_type_create_down_stair_get,
         "align" : playerc.player_type_align_get,
@@ -535,15 +508,6 @@ class player_type:
         "command_wrk" : playerc.player_type_command_wrk_get,
         "command_new" : playerc.player_type_command_new_get,
         "new_spells" : playerc.player_type_new_spells_get,
-        "old_spells" : playerc.player_type_old_spells_get,
-        "old_cumber_armor" : playerc.player_type_old_cumber_armor_get,
-        "old_cumber_glove" : playerc.player_type_old_cumber_glove_get,
-        "old_heavy_wield" : playerc.player_type_old_heavy_wield_get,
-        "old_heavy_shoot" : playerc.player_type_old_heavy_shoot_get,
-        "old_icky_wield" : playerc.player_type_old_icky_wield_get,
-        "old_lite" : playerc.player_type_old_lite_get,
-        "old_view" : playerc.player_type_old_view_get,
-        "old_food_aux" : playerc.player_type_old_food_aux_get,
         "cumber_armor" : playerc.player_type_cumber_armor_get,
         "cumber_glove" : playerc.player_type_cumber_glove_get,
         "heavy_wield" : playerc.player_type_heavy_wield_get,
@@ -557,7 +521,6 @@ class player_type:
         "stat_use" : playerc.player_type_stat_use_get,
         "stat_top" : playerc.player_type_stat_top_get,
         "stat_add" : playerc.player_type_stat_add_get,
-        "stat_ind" : playerc.player_type_stat_ind_get,
         "immune_acid" : playerc.player_type_immune_acid_get,
         "immune_elec" : playerc.player_type_immune_elec_get,
         "immune_fire" : playerc.player_type_immune_fire_get,
@@ -626,7 +589,6 @@ class player_type:
         "noise" : playerc.player_type_noise_get,
         "num_blow" : playerc.player_type_num_blow_get,
         "num_fire" : playerc.player_type_num_fire_get,
-        "tval_xtra" : playerc.player_type_tval_xtra_get,
         "ammo_mult" : playerc.player_type_ammo_mult_get,
         "ammo_tval" : playerc.player_type_ammo_tval_get,
         "pspeed" : playerc.player_type_pspeed_get,
@@ -691,5 +653,6 @@ A_WIS = playerc.A_WIS
 A_DEX = playerc.A_DEX
 A_CON = playerc.A_CON
 A_CHR = playerc.A_CHR
+A_MAX = playerc.A_MAX
 SEX_FEMALE = playerc.SEX_FEMALE
 SEX_MALE = playerc.SEX_MALE
