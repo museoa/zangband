@@ -86,11 +86,13 @@ struct term_data
 #ifdef USE_GRAPHICS
 
 	GdkImage *tiles;
+	GdkImage *b_tiles;
 	GdkImage *temp;
 	
 #endif /* USE_GRAPHICS */
 
 	int font_wid;
+	int font_twid;
 	int font_hgt;
 	
 
@@ -702,11 +704,36 @@ static GdkImage *resize_tiles(int tile_wid, int tile_hgt)
 
 #endif /* USE_GRAPHICS */
 
+
+/*
+ * Find the pixel at the top-left corner of a square.
+ */
+static void square_to_pixel(int *x, int *y, int ox, int oy)
+{
+	term_data *td = (term_data*)(Term->data);
+	
+	(*y) = oy * td->font_hgt;
+	
+	if ((use_bigtile) && (oy >= Term->scr->big_y1)
+			&& (oy <= Term->scr->big_y2)
+			&& (ox > Term->scr->big_x1))
+	{
+		(*x) = ox * td->font_twid - Term->scr->big_x1 * td->font_wid;
+	}
+	else
+	{
+		(*x) = ox * td->font_wid;
+	}
+}
+
+
 /*
  * Erase some characters.
  */
 static errr Term_wipe_gtk(int x, int y, int n)
 {
+	int x1, y1, x2, y2;
+	
 	term_data *td = (term_data*)(Term->data);
 	
 	/* Don't draw to hidden windows */
@@ -714,16 +741,20 @@ static errr Term_wipe_gtk(int x, int y, int n)
 
 	g_assert(td->pixmap);
 	g_assert(td->drawing_area->window);
+	
+	/*** Find the dimensions ***/
+	square_to_pixel(&x1, &y1, x, y);
+	square_to_pixel(&x2, &y2, x + n, y);
 
 	gdk_draw_rectangle(td->pixmap, td->drawing_area->style->black_gc,
-					TRUE, x * td->font_wid, y * td->font_hgt,
-					n * td->font_wid, td->font_hgt);
+					TRUE, x1, y1,
+					x2 - x1, td->font_hgt);
 
 	/* Copy it to the window */
 	gdk_draw_pixmap(td->drawing_area->window, td->gc, td->pixmap,
-	                x * td->font_wid, y * td->font_hgt,
-	                x * td->font_wid, y * td->font_hgt,
-	                n * td->font_wid, td->font_hgt);
+	                x1, y1,
+	                x1, y1,
+	                x2 - x1, td->font_hgt);
 
 	/* Success */
 	return (0);
@@ -733,11 +764,14 @@ static errr Term_wipe_gtk(int x, int y, int n)
 /*
  * Draw some textual characters.
  */
-static errr Term_text_gtk(int x, int y, int n, byte a, cptr s)
+static errr Term_text_gtk(int cx, int cy, int n, byte a, cptr s)
 {
 	int i;
 	term_data *td = (term_data*)(Term->data);
 	GdkColor color;
+	
+	int x, y;
+	int sx, sy;
 	
 	/* Don't draw to hidden windows */
 	if (!td->shown) return (0);
@@ -752,21 +786,42 @@ static errr Term_text_gtk(int x, int y, int n, byte a, cptr s)
 	gdk_gc_set_foreground(td->gc, &color);
 
 	/* Clear the line */
-	Term_wipe_gtk(x, y, n);
+	Term_wipe_gtk(cx, cy, n);
+	
+	/*** Decide where to place the string, vertically ***/
+	square_to_pixel(&x, &y, cx, cy);
+	
+	/* Start location */
+	sx = x;
+	sy = y;
+	
+	/* Ignore Vertical Justifications */
+	y += td->font->ascent;
 
 	/* Draw the text to the pixmap */
 	for (i = 0; i < n; i++)
 	{
-		gdk_draw_text(td->pixmap, td->font, td->gc,
-					 (x + i) * td->font_wid,
-					 td->font->ascent + y * td->font_hgt, s + i, 1);
+		if (is_bigtiled(cx + i, cy))
+		{
+			/* Note that the Infoclr is set up to contain the Infofnt */
+			gdk_draw_text(td->pixmap, td->font, td->gc,
+							x, y, s + i, 1);
+			x += td->font_twid;
+		}
+		else
+		{
+			/* Note that the Infoclr is set up to contain the Infofnt */
+			gdk_draw_text(td->pixmap, td->font, td->gc,
+							x, y, s + i, 1);
+			x += td->font_wid;
+		}
 	}
 
 	/* Copy it to the window */
 	gdk_draw_pixmap(td->drawing_area->window, td->gc, td->pixmap,
-	                x * td->font_wid, y * td->font_hgt,
-	                x * td->font_wid, y * td->font_hgt,
-	                n * td->font_wid, td->font_hgt);
+	                sx, sy,
+	                sx, sy,
+	                x, td->font_hgt);
 
 	/* Success */
 	return (0);
@@ -777,6 +832,8 @@ static errr Term_curs_gtk(int x, int y)
 {
 	term_data *td = (term_data*)(Term->data);
 	
+	int x1, y1;
+	
 	/* Don't draw to hidden windows */
 	if (!td->shown) return (0);
 
@@ -784,16 +841,33 @@ static errr Term_curs_gtk(int x, int y)
 	g_assert(td->drawing_area->window);
 
 	gdk_gc_set_foreground(td->gc, &colours[TERM_YELLOW].pixel);
+	
+	square_to_pixel(&x1, &y1, x, y);
 
-	gdk_draw_rectangle(td->pixmap, td->gc, FALSE,
-	                   x * td->font_wid, y * td->font_hgt,
-					   td->font_wid - 1, td->font_hgt - 1);
+	if (is_bigtiled(x, y))
+	{
+		gdk_draw_rectangle(td->pixmap, td->gc, FALSE,
+							x1, y1,
+							td->font_twid - 1, td->font_hgt - 1);
 
-	/* Copy it to the window */
-	gdk_draw_pixmap(td->drawing_area->window, td->gc, td->pixmap,
-	                x * td->font_wid, y * td->font_hgt,
-	                x * td->font_wid, y * td->font_hgt,
-	                td->font_wid, td->font_hgt);
+		/* Copy it to the window */
+		gdk_draw_pixmap(td->drawing_area->window, td->gc, td->pixmap,
+							x1, y1,
+							x1, y1,
+							td->font_twid, td->font_hgt);
+	}
+	else
+	{
+		gdk_draw_rectangle(td->pixmap, td->gc, FALSE,
+							x1, y1,
+							td->font_wid - 1, td->font_hgt - 1);
+
+		/* Copy it to the window */
+		gdk_draw_pixmap(td->drawing_area->window, td->gc, td->pixmap,
+							x1, y1,
+							x1, y1,
+							td->font_wid, td->font_hgt);
+	}
 
 	/* Success */
 	return (0);
@@ -805,10 +879,11 @@ static errr Term_curs_gtk(int x, int y)
 /*
  * Draw some graphical characters.
  */
-static errr Term_pict_gtk(int x, int y, int n, const byte *ap, const char *cp,
+static errr Term_pict_gtk(int ox, int oy, int n, const byte *ap, const char *cp,
 	const byte *tap, const char *tcp)
 {
-	int i, x1, y1, x0 = x, y0 = y;
+	int i;
+	int x1, y1;
 
 	byte a;
 	char c;
@@ -816,12 +891,17 @@ static errr Term_pict_gtk(int x, int y, int n, const byte *ap, const char *cp,
 	byte ta;
 	char tc;
 
+	int x, y;
+	int sx;
 	int x2, y2;
 	int k, l;
 
 	guint32 pixel, blank;
 
 	term_data *td = (term_data*)(Term->data);
+	
+	int wid, hgt = td->font_hgt;
+	GdkImage *tiles;
 
 	/* Mega Hack^2 - assume the top left corner is "black" */
 	blank = gdk_image_get_pixel(td->tiles, 0, td->font_hgt * 6);
@@ -833,44 +913,59 @@ static errr Term_pict_gtk(int x, int y, int n, const byte *ap, const char *cp,
 	g_assert(td->tiles);
 	g_assert(use_graphics);
 
-	y *= td->font_hgt;
-	x *= td->font_wid;
+	/* Starting point */
+	square_to_pixel(&x, &y, ox, oy);
+	
+	/* Save start x coord */
+	sx = x;
 
 	for (i = 0; i < n; i++)
 	{
+		/* What are we drawing? */
+		if (is_bigtiled(ox + i, oy))
+		{
+			tiles = td->b_tiles;
+			wid = td->font_twid;
+		}
+		else
+		{
+			tiles = td->tiles;
+			wid = td->font_wid;
+		}
+
 		a = *ap++;
 		c = *cp++;
 
 		/* For extra speed - cache these values */
-		x1 = (c&0x7F) * td->font_wid;
-		y1 = (a&0x7F) * td->font_hgt;
+		x1 = (c&0x7F) * wid;
+		y1 = (a&0x7F) * hgt;
 
 		ta = *tap++;
 		tc = *tcp++;
 
 		/* For extra speed - cache these values */
-		x2 = (tc&0x7F) * td->font_wid;
-		y2 = (ta&0x7F) * td->font_hgt;
+		x2 = (tc&0x7F) * wid;
+		y2 = (ta&0x7F) * hgt;
 
 		/* Optimise the common case */
 		if (!use_transparency || ((x1 == x2) && (y1 == y2)))
 		{
 			/* Draw object / terrain */
-			gdk_draw_image(td->pixmap, td->gc, td->tiles,
+			gdk_draw_image(td->pixmap, td->gc, tiles,
 				 x1, y1, x, y,
-				 td->font_wid, td->font_hgt);
+				 wid, hgt);
 		}
 		else
 		{
-			for (k = 0; k < td->font_wid; k++)
+			for (k = 0; k < wid; k++)
 			{
-				for (l = 0; l < td->font_hgt; l++)
+				for (l = 0; l < hgt; l++)
 				{
 					/* If mask set... */
-					if ((pixel = gdk_image_get_pixel(td->tiles, x1 + k, y1 + l)) == blank)
+					if ((pixel = gdk_image_get_pixel(tiles, x1 + k, y1 + l)) == blank)
 					{
 						/* Output from the terrain */
-						pixel = gdk_image_get_pixel(td->tiles, x2 + k, y2 + l);
+						pixel = gdk_image_get_pixel(tiles, x2 + k, y2 + l);
 					}
 
 					/* Store into the temp storage. */
@@ -882,21 +977,21 @@ static errr Term_pict_gtk(int x, int y, int n, const byte *ap, const char *cp,
 			/* Draw to screen */
 			gdk_draw_image(td->pixmap, td->gc, td->temp,
 				 0, 0, x, y,
-				 td->font_wid, td->font_hgt);
+				 wid, hgt);
 		
 			/* Hack - flush the changes */
 			gdk_flush();
 		}
 		
-		x += td->font_wid;
+		x += wid;
 	}
 	
 	
 	/* Copy it to the window */
 	gdk_draw_pixmap(td->drawing_area->window, td->gc, td->pixmap,
-	                x0 * td->font_wid, y0 * td->font_hgt,
-	                x0 * td->font_wid, y0 * td->font_hgt,
-	                n * td->font_wid, td->font_hgt);
+	                sx, y,
+	                sx, y,
+	                x - sx, td->font_hgt);
 
 	/* Success */
 	return (0);
@@ -1102,6 +1197,11 @@ static void load_font(term_data *td, cptr fontname)
 	/* Calculate the size of the font XXX */
 	td->font_wid = gdk_char_width(td->font, '@');
 	td->font_hgt = td->font->ascent + td->font->descent;
+	
+	if (use_bigtile)
+		td->font_twid = 2 * td->font_wid;
+	else
+		td->font_twid = td->font_wid;
 }
 
 
@@ -1432,10 +1532,19 @@ static void graf_init(void)
 
 			/* Resize tiles */
 			td->tiles = resize_tiles(td->font_wid, td->font_hgt);
-
+			
+			if (use_bigtile)
+			{
+				td->b_tiles = resize_tiles(td->font_twid, td->font_hgt);
+			}
+			else
+			{
+				td->b_tiles = NULL;
+			}
+			
 			/* Initialize the transparency temp storage*/			
 			td->temp = gdk_image_new(GDK_IMAGE_FASTEST, gdk_visual_get_system(),
-				td->font_wid, td->font_hgt);
+				td->font_twid, td->font_hgt);
 		}
 		else
 		{
@@ -2675,6 +2784,11 @@ errr init_gtk(int argc, char **argv, unsigned char *new_game)
 		plog_fmt("Ignoring option: %s", argv[i]);
 	}
 	
+#ifdef USE_GRAPHICS
+	/* We support bigtile mode */
+	if (arg_bigtile && arg_graphics) use_bigtile = TRUE;
+#endif /* USE_GRAPHICS */
+
 	/*
 	 * Initialize the terms
 	 */
