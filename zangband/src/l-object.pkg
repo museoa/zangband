@@ -1279,64 +1279,6 @@ struct obj_theme
 	byte tools;
 };
 
-struct artifact_type
-{
-	u32b name;			/* Name (offset) */
-	u32b text;			/* Text (offset) */
-
-	byte tval;			/* Artifact type */
-	byte sval;			/* Artifact sub type */
-
-	s16b pval;			/* Artifact extra info */
-
-	s16b to_h;			/* Bonus to hit */
-	s16b to_d;			/* Bonus to damage */
-	s16b to_a;			/* Bonus to armor */
-
-	s16b ac;			/* Base armor */
-
-	byte dd;			/* Damage when hits */
-	byte ds;
-
-	s16b weight;		/* Weight */
-
-	s32b cost;			/* Artifact "cost" */
-
-	u32b flags1;		/* Artifact Flags, set 1 */
-	u32b flags2;		/* Artifact Flags, set 2 */
-	u32b flags3;		/* Artifact Flags, set 3 */
-
-	byte level;			/* Artifact level */
-	byte rarity;		/* Artifact rarity */
-
-	byte cur_num;		/* Number created (0 or 1) */
-	byte max_num;		/* Unused (should be "1") */
-};
-
-struct ego_item_type
-{
-	u32b name;			/* Name (offset) */
-	u32b text;			/* Text (offset) */
-
-	byte slot;			/* Standard slot value */
-	byte rating;		/* Rating boost */
-
-	byte level;			/* Minimum level */
-	byte rarity;		/* Object rarity */
-
-	byte max_to_h;		/* Maximum to-hit bonus */
-	byte max_to_d;		/* Maximum to-dam bonus */
-	byte max_to_a;		/* Maximum to-ac bonus */
-
-	byte max_pval;		/* Maximum pval */
-
-	s32b cost;			/* Ego-item "cost" */
-
-	u32b flags1;		/* Ego-Item Flags, set 1 */
-	u32b flags2;		/* Ego-Item Flags, set 2 */
-	u32b flags3;		/* Ego-Item Flags, set 3 */
-};
-
 struct object_type
 {
 	s16b k_idx;			/* Kind index (zero if "dead") */
@@ -1400,12 +1342,8 @@ extern object_type o_list[o_max];
 extern object_kind k_info[z_info->k_max];
 extern char *k_name;
 extern char *k_text;
-extern artifact_type a_info[z_info->a_max];
 extern char *a_name;
 extern char *a_text;
-extern ego_item_type e_info[z_info->e_max];
-extern char *e_name;
-extern char *e_text;
 
 
 /***** Functions *****/
@@ -1487,8 +1425,6 @@ extern void place_gold(int x, int y);
 extern void drop_near(object_type *o_ptr, int chance, int x, int y);
 extern void acquirement(int x1, int y1, int num, bool great, bool known);
 extern cptr item_activation(const object_type *o_ptr);
-extern void combine_pack(void);
-extern void reorder_pack(void);
 extern bool can_player_destroy_object(object_type *o_ptr);
 extern void display_koff(int k_idx);
 
