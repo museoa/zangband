@@ -433,9 +433,9 @@ static void roff_aux(int r_idx, int remem)
 		}
 		else if (speed < 110)
 		{
-			if (speed < 90) roff(CLR_GREEN, " incredibly");
+			if (speed < 90) roff(CLR_GREEN " incredibly");
 			else if (speed < 100) roff(CLR_GREEN " very");
-			roff(CLR_GREEN, " slowly");
+			roff(CLR_GREEN " slowly");
 		}
 		else
 		{
@@ -1567,7 +1567,7 @@ void display_visible(void)
 	/* Are we hallucinating? */
 	if (p_ptr->image)
 	{
-		put_fstr(0, 10, CLR_VIOLET, "Hallucinations");
+		put_fstr(0, 10, CLR_VIOLET "Hallucinations");
 
 		return;
 	}

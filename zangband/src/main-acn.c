@@ -855,7 +855,7 @@ static errr loadfile_hook(cptr defname, int row, func_errr loader)
 {
 	char ourbuf[256];
 
-	put_fstr(0, row, CLR_YELLOW, "[Drag a file to the window]");
+	put_fstr(0, row, CLR_YELLOW "[Drag a file to the window]");
 
 	Term_fresh();
 

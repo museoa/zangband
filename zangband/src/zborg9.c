@@ -2984,7 +2984,7 @@ void borg_status_window(void)
 
 			put_fstr(54, 11, "This Level         %d", borg_t - borg_began);
 
-			put_fstr(54, 12, CLR_SLATE, "Since Town         " CLR_WHITE "%d",
+			put_fstr(54, 12, CLR_SLATE "Since Town         " CLR_WHITE "%d",
 					 borg_time_town + (borg_t - borg_began));
 
 
