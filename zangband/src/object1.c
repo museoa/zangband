@@ -2957,6 +2957,11 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 				strcat(out_val, " / for Equip,");
 			}
 		}
+		else
+		{
+			/* Begin the prompt */
+			sprintf(out_val, "Top item on floor: '-'");
+		}
 
 		/* Finish the prompt */
 		strcat(out_val, " ESC");
