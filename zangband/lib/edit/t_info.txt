@@ -7,7 +7,7 @@
 
 # === Understanding t_info.txt ===
 
-# N: serial number : & field name~
+# N: serial number : field name
 # G: symbol : color
 # W: priority : type : counter inital value 
 # I: flag | flag | flag
@@ -16,9 +16,8 @@
 
 
 # 'N' indicates the beginning of an entry. The serial number must
-# increase for each new item. The '&' and '~' symbols are use to
-# include articles and pluralization as necessary to ensure
-# grammatical correctness in descriptions.
+# increase for each new item.  It also is used to store the name of
+# the field.
 
 # 'G' is for graphics - symbol and color. There are 16 colors, as
 # follows:
@@ -54,7 +53,7 @@ W:0:0:0
 D:0:0:0:0:0:0:0:0
 
 # Invisible Wall
-N:1:& blank~
+N:1:blank
 G:.:w
 W:0:4:0
 I:FEAT | NO_LOOK | NO_ENTER | NO_MAGIC | NO_OBJECT
@@ -62,26 +61,43 @@ D:0:0:0:0:0:0:0:0
 F:12,field_action_compact_basic
 
 # Glyph of Warding
-N:2:& Glyph of warding~
+N:2:glyph of warding
 G:;:y
-W:100:4:0
+W:100:6:0
 I:FEAT | VIS | NO_OBJECT
 D:0:0:0:0:0:0:0:0
 F:12,field_action_compact_basic
 F:17,field_action_glyph_warding
 
 # Explosive Rune
-N:3:& Explosive Rune~
+N:3:explosive Rune
 G:*:R
-W:100:4:0
+W:100:6:0
 I:FEAT | VIS | NO_OBJECT
 D:0:0:0:0:0:0:0:0
 F:12,field_action_compact_basic
 F:17,field_action_glyph_explode
 
+# Corpse
+N:4:corpse
+G:~:v
+W:150:7:100
+I:TEMP | FEAT | VIS
+D:0:0:0:0:0:0:0:0
+F:0,field_action_corpse_init
+F:13,field_action_corpse_decay
+
+# Skeleton
+N:5:skeleton
+G:~:w
+W:150:7:100
+I:TEMP | FEAT | VIS
+D:0:0:0:0:0:0:0:0
+F:0,field_action_corpse_init
+F:13,field_action_corpse_decay
 
 # Trap
-N:4:& trap~
+N:6:trap
 G:^:w
 W:240:6:0
 I:FEAT
