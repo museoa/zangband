@@ -102,7 +102,7 @@ static void roff2fmt(cptr fmt, ...)
 	va_start(vp, fmt);
 
 	/* Build the string, assume 32K buffer */
-	s_buffer += vstrnfmt(s_buffer, 32767, fmt, vp);
+	s_buffer += vstrnfmt(s_buffer, 32767, fmt, &vp);
 
 	/* End the Varargs Stuff */
 	va_end(vp);

@@ -566,6 +566,14 @@
  */
 /* #define USE_64B */
 
+
+/*
+ * Define where the tk directory is.
+ * This probably should be moved into the lib directory.
+ */
+#define DEFAULT_TK_PATH "./tk/"
+
+
 /* Include maid-grf.c */
 #if defined(USE_AMI) || defined(ALLOW_BORG)
 #define TERM_USE_MAP

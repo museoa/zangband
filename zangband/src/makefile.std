@@ -113,7 +113,7 @@ BORGOBJS := \
 ## The Tk port files
 ##
 TKOBJS := \
-	tk/bind.o birth-tnb.o tk/canv.o tk/cmdinfo.o \
+	tk/bind.o tk/canv.o tk/cmdinfo.o \
 	tk/icon1.o tk/icon2.o tk/icon3.o tk/const.o \
 	tk/describe.o tk/interp1.o tk/interp2.o tk/plat.o \
 	tk/map1.o tk/map2.o tk/qebind.o \

@@ -1027,7 +1027,7 @@ static int struct_info_monster_type(Tcl_Interp *interp, StructType *typePtr,
 		}
 
 		case 4: /* monster_desc */
-			monster_desc(m_name, m_ptr, 0x08);
+			monster_desc(m_name, m_ptr, 0x08, 80);
 			resultObjPtr = ExtToUtf_NewStringObj(m_name, -1);
 			break;
 

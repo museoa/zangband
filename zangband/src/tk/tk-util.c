@@ -1088,7 +1088,7 @@ void prompt_format(cptr fmt, ...)
 	va_start(vp, fmt);
 	
 	/* Format the args, save the length */
-	(void)vstrnfmt(buf, 1024, fmt, vp);
+	(void)vstrnfmt(buf, 1024, fmt, &vp);
 	
 	/* End the Varargs Stuff */
 	va_end(vp);
@@ -1133,8 +1133,8 @@ void any_more(cptr prompt)
 	quick_messages = TRUE;
 
 	/* Display the message, wait for a response */
-	msg_print(prompt);
-	msg_print(NULL);
+	msgf(prompt);
+	message_flush();
 
 	/* Restore quick_messages */
 	quick_messages = old_quick;

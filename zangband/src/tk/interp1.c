@@ -2271,7 +2271,7 @@ static void HandleError(void)
 	FILE *fp;
 
 	/* Dump the stack to errors.txt */
-	path_build(path, 1024, ANGBAND_DIR_ROOT, "errors.txt");
+	path_build(path, 1024, ANGBAND_DIR_TK, "errors.txt");
 	fp = fopen(path, "a");
 	if (fp != NULL)
 	{
@@ -2369,23 +2369,19 @@ void angtk_init(void)
 	}
 
 	/* Tcl commands */
-	(void) CommandInfo_Init(g_interp, commandInit, NULL);
+	CommandInfo_Init(g_interp, commandInit, NULL);
 
-	/* The "birth" command */
-	init_birth();
 
 	/* Cool quasi-event bindings */
-	init_bindings();
+	/* init_bindings(); */
 
-	(void) init_const(g_interp);
+	init_const(g_interp);
 
 	/* Standard color palette */
 	init_palette();
 
 	/* Source the "startup script" */
 	path_build(path, 1024, ANGBAND_DIR_TK, "init-startup.tcl");
-	validate_file(path, "Could not find a required file:\n\"%s\"\n"
-		"Make sure your unzip utility supports long filenames.");	
 	if (angtk_eval_file(path) == TCL_ERROR)
 	{
 		HandleError();
@@ -2781,7 +2777,7 @@ bool player_test_feature(int y, int x, int mode)
 	if (message)
 	{
 		/* Print a message */
-		if (msg) msg_print(msg);
+		if (msg) msgf(msg);
 
 		/* Mark unknown grid */
 		if (note)

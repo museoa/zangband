@@ -312,8 +312,7 @@ objcmd_equipment(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
 	static cptr cmdOptions[] = {"inscription", NULL};
-	enum {IDX_FLAGS,
-		IDX_INSCRIPTION} option;
+	enum {IDX_INSCRIPTION} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 
 	int i_idx;
@@ -724,13 +723,6 @@ cptr keyword_path[] = {
 	NULL
 };
 
-/* Can the above directories be changed? */
-static bool s_edit_path[] = {
-	FALSE,
-	FALSE,
-	FALSE,
-	TRUE
-};
 
 int
 objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
@@ -739,11 +731,11 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 	int objC = objc - infoCmd->depth;
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
-	static cptr cmdOptions[] = {"abort", "directory",
+	static cptr cmdOptions[] = {"abort",
 		"macro_dump", "new", "open", "process_pref_file", "quit",
 		"keymap_dump", "version",
 		"savefile", NULL};
-	enum {IDX_ABORT, IDX_DIRECTORY,
+	enum {IDX_ABORT,
 		IDX_MACRO_DUMP, IDX_NEW, IDX_OPEN, IDX_PROCESS_PREF_FILE, IDX_QUIT,
 		IDX_KEYMAP_DUMP, IDX_VERSION,
 		IDX_SAVEFILE} option;
@@ -751,7 +743,6 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 	int index;
 
 	char *t, *utfString, *extString;
-	cptr *angband_path[10];
 	Tcl_DString utfDString, extDString;
 	Tcl_Channel c;
 
@@ -798,75 +789,7 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 			quit(NULL);
 			break;
 		}
-		
-		case IDX_DIRECTORY: /* directory */
-			if (objC < 3)
-			{
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, (char *) "dirname ?path?");
-				return TCL_ERROR;
-			}
-			if (Tcl_GetIndexFromObj(interp, objV[2], (char **) keyword_path, (char *) "dirname",
-				0, &index) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			
-			angband_path[0] = &ANGBAND_DIR_ROOT;
-			angband_path[1] = &ANGBAND_DIR_USER;
-			angband_path[2] = &ANGBAND_DIR_TK;
-			
-			if (objC == 4)
-			{
-				/* Only the sound directory can be changed */
-				if (!s_edit_path[index])
-				{
-					/* Set the error */
-					Tcl_SetStringObj(resultPtr,
-						format("can't change directory \"%s\"",
-						keyword_path[index]), -1);
-
-					/* Failure */
-					return TCL_ERROR; 
-				}
-
-				/* Get the new directory path */
-				t = Tcl_GetString(objV[3]);
-
-				/* Translate the directory path */
-				extString = UtfToExt_TranslateFileName(interp, t, &extDString);
-				if (extString == NULL) return TCL_ERROR;
-
-				/* Check that the directory exists */
-				if (!check_dir(extString))
-				{
-					/* Set the error */
-					Tcl_SetStringObj(resultPtr,
-						format("can't access directory \"%s\"", t), -1);
-
-					/* Clean up */
-					Tcl_DStringFree(&extDString);
-
-					/* Failure */
-					return TCL_ERROR;
-				}
-
-				/* Free the old directory path */
-				string_free(*angband_path[index]);
-
-				/* Save the new directory path */
-				*angband_path[index] = string_make(extString);
-
-				/* Clean up */
-				Tcl_DStringFree(&extDString);
-
-				/* Done */
-				break;
-			}
-
-			/* Return the current directory path */
-			ExtToUtf_SetResult(interp, (char *) *angband_path[index]);
-			break;
-			
+					
 		case IDX_MACRO_DUMP: /* macro_dump */
 			if (objC != 3)
 			{
