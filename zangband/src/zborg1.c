@@ -655,7 +655,7 @@ s16b amt_slow_poison;
 s16b amt_cure_confusion;
 s16b amt_cure_blind;
 
-s16b amt_book[7][4];	/* [realm][sval] */
+s16b amt_book[8][4];	/* [realm][sval] */
 
 s16b amt_add_stat[6];
 s16b amt_fix_stat[7];	/* #7 is to fix all stats */
@@ -694,7 +694,7 @@ int num_pot_rcold;
 
 int num_missile;
 
-int num_book[7][4];	/* [realm][book] */
+int num_book[8][4];	/* [realm][book] */
 
 int num_fix_stat[7];	/* #7 is to fix all stats */
 

@@ -15406,7 +15406,7 @@ static void borg_flow_border(int y1, int x1, int y2, int x2, bool stop)
 			mb_ptr->info &= ~(BORG_MAP_ICKY | BORG_MAP_KNOW);
 		}
 	}
-};
+}
 
 
 /*

@@ -844,7 +844,7 @@ extern s16b amt_cure_blind;
 
 extern s16b amt_cool_staff;	/* holiness-power staff */
 
-extern s16b amt_book[7][4];	/* [realm][sval] */
+extern s16b amt_book[8][4];	/* [realm][sval] */
 
 extern s16b amt_add_stat[6];
 extern s16b amt_fix_stat[7];
@@ -882,7 +882,7 @@ extern int num_pot_rcold;
 
 extern int num_missile;
 
-extern int num_book[7][4];
+extern int num_book[8][4];
 
 extern int num_fix_stat[7];
 
