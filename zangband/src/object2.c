@@ -5156,27 +5156,54 @@ void item_describe(object_type *o_ptr)
 
 	/* Get a description */
 	object_desc(o_name, o_ptr, TRUE, 3, 256);
-
-	if (!list)
+	
+	if (o_ptr->number <= 0)
 	{
-		/* Item is in the equipment */
-		item = GET_ARRAY_INDEX(p_ptr->equipment, o_ptr);
-
-		msgf("%^s: %s (%c).", describe_use(item), o_name, I2A(item));
+		if (!list)
+		{
+			/* Hack XXX XXX pretend there is one item */
+			int num = o_ptr->number;
+			o_ptr->number = 1;
+			
+			/* Get a (new) description */
+			object_desc(o_name, o_ptr, TRUE, 3, 256);
+			
+			/* Item is in the equipment */
+			item = GET_ARRAY_INDEX(p_ptr->equipment, o_ptr);
+			
+			/* No more items? */
+			msgf("You were %s: %s (%c).", describe_use(item), o_name, I2A(item));
+			
+			/* Restore old number of items */
+			o_ptr->number = num;
+		}
+		else
+		{
+			/* No more items? */
+			msgf("There are %s.", o_name);
+		}
 	}
-	else if (list == &p_ptr->inventory)
+	else
 	{
-		/* Get number of item in inventory */
-		item = get_item_position(p_ptr->inventory, o_ptr);
+		if (!list)
+		{
+			/* Item is in the equipment */
+			item = GET_ARRAY_INDEX(p_ptr->equipment, o_ptr);
 
-		msgf("In your pack: %s (%c).", o_name, I2A(item));
-	}
-	else if (list == &c_ptr->o_idx)
-	{
-		msgf("On the ground: %s.", o_name);
-	}
+			msgf("%^s: %s (%c).", describe_use(item), o_name, I2A(item));
+		}
+		else if (list == &p_ptr->inventory)
+		{
+			/* Get number of item in inventory */
+			item = get_item_position(p_ptr->inventory, o_ptr);
 
-	/* Elsewhere??? */
+			msgf("In your pack: %s (%c).", o_name, I2A(item));
+		}
+		else if (list == &c_ptr->o_idx)
+		{
+			msgf("On the ground: %s.", o_name);
+		}
+	}
 }
 
 
