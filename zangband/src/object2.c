@@ -1083,13 +1083,13 @@ s32b flag_cost(const object_type *o_ptr, int plusses)
 	if (FLAG(o_ptr, TR_SHOW_MODS)) total += 0;
 	if (FLAG(o_ptr, TR_INSTA_ART)) total += 0;
 	if (FLAG(o_ptr, TR_FEATHER)) total += 250;
-	if (FLAG(o_ptr, TR_LITE)) total += 750;
+	if (FLAG(o_ptr, TR_LITE)) total += 500;
 	if (FLAG(o_ptr, TR_SEE_INVIS)) total += 2000;
 	if (FLAG(o_ptr, TR_TELEPATHY)) total += 10000;
 	if (FLAG(o_ptr, TR_SLOW_DIGEST)) total += 750;
 	if (FLAG(o_ptr, TR_REGEN)) total += 1000;
-	if (FLAG(o_ptr, TR_XTRA_MIGHT)) total += 5000;
-	if (FLAG(o_ptr, TR_XTRA_SHOTS)) total += 5000;
+	if (FLAG(o_ptr, TR_XTRA_MIGHT)) total += 1000;
+	if (FLAG(o_ptr, TR_XTRA_SHOTS)) total += 1000;
 	if (FLAG(o_ptr, TR_IGNORE_ACID)) total += 200;
 	if (FLAG(o_ptr, TR_IGNORE_ELEC)) total += 50;
 	if (FLAG(o_ptr, TR_IGNORE_FIRE)) total += 50;
@@ -1166,6 +1166,7 @@ s32b object_value_real(const object_type *o_ptr)
 	s32b value;
 
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
+	object_type dummy;
 
 	/* Base cost */
 	value = o_ptr->cost;
@@ -1173,65 +1174,30 @@ s32b object_value_real(const object_type *o_ptr)
 	/* Hack -- "worthless" items */
 	if (!value) return (0L);
 
-	/* Mega Hack - extra price due to some flags... */
-
-	/* Analyze pval bonus */
-	switch (o_ptr->tval)
+	/* 
+	 * For non-artifact items, count the flag value
+	 */
+	if (!o_ptr->a_idx)
 	{
-		case TV_SHOT:
-		case TV_ARROW:
-		case TV_BOLT:
-		case TV_BOW:
-		case TV_DIGGING:
-		case TV_HAFTED:
-		case TV_POLEARM:
-		case TV_SWORD:
-		case TV_BOOTS:
-		case TV_GLOVES:
-		case TV_HELM:
-		case TV_CROWN:
-		case TV_SHIELD:
-		case TV_CLOAK:
-		case TV_SOFT_ARMOR:
-		case TV_HARD_ARMOR:
-		case TV_DRAG_ARMOR:
-		case TV_LITE:
-		case TV_AMULET:
-		case TV_RING:
+		int divisor = 1;
+
+		/* Ammo gets less value from flags */
+		if (o_ptr->tval == TV_SHOT ||
+		    o_ptr->tval == TV_ARROW ||
+		    o_ptr->tval == TV_BOLT)
 		{
-			/* Hack -- Negative "pval" is always bad */
-			if (o_ptr->pval < 0) return (0L);
-
-			/* No pval */
-			if (!o_ptr->pval) break;
-
-			/* Give credit for stat bonuses */
-			if (FLAG(o_ptr, TR_STR)) value += (o_ptr->pval * 200L);
-			if (FLAG(o_ptr, TR_INT)) value += (o_ptr->pval * 200L);
-			if (FLAG(o_ptr, TR_WIS)) value += (o_ptr->pval * 200L);
-			if (FLAG(o_ptr, TR_DEX)) value += (o_ptr->pval * 200L);
-			if (FLAG(o_ptr, TR_CON)) value += (o_ptr->pval * 200L);
-			if (FLAG(o_ptr, TR_CHR)) value += (o_ptr->pval * 200L);
-
-			/* Give credit for mana increase */
-			if (FLAG(o_ptr, TR_SP)) value += (o_ptr->pval * 1000L);
-
-			/* Give credit for stealth and searching */
-			if (FLAG(o_ptr, TR_STEALTH)) value += (o_ptr->pval * 100L);
-			if (FLAG(o_ptr, TR_SEARCH)) value += (o_ptr->pval * 100L);
-
-			/* Give credit for infra-vision and tunneling */
-			if (FLAG(o_ptr, TR_INFRA)) value += (o_ptr->pval * 30L);
-			if (FLAG(o_ptr, TR_TUNNEL)) value += (o_ptr->pval * 20L);
-
-			/* Give credit for extra attacks */
-			if (FLAG(o_ptr, TR_BLOWS)) value += (sqvalue(o_ptr->pval) * 500L);
-
-			/* Give credit for speed bonus */
-			if (FLAG(o_ptr, TR_SPEED)) value += (sqvalue(o_ptr->pval) * 500L);
-
-			break;
+			divisor = 20;
 		}
+
+		/* Initialize the dummy object */
+		memcpy(&dummy, o_ptr, sizeof(object_type));
+
+		/* Copy the flags from the type to the dummy object */
+		memcpy(dummy.flags, k_ptr->flags, sizeof(dummy.flags));
+
+		/* Price the object's flags vs the default flags */
+		value += flag_cost(o_ptr, o_ptr->pval) / divisor;
+		value -= flag_cost(&dummy, 0) / divisor;
 	}
 
 
@@ -2262,16 +2228,8 @@ void add_ego_flags(object_type *o_ptr, byte ego)
 			o_ptr->trigger[i] = quark_add(e_text + e_ptr->trigger[i]);
 	}
 
-	if (!e_ptr->cost)
-	{
-		/* Hack -- "worthless" ego-items */
-		o_ptr->cost = 0L;
-	}
-	else
-	{
-		/* Add in cost of ego item */
-		o_ptr->cost = k_info[o_ptr->k_idx].cost + e_ptr->cost;
-	}
+	/* Add in cost of ego item */
+	o_ptr->cost = k_info[o_ptr->k_idx].cost + e_ptr->cost;
 }
 
 
