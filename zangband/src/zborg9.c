@@ -2894,7 +2894,7 @@ void borg_status(void)
 				attr = TERM_SLATE;
 			Term_putstr(12, 2, -1, attr, "Feath");
 
-			if (borg_skill[BI_LITE]) attr = TERM_BLUE;
+			if (bp_ptr->britelite) attr = TERM_BLUE;
 			else
 				attr = TERM_SLATE;
 			Term_putstr(12, 3, -1, attr, "PLite");

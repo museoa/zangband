@@ -1046,10 +1046,10 @@ void borg_update_frame(void)
 	borg_skill[BI_ARMOR] = p_ptr->dis_ac + p_ptr->dis_to_a;
 
 	/* Extract "Cur HP xxxxx" */
-	borg_skill[BI_CURHP] = p_ptr->chp;
+	bp_ptr->chp = p_ptr->chp;
 
 	/* Extract "Max HP xxxxx" */
-	borg_skill[BI_MAXHP] = p_ptr->mhp;
+	bp_ptr->mhp = p_ptr->mhp;
 
 	/* Extract "Cur SP xxxxx" (or zero) */
 	borg_skill[BI_CURSP] = p_ptr->csp;
@@ -1137,7 +1137,7 @@ void borg_update_frame(void)
 		case CLASS_MONK:
 		case CLASS_MINDCRAFTER:
 		{
-			borg_skill[BI_WISMANA] = 1;
+			bp_ptr->wismana = 1;
 			break;
 		}
 
@@ -1148,14 +1148,14 @@ void borg_update_frame(void)
 		case CLASS_CHAOS_WARRIOR:
 		case CLASS_HIGH_MAGE:
 		{
-			borg_skill[BI_INTMANA] = 1;
+			bp_ptr->intmana = 1;
 			break;
 		}
 
 		default:
 		{
-			borg_skill[BI_WISMANA] = 0;
-			borg_skill[BI_INTMANA] = 0;
+			bp_ptr->wismana = 0;
+			bp_ptr->intmana = 0;
 		}
 	}
 }

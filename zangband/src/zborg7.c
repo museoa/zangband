@@ -1536,7 +1536,7 @@ bool borg_crush_junk(void)
 
 	/* No crush if even slightly dangerous */
 	if (borg_danger(c_x, c_y, 1, TRUE) >
-		borg_skill[BI_CURHP] / 10) return (FALSE);
+		bp_ptr->chp / 10) return (FALSE);
 
 	my_power = borg_power();
 
@@ -1761,7 +1761,7 @@ bool borg_crush_slow(void)
 
 	/* No crush if even slightly dangerous */
 	if (borg_danger(c_x, c_y, 1, TRUE) >
-		borg_skill[BI_CURHP] / 20) return (FALSE);
+		bp_ptr->chp / 20) return (FALSE);
 
 	/* Hack -- never in town */
 	if (!borg_skill[BI_CDEPTH]) return (FALSE);

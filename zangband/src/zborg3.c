@@ -2304,7 +2304,7 @@ bool borg_racial_check(int race, bool check_fail)
 	if (borg_skill[BI_ISCONFUSED]) return FALSE;
 
 	/* Cost -- dont go into debt */
-	if (use_hp && (cost > borg_skill[BI_CURHP] * 7 / 10)) return (FALSE);
+	if (use_hp && (cost > bp_ptr->chp * 7 / 10)) return (FALSE);
 
 	/* Legal check ends here */
 	if (!check_fail) return (TRUE);
@@ -2355,11 +2355,11 @@ bool borg_racial(int race)
 	if (!borg_racial_check(race, TRUE)) return (FALSE);
 
 	/* Cost -- dont go into debt */
-	if (borg_skill[BI_CURHP] < borg_skill[BI_MAXHP] * 5 / 10 &&
+	if (bp_ptr->chp < bp_ptr->mhp * 5 / 10 &&
 		borg_race != RACE_GNOME) return (FALSE);
 
 	/* Gnomes can go into emergency zone (mostly) */
-	if (borg_skill[BI_CURHP] < borg_skill[BI_MAXHP] * 3 / 10 &&
+	if (bp_ptr->chp < bp_ptr->mhp * 3 / 10 &&
 		borg_race == RACE_GNOME) return (FALSE);
 
 	/* Debugging Info */

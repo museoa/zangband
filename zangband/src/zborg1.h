@@ -213,23 +213,23 @@ typedef struct borg_player borg_player;
 
 struct borg_player
 {
-	/* sustains */
+	/* Sustains */
 	bool sust[A_MAX];
 
-	int intmana;
-	int wismana;
+	bool intmana;
+	bool wismana;
+	
+	bool britelite;
+	
+	/* Hitpoints */
+	int chp;
+	int mhp;
+	int oldhp;
 };
 
 extern borg_player *bp_ptr;
 
 
-#define BI_INTMANA	18
-#define BI_WISMANA	19
-#define BI_LITE		20
-#define BI_CURHP	21
-#define BI_MAXHP	22
-#define BI_HP_ADJ	23
-#define BI_OLDCHP	24
 #define BI_CURSP	25
 #define BI_MAXSP	26
 #define BI_SP_ADJ	27

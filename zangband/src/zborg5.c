@@ -388,7 +388,7 @@ static int borg_danger_aux1(int r_idx)
 				if (borg_spell_legal(REALM_LIFE, 3, 3)) break;
 				z += 150;
 				/* extra scary for spell caster */
-				if (borg_skill[BI_INTMANA])
+				if (bp_ptr->intmana)
 					z += 350;
 				if ((pfe) && !borg_attacking)
 					z /= 2;
@@ -406,7 +406,7 @@ static int borg_danger_aux1(int r_idx)
 				if (borg_spell_legal(REALM_LIFE, 3, 3)) break;
 				z += 150;
 				/* extra scary for pray'er */
-				if (borg_skill[BI_WISMANA])
+				if (bp_ptr->wismana)
 					z += 350;
 				if ((pfe) && !borg_attacking)
 					z /= 2;
@@ -1835,7 +1835,7 @@ static int borg_danger_aux2(int i, bool average)
 			{
 				/* RF6_HASTE */
 				if (borg_skill[BI_SAV] >= 100) break;
-				z += (90 * borg_skill[BI_CURHP] / 100);
+				z += (90 * bp_ptr->chp / 100);
 				p += 150;
 				/* if looking at full damage, things that are just annoying */
 				/* do not count. */
@@ -2415,7 +2415,7 @@ static int borg_danger_aux2(int i, bool average)
 	 * elemental resistance spells and PFE have the flag set as FALSE.
 	 */
 	if (!average) return (av);
-	if ((n >= av * 15 / 10) || (n > borg_skill[BI_CURHP] * 8 / 10))
+	if ((n >= av * 15 / 10) || (n > bp_ptr->chp * 8 / 10))
 	{
 		return (n);
 	}
@@ -2494,7 +2494,7 @@ int borg_danger_aux(int x, int y, int c, int i, bool average)
 		monster_speed -= 10;
 
 	/* Assume monsters are a little fast when you are low level */
-	if (borg_skill[BI_MAXHP] < 20)
+	if (bp_ptr->mhp < 20)
 		monster_speed += 7;
 
 
@@ -3143,7 +3143,7 @@ static s32b borg_power_aux3(void)
 	value += (my_stat_ind[A_STR] * 100L);
 
 	/* Hack -- Reward intelligence bonus */
-	if ((borg_skill[BI_INTMANA]) && (my_stat_ind[A_INT] <= 37))
+	if (bp_ptr->intmana && (my_stat_ind[A_INT] <= 37))
 	{
 		value += (my_stat_ind[A_INT] * 500L);
 
@@ -3172,7 +3172,7 @@ static s32b borg_power_aux3(void)
 	}
 
 	/* Hack -- Reward wisdom bonus */
-	if ((borg_skill[BI_WISMANA]) && (my_stat_ind[A_WIS] <= 37))
+	if (bp_ptr->wismana && (my_stat_ind[A_WIS] <= 37))
 	{
 		value += (my_stat_ind[A_WIS] * 200L);
 
@@ -3270,7 +3270,7 @@ static s32b borg_power_aux3(void)
 	{
 		if (borg_skill[BI_FEATH]) value += 50;
 	}
-	if (borg_skill[BI_LITE]) value += 2000L;
+	if (bp_ptr->britelite) value += 2000L;
 	if (borg_skill[BI_ESP])
 	{
 		if (borg_skill[BI_SINV]) value += 500L;
@@ -3465,7 +3465,7 @@ static s32b borg_power_aux3(void)
 	max_wgt = mp_ptr->spell_weight;
 
 	/* Hack -- heavy armor hurts magic */
-	if (borg_skill[BI_INTMANA] &&
+	if (bp_ptr->intmana &&
 		(((cur_wgt - max_wgt) / 10) > 0) &&
 		((adj_mag_mana[my_stat_ind[A_INT]] * borg_skill[BI_CLEVEL]) / 2) < 150)
 	{
@@ -3848,13 +3848,13 @@ static s32b borg_power_aux4(void)
 	/* Hack -- Reward add stat */
 	if (amt_add_stat[A_STR]) value += 50000;
 	if (amt_add_stat[A_INT]) value += 20000;
-	if (borg_skill[BI_INTMANA])
+	if (bp_ptr->intmana)
 	{
 		if (amt_add_stat[A_INT]) value += 50000;
 	}
 
 	if (amt_add_stat[A_WIS]) value += 20000;
-	if (borg_skill[BI_WISMANA])
+	if (bp_ptr->wismana)
 	{
 		if (amt_add_stat[A_WIS]) value += 50000;
 	}
@@ -4230,11 +4230,11 @@ static cptr borg_prepared_aux2(int depth)
 	/* have some minimal stats */
 	if (borg_stat[A_STR] < 7) return ("low STR");
 
-	if (borg_skill[BI_INTMANA])
+	if (bp_ptr->intmana)
 	{
 		if (borg_stat[A_INT] < 7) return ("low INT");
 	}
-	if (borg_skill[BI_WISMANA])
+	if (bp_ptr->wismana)
 	{
 		if (borg_stat[A_WIS] < 7) return ("low WIS");
 	}

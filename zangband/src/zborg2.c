@@ -2957,8 +2957,8 @@ static int borg_fear_spell(int i)
 
 
 	/* Damage taken */
-	if (borg_skill[BI_OLDCHP] > borg_skill[BI_CURHP]) ouch =
-			(borg_skill[BI_OLDCHP] - borg_skill[BI_CURHP]) * 2;
+	if (bp_ptr->oldhp > bp_ptr->chp) ouch =
+			(bp_ptr->oldhp - bp_ptr->chp) * 2;
 
 
 	/* Check the spell */
@@ -3694,7 +3694,7 @@ static int borg_fear_spell(int i)
 	}
 
 	/* Things which hurt us alot need to be a concern */
-	if (ouch >= borg_skill[BI_CURHP] / 2) ouch = ouch * 2;
+	if (ouch >= bp_ptr->chp / 2) ouch = ouch * 2;
 
 	/* Notice damage */
 	return (p + z);
@@ -4165,7 +4165,7 @@ void borg_update(void)
 		borg_completed = FALSE;
 
 		/* New danger thresh-hold */
-		avoidance = borg_skill[BI_CURHP];
+		avoidance = bp_ptr->chp;
 
 		/* Wipe the danger */
 		borg_danger_wipe = TRUE;
@@ -4460,10 +4460,10 @@ void borg_update(void)
 		borg_skill[BI_ISHEAVYSTUN]) goal = 0;
 
 	/* Forget goals when HP changes */
-	if (borg_skill[BI_CURHP] < borg_skill[BI_OLDCHP]) goal = 0;
+	if (bp_ptr->chp < bp_ptr->oldhp) goal = 0;
 
 	/* Save the hit points */
-	borg_skill[BI_OLDCHP] = borg_skill[BI_CURHP];
+	bp_ptr->oldhp = bp_ptr->chp;
 
 	/* Save the spell points */
 	borg_skill[BI_OLDCSP] = borg_skill[BI_CURSP];

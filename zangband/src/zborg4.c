@@ -348,7 +348,7 @@ static void borg_notice_player(void)
 	/* Good flags */
 	if (f3 & (TR3_SLOW_DIGEST)) borg_skill[BI_SDIG] = TRUE;
 	if (f3 & (TR3_FEATHER)) borg_skill[BI_FEATH] = TRUE;
-	if (f3 & (TR3_LITE)) borg_skill[BI_LITE] = TRUE;
+	if (f3 & (TR3_LITE)) bp_ptr->britelite = TRUE;
 	if (f3 & (TR3_REGEN)) borg_skill[BI_REG] = TRUE;
 	if (f3 & (TR3_TELEPATHY)) borg_skill[BI_ESP] = TRUE;
 	if (f3 & (TR3_SEE_INVIS)) borg_skill[BI_SINV] = TRUE;
@@ -568,7 +568,7 @@ static void borg_notice_equip(int *extra_blows, int *extra_shots,
 
 		if (l_ptr->kn_flags3 & TR3_REGEN) borg_skill[BI_REG] = TRUE;
 		if (l_ptr->kn_flags3 & TR3_TELEPATHY) borg_skill[BI_ESP] = TRUE;
-		if (l_ptr->kn_flags3 & TR3_LITE) borg_skill[BI_LITE] = TRUE;
+		if (l_ptr->kn_flags3 & TR3_LITE) bp_ptr->britelite = TRUE;
 		if (l_ptr->kn_flags3 & TR3_SEE_INVIS) borg_skill[BI_SINV] = TRUE;
 		if (l_ptr->kn_flags3 & TR3_FEATHER) borg_skill[BI_FEATH] = TRUE;
 		if (l_ptr->kn_flags2 & TR2_FREE_ACT) borg_skill[BI_FRACT] = TRUE;
@@ -689,19 +689,15 @@ static void borg_notice_stats(void)
 			my_stat_ind[i] = p_ptr->stat_ind[i];
 	}
 
-
-	borg_skill[BI_HP_ADJ] =
-		(((adj_con_mhp[my_stat_ind[A_CON]] - 128) * borg_skill[BI_CLEVEL]) / 2);
-
 	/* 'Mana' is actually the 'mana adjustment' */
-	if (borg_skill[BI_WISMANA])
+	if (bp_ptr->wismana)
 	{
 		borg_skill[BI_SP_ADJ] =
 			((adj_mag_mana[my_stat_ind[A_WIS]] * borg_skill[BI_CLEVEL]) / 2);
 		borg_skill[BI_FAIL1] = adj_mag_stat[my_stat_ind[A_WIS]];
 		borg_skill[BI_FAIL2] = adj_mag_fail[my_stat_ind[A_WIS]];
 	}
-	if (borg_skill[BI_INTMANA])
+	if (bp_ptr->intmana)
 	{
 		borg_skill[BI_SP_ADJ] =
 			((adj_mag_mana[my_stat_ind[A_INT]] * borg_skill[BI_CLEVEL]) / 2);
@@ -1340,7 +1336,7 @@ static void borg_notice_lite(void)
 	borg_skill[BI_CUR_LITE] = 0;
 
 	/* Glowing player has light */
-	if (borg_skill[BI_LITE]) borg_skill[BI_CUR_LITE] = 1;
+	if (bp_ptr->britelite) borg_skill[BI_CUR_LITE] = 1;
 
 	/* Vampires that do not Resist Light are in trouble */
 	if (borg_race == RACE_VAMPIRE && !borg_skill[BI_RLITE])
@@ -1376,15 +1372,12 @@ static void borg_notice_lite(void)
 			borg_skill[BI_CUR_LITE] += 3;
 
 			/* Artifact lites -- assume glowing */
-			borg_skill[BI_LITE] = TRUE;
+			bp_ptr->britelite = TRUE;
 
 			/* Vampires need to be concerned with Artifacts Lites */
 			if (borg_skill[BI_FEAR_LITE])
 			{
 				borg_skill[BI_CUR_LITE] = 1;
-
-				/* Artifact lites -- assume glowing */
-				borg_skill[BI_LITE] = TRUE;
 			}
 		}
 	}
@@ -2466,7 +2459,7 @@ static void borg_notice_aux2(void)
 		 borg_spell_legal_fail(REALM_SORCERY, 3, 7, 4)) &&
 		borg_skill[BI_RBLIND] &&
 		borg_skill[BI_RCONF] &&
-		borg_skill[BI_ESP] && (borg_skill[BI_MAXHP] >= 650))
+		borg_skill[BI_ESP] && (bp_ptr->mhp >= 650))
 	{
 		borg_skill[BI_AXGOI] += 1000;
 	}
@@ -3463,7 +3456,7 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 			num_gloves += l_ptr->number;
 
 			/* most gloves hurt magic for spell-casters */
-			if (borg_skill[BI_INTMANA] && borg_skill[BI_MAXSP] > 3)
+			if (bp_ptr->intmana && borg_skill[BI_MAXSP] > 3)
 			{
 				/* Penalize non-usable gloves */
 				if (l_ptr->number &&
@@ -4102,7 +4095,7 @@ static s32b borg_power_home_aux1(void)
 		value += 15 * 300L + 6 * 200L + (home_stat_add[A_CON] - 21) * 1L;
 
 	/* int and wis are only bonused for spell casters. */
-	if (borg_skill[BI_INTMANA])
+	if (bp_ptr->intmana)
 	{
 		if (home_stat_add[A_INT] < 20)
 			value += home_stat_add[A_INT] * 400L;
@@ -4112,7 +4105,7 @@ static s32b borg_power_home_aux1(void)
 			value += 20 * 100L + 6 * 300L + (home_stat_add[A_INT] - 26) * 5L;
 	}
 
-	if (borg_skill[BI_WISMANA])
+	if (bp_ptr->wismana)
 	{
 		if (home_stat_add[A_WIS] < 20)
 			value += home_stat_add[A_WIS] * 400L;

@@ -421,10 +421,10 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid,
 			/* Avoid Traps if low level-- unless brave or scaryguy. */
 			if (mb_ptr->feat >= FEAT_TRAP_TRAPDOOR &&
 				mb_ptr->feat <= FEAT_TRAP_SLEEP &&
-				avoidance <= borg_skill[BI_CURHP] && !scaryguy_on_level)
+				avoidance <= bp_ptr->chp && !scaryguy_on_level)
 			{
 				/* Do not disarm when you could end up dead */
-				if (borg_skill[BI_CURHP] < 60) continue;
+				if (bp_ptr->chp < 60) continue;
 
 				/* Do not disarm when clumsy */
 				if (borg_skill[BI_DIS] < 30 &&
@@ -681,7 +681,7 @@ static bool borg_eat_food_any(void)
 		if (l_ptr->tval != TV_POTION) continue;
 
 		/* Consume in order, when hurting */
-		if (borg_skill[BI_CURHP] < 4 &&
+		if (bp_ptr->chp < 4 &&
 			(borg_quaff_potion(SV_POTION_CURE_LIGHT) ||
 			 borg_quaff_potion(SV_POTION_CURE_SERIOUS) ||
 			 borg_quaff_potion(SV_POTION_CURE_CRITICAL) ||
@@ -1332,7 +1332,7 @@ bool borg_caution_phase(int emergency, int turns)
 			mb_ptr = map_loc(x, y);
 
 			/* If low level, unknown squares are scary */
-			if (!mb_ptr->feat && borg_skill[BI_MAXHP] < 30) break;
+			if (!mb_ptr->feat && bp_ptr->mhp < 30) break;
 
 			/* Skip unknown grids */
 			if (!mb_ptr->feat) continue;
@@ -1348,7 +1348,7 @@ bool borg_caution_phase(int emergency, int turns)
 		}
 
 		/* If low level, unknown squares are scary */
-		if (!mb_ptr->feat && borg_skill[BI_MAXHP] < 30)
+		if (!mb_ptr->feat && bp_ptr->mhp < 30)
 		{
 			n++;
 			continue;
@@ -1368,7 +1368,7 @@ bool borg_caution_phase(int emergency, int turns)
 		p = borg_danger(x, y, turns, TRUE);
 
 		/* if *very* scary, do not allow jumps at all */
-		if (p > borg_skill[BI_CURHP]) n++;
+		if (p > bp_ptr->chp) n++;
 
 	}
 
@@ -1427,7 +1427,7 @@ static bool borg_dim_door(int emergency, int p1)
 			p = borg_danger(x, y, 1, TRUE);
 
 			/* if *very* scary, do not allow jumps at all */
-			if (!emergency && p > borg_skill[BI_CURHP]) continue;
+			if (!emergency && p > bp_ptr->chp) continue;
 
 			/* Track the grid with the least danger */
 			if (p > b_p) continue;
@@ -1477,7 +1477,7 @@ static bool borg_escape(int b_q)
 					borg_mindcr_okay_fail(MIND_MINOR_DISP, 40, allow_fail));
 
 	/* if very healthy, allow extra fail */
-	if (((borg_skill[BI_CURHP] * 100) / borg_skill[BI_MAXHP]) > 70)
+	if (((bp_ptr->chp * 100) / bp_ptr->mhp) > 70)
 		allow_fail = 10;
 
 	/* comprimised, get out of the fight */
@@ -1506,13 +1506,13 @@ static bool borg_escape(int b_q)
 		(b_q >= avoidance * (45 + risky_boost) / 10) ||
 		((b_q >= avoidance * (40 + risky_boost) / 10) &&
 		 borg_fighting_unique >= 10 && borg_skill[BI_CDEPTH] == 100 &&
-		 borg_skill[BI_CURHP] < 600) ||
+		 bp_ptr->chp < 600) ||
 		((b_q >= avoidance * (30 + risky_boost) / 10) &&
 		 borg_fighting_unique >= 10 && borg_skill[BI_CDEPTH] == 99 &&
-		 borg_skill[BI_CURHP] < 600) ||
+		 bp_ptr->chp < 600) ||
 		((b_q >= avoidance * (25 + risky_boost) / 10) &&
 		 borg_fighting_unique >= 1 && borg_fighting_unique <= 8 &&
-		 borg_skill[BI_CDEPTH] >= 95 && borg_skill[BI_CURHP] < 550) ||
+		 borg_skill[BI_CDEPTH] >= 95 && bp_ptr->chp < 550) ||
 		((b_q >= avoidance * (17 + risky_boost) / 10) &&
 		 borg_fighting_unique >= 1 && borg_fighting_unique <= 8 &&
 		 borg_skill[BI_CDEPTH] < 95) ||
@@ -1610,7 +1610,7 @@ static bool borg_escape(int b_q)
 	 */
 	if ((b_q < avoidance * (25 + risky_boost) / 10 && borg_fighting_unique >= 1
 		 && borg_fighting_unique <= 3 && borg_skill[BI_CDEPTH] >= 97) ||
-		borg_skill[BI_CURHP] > 550) return (FALSE);
+		bp_ptr->chp > 550) return (FALSE);
 
 
 	/* 2 - a bit more scary */
@@ -1766,11 +1766,11 @@ static bool borg_escape(int b_q)
 	/* 4- not too scary but I'm comprimized */
 	if ((b_q >= avoidance * (8 + risky_boost) / 10 &&
 		 (borg_skill[BI_CLEVEL] < 35 ||
-		  borg_skill[BI_CURHP] <= borg_skill[BI_MAXHP] / 3)) ||
+		  bp_ptr->chp <= bp_ptr->mhp / 3)) ||
 		((b_q >= avoidance * (12 + risky_boost) / 10) &&
 		 borg_fighting_unique >= 1 && borg_fighting_unique <= 8 &&
 		 (borg_skill[BI_CLEVEL] < 35 ||
-		  borg_skill[BI_CURHP] <= borg_skill[BI_MAXHP] / 3)) ||
+		  bp_ptr->chp <= bp_ptr->mhp / 3)) ||
 		((b_q >= avoidance * (6 + risky_boost) / 10) &&
 		 borg_skill[BI_CLEVEL] <= 20 && !borg_fighting_unique) ||
 		((b_q >= avoidance * (6 + risky_boost) / 10) && borg_class == CLASS_MAGE
@@ -2014,7 +2014,7 @@ static bool borg_heal(int danger)
 
 	map_block *mb_ptr = map_loc(c_x, c_y);
 
-	hp_down = borg_skill[BI_MAXHP] - borg_skill[BI_CURHP];
+	hp_down = bp_ptr->mhp - bp_ptr->chp;
 
 
 	/*
@@ -2034,9 +2034,9 @@ static bool borg_heal(int danger)
 		borg_skill[BI_ISFIXWIS]) stats_needing_fix++;
 	if (borg_class == CLASS_WARRIOR &&
 		borg_skill[BI_ISFIXCON]) stats_needing_fix++;
-	if (borg_skill[BI_MAXHP] <= 850 &&
+	if (bp_ptr->mhp <= 850 &&
 		borg_skill[BI_ISFIXCON]) stats_needing_fix++;
-	if (borg_skill[BI_MAXHP] <= 700 &&
+	if (bp_ptr->mhp <= 700 &&
 		borg_skill[BI_ISFIXCON]) stats_needing_fix += 3;
 	if (borg_class == CLASS_PRIEST && borg_skill[BI_MAXSP] < 100 &&
 		borg_skill[BI_ISFIXWIS])
@@ -2054,13 +2054,13 @@ static bool borg_heal(int danger)
 	 */
 	if (borg_skill[BI_ISCONFUSED] && (randint0(100) < 85))
 	{
-		if ((hp_down >= 300) && danger - 300 < borg_skill[BI_CURHP] &&
+		if ((hp_down >= 300) && danger - 300 < bp_ptr->chp &&
 			borg_quaff_potion(SV_POTION_HEALING))
 		{
 			borg_note("# Fixing Confusion. Level 1");
 			return (TRUE);
 		}
-		if (danger - 20 < borg_skill[BI_CURHP] &&
+		if (danger - 20 < bp_ptr->chp &&
 			(borg_eat_food(SV_FOOD_CURE_CONFUSION) ||
 			 borg_quaff_potion(SV_POTION_CURE_SERIOUS) ||
 			 borg_quaff_crit(FALSE) ||
@@ -2122,7 +2122,7 @@ static bool borg_heal(int danger)
 		/* Warriors with ESP won't need it so quickly */
 		if (!
 			(borg_class == CLASS_WARRIOR &&
-			 borg_skill[BI_CURHP] > borg_skill[BI_MAXHP] / 4 &&
+			 bp_ptr->chp > bp_ptr->mhp / 4 &&
 			 borg_skill[BI_ESP]))
 		{
 			if (borg_eat_food(SV_FOOD_CURE_BLINDNESS) ||
@@ -2142,7 +2142,7 @@ static bool borg_heal(int danger)
 	/* We generally try to conserve ez-heal pots */
 	if ((borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED]) &&
 		((hp_down >= 400) ||
-		 (danger > borg_skill[BI_CURHP] * 5 && hp_down > 100)) &&
+		 (danger > bp_ptr->chp * 5 && hp_down > 100)) &&
 		borg_quaff_potion(SV_POTION_STAR_HEALING))
 	{
 		borg_note("# Fixing Confusion/Blind.");
@@ -2158,7 +2158,7 @@ static bool borg_heal(int danger)
 		  borg_skill[BI_ISAFRAID] ||
 		  borg_skill[BI_ISSTUN] ||
 		  borg_skill[BI_ISHEAVYSTUN] ||
-		  (borg_skill[BI_CURHP] < borg_skill[BI_MAXHP]) ||
+		  (bp_ptr->chp < bp_ptr->mhp) ||
 		  (borg_skill[BI_CURSP] < borg_skill[BI_MAXSP] * 6 / 10)) &&
 		 (danger < avoidance / 5)) && borg_check_rest() && !scaryguy_on_level &&
 		(danger <= mb_ptr->fear) && !goal_fleeing)
@@ -2191,8 +2191,8 @@ static bool borg_heal(int danger)
 	/* Healing and fighting Morgoth. */
 	if (borg_fighting_unique >= 10)
 	{
-		if ((borg_skill[BI_CURHP] <= 625) && (borg_fighting_unique >= 10) &&
-			(((borg_skill[BI_CURHP] > 250) &&
+		if ((bp_ptr->chp <= 625) && (borg_fighting_unique >= 10) &&
+			(((bp_ptr->chp > 250) &&
 			  borg_spell_fail(REALM_LIFE, 2, 6, 14)) ||
 			 borg_use_staff_fail(SV_STAFF_HOLINESS) ||
 			 ((stats_needing_fix >= 5) && borg_quaff_potion(SV_POTION_LIFE)) ||
@@ -2252,7 +2252,7 @@ static bool borg_heal(int danger)
 
 	/* Restoring while fighting Morgoth */
 	if (stats_needing_fix >= 5 && borg_fighting_unique >= 10 &&
-		borg_skill[BI_CURHP] > 650 && borg_eat_food(SV_FOOD_RESTORING))
+		bp_ptr->chp > 650 && borg_eat_food(SV_FOOD_RESTORING))
 	{
 		borg_note("# Trying to fix stats in combat.");
 		return (TRUE);
@@ -2280,7 +2280,7 @@ static bool borg_heal(int danger)
 	if (borg_fighting_unique) chance -= 10;
 
 	/* if danger is close to the hp and healing will help, do it */
-	if (danger >= borg_skill[BI_CURHP] && danger < borg_skill[BI_MAXHP])
+	if (danger >= bp_ptr->chp && danger < bp_ptr->mhp)
 		chance -= 75;
 	else
 	{
@@ -2290,16 +2290,16 @@ static bool borg_heal(int danger)
 
 
 	if (!
-		(((borg_skill[BI_CURHP] <= ((borg_skill[BI_MAXHP] * 4) / 5)) &&
+		(((bp_ptr->chp <= ((bp_ptr->mhp * 4) / 5)) &&
 		  (chance < 0)) ||
-		 ((borg_skill[BI_CURHP] <= ((borg_skill[BI_MAXHP] * 3) / 4)) &&
+		 ((bp_ptr->chp <= ((bp_ptr->mhp * 3) / 4)) &&
 		  (chance < 2)) ||
-		 ((borg_skill[BI_CURHP] <= ((borg_skill[BI_MAXHP] * 2) / 3)) &&
+		 ((bp_ptr->chp <= ((bp_ptr->mhp * 2) / 3)) &&
 		  (chance < 20)) ||
-		 ((borg_skill[BI_CURHP] <= (borg_skill[BI_MAXHP] / 2)) && (chance < 50))
-		 || ((borg_skill[BI_CURHP] <= (borg_skill[BI_MAXHP] / 3)) &&
+		 ((bp_ptr->chp <= (bp_ptr->mhp / 2)) && (chance < 50))
+		 || ((bp_ptr->chp <= (bp_ptr->mhp / 3)) &&
 			 (chance < 75)) ||
-		 (borg_skill[BI_CURHP] <= (borg_skill[BI_MAXHP] / 4)) ||
+		 (bp_ptr->chp <= (bp_ptr->mhp / 4)) ||
 		 borg_skill[BI_ISHEAVYSTUN] || borg_skill[BI_ISSTUN] ||
 		 borg_skill[BI_ISPOISONED] || borg_skill[BI_ISCUT]))
 		return FALSE;
@@ -2307,7 +2307,7 @@ static bool borg_heal(int danger)
 
 	/* Cure light Wounds (2d10) */
 	if (hp_down < 10 &&
-		((danger / 2) < borg_skill[BI_CURHP] + 6) &&
+		((danger / 2) < bp_ptr->chp + 6) &&
 		(borg_spell_fail(REALM_LIFE, 0, 1, allow_fail) ||
 		 borg_spell_fail(REALM_ARCANE, 0, 7, allow_fail) ||
 		 borg_spell_fail(REALM_NATURE, 0, 1, allow_fail) ||
@@ -2319,7 +2319,7 @@ static bool borg_heal(int danger)
 	}
 	/* Cure Serious Wounds (4d10) */
 	if (hp_down < 20 &&
-		((danger / 2) < borg_skill[BI_CURHP] + 18) &&
+		((danger / 2) < bp_ptr->chp + 18) &&
 		(borg_spell_fail(REALM_LIFE, 0, 6, allow_fail) ||
 		 borg_spell_fail(REALM_ARCANE, 2, 3, allow_fail) ||
 		 borg_mindcr_fail(MIND_ADRENALINE, 23, allow_fail) ||
@@ -2331,7 +2331,7 @@ static bool borg_heal(int danger)
 
 	/* Cure Critical Wounds (6d10) */
 	if (hp_down < 50 &&
-		((danger / 2) < borg_skill[BI_CURHP] + 35) &&
+		((danger / 2) < bp_ptr->chp + 35) &&
 		(borg_spell_fail(REALM_LIFE, 1, 2, allow_fail) ||
 		 borg_mindcr_fail(MIND_ADRENALINE, 35, allow_fail) ||
 		 borg_quaff_crit(FALSE)))
@@ -2343,7 +2343,7 @@ static bool borg_heal(int danger)
 	/* Cure Mortal Wounds (8d10) */
 #if 0							/* These spells are not in Z */
 	if (hp_down < 120 &&
-		((danger / 2) < borg_skill[BI_CURHP] + 55) &&
+		((danger / 2) < bp_ptr->chp + 55) &&
 		(borg_spell_fail(REALM_LIFE, 2, 7, allow_fail) ||
 		 borg_spell_fail(REALM_LIFE, 6, 1, allow_fail) ||
 		 borg_mindcr_fail(MIND_ADRENALINE, 50, allow_fail) ||
@@ -2356,9 +2356,9 @@ static bool borg_heal(int danger)
 	}
 #endif
 	/* If in danger try  one more Cure Critical if it will help */
-	if (danger >= borg_skill[BI_CURHP] &&
-		danger < borg_skill[BI_MAXHP] &&
-		borg_skill[BI_CURHP] < 20 && danger < 30 && borg_quaff_crit(TRUE))
+	if (danger >= bp_ptr->chp &&
+		danger < bp_ptr->mhp &&
+		bp_ptr->chp < 20 && danger < 30 && borg_quaff_crit(TRUE))
 	{
 		borg_note("# Healing Level 5.");
 		return (TRUE);
@@ -2380,7 +2380,7 @@ static bool borg_heal(int danger)
 
 	/* Heal step one (200hp) */
 	if (hp_down < 250 &&
-		danger / 2 < borg_skill[BI_CURHP] + 200 &&
+		danger / 2 < bp_ptr->chp + 200 &&
 		(((!borg_skill[BI_ATELEPORT] ||
 		   borg_skill[BI_DEV] -
 		   borg_get_kind(TV_ROD, SV_ROD_HEALING)->level > 7) &&
@@ -2396,7 +2396,7 @@ static bool borg_heal(int danger)
 	}
 
 	/* Heal step two (300hp) */
-	if (hp_down < 350 && danger / 2 < borg_skill[BI_CURHP] + 300 && (borg_use_staff_fail(SV_STAFF_HEALING) || (borg_fighting_evil_unique && borg_spell_fail(REALM_LIFE, 2, 6, allow_fail)) ||	/* holy word */
+	if (hp_down < 350 && danger / 2 < bp_ptr->chp + 300 && (borg_use_staff_fail(SV_STAFF_HEALING) || (borg_fighting_evil_unique && borg_spell_fail(REALM_LIFE, 2, 6, allow_fail)) ||	/* holy word */
 /* Vamp Drain ? */
 																	 borg_use_staff_fail
 																	 (SV_STAFF_HOLINESS)
@@ -2413,7 +2413,7 @@ static bool borg_heal(int danger)
 	}
 
 	/* Healing step three (300hp).  */
-	if (hp_down < 650 && danger / 2 < borg_skill[BI_CURHP] + 300 && ((borg_fighting_evil_unique && borg_spell_fail(REALM_LIFE, 2, 6, allow_fail)) ||	/* holy word */
+	if (hp_down < 650 && danger / 2 < bp_ptr->chp + 300 && ((borg_fighting_evil_unique && borg_spell_fail(REALM_LIFE, 2, 6, allow_fail)) ||	/* holy word */
 /* Vamp Drain ? */
 																	 ((!borg_skill[BI_ATELEPORT] || borg_skill[BI_DEV] - borg_get_kind(TV_ROD, SV_ROD_HEALING)->level > 7) && borg_zap_rod(SV_ROD_HEALING)) || borg_spell_fail(REALM_LIFE, 1, 6, allow_fail) || borg_spell_fail(REALM_NATURE, 1, 7, allow_fail) || borg_use_staff_fail(SV_STAFF_HOLINESS) || borg_use_staff_fail(SV_STAFF_HEALING) || borg_quaff_potion(SV_POTION_HEALING) || borg_activate_artifact(ART_SOULKEEPER, FALSE) || borg_activate_artifact(ART_GONDOR, FALSE)))
 	{
@@ -2425,7 +2425,7 @@ static bool borg_heal(int danger)
 	 * wasted.  They are saved for Morgoth and emergencies.  The
 	 * Emergency check is at the end of borg_caution().
 	 */
-	if (hp_down >= 650 && (danger / 2 < borg_skill[BI_CURHP] + 500) && ((borg_fighting_evil_unique && borg_spell_fail(REALM_LIFE, 2, 6, allow_fail)) ||	/* holy word */
+	if (hp_down >= 650 && (danger / 2 < bp_ptr->chp + 500) && ((borg_fighting_evil_unique && borg_spell_fail(REALM_LIFE, 2, 6, allow_fail)) ||	/* holy word */
 /* Vamp Drain ? */
 																		borg_spell_fail(REALM_LIFE, 3, 4, allow_fail) ||	/* 2000 */
 																		borg_spell_fail(REALM_NATURE, 1, 7, allow_fail) ||	/* 1000 */
@@ -2450,7 +2450,7 @@ static bool borg_heal(int danger)
 	 * This was moved from borg_caution.
 	 */
 	if (borg_skill[BI_ISPOISONED] &&
-		(borg_skill[BI_CURHP] < borg_skill[BI_MAXHP] / 2))
+		(bp_ptr->chp < bp_ptr->mhp / 2))
 	{
 		if (borg_spell_fail(REALM_LIFE, 1, 1, 60) ||
 			borg_spell_fail(REALM_ARCANE, 1, 5, 60) ||
@@ -2487,8 +2487,8 @@ static bool borg_heal(int danger)
 	/* Hack -- cure poison when poisoned CRITICAL CHECK
 	 */
 	if (borg_skill[BI_ISPOISONED] &&
-		(borg_skill[BI_CURHP] < 2 ||
-		 borg_skill[BI_CURHP] < borg_skill[BI_MAXHP] / 20))
+		(bp_ptr->chp < 2 ||
+		 bp_ptr->chp < bp_ptr->mhp / 20))
 	{
 		int sv_mana = borg_skill[BI_CURSP];
 
@@ -2518,7 +2518,7 @@ static bool borg_heal(int danger)
 		 * but we did not use our ez_heal potions.  All other attempts to save
 		 * ourself have failed.  Use the ez_heal if I have it.
 		 */
-		if (borg_skill[BI_CURHP] < borg_skill[BI_MAXHP] / 20 &&
+		if (bp_ptr->chp < bp_ptr->mhp / 20 &&
 			(borg_quaff_potion(SV_POTION_STAR_HEALING) ||
 			 borg_quaff_potion(SV_POTION_LIFE) ||
 			 borg_quaff_potion(SV_POTION_HEALING)))
@@ -2539,11 +2539,11 @@ static bool borg_heal(int danger)
 
 	/* Hack -- cure wounds when bleeding, also critical check */
 	if (borg_skill[BI_ISCUT] &&
-		(borg_skill[BI_CURHP] < borg_skill[BI_MAXHP] / 3 || randint0(100) < 20))
+		(bp_ptr->chp < bp_ptr->mhp / 3 || randint0(100) < 20))
 	{
 		if (borg_quaff_potion(SV_POTION_CURE_SERIOUS) ||
 			borg_quaff_potion(SV_POTION_CURE_LIGHT) ||
-			borg_quaff_crit(borg_skill[BI_CURHP] < 10) ||
+			borg_quaff_crit(bp_ptr->chp < 10) ||
 			borg_spell_fail(REALM_LIFE, 1, 1, 100) ||
 			borg_spell_fail(REALM_LIFE, 0, 6, 100) ||
 			borg_spell_fail(REALM_LIFE, 0, 1, 100) ||
@@ -2557,8 +2557,8 @@ static bool borg_heal(int danger)
 	}
 	/* bleeding and about to die CRITICAL CHECK */
 	if (borg_skill[BI_ISCUT] &&
-		((borg_skill[BI_CURHP] < 2) ||
-		 borg_skill[BI_CURHP] < borg_skill[BI_MAXHP] / 20))
+		((bp_ptr->chp < 2) ||
+		 bp_ptr->chp < bp_ptr->mhp / 20))
 	{
 		int sv_mana = borg_skill[BI_CURSP];
 
@@ -2574,7 +2574,7 @@ static bool borg_heal(int danger)
 		 * but we did not use our ez_heal potions.  All other attempts to save
 		 * ourself have failed.  Use the ez_heal if I have it.
 		 */
-		if (borg_skill[BI_CURHP] < borg_skill[BI_MAXHP] / 20 &&
+		if (bp_ptr->chp < bp_ptr->mhp / 20 &&
 			(borg_quaff_potion(SV_POTION_HEALING) ||
 			 borg_quaff_potion(SV_POTION_STAR_HEALING) ||
 			 borg_quaff_potion(SV_POTION_LIFE)))
@@ -2749,7 +2749,7 @@ bool borg_caution(void)
 	/*** Notice "nasty" situations ***/
 
 	/* About to run out of light is extremely nasty */
-	if (!borg_skill[BI_LITE] &&
+	if (!bp_ptr->britelite &&
 		equipment[EQUIP_LITE].timeout < 250) nasty = TRUE;
 
 	/* Starvation is nasty */
@@ -2837,7 +2837,7 @@ bool borg_caution(void)
 		borg_note_fmt
 			("# Loc:%d,%d Dep:%d Lev:%d HP:%d/%d SP:%d/%d Danger:p=%d",
 			 c_y, c_x, borg_skill[BI_CDEPTH], borg_skill[BI_CLEVEL],
-			 borg_skill[BI_CURHP], borg_skill[BI_MAXHP],
+			 bp_ptr->chp, bp_ptr->mhp,
 			 borg_skill[BI_CURSP], borg_skill[BI_MAXSP], p);
 		if (borg_goi)
 		{
@@ -3006,7 +3006,7 @@ bool borg_caution(void)
 		}
 	}
 	/* Excessive danger */
-	else if (p > (borg_skill[BI_CURHP] * 2))
+	else if (p > (bp_ptr->chp * 2))
 	{
 		/* Start fleeing */
 		if (!goal_fleeing && !borg_fighting_unique &&
@@ -3021,7 +3021,7 @@ bool borg_caution(void)
 		}
 	}
 	/* Potential danger (near death) in town */
-	else if (!borg_skill[BI_CDEPTH] && (p > borg_skill[BI_CURHP]) &&
+	else if (!borg_skill[BI_CDEPTH] && (p > bp_ptr->chp) &&
 			 (borg_skill[BI_CLEVEL] < 50))
 	{
 		/* Flee now */
@@ -3147,7 +3147,7 @@ bool borg_caution(void)
 	/*** Deal with critical situations ***/
 
 	/* Hack -- require light */
-	if (!borg_skill[BI_LITE])
+	if (!bp_ptr->britelite)
 	{
 		list_item *l_ptr = &equipment[EQUIP_LITE];
 
@@ -3266,10 +3266,12 @@ bool borg_caution(void)
 			/* track it */
 			b_j = j;
 		}
-		/* If you are within a few (3) steps of the stairs */
-		/* and you can take some damage to get there */
-		/* go for it */
-		if (b_j < 3 && p < borg_skill[BI_CURHP])
+		/*
+		 * If you are within a few (3) steps of the stairs
+		 * and you can take some damage to get there
+		 * go for it
+		 */
+		if ((b_j < 3) && (p < bp_ptr->chp))
 		{
 			borg_desperate = TRUE;
 			if (borg_flow_stair_less(GOAL_FLEE))
@@ -3556,7 +3558,7 @@ bool borg_caution(void)
 			{
 				/* If I am low level, reward backing-up if safe */
 				if (borg_skill[BI_CLEVEL] <= 3 &&
-					(borg_skill[BI_CURHP] < borg_skill[BI_MAXHP] ||
+					(bp_ptr->chp < bp_ptr->mhp ||
 					 borg_skill[BI_CURSP] < borg_skill[BI_CURSP]))
 				{
 					/* do consider the retreat */
@@ -3601,7 +3603,7 @@ bool borg_caution(void)
 	/* cure confusion, second check, first (slightly different) in borg_heal */
 	if (borg_skill[BI_ISCONFUSED])
 	{
-		if (borg_skill[BI_MAXHP] - borg_skill[BI_CURHP] >= 300 &&
+		if (bp_ptr->mhp - bp_ptr->chp >= 300 &&
 			(borg_quaff_potion(SV_POTION_HEALING) ||
 			 borg_quaff_potion(SV_POTION_STAR_HEALING) ||
 			 borg_quaff_potion(SV_POTION_LIFE)))
@@ -3639,9 +3641,9 @@ bool borg_caution(void)
 	/*** Note impending death XXX XXX XXX ***/
 
 	/* Flee from low hit-points */
-	if (((borg_skill[BI_CURHP] < borg_skill[BI_MAXHP] / 3) ||
-		 ((borg_skill[BI_CURHP] < borg_skill[BI_MAXHP] / 2) &&
-		  borg_skill[BI_CURHP] < (borg_skill[BI_CLEVEL] * 3))) &&
+	if (((bp_ptr->chp < bp_ptr->mhp / 3) ||
+		 ((bp_ptr->chp < bp_ptr->mhp / 2) &&
+		  bp_ptr->chp < (borg_skill[BI_CLEVEL] * 3))) &&
 		(borg_skill[BI_ACCW] < 3) && (borg_skill[BI_AHEAL] < 1))
 	{
 		/* Flee from low hit-points */
@@ -3672,7 +3674,7 @@ bool borg_caution(void)
 
 	/* Flee from bleeding wounds or poison and no heals */
 	if ((borg_skill[BI_ISCUT] || borg_skill[BI_ISPOISONED]) &&
-		(borg_skill[BI_CURHP] < borg_skill[BI_MAXHP] / 2))
+		(bp_ptr->chp < bp_ptr->mhp / 2))
 	{
 		/* Flee from bleeding wounds */
 		if (borg_skill[BI_CDEPTH] && (randint0(100) < 25))
@@ -3699,15 +3701,16 @@ bool borg_caution(void)
 		}
 	}
 
-	/* Emergency check on healing.  Borg_heal has already been checked but
+	/*
+	 * Emergency check on healing.  Borg_heal has already been checked but
 	 * but we did not use our ez_heal potions.  All other attempts to save
 	 * ourself have failed.  Use the ez_heal if I have it.
 	 */
-	if ((borg_skill[BI_CURHP] < borg_skill[BI_MAXHP] / 10 ||	/* dangerously low HP */
-		 (borg_skill[BI_ATELEPORT] + borg_skill[BI_AESCAPE] == 0 && borg_skill[BI_CURHP] < borg_skill[BI_MAXHP] / 4)) &&	/* low on escapes */
-		(p > borg_skill[BI_CURHP] * 2 ||	/* extreme danger */
-		 (p > borg_skill[BI_CURHP] && borg_skill[BI_AEZHEAL] > 5) ||	/* moderate danger, lots of heals */
-		 (p > borg_skill[BI_CURHP] * 12 / 10 && borg_skill[BI_MAXHP] - borg_skill[BI_CURHP] >= 400 && borg_fighting_unique && borg_skill[BI_CDEPTH] >= 85)) &&	/* moderate danger, unique, deep */
+	if ((bp_ptr->chp < bp_ptr->mhp / 10 ||
+		 (borg_skill[BI_ATELEPORT] + borg_skill[BI_AESCAPE] == 0 && bp_ptr->chp < bp_ptr->mhp / 4)) &&
+		(p > bp_ptr->chp * 2 ||
+		 (p > bp_ptr->chp && borg_skill[BI_AEZHEAL] > 5) ||
+		 (p > bp_ptr->chp * 12 / 10 && bp_ptr->mhp - bp_ptr->chp >= 400 && borg_fighting_unique && borg_skill[BI_CDEPTH] >= 85)) &&	
 		(borg_quaff_potion(SV_POTION_HEALING) ||
 		 borg_quaff_potion(SV_POTION_STAR_HEALING) ||
 		 borg_quaff_potion(SV_POTION_LIFE)))
@@ -3753,7 +3756,7 @@ bool borg_caution(void)
 			return (TRUE);
 		}
 
-		if ((borg_skill[BI_MAXHP] - borg_skill[BI_CURHP] < 100) &&
+		if ((bp_ptr->mhp - bp_ptr->chp < 100) &&
 			(borg_quaff_crit(TRUE) ||
 			 borg_quaff_potion(SV_POTION_CURE_SERIOUS) ||
 			 borg_quaff_potion(SV_POTION_CURE_LIGHT)))
@@ -3761,7 +3764,7 @@ bool borg_caution(void)
 			borg_note("# Buying time waiting for Recall.  Step 3.");
 			return (TRUE);
 		}
-		if ((borg_skill[BI_MAXHP] - borg_skill[BI_CURHP] > 150) &&
+		if ((bp_ptr->mhp - bp_ptr->chp > 150) &&
 			(borg_quaff_potion(SV_POTION_HEALING) ||
 			 borg_quaff_potion(SV_POTION_STAR_HEALING) ||
 			 borg_quaff_potion(SV_POTION_LIFE) ||
@@ -3780,7 +3783,7 @@ bool borg_caution(void)
 	/* if I am gonna die next round, and I have no way to escape
 	 * use the unknown stuff (if I am low level).
 	 */
-	if (p > (borg_skill[BI_CURHP] * 4) && borg_skill[BI_CLEVEL] < 20 &&
+	if (p > (bp_ptr->chp * 4) && borg_skill[BI_CLEVEL] < 20 &&
 		!borg_skill[BI_MAXSP])
 	{
 		if (borg_use_unknown()) return (TRUE);
@@ -7228,11 +7231,12 @@ static int borg_attack_aux(int what)
 		{
 			/* Holy Word also has heal effect and is considered in borg_heal */
 			rad = MAX_SIGHT + 10;
-			if (borg_skill[BI_MAXHP] - borg_skill[BI_CURHP] >= 300)
-				/*  force him to think the spell is more deadly to get him to
+			if (bp_ptr->mhp - bp_ptr->chp >= 300)
+			{
+				/*
+				 * Force him to think the spell is more deadly to get him to
 				 * cast it.  This will provide some healing for him.
 				 */
-			{
 				dam = ((borg_skill[BI_CLEVEL] * 10));
 				return (borg_attack_aux_spell_dispel
 						(REALM_LIFE, 2, 6, rad, dam, GF_DISP_EVIL));
@@ -7256,7 +7260,7 @@ static int borg_attack_aux(int what)
 			rad = MAX_SIGHT + 10;
 
 			/* if hurting, add bonus */
-			if (borg_skill[BI_MAXHP] - borg_skill[BI_CURHP] >= 200) dam =
+			if (bp_ptr->mhp - bp_ptr->chp >= 200) dam =
 					(dam * 12) / 10;
 
 			/* if no speedy, add bonus */
@@ -7457,7 +7461,7 @@ static int borg_attack_aux(int what)
 			/* Call Sunlight */
 			dam = 150;
 			rad = 8 + 10;
-			if (borg_skill[BI_FEAR_LITE] && borg_skill[BI_CURHP] < 150) dam = 0;
+			if (borg_skill[BI_FEAR_LITE] && bp_ptr->chp < 150) dam = 0;
 			return (borg_attack_aux_spell_dispel
 					(REALM_NATURE, 3, 5, rad, dam, GF_LITE_WEAK));
 		}
@@ -7655,7 +7659,7 @@ static int borg_attack_aux(int what)
 		case BF_CHAOS_BRLOGRUS:
 		{
 			rad = 2;
-			dam = (borg_skill[BI_CURHP]);
+			dam = (bp_ptr->chp);
 			return (borg_attack_aux_spell_bolt
 					(REALM_CHAOS, 3, 6, rad, dam, GF_CHAOS));
 		}
@@ -7809,7 +7813,7 @@ static int borg_attack_aux(int what)
 		{
 			/* HellFire */
 			dam = 666;
-			if (borg_skill[BI_CURHP] < 200) dam = 0;
+			if (bp_ptr->chp < 200) dam = 0;
 			return (borg_attack_aux_spell_bolt
 					(REALM_DEATH, 3, 5, rad, dam, GF_OLD_DRAIN));
 		}
@@ -8029,7 +8033,7 @@ static int borg_attack_aux(int what)
 		{
 			/* Staff -- holiness */
 			rad = MAX_SIGHT + 10;
-			if (borg_skill[BI_CURHP] < borg_skill[BI_MAXHP] / 2) dam = 500;
+			if (bp_ptr->chp < bp_ptr->mhp / 2) dam = 500;
 			else
 				dam = 120;
 			return (borg_attack_aux_staff_dispel
@@ -9901,7 +9905,7 @@ static int borg_defend_aux_mass_genocide(void)
 	/* if strain (plus a pad incase we did not know about some monsters)
 	 * is greater than hp, don't cast it
 	 */
-	if ((hit * 11 / 10) >= borg_skill[BI_CURHP]) return (0);
+	if ((hit * 11 / 10) >= bp_ptr->chp) return (0);
 
 	/* Penalize the strain from casting the spell */
 	p2 = p2 + hit;
@@ -9989,7 +9993,7 @@ static int borg_defend_aux_genocide(void)
 
 
 	/* Don't try it if really weak */
-	if (borg_skill[BI_CURHP] <= 75) return (0);
+	if (bp_ptr->chp <= 75) return (0);
 
 	/* two methods to calculate the threat:
 	 *1. cycle each character of monsters on screen
@@ -10075,18 +10079,18 @@ static int borg_defend_aux_genocide(void)
 	if (b_threat_id)
 	{
 		/* Not if I am weak (should have 400 HP really in case of a Pit) */
-		if (borg_skill[BI_CURHP] < borg_skill[BI_MAXHP] ||
-			borg_skill[BI_CURHP] < 375) b_threat_id = 0;
+		if (bp_ptr->chp < bp_ptr->mhp ||
+			bp_ptr->chp < 375) b_threat_id = 0;
 
 		/* Do not perform in Danger */
 		if (borg_danger(c_x, c_y, 1, TRUE) > avoidance / 5) b_threat_id = 0;
 
 		/* The threat must be real */
-		if (b_threat[b_threat_id] < borg_skill[BI_MAXHP] * 10) b_threat_id = 0;
+		if (b_threat[b_threat_id] < bp_ptr->mhp * 10) b_threat_id = 0;
 
 		/* Too painful to cast it (padded to be safe incase of unknown monsters) */
 		if ((b_num[b_threat_id] * 4) * 11 / 10 >=
-			borg_skill[BI_CURHP]) b_threat_id = 0;
+			bp_ptr->chp) b_threat_id = 0;
 
 		/* report the danger and most dangerous race */
 		if (b_threat_id)
@@ -10106,7 +10110,7 @@ static int borg_defend_aux_genocide(void)
 	{
 
 		/* Too painful to cast it (padded to be safe incase of unknown monsters) */
-		if ((b_num[b_i] * 4) * 11 / 10 >= borg_skill[BI_CURHP]) b_i = 0;
+		if ((b_num[b_i] * 4) * 11 / 10 >= bp_ptr->chp) b_i = 0;
 
 		/* See if he is in real danger, generally,
 		 * or deeper in the dungeon, conservatively,
@@ -10176,8 +10180,8 @@ static int borg_defend_aux_genocide_hounds(void)
 	bool genocide_spell = FALSE;
 
 	/* Not if I am weak */
-	if (borg_skill[BI_CURHP] < borg_skill[BI_MAXHP] ||
-		borg_skill[BI_CURHP] < 350) return (0);
+	if (bp_ptr->chp < bp_ptr->mhp ||
+		bp_ptr->chp < 350) return (0);
 
 	/* only do it when deep, */
 	if (borg_skill[BI_CDEPTH] < 50) return (0);
@@ -10447,9 +10451,9 @@ static int borg_defend_aux_banishment(int p1)
 	if (p2 <= 0) p2 = 0;
 
 	/* Try not to cast this against Morgy/Sauron */
-	if (borg_fighting_unique >= 10 && borg_skill[BI_CURHP] > 250 &&
+	if (borg_fighting_unique >= 10 && bp_ptr->chp > 250 &&
 		borg_skill[BI_CDEPTH] == 99) p2 = 9999;
-	if (borg_fighting_unique >= 10 && borg_skill[BI_CURHP] > 350 &&
+	if (borg_fighting_unique >= 10 && bp_ptr->chp > 350 &&
 		borg_skill[BI_CDEPTH] == 100) p2 = 9999;
 
 	/* check to see if I am left better off */
@@ -11976,10 +11980,10 @@ bool borg_recover(void)
 	q = randint0(100);
 
 	/* Half dead */
-	if (borg_skill[BI_CURHP] < borg_skill[BI_MAXHP] / 2) q = q - 10;
+	if (bp_ptr->chp < bp_ptr->mhp / 2) q = q - 10;
 
 	/* Almost dead */
-	if (borg_skill[BI_CURHP] < borg_skill[BI_MAXHP] / 4) q = q - 10;
+	if (bp_ptr->chp < bp_ptr->mhp / 4) q = q - 10;
 
 
 	/*** Use "cheap" cures ***/
@@ -12068,7 +12072,7 @@ bool borg_recover(void)
 	}
 
 	/* Hack -- heal damage */
-	if ((borg_skill[BI_CURHP] < borg_skill[BI_MAXHP] / 2) && (q < 75) && p == 0
+	if ((bp_ptr->chp < bp_ptr->mhp / 2) && (q < 75) && p == 0
 		&& (borg_skill[BI_CURSP] > borg_skill[BI_MAXSP] / 4))
 	{
 		if (borg_activate_artifact(ART_SOULKEEPER, FALSE) ||
@@ -12143,7 +12147,7 @@ bool borg_recover(void)
 			borg_quaff_potion(SV_POTION_CURING) ||
 			borg_activate_artifact(ART_SOULKEEPER, FALSE) ||
 			borg_activate_artifact(ART_GONDOR, FALSE) ||
-			borg_quaff_crit(borg_skill[BI_CURHP] < 10))
+			borg_quaff_crit(bp_ptr->chp < 10))
 		{
 			return (TRUE);
 		}
@@ -12156,7 +12160,7 @@ bool borg_recover(void)
 			borg_quaff_potion(SV_POTION_SLOW_POISON) ||
 			borg_eat_food(SV_FOOD_WAYBREAD) ||
 			borg_eat_food(SV_FOOD_CURE_POISON) ||
-			borg_quaff_crit(borg_skill[BI_CURHP] < 10) ||
+			borg_quaff_crit(bp_ptr->chp < 10) ||
 			borg_use_staff_fail(SV_STAFF_CURING) ||
 			borg_zap_rod(SV_ROD_CURING) ||
 			borg_quaff_potion(SV_POTION_CURING) ||
@@ -12217,7 +12221,7 @@ bool borg_recover(void)
 	}
 
 	/* Hack -- heal damage */
-	if ((borg_skill[BI_CURHP] < borg_skill[BI_MAXHP] / 2) && (q < 25))
+	if ((bp_ptr->chp < bp_ptr->mhp / 2) && (q < 25))
 	{
 		if (borg_zap_rod(SV_ROD_HEALING) ||
 			borg_quaff_potion(SV_POTION_CURE_SERIOUS) ||
@@ -12270,7 +12274,7 @@ bool borg_recover(void)
 	if ((borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
 		 borg_skill[BI_ISIMAGE] || borg_skill[BI_ISAFRAID] ||
 		 borg_skill[BI_ISSTUN] || borg_skill[BI_ISHEAVYSTUN] ||
-		 (borg_skill[BI_CURHP] < borg_skill[BI_MAXHP]) ||
+		 (bp_ptr->chp < bp_ptr->mhp) ||
 		 (borg_skill[BI_CURSP] < borg_skill[BI_MAXSP] * 6 / 10)) &&
 		(!borg_takes_cnt || !goal_recalling) && !borg_goi && !borg_shield &&
 		!scaryguy_on_level && borg_check_rest() && (p <= mb_ptr->fear) &&
@@ -12550,7 +12554,7 @@ static bool borg_play_step(int y2, int x2)
 
 		/* No tunneling if in danger */
 		if (borg_danger(c_x, c_y, 1, TRUE) >=
-			borg_skill[BI_CURHP] / 4) return (FALSE);
+			bp_ptr->chp / 4) return (FALSE);
 
 		/* Tunnel */
 		borg_note("# Digging through wall/etc");
@@ -13946,7 +13950,7 @@ static bool borg_flow_dark_interesting(int x, int y, int b_stair)
 			mb_ptr->feat == FEAT_TRAP_TRAPDOOR) return (FALSE);
 
 		/* Do not disarm when you could end up dead */
-		if (borg_skill[BI_CURHP] < 60) return (FALSE);
+		if (bp_ptr->chp < 60) return (FALSE);
 
 		/* Do not disarm when clumsy */
 		if (borg_skill[BI_DIS] < 30 &&

@@ -1433,10 +1433,10 @@ bool borg_think_dungeon(void)
 	}
 
 	/* Reset avoidance */
-	if (avoidance != borg_skill[BI_CURHP])
+	if (avoidance != bp_ptr->chp)
 	{
 		/* Reset "avoidance" */
-		avoidance = borg_skill[BI_CURHP];
+		avoidance = bp_ptr->chp;
 
 		/* Re-calculate danger */
 		borg_danger_wipe = TRUE;
@@ -1760,16 +1760,16 @@ bool borg_think_dungeon(void)
 	borg_no_retreat = 5;
 
 	/* Boost slightly */
-	if (avoidance < borg_skill[BI_CURHP] * 2)
+	if (avoidance < bp_ptr->chp * 2)
 	{
 		bool done = FALSE;
 
 		/* Note */
 		borg_note_fmt("# Boosting bravery (1) from %d to %d!",
-					  avoidance, borg_skill[BI_CURHP] * 2);
+					  avoidance, bp_ptr->chp * 2);
 
 		/* Hack -- ignore some danger */
-		avoidance = (borg_skill[BI_CURHP] * 2);
+		avoidance = (bp_ptr->chp * 2);
 
 		/* Forget the danger fields */
 		borg_danger_wipe = TRUE;
@@ -1778,7 +1778,7 @@ bool borg_think_dungeon(void)
 		if (borg_think_dungeon_brave()) done = TRUE;
 
 		/* Reset "avoidance" */
-		avoidance = borg_skill[BI_CURHP];
+		avoidance = bp_ptr->chp;
 
 		/* Re-calculate danger */
 		borg_danger_wipe = TRUE;
@@ -1814,16 +1814,16 @@ bool borg_think_dungeon(void)
 	borg_no_retreat = 10;
 
 	/* Boost some more */
-	if (avoidance < borg_skill[BI_MAXHP] * 4)
+	if (avoidance < bp_ptr->mhp * 4)
 	{
 		bool done = FALSE;
 
 		/* Note */
 		borg_note_fmt("# Boosting bravery (2) from %d to %d!",
-					  avoidance, borg_skill[BI_MAXHP] * 4);
+					  avoidance, bp_ptr->mhp * 4);
 
 		/* Hack -- ignore some danger */
-		avoidance = (borg_skill[BI_MAXHP] * 4);
+		avoidance = (bp_ptr->mhp * 4);
 
 		/* Forget the danger fields */
 		borg_danger_wipe = TRUE;
@@ -1832,7 +1832,7 @@ bool borg_think_dungeon(void)
 		if (borg_think_dungeon_brave()) done = TRUE;
 
 		/* Reset "avoidance" */
-		avoidance = borg_skill[BI_CURHP];
+		avoidance = bp_ptr->chp;
 
 		/* Re-calculate danger */
 		borg_danger_wipe = TRUE;
@@ -1860,7 +1860,7 @@ bool borg_think_dungeon(void)
 		if (borg_think_dungeon_brave()) done = TRUE;
 
 		/* Reset "avoidance" */
-		avoidance = borg_skill[BI_CURHP];
+		avoidance = bp_ptr->chp;
 
 		/* Re-calculate danger */
 		borg_danger_wipe = TRUE;
