@@ -868,7 +868,7 @@ static void roff_aux(int r_idx, int remem)
 				c_roff(TERM_WHITE, " and ");
 
 			/* Dump */
-			c_roff(TERM_WHITE, vp[n]);
+			c_roff(TERM_L_UMBER, vp[n]);
 		}
 
 		/* End */
