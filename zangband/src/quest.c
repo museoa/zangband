@@ -306,7 +306,7 @@ void get_player_quests(void)
 			}
 
 			/* Break on valid input */
-			if ((v <= 50) && (v >= 0)) break;
+			if ((v < 50) && (v >= 0)) break;
 		}
 		break;
 	}
