@@ -24,28 +24,24 @@
  */
 int deadliness_calc(int attack_power)
 {
-	if (attack_power > 255)
-	{
-		/* Really high deadliness */
-		return (355);
-	}
-	
-	if (attack_power > 0)
-	{
-		/* Normal deadliness */
-		return (100 + deadliness_conversion[attack_power]);
-	}
-	
-	if (attack_power > -31)
-	{
-		/* Cursed items */
-		return (100 - deadliness_conversion[ABS(attack_power)]);
-	}
+	/* Calculate effect of deadliness - linearly */
+	int result = (attack_power * 3) + 100;
 	
 	/* Really powerful minus yields zero damage */
-	return (0);
+	if (result < 0) result = 0;
+	
+	return (result);
 }
 
+/* Helper function to calculate the average damage a weapon will do */
+long avg_dam(int attack_power, int dice_num, int dice_sides)
+{
+	/* Calculate damage per dice x 100 */
+	long temp = dice_sides * deadliness_calc(attack_power);
+	
+	/* Add one to take into account dice formula, and return avg*2 */
+	return (dice_num * (temp + 1) / 100);
+}
 
 /*
  * Determine if the player "hits" a monster (normal combat).
@@ -101,16 +97,15 @@ bool test_hit_fire(int chance, int ac, int vis)
 /*
  * Calculation of critical hits by the player in hand-to-hand combat. -LM-
  */
-static sint critical_melee(int chance, int sleeping_bonus, char m_name[], object_type *o_ptr)
+static int critical_melee(int chance, int sleeping_bonus, char *m_name,
+	 object_type *o_ptr)
 {
-	int i, k;
+	int power = (chance + sleeping_bonus);
 	int mult_m_crit;
 
-	/* Extract melee attack power. */
-	i = (chance + sleeping_bonus);
 
 	/* Test for critical hit. */
-	if (randint1(i + 200) <= i)
+	if (randint1(power + 240) <= power)
 	{
 		/*
 		 * Encourage the player to make sneak attacks on
@@ -118,62 +113,36 @@ static sint critical_melee(int chance, int sleeping_bonus, char m_name[], object
 		 */
 		if ((sleeping_bonus) && (p_ptr->pclass == CLASS_ROGUE))
 			msg_print("You ruthlessly sneak attack!");
+		
+		/* Determine level of critical hit x 10. */
+		if		(rand_int(90) == 0) mult_m_crit = 50;
+		if      (rand_int(40) == 0) mult_m_crit = 36;
+		else if (rand_int(12) == 0) mult_m_crit = 27;
+		else if (rand_int(3)  == 0) mult_m_crit = 20;
+		else                        mult_m_crit = 15;
+		
 
-		/*
-		 * Hack - Weapons that normally do little damage benefit most from
-		 * critical hits (10x inflation).
-		 */
-		mult_m_crit = 120 / (o_ptr->dd * (o_ptr->ds + 1));
-		if (mult_m_crit > 20) mult_m_crit = 20;
-		if (mult_m_crit < 10) mult_m_crit = 10;
-
-
-		/* Determine level of critical hit */
-		k = randint1(i) + randint1(100);
-
-		/*
-		 * This portion of the function determines the level of critical hit,
-		 * the critical mult_m_crit, and displays an appropriate combat
-		 * message.  A distinction is often made between edged and blunt
-		 * weapons.  Unfortunately, whips sometimes display rather odd
-		 * messages...
-		 */
-		if (k < 100)
+		if ((mult_m_crit == 15) || 
+			((o_ptr->tval == TV_HAFTED) && (o_ptr->sval == SV_WHIP)))
 		{
-			mult_m_crit *= 15;
 			msg_format("You strike %s.", m_name);
 		}
-		else if (k < 160)
+		else if (mult_m_crit == 20)
 		{
-			mult_m_crit *= 17;
-
 			if ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM))
 				msg_format("You hack at %s.", m_name);
 			else
 				msg_format("You bash %s.", m_name);
 		}
-		else if (k < 210)
+		else if (mult_m_crit == 27)
 		{
-			mult_m_crit *= 20;
-
 			if ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM))
 				msg_format("You slash %s.", m_name);
-		else
+			else
 				msg_format("You pound %s.", m_name);
 		}
-		else if (k < 250)
+		else if (mult_m_crit == 36)
 		{
-			mult_m_crit *= 23;
-
-			if ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM))
-				msg_format("You score %s!", m_name);
-			else
-				msg_format("You batter %s!", m_name);
-		}
-		else if (k < 280)
-		{
-			mult_m_crit *= 27;
-
 			if ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM))
 				msg_format("You gouge %s!", m_name);
 			else
@@ -181,17 +150,10 @@ static sint critical_melee(int chance, int sleeping_bonus, char m_name[], object
 		}
 		else
 		{
-			mult_m_crit *= 32;
 			msg_format("You *smite* %s!", m_name);
-		}
-
-		/*
-		 * Compensate for the weak weapon bonus by deflating the critical
-		 * hit multiplier.
-		 */
-		mult_m_crit /= 10;
+		}	
 	}
-
+	
 	/*
 	 * If the blow is not a critical hit, display the default attack
 	 * message and apply the standard multiplier.
@@ -215,13 +177,13 @@ static sint critical_melee(int chance, int sleeping_bonus, char m_name[], object
  */
 static s16b critical_norm(int weight, int plus, int dam)
 {
-	int i, k;
+	int power, k;
 
 	/* Extract "blow" power */
-	i = (weight + ((p_ptr->to_h + plus) * 5) + (p_ptr->lev * 3));
+	power = (weight + ((p_ptr->to_h + plus) * 5) + (p_ptr->lev * 3));
 
 	/* Chance */
-	if (randint1(5000) <= i)
+	if (randint1(5000) <= power)
 	{
 		k = weight + randint1(650);
 
@@ -256,7 +218,6 @@ static s16b critical_norm(int weight, int plus, int dam)
 }
 
 
-
 /*
  * Extract the "total damage" from a given object hitting a given monster.
  *
@@ -266,7 +227,7 @@ static s16b critical_norm(int weight, int plus, int dam)
  * Note that most brands and slays are x2, except Slay Animal (x1.7),
  * Slay Evil (x1.5), and Kill dragon (x3). -SF-
  */
-s16b tot_dam_aux(const object_type *o_ptr, int tdam, const monster_type *m_ptr)
+int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr)
 {
 	/*
 	 * mult is scaled to be *10 so that the fractional slays can be stored
@@ -500,7 +461,7 @@ s16b tot_dam_aux(const object_type *o_ptr, int tdam, const monster_type *m_ptr)
 
 
 	/* Return the total damage */
-	return (tdam * mult);
+	return (mult);
 }
 
 
@@ -1453,7 +1414,7 @@ void py_attack(int y, int x)
 	long k;
 
 	/* The whole and fractional damage dice and their resulting damage. */
-	int k_remainder, k_whole;
+	int slay;
 
 	/* blow count */
 	int num = 0;
@@ -1709,10 +1670,11 @@ void py_attack(int y, int x)
 			else if (o_ptr->k_idx)
 			{
 				/* base damage dice. */
-				k = o_ptr->dd;
+				k = o_ptr->ds;
 
 				/* multiply by slays or brands. (10x inflation) */
-				k = tot_dam_aux(o_ptr, k, m_ptr);
+				slay = tot_dam_aux(o_ptr, m_ptr);
+				k *= slay;
 
 				/* multiply by critical hit. (10x inflation) */
 				k *= critical_melee(chance, sleeping_bonus, m_name, o_ptr);
@@ -1723,25 +1685,17 @@ void py_attack(int y, int x)
 				 */
 				k *= deadliness_calc(total_deadliness);
 
-				/* Get the whole number of dice by deflating the result. */
-				k_whole = k / 10000;
-
-				/* Calculate the remainder (the fractional die, x10000). */
-				k_remainder = k % 10000;
-
-
 				/*
-				 * Calculate and combine the damages of the whole and
-				 * fractional dice.
+				 * Get the whole number of dice sides by deflating,
+				 * and then get total dice damage.
 				 */
-				k = damroll(k_whole, o_ptr->ds) +
-					(k_remainder * damroll(1, o_ptr->ds) / 10000);
+				k = damroll(o_ptr->dd, k / 10000 +
+				        (rand_int(10000) < (k % 10000) ? 1 : 0));
 
+				/* Add in extra effect due to slays */
+				k += (slay - 10);
+				
 				/* hack -- check for earthquake. */
-				if (p_ptr->impact && (k > 49)) do_quake = TRUE;
-
-
-
 				if ((p_ptr->impact && ((k > 50) || one_in_(7))) ||
 				    (chaos_effect == 2))
 				{
@@ -2566,7 +2520,7 @@ void move_player(int dir, int do_pickup)
 #ifdef USE_SCRIPT
 
 		/* Player movement callback */
-		if (player_move_callback(y, x)) return;
+		/* if (player_move_callback(y, x)) return; */
 
 #endif /* USE_SCRIPT */
 

@@ -1149,16 +1149,16 @@ static void compare_weapon_aux2(const object_type *o_ptr, int numblows,
 
 	dambonus = o_ptr->to_d + p_ptr->to_d;
 
-	mindam = deadliness_calc(dambonus);
+	/* Include effects of slaying bonus */
+	mindam = o_ptr->dd * slay * 10;
+	
+	maxdam = (o_ptr->dd * o_ptr->ds * deadliness_calc(dambonus) * slay) / 10;
 	
 	/* Include effects of slaying bonus */
-	mindam = (mindam * slay) / 10;
+	mindam += (slay - 10) * 100;
+	maxdam += (slay - 10) * 100;
 
-	/* Effect of damage dice */
-	maxdam = mindam * (o_ptr->ds * o_ptr->dd);
-	mindam *= o_ptr->dd;
-
-	/* number of blows */
+	/* Number of blows */
 	maxdam *= numblows;
 	mindam *= numblows;
 
@@ -1241,86 +1241,75 @@ static int hit_prob(int to_h, int ac)
 
 
 /*
- * Calculate the probability randint1(x)+randint1(100) < r
- * in unit of 1/(100*x) 	r>100 is assumed
- */
-static int critical_prob_aux(int x, int r)
-{
-	/*
-	 * Ex. r=130 x=60
-	 * x
-	 * 6******.... \
-	 * 5*******... n 
-	 * 4********.. | 
-	 * 3*********. /
-	 * 2**********
-	 * 1**********  
-	 *  1234567890
-	 */
-	int n = x + 1 - (r - 100);
-
-	if (n <= 0) return (100 * x);
-
-	if (n <= 100) return (100 * x - n * (n - 1) / 2);
-
-	/*
-	 *  Ex. r=130 x=150
-	 *  #(o) = 100*(100-1)/2
-	 *  #(.) = 100*(n-100) 
-	 *
-	 * x
-	 * 5oooooooooo \
-	 * 4.ooooooooo |
-	 * 3..oooooooo |
-	 * 2...ooooooo |
-	 * 1*...oooooo |
-	 * 0**...ooooo n
-	 * 9***...oooo |
-	 * 8****...ooo |
-	 * 7*****...oo |
-	 * 6******...o |
-	 * 5*******... |
-	 * 4********.. |
-	 * 3*********. /
-	 * 2**********
-	 * 1**********  
-	 *  1234567890
-	 */
-	 
-	return (100 * x - 100 * (100 - 1) / 2 - (n - 100) * 100);
-}
-
-
-/*
  * Calculate the probability of critical hit for a weapon 
  *
  * Only accurate for the current weapon, because it includes
  * player's +to_hit.
  */
-static int critical_prob(int to_h, int r1, int r2)
+static int critical_prob(int to_h, int number)
 {
-	int prob1, prob2;
 	int chance = p_ptr->skill_thn + (p_ptr->to_h + to_h) * BTH_PLUS_ADJ;
 
 	if (chance <= 0) return (0);
 	
-	prob1 = critical_prob_aux(chance, r1);
+	/* Chance we make a critical */
+	chance = (chance * 100) / (chance + 240);
 	
-	if (r2 == 0)
+	/* Which critical do we want? */
+	switch (number)
 	{
-		prob2 = 100 * chance;
+		case 0:
+		{
+			/* No critical */
+			return (100 - chance);
+		}
+		
+		case 1:
+		{
+			/* x 1.5 */
+			chance = ((chance * 89) / 90);
+			chance = ((chance * 39) / 40);
+			chance = ((chance * 11) / 12);
+			
+			return (2 * chance / 3);
+		}
+		
+		case 2:
+		{
+			/* x 2.0 */
+			chance = ((chance * 89) / 90);
+			chance = ((chance * 39) / 40);
+			chance = ((chance * 11) / 12);
+			
+			return (chance / 3);
+		}
+		
+		case 3:
+		{
+			/* x 2.7 */
+			chance = ((chance * 89) / 90);
+			chance = ((chance * 39) / 40);
+			
+			return (chance / 12);
+		}
+		
+		case 4:
+		{
+			/* x 3.6 */
+			chance = ((chance * 89) / 90);
+			
+			return (chance / 40);
+		}
+		
+		case 5:
+		{
+			 /* x 5.0 */
+			 return (chance / 90);
+		}
 	}
-	else
-	{
-		prob2 = critical_prob_aux(chance, r2); 
-	}
-	/*
-	 *  		chance  	 prob2 - prob1
-	 *   100 *  ------	*  --------------- 
-	 *		  200+chance    100 * chance 
-	 */
-	 
-	 return (chance * (prob2 - prob1) * 100 / ((chance + 200) * chance * 100)); 
+	
+	/* Paranoia */
+	return (0);
 }
 
 
@@ -1335,18 +1324,9 @@ static void list_weapon(const object_type *o_ptr)
 	char o_name[80];
 	char tmp_str[80];
 
-	long maxdam, mindam;
 	int dambonus;
 
 	int intmaxdam, intmindam;
-
-	/* Modification to the critical multiplier */
-	int mult_crit = 120 / (o_ptr->dd * (o_ptr->ds + 1));
-	
-	/* Bounds checking */      
-	if (mult_crit > 20) mult_crit = 20;
-	if (mult_crit < 10) mult_crit = 10;
-
 
 	/* Print the weapon name */
 	object_desc(o_name, o_ptr, TRUE, 0);
@@ -1372,23 +1352,16 @@ static void list_weapon(const object_type *o_ptr)
 	put_str(tmp_str, 13, WEP_MAST_COL1);
 	
 	/* Print critical hit probabilities */
-	sprintf(tmp_str, "Critical: 1.0 %1d.%1d %1d.%1d %1d.%1d %1d.%1d %1d.%1d %1d.%1d",
-		mult_crit * 15 / 100, (mult_crit * 15 / 10) % 10, 
-		mult_crit * 17 / 100, (mult_crit * 17 / 10) % 10, 
-		mult_crit * 20 / 100, (mult_crit * 20 / 10) % 10, 
-		mult_crit * 23 / 100, (mult_crit * 23 / 10) % 10, 
-		mult_crit * 27 / 100, (mult_crit * 27 / 10) % 10, 
-		mult_crit * 32 / 100, (mult_crit * 32 / 10) % 10);
+	sprintf(tmp_str, "Critical: 1.0 1.5 2.0 2.7 3.6 5.0");
 	put_str(tmp_str, 15, WEP_MAST_COL1);
 	
-	sprintf(tmp_str, "          %2d%% %2d%% %2d%% %2d%% %2d%% %2d%% %2d%%",
-		100 - critical_prob(o_ptr->to_h, 0, 0),
-		critical_prob(o_ptr->to_h, 0, 100),
-		critical_prob(o_ptr->to_h, 100, 160),
-		critical_prob(o_ptr->to_h, 160, 210),
-		critical_prob(o_ptr->to_h, 210, 250),
-		critical_prob(o_ptr->to_h, 250, 280),
-		critical_prob(o_ptr->to_h, 280, 0));
+	sprintf(tmp_str, "          %2d%% %2d%% %2d%% %2d%% %2d%% %2d%%",
+		critical_prob(o_ptr->to_h, 0),
+		critical_prob(o_ptr->to_h, 1),
+		critical_prob(o_ptr->to_h, 2),
+		critical_prob(o_ptr->to_h, 3),
+		critical_prob(o_ptr->to_h, 4),
+		critical_prob(o_ptr->to_h, 5));
   
 	put_str(tmp_str, 16, WEP_MAST_COL1);
 	
@@ -1396,23 +1369,18 @@ static void list_weapon(const object_type *o_ptr)
 
 	dambonus = o_ptr->to_d + p_ptr->to_d;
 
-	mindam = deadliness_calc(dambonus);
-
-	/* Effect of damage dice */
-	maxdam = mindam * (o_ptr->ds * o_ptr->dd);
-	mindam *= o_ptr->dd;
-
-	/* rescale */
-	intmaxdam = maxdam / 100;
-	intmindam = mindam / 100;
+	/* Calculate max and min damage */
+	intmindam = o_ptr->dd;
+	intmaxdam = (o_ptr->dd * o_ptr->ds * deadliness_calc(dambonus)) / 100;
+	
 
 	/* Damage for one blow (if it hits) */
 	sprintf(tmp_str, "One Strike: %d-%d damage", intmindam, intmaxdam);
 	put_str(tmp_str, 7, WEP_MAST_COL2);
 
-	/* rescale */
-	intmaxdam = (maxdam * p_ptr->num_blow) / 100;
-	intmindam = (mindam * p_ptr->num_blow) / 100;
+	/* Rescale */
+	intmindam *= p_ptr->num_blow;
+	intmaxdam *= p_ptr->num_blow;
 
 	/* Damage for the complete attack (if all blows hit) */
 	sprintf(tmp_str, "One Attack: %d-%d damage", intmindam, intmaxdam);

@@ -797,6 +797,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode)
 	char            p1 = '(', p2 = ')';
 	char            b1 = '[', b2 = ']';
 	char            c1 = '{', c2 = '}';
+	char			pct = '%';
 
 	char            tmp_val[160];
 	char            tmp_val2[90];
@@ -1453,7 +1454,8 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode)
 			t = object_desc_chr(t, p1);
 			t = object_desc_int(t, o_ptr->to_h);
 			t = object_desc_chr(t, ',');
-			t = object_desc_int(t, o_ptr->to_d);
+			t = object_desc_int(t, o_ptr->to_d * 3);
+			t = object_desc_chr(t, pct);
 			t = object_desc_chr(t, p2);
 		}
 
@@ -1471,7 +1473,8 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode)
 		{
 			t = object_desc_chr(t, ' ');
 			t = object_desc_chr(t, p1);
-			t = object_desc_int(t, o_ptr->to_d);
+			t = object_desc_int(t, o_ptr->to_d * 3);
+			t = object_desc_chr(t, pct);
 			t = object_desc_chr(t, p2);
 		}
 	}
@@ -1500,10 +1503,8 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode)
 		dd = o_ptr->dd;
 		ds = o_ptr->ds;
 
-		avgdam = deadliness_calc(db);
-
 		/* effect of damage dice x2 */
-		avgdam *= dd * (ds + 1);
+		avgdam = avg_dam(db, dd, ds);
 		
 		/* Bow properties */
 		energy_use = p_ptr->bow_energy;

@@ -59,7 +59,6 @@ extern const byte realm_choices1[];
 extern const byte realm_choices2[];
 extern cptr realm_names[];
 extern cptr spell_names[7][32];
-extern const byte deadliness_conversion[151];
 extern const byte chest_traps[64];
 extern cptr player_title[MAX_CLASS][PY_MAX_LEVEL/5];
 extern cptr color_names[16];
@@ -364,9 +363,10 @@ extern void disturb(bool stop_search);
 
 /* cmd1.c */
 extern int deadliness_calc(int attack_power);
+extern long avg_dam(int attack_power, int dice_num, int dice_sides);
 extern bool test_hit_fire(int chance, int ac, int vis);
 extern bool test_hit_norm(int chance, int ac, int vis);
-extern s16b tot_dam_aux(const object_type *o_ptr, int tdam, const monster_type *m_ptr);
+extern int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr);
 extern void search(void);
 extern bool auto_pickup_okay(object_type *o_ptr);
 extern void py_pickup_aux(int o_idx);

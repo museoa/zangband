@@ -2401,10 +2401,10 @@ static int breakage_chance(object_type *o_ptr)
 /*
  * Calculation of critical hits for objects fired or thrown by the player. -LM-
  */
-static sint critical_shot(int chance, int sleeping_bonus,
-	cptr o_name, cptr m_name, int visible)
+static int critical_shot(int chance, int sleeping_bonus, cptr o_name,
+	 cptr m_name, int visible)
 {
-	int i, k;
+	int power = (chance + sleeping_bonus);
 	int mult_a_crit;
 
 	if (!visible)
@@ -2412,74 +2412,63 @@ static sint critical_shot(int chance, int sleeping_bonus,
 		msg_format("The %s finds a mark.", o_name);
 	}
 
-	/* Extract missile power. */
-	i = (chance + sleeping_bonus);
-
 	/* Test for critical hit. */
-	if (randint1(i + 200) <= i)
+	if (randint1(power + 240) <= power)
 	{
-		/* Encourage the player to throw weapons at sleeping
+		/*
+		 * Encourage the player to throw weapons at sleeping
 		 * monsters. -LM-
 		 */
 		if (sleeping_bonus && visible)
 		{
 			msg_print("You rudely awaken the monster!");
 		}
-
-		/* Determine level of critical hit */
-		k = randint1(i) + randint1(100);
-
-		/* This portion of the function determines the level of critical hit,
-		 * then adjusts the damage dice multiplier and displays an appropriate
-		 * combat message.
-		 * A distinction is made between visible and invisible monsters.
-		 */
-		if (k < 125)
+		
+		/* Determine level of critical hit x 10. */
+		if		(rand_int(100) == 0) mult_a_crit = 50;
+		if      (rand_int(40) == 0)  mult_a_crit = 36;
+		else if (rand_int(12) == 0)  mult_a_crit = 27;
+		else if (rand_int(3)  == 0)  mult_a_crit = 20;
+		else                         mult_a_crit = 15;
+		
+		/* Only give a message if we see it hit. */
+		if (visible)
 		{
-			if (visible)
+			if (mult_a_crit == 15)
 			{
 				msg_format("The %s strikes %s.", o_name, m_name);
 			}
-
-			mult_a_crit = 15;
-		}
-		else if (k < 215)
-		{
-			if (visible)
+			else if (mult_a_crit == 20)
 			{
 				msg_format("The %s penetrates %s.", o_name, m_name);
 			}
-
-			mult_a_crit = 21;
-		}
-		else if (k < 275)
-		{
-			if (visible)
+			else if (mult_a_crit == 27)
 			{
 				msg_format("The %s drives into %s!", o_name, m_name);
 			}
-
-			mult_a_crit = 28;
-		}
-		else
-		{
-			if (visible)
+			else if (mult_a_crit == 36)
 			{
 				msg_format("The %s transpierces %s!", o_name, m_name);
 			}
-
-			mult_a_crit = 35;
-		}
+			else
+			{
+				msg_format("The %s *smites* %s!", o_name, m_name);
+			}
+		}	
 	}
-	/* If the shot is not a critical hit, then the default message is shown. */
+	
+	/*
+	 * If the blow is not a critical hit, display the default attack
+	 * message and apply the standard multiplier.
+	 */
 	else
 	{
+		mult_a_crit = 10;
+		
 		if (visible)
 		{
 			msg_format("The %s hits %s.", o_name, m_name);
 		}
-
-		mult_a_crit = 10;
 	}
 
 	return (mult_a_crit);
@@ -2531,7 +2520,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	int terrain_bonus = 0;
 
 	long tdam;
-	int tdam_remainder, tdam_whole;
+	int slay;
 
 #if 0
 	/* Assume no weapon of velocity or accuracy bonus. */
@@ -2830,23 +2819,27 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 				/* Hack -- Track this monster */
 				if (m_ptr->ml) health_track(c_ptr->m_idx);
 
-				/* The basic damage-determination formula is the same in
+				/*
+				 * The basic damage-determination formula is the same in
 				 * archery as it is in melee (apart from the launcher mul-
 				 * tiplier).  See formula "py_attack" in "cmd1.c" for more
 				 * details. -LM-
 				 */
 
 				/* Base damage dice. */
-				tdam = i_ptr->dd;
+				tdam = i_ptr->ds;
 
 				/* Multiply by the missile weapon multiplier. */
 				tdam *= tmul;
 
-
 				/* multiply by slays or brands. (10x inflation) */
-				tdam = tot_dam_aux(i_ptr, tdam, m_ptr);
+				slay = tot_dam_aux(i_ptr, m_ptr);
+				tdam *= slay;
 
-				/* multiply by critical shot. (10x inflation) + level damage bonus */
+				/*
+				 * Multiply by critical shot.
+				 * (10x inflation) + level damage bonus
+				 */
 				tdam *= critical_shot(chance2, sleeping_bonus,
 					o_name, m_name, m_ptr->ml);
 
@@ -2856,18 +2849,16 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 				 */
 				tdam *= deadliness_calc(total_deadliness);
 
-				/* Get the whole number of dice by deflating the result. */
-				tdam_whole = tdam / 10000;
-
-				/* Calculate the remainder (the fractional die, x10000). */
-				tdam_remainder = tdam % 10000;
 
 				/*
-				 * Calculate and combine the damages of the whole and
-				 * fractional dice.
+				 * Get the whole number of dice sides by deflating,
+				 * and then get total dice damage.
 				 */
-				tdam = damroll(tdam_whole, i_ptr->ds) +
-					(tdam_remainder * damroll(1, i_ptr->ds) / 10000);
+				tdam = damroll(i_ptr->dd, tdam / 10000 + 
+				        (rand_int(10000) < (tdam % 10000) ? 1 : 0));
+
+				/* Add in extra effect due to slays */
+				tdam += (slay - 10);
 
 #if 0
 				/* If a weapon of velocity activates, increase damage. */
@@ -2983,7 +2974,7 @@ void do_cmd_throw_aux(int mult)
 	int cur_dis;
 
 	long tdam;
-	int tdam_remainder, tdam_whole;
+	int slay;
 
 	int total_deadliness;
 	int sleeping_bonus = 0;
@@ -3254,17 +3245,17 @@ void do_cmd_throw_aux(int mult)
 				/* sum all the applicable additions to Deadliness. */
 				total_deadliness = p_ptr->to_d + q_ptr->to_d;
 
-
-				/* The basic damage-determination formula is the same in
+				/*
+				 * The basic damage-determination formula is the same in
 				 * throwing as it is in melee (apart from the thrown weapon
 				 * multiplier, and the ignoring of non-object bonuses to
 				 * Deadliness for objects that are not thrown weapons).  See
 				 * formula "py_attack" in "cmd1.c" for more details. -LM-
 				 */
+				tdam = q_ptr->ds;
 
-				tdam = q_ptr->dd;
-
-				/* Multiply the number of damage dice by the throwing weapon
+				/*
+				 * Multiply the number of damage dice by the throwing weapon
 				 * multiplier, if applicable.  This is not the prettiest
 				 * equation, but it does at least try to keep throwing
 				 * weapons competitive.
@@ -3275,17 +3266,22 @@ void do_cmd_throw_aux(int mult)
 				}
 
 				/* multiply by slays or brands. (10x inflation) */
-				tdam = tot_dam_aux(q_ptr, tdam, m_ptr);
+				slay = tot_dam_aux(q_ptr, m_ptr);
+				tdam *= slay;
 
 				/* Only allow critical hits if the object is a throwing
 				 * weapon.  Otherwise, grant the default multiplier.
 				 * (10x inflation)
 				 */
-				if (f2 & (TR2_THROW)) tdam *= critical_shot
-					(chance2, sleeping_bonus, o_name, m_name, m_ptr->ml);
+				if (f2 & (TR2_THROW))
+				{
+					tdam *= critical_shot(chance2, sleeping_bonus, o_name,
+												 m_name, m_ptr->ml);
+				}
 				else tdam *= 10;
 
-				/* Convert total or object-only Deadliness into a percen-
+				/*
+				 * Convert total or object-only Deadliness into a percen-
 				 * tage, and apply it as a bonus or penalty (100x inflation)
 				 */
 				if (f2 & (TR2_THROW))
@@ -3297,18 +3293,15 @@ void do_cmd_throw_aux(int mult)
 					tdam *= deadliness_calc(q_ptr->to_d);
 				}
 
-				/* Get the whole number of dice by deflating the result. */
-				tdam_whole = tdam / 10000;
-
-				/* Calculate the remainder (the fractional die, x10000). */
-				tdam_remainder = tdam % 10000;
-
-
-				/* Calculate and combine the damages of the whole and
-				 * fractional dice.
+				/*
+				 * Get the whole number of dice sides by deflating,
+				 * and then get total dice damage.
 				 */
-				tdam = damroll(tdam_whole, q_ptr->ds) +
-					(tdam_remainder * damroll(1, q_ptr->ds) / 10000);
+				tdam = damroll(q_ptr->dd, tdam / 10000 + 
+				        (rand_int(10000) < (tdam % 10000) ? 1 : 0));
+				
+				/* Add in extra effect due to slays */
+				tdam += (slay - 10);
 
 				/* No negative damage */
 				if (tdam < 0) tdam = 0;

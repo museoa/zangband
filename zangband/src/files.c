@@ -1505,17 +1505,14 @@ static void display_player_abilities(void)
 
 	put_str("Avg.Dam./Rnd:", 18, COL_SKILLS3);
 
-	/* Deadliness conversion table */
-	avgdam = deadliness_calc(dambonus);
-
 	/* Effect of damage dice x2 */
-	avgdam *= damdice * (damsides + 1);
+	avgdam = avg_dam(dambonus, damdice, damsides);
 
 	/* number of blows */
 	avgdam *= blows;
 
 	/* Rescale */
-	avgdam /= 200;
+	avgdam /= 2;
 
 	/* See if have a weapon with extra power */
 	if (o_ptr->k_idx)
