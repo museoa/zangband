@@ -1383,8 +1383,10 @@ static void display_player_abilities(void)
 			break;
 		}
 	}
-	/* Calculate shots per round */
-	shots = p_ptr->num_fire * 100;
+	/* Calculate shots per round  - note "strange" formula. */
+	
+	/* The real number of shots per round is (2 + n)/2 */
+	shots = (2 + p_ptr->num_fire) * 50;
 	shot_frac = (shots * 100 / energy_fire) % 100;
 	shots = shots / energy_fire;
 
