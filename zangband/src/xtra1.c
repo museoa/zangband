@@ -591,15 +591,25 @@ static void prt_hp(void)
 
 #ifndef VARIABLE_PLAYER_GRAPH
 
+
 	/* Hack - only change the colour if in character mode */
 	if (r_ptr->x_char != '@') return;
-
-	/* Normal colour is white */
-	if (color == TERM_L_GREEN) color = TERM_WHITE;
-
-	/* Pink is better than yellow */
-	if (color == TERM_YELLOW) color = TERM_ORANGE;
-
+	
+	/* Only change colour if asked */
+	if (!view_player_colour)
+	{
+		/* Normal colour is white */
+		color = TERM_WHITE;
+	}
+	else
+	{
+		/* Normal colour is white */
+		if (color == TERM_L_GREEN) color = TERM_WHITE;
+	
+		/* Orange is better than yellow */
+		if (color == TERM_YELLOW) color = TERM_ORANGE;
+	}
+	
 	/* Redraw the player ? */
 	if (old_attr != color)
 	{

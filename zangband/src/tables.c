@@ -6200,7 +6200,7 @@ option_type option_info[OPT_MAX] =
 	{FALSE, 5, "view_granite_lite",		"Use special colors for wall grids (slow)" },
 	{FALSE, 5, "view_special_lite",		"Use special colors for floor grids (slow)" },
 
-	{TRUE,  0, NULL,					"Number 64" },
+	{TRUE,  5, "view_player_colour",	"Use special colours for the player" },
 	{TRUE,  0, NULL,					"Number 65" },
 	{TRUE,  0, NULL,					"Number 66" },
 	{TRUE,  0, NULL,					"Number 67" },

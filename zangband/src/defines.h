@@ -3629,7 +3629,7 @@
 
 /* Option Set 2 */
 
-/* {TRUE,  0, NULL,					"Number 64" }, p_ptr->options[49] */
+#define	view_player_colour		p_ptr->options[49]
 /* {TRUE,  0, NULL,					"Number 65" }, p_ptr->options[50] */
 /* {TRUE,  0, NULL,					"Number 66" }, p_ptr->options[51] */
 /* {TRUE,  0, NULL,					"Number 67" }, p_ptr->options[52] */
