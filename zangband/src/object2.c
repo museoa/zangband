@@ -5214,6 +5214,9 @@ object_type *item_split(object_type *o_ptr, int num)
 
 	/* Duplicate the object */
 	q_ptr = object_dup(o_ptr);
+	
+	/* Distribute charges of wands or rods */
+	distribute_charges(o_ptr, q_ptr, num);
 
 	/* Update item totals */
 	o_ptr->number -= num;
@@ -5234,9 +5237,6 @@ object_type *item_split(object_type *o_ptr, int num)
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
 	}
-
-	/* Distribute charges of wands or rods */
-	distribute_charges(o_ptr, q_ptr, num);
 
 	/* Fill in holes... */
 	item_optimize(o_ptr);
