@@ -4447,7 +4447,6 @@ bool borg_target_unknown_wall(int y, int x)
 	bool found = FALSE;
 	bool y_hall = FALSE;
     bool x_hall = FALSE;
-    int i;
 
 	borg_note(format("# Perhaps wall near targetted location (%d,%d)", y, x));
 
@@ -4482,34 +4481,29 @@ bool borg_target_unknown_wall(int y, int x)
 		!borg_cave_floor_bold(c_y - 1, c_x))
 		y_hall = TRUE;
 
-	/* XXX XXX hack */
-	for (i = 0; i < 1000; i++)
+	while (n_x != x && n_y != y)
 	{
 		map_block *mb_ptr;
 
 		/* Bounds checking */
-		if (!map_in_bounds(n_x, n_y)) continue;
-
-		mb_ptr = map_loc(n_x, n_y);
-
-		if (!mb_ptr->feat &&
-			((n_y != c_y) || !y_hall) && ((n_x != c_x) || !x_hall))
+		if (map_in_bounds(n_x, n_y))
 		{
-			borg_note(format
-					  ("# Guessing wall (%d,%d) near target (%d,%d)", n_y, n_x,
-					   y, x));
-			mb_ptr->feat = FEAT_WALL_SOLID;
-			found = TRUE;
+			mb_ptr = map_loc(n_x, n_y);
+	
+			if (!mb_ptr->feat &&
+				((n_y != c_y) || !y_hall) && ((n_x != c_x) || !x_hall))
+			{
+				borg_note(format
+						  ("# Guessing wall (%d,%d) near target (%d,%d)",
+						   n_y, n_x, y, x));
+				mb_ptr->feat = FEAT_WALL_SOLID;
+				found = TRUE;
+			}
 		}
-
-		if (n_x == x && n_y == y) break;
 
 		/* Calculate the new location */
 		borgmove2(&n_y, &n_x, c_y, c_x, y, x);
     }
-
-    if (i >= 1000)
-        borg_oops("infinite loop while targeting");
 
 	return found;
 }
