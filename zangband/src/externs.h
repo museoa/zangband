@@ -1013,7 +1013,7 @@ extern bool clean_shot(int x1, int y1, int x2, int y2, bool friendly);
 extern bool monst_spell_monst(int m_idx);
 
 /* artifact.c */
-extern bool create_artifact(object_type *o_ptr, bool a_scroll);
+extern bool create_artifact(object_type *o_ptr, int level, bool a_scroll);
 extern void random_resistance(object_type *o_ptr, int specific);
 extern bool activate_effect(object_type *o_ptr);
 extern void random_artifact_resistance(object_type *o_ptr);

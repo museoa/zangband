@@ -1955,7 +1955,8 @@ bool artifact_scroll(void)
 			p_ptr->update |= PU_WEIGHT;
 		}
 
-		okay = create_artifact(o_ptr, TRUE);
+		/* The power of the generated artifact depends on player level */
+		okay = create_artifact(o_ptr, p_ptr->lev * 2, TRUE);
 	}
 
 	/* Failure */

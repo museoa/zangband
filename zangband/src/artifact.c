@@ -650,56 +650,116 @@ static void get_random_name(char *return_name, byte tval, int power)
 
 static void random_minor_theme_weapon(object_type *o_ptr)
 {
-	switch (randint1(16))
+	switch (randint1(39))
 	{
 		case 1:
+		case 2:
+		case 3:
 			o_ptr->flags1 |= TR1_WIS;
 			o_ptr->flags3 |= TR3_BLESSED;
 
 			break;
 
-		case 2:
+		case 4:
+		case 5:
 			o_ptr->flags1 |= TR1_BRAND_ACID;
 			o_ptr->flags2 |= TR2_RES_ACID;
 			if (o_ptr->tval == TV_SWORD && one_in_(3))
 				o_ptr->flags1 |= TR1_TUNNEL;
+
+			if (!o_ptr->activate)
+			{
+				if (one_in_(2))
+					o_ptr->activate = ACT_BO_ACID_1;
+			}
 			
 			break;
 
-		case 3:
+		case 6:
+		case 7:
 			o_ptr->flags1 |= TR1_BRAND_ELEC;
 			o_ptr->flags2 |= TR2_RES_ELEC;
 
+			if (!o_ptr->activate)
+			{
+				if (one_in_(4))
+					o_ptr->activate = ACT_BO_ELEC_1;
+				else if (one_in_(5))
+					o_ptr->activate = ACT_BA_ELEC_2;
+				else if (one_in_(5))
+					o_ptr->activate = ACT_BA_ELEC_3;
+			}
+
 			break;
 
-		case 4:
+		case 8:
+		case 9:
+		case 10:
 			o_ptr->flags1 |= TR1_BRAND_FIRE;
 			o_ptr->flags2 |= TR2_RES_FIRE;
 			o_ptr->flags3 |= TR3_LITE;
 
+			if (!o_ptr->activate)
+			{
+				if (one_in_(5))
+					o_ptr->activate = ACT_BO_FIRE_1;
+				else if (one_in_(5))
+					o_ptr->activate = ACT_BA_FIRE_1;
+				else if (one_in_(5))
+					o_ptr->activate = ACT_BA_FIRE_2;
+			}
+
 			break;
 
-		case 5:
+		case 11:
+		case 12:
+		case 13:
 			o_ptr->flags1 |= TR1_BRAND_COLD;
 			o_ptr->flags2 |= TR2_RES_COLD;
 
+			if (!o_ptr->activate)
+			{
+				if (one_in_(6))
+					o_ptr->activate = ACT_BO_COLD_1;
+				else if (one_in_(6))
+					o_ptr->activate = ACT_BA_COLD_1;
+				else if (one_in_(6))
+					o_ptr->activate = ACT_BA_COLD_2;
+				else if (one_in_(7))
+					o_ptr->flags3 |= TR3_ACTIVATE;
+			}
+
 			break;
 
-		case 6:
+		case 14:
+		case 15:	
 			o_ptr->flags1 |= TR1_BRAND_POIS;
 			o_ptr->flags2 |= TR2_RES_POIS;
 
+			if (!o_ptr->activate)
+			{
+				if (one_in_(3))
+					o_ptr->activate = ACT_BA_POIS_1;
+			}
+
 			break;
 
-		case 7:
+		case 16:
+		case 17:
 			o_ptr->flags1 |= TR1_CHAOTIC;
 			o_ptr->flags2 |= TR2_RES_CHAOS;
 			if (one_in_(3))
 				o_ptr->flags4 |= TR4_PATRON;
+
+			if (!o_ptr->activate)
+			{
+				if (one_in_(11))
+					o_ptr->activate = ACT_CALL_CHAOS;
+			}
 			
 			break;
 
-		case 8:
+		case 18:
 			if (o_ptr->tval == TV_SWORD)
 			{
 				o_ptr->flags1 |= TR1_VORPAL;
@@ -712,7 +772,8 @@ static void random_minor_theme_weapon(object_type *o_ptr)
 
 			break;
 
-		case 9:
+		case 19:
+		case 20:
 			o_ptr->flags1 |= TR1_SLAY_ANIMAL;
 			if (one_in_(2))
 				o_ptr->flags1 |= TR1_INT;
@@ -721,7 +782,9 @@ static void random_minor_theme_weapon(object_type *o_ptr)
 
 			break;
 
-		case 10:
+		case 21:
+		case 22:
+		case 23:
 			o_ptr->flags1 |= TR1_SLAY_EVIL;
 			o_ptr->flags3 |= TR3_BLESSED;
 			if (one_in_(2))
@@ -731,7 +794,8 @@ static void random_minor_theme_weapon(object_type *o_ptr)
 
 			break;
 
-		case 11:
+		case 24:
+		case 25:
 			o_ptr->flags1 |= TR1_SLAY_UNDEAD;
 			if (one_in_(2))
 				o_ptr->flags1 |= TR1_INT;
@@ -742,25 +806,29 @@ static void random_minor_theme_weapon(object_type *o_ptr)
 
 			break;
 
-		case 12:
+		case 26:
+		case 27:
 			o_ptr->flags1 |= TR1_SLAY_DEMON;
 			o_ptr->flags1 |= TR1_INT;
 			
 			break;
 
-		case 13:
+		case 28:
+		case 29:
 			o_ptr->flags1 |= TR1_SLAY_ORC;
 			o_ptr->flags1 |= TR1_DEX;
 
 			break;
 
-		case 14:
+		case 30:
+		case 31:
 			o_ptr->flags1 |= TR1_SLAY_GIANT;
 			o_ptr->flags1 |= TR1_STR;
 
 			break;
 
-		case 15:
+		case 32:
+		case 33:
 			o_ptr->flags1 |= TR1_SLAY_DRAGON;
 			if (one_in_(3))
 				o_ptr->flags1 |= TR1_KILL_DRAGON;
@@ -768,12 +836,82 @@ static void random_minor_theme_weapon(object_type *o_ptr)
 
 			break;
 
-		case 16:
+		case 34:
+		case 35:
 			o_ptr->flags1 |= TR1_VAMPIRIC;
 			o_ptr->flags2 |= TR2_HOLD_LIFE;
 
+			if (!o_ptr->activate)
+			{
+				if (one_in_(6))
+					o_ptr->activate = ACT_VAMPIRE_1;
+				else if (one_in_(9))
+					o_ptr->activate = ACT_VAMPIRE_2;
+			}
+
+			break;
+
+		case 36:
+			o_ptr->flags2 |= TR2_HOLD_LIFE;
+
+			if (!o_ptr->activate)
+			{
+				if (!one_in_(3))
+					o_ptr->activate = ACT_DRAIN_1;
+				else
+					o_ptr->activate = ACT_DRAIN_2;
+			}
+
+			break;
+
+		case 37:
+			o_ptr->to_h += rand_range(5, 15);
+			o_ptr->to_d += rand_range(5, 15);
+
+			if (!o_ptr->activate)
+			{
+				o_ptr->activate = ACT_WHIRLWIND;
+			}
+
+			break;
+
+		case 38:
+			o_ptr->flags1 |= TR1_SLAY_ANIMAL;
+
+			if (!o_ptr->activate)
+			{
+				if (!one_in_(3))
+					o_ptr->activate = ACT_CHARM_ANIMAL;
+				else
+					o_ptr->activate = ACT_CHARM_ANIMALS;
+			}
+
+			break;
+
+		case 39:
+			o_ptr->flags1 |= TR1_SLAY_UNDEAD;
+
+			if (!o_ptr->activate)
+			{
+				o_ptr->activate = ACT_CHARM_UNDEAD;
+			}
+
+			break;
+
+		case 40:
+			if (o_ptr->tval == TV_SWORD)
+				o_ptr->flags1 |= TR1_TUNNEL;
+
+			if (!o_ptr->activate)
+			{
+				o_ptr->activate = ACT_STONE_MUD;
+			}
+
 			break;
 	}
+
+	if (o_ptr->activate)
+		o_ptr->flags3 |= TR3_ACTIVATE;
 }
 
 static void random_major_theme_weapon(object_type *o_ptr)
@@ -787,6 +925,14 @@ static void random_major_theme_weapon(object_type *o_ptr)
 		o_ptr->flags1 |= TR1_SLAY_DEMON;
 		o_ptr->flags3 |= TR3_SEE_INVIS;
 		o_ptr->flags3 |= TR3_BLESSED;
+
+		if (!o_ptr->activate)
+		{
+			if (one_in_(4))
+				o_ptr->activate = ACT_DISP_EVIL;
+			else if (one_in_(7))
+				o_ptr->activate = ACT_CURE_700;
+		}
 		
 		break;
 
@@ -804,6 +950,14 @@ static void random_major_theme_weapon(object_type *o_ptr)
 			o_ptr->flags3 |= TR3_FEATHER;
 		if (one_in_(2))
 			o_ptr->flags3 |= TR3_REGEN;
+		if (one_in_(2))
+			o_ptr->to_a += randint1(5);
+
+		if (!o_ptr->activate)
+		{
+			if (one_in_(8))
+				o_ptr->activate = ACT_RESIST_ALL;
+		}
 
 		break;
 
@@ -829,6 +983,14 @@ static void random_major_theme_weapon(object_type *o_ptr)
 			o_ptr->flags3 |= TR3_REGEN;
 		if (one_in_(2))
 			o_ptr->flags3 |= TR3_SLOW_DIGEST;
+
+		if (!o_ptr->activate)
+		{
+			if (one_in_(3))
+				o_ptr->activate = ACT_TELEPORT_2;
+			else if (one_in_(3))
+				o_ptr->activate = ACT_TELEPORT_1;
+		}
 
 		break;
 
@@ -882,19 +1044,25 @@ static void random_major_theme_weapon(object_type *o_ptr)
 		if (o_ptr->tval == TV_SWORD)
 			o_ptr->flags2 |= TR2_THROW;
 	}
+
+	if (o_ptr->activate)
+		o_ptr->flags3 |= TR3_ACTIVATE;
 }
 
 static void random_minor_theme_armor(object_type *o_ptr)
 {
-	switch (randint(13))
+	switch (randint1(25))
 	{
 		case 1:
+		case 2:
+		case 3:
 			o_ptr->flags3 |= TR3_SEE_INVIS;
 			o_ptr->flags1 |= TR1_SEARCH;
 
 			break;
 
-		case 2:
+		case 4:
+		case 5:
 			o_ptr->flags1 |= TR1_STR;
 			o_ptr->flags2 |= TR2_SUST_STR;
 			if (one_in_(3))
@@ -902,7 +1070,8 @@ static void random_minor_theme_armor(object_type *o_ptr)
 			
 			break;
 
-		case 3:
+		case 6:
+		case 7:
 			o_ptr->flags1 |= TR1_INT;
 			o_ptr->flags2 |= TR2_SUST_INT;
 			if (one_in_(3))
@@ -910,7 +1079,8 @@ static void random_minor_theme_armor(object_type *o_ptr)
 			
 			break;
 
-		case 4:
+		case 8:
+		case 9:
 			o_ptr->flags1 |= TR1_WIS;
 			o_ptr->flags2 |= TR2_SUST_WIS;
 			if (one_in_(3))
@@ -918,7 +1088,8 @@ static void random_minor_theme_armor(object_type *o_ptr)
 
 			break;
 
-		case 5:
+		case 10:
+		case 11:
 			o_ptr->flags1 |= TR1_DEX;
 			o_ptr->flags2 |= TR2_SUST_DEX;
 			if (one_in_(3))
@@ -926,7 +1097,8 @@ static void random_minor_theme_armor(object_type *o_ptr)
 
 			break;
 
-		case 6:
+		case 12:
+		case 13:
 			o_ptr->flags1 |= TR1_CON;
 			o_ptr->flags2 |= TR2_SUST_CON;
 			if (one_in_(3))
@@ -934,7 +1106,8 @@ static void random_minor_theme_armor(object_type *o_ptr)
 
 			break;
 
-		case 7:
+		case 14:
+		case 15:
 			o_ptr->flags1 |= TR1_CHR;
 			o_ptr->flags2 |= TR2_SUST_CHR;
 			if (one_in_(3))
@@ -942,51 +1115,96 @@ static void random_minor_theme_armor(object_type *o_ptr)
 
 			break;
 
-		case 8:
+		case 16:
 			o_ptr->flags3 |= TR3_LITE;
 			o_ptr->flags2 |= TR2_RES_LITE;
 
+			if (!o_ptr->activate)
+			{
+				if (one_in_(3))
+					o_ptr->activate = ACT_LIGHT;
+			}
+
 			break;
 
-		case 9:
+		case 17:
+		case 18:
 			o_ptr->flags2 |= TR2_RES_FIRE;
 			o_ptr->flags3 |= TR3_SH_FIRE;
 
 			break;
 
-		case 10:
+		case 19:
 			o_ptr->flags2 |= TR2_RES_ELEC;
 			o_ptr->flags3 |= TR3_SH_ELEC;
 
 			break;
 
-		case 11:
+		case 20:
 			o_ptr->flags2 |= TR2_RES_COLD;
 			o_ptr->flags4 |= TR4_SH_COLD;
 
 			break;
 
-		case 12:
+		case 21:
 			o_ptr->flags1 |= TR1_INT;
 			o_ptr->flags1 |= TR1_WIS;
 
 			break;
 
-		case 13:
+		case 22:
 			o_ptr->flags2 |= TR2_RES_LITE;
 			o_ptr->flags2 |= TR2_RES_DARK;
 			if (one_in_(2))
 				o_ptr->flags3 |= TR3_LITE;
 
 			break;
+
+		case 23:
+			o_ptr->flags1 |= TR1_SLAY_EVIL;
+
+			if (!o_ptr->activate)
+			{
+				if (one_in_(3))
+					o_ptr->activate = ACT_DISP_EVIL;
+				else if (one_in_(2))
+					o_ptr->activate = ACT_BANISH_EVIL;
+				else
+					o_ptr->activate = ACT_PROT_EVIL;
+			}
+
+			break;
+
+		case 24:
+			o_ptr->flags1 |= TR1_STEALTH;
+
+			if (!o_ptr->activate)
+			{
+				o_ptr->activate = ACT_SLEEP;
+			}
+
+			break;
+
+		case 25:
+			o_ptr->flags1 |= TR1_WIS;
+
+			if (!o_ptr->activate)
+			{
+				o_ptr->activate = ACT_ESP;
+			}
+
+			break;
 	}
+
+	if (o_ptr->activate)
+		o_ptr->flags3 |= TR3_ACTIVATE;
 }
 
 static void random_major_theme_armor(object_type *o_ptr)
 {
 	int i;
 
-	switch (randint(10))
+	switch (randint1(10))
 	{
 		case 1:
 			o_ptr->flags2 |= TR2_RES_ACID;
@@ -1069,9 +1287,14 @@ static void random_major_theme_armor(object_type *o_ptr)
 			o_ptr->flags1 |= TR1_INT;
 			o_ptr->flags1 |= TR1_WIS;
 			o_ptr->flags2 |= TR2_RES_BLIND;
+			if (o_ptr->tval == TV_HELM || o_ptr->tval == TV_CROWN)
+				o_ptr->flags3 |= TR3_TELEPATHY;
 
 			break;
 	}
+
+	if (o_ptr->activate)
+		o_ptr->flags3 |= TR3_ACTIVATE;
 }
 
 static void curse_artifact(object_type *o_ptr)
@@ -1093,13 +1316,14 @@ static void curse_artifact(object_type *o_ptr)
 }
 
 
-bool create_artifact(object_type *o_ptr, bool a_scroll)
+bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 {
 	char new_name[1024];
 	int powers = rand_range(2, 6);
 	int power_level;
-	s32b total_flags;
+	s32b total_flags, target_flags;
 	bool a_cursed = FALSE;
+	int i;
 
 	/* No activation yet */
 	o_ptr->activate = 0;
@@ -1119,16 +1343,23 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 
 	if (a_cursed) powers /= 2;
 
+	target_flags = 0;
+	for (i = 0; i < powers; i++)
+		target_flags += rand_range(10, 50) * (level + 5);
+
 	/* Sometimes select a major theme - or two */
 	while (randint1(powers) > 3)
 	{
 		if (o_ptr->tval < TV_BOOTS)
 		{
 			random_major_theme_weapon(o_ptr);
+			o_ptr->to_h += rand_range(5, 15);
+			o_ptr->to_d += rand_range(5, 15);
 		}
 		else
 		{
 			random_major_theme_armor(o_ptr);
+			o_ptr->to_a += rand_range(5, 15);
 		}
 		powers -= 3;
 	}
@@ -1168,8 +1399,10 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 		}
 	}
 
+	total_flags = flag_cost(o_ptr, 1);
+
 	/* Main loop */
-	while (powers--)
+	while (total_flags < target_flags)
 	{
 		switch (randint1(o_ptr->tval < TV_BOOTS ? 11 : 7))
 		{
@@ -1192,7 +1425,9 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 				random_minor_theme_weapon(o_ptr);
 				break;
 		}
-	};
+		
+		total_flags = flag_cost(o_ptr, 1);
+	}
 
 	if (o_ptr->flags1 & (TR1_PVAL_MASK))
 	{
@@ -1209,16 +1444,22 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 		}
 		else
 		{
-			do
-			{
-				o_ptr->pval++;
-			}
-			while (o_ptr->pval < randint1(5) || one_in_(o_ptr->pval));
-		}
+			i = randint1(100);
 
-		if ((o_ptr->pval > 4) && !one_in_(WEIRD_LUCK))
-			o_ptr->pval = 4;
+			if (i <= 35)
+				o_ptr->pval = 1;
+			else if (i <= 65)
+				o_ptr->pval = 2;
+			else if (i <= 85)
+				o_ptr->pval = 3;
+			else if (i <= 99)
+				o_ptr->pval = 4;
+			else
+				o_ptr->pval = 5;
+		}
 	}
+	else
+		o_ptr->pval = 0;
 
 	/* give it some plusses... */
 	if (o_ptr->tval >= TV_BOOTS)
@@ -1236,18 +1477,31 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 	/* Possibly add some curses ... */
 	total_flags = flag_cost(o_ptr, o_ptr->pval);
 	if (one_in_(13))
+	{
 		random_curse(o_ptr);
-	if (total_flags >= 10000 && one_in_(4))
-		random_curse(o_ptr);
-	if (total_flags >= 25000 && one_in_(2))
-		random_curse(o_ptr);
+		total_flags = flag_cost(o_ptr, o_ptr->pval);
+	}
 
-	total_flags = flag_cost(o_ptr, o_ptr->pval);
+	/* Penalize too-good artifacts */
+	if (!a_scroll)
+	{
+		if (total_flags >= target_flags * 2 && one_in_(2))
+		{
+			random_curse(o_ptr);
+			total_flags = flag_cost(o_ptr, o_ptr->pval);
+		}
+		if (total_flags >= target_flags * 3 && !one_in_(WEIRD_LUCK))
+		{
+			random_curse(o_ptr);
+			total_flags = flag_cost(o_ptr, o_ptr->pval);
+		}
+	}
+
 	if (cheat_peek) msgf("%ld", total_flags);
 
 	if (a_cursed) curse_artifact(o_ptr);
 
-	if (!a_cursed && one_in_((o_ptr->tval >= TV_BOOTS)
+	if (!a_cursed && !o_ptr->activate && one_in_((o_ptr->tval >= TV_BOOTS)
 							 ? ACTIVATION_CHANCE * 2 : ACTIVATION_CHANCE))
 	{
 		o_ptr->activate = 0;

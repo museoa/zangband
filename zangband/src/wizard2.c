@@ -600,7 +600,7 @@ static void wiz_display_item(const object_type *o_ptr)
 			   o_ptr->pval, o_ptr->to_a, o_ptr->to_h, o_ptr->to_d);
 
 	prtf(j, 7, "activate = %-4d  cost = %ld",
-			   o_ptr->activate, (long)object_value(o_ptr));
+			   o_ptr->activate, (long)object_value_real(o_ptr));
 
 	prtf(j, 8, "info = %04x  timeout = %-d",
 			   o_ptr->info, o_ptr->timeout);
@@ -980,7 +980,7 @@ static object_type *wiz_reroll_item(object_type *o_ptr)
 				o_ptr = object_prep(o_ptr->k_idx);
 
 				/* Make a random artifact */
-				(void)create_artifact(o_ptr, FALSE);
+				(void)create_artifact(o_ptr, p_ptr->depth, FALSE);
 				break;
 			}
 		}
