@@ -434,9 +434,6 @@ bool monster_death(int m_idx, bool explode)
 	}
 
 
-#ifdef USE_CORPSES
-	/* Drop a dead corpse? */
-
 	/* Hack: Do not drop a corpse in a random quest.  */
 	if ((one_in_(r_ptr->flags1 & RF1_UNIQUE ? 1 : 2) &&
 		 ((r_ptr->flags9 & RF9_DROP_CORPSE) ||
@@ -495,7 +492,6 @@ bool monster_death(int m_idx, bool explode)
 			dropped_corpse = TRUE;
 		}
 	}
-#endif /* USE_CORPSES */
 
 	/* Drop objects being carried */
 	drop_object_list(&m_ptr->hold_o_idx, m_ptr->fx, m_ptr->fy);

@@ -515,11 +515,6 @@
 /* #define MONK_HACK */
 
 /*
- * Monsters can drop corpses when killed
- */
-#define USE_CORPSES
-
-/*
  * Add caverns and lakes to the dungeon
  */
 #define ALLOW_CAVERNS_AND_LAKES
