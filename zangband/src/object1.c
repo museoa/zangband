@@ -1889,7 +1889,7 @@ bool item_tester_hook_tval(const object_type *o_ptr)
 bool item_tester_hook_is_blessed(const object_type *o_ptr)
 {
 	u32b f1, f2, f3;
-	object_flags(o_ptr, &f1, &f2, &f3);
+	object_flags_known(o_ptr, &f1, &f2, &f3);
 	
 	/* Is it blessed? */
 	if (f3 & TR3_BLESSED) return (TRUE);
@@ -1903,6 +1903,9 @@ bool item_tester_hook_is_blessed(const object_type *o_ptr)
 
 bool item_tester_hook_is_good(const object_type *o_ptr)
 {
+	/* Check to see if we have identified the item */
+	if (!object_known_p(o_ptr)) return (FALSE);
+	
 	if (cursed_p(o_ptr)) return (FALSE);
 	
 	/* Ego item or artifact */
@@ -1921,6 +1924,9 @@ bool item_tester_hook_is_good(const object_type *o_ptr)
 
 bool item_tester_hook_is_great(const object_type *o_ptr)
 {
+	/* Check to see if we have identified the item */
+	if (!object_known_p(o_ptr)) return (FALSE);
+	
 	if (cursed_p(o_ptr)) return (FALSE);
 	
 	/* Ego item or artifact */

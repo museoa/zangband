@@ -919,10 +919,11 @@ static int store_carry(object_type *o_ptr)
 
 	/* Cursed/Worthless items "disappear" when sold */
 	if (value <= 0) return (-1);
-
-	/* We will buy some items we will not stock */
-	if (!store_will_stock(o_ptr)) return (-1);
-
+	
+	/* Identify it fully */
+	object_aware(o_ptr);
+	object_known(o_ptr);
+	
 	/* All store items are fully *identified* */
 	o_ptr->ident |= IDENT_MENTAL;
 	
@@ -930,6 +931,9 @@ static int store_carry(object_type *o_ptr)
 	o_ptr->kn_flags1 = o_ptr->flags1;
 	o_ptr->kn_flags2 = o_ptr->flags2;
 	o_ptr->kn_flags3 = o_ptr->flags3;
+
+	/* We will buy some items we will not stock */
+	if (!store_will_stock(o_ptr)) return (-1);
 
 	/* Erase the inscription */
 	o_ptr->inscription = 0;
