@@ -15,9 +15,6 @@
 /* Extended Widget record */
 typedef struct ExWidget {
 	Widget widget;
-	int spriteCnt;
-	int vaultNum;
-	void *vaultPtr;
 	IconSpec *effect; /* Per-tile effect icons */
 
 	/* WIDGET_STYLE_ICON */
@@ -27,5 +24,4 @@ typedef struct ExWidget {
 	int (*symbolProc)(Widget *widgetPtr, int y, int x); /* For micro-map */
 } ExWidget;
 
-extern void Widget_SetVault(Widget *widgetPtr);
 
