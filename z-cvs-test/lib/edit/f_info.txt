@@ -15,6 +15,22 @@
 
 # Note that terrain feature zero contains the "darkness" picture.
 
+# === Understanding f_info.txt ===
+
+# N:serial number:terrain name
+# G:symbol:color
+
+# N' indicates the beginning of an entry. The serial number must
+# increase for each new item.
+
+# 'G' is for graphics - symbol and color. There are 16 colors, as
+# follows:
+
+# D - Black        w - White          s - Gray          o - Orange
+# r - Red          g - Green          b - Blue          u - Brown
+# d - Dark Gray    W - Light Gray     v - Violet        y - Yellow
+# R - Light Red    G - Light Green    B - Light Blue    U - Light Brown
+
 
 # Version stamp (required)
 
@@ -51,7 +67,7 @@ G:':U
 # 0x05 --> broken door
 
 N:5:broken door
-G:':U
+G:':u
 
 # 0x06 --> up stairs (perm)
 
@@ -100,8 +116,8 @@ G:^:s
 
 # 0x14 --> visible trap -- rune -- summon
 
-N:20:strange rune
-G:^:o
+N:20:evil rune
+G:^:G
 
 # 0x15 --> visible trap -- rune -- teleport
 
@@ -440,6 +456,13 @@ G:.:u
 
 N:89:patch of grass
 G:.:g
+
+N:90:compact rune
+G:^:D
+
+N:91:invisible wall
+G:.:w
+M:1
 
 N:96:tree
 G:#:G
