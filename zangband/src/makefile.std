@@ -1,37 +1,32 @@
 # File: Makefile
 
-# This is not a very "nice" Makefile, but it usually works.
-
 #
 # Note that you may have to make modifications below according
 # to your machine, available libraries, compilation options,
-# and your "visual module" of choice.  This Makefile is intended
-# for use with Unix machines running X11, Curses, Ncurses, or Vt100,
-# or possibly for "Atari" or "Amiga" computers with "Curses" ports,
-# see below for more information.
+# and your "visual module" of choice.  This Makefile was originally
+# intended for use with Unix machines running X11, Curses, Ncurses,
+# or Vt100, or possibly for "Atari" or "Amiga" computers with
+# "Curses" ports, see below for more information.  It was extended
+# work on most ports by Steven Fuerst.  This makefile probably
+# requires a recent version of gnu make in order to work.
 #
 #
 # USAGE:  Simply type in "make portname" where portname is the name
 #         of your port.  ie. "make open_bsd".  The default port can
-#         be changed by editing the default_port target.
+#         be changed by editing the DEFAULT variable.
 #
 #
 # Note that "main-mac.c", the visual module for the Macintosh,
 # must be compiled in a special way, see elsewhere.
 #
 # Note that "main-win.c", the visual module for Windows,
-# must be compiled in a special way, see elsewhere.
-#
-# Note that "main-ibm.c", "main-emx.c", and "main-286.c",
-# the visual modules for various types of IBM-PC computers,
-# must be compiled with special Makefiles, see elsewhere.
+# might have to be compiled with another makefile (depending
+# upon which compiler you use.)
 #
 # Note that "main-lsl.c", the visual module for linux svga,
 # is depreciated.  Do not use this unless you feel like making
-# a heap of new tiles.
-#
-# Note that "main-acn.c", the visual module for Risc Acorn,
-# must be compiled with "Makefile.acn", see elsewhere.
+# a heap of new tiles.  It also is a security problem, since
+# svgalib only works if you run as root.
 #
 # If you are able to construct "main-xxx.c" and/or "Makefile.xxx"
 # files for a currently unsupported system, please send them to me
@@ -45,7 +40,9 @@
 CC := gcc
 
 ##
-## This is the default port to compile
+## This is the default port to compile.
+##
+## Change this to your favourite port if you compile the game often.
 ##
 DEFAULT := linux
 
@@ -69,7 +66,7 @@ LUAWOBJS := \
 	l-misc.o l-spell.o
 
 ##
-## The angband source files
+## The Zangband source files
 ##
 
 ANGOBJS := $(LUAWOBJS) \
@@ -137,26 +134,27 @@ PORTS := default_port linux linux_svga openbsd freebsd main-cap vt100 \
 ## attempt to "guess" at many of these flags based on your system.
 ##
 
-## Generic compile flags
+## Generic compile flags used by most ports.
 CFLAGS := -Wall -O2 -g -pipe
 
 ## Variation
 # CFLAGS := -O1 -g
 
 ##
-## Hack -- "install" as the fake target
-## Select the default port to use
+## Select the default port to use.
 ##
 default_port: $(DEFAULT)
 
 
 ##
-## Hack - dependancy to get them to compile properly
+## Hack -- "install_game" dependancy as the target
+## to get them to compile properly.
 ##
 $(PORTS): install_game
 
 ##
-## Hack - default install action
+## Hack - default install action.
+## (This can be overridden below.)
 ##
 INSTALL = cp zangband$(EXEC) ..
 
@@ -278,6 +276,7 @@ aix: LIBS := -lX11 -ltermcap -lcurses -lbsd -lXm -lXmu -lXaw -lXt
 ##
 ## Variation -- Dos using "main-dos.c" and the allegro library, with djgpp
 ##
+
 dos: CFLAGS := -Wall -O2 -g -DUSE_DOS -DUSE_IBM -D"USE_BACKGROUND"
 dos: LIBS := -lpc -lalleg
 dos: INSTALL := copy zangband ..\zangband.exe
@@ -285,13 +284,16 @@ dos: INSTALL := copy zangband ..\zangband.exe
 ##
 ## Variation -- Compile using the main-ibm.c port with djgpp
 ##
+
 ibm: CFLAGS := -Wall -O2 -g -DUSE_IBM
 ibm: LIBS := -lpc
 ibm: INSTALL := copy zangband ..\zangband.exe
 
 ##
 ## Variation -- Compile using the lcc32 compiler
+## (This is untested and probably broken)
 ##
+
 lcc: LCC_PATH := C:\lcc
 lcc: CC	:= $(LCC_PATH)\bin\lcc.exe
 lcc: LIBS := $(LCC_PATH)\lib\winmm.lib -I$(LCC_PATH)\include
@@ -311,6 +313,9 @@ lcc: angband.res readdib.o
 ##
 ## Remove the #s to generate a debug version
 ##
+## (This is awaiting a newer working version from takkaria)
+##
+
 risc: CC := cc
 risc: LD := link
 risc: CFLAGS := -IOS:,C: -throwback -depend !Depend -Wan -ff -zps1 #-g
@@ -326,6 +331,7 @@ risc: o.Stubs o.OSLib o.eventlib
 ## Use 'dmake -B -r -f makefile.emx' to compile
 ## (see "main-emx.c" for details).
 ##
+
 emx: CFLAGS := -MMD -O3 -DUSE_EMX -Zmt -Wall
 emx: LDFLAGS := -lvideo
 emx: AR := ar
@@ -355,7 +361,9 @@ zangband.a: $(OBJS)
 
 ##
 ## Variation -- Compile for Amiga
+## (Untested - probably needs to be fixed)
 ##
+
 amiga: LD := slink QUIET WITH zangband.lnk
 amiga: CC := sc
 amiga: CFLAGS := DEFINE AMIGA DEFINE USE_AMI
@@ -367,6 +375,7 @@ amiga: sound-ami.o
 
 ##
 ## Variation -- Compile using Borland C++ 5.5 (Win32)
+## (Untested - may require lots of effort to get this to work)
 ##
 borland: CC := bcc32
 borland: LD := ilink32 -aa -x
@@ -571,12 +580,12 @@ $(LUAWSRCS): %.c: %.pkg $(LUA)tolua$(EXEC)
 %.o:%.obj
 	move $@ $<
 
-LUALIST := basic.lua feature.lua verbatim.lua code.lua typedef.lua \
-	container.lua package.lua module.lua define.lua enumerate.lua \
-	declaration.lua variable.lua array.lua function.lua operator.lua \
-	class.lua clean.lua doit.lua
+#LUALIST := basic.lua feature.lua verbatim.lua code.lua typedef.lua \
+#	container.lua package.lua module.lua define.lua enumerate.lua \
+#	declaration.lua variable.lua array.lua function.lua operator.lua \
+#	class.lua clean.lua doit.lua
 	
-LUALIST := $(addprefix $(LUA), $(LUALIST))
+#LUALIST := $(addprefix $(LUA), $(LUALIST))
 
 ##
 ## We sometimes want to redo the lua stuff
