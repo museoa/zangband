@@ -352,30 +352,6 @@ proc NSMainWindow::InitWindow {oop} {
 	# Update the monster health bar when needed
 	qebind $widget <Track-health> "NSMainWindow::UpdateHealthWho $oop %w %f"
 
-# Debug: draw 1 spot
-proc ::wipespot {y x} {
-	scan [[Global main,widget] caveyx $x $y] "%d %d" y x
-	[Global main,widget] wipespot $y $x
-}
-bind $widget <Shift-ButtonPress-3> "wipespot %y %x"
-
-proc hittest {w x y} {
-	variable HT
-	set ht [$w hittest $x $y]
-	if {[string compare $ht $HT]} {
-		if {[scan $ht "%d %d %d" hity hitx layer] == 3} {
-			NSMainWindow::ExamineLocation [Global main,widgetId] $hity $hitx
-			if {0 && ![Global cursor,visible]} {
-				$w configure -hit $layer -hitx $hitx -hity $hity
-				$w wipe
-			}
-		}
-		set HT $ht
-	}
-}
-	variable HT ""
-#	bind $widget <Motion> {+NSMainWindow::hittest %W %x %y}
-
 	# The "big map", the map of the entire cave with scroll bars.
 	# The user can change the scale via a popup menu, so we save
 	# the desired scale.
