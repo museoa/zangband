@@ -624,6 +624,29 @@ void monster_death(int m_idx)
 		(void)drop_near(q_ptr, -1, y, x);
 	}
 
+	/* Mega^2-hack -- Get a t-shirt from our first Greater Hell-beast kill */
+	else if (!r_ptr->r_pkills && strstr((r_name + r_ptr->name), "Greater hell-beast"))
+	{
+		/* Get local object */
+		q_ptr = &forge;
+
+		/* Prepare to make the Stormbringer */
+		object_prep(q_ptr, lookup_kind(TV_SOFT_ARMOR, SV_T_SHIRT));
+
+		/* Mega-Hack -- Name the shirt  */
+		q_ptr->art_name = quark_add("'I killed the GHB and all I got was this lousy t-shirt!'");
+
+		q_ptr->art_flags3 |= (TR3_IGNORE_ACID | TR3_IGNORE_ELEC |
+									 TR3_IGNORE_FIRE | TR3_IGNORE_COLD);
+
+#ifdef USE_SCRIPT
+		q_ptr->python = object_create_callback(q_ptr);
+#endif /* USE_SCRIPT */
+
+		/* Drop it in the dungeon */
+		(void)drop_near(q_ptr, -1, y, x);
+	}
+
 	/* Mega-Hack -- drop "winner" treasures */
 	else if (r_ptr->flags1 & RF1_DROP_CHOSEN)
 	{

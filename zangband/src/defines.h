@@ -1577,6 +1577,7 @@
 #define SV_SET_OF_CESTI                  5
 
 /* The "sval" codes for TV_SOFT_ARMOR */
+#define SV_T_SHIRT                       0
 #define SV_FILTHY_RAG                    1
 #define SV_ROBE                          2
 #define SV_PAPER_ARMOR                   3  /* 4 */
