@@ -801,7 +801,7 @@ bool field_hook_single(s16b *field_ptr, int action, void *action_struct)
 void field_hook(s16b *field_ptr, int action, void *action_struct)
 {
 	field_type *f_ptr;
-
+	
 	while (*field_ptr)
 	{
 		/* Point to the field */

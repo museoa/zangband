@@ -475,9 +475,7 @@ void curse_equipment(int chance, int heavy_chance)
 	{
 		char o_name[256];
 		object_desc(o_name, o_ptr, FALSE, 0);
-		msg_format("Your %s resist%s cursing!", o_name,
-			((o_ptr->number > 1) ? "" : "s"));
-		/* Hmmm -- can we wear multiple items? If not, this is unnecessary */
+		msg_format("Your %s resists cursing!", o_name);
 		return;
 	}
 
