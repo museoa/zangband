@@ -1461,7 +1461,17 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 #endif
 
 		if (o_ptr->art_flags1 & TR1_BLOWS)
-		    o_ptr->pval = randint(1) + 1;
+		{
+			if (randint(100)==1)
+			{
+				o_ptr->pval = 2;
+			}
+			else
+			{
+				o_ptr->pval = 1;
+			}
+				
+		}
 		else
 		{
 			do

@@ -2123,6 +2123,16 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 							o_ptr->art_flags1 |= TR1_BLOWS;
 							if (o_ptr->pval > 2)
 								o_ptr->pval = o_ptr->pval - randint(2);
+							
+							/* tone down number of attacks*/
+							if (o_ptr->pval>0)
+							{
+								o_ptr->pval-=(o_ptr->dd)/2;
+								if (o_ptr->pval<1)
+								{
+									o_ptr->pval=1;
+								}
+							}						
 						}
 						break;
 					}
@@ -2263,6 +2273,16 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 					case 29: case 30:
 					{
 						o_ptr->name2 = EGO_ATTACKS;
+						
+						/* tone down number of attacks*/
+						if (o_ptr->pval>0)
+						{
+							o_ptr->pval-=(o_ptr->dd)/2;
+							if (o_ptr->pval<1)
+							{
+								o_ptr->pval=1;
+							}
+						}						
 						break;
 					}
 
@@ -2345,6 +2365,16 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 							o_ptr->name2 = EGO_EARTHQUAKES;
 							if (randint(3) == 1) o_ptr->art_flags1 |= TR1_BLOWS;
 							o_ptr->pval = m_bonus(3, level);
+							
+							/* tone down number of attacks*/
+							if (o_ptr->pval>0)
+							{
+								o_ptr->pval-=(o_ptr->dd)/2;
+								if (o_ptr->pval<1)
+								{
+									o_ptr->pval=1;
+								}
+							}					
 						}
 					}
 				}
