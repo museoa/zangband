@@ -223,10 +223,8 @@ static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
 /*
  * Sell items to the current shop
  */
-static void borg_think_shop_sell(int item)
+static void borg_think_shop_sell(int item, list_item *l_ptr)
 {
-	list_item *l_ptr = &cur_list[item];
-
 	/* Log */
 	borg_note(format("# Selling %s", l_ptr->o_name));
 
@@ -486,7 +484,7 @@ static bool borg_think_home_sell_aux(void)
 	{
 		goal_shop = home_shop;
 		
-		borg_think_shop_sell(index);
+		borg_think_shop_sell(index, &inventory[index]);
 		
 		/* We have goal */
 		return (TRUE);
@@ -647,7 +645,7 @@ static bool borg_think_shop_sell_aux(int shop)
 		goal_shop = shop;
 
 		/* Sell that item */
-		borg_think_shop_sell(b_i);
+		borg_think_shop_sell(b_i, &inventory[b_i]);
 
 		/* Success */
 		return (TRUE);
@@ -1085,6 +1083,8 @@ static bool borg_think_home_grab_aux(void)
 }
 
 
+static int min_use = 0;
+
 /*
  * Choose a shop to visit (see above)
  */
@@ -1123,11 +1123,13 @@ static bool borg_choose_shop(void)
 		{
 			goal_shop = i;
 			bu = use;
+			
+			if (use > min_use) min_use = use;
 		}
 	}
 
 	/* Is it worth our while to continue? */
-	if (bu > SHOP_SCAN_THRESHOLD)
+	if (bu > min_use)
 	{
 		/* We want to shop */
 		borg_note(format("# Goal shop: %d, use: %d", goal_shop, bu));
