@@ -557,6 +557,8 @@ static void image_random(byte *ap, char *cp)
 	}
 }
 
+/* Are we using 16x16 tiles ? (Faster than streq("new") etc.)*/
+static bool new_graphics_on;
 
 /*
  * The 16x16 tile of the terrain supports lighting
@@ -855,7 +857,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 				else if (!(c_ptr->info & CAVE_VIEW))
 				{
 					/* Special flag */
-					if (view_bright_lite)
+					if (view_bright_lite && new_graphics_on)
 					{
 						if (use_transparency && feat_supports_lighting(c_ptr->feat))
 						{
@@ -936,7 +938,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 			}
 
 			/* Handle "view_bright_lite" */
-			else if (view_bright_lite && (!use_transparency || feat_supports_lighting(c_ptr->feat)))
+			else if (view_bright_lite && new_graphics_on && (!use_transparency || feat_supports_lighting(c_ptr->feat)))
 			{
 				/* Not viewable */
 				if (!(c_ptr->info & CAVE_VIEW))
@@ -1656,6 +1658,9 @@ void display_dungeon(void)
 	byte ta;
 	char tc;
 #endif /* USE_TRANSPARENCY */
+
+	/* Mega hack - set state of existance of Adom Bolts 16x16 graphics. */
+	new_graphics_on = (streq(ANGBAND_GRAF, "new"));
 
 	for (x = px - Term->wid / 2 + 1; x <= px + Term->wid / 2; x++)
 	{
