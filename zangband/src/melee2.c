@@ -2716,7 +2716,9 @@ static void process_monster(int m_idx)
 
 	cave_type *c_ptr;
 
-	bool gets_angry = FALSE;
+    bool gets_angry = FALSE;
+
+    int rand_move = 0;
 
 
 	/* Quantum monsters are odd */
@@ -3062,7 +3064,10 @@ static void process_monster(int m_idx)
 
 	/* Hack -- Assume no movement */
 	mm[0] = mm[1] = mm[2] = mm[3] = 0;
-	mm[4] = mm[5] = mm[6] = mm[7] = 0;
+    mm[4] = mm[5] = mm[6] = mm[7] = 0;
+
+    if (r_ptr->flags1 & RF1_RAND_50) rand_move += 50;
+    if (r_ptr->flags1 & RF1_RAND_25) rand_move += 25;
 
 	/* Confused -- 100% random */
 	if (m_ptr->confused)
@@ -3071,33 +3076,14 @@ static void process_monster(int m_idx)
 		mm[0] = mm[1] = mm[2] = mm[3] = 5;
 	}
 
-	/* 75% random movement */
-	else if ((r_ptr->flags1 & RF1_RAND_50) && (r_ptr->flags1 & RF1_RAND_25) &&
-			 (randint0(100) < 75))
+	/* Random movement */
+	else if (rand_move && (randint0(100) < rand_move))
 	{
 		/* Memorize flags */
-		if (m_ptr->ml) r_ptr->r_flags1 |= (RF1_RAND_50);
-		if (m_ptr->ml) r_ptr->r_flags1 |= (RF1_RAND_25);
-
-		/* Try four "random" directions */
-		mm[0] = mm[1] = mm[2] = mm[3] = 5;
-	}
-
-	/* 50% random movement */
-	else if ((r_ptr->flags1 & RF1_RAND_50) && (randint0(100) < 50))
-	{
-		/* Memorize flags */
-		if (m_ptr->ml) r_ptr->r_flags1 |= (RF1_RAND_50);
-
-		/* Try four "random" directions */
-		mm[0] = mm[1] = mm[2] = mm[3] = 5;
-	}
-
-	/* 25% random movement */
-	else if ((r_ptr->flags1 & RF1_RAND_25) && (randint0(100) < 25))
-	{
-		/* Memorize flags */
-		if (m_ptr->ml) r_ptr->r_flags1 |= RF1_RAND_25;
+        if (m_ptr->ml && (r_ptr->flags1 & RF1_RAND_50))
+            r_ptr->r_flags1 |= (RF1_RAND_50);
+        if (m_ptr->ml && (r_ptr->flags1 & RF1_RAND_25))
+            r_ptr->r_flags1 |= (RF1_RAND_25);
 
 		/* Try four "random" directions */
 		mm[0] = mm[1] = mm[2] = mm[3] = 5;
