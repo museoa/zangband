@@ -123,7 +123,7 @@ static void sense_inventory(void)
 	bool        heavy = FALSE;
 	byte        feel;
 	object_type *o_ptr;
-	char        o_name[80];
+	char        o_name[256];
 
 
 	/*** Check for "sensing" ***/
@@ -358,7 +358,7 @@ static void sense_inventory(void)
 		if (disturb_minor) disturb(FALSE);
 
 		/* Get an object description */
-		object_desc(o_name, o_ptr, FALSE, 0);
+		object_desc(o_name, o_ptr, FALSE, 0, 256);
 
 		/* Message (equipment) */
 		if (i >= INVEN_WIELD)
@@ -753,7 +753,7 @@ bool psychometry(void)
 {
 	int             item;
 	object_type     *o_ptr;
-	char            o_name[80];
+	char            o_name[256];
 	byte            feel;
 	cptr            q, s;
 
@@ -786,7 +786,7 @@ bool psychometry(void)
 	feel = value_check_aux1(o_ptr);
 
 	/* Get an object description */
-	object_desc(o_name, o_ptr, FALSE, 0);
+	object_desc(o_name, o_ptr, FALSE, 0, 256);
 
 	/* Skip non-feelings */
 	if (!feel)
@@ -822,7 +822,7 @@ bool psychometry(void)
  */
 static void recharged_notice(const object_type *o_ptr)
 {
-	char o_name[80];
+	char o_name[256];
 
 	cptr s;
 
@@ -839,7 +839,7 @@ static void recharged_notice(const object_type *o_ptr)
 		if (s[1] == '!')
 		{
 			/* Describe (briefly) */
-			object_desc(o_name, o_ptr, FALSE, 0);
+			object_desc(o_name, o_ptr, FALSE, 0, 256);
 
 			/* Notify the player */
 			if (o_ptr->number > 1)
@@ -1019,20 +1019,20 @@ static void process_world(void)
 		    (inventory[INVEN_LITE].sval < SV_LITE_THRAIN) &&
 		    !p_ptr->resist_lite)
 		{
-			char o_name[80];
-			char ouch[80];
+			char o_name[256];
+			char ouch[280];
 			
 			o_ptr = &inventory[INVEN_LITE];
 
 			/* Get an object description */
-			object_desc(o_name, o_ptr, FALSE, 0);
+			object_desc(o_name, o_ptr, FALSE, 0, 256);
 
 			msg_format("The %s scorches your undead flesh!", o_name);
 
 			cave_no_regen = TRUE;
 
 			/* Get an object description */
-			object_desc(o_name, o_ptr, TRUE, 0);
+			object_desc(o_name, o_ptr, TRUE, 0, 256);
 
 			sprintf(ouch, "wielding %s", o_name);
 			if (!p_ptr->invuln) take_hit(1, ouch);
@@ -2682,7 +2682,7 @@ static void process_player(void)
 		{
 			int item = INVEN_PACK;
 
-			char o_name[80];
+			char o_name[256];
 
 			object_type *o_ptr;
 
@@ -2696,7 +2696,7 @@ static void process_player(void)
 			msg_print("Your pack overflows!");
 
 			/* Describe */
-			object_desc(o_name, o_ptr, TRUE, 3);
+			object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 			/* Message */
 			msg_format("You drop %s (%c).", o_name, index_to_label(item));

@@ -581,7 +581,7 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 
 	u32b f1, f2, f3;
 
-	char o_name[80];
+	char o_name[256];
 
 	int k_idx = 0;
 	bool is_potion = FALSE;
@@ -796,7 +796,7 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 			if (known && o_ptr->marked)
 			{
 				obvious = TRUE;
-				object_desc(o_name, o_ptr, FALSE, 0);
+				object_desc(o_name, o_ptr, FALSE, 0, 256);
 			}
 
 			/* Artifacts, and other objects, get to resist */

@@ -1963,10 +1963,10 @@ static s16b w_bonus(int max, int lev_dif)
  */
 static void object_mention(const object_type *o_ptr)
 {
-	char o_name[80];
+	char o_name[256];
 
 	/* Describe */
-	object_desc_store(o_name, o_ptr, FALSE, 0);
+	object_desc_store(o_name, o_ptr, FALSE, 0, 256);
 
 	/* Artifact */
 	if (o_ptr->flags3 & TR3_INSTA_ART)
@@ -4399,7 +4399,7 @@ s16b drop_near(object_type *j_ptr, int chance, int x, int y)
 
 	cave_type *c_ptr;
 
-	char o_name[80];
+	char o_name[256];
 
 	bool flag = FALSE;
 	bool done = FALSE;
@@ -4411,7 +4411,7 @@ s16b drop_near(object_type *j_ptr, int chance, int x, int y)
 	if (j_ptr->number != 1) plural = TRUE;
 
 	/* Describe object */
-	object_desc(o_name, j_ptr, FALSE, 0);
+	object_desc(o_name, j_ptr, FALSE, 0, 256);
 
 
 	/* Handle normal "breakage" */
@@ -4835,10 +4835,10 @@ void inven_item_charges(int item)
 void inven_item_describe(int item)
 {
 	object_type *o_ptr = &inventory[item];
-	char o_name[80];
+	char o_name[256];
 
 	/* Get a description */
-	object_desc(o_name, o_ptr, TRUE, 3);
+	object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 	/* Print a message */
 	msg_format("You have %s.", o_name);
@@ -4983,10 +4983,10 @@ void floor_item_charges(int item)
 void floor_item_describe(int item)
 {
 	object_type *o_ptr = &o_list[item];
-	char        o_name[80];
+	char o_name[256];
 
 	/* Get a description */
-	object_desc(o_name, o_ptr, TRUE, 3);
+	object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 	/* Print a message */
 	msg_format("You see %s.", o_name);
@@ -5276,7 +5276,7 @@ s16b inven_takeoff(int item, int amt)
 
 	cptr act;
 
-	char o_name[80];
+	char o_name[256];
 
 
 	/* Get the item to take off */
@@ -5298,7 +5298,7 @@ s16b inven_takeoff(int item, int amt)
 	q_ptr->number = amt;
 
 	/* Describe the object */
-	object_desc(o_name, q_ptr, TRUE, 3);
+	object_desc(o_name, q_ptr, TRUE, 3, 256);
 
 	/* Took off weapon */
 	if (item == INVEN_WIELD)
@@ -5351,7 +5351,7 @@ void inven_drop(int item, int amt)
 
 	object_type *o_ptr;
 
-	char o_name[80];
+	char o_name[256];
 
 
 	/* Access original object */
@@ -5388,7 +5388,7 @@ void inven_drop(int item, int amt)
 	q_ptr->number = amt;
 
 	/* Describe local object */
-	object_desc(o_name, q_ptr, TRUE, 3);
+	object_desc(o_name, q_ptr, TRUE, 3, 256);
 
 	/* Message */
 	msg_format("You drop %s (%c).", o_name, index_to_label(item));
@@ -5632,7 +5632,7 @@ void display_koff(int k_idx)
 	object_type forge;
 	object_type *q_ptr;
 
-	char o_name[80];
+	char o_name[256];
 
 
 	/* Erase the window */
@@ -5652,7 +5652,7 @@ void display_koff(int k_idx)
 	object_prep(q_ptr, k_idx);
 
 	/* Describe */
-	object_desc_store(o_name, q_ptr, FALSE, 0);
+	object_desc_store(o_name, q_ptr, FALSE, 0, 256);
 
 	/* Mention the object name */
 	Term_putstr(0, 0, -1, TERM_WHITE, o_name);

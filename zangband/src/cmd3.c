@@ -132,7 +132,7 @@ void do_cmd_wield(void)
 
 	cptr act;
 
-	char o_name[80];
+	char o_name[256];
 
 	cptr q, s;
 
@@ -164,7 +164,7 @@ void do_cmd_wield(void)
 	if (cursed_p(&inventory[slot]))
 	{
 		/* Describe it */
-		object_desc(o_name, &inventory[slot], FALSE, 0);
+		object_desc(o_name, &inventory[slot], FALSE, 0, 256);
 
 		/* Message */
 		msg_format("The %s you are %s appears to be cursed.",
@@ -180,7 +180,7 @@ void do_cmd_wield(void)
 		char dummy[512];
 
 		/* Describe it */
-		object_desc(o_name, o_ptr, FALSE, 0);
+		object_desc(o_name, o_ptr, FALSE, 0, 256);
 
 		sprintf(dummy, "Really use the %s {cursed}? ", o_name);
 
@@ -261,7 +261,7 @@ void do_cmd_wield(void)
 	}
 
 	/* Describe the result */
-	object_desc(o_name, o_ptr, TRUE, 3);
+	object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 	/* Message */
 	msg_format("%s %s (%c).", act, o_name, index_to_label(slot));
@@ -433,11 +433,11 @@ static bool high_level_book(const object_type *o_ptr)
 
 bool destroy_item_aux(object_type *o_ptr, int amt)
 {
-	char o_name[80];
+	char o_name[256];
 	
 	bool gain_expr = FALSE;
 	
-	object_desc(o_name, o_ptr, TRUE, 3);
+	object_desc(o_name, o_ptr, TRUE, 3, 256);
 	
 	/* Can the player destroy the object? */
 	if (!can_player_destroy_object(o_ptr))
@@ -453,7 +453,7 @@ bool destroy_item_aux(object_type *o_ptr, int amt)
 	p_ptr->energy_use += 100;
 	
 	/* Describe the object (with {terrible/special}) */
-	object_desc(o_name, o_ptr, TRUE, 3);
+	object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 	/* Message */
 	msg_format("You destroy %s.", o_name);
@@ -531,9 +531,9 @@ void do_cmd_destroy(void)
 
 	object_type		*o_ptr;
 
-	char		o_name[80];
+	char		o_name[256];
 
-	char		out_val[160];
+	char		out_val[512];
 
 	cptr q, s;
 
@@ -573,7 +573,7 @@ void do_cmd_destroy(void)
 	/* Describe the object */
 	old_number = o_ptr->number;
 	o_ptr->number = amt;
-	object_desc(o_name, o_ptr, TRUE, 3);
+	object_desc(o_name, o_ptr, TRUE, 3, 256);
 	o_ptr->number = old_number;
 
 	/* Verify unless quantity given */
@@ -623,7 +623,7 @@ void do_cmd_observe(void)
 
 	object_type		*o_ptr;
 
-	char		o_name[80];
+	char		o_name[256];
 
 	cptr q, s;
 
@@ -654,7 +654,7 @@ void do_cmd_observe(void)
 #endif /* 0 */
 
 	/* Description */
-	object_desc(o_name, o_ptr, TRUE, 3);
+	object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 	/* Describe */
 	msg_format("Examining %s...", o_name);
@@ -726,7 +726,7 @@ void do_cmd_inscribe(void)
 
 	object_type		*o_ptr;
 
-	char		o_name[80];
+	char		o_name[256];
 
 	char		out_val[80];
 
@@ -750,7 +750,7 @@ void do_cmd_inscribe(void)
 	}
 
 	/* Describe the activity */
-	object_desc(o_name, o_ptr, TRUE, 3);
+	object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 	/* Message */
 	msg_format("Inscribing %s.", o_name);

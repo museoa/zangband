@@ -625,7 +625,7 @@ void py_pickup_aux(int o_idx)
 {
 	int slot;
 
-	char o_name[80];
+	char o_name[256];
 	object_type *o_ptr;
 
 	o_ptr = &o_list[o_idx];
@@ -637,7 +637,7 @@ void py_pickup_aux(int o_idx)
 	o_ptr = &inventory[slot];
 
 	/* Describe the object */
-	object_desc(o_name, o_ptr, TRUE, 3);
+	object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 	/* Message */
 	msg_format("You have %s (%c).", o_name, index_to_label(slot));
@@ -664,7 +664,7 @@ void carry(int pickup)
 
 	s16b this_o_idx, next_o_idx;
 
-	char o_name[80];
+	char o_name[256];
 	object_type *o_ptr;
 
 	int floor_num = 0, floor_list[23], floor_o_idx = 0;
@@ -695,7 +695,7 @@ void carry(int pickup)
 		o_ptr = &o_list[this_o_idx];
 
 		/* Describe the object */
-		object_desc(o_name, o_ptr, TRUE, 3);
+		object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 		/* Access the next object */
 		next_o_idx = o_ptr->next_o_idx;
@@ -841,7 +841,7 @@ void carry(int pickup)
 			o_ptr = &o_list[floor_o_idx];
 
 			/* Describe the object */
-			object_desc(o_name, o_ptr, TRUE, 3);
+			object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 			/* Message */
 			msg_format("You see %s.", o_name);
@@ -868,7 +868,7 @@ void carry(int pickup)
 			o_ptr = &o_list[floor_o_idx];
 
 			/* Describe the object */
-			object_desc(o_name, o_ptr, TRUE, 3);
+			object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 			/* Message */
 			msg_format("You have no room for %s.", o_name);
@@ -904,8 +904,8 @@ void carry(int pickup)
 			message_flush();
 			
 			/* Describe the object */
-			object_desc(o_name, o_ptr, TRUE, 3);
-					
+			object_desc(o_name, o_ptr, TRUE, 3, 256);
+			
 			sprintf(out_val, "Pick up %s? [y/n/k] ", o_name);
 					
 			/* Prompt for it */

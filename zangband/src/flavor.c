@@ -744,7 +744,7 @@ static char *object_desc_int(char *t, sint v)
  * description, which can get pretty long, including incriptions, such as:
  * "no more Maces of Disruption (Defender) (+10,+10) [+5] (+3 to stealth)".
  * Note that the inscription will be clipped to keep the total description
- * under 79 chars (plus a terminator).
+ * under size - 1 chars (plus a terminator).
  *
  * Note the use of "object_desc_num()" and "object_desc_int()" as
  * hyper-efficient, portable, versions of some common "sprintf()" commands.
@@ -778,7 +778,8 @@ static char *object_desc_int(char *t, sint v)
  *   2 -- The Cloak of Death [1,+3] (+2 to Stealth)
  *   3 -- The Cloak of Death [1,+3] (+2 to Stealth) {nifty}
  */
-void object_desc(char *buf, const object_type *o_ptr, int pref, int mode)
+void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
+	 int size)
 {
 	cptr            basenm, modstr;
 	int             power, indexx;
@@ -799,8 +800,8 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode)
 	char            c1 = '{', c2 = '}';
 	char			pct = '%';
 
-	char            tmp_val[160];
-	char            tmp_val2[90];
+	char            tmp_val[512];
+	char            tmp_val2[256];
 
 	u32b            f1, f2, f3;
 
@@ -1792,7 +1793,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode)
 
 copyback:
 	/* Here's where we dump the built string into buf. */
-	tmp_val[79] = '\0';
+	tmp_val[size - 1] = '\0';
 	t = tmp_val;
 	while ((*(buf++) = *(t++))); /* copy the string over */
 }
@@ -1802,7 +1803,8 @@ copyback:
  * Hack -- describe an item currently in a store's inventory
  * This allows an item to *look* like the player is "aware" of it
  */
-void object_desc_store(char *buf, const object_type *o_ptr, int pref, int mode)
+void object_desc_store(char *buf, const object_type *o_ptr, int pref, 
+	int mode, int size)
 {
 	object_type *i_ptr;
 	object_type object_type_body;
@@ -1834,7 +1836,7 @@ void object_desc_store(char *buf, const object_type *o_ptr, int pref, int mode)
 
 
 	/* Describe the object */
-	object_desc(buf, i_ptr, pref, mode);
+	object_desc(buf, i_ptr, pref, mode, size);
 
 
 	/* Restore "flavor" value */

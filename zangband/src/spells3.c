@@ -780,7 +780,7 @@ bool apply_disenchant(void)
 {
 	int             t = 0;
 	object_type     *o_ptr;
-	char            o_name[80];
+	char            o_name[256];
 
 
 	/* Pick a random slot */
@@ -812,7 +812,7 @@ bool apply_disenchant(void)
 
 
 	/* Describe the object */
-	object_desc(o_name, o_ptr, FALSE, 0);
+	object_desc(o_name, o_ptr, FALSE, 0, 256);
 
 
 	/* Artifacts have 71% chance to resist */
@@ -998,8 +998,8 @@ void brand_weapon(int brand_type)
 		cptr act;
 
 		/* Let's get the name before it is changed... */
-		char o_name[80];
-		object_desc(o_name, o_ptr, FALSE, 0);
+		char o_name[256];
+		object_desc(o_name, o_ptr, FALSE, 0, 256);
 
 		switch (brand_type)
 		{
@@ -1121,7 +1121,7 @@ void fetch(int dir, int wgt, bool require_los)
 	int             ty, tx, i;
 	cave_type       *c_ptr;
 	object_type     *o_ptr;
-	char            o_name[80];
+	char            o_name[256];
 
 	/* Check to see if an object is already there */
 	if (area(px, py)->o_idx)
@@ -1219,7 +1219,7 @@ void fetch(int dir, int wgt, bool require_los)
 	o_ptr->iy = py;
 	o_ptr->ix = px;
 
-	object_desc(o_name, o_ptr, TRUE, 0);
+	object_desc(o_name, o_ptr, TRUE, 0, 256);
 	msg_format("%^s flies through the air to your feet.", o_name);
 
 	/* Notice the moved object (The player gets redrawn) */
@@ -1448,8 +1448,8 @@ bool alchemy(void)
 	long price;
 	bool force = FALSE;
 	object_type *o_ptr;
-	char o_name[80];
-	char out_val[160];
+	char o_name[256];
+	char out_val[512];
 
 	cptr q, s;
 
@@ -1488,7 +1488,7 @@ bool alchemy(void)
 	/* Describe the object */
 	old_number = o_ptr->number;
 	o_ptr->number = amt;
-	object_desc(o_name, o_ptr, TRUE, 3);
+	object_desc(o_name, o_ptr, TRUE, 3, 256);
 	o_ptr->number = old_number;
 
 	/* Verify unless quantity given */
@@ -1778,7 +1778,7 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 	int         item;
 	bool        okay = FALSE;
 	object_type *o_ptr;
-	char        o_name[80];
+	char        o_name[512];
 	cptr        q, s;
 
 
@@ -1807,7 +1807,7 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 
 
 	/* Description */
-	object_desc(o_name, o_ptr, FALSE, 0);
+	object_desc(o_name, o_ptr, FALSE, 0, 256);
 
 	/* Describe */
 	msg_format("%s %s glow%s brightly!",
@@ -1843,7 +1843,7 @@ bool artifact_scroll(void)
 	int             item;
 	bool            okay;
 	object_type     *o_ptr;
-	char            o_name[80];
+	char            o_name[256];
 	cptr            q, s;
 
 
@@ -1869,7 +1869,7 @@ bool artifact_scroll(void)
 
 
 	/* Description */
-	object_desc(o_name, o_ptr, FALSE, 0);
+	object_desc(o_name, o_ptr, FALSE, 0, 256);
 
 	/* Describe */
 	msg_format("%s %s radiate%s a blinding light!",
@@ -2031,9 +2031,9 @@ void identify_item(object_type *o_ptr)
 			 */
 			if (auto_notes && take_notes)
 			{
-				char note[80];
-				char item_name[80];
-				object_desc(item_name, o_ptr, FALSE, 0);
+				char note[280];
+				char item_name[256];
+				object_desc(item_name, o_ptr, FALSE, 0, 256);
 	
 				/* Build note and write */
 				sprintf(note, "Found The %s", item_name);
@@ -2093,7 +2093,7 @@ bool ident_spell(void)
 {
 	int             item;
 	object_type     *o_ptr;
-	char            o_name[80];
+	char            o_name[256];
 	cptr            q, s;
 
 	/* Only un-id'ed items */
@@ -2121,7 +2121,7 @@ bool ident_spell(void)
 	identify_item(o_ptr);
 
 	/* Description */
-	object_desc(o_name, o_ptr, TRUE, 3);
+	object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 	/* Describe */
 	if (item >= INVEN_WIELD)
@@ -2246,7 +2246,7 @@ bool identify_fully(void)
 {
 	int             item;
 	object_type     *o_ptr;
-	char            o_name[80];
+	char            o_name[256];
 	cptr            q, s;
 
 	/* Only un-*id*'ed items */
@@ -2284,7 +2284,7 @@ bool identify_fully(void)
 	handle_stuff();
 
 	/* Description */
-	object_desc(o_name, o_ptr, TRUE, 3);
+	object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 	/* Describe */
 	if (item >= INVEN_WIELD)
@@ -2340,7 +2340,7 @@ bool recharge(int power)
 	byte fail_type = 1;
 
 	cptr q, s;
-	char o_name[80];
+	char o_name[256];
 
 
 	/* Only accept legal items */
@@ -2473,7 +2473,7 @@ bool recharge(int power)
 		/* Artifacts are never destroyed. */
 		if (o_ptr->flags3 & TR3_INSTA_ART)
 		{
-			object_desc(o_name, o_ptr, TRUE, 0);
+			object_desc(o_name, o_ptr, TRUE, 0, 256);
 			msg_format("The recharging backfires - %s is completely drained!", o_name);
 
 			/* Artifact rods. */
@@ -2494,7 +2494,7 @@ bool recharge(int power)
 		else
 		{
 			/* Get the object description */
-			object_desc(o_name, o_ptr, FALSE, 0);
+			object_desc(o_name, o_ptr, FALSE, 0, 256);
 
 			/*** Determine Seriousness of Failure ***/
 
@@ -2646,7 +2646,7 @@ bool bless_weapon(void)
 	int             item;
 	object_type     *o_ptr;
 	u32b            f1, f2, f3;
-	char            o_name[80];
+	char            o_name[256];
 	cptr            q, s;
 
 	/* Assume enchant weapon */
@@ -2672,7 +2672,7 @@ bool bless_weapon(void)
 
 
 	/* Description */
-	object_desc(o_name, o_ptr, FALSE, 0);
+	object_desc(o_name, o_ptr, FALSE, 0, 256);
 
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3);
@@ -3720,7 +3720,7 @@ int inven_damage(inven_func typ, int perc)
 {
 	int         i, j, k, amt;
 	object_type *o_ptr;
-	char        o_name[80];
+	char        o_name[256];
 
 
 	/* Count the casualties */
@@ -3750,7 +3750,7 @@ int inven_damage(inven_func typ, int perc)
 			if (amt)
 			{
 				/* Get a description */
-				object_desc(o_name, o_ptr, FALSE, 3);
+				object_desc(o_name, o_ptr, FALSE, 3, 256);
 
 				/* Message */
 				msg_format("%sour %s (%c) %s destroyed!",
@@ -3798,7 +3798,7 @@ static int minus_ac(void)
 {
 	object_type *o_ptr = NULL;
 	u32b        f1, f2, f3;
-	char        o_name[80];
+	char        o_name[256];
 
 
 	/* Pick a (possibly empty) inventory slot */
@@ -3820,7 +3820,7 @@ static int minus_ac(void)
 
 
 	/* Describe */
-	object_desc(o_name, o_ptr, FALSE, 0);
+	object_desc(o_name, o_ptr, FALSE, 0, 256);
 
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3);
@@ -3973,7 +3973,7 @@ bool rustproof(void)
 {
 	int         item;
 	object_type *o_ptr;
-	char        o_name[80];
+	char        o_name[256];
 	cptr        q, s;
 
 	/* Select a piece of armour */
@@ -3998,7 +3998,7 @@ bool rustproof(void)
 
 
 	/* Description */
-	object_desc(o_name, o_ptr, FALSE, 0);
+	object_desc(o_name, o_ptr, FALSE, 0, 256);
 
 	o_ptr->flags3 |= TR3_IGNORE_ACID;
 
@@ -4025,7 +4025,7 @@ bool curse_armor(void)
 {
 	object_type *o_ptr;
 
-	char o_name[80];
+	char o_name[256];
 
 
 	/* Curse the body armor */
@@ -4036,7 +4036,7 @@ bool curse_armor(void)
 
 
 	/* Describe */
-	object_desc(o_name, o_ptr, FALSE, 3);
+	object_desc(o_name, o_ptr, FALSE, 3, 256);
 
 	/* Attempt a saving throw for artifacts */
 	if ((o_ptr->flags3 & TR3_INSTA_ART) && !one_in_(3))
@@ -4094,7 +4094,7 @@ bool curse_weapon(void)
 {
 	object_type *o_ptr;
 
-	char o_name[80];
+	char o_name[256];
 
 
 	/* Curse the weapon */
@@ -4105,7 +4105,7 @@ bool curse_weapon(void)
 
 
 	/* Describe */
-	object_desc(o_name, o_ptr, FALSE, 3);
+	object_desc(o_name, o_ptr, FALSE, 3, 256);
 
 	/* Attempt a saving throw */
 	if ((o_ptr->flags3 & TR3_INSTA_ART) && !one_in_(3))

@@ -2733,7 +2733,7 @@ errr file_character(cptr name, bool full)
 	int			fd = -1;
 	FILE		*fff = NULL;
 	store_type  *st_ptr;
-	char		o_name[80];
+	char		o_name[256];
 	char		buf[1024];
 
 	int msg_max = message_num();
@@ -2994,7 +2994,7 @@ errr file_character(cptr name, bool full)
 		fprintf(fff, "  [Character Equipment]\n\n");
 		for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
 		{
-			object_desc(o_name, &inventory[i], TRUE, 3);
+			object_desc(o_name, &inventory[i], TRUE, 3, 256);
 			fprintf(fff, "%c%s %s\n",
 			        index_to_label(i), paren, o_name);
 		}
@@ -3009,7 +3009,7 @@ errr file_character(cptr name, bool full)
 		if (!inventory[i].k_idx) break;
 
 		/* Dump the inventory slots */
-		object_desc(o_name, &inventory[i], TRUE, 3);
+		object_desc(o_name, &inventory[i], TRUE, 3, 256);
 		fprintf(fff, "%c%s %s\n", index_to_label(i), paren, o_name);
 	}
 
@@ -3034,7 +3034,7 @@ errr file_character(cptr name, bool full)
 					/* Dump all available items */
 					for (k = 0; k < st_ptr->stock_num; k++)
 					{
-						object_desc(o_name, &st_ptr->stock[k], TRUE, 3);
+						object_desc(o_name, &st_ptr->stock[k], TRUE, 3, 256);
 						fprintf(fff, "%c%s %s\n", I2A(k), paren, o_name);
 					}
 	
@@ -4253,7 +4253,7 @@ static void show_info(void)
 						for (j = 0; (j < 12) && (i < st_ptr->stock_num);
 							 j++, i++)
 						{
-							char o_name[80];
+							char o_name[256];
 							char tmp_val[80];
 
 							/* Acquire item */
@@ -4264,7 +4264,7 @@ static void show_info(void)
 							prt(tmp_val, 4, j + 2);
 
 							/* Display object description */
-							object_desc(o_name, o_ptr, TRUE, 3);
+							object_desc(o_name, o_ptr, TRUE, 3, 256);
 							c_put_str(tval_to_attr[o_ptr->tval], o_name, 7, j + 2);
 						}
 

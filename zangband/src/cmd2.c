@@ -2362,7 +2362,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 
 	bool hit_body = FALSE;
 
-	char o_name[80];
+	char o_name[256];
 	char m_name[80];
 
 	int msec = delay_factor * delay_factor * delay_factor;
@@ -2381,7 +2381,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 			else if (j_ptr->name2 == EGO_ACCURACY) special_hit = TRUE;
 
 			/* Describe the object */
-			object_desc(o_name, j_ptr, FALSE, 0);
+			object_desc(o_name, j_ptr, FALSE, 0, 256);
 
 			/* Let player know that weapon is activated. */
 			msg_format("You feel your %s tremble in your hand.", o_name);
@@ -2433,7 +2433,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	sound(SOUND_SHOOT);
 
 	/* Describe the object */
-	object_desc(o_name, i_ptr, FALSE, 0);
+	object_desc(o_name, i_ptr, FALSE, 0, 256);
 
 	/* Use the proper number of shots */
 	thits = p_ptr->num_fire;
@@ -2813,7 +2813,7 @@ void do_cmd_throw_aux(int mult)
 	bool hit_body = FALSE;
 	bool hit_wall = FALSE;
 
-	char o_name[80];
+	char o_name[256];
 	char m_name[80];
 
 	int msec = delay_factor * delay_factor * delay_factor;
@@ -2885,7 +2885,7 @@ void do_cmd_throw_aux(int mult)
 
 
 	/* Description */
-	object_desc(o_name, q_ptr, FALSE, 3);
+	object_desc(o_name, q_ptr, FALSE, 3, 256);
 
 	/* Extract a "distance multiplier" */
 	/* Changed for 'launcher' mutation */

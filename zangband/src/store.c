@@ -1271,7 +1271,7 @@ static void display_entry(int pos)
 	object_type 	*o_ptr;
 	s32b		x;
 
-	char		o_name[80];
+	char		o_name[256];
 	char		out_val[160];
 
 	byte		a;
@@ -1280,6 +1280,11 @@ static void display_entry(int pos)
 	int maxwid;
 	
 	const owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
+	
+	int wid, hgt;
+
+	/* Get size */
+	Term_get_size(&wid, &hgt);
 
 	/* Get the item */
 	o_ptr = &st_ptr->stock[pos];
@@ -1307,14 +1312,13 @@ static void display_entry(int pos)
 	/* Describe an item in the home */
 	if (st_ptr->type == BUILD_STORE_HOME)
 	{
-		maxwid = 75;
+		maxwid = wid - 4;
 
 		/* Leave room for weights, if necessary -DRS- */
 		if (show_weights) maxwid -= 10;
 
 		/* Describe the object */
-		object_desc(o_name, o_ptr, TRUE, 3);
-		o_name[maxwid] = '\0';
+		object_desc(o_name, o_ptr, TRUE, 3, maxwid);
 		c_put_str(tval_to_attr[o_ptr->tval], o_name, 5, i + 6);
 
 		/* Show weights */
@@ -1323,7 +1327,7 @@ static void display_entry(int pos)
 			/* Only show the weight of an individual item */
 			int wgt = o_ptr->weight;
 			(void)sprintf(out_val, "%3d.%d lb", wgt / 10, wgt % 10);
-			put_str(out_val, 68, i + 6);
+			put_str(out_val, wid - 12, i + 6);
 		}
 	}
 
@@ -1331,14 +1335,13 @@ static void display_entry(int pos)
 	else
 	{
 		/* Must leave room for the "price" */
-		maxwid = 65;
+		maxwid = wid - 14;
 
 		/* Leave room for weights, if necessary -DRS- */
 		if (show_weights) maxwid -= 7;
 
 		/* Describe the object (fully) */
-		object_desc_store(o_name, o_ptr, TRUE, 3);
-		o_name[maxwid] = '\0';
+		object_desc_store(o_name, o_ptr, TRUE, 3, maxwid);
 		c_put_str(tval_to_attr[o_ptr->tval], o_name, 5, i + 6);
 
 		/* Show weights */
@@ -1347,7 +1350,7 @@ static void display_entry(int pos)
 			/* Only show the weight of an individual item */
 			int wgt = o_ptr->weight;
 			(void)sprintf(out_val, "%3d.%d", wgt / 10, wgt % 10);
-			put_str(out_val, 61, i + 6);
+			put_str(out_val, wid - 19, i + 6);
 		}
 
 		/* Display a "fixed" cost */
@@ -1358,7 +1361,7 @@ static void display_entry(int pos)
 
 			/* Actually draw the price (not fixed) */
 			(void)sprintf(out_val, "%9ld F", (long)x);
-			put_str(out_val, 68, i + 6);
+			put_str(out_val, wid - 12, i + 6);
 		}
 
 		/* Display a "taxed" cost */
@@ -1372,7 +1375,7 @@ static void display_entry(int pos)
 
 			/* Actually draw the price (with tax) */
 			(void)sprintf(out_val, "%9ld  ", (long)x);
-			put_str(out_val, 68, i + 6);
+			put_str(out_val, wid - 12, i + 6);
 		}
 
 		/* Display a "haggle" cost */
@@ -1383,7 +1386,7 @@ static void display_entry(int pos)
 
 			/* Actually draw the price (not fixed) */
 			(void)sprintf(out_val, "%9ld  ", (long)x);
-			put_str(out_val, 68, i + 6);
+			put_str(out_val, wid - 12, i + 6);
 		}
 	}
 }
@@ -2314,7 +2317,7 @@ static void store_purchase(int *store_top)
 
 	object_type *o_ptr;
 
-	char o_name[80];
+	char o_name[256];
 
 	char out_val[160];
 	
@@ -2437,7 +2440,7 @@ static void store_purchase(int *store_top)
 		else
 		{
 			/* Describe the object (fully) */
-			object_desc_store(o_name, j_ptr, TRUE, 3);
+			object_desc_store(o_name, j_ptr, TRUE, 3, 256);
 
 			/* Message */
 			msg_format("Buying %s (%c).", o_name, I2A(item));
@@ -2482,7 +2485,7 @@ static void store_purchase(int *store_top)
 				j_ptr->ident &= ~(IDENT_FIXED);
 
 				/* Describe the transaction */
-				object_desc(o_name, j_ptr, TRUE, 3);
+				object_desc(o_name, j_ptr, TRUE, 3, 256);
 
 				/* Message */
 				msg_format("You bought %s for %ld gold.", o_name, (long)price);
@@ -2497,7 +2500,7 @@ static void store_purchase(int *store_top)
 				item_new = inven_carry(j_ptr);
 
 				/* Describe the final result */
-				object_desc(o_name, &inventory[item_new], TRUE, 3);
+				object_desc(o_name, &inventory[item_new], TRUE, 3, 256);
 
 				/* Message */
 				msg_format("You have %s (%c).",
@@ -2593,7 +2596,7 @@ static void store_purchase(int *store_top)
 		item_new = inven_carry(j_ptr);
 
 		/* Describe just the result */
-		object_desc(o_name, &inventory[item_new], TRUE, 3);
+		object_desc(o_name, &inventory[item_new], TRUE, 3, 256);
 
 		/* Message */
 		msg_format("You have %s (%c).", o_name, index_to_label(item_new));
@@ -2654,7 +2657,7 @@ static void store_sell(int *store_top)
 
 	cptr q, s;
 
-	char o_name[80];
+	char o_name[256];
 
 
 	/* Prepare a prompt */
@@ -2749,7 +2752,7 @@ static void store_sell(int *store_top)
 	}
 
 	/* Get a full description */
-	object_desc(o_name, q_ptr, TRUE, 3);
+	object_desc(o_name, q_ptr, TRUE, 3, 256);
 
 	/* Remove any inscription, feeling for stores */
 	if (!(st_ptr->type == BUILD_STORE_HOME))
@@ -2825,7 +2828,7 @@ static void store_sell(int *store_top)
 			value = object_value(q_ptr) * q_ptr->number;
 
 			/* Get the description all over again */
-			object_desc(o_name, q_ptr, TRUE, 3);
+			object_desc(o_name, q_ptr, TRUE, 3, 256);
 
 			/* Describe the result (in message buffer) */
 			msg_format("You sold %s for %ld gold.", o_name, (long)price);
@@ -2909,7 +2912,7 @@ static void store_examine(int store_top)
 	int         i;
 	int         item;
 	object_type *o_ptr;
-	char        o_name[80];
+	char        o_name[256];
 	char        out_val[160];
 
 
@@ -2951,7 +2954,7 @@ static void store_examine(int store_top)
 	}
 
 	/* Description */
-	object_desc(o_name, o_ptr, TRUE, 3);
+	object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 	/* Describe */
 	msg_format("Examining %s...", o_name);
@@ -3588,7 +3591,7 @@ void do_cmd_store(field_type *f1_ptr)
 				object_type forge;
 				object_type *q_ptr;
 
-				char o_name[80];
+				char o_name[256];
 
 
 				/* Give a message */
@@ -3601,7 +3604,7 @@ void do_cmd_store(field_type *f1_ptr)
 				object_copy(q_ptr, o_ptr);
 
 				/* Describe it */
-				object_desc(o_name, q_ptr, TRUE, 3);
+				object_desc(o_name, q_ptr, TRUE, 3, 256);
 
 				/* Message */
 				msg_format("You drop %s (%c).", o_name, index_to_label(item));

@@ -524,7 +524,7 @@ static void wiz_display_item(const object_type *o_ptr)
 	for (i = 1; i <= 23; i++) prt("", j - 2, i);
 
 	/* Describe fully */
-	object_desc_store(buf, o_ptr, TRUE, 3);
+	object_desc_store(buf, o_ptr, TRUE, 3, 256);
 
 	prt(buf, j, 2);
 

@@ -1622,10 +1622,10 @@ bool activate_effect(object_type *o_ptr)
 	int k, dir, dummy;
 	byte activate;
 	
-	char o_name[80];
+	char o_name[256];
 		
 	/* Get the basic name of the object */
-	object_desc(o_name, o_ptr, FALSE, 0);
+	object_desc(o_name, o_ptr, FALSE, 0, 256);
 	
 	/* Get activation */
 	activate = o_ptr->activate;

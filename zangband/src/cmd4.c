@@ -3532,7 +3532,7 @@ static void do_cmd_knowledge_objects(void)
 
 	FILE *fff;
 
-	char o_name[80];
+	char o_name[256];
 
 	char file_name[1024];
 
@@ -3564,7 +3564,7 @@ static void do_cmd_knowledge_objects(void)
 			object_prep(i_ptr, k);
 
 			/* Describe the object */
-			object_desc_store(o_name, i_ptr, FALSE, 0);
+			object_desc_store(o_name, i_ptr, FALSE, 0, 256);
 
 			/* Print a message */
 			fprintf(fff, "     %s\n", o_name);

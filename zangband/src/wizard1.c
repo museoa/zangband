@@ -161,7 +161,7 @@ static void kind_info(char *buf, char *dam, char *wgt, int *lev, s32b *val, int 
 
 
 	/* Description (too brief) */
-	object_desc_store(buf, q_ptr, FALSE, 0);
+	object_desc_store(buf, q_ptr, FALSE, 0, 256);
 
 
 	/* Misc info */
@@ -624,7 +624,7 @@ typedef struct
 typedef struct
 {
 	/* "The Longsword Dragonsmiter (6d4) (+20, +25)" */
-	char description[160];
+	char description[256];
 
 	/* Description of what is affected by an object's pval */
 	pval_info_type pval_info;
@@ -721,7 +721,7 @@ static cptr *spoiler_flag_aux(const u32b flags, const flag_desc *flag_ptr,
 static void analyze_general(const object_type *o_ptr, char *desc_ptr)
 {
 	/* Get a "useful" description of the object */
-	object_desc_store(desc_ptr, o_ptr, TRUE, 1);
+	object_desc_store(desc_ptr, o_ptr, TRUE, 1, 256);
 }
 
 

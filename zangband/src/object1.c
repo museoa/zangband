@@ -1949,7 +1949,6 @@ bool item_tester_hook_is_great(const object_type *o_ptr)
 }
 
 
-
 bool item_tester_hook_is_book(const object_type *o_ptr)
 {
 	switch (o_ptr->tval)
@@ -2015,20 +2014,24 @@ bool item_tester_okay(const object_type *o_ptr)
 }
 
 
-
-
 /*
  * Choice window "shadow" of the "show_inven()" function
  */
 void display_inven(void)
 {
 	int i, n, z = 0;
-	object_type     *o_ptr;
-	byte            attr;
-	char            tmp_val[80];
-	char            o_name[80];
+	object_type *o_ptr;
+	byte attr;
+	
+	char tmp_val[80];
+	char o_name[256];
+	
+	int wid, hgt;
 
-
+	/* Get size */
+	Term_get_size(&wid, &hgt);
+	
+	
 	/* Find the "final" slot */
 	for (i = 0; i < INVEN_PACK; i++)
 	{
@@ -2064,7 +2067,7 @@ void display_inven(void)
 		Term_putstr(0, i, 3, TERM_WHITE, tmp_val);
 
 		/* Obtain an item description */
-		object_desc(o_name, o_ptr, TRUE, 3);
+		object_desc(o_name, o_ptr, TRUE, 3, wid - 3);
 
 		/* Obtain the length of the description */
 		n = strlen(o_name);
@@ -2086,25 +2089,24 @@ void display_inven(void)
 		Term_putstr(3, i, n, attr, o_name);
 
 		/* Erase the rest of the line */
-		Term_erase(3+n, i, 255);
+		Term_erase(3 + n, i, 255);
 
 		/* Display the weight if needed */
 		if (show_weights && o_ptr->weight)
 		{
 			int wgt = o_ptr->weight * o_ptr->number;
 			sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
-			Term_putstr(71, i, -1, TERM_WHITE, tmp_val);
+			Term_putstr(wid - 9, i, -1, TERM_WHITE, tmp_val);
 		}
 	}
 
 	/* Erase the rest of the window */
-	for (i = z; i < Term->hgt; i++)
+	for (i = z; i < hgt; i++)
 	{
 		/* Erase the line */
 		Term_erase(0, i, 255);
 	}
 }
-
 
 
 /*
@@ -2113,12 +2115,17 @@ void display_inven(void)
 void display_equip(void)
 {
 	int i, n;
-	object_type     *o_ptr;
-	byte            attr;
-	char            tmp_val[80];
-	char            o_name[80];
+	object_type *o_ptr;
+	byte attr;
+	char tmp_val[80];
+	char o_name[256];
 
 
+	int wid, hgt;
+
+	/* Get size */
+	Term_get_size(&wid, &hgt);
+	
 	/* Display the equipment */
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
 	{
@@ -2142,7 +2149,7 @@ void display_equip(void)
 		Term_putstr(0, i - INVEN_WIELD, 3, TERM_WHITE, tmp_val);
 
 		/* Obtain an item description */
-		object_desc(o_name, o_ptr, TRUE, 3);
+		object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 		/* Obtain the length of the description */
 		n = strlen(o_name);
@@ -2164,36 +2171,32 @@ void display_equip(void)
 		Term_putstr(3, i - INVEN_WIELD, n, attr, o_name);
 
 		/* Erase the rest of the line */
-		Term_erase(3+n, i - INVEN_WIELD, 255);
+		Term_erase(3 + n, i - INVEN_WIELD, 255);
 
 		/* Display the slot description (if needed) */
 		if (show_labels)
 		{
-			Term_putstr(61, i - INVEN_WIELD, -1, TERM_WHITE, "<--");
-			Term_putstr(65, i - INVEN_WIELD, -1, TERM_WHITE, mention_use(i));
+			Term_putstr(wid - 19, i - INVEN_WIELD, -1, TERM_WHITE, "<--");
+			Term_putstr(wid - 15, i - INVEN_WIELD, -1, TERM_WHITE, mention_use(i));
 		}
 
 		/* Display the weight (if needed) */
 		if (show_weights && o_ptr->weight)
 		{
 			int wgt = o_ptr->weight * o_ptr->number;
-			int col = (show_labels ? 52 : 71);
+			int col = (show_labels ? wid - 28 : wid - 19);
 			sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
 			Term_putstr(col, i - INVEN_WIELD, -1, TERM_WHITE, tmp_val);
 		}
 	}
 
 	/* Erase the rest of the window */
-	for (i = INVEN_TOTAL - INVEN_WIELD; i < Term->hgt; i++)
+	for (i = INVEN_TOTAL - INVEN_WIELD; i < hgt; i++)
 	{
 		/* Clear that line */
 		Term_erase(0, i, 255);
 	}
 }
-
-
-
-
 
 
 /*
@@ -2203,23 +2206,30 @@ void display_equip(void)
  */
 void show_inven(void)
 {
-	int             i, j, k, l, z = 0;
-	int             col, len, lim;
-	object_type     *o_ptr;
-	char            o_name[80];
-	char            tmp_val[80];
-	int             out_index[23];
-	byte            out_color[23];
-	char            out_desc[23][80];
-	byte		a;
-	char		c;
+	int i, j, k, l, z = 0;
 
+	int col, len, lim;
+	object_type *o_ptr;
+
+	char o_name[256];
+	char tmp_val[80];
+	int out_index[23];
+	byte out_color[23];
+	char out_desc[23][256];
+
+	byte a;
+	char c;
+
+	int wid, hgt;
+
+	/* Get size */
+	Term_get_size(&wid, &hgt);
 
 	/* Default "max-length" */
-	len = 79 - 50;
+	len = wid - 51;
 
 	/* Maximum space allowed for descriptions */
-	lim = 79 - 3;
+	lim = wid - 4;
 
 	/* Require space for weight (if needed) */
 	if (show_weights) lim -= 9;
@@ -2248,7 +2258,7 @@ void show_inven(void)
 		if (!item_tester_okay(o_ptr)) continue;
 
 		/* Describe the object */
-		object_desc(o_name, o_ptr, TRUE, 3);
+		object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 		/* Hack -- enforce max length */
 		o_name[lim] = '\0';
@@ -2289,7 +2299,7 @@ void show_inven(void)
 	}
 
 	/* Find the column to start in */
-	col = (len > 76) ? 0 : (79 - len);
+	col = (len > wid - 4) ? 0 : (wid - len - 1);
 
 	/* Output each entry */
 	for (j = 0; j < k; j++)
@@ -2335,7 +2345,7 @@ void show_inven(void)
 		{
 			int wgt = o_ptr->weight * o_ptr->number;
 			(void)sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
-			put_str(tmp_val, 71, j + 1);
+			put_str(tmp_val, wid - 9, j + 1);
 		}
 	}
 
@@ -2344,29 +2354,36 @@ void show_inven(void)
 }
 
 
-
 /*
  * Display the equipment.
  */
 void show_equip(void)
 {
-	int             i, j, k, l;
-	int             col, len, lim;
-	object_type     *o_ptr;
-	char            tmp_val[80];
-	char            o_name[80];
-	int             out_index[23];
-	byte            out_color[23];
-	char            out_desc[23][80];
-	byte		a;
-	char		c;
+	int i, j, k, l;
+	int col, len, lim;
+	
+	object_type *o_ptr;
+	
+	char tmp_val[80];
+	char o_name[256];
+	int out_index[23];
+	byte out_color[23];
+	char out_desc[23][256];
+	
+	byte a;
+	char c;
+
+	int wid, hgt;
+
+	/* Get size */
+	Term_get_size(&wid, &hgt);
 
 
 	/* Maximal length */
-	len = 79 - 50;
+	len = wid - 51;
 
 	/* Maximum space allowed for descriptions */
-	lim = 79 - 3;
+	lim = wid - 4;
 
 	/* Require space for labels (if needed) */
 	if (show_labels) lim -= (14 + 2);
@@ -2386,10 +2403,10 @@ void show_equip(void)
 		if (!item_tester_okay(o_ptr)) continue;
 
 		/* Description */
-		object_desc(o_name, o_ptr, TRUE, 3);
+		object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 		/* Truncate the description */
-		o_name[lim] = 0;
+		o_name[lim] = '\0';
 
 		/* Save the color */
 		out_index[k] = i;
@@ -2430,7 +2447,7 @@ void show_equip(void)
 	}
 
 	/* Hack -- Find a column to start in */
-	col = (len > 76) ? 0 : (79 - len);
+	col = (len > wid - 4) ? 0 : (wid - len - 1);
 
 	/* Output each entry */
 	for (j = 0; j < k; j++)
@@ -2492,15 +2509,13 @@ void show_equip(void)
 		{
 			int wgt = o_ptr->weight * o_ptr->number;
 			(void)sprintf(tmp_val, "%3d.%d lb", wgt / 10, wgt % 10);
-			put_str(tmp_val, 71, j + 1);
+			put_str(tmp_val, wid - 9, j + 1);
 		}
 	}
 
 	/* Make a "shadow" below the list (only if needed) */
 	if (j && (j < 23)) prt("", col ? col - 2 : col, j + 1);
 }
-
-
 
 
 /*
@@ -2549,8 +2564,8 @@ void toggle_inven_equip(void)
  */
 static bool verify(cptr prompt, int item)
 {
-	char        o_name[80];
-	char        out_val[160];
+	char        o_name[256];
+	char        out_val[512];
 	object_type *o_ptr;
 
 
@@ -2567,7 +2582,7 @@ static bool verify(cptr prompt, int item)
 	}
 
 	/* Describe */
-	object_desc(o_name, o_ptr, TRUE, 3);
+	object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 	/* Prompt */
 	(void)sprintf(out_val, "%s %s? ", prompt, o_name);
@@ -2770,21 +2785,26 @@ void show_floor(int x, int y)
 
 	object_type *o_ptr;
 
-	char o_name[80];
+	char o_name[256];
 
 	char tmp_val[80];
 
 	int out_index[23];
 	byte out_color[23];
-	char out_desc[23][80];
+	char out_desc[23][256];
 
 	int floor_list[23], floor_num;
 
+	int wid, hgt;
+
+	/* Get size */
+	Term_get_size(&wid, &hgt);
+	
 	/* Default length */
-	len = 79 - 50;
+	len = wid - 51;
 
 	/* Maximum space allowed for descriptions */
-	lim = 79 - 3;
+	lim = wid - 4;
 
 	/* Require space for weight (if needed) */
 	if (show_weights) lim -= 9;
@@ -2798,7 +2818,7 @@ void show_floor(int x, int y)
 		o_ptr = &o_list[floor_list[i]];
 
 		/* Describe the object */
-		object_desc(o_name, o_ptr, TRUE, 3);
+		object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 		/* Hack -- enforce max length */
 		o_name[lim] = '\0';
@@ -2826,7 +2846,7 @@ void show_floor(int x, int y)
 	}
 
 	/* Find the column to start in */
-	col = (len > 76) ? 0 : (79 - len);
+	col = (len > wid - 4) ? 0 : (wid - len - 1);
 
 	/* Output each entry */
 	for (j = 0; j < k; j++)
@@ -2854,7 +2874,7 @@ void show_floor(int x, int y)
 		{
 			int wgt = o_ptr->weight * o_ptr->number;
 			sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
-			put_str(tmp_val, 71, j + 1);
+			put_str(tmp_val, wid - 9, j + 1);
 		}
 	}
 

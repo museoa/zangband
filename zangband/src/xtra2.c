@@ -1944,7 +1944,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 
 	int query;
 
-	char out_val[160];
+	char out_val[512];
 
 
 	/* Repeat forever */
@@ -2119,7 +2119,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 					/* Scan all objects being carried */
 					for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx)
 					{
-						char o_name[80];
+						char o_name[256];
 	
 						object_type *o_ptr;
 
@@ -2130,7 +2130,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 						next_o_idx = o_ptr->next_o_idx;
 
 						/* Obtain an object description */
-						object_desc(o_name, o_ptr, TRUE, 3);
+						object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 						/* Describe the object */
 						sprintf(out_val, "%s%s%s%s [%s]", s1, s2, s3, o_name, info);
@@ -2171,7 +2171,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 				{
 					if (floor_num == 1)
 					{
-						char o_name[80];
+						char o_name[256];
 
 						object_type *o_ptr;
 
@@ -2179,7 +2179,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 						o_ptr = &o_list[floor_list[0]];
 
 						/* Describe the object */
-						object_desc(o_name, o_ptr, TRUE, 3);
+						object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 						/* Message */
 						sprintf(out_val, "%s%s%s%s [%s]",
@@ -2248,7 +2248,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 				boring = FALSE;
 
 				/* Obtain an object description */
-				object_desc(o_name, o_ptr, TRUE, 3);
+				object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 				/* Describe the object */
 				sprintf(out_val, "%s%s%s%s [%s]", s1, s2, s3, o_name, info);

@@ -475,7 +475,7 @@ void curse_equipment(int chance, int heavy_chance)
 	if ((o3 & TR3_BLESSED) && (randint1(888) > chance))
 	{
 		char o_name[256];
-		object_desc(o_name, o_ptr, FALSE, 0);
+		object_desc(o_name, o_ptr, FALSE, 0, 256);
 		msg_format("Your %s resists cursing!", o_name);
 		return;
 	}

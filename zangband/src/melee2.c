@@ -2761,13 +2761,13 @@ static void process_monster(int m_idx)
 
 					u32b flg3 = 0L;
 
-					char o_name[80];
+					char o_name[256];
 
 					/* Extract some flags */
 					object_flags(o_ptr, &f1, &f2, &f3);
 
 					/* Acquire the object name */
-					object_desc(o_name, o_ptr, TRUE, 3);
+					object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 					/* Acquire the monster name */
 					monster_desc(m_name, m_ptr, 0x04);

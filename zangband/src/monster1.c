@@ -101,19 +101,26 @@ static bool know_damage(int r_idx, int i)
  */
 static void roff_aux(int r_idx, int remem)
 {
-	monster_race    *r_ptr = &r_info[r_idx];
-	bool            old = FALSE;
-	bool            sin = FALSE;
-	int             m, n, r;
-	cptr            p, q;
-	int             msex = 0;
-	int             speed = (ironman_nightmare) ? r_ptr->speed + 5 : r_ptr->speed;
-	bool            breath = FALSE;
-	bool            magic = FALSE;
-	u32b            flags1, flags2, flags3, flags4, flags5, flags6, flags7;
-	int             vn = 0;
-	cptr            vp[80];
-	monster_race    save_mem;
+	monster_race *r_ptr = &r_info[r_idx];
+	
+	bool old = FALSE;
+	bool sin = FALSE;
+	
+	int m, n, r;
+	cptr p, q;
+	
+	int msex = 0;
+	int speed = (ironman_nightmare) ? r_ptr->speed + 5 : r_ptr->speed;
+	
+	bool breath = FALSE;
+	bool magic = FALSE;
+	
+	u32b flags1, flags2, flags3, flags4, flags5, flags6, flags7;
+	
+	int vn = 0;
+	cptr vp[80];
+	
+	monster_race save_mem;
 
 	/* Descriptions */
 	char buf[2048];
@@ -310,8 +317,6 @@ static void roff_aux(int r_idx, int remem)
 			c_roff(TERM_WHITE, "No battles to the death are recalled.  ");
 		}
 	}
-
-
 
 
 #ifdef DELAY_LOAD_R_TEXT
@@ -1355,10 +1360,10 @@ static void roff_aux(int r_idx, int remem)
  */
 static void roff_top(int r_idx)
 {
-	monster_race	*r_ptr = &r_info[r_idx];
+	monster_race *r_ptr = &r_info[r_idx];
 
-	byte		a1, a2;
-	char		c1, c2;
+	byte a1, a2;
+	char c1, c2;
 
 
 	/* Access the chars */

@@ -126,7 +126,7 @@ bool make_attack_normal(int m_idx)
 
 	object_type *o_ptr;
 
-	char o_name[80];
+	char o_name[256];
 
 	char m_name[80];
 
@@ -697,7 +697,7 @@ bool make_attack_normal(int m_idx)
 							if (o_ptr->flags3 & TR3_INSTA_ART) continue;
 
 							/* Get a description */
-							object_desc(o_name, o_ptr, FALSE, 3);
+							object_desc(o_name, o_ptr, FALSE, 3, 256);
 
 							/* Message */
 							msg_format("%sour %s (%c) was stolen!",
@@ -778,7 +778,7 @@ bool make_attack_normal(int m_idx)
 							if (o_ptr->tval != TV_FOOD) continue;
 
 							/* Get a description */
-							object_desc(o_name, o_ptr, FALSE, 0);
+							object_desc(o_name, o_ptr, FALSE, 0, 256);
 
 							/* Message */
 							msg_format("%sour %s (%c) was eaten!",
