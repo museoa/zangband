@@ -2329,10 +2329,10 @@ static object_type *make_artifact(void)
 		k_idx = lookup_kind(a_ptr->tval, a_ptr->sval);
 
 		/* XXX XXX Enforce minimum "object" level (loosely) */
-		if (k_info[k_idx].level > base_level)
+		if (k_info[k_idx].level > base_level())
 		{
 			/* Acquire the "out-of-depth factor" */
-			int d = (k_info[k_idx].level - base_level) * 5;
+			int d = (k_info[k_idx].level - base_level()) * 5;
 
 			/* Roll for out-of-depth creation */
 			if (!one_in_(d)) continue;
@@ -4556,7 +4556,7 @@ void place_specific_object(int x, int y, int level, int k_idx)
  *
  * This routine plays nasty games to generate the "special artifacts".
  *
- * This routine uses "base_level" + "delta_level" for the "generation level".
+ * This routine uses "base_level()" + "delta_level" for the "generation level".
  *
  * This routine requires a clean floor grid destination.
  */
@@ -4580,7 +4580,7 @@ void place_object(int x, int y, bool good, bool great, int delta_level)
 	}
 	
 	/* Make an object (if possible) */
-	o_ptr = make_object(base_level + delta_level,
+	o_ptr = make_object(base_level() + delta_level,
 						(good ? 15 : 0) + (great ? 15 : 0), &dun_ptr->theme);
 
 	/* Put it on the ground */
@@ -4643,7 +4643,7 @@ void place_gold(int x, int y)
 	object_type *o_ptr;
 
 	/* Make some gold */
-	o_ptr = make_gold(base_level, 0);
+	o_ptr = make_gold(base_level(), 0);
 
 	/* Put it on the ground */
 	(void)put_object(o_ptr, x, y);
@@ -4980,7 +4980,7 @@ void acquirement(int x1, int y1, int num, bool great, bool known)
 			if (great)
 			{
 				/* Make a great object (if possible) */
-				o_ptr = make_object(base_level, 40, &theme);
+				o_ptr = make_object(base_level(), 40, &theme);
 
 				/* Paranoia */
 				if (!o_ptr) continue;
@@ -4988,7 +4988,7 @@ void acquirement(int x1, int y1, int num, bool great, bool known)
 			else
 			{
 				/* Make a good object (if possible) */
-				o_ptr = make_object(base_level, 20, &theme);
+				o_ptr = make_object(base_level(), 20, &theme);
 
 				/* Paranoia */
 				if (!o_ptr) continue;

@@ -1314,9 +1314,6 @@ void generate_cave(void)
 
 		cptr why = NULL;
 
-		/* Set the base level */
-		base_level = p_ptr->depth;
-
 		/* Nothing special here yet */
 		dun_ptr->good_item_flag = FALSE;
 

@@ -2995,9 +2995,6 @@ static void dungeon(void)
 {
 	cave_type *c_ptr;
 
-	/* Set the base level */
-	base_level = p_ptr->depth;
-
 	/* Not leaving */
 	p_ptr->state.leaving = FALSE;
 

@@ -599,7 +599,7 @@ bool monster_death(int m_idx, bool explode)
 		/* Prepare to make a Blade of Chaos */
 		q_ptr = object_prep(lookup_kind(TV_SWORD, SV_BLADE_OF_CHAOS));
 
-		apply_magic(q_ptr, base_level, 0, 0);
+		apply_magic(q_ptr, base_level(), 0, 0);
 
 		/* Drop it in the dungeon */
 		drop_near(q_ptr, -1, x, y);

@@ -83,9 +83,6 @@ bool msg_flag;	/* Used in msg_print() for "buffering" */
 
 s16b num_repro;	/* Current reproducer count */
 
-s16b object_level;	/* Current object creation level */
-s16b base_level;	/* Base dungeon level */
-
 s32b turn;	/* Current game turn */
 s32b old_turn;	/* Turn when level began (feelings) */
 

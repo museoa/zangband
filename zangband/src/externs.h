@@ -112,7 +112,6 @@ extern bool character_xtra;
 extern u32b seed_flavor;
 extern bool msg_flag;
 extern s16b num_repro;
-extern s16b base_level;
 extern s32b turn;
 extern s32b old_turn;
 extern bool use_sound;
@@ -1051,6 +1050,7 @@ extern void move_wild(void);
 extern void init_wild_cache(void);
 extern void shift_in_bounds(int *x, int *y);
 extern void change_level(int);
+extern int base_level(void);
 extern void wipe_all_list(void);
 extern cptr building_name(byte build_type);
 

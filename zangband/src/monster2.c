@@ -649,7 +649,6 @@ static int filter_mon_loc(int x, int y)
 {
 	wild_done_type *w_ptr;
 	monster_race *r_ptr;
-	cave_type *c_ptr;
 	
 	int level;
 
@@ -660,9 +659,6 @@ static int filter_mon_loc(int x, int y)
 	{
 		/* Point to wilderness block info */
 		w_ptr = &wild[y / 16][x / 16].done;
-		
-		/* Location */
-		c_ptr = area(x, y);
 		
 		/* Scan the allocation table */
 		for (i = 0; i < alloc_race_size; i++)
@@ -691,9 +687,6 @@ static int filter_mon_loc(int x, int y)
 	{
 		/* In the dungeon */
 		
-		/* Location */
-		c_ptr = area(x, y);
-		
 		/* Scan the allocation table */
 		for (i = 0; i < alloc_race_size; i++)
 		{
@@ -715,7 +708,7 @@ static int filter_mon_loc(int x, int y)
 		}
 		
 		/* The level of the monsters */
-		level = base_level;
+		level = base_level();
 	}
 	
 	return (level);

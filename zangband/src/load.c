@@ -2089,13 +2089,10 @@ static errr rd_dungeon(void)
 	/* Header info */
 	rd_s16b(&p_ptr->depth);
 
-	/* Set the base level for old versions */
-	base_level = p_ptr->depth;
-
 	/* Read the base level */
 	if (!z_older_than(2, 2, 2))
 	{
-		rd_s16b(&base_level);
+		strip_bytes(2);
 	}
 
 	rd_s16b(&num_repro);

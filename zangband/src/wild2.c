@@ -3335,9 +3335,6 @@ static void gen_block(int x, int y)
 	/* Day / Night - lighten or darken the new block */
 	light_dark_block(x, y);
 
-	/* Hack - set the base level to the monster generation level */
-	base_level = wild[y][x].done.mon_gen;
-
 	/* Add monsters */
 	add_monsters_block(x, y);
 }
@@ -3973,6 +3970,25 @@ void change_level(int level)
 
 	/* Tell the rest of the world that the map is no longer valid */
 	Term_erase_map();
+}
+
+
+/*
+ * Get the base level for objects and monsters
+ * around the player.
+ */
+int base_level(void)
+{
+	wild_done_type *w_ptr;
+
+	/* Are we in the dungeon? */
+	if (p_ptr->depth) return (p_ptr->depth);
+	
+	/* Point to wilderness block info */
+	w_ptr = &wild[p_ptr->py / 16][p_ptr->px / 16].done;
+	
+	/* The level of the wilderness */
+	return(w_ptr->mon_gen);
 }
 
 
