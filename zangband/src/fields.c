@@ -945,6 +945,9 @@ bool field_detect_type(s16b fld_idx, byte typ)
 			{
 				/* Now is visible + known */
 				f_ptr->info |= (FIELD_INFO_VIS | FIELD_INFO_MARK);
+				
+				/* Lookable */
+				f_ptr->info &= ~(FIELD_INFO_NO_LOOK);
 			}
 
 			/* We found something */
@@ -1949,6 +1952,9 @@ static void hit_trap(field_type *f_ptr)
 	{
 		/* Detect it. */
 		f_ptr->info |= FIELD_INFO_VIS;
+		
+		/* Trap is "lookable" */
+		f_ptr->info &= ~(FIELD_INFO_NO_LOOK);
 		
 		/* Message */
 		msg_print("You found a trap!");

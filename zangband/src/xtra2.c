@@ -1938,8 +1938,9 @@ static bool target_set_accept(int y, int x)
 		/* Acquire next field */
 		next_f_idx = f_ptr->next_f_idx;
 
-		/* Memorized field */
-		if (f_ptr->info & FIELD_INFO_MARK) return (TRUE);
+		/* Memorized , lookable field */
+		if ((f_ptr->info & (FIELD_INFO_MARK | FIELD_INFO_NO_LOOK)) ==
+			 FIELD_INFO_MARK) return (TRUE);
 	}
 
 	/* Interesting memorized features */
@@ -2391,8 +2392,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 			if (f_ptr->info & FIELD_INFO_NO_LOOK) continue;
 
 			/* Describe if if is visible and known. */
-			if ((f_ptr->info & (FIELD_INFO_MARK | FIELD_INFO_VIS))
-				 == (FIELD_INFO_MARK | FIELD_INFO_VIS))
+			if (f_ptr->info & FIELD_INFO_MARK)
 			{
 				/* See if it has a special name */
 				if (f_ptr->action[FIELD_ACT_LOOK])
