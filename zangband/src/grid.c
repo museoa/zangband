@@ -364,10 +364,10 @@ int next_to_walls(int y, int x)
 {
 	int	k = 0;
 
-	if (cave[y+1][x].feat >= FEAT_WALL_EXTRA) k++;
-	if (cave[y-1][x].feat >= FEAT_WALL_EXTRA) k++;
-	if (cave[y][x+1].feat >= FEAT_WALL_EXTRA) k++;
-	if (cave[y][x-1].feat >= FEAT_WALL_EXTRA) k++;
+	if (cave_floor_bold(y+1, x)) k++;
+	if (cave_floor_bold(y-1, x)) k++;
+	if (cave_floor_bold(y, x+1)) k++;
+	if (cave_floor_bold(y, x-1)) k++;
 
 	return (k);
 }
