@@ -2423,7 +2423,7 @@ bool monst_spell_monst(int m_idx)
 				}
 				else
 				{
-					count += summon_cyber();
+					count += summon_cyber(y, x);
 				}
 
 				if (known && !see_t && count)

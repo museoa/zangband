@@ -3979,7 +3979,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 				 */
 				if ((dun_level > 65) && !stop_ty)
 				{
-					(*count) += summon_cyber();
+					(*count) += summon_cyber(py, px);
 					stop_ty = TRUE;
 					break;
 				}
@@ -4064,7 +4064,7 @@ int activate_hi_summon(void)
 
 
 /* ToDo: check */
-int summon_cyber(void)
+int summon_cyber(int y, int x)
 {
 	int i;
 	int max_cyber = (dun_level / 50) + randint(6);
@@ -4072,7 +4072,7 @@ int summon_cyber(void)
 
 	for (i = 0; i < max_cyber; i++)
 	{
-		count += summon_specific(py, px, 100, SUMMON_CYBER, TRUE, FALSE, FALSE);
+		count += summon_specific(y, x, 100, SUMMON_CYBER, FALSE, FALSE, FALSE);
 	}
 
 	return count;

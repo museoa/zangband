@@ -2267,7 +2267,7 @@ bool make_attack_spell(int m_idx)
 			if (blind) msg_format("%^s mumbles.", m_name);
 			else msg_format("%^s magically summons Cyberdemons!", m_name);
 			if (blind && count) msg_print("You hear heavy steps nearby.");
-			summon_cyber();
+			summon_cyber(y, x);
 			break;
 		}
 

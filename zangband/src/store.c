@@ -2578,11 +2578,8 @@ static void store_purchase(void)
 	/* Get a copy of the object */
 	object_copy(j_ptr, o_ptr);
 
-	/*
-	 * If a rod or wand, allocate total maximum timeouts or charges
-	 * between those purchased and left on the shelf.
-	 */
-	reduce_charges(j_ptr, amt);
+	/* Recalculate charges for a single wand/rod */
+	reduce_charges(j_ptr, j_ptr->number - 1);
 
 	/* Modify quantity */
 	j_ptr->number = amt;
@@ -2624,7 +2621,7 @@ static void store_purchase(void)
 	 * If a rod or wand, allocate total maximum timeouts or charges
 	 * between those purchased and left on the shelf.
 	 */
-	reduce_charges(j_ptr, amt);
+	reduce_charges(j_ptr, j_ptr->number - amt);
 
 	/* Modify quantity */
 	j_ptr->number = amt;

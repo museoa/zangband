@@ -634,4 +634,4 @@
 /*
  * Compile in virtues
  */
-#define AVATAR
+/* #define AVATAR */

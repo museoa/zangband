@@ -655,7 +655,7 @@ void wild_magic(int spell)
 		}
 		case 38:
 		{
-			summon_cyber();
+			summon_cyber(py, px);
 			break;
 		}
 		default:
