@@ -69,8 +69,11 @@ Zangband 2.3.4:
 -Fixed a bug with critical shots.
 -Trees will now only block LOS half the time.
 -Increased the maximum number of pits to 2 per level
-
-
+-Fixed a bug that caused thrown/fired objects to look strange with
+ graphics turned on.
+-Changed the compiler optimization flags for the DOS version to work-
+ around a bug in DJGPP that could cause ZAngband to hang when
+ compacting items.
 
 Zangband 2.3.3:
 -Added magical figurines, statues, and corpses (corpses are turned off
