@@ -3855,22 +3855,86 @@ static bool do_cmd_knowledge_notes(int dummy)
 	return (FALSE);
 }
 
+
+/*
+ * Dump info about a town to the given file
+ */
+void dump_town_info(FILE *fff, int town)
+{
+	int j;
+
+	char stores_info[2048];
+	
+	cptr build_name;
+
+	bool visited = FALSE;
+
+	place_type *pl_ptr = &place[town];
+
+	/* Is it a town? */
+	if (!pl_ptr->quest_num)
+	{
+		/* Hack-- determine the town has been visited */
+		visited = FALSE;
+
+		for (j = 0; j < pl_ptr->numstores; j++)
+		{
+			/* Stores are not given coordinates until you visit a town */
+			if ((pl_ptr->store[j].x != 0) && (pl_ptr->store[j].y != 0))
+			{
+				visited = TRUE;
+				break;
+			}
+		}
+
+		/* Build a buffer with the information (If visited, and if it is a town) */
+		if (visited)
+		{
+			/* Clear stores and place information */
+			stores_info[0] = '\0';
+
+			/* Built stores information */
+			for (j = 0; j < pl_ptr->numstores;j++)
+			{
+				build_name = building_name(pl_ptr->store[j].type);
+
+				/* Make a string, but only if this is a real building */
+				if (!streq(build_name, "Nothing"))
+				{
+					/* Append information about store */
+					strnfmt(stores_info, 2048, "%s     %s\n",
+							stores_info, build_name);
+				}
+			}
+
+			/* write stairs information to file */
+			if (pl_ptr->dungeon)
+			{
+				froff(fff, "%s -- Stairs\n", pl_ptr->name);
+			}
+			else
+			{
+				froff(fff, "%s\n", pl_ptr->name);
+			}
+
+			/* Write to file */
+			froff(fff, stores_info);
+			froff(fff, "\n");
+		}
+	}
+}
+
+
 /*
  * Display information about wilderness areas
  */
 static bool do_cmd_knowledge_wild(int dummy)
 {
-	int k, j;
+	int k;
 
 	FILE *fff;
 
-	char stores_info[2048];
-
 	char file_name[1024];
-	
-	cptr build_name;
-
-	bool visited = FALSE;
 	
 	/* Hack - ignore parameter */
 	(void) dummy;
@@ -3884,57 +3948,7 @@ static bool do_cmd_knowledge_wild(int dummy)
 	/* Cycle through the places */
 	for (k = 1; k < place_count; k++)
 	{
-		/* Is this a town? */
-		if (!place[k].quest_num)
-		{
-			/* Hack -- determine the town has been visited */
-			visited = FALSE;
-
-			for (j = 0; j < place[k].numstores; j++)
-			{
-				/* Stores are not given coordinates until you visit a town */
-				if (place[k].store[j].x != 0 && place[k].store[j].y != 0)
-				{
-					visited = TRUE;
-					break;
-				}
-			}
-
-			/* Build a buffer with information (if visited, and if it is a town) */
-			if (visited)
-			{
-				/* Clear stores and place information */
-				stores_info[0] = '\0';
-
-				/* Build stores information */
-				for (j = 0; j < place[k].numstores; j++)
-				{
-					build_name = building_name(place[k].store[j].type);
-				
-					/* Make a string, but only if this is a real building */
-					if (!streq(build_name, "Nothing"))
-					{
-						/* Append information about store */
-						strnfmt(stores_info, 2048, "%s     %s\n",
-								stores_info, build_name);
-					}
-				}
-				
-				/* Write stairs information to file */
-				if (place[k].dungeon)
-				{
-					froff(fff, "%s -- Stairs\n", place[k].name);
-				}
-				else
-				{
-					froff(fff, "%s\n", place[k].name);
-				}
-
-				/* Write to file */
-				froff(fff, stores_info);
-				froff(fff, "\n");
-			}
-		}
+		dump_town_info(fff, k);
 	}
 
 	/* Close the file */

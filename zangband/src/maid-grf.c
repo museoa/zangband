@@ -729,6 +729,34 @@ map_block *map_loc(int x, int y)
 			[y & 15][x & 15]);
 }
 
+/*
+ * Display info about one town -- used with the map function
+ *
+ * Basically a rip of do_cmd_knowledge_wild from cmd4.c -MT
+ */
+static void single_town_info(int place)
+{
+	FILE *fff;
+
+	char file_name[1024];
+
+	/* Opet temporary file */
+	fff = my_fopen_temp(file_name, 1024);
+
+	/* Failure */
+	if (!fff) return;
+	
+	dump_town_info(fff, place);
+
+	/* Close the file */
+	my_fclose(fff);
+	
+	/* Display the file contents */
+	(void)show_file(file_name, "Town Info", 0, 0);
+
+	/* Remove the file */
+	(void)fd_kill(file_name);
+}
 
 /*
  * Display a "small-scale" map of the dungeon for the player
@@ -808,10 +836,6 @@ void do_cmd_view_map(void)
 
 			display_map(&cx, &cy);
 
-			/* Wait for it */
-			put_fstr(COL_MAP - 23 + (wid - COL_MAP) / 2, hgt - 1,
-						"Move around, or hit any other key to continue.");
-
 			w_ptr = &wild[y + py / WILD_BLOCK_SIZE][x + px / WILD_BLOCK_SIZE].done;
 
 			/* Show the town name, if it exists */
@@ -822,6 +846,16 @@ void do_cmd_view_map(void)
 			
 				/* Display it */
 				put_fstr(COL_MAP + (wid - COL_MAP - town_name_len) / 2, 0, town_name);
+
+				/* Display different prompt -MT */
+				put_fstr(COL_MAP - 36 + (wid - COL_MAP) / 2, hgt - 1,
+						"Move around, press * for town info, or hit any other key to continue.");
+			}
+			else
+			{
+				/* Display standard prompt -MT */
+				put_fstr(COL_MAP - 23 + (wid - COL_MAP) / 2, hgt - 1,
+						"Move around, or hit any other key to continue.");
 			}
 
 			/* Show the cursor */
@@ -831,9 +865,22 @@ void do_cmd_view_map(void)
 			Term_fresh();
 
 			/* Get a response */
-			d = get_keymap_dir(inkey());
+			d = inkey();
 
+			/* On a town?  -- MT */
+			if (w_ptr->place)
+			{
+				/* Accept '*' or a direction -- MT */
+				if (d == '*')
+				{
+					/* Display info for this town -- MT */
+					single_town_info(w_ptr->place);
+					continue;
+				}
+			}
+			
 			/* Done if not a direction */
+			d = get_keymap_dir(d);
 			if (!d) break;
 
 			x += ddx[d];
