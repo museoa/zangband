@@ -2685,6 +2685,7 @@ bool bless_weapon(void)
 		/* Describe */
 		msg_format("The %s shine%s!", o_name, ((o_ptr->number > 1) ? "" : "s"));
 		o_ptr->flags3 |= TR3_BLESSED;
+		o_ptr->kn_flags3 |= TR3_BLESSED;
 	}
 	else
 	{

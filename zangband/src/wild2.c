@@ -621,7 +621,7 @@ static bool create_city(int x, int y, int town_num)
 	count = fill_town_driver();
 
 	/* Too few squares??? */
-	if (count < 6) return (FALSE);
+	if (count < 7) return (FALSE);
 
 	/* Make sure the city is self-connected properly */
 	remove_islands();
