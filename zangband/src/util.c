@@ -809,6 +809,23 @@ errr fd_close(int fd)
 #endif /* ACORN */
 
 
+/* This works by masking off the lowest order set bits one at a time */
+int count_bits(u32b x)
+{
+	int n = 0;
+
+	if (x)
+	{
+		do
+		{
+			n++;
+		}
+		while (0 != (x = x & (x - 1)));
+	}
+
+	return (n);
+}
+
 
 /*
  * Convert a decimal to a single digit hex number

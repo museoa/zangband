@@ -3584,7 +3584,8 @@ static void build_elemental_vault(int x0, int y0, int xsiz, int ysiz)
 	int c1, c2, c3;
 	bool done = FALSE;
 	int xsize, ysize, xhsize, yhsize, i;
-	int type;
+
+	byte f1, f2, f3;
 
 
 	if (cheat_room) msgf("Elemental Vault");
@@ -3598,22 +3599,30 @@ static void build_elemental_vault(int x0, int y0, int xsiz, int ysiz)
 	if (p_ptr->depth < 25)
 	{
 		/* Earth vault  (Rubble) */
-		type = LAKE_EEARTH;
+		f1 = FEAT_RUBBLE;
+		f2 = FEAT_FLOOR;
+		f3 = FEAT_RUBBLE;
 	}
 	else if (p_ptr->depth < 50)
 	{
 		/* Air vault (Trees) */
-		type = LAKE_EAIR;
+		f1 = FEAT_FLOOR;
+		f2 = FEAT_TREES;
+		f3 = FEAT_FLOOR;
 	}
 	else if (p_ptr->depth < 75)
 	{
 		/* Water vault (shallow water) */
-		type = LAKE_EWATER;
+		f1 = FEAT_SHAL_WATER;
+		f2 = FEAT_DEEP_WATER;
+		f3 = FEAT_SHAL_WATER;
 	}
 	else
 	{
 		/* Fire vault (shallow lava) */
-		type = LAKE_EFIRE;
+		f1 = FEAT_SHAL_LAVA;
+		f2 = FEAT_DEEP_LAVA;
+		f3 = FEAT_SHAL_LAVA;
 	}
 
 	while (!done)
@@ -3638,7 +3647,7 @@ static void build_elemental_vault(int x0, int y0, int xsiz, int ysiz)
 		generate_hmap(x0, y0, xsize, ysize, grd, roug, c3);
 
 		/* Convert to normal format + clean up */
-		done = generate_lake(x0, y0, xsize, ysize, c1, c2, c3, type);
+		done = generate_lake(x0, y0, xsize, ysize, c1, c2, c3, f1, f2, f3);
 	}
 
 	/* Set icky flag because is a vault */
@@ -3860,7 +3869,7 @@ static void build_type11(int bx0, int by0)
 	{
 		rad = randint1(rad);
 		
-		/* Make circular water feature */
+		/* Make circular liquid feature */
 		for (x = x0 - rad; x <= x0 + rad; x++)
 		{
 			for (y = y0 - rad; y <= y0 + rad; y++)
@@ -3868,7 +3877,7 @@ static void build_type11(int bx0, int by0)
 				if (distance(x0, y0, x, y) <= rad - 1)
 				{
 					/* inside- so is floor */
-					set_feat_bold(x, y, FEAT_SHAL_WATER);
+					set_feat_bold(x, y, dun->feat_shal_liquid);
 				}
 			}
 		}
@@ -3979,7 +3988,7 @@ static void build_type13(int bx0, int by0)
 	int grd, roug, xsize, ysize, xhsize, yhsize, y0, x0;
 
 	int c1, c2, c3;
-	int type = LAKE_CAVERN;
+	byte f1 = 0, f2 = 0, f3 = 0;
 
 	bool done;
 
@@ -4004,35 +4013,45 @@ static void build_type13(int bx0, int by0)
 		case 0:
 		{
 			/* Water */
-			type = LAKE_WATER;
+			f1 = FEAT_DEEP_WATER;
+			f2 = FEAT_SHAL_WATER;
+			f3 = FEAT_FLOOR;
 			break;
 		}
 
 		case 1:
 		{
 			/* Lava */
-			type = LAKE_LAVA;
+			f1 = FEAT_DEEP_LAVA;
+			f2 = FEAT_SHAL_LAVA;
+			f3 = FEAT_FLOOR;
 			break;
 		}
 
 		case 2:
 		{
 			/* Rock */
-			type = LAKE_ROCK;
+			f1 = FEAT_WALL_INNER;
+			f2 = FEAT_WALL_INNER;
+			f3 = FEAT_FLOOR;
 			break;
 		}
 
 		case 3:
 		{
 			/* Rubble - oooh treasure */
-			type = LAKE_RUBBLE;
+			f1 = FEAT_RUBBLE;
+			f2 = FEAT_RUBBLE;
+			f3 = FEAT_FLOOR;
 			break;
 		}
 
 		case 4:
 		{
 			/* Sand */
-			type = LAKE_SAND;
+			f1 = FEAT_SAND;
+			f2 = FEAT_SAND;
+			f3 = FEAT_FLOOR;
 			break;
 		}
 	}
@@ -4059,7 +4078,7 @@ static void build_type13(int bx0, int by0)
 		generate_hmap(x0, y0, xsize, ysize, grd, roug, c3);
 
 		/* Convert to normal format + clean up */
-		done = generate_lake(x0, y0, xsize, ysize, c1, c2, c3, type);
+		done = generate_lake(x0, y0, xsize, ysize, c1, c2, c3, f1, f2, f3);
 	}
 
 	/* Make inner passage */
@@ -4561,8 +4580,8 @@ static void build_type19(int bx0, int by0)
 		generate_draw(x1, y1, x2, y2, FEAT_FLOOR);
 		
 		/* Generate liquid */
-		generate_draw(x1, y1 + 1, x2, y2 - 1, FEAT_SHAL_WATER);
-		generate_fill(x1, y1 + 2, x2, y2 - 2, FEAT_DEEP_WATER);
+		generate_draw(x1, y1 + 1, x2, y2 - 1, dun->feat_shal_liquid);
+		generate_fill(x1, y1 + 2, x2, y2 - 2, dun->feat_deep_liquid);
 	}
 	else
 	{
@@ -4585,8 +4604,8 @@ static void build_type19(int bx0, int by0)
 		generate_draw(x1, y1, x2, y2, FEAT_FLOOR);
 		
 		/* Generate liquid */
-		generate_draw(x1 + 1, y1, x2 - 1, y2, FEAT_SHAL_WATER);
-		generate_fill(x1 + 2, y1, x2 - 2, y2, FEAT_DEEP_WATER);
+		generate_draw(x1 + 1, y1, x2 - 1, y2, dun->feat_shal_liquid);
+		generate_fill(x1 + 2, y1, x2 - 2, y2, dun->feat_deep_liquid);
 	}
 }
 

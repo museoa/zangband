@@ -146,6 +146,37 @@ struct dun_data
 
 	/* Hack -- there is a pit/nest on this level */
 	int crowded;
+	
+	/* Liquid type for lakes/ rivers etc. */
+	byte feat_shal_liquid;
+	byte feat_deep_liquid;
 };
 
 extern dun_data *dun;
+
+/* Types of "liquid" for dungeon */
+#define LQ_NONE		0x00
+#define LQ_WATER	0x01
+#define LQ_LAVA		0x02
+#define LQ_ACID		0x04
+#define LQ_SWAMP	0x08
+#define LQ_MUD		0x10
+
+
+#define LQ_MAX		5
+
+
+/* Type holding dungeon type information */
+typedef struct dun_gen_type dun_gen_type;
+
+struct dun_gen_type
+{
+	obj_theme theme;
+	u32b habitat;
+	int level;
+	int chance;
+	
+	/* Liquid type for lakes/ rivers etc. */
+	byte liquid;
+};
+

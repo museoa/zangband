@@ -474,25 +474,19 @@ void build_cavern(void)
 
 		/* Convert to normal format+ clean up */
 		done = generate_lake(x0 + 1, y0 + 1, xsize, ysize,
-							 cutoff, cutoff, cutoff, LAKE_CAVERN);
+							 cutoff, cutoff, cutoff,
+							 FEAT_FLOOR, FEAT_FLOOR, FEAT_FLOOR);
 	}
 }
 
 /*
  * makes a lake/collapsed cave system in the center of the dungeon
  */
-void build_lake(int type)
+void build_lake(byte f1, byte f2, byte f3)
 {
 	int grd, roug, xsize, ysize, x0, y0;
 	bool done = FALSE;
 	int c1, c2, c3;
-
-	/* paranoia - exit if lake type out of range. */
-	if ((type < 1) || (type > 7))
-	{
-		msgf("Invalid lake type (%d)", type);
-		return;
-	}
 
 	/* Make the size of the dungeon */
 	xsize = p_ptr->max_wid - 2;
@@ -526,6 +520,6 @@ void build_lake(int type)
 		generate_hmap(x0 + 1, y0 + 1, xsize, ysize, grd, roug, c3);
 
 		/* Convert to normal format+ clean up */
-		done = generate_lake(x0 + 1, y0 + 1, xsize, ysize, c1, c2, c3, type);
+		done = generate_lake(x0 + 1, y0 + 1, xsize, ysize, c1, c2, c3, f1, f2, f3);
 	}
 }

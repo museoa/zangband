@@ -15,18 +15,6 @@
 
 /* Macros */
 
-#define LAKE_LAVA		1
-#define LAKE_WATER		2
-#define LAKE_DESTROY	3
-#define LAKE_EEARTH		4
-#define LAKE_EAIR		5
-#define LAKE_EWATER		6
-#define LAKE_EFIRE		7
-#define LAKE_CAVERN		8
-#define LAKE_RUBBLE		9
-#define LAKE_SAND		10
-#define LAKE_ROCK		11
-
 /*
  * Access the cave data for the current region
  */
@@ -89,4 +77,5 @@ extern void generate_hmap(int x0, int y0, int xsiz, int ysiz, int grd,
 extern bool generate_fracave(int x0, int y0, int xsize, int ysize, int cutoff,
 							 bool light);
 extern bool generate_lake(int x0, int y0, int xsize, int ysize,
-						  int c1, int c2, int c3, int type);
+						  int c1, int c2, int c3,
+						  byte f1, byte f2, byte f3);

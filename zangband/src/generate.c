@@ -379,6 +379,15 @@ static void try_door(int x, int y)
 	}
 }
 
+static const byte liquid_types[LQ_MAX][2] =
+{
+	{FEAT_SHAL_WATER, FEAT_DEEP_WATER},
+	{FEAT_SHAL_LAVA, FEAT_DEEP_LAVA},
+	{FEAT_SHAL_ACID, FEAT_DEEP_ACID},
+	{FEAT_SHAL_SWAMP, FEAT_DEEP_SWAMP},
+	{FEAT_DRY_MUD, FEAT_WET_MUD}
+};
+
 
 
 /*
@@ -386,20 +395,19 @@ static void try_door(int x, int y)
  *
  * Note that "dun_body" adds about 4000 bytes of memory to the stack.
  */
-static bool cave_gen(void)
+static bool cave_gen(const dun_gen_type *d_type_ptr)
 {
 	int i, j, k, y, x, y1, x1;
 
 	int max_vault_ok = 2;
-
-	int feat1, feat2;
 
 	cave_type *c_ptr;
 
 	bool destroyed = FALSE;
 	bool empty_level = FALSE;
 	bool cavern = FALSE;
-	int laketype = 0;
+
+	int lq_count;
 
 	dun_data dun_body;
 
@@ -416,6 +424,39 @@ static bool cave_gen(void)
 	dun_tun_con = rand_range(DUN_TUN_CON_MIN, DUN_TUN_CON_MAX);
 	dun_tun_pen = rand_range(DUN_TUN_PEN_MIN, DUN_TUN_PEN_MAX);
 	dun_tun_jct = rand_range(DUN_TUN_JCT_MIN, DUN_TUN_JCT_MAX);
+	
+	/*** Store in the terrain types ***/
+	
+	/* Paranoia */
+	if (d_type_ptr->liquid == LQ_NONE)
+	{
+		quit("Undefined liquid type in dungeon.");
+	}
+	
+	/* Count applicable liquid types */
+	lq_count = count_bits(d_type_ptr->liquid);
+	
+	/* Pick one */
+	lq_count = randint0(lq_count);
+	
+	/* Find which choice we have made */
+	for (i = 0; i < LQ_MAX; i++)
+	{
+		/* Is this flag set? */
+		if (d_type_ptr->liquid & (1 << i))
+		{
+			if (!lq_count)
+			{
+				/* Our choice */
+				dun->feat_shal_liquid = liquid_types[i][0];
+				dun->feat_deep_liquid = liquid_types[i][1];
+				break;
+			}
+			
+			/* Count down bits until we get to the one we want */
+			lq_count--;
+		}
+	}	
 
 	/* Empty arena levels */
 	if (ironman_empty_levels || (empty_levels && one_in_(EMPTY_LEVEL)))
@@ -450,28 +491,18 @@ static bool cave_gen(void)
 		destroyed = TRUE;
 
 		/* extra rubble around the place looks cool */
-		build_lake(LAKE_DESTROY);
+		build_lake(FEAT_FLOOR, FEAT_FLOOR, FEAT_RUBBLE);
 	}
 
 	/* Make a lake some of the time */
 	if (one_in_(LAKE_LEVEL) && !empty_level && !destroyed && terrain_streams)
 	{
-		/* Lake of Water */
-		if (p_ptr->depth > 52) laketype = LAKE_WATER;
-
-		/* Lake of Lava */
-		if (p_ptr->depth > 90) laketype = LAKE_LAVA;
-
-		if (laketype != 0)
-		{
-			if (cheat_room)
-				msgf("Lake on the level.");
-			build_lake(laketype);
-		}
+		if (cheat_room) msgf("Lake on the level.");
+		build_lake(dun->feat_deep_liquid, dun->feat_shal_liquid, FEAT_FLOOR);
 	}
 
-	if (one_in_(DUN_CAV1 / (p_ptr->depth + DUN_CAV2)) && !empty_level &&
-		(laketype == 0) && !destroyed && (p_ptr->depth >= MIN_CAVERN))
+	else if (one_in_(DUN_CAV1 / (p_ptr->depth + DUN_CAV2)) && !empty_level &&
+				!destroyed && (p_ptr->depth >= MIN_CAVERN))
 	{
 		cavern = TRUE;
 
@@ -610,8 +641,7 @@ static bool cave_gen(void)
 		k = randint1(100);
 
 		/* No caves when a cavern exists: they look bad */
-		if ((k < p_ptr->depth) && (!cavern) && (!empty_level)
-			&& (laketype == 0))
+		if ((k < p_ptr->depth) && (!cavern) && (!empty_level))
 		{
 			/* Type 9 -- Fractal cave */
 			if (room_build(x, y, 9)) continue;
@@ -639,25 +669,7 @@ static bool cave_gen(void)
 	/* Hack -- Add some rivers */
 	if (one_in_(3) && (randint1(p_ptr->depth) > 5) && terrain_streams)
 	{
-		/* Choose water or lava */
-		if (randint0(MAX_DEPTH * 2) > p_ptr->depth)
-		{
-			feat1 = FEAT_DEEP_WATER;
-			feat2 = FEAT_SHAL_WATER;
-		}
-		else
-		{
-			feat1 = FEAT_DEEP_LAVA;
-			feat2 = FEAT_SHAL_LAVA;
-		}
-
-
-		/* Only add river if matches lake type or if have no lake at all */
-		if (((laketype == 1) && (feat1 == FEAT_DEEP_LAVA)) ||
-			((laketype == 2) && (feat1 == FEAT_DEEP_WATER)) || (laketype == 0))
-		{
-			add_river(feat1, feat2);
-		}
+		add_river(dun->feat_deep_liquid, dun->feat_shal_liquid);
 	}
 
 	/* Special boundary walls -- Top */
@@ -958,7 +970,7 @@ void map_panel_size(void)
 }
 
 /* Make a real level */
-static bool level_gen(cptr *why)
+static bool level_gen(cptr *why, const dun_gen_type *d_type_ptr)
 {
 	int level_height, level_width;
 
@@ -1005,7 +1017,7 @@ static bool level_gen(cptr *why)
 	incref_region(cur_region);
 
 	/* Make a dungeon */
-	if (!cave_gen())
+	if (!cave_gen(d_type_ptr))
 	{
 		*why = "could not place player";
 		return FALSE;
@@ -1277,16 +1289,6 @@ int create_region(int x, int y, byte flags)
 	return (0);
 }
 
-typedef struct dun_gen_type dun_gen_type;
-
-struct dun_gen_type
-{
-	obj_theme theme;
-	u32b habitat;
-	int level;
-	int chance;
-};
-
 
 /*
  * A few dungeon types... just testing.
@@ -1294,19 +1296,19 @@ struct dun_gen_type
  */
 static const dun_gen_type dungeons[] =
 {
-	{{0, 10, 0, 40}, RF8_DUN_DARKWATER, 0, 1},
-	{{50, 10, 10, 0}, RF8_DUN_LAIR, 0, 1},
-	{{10, 30, 30, 30}, RF8_DUN_TEMPLE, 20, 1},
-	{{20, 0, 80, 0}, RF8_DUN_TOWER, 20, 1},
-	{{10, 20, 20, 0}, RF8_DUN_RUIN, 0, 1},
-	{{50, 20, 20, 0}, RF8_DUN_GRAVE, 0, 1},
-	{{30, 30, 30, 10}, RF8_DUN_CAVERN, 40, 1},
-	{{30, 30, 40, 0}, RF8_DUN_PLANAR, 0, 1},
-	{{20, 40, 40, 0}, RF8_DUN_HELL, 60, 1},
-	{{0, 20, 20, 0}, RF8_DUN_HORROR, 80, 1},
-	{{10, 20, 10, 40}, RF8_DUN_MINE, 0, 1},
-	{{30, 30, 10, 10}, RF8_DUN_CITY, 20, 1},
-	{{0, 0, 0, 0}, 0, 0, 0},
+	{{0, 10, 0, 40}, RF8_DUN_DARKWATER, 0, 1, LQ_WATER | LQ_MUD | LQ_SWAMP},
+	{{50, 10, 10, 0}, RF8_DUN_LAIR, 0, 1, LQ_WATER | LQ_ACID | LQ_SWAMP | LQ_MUD},
+	{{10, 30, 30, 30}, RF8_DUN_TEMPLE, 20, 1, LQ_WATER | LQ_LAVA},
+	{{20, 0, 80, 0}, RF8_DUN_TOWER, 20, 1, LQ_ACID | LQ_LAVA},
+	{{10, 20, 20, 0}, RF8_DUN_RUIN, 0, 1, LQ_WATER | LQ_LAVA | LQ_SWAMP},
+	{{50, 20, 20, 0}, RF8_DUN_GRAVE, 0, 1, LQ_WATER | LQ_SWAMP},
+	{{30, 30, 30, 10}, RF8_DUN_CAVERN, 40, 1, LQ_WATER | LQ_ACID | LQ_LAVA | LQ_MUD},
+	{{30, 30, 40, 0}, RF8_DUN_PLANAR, 0, 1, LQ_ACID | LQ_LAVA},
+	{{20, 40, 40, 0}, RF8_DUN_HELL, 60, 1, LQ_LAVA | LQ_MUD},
+	{{0, 20, 20, 0}, RF8_DUN_HORROR, 80, 1, LQ_ACID},
+	{{10, 20, 10, 40}, RF8_DUN_MINE, 0, 1, LQ_WATER | LQ_MUD | LQ_LAVA},
+	{{30, 30, 10, 10}, RF8_DUN_CITY, 20, 1, LQ_WATER},
+	{{0, 0, 0, 0}, 0, 0, 0, LQ_NONE},
 };
 
 
@@ -1403,7 +1405,7 @@ void generate_cave(void)
 		/* Nothing good here yet */
 		dun_ptr->rating = 0;
 
-		okay = level_gen(&why);
+		okay = level_gen(&why, &dungeons[type]);
 
 		/* Extract the feeling */
 		dun_ptr->feeling = extract_feeling();
@@ -1467,18 +1469,6 @@ void generate_cave(void)
 
 	/* Verify the panel */
 	verify_panel();
-
-#if 0
-	/* Remove the CAVE_ROOM flags... reused as CAVE_MNLT */
-	for (x = p_ptr->min_wid; x < p_ptr->max_wid; x++)
-	{
-		for (y = p_ptr->min_hgt; y < p_ptr->max_hgt; y++)
-		{
-			/* Clear the flag */
-			cave_p(x, y)->info &= ~(CAVE_ROOM);
-		}
-	}
-#endif /* 0 */
 
 	/* Remember when this level was "created" */
 	old_turn = turn;

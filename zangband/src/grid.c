@@ -2001,10 +2001,10 @@ bool generate_fracave(int x0, int y0, int xsize, int ysize, int cutoff,
 
 
 bool generate_lake(int x0, int y0, int xsize, int ysize,
-                   int c1, int c2, int c3, int type)
+                   int c1, int c2, int c3,
+				   byte f1, byte f2, byte f3)
 {
 	int x, y, xhsize, yhsize;
-	int feat1, feat2, feat3;
 
 	cave_type *c_ptr;
 
@@ -2012,121 +2012,15 @@ bool generate_lake(int x0, int y0, int xsize, int ysize,
 	xhsize = xsize / 2;
 	yhsize = ysize / 2;
 
-	/* Get features based on type */
-	switch (type)
-	{
-		case LAKE_LAVA:
-		{
-			/* Lava */
-			feat1 = FEAT_DEEP_LAVA;
-			feat2 = FEAT_SHAL_LAVA;
-			feat3 = FEAT_FLOOR;
-			break;
-		}
-
-		case LAKE_WATER:
-		{
-			/* Water */
-			feat1 = FEAT_DEEP_WATER;
-			feat2 = FEAT_SHAL_WATER;
-			feat3 = FEAT_FLOOR;
-			break;
-		}
-
-		case LAKE_DESTROY:
-		{
-			/* Collapsed cave */
-			feat1 = FEAT_FLOOR;
-			feat2 = FEAT_FLOOR;
-			feat3 = FEAT_RUBBLE;
-			break;
-		}
-
-		case LAKE_EEARTH:
-		{
-			/* Earth vault */
-			feat1 = FEAT_RUBBLE;
-			feat2 = FEAT_FLOOR;
-			feat3 = FEAT_RUBBLE;
-			break;
-		}
-
-		case LAKE_EAIR:
-		{
-			/* Air vault */
-			feat1 = FEAT_FLOOR;
-			feat2 = FEAT_TREES;
-			feat3 = FEAT_FLOOR;
-			break;
-		}
-
-		case LAKE_EWATER:
-		{
-			/* Water vault */
-			feat1 = FEAT_SHAL_WATER;
-			feat2 = FEAT_DEEP_WATER;
-			feat3 = FEAT_SHAL_WATER;
-			break;
-		}
-
-		case LAKE_EFIRE:
-		{
-			/* Fire Vault */
-			feat1 = FEAT_SHAL_LAVA;
-			feat2 = FEAT_DEEP_LAVA;
-			feat3 = FEAT_SHAL_LAVA;
-			break;
-		}
-
-		case LAKE_CAVERN:
-		{
-			/* Cavern */
-			feat1 = FEAT_FLOOR;
-			feat2 = FEAT_FLOOR;
-			feat3 = FEAT_FLOOR;
-			break;
-		}
-
-		case LAKE_RUBBLE:
-		{
-			/* Rubble everywhere */
-			feat1 = FEAT_RUBBLE;
-			feat2 = FEAT_RUBBLE;
-			feat3 = FEAT_FLOOR;
-			break;
-		}
-
-		case LAKE_SAND:
-		{
-			/* Sand everywhere */
-			feat1 = FEAT_SAND;
-			feat2 = FEAT_SAND;
-			feat3 = FEAT_FLOOR;
-			break;
-		}
-
-		case LAKE_ROCK:
-		{
-			/* Rock formation */
-			feat1 = FEAT_WALL_INNER;
-			feat2 = FEAT_WALL_INNER;
-			feat3 = FEAT_FLOOR;
-			break;
-		}
-
-			/* Paranoia */
-		default: return FALSE;
-	}
-
 	/* cutoffs */
 	fill_data.c1 = c1;
 	fill_data.c2 = c2;
 	fill_data.c3 = c3;
 
 	/* features to fill with */
-	fill_data.feat1 = feat1;
-	fill_data.feat2 = feat2;
-	fill_data.feat3 = feat3;
+	fill_data.feat1 = f1;
+	fill_data.feat2 = f2;
+	fill_data.feat3 = f3;
 
 	/* number of filled squares */
 	fill_data.amount = 0;

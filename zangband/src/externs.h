@@ -852,6 +852,7 @@ extern errr fd_chop(int fd, huge n);
 extern errr fd_read(int fd, char *buf, huge n);
 extern errr fd_write(int fd, cptr buf, huge n);
 extern errr fd_close(int fd);
+extern int count_bits(u32b x);
 extern sint macro_find_exact(cptr pat);
 extern void macro_add(cptr pat, cptr act);
 extern void flush(void);
