@@ -1210,7 +1210,7 @@ s32b object_value_real(const object_type *o_ptr)
 
 		/* Price the object's flags vs the default flags */
 		value += flag_cost(o_ptr, o_ptr->pval) / divisor;
-		value -= flag_cost(&dummy, 0) / divisor;
+		value -= flag_cost(&dummy, 1) / divisor;
 	}
 
 
