@@ -2929,6 +2929,9 @@ static bool borg_power_check(bool race, u32b which, bool check_fail,
 	/* Don't use too much HP */
 	if (bp_ptr->csp < cost)
 	{
+		/* Don't use it if it can kill you */
+		if (cost > bp_ptr->chp) return (FALSE);
+
 		/* Don't use the racial if it takes more then 70% of current HP */
 		if (cost > bp_ptr->chp * 7 / 10) return (FALSE);
 
@@ -3027,8 +3030,8 @@ bool borg_racial_check(int race, bool check_fail)
 	if (borg_race != race)
 	{
 		/* Hack these two races with two powers */
-		if ((borg_race != RACE_AMBERITE && race == RACE_AMBERITE_POWER2) ||
-			(borg_race != RACE_GHOUL && race == RACE_GHOUL_POWER2))
+		if ((borg_race != RACE_AMBERITE || race != RACE_AMBERITE_POWER2) &&
+			(borg_race != RACE_GHOUL || race != RACE_GHOUL_POWER2))
 		{
 			/* This race is not omnipotent */
 			return (FALSE);
