@@ -1192,12 +1192,7 @@ void generate_cave(void)
 		/* Nothing good here yet */
 		rating = 0;
 
-#ifdef USE_SCRIPT
-		if (!generate_level_callback(p_ptr->depth))
-#endif /* USE_SCRIPT */
-		{
-			okay = level_gen(&why);
-		}
+		okay = level_gen(&why);
 
 		/* Extract the feeling */
 		feeling = extract_feeling();

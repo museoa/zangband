@@ -1472,11 +1472,6 @@ static void player_outfit(void)
 	object_type	forge;
 	object_type	*q_ptr;
 
-
-#ifdef USE_SCRIPT
-	if (player_outfit_callback()) return;
-#endif /* USE_SCRIPT */
-
 	/* Get local object */
 	q_ptr = &forge;
 
@@ -2395,18 +2390,6 @@ static bool get_player_quests(void)
  */
 static bool player_birth_aux_1(void)
 {
-#ifdef USE_SCRIPT
-
-	int result;
-
-	/* Generate the player */
-	result = player_birth_callback();
-
-	/* Restart ? */
-	if (result == -1) return FALSE;
-
-#else /* USE_SCRIPT */
-
 	/*** Instructions ***/
 
 	/* Clear screen */
@@ -2473,8 +2456,6 @@ static bool player_birth_aux_1(void)
 	}
 
 	if (!get_player_quests()) return (FALSE);
-
-#endif /* USE_SCRIPT */
 
 	/* Clear */
 	clear_from(15);

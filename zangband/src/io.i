@@ -1,4 +1,4 @@
-%module io
+%module ioc
 
 %{
 

@@ -703,7 +703,7 @@ static errr init_k_info(void)
 		if (!err)
 		{
 #ifdef USE_SCRIPT
-			if (init_object_kind_list_callback()) return (0);
+			/* if (init_object_kind_list_callback()) return (0); */
 #endif /* USE_SCRIPT */
 
 			return (0);
@@ -839,7 +839,7 @@ static errr init_k_info(void)
 
 
 #ifdef USE_SCRIPT
-	if (init_object_kind_list_callback()) return (0);
+	/* if (init_object_kind_list_callback()) return (0); */
 #endif /* USE_SCRIPT */
 
 	/* Success */

@@ -49,15 +49,21 @@
 
 /* Added for ZAngband */
 #ifdef USE_SCRIPT
+
+/* Why do we need a fake version number? */
+
 #define FAKE_VERSION   0
 #define FAKE_VER_MAJOR 3
 #define FAKE_VER_MINOR 0
 #define FAKE_VER_PATCH 0
+
 #else /* USE_SCRIPT */
+
 #define FAKE_VERSION   0
 #define FAKE_VER_MAJOR 2
 #define FAKE_VER_MINOR 6
 #define FAKE_VER_PATCH 2
+
 #endif /* USE_SCRIPT */
 
 #define ANGBAND_2_8_1

@@ -2518,7 +2518,7 @@ static void calc_bonuses(void)
 
 #ifdef USE_SCRIPT
 
-	if (!get_player_flags_callback())
+	/* if (!get_player_flags_callback()) */
 
 #endif /* USE_SCRIPT */
 

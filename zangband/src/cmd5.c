@@ -2634,9 +2634,6 @@ static bool cast_arcane_spell(int spell)
  */
 void do_cmd_cast(void)
 {
-#ifdef USE_SCRIPT
-	use_skill_callback();
-#else /* USE_SCRIPT */
 	int	item, sval, spell, realm;
 	int	chance;
 	int	increment = 0;
@@ -2691,10 +2688,6 @@ void do_cmd_cast(void)
 	{
 		o_ptr = &o_list[0 - item];
 	}
-
-#ifdef USE_SCRIPT
-	if (object_cast_callback(o_ptr)) return;
-#endif /* USE_SCRIPT */
 
 	/* Access the item's sval */
 	sval = o_ptr->sval;
@@ -2773,7 +2766,7 @@ void do_cmd_cast(void)
 				msg_print("Your sanity is shaken by reading the Necronomicon!");
 				
 				/* Mind blast */
-				if (!saving_throw(p_ptr->skill_sav * 100))
+				if (!saving_throw(p_ptr->skill_sav))
 				{
 					if (!p_ptr->resist_confu)
 					{
@@ -2786,7 +2779,7 @@ void do_cmd_cast(void)
 				}
 
 				/* Lose int & wis */
-				else if (!saving_throw(p_ptr->skill_sav * 100))
+				else if (!saving_throw(p_ptr->skill_sav))
 				{
 					(void)do_dec_stat(A_INT);
 					(void)do_dec_stat(A_WIS);
@@ -2922,7 +2915,6 @@ void do_cmd_cast(void)
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
 	p_ptr->window |= (PW_SPELL);
-#endif /* USE_SCRIPT */
 }
 
 

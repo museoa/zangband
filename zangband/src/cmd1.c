@@ -2564,10 +2564,10 @@ void move_player(int dir, int do_pickup)
 		int oy, ox;
 
 #ifdef USE_SCRIPT
-		if (player_enter_grid_callback(y, x)) return;
 
 		/* Player movement callback */
 		if (player_move_callback(y, x)) return;
+
 #endif /* USE_SCRIPT */
 
 		/* Save old location */

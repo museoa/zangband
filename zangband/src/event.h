@@ -1,5 +1,4 @@
 #include "angband.h"
-#include "Python.h"
 
 extern void new_game_callback(void);
 extern void load_game_callback(char *data);

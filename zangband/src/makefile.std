@@ -37,9 +37,9 @@
 ##
 ## Compile for python?
 ##
-#
-# PYTHON = TRUE
-#
+
+PYTHON = TRUE
+
 
 
 #
@@ -94,7 +94,7 @@ SRCS = \
 	store.c birth.c load.c \
 	wizard1.c wizard2.c grid.c streams.c rooms.c \
 	generate.c dungeon.c init1.c init2.c \
-	effects.c racial.c \
+	effects.c racial.c script.c \
 	artifact.c mutation.c flavor.c spells3.c \
 	mspells1.c mspells2.c scores.c mind.c maid-x11.c\
 	bldg.c obj_kind.c wild1.c wild2.c avatar.c notes.c\
@@ -111,7 +111,7 @@ OBJS = \
 	store.o birth.o load.o \
 	wizard1.o wizard2.o grid.o streams.o rooms.o \
 	generate.o dungeon.o init1.o init2.o \
-	effects.o racial.o \
+	effects.o racial.o script.o\
 	artifact.o mutation.o flavor.o spells3.o \
 	mspells1.o mspells2.o scores.o mind.o maid-x11.o\
 	bldg.o obj_kind.o wild1.o wild2.o avatar.o notes.o\
@@ -150,24 +150,24 @@ CC = gcc
 
 
 #
-# The python version to use. (I have 1.5)
+# The python version to use. (I have 2.0)
 #
 
-PYVERSION = python1.5
+PYVERSION = python2.0
 
 
 #
 # The name of the swig tool.
 #
 
-SWIG = swig
+SWIG = swig1.3
 
 
 #
 # The flags to pass to SWIG
 #
 
-SFLAGS = -python -dnone
+SFLAGS = -python -I/usr/share/swig1.3 -I/usr/share/swig1.3/python
 
 #
 # The flags used to compile for python
@@ -177,7 +177,6 @@ PYFLAGS = -I/usr/include/$(PYVERSION) -w
 
 #
 # The libraries needed for python
-# (I have Python 1.5)
 #
 
 ifdef PYTHON
@@ -219,17 +218,7 @@ endif
 CFLAGS = -Wall -O2 -fno-strength-reduce -pipe -g \
           -D"USE_XAW" -D"USE_GCU" -D"USE_VCS" -D"USE_TRANSPARENCY"
 LIBS = -L/usr/X11R6/lib -lXaw -lXext -lSM -lICE -lXmu -lXt\
-          -lX11 -lcurses $(PYLIB)
-
-
-##
-## Variation - Debian 
-##
-#
-#CFLAGS = -Wall -O2 -fno-strength-reduce -pipe -g \
-#         -D"USE_GCU" -D"USE_TRANSPARENCY" -D"USE_XPJ" -D"USE_X11"
-#LIBS = -lX11 -lcurses -lncurses -L/usr/X11R6/lib $(PYLIB)
-
+          -lX11 -lcurses -lncurses $(PYLIB)
 
 ##
 ## Variation - 3D Projected View
@@ -476,8 +465,8 @@ object1.o: object1.c $(INCS)
 object2.o: object2.c $(INCS)
 obj_kind.o: obj_kind.c $(INCS)
 racial.o: racial.c $(INCS)
-scores.o: scores.c $(INCS)
 save.o: save.c $(INCS)
+scores.o: scores.c $(INCS)
 spells1.o: spells1.c $(INCS)
 spells2.o: spells2.c $(INCS)
 spells3.o: spells3.c $(INCS)
@@ -502,6 +491,9 @@ z-virt.o: z-virt.c $(HDRS) z-virt.h z-util.h
 #
 
 ifdef PYTHON
+
+script.o: script.c $(INCS)
+	$(CC) $(CFLAGS) -c -o $@ $< $(PYFLAGS)
 
 $(POBJS): %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $< $(PYFLAGS)
