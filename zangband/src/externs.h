@@ -887,6 +887,11 @@ extern void quest_discovery(int q_idx);
 extern int quest_number(int level);
 extern int random_quest_number(int level);
 extern int number_of_quests(void);
+extern void gamble_help(void);
+extern void gamble_in_between(void);
+extern void gamble_craps(void);
+extern void gamble_spin_wheel(void);
+extern void gamble_dice_slots(void);
 extern void build_init(int town_num, int build_num, byte build_type);
 
 /* util.c */
@@ -1203,6 +1208,8 @@ extern void field_action_buymap1(s16b *field_ptr, vptr input);
 extern void field_action_buymap2(s16b *field_ptr, vptr input);
 extern void field_action_library1(s16b *field_ptr, vptr input);
 extern void field_action_library2(s16b *field_ptr, vptr input);
+extern void field_action_casino1(s16b *field_ptr, vptr nothing);
+extern void field_action_casino2(s16b *field_ptr, vptr input);
 extern void field_action_isbook_tester(s16b *field_ptr, vptr input);
 extern void field_action_isweapon_tester(s16b *field_ptr, vptr input);
 extern void field_action_isarmour_tester(s16b *field_ptr, vptr input);

@@ -1481,6 +1481,16 @@ b_own_type b_owners[MAX_BLDG][MAX_B_OWN] =
 		{ "Pagpon",				120,			RACE_AMBERITE},
 		{ "Leiwthen",			100,			RACE_HIGH_ELF},
 	},
+
+	{
+		/* Casino */
+		{ "Key East",			100,			RACE_HUMAN},
+		{ "Point Rip", 			100,			RACE_HALF_ELF},
+		{ "Lean West",		 	100,			RACE_DWARF},
+		{ "Tile Green",			100,			RACE_HUMAN},
+		{ "Gold Red",			100,			RACE_DWARF},
+	},
+
 };
 
 
@@ -6866,11 +6876,17 @@ field_action f_action[] =
 	/* Map maker part 2 */
 	{field_action_buymap2, "field_action_buymap2"},
 	
-	/* Libarary part 1 */
+	/* Library part 1 */
 	{field_action_library1, "field_action_library1"},
 	
-	/* Library part 2 */
+	/* Librry part 2 */
 	{field_action_library2, "field_action_library2"},
+	
+	/* Casino part 1 */
+	{field_action_casino1, "field_action_casino1"},
+	
+	/* Casino part 2 */
+	{field_action_casino2, "field_action_casino2"},
 	
 	/* Bookstore */
 	{field_action_isbook_tester, "field_action_isbook_tester"},

@@ -3892,6 +3892,101 @@ void field_action_library2(s16b *field_ptr, vptr input)
 	}
 }
 
+/*
+ * Casino1
+ */
+void field_action_casino1(s16b *field_ptr, vptr nothing)
+{	
+	char tmp_str[80];
+	
+	/* Ignore field_ptr */
+	(void) field_ptr;
+	
+	/* Ignore nothing */
+	(void) nothing;
+
+	sprintf(tmp_str, " H) Help");
+	c_put_str(TERM_YELLOW, tmp_str, 16, 35);
+	
+	sprintf(tmp_str, " I) In Between");
+	c_put_str(TERM_YELLOW, tmp_str, 17, 35);
+	
+	sprintf(tmp_str, " C) Craps");
+	c_put_str(TERM_YELLOW, tmp_str, 18, 35);
+	
+	sprintf(tmp_str, " S) Spin the wheel");
+	c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+	
+	sprintf(tmp_str, " D) Dice slots");
+	c_put_str(TERM_YELLOW, tmp_str, 20, 35);
+}
+
+/*
+ * Casino2
+ */
+void field_action_casino2(s16b *field_ptr, vptr input)
+{	
+	int *factor = ((int*) input);
+	
+	/* Ignore field_ptr */
+	(void) field_ptr;
+	
+	switch (p_ptr->command_cmd)
+	{
+		case 'H':
+		{
+			gamble_help();
+		
+			/* Hack, use factor as a return value */	
+			*factor = TRUE;
+			break;
+		}
+		
+		case 'I':
+		{
+			gamble_in_between();
+		
+			/* Hack, use factor as a return value */	
+			*factor = TRUE;
+			break;
+		}
+		
+		case 'C':
+		{
+			gamble_craps();
+		
+			/* Hack, use factor as a return value */	
+			*factor = TRUE;
+			break;
+		}
+		
+		case 'S':
+		{
+			gamble_spin_wheel();
+		
+			/* Hack, use factor as a return value */	
+			*factor = TRUE;
+			break;
+		}
+		
+		case 'D':
+		{
+			gamble_dice_slots();
+		
+			/* Hack, use factor as a return value */	
+			*factor = TRUE;
+			break;
+		}
+	
+		default:
+		{
+			*factor = FALSE;
+			break;
+		}
+	}
+}
+
+
 
 
 /*

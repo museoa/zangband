@@ -368,55 +368,6 @@ int number_of_quests(void)
 }
 
 
-#if 0
-
-/* hack as in leave_store in store.c */
-
-static bool is_owner(building_type *bldg)
-{
-	if (bldg->member_class[p_ptr->pclass] == BUILDING_OWNER)
-	{
-		return (TRUE);
-	}
-
-	if (bldg->member_race[p_ptr->prace] == BUILDING_OWNER)
-	{
-		return (TRUE);
-	}
-
-	if ((bldg->member_realm[p_ptr->realm1] == BUILDING_OWNER) ||
-		(bldg->member_realm[p_ptr->realm2] == BUILDING_OWNER))
-	{
-		return (TRUE);
-	}
-
-	return (FALSE);
-}
-
-
-static bool is_member(building_type *bldg)
-{
-	if (bldg->member_class[p_ptr->pclass])
-	{
-		return (TRUE);
-	}
-
-	if (bldg->member_race[p_ptr->prace])
-	{
-		return (TRUE);
-	}
-
-	if ((bldg->member_realm[p_ptr->realm1]) || 
-		(bldg->member_realm[p_ptr->realm2]))
-	{
-		return (TRUE);
-	}
-
-	return (FALSE);
-}
-
-#endif /* 0 */
-
 /*
  * Clear the building information
  */
@@ -479,7 +430,6 @@ static void display_build(field_type *f_ptr, store_type *b_ptr)
 	building_prt_gold();
 }
 
-#if 0
 
 /*
  * display fruit for dice slots
@@ -558,256 +508,369 @@ static void display_fruit(int row, int col, int fruit)
 }
 
 
+/* The amount of gold you have before gambling */
+static s32b gamble_oldgold;
+
 /*
- * gamble_comm
+ * Initialize gambling by getting bet.
+ * Return a wager of zero, if something goes wrong.
  */
-static bool gamble_comm(int cmd)
+static s32b gamble_init(void)
 {
-	int roll1, roll2, roll3, choice, odds, win;
+	char out_val[160], tmp_str[80];
+	cptr p;
+	
 	s32b wager;
 	s32b maxbet;
-	s32b oldgold;
-	static const char *fruit[6] = {"Lemon", "Orange", "Sword", "Shield", "Plum", "Cherry"};
-	char out_val[160], tmp_str[80], again;
-	cptr p;
+	
+	/* Save gold before gambling */
+	gamble_oldgold = p_ptr->au;
 
 	screen_save();
-
-	if (cmd == BACT_GAMBLE_RULES)
+	
+	/* No money */
+	if (p_ptr->au < 1)
 	{
-		/* Peruse the gambling help file */
-		(void)show_file("gambling.txt", NULL, 0, 0);
+		msg_print("Hey! You don't have gold - get out of here!");
+		msg_print(NULL);
+
+		screen_load();
+		return (0);
+	}
+
+	clear_bldg(5, 23);
+
+	/* Set maximum bet */
+	if (p_ptr->lev < 10)
+		maxbet = p_ptr->lev * 100;
+	else
+		maxbet = p_ptr->lev * 1000;
+
+	/* We can't bet more than we have */
+	maxbet = MIN(maxbet, p_ptr->au);
+
+	/* Get the wager */
+	strcpy(out_val, "");
+	sprintf(tmp_str,"Your wager (1-%ld) ? ", maxbet);
+
+	/*
+	 * Use get_string() because we may need more than
+	 * the s16b value returned by get_quantity().
+	 */
+	if (!get_string(tmp_str, out_val, 32))
+	{
+		screen_load();		
+		return (0);
+	}
+	
+	/* Strip spaces */
+	for (p = out_val; *p == ' '; p++);
+
+	/* Get the wager */
+	wager = atol(p);
+
+	if (wager > p_ptr->au)
+	{
+		msg_print("Hey! You don't have the gold - get out of here!");
+		msg_print(NULL);
+
+		screen_load();
+		return (0);
+	}
+	else if (wager > maxbet)
+	{
+		msg_format("I'll take %ld gold of that. Keep the rest.", maxbet);
+		wager = maxbet;
+	}
+	else if (wager < 1)
+	{
+		msg_print("Ok, we'll start with 1 gold.");
+		wager = 1;
+	}
+		
+	msg_print(NULL);
+
+	sprintf(tmp_str, "Gold before game: %9ld", p_ptr->au);
+	prt(tmp_str, 20, 2);
+
+	sprintf(tmp_str, "Current Wager:    %9ld", wager);
+	prt(tmp_str, 21, 2);
+
+	/* Prevent savefile-scumming of the casino */
+	Rand_quick = TRUE;
+	Rand_value = time(NULL);	
+	
+	/* Return the amount of gold bet */
+	return (wager);
+}
+
+static bool gamble_again(bool win, int odds, s32b wager)
+{
+	char tmp_str[80];
+	char again;
+
+	if (win)
+	{
+		prt("YOU WON", 16, 37);
+		p_ptr->au += odds * wager;
+		sprintf(tmp_str, "Payoff: %ld", odds * wager);
+		prt(tmp_str, 17, 37);
 	}
 	else
 	{
-		/* No money */
-		if (p_ptr->au < 1)
-		{
-			msg_print("Hey! You don't have gold - get out of here!");
-			msg_print(NULL);
-			screen_load();
-			return FALSE;
-		}
-
-		clear_bldg(5, 23);
-
-		/* Set maximum bet */
-		if (p_ptr->lev < 10)
-			maxbet = p_ptr->lev * 100;
-		else
-			maxbet = p_ptr->lev * 1000;
-
-		/* We can't bet more than we have */
-		maxbet = MIN(maxbet, p_ptr->au);
-
-		/* Get the wager */
-		strcpy(out_val, "");
-		sprintf(tmp_str,"Your wager (1-%ld) ? ", maxbet);
-
-		/*
-		 * Use get_string() because we may need more than
-		 * the s16b value returned by get_quantity().
-		 */
-		if (get_string(tmp_str, out_val, 32))
-		{
-			/* Strip spaces */
-			for (p = out_val; *p == ' '; p++);
-
-			/* Get the wager */
-			wager = atol(p);
-
-			if (wager > p_ptr->au)
-			{
-				msg_print("Hey! You don't have the gold - get out of here!");
-				msg_print(NULL);
-				screen_load();
-				return (FALSE);
-			}
-			else if (wager > maxbet)
-			{
-				msg_format("I'll take %ld gold of that. Keep the rest.", maxbet);
-				wager = maxbet;
-			}
-			else if (wager < 1)
-			{
-				msg_print("Ok, we'll start with 1 gold.");
-
-				wager = 1;
-			}
-			msg_print(NULL);
-			win = FALSE;
-			odds = 0;
-			oldgold = p_ptr->au;
-
-			sprintf(tmp_str, "Gold before game: %9ld", oldgold);
-			prt(tmp_str, 20, 2);
-
-			sprintf(tmp_str, "Current Wager:    %9ld", wager);
-			prt(tmp_str, 21, 2);
-
-			/* Prevent savefile-scumming of the casino */
-			Rand_quick = TRUE;
-			Rand_value = time(NULL);
-
-			do
-			{
-				switch (cmd)
-				{
-				 case BACT_IN_BETWEEN: /* Game of In-Between */
-					c_put_str(TERM_GREEN, "In Between", 5, 2);
-					odds = 3;
-					win = FALSE;
-					roll1 = randint1(10);
-					roll2 = randint1(10);
-					choice = randint1(10);
-					sprintf(tmp_str, "Black die: %d       Black Die: %d", roll1, roll2);
-					prt(tmp_str, 8, 3);
-					sprintf(tmp_str, "Red die: %d", choice);
-					prt(tmp_str, 11, 14);
-					if (((choice > roll1) && (choice < roll2)) ||
-						((choice < roll1) && (choice > roll2)))
-						win = TRUE;
-					break;
-				case BACT_CRAPS:  /* Game of Craps */
-					c_put_str(TERM_GREEN, "Craps", 5, 2);
-					win = 3;
-					odds = 1;
-					roll1 = randint1(6);
-					roll2 = randint1(6);
-					roll3 = roll1 + roll2;
-					choice = roll3;
-					sprintf(tmp_str, "First roll: %d %d    Total: %d", roll1,
-						 roll2, roll3);
-					prt(tmp_str, 7, 5);
-					if ((roll3 == 7) || (roll3 == 11))
-						win = TRUE;
-					else if ((roll3 == 2) || (roll3 == 3) || (roll3 == 12))
-						win = FALSE;
-					else
-						do
-						{
-							msg_print("Hit any key to roll again");
-							msg_print(NULL);
-							roll1 = randint1(6);
-							roll2 = randint1(6);
-							roll3 = roll1 + roll2;
-
-							sprintf(tmp_str, "Roll result: %d %d   Total:     %d",
-								 roll1, roll2, roll3);
-							prt(tmp_str, 8, 5);
-							if (roll3 == choice)
-								win = TRUE;
-							else if (roll3 == 7)
-								win = FALSE;
-						} while ((win != TRUE) && (win != FALSE));
-					break;
-
-				case BACT_SPIN_WHEEL:  /* Spin the Wheel Game */
-					win = FALSE;
-					odds = 8;
-					c_put_str(TERM_GREEN, "Wheel", 5, 2);
-					prt("0  1  2  3  4  5  6  7  8  9", 7, 5);
-					prt("--------------------------------", 8, 3);
-					strcpy(out_val, "");
-					get_string("Pick a number (0-9): ", out_val, 32);
-					for (p = out_val; *p == ' '; p++);
-					choice = atol(p);
-					if (choice < 0)
-					{
-						msg_print("I'll put you down for 0.");
-						choice = 0;
-					}
-					else if (choice > 9)
-					{
-						msg_print("Ok, I'll put you down for 9.");
-						choice = 9;
-					}
-					msg_print(NULL);
-					roll1 = randint0(10);
-					sprintf(tmp_str, "The wheel spins to a stop and the winner is %d",
-						roll1);
-					prt(tmp_str, 13, 3);
-					prt("", 9, 0);
-					prt("*", 9, (3 * roll1 + 5));
-					if (roll1 == choice)
-						win = TRUE;
-					break;
-
-				case BACT_DICE_SLOTS: /* The Dice Slots */
-					c_put_str(TERM_GREEN, "Dice Slots", 5, 2);
-					win = FALSE;
-					roll1 = randint1(6);
-					roll2 = randint1(6);
-					choice = randint1(6);
-					(void)sprintf(tmp_str, "%s %s %s", fruit[roll1 - 1], fruit[roll2 - 1],
-						 fruit[choice - 1]);
-					prt(tmp_str, 15, 37);
-					prt("/--------------------------\\", 7, 2);
-					prt("\\--------------------------/", 17, 2);
-					display_fruit(8,  3, roll1 - 1);
-					display_fruit(8, 12, roll2 - 1);
-					display_fruit(8, 21, choice - 1);
-					if ((roll1 == roll2) && (roll2 == choice))
-					{
-						win = TRUE;
-						if (roll1 == 1)
-							odds = 4;
-						else if (roll1 == 2)
-							odds = 6;
-						else
-							odds = roll1 * roll1;
-					}
-					else if ((roll1 == 6) && (roll2 == 6))
-					{
-						win = TRUE;
-						odds = choice + 1;
-					}
-					break;
-				}
-
-				if (win)
-				{
-					prt("YOU WON", 16, 37);
-					p_ptr->au += odds * wager;
-					sprintf(tmp_str, "Payoff: %d", odds);
-					prt(tmp_str, 17, 37);
-				}
-				else
-				{
-					prt("You Lost", 16, 37);
-					p_ptr->au -= wager;
-					prt("", 17, 37);
-				}
-				sprintf(tmp_str, "Current Gold:     %9ld", p_ptr->au);
-				prt(tmp_str, 22, 2);
-				prt("Again(Y/N)?", 18, 37);
-				move_cursor(18, 49);
-				again = inkey();
-				if (wager > p_ptr->au)
-				{
-					msg_print("Hey! You don't have the gold - get out of here!");
-					msg_print(NULL);
-
-					/* Get out here */
-					break;
-				}
-			} while ((again == 'y') || (again == 'Y'));
-
-			/* Switch back to complex RNG */
-			Rand_quick = FALSE;
-
-			prt("", 18, 37);
-			if (p_ptr->au >= oldgold)
-				msg_print("You came out a winner! We'll win next time, I'm sure.");
-			else
-				msg_print("You lost gold! Haha, better head home.");
-		}
-		msg_print(NULL);
+		prt("You Lost", 16, 37);
+		p_ptr->au -= wager;
+		prt("", 17, 37);
 	}
-	screen_load();
+	
+	sprintf(tmp_str, "Current Gold:     %9ld", p_ptr->au);
+	prt(tmp_str, 22, 2);
+	prt("Again(Y/N)?", 18, 37);
+	move_cursor(18, 49);
+	again = inkey();
+		
+	if ((again != 'y') && (again != 'Y')) return (FALSE);
+		
+	if (wager > p_ptr->au)
+	{
+		msg_print("Hey! You don't have the gold - get out of here!");
+		msg_print(NULL);
+
+		/* Get out here */
+		return (FALSE);
+	}
+	
+	/* The player wants another go */
 	return (TRUE);
 }
 
+/* Finished gambling */
+static void gamble_done(void)
+{
+	/* Switch back to complex RNG */
+	Rand_quick = FALSE;
+
+	prt("", 18, 37);
+	if (p_ptr->au >= gamble_oldgold)
+		msg_print("You came out a winner! We'll win next time, I'm sure.");
+	else
+		msg_print("You lost gold! Haha, better head home.");
+	
+	msg_print(NULL);
+	
+	screen_load();
+}
+
+void gamble_help(void)
+{
+	screen_save();
+
+	/* Peruse the gambling help file */
+	(void)show_file("gambling.txt", NULL, 0, 0);
+
+	screen_load();
+}
+
+void gamble_in_between(void)
+{
+	s32b wager = gamble_init();
+	char tmp_str[80];
+	
+	int roll1, roll2, choice;
+
+	bool win;
+
+	/* Exit if the player is out of gold */
+	if (!wager) return;
+
+	while (TRUE)
+	{	
+		win = FALSE;
+		
+		c_put_str(TERM_GREEN, "In Between", 5, 2);
+		
+		roll1 = randint1(10);
+		roll2 = randint1(10);
+		choice = randint1(10);
+		
+		sprintf(tmp_str, "Black die: %d       Black Die: %d", roll1, roll2);
+		prt(tmp_str, 8, 3);
+		
+		sprintf(tmp_str, "Red die: %d", choice);
+		prt(tmp_str, 11, 14);
+		
+		if (((choice > roll1) && (choice < roll2)) ||
+			((choice < roll1) && (choice > roll2)))
+			win = TRUE;
+		if (!gamble_again(win, 3, wager)) break;
+	}
+	
+	gamble_done();
+}
+
+void gamble_craps(void)
+{
+	s32b wager = gamble_init();
+	char tmp_str[80];
+	
+	int roll1, roll2, roll3, choice;
+
+	bool win;
+
+	/* Exit if the player is out of gold */
+	if (!wager) return;
+
+	while (TRUE)
+	{	
+		c_put_str(TERM_GREEN, "Craps", 5, 2);
+
+		/* Roll the dice */
+		roll1 = randint1(6);
+		roll2 = randint1(6);
+		roll3 = roll1 + roll2;
+		choice = roll3;
+		
+		sprintf(tmp_str, "First roll: %d %d    Total: %d", roll1,
+			 roll2, roll3);
+		prt(tmp_str, 7, 5);
+		
+		/* Is it is result straight away? */
+		if ((roll3 == 7) || (roll3 == 11))
+			win = TRUE;
+		else if ((roll3 == 2) || (roll3 == 3) || (roll3 == 12))
+			win = FALSE;
+		else
+			while (TRUE)
+			{
+				/* Ok - we need to roll a few more times */
+				msg_print("Hit any key to roll again");
+				msg_print(NULL);
+
+				roll1 = randint1(6);
+				roll2 = randint1(6);
+				roll3 = roll1 + roll2;
+
+				sprintf(tmp_str, "Roll result: %d %d   Total:     %d",
+					 roll1, roll2, roll3);
+				prt(tmp_str, 8, 5);
+
+				if (roll3 == choice)
+					win = TRUE;
+				else if (roll3 == 7)
+					win = FALSE;
+				else
+					continue;
+				
+				/* We have a result */
+				break;
+			}
+		if (!gamble_again(win, 1, wager)) break;
+	}
+	
+	gamble_done();
+}
+
+void gamble_spin_wheel(void)
+{
+	s32b wager = gamble_init();
+	char tmp_str[80];
+	
+	int roll1, choice;
+
+	bool win;
+
+	/* Exit if the player is out of gold */
+	if (!wager) return;
+
+	while (TRUE)
+	{	
+		win = FALSE;
+
+		c_put_str(TERM_GREEN, "Wheel", 5, 2);
+		prt("1  2  3  4  5  6  7  8  9 10", 7, 5);
+		prt("--------------------------------", 8, 3);
+		
+		choice = get_quantity("Pick a number (1-10): ", 10);
+		
+		msg_print(NULL);
+		roll1 = randint1(10);
+		sprintf(tmp_str, "The wheel spins to a stop and the winner is %d",
+			roll1);
+		prt(tmp_str, 13, 3);
+		prt("", 9, 0);
+		prt("*", 9, (3 * roll1 + 5));
+
+		if (roll1 == choice) win = TRUE;
+		
+		if (!gamble_again(win, 8, wager)) break;
+	}
+	
+	gamble_done();
+}
+
+void gamble_dice_slots(void)
+{
+	static const char *fruit[6] =
+		 {"Lemon", "Orange", "Sword", "Shield", "Plum", "Cherry"};
+	
+	s32b wager = gamble_init();
+	char tmp_str[80];
+	
+	int roll1, roll2, choice;
+	int odds;
+
+	bool win;
+
+	/* Exit if the player is out of gold */
+	if (!wager) return;
+
+	while (TRUE)
+	{	
+		c_put_str(TERM_GREEN, "Dice Slots", 5, 2);
+		win = FALSE;
+		odds = 0;
+		
+		/* Roll the dice */
+		roll1 = randint1(6);
+		roll2 = randint1(6);
+		choice = randint1(6);
+		
+		/* Show the result */
+		sprintf(tmp_str, "%s %s %s", fruit[roll1 - 1], fruit[roll2 - 1],
+			 fruit[choice - 1]);
+		prt(tmp_str, 15, 37);
+		prt("/--------------------------\\", 7, 2);
+		prt("\\--------------------------/", 17, 2);
+		
+		display_fruit(8,  3, roll1 - 1);
+		display_fruit(8, 12, roll2 - 1);
+		display_fruit(8, 21, choice - 1);
+		
+		/* What did we win? */
+		if ((roll1 == roll2) && (roll2 == choice))
+		{
+			win = TRUE;
+			if (roll1 == 1)
+				odds = 4;
+			else if (roll1 == 2)
+				odds = 6;
+			else
+				odds = roll1 * roll1;
+		}
+		else if ((roll1 == 6) && (roll2 == 6))
+		{
+			win = TRUE;
+			odds = choice + 1;
+		}
+		
+		if (!gamble_again(win, odds, wager)) break;
+	}
+	
+	gamble_done();
+}
+	
+
+#if 0
 
 /*
  * Inn commands
@@ -825,7 +888,7 @@ static bool inn_comm(int cmd)
 	switch (cmd)
 	{
 		case BACT_FOOD: /* Buy food & drink */
-			msg_print("The barkeep gives you some gruel and a beer.");
+			msg_print("The barkeeper gives you some gruel and a beer.");
 			msg_print(NULL);
 			(void)set_food(PY_FOOD_MAX - 1);
 			break;
@@ -1709,34 +1772,6 @@ void building_recharge(s32b cost)
  */
 static void bldg_process_command(building_type *bldg, int i)
 {
-	int bact = bldg->actions[i];
-	int bcost;
-	bool paid = FALSE;
-	int amt;
-
-	if (is_owner(bldg))
-		bcost = bldg->member_costs[i];
-	else
-		bcost = bldg->other_costs[i];
-
-	/* action restrictions */
-	if (((bldg->action_restr[i] == 1) && !is_member(bldg)) ||
-	    ((bldg->action_restr[i] == 2) && !is_owner(bldg)))
-	{
-		msg_print("You have no right to choose that!");
-		msg_print(NULL);
-		return;
-	}
-
-	/* check gold (HACK - Recharge uses variable costs) */
-	if ((bact != BACT_RECHARGE) &&
-	    (((bldg->member_costs[i] > p_ptr->au) && is_owner(bldg)) ||
-	     ((bldg->other_costs[i] > p_ptr->au) && !is_owner(bldg))))
-	{
-		msg_print("You do not have the gold!");
-		msg_print(NULL);
-		return;
-	}
 
 
 	switch (bact)
@@ -1753,21 +1788,13 @@ static void bldg_process_command(building_type *bldg, int i)
 		case BACT_RACE_LEGENDS:
 			race_legends();
 			break;
-#if 0
-		case BACT_QUEST:
-			castle_quest();
-			break;
-#endif
+
 		case BACT_KING_LEGENDS:
 		case BACT_ARENA_LEGENDS:
 		case BACT_LEGENDS:
 			show_highclass();
 			break;
-		case BACT_POSTER:
-		case BACT_ARENA_RULES:
-		case BACT_ARENA:
-			arena_comm(bact);
-			break;
+
 		case BACT_IN_BETWEEN:
 		case BACT_CRAPS:
 		case BACT_SPIN_WHEEL:
@@ -1780,20 +1807,7 @@ static void bldg_process_command(building_type *bldg, int i)
 		case BACT_FOOD:
 			paid = inn_comm(bact);
 			break;
-		case BACT_RESEARCH_MONSTER:
-			paid = research_mon();
-			break;
-		case BACT_ENCHANT_WEAPON:
-			item_tester_hook = item_tester_hook_melee_weapon;
-			enchant_item(bcost, 1, 1, 0);
-			break;
-		case BACT_ENCHANT_ARMOR:
-			item_tester_hook = item_tester_hook_armour;
-			enchant_item(bcost, 0, 0, 1);
-			break;
-		case BACT_RECHARGE:
-			building_recharge();
-			break;
+
 		case BACT_IDENTS: /* needs work */
 			identify_pack();
 
@@ -1861,19 +1875,6 @@ static void bldg_process_command(building_type *bldg, int i)
 				p_ptr->redraw |= (PR_STATUS);
 			}
 			break;
-		case BACT_LOSE_MUTATION:
-			paid = lose_mutation(0);
-			/* ToDo: Better message text. */
-			if (!paid)
-				msg_print("You feel oddly normal.");
-
-			break;
-	}
-
-	if (paid)
-	{
-		p_ptr->au -= bcost;
-	}
 }
 
 
