@@ -161,6 +161,7 @@ static void prt_binary(u32b flags, int col, int row)
 	}
 }
 
+#if 0
 typedef u64b ufix40_24;	/* Fixed point: 40 bits integer 24 bits fractional */
 
 static ufix40_24 pow4(ufix40_24 n)
@@ -168,6 +169,7 @@ static ufix40_24 pow4(ufix40_24 n)
 	ufix40_24 pow2 = (n * n) >> 24;
 	return (pow2 * pow2) >> 24;
 }
+
 
 static void get_obj_dist(int min_level, int obj_num, u32b rarity[MAX_DEPTH])
 {
@@ -243,6 +245,7 @@ static void get_obj_dist(int min_level, int obj_num, u32b rarity[MAX_DEPTH])
 	for (i = 0; i < MAX_DEPTH; i++)
 		rarity[i] /= 0x100;
 }
+
 
 /*
  * Output a rarity graph for a type of object.
@@ -371,6 +374,8 @@ static void prt_alloc(const object_type *o_ptr, int col, int row, u32b monte)
 
 	prt("+", col, row + 21);
 }
+
+#endif /* 0 */
 
 
 /*
@@ -992,6 +997,7 @@ static object_type *wiz_reroll_item(object_type *o_ptr)
 }
 
 
+#if 0
 
 /*
  * Redraw the rarity graph with a different number of rolls
@@ -1012,6 +1018,8 @@ static void wiz_statistics(object_type *o_ptr)
 	/* Display the rarity graph */
 	prt_alloc(o_ptr, 0, 2, test_roll);
 }
+
+#endif /* 0 */
 
 
 /*
@@ -1092,9 +1100,6 @@ static void do_cmd_wiz_play(void)
 	/* Display the item */
 	wiz_display_item(o_ptr);
 
-	/* Display the rarity graph - turned off for now (too slow). */
-	/* prt_alloc(o_ptr, 0, 2, 1000); */
-
 	/* The main loop */
 	while (TRUE)
 	{
@@ -1102,8 +1107,7 @@ static void do_cmd_wiz_play(void)
 		wiz_display_item(o_ptr);
 
 		/* Get choice */
-		if (!get_com
-			("[a]ccept [s]tatistics [r]eroll [t]weak [q]uantity? ", &ch))
+		if (!get_com("[a]ccept [r]eroll [t]weak [q]uantity? ", &ch))
 		{
 			/* Ignore changes */
 			msg_print("Changes ignored.");
@@ -1133,10 +1137,12 @@ static void do_cmd_wiz_play(void)
 			break;
 		}
 
+#if 0
 		if (ch == 's' || ch == 'S')
 		{
 			wiz_statistics(o_ptr);
 		}
+#endif /* 0 */
 
 		if (ch == 'r' || ch == 'r')
 		{

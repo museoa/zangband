@@ -108,15 +108,18 @@ typedef unsigned short u16b;
 typedef signed int s32b;
 typedef unsigned int u32b;
 
+#if 0
 /* Signed/Unsigned 64bit value */
 typedef long u64b;
 typedef unsigned long s64b;
+#endif /* 0 */
 
 #else  /* L64 */
 
 typedef signed long s32b;
 typedef unsigned long u32b;
 
+#if 0
 /* Try to get a 64 bit type */
 #if defined __STDC_VERSION__ && __STDC_VERSION__ >= 199901L
 
@@ -154,6 +157,8 @@ typedef unsigned long u32b;
 /* Define the 64bit types */
 typedef ANG_U64B u64b;
 typedef ANG_S64B s64b;
+
+#endif /* 0 */
 
 #endif /* L64 */
 
