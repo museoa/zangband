@@ -175,7 +175,7 @@ void toluaI_tt_register (lua_State* L, int tag, const char* type)
 }
 
 
-void toluaI_tt_class (lua_State* L, int lo, char* derived, char* base)
+void toluaI_tt_class (lua_State* L, int lo, const char* derived, const char* base)
 {
  char* cderived = toluaI_tt_concat("const ",derived);
  int tag = toluaI_tt_gettag(L,derived);

@@ -63,7 +63,7 @@ void toluaI_tm_setclass (lua_State* L, int lo)
  settag(L,lo,"tolua_tag_class");
 }
 
-void toluaI_tm_class (lua_State* L, int lo, char* name)
+void toluaI_tm_class (lua_State* L, int lo, const char* name)
 {
  int tag_class;
  int tag = lua_newtag(L);

@@ -18,7 +18,7 @@
 
 void  toluaI_tt_init (lua_State* L);
 void  toluaI_tt_register (lua_State* L, int tag, const char* type);
-void  toluaI_tt_class (lua_State* L, int lo, char* derived, char* base);
+void  toluaI_tt_class (lua_State* L, int lo, const char* derived, const char* base);
 void  toluaI_tt_sethierarchy (lua_State* L, int tag, int btag);
 int   toluaI_tt_isusertype (lua_State* L, int lo);
 int   toluaI_tt_gettag (lua_State* L, const char* type);

@@ -285,7 +285,7 @@ static void luaK_testgo (FuncState *fs, expdesc *v, int invert, OpCode jump) {
     prevpos = luaK_code1(fs, jump, NO_JUMP);
   else {  /* last instruction is already a jump */
     if (invert)
-      SET_OPCODE(*previous, invertjump(GET_OPCODE(*previous)));
+      SET_OPCODE(*previous, (OpCode)invertjump(GET_OPCODE(*previous)));
   }
   luaK_concat(fs, exitlist, prevpos);  /* insert last jump in `exitlist' */
   luaK_patchlist(fs, *golist, luaK_getlabel(fs));
@@ -357,7 +357,7 @@ void luaK_prefix (LexState *ls, UnOpr op, expdesc *v) {
     discharge1(fs, v);
     previous = &fs->f->code[fs->pc-1];
     if (ISJUMP(GET_OPCODE(*previous)))
-      SET_OPCODE(*previous, invertjump(GET_OPCODE(*previous)));
+      SET_OPCODE(*previous, (OpCode)invertjump(GET_OPCODE(*previous)));
     else
       luaK_code0(fs, OP_NOT);
     /* interchange true and false lists */

@@ -104,6 +104,7 @@ int tolua_getfieldvalue (lua_State* L, int lo, int index, int def)
 int tolua_getfieldbool (lua_State* L, int lo, int index, int def)
 {
  int v;
+(void) def;
  lua_pushnumber(L,index);
  lua_gettable(L,lo);
  v = lua_isnil(L,-1) ? 0 : lua_tonumber(L,-1)!=0;

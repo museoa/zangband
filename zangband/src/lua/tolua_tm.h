@@ -20,7 +20,7 @@
 void toluaI_tm_init (lua_State* L);
 void toluaI_tm_global (lua_State* L, int lo);
 void toluaI_tm_module (lua_State* L, int lo);
-void toluaI_tm_class (lua_State* L, int lo, char* name);
+void toluaI_tm_class (lua_State* L, int lo, const char* name);
 void toluaI_tm_instance (lua_State* L, int tag, int lo);
 void toluaI_tm_linstance (lua_State* L, int tag, int lo);
 void toluaI_tm_using (lua_State* L, int module);
