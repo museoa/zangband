@@ -2211,7 +2211,7 @@ static void process_world(void)
 	* in the illumination in a forest after dark.
 	*/
 
-	rand_quick_add();
+	quick_rand_add();
 
 
 	/*** Involuntary Movement ***/
