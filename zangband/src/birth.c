@@ -743,7 +743,7 @@ static void load_prev_data(void)
 }
 
 
-
+#ifdef OLD_AUTOROLLER
 
 /*
  * Returns adjusted stat -JK-  Algorithm by -JWT-
@@ -798,7 +798,7 @@ static int adjust_stat(int value, int amount)
 	return (value);
 }
 
-
+#endif /* OLD_AUTOROLLER */
 
 
 /*
@@ -2478,7 +2478,7 @@ static bool player_birth_aux_2(void)
  */
 static bool player_birth_aux_3(void)
 {
-	int i, j, m, v;
+	int i, v;
 
 	bool flag;
 	bool previous = FALSE;
@@ -2503,6 +2503,8 @@ static bool player_birth_aux_3(void)
 
 	s16b stat_limit[A_MAX];
 
+	int j, m
+
 #endif /* OLD_AUTOROLLER */
 	
 	s32b stat_match[A_MAX];
@@ -2517,15 +2519,12 @@ static bool player_birth_aux_3(void)
 	/* Initialize */
 	if (autoroller)
 	{
-		int mval[A_MAX];
-
 		char inp[80];
-
+		
+#ifndef OLD_AUTOROLLER
 
 		/* Clean up */
 		clear_from(10);
-
-#ifndef OLD_AUTOROLLER
 
 		/* Extra info */
 		Term_putstr(5, 10, -1, TERM_WHITE,
@@ -2560,8 +2559,6 @@ static bool player_birth_aux_3(void)
 			/* Get a minimum stat */
 			while (TRUE)
 			{
-				char *s;
-
 				/* Move the cursor */
 				put_str("", 10, 16 + i);
 
@@ -2583,6 +2580,11 @@ static bool player_birth_aux_3(void)
 		}
 
 #else /* !OLD_AUTOROLLER */
+
+		int mval[A_MAX];
+
+		/* Clean up */
+		clear_from(10);
 
 		/* Extra info */
 		Term_putstr(5, 10, -1, TERM_WHITE,
@@ -2734,8 +2736,6 @@ static bool player_birth_aux_3(void)
 			/* Auto-roll */
 			while (TRUE)
 			{
-				bool accept = TRUE;
-
 				/* Get a new character */
 				get_stats();
 
