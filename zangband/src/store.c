@@ -1123,9 +1123,6 @@ static void display_entry(int pos)
 		/* Extract the "minimum" price */
 		x = price_item(o_ptr, ot_ptr->min_inflate, FALSE);
 
-		/* Apply Sales Tax */
-		x += x / 10;
-
 		/* Actually draw the price (with tax) */
 		(void)sprintf(out_val, "%9ld  ", (long)x);
 		put_str(out_val, wid - 12, i + 6);
@@ -1485,9 +1482,6 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 	msg_print("You quickly agree upon the price.");
 	message_flush();
 
-	/* Apply Sales Tax */
-	ask += ask / 10;
-
 	/* Haggle for the whole pile */
 	ask *= o_ptr->number;
 
@@ -1529,9 +1523,6 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 		/* Message summary */
 		msg_print("You quickly agree upon the price.");
 		message_flush();
-
-		/* Apply Sales Tax */
-		ask -= ask / 10;
 	}
 
 	/* Haggle for the whole pile */
