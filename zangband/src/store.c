@@ -4054,17 +4054,6 @@ void store_init(int town_num, int store_num)
 	 * BEFORE player birth to enable store restocking
 	 */
 	st_ptr->last_visit = -100L * STORE_TURNS;
-#if 0
-	/* Clear any old items */
-	for (k = 0; k < st_ptr->stock_size; k++)
-	{
-#ifdef USE_SCRIPT
-		object_delete_callback(&st_ptr->stock[k]);
-#endif /* USE_SCRIPT */
-
-		object_wipe(&st_ptr->stock[k]);
-	}
-#endif
 }
 
 
