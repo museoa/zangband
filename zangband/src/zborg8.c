@@ -735,6 +735,9 @@ static bool borg_think_shop_buy_aux(int shop)
 		/* second check on empty */
 		if (!l_ptr->k_idx) continue;
 
+		/* Hack - we cannot buy some items */
+		if (!l_ptr->cost) continue;
+
 		/* Hack -- Require "sufficient" cash */
 		if (borg_gold < l_ptr->cost * 12 / 10) continue;
 
@@ -955,6 +958,9 @@ static bool borg_think_shop_grab_aux(int shop)
 	for (n = 0; n < cur_num; n++)
 	{
 		list_item *l_ptr = &cur_list[n];
+
+		/* Hack - we cannot buy some items */
+		if (!l_ptr->cost) continue;
 
 		/* Get a single item */
 		l_ptr->treat_as = TREAT_AS_LESS;
