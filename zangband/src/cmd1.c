@@ -103,7 +103,7 @@ static int critical_melee(int chance, int sleeping_bonus, cptr m_name,
                           object_type *o_ptr)
 {
 	int power = (chance + sleeping_bonus);
-	int mult_m_crit;
+	int bonus = 0;
 	int psi_hit = FALSE;
 
 	if ((TEST_FLAG(p_ptr->flags, 3, TR3_PSI_CRIT)) && (p_ptr->csp >= PSI_COST) && 
@@ -125,27 +125,26 @@ static int critical_melee(int chance, int sleeping_bonus, cptr m_name,
 		if ((sleeping_bonus) && (p_ptr->rp.pclass == CLASS_ROGUE))
 			msgf("You ruthlessly sneak attack!");
 
-		/* Determine level of critical hit x 10. */
-		if (randint0(90) == 0) mult_m_crit = 50;
-		if (randint0(40) == 0) mult_m_crit = 36;
-		else if (randint0(12) == 0) mult_m_crit = 27;
-		else if (randint0(3) == 0) mult_m_crit = 20;
-		else
-			mult_m_crit = 15;
+		/* Determine level of critical hit. */
+		if (randint0(90) == 0)      bonus = 800;
+		if (randint0(40) == 0)      bonus = 500;
+		else if (randint0(12) == 0) bonus = 300;
+		else if (randint0(3) == 0)  bonus = 200;
+		else                        bonus = 100;
 
 
 		/* Criticals with PSI_HIT weapons do about 47% more damage */
 		if (psi_hit)
 		{
-			int bonus;
+			int psi_bonus;
 			if (one_in_(12) && p_ptr->csp >= PSI_COST * 3)
-				bonus = 3;
+				psi_bonus = 3;
 			else if (one_in_(3) && p_ptr->csp >= PSI_COST * 2)
-				bonus = 2;
+				psi_bonus = 2;
 			else
-				bonus = 1;
+				psi_bonus = 1;
 
-			mult_m_crit *= bonus;
+			bonus *= psi_bonus;
 			
 			p_ptr->csp -= PSI_COST * bonus;
 			p_ptr->redraw |= (PR_MANA);
@@ -154,26 +153,26 @@ static int critical_melee(int chance, int sleeping_bonus, cptr m_name,
 		}
 
 
-		if ((mult_m_crit <= 15) ||
+		if ((bonus <= 100) ||
 			((o_ptr->tval == TV_HAFTED) && (o_ptr->sval == SV_WHIP)))
 		{
 			msgf(MSGT_HIT, "You strike %s.", m_name);
 		}
-		else if (mult_m_crit <= 20)
+		else if (bonus <= 200)
 		{
 			if ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM))
 				msgf(MSGT_HIT, "You hack at %s.", m_name);
 			else
 				msgf(MSGT_HIT, "You bash %s.", m_name);
 		}
-		else if (mult_m_crit <= 27)
+		else if (bonus <= 300)
 		{
 			if ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM))
 				msgf(MSGT_HIT, "You slash %s.", m_name);
 			else
 				msgf(MSGT_HIT, "You pound %s.", m_name);
 		}
-		else if (mult_m_crit <= 36)
+		else if (bonus <= 500)
 		{
 			if ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM))
 				msgf(MSGT_HIT, "You gouge %s!", m_name);
@@ -192,11 +191,10 @@ static int critical_melee(int chance, int sleeping_bonus, cptr m_name,
 	 */
 	else
 	{
-		mult_m_crit = 10;
 		msgf(MSGT_HIT, "You hit %s.", m_name);
 	}
 
-	return (mult_m_crit);
+	return (bonus);
 }
 
 
@@ -254,21 +252,20 @@ static s16b critical_norm(int weight, int plus, int dam)
 
 
 /*
- * Extract the "total damage" from a given object hitting a given monster.
+ * Extract the deadliness bonus from slays and brands.
  *
- * Note that "flasks of oil" do NOT do fire damage, although they
- * certainly could be made to do so.  XXX XXX
+ * Note that most brands and slays are +200%, except Slay Animal (+100%),
+ * Slay Evil (+100%), and Kill dragon (+400%).
  *
- * Note that most brands and slays are x2, except Slay Animal (x1.7),
- * Slay Evil (x1.5), and Kill dragon (x3). -SF-
+ * Currently brands add +200%, but it might be more interesting to make
+ * them +100% that is cumulative with other slays and brands.
  */
 int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr)
 {
 	/*
-	 * mult is scaled to be *10 so that the fractional slays can be stored
-	 * in an integer. -SF-
+	 * mult is based at 100 = +0 deadliness.
 	 */
-	int mult = 10;
+	int mult = 100;
 
 
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
@@ -295,7 +292,7 @@ int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr)
 					r_ptr->r_flags[2] |= RF2_ANIMAL;
 				}
 
-				if (mult < 17) mult = 17;
+				if (mult < 200) mult = 200;
 			}
 
 			/* Slay Evil */
@@ -306,7 +303,7 @@ int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr)
 					r_ptr->r_flags[2] |= RF2_EVIL;
 				}
 
-				if (mult < 15) mult = 15;
+				if (mult < 200) mult = 200;
 			}
 
 			/* Slay Undead */
@@ -317,7 +314,7 @@ int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr)
 					r_ptr->r_flags[2] |= RF2_UNDEAD;
 				}
 
-				if (mult < 20) mult = 20;
+				if (mult < 300) mult = 300;
 			}
 
 			/* Slay Demon */
@@ -328,7 +325,7 @@ int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr)
 					r_ptr->r_flags[2] |= RF2_DEMON;
 				}
 
-				if (mult < 20) mult = 20;
+				if (mult < 300) mult = 300;
 			}
 
 			/* Slay Orc */
@@ -339,7 +336,7 @@ int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr)
 					r_ptr->r_flags[2] |= RF2_ORC;
 				}
 
-				if (mult < 20) mult = 20;
+				if (mult < 300) mult = 300;
 			}
 
 			/* Slay Troll */
@@ -350,7 +347,7 @@ int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr)
 					r_ptr->r_flags[2] |= RF2_TROLL;
 				}
 
-				if (mult < 20) mult = 20;
+				if (mult < 300) mult = 300;
 			}
 
 			/* Slay Giant */
@@ -361,7 +358,7 @@ int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr)
 					r_ptr->r_flags[2] |= RF2_GIANT;
 				}
 
-				if (mult < 20) mult = 20;
+				if (mult < 300) mult = 300;
 			}
 
 			/* Slay Dragon */
@@ -372,7 +369,7 @@ int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr)
 					r_ptr->r_flags[2] |= RF2_DRAGON;
 				}
 
-				if (mult < 20) mult = 20;
+				if (mult < 300) mult = 300;
 			}
 
 			/* Execute Dragon */
@@ -383,7 +380,7 @@ int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr)
 					r_ptr->r_flags[2] |= RF2_DRAGON;
 				}
 
-				if (mult < 30) mult = 30;
+				if (mult < 500) mult = 500;
 			}
 
 			/* Brand (Acid) */
@@ -401,7 +398,7 @@ int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr)
 				/* Otherwise, take the damage */
 				else
 				{
-					if (mult < 20) mult = 20;
+					if (mult < 300) mult = 300;
 				}
 			}
 
@@ -420,7 +417,7 @@ int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr)
 				/* Otherwise, take the damage */
 				else
 				{
-					if (mult < 20) mult = 20;
+					if (mult < 300) mult = 300;
 				}
 			}
 
@@ -439,7 +436,7 @@ int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr)
 				/* Otherwise, take the damage */
 				else
 				{
-					if (mult < 20) mult = 20;
+					if (mult < 300) mult = 300;
 				}
 			}
 
@@ -457,7 +454,7 @@ int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr)
 				/* Otherwise, take the damage */
 				else
 				{
-					if (mult < 20) mult = 20;
+					if (mult < 300) mult = 300;
 				}
 			}
 
@@ -476,7 +473,7 @@ int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr)
 				/* Otherwise, take the damage */
 				else
 				{
-					if (mult < 20) mult = 20;
+					if (mult < 300) mult = 300;
 				}
 			}
 			break;
@@ -1588,6 +1585,11 @@ void py_attack(int x, int y)
 	bonus = p_ptr->to_h + o_ptr->to_h;
 	chance = (p_ptr->skill.thn + (bonus * BTH_PLUS_ADJ));
 
+	apply_object_trigger(TRIGGER_ATTACK, o_ptr, "p:iiii", 
+		LUA_MONSTER_NAMED(m_ptr, "monster"), LUA_RETURN(chance),
+		LUA_RETURN(terrain_bonus), LUA_RETURN(total_deadliness),
+		LUA_RETURN(sleeping_bonus));
+
 	/* Attack once for each legal blow */
 	while (num++ < blows)
 	{
@@ -1672,33 +1674,34 @@ void py_attack(int x, int y)
 			else if (o_ptr->k_idx)
 			{
 				int vorpal_chance = (o_ptr->flags[0] & TR0_VORPAL) ? 2 : 0;
+				int multiplier = deadliness_calc(total_deadliness);
 
 				/* base damage dice. */
 				k = o_ptr->ds;
 
-				/* multiply by slays or brands. (10x inflation) */
-				slay = tot_dam_aux(o_ptr, m_ptr);
-				k *= slay;
+				/* Add deadliness bonus from slays/brands */
+				slay = (tot_dam_aux(o_ptr, m_ptr) - 100);
+				multiplier += slay;
 
 
-				/* multiply by critical hit. (10x inflation) */
-				k *= critical_melee(chance, sleeping_bonus, m_name, o_ptr);
+				/* Add deadliness bonus from critical hits */
+				multiplier += critical_melee(chance, sleeping_bonus, m_name, o_ptr);
 
 				/*
 				 * Convert total Deadliness into a percentage, and apply
 				 * it as a bonus or penalty. (100x inflation)
 				 */
-				k *= deadliness_calc(total_deadliness);
+				k *= multiplier;
 
 				/*
 				 * Get the whole number of dice sides by deflating,
 				 * and then get total dice damage.
 				 */
-				k = damroll(o_ptr->dd, k / 10000 +
-							(randint0(10000) < (k % 10000) ? 1 : 0));
+				k = damroll(o_ptr->dd, k / 100 +
+							(randint0(100) < (k % 100) ? 1 : 0));
 
 				/* Add in extra effect due to slays */
-				k += (slay - 10);
+				k += slay / 20;
 
 				/* Apply scripted effects */
 				apply_object_trigger(TRIGGER_HIT, o_ptr, "p:iiiibbbb", 

@@ -111,7 +111,7 @@
 /*
  * Script triggers
  */
-#define MAX_TRIGGER     7
+#define MAX_TRIGGER     8
 
 #define TRIGGER_USE     0
 #define TRIGGER_MAKE    1
@@ -120,6 +120,7 @@
 #define TRIGGER_DESC	4
 #define TRIGGER_TIMED   5
 #define TRIGGER_HIT     6
+#define TRIGGER_ATTACK  7
 
 
 /*

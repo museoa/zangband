@@ -2180,7 +2180,7 @@ static int critical_shot(int chance, int sleeping_bonus, cptr o_name,
                          cptr m_name, int visible)
 {
 	int power = (chance + sleeping_bonus);
-	int mult_a_crit;
+	int bonus = 0;
 
 	if (!visible)
 	{
@@ -2199,30 +2199,29 @@ static int critical_shot(int chance, int sleeping_bonus, cptr o_name,
 			msgf("You rudely awaken the monster!");
 		}
 
-		/* Determine level of critical hit x 10. */
-		if (randint0(100) == 0) mult_a_crit = 50;
-		if (randint0(40) == 0) mult_a_crit = 36;
-		else if (randint0(12) == 0) mult_a_crit = 27;
-		else if (randint0(3) == 0) mult_a_crit = 20;
-		else
-			mult_a_crit = 15;
+		/* Determine deadliness bonus from critical hit. */
+		if (randint0(100) == 0)     bonus = 800;
+		if (randint0(40) == 0)      bonus = 500;
+		else if (randint0(12) == 0) bonus = 300;
+		else if (randint0(3) == 0)  bonus = 200;
+		else                        bonus = 100;
 
 		/* Only give a message if we see it hit. */
 		if (visible)
 		{
-			if (mult_a_crit == 15)
+			if (bonus <= 100)
 			{
 				msgf("The %s strikes %s.", o_name, m_name);
 			}
-			else if (mult_a_crit == 20)
+			else if (bonus <= 200)
 			{
 				msgf("The %s penetrates %s.", o_name, m_name);
 			}
-			else if (mult_a_crit == 27)
+			else if (bonus <= 300)
 			{
 				msgf("The %s drives into %s!", o_name, m_name);
 			}
-			else if (mult_a_crit == 36)
+			else if (bonus <= 500)
 			{
 				msgf("The %s transpierces %s!", o_name, m_name);
 			}
@@ -2239,15 +2238,13 @@ static int critical_shot(int chance, int sleeping_bonus, cptr o_name,
 	 */
 	else
 	{
-		mult_a_crit = 10;
-
 		if (visible)
 		{
 			msgf("The %s hits %s.", o_name, m_name);
 		}
 	}
 
-	return (mult_a_crit);
+	return (bonus);
 }
 
 
@@ -2684,6 +2681,7 @@ void do_cmd_fire_aux(int mult, object_type *o_ptr, const object_type *j_ptr)
 			if (test_hit_fire(chance2 + sleeping_bonus, armour, m_ptr->ml))
 			{
 				bool fear = FALSE;
+				int multiplier = deadliness_calc(total_deadliness);
 
 				/* Assume a default death */
 				cptr note_dies = " dies.";
@@ -2717,38 +2715,32 @@ void do_cmd_fire_aux(int mult, object_type *o_ptr, const object_type *j_ptr)
 				/* Multiply by the missile weapon multiplier. */
 				tdam *= tmul;
 
-				/* multiply by slays or brands. (10x inflation) */
-				slay = tot_dam_aux(i_ptr, m_ptr);
-				tdam *= slay;
+				/* Add deadliness bonus from slays/brands */
+				slay = (tot_dam_aux(i_ptr, m_ptr) - 100);
+				multiplier += slay;
 
 				/*
-				 * Multiply by critical shot.
-				 * (10x inflation) + level damage bonus
+				 * Add deadliness bonus from critical shot
 				 */
-				if (tmul > 1)
-				{
-					tdam *= critical_shot(chance2, sleeping_bonus,
-										  o_name, m_name, m_ptr->ml);
-				}
-				else
-					tdam *= 10;
+				multiplier += critical_shot(tmul > 1 ? chance2 : 0,
+					sleeping_bonus, o_name, m_name, m_ptr->ml);
 
 				/*
 				 * Convert total Deadliness into a percentage, and apply
 				 * it as a bonus or penalty. (100x inflation)
 				 */
-				tdam *= deadliness_calc(total_deadliness);
+				tdam *= multiplier;
 
 
 				/*
 				 * Get the whole number of dice sides by deflating,
 				 * and then get total dice damage.
 				 */
-				tdam = damroll(i_ptr->dd, tdam / 10000 +
-							   (randint0(10000) < (tdam % 10000) ? 1 : 0));
+				tdam = damroll(i_ptr->dd, tdam / 100 +
+							   (randint0(100) < (tdam % 100) ? 1 : 0));
 
 				/* Add in extra effect due to slays */
-				tdam += (slay - 10);
+				tdam += slay / 20;
 
 #if 0
 				/* If a weapon of velocity activates, increase damage. */
