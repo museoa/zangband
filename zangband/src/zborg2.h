@@ -46,8 +46,12 @@
     (map_in_bounds((X),(Y)) && \
 	 borg_cave_floor_grid(map_loc((X),(Y))))
 
+/* Useful typedef for los_general() */
+typedef bool (*map_hook_type) (map_block *mb_ptr);
 
 
+extern void borg_mmove_init(int x1, int y1, int x2, int y2);
+extern void borg_mmove(int *x, int *y, int x1, int y1);
 extern void borgmove2(int *y, int *x, int y1, int x1, int y2, int x2);
 extern bool borg_los(int y1, int x1, int y2, int x2);
 extern bool borg_projectable(int y1, int x1, int y2, int x2);

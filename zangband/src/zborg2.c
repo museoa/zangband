@@ -816,7 +816,143 @@ void borg_forget_view(void)
 }
 
 
+/*
+ * This is a version of the los function that uses a
+ * tester function to determine whether or not to stop.
+ *
+ * Use this function instead of cut+pasting los() everywhere
+ * with only tiny changes made to it.
+ *
+ * This works by following a "ray" that is one of those used
+ * in the update_view() routine.
+ *
+ * We pick the minimal sloped ray that passes through the
+ * required square.  We then follow that ray, looking at each
+ * grid along it.  If the grid passes c_hook() then we keep
+ * going.  If the grid does not, then we go to the minimal
+ * slope that does not pass through this blocking grid.
+ * We go to the first unchecked square along that ray - and
+ * then continue following it.
+ *
+ * If the new ray does not pass through the target square, then
+ * its slope will be greater than the maximal slope of the
+ * target.
+ *
+ * This routine will over-check some squares in a worst-case
+ * scenario - but it is fairly efficient.  Most of the required
+ * information has been pre-calculated in the code that also
+ * works out the data used by update_view()
+ *
+ * Unlike the old los() routine, this will give exactly the
+ * same results as testing cave_view_grid() after using
+ * update_view().
+ */
+static bool los_general(int x1, int y1, int x2, int y2, map_hook_type mb_hook)
+{
+	int i, j, temp, dist;
 
+	int x, y;
+
+	int dx, dy, ax, ay, sx, sy;
+
+	map_block *mb_ptr;
+
+	dist = distance(x1, y1, x2, y2);
+
+	/* If (x1,y1) == (x2, y2) we know we can see ourselves */
+	if (dist == 0) return (TRUE);
+
+	/* We only work for points that are less than MAX_SIGHT appart. */
+	if (dist > MAX_SIGHT) return (FALSE);
+
+	/* Extract the offset */
+	dy = y2 - y1;
+	dx = x2 - x1;
+
+	/* Extract the absolute offset */
+	ay = ABS(dy);
+	ax = ABS(dx);
+
+	/*
+	 * Start at the first square in the list.
+	 * This is a square adjacent to (x1,y1)
+	 */
+	j = 0;
+
+	/* Extract some signs */
+	sx = (dx < 0) ? -1 : 1;
+	sy = (dy < 0) ? -1 : 1;
+
+	/* Hack - we need to stick to one octant */
+	if (ay < ax)
+	{
+		/* Look up the slope to use */
+		i = p_slope_min[ax][ay];
+
+		while (i <= p_slope_max[ax][ay])
+		{
+			x = x1 + sx * project_data[i][j].x;
+			y = y1 + sy * project_data[i][j].y;
+
+			/* Done? */
+			if ((x == x2) && (y == y2)) return (TRUE);
+
+			/* Stop if out of bounds */
+			if (!map_in_bounds(x, y)) return (FALSE);
+
+			mb_ptr = map_loc(x, y);
+
+			if ((*mb_hook) (mb_ptr))
+			{
+				/* Blocked: go to the best position we have not looked at yet */
+				temp = project_data[i][j].slope;
+				j = project_data[i][j].square;
+				i = temp;
+			}
+			else
+			{
+				/* Advance along ray */
+				j++;
+			}
+		}
+	}
+	else
+	{
+		/* Look up the slope to use */
+		i = p_slope_min[ay][ax];
+
+		while (i <= p_slope_max[ay][ax])
+		{
+			/* Note that the data offsets have x,y swapped */
+			x = x1 + sx * project_data[i][j].y;
+			y = y1 + sy * project_data[i][j].x;
+
+			/* Done? */
+			if ((x == x2) && (y == y2)) return (TRUE);
+
+			/* Stop if out of bounds */
+			if (!map_in_bounds(x, y)) return (FALSE);
+
+			mb_ptr = map_loc(x, y);
+
+			if ((*mb_hook) (mb_ptr))
+			{
+				/* Blocked: go to the best position we have not looked at yet */
+				temp = project_data[i][j].slope;
+				j = project_data[i][j].square;
+				i = temp;
+			}
+			else
+			{
+				/* Advance along ray */
+				j++;
+			}
+		}
+	}
+
+	/* No path */
+	return (FALSE);
+}
 
 
 /* Slope and square used by mmove2 */
@@ -990,8 +1126,50 @@ void borg_mmove_init(int x1, int y1, int x2, int y2)
 	mmove_sq = 0;
 }
 
+/*
+ * Calculate incremental motion
+ *
+ * The current position is updated.
+ *
+ * (x,y) encodes the current location.
+ *
+ * This routine is very similar to los() except that we can use it
+ * to return partial results.
+ */
+void borg_mmove(int *x, int *y, int x1, int y1)
+{
+	int ax, ay, sx, sy;
 
+	/* Extract the absolute offset */
+	ay = ABS(mmove_dy);
+	ax = ABS(mmove_dx);
 
+	/* Extract some signs */
+	sx = (mmove_dx < 0) ? -1 : 1;
+	sy = (mmove_dy < 0) ? -1 : 1;
+
+	/* Paranoia - square number is too large */
+	if (mmove_sq >= slope_count[mmove_slope])
+	{
+		mmove_sq = slope_count[mmove_slope] - 1;
+	}
+
+	if (ay < ax)
+	{
+		/* Work out square to return */
+		*x = x1 + sx * project_data[mmove_slope][mmove_sq].x;
+		*y = y1 + sy * project_data[mmove_slope][mmove_sq].y;
+	}
+	else
+	{
+		/* Work out square to return */
+		*x = x1 + sx * project_data[mmove_slope][mmove_sq].y;
+		*y = y1 + sy * project_data[mmove_slope][mmove_sq].x;
+	}
+
+	/* Next square, next time. */
+	mmove_sq++;
+}
 
 
 /*
