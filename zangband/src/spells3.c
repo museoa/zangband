@@ -293,8 +293,9 @@ void teleport_player(int dis)
 			/* Ignore illegal locations */
 			if (!in_bounds(y, x)) continue;
 
-			/* Require "naked" floor space */
-			if (!cave_naked_bold(y, x)) continue;
+			/* Require "naked" floor space or trees */
+			if (!(cave_naked_bold(y, x) ||
+			    (cave[y][x].feat == FEAT_TREES))) continue;
 
 			/* No teleporting into vaults and such */
 			if (cave[y][x].info & CAVE_ICKY) continue;
