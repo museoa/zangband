@@ -14,7 +14,6 @@
 
 %:font-xxx.prf
 
-
 ##### System Specific Subfiles #####
 
 ?:[EQU $SYS xaw]
