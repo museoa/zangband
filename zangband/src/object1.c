@@ -1039,6 +1039,13 @@ bool identify_fully_aux(object_type *o_ptr)
 		info[i++] = "...if it is being worn.";
 	}
 
+	/* Books, a hack */
+	if ((o_ptr->tval >= TV_BOOKS_MIN) && (o_ptr->tval <= TV_BOOKS_MAX))
+	{
+		do_cmd_browse_aux(o_ptr);
+		return (TRUE);
+	}
+
 	/* Figurines, a hack */
 	if (o_ptr->tval == TV_FIGURINE)
 	{

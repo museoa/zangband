@@ -574,6 +574,7 @@ extern void do_cmd_time(void);
 
 /* cmd5.c */
 extern void do_cmd_browse(void);
+extern void do_cmd_browse_aux(object_type *o_ptr);
 extern void do_cmd_study(void);
 extern void do_cmd_cast(void);
 extern void do_cmd_pray(void);

@@ -205,19 +205,77 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, bool realm_2)
 
 
 /*
- * Peruse the spells/prayers in a book
+ * Peruse the spells/prayers in a given book.  Note that we may
+ * bypass do_cmd_browse by calling this function directly (as we
+ * do from identify_fully_aux() which has the effect of allowing
+ * any book to be browsed regardless of the player's realm choice.
  *
  * Note that *all* spells in the book are listed
+ */
+void do_cmd_browse_aux(object_type *o_ptr)
+{
+	int sval;
+	int spell;
+	int num = 0;
+
+	byte spells[64];
+
+
+#ifdef USE_SCRIPT
+	if (object_browse_callback(o_ptr)) return;
+#endif /* USE_SCRIPT */
+
+	/* Access the item's sval */
+	sval = o_ptr->sval;
+
+	/* Track the object kind */
+	object_kind_track(o_ptr->k_idx);
+
+	/* Hack -- Handle stuff */
+	handle_stuff();
+
+
+	/* Extract spells */
+	for (spell = 0; spell < 32; spell++)
+	{
+		/* Check for this spell */
+		if ((fake_spell_flags[sval] & (1L << spell)))
+		{
+			/* Collect this spell */
+			spells[num++] = spell;
+		}
+	}
+
+
+	/* Save the screen */
+	screen_save();
+
+	/* Display the spells */
+	print_spells(spells, num, 1, 20, (o_ptr->tval - TV_BOOKS_MIN));
+
+	/* Clear the top line */
+	prt("", 0, 0);
+
+	/* Prompt user */
+	put_str("[Press any key to continue]", 0, 23);
+
+	/* Wait for key */
+	(void)inkey();
+
+	/* Restore the screen */
+	screen_load();
+}
+
+
+/*
+ * Peruse the spells/prayers in a book
  *
  * Note that browsing is allowed while confused or blind,
  * and in the dark, primarily to allow browsing in stores.
  */
-void do_cmd_browse(void)
+void do_cmd_browse()
 {
-	int item, sval;
-	int spell;
-	int num = 0;
-	byte spells[64];
+	int item;
 	object_type	*o_ptr;
 	cptr q, s;
 
@@ -267,52 +325,9 @@ void do_cmd_browse(void)
 		o_ptr = &o_list[0 - item];
 	}
 
-#ifdef USE_SCRIPT
-	if (object_browse_callback(o_ptr)) return;
-#endif /* USE_SCRIPT */
-
-	/* Access the item's sval */
-	sval = o_ptr->sval;
-
-	/* Track the object kind */
-	object_kind_track(o_ptr->k_idx);
-
-	/* Hack -- Handle stuff */
-	handle_stuff();
-
-
-	/* Extract spells */
-	for (spell = 0; spell < 32; spell++)
-	{
-		/* Check for this spell */
-		if ((fake_spell_flags[sval] & (1L << spell)))
-		{
-			/* Collect this spell */
-			spells[num++] = spell;
-		}
-	}
-
-
-	/* Save the screen */
-	screen_save();
-
-	/* Display the spells */
-	print_spells(spells, num, 1, 20, (o_ptr->tval - TV_BOOKS_MIN));
-
-	/* Clear the top line */
-	prt("", 0, 0);
-
-	/* Prompt user */
-	put_str("[Press any key to continue]", 0, 23);
-
-	/* Wait for key */
-	(void)inkey();
-
-	/* Restore the screen */
-	screen_load();
+	/* Print out the spells */
+	do_cmd_browse_aux(o_ptr);
 }
-
-
 
 
 /*

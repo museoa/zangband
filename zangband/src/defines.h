@@ -1450,6 +1450,7 @@
 #define TV_GOLD         100     /* Gold can only be picked up by players */
 
 #define TV_BOOKS_MIN    TV_LIFE_BOOK  /* First tval of spellbooks */
+#define TV_BOOKS_MAX    TV_ARCANE_BOOK  /* Last tval of spellbooks */
 
 /* Any subvalue */
 #define SV_ANY 					255
