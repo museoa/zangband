@@ -929,8 +929,10 @@ static int store_carry(object_type *o_ptr)
 	o_ptr->kn_flags2 = o_ptr->flags2;
 	o_ptr->kn_flags3 = o_ptr->flags3;
 
+#if 0
 	/* We will buy some items we will not stock */
-	if (!store_will_stock(o_ptr)) return (-1);
+    if (!store_will_stock(o_ptr)) return (-1);
+#endif
 
 	/* Erase the inscription */
 	o_ptr->inscription = 0;
