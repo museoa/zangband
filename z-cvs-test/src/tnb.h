@@ -257,7 +257,6 @@ extern cptr *keyword_class;
 
 extern char *g_attr_str;
 extern cptr keyword_artifact_location[];
-extern int debug_commands;
 extern int exit_skip_save;
 extern bool command_repeating;
 extern int g_cave_hgt, g_cave_wid;
@@ -445,12 +444,6 @@ extern void Bind_Option(const char *name, int value);
 
 /* birth-tnb.c */
 extern void init_birth(void);
-
-/* debug.c */
-extern int wiz_see_monsters;
-extern int wiz_auto_lite;
-extern int wiz_free_moves;
-extern void init_debug(void);
 
 /* describe.c */
 extern cptr keyword_slot[];

@@ -10,7 +10,7 @@ COMMONOBJS := \
 		artifact.o avatar.o bind.o birth-tnb.o birth.o bldg.o \
 		canv-widget.o cave.o cmdinfo-dll.o icon-dll.o\
 		cmd1.o cmd2.o cmd3.o cmd4.o cmd5.o cmd6.o \
-		const.o debug.o describe.o dungeon.o effects.o \
+		const.o describe.o dungeon.o effects.o \
 		files.o flavor.o generate.o grid.o icon1.o icon2.o init1.o \
 		init2.o interp1.o interp2.o load.o struct-dll.o\
 		main-tnb.o map.o melee1.o TclTk-dll.o map-dll.o\

@@ -1330,9 +1330,6 @@ void update_mon(int m_idx, bool full)
 	if (m_ptr->mflag & (MFLAG_MARK))
 		flag = TRUE;
 
-	if (wizard && wiz_see_monsters)
-		flag = TRUE; /* TNB */
-
 	/* Nearby */
 	if (d <= MAX_SIGHT)
 	{

@@ -3929,9 +3929,6 @@ static void dungeon(void)
 	/* Flush messages */
 	msg_print(NULL);
 
-	if (wizard && wiz_auto_lite)
-		wiz_lite();	/* TNB */
-
 	/* Enter "xtra" mode */
 	character_xtra = TRUE;
 

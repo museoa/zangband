@@ -3362,9 +3362,6 @@ void process_monsters(int min_energy)
 			continue;
 		}
 
-		if (wizard && wiz_free_moves)
-			continue; /* TNB */
-
 		/* Not enough energy to move */
 		if (m_ptr->energy < min_energy)
 			continue;

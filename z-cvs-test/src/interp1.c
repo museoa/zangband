@@ -3591,8 +3591,6 @@ void angtk_angband_initialized(void)
 
 	init_map();
 
-	init_debug();
-
 	init_struct();
 
 #ifdef ALLOW_STATUS_EXTRA
