@@ -24,230 +24,42 @@
  */
 #define ACTIVATION_CHANCE 3
 
-
-static void curse_artifact(object_type *o_ptr)
+static void random_plus(object_type *o_ptr)
 {
-	if (o_ptr->pval) o_ptr->pval = 0 - (o_ptr->pval + randint1(4));
-	if (o_ptr->to_a) o_ptr->to_a = 0 - (o_ptr->to_a + randint1(4));
-	if (o_ptr->to_h) o_ptr->to_h = 0 - (o_ptr->to_h + randint1(4));
-	if (o_ptr->to_d) o_ptr->to_d = 0 - (o_ptr->to_d + randint1(4));
-
-	o_ptr->flags3 |= (TR3_HEAVY_CURSE | TR3_CURSED);
-
-	/* if (one_in_(4)) o_ptr->flags3 |= TR3_PERMA_CURSE; */
-	if (one_in_(3)) o_ptr->flags3 |= TR3_TY_CURSE;
-	if (one_in_(2)) o_ptr->flags3 |= TR3_AGGRAVATE;
-	if (one_in_(3)) o_ptr->flags3 |= TR3_DRAIN_EXP;
-	if (one_in_(2)) o_ptr->flags3 |= TR3_TELEPORT;
-	else if (one_in_(3)) o_ptr->flags3 |= TR3_NO_TELE;
-	if (one_in_(7)) o_ptr->flags4 |= TR4_HURT_ACID;
-	if (one_in_(7)) o_ptr->flags4 |= TR4_HURT_ELEC;
-	if (one_in_(7)) o_ptr->flags4 |= TR4_HURT_FIRE;
-	if (one_in_(7)) o_ptr->flags4 |= TR4_HURT_COLD;
-	if (one_in_(3)) o_ptr->flags4 |= TR4_DRAIN_STATS;
-	if (one_in_(3)) o_ptr->flags4 |= TR4_SLOW_HEAL;
-
-	if ((p_ptr->rp.pclass != CLASS_WARRIOR) && one_in_(3))
-		o_ptr->flags3 |= TR3_NO_MAGIC;
-}
-
-
-static int random_plus(object_type *o_ptr, int artifact_bias)
-{
-	switch (artifact_bias)
-	{
-		case BIAS_WARRIOR:
-			if (!(o_ptr->flags1 & TR1_STR))
-			{
-				o_ptr->flags1 |= TR1_STR;
-				if (one_in_(2)) return (artifact_bias);
-			}
-
-			if (!(o_ptr->flags1 & TR1_CON))
-			{
-				o_ptr->flags1 |= TR1_CON;
-				if (one_in_(2)) return (artifact_bias);
-			}
-
-			if (!(o_ptr->flags1 & TR1_DEX))
-			{
-				o_ptr->flags1 |= TR1_DEX;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_MAGE:
-			if (!(o_ptr->flags1 & TR1_INT))
-			{
-				o_ptr->flags1 |= TR1_INT;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_PRIESTLY:
-			if (!(o_ptr->flags1 & TR1_WIS))
-			{
-				o_ptr->flags1 |= TR1_WIS;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_RANGER:
-			if (!(o_ptr->flags1 & TR1_CON))
-			{
-				o_ptr->flags1 |= TR1_CON;
-				if (one_in_(2)) return (artifact_bias);
-			}
-
-			if (!(o_ptr->flags1 & TR1_DEX))
-			{
-				o_ptr->flags1 |= TR1_DEX;
-				if (one_in_(2)) return (artifact_bias);
-			}
-
-			if (!(o_ptr->flags1 & TR1_STR))
-			{
-				o_ptr->flags1 |= TR1_STR;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_ROGUE:
-			if (!(o_ptr->flags1 & TR1_STEALTH))
-			{
-				o_ptr->flags1 |= TR1_STEALTH;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			if (!(o_ptr->flags1 & TR1_SEARCH))
-			{
-				o_ptr->flags1 |= TR1_SEARCH;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_STR:
-			if (!(o_ptr->flags1 & TR1_STR))
-			{
-				o_ptr->flags1 |= TR1_STR;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_WIS:
-			if (!(o_ptr->flags1 & TR1_WIS))
-			{
-				o_ptr->flags1 |= TR1_WIS;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_INT:
-			if (!(o_ptr->flags1 & TR1_INT))
-			{
-				o_ptr->flags1 |= TR1_INT;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_DEX:
-			if (!(o_ptr->flags1 & TR1_DEX))
-			{
-				o_ptr->flags1 |= TR1_DEX;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_CON:
-			if (!(o_ptr->flags1 & TR1_CON))
-			{
-				o_ptr->flags1 |= TR1_CON;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_CHR:
-			if (!(o_ptr->flags1 & TR1_CHR))
-			{
-				o_ptr->flags1 |= TR1_CHR;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-	}
-
-
 	switch (randint1(o_ptr->tval < TV_BOOTS ? 23 : 19))
 	{
 		case 1:  case 2:
 			o_ptr->flags1 |= TR1_STR;
-
-			if (!artifact_bias && !one_in_(13))
-				artifact_bias = BIAS_STR;
-			else if (!artifact_bias && one_in_(7))
-				artifact_bias = BIAS_WARRIOR;
 			break;
 		case 3:  case 4:
 			o_ptr->flags1 |= TR1_INT;
-
-			if (!artifact_bias && !one_in_(13))
-				artifact_bias = BIAS_INT;
-			else if (!artifact_bias && one_in_(7))
-				artifact_bias = BIAS_MAGE;
 			break;
 		case 5:  case 6:
 			o_ptr->flags1 |= TR1_WIS;
-
-			if (!artifact_bias && !one_in_(13))
-				artifact_bias = BIAS_WIS;
-			else if (!artifact_bias && one_in_(7))
-				artifact_bias = BIAS_PRIESTLY;
 			break;
 		case 7:  case 8:
 			o_ptr->flags1 |= TR1_DEX;
-
-			if (!artifact_bias && !one_in_(13))
-				artifact_bias = BIAS_DEX;
-			else if (!artifact_bias && one_in_(7))
-				artifact_bias = BIAS_ROGUE;
 			break;
 		case 9:  case 10:
 			o_ptr->flags1 |= TR1_CON;
-
-			if (!artifact_bias && !one_in_(13))
-				artifact_bias = BIAS_CON;
-			else if (!artifact_bias && one_in_(9))
-				artifact_bias = BIAS_RANGER;
 			break;
 		case 11:  case 12:
 			o_ptr->flags1 |= TR1_CHR;
-
-			if (!artifact_bias && !one_in_(13))
-				artifact_bias = BIAS_CHR;
 			break;
 		case 13:  case 14:
 			o_ptr->flags1 |= TR1_STEALTH;
-
-			if (!artifact_bias && one_in_(3))
-				artifact_bias = BIAS_ROGUE;
 			break;
 		case 15:  case 16:
 			o_ptr->flags1 |= TR1_SEARCH;
-
-			if (!artifact_bias && one_in_(9))
-				artifact_bias = BIAS_RANGER;
 			break;
 		case 17:  case 18:
 			o_ptr->flags1 |= TR1_INFRA;
-
 			break;
 		case 19:
 			o_ptr->flags1 |= TR1_SPEED;
-
-			if (!artifact_bias && one_in_(11))
-				artifact_bias = BIAS_ROGUE;
 			break;
 		case 20:  case 21:
 			o_ptr->flags1 |= TR1_TUNNEL;
-
 			break;
 		case 22:  case 23:
 			if (o_ptr->tval == TV_BOW)
@@ -257,347 +69,129 @@ static int random_plus(object_type *o_ptr, int artifact_bias)
 			else
 			{
 				o_ptr->flags1 |= TR1_BLOWS;
-
-				if (!artifact_bias && one_in_(11))
-					artifact_bias = BIAS_WARRIOR;
 			}
 			break;
 	}
-
-	return (artifact_bias);
 }
 
 
-int random_resistance(object_type *o_ptr, int specific, int artifact_bias)
+void random_resistance(object_type *o_ptr, int specific)
 {
-	/* Paranoia */
-	if (specific && artifact_bias)
-	{
-		msgf("Invalid call to 'random_resistance', %d, %d",
-				   specific, artifact_bias);
-
-		/* Bail out */
-		return (0);
-	}
-
-	switch (artifact_bias)
-	{
-		case BIAS_ACID:
-			if (!(o_ptr->flags2 & TR2_RES_ACID))
-			{
-				o_ptr->flags2 |= TR2_RES_ACID;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			if ((o_ptr->tval >= TV_CLOAK) &&
-				(o_ptr->tval <= TV_HARD_ARMOR) &&
-				!(o_ptr->flags4 & TR4_SH_ACID) && one_in_(3))
-			{
-				o_ptr->flags4 |= TR4_SH_ACID;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			if (one_in_(BIAS_LUCK) && !(o_ptr->flags2 & TR2_IM_ACID))
-			{
-				o_ptr->flags2 |= TR2_IM_ACID;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_ELEC:
-			if (!(o_ptr->flags2 & TR2_RES_ELEC))
-			{
-				o_ptr->flags2 |= TR2_RES_ELEC;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			if ((o_ptr->tval >= TV_CLOAK) && (o_ptr->tval <= TV_HARD_ARMOR) &&
-				!(o_ptr->flags3 & TR3_SH_ELEC))
-			{
-				o_ptr->flags3 |= TR3_SH_ELEC;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			if (one_in_(BIAS_LUCK) && !(o_ptr->flags2 & TR2_IM_ELEC))
-			{
-				o_ptr->flags2 |= TR2_IM_ELEC;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_FIRE:
-			if (!(o_ptr->flags2 & TR2_RES_FIRE))
-			{
-				o_ptr->flags2 |= TR2_RES_FIRE;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			if ((o_ptr->tval >= TV_CLOAK) &&
-				(o_ptr->tval <= TV_HARD_ARMOR) &&
-				!(o_ptr->flags3 & TR3_SH_FIRE))
-			{
-				o_ptr->flags3 |= TR3_SH_FIRE;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			if (one_in_(BIAS_LUCK) && !(o_ptr->flags2 & TR2_IM_FIRE))
-			{
-				o_ptr->flags2 |= TR2_IM_FIRE;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_COLD:
-			if (!(o_ptr->flags2 & TR2_RES_COLD))
-			{
-				o_ptr->flags2 |= TR2_RES_COLD;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			if ((o_ptr->tval >= TV_CLOAK) &&
-				(o_ptr->tval <= TV_HARD_ARMOR) &&
-				!(o_ptr->flags4 & TR4_SH_COLD))
-			{
-				o_ptr->flags4 |= TR4_SH_COLD;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			if (one_in_(BIAS_LUCK) && !(o_ptr->flags2 & TR2_IM_COLD))
-			{
-				o_ptr->flags2 |= TR2_IM_COLD;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_POIS:
-			if (!(o_ptr->flags2 & TR2_RES_POIS))
-			{
-				o_ptr->flags2 |= TR2_RES_POIS;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_WARRIOR:
-			if (!one_in_(3) && (!(o_ptr->flags2 & TR2_RES_FEAR)))
-			{
-				o_ptr->flags2 |= TR2_RES_FEAR;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			if (one_in_(3) && (!(o_ptr->flags3 & TR3_NO_MAGIC)))
-			{
-				o_ptr->flags3 |= TR3_NO_MAGIC;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_NECROMANTIC:
-			if (!(o_ptr->flags2 & TR2_RES_NETHER))
-			{
-				o_ptr->flags2 |= TR2_RES_NETHER;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			if (!(o_ptr->flags2 & TR2_RES_POIS))
-			{
-				o_ptr->flags2 |= TR2_RES_POIS;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			if (!(o_ptr->flags2 & TR2_RES_DARK))
-			{
-				o_ptr->flags2 |= TR2_RES_DARK;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_CHAOS:
-			if (!(o_ptr->flags2 & TR2_RES_CHAOS))
-			{
-				o_ptr->flags2 |= TR2_RES_CHAOS;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			if (!(o_ptr->flags2 & TR2_RES_CONF))
-			{
-				o_ptr->flags2 |= TR2_RES_CONF;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			if (!(o_ptr->flags2 & TR2_RES_DISEN))
-			{
-				o_ptr->flags2 |= TR2_RES_DISEN;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-	}
-
 	switch (specific ? specific : randint1(42))
 	{
 		case 1:
 			if (!one_in_(WEIRD_LUCK))
 				o_ptr->flags2 |= TR2_RES_ACID;
 			else
-			{
 				o_ptr->flags2 |= TR2_IM_ACID;
-
-				if (!artifact_bias)
-					artifact_bias = BIAS_ACID;
-			}
 			break;
 		case 2:
 			if (!one_in_(WEIRD_LUCK))
 				o_ptr->flags2 |= TR2_RES_ELEC;
 			else
-			{
 				o_ptr->flags2 |= TR2_IM_ELEC;
-
-				if (!artifact_bias)
-					artifact_bias = BIAS_ELEC;
-			}
 			break;
 		case 3:
 			if (!one_in_(WEIRD_LUCK))
 				o_ptr->flags2 |= TR2_RES_COLD;
 			else
-			{
 				o_ptr->flags2 |= TR2_IM_COLD;
-
-				if (!artifact_bias)
-					artifact_bias = BIAS_COLD;
-			}
 			break;
 		case 4:
 			if (!one_in_(WEIRD_LUCK))
 				o_ptr->flags2 |= TR2_RES_FIRE;
 			else
-			{
 				o_ptr->flags2 |= TR2_IM_FIRE;
-
-				if (!artifact_bias)
-					artifact_bias = BIAS_FIRE;
-			}
 			break;
 		case 5:
 		case 6:
 		case 13:
 			o_ptr->flags2 |= TR2_RES_ACID;
-
-			if (!artifact_bias)
-				artifact_bias = BIAS_ACID;
 			break;
 		case 7:
 		case 8:
 		case 14:
 			o_ptr->flags2 |= TR2_RES_ELEC;
-
-			if (!artifact_bias)
-				artifact_bias = BIAS_ELEC;
 			break;
 		case 9:
 		case 10:
 		case 15:
 			o_ptr->flags2 |= TR2_RES_FIRE;
-
-			if (!artifact_bias)
-				artifact_bias = BIAS_FIRE;
 			break;
 		case 11:
 		case 12:
 		case 16:
 			o_ptr->flags2 |= TR2_RES_COLD;
-
-			if (!artifact_bias)
-				artifact_bias = BIAS_COLD;
 			break;
 		case 17:
 		case 18:
 			o_ptr->flags2 |= TR2_RES_POIS;
-
-			if (!artifact_bias && !one_in_(4))
-				artifact_bias = BIAS_POIS;
-			else if (!artifact_bias && one_in_(2))
-				artifact_bias = BIAS_NECROMANTIC;
-			else if (!artifact_bias && one_in_(2))
-				artifact_bias = BIAS_ROGUE;
 			break;
 		case 19:
 		case 20:
 			o_ptr->flags2 |= TR2_RES_FEAR;
-
-			if (!artifact_bias && one_in_(3))
-				artifact_bias = BIAS_WARRIOR;
 			break;
 		case 21:
 			if (!one_in_(WEIRD_LUCK))
 				o_ptr->flags2 |= TR2_RES_LITE;
 			else
 				o_ptr->flags4 |= TR4_IM_LITE;
-
 			break;
 		case 22:
 			if (!one_in_(WEIRD_LUCK))
 				o_ptr->flags2 |= TR2_RES_DARK;
 			else
 				o_ptr->flags4 |= TR4_IM_DARK;
-
 			break;
 		case 23:
 		case 24:
 			o_ptr->flags2 |= TR2_RES_BLIND;
-
 			break;
 		case 25:
 		case 26:
 			o_ptr->flags2 |= TR2_RES_CONF;
-
-			if (!artifact_bias && one_in_(6))
-				artifact_bias = BIAS_CHAOS;
 			break;
 		case 27:
 		case 28:
 			o_ptr->flags2 |= TR2_RES_SOUND;
-
 			break;
 		case 29:
 		case 30:
 			o_ptr->flags2 |= TR2_RES_SHARDS;
-
 			break;
 		case 31:
 		case 32:
 			o_ptr->flags2 |= TR2_RES_NETHER;
-
-			if (!artifact_bias && one_in_(3))
-				artifact_bias = BIAS_NECROMANTIC;
 			break;
 		case 33:
 		case 34:
 			o_ptr->flags2 |= TR2_RES_NEXUS;
-
 			break;
 		case 35:
 		case 36:
 			o_ptr->flags2 |= TR2_RES_CHAOS;
-
-			if (!artifact_bias && one_in_(2))
-				artifact_bias = BIAS_CHAOS;
 			break;
 		case 37:
 		case 38:
 			o_ptr->flags2 |= TR2_RES_DISEN;
-
 			break;
 		case 39:
 			if (o_ptr->tval >= TV_CLOAK && o_ptr->tval <= TV_HARD_ARMOR)
 				o_ptr->flags3 |= TR3_SH_ELEC;
 			else
 				o_ptr->flags2 |= TR2_RES_ELEC;
-			if (!artifact_bias)
-				artifact_bias = BIAS_ELEC;
 			break;
 		case 40:
 			if (o_ptr->tval >= TV_CLOAK && o_ptr->tval <= TV_HARD_ARMOR)
 				o_ptr->flags3 |= TR3_SH_FIRE;
 			else
 				o_ptr->flags2 |= TR2_RES_FIRE;
-			if (!artifact_bias)
-				artifact_bias = BIAS_FIRE;
 			break;
 		case 41:
 			if (o_ptr->tval >= TV_CLOAK && o_ptr->tval <= TV_HARD_ARMOR)
 				o_ptr->flags4 |= TR4_SH_COLD;
 			else
 				o_ptr->flags2 |= TR2_RES_COLD;
-			if (!artifact_bias)
-				artifact_bias = BIAS_COLD;
 			break;
 		/* Note: SH_ACID is deliberately omitted here */
 		case 42:
@@ -608,149 +202,47 @@ int random_resistance(object_type *o_ptr, int specific, int artifact_bias)
 				o_ptr->flags2 |= TR2_RES_FEAR;
 			break;
 	}
-
-	return (artifact_bias);
 }
 
 
 
-static int random_misc(object_type *o_ptr, int artifact_bias)
+static void random_misc(object_type *o_ptr)
 {
-	switch (artifact_bias)
-	{
-		case BIAS_RANGER:
-			if (!(o_ptr->flags2 & TR2_SUST_CON))
-			{
-				o_ptr->flags2 |= TR2_SUST_CON;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_STR:
-			if (!(o_ptr->flags2 & TR2_SUST_STR))
-			{
-				o_ptr->flags2 |= TR2_SUST_STR;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_WIS:
-			if (!(o_ptr->flags2 & TR2_SUST_WIS))
-			{
-				o_ptr->flags2 |= TR2_SUST_WIS;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_INT:
-			if (!(o_ptr->flags2 & TR2_SUST_INT))
-			{
-				o_ptr->flags2 |= TR2_SUST_INT;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_DEX:
-			if (!(o_ptr->flags2 & TR2_SUST_DEX))
-			{
-				o_ptr->flags2 |= TR2_SUST_DEX;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_CON:
-			if (!(o_ptr->flags2 & TR2_SUST_CON))
-			{
-				o_ptr->flags2 |= TR2_SUST_CON;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_CHR:
-			if (!(o_ptr->flags2 & TR2_SUST_CHR))
-			{
-				o_ptr->flags2 |= TR2_SUST_CHR;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_CHAOS:
-			if (!(o_ptr->flags3 & TR3_TELEPORT))
-			{
-				o_ptr->flags3 |= TR3_TELEPORT;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_FIRE:
-			if (!(o_ptr->flags3 & TR3_LITE))
-			{
-				o_ptr->flags3 |= TR3_LITE;	/* Freebie */
-			}
-			break;
-	}
-
 	switch (randint1(37))
 	{
 		case 1:
 			o_ptr->flags2 |= TR2_SUST_STR;
-
-			if (!artifact_bias)
-				artifact_bias = BIAS_STR;
 			break;
 		case 2:
 			o_ptr->flags2 |= TR2_SUST_INT;
-
-			if (!artifact_bias)
-				artifact_bias = BIAS_INT;
 			break;
 		case 3:
 			o_ptr->flags2 |= TR2_SUST_WIS;
-
-			if (!artifact_bias)
-				artifact_bias = BIAS_WIS;
 			break;
 		case 4:
 			o_ptr->flags2 |= TR2_SUST_DEX;
-
-			if (!artifact_bias)
-				artifact_bias = BIAS_DEX;
 			break;
 		case 5:
 			o_ptr->flags2 |= TR2_SUST_CON;
-
-			if (!artifact_bias)
-				artifact_bias = BIAS_CON;
 			break;
 		case 6:
 			o_ptr->flags2 |= TR2_SUST_CHR;
-
-			if (!artifact_bias)
-				artifact_bias = BIAS_CHR;
 			break;
 		case 7:
 		case 8:
 		case 14:
 			o_ptr->flags2 |= TR2_FREE_ACT;
-
 			break;
 		case 9:
 			o_ptr->flags2 |= TR2_HOLD_LIFE;
-
-			if (!artifact_bias && one_in_(5))
-				artifact_bias = BIAS_PRIESTLY;
-			else if (!artifact_bias && one_in_(6))
-				artifact_bias = BIAS_NECROMANTIC;
 			break;
 		case 10:
 		case 11:
 			o_ptr->flags3 |= TR3_LITE;
-
 			break;
 		case 12:
 		case 13:
 			o_ptr->flags3 |= TR3_FEATHER;
-
 			break;
 		case 15:
 			if (o_ptr->tval == TV_GLOVES)
@@ -762,27 +254,20 @@ static int random_misc(object_type *o_ptr, int artifact_bias)
 		case 16:
 		case 17:
 			o_ptr->flags3 |= TR3_SEE_INVIS;
-
 			break;
 		case 18:
 			o_ptr->flags3 |= TR3_TELEPATHY;
-
-			if (!artifact_bias && one_in_(9))
-				artifact_bias = BIAS_MAGE;
 			break;
 		case 19:
 		case 20:
 			o_ptr->flags3 |= TR3_SLOW_DIGEST;
-
 			break;
 		case 21:
 		case 22:
 			o_ptr->flags3 |= TR3_REGEN;
-
 			break;
 		case 23:
 			o_ptr->flags3 |= TR3_TELEPORT;
-
 			break;
 		case 24:
 		case 25:
@@ -835,48 +320,10 @@ static int random_misc(object_type *o_ptr, int artifact_bias)
 		case 37:
 			o_ptr->flags4 |= TR4_STRANGE_LUCK;
 	}
-
-	return (artifact_bias);
 }
 
-static int random_curse(object_type *o_ptr, int artifact_bias)
+static void random_curse(object_type *o_ptr)
 {
-	switch (artifact_bias)
-	{
-		case BIAS_COLD:
-			if (!(o_ptr->flags4 & TR4_HURT_FIRE))
-			{
-				o_ptr->flags4 |= TR4_HURT_FIRE;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_FIRE:
-			if (!(o_ptr->flags4 & TR4_HURT_COLD))
-			{
-				o_ptr->flags4 |= TR4_HURT_COLD;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_NECROMANTIC:
-			if (!(o_ptr->flags4 & TR4_HURT_LITE))
-			{
-				o_ptr->flags4 |= TR4_HURT_LITE;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_WARRIOR:
-			if (!(o_ptr->flags3 & TR3_AGGRAVATE))
-			{
-				o_ptr->flags3 |= TR3_AGGRAVATE;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-	}
-
 	switch (randint1(13))
 	{
 		case 1:
@@ -912,14 +359,28 @@ static int random_curse(object_type *o_ptr, int artifact_bias)
 			o_ptr->flags4 |= TR4_AUTO_CURSE;
 			break;
 		case 13:
+		case 14:
 			o_ptr->flags4 |= TR4_CANT_EAT;
 			break;
+		case 15:
+			o_ptr->flags3 |= TR3_DRAIN_EXP;
+			break;
+		case 16:
+		case 17:
+			o_ptr->flags3 |= TR3_TELEPORT;
+			break;
+		case 18:
+		case 19:
+			o_ptr->flags4 |= TR4_AUTO_CURSE;
+			break;
+		case 20:
+		case 21:
+			o_ptr->flags4 |= TR4_SLOW_HEAL;
+			break;
 	}
-
-	return (artifact_bias);
 }
 
-static int random_slay(object_type *o_ptr, int artifact_bias)
+static void random_slay(object_type *o_ptr)
 {
 	/* Bows get special treatment */
 	if (o_ptr->tval == TV_BOW)
@@ -930,136 +391,11 @@ static int random_slay(object_type *o_ptr, int artifact_bias)
 			case 2:
 			case 3:
 				o_ptr->flags3 |= TR3_XTRA_MIGHT;
-
-				if (!artifact_bias && one_in_(9))
-					artifact_bias = BIAS_RANGER;
 				break;
 			default:
 				o_ptr->flags3 |= TR3_XTRA_SHOTS;
-
-				if (!artifact_bias && one_in_(9))
-					artifact_bias = BIAS_RANGER;
 				break;
 		}
-
-		return (artifact_bias);
-	}
-
-
-	switch (artifact_bias)
-	{
-		case BIAS_CHAOS:
-			if (!(o_ptr->flags1 & TR1_CHAOTIC))
-			{
-				o_ptr->flags1 |= TR1_CHAOTIC;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_PRIESTLY:
-			if ((o_ptr->tval == TV_SWORD || o_ptr->tval == TV_POLEARM) &&
-				!(o_ptr->flags3 & TR3_BLESSED))
-			{
-				/* A free power for "priestly" random artifacts */
-				o_ptr->flags3 |= TR3_BLESSED;
-			}
-			break;
-
-		case BIAS_NECROMANTIC:
-			if (!(o_ptr->flags1 & TR1_VAMPIRIC))
-			{
-				o_ptr->flags1 |= TR1_VAMPIRIC;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			if (!(o_ptr->flags1 & TR1_BRAND_POIS) && one_in_(2))
-			{
-				o_ptr->flags1 |= TR1_BRAND_POIS;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_RANGER:
-			if (!(o_ptr->flags1 & TR1_SLAY_ANIMAL))
-			{
-				o_ptr->flags1 |= TR1_SLAY_ANIMAL;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_ROGUE:
-			if ((((o_ptr->tval == TV_SWORD) && (o_ptr->sval == SV_DAGGER)) ||
-				 ((o_ptr->tval == TV_POLEARM) && (o_ptr->sval == SV_SPEAR)) ||
-				 ((o_ptr->tval == TV_POLEARM) &&
-				  (o_ptr->sval == SV_HATCHET))) && !(o_ptr->flags2 & TR2_THROW))
-			{
-				/* Free power for rogues... */
-				o_ptr->flags2 |= TR2_THROW;
-			}
-			if ((!(o_ptr->flags1 & TR1_BRAND_POIS)) && one_in_(2))
-			{
-				o_ptr->flags1 |= TR1_BRAND_POIS;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_POIS:
-			if (!(o_ptr->flags1 & TR1_BRAND_POIS))
-			{
-				o_ptr->flags1 |= TR1_BRAND_POIS;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_FIRE:
-			if (!(o_ptr->flags1 & TR1_BRAND_FIRE))
-			{
-				o_ptr->flags1 |= TR1_BRAND_FIRE;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_COLD:
-			if (!(o_ptr->flags1 & TR1_BRAND_COLD))
-			{
-				o_ptr->flags1 |= TR1_BRAND_COLD;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_ELEC:
-			if (!(o_ptr->flags1 & TR1_BRAND_ELEC))
-			{
-				o_ptr->flags1 |= TR1_BRAND_ELEC;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_ACID:
-			if (!(o_ptr->flags1 & TR1_BRAND_ACID))
-			{
-				o_ptr->flags1 |= TR1_BRAND_ACID;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
-
-		case BIAS_LAW:
-
-			if (!(o_ptr->flags1 & TR1_SLAY_EVIL))
-			{
-				o_ptr->flags1 |= TR1_SLAY_EVIL;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			if (!(o_ptr->flags1 & TR1_SLAY_UNDEAD))
-			{
-				o_ptr->flags1 |= TR1_SLAY_UNDEAD;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			if (!(o_ptr->flags1 & TR1_SLAY_DEMON))
-			{
-				o_ptr->flags1 |= TR1_SLAY_DEMON;
-				if (one_in_(2)) return (artifact_bias);
-			}
-			break;
 	}
 
 	switch (randint1(36))
@@ -1067,63 +403,43 @@ static int random_slay(object_type *o_ptr, int artifact_bias)
 		case 1:
 		case 2:
 			o_ptr->flags1 |= TR1_SLAY_ANIMAL;
-
 			break;
 		case 3:
 		case 4:
 			o_ptr->flags1 |= TR1_SLAY_EVIL;
-
-			if (!artifact_bias && one_in_(2))
-				artifact_bias = BIAS_LAW;
-			else if (!artifact_bias && one_in_(9))
-				artifact_bias = BIAS_PRIESTLY;
 			break;
 		case 5:
 		case 6:
 			o_ptr->flags1 |= TR1_SLAY_UNDEAD;
-
-			if (!artifact_bias && one_in_(9))
-				artifact_bias = BIAS_PRIESTLY;
 			break;
 		case 7:
 		case 8:
 			o_ptr->flags1 |= TR1_SLAY_DEMON;
-
-			if (!artifact_bias && one_in_(9))
-				artifact_bias = BIAS_PRIESTLY;
 			break;
 		case 9:
 		case 10:
 			o_ptr->flags1 |= TR1_SLAY_ORC;
-
 			break;
 		case 11:
 		case 12:
 			o_ptr->flags1 |= TR1_SLAY_TROLL;
-
 			break;
 		case 13:
 		case 14:
 			o_ptr->flags1 |= TR1_SLAY_GIANT;
-
 			break;
 		case 15:
 		case 16:
 			o_ptr->flags1 |= TR1_SLAY_DRAGON;
-
 			break;
 		case 17:
 			o_ptr->flags1 |= TR1_KILL_DRAGON;
-
 			break;
 		case 18:
 		case 19:
 			if (o_ptr->tval == TV_SWORD)
 			{
 				o_ptr->flags1 |= TR1_VORPAL;
-
-				if (!artifact_bias && one_in_(9))
-					artifact_bias = BIAS_WARRIOR;
 			}
 			else
 			{
@@ -1134,48 +450,26 @@ static int random_slay(object_type *o_ptr, int artifact_bias)
 		case 21:
 		case 22:
 			o_ptr->flags1 |= TR1_BRAND_FIRE;
-
-			if (!artifact_bias)
-				artifact_bias = BIAS_FIRE;
 			break;
 		case 23:
 		case 24:
 			o_ptr->flags1 |= TR1_BRAND_COLD;
-
-			if (!artifact_bias)
-				artifact_bias = BIAS_COLD;
 			break;
 		case 25:
 		case 26:
 			o_ptr->flags1 |= TR1_BRAND_ELEC;
-
-			if (!artifact_bias)
-				artifact_bias = BIAS_ELEC;
 			break;
 		case 27:
 		case 28:
 			o_ptr->flags1 |= TR1_BRAND_ACID;
-
-			if (!artifact_bias)
-				artifact_bias = BIAS_ACID;
 			break;
 		case 29:
 		case 30:
 			o_ptr->flags1 |= TR1_BRAND_POIS;
-
-			if (!artifact_bias && !one_in_(3))
-				artifact_bias = BIAS_POIS;
-			else if (!artifact_bias && one_in_(6))
-				artifact_bias = BIAS_NECROMANTIC;
-			else if (!artifact_bias)
-				artifact_bias = BIAS_ROGUE;
 			break;
 		case 31:
 		case 32:
 			o_ptr->flags1 |= TR1_VAMPIRIC;
-
-			if (!artifact_bias)
-				artifact_bias = BIAS_NECROMANTIC;
 			break;
 		case 33:
 		case 34:
@@ -1183,182 +477,14 @@ static int random_slay(object_type *o_ptr, int artifact_bias)
 			break;
 		default:
 			o_ptr->flags1 |= TR1_CHAOTIC;
-
-			if (!artifact_bias)
-				artifact_bias = BIAS_CHAOS;
 			break;
 	}
-
-	return (artifact_bias);
 }
 
 
-static void give_activation_power(object_type *o_ptr, int artifact_bias)
+static void give_activation_power(object_type *o_ptr)
 {
 	int type = 0, chance = 0;
-
-	switch (artifact_bias)
-	{
-		case BIAS_ELEC:
-			chance = 101;
-			if (!one_in_(3))
-				type = ACT_BO_ELEC_1;
-			else if (!one_in_(5))
-				type = ACT_BA_ELEC_2;
-			else
-				type = ACT_BA_ELEC_3;
-			break;
-
-		case BIAS_POIS:
-			chance = 101;
-			type = ACT_BA_POIS_1;
-			break;
-
-		case BIAS_FIRE:
-			chance = 101;
-			if (!one_in_(3))
-				type = ACT_BO_FIRE_1;
-			else if (!one_in_(5))
-				type = ACT_BA_FIRE_1;
-			else
-				type = ACT_BA_FIRE_2;
-			break;
-
-		case BIAS_COLD:
-			chance = 101;
-			if (!one_in_(3))
-				type = ACT_BO_COLD_1;
-			else if (!one_in_(3))
-				type = ACT_BA_COLD_1;
-			else if (!one_in_(3))
-				type = ACT_BA_COLD_2;
-			else
-				type = ACT_BA_COLD_3;
-			break;
-
-		case BIAS_CHAOS:
-			chance = 50;
-			if (one_in_(6))
-				type = ACT_SUMMON_DEMON;
-			else
-				type = ACT_CALL_CHAOS;
-			break;
-
-		case BIAS_PRIESTLY:
-			chance = 101;
-
-			switch (randint1(13))
-			{
-				case 13:
-					type = ACT_CHARM_UNDEAD;
-					break;
-				case 12:
-					type = ACT_BANISH_EVIL;
-					break;
-				case 11:
-					type = ACT_DISP_EVIL;
-					break;
-				case 10:
-					type = ACT_PROT_EVIL;
-					break;
-				case 9:
-					type = ACT_CURE_1000;
-					break;
-				case 8:
-					type = ACT_CURE_700;
-					break;
-				case 7:
-					type = ACT_REST_ALL;
-					break;
-				case 6:
-					type = ACT_REST_LIFE;
-					break;
-				default:
-					type = ACT_CURE_MW;
-					break;
-			}
-			break;
-
-		case BIAS_NECROMANTIC:
-			chance = 101;
-			if (randint1(66))
-				type = ACT_WRAITH;
-			else if (one_in_(13))
-				type = ACT_DISP_GOOD;
-			else if (one_in_(9))
-				type = ACT_MASS_GENO;
-			else if (one_in_(8))
-				type = ACT_GENOCIDE;
-			else if (one_in_(13))
-				type = ACT_SUMMON_UNDEAD;
-			else if (one_in_(9))
-				type = ACT_VAMPIRE_2;
-			else if (one_in_(6))
-				type = ACT_CHARM_UNDEAD;
-			else
-				type = ACT_VAMPIRE_1;
-			break;
-
-		case BIAS_LAW:
-			chance = 101;
-			if (one_in_(8))
-				type = ACT_BANISH_EVIL;
-			else if (one_in_(4))
-				type = ACT_DISP_EVIL;
-			else
-				type = ACT_PROT_EVIL;
-			break;
-
-		case BIAS_ROGUE:
-			chance = 101;
-			if (one_in_(50))
-				type = ACT_SPEED;
-			else if (one_in_(4))
-				type = ACT_SLEEP;
-			else if (one_in_(3))
-				type = ACT_DETECT_ALL;
-			else if (one_in_(8))
-				type = ACT_ID_FULL;
-			else
-				type = ACT_ID_PLAIN;
-			break;
-
-		case BIAS_MAGE:
-			chance = 66;
-			if (one_in_(20))
-				type = SUMMON_ELEMENTAL;
-			else if (one_in_(10))
-				type = SUMMON_PHANTOM;
-			else if (one_in_(5))
-				type = ACT_RUNE_EXPLO;
-			else
-				type = ACT_ESP;
-			break;
-
-		case BIAS_WARRIOR:
-			chance = 80;
-			if (one_in_(100))
-				type = ACT_INVULN;
-			else
-				type = ACT_BERSERK;
-			break;
-
-		case BIAS_RANGER:
-			chance = 101;
-			if (one_in_(20))
-				type = ACT_CHARM_ANIMALS;
-			else if (one_in_(7))
-				type = ACT_SUMMON_ANIMAL;
-			else if (one_in_(6))
-				type = ACT_CHARM_ANIMAL;
-			else if (one_in_(4))
-				type = ACT_RESIST_ALL;
-			else if (one_in_(3))
-				type = ACT_SATIATE;
-			else
-				type = ACT_CURE_POISON;
-			break;
-	}
 
 	while (!type || (randint1(100) >= chance))
 	{
@@ -1522,101 +648,553 @@ static void get_random_name(char *return_name, byte tval, int power)
 }
 
 
+static void random_minor_theme_weapon(object_type *o_ptr)
+{
+	switch (randint1(16))
+	{
+		case 1:
+			o_ptr->flags1 |= TR1_WIS;
+			o_ptr->flags3 |= TR3_BLESSED;
+
+			break;
+
+		case 2:
+			o_ptr->flags1 |= TR1_BRAND_ACID;
+			o_ptr->flags2 |= TR2_RES_ACID;
+			if (o_ptr->tval == TV_SWORD && one_in_(3))
+				o_ptr->flags1 |= TR1_TUNNEL;
+			
+			break;
+
+		case 3:
+			o_ptr->flags1 |= TR1_BRAND_ELEC;
+			o_ptr->flags2 |= TR2_RES_ELEC;
+
+			break;
+
+		case 4:
+			o_ptr->flags1 |= TR1_BRAND_FIRE;
+			o_ptr->flags2 |= TR2_RES_FIRE;
+			o_ptr->flags3 |= TR3_LITE;
+
+			break;
+
+		case 5:
+			o_ptr->flags1 |= TR1_BRAND_COLD;
+			o_ptr->flags2 |= TR2_RES_COLD;
+
+			break;
+
+		case 6:
+			o_ptr->flags1 |= TR1_BRAND_POIS;
+			o_ptr->flags2 |= TR2_RES_POIS;
+
+			break;
+
+		case 7:
+			o_ptr->flags1 |= TR1_CHAOTIC;
+			o_ptr->flags2 |= TR2_RES_CHAOS;
+			if (one_in_(3))
+				o_ptr->flags4 |= TR4_PATRON;
+			
+			break;
+
+		case 8:
+			if (o_ptr->tval == TV_SWORD)
+			{
+				o_ptr->flags1 |= TR1_VORPAL;
+				o_ptr->flags1 |= TR1_TUNNEL;
+			}
+			else
+			{
+				o_ptr->flags1 |= TR1_BLOWS;
+			}
+
+			break;
+
+		case 9:
+			o_ptr->flags1 |= TR1_SLAY_ANIMAL;
+			if (one_in_(2))
+				o_ptr->flags1 |= TR1_INT;
+			if (one_in_(2))
+				o_ptr->flags3 |= TR3_REGEN;
+
+			break;
+
+		case 10:
+			o_ptr->flags1 |= TR1_SLAY_EVIL;
+			o_ptr->flags3 |= TR3_BLESSED;
+			if (one_in_(2))
+				o_ptr->flags1 |= TR1_WIS;
+			if (one_in_(2))
+				o_ptr->flags2 |= TR2_RES_FEAR;
+
+			break;
+
+		case 11:
+			o_ptr->flags1 |= TR1_SLAY_UNDEAD;
+			if (one_in_(2))
+				o_ptr->flags1 |= TR1_INT;
+			if (one_in_(2))
+				o_ptr->flags2 |= TR2_HOLD_LIFE;
+			if (one_in_(2))
+				o_ptr->flags3 |= TR3_SEE_INVIS;
+
+			break;
+
+		case 12:
+			o_ptr->flags1 |= TR1_SLAY_DEMON;
+			o_ptr->flags1 |= TR1_INT;
+			
+			break;
+
+		case 13:
+			o_ptr->flags1 |= TR1_SLAY_ORC;
+			o_ptr->flags1 |= TR1_DEX;
+
+			break;
+
+		case 14:
+			o_ptr->flags1 |= TR1_SLAY_GIANT;
+			o_ptr->flags1 |= TR1_STR;
+
+			break;
+
+		case 15:
+			o_ptr->flags1 |= TR1_SLAY_DRAGON;
+			if (one_in_(3))
+				o_ptr->flags1 |= TR1_KILL_DRAGON;
+			o_ptr->flags1 |= TR1_CON;
+
+			break;
+
+		case 16:
+			o_ptr->flags1 |= TR1_VAMPIRIC;
+			o_ptr->flags2 |= TR2_HOLD_LIFE;
+
+			break;
+	}
+}
+
+static void random_major_theme_weapon(object_type *o_ptr)
+{
+	switch (randint1(7))
+	{
+	case 1:
+		/* Holy Avenger */
+		o_ptr->flags1 |= TR1_SLAY_EVIL;
+		o_ptr->flags1 |= TR1_SLAY_UNDEAD;
+		o_ptr->flags1 |= TR1_SLAY_DEMON;
+		o_ptr->flags3 |= TR3_SEE_INVIS;
+		o_ptr->flags3 |= TR3_BLESSED;
+		
+		break;
+
+	case 2:
+		/* Defender */
+		o_ptr->flags2 |= TR2_RES_ACID;
+		o_ptr->flags2 |= TR2_RES_ELEC;
+		o_ptr->flags2 |= TR2_RES_FIRE;
+		o_ptr->flags2 |= TR2_RES_COLD;
+		if (one_in_(2))
+			o_ptr->flags2 |= TR2_FREE_ACT;
+		if (one_in_(2))
+			o_ptr->flags3 |= TR3_SEE_INVIS;
+		if (one_in_(2))
+			o_ptr->flags3 |= TR3_FEATHER;
+		if (one_in_(2))
+			o_ptr->flags3 |= TR3_REGEN;
+
+		break;
+
+	case 3:
+		/* Westernesse */
+		o_ptr->flags1 |= TR1_STR;
+		o_ptr->flags1 |= TR1_DEX;
+		o_ptr->flags1 |= TR1_CON;
+		o_ptr->flags1 |= TR1_SLAY_ORC;
+		o_ptr->flags1 |= TR1_SLAY_TROLL;
+		o_ptr->flags1 |= TR1_SLAY_GIANT;
+
+		break;
+
+	case 4:
+		/* Trump Weapon */
+		o_ptr->flags1 |= TR1_SLAY_EVIL;
+		o_ptr->flags3 |= TR3_TELEPORT;
+		o_ptr->flags2 |= TR2_FREE_ACT;
+		if (one_in_(2))
+			o_ptr->flags1 |= TR1_SEARCH;
+		if (one_in_(2))
+			o_ptr->flags3 |= TR3_REGEN;
+		if (one_in_(2))
+			o_ptr->flags3 |= TR3_SLOW_DIGEST;
+
+		break;
+
+	case 5:
+		/* Pattern Weapon */
+		o_ptr->flags1 |= TR1_STR;
+		o_ptr->flags1 |= TR1_CON;
+		o_ptr->flags2 |= TR2_FREE_ACT;
+		o_ptr->flags3 |= TR3_SEE_INVIS;
+		if (one_in_(2))
+			o_ptr->flags1 |= TR1_SLAY_EVIL;
+		if (one_in_(2))
+			o_ptr->flags1 |= TR1_SLAY_DEMON;
+		if (one_in_(2))
+			o_ptr->flags1 |= TR1_SLAY_UNDEAD;
+
+		break;
+
+	case 6:
+		/* Mixed slays */
+		if (one_in_(3))
+			o_ptr->flags1 |= TR1_SLAY_ANIMAL;
+		if (one_in_(3))
+			o_ptr->flags1 |= TR1_SLAY_EVIL;
+		if (one_in_(3))
+			o_ptr->flags1 |= TR1_SLAY_UNDEAD;
+		if (one_in_(3))
+			o_ptr->flags1 |= TR1_SLAY_DEMON;
+		if (one_in_(3))
+			o_ptr->flags1 |= TR1_SLAY_ORC;
+		if (one_in_(3))
+			o_ptr->flags1 |= TR1_SLAY_TROLL;
+		if (one_in_(3))
+			o_ptr->flags1 |= TR1_SLAY_GIANT;
+		if (one_in_(3))
+			o_ptr->flags1 |= TR1_SLAY_DRAGON;
+
+		break;
+
+	case 7:
+		/* Assassin blade */
+		o_ptr->flags1 |= TR1_STEALTH;
+		o_ptr->flags1 |= TR1_BLOWS;
+		o_ptr->flags2 |= TR2_FREE_ACT;
+		
+		if (one_in_(2))
+			o_ptr->flags1 |= TR1_BRAND_POIS;
+		else
+			o_ptr->flags1 |= TR1_VAMPIRIC;
+		
+		if (o_ptr->tval == TV_SWORD)
+			o_ptr->flags2 |= TR2_THROW;
+	}
+}
+
+static void random_minor_theme_armor(object_type *o_ptr)
+{
+	switch (randint(13))
+	{
+		case 1:
+			o_ptr->flags3 |= TR3_SEE_INVIS;
+			o_ptr->flags1 |= TR1_SEARCH;
+
+			break;
+
+		case 2:
+			o_ptr->flags1 |= TR1_STR;
+			o_ptr->flags2 |= TR2_SUST_STR;
+			if (one_in_(3))
+				o_ptr->flags2 |= TR2_RES_FEAR;
+			
+			break;
+
+		case 3:
+			o_ptr->flags1 |= TR1_INT;
+			o_ptr->flags2 |= TR2_SUST_INT;
+			if (one_in_(3))
+				o_ptr->flags3 |= TR3_FEATHER;
+			
+			break;
+
+		case 4:
+			o_ptr->flags1 |= TR1_WIS;
+			o_ptr->flags2 |= TR2_SUST_WIS;
+			if (one_in_(3))
+				o_ptr->flags3 |= TR3_SEE_INVIS;
+
+			break;
+
+		case 5:
+			o_ptr->flags1 |= TR1_DEX;
+			o_ptr->flags2 |= TR2_SUST_DEX;
+			if (one_in_(3))
+				o_ptr->flags2 |= TR2_FREE_ACT;
+
+			break;
+
+		case 6:
+			o_ptr->flags1 |= TR1_CON;
+			o_ptr->flags2 |= TR2_SUST_CON;
+			if (one_in_(3))
+				o_ptr->flags3 |= TR3_REGEN;
+
+			break;
+
+		case 7:
+			o_ptr->flags1 |= TR1_CHR;
+			o_ptr->flags2 |= TR2_SUST_CHR;
+			if (one_in_(3))
+				o_ptr->flags3 |= TR3_LITE;
+
+			break;
+
+		case 8:
+			o_ptr->flags3 |= TR3_LITE;
+			o_ptr->flags2 |= TR2_RES_LITE;
+
+			break;
+
+		case 9:
+			o_ptr->flags2 |= TR2_RES_FIRE;
+			o_ptr->flags3 |= TR3_SH_FIRE;
+
+			break;
+
+		case 10:
+			o_ptr->flags2 |= TR2_RES_ELEC;
+			o_ptr->flags3 |= TR3_SH_ELEC;
+
+			break;
+
+		case 11:
+			o_ptr->flags2 |= TR2_RES_COLD;
+			o_ptr->flags4 |= TR4_SH_COLD;
+
+			break;
+
+		case 12:
+			o_ptr->flags1 |= TR1_INT;
+			o_ptr->flags1 |= TR1_WIS;
+
+			break;
+
+		case 13:
+			o_ptr->flags2 |= TR2_RES_LITE;
+			o_ptr->flags2 |= TR2_RES_DARK;
+			if (one_in_(2))
+				o_ptr->flags3 |= TR3_LITE;
+
+			break;
+	}
+}
+
+static void random_major_theme_armor(object_type *o_ptr)
+{
+	int i;
+
+	switch (randint(10))
+	{
+		case 1:
+			o_ptr->flags2 |= TR2_RES_ACID;
+			o_ptr->flags2 |= TR2_RES_ELEC;
+			o_ptr->flags2 |= TR2_RES_FIRE;
+			o_ptr->flags2 |= TR2_RES_COLD;
+
+			if (one_in_(3))
+				o_ptr->flags2 |= TR2_RES_POIS;
+
+			break;
+
+		case 2:
+			o_ptr->flags2 |= TR2_SUST_STR;
+			o_ptr->flags2 |= TR2_SUST_INT;
+			o_ptr->flags2 |= TR2_SUST_WIS;
+			o_ptr->flags2 |= TR2_SUST_DEX;
+			o_ptr->flags2 |= TR2_SUST_CON;
+			o_ptr->flags2 |= TR2_SUST_CHR;
+
+			break;
+
+		case 3:
+			/* Might */
+			o_ptr->flags1 |= TR1_STR;
+			o_ptr->flags2 |= TR2_SUST_STR;
+			o_ptr->flags1 |= TR1_DEX;
+			o_ptr->flags2 |= TR2_SUST_DEX;
+			o_ptr->flags1 |= TR1_CON;
+			o_ptr->flags2 |= TR2_SUST_CON;
+
+			break;
+
+		case 4:
+			/* Mental */
+			o_ptr->flags1 |= TR1_INT;
+			o_ptr->flags2 |= TR2_SUST_INT;
+			o_ptr->flags1 |= TR1_WIS;
+			o_ptr->flags2 |= TR2_SUST_WIS;
+			
+			break;
+
+		case 5:
+			/* Lohengrin */
+			o_ptr->flags1 |= TR1_STEALTH;
+			o_ptr->flags1 |= TR1_INT;
+			o_ptr->flags1 |= TR1_WIS;
+			o_ptr->flags3 |= TR3_SEE_INVIS;
+
+			break;
+
+		case 6:
+		case 7:
+		case 8:
+			/* Several high resists */
+			for (i = randint1(3) + 1; i > 0; --i)
+				random_resistance(o_ptr, rand_range(17, 38));
+
+			break;
+
+		case 9:
+			/* Mixed stat boosts */
+			for (i = 3; i > 0; --i)
+			{
+				switch (randint1(6))
+				{
+					case 1: o_ptr->flags1 |= TR1_STR; break;
+					case 2: o_ptr->flags1 |= TR1_INT; break;
+					case 3: o_ptr->flags1 |= TR1_WIS; break;
+					case 4: o_ptr->flags1 |= TR1_DEX; break;
+					case 5: o_ptr->flags1 |= TR1_CON; break;
+					case 6: o_ptr->flags1 |= TR1_CHR; break;
+				}
+			}
+
+			break;
+
+		case 10:
+			/* Thranduil */
+			o_ptr->flags1 |= TR1_INT;
+			o_ptr->flags1 |= TR1_WIS;
+			o_ptr->flags2 |= TR2_RES_BLIND;
+
+			break;
+	}
+}
+
+static void curse_artifact(object_type *o_ptr)
+{
+	int i;
+	
+	if (o_ptr->pval) o_ptr->pval = 0 - (o_ptr->pval + randint1(4));
+	if (o_ptr->to_a) o_ptr->to_a = 0 - (o_ptr->to_a + randint1(4));
+	if (o_ptr->to_h) o_ptr->to_h = 0 - (o_ptr->to_h + randint1(4));
+	if (o_ptr->to_d) o_ptr->to_d = 0 - (o_ptr->to_d + randint1(4));
+
+	o_ptr->flags3 |= (TR3_HEAVY_CURSE | TR3_CURSED);
+
+	for (i = rand_range(2, 5); i > 0; --i)
+		random_curse(o_ptr);
+
+	if ((p_ptr->rp.pclass != CLASS_WARRIOR) && one_in_(3))
+		o_ptr->flags3 |= TR3_NO_MAGIC;
+}
+
+
 bool create_artifact(object_type *o_ptr, bool a_scroll)
 {
 	char new_name[1024];
-	int has_pval = 0;
 	int powers = rand_range(2, 6);
 	int power_level;
 	s32b total_flags;
 	bool a_cursed = FALSE;
-	int warrior_artifact_bias = 0;
-	int artifact_bias = 0;
 
 	/* No activation yet */
 	o_ptr->activate = 0;
-
-	if (a_scroll && one_in_(4))
-	{
-		switch (p_ptr->rp.pclass)
-		{
-			case CLASS_WARRIOR:
-				artifact_bias = BIAS_WARRIOR;
-				break;
-			case CLASS_MAGE:
-			case CLASS_HIGH_MAGE:
-				artifact_bias = BIAS_MAGE;
-				break;
-			case CLASS_PRIEST:
-				artifact_bias = BIAS_PRIESTLY;
-				break;
-			case CLASS_ROGUE:
-				artifact_bias = BIAS_ROGUE;
-				warrior_artifact_bias = 25;
-				break;
-			case CLASS_RANGER:
-				artifact_bias = BIAS_RANGER;
-				warrior_artifact_bias = 30;
-				break;
-			case CLASS_PALADIN:
-				artifact_bias = BIAS_PRIESTLY;
-				warrior_artifact_bias = 40;
-				break;
-			case CLASS_WARRIOR_MAGE:
-				artifact_bias = BIAS_MAGE;
-				warrior_artifact_bias = 40;
-				break;
-			case CLASS_CHAOS_WARRIOR:
-				artifact_bias = BIAS_CHAOS;
-				warrior_artifact_bias = 40;
-				break;
-			case CLASS_MONK:
-				artifact_bias = BIAS_PRIESTLY;
-				break;
-			case CLASS_MINDCRAFTER:
-				if (one_in_(2)) artifact_bias = BIAS_PRIESTLY;
-				break;
-		}
-	}
-
-	if (a_scroll && (randint1(100) <= warrior_artifact_bias))
-		artifact_bias = BIAS_WARRIOR;
 
 	new_name[0] = 0;
 
 	if (!a_scroll && one_in_(A_CURSED))
 		a_cursed = TRUE;
 
-	while (one_in_(powers) || one_in_(7) || one_in_(10))
+	while (one_in_(powers + 1))
 		powers++;
 
+#if 0
 	if (!a_cursed && one_in_(WEIRD_LUCK))
 		powers *= 2;
+#endif
 
 	if (a_cursed) powers /= 2;
+
+	/* Sometimes select a major theme - or two */
+	while (randint1(powers) > 3)
+	{
+		if (o_ptr->tval < TV_BOOTS)
+		{
+			random_major_theme_weapon(o_ptr);
+		}
+		else
+		{
+			random_major_theme_armor(o_ptr);
+		}
+		powers -= 3;
+	}
+
+	if (one_in_(3))
+	{
+		switch (o_ptr->tval)
+		{
+			case TV_BOOTS:
+				if (one_in_(WEIRD_LUCK))
+					o_ptr->flags1 |= TR1_SPEED;
+				else if (one_in_(2))
+					o_ptr->flags2 |= TR2_FREE_ACT;
+				else
+					o_ptr->flags3 |= TR3_FEATHER;
+				powers--;
+				break;
+
+			case TV_GLOVES:
+				if (one_in_(2))
+					o_ptr->flags2 |= TR2_FREE_ACT;
+				else
+					o_ptr->flags1 |= TR1_DEX;
+				powers--;
+				break;
+
+			case TV_HELM:
+			case TV_CROWN:
+				if (one_in_(3))
+					o_ptr->flags3 |= TR3_TELEPATHY;
+				else if (one_in_(2))
+					o_ptr->flags3 |= TR3_SEE_INVIS;
+				else
+					o_ptr->flags1 |= TR1_INFRA;
+				powers--;
+				break;
+		}
+	}
 
 	/* Main loop */
 	while (powers--)
 	{
-		switch (randint1(o_ptr->tval < TV_BOOTS ? 7 : 5))
+		switch (randint1(o_ptr->tval < TV_BOOTS ? 11 : 7))
 		{
 			case 1:  case 2:
-				artifact_bias = random_plus(o_ptr, artifact_bias);
-				has_pval = TRUE;
+				random_plus(o_ptr);
 				break;
 			case 3:  case 4:
-				artifact_bias = random_resistance(o_ptr, 0, artifact_bias);
+				random_resistance(o_ptr, 0);
 				break;
 			case 5:
-				artifact_bias = random_misc(o_ptr, artifact_bias);
+				random_misc(o_ptr);
 				break;
 			case 6:  case 7:
-				artifact_bias = random_slay(o_ptr, artifact_bias);
+				random_minor_theme_armor(o_ptr);
+				break;
+			case 8:  case 9:
+				random_slay(o_ptr);
+				break;
+			case 10:  case 11:
+				random_minor_theme_weapon(o_ptr);
 				break;
 		}
 	};
 
-	if (has_pval)
+	if (o_ptr->flags1 & (TR1_PVAL_MASK))
 	{
 		if (o_ptr->flags1 & TR1_BLOWS)
 		{
@@ -1658,11 +1236,11 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 	/* Possibly add some curses ... */
 	total_flags = flag_cost(o_ptr, o_ptr->pval);
 	if (one_in_(13))
-		artifact_bias = random_curse(o_ptr, artifact_bias);
+		random_curse(o_ptr);
 	if (total_flags >= 10000 && one_in_(4))
-		artifact_bias = random_curse(o_ptr, artifact_bias);
+		random_curse(o_ptr);
 	if (total_flags >= 25000 && one_in_(2))
-		artifact_bias = random_curse(o_ptr, artifact_bias);
+		random_curse(o_ptr);
 
 	total_flags = flag_cost(o_ptr, o_ptr->pval);
 	if (cheat_peek) msgf("%ld", total_flags);
@@ -1673,7 +1251,7 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 							 ? ACTIVATION_CHANCE * 2 : ACTIVATION_CHANCE))
 	{
 		o_ptr->activate = 0;
-		give_activation_power(o_ptr, artifact_bias);
+		give_activation_power(o_ptr);
 	}
 
 	if (o_ptr->dd && o_ptr->ds)
@@ -1732,14 +1310,6 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 	else
 	{
 		get_random_name(new_name, o_ptr->tval, power_level);
-	}
-
-	if (cheat_xtra)
-	{
-		if (artifact_bias)
-			msgf("Biased artifact: %d.", artifact_bias);
-		else
-			msgf("No bias in artifact.");
 	}
 
 	chg_virtue(V_INDIVIDUALISM, 2);
@@ -3312,7 +2882,7 @@ void random_artifact_resistance(object_type *o_ptr)
 
 	if (give_resistance)
 	{
-		(void)random_resistance(o_ptr, rand_range(17, 38), 0);
+		random_resistance(o_ptr, rand_range(17, 38));
 	}
 }
 

@@ -3411,7 +3411,7 @@ void gain_level_reward(int chosen_reward)
 			q_ptr->to_h = 3 + randint1(p_ptr->depth) % 10;
 			q_ptr->to_d = 3 + randint1(p_ptr->depth) % 10;
 
-			(void)random_resistance(q_ptr, rand_range(5, 38), 0);
+			random_resistance(q_ptr, rand_range(5, 38));
 
 			add_ego_flags(q_ptr, EGO_CHAOTIC);
 

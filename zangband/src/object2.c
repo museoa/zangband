@@ -2495,14 +2495,14 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 							o_ptr->flags2 |= TR2_RES_POIS;
 						}
 
-						(void)random_resistance(o_ptr, rand_range(17, 38), 0);
+						random_resistance(o_ptr, rand_range(17, 38));
 						add_ego_power(EGO_XTRA_SUSTAIN, o_ptr);
 						break;
 					}
 
 					case EGO_SLAY_DRAGON:
 					{
-						(void)random_resistance(o_ptr, rand_range(5, 16), 0);
+						random_resistance(o_ptr, rand_range(5, 16));
 
 						break;
 					}
@@ -2514,8 +2514,8 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 							o_ptr->flags2 |= TR2_RES_POIS;
 						}
 
-						(void)random_resistance(o_ptr, rand_range(5, 16), 0);
-						(void)random_resistance(o_ptr, rand_range(5, 18), 0);
+						random_resistance(o_ptr, rand_range(5, 16));
+						random_resistance(o_ptr, rand_range(5, 18));
 
 						break;
 					}
@@ -2551,7 +2551,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 
 					case EGO_CHAOTIC:
 					{
-						(void)random_resistance(o_ptr, rand_range(5, 38), 0);
+						random_resistance(o_ptr, rand_range(5, 38));
 
 						break;
 					}
@@ -2582,7 +2582,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 						{
 							add_ego_power(EGO_XTRA_ABILITY, o_ptr);
 						}
-						(void)random_resistance(o_ptr, rand_range(17, 38), 0);
+						random_resistance(o_ptr, rand_range(17, 38));
 
 						break;
 					}
@@ -2603,7 +2603,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 							o_ptr->flags2 |= TR2_RES_FEAR;
 						}
 
-						(void)random_resistance(o_ptr, rand_range(17, 38), 0);
+						random_resistance(o_ptr, rand_range(17, 38));
 
 						break;
 					}
@@ -2698,7 +2698,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 				/* Extra powers */
 				if (ego == EGO_EXTRA_MIGHT)
 				{
-					(void)random_resistance(o_ptr, rand_range(5, 38), 0);
+					random_resistance(o_ptr, rand_range(5, 38));
 				}
 			}
 
@@ -2762,9 +2762,9 @@ static void dragon_resist(object_type *o_ptr)
 	do
 	{
 		if (one_in_(4))
-			(void)random_resistance(o_ptr, rand_range(5, 18), 0);
+			random_resistance(o_ptr, rand_range(5, 18));
 		else
-			(void)random_resistance(o_ptr, rand_range(17, 38), 0);
+			random_resistance(o_ptr, rand_range(17, 38));
 	}
 	while (one_in_(2));
 }
@@ -2873,7 +2873,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 							o_ptr->flags2 |= TR2_RES_POIS;
 						}
 
-						(void)random_resistance(o_ptr, rand_range(17, 38), 0);
+						random_resistance(o_ptr, rand_range(17, 38));
 
 						break;
 					}
@@ -2925,7 +2925,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 					/* Extra powers */
 					if (ego == EGO_ENDURANCE)
 					{
-						(void)random_resistance(o_ptr, rand_range(5, 38), 0);
+						random_resistance(o_ptr, rand_range(5, 38));
 
 						if (one_in_(4))
 						{
@@ -2959,7 +2959,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				/* Extra powers */
 				if (ego == EGO_POWER)
 				{
-					(void)random_resistance(o_ptr, rand_range(17, 38), 0);
+					random_resistance(o_ptr, rand_range(17, 38));
 				}
 			}
 
@@ -3000,7 +3000,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				{
 					if (one_in_(2))
 					{
-						(void)random_resistance(o_ptr, rand_range(17, 38), 0);
+						random_resistance(o_ptr, rand_range(17, 38));
 					}
 				}
 			}
@@ -3042,20 +3042,20 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				{
 					case EGO_MAGI:
 					{
-						(void)random_resistance(o_ptr, rand_range(17, 38), 0);
+						random_resistance(o_ptr, rand_range(17, 38));
 						add_ego_power(EGO_XTRA_ABILITY, o_ptr);
 
 						break;
 					}
 					case EGO_MIGHT:
 					{
-						(void)random_resistance(o_ptr, rand_range(17, 38), 0);
+						random_resistance(o_ptr, rand_range(17, 38));
 
 						break;
 					}
 					case EGO_LORDLINESS:
 					{
-						(void)random_resistance(o_ptr, rand_range(17, 38), 0);
+						random_resistance(o_ptr, rand_range(17, 38));
 
 						break;
 					}
@@ -3320,8 +3320,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					{
 						do
 						{
-							(void)random_resistance(o_ptr, rand_range(19, 38),
-													0);
+							random_resistance(o_ptr, rand_range(19, 38));
 						}
 						while (one_in_(4));
 
@@ -3564,7 +3563,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 				{
 					if (one_in_(3))
 					{
-						(void)random_resistance(o_ptr, rand_range(5, 38), 0);
+						random_resistance(o_ptr, rand_range(5, 38));
 					}
 
 					if (one_in_(5))

@@ -624,7 +624,7 @@ static void wiz_display_item(const object_type *o_ptr)
 	prtf(j + 32, 10,"+------------FLAGS3------------+\n"
 			"SH  NO tehsif itdrmsIGNRadtabchp\n"
 			"fe  tm yzdhnelneieihaefccrpgluvr\n"
-			"il  ea cktmaticlgggocliotnorercm\n"
+			"il  ea cktmativlgggocliotnorercm\n"
 			"re  lg rnyorhtiesehtierlvxrvssuc\n"
 			"ec  ec swpdtresptntsdcedtpttsers\n"
                     "%v", binary_fmt, o_ptr->flags3);
