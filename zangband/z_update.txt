@@ -23,6 +23,9 @@ Done since 2.3.0:
 -Changed the way game-created inscriptions work. They're seperate from
  player inscriptions now. No more problem with priests cursing and
  scrolls of remove curse that mess up your own inscriptions.
+-Fixed a bug in patterns in *greater* vaults that made it impossible
+ to walk them.
+-Added new quests (and changed ones) by Shayne Steele.
  
 ZAngband 2.3.0
 -Maximize mode, preserve mode, and the autoroller are now specified in
