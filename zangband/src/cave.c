@@ -474,44 +474,6 @@ void mmove(int *x, int *y, int x1, int y1)
 	mmove_sq++;
 }
 
-/*
- * Determine if a bolt spell cast from (x1,y1) to (x2,y2) will arrive
- * at the final destination, assuming no monster gets in the way.
- *
- * This needs to be as fast as possible - so do not use the los_general()
- * function.
- *
- * XXX XXX Should we use a version of los(), but choose the average slope?
- *
- * XXX XXX Should we use los_general() anyway?
- *
- * XXX XXX Should there be two slightly different versions of this function
- *         a 'smart' one, and a 'dumb' but fast one?
- */
-bool projectable(int x1, int y1, int x2, int y2)
-{
-	int y, x;
-
-	int grid_n = 0;
-	coord grid_g[512];
-
-	/* Check the projection path */
-	grid_n = project_path(grid_g, x1, y1, x2, y2, 0);
-
-	/* No grid is ever projectable from itself */
-	if (!grid_n) return (FALSE);
-
-	/* Final grid */
-	y = grid_g[grid_n - 1].y;
-	x = grid_g[grid_n - 1].x;
-
-	/* May not end in an unrequested grid */
-	if ((y != y2) || (x != x2)) return (FALSE);
-
-	/* Assume okay */
-	return (TRUE);
-}
-
 
 /* Does this square stop the projection? */
 static bool project_stop(cave_type *c_ptr, u16b flg)
@@ -546,6 +508,37 @@ static bool project_stop(cave_type *c_ptr, u16b flg)
 
 	/* Blocked */
 	return (TRUE);
+}
+
+/*
+ * Hack - a function to pass to los_general() used
+ * to do projectable().  Assume everything blocks projections.
+ */
+static bool cave_stop_project(cave_type *c_ptr)
+{
+	/* Is it passable? */
+	return (project_stop(c_ptr, 0));
+}
+
+
+/*
+ * Determine if a bolt spell cast from (x1,y1) to (x2,y2) will arrive
+ * at the final destination, assuming no monster gets in the way.
+ *
+ * This needs to be as fast as possible - so do not use the los_general()
+ * function.
+ *
+ * XXX XXX Should we use a version of los(), but choose the average slope?
+ *
+ * XXX XXX Should we use los_general() anyway?
+ *
+ * XXX XXX Should there be two slightly different versions of this function
+ *         a 'smart' one, and a 'dumb' but fast one?
+ */
+bool projectable(int x1, int y1, int x2, int y2)
+{
+	/* Are we projectable? */
+	return (los_general(x1, y1, x2, y2, cave_stop_project));
 }
 
 
