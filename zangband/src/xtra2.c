@@ -964,27 +964,31 @@ int mon_damage_mod(monster_type *m_ptr, int dam, int type)
 }
 
 /* This function calculates the experience gained for killing a monster.
- * The formula now is "m_exp * m_lev * 4 / n_killed"
- * instead of simply "(m_exp * m_lev) / (p_lev)".  This makes the first
- * monster worth more than subsequent monsters.  (It is equivalent to
- * the old formula when p_lev monsters are killed.)
+ * The formula has the following properties:
+ *
+ * 1 killed		old value * 4
+ * 5 killed		old value * 1
+ * 20 killed		~ old value * 1/4
+ * 50 killed		~ old value * 1/10
+ * 100 killed		~ old value * 1/25
+ *
+ * This decreases slower than the Rangband version.
  */
 void exp_for_kill(monster_race *r_ptr, s32b *new_exp, s32b *new_exp_frac)
 {
-	s32b div, mod;
+	s32b div, exp;
 	
 	if (r_ptr->mexp)
 	{
-		div = r_ptr->mexp + r_ptr->r_pkills;
-
-		mod = p_ptr->lev * div;
-		*new_exp_frac = ((long)r_ptr->mexp * r_ptr->mexp % mod) * r_ptr->level % mod;
-
+		div = p_ptr->lev * (10 + (5 + r_ptr->r_pkills) * r_ptr->r_pkills);
+		
+		exp = r_ptr->mexp * r_ptr->level * (40 + r_ptr->r_pkills);
+		
 		/* calculate the integer exp part */
-		*new_exp = ((long)r_ptr->mexp * r_ptr->level / p_ptr->lev) * r_ptr->mexp / div;
+		*new_exp = ((long) exp / div);
 
 		/* Handle fractional experience */
-		*new_exp_frac = (*new_exp_frac * 0x10000L / mod);
+		*new_exp_frac = ((long) (exp % div) * 0x10000L / div);
 	}
 	else
 	{
