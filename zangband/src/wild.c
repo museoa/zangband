@@ -356,9 +356,16 @@ static void town_gen_hack(u16b town_num)
 			/* Pick a random unplaced store */
 			k = ((n <= 1) ? 0 : rand_int(n));
 
-			/* Build that store at the proper location */
-			build_store(rooms[k], y, x);
-
+			/* 
+			 * Mega Hack XXX XXX XXX - different towns have
+			 * different stores in non vanilla_town mode.
+			 */
+			if((vanilla_town) || (rand_int(10 - rooms[k])))
+			{
+				/* Build that store at the proper location */
+				build_store(rooms[k], y, x);
+			}
+			
 			/* Shift the stores down, remove one store */
 			rooms[k] = rooms[--n];
 		}
@@ -533,7 +540,7 @@ static void init_towns(void)
 		y = randint(max_wild);
 		
 		/* See if space is free */
-		if (!town_blank(x, y, SCREEN_WID / 16 +1, SCREEN_HGT / 16 + 1)) continue;
+		if (!town_blank(x, y, SCREEN_WID / 16 + 1, SCREEN_HGT / 16 + 1)) continue;
 	
 		/* Add town */
 		strcpy(town[town_count].name, "town");
@@ -546,7 +553,7 @@ static void init_towns(void)
 		/* Place town on wilderness */
 		for (j = 0; j < (SCREEN_HGT / 16 + 1); j++)
 		{
-			for (i = 0; i < (SCREEN_WID / 16 +1); i++)
+			for (i = 0; i < (SCREEN_WID / 16 + 1); i++)
 			{
 				w_ptr = &wild[town[town_count].y + j][town[town_count].x + i].done;
 				
@@ -2892,8 +2899,8 @@ static void	add_monsters_block(int x, int y)
 		
 	prob = 16384 / (wild[y][x].done.mon_prob + 1);
 		
-	xx = (x + wild_grid.x) * 16 - wild_grid.x_min;
-	yy = (y + wild_grid.y) * 16 - wild_grid.y_min;
+	xx = x * 16;
+	yy = y * 16;
 		
 	for(i = 0; i < 16; i++)
 	{
