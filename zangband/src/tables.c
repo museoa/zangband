@@ -6311,7 +6311,7 @@ option_type option_info[OPT_MAX] =
 	{FALSE, 6, "point_based",			"Generate character using a point system" },
 	{TRUE,  6, "silly_monsters",		"Allow silly monsters" },
 	{FALSE, 6, "ironman_nightmare",		"Nightmare mode (this isn't even remotely fair!)" },
-	{TRUE,  0, NULL,					"Number 211" },
+	{FALSE, 6, "ironman_deep_quests",   "Random quests are very difficult" },
 	{TRUE,  0, NULL,					"Number 212" },
 	{TRUE,  0, NULL,					"Number 213" },
 	{TRUE,  0, NULL,					"Number 214" },

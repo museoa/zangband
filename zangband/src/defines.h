@@ -3759,7 +3759,7 @@
 #define point_based				p_ptr->birth[16]
 #define silly_monsters			p_ptr->birth[17]
 #define ironman_nightmare		p_ptr->birth[18]
-/* {TRUE,  0, NULL,					"Number 211" }, p_ptr->birth[19] */
+#define ironman_deep_quests     p_ptr->birth[19]
 /* {TRUE,  0, NULL,					"Number 212" }, p_ptr->birth[20] */
 /* {TRUE,  0, NULL,					"Number 213" }, p_ptr->birth[21] */
 /* {TRUE,  0, NULL,					"Number 214" }, p_ptr->birth[22] */

@@ -335,14 +335,28 @@ void get_player_quests(void)
 
 		/* Get monster */
 		for (j = 0; j < MAX_TRIES; j++)
-		{
+        {
+            int depth;
+            int min_depth;
+
+            if (!ironman_deep_quests)
+            {
+                depth = level + 6 +
+                    randint1(level * v / 200 + 1) +
+                    randint1(level * v / 200 + 1);
+                min_depth = level + (level / 20) + 1;
+            }
+            else
+            {
+                depth = level + rand_range(15, 30);
+                min_depth = level + v / 10 + 10;
+            }
+
 			/*
 			 * Random monster out of depth
 			 * (depending on level + number of quests)
 			 */
-			r_idx = get_mon_num(level + 6 +
-								randint1(level * v / 200 + 1) +
-								randint1(level * v / 200 + 1));
+			r_idx = get_mon_num(depth);
 
 			r_ptr = &r_info[r_idx];
 
@@ -357,7 +371,7 @@ void get_player_quests(void)
 			}
 
 			/* Accept monsters that are a few levels out of depth */
-			if (best_level > (level + (level / 20) + 1)) break;
+            if (best_level > min_depth) break;
 		}
 
 		r_ptr = &r_info[best_r_idx];
