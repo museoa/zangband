@@ -4588,7 +4588,68 @@ static void build_type19(int bx0, int by0)
 }
 
 
-#define ROOM_TYPES	19
+/*
+ * Type 20 -- Collapsed room.
+ */
+static void build_type20(int bx0, int by0)
+{
+	int y1, x1;
+	int y2, x2, yval, xval;
+	bool light;
+	
+	int xsize, ysize;
+	
+	int i;
+	
+	/* Pick a room size */
+	y1 = randint1(4);
+	x1 = randint1(11);
+	y2 = randint1(3);
+	x2 = randint1(11);
+
+	xsize = x1 + x2 + 1;
+	ysize = y1 + y2 + 1;
+
+	/* Try to allocate space for room.  If fails, exit */
+	if (!room_alloc(xsize + 2, ysize + 2, FALSE, bx0, by0, &xval, &yval))
+		return;
+
+	/* Choose lite or dark */
+	light = (p_ptr->depth <= randint1(25));
+	
+	/* Get corner values */
+	y1 = yval - ysize / 2;
+	x1 = xval - xsize / 2;
+	y2 = yval + (ysize - 1) / 2;
+	x2 = xval + (xsize - 1) / 2;
+	
+	/* Generate new room */
+	generate_room(x1 - 1, y1 - 1, x2 + 1, y2 + 1, light);
+
+	/* Generate outer walls */
+	generate_draw(x1 - 1, y1 - 1, x2 + 1, y2 + 1, FEAT_WALL_OUTER);
+
+	/* Generate inner floors */
+	generate_fill(x1, y1, x2, y2, FEAT_FLOOR);
+	
+	/* Fill with rock and rubble */
+	for (i = randint1(xsize * ysize / 4); i > 0; i--)
+	{
+		if (one_in_(2))
+		{
+			/* Rock */
+			set_feat_bold(rand_range(x1, x2), rand_range(y1, y2), FEAT_WALL_INNER);
+		}
+		else
+		{
+			/* Rubble */
+			set_feat_bold(rand_range(x1, x2), rand_range(y1, y2), FEAT_RUBBLE);
+		}
+	}
+}
+
+
+#define ROOM_TYPES	20
 
 typedef void (*room_build_type)(int, int);
 
@@ -4612,7 +4673,8 @@ room_build_type room_list[ROOM_TYPES] =
 	build_type16,
 	build_type17,
 	build_type18,
-	build_type19
+	build_type19,
+	build_type20
 };
 
 
