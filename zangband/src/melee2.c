@@ -2427,7 +2427,7 @@ static void process_monster(int m_idx)
 
 	/* Assume nothing */
 	do_turn = FALSE;
-	do_move = FALSE;
+	do_move = TRUE;
 	do_view = FALSE;
 
 	/* Assume nothing */
@@ -2527,6 +2527,12 @@ static void process_monster(int m_idx)
 
 			/* Note changes to viewable region */
 			if (player_can_see_bold(ny, nx)) do_view = TRUE;
+		}
+		else if ((c_ptr->feat >= FEAT_RUBBLE) &&
+			(c_ptr->feat <= FEAT_WALL_SOLID))
+		{
+			/* This monster cannot walk through walls */
+			do_move = FALSE;
 		}
 
 		/* Some monsters never attack */
