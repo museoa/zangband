@@ -2253,9 +2253,6 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 			}
 		}
 
-
-#ifdef ALLOW_EASY_FLOOR
-
 		/* Scan all objects in the grid */
 		if (easy_floor)
 		{
@@ -2326,9 +2323,6 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 				break;
 			}
 		}
-
-#endif /* ALLOW_EASY_FLOOR */
-
 
 		/* Scan all objects in the grid */
 		for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
@@ -3028,8 +3022,6 @@ bool get_aim_dir(int *dp)
 	/* Hack -- auto-target if requested */
 	if (use_old_target && target_okay()) dir = 5;
 
-#ifdef ALLOW_REPEAT /* TNB */
-
 	if (repeat_pull(dp))
 	{
 		/* Confusion? */
@@ -3041,8 +3033,6 @@ bool get_aim_dir(int *dp)
 			dir = *dp;
 		}
 	}
-
-#endif /* ALLOW_REPEAT -- TNB */
 
 	/* Ask until satisfied */
 	while (!dir)
@@ -3120,11 +3110,7 @@ bool get_aim_dir(int *dp)
 	/* Save direction */
 	(*dp) = dir;
 
-#ifdef ALLOW_REPEAT /* TNB */
-
 	repeat_push(command_dir);
-
-#endif /* ALLOW_REPEAT -- TNB */
 
 	/* A "valid" direction was entered */
 	return (TRUE);
@@ -3152,14 +3138,10 @@ bool get_rep_dir(int *dp, bool under)
 {
 	int dir;
 
-#ifdef ALLOW_REPEAT /* TNB */
-
 	if (repeat_pull(dp))
 	{
 		return (TRUE);
 	}
-
-#endif /* ALLOW_REPEAT -- TNB */
 
 	/* Initialize */
 	(*dp) = 0;
@@ -3212,11 +3194,7 @@ bool get_rep_dir(int *dp, bool under)
 	/* Save direction */
 	(*dp) = dir;
 
-#ifdef ALLOW_REPEAT /* TNB */
-
 	repeat_push(dir);
-
-#endif /* ALLOW_REPEAT -- TNB */
 
 	/* Success */
 	return (TRUE);

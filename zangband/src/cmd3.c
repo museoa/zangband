@@ -22,16 +22,8 @@ void do_cmd_inven(void)
 {
 	char out_val[160];
 
-
 	/* Note that we are in "inventory" mode */
-	command_wrk = FALSE;
-
-#ifdef ALLOW_EASY_FLOOR
-
-	/* Note that we are in "inventory" mode */
-	if (easy_floor) command_wrk = (USE_INVEN);
-
-#endif /* ALLOW_EASY_FLOOR */
+	command_wrk = (USE_INVEN);
 
 	/* Save screen */
 	screen_save();
@@ -83,16 +75,8 @@ void do_cmd_equip(void)
 {
 	char out_val[160];
 
-
 	/* Note that we are in "equipment" mode */
-	command_wrk = TRUE;
-
-#ifdef ALLOW_EASY_FLOOR
-
-	/* Note that we are in "equipment" mode */
-	if (easy_floor) command_wrk = (USE_EQUIP);
-
-#endif /* ALLOW_EASY_FLOOR */
+	command_wrk = (USE_EQUIP);
 
 	/* Save the screen */
 	screen_save();

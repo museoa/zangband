@@ -38,8 +38,6 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, bool realm_2)
 	int         use_realm = (realm_2 ? p_ptr->realm2 : p_ptr->realm1);
 	cptr        p = ((mp_ptr->spell_book == TV_LIFE_BOOK) ? "prayer" : "spell");
 
-#ifdef ALLOW_REPEAT /* TNB */
-
 	/* Get the spell, if available */
 	if (repeat_pull(sn))
 	{
@@ -50,8 +48,6 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, bool realm_2)
 			return (TRUE);
 		}
 	}
-
-#endif /* ALLOW_REPEAT -- TNB */
 
 	/* Extract spells */
 	for (spell = 0; spell < 32; spell++)
@@ -202,11 +198,7 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, bool realm_2)
 	/* Save the choice */
 	(*sn) = spell;
 
-#ifdef ALLOW_REPEAT /* TNB */
-
 	repeat_push(*sn);
-
-#endif /* ALLOW_REPEAT -- TNB */
 
 	/* Success */
 	return (TRUE);

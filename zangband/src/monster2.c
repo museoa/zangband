@@ -2914,8 +2914,6 @@ void message_pain(int m_idx, int dam)
  */
 void update_smart_learn(int m_idx, int what)
 {
-#ifdef DRS_SMART_OPTIONS
-
 	monster_type *m_ptr = &m_list[m_idx];
 
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
@@ -3022,9 +3020,6 @@ void update_smart_learn(int m_idx, int what)
 		if (p_ptr->reflect) m_ptr-> smart |= (SM_IMM_REFLECT);
 		break;
 	}
-
-#endif /* DRS_SMART_OPTIONS */
-
 }
 
 

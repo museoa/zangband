@@ -1001,17 +1001,11 @@ bool (*get_obj_num_hook)(int k_idx);
 bool monk_armour_aux;
 bool monk_notify_aux;
 
-#ifdef ALLOW_EASY_OPEN /* TNB */
+
+/* Easy patch flags */
 bool easy_open;
-#endif /* ALLOW_EASY_OPEN -- TNB */
-
-#ifdef ALLOW_EASY_DISARM /* TNB */
 bool easy_disarm;
-#endif /* ALLOW_EASY_DISARM -- TNB */
-
-#ifdef ALLOW_EASY_FLOOR /* TNB */
 bool easy_floor;
-#endif /* ALLOW_EASY_FLOOR -- TNB */
 
 bool use_command;
 bool center_player;

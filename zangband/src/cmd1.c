@@ -16,43 +16,6 @@
 
 
 
-/*
-* The Oangband combat system has been partially implemented. -SF-
-* The list of things still to do is:
-*
-* Artifacts - rebalance damage :done + damage from activations: not done
-* RandArts - rebalance (lower number of attacks)
-*  - Number of attacks has now been toned down for the larger weapons.
-* Potions (death, detonations etc.) May need to rebalance
-* Wands
-* Rods
-* Staves  Damage from these three probably need to be adjusted. Done.
-*
-* Spells  - will probably have to wait for new system
-* Ego items.
-*  - Number of attacks for various ego items has been lowered for larger
-*          weapons.
-*     Oangband also has various modifiers for ego items that are not
-*     implemented as yet.  (See ego shooters in [o]):  Not likely to be done
-* Class rebalancing
-*     In [o] the weapon proficiancy is level dependant: done.
-*  - The number of blows for each class have been changed.
-*
-* Thrown items - done
-*   There are no "normal" throwing items.  Only artifacts.
-*   We may want to add more ego flags+ "Throwing daggers", "Throwing Hammers"
-*   and the like.
-* Shift - C command (info screen)
-*      (deadliness instead of + to dam.)
-*  - done
-* Weapon Master
-*  - done
-*
-* Shops - item prices may need to change to reflect their altered value to
-*      the player.  Done.
-*
-*/
-
 
 
 /*
@@ -649,7 +612,7 @@ bool auto_pickup_okay(object_type *o_ptr)
 }
 
 /*
- * Helper routine for py_pickup() and py_pickup_floor().
+ * Helper routine for py_pickup().
  *
  * Add the given dungeon object to the character's inventory.
  *
@@ -747,67 +710,40 @@ static void auto_destroy_items(cave_type *c_ptr)
  * Player "wants" to pick up an object or gold.
  * Note that we ONLY handle things that can be picked up.
  * See "move_player()" for handling of other things.
+ *
+ * If the easy floor option is true: 
+ *		Make the player carry everything in a grid
+ *
+ * 		If "pickup" is FALSE then only gold will be picked up
  */
 void carry(int pickup)
 {
-	cave_type *c_ptr = area(py, px);
-
-	s16b this_o_idx, next_o_idx = 0;
+	s16b this_o_idx, next_o_idx;
 
 	char o_name[80];
+	object_type *o_ptr;
 
-	/* Recenter the map around the player */
-	verify_panel();
+	int floor_num = 0, floor_list[23], floor_o_idx = 0;
 
-	/* Update stuff */
-	p_ptr->update |= (PU_MONSTERS);
+	int can_pickup = 0;
 
-	/* Redraw map */
-	p_ptr->redraw |= (PR_MAP);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD);
-
-	/* Handle stuff */
-	handle_stuff();
-
-
-	/* Automatically destroy items */
-	auto_destroy_items(c_ptr);
-
-#ifdef ALLOW_EASY_FLOOR
-
-	if (easy_floor)
-	{
-		py_pickup_floor(pickup);
-		return;
-	}
-
-#endif /* ALLOW_EASY_FLOOR */
+	bool do_ask = TRUE;
+	
+	/* Destroy worthless items below the player */
+	auto_destroy_items(area(py, px));
 
 	/* Scan the pile of objects */
-	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
+	for (this_o_idx = area(py,px)->o_idx; this_o_idx; this_o_idx = next_o_idx)
 	{
 		object_type *o_ptr;
 
-		/* Acquire object */
+		/* Access the object */
 		o_ptr = &o_list[this_o_idx];
-
-#ifdef ALLOW_EASY_SENSE /* TNB */
-
-		/* Option: Make item sensing easy */
-		if (easy_sense)
-		{
-			/* Sense the object */
-			(void)sense_object(o_ptr);
-		}
-
-#endif /* ALLOW_EASY_SENSE -- TNB */
 
 		/* Describe the object */
 		object_desc(o_name, o_ptr, TRUE, 3);
 
-		/* Acquire next object */
+		/* Access the next object */
 		next_o_idx = o_ptr->next_o_idx;
 
 		/* Hack -- disturb */
@@ -817,11 +753,11 @@ void carry(int pickup)
 		if (o_ptr->tval == TV_GOLD)
 		{
 			/* Message */
-			msg_format("You collect %ld gold pieces worth of %s.",
-				   (long)o_ptr->pval, o_name);
+			msg_format("You have found %ld gold pieces worth of %s.",
+				(long)o_ptr->pval, o_name);
 
 			sound(SOUND_SELL);
-
+			
 			/* Collect the gold */
 			p_ptr->au += o_ptr->pval;
 
@@ -833,16 +769,23 @@ void carry(int pickup)
 
 			/* Delete the gold */
 			delete_object_idx(this_o_idx);
+
+			/* Check the next object */
+			continue;
 		}
 
 		/* Test for auto-pickup */
-		else if (auto_pickup_okay(o_ptr))
+		if (auto_pickup_okay(o_ptr))
 		{
 			/* Pick up the object */
 			py_pickup_aux(this_o_idx);
+
+			/* Check the next object */
+			continue;
 		}
-		/* Pick up objects */
-		else
+
+		/* The old pick-up routine is here */
+		if (!easy_floor)
 		{
 			/* Describe the object */
 			if (!pickup)
@@ -876,10 +819,146 @@ void carry(int pickup)
 					py_pickup_aux(this_o_idx);
 				}
 			}
+		
+			/* Get the next object */
+			continue;
+		}
+
+
+		/* Count non-gold objects that can be picked up. */
+		if (inven_carry_okay(o_ptr))
+		{
+			can_pickup++;
+		}
+
+		/* Remember this object index */
+		floor_list[floor_num] = this_o_idx;
+
+		/* Count non-gold objects */
+		if (floor_num != 22) floor_num++;
+
+		/* Remember this index */
+		floor_o_idx = this_o_idx;
+	}
+
+	/* There are no non-gold objects (or easy floor patch is off) */
+	if (!floor_num) return;
+
+	/* Mention the number of objects */
+	if (!pickup)
+	{
+		/* One object */
+		if (floor_num == 1)
+		{
+			/* Access the object */
+			o_ptr = &o_list[floor_o_idx];
+
+			/* Describe the object */
+			object_desc(o_name, o_ptr, TRUE, 3);
+
+			/* Message */
+			msg_format("You see %s.", o_name);
+		}
+
+		/* Multiple objects */
+		else
+		{
+			/* Message */
+			msg_format("You see a pile of %d items.", floor_num);
+		}
+
+		/* Done */
+		return;
+	}
+
+	/* The player has no room for anything on the floor. */
+	if (!can_pickup)
+	{
+		/* One object */
+		if (floor_num == 1)
+		{
+			/* Access the object */
+			o_ptr = &o_list[floor_o_idx];
+
+			/* Describe the object */
+			object_desc(o_name, o_ptr, TRUE, 3);
+
+			/* Message */
+			msg_format("You have no room for %s.", o_name);
+		}
+
+		/* Multiple objects */
+		else
+		{
+			/* Message */
+			msg_print("You have no room for any of the objects on the floor.");
+		}
+
+		/* Done */
+		return;
+	}
+
+	/* One object */
+	if (floor_num == 1)
+	{
+		/* Hack -- query every object */
+		if (carry_query_flag)
+		{
+			char out_val[160];
+
+			/* Access the object */
+			o_ptr = &o_list[floor_o_idx];
+
+			/* Describe the object */
+			object_desc(o_name, o_ptr, TRUE, 3);
+
+			/* Build a prompt */
+			(void)sprintf(out_val, "Pick up %s? ", o_name);
+
+			/* Ask the user to confirm */
+			if (!get_check(out_val))
+			{
+				/* Done */
+				return;
+			}
+		}
+
+		/* Don't ask */
+		do_ask = FALSE;
+
+		/* Remember the object to pick up */
+		this_o_idx = floor_o_idx;
+	}
+
+	/* Allow the user to choose an object */
+	if (do_ask)
+	{
+		cptr q, s;
+
+		int item;
+
+		/* Restrict the choices */
+		item_tester_hook = inven_carry_okay;
+
+		/* Get an object */
+		q = "Get which item? ";
+		s = "You see nothing there.";
+		if (get_item(&item, q, s, (USE_FLOOR)))
+		{
+			this_o_idx = 0 - item;
+		}
+		else
+		{
+			return;
 		}
 	}
-}
 
+	/* Access the object */
+	o_ptr = &o_list[this_o_idx];
+
+	/* Pick up the object */
+	py_pickup_aux(this_o_idx);
+}
 
 /*
  * Determine if a trap affects the player.
@@ -2629,7 +2708,6 @@ void move_player(int dir, int do_pickup)
 		/* Pass through the door? */
 		if (p_can_pass_walls)
 		{
-#ifdef ALLOW_EASY_OPEN
 			/* Automatically open the door? */
 			if (easy_open && easy_open_door(y, x))
 			{
@@ -2638,7 +2716,6 @@ void move_player(int dir, int do_pickup)
 				/* Disturb the player */
 				disturb(0, 0);
 			}
-#endif /* ALLOW_EASY_OPEN */
 		}
 		else
 		{
@@ -2659,9 +2736,8 @@ void move_player(int dir, int do_pickup)
 			/* Notice things */
 			else
 			{
-#ifdef ALLOW_EASY_OPEN
+				/* Try to open a door if is there */
 				if (easy_open && easy_open_door(y, x)) return;
-#endif /* ALLOW_EASY_OPEN */
 
 				msg_print("There is a closed door blocking your way.");
 
@@ -2673,8 +2749,6 @@ void move_player(int dir, int do_pickup)
 			sound(SOUND_HITWALL);
 		}
 	}
-
-#ifdef ALLOW_EASY_DISARM /* TNB */
 
 	/* Disarm a visible trap */
 	else if ((do_pickup != easy_disarm) && is_trap(c_ptr->feat))
@@ -2717,8 +2791,6 @@ void move_player(int dir, int do_pickup)
 			return;
 		}
 	}
-
-#endif /* ALLOW_EASY_DISARM -- TNB */
 
 	/* Player can not walk through "walls" unless in wraith form... */
 	else if (!cave_floor_grid(c_ptr) && !p_can_pass_walls)
@@ -2885,16 +2957,7 @@ void move_player(int dir, int do_pickup)
 		}
 
 		/* Handle "objects" */
-
-#ifdef ALLOW_EASY_DISARM /* TNB */
-
 		carry(do_pickup != always_pickup);
-
-#else /* ALLOW_EASY_DISARM -- TNB */
-
-		carry(do_pickup);
-
-#endif /* ALLOW_EASY_DISARM -- TNB */
 
 		/* Handle "store doors" */
 		if ((c_ptr->feat >= FEAT_SHOP_HEAD) &&
@@ -3845,13 +3908,5 @@ void run_step(int dir)
 	energy_use = 100;
 
 	/* Move the player, using the "pickup" flag */
-#ifdef ALLOW_EASY_DISARM /* TNB */
-
 	move_player(find_current, FALSE);
-
-#else /* ALLOW_EASY_DISARM -- TNB */
-
-	move_player(find_current, always_pickup);
-
-#endif /* ALLOW_EASY_DISARM -- TNB */
 }

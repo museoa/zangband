@@ -3109,7 +3109,6 @@ static void spell_info(char *p, int spell, int realm)
 	/* Default */
 	strcpy(p, "");
 
-#ifdef DRS_SHOW_SPELL_INFO
 	{
 		int plev = p_ptr->lev;
 
@@ -3277,7 +3276,6 @@ static void spell_info(char *p, int spell, int realm)
 				sprintf(p, "Unknown type: %d.", realm);
 		}
 	}
-#endif /* DRS_SHOW_SPELL_INFO */
 }
 
 

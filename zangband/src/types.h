@@ -819,23 +819,7 @@ struct monster_type
 
 	s16b hold_o_idx;	/* Object being held (if any) */
 
-#ifdef WDT_TRACK_OPTIONS
-
-	byte ty;			/* Y location of target */
-	byte tx;			/* X location of target */
-
-	byte t_dur;			/* How long are we tracking */
-
-	byte t_bit;			/* Up to eight bit flags */
-
-#endif /* WDT_TRACK_OPTIONS */
-
-#ifdef DRS_SMART_OPTIONS
-
 	u32b smart;			/* Field for "smart_learn" */
-
-#endif /* DRS_SMART_OPTIONS */
-
 };
 
 /* Forward declare */

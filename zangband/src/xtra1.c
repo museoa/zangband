@@ -975,8 +975,6 @@ static void prt_stun(void)
 static void health_redraw(void)
 {
 
-#ifdef DRS_SHOW_HEALTH_BAR
-
 	/* Not tracking */
 	if (!p_ptr->health_who)
 	{
@@ -1048,9 +1046,6 @@ static void health_redraw(void)
 		/* Dump the current "health" (use '*' symbols) */
 		Term_putstr(COL_INFO + 1, ROW_INFO, len, attr, "**********");
 	}
-
-#endif
-
 }
 
 

@@ -5952,23 +5952,17 @@ option_type option_info[] =
 	{ &expand_list,                 TRUE, 1, 1, 5,
 	"expand_list",                  "Expand the power of the list commands" },
 
-#ifdef ALLOW_EASY_OPEN
 	{ &easy_open,                   TRUE, 1, 5, 7,
 	"easy_open",                    "Automatically open doors" },
-#endif /* ALLOW_EASY_OPEN */
 
-#ifdef ALLOW_EASY_DISARM
 	{ &easy_disarm,                 TRUE, 1, 5, 8,
 	"easy_disarm",                  "Automatically disarm traps" },
-#endif /* ALLOW_EASY_DISARM */
 
 	{ &auto_haggle,                 TRUE, 1, 1, 0,
 	"auto_haggle",                  "Auto-haggle in stores" },
 
-#ifdef ALLOW_EASY_FLOOR /* TNB */
 	{ &easy_floor,                  FALSE, 1, 5, 9,
 	"easy_floor",                   "Display floor stacks in a list" },
-#endif /* ALLOW_EASY_FLOOR -- TNB */
 
 	{ &use_command,                 FALSE, 1, 5, 10,
 	"use_command",                  "Allow unified use command" },

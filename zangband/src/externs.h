@@ -447,6 +447,9 @@ extern bool preserve_mode;
 extern bool autoroller;
 extern bool use_transparency;
 extern bool can_save;
+extern bool easy_disarm;
+extern bool easy_open;
+extern bool easy_floor;
 
 /* birth.c */
 extern void player_birth(void);
@@ -521,6 +524,8 @@ extern void do_cmd_fire(void);
 extern void do_cmd_fire_aux(int item, object_type *j_ptr);
 extern void do_cmd_throw(void);
 extern void do_cmd_throw_aux(int mult);
+extern bool do_cmd_disarm_aux(int y, int x, int dir);
+extern bool easy_open_door(int y, int x);
 
 /* cmd3.c */
 extern void do_cmd_inven(void);
@@ -792,6 +797,8 @@ extern void combine_pack(void);
 extern void reorder_pack(void);
 extern bool can_player_destroy_object(object_type *o_ptr);
 extern void display_koff(int k_idx);
+extern bool scan_floor(int *items, int *item_num, int y, int x, int mode);
+extern void show_floor(int y, int x);
 
 /* racial.c */
 extern bool racial_aux(s16b min_level, int cost, int use_stat, int difficulty);
@@ -1037,6 +1044,9 @@ extern void pause_line(int row);
 extern void request_command(int shopping);
 extern bool is_a_vowel(int ch);
 extern int get_keymap_dir(char ch);
+extern void repeat_push(int what);
+extern bool repeat_pull(int *what);
+extern void repeat_check(void);
 
 #ifdef SORT_R_INFO
 extern void tag_sort(tag_type elements[], int number);
@@ -1160,93 +1170,6 @@ extern void do_cmd_knowledge_mutations(void);
 extern int calc_mutant_regenerate_mod(void);
 extern void mutation_power_aux(u32b power);
 
-
-/*
- * Hack -- conditional (or "bizarre") externs
- */
-
-#ifdef SET_UID
-/* util.c */
-extern void user_name(char *buf, int id);
-#endif
-
-#ifndef HAS_MEMSET
-/* util.c */
-extern char *memset(char*, int, huge);
-#endif
-
-#if 0
-#ifndef HAS_STRICMP
-/* util.c */
-extern int stricmp(cptr a, cptr b);
-#endif
-#endif
-
-#ifndef HAS_USLEEP
-/* util.c */
-extern int usleep(huge usecs);
-#endif
-
-#ifdef MACINTOSH
-/* main-mac.c */
-/* extern int main(void); */
-#endif
-
-#ifdef WINDOWS
-/* main-win.c */
-/* extern int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, ...); */
-#endif
-
-
-#ifdef ALLOW_REPEAT /* TNB */
-
-/* util.c */
-extern void repeat_push(int what);
-extern bool repeat_pull(int *what);
-extern void repeat_check(void);
-
-#endif /* ALLOW_REPEAT -- TNB */
-
-#ifdef ALLOW_EASY_OPEN /* TNB */
-
-/* variable.c */
-extern bool easy_open;
-
-/* cmd2.c */
-extern bool easy_open_door(int y, int x);
-
-#endif /* ALLOW_EASY_OPEN -- TNB */
-
-#ifdef ALLOW_EASY_DISARM /* TNB */
-
-/* variable.c */
-extern bool easy_disarm;
-
-/* cmd2.c */
-extern bool do_cmd_disarm_aux(int y, int x, int dir);
-
-#endif /* ALLOW_EASY_DISARM -- TNB */
-
-
-#ifdef USE_SCRIPT
-extern errr script_execute(char *name);
-extern errr init_script(void);
-#endif /* USE_SCRIPT */
-
-
-#ifdef ALLOW_EASY_FLOOR /* TNB */
-
-/* object1.c */
-extern bool scan_floor(int *items, int *item_num, int y, int x, int mode);
-extern void show_floor(int y, int x);
-extern bool get_item_floor(int *cp, cptr pmt, cptr str, int mode);
-extern void py_pickup_floor(int pickup);
-
-/* variable.c */
-extern bool easy_floor;
-
-#endif /* ALLOW_EASY_FLOOR -- TNB */
-
 /* obj_kind.c */
 extern errr k_info_alloc(void);
 extern errr k_info_free(void);
@@ -1310,3 +1233,30 @@ extern void process_fields(void);
 extern void test_field_data_integtrity(void);
 extern void field_action_nothing(s16b *field_ptr, void *nothing);
 extern void field_action_delete(s16b *field_ptr, void *nothing);
+
+
+/*
+ * Hack -- conditional (or "bizarre") externs
+ */
+
+#ifdef SET_UID
+/* util.c */
+extern void user_name(char *buf, int id);
+#endif
+
+#ifndef HAS_MEMSET
+/* util.c */
+extern char *memset(char*, int, huge);
+#endif
+
+#ifndef HAS_USLEEP
+/* util.c */
+extern int usleep(huge usecs);
+#endif
+
+#ifdef USE_SCRIPT
+extern errr script_execute(char *name);
+extern errr init_script(void);
+#endif /* USE_SCRIPT */
+
+

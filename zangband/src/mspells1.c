@@ -14,8 +14,6 @@
 #include "angband.h"
 
 
-#ifdef DRS_SMART_OPTIONS
-
 /*
  * And now for Intelligent monster attacks (including spells).
  *
@@ -332,8 +330,6 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 	(*f5p) = f5;
 	(*f6p) = f6;
 }
-
-#endif /* DRS_SMART_OPTIONS */
 
 
 /*
@@ -857,15 +853,11 @@ bool make_attack_spell(int m_idx)
 		if (!f4 && !f5 && !f6) return (FALSE);
 	}
 
-#ifdef DRS_SMART_OPTIONS
-
 	/* Remove the "ineffective" spells */
 	remove_bad_spells(m_idx, &f4, &f5, &f6);
 
 	/* No spells left */
 	if (!f4 && !f5 && !f6) return (FALSE);
-
-#endif /* DRS_SMART_OPTIONS */
 
 	if (!stupid_monsters)
 	{
