@@ -21,31 +21,43 @@
 * The list of things still to do is:
 *
 * Artifacts - rebalance damage + damage from activations
+*        - The chainsword is the only one that looks too munchkinish...
 * RandArts - rebalance (lower number of attacks)
 *  - Number of attacks has now been toned down for the larger weapons.
 * Potions (death, detonations etc.) May need to rebalance
 * Wands
 * Rods
 * Staves  Damage from these three probably need to be adjusted.
+*	-Some values have been changed: need more testing. (This isn't very
+*        important until the new spell system is put in as a whole.)
 * Spells  - will probably have to wait for new system
 * Ego items.
 *  - Number of attacks for various ego items has been lowered for larger
-*  - weapons.
+*          weapons.
 *     Oangband also has various modifiers for ego items that are not
 *     implemented as yet.  (See ego shooters in [o])
 * Class rebalancing
-*     The adjusted weapon proficiancy hasn't been done either.
+*     In [o] the weapon proficiancy is level dependant: hasn't been done.
+*     (Need to wait for play-testing race/classes are different in [z].)
 *  - The number of blows for each class have been changed.
 *
 * Thrown items - done
+*   There are no "normal" throwing items.  Only artifacts.
+*   We may want to add more ego flags+ "Throwing daggers", "Throwing Hammers"
+*   and the like.
 * Shift - C command (info screen)
 *      (deadliness instead of + to dam.)
-*  - done (but the formula need to be checked.)
+*  - done
 * Weapon Master
 *  - done (but the formulae need to be checked.)
 * 
 * Shops - item prices may need to change to reflect their altered value to
 *      the player.
+*  - Not sure this is important. The whole store value system may need to be
+*   rewritten anyway.  At the moment, a -ve value means the item is worthless.
+*   This may not make sense.  A long sword (-1,-1) is still better than a
+*   dagger (+0,+0) IMHO - so should be priced as such.  Maybe an estimate of
+*   the items worth should depend on what it does to the player...
 *
 * Anything else?
 */
@@ -201,6 +213,7 @@ static sint critical_melee(int chance, int sleeping_bonus, char m_name[], object
 	else
 	{
 		mult_m_crit = 10;
+		msg_format("You hit the %s.", m_name);
 	}
 
 	return (mult_m_crit);
@@ -1343,10 +1356,8 @@ void py_attack(int y, int x)
 	bool            fear = FALSE;
 	bool            mdeath = FALSE;
 
-	bool            backstab = FALSE;
 	bool            vorpal_cut = FALSE;
 	int             chaos_effect = 0;
-	bool            stab_fleeing = FALSE;
 	bool            do_quake = FALSE;
 	bool            drain_msg = TRUE;
 	int             drain_result = 0, drain_heal = 0;
@@ -1366,12 +1377,10 @@ void py_attack(int y, int x)
 		if (m_ptr->csleep && m_ptr->ml)
 		{
 			/* Can't backstab creatures that we can't see, right? */
-			backstab = TRUE;
 			sleeping_bonus = 10 + 2 * p_ptr->lev / 5;
 		}
 		else if (m_ptr->monfear && m_ptr->ml)
 		{
-			stab_fleeing = TRUE;
 			sleeping_bonus = 5 + p_ptr->lev / 5;
 		}
 	}
@@ -1544,19 +1553,6 @@ void py_attack(int y, int x)
 
 			/* Sound */
 			sound(SOUND_HIT);
-
-			/* Message */
-			if (!(backstab || stab_fleeing))
-			{
-				if (!((p_ptr->pclass == CLASS_MONK) && monk_empty_hands()))
-					msg_format("You hit %s.", m_name);
-			}
-			else if (backstab)
-				msg_format("You cruelly stab the helpless, sleeping %s!",
-				    (r_name + r_info[m_ptr->r_idx].name));
-			else
-				msg_format("You backstab the fleeing %s!",
-				    (r_name + r_info[m_ptr->r_idx].name));
 
 			/* Hack -- bare hands do one damage */
 			k = 1;
@@ -1980,8 +1976,6 @@ void py_attack(int y, int x)
 		{
 			/* Sound */
 			sound(SOUND_MISS);
-
-			backstab = FALSE; /* Clumsy! */
 
 			/* Message */
 			msg_format("You miss %s.", m_name);
