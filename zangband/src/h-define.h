@@ -103,38 +103,6 @@
 #undef SGN
 #define SGN(a)		(((a) < 0)   ? (-1) : ((a) != 0))
 
-/*
- * An assertion macro
- */
-#undef assert
-
-#ifdef NDEBUG
-	#define assert(ignore)	((void) 0)
-#else
-	/* Pick which type of output to use */
-	#ifdef DEBUG_CORE
-		#define __assert_fmt core_fmt
-	#else
-		#define __assert_fmt quit_fmt
-	#endif
-	
-	/* Save the game, and then abort. */
-	#define assert(expr)\
-	do\
-	{\
-		signals_ignore_tstp();\
-		(void) save_player();\
-		if (!(expr))\
-		{\
-			__assert_fmt("\n%s%s\n%s%s\n%s%d\n\n",\
-			"Assertion failed: ", #expr,\
-			"in file ", __FILE__,\
-			"on line ", __LINE__);\
-		}\
-	}\
-	while (FALSE)
-#endif
-	
 
 /*
  * Hack -- allow use of "ASCII" and "EBCDIC" for "indexes", "digits",
@@ -162,4 +130,5 @@
 
 
 #endif
+
 

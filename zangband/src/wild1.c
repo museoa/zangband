@@ -2734,7 +2734,7 @@ static void create_roads(void)
 	}
 
 	/* Make towns x towns array of u16b's */
-	C_MAKE(link_list, towns, u16b_ptr);
+	C_MAKE(link_list, towns, u16b*);
 
 	for (i = 0; i < towns; i++)
 	{
@@ -2997,7 +2997,7 @@ static void create_roads(void)
 		C_FREE(link_list[i], towns, u16b);
 	}
 
-	C_FREE(link_list, towns, u16b_ptr);
+	C_FREE(link_list, towns, u16b*);
 
 	/* Town lookup table */
 	C_FREE(town_number, towns, u16b);

@@ -8,23 +8,6 @@
 
 
 
-#ifndef HAS_MEMSET
-
-/*
- * For those systems that don't have "memset()"
- *
- * Set the value of each of 'n' bytes starting at 's' to 'c', return 's'
- * If 'n' is negative, you will erase a whole lot of memory.
- */
-char *memset(char *s, int c, huge n)
-{
-	char *t;
-	for (t = s; n--; ) *t++ = c;
-	return (s);
-}
-
-#endif
-
 #ifdef SET_UID
 
 # ifndef HAS_USLEEP

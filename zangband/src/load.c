@@ -2781,36 +2781,63 @@ static errr rd_savefile_new_aux(void)
 		/* Generate quests */
 		for (i = MIN_RANDOM_QUEST + v - 1; i >= MIN_RANDOM_QUEST; i--)
 		{
-			quest_type *q_ptr = &quest[i];
-			monster_race *r_ptr = NULL;
+			quest_type      *q_ptr = &quest[i];
+			monster_race    *r_ptr;
+			monster_race    *quest_r_ptr;
+			int             level, r_idx;
 
 			q_ptr->status = QUEST_STATUS_TAKEN;
 
 			for (j = 0; j < MAX_TRIES; j++)
 			{
-				/* Random monster 5 - 10 levels out of depth */
-				q_ptr->r_idx = get_mon_num(q_ptr->level + rand_range(4, 10));
+				/*
+				 * Random monster out of depth
+				 * (depending on level + number of quests)
+				 */
+				level = q_ptr->level + 6 +
+				        randint(q_ptr->level * v / 200 + 1) +
+				        randint(q_ptr->level * v / 200 + 1);
 
-				r_ptr = &r_info[q_ptr->r_idx];
+				r_idx = get_mon_num(level);
+				r_ptr = &r_info[r_idx];
 
-				/* Accept only monsters that are out of depth */
-				if (r_ptr->level > q_ptr->level) break;
+				/* Look at the monster - only "hard" monsters for quests */
+				if (r_ptr->flags1 & (RF1_NEVER_MOVE | RF1_FRIENDS)) continue;
+
+				/* Save the index if the monster is deeper than current monster */
+				if (!q_ptr->r_idx || (r_info[r_idx].level > r_info[q_ptr->r_idx].level))
+				{
+					q_ptr->r_idx = r_idx;
+				}
+
+				/*
+				 * Accept monsters that are 2 - 6 levels
+				 * out of depth depending on the quest level
+				 */
+				if (r_ptr->level > (q_ptr->level + (q_ptr->level / 20) + 1)) break;
 			}
 
-			/* We must have a race by now */
-			assert(r_ptr);
-			
+			quest_r_ptr = &r_info[q_ptr->r_idx];
+
 			/* Get the number of monsters */
-			if (r_ptr->flags1 & RF1_UNIQUE)
+			if (quest_r_ptr->flags1 & RF1_UNIQUE)
 			{
 				/* Mark uniques */
-				r_ptr->flags1 |= RF1_QUESTOR;
+				quest_r_ptr->flags1 |= RF1_QUESTOR;
 
 				q_ptr->max_num = 1;
 			}
+			else if (quest_r_ptr->flags3 & RF3_UNIQUE_7)
+			{
+				/* Mark uniques */
+				quest_r_ptr->flags1 |= RF1_QUESTOR;
+
+				q_ptr->max_num = randint(quest_r_ptr->max_num);
+			}
 			else
 			{
-				q_ptr->max_num = (s16b)rand_range(5, q_ptr->level/3 + 10);
+				q_ptr->max_num = 5 + (s16b)rand_int(q_ptr->level / 3 + 5) /
+										quest_r_ptr->rarity;
 			}
 		}
 
