@@ -907,7 +907,7 @@ bool make_attack_spell(int m_idx)
 		/* RF4_ELDRITCH_HORROR */
 		case 96+1:
 		{
-			if (!direct) break;
+			if (!direct || !seen) break;
 			disturb(TRUE);
 			sanity_blast(m_ptr);
 			break;
