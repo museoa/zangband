@@ -327,11 +327,11 @@ static void prt_status(void)
 		num++;
 	}
 
-	/* Super Heroism */
+	/* Super Heroism / berserk*/
 	if (p_ptr->shero)
 	{
-		letter[num]='H';
-		colour[num]=TERM_YELLOW;
+		letter[num]='B';
+		colour[num]=TERM_RED;
 		num++;
 	}
 
