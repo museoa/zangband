@@ -902,7 +902,7 @@ void monster_death(int m_idx)
 	}
 
 	/*
-	 * Drop quest reward
+	 * Drop random quest reward
 	 */
 	if (reward)
 	{
@@ -912,8 +912,17 @@ void monster_death(int m_idx)
 		/* Wipe the object */
 		object_wipe(q_ptr);
 
-		/* Make a great object */
-		make_object(q_ptr, TRUE, TRUE);
+		/* Average of 20 great objects per game */
+		if (rand_int(number_of_quests() + 1) < 20)
+		{
+			/* Make a great object */
+			make_object(q_ptr, TRUE, TRUE);
+		}
+		else
+		{
+			/* Make a good object */
+			make_object(q_ptr, TRUE, FALSE);
+		}
 
 #ifdef USE_SCRIPT
 		q_ptr->python = object_create_callback(q_ptr);

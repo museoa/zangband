@@ -3024,6 +3024,8 @@ errr file_character(cptr name, bool full)
 	else
 		fprintf(fff, "\n Hard Quests:        OFF");
 
+	fprintf(fff, "\n Num. Random Quests: %d", number_of_quests());
+
 	if (ironman_nightmare)
 		fprintf(fff, "\n Nightmare Mode:     ON");
 	else

@@ -2326,10 +2326,9 @@ static bool player_birth_aux_1(void)
 			 * Random monster out of depth
 			 * (depending on level + number of quests)
 			 */
-			level = q_ptr->level * v / 20 + 6 + randint( q_ptr->level * v / 200 + 1);
-			
-			/* Not too easy. */
-			if (level < q_ptr->level + 6) level = q_ptr->level + 6;
+			level = q_ptr->level + 6 +
+			 randint(q_ptr->level * v / 200 + 1) +
+			  randint(q_ptr->level * v / 200 + 1);
 			
 			r_idx = get_mon_num(level);
 			r_ptr = &r_info[r_idx];

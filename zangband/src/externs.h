@@ -1035,6 +1035,7 @@ extern void handle_stuff(void);
 extern bool monk_empty_hands(void);
 extern bool monk_heavy_armor(void);
 extern void calc_bonuses(void);
+extern int number_of_quests(void);
 
 /* effects.c */
 extern bool set_blind(int v);
