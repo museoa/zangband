@@ -472,8 +472,22 @@ struct cave_type
 	byte cost;		/* Hack -- cost of flowing */
 	byte when;		/* Hack -- when cost was computed */
 	
-	/* Hack -- this contains the player-specific data (temporary) */
 	byte player;
+};
+
+
+/*
+ * Cave data that is player-specific
+ *
+ * The feat is the memorized feat on this square
+ */
+
+typedef struct pcave_type pcave_type;
+
+struct pcave_type
+{
+	byte player;	/* Player-specific flags */
+	byte feat;		/* Memorized feature */
 };
 
 
@@ -496,6 +510,15 @@ struct coord
  */
 
 typedef cave_type **blk_ptr;
+
+
+/*
+ * Pointer to a 16x16 block of grids of player information.
+ * The grids are allocated and deallocated in large
+ * blocks for speed.
+ */
+
+typedef pcave_type **pblk_ptr;
 
 
 /*
@@ -1282,6 +1305,17 @@ struct player_type
 						 * characters (such as Amberite Paladins)
 						 */
 
+	/*** Pointers to player grid information ***/
+
+	pcave_type *pcave[MAX_HGT];
+	pblk_ptr **pwild;
+	
+	/*** Boundary of player-known area ****/
+	u16b max_hgt;
+	u16b min_hgt;
+	u16b max_wid;
+	u16b min_wid;
+
 	/*** Temporary fields ***/
 
 	bool playing;		/* True if player is playing */
@@ -1468,12 +1502,6 @@ struct player_type
 	u16b max_seen_r_idx;	/* Most powerful monster visible */
 	bool monk_armour_stat;	/* Status of monk armour */
 	byte noise_level;		/* Amount of noise since last update */
-
-	/*** Boundary of player-known area ****/
-	u16b max_hgt;
-	u16b min_hgt;
-	u16b max_wid;
-	u16b min_wid;
 };
 
 

@@ -1072,7 +1072,6 @@ extern void k_info_reset(void);
 /* wild.c */
 extern void select_town_name(char *name, int pop);
 extern void light_dark_square(cave_type *c_ptr, bool daytime);
-extern void change_level(int);
 extern u16b init_choice_tree(wild_bound_box_type *bound, u16b type);
 extern u16b add_node_tree_root(wild_bound_box_type *bound, u16b type);
 extern void test_decision_tree(void);
@@ -1080,6 +1079,8 @@ extern void repopulate_wilderness(void);
 extern void create_wilderness(void);
 extern void move_wild(void);
 extern void init_wild_cache(void);
+extern void shift_in_bounds(int *x, int *y);
+extern void change_level(int);
 
 /* avatar.c */
 extern cptr virtue[MAX_VIRTUE];

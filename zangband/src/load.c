@@ -2381,6 +2381,8 @@ static errr rd_savefile_new_aux(void)
 {
 	int i, j;
 
+	int tempx, tempy;
+
 	byte tmp8u;
 	u16b tmp16u;
 	u32b tmp32u;
@@ -2653,8 +2655,15 @@ static errr rd_savefile_new_aux(void)
 		rd_s32b(&p_ptr->wilderness_x);
 		rd_s32b(&p_ptr->wilderness_y);
 		
-		p_ptr->old_wild_x = (u16b) p_ptr->wilderness_x / 16;
-		p_ptr->old_wild_y = (u16b) p_ptr->wilderness_y / 16;
+		tempx = (int) p_ptr->wilderness_x / 16;
+		tempy = (int) p_ptr->wilderness_y / 16;
+		
+		/* Get corner of visible region */
+		shift_in_bounds(&tempx, &tempy);
+		
+		/* Set corner of visible region */
+		p_ptr->old_wild_x = tempx;
+		p_ptr->old_wild_y = tempy;
 		
 		/* Size of the wilderness */
 		rd_s32b(&wild_x_size);

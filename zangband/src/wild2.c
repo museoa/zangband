@@ -2327,7 +2327,7 @@ static void allocate_block(int x, int y)
 }
 
 
-static void shift_in_bounds(int *x, int *y)
+void shift_in_bounds(int *x, int *y)
 {
 	/* Recenter map */
 	*x -= WILD_VIEW / 2;
@@ -2336,8 +2336,13 @@ static void shift_in_bounds(int *x, int *y)
 	/* Move if out of bounds */
 	if (*x < 0) *x = 0;
 	if (*y < 0) *y = 0;
-	if (*x + WILD_VIEW >= max_wild) *x = max_wild - WILD_VIEW - 1;
-	if (*y + WILD_VIEW >= max_wild) *y = max_wild - WILD_VIEW - 1;
+
+	/* Hack XXX This doesn't isn't set when we call during loading */
+	if (max_wild)
+	{
+		if (*x + WILD_VIEW >= max_wild) *x = max_wild - WILD_VIEW - 1;
+		if (*y + WILD_VIEW >= max_wild) *y = max_wild - WILD_VIEW - 1;
+	}
 }
 
 
@@ -2351,7 +2356,7 @@ static void shift_in_bounds(int *x, int *y)
 void move_wild(void)
 {
 	int x, y;
-	int ox, oy;
+	int ox = p_ptr->old_wild_x, oy = p_ptr->old_wild_y;
 	int i, j;
 
 	/* Get upper left hand block in grid. */
@@ -2366,43 +2371,12 @@ void move_wild(void)
 	/* Hack - set town */
 	p_ptr->town_num = wild[y][x].done.town;
 	
-	/* If we haven't moved block - exit */
-	if ((p_ptr->old_wild_x == x) && (p_ptr->old_wild_y == y)) return;
-	
 	/* Move boundary */
 	shift_in_bounds(&x, &y);
 	
-	/* Allocate new blocks */
-	for (i = 0; i < WILD_VIEW; i++)
-	{
-		for (j = 0; j < WILD_VIEW; j++)
-		{
-			allocate_block(x + i, y + j);
-		}
-	}
+	/* If we haven't moved block - exit */
+	if ((ox == x) && (oy == y)) return;
 	
-	p_ptr->min_wid = x * WILD_BLOCK_SIZE;
-	p_ptr->min_hgt = y * WILD_BLOCK_SIZE;
-	p_ptr->max_wid = p_ptr->min_wid + WILD_VIEW * WILD_BLOCK_SIZE;
-	p_ptr->max_hgt = p_ptr->min_hgt + WILD_VIEW * WILD_BLOCK_SIZE;
-	
-	/* Get old area */
-	ox = p_ptr->old_wild_x;
-	oy = p_ptr->old_wild_y;
-	shift_in_bounds(&ox, &oy);
-	
-	/* Deallocate old blocks */
-	for (i = 0; i < WILD_VIEW; i++)
-	{
-		for (j = 0; j < WILD_VIEW; j++)
-		{
-			del_block(ox + i, oy + j);
-		}
-	}
-
-	/* Redraw depth */
-	p_ptr->redraw |= (PR_DEPTH);
-
 #if 0	
 	/* Shift the player information */
 	while(ox < x)
@@ -2430,9 +2404,36 @@ void move_wild(void)
 	}
 #endif /* 0 */
 
+	/* Allocate new blocks */
+	for (i = 0; i < WILD_VIEW; i++)
+	{
+		for (j = 0; j < WILD_VIEW; j++)
+		{
+			allocate_block(x + i, y + j);
+		}
+	}
+	
+	/* Reset bounds */
+	p_ptr->min_wid = x * WILD_BLOCK_SIZE;
+	p_ptr->min_hgt = y * WILD_BLOCK_SIZE;
+	p_ptr->max_wid = p_ptr->min_wid + WILD_VIEW * WILD_BLOCK_SIZE;
+	p_ptr->max_hgt = p_ptr->min_hgt + WILD_VIEW * WILD_BLOCK_SIZE;
+		
+	/* Deallocate old blocks */
+	for (i = 0; i < WILD_VIEW; i++)
+	{
+		for (j = 0; j < WILD_VIEW; j++)
+		{
+			del_block(p_ptr->old_wild_x + i, p_ptr->old_wild_y + j);
+		}
+	}
+
+	/* Redraw depth */
+	p_ptr->redraw |= (PR_DEPTH);
+
 	/* Save the new location */
-	p_ptr->old_wild_x = ((u16b)p_ptr->wilderness_x / WILD_BLOCK_SIZE);
-	p_ptr->old_wild_y = ((u16b)p_ptr->wilderness_y / WILD_BLOCK_SIZE);	
+	p_ptr->old_wild_x = x;
+	p_ptr->old_wild_y = y;	
 }
 
 #if 0
@@ -2469,6 +2470,14 @@ static cave_type *access_cave(int y, int x)
 
 
 /*
+ * Access player information in dungeon
+ */
+static pcave_type *access_pcave(int y, int x)
+{
+	return &p_ptr->pcave[y][x];
+}
+
+/*
  * Access wilderness
  */
 static cave_type *access_wild(int y, int x)
@@ -2478,6 +2487,19 @@ static cave_type *access_wild(int y, int x)
 	 * Logical AND with 15 to get location within block.
 	 */
 	return &wild_grid[y / WILD_BLOCK_SIZE][x / WILD_BLOCK_SIZE][y & 15][x & 15];
+}
+
+/*
+ * Access player information in wilderness
+ */
+static pcave_type *access_pwild(int y, int x)
+{
+	/*
+	 * Divide by 16 to get block.
+	 * Logical AND with 15 to get location within block.
+	 */
+	return &p_ptr->pwild[(y / WILD_BLOCK_SIZE) - p_ptr->old_wild_y]
+		[(x / WILD_BLOCK_SIZE) - p_ptr->old_wild_x][y & 15][x & 15];
 }
 
 
@@ -2518,10 +2540,7 @@ void init_wild_cache(void)
 {
 	int x = p_ptr->old_wild_x, y = p_ptr->old_wild_y;
 	int i, j;
-	
-	/* Move square in bounds */
-	shift_in_bounds(&x, &y);
-	
+		
 	/* Allocate blocks around player */
 	for (i = 0; i < WILD_VIEW; i++)
 	{
@@ -2537,10 +2556,7 @@ static void del_wild_cache(void)
 {
 	int x = p_ptr->old_wild_x, y = p_ptr->old_wild_y;
 	int i, j;
-	
-	/* Move square in bounds */
-	shift_in_bounds(&x, &y);
-	
+		
 	/* Deallocate blocks around player */
 	for (i = 0; i < WILD_VIEW; i++)
 	{
@@ -2560,8 +2576,6 @@ static void del_wild_cache(void)
 
 void change_level(int level)
 {
-	int x, y;
-
 	bool switched = FALSE;
 
 	/* Hack - reset trap detection flag */
@@ -2595,13 +2609,8 @@ void change_level(int level)
 #endif /* 0 */
 
 		/* Initialise the boundary */
-		x = p_ptr->old_wild_x;
-		y = p_ptr->old_wild_y;
-		
-		shift_in_bounds(&x, &y);
-		
-		p_ptr->min_wid = x * WILD_BLOCK_SIZE;
-		p_ptr->min_hgt = y * WILD_BLOCK_SIZE;
+		p_ptr->min_wid = p_ptr->old_wild_x * WILD_BLOCK_SIZE;
+		p_ptr->min_hgt = p_ptr->old_wild_y * WILD_BLOCK_SIZE;
 		p_ptr->max_wid = p_ptr->min_wid + WILD_VIEW * WILD_BLOCK_SIZE;
 		p_ptr->max_hgt = p_ptr->min_hgt + WILD_VIEW * WILD_BLOCK_SIZE;
 

@@ -157,9 +157,17 @@ static int wild_first_town[START_STORE_NUM] =
 /* Find a place for the player */
 static void place_player_start(s32b *x, s32b *y, u16b this_town)
 {
-	/* Reset 'old' block location */
-	p_ptr->old_wild_x = town[this_town].x;
-	p_ptr->old_wild_y = town[this_town].y;
+	int tempx, tempy;
+	
+	tempx = (int) town[this_town].x;
+	tempy = (int) town[this_town].y;
+	
+	/* Get corner of visible region */
+	shift_in_bounds(&tempx, &tempy);
+	
+	/* Set corner of visible region */
+	p_ptr->old_wild_x = tempx;
+	p_ptr->old_wild_y = tempy;
 	
 	/* Hack - Reset player position to be on the stairs in town */
 	*x = town[this_town].x * 16 + wild_stairs_x;
