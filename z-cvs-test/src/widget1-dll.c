@@ -51,8 +51,8 @@ static Tk_OptionSpec optionSpecs[20] = {
      "-1", -1, Tk_Offset(Widget, hitx), 0, 0, 0},
     {TK_OPTION_INT, "-hity", "", "",
      "-1", -1, Tk_Offset(Widget, hity), 0, 0, 0},
-    {TK_OPTION_END, (char *) NULL, (char *) NULL, (char *) NULL,
-     (char *) NULL, 0, -1, 0, 0, 0}
+    {TK_OPTION_END, NULL, NULL, NULL,
+     NULL, 0, -1, 0, 0, 0}
 };
 
 static Tk_OptionTable optionTable = None;
@@ -285,7 +285,7 @@ int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
 
 	/* Create a new Tk window with the given name */
     tkwin = Tk_CreateWindowFromPath(interp, Tk_MainWindow(interp),
-	    Tcl_GetString(objv[1]), (char *) NULL);
+	    Tcl_GetString(objv[1]), NULL);
 
 	/* The window could not be created */
 	if (tkwin == NULL)
@@ -548,7 +548,7 @@ int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl
 			if (objc <= 3)
 			{
 				objPtr = Tk_GetOptionInfo(interp, (char *) widgetPtr,
-					optionTable, (objc == 3) ? objv[2] : (Tcl_Obj *) NULL,
+					optionTable, (objc == 3) ? objv[2] : NULL,
 					widgetPtr->tkwin);
 				if (objPtr == NULL)
 				{
@@ -1011,7 +1011,7 @@ int Widget_Configure(Tcl_Interp *interp, Widget *widgetPtr, int objc, Tcl_Obj *C
 		     * First pass: set options to new values.
 		     */
 			if (Tk_SetOptions(interp, (char *) widgetPtr, optionTable, objc, objv,
-				widgetPtr->tkwin, &savedOptions, (int *) NULL) != TCL_OK)
+				widgetPtr->tkwin, &savedOptions, NULL) != TCL_OK)
 			{
 				continue;
 			}
@@ -2096,7 +2096,7 @@ badType:
 
 	/* Set the error */
     Tcl_AppendResult(interp, "unknown or ambiguous item type \"",
-		t, "\"", (char *) NULL);
+		t, "\"", NULL);
 error:
 
 	/* Failure */
@@ -2138,7 +2138,7 @@ int WidgetItem_Cget(Tcl_Interp *interp, Widget *widgetPtr,
 	{
 		/* Set the error */
 		Tcl_AppendResult(interp, format("bad item index \"%d\"", index),
-			(char *) NULL);
+			NULL);
 
 		/* Failure */
 		return TCL_ERROR;
@@ -2199,7 +2199,7 @@ int WidgetItem_Configure(Tcl_Interp *interp, Widget *widgetPtr,
 	{
 		/* Set the error */
 		Tcl_AppendResult(interp, format("bad item index \"%d\"", index),
-			(char *) NULL);
+			NULL);
 
 		/* Failure */
 		return TCL_ERROR;
@@ -2216,7 +2216,7 @@ int WidgetItem_Configure(Tcl_Interp *interp, Widget *widgetPtr,
 	{
 		objPtr = Tk_GetOptionInfo(interp, (char *) itemPtr,
 			itemPtr->typePtr->optionTable,
-			(objc == 4) ? objv[3] : (Tcl_Obj *) NULL,
+			(objc == 4) ? objv[3] : NULL,
 			widgetPtr->tkwin);
 		if (objPtr == NULL)
 		{

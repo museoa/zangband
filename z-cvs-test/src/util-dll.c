@@ -501,7 +501,7 @@ int objcmd_palette_set(ClientData clientData, Tcl_Interp *interp, int objc,
 }
 
 static CommandInit commandInit[] = {
-	{0, "palette", 0, 0, (char *) NULL, (Tcl_ObjCmdProc *) NULL, (ClientData) 0},
+	{0, "palette", 0, 0, NULL, NULL, (ClientData) 0},
 		{1, "nearest", 2, 2, "color", objcmd_palette_nearest, (ClientData) 0},
 		{1, "set", 2, 3, "?color?", objcmd_palette_set, (ClientData) 0},
 	{0, NULL, 0, 0, NULL, NULL, 0}

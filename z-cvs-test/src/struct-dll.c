@@ -1039,7 +1039,7 @@ static int objcmd_set(ClientData clientData, Tcl_Interp *interp, int objc,
 }
 
 static CommandInit commandInit[] = {
-	{0, "struct", 0, 0, (char *) NULL, (Tcl_ObjCmdProc *) NULL, (ClientData) 0},
+	{0, "struct", 0, 0, NULL, NULL, (ClientData) 0},
 		{1, "find", 2, 0, "array ?arg ...?", objcmd_find, (ClientData) 0},
 		{1, "flags", 4, 4, "array index field", objcmd_flags, (ClientData) 0},
 		{1, "info", 4, 0, "array index option ?arg ...?", objcmd_info, (ClientData) 0},

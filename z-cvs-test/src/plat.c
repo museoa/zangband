@@ -37,18 +37,18 @@ int AngbandTk_CmdChooseFont(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_
     /* Initialize members of the CHOOSEFONT structure. */ 
  
     cf.lStructSize = sizeof(CHOOSEFONT); 
-    cf.hwndOwner = (HWND)NULL; 
-    cf.hDC = (HDC)NULL; 
+    cf.hwndOwner = NULL; 
+    cf.hDC = NULL; 
     cf.lpLogFont = &lf; 
     cf.iPointSize = 0; 
     cf.Flags = CF_SCREENFONTS; 
     cf.rgbColors = RGB(0,0,0); 
     cf.lCustData = 0L; 
-    cf.lpfnHook = (LPCFHOOKPROC)NULL; 
-    cf.lpTemplateName = (LPSTR)NULL; 
+    cf.lpfnHook = NULL; 
+    cf.lpTemplateName = NULL; 
 
-    cf.hInstance = (HINSTANCE) NULL; 
-    cf.lpszStyle = (LPSTR)NULL; 
+    cf.hInstance = NULL; 
+    cf.lpszStyle = NULL; 
     cf.nFontType = SCREEN_FONTTYPE; 
     cf.nSizeMin = 0; 
     cf.nSizeMax = 0; 

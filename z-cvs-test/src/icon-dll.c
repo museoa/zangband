@@ -989,7 +989,7 @@ int WriteIconFile(Tcl_Interp *interp, char *utfFileName, t_icon_data *idp)
 
 	/* Open the file for writing */
 	chan = Tcl_OpenFileChannel(interp, fileName, "w", 0644);
-	if (chan == (Tcl_Channel) NULL)
+	if (chan == NULL)
 	{
         Tcl_ResetResult(interp);
 		goto nowrite;
@@ -1015,7 +1015,7 @@ int WriteIconFile(Tcl_Interp *interp, char *utfFileName, t_icon_data *idp)
 
 nowrite:
 	Tcl_AppendResult(interp, "couldn't write file \"", fileName,
-		"\": ", Tcl_PosixError(interp), (char *) NULL);
+		"\": ", Tcl_PosixError(interp), NULL);
 
 error:
 	if (fileBuf != NULL)
@@ -1078,13 +1078,13 @@ int ReadIconFile(Tcl_Interp *interp, char *fileName, IconPtr *iconData,
 	if ((statBuf.st_size % ICON_LENGTH) != 0)
 	{
 		Tcl_AppendResult(interp, "bad size on icon file \"", fileName,
-			"\"", (char *) NULL);
+			"\"", NULL);
 		goto error;
 	}
 
 	/* Open the file for reading */
 	chan = Tcl_OpenFileChannel(interp, fileName, "r", 0644);
-	if (chan == (Tcl_Channel) NULL)
+	if (chan == NULL)
 	{
         Tcl_ResetResult(interp);
 		goto noread;
@@ -1111,7 +1111,7 @@ int ReadIconFile(Tcl_Interp *interp, char *fileName, IconPtr *iconData,
 
 noread:
 	Tcl_AppendResult(interp, "couldn't read file \"", fileName,
-		"\": ", Tcl_PosixError(interp), (char *) NULL);
+		"\": ", Tcl_PosixError(interp), NULL);
 
 error:
 	if (fileBuf != NULL)
@@ -1835,7 +1835,7 @@ objcmd_icon_photo(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 		/* Set the error */
 	    Tcl_AppendResult(interp, "image \"", imageName,
 	    	"\" doesn't exist or is not a photo image",
-	    	(char *) NULL);
+	    	NULL);
 
 		/* Failure */
 		return TCL_ERROR;

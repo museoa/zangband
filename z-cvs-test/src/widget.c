@@ -32,8 +32,8 @@ extern int vault_symbol_proc(Widget *widgetPtr, int y, int x);
 static Tk_OptionSpec extraOptions[] = {
     {TK_OPTION_INT, "-vaultnum", "vaultNum", "VaultNum",
      "0", -1, Tk_Offset(ExWidget, vaultNum), 0, 0, 0},
-    {TK_OPTION_END, (char *) NULL, (char *) NULL, (char *) NULL,
-     (char *) NULL, 0, -1, 0, 0, 0}
+    {TK_OPTION_END, NULL, NULL, NULL,
+     NULL, 0, -1, 0, 0, 0}
 };
 
 /*

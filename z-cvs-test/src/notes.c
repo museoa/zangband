@@ -72,7 +72,7 @@ void add_note(char *note, char code)
 {
 	char buf[255];
 	char long_day[25];
-	time_t ct = time((time_t*)NULL);
+	time_t ct = time(NULL);
 	char depths[32];
 
 

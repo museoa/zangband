@@ -76,41 +76,41 @@ static Tk_CustomOption stateOption = {
 static Tk_CustomOption tagsOption = {
 	Tk_CanvasTagsParseProc,
     Tk_CanvasTagsPrintProc,
-	(ClientData) NULL
+	NULL
 };
 
 static Tk_CustomOption assignOption = {
 	Assign_ParseProc,
     Assign_PrintProc,
-	(ClientData) NULL
+	NULL
 };
 
 static Tk_ConfigSpec configSpecs[] = {
-    {TK_CONFIG_ANCHOR, "-anchor", (char *) NULL, (char *) NULL,
+    {TK_CONFIG_ANCHOR, "-anchor", NULL, NULL,
 	 "nw", Tk_Offset(WidgetItem, anchor),
 	 TK_CONFIG_DONT_SET_DEFAULT},
-    {TK_CONFIG_COLOR, "-bordercolor", (char *) NULL, (char *) NULL,
+    {TK_CONFIG_COLOR, "-bordercolor", NULL, NULL,
 	 "Yellow", Tk_Offset(WidgetItem, borderColor),
 	 TK_CONFIG_DONT_SET_DEFAULT | TK_CONFIG_NULL_OK},
-    {TK_CONFIG_INT, "-borderdistance", (char *) NULL, (char *) NULL,
+    {TK_CONFIG_INT, "-borderdistance", NULL, NULL,
 	 "1", Tk_Offset(WidgetItem, borderDist), 0},
-    {TK_CONFIG_INT, "-borderwidth", (char *) NULL, (char *) NULL,
+    {TK_CONFIG_INT, "-borderwidth", NULL, NULL,
 	 "2", Tk_Offset(WidgetItem, borderWidth), 0},
-    {TK_CONFIG_CUSTOM, "-assign", (char *) NULL, (char *) NULL,
-	 (char *) NULL, Tk_Offset(WidgetItem, assign), TK_CONFIG_USER_BIT,
+    {TK_CONFIG_CUSTOM, "-assign", NULL, NULL,
+	 NULL, Tk_Offset(WidgetItem, assign), TK_CONFIG_USER_BIT,
 	 &assignOption},
-    {TK_CONFIG_CUSTOM, "-assignbg", (char *) NULL, (char *) NULL,
-	 (char *) NULL, Tk_Offset(WidgetItem, assignbg), TK_CONFIG_USER_BIT,
+    {TK_CONFIG_CUSTOM, "-assignbg", NULL, NULL,
+	 NULL, Tk_Offset(WidgetItem, assignbg), TK_CONFIG_USER_BIT,
 	 &assignOption},
 #if TK_MINOR_VERSION >= 3
-    {TK_CONFIG_CUSTOM, "-state", (char *) NULL, (char *) NULL,
-	 (char *) NULL, Tk_Offset(Tk_Item, state), TK_CONFIG_NULL_OK,
+    {TK_CONFIG_CUSTOM, "-state", NULL, NULL,
+	 NULL, Tk_Offset(Tk_Item, state), TK_CONFIG_NULL_OK,
 	 &stateOption},
 #endif /* 8.3 */
-    {TK_CONFIG_CUSTOM, "-tags", (char *) NULL, (char *) NULL,
-	 (char *) NULL, 0, TK_CONFIG_NULL_OK, &tagsOption},
-    {TK_CONFIG_END, (char *) NULL, (char *) NULL, (char *) NULL,
-	 (char *) NULL, 0, 0}
+    {TK_CONFIG_CUSTOM, "-tags", NULL, NULL,
+	 NULL, 0, TK_CONFIG_NULL_OK, &tagsOption},
+    {TK_CONFIG_END, NULL, NULL, NULL,
+	 NULL, 0, 0}
 };
 
 static int		WidgetToArea _ANSI_ARGS_((Tk_Canvas canvas,
@@ -167,15 +167,15 @@ Tk_ItemType WidgetType = {
 #endif /* not 8.3 */
     WidgetToPoint,					/* pointProc */
     WidgetToArea,					/* areaProc */
-    (Tk_ItemPostscriptProc *) NULL,	/* postscriptProc */
+    NULL,							/* postscriptProc */
     ScaleWidget,					/* scaleProc */
     TranslateWidget,				/* translateProc */
-    (Tk_ItemIndexProc *) NULL,		/* indexProc */
-    (Tk_ItemCursorProc *) NULL,		/* icursorProc */
-    (Tk_ItemSelectionProc *) NULL,	/* selectionProc */
-    (Tk_ItemInsertProc *) NULL,		/* insertProc */
-    (Tk_ItemDCharsProc *) NULL,		/* dTextProc */
-    (Tk_ItemType *) NULL			/* nextPtr */
+    NULL,	   						/* indexProc */
+    NULL,							/* icursorProc */
+    NULL,							/* selectionProc */
+    NULL,	  						/* insertProc */
+    NULL,	 						/* dTextProc */
+    NULL							/* nextPtr */
 };
 
 static int
@@ -200,7 +200,7 @@ CreateWidget(
 		Tcl_AppendResult(interp, "wrong # args: should be \"",
 			Tk_PathName(Tk_CanvasTkwin(canvas)), " create ",
 			itemPtr->typePtr->name, " x y ?options?\"",
-			(char *) NULL);
+			NULL);
 		return TCL_ERROR;
     }
 
@@ -276,7 +276,7 @@ WidgetCoords(
     {
 		Tcl_PrintDouble(interp, widgetPtr->x, x);
 		Tcl_PrintDouble(interp, widgetPtr->y, y);
-		Tcl_AppendResult(interp, x, " ", y, (char *) NULL);
+		Tcl_AppendResult(interp, x, " ", y, NULL);
     }
     else if (argc == 2)
     {

@@ -168,60 +168,60 @@ typedef struct ProgressItem {
 #define PROGRESS_DISPLAY 0x8000
 
 static Tk_OptionSpec optionSpecProgress[] = {
-    {TK_OPTION_INT, "-x", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-x", NULL, NULL,
      "0", -1, Tk_Offset(ProgressItem, x), 0, 0,
      PROGRESS_MOVE | PROGRESS_DISPLAY},
-    {TK_OPTION_INT, "-y", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-y", NULL, NULL,
      "0", -1, Tk_Offset(ProgressItem, y), 0, 0,
      PROGRESS_MOVE | PROGRESS_DISPLAY},
-    {TK_OPTION_INT, "-width", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-width", NULL, NULL,
      "160", -1, Tk_Offset(ProgressItem, width), 0, 0,
      PROGRESS_SIZE | PROGRESS_DRAW | PROGRESS_DISPLAY},
-    {TK_OPTION_INT, "-height", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-height", NULL, NULL,
      "7", -1, Tk_Offset(ProgressItem, height), 0, 0,
      PROGRESS_SIZE | PROGRESS_DRAW | PROGRESS_DISPLAY},
-    {TK_OPTION_COLOR, "-done", (char *) NULL, (char *) NULL,
+    {TK_OPTION_COLOR, "-done", NULL, NULL,
      "Black", -1, Tk_Offset(ProgressItem, done), 0, 0,
      PROGRESS_DONE | PROGRESS_DISPLAY},
-    {TK_OPTION_COLOR, "-todo", (char *) NULL, (char *) NULL,
+    {TK_OPTION_COLOR, "-todo", NULL, NULL,
      "White", -1, Tk_Offset(ProgressItem, todo), 0, 0,
      PROGRESS_TODO | PROGRESS_DISPLAY},
-    {TK_OPTION_BOOLEAN, "-bevel", (char *) NULL, (char *) NULL,
+    {TK_OPTION_BOOLEAN, "-bevel", NULL, NULL,
      "1", -1, Tk_Offset(ProgressItem, bevel), 0, 0, 0},
-    {TK_OPTION_COLOR, "-bevellight", (char *) NULL, (char *) NULL,
+    {TK_OPTION_COLOR, "-bevellight", NULL, NULL,
      DEF_BEVEL_LIGHT, -1, Tk_Offset(ProgressItem, bevelLight), 0, 0,
      PROGRESS_BEVEL_L | PROGRESS_DISPLAY},
-    {TK_OPTION_COLOR, "-beveldark", (char *) NULL, (char *) NULL,
+    {TK_OPTION_COLOR, "-beveldark", NULL, NULL,
      DEF_BEVEL_DARK, -1, Tk_Offset(ProgressItem, bevelDark), 0, 0,
      PROGRESS_BEVEL_D | PROGRESS_DISPLAY},
 /* WIDGET_TRANSPARENCY */
-    {TK_OPTION_INT, "-done2", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-done2", NULL, NULL,
      "0", -1, Tk_Offset(ProgressItem, done2), 0, 0,
      PROGRESS_DONE | PROGRESS_DISPLAY},
-    {TK_OPTION_INT, "-todo2", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-todo2", NULL, NULL,
      "0", -1, Tk_Offset(ProgressItem, todo2), 0, 0,
      PROGRESS_TODO | PROGRESS_DISPLAY},
-    {TK_OPTION_INT, "-bevellight2", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-bevellight2", NULL, NULL,
      DEF_BEVEL_OPACITY, -1, Tk_Offset(ProgressItem, bevelLight2), 0, 0,
      PROGRESS_BEVEL_L | PROGRESS_DISPLAY},
-    {TK_OPTION_INT, "-beveldark2", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-beveldark2", NULL, NULL,
      DEF_BEVEL_OPACITY, -1, Tk_Offset(ProgressItem, bevelDark2), 0, 0,
      PROGRESS_BEVEL_D | PROGRESS_DISPLAY},
 /* */
-    {TK_OPTION_INT, "-current", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-current", NULL, NULL,
      "0", -1, Tk_Offset(ProgressItem, cur), 0, 0,
      PROGRESS_VAL | PROGRESS_DRAW | PROGRESS_DISPLAY},
-    {TK_OPTION_INT, "-maximum", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-maximum", NULL, NULL,
      "1", -1, Tk_Offset(ProgressItem, max), 0, 0, 
      PROGRESS_VAL | PROGRESS_DRAW | PROGRESS_DISPLAY},
-    {TK_OPTION_BOOLEAN, "-visible", (char *) NULL, (char *) NULL,
+    {TK_OPTION_BOOLEAN, "-visible", NULL, NULL,
      "1", -1, Tk_Offset(WidgetItem, visible), 0, 0,
      PROGRESS_DISPLAY},
-    {TK_OPTION_ANCHOR, "-anchor", (char *) NULL, (char *) NULL,
+    {TK_OPTION_ANCHOR, "-anchor", NULL, NULL,
 	 "center", -1, Tk_Offset(ProgressItem, anchor), 0, 0,
 	 PROGRESS_MOVE | PROGRESS_DISPLAY},
-    {TK_OPTION_END, (char *) NULL, (char *) NULL, (char *) NULL,
-     (char *) NULL, 0, -1, 0, 0, 0}
+    {TK_OPTION_END, NULL, NULL, NULL,
+     NULL, 0, -1, 0, 0, 0}
 };
 
 static int	CreateProgress _ANSI_ARGS_((Tcl_Interp *interp,
@@ -251,7 +251,7 @@ WidgetItemType ProgressType = {
 	DisplayProgress,
 	ChangedProgress,
 	DeleteProgress,
-	(WidgetItemType *) NULL
+	NULL
 };
 
 /* 
@@ -363,13 +363,13 @@ static int ConfigureProgress(Tcl_Interp *interp, Widget *widgetPtr,
 			if ((barPtr->header.x1 < 0) || (barPtr->width < 0) ||
 				(barPtr->header.x2 >= widgetPtr->width))
 			{
-				Tcl_AppendResult(interp, "illegal x size or position", (char *) NULL);
+				Tcl_AppendResult(interp, "illegal x size or position", NULL);
 				continue;
 			}
 			if ((barPtr->header.y1 < 0) || (barPtr->height < 0) ||
 				(barPtr->header.y2 >= widgetPtr->height))
 			{
-				Tcl_AppendResult(interp, "illegal y size or position", (char *) NULL);
+				Tcl_AppendResult(interp, "illegal y size or position", NULL);
 				continue;
 			}
 		
@@ -397,7 +397,7 @@ static int ConfigureProgress(Tcl_Interp *interp, Widget *widgetPtr,
 				
 				if (BAD_COLOR(barPtr->done2) || BAD_COLOR(barPtr->todo2))
 				{
-					Tcl_AppendResult(interp, "bad opacity", (char *) NULL);
+					Tcl_AppendResult(interp, "bad opacity", NULL);
 					continue;
 				}
 			
@@ -415,7 +415,7 @@ static int ConfigureProgress(Tcl_Interp *interp, Widget *widgetPtr,
 			if ((barPtr->cur < 0) || (barPtr->cur > barPtr->max) ||
 				(barPtr->max < 1))
 			{
-				Tcl_AppendResult(interp, "bad min/max value", (char *) NULL);
+				Tcl_AppendResult(interp, "bad min/max value", NULL);
 				continue;
 			}
 			barPtr->length = (barPtr->width - 2) * ((long) barPtr->cur) / barPtr->max;
@@ -439,14 +439,14 @@ static int ConfigureProgress(Tcl_Interp *interp, Widget *widgetPtr,
 					(barPtr->header.x2 >= widgetPtr->width))
 				{
 					Tcl_AppendResult(interp, "illegal x size or position",
-						(char *) NULL);
+						 NULL);
 					continue;
 				}
 				if ((barPtr->header.y1 < 0) || (barPtr->height < 0) ||
 					(barPtr->header.y2 >= widgetPtr->height))
 				{
 					Tcl_AppendResult(interp, "illegal y size or position",
-						(char *) NULL);
+						NULL);
 					continue;
 				}
 			
@@ -483,7 +483,7 @@ static int ConfigureProgress(Tcl_Interp *interp, Widget *widgetPtr,
 				if (BAD_COLOR(barPtr->done1) || BAD_COLOR(barPtr->done2) ||
 					BAD_COLOR(barPtr->todo1) || BAD_COLOR(barPtr->todo2))
 				{
-					Tcl_AppendResult(interp, "bad color or opacity", (char *) NULL);
+					Tcl_AppendResult(interp, "bad color or opacity", NULL);
 					continue;
 				}
 			
@@ -527,7 +527,7 @@ static int ConfigureProgress(Tcl_Interp *interp, Widget *widgetPtr,
 				if ((barPtr->cur < 0) || (barPtr->cur > barPtr->max) ||
 					(barPtr->max < 1))
 				{
-					Tcl_AppendResult(interp, "bad min/max value", (char *) NULL);
+					Tcl_AppendResult(interp, "bad min/max value", NULL);
 					continue;
 				}
 				barPtr->length = (barPtr->width - 2) * ((long) barPtr->cur) / barPtr->max;
@@ -880,77 +880,77 @@ static char *keyword_config_text[] = {
 	NULL};
 	
 static Tk_OptionSpec optionSpecText[] = {
-    {TK_OPTION_PIXELS, "-x", (char *) NULL, (char *) NULL,
+    {TK_OPTION_PIXELS, "-x", NULL, NULL,
      "0", -1, Tk_Offset(TextItem, x), 0, 0, 0},
-    {TK_OPTION_PIXELS, "-y", (char *) NULL, (char *) NULL,
+    {TK_OPTION_PIXELS, "-y", NULL, NULL,
      "0", -1, Tk_Offset(TextItem, y), 0, 0, 0},
-    {TK_OPTION_ANCHOR, "-anchor", (char *) NULL, (char *) NULL,
+    {TK_OPTION_ANCHOR, "-anchor", NULL, NULL,
 	 "center", -1, Tk_Offset(TextItem, anchor), 0, 0, 0},
-    {TK_OPTION_FONT, "-font", (char *) NULL, (char *) NULL,
+    {TK_OPTION_FONT, "-font", NULL, NULL,
 	 "{MS Sans Serif} 8", -1, Tk_Offset(TextItem, tkfont), 0, 0,
 	 TEXT_FONT | TEXT_TEXT | TEXT_DRAW | TEXT_DISPLAY},
-    {TK_OPTION_JUSTIFY, "-justify", (char *) NULL, (char *) NULL,
+    {TK_OPTION_JUSTIFY, "-justify", NULL, NULL,
 	 "left", -1, Tk_Offset(TextItem, justify), 0, 0,
 	 TEXT_TEXT | TEXT_DRAW | TEXT_DISPLAY},
-    {TK_OPTION_STRING, "-text", (char *) NULL, (char *) NULL,
+    {TK_OPTION_STRING, "-text", NULL, NULL,
 	 "", -1, Tk_Offset(TextItem, text), 0, 0,
 	 TEXT_TEXT | TEXT_DRAW | TEXT_DISPLAY},
-    {TK_OPTION_PIXELS, "-width", (char *) NULL, (char *) NULL,
+    {TK_OPTION_PIXELS, "-width", NULL, NULL,
      "160", -1, Tk_Offset(TextItem, width), 0, 0,
      TEXT_SIZE | TEXT_DRAW | TEXT_DISPLAY},
-    {TK_OPTION_PIXELS, "-height", (char *) NULL, (char *) NULL,
+    {TK_OPTION_PIXELS, "-height", NULL, NULL,
      "7", -1, Tk_Offset(TextItem, height), 0, 0,
      TEXT_SIZE | TEXT_DRAW | TEXT_DISPLAY},
-    {TK_OPTION_COLOR, "-fill", (char *) NULL, (char *) NULL,
+    {TK_OPTION_COLOR, "-fill", NULL, NULL,
      DEF_TEXT_FILL, -1, Tk_Offset(TextItem, fill), 0, 0,
      TEXT_FILL | TEXT_DISPLAY},
-    {TK_OPTION_COLOR, "-background", (char *) NULL, (char *) NULL,
+    {TK_OPTION_COLOR, "-background", NULL, NULL,
      DEF_TEXT_BACK, -1, Tk_Offset(TextItem, background),
      TK_OPTION_NULL_OK, 0,
      TEXT_BACKGROUND | TEXT_DISPLAY},
-    {TK_OPTION_BOOLEAN, "-bevel", (char *) NULL, (char *) NULL,
+    {TK_OPTION_BOOLEAN, "-bevel", NULL, NULL,
      "1", -1, Tk_Offset(TextItem, bevel), 0, 0, 0},
-    {TK_OPTION_COLOR, "-bevellight", (char *) NULL, (char *) NULL,
+    {TK_OPTION_COLOR, "-bevellight", NULL, NULL,
      DEF_BEVEL_LIGHT, -1, Tk_Offset(TextItem, bevelLight), 0, 0,
      TEXT_BEVEL_L | TEXT_DISPLAY},
-    {TK_OPTION_COLOR, "-beveldark", (char *) NULL, (char *) NULL,
+    {TK_OPTION_COLOR, "-beveldark", NULL, NULL,
      DEF_BEVEL_DARK, -1, Tk_Offset(TextItem, bevelDark), 0, 0,
      TEXT_BEVEL_D | TEXT_DISPLAY},
 /* WIDGET_TRANSPARENCY */
-    {TK_OPTION_INT, "-fill2", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-fill2", NULL, NULL,
      DEF_TEXT_OPACITY, -1, Tk_Offset(TextItem, fill2), 0, 0,
      TEXT_FILL | TEXT_DISPLAY},
-    {TK_OPTION_INT, "-background2", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-background2", NULL, NULL,
      DEF_TEXT_OPACITY, -1, Tk_Offset(TextItem, background2), 0, 0,
      TEXT_BACKGROUND | TEXT_DISPLAY},
-    {TK_OPTION_INT, "-bevellight2", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-bevellight2", NULL, NULL,
      DEF_BEVEL_OPACITY, -1, Tk_Offset(TextItem, bevelLight2), 0, 0,
      TEXT_BEVEL_L | TEXT_DISPLAY},
-    {TK_OPTION_INT, "-beveldark2", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-beveldark2", NULL, NULL,
      DEF_BEVEL_OPACITY, -1, Tk_Offset(TextItem, bevelDark2), 0, 0,
      TEXT_BEVEL_D | TEXT_DISPLAY},
 /* */
-    {TK_OPTION_BOOLEAN, "-clipx", (char *) NULL, (char *) NULL,
+    {TK_OPTION_BOOLEAN, "-clipx", NULL, NULL,
      "0", -1, Tk_Offset(TextItem, clipX), 0, 0, 0},
-    {TK_OPTION_BOOLEAN, "-clipy", (char *) NULL, (char *) NULL,
+    {TK_OPTION_BOOLEAN, "-clipy", NULL, NULL,
      "0", -1, Tk_Offset(TextItem, clipY), 0, 0, 0},
-    {TK_OPTION_BOOLEAN, "-expandx", (char *) NULL, (char *) NULL,
+    {TK_OPTION_BOOLEAN, "-expandx", NULL, NULL,
      "0", -1, Tk_Offset(TextItem, expandX), 0, 0, 0},
-    {TK_OPTION_BOOLEAN, "-expandy", (char *) NULL, (char *) NULL,
+    {TK_OPTION_BOOLEAN, "-expandy", NULL, NULL,
      "0", -1, Tk_Offset(TextItem, expandY), 0, 0, 0},
-    {TK_OPTION_PIXELS, "-padleft", (char *) NULL, (char *) NULL,
+    {TK_OPTION_PIXELS, "-padleft", NULL, NULL,
      "2", -1, Tk_Offset(TextItem, padLeft), 0, 0, 0},
-    {TK_OPTION_PIXELS, "-padright", (char *) NULL, (char *) NULL,
+    {TK_OPTION_PIXELS, "-padright", NULL, NULL,
      "2", -1, Tk_Offset(TextItem, padRight), 0, 0, 0},
-    {TK_OPTION_PIXELS, "-padtop", (char *) NULL, (char *) NULL,
+    {TK_OPTION_PIXELS, "-padtop", NULL, NULL,
      "0", -1, Tk_Offset(TextItem, padTop), 0, 0, 0},
-    {TK_OPTION_PIXELS, "-padbottom", (char *) NULL, (char *) NULL,
+    {TK_OPTION_PIXELS, "-padbottom", NULL, NULL,
      "0", -1, Tk_Offset(TextItem, padBottom), 0, 0, 0},
-    {TK_OPTION_BOOLEAN, "-visible", (char *) NULL, (char *) NULL,
+    {TK_OPTION_BOOLEAN, "-visible", NULL, NULL,
      "0", -1, Tk_Offset(WidgetItem, visible), 0, 0,
      TEXT_DISPLAY},
-    {TK_OPTION_END, (char *) NULL, (char *) NULL, (char *) NULL,
-     (char *) NULL, 0, -1, 0, 0, 0}
+    {TK_OPTION_END, NULL, NULL, NULL,
+     NULL, 0, -1, 0, 0, 0}
 };
 
 static int	CreateText _ANSI_ARGS_((Tcl_Interp *interp,
@@ -981,7 +981,7 @@ WidgetItemType TextType = {
 	DisplayText,
 	ChangedText,
 	DeleteText,
-	(WidgetItemType *) NULL
+	NULL
 };
 
 /*
@@ -1581,7 +1581,7 @@ static int SanityCheckText(Widget *widgetPtr, TextItem *textPtr)
 		BAD_COLOR(textPtr->fill2) || BAD_COLOR(textPtr->background2))
 	{
 		Tcl_AppendResult(widgetPtr->interp, "bad color or opacity",
-			(char *) NULL);
+			NULL);
 		return TCL_ERROR;
 	}
 #endif
@@ -1591,7 +1591,7 @@ static int SanityCheckText(Widget *widgetPtr, TextItem *textPtr)
 		((itemPtr->x2 - itemPtr->x1) > textPtr->width))
 	{
 		Tcl_AppendResult(widgetPtr->interp, "illegal x size or position",
-			(char *) NULL);
+			NULL);
 		return TCL_ERROR;
 	}
 
@@ -1601,7 +1601,7 @@ static int SanityCheckText(Widget *widgetPtr, TextItem *textPtr)
 		((itemPtr->y2 - itemPtr->y1) > textPtr->height))
 	{
 		Tcl_AppendResult(widgetPtr->interp, "illegal y size or position",
-			(char *) NULL);
+			NULL);
 		return TCL_ERROR;
 	}
 
@@ -1815,18 +1815,18 @@ typedef struct CursorItem {
 } CursorItem;
 
 static Tk_OptionSpec optionSpecCursor[] = {
-    {TK_OPTION_BOOLEAN, "-visible", (char *) NULL, (char *) NULL,
+    {TK_OPTION_BOOLEAN, "-visible", NULL, NULL,
      "1", -1, Tk_Offset(WidgetItem, visible), 0, 0, 0},
-    {TK_OPTION_PIXELS, "-x", (char *) NULL, (char *) NULL,
+    {TK_OPTION_PIXELS, "-x", NULL, NULL,
      "0", -1, Tk_Offset(CursorItem, x), 0, 0, 0},
-    {TK_OPTION_PIXELS, "-y", (char *) NULL, (char *) NULL,
+    {TK_OPTION_PIXELS, "-y", NULL, NULL,
      "0", -1, Tk_Offset(CursorItem, y), 0, 0, 0},
-    {TK_OPTION_COLOR, "-color", (char *) NULL, (char *) NULL,
+    {TK_OPTION_COLOR, "-color", NULL, NULL,
      "yellow", -1, Tk_Offset(CursorItem, color), 0, 0, 0},
-    {TK_OPTION_INT, "-linewidth", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-linewidth", NULL, NULL,
      "2", -1, Tk_Offset(CursorItem, lineWidth), 0, 0, 0},
-    {TK_OPTION_END, (char *) NULL, (char *) NULL, (char *) NULL,
-     (char *) NULL, 0, -1, 0, 0, 0}
+    {TK_OPTION_END, NULL, NULL, NULL,
+     NULL, 0, -1, 0, 0, 0}
 };
 
 static int	KreateCursor _ANSI_ARGS_((Tcl_Interp *interp,
@@ -1851,7 +1851,7 @@ WidgetItemType CursorType = {
 	DisplayCursor,
 	NULL,
 	DeleteCursor,
-	(WidgetItemType *) NULL
+	NULL
 };
 
 /*
@@ -2100,22 +2100,22 @@ typedef struct RectItem {
 } RectItem;
 
 static Tk_OptionSpec optionSpecRect[] = {
-    {TK_OPTION_BOOLEAN, "-visible", (char *) NULL, (char *) NULL,
+    {TK_OPTION_BOOLEAN, "-visible", NULL, NULL,
      "0", -1, Tk_Offset(WidgetItem, visible), 0, 0, 0},
-    {TK_OPTION_PIXELS, "-x1", (char *) NULL, (char *) NULL,
+    {TK_OPTION_PIXELS, "-x1", NULL, NULL,
      "0", -1, Tk_Offset(RectItem, x1), 0, 0, RECT_BOUNDS},
-    {TK_OPTION_PIXELS, "-y1", (char *) NULL, (char *) NULL,
+    {TK_OPTION_PIXELS, "-y1", NULL, NULL,
      "0", -1, Tk_Offset(RectItem, y1), 0, 0, RECT_BOUNDS},
-    {TK_OPTION_PIXELS, "-x2", (char *) NULL, (char *) NULL,
+    {TK_OPTION_PIXELS, "-x2", NULL, NULL,
      "0", -1, Tk_Offset(RectItem, x2), 0, 0, RECT_BOUNDS},
-    {TK_OPTION_PIXELS, "-y2", (char *) NULL, (char *) NULL,
+    {TK_OPTION_PIXELS, "-y2", NULL, NULL,
      "0", -1, Tk_Offset(RectItem, y2), 0, 0, RECT_BOUNDS},
-    {TK_OPTION_COLOR, "-color", (char *) NULL, (char *) NULL,
+    {TK_OPTION_COLOR, "-color", NULL, NULL,
      "yellow", -1, Tk_Offset(RectItem, color), 0, 0, 0},
-    {TK_OPTION_INT, "-linewidth", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-linewidth", NULL, NULL,
      "2", -1, Tk_Offset(RectItem, lineWidth), 0, 0, 0},
-    {TK_OPTION_END, (char *) NULL, (char *) NULL, (char *) NULL,
-     (char *) NULL, 0, -1, 0, 0, 0}
+    {TK_OPTION_END, NULL, NULL, NULL,
+     NULL, 0, -1, 0, 0, 0}
 };
 
 static int CreateRect _ANSI_ARGS_((Tcl_Interp *interp,
@@ -2140,7 +2140,7 @@ WidgetItemType RectType = {
 	DisplayRect,
 	NULL,
 	DeleteRect,
-	(WidgetItemType *) NULL
+	NULL
 };
 
 /*

@@ -397,10 +397,10 @@ void map_draw_invalid(Widget *widgetPtr)
 }
 
 static CommandInit commandInit[] = {
-	{0, "symbol", 0, 0, (char *) NULL, (Tcl_ObjCmdProc *) NULL, (ClientData) 0},
+	{0, "symbol", 0, 0, NULL, NULL, (ClientData) 0},
 		{1, "assign", 3, 4, "group member ?symbol?", objcmd_symbol_assign, (ClientData) 0},
 		{1, "special", 2, 3, "pet|dark ?symbol?", objcmd_symbol_special, (ClientData) 0},
-	{0, (char *) NULL, 0, 0, (char *) NULL, (Tcl_ObjCmdProc *) NULL, (ClientData) 0}
+	{0, NULL, 0, 0, NULL, NULL, (ClientData) 0}
 };
 
 static void assign_wipe(t_symbol_assign *groupPtr)

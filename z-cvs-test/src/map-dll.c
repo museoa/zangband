@@ -1130,16 +1130,16 @@ error:
 }
 
 static CommandInit commandInit[] = {
-	{0, "symbol", 0, 0, (char *) NULL, (Tcl_ObjCmdProc *) NULL, (ClientData) 0},
+	{0, "symbol", 0, 0, NULL, NULL, (ClientData) 0},
 		{1, "cget", 3, 3, "name option", objcmd_symbol_cget, (ClientData) 0},
 		{1, "configure", 4, 0, "symbol option value ?option value ...?", objcmd_symbol_configure, (ClientData) 0},
 		{1, "data", 3, 3, "name size", objcmd_symbol_data, (ClientData) 0},
 		{1, "image2bits", 4, 4, "imageName size symbolList", objcmd_symbol_image2bits, (ClientData) 0},
-		{1, "names", 1, 1, (char *) NULL, objcmd_symbol_names, (ClientData) 0},
+		{1, "names", 1, 1, NULL, objcmd_symbol_names, (ClientData) 0},
 		{1, "new", 2, 0, "name ?option value ...?", objcmd_symbol_new, (ClientData) 0},
 		{1, "read", 2, 2, "path", objcmd_symbol_read, (ClientData) 0},
 		{1, "write", 2, 2, "path", objcmd_symbol_write, (ClientData) 0},
-	{0, (char *) NULL, 0, 0, (char *) NULL, (Tcl_ObjCmdProc *) NULL, (ClientData) 0}
+	{0, NULL, 0, 0, NULL, NULL, (ClientData) 0}
 };
 
 int Map_Init(Tcl_Interp *interp)

@@ -2332,9 +2332,9 @@ void angtk_rebuild_town(void)
 }
 
 static CommandInit commandInit[] = {
- {0, "vault", 0, 0, (char *) NULL, (Tcl_ObjCmdProc *) NULL, (ClientData) 0},
+ {0, "vault", 0, 0, NULL, NULL, (ClientData) 0},
   {1, "copy", 10, 10, "plane vaultId y1 x1 y2 x2 vaultId y3 x3", objcmd_vault_copy, (ClientData) 0},
-  {1, "create", 0, 0, (char *) NULL, objcmd_vault_create, (ClientData) 0},
+  {1, "create", 0, 0, NULL, objcmd_vault_create, (ClientData) 0},
   {1, "current", 0, 2, "?vaultId?", objcmd_vault_current, (ClientData) 0},
   {1, "delete", 2, 2, "vaultId", objcmd_vault_delete, (ClientData) 0},
   {1, "get", 0, 0, "vaultId plane ?y1 x1? ?y2 x2?", objcmd_vault_get, (ClientData) 0},
@@ -2347,7 +2347,7 @@ static CommandInit commandInit[] = {
   {1, "town", 0, 2, "?vaultId?", objcmd_vault_town, (ClientData) 0},
   {1, "width", 2, 3, "vaultId ?width?", objcmd_vault_width, (ClientData) 0},
   {1, "write", 3, 3, "vaultId file", objcmd_vault_write, (ClientData) 0},
- {0, (char *) NULL, 0, 0, (char *) NULL, (Tcl_ObjCmdProc *) NULL, (ClientData) 0}
+ {0, NULL, 0, 0, NULL, NULL, (ClientData) 0}
 };
 
 void init_vault(void)

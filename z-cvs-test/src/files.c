@@ -5023,7 +5023,7 @@ void close_game(void)
 		{
 			char long_day[30];
 			char buf[80];
-			time_t ct = time((time_t *) NULL);
+			time_t ct = time(NULL);
 
 			/* Get the date */
 			strftime(long_day, 30, "%Y-%m-%d at %H:%M:%S", localtime(&ct));
@@ -5092,7 +5092,7 @@ void close_game(void)
 		{
 			char long_day[30];
 			char buf[80];
-			time_t ct = time((time_t *) NULL);
+			time_t ct = time(NULL);
 
 			/* Get the date */
 			strftime(long_day, 30, "%Y-%m-%d at %H:%M:%S", localtime(&ct));

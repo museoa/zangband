@@ -2281,8 +2281,7 @@ objcmd_birth_info(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 
 	static char *infoName[] = {"has_prev", "stat_limit",
-		"realm_name", "max_quest",
-		NULL};
+		"realm_name", "max_quest", NULL};
 	int option;
 
 	/* Initialize if needed */
@@ -2818,27 +2817,27 @@ objcmd_birth_realm2(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
 }
 
 static CommandInit commandInit[] = {
-	{0, "birth", 0, 0, (char *) NULL, (Tcl_ObjCmdProc *) NULL, (ClientData) 0},
+	{0, "birth", 0, 0, NULL, NULL, (ClientData) 0},
 		{1, "class", 2, 2, "className", objcmd_birth_class, (ClientData) 0},
-		{1, "done", 0, 0, (char *) NULL, objcmd_birth_done, (ClientData) 0},
-		{1, "done_options", 0, 0, (char *) NULL, objcmd_birth_done_options, (ClientData) 0},
+		{1, "done", 0, 0, NULL, objcmd_birth_done, (ClientData) 0},
+		{1, "done_options", 0, 0, NULL, objcmd_birth_done_options, (ClientData) 0},
 		{1, "gender", 2, 2, "genderName", objcmd_birth_gender, (ClientData) 0},
-		{1, "get_player", 0, 0, (char *) NULL, objcmd_birth_get_player, (ClientData) 0},
-		{1, "get_stats", 0, 0, (char *) NULL, objcmd_birth_get_stats, (ClientData) 0},
+		{1, "get_player", 0, 0, NULL, objcmd_birth_get_player, (ClientData) 0},
+		{1, "get_stats", 0, 0, NULL, objcmd_birth_get_stats, (ClientData) 0},
 		{1, "info", 2, 2, "option", objcmd_birth_info, (ClientData) 0},
-		{1, "load_prev", 0, 0, (char *) NULL, objcmd_birth_load_prev, (ClientData) 0},
+		{1, "load_prev", 0, 0, NULL, objcmd_birth_load_prev, (ClientData) 0},
 		{1, "name", 2, 2, "playerName", objcmd_birth_name, (ClientData) 0},
 		{1, "option", 2, 3, "optionName ?value?", objcmd_birth_option, (ClientData) 0},
-		{1, "points", 0, 0, (char *) NULL, (Tcl_ObjCmdProc *) NULL, (ClientData) 0},
+		{1, "points", 0, 0, NULL, NULL, (ClientData) 0},
 			{2, "cost", 2, 2, "stat", objcmd_birth_points_cost, (ClientData) 0},
 			{2, "stat", 2, 3, "stat ?value?", objcmd_birth_points_stat, (ClientData) 0},
 		{1, "race", 2, 2, "raceName", objcmd_birth_race, (ClientData) 0},
 		{1, "realm1", 2, 2, "realmName", objcmd_birth_realm1, (ClientData) 0},
 		{1, "realm2", 2, 2, "realmName", objcmd_birth_realm2, (ClientData) 0},
-		{1, "reset", 0, 0, (char *) NULL, objcmd_birth_reset, (ClientData) 0},
-		{1, "save_prev", 0, 0, (char *) NULL, objcmd_birth_save_prev, (ClientData) 0},
+		{1, "reset", 0, 0, NULL, objcmd_birth_reset, (ClientData) 0},
+		{1, "save_prev", 0, 0, NULL, objcmd_birth_save_prev, (ClientData) 0},
 		{1, "stat", 3, 3, "option statName", objcmd_birth_stat, (ClientData) 0},
-	{0, (char *) NULL, 0, 0, (char *) NULL, (Tcl_ObjCmdProc *) NULL, (ClientData) 0}
+	{0, NULL, 0, 0, NULL, NULL, (ClientData) 0}
 };
 
 void init_birth(void)

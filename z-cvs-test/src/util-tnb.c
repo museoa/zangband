@@ -78,7 +78,7 @@ int objcmd_fontdesc(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 int objcmd_menuentrystate(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	static char *tkMenuStateStrings[] = {"active", "normal", "disabled",
-		(char *) NULL};
+		NULL};
 	Tcl_HashEntry *hashEntryPtr;
 	Tcl_HashTable *menuTablePtr;
 	TkMenu *menuPtr;
@@ -394,7 +394,7 @@ objcmd_photo_copy(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 	if ((x < 0) || (x + width > photoBlock.width)
 		|| (y < 0) || (y + height > photoBlock.height))
 	{
-	    Tcl_AppendResult(interp, "coordinates out of range", (char *) NULL);
+	    Tcl_AppendResult(interp, "coordinates out of range", NULL);
 	    return TCL_ERROR;
 	}
 
@@ -499,7 +499,7 @@ objcmd_photo_get(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 	if ((x < 0) || (x >= masterPtr->width)
 		|| (y < 0) || (y >= masterPtr->height))
 	{
-	    Tcl_AppendResult(interp, "coordinates out of range", (char *) NULL);
+	    Tcl_AppendResult(interp, "coordinates out of range", NULL);
 	    return TCL_ERROR;
 	}
 

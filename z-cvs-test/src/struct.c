@@ -1738,7 +1738,7 @@ void init_struct(void)
 	type.info = struct_monster_type;
 	type.infoProc = (StructInfoProc) struct_info_monster_type;
 	type.findProc = NULL;
-	type.matchProc = (StructFindMatchProc) NULL;
+	type.matchProc = NULL;
 	Struct_AddType(g_interp, &type);
 
 	type.name = "object_kind";
