@@ -225,15 +225,15 @@ struct borg_player
 	int chp;
 	int mhp;
 	int oldhp;
+	
+	/* Spellpoints */
+	int csp;
+	int msp;
 };
 
 extern borg_player *bp_ptr;
 
 
-#define BI_CURSP	25
-#define BI_MAXSP	26
-#define BI_SP_ADJ	27
-#define BI_OLDCSP	28
 #define BI_FAIL1	29
 #define BI_FAIL2	30
 #define BI_REALM1	31

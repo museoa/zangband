@@ -1052,10 +1052,10 @@ void borg_update_frame(void)
 	bp_ptr->mhp = p_ptr->mhp;
 
 	/* Extract "Cur SP xxxxx" (or zero) */
-	borg_skill[BI_CURSP] = p_ptr->csp;
+	bp_ptr->csp = p_ptr->csp;
 
 	/* Extract "Max SP xxxxx" (or zero) */
-	borg_skill[BI_MAXSP] = p_ptr->msp;
+	bp_ptr->msp = p_ptr->msp;
 
 	/* Clear all the "state flags" */
 	borg_skill[BI_ISWEAK] = borg_skill[BI_ISHUNGRY] = borg_skill[BI_ISFULL] =

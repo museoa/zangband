@@ -1510,7 +1510,7 @@ static int borg_danger_aux2(int i, bool average)
 			case 128 + 9:
 			{
 				/* RF5_DRAIN_MANA */
-				if (borg_skill[BI_MAXSP]) p += 10;
+				if (bp_ptr->msp) p += 10;
 				break;
 			}
 
@@ -3727,7 +3727,7 @@ static s32b borg_power_aux4(void)
 	}
 
 	/* Restore Mana */
-	if (borg_skill[BI_MAXSP] > 100)
+	if (bp_ptr->msp > 100)
 	{
 		for (k = 0; k < 10 && k < borg_has[266]; k++) value += 4000L;
 		for (k = 0; k < 100 && k < borg_skill[BI_ASTFMAGI]; k++) value += 4000L;
@@ -4394,7 +4394,7 @@ static cptr borg_prepared_aux2(int depth)
 	/* must have lots of restore mana to go after MORGOTH */
 	if (!borg_skill[BI_KING])
 	{
-		if ((borg_skill[BI_MAXSP] > 100) &&
+		if ((bp_ptr->msp > 100) &&
 			(borg_has[266] < 15)) return ("15ResMana");
 
 		/* must have lots of heal */

@@ -692,15 +692,11 @@ static void borg_notice_stats(void)
 	/* 'Mana' is actually the 'mana adjustment' */
 	if (bp_ptr->wismana)
 	{
-		borg_skill[BI_SP_ADJ] =
-			((adj_mag_mana[my_stat_ind[A_WIS]] * borg_skill[BI_CLEVEL]) / 2);
 		borg_skill[BI_FAIL1] = adj_mag_stat[my_stat_ind[A_WIS]];
 		borg_skill[BI_FAIL2] = adj_mag_fail[my_stat_ind[A_WIS]];
 	}
 	if (bp_ptr->intmana)
 	{
-		borg_skill[BI_SP_ADJ] =
-			((adj_mag_mana[my_stat_ind[A_INT]] * borg_skill[BI_CLEVEL]) / 2);
 		borg_skill[BI_FAIL1] = adj_mag_stat[my_stat_ind[A_INT]];
 		borg_skill[BI_FAIL2] = adj_mag_fail[my_stat_ind[A_INT]];
 	}
@@ -3456,7 +3452,7 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 			num_gloves += l_ptr->number;
 
 			/* most gloves hurt magic for spell-casters */
-			if (bp_ptr->intmana && borg_skill[BI_MAXSP] > 3)
+			if (bp_ptr->intmana && bp_ptr->msp > 3)
 			{
 				/* Penalize non-usable gloves */
 				if (l_ptr->number &&
@@ -4270,7 +4266,7 @@ static s32b borg_power_home_aux2(void)
 	/* Collect heal/mana/ */
 	for (k = 0; k < 99 && k < num_heal; k++) value += 3000L - k * 8L;
 	for (k = 0; k < 99 && k < num_ez_heal; k++) value += 8000L - k * 8L;
-	if (borg_skill[BI_MAXSP] > 1)
+	if (bp_ptr->msp > 1)
 	{
 		for (k = 0; k < 99 && k < num_mana; k++) value += 6000L - k * 8L;
 	}

@@ -3314,7 +3314,7 @@ static int borg_fear_spell(int i)
 		case 41:
 		{
 			/* RF5_DRAIN_MANA */
-			if (borg_skill[BI_MAXSP]) p += 10;
+			if (bp_ptr->msp) p += 10;
 			break;
 		}
 
@@ -4464,9 +4464,6 @@ void borg_update(void)
 
 	/* Save the hit points */
 	bp_ptr->oldhp = bp_ptr->chp;
-
-	/* Save the spell points */
-	borg_skill[BI_OLDCSP] = borg_skill[BI_CURSP];
 
 	/* Forget failure */
 	borg_failure = FALSE;

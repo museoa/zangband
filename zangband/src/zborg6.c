@@ -1485,7 +1485,7 @@ static bool borg_escape(int b_q)
 		allow_fail = 35;
 
 	/* for emergencies */
-	sv_mana = borg_skill[BI_CURSP];
+	sv_mana = bp_ptr->csp;
 
 	/* Borgs who are bleeding to death or dying of poison may sometimes
 	 * phase around the last two hit points right before they enter a
@@ -1559,7 +1559,7 @@ static bool borg_escape(int b_q)
 			return (TRUE);
 		}
 
-		borg_skill[BI_CURSP] = borg_skill[BI_MAXSP];
+		bp_ptr->csp = bp_ptr->msp;
 
 		/* try to teleport, get far away from here */
 		if (borg_use_staff_fail(SV_STAFF_TELEPORTATION) ||
@@ -1602,7 +1602,7 @@ static bool borg_escape(int b_q)
 			borg_note("# Danger Level 1.3  Critical Attempt");
 			return (TRUE);
 		}
-		borg_skill[BI_CURSP] = sv_mana;
+		bp_ptr->csp = sv_mana;
 	}
 
 	/* If fighting a unique and at the end of the game try to stay and
@@ -1948,8 +1948,8 @@ static bool borg_escape(int b_q)
 		(b_q >= avoidance * (6 + risky_boost) / 10 ||
 		 (b_q >= avoidance * (8 + risky_boost) / 10 && borg_fighting_unique >= 1
 		  && borg_fighting_unique <= 8)) &&
-		(borg_skill[BI_CURSP] <= (borg_skill[BI_MAXSP] * 1 / 10) &&
-		 borg_skill[BI_MAXSP] >= 100))
+		(bp_ptr->csp <= (bp_ptr->msp * 1 / 10) &&
+		 bp_ptr->msp >= 100))
 	{
 		/* Dimension Door, if useful */
 		if ((amt_dim_door && borg_dim_door(TRUE, b_q) &&
@@ -2038,10 +2038,10 @@ static bool borg_heal(int danger)
 		borg_skill[BI_ISFIXCON]) stats_needing_fix++;
 	if (bp_ptr->mhp <= 700 &&
 		borg_skill[BI_ISFIXCON]) stats_needing_fix += 3;
-	if (borg_class == CLASS_PRIEST && borg_skill[BI_MAXSP] < 100 &&
+	if (borg_class == CLASS_PRIEST && bp_ptr->msp < 100 &&
 		borg_skill[BI_ISFIXWIS])
 		stats_needing_fix += 5;
-	if (borg_class == CLASS_MAGE && borg_skill[BI_MAXSP] < 100 &&
+	if (borg_class == CLASS_MAGE && bp_ptr->msp < 100 &&
 		borg_skill[BI_ISFIXINT])
 		stats_needing_fix += 5;
 
@@ -2159,7 +2159,7 @@ static bool borg_heal(int danger)
 		  borg_skill[BI_ISSTUN] ||
 		  borg_skill[BI_ISHEAVYSTUN] ||
 		  (bp_ptr->chp < bp_ptr->mhp) ||
-		  (borg_skill[BI_CURSP] < borg_skill[BI_MAXSP] * 6 / 10)) &&
+		  (bp_ptr->csp < bp_ptr->msp * 6 / 10)) &&
 		 (danger < avoidance / 5)) && borg_check_rest() && !scaryguy_on_level &&
 		(danger <= mb_ptr->fear) && !goal_fleeing)
 	{
@@ -2213,7 +2213,7 @@ static bool borg_heal(int danger)
 
 	/* restore Mana */
 	/* note, blow the staff charges easy because the staff will not last. */
-	if (borg_skill[BI_CURSP] < (borg_skill[BI_MAXSP] / 5) &&
+	if (bp_ptr->csp < (bp_ptr->msp / 5) &&
 		(randint0(100) < 50))
 	{
 		if (borg_use_staff_fail(SV_STAFF_THE_MAGI))
@@ -2224,8 +2224,8 @@ static bool borg_heal(int danger)
 	}
 	/* blowing potions is harder */
 	/* NOTE: must have enough mana to keep up GOI or do a HEAL */
-	if (borg_skill[BI_CURSP] < (borg_skill[BI_MAXSP] / 10) ||
-		((borg_skill[BI_CURSP] < 70 && borg_skill[BI_MAXSP] > 200) &&
+	if (bp_ptr->csp < (bp_ptr->msp / 10) ||
+		((bp_ptr->csp < 70 && bp_ptr->msp > 200) &&
 		 (borg_goi <= borg_game_ratio * 3)))
 	{
 		/*  use the potion if battling a unique and not too dangerous */
@@ -2490,9 +2490,9 @@ static bool borg_heal(int danger)
 		(bp_ptr->chp < 2 ||
 		 bp_ptr->chp < bp_ptr->mhp / 20))
 	{
-		int sv_mana = borg_skill[BI_CURSP];
+		int sv_mana = bp_ptr->csp;
 
-		borg_skill[BI_CURSP] = borg_skill[BI_MAXSP];
+		bp_ptr->csp = bp_ptr->msp;
 
 		if (borg_spell(REALM_LIFE, 1, 1) ||
 			borg_spell(REALM_ARCANE, 1, 5) || borg_spell(REALM_NATURE, 0, 7))
@@ -2505,7 +2505,7 @@ static bool borg_heal(int danger)
 
 			return (TRUE);
 		}
-		borg_skill[BI_CURSP] = sv_mana;
+		bp_ptr->csp = sv_mana;
 
 		/* Quaff healing pots to buy some time- in this emergency.  */
 		if (borg_quaff_potion(SV_POTION_CURE_LIGHT) ||
@@ -2560,7 +2560,7 @@ static bool borg_heal(int danger)
 		((bp_ptr->chp < 2) ||
 		 bp_ptr->chp < bp_ptr->mhp / 20))
 	{
-		int sv_mana = borg_skill[BI_CURSP];
+		int sv_mana = bp_ptr->csp;
 
 
 		/* Quaff healing pots to buy some time- in this emergency.  */
@@ -2582,7 +2582,7 @@ static bool borg_heal(int danger)
 			return (TRUE);
 		}
 
-		borg_skill[BI_CURSP] = borg_skill[BI_MAXSP];
+		bp_ptr->csp = bp_ptr->msp;
 
 		/* Emergency use of spell */
 		if (borg_spell_fail(REALM_LIFE, 1, 1, 100) ||
@@ -2602,7 +2602,7 @@ static bool borg_heal(int danger)
 
 			return (TRUE);
 		}
-		borg_skill[BI_CURSP] = sv_mana;
+		bp_ptr->csp = sv_mana;
 
 		/* Quaff unknown potions in this emergency.  We might get luck */
 		if (borg_quaff_unknown()) return (TRUE);
@@ -2838,7 +2838,7 @@ bool borg_caution(void)
 			("# Loc:%d,%d Dep:%d Lev:%d HP:%d/%d SP:%d/%d Danger:p=%d",
 			 c_y, c_x, borg_skill[BI_CDEPTH], borg_skill[BI_CLEVEL],
 			 bp_ptr->chp, bp_ptr->mhp,
-			 borg_skill[BI_CURSP], borg_skill[BI_MAXSP], p);
+			 bp_ptr->csp, bp_ptr->msp, p);
 		if (borg_goi)
 		{
 			borg_note_fmt
@@ -3094,7 +3094,7 @@ bool borg_caution(void)
 		if (mb_ptr->feat == FEAT_MORE)
 		{
 			/* Cast GOI just before returning to dungeon */
-			if (borg_skill[BI_CURSP] > borg_skill[BI_MAXSP] * 6 / 10 &&
+			if (bp_ptr->csp > bp_ptr->msp * 6 / 10 &&
 				!borg_goi &&
 				(borg_spell_fail(REALM_LIFE, 3, 7, 15) ||
 				 borg_spell_fail(REALM_SORCERY, 3, 7, 15)))
@@ -3104,7 +3104,7 @@ bool borg_caution(void)
 			}
 
 			/* Cast PFE just before returning to dungeon */
-			if (borg_skill[BI_CURSP] > borg_skill[BI_MAXSP] * 6 / 10 &&
+			if (bp_ptr->csp > bp_ptr->msp * 6 / 10 &&
 				!borg_prot_from_evil && borg_spell_fail(REALM_LIFE, 1, 5, 15))
 			{
 				borg_note("# Casting PFE before taking stairs.");
@@ -3112,7 +3112,7 @@ bool borg_caution(void)
 			}
 
 			/* Cast other good prep things */
-			if ((borg_skill[BI_CURSP] > borg_skill[BI_MAXSP] * 6 / 10) &&
+			if ((bp_ptr->csp > bp_ptr->msp * 6 / 10) &&
 				((!borg_speed && borg_spell_fail(REALM_SORCERY, 1, 5, 15)) ||
 				 (my_oppose_fire + my_oppose_cold + my_oppose_acid +
 				  my_oppose_elec + my_oppose_pois < 3 &&
@@ -3559,7 +3559,7 @@ bool borg_caution(void)
 				/* If I am low level, reward backing-up if safe */
 				if (borg_skill[BI_CLEVEL] <= 3 &&
 					(bp_ptr->chp < bp_ptr->mhp ||
-					 borg_skill[BI_CURSP] < borg_skill[BI_CURSP]))
+					 bp_ptr->csp < bp_ptr->msp))
 				{
 					/* do consider the retreat */
 				}
@@ -3735,8 +3735,8 @@ bool borg_caution(void)
 	if (goal_recalling && (p > avoidance * 2))
 	{
 		if (!borg_skill[BI_ISCONFUSED] && !borg_skill[BI_ISBLIND] &&
-			borg_skill[BI_MAXSP] > 60 &&
-			borg_skill[BI_CURSP] < (borg_skill[BI_CURSP] / 4) &&
+			bp_ptr->msp > 60 &&
+			bp_ptr->csp < (bp_ptr->msp / 4) &&
 			borg_quaff_potion(SV_POTION_RESTORE_MANA))
 		{
 			borg_note("# Buying time waiting for Recall.  Step 1.");
@@ -3784,7 +3784,7 @@ bool borg_caution(void)
 	 * use the unknown stuff (if I am low level).
 	 */
 	if (p > (bp_ptr->chp * 4) && borg_skill[BI_CLEVEL] < 20 &&
-		!borg_skill[BI_MAXSP])
+		!bp_ptr->msp)
 	{
 		if (borg_use_unknown()) return (TRUE);
 		if (borg_quaff_unknown()) return (TRUE);
@@ -6367,7 +6367,7 @@ static int borg_attack_aux_spell_bolt(int realm, int book, int what, int rad,
 		borg_skill[BI_ISIMAGE]) return (0);
 
 	/* make sure I am powerfull enough to do another goi if this one falls */
-	if (borg_goi && ((borg_skill[BI_CURSP] - as->power) < 70)) return (0);
+	if (borg_goi && ((bp_ptr->csp - as->power) < 70)) return (0);
 
 	/* Paranoia */
 	if (borg_simulate && (randint0(100) < 5)) return (0);
@@ -6390,11 +6390,11 @@ static int borg_attack_aux_spell_bolt(int realm, int book, int what, int rad,
 	b_n = b_n - as->power;
 
 	/* Penalize use of reserve mana */
-	if (borg_skill[BI_CURSP] - as->power < borg_skill[BI_MAXSP] / 2) b_n =
+	if (bp_ptr->csp - as->power < bp_ptr->msp / 2) b_n =
 			b_n - (as->power * 10);
 
 	/* Penalize use of deep reserve mana */
-	if (borg_skill[BI_CURSP] - as->power < borg_skill[BI_MAXSP] / 3) b_n =
+	if (bp_ptr->csp - as->power < bp_ptr->msp / 3) b_n =
 			b_n - (as->power * 20);
 
 	/* Really penalize use of mana needed for final teleport */
@@ -6403,8 +6403,8 @@ static int borg_attack_aux_spell_bolt(int realm, int book, int what, int rad,
 	if (borg_class == CLASS_ROGUE) penalty = 20;
 	if (borg_class == CLASS_PRIEST) penalty = 8;
 	if (borg_class == CLASS_PALADIN) penalty = 20;
-	if ((borg_skill[BI_MAXSP] > 30) &&
-		(borg_skill[BI_CURSP] - as->power) < penalty)
+	if ((bp_ptr->msp > 30) &&
+		(bp_ptr->csp - as->power) < penalty)
 		b_n = b_n - (as->power * 750);
 
 
@@ -6435,7 +6435,7 @@ static int borg_attack_aux_spell_bolt_reserve(int realm, int book, int what,
 	int i;
 
 	/* Fake our Mana */
-	int sv_mana = borg_skill[BI_CURSP];
+	int sv_mana = bp_ptr->csp;
 
 	/* Only Weak guys should try this */
 	if (borg_skill[BI_CLEVEL] >= 15) return (0);
@@ -6482,11 +6482,11 @@ static int borg_attack_aux_spell_bolt_reserve(int realm, int book, int what,
 	}
 
 	/* Require ability (with faked mana) */
-	borg_skill[BI_CURSP] = borg_skill[BI_MAXSP];
+	bp_ptr->csp = bp_ptr->msp;
 	if (!borg_spell_okay_fail(realm, book, what, 25))
 	{
 		/* Restore Mana */
-		borg_skill[BI_CURSP] = sv_mana;
+		bp_ptr->csp = sv_mana;
 		return (0);
 	}
 
@@ -6497,12 +6497,12 @@ static int borg_attack_aux_spell_bolt_reserve(int realm, int book, int what,
 	if (borg_simulate)
 	{
 		/* Restore Mana */
-		borg_skill[BI_CURSP] = sv_mana;
+		bp_ptr->csp = sv_mana;
 		return (b_n);
 	}
 
 	/* Cast the spell with fake mana */
-	borg_skill[BI_CURSP] = borg_skill[BI_MAXSP];
+	bp_ptr->csp = bp_ptr->msp;
 	if (borg_spell_fail(realm, book, what, 25))
 	{
 		/* Note the use of the emergency spell */
@@ -6516,7 +6516,7 @@ static int borg_attack_aux_spell_bolt_reserve(int realm, int book, int what,
 	successful_target = -1;
 
 	/* restore true mana */
-	borg_skill[BI_CURSP] = 0;
+	bp_ptr->csp = 0;
 
 	/* Value */
 	return (b_n);
@@ -6553,11 +6553,11 @@ static int borg_attack_aux_spell_dispel(int realm, int book, int what, int rad,
 	b_n = b_n - as->power;
 
 	/* Penalize use of reserve mana */
-	if (borg_skill[BI_CURSP] - as->power < borg_skill[BI_MAXSP] / 2) b_n =
+	if (bp_ptr->csp - as->power < bp_ptr->msp / 2) b_n =
 			b_n - (as->power * 10);
 
 	/* Penalize use of deep reserve mana */
-	if (borg_skill[BI_CURSP] - as->power < borg_skill[BI_MAXSP] / 3) b_n =
+	if (bp_ptr->csp - as->power < bp_ptr->msp / 3) b_n =
 			b_n - (as->power * 20);
 
 	/* Really penalize use of mana needed for final teleport */
@@ -6566,8 +6566,8 @@ static int borg_attack_aux_spell_dispel(int realm, int book, int what, int rad,
 	if (borg_class == CLASS_ROGUE) penalty = 20;
 	if (borg_class == CLASS_PRIEST) penalty = 8;
 	if (borg_class == CLASS_PALADIN) penalty = 20;
-	if ((borg_skill[BI_MAXSP] > 30) &&
-		(borg_skill[BI_CURSP] - as->power) < penalty)
+	if ((bp_ptr->msp > 30) &&
+		(bp_ptr->csp - as->power) < penalty)
 		b_n = b_n - (as->power * 750);
 
 	/* Simulation */
@@ -6619,17 +6619,17 @@ static int borg_attack_aux_mind_bolt(int spell, int level, int rad, int dam,
 	b_n = b_n - as->power;
 
 	/* Penalize use of reserve mana */
-	if (borg_skill[BI_CURSP] - as->power < borg_skill[BI_MAXSP] / 2) b_n =
+	if (bp_ptr->csp - as->power < bp_ptr->msp / 2) b_n =
 			b_n - (as->power * 10);
 
 	/* Penalize use of deep reserve mana */
-	if (borg_skill[BI_CURSP] - as->power < borg_skill[BI_MAXSP] / 3) b_n =
+	if (bp_ptr->csp - as->power < bp_ptr->msp / 3) b_n =
 			b_n - (as->power * 20);
 
 	/* Really penalize use of mana needed for final teleport */
 	penalty = 6;
-	if ((borg_skill[BI_MAXSP] > 30) &&
-		(borg_skill[BI_CURSP] - as->power) < penalty)
+	if ((bp_ptr->msp > 30) &&
+		(bp_ptr->csp - as->power) < penalty)
 		b_n = b_n - (as->power * 750);
 
 	/* Simulation */
@@ -10942,7 +10942,7 @@ static int borg_perma_aux_bless(void)
 	cost = as->power;
 	/* If its cheap, go ahead */
 	if (cost >=
-		((unique_on_level) ? borg_skill[BI_CURSP] / 7 : borg_skill[BI_CURSP] /
+		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp /
 		 10)) return (0);
 
 	/* Simulation */
@@ -10984,7 +10984,7 @@ static int borg_perma_aux_resist(void)
 
 	/* If its cheap, go ahead */
 	if (cost >=
-		((unique_on_level) ? borg_skill[BI_CURSP] / 7 : borg_skill[BI_CURSP] /
+		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp /
 		 10)) return (0);
 
 	/* Simulation */
@@ -11029,7 +11029,7 @@ static int borg_perma_aux_resist_f(void)
 	cost = as->power;
 
 	/* If its cheap, go ahead */
-	if (cost >= borg_skill[BI_CURSP] / 20) return (0);
+	if (cost >= bp_ptr->csp / 20) return (0);
 
 	/* Simulation */
 	if (borg_simulate) return (1);
@@ -11073,7 +11073,7 @@ static int borg_perma_aux_resist_c(void)
 	cost = as->power;
 
 	/* If its cheap, go ahead */
-	if (cost >= borg_skill[BI_CURSP] / 20) return (0);
+	if (cost >= bp_ptr->csp / 20) return (0);
 
 	/* Simulation */
 	if (borg_simulate) return (1);
@@ -11115,7 +11115,7 @@ static int borg_perma_aux_resist_a(void)
 	cost = as->power;
 
 	/* If its cheap, go ahead */
-	if (cost >= borg_skill[BI_CURSP] / 20) return (0);
+	if (cost >= bp_ptr->csp / 20) return (0);
 
 	/* Simulation */
 	if (borg_simulate) return (1);
@@ -11159,7 +11159,7 @@ static int borg_perma_aux_resist_p(void)
 	cost = as->power;
 
 	/* If its cheap, go ahead */
-	if (cost >= borg_skill[BI_CURSP] / 20) return (0);
+	if (cost >= bp_ptr->csp / 20) return (0);
 
 	/* Simulation */
 	if (borg_simulate) return (1);
@@ -11212,7 +11212,7 @@ static int borg_perma_aux_resist_fce(void)
 
 	/* If its cheap, go ahead */
 	if (cost >=
-		((unique_on_level) ? borg_skill[BI_CURSP] / 7 : borg_skill[BI_CURSP] /
+		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp /
 		 10)) return (0);
 
 	/* Simulation */
@@ -11268,7 +11268,7 @@ static int borg_perma_aux_speed(void)
 
 	/* If its cheap, go ahead */
 	if (cost >=
-		((unique_on_level) ? borg_skill[BI_CURSP] / 7 : borg_skill[BI_CURSP] /
+		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp /
 		 10)) return (0);
 
 	/* Simulation */
@@ -11317,7 +11317,7 @@ static int borg_perma_aux_goi(void)
 
 	/* If its cheap, go ahead */
 	if (cost >=
-		((unique_on_level) ? borg_skill[BI_CURSP] / 7 : borg_skill[BI_CURSP] /
+		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp /
 		 10)) return (0);
 
 	/* Simulation */
@@ -11368,7 +11368,7 @@ static int borg_perma_aux_telepathy(void)
 
 	/* If its cheap, go ahead */
 	if (cost >=
-		((unique_on_level) ? borg_skill[BI_CURSP] / 7 : borg_skill[BI_CURSP] /
+		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp /
 		 10)) return (0);
 
 	/* Simulation */
@@ -11405,7 +11405,7 @@ static int borg_perma_aux_shield(void)
 
 	/* If its cheap, go ahead */
 	if (cost >=
-		((unique_on_level) ? borg_skill[BI_CURSP] / 7 : borg_skill[BI_CURSP] /
+		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp /
 		 10)) return (0);
 
 	/* Simulation */
@@ -11441,7 +11441,7 @@ static int borg_perma_aux_prot_evil(void)
 
 	/* If its cheap, go ahead */
 	if (cost >=
-		((unique_on_level) ? borg_skill[BI_CURSP] / 7 : borg_skill[BI_CURSP] /
+		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp /
 		 10)) return (0);
 
 	/* Simulation */
@@ -11497,7 +11497,7 @@ static int borg_perma_aux_hero(void)
 
 	/* If its cheap, go ahead */
 	if (cost >=
-		((unique_on_level) ? borg_skill[BI_CURSP] / 7 : borg_skill[BI_CURSP] /
+		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp /
 		 10)) return (0);
 
 	/* Simulation */
@@ -11543,7 +11543,7 @@ static int borg_perma_aux_berserk(void)
 
 	/* If its cheap, go ahead */
 	if (cost >=
-		((unique_on_level) ? borg_skill[BI_CURSP] / 7 : borg_skill[BI_CURSP] /
+		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp /
 		 10)) return (0);
 
 	/* Simulation */
@@ -11893,7 +11893,7 @@ bool borg_check_rest(void)
 
 		/* if absorbs mana, not safe */
 		if ((r_ptr->flags5 & RF5_DRAIN_MANA) &&
-			(borg_skill[BI_MAXSP] > 1)) return FALSE;
+			(bp_ptr->msp > 1)) return FALSE;
 
 		/* if it walks through walls, not safe */
 		if (r_ptr->flags2 & RF2_PASS_WALL) return FALSE;
@@ -12073,7 +12073,7 @@ bool borg_recover(void)
 
 	/* Hack -- heal damage */
 	if ((bp_ptr->chp < bp_ptr->mhp / 2) && (q < 75) && p == 0
-		&& (borg_skill[BI_CURSP] > borg_skill[BI_MAXSP] / 4))
+		&& (bp_ptr->csp > bp_ptr->msp / 4))
 	{
 		if (borg_activate_artifact(ART_SOULKEEPER, FALSE) ||
 			borg_spell(REALM_LIFE, 1, 6) || borg_spell(REALM_NATURE, 1, 7))
@@ -12275,7 +12275,7 @@ bool borg_recover(void)
 		 borg_skill[BI_ISIMAGE] || borg_skill[BI_ISAFRAID] ||
 		 borg_skill[BI_ISSTUN] || borg_skill[BI_ISHEAVYSTUN] ||
 		 (bp_ptr->chp < bp_ptr->mhp) ||
-		 (borg_skill[BI_CURSP] < borg_skill[BI_MAXSP] * 6 / 10)) &&
+		 (bp_ptr->csp < bp_ptr->msp * 6 / 10)) &&
 		(!borg_takes_cnt || !goal_recalling) && !borg_goi && !borg_shield &&
 		!scaryguy_on_level && borg_check_rest() && (p <= mb_ptr->fear) &&
 		!goal_fleeing)
@@ -12297,8 +12297,8 @@ bool borg_recover(void)
 	}
 
 	/* Hack to recharge mana if a low level mage or priest */
-	if (borg_skill[BI_MAXSP] && borg_skill[BI_CLEVEL] < 25 &&
-		borg_skill[BI_CURSP] < borg_skill[BI_MAXSP] && p == 0)
+	if (bp_ptr->msp && borg_skill[BI_CLEVEL] < 25 &&
+		bp_ptr->csp < bp_ptr->msp && p == 0)
 	{
 		if (!borg_skill[BI_ISWEAK] && !borg_skill[BI_ISCUT] &&
 			!borg_skill[BI_ISHUNGRY] && !borg_skill[BI_ISPOISONED])

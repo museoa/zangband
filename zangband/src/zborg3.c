@@ -1649,7 +1649,7 @@ bool borg_spell_legal(int realm, int book, int what)
 	if (as->status < BORG_MAGIC_TEST) return (FALSE);
 
 	/* The spell must be affordable (when rested) */
-	if (as->power > borg_skill[BI_MAXSP]) return (FALSE);
+	if (as->power > bp_ptr->msp) return (FALSE);
 
 	/* Success */
 	return (TRUE);
@@ -1686,10 +1686,10 @@ bool borg_spell_okay(int realm, int book, int what)
 
 
 	/* The spell must be affordable (now) */
-	if (as->power > borg_skill[BI_CURSP]) return (FALSE);
+	if (as->power > bp_ptr->csp) return (FALSE);
 
 	/* Do not cut into reserve mana (for final teleport) */
-	if (borg_skill[BI_CURSP] - as->power < reserve_mana &&
+	if (bp_ptr->csp - as->power < reserve_mana &&
 		realm == REALM_SORCERY)
 	{
 		/* Phase spells ok */
@@ -1865,7 +1865,7 @@ bool borg_mindcr_legal(int spell, int level)
 	if (borg_skill[BI_CLEVEL] < level) return (FALSE);
 
 	/* The spell must be affordable (when rested) */
-	if (as->power > borg_skill[BI_MAXSP]) return (FALSE);
+	if (as->power > bp_ptr->msp) return (FALSE);
 
 	/* Success */
 	return (TRUE);
@@ -1900,10 +1900,10 @@ bool borg_mindcr_okay(int spell, int level)
 
 
 	/* The spell must be affordable (now) */
-	if (as->power > borg_skill[BI_CURSP]) return (FALSE);
+	if (as->power > bp_ptr->csp) return (FALSE);
 
 	/* Do not cut into reserve mana (for final teleport) */
-	if (borg_skill[BI_CURSP] - as->power < reserve_mana)
+	if (bp_ptr->csp - as->power < reserve_mana)
 	{
 		/* Minor Displacement spells ok */
 		if (spell == 2) return (TRUE);
@@ -2298,7 +2298,7 @@ bool borg_racial_check(int race, bool check_fail)
 	if (borg_skill[BI_CLEVEL] < lev_req) return (FALSE);
 
 	/* Not enough mana - use hp */
-	if (borg_skill[BI_MAXSP] < cost) use_hp = TRUE;
+	if (bp_ptr->msp < cost) use_hp = TRUE;
 
 	/* Too confused */
 	if (borg_skill[BI_ISCONFUSED]) return FALSE;

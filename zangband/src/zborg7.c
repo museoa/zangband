@@ -1689,7 +1689,7 @@ bool borg_crush_hole(void)
 
 		/* never crush cool stuff that we might be needing later */
 		if ((l_ptr->tval == TV_POTION && sval == SV_POTION_RESTORE_MANA) &&
-			(borg_skill[BI_MAXSP] >= 1)) continue;
+			bp_ptr->msp) continue;
 		if ((l_ptr->tval == TV_POTION) && (sval == SV_POTION_HEALING)) continue;
 		if ((l_ptr->tval == TV_POTION) &&
 			(sval == SV_POTION_STAR_HEALING)) continue;
@@ -1876,8 +1876,8 @@ bool borg_test_stuff(bool star_id)
 
 	/* don't ID stuff when you can't recover spent spell point immediately */
 	if ((!star_id) &&
-		((borg_skill[BI_CURSP] < 50 && borg_spell_legal(REALM_ARCANE, 3, 2)) ||
-		 (borg_skill[BI_CURSP] < 50 && borg_spell_legal(REALM_SORCERY, 1, 1)))
+		((bp_ptr->csp < 50 && borg_spell_legal(REALM_ARCANE, 3, 2)) ||
+		 (bp_ptr->csp < 50 && borg_spell_legal(REALM_SORCERY, 1, 1)))
 		&& !borg_check_rest())
 		return (FALSE);
 
@@ -2613,7 +2613,7 @@ bool borg_play_magic(bool bored)
 				if (as->method == BORG_MAGIC_OBJ) continue;
 
 				/* Make sure I have enough mana */
-				if (borg_skill[BI_CURSP] < as->power) continue;
+				if (bp_ptr->csp < as->power) continue;
 
 				/* Note */
 				borg_note("# Testing untried spell/prayer");
