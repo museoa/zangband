@@ -46,47 +46,6 @@ borg_shop *safe_shops;	/* Safety "shops" */
 borg_magic borg_magics[8][4][8];	/* Spell info, by realm/book/what */
 borg_mind borg_minds[MINDCRAFT_MAX];
 
-
-/* Food Names */
-static char *food_syllable1[] =
-{
-	"BBQ ", "Boiled ", "Fresh ", "Frozen ", "Burned ", "Rotten ", "Raw ",
-	"Toasted ", "Broiled ", "Baked ", "Fried ", "Buttered ", "Steamed ",
-	"Gramma's ",
-};
-
-/* Food Names */
-static char *food_syllable2[] =
-{
-	"Pizza", "Eggs", "Spam", "Oatmeal", "Chicken", "Bacon", "Peanutbutter",
-	"Roast Beef", "Cheese", "Toast", "Hamburger", "Carrots", "Corn",
-	"Potato", "Pork Chops", "Chinese Takeout", "Cookies",
-};
-
-/* Slime Molds */
-static char *mold_syllable1[] =
-{
-	"Ab", "Ac", "Ad", "Af", "Agr", "Ast", "As", "Al", "Adw", "Adr", "Ar", "B",
-	"Br", "C", "Cr", "Ch", "Cad", "D", "Dr", "Dw", "Ed", "Eth", "Et", "Er",
-	"El", "Eow", "F", "Fr", "G", "Gr", "Gw", "Gal", "Gl", "H", "Ha", "Ib",
-	"Jer", "K", "Ka", "Ked", "L", "Loth", "Lar", "Leg", "M", "Mir", "N",
-	"Nyd", "Ol", "Oc", "On", "P", "Pr", "R", "Rh", "S", "Sev", "T", "Tr",
-	"Th", "V", "Y", "Z", "W", "Wic",
-};
-
-static char *mold_syllable2[] =
-{
-	"a", "adrie", "ara", "e", "ebri", "ele", "ere", "i", "io", "ithra", "ilma",
-	"il-Ga", "ili", "o", "orfi", "u", "y",
-};
-
-static char *mold_syllable3[] =
-{
-	"bur", "fur", "gan", "gnus", "gnar", "li", "lin", "lir", "mli", "nar",
-	"nus", "rin", "ran", "sin", "sil", "sur",
-};
-
-
 /*
  * Hack -- help analyze the magic
  *
