@@ -1318,6 +1318,9 @@ errr init_k_info_txt(FILE *fp, char *buf)
 			/* XXX XXX XXX Simply read each number following a colon */
 			for (i = 0, s = buf+1; s && (s[0] == ':') && s[1]; ++i)
 			{
+				/* Paranoia */
+				if (i >= 4) return (6);
+				
 				/* Default chance */
 				k_ptr->chance[i] = 1;
 
