@@ -316,33 +316,15 @@ static void add_town_wall(void)
 {
 	int i;
 	
-	bool daytime;
-	
-	/* Day time */
-	if ((turn % (10L * TOWN_DAWN)) < ((10L * TOWN_DAWN) / 2))
-		daytime = TRUE;
-	else
-		daytime = FALSE;
-	
 	/* Upper and lower walls */
 	for (i = 0; i < SCREEN_WID; i++)
 	{
 		/* Wall with doors in middle */
 		if (i == SCREEN_WID / 2)
 		{
-			/* Make town gates */			
-			if(daytime)
-			{
-				/* Normal door */
-				cave[0][i].feat = FEAT_DOOR_HEAD;
-				cave[SCREEN_HGT - 1][i].feat = FEAT_DOOR_HEAD;
-			}
-			else
-			{
-				/* Locked gates at night */
-				cave[0][i].feat = FEAT_DOOR_HEAD + 4;
-				cave[SCREEN_HGT - 1][i].feat = FEAT_DOOR_HEAD + 4;	
-			}
+			/* Make town gates (locked) */			
+			cave[0][i].feat = FEAT_DOOR_HEAD + 4;
+			cave[SCREEN_HGT - 1][i].feat = FEAT_DOOR_HEAD + 4;
 		}
 		else
 		{
@@ -358,19 +340,9 @@ static void add_town_wall(void)
 		/* Walls with doors in middle. */
 		if (i == SCREEN_HGT / 2)
 		{
-			/* Make town gates */
-			if(daytime)
-			{
-				/* Normal door */
-				cave[i][0].feat = FEAT_DOOR_HEAD;
-				cave[i][SCREEN_WID - 1].feat = FEAT_DOOR_HEAD;
-			}
-			else
-			{
-				/* Locked gates at night */
-				cave[i][0].feat = FEAT_DOOR_HEAD + 4;
-				cave[i][SCREEN_WID - 1].feat = FEAT_DOOR_HEAD + 4;	
-			}
+			/* Make town gates (locked) */
+			cave[i][0].feat = FEAT_DOOR_HEAD + 4;
+			cave[i][SCREEN_WID - 1].feat = FEAT_DOOR_HEAD + 4;
 		}
 		else
 		{		
