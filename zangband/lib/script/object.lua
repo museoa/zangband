@@ -67,25 +67,25 @@ function eat_food(object)
 		do_dec_stat(A_STR)
 		ident = TRUE
 	elseif object.sval == SV_FOOD_PARALYSIS then
-		if not player.free_act then
+		if not player_res(TR2_FREE_ACT) then
 			if inc_paralyzed(rand_int(10) + 10) then
 				ident = TRUE
 			end
 		end
 	elseif object.sval == SV_FOOD_HALLUCINATION then
-		if not player.resist_chaos then
+		if not player_res(TR2_RES_CHAOS) then
 			if inc_image(rand_int(250) + 250) then
 				ident = TRUE
 			end
 		end
 	elseif object.sval == SV_FOOD_CONFUSION then
-		if  not player.resist_confu then
+		if  not player_res(TR2_RES_CONF) then
 			if inc_confused(rand_int(10) + 10) then
 				ident = TRUE
 			end
 		end
 	elseif object.sval == SV_FOOD_PARANOIA then
-		if not player.resist_fear then
+		if not player_res(TR2_RES_FEAR) then
 			if inc_afraid(rand_int(10) + 10) then
 				ident = TRUE
 			end
@@ -97,7 +97,7 @@ function eat_food(object)
 			end
 		end
 	elseif object.sval == SV_FOOD_BLINDNESS then
-		if not player.resist_blind then
+		if not player_res(TR2_RES_BLIND) then
 			if inc_blind(rand_int(200) + 200) then
 				ident = TRUE
 			end
@@ -120,7 +120,7 @@ function quaff_potion(object)
 		if inc_slow(rand_range(15, 40)) then ident = TRUE end
 	elseif object.sval == SV_POTION_SALT_WATER then
 		msgf("The potion makes you vomit!")
-		if player.food > PY_FOOD_STARVE - 1 then
+		if player.tim.food > PY_FOOD_STARVE - 1 then
 			set_food(PY_FOOD_STARVE - 1)
 		end
 		clear_poisoned()
@@ -133,20 +133,20 @@ function quaff_potion(object)
 			end
 		end
 	elseif object.sval == SV_POTION_BLINDNESS then
-		if not player.resist_blind then
+		if not player_res(TR2_RES_BLIND) then
 			if inc_blind(rand_range(100, 200)) then
 				ident = TRUE
 			end
 		end
 	-- Booze
 	elseif object.sval == SV_POTION_CONFUSION then
-		if not player.resist_confu then
+		if not player_res(TR2_RES_CONF) then
 			if inc_confused(rand_range(15, 35)) then
 				ident = TRUE
 			end
 		end
 
-		if not player.resist_chaos then
+		if not player_res(TR2_RES_CHAOS) then
 			if one_in_(2) then
 				if inc_image(rand_range(150, 300)) then
 					ident = TRUE
@@ -166,7 +166,7 @@ function quaff_potion(object)
 			end
 		end
 	elseif object.sval == SV_POTION_SLEEP then
-		if not player.free_act then
+		if not player_res(TR2_FREE_ACT) then
 			msgf("You fall asleep.")
 
 			if ironman_nightmare then
@@ -187,7 +187,7 @@ function quaff_potion(object)
 			end
 		end
 	elseif object.sval == SV_POTION_LOSE_MEMORIES then
-		if not player.hold_life and (player.exp > 0) then
+		if not player_res(TR2_HOLD_LIFE) and (player.exp > 0) then
 			msgf("You feel your memories fade.")
 
 			lose_exp(player.exp / 4)
@@ -248,7 +248,7 @@ function quaff_potion(object)
 	elseif object.sval == SV_POTION_HEROISM then
 		if clear_afraid() then ident = TRUE end
 		if inc_hero(rand_range(25, 50)) then ident = TRUE end
-		if hp_player(10)then ident = TRUE end
+		if hp_player(10) then ident = TRUE end
 	elseif object.sval == SV_POTION_BERSERK_STRENGTH then
 		if clear_afraid() then ident = TRUE end
 		if inc_shero(rand_range(25, 50)) then ident = TRUE end
@@ -419,7 +419,7 @@ function read_scroll(object)
 	local used_up = TRUE
 
 	if object.sval == SV_SCROLL_DARKNESS then
-		if not player.resist_blind and not player.resist_dark then
+		if not player_res(TR2_RES_BLIND) and not player_res(TR2_RES_DARK) then
 			inc_blind(rand_range(3, 8))
 		end
 		if unlite_area(10, 3) then ident = TRUE end
@@ -518,9 +518,9 @@ function read_scroll(object)
 	elseif object.sval == SV_SCROLL_HOLY_PRAYER then
 		if inc_blessed(rand_range(24, 72)) then ident = TRUE end
 	elseif object.sval == SV_SCROLL_MONSTER_CONFUSION then
-		if player.confusing == 0 then
+		if player.state.confusing == 0 then
 			msgf("Your hands begin to glow.")
-			player.confusing = TRUE
+			player.state.confusing = TRUE
 			ident = TRUE
 			player.redraw = bOr(player.redraw, PR_STATUS)
 		end
@@ -567,7 +567,7 @@ function read_scroll(object)
 		ident = TRUE
 	elseif object.sval == SV_SCROLL_CHAOS then
 		fire_ball(GF_CHAOS, 0, 400, 4)
-		if not player.resist_chaos then
+		if not player_res(TR2_RES_CHAOS) then
 			take_hit(rand_range(150, 300), "a Scroll of Logrus")
 		end
 		ident = TRUE
@@ -594,7 +594,7 @@ function use_staff(object)
 	local sval = object.sval
 
 	if sval == SV_STAFF_DARKNESS then
-		if not player.resist_blind and not player.resist_dark then
+		if not player_res(TR2_RES_BLIND) and not player_res(TR2_RES_DARK) then
 			if inc_blind(rand_range(4, 8)) then ident = TRUE end
 		end
 		if unlite_area(10, 3) then ident = TRUE end
@@ -616,13 +616,13 @@ function use_staff(object)
 		ident = TRUE
 	elseif sval == SV_STAFF_REMOVE_CURSE then
 		if remove_curse() then
-			if player.blind == 0 then
+			if player.tim.blind == 0 then
 				msgf("The staff glows blue for a moment...")
 			end
 			ident = TRUE
 		end
 	elseif sval == SV_STAFF_STARLITE then
-		if player.blind == 0 then
+		if player.tim.blind == 0 then
 			msgf("The end of the staff glows brightly...")
 		end
 		starlite()
@@ -719,7 +719,7 @@ function aim_wand(object)
 	if not success then return FALSE, FALSE end
 
 	-- Take a turn
-	player.energy_use = min(75, 200 - 5 * player.skill_dev / 8)
+	player.energy_use = min(75, 200 - 5 * player.skill.dev / 8)
 
 	-- Not identified yet
 	local ident = FALSE
@@ -728,10 +728,10 @@ function aim_wand(object)
 	local lev = k_info[object.k_idx].level
 
 	-- Base chance of success
-	local chance = player.skill_dev
+	local chance = player.skill.dev
 
 	-- Confusion hurts skill
-	if (player.confused ~= 0) then chance = chance / 2 end
+	if (player.tim.confused ~= 0) then chance = chance / 2 end
 
 	-- High level objects are harder
 	chance = chance - lev / 2
