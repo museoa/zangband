@@ -1634,7 +1634,7 @@ bool borg_crush_junk(void)
 #endif /* 0 */
 
 			/* Pretend item isn't there */
-			l_ptr->treat_as = TREAT_AS_GONE;
+			l_ptr->treat_as = TREAT_AS_SWAP;
 
 			/* Fix later */
 			fix = TRUE;
@@ -1817,7 +1817,7 @@ bool borg_crush_hole(void)
 
 
 		/* Pretend item isn't there */
-		l_ptr->treat_as = TREAT_AS_GONE;
+		l_ptr->treat_as = TREAT_AS_SWAP;
 
 		/* Fix later */
 		fix = TRUE;
@@ -2392,7 +2392,7 @@ bool borg_swap_rings(void)
 	if (!equipment[EQUIP_RIGHT].k_idx) return (FALSE);
 
 	/*** Remove nasty "tight" rings ***/
-	equipment[EQUIP_LEFT].treat_as = TREAT_AS_GONE;
+	equipment[EQUIP_LEFT].treat_as = TREAT_AS_SWAP;
 
 	/* Fix later */
 	fix = TRUE;
@@ -2407,7 +2407,7 @@ bool borg_swap_rings(void)
 	equipment[EQUIP_LEFT].treat_as = TREAT_AS_NORM;
 
 	/*** Consider taking off the "right" ring ***/
-	equipment[EQUIP_RIGHT].treat_as = TREAT_AS_GONE;
+	equipment[EQUIP_RIGHT].treat_as = TREAT_AS_SWAP;
 
 	/* Fix later */
 	fix = TRUE;
@@ -2443,7 +2443,6 @@ bool borg_swap_rings(void)
 	/* Nope */
 	return (FALSE);
 }
-
 
 
 /*

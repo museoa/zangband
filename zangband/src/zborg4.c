@@ -1906,8 +1906,6 @@ static void borg_notice_inven(void)
 
 	int i;
 	
-	bool swapped = FALSE;
-
 	/* Scan the inventory */
 	for (i = 0; i < inven_num; i++)
 	{
@@ -1916,16 +1914,6 @@ static void borg_notice_inven(void)
 		/* Pretend item isn't there */
 		if (l_ptr->treat_as == TREAT_AS_GONE) continue;
 		
-		/* Item swapped with equipment? */
-		if (l_ptr->treat_as == TREAT_AS_SWAP)
-		{
-			/* Notice we have swaps */
-			swapped = TRUE;
-			
-			/* Get next item */
-			continue;
-		}
-		
 		/* Unaware item? */
 		if (!l_ptr->k_idx) continue;
 		
@@ -1933,10 +1921,7 @@ static void borg_notice_inven(void)
 		borg_notice_inven_item(l_ptr);
 	}
 	
-	/* Look for swaps if they exist */
-	if (!swapped) return;
-	
-	/* Search equipment for the swapped item */
+	/* Search equipment for swapped items */
 	for (i = 0; i < equip_num; i++)
 	{
 		l_ptr = &equipment[i];
@@ -1949,7 +1934,7 @@ static void borg_notice_inven(void)
 				/* Examine the item */
 				borg_notice_inven_item(l_ptr);
 				
-				/* Done */
+				/* Done (Only one extra item) */
 				return;
 			}
 		}
