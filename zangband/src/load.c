@@ -122,7 +122,7 @@ static void note(cptr msg)
 	static int y = 2;
 
 	/* Draw the message */
-	prt(msg, y, 0);
+	prt(msg, 0, y);
 
 	/* Advance one line (wrap if needed) */
 	if (++y >= 24) y = 2;
