@@ -543,18 +543,9 @@ static int get_empty_block(void)
 
 
 /*
- * Is the relative location in bounds on the map?
- */
-bool map_in_bounds_rel(int dx, int dy)
-{
-	return (map_refcount[(dy + player_y) / 16]
-						[(dx + player_x) / 16] ? TRUE : FALSE);
-}
-
-/*
  * Is the location in bounds on the map?
  */
-static bool map_in_bounds(int x, int y)
+bool map_in_bounds(int x, int y)
 {
 	return (map_refcount[y  / 16][x  / 16] ? TRUE : FALSE);
 }
@@ -631,11 +622,8 @@ static void save_map_location(int x, int y, term_map *map)
 /*
  * Get the information in the map
  */
-map_block *read_map_location(int dx, int dy)
+map_block *map_loc(int x, int y)
 {
-	int x = dx + player_x;
-	int y = dy + player_y;
-	
 	return (&map_cache[map_grid[y / WILD_BLOCK_SIZE][x / WILD_BLOCK_SIZE]]
 				[y % 15][x % 15]);
 }

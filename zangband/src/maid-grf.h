@@ -84,5 +84,5 @@ extern map_info_hook_type set_map_hook(map_info_hook_type hook_func);
 extern map_erase_hook_type set_erase_hook(map_erase_hook_type hook_func);
 extern void init_overhead_map(void);
 extern void del_overhead_map(void);
-extern bool map_in_bounds_rel(int dx, int dy);
-extern map_block *read_map_location(int dx, int dy);
+extern bool map_in_bounds(int x, int y);
+extern map_block *map_loc(int dx, int dy);
