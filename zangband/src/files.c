@@ -3056,7 +3056,7 @@ errr file_character(cptr name, bool full)
 		display_player(2);
 
 		/* Dump first column */
-		for (y = 5; y < 23; y++)
+		for (y = 6; y < 23; y++)
 		{
 			for (x = 0; x < 21; x++)
 			{
@@ -3068,8 +3068,11 @@ errr file_character(cptr name, bool full)
 			fprintf(fff, "%s\n", buf);
 		}
 
+		/* New line */
+		fprintf(fff, "\n");
+
 		/* Dump second column */
-		for (y = 11; y < 22; y++)
+		for (y = 12; y < 22; y++)
 		{
 			for (x = 0; x < 23; x++)
 			{
@@ -3081,8 +3084,11 @@ errr file_character(cptr name, bool full)
 			fprintf(fff, "%s\n", buf);
 		}
 
+		/* New line */
+		fprintf(fff, "\n");
+
 		/* Dump third column */
-		for (y = 11; y < 23; y++)
+		for (y = 12; y < 23; y++)
 		{
 			for (x = 0; x < 24; x++)
 			{
