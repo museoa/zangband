@@ -136,7 +136,6 @@ extern bool g_daytime; /* Day or night */
 /* Cave location -> t_grid */
 extern void get_grid_info(int y, int x, t_grid *gridPtr);
 
-extern void angtk_flicker(void);
 extern void angtk_image_reset(void);
 extern void angtk_cave_changed(void);
 extern void angtk_feat_known(int y, int x);

@@ -758,7 +758,6 @@ static void notice_lite_change(object_type * o_ptr)
 	{
 		if (disturb_minor)
 			disturb(0, 0);
-		angtk_flicker(); /* TNB */
 		msg_print("Your light is growing faint.");
 	}
 }
@@ -1913,7 +1912,6 @@ static void process_world(void)
 					/* Decrease life-span of lite */
 					o_ptr->pval /= 2;
 
-					angtk_flicker(); /* TNB */
 					msg_print("You absorb energy from your light!");
 
 					/* Notice interesting fuel steps */

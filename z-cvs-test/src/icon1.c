@@ -146,17 +146,6 @@ void angtk_view_wall(int y, int x, int info, int torch)
 }
 
 /*
- * Visually flicker the character's light source
- */
-void angtk_flicker(void)
-{
-	forget_lite(); Term_fresh(); Term_xtra(TERM_XTRA_DELAY, 20);
-	update_lite(); Term_fresh(); Term_xtra(TERM_XTRA_DELAY, 20);
-	forget_lite(); Term_fresh(); Term_xtra(TERM_XTRA_DELAY, 20);
-	update_lite(); Term_fresh();
-}
-
-/*
  * This routine fills the given t_grid struct with the indices of
  * any known feature, object or monster at the given cave location.
  * This routine does not consider light radius.

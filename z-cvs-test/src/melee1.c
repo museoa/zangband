@@ -978,7 +978,6 @@ bool make_attack_normal(int m_idx)
 							/* Notice */
 							if (!p_ptr->blind)
 							{
-								angtk_flicker(); /* TNB */
 								msg_print("Your light dims.");
 								obvious = TRUE;
 							}
