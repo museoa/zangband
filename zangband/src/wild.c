@@ -190,7 +190,7 @@ void change_level(int level)
 		in_bounds = in_bounds_wild;
 		in_bounds2 = in_bounds2_wild;
 		area = access_wild;
-
+		
 		/*
 		 * Allocate blocks around player - only has effect if
 		 * old game is loaded in the dungeon.
@@ -202,7 +202,6 @@ void change_level(int level)
 			/* Lighten / darken wilderness */
 			day_night();
 		}
-			
 	}
 	else
 	{
@@ -515,7 +514,7 @@ static bool town_blank(int x, int y, int xsize, int ysize)
  */
 static void init_towns(void)
 {
-	int i, j, k;
+	int i, j;
 	int x, y;
 	
 	wild_done_type *w_ptr;
@@ -533,7 +532,7 @@ static void init_towns(void)
 	 * Hack - Try to add max_towns towns.
 	 * (Although will only get ~3/4 of these)
 	 */ 
-	for (k = 0; k < max_towns; k++)
+	while (town_count < max_towns / 2)
 	{
 		/* Get random position */
 		x = randint(max_wild);
@@ -566,6 +565,12 @@ static void init_towns(void)
 				
 				/* Add town to wilderness */
 				w_ptr->town = town_count;
+				
+				/* Monsters are easy */
+				w_ptr->mon_gen = 0;
+				
+				/* Monsters are fairly common */
+				w_ptr->mon_prob = 4;
 			}
 		}
 		
@@ -607,8 +612,8 @@ static void init_vanilla_town(void)
 	cur_town = 0;
 	
 	/* Hack - Reset player position to just next to town 1 */
-	p_ptr->wilderness_x = town[1].x * 16 - 1;
-	p_ptr->wilderness_y = town[1].y * 16 - 1;
+	p_ptr->wilderness_x = town[1].x * 16;
+	p_ptr->wilderness_y = town[1].y * 16;
 	
 	/* One town */
 	town_count = 1;
@@ -2080,6 +2085,54 @@ void test_decision_tree(void)
 	msg_format("Type returned: %d .", type);
 }
 
+
+/*
+ * "Testing" function, used to find where the "invisible monster" bug
+ * is being caused.
+ * This tests the wilderness to see if everything is ok in the monster-
+ * wilderness data structures.
+ */
+void test_mon_wild_integrity(void)
+{
+	int i, j;
+	cave_type *c_ptr;
+	monster_type *m_ptr;
+
+	/* Only when in wilderness */
+	if (dun_level) return;
+	
+	/* Check the wilderness */
+	for(i = wild_grid.x_min; i < wild_grid.x_max; i++)
+	{
+		for(j = wild_grid.y_min; j < wild_grid.y_max; j++)
+		{
+			/* Point to location */
+			c_ptr = area(j, i);
+			
+			/* Want a monster */
+			if (!c_ptr->m_idx) continue;
+			
+			m_ptr = &m_list[c_ptr->m_idx];
+			
+			/* Dead monster? */
+			if (!m_ptr->r_idx)
+			{
+				msg_print("Dead Monster");
+			}
+			
+			if (c_ptr->m_idx > m_max)
+			{
+				msg_print("Monster index inconsistancy.");
+			}
+			
+			if((m_ptr->fy != j) || (m_ptr->fx != i))
+			{
+				msg_print("Monster location inconsistancy.");
+			}
+		}
+	}
+}
+
 /*
  * Test to see that there are no null nodes in the decision tree.
  */
@@ -3017,6 +3070,21 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 #endif /* USE_SCRIPT */
 }
 
+/* Allocate all grids around player */
+static void init_wild_cache(void)
+{
+	int x, y;
+	
+	/* Allocate blocks around player */
+	for (x = 0; x < WILD_GRID_SIZE; x++)
+	{
+		for (y = 0; y < WILD_GRID_SIZE; y++)
+		{
+			/* Link to the grid */
+			wild_grid.block_ptr[y][x] = wild_cache[x  + WILD_GRID_SIZE * y];
+		}
+	}
+}
 
 
 /* Allocate all grids around player */
@@ -4019,8 +4087,8 @@ void wild_done(void)
 	}
 
 	/* Clear cache */
-	wild_grid.cache_count = 0;
-
+	init_wild_cache();
+	
 	/* Fix location of grid */
 
 	/* 
@@ -4250,7 +4318,7 @@ void create_wilderness(void)
 			/* Mega hack - set monster toughness and density */
 
 			/* Toughness (level 0 - 80) */
-			wild[j][i].done.mon_gen = law * 5 / 16;
+			wild[j][i].done.mon_gen = (256 - law) * 5 / 16;
 			
 			/* No monsters (probability 1 - 17) */
 			wild[j][i].done.mon_prob = pop / 16;

@@ -1727,6 +1727,11 @@ void do_cmd_debug(void)
 		(void)ident_spell();
 		break;
 
+		/* Monster Integrity */
+		case 'I':
+		(void)test_mon_wild_integrity();
+		break;
+
 		/* Go up or down in the dungeon */
 		case 'j':
 		do_cmd_wiz_jump();

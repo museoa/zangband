@@ -4220,6 +4220,7 @@ void play_game(bool new_game)
 	/* Generate a dungeon level if needed */
 	if (!character_dungeon) generate_cave();
 
+	
 	/* Character is now "complete" */
 	character_generated = TRUE;
 

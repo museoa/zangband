@@ -1946,8 +1946,12 @@ errr init_w_info(bool new_game)
 	{
 		create_wilderness();
 
+		dun_level = 0;
+		
 		/* Make the function pointers point the the correct data type */
-		change_level(dun_level);
+		change_level(0);
+		
+		character_dungeon = TRUE;
 	}
 		
 	/* Success */
