@@ -2987,7 +2987,7 @@ bool lose_all_info(void)
 		object_kind *k_ptr = &k_info[k];
 
 		/* Forget flavored items, with saving throw */
-		if (k_ptr->flavor && player_save(k_ptr->level - 50))
+		if (k_ptr->flavor && !player_save(k_ptr->level - 50))
 		{
 			/* Forget knowledge */
 			k_ptr->aware = FALSE;
@@ -3358,7 +3358,7 @@ void take_hit(int damage, cptr hit_from)
 	}
 
 	/* Hitpoint warning */
-	if (p_ptr->chp < warning)
+	if (p_ptr->chp <= warning)
 	{
 		/* Hack -- bell on first notice */
 		if (old_chp > warning) bell("Low hitpoint warning!");
