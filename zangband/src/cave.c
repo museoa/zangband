@@ -909,7 +909,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 					/* Use a dark tile */
 					c++;
 				}
-				else
+				else if (!use_transparency)
 				{
 					/* Use darkened colour */
 					a = lighting_colours[a][1];
