@@ -523,6 +523,16 @@ lifts his leg at the nearest wall.
 says, 'Bad adventurer! No more living for you!'
 snarls and howls.
 
+#LOTR Book5 Chap.10
+N:818:The Mouth of Sauron
+6
+asks, 'Anyone with authority to treat with me? Not thou at least!'
+says, 'This time thou hast stuck out thy nose too far.'
+says, 'Thou shalt see what comes to him who defy Sauron the Great.'
+says, 'Take swift counsel with what little wit is left to you.'
+says, 'And now thou shalt endure the slow torment of years!'
+says, 'Do not bandy words in your insolence with the Mouth of Sauron!'
+
 N:819:Klingsor, Evil Master of Magic
 6
 states, 'The time has come.'
@@ -534,7 +544,6 @@ yells, 'I will cut you down with your master's spear!'
 
 N:830:Cantoras, the Skeletal Lord
 N:831:Mephistopheles, Lord of Hell
-N:818:The Mouth of Sauron
 N:804:Vecna, the Emperor Lich
 N:844:Kaschei the Immortal
 N:856:Gothmog, the High Captain of Balrogs
