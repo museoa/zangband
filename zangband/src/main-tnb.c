@@ -26,7 +26,6 @@ cptr help_tnb[] =
 #endif
 
 static term data;
-bool g_initialized = FALSE;
 bool game_in_progress = FALSE;
 cptr ANGBAND_DIR_TK;
 Tcl_Interp *g_interp;
@@ -498,9 +497,6 @@ int init_tnb(int argc, cptr *argv)
 	
 	/* Initialize */
 	init_angband();
-
-	/* We are now initialized */
-	g_initialized = TRUE;
 
 	/* Program is intialized */
 	angtk_angband_initialized();

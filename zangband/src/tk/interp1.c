@@ -14,22 +14,8 @@
 #include "icon.h"
 
 
-/* d_attr characters */
-cptr g_attr_str = "dwsorgbuDWvyRGBU";
-
-/* Last known target state */
-int target_state = 0;
-
-/* Visibility of target */
-bool target_vis = FALSE;
-
 /* TRUE if current command is repeated */
 bool command_repeating = FALSE;
-
-/* NULL-terminated lists */
-cptr *keyword_gender;
-cptr *keyword_race;
-cptr *keyword_class;
 
 int inkey_flags = 0;
 int inkey_book;
@@ -1975,38 +1961,6 @@ objcmd_spell(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 	return TCL_OK;
 }
 
-/*
- * Initializes lists of keywords for various things.
- */
-static void init_keyword_misc(void)
-{
-	int i;
-	
-	/* A list of gender names */
-	C_MAKE(keyword_gender, MAX_SEXES + 1, cptr);
-	for (i = 0; i < MAX_SEXES; i++)
-	{
-		keyword_gender[i] = sex_info[i].title;
-	}
-	keyword_gender[MAX_SEXES] = NULL;
-
-	/* A list of class names */
-	C_MAKE(keyword_class, MAX_CLASS + 1, cptr);
-	for (i = 0; i < MAX_CLASS; i++)
-	{
-		keyword_class[i] = class_info[i].title;
-	}
-	keyword_class[MAX_CLASS] = NULL;
-
-	/* A list of race names */
-	C_MAKE(keyword_race, MAX_RACES + 1, cptr);
-	for (i = 0; i < MAX_RACES; i++)
-	{
-		keyword_race[i] = race_info[i].title;
-	}
-	keyword_race[MAX_RACES] = NULL;
-}
-
 
 /*
  *--------------------------------------------------------------
@@ -2247,10 +2201,6 @@ void angtk_init(void)
 void angtk_angband_initialized(void)
 {
 	int i;
-
-	/* Ack! Angband has dynamic p_info array */
-	/* Names of gender, race and class */
-	init_keyword_misc();
 
 	/* These are required for savefile loading (see lite_spot()) */
 	for (i = 0; i < MAX_HGT; i++)

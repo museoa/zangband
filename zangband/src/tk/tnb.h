@@ -22,7 +22,7 @@
 #endif /* */
 
 /* Hack - prevent warnings from tk headers */
-#if defined errno
+#ifdef errno
 #	undef errno
 #	define errno errno_hack
 #endif /* errno */
@@ -45,10 +45,7 @@
 #endif /* PLATFORM_X11 */
 
 
-
-
 /* main-tnb.c */
-extern bool g_initialized;
 extern bool game_in_progress;
 extern cptr ANGBAND_DIR_TK;
 
@@ -104,11 +101,6 @@ extern int CommandInfo_ObjCmd(ClientData clientData, Tcl_Interp *interp,
 extern int g_icon_size; /* 16, 24 or 32 */
 extern void init_icons(int size, int depth);
 
-/* Constants for t_grid.dark */
-#define GRID_LITE_TORCH 0
-#define GRID_LITE_NORMAL 1
-#define GRID_LITE_DARK 2
-
 
 /*
  * Memory of what is seen at a cave location for the entire cave.
@@ -143,9 +135,6 @@ extern t_tval g_tval[];
 extern Tcl_HashTable *g_tval_str;
 extern Tcl_HashTable *g_tval_const;
 
-extern cptr *keyword_gender;
-extern cptr *keyword_race;
-extern cptr *keyword_class;
 
 /* Like object_attr, by k_info[] index */
 #define kind_attr(k_idx) \
@@ -153,7 +142,6 @@ extern cptr *keyword_class;
 	 (misc_to_attr[k_info[k_idx].flavor]) : \
 	 (k_info[k_idx].x_attr))
 
-extern cptr g_attr_str;
 extern int exit_skip_save;
 extern bool command_repeating;
 extern int angtk_tval_const(int *tval, cptr str);
@@ -170,14 +158,6 @@ extern void angtk_health(char *buf);
 extern void angtk_init(void);
 extern cptr player_status(int status, int *value);
 
-#define TARGET_STATE_SET 0x0001 /* Target is set */
-#define TARGET_STATE_VIS 0x0002 /* Target is visible */
-#define TARGET_STATE_CHANGE 0x0004 /* Target changed */
-extern int target_state;
-extern bool target_vis;
-
-#define PR_POSITION 0x20000000L /* p_ptr->redraw: player position changed */
-#define PR_TARGET 0x40000000L /* p_ptr->redraw: target visibility changed */
 
 /*
  * XXXXX Important!
@@ -198,12 +178,6 @@ extern bool target_vis;
 
 extern int inkey_book;
 extern int inkey_flags;
-
-/* r_info.c */
-extern long angtk_roff(int r_idx, char *buffer);
-
-/* birth-tnb.c */
-extern void init_birth(void);
 
 /* describe.c */
 extern cptr keyword_slot[];
@@ -306,8 +280,8 @@ extern void Plat_SyncDisplay(Display *display);
 
 /* Make a tk hook function called 'objcmd_name' */
 #define DECLARE_TK_HOOK(N) \
-	extern int objcmd_##N _ANSI_ARGS_((ClientData clientData, \
-		    Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]))
+	extern int objcmd_##N (ClientData clientData, \
+		    Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 
 /* DECLARE_TK_HOOK(angband); */
 DECLARE_TK_HOOK(player);
