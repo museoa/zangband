@@ -4259,7 +4259,7 @@ bool make_object(object_type *j_ptr, bool good, bool great)
 		case TV_ARROW:
 		case TV_BOLT:
 		{
-			j_ptr->number = (byte)damroll(6, 7);
+			j_ptr->number = (byte)damroll(10, 8);
 		}
 	}
 

@@ -1494,7 +1494,7 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 	    (o_ptr->tval == TV_ARROW) ||
 	    (o_ptr->tval == TV_SHOT))
 	{
-		prob = prob / 20;
+		prob = prob / 50;
 	}
 
 	/* Try "n" times */
