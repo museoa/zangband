@@ -1173,23 +1173,23 @@ static bool do_cmd_options_dump(int dummy)
 /* The main options menu */
 static menu_type options_menu[OPTION_MENU_MAX] =
 {
-	{"User Interface Options", NULL, do_cmd_options_aux, MN_ACTIVE | MN_CLEAR},
-	{"Disturbance Options", NULL, do_cmd_options_aux, MN_ACTIVE | MN_CLEAR},
-	{"Game-Play Options", NULL, do_cmd_options_aux, MN_ACTIVE | MN_CLEAR},
-	{"Efficiency Options", NULL, do_cmd_options_aux, MN_ACTIVE | MN_CLEAR},
-	{"Display Options", NULL, do_cmd_options_aux, MN_ACTIVE | MN_CLEAR},
-	{"Birth Options", NULL, do_cmd_options_aux, MN_ACTIVE | MN_CLEAR},
-	{"Artificial Intelligence Options", NULL, do_cmd_options_aux, MN_ACTIVE | MN_CLEAR},
-	{"Testing Options", NULL, do_cmd_options_aux, MN_ACTIVE | MN_CLEAR},
+	{"User Interface Options", NULL, do_cmd_options_aux, MN_ACTIVE | MN_SELECT | MN_CLEAR},
+	{"Disturbance Options", NULL, do_cmd_options_aux, MN_ACTIVE | MN_SELECT | MN_CLEAR},
+	{"Game-Play Options", NULL, do_cmd_options_aux, MN_ACTIVE | MN_SELECT | MN_CLEAR},
+	{"Efficiency Options", NULL, do_cmd_options_aux, MN_ACTIVE | MN_SELECT | MN_CLEAR},
+	{"Display Options", NULL, do_cmd_options_aux, MN_ACTIVE | MN_SELECT | MN_CLEAR},
+	{"Birth Options", NULL, do_cmd_options_aux, MN_ACTIVE | MN_SELECT | MN_CLEAR},
+	{"Artificial Intelligence Options", NULL, do_cmd_options_aux, MN_ACTIVE | MN_SELECT | MN_CLEAR},
+	{"Testing Options", NULL, do_cmd_options_aux, MN_ACTIVE | MN_SELECT | MN_CLEAR},
 	MENU_SEPERATOR,
-	{"Cheating Options", NULL, do_cmd_options_cheat, MN_ACTIVE | MN_CLEAR},
-	{"Base Delay Factor", NULL, do_cmd_options_delay, MN_ACTIVE},
-	{"Hitpoint Warning", NULL, do_cmd_options_hitpoint, MN_ACTIVE},
+	{"Cheating Options", NULL, do_cmd_options_cheat, MN_ACTIVE | MN_SELECT | MN_CLEAR},
+	{"Base Delay Factor", NULL, do_cmd_options_delay, MN_ACTIVE | MN_SELECT},
+	{"Hitpoint Warning", NULL, do_cmd_options_hitpoint, MN_ACTIVE | MN_SELECT},
 	MENU_SEPERATOR,
-	{"Autosave Options", NULL, do_cmd_options_autosave, MN_ACTIVE | MN_CLEAR},
-	{"Window Flags", NULL, do_cmd_options_win, MN_ACTIVE},
+	{"Autosave Options", NULL, do_cmd_options_autosave, MN_ACTIVE | MN_SELECT | MN_CLEAR},
+	{"Window Flags", NULL, do_cmd_options_win, MN_ACTIVE | MN_SELECT},
 	MENU_SEPERATOR,
-	{"Dump Options to a Pref File", NULL, do_cmd_options_dump, MN_ACTIVE},
+	{"Dump Options to a Pref File", NULL, do_cmd_options_dump, MN_ACTIVE | MN_SELECT},
 	MENU_END
 };
 

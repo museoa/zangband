@@ -595,14 +595,19 @@ bool display_menu(menu_type *options, int select, bool scroll, int (* disp)(int)
 			/* Pick default option */
 			if ((choice == '\r') || (choice == ' '))
 			{
-				/* Default options */
-        		if (num == 1)
-	        	{
-					i = 0;
-	        	    }
-    	        else
+				i = 0;
+			
+				/* Scan options */
+        		if (num > 1)
 				{
-					i = select;
+					/* Count active options up to our selection */
+					for (j = 0; j < select; j++)
+					{
+						if (options[j].flags & MN_ACTIVE)
+						{
+							i++;
+						}
+					}
 				}
 			}
 
@@ -617,7 +622,7 @@ bool display_menu(menu_type *options, int select, bool scroll, int (* disp)(int)
 					/* Scroll over */
 					if (select < 0) select = num - 1;
 				}
-				while(!options[select].flags & MN_SELECT);
+				while(!(options[select].flags & MN_SELECT));
 			
 				/* Show the list */
 				show_menu(num, options, select, scroll, disp, prompt);
@@ -637,7 +642,7 @@ bool display_menu(menu_type *options, int select, bool scroll, int (* disp)(int)
 					/* Scroll over */
 					if (select >= num) select = 0;
 				}
-				while(!options[select].flags & MN_SELECT);
+				while(!(options[select].flags & MN_SELECT));
 			
 				/* Show the list */
 				show_menu(num, options, select, scroll, disp, prompt);
