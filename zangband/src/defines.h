@@ -3381,10 +3381,10 @@
 #define RF3_ELDRITCH_HORROR 0x00000002	/* Sanity-blasting horror */
 #define RF3_XXX3            0x00000004	/* (?) */
 #define RF3_ROCKET          0x00000008	/* TY: Rocket */
-#define RF3_ARROW_1         0x00000010	/* Fire an arrow (light) */
-#define RF3_ARROW_2         0x00000020	/* Fire an arrow (heavy) */
-#define RF3_ARROW_3         0x00000040	/* Fire missiles (light) */
-#define RF3_ARROW_4         0x00000080	/* Fire missiles (heavy) */
+#define RF3_ARROW           0x00000010  /* Fire an arrow */
+#define RF3_XXX6            0x00000020  /* (?) */
+#define RF3_XXX7            0x00000040  /* (?) */
+#define RF3_XXX8            0x00000080  /* (?) */
 #define RF3_BR_ACID         0x00000100	/* Breathe Acid */
 #define RF3_BR_ELEC         0x00000200	/* Breathe Elec */
 #define RF3_BR_FIRE         0x00000400	/* Breathe Fire */
@@ -3568,7 +3568,7 @@
  * Hack -- "bolt" spells that may hurt fellow monsters
  */
 #define RF3_BOLT_MASK \
-  (RF3_ROCKET | RF3_ARROW_1 | RF3_ARROW_2 | RF3_ARROW_3 | RF3_ARROW_4)
+  (RF3_ROCKET | RF3_ARROW)
 
 #define RF4_BOLT_MASK \
    (RF4_BO_ACID | RF4_BO_ELEC | RF4_BO_FIRE | RF4_BO_COLD | \
@@ -3582,7 +3582,7 @@
  * Spells that hurt the player directly
  */
 #define RF3_ATTACK_MASK \
-	(RF3_ROCKET | RF3_ARROW_1 | RF3_ARROW_2 | RF3_ARROW_3 | RF3_ARROW_4 | \
+	(RF3_ROCKET | RF3_ARROW |  \
 	 RF3_BR_ACID | RF3_BR_ELEC | RF3_BR_FIRE | RF3_BR_COLD | RF3_BR_POIS | \
 	 RF3_BR_NETH | RF3_BR_LITE | RF3_BR_DARK | RF3_BR_CONF | RF3_BR_SOUN | \
 	 RF3_BR_CHAO | RF3_BR_DISE | RF3_BR_NEXU | RF3_BR_TIME | RF3_BR_INER | \
@@ -3720,8 +3720,8 @@
  * Innate spell-like effects
  */
 #define RF3_INNATE_MASK \
-	(RF3_SHRIEK | RF3_ELDRITCH_HORROR | RF3_ARROW_1 | RF3_ARROW_2 | \
-	 RF3_ARROW_3 | RF3_ARROW_4 | RF3_BR_ACID | RF3_BR_ELEC | RF3_BR_FIRE | \
+	(RF3_SHRIEK | RF3_ELDRITCH_HORROR | RF3_ARROW | \
+	 RF3_BR_ACID | RF3_BR_ELEC | RF3_BR_FIRE | \
 	 RF3_BR_COLD | RF3_BR_POIS | RF3_BR_NETH | RF3_BR_LITE | RF3_BR_DARK | \
 	 RF3_BR_CONF | RF3_BR_SOUN | RF3_BR_CHAO | RF3_BR_DISE | RF3_BR_NEXU | \
 	 RF3_BR_TIME | RF3_BR_INER | RF3_BR_GRAV | RF3_BR_SHAR | RF3_BR_PLAS | \
@@ -3857,10 +3857,10 @@
 #define RF_ELDRITCH_HORROR     3,  RF3_ELDRITCH_HORROR 
 #define RF_XXX3 			   3,  RF3_XXX3 		
 #define RF_ROCKET			   3,  RF3_ROCKET		
-#define RF_ARROW_1  		   3,  RF3_ARROW_1  	
-#define RF_ARROW_2  		   3,  RF3_ARROW_2  	
-#define RF_ARROW_3  		   3,  RF3_ARROW_3  	
-#define RF_ARROW_4  		   3,  RF3_ARROW_4  	
+#define RF_ARROW  		   3,  RF3_ARROW  	
+#define RF_XXX6X4  		   3,  RF3_XXX6  	
+#define RF_XXX7X4  		   3,  RF3_XXX7  	
+#define RF_XXX8X4  		   3,  RF3_XXX8
 #define RF_BR_ACID  		   3,  RF3_BR_ACID  	
 #define RF_BR_ELEC  		   3,  RF3_BR_ELEC  	
 #define RF_BR_FIRE  		   3,  RF3_BR_FIRE  	

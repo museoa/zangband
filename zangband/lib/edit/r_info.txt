@@ -1190,7 +1190,7 @@ D:It is an armoured lizard with a powerful bite.
 
 N:83:Novice ranger
 G:p:g
-I:110:4d9:20:10:5
+I:110:6d6:20:10:5
 W:7:1:0:93
 O:25:50:25
 B:HIT:HURT:1d5
@@ -1200,7 +1200,7 @@ F:FORCE_SLEEP | DROP_SKELETON | DROP_CORPSE
 F:DROP_60 | LITE_1
 F:OPEN_DOOR | BASH_DOOR | DUN_CITY | DUN_TEMPLE | DUN_TOWER | WILD_FOREST1 | WILD_FOREST2 |
 S:1_IN_9 | 
-S:ARROW_2 | MISSILE
+S:ARROW | MISSILE
 D:An agile hunter, ready and relaxed.
 
 N:84:Blue jelly
@@ -1311,7 +1311,7 @@ B:HIT:HURT:1d6
 F:DUN_TOWER | WILD_FOREST2 | SILLY | LITE_1
 F:DROP_60 | OPEN_DOOR | BASH_DOOR | FRIENDS | DROP_CORPSE |
 S:1_IN_8
-S:ARROW_1
+S:ARROW
 D:A cute, furry little animal, full of merchandising potential. 
 
 N:93:Novice mage
@@ -1622,7 +1622,7 @@ F:FORCE_SLEEP | WILD_GRASS | DROP_SKELETON | DROP_CORPSE
 F:ONLY_GOLD | DROP_1D2 | LITE_1
 F:OPEN_DOOR | BASH_DOOR
 S:1_IN_3 | 
-S:ARROW_1
+S:ARROW
 D:A nasty little fellow with a bow and arrow.
 
 N:117:Creeping silver coins
@@ -1909,7 +1909,7 @@ D:heavy lids for a moment and gazed on the strangers with dark eyes."
 
 N:138:Robin Hood, the Outlaw
 G:p:G
-I:120:6d20:20:15:20
+I:120:12d10:20:15:20
 W:12:2:0:1250
 O:20:80:0
 B:HIT:HURT:1d5
@@ -1921,7 +1921,7 @@ F:ONLY_ITEM | DROP_1D2 | DROP_GOOD | DROP_GREAT
 F:WILD_FOREST1 | WILD_FOREST2 | WILD_GRASS | DUN_LAIR
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | EVIL | DROP_SKELETON | DROP_CORPSE
 S:1_IN_5
-S:ARROW_2 | HEAL | TRAPS
+S:ARROW | HEAL | TRAPS
 D:The legendary archer steals from the rich (you qualify).
 
 N:139:Nurgling
@@ -1979,7 +1979,7 @@ F:WILD_FOREST1 | WILD_FOREST2
 F:FORCE_SLEEP | FRIENDS | DROP_60 | DROP_SKELETON | DROP_CORPSE
 F:OPEN_DOOR | BASH_DOOR | LITE_2
 S:1_IN_9 | 
-S:ARROW_2 | MISSILE
+S:ARROW | MISSILE
 D:An agile hunter, ready and relaxed.
 
 N:143:Giant salamander
@@ -2577,7 +2577,7 @@ F:NEVER_MOVE | COLD_BLOOD | MULTIPLY |
 F:STUPID | EMPTY_MIND | 
 F:NO_CONF | NO_SLEEP | NO_FEAR
 S:1_IN_5
-S:ARROW_1
+S:ARROW
 D:It looks weird.
 
 N:186:Grishnakh, the Hill Orc
@@ -3042,7 +3042,7 @@ D:gaze seems mesmerizing.
 
 N:219:Knight archer
 G:p:U
-I:110:9d9:20:20:20
+I:110:13d6:20:20:20
 W:17:1:0:410
 O:0:50:0
 B:HIT:HURT:3d4
@@ -3051,7 +3051,7 @@ F:MALE | DUN_TOWER | DUN_TEMPLE | DUN_CITY
 F:DROP_1D2 | LITE_2
 F:OPEN_DOOR | BASH_DOOR | DROP_SKELETON | DROP_CORPSE
 S:1_IN_8
-S:ARROW_2
+S:ARROW
 D:A warrior trained in melee as well as missile weapons.
 
 N:220:Ixitxachitl
@@ -3263,7 +3263,7 @@ F:FORCE_SLEEP | DUN_LAIR | WILD_FOREST2
 F:BASH_DOOR | DROP_SKELETON |
 F:EVIL | IM_POIS
 S:1_IN_8 | 
-S:CONF | CAUSE_1 | DARKNESS | MISSILE | ARROW_2 
+S:CONF | CAUSE_1 | DARKNESS | MISSILE | ARROW 
 D:A dark elven torso merged with the bloated form of a giant spider.
 
 N:235:Mongbat
@@ -3405,7 +3405,7 @@ F:FRIENDS | DROP_60 |
 F:OPEN_DOOR | BASH_DOOR | 
 F:EVIL | ORC | HURT_LITE
 S:1_IN_15
-S:ARROW_1
+S:ARROW
 D:He is a large orc with powerful arms and deep black skin.
 
 N:245:Ochre jelly
@@ -3996,7 +3996,7 @@ F:DROP_90 |
 F:OPEN_DOOR | BASH_DOOR | ESCORT | DROP_SKELETON | DROP_CORPSE
 F:EVIL | ORC | CAN_SPEAK
 S:1_IN_15
-S:ARROW_1
+S:ARROW
 D:An armoured orc with an air of authority.
 
 N:286:Gelatinous cube
@@ -4397,7 +4397,7 @@ F:FORCE_MAXHP | FRIENDS | DROP_60 |
 F:OPEN_DOOR | BASH_DOOR | DROP_SKELETON | DROP_CORPSE
 F:EVIL | ORC | IM_POIS
 S:1_IN_12
-S:ARROW_1
+S:ARROW
 D:He is a cunning orc of power, as tall as a man, and stronger.  It fears 
 D:little.
 
@@ -6372,7 +6372,7 @@ D:magical seahorse.
 
 N:444:Cyclops
 G:P:u
-I:120:22d28:20:45:20
+I:120:28d22:20:45:20
 W:44:2:0:13500
 O:0:100:0
 B:HIT:HURT:9d8
@@ -6382,7 +6382,7 @@ F:DROP_90 | TAKE_ITEM | DUN_CAVERN | DUN_LAIR | WILD_SHORE | WILD_MOUNT1 |
 F:BASH_DOOR | OPEN_DOOR | MOVE_BODY | DROP_CORPSE
 F:EVIL | IM_POIS | IM_ACID | GIANT
 S:1_IN_8 | 
-S:ARROW_4
+S:ARROW
 D:A gigantic humanoid with but one eye.
 
 N:445:Clairvoyant
@@ -6842,7 +6842,7 @@ F:FORCE_SLEEP | FORCE_MAXHP |
 F:BASH_DOOR | CAN_FLY | DUN_LAIR | WILD_FOREST2 | DROP_CORPSE
 F:EVIL
 S:1_IN_5 | 
-S:ARROW_4
+S:ARROW
 D:It is a winged lion's body with a human torso and a tail covered in 
 D:vicious spikes.
 
@@ -7121,7 +7121,7 @@ F:DROP_90 | TAKE_ITEM | DROP_CORPSE |
 F:BASH_DOOR | OPEN_DOOR | MOVE_BODY |
 F:EVIL | IM_POIS | IM_ACID | GIANT
 S:1_IN_8 |
-S:ARROW_4
+S:ARROW
 D:Oh, no! Aaargh! It is the most unnatural, most disgusting 
 D:creature imaginable: a two-eyed cyclops! This perversion 
 D:of nature must be exterminated!
@@ -7932,7 +7932,7 @@ F:DUN_CITY | DUN_RUIN | DUN_CAVERN | WILD_FOREST1 | WILD_GRASS
 F:FORCE_MAXHP | OPEN_DOOR | FRIENDS | DROP_90 |
 F:SMART | EVIL | IM_POIS | MALE | DROP_SKELETON | DROP_CORPSE
 S:1_IN_3
-S:ARROW_4
+S:ARROW
 D:A rebel halfling who has rejected the halfling tradition of archery.
 
 N:540:Gravity hound
@@ -8252,7 +8252,7 @@ F:IM_FIRE | IM_COLD
 F:IM_POIS | NONLIVING | REFLECTING |
 F:NO_CONF | NO_SLEEP | NO_FEAR
 S:1_IN_8
-S:ARROW_4
+S:ARROW
 D:An enormous construct resembling a titan made from stone.  It strides 
 D:purposefully towards you, swinging its slow fists with earth-shattering 
 D:power.
@@ -10682,7 +10682,7 @@ F:DRAGON | IM_FIRE | IM_COLD |
 F:IM_ELEC | IM_POIS | CAN_SWIM |
 F:NO_CONF | NO_SLEEP | NO_FEAR | NONLIVING
 S:1_IN_6 | 
-S:BLIND | SLOW | CONF | ARROW_3 | 
+S:BLIND | SLOW | CONF | ARROW | 
 S:BR_POIS
 D:A constructed dragon, the drolem has massive strength.  Powerful spells 
 D:weaved during its creation make it a fearsome adversary.  Its eyes show 
@@ -11425,7 +11425,7 @@ F:ONLY_ITEM | DROP_2D2 | DROP_GOOD |
 F:BASH_DOOR | DROP_CORPSE
 F:EVIL | IM_FIRE | IM_POIS | NO_CONF | NO_SLEEP
 S:1_IN_6 | 
-S:SLOW | ARROW_4 | BO_MANA | BO_PLAS | BA_ELEC | 
+S:SLOW | ARROW | BO_MANA | BO_PLAS | BA_ELEC | 
 S:BR_WALL
 D:A fearsome bull-headed demon, Baphomet swings a mighty axe as he curses 
 D:all that defy him.
@@ -12806,7 +12806,7 @@ F:DROP_CHOSEN | LITE_2
 F:EVIL | IM_POIS | IM_ELEC | IM_COLD | SMART | REGENERATE
 F:OPEN_DOOR | BASH_DOOR | CAN_SWIM
 S:1_IN_4 |
-S:TPORT | TELE_TO | ARROW_2 | SHRIEK | SCARE | DARKNESS |
+S:TPORT | TELE_TO | ARROW | SHRIEK | SCARE | DARKNESS |
 S:S_ANT | S_SPIDER | S_HOUND | S_HYDRA | TRAPS | BO_WATE | BO_ELEC
 D:Julian is at home in wild woodlands. He enjoys hunting a challenging 
 D:prey: you. "Julian, dark hair hanging long, blue eyes containing neither 
@@ -14460,12 +14460,12 @@ D: in the darkness until some unfortunate creature wanders too close.
 
 N:867:Culverin
 G:I:U
-I:110:10d3:20:7:40
+I:110:16d2:20:7:40
 W:19:2:0:1160
 O:0:0:0
 F:NEVER_BLOW | RAND_25 | ANIMAL | WILD_FOREST1 | DUN_LAIR
 S:1_IN_1
-S:ARROW_3 |
+S:ARROW |
 D:A many legged scuttling thing, it spits pebbles with deadly force.
 
 N:868:Behinder

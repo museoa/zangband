@@ -322,7 +322,10 @@ bool monst_spell_monst(int m_idx)
 
 			case 96 + 4:
 			{
-				/* RF3_ARROW_1 */
+				int dice = r_ptr->hdice < 4 ? 1 : r_ptr->hdice / 4;
+				if (dice > 7) dice = 7;
+
+				/* RF3_ARROW */
 				if (known)
 				{
 					if (see_either)
@@ -345,98 +348,26 @@ bool monst_spell_monst(int m_idx)
 					sound(SOUND_SHOOT);
 				}
 
-				monst_bolt_monst(m_idx, x, y, GF_ARROW, damroll(1, 6));
+				monst_bolt_monst(m_idx, x, y, GF_ARROW, damroll(dice, 6));
 
 				break;
 			}
 
 			case 96 + 5:
 			{
-				/* RF3_ARROW_2 */
-				if (known)
-				{
-					if (see_either)
-					{
-						if (blind)
-						{
-							msgf("%^s makes a strange noise.", m_name);
-						}
-						else
-						{
-							msgf("%^s fires an arrow at %s.", m_name,
-									   t_name);
-						}
-					}
-					else
-					{
-						p_ptr->state.mon_fight = TRUE;
-					}
-
-					sound(SOUND_SHOOT);
-				}
-
-				monst_bolt_monst(m_idx, x, y, GF_ARROW, damroll(3, 6));
-
+				/* RF3_XXX6 */
 				break;
 			}
 
 			case 96 + 6:
 			{
-				/* RF3_ARROW_3 */
-				if (known)
-				{
-					if (see_either)
-					{
-						if (blind)
-						{
-							msgf("%^s makes a strange noise.", m_name);
-						}
-						else
-						{
-							msgf("%^s fires a bolt at %s.", m_name,
-									   t_name);
-						}
-					}
-					else
-					{
-						p_ptr->state.mon_fight = TRUE;
-					}
-
-					sound(SOUND_SHOOT);
-				}
-
-				monst_bolt_monst(m_idx, x, y, GF_ARROW, damroll(5, 6));
-
+				/* RF3_XXX7 */
 				break;
 			}
 
 			case 96 + 7:
 			{
-				/* RF3_ARROW_4 */
-				if (known)
-				{
-					if (see_either)
-					{
-						if (blind)
-						{
-							msgf("%^s makes a strange noise.", m_name);
-						}
-						else
-						{
-							msgf("%^s fires a bolt at %s.", m_name,
-									   t_name);
-						}
-					}
-					else
-					{
-						p_ptr->state.mon_fight = TRUE;
-					}
-
-					sound(SOUND_SHOOT);
-				}
-
-				monst_bolt_monst(m_idx, x, y, GF_ARROW, damroll(7, 6));
-
+				/* RF3_XXX8 */
 				break;
 			}
 

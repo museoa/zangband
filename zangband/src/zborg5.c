@@ -784,8 +784,11 @@ static int borg_danger_aux2(int i, bool average)
 
 			case 96 + 4:
 			{
-				/* RF3_ARROW_1 */
-				z = (1 * 6);
+				int dice = (r_ptr->hdice < 4 ? 1 : r_ptr->hdice / 4);
+				if (dice > 7) dice = 7;
+				
+				/* RF3_ARROW */
+				z = (dice * 6);
 				if (borg_goi)
 				{
 					z /= 25;
@@ -797,40 +800,19 @@ static int borg_danger_aux2(int i, bool average)
 
 			case 96 + 5:
 			{
-				/* RF3_ARROW_2 */
-				z = (3 * 6);
-				if (borg_goi)
-				{
-					z /= 25;
-					break;
-				}
-				if (FLAG(bp_ptr, TR_REFLECT)) z = (z + 2) / 3;
+				/* RF3_XXX6 */
 				break;
 			}
 
 			case 96 + 6:
 			{
-				/* RF3_ARROW_3 */
-				z = (5 * 6);
-				if (borg_goi)
-				{
-					z /= 25;
-					break;
-				}
-				if (FLAG(bp_ptr, TR_REFLECT)) z = (z + 2) / 3;
+				/* RF3_XXX7 */
 				break;
 			}
 
 			case 96 + 7:
 			{
-				/* RF3_ARROW_4 */
-				z = (7 * 6);
-				if (borg_goi)
-				{
-					z /= 25;
-					break;
-				}
-				if (FLAG(bp_ptr, TR_REFLECT)) z = (z + 2) / 3;
+				/* RF3_XXX8 */
 				break;
 			}
 

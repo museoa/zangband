@@ -705,10 +705,10 @@ static cptr suffix_spell[] =
 	" tries to cast a spell, but fails.",	/* 1 RF3_FAILS */
 	" does something.",	/* 2 RF3_XXX3X4 */
 	" does something.",	/* 3 RF3_XXX4X4 */
-	" fires an arrow.",	/* 4 RF3_ARROW_1 */
-	" fires an arrow!",	/* 5 RF3_ARROW_2 */
-	" fires a missile.",	/* 6 RF3_ARROW_3 */
-	" fires a missile!",	/* 7 RF3_ARROW_4 */
+	" fires an arrow.",	/* 4 RF3_ARROW */
+	" fires an arrow!",	/* 5 RF3_XXX6 */
+	" fires a missile.",	/* 6 RF3_XXX7 */
+	" fires a missile!",	/* 7 RF3_XXX8 */
 	" breathes acid.",	/* 8 RF3_BR_ACID */
 	" breathes lightning.",	/* 9 RF3_BR_ELEC */
 	" breathes fire.",	/*10 RF3_BR_FIRE */

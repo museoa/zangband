@@ -1773,10 +1773,7 @@ static void spoil_mon_info(cptr fname)
 		if (flags4 & RF3_SHRIEK) vp[vn++] = "shriek for help";
 		if (flags4 & RF3_ELDRITCH_HORROR) vp[vn++] = "blast your sanity";
 		if (flags4 & RF3_ROCKET) vp[vn++] = "shoot a rocket";
-		if (flags4 & RF3_ARROW_1) vp[vn++] = "fire arrows";
-		if (flags4 & RF3_ARROW_2) vp[vn++] = "fire arrows";
-		if (flags4 & RF3_ARROW_3) vp[vn++] = "fire missiles";
-		if (flags4 & RF3_ARROW_4) vp[vn++] = "fire missiles";
+		if (flags4 & RF3_ARROW) vp[vn++] = "fire arrows";
 
 		if (vn)
 		{

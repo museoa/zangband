@@ -122,10 +122,10 @@ typedef int errr;
 #define RF3_ELDRITCH_HORROR 0x00000002  /* Sanity-blasting horror */
 #define RF3_XXX3            0x00000004  /* (?) */
 #define RF3_ROCKET          0x00000008  /* TY: Rocket */
-#define RF3_ARROW_1         0x00000010  /* Fire an arrow (light) */
-#define RF3_ARROW_2         0x00000020  /* Fire an arrow (heavy) */
-#define RF3_ARROW_3         0x00000040  /* Fire missiles (light) */
-#define RF3_ARROW_4         0x00000080  /* Fire missiles (heavy) */
+#define RF3_ARROW           0x00000010  /* Fire an arrow */
+#define RF3_XXX6            0x00000020  /* (?) */
+#define RF3_XXX7            0x00000040  /* (?) */
+#define RF3_XXX8            0x00000080  /* (?) */
 #define RF3_BR_ACID         0x00000100  /* Breathe Acid */
 #define RF3_BR_ELEC         0x00000200  /* Breathe Elec */
 #define RF3_BR_FIRE         0x00000400  /* Breathe Fire */

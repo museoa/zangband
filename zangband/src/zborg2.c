@@ -2997,29 +2997,27 @@ static int borg_fear_spell(int i)
 
 		case 4:
 		{
-			/* RF3_ARROW_1 */
-			z = (1 * 6);
+			/* RF3_ARROW */
+			/* XXX FIXME this depends on the monster */
+			z = (4 * 6);
 			break;
 		}
 
 		case 5:
 		{
-			/* RF3_ARROW_2 */
-			z = (3 * 6);
+			/* RF3_XXX6 */
 			break;
 		}
 
 		case 6:
 		{
-			/* RF3_ARROW_3 */
-			z = (5 * 6);
+			/* RF3_XXX7 */
 			break;
 		}
 
 		case 7:
 		{
-			/* RF3_ARROW_4 */
-			z = (7 * 6);
+			/* RF3_XXX8 */
 			break;
 		}
 

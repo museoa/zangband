@@ -259,7 +259,7 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 				| RF4_BO_ELEC | RF4_BO_POIS | RF4_BO_NETH
 				| RF4_BO_WATE | RF4_BO_MANA | RF4_BO_PLAS
 				| RF4_BO_ICEE | RF4_MISSILE);
-		f4 &= ~(RF3_ARROW_1 | RF3_ARROW_2 | RF3_ARROW_3 | RF3_ARROW_4);
+		f4 &= ~(RF3_ARROW);
 	}
 
 	if ((smart & (SM_IMM_FREE)) && (int_outof(is_dumb, 100)))
@@ -927,49 +927,34 @@ bool make_attack_spell(int m_idx)
 
 		case 96 + 4:
 		{
-			/* RF3_ARROW_1 */
+			int dice = r_ptr->hdice < 4 ? 1 : r_ptr->hdice / 4;
+			if (dice > 7) dice = 7;
+
+			/* RF3_ARROW */
 			disturb(TRUE);
 			if (blind) msgf("%^s makes a strange noise.", m_name);
 			else
 				msgf("%^s fires an arrow.", m_name);
-			bolt(m_idx, GF_ARROW, damroll(1, 6));
+			bolt(m_idx, GF_ARROW, damroll(dice, 6));
 			update_smart_learn(m_idx, DRS_REFLECT);
 			break;
 		}
 
 		case 96 + 5:
 		{
-			/* RF3_ARROW_2 */
-			disturb(TRUE);
-			if (blind) msgf("%^s makes a strange noise.", m_name);
-			else
-				msgf("%^s fires an arrow!", m_name);
-			bolt(m_idx, GF_ARROW, damroll(3, 6));
-			update_smart_learn(m_idx, DRS_REFLECT);
+			/* RF3_XXX6X4 */
 			break;
 		}
 
 		case 96 + 6:
 		{
-			/* RF3_ARROW_3 */
-			disturb(TRUE);
-			if (blind) msgf("%^s makes a strange noise.", m_name);
-			else
-				msgf("%^s fires a bolt.", m_name);
-			bolt(m_idx, GF_ARROW, damroll(5, 6));
-			update_smart_learn(m_idx, DRS_REFLECT);
+			/* RF3_XXX7X4 */
 			break;
 		}
 
 		case 96 + 7:
 		{
-			/* RF3_ARROW_4 */
-			disturb(TRUE);
-			if (blind) msgf("%^s makes a strange noise.", m_name);
-			else
-				msgf("%^s fires a bolt!", m_name);
-			bolt(m_idx, GF_ARROW, damroll(7, 6));
-			update_smart_learn(m_idx, DRS_REFLECT);
+			/* RF3_XXX8X4 */
 			break;
 		}
 

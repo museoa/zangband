@@ -638,10 +638,7 @@ static void roff_mon_aux(int r_idx, int remem)
 	if (FLAG(mf_ptr, RF_SHRIEK)) vp[vn++] = "shriek for help";
 	if (FLAG(mf_ptr, RF_ELDRITCH_HORROR)) vp[vn++] = "blast your sanity";
 	if (FLAG(mf_ptr, RF_ROCKET)) vp[vn++] = "shoot a rocket";
-	if (FLAG(mf_ptr, RF_ARROW_1)) vp[vn++] = "fire an arrow";
-	if (FLAG(mf_ptr, RF_ARROW_2)) vp[vn++] = "fire arrows";
-	if (FLAG(mf_ptr, RF_ARROW_3)) vp[vn++] = "fire a missile";
-	if (FLAG(mf_ptr, RF_ARROW_4)) vp[vn++] = "fire missiles";
+	if (FLAG(mf_ptr, RF_ARROW)) vp[vn++] = "fire arrows";
 
 	/* Describe inate attacks */
 	if (vn)

@@ -1363,12 +1363,12 @@ static int breath_gf[32] =
 {
 	GF_NONE,	/* RF3_SHRIEK */
 	GF_NONE,	/* RF3_ELDRITCH_HORROR */
-	GF_NONE,	/* RF3_XXX3X4 */
+	GF_NONE,	/* RF3_XXX3 */
 	GF_NONE,	/* RF3_ROCKET */
-	GF_NONE,	/* RF3_ARROW_1 */
-	GF_NONE,	/* RF3_ARROW_2 */
-	GF_NONE,	/* RF3_ARROW_3 */
-	GF_NONE,	/* RF3_ARROW_4 */
+	GF_NONE,	/* RF3_ARROW */
+	GF_NONE,	/* RF3_XXX6 */
+	GF_NONE,	/* RF3_XXX7 */
+	GF_NONE,	/* RF3_XXX8 */
 	GF_ACID,	/* RF3_BR_ACID */
 	GF_ELEC,	/* RF3_BR_ELEC */
 	GF_FIRE,	/* RF3_BR_FIRE */
