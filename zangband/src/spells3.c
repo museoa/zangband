@@ -2202,8 +2202,8 @@ bool mundane_spell(void)
 	/* Not identified yet */
 	o_ptr->info &= ~(OB_SENSE | OB_KNOWN | OB_EMPTY | OB_STOREB);
 
-	/* Erase the inscription */
-	o_ptr->inscription = 0;
+    /* Erase the inscription */
+    quark_remove(&o_ptr->inscription);
 
 	/* Erase the activation */
 	o_ptr->activate = 0;
@@ -2222,8 +2222,8 @@ bool mundane_spell(void)
 	o_ptr->to_d = k_ptr->to_d;
 	o_ptr->to_a = k_ptr->to_a;
 
-	/* No longer artifact / ego item */
-	o_ptr->xtra_name = 0;
+    /* No longer artifact / ego item */
+    quark_remove(&o_ptr->xtra_name);
 
 	/* Default power */
 	o_ptr->ac = k_ptr->ac;

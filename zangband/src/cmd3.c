@@ -594,8 +594,8 @@ void do_cmd_uninscribe(void)
 	/* Message */
 	msg_print("Inscription removed.");
 
-	/* Remove the incription */
-	o_ptr->inscription = 0;
+    /* Remove the incription */
+    quark_remove(&o_ptr->inscription);
 
 	/* Combine the pack */
 	p_ptr->notice |= (PN_COMBINE);
@@ -649,7 +649,8 @@ void do_cmd_inscribe(void)
 	/* Get a new inscription (possibly empty) */
 	if (get_string("Inscription: ", out_val, 80))
 	{
-		/* Save the inscription */
+        /* Save the inscription */
+        quark_remove(&o_ptr->inscription);
 		o_ptr->inscription = quark_add(out_val);
 
 		/* Combine the pack */

@@ -1751,6 +1751,7 @@ void object_absorb(object_type *o_ptr, const object_type *j_ptr)
 	/* Hack -- blend "inscriptions" */
     if (j_ptr->inscription)
     {
+        quark_remove(&o_ptr->inscription);
         o_ptr->inscription = j_ptr->inscription;
         quark_dup(j_ptr->inscription);
     }

@@ -743,8 +743,8 @@ static object_type *store_carry(object_type *o_ptr)
 	o_ptr->kn_flags2 = o_ptr->flags2;
 	o_ptr->kn_flags3 = o_ptr->flags3;
 
-	/* Erase the inscription */
-	o_ptr->inscription = 0;
+    /* Erase the inscription */
+    quark_remove(&o_ptr->inscription);
 
 	/* Erase the "feeling" */
 	o_ptr->feeling = FEEL_NONE;
@@ -1523,8 +1523,8 @@ static void store_purchase(int *store_top)
 			/* Message */
 			msg_format("You bought %s for %ld gold.", o_name, (long)price);
 
-			/* Erase the inscription */
-			j_ptr->inscription = 0;
+            /* Erase the inscription */
+            quark_remove(&j_ptr->inscription);
 
 			/* Erase the "feeling" */
 			j_ptr->feeling = FEEL_NONE;
@@ -1786,8 +1786,8 @@ static void store_sell(int *store_top)
 
 	/* Remove any inscription, feeling for stores */
 	if (!(st_ptr->type == BUILD_STORE_HOME))
-	{
-		q_ptr->inscription = 0;
+    {
+        quark_remove(&q_ptr->inscription);
 		q_ptr->feeling = FEEL_NONE;
 	}
 
