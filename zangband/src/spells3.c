@@ -1812,6 +1812,10 @@ bool artifact_scroll(void)
 			msg_print("Not enough enough energy to enchant more than one object!");
 			msg_format("%d of your %s %s destroyed!", (o_ptr->number) - 1,
 			           o_name, ((o_ptr->number > 2) ? "were" : "was"));
+			
+			/* Change the weight */
+			p_ptr->total_weight -= ((o_ptr->number - 1) * o_ptr->weight);
+			
 			o_ptr->number = 1;
 		}
 
@@ -1856,12 +1860,6 @@ static void good_luck(object_type *o_ptr)
 
 		/* Apply good magic (allow artifacts, good, great if an ego-item, no curse) */
 		apply_magic(o_ptr, dun_level, TRUE, TRUE, great, FALSE);
-	}
-
-	/* Objects duplicate sometimes */
-	if (!rand_int(777) && (o_ptr->number < 99))
-	{
-		o_ptr->number++;
 	}
 }
 

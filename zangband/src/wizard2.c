@@ -1130,6 +1130,9 @@ static void wiz_quantity_item(object_type *o_ptr)
 		/* Paranoia */
 		if (tmp_int < 1) tmp_int = 1;
 		if (tmp_int > 99) tmp_int = 99;
+		
+		/* Add the weight */
+		p_ptr->total_weight += ((tmp_int - o_ptr->number) * o_ptr->weight);
 
 		/* Accept modifications */
 		o_ptr->number = tmp_int;
