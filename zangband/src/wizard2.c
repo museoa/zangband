@@ -817,6 +817,8 @@ static void wiz_reroll_item(object_type *o_ptr)
 
 	bool changed = FALSE;
 
+	s16b *o_list_ptr = look_up_list(o_ptr);
+
 	/* Hack -- leave normal artifacts alone */
 	if ((o_ptr->flags3 & TR3_INSTA_ART) && (o_ptr->activate > 128)) return;
 
@@ -825,7 +827,6 @@ static void wiz_reroll_item(object_type *o_ptr)
 
 	/* Copy the object */
 	object_copy(q_ptr, o_ptr);
-
 
 	/* Main loop. Ask for magification and artifactification */
 	while (TRUE)
@@ -870,6 +871,9 @@ static void wiz_reroll_item(object_type *o_ptr)
 		{
 			case 'w':  case 'W':
 			{
+				/* Delete the refcounted information */
+				delete_static_object(q_ptr);
+
 				/* Apply bad magic, but first clear object */
 				object_prep(q_ptr, o_ptr->k_idx);
 				apply_magic(q_ptr, p_ptr->depth, 0, OC_FORCE_BAD);
@@ -877,6 +881,9 @@ static void wiz_reroll_item(object_type *o_ptr)
 			}
 			case 'n':  case 'N':
 			{
+				/* Delete the refcounted information */
+				delete_static_object(q_ptr);
+
 				/* Apply normal magic, but first clear object */
 				object_prep(q_ptr, o_ptr->k_idx);
 				apply_magic(q_ptr, p_ptr->depth, 0, OC_NORMAL);
@@ -884,6 +891,9 @@ static void wiz_reroll_item(object_type *o_ptr)
 			}
 			case 'e':  case 'E':
 			{
+				/* Delete the refcounted information */
+				delete_static_object(q_ptr);
+
 				/* Apply great magic, but first clear object */
 				object_prep(q_ptr, o_ptr->k_idx);
 				apply_magic(q_ptr, p_ptr->depth, 30, OC_FORCE_GOOD);
@@ -891,6 +901,9 @@ static void wiz_reroll_item(object_type *o_ptr)
 			}
 			case 's':  case 'S':
 			{
+				/* Delete the refcounted information */
+				delete_static_object(q_ptr);
+
 				object_prep(q_ptr, o_ptr->k_idx);
 
 				/* Make a random artifact */
@@ -908,9 +921,22 @@ static void wiz_reroll_item(object_type *o_ptr)
 		q_ptr->iy = o_ptr->iy;
 		q_ptr->ix = o_ptr->ix;
 		q_ptr->next_o_idx = o_ptr->next_o_idx;
+		q_ptr->held = o_ptr->held;
 
-		/* Apply changes */
-		object_copy(o_ptr, q_ptr);
+		/* Is the object in a list? */
+		if (o_list_ptr)
+		{
+			/* Delete the object */
+			delete_held_object(o_list_ptr, o_ptr);
+
+			/* Add the new object to the list */
+			add_object_list(o_list_ptr, o_ptr);
+		}
+		else
+		{
+			/* Apply changes */
+			object_copy(o_ptr, q_ptr);
+		}
 
 		/* Recalculate bonuses */
 		p_ptr->update |= (PU_BONUS);
@@ -998,8 +1024,6 @@ static void wiz_quantity_item(object_type *o_ptr)
  */
 static void do_cmd_wiz_play(void)
 {
-	int item;
-
 	object_type forge;
 	object_type *q_ptr;
 
@@ -1014,20 +1038,11 @@ static void do_cmd_wiz_play(void)
 	/* Get an item */
 	q = "Play with which object? ";
 	s = "You have nothing to play with.";
-	if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR))) return;
 
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
+	o_ptr = get_item(q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR));
 
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
-	}
-
+	/* Not a valid item */
+	if (!o_ptr) return;
 
 	/* Save the screen */
 	screen_save();

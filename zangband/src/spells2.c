@@ -60,11 +60,11 @@ void self_knowledge(void)
 	chg_virtue(V_ENLIGHTEN, 1);
 
 	/* Acquire item flags from equipment */
-	for (k = INVEN_WIELD; k < INVEN_TOTAL; k++)
+	for (k = 0; k < EQUIP_MAX; k++)
 	{
 		u32b t1, t2, t3;
 
-		o_ptr = &inventory[k];
+		o_ptr = &p_ptr->equipment[k];
 
 		/* Skip non-objects */
 		if (!o_ptr->k_idx) continue;
@@ -480,7 +480,7 @@ void self_knowledge(void)
 
 
 	/* Access the current weapon */
-	o_ptr = &inventory[INVEN_WIELD];
+	o_ptr = &p_ptr->equipment[EQUIP_WIELD];
 
 	/* Analyze the weapon */
 	if (o_ptr->k_idx)

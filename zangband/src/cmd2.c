@@ -210,7 +210,7 @@ void do_cmd_toggle_search(void)
 /*
  * Determine if a grid contains a chest
  */
-static s16b chest_check(int x, int y)
+static object_type *chest_check(int x, int y)
 {
 	cave_type *c_ptr = area(x, y);
 
@@ -220,7 +220,7 @@ static s16b chest_check(int x, int y)
 	OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 	{
 		/* Check for chest */
-		if (o_ptr->tval == TV_CHEST) return (_this_o_idx);
+		if (o_ptr->tval == TV_CHEST) return (o_ptr);
 	}
 	OBJ_ITT_END;
 
@@ -240,7 +240,7 @@ static s16b chest_check(int x, int y)
  * chest is based on the "power" of the chest, which is in turn based
  * on the level on which the chest is generated.
  */
-static void chest_death(int x, int y, s16b o_idx)
+static void chest_death(int x, int y, object_type *o_ptr)
 {
 	int number;
 
@@ -250,8 +250,6 @@ static void chest_death(int x, int y, s16b o_idx)
 
 	object_type forge;
 	object_type *q_ptr;
-
-	object_type *o_ptr = &o_list[o_idx];
 
 	/* 
 	 * Pick type of item to find in the chest.
@@ -396,12 +394,9 @@ static void chest_death(int x, int y, s16b o_idx)
  * Exploding chest destroys contents (and traps).
  * Note that the chest itself is never destroyed.
  */
-static void chest_trap(int x, int y, s16b o_idx)
+static void chest_trap(int x, int y, object_type *o_ptr)
 {
 	int i, trap;
-
-	object_type *o_ptr = &o_list[o_idx];
-
 
 	/* Ignore disarmed chests */
 	if (o_ptr->pval <= 0) return;
@@ -483,15 +478,13 @@ static void chest_trap(int x, int y, s16b o_idx)
  *
  * Returns TRUE if repeated commands may continue
  */
-static bool do_cmd_open_chest(int x, int y, s16b o_idx)
+static bool do_cmd_open_chest(int x, int y, object_type *o_ptr)
 {
 	int i, j;
 
 	bool flag = TRUE;
 
 	bool more = FALSE;
-
-	object_type *o_ptr = &o_list[o_idx];
 
 
 	/* Take a turn */
@@ -538,10 +531,10 @@ static bool do_cmd_open_chest(int x, int y, s16b o_idx)
 	if (flag)
 	{
 		/* Apply chest traps, if any */
-		chest_trap(x, y, o_idx);
+		chest_trap(x, y, o_ptr);
 
 		/* Let the Chest drop items */
-		chest_death(x, y, o_idx);
+		chest_death(x, y, o_ptr);
 	}
 
 	/* Result */
@@ -654,7 +647,7 @@ static int count_doors(int *x, int *y, bool (*test) (int feat), bool under)
  */
 static int count_chests(int *x, int *y, bool trapped)
 {
-	int d, count, o_idx;
+	int d, count;
 
 	object_type *o_ptr;
 
@@ -668,11 +661,10 @@ static int count_chests(int *x, int *y, bool trapped)
 		int yy = p_ptr->py + ddy_ddd[d];
 		int xx = p_ptr->px + ddx_ddd[d];
 
-		/* No (visible) chest is there */
-		if ((o_idx = chest_check(xx, yy)) == 0) continue;
+		o_ptr = chest_check(xx, yy);
 
-		/* Grab the object */
-		o_ptr = &o_list[o_idx];
+		/* No (visible) chest is there */
+		if (!o_ptr) continue;
 
 		/* Already open */
 		if (o_ptr->pval == 0) continue;
@@ -805,7 +797,7 @@ void do_cmd_open(void)
 {
 	int y, x, dir;
 
-	s16b o_idx;
+	object_type *o_ptr;
 
 	cave_type *c_ptr;
 
@@ -856,10 +848,10 @@ void do_cmd_open(void)
 		c_ptr = area(x, y);
 
 		/* Check for chest */
-		o_idx = chest_check(x, y);
+		o_ptr = chest_check(x, y);
 
 		/* Nothing useful */
-		if (!((c_ptr->feat == FEAT_CLOSED) || o_idx))
+		if (!((c_ptr->feat == FEAT_CLOSED) || o_ptr))
 		{
 			/* Message */
 			message(MSG_NOTHING_TO_OPEN, 0, "You see nothing there to open.");
@@ -879,10 +871,10 @@ void do_cmd_open(void)
 		}
 
 		/* Handle chests */
-		else if (o_idx)
+		else if (o_ptr)
 		{
 			/* Open the chest */
-			more = do_cmd_open_chest(x, y, o_idx);
+			more = do_cmd_open_chest(x, y, o_ptr);
 		}
 
 		/* Handle doors */
@@ -1457,14 +1449,11 @@ void do_cmd_tunnel(void)
  *
  * Returns TRUE if repeated commands may continue
  */
-static bool do_cmd_disarm_chest(int x, int y, s16b o_idx)
+static bool do_cmd_disarm_chest(int x, int y, object_type *o_ptr)
 {
 	int i, j;
 
 	bool more = FALSE;
-
-	object_type *o_ptr = &o_list[o_idx];
-
 
 	/* Take a turn */
 	p_ptr->energy_use = 100;
@@ -1522,7 +1511,7 @@ static bool do_cmd_disarm_chest(int x, int y, s16b o_idx)
 	{
 		msg_print("You set off a trap!");
 		sound(SOUND_FAIL);
-		chest_trap(x, y, o_idx);
+		chest_trap(x, y, o_ptr);
 	}
 
 	/* Result */
@@ -1626,7 +1615,7 @@ void do_cmd_disarm(void)
 {
 	int y, x, dir;
 
-	s16b o_idx;
+	object_type *o_ptr;
 
 	cave_type *c_ptr;
 
@@ -1686,10 +1675,10 @@ void do_cmd_disarm(void)
 		c_ptr = area(x, y);
 
 		/* Check for chests */
-		o_idx = chest_check(x, y);
+		o_ptr = chest_check(x, y);
 
 		/* Disarm a trap */
-		if (!is_visible_trap(c_ptr) && !o_idx)
+		if (!is_visible_trap(c_ptr) && !o_ptr)
 		{
 			/* Message */
 			msg_print("You see nothing there to disarm.");
@@ -1706,10 +1695,10 @@ void do_cmd_disarm(void)
 		}
 
 		/* Disarm chest */
-		else if (o_idx)
+		else if (o_ptr)
 		{
 			/* Disarm the chest */
-			more = do_cmd_disarm_chest(x, y, o_idx);
+			more = do_cmd_disarm_chest(x, y, o_ptr);
 		}
 
 		/* Disarm trap */
@@ -1855,31 +1844,24 @@ void do_cmd_alter(void)
  *
  * XXX XXX XXX Let user choose a pile of spikes, perhaps?
  */
-static bool get_spike(int *ip)
+static object_type *get_spike(void)
 {
-	int i;
+	object_type *o_ptr;
 
 	/* Check every item in the pack */
-	for (i = 0; i < INVEN_PACK; i++)
+	OBJ_ITT_START (p_ptr->inventory, o_ptr)
 	{
-		object_type *o_ptr = &inventory[i];
-
-		/* Skip non-objects */
-		if (!o_ptr->k_idx) continue;
-
 		/* Check the "tval" code */
 		if (o_ptr->tval == TV_SPIKE)
 		{
 			/* Save the spike index */
-			(*ip) = i;
-
-			/* Success */
-			return (TRUE);
+			return (o_ptr);
 		}
 	}
+	OBJ_ITT_END;
 
 	/* Oops */
-	return (FALSE);
+	return (NULL);
 }
 
 
@@ -1890,9 +1872,10 @@ static bool get_spike(int *ip)
  */
 void do_cmd_spike(void)
 {
-	int dir, item;
+	int dir;
 	s16b y, x;
 
+	object_type *o_ptr;
 	cave_type *c_ptr;
 
 
@@ -1921,10 +1904,15 @@ void do_cmd_spike(void)
 		{
 			/* Message */
 			msg_print("You see nothing there to spike.");
+
+			disturb(FALSE);
+			return;
 		}
 
 		/* Get a spike */
-		else if (!get_spike(&item))
+		o_ptr = get_spike();
+
+		if (!o_ptr)
 		{
 			/* Message */
 			msg_print("You have no spikes!");
@@ -1956,9 +1944,9 @@ void do_cmd_spike(void)
 			make_lockjam_door(x, y, 1, TRUE);
 
 			/* Use up, and describe, a single spike, from the bottom */
-			inven_item_increase(item, -1);
-			inven_item_describe(item);
-			inven_item_optimize(item);
+			item_increase(o_ptr, -1);
+			item_describe(o_ptr);
+			item_optimize(o_ptr);
 		}
 	}
 
@@ -2309,7 +2297,7 @@ static int critical_shot(int chance, int sleeping_bonus, cptr o_name,
  *
  * Note that Bows of "Extra Shots" give an extra shot.
  */
-void do_cmd_fire_aux(int item, object_type *j_ptr)
+void do_cmd_fire_aux(object_type *o_ptr, object_type *j_ptr)
 {
 	int py = p_ptr->py;
 	int px = p_ptr->px;
@@ -2330,8 +2318,6 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	int special_dam = 0;
 	int special_hit = 0;
 #endif /* 0 */
-
-	object_type *o_ptr;
 
 	int tdis, thits, tmul;
 	int cur_dis;
@@ -2370,16 +2356,6 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	}
 #endif /* 0 */
 
-	/* Access the item (if in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-	else
-	{
-		o_ptr = &o_list[0 - item];
-	}
-
 	/* Get a direction (or cancel) */
 	if (!get_aim_dir(&dir)) return;
 
@@ -2396,19 +2372,9 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	i_ptr->number = 1;
 
 	/* Reduce and describe inventory */
-	if (item >= 0)
-	{
-		inven_item_increase(item, -1);
-		inven_item_describe(item);
-		inven_item_optimize(item);
-	}
-
-	/* Reduce and describe floor item */
-	else
-	{
-		floor_item_increase(0 - item, -1);
-		floor_item_optimize(0 - item);
-	}
+	item_increase(o_ptr, -1);
+	item_describe(o_ptr);
+	item_optimize(o_ptr);
 
 	/* Sound */
 	sound(SOUND_SHOOT);
@@ -2732,12 +2698,11 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 
 void do_cmd_fire(void)
 {
-	int item;
-	object_type *j_ptr;
+	object_type *j_ptr, *o_ptr;
 	cptr q, s;
 
 	/* Get the "bow" (if any) */
-	j_ptr = &inventory[INVEN_BOW];
+	j_ptr = &p_ptr->equipment[EQUIP_BOW];
 
 	/* Require a launcher */
 	if (!j_ptr->tval)
@@ -2753,10 +2718,14 @@ void do_cmd_fire(void)
 	/* Get an item */
 	q = "Fire which item? ";
 	s = "You have nothing to fire.";
-	if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR))) return;
+
+	o_ptr = get_item(q, s, (USE_INVEN | USE_FLOOR));
+
+	/* Not a valid item */
+	if (!o_ptr) return;
 
 	/* Fire the item */
-	do_cmd_fire_aux(item, j_ptr);
+	do_cmd_fire_aux(o_ptr, j_ptr);
 }
 
 
@@ -2774,7 +2743,7 @@ void do_cmd_throw_aux(int mult)
 	int py = p_ptr->py;
 	int px = p_ptr->px;
 
-	int dir, item;
+	int dir;
 	int y, x, ny, nx, ty, tx;
 
 	int chance, chance2, tdis;
@@ -2811,20 +2780,14 @@ void do_cmd_throw_aux(int mult)
 	/* Get an item */
 	q = "Throw which item? ";
 	s = "You have nothing to throw.";
-	if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR))) return;
 
-	/* Access the item (if in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-	else
-	{
-		o_ptr = &o_list[0 - item];
-	}
+	o_ptr = get_item(q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR));
+
+	/* Not a valid item */
+	if (!o_ptr) return;
 
 	/* Hack -- Cannot remove cursed items */
-	if ((item >= INVEN_WIELD) && cursed_p(o_ptr))
+	if ((!o_ptr->held) && cursed_p(o_ptr))
 	{
 		/* Oops */
 		msg_print("Hmmm, it seems to be cursed.");
@@ -2852,21 +2815,10 @@ void do_cmd_throw_aux(int mult)
 	/* Single object */
 	q_ptr->number = 1;
 
-	/* Reduce and describe inventory */
-	if (item >= 0)
-	{
-		inven_item_increase(item, -1);
-		inven_item_describe(item);
-		inven_item_optimize(item);
-	}
-
-	/* Reduce and describe floor item */
-	else
-	{
-		floor_item_increase(0 - item, -1);
-		floor_item_optimize(0 - item);
-	}
-
+	/* Reduce and describe object */
+	item_increase(o_ptr, -1);
+	item_describe(o_ptr);
+	item_optimize(o_ptr);
 
 	/* Description */
 	object_desc(o_name, q_ptr, FALSE, 3, 256);

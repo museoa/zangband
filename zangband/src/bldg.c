@@ -1192,7 +1192,7 @@ bool compare_weapons(void)
 	clear_bldg(6, 18);
 
 	/* Point to wielded weapon */
-	o_ptr = &inventory[INVEN_WIELD];
+	o_ptr = &p_ptr->equipment[EQUIP_WIELD];
 
 	/* Check to see if we have one */
 	if (!o_ptr->k_idx)
@@ -1235,7 +1235,6 @@ bool compare_weapons(void)
  */
 bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac)
 {
-	int item;
 	bool okay = FALSE;
 	object_type *o_ptr;
 	cptr q, s;
@@ -1251,10 +1250,12 @@ bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac)
 	/* Get an item */
 	q = "Improve which item? ";
 	s = "You have nothing to improve.";
-	if (!get_item(&item, q, s, (USE_INVEN | USE_EQUIP))) return (FALSE);
 
-	/* Get the item (in the pack) */
-	o_ptr = &inventory[item];
+	/* Get the item */
+	o_ptr = get_item(q, s, (USE_INVEN | USE_EQUIP));
+
+	/* No valid items */
+	if (!o_ptr) return (FALSE);
 
 	/* Check if the player has enough money */
 	if (p_ptr->au < (cost * o_ptr->number))
@@ -1327,7 +1328,7 @@ bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac)
  */
 void building_recharge(s32b cost)
 {
-	int item, lev;
+	int lev;
 	object_type *o_ptr;
 	object_kind *k_ptr;
 	cptr q, s;
@@ -1347,19 +1348,11 @@ void building_recharge(s32b cost)
 	/* Get an item */
 	q = "Recharge which item? ";
 	s = "You have nothing to recharge.";
-	if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR))) return;
 
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
+	o_ptr = get_item(q, s, (USE_INVEN | USE_FLOOR));
 
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
-	}
+	/* No valid item */
+	if (!o_ptr) return;
 
 	k_ptr = &k_info[o_ptr->k_idx];
 

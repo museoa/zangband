@@ -126,15 +126,26 @@ static long equip_value(void)
 	long total = 0L;
 	int i;
 
-	for (i = 1; i < INVEN_TOTAL; i++)
+	/* Scan equipment */
+	for (i = 0; i < EQUIP_MAX; i++)
 	{
-		o_ptr = &inventory[i];
+		o_ptr = &p_ptr->equipment[i];
 
 		if (o_ptr->info & OB_STOREB) continue;
 		if (!(o_ptr->info & OB_KNOWN)) continue;
 
 		total += object_value(o_ptr);
 	}
+
+	/* Scan inventory */
+	OBJ_ITT_START (p_ptr->inventory, o_ptr)
+	{
+		if (o_ptr->info & OB_STOREB) continue;
+		if (!(o_ptr->info & OB_KNOWN)) continue;
+
+		total += object_value(o_ptr);
+	}
+	OBJ_ITT_END;
 
 	return (total);
 }

@@ -166,20 +166,25 @@ typedef void (*map_erase_hook_type) (void);
 
 /* Extern Variables */
 extern byte gamma_table[256];
+
+#ifdef TERM_USE_MAP
 extern map_blk_ptr_ptr *map_cache;
 extern byte *map_cache_refcount;
 extern int *map_cache_x;
 extern int *map_cache_y;
 extern int **map_grid;
+#endif /* TERM_USE_MAP */
 
 
 /* Extern Functions */
 extern void build_gamma_table(int gamma);
 extern cptr get_default_font(int term_num);
 extern bool pick_graphics(int graphics, int *xsize, int *ysize, char *filename);
+#ifdef TERM_USE_MAP
 extern map_info_hook_type set_map_hook(map_info_hook_type hook_func);
 extern map_erase_hook_type set_erase_hook(map_erase_hook_type hook_func);
 extern void init_overhead_map(void);
 extern void del_overhead_map(void);
 extern bool map_in_bounds(int x, int y);
 extern map_block *map_loc(int dx, int dy);
+#endif /* TERM_USE_MAP */

@@ -276,10 +276,8 @@ void do_cmd_browse_aux(const object_type *o_ptr)
  */
 void do_cmd_browse(void)
 {
-	int item;
 	object_type *o_ptr;
 	cptr q, s;
-
 
 	/* Warriors are illiterate */
 	if (!(p_ptr->realm1 || p_ptr->realm2))
@@ -294,19 +292,11 @@ void do_cmd_browse(void)
 	/* Get an item */
 	q = "Browse which book? ";
 	s = "You have no books that you can read.";
-	if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR))) return;
 
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
+	o_ptr = get_item(q, s, (USE_INVEN | USE_FLOOR));
 
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
-	}
+	/* Not a valid item */
+	if (!o_ptr) return;
 
 	/* Print out the spells */
 	do_cmd_browse_aux(o_ptr);
@@ -318,7 +308,7 @@ void do_cmd_browse(void)
  */
 void do_cmd_study(void)
 {
-	int i, item, sval;
+	int i, sval;
 	int increment = 0;
 
 	/* Spells of realm2 will have an increment of +32 */
@@ -365,19 +355,11 @@ void do_cmd_study(void)
 	/* Get an item */
 	q = "Study which book? ";
 	s = "You have no books that you can read.";
-	if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR))) return;
 
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
+	o_ptr = get_item(q, s, (USE_INVEN | USE_FLOOR));
 
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
-	}
+	/* Not a valid item */
+	if (!o_ptr) return;
 
 	/* Access the item's sval */
 	sval = o_ptr->sval;
@@ -2717,7 +2699,7 @@ static bool cast_arcane_spell(int spell)
  */
 void do_cmd_cast(void)
 {
-	int item, sval, spell, realm;
+	int sval, spell, realm;
 	int chance;
 	int increment = 0;
 	int use_realm;
@@ -2759,19 +2741,11 @@ void do_cmd_cast(void)
 	/* Get an item */
 	q = "Use which book? ";
 	s = "You have no spell books!";
-	if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR))) return;
 
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
+	o_ptr = get_item(q, s, (USE_INVEN | USE_FLOOR));
 
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
-	}
+	/* Not a valid item */
+	if (!o_ptr) return;
 
 	/* Access the item's sval */
 	sval = o_ptr->sval;

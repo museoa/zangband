@@ -3717,7 +3717,7 @@ static void do_cmd_knowledge_notes(void)
  */
 static void do_cmd_knowledge_wild(void)
 {
-	int k , j;
+	int k, j;
 
 	FILE *fff;
 
@@ -3751,14 +3751,14 @@ static void do_cmd_knowledge_wild(void)
 			for (j = 0; j < place[k].numstores; j++)
 			{
 				/* Stores are not given coordinates until you visit a town */
-				if (place[k].store[j].x !=0 && place[k].store[j].y !=0)
+				if (place[k].store[j].x != 0 && place[k].store[j].y != 0)
 				{
 					visited = TRUE;
 				}
 			}
 
-			/* Build a buffer with information (if visited, and if it is a town)*/
-			if (visited) 
+			/* Build a buffer with information (if visited, and if it is a town) */
+			if (visited)
 			{
 
 				/* Clear stores and place information */
@@ -3769,7 +3769,7 @@ static void do_cmd_knowledge_wild(void)
 				/* Build stores information */
 				for (j = 0; j < place[k].numstores; j++)
 				{
-				
+
 					/* Clear building */
 					memset(build_name, 0, 80);
 
@@ -3787,19 +3787,19 @@ static void do_cmd_knowledge_wild(void)
 					/* Note if there are stairs in this town */
 					if (place[k].store[j].type == BUILD_STAIRS)
 					{
-					stairs_exist = TRUE;
+						stairs_exist = TRUE;
 					}
-			       
+
 				}
 
 				/* Build town information */
 				if (stairs_exist)
 				{
-					sprintf(place_info, "%s -- Stairs\n",place[k].name);
+					sprintf(place_info, "%s -- Stairs\n", place[k].name);
 				}
 				else
 				{
-					sprintf(place_info, "%s\n",place[k].name);
+					sprintf(place_info, "%s\n", place[k].name);
 				}
 
 				/* Write to file */
@@ -3818,7 +3818,7 @@ static void do_cmd_knowledge_wild(void)
 
 	/* Remove the file */
 	(void)fd_kill(file_name);
-	
+
 }
 
 /*

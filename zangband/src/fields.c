@@ -2802,6 +2802,8 @@ bool field_action_hit_trap_drop_item(field_type *f_ptr, vptr nothing)
 {
 	int item;
 
+	object_type *o_ptr;
+
 	/* Hack - ignore 'nothing' */
 	(void)nothing;
 
@@ -2811,19 +2813,18 @@ bool field_action_hit_trap_drop_item(field_type *f_ptr, vptr nothing)
 	/* Saving throw */
 	if (!check_save(f_ptr->data[1])) return (FALSE);
 
-	msg_print("You fumble with your equipment!");
+	msg_print("You fumble with your pack!");
 
 	/* Get the item to drop */
 	item = randint1(p_ptr->inven_cnt);
 
-	if (inventory[item].k_idx)
+	o_ptr = get_list_item(p_ptr->inventory, item);
+
+	/* Only if not cursed */
+	if (!cursed_p(o_ptr))
 	{
-		/* Only if not cursed */
-		if (!cursed_p(&inventory[item]))
-		{
-			/* Drop it */
-			inven_drop(item, inventory[item].number);
-		}
+		/* Drop it */
+		inven_drop(o_ptr, o_ptr->number);
 	}
 
 	/* Done */
@@ -2889,7 +2890,7 @@ bool field_action_hit_trap_no_lite(field_type *f_ptr, vptr nothing)
 	msg_print("Darkness surrounds you!");
 
 	/* Access the lite */
-	o_ptr = &inventory[INVEN_LITE];
+	o_ptr = &p_ptr->equipment[EQUIP_LITE];
 
 	if ((o_ptr->k_idx) &&
 		((o_ptr->sval == SV_LITE_LANTERN) || (o_ptr->sval == SV_LITE_TORCH)))
@@ -3006,7 +3007,6 @@ bool field_action_hit_trap_raise_mon(field_type *f_ptr, vptr nothing)
 
 bool field_action_hit_trap_drain_magic(field_type *f_ptr, vptr nothing)
 {
-	int i, k;
 	object_type *o_ptr;
 
 	/* Hack - ignore 'nothing' */
@@ -3021,16 +3021,10 @@ bool field_action_hit_trap_drain_magic(field_type *f_ptr, vptr nothing)
 	msg_print("Static fills the air.");
 
 	/* Find an item */
-	for (k = 0; k < 10; k++)
+	OBJ_ITT_START (p_ptr->inventory, o_ptr)
 	{
-		/* Pick an item */
-		i = randint0(INVEN_PACK);
-
-		/* Obtain the item */
-		o_ptr = &inventory[i];
-
-		/* Skip non-objects */
-		if (!o_ptr->k_idx) continue;
+		/* Only work some of the time */
+		if (one_in_(2)) continue;
 
 		/* Drain charged wands/staffs */
 		if (((o_ptr->tval == TV_STAFF) || (o_ptr->tval == TV_WAND)) &&
@@ -3048,6 +3042,7 @@ bool field_action_hit_trap_drain_magic(field_type *f_ptr, vptr nothing)
 			p_ptr->window |= (PW_INVEN);
 		}
 	}
+	OBJ_ITT_END;
 
 	/* Done */
 	return (FALSE);
@@ -4163,10 +4158,10 @@ bool field_action_magetower2(field_type *f_ptr, vptr input)
 		}
 
 		/* Hack, use factor as a return value */
-        *factor = TRUE;
+		*factor = TRUE;
 
-        /* Done */
-        return (FALSE);
+		/* Done */
+		return (FALSE);
 	}
 
 	if (p_ptr->command_cmd == 'T')

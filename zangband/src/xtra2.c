@@ -2297,9 +2297,12 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 		/* Scan all objects in the grid */
 		if (easy_floor)
 		{
-			int floor_list[23], floor_num;
+			int floor_num;
 
-			if (scan_floor(floor_list, &floor_num, x, y, 0x02))
+			object_type *o_ptr = test_floor(&floor_num, c_ptr, 0x02);
+
+			/* Any items there? */
+			if (o_ptr)
 			{
 				/* Not boring */
 				boring = FALSE;
@@ -2309,11 +2312,6 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 					if (floor_num == 1)
 					{
 						char o_name[256];
-
-						object_type *o_ptr;
-
-						/* Acquire object */
-						o_ptr = &o_list[floor_list[0]];
 
 						/* Describe the object */
 						object_desc(o_name, o_ptr, TRUE, 3, 256);
@@ -2344,7 +2342,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 						screen_save();
 
 						/* Display */
-						show_floor(x, y);
+						show_list(c_ptr->o_idx);
 
 						/* Prompt */
 						prt("Hit any key to continue", 0, 0);

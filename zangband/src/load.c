@@ -350,15 +350,15 @@ static void rd_item(object_type *o_ptr)
 	rd_byte(&old_ds);
 
 	rd_byte(&o_ptr->info);
-	
+
 	if (sf_version < 35)
 	{
 		/* Old "marked" flag */
 		rd_byte(&tmpbyte);
-	
+
 		if (tmpbyte) o_ptr->info |= OB_SEEN;
 	}
-	
+
 	/* Old flags */
 	rd_u32b(&o_ptr->flags1);
 	rd_u32b(&o_ptr->flags2);
@@ -390,7 +390,7 @@ static void rd_item(object_type *o_ptr)
 	{
 		/* Monster holding object */
 		rd_s16b(&tmps16b);
-		
+
 		if (tmps16b)
 		{
 			o_ptr->held = TRUE;
@@ -1338,7 +1338,11 @@ static void rd_extra(void)
 }
 
 
-
+/*
+ * Mega-Hack , in order to load old savefiles, we
+ * need to save the player's inventory temporarily.
+ */
+static object_type old_inventory[24];
 
 /*
  * Read the player inventory
@@ -1353,8 +1357,6 @@ static void rd_extra(void)
  */
 static errr rd_inventory(void)
 {
-	int slot = 0;
-
 	object_type forge;
 	object_type *q_ptr;
 
@@ -1388,43 +1390,48 @@ static errr rd_inventory(void)
 		/* Hack -- verify item */
 		if (!q_ptr->k_idx) return (53);
 
-		/* Wield equipment */
-		if (n >= INVEN_WIELD)
+		if (sf_version > 36)
 		{
-			/* Copy object */
-			object_copy(&inventory[n], q_ptr);
+			/* Wield equipment */
+			if (n < EQUIP_MAX)
+			{
+				/* Copy object */
+				object_copy(&p_ptr->equipment[n], q_ptr);
 
-			/* Add the weight */
-			p_ptr->total_weight += (q_ptr->number * q_ptr->weight);
+				/* Add the weight */
+				p_ptr->total_weight += (q_ptr->number * q_ptr->weight);
 
-			/* One more item */
-			p_ptr->equip_cnt++;
+				/* One more item */
+				p_ptr->equip_cnt++;
+			}
 		}
-
-		/* Warning -- backpack is full */
-		else if (p_ptr->inven_cnt == INVEN_PACK)
-		{
-			/* Oops */
-			note("Too many items in the inventory!");
-
-			/* Fail */
-			return (54);
-		}
-
-		/* Carry inventory */
 		else
 		{
-			/* Get a slot */
-			n = slot++;
+			/* Wield equipment */
+			if (n >= 24)
+			{
+				/* Copy object */
+				object_copy(&p_ptr->equipment[n - 24], q_ptr);
 
-			/* Copy object */
-			object_copy(&inventory[n], q_ptr);
+				/* Add the weight */
+				p_ptr->total_weight += (q_ptr->number * q_ptr->weight);
 
-			/* Add the weight */
-			p_ptr->total_weight += (q_ptr->number * q_ptr->weight);
+				/* One more item */
+				p_ptr->equip_cnt++;
+			}
 
-			/* One more item */
-			p_ptr->inven_cnt++;
+			/* Carry inventory */
+			else
+			{
+				/* Copy object into temp structure */
+				object_copy(&old_inventory[n], q_ptr);
+
+				/* Add the weight */
+				p_ptr->total_weight += (q_ptr->number * q_ptr->weight);
+
+				/* One more item */
+				p_ptr->inven_cnt++;
+			}
 		}
 	}
 
@@ -2311,6 +2318,41 @@ static errr rd_dungeon(void)
 			/* Hack - set region of object */
 			o_ptr->region = cur_region;
 		}
+	}
+
+	/* Repair inventory information */
+	if (sf_version < 37)
+	{
+		object_type *o_ptr;
+
+		for (i = 0; i < 24; i++)
+		{
+			o_ptr = &old_inventory[i];
+
+			/* Do we have a real object? */
+			if (o_ptr->k_idx)
+			{
+				/* Carry it */
+				(void)inven_carry(o_ptr);
+			}
+		}
+	}
+	else
+	{
+		/* Delete this code when inven_cnt and total_weight are removed */
+
+		object_type *o_ptr;
+
+		/* Repair information */
+		OBJ_ITT_START (p_ptr->inventory, o_ptr)
+		{
+			/* Add the weight */
+			p_ptr->total_weight += (o_ptr->number * o_ptr->weight);
+
+			/* One more item */
+			p_ptr->inven_cnt++;
+		}
+		OBJ_ITT_END;
 	}
 
 	/*** Monsters ***/

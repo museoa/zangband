@@ -1687,14 +1687,16 @@ static void store_purchase(int *store_top)
 				j_ptr->feeling = FEEL_NONE;
 
 				/* Give it to the player */
-				item_new = inven_carry(j_ptr);
+				j_ptr = inven_carry(j_ptr);
 
 				/* Describe the final result */
-				object_desc(o_name, &inventory[item_new], TRUE, 3, 256);
+				object_desc(o_name, j_ptr, TRUE, 3, 256);
+
+				/* Get slot */
+				item_new = get_item_position(p_ptr->inventory, j_ptr);
 
 				/* Message */
-				msg_format("You have %s (%c).",
-						   o_name, index_to_label(item_new));
+				msg_format("You have %s (%c).", o_name, I2A(item_new));
 
 				/* Now, reduce the original stack's pval. */
 				if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
@@ -1783,13 +1785,16 @@ static void store_purchase(int *store_top)
 		distribute_charges(o_ptr, j_ptr, amt);
 
 		/* Give it to the player */
-		item_new = inven_carry(j_ptr);
+		j_ptr = inven_carry(j_ptr);
 
 		/* Describe just the result */
-		object_desc(o_name, &inventory[item_new], TRUE, 3, 256);
+		object_desc(o_name, j_ptr, TRUE, 3, 256);
+
+		/* Get slot */
+		item_new = get_item_position(p_ptr->inventory, j_ptr);
 
 		/* Message */
-		msg_format("You have %s (%c).", o_name, index_to_label(item_new));
+		msg_format("You have %s (%c).", o_name, I2A(item_new));
 
 		/* Handle stuff */
 		handle_stuff();
@@ -1868,23 +1873,14 @@ static void store_sell(int *store_top)
 
 	/* Get an item */
 	s = "You have nothing that I want.";
-	if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR))) return;
 
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
+	o_ptr = get_item(q, s, (USE_EQUIP | USE_INVEN));
 
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
-	}
-
+	/* Not a valid item */
+	if (!o_ptr) return;
 
 	/* Hack -- Cannot remove cursed items */
-	if ((item >= INVEN_WIELD) && cursed_p(o_ptr))
+	if ((!o_ptr->held) && cursed_p(o_ptr))
 	{
 		/* Oops */
 		msg_print("Hmmm, it seems to be cursed.");
@@ -1964,8 +1960,22 @@ static void store_sell(int *store_top)
 	/* Real store */
 	if (!(st_ptr->type == BUILD_STORE_HOME))
 	{
+		s16b *list = look_up_list(o_ptr);
+
+		/* Get slot */
+		if (!list)
+		{
+			/* Item is in the equipment */
+			item = GET_ARRAY_INDEX(p_ptr->equipment, o_ptr);
+		}
+		else
+		{
+			/* Get number of item in inventory */
+			item = get_item_position(p_ptr->inventory, o_ptr);
+		}
+
 		/* Describe the transaction */
-		msg_format("Selling %s (%c).", o_name, index_to_label(item));
+		msg_format("Selling %s (%c).", o_name, I2A(item));
 		message_flush();
 
 		/* Sold... */
@@ -2035,9 +2045,9 @@ static void store_sell(int *store_top)
 			}
 
 			/* Take the item from the player, describe the result */
-			inven_item_increase(item, -amt);
-			inven_item_describe(item);
-			inven_item_optimize(item);
+			item_increase(o_ptr, -amt);
+			item_describe(o_ptr);
+			item_optimize(o_ptr);
 
 			/* Handle stuff */
 			handle_stuff();
@@ -2057,16 +2067,30 @@ static void store_sell(int *store_top)
 	/* Player is at home */
 	else
 	{
+		s16b *list = look_up_list(o_ptr);
+
+		/* Get slot */
+		if (!list)
+		{
+			/* Item is in the equipment */
+			item = GET_ARRAY_INDEX(p_ptr->equipment, o_ptr);
+		}
+		else
+		{
+			/* Get number of item in inventory */
+			item = get_item_position(p_ptr->inventory, o_ptr);
+		}
+
 		/* Distribute charges of wands/rods */
 		distribute_charges(o_ptr, q_ptr, amt);
 
 		/* Describe */
-		msg_format("You drop %s (%c).", o_name, index_to_label(item));
+		msg_format("You drop %s (%c).", o_name, I2A(item));
 
 		/* Take it from the players inventory */
-		inven_item_increase(item, -amt);
-		inven_item_describe(item);
-		inven_item_optimize(item);
+		item_increase(o_ptr, -amt);
+		item_describe(o_ptr);
+		item_optimize(o_ptr);
 
 		/* Handle stuff */
 		handle_stuff();
@@ -2746,12 +2770,8 @@ void do_cmd_store(field_type *f1_ptr)
 		handle_stuff();
 
 		/* XXX XXX XXX Pack Overflow */
-		if (inventory[INVEN_PACK].k_idx)
+		if (get_list_length(p_ptr->inventory) > INVEN_PACK)
 		{
-			int item = INVEN_PACK;
-
-			object_type *o_ptr = &inventory[item];
-
 			/* Hack -- Flee from the store */
 			if (!(st_ptr->type == BUILD_STORE_HOME))
 			{
@@ -2763,58 +2783,13 @@ void do_cmd_store(field_type *f1_ptr)
 			}
 
 			/* Hack -- Flee from the home */
-			else if (!store_check_num(o_ptr))
+			else
 			{
 				/* Message */
 				msg_print("Your pack is so full that you flee your home...");
 
 				/* Leave */
 				leave_store = TRUE;
-			}
-
-			/* Hack -- Drop items into the home */
-			else
-			{
-				int item_pos;
-
-				object_type forge;
-				object_type *q_ptr;
-
-				char o_name[256];
-
-
-				/* Give a message */
-				msg_print("Your pack overflows!");
-
-				/* Get local object */
-				q_ptr = &forge;
-
-				/* Grab a copy of the item */
-				object_copy(q_ptr, o_ptr);
-
-				/* Describe it */
-				object_desc(o_name, q_ptr, TRUE, 3, 256);
-
-				/* Message */
-				msg_format("You drop %s (%c).", o_name, index_to_label(item));
-
-				/* Remove it from the players inventory */
-				inven_item_increase(item, -255);
-				inven_item_describe(item);
-				inven_item_optimize(item);
-
-				/* Handle stuff */
-				handle_stuff();
-
-				/* Let the home carry it */
-				item_pos = home_carry(q_ptr);
-
-				/* Redraw the home */
-				if (item_pos >= 0)
-				{
-					store_top = (item_pos / 12) * 12;
-					display_inventory(store_top);
-				}
 			}
 		}
 

@@ -2405,13 +2405,15 @@ bool lose_all_info(void)
 {
 	int i, k;
 
+	object_type *o_ptr;
+
 	chg_virtue(V_KNOWLEDGE, -5);
 	chg_virtue(V_ENLIGHTEN, -5);
 
-	/* Forget info about objects */
-	for (i = 0; i < INVEN_TOTAL; i++)
+	/* Forget info about equipment */
+	for (i = 0; i < EQUIP_MAX; i++)
 	{
-		object_type *o_ptr = &inventory[i];
+		o_ptr = &p_ptr->equipment[i];
 
 		/* Skip non-objects */
 		if (!o_ptr->k_idx) continue;
@@ -2431,6 +2433,26 @@ bool lose_all_info(void)
 		/* Hack -- Clear the "felt" flag */
 		o_ptr->info &= ~(OB_SENSE);
 	}
+
+	/* Forget info about objects */
+	OBJ_ITT_START (p_ptr->inventory, o_ptr)
+	{
+		/* Allow "protection" if know all the flags... */
+		if (object_known_full(o_ptr)) continue;
+
+		/* Remove "default inscriptions" */
+		o_ptr->feeling = FEEL_NONE;
+
+		/* Hack -- Clear the "empty" flag */
+		o_ptr->info &= ~(OB_EMPTY);
+
+		/* Hack -- Clear the "known" flag */
+		o_ptr->info &= ~(OB_KNOWN);
+
+		/* Hack -- Clear the "felt" flag */
+		o_ptr->info &= ~(OB_SENSE);
+	}
+	OBJ_ITT_END;
 
 	/* Hack - Remove all knowledge about objects */
 

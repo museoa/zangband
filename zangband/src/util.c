@@ -3513,11 +3513,11 @@ void request_command(int shopping)
 	}
 
 	/* Hack -- Scan equipment */
-	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+	for (i = 0; i < EQUIP_MAX; i++)
 	{
 		cptr s;
 
-		object_type *o_ptr = &inventory[i];
+		object_type *o_ptr = &p_ptr->equipment[i];
 
 		/* Skip non-objects */
 		if (!o_ptr->k_idx) continue;

@@ -3328,8 +3328,7 @@ void borg_cheat_equip(void)
 		borg_item_analyze(&borg_items[i], &inventory[i], buf);
 
 		/* get the fully id stuff */
-		if (object_known_full(&inventory[i]) ||
-			(inventory[i].info & OB_STOREB))
+		if (object_known_full(&inventory[i]) || (inventory[i].info & OB_STOREB))
 		{
 			borg_items[i].fully_identified = TRUE;
 			borg_items[i].needs_I_exam = TRUE;
@@ -3375,8 +3374,7 @@ void borg_cheat_inven(void)
 		borg_item_analyze(&borg_items[i], &inventory[i], buf);
 
 		/* get the fully id stuff */
-		if (object_known_full(&inventory[i]) ||
-			(inventory[i].info & OB_STOREB))
+		if (object_known_full(&inventory[i]) || (inventory[i].info & OB_STOREB))
 		{
 			borg_items[i].fully_identified = TRUE;
 			borg_items[i].needs_I_exam = TRUE;

@@ -831,9 +831,8 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 				k_idx = o_ptr->k_idx;
 				is_potion = object_is_potion(o_ptr);
 
-
 				/* Delete the object */
-				OBJ_DEL_FCURRENT;
+				delete_dungeon_object(o_ptr);
 
 				/* Potions produce effects when 'shattered' */
 				if (is_potion)

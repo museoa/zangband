@@ -1212,6 +1212,11 @@ static void player_wipe(void)
 	C_COPY(pcave, p_ptr->pcave, MAX_HGT, pcave_type *);
 	pwild = p_ptr->pwild;
 
+	/*
+	 * Delete the carried objects
+	 */
+	delete_object_list(&p_ptr->inventory);
+
 	/* Hack -- zero the struct */
 	(void)WIPE(p_ptr, player_type);
 
@@ -1228,13 +1233,6 @@ static void player_wipe(void)
 	{
 		strcpy(p_ptr->history[i], "");
 	}
-
-	/* Clear the inventory */
-	for (i = 0; i < INVEN_TOTAL; i++)
-	{
-		object_wipe(&inventory[i]);
-	}
-
 
 	/* Start with no artifacts made yet */
 	for (i = 0; i < z_info->a_max; i++)

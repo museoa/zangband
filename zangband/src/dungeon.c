@@ -102,8 +102,161 @@ static byte value_check_aux2(const object_type *o_ptr)
 	return FEEL_NONE;
 }
 
+/*
+ * Psuedo-id the item
+ */
+static void sense_item(object_type *o_ptr, bool heavy, bool wield)
+{
+	byte feel;
 
+	int slot;
 
+	char o_name[256];
+
+	bool okay = FALSE;
+
+	/* Valid "tval" codes */
+	switch (o_ptr->tval)
+	{
+		case TV_SHOT:
+		case TV_ARROW:
+		case TV_BOLT:
+		case TV_BOW:
+		case TV_DIGGING:
+		case TV_HAFTED:
+		case TV_POLEARM:
+		case TV_SWORD:
+		case TV_BOOTS:
+		case TV_GLOVES:
+		case TV_HELM:
+		case TV_CROWN:
+		case TV_SHIELD:
+		case TV_CLOAK:
+		case TV_SOFT_ARMOR:
+		case TV_HARD_ARMOR:
+		case TV_DRAG_ARMOR:
+		{
+			okay = TRUE;
+			break;
+		}
+		case TV_FIGURINE:
+		{
+			if (!heavy)
+				okay = TRUE;
+			break;
+		}
+		default:
+		{
+			/* Skip */
+			return;
+		}
+	}
+
+	/* We know about it already, do not tell us again */
+	if (o_ptr->info & (OB_SENSE)) return;
+
+	/* It is fully known, no information needed */
+	if (object_known_p(o_ptr)) return;
+
+	/* Occasional failure on inventory items */
+	if (wield && !one_in_(5)) return;
+
+	/* Good luck */
+	if ((p_ptr->muta3 & MUT3_GOOD_LUCK) && !one_in_(13))
+	{
+		heavy = TRUE;
+	}
+
+	/* Check for a feeling */
+	feel = (heavy ? value_check_aux1(o_ptr) : value_check_aux2(o_ptr));
+
+	/* Skip non-feelings */
+	if (!feel) return;
+
+	/* Bad luck */
+	if ((p_ptr->muta3 & MUT3_BAD_LUCK) && !one_in_(13))
+	{
+		switch (feel)
+		{
+			case FEEL_TERRIBLE:
+			{
+				feel = FEEL_SPECIAL;
+				break;
+			}
+			case FEEL_WORTHLESS:
+			{
+				feel = FEEL_EXCELLENT;
+				break;
+			}
+			case FEEL_CURSED:
+			{
+				feel = one_in_(3) ? FEEL_AVERAGE : FEEL_GOOD;
+				break;
+			}
+			case FEEL_AVERAGE:
+			{
+				feel = one_in_(2) ? FEEL_BAD : FEEL_GOOD;
+				break;
+			}
+			case FEEL_GOOD:
+			case FEEL_BAD:
+			{
+				feel = one_in_(3) ? FEEL_AVERAGE : FEEL_CURSED;
+				break;
+			}
+			case FEEL_EXCELLENT:
+			{
+				feel = FEEL_WORTHLESS;
+				break;
+			}
+			case FEEL_SPECIAL:
+			{
+				feel = FEEL_TERRIBLE;
+				break;
+			}
+		}
+	}
+
+	/* Stop everything */
+	if (disturb_minor) disturb(FALSE);
+
+	/* Get an object description */
+	object_desc(o_name, o_ptr, FALSE, 0, 256);
+
+	/* Message (equipment) */
+	if (wield)
+	{
+		slot = GET_ARRAY_INDEX(p_ptr->equipment, o_ptr);
+
+		msg_format("You feel the %s (%c) you are %s %s %s...",
+				   o_name, I2A(slot), describe_use(slot),
+				   ((o_ptr->number == 1) ? "is" : "are"),
+				   game_inscriptions[feel]);
+	}
+
+	/* Message (inventory) */
+	else
+	{
+		slot = get_item_position(p_ptr->inventory, o_ptr);
+
+		msg_format("You feel the %s (%c) in your pack %s %s...",
+				   o_name, I2A(slot),
+				   ((o_ptr->number == 1) ? "is" : "are"),
+				   game_inscriptions[feel]);
+	}
+
+	/* We have "felt" it */
+	o_ptr->info |= (OB_SENSE);
+
+	/* Set the "inscription" */
+	o_ptr->feeling = feel;
+
+	/* Combine / Reorder the pack (later) */
+	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP);
+}
 
 
 /*
@@ -119,12 +272,9 @@ static byte value_check_aux2(const object_type *o_ptr)
 static void sense_inventory(void)
 {
 	int i;
-	int plev = p_ptr->lev;
 	bool heavy;
-	byte feel;
 
 	object_type *o_ptr;
-	char o_name[256];
 
 	long difficulty;
 
@@ -256,7 +406,7 @@ static void sense_inventory(void)
 	difficulty *= 25;
 
 	/* Sensing gets better as you get more experienced */
-	difficulty /= plev * plev + 40;
+	difficulty /= p_ptr->lev * p_ptr->lev + 40;
 
 	/* Does it work? */
 	if (!(one_in_(difficulty))) return;
@@ -264,152 +414,23 @@ static void sense_inventory(void)
 
 	/*** Sense everything ***/
 
-	/* Check everything */
-	for (i = 0; i < INVEN_TOTAL; i++)
+	/* Scan Equipment */
+	for (i = 0; i < EQUIP_MAX; i++)
 	{
-		bool okay = FALSE;
-
-		o_ptr = &inventory[i];
+		o_ptr = &p_ptr->equipment[i];
 
 		/* Skip empty slots */
 		if (!o_ptr->k_idx) continue;
 
-		/* Valid "tval" codes */
-		switch (o_ptr->tval)
-		{
-			case TV_SHOT:
-			case TV_ARROW:
-			case TV_BOLT:
-			case TV_BOW:
-			case TV_DIGGING:
-			case TV_HAFTED:
-			case TV_POLEARM:
-			case TV_SWORD:
-			case TV_BOOTS:
-			case TV_GLOVES:
-			case TV_HELM:
-			case TV_CROWN:
-			case TV_SHIELD:
-			case TV_CLOAK:
-			case TV_SOFT_ARMOR:
-			case TV_HARD_ARMOR:
-			case TV_DRAG_ARMOR:
-			{
-				okay = TRUE;
-				break;
-			}
-			case TV_FIGURINE:
-			{
-				if (!heavy)
-					okay = TRUE;
-				break;
-			}
-		}
-
-		/* Skip non-sense machines */
-		if (!okay) continue;
-
-		/* We know about it already, do not tell us again */
-		if (o_ptr->info & (OB_SENSE)) continue;
-
-		/* It is fully known, no information needed */
-		if (object_known_p(o_ptr)) continue;
-
-		/* Occasional failure on inventory items */
-		if ((i < INVEN_WIELD) && !one_in_(5)) continue;
-
-		/* Good luck */
-		if ((p_ptr->muta3 & MUT3_GOOD_LUCK) && !one_in_(13))
-		{
-			heavy = TRUE;
-		}
-
-		/* Check for a feeling */
-		feel = (heavy ? value_check_aux1(o_ptr) : value_check_aux2(o_ptr));
-
-		/* Skip non-feelings */
-		if (!feel) continue;
-
-		/* Bad luck */
-		if ((p_ptr->muta3 & MUT3_BAD_LUCK) && !one_in_(13))
-		{
-			switch (feel)
-			{
-				case FEEL_TERRIBLE:
-				{
-					feel = FEEL_SPECIAL;
-					break;
-				}
-				case FEEL_WORTHLESS:
-				{
-					feel = FEEL_EXCELLENT;
-					break;
-				}
-				case FEEL_CURSED:
-				{
-					feel = one_in_(3) ? FEEL_AVERAGE : FEEL_GOOD;
-					break;
-				}
-				case FEEL_AVERAGE:
-				{
-					feel = one_in_(2) ? FEEL_BAD : FEEL_GOOD;
-					break;
-				}
-				case FEEL_GOOD:
-				case FEEL_BAD:
-				{
-					feel = one_in_(3) ? FEEL_AVERAGE : FEEL_CURSED;
-					break;
-				}
-				case FEEL_EXCELLENT:
-				{
-					feel = FEEL_WORTHLESS;
-					break;
-				}
-				case FEEL_SPECIAL:
-				{
-					feel = FEEL_TERRIBLE;
-					break;
-				}
-			}
-		}
-
-		/* Stop everything */
-		if (disturb_minor) disturb(FALSE);
-
-		/* Get an object description */
-		object_desc(o_name, o_ptr, FALSE, 0, 256);
-
-		/* Message (equipment) */
-		if (i >= INVEN_WIELD)
-		{
-			msg_format("You feel the %s (%c) you are %s %s %s...",
-					   o_name, index_to_label(i), describe_use(i),
-					   ((o_ptr->number == 1) ? "is" : "are"),
-					   game_inscriptions[feel]);
-		}
-
-		/* Message (inventory) */
-		else
-		{
-			msg_format("You feel the %s (%c) in your pack %s %s...",
-					   o_name, index_to_label(i),
-					   ((o_ptr->number == 1) ? "is" : "are"),
-					   game_inscriptions[feel]);
-		}
-
-		/* We have "felt" it */
-		o_ptr->info |= (OB_SENSE);
-
-		/* Set the "inscription" */
-		o_ptr->feeling = feel;
-
-		/* Combine / Reorder the pack (later) */
-		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+		sense_item(o_ptr, heavy, TRUE);
 	}
+
+	/* Scan inventory */
+	OBJ_ITT_START (p_ptr->inventory, o_ptr)
+	{
+		sense_item(o_ptr, heavy, FALSE);
+	}
+	OBJ_ITT_END;
 }
 
 
@@ -773,7 +794,6 @@ void notice_lite_change(object_type *o_ptr)
  */
 bool psychometry(void)
 {
-	int item;
 	object_type *o_ptr;
 	char o_name[256];
 	byte feel;
@@ -783,20 +803,11 @@ bool psychometry(void)
 	/* Get an item */
 	q = "Meditate on which item? ";
 	s = "You have nothing appropriate.";
-	if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR)))
-		return (FALSE);
 
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
+	o_ptr = get_item(q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR));
 
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
-	}
+	/* Not a valid item */
+	if (!o_ptr) return (FALSE);
 
 	/* It is fully known, no information needed */
 	if (object_known_p(o_ptr))
@@ -1039,15 +1050,14 @@ static void process_world(void)
 			}
 		}
 
-		if (inventory[INVEN_LITE].tval &&
-			(inventory[INVEN_LITE].sval >= SV_LITE_GALADRIEL) &&
-			(inventory[INVEN_LITE].sval < SV_LITE_THRAIN) &&
-			!p_ptr->resist_lite)
+		o_ptr = &p_ptr->equipment[EQUIP_LITE];
+
+		if (o_ptr->tval &&
+			(o_ptr->sval >= SV_LITE_GALADRIEL) &&
+			(o_ptr->sval < SV_LITE_THRAIN) && !p_ptr->resist_lite)
 		{
 			char o_name[256];
 			char ouch[280];
-
-			o_ptr = &inventory[INVEN_LITE];
 
 			/* Get an object description */
 			object_desc(o_name, o_ptr, FALSE, 0, 256);
@@ -1580,8 +1590,8 @@ static void process_world(void)
 	/* Rarely, take damage from the Jewel of Judgement */
 	if (one_in_(999) && !p_ptr->anti_magic)
 	{
-		if ((inventory[INVEN_LITE].tval) && !p_ptr->invuln &&
-			(inventory[INVEN_LITE].sval == SV_LITE_THRAIN))
+		if ((p_ptr->equipment[EQUIP_LITE].tval) && !p_ptr->invuln &&
+			(p_ptr->equipment[EQUIP_LITE].sval == SV_LITE_THRAIN))
 		{
 			msg_print("The Jewel of Judgement drains life from you!");
 			take_hit(MIN(p_ptr->lev, 50), "the Jewel of Judgement");
@@ -1590,10 +1600,10 @@ static void process_world(void)
 
 
 	/* Process equipment */
-	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+	for (i = 0; i < EQUIP_MAX; i++)
 	{
 		/* Get the object */
-		o_ptr = &inventory[i];
+		o_ptr = &p_ptr->equipment[i];
 
 		/* Skip non-objects */
 		if (!o_ptr->k_idx) continue;
@@ -1700,13 +1710,9 @@ static void process_world(void)
 	 * and each charging rod in a stack decreases the stack's timeout by
 	 * one per turn. -LM-
 	 */
-	for (i = 0; i < INVEN_PACK; i++)
+	OBJ_ITT_START (p_ptr->inventory, o_ptr)
 	{
-		o_ptr = &inventory[i];
 		k_ptr = &k_info[o_ptr->k_idx];
-
-		/* Skip non-objects */
-		if (!o_ptr->k_idx) continue;
 
 		/* Must have a timeout */
 		if (!o_ptr->timeout) continue;
@@ -1737,6 +1743,7 @@ static void process_world(void)
 			}
 		}
 	}
+	OBJ_ITT_END;
 
 	/* Feel the inventory */
 	sense_inventory();
@@ -2707,36 +2714,46 @@ static void process_player(void)
 
 
 		/* Hack -- Pack Overflow */
-		if (inventory[INVEN_PACK].k_idx)
+		if (get_list_length(p_ptr->inventory) > INVEN_PACK)
 		{
-			int item = INVEN_PACK;
+			int i = 0;
 
 			char o_name[256];
 
 			object_type *o_ptr;
 
-			/* Access the slot to be dropped */
-			o_ptr = &inventory[item];
+			/* Scan pack */
+			OBJ_ITT_START (p_ptr->inventory, o_ptr)
+			{
+				/* Count items */
+				i++;
 
-			/* Disturbing */
-			disturb(FALSE);
+				/* Does item need to be dropped? */
+				if (i > INVEN_PACK)
+				{
+					/* Disturbing */
+					disturb(FALSE);
 
-			/* Warning */
-			msg_print("Your pack overflows!");
+					/* Warning */
+					msg_print("Your pack overflows!");
 
-			/* Describe */
-			object_desc(o_name, o_ptr, TRUE, 3, 256);
+					/* Describe */
+					object_desc(o_name, o_ptr, TRUE, 3, 256);
 
-			/* Message */
-			msg_format("You drop %s (%c).", o_name, index_to_label(item));
+					/* Message */
+					msg_format("You drop %s (%c).", o_name, I2A(i));
 
-			/* Drop it (carefully) near the player */
-			drop_near(o_ptr, 0, p_ptr->px, p_ptr->py);
+					/* Drop it (carefully) near the player */
+					drop_near(o_ptr, 0, p_ptr->px, p_ptr->py);
 
-			/* Modify, Describe, Optimize */
-			inven_item_increase(item, -255);
-			inven_item_describe(item);
-			inven_item_optimize(item);
+					/* Modify, Describe, Optimize */
+					item_increase(o_ptr, -255);
+					item_describe(o_ptr);
+					item_optimize(o_ptr);
+				}
+
+			}
+			OBJ_ITT_END;
 
 			/* Notice stuff */
 			notice_stuff();
@@ -3160,8 +3177,6 @@ static void dungeon(void)
 	/* Main loop */
 	while (TRUE)
 	{
-		int i;
-
 		/* Hack -- Compact the monster list occasionally */
 		if (m_cnt + 32 > z_info->m_max) compact_monsters(64);
 
@@ -3190,15 +3205,6 @@ static void dungeon(void)
 
 		/* Notice */
 		notice_stuff();
-
-		/* Similar slot? */
-		for (i = 0; i < INVEN_PACK; i++)
-		{
-			object_type *j_ptr = &inventory[i];
-
-			/* Skip non-objects */
-			if (!j_ptr->k_idx) continue;
-		}
 
 		/* Update  */
 		handle_stuff();

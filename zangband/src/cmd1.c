@@ -603,29 +603,28 @@ bool auto_pickup_okay(object_type *o_ptr)
  *
  * Delete the object afterwards.
  */
-void py_pickup_aux(int o_idx)
+void py_pickup_aux(object_type *o_ptr)
 {
+	object_type *j_ptr;
+
 	int slot;
 
 	char o_name[256];
-	object_type *o_ptr;
-
-	o_ptr = &o_list[o_idx];
 
 	/* Carry the object */
-	slot = inven_carry(o_ptr);
-
-	/* Get the object again */
-	o_ptr = &inventory[slot];
+	j_ptr = inven_carry(o_ptr);
 
 	/* Describe the object */
-	object_desc(o_name, o_ptr, TRUE, 3, 256);
+	object_desc(o_name, j_ptr, TRUE, 3, 256);
+
+	/* Get slot number */
+	slot = get_item_position(p_ptr->inventory, j_ptr);
 
 	/* Message */
-	msg_format("You have %s (%c).", o_name, index_to_label(slot));
+	msg_format("You have %s (%c).", o_name, I2A(slot));
 
 	/* Delete the object */
-	delete_dungeon_object(o_idx);
+	delete_dungeon_object(o_ptr);
 }
 
 
@@ -645,10 +644,9 @@ void carry(int pickup)
 	int px = p_ptr->px;
 
 	char o_name[256];
-	object_type *o_ptr;
+	object_type *o_ptr, *fo_ptr = NULL;
 
-	int floor_num = 0, floor_list[23];
-	int this_o_idx, floor_o_idx = 0;
+	int floor_num = 0;
 
 	int can_pickup = 0;
 
@@ -695,7 +693,7 @@ void carry(int pickup)
 			p_ptr->window |= (PW_PLAYER);
 
 			/* Delete the gold */
-			OBJ_DEL_FCURRENT;
+			delete_dungeon_object(o_ptr);
 
 			/* Check the next object */
 			continue;
@@ -705,7 +703,7 @@ void carry(int pickup)
 		if (auto_pickup_okay(o_ptr))
 		{
 			/* Hack - Pick up the object */
-			py_pickup_aux(_this_o_idx);
+			py_pickup_aux(o_ptr);
 
 			/* Check the next object */
 			continue;
@@ -759,7 +757,7 @@ void carry(int pickup)
 					if ((i == 'Y') || (i == 'y'))
 					{
 						/* Hack - Pick up the object */
-						py_pickup_aux(_this_o_idx);
+						py_pickup_aux(o_ptr);
 					}
 
 					if ((i == 'K') || (i == 'k'))
@@ -767,7 +765,7 @@ void carry(int pickup)
 						/* Physically try to destroy the item */
 						if (destroy_item_aux(o_ptr, o_ptr->number))
 						{
-							OBJ_DEL_FCURRENT;
+							delete_dungeon_object(o_ptr);
 						}
 					}
 				}
@@ -776,7 +774,7 @@ void carry(int pickup)
 				else
 				{
 					/* Hack - Pick up the object */
-					py_pickup_aux(_this_o_idx);
+					py_pickup_aux(o_ptr);
 				}
 			}
 
@@ -791,18 +789,15 @@ void carry(int pickup)
 			can_pickup++;
 		}
 
-		/* hack - Remember this object index */
-		floor_list[floor_num] = _this_o_idx;
-
 		/* Count non-gold objects */
 		if (floor_num != 22) floor_num++;
 
-		/* Hack - Remember this index */
-		floor_o_idx = _this_o_idx;
+		/* Hack - Remember this object */
+		fo_ptr = o_ptr;
 	}
 	OBJ_ITT_END;
 
-	/* There are no non-gold objects (or easy floor patch is off) */
+	/* There are no non-gold objects left */
 	if (!floor_num) return;
 
 	/* Mention the number of objects */
@@ -811,11 +806,8 @@ void carry(int pickup)
 		/* One object */
 		if (floor_num == 1)
 		{
-			/* Access the object */
-			o_ptr = &o_list[floor_o_idx];
-
 			/* Describe the object */
-			object_desc(o_name, o_ptr, TRUE, 3, 256);
+			object_desc(o_name, fo_ptr, TRUE, 3, 256);
 
 			/* Message */
 			msg_format("You see %s.", o_name);
@@ -838,11 +830,8 @@ void carry(int pickup)
 		/* One object */
 		if (floor_num == 1)
 		{
-			/* Access the object */
-			o_ptr = &o_list[floor_o_idx];
-
 			/* Describe the object */
-			object_desc(o_name, o_ptr, TRUE, 3, 256);
+			object_desc(o_name, fo_ptr, TRUE, 3, 256);
 
 			/* Message */
 			msg_format("You have no room for %s.", o_name);
@@ -862,12 +851,6 @@ void carry(int pickup)
 	/* One object */
 	if (floor_num == 1)
 	{
-		/* Remember the object to pick up */
-		this_o_idx = floor_o_idx;
-
-		/* Access the object */
-		o_ptr = &o_list[floor_o_idx];
-
 		/* Hack -- query every object */
 		if (carry_query_flag)
 		{
@@ -878,7 +861,7 @@ void carry(int pickup)
 			message_flush();
 
 			/* Describe the object */
-			object_desc(o_name, o_ptr, TRUE, 3, 256);
+			object_desc(o_name, fo_ptr, TRUE, 3, 256);
 
 			sprintf(out_val, "Pick up %s? [y/n/k] ", o_name);
 
@@ -901,51 +884,40 @@ void carry(int pickup)
 			if ((i == 'Y') || (i == 'y'))
 			{
 				/* Pick up the object */
-				py_pickup_aux(floor_o_idx);
+				py_pickup_aux(fo_ptr);
 			}
 
 			if ((i == 'K') || (i == 'k'))
 			{
 				/* Physically try to destroy the item */
-				if (destroy_item_aux(o_ptr, o_ptr->number))
+				if (destroy_item_aux(fo_ptr, fo_ptr->number))
 				{
-					delete_dungeon_object(floor_o_idx);
+					delete_dungeon_object(fo_ptr);
 				}
 			}
 
 			/* Done */
 			return;
 		}
+
+		/* Pick up the object */
+		py_pickup_aux(fo_ptr);
+
+		/* Done */
+		return;
 	}
 
-	/* Allow the user to choose an object */
-	else
-	{
-		cptr q, s;
+	/* Restrict the choices */
+	item_tester_hook = inven_carry_okay;
 
-		int item;
+	/* Get an object */
+	o_ptr = get_item("Get which item? ", "You see nothing there.", (USE_FLOOR));
 
-		/* Restrict the choices */
-		item_tester_hook = inven_carry_okay;
-
-		/* Get an object */
-		q = "Get which item? ";
-		s = "You see nothing there.";
-		if (get_item(&item, q, s, (USE_FLOOR)))
-		{
-			this_o_idx = 0 - item;
-		}
-		else
-		{
-			return;
-		}
-	}
-
-	/* Access the object */
-	o_ptr = &o_list[this_o_idx];
+	/* Not a valid item */
+	if (!o_ptr) return;
 
 	/* Pick up the object */
-	py_pickup_aux(this_o_idx);
+	py_pickup_aux(o_ptr);
 }
 
 
@@ -1182,8 +1154,10 @@ static bool monster_bash(int *blows, int sleeping_bonus, cave_type *c_ptr,
 	monster_type *m_ptr = &m_list[c_ptr->m_idx];
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
+	object_type *o_ptr;
+
 	/* No shield on arm, no bash. */
-	if (!inventory[INVEN_ARM].k_idx)
+	if (!p_ptr->equipment[EQUIP_ARM].k_idx)
 	{
 		bash_chance = 0;
 	}
@@ -1209,25 +1183,29 @@ static bool monster_bash(int *blows, int sleeping_bonus, cave_type *c_ptr,
 	/* Players bash more often when they see a real need. */
 	if (bash_chance)
 	{
-		if ((!inventory[INVEN_WIELD].k_idx) && (p_ptr->pclass != CLASS_MONK))
+		o_ptr = &p_ptr->equipment[EQUIP_WIELD];
+
+		if ((!o_ptr->k_idx) && (p_ptr->pclass != CLASS_MONK))
 			bash_chance *= 3;
-		else if ((inventory[INVEN_WIELD].dd * inventory[INVEN_WIELD].ds *
-				  (*blows)) <
-				 (inventory[INVEN_ARM].dd * inventory[INVEN_ARM].ds * 3))
+		else if ((o_ptr->dd * o_ptr->ds * (*blows)) <
+				 (p_ptr->equipment[EQUIP_ARM].dd *
+				  p_ptr->equipment[EQUIP_ARM].ds * 3))
 			bash_chance *= 2;
 	}
 
 	/* Try to get in a shield bash. */
 	if (bash_chance > randint0(240 + r_ptr->level * 9))
 	{
+		o_ptr = &p_ptr->equipment[EQUIP_ARM];
+
 		msg_print("You get in a shield bash!");
 
 		/* Calculate attack quality, a mix of momentum and accuracy. */
 		bash_quality = p_ptr->skill_thn + (p_ptr->wt / 8) +
-			(p_ptr->total_weight / 80) + (inventory[INVEN_ARM].weight / 3);
+			(p_ptr->total_weight / 80) + (o_ptr->weight / 3);
 
 		/* Calculate damage.  Big shields are deadly. */
-		bash_dam = damroll(inventory[INVEN_ARM].dd, inventory[INVEN_ARM].ds);
+		bash_dam = damroll(o_ptr->dd, o_ptr->ds);
 
 		/* Multiply by quality and experience factors */
 		bash_dam *= bash_quality / 20 + p_ptr->lev / 7;
@@ -1449,6 +1427,10 @@ void py_attack(int x, int y)
 	u32b f1, f2, f3;
 	bool no_extra = FALSE;
 
+	/* Access the weapon */
+	o_ptr = &p_ptr->equipment[EQUIP_WIELD];
+
+
 
 	/* Disturb the player */
 	disturb(FALSE);
@@ -1457,7 +1439,7 @@ void py_attack(int x, int y)
 	blows = p_ptr->num_blow;
 
 	/* Prepare for ghoul paralysis? */
-	if (!(inventory[INVEN_WIELD].k_idx) && (p_ptr->prace == RACE_GHOUL))
+	if (!(o_ptr->k_idx) && (p_ptr->prace == RACE_GHOUL))
 	{
 		ghoul_paral = 0;
 
@@ -1520,16 +1502,14 @@ void py_attack(int x, int y)
 		&& !p_ptr->image && !((p_ptr->muta2 & MUT2_BERS_RAGE) && p_ptr->shero)
 		&& m_ptr->ml)
 	{
-		if (!inventory[INVEN_WIELD].xtra_name)
+		if (!o_ptr->xtra_name)
 		{
 			msg_format("You stop to avoid hitting %s.", m_name);
 			return;
 		}
 
 		/* Mega-hack */
-		if (!
-			(streq
-			 (quark_str(inventory[INVEN_WIELD].xtra_name), "'Stormbringer'")))
+		if (!(streq(quark_str(o_ptr->xtra_name), "'Stormbringer'")))
 		{
 			msg_format("You stop to avoid hitting %s.", m_name);
 			return;
@@ -1542,7 +1522,6 @@ void py_attack(int x, int y)
 		chg_virtue(V_JUSTICE, -1);
 		chg_virtue(V_COMPASSION, -1);
 	}
-
 
 	/* Handle player fear */
 	if (p_ptr->afraid)
@@ -1578,10 +1557,6 @@ void py_attack(int x, int y)
 
 	/* Attempt to shield bash the monster */
 	if (monster_bash(&blows, sleeping_bonus, c_ptr, &fear, m_name)) return;
-
-
-	/* Access the weapon */
-	o_ptr = &inventory[INVEN_WIELD];
 
 	/* Initialize. */
 	total_deadliness = p_ptr->to_d + o_ptr->to_d;
@@ -1657,8 +1632,7 @@ void py_attack(int x, int y)
 			}
 
 			/* Monk attack? */
-			if ((p_ptr->pclass == CLASS_MONK) &&
-				(!(inventory[INVEN_WIELD].k_idx)))
+			if ((p_ptr->pclass == CLASS_MONK) && (!o_ptr->k_idx))
 			{
 				/* Make a special monk attack */
 				monk_attack(m_ptr, &k, m_name);
@@ -2269,6 +2243,7 @@ void move_player(int dir, int do_pickup)
 	cave_type *c_ptr;
 	pcave_type *pc_ptr;
 	monster_type *m_ptr;
+	object_type *o_ptr;
 
 	char m_name[80];
 
@@ -2301,12 +2276,16 @@ void move_player(int dir, int do_pickup)
 	/* Get the monster */
 	m_ptr = &m_list[c_ptr->m_idx];
 
+	/* Access weapon */
+	o_ptr = &p_ptr->equipment[EQUIP_WIELD];
+
 	/* Mega-hack */
-	if (inventory[INVEN_WIELD].xtra_name)
+	if (o_ptr->xtra_name)
 	{
-		if (streq
-			(quark_str(inventory[INVEN_WIELD].xtra_name), "'Stormbringer'"))
+		if (streq(quark_str(o_ptr->xtra_name), "'Stormbringer'"))
+		{
 			stormbringer = TRUE;
+		}
 	}
 
 	/* Player can not walk through "walls"... */

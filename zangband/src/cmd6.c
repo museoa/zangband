@@ -54,22 +54,9 @@
  * but instead use the "sval" (which is also used to sort the objects).
  */
 
-static void do_cmd_eat_food_aux(int item)
+static void do_cmd_eat_food_aux(object_type *o_ptr)
 {
 	bool ident;
-	object_type *o_ptr;
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
-	}
 
 	/* Sound */
 	sound(SOUND_EAT);
@@ -152,21 +139,10 @@ static void do_cmd_eat_food_aux(int item)
 		(void)set_food(p_ptr->food + o_ptr->pval);
 	}
 
-	/* Destroy a food in the pack */
-	if (item >= 0)
-	{
-		inven_item_increase(item, -1);
-		inven_item_describe(item);
-		inven_item_optimize(item);
-	}
-
-	/* Destroy a food on the floor */
-	else
-	{
-		floor_item_increase(0 - item, -1);
-		floor_item_describe(0 - item);
-		floor_item_optimize(0 - item);
-	}
+	/* Destroy a food item */
+	item_increase(o_ptr, -1);
+	item_describe(o_ptr);
+	item_optimize(o_ptr);
 
 	make_noise(1);
 }
@@ -177,7 +153,7 @@ static void do_cmd_eat_food_aux(int item)
  */
 void do_cmd_eat_food(void)
 {
-	int item;
+	object_type *o_ptr;
 	cptr q, s;
 
 
@@ -187,37 +163,26 @@ void do_cmd_eat_food(void)
 	/* Get an item */
 	q = "Eat which item? ";
 	s = "You have nothing to eat.";
-	if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR))) return;
+
+	o_ptr = get_item(q, s, (USE_INVEN | USE_FLOOR));
+
+	/* Not a valid item */
+	if (!o_ptr) return;
 
 	/* Eat the object */
-	do_cmd_eat_food_aux(item);
+	do_cmd_eat_food_aux(o_ptr);
 }
 
 
 /*
  * Quaff a potion (from the pack or the floor)
  */
-static void do_cmd_quaff_potion_aux(int item)
+static void do_cmd_quaff_potion_aux(object_type *o_ptr)
 {
 	bool ident;
-	object_type *o_ptr;
-
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
-	}
 
 	/* Sound */
 	sound(SOUND_QUAFF);
-
 
 	/* Take a turn */
 	p_ptr->energy_use = 100;
@@ -278,21 +243,10 @@ static void do_cmd_quaff_potion_aux(int item)
 			(void)set_food(p_ptr->food + o_ptr->pval);
 	}
 
-	/* Reduce and describe inventory */
-	if (item >= 0)
-	{
-		inven_item_increase(item, -1);
-		inven_item_describe(item);
-		inven_item_optimize(item);
-	}
-
-	/* Reduce and describe floor item */
-	else
-	{
-		floor_item_increase(0 - item, -1);
-		floor_item_describe(0 - item);
-		floor_item_optimize(0 - item);
-	}
+	/* Reduce and describe items */
+	item_increase(o_ptr, -1);
+	item_describe(o_ptr);
+	item_optimize(o_ptr);
 
 	make_noise(1);
 }
@@ -300,7 +254,7 @@ static void do_cmd_quaff_potion_aux(int item)
 
 void do_cmd_quaff_potion(void)
 {
-	int item;
+	object_type *o_ptr;
 	cptr q, s;
 
 	/* Restrict choices to potions */
@@ -309,10 +263,14 @@ void do_cmd_quaff_potion(void)
 	/* Get an item */
 	q = "Quaff which potion? ";
 	s = "You have no potions to quaff.";
-	if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR))) return;
+
+	o_ptr = get_item(q, s, (USE_INVEN | USE_FLOOR));
+
+	/* Not a valid item */
+	if (!o_ptr) return;
 
 	/* Quaff the potion */
-	do_cmd_quaff_potion_aux(item);
+	do_cmd_quaff_potion_aux(o_ptr);
 }
 
 
@@ -323,24 +281,9 @@ void do_cmd_quaff_potion(void)
  * include scrolls with no effects but recharge or identify, which are
  * cancelled before use.  XXX Reading them still takes a turn, though.
  */
-static void do_cmd_read_scroll_aux(int item)
+static void do_cmd_read_scroll_aux(object_type *o_ptr)
 {
 	bool ident, used_up;
-	object_type *o_ptr;
-
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
-	}
-
 
 	/* Take a turn */
 	p_ptr->energy_use = 100;
@@ -382,21 +325,10 @@ static void do_cmd_read_scroll_aux(int item)
 
 	sound(SOUND_SCROLL);
 
-	/* Destroy a scroll in the pack */
-	if (item >= 0)
-	{
-		inven_item_increase(item, -1);
-		inven_item_describe(item);
-		inven_item_optimize(item);
-	}
-
-	/* Destroy a scroll on the floor */
-	else
-	{
-		floor_item_increase(0 - item, -1);
-		floor_item_describe(0 - item);
-		floor_item_optimize(0 - item);
-	}
+	/* Destroy a scroll */
+	item_increase(o_ptr, -1);
+	item_describe(o_ptr);
+	item_optimize(o_ptr);
 
 	make_noise(1);
 }
@@ -404,7 +336,7 @@ static void do_cmd_read_scroll_aux(int item)
 
 void do_cmd_read_scroll(void)
 {
-	int item;
+	object_type *o_ptr;
 	cptr q, s;
 
 	/* Check some conditions */
@@ -431,47 +363,35 @@ void do_cmd_read_scroll(void)
 	/* Get an item */
 	q = "Read which scroll? ";
 	s = "You have no scrolls to read.";
-	if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR))) return;
+
+	o_ptr = get_item(q, s, (USE_INVEN | USE_FLOOR));
+
+	/* Not a valid item */
+	if (!o_ptr) return;
 
 	/* Read the scroll */
-	do_cmd_read_scroll_aux(item);
+	do_cmd_read_scroll_aux(o_ptr);
 }
 
 
 /*
- * Use a staff.			-RAK-
+ * Use a staff.
  *
  * One charge of one staff disappears.
  *
  * Hack -- staffs of identify can be "cancelled".
  */
-static void do_cmd_use_staff_aux(int item)
+static void do_cmd_use_staff_aux(object_type *o_ptr)
 {
 	int chance, lev;
 	bool ident, use_charge;
-	object_type *o_ptr;
-
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
-	}
-
 
 	/* Mega-Hack -- refuse to use a pile from the ground */
-	if ((item < 0) && (o_ptr->number > 1))
+	if (floor_item(o_ptr) && (o_ptr->number > 1))
 	{
 		msg_print("You must first pick up the staffs.");
 		return;
 	}
-
 
 	/* Take a turn */
 	p_ptr->energy_use = 100;
@@ -560,7 +480,7 @@ static void do_cmd_use_staff_aux(int item)
 	o_ptr->pval--;
 
 	/* XXX Hack -- unstack if necessary */
-	if ((item >= 0) && (o_ptr->number > 1))
+	if (o_ptr->number > 1)
 	{
 		object_type forge;
 		object_type *q_ptr;
@@ -580,23 +500,14 @@ static void do_cmd_use_staff_aux(int item)
 		/* Unstack the used item */
 		o_ptr->number--;
 		p_ptr->total_weight -= q_ptr->weight;
-		item = inven_carry(q_ptr);
+		o_ptr = inven_carry(q_ptr);
 
 		/* Message */
 		msg_print("You unstack your staff.");
 	}
 
 	/* Describe charges in the pack */
-	if (item >= 0)
-	{
-		inven_item_charges(item);
-	}
-
-	/* Describe charges on the floor */
-	else
-	{
-		floor_item_charges(0 - item);
-	}
+	item_charges(o_ptr);
 
 	make_noise(1);
 }
@@ -604,7 +515,7 @@ static void do_cmd_use_staff_aux(int item)
 
 void do_cmd_use_staff(void)
 {
-	int item;
+	object_type *o_ptr;
 	cptr q, s;
 
 	/* Restrict choices to wands */
@@ -613,9 +524,13 @@ void do_cmd_use_staff(void)
 	/* Get an item */
 	q = "Use which staff? ";
 	s = "You have no staff to use.";
-	if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR))) return;
 
-	do_cmd_use_staff_aux(item);
+	o_ptr = get_item(q, s, (USE_INVEN | USE_FLOOR));
+
+	/* Not a valid item */
+	if (!o_ptr) return;
+
+	do_cmd_use_staff_aux(o_ptr);
 }
 
 
@@ -639,26 +554,12 @@ void do_cmd_use_staff(void)
  * basic "bolt" rods, but the basic "ball" wands do the same damage
  * as the basic "ball" rods.
  */
-static void do_cmd_aim_wand_aux(int item)
+static void do_cmd_aim_wand_aux(object_type *o_ptr)
 {
 	bool ident, use_charge;
-	object_type *o_ptr;
 
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
-	}
-
-	/* Mega-Hack -- refuse to aim a pile from the ground */
-	if ((item < 0) && (o_ptr->number > 1))
+	/* Mega-Hack -- refuse to use a pile from the ground */
+	if (floor_item(o_ptr) && (o_ptr->number > 1))
 	{
 		msg_print("You must first pick up the wands.");
 		return;
@@ -692,18 +593,8 @@ static void do_cmd_aim_wand_aux(int item)
 	o_ptr->pval--;
 	o_ptr->ac++;
 
-
-	/* Describe the charges in the pack */
-	if (item >= 0)
-	{
-		inven_item_charges(item);
-	}
-
-	/* Describe the charges on the floor */
-	else
-	{
-		floor_item_charges(0 - item);
-	}
+	/* Describe the charges */
+	item_charges(o_ptr);
 
 	make_noise(1);
 }
@@ -711,7 +602,7 @@ static void do_cmd_aim_wand_aux(int item)
 
 void do_cmd_aim_wand(void)
 {
-	int item;
+	object_type *o_ptr;
 	cptr q, s;
 
 	/* Restrict choices to wands */
@@ -720,10 +611,14 @@ void do_cmd_aim_wand(void)
 	/* Get an item */
 	q = "Aim which wand? ";
 	s = "You have no wand to aim.";
-	if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR))) return;
+
+	o_ptr = get_item(q, s, (USE_INVEN | USE_FLOOR));
+
+	/* Not a valid item */
+	if (!o_ptr) return;
 
 	/* Aim the wand */
-	do_cmd_aim_wand_aux(item);
+	do_cmd_aim_wand_aux(o_ptr);
 }
 
 
@@ -737,31 +632,17 @@ void do_cmd_aim_wand(void)
  *
  * pvals are defined for each rod in k_info. -LM-
  */
-static void do_cmd_zap_rod_aux(int item)
+static void do_cmd_zap_rod_aux(object_type *o_ptr)
 {
 	int ident, chance, dir, lev;
-	object_type *o_ptr;
 
 	/* Hack -- let perception get aborted */
 	bool use_charge = TRUE;
 
 	object_kind *k_ptr;
 
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
-	}
-
-
-	/* Mega-Hack -- refuse to zap a pile from the ground */
-	if ((item < 0) && (o_ptr->number > 1))
+	/* Mega-Hack -- refuse to use a pile from the ground */
+	if (floor_item(o_ptr) && (o_ptr->number > 1))
 	{
 		msg_print("You must first pick up the rods.");
 		return;
@@ -1076,7 +957,7 @@ static void do_cmd_zap_rod_aux(int item)
 
 void do_cmd_zap_rod(void)
 {
-	int item;
+	object_type *o_ptr;
 	cptr q, s;
 
 	/* Restrict choices to rods */
@@ -1085,10 +966,14 @@ void do_cmd_zap_rod(void)
 	/* Get an item */
 	q = "Zap which rod? ";
 	s = "You have no rod to zap.";
-	if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR))) return;
+
+	o_ptr = get_item(q, s, (USE_INVEN | USE_FLOOR));
+
+	/* Not a valid item */
+	if (!o_ptr) return;
 
 	/* Zap the rod */
-	do_cmd_zap_rod_aux(item);
+	do_cmd_zap_rod_aux(o_ptr);
 }
 
 
@@ -1189,23 +1074,9 @@ void ring_of_power(int dir)
  * Note that it always takes a turn to activate an artifact, even if
  * the user hits "escape" at the "direction" prompt.
  */
-static void do_cmd_activate_aux(int item)
+static void do_cmd_activate_aux(object_type *o_ptr)
 {
 	int dir, lev, chance;
-	object_type *o_ptr;
-
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
-	}
 
 	/* Take a turn */
 	p_ptr->energy_use = MIN(75, 200 - 5 * p_ptr->skill_dev / 8);
@@ -1462,7 +1333,7 @@ static void do_cmd_activate_aux(int item)
 
 void do_cmd_activate(void)
 {
-	int item;
+	object_type *o_ptr;
 	cptr q, s;
 
 
@@ -1472,10 +1343,14 @@ void do_cmd_activate(void)
 	/* Get an item */
 	q = "Activate which item? ";
 	s = "You have nothing to activate.";
-	if (!get_item(&item, q, s, (USE_EQUIP | USE_FLOOR))) return;
+
+	o_ptr = get_item(q, s, (USE_EQUIP | USE_FLOOR));
+
+	/* Not a valid item */
+	if (!o_ptr) return;
 
 	/* Activate the item */
-	do_cmd_activate_aux(item);
+	do_cmd_activate_aux(o_ptr);
 }
 
 
@@ -1512,9 +1387,9 @@ static bool item_tester_hook_use(const object_type *o_ptr)
 			if (!object_known_p(o_ptr)) return (FALSE);
 
 			/* HACK - only items from the equipment can be activated */
-			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+			for (i = 0; i < EQUIP_MAX; i++)
 			{
-				if (&inventory[i] == o_ptr)
+				if (&p_ptr->equipment[i] == o_ptr)
 				{
 					/* Extract the flags */
 					object_flags(o_ptr, &f1, &f2, &f3);
@@ -1537,7 +1412,6 @@ static bool item_tester_hook_use(const object_type *o_ptr)
  */
 void do_cmd_use(void)
 {
-	int item;
 	object_type *o_ptr;
 	cptr q, s;
 
@@ -1547,66 +1421,60 @@ void do_cmd_use(void)
 	/* Get an item */
 	q = "Use which item? ";
 	s = "You have nothing to use.";
-	if (!get_item(&item, q, s, (USE_INVEN | USE_EQUIP | USE_FLOOR))) return;
 
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
-	}
+	o_ptr = get_item(q, s, (USE_INVEN | USE_EQUIP | USE_FLOOR));
+
+	/* Not a valid item */
+	if (!o_ptr) return;
 
 	switch (o_ptr->tval)
 	{
-			/* Spike a door */
 		case TV_SPIKE:
 		{
+			/* Spike a door */
 			do_cmd_spike();
 			break;
 		}
 
-			/* Eat some food */
 		case TV_FOOD:
 		{
-			do_cmd_eat_food_aux(item);
+			/* Eat some food */
+			do_cmd_eat_food_aux(o_ptr);
 			break;
 		}
 
-			/* Aim a wand */
 		case TV_WAND:
 		{
-			do_cmd_aim_wand_aux(item);
+			/* Aim a wand */
+			do_cmd_aim_wand_aux(o_ptr);
 			break;
 		}
 
-			/* Use a staff */
 		case TV_STAFF:
 		{
-			do_cmd_use_staff_aux(item);
+			/* Use a staff */
+			do_cmd_use_staff_aux(o_ptr);
 			break;
 		}
 
-			/* Zap a rod */
 		case TV_ROD:
 		{
-			do_cmd_zap_rod_aux(item);
+			/* Zap a rod */
+			do_cmd_zap_rod_aux(o_ptr);
 			break;
 		}
 
-			/* Quaff a potion */
 		case TV_POTION:
 		{
-			do_cmd_quaff_potion_aux(item);
+			/* Quaff a potion */
+			do_cmd_quaff_potion_aux(o_ptr);
 			break;
 		}
 
-			/* Read a scroll */
 		case TV_SCROLL:
 		{
+			/* Read a scroll */
+
 			/* Check some conditions */
 			if (p_ptr->blind)
 			{
@@ -1624,23 +1492,23 @@ void do_cmd_use(void)
 				return;
 			}
 
-			do_cmd_read_scroll_aux(item);
+			do_cmd_read_scroll_aux(o_ptr);
 			break;
 		}
 
-			/* Fire ammo */
 		case TV_SHOT:
 		case TV_ARROW:
 		case TV_BOLT:
 		{
-			do_cmd_fire_aux(item, &inventory[INVEN_BOW]);
+			/* Fire ammo */
+			do_cmd_fire_aux(o_ptr, &p_ptr->equipment[EQUIP_BOW]);
 			break;
 		}
 
-			/* Activate an artifact */
 		default:
 		{
-			do_cmd_activate_aux(item);
+			/* Activate an artifact */
+			do_cmd_activate_aux(o_ptr);
 			break;
 		}
 	}

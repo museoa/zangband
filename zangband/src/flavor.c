@@ -924,8 +924,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 			modstr = amulet_adj[indexx];
 			if (aware) append_name = TRUE;
 
-			if (((plain_descriptions) && (aware))
-				|| (o_ptr->info & OB_STOREB))
+			if (((plain_descriptions) && (aware)) || (o_ptr->info & OB_STOREB))
 				basenm = "& Amulet~";
 			else
 				basenm = aware ? "& # Amulet~" : "& # Amulet~";
@@ -944,8 +943,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 			modstr = ring_adj[indexx];
 			if (aware) append_name = TRUE;
 
-			if (((plain_descriptions) && (aware))
-				|| (o_ptr->info & OB_STOREB))
+			if (((plain_descriptions) && (aware)) || (o_ptr->info & OB_STOREB))
 				basenm = "& Ring~";
 			else
 				basenm = aware ? "& # Ring~" : "& # Ring~";
@@ -961,8 +959,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 			/* Color the object */
 			modstr = staff_adj[indexx];
 			if (aware) append_name = TRUE;
-			if (((plain_descriptions) && (aware))
-				|| (o_ptr->info & OB_STOREB))
+			if (((plain_descriptions) && (aware)) || (o_ptr->info & OB_STOREB))
 				basenm = "& Staff~";
 			else
 				basenm = aware ? "& # Staff~" : "& # Staff~";
@@ -974,8 +971,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 			/* Color the object */
 			modstr = wand_adj[indexx];
 			if (aware) append_name = TRUE;
-			if (((plain_descriptions) && (aware))
-				|| (o_ptr->info & OB_STOREB))
+			if (((plain_descriptions) && (aware)) || (o_ptr->info & OB_STOREB))
 				basenm = "& Wand~";
 			else
 				basenm = aware ? "& # Wand~" : "& # Wand~";
@@ -987,8 +983,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 			/* Color the object */
 			modstr = rod_adj[indexx];
 			if (aware) append_name = TRUE;
-			if (((plain_descriptions) && (aware))
-				|| (o_ptr->info & OB_STOREB))
+			if (((plain_descriptions) && (aware)) || (o_ptr->info & OB_STOREB))
 				basenm = "& Rod~";
 			else
 				basenm = aware ? "& # Rod~" : "& # Rod~";
@@ -1000,8 +995,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 			/* Color the object */
 			modstr = scroll_adj[indexx];
 			if (aware) append_name = TRUE;
-			if (((plain_descriptions) && (aware))
-				|| (o_ptr->info & OB_STOREB))
+			if (((plain_descriptions) && (aware)) || (o_ptr->info & OB_STOREB))
 				basenm = "& Scroll~";
 			else
 				basenm =
@@ -1014,8 +1008,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 			/* Color the object */
 			modstr = potion_adj[indexx];
 			if (aware) append_name = TRUE;
-			if (((plain_descriptions) && (aware))
-				|| (o_ptr->info & OB_STOREB))
+			if (((plain_descriptions) && (aware)) || (o_ptr->info & OB_STOREB))
 				basenm = "& Potion~";
 			else
 				basenm = aware ? "& # Potion~" : "& # Potion~";
@@ -1030,8 +1023,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 			/* Color the object */
 			modstr = food_adj[indexx];
 			if (aware) append_name = TRUE;
-			if (((plain_descriptions) && (aware))
-				|| (o_ptr->info & OB_STOREB))
+			if (((plain_descriptions) && (aware)) || (o_ptr->info & OB_STOREB))
 				basenm = "& Mushroom~";
 			else
 				basenm = aware ? "& # Mushroom~" : "& # Mushroom~";
@@ -1505,7 +1497,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 		}
 	}
 
-	bow_ptr = &inventory[INVEN_BOW];
+	bow_ptr = &p_ptr->equipment[EQUIP_BOW];
 
 	/* if have a firing weapon + ammo matches bow */
 	if (bow_ptr->k_idx && (p_ptr->ammo_tval == o_ptr->tval))

@@ -119,14 +119,14 @@ bool make_attack_normal(int m_idx)
 
 	int ap_cnt;
 
-	int i, k, tmp, ac, rlev;
+	int k, tmp, ac, rlev;
 	bool do_cut, do_stun;
 
 	s32b gold;
 
 	object_type *o_ptr;
 
-	char o_name[256];
+	/* char o_name[256]; */
 
 	char m_name[80];
 
@@ -514,16 +514,10 @@ bool make_attack_normal(int m_idx)
 						take_hit(damage, ddesc);
 
 						/* Find an item */
-						for (k = 0; k < 10; k++)
+						OBJ_ITT_START (p_ptr->inventory, o_ptr)
 						{
-							/* Pick an item */
-							i = randint0(INVEN_PACK);
-
-							/* Obtain the item */
-							o_ptr = &inventory[i];
-
-							/* Skip non-objects */
-							if (!o_ptr->k_idx) continue;
+							/* Only work some of the time */
+							if (one_in_(2)) continue;
 
 							/* Drain charged wands/staffs */
 							if (((o_ptr->tval == TV_STAFF) ||
@@ -565,6 +559,7 @@ bool make_attack_normal(int m_idx)
 								break;
 							}
 						}
+						OBJ_ITT_END;
 
 						break;
 					}
@@ -662,19 +657,15 @@ bool make_attack_normal(int m_idx)
 							break;
 						}
 
+#if 0							/* This is broken until we rearrange the object-making code */
+
 						/* Find an item */
-						for (k = 0; k < 10; k++)
+						OBJ_ITT_START (p_ptr->inventory, o_ptr)
 						{
 							s16b o_idx;
 
-							/* Pick an item */
-							i = randint0(INVEN_PACK);
-
-							/* Obtain the item */
-							o_ptr = &inventory[i];
-
-							/* Skip non-objects */
-							if (!o_ptr->k_idx) continue;
+							/* Only some of the time */
+							if (!one_in_(INVEN_PACK)) continue;
 
 							/* Skip artifacts */
 							if (o_ptr->flags3 & TR3_INSTA_ART) continue;
@@ -736,6 +727,8 @@ bool make_attack_normal(int m_idx)
 							/* Done */
 							break;
 						}
+						OBJ_ITT_END;
+#endif /* 0 */
 
 						break;
 					}
@@ -745,17 +738,13 @@ bool make_attack_normal(int m_idx)
 						/* Take some damage */
 						take_hit(damage, ddesc);
 
+#if 0							/* Not working until object code done... */
+
 						/* Steal some food */
-						for (k = 0; k < 10; k++)
+						OBJ_ITT_START (p_ptr->inventory, o_ptr)
 						{
 							/* Pick an item from the pack */
-							i = randint0(INVEN_PACK);
-
-							/* Get the item */
-							o_ptr = &inventory[i];
-
-							/* Skip non-objects */
-							if (!o_ptr->k_idx) continue;
+							if (!one_in_(INVEN_PACK)) continue;
 
 							/* Skip non-food objects */
 							if (o_ptr->tval != TV_FOOD) continue;
@@ -778,7 +767,8 @@ bool make_attack_normal(int m_idx)
 							/* Done */
 							break;
 						}
-
+						OBJ_ITT_END;
+#endif /* 0 */
 						break;
 					}
 
@@ -788,7 +778,7 @@ bool make_attack_normal(int m_idx)
 						take_hit(damage, ddesc);
 
 						/* Access the lite */
-						o_ptr = &inventory[INVEN_LITE];
+						o_ptr = &p_ptr->equipment[EQUIP_LITE];
 
 						/* Drain fuel */
 						if ((o_ptr->pval > 0) &&

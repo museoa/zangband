@@ -2576,9 +2576,6 @@ static void take_move(int m_idx, int *mm)
 							msg_format("%^s picks up %s.", m_name, o_name);
 						}
 
-						/* Hack Excise the object */
-						excise_object_idx(&c_ptr->o_idx, _this_o_idx);
-
 						/* Forget mark */
 						o_ptr->info &= ~(OB_SEEN);
 
@@ -2591,11 +2588,8 @@ static void take_move(int m_idx, int *mm)
 						/* We are held */
 						o_ptr->held = TRUE;
 
-						/* Build a stack */
-						o_ptr->next_o_idx = m_ptr->hold_o_idx;
-
-						/* Carry object */
-						m_ptr->hold_o_idx = _this_o_idx;
+						/* Hold the object */
+						move_object(&m_ptr->hold_o_idx, &c_ptr->o_idx, o_ptr);
 					}
 
 					/* Destroy the item if not a pet */
@@ -2612,7 +2606,7 @@ static void take_move(int m_idx, int *mm)
 						}
 
 						/* Delete the object */
-						OBJ_DEL_FCURRENT;
+						delete_dungeon_object(o_ptr);
 					}
 				}
 				OBJ_ITT_END;

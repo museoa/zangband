@@ -162,4 +162,13 @@
 #endif
 
 
+/*
+ * Hack - a useful "get array index from pointers" macro.
+ *
+ * We assume P is a pointer to something in array A.
+ */
+#define GET_ARRAY_INDEX(A,P) \
+	((P)-(A))
+
+
 #endif

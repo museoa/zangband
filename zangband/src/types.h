@@ -741,8 +741,10 @@ struct object_type
 {
 	s16b k_idx;	/* Kind index (zero if "dead") */
 
-	s16b iy;	/* Y-position on map, or zero */
 	s16b ix;	/* X-position on map, or zero */
+	s16b iy;	/* Y-position on map, or zero */
+
+	s16b weight;	/* Item weight */
 
 	byte tval;	/* Item type (from kind) */
 	byte sval;	/* Item sub-type (from kind) */
@@ -753,8 +755,6 @@ struct object_type
 
 	byte number;	/* Number of items */
 
-	s16b weight;	/* Item weight */
-
 	s16b to_h;	/* Plusses to hit */
 	s16b to_d;	/* Plusses to damage */
 	s16b to_a;	/* Plusses to AC */
@@ -764,7 +764,7 @@ struct object_type
 	s16b timeout;	/* Timeout Counter */
 
 	byte dd, ds;	/* Damage dice/sides */
-	
+
 	s16b next_o_idx;	/* Next object in stack (if any) */
 
 	u16b inscription;	/* Inscription index */
@@ -785,9 +785,9 @@ struct object_type
 	byte feeling;	/* Game generated inscription number (eg, pseudo-id) */
 
 	byte activate;	/* Activation type */
-	
-	byte info;		/* Special flags */
-	
+
+	byte info;	/* Special flags */
+
 	bool held;	/* Held by something */
 };
 
@@ -1427,6 +1427,9 @@ struct player_type
 	s16b inven_cnt;	/* Number of items in inventory */
 	s16b equip_cnt;	/* Number of items in equipment */
 
+	s16b inventory;	/* Index to inventory item list */
+	object_type equipment[EQUIP_MAX];	/* Equipment */
+
 	s16b target_set;	/* Target flag */
 	s16b target_who;	/* Target identity */
 	s16b target_row;	/* Target location */
@@ -1461,8 +1464,6 @@ struct player_type
 	s16b command_new;	/* Hack -- command chaining XXX XXX */
 
 	s16b new_spells;	/* Number of spells available */
-
-	s16b inventory;	/* Index to inventory item list */
 
 	bool cumber_armor;	/* Mana draining armor */
 	bool cumber_glove;	/* Mana draining gloves */

@@ -461,7 +461,7 @@ void curse_equipment(int chance, int heavy_chance)
 {
 	bool changed = FALSE;
 	u32b o1, o2, o3;
-	object_type *o_ptr = &inventory[INVEN_WIELD + randint0(12)];
+	object_type *o_ptr = &p_ptr->equipment[randint0(EQUIP_MAX)];
 
 	if (randint1(100) > chance) return;
 

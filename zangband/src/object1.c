@@ -1447,65 +1447,80 @@ bool identify_fully_aux(const object_type *o_ptr)
 	return (TRUE);
 }
 
-
-
 /*
- * Convert an inventory index into a one character label
- * Note that the label does NOT distinguish inven/equip.
+ * Convert a label into the object pointer
+ *  to an item in a list.
+ * Return NULL if the label does not indicate a real item.
  */
-char index_to_label(int i)
+static object_type *label_to_list(int c, s16b list_start)
 {
-	/* Indexes for "inven" are easy */
-	if (i < INVEN_WIELD) return (I2A(i));
+	object_type *o_ptr;
 
-	/* Indexes for "equip" are offset */
-	return (I2A(i - INVEN_WIELD));
+	int i;
+
+	/* Convert */
+	i = (islower(c) ? A2I(c) : -1);
+
+	o_ptr = get_list_item(list_start, i);
+
+	/* Return the item */
+	return (o_ptr);
 }
 
-
 /*
- * Convert a label into the index of an item in the "inven"
- * Return "-1" if the label does not indicate a real item
+ * Convert a label into the object pointer
+ *  to an item in the equipment.
+ * Return NULL if the label does not indicate a real item.
  */
-s16b label_to_inven(int c)
+static object_type *label_to_equip(int c)
 {
+	object_type *o_ptr;
+
 	int i;
 
 	/* Convert */
 	i = (islower(c) ? A2I(c) : -1);
 
 	/* Verify the index */
-	if ((i < 0) || (i > INVEN_PACK)) return (-1);
+	if ((i < 0) || (i >= EQUIP_MAX)) return (NULL);
+
+	/* Get the item */
+	o_ptr = &p_ptr->equipment[i];
 
 	/* Empty slots can never be chosen */
-	if (!inventory[i].k_idx) return (-1);
+	if (!o_ptr->k_idx) return (NULL);
 
-	/* Return the index */
-	return (i);
+	/* Return the item */
+	return (o_ptr);
 }
-
 
 /*
- * Convert a label into the index of a item in the "equip"
- * Return "-1" if the label does not indicate a real item
+ * The the "choosable" range of objects from the list.
  */
-s16b label_to_equip(int c)
+static void get_label_bounds(s16b list, int *n1, int *n2)
 {
-	int i;
+	object_type *o_ptr;
 
-	/* Convert */
-	i = (islower(c) ? A2I(c) : -1) + INVEN_WIELD;
+	int i = -1;
 
-	/* Verify the index */
-	if ((i < INVEN_WIELD) || (i >= INVEN_TOTAL)) return (-1);
+	*n1 = -1;
+	*n2 = -1;
 
-	/* Empty slots can never be chosen */
-	if (!inventory[i].k_idx) return (-1);
+	OBJ_ITT_START (list, o_ptr)
+	{
+		i++;
 
-	/* Return the index */
-	return (i);
+		if (item_tester_okay(o_ptr))
+		{
+			/* Get lower bounds */
+			if (*n1 == -1) *n1 = i;
+
+			/* Get higher bounds */
+			*n2 = i;
+		}
+	}
+	OBJ_ITT_END;
 }
-
 
 
 /*
@@ -1521,64 +1536,64 @@ s16b wield_slot(const object_type *o_ptr)
 		case TV_POLEARM:
 		case TV_SWORD:
 		{
-			return (INVEN_WIELD);
+			return (EQUIP_WIELD);
 		}
 
 		case TV_BOW:
 		{
-			return (INVEN_BOW);
+			return (EQUIP_BOW);
 		}
 
 		case TV_RING:
 		{
 			/* Use the right hand first */
-			if (!inventory[INVEN_RIGHT].k_idx) return (INVEN_RIGHT);
+			if (!p_ptr->equipment[EQUIP_RIGHT].k_idx) return (EQUIP_RIGHT);
 
 			/* Use the left hand for swapping (by default) */
-			return (INVEN_LEFT);
+			return (EQUIP_LEFT);
 		}
 
 		case TV_AMULET:
 		{
-			return (INVEN_NECK);
+			return (EQUIP_NECK);
 		}
 
 		case TV_LITE:
 		{
-			return (INVEN_LITE);
+			return (EQUIP_LITE);
 		}
 
 		case TV_DRAG_ARMOR:
 		case TV_HARD_ARMOR:
 		case TV_SOFT_ARMOR:
 		{
-			return (INVEN_BODY);
+			return (EQUIP_BODY);
 		}
 
 		case TV_CLOAK:
 		{
-			return (INVEN_OUTER);
+			return (EQUIP_OUTER);
 		}
 
 		case TV_SHIELD:
 		{
-			return (INVEN_ARM);
+			return (EQUIP_ARM);
 		}
 
 		case TV_CROWN:
 		case TV_HELM:
 		{
-			return (INVEN_HEAD);
+			return (EQUIP_HEAD);
 		}
 
 		case TV_GLOVES:
 		{
-			return (INVEN_HANDS);
+			return (EQUIP_HANDS);
 		}
 
 		case TV_BOOTS:
 		{
-			return (INVEN_FEET);
+			return (EQUIP_FEET);
 		}
 	}
 
@@ -1597,62 +1612,62 @@ cptr mention_use(int i)
 	/* Examine the location */
 	switch (i)
 	{
-		case INVEN_WIELD:
+		case EQUIP_WIELD:
 		{
 			p = "Wielding";
 			break;
 		}
-		case INVEN_BOW:
+		case EQUIP_BOW:
 		{
 			p = "Shooting";
 			break;
 		}
-		case INVEN_LEFT:
+		case EQUIP_LEFT:
 		{
 			p = "On left hand";
 			break;
 		}
-		case INVEN_RIGHT:
+		case EQUIP_RIGHT:
 		{
 			p = "On right hand";
 			break;
 		}
-		case INVEN_NECK:
+		case EQUIP_NECK:
 		{
 			p = "Around neck";
 			break;
 		}
-		case INVEN_LITE:
+		case EQUIP_LITE:
 		{
 			p = "Light source";
 			break;
 		}
-		case INVEN_BODY:
+		case EQUIP_BODY:
 		{
 			p = "On body";
 			break;
 		}
-		case INVEN_OUTER:
+		case EQUIP_OUTER:
 		{
 			p = "About body";
 			break;
 		}
-		case INVEN_ARM:
+		case EQUIP_ARM:
 		{
 			p = "On arm";
 			break;
 		}
-		case INVEN_HEAD:
+		case EQUIP_HEAD:
 		{
 			p = "On head";
 			break;
 		}
-		case INVEN_HANDS:
+		case EQUIP_HANDS:
 		{
 			p = "On hands";
 			break;
 		}
-		case INVEN_FEET:
+		case EQUIP_FEET:
 		{
 			p = "On feet";
 			break;
@@ -1665,10 +1680,10 @@ cptr mention_use(int i)
 	}
 
 	/* Hack -- Heavy weapon */
-	if (i == INVEN_WIELD)
+	if (i == EQUIP_WIELD)
 	{
 		object_type *o_ptr;
-		o_ptr = &inventory[i];
+		o_ptr = &p_ptr->equipment[i];
 		if (adj_str_hold[p_ptr->stat_ind[A_STR]] < o_ptr->weight / 10)
 		{
 			p = "Just lifting";
@@ -1676,10 +1691,10 @@ cptr mention_use(int i)
 	}
 
 	/* Hack -- Heavy bow */
-	if (i == INVEN_BOW)
+	if (i == EQUIP_BOW)
 	{
 		object_type *o_ptr;
-		o_ptr = &inventory[i];
+		o_ptr = &p_ptr->equipment[i];
 		if (adj_str_hold[p_ptr->stat_ind[A_STR]] < o_ptr->weight / 10)
 		{
 			p = "Just holding";
@@ -1701,78 +1716,77 @@ cptr describe_use(int i)
 
 	switch (i)
 	{
-		case INVEN_WIELD:
+		case EQUIP_WIELD:
 		{
 			p = "attacking monsters with";
 			break;
 		}
-		case INVEN_BOW:
+		case EQUIP_BOW:
 		{
 			p = "shooting missiles with";
 			break;
 		}
-		case INVEN_LEFT:
+		case EQUIP_LEFT:
 		{
 			p = "wearing on your left hand";
 			break;
 		}
-		case INVEN_RIGHT:
+		case EQUIP_RIGHT:
 		{
 			p = "wearing on your right hand";
 			break;
 		}
-		case INVEN_NECK:
+		case EQUIP_NECK:
 		{
 			p = "wearing around your neck";
 			break;
 		}
-		case INVEN_LITE:
+		case EQUIP_LITE:
 		{
 			p = "using to light the way";
 			break;
 		}
-		case INVEN_BODY:
+		case EQUIP_BODY:
 		{
 			p = "wearing on your body";
 			break;
 		}
-		case INVEN_OUTER:
+		case EQUIP_OUTER:
 		{
 			p = "wearing on your back";
 			break;
 		}
-		case INVEN_ARM:
+		case EQUIP_ARM:
 		{
 			p = "wearing on your arm";
 			break;
 		}
-		case INVEN_HEAD:
+		case EQUIP_HEAD:
 		{
 			p = "wearing on your head";
 			break;
 		}
-		case INVEN_HANDS:
+		case EQUIP_HANDS:
 		{
 			p = "wearing on your hands";
 			break;
 		}
-		case INVEN_FEET:
+		case EQUIP_FEET:
 		{
 			p = "wearing on your feet";
 			break;
 		}
 		default:
 		{
-			p = "carrying in your pack";
+			p = "invalid item to describe_use()!";
 			break;
 		}
 	}
 
 	/* Hack -- Heavy weapon */
-	if (i == INVEN_WIELD)
+	if (i == EQUIP_WIELD)
 	{
-		object_type *o_ptr;
-		o_ptr = &inventory[i];
+		object_type *o_ptr = &p_ptr->equipment[i];
 		if (adj_str_hold[p_ptr->stat_ind[A_STR]] < o_ptr->weight / 10)
 		{
 			p = "just lifting";
@@ -1780,10 +1794,9 @@ cptr describe_use(int i)
 	}
 
 	/* Hack -- Heavy bow */
-	if (i == INVEN_BOW)
+	if (i == EQUIP_BOW)
 	{
-		object_type *o_ptr;
-		o_ptr = &inventory[i];
+		object_type *o_ptr = &p_ptr->equipment[i];
 		if (adj_str_hold[p_ptr->stat_ind[A_STR]] < o_ptr->weight / 10)
 		{
 			p = "just holding";
@@ -1791,7 +1804,7 @@ cptr describe_use(int i)
 	}
 
 	/* Return the result */
-	return p;
+	return (p);
 }
 
 
@@ -2025,7 +2038,7 @@ bool item_tester_hook_weapon_armour(const object_type *o_ptr)
 bool item_tester_hook_wear(const object_type *o_ptr)
 {
 	/* Check for a usable slot */
-	if (wield_slot(o_ptr) >= INVEN_WIELD) return (TRUE);
+	if (wield_slot(o_ptr) >= EQUIP_WIELD) return (TRUE);
 
 	/* Assume not wearable */
 	return (FALSE);
@@ -2162,6 +2175,9 @@ static bool check_book_realm(const byte book_tval)
  */
 bool item_tester_okay(const object_type *o_ptr)
 {
+	/* Paranoia */
+	if (!o_ptr) return (FALSE);
+
 	/* Hack -- allow listing empty slots */
 	if (item_tester_full) return (TRUE);
 
@@ -2224,13 +2240,12 @@ static bool item_is_recharging(object_type *o_ptr)
 }
 
 
-
 /*
  * Choice window "shadow" of the "show_inven()" function
  */
 void display_inven(void)
 {
-	int i, n, z = 0;
+	int i = 0, n;
 	object_type *o_ptr;
 	byte attr;
 
@@ -2242,25 +2257,9 @@ void display_inven(void)
 	/* Get size */
 	Term_get_size(&wid, &hgt);
 
-
-	/* Find the "final" slot */
-	for (i = 0; i < INVEN_PACK; i++)
-	{
-		o_ptr = &inventory[i];
-
-		/* Skip non-objects */
-		if (!o_ptr->k_idx) continue;
-
-		/* Track */
-		z = i + 1;
-	}
-
 	/* Display the pack */
-	for (i = 0; i < z; i++)
+	OBJ_ITT_START (p_ptr->inventory, o_ptr)
 	{
-		/* Examine the item */
-		o_ptr = &inventory[i];
-
 		/* Start with an empty "index" */
 		tmp_val[0] = tmp_val[1] = tmp_val[2] = ' ';
 
@@ -2268,7 +2267,7 @@ void display_inven(void)
 		if (item_tester_okay(o_ptr))
 		{
 			/* Prepare an "index" */
-			tmp_val[0] = index_to_label(i);
+			tmp_val[0] = I2A(i);
 
 			/* Bracket the "index" --(-- */
 			tmp_val[1] = ')';
@@ -2305,10 +2304,14 @@ void display_inven(void)
 			sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
 			Term_putstr(wid - 9, i, -1, TERM_WHITE, tmp_val);
 		}
+
+		/* Count items in inventory */
+		i++;
 	}
+	OBJ_ITT_END;
 
 	/* Erase the rest of the window */
-	for (i = z; i < hgt; i++)
+	for (; i < hgt; i++)
 	{
 		/* Erase the line */
 		Term_erase(0, i, 255);
@@ -2334,10 +2337,10 @@ void display_equip(void)
 	Term_get_size(&wid, &hgt);
 
 	/* Display the equipment */
-	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+	for (i = 0; i < EQUIP_MAX; i++)
 	{
 		/* Examine the item */
-		o_ptr = &inventory[i];
+		o_ptr = &p_ptr->equipment[i];
 
 		/* Start with an empty "index" */
 		tmp_val[0] = tmp_val[1] = tmp_val[2] = ' ';
@@ -2346,14 +2349,14 @@ void display_equip(void)
 		if (item_tester_okay(o_ptr))
 		{
 			/* Prepare an "index" */
-			tmp_val[0] = index_to_label(i);
+			tmp_val[0] = I2A(i);
 
 			/* Bracket the "index" --(-- */
 			tmp_val[1] = ')';
 		}
 
 		/* Display the index (or blank space) */
-		Term_putstr(0, i - INVEN_WIELD, 3, TERM_WHITE, tmp_val);
+		Term_putstr(0, i, 3, TERM_WHITE, tmp_val);
 
 		/* Obtain an item description */
 		object_desc(o_name, o_ptr, TRUE, 3, 256);
@@ -2371,17 +2374,16 @@ void display_equip(void)
 		if (!use_color || ironman_moria) attr = TERM_WHITE;
 
 		/* Display the entry itself */
-		Term_putstr(3, i - INVEN_WIELD, n, attr, o_name);
+		Term_putstr(3, i, n, attr, o_name);
 
 		/* Erase the rest of the line */
-		Term_erase(3 + n, i - INVEN_WIELD, 255);
+		Term_erase(3 + n, i, 255);
 
 		/* Display the slot description (if needed) */
 		if (show_labels)
 		{
-			Term_putstr(wid - 19, i - INVEN_WIELD, -1, TERM_WHITE, "<--");
-			Term_putstr(wid - 15, i - INVEN_WIELD, -1, TERM_WHITE,
-						mention_use(i));
+			Term_putstr(wid - 19, i, -1, TERM_WHITE, "<--");
+			Term_putstr(wid - 15, i, -1, TERM_WHITE, mention_use(i));
 		}
 
 		/* Display the weight (if needed) */
@@ -2390,12 +2392,12 @@ void display_equip(void)
 			int wgt = o_ptr->weight * o_ptr->number;
 			int col = (show_labels ? wid - 28 : wid - 19);
 			sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
-			Term_putstr(col, i - INVEN_WIELD, -1, TERM_WHITE, tmp_val);
+			Term_putstr(col, i, -1, TERM_WHITE, tmp_val);
 		}
 	}
 
 	/* Erase the rest of the window */
-	for (i = INVEN_TOTAL - INVEN_WIELD; i < hgt; i++)
+	for (i = EQUIP_MAX; i < hgt; i++)
 	{
 		/* Clear that line */
 		Term_erase(0, i, 255);
@@ -2404,19 +2406,24 @@ void display_equip(void)
 
 
 /*
- * Display the inventory.
+ * Display a list of objects.
+ * This can be used to show the player's inventory,
+ * or to show a list of floor items.
  *
  * Hack -- do not display "trailing" empty slots
  */
-void show_inven(void)
+void show_list(s16b o_list_ptr)
 {
-	int i, j, k, l, z = 0;
+	int i, j;
+	int k, l;
 
 	int col, len, lim;
 	object_type *o_ptr;
 
 	char o_name[256];
 	char tmp_val[80];
+
+	object_type *out_object[23];
 	int out_index[23];
 	byte out_color[23];
 	char out_desc[23][256];
@@ -2441,25 +2448,21 @@ void show_inven(void)
 	/* Require space for icon */
 	lim -= 2;
 
-	/* Find the "final" slot */
-	for (i = 0; i < INVEN_PACK; i++)
-	{
-		o_ptr = &inventory[i];
-
-		/* Skip non-objects */
-		if (!o_ptr->k_idx) continue;
-
-		/* Track */
-		z = i + 1;
-	}
+	/* Initialise counters */
+	i = -1;
+	j = 0;
+	k = -1;
 
 	/* Display the inventory */
-	for (k = 0, i = 0; i < z; i++)
+	OBJ_ITT_START (o_list_ptr, o_ptr)
 	{
-		o_ptr = &inventory[i];
+		i++;
 
 		/* Is this item acceptable? */
 		if (!item_tester_okay(o_ptr)) continue;
+
+		/* Advance to next "line" */
+		k++;
 
 		/* Describe the object */
 		object_desc(o_name, o_ptr, TRUE, 3, 256);
@@ -2469,6 +2472,7 @@ void show_inven(void)
 
 		/* Save the object index, color, and description */
 		out_index[k] = i;
+		out_object[k] = o_ptr;
 		out_color[k] = tval_to_attr[o_ptr->tval % 128];
 
 		/* Grey out charging items */
@@ -2487,10 +2491,8 @@ void show_inven(void)
 
 		/* Maintain the maximum length */
 		if (l > len) len = l;
-
-		/* Advance to next "line" */
-		k++;
 	}
+	OBJ_ITT_END;
 
 	/* Find the column to start in */
 	col = (len > wid - 4) ? 0 : (wid - len - 1);
@@ -2498,17 +2500,14 @@ void show_inven(void)
 	/* Output each entry */
 	for (j = 0; j < k; j++)
 	{
-		/* Get the index */
-		i = out_index[j];
-
 		/* Get the item */
-		o_ptr = &inventory[i];
+		o_ptr = out_object[j];
 
 		/* Clear the line */
 		prt("", col ? col - 2 : col, j + 1);
 
 		/* Prepare an index --(-- */
-		sprintf(tmp_val, "%c)", index_to_label(i));
+		sprintf(tmp_val, "%c)", I2A(out_index[j]));
 
 		/* Clear the line with the (possibly indented) index */
 		put_str(tmp_val, col, j + 1);
@@ -2589,9 +2588,9 @@ void show_equip(void)
 	lim -= 2;
 
 	/* Scan the equipment list */
-	for (k = 0, i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+	for (k = 0, i = 0; i < EQUIP_MAX; i++)
 	{
-		o_ptr = &inventory[i];
+		o_ptr = &p_ptr->equipment[i];
 
 		/* Is this item acceptable? */
 		if (!item_tester_okay(o_ptr)) continue;
@@ -2646,13 +2645,13 @@ void show_equip(void)
 		i = out_index[j];
 
 		/* Get the item */
-		o_ptr = &inventory[i];
+		o_ptr = &p_ptr->equipment[i];
 
 		/* Clear the line */
 		prt("", col ? col - 2 : col, j + 1);
 
 		/* Prepare an index --(-- */
-		sprintf(tmp_val, "%c)", index_to_label(i));
+		sprintf(tmp_val, "%c)", I2A(i));
 
 		/* Clear the line with the (possibly indented) index */
 		put_str(tmp_val, col, j + 1);
@@ -2752,24 +2751,10 @@ void toggle_inven_equip(void)
  *
  * The item can be negative to mean "item on floor".
  */
-static bool verify(cptr prompt, int item)
+static bool verify(cptr prompt, object_type *o_ptr)
 {
 	char o_name[256];
 	char out_val[512];
-	object_type *o_ptr;
-
-
-	/* Inventory */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Floor */
-	else
-	{
-		o_ptr = &o_list[0 - item];
-	}
 
 	/* Describe */
 	object_desc(o_name, o_ptr, TRUE, 3, 256);
@@ -2787,23 +2772,9 @@ static bool verify(cptr prompt, int item)
  *
  * The item can be negative to mean "item on floor".
  */
-static bool get_item_allow(int item)
+static bool get_item_allow(object_type *o_ptr)
 {
 	cptr s;
-
-	object_type *o_ptr;
-
-	/* Inventory */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-
-	/* Floor */
-	else
-	{
-		o_ptr = &o_list[0 - item];
-	}
 
 	/* No inscription */
 	if (!o_ptr->inscription) return (TRUE);
@@ -2818,7 +2789,7 @@ static bool get_item_allow(int item)
 		if ((s[1] == p_ptr->command_cmd) || (s[1] == '*'))
 		{
 			/* Verify the choice */
-			if (!verify("Really try", item)) return (FALSE);
+			if (!verify("Really try", o_ptr)) return (FALSE);
 		}
 
 		/* Find another '!' */
@@ -2830,24 +2801,6 @@ static bool get_item_allow(int item)
 }
 
 
-
-/*
- * Auxiliary function for "get_item()" -- test an index
- */
-static bool get_item_okay(int i)
-{
-	/* Illegal items */
-	if ((i < 0) || (i >= INVEN_TOTAL)) return (FALSE);
-
-	/* Verify the item */
-	if (!item_tester_okay(&inventory[i])) return (FALSE);
-
-	/* Assume okay */
-	return (TRUE);
-}
-
-
-
 /*
  * Find the "first" inventory object with the given "tag".
  *
@@ -2857,16 +2810,57 @@ static bool get_item_okay(int i)
  * Also, the tag "@xn" will work as well, where "n" is a tag-char,
  * and "x" is the "current" command_cmd code.
  */
-static int get_tag(int *cp, char tag)
+static object_type *get_tag(bool *inven, char tag)
 {
 	int i;
+
 	cptr s;
 
+	object_type *o_ptr;
 
-	/* Check every object */
-	for (i = 0; i < INVEN_TOTAL; ++i)
+
+	/* Check inventory */
+	OBJ_ITT_START (p_ptr->inventory, o_ptr)
 	{
-		object_type *o_ptr = &inventory[i];
+		/* Skip empty inscriptions */
+		if (!o_ptr->inscription) continue;
+
+		/* Find a '@' */
+		s = strchr(quark_str(o_ptr->inscription), '@');
+
+		/* Process all tags */
+		while (s)
+		{
+			/* Check the normal tags */
+			if (s[1] == tag)
+			{
+				/* Save the actual inventory ID */
+				*inven = TRUE;
+
+				/* Success */
+				return (o_ptr);
+			}
+
+			/* Check the special tags */
+			if ((s[1] == p_ptr->command_cmd) && (s[2] == tag))
+			{
+				/* Save the actual inventory ID */
+				*inven = TRUE;
+
+				/* Success */
+				return (o_ptr);
+			}
+
+			/* Find another '@' */
+			s = strchr(s + 1, '@');
+		}
+	}
+	OBJ_ITT_END;
+
+	/* Check equipment */
+	for (i = 0; i < EQUIP_MAX; i++)
+	{
+		object_type *o_ptr = &p_ptr->equipment[i];
 
 		/* Skip non-objects */
 		if (!o_ptr->k_idx) continue;
@@ -2884,20 +2878,20 @@ static int get_tag(int *cp, char tag)
 			if (s[1] == tag)
 			{
 				/* Save the actual inventory ID */
-				*cp = i;
+				*inven = FALSE;
 
 				/* Success */
-				return (TRUE);
+				return (o_ptr);
 			}
 
 			/* Check the special tags */
 			if ((s[1] == p_ptr->command_cmd) && (s[2] == tag))
 			{
 				/* Save the actual inventory ID */
-				*cp = i;
+				*inven = FALSE;
 
 				/* Success */
-				return (TRUE);
+				return (o_ptr);
 			}
 
 			/* Find another '@' */
@@ -2906,33 +2900,30 @@ static int get_tag(int *cp, char tag)
 	}
 
 	/* No such tag */
-	return (FALSE);
+	return (NULL);
 }
 
-
 /*
- * scan_floor --
+ * test_floor --
  *
- * Return a list of o_list[] indexes of items at the given cave
- * location. Valid flags are:
+ * Return the first valid item at a location +
+ * Return the number of valid items at the location.
+ *
+ * Valid flags are:
  *
  *		mode & 0x01 -- Item tester
  *		mode & 0x02 -- Marked items only
- *		mode & 0x04 -- Stop after first
  */
-bool scan_floor(int *items, int *item_num, int x, int y, int mode)
+object_type *test_floor(int *num, cave_type *c_ptr, int mode)
 {
-	int num = 0;
-
+	object_type *q_ptr = NULL;
 	object_type *o_ptr;
 
-	(*item_num) = 0;
-
-	/* Sanity */
-	if (!in_bounds(x, y)) return (FALSE);
+	/* No items yet */
+	*num = 0;
 
 	/* Scan all objects in the grid */
-	OBJ_ITT_START (area(x, y)->o_idx, o_ptr)
+	OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 	{
 		/* Item tester */
 		if ((mode & 0x01) && !item_tester_okay(o_ptr)) continue;
@@ -2940,135 +2931,342 @@ bool scan_floor(int *items, int *item_num, int x, int y, int mode)
 		/* Marked */
 		if ((mode & 0x02) && !(o_ptr->info & OB_SEEN)) continue;
 
-		/* Hack - Accept this item */
-		items[num++] = _this_o_idx;
+		/* Save first item */
+		if (!q_ptr) q_ptr = o_ptr;
 
-		/* Only one */
-		if (mode & 0x04) break;
-
-		/* XXX Hack -- Enforce limit */
-		if (num == 23) break;
+		/* Count objects */
+		(*num)++;
 	}
 	OBJ_ITT_END;
 
-	/* Number of items */
-	(*item_num) = num;
-
-	/* Result */
-	return (num != 0);
+	/* First item in list, if it exists */
+	return (q_ptr);
 }
 
 /*
- * Display a list of the items on the floor at the given location.
+ * Toggle the inventory and equipment terms when needed
  */
-void show_floor(int x, int y)
+static bool toggle_windows(bool toggle)
 {
-	int i, j, k, l;
-	int col, len, lim;
+	bool ni = FALSE;
+	bool ne = FALSE;
 
-	object_type *o_ptr;
+	int j;
 
-	char o_name[256];
-
-	char tmp_val[80];
-
-	int out_index[23];
-	byte out_color[23];
-	char out_desc[23][256];
-
-	int floor_list[23], floor_num;
-
-	int wid, hgt;
-
-	/* Get size */
-	Term_get_size(&wid, &hgt);
-
-	/* Default length */
-	len = wid - 51;
-
-	/* Maximum space allowed for descriptions */
-	lim = wid - 4;
-
-	/* Require space for weight (if needed) */
-	if (show_weights) lim -= 9;
-
-	/* Scan for objects in the grid, using item_tester_okay() */
-	(void)scan_floor(floor_list, &floor_num, x, y, 0x01);
-
-	/* Display the inventory */
-	for (k = 0, i = 0; i < floor_num; i++)
+	/* Scan windows */
+	for (j = 0; j < ANGBAND_TERM_MAX; j++)
 	{
-		o_ptr = &o_list[floor_list[i]];
+		/* Unused */
+		if (!angband_term[j]) continue;
 
-		/* Describe the object */
-		object_desc(o_name, o_ptr, TRUE, 3, 256);
+		/* Count windows displaying inven */
+		if (window_flag[j] & (PW_INVEN)) ni = TRUE;
 
-		/* Hack -- enforce max length */
-		o_name[lim] = '\0';
-
-		/* Save the index */
-		out_index[k] = i;
-
-		/* Acquire inventory color */
-		out_color[k] = tval_to_attr[o_ptr->tval & 0x7F];
-
-		/* Save the object description */
-		strcpy(out_desc[k], o_name);
-
-		/* Find the predicted "line length" */
-		l = strlen(out_desc[k]) + 5;
-
-		/* Be sure to account for the weight */
-		if (show_weights) l += 9;
-
-		/* Maintain the maximum length */
-		if (l > len) len = l;
-
-		/* Advance to next "line" */
-		k++;
+		/* Count windows displaying equip */
+		if (window_flag[j] & (PW_EQUIP)) ne = TRUE;
 	}
 
-	/* Find the column to start in */
-	col = (len > wid - 4) ? 0 : (wid - len - 1);
-
-	/* Output each entry */
-	for (j = 0; j < k; j++)
+	/* Toggle if needed */
+	if ((p_ptr->command_wrk == (USE_EQUIP) && ni && !ne) ||
+		(p_ptr->command_wrk == (USE_INVEN) && !ni && ne))
 	{
-		/* Get the index */
-		i = floor_list[out_index[j]];
+		/* Toggle */
+		toggle_inven_equip();
 
-		/* Get the item */
-		o_ptr = &o_list[i];
+		/* Track toggles */
+		toggle = !toggle;
+	}
 
-		/* Clear the line */
-		prt("", col ? col - 2 : col, j + 1);
+	/* Update */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
-		/* Prepare an index --(-- */
-		sprintf(tmp_val, "%c)", index_to_label(j));
+	/* Redraw windows */
+	window_stuff();
 
-		/* Clear the line with the (possibly indented) index */
-		put_str(tmp_val, col, j + 1);
+	return (toggle);
+}
 
-		/* Display the entry itself */
-		c_put_str(out_color[j], out_desc[j], col + 3, j + 1);
 
-		/* Display the weight if needed */
-		if (show_weights)
+/*
+ * Show the prompt for items
+ */
+static void show_item_prompt(bool inven, bool equip, bool floor, cptr pmt)
+{
+	int i;
+
+	int n1, n2;
+
+	char tmp_val[160];
+	char out_val[160];
+
+	object_type *eo_ptr;
+
+	switch (p_ptr->command_wrk)
+	{
+		case USE_INVEN:
 		{
-			int wgt = o_ptr->weight * o_ptr->number;
-			sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
-			put_str(tmp_val, wid - 9, j + 1);
+			/* Extract the legal requests */
+			get_label_bounds(p_ptr->inventory, &n1, &n2);
+
+			/* Redraw if needed */
+			if (p_ptr->command_see) show_list(p_ptr->inventory);
+
+			/* Begin the prompt */
+			sprintf(out_val, "Inven:");
+
+			/* Build the prompt */
+			sprintf(tmp_val, " %c-%c,", I2A(n1), I2A(n2));
+
+			/* Append */
+			strcat(out_val, tmp_val);
+
+			/* Indicate ability to "view" */
+			if (!p_ptr->command_see) strcat(out_val, " * to see,");
+
+			/* Append */
+			if (equip) strcat(out_val, " / for Equip,");
+
+			/* Append */
+			if (floor) strcat(out_val, " - for floor,");
+
+			break;
+		}
+
+		case USE_EQUIP:
+		{
+			/* Nothing yet */
+			n1 = -1;
+			n2 = -1;
+
+			/* Test for usable equipment */
+			for (i = 0; i < EQUIP_MAX; i++)
+			{
+				eo_ptr = &p_ptr->equipment[i];
+
+				if (item_tester_okay(eo_ptr))
+				{
+					/* Get lower bound */
+					if (n1 == -1) n1 = i;
+
+					/* Get higher bound */
+					n2 = i;
+				}
+			}
+
+			/* Redraw if needed */
+			if (p_ptr->command_see) show_equip();
+
+			/* Begin the prompt */
+			sprintf(out_val, "Equip:");
+
+			/* Build the prompt */
+			sprintf(tmp_val, " %c-%c,", I2A(n1), I2A(n2));
+
+			/* Append */
+			strcat(out_val, tmp_val);
+
+			/* Indicate ability to "view" */
+			if (!p_ptr->command_see) strcat(out_val, " * to see,");
+
+			/* Append */
+			if (inven) strcat(out_val, " / for Inven,");
+
+			/* Append */
+			if (floor) strcat(out_val, " - for floor,");
+
+			break;
+		}
+
+		case USE_FLOOR:
+		{
+			cave_type *c_ptr = area(p_ptr->px, p_ptr->py);
+
+			/* Extract the legal requests */
+			get_label_bounds(p_ptr->inventory, &n1, &n2);
+
+			if (easy_floor)
+			{
+				/* Redraw if needed */
+				if (p_ptr->command_see)
+				{
+					show_list(c_ptr->o_idx);
+				}
+
+				/* Begin the prompt */
+				sprintf(out_val, "Floor:");
+
+				/* Build the prompt */
+				sprintf(tmp_val, " %c-%c,", I2A(n1), I2A(n2));
+
+				/* Append */
+				strcat(out_val, tmp_val);
+
+				/* Indicate ability to "view" */
+				if (!p_ptr->command_see) strcat(out_val, " * to see,");
+
+				/* Append */
+				if (inven)
+				{
+					strcat(out_val, " / for Inven,");
+				}
+				else if (equip)
+				{
+					strcat(out_val, " / for Equip,");
+				}
+			}
+			else
+			{
+				/* Begin the prompt */
+				sprintf(out_val, "Top item on floor: '-'");
+			}
+
+			break;
 		}
 	}
 
-	/* Make a "shadow" below the list (only if needed) */
-	if (j && (j < 23)) prt("", col ? col - 2 : col, j + 1);
+	/* Finish the prompt */
+	strcat(out_val, " ESC");
+
+	/* Build the prompt */
+	sprintf(tmp_val, "(%s) %s", out_val, pmt);
+
+	/* Show the prompt */
+	prt(tmp_val, 0, 0);
 }
 
 /*
- * Let the user select an item, save its "index"
- *
- * Return TRUE only if an acceptable item was chosen by the user.
+ * Remember the object we selected so that
+ * we can repeat the action if required.
+ */
+static void save_object_choice(object_type *o_ptr)
+{
+	int index = -1;
+
+	cave_type *c_ptr;
+
+	/* Save type of prompt */
+	repeat_push(p_ptr->command_wrk);
+
+	switch (p_ptr->command_wrk)
+	{
+		case USE_INVEN:
+		{
+			index = get_item_position(p_ptr->inventory, o_ptr);
+			break;
+		}
+
+		case USE_EQUIP:
+		{
+			index = GET_ARRAY_INDEX(p_ptr->equipment, o_ptr);
+			break;
+		}
+
+		case USE_FLOOR:
+		{
+			c_ptr = area(p_ptr->px, p_ptr->py);
+
+			index = get_item_position(c_ptr->o_idx, o_ptr);
+			break;
+		}
+	}
+
+	/* Save the index */
+	repeat_push(index);
+}
+
+/*
+ * Recall which object we have previously used.
+ */
+static object_type *recall_object_choice(void)
+{
+	int type;
+	int index;
+
+	cave_type *c_ptr;
+	object_type *o_ptr = NULL;
+
+	/* Get type of prompt */
+	if (!repeat_pull(&type)) return (NULL);
+
+	/* Set type of prompt */
+	p_ptr->command_wrk = type;
+
+	/* Get index */
+	if (!repeat_pull(&index)) return (NULL);
+
+	/* Paranoia */
+	if (index == -1)
+	{
+		repeat_clear();
+
+		return (NULL);
+	}
+
+	/* Get item */
+	switch (type)
+	{
+		case USE_INVEN:
+		{
+			o_ptr = get_list_item(p_ptr->inventory, index);
+			break;
+		}
+
+		case USE_EQUIP:
+		{
+			if ((index < 0) || (index >= EQUIP_MAX))
+			{
+				o_ptr = NULL;
+			}
+			else
+			{
+				o_ptr = &p_ptr->equipment[index];
+			}
+
+			break;
+		}
+
+		case USE_FLOOR:
+		{
+			c_ptr = area(p_ptr->px, p_ptr->py);
+
+			o_ptr = get_list_item(c_ptr->o_idx, index);
+			break;
+		}
+
+		default:
+		{
+			/* Invalid repeat - reset it */
+			repeat_clear();
+
+			/* Not a valid object */
+			return (NULL);
+		}
+	}
+
+
+	/* Validate the item */
+	if (item_tester_okay(o_ptr))
+	{
+		/* Forget the item_tester_tval restriction */
+		item_tester_tval = 0;
+
+		/* Forget the item_tester_hook restriction */
+		item_tester_hook = NULL;
+
+		/* Success */
+		return (o_ptr);
+	}
+
+	/* Invalid repeat - reset it */
+	repeat_clear();
+
+	/* Not a valid object */
+	return (NULL);
+}
+
+
+/*
+ * Let the user select an item and return a pointer to it.
  *
  * The selected item must satisfy the "item_tester_hook()" function,
  * if that hook is set, and the "item_tester_tval", if that value is set.
@@ -3091,17 +3289,6 @@ void show_floor(int x, int y)
  * use of "capital" letters will "examine" an inventory/equipment item,
  * and prompt for its use.
  *
- * If a legal item is selected from the inventory, we save it in "cp"
- * directly (0 to 35), and return TRUE.
- *
- * If a legal item is selected from the floor, we save it in "cp" as
- * a negative (-1 to -511), and return TRUE.
- *
- * If no item is available, we do nothing to "cp", and we display a
- * warning message, using "str" if available, and return FALSE.
- *
- * If no item is selected, we do nothing to "cp", and return FALSE.
- *
  * Global "p_ptr->command_new" is used when viewing the inventory or equipment
  * to allow the user to enter a command while viewing those screens, and
  * also to induce "auto-enter" of stores, and other such stuff.
@@ -3118,18 +3305,15 @@ void show_floor(int x, int y)
  * This version of get_item() includes the modifications due to the
  * easy_floor flag.  This flag changes how items on the floor are treated.
  */
-bool get_item(int *cp, cptr pmt, cptr str, int mode)
+object_type *get_item(cptr pmt, cptr str, int mode)
 {
-	int py = p_ptr->py;
-	int px = p_ptr->px;
+	cave_type *c_ptr = area(p_ptr->px, p_ptr->py);
 
-	char n1 = ' ', n2 = ' ', which;
+	char which;
 
-	int i, j, k, i1, i2, e1, e2;
+	int i;
 
-	bool done, item;
-
-	bool oops = FALSE;
+	bool done = FALSE;
 
 	bool equip = FALSE;
 	bool inven = FALSE;
@@ -3141,55 +3325,15 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 
 	bool toggle = FALSE;
 
-	char tmp_val[160];
-	char out_val[160];
+	int floor_num;
 
-	int floor_num, floor_list[23], floor_top = 0;
+	/* The first object on the floor */
+	object_type *fo_ptr;
 
-	/* Get the item index */
-	if (repeat_pull(cp))
-	{
-		/* Floor item? */
-		if (*cp < 0)
-		{
-			object_type *o_ptr;
+	/* The default equipment item */
+	object_type *eo_ptr;
 
-			/* Special index */
-			k = 0 - (*cp);
-
-			/* Acquire object */
-			o_ptr = &o_list[k];
-
-			/* Validate the item */
-			if (item_tester_okay(o_ptr))
-			{
-				/* Forget the item_tester_tval restriction */
-				item_tester_tval = 0;
-
-				/* Forget the item_tester_hook restriction */
-				item_tester_hook = NULL;
-
-				/* Success */
-				return (TRUE);
-			}
-		}
-
-		/* Verify the item */
-		else if (get_item_okay(*cp))
-		{
-			/* Forget the item_tester_tval restriction */
-			item_tester_tval = 0;
-
-			/* Forget the item_tester_hook restriction */
-			item_tester_hook = NULL;
-
-			/* Success */
-			return (TRUE);
-		}
-
-		/* Invalid repeat - reset it */
-		repeat_clear();
-	}
+	object_type *o_ptr;
 
 	/* Extract args */
 	if (mode & (USE_EQUIP)) equip = TRUE;
@@ -3200,56 +3344,33 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 	/* Paranoia XXX XXX XXX */
 	message_flush();
 
-
 	/* Not done */
 	done = FALSE;
 
-	/* No item selected */
-	item = FALSE;
-
-
-	/* Full inventory */
-	i1 = 0;
-	i2 = INVEN_PACK - 1;
-
-	/* Forbid inventory */
-	if (!inven) i2 = -1;
-
-	/* Restrict inventory indexes */
-	while ((i1 <= i2) && (!get_item_okay(i1))) i1++;
-	while ((i1 <= i2) && (!get_item_okay(i2))) i2--;
-
-
-	/* Full equipment */
-	e1 = INVEN_WIELD;
-	e2 = INVEN_TOTAL - 1;
-
-	/* Forbid equipment */
-	if (!equip) e2 = -1;
-
-	/* Restrict equipment indexes */
-	while ((e1 <= e2) && (!get_item_okay(e1))) e1++;
-	while ((e1 <= e2) && (!get_item_okay(e2))) e2--;
-
-
-	/* Count "okay" floor items */
-	floor_num = 0;
-
-	/* Restrict floor usage */
-	if (floor)
+	/* Test for equipment */
+	for (i = 0; i < EQUIP_MAX; i++)
 	{
-		/* Scan all objects in the grid */
-		(void)scan_floor(floor_list, &floor_num, px, py, 0x01);
+		eo_ptr = &p_ptr->equipment[i];
+
+		if (eo_ptr->k_idx)
+		{
+			allow_equip = TRUE;
+
+			break;
+		}
 	}
 
-	/* Accept inventory */
-	if (i1 <= i2) allow_inven = TRUE;
+	if (!equip) allow_equip = FALSE;
 
-	/* Accept equipment */
-	if (e1 <= e2) allow_equip = TRUE;
+
+	/* Scan all objects in the grid */
+	fo_ptr = test_floor(&floor_num, c_ptr, 0x01);
 
 	/* Accept floor */
-	if (floor_num) allow_floor = TRUE;
+	if (floor_num && floor) allow_floor = TRUE;
+
+	/* Accept inventory */
+	if (p_ptr->inventory && inven) allow_inven = TRUE;
 
 	/* Require at least one legal choice */
 	if (!allow_inven && !allow_equip && !allow_floor)
@@ -3257,41 +3378,51 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 		/* Cancel p_ptr->command_see */
 		p_ptr->command_see = FALSE;
 
-		/* Oops */
-		oops = TRUE;
+		/* Warning if needed */
+		if (str) msg_print(str);
 
 		/* Done */
-		done = TRUE;
+		return (FALSE);
 	}
 
 	/* Analyze choices */
-	else
+
+	/* Hack -- Start on equipment if requested */
+	if (p_ptr->command_see && (p_ptr->command_wrk == (USE_EQUIP))
+		&& allow_equip)
 	{
-		/* Hack -- Start on equipment if requested */
-		if (p_ptr->command_see && (p_ptr->command_wrk == (USE_EQUIP))
-			&& allow_equip)
-		{
-			/* This line is redundant */
-			p_ptr->command_wrk = (USE_EQUIP);
-		}
+		/* This line is redundant */
+		p_ptr->command_wrk = (USE_EQUIP);
+	}
 
-		/* Use inventory if allowed */
-		else if (allow_inven)
-		{
-			p_ptr->command_wrk = (USE_INVEN);
-		}
+	/* Use inventory if allowed */
+	else if (allow_inven)
+	{
+		p_ptr->command_wrk = (USE_INVEN);
+	}
 
-		/* Use equipment if allowed */
-		else if (allow_equip)
-		{
-			p_ptr->command_wrk = (USE_EQUIP);
-		}
+	/* Use equipment if allowed */
+	else if (allow_equip)
+	{
+		p_ptr->command_wrk = (USE_EQUIP);
+	}
 
-		/* Use floor if allowed */
-		else if (allow_floor)
-		{
-			p_ptr->command_wrk = (USE_FLOOR);
-		}
+	/* Use floor if allowed */
+	else if (allow_floor)
+	{
+		p_ptr->command_wrk = (USE_FLOOR);
+	}
+
+	/* Get the saved item index */
+	o_ptr = recall_object_choice();
+
+	if (o_ptr)
+	{
+		/* Save this object */
+		save_object_choice(o_ptr);
+
+		/* Done */
+		return (o_ptr);
 	}
 
 	/* Hack -- start out in "display" mode */
@@ -3304,158 +3435,11 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 	/* Repeat until done */
 	while (!done)
 	{
-		int ni = 0;
-		int ne = 0;
+		/* Activate the correct term info */
+		toggle = toggle_windows(toggle);
 
-		/* Scan windows */
-		for (j = 0; j < ANGBAND_TERM_MAX; j++)
-		{
-			/* Unused */
-			if (!angband_term[j]) continue;
-
-			/* Count windows displaying inven */
-			if (window_flag[j] & (PW_INVEN)) ni++;
-
-			/* Count windows displaying equip */
-			if (window_flag[j] & (PW_EQUIP)) ne++;
-		}
-
-		/* Toggle if needed */
-		if ((p_ptr->command_wrk == (USE_EQUIP) && ni && !ne) ||
-			(p_ptr->command_wrk == (USE_INVEN) && !ni && ne))
-		{
-			/* Toggle */
-			toggle_inven_equip();
-
-			/* Track toggles */
-			toggle = !toggle;
-		}
-
-		/* Update */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP);
-
-		/* Redraw windows */
-		window_stuff();
-
-		/* Inventory screen */
-		if (p_ptr->command_wrk == (USE_INVEN))
-		{
-			/* Extract the legal requests */
-			n1 = I2A(i1);
-			n2 = I2A(i2);
-
-			/* Redraw if needed */
-			if (p_ptr->command_see) show_inven();
-		}
-
-		/* Equipment screen */
-		else if (p_ptr->command_wrk == (USE_EQUIP))
-		{
-			/* Extract the legal requests */
-			n1 = I2A(e1 - INVEN_WIELD);
-			n2 = I2A(e2 - INVEN_WIELD);
-
-			/* Redraw if needed */
-			if (p_ptr->command_see) show_equip();
-		}
-
-		/* Floor screen */
-		else if (p_ptr->command_wrk == (USE_FLOOR))
-		{
-			j = floor_top;
-			k = MIN(floor_top + 23, floor_num) - 1;
-
-			/* Extract the legal requests */
-			n1 = I2A(j - floor_top);
-			n2 = I2A(k - floor_top);
-
-			/* Redraw if needed */
-			if (p_ptr->command_see && easy_floor) show_floor(px, py);
-		}
-
-		/* Viewing inventory */
-		if (p_ptr->command_wrk == (USE_INVEN))
-		{
-			/* Begin the prompt */
-			sprintf(out_val, "Inven:");
-
-			/* Build the prompt */
-			sprintf(tmp_val, " %c-%c,", index_to_label(i1), index_to_label(i2));
-
-			/* Append */
-			strcat(out_val, tmp_val);
-
-			/* Indicate ability to "view" */
-			if (!p_ptr->command_see) strcat(out_val, " * to see,");
-
-			/* Append */
-			if (allow_equip) strcat(out_val, " / for Equip,");
-
-			/* Append */
-			if (allow_floor) strcat(out_val, " - for floor,");
-		}
-
-		/* Viewing equipment */
-		else if (p_ptr->command_wrk == (USE_EQUIP))
-		{
-			/* Begin the prompt */
-			sprintf(out_val, "Equip:");
-
-			/* Build the prompt */
-			sprintf(tmp_val, " %c-%c,", index_to_label(e1), index_to_label(e2));
-
-			/* Append */
-			strcat(out_val, tmp_val);
-
-			/* Indicate ability to "view" */
-			if (!p_ptr->command_see) strcat(out_val, " * to see,");
-
-			/* Append */
-			if (allow_inven) strcat(out_val, " / for Inven,");
-
-			/* Append */
-			if (allow_floor) strcat(out_val, " - for floor,");
-		}
-
-		/* Viewing floor */
-		else if (p_ptr->command_wrk == (USE_FLOOR) && easy_floor)
-		{
-			/* Begin the prompt */
-			sprintf(out_val, "Floor:");
-
-			/* Build the prompt */
-			sprintf(tmp_val, " %c-%c,", n1, n2);
-
-			/* Append */
-			strcat(out_val, tmp_val);
-
-			/* Indicate ability to "view" */
-			if (!p_ptr->command_see) strcat(out_val, " * to see,");
-
-			/* Append */
-			if (allow_inven)
-			{
-				strcat(out_val, " / for Inven,");
-			}
-			else if (allow_equip)
-			{
-				strcat(out_val, " / for Equip,");
-			}
-		}
-		else
-		{
-			/* Begin the prompt */
-			sprintf(out_val, "Top item on floor: '-'");
-		}
-
-		/* Finish the prompt */
-		strcat(out_val, " ESC");
-
-		/* Build the prompt */
-		sprintf(tmp_val, "(%s) %s", out_val, pmt);
-
-		/* Show the prompt */
-		prt(tmp_val, 0, 0);
+		/* Display the prompt */
+		show_item_prompt(allow_inven, allow_equip, allow_floor, pmt);
 
 		/* Get a key */
 		which = inkey();
@@ -3557,23 +3541,19 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 				if (!easy_floor)
 				{
 					/* Scan all objects in the grid */
-					for (i = 0; i < floor_num; i++)
+					OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 					{
-						/* Floor item */
-						k = 0 - floor_list[i];
-
 						/* Verify the item (if required) */
-						if (other_query_flag && !verify("Try", k)) continue;
+						if (other_query_flag && !verify("Try", o_ptr)) continue;
 
 						/* Allow player to "refuse" certain actions */
-						if (!get_item_allow(k)) continue;
+						if (!get_item_allow(o_ptr)) continue;
 
 						/* Accept that choice */
-						(*cp) = k;
-						item = TRUE;
 						done = TRUE;
 						break;
 					}
+					OBJ_ITT_END;
 				}
 
 				/*
@@ -3588,19 +3568,17 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 					if ((p_ptr->command_wrk == (USE_FLOOR))
 						|| (!carry_query_flag))
 					{
-						/* Special index */
-						k = 0 - floor_list[0];
-
 						/* Allow player to "refuse" certain actions */
-						if (!get_item_allow(k))
+						if (!get_item_allow(fo_ptr))
 						{
 							done = TRUE;
 							break;
 						}
 
+						/* We use the first floor item */
+						o_ptr = fo_ptr;
+
 						/* Accept that choice */
-						(*cp) = k;
-						item = TRUE;
 						done = TRUE;
 
 						break;
@@ -3627,37 +3605,39 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 			case '4':  case '5':  case '6':
 			case '7':  case '8':  case '9':
 			{
+				bool was_inven;
+
 				/* Look up the tag */
-				if (!get_tag(&k, which))
+				o_ptr = get_tag(&was_inven, which);
+
+				if (!o_ptr)
 				{
 					bell("Illegal object choice (tag)!");
 					break;
 				}
 
 				/* Hack -- Validate the item */
-				if ((k < INVEN_WIELD) ? !inven : !equip)
+				if (was_inven ? !inven : !equip)
 				{
 					bell("Illegal object choice (tag)!");
 					break;
 				}
 
 				/* Validate the item */
-				if (!get_item_okay(k))
+				if (!item_tester_okay(o_ptr))
 				{
 					bell("Illegal object choice (tag)!");
 					break;
 				}
 
 				/* Allow player to "refuse" certain actions */
-				if (!get_item_allow(k))
+				if (!get_item_allow(o_ptr))
 				{
 					done = TRUE;
 					break;
 				}
 
 				/* Accept that choice */
-				(*cp) = k;
-				item = TRUE;
 				done = TRUE;
 				break;
 			}
@@ -3665,16 +3645,19 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 			case '\n':
 			case '\r':
 			{
+				/* No object selected yet */
+				o_ptr = NULL;
+
 				/* Choose "default" inventory item */
 				if (p_ptr->command_wrk == (USE_INVEN))
 				{
-					k = ((i1 == i2) ? i1 : -1);
+					o_ptr = &o_list[p_ptr->inventory];
 				}
 
 				/* Choose "default" equipment item */
 				else if (p_ptr->command_wrk == (USE_EQUIP))
 				{
-					k = ((e1 == e2) ? e1 : -1);
+					o_ptr = eo_ptr;
 				}
 
 				/* Choose "default" floor item */
@@ -3682,41 +3665,25 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 				{
 					if (floor_num == 1)
 					{
-						/* Special index */
-						k = 0 - floor_list[0];
-
-						/* Allow player to "refuse" certain actions */
-						if (!get_item_allow(k))
-						{
-							done = TRUE;
-							break;
-						}
-
-						/* Accept that choice */
-						(*cp) = k;
-						item = TRUE;
-						done = TRUE;
+						o_ptr = fo_ptr;
 					}
-					break;
 				}
 
 				/* Validate the item */
-				if (!get_item_okay(k))
+				if (!o_ptr || !item_tester_okay(o_ptr))
 				{
 					bell("Illegal object choice (default)!");
 					break;
 				}
 
 				/* Allow player to "refuse" certain actions */
-				if (!get_item_allow(k))
+				if (!get_item_allow(o_ptr))
 				{
 					done = TRUE;
 					break;
 				}
 
 				/* Accept that choice */
-				(*cp) = k;
-				item = TRUE;
 				done = TRUE;
 				break;
 			}
@@ -3732,53 +3699,50 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 				/* Convert letter to inventory index */
 				if (p_ptr->command_wrk == (USE_INVEN))
 				{
-					k = label_to_inven(which);
+					o_ptr = label_to_list(which, p_ptr->inventory);
 				}
 
 				/* Convert letter to equipment index */
 				else if (p_ptr->command_wrk == (USE_EQUIP))
 				{
-					k = label_to_equip(which);
+					o_ptr = label_to_equip(which);
 				}
 
 				/* Convert letter to floor index */
 				else if (p_ptr->command_wrk == USE_FLOOR)
 				{
-					k = islower(which) ? A2I(which) : -1;
-					if (k < 0 || k >= floor_num)
-					{
-						bell("Illegal object choice (floor)!");
-						break;
-					}
+					o_ptr = label_to_list(which, c_ptr->o_idx);
+				}
 
-					/* Special index */
-					k = 0 - floor_list[k];
+				/* Make sure selection is in bounds */
+				if (!o_ptr)
+				{
+					bell("Illegal object choice (bounds)!");
+					break;
 				}
 
 				/* Validate the item */
-				if ((p_ptr->command_wrk != USE_FLOOR) && !get_item_okay(k))
+				if (!item_tester_okay(o_ptr))
 				{
 					bell("Illegal object choice (normal)!");
 					break;
 				}
 
 				/* Verify the item */
-				if (ver && !verify("Try", k))
+				if (ver && !verify("Try", o_ptr))
 				{
 					done = TRUE;
 					break;
 				}
 
 				/* Allow player to "refuse" certain actions */
-				if (!get_item_allow(k))
+				if (!get_item_allow(o_ptr))
 				{
 					done = TRUE;
 					break;
 				}
 
 				/* Accept that choice */
-				(*cp) = k;
-				item = TRUE;
 				done = TRUE;
 				break;
 			}
@@ -3817,11 +3781,9 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 	/* Clear the prompt line */
 	prt("", 0, 0);
 
-	/* Warning if needed */
-	if (oops && str) msg_print(str);
+	/* Save this object */
+	save_object_choice(o_ptr);
 
-	if (item) repeat_push(*cp);
-
-	/* Result */
-	return (item);
+	/* Done */
+	return (o_ptr);
 }

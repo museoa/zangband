@@ -485,7 +485,7 @@ static void prt_exp(void)
 		attr = TERM_YELLOW;
 	}
 
-	
+
 
 	if (toggle_xp)
 	{
@@ -1884,7 +1884,7 @@ static void calc_mana(void)
 		p_ptr->cumber_glove = FALSE;
 
 		/* Get the gloves */
-		o_ptr = &inventory[INVEN_HANDS];
+		o_ptr = &p_ptr->equipment[EQUIP_HANDS];
 
 		/* Examine the gloves */
 		object_flags(o_ptr, &f1, &f2, &f3);
@@ -1907,12 +1907,12 @@ static void calc_mana(void)
 
 	/* Weigh the armor */
 	cur_wgt = 0;
-	cur_wgt += inventory[INVEN_BODY].weight;
-	cur_wgt += inventory[INVEN_HEAD].weight;
-	cur_wgt += inventory[INVEN_ARM].weight;
-	cur_wgt += inventory[INVEN_OUTER].weight;
-	cur_wgt += inventory[INVEN_HANDS].weight;
-	cur_wgt += inventory[INVEN_FEET].weight;
+	cur_wgt += p_ptr->equipment[EQUIP_BODY].weight;
+	cur_wgt += p_ptr->equipment[EQUIP_HEAD].weight;
+	cur_wgt += p_ptr->equipment[EQUIP_ARM].weight;
+	cur_wgt += p_ptr->equipment[EQUIP_OUTER].weight;
+	cur_wgt += p_ptr->equipment[EQUIP_HANDS].weight;
+	cur_wgt += p_ptr->equipment[EQUIP_FEET].weight;
 
 	/* Determine the weight allowance */
 	max_wgt = mp_ptr->spell_weight;
@@ -2097,12 +2097,12 @@ static void calc_torch(void)
 	p_ptr->cur_lite = 0;
 
 	/* Loop through all wielded items */
-	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+	for (i = 0; i < EQUIP_MAX; i++)
 	{
-		o_ptr = &inventory[i];
+		o_ptr = &p_ptr->equipment[i];
 
 		/* Examine actual lites */
-		if ((i == INVEN_LITE) && (o_ptr->k_idx) && (o_ptr->tval == TV_LITE))
+		if ((i == EQUIP_LITE) && (o_ptr->k_idx) && (o_ptr->tval == TV_LITE))
 		{
 			/* Artifact Lites provide permanent, bright, lite */
 			if (o_ptr->flags3 & TR3_INSTA_ART)
@@ -2438,12 +2438,12 @@ static void calc_bonuses(void)
 		u16b monk_arm_wgt = 0;
 
 		/* Weigh the armor */
-		monk_arm_wgt += inventory[INVEN_BODY].weight;
-		monk_arm_wgt += inventory[INVEN_HEAD].weight;
-		monk_arm_wgt += inventory[INVEN_ARM].weight;
-		monk_arm_wgt += inventory[INVEN_OUTER].weight;
-		monk_arm_wgt += inventory[INVEN_HANDS].weight;
-		monk_arm_wgt += inventory[INVEN_FEET].weight;
+		monk_arm_wgt += p_ptr->equipment[EQUIP_BODY].weight;
+		monk_arm_wgt += p_ptr->equipment[EQUIP_HEAD].weight;
+		monk_arm_wgt += p_ptr->equipment[EQUIP_ARM].weight;
+		monk_arm_wgt += p_ptr->equipment[EQUIP_OUTER].weight;
+		monk_arm_wgt += p_ptr->equipment[EQUIP_HANDS].weight;
+		monk_arm_wgt += p_ptr->equipment[EQUIP_FEET].weight;
 
 		if (monk_arm_wgt > (100 + (p_ptr->lev * 4)))
 		{
@@ -2876,9 +2876,9 @@ static void calc_bonuses(void)
 	}
 
 	/* Scan the usable inventory */
-	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+	for (i = 0; i < EQUIP_MAX; i++)
 	{
-		o_ptr = &inventory[i];
+		o_ptr = &p_ptr->equipment[i];
 
 		/* Skip non-objects */
 		if (!o_ptr->k_idx) continue;
@@ -2987,10 +2987,10 @@ static void calc_bonuses(void)
 		if (object_known_p(o_ptr)) p_ptr->dis_to_a += o_ptr->to_a;
 
 		/* Hack -- do not apply "weapon" bonuses */
-		if (i == INVEN_WIELD) continue;
+		if (i == EQUIP_WIELD) continue;
 
 		/* Hack -- do not apply "bow" bonuses */
-		if (i == INVEN_BOW) continue;
+		if (i == EQUIP_BOW) continue;
 
 		/* Apply the bonuses to hit/damage */
 		p_ptr->to_h += o_ptr->to_h;
@@ -3004,32 +3004,32 @@ static void calc_bonuses(void)
 	/* Monks get extra ac for armour _not worn_ */
 	if ((p_ptr->pclass == CLASS_MONK) && (!p_ptr->monk_armour_stat))
 	{
-		if (!(inventory[INVEN_BODY].k_idx))
+		if (!(p_ptr->equipment[EQUIP_BODY].k_idx))
 		{
 			p_ptr->to_a += (p_ptr->lev * 3) / 2;
 			p_ptr->dis_to_a += (p_ptr->lev * 3) / 2;
 		}
-		if (!(inventory[INVEN_OUTER].k_idx) && (p_ptr->lev > 15))
+		if (!(p_ptr->equipment[EQUIP_OUTER].k_idx) && (p_ptr->lev > 15))
 		{
 			p_ptr->to_a += ((p_ptr->lev - 13) / 3);
 			p_ptr->dis_to_a += ((p_ptr->lev - 13) / 3);
 		}
-		if (!(inventory[INVEN_ARM].k_idx) && (p_ptr->lev > 10))
+		if (!(p_ptr->equipment[EQUIP_ARM].k_idx) && (p_ptr->lev > 10))
 		{
 			p_ptr->to_a += ((p_ptr->lev - 8) / 3);
 			p_ptr->dis_to_a += ((p_ptr->lev - 8) / 3);
 		}
-		if (!(inventory[INVEN_HEAD].k_idx) && (p_ptr->lev > 4))
+		if (!(p_ptr->equipment[EQUIP_HEAD].k_idx) && (p_ptr->lev > 4))
 		{
 			p_ptr->to_a += (p_ptr->lev - 2) / 3;
 			p_ptr->dis_to_a += (p_ptr->lev - 2) / 3;
 		}
-		if (!(inventory[INVEN_HANDS].k_idx))
+		if (!(p_ptr->equipment[EQUIP_HANDS].k_idx))
 		{
 			p_ptr->to_a += (p_ptr->lev / 2);
 			p_ptr->dis_to_a += (p_ptr->lev / 2);
 		}
-		if (!(inventory[INVEN_FEET].k_idx))
+		if (!(p_ptr->equipment[EQUIP_FEET].k_idx))
 		{
 			p_ptr->to_a += (p_ptr->lev / 3);
 			p_ptr->dis_to_a += (p_ptr->lev / 3);
@@ -3300,7 +3300,7 @@ static void calc_bonuses(void)
 
 
 	/* Examine the "current bow" */
-	o_ptr = &inventory[INVEN_BOW];
+	o_ptr = &p_ptr->equipment[EQUIP_BOW];
 
 
 	/* Assume not heavy */
@@ -3438,7 +3438,7 @@ static void calc_bonuses(void)
 	p_ptr->skill_thb += add_special_missile_skill(p_ptr->pclass);
 
 	/* Examine the "main weapon" */
-	o_ptr = &inventory[INVEN_WIELD];
+	o_ptr = &p_ptr->equipment[EQUIP_WIELD];
 
 	/* Add all other class-specific adjustments to melee Skill. -LM- */
 	p_ptr->skill_thn += add_special_melee_skill(p_ptr->pclass, o_ptr);
@@ -3653,7 +3653,7 @@ static void calc_bonuses(void)
 		{
 			msg_print("You have trouble wielding such a heavy bow.");
 		}
-		else if (inventory[INVEN_BOW].k_idx)
+		else if (p_ptr->equipment[EQUIP_BOW].k_idx)
 		{
 			msg_print("You have no trouble wielding your bow.");
 		}
@@ -3672,7 +3672,7 @@ static void calc_bonuses(void)
 		{
 			msg_print("You have trouble wielding such a heavy weapon.");
 		}
-		else if (inventory[INVEN_WIELD].k_idx)
+		else if (p_ptr->equipment[EQUIP_WIELD].k_idx)
 		{
 			msg_print("You have no trouble wielding your weapon.");
 		}
@@ -3691,7 +3691,7 @@ static void calc_bonuses(void)
 		{
 			msg_print("You do not feel comfortable with your weapon.");
 		}
-		else if (inventory[INVEN_WIELD].k_idx)
+		else if (p_ptr->equipment[EQUIP_WIELD].k_idx)
 		{
 			msg_print("You feel comfortable with your weapon.");
 		}

@@ -1048,13 +1048,6 @@ static errr init_other(void)
 	/* Monsters */
 	C_MAKE(m_list, z_info->m_max, monster_type);
 
-
-	/*** Prepare the inventory ***/
-
-	/* Allocate it */
-	C_MAKE(inventory, INVEN_TOTAL, object_type);
-
-
 	/*** Prepare the options ***/
 
 
@@ -1520,9 +1513,6 @@ void cleanup_angband(void)
 
 	/* Free the stores */
 	FREE(store_cache);
-
-	/* Free the player inventory */
-	FREE(inventory);
 
 	/* Free the quest list */
 	FREE(quest);

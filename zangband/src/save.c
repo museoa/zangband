@@ -1589,10 +1589,10 @@ static bool wr_savefile_new(void)
 	}
 
 
-	/* Write the inventory */
-	for (i = 0; i < INVEN_TOTAL; i++)
+	/* Write the equipment */
+	for (i = 0; i < EQUIP_MAX; i++)
 	{
-		object_type *o_ptr = &inventory[i];
+		object_type *o_ptr = &p_ptr->equipment[i];
 
 		/* Skip non-objects */
 		if (!o_ptr->k_idx) continue;

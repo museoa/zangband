@@ -98,6 +98,7 @@ bool use_transparency = FALSE;	/* Use transparent tiles */
 
 s16b signal_count;	/* Hack -- Count interupts */
 
+/* Move these to util.c soon */
 bool inkey_base;	/* See the "inkey()" function */
 bool inkey_xtra;	/* See the "inkey()" function */
 bool inkey_scan;	/* See the "inkey()" function */
@@ -518,12 +519,6 @@ u16b place_count;
  * Places in the wilderness [z_info->wp_max]
  */
 place_type *place;
-
-
-/*
- * The player's inventory [INVEN_TOTAL]
- */
-object_type *inventory;
 
 
 /*

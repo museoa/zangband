@@ -1444,12 +1444,12 @@ static void display_player_abilities(void)
 	if (p_ptr->muta2 & MUT2_TENTACLES) muta_att++;
 
 	/* Fighting Skill (with current weapon) */
-	o_ptr = &inventory[INVEN_WIELD];
+	o_ptr = &p_ptr->equipment[EQUIP_WIELD];
 	tmp = p_ptr->to_h + o_ptr->to_h;
 	xthn = p_ptr->skill_thn + (tmp * BTH_PLUS_ADJ);
 
 	/* Shooting Skill (with current bow and normal missile) */
-	o_ptr = &inventory[INVEN_BOW];
+	o_ptr = &p_ptr->equipment[EQUIP_BOW];
 	tmp = p_ptr->to_h + o_ptr->to_h;
 	xthb = p_ptr->skill_thb + (tmp * BTH_PLUS_ADJ);
 
@@ -1471,7 +1471,7 @@ static void display_player_abilities(void)
 	shots = shots / energy_fire;
 
 	/* Average damage per round */
-	o_ptr = &inventory[INVEN_WIELD];
+	o_ptr = &p_ptr->equipment[EQUIP_WIELD];
 	dambonus = p_ptr->dis_to_d;
 	if (object_known_p(o_ptr)) dambonus += o_ptr->to_d;
 	damdice = o_ptr->dd;
@@ -1889,10 +1889,10 @@ static void display_player_equippy(int x, int y)
 
 
 	/* Dump equippy chars */
-	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+	for (i = 0; i < EQUIP_MAX; i++)
 	{
 		/* Object */
-		o_ptr = &inventory[i];
+		o_ptr = &p_ptr->equipment[i];
 
 		a = object_attr(o_ptr);
 		c = object_char(o_ptr);
@@ -1908,7 +1908,7 @@ static void display_player_equippy(int x, int y)
 		}
 
 		/* Dump */
-		Term_putch(x + i - INVEN_WIELD, y, a, c);
+		Term_putch(x + i, y, a, c);
 	}
 }
 
@@ -1937,12 +1937,12 @@ static void display_player_flag_aux(int col, int row,
 
 
 	/* Check equipment */
-	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+	for (i = 0; i < EQUIP_MAX; i++)
 	{
 		object_type *o_ptr;
 
 		/* Object */
-		o_ptr = &inventory[i];
+		o_ptr = &p_ptr->equipment[i];
 
 		/* Known flags */
 		object_flags_known(o_ptr, &f[0], &f[1], &f[2]);
@@ -2183,10 +2183,10 @@ static void display_player_stat_info(void)
 	c_put_str(TERM_L_GREEN, "Modifications", col, row + 6);
 
 	/* Process equipment */
-	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+	for (i = 0; i < EQUIP_MAX; i++)
 	{
 		/* Access object */
-		o_ptr = &inventory[i];
+		o_ptr = &p_ptr->equipment[i];
 
 		/* Object kind */
 		k_idx = o_ptr->k_idx;
@@ -2468,7 +2468,7 @@ static void display_player_middle(void)
 	int show_todam = p_ptr->dis_to_d;
 	byte attr;
 
-	object_type *o_ptr = &inventory[INVEN_WIELD];
+	object_type *o_ptr = &p_ptr->equipment[EQUIP_WIELD];
 
 	/* Hack -- add in weapon info if known */
 	if (object_known_p(o_ptr)) show_tohit += o_ptr->to_h;
@@ -2751,6 +2751,8 @@ errr file_character(cptr name, bool full)
 
 	int msg_max = message_num();
 
+	object_type *o_ptr;
+
 
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_USER, name);
@@ -2998,25 +3000,30 @@ errr file_character(cptr name, bool full)
 	if (p_ptr->equip_cnt)
 	{
 		fprintf(fff, "  [Character Equipment]\n\n");
-		for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+		for (i = 0; i < EQUIP_MAX; i++)
 		{
-			object_desc(o_name, &inventory[i], TRUE, 3, 256);
-			fprintf(fff, "%c%s %s\n", index_to_label(i), paren, o_name);
+			object_desc(o_name, &p_ptr->equipment[i], TRUE, 3, 256);
+			fprintf(fff, "%c%s %s\n", I2A(i), paren, o_name);
 		}
 		fprintf(fff, "\n\n");
 	}
 
 	/* Dump the inventory */
 	fprintf(fff, "  [Character Inventory]\n\n");
-	for (i = 0; i < INVEN_PACK; i++)
-	{
-		/* Don't dump the empty slots */
-		if (!inventory[i].k_idx) break;
 
+	i = 0;
+
+	OBJ_ITT_START (p_ptr->inventory, o_ptr)
+	{
 		/* Dump the inventory slots */
-		object_desc(o_name, &inventory[i], TRUE, 3, 256);
-		fprintf(fff, "%c%s %s\n", index_to_label(i), paren, o_name);
+		object_desc(o_name, o_ptr, TRUE, 3, 256);
+
+		fprintf(fff, "%c%s %s\n", I2A(i), paren, o_name);
+
+		/* Count slots */
+		i++;
 	}
+	OBJ_ITT_END;
 
 	/* Add an empty line */
 	fprintf(fff, "\n\n");
@@ -4136,10 +4143,10 @@ static void show_info(void)
 	object_type *o_ptr;
 	store_type *st_ptr;
 
-	/* Hack -- Know everything in the inven/equip */
-	for (i = 0; i < INVEN_TOTAL; i++)
+	/* Hack -- Know everything in the equipment */
+	for (i = 0; i < EQUIP_MAX; i++)
 	{
-		o_ptr = &inventory[i];
+		o_ptr = &p_ptr->equipment[i];
 
 		/* Skip non-objects */
 		if (!o_ptr->k_idx) continue;
@@ -4153,6 +4160,20 @@ static void show_info(void)
 		o_ptr->kn_flags2 = o_ptr->flags2;
 		o_ptr->kn_flags3 = o_ptr->flags3;
 	}
+
+	/* Hack -- Know everything in the inventory */
+	OBJ_ITT_START (p_ptr->inventory, o_ptr)
+	{
+		/* Aware and Known */
+		object_aware(o_ptr);
+		object_known(o_ptr);
+
+		/* Save all the known flags */
+		o_ptr->kn_flags1 = o_ptr->flags1;
+		o_ptr->kn_flags2 = o_ptr->flags2;
+		o_ptr->kn_flags3 = o_ptr->flags3;
+	}
+	OBJ_ITT_END;
 
 	for (i = 1; i < z_info->wp_max; i++)
 	{
@@ -4226,7 +4247,7 @@ static void show_info(void)
 
 		/* Inventory -- if any */
 		item_tester_full = TRUE;
-		show_inven();
+		show_list(p_ptr->inventory);
 
 		prt("You are carrying: -more-", 0, 0);
 

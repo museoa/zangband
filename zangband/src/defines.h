@@ -45,7 +45,7 @@
 #define VERSION_MINOR   8
 #define VERSION_PATCH   1
 
-#define SAVEFILE_VERSION 36
+#define SAVEFILE_VERSION 37
 
 /* Added for ZAngband */
 /* Why do we need a fake version number? */
@@ -832,7 +832,7 @@
  */
 
 /* XXX XXX Hack - gap */
- 
+
 #define ES_CROWN     21
 #define ES_DIG		 22
 #define ES_AMMO      23
@@ -852,41 +852,32 @@
 
 
 /*
- * Maximum number of "normal" pack slots, and the index of the "overflow"
- * slot, which can hold an item, but only temporarily, since it causes the
- * pack to "overflow", dropping the "last" item onto the ground.  Since this
- * value is used as an actual slot, it must be less than "INVEN_WIELD" (below).
+ * Maximum number of "normal" pack slots.
  * Note that "INVEN_PACK" is probably hard-coded by its use in savefiles, and
  * by the fact that the screen can only show 23 items plus a one-line prompt.
  */
 #define INVEN_PACK              23
 
 /*
- * Indexes used for various "equipment" slots (hard-coded by savefiles, etc).
+ * Equipment slots
  */
-
-/* Hack XXX XXX XXX these three are used by the ego item code. */
-#define INVEN_CROWN		21
-#define INVEN_DIG		22
-#define INVEN_AMMO		23
-
-#define INVEN_WIELD     24
-#define INVEN_BOW       25
-#define INVEN_LEFT      26
-#define INVEN_RIGHT     27
-#define INVEN_NECK      28
-#define INVEN_LITE      29
-#define INVEN_BODY      30
-#define INVEN_OUTER     31
-#define INVEN_ARM       32
-#define INVEN_HEAD      33
-#define INVEN_HANDS     34
-#define INVEN_FEET      35
+#define EQUIP_WIELD     0
+#define EQUIP_BOW       1
+#define EQUIP_LEFT      2
+#define EQUIP_RIGHT     3
+#define EQUIP_NECK      4
+#define EQUIP_LITE      5
+#define EQUIP_BODY      6
+#define EQUIP_OUTER     7
+#define EQUIP_ARM       8
+#define EQUIP_HEAD      9
+#define EQUIP_HANDS     10
+#define EQUIP_FEET      11
 
 /*
- * Total number of inventory slots (hard-coded).
+ * Total number of things that you can wield (hard coded)
  */
-#define INVEN_TOTAL     36
+#define EQUIP_MAX		12
 
 
 /*
@@ -2804,11 +2795,11 @@
 /*
  * Special Object Flags
  */
-#define OB_SENSE     0x01	/* Item has been "sensed" */
-#define OB_SEEN      0x02	/* Item is seen */
-#define OB_EMPTY     0x04	/* Item charges are known */
-#define OB_KNOWN     0x08	/* Item abilities are known */
-#define OB_STOREB    0x10	/* Item is storebought */
+#define OB_SENSE     0x01		/* Item has been "sensed" */
+#define OB_SEEN      0x02		/* Item is seen */
+#define OB_EMPTY     0x04		/* Item charges are known */
+#define OB_KNOWN     0x08		/* Item abilities are known */
+#define OB_STOREB    0x10		/* Item is storebought */
 #define OB_DUMMY2    0x20
 #define OB_DUMMY3    0x40
 #define OB_DUMMY4    0x80
@@ -3937,13 +3928,6 @@
 #define OBJ_ITT_END \
 		} \
 	}
-
-/*
- * Delete the current (floor) object we are scanning
- */
-#define OBJ_DEL_FCURRENT \
-	delete_dungeon_object(_this_o_idx)
-
 
 
 /*

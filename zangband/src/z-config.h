@@ -170,7 +170,7 @@
 /*
  * OPTION: Hack -- Compile in support for "Borg mode"
  */
-#define ALLOW_BORG
+/* #define ALLOW_BORG  This is turned off because of the object changes */
 
 #ifdef USE_DEBUG
 
