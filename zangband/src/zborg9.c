@@ -583,38 +583,38 @@ static bool borg_think(void)
 	/* Hack -- Check for being in a store */
 	if ((0 == borg_what_text(3, 5, 16, &t_a, buf)) &&
 		(streq(buf, "Item Description")))
-    {
-        static store_type *st_ptr = 0;
-        place_type *pl_ptr = &place[p_ptr->place_num];
+	{
+		static store_type *st_ptr = 0;
+		place_type *pl_ptr = &place[p_ptr->place_num];
 
 		/* Silly value */
-        shop_num = 0;
+		shop_num = 0;
 
-        /* Scan for the right shop */
-        for (i = 0; i < track_shop_num; i++)
-        {
-            /*
-             * The turn before moving into the shop we should have been
-             * standing next to it, so check for shops 1 square away.
-             */
-            if (abs(track_shop_x[i] - c_x) <= 1 &&
-                abs(track_shop_y[i] - c_y) <= 1)
-            {
-                shop_num = i;
-                break;
-            }
-        }
+		/* Scan for the right shop */
+		for (i = 0; i < track_shop_num; i++)
+		{
+			/*
+			 * The turn before moving into the shop we should have been
+			 * standing next to it, so check for shops 1 square away.
+			 */
+			if (abs(track_shop_x[i] - c_x) <= 1 &&
+				abs(track_shop_y[i] - c_y) <= 1)
+			{
+				shop_num = i;
+				break;
+			}
+		}
 
-        /* Scan for the right real shop */
-        for (i = 0; i < pl_ptr->numstores; i++)
-        {
-            if ((p_ptr->py - pl_ptr->y * 16 == pl_ptr->store[i].y) &&
-                (p_ptr->px - pl_ptr->x * 16 == pl_ptr->store[i].x))
-            {
-                st_ptr = &pl_ptr->store[i];
-                break;
-            }
-        }
+		/* Scan for the right real shop */
+		for (i = 0; i < pl_ptr->numstores; i++)
+		{
+			if ((p_ptr->py - pl_ptr->y * 16 == pl_ptr->store[i].y) &&
+				(p_ptr->px - pl_ptr->x * 16 == pl_ptr->store[i].x))
+			{
+				st_ptr = &pl_ptr->store[i];
+				break;
+			}
+		}
 
 
 		/* Clear the goal (the goal was probably going to a shop) */
@@ -699,26 +699,26 @@ static bool borg_think(void)
 				}
 
 				/* Strip trailing spaces */
-                for (k = strlen(desc); (k > 0) && (desc[k - 1] == ' '); k--)
-                    /* loop */ ;
+				for (k = strlen(desc); (k > 0) && (desc[k - 1] == ' '); k--)
+					/* loop */ ;
 				desc[k] = '\0';
 
 				/* Extract the item cost in stores */
-                if (0 != borg_what_text(68, i + 6, -9, &t_a, cost))
-                {
-                    cost[0] = '\0';
-                }
+				if (0 != borg_what_text(68, i + 6, -9, &t_a, cost))
+				{
+					cost[0] = '\0';
+				}
 			}
 
 			/* Extract actual index */
-            n = borg_shops[shop_num].page * 12 + i;
+			n = borg_shops[shop_num].page * 12 + i;
 
-            /* We have to cheat and get a pointer to the actual item... */
-            borg_item_analyze(&borg_shops[shop_num].ware[n],
-                              &st_ptr->stock[n], desc);
+			/* We have to cheat and get a pointer to the actual item... */
+			borg_item_analyze(&borg_shops[shop_num].ware[n],
+							  &st_ptr->stock[n], desc);
 
-            /* Save the cost */
-            borg_shops[shop_num].ware[n].cost = atoi(cost);
+			/* Save the cost */
+			borg_shops[shop_num].ware[n].cost = atoi(cost);
 		}
 
 		/* Hack -- browse as needed */
@@ -3526,7 +3526,7 @@ static char borg_inkey_hack(int flush_first)
 	bool borg_prompt;	/* ajg  For now we can just use this locally.
 						   in the 283 borg he uses this to optimize knowing if
 						   we are waiting at a prompt for info */
-	
+
 	bool borg_rand_quick;	/* Save system setting */
 	u32b borg_rand_value;	/* Save system setting */
 
@@ -3988,9 +3988,9 @@ void borg_init_9(void)
 	borg_init_6();
 	borg_init_7();
 	borg_init_8();
-	
+
 	/*** Redraw ***/
-	
+
 	/* Redraw map */
 	p_ptr->redraw |= (PR_MAP);
 
@@ -4048,32 +4048,32 @@ void borg_init_9(void)
 static void borg_display_map_info(byte data, byte type)
 {
 	int x, y;
-	
+
 	char c = ' ';
 	byte a = TERM_DARK;
 
 	int wid, hgt;
-	
+
 	map_block *mb_ptr;
-	
+
 	/* Get size */
 	Term_get_size(&wid, &hgt);
-	
+
 	/* Remove map offset */
 	wid -= COL_MAP + 1;
 	hgt -= ROW_MAP + 1;
-	
+
 	for (x = panel_col_min; x < panel_col_max; x++)
 	{
 		for (y = panel_row_min; y < panel_row_max; y++)
 		{
-            a = TERM_DARK;
-            c = ' ';
+			a = TERM_DARK;
+			c = ' ';
 
 			if (map_in_bounds(x, y))
 			{
 				mb_ptr = map_loc(x, y);
-				
+
 				switch (type)
 				{
 					case BORG_SHOW_FEAT:
@@ -4083,10 +4083,10 @@ static void borg_display_map_info(byte data, byte type)
 							a = TERM_WHITE;
 							c = '*';
 						}
-						
+
 						break;
 					}
-					
+
 					case BORG_SHOW_INFO:
 					{
 						if (mb_ptr->info & data)
@@ -4094,10 +4094,10 @@ static void borg_display_map_info(byte data, byte type)
 							a = TERM_WHITE;
 							c = '*';
 						}
-						
+
 						break;
 					}
-					
+
 					case BORG_SHOW_FLAG:
 					{
 						if (mb_ptr->flags & data)
@@ -4105,10 +4105,10 @@ static void borg_display_map_info(byte data, byte type)
 							a = TERM_WHITE;
 							c = '*';
 						}
-						
+
 						break;
 					}
-					
+
 					case BORG_SHOW_FLOW:
 					{
 						if (mb_ptr->flow == data)
@@ -4116,18 +4116,18 @@ static void borg_display_map_info(byte data, byte type)
 							a = TERM_WHITE;
 							c = '*';
 						}
-						
+
 						break;
 					}
-					
+
 					case BORG_SHOW_AVOID:
 					{
 						/* Obtain danger */
 						int p = borg_danger(y, x, 1, TRUE);
-						
+
 						/* Skip non-avoidances */
 						if (p <= avoidance / 3) break;
-						
+
 						if (p <= avoidance)
 						{
 							a = TERM_YELLOW;
@@ -4136,18 +4136,18 @@ static void borg_display_map_info(byte data, byte type)
 						{
 							a = TERM_RED;
 						}
-						
+
 						break;
 					}
-					
+
 					case BORG_SHOW_FEAR:
 					{
 						/* Obtain fear */
 						int p = mb_ptr->fear;
-						
+
 						/* Skip non-avoidances */
 						if (p <= avoidance / 10) break;
-						
+
 						if (p <= avoidance / 4)
 						{
 							a = TERM_YELLOW;
@@ -4156,44 +4156,46 @@ static void borg_display_map_info(byte data, byte type)
 						{
 							a = TERM_RED;
 						}
-						
+
 						break;
 					}
-					
+
 					case BORG_SHOW_STEP:
 					{
 						int i;
-						
+
 						/* Check for an existing step */
 						for (i = 0; i < track_step_num; i++)
 						{
 							/* Stop if we already new about this glyph */
-							if ((track_step_x[i] == x) && (track_step_y[i] == y))
+							if ((track_step_x[i] == x) &&
+								(track_step_y[i] == y))
 							{
 								a = TERM_WHITE;
 								c = '*';
-								
+
 								break;
 							}
 						}
 						break;
 					}
 				}
-            }
-		
+			}
 
-            if (c != ' ')
-            {
+
+			if (c != ' ')
+			{
 #ifdef USE_TRANSPARENCY
 
-                /* Hack -- Queue it */
-                Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c, a, c);
+				/* Hack -- Queue it */
+				Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c, a,
+								c);
 #else  /* USE_TRANSPARENCY */
 
-                Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c);
+				Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c);
 #endif /* USE_TRANSPARENCY */
-            }
-		
+			}
+
 		}
 	}
 }
@@ -5181,7 +5183,7 @@ void do_cmd_borg(void)
 					break;
 				}
 			}
-			
+
 			/* Show it */
 			borg_display_map_info(feat, BORG_SHOW_FEAT);
 
@@ -5253,7 +5255,7 @@ void do_cmd_borg(void)
 					break;
 				}
 			}
-			
+
 			/* Show it */
 			borg_display_map_info(mask, BORG_SHOW_FLAG);
 
@@ -5270,10 +5272,10 @@ void do_cmd_borg(void)
 		case 'A':
 		{
 			/* Command: check "avoidances" */
-			
+
 			/* Show it */
 			borg_display_map_info(0, BORG_SHOW_AVOID);
-			
+
 			/* Get keypress */
 			msg_format("(%d,%d) Avoidance value %d.", c_y, c_x, avoidance);
 			msg_print(NULL);
@@ -5286,7 +5288,7 @@ void do_cmd_borg(void)
 		case 'y':
 		{
 			/* Command: check previous steps */
-			
+
 			/* Show it */
 			borg_display_map_info(0, BORG_SHOW_STEP);
 
@@ -5365,30 +5367,30 @@ void do_cmd_borg(void)
 			/* Redraw map */
 			prt_map();
 			break;
-        }
+		}
 
-        case '8':
-        {
-            /* Command: debug -- show shops */
-            int i, n = 0;
+		case '8':
+		{
+			/* Command: debug -- show shops */
+			int i, n = 0;
 
-            for (i = 0; i < track_shop_num; i++)
-            {
-                /* Print */
-                print_rel('*', TERM_RED, track_shop_x[i], track_shop_y[i]);
+			for (i = 0; i < track_shop_num; i++)
+			{
+				/* Print */
+				print_rel('*', TERM_RED, track_shop_x[i], track_shop_y[i]);
 
-                /* Count */
-                n++;
-            }
+				/* Count */
+				n++;
+			}
 
-            /* Get keypress */
+			/* Get keypress */
 			msg_format("There are %d known shops.", n);
 			msg_print(NULL);
 
 			/* Redraw map */
 			prt_map();
 			break;
-        }
+		}
 
 		case '%':
 		{
@@ -5404,7 +5406,7 @@ void do_cmd_borg(void)
 				/* Get keypress */
 				msg_format("Flow depth %d.", i);
 				msg_print(NULL);
-				
+
 				if (!get_check("Continue?")) break;
 
 				/* Redraw map */
@@ -5514,7 +5516,7 @@ void do_cmd_borg(void)
 		case '_':
 		{
 			/* Command:  Regional Fear Info */
-			
+
 			/* Show it */
 			borg_display_map_info(0, BORG_SHOW_FEAR);
 

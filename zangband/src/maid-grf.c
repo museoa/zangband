@@ -369,7 +369,7 @@ static void clear_map(void)
 	for (i = 0; i < MAP_CACHE; i++)
 	{
 		map_cache_refcount[i] = 0;
-		
+
 		/* Flag that the block isn't used */
 		map_cache_x[i] = -1;
 	}
@@ -422,10 +422,10 @@ void init_overhead_map(void)
 	}
 
 	/* The map exists */
-    map_init = TRUE;
+	map_init = TRUE;
 
-    /* Initialize */
-    clear_map();
+	/* Initialize */
+	clear_map();
 }
 
 /*
@@ -494,13 +494,13 @@ static void clear_block(int block)
 			(void)WIPE(mb_ptr, map_block);
 		}
 	}
-	
+
 	/* Was this used? */
 	if (map_cache_x[block] != -1)
 	{
 		/* Mark map block as unused */
 		map_grid[map_cache_y[block]][map_cache_x[block]] = -1;
-		
+
 		/* Set "unused block" flag */
 		map_cache_x[block] = -1;
 	}
@@ -527,14 +527,14 @@ static int get_empty_block(void)
 	{
 		/* Get block out of los */
 		if (map_cache_refcount[i]) continue;
-		
+
 		/* Check to see if unused */
 		if (map_cache_x[i] < 0)
 		{
 			best_block = i;
 			break;
 		}
-		
+
 		/* Get rough dist from player */
 		dist = ABS(map_cache_x[i] - px) + ABS(map_cache_y[i] - py);
 
@@ -559,8 +559,8 @@ static int get_empty_block(void)
  */
 bool map_in_bounds(int x, int y)
 {
-    if (x < 0 || x >= WILD_BLOCK_SIZE * WILD_SIZE) return (FALSE);
-    if (y < 0 || y >= WILD_BLOCK_SIZE * WILD_SIZE) return (FALSE);
+	if (x < 0 || x >= WILD_BLOCK_SIZE * WILD_SIZE) return (FALSE);
+	if (y < 0 || y >= WILD_BLOCK_SIZE * WILD_SIZE) return (FALSE);
 	return (map_grid[y >> 4][x >> 4] != -1);
 }
 
@@ -589,7 +589,7 @@ static void save_map_location(int x, int y, term_map *map)
 
 		/* Link to the map */
 		map_grid[y1][x1] = block_num;
-		
+
 		/* Save block coordinates */
 		map_cache_x[block_num] = x1;
 		map_cache_y[block_num] = y1;
@@ -608,7 +608,7 @@ static void save_map_location(int x, int y, term_map *map)
 		/* Wasn't seen, and now is */
 		if (!(mb_ptr->flags & (MAP_ONCE)))
 		{
-            map_cache_refcount[block_num]++;
+			map_cache_refcount[block_num]++;
 		}
 	}
 	else if (!(mb_ptr->flags & MAP_ONCE))
@@ -617,10 +617,10 @@ static void save_map_location(int x, int y, term_map *map)
 		if (mb_ptr->flags & MAP_ONCE)
 		{
 			/* Paranoia */
-            if (!map_cache_refcount[block_num])
-                quit("Decrementing invalid overhead map loc");
-			
-            map_cache_refcount[block_num]--;
+			if (!map_cache_refcount[block_num])
+				quit("Decrementing invalid overhead map loc");
+
+			map_cache_refcount[block_num]--;
 		}
 	}
 
@@ -630,15 +630,15 @@ static void save_map_location(int x, int y, term_map *map)
 		map_info_hook(mb_ptr, map);
 	}
 
-    /* Save the flags */
+	/* Save the flags */
 	mb_ptr->flags = map->flags;
 
 #ifdef TERM_CAVE_MAP
 	/* Save the information used by the borg */
 	mb_ptr->object = map->object;
 	mb_ptr->monster = map->monster;
-    mb_ptr->field = map->field;
-    mb_ptr->unknown = map->unknown;
+	mb_ptr->field = map->field;
+	mb_ptr->unknown = map->unknown;
 #endif /* TERM_CAVE_MAP */
 
 	/* XXX XXX Hack */
@@ -672,7 +672,7 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 	monster_type *m_ptr;
 	object_type *o_ptr;
 	field_type *fld_ptr;
-	
+
 	monster_race *r_ptr;
 	object_kind *k_ptr;
 
@@ -685,7 +685,7 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 
 	/* clear map info */
 	(void)WIPE(&map, term_map);
-	
+
 	/* Save known data */
 	map.terrain = pc_ptr->feat;
 
@@ -697,7 +697,7 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 		if (glow) map.flags |= MAP_GLOW;
 		if (lite) map.flags |= MAP_LITE;
 	}
-	
+
 	/* Not hallucinating */
 	if (!p_ptr->image)
 	{
@@ -710,21 +710,21 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 			if (m_ptr->ml)
 			{
 				map.monster = m_ptr->r_idx;
-				
+
 				/* Keep this grid */
 				map.flags |= MAP_ONCE;
 			}
-			
+
 			/* Mimic in los? */
 			else if (visible)
 			{
 				r_ptr = &r_info[m_ptr->r_idx];
-				
+
 				if (r_ptr->flags1 & RF1_CHAR_MIMIC)
 				{
 					/* Keep this grid */
 					map.flags |= MAP_ONCE;
-					
+
 					/* Save mimic character */
 					map.unknown = r_ptr->d_char;
 				}
@@ -745,10 +745,10 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 				(FIELD_INFO_MARK | FIELD_INFO_VIS))
 			{
 				map.field = fld_ptr->t_idx;
-				
+
 				/* Keep this grid */
 				map.flags |= MAP_ONCE;
-				
+
 				/* Stop looking */
 				break;
 			}
@@ -766,7 +766,7 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 			if (o_ptr->marked)
 			{
 				k_ptr = &k_info[o_ptr->k_idx];
-			
+
 				/* Flavoured object */
 				if (k_ptr->flavor)
 				{
@@ -778,10 +778,10 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 					/* Save object */
 					map.object = o_ptr->k_idx;
 				}
-				
+
 				/* Keep this grid */
 				map.flags |= MAP_ONCE;
-				
+
 				/* Stop looking */
 				break;
 			}

@@ -390,10 +390,10 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid,
 			/* Avoid "wall" grids (not doors) unless tunneling */
 			if (!tunneling &&
 				(mb_ptr->terrain >= FEAT_SECRET &&
-                 mb_ptr->terrain <= FEAT_WALL_SOLID)) continue;
+				 mb_ptr->terrain <= FEAT_WALL_SOLID)) continue;
 
-            /* Avoid pillars */
-            if (!tunneling && mb_ptr->terrain == FEAT_PILLAR) continue;
+			/* Avoid pillars */
+			if (!tunneling && mb_ptr->terrain == FEAT_PILLAR) continue;
 
 			/* Avoid "perma-wall" grids */
 			if (mb_ptr->terrain >= FEAT_PERM_EXTRA &&
@@ -414,9 +414,9 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid,
 
 			/* Avoid some other Zang Terrains */
 
-            /* Avoid unknown grids (if requested or retreating) */
+			/* Avoid unknown grids (if requested or retreating) */
 			if ((avoid || borg_desperate) &&
-                (mb_ptr->terrain == FEAT_NONE)) continue;
+				(mb_ptr->terrain == FEAT_NONE)) continue;
 
 			/* Avoid Monsters if Desprerate */
 			if (borg_desperate && (mb_ptr->monster)) continue;
@@ -2228,7 +2228,7 @@ static bool borg_heal(int danger)
 	int chance;
 
 	int stats_needing_fix = 0;
-	
+
 	map_block *mb_ptr = map_loc(c_x, c_y);
 
 	hp_down = borg_skill[BI_MAXHP] - borg_skill[BI_CURHP];
@@ -2361,9 +2361,9 @@ static bool borg_heal(int danger)
 	/*  Hack -- rest until healed */
 	if ((!borg_skill[BI_ISBLIND] && !borg_skill[BI_ISPOISONED] &&
 		 !borg_skill[BI_ISCUT] && !borg_goi && !borg_see_inv && !borg_shield &&
-																 (borg_skill
-																 [BI_CDEPTH] !=
-																 100) &&
+		 (borg_skill
+		  [BI_CDEPTH] !=
+		  100) &&
 		 !borg_skill[BI_ISWEAK] && !borg_skill[BI_ISHUNGRY] &&
 		 danger < avoidance / 5) && (borg_skill[BI_ISCONFUSED] ||
 									 borg_skill[BI_ISIMAGE] ||
@@ -2372,7 +2372,7 @@ static bool borg_heal(int danger)
 									 borg_skill[BI_ISHEAVYSTUN] ||
 									 borg_skill[BI_CURHP] < borg_skill[BI_MAXHP]
 									 || (borg_skill[BI_CURSP] <
-									 borg_skill[BI_MAXSP] * 6 / 10)) &&
+										 borg_skill[BI_MAXSP] * 6 / 10)) &&
 		borg_check_rest() && !scaryguy_on_level &&
 		(danger <= mb_ptr->fear) && !goal_fleeing)
 	{
@@ -2963,13 +2963,14 @@ bool borg_caution(void)
 	int j, p;
 	bool borg_surround = FALSE;
 	bool nasty = FALSE;
-	
+
 	map_block *mb_ptr = map_loc(c_x, c_y);
 
 	/*** Notice "nasty" situations ***/
 
 	/* About to run out of light is extremely nasty */
-	if (!borg_skill[BI_LITE] && borg_items[INVEN_LITE].timeout < 250) nasty = TRUE;
+	if (!borg_skill[BI_LITE] &&
+		borg_items[INVEN_LITE].timeout < 250) nasty = TRUE;
 
 	/* Starvation is nasty */
 	if (borg_skill[BI_ISWEAK]) nasty = TRUE;
@@ -11233,18 +11234,18 @@ static int borg_defend_aux_lbeam(void)
 static int borg_defend_aux_panel_shift(void)
 {
 	int dir = 0;
-	
+
 	int x, y;
-	
+
 	int wx, wy;
-	
+
 	/* Get size */
 	Term_get_size(&x, &y);
-	
+
 	/* Remove map offset */
 	x -= COL_MAP + 1;
 	y -= ROW_MAP + 1;
-	
+
 	/* Get panel */
 	wx = ((c_x - x / 4) / (x / 2));
 	wy = ((c_y - y / 4) / (y / 2));
@@ -11552,7 +11553,7 @@ bool borg_defend(int p1)
 {
 	int n, b_n = 0;
 	int g, b_g = -1;
-	
+
 	map_block *mb_ptr = map_loc(c_x, c_y);
 
 	/* Simulate */
@@ -12408,8 +12409,8 @@ static int borg_perma_aux_glyph(void)
 			mb_ptr = map_loc(x, y);
 
 			/* track adjacent walls */
-            if (				/* (mb_ptr->terrain == FEAT_GLYPH) || */
-                   (mb_ptr->terrain == FEAT_PILLAR) ||
+			if (				/* (mb_ptr->terrain == FEAT_GLYPH) || */
+				   (mb_ptr->terrain == FEAT_PILLAR) ||
 				   ((mb_ptr->terrain >= FEAT_MAGMA) &&
 					(mb_ptr->terrain <= FEAT_WALL_SOLID)))
 			{
@@ -12727,7 +12728,7 @@ bool borg_recover(void)
 {
 	int p = 0;
 	int q;
-	
+
 	map_block *mb_ptr = map_loc(c_x, c_y);
 
 	/*** Handle annoying situations ***/
@@ -13081,9 +13082,9 @@ bool borg_recover(void)
 		 (borg_skill[BI_CURHP] < borg_skill[BI_MAXHP]) ||
 		 (borg_skill[BI_CURSP] < borg_skill[BI_MAXSP] * 6 / 10)) &&
 		(!borg_takes_cnt || !goal_recalling) && !borg_goi && !borg_shield &&
-															  (borg_skill
-															  [BI_CDEPTH] !=
-															  100) &&
+		(borg_skill
+		 [BI_CDEPTH] !=
+		 100) &&
 		!scaryguy_on_level && (randint0(100) < 90) && borg_check_rest() &&
 		(p <= mb_ptr->fear) && !goal_fleeing)
 	{
@@ -13313,20 +13314,20 @@ static bool borg_play_step(int y2, int x2)
 				return (TRUE);
 			}
 
-		/* No trap, or unknown trap that passed above checks - Open it */
-		/* if (o_ptr->pval < 0 || !object_known_p(o_ptr)) */
-		{
-			borg_note(format("# Opening a '%s' at (%d,%d)",
-							 k_name + k_info[mb_ptr->object].name, y, x));
+			/* No trap, or unknown trap that passed above checks - Open it */
+			/* if (o_ptr->pval < 0 || !object_known_p(o_ptr)) */
+			{
+				borg_note(format("# Opening a '%s' at (%d,%d)",
+								 k_name + k_info[mb_ptr->object].name, y, x));
 
-			/* Open it */
-			borg_keypress('o');
-			borg_keypress(I2D(dir));
-			return (TRUE);
-		}
+				/* Open it */
+				borg_keypress('o');
+				borg_keypress(I2D(dir));
+				return (TRUE);
+			}
 
-		/* Empty chest */
-		/* continue in routine and pick it up */
+			/* Empty chest */
+			/* continue in routine and pick it up */
 		}
 #endif /* 0 */
 
@@ -14074,7 +14075,7 @@ bool borg_flow_shop_visit(void)
 
 		/* if dark--skip non food places */
 		if (borg_skill[BI_CUR_LITE] == 0 && (i != 0) &&
-            borg_skill[BI_CLEVEL] >= 2) continue;
+			borg_skill[BI_CLEVEL] >= 2) continue;
 #endif
 
 		/* Obtain the location */
@@ -14717,7 +14718,7 @@ bool borg_flow_take(bool viewable, int nearness)
 		{
 			/* Check the distance of this 'take' to the stair */
 			j = distance(track_less_y[b_stair], track_less_x[b_stair], y, x);
-			
+
 			/* skip far away takes while I am close to stair */
 			if (b_j <= borg_skill[BI_CLEVEL] * 5 + 9 &&
 				j >= borg_skill[BI_CLEVEL] * 5 + 9) continue;
@@ -14796,9 +14797,9 @@ static bool borg_flow_dark_interesting(int y, int x, int b_stair)
 	int ox, i;
 
 	map_block *mb_ptr;
-	
+
 	/* Hack ignore parameter */
-	(void) b_stair;
+	(void)b_stair;
 
 	/* Have the borg so some Searching */
 	borg_needs_searching = TRUE;
@@ -14815,7 +14816,7 @@ static bool borg_flow_dark_interesting(int y, int x, int b_stair)
 		/* skip far away grids while I am close to stair */
 		if (b_j <= borg_skill[BI_CLEVEL] * 5 + 9 &&
 			j >= borg_skill[BI_CLEVEL] * 5 + 9) return (FALSE);
-    }
+	}
 #endif /* 0 */
 
 	/* Bounds checking */
@@ -14824,8 +14825,8 @@ static bool borg_flow_dark_interesting(int y, int x, int b_stair)
 	/* Get the grid */
 	mb_ptr = map_loc(x, y);
 
-    /* Explore unknown grids */
-    if (mb_ptr->terrain == FEAT_NONE) return (TRUE);
+	/* Explore unknown grids */
+	if (mb_ptr->terrain == FEAT_NONE) return (TRUE);
 
 	/* Efficiency -- Ignore "boring" grids */
 	if (mb_ptr->terrain < FEAT_CLOSED) return (FALSE);
@@ -14861,7 +14862,7 @@ static bool borg_flow_dark_interesting(int y, int x, int b_stair)
 
 		/* Okay */
 		return (TRUE);
-    }
+	}
 
 #if 0
 	/* "Vaults" Explore non perma-walls adjacent to a perma wall */
@@ -14918,7 +14919,7 @@ static bool borg_flow_dark_interesting(int y, int x, int b_stair)
 
 		/* not adjacent to a GCV,  Restore Grid */
 		mb_ptr = map_loc(x, y);
-    }
+	}
 #endif /* 0 */
 
 	/* Explore "rubble" */
@@ -15422,9 +15423,9 @@ static bool borg_flow_dark_1(int b_stair)
 	int i;
 
 	int x, y;
-	
+
 	/* Ignore parameter */
-	(void) b_stair;
+	(void)b_stair;
 
 
 	/* Hack -- not in town */
@@ -15432,8 +15433,8 @@ static bool borg_flow_dark_1(int b_stair)
 
 	/* Reset */
 	borg_temp_n = 0;
-	
-	
+
+
 	/* This is broken borg_lite_ no longer exists */
 #if 0
 	/* Scan torch-lit grids */
@@ -15465,19 +15466,19 @@ static bool borg_flow_dark_1(int b_stair)
 		y = borg_temp_y[i];
 		x = borg_temp_x[i];
 
-        /* Create a path */
-        borg_flow_direct(y, x);
+		/* Create a path */
+		borg_flow_direct(y, x);
 #if 0
-        borg_flow_enqueue_grid(y, x);
+		borg_flow_enqueue_grid(y, x);
 #endif /* 0 */
-    }
+	}
 
-    /* Spread the flow */
-    borg_flow_spread(5, TRUE, FALSE, FALSE);
+	/* Spread the flow */
+	borg_flow_spread(5, TRUE, FALSE, FALSE);
 
 
-    /* Attempt to Commit the flow */
-    /* Note was NULL */
+	/* Attempt to Commit the flow */
+	/* Note was NULL */
 	if (!borg_flow_commit("dark-1", GOAL_DARK)) return (FALSE);
 
 	/* Take one step */
@@ -15560,19 +15561,19 @@ static bool borg_flow_dark_2(void)
 		y = borg_temp_y[i];
 		x = borg_temp_x[i];
 
-        /* Create a path */
-        borg_flow_direct(y, x);
+		/* Create a path */
+		borg_flow_direct(y, x);
 #if 0
-        borg_flow_enqueue_grid(y, x);
+		borg_flow_enqueue_grid(y, x);
 #endif
 	}
 
-    /* Spread the flow */
-    borg_flow_spread(5, TRUE, FALSE, FALSE);
+	/* Spread the flow */
+	borg_flow_spread(5, TRUE, FALSE, FALSE);
 
 
-    /* Attempt to Commit the flow */
-    /* Note was NULL */
+	/* Attempt to Commit the flow */
+	/* Note was NULL */
 	if (!borg_flow_commit("dark-2", GOAL_DARK)) return (FALSE);
 
 	/* Take one step */
@@ -15659,9 +15660,9 @@ static bool borg_flow_dark_3(int b_stair)
 	borg_flow_spread(5, TRUE, TRUE, FALSE);
 
 
-    /* Attempt to Commit the flow */
-    /* Note was NULL */
-    if (!borg_flow_commit("dark-3", GOAL_DARK)) return (FALSE);
+	/* Attempt to Commit the flow */
+	/* Note was NULL */
+	if (!borg_flow_commit("dark-3", GOAL_DARK)) return (FALSE);
 
 	/* Take one step */
 	if (!borg_flow_old(GOAL_DARK)) return (FALSE);

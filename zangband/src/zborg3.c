@@ -2224,13 +2224,13 @@ bool borg_activate_artifact(int name1, bool secondary)
 {
 	int i;
 
-    /* Hack - ignore unused parameter */
-	(void) name1;
-    (void) secondary;
+	/* Hack - ignore unused parameter */
+	(void)name1;
+	(void)secondary;
 
-    /* -RML- We can't recognize artifacts yet... */
-    return (FALSE);
-	
+	/* -RML- We can't recognize artifacts yet... */
+	return (FALSE);
+
 	/* Check the equipment */
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
 	{

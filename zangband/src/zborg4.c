@@ -4707,11 +4707,11 @@ extern s32b borg_power_aux2(void)
 		}
 		/* Sauron is dead -- store them unless I have enough */
 		if (borg_race_death[860] != 0)
-        {
+		{
 			/* Must know exact number of Potions  in home */
-            borg_notice_home(NULL, FALSE);
+			borg_notice_home(NULL, FALSE);
 
-            /* Must scum for more pots */
+			/* Must scum for more pots */
 			if ((num_heal_true + borg_has[242] +
 				 num_ez_heal_true + borg_skill[BI_AEZHEAL] < 45) ||
 				(num_ez_heal_true + borg_skill[BI_AEZHEAL] < 20) ||
@@ -9374,7 +9374,7 @@ int borg_danger_aux(int y, int x, int c, int i, bool average)
 			v1 = v1 * 8 / 10;
 		}
 	}
-	
+
 	/* Reduce danger from sleeping monsters with the sleep 2 spell */
 	if (borg_sleep_spell_ii)
 	{
@@ -9625,12 +9625,12 @@ int borg_danger(int y, int x, int c, bool average)
 	/* !FIX this is very slow.  I need to find a better way of doing this */
 	/* perhaps I should calc both at the same time and pass back */
 	/* the right one.  AJG */
-	
+
 	/* Bounds checking */
 	if (map_in_bounds(x, y))
 	{
 		mb_ptr = map_loc(x, y);
-		
+
 		/* Base danger (from fear) */
 		grid_fear = mb_ptr->fear * c;
 		p = grid_fear;
@@ -9644,7 +9644,7 @@ int borg_danger(int y, int x, int c, bool average)
 
 
 	borg_full_damage = TRUE;
-	
+
 	/* Examine all the monsters */
 	for (i = 1; i < borg_kills_nxt; i++)
 	{
@@ -9656,7 +9656,7 @@ int borg_danger(int y, int x, int c, bool average)
 		/* Collect danger from monster */
 		p += borg_danger_aux(y, x, c, i, average);
 	}
-	
+
 	borg_full_damage = FALSE;
 
 	/* if I can't be killed in one round (or severely wounded) use probablilities */

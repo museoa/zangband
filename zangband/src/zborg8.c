@@ -936,7 +936,7 @@ static bool borg_think_shop_sell_aux(void)
 
 #if 0
 		/* skip the home */
-        if (k == BORG_HOME) continue;
+		if (k == BORG_HOME) continue;
 #endif
 
 		/* Save the store hole */
@@ -1200,10 +1200,10 @@ static bool borg_think_shop_buy_aux(void)
 
 	/* Check the shops */
 	for (k = 0; k < (track_shop_num); k++)
-    {
+	{
 #if 0
 		/* Skip home */
-        if (k == BORG_HOME) continue;
+		if (k == BORG_HOME) continue;
 #endif
 
 		/* Scan the wares */
@@ -1657,7 +1657,7 @@ static bool borg_think_shop_grab_aux(void)
 
 #if 0
 			/* skip home */
-            if (k == BORG_HOME) continue;
+			if (k == BORG_HOME) continue;
 #endif
 
 			/* Skip "bad" buys */
@@ -1687,7 +1687,7 @@ static bool borg_think_shop_grab_aux(void)
 			if (borg_empty_home_power >= borg_power_home()) continue;
 
 			/* optimize the home inventory */
-            if (!borg_think_home_sell_aux(TRUE)) continue;
+			if (!borg_think_home_sell_aux(TRUE)) continue;
 
 			/* Obtain the "cost" of the item */
 			c = item->cost * qty;
@@ -2142,7 +2142,7 @@ static bool borg_choose_shop(void)
 			return (TRUE);
 		}
 
-    }
+	}
 #endif /* 0 */
 
 	/* Must have visited all shops first---complete information */
@@ -2213,7 +2213,7 @@ static bool borg_choose_shop(void)
 
 		/* Success */
 		return (TRUE);
-    }
+	}
 #endif /* 0 */
 
 	/* get rid of junk from home first.  That way the home is 'uncluttered' */
@@ -2231,7 +2231,7 @@ static bool borg_choose_shop(void)
 
 		/* Success */
 		return (TRUE);
-    }
+	}
 #endif /* 0 */
 
 #if 0
@@ -2245,7 +2245,7 @@ static bool borg_choose_shop(void)
 
 		/* Success */
 		return (TRUE);
-    }
+	}
 #endif /* 0 */
 
 #if 0
@@ -2258,7 +2258,7 @@ static bool borg_choose_shop(void)
 
 		/* Success */
 		return (TRUE);
-    }
+	}
 #endif /* 0 */
 
 #if 0
@@ -2762,7 +2762,7 @@ bool borg_think_dungeon(void)
 		do_cmd_redraw();
 		my_need_redraw = FALSE;
 	}
-	
+
 	/* Prevent clock overflow */
 	if (borg_t - borg_began >= 10000)
 	{
@@ -2797,13 +2797,13 @@ bool borg_think_dungeon(void)
 	 */
 	if (borg_skill[BI_CDEPTH] &&
 		(time_this_panel >= 300 && time_this_panel <= 303))
-    {
-        borg_oops("bouncing borg");
+	{
+		borg_oops("bouncing borg");
 #if 0
 		/* Clear goals, start flow over */
-        goal = 0;
+		goal = 0;
 #endif /* 0 */
-    }
+	}
 #if 0
 	if (borg_skill[BI_CDEPTH] &&
 		(time_this_panel >= 400 && time_this_panel <= 405))
@@ -2842,7 +2842,7 @@ bool borg_think_dungeon(void)
 			goal_fleeing = TRUE;
 		}
 
-    }
+	}
 #endif /* 0 */
 
 	/* Avoid the burning sun */
@@ -2983,7 +2983,7 @@ bool borg_think_dungeon(void)
 			}
 
 		}
-    }
+	}
 #endif /* 0 */
 
 	/*** crucial goals ***/
@@ -3279,7 +3279,7 @@ bool borg_think_dungeon(void)
 	if (borg_flow_old(GOAL_TAKE)) return (TRUE);
 
 	/* Find a (viewable) object */
-    if (borg_flow_take(TRUE, 250)) return (TRUE);
+	if (borg_flow_take(TRUE, 250)) return (TRUE);
 
 
 	/*** Leave the level XXX XXX XXX ***/
@@ -3343,11 +3343,11 @@ bool borg_think_dungeon(void)
 	}
 #endif /* 0 */
 
-    /* Chase close monsters */
-    if (borg_flow_kill(FALSE, 35)) return (TRUE);
+	/* Chase close monsters */
+	if (borg_flow_kill(FALSE, 35)) return (TRUE);
 
-    /* Chase close objects */
-    if (borg_flow_take(FALSE, 35)) return (TRUE);
+	/* Chase close objects */
+	if (borg_flow_take(FALSE, 35)) return (TRUE);
 
 	/* Chase old monsters */
 	if (borg_flow_kill(FALSE, 250)) return (TRUE);
@@ -3358,8 +3358,8 @@ bool borg_think_dungeon(void)
 	/* Explore interesting grids */
 	if (borg_flow_dark(TRUE)) return (TRUE);
 
-    /* Possibly leave the level (not bored) */
-  	if (borg_leave_level(FALSE)) return (TRUE);
+	/* Possibly leave the level (not bored) */
+	if (borg_leave_level(FALSE)) return (TRUE);
 
 	/* Explore interesting grids */
 	if (borg_flow_dark(FALSE)) return (TRUE);
@@ -3393,8 +3393,8 @@ bool borg_think_dungeon(void)
 	/* Recharge items before leaving the level */
 	if (borg_wear_recharge()) return (TRUE);
 
-    /* Leave the level (bored) */
-   	if (borg_leave_level(TRUE)) return (TRUE);
+	/* Leave the level (bored) */
+	if (borg_leave_level(TRUE)) return (TRUE);
 
 
 	/* Search for secret doors */

@@ -28,10 +28,10 @@
  * Constants used to pass information to users
  * of the overhead map hooks.
  */
-#define MAP_SEEN	0x01	/* GRID_SEEN equivalent */
-#define MAP_GLOW	0x02	/* CAVE_GLOW equivalent */
-#define MAP_LITE	0x04	/* GRID_LITE equivalent */
-#define MAP_ONCE    0x08	/* This block has ever been seen */
+#define MAP_SEEN	0x01		/* GRID_SEEN equivalent */
+#define MAP_GLOW	0x02		/* CAVE_GLOW equivalent */
+#define MAP_LITE	0x04		/* GRID_LITE equivalent */
+#define MAP_ONCE    0x08		/* This block has ever been seen */
 
 /*
  * Make an itterator, so we can scan the map quickly
@@ -84,7 +84,7 @@ struct term_map
 	/* Location */
 	u16b x;
 	u16b y;
-	
+
 	/* Player-known flags */
 	byte flags;
 };

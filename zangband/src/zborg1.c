@@ -2401,9 +2401,9 @@ void borg_init_1(void)
 
 	/*** Very special "tracking" array ***/
 
-    /* Track the shop locations */
-    track_shop_num = 0;
-    track_shop_size = 16;
+	/* Track the shop locations */
+	track_shop_num = 0;
+	track_shop_size = 16;
 	C_MAKE(track_shop_x, track_shop_size, int);
 	C_MAKE(track_shop_y, track_shop_size, int);
 

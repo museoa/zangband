@@ -4024,21 +4024,20 @@ static void borg_best_stuff_aux(int n, byte *test, byte *best, s32b *vp)
 
 
 	/* Try other possible objects */
-    for (i = 0; i <
+	for (i = 0; i <
 #if 0
-		 ((shop_num ==
-           BORG_HOME) ? (INVEN_PACK + STORE_INVEN_MAX) : INVEN_PACK)
+		 ((shop_num == BORG_HOME) ? (INVEN_PACK + STORE_INVEN_MAX) : INVEN_PACK)
 #endif
-         INVEN_PACK; i++)
+		 INVEN_PACK; i++)
 	{
-        borg_item *item;
+		borg_item *item;
 #if 0
-        if (i < INVEN_PACK)
+		if (i < INVEN_PACK)
 			item = &borg_items[i];
 		else
-            item = &borg_shops[BORG_HOME].ware[i - INVEN_PACK];
+			item = &borg_shops[BORG_HOME].ware[i - INVEN_PACK];
 #endif
-        item = &borg_items[i];
+		item = &borg_items[i];
 
 		/* Skip empty items */
 		if (!item->iqty) continue;
@@ -4135,7 +4134,7 @@ bool borg_best_stuff(void)
 			/* Save the item */
 			COPY(&safe_home[i], &borg_shops[BORG_HOME].ware[i], borg_item);
 		}
-    }
+	}
 #endif
 
 	/* Evaluate the inventory */
@@ -4168,7 +4167,7 @@ bool borg_best_stuff(void)
 			return (TRUE);
 		}
 		else
-        {
+		{
 #if 0
 			borg_item *item;
 
@@ -4206,7 +4205,7 @@ bool borg_best_stuff(void)
 			/* tick the clock */
 			time_this_panel++;
 
-            return (TRUE);
+			return (TRUE);
 #endif /* 0 */
 		}
 	}
@@ -4465,27 +4464,27 @@ bool borg_wear_recharge(void)
 	/* Not if hungry */
 	if (borg_skill[BI_ISWEAK]) return (FALSE);
 
-    /* Look for an (wearable- non rod) item to recharge */
-    for (i = 0; i < INVEN_TOTAL; i++)
-    {
-        borg_item *item = &borg_items[i];
-        object_type *o_ptr;  /* cheat */
-        o_ptr = &inventory[i]; /* cheat */
+	/* Look for an (wearable- non rod) item to recharge */
+	for (i = 0; i < INVEN_TOTAL; i++)
+	{
+		borg_item *item = &borg_items[i];
+		object_type *o_ptr;	/* cheat */
+		o_ptr = &inventory[i];	/* cheat */
 
-        /* Skip empty items */
-        if (!item->iqty) continue;
-        if (!item->kind) continue;
+		/* Skip empty items */
+		if (!item->iqty) continue;
+		if (!item->kind) continue;
 
-        /* skip items that are charged */
-        if (!item->timeout) continue;
+		/* skip items that are charged */
+		if (!item->timeout) continue;
 
-        /* skip lites */
-        if (item->tval == TV_LITE) continue;
+		/* skip lites */
+		if (item->tval == TV_LITE) continue;
 
-        /* Cheat-- the borg is misreading his equip.
-         * So this is pulling the info right from the game.
-         */
-        if (!o_ptr->timeout) continue;
+		/* Cheat-- the borg is misreading his equip.
+		 * So this is pulling the info right from the game.
+		 */
+		if (!o_ptr->timeout) continue;
 
 		/* Where does this belong? */
 		slot = borg_wield_slot(item);
@@ -4602,9 +4601,9 @@ bool borg_leave_level(bool bored)
 
 		/* Hack -- Recall into dungeon */
 		if ((borg_skill[BI_MAXDEPTH] >= (borg_worships_gold ? 8 : 5)) &&
-            (borg_skill[BI_RECALL] >= 3) &&
-#if 0 /* This is riskier but more fun :) */
-            ((cptr)NULL == borg_prepared(borg_skill[BI_MAXDEPTH] * 6 / 10)) &&
+			(borg_skill[BI_RECALL] >= 3) &&
+#if 0							/* This is riskier but more fun :) */
+			((cptr)NULL == borg_prepared(borg_skill[BI_MAXDEPTH] * 6 / 10)) &&
 #endif
 			borg_recall())
 		{
