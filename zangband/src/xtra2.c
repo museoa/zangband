@@ -1232,9 +1232,12 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
                 if ((r_ptr->flags1 & RF1_UNIQUE) && take_notes && auto_notes)
 		{
 			char note[80];
+
+                        /* Get true name even if blinded/hallucinating */
+                        cptr monst = (r_name + r_ptr->name);
  
 			/* Write note */
-			sprintf(note, "Killed %s", m_name);
+			sprintf(note, "Killed %s", monst);
  
 			add_note(note, 'U');
 		}
