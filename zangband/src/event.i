@@ -473,15 +473,102 @@ long get_player_race_callback(void)
 	return res;
 }
 
+cptr get_script_window_line(int line)
+{
+	PyObject *func, *arglist;
+	PyObject *result;
+	cptr res = "";
 
-cptr callbacks_save_callback(void)
+	/* Get the Python object */
+	func = python_callbacks[GET_SCRIPT_WINDOW_LINE_EVENT];
+
+	/* Callback installed */
+	if (func)
+	{
+		/* Build the argument-list */
+		arglist = Py_BuildValue("(i)", line);
+
+		/* Call the object with the correct arguments */
+		result = PyEval_CallObject(func, arglist);
+
+		if (result && PyString_Check(result))
+		{
+			res = string_make(PyString_AsString(result));
+		}
+
+		/* Free the arguments */
+		Py_DECREF(arglist);
+
+		/* Free the result */
+		Py_XDECREF(result);
+	}
+
+	return res;
+}
+
+
+void new_game_callback(void)
+{
+	PyObject *func;
+	PyObject *result;
+	PyObject *arglist;
+
+	/* Get the Python object */
+	func = python_callbacks[NEW_GAME_EVENT];
+
+	/* Callback installed */
+	if (func)
+	{
+		/* Build the argument-list */
+		arglist = Py_BuildValue("(())");
+		
+		/* Call the object with the correct arguments */
+		result = PyEval_CallObject(func, arglist);
+
+		/* Free the argument */
+		Py_XDECREF(arglist);
+
+		/* Free the result */
+		Py_XDECREF(result);
+	}
+}
+
+
+void play_game_callback(void)
+{
+	PyObject *func;
+	PyObject *result;
+	PyObject *arglist;
+
+	/* Get the Python object */
+	func = python_callbacks[PLAY_GAME_EVENT];
+
+	/* Callback installed */
+	if (func)
+	{
+		/* Build the argument-list */
+		arglist = Py_BuildValue("(())");
+		
+		/* Call the object with the correct arguments */
+		result = PyEval_CallObject(func, arglist);
+
+		/* Free the argument */
+		Py_XDECREF(arglist);
+
+		/* Free the result */
+		Py_XDECREF(result);
+	}
+}
+
+
+cptr save_game_callback(void)
 {
 	PyObject *func;
 	PyObject *result;
 	cptr res = NULL;
 
 	/* Get the Python object */
-	func = python_callbacks[CALLBACKS_SAVE_EVENT];
+	func = python_callbacks[SAVE_GAME_EVENT];
 
 	/* Callback installed */
 	if (func)
@@ -502,13 +589,13 @@ cptr callbacks_save_callback(void)
 }
 
 
-void callbacks_load_callback(char *data)
+void load_game_callback(char *data)
 {
 	PyObject *func, *arglist;
 	PyObject *result;
 
 	/* Get the Python object */
-	func = python_callbacks[CALLBACKS_LOAD_EVENT];
+	func = python_callbacks[LOAD_GAME_EVENT];
 
 	/* Callback installed */
 	if (func)
@@ -772,8 +859,8 @@ void store_examine_callback(object_type *o_ptr)
 	if (func)
 	{
 		/* Build the argument-list */
-		SWIG_MakePtr(_ptemp, o_ptr,"_object_type_p");
-		arglist = Py_BuildValue("(s)",_ptemp);
+		SWIG_MakePtr(_ptemp, o_ptr, SWIGTYPE_object_type_p);
+		arglist = Py_BuildValue("(s)", _ptemp);
 
 		/* Call the object with the correct arguments */
 		result = PyEval_CallObject(func, arglist);
@@ -1069,7 +1156,7 @@ bool destroy_object_callback(object_type *o_ptr, int number)
 	if (func)
 	{
 		/* Build the argument-list */
-		SWIG_MakePtr(_ptemp, o_ptr, "_object_type_p");
+		SWIG_MakePtr(_ptemp, o_ptr, SWIGTYPE_object_type_p);
 		arglist = Py_BuildValue("((si))", _ptemp, number);
 
 		/* Call the object with the correct arguments */
@@ -1094,7 +1181,7 @@ bool destroy_object_callback(object_type *o_ptr, int number)
 PyObject* object_create_callback(object_type *o_ptr)
 {
 	PyObject *func, *arglist;
-	PyObject *result;
+	PyObject *result = NULL;
 	char _ptemp[128];
 
 	/* Get the Python object */
@@ -1104,7 +1191,7 @@ PyObject* object_create_callback(object_type *o_ptr)
 	if (func)
 	{
 		/* Build the argument-list */
-		SWIG_MakePtr(_ptemp, o_ptr, "_object_type_p");
+		SWIG_MakePtr(_ptemp, o_ptr, SWIGTYPE_object_type_p);
 		arglist = Py_BuildValue("(s)", _ptemp);
 
 		/* Call the object with the correct arguments */
@@ -1270,7 +1357,7 @@ PyObject* object_copy_callback(object_type *o_ptr, object_type *j_ptr)
 		char _ptemp[128];
 
 		/* Build the argument-list */
-		SWIG_MakePtr(_ptemp, j_ptr, "_object_type_p");
+		SWIG_MakePtr(_ptemp, j_ptr, SWIGTYPE_object_type_p);
 
 		result = PyObject_CallMethod(o_ptr->python, "object_copy_hook", "(s)", _ptemp);
 
@@ -1648,6 +1735,14 @@ PyObject *get_callback(int event)
 	return python_callbacks[event];
 }
 
+void remove_callback(int event)
+{
+	/* Dispose old callback */
+	Py_XDECREF(python_callbacks[event]);
+
+	python_callbacks[event] = NULL;
+}
+
 %}
 
 %typemap(python,in) PyObject *PyFunc
@@ -1670,3 +1765,5 @@ PyObject *get_callback(int event)
 void set_callback(int event, PyObject *PyFunc);
 
 PyObject *get_callback(int event);
+
+void remove_callback(int event);

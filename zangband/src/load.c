@@ -3828,7 +3828,7 @@ static errr rd_savefile_new_aux(void)
 			{
 				char *callbacks = (char*) malloc(tmp32s + 1);
 				rd_string(callbacks, tmp32s + 1);
-				callbacks_load_callback(callbacks);
+				load_game_callback(callbacks);
 				free(callbacks);
 			}
 #else /* USE_SCRIPT */

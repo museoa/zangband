@@ -4,8 +4,21 @@
 
 #include "angband.h"
 
+char get_line_tmp[1024];
+
+cptr get_line(void)
+{
+	if (get_string("", get_line_tmp, 1024))
+		return get_line_tmp;
+	else
+		return "\n";
+
+	p_ptr->window |= (PW_SCRIPT);
+}
+
 %}
 
+%include typemap.i
 
 typedef const char *cptr;
 typedef unsigned char byte;
@@ -13,6 +26,9 @@ typedef signed short s16b;
 typedef unsigned short u16b;
 typedef signed int s32b;
 typedef unsigned int u32b;
+
+
+extern cptr get_line(void);
 
 
 /* util.c */
@@ -70,6 +86,8 @@ extern void pause_line(int row);
 extern void request_command(int shopping);
 extern bool is_a_vowel(int ch);
 extern int get_keymap_dir(char ch);
+
+extern bool get_aim_dir(int *dp);
 
 
 
@@ -142,6 +160,7 @@ extern errr Term_clear(void);
 extern errr Term_redraw(void);
 
 extern errr Term_get_cursor(int *v);
+
 extern errr Term_get_size(int *w, int *h);
 extern errr Term_locate(int *x, int *y);
 extern errr Term_what(int x, int y, byte *a, char *c);
@@ -265,3 +284,74 @@ extern errr term_init(term *t, int w, int h, int k);
  * Mega-Hack -- maximum known sounds
  */
 #define SOUND_MAX 65
+
+extern u32b option_flag[8];
+extern u32b option_mask[8];
+extern u32b window_flag[8];
+extern u32b window_mask[8];
+extern term *angband_term[8];
+extern char angband_term_name[8][16];
+extern byte angband_color_table[256][4];
+extern char angband_sound_name[SOUND_MAX][16];
+
+/*
+ * Bit flags for the "p_ptr->redraw" variable
+ */
+#define PR_MISC         0x00000001L     /* Display Race/Class */
+#define PR_TITLE        0x00000002L     /* Display Title */
+#define PR_LEV          0x00000004L     /* Display Level */
+#define PR_EXP          0x00000008L     /* Display Experience */
+#define PR_STATS        0x00000010L     /* Display Stats */
+#define PR_ARMOR        0x00000020L     /* Display Armor */
+#define PR_HP           0x00000040L     /* Display Hitpoints */
+#define PR_MANA         0x00000080L     /* Display Mana */
+#define PR_GOLD         0x00000100L     /* Display Gold */
+#define PR_DEPTH        0x00000200L     /* Display Depth */
+#define PR_EQUIPPY      0x00000400L     /* Display equippy chars */
+#define PR_HEALTH       0x00000800L     /* Display Health Bar */
+#define PR_CUT          0x00001000L     /* Display Extra (Cut) */
+#define PR_STUN         0x00002000L     /* Display Extra (Stun) */
+#define PR_HUNGER       0x00004000L     /* Display Extra (Hunger) */
+#define PR_STATUS       0x00008000L     /* Display Status Bar */
+#define PR_BLIND        0x00010000L     /* Display Extra (Blind) */
+#define PR_CONFUSED     0x00020000L     /* Display Extra (Confused) */
+#define PR_AFRAID       0x00040000L     /* Display Extra (Afraid) */
+#define PR_POISONED     0x00080000L     /* Display Extra (Poisoned) */
+#define PR_STATE        0x00100000L     /* Display Extra (State) */
+#define PR_SPEED        0x00200000L     /* Display Extra (Speed) */
+#define PR_STUDY        0x00400000L     /* Display Extra (Study) */
+/* xxx */
+#define PR_EXTRA        0x01000000L     /* Display Extra Info */
+#define PR_BASIC        0x02000000L     /* Display Basic Info */
+#define PR_MAP          0x04000000L     /* Display Map */
+#define PR_WIPE         0x08000000L     /* Hack -- Total Redraw */
+/* xxx */
+/* xxx */
+/* xxx */
+/* xxx */
+
+/*
+ * Bit flags for the "p_ptr->window" variable (etc)
+ */
+#define PW_INVEN        0x00000001L     /* Display inven/equip */
+#define PW_EQUIP        0x00000002L     /* Display equip/inven */
+#define PW_SPELL        0x00000004L     /* Display spell list */
+#define PW_PLAYER       0x00000008L     /* Display character */
+/* xxx */
+/* xxx */
+#define PW_MESSAGE      0x00000040L     /* Display messages */
+#define PW_OVERHEAD     0x00000080L     /* Display overhead view */
+#define PW_MONSTER      0x00000100L     /* Display monster recall */
+#define PW_OBJECT       0x00000200L     /* Display object recall */
+#define PW_DUNGEON      0x00000400L     /* Display dungeon view */
+#define PW_SNAPSHOT     0x00000800L     /* Display snap-shot */
+/* xxx */
+#define PW_SCRIPT       0x00002000L     /* Display script messages */
+#define PW_BORG_1       0x00004000L     /* Display borg messages */
+#define PW_BORG_2       0x00008000L     /* Display borg status */
+
+
+bool inkey_base;		/* See the "inkey()" function */
+bool inkey_xtra;		/* See the "inkey()" function */
+bool inkey_scan;		/* See the "inkey()" function */
+bool inkey_flag;		/* See the "inkey()" function */

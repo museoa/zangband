@@ -1,4 +1,4 @@
-%module player
+     %module player
 
 %{
 
@@ -140,22 +140,6 @@ extern player_type *p_ptr;
  * Total number of inventory slots (hard-coded).
  */
 #define INVEN_TOTAL     36
-
-%inline
-%{
-	typedef struct s16b_array_6
-	{
-		s16b data[6];
-	} s16b_array_6;
-%}
-
-%addmethods s16b
-{
-	s16b __getitem__(int i)
-	{
-		return self + i;
-	}
-}
 
 
 typedef struct player_type
@@ -413,19 +397,6 @@ typedef struct player_type
 	char player_base[32];
 	char died_from[80];
 	char history[4][60];
-
-/*	%addmethods
-	{
-		s16b stat_ind_get(int index)
-		{
-			return p_ptr->stat_ind[index];
-		}
-
-		void stat_ind_set(int index, s16b value)
-		{
-			p_ptr->stat_ind[index] = value;
-		}
-	}*/
 } player_type;
 
 

@@ -1626,7 +1626,7 @@ static bool wr_savefile_new(void)
 
 #ifdef USE_SCRIPT
 		{
-			cptr callbacks = callbacks_save_callback();
+			cptr callbacks = save_game_callback();
 			if (callbacks && *callbacks)
 			{
 				wr_s32b(strlen(callbacks));
