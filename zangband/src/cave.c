@@ -2762,7 +2762,7 @@ void do_cmd_view_map(void)
 		put_str("Hit any key to continue", hgt - 1, (wid - COL_MAP) / 2);
 
 		/* Hilite the player */
-		move_cursor(cy, cx);
+		Term_gotoxy(cx, cy);
 
 		/* Get any key */
 		(void) inkey();
@@ -2794,7 +2794,7 @@ void do_cmd_view_map(void)
 			        hgt - 1, COL_MAP - 23 + (wid - COL_MAP) / 2);
 
 			/* Hilite the player */
-			move_cursor(cy, cx);
+			Term_gotoxy(cx, cy);
 
 			/* Draw it */
 			Term_fresh();

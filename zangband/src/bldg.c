@@ -513,7 +513,7 @@ static bool gamble_again(bool win, int odds, s32b wager)
 	sprintf(tmp_str, "Current Gold:     %9ld", p_ptr->au);
 	prt(tmp_str, 22, 2);
 	prt("Again(Y/N)?", 18, 37);
-	move_cursor(18, 49);
+	Term_gotoxy(49, 18);
 	again = inkey();
 		
 	if ((again != 'y') && (again != 'Y')) return (FALSE);

@@ -3734,7 +3734,7 @@ void change_player_name(void)
 	while (1)
 	{
 		/* Go to the "name" field */
-		move_cursor(2, COL_NAME + WID_NAME);
+		Term_gotoxy(COL_NAME + WID_NAME, 2);
 
 		/* Save the player name */
 		strcpy(tmp, player_name);

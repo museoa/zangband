@@ -869,7 +869,6 @@ extern void macro_add(cptr pat, cptr act);
 extern void flush(void);
 extern void bell(cptr reason);
 extern void sound(int num);
-extern void move_cursor(int row, int col);
 extern void text_to_ascii(char *buf, cptr str);
 extern void ascii_to_text(char *buf, cptr str);
 extern char inkey(void);
