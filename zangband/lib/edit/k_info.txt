@@ -1385,21 +1385,21 @@ F:TY_CURSE | NO_TELE | NO_MAGIC | REGEN | HIDE_TYPE
 N:173:Enchant Weapon Skill
 G:?:d
 I:70:17:0
-W:26:0:5:125
+W:26:0:5:250
 A:26/1
 F:EASY_KNOW
 
 N:174:Enchant Weapon Deadliness
 G:?:d
 I:70:18:0
-W:26:0:5:125
+W:26:0:5:250
 A:26/1
 F:EASY_KNOW
 
 N:175:Enchant Armor
 G:?:d
 I:70:16:0
-W:26:0:5:125
+W:26:0:5:250
 A:26/1
 F:EASY_KNOW
 
@@ -1665,7 +1665,7 @@ F:EASY_KNOW
 N:212:*Enchant Weapon*
 G:?:d
 I:70:21:0
-W:50:0:5:400
+W:50:0:5:500
 A:75/1
 F:EASY_KNOW
 
@@ -1679,7 +1679,7 @@ F:EASY_KNOW
 N:214:*Enchant Armor*
 G:?:d
 I:70:20:0
-W:50:0:5:400
+W:50:0:5:500
 A:75/1:92/1
 F:EASY_KNOW
 
