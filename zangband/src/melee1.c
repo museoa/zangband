@@ -180,11 +180,10 @@ bool make_attack_normal(int m_idx)
 		int d_side = r_ptr->blow[ap_cnt].d_side;
 
 		/* Stop attacking if the aggressor dies (fire sheath etc.) */
-		if (m_ptr->hp < 0) return TRUE;
+		if (!alive) break;
 
 		/* Hack -- no more attacks */
 		if (!method) break;
-
 
 		/* Stop if player is dead or gone */
 		if (!p_ptr->playing || p_ptr->is_dead) break;
@@ -1523,7 +1522,7 @@ bool make_attack_normal(int m_idx)
 
 
 		/* Analyze "visible" monsters only */
-		if (m_ptr->ml)
+		if (alive && m_ptr->ml)
 		{
 			/* Count "obvious" attacks (and ones that cause damage) */
 			if (obvious || damage || (r_ptr->r_blows[ap_cnt] > 10))
@@ -1549,7 +1548,7 @@ bool make_attack_normal(int m_idx)
 
 
 	/* Blink away */
-	if (blinked)
+	if (blinked && alive)
 	{
 		msg_print("The thief flees laughing!");
 		teleport_away(m_idx, MAX_SIGHT * 2 + 5);
@@ -1562,7 +1561,7 @@ bool make_attack_normal(int m_idx)
 		r_ptr->r_deaths++;
 	}
 
-	if (m_ptr->ml && fear)
+	if (alive && m_ptr->ml && fear)
 	{
 		sound(SOUND_FLEE);
 		msg_format("%^s flees in terror!", m_name);
