@@ -284,9 +284,6 @@ static void borg_think_shop_buy(int item)
 
 	/* The purchase is complete */
 	goal_shop = -1;
-
-	/* Hack - Leave the store */
-	borg_keypress(ESCAPE);
 }
 
 
@@ -315,7 +312,7 @@ static list_item *borg_can_merge_home(list_item *l_ptr)
 	return (NULL);
 }
 
-
+#if 0
 
 /*
  * This will see what single addition/substitution is best for the home.
@@ -491,6 +488,7 @@ static bool borg_think_home_sell_aux(void)
 	return (FALSE);
 }
 
+#endif /* 0 */
 
 /*
  * Determine if an item can be sold in the given store
@@ -592,14 +590,7 @@ static bool borg_think_shop_sell_aux(int shop)
 		if (!borg_good_sell(l_ptr)) continue;
 
 		/* Give the item to the shop */
-		if (l_ptr->number == 1)
-		{
-			l_ptr->treat_as = TREAT_AS_GONE;
-		}
-		else
-		{
-			l_ptr->treat_as = TREAT_AS_LESS;
-		}
+		l_ptr->treat_as = TREAT_AS_LESS;
 
 		/* Fix later */
 		fix = TRUE;
@@ -609,7 +600,22 @@ static bool borg_think_shop_sell_aux(int shop)
 
 		/* Evaluate the inventory with this item gone */
 		p = borg_power();
-
+		
+		/* Hack - it is good to sell unknown stuff */
+		if (!l_ptr->k_idx)
+		{
+			if (borg_skill[BI_CLEVEL] < 10)
+			{
+				p += 100;
+			}
+		}
+		else
+		{
+		
+			/* Mega-hack, only sell un-identified stuff for now */
+			continue;
+		}
+		
 		/* Restore the item */
 		l_ptr->treat_as = TREAT_AS_NORM;
 
@@ -921,7 +927,7 @@ static bool borg_think_home_buy_aux(void)
 	/* Nope */
 	return (FALSE);
 }
-
+#if 0
 
 /*
  * Step 5 -- buy "interesting" things from a shop (to be used later)
@@ -1001,6 +1007,9 @@ static bool borg_think_shop_grab_aux(int shop)
 
 		/* Buy that item */
 		borg_think_shop_buy(b_n);
+		
+		/* Hack - get out of the store */
+		borg_keypress(ESCAPE);
 
 		/* Success */
 		return (TRUE);
@@ -1010,6 +1019,7 @@ static bool borg_think_shop_grab_aux(int shop)
 	return (FALSE);
 }
 
+#endif /* 0 */
 
 /*
  * Step 6 -- take "useless" things from the home (to be sold)
@@ -1159,6 +1169,9 @@ bool borg_think_store(void)
 
 	/* Remove "useless" equipment */
 	if (borg_remove_stuff()) return (TRUE);
+	
+	/* Wear good stuff */
+	if (borg_wear_stuff()) return (TRUE);
 
 	/* Increment 'been' count */
 	borg_shops[shop_num].b_count++;
@@ -1167,7 +1180,7 @@ bool borg_think_store(void)
 	if (shop_num == home_shop)
 	{
 		/* Step 1 -- Sell items to the home */
-		if (borg_think_home_sell_aux()) return (TRUE);
+		/* if (borg_think_home_sell_aux()) return (TRUE); */
 
 		/* Step 4 -- Buy items from the home (for the player) */
 		if (borg_think_home_buy_aux()) return (TRUE);
@@ -1186,7 +1199,7 @@ bool borg_think_store(void)
 		if (borg_think_shop_buy_aux(shop_num)) return (TRUE);
 
 		/* Step 6 -- Buy items from the shops (for the home) */
-		if (borg_think_shop_grab_aux(shop_num)) return (TRUE);
+		/* if (borg_think_shop_grab_aux(shop_num)) return (TRUE); */
 
 		borg_note("# Nothing to do in the store.");
 	}

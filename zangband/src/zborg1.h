@@ -428,7 +428,8 @@ extern int size_obj;
 #define BI_AHWORD	189			/* Holy Word prayer */
 
 #define BI_WEIGHT	190
-#define BI_MAX		191
+#define BI_VALUE	191
+#define BI_MAX		192
 
 
 /*

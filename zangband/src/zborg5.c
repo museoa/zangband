@@ -3612,8 +3612,11 @@ static s32b borg_power_aux4(void)
 	if ((borg_skill[BI_ISHUNGRY] || borg_skill[BI_ISWEAK]) &&
 		borg_skill[BI_FOOD]) value += 100000;
 
-	for (k = 0; k < 5 && k < borg_skill[BI_FOOD]; k++) value += 50000L;
-	for (; k < 10 && k < borg_skill[BI_FOOD]; k++) value += 200L;
+	for (k = 0; k < 25 && k < borg_skill[BI_FOOD]; k++) value += 10000L;
+	for (; k < 35 && k < borg_skill[BI_FOOD]; k++) value += 200L;
+	
+	/* borg_note_fmt("# Have food: %d (value now : %ld)", borg_skill[BI_FOOD], (long) value); */
+	
 	if (borg_skill[BI_REG] && !borg_skill[BI_SDIG])
 	{
 		for (k = 0; k < 10 && k < borg_skill[BI_FOOD]; k++) value += 500L;
@@ -3970,7 +3973,6 @@ static s32b borg_power_aux4(void)
 
 	/* Being too heavy is really bad */
 	value -= borg_skill[BI_WEIGHT] / adj_str_wgt[my_stat_ind[A_STR]];
-
 
 	/* Reward empty slots */
 	if (INVEN_PACK - inven_num < 5)

@@ -11842,8 +11842,6 @@ bool borg_perma_spell()
 bool borg_check_rest(void)
 {
 	int i;
-	
-	borg_note("# Checking to see if we can rest");
 
 	/* Do not rest in Sunlight */
 	if (borg_skill[BI_FEAR_LITE] && (borg_skill[BI_CDEPTH] == 0))
@@ -11864,8 +11862,6 @@ bool borg_check_rest(void)
 
 	/* Now check the ground to see if safe. */
 	if (borg_on_safe_grid() == FALSE) return (FALSE);
-
-	borg_note("# About to scan for nasty monsters nearby");
 
 	/* Examine all the monsters */
 	for (i = 1; i < borg_kills_nxt; i++)
@@ -11922,8 +11918,6 @@ bool borg_check_rest(void)
 		if (r_ptr->flags2 & RF2_PASS_WALL) return FALSE;
 		if (r_ptr->flags2 & RF2_KILL_WALL) return FALSE;
 	}
-	
-	borg_note("# No monsters nearby???");
 
 	/* Otherwise ok */
 	return TRUE;

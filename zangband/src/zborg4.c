@@ -1736,7 +1736,7 @@ static void borg_notice_scrolls(list_item *l_ptr, int number)
 		}
 		case SV_SCROLL_SATISFY_HUNGER:
 		{
-			borg_skill[BI_FOOD] += number * 3;
+			borg_skill[BI_FOOD] += number * 5;
 			break;
 		}
 	}
@@ -1928,9 +1928,12 @@ static void borg_notice_inven_item(list_item *l_ptr)
 
 	/* Keep track of weight */
 	borg_skill[BI_WEIGHT] += l_ptr->weight * number;
-
+	
 	/* Get item type */
 	k_ptr = &k_info[l_ptr->k_idx];
+	
+	/* Keep track of (base) value */
+	borg_skill[BI_VALUE] += k_ptr->cost * number;
 
 	/* Analyze the item */
 	switch (l_ptr->tval)
@@ -2190,12 +2193,18 @@ static void borg_notice_inven(void)
 
 			/* Hack - assume we get one item */
 			l_ptr->number = 1;
+			
+			/* Hack - fix the treat_as value */
+			l_ptr->treat_as = TREAT_AS_NORM;
 
 			/* Examine the item */
 			borg_notice_inven_item(l_ptr);
 
 			/* Restore number */
 			l_ptr->number = num;
+			
+			/* Restore treat_as value */
+			l_ptr->treat_as = TREAT_AS_LESS;
 
 			/* Done (Only one extra item) */
 			return;
@@ -2229,12 +2238,18 @@ static void borg_notice_inven(void)
 
 					/* Hack - assume we get one item */
 					l_ptr->number = 1;
+					
+					/* Hack - fix the treat_as value */
+					l_ptr->treat_as = TREAT_AS_NORM;
 
 					/* Examine the item */
 					borg_notice_inven_item(l_ptr);
 
 					/* Restore number */
 					l_ptr->number = num;
+					
+					/* Restore treat_as value */
+					l_ptr->treat_as = TREAT_AS_LESS;
 
 					/* Done (Only one extra item) */
 					return;
@@ -2552,8 +2567,8 @@ static void borg_notice_aux2(void)
 	 */
 	if ((borg_race <= RACE_IMP) || (borg_race >= RACE_SPRITE))
 	{
-		borg_skill[BI_FOOD] += amt_food_hical;
-		if (borg_skill[BI_FOOD] <= 4)
+		borg_skill[BI_FOOD] += amt_food_hical * 5;
+		if (borg_skill[BI_FOOD] <= 30)
 		{
 			borg_skill[BI_FOOD] += amt_food_lowcal;
 		}

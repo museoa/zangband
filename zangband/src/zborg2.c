@@ -1789,11 +1789,6 @@ static void borg_merge_kill(int who)
 
 	/* Paranoia -- Already wiped */
 	if (!kill->r_idx) return;
-
-	/* Note */
-	borg_note_fmt("# Merging a monster '%s' (%i) at (%d,%d)",
-					 (r_name + r_info[kill->r_idx].name), who,
-					 kill->x, kill->y);
 	
 	if (map_in_bounds(kill->x, kill->y))
 	{
@@ -1853,14 +1848,6 @@ static void borg_append_mon_list(byte type1, byte type2)
 		/* Add kills of type2 to type1 */
 		if (kill->type == type2)
 		{
-			if (type1 == BORG_MON_USED)
-			{
-				borg_note_fmt("Moving kill %d to USED list in append_mon_list (%d,%d)", i, kill->x, kill->y);
-			}
-			else
-			{
-				borg_note_fmt("Moving kill %d to OLD list in append_mon_list (%d,%d)", i, kill->x, kill->y);
-			}
 			kill->type = type1;
 		}
 	}
@@ -2073,8 +2060,8 @@ static void observe_kill_move(int new_type, int old_type, int dist)
 			if (d > dist) continue;
 			
 			/* Note */
-			borg_note_fmt("# Tracking monster (%d) from (%d,%d) to (%d,%d)",
-							 i, x, y, kill2->x, kill2->y);
+			borg_note_fmt("# Tracking monster (%d) from (%d,%d) to (%d) (%d,%d)",
+							 i, x, y, j, kill2->x, kill2->y);
 			
 			/* Change the location of the old one */
 			kill1->x = kill2->x;
@@ -2512,8 +2499,6 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 			
 			if (kill->type != BORG_MON_NEW)
 			{
-				borg_note_fmt("Moving kill %d to USED list in map_info (%d,%d)", mb_ptr->kill, x, y);
-
 				/* Remove it from the old list. */
 				kill->type = BORG_MON_USED;
 			}
@@ -2524,8 +2509,6 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 			if (mb_ptr->kill)
 			{
 				kill = &borg_kills[mb_ptr->kill];
-				
-				borg_note_fmt("Moving old kill %d to MOVE list in map_info (%d,%d)", mb_ptr->kill, x, y);
 
 				/* Move old entry into "moved" list */
 				kill->type = BORG_MON_MOVE;
@@ -2552,8 +2535,6 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 			
 			if (kill->type != BORG_MON_NEW)
 			{
-				borg_note_fmt("Moving kill %d to MOVE list in map_info (%d,%d)", mb_ptr->kill, x, y);
-
 				if ((kill->x == x) && (kill->y == y))
 				{
 					/*

@@ -2150,7 +2150,6 @@ static char borg_inkey_hack(int flush_first)
 	bool borg_rand_quick;	/* Save system setting */
 	u32b borg_rand_value;	/* Save system setting */
 
-
 	/* Refresh the screen */
 	Term_fresh();
 
@@ -2311,6 +2310,12 @@ static char borg_inkey_hack(int flush_first)
 
 	/* Use the key */
 	if (ch) return (ch);
+	
+	/* Hack - check to see if we are doing a repeated action */
+	if (p_ptr->running || p_ptr->command_rep || p_ptr->resting)
+	{
+		return (0);
+	}
 
 
 	/* Check for user abort */

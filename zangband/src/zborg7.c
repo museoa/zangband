@@ -1532,18 +1532,21 @@ bool borg_crush_junk(void)
 	s32b p;
 	s32b value;
 	s32b my_power;
+	
+	/* Hack -- no need */
+	if (!borg_do_crush_junk) return (FALSE);
+	
+	/* No crush if even slightly dangerous */
+	if (borg_danger(c_x, c_y, 1, TRUE) >
+		borg_skill[BI_CURHP] / 10) return (FALSE);
 
 	/* Notice changes */
 	borg_notice();
 
 	my_power = borg_power();
-
-	/* Hack -- no need */
-	if (!borg_do_crush_junk) return (FALSE);
-
-	/* No crush if even slightly dangerous */
-	if (borg_danger(c_x, c_y, 1, TRUE) >
-		borg_skill[BI_CURHP] / 10) return (FALSE);
+	
+	/* Include the effects of value of items */
+	my_power += (long) borg_skill[BI_VALUE];
 
 	/* Destroy actual "junk" items */
 	for (i = 0; i < inven_num; i++)
@@ -1556,9 +1559,6 @@ bool borg_crush_junk(void)
 		/* dont crush our spell books */
 		if (l_ptr->tval == mp_ptr->spell_book) continue;
 
-		/* save the items value */
-		/* value = item->value; */
-
 		/* Hack - we need to work this out properly */
 		value = 0;
 
@@ -1570,7 +1570,9 @@ bool borg_crush_junk(void)
 		{
 			/* unknown? */
 			if (!borg_obj_known_p(l_ptr) &&
-				!strstr(l_ptr->o_name, "{average")) continue;
+				!(strstr(l_ptr->o_name, "{average") ||
+				strstr(l_ptr->o_name, "{cursed") ||
+				strstr(l_ptr->o_name, "{bad"))) continue;
 
 			/* Pretend one item isn't there */
 			l_ptr->treat_as = TREAT_AS_LESS;
@@ -1583,18 +1585,21 @@ bool borg_crush_junk(void)
 
 			/* Evaluate the inventory */
 			p = borg_power();
-
+			
+			/* Include the effects of value of items */
+			p += borg_skill[BI_VALUE];
+			
 			/* Restore item */
 			l_ptr->treat_as = TREAT_AS_NORM;
 
 			/* Hack - set value */
 			value = my_power - p;
 
-			/* up to level 5, keep anything of any value */
-			if (borg_skill[BI_CDEPTH] < 5 && value > 0)
+			/* up to level 5, keep anything of value 100 or better */
+			if (borg_skill[BI_CDEPTH] < 5 && value > 100)
 				continue;
 			/* up to level 15, keep anything of value 100 or better */
-			if (borg_skill[BI_CDEPTH] < 15 && value > 100)
+			if (borg_skill[BI_CDEPTH] < 15 && value > 200)
 				continue;
 			/* up to level 30, keep anything of value 500 or better */
 			if (borg_skill[BI_CDEPTH] < 30 && value > 500)
@@ -1900,6 +1905,8 @@ bool borg_test_stuff(bool star_id)
 {
 	int i, b_i = -1;
 	s32b v, b_v = -1;
+	
+	list_item *l_ptr;
 
 	bool inven = FALSE;
 
@@ -1916,7 +1923,7 @@ bool borg_test_stuff(bool star_id)
 	/* Look for an item to identify (equipment) */
 	for (i = 0; i < equip_num; i++)
 	{
-		list_item *l_ptr = &equipment[i];
+		l_ptr = &equipment[i];
 
 		/* Skip empty / unaware items */
 		if (!l_ptr->k_idx) continue;
@@ -1943,7 +1950,7 @@ bool borg_test_stuff(bool star_id)
 	/* Look for an ego or artifact item to identify (inventory) */
 	for (i = 0; i < inven_num; i++)
 	{
-		list_item *l_ptr = &inventory[i];
+		l_ptr = &inventory[i];
 
 		/* Skip known items */
 		if (!star_id)
@@ -2042,6 +2049,26 @@ bool borg_test_stuff(bool star_id)
 	/* Found something */
 	if (b_i >= 0)
 	{
+		if (inven)
+		{
+			l_ptr = &inventory[b_i];
+		}
+		else
+		{
+			l_ptr = &equipment[b_i];
+		}
+	
+	
+		if (star_id)
+		{
+			borg_oops_fmt("# Sorry - I cannot id anything yet.  Can you *id* the %s, and then restart me.", l_ptr->o_name);
+		}
+		else
+		{
+			borg_oops_fmt("# Sorry - I cannot id anything yet.  Can you identify the %s, and then restart me.", l_ptr->o_name);
+		}
+		
+#if 0
 		if (inven)
 		{
 			list_item *l_ptr = &inventory[b_i];
@@ -2169,6 +2196,8 @@ bool borg_test_stuff(bool star_id)
 				}
 			}
 		}
+
+#endif /* 0 */
 	}
 
 	/* Nothing to do */
@@ -2434,8 +2463,6 @@ bool borg_wear_stuff(void)
 	borg_notice();
 
 	b_p = borg_power();
-
-	borg_note_fmt("# Trying to pick best, Old Power (%ld)", b_p);
 
 	/* Require an empty slot */
 	if (inven_num >= INVEN_PACK - 1) return (FALSE);
