@@ -1511,19 +1511,8 @@ bool inc_oppose_pois(int v)
 /*
  * Helper functions to test resistance status for the various elements
  *
- *
- * These return a value from 0 to 18 standing for how much damage
- * you will receive.
- *
- * 0 is immunity.
- * 1 is double resistance.
- * 3 is normal resistance.
- * 9 is no resistance.
- * 18 is succeptibility to.
- *
- * Other combinations such as 2 and 6 are also possible.
- *
- * XXX XXX Should these "magic numbers" have #defines?
+ * These return a value from 0 to 200 indicating how much damage you
+ * take from an element, as a percentage of normal damage.
  */
 
 static int resist_table[12] = {3, 5, 7, 11, 16, 22, 33, 50, 66, 100, 150, 200};
