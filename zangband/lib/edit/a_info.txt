@@ -1299,6 +1299,12 @@ P:0:1d10:3:7:0
 F:BLOWS |
 F:SLAY_ANIMAL | SLOW_DIGEST | REGEN | SHOW_MODS | SEE_INVIS | RES_DISEN
 F:INSTA_ART
+L:MAKE:	if (player.rp.pclass == CLASS_MAGE) or (player.rp.pclass == CLASS_HIGH_MAGE) then
+L:MAKE:		set_obj_flag(object, 0, TR0_SP)
+L:MAKE:	end
+L:HIT:	dam = dam + player.msp / 10
+D:This fine sword is most powerful in the hands of a skilled magic user.
+
 
 # The Blade of Chaos 'Doomcaller'
 # Was (-5) CON | HIDE_TYPE, +0 armor
@@ -1418,6 +1424,7 @@ P:0:1d10:11:13:0
 F:STEALTH | RES_DARK | INFRA | SPEED |
 F:BRAND_COLD | SLAY_UNDEAD | RES_COLD | SEE_INVIS | SHOW_MODS | THROW
 F:INSTA_ART
+L:BONUS:	b.pspeed = (player.level + 4) / 5
 
 # The Spear 'Soulsucker'
 
@@ -1646,13 +1653,19 @@ L:DESC:	return "fire ball (200), rad. 3, every 100 turns"
 N:116:of Energy
 I:22:17:4
 W:70:25:250:50000
-P:0:5d3:20:20:0
+P:0:5d3:15:5:0
 F:CON | BRAND_ELEC | IM_ELEC | HIDE_TYPE | SHOW_MODS | KILL_DRAGON
 F:INSTA_ART | ACTIVATE
 L:USE:	msgf("Your scythe glows bright green...")
 L:USE:	inc_fast(rand_range(20, 40))
 L:USE:	object.timeout = rand_range(100, 200)
 L:DESC:	return "haste self (20-40) every 100-200 turns"
+L:HIT:	if player.tim.fast > 0 then
+L:HIT:		dam = dam * 2
+L:HIT:	end
+D:A metal pole tipped with an arc of pure blue energy, the pulses of 
+D:the blade ripping through opponents all the more deadly as you move 
+D:faster.
 
 # The War Hammer of Aule
 
