@@ -257,7 +257,7 @@ void teleport_player(int dis)
 	int d, i, min, ox, oy;
 	int tries = 0;
 
-	int xx = -1, yy = -1;
+	int xx = -1, yy;
 
 	/* Initialize */
 	int y = py;
@@ -607,10 +607,6 @@ bool apply_disenchant(int mode)
 	char            o_name[80];
 
 
-	/* Unused */
-	mode = mode;
-
-
 	/* Pick a random slot */
 	switch (randint(8))
 	{
@@ -762,8 +758,9 @@ void apply_nexus(monster_type *m_ptr)
  */
 void phlogiston(void)
 {
-	int max_flog = 0;
+	int max_flog;
 	object_type * o_ptr = &inventory[INVEN_LITE];
+
 
 	/* It's a lamp */
 	if ((o_ptr->tval == TV_LITE) && (o_ptr->sval == SV_LITE_LANTERN))
@@ -823,7 +820,7 @@ void brand_weapon(int brand_type)
 	if (o_ptr->k_idx && !artifact_p(o_ptr) && !ego_item_p(o_ptr) &&
 	    !o_ptr->art_name && !cursed_p(o_ptr))
 	{
-		cptr act = NULL;
+		cptr act;
 
 		/* Let's get the name before it is changed... */
 		char o_name[80];
@@ -927,20 +924,19 @@ void call_the_(void)
 void fetch(int dir, int wgt, bool require_los)
 {
 	int             ty, tx, i;
-	bool            flag;
 	cave_type       *c_ptr;
 	object_type     *o_ptr;
 	char            o_name[80];
 
 	/* Check to see if an object is already there */
-	if (area(py,px)->o_idx)
+	if (area(py, px)->o_idx)
 	{
 		msg_print("You can't fetch when you're already standing on something.");
 		return;
 	}
 
 	/* Use a target */
-	if (dir == 5 && target_okay())
+	if ((dir == 5) && target_okay())
 	{
 		tx = target_col;
 		ty = target_row;
@@ -951,7 +947,7 @@ void fetch(int dir, int wgt, bool require_los)
 			return;
 		}
 
-		c_ptr = area(ty,tx);
+		c_ptr = area(ty, tx);
 
 		/* We need an item to fetch */
 		if (!c_ptr->o_idx)
@@ -979,13 +975,12 @@ void fetch(int dir, int wgt, bool require_los)
 		/* Use a direction */
 		ty = py; /* Where to drop the item */
 		tx = px;
-		flag = FALSE;
 
 		do
 		{
 			ty += ddy[dir];
 			tx += ddx[dir];
-			c_ptr = area(ty,tx);
+			c_ptr = area(ty, tx);
 
 			if ((distance(py, px, ty, tx) > MAX_RANGE) ||
 			    !cave_floor_bold(ty, tx)) return;
@@ -1624,7 +1619,7 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 bool artifact_scroll(void)
 {
 	int             item;
-	bool            okay = FALSE;
+	bool            okay;
 	object_type     *o_ptr;
 	char            o_name[80];
 	cptr            q, s;
@@ -1694,6 +1689,7 @@ bool artifact_scroll(void)
 			           o_name, ((o_ptr->number > 2) ? "were" : "was"));
 			o_ptr->number = 1;
 		}
+
 		okay = create_artifact(o_ptr, TRUE);
 	}
 
@@ -1705,7 +1701,7 @@ bool artifact_scroll(void)
 
 		/* Message */
 		msg_print("The enchantment failed.");
-		if (randint(3)==1) chg_virtue(V_ENCHANT, -1);
+		if (randint(3) == 1) chg_virtue(V_ENCHANT, -1);
 	}
 	else
 		chg_virtue(V_ENCHANT, 1);
@@ -2705,7 +2701,13 @@ bool potion_smash_effect(int who, int y, int x, int k_idx)
 	(void)project(who, radius, y, x, dam, dt,
 	    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL));
 
-	/* XXX  those potions that explode need to become "known" */
+	/* An identification was made */
+	if (ident && !(k_ptr->aware))
+	{
+		k_ptr->aware = TRUE;
+		gain_exp((k_ptr->level + (p_ptr->lev >> 1)) / p_ptr->lev);
+	}
+
 	return angry;
 }
 
@@ -2741,9 +2743,9 @@ void display_spell_list(void)
 		int             i;
 		int             y = 1;
 		int             x = 1;
-		int             minfail = 0;
+		int             minfail;
 		int             plev = p_ptr->lev;
-		int             chance = 0;
+		int             chance;
 		mindcraft_power spell;
 		char            comment[80];
 		char            psi_desc[80];
