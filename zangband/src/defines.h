@@ -27,6 +27,18 @@
 
 
 /*
+ * Name of the version/variant
+ */
+#define VERSION_NAME "ZAngband"
+
+
+/*
+ * Current version string
+ */
+#define VERSION_STRING	"2.5.3"
+
+
+/*
  * Current version number of Angband: 2.8.1
  */
 #define VERSION_MAJOR   2
