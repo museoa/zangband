@@ -382,58 +382,6 @@ proc NSWidget::CaveSize {oop _height _width} {
 	return
 }
 
-proc NSWidget::CaveToIso {oop _y _x} {
-
-	upvar $_y y
-	upvar $_x x
-
-	set y1 $y
-	set x1 $x
-	set y [expr {$x1 + $y1}]
-	set x [expr {$x1 - $y1}]
-
-	incr x [IsoOffset $oop]
-
-	return
-}
-
-proc NSWidget::IsoToCave {oop _y _x} {
-
-	upvar $_y y
-	upvar $_x x
-
-	incr x -[IsoOffset $oop]
-
-	set y1 $y
-	set x1 $x
-	set y [expr {($y1 - $x1) / 2}]
-	set x [expr {($y1 + $x1) / 2}]
-
-set y2 $y ; set x2 $x
-CaveToIso $oop y2 x2
-incr x1 [IsoOffset $oop]
-if {$y2 != $y1 || $x2 != $x1} {
-	IsoToCave $oop y2 x2
-	set y $y2 ; set x $x2
-}
-
-	return
-}
-
-proc NSWidget::IsoOffset {oop} {
-
-	set widget [Info $oop widget]
-
-	set h [angband cave height]
-	set w [angband cave width]
-
-	Size $oop h2 w2
-	if {$h > $h2} {
-		incr h 2
-	}
-	return [expr $h - 1]
-}
-
 # NSWidget::yview --
 #
 #	Typical yview command
