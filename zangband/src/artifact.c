@@ -1889,7 +1889,7 @@ bool activate_effect(object_type *o_ptr)
 				object_prep(q_ptr, 21);
 
 				/* Drop the object from heaven */
-                (void)drop_near(q_ptr, -1, p_ptr->px, p_ptr->py);
+                drop_near(q_ptr, -1, p_ptr->px, p_ptr->py);
 
                 o_ptr->timeout = 100;
 
@@ -3232,5 +3232,5 @@ void create_named_art(int a_idx, int x, int y)
 	}
 
 	/* Drop the artifact from heaven */
-	(void)drop_near(q_ptr, -1, x, y);
+	drop_near(q_ptr, -1, x, y);
 }

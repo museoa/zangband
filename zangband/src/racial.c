@@ -231,7 +231,7 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 				object_prep(q_ptr, 21);
 
 				/* Drop the object from heaven */
-				(void)drop_near(q_ptr, -1, p_ptr->px, p_ptr->py);
+				drop_near(q_ptr, -1, p_ptr->px, p_ptr->py);
 				msg_print("You cook some food.");
 
 				break;

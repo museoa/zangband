@@ -4123,11 +4123,10 @@ static int toluaI_object_drop_near00(lua_State* tolua_S)
   int x = ((int)  tolua_getnumber(tolua_S,3,0));
   int y = ((int)  tolua_getnumber(tolua_S,4,0));
   {
-   s16b toluaI_ret = (s16b)  drop_near(o_ptr,chance,x,y);
-   tolua_pushnumber(tolua_S,(long)toluaI_ret);
+   drop_near(o_ptr,chance,x,y);
   }
  }
- return 1;
+ return 0;
 tolua_lerror:
  tolua_error(tolua_S,"#ferror in function 'drop_near'.");
  return 0;

@@ -187,7 +187,7 @@ void drop_object_list(s16b *o_idx_ptr, int x, int y)
 		o_cnt--;
 
 		/* Drop it */
-		(void)drop_near(q_ptr, -1, x, y);
+		drop_near(q_ptr, -1, x, y);
 	}
 	OBJ_ITT_END;
 
@@ -4298,7 +4298,7 @@ void place_specific_object(int x, int y, int level, int k_idx)
 	}
 
 	/* Drop the object at the square */
-	(void)drop_near(q_ptr, -1, x, y);
+	drop_near(q_ptr, -1, x, y);
 }
 
 
@@ -4517,7 +4517,7 @@ void place_gold(int x, int y)
  * the object can combine, stack, or be placed.  Artifacts will try very
  * hard to be placed, including "teleporting" to a useful grid if needed.
  */
-s16b drop_near(object_type *j_ptr, int chance, int x, int y)
+void drop_near(object_type *j_ptr, int chance, int x, int y)
 {
 	int i, k, d, s;
 
@@ -4529,7 +4529,7 @@ s16b drop_near(object_type *j_ptr, int chance, int x, int y)
 	s16b o_idx = 0;
 
 	cave_type *c_ptr;
-	object_type *o_ptr;
+	object_type *o_ptr = NULL;
 
 	char o_name[256];
 
@@ -4556,7 +4556,7 @@ s16b drop_near(object_type *j_ptr, int chance, int x, int y)
 		if (p_ptr->wizard) msg_print("(breakage)");
 
 		/* Failure */
-		return (0);
+		return;
 	}
 
 
@@ -4669,7 +4669,7 @@ s16b drop_near(object_type *j_ptr, int chance, int x, int y)
 		if (p_ptr->wizard) msg_print("(no floor space)");
 
 		/* Failure */
-		return (0);
+		return;
 	}
 
 
@@ -4736,7 +4736,7 @@ s16b drop_near(object_type *j_ptr, int chance, int x, int y)
 			if (p_ptr->wizard) msg_print("(contact with lava)");
 
 			/* Failure */
-			return (0);
+			return;
 		}
 
 		/* Check to see if the object will disappear in water. */
@@ -4753,7 +4753,7 @@ s16b drop_near(object_type *j_ptr, int chance, int x, int y)
 			if (p_ptr->wizard) msg_print("(contact with water)");
 
 			/* Failure */
-			return (0);
+			return;
 		}
 	}
 
@@ -4766,9 +4766,6 @@ s16b drop_near(object_type *j_ptr, int chance, int x, int y)
 			/* Combine the items */
 			object_absorb(o_ptr, j_ptr);
 
-			/* Hack - Get the pointer to the stack */
-			o_idx = _this_o_idx;
-
 			/* Success */
 			done = TRUE;
 
@@ -4779,48 +4776,43 @@ s16b drop_near(object_type *j_ptr, int chance, int x, int y)
 	OBJ_ITT_END;
 
 	/* Get new object */
-	if (!done) o_idx = o_pop();
-
-	/* Failure */
-	if (!done && !o_idx)
-	{
-		/* Message */
-		msg_format("The %s disappear%s.", o_name, (plural ? "" : "s"));
-
-		/* Debug */
-		if (p_ptr->wizard) msg_print("(too many objects)");
-
-		/* Failure */
-		return (0);
-	}
-
-	/* Stack */
 	if (!done)
 	{
-		/* Structure copy */
-		object_copy(&o_list[o_idx], j_ptr);
+		o_idx = o_pop();
+		
+		/* Failure */
+		if (!o_idx)
+		{
+			/* Message */
+			msg_format("The %s disappear%s.", o_name, (plural ? "" : "s"));
 
-		/* Access new object */
-		j_ptr = &o_list[o_idx];
+			/* Debug */
+			if (p_ptr->wizard) msg_print("(too many objects)");
+
+			/* Failure */
+			return;
+		}
+		
+		o_ptr = &o_list[o_idx];
+		
+		/* Structure copy */
+		object_copy(o_ptr, j_ptr);
 
 		/* Locate */
-		j_ptr->iy = by;
-		j_ptr->ix = bx;
+		o_ptr->iy = by;
+		o_ptr->ix = bx;
 
 		/* Region */
-		j_ptr->region = cur_region;
+		o_ptr->region = cur_region;
 
 		/* No monster */
-		j_ptr->held_m_idx = 0;
+		o_ptr->held_m_idx = 0;
 
 		/* Build a stack */
-		j_ptr->next_o_idx = c_ptr->o_idx;
+		o_ptr->next_o_idx = c_ptr->o_idx;
 
 		/* Place the object */
 		c_ptr->o_idx = o_idx;
-
-		/* Success */
-		done = TRUE;
 	}
 
 	/* Note + Redraw the spot */
@@ -4838,12 +4830,7 @@ s16b drop_near(object_type *j_ptr, int chance, int x, int y)
 
 	/* Fields may interact with an object in some way */
 	field_hook(&area(bx, by)->fld_idx, FIELD_ACT_OBJECT_DROP,
-			   (vptr)&o_list[o_idx]);
-
-	/* XXX XXX XXX */
-
-	/* Result */
-	return (o_idx);
+			   (vptr) o_ptr);
 }
 
 
@@ -4897,7 +4884,7 @@ void acquirement(int x1, int y1, int num, bool great, bool known)
 		}
 
 		/* Drop the object */
-		(void)drop_near(i_ptr, -1, x1, y1);
+		drop_near(i_ptr, -1, x1, y1);
 	}
 }
 
@@ -5497,7 +5484,7 @@ void inven_drop(int item, int amt)
 	msg_format("You drop %s (%c).", o_name, index_to_label(item));
 
 	/* Drop it near the player */
-	(void)drop_near(q_ptr, 0, p_ptr->px, p_ptr->py);
+	drop_near(q_ptr, 0, p_ptr->px, p_ptr->py);
 
 	/* Modify, Describe, Optimize */
 	inven_item_increase(item, -amt);

@@ -371,7 +371,7 @@ static void chest_death(int x, int y, s16b o_idx)
 		}
 
 		/* Drop it in the dungeon */
-		(void)drop_near(q_ptr, -1, x, y);
+		drop_near(q_ptr, -1, x, y);
 	}
 
 	/* Reset the object level */
@@ -2727,7 +2727,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	j = (hit_body ? breakage_chance(i_ptr) : 0);
 
 	/* Drop (or break) near that location */
-	(void)drop_near(i_ptr, j, x, y);
+	drop_near(i_ptr, j, x, y);
 
 	make_noise(3);
 }
@@ -3215,7 +3215,7 @@ void do_cmd_throw_aux(int mult)
 	}
 
 	/* Drop (or break) near that location */
-	(void)drop_near(q_ptr, breakage, x, y);
+	drop_near(q_ptr, breakage, x, y);
 
 	p_ptr->redraw |= (PR_EQUIPPY);
 
