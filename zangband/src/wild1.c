@@ -3091,7 +3091,7 @@ static void ang_sort_swap_height(vptr u, vptr v, int a, int b)
  * Make river between two points.
  * Do not change the value of the two points
  */
-static void link_river(int x1, int x2, int y1, int y2)
+static void link_river(int x1, int y1, int x2, int y2)
 {
 	int xn, yn;
 	int x, y, dx, dy, changex, changey;
@@ -3138,8 +3138,8 @@ static void link_river(int x1, int x2, int y1, int y2)
 		if (yn >= max_wild) yn = max_wild - 1;
 
 		/* construct river out of two smaller ones */
-		link_river(x1, xn, y1, yn);
-		link_river(xn, x2, yn, y2);
+		link_river(x1, y1, xn, yn);
+		link_river(xn, yn, x2, y2);
 	}
 	else
 	{
@@ -3250,7 +3250,7 @@ static void create_rivers(void)
 		if (h_val == 10000) break;
 
 		/* Make river between two points */
-		link_river(cx, temp_x[high_posn], cy, temp_y[high_posn]);
+		link_river(cx, cy, temp_x[high_posn], temp_y[high_posn]);
 
 		/*
 		 * Mega hack - flag below sea level points
