@@ -73,29 +73,17 @@ static Tcl_Obj *Struct_FieldToObj(Tcl_Interp *interp, t_field *info, void *data,
 			break;
 
 		case FLD_FLAGS8:
-#if 1
 			(void) sprintf(buf, "0x%02X", (int) *((unsigned char *) data));
-#else
-			(void) sprintf(buf, "%#10.2X", (int) *((unsigned char *) data));
-#endif
 			doString = 1;
 			break;
 
 		case FLD_FLAGS16:
-#if 1
 			(void) sprintf(buf, "0x%04X", (unsigned short) *((unsigned short *) data));
-#else
-			(void) sprintf(buf, "%#10.4X", (unsigned short) *((unsigned short *) data));
-#endif
 			doString = 1;
 			break;
 
 		case FLD_FLAGS32:
-#if 1
 			(void) sprintf(buf, "0x%08lX", (unsigned long) *((unsigned long *) data));
-#else
-			(void) sprintf(buf, "%#10.8lX", (unsigned long) *((unsigned long *) data));
-#endif
 			doString = 1;
 			break;
 			
@@ -970,7 +958,7 @@ int Struct_Info(Tcl_Interp *interp, StructType *typePtr, int elemIndex,
 }
 
 /* info array index ?args ...? */
-static int objcmd_info(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_struct_info(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -1050,7 +1038,7 @@ static CommandInit commandInit[] = {
 	{0, "struct", 0, 0, NULL, NULL, (ClientData) 0},
 		{1, "find", 2, 0, "array ?arg ...?", objcmd_find, (ClientData) 0},
 		{1, "flags", 4, 4, "array index field", objcmd_flags, (ClientData) 0},
-		{1, "info", 4, 0, "array index option ?arg ...?", objcmd_info, (ClientData) 0},
+		{1, "info", 4, 0, "array index option ?arg ...?", objcmd_struct_info, (ClientData) 0},
 		{1, "max", 2, 2, "array", objcmd_max, (ClientData) 0},
 		{1, "set", 3, 5, "array index ?field? ?value?", objcmd_set, (ClientData) 0},
 	{0, NULL, 0, 0, NULL, NULL, 0}
