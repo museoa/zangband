@@ -3805,7 +3805,7 @@ void do_cmd_knowledge(void)
 				if (take_notes)
 					do_cmd_knowledge_notes();
 				else
-					bell("You have turned on note taking!");
+					bell("You have not turned on note taking!");
 				break;
 			}
 			default:
