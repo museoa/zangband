@@ -3956,6 +3956,9 @@ void change_level(int level)
 void wipe_all_list(void)
 {
 	int i;
+	
+	/* Hack - cull the players inventory */
+	if (p_ptr->inventory) delete_object_list(&p_ptr->inventory);
 
 	/* Clear the store cache */
 	for (i = 0; i < store_cache_num; i++)

@@ -2350,9 +2350,6 @@ static errr rd_dungeon(void)
 		{
 			/* Count objects */
 			o_cnt++;
-			
-			/* Hack - set region of object */
-			o_ptr->region = cur_region;
 
 			/* Dungeon items */
 			if (!ignore_stuff && (o_ptr->ix || o_ptr->iy))
@@ -2363,6 +2360,9 @@ static errr rd_dungeon(void)
 						  o_ptr->iy);
 					return (152);
 				}
+				
+				/* Hack - set region of object if is in the dungeon */
+				o_ptr->region = cur_region;
 
 				/* Access the item location */
 				c_ptr = area(o_ptr->ix, o_ptr->iy);
@@ -2467,7 +2467,6 @@ static errr rd_dungeon(void)
 
 	if (sf_version > 11)
 	{
-
 		/*** Fields ***/
 
 		/* Read the field count */
