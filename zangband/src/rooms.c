@@ -4479,7 +4479,6 @@ static void build_type17(int bx0, int by0)
 }
 
 
-
 /*
  * Type 18 -- Large room with many small rooms inside.
  *
@@ -4871,9 +4870,50 @@ static void build_type23(int bx0, int by0)
 }
 
 
+/*
+ * Type 24 -- Hourglass-shaped room.
+ */
+static void build_type24(int bx0, int by0)
+{
+	int y1, x1;
+	int y2, x2, yval, xval;
+	bool light;
+	
+	int i;
 
+	/* Try to allocate space for room. */
+	if (!room_alloc(25, 11, FALSE, bx0, by0, &xval, &yval)) return;
 
-#define ROOM_TYPES	23
+	/* Choose lite or dark */
+	light = (p_ptr->depth <= randint1(25));
+
+	/* Large room */
+	y1 = yval - 4;
+	y2 = yval + 4;
+	x1 = xval - 11;
+	x2 = xval + 11;
+
+	/* Generate new room */
+	generate_room(x1 - 1, y1 - 1, x2 + 1, y2 + 1, light);
+	
+	/* Generate outer walls */
+	generate_draw(x1 - 1, y1 - 1, x2 + 1, y2 + 1, FEAT_WALL_OUTER);
+
+	/* Generate inner floors */
+	generate_fill(x1, y1, x2, y2, FEAT_FLOOR);
+	
+	/* Create triangular features */
+	for (i = 1; i < 4; i++)
+	{
+		generate_line(x1 + i * 3, y1 + i, x2 - i * 3, y1 + i, FEAT_WALL_INNER);
+		generate_line(x1 + i * 3, y2 - i, x2 - i * 3, y2 - i, FEAT_WALL_INNER);
+	}
+	
+	/* Put a door in the middle */
+	place_random_door(xval, yval);
+}
+
+#define ROOM_TYPES	24
 
 typedef void (*room_build_type)(int, int);
 
@@ -4901,7 +4941,8 @@ room_build_type room_list[ROOM_TYPES] =
 	build_type20,
 	build_type21,
 	build_type22,
-	build_type23
+	build_type23,
+	build_type24
 };
 
 
