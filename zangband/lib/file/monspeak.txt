@@ -105,12 +105,15 @@ says, 'I'll slaughter you slowly...'
 #LOTR Book3 Chap.6
 says, 'Lathspell I name you, Ill-news; and Ill-news is an ill guest they say.'
 says, 'Forbid his staff!'
+#LOTR Book3 Chap.6
 yells, 'You lie!'
+#LOTR Book3 Chap.9
 says, 'Let me go, let me go!  I know the way!'
+#LOTR Book3 Chap.9
 says, 'My messages are useless now!'
 says, 'No no!'
+#LOTR Book6 Chap.8
 hisses, 'You told me to; you made me do it!'
-
 
 N:138:Robin Hood, the Outlaw
 6
@@ -262,6 +265,7 @@ N:493:Bert the Stone Troll
 N:494:Bill the Stone Troll
 N:495:Tom the Stone Troll
 4
+#Hobbit Chap.2
 complains, 'What's a burrahobbit got to do with my pocket, anyways?'
 rejoices, 'No more roast mutton! Roast adventurer today!'
 says, 'That'll teach yer!'
@@ -309,6 +313,8 @@ N:598:Mandor, Master of the Logrus
 
 N:642:Jasra, Brand's Mistress
 2
+#In Amber Book8, She overtake the Keep of the Four Worlds
+#and turn the previous master into a coatrack
 'I will turn you into a coatrack.'
 'I'm a master of the Keep of the Four Worlds!'
 
@@ -364,14 +370,17 @@ says: 'My throat is well made to gulp you down.'
 growls: 'Come here, young braggart.'
 
 N:713:Fangorn the Treebeard
-1
+2
 #LOTR Book3 Chap.4
 says: 'Hoom, hm, ah well.'
+#LOTR Book6 Chap.6
+#Too long, intentionaly :) to discourage those who defy him.
+booms: 'Burarum, you evileyed - blackhanded - bowlegged - flinthearted - clawfingered - foulbellied - bloodthirsty, morimaite'sincahonda, hoom, hm, ...'
 
 N:715:Glaurung, Father of the Dragons
 N:766:Ancalagon the Black
 1
-says: 'Thou shalt not escape a doom.'
+says: 'Thou shalt not escape thy doom.'
 
 #N:729:Ulik the Troll
 #N:730:Baphomet the Minotaur Lord
