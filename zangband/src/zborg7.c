@@ -1760,8 +1760,8 @@ static bool borg_destroy_aux(bool must_destroy)
 	list_item *l_ptr;
 
 	/* Get the starting power and encumberment */
-	my_power = borg_power();
-	my_home_power = borg_power_home();
+	my_power = g_power;
+	my_home_power = g_power_home;
 	my_encumber = bp_ptr->encumber;
 
 	/* if the carry capacity is used for more than 120% */
@@ -1865,6 +1865,10 @@ static bool borg_destroy_aux(bool must_destroy)
 		b_w = l_ptr->weight;
 	}
 
+	/* Restore correct values in bp_ptr */
+	(void)borg_power();
+	(void)borg_power_home();
+
 	/* Nothing to destroy */
 	if (b_i < 0) return (FALSE);
 
@@ -1962,20 +1966,8 @@ static bool borg_test_stuff(void)
 	bool inven = FALSE;
 
 	/* Is there a way to identify things? */
-	if (!borg_activate_fail(BORG_ACT_IDENTIFY) &&
-		!borg_equips_rod_fail(SV_ROD_IDENTIFY) &&
-		!borg_spell_legal_fail(REALM_ARCANE, 3, 2, 60) &&
-		!borg_spell_legal_fail(REALM_SORCERY, 1, 1, 60) &&
-		!borg_mindcr_legal_fail(MIND_PSYCHOMETRY, 25, 60) &&
-		!borg_equips_staff_fail(SV_STAFF_IDENTIFY) &&
-		!borg_read_scroll_fail(SV_SCROLL_IDENTIFY) &&
-		/* Or *identify* */
-		!borg_spell_legal_fail(REALM_SORCERY, 1, 7, 60) &&
-		!borg_spell_legal_fail(REALM_NATURE, 2, 5, 60) &&
-		!borg_spell_legal_fail(REALM_DEATH, 3, 2, 60) &&
-		!borg_spell_legal_fail(REALM_TRUMP, 3, 1, 60) &&
-		!borg_spell_legal_fail(REALM_LIFE, 3, 5, 60) &&
-		!borg_activate_fail(BORG_ACT_STAR_IDENTIFY)) return (FALSE);
+	if (!bp_ptr->able.id &&
+		bp_ptr->able.star_id < 1000) return (FALSE);
 		
 	/* Look for an item to identify (equipment) */
 	for (i = 0; i < equip_num; i++)
@@ -2154,13 +2146,6 @@ static bool borg_test_stuff(void)
 
 			borg_keypress(ESCAPE);
 
-			/* HACK need to recheck stats if we id something on us. */
-			for (i = 0; i < 6; i++)
-			{
-				my_need_stat_check[i] = TRUE;
-				my_stat_max[i] = 0;
-			}
-
 			/* Success */
 			return (TRUE);
 		}
@@ -2185,13 +2170,7 @@ static bool borg_test_stuff_star(void)
 	list_item *l_ptr;
 
 	/* Do we have the ability? */
-	if (!borg_spell_legal_fail(REALM_SORCERY, 1, 7, 60) &&
-		!borg_spell_legal_fail(REALM_NATURE, 2, 5, 60) &&
-		!borg_spell_legal_fail(REALM_DEATH, 3, 2, 60) &&
-		!borg_spell_legal_fail(REALM_TRUMP, 3, 1, 60) &&
-		!borg_spell_legal_fail(REALM_LIFE, 3, 5, 60) &&
-		!borg_activate_fail(BORG_ACT_STAR_IDENTIFY) &&
-		!borg_read_scroll_fail(SV_SCROLL_STAR_IDENTIFY)) return (FALSE);
+	if (!bp_ptr->able.star_id) return (FALSE);
 
 	/* Look for an item to identify (equipment) */
 	for (i = 0; i < equip_num + inven_num; i++)
@@ -2256,25 +2235,11 @@ static bool borg_test_stuff_star(void)
 				}
 			}
 
-			/* Log -- may be cancelled */
+			/* Make a note */
 			borg_note("# *IDENTIFY*ing %s.", l_ptr->o_name);
 
 			/* Select the item */
 			borg_keypress(I2A(b_i));
-
-			/* press enter a few time (get rid of display) */
-			borg_keypress('\r');
-			borg_keypress('\r');
-			borg_keypress('\r');
-			borg_keypress('\r');
-			borg_keypress(ESCAPE);
-
-			/* HACK need to recheck stats if we id something on us. */
-			for (i = 0; i < 6; i++)
-			{
-				my_need_stat_check[i] = TRUE;
-				my_stat_max[i] = 0;
-			}
 
 			/* Success */
 			return (TRUE);
@@ -2433,7 +2398,7 @@ bool borg_wear_stuff(void)
 
 	bool ring_repeat = FALSE;
 
-	s32b p, b_p = borg_power();
+	s32b p, b_p = g_power;
 
 	list_item *l_ptr;
 
@@ -2455,11 +2420,14 @@ bool borg_wear_stuff(void)
 		if (!borg_obj_known_full(l_ptr) &&
 			borg_obj_star_id_able(l_ptr)) continue;
 
-		/* Where does it go */
+		/* Where does it go */							  
 		slot = borg_wield_slot(l_ptr);
 
 		/* Cannot wear this item */
 		if (slot < 0) continue;
+
+		/* Monks never have a weapon */
+		if (borg_class == CLASS_MONK && slot == EQUIP_WIELD) continue;
 
 		/* Process non-rings */
 		if (slot == EQUIP_LEFT)
@@ -2514,6 +2482,9 @@ bool borg_wear_stuff(void)
 		b_slot = slot;
 	}
 
+	/* Restore internally kept stats */
+	(void)borg_power();
+
 	/* No item so give up */
 	if (b_i < 0) return (FALSE);
 
@@ -2558,7 +2529,7 @@ bool borg_unwear_stuff(void)
 	list_item *l_ptr;
 	
 	/* Get the original power */
-	b_p = borg_power();
+	b_p = g_power;
 
 	/* Get the original danger */
 	b_d = borg_danger(c_x, c_y, 1, TRUE);
@@ -2575,6 +2546,14 @@ bool borg_unwear_stuff(void)
 		/* skip it if it has not been decursed */
 		if (KN_FLAG(l_ptr, TR_CURSED) ||
 			KN_FLAG(l_ptr, TR_HEAVY_CURSE)) continue;
+
+		/* Monks never have a weapon */
+		if (borg_class == CLASS_MONK && slot == EQUIP_WIELD)
+		{
+			/* And if they have, take it off right now */
+			b_slot = 0;
+			break;
+		}
 
 		/* Pretend it is not there */
 		l_ptr->treat_as = TREAT_AS_SWAP;
@@ -2598,6 +2577,9 @@ bool borg_unwear_stuff(void)
 		b_slot = slot;
 		b_p = p;
 	}
+
+	/* Restore internally kept stats */
+	(void)borg_power();
 
 	/* All the equipment is fine */
 	if (b_slot == -1) return (FALSE);

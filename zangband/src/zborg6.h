@@ -89,6 +89,8 @@ extern bool borg_flow_kill_corridor(bool viewable);
 extern bool borg_flow_take(bool viewable, int nearness);
 
 /* Flow in the wilderness */
+extern bool borg_choose_shop(void);
+extern bool borg_find_shop(void);
 extern bool borg_find_town(void);
 extern bool borg_find_dungeon(void);
 extern bool borg_find_home(void);

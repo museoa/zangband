@@ -1436,46 +1436,6 @@ static int borg_guess_race_name(cptr who)
 		return (0);
 	}
 
-	/* Start the search */
-	m = 0;
-	n = borg_unique_size;
-
-	/* Binary search */
-	while (m < n - 1)
-	{
-		/* Pick a "middle" entry */
-		i = (m + n) / 2;
-
-		/* Search to the right (or here) */
-		if (strcmp(borg_unique_text[i], who) <= 0)
-		{
-			m = i;
-		}
-
-		/* Search to the left */
-		else
-		{
-			n = i;
-		}
-	}
-
-	/* Check for equality */
-	if (streq(who, borg_unique_text[m]))
-	{
-		/* Use this monster */
-		return (borg_unique_what[m]);
-	}
-
-	/* Assume player ghost */
-	if (!prefix(who, "The "))
-	{
-		/* What sort of monster is this? */
-		borg_note("# Assuming unknown (%s)", who);
-
-		/* Oops */
-		return (0);
-	}
-
 	/* Hack -- handle "offscreen" */
 	if (suffix(who, " (offscreen)")) suflen = 12;
 
@@ -1523,6 +1483,46 @@ static int borg_guess_race_name(cptr who)
 
 	/* Skip the prefix */
 	who += 4;								   
+
+	/* Start the search */
+	m = 0;
+	n = borg_unique_size;
+
+	/* Binary search */
+	while (m < n - 1)
+	{
+		/* Pick a "middle" entry */
+		i = (m + n) / 2;
+
+		/* Search to the right (or here) */
+		if (strcmp(borg_unique_text[i], who) <= 0)
+		{
+			m = i;
+		}
+
+		/* Search to the left */
+		else
+		{
+			n = i;
+		}
+	}
+
+	/* Check for equality */
+	if (streq(who, borg_unique_text[m]))
+	{
+		/* Use this monster */
+		return (borg_unique_what[m]);
+	}
+
+	/* Assume player ghost */
+	if (!prefix(who, "The "))
+	{
+		/* What sort of monster is this? */
+		borg_note("# Assuming unknown (%s)", who);
+
+		/* Oops */
+		return (0);
+	}
 
 
 	/* Start the search */
@@ -1621,7 +1621,7 @@ static void borg_delete_take(int i)
 	borg_takes_cnt--;
 
 	/* Wipe goals */
-	goal = 0;
+	goal = GOAL_NONE;
 }
 
 
@@ -1758,7 +1758,7 @@ static int borg_new_take(int k_idx, char unknown, int x, int y)
 				  (k_name + k_info[take->k_idx].name), x, y);
 
 	/* Wipe goals */
-	goal = 0;
+	goal = GOAL_NONE;
 
 	/* Result */
 	return (n);
@@ -1824,7 +1824,7 @@ void borg_delete_kill(int who, cptr reason)
 	borg_danger_wipe = TRUE;
 
 	/* Wipe goals */
-	goal = 0;
+	goal = GOAL_NONE;
 }
 
 static int get_blank_kill(void)
@@ -2014,7 +2014,7 @@ static void borg_new_kill(int r_idx, int n, int x, int y)
 	borg_danger_wipe = TRUE;
 
 	/* Wipe goals */
-	goal = 0;
+	goal = GOAL_NONE;
 
 	/* Done */
 	return;
@@ -2183,7 +2183,7 @@ static void observe_kill_move(int new_type, int old_type, int dist)
 			/* Clear goals */
 			if (!(FLAG(bp_ptr, TR_TELEPATHY)) && (goal == GOAL_TAKE))
 			{
-				goal = 0;
+				goal = GOAL_NONE;
 			}
 		}
 	}
@@ -2218,12 +2218,13 @@ static bool remove_bad_kills(u16b who)
 	{
 		char buf[100];
 
-		(void)strnfmt(buf, 100, "vanished : %d, %d", map_loc(ox, oy)->monster,
-					  kill->r_idx);
-
-		/* Not if it has just jumped out of sight */
-		if (distance(c_x, c_y, ox, oy) != MAX_SIGHT)
+		/* Check again because BORG_MAP_VIEW != Line of Sight 
+		if (distance(c_x, c_y, ox, oy) < MAX_SIGHT &&
+			borg_los_pure(c_x, c_y, ox, oy))				  */
 		{
+			(void)strnfmt(buf, 100, "vanished : %d, %d", map_loc(ox, oy)->monster,
+						  kill->r_idx);
+
 			borg_delete_kill(who, buf);
 			return (TRUE);
 		}
@@ -4480,7 +4481,7 @@ void borg_update(void)
 		when_detect_evil = 0;
 
 		/* No goal yet */
-		goal = 0;
+		goal == GOAL_NONE;
 
 		/* Hack -- Clear "shop" goals */
 		goal_shop = -1;

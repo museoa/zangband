@@ -87,9 +87,6 @@
 #define GF_ELEMENTS			102	/* all elements could be cast */
 #define GF_DEATHRAY			103
 
-/* the Z randarts are considered #127 by the borg */
-#define ART_RANDART  127
-
 /* values for the successful_target global */
 #define BORG_TARGET			-1
 #define BORG_FRESH_TARGET	0
@@ -232,8 +229,12 @@ struct borg_town
 
 /* Max size for the wilderness */
 #define BORG_MAX_WILD_SIZE	(max_wild * WILD_BLOCK_SIZE)
+
 /* Maximal distance the borg can travel between dungeons */
 #define BORG_MAX_DISTANCE	(BORG_MAX_WILD_SIZE * 3 / 2)
+
+/* Small distance in the wilderness (when the borg is close enough) */
+#define BORG_SMALL_DISTANCE	96
 
 /*
  * Some variables
@@ -593,7 +594,10 @@ extern int c_y;	/* Current location (Y) */
 extern int g_x;	/* Goal location (X) */
 extern int g_y;	/* Goal location (Y) */
 
-extern int dim_door_y;	/* Safe landing zone for DDoor */
+extern s32b g_power;		/* Current power value */
+extern s32b g_power_home;	/* Current power_home value */
+
+extern int dim_door_y;		/* Safe landing zone for DDoor */
 extern int dim_door_x;
 
 extern int bad_obj_x[50];	/* Dropped cursed artifact at location (X) */

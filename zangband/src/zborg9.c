@@ -1350,7 +1350,8 @@ static void borg_parse_aux(cptr msg, int len)
 	if (streq(msg, "The door appears to be broken."))
 	{
 		/* Clear goals */
-		goal = 0;
+		goal = GOAL_NONE;
+
 		return;
 	}
 
@@ -1358,7 +1359,7 @@ static void borg_parse_aux(cptr msg, int len)
 	if (streq(msg, "The door appears to be stuck."))
 	{
 		/* Clear goals */
-		goal = 0;
+		goal = GOAL_NONE;
 
 		return;
 	}
@@ -1370,7 +1371,7 @@ static void borg_parse_aux(cptr msg, int len)
 	{
 
 		/* Clear goals */
-		goal = 0;
+		goal = GOAL_NONE;
 
 		return;
 	}
@@ -1379,8 +1380,8 @@ static void borg_parse_aux(cptr msg, int len)
 	if (streq(msg, "You tunnel into the granite wall."))
 	{
 		/* Clear goals */
-		goal = 0;
-
+		goal = GOAL_NONE;
+	
 		return;
 	}
 
@@ -1388,8 +1389,8 @@ static void borg_parse_aux(cptr msg, int len)
 	if (streq(msg, "You bump into something."))
 	{
 		/* Clear goals */
-		goal = 0;
-
+		goal = GOAL_NONE;
+	
 		return;
 	}
 
@@ -1397,8 +1398,8 @@ static void borg_parse_aux(cptr msg, int len)
 	if (streq(msg, "You tunnel into the quartz vein."))
 	{
 		/* Clear goals */
-		goal = 0;
-
+		goal = GOAL_NONE;
+	
 		return;
 	}
 
@@ -1406,8 +1407,8 @@ static void borg_parse_aux(cptr msg, int len)
 	if (streq(msg, "You tunnel into the magma vein."))
 	{
 		/* Clear goals */
-		goal = 0;
-
+		goal = GOAL_NONE;
+	
 		return;
 	}
 
@@ -1619,7 +1620,7 @@ static void borg_parse_aux(cptr msg, int len)
 	if ((prefix(msg, "There is a wall ") && !bp_ptr->status.confused))
 	{
 		my_need_alter = TRUE;
-		goal = 0;
+		goal = GOAL_NONE;
 		return;
 	}
 
@@ -1639,7 +1640,7 @@ static void borg_parse_aux(cptr msg, int len)
 		 !bp_ptr->status.confused))
 	{
 		my_need_alter = TRUE;
-		goal = 0;
+		goal = GOAL_NONE;
 		return;
 	}
 
@@ -1681,7 +1682,7 @@ static void borg_parse_aux(cptr msg, int len)
 		}
 
 		my_no_alter = TRUE;
-		goal = 0;
+		goal = GOAL_NONE;
 		return;
 	}
 
@@ -1690,7 +1691,7 @@ static void borg_parse_aux(cptr msg, int len)
 	{
 		my_no_alter = TRUE;
 		/* Clear goals */
-		goal = 0;
+		goal = GOAL_NONE;
 		return;
 
 	}
@@ -1700,7 +1701,7 @@ static void borg_parse_aux(cptr msg, int len)
 		my_no_alter = TRUE;
 
 		/* Clear goals */
-		goal = 0;
+		goal = GOAL_NONE;
 		return;
 
 	}
@@ -1922,7 +1923,7 @@ static void borg_parse_aux(cptr msg, int len)
 	if (prefix(msg, "You are drowning"))
 	{
 		/* Clear goals */
-		goal = 0;
+		goal = GOAL_NONE;
 		borg_note("# Help! I can't swim");
 
 		return;
@@ -1933,7 +1934,7 @@ static void borg_parse_aux(cptr msg, int len)
 		prefix(msg, "The heat burns you!"))
 	{
 		/* Clear goals */
-		goal = 0;
+		goal = GOAL_NONE;
 		borg_note("# Help! I'm burning");
 
 		return;
@@ -1944,7 +1945,7 @@ static void borg_parse_aux(cptr msg, int len)
 		prefix(msg, "The fumes burn you!"))
 	{
 		/* Clear goals */
-		goal = 0;
+		goal = GOAL_NONE;
 		borg_note("# Help! I'm corroding");
 
 		return;
@@ -1957,7 +1958,7 @@ static void borg_parse_aux(cptr msg, int len)
 		borg_note("# Help! I'm poisoned");
 
 		/* Clear goals */
-		goal = 0;
+		goal = GOAL_NONE;
 		return;
 	}
 

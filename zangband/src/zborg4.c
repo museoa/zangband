@@ -2747,7 +2747,8 @@ static void borg_notice_aux2(void)
 	if (borg_activate_fail(BORG_ACT_SATISFY)) bp_ptr->able.id += 5;
 
 	/* Handle "identify" -> infinite identifies */
-	if (borg_spell_legal_fail(REALM_SORCERY, 1, 1, 60) ||
+	if (borg_activate_fail(BORG_ACT_IDENTIFY) ||
+		borg_spell_legal_fail(REALM_SORCERY, 1, 1, 60) ||
 		borg_spell_legal_fail(REALM_ARCANE, 3, 2, 60) ||
 		borg_mindcr_legal_fail(MIND_PSYCHOMETRY, 25, 60))
 	{

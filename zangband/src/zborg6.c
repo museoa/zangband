@@ -1341,7 +1341,7 @@ bool borg_flow_old(int why)
  * coords.  That is closer than needed for a word of recall, but it is an easy
  * way to make sure that the borg doesn't go down the wrong dungeon.
  */
-static bool borg_flow_block(int x, int y, cptr reason, int aim)
+static bool borg_flow_block(int x, int y, cptr reason, int why)
 {
 	/* Don't leave the map */
 	if (x < 0 || x > BORG_MAX_WILD_SIZE) return (FALSE);
@@ -1382,13 +1382,153 @@ static bool borg_flow_block(int x, int y, cptr reason, int aim)
 	borg_flow_spread(250, TRUE, TRUE, FALSE, FALSE);
 
 	/* Attempt to Commit the flow */
-	if (!borg_flow_commit(reason, aim)) return (FALSE);
+	if (!borg_flow_commit(reason, why)) return (FALSE);
 
 	/* Take one step */
-	if (!borg_flow_old(aim)) return (FALSE);
+	if (!borg_flow_old(why)) return (FALSE);
 
 	/* Success */
 	return (TRUE);
+}
+
+
+/*
+ * Prepare to "flow" towards a specific shop entry
+ */
+bool borg_flow_shop_entry(int i)
+{
+	int x, y;
+
+	/* Must be in town */
+	if (bp_ptr->depth) return (FALSE);
+
+	/* Is it a valid shop? */
+	if (i < 0 || i > borg_shop_num) return (FALSE);
+
+	/* Pick up the new target, but not too far */
+	if (c_x < borg_shops[i].x)
+	{
+		/* Flow a block east */
+		x = MIN(c_x + 16, borg_shops[i].x);
+	}
+	else if (c_x > borg_shops[i].x)
+	{
+		/* Flow a block west */
+		x = MAX(c_x - 16, borg_shops[i].x);
+	}
+	else x = c_x;
+
+	if (c_y < borg_shops[i].y)
+	{
+		/* Flow a block south */
+		y = MIN(c_y + 16, borg_shops[i].y);
+	}
+	else if (c_y > borg_shops[i].y)
+	{
+		/* Flow a block north */
+		y = MAX(c_y - 16, borg_shops[i].y);
+	}
+	else y = c_y;
+
+	/* Hack -- re-enter a shop if needed */
+	if (x == c_x && y == c_y)
+	{
+		/* Note */
+		borg_note("# Re-entering a shop");
+
+		/* Enter the store */
+		borg_keypress('5');
+
+		/* Success */
+		return (TRUE);
+	}
+
+	/* Clear the flow codes */
+	borg_flow_clear();
+
+	/* Enqueue the grid */
+	borg_flow_enqueue_grid(x, y);
+
+	/* Spread the flow */
+	borg_flow_spread(250, TRUE, FALSE, FALSE, FALSE);
+
+	/* Attempt to Commit the flow */
+	if (!borg_flow_commit("shop", GOAL_SHOP)) return (FALSE);
+
+	/* Take one step */
+	if (!borg_flow_old(GOAL_SHOP)) return (FALSE);
+
+	/* Success */
+	return (TRUE);
+}
+
+
+/* Choose a shop to visit */
+bool borg_choose_shop(void)
+{
+	int i;
+	s32b dist, b_d = BORG_SMALL_DISTANCE;
+
+	/* Must be in town */
+	if (bp_ptr->depth) return (FALSE);
+
+	/* Only try to find a shop when there is no goal */
+	if (goal && goal != GOAL_SHOP) return (FALSE);
+
+	/* If we are already flowing toward a shop do not check again... */
+	if (goal_shop != -1)
+	{
+		borg_note("# Using previous goal shop: %d", goal_shop);
+		return (TRUE);
+	}
+	
+	/* Find 'best' shop to go to */
+	for (i = 0; i < borg_shop_num; i++)
+	{
+		/* Do not revisit shops */
+		if (borg_shops[i].visit) continue;
+
+		/* Get distance */
+		dist = distance(c_x, c_y, borg_shops[i].x, borg_shops[i].y);
+
+		/* Visit only the shops in one town */
+		if (dist > BORG_SMALL_DISTANCE) continue;
+
+		/* Only closer shops */
+		if (dist >= b_d) continue;
+
+		goal_shop = i;
+	}
+
+	/* All shops have been visited */
+	if (goal_shop == -1) return (FALSE);
+
+	/* We want to shop */
+	borg_note("# Goal shop: %d, dist: %d", goal_shop, b_d);
+
+	/* Success */
+	return (TRUE);
+}
+
+
+/* Find the closest shop from the closest town */
+bool borg_find_shop(void)
+{
+	if (borg_choose_shop())
+	{
+		/* Try and visit a shop, if so desired */
+		if (borg_flow_shop_entry(goal_shop)) return (TRUE);
+
+		/* Let us know what the value is when we fail */
+		borg_note("# Failed to get good shop!");
+	}
+
+	goal = GOAL_NONE;
+	goal_shop = -1;
+	shop_num = -1;
+
+	/* No shop */
+	return (FALSE);
 }
 
 
@@ -1429,7 +1569,7 @@ bool borg_find_town(void)
 
 			/* Was it visited recently? */
 			if (borg_towns[i].visit) continue;
-			
+
 			/* Is it closer? */
 			if (d >= b_d) continue;
 
@@ -1443,7 +1583,7 @@ bool borg_find_town(void)
 	if (b_i == -1) return (FALSE);
 
 	/* More or less in town */
-	if (b_d < 30)
+	if (b_d < BORG_SMALL_DISTANCE)
 	{
 		/* Mark this place to prevent looping */
 		borg_towns[b_i].visit = TRUE;
@@ -1452,6 +1592,9 @@ bool borg_find_town(void)
 		goal_town = -1;
 
 		/* Go shopping */
+		if (borg_find_shop()) return (TRUE);
+
+		/* Oh well */
 		return (FALSE);
 	}
 
@@ -1463,6 +1606,10 @@ bool borg_find_town(void)
 	{
 		/* Happy */
 		return (TRUE);
+	}
+	else
+	{
+		borg_note("Flow block failed because the target was in deep water");
 	}
 
 	goal = GOAL_NONE;
@@ -1808,77 +1955,6 @@ bool borg_flow_light(int why)
 
 	/* Take one step */
 	if (!borg_flow_old(why)) return (FALSE);
-
-	/* Success */
-	return (TRUE);
-}
-
-
-/*
- * Prepare to "flow" towards a specific shop entry
- */
-bool borg_flow_shop_entry(int i)
-{
-	int x, y;
-
-	/* Must be in town */
-	if (bp_ptr->depth) return (FALSE);
-
-	/* Is it a valid shop? */
-	if (i < 0 || i > borg_shop_num) return (FALSE);
-
-	/* Pick up the new target, but not too far */
-	if (c_x < borg_shops[i].x)
-	{
-		/* Flow a block east */
-		x = MIN(c_x + 16, borg_shops[i].x);
-	}
-	else if (c_x > borg_shops[i].x)
-	{
-		/* Flow a block west */
-		x = MAX(c_x - 16, borg_shops[i].x);
-	}
-	else x = c_x;
-
-	if (c_y < borg_shops[i].y)
-	{
-		/* Flow a block south */
-		y = MIN(c_y + 16, borg_shops[i].y);
-	}
-	else if (c_y > borg_shops[i].y)
-	{
-		/* Flow a block north */
-		y = MAX(c_y - 16, borg_shops[i].y);
-	}
-	else y = c_y;
-
-	/* Hack -- re-enter a shop if needed */
-	if (x == c_x && y == c_y)
-	{
-		/* Note */
-		borg_note("# Re-entering a shop");
-
-		/* Enter the store */
-		borg_keypress('5');
-
-		/* Success */
-		return (TRUE);
-	}
-
-	/* Clear the flow codes */
-	borg_flow_clear();
-
-	/* Enqueue the grid */
-	borg_flow_enqueue_grid(x, y);
-
-	/* Spread the flow */
-	borg_flow_spread(250, TRUE, FALSE, FALSE, FALSE);
-
-	/* Attempt to Commit the flow */
-	if (!borg_flow_commit("shop", GOAL_SHOP)) return (FALSE);
-
-	/* Take one step */
-	if (!borg_flow_old(GOAL_SHOP)) return (FALSE);
 
 	/* Success */
 	return (TRUE);

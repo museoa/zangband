@@ -321,7 +321,7 @@ static int borg_think_home_sell_aux2(void)
 	s32b p, b_p, b_s = 0;
 
 	/* Evaluate the home */
-	b_p = borg_power() + borg_power_home();
+	b_p = g_power + g_power_home;
 
 	/* If the home is almost full */
 	if (home_num >= STORE_INVEN_MAX - 1)
@@ -376,6 +376,10 @@ static int borg_think_home_sell_aux2(void)
 		b_i = i;
 		b_p = p;
 	}
+
+	/* Set the internally kept stats correctly */
+	g_power = borg_power();
+	g_power_home = borg_power_home();
 
 	/* Item to give to home, if any. */
 	return (b_i);
@@ -499,7 +503,7 @@ static bool borg_think_shop_sell_aux(int shop)
 	s32b b_c = 30001L;
 
 	/* Evaluate */
-	b_p = borg_power();
+	b_p = g_power;
 
 	/* Sell stuff */
 	for (i = 0; i < inven_num; i++)
@@ -546,21 +550,20 @@ static bool borg_think_shop_sell_aux(int shop)
 		b_c = c;
 	}
 
-	/* Sell something (if useless) */
-	if (b_i >= 0)
-	{
-		/* Visit that shop */
-		goal_shop = shop;
+	/* Set the internally kept stats correctly */
+	g_power = borg_power();
 
-		/* Sell that item */
-		borg_think_shop_sell(b_i, &inventory[b_i]);
+	/* Sell nothing */
+	if (b_i == -1) return (FALSE);
 
-		/* Success */
-		return (TRUE);
-	}
+	/* Visit that shop */
+	goal_shop = shop;
 
-	/* Assume not */
-	return (FALSE);
+	/* Sell that item */
+	borg_think_shop_sell(b_i, &inventory[b_i]);
+
+	/* Success */
+	return (TRUE);
 }
 
 /*
@@ -653,7 +656,7 @@ static bool borg_think_shop_buy_aux(int shop)
 	if (inven_num == INVEN_PACK) return (FALSE);
 
 	/* Extract the "power" */
-	b_p = borg_power();
+	b_p = g_power;
 
 	/* Attempt to use shop items */
 	use_shop = TRUE;
@@ -735,21 +738,20 @@ static bool borg_think_shop_buy_aux(int shop)
 	/* Use normal items */
 	use_shop = FALSE;
 
+	/* Set the internally kept stats correctly */
+	g_power = borg_power();
+
 	/* Buy something */
-	if (b_n >= 0)
-	{
-		/* Visit that shop */
-		goal_shop = shop;
+	if (b_n == -1) return (FALSE);
 
-		/* Buy that item */
-		borg_think_shop_buy(b_n);
+	/* Visit that shop */
+	goal_shop = shop;
 
-		/* Success */
-		return (TRUE);
-	}
+	/* Buy that item */
+	borg_think_shop_buy(b_n);
 
-	/* Nope */
-	return (FALSE);
+	/* Success */
+	return (TRUE);
 }
 
 
@@ -766,7 +768,7 @@ static bool borg_think_home_buy_aux(void)
 	if (inven_num == INVEN_PACK) return (FALSE);
 
 	/* Extract the "power" */
-	b_p = borg_power() + borg_power_home();
+	b_p = g_power + g_power_home;
 
 	/* Scan the home */
 	for (n = 0; n < home_num; n++)
@@ -814,21 +816,21 @@ static bool borg_think_home_buy_aux(void)
 		b_p = p;
 	}
 
-	/* Buy something */
-	if (b_n != -1)
-	{
-		/* Go to the home */
-		goal_shop = home_shop;
+	/* Set the internally kept stats correctly */
+	g_power = borg_power();
+	g_power_home = borg_power_home();
 
-		/* Buy that item */
-		borg_think_shop_buy(b_n);
+	/* Buy nothing */
+	if (b_n == -1) return (FALSE);
 
-		/* Success */
-		return (TRUE);
-	}
+	/* Go to the home */
+	goal_shop = home_shop;
 
-	/* Nope */
-	return (FALSE);
+	/* Buy that item */
+	borg_think_shop_buy(b_n);
+
+	/* Success */
+	return (TRUE);
 }
 
 
@@ -850,7 +852,7 @@ static bool borg_think_shop_grab_aux(int shop)
 	if (inven_num >= INVEN_PACK - 2) return (FALSE);
 
 	/* Evaluate the home */
-	b_s = borg_power_home();
+	b_s = g_power_home;
 
 	/* Use shops */
 	use_shop = TRUE;
@@ -903,24 +905,23 @@ static bool borg_think_shop_grab_aux(int shop)
 	/* Normal power calculation */
 	use_shop = FALSE;
 
+	/* Set the internally kept stats correctly */
+	g_power_home = borg_power_home();
+
 	/* Buy something */
-	if (b_n >= 0)
-	{
-		/* Visit that shop */
-		goal_shop = shop;
+	if (b_n == -1) return (FALSE);
 
-		/* Buy that item */
-		borg_think_shop_buy(b_n);
+	/* Visit that shop */
+	goal_shop = shop;
 
-		/* Hack - get out of the store */
-		borg_keypress(ESCAPE);
+	/* Buy that item */
+	borg_think_shop_buy(b_n);
 
-		/* Success */
-		return (TRUE);
-	}
+	/* Hack - get out of the store */
+	borg_keypress(ESCAPE);
 
-	/* Nope */
-	return (FALSE);
+	/* Success */
+	return (TRUE);
 }
 
 
@@ -936,7 +937,7 @@ static bool borg_think_home_grab_aux(void)
 	if (inven_num >= INVEN_PACK - 2) return (FALSE);
 
 	/* Evaluate the home */
-	b_s = borg_power() + borg_power_home();
+	b_s = g_power + g_power_home;
 
 	/* If the home is full, force one item to be picked up */
 	if (home_num == STORE_INVEN_MAX) b_s = 0;
@@ -972,89 +973,21 @@ static bool borg_think_home_grab_aux(void)
 		b_s = s;
 	}
 
-	/* Stockpile */
-	if (b_n >= 0)
-	{
-		/* Visit the home */
-		goal_shop = home_shop;
+	/* Set the internally kept stats correctly */
+	g_power = borg_power();
+	g_power_home = borg_power_home();
 
-		/* Grab that item */
-		borg_think_shop_buy(b_n);
+	/* Do nothing */
+	if (b_n == -1) return (FALSE);
 
-		/* Success */
-		return (TRUE);
-	}
+	/* Visit the home */
+	goal_shop = home_shop;
 
-	/* Assume not */
-	return (FALSE);
-}
+	/* Grab that item */
+	borg_think_shop_buy(b_n);
 
-
-/*
- * Choose a shop to visit (see above)
- */
-static bool borg_choose_shop(void)
-{
-	int i;
-	s32b use, bu = 0;
-	s32b dist;
-	s32b time;
-
-	/* Must be in town */
-	if (bp_ptr->depth) return (FALSE);
-
-	/* If we are already flowing toward a shop do not check again... */
-	if (goal_shop != -1)
-	{
-		borg_note("# Using previous goal shop: %d", goal_shop);
-		return (TRUE);
-	}
-	
-	/* Find 'best' shop to go to */
-	for (i = 0; i < borg_shop_num; i++)
-	{
-		/* Do not revisit shops */
-		if (borg_shops[i].visit) continue;
-
-		/* Get distance */
-		dist = distance(c_x, c_y, borg_shops[i].x, borg_shops[i].y);
-
-		/* Get time since last been there */
-		time = borg_t - borg_shops[i].when;
-
-		/* How useful is this shop? */
-		use = time / (dist + 1);
-		use = use * (borg_shops[i].u_count + 1) / (borg_shops[i].b_count + 1);
-
-		/* Track most-useful shop */
-		if (use > bu)
-		{
-			goal_shop = i;
-			bu = use;
-		}
-	}
-
-	/* All shops have been visited */
-	if (goal_shop == -1) return (FALSE);
-
-	/* Is it worth our while to continue? */
-	if (bu > SHOP_SCAN_THRESHOLD)
-	{
-		/* We want to shop */
-		borg_note("# Goal shop: %d, use: %d", goal_shop, (int)bu);
-
-		/* Success */
-		return (TRUE);
-	}
-
-	/* Assume no important shop */
-	goal_shop = -1;
-
-	/* Let us know what the value is when we fail */
-	borg_note("# No more shopping - value: %d", bu);
-
-	/* Failure */
-	return (FALSE);
+	/* Success */
+	return (TRUE);
 }
 
 
@@ -1567,11 +1500,14 @@ bool borg_think_store(void)
 {
 	int i;
 
-	/* Cheat the current gold */
-	borg_gold = p_ptr->au;
+	/* Set the internally kept stats correctly */
+	g_power = borg_power();
+	g_power_home = borg_power_home();
 
 	/* Clear goal */
 	goal = GOAL_NONE;
+
+	if (goal == GOAL_NONE) 	borg_note("Null at think_store");
 
 	/* Retrieve the correct place */
 	for (i = 0; i < borg_shop_num; i++)
@@ -1979,8 +1915,9 @@ bool borg_think_dungeon(void)
 
 	/*** crucial goals ***/
 
-	/* examine equipment and swaps */
-	borg_notice();
+	/* Set the internally kept stats correctly */
+	g_power = borg_power();
+	g_power_home = borg_power_home();
 
 	/* require light-- */
 	if (!bp_ptr->cur_lite && (bp_ptr->depth >= 1))
@@ -2156,7 +2093,6 @@ bool borg_think_dungeon(void)
 	/* Maybe destroy an item */
 	if (borg_destroy()) return (TRUE);
 
-
 	/*** Flow towards objects ***/
 
 	/* Continue flowing towards objects */
@@ -2218,22 +2154,8 @@ bool borg_think_dungeon(void)
 	/* Explore interesting grids */
 	if (borg_flow_dark(FALSE)) return (TRUE);
 
-
 	/*** Deal with shops ***/
-
-	/* Hack -- Visit the shops */
-	if (borg_choose_shop())
-	{
-		/* Try and visit a shop, if so desired */
-		if (borg_flow_shop_entry(goal_shop)) return (TRUE);
-
-		/* Let us know what the value is when we fail */
-		borg_note("# Failed to get good shop!");
-
-		goal_shop = -1;
-		shop_num = -1;
-	}
-
+	if (borg_find_shop()) return (TRUE);
 
 	/*** Leave the Level ***/
 

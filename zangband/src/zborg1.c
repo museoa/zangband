@@ -204,6 +204,9 @@ int c_y;	/* Current location (Y) */
 int g_x;	/* Goal location (X) */
 int g_y;	/* Goal location (Y) */
 
+s32b g_power;		/* Current power value */
+s32b g_power_home;	/* Current power_home value */
+
 int dim_door_y;	/* Safe landing zone for DDoor */
 int dim_door_x;
 
