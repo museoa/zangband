@@ -46,8 +46,24 @@
 #error Must have USE_TRANSPARENCY compile-time flag on.
 #endif
 
-/* Hack - tile size for Adam Bolt tiles */
+/* 
+ * The tile size to use.  (Configure this if you want.)
+ *
+ * This is 16 by default - but any multiple of 4 works.
+ * Try setting this to be 20 or larger if you have a big screen.
+ * Settings as small as 8 also work. (However, things are a bit
+ * hard to see on that setting.) -SF-
+ *
+ * XXX XXX This probably could be converted to work with any
+ * even number, with a few minor changes.
+ */
 #define P_TILE_SIZE	16
+
+
+
+
+
+/* Rest of the dependancies */
 
 #ifndef __MAKEDEPEND__
 #include <X11/Xlib.h>
@@ -556,7 +572,7 @@ static u32b pj_row2[64];
 static int pj_cur_row;
 
 /* Font data */
-static XImage *font_raw;
+static XImage *font_data;
 
 /* Number of bytes per pixel */
 static int bytes_per_pixel;
@@ -1293,47 +1309,6 @@ static errr Infofnt_text_std(int x, int y, cptr str, int len)
 }
 
 
-/*
- * Painting where text would be
- */
-static errr Infofnt_text_non(int x, int y, cptr str, int len)
-{
-	int w, h;
-
-
-	/*** Find the width ***/
-
-	/* Negative length is a flag to count the characters in str */
-	if (len < 0) len = strlen(str);
-
-
-	/* Ignore Vertical Justifications */
-	y = y * Infofnt->hgt + Infowin->oy;
-
-
-	/*** Decide where to place the string, horizontally ***/
-
-	/* Line up with x at left edge of column 'x' */
-	x = x * Infofnt->wid + Infowin->ox;
-		
-	/* Simply do 'Infofnt->hgt' (a single row) high */
-	h = Infofnt->hgt;
-		
-	/* The total width will be 'len' chars * standard width */
-	w = len * Infofnt->wid;
-
-
-	/*** Actually 'paint' the area ***/
-
-	/* Just do a Fill Rectangle */
-	XFillRectangle(Metadpy->dpy, Infowin->win, Infoclr->gc, x, y, w, h);
-
-	/* Success */
-	return (0);
-}
-
-
-
 /*************************************************************************/
 
 
@@ -1662,9 +1637,10 @@ static errr CheckEvent(bool wait)
 				
 				cols = 80;
 #endif /* 0 */
-				cols = (Infowin->w - (ox + ox)) / P_TILE_SIZE - 1;
+				
 				rows = (Infowin->h - (oy + oy)) / P_TILE_SIZE - 1;
-
+				cols = (Infowin->w - (ox + ox) - rows * P_TILE_SIZE / 2)
+					 / P_TILE_SIZE - 1;
 			}
 			else
 			{
@@ -1673,23 +1649,25 @@ static errr CheckEvent(bool wait)
 				rows = (Infowin->h - (oy + oy)) / td->fnt->hgt;
 			}
 
-
-			/* Hack -- minimal size */
-			if (cols < 1) cols = 1;
-			if (rows < 1) rows = 1;
-
 			if (window == 0)
 			{
 				/* Hack the main window must be at least 80x24 */
 				if (cols < 80) cols = 80;
 				if (rows < 24) rows = 24;
 			}
+			else
+			{
+				/* Hack -- minimal size for normal windows */
+				if (cols < 1) cols = 1;
+				if (rows < 1) rows = 1;
+			}
 
 			if (window == 0)
 			{ 
 				/* Desired size of window */
 
-				wid = (cols + 1) * P_TILE_SIZE + ox * 2;
+				wid = (cols + 1) * P_TILE_SIZE + rows * P_TILE_SIZE / 2 
+					+ ox * 2;
 				hgt = (rows + 1) * P_TILE_SIZE + oy * 2;
 			}
 			else
@@ -1790,14 +1768,15 @@ static errr Term_xtra_xpj_react(void)
 				if (i > 31) continue;
 								
 				/* Need to redo the font metrics */
-				for (j = 0; j < 16; j++)
+				for (j = 0; j < P_TILE_SIZE; j++)
 				{
-					for (k = 0; k < 128; k++)
+					for (k = 0; k < 128 * P_TILE_SIZE; k++)
 					{
 						/* Recolour the changed pixels */
-						if (XGetPixel(font_raw, i * 16 + j, k))
+						if (XGetPixel(font_data, i * P_TILE_SIZE + j, k))
 						{
-							XPutPixel(font_raw, i * 16 + j, k, pixel);
+							XPutPixel(font_data, i * P_TILE_SIZE + j, k,
+								 pixel);
 						}
 					}
 				}
@@ -1858,11 +1837,22 @@ static errr Term_xtra_xpj(int n, int v)
  */
 static errr Term_curs_xpj(int x, int y)
 {
-	/* Draw the cursor */
-	Infoclr_set(xor);
-
-	/* Hilite the cursor character */
-	Infofnt_text_non(x, y, " ", 1);
+	/* Are we on the main window? */
+	if (Term->data == &data[0])
+	{
+		XDrawRectangle(Metadpy->dpy, Infowin->win, xor->gc,
+			 x * P_TILE_SIZE + y * P_TILE_SIZE / 2
+			 + P_TILE_SIZE  / 4 + Infowin->ox, 
+			 y * P_TILE_SIZE + P_TILE_SIZE / 2 + Infowin->oy,
+			  P_TILE_SIZE, P_TILE_SIZE);
+	}
+	else
+	{
+		XDrawRectangle(Metadpy->dpy, Infowin->win, xor->gc,
+			 x * Infofnt->wid + Infowin->ox,
+			 y * Infofnt->hgt + Infowin->oy,
+			 Infofnt->wid, Infofnt->hgt);
+	}
 
 	/* Success */
 	return (0);
@@ -1943,7 +1933,8 @@ static void draw_block8(void *tiles[PJ_MAX],
 				 *
 				 * This is majorly optimised.
 				 * The offsets have been moved into the pointers passed
-				 * by tiles
+				 * by tiles.  All that remains are the parts dependant
+				 * on i and j.
 				 */
 				pixel = ((byte *) tiles[val])
 					[t_xscale[val] * j / 2 + i * (wall_flip[val] + 1)
@@ -1956,7 +1947,7 @@ static void draw_block8(void *tiles[PJ_MAX],
 	}
 }
 
-/* Draw a block with word-sized pixels */
+/* Draw a block with 16bit pixels */
 static void draw_block16(void *tiles[PJ_MAX],
 	 u16b pj_table[P_TILE_SIZE][P_TILE_SIZE / 2], u16b mask,
 	 term_data *td)
@@ -2005,8 +1996,8 @@ static void draw_block16(void *tiles[PJ_MAX],
 				
 	
 				/* 
-				 * Update the bit so that transparency works
-				 * (by getting rid of the bit we are using now.)
+				 * Update the mask so that transparency works
+				 * (by getting rid of the particular bit we are using now.)
 				 */
 				value &= (~(1 << val));
 	
@@ -2015,7 +2006,8 @@ static void draw_block16(void *tiles[PJ_MAX],
 				 *
 				 * This is majorly optimised.
 				 * The offsets have been moved into the pointers passed
-				 * by tiles
+				 * by tiles.  All that remains are the parts dependant
+				 * on i and j.
 				 */
 				pixel = ((u16b *)tiles[val])
 					[t_xscale[val] * j / 2 + i * (wall_flip[val] + 1)
@@ -2086,7 +2078,8 @@ static void draw_block32(void *tiles[PJ_MAX],
 				 *
 				 * This is majorly optimised.
 				 * The offsets have been moved into the pointers passed
-				 * by tiles
+				 * by tiles.  All that remains are the parts dependant
+				 * on i and j.
 				 */
 				pixel = ((u32b *)tiles[val])
 					[t_xscale[val] * j / 2 + i * (wall_flip[val]+1)
@@ -2099,13 +2092,14 @@ static void draw_block32(void *tiles[PJ_MAX],
 	}
 }
 
-/* Macro used to set the tabe information */
+/* Macro used to set the tile information */
 #define set_tile1(N, X, Y) table[N] = &(((byte *)td->tiles->data)\
 	[(t_offsetx1[N] + (X) * P_TILE_SIZE\
 		+ (t_offsety1[N] + (Y) * P_TILE_SIZE) * 32 * P_TILE_SIZE)\
 		 * bytes_per_pixel])
 
-#define set_font1(N, Y, X) table[N] = &(((byte *)font_raw->data)\
+/* Macro used to set the tile (font-based) information */
+#define set_font1(N, Y, X) table[N] = &(((byte *)font_data->data)\
 	[(t_offsetx1[N] + (X) * P_TILE_SIZE\
 		+ (t_offsety1[N] + (Y) * P_TILE_SIZE) * 32 * P_TILE_SIZE)\
 		 * bytes_per_pixel])
@@ -2351,13 +2345,14 @@ static errr draw_rect_t1(int x, int y, term_data *td, int xp, int yp)
 	return (0);
 }
 
-/* Macro used to set the tabe information */
+/* Macro used to set the tile information */
 #define set_tile2(N, X, Y) table[N] = &(((byte *)td->tiles->data)\
 	[(t_offsetx2[N] + (X) * P_TILE_SIZE\
 		+ (t_offsety2[N] + (Y) * P_TILE_SIZE) * 32 * P_TILE_SIZE)\
 			 * bytes_per_pixel]) 
 
-#define set_font2(N, Y, X) table[N] = &(((byte *)font_raw->data)\
+/* Macro used to set the tile (font-based) information */
+#define set_font2(N, Y, X) table[N] = &(((byte *)font_data->data)\
 	[(t_offsetx2[N] + (X) * P_TILE_SIZE\
 		+ (t_offsety2[N] + (Y) * P_TILE_SIZE) * 32 * P_TILE_SIZE)\
 		 * bytes_per_pixel])
@@ -2764,7 +2759,7 @@ static errr Term_wipe_xpj(int x, int y, int n)
 
 
 /* Load the font data */
-static XImage *ReadFONT(Display *dpy, char *Name)
+static XImage *ReadFONT(Display *dpy, char *Name, u16b size)
 {
 	Visual *visual = DefaultVisual(dpy, DefaultScreen(dpy));
 
@@ -2787,10 +2782,7 @@ static XImage *ReadFONT(Display *dpy, char *Name)
 	int num = 0, error_idx = -1;
 
 	/* Determine total bytes needed for image */
-	i = 1;
-	j = (depth - 1) >> 2;
-	while (j >>= 1) i <<= 1;
-	total = 32 * 16 * 128 * 16 * i;
+	total = 32 * size * 128 * size * bytes_per_pixel;
 	
 	
 	/* Open the BMP file */
@@ -2806,7 +2798,7 @@ static XImage *ReadFONT(Display *dpy, char *Name)
 	C_MAKE(Data, total, char);
 
 	Res = XCreateImage(dpy, visual, depth, ZPixmap, 0,
-	                   Data, 16 * 32, 128 * 16,
+	                   Data, size * 32, size * 128,
 	                   32, 0);
 					   
 	/* Failure */
@@ -2871,7 +2863,7 @@ static XImage *ReadFONT(Display *dpy, char *Name)
 			}
 			
 			/* Verify information */
-			if (j != 16)
+			if (j != size)
 			{
 				sprintf(tmp_string, 
 					"Incorrect font size on line %d", num);
@@ -2886,14 +2878,14 @@ static XImage *ReadFONT(Display *dpy, char *Name)
 		if (buf[0] == 'F')
 		{
 			/* Verify information */
-			if (j >= 16)
+			if (j >= size)
 			{
 				sprintf(tmp_string, 
 					"Incorrect font size length on line %d", num);
 				quit(tmp_string);
 			}
 			
-			if (strlen(buf) != 18)
+			if (((int) strlen(buf)) != size + 2)
 			{
 				sprintf(tmp_string, 
 					"Incorrect font size width on line %d", num);
@@ -2901,7 +2893,7 @@ static XImage *ReadFONT(Display *dpy, char *Name)
 			}
 			
 			/* Create the line */
-			for (k = 0; k < 16; k++)
+			for (k = 0; k < size; k++)
 			{
 				line[k] = buf[k + 2];
 			}
@@ -2911,17 +2903,17 @@ static XImage *ReadFONT(Display *dpy, char *Name)
 			{
 				pixel = clr[k]->fg;
 				
-				for (m = 0; m < 16; m++)
+				for (m = 0; m < size; m++)
 				{
 					if (line[m] == '*')
 					{
 						/* Coloured pixel */
-						XPutPixel(Res, k * 16 + m, i * 16 + j, pixel);
+						XPutPixel(Res, k * size + m, i * size + j, pixel);
 					}
 					else
 					{
 						/* Blank pixel */
-						XPutPixel(Res, k * 16 + m, i * 16 + j, 0);
+						XPutPixel(Res, k * size + m, i * size + j, 0);
 					}
 				}
 			}
@@ -2935,7 +2927,7 @@ static XImage *ReadFONT(Display *dpy, char *Name)
 	my_fclose(fp);
 
 	/* Paranoia - does the file end early? */
-	if ((i != 127) || (j != 16)) return (NULL);
+	if ((i != 127) || (j != size)) return (NULL);
 	
 	return (Res);
 }
@@ -3220,7 +3212,7 @@ errr init_xpj(int argc, char *argv[])
 
 	cptr dpy_name = "";
 
-	int num_term = MAX_TERM_DATA;
+	int num_term = 3;
 
 	char filename[1024];
 
@@ -3229,6 +3221,18 @@ errr init_xpj(int argc, char *argv[])
 
 	char *TmpData;
 
+	/* Load graphics */
+	Display *dpy;
+
+	XImage *tiles_raw;
+	XImage *font_raw;
+	
+	/* Check tile size */
+	if (P_TILE_SIZE % 4)
+	{
+		quit("Need to compile with P_TILE_SIZE as a multiple of four.");
+	}
+	
 	/* Parse args */
 	for (i = 1; i < argc; i++)
 	{
@@ -3334,148 +3338,143 @@ errr init_xpj(int argc, char *argv[])
 
 		ANGBAND_GRAF = "new";
 	}
-
-	/* Load graphics */
-	if (use_graphics)
-	{
-		Display *dpy = Metadpy->dpy;
-
-		XImage *tiles_raw;
-
-		/* Load the graphical tiles */
-		tiles_raw = ReadBMP(dpy, filename);
-
-		/* Initialize the windows */
-		for (i = 0; i < num_term; i++)
-		{
-			term_data *td = &data[i];
-
-			term *t = &td->t;
-
-			/* Use graphics sometimes */
-			t->higher_pict = TRUE;
-
-			if (i == 0)
-			{
-				/* Graphics hook */
-				t->pict_hook = Term_skew_xpj;
-				
-				/* Always use graphics */
-				t->always_pict = TRUE;
-				
-				/* Resize tiles */
-				td->tiles =
-					ResizeImage(dpy, tiles_raw,
-					pict_wid, pict_hgt,
-					P_TILE_SIZE, P_TILE_SIZE);
-			}
-			else
-			{
-				/* Graphics hook */
-				t->pict_hook = Term_pict_xpj;
-				
-				/* Resize tiles */
-				td->tiles =
-					ResizeImage(dpy, tiles_raw,
-					pict_wid, pict_hgt,
-					td->fnt->wid, td->fnt->hgt);
-			}
-		}
-
-		/* Initialize the transparency masks */
-		for (i = 0; i < num_term; i++)
-		{
-			term_data *td = &data[i];
-			int ii, jj;
-			int depth = DefaultDepth(dpy, DefaultScreen(dpy));
-			Visual *visual = DefaultVisual(dpy, DefaultScreen(dpy));
-			int total;
-
-
-			/* Determine total bytes needed for image */
-			ii = 1;
-			jj = (depth - 1) >> 2;
-			while (jj >>= 1) ii <<= 1;
-			
-			if (i == 0)
-			{
-				total = P_TILE_SIZE * P_TILE_SIZE * ii;
-			}
-			else
-			{
-				total = td->fnt->wid * td->fnt->hgt * ii;
-			}
-			
-			/* Save number of bytes per pixel */
-			bytes_per_pixel = ii;
-			
-			switch (bytes_per_pixel)
-			{
-				case 1:
-				{
-					draw_block = draw_block8;
-					
-					/* Mega Hack^2 - assume the top left corner is "black" */
-					pix_blank = ((byte *) data[0].tiles->data)
-						[6 * P_TILE_SIZE * 32];
-					break;
-				}
-				case 2:
-				{
-					draw_block = draw_block16;
-					
-					/* Mega Hack^2 - assume the top left corner is "black" */
-					pix_blank = ((u16b *) data[0].tiles->data)
-						[6 * P_TILE_SIZE * 32];
-					break;
-				}
-				case 4:
-				{
-					draw_block = draw_block32;
-					
-					/* Mega Hack^2 - assume the top left corner is "black" */
-					pix_blank = ((u32b *) data[0].tiles->data)
-						[6 * P_TILE_SIZE * 32];
-					break;
-				}
-				default:
-				{
-					quit("Unsupported bytes per pixel format of screen");
-					break;
-				}
-			}
-			
-
-			TmpData = (char *)malloc(total);
-
-			if (i == 0)
-			{
-				/* Normal tiles */
-				td->TmpImage = XCreateImage(dpy,visual,depth,
-					ZPixmap, 0, TmpData,
-					P_TILE_SIZE, P_TILE_SIZE, 32, 0);
-				
-				/* Skewed tiles */
-				TmpData = (char *)malloc(total / 2);
-				
-				td->SkewImage = XCreateImage(dpy, visual, depth,
-					ZPixmap, 0, TmpData,
-					P_TILE_SIZE / 2, P_TILE_SIZE, 32, 0);
-			}
-			else
-			{
-				td->TmpImage = XCreateImage(dpy, visual, depth,
-					ZPixmap, 0, TmpData,
-					td->fnt->wid, td->fnt->hgt, 32, 0);
-			}
-
-		}
-		/* Free tiles_raw? XXX XXX */
-	}
 	else
 	{
 		quit("Could not initialise graphics!");
 	}
+	
+	dpy = Metadpy->dpy;	
+
+	/* Load the graphical tiles */
+	tiles_raw = ReadBMP(dpy, filename);
+
+	/* Initialize the windows */
+	for (i = 0; i < num_term; i++)
+	{
+		term_data *td = &data[i];
+		
+		term *t = &td->t;
+
+		/* Use graphics sometimes */
+		t->higher_pict = TRUE;
+
+		if (i == 0)
+		{
+			/* Graphics hook */
+			t->pict_hook = Term_skew_xpj;
+				
+			/* Always use graphics */
+			t->always_pict = TRUE;
+				
+			/* Resize tiles */
+			td->tiles =
+				ResizeImage(dpy, tiles_raw,
+				pict_wid, pict_hgt,
+				P_TILE_SIZE, P_TILE_SIZE);
+		}
+		else
+		{
+			/* Graphics hook */
+			t->pict_hook = Term_pict_xpj;
+				
+			/* Resize tiles */
+			td->tiles =
+				ResizeImage(dpy, tiles_raw,
+				pict_wid, pict_hgt,
+				td->fnt->wid, td->fnt->hgt);
+		}
+	}
+
+	/* Initialize the transparency masks */
+	for (i = 0; i < num_term; i++)
+	{
+		term_data *td = &data[i];
+		int ii, jj;
+		int depth = DefaultDepth(dpy, DefaultScreen(dpy));
+		Visual *visual = DefaultVisual(dpy, DefaultScreen(dpy));
+		int total;
+
+
+		/* Determine total bytes needed for image */
+		ii = 1;
+		jj = (depth - 1) >> 2;
+		while (jj >>= 1) ii <<= 1;
+			
+		if (i == 0)
+		{
+			total = P_TILE_SIZE * P_TILE_SIZE * ii;
+		}
+		else
+		{
+			total = td->fnt->wid * td->fnt->hgt * ii;
+		}
+			
+		/* Save number of bytes per pixel */
+		bytes_per_pixel = ii;
+			
+		switch (bytes_per_pixel)
+		{
+			case 1:
+			{
+				draw_block = draw_block8;
+					
+				/* Mega Hack^2 - assume the top left corner is "black" */
+				pix_blank = ((byte *) data[0].tiles->data)
+					[6 * P_TILE_SIZE * 32];
+				break;
+			}
+			case 2:
+			{
+				draw_block = draw_block16;
+					
+				/* Mega Hack^2 - assume the top left corner is "black" */
+				pix_blank = ((u16b *) data[0].tiles->data)
+					[6 * P_TILE_SIZE * 32];
+				break;
+			}
+			case 4:
+			{
+				draw_block = draw_block32;
+					
+				/* Mega Hack^2 - assume the top left corner is "black" */
+				pix_blank = ((u32b *) data[0].tiles->data)
+					[6 * P_TILE_SIZE * 32];
+				break;
+			}
+			default:
+			{
+				quit("Unsupported bytes per pixel format of screen");
+				break;
+			}
+		}
+			
+
+		TmpData = (char *)malloc(total);
+
+		if (i == 0)
+		{
+			/* Normal tiles */
+			td->TmpImage = XCreateImage(dpy,visual,depth,
+				ZPixmap, 0, TmpData,
+				P_TILE_SIZE, P_TILE_SIZE, 32, 0);
+				
+			/* Skewed tiles */
+			TmpData = (char *)malloc(total / 2);
+				
+			td->SkewImage = XCreateImage(dpy, visual, depth,
+				ZPixmap, 0, TmpData,
+				P_TILE_SIZE / 2, P_TILE_SIZE, 32, 0);
+		}
+		else
+		{
+			td->TmpImage = XCreateImage(dpy, visual, depth,
+				ZPixmap, 0, TmpData,
+				td->fnt->wid, td->fnt->hgt, 32, 0);
+		}
+
+	}
+
+	/* Free tiles_raw? XXX XXX */
 
 	/*
 	 * Precalculate the tables used to draw the tiles
@@ -3484,9 +3483,9 @@ errr init_xpj(int argc, char *argv[])
 	 * where tiles can be. By masking the value in the table,
 	 * you can quickly determine what to draw.
 	 */
-	for (i = 0; i < 8; i++)
+	for (i = 0; i < P_TILE_SIZE / 2; i++)
 	{
-		for (j = 0; j < 16; j++)
+		for (j = 0; j < P_TILE_SIZE; j++)
 		{
 			/* Table 1 */
 			pj_table1[j][i] = PJ_T_WALLF;
@@ -3501,11 +3500,11 @@ errr init_xpj(int argc, char *argv[])
 				pj_table1[j][i] |= PJ_T_TOP_T1;
 			}
 					
-			if (j >= 8)
+			if (j >= P_TILE_SIZE / 2)
 			{
 				pj_table1[j][i] |= PJ_T_OVER2;
 			}
-			else if (i < 4)
+			else if (i < P_TILE_SIZE / 4)
 			{
 				pj_table1[j][i] |= PJ_T_OVER3;
 			}
@@ -3541,11 +3540,11 @@ errr init_xpj(int argc, char *argv[])
 				pj_table2[j][i] |= PJ_T_WALLB;
 			}
 
-			if (j < 8)
+			if (j < P_TILE_SIZE / 2)
 			{
 				pj_table2[j][i] |= PJ_T_OVER1;
 			}
-			else if (i < 4)
+			else if (i < P_TILE_SIZE / 4)
 			{
 				pj_table2[j][i] |= PJ_T_OVER2;
 			}
@@ -3595,9 +3594,14 @@ errr init_xpj(int argc, char *argv[])
 		Display *dpy = Metadpy->dpy;
 
 		/* Load the graphical tiles */
-		font_raw = ReadFONT(dpy, filename);
+		font_raw = ReadFONT(dpy, filename, 16);
 		
 		if (!font_raw) quit("Could not allocate font metrics!");
+	
+		/* Hack - Resize font */
+		font_data = ResizeImage(dpy, font_raw,
+			16, 16,
+			P_TILE_SIZE, P_TILE_SIZE);
 	}
 	else
 	{
