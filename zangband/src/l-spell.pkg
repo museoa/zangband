@@ -121,6 +121,18 @@ typedef int errr;
 #define MAX_GF			91
 
 
+#define PROJECT_JUMP    0x0001
+#define PROJECT_BEAM    0x0002
+#define PROJECT_THRU    0x0004
+#define PROJECT_STOP    0x0008
+#define PROJECT_GRID    0x0010
+#define PROJECT_ITEM    0x0020
+#define PROJECT_KILL    0x0040
+#define PROJECT_HIDE    0x0080
+#define PROJECT_FRND	0x0100
+#define PROJECT_MFLD	0x0200
+
+
 /***** Types *****/
 
 

@@ -2084,7 +2084,7 @@ F:EASY_KNOW
 L:USE:	ident = cure_potion(150, TRUE, TRUE, TRUE)
 L:USE:	if clear_image() then ident = TRUE end
 L:SMASH:project(who, 2, x, y, damroll(6, 3), GF_OLD_HEAL,
-L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return FALSE,TRUE
+L:SMASH:    (PROJECT_JUMP + PROJECT_ITEM + PROJECT_KILL)); return FALSE,TRUE
 
 # Note! Invulnerability decreases your food...
 
@@ -2115,7 +2115,7 @@ P:0:1d1:0:0:0
 F:EASY_KNOW
 L:USE:	ident = cure_potion(75, TRUE, TRUE, FALSE)
 L:SMASH:project(who, 2, x, y, damroll(4, 3), GF_OLD_HEAL,
-L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return FALSE,TRUE
+L:SMASH:    (PROJECT_JUMP + PROJECT_ITEM + PROJECT_KILL)); return FALSE,TRUE
 
 N:241:Cure Critical Wounds
 G:!:d
@@ -2126,7 +2126,7 @@ P:0:1d1:0:0:0
 F:EASY_KNOW
 L:USE:	ident = cure_potion(150, TRUE, TRUE, TRUE)
 L:SMASH:project(who, 2, x, y, damroll(6, 3), GF_OLD_HEAL,
-L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return FALSE,TRUE
+L:SMASH:    (PROJECT_JUMP + PROJECT_ITEM + PROJECT_KILL)); return FALSE,TRUE
 
 N:242:Healing
 G:!:d
@@ -2137,7 +2137,7 @@ P:0:1d1:0:0:0
 F:EASY_KNOW
 L:USE:	ident = cure_potion(300, TRUE, TRUE, TRUE)
 L:SMASH:project(who, 2, x, y, damroll(10, 10), GF_OLD_HEAL,
-L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return FALSE,TRUE
+L:SMASH:    (PROJECT_JUMP + PROJECT_ITEM + PROJECT_KILL)); return FALSE,TRUE
 
 N:243:Constitution
 G:!:d
@@ -2171,7 +2171,7 @@ P:0:1d1:0:0:0
 F:EASY_KNOW
 L:USE:	msgf("You fall asleep."); do_dream(); inc_paralyzed(rand_range(4, 8))
 L:SMASH:project(who, 2, x, y, 0, GF_OLD_SLEEP,
-L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return TRUE,TRUE
+L:SMASH:    (PROJECT_JUMP + PROJECT_ITEM + PROJECT_KILL)); return TRUE,TRUE
 
 N:246:Blindness
 G:!:d
@@ -2182,7 +2182,7 @@ P:0:1d1:0:0:0
 F:EASY_KNOW
 L:USE:	ident = not player_res(TR2_RES_BLIND) and inc_blind(rand_range(100, 200))
 L:SMASH:project(who, 2, x, y, 0, GF_DARK,
-L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return TRUE,TRUE
+L:SMASH:    (PROJECT_JUMP + PROJECT_ITEM + PROJECT_KILL)); return TRUE,TRUE
 
 N:247:Booze
 G:!:d
@@ -2207,7 +2207,7 @@ L:USE:		msgf("You wake up somewhere with a sore head...")
 L:USE:		msgf("You can't remember a thing, or how you got here!")
 L:USE:	end
 L:SMASH:project(who, 2, x, y, 0, GF_OLD_CONF,
-L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return TRUE,TRUE
+L:SMASH:    (PROJECT_JUMP + PROJECT_ITEM + PROJECT_KILL)); return TRUE,TRUE
 D:A drunken alchemist accidentally poured ale into a potion mix.
 
 N:248:Poison
@@ -2219,7 +2219,7 @@ P:0:1d1:0:0:0
 F:EASY_KNOW
 L:USE:	ident = res_pois_lvel() ~= 0 and inc_poisoned(rand_range(10, 25))
 L:SMASH:project(who, 2, x, y, damroll(3, 6), GF_POIS,
-L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return TRUE,TRUE
+L:SMASH:    (PROJECT_JUMP + PROJECT_ITEM + PROJECT_KILL)); return TRUE,TRUE
 
 N:249:Speed
 G:!:d
@@ -2228,9 +2228,9 @@ W:2:0:4:100
 A:2/16:65/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
-L:USE:	ident = inc_fast(rand_range(15, 40))
+L:USE:	ident + PROJECT= inc_fast(rand_range(15, 40))
 L:SMASH:project(who, 2, x, y, 0, GF_OLD_SPEED,
-L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return FALSE,TRUE
+L:SMASH:    (PROJECT_JUMP + PROJECT_ITEM + PROJECT_KILL)); return FALSE,TRUE
 
 N:250:Slowness
 G:!:d
@@ -2241,7 +2241,7 @@ P:0:1d1:0:0:0
 F:EASY_KNOW
 L:USE:	ident = inc_slow(rand_range(15, 40))
 L:SMASH:project(who, 2, x, y, 5, GF_OLD_SLOW,
-L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return TRUE,TRUE
+L:SMASH:    (PROJECT_JUMP + PROJECT_ITEM + PROJECT_KILL)); return TRUE,TRUE
 
 N:251:Dexterity
 G:!:d
@@ -2400,7 +2400,7 @@ P:0:1d1:0:0:0
 F:EASY_KNOW
 L:USE:	ident = restore_mana()
 L:SMASH:project(who, 1, x, y, damroll(10, 10), GF_MANA,
-L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return TRUE,TRUE
+L:SMASH:    (PROJECT_JUMP + PROJECT_ITEM + PROJECT_KILL)); return TRUE,TRUE
 D:The liquid in this bottle sparks with flashes of energy.
 
 N:267:Infra-vision
@@ -3838,7 +3838,7 @@ F:EASY_KNOW
 L:USE:	msgf("A feeling of Death flows through your body.")
 L:USE:	take_hit(5000, "a potion of Death")
 L:SMASH:project(who, 1, x, y, damroll(25, 25), GF_DEATH_RAY,
-L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return TRUE,TRUE
+L:SMASH:    (PROJECT_JUMP + PROJECT_ITEM + PROJECT_KILL)); return TRUE,TRUE
 
 N:416:Ruination
 G:!:d
@@ -3856,7 +3856,7 @@ L:USE:	dec_stat(A_STR, 25, TRUE)
 L:USE:	dec_stat(A_CHR, 25, TRUE)
 L:USE:	dec_stat(A_INT, 25, TRUE)
 L:SMASH:project(who, 1, x, y, damroll(25, 25), GF_SHARDS,
-L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return TRUE,TRUE
+L:SMASH:    (PROJECT_JUMP + PROJECT_ITEM + PROJECT_KILL)); return TRUE,TRUE
 
 N:417:Detonations
 G:!:d
@@ -3870,7 +3870,7 @@ L:USE:	take_hit(damroll(50, 20), "a potion of Detonations")
 L:USE:	inc_stun(75)
 L:USE:	inc_cut(5000)
 L:SMASH:project(who, 1, x, y, damroll(25, 25), GF_SHARDS,
-L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return TRUE,TRUE
+L:SMASH:    (PROJECT_JUMP + PROJECT_ITEM + PROJECT_KILL)); return TRUE,TRUE
 D:The bottle this potion is in looks very fragile.
 
 N:418:Augmentation
@@ -3897,7 +3897,7 @@ P:0:1d1:0:0:0
 F:EASY_KNOW
 L:USE:	ident = cure_potion(1200, TRUE, TRUE, TRUE)
 L:SMASH:project(who, 2, x, y, damroll(50, 50), GF_OLD_HEAL,
-L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return FALSE,TRUE
+L:SMASH:    (PROJECT_JUMP + PROJECT_ITEM + PROJECT_KILL)); return FALSE,TRUE
 
 N:420:Life
 G:!:d
@@ -3908,7 +3908,7 @@ P:0:1d1:0:0:0
 F:EASY_KNOW
 L:USE:	do_life_potion()
 L:SMASH:project(who, 2, x, y, damroll(50, 50), GF_OLD_HEAL,
-L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return FALSE,TRUE
+L:SMASH:    (PROJECT_JUMP + PROJECT_ITEM + PROJECT_KILL)); return FALSE,TRUE
 
 N:421:Self Knowledge
 G:!:d
@@ -4055,7 +4055,7 @@ P:0:1d1:0:0:0
 F:EASY_KNOW
 L:USE:	ident = cure_potion(38, TRUE, FALSE, FALSE)
 L:SMASH:project(who, 2, x, y, damroll(2, 3), GF_OLD_HEAL,
-L:SMASH:    (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL)); return FALSE,TRUE
+L:SMASH:    (PROJECT_JUMP + PROJECT_ITEM + PROJECT_KILL)); return FALSE,TRUE
 
 N:438:Clumsiness
 G:!:d
