@@ -2656,6 +2656,9 @@ errr init_gtk(unsigned char *new_game, int argc, char **argv)
 	
 	/* Hack - save variable so that everyone can use it */
 	gtk_newgame = *new_game;
+	
+	/* Hack - commandline option sets new game? */
+	game_in_progress = gtk_newgame;
 
 	/* Initialize the environment */
 	gtk_init(&argc, &argv);
