@@ -194,7 +194,8 @@ void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
 	if (m_ptr->hp < 0)
 	{
 		if ((r_ptr->flags1 & RF1_UNIQUE) ||
-			(r_ptr->flags1 & RF1_QUESTOR))
+			(r_ptr->flags1 & RF1_QUESTOR) || 
+			(r_ptr->flags3 & RF3_UNIQUE_7))
 		{
 			m_ptr->hp = 1;
 		}

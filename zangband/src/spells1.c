@@ -2992,7 +2992,8 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 	if (r_ptr->flags1 & RF1_QUESTOR) do_poly = FALSE;
 
 	/* "Unique" and "quest" monsters can only be "killed" by the player. */
-	if ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags1 & RF1_QUESTOR))
+	if ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags1 & RF1_QUESTOR) ||
+		 (r_ptr->flags3 & RF3_UNIQUE_7))
 	{
 		if (who && (dam > m_ptr->hp)) dam = m_ptr->hp;
 	}
