@@ -127,6 +127,14 @@ Unique monsters are often a different color from other monsters of
 their type to allow the player to more easily distinguish them but
 this is not always true.
 
+--- Uniques' Resistance to Magic ---
+
+Unique monsters tend to be more resistant to magic than the other
+dungeon inhabitants. Thus, slowing, confusing, sleeping and scaring
+will be less effective and may not work at all. In addition, Genocide
+and Mass-Genocide spells will never work on Uniques and *Destruction*
+will teleoprt them from a level but will not kill them.
+
 --- Keeping Track of Uniques ---
 
 Since Unique monsters are often very difficult to defeat, most
@@ -234,7 +242,7 @@ not be commanded using the pet commands.
 Original   : (??)
 Updated    : (??)
 Updated    : Zangband DevTeam
-Last update: May 25, 2000
+Last update: May 29, 2000
 
 ***** Begin Hyperlinks
 ***** [1] commdesc.txt#Looking

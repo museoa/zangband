@@ -298,12 +298,16 @@ collect and sell the dropped items and gain repeated experience for
 killing the monsters. This technique is frowned upon by many players
 and should be noted in any 'winner' post to the newsgroup.
 
+Note that to avoid some ugly abuses available to players, the Genocide,
+Mass-Genocide and *Destruction* spells are prevented from working
+on random quests monsters. Random quest monsters may also not be cloned
+or tamed.
 
 --
 Original   : (??)
 Updated    : (??)
 Updated    : Zangband DevTeam
-Last update: May 16, 2000
+Last update: May 29, 2000
 
 ***** Begin Hyperlinks
 ***** [1] command.txt

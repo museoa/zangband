@@ -159,6 +159,9 @@ to these prayers in their effect. It is also possible that in the
 course of enchanting an item you may lift a curse as a side-effect the
 enchanting process although this is not guaranteed to happen.
 
+Note: that items which can be activated (such as Dragon Scale Mail or
+some artifacts) become more difficult to activate when they are cursed.
+
 --- The Curses ---
 
 There are several different types of curse and more than one may be
@@ -371,7 +374,6 @@ this behavior is only exhibited once you have identified the artifact.
 It is therefor safer to leave a level before it is completely explored
 as any fixed artifact can be regenerated in subsequent levels.
 
-
 --- Special feelings ---
 
 If you have stayed on the previous level long enough, on entering a
@@ -389,7 +391,6 @@ Note: In non-preserve mode, you can still find artifacts on
 levels that did not give a special feeling but these will always
 be the result of a monster dropping them.
 
-
 --- The '~' Command ---
 
 By pressing '~' and choosing the option for artifacts, you can see
@@ -399,6 +400,17 @@ random) artifacts you have missed. However, in this case, it will
 show nothing about fixed artifacts on the current dungeon level but
 not yet found and as a result is often best used on the town level.
 
+--- Random Artifacts ---
+
+In addition to the standard artifacts which are potentially available
+in every game. Zangband will also occasionally generate a 'random'
+artifact. Any weapon or piece of armor as well Amulets of the Magi and
+Rings of Lordly Protection have a chance of becoming a random artifact.
+
+Note that random artifacts can be both good and bad and of greatly
+varying quality. Unlike standard artifacts, the in-game spoilers will
+not contain details of their special powers and so you must *identify*
+if you wish to ascertain this information.
 
 ***** <RandomAbilities>
 === Random Abilities of Objects ===
@@ -618,7 +630,7 @@ Light Sources ('~')
 Original   : (??)
 Updated    : (??)
 Updated    : Zangband DevTeam
-Last update: February 2, 2000
+Last update: May 29, 2000
 
 ***** Begin Hyperlinks
 ***** [1] option.txt#UserInterface
