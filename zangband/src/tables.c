@@ -6861,9 +6861,6 @@ const field_action f_action[] =
 	/* Corpse init function */
 	{field_action_corpse_init, "field_action_corpse_init"},
 	
-	/* Corpse raising function for spell */
-	{field_action_corpse_raise, "field_action_corpse_raise"},
-	
 	/* Function returning name of the monster the corpse once was. */
 	{field_action_corpse_look, "field_action_corpse_look"},
 	

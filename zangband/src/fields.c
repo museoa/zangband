@@ -1581,36 +1581,6 @@ bool field_action_corpse_decay(field_type *f_ptr, va_list vp)
 }
 
 
-/* 
- * Special action to raise corpses.
- */
-bool field_action_corpse_raise(field_type *f_ptr, va_list vp)
-{
-	bool want_pet = va_arg(vp, int);
-
-	/*
-	 * Data[1] * 256 + Data[2] = r_idx of monster.
-	 */
-
-	/* Monster race */
-	u16b r_idx = ((u16b)f_ptr->data[1]) * 256 + f_ptr->data[2];
-	
-	/* Make a monster nearby if possible */
-	monster_type *m_ptr = summon_named_creature(f_ptr->fx, f_ptr->fy,
-							  r_idx, FALSE, FALSE, want_pet);
-
-	/* Success? */
-	if (m_ptr)
-	{
-		/* Set the cloned flag, so no treasure is dropped */
-		m_ptr->smart |= SM_CLONED;
-	}
-
-	/* Delete the field */
-	return (TRUE);
-}
-
-
 /*
  * Hack XXX XXX Convert the char of the monster to a corpse type
  *

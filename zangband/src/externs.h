@@ -1122,7 +1122,6 @@ DECL_FIELD_ACTION(delete);
 DECL_FIELD_ACTION(glyph_warding);
 DECL_FIELD_ACTION(glyph_explode);
 DECL_FIELD_ACTION(corpse_decay);
-DECL_FIELD_ACTION(corpse_raise);
 DECL_FIELD_ACTION(corpse_init);
 DECL_FIELD_ACTION(corpse_look);
 DECL_FIELD_ACTION(wall_tunnel);
