@@ -2520,7 +2520,7 @@ static bool borg_handle_self(cptr str)
 /*
  * Save the borg information into the overhead map
  */
-void borg_map_info(map_block *mb_ptr, term_map *map, vptr dummy)
+void borg_map_info(map_block *mb_ptr, const term_map *map, vptr dummy)
 {
 	int i;
 

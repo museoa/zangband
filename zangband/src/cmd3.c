@@ -928,21 +928,8 @@ void do_cmd_locate(void)
 		}
 	}
 
-
 	/* Recenter the map around the player */
 	verify_panel();
-
-	/* Update stuff */
-	p_ptr->update |= (PU_MONSTERS);
-
-	/* Redraw map */
-	p_ptr->redraw |= (PR_MAP);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
-
-	/* Handle stuff */
-	handle_stuff();
 }
 
 

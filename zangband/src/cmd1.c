@@ -685,18 +685,6 @@ void carry(int pickup)
 	/* Recenter the map around the player */
 	verify_panel();
 
-	/* Update stuff */
-	p_ptr->update |= PU_MONSTERS;
-
-	/* Redraw map */
-	p_ptr->redraw |= PR_MAP;
-
-	/* Window stuff */
-	p_ptr->window |= PW_OVERHEAD;
-
-	/* Handle stuff */
-	handle_stuff();
-
 	/* Scan the pile of objects */
 	OBJ_ITT_START (area(px, py)->o_idx, o_ptr)
 	{
@@ -2596,9 +2584,6 @@ void move_player(int dir, int do_pickup)
 
 		/* Update the monsters */
 		p_ptr->update |= (PU_DISTANCE);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
 
 		/* Warn about traps */
 

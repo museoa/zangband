@@ -201,7 +201,7 @@ struct map_block
 typedef map_block *map_blk_ptr;
 typedef map_block **map_blk_ptr_ptr;
 
-typedef void (*map_info_hook_type) (map_block *mb_ptr, term_map *map, vptr data);
+typedef void (*map_info_hook_type) (map_block *mb_ptr, const term_map *map, vptr data);
 typedef void (*map_erase_hook_type) (vptr data);
 typedef void (*player_move_hook_type) (int x, int y, vptr data);
 

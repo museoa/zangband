@@ -607,7 +607,7 @@ bool map_in_bounds(int x, int y)
 /*
  * Save information into a block location
  */
-static void save_map_location(int x, int y, term_map *map)
+static void save_map_location(int x, int y, const term_map *map)
 {
 	map_blk_ptr_ptr mbp_ptr;
 	map_block *mb_ptr;

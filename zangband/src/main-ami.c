@@ -4074,7 +4074,7 @@ static void ami_player_move(int x, int y, vptr dummy)
 /*
  * Save the information so we can access it later
  */
-static void ami_map_info(map_block *mb_ptr, term_map *map, vptr dummy)
+static void ami_map_info(map_block *mb_ptr, const term_map *map, vptr dummy)
 {
 	/* Hack -- ignore parameter */
 	(void) dummy;
