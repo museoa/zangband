@@ -42,7 +42,7 @@ void do_cmd_go_up(void)
 		}
 
 #ifdef USE_SCRIPT
-		if (cmd_go_up_callback()) return;
+		/* if (cmd_go_up_callback()) return; */
 #endif /* USE_SCRIPT */
 
 		/* Activate the quest */
@@ -59,6 +59,13 @@ void do_cmd_go_up(void)
 
 		/* Leaving */
 		p_ptr->leaving = TRUE;
+	
+		/*
+		 * Hack XXX XXX Take some time
+		 *
+		 * This will need to be rethought in multiplayer
+		 */
+		turn += 100;
 	}
 
 	/* Normal up stairs */
@@ -89,8 +96,8 @@ void do_cmd_go_up(void)
 		{
 			/*
 			 * I'm experimenting without this... otherwise the monsters get to
-			 * act first when we go up stairs, theoretically resulting in a possible
-			 * insta-death.
+			 * act first when we go up stairs, theoretically resulting in a
+			 * possible insta-death.
 			 */
 			p_ptr->energy_use = 0;
 
@@ -100,7 +107,7 @@ void do_cmd_go_up(void)
 			if (autosave_l) do_cmd_save_game(TRUE);
 
 #ifdef USE_SCRIPT
-			if (cmd_go_up_callback()) return;
+			/* if (cmd_go_up_callback()) return; */
 #endif /* USE_SCRIPT */
 
 #if 0
@@ -130,6 +137,13 @@ void do_cmd_go_up(void)
 
 			/* Leaving */
 			p_ptr->leaving = TRUE;
+
+			/*
+			 * Hack XXX XXX Take some time
+			 *
+			 * This will need to be rethought in multiplayer
+			 */
+			turn += 100;
 		}
 	}
 	else
@@ -231,6 +245,13 @@ void do_cmd_go_down(void)
 
 			/* Create a way back */
 			p_ptr->create_up_stair = TRUE;
+			
+			/*
+			 * Hack XXX XXX Take some time
+			 *
+			 * This will need to be rethought in multiplayer
+			 */
+			turn += 100;
 		}
 	}
 }
