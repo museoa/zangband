@@ -223,9 +223,9 @@ static cptr state_state(void)
 	}
 
 	/* Repeating */
-	else if (p_ptr->command_rep)
+	else if (p_ptr->cmd.rep)
 	{
-		int n = p_ptr->command_rep;
+		int n = p_ptr->cmd.rep;
 
 		s_status_value = trunc_num(n);
 
@@ -755,7 +755,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 		case IDX_COMMAND_REP: /* command_rep */
-			Tcl_SetIntObj(resultPtr, p_ptr->command_rep);
+			Tcl_SetIntObj(resultPtr, p_ptr->cmd.rep);
 			break;
 
 		case IDX_RUNNING: /* running */
