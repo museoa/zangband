@@ -26,6 +26,10 @@
 #endif /* !RISCOS */
 #endif /* CHECK_MODIFICATION_TIME */
 
+#ifdef HAVE_MMAP
+#include <sys/mman.h>
+#endif
+
 
 /*
  * This file is used to initialize various variables and arrays for the
@@ -304,11 +308,17 @@ header r_head;
 
 /*
  * Initialize a "*_info" array, by parsing a binary "image" file
+ *
+ * If possible, just mmap() the image file directory into memory.
+ * This is faster than reading it from disk, because it delays
+ * the loading until it's actually accessed. It may also save memory.
  */
 static errr init_info_raw(int fd, header *head)
 {
 	header test;
-
+#ifdef HAVE_MMAP
+	char *data;
+#endif /* HAVE_MMAP */
 
 	/* Read and verify the header */
 	if (fd_read(fd, (char *)(&test), sizeof(header)) ||
@@ -329,30 +339,58 @@ static errr init_info_raw(int fd, header *head)
 	/* Accept the header */
 	COPY(head, &test, header);
 
+#ifdef HAVE_MMAP
+	data = mmap(NULL, sizeof(header) + head->info_size + 
+		head->name_size + head->text_size,
+		PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
 
-	/* Allocate the "*_info" array */
-	C_MAKE(head->info_ptr, head->info_size, char);
-
-	/* Read the "*_info" array */
-	fd_read(fd, head->info_ptr, head->info_size);
-
-	if (head->name_size)
+	if (data != MAP_FAILED)
 	{
-		/* Allocate the "*_name" array */
-		C_MAKE(head->name_ptr, head->name_size, char);
+		/* Skip the header */
+		data += sizeof(header);
 
-		/* Read the "*_name" array */
-		fd_read(fd, head->name_ptr, head->name_size);
+		/* Save a pointer to the info */
+		head->info_ptr = data;
+		data += head->info_size;
+
+		/* Save a pointer to the names */
+		head->name_ptr = data;
+		data += head->name_size;
+
+		/* Save a pointer to the text */
+		head->text_ptr = data;
 	}
-
-	if (head->text_size)
+	else
 	{
-		/* Allocate the "*_text" array */
-		C_MAKE(head->text_ptr, head->text_size, char);
+#endif /* HAVE_MMAP */
 
-		/* Read the "*_text" array */
-		fd_read(fd, head->text_ptr, head->text_size);
+		/* Allocate the "*_info" array */
+		C_MAKE(head->info_ptr, head->info_size, char);
+
+		/* Read the "*_info" array */
+		fd_read(fd, head->info_ptr, head->info_size);
+
+		if (head->name_size)
+		{
+			/* Allocate the "*_name" array */
+			C_MAKE(head->name_ptr, head->name_size, char);
+	
+			/* Read the "*_name" array */
+			fd_read(fd, head->name_ptr, head->name_size);
+		}
+
+		if (head->text_size)
+		{
+			/* Allocate the "*_text" array */
+			C_MAKE(head->text_ptr, head->text_size, char);
+
+			/* Read the "*_text" array */
+			fd_read(fd, head->text_ptr, head->text_size);
+		}
+
+#ifdef HAVE_MMAP
 	}
+#endif /* HAVE_MMAP */
 
 	/* Success */
 	return (0);

@@ -215,6 +215,7 @@ AC_FUNC_STAT
 AC_FUNC_STRCOLL
 AC_FUNC_STRFTIME
 AC_FUNC_VPRINTF
+AC_FUNC_MMAP
 AC_CHECK_FUNCS([floor ftruncate gethostname memchr memmove memset mkdir modf select setlocale strchr strcspn strdup strerror strpbrk strrchr strstr strtol strtoul])
 
 AC_CHECK_FUNCS([Tk_SetClassProcs TkpSync])
