@@ -2480,8 +2480,8 @@ static void process_monster(int m_idx)
 			do_move = TRUE;
 		}
 
-		/* Hack -- closed doors are no obstacle */
-		else if (c_ptr->feat == FEAT_CLOSED)
+		/* Hack -- closed or secret doors are no obstacle */
+		else if ((c_ptr->feat == FEAT_CLOSED) || (c_ptr->feat == FEAT_SECRET))
 		{
 			do_move = TRUE;
 		}
