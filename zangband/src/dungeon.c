@@ -4108,14 +4108,9 @@ void play_game(bool new_game)
 	/* React to changes */
 	Term_xtra(TERM_XTRA_REACT, 0);
 
-	/* Create the random wilderness */
-	if (new_game)
-	{
-		create_wilderness();
+	/* Initialize vault info */
+	if (init_w_info(new_game)) quit("Cannot initialize wilderness");
 
-		/* Make the function pointers point the the correct data type */
-		change_level(dun_level);
-	}
 
 	/* Generate a dungeon level if needed */
 	if (!character_dungeon) generate_cave();

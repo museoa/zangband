@@ -461,6 +461,1447 @@ void set_no_town(void)
 	cur_town = 0;
 }
 
+
+/*
+ * This section deals with wilderness generation
+ * - both at the start of the game, and sorting
+ * out what routines are used to make things as
+ * the player moves around.
+ *
+ * Note that these routines return zero as a fail
+ * indicator.  They return a non zero value for
+ * a success - the value being the node last added
+ * to the decision tree.  (This usually can be
+ * ignored.)
+ *
+ */
+
+
+
+/*
+ * This function returns a wilderness block type that fits
+ * the required parameters.
+ *
+ * The set of generation types is stored in a "decision tree"
+ * - so the required time to get the wilderness type from the
+ * three parameters (hgt,pop,law) is proportional to log(n).
+ * This speeds up wilderness generation alot.  (Note the
+ * "obvious" method of using a linear search to find matching
+ * wilderness creation functions is too slow.
+ *
+ * The "type" value has two different uses.  One is to specify
+ * which axis of the parameter space is being split.  The other
+ * is to show whether or not a node is a terminal "leaf" node.
+ * If it is a leaf node - the value returned is the number of
+ * the type of wilderness generation function.
+ */
+static u16b get_gen_type(byte hgt, byte pop, byte law)
+{
+	/* Current node in choice tree - node zero is the "trunk" */
+	int node = 0;
+	
+	/* branch of tree to go down */
+	bool branch = TRUE;
+	
+	wild_choice_tree_type *tree_ptr;
+	
+	/* Find matching generation type */
+	
+	/* The while loop is used instead of the "obvious" recursion */
+	while(1)
+	{
+		/* Access Node */
+		tree_ptr = &wild_choice_tree[node];
+		
+		/* If are near end - look at leaves of tree		
+		 * 
+		 * (cutoff == 0) is used as a flag since it doesn't
+		 * split the possibility tree in any useful way.
+		 */
+		if (tree_ptr->cutoff == 0)
+		{
+			/* randomly choose branch */
+			if (randint(tree_ptr->chance1+tree_ptr->chance2) 
+				> tree_ptr->chance1)
+			{
+				/* Chance1 of going "left" */
+				branch = TRUE;
+			}
+			else
+			{
+				/* Chance2 of going "right" */
+				branch = FALSE;
+			}
+		}
+		else
+		{
+			/* 
+			 * Get lower two bits of type to decribe which of
+			 * (hgt,pop,law) cutoff refers to.
+			 */
+			
+			switch(tree_ptr->info & 3)
+			{
+				case 1: 
+				{
+					/* Look at height */
+					if (tree_ptr->cutoff >= hgt)
+					{
+						branch = TRUE;
+					}
+					else
+					{
+						branch = FALSE;
+					}
+					
+					break;
+				}
+				case 2:
+				{
+					/* Look at population */
+					if (tree_ptr->cutoff >= pop)
+					{
+						branch = TRUE;
+					}
+					else
+					{
+						branch = FALSE;
+					}
+				
+					break;
+				}
+				case 3:
+				{
+					/* Look at lawfulness */
+					if (tree_ptr->cutoff >= law)
+					{
+						branch = TRUE;
+					}
+					else
+					{
+						branch = FALSE;
+					}
+					
+					break;
+				}
+				default:
+				{
+					msg_print("Invalid stat chosen!");
+					
+					break;
+				}
+			}
+		}
+		
+		
+		/* Look at the proper branch of the tree */ 
+		if (branch)
+		{
+			/* Go "left" */
+			
+			/* See if references leaf node */
+			if (tree_ptr->info & 4)
+			{
+				/* If the bit is set - leaf */
+				return (tree_ptr->ptrnode1);			
+			}
+			else
+			{
+				/* use the while loop to recurse */
+				node = tree_ptr->ptrnode1;
+			}
+		}
+		else
+		{
+			/* Go "right" */
+			
+			/* See if references leaf node */
+			if (tree_ptr->info & 8)
+			{
+				/* If the bit is set - leaf */
+				return (tree_ptr->ptrnode2);			
+			}
+			else
+			{
+				/* use the while loop to recurse */
+				node = tree_ptr->ptrnode2;
+			}
+		}	
+	}
+}
+
+/* The number of allocated nodes in the decsion tree */
+static u16b d_tree_count;
+
+/* Get rid of this as soon as misc.txt is used to resize
+ * the wilderness arrays.  Note that init2.c contains
+ * hard coded array sizes (100 and 27) that will also
+ * need to be changed.  -  This is only temporary.
+ */
+#define MAX_D_TREE 100
+
+/*
+ * This function creates a new node on the decision tree.
+ * It then connects that node to the node referenced by
+ * the variable "node".  The process of making the link
+ * stomps on any information about the old link.
+ *
+ * branch == TRUE is "left" , FALSE is "right" 
+ *
+ * This function returns the location of the new node in
+ * the decision tree array.
+ */ 
+static u16b create_node(u16b node, bool branch)
+{
+	u16b new_node;
+	
+	wild_choice_tree_type	*tree_ptr;
+	
+	if (d_tree_count >= MAX_D_TREE)
+	{
+		/* 
+		 * Return zero (known as the location of the tree's
+		 * "root" - so can act as a flag) if all of the
+		 * memory allocated has been used.
+		 *
+		 * Always check the return value - and report the error
+		 *
+		 * The number of nodes required is roughly proportional
+		 * to nlog(n) for a random input of ranges.
+		 */
+		 return(0);	
+	}
+	
+	/* Get location of new node */
+	new_node = d_tree_count;
+	
+	/* Access old node */
+	tree_ptr = &wild_choice_tree[node];
+	
+	if (branch)
+	{
+		/* Link new node to left of old */
+		tree_ptr->ptrnode1 = new_node;
+		
+		/* Link is not to a leaf */
+		tree_ptr->info &= ~4;
+	}
+	else
+	{
+		/* Link new node to right of old */
+		tree_ptr->ptrnode2 = new_node;
+		
+		/* Link is not to a leaf */
+		tree_ptr->info &= ~8;	
+	}
+	
+	/* Increase count of allocated nodes */
+	d_tree_count++;
+	
+	return(new_node);	
+}
+
+/*
+ * This function deletes the last node on the decision tree.
+ * It is needed for a major hack when something is being added
+ * to a "null" region.
+ *
+ * This routine, and the above routine are the only ones that can
+ * modify the number of nodes in the array.  (This makes checking
+ * for the array-full case much easier.)
+ */
+static void delete_last_node(void)
+{
+	d_tree_count--;
+}
+
+/*
+ * This function adds a node to the tree between a "leaf"
+ * and the rest of the tree.  As nodes are added to the "leaf"
+ * the chance of each wilderness generation type is collated.
+ *
+ * Note - this function used so that several different wilderness
+ * generation types can exist within the same region in parameter
+ * space.  Each possibility has a "chance" associated with it.
+ * At generation time - the RNG is used to determine which node
+ * in the "leaf" of several different generation types is used.
+ * The wilderness generation type of that node is then used.
+ *
+ * This function also takes care of the case when something is
+ * being added to a "null" node.  "Null" nodes of type zero
+ * describe areas of parameter space that are outside the currently
+ * used area.  This is needed because the decision tree starts out
+ * empty.  As wilderness generation types are added, the null area
+ * is slowly clipped away.  If at the end of creating the decision
+ * tree and there is any "null" area left, the types do not fill
+ * parameter space.  This will flag an error. 
+ */ 
+
+static u16b add_node_chance(u16b type, u16b node, bool branch)
+{
+	/* Is the "leaf" a tree of nodes - or a single node. */
+	bool is_tree;
+	
+	/* The node inserted into the decision tree */
+	u16b new_node;
+	wild_choice_tree_type	*tree_ptr;
+	
+	/* The old connection */
+	u16b old_node;
+	
+	tree_ptr = &wild_choice_tree[node];
+	
+	if (branch)
+	{
+		/* Get left leaf status */
+		is_tree = (tree_ptr->info & 4);
+		
+		old_node = tree_ptr->ptrnode1;
+		
+		/* Check for null case. */
+		if (old_node == 0)
+		{
+			/* Easy - just replace with data */
+		 	tree_ptr->ptrnode1 = type;
+			
+			/* Return current node. */
+			return(node);
+		}
+		
+	}
+	else
+	{
+		/* Get right leaf status */
+		is_tree = (tree_ptr->info & 8);
+		
+		old_node = tree_ptr->ptrnode2;
+		
+		/* Check for null case. */
+		if (old_node == 0)
+		{
+			/* Easy - just replace with data */
+		 	tree_ptr->ptrnode2 = type;
+			
+			/* Return current node. */
+			return(node);
+		}
+	}
+
+	/* Insert new node */
+	new_node = create_node(node, branch);
+	
+	/* Error if array is full */	
+	if (new_node==0)
+	{
+		/* Return zero as error code */
+		return(0);
+	}	
+	
+	/* Access node */
+	tree_ptr = &wild_choice_tree[new_node];
+	
+	/* Cutoff = 0 since is a leaf node */
+	tree_ptr->cutoff = 0;
+	
+	/* Connect to old leaf */
+	tree_ptr->ptrnode1 = old_node;
+	
+	/* Connect to new type */
+	tree_ptr->ptrnode2 = type;
+	
+	
+	if (is_tree)
+	{
+		/* Set "info" bit-flag */
+		/* Only new node is a pointer to gen. type */
+		tree_ptr->info = 8;
+		
+		/* Calculate the chance fields */		
+		tree_ptr->chance1 = wild_choice_tree[tree_ptr->ptrnode1].chance1 +
+			wild_choice_tree[tree_ptr->ptrnode1].chance2;
+		
+		tree_ptr->chance2 = wild_gen_data[type].chance;
+	}
+	else
+	{
+		/* Set "info" bit-flag */
+		/* Both links are to wild. gen. types. */
+		tree_ptr->info = 8 + 4;
+		
+		/* Calculate the chance fields */
+		tree_ptr->chance1 = wild_gen_data[tree_ptr->ptrnode1].chance;
+		tree_ptr->chance2 = wild_gen_data[type].chance;
+	}
+	
+	/* Return location of new node if required */
+	return(new_node);
+}
+
+
+/*
+ * This function copies the contents of one "leaf" (specified by
+ * node1 + branch1) to the side of another node.
+ *
+ * This is needed because as the tree splits the parameter space
+ * the leaves occupy regions.  When new wild. gen. types are added
+ * to the decision tree - the "leaves" may not match their size.
+ * This means that the leaves need to be split - in other words
+ * copied.
+ */
+static u16b copy_branch(u16b node1, bool branch1, u16b node2, bool branch2)
+{
+	/* This function assumes that the "leaves" are of this form:
+	*
+	*StartNode
+	* /  \
+	*x  Node
+	*    / \
+	* type Node
+	*       / \
+	*    type Node
+	*          / \
+	*       type type
+	*
+	* (Where one pointer connects to a node, and one to a wild. gen. type)
+	*/
+	
+	/* 
+	 * The complexity of this function is due to the large number of
+	 * possibilities:  both branches can be left of right, and the node
+	 * can be terminal or not.  This gives a set of nested "if's" resulting
+	 * in eight small sections of code.
+	 */
+	u16b new_node;
+	u16b temp_node;
+	
+	wild_choice_tree_type	*tree_ptr1;
+	wild_choice_tree_type	*tree_ptr2;
+		
+	/* point to node to be copied from */
+	tree_ptr1 = &wild_choice_tree[node1];
+	
+	/* work out what has to be copied. */
+	if (branch1)
+	{
+		if(tree_ptr1->info & 4)
+		{
+			/* need to copy tree of nodes */
+			
+			/* make new node */
+			new_node = create_node(node2, branch2);
+			
+			/* Exit on failure */
+			if(new_node == 0) return(0);
+			
+			/* Point to block to copy */
+			temp_node = tree_ptr1->ptrnode1;
+			tree_ptr1 = &wild_choice_tree[temp_node];
+			
+			/* Point to new block */
+			tree_ptr2 = &wild_choice_tree[new_node];
+			
+			/* Copy data to new node */
+			tree_ptr2->info = tree_ptr1->info;
+			tree_ptr2->cutoff = tree_ptr1->cutoff;
+			tree_ptr2->chance1 = tree_ptr1->chance1;
+			tree_ptr2->chance2 = tree_ptr1->chance2;
+			tree_ptr2->ptrnode1 = tree_ptr1->ptrnode1;
+			tree_ptr2->ptrnode2 = tree_ptr1->ptrnode2;
+			
+			/* Recurse along branches to this node */
+			if(!(tree_ptr2->info & 4))
+			{
+				/* Recurse along "left" branch */
+				if(copy_branch(temp_node, TRUE, new_node, TRUE) == 0)
+					return(0);		
+			}
+			
+			if(!(tree_ptr2->info & 8))
+			{
+				/* Recurse along "right" branch */
+				if(copy_branch(temp_node, TRUE, new_node, TRUE) == 0)
+					return(0);
+			}
+			
+			/* Done */
+			return(new_node);
+		}
+		else
+		{
+			/* point to node to be copied to */
+			tree_ptr2 = &wild_choice_tree[node2];
+			
+			/* only need to copy a single wild. gen. type */
+			if(branch2)
+			{
+				/* terminal branch */
+				tree_ptr2->info |= 4;
+				
+				/* Copy information */
+				tree_ptr2->ptrnode1 = tree_ptr1->ptrnode1;
+				tree_ptr2->chance1 = tree_ptr1->chance1;
+			}
+			else
+			{
+				/* terminal branch */
+				tree_ptr2->info |= 8;
+				
+				/* Copy information */
+				tree_ptr2->ptrnode2 = tree_ptr1->ptrnode1;
+				tree_ptr2->chance2 = tree_ptr1->chance1;
+			}
+			
+			/* done */
+			return(node2);
+		}
+	}
+	else
+	{
+		if(tree_ptr1->info & 8)
+		{
+			/* need to copy tree of nodes */
+			
+			/* make new node */
+			new_node = create_node(node2, branch2);
+			
+			/* Exit on failure */
+			if(new_node == 0) return(0);
+			
+			/* Point to block to copy */
+			temp_node = tree_ptr1->ptrnode2;
+			tree_ptr1 = &wild_choice_tree[temp_node];
+			
+			/* Point to new block */
+			tree_ptr2 = &wild_choice_tree[new_node];
+			
+			/* Copy data to new node */
+			tree_ptr2->info = tree_ptr1->info;
+			tree_ptr2->cutoff = tree_ptr1->cutoff;
+			tree_ptr2->chance1 = tree_ptr1->chance1;
+			tree_ptr2->chance2 = tree_ptr1->chance2;
+			tree_ptr2->ptrnode1 = tree_ptr1->ptrnode1;
+			tree_ptr2->ptrnode2 = tree_ptr1->ptrnode2;
+			
+			/* Recurse along branches to this node */
+			if(!(tree_ptr2->info & 4))
+			{
+				/* Recurse along "left" branch */
+				if(copy_branch(temp_node, TRUE, new_node, TRUE) == 0)
+					return(0);		
+			}
+			
+			if(!(tree_ptr2->info & 8))
+			{
+				/* Recurse along "right" branch */
+				if(copy_branch(temp_node, TRUE, new_node, TRUE) == 0)
+					return(0);
+			}
+			
+			/* Done */
+			return(new_node);
+		}
+		else
+		{
+			/* point to node to be copied to */
+			tree_ptr2 = &wild_choice_tree[node2];
+			
+			/* only need to copy a single wild. gen. type */
+			if(branch2)
+			{
+				/* terminal branch */
+				tree_ptr2->info |= 4;
+				
+				/* Copy information */
+				tree_ptr2->ptrnode1 = tree_ptr1->ptrnode2;
+				tree_ptr2->chance1 = tree_ptr1->chance2;
+			}
+			else
+			{
+				/* terminal branch */
+				tree_ptr2->info |= 8;
+				
+				/* Copy information */
+				tree_ptr2->ptrnode2 = tree_ptr1->ptrnode2;
+				tree_ptr2->chance2 = tree_ptr1->chance2;
+			}
+			
+			/* done */
+			return(node2);
+		}
+	}
+}
+
+
+/*
+ * This function is used to add a wilderness generation type within another
+ * typed region of parameter space described by the decision tree.  This is
+ * the only function that actually extends the decision tree itself.  (The
+ * add_node_chance() function increases the size of the "leaves" though.)
+ *
+ * The bounding box of the bigger region (number 1) is repeatedly clipped onto
+ * the sides of the smaller region2.  This can result with up to 6 nodes being
+ * used.  Finally, when the two regions are the same size, the add_node_chance()
+ * function is called to extend the "leaves" of the decision tree.
+ *
+ * This function must be called with a new empty node.  The node must be connected
+ * to the tree by the calling routine.  (This "feature" is so that this routine
+ * can be used to initialise an empty decision tree.)  This means that the calling
+ * routine must check for the "null" node + completely filled case. XXX XXX
+ */
+
+static u16b add_node_inside(u16b node, u16b type1, wild_bound_box_type *bound1,
+	 u16b type2, wild_bound_box_type *bound2)
+{
+	/* The node inserted into the decision tree */
+	u16b new_node;
+	wild_choice_tree_type	*tree_ptr;
+	
+	tree_ptr = &wild_choice_tree[node];
+	
+	if(bound1->hgtmin != bound2->hgtmin)
+	{
+		/* Split node along face of region */
+		tree_ptr->cutoff = bound2->hgtmin;
+		
+		/* Excess is smaller than cutoff */
+		tree_ptr->ptrnode1 = type1;
+		
+		/* Cutoff = hgt , ptrnode1 = wild. gen. type. */
+		tree_ptr->info = 1 + 4;
+		
+		/* Wipe chance values  (this probably isn't needed) */
+		tree_ptr->chance1 = 0;
+		tree_ptr->chance2 = 0;
+		
+		/* Add new node to decision tree */
+		new_node = create_node(node, FALSE);
+		
+		/* Exit if out of space */
+		if (new_node == 0) return(0);
+	
+		/* reset node to current end of tree */
+		node = new_node;
+		tree_ptr = &wild_choice_tree[node];
+	}
+	
+	if(bound1->hgtmax != bound2->hgtmax)
+	{
+		/* Split node along face of region */
+		tree_ptr->cutoff = bound2->hgtmax;
+		
+		/* Excess is larger than cutoff */
+		tree_ptr->ptrnode2 = type1;
+		
+		/* Cutoff = hgt , ptrnode2 = wild. gen. type. */
+		tree_ptr->info = 1 + 8;
+		
+		/* Wipe chance values  (this probably isn't needed) */
+		tree_ptr->chance1 = 0;
+		tree_ptr->chance2 = 0;
+		
+		/* Add new node to decision tree */
+		new_node = create_node(node, TRUE);
+		
+		/* Exit if out of space */
+		if (new_node == 0) return(0);
+	
+		/* reset node to current end of tree */
+		node = new_node;
+		tree_ptr = &wild_choice_tree[node];
+	}
+	
+	if(bound1->popmin != bound2->popmin)
+	{
+		/* Split node along face of region */
+		tree_ptr->cutoff = bound2->popmin;
+		
+		/* Excess is smaller than cutoff */
+		tree_ptr->ptrnode1 = type1;
+		
+		/* Cutoff = pop , ptrnode1 = wild. gen. type. */
+		tree_ptr->info = 2 + 4;
+		
+		/* Wipe chance values  (this probably isn't needed) */
+		tree_ptr->chance1 = 0;
+		tree_ptr->chance2 = 0;
+		
+		/* Add new node to decision tree */
+		new_node = create_node(node, FALSE);
+		
+		/* Exit if out of space */
+		if (new_node == 0) return(0);
+	
+		/* reset node to current end of tree */
+		node = new_node;
+		tree_ptr = &wild_choice_tree[node];
+	}
+	
+	if(bound1->popmax != bound2->popmax)
+	{
+		/* Split node along face of region */
+		tree_ptr->cutoff = bound2->popmax;
+		
+		/* Excess is larger than cutoff */
+		tree_ptr->ptrnode2 = type1;
+		
+		/* Cutoff = pop , ptrnode2 = wild. gen. type. */
+		tree_ptr->info = 2 + 8;
+		
+		/* Wipe chance values  (this probably isn't needed) */
+		tree_ptr->chance1 = 0;
+		tree_ptr->chance2 = 0;
+		
+		/* Add new node to decision tree */
+		new_node = create_node(node, TRUE);
+		
+		/* Exit if out of space */
+		if (new_node == 0) return(0);
+	
+		/* reset node to current end of tree */
+		node = new_node;
+		tree_ptr = &wild_choice_tree[node];
+	}
+	
+	if(bound1->lawmin != bound2->lawmin)
+	{
+		/* Split node along face of region */
+		tree_ptr->cutoff = bound2->lawmin;
+		
+		/* Excess is smaller than cutoff */
+		tree_ptr->ptrnode1 = type1;
+		
+		/* Cutoff = law , ptrnode1 = wild. gen. type. */
+		tree_ptr->info = 3 + 4;
+		
+		/* Wipe chance values  (this probably isn't needed) */
+		tree_ptr->chance1 = 0;
+		tree_ptr->chance2 = 0;
+		
+		/* Add new node to decision tree */
+		new_node = create_node(node, FALSE);
+		
+		/* Exit if out of space */
+		if (new_node == 0) return(0);
+	
+		/* reset node to current end of tree */
+		node = new_node;
+		tree_ptr = &wild_choice_tree[node];
+	}
+	
+	if(bound1->lawmax != bound2->lawmax)
+	{
+		/* Split node along face of region */
+		tree_ptr->cutoff = bound2->lawmax;
+		
+		/* Excess is larger than cutoff */
+		tree_ptr->ptrnode2 = type1;
+		
+		/* Cutoff = law , ptrnode2 = wild. gen. type. */
+		tree_ptr->info = 3 + 8;
+		
+		/* Wipe chance values  (this probably isn't needed) */
+		tree_ptr->chance1 = 0;
+		tree_ptr->chance2 = 0;
+		
+		/* Add new node to decision tree */
+		new_node = create_node(node, TRUE);
+		
+		/* Exit if out of space */
+		if (new_node == 0) return(0);
+	
+		/* reset node to current end of tree */
+		node = new_node;
+		tree_ptr = &wild_choice_tree[node];
+	}
+	
+	/*
+	 * "null" case - don't need the extra node.
+	 * Hack - delete extra node and go up one (should be the last node on the
+	 * array.)  XXX XXX XXX
+	 * Once there - look for "null" type on _one_ branch.
+	 * The other branch was previously a link to the now deleted node.
+	 * Replace that link with the wilderness gen. type.
+	 *
+	 * This only works because we know that at least one node was added
+	 * to the bottom of the array.  This is why this routine must never
+	 * be called with a "null" region the same size as the region to be
+	 * added.
+	 */
+	if (type1 == 0)
+	{
+		/* Delete last node on array - and move back one. */
+		delete_last_node();
+		node--;
+		tree_ptr = &wild_choice_tree[node];
+		
+		/* look "left" for null */
+		if(tree_ptr->ptrnode1 == 0)
+		{
+			/* Paranoia - check for both branches null */
+			if(tree_ptr->ptrnode2 == 0) return(0);
+			
+			/* link to wild. gen. type. */
+			tree_ptr->ptrnode2 = type2;
+			
+			/* right branch is to a wild. gen. type - not a node. */
+			tree_ptr->info |= 8;
+		
+			/* Done */
+			return(node);
+		}
+		
+		/* look "right" for null */
+		if(tree_ptr->ptrnode2 == 0)
+		{
+			/* Paranoia - check for both branches null */
+			if(tree_ptr->ptrnode1 == 0) return(0);
+			
+			/* link to wild. gen. type. */
+			tree_ptr->ptrnode1 = type2;
+			
+			/* left branch is to a wild. gen. type - not a node. */
+			tree_ptr->info |= 4;
+		
+			/* Done */
+			return(node);
+		}		
+	}
+	
+	/*
+	 * Have two wild. gen. types that want to be in the same region of
+	 * parameter space.  This is accomedated by using the "chance" fields.
+	 * chance1 of going "left", and chance2 of going "right".  This state
+	 * is flagged by having cutoff == 0.
+	 */
+
+	/* Set flag for existance of "chance" fields. */
+	tree_ptr->cutoff = 0;
+	
+	/* connect to wild. gen. types */
+	tree_ptr->ptrnode1 = type1;
+	tree_ptr->ptrnode2 = type2;
+	
+	/* Set info flag to show both branches are "leaves"*/
+	tree_ptr->info = 8 + 4;
+	
+	/* Look up chances and add to node. */
+	tree_ptr->chance1 = wild_gen_data[type1].chance;
+	tree_ptr->chance2 = wild_gen_data[type2].chance;
+
+	/* Done */
+	return(node);
+}
+
+/*
+ * This routine compares two bounding boxes and returns true if they are the same.
+ */
+
+static bool compare_bounds(wild_bound_box_type *bound1, wild_bound_box_type *bound2)
+{
+	return((bound2->hgtmin == bound1->hgtmin) &&
+		(bound2->hgtmax == bound1->hgtmax) &&
+	
+		(bound2->popmin == bound1->popmin) &&
+		(bound2->popmax == bound1->popmax) &&
+	
+		(bound2->lawmin == bound1->lawmin) &&
+		(bound2->lawmax == bound1->lawmax));
+}
+
+/*
+ * This function adds a type within a leaf that has a bigger bounding box.
+ * This means that the nodes containing the leaf are copied several times
+ * until the bounding boxes match - and the node can be added to the leaf.
+ *
+ * This function is similar to the above one - except that the input is
+ * node + branch rather than just node. (This is to simplify the copying
+ * function.) 
+ */
+static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
+	 wild_bound_box_type *bound2, bool branch)
+{
+	
+	
+	/* The node inserted into the decision tree */
+	u16b new_node;
+	u16b branch_node;
+	wild_choice_tree_type	*tree_ptr;
+	
+	tree_ptr = &wild_choice_tree[node];
+	
+	/* Check to see if bouding boxes are the same.
+	 * If so, use the add_node_chance function to increase the
+	 * size of the "leaf"
+	 */
+	if (compare_bounds(bound1, bound2))
+	{
+		return(add_node_chance(type, node, branch));
+	}
+	
+	if(bound1->hgtmin != bound2->hgtmin)
+	{
+		
+		/* Record branch node */
+		if(branch)
+		{
+			branch_node = tree_ptr->ptrnode1;
+		}
+		else
+		{
+			branch_node = tree_ptr->ptrnode2;
+		
+		}
+		
+		/* Make empty node connected along branch */
+		new_node = create_node(node, branch);
+		if(new_node == 0) return(0);
+		
+		/* Reconnect to new node */
+		tree_ptr = &wild_choice_tree[new_node];
+		tree_ptr->ptrnode1 = branch_node;
+		
+		/* Copy so that leaf is duplicated */
+		if(copy_branch(new_node, TRUE, new_node, FALSE) == 0)
+			return(0);
+		
+		/* Split node along face of region */
+		tree_ptr->cutoff = bound2->hgtmin;
+		
+		/* Cutoff = hgt */
+		tree_ptr->info = 1;
+	
+		/* work out branch to follow */
+		branch = FALSE;
+	}
+
+	if(bound1->hgtmax != bound2->hgtmax)
+	{
+		
+		/* Record branch node */
+		if(branch)
+		{
+			branch_node = tree_ptr->ptrnode1;
+		}
+		else
+		{
+			branch_node = tree_ptr->ptrnode2;
+		
+		}
+		
+		/* Make empty node connected along branch */
+		new_node = create_node(node, branch);
+		if(new_node == 0) return(0);
+		
+		/* Reconnect to new node */
+		tree_ptr = &wild_choice_tree[new_node];
+		tree_ptr->ptrnode1 = branch_node;
+		
+		/* Copy so that leaf is duplicated */
+		if(copy_branch(new_node, TRUE, new_node, FALSE) == 0)
+			return(0);
+		
+		/* Split node along face of region */
+		tree_ptr->cutoff = bound2->hgtmax;
+		
+		/* Cutoff = hgt */
+		tree_ptr->info = 1;
+	
+		/* work out branch to follow */
+		branch = TRUE;
+	}
+
+	if(bound1->popmin != bound2->popmin)
+	{
+		
+		/* Record branch node */
+		if(branch)
+		{
+			branch_node = tree_ptr->ptrnode1;
+		}
+		else
+		{
+			branch_node = tree_ptr->ptrnode2;
+		
+		}
+		
+		/* Make empty node connected along branch */
+		new_node = create_node(node, branch);
+		if(new_node == 0) return(0);
+		
+		/* Reconnect to new node */
+		tree_ptr = &wild_choice_tree[new_node];
+		tree_ptr->ptrnode1 = branch_node;
+		
+		/* Copy so that leaf is duplicated */
+		if(copy_branch(new_node, TRUE, new_node, FALSE) == 0)
+			return(0);
+		
+		/* Split node along face of region */
+		tree_ptr->cutoff = bound2->popmin;
+		
+		/* Cutoff = pop */
+		tree_ptr->info = 2;
+	
+		/* work out branch to follow */
+		branch = FALSE;
+	}
+
+	if(bound1->popmax != bound2->popmax)
+	{
+		
+		/* Record branch node */
+		if(branch)
+		{
+			branch_node = tree_ptr->ptrnode1;
+		}
+		else
+		{
+			branch_node = tree_ptr->ptrnode2;
+		
+		}
+		
+		/* Make empty node connected along branch */
+		new_node = create_node(node, branch);
+		if(new_node == 0) return(0);
+		
+		/* Reconnect to new node */
+		tree_ptr = &wild_choice_tree[new_node];
+		tree_ptr->ptrnode1 = branch_node;
+		
+		/* Copy so that leaf is duplicated */
+		if(copy_branch(new_node, TRUE, new_node, FALSE) == 0)
+			return(0);
+		
+		/* Split node along face of region */
+		tree_ptr->cutoff = bound2->popmax;
+		
+		/* Cutoff = pop */
+		tree_ptr->info = 2;
+	
+		/* work out branch to follow */
+		branch = TRUE;
+	}
+	
+	if(bound1->lawmin != bound2->lawmin)
+	{
+		
+		/* Record branch node */
+		if(branch)
+		{
+			branch_node = tree_ptr->ptrnode1;
+		}
+		else
+		{
+			branch_node = tree_ptr->ptrnode2;
+		
+		}
+		
+		/* Make empty node connected along branch */
+		new_node = create_node(node, branch);
+		if(new_node == 0) return(0);
+		
+		/* Reconnect to new node */
+		tree_ptr = &wild_choice_tree[new_node];
+		tree_ptr->ptrnode1 = branch_node;
+		
+		/* Copy so that leaf is duplicated */
+		if(copy_branch(new_node, TRUE, new_node, FALSE) == 0)
+			return(0);
+		
+		/* Split node along face of region */
+		tree_ptr->cutoff = bound2->lawmin;
+		
+		/* Cutoff = law */
+		tree_ptr->info = 3;
+	
+		/* work out branch to follow */
+		branch = FALSE;
+	}
+
+	if(bound1->lawmax != bound2->lawmax)
+	{
+		
+		/* Record branch node */
+		if(branch)
+		{
+			branch_node = tree_ptr->ptrnode1;
+		}
+		else
+		{
+			branch_node = tree_ptr->ptrnode2;
+		
+		}
+		
+		/* Make empty node connected along branch */
+		new_node = create_node(node, branch);
+		if(new_node == 0) return(0);
+		
+		/* Reconnect to new node */
+		tree_ptr = &wild_choice_tree[new_node];
+		tree_ptr->ptrnode1 = branch_node;
+		
+		/* Copy so that leaf is duplicated */
+		if(copy_branch(new_node, TRUE, new_node, FALSE) == 0)
+			return(0);
+		
+		/* Split node along face of region */
+		tree_ptr->cutoff = bound2->lawmax;
+		
+		/* Cutoff = law */
+		tree_ptr->info = 3;
+	
+		/* work out branch to follow */
+		branch = TRUE;
+	}
+	
+	/* Finally - merge wild. gen. type with leaf of the same size */
+	return(add_node_chance(type, node, branch));
+}
+
+
+/*
+ * This function copies the parameter bounds from one variable to another.
+ */
+static void copy_bounds(wild_bound_box_type *bound1,
+	 wild_bound_box_type *bound2)
+{
+	bound2->hgtmin = bound1->hgtmin;
+	bound2->hgtmax = bound1->hgtmax;
+	
+	bound2->popmin = bound1->popmin;
+	bound2->popmax = bound1->popmax;
+	
+	bound2->lawmin = bound1->lawmin;
+	bound2->lawmax = bound1->lawmax;
+}
+
+
+/* 
+ * Add a wilderness generation function to the decision tree.
+ *
+ * There are many special cases to take care of here.  First the
+ * current tree is followed until the required region either
+ * 1) Is split
+ * 2) Is subsumed inside a "leaf" node.
+ * 3) Takes over a "null" node.
+ *
+ * Note: Null nodes exist because no generation routine covers the
+ * whole parameter space.  This means that the inital state of the
+ * decision tree does not cover every case.  Therefore, as nodes are
+ * added - checks are made to see if the region falls ouside of the
+ * current "reach" of the tree.
+ */
+static u16b add_node(wild_bound_box_type *bound,
+	 wild_bound_box_type *cur_bound, u16b type, u16b node)
+{
+	
+	/* 
+	 * Temp storage of the current bounds and current type bounds 
+	 * (Used in splitting a region that overlaps a cutoff)
+	 */
+	wild_bound_box_type temp_bound1;
+	wild_bound_box_type temp_bound2;
+	
+	u16b oldnode = node;
+	
+	bool branch = FALSE;
+	
+	wild_choice_tree_type	*tree_ptr;
+	/* Scan tree until hit a leaf or split required region */
+	
+	/* Use a while loop instead of recursion to follow tree */
+	while(1) 
+	{
+		/* Access Node */
+		tree_ptr = &wild_choice_tree[node];
+		
+		/* If are near end - look at leaves of tree		
+		 * 
+		 * (cutoff == 0) is used as a flag since it doesn't
+		 * split the possibility tree in any useful way.
+		 */
+		if (tree_ptr->cutoff == 0)
+		{
+			/* leaf node */	
+			return(inside_leaf(oldnode, type, bound, cur_bound, branch));
+		}
+		else
+		{
+			/* 
+			 * Get lower two bits of type to decribe which of
+			 * (hgt,pop,law) cutoff refers to.
+			 */
+			
+			switch(tree_ptr->info & 3)
+			{
+				case 1: 
+				{
+					/* Look at height */
+					if (tree_ptr->cutoff >= bound->hgtmax)
+					{
+						branch = TRUE;
+						
+						cur_bound->hgtmax = tree_ptr->cutoff;
+					}
+					else if (tree_ptr->cutoff <= bound->hgtmin)
+					{
+						branch = FALSE;
+						
+						cur_bound->hgtmin = tree_ptr->cutoff;
+					}
+					else
+					{
+						/* make backups before recursion */
+						copy_bounds(bound, &temp_bound1);
+						copy_bounds(cur_bound, &temp_bound2);
+						
+						/* upper bound = cutoff */
+						temp_bound1.hgtmax = tree_ptr->cutoff;
+						temp_bound2.hgtmax = tree_ptr->cutoff;
+						
+						/* rescan with smaller domain */
+						if (!add_node(&temp_bound1, &temp_bound2, type, node))
+							return(0);
+						
+						/* make backups before recursion */
+						copy_bounds(bound, &temp_bound1);
+						copy_bounds(cur_bound, &temp_bound2);
+						
+						/* lower bound = cutoff */
+						temp_bound1.hgtmin = tree_ptr->cutoff;
+						temp_bound2.hgtmin = tree_ptr->cutoff;
+						
+						/* rescan with smaller domain */
+						return(add_node(&temp_bound1, &temp_bound2, type, node));
+					}
+					break;
+				}
+				case 2:
+				{
+					/* Look at population */
+					if (tree_ptr->cutoff >= bound->popmax)
+					{
+						branch = TRUE;
+						
+						cur_bound->popmax = tree_ptr->cutoff;
+					}
+					else if (tree_ptr->cutoff <= bound->popmin)
+					{
+						branch = FALSE;
+						
+						cur_bound->popmin = tree_ptr->cutoff;
+					}
+					else
+					{
+						/* make backups before recursion */
+						copy_bounds(bound, &temp_bound1);
+						copy_bounds(cur_bound, &temp_bound2);
+						
+						/* upper bound = cutoff */
+						temp_bound1.popmax = tree_ptr->cutoff;
+						temp_bound2.popmax = tree_ptr->cutoff;
+						
+						/* rescan with smaller domain */
+						if (!add_node(&temp_bound1, &temp_bound2, type, node))
+							return(0);
+						
+						/* make backups before recursion */
+						copy_bounds(bound, &temp_bound1);
+						copy_bounds(cur_bound, &temp_bound2);
+						
+						/* lower bound = cutoff */
+						temp_bound1.popmin = tree_ptr->cutoff;
+						temp_bound2.popmin = tree_ptr->cutoff;
+						
+						/* rescan with smaller domain */
+						return(add_node(&temp_bound1, &temp_bound2, type, node));
+					}
+					break;
+				}
+				case 3:
+				{
+					/* Look at lawfulness */
+					if (tree_ptr->cutoff >= bound->lawmax)
+					{
+						branch = TRUE;
+						
+						cur_bound->lawmax = tree_ptr->cutoff;
+					}
+					else if (tree_ptr->cutoff <= bound->lawmin)
+					{
+						branch = FALSE;
+						
+						cur_bound->lawmin = tree_ptr->cutoff;
+					}
+					else
+					{
+						/* make backups before recursion */
+						copy_bounds(bound, &temp_bound1);
+						copy_bounds(cur_bound, &temp_bound2);
+						
+						/* upper bound = cutoff */
+						temp_bound1.lawmax = tree_ptr->cutoff;
+						temp_bound2.lawmax = tree_ptr->cutoff;
+						
+						/* rescan with smaller domain */
+						if (!add_node(&temp_bound1, &temp_bound2, type, node))
+							return(0);
+						
+						/* make backups before recursion */
+						copy_bounds(bound, &temp_bound1);
+						copy_bounds(cur_bound, &temp_bound2);
+						
+						/* lower bound = cutoff */
+						temp_bound1.lawmin = tree_ptr->cutoff;
+						temp_bound2.lawmin = tree_ptr->cutoff;
+						
+						/* rescan with smaller domain */
+						return(add_node(&temp_bound1, &temp_bound2, type, node));
+					}
+					break;
+				}
+				default:
+				{
+					msg_format("Info - %d", tree_ptr->info);
+					msg_print("Invalid stat chosen!");
+					
+					break;
+				}
+			}
+		}
+		
+		
+		/* Look at the proper branch of the tree */ 
+		if (branch)
+		{
+			/* Go "left" */
+			
+			/* See if references leaf node */
+			if (tree_ptr->info & 4)
+			{
+				/* Hit leaf node */
+				
+				/* store connection */
+				oldnode = tree_ptr->ptrnode1;
+				
+				/* Take care of null case */
+				if ((oldnode == 0) && compare_bounds(cur_bound, bound))
+				{
+					/* simply set the branch to point to the wild. gen. type */
+					tree_ptr->ptrnode1 = type;
+					
+					/* done - don't return zero as can happen with the root node */
+					return(1);
+				}
+				
+				/* Make new node */
+				node = create_node(node, TRUE);
+				if (node == 0) return (0);
+				
+				return(add_node_inside(node, oldnode, cur_bound, type, bound));
+			}
+			else
+			{
+				/* use the while loop to recurse */
+				
+				oldnode = node;
+				node = tree_ptr->ptrnode1;
+			}
+		}
+		else
+		{
+			/* Go "right" */
+			
+			/* See if references leaf node */
+			if (tree_ptr->info & 8)
+			{
+				/* Hit leaf node */
+				
+				/* store connection */
+				oldnode = tree_ptr->ptrnode2;
+				
+				/* Take care of null case */
+				if ((oldnode == 0) && compare_bounds(cur_bound, bound))
+				{
+					/* simply set the branch to point to the wild. gen. type */
+					tree_ptr->ptrnode2 = type;
+					
+					/* done - don't return zero as can happen with the root node */
+					return(1);
+				}
+				
+				/* Make new node */
+				node = create_node(node, FALSE);
+				if (node == 0) return (0);
+				
+				return(add_node_inside(node, oldnode, cur_bound, type, bound));		
+			}
+			else
+			{
+				/* use the while loop to recurse */
+				oldnode = node;
+				node = tree_ptr->ptrnode2;
+			}
+		}	
+	}
+}
+
+/*
+ * Initialise the decision tree with the first wilderness generation type.
+ */
+
+u16b init_choice_tree(wild_bound_box_type *bound, u16b type)
+{
+	wild_bound_box_type start_bounds;
+	
+	/* The decision tree has one (empty) node */
+	d_tree_count = 1;
+	
+	/* 
+	 * Set the starting bounds of the decision tree - this covers
+	 * the whole parameter space used by the wilderness generation
+	 * types.
+	 */
+	start_bounds.hgtmin = 0;
+	start_bounds.hgtmax = 255;
+	
+	start_bounds.popmin = 0;
+	start_bounds.popmax = 255;
+	
+	start_bounds.lawmin = 0;
+	start_bounds.lawmax = 255;
+	
+	/* Assume first node is cleared by C_MAKE */
+	
+	/* 
+	 * Start the tree off by adding the type within a "null" region covering
+	 * the whole parameter space.  (Note this routine requires one empty node.
+	 * - that is why d_tree_count starts out as one.)
+	 */
+	return(add_node_inside(0, 0, &start_bounds, type, bound));
+}
+
+
+u16b add_node_tree_root(wild_bound_box_type *bound, u16b type)
+{
+	/* default bounds */
+	wild_bound_box_type start_bounds;
+	
+	start_bounds.hgtmin = 0;
+	start_bounds.hgtmax = 255;
+	
+	start_bounds.popmin = 0;
+	start_bounds.popmax = 255;
+	
+	start_bounds.lawmin = 0;
+	start_bounds.lawmax = 255;
+
+	/* Add to root of tree */
+	return(add_node(bound, &start_bounds, type, 0));
+}
+
+
+
 /* Delete a wilderness block */
 static void del_block(blk_ptr block_ptr)
 {

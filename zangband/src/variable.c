@@ -665,6 +665,12 @@ wild_grid_type wild_grid;
 /* The wilderness itself */
 wild_type *wild[WILD_SIZE];
 
+/* Description of wilderness block types */
+wild_gen_data_type *wild_gen_data;
+
+/* The decision tree for working out what block type to pick */
+wild_choice_tree_type *wild_choice_tree;
+
 /*
  * The array of dungeon items [max_o_idx]
  */

@@ -2432,6 +2432,173 @@ errr init_r_info_txt(FILE *fp, char *buf)
 }
 
 
+
+/*
+ * Initialize the "wild_choice_tree" and "wild_gen_data" arrays,
+ *  by parsing an ascii "template" file
+ */
+errr init_w_info_txt(FILE *fp, char *buf)
+{
+	int i = -1;
+
+	/* Bounding box of entry */
+	wild_bound_box_type bound;
+	
+	/* Current entry */
+	wild_gen_data_type *w_ptr = NULL;
+
+	/* Just before the first line */
+	error_line = -1;
+
+	/* Parse */
+	while (0 == my_fgets(fp, buf, 1024))
+	{
+		/* Advance the line number */
+		error_line++;
+
+		/* Skip comments and blank lines */
+		if (!buf[0] || (buf[0] == '#')) continue;
+
+		/* Verify correct "colon" format */
+		if (buf[1] != ':') return (1);
+
+		/* Process 'G' for "Graphics" (one line only) */
+		if (buf[0] == 'G')
+		{
+			int tmp;
+
+			/* Paranoia */
+			if (!buf[2]) return (1);
+			if (!buf[3]) return (1);
+			if (!buf[4]) return (1);
+
+			/* Extract the color */
+			tmp = color_char_to_attr(buf[4]);
+
+			/* Paranoia */
+			if (tmp < 0) return (1);
+
+			/* Increase the wild. gen. type */
+			i++;
+			
+			/* Check to see if there is room in array */
+			/* Hack - need to use misc.txt XXX XXX XXX */
+			
+			if (i >= 27) return (2);
+			
+			/* point to new position in array */
+			w_ptr = &wild_gen_data[i];
+			
+			/* Save the values */
+			w_ptr->w_attr = tmp;
+			w_ptr->w_char = buf[2];
+
+			/* Next... */
+			continue;
+		}
+
+
+		/* There better be a current w_ptr */
+		if (!w_ptr) return (3);
+
+		/* Process 'W' for "Wilderness Info" (one line only) */
+		if (buf[0] == 'W')
+		{
+			int hgtmin, hgtmax, popmin, popmax, lawmin, lawmax;
+			
+
+			/* Scan for the values */
+			if (6 != sscanf(buf+2, "%d:%d:%d:%d:%d:%d",
+				&hgtmin, &hgtmax, &popmin, &popmax,
+					&lawmin, &lawmax)) return (1);
+
+			/* Save the values into bounds*/
+			bound.hgtmin = hgtmin;
+			bound.hgtmax = hgtmax;
+			
+			bound.popmin = popmin;
+			bound.popmax = popmax;
+			
+			bound.lawmin = lawmin;
+			bound.lawmax = lawmax;
+
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'T' for "Type" (one line only) */
+		if (buf[0] == 'T')
+		{
+			int routine, type, chance;
+
+			/* Scan for the values */
+			if (3 != sscanf(buf+2, "%d:%d:%d",
+				&routine, &type, &chance)) return (1);
+
+			/* Save the values */
+			w_ptr->gen_routine = routine;
+			w_ptr->rough_type = type;
+			w_ptr->chance = chance;
+
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'E' for "Extra Information" (one line only) */
+		if (buf[0] == 'E')
+		{
+			int d0, d1, d2, d3, d4, d5, d6, d7;
+
+			/* Scan for the values */
+			if (8 != sscanf(buf+2, "%d:%d:%d:%d:%d:%d:%d:%d",
+				&d0, &d1, &d2, &d3, &d4, &d5, &d6, &d7))
+					return (1);
+
+			/* Save the values */
+			w_ptr->data[0] = d0;
+			w_ptr->data[1] = d1;
+			w_ptr->data[2] = d2;
+			w_ptr->data[3] = d3;
+			w_ptr->data[4] = d4;
+			w_ptr->data[5] = d5;
+			w_ptr->data[6] = d6;
+			w_ptr->data[7] = d7;
+			
+			/* Initialise if tree is empty */
+			if (i == 0)
+			{
+				init_choice_tree(&bound, i+1);
+				/*if(init_choice_tree(&bound, i+1) == 0)
+					return (2);*/
+			}
+			else
+			{
+				/* Add type to decision tree */
+				if(add_node_tree_root(&bound, i+1) == 0)
+					return (2);
+			}
+			
+			/* Next... */
+			continue;
+		}
+
+		/* Oops */
+		return (6);
+	}
+
+	/* Success */
+	return (0);
+}
+
+
+
+
+
+
+
+
+
+
 #else	/* ALLOW_TEMPLATES */
 
 #ifdef MACINTOSH

@@ -325,6 +325,8 @@ extern u16b *temp_block[WILD_BLOCK_SIZE+1];
 extern cave_type **wild_cache[WILD_BLOCKS];
 extern wild_grid_type wild_grid;
 extern wild_type *wild[WILD_SIZE];
+extern wild_gen_data_type *wild_gen_data;
+extern wild_choice_tree_type *wild_choice_tree;
 extern object_type *o_list;
 extern monster_type *m_list;
 extern u16b max_towns;
@@ -617,11 +619,13 @@ extern errr init_k_info_txt(FILE *fp, char *buf);
 extern errr init_a_info_txt(FILE *fp, char *buf);
 extern errr init_e_info_txt(FILE *fp, char *buf);
 extern errr init_r_info_txt(FILE *fp, char *buf);
+extern errr init_w_info_txt(FILE *fp, char *buf);
 extern errr process_dungeon_file(cptr name, int ymin, int xmin, int ymax, int xmax);
 
 /* init2.c */
 extern cptr err_str[PARSE_ERROR_MAX];
 extern errr init_v_info(void);
+extern errr init_w_info(bool new_game);
 extern void init_file_paths(char *path);
 extern void init_angband(void);
 extern errr init_buildings(void);
@@ -1232,6 +1236,8 @@ extern void k_info_reset(void);
 /* wild.c */
 extern void change_level(int);
 extern void set_no_town(void);
+extern u16b init_choice_tree(wild_bound_box_type *bound, u16b type);
+extern u16b add_node_tree_root(wild_bound_box_type *bound, u16b type);
 extern void create_wilderness(void);
 extern void move_wild(void);
 

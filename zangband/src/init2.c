@@ -1869,6 +1869,78 @@ errr init_v_info(void)
 	return (0);
 }
 
+/*
+ * Initialize the "wild_choice_tree" array and the
+ * "wild_gen_data" array.
+ *
+ */
+errr init_w_info(bool new_game)
+{
+	errr err;
+
+	FILE *fp;
+
+	/* General buffer */
+	char buf[1024];
+	
+	
+	/* Massive hack XXX XXX XXX */
+	
+	/* Later must add in raw file + misc.txt support. */
+	C_MAKE(wild_choice_tree, 100, wild_choice_tree_type);
+	C_MAKE(wild_gen_data, 27, wild_gen_data_type);
+	
+	/*** Load the ascii template file ***/
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_EDIT, "w_info.txt");
+
+	/* Open the file */
+	fp = my_fopen(buf, "r");
+
+	/* Parse it */
+	if (!fp) quit("Cannot open 'w_info.txt' file.");
+
+	/* Parse the file */
+	err = init_w_info_txt(fp, buf);
+
+	/* Close it */
+	my_fclose(fp);
+
+	/* Errors */
+	if (err)
+	{
+		cptr oops;
+
+		/* Error string */
+		oops = (((err > 0) && (err < PARSE_ERROR_MAX)) ? err_str[err] : "unknown");
+
+		/* Oops */
+		msg_format("Error %d at line %d of 'w_info.txt'.", err, error_line);
+		msg_format("Record %d contains a '%s' error.", error_idx, oops);
+		msg_format("Parsing '%s'.", buf);
+		msg_print(NULL);
+
+		/* Quit */
+		quit("Error in 'w_info.txt' file.");
+	}
+	
+	/* Create the random wilderness */
+	if (new_game)
+	{
+		create_wilderness();
+
+		/* Make the function pointers point the the correct data type */
+		change_level(dun_level);
+	}
+	
+	/* Free decision tree now that are done with it */
+	C_FREE(wild_choice_tree, 100, wild_choice_tree_type);
+	
+	/* Success */
+	return(0);
+}
+
 
 
 /*** Initialize others ***/

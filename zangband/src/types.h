@@ -473,13 +473,31 @@ struct cave_type
 };
 
 
+/* 
+ * Pointer to a 16x16 block of cave grids.
+ * The grids are allocated and deallocated in large
+ * blocks for speed.
+ */
+
 typedef cave_type **blk_ptr;
 
 /* Hack - to get the C_MAKE to work in init2.c */
 
 typedef cave_type *cave_tp_ptr;
 
-/* Grid of blocks around the player. */
+
+/* 
+ * Grid of blocks around the player.
+ * This stores important information about what the player can see
+ * in the wilderness.  The max/ min vaules are stored for speed of
+ * the in_bounds and in_bounds2 functions.
+ * The cache_ count is no longer used.  (Before the number of blocks
+ * Allocated would change as the player moves around.  Now - this
+ * number is constant, and equal to the number of blocks the player
+ * can see.  The overhead involved in maintaining a cache of blocks
+ * did not seem worth the small speed increase that would exist only
+ * in a few cases.
+ */
 
 typedef struct wild_grid_type wild_grid_type;
 
@@ -501,11 +519,18 @@ struct wild_grid_type
 	u16b y_min;
 	u16b x_min;
 
+	/* Random seed of the wilderness */
 	u32b wild_seed;
 };
 
 
-/* Structure used to generate the wilderness */
+/* 
+ * Structure used to generate the wilderness.
+ * This stores the "height", "population" and "law" results
+ * after the initial plasma fractal routines.
+ * These values are then converted into simple look up numbers
+ * for the wilderness generation type and wandering monster type.
+ */
 
 typedef struct wild_gen_type wild_gen_type;
 
@@ -537,8 +562,98 @@ struct wild_done_type
 typedef union wild_type wild_type;
 union wild_type
 {
-	wild_gen_type gen;
-	wild_done_type done;
+	wild_gen_type	gen;
+	wild_done_type	done;
+};
+
+
+/* 
+ * An array of this structure is used to work out what wilderness type
+ * is at each 16x16 block.
+ */ 
+typedef struct wild_choice_tree_type wild_choice_tree_type;
+
+struct wild_choice_tree_type
+{
+	/* 
+	 * Stores what type of node this is -
+	 * both what type of cutoff (hgt,pop,law)
+	 * and whether the pointers reference
+	 * another tree node- or a wilderness
+	 * generation type.
+	 */	
+	byte	info;
+	
+	/* cutoff for the split of the virtual BSP tree */
+	byte	cutoff;
+	
+	/* 
+	 * chance1/(chance1+chance2) = prob. of going down
+	 * the "left" branch.  (This is used when several
+	 * wilderness generation functions inhabit the same
+	 * area of parameter space.  This is used to select
+	 * between the possibilities randomly.
+	 */
+	byte	chance1;
+	byte	chance2;
+	
+	/* 
+	 * These point to the left and right branches of the tree.
+	 * Note - that since these also need to reference a wild.gen.type.
+	 * these are index numbers of the "choice" or "gen" arrays.
+	 * (depending on the value of info)
+	 */
+	u16b	ptrnode1;
+	u16b	ptrnode2;
+};
+
+
+/*
+ * This type is used to describe a region in parameter space
+ * for wilderness generation.
+ */
+
+
+typedef struct wild_bound_box_type wild_bound_box_type;
+
+struct wild_bound_box_type
+{
+	/* Min and max values for the cuboid in the parameter space */
+	
+	byte hgtmin;
+	byte hgtmax;
+	
+	byte popmin;
+	byte popmax;
+	
+	byte lawmin;
+	byte lawmax;
+};
+/*
+ * This data type stores the information on a particular
+ * wilderness generation type for 16x16 blocks, so the
+ * blocks can be
+ * 1) made.
+ * 2) Looked at on the overhead map.
+ */
+typedef struct wild_gen_data_type wild_gen_data_type;
+
+struct wild_gen_data_type
+{
+	byte	w_attr;		/* Default attribute for overhead map*/
+	char	w_char;		/* Default character for overhead map*/
+
+	byte	gen_routine;	/* Generation routine number */
+	
+	/*
+	 * Course type - used in plasma fractal routines to make
+	 * adjacent tiles fit togther smoothly.
+	 */
+	byte	rough_type;
+	
+	byte	chance;		/* Chance for this type vs others */
+
+	byte	data[8];	/* data for generation routine */
 };
 
 
