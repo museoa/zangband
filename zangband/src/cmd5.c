@@ -251,7 +251,7 @@ void do_cmd_browse(void)
 	}
 
 	/* Restrict choices to "useful" books */
-	item_tester_tval = mp_ptr->spell_book;
+	/* item_tester_tval = mp_ptr->spell_book; */
 
 	/* Get an item */
 	q = "Browse which book? ";
