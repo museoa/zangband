@@ -768,7 +768,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 	
 	monster_type *m_ptr;
 
-	s16b this_o_idx, next_o_idx = 0;
+	s16b this_o_idx, next_o_idx;
 
 	byte feat;
 	byte info;
@@ -785,9 +785,6 @@ void map_info(int y, int x, byte *ap, char *cp)
 	/* Feature + Info flags */
 	feat = c_ptr->feat;
 	info = c_ptr->info;
-
-	/* Apply mimic field */
-	feat = f_info[feat].mimic;
 	
 	/* Is this feature memorized? */
 	if (!(info & (CAVE_MARK | CAVE_LITE)))
@@ -811,6 +808,10 @@ void map_info(int y, int x, byte *ap, char *cp)
 	}
 	else
 	{
+		/* Apply mimic field */
+		feat = f_info[feat].mimic;
+		
+		/* point to the feat */
 		f_ptr = &f_info[feat];
 			
 		/* Blank attr */
