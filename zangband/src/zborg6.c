@@ -8515,7 +8515,7 @@ static int borg_attack_spell(int *b_slot, int *b_spell)
 /* Try to use the reserve mana for attacking anyway if there is one monster */
 static int borg_attack_spell_reserve(bool faint, int *b_slot, int *b_spell)
 {
-	int realm, book, spell;
+	int realm, book, spell = 0;
 
 	int k, n, b_n = 0;
 	int b_x = 0, b_y = 0;
