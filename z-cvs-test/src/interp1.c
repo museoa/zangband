@@ -1646,7 +1646,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 				{
 					Tcl_SetStringObj(resultPtr,
 						format("bad r_info index \"%d\": must be between 0 and %d",
-						r_idx, (int) MAX_VALID_R_IDX - 1), -1);
+						r_idx, (int) max_r_idx - 1), -1);
 					return TCL_ERROR;
 				}
 				p_ptr->monster_race_idx = r_idx;

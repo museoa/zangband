@@ -1724,7 +1724,7 @@ void init_struct(void)
 	type.name = "monster_race";
 	type.elem = (unsigned char *) r_info;
 	type.elem_size = sizeof(monster_race);
-	type.max = MAX_VALID_R_IDX;
+	type.max = max_r_idx;
 	type.info = struct_monster_race;
 	type.infoProc = (StructInfoProc) struct_info_monster_race;
 	type.findProc = struct_find_monster_race;

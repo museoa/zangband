@@ -60,7 +60,6 @@
 #define p_ptr_maximize maximize_mode
 #define p_ptr_preserve preserve_mode
 #define Rand_normal randnor
-#define MAX_VALID_R_IDX max_r_idx
 #define set_user_inscription(o,q) o->inscription = q
 #define get_user_inscription(o) o->inscription
 #define player_is_here(y,x) \
@@ -81,7 +80,7 @@
 #define ART_CURNUM(a) a->cur_num
 
 
-#define monster_race_valid(r_idx) ((r_idx >= 0) && (r_idx < MAX_VALID_R_IDX))
+#define monster_race_valid(r_idx) ((r_idx >= 0) && (r_idx < max_r_idx))
 
 #define monster_is_friend(m) (is_friendly(m) || is_pet(m))
 

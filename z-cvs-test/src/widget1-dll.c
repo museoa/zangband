@@ -20,8 +20,6 @@
 #include "plat-dll.h"
 #include "widget-dll.h"
 
-extern char *format(char *fmt, ...);
-
 char *keyword_widget_style[] = {
 	"icon", "map", "iso",
 	NULL
