@@ -171,13 +171,6 @@ typedef void (*map_erase_hook_type) (void);
  */
 #ifdef TERM_USE_LIST
 
-/* Types of list */
-#define LIST_INVEN			1
-#define LIST_EQUIP			2
-#define LIST_FLOOR			3
-#define LIST_STORE_BUY		4
-#define LIST_STORE_SELL		5
-
 /*
  * Object List data structure
  */
@@ -196,6 +189,13 @@ struct term_list
 	
 	s16b k_idx;	/* Kind index (zero if "dead") */
 	s16b weight;	/* Item weight */
+	
+	s16b to_h;	/* Bonus to hit */
+	s16b to_d;	/* Bonus to dam */
+	s16b to_a;	/* Bonus to ac */
+	s16b ac;	/* Armor class */
+	byte dd;	/* Damage dice */
+	byte ds;	/* Damage sides */
 	
 	byte number;	/* Number of items */
 	byte info;	/* Special flags */
@@ -219,6 +219,13 @@ struct list_item
 	
 	s16b k_idx;	/* Kind index (zero if "dead") */
 	s16b weight;	/* Item weight */
+	
+	s16b to_h;	/* Bonus to hit */
+	s16b to_d;	/* Bonus to dam */
+	s16b to_a;	/* Bonus to ac */
+	s16b ac;	/* Armor class */
+	byte dd;	/* Damage dice */
+	byte ds;	/* Damage sides */
 	
 	byte number;	/* Number of items */
 	byte info;	/* Special flags */
@@ -275,6 +282,4 @@ extern map_block *map_loc(int dx, int dy);
 #ifdef TERM_USE_LIST
 extern list_notice_hook_type set_list_notice_hook(list_notice_hook_type
 												 hook_func);
-extern void Term_write_equipment(void);
-extern void Term_write_list(s16b o_idx, byte list_type);
 #endif /* TERM_USE_LIST */

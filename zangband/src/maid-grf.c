@@ -944,6 +944,18 @@ static void copy_list(term_list *t_ptr, int num1, list_item **l_ptr_ptr,
 		/* Duplicate equipment slot */
 		l_ptr->slot = tl_ptr->slot;
 		
+		/* Duplicate bonuses */
+		l_ptr->to_h = tl_ptr->to_h;
+		l_ptr->to_d = tl_ptr->to_d;
+		l_ptr->to_a = tl_ptr->to_a;
+		
+		/* Duplicate AC */
+		l_ptr->ac = tl_ptr->ac;
+
+		/* Duplicate Dice */
+		l_ptr->dd = tl_ptr->dd;
+		l_ptr->ds = tl_ptr->ds;
+		
 		/* Duplicate strings */
 		l_ptr->o_name = string_make(tl_ptr->o_name);
 		l_ptr->xtra_name = string_make(tl_ptr->xtra_name);
@@ -1017,6 +1029,25 @@ static void set_basic_flags(term_list *l_ptr, object_type *o_ptr)
 	else
 	{
 		l_ptr->xtra_name = NULL;
+	}
+	
+	/* Damage dice */
+	l_ptr->dd = o_ptr->dd;
+	l_ptr->ds = o_ptr->ds;
+	
+	/* Hack - only send AC information if isn't a wand */
+	if (o_ptr->tval != TV_WAND)
+	{
+		l_ptr->ac = o_ptr->ac;
+	}
+	
+	/* Identified items yield extra information */
+	if (object_known_p(o_ptr))
+	{
+		/* Bonuses */
+		l_ptr->to_h = o_ptr->to_h;
+		l_ptr->to_d = o_ptr->to_d;
+		l_ptr->to_a = o_ptr->to_a;
 	}
 }
 
