@@ -1684,6 +1684,9 @@ static void Term_nuke_win(term *t)
  */
 static errr Term_user_win(int n)
 {
+	/* Unused parameter */
+	(void)n;
+
 	/* Success */
 	return (0);
 }
@@ -2320,6 +2323,10 @@ static errr Term_pict_win(int x, int y, int n, const byte *ap, const char *cp)
 	{
 		hdcMask = CreateCompatibleDC(hdc);
 		SelectObject(hdcMask, infMask.hBitmap);
+	}
+	else
+	{
+		hdcMask = NULL;
 	}
 
 # endif /* USE_TRANSPARENCY */
@@ -4456,6 +4463,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 	WNDCLASS wc;
 	HDC hdc;
 	MSG msg;
+
+	/* Unused parameter */
+	(void)nCmdShow;
 
 	/* Save globally */
 	hInstance = hInst;
