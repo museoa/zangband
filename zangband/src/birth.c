@@ -1901,14 +1901,14 @@ static bool player_birth_aux_1(void)
 
 	/* Display the information so far. */
 	/* Name, Sex, Race, Class */
-	put_fstr(0, 2, "Name     :" CLR_L_BLUE "%s", player_name);
-	put_fstr(0, 3, "Sex      :" CLR_L_BLUE "%s", sp_ptr->title);
-	put_fstr(0, 4, "Race     :" CLR_L_BLUE "%s", rp_ptr->title);
-	put_fstr(0, 5, "Class    :" CLR_L_BLUE "%s", cp_ptr->title);
+	put_fstr(0, 2, "Name     : " CLR_L_BLUE "%s", player_name);
+	put_fstr(0, 3, "Sex      : " CLR_L_BLUE "%s", sp_ptr->title);
+	put_fstr(0, 4, "Race     : " CLR_L_BLUE "%s", rp_ptr->title);
+	put_fstr(0, 5, "Class    : " CLR_L_BLUE "%s", cp_ptr->title);
 
 	if (p_ptr->realm1 || p_ptr->realm2)
 	{
-		put_fstr(0, 6, "Magic    :" CLR_L_BLUE "%s", realm_names[p_ptr->realm1]);
+		put_fstr(0, 6, "Magic    : " CLR_L_BLUE "%s", realm_names[p_ptr->realm1]);
 	}
 
 	if (p_ptr->realm2)

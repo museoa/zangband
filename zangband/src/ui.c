@@ -432,10 +432,14 @@ void put_cstr(int col, int row, cptr str)
 			c++;
 			
 			/* Is it a colour specifier? */
-			if (*c && (*c < TERM_L_UMBER + 1))
+			if ((*c >= 'A') && (*c <= 'P'))
 			{
-				/* Save the new colour */
-				a = *c - 1;
+				/*
+				 * Save the new colour
+				 *
+				 * Hack - this depends on ASCII symbols
+				 */
+				a = *c - 'A';
 				c++;
 				
 				/* Paranoia: no more in string? */

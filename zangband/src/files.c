@@ -1298,12 +1298,7 @@ errr check_load_init(void)
 static void prt_num(cptr header, s32b num, int col, int row, byte color,
                     int wid)
 {
-	int len = strlen(header);
-	char out_val[32];
-	put_str(header, col, row);
-	put_str("   ", col + len, row);
-	(void)sprintf(out_val, "%*ld", wid, (long)num);
-	c_put_str(color, out_val, col + len + 3, row);
+	put_fstr(col, row, "%s   %s%*ld", header, color_seq[color], wid, (long)num);
 }
 
 
@@ -1311,12 +1306,6 @@ static void prt_num(cptr header, s32b num, int col, int row, byte color,
 #define COL_SKILLS2		29
 #define COL_SKILLS3		58
 #define WID_SKILLS		14
-
-
-/*
- * Hack -- pass color info around this file
- */
-static byte likert_color = TERM_WHITE;
 
 
 /*
@@ -1333,8 +1322,7 @@ static void likert(int x, int y, char *desc)
 	/* Negative value */
 	if (x < 0)
 	{
-		likert_color = TERM_L_DARK;
-		strcpy(desc, "Very Bad");
+		strcpy(desc, CLR_L_DARK "Very Bad");
 		return;
 	}
 
@@ -1344,40 +1332,34 @@ static void likert(int x, int y, char *desc)
 		case 0:
 		case 1:
 		{
-			likert_color = TERM_RED;
-			strcpy(desc, "Bad");
+			strcpy(desc, CLR_RED "Bad");
 			return;
 		}
 		case 2:
 		{
-			likert_color = TERM_L_RED;
-			strcpy(desc, "Poor");
+			strcpy(desc, CLR_L_RED "Poor");
 			return;
 		}
 		case 3:
 		case 4:
 		{
-			likert_color = TERM_ORANGE;
-			strcpy(desc, "Fair");
+			strcpy(desc, CLR_ORANGE "Fair");
 			return;
 		}
 		case 5:
 		{
-			likert_color = TERM_YELLOW;
-			strcpy(desc, "Good");
+			strcpy(desc, CLR_YELLOW "Good");
 			return;
 		}
 		case 6:
 		{
-			likert_color = TERM_YELLOW;
-			strcpy(desc, "Very Good");
+			strcpy(desc, CLR_YELLOW "Very Good");
 			return;
 		}
 		case 7:
 		case 8:
 		{
-			likert_color = TERM_L_GREEN;
-			strcpy(desc, "Excellent");
+			strcpy(desc, CLR_YELLOW "Excellent");
 			return;
 		}
 		case 9:
@@ -1386,8 +1368,7 @@ static void likert(int x, int y, char *desc)
 		case 12:
 		case 13:
 		{
-			likert_color = TERM_GREEN;
-			strcpy(desc, "Superb");
+			strcpy(desc, CLR_GREEN "Superb");
 			return;
 		}
 		case 14:
@@ -1395,14 +1376,12 @@ static void likert(int x, int y, char *desc)
 		case 16:
 		case 17:
 		{
-			likert_color = TERM_BLUE;
-			strcpy(desc, "Chaos Rank");
+			strcpy(desc, CLR_BLUE "Chaos Rank");
 			return;
 		}
 		default:
 		{
-			likert_color = TERM_VIOLET;
-			sprintf(desc, "Amber [%d]", (int)((((x / y) - 17) * 5) / 2));
+			sprintf(desc, CLR_VIOLET "Amber [%d]", (int)((((x / y) - 17) * 5) / 2));
 			return;
 		}
 	}
@@ -1493,36 +1472,36 @@ static void display_player_abilities(void)
 
 	put_str("Fighting    :", COL_SKILLS1, 16);
 	likert(xthn, 10, desc);
-	c_put_str(likert_color, desc, COL_SKILLS1 + WID_SKILLS, 16);
+	put_cstr(COL_SKILLS1 + WID_SKILLS, 16, desc);
 
 	put_str("Bows/Throw  :", COL_SKILLS1, 17);
 	likert(xthb, 10, desc);
-	c_put_str(likert_color, desc, COL_SKILLS1 + WID_SKILLS, 17);
+	put_cstr(COL_SKILLS1 + WID_SKILLS, 17, desc);
 
 	put_str("Saving Throw:", COL_SKILLS1, 18);
 	likert(xsav, 6, desc);
-	c_put_str(likert_color, desc, COL_SKILLS1 + WID_SKILLS, 18);
+	put_cstr(COL_SKILLS1 + WID_SKILLS, 18, desc);
 
 	put_str("Stealth     :", COL_SKILLS1, 19);
 	likert(xstl, 1, desc);
-	c_put_str(likert_color, desc, COL_SKILLS1 + WID_SKILLS, 19);
+	put_cstr(COL_SKILLS1 + WID_SKILLS, 19, desc);
 
 
 	put_str("Perception  :", COL_SKILLS2, 16);
 	likert(xfos, 6, desc);
-	c_put_str(likert_color, desc, COL_SKILLS2 + WID_SKILLS, 16);
+	put_cstr(COL_SKILLS2 + WID_SKILLS, 16, desc);
 
 	put_str("Sensing     :", COL_SKILLS2, 17);
 	likert(xsns, 6, desc);
-	c_put_str(likert_color, desc, COL_SKILLS2 + WID_SKILLS, 17);
+	put_cstr(COL_SKILLS2 + WID_SKILLS, 17, desc);
 
 	put_str("Disarming   :", COL_SKILLS2, 18);
 	likert(xdis, 8, desc);
-	c_put_str(likert_color, desc, COL_SKILLS2 + WID_SKILLS, 18);
+	put_cstr(COL_SKILLS2 + WID_SKILLS, 18, desc);
 
 	put_str("Magic Device:", COL_SKILLS2, 19);
 	likert(xdev, 6, desc);
-	c_put_str(likert_color, desc, COL_SKILLS2 + WID_SKILLS, 19);
+	put_cstr(COL_SKILLS2 + WID_SKILLS, 19, desc);
 
 
 	put_str("Blows/Round :", COL_SKILLS3, 16);
@@ -2319,19 +2298,19 @@ static void display_player_top(void)
 	int i;
 	
 	/* Name, Sex, Race, Class */
-	put_fstr(COL_NAME, 2, "Name     :" CLR_L_BLUE "%s", player_name);
-	put_fstr(COL_NAME, 3, "Sex      :" CLR_L_BLUE "%s", sp_ptr->title);
-	put_fstr(COL_NAME, 4, "Race     :" CLR_L_BLUE "%s", rp_ptr->title);
-	put_fstr(COL_NAME, 5, "Class    :" CLR_L_BLUE "%s", cp_ptr->title);
+	put_fstr(COL_NAME, 2, "Name     : " CLR_L_BLUE "%s", player_name);
+	put_fstr(COL_NAME, 3, "Sex      : " CLR_L_BLUE "%s", sp_ptr->title);
+	put_fstr(COL_NAME, 4, "Race     : " CLR_L_BLUE "%s", rp_ptr->title);
+	put_fstr(COL_NAME, 5, "Class    : " CLR_L_BLUE "%s", cp_ptr->title);
 
 	if (p_ptr->realm1 || p_ptr->realm2)
 	{
-		put_fstr(COL_NAME, 6, "Magic    :" CLR_L_BLUE "%s", realm_names[p_ptr->realm1]);
+		put_fstr(COL_NAME, 6, "Magic    : " CLR_L_BLUE "%s", realm_names[p_ptr->realm1]);
 	}
 
 	if (p_ptr->pclass == CLASS_CHAOS_WARRIOR)
 	{
-		put_fstr(COL_NAME, 7, "Patron   :", CLR_L_BLUE "%s",
+		put_fstr(COL_NAME, 7, "Patron   : ", CLR_L_BLUE "%s",
 					 chaos_patrons[p_ptr->chaos_patron]);
 	}
 

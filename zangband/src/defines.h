@@ -4106,25 +4106,25 @@ extern int PlayerUID;
  * colour.  We could also use this techinque for other formatting
  * specifiers...
  *
- * Note how we start from 001 instead of 0, because a zero would
- * end the string. Also note how the numbers have to be in octal. :-/
+ * Note we must use 'nice' characters for the specifier because
+ * the formatting routines eat some of the control characters.
  */
-#define CLR_DARK		"/001/001"  
-#define CLR_WHITE		"/001/002"
-#define CLR_SLATE		"/001/003"
-#define CLR_ORANGE		"/001/004"
-#define CLR_RED			"/001/005"
-#define CLR_GREEN		"/001/006"
-#define CLR_BLUE		"/001/007"
-#define CLR_UMBER		"/001/010"
-#define CLR_L_DARK		"/001/011"
-#define CLR_L_WHITE		"/001/012"
-#define CLR_VIOLET		"/001/013"
-#define CLR_YELLOW		"/001/014"
-#define CLR_L_RED		"/001/015"
-#define CLR_L_GREEN		"/001/016"
-#define CLR_L_BLUE		"/001/017"
-#define CLR_L_UMBER		"/001/020"
+#define CLR_DARK		"\001A"  
+#define CLR_WHITE		"\001B"
+#define CLR_SLATE		"\001C"
+#define CLR_ORANGE		"\001D"
+#define CLR_RED			"\001E"
+#define CLR_GREEN		"\001F"
+#define CLR_BLUE		"\001G"
+#define CLR_UMBER		"\001H"
+#define CLR_L_DARK		"\001I"
+#define CLR_L_WHITE		"\001J"
+#define CLR_VIOLET		"\001K"
+#define CLR_YELLOW		"\001L"
+#define CLR_L_RED		"\001M"
+#define CLR_L_GREEN		"\001N"
+#define CLR_L_BLUE		"\001O"
+#define CLR_L_UMBER		"\001P"
 
 
 #define MSG_GENERIC          0
