@@ -103,8 +103,6 @@ BORGOBJS := \
 	zborg1.o zborg2.o zborg3.o zborg4.o zborg5.o \
 	zborg6.o zborg7.o zborg8.o zborg9.o \
 
-
-
 ##
 ## The list of ports available
 ##
@@ -188,7 +186,7 @@ linux: LIBS := -lX11 -lcurses -lncurses -L/usr/X11R6/lib -lz -lvgagl -lvga \
 ##
 cygwin: CFLAGS += -W -pedantic -mno-cygwin -DWINDOWS
 cygwin: LIBS := -s -mno-cygwin -mwindows -e _mainCRTStartup -lwinmm
-cygwin: ANGOBJS += angband.res readdib.o
+cygwin: OTHEROBJS += angband.res readdib.o
 cygwin: INSTALL := mv -f zangband.exe ../zangband.exe
 cygwin: RES := windres
 cygwin: RESCMD = $< -O coff -o $@
@@ -281,7 +279,7 @@ lcc: LIBS := $(LCC_PATH)\lib\winmm.lib -I$(LCC_PATH)\include
 lcc: LDFLAGS := -s -subsystem windows
 lcc: RES := $(LCC_PATH)\bin\lrc.exe
 lcc: RESCMD := -I$(LCC_PATH)\include angband.rc
-lcc: ANGOBJS += angband.res readdib.o
+lcc: OTHEROBJS += angband.res readdib.o
 lcc: INSTALL := copy zangband ..\zangband.exe
 lcc: LUA := $(subst /, \, $(LUA))
 lcc: EXEC := .exe
@@ -300,14 +298,6 @@ risc: ANGOBJS += C:o.Stubs OSLib:o.OSLib C:o.eventlib
 
 
 ##########################################################
-
-##
-## Get the list of .c files from the .o files
-##
-ANGSRCS := $(ANGOBJS:.o=.c)
-ZUTILSRCS := $(ZUTILOBJS:.o=.c)
-BORGSRCS := $(BORGOBJS:.o=.c)
-LUAWSRCS := $(LUAWOBJS:.o=.c)
 
 ##
 ## The "source" and "object" files.
@@ -329,13 +319,21 @@ LUAOBJS := $(addprefix $(LUA), \
 TOLUAOBJS := \
   $(addprefix $(LUA), tolua.o tolualua.o liolib.o) $(LUAOBJS)
 
+##
+## Get the list of .c files from the .o files
+##
+ANGSRCS := $(ANGOBJS:.o=.c)
+ZUTILSRCS := $(ZUTILOBJS:.o=.c)
+BORGSRCS := $(BORGOBJS:.o=.c)
+LUAWSRCS := $(LUAWOBJS:.o=.c)
+
 
 ##
 ## Main list of objects and source files.
 ##
 SRCS := $(ANGSRCS) $(ZUTILSRCS) $(BORGSRCS)
 
-OBJS := $(ANGOBJS) $(ZUTILOBJS) $(BORGOBJS) $(LUAOBJS)
+OBJS := $(ANGOBJS) $(ZUTILOBJS) $(BORGOBJS) $(LUAOBJS) $(OTHEROBJS)
 
 ##
 ## Hack - GCC requires other flags
@@ -484,6 +482,19 @@ $(LUAWSRCS): %.c: %.pkg $(LUA)tolua$(EXEC)
 ##
 %.o:%.obj
 	move $@ $<
+
+LUALIST := basic.lua feature.lua verbatim.lua code.lua typedef.lua \
+	container.lua package.lua module.lua define.lua enumerate.lua \
+	declaration.lua variable.lua array.lua function.lua operator.lua \
+	class.lua clean.lua doit.lua
+	
+LUALIST := $(addprefix $(LUA), $(LUALIST))
+
+##
+## We sometimes want to redo the lua stuff
+##
+#$(LUA)tolualua.c: $(LUALIST)
+#	./tolua -n tolualua -o tolualua.c tolualua.pkg
 
 ##
 ## Phony targets
