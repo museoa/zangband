@@ -89,6 +89,24 @@ We are currently testing methods of linking to a particular section
 in a document and may also implement histories to allow 'back' and
 'forward' actions similar to web browsers.
 
+--- Tags ---
+
+A "tag" is something like a bookmark, it marks a line for reference by
+a hyperlink.  A tag is specified with:
+
+	***** <x>
+
+(where x is a single lower/uppercase letter or digit).
+
+You can then jump to the line marked with the tag with:
+
+	***** [1] target_filename#x
+
+This command jumps to the line with the tag 'x' in the file target_file.
+You can jump inside the current file too (just use the filename of
+the current file in the link).
+
 -- 
 Original    : Zangband DevTeam
-Last update : November 16, 1999
+Last update : November 17, 1999
+
