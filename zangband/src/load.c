@@ -2010,9 +2010,11 @@ static errr rd_dungeon(void)
 			px = px_back;
 			py = py_back;
 		}
-		
+
+		/* Remove fields and monsters */
 		wipe_f_list();
-		
+		wipe_m_list();
+
 		/* Hack - do not load data into wilderness */
 		change_level(1);
 
