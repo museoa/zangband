@@ -1270,8 +1270,7 @@ s32b object_value(object_type *o_ptr)
 {
 	s32b value;
 
-
-	/* Unknown items -- acquire a base value */
+	/* Known items -- acquire the actual value */
 	if (object_known_p(o_ptr))
 	{
 		/* Broken items -- worthless */
@@ -1284,7 +1283,7 @@ s32b object_value(object_type *o_ptr)
 		value = object_value_real(o_ptr);
 	}
 
-	/* Known items -- acquire the actual value */
+	/* Unknown items -- acquire a base value */
 	else
 	{
 		/* Hack -- Felt broken items */
@@ -3943,8 +3942,7 @@ void add_ego_power(int power, object_type *o_ptr)
  */
 void apply_magic(object_type *o_ptr, int lev, int lev_dif, byte flags)
 {
-
-	int f, power;
+	int f;
 
 	/* Maximum "level" for various things */
 	if (lev > MAX_DEPTH - 1) lev = MAX_DEPTH - 1;
@@ -3955,11 +3953,8 @@ void apply_magic(object_type *o_ptr, int lev, int lev_dif, byte flags)
 	/* Maximal chance of being "good" */
 	if (f > 30) f = 30;
 
-
-	/* Assume normal */
-	power = 0;
-	
-	if (flags & OC_NORMAL)
+	/* Roll for ego items */
+	if ((flags & OC_NORMAL) && (randint0(100) < f))
 	{
 		if (randint0(100) < f) flags |= OC_FORCE_GOOD; 
 		else if (randint0(100) < f) flags |= OC_FORCE_BAD; 
