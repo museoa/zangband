@@ -44,7 +44,7 @@ Zangband 2.7.2:
 - There is some randomness applied to the last digit of starting
   characters' stats.
 - Added some borg fixes from Lunal (M. Titus).
-- Made Rings of See Invisible, Dexterity, Resist Fire, Resist Cold,
+- Made Rings of See Invisible, Dexterity, Resist Fire and Cold,
   and Ring of the Cat more common.
 - Change the nominal depths of many items to match their actual
   drop depths, or in some cases add or change drop entries to match
