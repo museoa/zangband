@@ -151,7 +151,7 @@ default_port: $(DEFAULT)
 ##
 ## Hack - dependancy to get them to compile properly
 ##
-$(PORTS): install
+$(PORTS): install_game
 
 ##
 ## Hack - default install action
@@ -363,7 +363,7 @@ endif
 ## autoconf generated makefile system.)
 ##
 
-install: zangband$(EXEC)
+install_game: zangband$(EXEC)
 	$(INSTALL)
 
 
@@ -385,7 +385,6 @@ clean:
 	-rm -f ./lua/*.bak ./lua/*.o
 	-rm -f ./l-*.c
 	-rm -f ./lua/tolua
-	-rm -f ./lua/tolua_boot
 ##
 ## Generate dependencies automatically
 ##
