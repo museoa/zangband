@@ -2337,8 +2337,8 @@ static errr rd_dungeon(void)
 		else
 		{
 			character_dungeon = FALSE;
-			wipe_m_list();
 			wipe_o_list();
+			wipe_m_list();
 		}
 		
 		/* enter the level */
