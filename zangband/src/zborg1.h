@@ -875,14 +875,6 @@ extern s16b *borg_race_count;
 
 
 /*
- * Hack -- count racial kills (for uniques)
- */
-
-extern s16b *borg_race_death;
-
-
-
-/*
  * Maintain a set of glow grids (liteable grids)
  */
 

@@ -1398,11 +1398,6 @@ static bool borg_think_shop_grab_aux(void)
 	s32b c, b_c = 0L;
 	s32b borg_empty_home_power;
 
-
-	/* Dont do this if Sauron is dead */
-	if (borg_race_death[860] != 0) return (FALSE);
-
-
 	/* get what an empty home would have for power */
 	borg_notice_home(NULL, TRUE);
 	borg_empty_home_power = borg_power_home();

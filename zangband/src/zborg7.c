@@ -3380,17 +3380,6 @@ bool borg_leave_level(bool bored)
 		goal_rising = TRUE;
 	}
 
-	/* Hack -- It is much safer to scum for items on 98
-	 * Check to see if depth 99, if Sauron is dead and Im not read to fight
-	 * the final battle
-	 */
-	if (borg_skill[BI_CDEPTH] == 99 && borg_race_death[860] == 1 &&
-		borg_ready_morgoth != 1)
-	{
-		borg_note("# Returning to level 98 to scum for items.");
-		g = -1;
-	}
-
 	/* Power dive too 100 if ready */
 	if ((cptr)NULL == borg_prepared(100)) g = 1;
 

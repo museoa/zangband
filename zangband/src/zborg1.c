@@ -555,13 +555,6 @@ s16b *borg_race_count;
 
 
 /*
- * Hack -- count racial kills (for uniques)
- */
-
-s16b *borg_race_death;
-
-
-/*
  * Maintain a set of grids marked as "BORG_GLOW"
  */
 
@@ -1403,28 +1396,6 @@ void borg_init_1(void)
 
 	/* Count racial appearances */
 	C_MAKE(borg_race_count, z_info->r_max, s16b);
-
-	/* Count racial deaths */
-	C_MAKE(borg_race_death, z_info->r_max, s16b);
-
-
-	/*** XXX XXX XXX Hack -- Cheat ***/
-
-	/* Hack -- Extract dead uniques */
-	for (i = 1; i < z_info->r_max; i++)
-	{
-		monster_race *r_ptr = &r_info[i];
-
-		/* Skip non-monsters */
-		if (!r_ptr->name) continue;
-
-		/* Skip non-uniques */
-		if (!(r_ptr->flags1 & RF1_UNIQUE)) continue;
-
-		/* Mega-Hack -- Access "dead unique" list */
-		if (r_ptr->max_num == 0) borg_race_death[i] = 1;
-	}
-
 }
 
 

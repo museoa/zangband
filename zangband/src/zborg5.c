@@ -1909,12 +1909,8 @@ static void borg_count_death(int i)
 	/* Access race */
 	r_idx = kill->r_idx;
 
-	/* Hack -- count racial deaths */
-	if (borg_race_death[r_idx] < MAX_SHORT) borg_race_death[r_idx]++;
-
 	/* if it was a unique then remove the unique_on_level flag */
 	if (r_info[kill->r_idx].flags1 & RF1_UNIQUE) unique_on_level = FALSE;
-
 }
 
 
@@ -3016,24 +3012,6 @@ void borg_update(void)
 
 		/* Hack -- Forget race counters */
 		C_WIPE(borg_race_count, z_info->r_max, s16b);
-
-		/* Hack -- Rarely, a Unique can die off screen and the borg will miss it.
-		 * This check will cheat to see if uniques are dead.
-		 */
-		/*Extract dead uniques */
-		for (i = 1; i < z_info->r_max; i++)
-		{
-			monster_race *r_ptr = &r_info[i];
-
-			/* Skip non-monsters */
-			if (!r_ptr->name) continue;
-
-			/* Skip non-uniques */
-			if (!(r_ptr->flags1 & RF1_UNIQUE)) continue;
-
-			/* Mega-Hack -- Access "dead unique" list */
-			if (r_ptr->max_num == 0) borg_race_death[i] = 1;
-		}
 
 		/* Reset */
 		reset = TRUE;

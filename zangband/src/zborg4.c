@@ -4357,51 +4357,6 @@ static s32b borg_power_aux4(void)
 		for (; k < 10 && k < borg_has[242]; k++) value -= 20000L;
 	}
 
-	/* Collecting Potions, prepping for Morgoth/Sauron fight */
-	if (borg_skill[BI_MAXDEPTH] >= 99)
-	{
-		/* Sauron is alive -- carry them all */
-		if (borg_race_death[860] == 0)
-		{
-			k = 0;
-			for (; k < 99 && k < borg_has[242]; k++) value += 8000L;
-			k = 0;
-			for (; k < 99 && k < borg_skill[BI_AEZHEAL]; k++) value += 10000L;
-			k = 0;
-			for (; k < 99 && k < borg_skill[BI_ASPEED]; k++) value += 8000L;
-		}
-		/* Sauron is dead -- store them unless I have enough */
-		if (borg_race_death[860] != 0)
-		{
-			/* Must scum for more pots */
-			/* Must scum for more pots */
-			if ((num_heal_true + borg_has[242] + num_ez_heal_true +
-				 borg_skill[BI_AEZHEAL] < 45) ||
-				(num_ez_heal_true + borg_skill[BI_AEZHEAL] < 20) ||
-				(num_speed + borg_skill[BI_ASPEED] < 15))
-			{
-				/* leave pots at home so they dont shatter */
-			}
-			/* I have enough, carry all pots */
-			else
-			{
-				k = 0;
-				for (; k < 99 && k < borg_has[242]; k++) value += 8000L;
-				k = 0;
-				for (; k < 99 && k < borg_skill[BI_AEZHEAL];
-					 k++) value += 10000L;
-				k = 0;
-				for (; k < 99 && k < borg_skill[BI_ASPEED]; k++) value += 8000L;
-				/* Restore Mana */
-				k = 0;
-				for (; k < 99 && k < borg_has[266]; k++) value += 5000L;
-				/* Shrooms of Restoring */
-				k = 0;
-				for (; k < 35 && k < amt_fix_stat[6]; k++) value += 5000L;
-			}
-		}
-	}
-
 	/* Restore Mana */
 	if (borg_skill[BI_MAXSP] > 100)
 	{
@@ -8764,7 +8719,7 @@ cptr borg_prepared(int depth)
 	borg_ready_morgoth = -1;
 
 	/* Town and First level */
-	if (depth == 1) return ((cptr)NULL);
+	if (depth == 1) return (NULL);
 
 	/* Not prepared if I need to restock */
 	if ((reason = borg_restock(depth))) return (reason);
@@ -8772,136 +8727,14 @@ cptr borg_prepared(int depth)
 	/* Must meet minimal requirements */
 	if ((reason = borg_prepared_aux2(depth))) return (reason);
 
-
 	/* Once Morgoth is dead */
 	if (borg_skill[BI_KING])
 	{
-		return ((cptr)NULL);
+		return (NULL);
 	}
 
-	/* Always okay from town */
-	if (!borg_skill[BI_CDEPTH]) return ((cptr)NULL);
-
-	/* check to make sure the borg does not go below where 2 living */
-	/* uniques are. */
-
-	if (borg_skill[BI_MAXDEPTH] <= 98)
-	{
-		int numb_live_unique = 0, i;
-		int living_unique_index = 0;
-
-		monster_race *r_ptr;
-
-		/* BIG HACK, should check to make sure he has seen the unique. */
-		/* !FIX change this to use the 'list of uniques (|) command AJG */
-		for (i = 1; i < z_info->r_max; i++)
-		{
-			/* If any have been killed it is not a live unique */
-			if (borg_race_death[i] != 0) continue;
-
-			r_ptr = &r_info[i];
-
-			/* Skip non-monsters */
-			if (!r_ptr->name) continue;
-
-			/* Skip non-uniques */
-			if (!(r_ptr->flags1 & RF1_UNIQUE)) continue;
-
-			/* Skip Friendly */
-			if (r_ptr->flags7 & RF7_FRIENDLY) continue;
-
-			/* Skip those that only live in the Wild */
-			if (!(r_ptr->flags8 & RF8_DUNGEON)) continue;
-
-			/* skip if deeper than dlevel */
-			if (r_ptr->level > depth) break;
-
-			numb_live_unique++;
-			if (i < living_unique_index ||
-				living_unique_index == 0) living_unique_index = i;
-			continue;
-		}
-
-		if (numb_live_unique < 3 || borg_plays_risky)
-		{
-			return ((cptr)NULL);
-		}
-		/* scum for the uniques and report */
-		r_ptr = &r_info[living_unique_index];
-#if 0
-		return ("Living uniques >= 3");
-#endif
-
-		/* To avoid double calls to format(); */
-		strnfmt(borg_prepared_buffer, MAX_REASON, "Must kill %s.",
-				r_name + r_ptr->name);
-
-		return (borg_prepared_buffer);
-
-	}
-	else
-		/* check to make sure the borg does not go to level 100 */
-		/* unless all the uniques are dead. */
-	{
-		int numb_live_unique = 0, i;
-		monster_race *r_ptr;
-		int living_unique_index = 0;
-
-
-		/* BIG HACK, should check to make sure he has seen the unique. */
-		/* !FIX change this to use the 'list of uniques (|) command AJG */
-		for (i = 1; i < z_info->r_max; i++)
-		{
-			/* If any have been killed it is not a live unique */
-			if (borg_race_death[i] != 0) continue;
-
-			r_ptr = &r_info[i];
-
-			/* Skip non-monsters */
-			if (!r_ptr->name) continue;
-
-			/* Skip non-uniques */
-			if (!(r_ptr->flags1 & RF1_UNIQUE)) continue;
-
-			/* skip if deeper than dlevel */
-			if (r_ptr->level >= depth) break;
-
-			/* skip the check on Questors */
-			if (r_ptr->flags1 & RF1_QUESTOR) continue;
-
-			/* Skip Friendly */
-			if (strstr(r_name + r_ptr->name, "Farmer Maggot")) continue;
-
-			numb_live_unique++;
-			living_unique_index = i;
-			continue;
-		}
-
-		if (numb_live_unique < 1)
-		{
-			if (depth > 99) borg_ready_morgoth = 1;
-			return ((cptr)NULL);
-		}
-		/* Under special cases allow the borg to dive to 99 then quickly
-		 * get his butt to dlevel 98
-		 */
-		if (borg_skill[BI_MAXDEPTH] == 99 && depth <= 98 &&
-			(randint0(100) < 3 ||
-			 borg_spell_legal_fail(REALM_SORCERY, 2, 6, 40) ||
-			 borg_spell_legal_fail(REALM_TRUMP, 1, 5, 40) || borg_has[187]))
-		{
-			return ((cptr)NULL);
-		}
-		/* Report */
-		r_ptr = &r_info[living_unique_index];
-
-		/* To avoid double calls to format(); */
-		strnfmt(borg_prepared_buffer, MAX_REASON, "Must kill %s.",
-				r_name + r_ptr->name);
-
-		return (borg_prepared_buffer);
-	}
-
+	/* Always okay */
+	return (NULL);
 }
 
 /*
