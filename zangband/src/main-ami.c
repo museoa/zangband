@@ -4184,8 +4184,8 @@ static void amiga_map( void )
 	else
 	{
 		/* Calculate offset values */
-		td->map_x = (( td->fw * 80 ) - ( td->mpt_w * WILD_GRID_SIZE * 16 )) / 2;
-		td->map_y = (( td->fh * 24 ) - ( td->mpt_h * WILD_GRID_SIZE * 16 )) / 2;
+		td->map_x = (( td->fw * 80 ) - ( td->mpt_w * MAX_WID )) / 2;
+		td->map_y = (( td->fh * 24 ) - ( td->mpt_h * MAX_HGT )) / 2;
 	}
 #else	
 
@@ -4258,16 +4258,22 @@ static void amiga_map( void )
 	}
 	else
 	{
-		/* The player is in the wilderness */ 
-      
+		/* The player is in the wilderness */
+		
+		/* Work out offset of corner of dungeon-sized segment of the wilderness */ 
+		int xoffset, yoffset;
+		
+		xoffset = (wild_grid.x_min + wild_grid.x_max - MAX_WID) / 2;
+		yoffset = (wild_grid.y_min + wild_grid.y_max - MAX_HGT) / 2;
+		
 		/* Draw all "interesting" features */
-		for ( i = wild_grid.x_min; i < wild_grid.x_max; i++ )
+		for ( i = xoffset; i < xoffset + MAX_WID; i++ )
 		{
-			for ( j = wild_grid.y_min; j < wild_grid.y_max; j++ )
+			for ( j = yoffset; j < yoffset + MAX_WID; j++ )
 			{
 				/* Get frame tile */
-				if ( (i == wild_grid.x_min) || (i == wild_grid.x_max - 1) ||
-					(j == wild_grid.y_min) || (j == wild_grid.y_max - 1) )
+				if ( (i == xoffset) || (i == xoffset + MAX_WID - 1) ||
+					(j == yoffset) || (j == yoffset + MAX_HGT - 1) )
 				{
 					ta = f_info[63].x_attr;
 					tc = f_info[63].x_char;
@@ -4296,7 +4302,7 @@ static void amiga_map( void )
 					}
 	
 					/* Put the graphics to the screen */
-					put_gfx_map( td, i, j, tc, ta );
+					put_gfx_map( td, i - xoffset, j - yoffset, tc, ta );
 				}
 
 			}
