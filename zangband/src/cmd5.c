@@ -1095,6 +1095,9 @@ static bool cast_nature_spell(int spell)
 			{
 				y = py + ddy[dir];
 				x = px + ddx[dir];
+				
+				/* paranoia */
+				if(!in_bounds2(y, x)) continue;
 				c_ptr = area(y,x);
 
 				/* Get the monster */
@@ -1362,7 +1365,7 @@ static bool cast_chaos_spell(int spell)
 			{
 				int count = 0;
 
-				do
+				while (TRUE)
 				{
 					count++;
 					if (count > 1000) break;
@@ -1374,9 +1377,18 @@ static bool cast_chaos_spell(int spell)
 
 					/* Approximate distance */
 					d = (dy > dx) ? (dy + (dx >> 1)) : (dx + (dy >> 1));
+					
+					/* paranoia */
+					if (!in_bounds(y, x)) continue;
+					
 					c_ptr = area(y, x);
+					
+					/* keep going if not in LOS */
+					if (!player_has_los_grid(c_ptr)) continue;
+					
+					/* if close enough - exit */
+					if (d < 6) break;
 				}
-				while (in_bounds(y, x) && ((d > 5) || !player_has_los_grid(c_ptr)));
 
 				if (count > 1000) break;
 
