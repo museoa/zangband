@@ -397,7 +397,7 @@ F:STR | CHR | HIDE_TYPE |
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_DARK |
 F:RES_DISEN | ACTIVATE | INSTA_ART
 L:USE:	msgf("Your armor glows deep blue...")
-L:USE:	genocide()
+L:USE:	genocide(TRUE)
 L:USE:	object.timeout = 500
 L:DESC:	return "genocide every 500 turns"
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
@@ -1423,7 +1423,7 @@ F:SLAY_EVIL | BRAND_COLD | SLAY_UNDEAD |
 F:SLAY_ORC | FREE_ACT | IM_COLD | SEE_INVIS | ACTIVATE |
 F:BLESSED | SHOW_MODS | INSTA_ART
 L:USE:	msgf("Your great axe lets out a long, shrill note...")
-L:USE:	mass_genocide()
+L:USE:	mass_genocide(TRUE)
 L:USE:	object.timeout = 1000
 L:DESC:	return "mass genocide every 1000 turns"
 
