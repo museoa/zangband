@@ -3891,39 +3891,6 @@ void update_view(void)
 					{
 						queue[queue_tail++] = last = p->next_1;
 					}
-
-					if (player & GRID_VIEW) continue;
-
-					/* Mark as "viewable" */
-					player |= (GRID_VIEW);
-
-					/* Torch-lit grids */
-					if (p->d <= radius)
-					{
-						if (!(player & GRID_LITE))
-						{
-							/* Mark as "GRID_LITE" */
-							player |= (GRID_LITE);
-
-							/* Clear the 'do not update flag' */
-							info &= ~(CAVE_TEMP);
-						}
-					}
-					else if (player & GRID_LITE)
-					{
-						/* Clear the flag, and then redraw */
-						info &= ~(CAVE_TEMP);
-						player &= ~(GRID_LITE);
-					}
-
-					/* Save cave info */
-					c_ptr->info = info;
-					pc_ptr->player = player;
-
-					/* Save in array */
-					view_y[view_n] = y;
-					view_x[view_n] = x;
-					view_n++;
 				}
 				/* Handle wall */
 				else
@@ -3934,44 +3901,44 @@ void update_view(void)
 					bits2 &= ~(p->bits[2]);
 					bits3 &= ~(p->bits[3]);
 					bits4 &= ~(p->bits[4]);
-
-					/* All ready seen.  Next... */
-					if (player & GRID_VIEW) continue;
-
-					/* Mark as viewable */
-					player |= (GRID_VIEW);
-
-					/* Torch-lit grids */
-					if (p->d <= radius)
-					{
-						if (!(player & GRID_LITE))
-						{
-							/* Mark as "GRID_LITE" */
-							player |= (GRID_LITE);
-
-							/* Clear the 'do not update flag' */
-							info &= ~(CAVE_TEMP);
-						}
-					}
-					else
-					{
-						if (player & GRID_LITE)
-						{
-							/* Clear the flag, and then redraw */
-							info &= ~(CAVE_TEMP);
-							player &= ~(GRID_LITE);
-						}
-					}
-
-					/* Save cave info */
-					c_ptr->info = info;
-					pc_ptr->player = player;
-
-					/* Save in array */
-					view_y[view_n] = y;
-					view_x[view_n] = x;
-					view_n++;
 				}
+				
+				/* All ready seen.  Next... */
+				if (player & GRID_VIEW) continue;
+
+				/* Mark as viewable */
+				player |= (GRID_VIEW);
+
+				/* Torch-lit grids */
+				if (p->d <= radius)
+				{
+					if (!(player & GRID_LITE))
+					{
+						/* Mark as "GRID_LITE" */
+						player |= (GRID_LITE);
+
+						/* Clear the 'do not update flag' */
+						info &= ~(CAVE_TEMP);
+					}
+				}
+				else
+				{
+					if (player & GRID_LITE)
+					{
+						/* Clear the flag, and then redraw */
+						info &= ~(CAVE_TEMP);
+						player &= ~(GRID_LITE);
+					}
+				}
+				
+				/* Save cave info */
+				c_ptr->info = info;
+				pc_ptr->player = player;
+
+				/* Save in array */
+				view_y[view_n] = y;
+				view_x[view_n] = x;
+				view_n++;
 			}
 		}
 	}
