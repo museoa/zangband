@@ -13,9 +13,14 @@ ZAngband 2.5.0:
  Angband).
 -Revised monster and object listings to distribute them more evenly
  throughout the dungeon.
+-Added the CAN_SWIM and CAN_FLY flags to deep uniques.
 -Slow and haste spells acting on monsters will decrease in effect if
  the monster is already slowed/hasted.
 -Fixed a bug that forced parsing of v_info.txt every time the game started.
+-Fixed the problem with vampiric attacks, where only if the monster
+ was seen, was the hp bonus given to the player. This was done via
+ the addition of a new GF type: GF_NEW_DRAIN.
+
 -Lava rivers are found deeper in the dungeon.
 -Fixed some out of bounds accesses of the wilderness map.
 -Added out of bounds checks to the running algorithm.
