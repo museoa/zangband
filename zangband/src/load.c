@@ -2161,6 +2161,10 @@ static errr rd_dungeon(void)
 
 			/* Make a new wilderness */
 			create_wilderness();
+			
+			/* Save location */
+			px = p_ptr->px;
+			py = p_ptr->py;
 		}
 	}
 	/* This doesn't do anything at the moment - but will in the future */
@@ -2172,7 +2176,7 @@ static errr rd_dungeon(void)
 		if (p_ptr->depth)
 		{
 			dun_level_backup = p_ptr->depth;
-
+			
 			change_level(p_ptr->depth);
 
 			/* Save player location */
@@ -2204,12 +2208,18 @@ static errr rd_dungeon(void)
 		}
 		else
 		{
-			/* Strip the wilderness map */
-			strip_map(p_ptr->min_wid, p_ptr->min_hgt,
-					  p_ptr->max_wid, p_ptr->max_hgt);
+			/*
+			 * Strip the wilderness map
+			 * A square WILD_BLOCK_SIZE * WILD_VIEW in width.
+			 */
+			strip_map(0, 0, 9 * 16, 9 * 16);
 
 			/* Make a new wilderness */
 			create_wilderness();
+			
+			/* Save location */
+			px = p_ptr->px;
+			py = p_ptr->py;
 		}
 	}
 	else
