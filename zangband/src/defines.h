@@ -1381,7 +1381,7 @@
 #define TV_CHEST         7      /* Chests ('~') */
 #define TV_FIGURINE      8      /* Magical figurines */
 #define TV_STATUE        9      /* Statue, what a silly object... */
-#define TV_CORPSE		10      /* Corpses and Skeletons, specific */
+#define TV_CORPSE			10      /* Corpses and Skeletons, specific */
 #define TV_SHOT         16      /* Ammo for slings */
 #define TV_ARROW        17      /* Ammo for bows */
 #define TV_BOLT         18      /* Ammo for x-bows */
@@ -1417,6 +1417,24 @@
 #define TV_TRUMP_BOOK   95
 #define TV_ARCANE_BOOK  96
 #define TV_GOLD         100     /* Gold can only be picked up by players */
+
+/* Any subvalue */
+#define SV_ANY 					255
+
+/* The "sval" codes for TV_FIGURINE */
+#define SV_FIGURINE_NORMAL		0
+
+/* The "sval" codes for TV_STATUE */
+#define SV_WOODEN_STATUE		0
+#define SV_CLAY_STATUE			1
+#define SV_STONE_STATUE			2
+#define SV_IRON_STATUE			3
+#define SV_COPPER_STATUE		4
+#define SV_SILVER_STATUE		5
+#define SV_GOLDEN_STATUE		6
+#define SV_IVORY_STATUE			7
+#define SV_MITHRIL_STATUE		8
+#define SV_ORNATE_STATUE		9
 
 /* The "sval" codes for TV_CORPSE */
 #define SV_SKELETON 				0

@@ -1661,14 +1661,34 @@ void object_absorb(object_type *o_ptr, object_type *j_ptr)
 s16b lookup_kind(int tval, int sval)
 {
 	int k;
+	int num = 0;
+	int bk = 0;
 
 	/* Look for it */
 	for (k = 1; k < max_k_idx; k++)
 	{
 		object_kind *k_ptr = &k_info[k];
 
+		/* Require correct tval */
+		if (k_ptr->tval != tval) continue;
+
 		/* Found a match */
-		if ((k_ptr->tval == tval) && (k_ptr->sval == sval)) return (k);
+		if (k_ptr->sval == sval) return (k);
+
+		/* Ignore illegal items */
+		if (sval != SV_ANY) continue;
+
+		/* Apply the randomizer */
+		if (!one_in_(++num)) continue;
+
+		/* Use this value */
+		bk = k;
+	}
+
+	/* Return this choice */
+	if (sval == SV_ANY)
+	{
+		return bk;
 	}
 
 	/* Oops */

@@ -594,17 +594,6 @@ static s32b price_item(object_type *o_ptr, int greed, bool flip)
 
 
 /*
- * Special "mass production" computation
- */
-static int mass_roll(int num, int max)
-{
-	int i, t = 0;
-	for (i = 0; i < num; i++) t += rand_int(max);
-	return (t);
-}
-
-
-/*
  * Certain "cheap" objects should be created in "piles"
  * Some objects can be sold at a "discount" (in small piles)
  */
@@ -624,16 +613,16 @@ static void mass_produce(object_type *o_ptr)
 		case TV_FLASK:
 		case TV_LITE:
 		{
-			if (cost <= 5L) size += mass_roll(3, 5);
-			if (cost <= 20L) size += mass_roll(3, 5);
+			if (cost <= 5L) size += damroll(3, 5);
+			if (cost <= 20L) size += damroll(3, 5);
 			break;
 		}
 
 		case TV_POTION:
 		case TV_SCROLL:
 		{
-			if (cost <= 60L) size += mass_roll(3, 5);
-			if (cost <= 240L) size += mass_roll(1, 5);
+			if (cost <= 60L) size += damroll(3, 5);
+			if (cost <= 240L) size += damroll(1, 5);
 			break;
 		}
 
@@ -645,8 +634,8 @@ static void mass_produce(object_type *o_ptr)
 		case TV_TRUMP_BOOK:
 		case TV_ARCANE_BOOK:
 		{
-			if (cost <= 50L) size += mass_roll(2, 3);
-			if (cost <= 500L) size += mass_roll(1, 3);
+			if (cost <= 50L) size += damroll(2, 3);
+			if (cost <= 500L) size += damroll(1, 3);
 			break;
 		}
 
@@ -665,8 +654,8 @@ static void mass_produce(object_type *o_ptr)
 		case TV_BOW:
 		{
 			if (o_ptr->name2) break;
-			if (cost <= 10L) size += mass_roll(3, 5);
-			if (cost <= 100L) size += mass_roll(3, 5);
+			if (cost <= 10L) size += damroll(3, 5);
+			if (cost <= 100L) size += damroll(3, 5);
 			break;
 		}
 
@@ -675,9 +664,17 @@ static void mass_produce(object_type *o_ptr)
 		case TV_ARROW:
 		case TV_BOLT:
 		{
-			if (cost <= 5L) size += mass_roll(5, 5);
-			if (cost <= 50L) size += mass_roll(5, 5);
-			if (cost <= 500L) size += mass_roll(5, 5);
+			if (cost <= 5L) size += damroll(5, 5);
+			if (cost <= 50L) size += damroll(5, 5);
+			if (cost <= 500L) size += damroll(5, 5);
+			break;
+		}
+
+		case TV_FIGURINE:
+		case TV_STATUE:
+		{
+			if (cost <= 100L) size += damroll(2, 2);
+			if (cost <= 1000L) size += damroll(2, 2);
 			break;
 		}
 
@@ -692,8 +689,8 @@ static void mass_produce(object_type *o_ptr)
 		{
 			if ((cur_store_num == STORE_BLACK) && (randint(3) == 1))
 			{
-				if (cost < 1601L) size += mass_roll(1, 5);
-				else if (cost < 3201L) size += mass_roll(1, 3);
+				if (cost < 1601L) size += damroll(1, 5);
+				else if (cost < 3201L) size += damroll(1, 3);
 			}
 
 			/* Ensure that mass-produced rods and wands get the correct pvals. */
@@ -914,6 +911,8 @@ static bool store_will_buy(object_type *o_ptr)
 				case TV_DIGGING:
 				case TV_CLOAK:
 				case TV_BOTTLE: /* 'Green', recycling Angband */
+				case TV_FIGURINE:
+				case TV_STATUE:
 				break;
 				default:
 				return (FALSE);
@@ -970,15 +969,24 @@ static bool store_will_buy(object_type *o_ptr)
 			/* Analyze the type */
 			switch (o_ptr->tval)
 			{
-						case TV_LIFE_BOOK:
+				case TV_LIFE_BOOK:
 				case TV_SCROLL:
 				case TV_POTION:
 				case TV_HAFTED:
-				break;
+				{
+					break;
+				}
+				/* Accept statues of 'good' monsters */
+				case TV_FIGURINE:
+				case TV_STATUE:
+				{
+					if (r_info[o_ptr->pval].flags3 & RF3_GOOD) break;
+				}
 				case TV_POLEARM:
 				case TV_SWORD:
-				if (is_blessed(o_ptr))
-					break;
+				{
+					if (is_blessed(o_ptr)) break;
+				}
 				default:
 				return (FALSE);
 			}
@@ -1019,6 +1027,7 @@ static bool store_will_buy(object_type *o_ptr)
 				case TV_ROD:
 				case TV_SCROLL:
 				case TV_POTION:
+				case TV_FIGURINE:
 				break;
 				default:
 				return (FALSE);
@@ -1447,6 +1456,9 @@ static void store_create(void)
 
 		/* Apply some "low-level" magic (no artifacts) */
 		apply_magic(q_ptr, level, FALSE, FALSE, FALSE);
+
+		/* Require valid object */
+		if (!store_will_buy(q_ptr)) continue;
 
 		/* Hack -- Charge lite's */
 		if (q_ptr->tval == TV_LITE)
