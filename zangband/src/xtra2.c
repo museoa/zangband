@@ -1080,23 +1080,6 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		/* Extract monster name */
 		monster_desc(m_name, m_ptr, 0);
 
-		/* Don't kill Amberites */
-		if ((r_ptr->flags3 & RF3_AMBERITE) && (randint(2) == 1))
-		{
-			int curses = 1 + randint(3);
-			bool stop_ty = FALSE;
-			int count = 0;
-
-			msg_format("%^s puts a terrible blood curse on you!", m_name);
-			curse_equipment(100, 50);
-
-			do
-			{
-				stop_ty = activate_ty_curse(stop_ty, &count);
-			}
-			while (--curses);
-		}
-
 		if (r_ptr->flags2 & RF2_CAN_SPEAK)
 		{
 			char line_got[1024];
@@ -1311,6 +1294,23 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 
 			/* Hack -- Auto-recall */
 			monster_race_track(m_ptr->r_idx);
+		}
+		
+		/* Don't kill Amberites */
+		if ((r_ptr->flags3 & RF3_AMBERITE) && (randint(2) == 1))
+		{
+			int curses = 1 + randint(3);
+			bool stop_ty = FALSE;
+			int count = 0;
+
+			msg_format("%^s puts a terrible blood curse on you!", m_name);
+			curse_equipment(100, 50);
+
+			do
+			{
+				stop_ty = activate_ty_curse(stop_ty, &count);
+			}
+			while (--curses);
 		}
 
 		/* Delete the monster */
