@@ -352,44 +352,6 @@ static void IndexedColor_BrightnessTable(IndexedColor *idc, int intensity, TintT
 }
 
 
-#if 0
-/*
- * Returns the given value adjusted for contrast.
- * This is usually called on each component of an RGB value.
- */
-static int contrast_value(int intensity, int value)
-{
-	int v;
-	double contrastValue = intensity;
-	double x, y;
-
-#define CLIPVALUE(a,x,y) ((a < x) ? x : ((a > y) ? y : a))
-
-	/* Less contrast */
-	if (contrastValue < 0)
-	{
-		v = (value > 127) ? (255 - value) : value;
-		x = (v ? v : 1) / 127.0;
-		y = (127 + contrastValue) / 127.0;
-		v = (int) (127.0 * pow(x, y));
-		v = CLIPVALUE(v, 0, 255);
-		return (value > 127) ? (255 - v) : v;
-	}
-	
-	/* More contrast */
-	else
-	{
-		v = (value > 127) ? (255 - value) : value;
-		x = v / 127.0;
-		y = (contrastValue == 127) ? 127 : 127.0 / (127 - contrastValue);
-		v = (int) (127.0 * pow(x, y));
-		v = CLIPVALUE(v, 0, 255);
-		return (value > 127) ? (255 - v) : v;
-	}
-}
-#endif /* 0 */
-
-
 /*
  * Adjusts the given 256 palette indices for the given contrast.
  * 'Intensity' can be from -127 to +127 inclusive.
@@ -408,12 +370,7 @@ static void IndexedColor_ContrastTable(IndexedColor *idc, int intensity, TintTab
 		r = rgb[n * 3 + 0];
 		g = rgb[n * 3 + 1];
 		b = rgb[n * 3 + 2];
-#if 0
-		/* Adjust contrast */
-		r = contrast_value(intensity, r);
-		g = contrast_value(intensity, g);
-		b = contrast_value(intensity, b);
-#endif /* 0 */
+
 		/* Ignore unused parameter due to above */
 		(void) intensity;
 	

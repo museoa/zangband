@@ -50,8 +50,6 @@ typedef struct t_icon_data {
 	int icon_count; /* Number of icons */
 	Tk_Font font; /* Font for ascii icons */
 	int *char_table; /* Table of chars for ascii icons */
-	int dynamic; /* rle_data is array of ptrs to malloc()'d data */
-	IconSpec *dynamic_spec; /* List of dynamic components */
 	IconPtr *dark_data; /* Darkened copies */
 	unsigned char *gamma[2]; /* Per-icon gamma for dark_data. Value 0-200 */
 

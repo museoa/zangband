@@ -1401,7 +1401,6 @@ void init_icons(int size, int depth)
 		icon_data_ptr->icon_data[i] = 0x00;
 	}
 
-	icon_data_ptr->dynamic = FALSE;
 	icon_data_ptr->depth = g_icon_depth;
 	icon_data_ptr->bypp = g_pixel_size;
 	icon_data_ptr->width = g_icon_size;
@@ -1431,7 +1430,6 @@ void init_icons(int size, int depth)
 			icon_data_ptr->icon_data[i] = COLORMAP_BLACK;
 	}
 
-	icon_data_ptr->dynamic = FALSE;
 	icon_data_ptr->depth = g_icon_depth;
 	icon_data_ptr->bypp = g_pixel_size;
 	icon_data_ptr->width = g_icon_size;
@@ -1479,19 +1477,13 @@ void init_icons(int size, int depth)
 			PixelSet_RGB(icon_data_ptr->icon_data + ((x2 + dx) * g_pixel_size) + ((y2 + dy) * g_icon_size * g_pixel_size),
 				rgb[0], rgb[1], rgb[2], g_pixel_size);
 			rgb += 3;
-#if 0
-			icon_data_ptr->icon_data[x2 + y2 * g_icon_size] = n;
-			icon_data_ptr->icon_data[(x2 + dx) + y2 * g_icon_size] = n;
-			icon_data_ptr->icon_data[x2 + (y2 + dy) * g_icon_size] = n;
-			icon_data_ptr->icon_data[(x2 + dx) + (y2 + dy) * g_icon_size] = n;
-#endif
+
 			n++;
 			x2 += dx ? 2 : 1;
 		}
 		y2 += dy ? 2 : 1;
 	}
 
-	icon_data_ptr->dynamic = FALSE;
 	icon_data_ptr->depth = g_icon_depth;
 	icon_data_ptr->bypp = g_pixel_size;
 	icon_data_ptr->width = g_icon_size;

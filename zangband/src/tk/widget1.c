@@ -141,15 +141,14 @@ static void DrawIconSpec(int y, int x, IconSpec iconSpec, BitmapPtr bitmapPtr)
 		int col = 0;
 		IconPtr rlePtr;
 
-if (iconSpec.dark)
-{
-	rlePtr = iconDataPtr->dark_data[iconSpec.index] + (iconSpec.dark - 1) * iconDataPtr->rle_len[iconSpec.index];
-}
-else
-		if (iconDataPtr->dynamic)
-			rlePtr = ((IconPtr *) iconDataPtr->rle_data)[iconSpec.index];
+		if (iconSpec.dark)
+		{
+			rlePtr = iconDataPtr->dark_data[iconSpec.index] + (iconSpec.dark - 1) * iconDataPtr->rle_len[iconSpec.index];
+		}
 		else
+		{
 			rlePtr = iconDataPtr->rle_data + iconDataPtr->rle_offset[iconSpec.index];
+		}
 
 		dstPtr = bitmapPtr->pixelPtr +
 			x * bypp +

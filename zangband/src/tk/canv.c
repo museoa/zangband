@@ -426,18 +426,8 @@ static void DrawIconSpec(IconSpec *iconSpecPtr)
 				bounds[1] * CanvWidgetBitmap.pitch;
 			int w = bounds[2], h = bounds[3];
 
-			if (iconDataPtr->dynamic)
-			{
-				IconValue empty[2] = { 0, 0 };
-				rlebuf = ((IconPtr *) iconDataPtr->rle_data)[iconSpecPtr->index];
-				if (!rlebuf)
-					rlebuf = empty;
-			}
-			else
-			{
-				rlebuf = iconDataPtr->rle_data +
-					iconDataPtr->rle_offset[iconSpecPtr->index];
-			}
+			rlebuf = iconDataPtr->rle_data +
+				iconDataPtr->rle_offset[iconSpecPtr->index];
 
 			while (1)
 			{

@@ -1680,8 +1680,8 @@ static int objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj 
 
 void Icon_MakeDark(t_icon_data *iconDataPtr, int index)
 {
-	int i, j, dark, length;
-	IconPtr srcPtr, dstPtr;
+	int i, j, length;
+	IconPtr srcPtr;
 	double gamma[2];
 
 	if (iconDataPtr->dark_data == NULL)
@@ -1694,12 +1694,7 @@ void Icon_MakeDark(t_icon_data *iconDataPtr, int index)
 		}
 	}
 
-	if (iconDataPtr->dynamic)
-	{
-		length = iconDataPtr->rle_len[index];
-		srcPtr = NULL;
-	}
-	else if (iconDataPtr->rle_data)
+	if (iconDataPtr->rle_data)
 	{
 		length = iconDataPtr->rle_len[index];
 		srcPtr = iconDataPtr->rle_data + iconDataPtr->rle_offset[index];
@@ -1714,83 +1709,6 @@ void Icon_MakeDark(t_icon_data *iconDataPtr, int index)
 	{
 		iconDataPtr->dark_data[index] =
 			(IconPtr) Tcl_Alloc(2 * length);
-	}
-
-	/*
-	 * For dynamic icons, instead of dark'ing the whole icon,
-	 * we copy each dark'd component icon (if any exist).
-	 */
-	if (iconDataPtr->dynamic)
-	{
-		IconPtr tmp;
-
-		/* New temp buffer for 1 icon */
-		tmp = (IconPtr) Tcl_Alloc(iconDataPtr->length);
-
-		for (dark = 0; dark < 2; dark++)
-		{
-			unsigned char *bounds;
-
-			/* Init to transparent pixel */
-			for (i = 0; i < iconDataPtr->pixels; i++)
-			{
-				PixelLongToPtr(tmp + i * iconDataPtr->bypp,
-					iconDataPtr->rle_pixel, iconDataPtr->bypp);
-			}
-
-			for (i = 0; i < 4; i++)
-			{
-				IconSpec iconSpec;
-				t_icon_data *dataPtr;
-	
-				/* Get the component icon */
-				iconSpec = iconDataPtr->dynamic_spec[index * 4 + i];
-	
-				/* Stop */
-				if (iconSpec.type == -1)
-					break;
-					
-				dataPtr = &g_icon_data[iconSpec.type];
-				bounds = dataPtr->rle_bounds + iconSpec.index * 4;
-	
-				/* Create dark data for component if needed */
-				if (dataPtr->flags[iconSpec.index] & ICON_FLAG_DARK)
-					Icon_MakeDark(dataPtr, iconSpec.index);
-
-				/* A darkened copy exists */
-				if (dataPtr->dark_data && dataPtr->dark_data[iconSpec.index])
-				{
-					srcPtr = dataPtr->dark_data[iconSpec.index] +
-						dark * dataPtr->rle_len[iconSpec.index];
-				}
-				else
-				{
-					srcPtr = dataPtr->rle_data + dataPtr->rle_offset[iconSpec.index];
-				}
-
-				RL_Decode(bounds[2], bounds[3], dataPtr->bypp, srcPtr,
-					tmp + bounds[0] * dataPtr->bypp +
-					bounds[1] * dataPtr->pitch,
-					dataPtr->pitch);
-			}
-
-			dstPtr = iconDataPtr->dark_data[index] +
-				dark * iconDataPtr->rle_len[index];
-			bounds = iconDataPtr->rle_bounds + index * 4;
-			
-			/* Encode */
-			(void) RL_Encode(bounds[2], bounds[3], iconDataPtr->bypp,
-				tmp + bounds[0] * iconDataPtr->bypp +
-				bounds[1] * iconDataPtr->pitch,
-				iconDataPtr->pitch, iconDataPtr->rle_pixel, dstPtr);
-		}
-
-		Tcl_Free((char *) tmp);
-
-		/* Dark data created */
-		iconDataPtr->flags[index] &= ~ICON_FLAG_DARK;
-
-		return;
 	}
 
 	gamma[0] = iconDataPtr->gamma[0][index] / 100.0;
@@ -1964,266 +1882,6 @@ static int objcmd_icon_dark(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_
 	return TCL_OK;
 }
 
-/*
- * objcmd_icon_dynamic --
- *	(icon) dynamic blank $type $index
- *	(icon) dynamic copy $type $index -type -index -ascii
- *	(icon) dynamic count $type ?$size?
- */
-static int objcmd_icon_dynamic(ClientData dummy, Tcl_Interp *interp, int objc,
-								 Tcl_Obj *CONST objv[])
-{
-	static cptr cmdOption[] = {"blank", "copy", "count", NULL};
-	enum {IDX_BLANK, IDX_COPY, IDX_COUNT} option;
-	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
-	int index;
-
-	t_icon_data *iconDataPtr;
-
-	/* Ignore parameter */
-	(void) dummy;
-
-	/* Required number of arguments */
-    if (objc < 3)
-    {
-		Tcl_WrongNumArgs(interp, 1, objv, (char *) "option type ?arg ...?");
-		return TCL_ERROR;
-    }
-
-	/* Get requested option */
-    if (Tcl_GetIndexFromObj(interp, objv[1], (char **) cmdOption, (char *) "option", 0, 
-		(int *) &option) != TCL_OK)
-	{
-		return TCL_ERROR;
-    }
-
-	if (Icon_GetTypeFromObj(interp, &iconDataPtr, objv[2]) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	if (!iconDataPtr->dynamic)
-	{
-		return TCL_ERROR;
-	}
-
-    switch (option)
-	{
-		case IDX_BLANK:
-		{
-			IconPtr *mem;
-			int i;
-
-			if (Icon_GetIndexFromObj(interp, &index, objv[3], iconDataPtr)
-				!= TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-
-			mem = (IconPtr *) iconDataPtr->rle_data;
-			if (mem[index])
-			{
-				Tcl_Free((char *) mem[index]);
-				mem[index] = NULL;
-			}
-			if (iconDataPtr->dark_data && iconDataPtr->dark_data[index])
-			{
-				Tcl_Free((char *) iconDataPtr->dark_data[index]);
-				iconDataPtr->dark_data[index] = NULL;
-			}
-			for (i = 0; i < 4; i++)
-				iconDataPtr->dynamic_spec[index * 4 + i].type = -1;
-			break;
-		}
-
-		case IDX_COPY:
-		{
-			IconSpec iconSpec;
-			IconPtr rlePtr, bits, *mem, tmp;
-			t_icon_data *srcDataPtr;
-			int i, len;
-			unsigned char *rlebounds, *bounds;
-			int bypp = iconDataPtr->bypp;
-
-			if (Icon_GetIndexFromObj(interp, &index, objv[3], iconDataPtr)
-				!= TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-
-			/* Return list of components */
-			if (objc == 4)
-			{
-				Tcl_Obj *listObjPtr = Tcl_NewListObj(0, NULL);
-				for (i = 0; i < 4; i++)
-				{
-					char buf[64];
-					iconSpec = iconDataPtr->dynamic_spec[index * 4 + i];
-					if (iconSpec.type == -1)
-						break;
-					(void) sprintf(buf, "%s %d",
-						g_icon_data[iconSpec.type].desc, iconSpec.index);
-					Tcl_ListObjAppendElement(interp, listObjPtr,
-						Tcl_NewStringObj(buf, -1));
-				}
-				Tcl_SetObjResult(interp, listObjPtr);
-				break;
-			}
-
-			/* Scan the arguments for icon type and index */
-			if (Icon_ParseArgs(interp, objc, objv, 4, &iconSpec) != TCL_OK)
-			{
-				/* Failure */
-				return TCL_ERROR;
-			}
-
-			/* Get the source RLE data */
-			srcDataPtr = &g_icon_data[iconSpec.type];
-			rlePtr = srcDataPtr->rle_data +
-				srcDataPtr->rle_offset[iconSpec.index];
-			rlebounds = srcDataPtr->rle_bounds + (iconSpec.index * 4);
-
-			/* Dest icon array */
-			mem = (IconPtr *) iconDataPtr->rle_data;
-
-			/* New temp buffer for 1 icon */
-			tmp = (IconPtr) Tcl_Alloc(iconDataPtr->length);
-
-			/* Init to transparent pixel */
-			for (i = 0; i < iconDataPtr->pixels; i++)
-			{
-				PixelLongToPtr(tmp + i * iconDataPtr->bypp,
-					iconDataPtr->rle_pixel, iconDataPtr->bypp);
-			}
-
-			bounds = iconDataPtr->rle_bounds + index * 4;
-
-			/* If old data, decode it first */
-			if (mem[index])
-			{
-				RL_Decode(bounds[2], bounds[3], iconDataPtr->bypp,
-					mem[index], tmp + bounds[0] * bypp + 
-					bounds[1] * iconDataPtr->pitch, iconDataPtr->pitch);
-				Tcl_Free((char *) mem[index]);
-				mem[index] = NULL;
-			}
-
-			/* Decode new data */
-			RL_Decode(rlebounds[2], rlebounds[3], iconDataPtr->bypp,
-				rlePtr, tmp + rlebounds[0] * bypp + rlebounds[1] *
-				srcDataPtr->pitch, srcDataPtr->pitch);
-
-			/* Get bounds of non-transparent pixels */
-			RL_Bounds(iconDataPtr->width, iconDataPtr->height, bypp,
-				tmp, iconDataPtr->rle_pixel, bounds);
-			
-			/* Get length of encoded data */
-			len = RL_Len(bounds[2], bounds[3],
-				bypp, tmp + bounds[0] * bypp + bounds[1] * iconDataPtr->pitch,
-				iconDataPtr->pitch, iconDataPtr->rle_pixel);
-
-			/* Allocate RLE buf */
-			/* FIXME: Does RL_Encode() still go past end of buffer? */
-			bits = (IconPtr) Tcl_Alloc(len);
-
-			/* Encode */
-			(void) RL_Encode(bounds[2], bounds[3],
-				bypp, tmp + bounds[0] * bypp + bounds[1] * iconDataPtr->pitch,
-				iconDataPtr->pitch, iconDataPtr->rle_pixel, bits);
-
-			mem[index] = bits;
-			iconDataPtr->rle_len[index] = len;
-
-			/* Keep a list of component icons */
-			for (i = 0; i < 4; i++)
-			{
-				if (iconDataPtr->dynamic_spec[index * 4 + i].type == -1)
-				{
-					iconDataPtr->dynamic_spec[index * 4 + i] = iconSpec;
-					break;
-				}
-			}
-
-			Tcl_Free((char *) tmp);
-			
-			break;
-		}
-
-		case IDX_COUNT:
-		{
-			IconPtr *newMem, *oldMem;
-			int i, count, *newLen, *oldLen;
-			unsigned char *newBounds, *oldBounds;
-			IconSpec *oldSpec, *newSpec;
-			short *oldFlags, *newFlags;
-
-			if (objc == 3)
-			{
-				Tcl_SetIntObj(resultPtr, iconDataPtr->icon_count);
-				break;
-			}
-			if (Tcl_GetIntFromObj(interp, objv[3], &count) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			if (count < 0)
-			{
-				return TCL_ERROR;
-			}
-
-			newMem = (IconPtr *) Tcl_Alloc(sizeof(IconPtr) * count);
-			newBounds = (unsigned char *) Tcl_Alloc(sizeof(unsigned char) * count * 4);
-			memset(newBounds, '\0', count * 4);
-			newLen = (int *) Tcl_Alloc(sizeof(int) * count);
-			newSpec = (IconSpec *) Tcl_Alloc(sizeof(IconSpec) * count * 4);
-			newFlags = (short *) Tcl_Alloc(sizeof(short) * count);
-			for (i = 0; i < count * 4; i++)
-				newSpec[i].type = -1;
-			for (i = 0; i < count; i++)
-			{
-				newMem[i] = NULL;
-				newLen[i] = 0;
-				newFlags[i] = 0;
-			}
-			oldMem = (IconPtr *) iconDataPtr->rle_data;
-			oldBounds = iconDataPtr->rle_bounds;
-			oldLen = iconDataPtr->rle_len;
-			oldSpec = iconDataPtr->dynamic_spec;
-			oldFlags = iconDataPtr->flags;
-			if (oldMem)
-			{
-				for (i = 0; i < count; i++)
-				{
-					newMem[i] = oldMem[i];
-					memcpy(newBounds + i * 4, oldBounds + i * 4, 4);
-					newLen[i] = oldLen[i];
-				}
-				for ( ; i < iconDataPtr->icon_count; i++)
-				{
-					Tcl_Free((char *) oldMem[i]);
-				}
-				Tcl_Free((char *) oldMem);
-				Tcl_Free((char *) oldBounds);
-				Tcl_Free((char *) oldLen);
-
-				for (i = 0; i < count * 4; i++)
-					newSpec[i] = oldSpec[i];
-				Tcl_Free((char *) oldSpec);
-
-				Tcl_Free((char *) oldFlags);
-			}
-			iconDataPtr->icon_count = count;
-			iconDataPtr->rle_data = (IconPtr) newMem;
-			iconDataPtr->rle_bounds = newBounds;
-			iconDataPtr->rle_len = newLen;
-			iconDataPtr->dynamic_spec = newSpec;
-			iconDataPtr->flags = newFlags;
-			break;
-		}
-	}
-
-    return TCL_OK;
-}
 
 /*
  * objcmd_makeicon --
@@ -2407,12 +2065,12 @@ static int objcmd_icon(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *
 	static cptr cmdOption[] = {"createtype", "count",
 		"gettypes", "validate", "size", "ascii",
 		"gamma", "makeicon", "depth",
-		"rle", "height", "width", "dynamic", "duplicate",
+		"rle", "height", "width", "duplicate",
 		"transparent", "dark", "flags", NULL};
 	enum {IDX_CREATETYPE, IDX_COUNT,
 		IDX_GETTYPES, IDX_VALIDATE, IDX_SIZE, IDX_ASCII,
 		IDX_GAMMA, IDX_MAKEICON, IDX_DEPTH,
-		IDX_RLE, IDX_HEIGHT, IDX_WIDTH, IDX_DYNAMIC, IDX_DUPLICATE,
+		IDX_RLE, IDX_HEIGHT, IDX_WIDTH, IDX_DUPLICATE,
 		IDX_TRANSPARENT, IDX_DARK, IDX_FLAGS} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 	int index;
@@ -2473,7 +2131,6 @@ wrongCreateArgs:
 			objPtr = objv + 3;
 			objc -= 3;
 
-			iconData.dynamic = FALSE;
 			iconData.icon_count = 0;
 			iconData.icon_data = NULL;
 			iconData.char_table = NULL;
@@ -2487,7 +2144,7 @@ wrongCreateArgs:
 			while (objc > 1)
 			{
 				static cptr createSwitch[] = {"-charset", "-file", "-font",
-					"-height", "-width", "-dynamic", NULL};
+					"-height", "-width", NULL};
 
 			    if (Tcl_GetIndexFromObj(interp, objPtr[0], (char **) createSwitch,
 					(char *) "switch", 0, &index) != TCL_OK)
@@ -2523,13 +2180,6 @@ wrongCreateArgs:
 							return TCL_ERROR;
 						}
 						break;
-
-					case 5: /* -dynamic */
-						if (Tcl_GetBooleanFromObj(interp, objPtr[1], &iconData.dynamic) != TCL_OK)
-						{
-							return TCL_ERROR;
-						}
-						break;
 				}
 
 				/* Next option/value pair */
@@ -2539,7 +2189,7 @@ wrongCreateArgs:
 
 			/* Required number of arguments */
 			if ((objc != 0) ||
-				(!iconData.dynamic && (iconFile == NULL) && (fontName == NULL)) ||
+				((iconFile == NULL) && (fontName == NULL)) ||
 				(iconData.height <= 0) || (iconData.width <= 0))
 			{
 				goto wrongCreateArgs;
@@ -2859,9 +2509,6 @@ wrongCreateArgs:
 			break;
 		}
 
-		case IDX_DYNAMIC: /* dynamic */
-			return objcmd_icon_dynamic(dummy, interp, objc - 1, objv + 1); 
-
 		case IDX_DUPLICATE: /* duplicate */
 		{
 			int index, count;
@@ -2877,7 +2524,7 @@ wrongCreateArgs:
 			{
 				return TCL_ERROR;
 			}
-			if (iconDataPtr->dynamic || iconDataPtr->rle_data || iconDataPtr->font)
+			if (iconDataPtr->rle_data || iconDataPtr->font)
 				return TCL_ERROR;
 
 			/* Get the icon index */
@@ -3233,7 +2880,6 @@ void Icon_AddType(t_icon_data *data)
 	icon_data_ptr->icon_data = data->icon_data;
 	icon_data_ptr->char_table = data->char_table;
 	icon_data_ptr->font = data->font;
-	icon_data_ptr->dynamic = data->dynamic;
 	icon_data_ptr->depth = data->depth;
 	icon_data_ptr->bypp = data->bypp;
 	icon_data_ptr->width = data->width;
@@ -3388,18 +3034,8 @@ void Icon_Exit(Tcl_Interp *interp)
 		/* Help the memory debugger */
 		if (iconDataPtr->rle_data)
 		{
-			if (iconDataPtr->dynamic)
-			{
-				IconPtr *mem = (IconPtr *) iconDataPtr->rle_data;
-				for (j = 0; j < iconDataPtr->icon_count; j++)
-					if (mem[j])
-						Tcl_Free((char *) mem[j]);
-			}
-			else
-			{
-				Tcl_Free((void *) iconDataPtr->rle_offset);
-				Tcl_Free((void *) iconDataPtr->rle_len);
-			}
+			Tcl_Free((void *) iconDataPtr->rle_offset);
+			Tcl_Free((void *) iconDataPtr->rle_len);
 			Tcl_Free((void *) iconDataPtr->rle_bounds);
 		}
 
