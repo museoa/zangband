@@ -2196,8 +2196,23 @@ static errr draw_rect_t1(int x, int y, term_data *td, int xp, int yp)
 		ta = window->ta[y][x - 1];
 		tc = window->tc[y][x - 1];
 		
+		/* Are we overlaying anything? */
+		if ((a != ta) || (c != tc) || !(a & 0x80))
+		{
+			mask |= PJ_T_OVER3;
+
+			if (a & 0x80)
+			{
+				set_tile1(PJ_OVER3, c & 0x3F, a & 0x7F);
+			}
+			else
+			{
+				set_font1(PJ_OVER3, c & 0x7F, a & 0x1F);
+			}
+		}
+		
 		/* Solid wall? */
-		if (tc & 0x40)
+		else if (tc & 0x40)
 		{
 			mask |= (PJ_T_WALLF | PJ_T_WALL1 | PJ_T_WALL1_T);
 
@@ -2207,31 +2222,14 @@ static errr draw_rect_t1(int x, int y, term_data *td, int xp, int yp)
 		}
 		
 		/* Is the terrain null? */
-		else
+		
+		if ((ta & 0x80) && !(tc & 0x40))
 		{
-			if (ta & 0x80)
-			{
-				mask |= PJ_T_FLOOR2;
-				set_tile1(PJ_FLOOR2, tc & 0x3F, ta & 0x7F);
+			mask |= PJ_T_FLOOR2;
+			set_tile1(PJ_FLOOR2, tc & 0x3F, ta & 0x7F);
 			
-				/* Blank floor? */
-				if (!((tc & 0x3F) || (ta & 0x7F))) floor_blank2 = TRUE;
-			}
-	
-			/* Are we overlaying anything? */
-			if ((a != ta) || (c != tc) || !(a & 0x80))
-			{
-				mask |= PJ_T_OVER3;
-			
-				if (a & 0x80)
-				{
-					set_tile1(PJ_OVER3, c & 0x3F, a & 0x7F);
-				}
-				else
-				{
-					set_font1(PJ_OVER3, c & 0x7F, a & 0x1F);
-				}
-			}
+			/* Blank floor? */
+			if (!((tc & 0x3F) || (ta & 0x7F))) floor_blank2 = TRUE;
 		}
 	}
 	
@@ -2243,8 +2241,23 @@ static errr draw_rect_t1(int x, int y, term_data *td, int xp, int yp)
 		ta = window->ta[y][x];
 		tc = window->tc[y][x];
 		
+		/* Are we overlaying anything? */
+		if ((a != ta) || (c != tc) || !(a & 0x80))
+		{
+			mask |= PJ_T_OVER1;
+			
+			if (a & 0x80)
+			{
+				set_tile1(PJ_OVER1, c & 0x3F, a & 0x7F);
+			}
+			else
+			{
+				set_font1(PJ_OVER1, c & 0x7F, a & 0x1F);
+			}
+		}
+		
 		/* Solid wall? */
-		if (tc & 0x40)
+		else if (tc & 0x40)
 		{
 			if (mask & PJ_T_WALL1)
 			{
@@ -2260,31 +2273,13 @@ static errr draw_rect_t1(int x, int y, term_data *td, int xp, int yp)
 		}
 		
 		/* Is the terrain null? */
-		else
+		if ((ta & 0x80) && !(tc & 0x40))
 		{
-			if (ta & 0x80)
-			{
-				mask |= PJ_T_FLOOR1;
-				set_tile1(PJ_FLOOR1, tc & 0x3F, ta & 0x7F);
+			mask |= PJ_T_FLOOR1;
+			set_tile1(PJ_FLOOR1, tc & 0x3F, ta & 0x7F);
 			
-				/* Blank floor? */
-				if (!((tc & 0x3F) || (ta & 0x7F))) floor_blank1 = TRUE;
-			}
-	
-			/* Are we overlaying anything? */
-			if ((a != ta) || (c != tc) || !(a & 0x80))
-			{
-				mask |= PJ_T_OVER1;
-			
-				if (a & 0x80)
-				{
-					set_tile1(PJ_OVER1, c & 0x3F, a & 0x7F);
-				}
-				else
-				{
-					set_font1(PJ_OVER1, c & 0x7F, a & 0x1F);
-				}
-			}
+			/* Blank floor? */
+			if (!((tc & 0x3F) || (ta & 0x7F))) floor_blank1 = TRUE;
 		}
 	}
 	
@@ -2297,8 +2292,23 @@ static errr draw_rect_t1(int x, int y, term_data *td, int xp, int yp)
 		ta = window->ta[y + 1][x - 1];
 		tc = window->tc[y + 1][x - 1];
 		
+		/* Are we overlaying anything? */
+		if ((a != ta) || (c != tc) || !(a & 0x80))
+		{
+			mask |= PJ_T_OVER2;
+			
+			if (a & 0x80)
+			{
+				set_tile1(PJ_OVER2, c & 0x3F, a & 0x7F);
+			}
+			else
+			{
+				set_font1(PJ_OVER2, c & 0x7F, a & 0x1F);
+			}
+		}
+		
 		/* Solid wall? */
-		if (tc & 0x40)
+		else if (tc & 0x40)
 		{
 			mask |= PJ_T_TOP1 | PJ_T_TOP_T1;
 
@@ -2316,7 +2326,7 @@ static errr draw_rect_t1(int x, int y, term_data *td, int xp, int yp)
 			
 			if (mask & PJ_T_WALLF)
 			{
-				mask &= (~PJ_T_WALLF);
+				mask &= ~(PJ_T_WALLF);
 			}
 			else
 			{
@@ -2333,21 +2343,6 @@ static errr draw_rect_t1(int x, int y, term_data *td, int xp, int yp)
 			if (floor_blank2)
 			{
 				mask &= ~(PJ_T_FLOOR2);
-			}
-		}
-		
-		/* Are we overlaying anything? */
-		else if ((a != ta) || (c != tc) || !(a & 0x80))
-		{
-			mask |= PJ_T_OVER2;
-			
-			if (a & 0x80)
-			{
-				set_tile1(PJ_OVER2, c & 0x3F, a & 0x7F);
-			}
-			else
-			{
-				set_font1(PJ_OVER2, c & 0x7F, a & 0x1F);
 			}
 		}
 	}	
@@ -2442,8 +2437,23 @@ static errr draw_rect_t2(int x, int y, term_data *td, int xp, int yp)
 		ta = window->ta[y][x];
 		tc = window->tc[y][x];
 		
+		/* Are we overlaying anything? */
+		if ((a != ta) || (c != tc) || !(a & 0x80))
+		{
+			mask |= PJ_T_OVER1;
+			
+			if (a & 0x80)
+			{
+				set_tile2(PJ_OVER1, c & 0x3F, a & 0x7F);
+			}
+			else
+			{
+				set_font2(PJ_OVER1, c & 0x7F, a & 0x1F);
+			}
+		}
+		
 		/* Solid wall? */
-		if (tc & 0x40)
+		else if (tc & 0x40)
 		{
 			mask |= (PJ_T_WALLF);
 
@@ -2451,31 +2461,13 @@ static errr draw_rect_t2(int x, int y, term_data *td, int xp, int yp)
 		}
 		
 		/* Is the terrain null? */
-		else
+		if ((ta & 0x80) && !(tc & 0x40))
 		{
-			if (ta & 0x80)
-			{
-				mask |= PJ_T_FLOOR1;
-				set_tile2(PJ_FLOOR1, tc & 0x3F, ta & 0x7F);
+			mask |= PJ_T_FLOOR1;
+			set_tile2(PJ_FLOOR1, tc & 0x3F, ta & 0x7F);
 			
-				/* Blank floor? */
-				if (!((tc & 0x3F) || (ta & 0x7F))) floor_blank = TRUE;
-			}
-	
-			/* Are we overlaying anything? */
-			if ((a != ta) || (c != tc) || !(a & 0x80))
-			{
-				mask |= PJ_T_OVER1;
-				
-				if (a & 0x80)
-				{
-					set_tile2(PJ_OVER1, c & 0x3F, a & 0x7F);
-				}
-				else
-				{
-					set_font2(PJ_OVER1, c & 0x7F, a & 0x1F);
-				}
-			}
+			/* Blank floor? */
+			if (!((tc & 0x3F) || (ta & 0x7F))) floor_blank = TRUE;
 		}
 	}
 	
@@ -2488,8 +2480,23 @@ static errr draw_rect_t2(int x, int y, term_data *td, int xp, int yp)
 		ta = window->ta[y + 1][x - 1];
 		tc = window->tc[y + 1][x - 1];
 		
+		/* Are we overlaying anything? */
+		if ((a != ta) || (c != tc) || !(a & 0x80))
+		{
+			mask |= PJ_T_OVER2;
+			
+			if (a & 0x80)
+			{
+				set_tile2(PJ_OVER2, c & 0x3F, a & 0x7F);
+			}
+			else
+			{
+				set_font2(PJ_OVER2, c & 0x7F, a & 0x1F);
+			}
+		}
+		
 		/* Solid wall? */
-		if (tc & 0x40)
+		else if (tc & 0x40)
 		{
 			mask |= (PJ_T_WALL2 | PJ_T_WALL2_T | PJ_T_TOP2 | PJ_T_TOP_T2);
 			set_tile2(PJ_WALL2, tc & 0x3F, ta & 0x7F);
@@ -2513,23 +2520,7 @@ static errr draw_rect_t2(int x, int y, term_data *td, int xp, int yp)
 				mask &= ~(PJ_T_FLOOR1);
 			}
 		}
-		
-		/* Are we overlaying anything? */
-		else if ((a != ta) || (c != tc) || !(a & 0x80))
-		{
-			mask |= PJ_T_OVER2;
-			
-			if (a & 0x80)
-			{
-				set_tile2(PJ_OVER2, c & 0x3F, a & 0x7F);
-			}
-			else
-			{
-				set_font2(PJ_OVER2, c & 0x7F, a & 0x1F);
-			}
-		}
 	}
-	
 	
 	/* Check below */
 	if ((x >= 0) && (y < td->t.hgt - 1))
@@ -2540,8 +2531,23 @@ static errr draw_rect_t2(int x, int y, term_data *td, int xp, int yp)
 		ta = window->ta[y + 1][x];
 		tc = window->tc[y + 1][x];
 		
+		/* Are we overlaying anything? */
+		if ((a != ta) || (c != tc) || !(a & 0x80))
+		{
+			mask |= PJ_T_OVER4;
+			
+			if (a & 0x80)
+			{
+				set_tile2(PJ_OVER4, c & 0x3F, a & 0x7F);
+			}
+			else
+			{
+				set_font2(PJ_OVER4, c & 0x7F, a & 0x1F);
+			}
+		}
+		
 		/* Solid wall? */
-		if (tc & 0x40)
+		else if (tc & 0x40)
 		{
 			mask |= PJ_T_TOP1 | PJ_T_TOP_T1;
 			
@@ -2582,21 +2588,6 @@ static errr draw_rect_t2(int x, int y, term_data *td, int xp, int yp)
 			{
 				mask |= PJ_T_WALLB;
 				set_tile2(PJ_WALLB, tc & 0x3F, ta & 0x7F);
-			}
-		}
-		
-		/* Are we overlaying anything? */
-		else if ((a != ta) || (c != tc) || !(a & 0x80))
-		{
-			mask |= PJ_T_OVER4;
-			
-			if (a & 0x80)
-			{
-				set_tile2(PJ_OVER4, c & 0x3F, a & 0x7F);
-			}
-			else
-			{
-				set_font2(PJ_OVER4, c & 0x7F, a & 0x1F);
 			}
 		}
 	}
