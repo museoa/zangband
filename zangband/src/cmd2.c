@@ -2666,6 +2666,11 @@ void do_cmd_fire_aux(object_type *o_ptr, const object_type *j_ptr)
 					}
 				}
 			}
+			else
+			{
+				/* Drop (or break) near that location (i_ptr is now invalid) */
+				drop_near(i_ptr, breakage_chance(i_ptr), x, y);
+			}
 
 			/* Stop looking */
 			return;
