@@ -3366,16 +3366,24 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 		else msg_print("The attack bounces!");
 
 		/* Choose 'new' target */
-		do
+		while (TRUE)
 		{
 			t_y = m_list[who].fy - 1 + randint(3);
 			t_x = m_list[who].fx - 1 + randint(3);
 			max_attempts--;
 			
+						
+			/* paranoia */
+			if(!max_attempts) break;
+			
+			/* not off edge */
+			if(!in_bounds2(t_y, t_x)) continue;
+			
 			c_ptr = area(t_y, t_x);
+			
+			/* Hack - exit if can see the reflection */
+			if(player_has_los_grid(c_ptr)) break;
 		}
-		while (max_attempts && in_bounds2(t_y, t_x) &&
-		     !(player_has_los_grid(c_ptr)));
 
 		if (max_attempts < 1)
 		{
