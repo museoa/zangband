@@ -2424,6 +2424,34 @@ static void calc_bonuses(void)
 	p_ptr->immune_elec = FALSE;
 	p_ptr->immune_fire = FALSE;
 	p_ptr->immune_cold = FALSE;
+	p_ptr->immune_lite = FALSE;
+	p_ptr->immune_dark = FALSE;
+
+	p_ptr->hurt_acid = FALSE;
+	p_ptr->hurt_elec = FALSE;
+	p_ptr->hurt_fire = FALSE;
+	p_ptr->hurt_cold = FALSE;
+	p_ptr->hurt_lite = FALSE;
+	p_ptr->hurt_dark = FALSE;
+
+	p_ptr->shld_animal = FALSE;
+	p_ptr->shld_evil = FALSE;
+	p_ptr->shld_undead = FALSE;
+	p_ptr->shld_demon = FALSE;
+	p_ptr->shld_orc = FALSE;
+	p_ptr->shld_troll = FALSE;
+	p_ptr->shld_giant = FALSE;
+	p_ptr->shld_dragon = FALSE;
+
+	p_ptr->sh_acid = FALSE;
+	p_ptr->sh_cold = FALSE;
+
+	p_ptr->stat_drain = FALSE;
+	p_ptr->cant_eat = FALSE;
+	p_ptr->slow_heal = FALSE;
+	p_ptr->mutates = FALSE;
+	p_ptr->has_patron = FALSE;
+	p_ptr->strange_luck = FALSE;
 
 
 	/* Base infravision (purely racial) */
@@ -2474,6 +2502,7 @@ static void calc_bonuses(void)
 		}
 		case CLASS_CHAOS_WARRIOR:
 		{
+			p_ptr->has_patron = TRUE;
 			if (p_ptr->lev > 29) p_ptr->resist_chaos = TRUE;
 			if (p_ptr->lev > 39) p_ptr->resist_fear = TRUE;
 			break;
@@ -2661,6 +2690,7 @@ static void calc_bonuses(void)
 			p_ptr->free_act = TRUE;
 			p_ptr->see_inv = TRUE;
 			p_ptr->resist_pois = TRUE;
+			p_ptr->cant_eat = TRUE;
 			if (p_ptr->lev > 34) p_ptr->hold_life = TRUE;
 			break;
 		}
@@ -2670,6 +2700,7 @@ static void calc_bonuses(void)
 			p_ptr->hold_life = TRUE;
 			p_ptr->see_inv = TRUE;
 			p_ptr->resist_pois = TRUE;
+			p_ptr->cant_eat = TRUE;
 			if (p_ptr->lev > 9) p_ptr->resist_cold = TRUE;
 			break;
 		}
@@ -2680,6 +2711,7 @@ static void calc_bonuses(void)
 			p_ptr->see_inv = TRUE;
 			p_ptr->resist_pois = TRUE;
 			p_ptr->slow_digest = TRUE;
+			p_ptr->cant_eat = TRUE;
 			if (p_ptr->lev > 4) p_ptr->resist_cold = TRUE;
 			break;
 		}
@@ -2691,6 +2723,8 @@ static void calc_bonuses(void)
 			p_ptr->resist_cold = TRUE;
 			p_ptr->resist_pois = TRUE;
 			p_ptr->lite = TRUE;
+			p_ptr->immune_dark = TRUE;
+			p_ptr->hurt_lite = TRUE;
 			break;
 		}
 		case RACE_SPECTRE:
@@ -2702,6 +2736,7 @@ static void calc_bonuses(void)
 			p_ptr->slow_digest = TRUE;
 			p_ptr->resist_cold = TRUE;
 			p_ptr->pass_wall = TRUE;
+			p_ptr->cant_eat = TRUE;
 			if (p_ptr->lev > 34) p_ptr->telepathy = TRUE;
 			break;
 		}
@@ -2722,6 +2757,7 @@ static void calc_bonuses(void)
 		}
 		case RACE_GHOUL:
 		{
+			p_ptr->cant_eat = TRUE;
 			if (p_ptr->lev > 9) p_ptr->resist_dark = TRUE;
 			p_ptr->hold_life = TRUE;
 			if (p_ptr->lev > 19) p_ptr->resist_nethr = TRUE;
@@ -2796,11 +2832,39 @@ static void calc_bonuses(void)
 		if (o_ptr->flags2 & (TR2_FREE_ACT)) p_ptr->free_act = TRUE;
 		if (o_ptr->flags2 & (TR2_HOLD_LIFE)) p_ptr->hold_life = TRUE;
 
+		if (o_ptr->flags4 & (TR4_PROT_ANIMAL)) p_ptr->shld_animal = TRUE;
+		if (o_ptr->flags4 & (TR4_PROT_EVIL)) p_ptr->shld_evil = TRUE;
+		if (o_ptr->flags4 & (TR4_PROT_UNDEAD)) p_ptr->shld_undead = TRUE;
+		if (o_ptr->flags4 & (TR4_PROT_DEMON)) p_ptr->shld_demon = TRUE;
+		if (o_ptr->flags4 & (TR4_PROT_ORC)) p_ptr->shld_orc = TRUE;
+		if (o_ptr->flags4 & (TR4_PROT_TROLL)) p_ptr->shld_troll = TRUE;
+		if (o_ptr->flags4 & (TR4_PROT_GIANT)) p_ptr->shld_giant = TRUE;
+		if (o_ptr->flags4 & (TR4_PROT_DRAGON)) p_ptr->shld_dragon = TRUE;
+
+		if (o_ptr->flags4 & (TR4_SH_ACID)) p_ptr->sh_acid = TRUE;
+		if (o_ptr->flags4 & (TR4_SH_COLD)) p_ptr->sh_cold = TRUE;
+		if (o_ptr->flags4 & (TR4_MUTATE)) p_ptr->mutates = TRUE;
+		if (o_ptr->flags4 & (TR4_PATRON)) p_ptr->has_patron = TRUE;
+		if (o_ptr->flags4 & (TR4_STRANGE_LUCK)) p_ptr->strange_luck = TRUE;
+		
+		if (o_ptr->flags4 & (TR4_HURT_ACID)) p_ptr->hurt_acid = TRUE;
+		if (o_ptr->flags4 & (TR4_HURT_ELEC)) p_ptr->hurt_elec = TRUE;
+		if (o_ptr->flags4 & (TR4_HURT_FIRE)) p_ptr->hurt_fire = TRUE;
+		if (o_ptr->flags4 & (TR4_HURT_COLD)) p_ptr->hurt_cold = TRUE;
+		if (o_ptr->flags4 & (TR4_HURT_LITE)) p_ptr->hurt_lite = TRUE;
+		if (o_ptr->flags4 & (TR4_HURT_DARK)) p_ptr->hurt_dark = TRUE;
+
+		if (o_ptr->flags4 & (TR4_DRAIN_STATS)) p_ptr->stat_drain = TRUE;
+		if (o_ptr->flags4 & (TR4_CANT_EAT)) p_ptr->cant_eat = TRUE;
+		if (o_ptr->flags4 & (TR4_SLOW_HEAL)) p_ptr->slow_heal = TRUE;
+
 		/* Immunity flags */
 		if (o_ptr->flags2 & (TR2_IM_FIRE)) p_ptr->immune_fire = TRUE;
 		if (o_ptr->flags2 & (TR2_IM_ACID)) p_ptr->immune_acid = TRUE;
 		if (o_ptr->flags2 & (TR2_IM_COLD)) p_ptr->immune_cold = TRUE;
 		if (o_ptr->flags2 & (TR2_IM_ELEC)) p_ptr->immune_elec = TRUE;
+		if (o_ptr->flags4 & (TR4_IM_LITE)) p_ptr->immune_lite = TRUE;
+		if (o_ptr->flags4 & (TR4_IM_DARK)) p_ptr->immune_dark = TRUE;
 
 		/* Resistance flags */
 		if (o_ptr->flags2 & (TR2_RES_ACID)) p_ptr->resist_acid = TRUE;

@@ -1450,12 +1450,21 @@ struct player_type
 	bool immune_elec;	/* Immunity to lightning */
 	bool immune_fire;	/* Immunity to fire */
 	bool immune_cold;	/* Immunity to cold */
+	bool immune_lite;	/* Immunity to light */
+	bool immune_dark;	/* Immunity to darkness */
 
 	bool resist_acid;	/* Resist acid */
 	bool resist_elec;	/* Resist lightning */
 	bool resist_fire;	/* Resist fire */
 	bool resist_cold;	/* Resist cold */
 	bool resist_pois;	/* Resist poison */
+
+	bool hurt_acid;		/* Susceptibility to acid */
+	bool hurt_elec;		/* Susceptibility to lightning */
+	bool hurt_fire;		/* Susceptibility to fire */
+	bool hurt_cold;		/* Susceptibility to cold */
+	bool hurt_lite;		/* Susceptibility to light */
+	bool hurt_dark;		/* Susceptibility to darkness */
 
 	bool resist_fear;	/* Resist fear */
 	bool resist_lite;	/* Resist light */
@@ -1469,9 +1478,20 @@ struct player_type
 	bool resist_chaos;	/* Resist chaos */
 	bool resist_disen;	/* Resist disenchant */
 
+	bool shld_animal;	/* Protection from animals */
+	bool shld_evil;		/* Protection from evil */
+	bool shld_undead;	/* Protection from undead */
+	bool shld_demon;	/* Protection from demons */
+	bool shld_orc;		/* Protection from orcs */
+	bool shld_troll;	/* Protection from trolls */
+	bool shld_giant;	/* Protection from giants */
+	bool shld_dragon;	/* Protection from dragons */
+
 	bool reflect;	/* Reflect 'bolt' attacks */
-	bool sh_fire;	/* Fiery 'immolation' effect */
+	bool sh_acid;	/* Acidic 'immolation' effect */
 	bool sh_elec;	/* Electric 'immolation' effect */
+	bool sh_fire;	/* Fiery 'immolation' effect */
+	bool sh_cold;	/* Frosty 'immolation' effect */
 
 	bool anti_magic;	/* Anti-magic */
 	bool anti_tele;	/* Prevent teleportation */
@@ -1496,10 +1516,17 @@ struct player_type
 	bool aggravate;	/* Aggravate monsters */
 	bool teleport;	/* Random teleporting */
 	bool exp_drain;	/* Experience draining */
+	bool stat_drain;	/* Stat draining */
+	bool cant_eat;	/* Eating restriction */
+	bool slow_heal;	/* Anti-regenration */
 
 	bool bless_blade;	/* Blessed blade */
 	bool xtra_might;	/* Extra might bow */
 	bool pass_wall;	/* Permanent wraithform */
+
+	bool mutates;	/* Mutation on level gain */
+	bool has_patron;	/* Has a chaos patron */
+	bool strange_luck;	/* Weird effects */
 
 	s16b dis_to_h;	/* Known bonus to hit */
 	s16b dis_to_d;	/* Known bonus to dam */

@@ -192,6 +192,10 @@ void self_knowledge(void)
 	{
 		info[i++] = "Your position is very uncertain.";
 	}
+	if (p_ptr->cant_eat)
+	{
+		info[i++] = "You cannot survive on normal food.";
+	}
 	if (p_ptr->blessed)
 	{
 		info[i++] = "You feel righteous.";
@@ -204,9 +208,37 @@ void self_knowledge(void)
 	{
 		info[i++] = "You are in a battle rage.";
 	}
-	if (p_ptr->protevil)
+	if (p_ptr->protevil || p_ptr->shld_evil)
 	{
 		info[i++] = "You are protected from evil.";
+	}
+	if (p_ptr->shld_animal)
+	{
+		info[i++] = "You are protected from animals.";
+	}
+	if (p_ptr->shld_undead)
+	{
+		info[i++] = "You are protected from undead.";
+	}
+	if (p_ptr->shld_demon)
+	{
+		info[i++] = "You are protected from demons.";
+	}
+	if (p_ptr->shld_orc)
+	{
+		info[i++] = "You are protected from orcs.";
+	}
+	if (p_ptr->shld_troll)
+	{
+		info[i++] = "You are protected from trolls.";
+	}
+	if (p_ptr->shld_giant)
+	{
+		info[i++] = "You are protected from giants.";
+	}
+	if (p_ptr->shld_dragon)
+	{
+		info[i++] = "You are protected from dragons.";
 	}
 	if (p_ptr->shield)
 	{
@@ -252,14 +284,40 @@ void self_knowledge(void)
 	{
 		info[i++] = "You have free action.";
 	}
+	if (p_ptr->mutates)
+	{
+		info[i++] = "You mutate spontaneously.";
+	}
+	if (p_ptr->has_patron)
+	{
+		info[i++] = "You have a chaos patron.";
+	}
+	if (p_ptr->strange_luck)
+	{
+		info[i++] = "Chance is warped around you.";
+	}
+
 	if ((p_ptr->regenerate) && (!(p_ptr->muta3 & MUT3_REGEN)))
 	{
-		info[i++] = "You regenerate quickly.";
+		if (p_ptr->slow_heal)
+			info[i++] = "You regenerate slowly.";
+		else
+			info[i++] = "You regenerate quickly.";
 	}
-	if (p_ptr->slow_digest)
+	else if (p_ptr->slow_heal)
+	{
+		info[i++] = "You regenerate very slowly.";
+	}
+	
+	if (p_ptr->slow_digest && p_ptr->slow_heal)
+	{
+		info[i++] = "Your appetite is very small.";
+	}
+	else if (p_ptr->slow_digest || p_ptr->slow_heal)
 	{
 		info[i++] = "Your appetite is small.";
 	}
+	
 	if ((p_ptr->telepathy) && (!(p_ptr->muta3 & MUT3_ESP)))
 	{
 		info[i++] = "You have ESP.";
@@ -280,6 +338,14 @@ void self_knowledge(void)
 	{
 		info[i++] = "You are surrounded with electricity.";
 	}
+	if (p_ptr->sh_acid)
+	{
+		info[i++] = "You are surrounded by an acidic cloud.";
+	}
+	if (p_ptr->sh_cold)
+	{
+		info[i++] = "You are surrounded by a freezing aura.";
+	}
 	if (p_ptr->anti_magic)
 	{
 		info[i++] = "You are surrounded by an anti-magic shell.";
@@ -299,11 +365,21 @@ void self_knowledge(void)
 	}
 	else if ((p_ptr->resist_acid) && (p_ptr->oppose_acid))
 	{
-		info[i++] = "You resist acid exceptionally well.";
+		if (p_ptr->hurt_acid)
+			info[i++] = "You resist acid very well.";
+		else
+			info[i++] = "You resist acid exceptionally well.";
 	}
 	else if ((p_ptr->resist_acid) || (p_ptr->oppose_acid))
 	{
-		info[i++] = "You are resistant to acid.";
+		if (p_ptr->hurt_acid)
+			info[i++] = "You are somewhat resistant to acid.";
+		else
+			info[i++] = "You are resistant to acid.";
+	}
+	else if (p_ptr->hurt_acid)
+	{
+		info[i++] = "You are vulnerable to acid.";
 	}
 
 	if (p_ptr->immune_elec)
@@ -312,11 +388,21 @@ void self_knowledge(void)
 	}
 	else if ((p_ptr->resist_elec) && (p_ptr->oppose_elec))
 	{
-		info[i++] = "You resist lightning exceptionally well.";
+		if (p_ptr->hurt_elec)
+			info[i++] = "You resist lightning very well.";
+		else
+			info[i++] = "You resist lightning exceptionally well.";
 	}
 	else if ((p_ptr->resist_elec) || (p_ptr->oppose_elec))
 	{
-		info[i++] = "You are resistant to lightning.";
+		if (p_ptr->hurt_elec)
+			info[i++] = "You are somewhat resistant to lightning.";
+		else
+			info[i++] = "You are resistant to lightning.";
+	}
+	else if (p_ptr->hurt_elec)
+	{
+		info[i++] = "You are vulnerable to lightning.";
 	}
 
 	if (p_ptr->immune_fire)
@@ -325,11 +411,21 @@ void self_knowledge(void)
 	}
 	else if ((p_ptr->resist_fire) && (p_ptr->oppose_fire))
 	{
-		info[i++] = "You resist fire exceptionally well.";
+		if (p_ptr->hurt_fire)
+			info[i++] = "You resist fire very well.";
+		else
+			info[i++] = "You resist fire exceptionally well.";
 	}
 	else if ((p_ptr->resist_fire) || (p_ptr->oppose_fire))
 	{
-		info[i++] = "You are resistant to fire.";
+		if (p_ptr->hurt_fire)
+			info[i++] = "You are somewhat resistant to fire.";
+		else
+			info[i++] = "You are resistant to fire.";
+	}
+	else if (p_ptr->hurt_fire)
+	{
+		info[i++] = "You are vulnerable to fire.";
 	}
 
 	if (p_ptr->immune_cold)
@@ -338,11 +434,21 @@ void self_knowledge(void)
 	}
 	else if ((p_ptr->resist_cold) && (p_ptr->oppose_cold))
 	{
-		info[i++] = "You resist cold exceptionally well.";
+		if (p_ptr->hurt_cold)
+			info[i++] = "You resist cold very well.";
+		else
+			info[i++] = "You resist cold exceptionally well.";
 	}
 	else if ((p_ptr->resist_cold) || (p_ptr->oppose_cold))
 	{
-		info[i++] = "You are resistant to cold.";
+		if (p_ptr->hurt_cold)
+			info[i++] = "You are somewhat resistant to cold.";
+		else
+			info[i++] = "You are resistant to cold.";
+	}
+	else if (p_ptr->hurt_cold)
+	{
+		info[i++] = "You are vulnerable to cold.";
 	}
 
 	if ((p_ptr->resist_pois) && (p_ptr->oppose_pois))
@@ -354,14 +460,38 @@ void self_knowledge(void)
 		info[i++] = "You are resistant to poison.";
 	}
 
-	if (p_ptr->resist_lite)
+	if (p_ptr->immune_lite)
 	{
-		info[i++] = "You are resistant to bright light.";
+		info[i++] = "You are completely immune to bright light.";
 	}
-	if (p_ptr->resist_dark)
+	else if (p_ptr->resist_lite)
 	{
-		info[i++] = "You are resistant to darkness.";
+		if (p_ptr->hurt_lite)
+			info[i++] = "You are somewhat resistant to bright light.";
+		else
+			info[i++] = "You are resistant to bright light.";
 	}
+	else if (p_ptr->hurt_lite)
+	{
+		info[i++] = "You are vulnerable to bright light.";
+	}
+
+	if (p_ptr->immune_dark)
+	{
+		info[i++] = "You are completely immune to darkness.";
+	}
+	else if (p_ptr->resist_dark)
+	{
+		if (p_ptr->hurt_dark)
+			info[i++] = "You are somewhat resistant to darkness.";
+		else
+			info[i++] = "You are resistant to darkness.";
+	}
+	else if (p_ptr->hurt_dark)
+	{
+		info[i++] = "You are vulnerable to darkness.";
+	}
+
 	if (p_ptr->resist_confu)
 	{
 		info[i++] = "You are resistant to confusion.";
@@ -573,6 +703,16 @@ void self_knowledge(void)
 		if (f2 & (TR2_THROW))
 		{
 			info[i++] = "Your weapon can be thrown well.";
+		}
+
+		if (f4 & (TR4_PARA_TOUCH))
+		{
+			info[i++] = "Your weapon paralyzes your foes.";
+		}
+
+		if (f4 & (TR4_PSI_CRIT))
+		{
+			info[i++] = "Your weapon uses magical power to strike great blows.";
 		}
 	}
 
