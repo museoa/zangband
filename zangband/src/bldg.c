@@ -429,6 +429,8 @@ static s32b gamble_oldgold;
 /*
  * Initialize gambling by getting bet.
  * Return a wager of zero, if something goes wrong.
+ *
+ * Hack - we return with screen still saved if wager is non-zero
  */
 static s32b gamble_init(void)
 {
@@ -447,7 +449,6 @@ static s32b gamble_init(void)
 	if (p_ptr->au < 1)
 	{
 		msg_print("Hey! You don't have gold - get out of here!");
-		message_flush();
 
 		screen_load();
 		return (0);
@@ -486,7 +487,6 @@ static s32b gamble_init(void)
 	if (wager > p_ptr->au)
 	{
 		msg_print("Hey! You don't have the gold - get out of here!");
-		message_flush();
 
 		screen_load();
 		return (0);

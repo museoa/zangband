@@ -752,13 +752,13 @@ bool lose_mutation(int choose_mut)
 /*
  * Print out a description of the current mutations
  */
-void dump_mutations(FILE *OutFile)
+void dump_mutations(FILE *fff)
 {
 	const mutation_type *mut_ptr;
 
 	int i;
 
-	if (!OutFile) return;
+	if (!fff) return;
 
 	/* Run through the mutations */
 	for (i = 0; i < MUT_PER_SET * 3; i++)
@@ -767,7 +767,7 @@ void dump_mutations(FILE *OutFile)
 
 		if (player_has_mut(i))
 		{
-			fprintf(OutFile, "%s\n", mut_ptr->desc_text);
+			fprintf(fff, "%s\n", mut_ptr->desc_text);
 		}
 	}
 }
@@ -812,11 +812,13 @@ static int count_bits(u32b x)
 	int n = 0;
 
 	if (x)
+	{
 		do
 		{
 			n++;
 		}
 		while (0 != (x = x & (x - 1)));
+	}
 
 	return (n);
 }
@@ -1645,11 +1647,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 			disturb(FALSE);
 			msg_print("You can feel yourself wasting away!");
 			message_flush();
-#if 0
-			(void)dec_stat(which_stat, rand_range(6, 12), one_in_(3));
-#else
 			(void)dec_stat(which_stat, rand_range(6, 12), 0);
-#endif
 		}
 	}
 
@@ -1787,7 +1785,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 	}
 }
 
-/* Constan mutation effects */
+/* Constant mutation effects */
 void mutation_effect(void)
 {
 	/* Hyper Strength */

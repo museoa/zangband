@@ -2416,10 +2416,8 @@ static bool player_birth_aux_3(void)
 			}
 			else if (ch == '=')
 			{
-				screen_save();
 				do_cmd_options(OPT_FLAG_BIRTH | OPT_FLAG_SERVER |
 							   OPT_FLAG_PLAYER);
-				screen_load();
 				continue;
 			}
 
