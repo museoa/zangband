@@ -3,6 +3,8 @@ standard Angband 2.8.1.) No long explanations, just a list. See code for
 details. In reversed chronological order (more or less):
 
 Zangband 2.3.3:
+-Fixed the excessive disturbing messages produced by monsters fighting 
+ each other.
 -Added magical figurines, statues, and corpses (corpses are turned off
  since they can't be resurrected yet).
 -Added a new scroll 'of mundanity'.
