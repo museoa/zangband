@@ -198,9 +198,6 @@ bool borg_fear_mon_spell;
  */
 
 s16b goal_shop = -1;	/* Next shop to visit */
-s16b goal_ware = -1;	/* Next item to buy there */
-s16b goal_item = -1;	/* Next item to sell there */
-int borg_food_onsale = -1;	/* Are shops selling food? */
 
 /*
  * Location variables

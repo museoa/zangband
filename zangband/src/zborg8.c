@@ -221,6 +221,67 @@ static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
 
 
 /*
+ * Sell items to the current shop
+ */
+static void borg_think_shop_sell(int item)
+{
+	list_item *l_ptr = &cur_list[item];
+
+	/* Log */
+	borg_note(format("# Selling %s", l_ptr->o_name));
+
+	/* Buy an item */
+	borg_keypress('s');
+
+	/* Buy the desired item */
+	borg_keypress(I2A(item));
+
+	/* Mega-Hack -- Accept the price */
+	borg_keypress('\n');
+	borg_keypress('\n');
+	borg_keypress('\n');
+	borg_keypress('\n');
+
+	/* The purchase is complete */
+	goal_shop = -1;
+}
+
+
+/*
+ * Buy items from the current shop
+ */
+static void borg_think_shop_buy(int item)
+{
+	list_item *l_ptr = &cur_list[item];
+
+	/* go to correct Page */
+	if (item / 12) borg_keypress(' ');
+
+	/* Log */
+	borg_note(format("# Buying %s (%i gold).", l_ptr->o_name, l_ptr->cost));
+
+	/* Buy an item */
+	borg_keypress('p');
+
+	/* Buy the desired item */
+	borg_keypress(I2A(item % 12));
+
+	/* Mega-Hack -- Accept the price */
+	borg_keypress('\n');
+	borg_keypress('\n');
+	borg_keypress('\n');
+	borg_keypress('\n');
+
+	/* The purchase is complete */
+	goal_shop = -1;
+
+	/* Hack - Leave the store */
+	borg_keypress(ESCAPE);
+}
+
+
+
+/*
  * Test to see if the item can be merged with anything in the home.
  *
  * Return a pointer to the item it merges with.
@@ -411,7 +472,8 @@ static bool borg_think_home_sell_aux(void)
 	if (index != -1)
 	{
 		goal_shop = home_shop;
-		goal_item = index;
+		
+		borg_think_shop_sell(index);
 		
 		/* We have goal */
 		return (TRUE);
@@ -572,7 +634,7 @@ static bool borg_think_shop_sell_aux(int shop)
 		goal_shop = shop;
 
 		/* Sell that item */
-		goal_item = b_i;
+		borg_think_shop_sell(b_i);
 
 		/* Success */
 		return (TRUE);
@@ -732,7 +794,7 @@ static bool borg_think_shop_buy_aux(int shop)
 		goal_shop = shop;
 
 		/* Buy that item */
-		goal_ware = b_n;
+		borg_think_shop_buy(b_n);
 
 		/* Success */
 		return (TRUE);
@@ -839,7 +901,7 @@ static bool borg_think_home_buy_aux(void)
 		goal_shop = home_shop;
 
 		/* Buy that item */
-		goal_ware = b_n;
+		borg_think_shop_buy(b_n);
 
 		/* Success */
 		return (TRUE);
@@ -924,7 +986,7 @@ static bool borg_think_shop_grab_aux(int shop)
 		goal_shop = shop;
 
 		/* Buy that item */
-		goal_ware = b_n;
+		borg_think_shop_buy(b_n);
 
 		/* Success */
 		return (TRUE);
@@ -993,93 +1055,13 @@ static bool borg_think_home_grab_aux(void)
 		goal_shop = home_shop;
 
 		/* Grab that item */
-		goal_ware = b_n;
+		borg_think_shop_buy(b_n);
 
 		/* Success */
 		return (TRUE);
 	}
 
 	/* Assume not */
-	return (FALSE);
-}
-
-
-/*
- * Sell items to the current shop, if desired
- */
-static bool borg_think_shop_sell(void)
-{
-	/* Sell something if requested */
-	if ((goal_shop == shop_num) && (goal_item >= 0))
-	{
-		list_item *l_ptr = &cur_list[goal_item];
-
-		/* Log */
-		borg_note(format("# Selling %s", l_ptr->o_name));
-
-		/* Buy an item */
-		borg_keypress('s');
-
-		/* Buy the desired item */
-		borg_keypress(I2A(goal_item));
-
-		/* Mega-Hack -- Accept the price */
-		borg_keypress('\n');
-		borg_keypress('\n');
-		borg_keypress('\n');
-		borg_keypress('\n');
-
-		/* The purchase is complete */
-		goal_shop = goal_item = -1;
-
-		/* Success */
-		return (TRUE);
-	}
-
-	/* Nope */
-	return (FALSE);
-}
-
-
-/*
- * Buy items from the current shop, if desired
- */
-static bool borg_think_shop_buy(void)
-{
-	/* Buy something if requested */
-	if ((goal_shop == shop_num) && (goal_ware >= 0))
-	{
-		list_item *l_ptr = &cur_list[goal_ware];
-
-		/* go to correct Page */
-		if (goal_ware / 12) borg_keypress(' ');
-
-		/* Log */
-		borg_note(format("# Buying %s (%i gold).", l_ptr->o_name, l_ptr->cost));
-
-		/* Buy an item */
-		borg_keypress('p');
-
-		/* Buy the desired item */
-		borg_keypress(I2A(goal_ware % 12));
-
-		/* Mega-Hack -- Accept the price */
-		borg_keypress('\n');
-		borg_keypress('\n');
-		borg_keypress('\n');
-		borg_keypress('\n');
-
-		/* The purchase is complete */
-		goal_shop = goal_ware = -1;
-
-		/* Hack - Leave the store */
-		borg_keypress(ESCAPE);
-
-		/* Success */
-		return (TRUE);
-	}
-
-	/* Nothing to buy */
 	return (FALSE);
 }
 
@@ -1107,7 +1089,7 @@ static bool borg_choose_shop(void)
 	if (goal_shop != -1) return TRUE;
 
 	/* Assume no important shop */
-	goal_shop = goal_ware = goal_item = -1;
+	goal_shop = -1;
 
 	/* Step 1 -- Sell items to the home */
 	if (borg_think_home_sell_aux()) return (TRUE);
@@ -1155,14 +1137,7 @@ bool borg_think_store(void)
 	if (borg_remove_stuff()) return (TRUE);
 
 	/* Choose a shop to visit */
-	if (borg_choose_shop())
-	{
-		/* Try to sell stuff */
-		if (borg_think_shop_sell()) return (TRUE);
-
-		/* Try to buy stuff */
-		if (borg_think_shop_buy()) return (TRUE);
-	}
+	if (borg_choose_shop()) return (TRUE);
 
 	/* No shop */
 	shop_num = -1;
@@ -1502,8 +1477,6 @@ bool borg_think_dungeon(void)
 			/* Start fleeing */
 			goal_fleeing = TRUE;
 		}
-
-
 	}
 
 	/* Reset avoidance */
@@ -1598,8 +1571,10 @@ bool borg_think_dungeon(void)
 	if (borg_play_magic(FALSE)) return (TRUE);
 
 	/* If using a digger, Wear "useful" equipment before fighting monsters */
-	if (borg_items[INVEN_WIELD].tval == TV_DIGGING &&
-		borg_wear_stuff()) return (TRUE);
+	if (equipment[EQUIP_WIELD].tval == TV_DIGGING && borg_wear_stuff())
+	{
+		return (TRUE);
+	}
 
 	/* Attack monsters */
 	if (borg_attack(FALSE)) return (TRUE);

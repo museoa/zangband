@@ -515,9 +515,6 @@ extern bool borg_fear_mon_spell;
  */
 
 extern s16b goal_shop;	/* Next shop to visit */
-extern s16b goal_ware;	/* Next item to buy there */
-extern s16b goal_item;	/* Next item to sell there */
-extern int borg_food_onsale;	/* Are shops selling food? */
 
 /*
  * Other variables

@@ -148,7 +148,7 @@ void borg_list_info(byte list_type)
 			borg_notice();
 
 			/* Inventory changed so goals must change. */
-			goal_shop = goal_ware = goal_item = -1;
+			goal_shop = -1;
 
 			/* Note changed inventory */
 			borg_do_crush_junk = TRUE;
@@ -163,7 +163,7 @@ void borg_list_info(byte list_type)
 			borg_notice();
 			
 			/* Equipment changed so goals must change. */
-			goal_shop = goal_ware = goal_item = -1;
+			goal_shop = -1;
 
 			/* Note changed inventory */
 			borg_do_crush_junk = TRUE;

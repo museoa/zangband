@@ -2979,13 +2979,11 @@ void borg_update(void)
 		goal = 0;
 
 		/* Hack -- Clear "shop" goals */
-		goal_shop = goal_ware = goal_item = -1;
-
-		/* Reset food in store */
-		borg_food_onsale = -1;
+		goal_shop = -1;
 
 		/* Do not use any stairs */
-		stair_less = stair_more = FALSE;
+		stair_less = FALSE;
+		stair_more = FALSE;
 
 		/* Hack -- cannot rise past town */
 		if (!borg_skill[BI_CDEPTH]) goal_rising = FALSE;
@@ -3002,11 +3000,6 @@ void borg_update(void)
 		/* No known stairs */
 		track_less_num = 0;
 		track_more_num = 0;
-
-#if 0
-		/* No known shops -- do we really need this? XXX */
-		track_shop_num = 0;
-#endif /* 0 */
 
 		/* No known glyph */
 		track_glyph_num = 0;
