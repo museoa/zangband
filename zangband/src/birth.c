@@ -1901,14 +1901,14 @@ static bool player_birth_aux_1(void)
 
 	/* Display the information so far. */
 	/* Name, Sex, Race, Class */
-	put_fstr(0, 2, "Name     :" COL_L_BLUE "%s", player_name);
-	put_fstr(0, 3, "Sex      :" COL_L_BLUE "%s", sp_ptr->title);
-	put_fstr(0, 4, "Race     :" COL_L_BLUE "%s", rp_ptr->title);
-	put_fstr(0, 5, "Class    :" COL_L_BLUE "%s", cp_ptr->title);
+	put_fstr(0, 2, "Name     :" CLR_L_BLUE "%s", player_name);
+	put_fstr(0, 3, "Sex      :" CLR_L_BLUE "%s", sp_ptr->title);
+	put_fstr(0, 4, "Race     :" CLR_L_BLUE "%s", rp_ptr->title);
+	put_fstr(0, 5, "Class    :" CLR_L_BLUE "%s", cp_ptr->title);
 
 	if (p_ptr->realm1 || p_ptr->realm2)
 	{
-		put_fstr(0, 6, "Magic    :" COL_L_BLUE "%s", realm_names[p_ptr->realm1]);
+		put_fstr(0, 6, "Magic    :" CLR_L_BLUE "%s", realm_names[p_ptr->realm1]);
 	}
 
 	if (p_ptr->realm2)
@@ -2262,7 +2262,7 @@ static bool player_birth_aux_3(void)
 				put_str(stat_names[i], col, i + 3);
 
 				/* Put the weight */
-				put_fstr(col + 5, i + 3, COL_L_BLUE "%6i", stat_weight[i]);
+				put_fstr(col + 5, i + 3, CLR_L_BLUE "%6i", stat_weight[i]);
 			}
 
 			/* Note when we started */

@@ -4109,22 +4109,22 @@ extern int PlayerUID;
  * Note how we start from 001 instead of 0, because a zero would
  * end the string. Also note how the numbers have to be in octal. :-/
  */
-#define COL_DARK		"/001/001"  
-#define COL_WHITE		"/001/002"
-#define COL_SLATE		"/001/003"
-#define COL_ORANGE		"/001/004"
-#define COL_RED			"/001/005"
-#define COL_GREEN		"/001/006"
-#define COL_BLUE		"/001/007"
-#define COL_UMBER		"/001/010"
-#define COL_L_DARK		"/001/011"
-#define COL_L_WHITE		"/001/012"
-#define COL_VIOLET		"/001/013"
-#define COL_YELLOW		"/001/014"
-#define COL_L_RED		"/001/015"
-#define COL_L_GREEN		"/001/016"
-#define COL_L_BLUE		"/001/017"
-#define COL_L_UMBER		"/001/020"
+#define CLR_DARK		"/001/001"  
+#define CLR_WHITE		"/001/002"
+#define CLR_SLATE		"/001/003"
+#define CLR_ORANGE		"/001/004"
+#define CLR_RED			"/001/005"
+#define CLR_GREEN		"/001/006"
+#define CLR_BLUE		"/001/007"
+#define CLR_UMBER		"/001/010"
+#define CLR_L_DARK		"/001/011"
+#define CLR_L_WHITE		"/001/012"
+#define CLR_VIOLET		"/001/013"
+#define CLR_YELLOW		"/001/014"
+#define CLR_L_RED		"/001/015"
+#define CLR_L_GREEN		"/001/016"
+#define CLR_L_BLUE		"/001/017"
+#define CLR_L_UMBER		"/001/020"
 
 
 #define MSG_GENERIC          0

@@ -1950,7 +1950,7 @@ static void display_player_flag_aux(int col, int row,
 		object_flags_known(o_ptr, &f[0], &f[1], &f[2]);
 
 		/* Default */
-		put_cstr(COL_SLATE ".", col, row);
+		put_cstr(CLR_SLATE ".", col, row);
 
 		/* Check flags */
 		if (f[n - 1] & flag1) put_str("+", col, row);
@@ -1964,7 +1964,7 @@ static void display_player_flag_aux(int col, int row,
 	player_flags(&f[0], &f[1], &f[2]);
 
 	/* Default */
-	put_cstr(COL_SLATE ".", col, row);
+	put_cstr(CLR_SLATE ".", col, row);
 
 	/* Check flags */
 	if (f[n - 1] & flag1) put_str("+", col, row);
@@ -2090,10 +2090,10 @@ static void display_player_stat_info(void)
 
 	/* Print out the labels for the columns */
 	put_str("Stat", stat_col, row - 1);
-	put_cstr(COL_BLUE "Intrnl", stat_col + 5, row - 1);
-	put_cstr(COL_L_BLUE "Rce Cls Mod", stat_col + 12, row - 1);
-	put_cstr(COL_L_GREEN "Actual", stat_col + 24, row - 1);
-	put_cstr(COL_YELLOW "Currnt", stat_col + 31, row - 1);
+	put_cstr(CLR_BLUE "Intrnl", stat_col + 5, row - 1);
+	put_cstr(CLR_L_BLUE "Rce Cls Mod", stat_col + 12, row - 1);
+	put_cstr(CLR_L_GREEN "Actual", stat_col + 24, row - 1);
+	put_cstr(CLR_YELLOW "Currnt", stat_col + 31, row - 1);
 
 	/* Display the stats */
 	for (i = 0; i < A_MAX; i++)
@@ -2121,9 +2121,9 @@ static void display_player_stat_info(void)
 		c_put_str(TERM_BLUE, buf, stat_col + 5, row + i);
 
 		/* Race, class, and equipment modifiers */
-		put_fstr(stat_col + 12, row + i, COL_L_BLUE "%3d", (int)rp_ptr->r_adj[i]);
-		put_fstr(stat_col + 16, row + i, COL_L_BLUE "%3d", (int)cp_ptr->c_adj[i]);
-		put_fstr(stat_col + 20, row + i, COL_L_BLUE "%3d", (int)e_adj);
+		put_fstr(stat_col + 12, row + i, CLR_L_BLUE "%3d", (int)rp_ptr->r_adj[i]);
+		put_fstr(stat_col + 16, row + i, CLR_L_BLUE "%3d", (int)cp_ptr->c_adj[i]);
+		put_fstr(stat_col + 20, row + i, CLR_L_BLUE "%3d", (int)e_adj);
 
 		/* Actual maximal modified value */
 		cnv_stat(p_ptr->stat_top[i], buf);
@@ -2142,7 +2142,7 @@ static void display_player_stat_info(void)
 
 	/* Header and Footer */
 	put_str("abcdefghijkl@", col, row - 1);
-	put_cstr(COL_L_GREEN "Modifications", col, row + 6);
+	put_cstr(CLR_L_GREEN "Modifications", col, row + 6);
 
 	/* Process equipment */
 	for (i = 0; i < EQUIP_MAX; i++)
@@ -2325,39 +2325,23 @@ static void display_player_top(void)
 	char buf[80];
 
 	/* Name, Sex, Race, Class */
-	put_str("Name     :", COL_NAME, 2);
-	put_str("Sex      :", COL_NAME, 3);
-	put_str("Race     :", COL_NAME, 4);
-	put_str("Class    :", COL_NAME, 5);
+	put_fstr(COL_NAME, 2, "Name     :" CLR_L_BLUE "%s", player_name);
+	put_fstr(COL_NAME, 3, "Sex      :" CLR_L_BLUE "%s", sp_ptr->title);
+	put_fstr(COL_NAME, 4, "Race     :" CLR_L_BLUE "%s", rp_ptr->title);
+	put_fstr(COL_NAME, 5, "Class    :" CLR_L_BLUE "%s", cp_ptr->title);
 
 	if (p_ptr->realm1 || p_ptr->realm2)
 	{
-		put_str("Magic    :", COL_NAME, 6);
+		put_fstr(COL_NAME, 6, "Magic    :" CLR_L_BLUE "%s", realm_names[p_ptr->realm1]);
 	}
 
 	if (p_ptr->pclass == CLASS_CHAOS_WARRIOR)
 	{
-		put_str("Patron   :", COL_NAME, 7);
+		put_fstr(COL_NAME, 7, "Patron   :", CLR_L_BLUE "%s",
+					 chaos_patrons[p_ptr->chaos_patron]);
 	}
 
-	c_put_str(TERM_L_BLUE, player_name, COL_NAME + WID_NAME, 2);
-	c_put_str(TERM_L_BLUE, sp_ptr->title, COL_NAME + WID_NAME, 3);
-	c_put_str(TERM_L_BLUE, rp_ptr->title, COL_NAME + WID_NAME, 4);
-	c_put_str(TERM_L_BLUE, cp_ptr->title, COL_NAME + WID_NAME, 5);
-
-	if (p_ptr->realm1)
-	{
-		c_put_str(TERM_L_BLUE, realm_names[p_ptr->realm1], COL_NAME + WID_NAME,
-				  6);
-	}
-
-	if (p_ptr->pclass == CLASS_CHAOS_WARRIOR)
-	{
-		c_put_str(TERM_L_BLUE, chaos_patrons[p_ptr->chaos_patron],
-				  COL_NAME + WID_NAME, 7);
-	}
-
-	else if (p_ptr->realm2)
+	if (p_ptr->realm2)
 	{
 		c_put_str(TERM_L_BLUE, realm_names[p_ptr->realm2], COL_NAME + WID_NAME,
 				  7);
@@ -2466,7 +2450,7 @@ static void display_player_middle(void)
 	if (p_ptr->lev >= PY_MAX_LEVEL)
 	{
 		put_str("Exp to Adv.", COL_VALUE, 12);
-		put_cstr(COL_L_GREEN "       *****", COL_VALUE + 11, 12);
+		put_cstr(CLR_L_GREEN "       *****", COL_VALUE + 11, 12);
 	}
 	else if (toggle_xp)
 	{
@@ -3735,7 +3719,7 @@ void change_player_name(void)
 	}
 
 	/* Re-Draw the name (in light blue) */
-	put_fstr(COL_NAME + WID_NAME, 2, COL_L_BLUE "%-15.15s", player_name);
+	put_fstr(COL_NAME + WID_NAME, 2, CLR_L_BLUE "%-15.15s", player_name);
 
 	/* Erase the prompt, etc */
 	clear_from(22);

@@ -3534,7 +3534,7 @@ bool field_action_weaponmaster1(field_type *f_ptr, vptr input)
 {
 	int factor = *((int *)input);
 
-	put_fstr(35, 19, COL_YELLOW " E) Examine Weapons (%dgp)", f_ptr->data[1] * factor);
+	put_fstr(35, 19, CLR_YELLOW " E) Examine Weapons (%dgp)", f_ptr->data[1] * factor);
 
 	/* Done */
 	return (FALSE);
@@ -3578,8 +3578,8 @@ bool field_action_recharge1(field_type *f_ptr, vptr input)
 {
 	int factor = *((int *)input);
 
-	put_cstr(COL_YELLOW " R) Recharge Items", 35, 19);
-	put_fstr(35, 20, COL_YELLOW " I) Identify Items (%dgp)", f_ptr->data[2] * factor);
+	put_cstr(CLR_YELLOW " R) Recharge Items", 35, 19);
+	put_fstr(35, 20, CLR_YELLOW " I) Identify Items (%dgp)", f_ptr->data[2] * factor);
 
 	/* Done */
 	return (FALSE);
@@ -3638,7 +3638,7 @@ bool field_action_weaponplus1(field_type *f_ptr, vptr input)
 {
 	int factor = *((int *)input);
 
-	put_fstr(35, 19, COL_YELLOW " E) Enchant Weapons (%dgp)", f_ptr->data[1] * factor);
+	put_fstr(35, 19, CLR_YELLOW " E) Enchant Weapons (%dgp)", f_ptr->data[1] * factor);
 
 	/* Done */
 	return (FALSE);
@@ -3677,7 +3677,7 @@ bool field_action_armourplus1(field_type *f_ptr, vptr input)
 {
 	int factor = *((int *)input);
 
-	put_fstr(35, 19, COL_YELLOW " E) Enchant Armour (%dgp)", f_ptr->data[1] * factor);
+	put_fstr(35, 19, CLR_YELLOW " E) Enchant Armour (%dgp)", f_ptr->data[1] * factor);
 
 	/* Done */
 	return (FALSE);
@@ -3716,7 +3716,7 @@ bool field_action_mutate1(field_type *f_ptr, vptr input)
 {
 	int factor = *((int *)input);
 
-	put_fstr(30, 19, COL_YELLOW " E) Expose yourself to raw chaos (%dgp)",
+	put_fstr(30, 19, CLR_YELLOW " E) Expose yourself to raw chaos (%dgp)",
 			f_ptr->data[1] * factor * (count_mutations() + 1));
 
 	/* Done */
@@ -3778,7 +3778,7 @@ bool field_action_buymap1(field_type *f_ptr, vptr input)
 {
 	int factor = *((int *)input);
 
-	put_fstr(35, 19, COL_YELLOW " E) Examine Map (%dgp)", f_ptr->data[1] * factor);
+	put_fstr(35, 19, CLR_YELLOW " E) Examine Map (%dgp)", f_ptr->data[1] * factor);
 
 	/* Done */
 	return (FALSE);
@@ -3828,7 +3828,7 @@ bool field_action_library1(field_type *f_ptr, vptr input)
 {
 	int factor = *((int *)input);
 
-	put_fstr(35, 19, COL_YELLOW " R) Read about monsters (%dgp)", f_ptr->data[1] * factor);
+	put_fstr(35, 19, CLR_YELLOW " R) Read about monsters (%dgp)", f_ptr->data[1] * factor);
 
 	/* Done */
 	return (FALSE);
@@ -3875,11 +3875,11 @@ bool field_action_casino1(field_type *f_ptr, vptr nothing)
 	/* Ignore nothing */
 	(void)nothing;
 
-	put_cstr(COL_YELLOW " H) Help", 35, 16);
-	put_cstr(COL_YELLOW " I) In Between", 35, 17);
-	put_cstr(COL_YELLOW " C) Craps", 35, 18);
-	put_cstr(COL_YELLOW " S) Spin the wheel", 35, 19);
-	put_cstr(COL_YELLOW " D) Dice slots", 35, 20);
+	put_cstr(CLR_YELLOW " H) Help", 35, 16);
+	put_cstr(CLR_YELLOW " I) In Between", 35, 17);
+	put_cstr(CLR_YELLOW " C) Craps", 35, 18);
+	put_cstr(CLR_YELLOW " S) Spin the wheel", 35, 19);
+	put_cstr(CLR_YELLOW " D) Dice slots", 35, 20);
 
 	/* Done */
 	return (FALSE);
@@ -3960,8 +3960,8 @@ bool field_action_inn1(field_type *f_ptr, vptr input)
 {
 	int factor = *((int *)input);
 
-	put_fstr(35, 18, COL_YELLOW " E) Eat (%dgp)", f_ptr->data[1] * factor / 100);
-	put_fstr(35, 19, COL_YELLOW " R) Rest (%dgp)", f_ptr->data[1] * factor / 20);
+	put_fstr(35, 18, CLR_YELLOW " E) Eat (%dgp)", f_ptr->data[1] * factor / 100);
+	put_fstr(35, 19, CLR_YELLOW " R) Rest (%dgp)", f_ptr->data[1] * factor / 20);
 
 	/* Done */
 	return (FALSE);
@@ -4023,7 +4023,7 @@ bool field_action_healer1(field_type *f_ptr, vptr input)
 {
 	int factor = *((int *)input);
 
-	put_fstr(35, 18, COL_YELLOW " R) Restore Stats (%dgp)", f_ptr->data[1] * factor);
+	put_fstr(35, 18, CLR_YELLOW " R) Restore Stats (%dgp)", f_ptr->data[1] * factor);
 
 	/* Done */
 	return (FALSE);
@@ -4077,10 +4077,10 @@ bool field_action_magetower1(field_type *f_ptr, vptr input)
 	/* We only need to do this once */
 	if (st_ptr && !st_ptr->data)
 	{
-		put_fstr(35, 18, COL_YELLOW " R) Record aura (%dgp)", f_ptr->data[1] * factor);
+		put_fstr(35, 18, CLR_YELLOW " R) Record aura (%dgp)", f_ptr->data[1] * factor);
 	}
 
-	put_fstr(35, 19, COL_YELLOW " T) Teleport");
+	put_fstr(35, 19, CLR_YELLOW " T) Teleport");
 
 	/* Done */
 	return (FALSE);

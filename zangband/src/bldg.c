@@ -351,84 +351,84 @@ static void display_fruit(int col, int row, int fruit)
 		case 0:
 		{
 			/* lemon */
-			put_cstr(COL_YELLOW "	####.", col, row);
-			put_cstr(COL_YELLOW "  #	#", col, row + 1);
-			put_cstr(COL_YELLOW " # 	#", col, row + 2);
-			put_cstr(COL_YELLOW "#  	#", col, row + 3);
-			put_cstr(COL_YELLOW "#  	#", col, row + 4);
-			put_cstr(COL_YELLOW "#     # ", col, row + 5);
-			put_cstr(COL_YELLOW "#    #  ", col, row + 6);
-			put_cstr(COL_YELLOW ".####   ", col, row + 7);
+			put_cstr(CLR_YELLOW "	####.", col, row);
+			put_cstr(CLR_YELLOW "  #    #", col, row + 1);
+			put_cstr(CLR_YELLOW " #     #", col, row + 2);
+			put_cstr(CLR_YELLOW "#      #", col, row + 3);
+			put_cstr(CLR_YELLOW "#      #", col, row + 4);
+			put_cstr(CLR_YELLOW "#     # ", col, row + 5);
+			put_cstr(CLR_YELLOW "#    #  ", col, row + 6);
+			put_cstr(CLR_YELLOW ".####   ", col, row + 7);
 			prt(" Lemon  ", col, row + 8);
 			break;
 		}
 		case 1:
 		{
 			/* orange */
-			put_cstr(COL_ORANGE "	##   ", col, row);
-			put_cstr(COL_ORANGE "  #..#  ", col, row + 1);
-			put_cstr(COL_ORANGE " #....# ", col, row + 2);
-			put_cstr(COL_ORANGE "#......#", col, row + 3);
-			put_cstr(COL_ORANGE "#......#", col, row + 4);
-			put_cstr(COL_ORANGE " #....# ", col, row + 5);
-			put_cstr(COL_ORANGE "  #..#  ", col, row + 6);
-			put_cstr(COL_ORANGE "	##   ", col, row + 7);
+			put_cstr(CLR_ORANGE "	##   ", col, row);
+			put_cstr(CLR_ORANGE "  #..#  ", col, row + 1);
+			put_cstr(CLR_ORANGE " #....# ", col, row + 2);
+			put_cstr(CLR_ORANGE "#......#", col, row + 3);
+			put_cstr(CLR_ORANGE "#......#", col, row + 4);
+			put_cstr(CLR_ORANGE " #....# ", col, row + 5);
+			put_cstr(CLR_ORANGE "  #..#  ", col, row + 6);
+			put_cstr(CLR_ORANGE "	##   ", col, row + 7);
 			prt(" Orange ", col, row + 8);
 			break;
 		}
 		case 2:
 		{
 			/* sword */
-			put_cstr(COL_SLATE "   /\\   ", col, row);
-			put_cstr(COL_SLATE "   ##	", col, row + 1);
-			put_cstr(COL_SLATE "   ##	", col, row + 2);
-			put_cstr(COL_SLATE "   ##	", col, row + 3);
-			put_cstr(COL_SLATE "   ##	", col, row + 4);
-			put_cstr(COL_SLATE "   ##	", col, row + 5);
-			put_cstr(COL_UMBER " ###### ", col, row + 6);
-			put_cstr(COL_UMBER "   ##	", col, row + 7);
+			put_cstr(CLR_SLATE "   /\\   ", col, row);
+			put_cstr(CLR_SLATE "   ##	", col, row + 1);
+			put_cstr(CLR_SLATE "   ##	", col, row + 2);
+			put_cstr(CLR_SLATE "   ##	", col, row + 3);
+			put_cstr(CLR_SLATE "   ##	", col, row + 4);
+			put_cstr(CLR_SLATE "   ##	", col, row + 5);
+			put_cstr(CLR_UMBER " ###### ", col, row + 6);
+			put_cstr(CLR_UMBER "   ##	", col, row + 7);
 			prt(" Sword  ", col, row + 8);
 			break;
 		}
 		case 3:
 		{
 			/* shield */
-			put_cstr(COL_SLATE " ###### ", col, row);
-			put_cstr(COL_SLATE "#      #", col, row + 1);
-			put_cstr(COL_SLATE "# ++++ #", col, row + 2);
-			put_cstr(COL_SLATE "# +==+ #", col, row + 3);
-			put_cstr(COL_SLATE "#  ++  #", col, row + 4);
-			put_cstr(COL_SLATE " #    # ", col, row + 5);
-			put_cstr(COL_SLATE "  #  #  ", col, row + 6);
-			put_cstr(COL_SLATE "   ##	", col, row + 7);
+			put_cstr(CLR_SLATE " ###### ", col, row);
+			put_cstr(CLR_SLATE "#      #", col, row + 1);
+			put_cstr(CLR_SLATE "# ++++ #", col, row + 2);
+			put_cstr(CLR_SLATE "# +==+ #", col, row + 3);
+			put_cstr(CLR_SLATE "#  ++  #", col, row + 4);
+			put_cstr(CLR_SLATE " #    # ", col, row + 5);
+			put_cstr(CLR_SLATE "  #  #  ", col, row + 6);
+			put_cstr(CLR_SLATE "   ##	", col, row + 7);
 			prt(" Shield ", col, row + 8);
 			break;
 		}
 		case 4:
 		{
 			/* plum */
-			put_cstr(COL_VIOLET "	##   ", col, row);
-			put_cstr(COL_VIOLET " ###### ", col, row + 1);
-			put_cstr(COL_VIOLET "########", col, row + 2);
-			put_cstr(COL_VIOLET "########", col, row + 3);
-			put_cstr(COL_VIOLET "########", col, row + 4);
-			put_cstr(COL_VIOLET " ###### ", col, row + 5);
-			put_cstr(COL_VIOLET "  ####  ", col, row + 6);
-			put_cstr(COL_VIOLET "	##   ", col, row + 7);
+			put_cstr(CLR_VIOLET "	##   ", col, row);
+			put_cstr(CLR_VIOLET " ###### ", col, row + 1);
+			put_cstr(CLR_VIOLET "########", col, row + 2);
+			put_cstr(CLR_VIOLET "########", col, row + 3);
+			put_cstr(CLR_VIOLET "########", col, row + 4);
+			put_cstr(CLR_VIOLET " ###### ", col, row + 5);
+			put_cstr(CLR_VIOLET "  ####  ", col, row + 6);
+			put_cstr(CLR_VIOLET "	##   ", col, row + 7);
 			prt("  Plum  ", col, row + 8);
 			break;
 		}
 		case 5:
 		{
 			/* cherry */
-			put_cstr(COL_GREEN " 	 ##", col, row);
-			put_cstr(COL_RED "   ##" COL_GREEN "#  ", col, row + 1);
-			put_cstr(COL_RED "  #..#  ", col, row + 2);
-			put_cstr(COL_RED "  #..#  ", col, row + 3);
-			put_cstr(COL_RED " ###### ", col, row + 4);
-			put_cstr(COL_RED "#..##..#", col, row + 5);
-			put_cstr(COL_RED "#..##..#", col, row + 6);
-			put_cstr(COL_RED " ##  ## ", col, row + 7);
+			put_cstr(CLR_GREEN " 	 ##", col, row);
+			put_cstr(CLR_RED "   ##" CLR_GREEN "#  ", col, row + 1);
+			put_cstr(CLR_RED "  #..#  ", col, row + 2);
+			put_cstr(CLR_RED "  #..#  ", col, row + 3);
+			put_cstr(CLR_RED " ###### ", col, row + 4);
+			put_cstr(CLR_RED "#..##..#", col, row + 5);
+			put_cstr(CLR_RED "#..##..#", col, row + 6);
+			put_cstr(CLR_RED " ##  ## ", col, row + 7);
 			prt(" Cherry ", col, row + 8);
 			break;
 		}
@@ -620,7 +620,7 @@ void gamble_in_between(void)
 	{
 		win = FALSE;
 
-		put_cstr(COL_GREEN "In Between", 2, 5);
+		put_cstr(CLR_GREEN "In Between", 2, 5);
 
 		roll1 = randint1(10);
 		roll2 = randint1(10);
@@ -653,7 +653,7 @@ void gamble_craps(void)
 
 	while (TRUE)
 	{
-		put_cstr(COL_GREEN "Craps", 2, 5);
+		put_cstr(CLR_GREEN "Craps", 2, 5);
 
 		/* Roll the dice */
 		roll1 = randint1(6);
@@ -716,7 +716,7 @@ void gamble_spin_wheel(void)
 	{
 		win = FALSE;
 
-		put_cstr(COL_GREEN "Wheel", 2, 5);
+		put_cstr(CLR_GREEN "Wheel", 2, 5);
 		prt("1  2  3  4  5  6  7  8  9 10", 5, 7);
 		prt("--------------------------------", 3, 8);
 
@@ -757,7 +757,7 @@ void gamble_dice_slots(void)
 
 	while (TRUE)
 	{
-		put_cstr(COL_GREEN "Dice Slots", 2, 5);
+		put_cstr(CLR_GREEN "Dice Slots", 2, 5);
 		win = FALSE;
 		odds = 0;
 
@@ -1128,7 +1128,7 @@ static void list_weapon(const object_type *o_ptr)
 			hit_prob(o_ptr->to_h, 200));
 
 	/* Print critical hit probabilities */
-	put_fstr(WEP_MAST_COL1, 15, COL_RED "Critical:" COL_WHITE " 1.0 1.5 2.0 2.7 3.6 5.0");
+	put_fstr(WEP_MAST_COL1, 15, CLR_RED "Critical:" CLR_WHITE " 1.0 1.5 2.0 2.7 3.6 5.0");
 
 	put_fstr(WEP_MAST_COL1, 16, "          %2d%% %2d%% %2d%% %2d%% %2d%% %2d%%",
 			critical_prob(o_ptr->to_h, 0),
@@ -1137,7 +1137,7 @@ static void list_weapon(const object_type *o_ptr)
 			critical_prob(o_ptr->to_h, 3),
 			critical_prob(o_ptr->to_h, 4), critical_prob(o_ptr->to_h, 5));
 
-	put_cstr(COL_L_BLUE "Possible Damage:", WEP_MAST_COL2, 6);
+	put_cstr(CLR_L_BLUE "Possible Damage:", WEP_MAST_COL2, 6);
 
 	dambonus = o_ptr->to_d + p_ptr->to_d;
 
