@@ -3835,6 +3835,7 @@ static void center_string(char *buf, cptr str)
 }
 
 
+#if 0
 /*
  * Save a "bones" file for a dead character
  *
@@ -3893,6 +3894,7 @@ static void make_bones(void)
 		}
 	}
 }
+#endif
 
 
 /*
@@ -4225,8 +4227,10 @@ void close_game(void)
 		if (!munchkin_death || get_check("Save death? "))
 			if (!save_player()) msg_print("death save failed!");
 
+#if 0
 		/* Dump bones file */
 		make_bones();
+#endif
 
 		/* You are dead */
 		print_tomb();
