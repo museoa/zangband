@@ -686,7 +686,6 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 	
 	int len = 0;
 
-
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
 	monster_race *r_ptr = &r_info[o_ptr->pval];
@@ -705,7 +704,9 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 
 	/* Assume no "modifier" string */
 	modstr = "";
-
+	
+	/* Empty description */
+	buf[0] = '\0';
 
 	/* Analyze the object */
 	switch (o_ptr->tval)

@@ -12,15 +12,16 @@ void binary_fmt(char *buf, uint max, cptr fmt, va_list *vp)
 {
 	uint i;
 	u32b mask = 1;
-
-	char tmp[256];
+	
+	int len = 0;
 	
     u32b arg;
 	
 	/* Unused parameter */
 	(void)fmt;
 	
-	tmp[0] = '\0';
+	/* Pre-terminate buffer */
+	buf[0] = '\0';
     
     /* Get the argument */
 	arg = va_arg(*vp, u32b);
@@ -31,22 +32,17 @@ void binary_fmt(char *buf, uint max, cptr fmt, va_list *vp)
 		/* Dump set bits */
 		if (arg & mask)
 		{
-			(void)strncat(tmp, CLR_BLUE "*", 255);
+			strnfcat(buf, max, &len, CLR_BLUE "*");
 		}
 
 		/* Dump unset bits */
 		else
 		{
-			(void)strncat(tmp, CLR_WHITE "-", 255);
+			strnfcat(buf, max, &len, CLR_WHITE "-");
 		}
 		
 		mask *= 2;
 	}
-	
-	/* Hack - pre-terminate if required */
-	tmp[max - 1] = '\0';
-
-	strcpy(buf, tmp);
 }
 
 
