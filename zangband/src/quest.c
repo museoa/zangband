@@ -2102,7 +2102,9 @@ bool do_cmd_knowledge_quests(int dummy)
 	return (FALSE);
 }
 
-bool dump_castle_info(FILE *fff, int town)
+
+/* Dump the quests related to this town into fff, only when display is set */
+bool dump_castle_info(FILE *fff, int town, bool display)
 {
 	int i;
 	bool quest_in_town = FALSE;
@@ -2126,6 +2128,9 @@ bool dump_castle_info(FILE *fff, int town)
 
 	/* Give up */
 	if (!quest_in_town || !visited_town) return (FALSE);
+
+	/* Is it showtime? */
+	if (!display) return (TRUE);
 
 	/* So there is a castle, but did it issue any quests? */
 	quest_in_town = FALSE;

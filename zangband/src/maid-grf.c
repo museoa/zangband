@@ -861,10 +861,9 @@ static void display_banner(place_type *pl_ptr, int wid, int hgt)
 
 
 /* Display info about the home in one town */
-static bool dump_home_info(FILE *fff, int town)
+static bool dump_home_info(FILE *fff, int town, bool display)
 {
 	int i, k;
-	bool home_in_town = FALSE;
 	bool visited_town = FALSE;
 
 	store_type *st_ptr;
@@ -880,8 +879,8 @@ static bool dump_home_info(FILE *fff, int town)
 		/* The only interest is homes */
 		if (st_ptr->type == BUILD_STORE_HOME)
 		{
-			/* Remember that a home was found */
-			home_in_town = TRUE;
+			/* bail out if no display is needed (fff is undefined!) */
+			if (!display && visited_town) return (TRUE);
 
 			/* Header with name of the town */
 			froff(fff, "  [Home Inventory - %s]\n\n", place[i].name);
@@ -922,7 +921,7 @@ static bool dump_home_info(FILE *fff, int town)
 	}
 
 	/* No home, no show */
-	return (home_in_town && visited_town);
+	return (visited_town);
 }
 
 
@@ -939,6 +938,40 @@ static bool do_cmd_view_map_aux(char c, int town)
 	/* Call this proc with a place that is a town */
 	if (place[town].numstores == 0) return (FALSE);
 
+	/* First find out if this command makes sense */
+	switch (c)
+	{
+		case '*':
+		{
+			/* Display the list of shops always works */
+			success = TRUE;
+			title = "Town info";
+
+			break;
+		}
+
+		case 'h':
+		{
+			/* Display the items in the home needs a home */
+			success = dump_home_info(fff, town, FALSE);
+			title = "Home info";
+
+			break;
+		}
+
+		case 'c':
+		{
+			/* Display the quests taken, needs a castle */
+			success = dump_castle_info(fff, town, FALSE);
+			title = "Castle info";
+
+			break;
+		}
+	}
+
+	/* go away if nothing will happen */
+	if (!success) return (FALSE);
+
 	/* Open temporary file */
 	fff = my_fopen_temp(file_name, 1024);
 
@@ -953,17 +986,13 @@ static bool do_cmd_view_map_aux(char c, int town)
 			/* Display the list of shops */
 			dump_town_info(fff, town, FALSE);
 
-			success = TRUE;
-			title = "Town info";
-
 			break;
 		}
 
 		case 'h':
 		{
 			/* Display the items in the home */
-			success = dump_home_info(fff, town);
-			title = "Home info";
+			(void)dump_home_info(fff, town, TRUE);
 
 			break;
 		}
@@ -971,8 +1000,7 @@ static bool do_cmd_view_map_aux(char c, int town)
 		case 'c':
 		{
 			/* Display the quests taken */
-			success = dump_castle_info(fff, town);
-			title = "Castle info";
+			(void)dump_castle_info(fff, town, TRUE);
 
 			break;
 		}
@@ -981,15 +1009,6 @@ static bool do_cmd_view_map_aux(char c, int town)
 	/* Close the file */
 	my_fclose(fff);
 
-	/* If there is no success don't show anything */
-	if (!success)
-	{
-		/* Remove the file */
-		(void)fd_kill(file_name);
-
-		return (FALSE);
-	}
-	
 	/* Display the file contents */
 	(void)show_file(file_name, title, 0, 0);
 
@@ -1108,6 +1127,15 @@ void do_cmd_view_map(void)
 
 			/* Get a response */
 			c = inkey();
+
+			/* Allow a redraw */
+			if (c == KTRL('R'))
+			{
+				/* Do the redraw */
+				do_cmd_redraw();
+
+				continue;
+			}
 
 			/* On a town?  -- MT */
 			if (w_ptr->place)
