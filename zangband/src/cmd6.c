@@ -1151,7 +1151,7 @@ static void do_cmd_read_scroll_aux(int item)
 		case SV_SCROLL_AGGRAVATE_MONSTER:
 		{
 			msg_print("There is a high pitched humming noise.");
-			aggravate_monsters(1);
+			aggravate_monsters(0);
 			ident = TRUE;
 			break;
 		}

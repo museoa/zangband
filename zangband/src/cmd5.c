@@ -592,7 +592,7 @@ static void wild_magic(int spell)
 		case 24:
 		case 25:
 		{
-			aggravate_monsters(1);
+			aggravate_monsters(0);
 			break;
 		}
 		case 26:
@@ -1894,7 +1894,7 @@ static bool cast_trump_spell(int spell, bool success)
 				else if (die < 22)
 				{
 					msg_print("It's the swords of discord.");
-					aggravate_monsters(1);
+					aggravate_monsters(0);
 				}
 				else if (die < 26)
 				{

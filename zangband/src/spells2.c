@@ -3949,7 +3949,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 			}
 			case 1: case 2: case 3: case 16: case 17:
 			{
-				aggravate_monsters(1);
+				aggravate_monsters(0);
 				if (randint(6) != 1) break;
 			}
 			case 4: case 5: case 6:
