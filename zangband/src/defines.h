@@ -992,28 +992,29 @@
 #define FEAT_PILLAR		0x67
 
 /* Feature 0x68 - 0x6F unused */
+/
+* Impassible terrains */
+
+#define FEAT_FENCE		0x70
+#define FEAT_WELL		0x71
+#define FEAT_FOUNTAIN		0x72
+#define FEAT_JUNGLE		0x73
+/* Buildings - removed (replaced with fields) */
 
 /* Slow "floor" terrains */
 
-#define FEAT_BUSH		0x70
-#define FEAT_DEAD_BUSH		0x71
-#define FEAT_GRASS_LONG		0x72
-#define FEAT_ROCK_GEN		0x73
-#define FEAT_ROCK_SNOW		0x74
-#define FEAT_TREE_GEN		0x75
-#define FEAT_TREE_SNOW		0x76
-#define FEAT_SNOW		0x77
-#define FEAT_DEEP_SWAMP		0x78
-#define FEAT_SHAL_SWAMP		0x79
-/* Buildings - removed (replaced with fields) */
+#define FEAT_BUSH		0x80
+#define FEAT_DEAD_BUSH		0x81
+#define FEAT_GRASS_LONG		0x82
+#define FEAT_ROCK_GEN		0x83
+#define FEAT_ROCK_SNOW		0x84
+#define FEAT_TREE_GEN		0x85
+#define FEAT_TREE_SNOW		0x86
+#define FEAT_SNOW		0x87
+#define FEAT_DEEP_SWAMP		0x88
+#define FEAT_SHAL_SWAMP		0x89
 
 
-/* Impassible terrains */
-
-#define FEAT_FENCE		0x80
-#define FEAT_WELL		0x81
-#define FEAT_FOUNTAIN		0x82
-#define FEAT_JUNGLE		0x83
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
 
 /* Lites */

@@ -502,61 +502,63 @@ G:%:g
 N:101:snow covered tree
 G:%:w
 
-N:102:oblisk
+N:102:obelisk
 G:;:b
 
 N:103:pillar
 G:#:w
 
-N:112:bush
+
+
+N:112:stone fence
+G:::b
+
+N:113:well
+G:~:v
+
+N:114:fountain
+G:~:U
+
+N:115:jungle
+G:%:D
+
+
+
+
+N:128:bush
 G:%:r
 
-N:113:dead bush
+N:129:dead bush
 G:%:s
 
-N:114:long grass
+N:130:long grass
 G:%:U
 
 #rock on general terrain
 
-N:115:rock
+N:131:rock
 G:::U
 
 #rock on snow
 
-N:116:rock
+N:132:rock
 G:::U
 
 # dead tree on general terrain
 
-N:117:dead tree
+N:133:dead tree
 G:%:u
 
 # dead tree on snow
 
-N:118:dead tree
+N:134:dead tree
 G:%:u
 
-N:119:snow
+N:135:snow
 G:.:W
 
-N:120:thick swamp
+N:136:thick swamp
 G:;:g
 
-N:121:swamp
+N:137:swamp
 G:;:G
-
-
-N:128:stone fence
-G:::b
-
-N:129:well
-G:~:v
-
-N:130:fountain
-G:~:U
-
-N:131:jungle
-G:%:D
-
-
