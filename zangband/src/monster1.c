@@ -510,7 +510,7 @@ static void roff_aux(int r_idx, int remem)
 
 			/* calculate the fractional exp part scaled by 100, */
 			/* must use long arithmetic to avoid overflow */
-			new_exp_frac = (((long)new_exp_frac + 0x10000L / 50) * 100) / 0x10000L;
+			new_exp_frac = (((long)new_exp_frac + 0x10000L / 500) * 100) / 0x10000L;
 
 			/* Mention the experience */
 			roff(format(" is worth %ld.%02ld point%s",
