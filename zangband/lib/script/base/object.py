@@ -60,6 +60,9 @@ class object_data_class:
 		# And when it loads an object
 		events.object_load.append(self)
 
+		events.save_game.append(self)
+		events.load_game.append(self)
+
 	def announce(self, object_class):
 		if hasattr(object_class, "sval"):
 			self.classes[object_class.tval, object_class.sval] = object_class
@@ -104,4 +107,12 @@ class object_data_class:
 		the_object = pickle.loads(data)
 		self.data.append(the_object)
 		return the_object
+
+	# XXX
+	def load_game_hook(self, dict):
+		self.data = dict["objects"]
+
+	# XXX
+	def save_game_hook(self):
+		return ("objects", self.data)
 
