@@ -2284,6 +2284,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 
 				/* Get the quest text */
 				init_flags = INIT_SHOW_TEXT;
+				quest_text_line = 0;
 				process_dungeon_file("q_info.txt", 0, 0, 0, 0);
 
 				name = quest[c_ptr->special].name;
