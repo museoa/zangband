@@ -149,7 +149,7 @@ static byte spell_color(int type)
  *
  * If the distance is not "one", we (may) return "*".
  */
-void bolt_pict(int y, int x, int ny, int nx, int typ, byte *a, byte *c)
+static void bolt_pict(int x, int y, int nx, int ny, int typ, byte *a, byte *c)
 {
 	int base;
 
@@ -4258,7 +4258,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 				byte a, c;
 
 				/* Obtain the bolt pict */
-				bolt_pict(oy, ox, y, x, typ, &a, &c);
+				bolt_pict(ox, oy, x, y, typ, &a, &c);
 
 				/* Visual effects */
 				print_rel(c, a, x, y);
@@ -4277,7 +4277,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 				if (flg & (PROJECT_BEAM))
 				{
 					/* Obtain the explosion pict */
-					bolt_pict(y, x, y, x, typ, &a, &c);
+					bolt_pict(x, y, x, y, typ, &a, &c);
 
 					/* Visual effects */
 					print_rel(c, a, x, y);
@@ -4492,7 +4492,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 					drawn = TRUE;
 
 					/* Obtain the explosion pict */
-					bolt_pict(y, x, y, x, typ, &a, &c);
+					bolt_pict(x, y, x, y, typ, &a, &c);
 
 					/* Visual effects -- Display */
 					print_rel(c, a, x, y);
