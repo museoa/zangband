@@ -169,7 +169,7 @@ void redraw_window(void)
 void do_cmd_message_one(void)
 {
 	/* Recall one message XXX XXX XXX */
-	c_prt(message_color(0), format("> %s", message_str(0)), 0, 0);
+	prtf(0, 0, "%s> %s", color_seq[message_color(0)], message_str(0));
 }
 
 
@@ -516,9 +516,6 @@ static void do_cmd_options_cheat(cptr info)
 
 	int i, k = 0, n = CHEAT_MAX;
 
-	char buf[80];
-
-
 	/* Clear screen */
 	Term_clear();
 
@@ -526,23 +523,21 @@ static void do_cmd_options_cheat(cptr info)
 	while (TRUE)
 	{
 		/* Prompt XXX XXX XXX */
-		sprintf(buf, "%s (RET to advance, y/n to set, ESC to accept) ", info);
-		prt(buf, 0, 0);
+		put_fstr(0, 0, "%s (RET to advance, y/n to set, ESC to accept) ", info);
 
 		/* Display the options */
 		for (i = 0; i < n; i++)
 		{
-			byte a = TERM_WHITE;
+			cptr a = CLR_WHITE;
 
 			/* Color current option */
-			if (i == k) a = TERM_L_BLUE;
+			if (i == k) a = CLR_L_BLUE;
 
 			/* Display the option text */
-			sprintf(buf, "%-48s: %s  (%s)",
-					cheat_info[i].o_desc,
+			prtf(0, i + 2, "%s%-48s: %s  (%s)",
+					a, cheat_info[i].o_desc,
 					(*cheat_info[i].o_var ? "yes" : "no "),
 					cheat_info[i].o_text);
-			c_prt(a, buf, 0, i + 2);
 		}
 
 		/* Hilite current option */
@@ -639,9 +634,6 @@ static void do_cmd_options_autosave(cptr info)
 
 	int i, k = 0, n = 2;
 
-	char buf[80];
-
-
 	/* Clear screen */
 	Term_clear();
 
@@ -649,30 +641,24 @@ static void do_cmd_options_autosave(cptr info)
 	while (TRUE)
 	{
 		/* Prompt XXX XXX XXX */
-		sprintf(buf,
-				"%s (RET to advance, y/n to set, 'F' for frequency, ESC to accept) ",
+		put_fstr(0, 0, "%s (RET to advance, y/n to set, 'F' for frequency, ESC to accept) ",
 				info);
-		prt(buf, 0, 0);
 
 		/* Display the options */
 		for (i = 0; i < n; i++)
 		{
-			byte a = TERM_WHITE;
+			cptr a = CLR_WHITE;
 
 			/* Color current option */
-			if (i == k) a = TERM_L_BLUE;
+			if (i == k) a = CLR_L_BLUE;
 
 			/* Display the option text */
-			sprintf(buf, "%-48s: %s  (%s)",
-					autosave_info[i].o_desc,
+			prtf(0, i + 2, "%s%-48s: %s  (%s)",
+					a, autosave_info[i].o_desc,
 					(*autosave_info[i].o_var ? "yes" : "no "),
 					autosave_info[i].o_text);
-			c_prt(a, buf, 0, i + 2);
 		}
-
-		prt(format("Timed autosave frequency: every %d turns", autosave_freq),
-			0, 5);
-
+		put_fstr(0, 5, "Timed autosave frequency: every %d turns", autosave_freq);
 
 		/* Hilite current option */
 		Term_gotoxy(50, k + 2);
@@ -782,23 +768,21 @@ static void do_cmd_options_aux(int page, cptr info)
 	while (TRUE)
 	{
 		/* Prompt XXX XXX XXX */
-		sprintf(buf, "%s (RET to advance, y/n to set, ESC to accept) ", info);
-		prt(buf, 0, 0);
+		put_fstr(0, 0, "%s (RET to advance, y/n to set, ESC to accept) ", info);
 
 		/* Display the options */
 		for (i = 0; i < n; i++)
 		{
-			byte a = TERM_WHITE;
+			cptr a = CLR_WHITE;
 
 			/* Color current option */
-			if (i == k) a = TERM_L_BLUE;
+			if (i == k) a = CLR_L_BLUE;
 
 			/* Display the option text */
-			sprintf(buf, "%-48s: %s  (%.23s)",
-					option_info[opt[i]].o_desc,
+			prtf(0, i + 2, "%s%-48s: %s  (%.23s)",
+					a, option_info[opt[i]].o_desc,
 					(option_info[opt[i]].o_val ? "yes" : "no "),
 					option_info[opt[i]].o_text);
-			c_prt(a, buf, 0, i + 2);
 		}
 
 		/* Hilite current option */

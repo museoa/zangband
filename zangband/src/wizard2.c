@@ -259,7 +259,7 @@ static void prt_alloc(const object_type *o_ptr, int col, int row, u32b monte)
 	u32b rarity[MAX_DEPTH];
 	u32b total[MAX_DEPTH];
 	u32b display[20];
-	byte c = TERM_WHITE;
+	cptr c = CLR_WHITE;
 	cptr r = "+--common--+";
 	u16b kind = o_ptr->k_idx;
 	u16b home = k_info[kind].level;
@@ -307,17 +307,17 @@ static void prt_alloc(const object_type *o_ptr, int col, int row, u32b monte)
 	/* Simulate a log graph */
 	if (maxt / maxr > 32)
 	{
-		c = TERM_L_WHITE;
+		c = CLR_L_WHITE;
 		r = "+-uncommon-+";
 	}
 	if (maxt / maxr > 1024)
 	{
-		c = TERM_SLATE;
+		c = CLR_SLATE;
 		r = "+---rare---+";
 	}
 	if (maxt / maxr > 32768L)
 	{
-		c = TERM_L_DARK;
+		c = CLR_L_DARK;
 		r = "+--unique--+";
 	}
 
@@ -351,13 +351,11 @@ static void prt_alloc(const object_type *o_ptr, int col, int row, u32b monte)
 		/* Note the level */
 		if ((i * MAX_DEPTH / 20 <= home) && (home < (i + 1) * MAX_DEPTH / 20))
 		{
-			c_prt(TERM_RED, format("%.*s", display[i], "**********"), col + 1,
-				  row + i + 1);
+			prtf(col + 1, row + i + 1, CLR_RED "%.*s", display[i], "**********");
 		}
 		else
 		{
-			c_prt(c, format("%.*s", display[i], "**********"), col + 1,
-				  row + i + 1);
+			prtf(col + 1, row + i + 1, "%s%.*s", c, display[i], "**********");
 		}
 	}
 

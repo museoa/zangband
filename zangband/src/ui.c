@@ -456,11 +456,40 @@ void put_fstr(int col, int row, cptr str, ...)
 	put_cstr(col, row, buf);
 }
 
+
+/*
+ * Put a string with formatting information at a given location.
+ * Clear the line before we start printing.
+ */
+void prtf(int col, int row, cptr str, ...)
+{
+	va_list vp;
+
+	char buf[1024];
+
+	/* Begin the Varargs Stuff */
+	va_start(vp, str);
+
+	/* Format the args, save the length */
+	(void)vstrnfmt(buf, 1024, str, vp);
+
+	/* End the Varargs Stuff */
+	va_end(vp);
+	
+	/* Clear line, position cursor */
+	Term_erase(col, row, 255);
+
+	/* Display */
+	put_cstr(col, row, buf);
+
+}
+
+
 /*
  * Display a string on the screen using an attribute, and clear
  * to the end of the line.
  */
-void c_prt(byte attr, cptr str, int col, int row)
+static void c_prt(byte attr, cptr str, int col, int row)
 {
 	/* Hack -- fake monochrome */
 	if (!use_color || ironman_moria) attr = TERM_WHITE;
@@ -481,6 +510,7 @@ void prt(cptr str, int col, int row)
 	/* Spawn */
 	c_prt(TERM_WHITE, str, col, row);
 }
+
 
 
 /*

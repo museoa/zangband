@@ -3875,9 +3875,6 @@ void print_spells(byte *spells, int num, int x, int y, int realm)
 	const magic_type *s_ptr;
 	cptr comment;
 	char info[80];
-	char out_val[160];
-	byte line_attr;
-
 
 	if (((realm <= 0) || (realm >= MAX_REALM)) && p_ptr->wizard)
 		msg_print("Warning! print_spells called with null realm");
@@ -3900,8 +3897,8 @@ void print_spells(byte *spells, int num, int x, int y, int realm)
 		/* Skip illegible spells */
 		if (s_ptr->slevel >= 99)
 		{
-			sprintf(out_val, "  %c) %-30s", I2A(i), "(illegible)");
-			c_prt(TERM_L_DARK, out_val, x, y + i + 1);
+			prtf(x, y + i + 1, CLR_L_DARK "  %c) %-30s",
+					 I2A(i), "(illegible)");
 			continue;
 		}
 
@@ -3913,14 +3910,10 @@ void print_spells(byte *spells, int num, int x, int y, int realm)
 		/* Use that info */
 		comment = info;
 
-		/* Assume spell is known and tried */
-		line_attr = TERM_WHITE;
-
 		/* Analyze the spell */
 		if ((realm + 1 != p_ptr->realm1) && (realm + 1 != p_ptr->realm2))
 		{
-			comment = " uncastable";
-			line_attr = TERM_SLATE;
+			comment = CLR_SLATE " uncastable";
 		}
 
 		/* We know these books */
@@ -3928,29 +3921,26 @@ void print_spells(byte *spells, int num, int x, int y, int realm)
 				 ((p_ptr->spell_forgotten1 & (1L << spell))) :
 				 ((p_ptr->spell_forgotten2 & (1L << spell))))
 		{
-			comment = " forgotten";
-			line_attr = TERM_YELLOW;
+			comment = CLR_YELLOW " forgotten";
 		}
 		else if (!((realm + 1 == p_ptr->realm1) ?
 				   (p_ptr->spell_learned1 & (1L << spell)) :
 				   (p_ptr->spell_learned2 & (1L << spell))))
 		{
-			comment = " unknown";
-			line_attr = TERM_L_BLUE;
+			comment = CLR_L_BLUE " unknown";
 		}
 		else if (!((realm + 1 == p_ptr->realm1) ?
 				   (p_ptr->spell_worked1 & (1L << spell)) :
 				   (p_ptr->spell_worked2 & (1L << spell))))
 		{
-			comment = " untried";
-			line_attr = TERM_L_GREEN;
+			comment = CLR_L_GREEN " untried";
 		}
 
 		/* Dump the spell --(-- */
-		sprintf(out_val, "  %c) %-30s%2d %4d %3d%%%s", I2A(i), spell_names[realm][spell],	/* realm, spell */
+		prtf(x, y + i + 1, "  %c) %-30s%2d %4d %3d%%%s",
+				I2A(i), spell_names[realm][spell],
 				(int)s_ptr->slevel, (int)s_ptr->smana,
 				spell_chance(spell, realm), comment);
-		c_prt(line_attr, out_val, x, y + i + 1);
 	}
 
 	/* Clear the bottom line */
