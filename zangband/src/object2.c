@@ -3394,25 +3394,18 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 
 				case SV_RING_LORDLY:
 				{
-					if (one_in_(7))
+					do
 					{
-						/* Randart ring */
-						(void)create_artifact(o_ptr, level, FALSE);
+						random_resistance(o_ptr, rand_range(19, 38));
 					}
-					else
-					{
-						do
-						{
-							random_resistance(o_ptr, rand_range(19, 38));
-						}
-						while (one_in_(4));
+					while (one_in_(4));
 
-						/* Bonus to armor class */
-						o_ptr->to_a = rand_range(10, 15) + m_bonus(10, level);
-						dun_ptr->rating += 5;
-					}
-				}
+					/* Bonus to armor class */
+					o_ptr->to_a = rand_range(10, 15) + m_bonus(10, level);
+					dun_ptr->rating += 5;
+					
 					break;
+				}
 
 				case SV_RING_SEARCHING:
 				{
@@ -3709,28 +3702,13 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 
 				case SV_AMULET_THE_MAGI:
 				{
-					/* Amulet of the Magi */
-					if (one_in_(7))
-					{
-						/* Randart amulet */
-						(void)create_artifact(o_ptr, level, FALSE);
+					o_ptr->pval = randint1(5) + m_bonus(o_ptr->pval, level);
+					o_ptr->to_a = randint1(5) + m_bonus(5, level);
 
-						if (o_ptr->pval == 0)
-						{
-							/* No amulets of "+0 searching" */
-							o_ptr->pval = 1;
-						}
-					}
-					else
-					{
-						o_ptr->pval = randint1(5) + m_bonus(o_ptr->pval, level);
-						o_ptr->to_a = randint1(5) + m_bonus(5, level);
+					if (one_in_(3)) o_ptr->flags3 |= TR3_SLOW_DIGEST;
 
-						if (one_in_(3)) o_ptr->flags3 |= TR3_SLOW_DIGEST;
-
-						/* Boost the rating */
-						dun_ptr->rating += 25;
-					}
+					/* Boost the rating */
+					dun_ptr->rating += 25;
 
 					/* Mention the item */
 					if (cheat_peek) object_mention(o_ptr);
