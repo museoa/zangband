@@ -229,14 +229,12 @@ bool borg_recall(void)
 			borg_read_scroll(SV_SCROLL_WORD_OF_RECALL))
 		{
 			/* reset recall depth in dungeon? */
-			if ((bp_ptr->depth < bp_ptr->max_depth) && bp_ptr->depth)
+			if (bp_ptr->depth &&
+				bp_ptr->depth < borg_dungeons[dungeon_num].maxdepth)
 			{
 				/* Do not reset depth */
-				borg_keypress('n');
+				borg_keypress(ESCAPE);
 			}
-
-			/* Keep track of the dungeon */
-			borg_dungeon_remember(FALSE);
 
 			/* Success */
 			return (TRUE);
@@ -752,7 +750,7 @@ static bool test_borg_lite_beam(byte dir, byte radius)
 		}
 	}
 
-	for (i = 0; i <= radius; i++)
+	for (i = 0; i < radius; i++)
 	{
 		x += dx;
 		y += dy;
@@ -2747,9 +2745,6 @@ bool borg_caution(void)
 		{
 			borg_keypress('<');
 
-			/* Do the dungeon bookkeeping */
-			borg_dungeon_remember(FALSE);
-
 			/* Success */
 			return (TRUE);
 		}
@@ -2810,8 +2805,8 @@ bool borg_caution(void)
 			/* Take the stairs */
 			borg_keypress('>');
 
-			/* Do the dungeon bookkeeping */
-			borg_dungeon_remember(TRUE);
+			/* Pick up the dungeon number */
+			if (!bp_ptr->depth) borg_dungeon_remember(TRUE);
 
 			/* Success */
 			return (TRUE);

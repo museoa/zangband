@@ -390,6 +390,9 @@ bool borg_test_bad_curse(list_item *l_ptr)
 	/* Just checking */
 	if (!l_ptr) return (FALSE);
 
+	/* Extra test for weapons of Morgul */
+	if (l_ptr->xtra_name && strstr(l_ptr->xtra_name, "Morgul")) return (TRUE);
+
 	/* No borg can handle not teleporting */
 	if (KN_FLAG(l_ptr, TR_NO_TELE)) return (TRUE);
 

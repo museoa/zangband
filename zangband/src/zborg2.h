@@ -70,6 +70,7 @@ extern bool borg_projectable(int x1, int y1, int x2, int y2);
 extern void borg_forget_view(void);
 extern void borg_update_view(void);
 extern void borg_delete_kill(int i, cptr reason);
+extern void borg_add_dungeon(int x, int y, bool guess);
 extern void borg_map_info(map_block *mb_ptr, const term_map *map, vptr dummy);
 extern void borg_map_erase(vptr dummy);
 extern void borg_update(void);

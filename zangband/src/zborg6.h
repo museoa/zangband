@@ -90,6 +90,7 @@ extern bool borg_flow_take(bool viewable, int nearness);
 
 /* Flow in the wilderness */
 extern bool borg_flow_dungeon(int dun_num);
+extern bool borg_find_town(void);
 extern bool borg_find_dungeon(void);
 extern bool borg_waits_daylight(void);
 extern bool borg_flow_dark_wild(void);

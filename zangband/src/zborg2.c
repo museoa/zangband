@@ -2517,6 +2517,67 @@ static bool borg_handle_self(cptr str)
 	return (TRUE);
 }
 
+
+/* Add a dungeon to the array, overwrite an old one if it was an estimate */
+void borg_add_dungeon(int x, int y, bool guess)
+{
+	int i;
+	int d, b_d = BORG_MAX_DISTANCE;
+
+	/* Do we need to increase the size of the dungeon array? */
+	if (borg_dungeon_num == borg_dungeon_size)
+	{
+		borg_dungeon *temp;
+
+		/* Double size of arrays */
+		borg_dungeon_size *= 2;
+
+		/* Make new (bigger) array */
+		C_MAKE(temp, borg_dungeon_size, borg_dungeon);
+
+		/* Copy into new array */
+		C_COPY(temp, borg_dungeons, borg_dungeon_num, borg_dungeon);
+
+		/* Get rid of old array */
+		FREE(borg_dungeons);
+
+		/* Use new array */
+		borg_dungeons = temp;
+	}
+
+	/* Check the guessed dungeons */
+	for (i = 0; i < borg_dungeon_num; i++)
+	{
+		/*
+		 * There is a wilderness dungeon that has three stairs
+		 * that all lead to the same dungeon.  Pick only one to
+		 * avoid confusion.
+		 */
+		if ((borg_dungeons[i].x == x ||
+			ABS(borg_dungeons[i].x - x) == 14) &&
+			(borg_dungeons[i].y == y ||
+			ABS(borg_dungeons[i].y - y) == 30)) return;
+
+		/* Skip the accurately placed dungeons */
+		if (!borg_dungeons[i].guess) continue;
+
+		/* Get the distance */
+		d = distance(x, y, borg_dungeons[i].x, borg_dungeons[i].y);
+
+		/* Too far from the estimate */
+		if (d > 120) continue;
+
+		/* replace this one */
+		break;
+	}
+
+	borg_dungeons[i].x = x;
+	borg_dungeons[i].y = y;
+	borg_dungeons[i].guess = FALSE;
+	borg_dungeon_num++;
+}
+
+
 /*
  * Save the borg information into the overhead map
  */
@@ -2702,48 +2763,8 @@ void borg_map_info(map_block *mb_ptr, const term_map *map, vptr dummy)
 			/* Hack!  use p_ptr instead of bp because bp is not yet updated */
 			if (p_ptr->depth == 0)
 			{
-				/* Has this dungeon been sighted */
-				for (i = 0; i < borg_dungeon_num; i++)
-				{
-					/*
-					 * There is a wilderness dungeon that has three stairs
-					 * that all lead to the same dungeon.  Pick only one to
-					 * avoid confusion.
-					 */
-					if ((borg_dungeons[i].x == x ||
-						ABS(borg_dungeons[i].x - x) == 14) &&
-						(borg_dungeons[i].y == y ||
-						ABS(borg_dungeons[i].y - y) == 30)) break;
-				}
-
-				/* Do we need to increase the size of the dungeon array? */
-				if (i == borg_dungeon_size)
-				{
-					borg_dungeon *temp;
-
-					/* Double size of arrays */
-					borg_dungeon_size *= 2;
-
-					/* Make new (bigger) array */
-					C_MAKE(temp, borg_dungeon_size, borg_dungeon);
-
-					/* Copy into new array */
-					C_COPY(temp, borg_dungeons, borg_dungeon_num, borg_dungeon);
-
-					/* Get rid of old array */
-					FREE(borg_dungeons);
-
-					/* Use new array */
-					borg_dungeons = temp;
-				}
-
-				/* It is a new dungeon */
-				if (i == borg_dungeon_num)
-				{
-					borg_dungeons[i].x = x;
-					borg_dungeons[i].y = y;
-					borg_dungeon_num++;
-				}
+				/* Add this dungeon maybe */
+				borg_add_dungeon(x, y, TRUE);
 			}
 
 			/* Done */

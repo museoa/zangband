@@ -1703,8 +1703,8 @@ static bool borg_think_dungeon_brave(void)
 			borg_note("# Fleeing town via Stairs.");
 			borg_keypress('>');
 
-			/* Do the dungeon bookkeeping */
-			borg_dungeon_remember(TRUE);
+			/* Pick up the dungeon number */
+			if (!bp_ptr->depth) borg_dungeon_remember(TRUE);
 
 			/* Success */
 			return (TRUE);
@@ -2008,10 +2008,10 @@ bool borg_think_dungeon(void)
 		/* Test for stairs */
 		if (map_loc(c_x, c_y)->feat == FEAT_LESS)
 		{
+			/* Take it */
 			borg_keypress('<');
 
-			/* Do the dungeon bookkeeping */
-			borg_dungeon_remember(FALSE);
+			return (TRUE);
 		}
 
 		/* Try to flow to a lite if I can recall */
@@ -2294,6 +2294,9 @@ bool borg_think_dungeon(void)
 
 	/* Wait for daylight */
 	if (borg_waits_daylight()) return (TRUE);
+
+	/* Try to cross the wilderness to do some fun shopping */
+	if (borg_find_town()) return (TRUE);
 
 	/* Try to cross the wilderness to find a challenging dungeon */
 	if (borg_find_dungeon()) return (TRUE);

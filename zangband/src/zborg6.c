@@ -835,6 +835,13 @@ static bool borg_play_step(int y2, int x2)
 }
 
 
+/* Find a town to blow some money */
+bool borg_find_town(void)
+{
+	return (FALSE);
+}
+
+
 /* Find a new dungeon */
 bool borg_find_dungeon(void)
 {
@@ -874,6 +881,29 @@ bool borg_find_dungeon(void)
 	/* No good dungeon found */
 	if (b_i == -1) return (FALSE);
 
+	/* If the borg is right there at the dungeon */
+	if (b_d == 0)
+	{
+		/* If the dungeon was visited and the target depth is not shallow */
+		if (p >= borg_dungeons[b_i].mindepth + 4 &&
+			borg_dungeons[b_i].mindepth != 0 &&
+			bp_ptr->recall >= 4 && borg_recall())
+		{
+			/* Note */
+			borg_note("# Recalling into dungeon.");
+
+			/* Give it a shot */
+			return (TRUE);
+		}
+
+		goal_fleeing = TRUE;
+		goal_leaving = TRUE;
+		stair_more = TRUE;
+
+		/* Attempt to use those stairs */
+		if (borg_flow_stair_more(GOAL_BORE)) return (TRUE);
+	}
+
 	if (borg_flow_dungeon(b_i))
 	{
 		borg_note("# Aiming to reach a dungeon at (%d, %d).",
@@ -892,9 +922,6 @@ bool borg_find_dungeon(void)
 bool borg_twitchy(void)
 {
 	int dir;
-
-	/* Not in the wilderness */
-	if (!bp_ptr->depth) borg_oops("Twitching in the wilderness!");
 
 	/* This is a bad thing */
 	borg_note("# Twitchy!");
@@ -1730,31 +1757,24 @@ bool borg_waits_daylight(void)
 		b_d = d;
 	}
 
-	/* No inn found */
-	if (b_i == -1)
-	{
-		/* Wait out the night */
-		borg_keypress('0');
-		borg_keypress('2');
-		borg_keypress('9');
-		borg_keypress('9');
-		borg_keypress('R');
-
-		borg_note("# Wait out the night.");
-
-		return (TRUE);
-	}
-
 	/* Go to that inn */
-	if (borg_flow_shop_entry(b_i))
+	if (b_i != -1 && borg_flow_shop_entry(b_i))
 	{
 		borg_note("# Looking for a place to spend the night.");
 
 		return (TRUE);
 	}
 
-	borg_oops("Huh");
-	return (FALSE);
+	/* Wait out the night */
+	borg_keypress('0');
+	borg_keypress('2');
+	borg_keypress('9');
+	borg_keypress('9');
+	borg_keypress('R');
+
+	borg_note("# Wait out the night.");
+
+	return (TRUE);
 }
 
 
@@ -2184,17 +2204,11 @@ bool borg_flow_non_hurt(void)
 	/* Spread the flow */
 	borg_flow_spread(30, TRUE, TRUE, FALSE, TRUE);
 
-borg_note("1");
-
 	/* Attempt to Commit the flow */
 	if (!borg_flow_commit("to a safe feat", GOAL_FEAT)) return (FALSE);
 
-borg_note("2");
-
 	/* Take one step */
 	if (!borg_flow_old(GOAL_FEAT)) return (FALSE);
-
-borg_note("3");
 
 	/* Success */
 	return (TRUE);
@@ -3645,7 +3659,6 @@ bool borg_flow_dungeon(int dun_num)
 
 	/* Success */
 	return (TRUE);
-	
 }
 
 /*

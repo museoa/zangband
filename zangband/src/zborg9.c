@@ -1414,6 +1414,9 @@ static void borg_parse_aux(cptr msg, int len)
 	/* Word of Recall -- Ignition */
 	if (prefix(msg, "The air about you becomes "))
 	{
+		/* Keep track of this dungeon */
+		borg_dungeon_remember(FALSE);
+
 		/* Initiate recall */
 		/* Guess how long it will take to lift off */
 		goal_recalling = 15000 + 5000;	/* Guess. game turns x 1000 ( 15+rand(20)) */
@@ -1423,6 +1426,9 @@ static void borg_parse_aux(cptr msg, int len)
 	/* Word of Recall -- Lift off */
 	if (prefix(msg, "You feel yourself yanked "))
 	{
+		/* Keep track of this dungeon */
+		borg_dungeon_remember(FALSE);
+
 		/* Recall complete */
 		goal_recalling = 0;
 		return;
@@ -1433,6 +1439,42 @@ static void borg_parse_aux(cptr msg, int len)
 	{
 		/* Hack -- Oops */
 		goal_recalling = 0;
+		return;
+	}
+
+	/* Take the stairs up */
+	if (streq(msg, "You enter a maze of up staircases."))
+	{
+		/* Keep track of this dungeon */
+		borg_dungeon_remember(TRUE);
+
+		return;
+	}
+
+	/* Take the stairs down */
+	if (streq(msg, "You enter a maze of down staircases."))
+	{
+		/* Keep track of this dungeon */
+		borg_dungeon_remember(FALSE);
+
+		return;
+	}
+
+	/* Level teleport up */
+	if (streq(msg, "You rise up through the ceiling."))
+	{
+		/* Keep track of this dungeon */
+		borg_dungeon_remember(TRUE);
+
+		return;
+	}
+
+	/* Level teleport down */
+	if (streq(msg, "You sink through the floor."))
+	{
+		/* Keep track of this dungeon */
+		borg_dungeon_remember(FALSE);
+
 		return;
 	}
 

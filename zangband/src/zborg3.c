@@ -3593,8 +3593,8 @@ void borg_dungeon_remember(bool down_stairs)
 	int i;
 	int d, b_d = BORG_MAX_DISTANCE;
 
-	/* On the surface */
-	if (bp_ptr->depth == 0)
+	/* Hack!  bp_ptr is not updated yet. */
+	if (p_ptr->depth == 0)
 	{
 		/* There is no dungeon known */
 		if (!borg_dungeon_num) return;
@@ -3604,12 +3604,16 @@ void borg_dungeon_remember(bool down_stairs)
 		{
 			d = distance(c_x, c_y, borg_dungeons[i].x, borg_dungeons[i].y);
 
+			borg_note("Remember b_d = %d, d = %d", b_d, d);
+
 			/* Ignore dungeons that are further away */
 			if (d > b_d) continue;
 
 			/* Remember this dungeon */
 			b_d = d;
 			dungeon_num = i;
+
+			borg_note("dungeon_num = %d", dungeon_num);
 		}
 	}
 	/* In a dungeon */

@@ -207,6 +207,7 @@ struct borg_dungeon
 	s16b maxdepth;
 
 	bool bottom;
+	bool guess;
 };
 
 /* Maximal distance the borg can travel between dungeons */
