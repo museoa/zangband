@@ -3916,13 +3916,13 @@
  */
 #define OBJ_ITT_START(OSTART, O) \
 	do { \
-		s16b O_this_o_idx, O_next_o_idx = 0; \
+		s16b _this_o_idx, _next_o_idx = 0; \
 		\
-		for (O_this_o_idx = (OSTART); O_this_o_idx; O_this_o_idx = O_next_o_idx) \
+		for (_this_o_idx = (OSTART); _this_o_idx; _this_o_idx = _next_o_idx) \
 		{ \
-			(O) = &o_list[O_this_o_idx];\
+			(O) = &o_list[_this_o_idx];\
 			\
-			O_next_o_idx = (O)->next_o_idx;
+			_next_o_idx = (O)->next_o_idx;
 
 #define OBJ_ITT_END \
 		} \
