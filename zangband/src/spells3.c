@@ -2913,21 +2913,19 @@ bool potion_smash_effect(int who, int y, int x, int k_idx)
 /*
  * Hack -- Display all known spells in a window
  *
- * XXX XXX XXX Need to analyze size of the window.
- *
  * XXX XXX XXX Need more color coding.
  */
 void display_spell_list(void)
 {
 	int             i, j;
-	int             y = 1, x = 1;
+	int             y = 0, x = 0;
 	int             use_realm1 = p_ptr->realm1 - 1;
 	int             use_realm2 = p_ptr->realm2 - 1;
-	int             m[9];
 	const magic_type *s_ptr;
 	char            name[80];
 	char            out_val[160];
-
+	int row = 0, col = 0;
+	unsigned int max_wid = 0;
 
 	/* Erase window */
 	clear_from(0);
@@ -2946,12 +2944,11 @@ void display_spell_list(void)
 		char            psi_desc[80];
 
 		/* Display a list of spells */
-		prt("", y, x);
-		put_str("Name", y, x + 5);
-		put_str("Lv Mana Fail Info", y, x + 35);
+		put_str("Name", y, x + 3);
+		put_str("Lv Mana Fail Info", y, x + 33);
 
 		/* Dump the spells */
-		for (i = 0; i < MINDCRAFT_MAX; i++)
+		for (i = 0; (i < MINDCRAFT_MAX) && (i < Term->hgt - 1); i++)
 		{
 			byte a = TERM_WHITE;
 
@@ -2992,11 +2989,12 @@ void display_spell_list(void)
 			mindcraft_info(comment, i);
 
 			/* Dump the spell */
-			sprintf(psi_desc, "  %c) %-30s%2d %4d %3d%%%s",
+			sprintf(psi_desc, "%c) %-30s%2d %4d %3d%%%s",
 			    I2A(i), spell.name,
 			    spell.min_lev, spell.mana_cost, chance, comment);
 			Term_putstr(x, y + i + 1, -1, a, psi_desc);
 		}
+
 		return;
 	}
 
@@ -3006,15 +3004,6 @@ void display_spell_list(void)
 	for (j = 0; j < ((use_realm2 > -1) ? 2 : 1); j++)
 	{
 		int n = 0;
-
-		/* Reset vertical */
-		m[j] = 0;
-
-		/* Vertical location */
-		y = (j < 3) ? 0 : (m[j - 3] + 2);
-
-		/* Horizontal location */
-		x = 27 * (j % 3);
 
 		/* Scan spells */
 		for (i = 0; i < 32; i++)
@@ -3064,14 +3053,23 @@ void display_spell_list(void)
 			}
 
 			/* Dump the spell --(-- */
-			sprintf(out_val, "%c/%c) %-20.20s",
+			sprintf(out_val, "%c/%c) %s",
 				I2A(n / 8), I2A(n % 8), name);
 
-			/* Track maximum */
-			m[j] = y + n;
+			max_wid = MAX(max_wid, strlen(out_val) + 1);
 
 			/* Dump onto the window */
-			Term_putstr(x, m[j], -1, a, out_val);
+			Term_putstr(col, row, -1, a, out_val);
+
+			/* Next row */
+			row++;
+
+			if (row >= Term->hgt)
+			{
+				row = 0;
+				col += max_wid;
+				max_wid = 0;
+			}
 
 			/* Next */
 			n++;
