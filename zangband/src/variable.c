@@ -377,14 +377,14 @@ char angband_sound_name[SOUND_MAX][16] =
  * In the wilderness, things are more complicated.
  */
 
-cave_type *(*area) (int, int);
+cave_type *(*area_aux) (int, int);
 
 /*
  * Equivalent function pointer used to get player information
  * for each grid.
  */
 
-pcave_type *(*parea) (int, int);
+pcave_type *(*parea_aux) (int, int);
 
 /*
  * Variables used to access the scrollable wilderness.

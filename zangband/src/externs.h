@@ -186,8 +186,8 @@ extern term *angband_term[ANGBAND_TERM_MAX];
 extern char angband_term_name[ANGBAND_TERM_MAX][16];
 extern byte angband_color_table[256][4];
 extern char angband_sound_name[SOUND_MAX][16];
-extern cave_type *(*area) (int, int);
-extern pcave_type *(*parea) (int, int);
+extern cave_type *(*area_aux) (int, int);
+extern pcave_type *(*parea_aux) (int, int);
 extern u16b *temp_block[WILD_BLOCK_SIZE + 1];
 extern blk_ptr *wild_cache;
 extern int **wild_refcount;
@@ -839,6 +839,7 @@ extern bool inn_rest(void);
 extern void build_init(int town_num, int build_num, byte build_type);
 
 /* util.c */
+extern bool assert_helper(cptr expr, cptr file, int line, bool result);
 extern errr path_parse(char *buf, int max, cptr file);
 extern void path_build(char *buf, int max, cptr path, cptr file);
 extern FILE *my_fopen(cptr file, cptr mode);

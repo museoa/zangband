@@ -80,7 +80,7 @@
 
 /* Alpha testing */
 #if (VER_EXTRA != 0)
-#define ALPHA_DEBUG
+#define DEBUG_ALPHA
 
 #ifndef DEBUG
 #define DEBUG
@@ -4469,8 +4469,6 @@ static __inline void COPY_FLAG_AUX(const u32b *flags1, u32b *flags2, int num, u3
 		} \
 	} while (0)
 
-
-
 /*
  * Useful macros for object formatting
  * (So we use the correct number of arguments)
@@ -4484,6 +4482,27 @@ static __inline void COPY_FLAG_AUX(const u32b *flags1, u32b *flags2, int num, u3
 /* Monster name format */
 #define MONSTER_FMT(M, P) \
 	monster_fmt, (M), (P)
+
+
+/*
+ * Test bounds checking
+ */
+#ifdef DEBUG_ALPHA
+#define area(X, Y) \
+	(assert_exp(in_bounds2((X), (Y))) ? area_aux((X), (Y)): NULL)
+
+#define parea(X, Y) \
+	(assert_exp(in_boundsp((X), (Y))) ? parea_aux((X), (Y)): NULL)
+
+#else /* DEBUG_ALPHA */
+#define area(X, Y) \
+	area_aux((X), (Y))
+#define parea(X, Y) \
+	parea_aux((X), (Y))
+
+
+#endif /* DEBUG_ALPHA */
+
 
 /*
  * Determines if a map location is currently "on screen" -RAK-

@@ -97,7 +97,27 @@ void user_name(char *buf, int id)
 
 #endif /* SET_UID */
 
+/*
+ * Helper function to assert something inside an expression
+ *
+ * (Note that the normal assert macro can only be used
+ *  as a statement - which prevents debugging via
+ *  function wrappers.)
+ */
+bool assert_helper(cptr expr, cptr file, int line, bool result)
+{
+	if (!result)
+	{
+		signals_ignore_tstp();\
+		ANG__assert_save;\
+		ANG__assert_fmt("\n"
+						"Assertion failed:%s\n"
+						"in file %s\n"
+						"on line %d\n\n", expr, file, line);
+	}
 
+	return (result);
+}
 
 
 /*

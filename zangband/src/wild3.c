@@ -2245,11 +2245,11 @@ void change_level(int level)
 		Term_move_player();
 
 		/* Used to be in the dungeon? */
-		if (area != access_wild) switched = TRUE;
+		if (area_aux != access_wild) switched = TRUE;
 
 		/* Access the wilderness */
-		area = access_wild;
-		parea = access_pwild;
+		area_aux = access_wild;
+		parea_aux = access_pwild;
 
 		/* Bounds checking rountine */
 		in_bounds = in_bounds_wild;
@@ -2290,7 +2290,7 @@ void change_level(int level)
 		}
 
 		/* Used to be in the wilderness? */
-		if (area == access_wild) switched = TRUE;
+		if (area_aux == access_wild) switched = TRUE;
 
 
 		/* 
@@ -2304,8 +2304,8 @@ void change_level(int level)
 		p_ptr->max_wid = 1;
 
 		/* Access the cave */
-		area = access_cave;
-		parea = access_pcave;
+		area_aux = access_cave;
+		parea_aux = access_pcave;
 
 
 		for (i = 0; i < MAX_WID; i++)
@@ -2406,8 +2406,8 @@ void wipe_all_list(void)
 	}
 
 	/* reset function pointers */
-	area = NULL;
-	parea = NULL;
+	area_aux = NULL;
+	parea_aux = NULL;
 
 	in_bounds = NULL;
 	in_bounds2 = NULL;
