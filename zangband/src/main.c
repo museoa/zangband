@@ -361,7 +361,13 @@ static void game_usage(void)
 	/* puts("  -- -d    Set display name"); */
 	/* puts("  -- -s    Turn off smoothscaling graphics"); */
 	puts("  -- -n#   Number of terms to use");
-#endif /* USE_VME */
+#endif /* USE_GTK */
+
+#ifdef USE_VCS
+	puts("  -mvcs    To use /dev/vcsa*");
+	puts("  -- x0,y0,x1,y1  Create new term");
+	puts("  -- --noframe    No window frames");
+#endif /* USE_VCS */
 				
 	/* Actually abort the process */
 	quit(NULL);
@@ -785,6 +791,18 @@ int main(int argc, char *argv[])
 		}
 	}
 #endif
+
+#ifdef USE_VCS
+	/* Attempt to use the "main-vcs.c" support */
+	if (!done && (!mstr || (streq(mstr, "vcs"))))
+	{
+		if (0 == init_vcs(argc, argv))
+		{
+			ANGBAND_SYS = "vcs";
+			done = TRUE;
+		}
+	}
+#endif /* USE_VCS */
 
 	/* Grab privs (dropped above for X11) */
  	safe_setuid_grab();
