@@ -78,7 +78,7 @@ bool teleport_away(int m_idx, int dis)
 			/* Ignore illegal locations */
 			if (!in_bounds(ny, nx)) continue;
 
-			c_ptr = area(ny, nx);
+			c_ptr = area(nx, ny);
 			
 			/* Check for a field that blocks movement */
 			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_ENTER))
@@ -140,10 +140,10 @@ bool teleport_away(int m_idx, int dis)
 			 FIELD_ACT_MONSTER_LEAVE, (vptr) m_ptr);
 
 	/* Update the new location */
-	area(ny,nx)->m_idx = m_idx;
+	area(nx, ny)->m_idx = m_idx;
 
 	/* Update the old location */
-	area(oy,ox)->m_idx = 0;
+	area(ox, oy)->m_idx = 0;
 
 	/* Move the monster */
 	m_ptr->fy = ny;
@@ -230,7 +230,7 @@ void teleport_to_player(int m_idx)
 			/* Ignore illegal locations */
 			if (!in_bounds(ny, nx)) continue;
 
-			c_ptr = area(ny, nx);
+			c_ptr = area(nx, ny);
 			
 			/* Check for a field that blocks movement */
 			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_ENTER))
@@ -291,10 +291,10 @@ void teleport_to_player(int m_idx)
 			 FIELD_ACT_MONSTER_LEAVE, (vptr) m_ptr);
 
 	/* Update the new location */
-	area(ny,nx)->m_idx = m_idx;
+	area(nx, ny)->m_idx = m_idx;
 
 	/* Update the old location */
-	area(oy,ox)->m_idx = 0;
+	area(ox, oy)->m_idx = 0;
 
 	/* Move the monster */
 	m_ptr->fy = ny;
@@ -389,7 +389,7 @@ void teleport_player(int dis)
 			/* Ignore illegal locations */
 			if (!in_bounds(y, x)) continue;
 
-			c_ptr = area(y, x);
+			c_ptr = area(x, y);
 
 			/* Require "naked" floor space or trees */
 			if (!(cave_naked_grid(c_ptr) ||
@@ -432,7 +432,7 @@ void teleport_player(int dis)
 	ox = px;
 
 	/* Process fields under the player. */
-	field_hook(&area(py, px)->fld_idx,
+	field_hook(&area(px, py)->fld_idx,
 		 FIELD_ACT_PLAYER_LEAVE, NULL);
 
 	/* Move the player */
@@ -458,7 +458,7 @@ void teleport_player(int dis)
 	lite_spot(px, py);
 	
 	/* Process fields under the player. */
-	field_hook(&area(py, px)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);
+	field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);
 
 	/* Monsters with teleport ability may follow the player */
 	for (xx = -1; xx <= 1; xx++)
@@ -474,9 +474,9 @@ void teleport_player(int dis)
 				x = ox + xx;
 				y = oy + yy;
 				
-				if (in_bounds2(y, x) && area(y, x)->m_idx)
+				if (in_bounds2(y, x) && area(x, y)->m_idx)
 				{
-					m_idx = area(y, x)->m_idx;
+					m_idx = area(x, y)->m_idx;
 					m_ptr = &m_list[m_idx];
 					
 					if ((r_info[m_ptr->r_idx].flags6 & RF6_TPORT) &&
@@ -545,7 +545,7 @@ void teleport_player_to(int nx, int ny)
 		}
 
 		/* Accept "naked" floor grids */
-		c_ptr = area(y, x);
+		c_ptr = area(x, y);
 		
 		/* Can enter grid? */
 		if (cave_naked_grid(c_ptr) && !(fields_have_flags(c_ptr->fld_idx,
@@ -570,7 +570,7 @@ void teleport_player_to(int nx, int ny)
 	ox = px;
 
 	/* Process fields under the player. */
-	field_hook(&area(py, px)->fld_idx,
+	field_hook(&area(px, py)->fld_idx,
 		 FIELD_ACT_PLAYER_LEAVE, NULL);
 
 	/* Move the player */
@@ -596,7 +596,7 @@ void teleport_player_to(int nx, int ny)
 	lite_spot(px, py);
 
 	/* Process fields under the player. */
-	field_hook(&area(py, px)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);
+	field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);
 
 	/* Check for new panel (redraw map) */
 	verify_panel();
@@ -1066,14 +1066,14 @@ void call_the_(void)
 	int i;
 
 	if (in_bounds(py, px) &&
-	    cave_floor_grid(area(py - 1, px - 1)) &&
-	    cave_floor_grid(area(py - 1, px    )) &&
-	    cave_floor_grid(area(py - 1, px + 1)) &&
-	    cave_floor_grid(area(py    , px - 1)) &&
-	    cave_floor_grid(area(py    , px + 1)) &&
-	    cave_floor_grid(area(py + 1, px - 1)) &&
-	    cave_floor_grid(area(py + 1, px    )) &&
-	    cave_floor_grid(area(py + 1, px + 1)))
+	    cave_floor_grid(area(px - 1, py - 1)) &&
+	    cave_floor_grid(area(px - 1, py    )) &&
+	    cave_floor_grid(area(px - 1, py + 1)) &&
+	    cave_floor_grid(area(px    , py - 1)) &&
+	    cave_floor_grid(area(px    , py + 1)) &&
+	    cave_floor_grid(area(px + 1, py - 1)) &&
+	    cave_floor_grid(area(px + 1, py    )) &&
+	    cave_floor_grid(area(px + 1, py + 1)))
 	{
 		for (i = 1; i < 10; i++)
 		{
@@ -1123,7 +1123,7 @@ void fetch(int dir, int wgt, bool require_los)
 	char            o_name[80];
 
 	/* Check to see if an object is already there */
-	if (area(py, px)->o_idx)
+	if (area(px, py)->o_idx)
 	{
 		msg_print("You can't fetch when you're already standing on something.");
 		return;
@@ -1143,7 +1143,7 @@ void fetch(int dir, int wgt, bool require_los)
 			return;
 		}
 
-		c_ptr = area(ty, tx);
+		c_ptr = area(tx, ty);
 
 		/* We need an item to fetch */
 		if (!c_ptr->o_idx)
@@ -1160,7 +1160,7 @@ void fetch(int dir, int wgt, bool require_los)
 		}
 
 		/* We need to see the item */
-		if (require_los && !player_has_los_grid(parea(ty, tx)))
+		if (require_los && !player_has_los_grid(parea(tx, ty)))
 		{
 			msg_print("You have no direct line of sight to that location.");
 			return;
@@ -1180,7 +1180,7 @@ void fetch(int dir, int wgt, bool require_los)
 			/* paranoia */
 			if (!in_bounds2(ty, tx)) continue;
 
-			c_ptr = area(ty, tx);
+			c_ptr = area(tx, ty);
 
 			if ((distance(py, px, ty, tx) > MAX_RANGE) ||
 			    !cave_floor_grid(c_ptr)) return;
@@ -1211,8 +1211,9 @@ void fetch(int dir, int wgt, bool require_los)
 
 	i = c_ptr->o_idx;
 	c_ptr->o_idx = o_ptr->next_o_idx;
-
-	area(py, px)->o_idx = i; /* 'move' it */
+	
+	 /* 'move' it */
+	area(px, py)->o_idx = i;
 	o_ptr->next_o_idx = 0;
 	o_ptr->iy = py;
 	o_ptr->ix = px;
@@ -1254,7 +1255,7 @@ bool warding_glyph(void)
 	int py = p_ptr->py;
 	int px = p_ptr->px;
 
-	cave_type *c_ptr = area(py, px);
+	cave_type *c_ptr = area(px, py);
 
 	/* XXX XXX XXX */
 	if (!cave_naked_grid(c_ptr))
@@ -1288,7 +1289,7 @@ bool explosive_rune(void)
 	int py = p_ptr->py;
 	int px = p_ptr->px;
 
-	cave_type *c_ptr = area(py, px);
+	cave_type *c_ptr = area(px, py);
 
 	/* XXX XXX XXX */
 	if (!cave_naked_grid(c_ptr))
@@ -1563,7 +1564,7 @@ void stair_creation(void)
 	int py = p_ptr->py;
 	int px = p_ptr->px;
 
-	cave_type *c_ptr = area(py, px);
+	cave_type *c_ptr = area(px, py);
 
 	/* XXX XXX XXX */
 	if (!cave_valid_grid(c_ptr))
@@ -4257,7 +4258,7 @@ static s16b poly_r_idx(int r_idx)
 
 bool polymorph_monster(int x, int y)
 {
-	cave_type *c_ptr = area(y, x);
+	cave_type *c_ptr = area(x, y);
 	monster_type *m_ptr = &m_list[c_ptr->m_idx];
 	bool friendly, pet;
 	bool polymorphed = FALSE;
@@ -4321,7 +4322,7 @@ bool dimension_door(void)
 	/* paranoia */
 	if (!in_bounds2(y, x)) return FALSE;
 
-	c_ptr = area(y, x);
+	c_ptr = area(x, y);
 
 	if (!cave_empty_grid(c_ptr) || (c_ptr->info & CAVE_ICKY) ||
 		(distance(y, x, py, px) > plev + 2) || (one_in_(plev * plev / 2)))

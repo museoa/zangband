@@ -419,10 +419,10 @@ static void get_moves_aux(int m_idx, int *xp, int *yp)
 	x1 = m_ptr->fx;
 
 	/* Monster grid */
-	c_ptr = area(y1, x1);
+	c_ptr = area(x1, y1);
 
 	/* The player is not currently near the monster grid */
-	if (c_ptr->when < area(py, px)->when)
+	if (c_ptr->when < area(px, py)->when)
 	{
 		/* The player has never been near the monster grid */
 		if (!c_ptr->when) return;
@@ -436,7 +436,7 @@ static void get_moves_aux(int m_idx, int *xp, int *yp)
 	}
 
 	/* Hack XXX XXX -- Player can see us, run towards him */
-	if (player_has_los_grid(parea(y1, x1))) return;
+	if (player_has_los_grid(parea(x1, y1))) return;
 
 	/* Check nearby grids, diagonals first */
 	for (i = 7; i >= 0; i--)
@@ -448,7 +448,7 @@ static void get_moves_aux(int m_idx, int *xp, int *yp)
 		/* Ignore locations off of edge */
 		if (!in_bounds2(y, x)) return;
 
-		c_ptr = area(y, x);
+		c_ptr = area(x, y);
 
 		/* Ignore illegal locations */
 		if (!c_ptr->when) continue;
@@ -499,15 +499,15 @@ static bool get_fear_moves_aux(int m_idx, int *xp, int *yp)
 	x1 = fx - (*xp);
 
 	/* The player is not currently near the monster grid */
-	if (area(fy,fx)->when < area(py, px)->when)
+	if (area(fx, fy)->when < area(px, py)->when)
 	{
 		/* No reason to attempt flowing */
 		return (FALSE);
 	}
 
 	/* Monster is too far away to use flow information */
-	if (area(fy,fx)->cost > MONSTER_FLOW_DEPTH) return (FALSE);
-	if (area(fy,fx)->cost > r_ptr->aaf) return (FALSE);
+	if (area(fx, fy)->cost > MONSTER_FLOW_DEPTH) return (FALSE);
+	if (area(fx, fy)->cost > r_ptr->aaf) return (FALSE);
 
 	/* Check nearby grids, diagonals first */
 	for (i = 7; i >= 0; i--)
@@ -522,16 +522,16 @@ static bool get_fear_moves_aux(int m_idx, int *xp, int *yp)
 		if (!in_bounds2(y, x)) continue;
 
 		/* Ignore illegal locations */
-		if (area(y, x)->when == 0) continue;
+		if (area(x, y)->when == 0) continue;
 
 		/* Ignore ancient locations */
-		if (area(y, x)->when < when) continue;
+		if (area(x, y)->when < when) continue;
 
 		/* Calculate distance of this grid from our destination */
 		dis = distance(y, x, y1, x1);
 
 		/* Score this grid */
-		s = 5000 / (dis + 3) - 500 / (area(y, x)->cost + 1);
+		s = 5000 / (dis + 3) - 500 / (area(x, y)->cost + 1);
 
 		/* No negative scores */
 		if (s < 0) s = 0;
@@ -540,7 +540,7 @@ static bool get_fear_moves_aux(int m_idx, int *xp, int *yp)
 		if (s < score) continue;
 
 		/* Save the score and time */
-		when = area(y, x)->when;
+		when = area(x, y)->when;
 		score = s;
 
 		/* Save the location */
@@ -744,16 +744,16 @@ static bool find_safety(int m_idx, int *xp, int *yp)
 			/* Skip illegal locations */
 			if (!in_boundsp(y, x)) continue;
 
-			c_ptr = area(y, x);
+			c_ptr = area(x, y);
 
 			/* Skip locations in a wall */
 			if (!cave_floor_grid(c_ptr)) continue;
 
 			/* Ignore grids very far from the player */
-			if (c_ptr->when < area(py, px)->when) continue;
+			if (c_ptr->when < area(px, py)->when) continue;
 
 			/* Ignore too-distant grids */
-			if (c_ptr->cost > area(fy, fx)->cost + 2 * d) continue;
+			if (c_ptr->cost > area(fx, fy)->cost + 2 * d) continue;
 
 			/* Check for absence of shot (more or less) */
 			if (clean_shot(fx, fy, x, y, FALSE))
@@ -767,7 +767,7 @@ static bool find_safety(int m_idx, int *xp, int *yp)
 				{
 					gy = y;
 					gx = x;
-					if (!player_has_los_grid(parea(y, x)))
+					if (!player_has_los_grid(parea(x, y)))
 					{
 						gdis = dis * 5;
 					}
@@ -845,7 +845,7 @@ static bool find_hiding(int m_idx, int *xp, int *yp)
 			/* Skip illegal locations */
 			if (!in_boundsp(y, x)) continue;
 
-			c_ptr = area(y, x);
+			c_ptr = area(x, y);
 
 			/* Skip occupied locations */
 			if (!cave_empty_grid(c_ptr)) continue;
@@ -854,7 +854,7 @@ static bool find_hiding(int m_idx, int *xp, int *yp)
 			if ((y == py) && (x == px)) continue;
 
 			/* Check for hidden, available grid */
-			if (!player_has_los_grid(parea(y, x))
+			if (!player_has_los_grid(parea(x, y))
 					 && clean_shot(fx, fy, x, y, FALSE))
 			{
 				/* Calculate distance from player */
@@ -933,7 +933,7 @@ static bool get_moves(int m_idx, int *mm)
 
 				if (!in_bounds2(yy, xx)) continue;
 
-				c_ptr = area(yy, xx);
+				c_ptr = area(xx, yy);
 
 				/* Check grid */
 				if (((cave_floor_grid(c_ptr)) || ((c_ptr->feat & 0x60) == 0x60)) &&
@@ -978,7 +978,7 @@ static bool get_moves(int m_idx, int *mm)
 				if (!in_bounds2(y2, x2)) continue;
 
 				/* Ignore filled grids */
-				c_ptr = area(y2, x2);
+				c_ptr = area(x2, y2);
 				if (!cave_empty_grid(c_ptr)) continue;
 				
 				/* Not on player */
@@ -1986,7 +1986,7 @@ static void process_monster(int m_idx)
 	ox = m_ptr->fx;
 	
 	/* Access that cave grid */
-	c_ptr = area(oy,ox);
+	c_ptr = area(ox, oy);
 
 	/* Process fields under the monster. */
 	field_hook(&c_ptr->fld_idx, FIELD_ACT_MONSTER_ON, (vptr) m_ptr);
@@ -2212,7 +2212,7 @@ static void process_monster(int m_idx)
 				/* Ignore locations off of edge */
 				if (!in_bounds2(y, x)) continue;
 
-				if (area(y, x)->m_idx) k++;
+				if (area(x, y)->m_idx) k++;
 			}
 		}
 
@@ -2243,12 +2243,12 @@ static void process_monster(int m_idx)
 	}
 
 	/* Access that cave grid */
-	c_ptr = area(oy, ox);
+	c_ptr = area(ox, oy);
 
 	/* Some monsters can speak */
 	if (speak_unique &&
 	    (r_ptr->flags2 & RF2_CAN_SPEAK) && one_in_(SPEAK_CHANCE) &&
-		player_has_los_grid(parea(oy, ox)))
+		player_has_los_grid(parea(ox, oy)))
 	{
 		char monmessage[1024];
 		cptr filename;
@@ -2426,8 +2426,8 @@ static void process_monster(int m_idx)
 		if (!in_boundsp(ny, nx)) continue;
 
 		/* Access that cave grid */
-		c_ptr = area(ny, nx);
-		pc_ptr = parea(ny, nx);
+		c_ptr = area(nx, ny);
+		pc_ptr = parea(nx, ny);
 
 		/* Access that cave grid's contents */
 		y_ptr = &m_list[c_ptr->m_idx];
@@ -2624,7 +2624,7 @@ static void process_monster(int m_idx)
 				/* attack */
 				if ((m2_ptr->r_idx) && (m2_ptr->hp >= 0))
 				{
-					if (monst_attack_monst(m_idx, area(ny,nx)->m_idx))
+					if (monst_attack_monst(m_idx, area(nx, ny)->m_idx))
 					return;
 				}
 			}
@@ -2632,7 +2632,7 @@ static void process_monster(int m_idx)
 			/* Push past weaker monsters (unless leaving a wall) */
 			else if ((r_ptr->flags2 & RF2_MOVE_BODY) &&
 				(r_ptr->mexp > z_ptr->mexp) && cave_floor_grid(c_ptr) &&
-				(cave_floor_grid(area(m_ptr->fy, m_ptr->fx))))
+				(cave_floor_grid(area(m_ptr->fx, m_ptr->fy))))
 			{
 				/* Allow movement */
 				do_move = TRUE;
@@ -2673,7 +2673,7 @@ static void process_monster(int m_idx)
 		{
 			s16b this_o_idx, next_o_idx;
 			
-			cave_type *old_ptr = area(oy, ox);
+			cave_type *old_ptr = area(ox, oy);
 
 			/* Take a turn */
 			do_turn = TRUE;
@@ -3104,7 +3104,7 @@ void process_monsters(int min_energy)
 		fx = m_ptr->fx;
 		fy = m_ptr->fy;
 
-		c_ptr = area(fy, fx);
+		c_ptr = area(fx, fy);
 
 		/* Assume no move */
 		test = FALSE;
@@ -3124,7 +3124,7 @@ void process_monsters(int min_energy)
 
 		/* Handle "sight" and "aggravation" */
 		else if ((m_ptr->cdis <= MAX_SIGHT) &&
-			(player_has_los_grid(parea(fy, fx)) || p_ptr->aggravate))
+			(player_has_los_grid(parea(fx, fy)) || p_ptr->aggravate))
 		{
 			/* We can "see" or "feel" the player */
 			test = TRUE;
@@ -3134,7 +3134,7 @@ void process_monsters(int min_energy)
 		 * Hack -- Monsters can "smell" the player from far away
 		 * Note that most monsters have "aaf" of "20" or so
 		 */
-		else if ((area(p_ptr->py, p_ptr->px)->when == c_ptr->when) &&
+		else if ((area(p_ptr->px, p_ptr->py)->when == c_ptr->when) &&
 			(c_ptr->cost < MONSTER_FLOW_DEPTH) &&
 			(c_ptr->cost < r_ptr->aaf))
 		{

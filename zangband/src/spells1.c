@@ -212,7 +212,7 @@ static int project_m_y;
  */
 static bool project_f(int who, int r, int x, int y, int dam, int typ)
 {
-	cave_type       *c_ptr = area(y, x);
+	cave_type *c_ptr = area(x, y);
 
 	bool obvious = FALSE;
 	bool known = player_can_see_bold(x, y);
@@ -608,7 +608,7 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
  */
 static bool project_o(int who, int r, int x, int y, int dam, int typ)
 {
-	cave_type *c_ptr = area(y,x);
+	cave_type *c_ptr = area(x, y);
 
 	s16b this_o_idx, next_o_idx = 0;
 
@@ -936,8 +936,8 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 {
 	int tmp;
 
-	cave_type *c_ptr = area(y, x);
-	pcave_type *pc_ptr = parea(y, x);
+	cave_type *c_ptr = area(x, y);
+	pcave_type *pc_ptr = parea(x, y);
 
 	monster_type *m_ptr = &m_list[c_ptr->m_idx];
 
@@ -2816,7 +2816,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 		x = m_ptr->fx;
 
 		/* Hack -- get new grid */
-		c_ptr = area(y,x);
+		c_ptr = area(x, y);
 	}
 
 	/* Sound and Impact breathers never stun */
@@ -3155,7 +3155,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			if (!in_boundsp(t_y, t_x)) continue;
 
 			/* Hack - exit if can see the reflection */
-			if (player_has_los_grid(parea(t_y, t_x))) break;
+			if (player_has_los_grid(parea(t_x, t_y))) break;
 		}
 
 		if (max_attempts < 1)
@@ -4228,7 +4228,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 		int ny = path_g[i].y;
 		int nx = path_g[i].x;
 
-		c_ptr = area(ny, nx);
+		c_ptr = area(nx, ny);
 
 		/* Hack -- Balls explode before reaching walls */
 		if (!cave_floor_grid(c_ptr) && (rad > 0)) break;
@@ -4253,7 +4253,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 		{
 			/* Only do visuals if the player can "see" the bolt */
 			if (in_boundsp(y, x) && panel_contains(y, x)
-				 && player_has_los_grid(parea(y, x)))
+				 && player_has_los_grid(parea(x, y)))
 			{
 				byte a, c;
 
@@ -4420,7 +4420,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 							/* Disintegration balls explosions are stopped by perma-walls */
 							if (!in_disintegration_range(x2, y2, x, y)) continue;
 														
-							c_ptr = area(y, x);
+							c_ptr = area(x, y);
 							
 							if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM)) continue;
 							
@@ -4485,7 +4485,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 
 				/* Only do visuals if the player can "see" the blast */
 				if (in_boundsp(y, x) && panel_contains(y, x)
-					 && player_has_los_grid(parea(y, x)))
+					 && player_has_los_grid(parea(x, y)))
 				{
 					byte a, c;
 
@@ -4523,7 +4523,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 				x = gx[i];
 
 				/* Hack -- Erase if needed */
-				if (in_boundsp(y, x) && player_has_los_grid(parea(y, x)))
+				if (in_boundsp(y, x) && player_has_los_grid(parea(x, y)))
 				{
 					lite_spot(x, y);
 				}
@@ -4572,7 +4572,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 				f_m_t.known = player_can_see_bold(x, y);
 				
 				/* Affect fields on the grid */
-				field_hook(&area(y, x)->fld_idx,
+				field_hook(&area(x, y)->fld_idx,
 					FIELD_ACT_MAGIC_TARGET, (vptr) &f_m_t);
 				
 				/* Restore notice variable */
@@ -4592,7 +4592,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 				f_m_t.known = player_can_see_bold(x, y);
 				
 				/* Affect fields on the grid */
-				field_hook(&area(y, x)->fld_idx,
+				field_hook(&area(x, y)->fld_idx,
 					FIELD_ACT_MAGIC_TARGET, (vptr) &f_m_t);
 				
 				/* Restore notice variable */
@@ -4677,7 +4677,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 			}
 			else
 			{
-				monster_race *ref_ptr = &r_info[m_list[area(y,x)->m_idx].r_idx];
+				monster_race *ref_ptr = &r_info[m_list[area(x, y)->m_idx].r_idx];
 
 				if ((ref_ptr->flags2 & RF2_REFLECTING) && !one_in_(10) &&
 					 (dist_hack > 1))
@@ -4702,14 +4702,14 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 						t_x = x_saver;
 					}
 
-					if (m_list[area(y,x)->m_idx].ml)
+					if (m_list[area(x, y)->m_idx].ml)
 					{
 						msg_print("The attack bounces!");
 						ref_ptr->r_flags2 |= RF2_REFLECTING;
 					}
 
 					/* Recursion... */
-					(void)project(area(y, x)->m_idx, 0, t_x, t_y,  dam, typ, flg);
+					(void)project(area(x, y)->m_idx, 0, t_x, t_y,  dam, typ, flg);
 				}
 				else
 				{
@@ -4726,15 +4726,15 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 			y = project_m_y;
 
 			/* Track if possible */
-			if (area(y,x)->m_idx > 0)
+			if (area(x, y)->m_idx > 0)
 			{
-				monster_type *m_ptr = &m_list[area(y,x)->m_idx];
+				monster_type *m_ptr = &m_list[area(x, y)->m_idx];
 
 				/* Hack -- auto-recall */
 				if (m_ptr->ml) monster_race_track(m_ptr->r_idx);
 
 				/* Hack - auto-track */
-				if (m_ptr->ml) health_track(area(y,x)->m_idx);
+				if (m_ptr->ml) health_track(area(x, y)->m_idx);
 			}
 		}
 	}

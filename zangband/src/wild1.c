@@ -2501,7 +2501,7 @@ void test_mon_wild_integrity(void)
 		for (j = min_hgt; j < max_hgt; j++)
 		{
 			/* Point to location */
-			c_ptr = area(j, i);
+			c_ptr = area(i, j);
 
 			/* Want a monster */
 			if (!c_ptr->m_idx) continue;

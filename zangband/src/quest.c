@@ -565,7 +565,7 @@ static void create_stairs(int x, int y)
 	
 	int ny, nx;
 	
-	cave_type *c_ptr = area(y, x);
+	cave_type *c_ptr = area(x, y);
 	
 	/* Stagger around */
 	while ((cave_perma_grid(c_ptr) || c_ptr->o_idx) && !(i > 100))
@@ -582,7 +582,7 @@ static void create_stairs(int x, int y)
 		/* paranoia */
 		if (!in_bounds(y, x)) continue;
 
-		c_ptr = area(y, x);
+		c_ptr = area(x, y);
 	}
 
 	/* Explain the staircase */

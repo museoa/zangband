@@ -1763,12 +1763,12 @@ bool activate_effect(object_type *o_ptr)
 
 					while (attempts--)
 					{
-						scatter(&y, &x, py, px, 4);
+						scatter(&x, &y, px, py, 4);
 
 						/* paranoia */
 						if (!in_bounds2(y, x)) continue;
 
-						c_ptr = area(y, x);
+						c_ptr = area(x, y);
 						if (!cave_floor_grid(c_ptr)) continue;
 
 						if ((y != py) || (x != px)) break;
@@ -2408,7 +2408,7 @@ bool activate_effect(object_type *o_ptr)
 				/* paranoia */
 				if (!in_bounds2(y, x)) continue;
 
-				c_ptr = area(y, x);
+				c_ptr = area(x, y);
 
 				/* Get the monster */
 				m_ptr = &m_list[c_ptr->m_idx];

@@ -1815,7 +1815,7 @@ monster_hook_type get_monster_hook2(int x, int y)
 	if (p_ptr->depth)
 	{
 		/* Set the monster list */
-		switch (area(y, x)->feat)
+		switch (area(x, y)->feat)
 		{
 		case FEAT_SHAL_WATER:
 			return &(monster_shallow_water_dun);
@@ -1892,7 +1892,7 @@ monster_hook_type get_monster_hook2(int x, int y)
 	}
 
 	/* Set the monster list */
-	switch (area(y, x)->feat)
+	switch (area(x, y)->feat)
 	{
 	case FEAT_SHAL_WATER:
 		return &(monster_shallow_water_wild);

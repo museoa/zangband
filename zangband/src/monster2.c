@@ -121,7 +121,7 @@ void delete_monster_idx(int i)
 	/* Monster is gone */
 	if (in_bounds2(y, x))
 	{
-		area(y, x)->m_idx = 0;
+		area(x, y)->m_idx = 0;
 	}
 
 	/* Delete objects */
@@ -165,7 +165,7 @@ void delete_monster(int x, int y)
 	if (!in_bounds2(y, x)) return;
 
 	/* Check the grid */
-	c_ptr = area(y,x);
+	c_ptr = area(x, y);
 
 	/* Delete the monster (if any) */
 	if (c_ptr->m_idx) delete_monster_idx(c_ptr->m_idx);
@@ -198,7 +198,7 @@ static void compact_monsters_aux(int i1, int i2)
 	x = m_ptr->fx;
 
 	/* Cave grid */
-	c_ptr = area(y,x);
+	c_ptr = area(x, y);
 
 	/* Update the cave */
 	c_ptr->m_idx = i2;
@@ -361,7 +361,7 @@ void wipe_m_list(void)
 		if (in_bounds2(y, x))
 		{
 			/* Monster is gone */
-			area(y, x)->m_idx = 0;
+			area(x, y)->m_idx = 0;
 		}
 
 		/* Wipe the Monster */
@@ -1124,7 +1124,7 @@ void update_mon(int m_idx, bool full)
 			}
 		}
 
-		pc_ptr = parea(fy, fx);
+		pc_ptr = parea(fx, fy);
 
 		/* Normal line of sight, and not blind */
 		if (player_has_los_grid(pc_ptr) && !p_ptr->blind)
@@ -1350,7 +1350,7 @@ bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly, bool pe
 
 
 	/* Access the location */
-	c_ptr = area(y,x);
+	c_ptr = area(x, y);
 	
 	/* Not if other monster is here */
 	if (c_ptr->m_idx) return (FALSE);
@@ -1676,7 +1676,7 @@ static bool place_monster_group(int x, int y, int r_idx, bool slp, bool friendly
 			if ((my == p_ptr->py) && (mx == p_ptr->px)) continue;
 
 			/* Walls and Monsters block flow */
-			c_ptr = area(my, mx);
+			c_ptr = area(mx, my);
 			if (!cave_empty_grid(c_ptr)) continue;
 
 			/* Attempt to place another monster */
@@ -1811,7 +1811,7 @@ bool place_monster_aux(int x, int y, int r_idx, bool slp, bool grp, bool friendl
 			if ((y == p_ptr->py) && (x == p_ptr->px)) continue;
 
 			/* Require empty grids */
-			c_ptr = area(ny, nx);
+			c_ptr = area(nx, ny);
 			if (!cave_empty_grid(c_ptr)) continue;
 
 			/* Prepare allocation table */
@@ -1908,7 +1908,7 @@ bool alloc_horde(int x, int y)
 
 	if (attempts < 1) return FALSE;
 
-	m_idx = area(y,x)->m_idx;
+	m_idx = area(x, y)->m_idx;
 
 	summon_kin_type = r_ptr->d_char;
 
@@ -1959,7 +1959,7 @@ bool alloc_monster(int dis, bool slp)
 		if ((y == py) && (x == px)) continue;
 
 		/* Require empty floor grid (was "naked") */
-		c_ptr = area(y, x);
+		c_ptr = area(x, y);
 		if (!cave_empty_grid(c_ptr)) continue;
 
 		/* Accept far away grids */
@@ -2340,7 +2340,7 @@ bool summon_specific(int who, int x1, int y1, int lev, int type,
 		if ((y == p_ptr->py) && (x == p_ptr->px)) continue;
 
 		/* Require "empty" floor grid */
-		c_ptr = area(y, x);
+		c_ptr = area(x, y);
 		if (!cave_empty_grid(c_ptr)) continue;
 
 		/* ... nor on the Pattern */
@@ -2434,7 +2434,7 @@ bool summon_named_creature(int x1, int y1, int r_idx, bool slp,
 		if ((y == p_ptr->py) && (x == p_ptr->px)) continue;
 
 		/* Require empty grids */
-		c_ptr = area(y, x);
+		c_ptr = area(x, y);
 		if (!cave_empty_grid(c_ptr)) continue;
 
 		/* Place it (allow groups) */
@@ -2479,7 +2479,7 @@ bool multiply_monster(int m_idx, bool clone, bool friendly, bool pet)
 		if ((y == p_ptr->py) && (x == p_ptr->px)) continue;
 
 		/* Require an "empty" floor grid */
-		c_ptr = area(y, x);
+		c_ptr = area(x, y);
 		if (!cave_empty_grid(c_ptr)) continue;
 
 		/* Create a new monster (awake, no groups) */

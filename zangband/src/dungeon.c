@@ -465,7 +465,7 @@ static void wreck_the_pattern(void)
 
 	int to_ruin, r_y, r_x;
 
-	if (area(py, px)->feat == FEAT_PATTERN_XTRA2)
+	if (area(px, py)->feat == FEAT_PATTERN_XTRA2)
 	{
 		/* Ruined already */
 		return;
@@ -483,8 +483,8 @@ static void wreck_the_pattern(void)
 	{
 		scatter(&r_x, &r_y, px, py, 4);
 
-		if ((area(r_y, r_x)->feat >= FEAT_PATTERN_START) &&
-		    (area(r_y, r_x)->feat < FEAT_PATTERN_XTRA2))
+		if ((area(r_x, r_y)->feat >= FEAT_PATTERN_START) &&
+		    (area(r_x, r_y)->feat < FEAT_PATTERN_XTRA2))
 		{
 			cave_set_feat(r_x, r_y, FEAT_PATTERN_XTRA2);
 			
@@ -505,7 +505,7 @@ static void wreck_the_pattern(void)
  */
 static bool pattern_effect(void)
 {
-	cave_type *c_ptr = area(p_ptr->py, p_ptr->px);
+	cave_type *c_ptr = area(p_ptr->px, p_ptr->py);
 
 	if ((c_ptr->feat < FEAT_PATTERN_START) ||
 	    (c_ptr->feat > FEAT_PATTERN_XTRA2))
@@ -878,7 +878,7 @@ static void process_world(void)
 	u32b f1 = 0 , f2 = 0 , f3 = 0;
 	int temp;
 	object_kind *k_ptr;
-	cave_type *c_ptr = area(p_ptr->py, p_ptr->px);
+	cave_type *c_ptr = area(p_ptr->px, p_ptr->py);
 	const mutation_type *mut_ptr;
 
 	/* Announce the level feeling */
@@ -1725,7 +1725,7 @@ static void process_world(void)
 		/* Exit if not in dungeon */
 		if (o_ptr->held_m_idx) continue;
 
-		field_hook(&area(o_ptr->iy, o_ptr->ix)->fld_idx,
+		field_hook(&area(o_ptr->ix, o_ptr->iy)->fld_idx,
 			 FIELD_ACT_OBJECT_ON, (vptr) o_ptr);
 
 		if (!o_ptr->timeout) continue;
@@ -3044,7 +3044,7 @@ static void dungeon(void)
 	if (p_ptr->create_up_stair || p_ptr->create_down_stair)
 	{
 		/* Place a stairway */
-		c_ptr = area(p_ptr->py, p_ptr->px);
+		c_ptr = area(p_ptr->px, p_ptr->py);
 		if (cave_valid_grid(c_ptr))
 		{
 			/* XXX XXX XXX */
@@ -3061,7 +3061,7 @@ static void dungeon(void)
 			}
 
 			/* Mark the stairs as known */
-			parea(p_ptr->py, p_ptr->px)->feat = area(p_ptr->py, p_ptr->px)->feat;
+			parea(p_ptr->px, p_ptr->py)->feat = area(p_ptr->px, p_ptr->py)->feat;
 		}
 
 		/* Cancel the stair request */

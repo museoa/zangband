@@ -2715,7 +2715,7 @@ bool scan_floor(int *items, int *item_num, int x, int y, int mode)
 	if (!in_bounds(y, x)) return (FALSE);
 
 	/* Scan all objects in the grid */
-	for (this_o_idx = area(y, x)->o_idx; this_o_idx; this_o_idx = next_o_idx)
+	for (this_o_idx = area(x, y)->o_idx; this_o_idx; this_o_idx = next_o_idx)
 	{
 		object_type *o_ptr;
 

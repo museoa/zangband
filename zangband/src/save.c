@@ -1093,7 +1093,7 @@ static void save_map(int xmin, int ymin, int xmax, int ymax)
 		for (x = xmin; x < xmax; x++)
 		{
 			/* Get the cave */
-			c_ptr = area(y, x);
+			c_ptr = area(x, y);
 
 			/* Extract a byte */
 			tmp8u = c_ptr->info;
@@ -1133,7 +1133,7 @@ static void save_map(int xmin, int ymin, int xmax, int ymax)
 		for (x = xmin; x < xmax; x++)
 		{
 			/* Get the cave */
-			pc_ptr = parea(y, x);
+			pc_ptr = parea(x, y);
 
 			/* Extract a byte */
 			tmp8u = pc_ptr->player;
@@ -1173,7 +1173,7 @@ static void save_map(int xmin, int ymin, int xmax, int ymax)
 		for (x = xmin; x < xmax; x++)
 		{
 			/* Get the cave */
-			pc_ptr = parea(y, x);
+			pc_ptr = parea(x, y);
 
 			/* Extract a byte */
 			tmp8u = pc_ptr->feat;
@@ -1216,7 +1216,7 @@ static void save_map(int xmin, int ymin, int xmax, int ymax)
 		for (x = xmin; x < xmax; x++)
 		{
 			/* Get the cave */
-			c_ptr = area(y,x);
+			c_ptr = area(x, y);
 
 			/* Extract a byte */
 			tmp8u = c_ptr->feat;

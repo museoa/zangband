@@ -771,7 +771,7 @@ static bool store_will_stock(object_type *o_ptr)
 	f_o_t.result = FALSE;
 	
 	/* Will the store !not! buy this item? */
-	field_hook(&area(p_ptr->py, p_ptr->px)->fld_idx,
+	field_hook(&area(p_ptr->px, p_ptr->py)->fld_idx,
 		 FIELD_ACT_STORE_ACT1, (vptr) &f_o_t);
 	
 	/* We don't want this item type? */
@@ -781,7 +781,7 @@ static bool store_will_stock(object_type *o_ptr)
 	f_o_t.result = TRUE;
 	
 	/* Will the store buy this item? */
-	field_hook(&area(p_ptr->py, p_ptr->px)->fld_idx,
+	field_hook(&area(p_ptr->px, p_ptr->py)->fld_idx,
 		 FIELD_ACT_STORE_ACT2, (vptr) &f_o_t);
 
 	/* Finally check to see if we will buy the item */

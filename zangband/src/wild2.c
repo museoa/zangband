@@ -1957,8 +1957,8 @@ static void add_monsters_block(int x, int y)
 
 void light_dark_square(int x, int y, bool daytime)
 {
-	cave_type *c_ptr = area(y, x);
-	pcave_type *pc_ptr = parea(y, x);
+	cave_type *c_ptr = area(x, y);
+	pcave_type *pc_ptr = parea(x, y);
 	
 	/* Hack -- Notice spot */
 	note_spot(x, y);
@@ -2463,7 +2463,7 @@ static void day_night(void)
 /*
  * Access the old cave array.
  */
-static cave_type *access_cave(int y, int x)
+static cave_type *access_cave(int x, int y)
 {
 	return &cave[y][x];
 }
@@ -2472,7 +2472,7 @@ static cave_type *access_cave(int y, int x)
 /*
  * Access player information in dungeon
  */
-static pcave_type *access_pcave(int y, int x)
+static pcave_type *access_pcave(int x, int y)
 {
 	return &p_ptr->pcave[y][x];
 }
@@ -2480,7 +2480,7 @@ static pcave_type *access_pcave(int y, int x)
 /*
  * Access wilderness
  */
-static cave_type *access_wild(int y, int x)
+static cave_type *access_wild(int x, int y)
 {
 	/*
 	 * Divide by 16 to get block.
@@ -2492,7 +2492,7 @@ static cave_type *access_wild(int y, int x)
 /*
  * Access player information in wilderness
  */
-static pcave_type *access_pwild(int y, int x)
+static pcave_type *access_pwild(int x, int y)
 {
 	/*
 	 * Divide by 16 to get block.
@@ -2680,7 +2680,7 @@ void change_level(int level)
 		{
 			for (j = 0; j < MAX_HGT; j++)
 			{
-				pc_ptr = parea(j, i);
+				pc_ptr = parea(i, j);
 				
 				/* Clear the player dungeon memory */
 				pc_ptr->feat = FEAT_NONE;

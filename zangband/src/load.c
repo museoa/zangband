@@ -1587,8 +1587,8 @@ static void load_map(int xmin, int ymin, int xmax, int ymax)
 		for (i = count; i > 0; i--)
 		{
 			/* Access the cave */
-			c_ptr = area(y, x);
-			pc_ptr = parea(y, x);
+			c_ptr = area(x, y);
+			pc_ptr = parea(x, y);
 			
 			/* Extract "info" (without the CAVE_ROOM flag set)*/
 			c_ptr->info = (tmp8u & (CAVE_GLOW | CAVE_ICKY));
@@ -1630,7 +1630,7 @@ static void load_map(int xmin, int ymin, int xmax, int ymax)
 			for (i = count; i > 0; i--)
 			{
 				/* Access the cave */
-				pc_ptr = parea(y,x);
+				pc_ptr = parea(x, y);
 
 				/* Extract "player" */
 				pc_ptr->player = tmp8u;
@@ -1663,7 +1663,7 @@ static void load_map(int xmin, int ymin, int xmax, int ymax)
 			for (i = count; i > 0; i--)
 			{
 				/* Access the cave */
-				pc_ptr = parea(y,x);
+				pc_ptr = parea(x, y);
 
 				/* Extract "feat" */
 				pc_ptr->feat = tmp8u;
@@ -1694,7 +1694,7 @@ static void load_map(int xmin, int ymin, int xmax, int ymax)
 		for (i = count; i > 0; i--)
 		{
 			/* Access the cave */
-			c_ptr = area(y,x);
+			c_ptr = area(x, y);
 
 			/* Extract "feat" */
 			c_ptr->feat = tmp8u;
@@ -1705,7 +1705,7 @@ static void load_map(int xmin, int ymin, int xmax, int ymax)
 			/* Fix player memory for old savefiles */
 			if (sf_version < 28)
 			{
-				pc_ptr = parea(y,x);
+				pc_ptr = parea(x, y);
 				
 				/* Old CAVE_MARK flag set? */
 				if (pc_ptr->player & 0x01)
@@ -1775,7 +1775,7 @@ static void load_map(int xmin, int ymin, int xmax, int ymax)
 				for (i = count; i > 0; i--)
 				{
 					/* Access the cave */
-					c_ptr = area(y,x);
+					c_ptr = area(x, y);
 
 					/* Extract field */
 					c_ptr->fld_idx = 0;
@@ -2282,7 +2282,7 @@ static errr rd_dungeon(void)
 
 			
 			/* Access the item location */
-			c_ptr = area(o_ptr->iy,o_ptr->ix);
+			c_ptr = area(o_ptr->ix, o_ptr->iy);
 
 			/* Build a stack */
 			o_ptr->next_o_idx = c_ptr->o_idx;
@@ -2334,7 +2334,7 @@ static errr rd_dungeon(void)
 			}
 			
 			/* Access grid */
-			c_ptr = area(m_ptr->fy,m_ptr->fx);
+			c_ptr = area(m_ptr->fx, m_ptr->fy);
 
 			/* Mark the location */
 			c_ptr->m_idx = m_idx;
@@ -2376,7 +2376,7 @@ static errr rd_dungeon(void)
 			if (!((sf_version < VERSION_CHANGE_WILD) && (p_ptr->depth == 0)))
 			{
 				/* Access the fields location */
-				c_ptr = area(f_ptr->fy, f_ptr->fx);
+				c_ptr = area(f_ptr->fx, f_ptr->fy);
 
 				/* Build a stack */
 				fld_idx = field_add(f_ptr, &c_ptr->fld_idx);

@@ -507,7 +507,7 @@ void search(void)
 				if (!in_bounds2(y, x)) continue;
 
 				/* Access the grid */
-				c_ptr = area(y, x);
+				c_ptr = area(x, y);
 
 				/* Save x and y into temp variables */
 				tx = x;
@@ -690,7 +690,7 @@ void carry(int pickup)
 	handle_stuff();
 
 	/* Scan the pile of objects */
-	for (this_o_idx = area(py, px)->o_idx; this_o_idx; this_o_idx = next_o_idx)
+	for (this_o_idx = area(px, py)->o_idx; this_o_idx; this_o_idx = next_o_idx)
 	{
 		object_type *o_ptr;
 
@@ -1423,7 +1423,7 @@ void py_attack(int x, int y)
 
 	int blows;
 
-	cave_type       *c_ptr = area(y,x);
+	cave_type       *c_ptr = area(x, y);
 
 	monster_type    *m_ptr = &m_list[c_ptr->m_idx];
 	monster_race    *r_ptr = &r_info[m_ptr->r_idx];
@@ -2038,8 +2038,8 @@ static bool pattern_seq(int c_x, int c_y, int n_x, int n_y)
 {
 	cave_type *c1_ptr, *c2_ptr;
 	
-	c1_ptr = area(c_y, c_x);
-	c2_ptr = area(n_y, n_x);
+	c1_ptr = area(c_x, c_y);
+	c2_ptr = area(n_x, n_y);
 	
 	if (!pattern_tile(c1_ptr) && !pattern_tile(c2_ptr))
 		return TRUE;
@@ -2165,7 +2165,7 @@ static bool pattern_seq(int c_x, int c_y, int n_x, int n_y)
 					break;
 				default:
 					if (p_ptr->wizard)
-						msg_format("Funny Pattern walking, %d.", *area(c_y, c_x));
+						msg_format("Funny Pattern walking, %d.", *area(c_x, c_y));
 					return TRUE; /* Goof-up */
 			}
 
@@ -2246,8 +2246,8 @@ void move_player(int dir, int do_pickup)
 	}
 
 	/* Examine the destination */
-	c_ptr = area(y, x);
-	pc_ptr = parea(y, x);
+	c_ptr = area(x, y);
+	pc_ptr = parea(x, y);
 
 	/* Get the monster */
 	m_ptr = &m_list[c_ptr->m_idx];
@@ -2301,15 +2301,15 @@ void move_player(int dir, int do_pickup)
 			{
 				py_attack(x, y);
 			}
-			else if (cave_floor_grid(area(py, px)) ||
+			else if (cave_floor_grid(area(px, py)) ||
 			    (r_info[m_ptr->r_idx].flags2 & RF2_PASS_WALL))
 			{
 				msg_format("You push past %s.", m_name);
 				m_ptr->fy = py;
 				m_ptr->fx = px;
-				area(py, px)->m_idx = c_ptr->m_idx;
+				area(px, py)->m_idx = c_ptr->m_idx;
 				c_ptr->m_idx = 0;
-				update_mon(area(py, px)->m_idx, TRUE);
+				update_mon(area(px, py)->m_idx, TRUE);
 			}
 			else
 			{
@@ -2514,7 +2514,7 @@ void move_player(int dir, int do_pickup)
 		ox = px;
 
 		/* Process fields under the player. */
-		field_hook(&area(py, px)->fld_idx,
+		field_hook(&area(px, py)->fld_idx,
 			 FIELD_ACT_PLAYER_LEAVE, NULL);
 
 		/* Move the player */
@@ -2536,7 +2536,7 @@ void move_player(int dir, int do_pickup)
 		lite_spot(ox, oy);
 		
 		/* Process fields under the player. */
-		field_hook(&area(y, x)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);
+		field_hook(&area(x, y)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);
  
 		/* Sound */
 		/* sound(SOUND_WALK); */
@@ -2607,7 +2607,7 @@ static int see_wall(int dir, int x, int y)
 	/* Illegal grids are "walls" */
 	if (!in_boundsp(y, x)) return (TRUE);
 
-	pc_ptr = parea(y, x);
+	pc_ptr = parea(x, y);
 	
 	feat = pc_ptr->feat;
 
@@ -2646,8 +2646,8 @@ static int see_nothing(int dir, int x, int y)
 	/* Illegal grids are unknown */
 	if (!in_boundsp(y, x)) return (FALSE);
 
-	c_ptr = area(y, x);
-	pc_ptr = parea(y, x);
+	c_ptr = area(x, y);
+	pc_ptr = parea(x, y);
 
 	/* Memorized grids are always known */
 	if (pc_ptr->feat) return (FALSE);
@@ -2972,8 +2972,8 @@ static bool run_test(void)
 		if (!in_boundsp(row, col)) continue;
 
 		/* Access grid */
-		c_ptr = area(row, col);
-		pc_ptr = parea(row, col);
+		c_ptr = area(col, row);
+		pc_ptr = parea(col, row);
 
 
 		/* Visible monsters abort running */
@@ -3257,7 +3257,7 @@ static bool run_test(void)
 			if (!in_bounds2(row, col)) continue;
 
 			/* Access grid */
-			c_ptr = area(row, col);
+			c_ptr = area(col, row);
 
 			/* Unknown grid or non-wall XXX XXX XXX cave_floor_grid(c_ptr)) */
 			if (!see_wall(new_dir, px, py))

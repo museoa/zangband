@@ -22,7 +22,7 @@ void do_cmd_go_up(void)
 	cave_type *c_ptr;
 
 	/* Player grid */
-	c_ptr = area(p_ptr->py, p_ptr->px);
+	c_ptr = area(p_ptr->px, p_ptr->py);
 
 	if (c_ptr->feat == FEAT_LESS)
 	{
@@ -91,7 +91,7 @@ void do_cmd_go_down(void)
 	bool go_down = FALSE;
 
 	/* Player grid */
-	c_ptr = area(p_ptr->py, p_ptr->px);
+	c_ptr = area(p_ptr->px, p_ptr->py);
 
 	if (c_ptr->feat != FEAT_MORE)
 	{
@@ -212,7 +212,7 @@ void do_cmd_toggle_search(void)
  */
 static s16b chest_check(int x, int y)
 {
-	cave_type *c_ptr = area(y, x);
+	cave_type *c_ptr = area(x, y);
 
 	s16b this_o_idx, next_o_idx;
 
@@ -600,7 +600,7 @@ int count_traps(int *x, int *y, bool under)
 		if (!in_bounds2(yy, xx)) continue;
 
 		/* Not looking for this feature */
-		if (!is_visible_trap(area(yy, xx))) continue;
+		if (!is_visible_trap(area(xx, yy))) continue;
 
 		/* OK */
 		++count;
@@ -638,10 +638,10 @@ static int count_doors(int *x, int *y, bool (*test)(int feat), bool under)
 		if (!in_boundsp(yy, xx)) continue;
 
 		/* Must have knowledge */
-		if (!(parea(yy, xx)->feat)) continue;
+		if (!(parea(xx, yy)->feat)) continue;
 
 		/* Not looking for this feature */
-		if (!((*test)(area(yy, xx)->feat))) continue;
+		if (!((*test)(area(xx, yy)->feat))) continue;
 
 		/* OK */
 		++count;
@@ -741,7 +741,7 @@ bool do_cmd_open_aux(int x, int y)
 	p_ptr->energy_use = 100;
 
 	/* Get requested grid */
-	c_ptr = area(y, x);
+	c_ptr = area(x, y);
 	
 	/* Must be a closed door */
 	if (c_ptr->feat != FEAT_CLOSED)
@@ -867,7 +867,7 @@ void do_cmd_open(void)
 		if (!in_bounds2(y, x)) return;
 
 		/* Get requested grid */
-		c_ptr = area(y, x);
+		c_ptr = area(x, y);
 
 		/* Check for chest */
 		o_idx = chest_check(x, y);
@@ -942,7 +942,7 @@ static bool do_cmd_close_aux(int x, int y)
 	p_ptr->energy_use = 100;
 
 	/* Get grid and contents */
-	c_ptr = area(y,x);
+	c_ptr = area(x, y);
 
 	/* Broken door */
 	if (c_ptr->feat == FEAT_BROKEN)
@@ -1026,7 +1026,7 @@ void do_cmd_close(void)
 		}
 
 		/* Get grid and contents */
-		c_ptr = area(y,x);
+		c_ptr = area(x, y);
 
 		/* Require open/broken door */
 		if ((c_ptr->feat != FEAT_OPEN) && (c_ptr->feat != FEAT_BROKEN))
@@ -1066,7 +1066,7 @@ void do_cmd_close(void)
  */
 static bool twall(int x, int y, byte feat)
 {
-	cave_type	*c_ptr = area(y, x);
+	cave_type *c_ptr = area(x, y);
 
 	/* Paranoia -- Require a wall or door or some such */
 	if (cave_floor_grid(c_ptr)) return (FALSE);
@@ -1099,8 +1099,8 @@ static bool do_cmd_tunnel_aux(int x, int y)
 {
 	bool more = FALSE;
 	
-	cave_type *c_ptr = area(y, x);
-	pcave_type *pc_ptr = parea(y, x);
+	cave_type *c_ptr = area(x, y);
+	pcave_type *pc_ptr = parea(x, y);
 	
 	int action;
 	
@@ -1443,7 +1443,7 @@ void do_cmd_tunnel(void)
 		}
 
 		/* Get grid */
-		c_ptr = area(y, x);
+		c_ptr = area(x, y);
 
 		/* No tunnelling through doors */
 		if (c_ptr->feat == FEAT_CLOSED)
@@ -1729,7 +1729,7 @@ void do_cmd_disarm(void)
 		}
 
 		/* Get grid and contents */
-		c_ptr = area(y,x);
+		c_ptr = area(x, y);
 
 		/* Check for chests */
 		o_idx = chest_check(x, y);
@@ -1822,7 +1822,7 @@ void do_cmd_alter(void)
 		}
 
 		/* Get grid */
-		c_ptr = area(y, x);
+		c_ptr = area(x, y);
 
 		/* Take a turn */
 		p_ptr->energy_use = 100;
@@ -1969,7 +1969,7 @@ void do_cmd_spike(void)
 		}
 
 		/* Get grid and contents */
-		c_ptr = area(y,x);
+		c_ptr = area(x, y);
 
 		/* Require closed door */
 		if (c_ptr->feat != FEAT_CLOSED)
@@ -2134,7 +2134,7 @@ void do_cmd_stay(int pickup)
 	/* 
 	 * Fields you are standing on may do something.
 	 */
-	field_hook(&area(p_ptr->py, p_ptr->px)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);
+	field_hook(&area(p_ptr->px, p_ptr->py)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);
 }
 
 
@@ -2555,7 +2555,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 		if (!in_bounds2(ny, nx)) break;
 
 		/* Stopped by walls/doors */
-		c_ptr = area(ny, nx);
+		c_ptr = area(nx, ny);
 		if (!cave_floor_grid(c_ptr)) break;
 
 		/* Advance the distance */
@@ -2992,7 +2992,7 @@ void do_cmd_throw_aux(int mult)
 		}
 
 		/* Stopped by walls/doors */
-		c_ptr = area(ny, nx);
+		c_ptr = area(nx, ny);
 		if (!cave_floor_grid(c_ptr))
 		{
 			hit_wall = TRUE;
@@ -3236,17 +3236,17 @@ void do_cmd_throw_aux(int mult)
 
 			if (potion_smash_effect(0, x, y, q_ptr->k_idx))
 			{
-				monster_type *m_ptr = &m_list[area(y, x)->m_idx];
+				monster_type *m_ptr = &m_list[area(x, y)->m_idx];
 
 				/* ToDo (Robert): fix the invulnerability */
-				if (area(y, x)->m_idx &&
-				    !is_hostile(&m_list[area(y, x)->m_idx]) &&
+				if (area(x, y)->m_idx &&
+				    !is_hostile(&m_list[area(x, y)->m_idx]) &&
 				    !(m_ptr->invulner))
 				{
 					char m_name2[80];
-					monster_desc(m_name2, &m_list[area(y, x)->m_idx], 0);
+					monster_desc(m_name2, &m_list[area(x, y)->m_idx], 0);
 					msg_format("%^s gets angry!", m_name2);
-					set_hostile(&m_list[area(y, x)->m_idx]);
+					set_hostile(&m_list[area(x, y)->m_idx]);
 				}
 			}
 

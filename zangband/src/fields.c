@@ -31,7 +31,7 @@ static s16b *field_find(s16b fld_idx)
 	/* Point to the field */
 	f_ptr = &fld_list[fld_idx];
 
-	location = &(area(f_ptr->fy, f_ptr->fx)->fld_idx);
+	location = &(area(f_ptr->fx, f_ptr->fy)->fld_idx);
 
 	while (*location != fld_idx)
 	{
@@ -70,7 +70,7 @@ void excise_field_idx(int fld_idx)
 	if ((x == 0) && (y == 0)) return;
 
 	/* Grid */
-	c_ptr = area(y, x);
+	c_ptr = area(x, y);
 
 	/* Scan all fields in the grid */
 	for (this_f_idx = c_ptr->fld_idx; this_f_idx; this_f_idx = next_f_idx)
@@ -130,7 +130,7 @@ static void notice_field(field_type *f_ptr)
 	if (in_boundsp(y, x))
 	{
 		/* Can the player see the square? */
-		if (player_has_los_grid(parea(y, x)))
+		if (player_has_los_grid(parea(x, y)))
 		{		
 			/* Note + Lite the spot */
 			note_spot(x, y);
@@ -251,7 +251,7 @@ void delete_field(int x, int y)
 	if (!in_bounds(y, x)) return;
 
 	/* Grid */
-	c_ptr = area(y,x);
+	c_ptr = area(x, y);
 
 	delete_field_aux(&(c_ptr->fld_idx));
 	
@@ -319,7 +319,7 @@ static void compact_fields_aux(int i1, int i2)
 	if ((y) && (x))
 	{
 		/* Acquire grid */
-		c_ptr = area(y, x);
+		c_ptr = area(x, y);
 
 		/* Repair grid */
 		if (c_ptr->fld_idx == i1)
@@ -547,7 +547,7 @@ void wipe_f_list(void)
 		x = f_ptr->fx;
 
 		/* Access grid */
-		c_ptr = area(y,x);
+		c_ptr = area(x, y);
 
 		/* Hack -- see above */
 		c_ptr->fld_idx = 0;
@@ -1031,7 +1031,7 @@ s16b place_field(int x, int y, s16b t_idx)
 	field_prep(ft_ptr, t_idx);
 	
 	/* Get pointer to field list */
-	fld_ptr = &(area(y, x)->fld_idx);
+	fld_ptr = &(area(x, y)->fld_idx);
 
 	/* Place it */
 	fld_idx = field_add(ft_ptr, fld_ptr);
@@ -1294,7 +1294,7 @@ void test_field_data_integrity(void)
 		for (j = p_ptr->min_hgt; j < p_ptr->max_hgt; j++)
 		{
 			/* Point to location */
-			c_ptr = area(j, i);
+			c_ptr = area(i, j);
 
 			fld_idx = c_ptr->fld_idx;
 
@@ -1415,7 +1415,7 @@ bool field_action_glyph_warding(field_type *f_ptr, vptr input)
 	    (randint1(BREAK_GLYPH) < r_ptr->level)) 
 	{
 		/* Describe observable breakage */
-		if (player_has_los_grid(parea(f_ptr->fy, f_ptr->fx)))
+		if (player_has_los_grid(parea(f_ptr->fx, f_ptr->fy)))
 		{
 			msg_print("The rune of protection is broken!");
 		}
@@ -1516,7 +1516,7 @@ bool field_action_corpse_decay(field_type *f_ptr, vptr nothing)
 		if (summon_named_creature(f_ptr->fx, f_ptr->fy,
 				 r_idx, FALSE, FALSE, FALSE))
 		{
-			if (player_has_los_grid(parea(f_ptr->fy, f_ptr->fx)))
+			if (player_has_los_grid(parea(f_ptr->fx, f_ptr->fy)))
 			{
 				if (disturb_minor) msg_format("The %s rises.", t_ptr->name);
 			}
@@ -1526,7 +1526,7 @@ bool field_action_corpse_decay(field_type *f_ptr, vptr nothing)
 		}
 		
 		/* Paranoia */
-		else if (player_has_los_grid(parea(f_ptr->fy, f_ptr->fx)))
+		else if (player_has_los_grid(parea(f_ptr->fx, f_ptr->fy)))
 		{
 			/* Let player know what happened. */
 			if (disturb_minor) msg_format("The %s decays.", t_ptr->name);
@@ -1535,7 +1535,7 @@ bool field_action_corpse_decay(field_type *f_ptr, vptr nothing)
 	}
 	else
 	{
-		if (player_has_los_grid(parea(f_ptr->fy, f_ptr->fx)))
+		if (player_has_los_grid(parea(f_ptr->fx, f_ptr->fy)))
 		{
 			/* Let player know what happened. */
 			if (disturb_minor) msg_format("The %s decays.", t_ptr->name);
@@ -3087,7 +3087,7 @@ bool field_action_hit_trap_lose_memory(field_type *f_ptr, vptr nothing)
  */
 void make_lockjam_door(int y, int x, int power, bool jam)
 {
-	cave_type *c_ptr = area(y, x);
+	cave_type *c_ptr = area(x, y);
 	field_type *f_ptr;
 	
 	s16b fld_idx = *field_is_type(&c_ptr->fld_idx, FTYPE_DOOR);
@@ -3443,8 +3443,8 @@ bool field_action_door_gf(field_type *f_ptr, vptr input)
 			f_m_t->notice = TRUE;
 		}
 
-		c_ptr = area(f_ptr->fy, f_ptr->fx);
-		pc_ptr = parea(f_ptr->fy, f_ptr->fx);
+		c_ptr = area(f_ptr->fx, f_ptr->fy);
+		pc_ptr = parea(f_ptr->fx, f_ptr->fy);
 		
 		/* Destroy the feature */
 		c_ptr->feat = FEAT_FLOOR;
@@ -3464,8 +3464,8 @@ bool field_action_door_gf(field_type *f_ptr, vptr input)
 			f_m_t->notice = TRUE;
 		}
 
-		c_ptr = area(f_ptr->fy, f_ptr->fx);
-		pc_ptr = parea(f_ptr->fy, f_ptr->fx);
+		c_ptr = area(f_ptr->fx, f_ptr->fy);
+		pc_ptr = parea(f_ptr->fx, f_ptr->fy);
 		
 		/* Destroy the feature */
 		c_ptr->feat = FEAT_FLOOR;

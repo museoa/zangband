@@ -829,8 +829,8 @@ bool detect_traps(void)
 			if (distance(px, py, x, y) > MAX_DETECT) continue;
 
 			/* Access the grid */
-			c_ptr = area(y, x);
-			pc_ptr = parea(y, x);
+			c_ptr = area(x, y);
+			pc_ptr = parea(x, y);
 
 			/* Detect traps */
 			if (field_detect_type(c_ptr->fld_idx, FTYPE_TRAP))
@@ -880,8 +880,8 @@ bool detect_doors(void)
 
 			if (distance(px, py, x, y) > MAX_DETECT) continue;
 
-			c_ptr = area(y, x);
-			pc_ptr = parea(y, x);
+			c_ptr = area(x, y);
+			pc_ptr = parea(x, y);
 
 			/* Detect secret doors */
 			if (c_ptr->feat == FEAT_SECRET)
@@ -942,8 +942,8 @@ bool detect_stairs(void)
 
 			if (distance(px, py, x, y) > MAX_DETECT) continue;
 
-			c_ptr = area(y, x);
-			pc_ptr = parea(y, x);
+			c_ptr = area(x, y);
+			pc_ptr = parea(x, y);
 
 			/* Detect stairs */
 			if ((c_ptr->feat == FEAT_LESS) ||
@@ -996,8 +996,8 @@ bool detect_treasure(void)
 
 			if (distance(px, py, x, y) > MAX_DETECT) continue;
 
-			c_ptr = area(y, x);
-			pc_ptr = parea(y, x);
+			c_ptr = area(x, y);
+			pc_ptr = parea(x, y);
 
 			/* Notice embedded gold */
 
@@ -1743,7 +1743,7 @@ bool project_hack(int typ, int dam)
 		x = m_ptr->fx;
 
 		/* Require line of sight */
-		if (!player_has_los_grid(parea(y, x))) continue;
+		if (!player_has_los_grid(parea(x, y))) continue;
 
 		/* Mark the monster */
 		m_ptr->mflag |= (MFLAG_TEMP);
@@ -1902,12 +1902,12 @@ bool raise_dead(int x, int y, bool pet)
 		/* Require line of sight */
 		if (!los(fx, fy, x, y)) continue;
 
-		c_ptr = area(fy, fx);
+		c_ptr = area(fx, fy);
 
 		/* Raise Corpses / Skeletons */
 		if (field_hook_special(&c_ptr->fld_idx, FTYPE_CORPSE, (vptr) &pet))
 		{
-			if (player_has_los_grid(parea(fy, fx))) obvious = TRUE;
+			if (player_has_los_grid(parea(fx, fy))) obvious = TRUE;
 		}
 	}
 
@@ -1955,7 +1955,7 @@ void aggravate_monsters(int who)
 		}
 
 		/* Speed up monsters in line of sight */
-		if (player_has_los_grid(parea(m_ptr->fy, m_ptr->fx)))
+		if (player_has_los_grid(parea(m_ptr->fx, m_ptr->fy)))
 		{
 			/* Speed up (instantly) to racial base + 10 */
 			if (m_ptr->mspeed < r_ptr->speed + 10)
@@ -2157,7 +2157,7 @@ bool probing(void)
 		if (!m_ptr->r_idx) continue;
 
 		/* Require line of sight */
-		if (!player_has_los_grid(parea(m_ptr->fy, m_ptr->fx))) continue;
+		if (!player_has_los_grid(parea(m_ptr->fx, m_ptr->fy))) continue;
 
 		/* Probe visible monsters */
 		if (m_ptr->ml)
@@ -2234,8 +2234,8 @@ bool destroy_area(int x1, int y1, int r)
 			if (k > r) continue;
 
 			/* Access the grid */
-			c_ptr = area(y, x);
-			pc_ptr = parea(y, x);
+			c_ptr = area(x, y);
+			pc_ptr = parea(x, y);
 
 			/* Lose room and vault */
 			c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY);
@@ -2420,8 +2420,8 @@ bool earthquake(int cx, int cy, int r)
 			if (distance(cy, cx, yy, xx) > r) continue;
 
 			/* Access the grid */
-			c_ptr = area(yy, xx);
-			pc_ptr = parea(yy, xx);
+			c_ptr = area(xx, yy);
+			pc_ptr = parea(xx, yy);
 
 			/* Lose room and vault */
 			c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY);
@@ -2456,7 +2456,7 @@ bool earthquake(int cx, int cy, int r)
 			if (!in_bounds2(y, x)) continue;
 
 			/* Access the grid */
-			c_ptr = area(y, x);
+			c_ptr = area(x, y);
 
 			/* Skip non-empty grids */
 			if (!cave_empty_grid(c_ptr)) continue;
@@ -2541,7 +2541,7 @@ bool earthquake(int cx, int cy, int r)
 			ox = px;
 
 			/* Process fields under the player. */
-			field_hook(&area(py, px)->fld_idx,
+			field_hook(&area(px, py)->fld_idx,
 				 FIELD_ACT_PLAYER_LEAVE, NULL);
 
 			/* Move the player */
@@ -2567,7 +2567,7 @@ bool earthquake(int cx, int cy, int r)
 			lite_spot(px, py);
 
 			/* Process fields under the player. */
-			field_hook(&area(py, px)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);
+			field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);
 
 			/* Check for new panel */
 			verify_panel();
@@ -2596,7 +2596,7 @@ bool earthquake(int cx, int cy, int r)
 			if (!in_bounds2(yy, xx)) continue;
 
 			/* Access the grid */
-			c_ptr = area(yy, xx);
+			c_ptr = area(xx, yy);
 
 			/* Process monsters */
 			if (c_ptr->m_idx)
@@ -2635,7 +2635,7 @@ bool earthquake(int cx, int cy, int r)
 							if (!in_bounds2(y, x)) continue;
 
 							/* Access the grid */
-							c_ptr = area(y, x);
+							c_ptr = area(x, y);
 
 							/* Skip non-empty grids */
 							if (!cave_empty_grid(c_ptr)) continue;
@@ -2714,13 +2714,13 @@ bool earthquake(int cx, int cy, int r)
 					/* Hack -- Escape from the rock */
 					if (sn)
 					{
-						int m_idx = area(yy,xx)->m_idx;
+						int m_idx = area(xx, yy)->m_idx;
 
 						/* Update the new location */
-						area(sy,sx)->m_idx = m_idx;
+						area(sx, sy)->m_idx = m_idx;
 
 						/* Update the old location */
-						area(yy,xx)->m_idx = 0;
+						area(xx, yy)->m_idx = 0;
 
 						/* Move the monster */
 						m_ptr->fy = sy;
@@ -2756,7 +2756,7 @@ bool earthquake(int cx, int cy, int r)
 			if (!in_bounds2(yy, xx)) continue;
 
 			/* Access the cave grid */
-			c_ptr = area(yy, xx);
+			c_ptr = area(xx, yy);
 
 			/* Paranoia -- never affect player */
 			if ((yy == py) && (xx == px)) continue;
@@ -2860,7 +2860,7 @@ static void cave_temp_room_lite(void)
 			int y = temp_y[i] + ddy_ddd[j];
 			int x = temp_x[i] + ddx_ddd[j];
 
-			cave_type *c_ptr = area(y,x);
+			cave_type *c_ptr = area(x, y);
 
 			/* Verify */
 			if (!in_bounds2(y, x)) continue;
@@ -2956,8 +2956,8 @@ static void cave_temp_room_unlite(void)
 			/* Verify */
 			if (!in_boundsp(y, x)) continue;
 			
-			c_ptr = area(y, x);
-			pc_ptr = parea(y, x);
+			c_ptr = area(x, y);
+			pc_ptr = parea(x, y);
 
 			/* No longer in the array */
 			c_ptr->info &= ~(CAVE_TEMP);
@@ -3015,7 +3015,7 @@ static int next_to_open(int cx, int cy)
 
 		if (!in_bounds2(y, x)) continue;
 
-		c_ptr = area(y, x);
+		c_ptr = area(x, y);
 
 		/* Found a wall, break the length */
 		if (!cave_floor_grid(c_ptr))
@@ -3055,7 +3055,7 @@ static int next_to_walls_adj(int cx, int cy)
 
 		if (!in_bounds2(y, x)) continue;
 
-		c_ptr = area(y, x);
+		c_ptr = area(x, y);
 
 		if (!cave_floor_grid(c_ptr)) c++;
 	}
@@ -3075,7 +3075,7 @@ static void cave_temp_room_aux(int x, int y)
 	if (!in_bounds(y, x)) return;
 
 	/* Get the grid */
-	c_ptr = area(y, x);
+	c_ptr = area(x, y);
 
 	/* Avoid infinite recursion */
 	if (c_ptr->info & (CAVE_TEMP)) return;
@@ -3129,7 +3129,7 @@ void lite_room(int x1, int y1)
 	{
 		x = temp_x[i], y = temp_y[i];
 
-		c_ptr = area(y, x);
+		c_ptr = area(x, y);
 
 		/* Walls get lit, but stop light */
 		if (!cave_floor_grid(c_ptr)) continue;
@@ -3169,7 +3169,7 @@ void unlite_room(int x1, int y1)
 	{
 		x = temp_x[i], y = temp_y[i];
 
-		c_ptr = area(y, x);
+		c_ptr = area(x, y);
 
 		/* Walls get dark, but stop darkness */
 		if (!cave_floor_grid(c_ptr)) continue;
@@ -3307,7 +3307,7 @@ bool teleport_swap(int dir)
 		return FALSE;
 	}
 
-	c_ptr = area(ty,tx);
+	c_ptr = area(tx, ty);
 
 	if (!c_ptr->m_idx)
 	{
@@ -3331,14 +3331,14 @@ bool teleport_swap(int dir)
 	sound(SOUND_TELEPORT);
 
 	/* Process fields under the player. */
-	field_hook(&area(py, px)->fld_idx, FIELD_ACT_PLAYER_LEAVE, NULL);
+	field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_LEAVE, NULL);
 
 	/* Process fields under the monster. */
-	field_hook(&area(m_ptr->fy, m_ptr->fx)->fld_idx,
+	field_hook(&area(m_ptr->fx, m_ptr->fy)->fld_idx,
 		 FIELD_ACT_MONSTER_LEAVE, m_ptr);
 
 	/* Move monster */
-	area(py, px)->m_idx = c_ptr->m_idx;
+	area(px, py)->m_idx = c_ptr->m_idx;
 
 	/* Update the old location */
 	c_ptr->m_idx = 0;
@@ -3367,7 +3367,7 @@ bool teleport_swap(int dir)
 	}
 	
 	/* Update the monster (new location) */
-	update_mon(area(ty, tx)->m_idx, TRUE);
+	update_mon(area(tx, ty)->m_idx, TRUE);
 	
 	/* Redraw the old grid */
 	lite_spot(tx, ty);
@@ -3376,10 +3376,10 @@ bool teleport_swap(int dir)
 	lite_spot(px, py);
 
 	/* Process fields under the player. */
-	field_hook(&area(py, px)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);
+	field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);
 
 	/* Process fields under the monster. */
-	field_hook(&area(m_ptr->fy, m_ptr->fx)->fld_idx,
+	field_hook(&area(m_ptr->fx, m_ptr->fy)->fld_idx,
 		FIELD_ACT_MONSTER_ENTER, (vptr) m_ptr);
 
 	/* Check for new panel (redraw map) */
@@ -4155,7 +4155,7 @@ bool starlite(void)
 			/* paranoia */
 			if (!in_bounds2(y, x)) continue;
 
-			c_ptr = area(y, x);
+			c_ptr = area(x, y);
 
 			if (!cave_floor_grid(c_ptr)) continue;
 

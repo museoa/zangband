@@ -94,7 +94,7 @@ void excise_object_idx(int o_idx)
 		if ((x == 0) && (y == 0)) return;
 
 		/* Grid */
-		c_ptr = area(y, x);
+		c_ptr = area(x, y);
 
 		/* Scan all objects in the grid */
 		for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
@@ -191,7 +191,7 @@ void delete_object(int x, int y)
 	if (!in_bounds(y, x)) return;
 
 	/* Grid */
-	c_ptr = area(y,x);
+	c_ptr = area(x, y);
 
 	/* Scan all objects in the grid */
 	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
@@ -313,7 +313,7 @@ static void compact_objects_aux(int i1, int i2)
 		x = o_ptr->ix;
 
 		/* Acquire grid */
-		c_ptr = area(y,x);
+		c_ptr = area(x, y);
 
 		/* Repair grid */
 		if (c_ptr->o_idx == i1)
@@ -504,7 +504,7 @@ void wipe_o_list(void)
 			int x = o_ptr->ix;
 
 			/* Access grid */
-			c_ptr = area(y,x);
+			c_ptr = area(x, y);
 
 			/* Hack -- see above */
 			c_ptr->o_idx = 0;
@@ -624,7 +624,7 @@ errr get_obj_store_prep(void)
 	object_type *o_ptr = &dummy_object;
 
 	/* The field to use */
-	s16b *fld_ptr = &area(p_ptr->py, p_ptr->px)->fld_idx;
+	s16b *fld_ptr = &area(p_ptr->px, p_ptr->py)->fld_idx;
 	
 	/* Thing to pass to the action functions */
 	field_obj_test f_o_t;
@@ -4096,7 +4096,7 @@ void place_object(int x, int y, bool good, bool great)
 	if (!in_bounds(y, x)) return;
 
 	/* Acquire grid */
-	c_ptr = area(y, x);
+	c_ptr = area(x, y);
 
 	/* Require clean floor space */
 	if (!cave_gen_grid(c_ptr)) return;
@@ -4216,7 +4216,7 @@ void place_gold(int x, int y)
 	if (!in_bounds(y, x)) return;
 
 	/* Acquire grid */
-	c_ptr = area(y,x);
+	c_ptr = area(x, y);
 
 	/* Require clean floor space */
 	if (!cave_clean_grid(c_ptr)) return;
@@ -4356,7 +4356,7 @@ s16b drop_near(object_type *j_ptr, int chance, int x, int y)
 			if (!los(x, y, tx, ty)) continue;
 
 			/* Obtain grid */
-			c_ptr = area(ty,tx);
+			c_ptr = area(tx, ty);
 
 			/* Require floor space */
 			if ((c_ptr->feat != FEAT_FLOOR) &&
@@ -4464,7 +4464,7 @@ s16b drop_near(object_type *j_ptr, int chance, int x, int y)
 		}
 
 		/* Grid */
-		c_ptr = area(ty,tx);
+		c_ptr = area(tx, ty);
 
 		/* Require floor space (or shallow terrain) -KMW- */
 		if ((c_ptr->feat != FEAT_FLOOR) &&
@@ -4493,7 +4493,7 @@ s16b drop_near(object_type *j_ptr, int chance, int x, int y)
 	}
 
 	/* Grid */
-	c_ptr = area(by,bx);
+	c_ptr = area(bx, by);
 
 	/* Hack - artifacts will not be affected by terrain */
 	if (!(j_ptr->flags3 & TR3_INSTA_ART))
@@ -4623,7 +4623,7 @@ s16b drop_near(object_type *j_ptr, int chance, int x, int y)
 	}
 
 	/* Fields may interact with an object in some way */
-	field_hook(&area(by, bx)->fld_idx, FIELD_ACT_OBJECT_DROP,
+	field_hook(&area(bx, by)->fld_idx, FIELD_ACT_OBJECT_DROP,
 		 (vptr) &o_list[o_idx]);
 
 	/* XXX XXX XXX */

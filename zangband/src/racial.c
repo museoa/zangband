@@ -75,7 +75,7 @@ static void eat_corpse(void)
 	s16b fld_idx;
 	field_type *f_ptr;
 	
-	fld_idx = area(p_ptr->py, p_ptr->px)->fld_idx;
+	fld_idx = area(p_ptr->px, p_ptr->py)->fld_idx;
 	
 	/* While there are fields in the linked list */
 	while (fld_idx)
@@ -556,7 +556,7 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 				/* Paranoia */
 				if (!in_bounds2(y, x)) break;
 
-				c_ptr = area(y, x);
+				c_ptr = area(x, y);
 
 				if (!c_ptr->m_idx)
 				{

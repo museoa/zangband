@@ -960,7 +960,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 		/* paranoia */
 		if (!in_bounds2(y, x)) return;
 
-		c_ptr = area(y, x);
+		c_ptr = area(x, y);
 
 		if (!(c_ptr->m_idx))
 		{
@@ -1012,7 +1012,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 		/* paranoia */
 		if (!in_bounds2(y, x)) return;
 
-		c_ptr = area(y, x);
+		c_ptr = area(x, y);
 
 		if (cave_floor_grid(c_ptr))
 		{
@@ -1061,7 +1061,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 		ox = px;
 
 		/* Process fields under the player. */
-		field_hook(&area(py, px)->fld_idx,
+		field_hook(&area(px, py)->fld_idx,
 			 FIELD_ACT_PLAYER_LEAVE, NULL);
 
 		/* Move the player */
@@ -1084,7 +1084,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 		lite_spot(ox, oy);
 		
 		/* Process fields under the player. */
-		field_hook(&area(py, px)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);
+		field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);
 
 		verify_panel();
 
@@ -1278,7 +1278,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 		/* paranoia */
 		if (!in_bounds2(y, x)) return;
 
-		if (area(y, x)->m_idx)
+		if (area(x, y)->m_idx)
 		{
 			py_attack(x, y);
 			teleport_player(30);
@@ -1322,7 +1322,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 		/* paranoia */
 		if (!in_bounds2(y, x)) return;
 
-		c_ptr = area(y, x);
+		c_ptr = area(x, y);
 
 		if (!c_ptr->m_idx)
 		{
@@ -1358,7 +1358,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 		/* paranoia */
 		if (!in_bounds2(y, x)) return;
 		
-		c_ptr = area(y, x);
+		c_ptr = area(x, y);
 		
 		if (!c_ptr->m_idx)
 		{
@@ -1535,7 +1535,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 	else if (mut_ptr->which == MUT2_EAT_LIGHT)
  	{
 		object_type *o_ptr;
-		cave_type *c_ptr = area(p_ptr->py, p_ptr->px);
+		cave_type *c_ptr = area(p_ptr->px, p_ptr->py);
 
 		msg_print("A shadow passes over you.");
 		message_flush();

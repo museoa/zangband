@@ -123,7 +123,7 @@ static void do_cmd_summon_horde(void)
 		/* paranoia */
 		if (!in_bounds2(wy, wx)) continue;
 
-		c_ptr = area(wy, wx);
+		c_ptr = area(wx, wy);
 		if (cave_naked_grid(c_ptr)) break;
 
 		/* Not under the player */
@@ -410,7 +410,7 @@ static void do_cmd_wiz_feature(int feat)
 		}
 
 		/* Access grid */
-		c_ptr = area(y, x);
+		c_ptr = area(x, y);
 		
 		/* Try to place a new feature */
 		if (c_ptr->feat == feat) continue;
@@ -429,7 +429,7 @@ static void do_cmd_wiz_feature(int feat)
 	cave_set_feat(x, y, feat);
 	
 	/* Change knowledge of grid */
-	parea(y, x)->feat = feat;
+	parea(x, y)->feat = feat;
 	
 	/* Notice */
 	note_spot(x, y);
@@ -1369,7 +1369,7 @@ static void do_cmd_wiz_named(int r_idx, bool slp)
 		if (!in_bounds2(y, x)) continue;
 
 		/* Require empty grids */
-		c_ptr = area(y, x);
+		c_ptr = area(x, y);
 		if (!cave_empty_grid(c_ptr)) continue;
 		
 		/* Not on player */
@@ -1944,8 +1944,8 @@ void do_cmd_debug(void)
 			{
 				for (x = p_ptr->min_wid; x < p_ptr->max_wid; x++)
 				{
-					area(y, x)->info |= (CAVE_GLOW);
-					parea(y, x)->feat = area(y, x)->feat;
+					area(x, y)->info |= (CAVE_GLOW);
+					parea(x, y)->feat = area(x, y)->feat;
 				}
 			}
 

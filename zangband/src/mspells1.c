@@ -313,7 +313,7 @@ static bool summon_possible(int x1, int y1)
 			if (!in_boundsp(y, x)) continue;
 
 			/* Access Grid */
-			c_ptr = area(y, x);
+			c_ptr = area(x, y);
 
 			/* ...nor on the Pattern */
 			if ((c_ptr->feat >= FEAT_PATTERN_START) &&
@@ -344,7 +344,7 @@ static bool summon_possible(int x1, int y1)
 
 			/* Require empty floor grid in line of sight of player */
 			if (cave_empty_grid(c_ptr)
-				 && (player_has_los_grid(parea(y, x)))) return (TRUE);
+				 && (player_has_los_grid(parea(x, y)))) return (TRUE);
 		}
 	}
 

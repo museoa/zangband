@@ -348,7 +348,7 @@ bool monster_death(int m_idx, bool explode)
 		}
 
 		/* Terrain to put corpse on. */
-		feat = area(y, x)->feat;
+		feat = area(x, y)->feat;
 
 		/* Hack - corpses only appear on certain floors */
 		if ((feat == FEAT_FLOOR) ||
@@ -442,7 +442,7 @@ bool monster_death(int m_idx, bool explode)
 			{
 				scatter(&wx, &wy, x, y, 20);
 			}
-			while (!(in_bounds(wy, wx) && cave_floor_grid(area(wy, wx))) && --attempts);
+			while (!(in_bounds(wy, wx) && cave_floor_grid(area(wx, wy))) && --attempts);
 
 			if (attempts > 0)
 			{
@@ -1774,8 +1774,8 @@ static bool target_set_accept(int x, int y)
 	if (!in_boundsp(y, x)) return (FALSE);
 
 	/* Examine the grid */
-	c_ptr = area(y, x);
-	pc_ptr = parea(y, x);
+	c_ptr = area(x, y);
+	pc_ptr = parea(x, y);
 
 	/* Visible monsters */
 	if (c_ptr->m_idx)
@@ -1866,7 +1866,7 @@ static void target_set_prepare(int mode)
 
 			if (!in_bounds2(y, x)) continue;
 
-			c_ptr = area(y, x);
+			c_ptr = area(x, y);
 
 			/* Require line of sight, unless "look" is "expanded" */
 			if (!expand_look && !player_can_see_bold(x, y)) continue;
@@ -1929,8 +1929,8 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 	int py = p_ptr->py;
 	int px = p_ptr->px;
 
-	cave_type *c_ptr = area(y, x);
-	pcave_type *pc_ptr = parea(y, x);
+	cave_type *c_ptr = area(x, y);
+	pcave_type *pc_ptr = parea(x, y);
 
 	s16b this_o_idx, next_o_idx = 0;
 	s16b *this_f_ptr, *next_f_ptr = NULL;
@@ -2516,7 +2516,7 @@ bool target_set(int mode)
 			x = temp_x[m];
 
 			/* Access */
-			c_ptr = area(y, x);
+			c_ptr = area(x, y);
 
 			/* Allow target */
 			if (target_able(c_ptr->m_idx))
