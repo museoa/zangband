@@ -477,7 +477,7 @@ static errr init_info(cptr filename, header *head,
 		fp = my_fopen(buf, "r");
 
 		/* Parse it */
-		if (!fp) quit(format("Cannot open '%s.txt' file.", filename));
+		if (!fp) quit_fmt("Cannot open '%s.txt' file.", filename);
 
 		/* Parse the file */
 		err = init_info_txt(fp, buf, head, head->parse_info_txt);
@@ -579,7 +579,7 @@ static errr init_info(cptr filename, header *head,
 		fd = fd_open(buf, O_RDONLY);
 
 		/* Process existing "raw" file */
-		if (fd < 0) quit(format("Cannot load '%s.raw' file.", filename));
+		if (fd < 0) quit_fmt("Cannot load '%s.raw' file.", filename);
 
 		/* Attempt to parse the "raw" file */
 		err = init_info_raw(fd, head);
@@ -588,7 +588,7 @@ static errr init_info(cptr filename, header *head,
 		fd_close(fd);
 
 		/* Error */
-		if (err) quit(format("Cannot parse '%s.raw' file.", filename));
+		if (err) quit_fmt("Cannot parse '%s.raw' file.", filename);
 
 #ifdef ALLOW_TEMPLATES
 	}

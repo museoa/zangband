@@ -93,9 +93,22 @@ static bool z_older_than(byte x, byte y, byte z)
  *
  * Avoid the top two lines, to avoid interference with "msgf()".
  */
-static void note(cptr msg)
+static void note(cptr fmt, ...)
 {
 	static int y = 2;
+	
+	va_list vp;
+
+	char msg[1024];
+
+	/* Begin the Varargs Stuff */
+	va_start(vp, fmt);
+	
+	/* Format the args, save the length */
+	(void)vstrnfmt(msg, 1024, fmt, &vp);
+
+	/* End the Varargs Stuff */
+	va_end(vp);
 
 	/* Draw the message */
 	prtf(0, y, msg);
@@ -105,6 +118,9 @@ static void note(cptr msg)
 
 	/* Flush it */
 	Term_fresh();
+	
+	/* End the Varargs Stuff */
+	va_end(vp);
 }
 
 
@@ -2306,7 +2322,7 @@ static errr rd_dungeon(void)
 	/* Verify maximum */
 	if (limit > z_info->o_max)
 	{
-		note(format("Too many (%d) object entries!", limit));
+		note("Too many (%d) object entries!", limit);
 		return (151);
 	}
 
@@ -2340,9 +2356,8 @@ static errr rd_dungeon(void)
 			{
 				if (!in_bounds(o_ptr->ix, o_ptr->iy))
 				{
-					note(format
-						 ("Object placement error (%d,%d)", o_ptr->ix,
-						  o_ptr->iy));
+					note("Object placement error (%d,%d)", o_ptr->ix,
+						  o_ptr->iy);
 					return (152);
 				}
 
@@ -2395,7 +2410,7 @@ static errr rd_dungeon(void)
 	/* Hack -- verify */
 	if (limit > z_info->m_max)
 	{
-		note(format("Too many (%d) monster entries!", limit));
+		note("Too many (%d) monster entries!", limit);
 		return (161);
 	}
 
@@ -2426,14 +2441,13 @@ static errr rd_dungeon(void)
 			/* Oops */
 			if (i != m_idx)
 			{
-				note(format("Monster allocation error (%d <> %d)", i, m_idx));
+				note("Monster allocation error (%d <> %d)", i, m_idx);
 				return (162);
 			}
 
 			if (!in_bounds(m_ptr->fx, m_ptr->fy))
 			{
-				note(format
-					 ("Monster placement error (%d,%d)", m_ptr->fx, m_ptr->fy));
+				note("Monster placement error (%d,%d)", m_ptr->fx, m_ptr->fy);
 				return (162);
 			}
 
@@ -2462,7 +2476,7 @@ static errr rd_dungeon(void)
 		/* Verify maximum */
 		if (limit > z_info->fld_max)
 		{
-			note(format("Too many (%d) field entries!", limit));
+			note("Too many (%d) field entries!", limit);
 			return (151);
 		}
 
@@ -2491,8 +2505,7 @@ static errr rd_dungeon(void)
 				/* Oops */
 				if (i != fld_idx)
 				{
-					note(format
-						 ("Field allocation error (%d <> %d)", i, fld_idx));
+					note("Field allocation error (%d <> %d)", i, fld_idx);
 					return (152);
 				}
 			}
@@ -2719,7 +2732,7 @@ static errr rd_savefile_new_aux(void)
 
 
 	/* Mention the savefile version */
-	note(format("Loading a %d.%d.%d savefile...", z_major, z_minor, z_patch));
+	note("Loading a %d.%d.%d savefile...", z_major, z_minor, z_patch);
 
 	/* Strip the version bytes */
 	strip_bytes(4);
@@ -2795,7 +2808,7 @@ static errr rd_savefile_new_aux(void)
 	/* Incompatible save files */
 	if (tmp16u > z_info->r_max)
 	{
-		note(format("Too many (%u) monster races!", tmp16u));
+		note("Too many (%u) monster races!", tmp16u);
 		return (21);
 	}
 
@@ -2832,7 +2845,7 @@ static errr rd_savefile_new_aux(void)
 	/* Incompatible save files */
 	if (tmp16u > z_info->k_max)
 	{
-		note(format("Too many (%u) object kinds!", tmp16u));
+		note("Too many (%u) object kinds!", tmp16u);
 		return (22);
 	}
 
@@ -2864,7 +2877,7 @@ static errr rd_savefile_new_aux(void)
 	/* Incompatible save files */
 	if (max_towns_load > z_info->wp_max)
 	{
-		note(format("Too many (%u) towns!", max_towns_load));
+		note("Too many (%u) towns!", max_towns_load);
 		return (23);
 	}
 
@@ -2883,7 +2896,7 @@ static errr rd_savefile_new_aux(void)
 		/* Incompatible save files */
 		if (max_quests_load > z_info->q_max)
 		{
-			note(format("Too many (%u) quests!", max_quests_load));
+			note("Too many (%u) quests!", max_quests_load);
 			return (23);
 		}
 
@@ -2912,8 +2925,7 @@ static errr rd_savefile_new_aux(void)
 	/* Incompatible save files */
 	if ((wild_x_size > WILD_SIZE) || (wild_y_size > WILD_SIZE))
 	{
-		note(format
-			 ("Wilderness is too big (%u/%u)!", wild_x_size, wild_y_size));
+		note("Wilderness is too big (%u/%u)!", wild_x_size, wild_y_size);
 		return (23);
 	}
 
@@ -2967,7 +2979,7 @@ static errr rd_savefile_new_aux(void)
 	/* Incompatible save files */
 	if (tmp16u > z_info->a_max)
 	{
-		note(format("Too many (%u) artifacts!", tmp16u));
+		note("Too many (%u) artifacts!", tmp16u);
 		return (24);
 	}
 
@@ -2993,7 +3005,7 @@ static errr rd_savefile_new_aux(void)
 	/* Incompatible save files */
 	if (tmp16u > PY_MAX_LEVEL)
 	{
-		note(format("Too many (%u) hitpoint entries!", tmp16u));
+		note("Too many (%u) hitpoint entries!", tmp16u);
 		return (25);
 	}
 

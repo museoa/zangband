@@ -1388,15 +1388,18 @@ void building_recharge(s32b cost)
 	}
 	else
 	{
+		char buf[160];
+	
 		if (o_ptr->tval == TV_STAFF)
 			max_charges = k_ptr->pval - o_ptr->pval;
 		else
 			max_charges = o_ptr->number * k_ptr->pval - o_ptr->pval;
+		
+		/* Get prompt */
+		strnfmt(buf, 160, "Add how many charges for %d gold? ", price);
 
 		/* Get the quantity for staves and wands */
-		charges = get_quantity(format("Add how many charges for %d gold? ",
-									  price), MIN(p_ptr->au / price,
-												  max_charges));
+		charges = get_quantity(buf, MIN(p_ptr->au / price, max_charges));
 
 		/* Do nothing */
 		if (charges < 1) return;
