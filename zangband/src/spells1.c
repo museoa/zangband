@@ -4252,7 +4252,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 		if (!blind && !(flg & (PROJECT_HIDE)))
 		{
 			/* Only do visuals if the player can "see" the bolt */
-			if (in_boundsp(x, y) && panel_contains(y, x)
+			if (in_boundsp(x, y) && panel_contains(x, y)
 				 && player_has_los_grid(parea(x, y)))
 			{
 				byte a, c;
@@ -4484,7 +4484,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 				x = gx[i];
 
 				/* Only do visuals if the player can "see" the blast */
-				if (in_boundsp(x, y) && panel_contains(y, x)
+				if (in_boundsp(x, y) && panel_contains(x, y)
 					 && player_has_los_grid(parea(x, y)))
 				{
 					byte a, c;

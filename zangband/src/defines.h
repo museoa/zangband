@@ -3929,7 +3929,7 @@
 /*
  * Determines if a map location is currently "on screen" -RAK-
  */
-#define panel_contains(Y,X) \
+#define panel_contains(X,Y) \
   (((Y) >= panel_row_min) && ((Y) <= panel_row_max) && \
    ((X) >= panel_col_min) && ((X) <= panel_col_max))
 

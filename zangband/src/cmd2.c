@@ -2563,7 +2563,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 
 
 		/* The player can see the (on screen) missile */
-		if (panel_contains(ny, nx) && player_can_see_bold(nx, ny))
+		if (panel_contains(nx, ny) && player_can_see_bold(nx, ny))
 		{
 			char c = object_char(i_ptr);
 			byte a = object_attr(i_ptr);
@@ -3003,7 +3003,7 @@ void do_cmd_throw_aux(int mult)
 		cur_dis++;
 
 		/* The player can see the (on screen) missile */
-		if (panel_contains(ny, nx) && player_can_see_bold(nx, ny))
+		if (panel_contains(nx, ny) && player_can_see_bold(nx, ny))
 		{
 			char c = object_char(q_ptr);
 			byte a = object_attr(q_ptr);

@@ -1873,7 +1873,7 @@ void move_cursor_relative(int col, int row)
 void print_rel(char c, byte a, int x, int y)
 {
 	/* Only do "legal" locations */
-	if (panel_contains(y, x))
+	if (panel_contains(x, y))
 	{
 		/* Hack -- fake monochrome */
 		if (fake_monochrome)
@@ -2075,7 +2075,7 @@ void display_dungeon(void)
 void lite_spot(int x, int y)
 {
 	/* Redraw if on screen */
-	if (panel_contains(y, x) && in_boundsp(x, y))
+	if (panel_contains(x, y) && in_boundsp(x, y))
 	{
 		byte a;
 		char c;
@@ -3057,7 +3057,7 @@ void forget_view(void)
 		pc_ptr->player &= ~(GRID_LITE | GRID_VIEW | GRID_SEEN);
 
 		/* Only lite the spot if is on the panel (can change due to resizing */
-		if (!panel_contains(y, x)) continue;
+		if (!panel_contains(x, y)) continue;
 
 		/* Update the screen */
 		lite_spot(x, y);
