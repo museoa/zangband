@@ -5434,9 +5434,6 @@ object_type *inven_carry(object_type *o_ptr)
  * Note that taking off an item when "full" may cause that item
  * to fall to the ground.
  *
- * Note that this function may be called while there is an important
- * object in temp_buffer, so it cannot do anything that will clobber that.
- *
  * Return the inventory slot into which the item is placed.
  */
 object_type *inven_takeoff(object_type *o_ptr)
