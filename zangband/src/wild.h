@@ -27,9 +27,22 @@
 /* Minimum fractional distance a road can approach a non-connecting town */
 #define ROAD_MIN		3
 
-/* Maximum number of building types in a city */
-#define MAX_CITY_BUILD			(MAX_STORES + MAX_BLDG)
 
+
+/* List of building types */
+#define	BUILD_STORE_GENERAL		0
+#define BUILD_STORE_ARMOURY		1
+#define BUILD_STORE_WEAPON		2
+#define BUILD_STORE_TEMPLE		3
+#define BUILD_STORE_ALCHEMIST	4
+#define BUILD_STORE_MAGIC		5
+#define BUILD_STORE_BLACK		6
+#define BUILD_STORE_HOME		7
+#define BUILD_STORE_BOOK		8
+#define BUILD_STAIRS			9
+
+/* Maximum number of "building" types in a city */
+#define MAX_CITY_BUILD			10
 
 /* Dodgy replacement for SCREEN_WID and SCREEN_HGT */
 
@@ -45,11 +58,11 @@
 #define GROUND_LEVEL	(WILD_BLOCK_SIZE * 100)
 
 /* Externs */
+extern bool build_is_general(byte type);
 extern void clear_temp_block(void);
 extern void set_temp_corner_val(u16b val);
 extern void set_temp_mid(u16b val);
 extern void frac_block(void);
-extern u16b select_building(byte level, byte magic, byte law, u16b *build);
 extern bool town_blank(int x, int y, int xsize, int ysize);
 extern void draw_city(u16b town_num);
 extern void van_town_gen(u16b town_num);

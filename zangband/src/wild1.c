@@ -15,13 +15,54 @@
 
 #include "wild.h"
 
+/* Is the building a store? */
+bool build_is_store(byte type)
+{
+	switch (type)
+	{
+		case BUILD_STORE_GENERAL:
+		case BUILD_STORE_ARMOURY:
+		case BUILD_STORE_WEAPON:
+		case BUILD_STORE_TEMPLE:
+		case BUILD_STORE_ALCHEMIST:
+		case BUILD_STORE_MAGIC:
+		case BUILD_STORE_BLACK:
+		case BUILD_STORE_HOME:
+		case BUILD_STORE_BOOK:
+		{
+			/* It is a store */
+			return(TRUE);
+		}
+	}
+	
+	/* Not a store */
+	return(FALSE);
+}
+
+/* Is the building a general feature? */
+bool build_is_general(byte type)
+{
+	switch (type)
+	{
+		case BUILD_STAIRS:
+		{
+			/* It is a general town feature */
+			return(TRUE);
+		}
+	}
+	
+	/* Nope it isn't */
+	return (FALSE);
+}
 
 /* Find a place for the player */
 static void place_player_start(u32b *x, u32b *y, u16b this_town)
 {
 	int i, j;
 	
-	while (TRUE) 
+	int count = 0;
+	
+	while (count < 1000) 
 	{
 		/* Hack - Find a place for the player */
 		i = randint1(127);
@@ -29,13 +70,80 @@ static void place_player_start(u32b *x, u32b *y, u16b this_town)
 
 		if (cave[j][i].feat == FEAT_FLOOR) break;
 		
-		/* Need to add some infinite loop protection here... */
+		/* infinite loop protection */
+		count++;
+	}
+	
+	if (count > 999)
+	{
+		/* Try to look for an "open spot" */
+		
+		while (TRUE) 
+		{
+			/* Hack - Find a place for the player */
+			i = randint1(127);
+			j = randint1(64);
+
+			if (cave[j][i].feat == FEAT_NONE) break;
+			
+			/* infinite loop protection ?*/
+		}
 	}
 
 	/* Hack - Reset player position to be on the stairs in town */
 	*x = town[this_town].x * 16 + i;
 	*y = town[this_town].y * 16 + j;
 }
+
+
+/* Select a store or building "appropriate" for a given position */
+static u16b select_building(byte level, byte magic, byte law, u16b *build)
+{
+	/* This is really dodgy */
+	int i, count = 0;
+	
+	/* Just select the buildings in order... */
+	while (TRUE)
+	{
+		for (i = 0; i < MAX_CITY_BUILD; i++)
+		{
+			if (build[i] == count) return (i);
+		}
+	
+		count++;
+	}
+	
+	
+	/* Find all acceptable buildings */
+	
+	/* None? */
+	
+	/* Find all semi-acceptable buildings */
+	
+	/* Pick one at random */
+	
+
+	/* Later add checks for silliness */
+	/* (A small town with 5 "homes" would be silly */
+} 
+
+static void general_init(int town_num, int store_num, byte general_type)
+{
+	/* Activate that feature */
+	store_type *st_ptr = &town[town_num].store[store_num];
+
+	/* Set the type */
+	st_ptr->type = general_type;
+
+	/* Initialize */
+	st_ptr->store_open = 0;
+	st_ptr->insult_cur = 0;
+	st_ptr->good_buy = 0;
+	st_ptr->bad_buy = 0;
+	st_ptr->stock_num = 0;
+	st_ptr->last_visit = 0;
+}
+
 
 /* Create a city + contained stores and buildings */
 static bool create_city(int x, int y, int town_num)
@@ -152,7 +260,7 @@ static bool create_city(int x, int y, int town_num)
 	
 		
 	/* Too few squares??? */
-	if (count < 3) return (FALSE);
+	if (count < 6) return (FALSE);
 
 	/* Rescan walls to avoid "islands" */
 	for (i = 0; i < WILD_BLOCK_SIZE; i++)
@@ -274,15 +382,22 @@ static bool create_city(int x, int y, int town_num)
 	/* Initialise the stores */
 	for (i = 0; i < build_num; i++)
 	{
-		if (build_list[i] < MAX_STORES)
+		building = build_list[i];
+		
+		if (build_is_store(building))
 		{
 			/* Initialise the store */
-			store_init(town_num, i, build_list[i]);
+			store_init(town_num, i, building);
+		}
+		else if (build_is_general(building))	
+		{
+			/* Initialise general feature */
+			general_init(town_num, i, building);
 		}
 		else
 		{
 			/* Initialise the building */
-			build_init(town_num, i, build_list[i]);
+			build_init(town_num, i, building);
 		}
 	}
 

@@ -1995,6 +1995,14 @@ void build_init(int town_num, int build_num, byte build_type)
 	/* Activate that building */
 	store_type *st_ptr = &town[town_num].store[build_num];
 
+	/* Set the type */
+	st_ptr->type = build_type;
 
-	/* Add body here */
+	/* Initialize */
+	st_ptr->store_open = 0;
+	st_ptr->insult_cur = 0;
+	st_ptr->good_buy = 0;
+	st_ptr->bad_buy = 0;
+	st_ptr->stock_num = 0;
+	st_ptr->last_visit = 0;
 }

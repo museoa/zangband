@@ -1491,17 +1491,19 @@ static void player_wipe(void)
 {
 	int i;
 	
-	/* Hack -- save these allocated arrays */
-	bool *options = p_ptr->options;
-	bool *birth = p_ptr->birth;
+	bool options[OPT_PLAYER];
+	bool birth[OPT_BIRTH];
 
+	/* Hack -- save these allocated arrays */
+	C_COPY(options, p_ptr->options, OPT_PLAYER, bool);
+	C_COPY(birth, p_ptr->birth, OPT_BIRTH, bool);
 
 	/* Hack -- zero the struct */
 	(void)WIPE(p_ptr, player_type);
 	
 	/* Hack -- Restore the arrays */
-	p_ptr->options = options;
-	p_ptr->birth = birth; 
+	C_COPY(p_ptr->options, options, OPT_PLAYER, bool);
+	C_COPY(p_ptr->birth, birth, OPT_BIRTH, bool);
 
 	/* Wipe the history */
 	for (i = 0; i < 4; i++)

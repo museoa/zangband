@@ -240,53 +240,6 @@ static void build_store(int yy, int xx, store_type *st_ptr)
 	st_ptr->y = y;
 }
 
-#if 0
-static void add_town_wall(void)
-{
-	int i;
-
-	/* Upper and lower walls */
-	for (i = 0; i < TOWN_WID; i++)
-	{
-		/* Wall with doors in middle */
-		if (i == TOWN_WID / 2)
-		{
-			/* Make town gates */
-			cave[0][i].feat = FEAT_CLOSED;
-			cave[0][i].fld_idx = FT_LOCK_DOOR;
-			cave[TOWN_HGT - 1][i].feat = FEAT_CLOSED;
-			cave[TOWN_HGT - 1][i].fld_idx = FT_LOCK_DOOR;
-		}
-		else
-		{
-			/* Make walls */
-			cave[0][i].feat = FEAT_PERM_OUTER;
-			cave[TOWN_HGT - 1][i].feat = FEAT_PERM_OUTER;
-		}
-	}
-
-	/* Left and right walls */
-	for (i = 1; i < TOWN_HGT - 1; i++)
-	{
-		/* Walls with doors in middle. */
-		if (i == TOWN_HGT / 2)
-		{
-			/* Make town gates (locked) */
-			cave[i][0].feat = FEAT_CLOSED;
-			cave[i][0].fld_idx = FT_LOCK_DOOR;
-			cave[i][TOWN_WID - 1].feat = FEAT_CLOSED;
-			cave[i][TOWN_WID - 1].fld_idx = FT_LOCK_DOOR;
-		}
-		else
-		{
-			/* Make walls */
-			cave[i][0].feat = FEAT_PERM_OUTER;
-			cave[i][TOWN_WID - 1].feat = FEAT_PERM_OUTER;
-		}
-	}
-}
-
-#endif /* 0 */
 
 
 /*
@@ -461,40 +414,6 @@ bool town_blank(int x, int y, int xsize, int ysize)
 }
 
 
-/* Select a store or building "appropriate" for a given position */
-u16b select_building(byte level, byte magic, byte law, u16b *build)
-{
-	/* This is really dodgy */
-	int i, count = 0;
-	
-	/* Just select the buildings in order... */
-	while (TRUE)
-	{
-		for (i = 0; i < MAX_STORES; i++)
-		{
-			if (build[i] == count) return (i);
-		}
-	
-		count++;
-	}
-	
-	
-	/* Find all acceptable buildings */
-	
-	/* None? */
-	
-	/* Find all semi-acceptable buildings */
-	
-	/* Pick one at random */
-	
-	/* For now - just use a tree of if's */
-	
-
-	/* Later add checks for silliness */
-	/* (A small town with 5 "homes" would be silly */
-} 
-
-
 
 
 /*
@@ -516,24 +435,37 @@ static bool get_city_block_locat(int *x, int *y)
 	}
 }
 
-/* Draw a building / store of a given type at a given position */
-static void draw_building(byte type, byte x, byte y, u16b store, u16b town_num)
+static void draw_general(int x0, int y0, store_type *st_ptr, int x, int y)
 {
-	/* Really dodgy - just a rectangle, independent of type, for now */
-	int xx, yy, x0, y0, x1, y1, x2, y2, i, j;
+	int i, j;
+	
+	switch (st_ptr->type)
+	{
+		case BUILD_STAIRS:
+		{
+			/* Put dungeon floor next to stairs so they are easy to find. */
+			for (i = -1; i <= 1; i++)
+			{
+				for (j = -1; j <= 1; j++)
+				{
+					/* Convert square to dungeon floor */
+					cave[y0 + j][x0 + i].feat = FEAT_FLOOR;
+				}
+			}
+
+			/* Clear previous contents, add down stairs */
+			cave[y0][x0].feat = FEAT_MORE;
+		}
+	}
+}
+
+static void draw_store(int x0, int y0, store_type *st_ptr, int x, int y)
+{
+	int x1, y1, x2, y2;
+	int i, j;
 	int tmp;
-	
-	
-	store_type *st_ptr = &town[town_num].store[store];
+	u16b field;
 
-	xx = x;
-	yy = y;
-	
-	if (!get_city_block_locat(&xx, &yy)) return;
-
-	/* Find the "center" of the store */
-	y0 = yy + 4;
-	x0 = xx + 4;
 
 	/* Determine the store boundaries */
 	y1 = y0 - randint1(3);
@@ -542,14 +474,7 @@ static void draw_building(byte type, byte x, byte y, u16b store, u16b town_num)
 	x2 = x0 + randint1(3);
 
 	/* Build an invulnerable rectangular building */
-	for (i = y1; i <= y2; i++)
-	{
-		for (j = x1; j <= x2; j++)
-		{
-			/* Create the building */
-			cave[i][j].feat = FEAT_PERM_EXTRA;
-		}
-	}
+	generate_fill(y1, x1, y2, x2, FEAT_PERM_EXTRA);
 
 	/* Pick a door direction (S,N,E,W) */
 	tmp = randint0(4);
@@ -592,11 +517,110 @@ static void draw_building(byte type, byte x, byte y, u16b store, u16b town_num)
 
 	/* Clear previous contents, add a store door */
 	cave[i][j].feat = FEAT_FLOOR;
-	cave[i][j].fld_idx = FT_STORE_GENERAL + st_ptr->type;
+	
+	/* Look up field to use */
+	switch (st_ptr->type)
+	{
+		case BUILD_STORE_GENERAL:
+		{
+			field = FT_STORE_GENERAL;
+			break;
+		}
+		
+		case BUILD_STORE_ARMOURY:
+		{
+			field = FT_STORE_ARMOURY;
+			break;
+		}
+		
+		case BUILD_STORE_WEAPON:
+		{
+			field = FT_STORE_WEAPON;
+			break;
+		}
+		
+		case BUILD_STORE_TEMPLE:
+		{
+			field = FT_STORE_TEMPLE;
+			break;
+		}
+		
+		case BUILD_STORE_ALCHEMIST:
+		{
+			field = FT_STORE_ALCHEMIST;
+			break;
+		}
+		
+		case BUILD_STORE_MAGIC:
+		{
+			field = FT_STORE_MAGIC;
+			break;
+		}
+		
+		case BUILD_STORE_BLACK:
+		{
+			field = FT_STORE_BLACK;
+			break;
+		}
+		
+		case BUILD_STORE_HOME:
+		{
+			field = FT_STORE_HOME;
+			break;
+		}
+		
+		case BUILD_STORE_BOOK:
+		{
+			field = FT_STORE_BOOK;
+			break;
+		}
+		
+		default:
+		{
+			/* Hack - nothing here? */
+			field = FT_WALL_INVIS;
+			break;
+		}
+	}	
+
+
+	cave[i][j].fld_idx = field;
 	
 	/* Save location of store door */
 	st_ptr->x = x * 8 + j % 8;
 	st_ptr->y = y * 8 + i % 8;
+}
+
+
+/* Draw a building / store of a given type at a given position */
+static void draw_building(byte type, byte x, byte y, u16b store, u16b town_num)
+{
+	/* Really dodgy - just a rectangle, independent of type, for now */
+	int xx, yy;
+	
+	store_type *st_ptr = &town[town_num].store[store];
+
+	/* Save location */
+	xx = x;
+	yy = y;
+	
+	if (!get_city_block_locat(&xx, &yy)) return;
+
+	/* What are we drawing? */
+	if (build_is_store(st_ptr->type))
+	{
+		/* Draw the store */
+		draw_store(xx + 4, yy + 4, st_ptr, x, y);	
+	}
+	else if (build_is_general(st_ptr->type))
+	{
+		/* Draw the general feature */
+		draw_general(xx + 4, yy + 4, st_ptr, x, y);
+	}
+	else
+	{
+		/* Draw the "normal" building */
+	}
 }
 
 
@@ -811,7 +835,7 @@ void draw_city(u16b town_num)
 }
 
 /*
- * Generate the seleted town
+ * Generate the selected town
  */
 static void town_gen(u16b town_num)
 {
