@@ -626,7 +626,7 @@ void Term_queue_line(int x, int y, int n, byte *a, char *c)
 		*scr_aa++ = *a++;
 		*scr_cc++ = *c++;
 		
-		/* Track minumum changed column */
+		/* Track minimum changed column */
 		if (x1 < 0) x1 = x;
 
 		/* Track maximum changed column */
@@ -1843,7 +1843,7 @@ errr Term_erase(int x, int y, int n)
 		scr_tcc[x] = 0;
 #endif /* USE_TRANSPARENCY */
 
-		/* Track minumum changed column */
+		/* Track minimum changed column */
 		if (x1 < 0) x1 = x;
 
 		/* Track maximum changed column */
