@@ -2997,7 +2997,7 @@ static void cave_temp_room_unlite(void)
 /*
  * Determine how much contiguous open space this grid is next to
  */
-static int next_to_open(int cy, int cx)
+static int next_to_open(int cx, int cy)
 {
 	int i;
 
@@ -3038,7 +3038,7 @@ static int next_to_open(int cy, int cx)
 }
 
 
-static int next_to_walls_adj(int cy, int cx)
+static int next_to_walls_adj(int cx, int cy)
 {
 	int i;
 
@@ -3067,7 +3067,7 @@ static int next_to_walls_adj(int cy, int cx)
 /*
  * Aux function -- see below
  */
-static void cave_temp_room_aux(int y, int x)
+static void cave_temp_room_aux(int x, int y)
 {
 	cave_type *c_ptr;
 
@@ -3096,7 +3096,7 @@ static void cave_temp_room_aux(int y, int x)
 	* properly.
 	* This leaves only a check for 6 bounding walls!
 	*/
-	if ((next_to_walls_adj(y, x) == 6) && (next_to_open(y, x) <= 1)) return;
+	if ((next_to_walls_adj(x, y) == 6) && (next_to_open(x, y) <= 1)) return;
 
 	/* Paranoia -- verify space */
 	if (temp_n == TEMP_MAX) return;
@@ -3122,7 +3122,7 @@ void lite_room(int y1, int x1)
 	cave_type *c_ptr;
 
 	/* Add the initial grid */
-	cave_temp_room_aux(y1, x1);
+	cave_temp_room_aux(x1, y1);
 
 	/* While grids are in the queue, add their neighbors */
 	for (i = 0; i < temp_n; i++)
@@ -3135,16 +3135,16 @@ void lite_room(int y1, int x1)
 		if (!cave_floor_grid(c_ptr)) continue;
 
 		/* Spread adjacent */
-		cave_temp_room_aux(y + 1, x);
-		cave_temp_room_aux(y - 1, x);
-		cave_temp_room_aux(y, x + 1);
-		cave_temp_room_aux(y, x - 1);
+		cave_temp_room_aux(x + 1, y);
+		cave_temp_room_aux(x - 1, y);
+		cave_temp_room_aux(x, y + 1);
+		cave_temp_room_aux(x, y - 1);
 
 		/* Spread diagonal */
-		cave_temp_room_aux(y + 1, x + 1);
-		cave_temp_room_aux(y - 1, x - 1);
-		cave_temp_room_aux(y - 1, x + 1);
-		cave_temp_room_aux(y + 1, x - 1);
+		cave_temp_room_aux(x + 1, y + 1);
+		cave_temp_room_aux(x - 1, y - 1);
+		cave_temp_room_aux(x - 1, y + 1);
+		cave_temp_room_aux(x + 1, y - 1);
 	}
 
 	/* Now, lite them all up at once */
@@ -3162,7 +3162,7 @@ void unlite_room(int y1, int x1)
 	cave_type *c_ptr;
 
 	/* Add the initial grid */
-	cave_temp_room_aux(y1, x1);
+	cave_temp_room_aux(x1, y1);
 
 	/* Spread, breadth first */
 	for (i = 0; i < temp_n; i++)
@@ -3175,16 +3175,16 @@ void unlite_room(int y1, int x1)
 		if (!cave_floor_grid(c_ptr)) continue;
 
 		/* Spread adjacent */
-		cave_temp_room_aux(y + 1, x);
-		cave_temp_room_aux(y - 1, x);
-		cave_temp_room_aux(y, x + 1);
-		cave_temp_room_aux(y, x - 1);
+		cave_temp_room_aux(x + 1, y);
+		cave_temp_room_aux(x - 1, y);
+		cave_temp_room_aux(x, y + 1);
+		cave_temp_room_aux(x, y - 1);
 
 		/* Spread diagonal */
-		cave_temp_room_aux(y + 1, x + 1);
-		cave_temp_room_aux(y - 1, x - 1);
-		cave_temp_room_aux(y - 1, x + 1);
-		cave_temp_room_aux(y + 1, x - 1);
+		cave_temp_room_aux(x + 1, y + 1);
+		cave_temp_room_aux(x - 1, y - 1);
+		cave_temp_room_aux(x - 1, y + 1);
+		cave_temp_room_aux(x + 1, y - 1);
 	}
 
 	/* Now, darken them all at once */
