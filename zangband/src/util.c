@@ -238,7 +238,12 @@ static errr path_temp(char *buf, int max)
 {
 	cptr s;
 
-	/* Temp file */
+	/*
+	 * Temp file
+	 *
+	 * If the following line gives you a compile-time warning,
+	 * then turn on the HAVE_MKSTEMP if you have mkstemp().
+	 */
 	s = tmpnam(NULL);
 
 	/* Oops */

@@ -100,6 +100,30 @@ bool is_visible_trap(cave_type *c_ptr)
  *
  * Use this function instead of cut+pasting los() everywhere
  * with only tiny changes made to it.
+ *
+ * This works by following a "ray" that is one of those used
+ * in the update_view() routine.
+ *
+ * We pick the minimal sloped ray that passes through the
+ * required square.  We then follow that ray, looking at each
+ * grid along it.  If the grid passes c_hook() then we keep
+ * going.  If the grid does not, then we go to the minimal
+ * slope that does not pass through this blocking grid.
+ * We go to the first unchecked square along that ray - and
+ * then continue following it.
+ *
+ * If the new ray does not pass through the target square, then
+ * its slope will be greater than the maximal slope of the
+ * target.
+ *
+ * This routine will over-check some squares in a worst-case
+ * scenario - but it is fairly efficient.  Most of the required
+ * information has been pre-calculated in the code that also
+ * works out the data used by update_view()
+ *
+ * Unlike the old los() routine, this will give exactly the
+ * same results as testing cave_view_grid() after using
+ * update_view().
  */
 static bool los_general(int x1, int y1, int x2, int y2, cave_hook_type c_hook)
 {
@@ -425,7 +449,7 @@ void mmove2(int *x, int *y, int x1, int y1, int x2, int y2, int *slope, int *sq)
 }
 
 /*
- * Determine if a bolt spell cast from (y1,x1) to (y2,x2) will arrive
+ * Determine if a bolt spell cast from (x1,y1) to (x2,y2) will arrive
  * at the final destination, assuming no monster gets in the way.
  *
  * This needs to be as fast as possible - so do not use the los_general()
@@ -507,7 +531,7 @@ static bool project_stop(cave_type *c_ptr, u16b flg)
  * due to the way in which distance is calculated, this function normally
  * uses fewer than "range" grids for the projection path, so the result
  * of this function should never be compared directly to "range".  Note
- * that the initial grid (y1,x1) is never saved into the grid array, not
+ * that the initial grid (x1,y1) is never saved into the grid array, not
  * even if the initial grid is also the final grid.  XXX XXX XXX
  *
  * The "flg" flags can be used to modify the behavior of this function.
@@ -518,10 +542,24 @@ static bool project_stop(cave_type *c_ptr, u16b flg)
  * through the destination grid, respectively.
  *
  * This function returns the number of grids (if any) in the path.  This
- * function will return zero if and only if (y1,x1) and (y2,x2) are equal.
+ * function will return zero if and only if (x1,y1) and (x2,y2) are equal.
  *
  * This algorithm is the same as that used by "los_general()", however
  * the grids are saved along the path.
+ *
+ * This means that mmove2() will now follow exactly the same path as used
+ * by los() and update_view().  You can only hit things you can see - and
+ * everything you can see, you can hit.  The paths from this function
+ * tend to look slightly "curved" - but that is a small price to pay for
+ * simplicity.
+ *
+ * XXX XXX XXX You could make the paths straighter by using the median
+ * ray connecting the two grids, and then going left and right to try and
+ * find a free shot.  That would require more information to be saved
+ * though.  It also probably would be slower than the current code.
+ *
+ * XXX XXX XXX This routine must be fairly fast - we use it in
+ * projectable(), which is called alot in the AI code.
  */
 sint project_path(coord *gp, int x1, int y1, int x2, int y2, u16b flg)
 {
@@ -1413,11 +1451,6 @@ static void variable_player_graph(byte *a, char *c)
  * is not the fastest method but since most of the calls to this function
  * are made for grids with no monsters or objects, it is fast enough.
  *
- * Note that this function, if used on the grid containing the "player",
- * will return the attr/char of the grid underneath the player, and not
- * the actual player attr/char itself, allowing a lot of optimization
- * in various "display" functions.
- *
  * Note that the "zero" entry in the feature/object/monster arrays are
  * used to provide "special" attr/char codes, with "monster zero" being
  * used for the player attr/char, "object zero" being used for the "stack"
@@ -1445,41 +1478,23 @@ static void variable_player_graph(byte *a, char *c)
  * to have memorized "terrain" without granting knowledge of any object
  * which may appear in that grid.
  *
- * Note the efficient code used to determine if a "floor" grid is
- * "memorized" or "viewable" by the player, where the test for the
- * grid being "viewable" is based on the facts that (1) the grid
- * must be "lit" (torch-lit or perma-lit), (2) the grid must be in
- * line of sight, and (3) the player must not be blind, and uses the
- * assumption that all torch-lit grids are in line of sight.
- *
- * Note that floors (and invisible traps) are the only grids which are
- * not memorized when seen, so only these grids need to check to see if
- * the grid is "viewable" to the player (if it is not memorized).  Since
- * most non-memorized grids are in fact walls, this induces *massive*
- * efficiency, at the cost of *forcing* the memorization of non-floor
- * grids when they are first seen.  Note that "invisible traps" are
- * always treated exactly like "floors", which prevents "cheating".
+ * We use the players memorised information to pick the terrain feature
+ * to use.  This allows massive simplification - getting rid of all the
+ * checks to tha old CAVE_MARK flag, and allowing the player is blind case
+ * to be merged into the main line code.  The section picking the terrain
+ * attr/feat is now less than a page long - which is important because
+ * this routine is a major bottleneck.
  *
  * Note the "special lighting effects" which can be activated for floor
- * grids using the "view_special_lite" option (for "white" floor grids),
- * causing certain grids to be displayed using special colors.  If the
- * player is "blind", we will use "dark gray", else if the grid is lit
- * by the torch, and the "view_yellow_lite" option is set, we will use
- * "yellow", else if the grid is "dark", we will use "dark gray", else
- * if the grid is not "viewable", and the "view_bright_lite" option is
- * set, and the we will use "slate" (gray).  We will use "white" for all
- * other cases, in particular, for illuminated viewable floor grids.
+ * grids using the "view_special_lite" option causing certain grids to be
+ * displayed using special colors.
  *
  * Note the "special lighting effects" which can be activated for wall
- * grids using the "view_granite_lite" option (for "white" wall grids),
- * causing certain grids to be displayed using special colors.  If the
- * player is "blind", we will use "dark gray", else if the grid is lit
- * by the torch, and the "view_yellow_lite" option is set, we will use
- * "yellow", else if the "view_bright_lite" option is set, and the grid
- * is not "viewable", or is "dark", or is glowing, but not when viewed
- * from the player's current location, we will use "slate" (gray).  We
- * will use "white" for all other cases, in particular, for correctly
- * illuminated viewable wall grids.
+ * grids using the "view_granite_lite" option causing certain grids to be
+ * displayed using special colors.
+ *
+ * The lighting and darkening of colours is handled by two arrays.  We can
+ * also lighten and darken some terrains in the 16x16 tileset.
  *
  * Note that bizarre things must be done when the "attr" and/or "char"
  * codes have the "high-bit" set, since these values are used to encode
@@ -1532,19 +1547,17 @@ static void map_info(cave_type *c_ptr, pcave_type *pc_ptr,
 	c = f_ptr->x_char;
 
 	/*
-	 * Look for more lighting effects.
+	 * Look for lighting effects.
 	 *
-	 * Hack - the cave_floor_grid() macro is not used
-	 * since the feat is already known.  This gives a
-	 * tiny speedup.  (But any speed increase in this
-	 * extremely important routine is good.)
+	 * Need to have lighting on and the player is not blind.
+	 * We then need to have a grid that is allowed to be lit.
 	 */
 	if (view_bright_lite && !p_ptr->blind
 		 && (floor_grid(feat) || (view_granite_lite && !view_torch_grids)))
 	{
 		/* It's not in view or no lighting effects? */
 		if (((!(player & (GRID_VIEW))) && view_special_lite)
-			 || !(player & GRID_SEEN))
+			 || !(player & (GRID_SEEN)))
 		{
 			/* If is ascii graphics */
 			if (a < 16)
@@ -1572,7 +1585,7 @@ static void map_info(cave_type *c_ptr, pcave_type *pc_ptr,
 				 && feat_supports_lighting[feat])
 			{
 				/* Use a light tile */
-				c+=2;
+				c += 2;
 			}
 		}
 	}
@@ -1875,10 +1888,6 @@ void print_rel(char c, byte a, int x, int y)
  * are interesting sometimes (depending on various options involving
  * the illumination of floor grids).
  *
- * The automatic memorization of all objects and non-floor terrain
- * features as soon as they are displayed allows incredible amounts
- * of optimization in various places, especially "map_info()".
- *
  * Note that the memorization of objects is completely separate from
  * the memorization of terrain features, preventing annoying floor
  * memorization when a detected object is picked up from a dark floor,
@@ -1888,9 +1897,7 @@ void print_rel(char c, byte a, int x, int y)
  * This function should be called every time the "memorization" of
  * a grid (or the object in a grid) is called into question, such
  * as when an object is created in a grid, when a terrain feature
- * "changes" from "floor" to "non-floor", when any grid becomes
- * "illuminated" or "viewable", and when a "floor" grid becomes
- * "torch-lit".
+ * changes, and when any grid becomes "illuminated" or "viewable".
  *
  * Note the relatively efficient use of this function by the various
  * "update_view()" and "update_lite()" calls, to allow objects and
@@ -1898,9 +1905,9 @@ void print_rel(char c, byte a, int x, int y)
  * viewable or illuminated in any way, but not when they "maintain"
  * or "lose" their previous viewability or illumination.
  *
- * Note the butchered "internal" version of "player_can_see_bold()",
- * optimized primarily for the most common cases, that is, for the
- * non-marked floor grids.
+ * Note the butchered "internal" version of the old "player_can_see_bold()"
+ * that is used internal to this function.  (Using the GRID_SEEN
+ * flag then allows us to quickly test visibility by the player.)
  */
 void note_spot(int x, int y)
 {
@@ -2873,8 +2880,8 @@ void do_cmd_view_map(void)
  * fact, the player can always "see" all grids which are marked as
  * "GRID_LITE", unless they are "off screen".
  *
- * Every lit grid that is "GRID_VIEW" is "GRID_SEEN" allowing a fast way
- * to tell if the player can see a grid or not.
+ * Every lit grid that is "GRID_VIEW" and lit in some way is "GRID_SEEN"
+ * allowing a fast way to tell if the player can see a grid or not.
  *
  * The "update_view()" function maintains the "GRID_VIEW" flag for each
  * grid and maintains an array of all "GRID_VIEW" grids.  It also looks
@@ -2889,10 +2896,10 @@ void do_cmd_view_map(void)
  * about their surroundings.  This flag is always cleared when we are done.
  *
  *
- * The current "update_view()" algorithm uses the
- * "CAVE_TEMP" flag, and the array of grids which are marked as "CAVE_TEMP",
- * to keep track of which grids were previously marked as "GRID_VIEW", which
- * allows us to optimize the "screen updates".
+ * The current "update_view()" algorithm uses the "CAVE_TEMP" flag, and the
+ * array of grids which are marked as "CAVE_TEMP", to keep track of which
+ * grids were previously marked as "GRID_VIEW", which allows us to optimize
+ * the "screen updates".  We only draw the squares that change on the screen.
  *
  * The "CAVE_TEMP" flag, and the array of "CAVE_TEMP" grids, is also used
  * for various other purposes, such as spreading lite or darkness during
@@ -2930,14 +2937,6 @@ void do_cmd_view_map(void)
  * which is observed, and the "view_torch_grids" allows the player to memorize
  * every torch-lit grid.  The player will always memorize important walls,
  * doors, stairs, and other terrain features, as well as any "detected" grids.
- * Note that currently the processing of the "view_perma_grids" option is
- * broken.  If it is off, then you can't see floor with the "CAVE_GLOW" flag.
- * Perhaps the "view_perma_grids" flag, and the "view_torch_grids" flags should
- * be combined.  The "view_torch_grids" option is also broken.  When on, walls
- * are not shown properly.  This is due to optimisations elsewhere...
- *
- * XXX XXX Perhaps these bugs can be fixed, or these flags removed in some way.
- * Do we really need all this optional functionality?
  *
  *
  * Note that the new "update_view()" method allows, among other things, a room
@@ -3638,8 +3637,8 @@ errr vinfo_init(void)
  * (above), which is initialised at startup.
  *
  * This has been changed to allow a more circular view, due to the more
- * advanced distance() function in Zangband.  There are now 135 lines of sight
- * and one more 32bit flag to hold the data.
+ * advanced distance() function in Zangband.  There are now 135 lines of
+ * sight and one more 32 bit flag to hold the data.
  *
  * Hack -- The queue must be able to hold more than VINFO_MAX_GRIDS grids
  * because the grids at the edge of the field of view use "grid zero" as
@@ -4049,6 +4048,7 @@ void update_view(void)
 	temp_n = 0;
 }
 
+/* Is the current monster visible? */
 static bool mon_invis;
 
 /*
