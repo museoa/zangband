@@ -563,7 +563,7 @@ static int mon_will_run(monster_type *m_ptr)
 	if (m_ptr->monfear) return (TRUE);
 
 	/* Nearby monsters will not become terrified */
-	if (m_ptr->cdis <= 5) return (FALSE);
+    if (m_ptr->cdis <= 5) return (FALSE);
 
 	/* Examine player power (level) */
 	p_lev = p_ptr->lev;
@@ -992,7 +992,23 @@ static void get_move_advance(monster_type *m_ptr, int *tx, int *ty)
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 
-	/* Hack - Monster can go through rocks - head straight for character */
+    /* Spellcasters may try to keep distance between them and the player */
+    if (m_ptr->cdis < MAX_RANGE / 2 &&
+        m_ptr->cdis > 2 &&
+        ((r_ptr->flags4 & RF4_ATTACK_MASK) ||
+         (r_ptr->flags5 & RF5_ATTACK_MASK) ||
+         (r_ptr->flags6 & RF6_ATTACK_MASK)) &&
+        m_ptr->hp < p_ptr->lev * 3)
+    {
+        /* Move directly away from character. */
+        *tx = -(p_ptr->px - m_ptr->fx);
+        *ty = -(p_ptr->py - m_ptr->fy);
+
+        return;
+    }
+
+
+    /* Hack - Monster can go through rocks - head straight for character */
 	if (r_ptr->flags2 & (RF2_PASS_WALL | RF2_KILL_WALL))
 	{
 		*tx = px;
