@@ -379,11 +379,11 @@ void compact_objects(int size)
 	{
 		object_type *o_ptr = &o_list[i];
 
-		/* Skip real objects */
-		if (o_ptr->k_idx) continue;
-
 		/* Stop when we get to a held object */
 		if (o_ptr->held) break;
+
+		/* Skip real objects */
+		if (o_ptr->k_idx) continue;
 
 		/* Move last object into open hole */
 		compact_objects_aux(o_max - 1, i);

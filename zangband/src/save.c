@@ -1045,6 +1045,9 @@ static void wr_extra(void)
 
 	/* Trap detection status */
 	wr_byte(p_ptr->detected);
+	
+	/* Compact the objects before saving inventory */
+	compact_objects(0);
 
 	/* Player inventory item */
 	wr_s16b(p_ptr->inventory);
@@ -1318,10 +1321,6 @@ static void wr_dungeon(void)
 		save_map(p_ptr->min_wid, p_ptr->min_hgt, p_ptr->max_wid,
 				 p_ptr->max_hgt);
 	}
-
-
-	/* Compact the objects */
-	compact_objects(0);
 
 	/* Compact the monsters */
 	compact_monsters(0);
