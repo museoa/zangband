@@ -640,6 +640,9 @@ static bool borg_think_shop_buy_aux(int shop)
 	{
 		list_item *l_ptr = &cur_list[n];
 
+		/* Reset value indicator */
+		p = 0;
+
 		/* second check on empty */
 		if (!l_ptr->k_idx) continue;
 
