@@ -1047,10 +1047,6 @@ static void store_item_optimize(int item)
 	/* Must have no items */
 	if (o_ptr->number) return;
 
-#ifdef USE_SCRIPT
-	object_delete_callback(o_ptr);
-#endif /* USE_SCRIPT */
-
 	/* One less item */
 	st_ptr->stock_num--;
 
@@ -1193,10 +1189,6 @@ static void store_create(void)
 
 		/* Mass produce and/or Apply discount */
 		mass_produce(q_ptr);
-
-#ifdef USE_SCRIPT
-		q_ptr->python = object_create_callback(q_ptr);
-#endif /* USE_SCRIPT */
 
 		/* Attempt to carry the (known) item */
 		(void)store_carry(q_ptr);

@@ -614,10 +614,6 @@ bool monster_death(int m_idx, bool explode)
 		else
 			q_ptr->flags3 |= (TR3_AGGRAVATE);
 
-#ifdef USE_SCRIPT
-		q_ptr->python = object_create_callback(q_ptr);
-#endif /* USE_SCRIPT */
-
 		/* Drop it in the dungeon */
 		(void)drop_near(q_ptr, -1, y, x);
 	}
@@ -693,10 +689,6 @@ bool monster_death(int m_idx, bool explode)
 
 		apply_magic(q_ptr, object_level, 0, 0);
 
-#ifdef USE_SCRIPT
-		q_ptr->python = object_create_callback(q_ptr);
-#endif /* USE_SCRIPT */
-
 		/* Drop it in the dungeon */
 		(void)drop_near(q_ptr, -1, y, x);
 	}
@@ -715,10 +707,6 @@ bool monster_death(int m_idx, bool explode)
 
 		q_ptr->flags3 |= (TR3_IGNORE_ACID | TR3_IGNORE_ELEC |
 						 TR3_IGNORE_FIRE | TR3_IGNORE_COLD);
-
-#ifdef USE_SCRIPT
-		q_ptr->python = object_create_callback(q_ptr);
-#endif /* USE_SCRIPT */
 
 		/* Drop it in the dungeon */
 		(void)drop_near(q_ptr, -1, y, x);
@@ -883,10 +871,6 @@ bool monster_death(int m_idx, bool explode)
 			dump_item++;
 		}
 
-#ifdef USE_SCRIPT
-		q_ptr->python = object_create_callback(q_ptr);
-#endif /* USE_SCRIPT */
-
 		/* Drop it in the dungeon */
 		(void)drop_near(q_ptr, -1, y, x);
 	}
@@ -927,10 +911,6 @@ bool monster_death(int m_idx, bool explode)
 			if (object_value_real(q_ptr) > 100 * p_ptr->depth) break;
 		}
 		
-#ifdef USE_SCRIPT
-		q_ptr->python = object_create_callback(q_ptr);
-#endif /* USE_SCRIPT */
-
 		/* Drop it in the dungeon */
 		(void)drop_near(q_ptr, -1, y, x);
 	}
@@ -3582,10 +3562,6 @@ void gain_level_reward(int chosen_reward)
 			(void) random_resistance(q_ptr, rand_range(5, 38), 0);
 			
 			add_ego_flags(q_ptr, EGO_CHAOTIC);
-
-#ifdef USE_SCRIPT
-			q_ptr->python = object_create_callback(q_ptr);
-#endif /* USE_SCRIPT */
 
 			/* Drop it in the dungeon */
 			(void)drop_near(q_ptr, -1, py, px);

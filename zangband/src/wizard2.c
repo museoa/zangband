@@ -1168,10 +1168,6 @@ static void wiz_create_item(void)
 				/* found it */
 				create_named_art(i, py, px);
 
-#ifdef USE_SCRIPT
-				q_ptr->python = object_create_callback(q_ptr);
-#endif /* USE_SCRIPT */
-
 				/* All done */
 				msg_print("Allocated.");
 
@@ -1184,10 +1180,6 @@ static void wiz_create_item(void)
 		/* Apply magic */
 		apply_magic(q_ptr, p_ptr->depth, 0, 0);
 	}
-
-#ifdef USE_SCRIPT
-	q_ptr->python = object_create_callback(q_ptr);
-#endif /* USE_SCRIPT */
 
 	/* Drop the object from heaven */
 	(void)drop_near(q_ptr, -1, py, px);

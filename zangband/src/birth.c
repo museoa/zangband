@@ -1701,10 +1701,6 @@ static void player_outfit(void)
 			/* These objects are "storebought" */
 			q_ptr->ident |= IDENT_STOREB;
 
-#ifdef USE_SCRIPT
-			q_ptr->python = object_create_callback(q_ptr);
-#endif /* USE_SCRIPT */
-
 			(void)inven_carry(q_ptr);
 
 			break;
@@ -1716,10 +1712,6 @@ static void player_outfit(void)
 			q_ptr->number = (byte)rand_range(3, 7);
 			object_aware(q_ptr);
 			object_known(q_ptr);
-
-#ifdef USE_SCRIPT
-			q_ptr->python = object_create_callback(q_ptr);
-#endif /* USE_SCRIPT */
 
 			(void)inven_carry(q_ptr);
 		}
@@ -1741,10 +1733,6 @@ static void player_outfit(void)
 		/* These objects are "storebought" */
 		q_ptr->ident |= IDENT_STOREB;
 
-#ifdef USE_SCRIPT
-		q_ptr->python = object_create_callback(q_ptr);
-#endif /* USE_SCRIPT */
-
 		(void)inven_carry(q_ptr);
 	}
 	else
@@ -1755,10 +1743,6 @@ static void player_outfit(void)
 		q_ptr->timeout = rand_range(3, 7) * 500;
 		object_aware(q_ptr);
 		object_known(q_ptr);
-
-#ifdef USE_SCRIPT
-		q_ptr->python = object_create_callback(q_ptr);
-#endif /* USE_SCRIPT */
 
 		(void)inven_carry(q_ptr);
 	}
@@ -1778,10 +1762,6 @@ static void player_outfit(void)
 		object_aware(q_ptr);
 		object_known(q_ptr);
 
-#ifdef USE_SCRIPT
-		q_ptr->python = object_create_callback(q_ptr);
-#endif /* USE_SCRIPT */
-
 		(void)inven_carry(q_ptr);
 
 		/* Hack -- Give the player some arrows */
@@ -1792,10 +1772,6 @@ static void player_outfit(void)
 
 		object_aware(q_ptr);
 		object_known(q_ptr);
-
-#ifdef USE_SCRIPT
-		q_ptr->python = object_create_callback(q_ptr);
-#endif /* USE_SCRIPT */
 
 		(void)inven_carry(q_ptr);
 	}
@@ -1811,10 +1787,6 @@ static void player_outfit(void)
 
 		object_aware(q_ptr);
 		object_known(q_ptr);
-
-#ifdef USE_SCRIPT
-		q_ptr->python = object_create_callback(q_ptr);
-#endif /* USE_SCRIPT */
 
 		(void)inven_carry(q_ptr);
 	}
@@ -1855,10 +1827,6 @@ static void player_outfit(void)
 
 		object_aware(q_ptr);
 		object_known(q_ptr);
-
-#ifdef USE_SCRIPT
-		q_ptr->python = object_create_callback(q_ptr);
-#endif /* USE_SCRIPT */
 
 		(void)inven_carry(q_ptr);
 	}

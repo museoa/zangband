@@ -3114,12 +3114,6 @@ void create_named_art(int a_idx, int y, int x)
 
 	random_artifact_resistance(q_ptr);
 
-#ifdef USE_SCRIPT
-
-	q_ptr->python = object_create_callback(q_ptr);
-
-#endif /* USE_SCRIPT */
-
 	if (!a_ptr->cost)
 	{
 		/* Hack -- "worthless" artifacts */

@@ -96,8 +96,6 @@ struct field_type
 	s16b counter;			/* Counter for timed effects */
 	
 	byte priority;			/* LOS priority higher = more visible */
-
-	PyObject *python;
 };
 
 

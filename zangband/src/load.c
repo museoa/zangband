@@ -450,17 +450,7 @@ static void rd_item(object_type *o_ptr)
 		s32b tmp32s;
 
 		rd_s32b(&tmp32s);
-#ifdef USE_SCRIPT
-		if (tmp32s)
-		{
-			char *python_object = (char*) malloc(tmp32s + 1);
-			rd_string(python_object, tmp32s + 1);
-			o_ptr->python = object_load_callback(python_object);
-			free(python_object);
-		}
-#else /* USE_SCRIPT */
 		strip_bytes(tmp32s);
-#endif /* USE_SCRIPT */
 	}
 
 	/* Obtain the "kind" template */
@@ -758,18 +748,7 @@ static void rd_field(field_type *f_ptr)
 	}
 
 	rd_s32b(&tmp32s);
-#ifdef USE_SCRIPT
-	if (tmp32s)
-	{
-		char *python_field = (char*) malloc(tmp32s + 1);
-		rd_string(python_field, tmp32s + 1);
-		f_ptr->python = field_load_callback(python_field);
-		free(python_field);
-	}
-#else /* USE_SCRIPT */
 	strip_bytes(tmp32s);
-#endif /* USE_SCRIPT */
-
 }
 
 

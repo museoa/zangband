@@ -14,16 +14,6 @@ typedef unsigned short u16b;
 typedef signed int s32b;
 typedef unsigned int u32b;
 
-%typemap(python,in) PyObject*
-{
-	$target = $source;
-}
-
-%typemap(python,out) PyObject*
-{
-	$target = $source;
-}
-
 
 typedef struct object_kind
 {
@@ -134,7 +124,7 @@ typedef struct object_type
 	{
 		object_type(void)
 		{
-			object_type *o_ptr = (object_type*) malloc(sizeof(object_type));
+			object_type *o_ptr = (object_type*)malloc(sizeof(object_type));
 			object_wipe(o_ptr);
 
 			return (o_ptr);
@@ -158,8 +148,6 @@ typedef struct object_type
 		void object_prep(int k_idx)
 		{
 			object_prep(self, k_idx);
-
-			self->python = object_create_callback(self);
 		}
 
 		s16b drop_near(int chance, int y, int x)
@@ -186,12 +174,6 @@ typedef struct object_type
 		{
 			object_aware(self);
 		}
-
-		void set_python(PyObject *python)
-		{
-			self->python = python;
-		}
-
 	}
 } object_type;
 

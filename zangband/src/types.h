@@ -12,16 +12,6 @@
 
 
 /*
- * This file should ONLY be included by "angband.h"
- */
-
-#ifdef USE_SCRIPT
-
-#include "Python.h"
-
-#endif /* USE_SCRIPT */
-
-/*
  * Note that "char" may or may not be signed, and that "signed char"
  * may or may not work on all machines.  So always use "s16b" or "s32b"
  * for signed values.  Also, note that unsigned values cause math problems
@@ -794,10 +784,6 @@ struct object_type
 
 	byte activate;		/* Activation type */
 
-#ifdef USE_SCRIPT
-	PyObject *python;
-#endif /* USE_SCRIPT */
-
 #ifdef SCRIPT_OBJ_KIND
 	char *name;
 
@@ -944,11 +930,8 @@ struct field_type
 	s16b counter;			/* Counter for timed effects */
 	
 	byte priority;			/* LOS priority higher = more visible */
-
-#ifdef USE_SCRIPT
-	PyObject *python;
-#endif /* USE_SCRIPT */
 };
+
 
 /*
  * This is the type of the array that is used to parse t_info.txt
