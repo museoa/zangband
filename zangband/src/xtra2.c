@@ -494,7 +494,7 @@ void monster_death(int m_idx)
 
 #ifdef USE_CORPSES
 	/* Drop a dead corpse? */
-	if ((randint(r_ptr->flags1 & RF1_UNIQUE ? 1 : 4) == 1) &&
+	if ((randint(r_ptr->flags1 & RF1_UNIQUE ? 1 : 2) == 1) &&
 	    ((r_ptr->flags9 & RF9_DROP_CORPSE) ||
 	    (r_ptr->flags9 & RF9_DROP_SKELETON)))
 	{
@@ -514,11 +514,11 @@ void monster_death(int m_idx)
 			/* Lots of damage in one blow */
 			if ((0 - ((m_ptr->maxhp) / 4)) > m_ptr->hp)
 			{
-				if (randint(5) == 1) corpse = TRUE;
+				if (randint(3) == 1) corpse = TRUE;
 			}
 			else
 			{
-				if (randint(5) != 1) corpse = TRUE;
+				if (randint(3) != 1) corpse = TRUE;
 			}
 		}
 
