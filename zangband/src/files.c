@@ -1813,9 +1813,61 @@ void player_flags(u32b *f1, u32b *f2, u32b *f3, u32b *f4)
 	/* Mutations */
 	if (p_ptr->muta3)
 	{
+		if (p_ptr->muta1 & MUT1_VAMPIRISM)
+		{
+			/* HURT_LITE would be too cruel */
+			(*f4) |= TR4_CANT_EAT;
+		}
+
+		if (p_ptr->muta1 & MUT1_POLYMORPH)
+		{
+			(*f4) |= TR4_MUTATE;
+		}
+
+		if (p_ptr->muta1 & MUT1_PANIC_HIT)
+		{
+			(*f2) &= ~(TR2_RES_FEAR);
+		}
+
+		if (p_ptr->muta1 & MUT1_EAT_ROCK)
+		{
+			(*f4) |= TR4_CANT_EAT;
+		}
+		
+		if (p_ptr->muta2 & MUT2_BEAK)
+		{
+			(*f4) |= TR4_CANT_EAT;
+		}
+
+		if (p_ptr->muta2 & MUT2_WARNING)
+		{
+			(*f2) &= ~(TR2_RES_FEAR);
+		}
+
+		if (p_ptr->muta3 & MUT3_HYPER_INT)
+		{
+			(*f4) |= TR4_HURT_ELEC;
+		}
+
+		if (p_ptr->muta3 & MUT3_MORONIC)
+		{
+			(*f2) |= TR2_RES_FEAR;
+			(*f2) |= TR2_RES_CONF;
+		}
+
+		if (p_ptr->muta3 & MUT3_ALBINO)
+		{
+			(*f2) |= TR2_RES_DARK;
+		}
+
 		if (p_ptr->muta3 & MUT3_FLESH_ROT)
 		{
 			(*f3) &= ~(TR3_REGEN);
+		}
+
+		if (p_ptr->muta3 & MUT3_BLANK_FAC)
+		{
+			(*f3) |= TR3_SEE_INVIS;
 		}
 
 #if 0

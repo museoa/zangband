@@ -3521,6 +3521,14 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Nexus -- see above */
 			if (fuzzy) msgf("You are hit by something strange!");
+
+			/* Mutations can be weird... */
+			if ((p_ptr->muta1 & MUT1_VTELEPORT) ||
+					(p_ptr->muta1 & MUT1_BLINK) ||
+					(p_ptr->muta1 & MUT1_SWAP_POS) ||
+					(p_ptr->muta1 & MUT1_RECALL))
+				dam *= 2;
+
 			if (p_ptr->flags2 & (TR2_RES_NEXUS))
 			{
 				dam *= 6;

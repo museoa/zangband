@@ -1806,16 +1806,125 @@ void mutation_random_aux(const mutation_type *mut_ptr)
  */
 void mutation_effect(void)
 {
+	if (p_ptr->muta1 & MUT1_HYPN_GAZE)
+	{
+		p_ptr->stat[A_WIS].add -= 1;
+	}
+
+	if (p_ptr->muta1 & MUT1_TELEKINES)
+	{
+		p_ptr->stat[A_CON].add -= 1;
+	}
+
+	if (p_ptr->muta1 & MUT1_MIND_BLST)
+	{
+		p_ptr->stat[A_STR].add -= 2;
+	}
+
+	if (p_ptr->muta1 & MUT1_RADIATION)
+	{
+		p_ptr->stat[A_CON].add -= 2;
+	}
+
+	if (p_ptr->muta1 & MUT1_SHRIEK)
+	{
+		p_ptr->stat[A_CHR].add -= 3;
+	}
+	
+	if (p_ptr->muta1 & MUT1_ILLUMINE)
+	{
+		p_ptr->skill.stl -= 3;
+	}
+
+	if (p_ptr->muta1 & MUT1_BERSERK)
+	{
+		p_ptr->stat[A_WIS].add -= 2;
+	}
+
+	if (p_ptr->muta1 & MUT1_MIDAS_TCH)
+	{
+		p_ptr->stat[A_CHR].add -= 4;
+	}
+
+	if (p_ptr->muta1 & MUT1_RESIST)
+	{
+		p_ptr->skill.sav -= 10;
+	}
+
+	if (p_ptr->muta1 & MUT1_EARTHQUAKE)
+	{
+		p_ptr->stat[A_WIS].add -= 1;
+	}
+
+	if (p_ptr->muta1 & MUT1_STERILITY)
+	{
+		p_ptr->stat[A_INT].add -= 2;
+	}
+
+	if (p_ptr->muta1 & MUT1_DAZZLE)
+	{
+		p_ptr->skill.stl -= 3;
+	}
+
+	if (p_ptr->muta1 & MUT1_LASER_EYE)
+	{
+		p_ptr->skill.sns -= 10;
+	}
+
+	if (p_ptr->muta1 & MUT1_COLD_TOUCH)
+	{
+		p_ptr->stat[A_DEX].add -= 1;
+	}
+
+	if (p_ptr->muta1 & MUT1_LAUNCHER)
+	{
+		p_ptr->stat[A_DEX].add -= 1;
+	}
+
+	if (p_ptr->muta2 & MUT2_SCOR_TAIL)
+	{
+		p_ptr->stat[A_CHR].add -= 3;
+	}
+
+	if (p_ptr->muta2 & MUT2_HORNS)
+	{
+		p_ptr->stat[A_INT].add -= 1;
+	}
+
+	if (p_ptr->muta2 & MUT2_TRUNK)
+	{
+		p_ptr->stat[A_CHR].add -= 2;
+	}
+
+	if (p_ptr->muta2 & MUT2_TENTACLES)
+	{
+		p_ptr->stat[A_CHR].add -= 3;
+	}
+
+	if (p_ptr->muta2 & MUT2_WRAITH)
+	{
+		p_ptr->stat[A_CON].add -= 3;
+	}
+
+	if (p_ptr->muta2 & MUT2_INVULN)
+	{
+		p_ptr->stat[A_WIS].add -= 3;
+	}
+
+
 	/* Hyper Strength */
 	if (p_ptr->muta3 & MUT3_HYPER_STR)
 	{
 		p_ptr->stat[A_STR].add += 4;
+		p_ptr->stat[A_INT].add -= 2;
+		p_ptr->stat[A_WIS].add -= 2;
 	}
 
 	/* Puny */
 	if (p_ptr->muta3 & MUT3_PUNY)
 	{
 		p_ptr->stat[A_STR].add -= 4;
+		p_ptr->stat[A_DEX].add += 2;
 	}
 
 	/* Living computer */
@@ -1823,6 +1932,7 @@ void mutation_effect(void)
 	{
 		p_ptr->stat[A_INT].add += 4;
 		p_ptr->stat[A_WIS].add += 4;
+		/* p_ptr->flags4 |= TR4_HURT_ELEC */
 	}
 
 	/* Moronic */
@@ -1830,6 +1940,8 @@ void mutation_effect(void)
 	{
 		p_ptr->stat[A_INT].add -= 4;
 		p_ptr->stat[A_WIS].add -= 4;
+		/* p_ptr->flags2 |= TR2_RES_FEAR */
+		/* p_ptr->flags2 |= TR2_RES_CONF */
 	}
 
 	if (p_ptr->muta3 & MUT3_RESILIENT)
@@ -1846,6 +1958,7 @@ void mutation_effect(void)
 	if (p_ptr->muta3 & MUT3_ALBINO)
 	{
 		p_ptr->stat[A_CON].add -= 4;
+		/* p_ptr->flags2 |= TR2_RES_DARK */
 	}
 
 	if (p_ptr->muta3 & MUT3_FLESH_ROT)
@@ -1864,12 +1977,14 @@ void mutation_effect(void)
 	if (p_ptr->muta3 & MUT3_BLANK_FAC)
 	{
 		p_ptr->stat[A_CHR].add -= 1;
+		/* p_ptr->Flags3 |= TR3_SEE_INVIS; */
 	}
 
 	if (p_ptr->muta3 & MUT3_XTRA_EYES)
 	{
 		p_ptr->skill.fos += 15;
 		p_ptr->skill.sns += 15;
+		p_ptr->stat[A_CHR].add -= 2;
 	}
 
 	if (p_ptr->muta3 & MUT3_MAGIC_RES)
@@ -1890,6 +2005,7 @@ void mutation_effect(void)
 	if (p_ptr->muta3 & MUT3_XTRA_LEGS)
 	{
 		p_ptr->pspeed += 3;
+		p_ptr->stat[A_DEX].add -= 2;
 	}
 
 	if (p_ptr->muta3 & MUT3_SHORT_LEG)
@@ -1899,11 +2015,13 @@ void mutation_effect(void)
 
 	if (p_ptr->muta3 & MUT3_ELEC_TOUC)
 	{
+		p_ptr->stat[A_CON].add -= 2;
 		/* p_ptr->flags3 |= (TR3_SH_ELEC); */
 	}
 
 	if (p_ptr->muta3 & MUT3_FIRE_BODY)
 	{
+		p_ptr->stat[A_DEX].add -= 2;
 		/* p_ptr->flags3 |= (TR3_SH_FIRE); */
 		/* p_ptr->flags3 |= (TR3_LITE); */
 	}
@@ -1924,13 +2042,14 @@ void mutation_effect(void)
 
 	if (p_ptr->muta3 & MUT3_IRON_SKIN)
 	{
-		p_ptr->stat[A_DEX].add -= 1;
+		p_ptr->stat[A_DEX].add -= 3;
 		p_ptr->to_a += 25;
 		p_ptr->dis_to_a += 25;
 	}
 
 	if (p_ptr->muta3 & MUT3_WINGS)
 	{
+		p_ptr->stat[A_CON].add -= 1;
 		/* p_ptr->flags3 |= (TR3_FEATHER); */
 	}
 
@@ -1946,17 +2065,19 @@ void mutation_effect(void)
 
 	if (p_ptr->muta3 & MUT3_ESP)
 	{
+		p_ptr->stat[A_CON].add -= 2;
 		/* p_ptr->flags3 |= (TR3_TELEPATHY); */
 	}
 
 	if (p_ptr->muta3 & MUT3_LIMBER)
 	{
-		/* p_ptr->stat[A_DEX].add += 3; */
+		p_ptr->stat[A_DEX].add += 3;
+		p_ptr->stat[A_STR].add -= 1;
 	}
 
 	if (p_ptr->muta3 & MUT3_ARTHRITIS)
 	{
-		/* p_ptr->stat[A_DEX].add -= 3; */
+		p_ptr->stat[A_DEX].add -= 3;
 	}
 
 	if (p_ptr->muta3 & MUT3_MOTION)

@@ -1360,6 +1360,10 @@ static void process_world(void)
 			/* Regeneration takes more food */
 			if (p_ptr->flags3 & (TR3_REGEN)) i += 30;
 
+			/* Some specific mutations increase food requirement */
+			if (p_ptr->muta3 & (MUT3_RESILIENT)) i += 20;
+			if (p_ptr->muta1 & (MUT1_EAT_ROCK)) i += 20;
+
 			/* Slow digestion takes less food */
 			if (p_ptr->flags3 & (TR3_SLOW_DIGEST)) i -= 10;
 

@@ -3103,6 +3103,17 @@ s16b spell_chance(int spell, int realm)
 		chance += 5 * (s_ptr->smana - p_ptr->csp);
 	}
 
+	/* Some mutations increase spell failure */
+	if ((p_ptr->muta3 & MUT3_MAGIC_RES) || (p_ptr->muta1 & MUT1_EAT_MAGIC))
+	{
+		chance += 5;
+	}
+
+	if (realm == REALM_DEATH-1 && (p_ptr->muta1 & MUT1_BANISH))
+	{
+		chance += 10;
+	}
+
 	/* Extract the minimum failure rate */
 	minfail = adj_mag_fail[p_ptr->stat[mp_ptr->spell_stat].ind];
 
