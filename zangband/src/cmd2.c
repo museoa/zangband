@@ -1274,7 +1274,7 @@ static bool do_cmd_tunnel_aux(int x, int y)
 			msgf("You have removed the rubble.");
 
 			/* Hack -- place an object */
-			if (one_in_(10))
+			if (p_ptr->depth && one_in_(10))
 			{
 				/* Create a simple object */
 				place_object(x, y, FALSE, FALSE, 0);
