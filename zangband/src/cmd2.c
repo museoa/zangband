@@ -2517,6 +2517,11 @@ static sint critical_shot(int chance, int sleeping_bonus, bool thrown_weapon,
 	int i, k;
 	int mult_a_crit = 10;
 
+	if (!visible)
+	{
+		msg_format("The %s finds a mark.", o_name);
+	}
+
 	/* Extract missile power.  */
 	i = (chance + sleeping_bonus);
 
@@ -2526,7 +2531,7 @@ static sint critical_shot(int chance, int sleeping_bonus, bool thrown_weapon,
 		/* Encourage the player to throw weapons at sleeping
 		 * monsters. -LM-
 		 */
-		if (sleeping_bonus)
+		if (sleeping_bonus && visible)
 		{
 			msg_print("You rudely awaken the monster!");
 		}
@@ -2541,59 +2546,38 @@ static sint critical_shot(int chance, int sleeping_bonus, bool thrown_weapon,
 		 */
 		if (k < 125)
 		{
+			if (visible)
+			{
+				msg_format("The %s strikes %s.", o_name, m_name);
+			}
 
-				if (!visible)
-				{
-				/* Invisible monster */
-					msg_format("The %s finds a mark.", o_name);
-				}
-				else
-				{
-				/* Visible monster */
-					msg_format("The %s strikes %s.", o_name, m_name);
-				}
 			mult_a_crit = 15;
 		}
 		else if (k < 215)
 		{
-				if (!visible)
-				{
-				/* Invisible monster */
-					msg_format("The %s finds a mark.", o_name);
-				}
-				else
-				{
-				/* Visible monster */
-					msg_format("The %s penetrates %s.", o_name, m_name);
-				}
+			if (visible)
+			{
+				msg_format("The %s penetrates %s.", o_name, m_name);
+			}
+
 			mult_a_crit = 21;
 		}
 		else if (k < 275)
 		{
-				if (!visible)
-				{
-				/* Invisible monster */
-					msg_format("The %s finds a mark.", o_name);
-				}
-				else
-				{
-				/* Visible monster */
-					msg_format("The %s drives into %s!", o_name, m_name);
-				}
+			if (visible)
+			{
+				msg_format("The %s drives into %s!", o_name, m_name);
+			}
+
 			mult_a_crit = 28;
 		}
 		else
 		{
-				if (!visible)
-				{
-				/* Invisible monster */
-					msg_format("The %s finds a mark.", o_name);
-				}
-				else
-				{
-				/* Visible monster */
-					msg_format("The %s transpierces %s!", o_name, m_name);
-				}
+			if (visible)
+			{
+				msg_format("The %s transpierces %s!", o_name, m_name);
+			}
+
 			mult_a_crit = 35;
 		}
 	}
@@ -2885,22 +2869,11 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 					note_dies = " is destroyed.";
 				}
 
-				/* Handle unseen monster */
-				if (!visible)
+				/* Get "the monster" or "it" */
+				monster_desc(m_name, m_ptr, 0);
+
+				if (visible)
 				{
-					/* Invisible monster */
-					msg_format("The %s finds a mark.", o_name);
-				}
-
-				/* Handle visible monster */
-				else
-				{
-					/* Get "the monster" or "it" */
-					monster_desc(m_name, m_ptr, 0);
-
-					/* Message */
-					msg_format("The %s hits %s.", o_name, m_name);
-
 					/* Hack -- Track this monster race */
 					if (m_ptr->ml) monster_race_track(m_ptr->r_idx);
 
