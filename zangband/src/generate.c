@@ -294,7 +294,7 @@ static void alloc_object(int set, int typ, int num)
  * grids which are not in rooms.  We might want to also count stairs,
  * open doors, closed doors, etc.
  */
-static int next_to_corr(int y1, int x1)
+static int next_to_corr(int x1, int y1)
 {
 	int i, y, x, k = 0;
 
@@ -334,10 +334,10 @@ static int next_to_corr(int y1, int x1)
  *
  * Assumes "in_bounds(y, x)"
  */
-static bool possible_doorway(int y, int x)
+static bool possible_doorway(int x, int y)
 {
 	/* Count the adjacent corridors */
-	if (next_to_corr(y, x) >= 2)
+	if (next_to_corr(x, y) >= 2)
 	{
 		/* Check Vertical */
 		if ((cave[y-1][x].feat >= FEAT_MAGMA) &&
@@ -362,7 +362,7 @@ static bool possible_doorway(int y, int x)
 /*
  * Places door at y, x position if at least 2 walls found
  */
-static void try_door(int y, int x)
+static void try_door(int x, int y)
 {
 	/* Paranoia */
 	if (!in_bounds(y, x)) return;
@@ -374,7 +374,7 @@ static void try_door(int y, int x)
 	if (cave[y][x].info & (CAVE_ROOM)) return;
 
 	/* Occasional door (if allowed) */
-	if ((randint0(100) < dun_tun_jct) && possible_doorway(y, x))
+	if ((randint0(100) < dun_tun_jct) && possible_doorway(x, y))
 	{
 		/* Place a door */
 		place_random_door(y, x);
@@ -807,10 +807,10 @@ static bool cave_gen(void)
 		x = dun->door[i].x;
 
 		/* Try placing doors */
-		try_door(y, x - 1);
-		try_door(y, x + 1);
-		try_door(y - 1, x);
-		try_door(y + 1, x);
+		try_door(x, y - 1);
+		try_door(x, y + 1);
+		try_door(x - 1, y);
+		try_door(x + 1, y);
 	}
 
 
