@@ -346,7 +346,7 @@ void teleport_player(int dis)
 	bool look = TRUE;
 	cave_type *c_ptr;
 
-	if (p_ptr->anti_tele)
+	if (p_ptr->flags3 & (TR3_NO_TELE))
 	{
 		msgf("A mysterious force prevents you from teleporting!");
 		return;
@@ -522,7 +522,7 @@ void teleport_player_to(int nx, int ny)
 	/* No movement at all */
 	if ((ny == py) && (nx == px)) return;
 
-	if (p_ptr->anti_tele)
+	if (p_ptr->flags3 & (TR3_NO_TELE))
 	{
 		msgf("A mysterious force prevents you from teleporting!");
 		return;
@@ -629,7 +629,7 @@ void teleport_player_level(void)
 
 	if (!check_down_wild()) return;
 
-	if (p_ptr->anti_tele)
+	if (p_ptr->flags3 & (TR3_NO_TELE))
 	{
 		msgf("A mysterious force prevents you from teleporting!");
 		return;
@@ -4267,19 +4267,20 @@ void acid_dam(int dam, cptr kb_str)
 	int inv;
 
 	/* Total Immunity */
-	if (p_ptr->immune_acid || (dam <= 0)) return;
+	if ((p_ptr->flags2 & (TR2_IM_ACID)) || (dam <= 0)) return;
 
 	/* Vulnerability (Ouch!) */
 	if (p_ptr->muta3 & MUT3_VULN_ELEM) dam *= 2;
-	if (p_ptr->hurt_acid) dam *= 2;
+	if (p_ptr->flags4 & (TR4_HURT_ACID)) dam *= 2;
 
 	/* Resist the damage */
-	if (p_ptr->resist_acid) dam = (dam + 2) / 3;
+	if (p_ptr->flags2 & (TR2_RES_ACID)) dam = (dam + 2) / 3;
 	if (p_ptr->tim.oppose_acid) dam = (dam + 2) / 3;
 
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
-	if ((!(p_ptr->tim.oppose_acid || p_ptr->resist_acid)) && one_in_(HURT_CHANCE))
+	if ((!(p_ptr->tim.oppose_acid || (p_ptr->flags2 & (TR2_RES_ACID)))) &&
+		 one_in_(HURT_CHANCE))
 		(void)do_dec_stat(A_CHR);
 
 	/* If any armor gets hit, defend the player */
@@ -4289,7 +4290,7 @@ void acid_dam(int dam, cptr kb_str)
 	take_hit(dam, kb_str);
 
 	/* Inventory damage */
-	if (!(p_ptr->tim.oppose_acid && p_ptr->resist_acid))
+	if (!(p_ptr->tim.oppose_acid && (p_ptr->flags2 & (TR2_RES_ACID))))
 		(void)inven_damage(set_acid_destroy, inv);
 }
 
@@ -4302,26 +4303,27 @@ void elec_dam(int dam, cptr kb_str)
 	int inv;
 
 	/* Total immunity */
-	if (p_ptr->immune_elec || (dam <= 0)) return;
+	if ((p_ptr->flags2 & (TR2_IM_ELEC)) || (dam <= 0)) return;
 
 	/* Vulnerability (Ouch!) */
 	if (p_ptr->muta3 & MUT3_VULN_ELEM) dam *= 2;
-	if (p_ptr->hurt_elec) dam *= 2;
+	if (p_ptr->flags4 & (TR4_HURT_ELEC)) dam *= 2;
 
 	/* Resist the damage */
 	if (p_ptr->tim.oppose_elec) dam = (dam + 2) / 3;
-	if (p_ptr->resist_elec) dam = (dam + 2) / 3;
+	if (p_ptr->flags2 & (TR2_RES_ELEC)) dam = (dam + 2) / 3;
 
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
-	if ((!(p_ptr->tim.oppose_elec || p_ptr->resist_elec)) && one_in_(HURT_CHANCE))
+	if ((!(p_ptr->tim.oppose_elec || (p_ptr->flags2 & (TR2_RES_ELEC)))) &&
+		 one_in_(HURT_CHANCE))
 		(void)do_dec_stat(A_DEX);
 
 	/* Take damage */
 	take_hit(dam, kb_str);
 
 	/* Inventory damage */
-	if (!(p_ptr->tim.oppose_elec && p_ptr->resist_elec))
+	if (!(p_ptr->tim.oppose_elec && (p_ptr->flags2 & (TR2_RES_ELEC))))
 		(void)inven_damage(set_elec_destroy, inv);
 }
 
@@ -4334,26 +4336,27 @@ void fire_dam(int dam, cptr kb_str)
 	int inv;
 
 	/* Totally immune */
-	if (p_ptr->immune_fire || (dam <= 0)) return;
+	if ((p_ptr->flags2 & (TR2_IM_FIRE)) || (dam <= 0)) return;
 
 	/* Vulnerability (Ouch!) */
 	if (p_ptr->muta3 & MUT3_VULN_ELEM) dam *= 2;
-	if (p_ptr->hurt_fire) dam *= 2;
+	if (p_ptr->flags4 & (TR4_HURT_FIRE)) dam *= 2;
 
 	/* Resist the damage */
-	if (p_ptr->resist_fire) dam = (dam + 2) / 3;
+	if (p_ptr->flags2 & (TR2_RES_FIRE)) dam = (dam + 2) / 3;
 	if (p_ptr->tim.oppose_fire) dam = (dam + 2) / 3;
 
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
-	if ((!(p_ptr->tim.oppose_fire || p_ptr->resist_fire)) && one_in_(HURT_CHANCE))
+	if ((!(p_ptr->tim.oppose_fire || (p_ptr->flags2 & (TR2_RES_FIRE)))) &&
+		 one_in_(HURT_CHANCE))
 		(void)do_dec_stat(A_STR);
 
 	/* Take damage */
 	take_hit(dam, kb_str);
 
 	/* Inventory damage */
-	if (!(p_ptr->resist_fire && p_ptr->tim.oppose_fire))
+	if (!((p_ptr->flags2 & (TR2_RES_FIRE)) && p_ptr->tim.oppose_fire))
 		(void)inven_damage(set_fire_destroy, inv);
 }
 
@@ -4366,26 +4369,27 @@ void cold_dam(int dam, cptr kb_str)
 	int inv;
 
 	/* Total immunity */
-	if (p_ptr->immune_cold || (dam <= 0)) return;
+	if ((p_ptr->flags2 & (TR2_IM_COLD)) || (dam <= 0)) return;
 
 	/* Vulnerability (Ouch!) */
 	if (p_ptr->muta3 & MUT3_VULN_ELEM) dam *= 2;
-	if (p_ptr->hurt_cold) dam *= 2;
+	if (p_ptr->flags4 & (TR4_HURT_COLD)) dam *= 2;
 
 	/* Resist the damage */
-	if (p_ptr->resist_cold) dam = (dam + 2) / 3;
+	if (p_ptr->flags2 & (TR2_RES_COLD)) dam = (dam + 2) / 3;
 	if (p_ptr->tim.oppose_cold) dam = (dam + 2) / 3;
 
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
-	if ((!(p_ptr->tim.oppose_cold || p_ptr->resist_cold)) && one_in_(HURT_CHANCE))
+	if ((!(p_ptr->tim.oppose_cold || (p_ptr->flags2 & (TR2_RES_COLD)))) &&
+		 one_in_(HURT_CHANCE))
 		(void)do_dec_stat(A_STR);
 
 	/* Take damage */
 	take_hit(dam, kb_str);
 
 	/* Inventory damage */
-	if (!(p_ptr->resist_cold && p_ptr->tim.oppose_cold))
+	if (!((p_ptr->flags2 & (TR2_RES_COLD)) && p_ptr->tim.oppose_cold))
 		(void)inven_damage(set_cold_destroy, inv);
 }
 
@@ -4834,12 +4838,12 @@ void sanity_blast(const monster_type *m_ptr)
 	/* Mind blast */
 	if (!saving_throw(p_ptr->skill.sav * 100 / power))
 	{
-		if ((!p_ptr->resist_fear) || one_in_(5))
+		if ((!(p_ptr->flags2 & (TR2_RES_FEAR))) || one_in_(5))
 		{
 			/* Get afraid, even if have resist fear! */
 			(void)set_afraid(p_ptr->tim.afraid + rand_range(10, 20));
 		}
-		if (!p_ptr->resist_chaos)
+		if (!(p_ptr->flags2 & (TR2_RES_CHAOS)))
 		{
 			(void)set_image(p_ptr->tim.image + rand_range(150, 400));
 		}

@@ -1014,9 +1014,10 @@ static void process_world(void)
 
 
 	/* (Vampires) Take damage from sunlight */
-	if (p_ptr->rp.prace == RACE_VAMPIRE)
+	if (p_ptr->flags4 & (TR4_HURT_LITE))
 	{
-		if (!p_ptr->depth && !p_ptr->resist_lite && !p_ptr->tim.invuln &&
+		if (!p_ptr->depth && !(p_ptr->flags2 & (TR2_RES_LITE)) &&
+			!p_ptr->tim.invuln &&
 			(!((turn / ((10L * TOWN_DAWN) / 2)) % 2)))
 		{
 			if (c_ptr->info & CAVE_GLOW)
@@ -1032,7 +1033,7 @@ static void process_world(void)
 
 		if (o_ptr->tval &&
 			(o_ptr->sval >= SV_LITE_GALADRIEL) &&
-			(o_ptr->sval < SV_LITE_THRAIN) && !p_ptr->resist_lite)
+			(o_ptr->sval < SV_LITE_THRAIN) && !(p_ptr->flags2 & (TR2_RES_LITE)))
 		{
 			char o_name[256];
 			char ouch[280];
@@ -1053,11 +1054,12 @@ static void process_world(void)
 	}
 
 	if ((c_ptr->feat == FEAT_SHAL_LAVA) &&
-		!p_ptr->tim.invuln && !p_ptr->immune_fire && !p_ptr->ffall)
+		!p_ptr->tim.invuln && !(p_ptr->flags2 & (TR2_IM_FIRE)) &&
+		!(p_ptr->flags3 & (TR3_FEATHER)))
 	{
 		int damage = p_ptr->lev;
 
-		if (p_ptr->resist_fire) damage = damage / 3;
+		if (p_ptr->flags2 & (TR2_RES_FIRE)) damage = damage / 3;
 		if (p_ptr->tim.oppose_fire) damage = damage / 3;
 
 		if (damage)
@@ -1070,16 +1072,16 @@ static void process_world(void)
 	}
 
 	else if ((c_ptr->feat == FEAT_DEEP_LAVA) &&
-			 !p_ptr->tim.invuln && !p_ptr->immune_fire)
+			 !p_ptr->tim.invuln && !(p_ptr->flags2 & (TR2_IM_FIRE)))
 	{
 		int damage = p_ptr->lev * 2;
 		cptr message;
 		cptr hit_from;
 
-		if (p_ptr->resist_fire) damage = damage / 3;
+		if (p_ptr->flags2 & (TR2_RES_FIRE)) damage = damage / 3;
 		if (p_ptr->tim.oppose_fire) damage = damage / 3;
 
-		if (p_ptr->ffall)
+		if (p_ptr->flags3 & (TR3_FEATHER))
 		{
 			damage = damage / 5;
 
@@ -1103,11 +1105,12 @@ static void process_world(void)
 	}
 
 	if ((c_ptr->feat == FEAT_SHAL_ACID) &&
-		!p_ptr->tim.invuln && !p_ptr->immune_acid && !p_ptr->ffall)
+		!p_ptr->tim.invuln && !(p_ptr->flags2 & (TR2_IM_ACID)) &&
+		!(p_ptr->flags3 & (TR3_FEATHER)))
 	{
 		int damage = p_ptr->lev;
 
-		if (p_ptr->resist_acid) damage = damage / 3;
+		if (p_ptr->flags2 & (TR2_RES_ACID)) damage = damage / 3;
 		if (p_ptr->tim.oppose_acid) damage = damage / 3;
 
 		if (damage)
@@ -1120,16 +1123,16 @@ static void process_world(void)
 	}
 
 	else if ((c_ptr->feat == FEAT_DEEP_ACID) &&
-			 !p_ptr->tim.invuln && !p_ptr->immune_acid)
+			 !p_ptr->tim.invuln && !(p_ptr->flags2 & (TR2_IM_ACID)))
 	{
 		int damage = p_ptr->lev * 2;
 		cptr message;
 		cptr hit_from;
 
-		if (p_ptr->resist_acid) damage = damage / 3;
+		if (p_ptr->flags2 & (TR2_RES_ACID)) damage = damage / 3;
 		if (p_ptr->tim.oppose_acid) damage = damage / 3;
 
-		if (p_ptr->ffall)
+		if (p_ptr->flags3 & (TR3_FEATHER))
 		{
 			damage = damage / 5;
 
@@ -1153,7 +1156,8 @@ static void process_world(void)
 	}
 
 	if ((c_ptr->feat == FEAT_SHAL_SWAMP) &&
-		!p_ptr->tim.invuln && !p_ptr->resist_pois && !p_ptr->ffall)
+		!p_ptr->tim.invuln && !(p_ptr->flags2 & (TR2_RES_POIS)) &&
+		!(p_ptr->flags3 & (TR3_FEATHER)))
 	{
 		int damage = p_ptr->lev;
 
@@ -1174,10 +1178,10 @@ static void process_world(void)
 		cptr message;
 		cptr hit_from;
 
-		if (p_ptr->resist_pois) damage = damage / 3;
+		if (p_ptr->flags2 & (TR2_RES_POIS)) damage = damage / 3;
 		if (p_ptr->tim.oppose_pois) damage = damage / 3;
 
-		if (p_ptr->ffall)
+		if (p_ptr->flags3 & (TR3_FEATHER))
 		{
 			damage = damage / 5;
 
@@ -1201,7 +1205,8 @@ static void process_world(void)
 	}
 
 	else if (((c_ptr->feat == FEAT_DEEP_WATER) ||
-			  (c_ptr->feat == FEAT_OCEAN_WATER)) && !p_ptr->ffall)
+			  (c_ptr->feat == FEAT_OCEAN_WATER)) &&
+			  !(p_ptr->flags3 & (TR3_FEATHER)))
 	{
 		if (p_ptr->total_weight >
 			((adj_str_wgt[p_ptr->stat[A_STR].ind] * 100) / 2))
@@ -1349,10 +1354,10 @@ static void process_world(void)
 			i *= 2;
 
 			/* Regeneration takes more food */
-			if (p_ptr->regenerate) i += 30;
+			if (p_ptr->flags3 & (TR3_REGEN)) i += 30;
 
 			/* Slow digestion takes less food */
-			if (p_ptr->slow_digest) i -= 10;
+			if (p_ptr->flags3 & (TR3_SLOW_DIGEST)) i -= 10;
 
 			/* Minimal digestion */
 			if (i < 1) i = 1;
@@ -1424,7 +1429,7 @@ static void process_world(void)
 	else
 	{
 		/* Regeneration ability */
-		if (p_ptr->regenerate)
+		if (p_ptr->flags3 & (TR3_REGEN))
 		{
 			regen_amount = regen_amount * 2;
 		}
@@ -1555,7 +1560,7 @@ static void process_world(void)
 	/*** Process Inventory ***/
 
 	/* Handle experience draining */
-	if (p_ptr->exp_drain)
+	if (p_ptr->flags3 & (TR3_DRAIN_EXP))
 	{
 		if ((randint0(100) < 10) && (p_ptr->exp > 0))
 		{
@@ -1566,7 +1571,7 @@ static void process_world(void)
 	}
 
 	/* Rarely, take damage from the Jewel of Judgement */
-	if (one_in_(999) && !p_ptr->anti_magic)
+	if (one_in_(999) && !(p_ptr->flags3 & (TR3_NO_MAGIC)))
 	{
 		if ((p_ptr->equipment[EQUIP_LITE].tval) && !p_ptr->tim.invuln &&
 			(p_ptr->equipment[EQUIP_LITE].sval == SV_LITE_THRAIN))
@@ -1610,7 +1615,7 @@ static void process_world(void)
 		 */
 		if ((o_ptr->flags3 & TR3_TELEPORT) && one_in_(100))
 		{
-			if (cursed_p(o_ptr) && !p_ptr->anti_tele)
+			if (cursed_p(o_ptr) && !(p_ptr->flags3 & (TR3_NO_TELE)))
 			{
 				disturb(FALSE);
 
@@ -2225,7 +2230,7 @@ static void process_command(void)
 		case 'm':
 		{
 			/* Cast a spell */
-			if (p_ptr->anti_magic)
+			if (p_ptr->flags3 & (TR3_NO_MAGIC))
 			{
 				cptr which_power = "magic";
 				if (p_ptr->rp.pclass == CLASS_MINDCRAFTER)

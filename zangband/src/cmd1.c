@@ -915,7 +915,7 @@ static void touch_zap_player(const monster_type *m_ptr)
 
 	if (r_ptr->flags2 & RF2_AURA_FIRE)
 	{
-		if (!p_ptr->immune_fire)
+		if (!(p_ptr->flags2 & (TR2_IM_FIRE)))
 		{
 			char aura_dam[80];
 
@@ -927,9 +927,9 @@ static void touch_zap_player(const monster_type *m_ptr)
 
 			msgf("You are suddenly very hot!");
 
-			if (p_ptr->hurt_fire) aura_damage *= 2;
+			if (p_ptr->flags4 & (TR4_HURT_FIRE)) aura_damage *= 2;
 			if (p_ptr->tim.oppose_fire) aura_damage = (aura_damage + 2) / 3;
-			if (p_ptr->resist_fire) aura_damage = (aura_damage + 2) / 3;
+			if (p_ptr->flags2 & (TR2_RES_FIRE)) aura_damage = (aura_damage + 2) / 3;
 
 			take_hit(aura_damage, aura_dam);
 			r_ptr->r_flags2 |= RF2_AURA_FIRE;
@@ -939,7 +939,7 @@ static void touch_zap_player(const monster_type *m_ptr)
 
 	if (r_ptr->flags3 & RF3_AURA_COLD)
 	{
-		if (!p_ptr->immune_cold)
+		if (!(p_ptr->flags2 & (TR2_IM_COLD)))
 		{
 			char aura_dam[80];
 
@@ -951,9 +951,9 @@ static void touch_zap_player(const monster_type *m_ptr)
 
 			msgf("You are suddenly very cold!");
 
-			if (p_ptr->hurt_cold) aura_damage *= 2;
+			if (p_ptr->flags4 & (TR4_HURT_COLD)) aura_damage *= 2;
 			if (p_ptr->tim.oppose_cold) aura_damage = (aura_damage + 2) / 3;
-			if (p_ptr->resist_cold) aura_damage = (aura_damage + 2) / 3;
+			if (p_ptr->flags2 & (TR2_RES_COLD)) aura_damage = (aura_damage + 2) / 3;
 
 			take_hit(aura_damage, aura_dam);
 			r_ptr->r_flags3 |= RF3_AURA_COLD;
@@ -963,19 +963,18 @@ static void touch_zap_player(const monster_type *m_ptr)
 
 	if (r_ptr->flags2 & RF2_AURA_ELEC)
 	{
-		if (!p_ptr->immune_elec)
+		if (!(p_ptr->flags2 & (TR2_IM_ELEC)))
 		{
 			char aura_dam[80];
 
-			aura_damage =
-				damroll(1 + (r_ptr->level / 26), 1 + (r_ptr->level / 17));
+			aura_damage = damroll(1 + (r_ptr->level / 26), 1 + (r_ptr->level / 17));
 
 			/* Hack -- Get the "died from" name */
 			monster_desc(aura_dam, m_ptr, 0x88, 80);
 
-			if (p_ptr->hurt_elec) aura_damage *= 2;
+			if (p_ptr->flags4 & (TR4_HURT_ELEC)) aura_damage *= 2;
 			if (p_ptr->tim.oppose_elec) aura_damage = (aura_damage + 2) / 3;
-			if (p_ptr->resist_elec) aura_damage = (aura_damage + 2) / 3;
+			if (p_ptr->flags2 & (TR2_RES_ELEC)) aura_damage = (aura_damage + 2) / 3;
 
 			msgf("You get zapped!");
 			take_hit(aura_damage, aura_dam);
@@ -1658,8 +1657,8 @@ void py_attack(int x, int y)
 				k += (slay - 10);
 
 				/* hack -- check for earthquake. */
-				if ((p_ptr->impact && ((k > 50) || one_in_(7))) ||
-					(chaos_effect == 2))
+				if (((p_ptr->flags1 & (TR1_IMPACT)) &&
+					((k > 50) || one_in_(7))) || (chaos_effect == 2))
 				{
 					do_quake = TRUE;
 				}
@@ -3046,7 +3045,8 @@ static bool run_test(void)
 				case FEAT_SHAL_LAVA:
 				{
 					/* Ignore */
-					if (p_ptr->tim.invuln || p_ptr->immune_fire) notice = FALSE;
+					if (p_ptr->tim.invuln || (p_ptr->flags2 & (TR2_IM_FIRE)))
+						 notice = FALSE;
 
 					/* Done */
 					break;
@@ -3056,7 +3056,8 @@ static bool run_test(void)
 				case FEAT_SHAL_ACID:
 				{
 					/* Ignore */
-					if (p_ptr->tim.invuln || p_ptr->immune_acid) notice = FALSE;
+					if (p_ptr->tim.invuln || (p_ptr->flags2 & (TR2_IM_ACID)))
+						 notice = FALSE;
 
 					/* Done */
 					break;
@@ -3077,7 +3078,7 @@ static bool run_test(void)
 				case FEAT_OCEAN_WATER:
 				{
 					/* Ignore */
-					if (p_ptr->ffall) notice = FALSE;
+					if (p_ptr->flags3 & (TR3_FEATHER)) notice = FALSE;
 
 					/* Done */
 					break;

@@ -1388,7 +1388,8 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 
 	else if (mut_ptr->which == MUT2_COWARDICE)
 	{
-		if (!(p_ptr->resist_fear || p_ptr->tim.hero || p_ptr->tim.shero))
+		if (!((p_ptr->flags2 & (TR2_RES_FEAR)) ||
+				p_ptr->tim.hero || p_ptr->tim.shero))
 		{
 			disturb(FALSE);
 			msgf("It's so dark... so scary!");
@@ -1398,8 +1399,9 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 
 	else if (mut_ptr->which == MUT2_RTELEPORT)
 	{
-		if (!p_ptr->resist_nexus && !(p_ptr->muta1 & MUT1_VTELEPORT) &&
-			!p_ptr->anti_tele)
+		if (!(p_ptr->flags2 & (TR2_RES_NEXUS)) &&
+			!(p_ptr->muta1 & MUT1_VTELEPORT) &&
+			!(p_ptr->flags3 & (TR3_NO_TELE)))
 		{
 			disturb(FALSE);
 
@@ -1412,19 +1414,20 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 
 	else if (mut_ptr->which == MUT2_ALCOHOL)
 	{
-		if (!p_ptr->resist_confu && !p_ptr->resist_chaos)
+		if (!(p_ptr->flags2 & (TR2_RES_CONF)) &&
+			!(p_ptr->flags2 & (TR2_RES_CHAOS)))
 		{
 			disturb(FALSE);
 			p_ptr->redraw |= PR_EXTRA;
 			msgf("You feel a SSSCHtupor cOmINg over yOu... *HIC*!");
 		}
 
-		if (!p_ptr->resist_confu)
+		if (!(p_ptr->flags2 & (TR2_RES_CONF)))
 		{
 			(void)set_confused(p_ptr->tim.confused + rand_range(15, 35));
 		}
 
-		if (!p_ptr->resist_chaos)
+		if (!(p_ptr->flags2 & (TR2_RES_CHAOS)))
 		{
 			if (one_in_(20))
 			{
@@ -1450,7 +1453,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 
 	else if (mut_ptr->which == MUT2_HALLU)
 	{
-		if (!p_ptr->resist_chaos)
+		if (!(p_ptr->flags2 & (TR2_RES_CHAOS)))
 		{
 			disturb(FALSE);
 			p_ptr->redraw |= PR_EXTRA;
@@ -1467,7 +1470,8 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		(void)fire_ball(GF_POIS, 0, p_ptr->lev, 3);
 	}
 
-	else if ((mut_ptr->which == MUT2_PROD_MANA) && !p_ptr->anti_magic)
+	else if ((mut_ptr->which == MUT2_PROD_MANA) &&
+		!(p_ptr->flags3 & (TR3_NO_MAGIC)))
 	{
 		int dire = 0;
 		disturb(FALSE);
@@ -1478,7 +1482,8 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		(void)fire_ball(GF_MANA, dire, p_ptr->lev * 2, 3);
 	}
 
-	else if ((mut_ptr->which == MUT2_ATT_DEMON) && !p_ptr->anti_magic)
+	else if ((mut_ptr->which == MUT2_ATT_DEMON) &&
+		!(p_ptr->flags3 & (TR3_NO_MAGIC)))
 	{
 		bool pet = (one_in_(6));
 
@@ -1570,7 +1575,8 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		(void)unlite_area(50, 10);
 	}
 
-	else if ((mut_ptr->which == MUT2_ATT_ANIMAL) && !p_ptr->anti_magic)
+	else if ((mut_ptr->which == MUT2_ATT_ANIMAL) &&
+		!(p_ptr->flags3 & (TR3_NO_MAGIC)))
 	{
 		bool pet = (one_in_(3));
 
@@ -1582,7 +1588,8 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		}
 	}
 
-	else if ((mut_ptr->which == MUT2_RAW_CHAOS) && !p_ptr->anti_magic)
+	else if ((mut_ptr->which == MUT2_RAW_CHAOS) &&
+		!(p_ptr->flags3 & (TR3_NO_MAGIC)))
 	{
 		disturb(FALSE);
 		msgf("You feel the world warping around you!");
@@ -1598,7 +1605,8 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		}
 	}
 
-	else if ((mut_ptr->which == MUT2_WRAITH) && !p_ptr->anti_magic)
+	else if ((mut_ptr->which == MUT2_WRAITH) &&
+		!(p_ptr->flags3 & (TR3_NO_MAGIC)))
 	{
 		disturb(FALSE);
 		msgf("You feel insubstantial!");
@@ -1620,22 +1628,22 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		switch (which_stat)
 		{
 			case A_STR:
-				if (p_ptr->sustain_str) sustained = TRUE;
+				if (p_ptr->flags2 & (TR2_SUST_STR)) sustained = TRUE;
 				break;
 			case A_INT:
-				if (p_ptr->sustain_int) sustained = TRUE;
+				if (p_ptr->flags2 & (TR2_SUST_INT)) sustained = TRUE;
 				break;
 			case A_WIS:
-				if (p_ptr->sustain_wis) sustained = TRUE;
+				if (p_ptr->flags2 & (TR2_SUST_WIS)) sustained = TRUE;
 				break;
 			case A_DEX:
-				if (p_ptr->sustain_dex) sustained = TRUE;
+				if (p_ptr->flags2 & (TR2_SUST_DEX)) sustained = TRUE;
 				break;
 			case A_CON:
-				if (p_ptr->sustain_con) sustained = TRUE;
+				if (p_ptr->flags2 & (TR2_SUST_CON)) sustained = TRUE;
 				break;
 			case A_CHR:
-				if (p_ptr->sustain_chr) sustained = TRUE;
+				if (p_ptr->flags2 & (TR2_SUST_CHR)) sustained = TRUE;
 				break;
 			default:
 				msgf("Invalid stat chosen!");
@@ -1651,7 +1659,8 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		}
 	}
 
-	else if ((mut_ptr->which == MUT2_ATT_DRAGON) && !p_ptr->anti_magic)
+	else if ((mut_ptr->which == MUT2_ATT_DRAGON) &&
+		!(p_ptr->flags3 & (TR3_NO_MAGIC)))
 	{
 		bool pet = (one_in_(5));
 
@@ -1663,7 +1672,8 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		}
 	}
 
-	else if ((mut_ptr->which == MUT2_WEIRD_MIND) && !p_ptr->anti_magic)
+	else if ((mut_ptr->which == MUT2_WEIRD_MIND) &&
+		!(p_ptr->flags3 & (TR3_NO_MAGIC)))
 	{
 		if (p_ptr->tim.esp > 0)
 		{
@@ -1677,7 +1687,8 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		}
 	}
 
-	else if ((mut_ptr->which == MUT2_NAUSEA) && !p_ptr->slow_digest)
+	else if ((mut_ptr->which == MUT2_NAUSEA) &&
+				!(p_ptr->flags3 & (TR3_SLOW_DIGEST)))
 	{
 		disturb(FALSE);
 		msgf("Your stomach roils, and you lose your lunch!");
@@ -1685,7 +1696,8 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		(void)set_food(PY_FOOD_WEAK);
 	}
 
-	else if ((mut_ptr->which == MUT2_WALK_SHAD) && !p_ptr->anti_magic)
+	else if ((mut_ptr->which == MUT2_WALK_SHAD) &&
+		!(p_ptr->flags3 & (TR3_NO_MAGIC)))
 	{
 		alter_reality();
 	}
@@ -1723,7 +1735,8 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 			msgf("You feel lonely.");
 	}
 
-	else if ((mut_ptr->which == MUT2_INVULN) && !p_ptr->anti_magic)
+	else if ((mut_ptr->which == MUT2_INVULN) &&
+		!(p_ptr->flags3 & (TR3_NO_MAGIC)))
 	{
 		disturb(FALSE);
 		msgf("You feel invincible!");
@@ -1749,7 +1762,8 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		}
 	}
 
-	else if ((mut_ptr->which == MUT2_HP_TO_SP) && !p_ptr->anti_magic)
+	else if ((mut_ptr->which == MUT2_HP_TO_SP) &&
+		!(p_ptr->flags3 & (TR3_NO_MAGIC)))
 	{
 		int wounds = p_ptr->msp - p_ptr->csp;
 
@@ -1834,7 +1848,7 @@ void mutation_effect(void)
 	{
 		p_ptr->stat[A_CON].add -= 2;
 		p_ptr->stat[A_CHR].add -= 1;
-		p_ptr->regenerate = FALSE;
+		p_ptr->flags3 &= ~(TR3_REGEN);
 		/* Cancel innate regeneration */
 	}
 
@@ -1881,13 +1895,13 @@ void mutation_effect(void)
 
 	if (p_ptr->muta3 & MUT3_ELEC_TOUC)
 	{
-		p_ptr->sh_elec = TRUE;
+		p_ptr->flags3 |= (TR3_SH_ELEC);
 	}
 
 	if (p_ptr->muta3 & MUT3_FIRE_BODY)
 	{
-		p_ptr->sh_fire = TRUE;
-		p_ptr->lite = TRUE;
+		p_ptr->flags3 |= (TR3_SH_FIRE);
+		p_ptr->flags3 |= (TR3_LITE);
 	}
 
 	if (p_ptr->muta3 & MUT3_WART_SKIN)
@@ -1913,22 +1927,22 @@ void mutation_effect(void)
 
 	if (p_ptr->muta3 & MUT3_WINGS)
 	{
-		p_ptr->ffall = TRUE;
+		p_ptr->flags3 |= (TR3_FEATHER);
 	}
 
 	if (p_ptr->muta3 & MUT3_FEARLESS)
 	{
-		p_ptr->resist_fear = TRUE;
+		p_ptr->flags2 |= (TR2_RES_FEAR);
 	}
 
 	if (p_ptr->muta3 & MUT3_REGEN)
 	{
-		p_ptr->regenerate = TRUE;
+		p_ptr->flags3 |= (TR3_REGEN);
 	}
 
 	if (p_ptr->muta3 & MUT3_ESP)
 	{
-		p_ptr->telepathy = TRUE;
+		p_ptr->flags3 |= (TR3_TELEPATHY);
 	}
 
 	if (p_ptr->muta3 & MUT3_LIMBER)
@@ -1943,7 +1957,7 @@ void mutation_effect(void)
 
 	if (p_ptr->muta3 & MUT3_MOTION)
 	{
-		p_ptr->free_act = TRUE;
+		p_ptr->flags2 |= (TR2_FREE_ACT);
 		p_ptr->skill.stl += 1;
 	}
 

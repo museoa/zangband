@@ -184,15 +184,15 @@ void self_knowledge(void)
 	{
 		info[i++] = "You are hallucinating.";
 	}
-	if (p_ptr->aggravate)
+	if (p_ptr->flags3 & (TR3_AGGRAVATE))
 	{
 		info[i++] = "You aggravate monsters.";
 	}
-	if (p_ptr->teleport)
+	if (p_ptr->flags3 & (TR3_TELEPORT))
 	{
 		info[i++] = "Your position is very uncertain.";
 	}
-	if (p_ptr->cant_eat)
+	if (p_ptr->flags4 & (TR4_CANT_EAT))
 	{
 		info[i++] = "You cannot survive on normal food.";
 	}
@@ -208,35 +208,35 @@ void self_knowledge(void)
 	{
 		info[i++] = "You are in a battle rage.";
 	}
-	if (p_ptr->tim.protevil || p_ptr->shld_evil)
+	if (p_ptr->tim.protevil || (p_ptr->flags4 & (TR4_PROT_EVIL)))
 	{
 		info[i++] = "You are protected from evil.";
 	}
-	if (p_ptr->shld_animal)
+	if (p_ptr->flags4 & (TR4_PROT_ANIMAL))
 	{
 		info[i++] = "You are protected from animals.";
 	}
-	if (p_ptr->shld_undead)
+	if (p_ptr->flags4 & (TR4_PROT_UNDEAD))
 	{
 		info[i++] = "You are protected from undead.";
 	}
-	if (p_ptr->shld_demon)
+	if (p_ptr->flags4 & (TR4_PROT_DEMON))
 	{
 		info[i++] = "You are protected from demons.";
 	}
-	if (p_ptr->shld_orc)
+	if (p_ptr->flags4 & (TR4_PROT_ORC))
 	{
 		info[i++] = "You are protected from orcs.";
 	}
-	if (p_ptr->shld_troll)
+	if (p_ptr->flags4 & (TR4_PROT_TROLL))
 	{
 		info[i++] = "You are protected from trolls.";
 	}
-	if (p_ptr->shld_giant)
+	if (p_ptr->flags4 & (TR4_PROT_GIANT))
 	{
 		info[i++] = "You are protected from giants.";
 	}
-	if (p_ptr->shld_dragon)
+	if (p_ptr->flags4 & (TR4_PROT_DRAGON))
 	{
 		info[i++] = "You are protected from dragons.";
 	}
@@ -272,284 +272,286 @@ void self_knowledge(void)
 	{
 		info[i++] = "Your eyes are sensitive to infrared light.";
 	}
-	if (p_ptr->see_inv)
+	if (p_ptr->flags3 & (TR3_SEE_INVIS))
 	{
 		info[i++] = "You can see invisible creatures.";
 	}
-	if (p_ptr->ffall)
+	if (p_ptr->flags3 & (TR3_FEATHER))
 	{
 		info[i++] = "You can fly.";
 	}
-	if (p_ptr->free_act)
+	if (p_ptr->flags2 & (TR2_FREE_ACT))
 	{
 		info[i++] = "You have free action.";
 	}
-	if (p_ptr->mutates)
+	if (p_ptr->flags4 & (TR4_MUTATE))
 	{
 		info[i++] = "You mutate spontaneously.";
 	}
-	if (p_ptr->has_patron)
+	if (p_ptr->flags4 & (TR4_PATRON))
 	{
 		info[i++] = "You have a chaos patron.";
 	}
-	if (p_ptr->strange_luck)
+	if (p_ptr->flags4 & (TR4_STRANGE_LUCK))
 	{
 		info[i++] = "Chance is warped around you.";
 	}
 
-	if ((p_ptr->regenerate) && (!(p_ptr->muta3 & MUT3_REGEN)))
+	if ((p_ptr->flags3 & (TR3_REGEN)) && (!(p_ptr->muta3 & MUT3_REGEN)))
 	{
-		if (p_ptr->slow_heal)
+		if (p_ptr->flags4 & (TR4_SLOW_HEAL))
 			info[i++] = "You regenerate slowly.";
 		else
 			info[i++] = "You regenerate quickly.";
 	}
-	else if (p_ptr->slow_heal)
+	else if (p_ptr->flags4 & (TR4_SLOW_HEAL))
 	{
 		info[i++] = "You regenerate very slowly.";
 	}
 	
-	if (p_ptr->slow_digest && p_ptr->slow_heal)
+	if ((p_ptr->flags3 & (TR3_SLOW_DIGEST)) &&
+		(p_ptr->flags4 & (TR4_SLOW_HEAL)))
 	{
 		info[i++] = "Your appetite is very small.";
 	}
-	else if (p_ptr->slow_digest || p_ptr->slow_heal)
+	else if ((p_ptr->flags3 & (TR3_SLOW_DIGEST)) ||
+		(p_ptr->flags4 & (TR4_SLOW_HEAL)))
 	{
 		info[i++] = "Your appetite is small.";
 	}
 	
-	if ((p_ptr->telepathy) && (!(p_ptr->muta3 & MUT3_ESP)))
+	if ((p_ptr->flags3 & (TR3_TELEPATHY)) && (!(p_ptr->muta3 & MUT3_ESP)))
 	{
 		info[i++] = "You have ESP.";
 	}
-	if (p_ptr->hold_life)
+	if (p_ptr->flags2 & (TR2_HOLD_LIFE))
 	{
 		info[i++] = "You have a firm hold on your life force.";
 	}
-	if (p_ptr->reflect)
+	if (p_ptr->flags2 & (TR2_REFLECT))
 	{
 		info[i++] = "You reflect arrows and bolts.";
 	}
-	if (p_ptr->sh_fire)
+	if (p_ptr->flags3 & (TR3_SH_FIRE))
 	{
 		info[i++] = "You are surrounded with a fiery aura.";
 	}
-	if (p_ptr->sh_elec)
+	if (p_ptr->flags3 & (TR3_SH_ELEC))
 	{
 		info[i++] = "You are surrounded with electricity.";
 	}
-	if (p_ptr->sh_acid)
+	if (p_ptr->flags4 & (TR4_SH_ACID))
 	{
 		info[i++] = "You are surrounded by an acidic cloud.";
 	}
-	if (p_ptr->sh_cold)
+	if (p_ptr->flags4 & (TR4_SH_COLD))
 	{
 		info[i++] = "You are surrounded by a freezing aura.";
 	}
-	if (p_ptr->anti_magic)
+	if (p_ptr->flags3 & (TR3_NO_MAGIC))
 	{
 		info[i++] = "You are surrounded by an anti-magic shell.";
 	}
-	if (p_ptr->anti_tele)
+	if (p_ptr->flags3 & (TR3_NO_TELE))
 	{
 		info[i++] = "You cannot teleport.";
 	}
-	if (p_ptr->lite)
+	if (p_ptr->flags2 & (TR2_RES_LITE))
 	{
-		info[i++] = "You are carrying a permanent light.";
+		info[i++] = "You have a source of permanent light.";
 	}
 
-	if (p_ptr->immune_acid)
+	if (p_ptr->flags2 & (TR2_IM_ACID))
 	{
 		info[i++] = "You are completely immune to acid.";
 	}
-	else if ((p_ptr->resist_acid) && (p_ptr->tim.oppose_acid))
+	else if ((p_ptr->flags2 & (TR2_RES_ACID)) && (p_ptr->tim.oppose_acid))
 	{
-		if (p_ptr->hurt_acid)
+		if (p_ptr->flags4 & (TR4_HURT_ACID))
 			info[i++] = "You resist acid very well.";
 		else
 			info[i++] = "You resist acid exceptionally well.";
 	}
-	else if ((p_ptr->resist_acid) || (p_ptr->tim.oppose_acid))
+	else if ((p_ptr->flags2 & (TR2_RES_ACID)) || (p_ptr->tim.oppose_acid))
 	{
-		if (p_ptr->hurt_acid)
+		if (p_ptr->flags4 & (TR4_HURT_ACID))
 			info[i++] = "You are somewhat resistant to acid.";
 		else
 			info[i++] = "You are resistant to acid.";
 	}
-	else if (p_ptr->hurt_acid)
+	else if (p_ptr->flags4 & (TR4_HURT_ACID))
 	{
 		info[i++] = "You are vulnerable to acid.";
 	}
 
-	if (p_ptr->immune_elec)
+	if (p_ptr->flags2 & (TR2_IM_ELEC))
 	{
 		info[i++] = "You are completely immune to lightning.";
 	}
-	else if ((p_ptr->resist_elec) && (p_ptr->tim.oppose_elec))
+	else if ((p_ptr->flags2 & (TR2_RES_ELEC)) && (p_ptr->tim.oppose_elec))
 	{
-		if (p_ptr->hurt_elec)
+		if (p_ptr->flags4 & (TR4_HURT_ELEC))
 			info[i++] = "You resist lightning very well.";
 		else
 			info[i++] = "You resist lightning exceptionally well.";
 	}
-	else if ((p_ptr->resist_elec) || (p_ptr->tim.oppose_elec))
+	else if ((p_ptr->flags2 & (TR2_RES_ELEC)) || (p_ptr->tim.oppose_elec))
 	{
-		if (p_ptr->hurt_elec)
+		if (p_ptr->flags4 & (TR4_HURT_ELEC))
 			info[i++] = "You are somewhat resistant to lightning.";
 		else
 			info[i++] = "You are resistant to lightning.";
 	}
-	else if (p_ptr->hurt_elec)
+	else if (p_ptr->flags4 & (TR4_HURT_ELEC))
 	{
 		info[i++] = "You are vulnerable to lightning.";
 	}
 
-	if (p_ptr->immune_fire)
+	if (p_ptr->flags2 & (TR2_IM_FIRE))
 	{
 		info[i++] = "You are completely immune to fire.";
 	}
-	else if ((p_ptr->resist_fire) && (p_ptr->tim.oppose_fire))
+	else if ((p_ptr->flags2 & (TR2_RES_FIRE)) && (p_ptr->tim.oppose_fire))
 	{
-		if (p_ptr->hurt_fire)
+		if (p_ptr->flags4 & (TR4_HURT_FIRE))
 			info[i++] = "You resist fire very well.";
 		else
 			info[i++] = "You resist fire exceptionally well.";
 	}
-	else if ((p_ptr->resist_fire) || (p_ptr->tim.oppose_fire))
+	else if ((p_ptr->flags2 & (TR2_RES_FIRE)) || (p_ptr->tim.oppose_fire))
 	{
-		if (p_ptr->hurt_fire)
+		if (p_ptr->flags4 & (TR4_HURT_FIRE))
 			info[i++] = "You are somewhat resistant to fire.";
 		else
 			info[i++] = "You are resistant to fire.";
 	}
-	else if (p_ptr->hurt_fire)
+	else if (p_ptr->flags4 & (TR4_HURT_FIRE))
 	{
 		info[i++] = "You are vulnerable to fire.";
 	}
 
-	if (p_ptr->immune_cold)
+	if (p_ptr->flags2 & (TR2_IM_COLD))
 	{
 		info[i++] = "You are completely immune to cold.";
 	}
-	else if ((p_ptr->resist_cold) && (p_ptr->tim.oppose_cold))
+	else if ((p_ptr->flags2 & (TR2_RES_COLD)) && (p_ptr->tim.oppose_cold))
 	{
-		if (p_ptr->hurt_cold)
+		if (p_ptr->flags4 & (TR4_HURT_COLD))
 			info[i++] = "You resist cold very well.";
 		else
 			info[i++] = "You resist cold exceptionally well.";
 	}
-	else if ((p_ptr->resist_cold) || (p_ptr->tim.oppose_cold))
+	else if ((p_ptr->flags2 & (TR2_RES_COLD)) || (p_ptr->tim.oppose_cold))
 	{
-		if (p_ptr->hurt_cold)
+		if (p_ptr->flags4 & (TR4_HURT_COLD))
 			info[i++] = "You are somewhat resistant to cold.";
 		else
 			info[i++] = "You are resistant to cold.";
 	}
-	else if (p_ptr->hurt_cold)
+	else if (p_ptr->flags4 & (TR4_HURT_COLD))
 	{
 		info[i++] = "You are vulnerable to cold.";
 	}
 
-	if ((p_ptr->resist_pois) && (p_ptr->tim.oppose_pois))
+	if ((p_ptr->flags2 & (TR2_RES_POIS)) && (p_ptr->tim.oppose_pois))
 	{
 		info[i++] = "You resist poison exceptionally well.";
 	}
-	else if ((p_ptr->resist_pois) || (p_ptr->tim.oppose_pois))
+	else if ((p_ptr->flags2 & (TR2_RES_POIS)) || (p_ptr->tim.oppose_pois))
 	{
 		info[i++] = "You are resistant to poison.";
 	}
 
-	if (p_ptr->immune_lite)
+	if (p_ptr->flags4 & (TR4_IM_LITE))
 	{
 		info[i++] = "You are completely immune to bright light.";
 	}
-	else if (p_ptr->resist_lite)
+	else if (p_ptr->flags2 & (TR2_RES_LITE))
 	{
-		if (p_ptr->hurt_lite)
+		if (p_ptr->flags4 & (TR4_HURT_LITE))
 			info[i++] = "You are somewhat resistant to bright light.";
 		else
 			info[i++] = "You are resistant to bright light.";
 	}
-	else if (p_ptr->hurt_lite)
+	else if (p_ptr->flags4 & (TR4_HURT_LITE))
 	{
 		info[i++] = "You are vulnerable to bright light.";
 	}
 
-	if (p_ptr->immune_dark)
+	if (p_ptr->flags4 & (TR4_IM_DARK))
 	{
 		info[i++] = "You are completely immune to darkness.";
 	}
-	else if (p_ptr->resist_dark)
+	else if (p_ptr->flags2 & (TR2_RES_DARK))
 	{
-		if (p_ptr->hurt_dark)
+		if (p_ptr->flags4 & (TR4_HURT_DARK))
 			info[i++] = "You are somewhat resistant to darkness.";
 		else
 			info[i++] = "You are resistant to darkness.";
 	}
-	else if (p_ptr->hurt_dark)
+	else if (p_ptr->flags4 & (TR4_HURT_DARK))
 	{
 		info[i++] = "You are vulnerable to darkness.";
 	}
 
-	if (p_ptr->resist_confu)
+	if (p_ptr->flags2 & (TR2_RES_CONF))
 	{
 		info[i++] = "You are resistant to confusion.";
 	}
-	if (p_ptr->resist_sound)
+	if (p_ptr->flags2 & (TR2_RES_SOUND))
 	{
 		info[i++] = "You are resistant to sonic attacks.";
 	}
-	if (p_ptr->resist_disen)
+	if (p_ptr->flags2 & (TR2_RES_DISEN))
 	{
 		info[i++] = "You are resistant to disenchantment.";
 	}
-	if (p_ptr->resist_chaos)
+	if (p_ptr->flags2 & (TR2_RES_CHAOS))
 	{
 		info[i++] = "You are resistant to chaos.";
 	}
-	if (p_ptr->resist_shard)
+	if (p_ptr->flags2 & (TR2_RES_SHARDS))
 	{
 		info[i++] = "You are resistant to blasts of shards.";
 	}
-	if (p_ptr->resist_nexus)
+	if (p_ptr->flags2 & (TR2_RES_NEXUS))
 	{
 		info[i++] = "You are resistant to nexus attacks.";
 	}
-	if (p_ptr->resist_nethr)
+	if (p_ptr->flags2 & (TR2_RES_NETHER))
 	{
 		info[i++] = "You are resistant to nether forces.";
 	}
-	if ((p_ptr->resist_fear) && (!(p_ptr->muta3 & MUT3_ESP)))
+	if ((p_ptr->flags2 & (TR2_RES_FEAR)) && (!(p_ptr->muta3 & MUT3_ESP)))
 	{
 		info[i++] = "You are completely fearless.";
 	}
-	if (p_ptr->resist_blind)
+	if (p_ptr->flags2 & (TR2_RES_BLIND))
 	{
 		info[i++] = "Your eyes are resistant to blindness.";
 	}
 
-	if (p_ptr->sustain_str)
+	if (p_ptr->flags2 & (TR2_SUST_STR))
 	{
 		info[i++] = "Your strength is sustained.";
 	}
-	if (p_ptr->sustain_int)
+	if (p_ptr->flags2 & (TR2_SUST_INT))
 	{
 		info[i++] = "Your intelligence is sustained.";
 	}
-	if (p_ptr->sustain_wis)
+	if (p_ptr->flags2 & (TR2_SUST_WIS))
 	{
 		info[i++] = "Your wisdom is sustained.";
 	}
-	if (p_ptr->sustain_con)
+	if (p_ptr->flags2 & (TR2_SUST_CON))
 	{
 		info[i++] = "Your constitution is sustained.";
 	}
-	if (p_ptr->sustain_dex)
+	if (p_ptr->flags2 & (TR2_SUST_DEX))
 	{
 		info[i++] = "Your dexterity is sustained.";
 	}
-	if (p_ptr->sustain_chr)
+	if (p_ptr->flags2 & (TR2_SUST_CHR))
 	{
 		info[i++] = "Your charisma is sustained.";
 	}
@@ -1432,7 +1434,7 @@ bool detect_monsters_normal(void)
 
 		/* Detect all non-invisible monsters */
 		if ((!(r_ptr->flags2 & RF2_INVISIBLE)) ||
-			p_ptr->see_inv || p_ptr->tim.invis)
+			(p_ptr->flags3 & (TR3_SEE_INVIS)) || p_ptr->tim.invis)
 		{
 			/* Repair visibility later */
 			repair_monsters = TRUE;
@@ -2487,7 +2489,8 @@ bool destroy_area(int x1, int y1, int r)
 		msgf("There is a searing blast of light!");
 
 		/* Blind the player */
-		if (!p_ptr->resist_blind && !p_ptr->resist_lite)
+		if (!(p_ptr->flags2 & (TR2_RES_BLIND)) &&
+			!(p_ptr->flags2 & (TR2_RES_LITE)))
 		{
 			/* Become blind */
 			(void)set_blind(p_ptr->tim.blind + rand_range(10, 20));
@@ -3972,15 +3975,16 @@ bool activate_ty_curse(bool stop_ty, int *count)
 			}
 			case 13:  case 14:  case 15:  case 19:  case 20:
 			{
-				if (stop_ty
-					|| (p_ptr->free_act && (randint1(100) < p_ptr->skill.sav)))
+				if (stop_ty ||
+					((p_ptr->flags2 & (TR2_FREE_ACT)) &&
+					 (randint1(100) < p_ptr->skill.sav)))
 				{
 					/* Do nothing */ ;
 				}
 				else
 				{
 					msgf("You feel like a statue!");
-					if (p_ptr->free_act)
+					if (p_ptr->flags2 & (TR2_FREE_ACT))
 					{
 						(void)set_paralyzed(p_ptr->tim.paralyzed + randint1(3));
 					}

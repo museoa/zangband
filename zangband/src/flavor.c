@@ -1358,7 +1358,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 		tmul = p_ptr->ammo_mult;
 
 		/* Get extra "power" from "extra might" */
-		if (p_ptr->xtra_might) tmul++;
+		if (p_ptr->flags3 & (TR3_XTRA_MIGHT)) tmul++;
 
 		/* launcher multiplier */
 		avgdam *= tmul;

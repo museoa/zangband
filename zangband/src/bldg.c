@@ -102,11 +102,11 @@ void have_nightmare(int r_idx)
 	/* Mind blast */
 	if (!saving_throw(p_ptr->skill.sav * 100 / power))
 	{
-		if (!p_ptr->resist_confu)
+		if (!(p_ptr->flags2 & (TR2_RES_CONF)))
 		{
 			(void)set_confused(p_ptr->tim.confused + rand_range(4, 8));
 		}
-		if (!p_ptr->resist_chaos && one_in_(3))
+		if (!(p_ptr->flags2 & (TR2_RES_CHAOS)) && one_in_(3))
 		{
 			(void)set_image(p_ptr->tim.image + rand_range(250, 400));
 		}
@@ -124,11 +124,11 @@ void have_nightmare(int r_idx)
 	/* Brain smash */
 	if (!saving_throw(p_ptr->skill.sav * 100 / power))
 	{
-		if (!p_ptr->resist_confu)
+		if (!(p_ptr->flags2 & (TR2_RES_CONF)))
 		{
 			(void)set_confused(p_ptr->tim.confused + rand_range(4, 8));
 		}
-		if (!p_ptr->free_act)
+		if (!(p_ptr->flags2 & (TR2_FREE_ACT)))
 		{
 			(void)set_paralyzed(p_ptr->tim.paralyzed + rand_range(4, 8));
 		}
@@ -140,7 +140,7 @@ void have_nightmare(int r_idx)
 		{
 			(void)do_dec_stat(A_WIS);
 		}
-		if (!p_ptr->resist_chaos)
+		if (!(p_ptr->flags2 & (TR2_RES_CHAOS)))
 		{
 			(void)set_image(p_ptr->tim.image + rand_range(250, 400));
 		}
@@ -171,8 +171,8 @@ void have_nightmare(int r_idx)
 
 	/* Else gain permanent insanity */
 	if ((p_ptr->muta3 & MUT3_MORONIC) && (p_ptr->muta2 & MUT2_BERS_RAGE) &&
-		((p_ptr->muta2 & MUT2_COWARDICE) || (p_ptr->resist_fear)) &&
-		((p_ptr->muta2 & MUT2_HALLU) || (p_ptr->resist_chaos)))
+		((p_ptr->muta2 & MUT2_COWARDICE) || (p_ptr->flags2 & (TR2_RES_FEAR))) &&
+		((p_ptr->muta2 & MUT2_HALLU) || (p_ptr->flags2 & (TR2_RES_CHAOS))))
 	{
 		/* The poor bastard already has all possible insanities! */
 		return;
@@ -199,7 +199,8 @@ void have_nightmare(int r_idx)
 			}
 			case 2:
 			{
-				if (!(p_ptr->muta2 & MUT2_COWARDICE) && !p_ptr->resist_fear)
+				if (!(p_ptr->muta2 & MUT2_COWARDICE) &&
+					!(p_ptr->flags2 & (TR2_RES_FEAR)))
 				{
 					msgf("You become paranoid!");
 
@@ -217,7 +218,8 @@ void have_nightmare(int r_idx)
 			}
 			case 3:
 			{
-				if (!(p_ptr->muta2 & MUT2_HALLU) && !p_ptr->resist_chaos)
+				if (!(p_ptr->muta2 & MUT2_HALLU) &&
+					!(p_ptr->flags2 & (TR2_RES_CHAOS)))
 				{
 					msgf("You are afflicted by a hallucinatory insanity!");
 					p_ptr->muta2 |= MUT2_HALLU;

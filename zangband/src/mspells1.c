@@ -1459,12 +1459,12 @@ bool make_attack_spell(int m_idx)
 			{
 				msgf("Your mind is blasted by psionic energy.");
 
-				if (!p_ptr->resist_confu)
+				if (!(p_ptr->flags2 & (TR2_RES_CONF)))
 				{
 					(void)set_confused(p_ptr->tim.confused + rand_range(4, 8));
 				}
 
-				if (!p_ptr->resist_chaos && one_in_(3))
+				if (!(p_ptr->flags2 & (TR2_RES_CHAOS)) && one_in_(3))
 				{
 					(void)set_image(p_ptr->tim.image + rand_range(150, 400));
 				}
@@ -1496,15 +1496,15 @@ bool make_attack_spell(int m_idx)
 			{
 				msgf("Your mind is blasted by psionic energy.");
 				take_hit(damroll(12, 15), ddesc);
-				if (!p_ptr->resist_blind)
+				if (!(p_ptr->flags2 & (TR2_RES_BLIND)))
 				{
 					(void)set_blind(p_ptr->tim.blind + rand_range(8, 16));
 				}
-				if (!p_ptr->resist_confu)
+				if (!(p_ptr->flags2 & (TR2_RES_CONF)))
 				{
 					(void)set_confused(p_ptr->tim.confused + rand_range(4, 8));
 				}
-				if (!p_ptr->free_act)
+				if (!(p_ptr->flags2 & (TR2_FREE_ACT)))
 				{
 					(void)set_paralyzed(p_ptr->tim.paralyzed + rand_range(4, 8));
 				}
@@ -1515,7 +1515,7 @@ bool make_attack_spell(int m_idx)
 				while (randint0(100) > p_ptr->skill.sav)
 					(void)do_dec_stat(A_WIS);
 
-				if (!p_ptr->resist_chaos)
+				if (!(p_ptr->flags2 & (TR2_RES_CHAOS)))
 				{
 					(void)set_image(p_ptr->tim.image + rand_range(150, 400));
 				}
@@ -1746,7 +1746,7 @@ bool make_attack_spell(int m_idx)
 								  m_name);
 			else
 				msgf("%^s casts a fearful illusion.", m_name);
-			if (p_ptr->resist_fear)
+			if (p_ptr->flags2 & (TR2_RES_FEAR))
 			{
 				msgf("You refuse to be frightened.");
 			}
@@ -1770,7 +1770,7 @@ bool make_attack_spell(int m_idx)
 			if (blind) msgf("%^s mumbles.", m_name);
 			else
 				msgf("%^s casts a spell, burning your eyes!", m_name);
-			if (p_ptr->resist_blind)
+			if (p_ptr->flags2 & (TR2_RES_BLIND))
 			{
 				msgf("You are unaffected!");
 			}
@@ -1795,7 +1795,7 @@ bool make_attack_spell(int m_idx)
 								  m_name);
 			else
 				msgf("%^s creates a mesmerising illusion.", m_name);
-			if (p_ptr->resist_confu)
+			if (p_ptr->flags2 & (TR2_RES_CONF))
 			{
 				msgf("You disbelieve the feeble spell.");
 			}
@@ -1817,7 +1817,7 @@ bool make_attack_spell(int m_idx)
 			if (!direct) break;
 			disturb(TRUE);
 			msgf("%^s drains power from your muscles!", m_name);
-			if (p_ptr->free_act)
+			if (p_ptr->flags2 & (TR2_FREE_ACT))
 			{
 				msgf("You are unaffected!");
 			}
@@ -1841,7 +1841,7 @@ bool make_attack_spell(int m_idx)
 			if (blind) msgf("%^s mumbles.", m_name);
 			else
 				msgf("%^s stares deep into your eyes!", m_name);
-			if (p_ptr->free_act)
+			if (p_ptr->flags2 & (TR2_FREE_ACT))
 			{
 				msgf("You are unaffected!");
 			}
@@ -2051,7 +2051,7 @@ bool make_attack_spell(int m_idx)
 			if (blind) msgf("%^s mumbles strangely.", m_name);
 			else
 				msgf("%^s gestures at your feet.", m_name);
-			if (p_ptr->resist_nexus)
+			if (p_ptr->flags2 & (TR2_RES_NEXUS))
 			{
 				msgf("You are unaffected!");
 			}

@@ -881,7 +881,7 @@ static bool cast_sorcery_spell(int spell)
 			break;
 		case 27:				/* Clairvoyance */
 			wiz_lite();
-			if (!(p_ptr->telepathy))
+			if (!(p_ptr->flags3 & (TR3_TELEPATHY)))
 			{
 				(void)set_tim_esp(p_ptr->tim.esp + rand_range(25, 55));
 			}
@@ -940,7 +940,8 @@ static bool cast_nature_spell(int spell)
 			break;
 		case 4:				/* Daylight */
 			(void)lite_area(damroll(2, (plev / 2)), (plev / 10) + 1);
-			if ((p_ptr->rp.prace == RACE_VAMPIRE) && !p_ptr->resist_lite)
+			if ((p_ptr->flags4 & (TR4_HURT_LITE)) &&
+				!(p_ptr->flags2 & (TR2_RES_LITE)))
 			{
 				msgf("The daylight scorches your flesh!");
 				take_hit(damroll(2, 2), "daylight");
@@ -1072,7 +1073,8 @@ static bool cast_nature_spell(int spell)
 		case 29:				/* Call Sunlight */
 			(void)fire_ball(GF_LITE, 0, 150, 8);
 			wiz_lite();
-			if ((p_ptr->rp.prace == RACE_VAMPIRE) && !p_ptr->resist_lite)
+			if ((p_ptr->flags4 & (TR4_HURT_LITE)) &&
+				!(p_ptr->flags2 & (TR2_RES_LITE)))
 			{
 				msgf("The sunlight scorches your flesh!");
 				take_hit(50, "sunlight");
@@ -2628,7 +2630,7 @@ static bool cast_arcane_spell(int spell)
 			break;
 		case 31:				/* Clairvoyance */
 			wiz_lite();
-			if (!p_ptr->telepathy)
+			if (!(p_ptr->flags3 & (TR3_TELEPATHY)))
 			{
 				(void)set_tim_esp(p_ptr->tim.esp + rand_range(25, 55));
 			}
@@ -2776,11 +2778,11 @@ void do_cmd_cast(void)
 				/* Mind blast */
 				if (!saving_throw(p_ptr->skill.sav))
 				{
-					if (!p_ptr->resist_confu)
+					if (!(p_ptr->flags2 & (TR2_RES_CONF)))
 					{
 						(void)set_confused(p_ptr->tim.confused + rand_range(4, 8));
 					}
-					if (!p_ptr->resist_chaos && one_in_(3))
+					if (!(p_ptr->flags2 & (TR2_RES_CHAOS)) && one_in_(3))
 					{
 						(void)set_image(p_ptr->tim.image + rand_range(150, 400));
 					}
@@ -2797,7 +2799,8 @@ void do_cmd_cast(void)
 			{
 				msgf("It hurts!");
 				take_hit(damroll(o_ptr->sval + 1, 6), "a miscast Death spell");
-				if ((spell > 15) && one_in_(6) && !p_ptr->hold_life)
+				if ((spell > 15) && one_in_(6) &&
+					 !(p_ptr->flags2 & (TR2_HOLD_LIFE)))
 					lose_exp(spell * 250);
 			}
 		}

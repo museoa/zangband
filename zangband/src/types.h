@@ -1476,8 +1476,6 @@ struct player_type
 	s16b virtues[MAX_PLAYER_VIRTUES];
 	s16b vir_types[MAX_PLAYER_VIRTUES];
 
-	s16b chaos_patron;	/* Players Chaos Patron */
-
 	s16b energy;	/* Current energy */
 	s16b food;	/* Current nutrition */
 
@@ -1489,6 +1487,8 @@ struct player_type
 					 * Note: was byte, causing overflow for Amberite
 					 * characters (such as Amberite Paladins)
 					 */
+	s16b chaos_patron;	/* Players Chaos Patron */
+
 	player_timed tim;	/* Timed effects */
 	
 	player_state state;	/* Internal state of the player */
@@ -1549,90 +1549,18 @@ struct player_type
 	u32b update;	/* Pending Updates (bit flags) */
 	u32b redraw;	/* Normal Redraws (bit flags) */
 	u32b window;	/* Window Redraws (bit flags) */
+	
+	/*
+	 * Flags on equipment items and the racial/class
+	 * effects logical-ored together.
+	 */
+	u32b flags1;
+	u32b flags2;
+	u32b flags3;
+	u32b flags4;
 
 	/*** Extracted fields ***/
-
-	bool immune_acid;	/* Immunity to acid */
-	bool immune_elec;	/* Immunity to lightning */
-	bool immune_fire;	/* Immunity to fire */
-	bool immune_cold;	/* Immunity to cold */
-	bool immune_lite;	/* Immunity to light */
-	bool immune_dark;	/* Immunity to darkness */
-
-	bool resist_acid;	/* Resist acid */
-	bool resist_elec;	/* Resist lightning */
-	bool resist_fire;	/* Resist fire */
-	bool resist_cold;	/* Resist cold */
-	bool resist_pois;	/* Resist poison */
-
-	bool hurt_acid;		/* Susceptibility to acid */
-	bool hurt_elec;		/* Susceptibility to lightning */
-	bool hurt_fire;		/* Susceptibility to fire */
-	bool hurt_cold;		/* Susceptibility to cold */
-	bool hurt_lite;		/* Susceptibility to light */
-	bool hurt_dark;		/* Susceptibility to darkness */
-
-	bool resist_fear;	/* Resist fear */
-	bool resist_lite;	/* Resist light */
-	bool resist_dark;	/* Resist darkness */
-	bool resist_blind;	/* Resist blindness */
-	bool resist_confu;	/* Resist confusion */
-	bool resist_sound;	/* Resist sound */
-	bool resist_shard;	/* Resist shards */
-	bool resist_nexus;	/* Resist nexus */
-	bool resist_nethr;	/* Resist nether */
-	bool resist_chaos;	/* Resist chaos */
-	bool resist_disen;	/* Resist disenchant */
-
-	bool shld_animal;	/* Protection from animals */
-	bool shld_evil;		/* Protection from evil */
-	bool shld_undead;	/* Protection from undead */
-	bool shld_demon;	/* Protection from demons */
-	bool shld_orc;		/* Protection from orcs */
-	bool shld_troll;	/* Protection from trolls */
-	bool shld_giant;	/* Protection from giants */
-	bool shld_dragon;	/* Protection from dragons */
-
-	bool reflect;	/* Reflect 'bolt' attacks */
-	bool sh_acid;	/* Acidic 'immolation' effect */
-	bool sh_elec;	/* Electric 'immolation' effect */
-	bool sh_fire;	/* Fiery 'immolation' effect */
-	bool sh_cold;	/* Frosty 'immolation' effect */
-
-	bool anti_magic;	/* Anti-magic */
-	bool anti_tele;	/* Prevent teleportation */
-
-	bool sustain_str;	/* Keep strength */
-	bool sustain_int;	/* Keep intelligence */
-	bool sustain_wis;	/* Keep wisdom */
-	bool sustain_dex;	/* Keep dexterity */
-	bool sustain_con;	/* Keep constitution */
-	bool sustain_chr;	/* Keep charisma */
-
-	bool slow_digest;	/* Slower digestion */
-	bool ffall;	/* No damage falling */
-	bool lite;	/* Permanent light */
-	bool regenerate;	/* Regenerate hit pts */
-	bool telepathy;	/* Telepathy */
-	bool see_inv;	/* Can see invisible */
-	bool free_act;	/* Never paralyzed */
-	bool hold_life;	/* Resist life draining */
-
-	bool impact;	/* Earthquake blows */
-	bool aggravate;	/* Aggravate monsters */
-	bool teleport;	/* Random teleporting */
-	bool exp_drain;	/* Experience draining */
-	bool stat_drain;	/* Stat draining */
-	bool cant_eat;	/* Eating restriction */
-	bool slow_heal;	/* Anti-regenration */
-
-	bool bless_blade;	/* Blessed blade */
-	bool xtra_might;	/* Extra might bow */
 	bool pass_wall;	/* Permanent wraithform */
-
-	bool mutates;	/* Mutation on level gain */
-	bool has_patron;	/* Has a chaos patron */
-	bool strange_luck;	/* Weird effects */
 
 	s16b dis_to_h;	/* Known bonus to hit */
 	s16b dis_to_d;	/* Known bonus to dam */

@@ -418,7 +418,7 @@ static void chest_trap(int x, int y, object_type *o_ptr)
 	if (trap & (CHEST_POISON))
 	{
 		msgf("A puff of green gas surrounds you!");
-		if (!(p_ptr->resist_pois || p_ptr->tim.oppose_pois))
+		if (!((p_ptr->flags2 & (TR2_RES_POIS)) || p_ptr->tim.oppose_pois))
 		{
 			(void)set_poisoned(p_ptr->tim.poisoned + rand_range(10, 30));
 		}
@@ -429,7 +429,7 @@ static void chest_trap(int x, int y, object_type *o_ptr)
 	{
 		msgf("A puff of yellow gas surrounds you!");
 
-		if (!p_ptr->free_act)
+		if (!(p_ptr->flags2 & (TR2_FREE_ACT)))
 		{
 			(void)set_paralyzed(p_ptr->tim.paralyzed + rand_range(10, 30));
 		}
@@ -2380,7 +2380,7 @@ void do_cmd_fire_aux(object_type *o_ptr, const object_type *j_ptr)
 	tmul = p_ptr->ammo_mult;
 
 	/* Get extra "power" from "extra might" */
-	if (p_ptr->xtra_might) tmul++;
+	if ((p_ptr->flags3 & (TR3_XTRA_MIGHT))) tmul++;
 
 	/* Base range */
 	tdis = 5 + 5 * tmul;

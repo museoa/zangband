@@ -1417,16 +1417,16 @@ bool set_stun(int v)
 			msgf("A vicious blow hits your head.");
 			if (one_in_(3))
 			{
-				if (!p_ptr->sustain_int) (void)do_dec_stat(A_INT);
-				if (!p_ptr->sustain_wis) (void)do_dec_stat(A_WIS);
+				if (!(p_ptr->flags2 & (TR2_SUST_INT))) (void)do_dec_stat(A_INT);
+				if (!(p_ptr->flags2 & (TR2_SUST_WIS))) (void)do_dec_stat(A_WIS);
 			}
 			else if (one_in_(2))
 			{
-				if (!p_ptr->sustain_int) (void)do_dec_stat(A_INT);
+				if (!(p_ptr->flags2 & (TR2_SUST_INT))) (void)do_dec_stat(A_INT);
 			}
 			else
 			{
-				if (!p_ptr->sustain_wis) (void)do_dec_stat(A_WIS);
+				if (!(p_ptr->flags2 & (TR2_SUST_WIS))) (void)do_dec_stat(A_WIS);
 			}
 		}
 
@@ -1653,7 +1653,7 @@ bool set_cut(int v)
 
 		if (randint1(1000) < v || one_in_(16))
 		{
-			if (!p_ptr->sustain_chr)
+			if (!(p_ptr->flags2 & (TR2_SUST_CHR)))
 			{
 				msgf("You have been horribly scarred.");
 
@@ -2233,32 +2233,32 @@ bool do_dec_stat(int stat)
 	{
 		case A_STR:
 		{
-			if (p_ptr->sustain_str) sust = TRUE;
+			if (p_ptr->flags2 & (TR2_SUST_STR)) sust = TRUE;
 			break;
 		}
 		case A_INT:
 		{
-			if (p_ptr->sustain_int) sust = TRUE;
+			if (p_ptr->flags2 & (TR2_SUST_INT)) sust = TRUE;
 			break;
 		}
 		case A_WIS:
 		{
-			if (p_ptr->sustain_wis) sust = TRUE;
+			if (p_ptr->flags2 & (TR2_SUST_WIS)) sust = TRUE;
 			break;
 		}
 		case A_DEX:
 		{
-			if (p_ptr->sustain_dex) sust = TRUE;
+			if (p_ptr->flags2 & (TR2_SUST_DEX)) sust = TRUE;
 			break;
 		}
 		case A_CON:
 		{
-			if (p_ptr->sustain_con) sust = TRUE;
+			if (p_ptr->flags2 & (TR2_SUST_CON)) sust = TRUE;
 			break;
 		}
 		case A_CHR:
 		{
-			if (p_ptr->sustain_chr) sust = TRUE;
+			if (p_ptr->flags2 & (TR2_SUST_CHR)) sust = TRUE;
 			break;
 		}
 	}

@@ -330,62 +330,18 @@ struct player_type
 	u32b update;		/* Pending Updates (bit flags) */
 	u32b redraw;		/* Normal Redraws (bit flags) */
 	u32b window;		/* Window Redraws (bit flags) */
+	
+	/*
+	 * Flags on equipment items and the racial/class
+	 * effects logical-ored together.
+	 */
+	u32b flags1;
+	u32b flags2;
+	u32b flags3;
+	u32b flags4;
+
 
 	/*** Extracted fields ***/
-
-	bool immune_acid;		/* Immunity to acid */
-	bool immune_elec;		/* Immunity to lightning */
-	bool immune_fire;		/* Immunity to fire */
-	bool immune_cold;		/* Immunity to cold */
-
-	bool resist_acid;		/* Resist acid */
-	bool resist_elec;		/* Resist lightning */
-	bool resist_fire;		/* Resist fire */
-	bool resist_cold;		/* Resist cold */
-	bool resist_pois;		/* Resist poison */
-
-	bool resist_fear;		/* Resist fear */
-	bool resist_lite;		/* Resist light */
-	bool resist_dark;		/* Resist darkness */
-	bool resist_blind;	/* Resist blindness */
-	bool resist_confu;	/* Resist confusion */
-	bool resist_sound;	/* Resist sound */
-	bool resist_shard;	/* Resist shards */
-	bool resist_nexus;	/* Resist nexus */
-	bool resist_nethr;	/* Resist nether */
-	bool resist_chaos;	/* Resist chaos */
-	bool resist_disen;	/* Resist disenchant */
-
-	bool reflect;		/* Reflect 'bolt' attacks */
-	bool sh_fire;		/* Fiery 'immolation' effect */
-	bool sh_elec;		/* Electric 'immolation' effect */
-
-	bool anti_magic;		/* Anti-magic */
-	bool anti_tele;		/* Prevent teleportation */
-
-	bool sustain_str;		/* Keep strength */
-	bool sustain_int;		/* Keep intelligence */
-	bool sustain_wis;		/* Keep wisdom */
-	bool sustain_dex;		/* Keep dexterity */
-	bool sustain_con;		/* Keep constitution */
-	bool sustain_chr;		/* Keep charisma */
-
-	bool slow_digest;		/* Slower digestion */
-	bool ffall;			/* No damage falling */
-	bool lite;			/* Permanent light */
-	bool regenerate;		/* Regenerate hit pts */
-	bool telepathy;		/* Telepathy */
-	bool see_inv;		/* Can see invisible */
-	bool free_act;		/* Never paralyzed */
-	bool hold_life;		/* Resist life draining */
-
-	bool impact;		/* Earthquake blows */
-	bool aggravate;		/* Aggravate monsters */
-	bool teleport;		/* Random teleporting */
-	bool exp_drain;		/* Experience draining */
-
-	bool bless_blade;		/* Blessed blade */
-	bool xtra_might;		/* Extra might bow */
 	bool pass_wall;		/* Permanent wraithform */
 
 	s16b dis_to_h;		/* Known bonus to hit */

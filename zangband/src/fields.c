@@ -2264,7 +2264,7 @@ bool field_action_hit_trap_door(field_type *f_ptr, va_list vp)
 	/* Hit the trap */
 	hit_trap(f_ptr);
 
-	if (p_ptr->ffall)
+	if (p_ptr->flags3 & (TR3_FEATHER))
 	{
 		msgf("You fly over a trap door.");
 	}
@@ -2307,7 +2307,7 @@ bool field_action_hit_trap_pit(field_type *f_ptr, va_list vp)
 	/* Hit the trap */
 	hit_trap(f_ptr);
 
-	if (p_ptr->ffall)
+	if (p_ptr->flags3 & (TR3_FEATHER))
 	{
 		msgf("You fly over a pit trap.");
 	}
@@ -2336,7 +2336,7 @@ bool field_action_hit_trap_spike(field_type *f_ptr, va_list vp)
 	/* Hit the trap */
 	hit_trap(f_ptr);
 
-	if (p_ptr->ffall)
+	if (p_ptr->flags3 & (TR3_FEATHER))
 	{
 		msgf("You fly over a spiked pit.");
 	}
@@ -2379,7 +2379,7 @@ bool field_action_hit_trap_poison_pit(field_type *f_ptr, va_list vp)
 	/* Hit the trap */
 	hit_trap(f_ptr);
 
-	if (p_ptr->ffall)
+	if (p_ptr->flags3 & (TR3_FEATHER))
 	{
 		msgf("You fly over a spiked pit.");
 	}
@@ -2402,7 +2402,7 @@ bool field_action_hit_trap_poison_pit(field_type *f_ptr, va_list vp)
 			dam *= 2;
 			(void)set_cut(p_ptr->tim.cut + randint1(dam));
 
-			if (p_ptr->resist_pois || p_ptr->tim.oppose_pois)
+			if ((p_ptr->flags2 & (TR2_RES_POIS)) || p_ptr->tim.oppose_pois)
 			{
 				msgf("The poison does not affect you!");
 			}
@@ -2519,7 +2519,7 @@ bool field_action_hit_trap_element(field_type *f_ptr, va_list vp)
 		case 2:
 		{
 			msgf("A pungent green gas surrounds you!");
-			if (!p_ptr->resist_pois && !p_ptr->tim.oppose_pois)
+			if (!(p_ptr->flags2 & (TR2_RES_POIS)) && !p_ptr->tim.oppose_pois)
 			{
 				(void)set_poisoned(p_ptr->tim.poisoned + rand_range(10, 30));
 			}
@@ -2582,7 +2582,7 @@ bool field_action_hit_trap_ba_element(field_type *f_ptr, va_list vp)
 			msgf("A pungent grey gas surrounds you!");
 			(void)fire_ball(GF_POIS, 0, 350, 4);
 
-			if (!p_ptr->resist_pois && !p_ptr->tim.oppose_pois)
+			if (!(p_ptr->flags2 & (TR2_RES_POIS)) && !p_ptr->tim.oppose_pois)
 			{
 				(void)set_poisoned(p_ptr->tim.poisoned + rand_range(100, 150));
 			}
@@ -2634,7 +2634,7 @@ bool field_action_hit_trap_gas(field_type *f_ptr, va_list vp)
 		case 1:
 		{
 			msgf("A black gas surrounds you!");
-			if (!p_ptr->resist_blind)
+			if (!(p_ptr->flags2 & (TR2_RES_BLIND)))
 			{
 				(void)set_blind(p_ptr->tim.blind + rand_range(25, 75));
 			}
@@ -2644,7 +2644,7 @@ bool field_action_hit_trap_gas(field_type *f_ptr, va_list vp)
 		case 2:
 		{
 			msgf("A gas of scintillating colors surrounds you!");
-			if (!p_ptr->resist_confu)
+			if (!(p_ptr->flags2 & (TR2_RES_CONF)))
 			{
 				(void)set_confused(p_ptr->tim.confused + rand_range(10, 30));
 			}
@@ -2654,7 +2654,7 @@ bool field_action_hit_trap_gas(field_type *f_ptr, va_list vp)
 		case 3:
 		{
 			msgf("A strange white mist surrounds you!");
-			if (!p_ptr->free_act)
+			if (!(p_ptr->flags2 & (TR2_FREE_ACT)))
 			{
 				msgf("You fall asleep.");
 
@@ -2680,7 +2680,7 @@ bool field_action_hit_trap_gas(field_type *f_ptr, va_list vp)
 		{
 			msgf("A gas of scintillating colors surrounds you!");
 
-			if (!p_ptr->resist_chaos)
+			if (!(p_ptr->flags2 & (TR2_RES_CHAOS)))
 			{
 				(void)set_image(p_ptr->tim.image + rand_range(10, 30));
 			}
@@ -2839,7 +2839,7 @@ bool field_action_hit_trap_disenchant(field_type *f_ptr, va_list vp)
 	/* Saving throw */
 	if (!check_save(f_ptr->data[1])) return (FALSE);
 
-	if (!p_ptr->resist_disen)
+	if (!(p_ptr->flags2 & (TR2_RES_DISEN)))
 	{
 		msgf("There is a bright flash of light!");
 		(void)apply_disenchant();

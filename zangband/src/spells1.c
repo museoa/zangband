@@ -1524,7 +1524,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 									break;
 								}
 								default:
-									if (!p_ptr->free_act)
+									if (!(p_ptr->flags2 & (TR2_FREE_ACT)))
 										(void)set_paralyzed(p_ptr->tim.paralyzed +
 															randint1(dam));
 									break;
@@ -2079,7 +2079,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 				note = " is unaffected!";
 				obvious = FALSE;
 			}
-			else if (p_ptr->aggravate)
+			else if (p_ptr->flags3 & (TR3_AGGRAVATE))
 			{
 				note = " hates you too much!";
 			}
@@ -2113,7 +2113,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 				note = " is unaffected!";
 				obvious = FALSE;
 			}
-			else if (p_ptr->aggravate)
+			else if (p_ptr->flags3 & (TR3_AGGRAVATE))
 			{
 				note = " hates you too much!";
 			}
@@ -2151,7 +2151,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 				note = " is unaffected!";
 				obvious = FALSE;
 			}
-			else if (p_ptr->aggravate)
+			else if (p_ptr->flags3 & (TR3_AGGRAVATE))
 			{
 				note = " hates you too much!";
 			}
@@ -3113,7 +3113,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 	if (!who) return (FALSE);
 
 
-	if (p_ptr->reflect && !a_rad && !one_in_(10))
+	if ((p_ptr->flags2 & (TR2_REFLECT)) && !a_rad && !one_in_(10))
 	{
 		int t_y, t_x;
 		int max_attempts = 10;
@@ -3213,10 +3213,10 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		case GF_POIS:
 		{
 			if (fuzzy) msgf("You are hit by poison!");
-			if (p_ptr->resist_pois) dam = (dam + 2) / 3;
+			if (p_ptr->flags2 & (TR2_RES_POIS)) dam = (dam + 2) / 3;
 			if (p_ptr->tim.oppose_pois) dam = (dam + 2) / 3;
 
-			if ((!(p_ptr->tim.oppose_pois || p_ptr->resist_pois)) &&
+			if ((!(p_ptr->tim.oppose_pois || (p_ptr->flags2 & (TR2_RES_POIS)))) &&
 				one_in_(HURT_CHANCE))
 			{
 				(void)do_dec_stat(A_CON);
@@ -3224,7 +3224,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 
 			take_hit(dam, killer);
 
-			if (!(p_ptr->resist_pois || p_ptr->tim.oppose_pois))
+			if (!((p_ptr->flags2 & (TR2_RES_POIS)) || p_ptr->tim.oppose_pois))
 			{
 				(void)set_poisoned(p_ptr->tim.poisoned + randint0(dam) + 10);
 			}
@@ -3235,10 +3235,10 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Standard damage -- also poisons / mutates player */
 			if (fuzzy) msgf("You are hit by radiation!");
-			if (p_ptr->resist_pois) dam = (2 * dam + 2) / 5;
+			if (p_ptr->flags2 & (TR2_RES_POIS)) dam = (2 * dam + 2) / 5;
 			if (p_ptr->tim.oppose_pois) dam = (2 * dam + 2) / 5;
 			take_hit(dam, killer);
-			if (!(p_ptr->resist_pois || p_ptr->tim.oppose_pois))
+			if (!((p_ptr->flags2 & (TR2_RES_POIS)) || p_ptr->tim.oppose_pois))
 			{
 				(void)set_poisoned(p_ptr->tim.poisoned + randint0(dam) + 10);
 
@@ -3308,14 +3308,14 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			if (fuzzy) msgf("You are hit by something *HOT*!");
 			take_hit(dam, killer);
 
-			if (!p_ptr->resist_sound)
+			if (!(p_ptr->flags2 & (TR2_RES_SOUND)))
 			{
 				(void)set_stun(p_ptr->tim.stun +
 							   randint1((dam > 40) ? 35 : (dam * 3 / 4 + 5)));
 			}
 
-			if (!(p_ptr->resist_fire ||
-				  p_ptr->tim.oppose_fire || p_ptr->immune_fire))
+			if (!((p_ptr->flags2 & (TR2_RES_FIRE)) ||
+				  p_ptr->tim.oppose_fire || (p_ptr->flags2 & (TR2_IM_FIRE))))
 			{
 				(void)inven_damage(set_acid_destroy, 3);
 			}
@@ -3328,7 +3328,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			/* Nether -- drain experience */
 			if (fuzzy) msgf("You are hit by nether forces!");
 
-			if (p_ptr->resist_nethr)
+			if (p_ptr->flags2 & (TR2_RES_NETHER))
 			{
 				if (p_ptr->rp.prace != RACE_SPECTRE)
 					dam *= 6;
@@ -3336,11 +3336,11 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			}
 			else
 			{
-				if (p_ptr->hold_life && (randint0(100) < 75))
+				if ((p_ptr->flags2 & (TR2_HOLD_LIFE)) && (randint0(100) < 75))
 				{
 					msgf("You keep hold of your life force!");
 				}
-				else if (p_ptr->hold_life)
+				else if (p_ptr->flags2 & (TR2_HOLD_LIFE))
 				{
 					msgf("You feel your life slipping away!");
 					lose_exp(200 + (p_ptr->exp / 1000) * MON_DRAIN_LIFE);
@@ -3369,11 +3369,11 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Water -- stun/confuse */
 			if (fuzzy) msgf("You are hit by something wet!");
-			if (!p_ptr->resist_sound)
+			if (!(p_ptr->flags2 & (TR2_RES_SOUND)))
 			{
 				(void)set_stun(p_ptr->tim.stun + randint1(40));
 			}
-			if (!p_ptr->resist_confu)
+			if (!(p_ptr->flags2 & (TR2_RES_CONF)))
 			{
 				(void)set_confused(p_ptr->tim.confused + rand_range(5, 10));
 			}
@@ -3391,16 +3391,16 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Chaos -- many effects */
 			if (fuzzy) msgf("You are hit by a wave of anarchy!");
-			if (p_ptr->resist_chaos)
+			if (p_ptr->flags2 & (TR2_RES_CHAOS))
 			{
 				dam *= 6;
 				dam /= rand_range(7, 12);
 			}
-			if (!p_ptr->resist_confu)
+			if (!(p_ptr->flags2 & (TR2_RES_CONF)))
 			{
 				(void)set_confused(p_ptr->tim.confused + rand_range(20, 30));
 			}
-			if (!p_ptr->resist_chaos)
+			if (!(p_ptr->flags2 & (TR2_RES_CHAOS)))
 			{
 				(void)set_image(p_ptr->tim.image + randint1(10));
 				if (one_in_(3))
@@ -3409,13 +3409,14 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 					(void)gain_mutation(0);
 				}
 			}
-			if (!p_ptr->resist_nethr && !p_ptr->resist_chaos)
+			if (!(p_ptr->flags2 & (TR2_RES_NETHER)) &&
+				!(p_ptr->flags2 & (TR2_RES_CHAOS)))
 			{
-				if (p_ptr->hold_life && (randint0(100) < 75))
+				if ((p_ptr->flags2 & (TR2_HOLD_LIFE)) && (randint0(100) < 75))
 				{
 					msgf("You keep hold of your life force!");
 				}
-				else if (p_ptr->hold_life)
+				else if (p_ptr->flags2 & (TR2_HOLD_LIFE))
 				{
 					msgf("You feel your life slipping away!");
 					lose_exp(500 + (p_ptr->exp / 1000) * MON_DRAIN_LIFE);
@@ -3426,7 +3427,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 					lose_exp(5000 + (p_ptr->exp / 100) * MON_DRAIN_LIFE);
 				}
 			}
-			if (!p_ptr->resist_chaos || one_in_(9))
+			if (!(p_ptr->flags2 & (TR2_RES_CHAOS)) || one_in_(9))
 			{
 				(void)inven_damage(set_elec_destroy, 2);
 				(void)inven_damage(set_fire_destroy, 2);
@@ -3439,7 +3440,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Shards -- mostly cutting */
 			if (fuzzy) msgf("You are hit by something sharp!");
-			if (p_ptr->resist_shard)
+			if (p_ptr->flags2 & (TR2_RES_SHARDS))
 			{
 				dam *= 6;
 				dam /= rand_range(7, 12);
@@ -3449,7 +3450,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 				(void)set_cut(p_ptr->tim.cut + dam);
 			}
 
-			if (!p_ptr->resist_shard || one_in_(13))
+			if (!(p_ptr->flags2 & (TR2_RES_SHARDS)) || one_in_(13))
 			{
 				(void)inven_damage(set_cold_destroy, 2);
 			}
@@ -3462,7 +3463,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Sound -- mostly stunning */
 			if (fuzzy) msgf("You are hit by a loud noise!");
-			if (p_ptr->resist_sound)
+			if (p_ptr->flags2 & (TR2_RES_SOUND))
 			{
 				dam *= 5;
 				dam /= rand_range(7, 12);
@@ -3473,7 +3474,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 							   randint1((dam > 90) ? 35 : (dam / 3 + 5)));
 			}
 
-			if (!p_ptr->resist_sound || one_in_(13))
+			if (!(p_ptr->flags2 & (TR2_RES_SOUND)) || one_in_(13))
 			{
 				(void)inven_damage(set_cold_destroy, 2);
 			}
@@ -3486,12 +3487,12 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Pure confusion */
 			if (fuzzy) msgf("You are hit by something puzzling!");
-			if (p_ptr->resist_confu)
+			if (p_ptr->flags2 & (TR2_RES_CONF))
 			{
 				dam *= 5;
 				dam /= rand_range(7, 12);
 			}
-			if (!p_ptr->resist_confu)
+			if (!(p_ptr->flags2 & (TR2_RES_CONF)))
 			{
 				(void)set_confused(p_ptr->tim.confused + rand_range(10, 30));
 			}
@@ -3503,7 +3504,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Disenchantment -- see above */
 			if (fuzzy) msgf("You are hit by something static!");
-			if (p_ptr->resist_disen)
+			if (p_ptr->flags2 & (TR2_RES_DISEN))
 			{
 				dam *= 6;
 				dam /= rand_range(7, 12);
@@ -3520,7 +3521,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Nexus -- see above */
 			if (fuzzy) msgf("You are hit by something strange!");
-			if (p_ptr->resist_nexus)
+			if (p_ptr->flags2 & (TR2_RES_NEXUS))
 			{
 				dam *= 6;
 				dam /= rand_range(7, 12);
@@ -3537,7 +3538,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Force -- mostly stun */
 			if (fuzzy) msgf("You are hit by kinetic force!");
-			if (!p_ptr->resist_sound)
+			if (!(p_ptr->flags2 & (TR2_RES_SOUND)))
 			{
 				(void)set_stun(p_ptr->tim.stun + randint1(20));
 			}
@@ -3549,11 +3550,11 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Rocket -- stun, cut */
 			if (fuzzy) msgf("There is an explosion!");
-			if (!p_ptr->resist_sound)
+			if (!(p_ptr->flags2 & (TR2_RES_SOUND)))
 			{
 				(void)set_stun(p_ptr->tim.stun + randint1(20));
 			}
-			if (p_ptr->resist_shard)
+			if (p_ptr->flags2 & (TR2_RES_SHARDS))
 			{
 				dam /= 2;
 			}
@@ -3562,7 +3563,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 				(void)set_cut(p_ptr->tim.cut + (dam / 2));
 			}
 
-			if (!p_ptr->resist_shard || one_in_(12))
+			if (!(p_ptr->flags2 & (TR2_RES_SHARDS)) || one_in_(12))
 			{
 				(void)inven_damage(set_cold_destroy, 3);
 			}
@@ -3584,16 +3585,16 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Lite -- blinding */
 			if (fuzzy) msgf("You are hit by something!");
-			if (p_ptr->resist_lite)
+			if (p_ptr->flags2 & (TR2_RES_LITE))
 			{
 				dam *= 4;
 				dam /= rand_range(7, 12);
 			}
-			else if (!blind && !p_ptr->resist_blind)
+			else if (!blind && !(p_ptr->flags2 & (TR2_RES_BLIND)))
 			{
 				(void)set_blind(p_ptr->tim.blind + rand_range(2, 7));
 			}
-			if (p_ptr->rp.prace == RACE_VAMPIRE)
+			if (p_ptr->flags4 & (TR4_HURT_LITE))
 			{
 				msgf("The light scorches your flesh!");
 				dam *= 2;
@@ -3618,14 +3619,14 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Dark -- blinding */
 			if (fuzzy) msgf("You are hit by something!");
-			if (p_ptr->resist_dark)
+			if (p_ptr->flags2 & (TR2_RES_DARK))
 			{
 				dam *= 4;
 				dam /= rand_range(7, 12);
 
-				if (p_ptr->rp.prace == RACE_VAMPIRE) dam = 0;
+				if (p_ptr->flags4 & (TR4_IM_DARK)) dam = 0;
 			}
-			else if (!blind && !p_ptr->resist_blind)
+			else if (!blind && !(p_ptr->flags2 & (TR2_RES_BLIND)))
 			{
 				(void)set_blind(p_ptr->tim.blind + rand_range(2, 7));
 			}
@@ -3724,19 +3725,20 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			if (fuzzy) msgf("You are hit by something heavy!");
 			msgf("Gravity warps around you.");
 			teleport_player(5);
-			if (!p_ptr->ffall)
+			if (!(p_ptr->flags3 & (TR3_FEATHER)))
 				(void)set_slow(p_ptr->tim.slow + rand_range(4, 8));
-			if (!(p_ptr->resist_sound || p_ptr->ffall))
+			if (!((p_ptr->flags2 & (TR2_RES_SOUND)) ||
+				 (p_ptr->flags3 & (TR3_FEATHER))))
 			{
 				(void)set_stun(p_ptr->tim.stun +
 							   randint1((dam > 90) ? 35 : (dam / 3 + 5)));
 			}
-			if (p_ptr->ffall)
+			if (p_ptr->flags3 & (TR3_FEATHER))
 			{
 				dam = (dam * 2) / 3;
 			}
 
-			if (!p_ptr->ffall || one_in_(13))
+			if (!(p_ptr->flags3 & (TR3_FEATHER)) || one_in_(13))
 			{
 				(void)inven_damage(set_cold_destroy, 2);
 			}
@@ -3778,7 +3780,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 
 		case GF_OLD_SLEEP:
 		{
-			if (p_ptr->free_act) break;
+			if (p_ptr->flags2 & (TR2_FREE_ACT)) break;
 			if (fuzzy) msgf("You fall asleep!");
 
 			if (ironman_nightmare)
@@ -3813,10 +3815,12 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			/* Pure damage */
 			if (fuzzy) msgf("Something falls from the sky on you!");
 			take_hit(dam, killer);
-			if (!p_ptr->resist_shard || one_in_(13))
+			if (!(p_ptr->flags2 & (TR2_RES_SHARDS)) || one_in_(13))
 			{
-				if (!p_ptr->immune_fire) (void)inven_damage(set_fire_destroy,
-															2);
+				if (!(p_ptr->flags2 & (TR2_IM_FIRE)))
+				{
+					(void)inven_damage(set_fire_destroy,2);
+				}
 				(void)inven_damage(set_cold_destroy, 2);
 			}
 
@@ -3828,19 +3832,22 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			/* Ice -- cold plus stun plus cuts */
 			if (fuzzy) msgf("You are hit by something sharp and cold!");
 			cold_dam(dam, killer);
-			if (!p_ptr->resist_shard)
+			if (!(p_ptr->flags2 & (TR2_RES_SHARDS)))
 			{
 				(void)set_cut(p_ptr->tim.cut + damroll(5, 8));
 			}
-			if (!p_ptr->resist_sound)
+			if (!(p_ptr->flags2 & (TR2_RES_SOUND)))
 			{
 				(void)set_stun(p_ptr->tim.stun + randint1(15));
 			}
 
-			if ((!(p_ptr->resist_cold || p_ptr->tim.oppose_cold)) || one_in_(12))
+			if (!((p_ptr->flags2 & (TR2_IM_COLD)) || p_ptr->tim.oppose_cold) ||
+				one_in_(12))
 			{
-				if (!p_ptr->immune_cold) (void)inven_damage(set_cold_destroy,
-															3);
+				if (!(p_ptr->flags2 & (TR2_IM_COLD)))
+				{
+					(void)inven_damage(set_cold_destroy, 3);
+				}
 			}
 
 			break;

@@ -2765,7 +2765,7 @@ static void process_monster(int m_idx)
 		u32b notice = 0;
 
 		/* Hack -- handle non-aggravation */
-		if (!p_ptr->aggravate) notice = randint0(1024);
+		if (!(p_ptr->flags3 & (TR3_AGGRAVATE))) notice = randint0(1024);
 
 		/* Nightmare monsters are more alert */
 		if (ironman_nightmare) notice /= 2;
@@ -2780,7 +2780,7 @@ static void process_monster(int m_idx)
 			if (m_ptr->cdis < 50) d = (100 / m_ptr->cdis);
 
 			/* Hack -- handle aggravation */
-			if (p_ptr->aggravate) d = m_ptr->csleep;
+			if (p_ptr->flags3 & (TR3_AGGRAVATE)) d = m_ptr->csleep;
 
 			/* Still asleep */
 			if (m_ptr->csleep > d)
@@ -2909,7 +2909,7 @@ static void process_monster(int m_idx)
 	}
 
 	/* No one wants to be your friend if you're aggravating */
-	if (!is_hostile(m_ptr) && p_ptr->aggravate)
+	if (!is_hostile(m_ptr) && (p_ptr->flags3 & (TR3_AGGRAVATE)))
 		gets_angry = TRUE;
 
 	/* Acquire the monster name */
@@ -3322,7 +3322,7 @@ void process_monsters(int min_energy)
 		/* Handle "sight" and "aggravation" */
 		else if ((m_ptr->cdis <= MAX_SIGHT) &&
 				 ((in_boundsp(fx, fy) && player_has_los_grid(parea(fx, fy)))
-				  || p_ptr->aggravate))
+				  || (p_ptr->flags3 & (TR3_AGGRAVATE))))
 		{
 			/* We can "see" or "feel" the player */
 			test = TRUE;
