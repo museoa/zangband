@@ -3573,8 +3573,11 @@ void wiz_lite(void)
 					/* Get the grid */
 					c_ptr = &cave[yy][xx];
 
+/* Enlightenment is not light */
+#if 0
 					/* Perma-lite the grid */
 					c_ptr->info |= (CAVE_GLOW);
+#endif
 
 					/* Memorize normal features */
 					if (c_ptr->feat > FEAT_INVIS)
@@ -3583,12 +3586,15 @@ void wiz_lite(void)
 						c_ptr->info |= (CAVE_MARK);
 					}
 
+/* Inconsistent with 'magic mapping' */
+#if 0
 					/* Normally, memorize floors (see above) */
 					if (view_perma_grids && !view_torch_grids)
 					{
 						/* Memorize the grid */
 						c_ptr->info |= (CAVE_MARK);
 					}
+#endif
 				}
 			}
 		}
