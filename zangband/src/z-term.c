@@ -554,6 +554,7 @@ void Term_queue_char(int x, int y, byte a, char c)
 	if (x > Term->x2[y]) Term->x2[y] = x;
 }
 
+
 /*
  * Mentally draw a string of attr/chars at a given location
  *
@@ -569,10 +570,10 @@ void Term_queue_line(int x, int y, int n, byte *a, char *c)
 #endif /* USE_TRANSPARENCY */
 {
 	term_win *scrn = Term->scr;
-	
+
 	int x1 = -1;
 	int x2 = -1;
-	
+
 	byte *scr_aa = &scrn->a[y][x];
 	char *scr_cc = &scrn->c[y][x];
 
@@ -585,6 +586,7 @@ void Term_queue_line(int x, int y, int n, byte *a, char *c)
 
 	while (n--)
 	{
+
 #ifdef USE_TRANSPARENCY
 
 		/* Hack -- Ignore non-changes */
@@ -602,8 +604,8 @@ void Term_queue_line(int x, int y, int n, byte *a, char *c)
 			scr_tcc++;
 			continue;
 		}
-		
-		/* Save the "literal" information */			
+
+		/* Save the "literal" information */
 		*scr_taa++ = *ta++;
 		*scr_tcc++ = *tc++;
 
@@ -611,7 +613,7 @@ void Term_queue_line(int x, int y, int n, byte *a, char *c)
 
 		/* Hack -- Ignore non-changes */
 		if ((*scr_aa == *a) && (*scr_cc == *c))
-				{
+		{
 			x++;
 			a++;
 			c++;
@@ -621,20 +623,20 @@ void Term_queue_line(int x, int y, int n, byte *a, char *c)
 		}
 
 #endif /* USE_TRANSPARENCY */
-				
+
 		/* Save the "literal" information */
 		*scr_aa++ = *a++;
 		*scr_cc++ = *c++;
-		
+
 		/* Track minimum changed column */
 		if (x1 < 0) x1 = x;
 
 		/* Track maximum changed column */
 		x2 = x;
-		
+
 		x++;
 	}
-	
+
 	/* Expand the "change area" as needed */
 	if (x1 >= 0)
 	{
