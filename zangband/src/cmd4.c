@@ -4018,6 +4018,11 @@ static void dump_dungeon_info(FILE *fff, int town, bool ignore)
 			froff(fff, "%s dungeon under %s",
 				dungeon_type_name(d_ptr->habitat), pl_ptr->name);
 		}
+		else
+		{
+			/* Don't show this */
+			return;
+		}
 	}
 	/* So it is a dungeon */
 	else
