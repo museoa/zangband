@@ -1779,11 +1779,19 @@ static void store_sell(int *store_top)
 			/* Get the "apparent" value */
 			dummy = object_value(q_ptr) * q_ptr->number;
 
-			/* Identify it */
-			identify_item(o_ptr);
-
 			/* Duplicate the object */
 			q_ptr = object_dup(o_ptr);
+			
+			if (o_ptr->tval == TV_WAND)
+			{
+				/* Identify sold item - this will cause awareness of pack item */
+				identify_item(q_ptr);
+			}
+			else
+			{
+				/* Identify pack item */
+				identify_item(o_ptr);
+			}
 
 			/* Modify quantity */
 			q_ptr->number = amt;
