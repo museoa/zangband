@@ -3391,18 +3391,18 @@ static void create_terrain(void)
 			/* Town */
 			w_ptr->done.place = place_num;
 
-			if (!place_num)
-			{
-				/* Set wilderness monsters to default values */
+			
+			
+			/* Set wilderness monsters to default values */
 
-				/* Toughness (level 0 - 64) */
-				w_ptr->done.mon_gen = (256 - law) / 4;
-				w_ptr->done.mon_gen = MAX(1, w_ptr->done.mon_gen - 5);
+			/* Toughness (level 0 - 64) */
+			w_ptr->done.mon_gen = (256 - law) / 4;
+			w_ptr->done.mon_gen = MAX(1, w_ptr->done.mon_gen - 5);
 
-				/* No monsters (probability 0 - 16) */
-				w_ptr->done.mon_prob = pop / 16;
-			}
-			else
+			/* No monsters (probability 0 - 16) */
+			w_ptr->done.mon_prob = pop / 16;
+			
+			if (place_num)
 			{
 				/* Set values depending on type of place */
 				set_mon_wild_values(place[place_num].monst_type, &w_ptr->done);
