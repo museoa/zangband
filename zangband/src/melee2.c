@@ -2781,12 +2781,12 @@ static void process_monster(int m_idx)
 			m_ptr->fy = ny;
 			m_ptr->fx = nx;
 			
+			/* Update the monster */
+			update_mon(m_idx, TRUE);
+			
 			/* Process fields under the monster. */
 			field_hook(&old_ptr->fld_idx,
 				 FIELD_ACT_MONSTER_ENTER, (void *) m_ptr);
-
-			/* Update the monster */
-			update_mon(m_idx, TRUE);
 
 			/* Redraw the old grid */
 			lite_spot(oy, ox);

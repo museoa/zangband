@@ -1966,16 +1966,12 @@ void mutation_power_aux(u32b power)
 
 				/* Process fields under the player. */
 				field_hook(&area(py, px)->fld_idx,
-					 FIELD_ACT_PLAYER_LEAVE, (void *) p_ptr);
+					 FIELD_ACT_PLAYER_LEAVE, NULL);
 
 				/* Move the player */
 				py = y;
 				px = x;
-		
-				/* Process fields under the player. */
-				field_hook(&area(py, px)->fld_idx,
-			 		FIELD_ACT_PLAYER_ENTER, (void *) p_ptr);
-
+				
 				if (!dun_level)
 				{
 					/* Scroll wilderness */
@@ -1983,6 +1979,10 @@ void mutation_power_aux(u32b power)
 					p_ptr->wilderness_y = py;
 					move_wild();
 				}
+		
+				/* Process fields under the player. */
+				field_hook(&area(py, px)->fld_idx,
+			 		FIELD_ACT_PLAYER_ENTER, NULL);
 
 				lite_spot(py, px);
 				lite_spot(oy, ox);

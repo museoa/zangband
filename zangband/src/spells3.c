@@ -147,13 +147,13 @@ bool teleport_away(int m_idx, int dis)
 	m_ptr->fy = ny;
 	m_ptr->fx = nx;
 	
+	/* Update the monster (new location) */
+	update_mon(m_idx, TRUE);
+	
 	/* Process fields under the monster. */
 	field_hook(&c_ptr->fld_idx,
 			 FIELD_ACT_MONSTER_ENTER, (void *) m_ptr);
 	
-	/* Update the monster (new location) */
-	update_mon(m_idx, TRUE);
-
 	/* Redraw the old grid */
 	lite_spot(oy, ox);
 
@@ -283,12 +283,12 @@ void teleport_to_player(int m_idx)
 	m_ptr->fy = ny;
 	m_ptr->fx = nx;
 	
+	/* Update the monster (new location) */
+	update_mon(m_idx, TRUE);
+	
 	/* Process fields under the monster. */
 	field_hook(&c_ptr->fld_idx,
 			 FIELD_ACT_MONSTER_ENTER, (void *) m_ptr);
-
-	/* Update the monster (new location) */
-	update_mon(m_idx, TRUE);
 
 	/* Redraw the old grid */
 	lite_spot(oy, ox);
@@ -400,16 +400,12 @@ void teleport_player(int dis)
 
 	/* Process fields under the player. */
 	field_hook(&area(py, px)->fld_idx,
-		 FIELD_ACT_PLAYER_LEAVE, (void *) p_ptr);
+		 FIELD_ACT_PLAYER_LEAVE, NULL);
 
 	/* Move the player */
 	py = y;
 	px = x;
-		
-	/* Process fields under the player. */
-	field_hook(&area(py, px)->fld_idx,
-		 FIELD_ACT_PLAYER_ENTER, (void *) p_ptr);
-
+	
 	if (!dun_level)
 	{
 		/* Scroll wilderness */
@@ -417,6 +413,10 @@ void teleport_player(int dis)
 		p_ptr->wilderness_y = py;
 		move_wild();
 	}
+		
+	/* Process fields under the player. */
+	field_hook(&area(py, px)->fld_idx,
+		 FIELD_ACT_PLAYER_ENTER, NULL);
 
 	/* Redraw the old spot */
 	lite_spot(oy, ox);
@@ -529,16 +529,12 @@ void teleport_player_to(int ny, int nx)
 
 	/* Process fields under the player. */
 	field_hook(&area(py, px)->fld_idx,
-		 FIELD_ACT_PLAYER_LEAVE, (void *) p_ptr);
+		 FIELD_ACT_PLAYER_LEAVE, NULL);
 
 	/* Move the player */
 	py = y;
 	px = x;
-		
-	/* Process fields under the player. */
-	field_hook(&area(py, px)->fld_idx,
-		 FIELD_ACT_PLAYER_ENTER, (void *) p_ptr);
-
+	
 	if (!dun_level)
 	{
 		/* Scroll wilderness */
@@ -546,6 +542,10 @@ void teleport_player_to(int ny, int nx)
 		p_ptr->wilderness_y = py;
 		move_wild();
 	}
+		
+	/* Process fields under the player. */
+	field_hook(&area(py, px)->fld_idx,
+		 FIELD_ACT_PLAYER_ENTER, NULL);
 
 	/* Redraw the old spot */
 	lite_spot(oy, ox);

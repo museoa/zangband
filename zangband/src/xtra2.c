@@ -1702,9 +1702,6 @@ void ang_sort(vptr u, vptr v, int n)
  * Currently, a monster is "target_able" if it is visible, and if
  * the player can hit it with a projection, and the player is not
  * hallucinating.  This allows use of "use closest target" macros.
- *
- * Future versions may restrict the ability to target "trappers"
- * and "mimics", but the semantics is a little bit weird.
  */
 bool target_able(int m_idx)
 {
@@ -1721,9 +1718,6 @@ bool target_able(int m_idx)
 
 	/* Hack -- no targeting hallucinations */
 	if (p_ptr->image) return (FALSE);
-
-	/* XXX XXX XXX Hack -- Never target trappers */
-	/* if (CLEAR_ATTR && (CLEAR_CHAR)) return (FALSE); */
 
 	/* Assume okay */
 	return (TRUE);
@@ -1957,9 +1951,6 @@ static bool target_set_accept(int y, int x)
 		/* Notice shops */
 		if ((c_ptr->feat >= FEAT_SHOP_HEAD) &&
 		    (c_ptr->feat <= FEAT_SHOP_TAIL)) return (TRUE);
-
-		/* Notice traps */
-		if (is_trap(c_ptr->feat)) return (TRUE);
 
 		/* Notice doors */
 		if ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
@@ -2443,7 +2434,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 		}
 
 		/* Terrain feature if needed */
-		if (boring || (feat > FEAT_INVIS))
+		if (boring || (feat >= FEAT_OPEN))
 		{
 			cptr name;
 

@@ -520,12 +520,9 @@ void search(void)
 				}
 #endif /* USE_SCRIPT */
 
-				/* Invisible trap */
-				if (c_ptr->feat == FEAT_INVIS)
+				/* Look for invisible traps */
+				if (field_detect_type(c_ptr->fld_idx, FTYPE_TRAP))
 				{
-					/* Pick a trap */
-					pick_trap(y, x);
-
 					/* Message */
 					msg_print("You have found a trap.");
 
@@ -975,353 +972,6 @@ void carry(int pickup)
 	py_pickup_aux(this_o_idx);
 }
 
-/*
- * Determine if a trap affects the player.
- * Always miss 5% of the time, Always hit 5% of the time.
- * Otherwise, match trap power against player armor.
- */
-static int check_hit(int power)
-{
-	int k, ac;
-
-	/* Percentile dice */
-	k = rand_int(100);
-
-	/* Hack -- 5% hit, 5% miss */
-	if (k < 10) return (k < 5);
-
-	/* Paranoia -- No power */
-	if (power <= 0) return (FALSE);
-
-	/* Total armor */
-	ac = p_ptr->ac + p_ptr->to_a;
-
-	/* Power competes against Armor */
-	if (randint(power) > ((ac * 3) / 4)) return (TRUE);
-
-	/* Assume miss */
-	return (FALSE);
-}
-
-
-/*
- * Handle player hitting a real trap
- */
-static void hit_trap(void)
-{
-	int i, num, dam;
-
-	cave_type *c_ptr;
-
-	cptr name = "a trap";
-
-
-	/* Disturb the player */
-	disturb(0, 0);
-
-	/* Get the cave grid */
-	c_ptr = area(py,px);
-
-	/* Analyze XXX XXX XXX */
-	switch (c_ptr->feat)
-	{
-		case FEAT_TRAP_TRAPDOOR:
-		{
-			if (p_ptr->ffall)
-			{
-				msg_print("You fly over a trap door.");
-			}
-			else
-			{
-				msg_print("You have fallen through a trap door!");
-				sound(SOUND_FALL);
-				dam = damroll(2, 8);
-				name = "a trap door";
-				take_hit(dam, name);
-
-				/* Still alive and autosave enabled */
-				if (autosave_l && (p_ptr->chp >= 0))
-					do_cmd_save_game(TRUE);
-
-				dun_level++;
-
-				/* Leaving */
-				p_ptr->leaving = TRUE;
-			}
-			break;
-		}
-
-		case FEAT_TRAP_PIT:
-		{
-			if (p_ptr->ffall)
-			{
-				msg_print("You fly over a pit trap.");
-			}
-			else
-			{
-				msg_print("You have fallen into a pit!");
-				dam = damroll(2, 6);
-				name = "a pit trap";
-				take_hit(dam, name);
-			}
-			break;
-		}
-
-		case FEAT_TRAP_SPIKED_PIT:
-		{
-			if (p_ptr->ffall)
-			{
-				msg_print("You fly over a spiked pit.");
-			}
-			else
-			{
-				msg_print("You fall into a spiked pit!");
-
-				/* Base damage */
-				name = "a pit trap";
-				dam = damroll(2, 6);
-
-				/* Extra spike damage */
-				if (rand_int(100) < 50)
-				{
-					msg_print("You are impaled!");
-
-					name = "a spiked pit";
-					dam = dam * 2;
-					(void)set_cut(p_ptr->cut + randint(dam));
-				}
-
-				/* Take the damage */
-				take_hit(dam, name);
-			}
-			break;
-		}
-
-		case FEAT_TRAP_POISON_PIT:
-		{
-			if (p_ptr->ffall)
-			{
-				msg_print("You fly over a spiked pit.");
-			}
-			else
-			{
-				msg_print("You fall into a spiked pit!");
-
-				/* Base damage */
-				dam = damroll(2, 6);
-
-				name = "a pit trap";
-
-				/* Extra spike damage */
-				if (rand_int(100) < 50)
-				{
-					msg_print("You are impaled on poisonous spikes!");
-
-					name = "a spiked pit";
-
-					dam = dam * 2;
-					(void)set_cut(p_ptr->cut + randint(dam));
-
-					if (p_ptr->resist_pois || p_ptr->oppose_pois)
-					{
-						msg_print("The poison does not affect you!");
-					}
-
-					else
-					{
-						dam = dam * 2;
-						(void)set_poisoned(p_ptr->poisoned + randint(dam));
-					}
-				}
-
-				/* Take the damage */
-				take_hit(dam, name);
-			}
-
-			break;
-		}
-
-		case FEAT_TRAP_TY_CURSE:
-		{
-			msg_print("There is a flash of shimmering light!");
-			c_ptr->info &= ~(CAVE_MARK);
-			cave_set_feat(py, px, FEAT_FLOOR);
-			num = 2 + randint(3);
-			for (i = 0; i < num; i++)
-			{
-				(void)summon_specific(0, py, px, dun_level, 0, TRUE, FALSE, FALSE);
-			}
-
-			if (dun_level > randint(100)) /* No nasty effect for low levels */
-			{
-				bool stop_ty = FALSE;
-				int count = 0;
-
-				do
-				{
-					stop_ty = activate_ty_curse(stop_ty, &count);
-				}
-				while (randint(6) == 1);
-			}
-			break;
-		}
-
-		case FEAT_TRAP_TELEPORT:
-		{
-			msg_print("You hit a teleport trap!");
-			teleport_player(100);
-			break;
-		}
-
-		case FEAT_TRAP_FIRE:
-		{
-			msg_print("You are enveloped in flames!");
-			dam = damroll(4, 6);
-			fire_dam(dam, "a fire trap");
-			break;
-		}
-
-		case FEAT_TRAP_ACID:
-		{
-			msg_print("You are splashed with acid!");
-			dam = damroll(4, 6);
-			acid_dam(dam, "an acid trap");
-			break;
-		}
-
-		case FEAT_TRAP_SLOW:
-		{
-			if (check_hit(125))
-			{
-				msg_print("A small dart hits you!");
-				dam = damroll(1, 4);
-				take_hit(dam, name);
-				(void)set_slow(p_ptr->slow + rand_int(20) + 20);
-			}
-			else
-			{
-				msg_print("A small dart barely misses you.");
-			}
-			break;
-		}
-
-		case FEAT_TRAP_LOSE_STR:
-		{
-			if (check_hit(125))
-			{
-				msg_print("A small dart hits you!");
-				dam = damroll(1, 4);
-				take_hit(dam, "a dart trap");
-				(void)do_dec_stat(A_STR);
-			}
-			else
-			{
-				msg_print("A small dart barely misses you.");
-			}
-			break;
-		}
-
-		case FEAT_TRAP_LOSE_DEX:
-		{
-			if (check_hit(125))
-			{
-				msg_print("A small dart hits you!");
-				dam = damroll(1, 4);
-				take_hit(dam, "a dart trap");
-				(void)do_dec_stat(A_DEX);
-			}
-			else
-			{
-				msg_print("A small dart barely misses you.");
-			}
-			break;
-		}
-
-		case FEAT_TRAP_LOSE_CON:
-		{
-			if (check_hit(125))
-			{
-				msg_print("A small dart hits you!");
-				dam = damroll(1, 4);
-				take_hit(dam, "a dart trap");
-				(void)do_dec_stat(A_CON);
-			}
-			else
-			{
-				msg_print("A small dart barely misses you.");
-			}
-			break;
-		}
-
-		case FEAT_TRAP_BLIND:
-		{
-			msg_print("A black gas surrounds you!");
-			if (!p_ptr->resist_blind)
-			{
-				(void)set_blind(p_ptr->blind + rand_int(50) + 25);
-			}
-			break;
-		}
-
-		case FEAT_TRAP_CONFUSE:
-		{
-			msg_print("A gas of scintillating colors surrounds you!");
-			if (!p_ptr->resist_conf)
-			{
-				(void)set_confused(p_ptr->confused + rand_int(20) + 10);
-			}
-			break;
-		}
-
-		case FEAT_TRAP_POISON:
-		{
-			msg_print("A pungent green gas surrounds you!");
-			if (!p_ptr->resist_pois && !p_ptr->oppose_pois)
-			{
-				(void)set_poisoned(p_ptr->poisoned + rand_int(20) + 10);
-			}
-			break;
-		}
-
-		case FEAT_TRAP_SLEEP:
-		{
-			msg_print("A strange white mist surrounds you!");
-			if (!p_ptr->free_act)
-			{
-				msg_print("You fall asleep.");
-
-				if (ironman_nightmare)
-				{
-					msg_print("A horrible vision enters your mind.");
-
-					/* Pick a nightmare */
-					get_mon_num_prep(get_nightmare, NULL);
-
-					/* Have some nightmares */
-					have_nightmare(get_mon_num(MAX_DEPTH));
-
-					/* Remove the monster restriction */
-					get_mon_num_prep(NULL, NULL);
-				}
-				(void)set_paralyzed(p_ptr->paralyzed + rand_int(10) + 5);
-			}
-			break;
-		}
-
-		case FEAT_TRAP_TRAPS:
-		{
-			msg_print("There is a bright flash of light!");
-
-			/* Destroy this trap */
-			cave_set_feat(py, px, FEAT_FLOOR);
-
-			/* Make some new traps */
-			project(0, 1, py, px, 0, GF_MAKE_TRAP, PROJECT_HIDE | PROJECT_JUMP | PROJECT_GRID);
-
-			break;
-		}
-	}
-}
 
 
 static void touch_zap_player(monster_type *m_ptr)
@@ -2766,45 +2416,10 @@ void move_player(int dir, int do_pickup)
 	}
 
 	/* Disarm a visible trap */
-	else if ((do_pickup != easy_disarm) && is_trap(c_ptr->feat))
+	else if ((do_pickup != easy_disarm) && is_visible_trap(c_ptr))
 	{
-		bool ignore = FALSE;
-		switch (c_ptr->feat)
-		{
-			case FEAT_TRAP_TRAPDOOR:
-			case FEAT_TRAP_PIT:
-			case FEAT_TRAP_SPIKED_PIT:
-			case FEAT_TRAP_POISON_PIT:
-				if (p_ptr->ffall) ignore = TRUE;
-				break;
-			case FEAT_TRAP_TELEPORT:
-				if (p_ptr->anti_tele) ignore = TRUE;
-				break;
-			case FEAT_TRAP_FIRE:
-				if (p_ptr->immune_fire) ignore = TRUE;
-				break;
-			case FEAT_TRAP_ACID:
-				if (p_ptr->immune_acid) ignore = TRUE;
-				break;
-			case FEAT_TRAP_BLIND:
-				if (p_ptr->resist_blind) ignore = TRUE;
-				break;
-			case FEAT_TRAP_CONFUSE:
-				if (p_ptr->resist_conf) ignore = TRUE;
-				break;
-			case FEAT_TRAP_POISON:
-				if (p_ptr->resist_pois) ignore = TRUE;
-				break;
-			case FEAT_TRAP_SLEEP:
-				if (p_ptr->free_act) ignore = TRUE;
-				break;
-		}
-
-		if (!ignore)
-		{
-			(void)do_cmd_disarm_aux(y, x, dir);
-			return;
-		}
+		(void)do_cmd_disarm_aux(c_ptr, dir);
+		return;
 	}
 
 	/* Player can not walk through "walls" unless in wraith form... */
@@ -2907,16 +2522,12 @@ void move_player(int dir, int do_pickup)
 
 		/* Process fields under the player. */
 		field_hook(&area(py, px)->fld_idx,
-			 FIELD_ACT_PLAYER_LEAVE, (void *) p_ptr);
+			 FIELD_ACT_PLAYER_LEAVE, NULL);
 
 		/* Move the player */
 		py = y;
 		px = x;
 		
-		/* Process fields under the player. */
-		field_hook(&area(py, px)->fld_idx,
-			 FIELD_ACT_PLAYER_ENTER, (void *) p_ptr);
-
 		if (!dun_level)
 		{
 			/* Scroll wilderness */
@@ -2924,9 +2535,13 @@ void move_player(int dir, int do_pickup)
 			p_ptr->wilderness_y = py;
 			move_wild();
 		}
-
+		
+		/* Process fields under the player. */
+		field_hook(&area(py, px)->fld_idx,
+			 FIELD_ACT_PLAYER_ENTER, NULL);
+		
 		/* Redraw new spot */
-		lite_spot(py, px);
+		lite_spot(py, px);		
 
 		/* Redraw old spot */
 		lite_spot(oy, ox);
@@ -3022,34 +2637,8 @@ void move_player(int dir, int do_pickup)
 			p_ptr->oldpy = 0;
 			p_ptr->leaving = TRUE;
 		}
-
 #endif
 
-		/* Discover invisible traps */
-		else if (c_ptr->feat == FEAT_INVIS)
-		{
-			/* Disturb */
-			disturb(0, 0);
-
-			/* Message */
-			msg_print("You found a trap!");
-
-			/* Pick a trap */
-			pick_trap(py, px);
-
-			/* Hit the trap */
-			hit_trap();
-		}
-
-		/* Set off an visible trap */
-		else if (is_trap(c_ptr->feat))
-		{
-			/* Disturb */
-			disturb(0, 0);
-
-			/* Hit the trap */
-			hit_trap();
-		}
 	}
 }
 
@@ -3074,7 +2663,7 @@ static int see_wall(int dir, int y, int x)
 	if (c_ptr->feat < FEAT_SECRET) return (FALSE);
 
 	if ((c_ptr->feat >= FEAT_DEEP_WATER) &&
-	    (c_ptr->feat <= FEAT_TRAP_TRAPS)) return (FALSE);
+	    (c_ptr->feat <= FEAT_GRASS)) return (FALSE);
 
 	if ((c_ptr->feat >= FEAT_SHOP_HEAD) &&
 	    (c_ptr->feat <= FEAT_SHOP_TAIL)) return (FALSE);
@@ -3318,8 +2907,9 @@ static void run_init(int dir)
 
 	if (!dun_level)
 	{
-		/* If in the wilderness - run max 32 squares at a time */
-		running = 32;
+		/* If in the wilderness - run max 21 squares at a time */
+		/* This is one less than the detection radius. */
+		running = 21;
 	}
 	else
 	{
@@ -3490,9 +3080,6 @@ static bool run_test(void)
 			{
 				/* Floors */
 				case FEAT_FLOOR:
-
-				/* Invis traps */
-				case FEAT_INVIS:
 
 				/* Secret doors */
 				case FEAT_SECRET:

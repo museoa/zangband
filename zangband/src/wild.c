@@ -67,7 +67,7 @@ void light_dark_block(blk_ptr block_ptr, u16b x, u16b y)
 				/* Darken "boring" features */
 				if (!(((c_ptr->feat >= FEAT_OPEN) &&
 				    (c_ptr->feat <= FEAT_MORE)) ||
-				    ((c_ptr->feat >= FEAT_TRAP_TRAPDOOR) &&
+				    ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
 				    (c_ptr->feat <= FEAT_SHOP_TAIL))))
 				{
 					/* Forget the grid */

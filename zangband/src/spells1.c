@@ -543,65 +543,12 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			break;
 		}
 
-		/* Destroy Traps (and Locks) */
-		case GF_KILL_TRAP:
-		{
-			/* Reveal secret doors */
-			if (c_ptr->feat == FEAT_SECRET)
-			{
-				/* Pick a door */
-				place_closed_door(y, x);
-
-				/* Check line of sight */
-				if (known)
-				{
-					obvious = TRUE;
-				}
-			}
-
-			/* Destroy traps */
-			if ((c_ptr->feat == FEAT_INVIS) || is_trap(c_ptr->feat))
-			{
-				/* Check line of sight */
-				if (known)
-				{
-					msg_print("There is a bright flash of light!");
-					obvious = TRUE;
-				}
-
-				/* Forget the trap */
-				c_ptr->info &= ~(CAVE_MARK);
-
-				/* Destroy the trap */
-				cave_set_feat(y, x, FEAT_FLOOR);
-			}
-
-			/* Locked doors are unlocked */
-			else if ((c_ptr->feat >= FEAT_DOOR_HEAD + 0x01) &&
-						 (c_ptr->feat <= FEAT_DOOR_HEAD + 0x07))
-			{
-				/* Unlock the door */
-				cave_set_feat(y, x, FEAT_DOOR_HEAD + 0x00);
-
-				/* Check line of sound */
-				if (known)
-				{
-					msg_print("Click!");
-					obvious = TRUE;
-				}
-			}
-
-			break;
-		}
-
 		/* Destroy Doors (and traps) */
 		case GF_KILL_DOOR:
 		{
 			/* Destroy all doors and traps */
 			if ((c_ptr->feat == FEAT_OPEN) ||
 				 (c_ptr->feat == FEAT_BROKEN) ||
-				 (c_ptr->feat == FEAT_INVIS) ||
-				(is_trap(c_ptr->feat)) ||
 				((c_ptr->feat >= FEAT_DOOR_HEAD) &&
 				 (c_ptr->feat <= FEAT_DOOR_TAIL)))
 			{
@@ -621,11 +568,61 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 					}
 				}
 
+				/* Now is floor */
+				c_ptr->feat = FEAT_FLOOR;
+						
 				/* Forget the door */
 				c_ptr->info &= ~(CAVE_MARK);
+			}
 
-				/* Destroy the feature */
-				cave_set_feat(y, x, FEAT_FLOOR);
+			/* Deliberate missing "break;" */
+		}		
+		
+		/* Destroy Traps (and Locks) */
+		case GF_KILL_TRAP:
+		{
+			/* Destroy traps */
+			if (is_trap(c_ptr))
+			{
+				/* Check line of sight */
+				
+				/* The !obvious check is to avoid two messages */
+				if (known && !obvious)
+				{
+					msg_print("There is a bright flash of light!");
+					obvious = TRUE;
+				}
+
+				/* Destroy all the traps */
+				field_destroy_type(c_ptr->fld_idx, FTYPE_TRAP);
+			}
+
+			/* Reveal secret doors */
+			if (c_ptr->feat == FEAT_SECRET)
+			{
+				/* Pick a door */
+				place_closed_door(y, x);
+
+				/* Check line of sight */
+				if (known)
+				{
+					obvious = TRUE;
+				}
+			}
+
+			/* Locked doors are unlocked */
+			else if ((c_ptr->feat >= FEAT_DOOR_HEAD + 0x01) &&
+						 (c_ptr->feat <= FEAT_DOOR_HEAD + 0x07))
+			{
+				/* Unlock the door */
+				cave_set_feat(y, x, FEAT_DOOR_HEAD + 0x00);
+
+				/* Check line of sound */
+				if (known)
+				{
+					msg_print("Click!");
+					obvious = TRUE;
+				}
 			}
 
 			break;
@@ -810,10 +807,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 		case GF_MAKE_TRAP:
 		{
 			/* Require a "naked" floor grid */
-			if ((c_ptr->feat != FEAT_FLOOR) &&
-				 (c_ptr->o_idx == 0) &&
-				 (c_ptr->m_idx == 0))
-				 break;
+			if ((c_ptr->o_idx != 0) || (c_ptr->m_idx != 0)) break;
 
 			/* Place a trap */
 			place_trap(y, x);
@@ -824,7 +818,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 		case GF_MAKE_GLYPH:
 		{
 			/* Require a "naked" floor grid */
-			if (!cave_naked_grid(c_ptr)) break;
+			if ((c_ptr->o_idx != 0) || (c_ptr->m_idx != 0)) break;
 
 			/* Add the glyph here as a field */
 			(void) place_field(y, x, FT_GLYPH_WARDING);
@@ -835,9 +829,9 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 		case GF_STONE_WALL:
 		{
 			/* Require a "naked" floor grid */
-			if (!cave_naked_grid(c_ptr)) break;
+			if ((c_ptr->o_idx != 0) || (c_ptr->m_idx != 0)) break;
 
-			/* Place a trap */
+			/* Place a wall */
 			cave_set_feat(y, x, FEAT_WALL_EXTRA);
 
 			/* Update some things */
@@ -880,7 +874,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			c_ptr->info &= ~(CAVE_GLOW);
 
 			/* Hack -- Forget "boring" grids */
-			if (c_ptr->feat <= FEAT_INVIS)
+			if (c_ptr->feat == FEAT_FLOOR)
 			{
 				/* Forget */
 				c_ptr->info &= ~(CAVE_MARK);

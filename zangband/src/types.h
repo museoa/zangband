@@ -960,6 +960,20 @@ struct field_mon_test
 	bool do_move; /* Does the monster enter this grid? */
 };
 
+typedef struct field_trap_type field_trap_type;
+
+struct field_trap_type
+{
+	/* Field type */
+	u16b t_idx;
+	
+	/* Average level found on */
+	byte level;
+	
+	/* Randomise data[3] */
+	byte rand;
+};
+
 /*
  * An entry for the object/monster allocation functions
  *

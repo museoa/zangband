@@ -156,12 +156,9 @@ void do_cmd_go_down(void)
 {
 	cave_type *c_ptr;
 	bool go_down = FALSE;
-	bool fall_trap = FALSE;
 
 	/* Player grid */
 	c_ptr = area(py,px);
-
-	if (c_ptr->feat == (FEAT_TRAP_TRAPDOOR)) fall_trap = TRUE;
 
 #if 0
 
@@ -202,9 +199,9 @@ void do_cmd_go_down(void)
 		p_ptr->oldpy = 0;
 	}
 	/* Verify stairs */
-	else if ((c_ptr->feat != FEAT_MORE) && !fall_trap)
+	else if (c_ptr->feat != FEAT_MORE)
 #else /* 0 */
-	if ((c_ptr->feat != FEAT_MORE) && !fall_trap)
+	if (c_ptr->feat != FEAT_MORE)
 #endif /* 0 */
 
 	{
@@ -238,11 +235,8 @@ void do_cmd_go_down(void)
 		{
 			energy_use = 0;
 
-			if (fall_trap)
-				msg_print("You deliberately jump through the trap door.");
-			else
-				/* Success */
-				msg_print("You enter a maze of down staircases.");
+			/* Success */
+			msg_print("You enter a maze of down staircases.");
 
 			if (autosave_l) do_cmd_save_game(TRUE);
 
@@ -252,11 +246,8 @@ void do_cmd_go_down(void)
 			/* Leaving */
 			p_ptr->leaving = TRUE;
 
-			if (!fall_trap)
-			{
-				/* Create a way back */
-				create_up_stair = TRUE;
-			}
+			/* Create a way back */
+			create_up_stair = TRUE;
 		}
 	}
 }
@@ -622,10 +613,49 @@ static bool is_closed(int feat)
 }
 
 /*
- * Return the number of features around (or under) the character.
- * Usually look for doors and floor traps.
+ * Return the number of traps around (or under) the character.
  */
-static int count_dt(int *y, int *x, bool (*test)(int feat), bool under)
+static int count_traps(int *y, int *x, bool under)
+{
+	int d;
+	int xx, yy;
+	int count = 0; /* Count how many matches */
+
+	/* Check around (and under) the character */
+	for (d = 0; d < 9; d++)
+	{
+		/* if not searching under player continue */
+		if ((d == 8) && !under) continue;
+
+		/* Extract adjacent (legal) location */
+		yy = py + ddy_ddd[d];
+		xx = px + ddx_ddd[d];
+
+		/* paranoia */
+		if (!in_bounds2(yy, xx)) continue;
+
+		/* Must have knowledge */
+		if (!(area(yy,xx)->info & (CAVE_MARK))) continue;
+
+		/* Not looking for this feature */
+		if (!is_visible_trap(area(yy, xx))) continue;
+
+		/* OK */
+		++count;
+
+		/* Remember the location. Only useful if only one match */
+		*y = yy;
+		*x = xx;
+	}
+
+	/* All done */
+	return count;
+}
+
+/*
+ * Return the number of doors around (or under) the character.
+ */
+static int count_doors(int *y, int *x, bool (*test)(int feat), bool under)
 {
 	int d;
 	int xx, yy;
@@ -661,6 +691,8 @@ static int count_dt(int *y, int *x, bool (*test)(int feat), bool under)
 	/* All done */
 	return count;
 }
+
+
 
 
 /*
@@ -849,7 +881,7 @@ void do_cmd_open(void)
 		int num_doors, num_chests;
 
 		/* Count closed doors */
-		num_doors = count_dt(&y, &x, is_closed, FALSE);
+		num_doors = count_doors(&y, &x, is_closed, FALSE);
 
 		/* Count chests (locked) */
 		num_chests = count_chests(&y, &x, FALSE);
@@ -1004,7 +1036,7 @@ void do_cmd_close(void)
 	if (easy_open)
 	{
 		/* Count open doors */
-		if (count_dt(&y, &x, is_open, FALSE) == 1)
+		if (count_doors(&y, &x, is_open, FALSE) == 1)
 		{
 			command_dir = coords_to_dir(y, x);
 		}
@@ -1685,26 +1717,28 @@ static bool do_cmd_disarm_chest(int y, int x, s16b o_idx)
  * Returns TRUE if repeated commands may continue
  */
 
-bool do_cmd_disarm_aux(int y, int x, int dir)
+bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
 {
 	int i, j, power;
 
-	cave_type *c_ptr;
-
-	cptr name;
+	field_type *f_ptr;
+	field_thaum *t_ptr;
+	s16b fld_idx;
 
 	bool more = FALSE;
 
-
 	/* Take a turn */
 	energy_use = 100;
-
-	/* Get grid and contents */
-	c_ptr = area(y,x);
-
-	/* Access trap name */
-	name = (f_name + f_info[c_ptr->feat].name);
-
+	
+	/* Get trap */
+	fld_idx = field_first_known(c_ptr->fld_idx, FTYPE_TRAP);
+	
+	/* Point to field */
+	f_ptr = &fld_list[fld_idx];
+	
+	/* Get type of trap */
+	t_ptr = &t_info[f_ptr->t_idx];
+	
 	/* Get the "disarm" factor */
 	i = p_ptr->skill_dis;
 
@@ -1712,10 +1746,8 @@ bool do_cmd_disarm_aux(int y, int x, int dir)
 	if (p_ptr->blind || no_lite()) i = i / 10;
 	if (p_ptr->confused || p_ptr->image) i = i / 10;
 
-	/* XXX XXX XXX Variable power? */
-
 	/* Extract trap "power" */
-	power = 5;
+	power = f_ptr->data[0];
 
 	/* Extract the difficulty */
 	j = i - power;
@@ -1727,19 +1759,17 @@ bool do_cmd_disarm_aux(int y, int x, int dir)
 	if (rand_int(100) < j)
 	{
 		/* Message */
-		msg_format("You have disarmed the %s.", name);
+		msg_format("You have disarmed the %s.", t_ptr->name);
 
 		/* Reward */
-		gain_exp(power);
-
-		/* Forget the trap */
-		c_ptr->info &= ~(CAVE_MARK);
-
-		/* Remove the trap */
-		cave_set_feat(y, x, FEAT_FLOOR);
-
-		/* Move the player onto the trap */
-		move_player(dir, easy_disarm);
+		gain_exp(power * power);
+		
+		/* Call completion routine */
+		if (field_hook_single(&fld_idx, FIELD_ACT_EXIT, NULL))
+		{
+			/* It didn't delete itself (naughty) so we do it now */
+			delete_field_idx(fld_idx);
+		}
 	}
 
 	/* Failure -- Keep trying */
@@ -1749,7 +1779,7 @@ bool do_cmd_disarm_aux(int y, int x, int dir)
 		if (flush_failure) flush();
 
 		/* Message */
-		msg_format("You failed to disarm the %s.", name);
+		msg_format("You failed to disarm the %s.", t_ptr->name);
 
 		/* We may keep trying */
 		more = TRUE;
@@ -1759,7 +1789,7 @@ bool do_cmd_disarm_aux(int y, int x, int dir)
 	else
 	{
 		/* Message */
-		msg_format("You set off the %s!", name);
+		msg_format("You set off the %s!", t_ptr->name);
 
 		/* Move the player onto the trap */
 		move_player(dir, easy_disarm);
@@ -1789,7 +1819,7 @@ void do_cmd_disarm(void)
 		int num_traps, num_chests;
 
 		/* Count visible traps */
-		num_traps = count_dt(&y, &x, is_trap, TRUE);
+		num_traps = count_traps(&y, &x, TRUE);
 
 		/* Count chests (trapped) */
 		num_chests = count_chests(&y, &x, TRUE);
@@ -1840,7 +1870,7 @@ void do_cmd_disarm(void)
 		o_idx = chest_check(y, x);
 
 		/* Disarm a trap */
-		if (!is_trap(c_ptr->feat) && !o_idx)
+		if (!is_visible_trap(c_ptr) && !o_idx)
 		{
 			/* Message */
 			msg_print("You see nothing there to disarm.");
@@ -1867,7 +1897,7 @@ void do_cmd_disarm(void)
 		else
 		{
 			/* Disarm the trap */
-			more = do_cmd_disarm_aux(y, x, dir);
+			more = do_cmd_disarm_aux(c_ptr, dir);
 		}
 	}
 
@@ -2162,10 +2192,10 @@ void do_cmd_alter(void)
 		}
 
 		/* Disarm traps */
-		else if (is_trap(c_ptr->feat))
+		else if (is_visible_trap(c_ptr))
 		{
 			/* Tunnel */
-			more = do_cmd_disarm_aux(y, x, dir);
+			more = do_cmd_disarm_aux(c_ptr, dir);
 		}
 
 		/* Oops */

@@ -2276,132 +2276,132 @@ static errr rd_dungeon_aux(void)
 				/* Trap -- Pit */
 				case 460:
 				{
-					k = FEAT_TRAP_PIT;
+					k = 0x02;
 					break;
 				}
 
 				/* Trap -- Spiked Pit */
 				case 461:
 				{
-					k = FEAT_TRAP_SPIKED_PIT;
+					k = 0x02;
 					break;
 				}
 
 				/* Trap -- Trap Door */
 				case 462:
 				{
-					k = FEAT_TRAP_TRAPDOOR;
+					k = 0x02;
 					break;
 				}
 
 				/* Trap -- Gas -- Sleep */
 				case 463:
 				{
-					k = FEAT_TRAP_SLEEP;
+					k = 0x02;
 					break;
 				}
 
 				/* Trap -- Loose rock */
 				case 464:
 				{
-					k = FEAT_TRAP_PIT;
+					k = 0x02;
 					break;
 				}
 
 				/* Trap -- Dart -- lose str */
 				case 465:
 				{
-					k = FEAT_TRAP_LOSE_STR;
+					k = 0x02;
 					break;
 				}
 
 				/* Trap -- Teleport */
 				case 466:
 				{
-					k = FEAT_TRAP_TELEPORT;
+					k = 0x02;
 					break;
 				}
 
 				/* Trap -- Falling rock */
 				case 467:
 				{
-					k = FEAT_TRAP_POISON_PIT;
+					k = 0x02;
 					break;
 				}
 
 				/* Trap -- Dart -- lose dex */
 				case 468:
 				{
-					k = FEAT_TRAP_LOSE_DEX;
+					k = 0x02;
 					break;
 				}
 
 				/* Trap -- Summoning */
 				case 469:
 				{
-					k = FEAT_TRAP_TY_CURSE;
+					k = 0x02;
 					break;
 				}
 
 				/* Trap -- Fire */
 				case 470:
 				{
-					k = FEAT_TRAP_FIRE;
+					k = 0x02;
 					break;
 				}
 
 				/* Trap -- Acid */
 				case 471:
 				{
-					k = FEAT_TRAP_ACID;
+					k = 0x02;
 					break;
 				}
 
 				/* Trap -- Gas -- poison */
 				case 472:
 				{
-					k = FEAT_TRAP_POISON;
+					k = 0x02;
 					break;
 				}
 
 				/* Trap -- Gas -- blind */
 				case 473:
 				{
-					k = FEAT_TRAP_BLIND;
+					k = 0x02;
 					break;
 				}
 
 				/* Trap -- Gas -- confuse */
 				case 474:
 				{
-					k = FEAT_TRAP_CONFUSE;
+					k = 0x02;
 					break;
 				}
 
 				/* Trap -- Dart -- slow */
 				case 475:
 				{
-					k = FEAT_TRAP_SLOW;
+					k = 0x02;
 					break;
 				}
 
 				/* Trap -- Dart -- lose con */
 				case 476:
 				{
-					k = FEAT_TRAP_LOSE_CON;
+					k = 0x02;
 					break;
 				}
 
 				/* Trap -- Arrow */
 				case 477:
 				{
-					k = FEAT_TRAP_SLOW;
+					k = 0x02;
 					break;
 				}
 			}
 
 			/* Hack -- handle "invisible traps" */
-			if (invis) k = FEAT_INVIS;
+			if (invis) k = 0x02;
 
 			/* Set new bits */
 			c_ptr->feat = k;
@@ -2537,7 +2537,7 @@ static errr rd_dungeon_aux(void)
 			cave_type *c_ptr = area(y,x);
 			
 			/* Get rid of pre-fields terrain */
-			if (sf_version < 14)
+			if (sf_version < 16)
 			{
 				/* Invisible wall */
 				if (c_ptr->feat == 0x5B)
@@ -2567,6 +2567,18 @@ static errr rd_dungeon_aux(void)
 					
 					/* Add the glyph here as a field */
 					(void) place_field(y, x, FT_GLYPH_EXPLODE);
+				}
+				
+				/* Traps */
+				if ((c_ptr->feat == 0x02) ||
+					(c_ptr->feat >= 0x20 && c_ptr->feat <=0x2F) ||
+					(c_ptr->feat == 0x5A))
+				{
+					/* Get rid of it */
+					c_ptr->feat = FEAT_NONE;
+					
+					/* Hack- Add a trap here as a field */
+					place_trap(y, x);
 				}
 			}
 

@@ -40,7 +40,7 @@
 #define VERSION_MINOR   8
 #define VERSION_PATCH   1
 
-#define SAVEFILE_VERSION 15
+#define SAVEFILE_VERSION 16
 
 /* Added for ZAngband */
 #ifdef USE_SCRIPT
@@ -845,7 +845,7 @@
 
 /* Various */
 #define FEAT_FLOOR              0x01
-#define FEAT_INVIS              0x02
+/* #define FEAT_INVIS              0x02 Now is a field */
 /* #define FEAT_GLYPH              0x03 Now is a field */
 #define FEAT_OPEN               0x04
 #define FEAT_BROKEN             0x05
@@ -865,24 +865,26 @@
 #define FEAT_PEBBLES		0x0E
 #define FEAT_SOLID_LAVA		0x0F
 
+#if 0  /* Traps are now fields */
+	/* Traps */
+	#define FEAT_TRAP_TRAPDOOR      0x10
+	#define FEAT_TRAP_PIT           0x11
+	#define FEAT_TRAP_SPIKED_PIT    0x12
+	#define FEAT_TRAP_POISON_PIT    0x13
+	#define FEAT_TRAP_TY_CURSE      0x14
+	#define FEAT_TRAP_TELEPORT      0x15
+	#define FEAT_TRAP_FIRE          0x16
+	#define FEAT_TRAP_ACID          0x17
+	#define FEAT_TRAP_SLOW          0x18
+	#define FEAT_TRAP_LOSE_STR      0x19
+	#define FEAT_TRAP_LOSE_DEX      0x1A
+	#define FEAT_TRAP_LOSE_CON      0x1B
+	#define FEAT_TRAP_BLIND         0x1C
+	#define FEAT_TRAP_CONFUSE       0x1D
+	#define FEAT_TRAP_POISON        0x1E
+	#define FEAT_TRAP_SLEEP         0x1F
 
-/* Traps */
-#define FEAT_TRAP_TRAPDOOR      0x10
-#define FEAT_TRAP_PIT           0x11
-#define FEAT_TRAP_SPIKED_PIT    0x12
-#define FEAT_TRAP_POISON_PIT    0x13
-#define FEAT_TRAP_TY_CURSE      0x14
-#define FEAT_TRAP_TELEPORT      0x15
-#define FEAT_TRAP_FIRE          0x16
-#define FEAT_TRAP_ACID          0x17
-#define FEAT_TRAP_SLOW          0x18
-#define FEAT_TRAP_LOSE_STR      0x19
-#define FEAT_TRAP_LOSE_DEX      0x1A
-#define FEAT_TRAP_LOSE_CON      0x1B
-#define FEAT_TRAP_BLIND         0x1C
-#define FEAT_TRAP_CONFUSE       0x1D
-#define FEAT_TRAP_POISON        0x1E
-#define FEAT_TRAP_SLEEP         0x1F
+#endif /* 0 */
 
 /* Doors */
 #define FEAT_DOOR_HEAD          0x20
@@ -937,9 +939,9 @@
 #define FEAT_DIRT               0x58
 #define FEAT_GRASS              0x59
 
-#define FEAT_TRAP_TRAPS         0x5A
+/* #define FEAT_TRAP_TRAPS		0x5A	Now is a field */
 
-/* #define FEAT_WALL_INVIS		0x5B   Now is a field */
+/* #define FEAT_WALL_INVIS		0x5B	Now is a field */
 
 #define FEAT_OCEAN_WATER	0x5C
 #define FEAT_DEEP_ACID		0x5D
@@ -996,6 +998,23 @@
 #define FT_GLYPH_EXPLODE	0x0003
 #define FT_CORPSE			0x0004
 #define FT_SKELETON			0x0005
+#define FT_TRAP_DOOR		0x0006
+#define FT_TRAP_PIT			0x0007
+#define FT_TRAP_SPIKE_PIT	0x0008
+#define FT_TRAP_POISON_PIT	0x0009
+#define FT_TRAP_CURSE		0x000A
+#define FT_TRAP_TELEPORT	0x000B
+#define FT_TRAP_ELEMENT		0x000C
+#define FT_TRAP_BA_ELEMENT	0x000D
+#define FT_TRAP_GAS			0x000E
+#define FT_TRAP_TRAPS		0x000F
+#define FT_TRAP_TEMP_STAT	0x0010
+#define FT_TRAP_PERM_STAT	0x0011
+#define FT_TRAP_LOSE_XP		0x0012
+#define FT_TRAP_DISENCHANT	0x0013
+#define FT_TRAP_DROP_ITEM	0x0014
+#define FT_TRAP_MUTATE		0x0015
+#define FT_TRAP_NEW_LIFE	0x0016
 
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
 
@@ -3678,7 +3697,7 @@ extern int PlayerUID;
 #define FIELD_INFO_FEAT		0x0002	/* Terrain feature based field */
 #define FIELD_INFO_VIS		0x0004	/* Has attr / char */
 #define FIELD_INFO_MARK		0x0008	/* Known */
-#define FIELD_INFO_RAND		0x0010	/* Randomize first 4 data values */
+#define FIELD_INFO_XXXX		0x0010	
 #define FIELD_INFO_NO_LOOK	0x0020	/* Do not describe when looked at */
 #define FIELD_INFO_NFT_LOOK	0x0040  /* Do not describe feat when looked at */
 #define FIELD_INFO_MERGE	0x0080  /* Merge counter with similar fields */ 
@@ -3725,7 +3744,7 @@ extern int PlayerUID;
 #define FIELD_ACTION_MAX		18	/* The last action + 1 */
 
 
-#define FIELD_ACTION_TYPES  8 /* Number of FIELD_ACT functions in tables.c */
+#define FIELD_ACTION_TYPES  26 /* Number of FIELD_ACT functions in tables.c */
 
 
 

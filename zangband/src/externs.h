@@ -457,7 +457,8 @@ extern void player_birth(void);
 
 /* cave.c */
 extern int distance(int y1, int x1, int y2, int x2);
-extern bool is_trap(int feat);
+extern bool is_trap(cave_type *c_ptr);
+extern bool is_visible_trap(cave_type *c_ptr);
 extern bool los(int y1, int x1, int y2, int x2);
 extern bool player_can_see_bold(int y, int x);
 extern bool cave_valid_grid(cave_type *c_ptr);
@@ -525,7 +526,7 @@ extern void do_cmd_fire(void);
 extern void do_cmd_fire_aux(int item, object_type *j_ptr);
 extern void do_cmd_throw(void);
 extern void do_cmd_throw_aux(int mult);
-extern bool do_cmd_disarm_aux(int y, int x, int dir);
+extern bool do_cmd_disarm_aux(cave_type *c_ptr, int dir);
 extern bool easy_open_door(int y, int x);
 
 /* cmd3.c */
@@ -791,8 +792,6 @@ extern bool make_gold(object_type *j_ptr);
 extern void place_gold(int y, int x);
 extern s16b drop_near(object_type *o_ptr, int chance, int y, int x);
 extern void acquirement(int y1, int x1, int num, bool great, bool known);
-extern void pick_trap(int y, int x);
-extern void place_trap(int y, int x);
 extern cptr item_activation(object_type *o_ptr);
 extern void combine_pack(void);
 extern void reorder_pack(void);
@@ -1226,7 +1225,11 @@ extern s16b field_add(field_type *f_ptr, s16b *fld_idx2);
 extern void field_sort_priority(s16b *fld_idx_ptr);
 extern void field_prep(field_type *f_ptr, int t_idx);
 extern bool field_is_type(s16b fld_idx, byte typ);
+extern s16b field_first_known(s16b fld_idx, byte typ);
+extern bool field_is_known_type(s16b fld_idx, byte typ);
 extern u16b fields_have_flags(s16b fld_idx, u16b info);
+extern bool field_detect_type(s16b fld_idx, byte typ);
+extern void field_destroy_type(s16b fld_idx, byte typ);
 extern s16b place_field(int y, int x, s16b t_idx);
 extern s16b *field_find(s16b fld_idx);
 extern bool field_hook_single(s16b *field_ptr, int action, void *action_struct);
@@ -1240,6 +1243,26 @@ extern void field_action_glyph_warding(s16b *field_ptr, void *mon_enter_test);
 extern void field_action_glyph_explode(s16b *field_ptr, void *mon_enter_test);
 extern void field_action_corpse_decay(s16b *field_ptr, void *nothing);
 extern void field_action_corpse_init(s16b *field_ptr, void *input);
+extern void place_trap(int y, int x);
+extern void field_action_trap_init(s16b *field_ptr, void *input);
+extern void field_action_hit_trap_door(s16b *field_ptr, void *nothing);
+extern void field_action_hit_trap_pit(s16b *field_ptr, void *nothing);
+extern void field_action_hit_trap_spike(s16b *field_ptr, void *nothing);
+extern void field_action_hit_trap_poison_pit(s16b *field_ptr, void *nothing);
+extern void field_action_hit_trap_curse(s16b *field_ptr, void *nothing);
+extern void field_action_hit_trap_teleport(s16b *field_ptr, void *nothing);
+extern void field_action_hit_trap_element(s16b *field_ptr, void *nothing);
+extern void field_action_hit_trap_ba_element(s16b *field_ptr, void *nothing);
+extern void field_action_hit_trap_gas(s16b *field_ptr, void *nothing);
+extern void field_action_hit_trap_traps(s16b *field_ptr, void *nothing);
+extern void field_action_hit_trap_temp_stat(s16b *field_ptr, void *nothing);
+extern void field_action_hit_trap_perm_stat(s16b *field_ptr, void *nothing);
+extern void field_action_hit_trap_lose_xp(s16b *field_ptr, void *nothing);
+extern void field_action_hit_trap_disenchant(s16b *field_ptr, void *nothing);
+extern void field_action_hit_trap_drop_item(s16b *field_ptr, void *nothing);
+extern void field_action_hit_trap_mutate(s16b *field_ptr, void *nothing);
+extern void field_action_hit_trap_new_life(s16b *field_ptr, void *nothing);
+
 
 /*
  * Hack -- conditional (or "bizarre") externs

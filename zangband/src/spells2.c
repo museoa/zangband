@@ -1341,19 +1341,9 @@ bool detect_traps(void)
 			/* Access the grid */
 			c_ptr = area(y,x);
 
-			/* Detect invisible traps */
-			if (c_ptr->feat == FEAT_INVIS)
-			{
-				/* Pick a trap */
-				pick_trap(y, x);
-			}
-
 			/* Detect traps */
-			if (is_trap(c_ptr->feat))
+			if (field_detect_type(c_ptr->fld_idx, FTYPE_TRAP))
 			{
-				/* Hack -- Memorize */
-				c_ptr->info |= (CAVE_MARK);
-
 				/* Redraw */
 				lite_spot(y, x);
 
@@ -2890,16 +2880,12 @@ bool earthquake(int cy, int cx, int r)
 
 			/* Process fields under the player. */
 			field_hook(&area(py, px)->fld_idx,
-				 FIELD_ACT_PLAYER_LEAVE, (void *) p_ptr);
+				 FIELD_ACT_PLAYER_LEAVE, NULL);
 
 			/* Move the player */
 			py = sy;
 			px = sx;
-		
-			/* Process fields under the player. */
-			field_hook(&area(py, px)->fld_idx,
-				 FIELD_ACT_PLAYER_ENTER, (void *) p_ptr);
-
+			
 			if (!dun_level)
 			{
 				/* Scroll wilderness */
@@ -2907,6 +2893,10 @@ bool earthquake(int cy, int cx, int r)
 				p_ptr->wilderness_y = py;
 				move_wild();
 			}
+		
+			/* Process fields under the player. */
+			field_hook(&area(py, px)->fld_idx,
+				 FIELD_ACT_PLAYER_ENTER, NULL);
 
 			/* Redraw the old spot */
 			lite_spot(oy, ox);
@@ -3301,7 +3291,7 @@ static void cave_temp_room_unlite(void)
 			c_ptr->info &= ~(CAVE_GLOW);
 
 			/* Hack -- Forget "boring" grids */
-			if (c_ptr->feat <= FEAT_INVIS)
+			if (c_ptr->feat == FEAT_FLOOR)
 			{
 				/* Forget the grid */
 				c_ptr->info &= ~(CAVE_MARK);
@@ -3660,15 +3650,18 @@ bool teleport_swap(int dir)
 
 	sound(SOUND_TELEPORT);
 
+	/* Process fields under the player. */
+	field_hook(&area(py, px)->fld_idx, FIELD_ACT_PLAYER_LEAVE, NULL);
+	
+	/* Process fields under the monster. */
+	field_hook(&area(m_ptr->fy, m_ptr->fx)->fld_idx,
+		 FIELD_ACT_MONSTER_LEAVE, m_ptr);
+		 
+	/* Move monster */
 	area(py,px)->m_idx = c_ptr->m_idx;
 
 	/* Update the old location */
 	c_ptr->m_idx = 0;
-
-	/* Process fields under the player. */
-	field_hook(&area(py, px)->fld_idx,
-		 FIELD_ACT_PLAYER_LEAVE, (void *) p_ptr);
-	
 	
 	/* Move the monster */
 	m_ptr->fy = py;
@@ -3681,19 +3674,6 @@ bool teleport_swap(int dir)
 	tx = m_ptr->fx;
 	ty = m_ptr->fy;
 	
-	/* Process fields under the player. */
-	field_hook(&area(py, px)->fld_idx,
-		FIELD_ACT_PLAYER_ENTER, (void *) p_ptr);
-
-	/* Update the monster (new location) */
-	update_mon(area(ty, tx)->m_idx, TRUE);
-
-	/* Redraw the old grid */
-	lite_spot(ty, tx);
-
-	/* Redraw the new grid */
-	lite_spot(py, px);
-
 	if (!dun_level)
 	{
 		/* Scroll wilderness */
@@ -3701,6 +3681,23 @@ bool teleport_swap(int dir)
 		p_ptr->wilderness_y = py;
 		move_wild();
 	}
+	
+	/* Process fields under the player. */
+	field_hook(&area(py, px)->fld_idx,
+		FIELD_ACT_PLAYER_ENTER, NULL);
+
+	/* Update the monster (new location) */
+	update_mon(area(ty, tx)->m_idx, TRUE);
+	
+	/* Process fields under the monster. */
+	field_hook(&area(m_ptr->fy, m_ptr->fx)->fld_idx,
+		FIELD_ACT_MONSTER_ENTER, (void *) m_ptr);
+
+	/* Redraw the old grid */
+	lite_spot(ty, tx);
+
+	/* Redraw the new grid */
+	lite_spot(py, px);
 
 	/* Check for new panel (redraw map) */
 	verify_panel();

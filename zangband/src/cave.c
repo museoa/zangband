@@ -52,40 +52,21 @@ int distance (int y1, int x1, int y2, int x2)
 
 
 /*
- * Return TRUE if the given feature is a trap
+ * Return TRUE if the given square contains a trap
  */
-bool is_trap(int feat)
+bool is_trap(cave_type *c_ptr)
 {
-	switch (feat)
-	{
-		case FEAT_TRAP_TRAPDOOR:
-		case FEAT_TRAP_PIT:
-		case FEAT_TRAP_SPIKED_PIT:
-		case FEAT_TRAP_POISON_PIT:
-		case FEAT_TRAP_TY_CURSE:
-		case FEAT_TRAP_TELEPORT:
-		case FEAT_TRAP_FIRE:
-		case FEAT_TRAP_ACID:
-		case FEAT_TRAP_SLOW:
-		case FEAT_TRAP_LOSE_STR:
-		case FEAT_TRAP_LOSE_DEX:
-		case FEAT_TRAP_LOSE_CON:
-		case FEAT_TRAP_BLIND:
-		case FEAT_TRAP_CONFUSE:
-		case FEAT_TRAP_POISON:
-		case FEAT_TRAP_SLEEP:
-		case FEAT_TRAP_TRAPS:
-		{
-			/* A trap */
-			return (TRUE);
-		}
-		default:
-		{
-			/* Not a trap */
-			return (FALSE);
-		}
-	}
+	return (field_is_type(c_ptr->fld_idx, FTYPE_TRAP));
 }
+
+/*
+ * Return TRUE if the given square contains a known trap
+ */
+bool is_visible_trap(cave_type *c_ptr)
+{
+	return (field_first_known(c_ptr->fld_idx, FTYPE_TRAP) != 0 );
+}
+
 
 
 /*
@@ -1385,7 +1366,7 @@ void note_spot(int y, int x)
 	if (!(c_ptr->info & (CAVE_MARK)))
 	{
 		/* Handle floor grids first */
-		if (c_ptr->feat <= FEAT_INVIS)
+		if (cave_floor_grid(c_ptr))
 		{
 			/* Option -- memorize all torch-lit floors */
 			if (view_torch_grids && (c_ptr->info & (CAVE_LITE)))
@@ -1400,13 +1381,6 @@ void note_spot(int y, int x)
 				/* Memorize */
 				c_ptr->info |= (CAVE_MARK);
 			}
-		}
-
-		/* Memorize normal grids */
-		else if (cave_floor_grid(c_ptr))
-		{
-			/* Memorize */
-			c_ptr->info |= (CAVE_MARK);
 		}
 
 		/* Memorize torch-lit walls */
@@ -1482,7 +1456,7 @@ void note_wild_spot(cave_type *c_ptr)
 	if (!(c_ptr->info & (CAVE_MARK)))
 	{
 		/* Handle floor grids first */
-		if (c_ptr->feat <= FEAT_INVIS)
+		if (cave_floor_grid(c_ptr))
 		{
 			/* Option -- memorize all torch-lit floors */
 			if (view_torch_grids && (c_ptr->info & (CAVE_LITE)))
@@ -1498,14 +1472,7 @@ void note_wild_spot(cave_type *c_ptr)
 				c_ptr->info |= (CAVE_MARK);
 			}
 		}
-
-		/* Memorize normal grids */
-		else if (cave_floor_grid(c_ptr))
-		{
-			/* Memorize */
-			c_ptr->info |= (CAVE_MARK);
-		}
-
+		
 		/* Memorize torch-lit walls */
 		else if (c_ptr->info & (CAVE_LITE))
 		{
@@ -3143,30 +3110,22 @@ void update_view(void)
 						info |= (CAVE_LITE);
 					}
 
-					/* Floor grids */
-					if (c_ptr->feat <= FEAT_INVIS)
+					/* Memorize? */
+					if (((info & (CAVE_LITE)) && view_torch_grids)
+						 || info & (CAVE_GLOW))
 					{
-						if (((info & (CAVE_LITE)) && view_torch_grids)
-							 || info & (CAVE_GLOW))
-						{
-							/*
-							 * Hack - Memorize
-							 *
-							 * These floors are forgotten unless the
-							 * view_perma_grids flag is set.
-							 *
-							 * This hack is done to simplify the map_info()
-							 * function enormously.  All lit grids in
-							 * view are marked...
-							 */
-
-							/* Memorize */
-							info |= (CAVE_MARK);
-						}
-					}
-					else if (info & (CAVE_LITE | CAVE_GLOW))
-					{
-						/* Memorize misc. terrain. */
+						/*
+						 * Hack - Memorize
+						 *
+						 * These floors are forgotten unless the
+						 * view_perma_grids flag is set.
+						 *
+						 * This hack is done to simplify the map_info()
+						 * function enormously.  All lit grids in
+						 * view are marked...
+						 */
+						 
+						/* Memorize */
 						info |= (CAVE_MARK);
 					}
 
@@ -3610,11 +3569,10 @@ void map_area(void)
 			/* All non-walls are "checked" */
 			if ((c_ptr->feat < FEAT_SECRET) ||
 			    (c_ptr->feat == FEAT_RUBBLE) ||
-				 ((c_ptr->feat >= FEAT_PATTERN_START) &&
-				  (c_ptr->feat != FEAT_TRAP_TRAPS)))
+				 ((c_ptr->feat >= FEAT_PATTERN_START)))
 			{
 				/* Memorize normal features */
-				if (c_ptr->feat > FEAT_INVIS)
+				if (c_ptr->feat >= FEAT_OPEN)
 				{
 					/* Memorize the object */
 					c_ptr->info |= (CAVE_MARK);
@@ -3711,7 +3669,7 @@ void wiz_lite(void)
 				cave_type *c_ptr = area(y,x);
 
 				/* Memorize normal features */
-				if (c_ptr->feat > FEAT_INVIS)
+				if (c_ptr->feat >= FEAT_OPEN)
 				{
 					/* Memorize the grid */
 					c_ptr->info |= (CAVE_MARK);
@@ -3729,7 +3687,7 @@ void wiz_lite(void)
 				cave_type *c_ptr = area(y,x);
 
 				/* Memorize normal features */
-				if (c_ptr->feat > FEAT_INVIS)
+				if (c_ptr->feat >= FEAT_OPEN)
 				{
 					/* Memorize the grid */
 					c_ptr->info |= (CAVE_MARK);
@@ -3956,10 +3914,10 @@ void scatter(int *yp, int *xp, int y, int x, int d, int m)
 		if (los(y, x, ny, nx)) break;
 	}
 
-	if (c == 1000)
+	if (c > 999)
 	{
-		ny = *yp;
-		nx = *xp;
+		ny = y;
+		nx = x;
 	}
 
 	/* Save the location */

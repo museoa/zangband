@@ -6510,6 +6510,60 @@ field_action f_action[FIELD_ACTION_TYPES] =
 	{field_action_corpse_decay, "field_action_corpse_decay"},
 	
 	/* Corpse init function */
-	{field_action_corpse_init, "field_action_corpse_init"}
+	{field_action_corpse_init, "field_action_corpse_init"},
+	
+	/* Trap init function */
+	{field_action_trap_init, "field_action_trap_init"},
+	
+	/* Trapdoor */
+	{field_action_hit_trap_door, "field_action_hit_trap_door"},
+	
+	/* Pit */
+	{field_action_hit_trap_pit, "field_action_hit_trap_pit"},
+	
+	/* Spiked Pit */
+	{field_action_hit_trap_spike, "field_action_hit_trap_spike"},
+	
+	/* Poisoned Spiked Pit */
+	{field_action_hit_trap_poison_pit, "field_action_hit_trap_poison_pit"},
+	
+	/* Curse Trap */
+	{field_action_hit_trap_curse, "field_action_hit_trap_curse"},
+	
+	/* Teleport Trap */
+	{field_action_hit_trap_teleport, "field_action_hit_trap_teleport"},
+	
+	/* Elemental Trap */
+	{field_action_hit_trap_element, "field_action_hit_trap_element"},
+	
+	/* Elemental Ball Trap */
+	{field_action_hit_trap_ba_element, "field_action_hit_trap_ba_element"},
+	
+	/* Gas Trap */
+	{field_action_hit_trap_gas, "field_action_hit_trap_gas"},
+	
+	/* Trap Trap */
+	{field_action_hit_trap_traps, "field_action_hit_trap_trap"},
+	
+	/* Temp Drain Stat Trap */
+	{field_action_hit_trap_temp_stat, "field_action_hit_trap_temp_stat"},
+	
+	/* Perm Drain Stat Trap */
+	{field_action_hit_trap_perm_stat, "field_action_hit_trap_perm_stat"},
+	
+	/* Lose XP Trap */
+	{field_action_hit_trap_lose_xp, "field_action_hit_trap_lose_xp"},
+	
+	/* Disenchant Trap */
+	{field_action_hit_trap_disenchant, "field_action_hit_trap_disenchant"},
+	
+	/* Drop Item Trap */
+	{field_action_hit_trap_drop_item, "field_action_hit_trap_drop_item"},
+	
+	/* Mutation Trap */
+	{field_action_hit_trap_mutate, "field_action_hit_trap_mutate"},
+	
+	/* New Life Trap */
+	{field_action_hit_trap_new_life, "field_action_hit_trap_new_life"}
 };
 
