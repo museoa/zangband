@@ -209,7 +209,6 @@ struct borg_dungeon
 	s16b max_depth;
 
 	bool bottom;
-	bool guess;
 };
 
 /*

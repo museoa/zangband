@@ -2533,7 +2533,7 @@ int borg_add_town(int x, int y, cptr town_name)
 		strstr(town_name, "0 ft") ||
 		prefix(town_name, "Lev "))
 	{
-		borg_oops("Trying to add a dungeon as a town!");
+		borg_oops("Trying to add %s as a town!", town_name);
 		return (-1);
 	}
 
@@ -2620,7 +2620,7 @@ static int borg_add_town_screen(int x, int y)
 
 
 /* Add a dungeon to the array, overwrite an old one if it was an estimate */
-void borg_add_dungeon(int x, int y, int min_depth, int max_depth)
+void borg_add_dungeon(int x, int y, int min_depth, int max_depth, bool bottom)
 {
 	int i, b_i = 0;
 	int d, b_d = BORG_MAX_DISTANCE;
@@ -2672,16 +2672,19 @@ void borg_add_dungeon(int x, int y, int min_depth, int max_depth)
 	}
 
 	/* It is close */
-	if (b_d < 6 * WILD_BLOCK_SIZE)
-	{
-		/* The borg knows better already */
-		if (min_depth) return;
-	}
-	else b_i = borg_dungeon_num++;
+	if (b_d > 6 * WILD_BLOCK_SIZE) b_i = borg_dungeon_num++;
 
-	borg_dungeons[b_i].x = x;
-	borg_dungeons[b_i].y = y;
-	borg_dungeons[b_i].guess = min_depth ? TRUE : FALSE;
+	/* The dungeon entrance is seen or spotted for the first time ever */
+	if (!min_depth || !borg_dungeons[b_i].x)
+	{
+		/* Assign coordinates */
+		borg_dungeons[b_i].x = x;
+		borg_dungeons[b_i].y = y;
+
+		/* Tell the player */
+		borg_note("# Adding a %d dungeon at (%d, %d), min, max = %d, %d",
+				 (min_depth + 9) / 10, x, y, min_depth, max_depth);
+	}
 
 	/* Add depth if it was given */
 	if (min_depth)
@@ -2689,10 +2692,9 @@ void borg_add_dungeon(int x, int y, int min_depth, int max_depth)
 		/* Assign depth */
 		borg_dungeons[b_i].min_depth = min_depth;
 		borg_dungeons[b_i].max_depth = max_depth;
+		borg_dungeons[b_i].bottom = bottom;
 	}
 
-	borg_note("# Adding a %d dungeon at (%d, %d), min_depth = %d",
-		(min_depth + 9) / 10, x, y, min_depth);
 }
 
 
@@ -2882,7 +2884,7 @@ void borg_map_info(map_block *mb_ptr, const term_map *map, vptr dummy)
 			if (p_ptr->depth == 0)
 			{
 				/* Add this dungeon maybe */
-				borg_add_dungeon(x, y, 0, 0);
+				borg_add_dungeon(x, y, 0, 0, FALSE);
 			}
 
 			/* Done */

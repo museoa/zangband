@@ -2228,7 +2228,6 @@ static void borg_read_map(void)
 	int min_depth, max_depth;
 	place_type *pl_ptr;
 	wild_done_type *w_ptr;
-	u32b prev = 0;
 
 	for (i = 0; i < max_wild - 1; i++)
 	{
@@ -2255,10 +2254,14 @@ static void borg_read_map(void)
 			/* Is this a dungeon */
 			if (pl_ptr->dungeon)
 			{
-				if (pl_ptr->dungeon->recall_depth != 0)
+				dun_type *d_ptr = pl_ptr->dungeon;
+				bool bottom = FALSE;
+
+				if (d_ptr->recall_depth != 0)
 				{
-					min_depth = pl_ptr->dungeon->min_level;
-					max_depth = pl_ptr->dungeon->recall_depth;
+					min_depth = d_ptr->min_level;
+					max_depth = d_ptr->recall_depth;
+					if (d_ptr->max_level == d_ptr->recall_depth) bottom = TRUE;
 				}
 				else
 				{
@@ -2269,7 +2272,7 @@ static void borg_read_map(void)
 					else
 					{
 						/* Determine dungeon level */
-						min_depth = (pl_ptr->dungeon->min_level + 9) / 10;
+						min_depth = (d_ptr->min_level + 9) / 10;
 						
 						/* You never know */
 						if (min_depth > 9) min_depth = 9;
@@ -2282,7 +2285,7 @@ static void borg_read_map(void)
 				}
 
 				/* Add dungeon */
-				borg_add_dungeon(x, y, min_depth, max_depth);
+				borg_add_dungeon(x, y, min_depth, max_depth, bottom);
 			}
 		}
 	}
@@ -3963,9 +3966,8 @@ void do_cmd_borg(void)
 			for (i = 0; i < borg_dungeon_num; i++)
 			{
 				/* Print */
-				msgf("i = %d, (x, y) = (%d, %d), guess = %c, min = %d, max = %d, bottom = %c",
+				msgf("i = %d, (x, y) = (%d, %d), min = %d, max = %d, bottom = %c",
 					i, borg_dungeons[i].x, borg_dungeons[i].y,
-					borg_dungeons[i].guess ? 'T' : 'F',
 					borg_dungeons[i].min_depth, borg_dungeons[i].max_depth,
 					borg_dungeons[i].bottom ? 'T' : 'F');
 			}
