@@ -1090,6 +1090,10 @@ static quest_type *insert_artifact_quest(u16b a_idx)
 {
 	artifact_type *a_ptr = &a_info[a_idx];
 	
+	place_type *pl_ptr;
+
+	cptr town_name, town_dir;
+	
 	quest_type *q_ptr;
 
 	int q_num;
@@ -1123,14 +1127,20 @@ static quest_type *insert_artifact_quest(u16b a_idx)
 	/* Finished when the player identifies it */
 	q_ptr->x_type = QX_KNOW_ARTIFACT;
 	
-	/* XXX XXX Create quest name */
-	(void)strnfmt(q_ptr->name, 60, "Find the relic %s.", a_name + a_ptr->name);
-	
 	/* Find an available dungeon to place it in */
 	
 	/* Save the quest data */
 	q_ptr->data.fit.a_idx = a_idx;
 	q_ptr->data.fit.place = find_good_dungeon(a_ptr->level);
+	
+	/* Where is it? */
+	pl_ptr = &place[q_ptr->data.fit.place];
+	
+	/* Get name of closest town + direction away from it */
+	town_name = describe_quest_location(&town_dir, pl_ptr->x, pl_ptr->y);
+				
+	/* XXX XXX Create quest name */
+	(void)strnfmt(q_ptr->name, 60, "Find the relic %s, which is hidden %s of %s.", a_name + a_ptr->name, town_dir, town_name);
 	
 	/* Artifact is now a quest item */
 	SET_FLAG(a_ptr, TR_QUESTITEM);
@@ -1146,9 +1156,6 @@ static const store_type *bad_item_quest_giver = NULL;
 static bool request_find_item(int dummy)
 {	
 	quest_type *q_ptr;
-	place_type *pl_ptr;
-
-	cptr town_name, town_dir;
 
 	/* Hack - ignore parameter */
 	(void) dummy;
@@ -1179,17 +1186,9 @@ static bool request_find_item(int dummy)
 		/* No available quests, unfortunately. */
 		return (FALSE);
 	}
-		
-	/* Show it on the screen? */
-			
-	/* Where is it? */
-	pl_ptr = &place[q_ptr->data.fit.place];
-			
-	/* Get name of closest town + direction away from it */
-	town_name = describe_quest_location(&town_dir, pl_ptr->x, pl_ptr->y);
-			
+				
 	/* Display a helpful message. */
-	msgf("%s.  I've heard it is hidden %s of %s.", q_ptr->name, town_dir, town_name);
+	msgf("%s", q_ptr->name);
 				  
 	message_flush();
 			
