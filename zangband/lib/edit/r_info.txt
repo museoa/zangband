@@ -9583,7 +9583,7 @@ D:It is a tougher relative of the Xorn.  Its hide glitters with metal ores.
 N:640:Jubjub bird
 G:B:u
 I:110:45d13:20:30:10
-W:23:3:0:555
+W:58:3:0:30030
 O:0:0:0
 B:CRUSH:HURT:8d12
 B:CRUSH:HURT:8d12
