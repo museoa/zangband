@@ -604,7 +604,7 @@ static const struct randart_activation randart_activations[] =
 {
 	{
 		NULL,
-		"remove fear & cure poison",
+		"remove fear and cure poison",
 		"clear_afraid(); clear_poisoned()",
 		20, FALSE, 100, 0, 0
 	},
@@ -965,19 +965,19 @@ static const struct randart_activation randart_activations[] =
 	},
 	{
 		NULL,
-		"remove fear & heal (%sd10)",
+		"remove fear and heal (%sd10)",
 		"clear_afraid(); hp_player(damroll(%s, 10))",
 		25, FALSE, 100, 33, 1	/* lev / 3 + 1 */
 	},
 	{
 		NULL,
-		"cure wounds & heal (%sd10)",
+		"cure wounds and heal (%sd10)",
 		"hp_player(damroll(%s, 10)); clear_cut(); clear_stun()",
 		100, FALSE, 100, 100, 0	/* lev */
 	},
 	{
 		NULL,
-		"cure wounds & heal (%s)",
+		"cure wounds and heal (%s)",
 		"hp_player(%s); clear_cut(); clear_stun()",
 		100, FALSE, 20, 1000, 0	/* lev * 10 */
 	},
@@ -1073,7 +1073,7 @@ static const struct randart_activation randart_activations[] =
 	},
 	{
 		"The %v shines brightly...",
-		"map & light area (5d20)",
+		"magic mapping and light area (5d20)",
 		"map_area(); lite_area(damroll(5, 20), 3)",
 		50, FALSE, 400, 0, 0
 	},
