@@ -1,0 +1,115 @@
+This is a patch to gnu indent version 2.2.7 that makes it conform to the Angband coding style.
+
+
+
+diff -u indent-2.2.7.bak/src/indent.c indent-2.2.7/src/indent.c
+--- indent-2.2.7.bak/src/indent.c       Tue Oct 16 19:23:49 2001
++++ indent-2.2.7/src/indent.c   Sun Jan 13 21:57:27 2002
+@@ -990,7 +990,10 @@
+                     }
+ 
+                     sp_sw = false;
+-                    force_nl = true;   /* must force newline after if
+*/
++                    /* force_nl = true; */     /* must force newline
+after if */
++                                       
++              /* Force space instead */
++              parser_state_tos->want_blank = true;
+                     parser_state_tos->last_u_d = true; /* inform lexi
+that a
+                                                         * following operator is
+                                                         * unary */
+@@ -1218,10 +1221,16 @@
+                 /* parser_state_tos->pcas e will be used by dump_line
+to decide
+                  * how to indent the label. force_nl will force a
+case n: to be
+                  * on a line by itself */
++                               
++                               
++          /* No forced newline after case statement */
++          force_nl = false;
++                               
++          parser_state_tos->want_blank = scase;
+ 
+-                force_nl = parser_state_tos->pcase = scase;
++                parser_state_tos->pcase = scase;
+                 scase = false;
+-                parser_state_tos->want_blank = false;
++                
+                 break;
+ 
+                 /* Deal with C++ Class::Method */
+@@ -1366,9 +1375,15 @@
+                         parser_state_tos->block_init_level++;
+                     }
+                 }
++                               
++           if (parser_state_tos->in_parameter_declaration)
++                {
++                    prefix_blankline_requested = 0;
++                }
+ 
+-                if (s_code != e_code && parser_state_tos->block_init
+!= 1)
++                if (s_code != e_code /* &&
+parser_state_tos->block_init != 1 */)
+                 {
++#if 0                          
+                     if ((!parser_state_tos->in_decl && !btype_2) ||
+                         (parser_state_tos->in_decl &&
+!braces_on_struct_decl_line))
+                     {
+@@ -1389,14 +1404,13 @@
+                             parser_state_tos->want_blank = true;
+                         }
+                     }
++#endif /* 0 */
++               /* Structs look like normal nested braces */
++               dump_line(true);
++               parser_state_tos->want_blank = true;
++               parser_state_tos->i_l_follow = 0;
+                 }
+-
+-                if (parser_state_tos->in_parameter_declaration)
+-                {
+-                    prefix_blankline_requested = 0;
+-                }
+-
+-                if (s_code == e_code)
++                else
+                 {
+                     parser_state_tos->ind_stmt = false;        /* dont put
+extra indentation
+                                                           on line with '{' */
+diff -u indent-2.2.7.bak/src/io.c indent-2.2.7/src/io.c
+--- indent-2.2.7.bak/src/io.c   Tue Oct 16 19:23:49 2001
++++ indent-2.2.7/src/io.c       Sun Jan 13 21:57:50 2002
+@@ -714,10 +714,16 @@
+             int current_column,
+             int target_column)
+ {
+-    if (current_column >= target_column)
++    int save_tabs = use_tabs;
++       
++       if (current_column >= target_column)
+     {
+         return current_column;
+     }
++       
++       /* Turn off tabs in function declarations */
++       if (parser_state_tos->in_parameter_declaration)
++               use_tabs = false;
+     
+ 
+     if (use_tabs && tabsize > 1)
+@@ -733,6 +739,8 @@
+             offset = tabsize;
+        }
+     }
++       
++       use_tabs = save_tabs;
+ 
+     while (current_column < target_column)
+     {
