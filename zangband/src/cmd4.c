@@ -3481,7 +3481,7 @@ void plural_aux(char *name)
 /*
  * Display current pets
  */
-static bool do_cmd_knowledge_pets(int dummy)
+bool do_cmd_knowledge_pets(int dummy)
 {
 	int i;
 	FILE *fff;

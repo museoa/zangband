@@ -669,15 +669,17 @@
 /*
  * Commands
  */
-#define PET_DISMISS					0
-#define PET_STAY_CLOSE				1
-#define PET_FOLLOW_ME				2
-#define PET_SEEK_AND_DESTROY		3
-#define PET_ALLOW_SPACE				4
-#define PET_STAY_AWAY				5
-#define PET_OPEN_DOORS				6
-#define PET_TAKE_ITEMS				7
-#define PET_CHOICE_MAX				8
+
+#define PET_STAY_CLOSE				0
+#define PET_FOLLOW_ME				1
+#define PET_SEEK_AND_DESTROY		2
+#define PET_ALLOW_SPACE				3
+#define PET_STAY_AWAY				4
+#define PET_OPEN_DOORS				5
+#define PET_TAKE_ITEMS				6
+#define PET_INFO					7
+#define PET_DISMISS					8
+#define PET_CHOICE_MAX				9
 
 /*
  * Follow distances
