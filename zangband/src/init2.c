@@ -7,8 +7,12 @@
 
 
 #ifdef CHECK_MODIFICATION_TIME
-#include <sys/types.h>
-#include <sys/stat.h>
+#ifdef MACINTOSH
+	#include <stat.h>
+#else
+	#include <sys/types.h>
+	#include <sys/stat.h>
+#endif /* MACINTOSH */
 #endif /* CHECK_MODIFICATION_TIME */
 
 
