@@ -616,7 +616,7 @@ bool monster_death(int m_idx, bool explode)
 	else if (!r_ptr->r_pkills
 			 && strstr((r_name + r_ptr->name), "Greater hell-beast"))
 	{
-		/* Prepare to make the Stormbringer */
+		/* Prepare to make the T-shirt */
 		q_ptr = object_prep(lookup_kind(TV_SOFT_ARMOR, SV_T_SHIRT));
 
 		/* Mega-Hack -- Name the shirt */

@@ -2441,7 +2441,7 @@ static bool player_birth_aux_3(void)
 	/*** Autoroll ***/
 
 	/* Initialize */
-	if (autoroller)
+	if (autoroller && !ironman_moria)
 	{
 		char inp[80];
 
@@ -2516,7 +2516,7 @@ static bool player_birth_aux_3(void)
 		int col = 42;
 
 		/* Feedback */
-		if (autoroller)
+		if (autoroller && !ironman_moria)
 		{
 			s32b best_score;
 			s32b cur_score;
@@ -2767,7 +2767,7 @@ static bool player_birth_aux(void)
 	if (!player_birth_aux_1()) return FALSE;
 
 	/* Point based */
-	if (point_based)
+	if (point_based && !ironman_moria)
 	{
 		if (!player_birth_aux_2()) return FALSE;
 	}
