@@ -655,7 +655,7 @@ static void do_cmd_zap_rod_aux(object_type *o_ptr)
 	/* Hack -- let perception get aborted */
 	bool use_charge = TRUE;
 
-	object_kind *k_ptr;
+	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
 	/* Mega-Hack -- refuse to use a pile from the ground */
 	if (floor_item(o_ptr) && (o_ptr->number > 1))
@@ -663,7 +663,22 @@ static void do_cmd_zap_rod_aux(object_type *o_ptr)
 		msg_print("You must first pick up the rods.");
 		return;
 	}
-
+	
+	/* A single rod is still charging */
+	if ((o_ptr->number == 1) && (o_ptr->timeout))
+	{
+		if (flush_failure) flush();
+		msg_print("The rod is still charging.");
+		return;
+	}
+	/* A stack of rods lacks enough energy. */
+	else if ((o_ptr->number > 1)
+			 && (o_ptr->timeout > o_ptr->pval - k_ptr->pval))
+	{
+		if (flush_failure) flush();
+		msg_print("The rods are all still charging.");
+		return;
+	}
 
 	/* Get a direction (unless KNOWN not to need it) */
 	if (((o_ptr->sval >= SV_ROD_MIN_DIRECTION) && (o_ptr->sval != SV_ROD_HAVOC))
@@ -672,7 +687,6 @@ static void do_cmd_zap_rod_aux(object_type *o_ptr)
 		/* Get a direction, allow cancel */
 		if (!get_aim_dir(&dir)) return;
 	}
-
 
 	/* Take a turn */
 	p_ptr->energy_use = MIN(75, 200 - 5 * p_ptr->skill_dev / 8);
@@ -704,24 +718,6 @@ static void do_cmd_zap_rod_aux(object_type *o_ptr)
 		if (flush_failure) flush();
 		msg_print("You failed to use the rod properly.");
 		sound(SOUND_FAIL);
-		return;
-	}
-
-	k_ptr = &k_info[o_ptr->k_idx];
-
-	/* A single rod is still charging */
-	if ((o_ptr->number == 1) && (o_ptr->timeout))
-	{
-		if (flush_failure) flush();
-		msg_print("The rod is still charging.");
-		return;
-	}
-	/* A stack of rods lacks enough energy. */
-	else if ((o_ptr->number > 1)
-			 && (o_ptr->timeout > o_ptr->pval - k_ptr->pval))
-	{
-		if (flush_failure) flush();
-		msg_print("The rods are all still charging.");
 		return;
 	}
 
