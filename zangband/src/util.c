@@ -1763,6 +1763,50 @@ void sound(int val)
  * ToDo: Automatically resize the array if necessary.
  */
 
+/*
+ * Sorting hook -- comp function -- by "quark age"
+ *
+ * We use "u" to point to arrays of ages,
+ * and sort the arrays by the value in quark__use[]
+ */
+static bool ang_sort_comp_quark(vptr u, vptr v, int a, int b)
+{
+	s16b *x = (s16b *) (u);
+	
+	u16b qa, qb;
+	
+	/* Hack - ignore unused parameter */
+	(void) v;
+
+	/* Get ages */
+	qa = quark__use[x[a]];
+	qb = quark__use[x[b]];
+
+	/* Compare them */
+	return (qa <= qb);
+}
+
+
+/*
+ * Sorting hook -- swap function -- by "quark age"
+ *
+ * We use "u" to point to arrays of ages,
+ * and sort the arrays by the value in quark__use[]
+ */
+static void ang_sort_swap_quark(vptr u, vptr v, int a, int b)
+{
+	s16b *x = (s16b *) (u);
+
+	s16b temp;
+	
+	/* Hack - ignore unused parameter */
+	(void) v;
+
+	/* Swap "x" */
+	temp = x[a];
+	x[a] = x[b];
+	x[b] = temp;
+}
 
 /*
  * Out of space - Compact the quarks
@@ -1770,35 +1814,38 @@ void sound(int val)
 static s16b compact_quarks(void)
 {
 	s16b i, empty = 1;
+	
+	s16b *quark_locat;
 
-	u16b min_use = quark__use[quark__num - 1];
-
-	/* Find least recently used quark */
+	/* Make array used to sort quark ages */
+	C_MAKE(quark_locat, quark__num, s16b);
+	
+	/* Fill in the array with the "order" of each quark */
+	for (i = 0; i < quark__num; i++)
+	{
+		quark_locat[i] = i;
+	}
+	
+	/* Set the sort hooks */
+	ang_sort_comp = ang_sort_comp_quark;
+	ang_sort_swap = ang_sort_swap_quark;
+	
+	/* Sort quarks - and get order location of each quark */
+	ang_sort(quark_locat, NULL, quark__num);
+	
 	for (i = 1; i < quark__num; i++)
 	{
-		if (quark__use[i] < min_use)
-		{
-			/* Less used than current quark? */
-			empty = i;
-			min_use = quark__use[i];
-		}
+		/* Set quark timer to be location order */
+		quark__use[i] = quark_locat[i];
+		
+		/* Find minimally used quark */
+		if (quark__use[i] == 1) empty = i;
 	}
-
-	/* Reset all the times to something "smaller" */
-	for (i = 1; i < quark__num; i++)
-	{
-		/* Hack XXX XXX - just use old value divided by QUARK_COMPACT */
-		quark__use[i] = quark__use[i] / QUARK_COMPACT;
-	}
-
-	/* 
-	 * Reset the time
-	 *
-	 * Note that QUARK_MAX * QUARK_COMPACT must be less than the
-	 * size of a s16b.
-	 */
+	
+	/* Set timer to be greater than any value so far */
 	quark__tim = quark__num + 1;
 
+	/* Return the least-used quark to overwrite if needed */
 	return (empty);
 }
 
@@ -1862,7 +1909,7 @@ cptr quark_str(s16b i)
 	quark__use[i] = ++quark__tim;
 
 	/* Compact from time to time */
-	if (quark__tim > QUARK_COMPACT * QUARK_MAX)
+	if (quark__tim > QUARK_COMPACT)
 	{
 		(void) compact_quarks();
 	}
