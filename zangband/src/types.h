@@ -1527,6 +1527,7 @@ struct player_type
 	bool mon_fight;			/* Monster fighting indicator */
 	
 	u16b max_seen_r_idx;	/* Most powerful monster visible */
+	bool monk_armour_stat;	/* Status of monk armour */
 };
 
 
@@ -1639,54 +1640,11 @@ struct store_type
 	
 	u16b x;					/* Location x coord. */
 	u16b y;					/* Location y coord. */
-	
-	field_type *f_ptr;		/* Field corresponding to this store */
-	byte	info_flags;		/* Info flags - obtained from the field data[] */
 };
 
 typedef store_type *store_ptr;
 
 
-/* Use the store type for owner, race, type etc. */
-#if 0
-
-/*
- * A structure to describe a building.
- * From Kamband
- */
-typedef struct building_type building_type;
-
-struct building_type
-{
-	char name[20];                  /* proprietor name */
-	char owner_name[20];            /* proprietor name */
-	char owner_race[20];            /* proprietor race */
-
-
-	/* 
-	 * I think this can all be "scriptified".
-	 *
-	 * No need for all the hacks.
-	 * This means that buildings and stores can share the same
-	 * data type.  The thing that interprets the data will be
-	 * different though.  This is naturally taken care of by
-	 * the fields code.
-	 */
-
-	char act_names[6][30];          /* action names */
-	s16b member_costs[6];           /* Costs for class members of building */
-	s16b other_costs[6];		    /* Costs for nonguild members */
-	char letters[6];                /* action letters */
-	s16b actions[6];                /* action codes */
-	s16b action_restr[6];           /* action restrictions */
-
-	s16b member_class[MAX_CLASS];   /* which classes are part of guild */
-	s16b member_race[MAX_RACES];    /* which classes are part of guild */
-	s16b member_realm[MAX_REALM+1]; /* which realms are part of guild */
-};
-
-
-#endif /* 0 */
 
 /*
  * A structure describing a town with
@@ -1722,16 +1680,6 @@ struct dun_type
 	cptr name;      /* The name of the dungeon */
 };
 
-/*
- * Sort-array element
- */
-typedef struct tag_type tag_type;
-
-struct tag_type
-{
-	int     tag;
-	void    *pointer;
-};
 
 typedef bool (*monster_hook_type)(int r_idx);
 
