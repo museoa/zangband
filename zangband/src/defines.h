@@ -140,12 +140,13 @@
 
 
 /* The building types */
-#define BLDG_WEAPONSMITH	0
+#define BLDG_WEAPONMASTER	0
+#define BLDG_RECHARGE		1
 
 /*
  * Total number of buildings (see "bldg.c", etc)
  */
-#define MAX_BLDG		1
+#define MAX_BLDG		2
 
 
 
@@ -1023,6 +1024,7 @@
 #define FT_STORE_HOME		0x0029
 #define FT_STORE_BOOK		0x002A
 #define FT_BUILD_WEAPON		0x002B
+#define FT_BUILD_RECHARGE	0x002C
 
 
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
