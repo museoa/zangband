@@ -1685,11 +1685,11 @@ void py_attack(int x, int y)
 				k += slay / 20;
 
 				/* Apply scripted effects */
-				apply_object_trigger(TRIGGER_HIT, o_ptr, "iiibbbb", 
+				apply_object_trigger(TRIGGER_HIT, o_ptr, "iiibbbbi", 
 					LUA_RETURN(ghoul_paral), LUA_RETURN(drain_power),
 					LUA_RETURN(vorpal_chance), LUA_RETURN(do_quake),
 					LUA_RETURN(do_conf), LUA_RETURN(do_tele),
-					LUA_RETURN(do_poly));
+					LUA_RETURN(do_poly), LUA_RETURN_NAMED(k, "dam"));
 
 				/* hack -- check for earthquake. */
 				if ((FLAG(p_ptr, TR_IMPACT)) &&

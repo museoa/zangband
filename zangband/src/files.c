@@ -11,6 +11,7 @@
  */
 
 #include "angband.h"
+#include "script.h"
 
 
 /*
@@ -1521,15 +1522,33 @@ static void display_player_abilities(void)
 	/* See if have a weapon with extra power */
 	if (o_ptr->k_idx)
 	{
+		int dam = avgdam / blows;
+		int vorpal_chance = (o_ptr->flags[0] & TR0_VORPAL) ? 2 : 0;
+		int ghoul_paral = 0;
+		int drain_power = 0;
+		bool do_quake = FALSE;
+		bool do_conf = FALSE;
+		bool do_tele = FALSE;
+		bool do_poly = FALSE;
+
+		/* Apply special scripts */
+		apply_object_trigger(TRIGGER_HIT, o_ptr, "iiibbbbi", 
+			LUA_RETURN(ghoul_paral), LUA_RETURN(drain_power),
+			LUA_RETURN(vorpal_chance), LUA_RETURN(do_quake),
+			LUA_RETURN(do_conf), LUA_RETURN(do_tele),
+			LUA_RETURN(do_poly), LUA_RETURN(dam));
+
+		/* Apply special damage boost */
+		avgdam = avgdam * dam / (avgdam / blows);
+
 		/* Is there a vorpal effect we know about? */
-		if (object_known_p(o_ptr) &&
-			(o_ptr->a_idx == ART_VORPAL_BLADE))
+		if (vorpal_chance == 1)
 		{
 			/* vorpal blade */
 			avgdam *= 786;
 			avgdam /= 500;
 		}
-		else if (object_known_p(o_ptr) && (FLAG(o_ptr, TR_VORPAL)))
+		else if (vorpal_chance == 2)
 		{
 			/* vorpal flag only */
 			avgdam *= 609;
