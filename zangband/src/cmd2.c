@@ -2548,9 +2548,6 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 
 	bool hit_body = FALSE;
 
-	byte missile_attr;
-	char missile_char;
-
 	char o_name[80];
 
 	int msec = delay_factor * delay_factor * delay_factor;
@@ -2601,10 +2598,6 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 
 	/* Describe the object */
 	object_desc(o_name, q_ptr, FALSE, 3);
-
-	/* Find the color and symbol for the object for throwing */
-	missile_attr = object_attr(q_ptr);
-	missile_char = object_char(q_ptr);
 
 
 	/* Use the proper number of shots */
@@ -2713,20 +2706,20 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 		/* Advance the distance */
 		cur_dis++;
 
-		/* Save the new location */
-		x = nx;
-		y = ny;
-
 
 		/* The player can see the (on screen) missile */
-		if (panel_contains(y, x) && player_can_see_bold(y, x))
+		if (panel_contains(ny, nx) && player_can_see_bold(ny, nx))
 		{
+			int p = bolt_pict(y, x, ny, nx, GF_ARROW);
+			int c = PICT_C(p);
+			int a = object_attr(q_ptr);
+
 			/* Draw, Hilite, Fresh, Pause, Erase */
-			print_rel(missile_char, missile_attr, y, x);
-			move_cursor_relative(y, x);
+			print_rel(c, a, ny, nx);
+			move_cursor_relative(ny, nx);
 			Term_fresh();
 			Term_xtra(TERM_XTRA_DELAY, msec);
-			lite_spot(y, x);
+			lite_spot(ny, nx);
 			Term_fresh();
 		}
 
@@ -2736,6 +2729,10 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 			/* Pause anyway, for consistancy */
 			Term_xtra(TERM_XTRA_DELAY, msec);
 		}
+
+		/* Save the new location */
+		x = nx;
+		y = ny;
 
 
 		/* Monster here, Try to hit it */
@@ -2909,9 +2906,6 @@ void do_cmd_throw_aux(int mult)
 	bool hit_body = FALSE;
 	bool hit_wall = FALSE;
 
-	byte missile_attr;
-	char missile_char;
-
 	char o_name[80];
 
 	int msec = delay_factor * delay_factor * delay_factor;
@@ -2969,10 +2963,6 @@ void do_cmd_throw_aux(int mult)
 
 	/* Description */
 	object_desc(o_name, q_ptr, FALSE, 3);
-
-	/* Find the color and symbol for the object for throwing */
-	missile_attr = object_attr(q_ptr);
-	missile_char = object_char(q_ptr);
 
 	/* Extract a "distance multiplier" */
 	/* Changed for 'launcher' mutation */
@@ -3040,20 +3030,19 @@ void do_cmd_throw_aux(int mult)
 		/* Advance the distance */
 		cur_dis++;
 
-		/* Save the new location */
-		x = nx;
-		y = ny;
-
-
 		/* The player can see the (on screen) missile */
-		if (panel_contains(y, x) && player_can_see_bold(y, x))
+		if (panel_contains(ny, nx) && player_can_see_bold(ny, nx))
 		{
+			int p = bolt_pict(y, x, ny, nx, GF_ARROW);
+			int c = PICT_C(p);
+			int a = object_attr(q_ptr);
+
 			/* Draw, Hilite, Fresh, Pause, Erase */
-			print_rel(missile_char, missile_attr, y, x);
-			move_cursor_relative(y, x);
+			print_rel(c, a, ny, nx);
+			move_cursor_relative(ny, nx);
 			Term_fresh();
 			Term_xtra(TERM_XTRA_DELAY, msec);
-			lite_spot(y, x);
+			lite_spot(ny, nx);
 			Term_fresh();
 		}
 
@@ -3063,6 +3052,10 @@ void do_cmd_throw_aux(int mult)
 			/* Pause anyway, for consistancy */
 			Term_xtra(TERM_XTRA_DELAY, msec);
 		}
+
+		/* Save the new location */
+		x = nx;
+		y = ny;
 
 
 		/* Monster here, Try to hit it */
