@@ -2630,6 +2630,12 @@ bool earthquake(int cy, int cx, int r)
 			/* Paranoia -- never affect player */
 			if ((yy == py) && (xx == px)) continue;
 
+			/* Fields can block destruction */
+			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM)) continue;
+
+			/* Destroy the fields on the square */
+			delete_field(y, x);
+			
 			/* Destroy location (if valid) */
 			if (cave_valid_grid(c_ptr))
 			{
