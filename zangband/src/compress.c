@@ -23,9 +23,20 @@
 /* 4k for each block_type */
 #define BLOCK_DATA_SIZE ((int)(4096 - sizeof(u16b) - sizeof(void *)))
 
-#define HI_BIT_32		0x80000000
-#define NEXT_BIT_32		0x40000000
-#define ALL_BITS		0xFFFFFFFF
+#define HI_BIT_16		0x8000
+#define NEXT_BIT_16		0x4000
+#define ALL_BITS		0xFFFF
+
+/*
+ * Maximum that a probability counter can obtain.
+ */
+#define PROB_TABLE_MAX	0x3FFF
+/*
+ * Increment to add per symbol
+ * The larger this is, the faster we adapt to changes, but the
+ * less accurate symbol frequencies become.
+ */
+#define PROB_CHANCE_INC	0x0020
 
 typedef struct block_type block_type;
 
@@ -175,26 +186,11 @@ static byte current_byte;
 /* Which bit are we up to */
 static byte current_bit;
 
-static void write_block_bit(block_handle *h_ptr, byte output)
+static void write_block_bit(block_handle *h_ptr, u16b output)
 {
-	/* End of block? */
-	if (h_ptr->counter >= BLOCK_DATA_SIZE)
-	{
-		if (!h_ptr->b_ptr->b_next)
-		{
-			/* Do we need to make a new block? */
-			h_ptr->b_ptr->b_next = new_block();
-		}
-		
-		/* Change block */
-		h_ptr->b_ptr = h_ptr->b_ptr->b_next;
-		
-		/* Start of new block */
-		h_ptr->counter = 0;
-	}
-	
 	/* Write the bit */
-	current_byte += (output ? 1 : 0) << current_bit;
+	current_byte *= 2;
+	current_byte += output ? 1 : 0;
 	
 	/* Move to next bit */
 	current_bit++;
@@ -202,35 +198,28 @@ static void write_block_bit(block_handle *h_ptr, byte output)
 	if (current_bit == 8)
 	{
 		/* We've done a whole byte */
-		h_ptr->b_ptr->block_data[h_ptr->counter++] = current_byte;
+		write_block_byte(h_ptr, current_byte);
 		
 		/* Reset to start of new byte */
 		current_byte = 0;
 		current_bit = 0;
-		
-		h_ptr->b_ptr->size = h_ptr->counter;
 	}
 }
 
-static int rerase_block_bit(block_handle *h_ptr)
+static byte rerase_block_bit(block_handle *h_ptr)
 {
-	/* End of block? */
-	if (h_ptr->counter >= h_ptr->b_ptr->size)
-	{
-		/* Change block, deleting old one */
-		h_ptr->b_ptr = del_block(h_ptr->b_ptr);
-		
-		/* Start of new block */
-		h_ptr->counter = 0;
+	int input_byte;
+	byte result_bit;
 
-		/* End of the stream */
-		if (!h_ptr->b_ptr) return (0);
-	}
-	
 	if (current_bit == 0)
 	{
+		input_byte = rerase_block_byte(h_ptr);
+		
+		/* At end of stream? */
+		if (input_byte == -1) input_byte = 0;
+		
 		/* Read a new byte */
-		current_byte = h_ptr->b_ptr->block_data[h_ptr->counter++];
+		current_byte = (byte) input_byte;
 		
 		current_bit = 8;
 	}
@@ -238,8 +227,11 @@ static int rerase_block_bit(block_handle *h_ptr)
 	/* Move to next bit */
 	current_bit--;
 	
+	result_bit = current_byte & 0x80;
+	current_byte *= 2;
+	
 	/* Return that bit */
-	return ((current_byte | (1 << current_bit)) ? 1 : 0);
+	return (result_bit ? 1 : 0);
 }
 
 /* Initialise static variables used to have a bitwise stream */
@@ -252,33 +244,10 @@ static void init_block_bit(void)
 /* Write out the pending bits, if any exist */
 static void flush_bits(block_handle *h_ptr)
 {
-	/* End of block? */
-	if (h_ptr->counter >= BLOCK_DATA_SIZE)
-	{
-		if (!h_ptr->b_ptr->b_next)
-		{
-			/* Do we need to make a new block? */
-			h_ptr->b_ptr->b_next = new_block();
-		}
-		
-		/* Change block */
-		h_ptr->b_ptr = h_ptr->b_ptr->b_next;
-		
-		/* Start of new block */
-		h_ptr->counter = 0;
-	}
-
 	/* Anything to output? */
-	if (current_bit != 0)
+	while (current_bit)
 	{
-		/* Write the partially full byte */
-		h_ptr->b_ptr->block_data[h_ptr->counter++] = current_byte;
-		
-		/* Reset to start of new byte */
-		current_byte = 0;
-		current_bit = 0;
-		
-		h_ptr->b_ptr->size = h_ptr->counter;
+		write_block_bit(h_ptr, TRUE);
 	}
 }
 
@@ -288,7 +257,7 @@ static void flush_bits(block_handle *h_ptr)
  *
  * Compact everything until the least amount of memory is used.
  */
-static void cln_blocks(block_type *b_ptr)
+static void clean_blocks(block_type *b_ptr)
 {
 	int i = 0, j = 0;
 	block_type* next_ptr = b_ptr;
@@ -329,21 +298,24 @@ static void cln_blocks(block_type *b_ptr)
 		b_ptr->block_data[i++] = next_ptr->block_data[j++];
 	}
 	
-	/* Save the size */
-	b_ptr->size = i;
-	
-	/* We have finished copying the stuff - now delete the extra blocks */
-	
-	/* Save the start of the blocks to delete */
-	b_ptr = b_ptr->b_next;
-	
-	while (b_ptr)
+	if (b_ptr)
 	{
-		/* Delete the block - and point to its child */
-		b_ptr = del_block(b_ptr);
-	}
+		/* Save the size */
+		b_ptr->size = i;
 	
-	b_ptr->b_next = NULL;
+		/* We have finished copying the stuff - now delete the extra blocks */
+		
+		/* Save the start of the blocks to delete */
+		b_ptr = b_ptr->b_next;
+	
+		while (b_ptr)
+		{
+			/* Delete the block - and point to its child */
+			b_ptr = del_block(b_ptr);
+		}
+	
+		b_ptr->b_next = NULL;
+	}
 	
 	/* Delete the extra blocks in the free list */
 	while (free_list)
@@ -535,45 +507,18 @@ static void rle_blocks_decode(block_handle *h1_ptr)
 	}
 }
 
-/* Information for model of data to compress */
 
-/* Variables for move-to-front probability model */
-static byte mtf_table[256];
-static u32b mtf_prob_table[256];
+/*
+ * Function pointers used to
+ * change the compression model.
+ */
+static void (*init_compress_hook)(u16b *prob_table);
+static void (*calc_prob_hook)(byte symbol, u16b *prob_table);
 
-static void init_compress(u32b *prob_table)
-{
-	int i;
-	u32b value;
-	
-	/* Reset the move-to-front table */
-	for (i = 0; i < 255; i++)
-	{
-		mtf_table[i] = i;
-	}
-
-	/* Reset the probability table */
-	for (i = 0; i < 255; i++)
-	{
-		/* Hack - we are going to assume fixed probabilities for now */
-		if (i > 128) value = 1;
-		else if (i > 64) value = 2;
-		else if (i > 32) value = 4;
-	
-	
-	}
-
-}
-
-static void calc_prob(byte symbol, u32b *prob_table)
-{
-
-
-}
 
 /* Bounds of arithmetic code value */
-static u32b bound1;
-static u32b bound2;
+static u16b bound1;
+static u16b bound2;
 
 /* 
  * Bits in an all-one or all-zero 'run' next to high-bit.
@@ -583,36 +528,41 @@ static u32b run_bits;
 
 
 /* Encode a symbol into the block stream */
-static void arth_block_encode(block_handle *h_ptr, u32b *prob_table, byte symbol)
+static void arth_symbol_encode(block_handle *h_ptr, u16b *prob_table, byte symbol)
 {
-	/* How large is the current range of possibilities? */
-	u32b range = bound2 - bound1 + 1;
+	/*
+	 * How large is the current range of possibilities?
+	 */
+	u32b range = (u32b)(bound2 - bound1) + 1;
 		
 	/*
 	 * Rescale the bounds
-	 * Note how upper bound is exclusive of the number.
 	 */
-	bound2 = bound1 + range * prob_table[symbol] / prob_table[256] - 1;
-	bound1 += range * (prob_table[symbol + 1] - 1) / prob_table[256];
-
+	bound2 = (u16b)((range * prob_table[symbol + 1]) / prob_table[256]
+		 - 1 + bound1);
+	bound1 += (u16b)((range * prob_table[symbol]) / prob_table[256]);
+	
 	/* Prune as many bits as possible */
 	while (TRUE)
 	{
 		/* Do the high bits match? */
-		if ((bound1 & HI_BIT_32) == (bound2 & HI_BIT_32))
+		if ((bound1 & HI_BIT_16) == (bound2 & HI_BIT_16))
 		{
 			/* Output the bit */
-			write_block_bit(h_ptr, bound1 & HI_BIT_32);
+			write_block_bit(h_ptr, bound1 & HI_BIT_16);
 			
 			/* Output the overflow bits in a run */
 			for (;run_bits > 0; run_bits--)
 			{
-				write_block_bit(h_ptr, !(bound1 & (~NEXT_BIT_32)));
+				write_block_bit(h_ptr, !(bound1 & HI_BIT_16));
 			}
 		}	
 	
-		/* Check the overflow bits - and store runs */
-		else if ((bound1 & NEXT_BIT_32) != (bound2 & NEXT_BIT_32))
+		/*
+		 * Check the overflow bits - and store runs
+		 * (Overflow if bit in bound1 is set, and unset in bound2)
+		 */
+		else if (bound1 & (~bound2) & NEXT_BIT_16)
 		{
 			/* Count the run bits */
 			run_bits++;
@@ -629,8 +579,8 @@ static void arth_block_encode(block_handle *h_ptr, u32b *prob_table, byte symbol
 			 * which means setting them to the right thing,
 			 * and shifting them into the high bit.)
 			 */
-			bound1 &= ~(NEXT_BIT_32);
-			bound2 |= NEXT_BIT_32;
+			bound1 &= ~(NEXT_BIT_16);
+			bound2 |= NEXT_BIT_16;
 		}
 		else
 		{
@@ -646,18 +596,6 @@ static void arth_block_encode(block_handle *h_ptr, u32b *prob_table, byte symbol
 		/* Shift in a one */
 		bound2 = (bound2 << 1) + 1;
 	}
-
-}
-
-/*
- * Find the fraction that code lies between bounds1 and bounds2
- *
- * This fraction is used to find the corresponding symbol.
- */
-static u32b arth_block_decode(u32b code, u32b *prob_table)
-{
-    return (((code - bound1 + 1 ) * prob_table[256] - 1) /
-		(bound2 - bound1 + 1));
 }
 
 
@@ -665,86 +603,58 @@ static u32b arth_block_decode(u32b code, u32b *prob_table)
  * Remove the current symbol from the code, and insert more
  * bits as needed.
  */
-static byte remove_symbol(u32b count, u32b *code, u32b *prob_table,
-	block_handle *h_ptr)
+static byte remove_symbol(u16b *code, u16b *prob_table, block_handle *h_ptr)
 {
 	/* How large is the current range of possibilities? */
-	u32b range = bound2 - bound1 + 1;
+	u32b range = (u32b)(bound2 - bound1) + 1;
 	
-	byte b1 = 0, b2 = 255;
-	int test = (b1 + b2) / 2;
-	u32b tv = prob_table[test];
+	byte symbol = 0;
 		
-	/*
-	 * Use a binary chop algorithm to find
-	 * the symbol that best-matches the code
-	 */
+	u32b temp = (u32b)(*code - bound1) + 1;
+	u16b count = (u16b)((temp * prob_table[256] - 1) / range);
 	
-	
-	/* Check boundaries first */
-	if (prob_table[b1] == count) return (b1);
-	if (prob_table[b2] <= count) return (b2);
-	
-	/* While we haven't found it, and the bounds are not to small */
-	while ((tv != count) && (b1 + 1 < b2))
+	int i;
+
+	/* Find the symbol to use */
+	for (i = 255; i >= 0; i--)
 	{
-		if (tv > count)
+		if (prob_table[i] <= count)
 		{
-			/* Shrink the boundary inwards */
-			b2 = (byte) test;
-			test = (b1 + b2) / 2;
-			
-			/* Paranoia - make sure we shrink it. */
-			if (test == b2) test--;
-			
-			tv = prob_table[test];
+			symbol = i;
+			break;
 		}
-		else
-		{
-			/* The lower boundary is special */
-			if (prob_table[b1 + 1] > count)
-			{
-				/* Save the value */
-				tv = prob_table[b1];
-				break;
-			}
-		
-			/* Shrink the boundary inwards */
-			b1 = (byte) test;
-			test = (b1 + b2) / 2;
+	}
 			
-			/* Paranoia - make sure we shrink it. */
-			if (test == b1) test++;
-			
-			tv = prob_table[test];
-		}
-	}	
-		
-	/* Rescale the bounds */
-	bound2 = bound1 + range * prob_table[tv] / prob_table[256] - 1;
-	bound1 += range * (prob_table[tv + 1] - 1) / prob_table[256];
+	/*
+	 * Rescale the bounds
+	 */
+	bound2 = (u16b)((range * prob_table[symbol + 1]) / prob_table[256]
+		 - 1 + bound1);
+	bound1 += (u16b)((range * (prob_table[symbol])) / prob_table[256]);
 
 	/* Try to remove as many bits as possible */
 	while (TRUE)
 	{
 		/* If the high bits match - remove them */
-		if ((bound1 & HI_BIT_32) == (bound2 & HI_BIT_32))
+		if ((bound1 & HI_BIT_16) == (bound2 & HI_BIT_16))
 		{
 			/* Shift out the bits below */
 		}
 		
-		/* Are we near an underflow? */
-		else if (((bound1 & NEXT_BIT_32) == NEXT_BIT_32)
-			 && !(bound2 & NEXT_BIT_32))
+		/*
+		 * Are we near an underflow?
+		 * Want the bit in bound1 to be set, and unset in bound2.
+		 */
+		else if (bound1 & (~bound2) & NEXT_BIT_16)
 		{
 			/* Delete these bits by copying in the state of the high bits */
 			
 			/* Make these bits match the high bit. */
-			bound1 &= ~(NEXT_BIT_32);
-			bound2 |= NEXT_BIT_32;
+			bound1 &= ~(NEXT_BIT_16);
+			bound2 |= NEXT_BIT_16;
 			
 			/* Flip the second highest bit in the code */
-			*code ^= NEXT_BIT_32;
+			*code ^= NEXT_BIT_16;
 		}
 		else
 		{
@@ -752,15 +662,15 @@ static byte remove_symbol(u32b count, u32b *code, u32b *prob_table,
 			 * We can't shift out anything
 			 * so exit with the symbol we found earlier.
 			 */
-			return (tv);
+			return (symbol);
 		}
 
 		/* Swap out the high bits */
-		bound1 *= 2;
-		bound2 = bound2 * 2 + 1;
+		bound1 = bound1 << 1;
+		bound2 = (bound2 << 1) + 1;
 		
 		/* Add in a new bit from the stream */
-		*code = *code * 2 + rerase_block_bit(h_ptr);
+		*code = (*code << 1) + rerase_block_bit(h_ptr);
 	}
 }
 
@@ -768,7 +678,7 @@ static byte remove_symbol(u32b count, u32b *code, u32b *prob_table,
 static void flush_arith(block_handle *h_ptr)
 {
 	/* Output the second highest bit */
-	write_block_bit(h_ptr, bound1 & NEXT_BIT_32);
+	write_block_bit(h_ptr, bound1 & NEXT_BIT_16);
 	
 	/*
 	 * Increment the number of overflow bits,
@@ -778,7 +688,7 @@ static void flush_arith(block_handle *h_ptr)
 	 */
 	for(run_bits++; run_bits > 0; run_bits--)
 	{
-		write_block_bit(h_ptr, !(bound1 & (~NEXT_BIT_32)));
+		write_block_bit(h_ptr, !(bound1 & NEXT_BIT_16));
 	}
 	
 	/* Write out the final byte, if required */
@@ -791,7 +701,8 @@ static void arth_blocks_encode(block_handle *h1_ptr)
 	block_type *b_ptr;
 
 	int symbol;
-	u32b size = 0, prob_table[256];
+	u32b size = 0;
+	u16b prob_table[257];
 	
 	/* Swap the block streams the two handles refer to */
 	b_ptr = h1_ptr->bf_ptr;
@@ -832,7 +743,7 @@ static void arth_blocks_encode(block_handle *h1_ptr)
 	run_bits = 0;
 	
 	/* Init the compression model */
-	init_compress(prob_table);
+	init_compress_hook(prob_table);
 	
 	/* Init the bitwise stream */
 	init_block_bit();
@@ -852,10 +763,10 @@ static void arth_blocks_encode(block_handle *h1_ptr)
 		}
 	
 		/* Encode it */
-		arth_block_encode(h1_ptr, prob_table, symbol);
+		arth_symbol_encode(h1_ptr, prob_table, symbol);
 		
 		/* Update probability table */
-		calc_prob(symbol, prob_table);
+		calc_prob_hook(symbol, prob_table);
 	}
 }
 
@@ -865,7 +776,8 @@ static void arth_blocks_decode(block_handle *h1_ptr)
 	block_type *b_ptr;
 
 	int i;
-	u32b code = 0, size, prob_table[256];
+	u32b size;
+	u16b code = 0, prob_table[257];
 
 	byte symbol;
 	
@@ -888,10 +800,12 @@ static void arth_blocks_decode(block_handle *h1_ptr)
 	bound1 = 0;
 	bound2 = ALL_BITS;
 
+	run_bits = 0;
+	
 	/* Paranoia */
-	if (b_ptr->size <= 64)
+	if (b_ptr->size <= 6)
 	{
-		msg_print("Stream too small to decode *");
+		msg_format("Stream too small to decode %d", b_ptr->size);
 		
 		return;
 	}
@@ -903,13 +817,13 @@ static void arth_blocks_decode(block_handle *h1_ptr)
 	size |= (rerase_block_byte(h2_ptr) << 24);
 
 	/* Init the compression model */
-	init_compress(prob_table);
+	init_compress_hook(prob_table);
 	
 	/* Init the bitwise stream */
 	init_block_bit();
 	
 	/* Initialise the decoder */
-	for (i = 0; i < 32; i++)
+	for (i = 0; i < 16; i++)
 	{
 		code *= 2;
 		code += rerase_block_bit(h2_ptr);
@@ -919,14 +833,13 @@ static void arth_blocks_decode(block_handle *h1_ptr)
 	for (;size > 0; size--)
 	{
 		/* Decode it */
-		symbol = remove_symbol(arth_block_decode(code, prob_table),
-			 &code, prob_table, h1_ptr);
+		symbol = remove_symbol(&code, prob_table, h2_ptr);
 		
 		/* Output the symbol to the stream */
 		write_block_byte(h1_ptr, symbol);
 			
 		/* Update probability table */
-		calc_prob(symbol, prob_table);
+		calc_prob_hook(symbol, prob_table);
 	}
 	
 	/* Paranoia - Get rid of the rest of the input stream */
@@ -1196,6 +1109,114 @@ static void ibw_block_trans(block_handle *h1_ptr, block_handle *h2_ptr)
 	C_KILL(temp, size, u32b);
 }
 
+
+/* Data modeling */
+
+/* Variables for move-to-front probability model */
+static byte mtf_table[256];
+static u16b mtf_prob_table[257];
+
+static void init_compress_mtf(u16b *prob_table)
+{
+	int i;
+	u32b value;
+	
+	/* Reset the move-to-front table */
+	for (i = 0; i < 255; i++)
+	{
+		mtf_table[i] = i;
+	}
+
+	/* Reset the probability table */
+	for (i = 0; i < 255; i++)
+	{
+		/* Hack - we are going to assume fixed probabilities for now */
+		if (i > 128) value = 1;
+		else if (i > 64) value = 2;
+		else if (i > 32) value = 4;
+	
+	
+	}
+
+}
+
+static void calc_prob_mtf(byte symbol, u16b *prob_table)
+{
+
+}
+
+static void init_mtf_model(void)
+{
+	/*
+	 * Initialise the function hooks to point to
+	 * the Move-to-Front model.
+	 */
+	init_compress_hook = init_compress_mtf;
+	calc_prob_hook = calc_prob_mtf;
+}
+
+/* Variables for simple-probability model */
+static u16b prob_count[256];
+
+static void init_compress_simple(u16b *prob_table)
+{
+	int i;
+	
+	/* Everything has equal probability to start with */
+	for (i = 0; i < 256; i++)
+	{
+		prob_count[i] = 1;
+	}
+	
+	/* Init prob_table[] */
+	for (i = 0; i <= 256; i++)
+	{
+		prob_table[i] = i;
+	}
+}
+
+static void calc_prob_simple(byte symbol, u16b *prob_table)
+{
+	int i;
+		
+	/* If counter gets too high - we need to rescale everything */
+	if (prob_table[256] >= PROB_TABLE_MAX)
+	{
+		for (i = 0; i < 256; i++)
+		{
+			/* Halve all the counts - rounding up so don't get zero */
+			prob_count[i] = (prob_count[i] + 1) / 2;
+		}
+	
+		/* Reset the probability table */
+		prob_table[0] = 0;
+		for (i = 0; i < 256; i++)
+		{
+			prob_table[i + 1] = prob_table[i] + prob_count[i];
+		}
+	}
+	
+	/* Increment the count for the symbol */
+	prob_count[symbol] += PROB_CHANCE_INC;
+
+	/* Need to redo the counters */
+	for (i = symbol + 1; i < 257; i++)
+	{
+		/* Update the cumluative frequencies */
+		prob_table[i] += PROB_CHANCE_INC;
+	}
+}
+
+static void init_simple_model(void)
+{
+	/*
+	 * Initialise the function hooks to point to
+	 * the simple probability model.
+	 */
+	init_compress_hook = init_compress_simple;
+	calc_prob_hook = calc_prob_simple;
+}
+
 /*
  * Read a file into an empty stream of blocks.
  */
@@ -1294,7 +1315,7 @@ void test_compress_module(void)
 {
 	block_handle handle, *h_ptr = &handle;
 	cptr infile = "test"; 
-	cptr outfile =  "rle";
+	cptr outfile =  "arth";
 	cptr outfile2 = "result";
 	char buf[1024];
 	
@@ -1303,8 +1324,11 @@ void test_compress_module(void)
 	
 	(void) read_file(h_ptr, buf);
 	
+	/* Use the "simple" compression model */
+	init_simple_model();
+	
 	/* compress the file with rle */
-	rle_blocks_encode(h_ptr);
+	arth_blocks_encode(h_ptr);
 	
 	/* Build the filename */
 	(void) path_build(buf, 1024, ANGBAND_DIR, outfile);
@@ -1312,7 +1336,7 @@ void test_compress_module(void)
 	(void) write_file(h_ptr, buf);
 	
 	/* decompress the file with rle */
-	rle_blocks_decode(h_ptr);
+	arth_blocks_decode(h_ptr);
 	
 	/* Build the filename */
 	(void) path_build(buf, 1024, ANGBAND_DIR, outfile2);
@@ -1321,4 +1345,7 @@ void test_compress_module(void)
 	
 	/* Done */
 	delete_handle(h_ptr);
+	
+	/* Clean up */
+	clean_blocks(NULL);
 }
