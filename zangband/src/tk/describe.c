@@ -459,7 +459,7 @@ int SetArrayValueChar(cptr varName, cptr field, char value)
 	char string[20];
 
 	(void) sprintf(string, "%c", value);
-	if (Tcl_SetVar2(g_interp, (char *) varName, (char *) field, string, TCL_LEAVE_ERR_MSG)
+	if (Tcl_SetVar2(g_interp, varName, field, string, TCL_LEAVE_ERR_MSG)
 		== NULL)
 	{
 		return TCL_ERROR;
@@ -475,7 +475,7 @@ int SetArrayValueLong(cptr varName, cptr field, long value)
 	char string[20];
 
 	(void) sprintf(string, "%ld", value);
-	if (Tcl_SetVar2(g_interp, (char *) varName, (char *) field, string, TCL_LEAVE_ERR_MSG)
+	if (Tcl_SetVar2(g_interp, varName, field, string, TCL_LEAVE_ERR_MSG)
 		== NULL)
 	{
 		return TCL_ERROR;
@@ -488,7 +488,7 @@ int SetArrayValueLong(cptr varName, cptr field, long value)
  */
 int SetArrayValueString(cptr varName, cptr field, cptr value)
 {
-	if (Tcl_SetVar2(g_interp, (char *) varName, (char *) field, (char *) value, TCL_LEAVE_ERR_MSG)
+	if (Tcl_SetVar2(g_interp, varName, field, value, TCL_LEAVE_ERR_MSG)
 		== NULL)
 	{
 		return TCL_ERROR;
@@ -503,7 +503,7 @@ static int DumpObjectInfo(object_type *o_ptr, char *varName)
 {
 	int known;
 	u32b f1, f2, f3;
-	char *note;
+	cptr note;
 
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3);
@@ -584,12 +584,12 @@ static int DumpObjectInfo(object_type *o_ptr, char *varName)
 		return TCL_ERROR;
 	}
 
-	note = (char *) "";
+	note = "";
 	if (o_ptr->inscription)
 	{
-		note = (char *) quark_str(o_ptr->inscription);
+		note = quark_str(o_ptr->inscription);
 	}
-	if (ExtToUtf_SetArrayValueString(varName, (char *) "note", note) != TCL_OK)
+	if (ExtToUtf_SetArrayValueString(varName, "note", note) != TCL_OK)
 	{
 		return TCL_ERROR;
 	}

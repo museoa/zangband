@@ -43,7 +43,7 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 
     if (objC < 2)
     {
-		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, (char *) "option ?arg ...?");
+		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, "option ?arg ...?");
 		return TCL_ERROR;
     }
 
@@ -60,7 +60,7 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 			if (!character_dungeon)
 			{
 				/* Set the error */
-				Tcl_SetStringObj(resultPtr, (char *) "dungeon has not been generated yet", -1);
+				Tcl_SetStringObj(resultPtr, "dungeon has not been generated yet", -1);
 				goto error;
 			}
 			if (!p_ptr->depth)
@@ -71,7 +71,7 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 				}
 				else
 				{
-					Tcl_SetStringObj(resultPtr, (char *) "Wilderness", -1);
+					Tcl_SetStringObj(resultPtr, "Wilderness", -1);
 				}
 			}
 			break;
@@ -134,7 +134,7 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 
 	if (objC < 2)
 	{
-		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, (char *) "option ?arg ...?");
+		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, "option ?arg ...?");
 		return TCL_ERROR;
 	}
 
@@ -324,7 +324,7 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 
 	if (objC < 2)
 	{
-		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, (char *) "option ?arg ...?");
+		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, "option ?arg ...?");
 		return TCL_ERROR;
 	}
 
@@ -354,7 +354,7 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 				int result;
 
 				result = Tcl_EvalEx(g_interp,
-					(char *) "tk_messageBox -icon warning -type okcancel -message \"Your character will not be saved!\" -title \"Quit Without Saving\"",
+					"tk_messageBox -icon warning -type okcancel -message \"Your character will not be saved!\" -title \"Quit Without Saving\"",
 					-1, TCL_EVAL_GLOBAL);
 				if (result == TCL_OK)
 				{
@@ -369,7 +369,7 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 		case IDX_TKDIR: /* Tk directory for game .tcl files */
 		{
 		 	/* Return the current directory path */
-			ExtToUtf_SetResult(interp, (char *) ANGBAND_DIR_TK);
+			ExtToUtf_SetResult(interp, ANGBAND_DIR_TK);
 			break;
 		}
 		
@@ -490,7 +490,7 @@ objcmd_inventory(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 
     if (objC < 2)
     {
-		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, (char *) "option ?arg ...?");
+		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, "option ?arg ...?");
 		return TCL_ERROR;
     }
 
@@ -588,7 +588,7 @@ objcmd_message(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 
     if (objC < 2)
     {
-		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, (char *) "option ?arg ...?");
+		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, "option ?arg ...?");
 		return TCL_ERROR;
     }
 
@@ -620,7 +620,7 @@ objcmd_message(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 				return TCL_ERROR;
 			}
 			attr = TERM_WHITE;
-			Tcl_SetStringObj(resultPtr, (char *) keyword_term_color[attr], -1);
+			Tcl_SetStringObj(resultPtr, keyword_term_color[attr], -1);
 			break;
 		
 		case IDX_COUNT: /* count */
@@ -639,7 +639,7 @@ objcmd_message(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 					"must be from 0 to %d", i, k - 1), -1);
 				return TCL_ERROR;
 			}
-			ExtToUtf_SetResult(interp, (char *) message_str(i));
+			ExtToUtf_SetResult(interp, message_str(i));
 			break;
 	}
 

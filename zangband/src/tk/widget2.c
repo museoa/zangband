@@ -21,19 +21,19 @@
  */
 static Tk_OptionSpec optionSpecs[20] = {
     {TK_OPTION_INT, (char *) "-height", (char *) "height", (char *) "Height",
-     (char *) "100", -1, Tk_Offset(Widget, height), 0, 0, 0},
+    (char *) "100", -1, Tk_Offset(Widget, height), 0, 0, 0},
     {TK_OPTION_INT, (char *) "-width", (char *) "width", (char *) "Width",
-     (char *) "100", -1, Tk_Offset(Widget, width), 0, 0, 0},
+    (char *) "100", -1, Tk_Offset(Widget, width), 0, 0, 0},
     {TK_OPTION_INT, (char *) "-gheight", (char *) "gheight", (char *) "Height",
-     (char *) "32", -1, Tk_Offset(Widget, gheight), 0, 0, 0},
+    (char *) "32", -1, Tk_Offset(Widget, gheight), 0, 0, 0},
     {TK_OPTION_INT, (char *) "-gwidth", (char *) "gwidth", (char *) "Width",
-     (char *) "32", -1, Tk_Offset(Widget, gwidth), 0, 0, 0},
+    (char *) "32", -1, Tk_Offset(Widget, gwidth), 0, 0, 0},
     {TK_OPTION_CURSOR, (char *) "-cursor", (char *) "cursor", (char *) "Cursor",
-     (char *) "", -1, Tk_Offset(Widget, cursor), TK_OPTION_NULL_OK, 0, 0},
+    (char *) "", -1, Tk_Offset(Widget, cursor), TK_OPTION_NULL_OK, 0, 0},
     {TK_OPTION_BOOLEAN, (char *) "-setgrid", (char *) "setGrid", (char *) "SetGrid",
-	 (char *) "no", -1, Tk_Offset(Widget, setGrid), 0, 0, 0},
+	(char *) "no", -1, Tk_Offset(Widget, setGrid), 0, 0, 0},
     {TK_OPTION_BOOLEAN, (char *) "-noupdate", (char *) "noUpdate", (char *) "NoUpdate",
-	 (char *) "no", -1, Tk_Offset(Widget, noUpdate), 0, 0, 0},
+	(char *) "no", -1, Tk_Offset(Widget, noUpdate), 0, 0, 0},
    {TK_OPTION_END, NULL, NULL, NULL,
      NULL, 0, -1, 0, 0, 0}
 };
@@ -256,7 +256,7 @@ int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
     if (objc < 2)
     {
 		/* Set the error */
-		Tcl_WrongNumArgs(interp, 1, objv, (char *) "pathName ?options?");
+		Tcl_WrongNumArgs(interp, 1, objv, "pathName ?options?");
 
 		/* Failure */
 		return(TCL_ERROR);
@@ -277,7 +277,7 @@ int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
 	 * a capital letter, and there exists a Tcl command with the same
 	 * name as each class.
 	 */
-    Tk_SetClass(tkwin, (char *) "Widget");
+    Tk_SetClass(tkwin, "Widget");
 
     /* Allocate a new Widget struct */
     if ((*g_create_proc)(interp, &widgetPtr) != TCL_OK)
@@ -320,9 +320,9 @@ int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
 	DoubleLink_Init(&WidgetList, &widgetPtr->link, widgetPtr);
 	DoubleLink_Init(&WidgetListMap, &widgetPtr->linkMap, widgetPtr);
 	DoubleLink_Init(&widgetPtr->linkerItem, NULL, NULL);
-	widgetPtr->linkerItem.what = (char *) "item";
+	widgetPtr->linkerItem.what = "item";
 	DoubleLink_Init(&widgetPtr->linkerItemVis, NULL, NULL);
-	widgetPtr->linkerItemVis.what = (char *)"itemVis";
+	widgetPtr->linkerItemVis.what ="itemVis";
 	widgetPtr->noUpdate = FALSE;
 	widgetPtr->dx = widgetPtr->dy = 0;
 	widgetPtr->dw = widgetPtr->dh = 0;
@@ -388,7 +388,7 @@ int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl
 	if (objc < 2)
 	{
 		/* Set the error */
-		Tcl_WrongNumArgs(interp, 1, objv, (char *) "option ?arg arg ...?");
+		Tcl_WrongNumArgs(interp, 1, objv, "option ?arg arg ...?");
 
 		/* Failure */
 		return TCL_ERROR;
@@ -489,7 +489,7 @@ int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl
 			if (objc != 3)
 			{
 				/* Set the error */
-				Tcl_WrongNumArgs(interp, 2, objv, (char *) "option");
+				Tcl_WrongNumArgs(interp, 2, objv, "option");
 	
 				/* Failure */
 				goto error;
@@ -552,8 +552,7 @@ int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl
 			if (objc != 4)
 			{
 				/* Set the error */
-				Tcl_WrongNumArgs(interp, 2, objv,
-					(char *) "paletteIndex opacity");
+				Tcl_WrongNumArgs(interp, 2, objv, "paletteIndex opacity");
 	
 				/* Failure */
 				goto error;
@@ -608,7 +607,7 @@ int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl
 			if (objc != 4)
 			{
 				/* Set the error */
-				Tcl_WrongNumArgs(interp, 2, objv, (char *) "paletteIndex opacity");
+				Tcl_WrongNumArgs(interp, 2, objv, "paletteIndex opacity");
 	
 				/* Failure */
 				goto error;
@@ -706,7 +705,7 @@ int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl
 			if (objc != 4)
 			{
 				/* Set the error */
-				Tcl_WrongNumArgs(interp, 2, objv, (char *) "y x");
+				Tcl_WrongNumArgs(interp, 2, objv, "y x");
 	
 				/* Failure */
 				goto error;
@@ -1460,7 +1459,7 @@ int WidgetItem_Create(Tcl_Interp *interp, Widget *widgetPtr,
 	if (objc < 3)
 	{
 		/* Set the error */
-		Tcl_WrongNumArgs(interp, 2, objv, (char *) "type ?arg arg ...?");
+		Tcl_WrongNumArgs(interp, 2, objv, "type ?arg arg ...?");
 
 		/* Failure */
 		goto error;
@@ -1566,7 +1565,7 @@ int WidgetItem_Cget(Tcl_Interp *interp, Widget *widgetPtr,
 	if (objc != 4)
 	{
 		/* Set the error */
-		Tcl_WrongNumArgs(interp, 2, objv, (char *) "index option");
+		Tcl_WrongNumArgs(interp, 2, objv, "index option");
 
 		/* Failure */
 		return TCL_ERROR;
@@ -1627,7 +1626,7 @@ int WidgetItem_Configure(Tcl_Interp *interp, Widget *widgetPtr,
 	if (objc < 3)
 	{
 		/* Set the error */
-		Tcl_WrongNumArgs(interp, 2, objv, (char *) "index ?option? ?value? ?option value ...?");
+		Tcl_WrongNumArgs(interp, 2, objv, "index ?option? ?value? ?option value ...?");
 		
 		/* Failure */
 		return TCL_ERROR;
@@ -1737,9 +1736,9 @@ int Widget_Init(Tcl_Interp *interp, Widget_CreateProc *proc)
 
 	/* Linked lists of Widgets */
 	DoubleLink_Init(&WidgetList, NULL, NULL);
-	WidgetList.what = (char *) "widget";
+	WidgetList.what = "widget";
 	DoubleLink_Init(&WidgetListMap, NULL, NULL);
-	WidgetListMap.what = (char *) "widgetMap";
+	WidgetListMap.what = "widgetMap";
 
 	/* Initialize Widget item colors */
 	if (WidgetColor_Init(interp) != TCL_OK)
@@ -1754,7 +1753,7 @@ int Widget_Init(Tcl_Interp *interp, Widget_CreateProc *proc)
 	}
 
 	/* Create the "widget" interpreter command */
-	Tcl_CreateObjCommand(interp, (char *) "widget", Widget_ObjCmd, NULL, NULL);
+	Tcl_CreateObjCommand(interp, "widget", Widget_ObjCmd, NULL, NULL);
 
 	/* Success */
     return TCL_OK;

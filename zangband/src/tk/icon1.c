@@ -533,7 +533,7 @@ static int init_flavor_aux(int n, cptr desc, int tval, int count,
 	int i, dummy;
 	IconSpec defaultIcon = {ICON_TYPE_DEFAULT, 0, -1};
 
-	flavor.desc = (char *) string_make(desc);
+	flavor.desc = string_make(desc);
 	flavor.tval = tval;
 	flavor.count = count;
 	C_MAKE(flavor.sorted, count, int);

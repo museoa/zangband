@@ -208,7 +208,7 @@ void Bitmap_New(Tcl_Interp *interp, BitmapPtr bitmapPtr)
 		XShmQueryVersion(display, &major, &minor, &pixmaps);
 		if (pixmaps != True)
 		{
-			Tcl_Panic((char *) "no shared pixmaps");
+			Tcl_Panic("no shared pixmaps");
 		}
 	}
 
@@ -225,7 +225,7 @@ void Bitmap_New(Tcl_Interp *interp, BitmapPtr bitmapPtr)
 		IPC_CREAT | 0777);
 	if (ret < 0)
 	{
-		Tcl_Panic((char *)"shmget() failed");
+		Tcl_Panic("shmget() failed");
 	}
 
 	platData->shminfo.shmaddr = shmat(platData->shminfo.shmid, 0, 0);
@@ -234,7 +234,7 @@ void Bitmap_New(Tcl_Interp *interp, BitmapPtr bitmapPtr)
     if(ret == -1)
     {
 		shmctl(platData->shminfo.shmid, IPC_RMID, 0);
-		Tcl_Panic((char *) "shmat() failed");
+		Tcl_Panic("shmat() failed");
 	}
 
 	/* Allow the server to write into our pixmap */
@@ -248,7 +248,7 @@ void Bitmap_New(Tcl_Interp *interp, BitmapPtr bitmapPtr)
     {
 		shmdt(platData->shminfo.shmaddr);
 		shmctl(platData->shminfo.shmid, IPC_RMID, 0);
-		Tcl_Panic((char *) "XShmAttach() failed");
+		Tcl_Panic("XShmAttach() failed");
     }
 	XSync(display, False);
     Tk_DeleteErrorHandler(handler);
@@ -256,7 +256,7 @@ void Bitmap_New(Tcl_Interp *interp, BitmapPtr bitmapPtr)
     {
 		shmdt(platData->shminfo.shmaddr);
 		shmctl(platData->shminfo.shmid, IPC_RMID, 0);
-		Tcl_Panic((char *) "XShmAttach() etc gave errors");
+		Tcl_Panic("XShmAttach() etc gave errors");
     }
 
     ret = shmctl(platData->shminfo.shmid, IPC_RMID, 0);
@@ -265,7 +265,7 @@ void Bitmap_New(Tcl_Interp *interp, BitmapPtr bitmapPtr)
 		XShmDetach(display, &platData->shminfo);
 		shmdt(platData->shminfo.shmaddr);
 		shmctl(platData->shminfo.shmid, IPC_RMID, 0);
-		Tcl_Panic((char *) "shmctl() failed");
+		Tcl_Panic("shmctl() failed");
     }
 
 	/* Image uses shared memory we allocated */
@@ -278,7 +278,7 @@ void Bitmap_New(Tcl_Interp *interp, BitmapPtr bitmapPtr)
 
 	if (bitmapPtr->pixmap == None)
 	{
-		Tcl_Panic((char *) "XShmCreatePixmap() failed");
+		Tcl_Panic("XShmCreatePixmap() failed");
 	}
 
 	/* Set pitch, pixelSize, and pixelPtr */

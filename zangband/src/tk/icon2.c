@@ -413,7 +413,7 @@ static int objcmd_effect_groups(ClientData clientData, Tcl_Interp *interp, int o
 	{
 		/* Append effect keyword as a string object to the list*/
 		Tcl_ListObjAppendElement(interp, listObjPtr,
-			Tcl_NewStringObj((char *) keyword_effect_group[index], -1));
+			Tcl_NewStringObj(keyword_effect_group[index], -1));
 	}
 
 	/* Return the list */

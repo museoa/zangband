@@ -24,11 +24,11 @@ int CommandInfo_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc,
 	{
 	    if (objC < 2)
 	    {
-			Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, (char *) "option ?arg ...?");
+			Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, "option ?arg ...?");
 			return TCL_ERROR;
 	    }
 	    if (Tcl_GetIndexFromObj(interp, objV[1], infoCmd->subCmd.name,
-	    	(char *) "option", 0, &subCmdIndex) != TCL_OK)
+	    	"option", 0, &subCmdIndex) != TCL_OK)
 		{
 			return TCL_ERROR;
 	    }
@@ -40,7 +40,7 @@ int CommandInfo_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc,
 		(infoCmd->maxArgs && (objC > infoCmd->maxArgs)))
 	{
 		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv,
-			(char *) infoCmd->errorMsg);
+			infoCmd->errorMsg);
 		return TCL_ERROR;
 	}
 
@@ -72,7 +72,7 @@ void CommandInfo_Add(CommandInfo *infoCmd, CommandInfo *infoSubCmd)
 		infoCmd->subCmd.alloc += 5;
 	}
 
-	infoCmd->subCmd.name[count] = (char *) infoSubCmd->name;
+	infoCmd->subCmd.name[count] = infoSubCmd->name;
 	infoCmd->subCmd.name[count + 1] = NULL;
 	infoCmd->subCmd.info[count] = infoSubCmd;
 	++infoCmd->subCmd.count;
@@ -101,7 +101,7 @@ CommandInfo *CommandInfo_New(CommandInit *init)
 /*
  * Get the CommandInfo for a command or subcommand.
  */
-static CommandInfo *CommandInfo_GetInfoAux(Tcl_Interp *interp, char *names[],
+static CommandInfo *CommandInfo_GetInfoAux(Tcl_Interp *interp, cptr names[],
 	CommandInfo *infoCmd)
 {
 	int subCmdIndex;
@@ -126,7 +126,7 @@ static CommandInfo *CommandInfo_GetInfoAux(Tcl_Interp *interp, char *names[],
 		Tcl_Obj *nameObjPtr = Tcl_NewStringObj(names[1], -1);
 
 	    if (Tcl_GetIndexFromObj(interp, nameObjPtr, infoCmd->subCmd.name,
-	    	(char *) "option", 0, &subCmdIndex) != TCL_OK)
+	    	"option", 0, &subCmdIndex) != TCL_OK)
 		{
 			Tcl_DecrRefCount(nameObjPtr);
 			return NULL;
@@ -140,7 +140,7 @@ static CommandInfo *CommandInfo_GetInfoAux(Tcl_Interp *interp, char *names[],
 	return NULL;
 }
 
-CommandInfo *CommandInfo_GetInfo(Tcl_Interp *interp, char *names[])
+CommandInfo *CommandInfo_GetInfo(Tcl_Interp *interp, cptr names[])
 {
 	Tcl_CmdInfo cmdInfo;
 
@@ -163,8 +163,8 @@ int CommandInfo_InitAux(Tcl_Interp *interp, CommandInit *init, int index,
 
 	if (parent == NULL)
 	{
-		char *names[2];
-		names[0] = (char *) init[index].name;
+		cptr names[2];
+		names[0] = init[index].name;
 		names[1] = NULL;
 		infoCmd = CommandInfo_GetInfo(interp, names);
 	}
@@ -176,7 +176,7 @@ int CommandInfo_InitAux(Tcl_Interp *interp, CommandInit *init, int index,
 	
 		if (parent == NULL)
 		{
-			Tcl_CreateObjCommand(interp, (char *) infoCmd->name,
+			Tcl_CreateObjCommand(interp, infoCmd->name,
 				CommandInfo_ObjCmd, (ClientData) infoCmd, NULL);
 		}
 		else

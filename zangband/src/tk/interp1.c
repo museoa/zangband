@@ -723,7 +723,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 	/* Required number of arguments */
     if (objC < 2)
     {
-		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, (char *) "option ?arg ...?");
+		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, "option ?arg ...?");
 		return TCL_ERROR;
     }
 
@@ -740,7 +740,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 
 		    if (objC != 3)
 		    {
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, (char *) "ability");
+				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, "ability");
 				return TCL_ERROR;
 		    }
 
@@ -802,7 +802,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 		case IDX_DIED_FROM: /* died_from */
 			if (!p_ptr->is_dead)
 			{
-				Tcl_SetStringObj(resultPtr, (char *) "character is not dead", -1);
+				Tcl_SetStringObj(resultPtr, "character is not dead", -1);
 				return TCL_ERROR;
 			}
 			ExtToUtf_SetResult(interp, p_ptr->died_from);
@@ -872,7 +872,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 		case IDX_SEX: /* sex */
-			Tcl_SetStringObj(resultPtr, (char *) sp_ptr->title, -1);
+			Tcl_SetStringObj(resultPtr, sp_ptr->title, -1);
 			break;
 
 		case IDX_SHOTS_PER_ROUND: /* shots_per_round */
@@ -894,20 +894,20 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			{
 				(void) angtk_tval_string(&cstr, p_ptr->realm1 + TV_LIFE_BOOK - 1);
 				Tcl_ListObjAppendElement(interp, listObjPtr,
-					Tcl_NewStringObj((char *) cstr, -1));
+					Tcl_NewStringObj(cstr, -1));
 			}
 			if (p_ptr->realm2)
 			{
 				(void) angtk_tval_string(&cstr, p_ptr->realm2 + TV_LIFE_BOOK - 1);
 				Tcl_ListObjAppendElement(interp, listObjPtr,
-					Tcl_NewStringObj((char *) cstr, -1));
+					Tcl_NewStringObj(cstr, -1));
 			}
 			Tcl_SetObjResult(interp, listObjPtr);
 			break;
 
 		case IDX_TITLE: /* title */
 			ExtToUtf_SetResult(interp,
-				(char *) player_title[p_ptr->pclass][(p_ptr->lev-1)/5]);
+				player_title[p_ptr->pclass][(p_ptr->lev-1)/5]);
 			break;
 
 		case IDX_TO_DAM: /* to_dam */
@@ -931,7 +931,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 		case IDX_BASE_NAME: /* base_name */
-			ExtToUtf_SetResult(interp, (char *) player_base);
+			ExtToUtf_SetResult(interp, player_base);
 			break;
 
 		case IDX_IS_DEAD: /* is_dead */
@@ -957,7 +957,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 		case IDX_NEW_SPELLS: /* new_spells */
 			if (!p_ptr->realm1)
 			{
-				Tcl_SetStringObj(resultPtr, (char *) "character cannot read books", -1);
+				Tcl_SetStringObj(resultPtr, "character cannot read books", -1);
 				return TCL_ERROR;
 			}
 			Tcl_SetIntObj(resultPtr, p_ptr->new_spells);
@@ -974,7 +974,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 		case IDX_PRAYER_OR_SPELL: /* prayer_or_spell */
 			if (!p_ptr->realm1)
 			{
-				Tcl_SetStringObj(resultPtr, (char *) "character cannot read books", -1);
+				Tcl_SetStringObj(resultPtr, "character cannot read books", -1);
 				return TCL_ERROR;
 			}
 			switch (mp_ptr->spell_book)
@@ -987,7 +987,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 				quit_fmt("unhandled mp_ptr->spell_book %d",
 					mp_ptr->spell_book);
 			}
-			Tcl_SetStringObj(resultPtr, (char *) t, -1);
+			Tcl_SetStringObj(resultPtr, t, -1);
 			break;
 
 		case IDX_HEALTH_WHO: /* health_who */
@@ -1052,17 +1052,17 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 
 		case IDX_REALM1: /* realm1 */
 			Tcl_SetStringObj(resultPtr,
-				(char *) realm_names[p_ptr->realm1], -1);
+				realm_names[p_ptr->realm1], -1);
 			break;
 
 		case IDX_REALM2: /* realm2 */
 			Tcl_SetStringObj(resultPtr,
-				(char *) realm_names[p_ptr->realm2], -1);
+				realm_names[p_ptr->realm2], -1);
 			break;
 
 		case IDX_PATRON: /* patron */
 			ExtToUtf_SetResult(interp,
-				(char *) chaos_patrons[p_ptr->chaos_patron]);
+				chaos_patrons[p_ptr->chaos_patron]);
 			break;
 
 	}
@@ -1495,7 +1495,7 @@ objcmd_power(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 	/* Required number of arguments */
     if (objC < 2)
     {
-		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, (char *) "option ?arg ...?");
+		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, "option ?arg ...?");
 		return TCL_ERROR;
     }
 
@@ -1509,7 +1509,7 @@ objcmd_power(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 	if (!character_generated)
 	{
 		Tcl_AppendStringsToObj(resultPtr,
-			(char *) "character has not been generated yet", NULL);
+			"character has not been generated yet", NULL);
 		return TCL_ERROR;
 	}
 
@@ -1644,7 +1644,7 @@ objcmd_spell(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 	if (objC < 2)
 	{
 		/* Set the error */
-		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, (char *) "option ?arg ...?");
+		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, "option ?arg ...?");
 
 		/* Failure */
 		return TCL_ERROR;
@@ -1686,7 +1686,7 @@ objcmd_spell(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 			/* Required number of arguments */
 		    if (objC < 3)
 		    {
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, (char *) "bookNum");
+				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, "bookNum");
 				return TCL_ERROR;
 		    }
 
@@ -1827,7 +1827,7 @@ objcmd_spell(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 			/* Required number of arguments */
 		    if (objC < 5)
 		    {
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, (char *) "bookNum spellIndex arrayName");
+				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, "bookNum spellIndex arrayName");
 				return TCL_ERROR;
 		    }
 
@@ -1917,8 +1917,8 @@ objcmd_spell(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 				{
 					return TCL_ERROR;
 				}
-				if (ExtToUtf_SetArrayValueString(t, (char *) "name",
-					(char *) spell_names[realm-1][spell]) != TCL_OK)
+				if (ExtToUtf_SetArrayValueString(t, "name",
+					spell_names[realm-1][spell]) != TCL_OK)
 				{
 					return TCL_ERROR;
 				}
@@ -1958,7 +1958,7 @@ objcmd_spell(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 				{
 					comment = " untried";
 				}
-				if (ExtToUtf_SetArrayValueString(t, (char *) "info", (char *) comment + 1)
+				if (ExtToUtf_SetArrayValueString(t, "info", comment + 1)
 					!= TCL_OK)
 				{
 					return TCL_ERROR;
@@ -1987,7 +1987,7 @@ static void init_keyword_misc(void)
 	C_MAKE(keyword_gender, MAX_SEXES + 1, cptr);
 	for (i = 0; i < MAX_SEXES; i++)
 	{
-		keyword_gender[i] = (char *) sex_info[i].title;
+		keyword_gender[i] = sex_info[i].title;
 	}
 	keyword_gender[MAX_SEXES] = NULL;
 
@@ -1995,7 +1995,7 @@ static void init_keyword_misc(void)
 	C_MAKE(keyword_class, MAX_CLASS + 1, cptr);
 	for (i = 0; i < MAX_CLASS; i++)
 	{
-		keyword_class[i] = (char *) class_info[i].title;
+		keyword_class[i] = class_info[i].title;
 	}
 	keyword_class[MAX_CLASS] = NULL;
 
@@ -2003,7 +2003,7 @@ static void init_keyword_misc(void)
 	C_MAKE(keyword_race, MAX_RACES + 1, cptr);
 	for (i = 0; i < MAX_RACES; i++)
 	{
-		keyword_race[i] = (char *) race_info[i].title;
+		keyword_race[i] = race_info[i].title;
 	}
 	keyword_race[MAX_RACES] = NULL;
 }
@@ -2088,10 +2088,10 @@ void angtk_display_info_append(cptr s)
 
 void angtk_display_info_done(cptr title)
 {
-	angtk_display_info_aux((char *) title, s_info_list);
+	angtk_display_info_aux(title, s_info_list);
 }
 
-void angtk_display_info_aux(char *title, Tcl_Obj *listObjPtr)
+void angtk_display_info_aux(cptr title, Tcl_Obj *listObjPtr)
 {
 	int i, objc = 0, result;
 	Tcl_Obj *objv[10];
@@ -2261,7 +2261,7 @@ void angtk_angband_initialized(void)
 	}
 
 	/* Program is intialized */
-	if (Tcl_EvalEx(g_interp, (char *) "angband_initialized", -1, TCL_EVAL_GLOBAL) != TCL_OK)
+	if (Tcl_EvalEx(g_interp, "angband_initialized", -1, TCL_EVAL_GLOBAL) != TCL_OK)
 	{
 		HandleError();
 	}
@@ -2280,7 +2280,7 @@ int angtk_eval_file(cptr extFileName)
 	int result;
 
 	utfFileName = Tcl_ExternalToUtfDString(NULL, extFileName, -1, &dString);
-	result = Tcl_EvalFile(g_interp, (char *) utfFileName);
+	result = Tcl_EvalFile(g_interp, utfFileName);
 	Tcl_DStringFree(&dString);
 	return result;
 }

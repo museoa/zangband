@@ -17,7 +17,7 @@
 
 #define ALLOW_TK_CONSOLE
 
-static void		WishPanic _ANSI_ARGS_(TCL_VARARGS(char *,format));
+static void	WishPanic _ANSI_ARGS_(TCL_VARARGS(char *,format));
 
 Tcl_Interp *g_interp = NULL;
 
@@ -233,19 +233,19 @@ Tcl_Interp *TclTk_Init(int argc, cptr *argv)
 
 	args = Tcl_Merge(argc-1, argv+1);
 	Tcl_ExternalToUtfDString(NULL, args, -1, &argString);
-	Tcl_SetVar(interp, (char *) "argv", Tcl_DStringValue(&argString), TCL_GLOBAL_ONLY);
+	Tcl_SetVar(interp, "argv", Tcl_DStringValue(&argString), TCL_GLOBAL_ONLY);
 	Tcl_DStringFree(&argString);
 	Tcl_Free(args);
 	sprintf(buf, "%d", argc-1);
 
 	Tcl_ExternalToUtfDString(NULL, argv[0], -1, &argString);
-	Tcl_SetVar(interp, (char *) "argc", buf, TCL_GLOBAL_ONLY);
-	Tcl_SetVar(interp, (char *) "argv0", Tcl_DStringValue(&argString), TCL_GLOBAL_ONLY);
+	Tcl_SetVar(interp, "argc", buf, TCL_GLOBAL_ONLY);
+	Tcl_SetVar(interp, "argv0", Tcl_DStringValue(&argString), TCL_GLOBAL_ONLY);
 	Tcl_DStringFree(&argString);
 
 	tsdPtr->tty = isatty(0);
-	Tcl_SetVar(interp, (char *) "tcl_interactive",
-		(char *) (tsdPtr->tty ? "1" : "0"), TCL_GLOBAL_ONLY);
+	Tcl_SetVar(interp, "tcl_interactive",
+		(tsdPtr->tty ? "1" : "0"), TCL_GLOBAL_ONLY);
 
 	/*** from tk83/unix/tkAppInit.c (Tcl_AppInit) ***/
 
@@ -257,7 +257,7 @@ Tcl_Interp *TclTk_Init(int argc, cptr *argv)
 	{
 		goto error;
 	}
-	Tcl_StaticPackage(interp, (char *) "Tk", Tk_Init, Tk_SafeInit);
+	Tcl_StaticPackage(interp, "Tk", Tk_Init, Tk_SafeInit);
 
 	/*** From tk83/generic/TkMain.c (again) ***/
 
@@ -291,7 +291,7 @@ Tcl_Interp *TclTk_Init(int argc, cptr *argv)
 	return interp;
 
 error:
-	TkpDisplayWarning(Tcl_GetStringResult(interp), (char *)"TclTk_Init Failed!");
+	TkpDisplayWarning(Tcl_GetStringResult(interp), "TclTk_Init Failed!");
 	Tcl_DeleteInterp(interp);
 	Tcl_Exit(1);
 	return NULL;
@@ -439,7 +439,7 @@ defaultPrompt:
              * this interpreter with "interp transfer".
              */
 
-	    outChannel = Tcl_GetChannel(interp, (char *) "stdout", NULL);
+	    outChannel = Tcl_GetChannel(interp, "stdout", NULL);
             if (outChannel != (Tcl_Channel) NULL) {
                 Tcl_WriteChars(outChannel, "% ", 2);
             }
@@ -448,22 +448,22 @@ defaultPrompt:
 	code = Tcl_Eval(interp, promptCmd);
 	if (code != TCL_OK) {
 	    Tcl_AddErrorInfo(interp,
-		    (char *) "\n    (script that generates prompt)");
+		    "\n    (script that generates prompt)");
             /*
              * We must check that errChannel is a real channel - it
              * is possible that someone has transferred stderr out of
              * this interpreter with "interp transfer".
              */
             
-	    errChannel = Tcl_GetChannel(interp, (char *) "stderr", NULL);
+	    errChannel = Tcl_GetChannel(interp, "stderr", NULL);
             if (errChannel != (Tcl_Channel) NULL) {
                 Tcl_WriteObj(errChannel, Tcl_GetObjResult(interp));
-                Tcl_WriteChars(errChannel, (char *) "\n", 1);
+                Tcl_WriteChars(errChannel, "\n", 1);
             }
 	    goto defaultPrompt;
 	}
     }
-    outChannel = Tcl_GetChannel(interp, (char *) "stdout", NULL);
+    outChannel = Tcl_GetChannel(interp, "stdout", NULL);
     if (outChannel != (Tcl_Channel) NULL) {
         Tcl_Flush(outChannel);
     }

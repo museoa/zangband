@@ -91,7 +91,7 @@ struct CommandInit {
 };
 
 extern void CommandInfo_Add(CommandInfo *infoCmd, CommandInfo *infoSubCmd);
-extern CommandInfo *CommandInfo_GetInfo(Tcl_Interp *interp, char *names[]);
+extern CommandInfo *CommandInfo_GetInfo(Tcl_Interp *interp, cptr names[]);
 extern int CommandInfo_InitAux(Tcl_Interp *interp, CommandInit *init,
 	int index, CommandInfo *parent);
 extern int CommandInfo_Init(Tcl_Interp *interp, CommandInit *init,
@@ -177,7 +177,7 @@ extern void angtk_display_info_init(void);
 extern void angtk_display_info_append(cptr s);
 extern void angtk_display_info_done(cptr title);
 extern void angtk_display_info(char *title, char **info, int count);
-extern void angtk_display_info_aux(char *title, Tcl_Obj *listObjPtr);
+extern void angtk_display_info_aux(cptr title, Tcl_Obj *listObjPtr);
 extern void angtk_eval(cptr command, ...);
 extern int angtk_eval_file(cptr extFileName);
 extern void angtk_cave_generated(void);
@@ -243,7 +243,7 @@ extern void prompt_open(cptr str);
 extern void prompt_update(cptr str);
 extern void any_more(cptr prompt);
 
-extern int ExtToUtf_SetArrayValueString(char *varName, char *field, char *value);
+extern int ExtToUtf_SetArrayValueString(cptr varName, cptr field, cptr value);
 
 /* util-dll.c */
 extern int g_palette_white, g_palette_black;
@@ -343,7 +343,7 @@ extern void DoubleLink_Link(DoubleLink *link);
 extern void DoubleLink_Unlink(DoubleLink *link);
 
 extern Tcl_Obj *ExtToUtf_NewStringObj(CONST char *bytes, int length);
-extern void ExtToUtf_SetResult(Tcl_Interp *interp, char *string);
+extern void ExtToUtf_SetResult(Tcl_Interp *interp, cptr string);
 extern char *UtfToExt_TranslateFileName(Tcl_Interp *interp, char *utfPath,
 	Tcl_DString *extDStringPtr);
 

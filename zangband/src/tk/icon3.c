@@ -1304,7 +1304,7 @@ static int objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj 
 	/* Required number of arguments */
     if (objc < 2)
     {
-		Tcl_WrongNumArgs(interp, 1, objv, (char *) "option ?arg ...?");
+		Tcl_WrongNumArgs(interp, 1, objv, "option ?arg ...?");
 		return TCL_ERROR;
     }
 
@@ -1391,7 +1391,7 @@ static int objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj 
 
 			if (objc < 3)
 			{
-				Tcl_WrongNumArgs(interp, 2, objv, (char *) "type");
+				Tcl_WrongNumArgs(interp, 2, objv, "type");
 				return TCL_ERROR;
 			}
 
@@ -1452,7 +1452,7 @@ static int objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj 
 
 			if (objc != 4)
 			{
-				Tcl_WrongNumArgs(interp, 2, objv, (char *) "type char");
+				Tcl_WrongNumArgs(interp, 2, objv, "type char");
 				return TCL_ERROR;
 			}
 
@@ -1515,7 +1515,7 @@ static int objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj 
 
 			if (objc < 4)
 			{
-				Tcl_WrongNumArgs(interp, 2, objv, (char *) "index option ?value?");
+				Tcl_WrongNumArgs(interp, 2, objv, "index option ?value?");
 				return TCL_ERROR;
 			}
 
@@ -1609,7 +1609,7 @@ static int objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj 
 
 			if (objc < 3)
 			{
-				Tcl_WrongNumArgs(interp, 2, objv, (char *) "type");
+				Tcl_WrongNumArgs(interp, 2, objv, "type");
 				return TCL_ERROR;
 			}
 
@@ -1647,7 +1647,7 @@ static int objcmd_makeicon(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_O
 
 	Tk_PhotoHandle photoH = NULL;
 	char *imageFile = NULL, *dataFile = NULL;
-	char *imageName = (char *) "MakeIconImage";
+	cptr imageName = "MakeIconImage";
 	int imageW, imageH;
 	int length;
 	t_icon_data iconData;
@@ -1839,7 +1839,7 @@ static int objcmd_icon(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *
 	/* Required number of arguments */
     if (objc < 2)
     {
-		Tcl_WrongNumArgs(interp, 1, objv, (char *) "option ?arg ...?");
+		Tcl_WrongNumArgs(interp, 1, objv, "option ?arg ...?");
 		return TCL_ERROR;
     }
 
@@ -1857,7 +1857,7 @@ static int objcmd_icon(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *
 			{
 wrongCreateArgs:
 				Tcl_WrongNumArgs(interp, 2, objv,
-					(char *) "typeName -file fileName ?-maskfile fileName?");
+				 "typeName -file fileName ?-maskfile fileName?");
 				return TCL_ERROR;
 			}
 
@@ -2050,7 +2050,7 @@ wrongCreateArgs:
 		case IDX_COUNT: /* count */
 			if (objc != 3)
 			{
-				Tcl_WrongNumArgs(interp, 2, objv, (char *) "typeName");
+				Tcl_WrongNumArgs(interp, 2, objv, "typeName");
 				return TCL_ERROR;
 			}
 
@@ -2090,7 +2090,7 @@ wrongCreateArgs:
 			if (objc < 6)
 			{
 				Tcl_WrongNumArgs(interp, 2, objv,
-					(char *) "-type iconType -index iconIndex ?-ascii asciiIndex?");
+				 "-type iconType -index iconIndex ?-ascii asciiIndex?");
 				return TCL_ERROR;
 			}
 			if (Icon_ParseArgs(interp, objc, objv, 2, &iconSpec) != TCL_OK)
@@ -2172,7 +2172,7 @@ wrongCreateArgs:
 
 			if (objc != 5)
 			{
-				Tcl_WrongNumArgs(interp, 2, objv, (char *) "type index count");
+				Tcl_WrongNumArgs(interp, 2, objv, "type index count");
 				return TCL_ERROR;
 			}
 		
@@ -2231,7 +2231,7 @@ wrongCreateArgs:
 
 			if (objc != 4)
 			{
-				Tcl_WrongNumArgs(interp, 2, objv, (char *) "type index");
+				Tcl_WrongNumArgs(interp, 2, objv, "type index");
 				return TCL_ERROR;
 			}
 
@@ -2453,7 +2453,7 @@ int Icon_ParseArgs(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[],
 	{
 		/* Set the error */
 		Tcl_WrongNumArgs(interp, offset, objv,
-			(char *) "-type iconType -index iconIndex ?-ascii asciiIndex?");
+		 "-type iconType -index iconIndex ?-ascii asciiIndex?");
 
 		/* Failure */
 		return TCL_ERROR;
@@ -2595,7 +2595,7 @@ int Icon_Init(Tcl_Interp *interp, int size, int depth)
 	 */
 	Tcl_InitHashTable(&g_icon_table, TCL_STRING_KEYS);
 
-	Tcl_CreateObjCommand(interp, (char *) "icon", objcmd_icon, NULL, NULL);
+	Tcl_CreateObjCommand(interp, "icon", objcmd_icon, NULL, NULL);
 	
 	return TCL_OK;
 }

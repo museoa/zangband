@@ -652,7 +652,7 @@ void DoubleLink_Unlink(DoubleLink *link)
 
 if (!linker->count)
 	if (linker->head != NULL || linker->tail != NULL)
-		Tcl_Panic((char *) "linker \"%s\" count is zero, but head=%ld tail=%ld",
+		Tcl_Panic("linker \"%s\" count is zero, but head=%ld tail=%ld",
 			linker->what, linker->head, linker->tail);
 			
 }
@@ -669,7 +669,7 @@ Tcl_Obj *ExtToUtf_NewStringObj(CONST char *bytes, int length)
 	return objResult;
 }
 
-void ExtToUtf_SetResult(Tcl_Interp *interp, char *string)
+void ExtToUtf_SetResult(Tcl_Interp *interp, cptr string)
 {
 	char *utfString;
 	Tcl_DString utfDString;
@@ -836,7 +836,7 @@ int objcmd_fontdesc(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 	
     if (objc != 2)
     {
-		Tcl_WrongNumArgs(interp, 1, objv, (char *) "font");
+		Tcl_WrongNumArgs(interp, 1, objv, "font");
 		return TCL_ERROR;
     }
 
@@ -889,7 +889,7 @@ int objcmd_menuentrystate(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Ob
 	/* Required number of arguments */
     if ((objc != 3) && (objc != 4))
     {
-		Tcl_WrongNumArgs(interp, 1, objv, (char *) "menu index ?state?");
+		Tcl_WrongNumArgs(interp, 1, objv, "menu index ?state?");
 		return TCL_ERROR;
     }
 
@@ -921,7 +921,7 @@ int objcmd_menuentrystate(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Ob
 	{
 		mePtr = menuPtr->entries[entryIndex];
 		Tcl_SetStringObj(Tcl_GetObjResult(interp),
-			(char *) tkMenuStateStrings[mePtr->state], -1);
+			tkMenuStateStrings[mePtr->state], -1);
 		return TCL_OK;
 	}
 
@@ -971,7 +971,7 @@ byte g_prompt_attr = TERM_WHITE;
  */
 void prompt_print(cptr str)
 {
-	char *attr = (char *) keyword_term_color[g_prompt_attr];
+	cptr attr = keyword_term_color[g_prompt_attr];
 
 	angtk_eval("angband_prompt", "set", str, attr, NULL);
 }
@@ -1008,21 +1008,21 @@ void prompt_format(cptr fmt, ...)
 
 void prompt_append(cptr str)
 {
-	char *attr = (char *) keyword_term_color[g_prompt_attr];
+	cptr attr = keyword_term_color[g_prompt_attr];
 
 	angtk_eval("angband_prompt", "append", str, attr, NULL);
 }
 
 void prompt_open(cptr str)
 {
-	char *attr = (char *) keyword_term_color[g_prompt_attr];
+	cptr attr = keyword_term_color[g_prompt_attr];
 
 	angtk_eval("angband_prompt", "open", str, attr, NULL);
 }
 
 void prompt_update(cptr str)
 {
-	char *attr = (char *) keyword_term_color[g_prompt_attr];
+	cptr attr = keyword_term_color[g_prompt_attr];
 
 	angtk_eval("angband_prompt", "update", str, attr, NULL);
 }
@@ -1049,10 +1049,10 @@ void any_more(cptr prompt)
 	quick_messages = old_quick;
 }
 
-int ExtToUtf_SetArrayValueString(char *varName, char *field, char *value)
+int ExtToUtf_SetArrayValueString(cptr varName, cptr field, cptr value)
 {
 	Tcl_DString utfDString;
-	char *utfString;
+	cptr utfString;
 
 	Tcl_ExternalToUtfDString(NULL, value, -1, &utfDString);
 	utfString = Tcl_DStringValue(&utfDString);

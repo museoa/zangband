@@ -204,7 +204,7 @@ typedef struct t_display {
  * are themselves defined by the structure below.
  */
 typedef struct t_flavor {
-	char *desc; /* Keyword for this flavor (potion, ring, mushroom) */
+	cptr desc; /* Keyword for this flavor (potion, ring, mushroom) */
 	int tval; /* Object tval flavor applies to */
 	int count; /* Number of assignments */
 	int *sorted; /* Map unsorted index to assignment index */
