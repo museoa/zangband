@@ -91,11 +91,9 @@ errr init_script(void)
 
 	Py_SetProgramName((char*)argv0);
 
-#ifdef __djgpp__
 	/* Set the enviroment variables */
-	setenv("PYTHONPATH", ANGBAND_DIR_SCRIPT, 1);
-	setenv("PYTHONHOME", ANGBAND_DIR_SCRIPT, 1);
-#endif /* __djgpp__ */
+	putenv(format("PYTHONPATH=%s", ANGBAND_DIR_SCRIPT));
+	putenv(format("PYTHONHOME=%s", ANGBAND_DIR_SCRIPT));
 
 	/* Initialize the Python interpreter */
 	Py_Initialize();
