@@ -355,11 +355,11 @@ static void get_money(void)
 	for (i = 0; i < A_MAX; i++)
 	{
 		/* Mega-Hack -- reduce gold for high stats */
-		if (stat_use[i] >= 18 + 50) gold -= 300;
-		else if (stat_use[i] >= 18 + 20) gold -= 200;
-		else if (stat_use[i] > 18) gold -= 150;
+		if (stat_use[i] >= 180 + 50) gold -= 300;
+		else if (stat_use[i] >= 180 + 20) gold -= 200;
+		else if (stat_use[i] > 180) gold -= 150;
 		else
-			gold -= (stat_use[i] - 8) * 10;
+			gold -= (stat_use[i] - 80);
 	}
 
 	/* Minimum 100 gold */
