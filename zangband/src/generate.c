@@ -1078,6 +1078,11 @@ void del_region(int rg_idx)
 	{
 		/* Delete everything in the region */
 		wipe_monsters(rg_idx);
+		
+		/*
+		 * Objects are deleted after the monsters,
+		 * because monsters carry them.
+		 */
 		wipe_objects(rg_idx);
 		wipe_fields(rg_idx);
 	}

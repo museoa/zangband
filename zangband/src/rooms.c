@@ -284,7 +284,7 @@ static void build_type1(int bx0, int by0)
 
 
 	/* Generate new room */
-	generate_room(y1 - 1, x1 - 1, y2 + 1, x2 + 1, light);
+	generate_room(x1 - 1, y1 - 1, x2 + 1, y2 + 1, light);
 
 	/* Generate outer walls */
 	generate_draw(x1 - 1, y1 - 1, x2 + 1, y2 + 1, FEAT_WALL_OUTER);
@@ -409,7 +409,7 @@ static void build_type2(int bx0, int by0)
 		x2 = xval + randint0(11);
 
 		/* Generate new room */
-		generate_room(y1 - 1, x1 - 1, y2 + 1, x2 + 1, light);
+		generate_room(x1 - 1, y1 - 1, x2 + 1, y2 + 1, light);
 
 		/* Generate outer walls */
 		generate_draw(x1 - 1, y1 - 1, x2 + 1, y2 + 1, FEAT_WALL_OUTER);
@@ -482,10 +482,10 @@ static void build_type3(int bx0, int by0)
 
 
 	/* Generate new room (a) */
-	generate_room(y1a - 1, x1a - 1, y2a + 1, x2a + 1, light);
+	generate_room(x1a - 1, y1a - 1, x2a + 1, y2a + 1, light);
 
 	/* Generate new room (b) */
-	generate_room(y1b - 1, x1b - 1, y2b + 1, x2b + 1, light);
+	generate_room(x1b - 1, y1b - 1, x2b + 1, y2b + 1, light);
 
 	/* Generate outer walls (a) */
 	generate_draw(x1a - 1, y1a - 1, x2a + 1, y2a + 1, FEAT_WALL_OUTER);
