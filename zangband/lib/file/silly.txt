@@ -1,5 +1,5 @@
 N:*:Default
-297
+296
 Borg
 Dalek
 Destructor
@@ -296,4 +296,3 @@ Beast of the Black Forest
 Demon of the Belfry
 Sex Beast
 Sunday Morning Slasher
-Luggage
