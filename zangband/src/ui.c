@@ -911,6 +911,53 @@ int fmt_offset(cptr str1, cptr str2)
 }
 
 /*
+ * Remove the formatting escape sequences from a buffer.
+ */
+void fmt_clean(char *buf)
+{
+	char *p = buf, *c = buf;
+	
+	while (*c)
+	{
+		/* Does this character match the escape code? */
+		if (*c == '$')
+		{
+			/* Scan the next character */
+			c++;
+			
+			/* Is it an escape sequence? */
+			if ((*c >= 'A') && (*c <= 'R'))
+			{
+				/* Ignore it */
+				c++;
+				
+				continue;
+			}
+						
+			/*
+			 * Hack XXX XXX - otherwise, ignore the dollar sign
+			 * and copy the string value.
+			 *
+			 * This makes "$$" turn into just "$".
+			 */
+			*p++ = *c;
+			
+			/* Stop if reach null */
+			if (*c == 0) break;
+		}
+		else
+		{
+			/* Copy the value */
+			*p++ = *c++;
+		}
+	}
+	
+	/* Terminate buffer */
+	*p = '\0';
+}
+
+
+/*
  * Put a string with control characters at a given location
  */
 static void put_cstr(int col, int row, cptr str, bool clear)

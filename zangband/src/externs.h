@@ -1172,6 +1172,7 @@ extern void Term_write_list(s16b o_idx, byte list_type);
 
 /* ui.c */
 extern void binary_fmt(char *buf, uint max, cptr fmt, va_list *vp);
+extern void fmt_clean(char *buf);
 extern int get_player_choice(cptr *choices, int num, int col, int wid,
                              cptr helpfile, void (*hook) (cptr));
 extern int get_player_sort_choice(cptr *choices, int num, int col, int wid,

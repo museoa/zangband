@@ -3278,8 +3278,16 @@ errr file_character(cptr name, bool full)
 
 	OBJ_ITT_START (p_ptr->inventory, o_ptr)
 	{
+		char o_name[256];
+		
+		/* Describe object */
+		object_desc(o_name, o_ptr, TRUE, 3, 256);
+						
+		/* Clean formatting escape sequences */
+		fmt_clean(o_name);
+		
 		/* Dump the inventory slots */
-		froff(fff, "%c%s %v\n", I2A(i), paren, OBJECT_FMT(o_ptr, TRUE, 3));
+		froff(fff, "%c%s %s\n", I2A(i), paren, o_name);
 
 		/* Count slots */
 		i++;
@@ -3301,6 +3309,8 @@ errr file_character(cptr name, bool full)
 				/* Home -- if anything there */
 				if (st_ptr->stock)
 				{
+					char o_name[256];
+				
 					/* Header with name of the town */
 					froff(fff, "  [Home Inventory - %s]\n\n", place[i].name);
 
@@ -3310,8 +3320,13 @@ errr file_character(cptr name, bool full)
 					/* Dump all available items */
 					OBJ_ITT_START (st_ptr->stock, o_ptr)
 					{
-						froff(fff, "%c%s %v\n", I2A(k), paren,
-								OBJECT_FMT(o_ptr, TRUE, 3));
+						/* Describe object */
+						object_desc(o_name, o_ptr, TRUE, 3, 256);
+						
+						/* Clean formatting escape sequences */
+						fmt_clean(o_name);
+					
+						froff(fff, "%c%s %s\n", I2A(k), paren, o_name);
 
 						/* Increment counter */
 						k++;
