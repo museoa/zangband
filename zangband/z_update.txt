@@ -18,6 +18,7 @@ Changes since 2.5.0
 -Fixed a problem with life ratings and racial intrinsics being
  mixed up in the self-knowledge scrren.
 -Fixed a problem with generating full monster spoilers.
+-Fixed some problems with the monster fleeing code.
 -Added some monster AI optimizations from standard Angband.
 -Corrected some silly messages when failing trump summonng spells.
 -Mindcrafters can no longer get the 'viscous blow' effect when failing
@@ -37,18 +38,21 @@ Changes since 2.5.0
 -The large wilderness map can now be scrolled.
 -Towns are no longer concentrated in one corner of the wilderness.
 -Ocean is now very deep water.
+-The 'l'ook command now skips boring terrains (grass, dirt, very deep
+ water).
 -You can now clear Jungle with 'ctrl-direction'.
 -Monster pits and nests are slightly more common and their intrinsic
  depths have been adjusted for the new monster distribution.
 -Stopped pre-emptive tunnel completion when the tunnel meets the caved
  in regions with trees on first level.
+-Simplified the dungeon fractal generation code somewhat.
 -Fixed the problem with main-gcu in graphics mode.  Use "-g" to get the
  graphical walls.
 -Changed ascii dynamic lighting for red and blue - lava and water
  should look better now.
 -Transparency now works in XAW mode.
 -Added gamma correction for -X11.
-
+-You can no longer target friendly monsters by accident.
 
 
 ZAngband 2.5.0:
