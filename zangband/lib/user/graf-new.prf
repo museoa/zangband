@@ -4828,6 +4828,9 @@ T:46:0xBE/0x95
 # Mutatalist
 T:47:0xBE/0x91
 
+# Map Maker
+T:48:0xBE/0x92
+
 # Load the special player pictures
 %:xtra-new.prf
 
