@@ -896,7 +896,7 @@ void do_cmd_open(void)
 	}
 
 	/* Get a "repeated" direction */
-	if (get_rep_dir(&dir))
+	if (get_rep_dir(&dir,FALSE))
 	{
 		/* Get requested location */
 		y = py + ddy[dir];
@@ -1049,7 +1049,7 @@ void do_cmd_close(void)
 	}
 
 	/* Get a "repeated" direction */
-	if (get_rep_dir(&dir))
+	if (get_rep_dir(&dir,FALSE))
 	{
 		/* Get requested location */
 		y = py + ddy[dir];
@@ -1456,7 +1456,7 @@ void do_cmd_tunnel(void)
 	}
 
 	/* Get a direction to tunnel, or Abort */
-	if (get_rep_dir(&dir))
+	if (get_rep_dir(&dir,FALSE))
 	{
 		/* Get location */
 		y = py + ddy[dir];
@@ -1882,7 +1882,7 @@ void do_cmd_disarm(void)
 	}
 
 	/* Get a direction (or abort) */
-	if (get_rep_dir(&dir))
+	if (get_rep_dir(&dir,TRUE))
 	{
 		/* Get location */
 		y = py + ddy[dir];
@@ -2073,7 +2073,7 @@ void do_cmd_bash(void)
 	}
 
 	/* Get a "repeated" direction */
-	if (get_rep_dir(&dir))
+	if (get_rep_dir(&dir,FALSE))
 	{
 		/* Bash location */
 		y = py + ddy[dir];
@@ -2159,7 +2159,7 @@ void do_cmd_alter(void)
 	}
 
 	/* Get a direction */
-	if (get_rep_dir(&dir))
+	if (get_rep_dir(&dir,TRUE))
 	{
 		/* Get location */
 		y = py + ddy[dir];
@@ -2292,7 +2292,7 @@ void do_cmd_spike(void)
 
 
 	/* Get a "repeated" direction */
-	if (get_rep_dir(&dir))
+	if (get_rep_dir(&dir,FALSE))
 	{
 		/* Get location */
 		y = py + ddy[dir];
@@ -2389,7 +2389,7 @@ void do_cmd_walk(int pickup)
 	}
 
 	/* Get a "repeated" direction */
-	if (get_rep_dir(&dir))
+	if (get_rep_dir(&dir,FALSE))
 	{
 		/* Take a turn */
 		energy_use = 100;
@@ -2422,7 +2422,7 @@ void do_cmd_run(void)
 	}
 
 	/* Get a "repeated" direction */
-	if (get_rep_dir(&dir))
+	if (get_rep_dir(&dir,FALSE))
 	{
 		/* Hack -- Set the run counter */
 		running = (command_arg ? command_arg : 1000);

@@ -1848,7 +1848,7 @@ void mutation_power_aux(u32b power)
 				}
 
 				/* Only works on adjacent monsters */
-				if (!get_rep_dir(&dir)) return;
+				if (!get_rep_dir(&dir,FALSE)) return;
 				y = py + ddy[dir];
 				x = px + ddx[dir];
 
@@ -1909,7 +1909,7 @@ void mutation_power_aux(u32b power)
 				int x, y, ox, oy;
 				cave_type *c_ptr;
 
-				if (!get_rep_dir(&dir)) break;
+				if (!get_rep_dir(&dir,FALSE)) break;
 				y = py + ddy[dir];
 				x = px + ddx[dir];
 
@@ -2183,7 +2183,7 @@ void mutation_power_aux(u32b power)
 			{
 				int x, y;
 
-				if (!get_rep_dir(&dir)) return;
+				if (!get_rep_dir(&dir,FALSE)) return;
 				y = py + ddy[dir];
 				x = px + ddx[dir];
 
@@ -2258,7 +2258,7 @@ void mutation_power_aux(u32b power)
 				monster_type *m_ptr;
 				monster_race *r_ptr;
 
-				if (!get_rep_dir(&dir)) return;
+				if (!get_rep_dir(&dir,FALSE)) return;
 				y = py + ddy[dir];
 				x = px + ddx[dir];
 
@@ -2297,7 +2297,7 @@ void mutation_power_aux(u32b power)
 				int x, y;
 				cave_type *c_ptr;
 
-				if (!get_rep_dir(&dir)) return;
+				if (!get_rep_dir(&dir,FALSE)) return;
 				y = py + ddy[dir];
 				x = px + ddx[dir];
 

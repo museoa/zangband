@@ -512,7 +512,7 @@ static void cmd_racial_power_aux(s32b command)
 				cave_type *c_ptr;
 
 				/* Only works on adjacent monsters */
-				if (!get_rep_dir(&dir)) break;   /* was get_aim_dir */
+				if (!get_rep_dir(&dir,FALSE)) break;   /* was get_aim_dir */
 				y = py + ddy[dir];
 				x = px + ddx[dir];
 
