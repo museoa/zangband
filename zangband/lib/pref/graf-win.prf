@@ -15,3 +15,7 @@
 # New tiles
 ?:[EQU $GRAF new]
 %:graf-new.prf
+
+# David Gervais tiles
+?:[EQU $GRAF david]
+%:graf-dvg.prf
