@@ -699,8 +699,8 @@ F:SLAY_EVIL
 
 N:118:of Explosion
 X:23:10
-W:0:2:0:30
 F:EXPLODE
+W:30:1:0:50
 
 N:119:of Hurt Dragon
 X:23:10
