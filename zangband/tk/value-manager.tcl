@@ -169,9 +169,6 @@ proc NSValueManager::InitModule {} {
 
 	Manage settings,showUnused 0
 
-	# Path elements of most-recently-used savefile
-	Manage savefile {}
-
 	# Icon configuration
 	Manage config,prefix dg32
 
@@ -209,11 +206,6 @@ proc NSValueManager::InitModule {} {
 
 #	Manage options,autosave 1
 	Manage window,autosave 1
-
-	variable Write
-	set Write(savefile) "NSValueManager::Write"
-	variable Read
-	set Read(savefile) "NSValueManager::Read"
 	
 	LoadValueFile
 
@@ -412,68 +404,6 @@ proc NSValueManager::Changed {name} {
 	return
 }
 
-# NSValueManager::Write --
-#
-#	Special handling of some values.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSValueManager::Write {name} {
-
-	# Instead of writing "Manage savefile {C:/ AngbandTk lib save SaveFile}"
-	# we will write "Manage savefile {PathTk lib save SaveFile}"
-	# so the user can move the game directory without trouble, and
-	# make UpgradeTool's job easier.
-
-	set value [Get $name]
-	if {![string length $value]} {
-		return $value
-	}
-
-	switch -- $name {
-		savefile {
-			set path [eval file join $value]
-			if {[IsFileInPath $path]} {
-				set list [StripCommon $path [PathTk]]
-				return [concat PathTk $list]
-			}
-		}
-	}
-
-	return [list $value]
-}
-
-# NSValueManager::Read --
-#
-#	Special handling of some values.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSValueManager::Read {name} {
-
-	set value [Get $name]
-	if {![string length $value]} {
-		return
-	}
-
-	switch -- $name {
-		savefile {
-			if {[lindex $value 0] == "PathTk"} {
-				Manage $name [file split [eval $value]]
-			}
-		}
-	}
-
-	return
-}
 
 # ColorFromValue --
 #
