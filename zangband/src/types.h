@@ -119,12 +119,6 @@ struct feature_type
 	u32b name;			/* Name (offset) */
 	u32b text;			/* Text (offset) */
 
-	byte mimic;			/* Feature to mimic */
-
-	byte extra;			/* Extra byte (unused) */
-
-	s16b unused;		/* Extra bytes (unused) */
-
 	byte d_attr;		/* Default feature attribute */
 	char d_char;		/* Default feature character */
 
@@ -478,8 +472,6 @@ struct cave_type
 
 	s16b fld_idx;		/* Field in this grid */
 
-	byte mimic;		/* Feature to mimic */
-
 #ifdef MONSTER_FLOW
 
 	byte cost;		/* Hack -- cost of flowing */
@@ -601,9 +593,8 @@ struct wild_done_type
 };
 
 /*
- * To save room, the above two structures are combined to form the completed
- * wilderness type.  The first one is only used in generation - the second
- * from then onwards.
+ * To save room, the above three structures are combined to form the completed
+ * wilderness type.
  */
 
 typedef union wild_type wild_type;
@@ -682,15 +673,15 @@ struct wild_bound_box_type
  * This data type stores the information on a particular
  * wilderness generation type for 16x16 blocks, so the
  * blocks can be
- * 1) made.
+ * 1) Made.
  * 2) Looked at on the overhead map.
  */
 typedef struct wild_gen_data_type wild_gen_data_type;
 
 struct wild_gen_data_type
 {
-	byte	w_attr;		/* Default attribute for overhead map*/
-	char	w_char;		/* Default character for overhead map*/
+	byte	w_attr;		/* Default attribute for overhead map */
+	char	w_char;		/* Default character for overhead map */
 
 	byte	gen_routine;	/* Generation routine number */
 
@@ -821,8 +812,6 @@ struct object_type
 /*
  * Monster information, for a specific monster.
  *
- * Note: fy, fx constrain dungeon size to 256x256
- *
  * The "hold_o_idx" field points to the first object of a stack
  * of objects (if any) being carried by the monster (see above).
  */
@@ -913,21 +902,12 @@ struct field_thaum
 /*
  * The field structure.
  *
- * Fields can be used in the following ways:
- * 1) Attached to the ground.
- * 2) Attached to an object.
- * 3) Attached to a monster.
- * 4) Some global "effect".
+ * Fields will be used to create a variety of effects from
+ * the ability to place traps on _all_ terrains (not just 
+ * dungeon floor), to the nightmare mode automatic corpse raising.
  *
- * The data-type is very general, and will be used to
- * create a variety of effects from the ability to place
- * traps on _all_ terrains (not just dungeon floor), to
- * The nightmare mode automatic corpse raising.
- * The same code can do effects like "wall of fire", or
- * timed branding of ammo.
  * The new building / store code will use this structure.
- * Even the "Change colour of item" spell can be done this
- * way.
+ *
  */
 struct field_type
 {
@@ -943,13 +923,13 @@ struct field_type
 
 	u16b info;			/* quick access flags */
 
-	s16b counter;			/* Counter for timed effects */
-
 	/* Storage space for the actions to interact with. */
 	byte data[8];
 
 	field_action_type action[FIELD_ACTION_MAX]; /* Function pointers for the actions */
 
+	s16b counter;			/* Counter for timed effects */
+	
 	byte priority;			/* LOS priority higher = more visible */
 
 #ifdef USE_SCRIPT
@@ -960,8 +940,6 @@ struct field_type
 /*
  * This is the type of the array that is used to parse t_info.txt
  * It contains the functions fields call + the names of those functions.
- * This means that an index to the array can be used to save what
- * fields do (in field_thaum_type).
  */
 
 typedef struct field_action field_action;
@@ -1020,8 +998,6 @@ struct alloc_entry
 	byte prob1;		/* Probability, pass 1 */
 	byte prob2;		/* Probability, pass 2 */
 	byte prob3;		/* Probability, pass 3 */
-
-	u16b total;		/* Unused for now */
 };
 
 
@@ -1676,6 +1652,7 @@ struct town_type
 	u16b 	    type;	/* Type of town / dungeon / special */
 	byte		x;	/* Location mod 16 in wilderness */
 	byte		y;
+	byte		data[8];	/* Data describing sub-information */
 };
 
 /* Dungeons */
