@@ -319,7 +319,7 @@ static void build_store(int n, int yy, int xx)
  * layout, including the size and shape of the buildings, the
  * locations of the doorways, and the location of the stairs.
  */
-static void town_gen_hack(u16b town_num)
+static void town_gen_hack(u16b town_num, int *xx, int *yy)
 {
 	int y, x, k, n;
 
@@ -362,15 +362,15 @@ static void town_gen_hack(u16b town_num)
 	while (TRUE)
 	{
 		/* Pick a location at least "three" from the outer walls */
-		y = rand_range(3, SCREEN_HGT - 4);
-		x = rand_range(3, SCREEN_WID - 4);
+		*yy = rand_range(3, SCREEN_HGT - 4);
+		*xx = rand_range(3, SCREEN_WID - 4);
 
 		/* Require a floor grid */
-		if (cave[y][x].feat == FEAT_PEBBLES) break;
+		if (cave[*yy][*xx].feat == FEAT_PEBBLES) break;
 	}
 
 	/* Clear previous contents, add down stairs */
-	cave[y][x].feat = FEAT_MORE;
+	cave[*yy][*xx].feat = FEAT_MORE;
 
 	/* Hack -- use the "complex" RNG */
 	Rand_quick = FALSE;
@@ -389,8 +389,10 @@ static void town_gen_hack(u16b town_num)
  * This function does NOT do anything about the owners of the stores,
  * nor the contents thereof.  It only handles the physical layout.
  *
+ * xx and yy point to the location of the stairs (So the player can
+ * start there.)
  */
-static void town_gen(u16b town_num)
+static void town_gen(u16b town_num, int *xx, int *yy)
 {
 	int y, x;
 
@@ -427,7 +429,7 @@ static void town_gen(u16b town_num)
 	}
 
 	/* Build stuff */
-	town_gen_hack(town_num);
+	town_gen_hack(town_num, xx, yy);
 
 	/* Town is now built */
 	cur_town = town_num;
@@ -514,7 +516,7 @@ static bool town_blank(int x, int y, int xsize, int ysize)
 static void init_towns(void)
 {
 	int i, j;
-	int x, y;
+	int x, y, xx, yy;
 	
 	wild_done_type *w_ptr;
 	
@@ -577,18 +579,18 @@ static void init_towns(void)
 		town_count++;
 	} 
 
-	/* No current town in cave[][] */
-	cur_town = 0;
+	/* Make the best town - and get the location of the stairs */
+	town_gen(best_town, &xx, &yy);
 	
-	/* Hack - Reset player position to just next to the easiest town */
-	p_ptr->wilderness_x = town[best_town].x * 16;
-	p_ptr->wilderness_y = town[best_town].y * 16;
+	/* Hack - Reset player position to be on the stairs in town */
+	p_ptr->wilderness_x = town[best_town].x * 16 + xx;
+	p_ptr->wilderness_y = town[best_town].y * 16 + yy;
 }
 
 /* Place a single town in the middle of the tiny wilderness */
 static void init_vanilla_town(void)
 {
-	int i, j;
+	int i, j, xx, yy;
 	
 	/* Only one town */
 	strcpy(town[1].name, "town");
@@ -607,12 +609,12 @@ static void init_vanilla_town(void)
 		}
 	}
 
-	/* No current town in cave[][] */
-	cur_town = 0;
+	/* Make the town - and get the location of the stairs */
+	town_gen(1, &xx, &yy);
 	
-	/* Hack - Reset player position to just next to town 1 */
-	p_ptr->wilderness_x = town[1].x * 16;
-	p_ptr->wilderness_y = town[1].y * 16;
+	/* Hack - Reset player position to be on the stairs in town */
+	p_ptr->wilderness_x = town[1].x * 16 + xx;
+	p_ptr->wilderness_y = town[1].y * 16 + yy;
 	
 	/* One town */
 	town_count = 1;
@@ -3024,6 +3026,7 @@ void repopulate_wilderness(void)
 static void gen_block(int x, int y, blk_ptr block_ptr)
 {
 	u16b w_town, w_type;
+	int dummy1, dummy2;
 	
 	/*
 	 * XXX XXX Later - most of this will be table driven.
@@ -3089,7 +3092,7 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 		if (cur_town != w_town)
 		{
 			/* Make the town */
-			town_gen(w_town);
+			town_gen(w_town, &dummy1, &dummy2);
 
 			init_buildings();
 		}
