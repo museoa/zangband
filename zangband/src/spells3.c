@@ -1971,29 +1971,29 @@ void identify_item(object_type *o_ptr)
 	object_aware(o_ptr);
 	object_known(o_ptr);
 
-	if ((o_ptr->flags3 & TR3_INSTA_ART) 
-		&& (a_info[o_ptr->activate - 128].cur_num != 2))
-	{
-		/*
-		 * If the item was an artifact, and if the
-		 * auto-note is selected, write a message.
-		 */
-		if (auto_notes && take_notes)
-		{
-			char note[80];
-			char item_name[80];
-			object_desc(item_name, o_ptr, FALSE, 0);
-
-			/* Build note and write */
-			sprintf(note, "Found The %s", item_name);
-
-			add_note(note, 'A');
-		}
-	}
-
 	/* Save knowledge of artifact */
 	if (o_ptr->activate > 127)
 	{
+		/* Have we seen it before? */
+		if (a_info[o_ptr->activate - 128].cur_num != 2)
+		{
+			/*
+			 * If the item was an artifact, and if the
+			 * auto-note is selected, write a message.
+			 */
+			if (auto_notes && take_notes)
+			{
+				char note[80];
+				char item_name[80];
+				object_desc(item_name, o_ptr, FALSE, 0);
+	
+				/* Build note and write */
+				sprintf(note, "Found The %s", item_name);
+
+				add_note(note, 'A');
+			}
+		}
+		
 		a_info[o_ptr->activate - 128].cur_num = 2;
 	}
 
