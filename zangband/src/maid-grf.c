@@ -291,7 +291,7 @@ static bool map_init = FALSE;
 map_blk_ptr_ptr *map_cache;
 
 /* Refcount for map cache */
-byte *map_cache_refcount;
+s16b *map_cache_refcount;
 
 /* Location of cache blocks */
 int *map_cache_x;
@@ -396,7 +396,7 @@ void init_overhead_map(void)
 	C_MAKE(map_cache, MAP_CACHE, map_blk_ptr_ptr);
 
 	/* Refcount for cache blocks */
-	C_MAKE(map_cache_refcount, MAP_CACHE, byte);
+	C_MAKE(map_cache_refcount, MAP_CACHE, s16b);
 
 	/* Cache block locations */
 	C_MAKE(map_cache_x, MAP_CACHE, int);

@@ -259,7 +259,7 @@ extern byte gamma_table[256];
 
 #ifdef TERM_USE_MAP
 extern map_blk_ptr_ptr *map_cache;
-extern byte *map_cache_refcount;
+extern s16b *map_cache_refcount;
 extern int *map_cache_x;
 extern int *map_cache_y;
 extern int **map_grid;
