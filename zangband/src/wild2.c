@@ -3487,7 +3487,7 @@ static void del_block(int x, int y)
 			}
 
 			/* Delete objects on the square */
-			delete_object_location(&block_ptr[yy][xx]);
+			delete_object_list(&block_ptr[yy][xx].o_idx);
 
 			/* Delete fields on the square */
 			delete_field_aux(&block_ptr[yy][xx].fld_idx);

@@ -15,7 +15,6 @@ void tolua_object_close (lua_State* tolua_S);
 static void toluaI_reg_types (lua_State* tolua_S)
 {
  tolua_usertype(tolua_S,"artifact_type");
- tolua_usertype(tolua_S,"cave_type");
  tolua_usertype(tolua_S,"ego_item_type");
  tolua_usertype(tolua_S,"obj_theme");
  tolua_usertype(tolua_S,"object_type");
@@ -3351,24 +3350,25 @@ tolua_lerror:
  return 0;
 }
 
-/* function: delete_object_location */
-static int toluaI_object_delete_object_location00(lua_State* tolua_S)
+/* function: delete_object_list */
+static int toluaI_object_delete_object_list00(lua_State* tolua_S)
 {
  if (
-     !tolua_istype(tolua_S,1,tolua_tag(tolua_S,"cave_type"),0) ||
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
      !tolua_isnoobj(tolua_S,2)
  )
   goto tolua_lerror;
  else
  {
-  cave_type* c_ptr = ((cave_type*)  tolua_getusertype(tolua_S,1,0));
+  s16b o_idx_ptr = ((s16b)  tolua_getnumber(tolua_S,1,0));
   {
-   delete_object_location(c_ptr);
+   delete_object_list(&o_idx_ptr);
+   tolua_pushnumber(tolua_S,(long)o_idx_ptr);
   }
  }
- return 0;
+ return 1;
 tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'delete_object_location'.");
+ tolua_error(tolua_S,"#ferror in function 'delete_object_list'.");
  return 0;
 }
 
@@ -5819,7 +5819,7 @@ int tolua_object_open (lua_State* tolua_S)
  tolua_function(tolua_S,NULL,"excise_object_idx",toluaI_object_excise_object_idx00);
  tolua_function(tolua_S,NULL,"delete_object_idx",toluaI_object_delete_object_idx00);
  tolua_function(tolua_S,NULL,"delete_object",toluaI_object_delete_object00);
- tolua_function(tolua_S,NULL,"delete_object_location",toluaI_object_delete_object_location00);
+ tolua_function(tolua_S,NULL,"delete_object_list",toluaI_object_delete_object_list00);
  tolua_function(tolua_S,NULL,"compact_objects",toluaI_object_compact_objects00);
  tolua_function(tolua_S,NULL,"o_pop",toluaI_object_o_pop00);
  tolua_function(tolua_S,NULL,"get_obj_num_prep",toluaI_object_get_obj_num_prep00);
@@ -6909,7 +6909,7 @@ void tolua_object_close (lua_State* tolua_S)
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"excise_object_idx");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"delete_object_idx");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"delete_object");
- lua_pushnil(tolua_S); lua_setglobal(tolua_S,"delete_object_location");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"delete_object_list");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"compact_objects");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"o_pop");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"get_obj_num_prep");

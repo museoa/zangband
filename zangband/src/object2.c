@@ -138,7 +138,7 @@ void delete_object(int x, int y)
 	c_ptr = area(x, y);
 
 	/* Delete the objects */
-	delete_object_location(c_ptr);
+	delete_object_list(&c_ptr->o_idx);
 
 	/* Visual update */
 	lite_spot(x, y);
@@ -148,12 +148,12 @@ void delete_object(int x, int y)
 /*
  * Deletes all objects at given location
  */
-void delete_object_location(cave_type *c_ptr)
+void delete_object_list(s16b *o_idx_ptr)
 {
 	object_type *o_ptr;
 
 	/* Scan all objects in the grid */
-	OBJ_ITT_START (c_ptr->o_idx, o_ptr)
+	OBJ_ITT_START (*o_idx_ptr, o_ptr)
 	{
 		/* Wipe the object */
 		object_wipe(o_ptr);
@@ -164,7 +164,7 @@ void delete_object_location(cave_type *c_ptr)
 	OBJ_ITT_END;
 
 	/* Objects are gone */
-	c_ptr->o_idx = 0;
+	o_idx_ptr = 0;
 }
 
 
