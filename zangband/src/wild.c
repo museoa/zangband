@@ -4384,8 +4384,8 @@ void create_wilderness(void)
 
 			/* Mega hack - set monster toughness and density */
 
-			/* Toughness (level 0 - 80) */
-			wild[j][i].done.mon_gen = (256 - law) * (256 - law) * 5 / 4096;
+			/* Toughness (level 0 - 64) */
+			wild[j][i].done.mon_gen = (256 - law) * (256 - law)  / 512;
 			
 			/* No monsters (probability 0 - 16) */
 			wild[j][i].done.mon_prob = pop / 16;
