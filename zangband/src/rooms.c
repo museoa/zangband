@@ -1746,7 +1746,7 @@ static void coord_trans(int *x, int *y, int xoffset, int yoffset, int transno)
 /*
  * Hack -- fill in "vault" rooms
  */
-static void build_vault(int yval, int xval, int ymax, int xmax, cptr data,
+static void build_vault(int xval, int yval, int xmax, int ymax, cptr data,
 		int xoffset, int yoffset, int transno)
 {
 	int dx, dy, x, y, i, j;
@@ -2076,7 +2076,7 @@ static void build_type7(int bx0, int by0)
 	}
 
 	/* Hack -- Build the vault */
-	build_vault(yval, xval, v_ptr->hgt, v_ptr->wid,
+	build_vault(xval, yval, v_ptr->wid, v_ptr->hgt,
 	            v_text + v_ptr->text, xoffset, yoffset, transno);
 }
 
@@ -2173,7 +2173,7 @@ static void build_type8(int bx0, int by0)
 	}
 
 	/* Hack -- Build the vault */
-	build_vault(yval, xval, v_ptr->hgt, v_ptr->wid,
+	build_vault(xval, yval, v_ptr->wid, v_ptr->hgt,
 	            v_text + v_ptr->text, xoffset, yoffset, transno);
 }
 
