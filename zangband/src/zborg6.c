@@ -2180,7 +2180,6 @@ static bool borg_heal(int danger)
 
 			/* Rest until done */
 			borg_keypress('R');
-			borg_keypress('&');
 			borg_keypress('\n');
 
 			/* Reset our panel clock, we need to be here */
@@ -12842,7 +12841,6 @@ bool borg_recover(void)
 
 			/* Rest until done */
 			borg_keypress('R');
-			borg_keypress('&');
 			borg_keypress('\n');
 
 			/* Reset our panel clock */

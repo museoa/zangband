@@ -3390,7 +3390,6 @@ bool borg_think_dungeon(void)
 		{
 			/* Rest until done */
 			borg_keypress('R');
-			borg_keypress('&');
 			borg_keypress('\n');
 		}
 		else
