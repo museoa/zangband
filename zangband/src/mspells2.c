@@ -27,7 +27,7 @@ static void monst_breath_monst(int m_idx, int x, int y, int typ, int dam_hp,
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 	/* Determine the radius of the blast */
-	if (rad < 1) rad = (r_ptr->flags[1] & RF1_POWERFUL) ? 3 : 2;
+	if (rad < 1) rad = FLAG(r_ptr, RF_POWERFUL) ? 3 : 2;
 
 	/* Handle breath attacks */
 	if (breath) rad = 0 - rad;
@@ -78,7 +78,7 @@ bool monst_spell_monst(int m_idx)
 	u32b f4, f5, f6;
 
 	/* Expected ball spell radius */
-	int rad = (r_ptr->flags[1] & RF1_POWERFUL) ? 3 : 2;
+	int rad = FLAG(r_ptr, RF_POWERFUL) ? 3 : 2;
 
 	bool wake_up = FALSE;
 	bool fear = FALSE;

@@ -206,8 +206,8 @@ bool monster_death(int m_idx, bool explode)
 
 	bool visible = (m_ptr->ml || (FLAG(r_ptr, RF_UNIQUE)));
 
-	bool good = (r_ptr->flags[0] & RF0_DROP_GOOD) ? TRUE : FALSE;
-	bool great = (r_ptr->flags[0] & RF0_DROP_GREAT) ? TRUE : FALSE;
+	bool good = FLAG(r_ptr, RF_DROP_GOOD);
+	bool great = FLAG(r_ptr, RF_DROP_GREAT);
 
 	bool do_gold = (!(FLAG(r_ptr, RF_ONLY_ITEM)));
 	bool do_item = (!(FLAG(r_ptr, RF_ONLY_GOLD)));

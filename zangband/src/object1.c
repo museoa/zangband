@@ -131,7 +131,7 @@ void object_flags_known(const object_type *o_ptr, object_flags *of_ptr)
 	of_ptr->flags[2] = k_ptr->flags[2];
 	of_ptr->flags[3] = k_ptr->flags[3];
 
-	/* Show modifications to stats */
+	/* Show modifications to stats (can't use FLAG() here.) */
 	of_ptr->flags[0] |= (o_ptr->flags[0] & TR0_EASY_MASK);
 
 	/* 

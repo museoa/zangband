@@ -1361,9 +1361,10 @@ static quest_type *insert_bounty_quest(u16b r_idx, u16b num)
 
 static bool request_bounty(int dummy)
 {
-	int i, num;
+	int i;
 	
-	int best_r_idx = 1;
+	u16b num;
+	u16b best_r_idx = 1;
 	int best_level = 1;
 
 	int r_idx;

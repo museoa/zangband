@@ -431,7 +431,7 @@ static void breath(int m_idx, int typ, int dam_hp, int rad, bool breath)
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 	/* Determine the radius of the blast */
-	if (rad < 1) rad = (r_ptr->flags[1] & (RF1_POWERFUL)) ? 3 : 2;
+	if (rad < 1) rad = FLAG(r_ptr, RF_POWERFUL) ? 3 : 2;
 
 	/* Handle breath attacks */
 	if (breath) rad = 0 - rad;
@@ -2149,7 +2149,7 @@ bool make_attack_spell(int m_idx)
 			else
 				msgf("%^s magically summons %s %s.",
 						   m_name, m_poss,
-						   ((r_ptr->flags[0]) & RF0_UNIQUE ? "minions" : "kin"));
+						   FLAG(r_ptr, RF_UNIQUE) ? "minions" : "kin");
 			summon_kin_type = r_ptr->d_char;	/* Big hack */
 
 			for (k = 0; k < 6; k++)

@@ -2061,7 +2061,7 @@ static bool place_monster_okay(int r_idx)
 	}
 
 	/* Hostile vs. non-hostile */
-	if ((FLAG(r_ptr, RF_FRIENDLY)) != (z_ptr->flags[6] & RF6_FRIENDLY))
+	if (FLAG(r_ptr, RF_FRIENDLY) != FLAG(z_ptr, RF_FRIENDLY))
 		return FALSE;
 
 	/* Okay */
@@ -2469,13 +2469,13 @@ static bool summon_specific_okay(int r_idx)
 
 		case SUMMON_AMBERITES:
 		{
-			okay = (r_ptr->flags[2] & (RF2_AMBERITE)) ? TRUE : FALSE;
+			okay = FLAG(r_ptr, RF_AMBERITE);
 			break;
 		}
 
 		case SUMMON_UNIQUE:
 		{
-			okay = (r_ptr->flags[0] & (RF0_UNIQUE)) ? TRUE : FALSE;
+			okay = FLAG(r_ptr, RF_UNIQUE);
 			break;
 		}
 
