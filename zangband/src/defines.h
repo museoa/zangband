@@ -3542,10 +3542,16 @@
 	 RF4_BR_GRAV | RF4_BR_SHAR | RF4_BR_PLAS | RF4_BR_WALL | RF4_BR_MANA | \
 	 RF4_BR_NUKE | RF4_BR_DISI)
 
+
+/* Menu seperator */
+#define MENU_SEPERATOR {NULL, NULL, FALSE, FALSE}
+
+
 /*** Option Definitions ***/
 
 /* Number of things in the main options menu */
 #define OPTION_MENU_MAX			14
+
 
 /*
  * Option indexes (offsets)

@@ -1229,11 +1229,14 @@ menu_type options_menu[OPTION_MENU_MAX] =
 	{"Birth Options", do_cmd_options_aux, TRUE, FALSE},
 	{"Artificial Intelligence Options", do_cmd_options_aux, TRUE, FALSE},
 	{"Testing Options", do_cmd_options_aux, TRUE, FALSE},
+	MENU_SEPERATOR,
 	{"Cheating Options", do_cmd_options_cheat, TRUE, FALSE},
 	{"Base Delay Factor", do_cmd_options_delay, TRUE, FALSE},
 	{"Hitpoint Warning", do_cmd_options_hitpoint, TRUE, FALSE},
+	MENU_SEPERATOR,
 	{"Autosave Options", do_cmd_options_autosave, TRUE, FALSE},
 	{"Window Flags", do_cmd_options_win, TRUE, FALSE},
+	MENU_SEPERATOR,
 	{"Dump Options to a Pref File", do_cmd_options_dump, TRUE, FALSE},
 };
 
