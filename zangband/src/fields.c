@@ -4003,6 +4003,21 @@ void field_action_isrecharge_tester(s16b *field_ptr, void *input)
 }
 
 /*
+ * Jeweler will buy/sell
+ */
+void field_action_isjewel_tester(s16b *field_ptr, void *input)
+{	
+	field_obj_test *f_o_ptr = (field_obj_test *) input;
+	
+	/* Hack - ignore field_ptr */
+	(void) field_ptr;
+		
+	f_o_ptr->result = item_tester_hook_jewel(f_o_ptr->o_ptr);
+}
+
+
+
+/*
  * Weildable items store will buy/sell
  */
 void field_action_iswield_tester(s16b *field_ptr, void *input)

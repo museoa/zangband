@@ -1793,6 +1793,22 @@ bool item_tester_hook_recharge(object_type *o_ptr)
 	return (FALSE);
 }
 
+/*
+ * Determine if something is a 'jewel'
+ */
+bool item_tester_hook_jewel(object_type *o_ptr)
+{
+	/* Rings */
+	if (o_ptr->tval == TV_RING) return (TRUE);
+
+	/* Amulets */
+	if (o_ptr->tval == TV_AMULET) return (TRUE);
+
+	/* Nope */
+	return (FALSE);
+}
+
+
 
 /* Hack - match item_tester_tval */
 bool item_tester_hook_tval(object_type *o_ptr)

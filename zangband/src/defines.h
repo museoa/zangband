@@ -234,7 +234,29 @@
 #define BUILD_HARMOUR3			64
 #define BUILD_HARMOUR4			65
 #define BUILD_HARMOUR5			66
-
+#define BUILD_HAT0				67
+#define BUILD_HAT1				68
+#define BUILD_HAT2				69
+#define BUILD_HAT3				70
+#define BUILD_JEWEL0			71
+#define BUILD_JEWEL1			72
+#define BUILD_JEWEL2			73
+#define BUILD_JEWEL3			74
+#define BUILD_JEWEL4			75
+#define BUILD_STATUE0			76
+#define BUILD_STATUE1			77
+#define BUILD_FIGUR0			78
+#define BUILD_FIGUR1			79
+#define BUILD_POTION0			80
+#define BUILD_POTION1			81
+#define BUILD_POTION2			82
+#define BUILD_POTION3			83
+#define BUILD_POTION4			84
+#define BUILD_SCROLL0			85
+#define BUILD_SCROLL1			86
+#define BUILD_SCROLL2			87
+#define BUILD_SCROLL3			88
+#define BUILD_SCROLL4			89
 
 
 /* Maximum number of "building" types in a city */
@@ -1185,7 +1207,29 @@
 #define FT_STORE_HARMOUR3		0x005F
 #define FT_STORE_HARMOUR4		0x0060
 #define FT_STORE_HARMOUR5		0x0061
-
+#define FT_STORE_HAT0			0x0062
+#define FT_STORE_HAT1			0x0063
+#define FT_STORE_HAT2			0x0064
+#define FT_STORE_HAT3			0x0065
+#define FT_STORE_JEWEL0			0x0066
+#define FT_STORE_JEWEL1			0x0067
+#define FT_STORE_JEWEL2			0x0068
+#define FT_STORE_JEWEL3			0x0069
+#define FT_STORE_JEWEL4			0x006A
+#define FT_STORE_STATUE0		0x006B
+#define FT_STORE_STATUE1		0x006C
+#define FT_STORE_FIGUR0			0x006D
+#define FT_STORE_FIGUR1			0x006E
+#define FT_STORE_POTION0		0x006F
+#define FT_STORE_POTION1		0x0070
+#define FT_STORE_POTION2		0x0071
+#define FT_STORE_POTION3		0x0072
+#define FT_STORE_POTION4		0x0073
+#define FT_STORE_SCROLL0		0x0074
+#define FT_STORE_SCROLL1		0x0075
+#define FT_STORE_SCROLL2		0x0076
+#define FT_STORE_SCROLL3		0x0077
+#define FT_STORE_SCROLL4		0x0078
 
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
 

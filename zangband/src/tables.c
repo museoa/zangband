@@ -6894,6 +6894,9 @@ field_action f_action[] =
 	/* Rechargable items store */
 	{field_action_isrecharge_tester, "field_action_isrecharge_tester"},
 	
+	/* Jewels store */
+	{field_action_isjewel_tester, "field_action_isjewel_tester"},
+	
 	/* Wieldable items store */
 	{field_action_iswield_tester, "field_action_iswield_tester"},
 	
