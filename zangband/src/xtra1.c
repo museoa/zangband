@@ -546,7 +546,7 @@ static void prt_depth(void)
 			int q_num = place[p_ptr->place_num].quest_num;
 
 			/* Is there a quest here? */
-			if (q_num)
+			if (q_num && q_num < z_info->q_max)
 			{
 				/* Is this a quest to find a ruin? */
 				if (quest[q_num].type == QUEST_TYPE_FIND_PLACE)
