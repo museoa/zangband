@@ -17,6 +17,8 @@ AC_INIT(ZAngband, 2.7.4-cvs, bugs@zangband.org)
 AC_CONFIG_SRCDIR([src/angband.h])
 AC_CONFIG_HEADER([src/autoconf.h])
 
+AC_LANG([C])
+
 dnl default option
 GAMEGROUP="games"
 
@@ -29,77 +31,92 @@ AC_ARG_WITH(setgid,
 esac])
 AC_SUBST(GAMEGROUP)
 
+AC_ARG_WITH(x11,
+[  --with-x11=no           Don't include support for X11])
 
 AC_ARG_WITH(tcltk,
 [  --with-tcltk=DIR        Use DIR/include and DIR/lib for tcl and tk])
+
+if test -n "$tcltk" -a "$tcltk" != "no" ; then
+	CPPFLAGS="-I$tcltk/include $CPPFLAGS"
+	LDFLAGS"$LDFLAGS -L$tcltk/lib"
+fi
 
 AC_ARG_WITH(tkdir,
 [  --with-tkdir=TKDIR      Use TKDIR/include and TKDIR/lib for tk if
                           is in a different place from tcl directory
 						  and is not auto-detected properly])
 
+if test -n "$tkdir" -a "$tkdir" != "no" ; then
+	CPPFLAGS="-I$tkdir/include $CPPFLAGS"
+	LDFLAGS"$LDFLAGS -L$tkdir/lib"
+fi
+
 AC_ARG_WITH(gtk,
 [  --with-gtk=yes          Use gtk support (you'll need to turn of sgid flag)])
 
-AC_LANG([C])
-
 # Checks for programs.
-#AC_PROG_CXX
 AC_PROG_CC
-#AC_PROG_INSTALL
+AC_PROG_CPP
 
-# Add gtk include paths if needed
-AC_CHECK_PROGS(GTK_CONFIG, [gtk-config], [no])
-if test $GTK_CONFIG != "no" ; then
-	CFLAGS="$CFLAGS `$GTK_CONFIG --cflags`" 
-	LDFLAGS="$LDFLAGS `$GTK_CONFIG --libs`"
+if test "x$with_x11" != "xno" ; then
+	if test "x$with_gtk" != "xno" ; then
+		# Add gtk include paths if needed
+		AC_CHECK_PROGS(GTK_CONFIG, [gtk-config], [no])
+		if test $GTK_CONFIG != "no" ; then
+			CFLAGS="$CFLAGS `$GTK_CONFIG --cflags`" 
+			LDFLAGS="$LDFLAGS `$GTK_CONFIG --libs`"
+		fi
+	fi
+
+	# Find X11 path
+	AC_PATH_X
+	if test -n "$x_includes" ; then
+		CPPFLAGS="-I$x_includes $CPPFLAGS"
+	fi
+	if test -n "$x_libraries" ; then
+		LDFLAGS="$LDFLAGS -L$x_libraries"
+	fi
+
+	# Checks for libraries.
+
+	AC_SEARCH_LIBS([XCreateImage], [X11],
+		AC_DEFINE(USE_X11, 1, [Use basic X11 port])
+		AC_DEFINE(USE_XPJ, 1, [Use X11 projected port]))
+
+	# Some or all of these libraries must be included before -lXaw
+
+	# FIXME: Replace `main' with a function in `-lXext':
+	AC_CHECK_LIB([Xext], [main])
+	# FIXME: Replace `main' with a function in `-lXm':
+	AC_CHECK_LIB([Xm], [main])
+	# FIXME: Replace `main' with a function in `-lXmu':
+	AC_CHECK_LIB([Xmu], [main])
+	# FIXME: Replace `main' with a function in `-lXt':
+	AC_CHECK_LIB([Xt], [main])
+	# FIXME: Replace `main' with a function in `-lSM':
+	AC_CHECK_LIB([SM], [main])
+	# FIXME: Replace `main' with a function in '-lXpm':
+	AC_CHECK_LIB([Xpm], [main])
+	# FIXME: Replace `main' with a function in `-lGn':
+	AC_CHECK_LIB([Gn], [main])
+	# FIXME: Replace `main' with a function in `-lICE':
+	AC_CHECK_LIB([ICE], [main])
+
+	AC_SEARCH_LIBS([XawInitializeWidgetSet], [Xaw],
+		AC_DEFINE(USE_XAW, 1, [Use xaw port]))
 fi
-
-# Find X11 path
-AC_PATH_X
-if test -n "$x_includes" ; then
-	CPPFLAGS="-I$x_includes $CPPFLAGS"
-fi
-if test -n "$x_libraries" ; then
-	LDFLAGS="$LDFLAGS -L$x_libraries"
-fi
-
-# Checks for libraries.
-
-AC_SEARCH_LIBS([XCreateImage], [X11],
-	AC_DEFINE(USE_X11, 1, [Use basic X11 port])
-	AC_DEFINE(USE_XPJ, 1, [Use X11 projected port]))
-
-# Some or all of these libraries must be included before -lXaw
-
-# FIXME: Replace `main' with a function in `-lXext':
-AC_CHECK_LIB([Xext], [main])
-# FIXME: Replace `main' with a function in `-lXm':
-AC_CHECK_LIB([Xm], [main])
-# FIXME: Replace `main' with a function in `-lXmu':
-AC_CHECK_LIB([Xmu], [main])
-# FIXME: Replace `main' with a function in `-lXt':
-AC_CHECK_LIB([Xt], [main])
-# FIXME: Replace `main' with a function in `-lSM':
-AC_CHECK_LIB([SM], [main])
-# FIXME: Replace `main' with a function in '-lXpm':
-AC_CHECK_LIB([Xpm], [main])
-# FIXME: Replace `main' with a function in `-lGn':
-AC_CHECK_LIB([Gn], [main])
-# FIXME: Replace `main' with a function in `-lICE':
-AC_CHECK_LIB([ICE], [main])
-
-AC_SEARCH_LIBS([XawInitializeWidgetSet], [Xaw],
-	AC_DEFINE(USE_XAW, 1, [Use xaw port]))
 
 AC_SEARCH_LIBS([initscr], [ncurses curses], 
 	AC_DEFINE(USE_GCU, 1, [Use gcu port]),
 	# Only check termcap if we don't have GCU
-	AC_CHECK_LIB([termcap], [tgetent], 
+	AC_SEARCH_LIBS([tgetent], [termcap],
 		AC_DEFINE(USE_CAP, 1, [Use termcap port])))
 
-AC_SEARCH_LIBS([gtk_init_check], [gtk],
-	AC_DEFINE(USE_GTK, 1, [Use gtk port]))
+if test "x$with_gtk" != "xno" ; then
+	AC_SEARCH_LIBS([gtk_init_check], [gtk],
+		AC_DEFINE(USE_GTK, 1, [Use gtk port]))
+fi
 
 dnl A function to search for header files
 AC_DEFUN(AC_SEARCH_HEADERS,
@@ -118,7 +135,8 @@ AC_DEFUN(AC_SEARCH_HEADERS,
 	done
 ])
 
-AC_SEARCH_LIBS([Tcl_Init], [tcl84 tcl8.4 tcl83 tcl8.3],
+if test "x$with_tcltk" != "xno" ; then
+	AC_SEARCH_LIBS([Tcl_Init], [tcl84 tcl8.4 tcl83 tcl8.3],
 	AC_SEARCH_LIBS([Tk_Init], [tk84 tk8.4 tk83 tk8.3],
 	    [AC_SEARCH_HEADERS(/usr/local/include/tcl.h /usr/local/include/tcl/tcl.h /usr/include/tcl.h /usr/include/tcl8.4/tcl.h /usr/local/include/tcl8.4/tcl.h /usr/include/tcl8.3/tcl.h /usr/local/include/tcl8.3/tcl.h
 		    ,BASE_TCL_DIR)
@@ -133,6 +151,7 @@ AC_SEARCH_LIBS([Tcl_Init], [tcl84 tcl8.4 tcl83 tcl8.3],
 			AC_DEFINE(PLATFORM_X11, 1, [Use tcl/tk port X11 version])
 	    fi
 		]))
+fi
 
 
 # FIXME: Replace `main' with a function in `-lpc':
