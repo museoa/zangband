@@ -674,8 +674,8 @@ static void init_vanilla_town(void)
 	town[1].seed = rand_int(0x10000000);
 	town[1].numstores = 9;
 	town[1].type = 1;
-	town[1].x = 0;
-	town[1].y = 0;
+	town[1].x = (max_wild / 2) - TOWN_WID / (WILD_BLOCK_SIZE * 2) - 1;
+	town[1].y = (max_wild / 2) - TOWN_HGT / (WILD_BLOCK_SIZE * 2) - 1;
 
 	/* Place town on wilderness */
 	for (j = 0; j < (TOWN_HGT / 16 + 1); j++)

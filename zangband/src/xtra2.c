@@ -1380,9 +1380,9 @@ void panel_bounds_center(void)
 	/* Get size */
 	Term_get_size(&wid, &hgt);
 
-	panel_row_max = panel_row_min + hgt - 2 - 1;
+	panel_row_max = panel_row_min + hgt - ROW_MAP - 2;
 	panel_row_prt = panel_row_min - 1;
-	panel_col_max = panel_col_min + wid - 14 - 1;
+	panel_col_max = panel_col_min + wid - COL_MAP - 2;
 	panel_col_prt = panel_col_min - 13;
 }
 
@@ -1401,31 +1401,35 @@ bool change_panel(int dy, int dx)
 
 	/* Get size */
 	Term_get_size(&wid, &hgt);
+	
+	/* Offset */
+	hgt -= ROW_MAP + 1;
+	wid -= COL_MAP + 1;
 
 	/* Apply the motion */
-	y = panel_row_min + dy * ((hgt - 2) / 2);
-	x = panel_col_min + dx * ((wid - 14) / 2);
+	y = panel_row_min + dy * (hgt / 2);
+	x = panel_col_min + dx * (wid / 2);
 
 	/* Verify wilderness */
 	if (!dun_level)
 	{
-		if (y > wild_grid.y_max - (hgt - 2)) y = wild_grid.y_max - (hgt - 2);
+		if (y > wild_grid.y_max - hgt) y = wild_grid.y_max - hgt;
 		if (y < wild_grid.y_min) y = wild_grid.y_min;
-		if (x > wild_grid.x_max - (wid - 14)) x = wild_grid.x_max - (wid - 14);
+		if (x > wild_grid.x_max - wid) x = wild_grid.x_max - wid;
 		if (x < wild_grid.x_min) x = wild_grid.x_min;
 
 		if (vanilla_town)
 		{
-			x = 0;
-			y = 0;
+			x = max_wild * WILD_BLOCK_SIZE / 2 - wid / 2 - 15;
+			y = max_wild * WILD_BLOCK_SIZE / 2 - hgt / 2 - 5;
 		}
 	}
 	else
 	{
 		/* Dungeon bounds */
-		if (y > cur_hgt - (hgt - 2)) y = cur_hgt - (hgt - 2);
+		if (y > cur_hgt - hgt) y = cur_hgt - hgt;
 		if (y < 0) y = 0;
-		if (x > cur_wid - (wid - 14)) x = cur_wid - (wid - 14);
+		if (x > cur_wid - wid) x = cur_wid - wid;
 		if (x < 0) x = 0;
 	}
 
@@ -1488,20 +1492,24 @@ void verify_panel(void)
 
 	/* Get size */
 	Term_get_size(&wid, &hgt);
+	
+	/* Offset */
+	hgt -= ROW_MAP + 1;
+	wid -= COL_MAP + 1;
 
-	max_prow_min = max_panel_rows - (hgt - 2);
-	max_pcol_min = max_panel_cols - (wid - 14);
+	max_prow_min = max_panel_rows - hgt;
+	max_pcol_min = max_panel_cols - wid;
 
 	/* Center on player */
 	if (center_player && (!avoid_center || !running))
 	{
 		/* Center vertically */
-		prow_min = y - (hgt - 2) / 2;
+		prow_min = y - hgt / 2;
 		if (prow_min > max_prow_min) prow_min = max_prow_min;
 		else if (prow_min < 0) prow_min = 0;
 
 		/* Center horizontally */
-		pcol_min = x - (wid - 14) / 2;
+		pcol_min = x - wid / 2;
 		if (pcol_min > max_pcol_min) pcol_min = max_pcol_min;
 		else if (pcol_min < 0) pcol_min = 0;
 	}
@@ -1515,7 +1523,7 @@ void verify_panel(void)
 		{
 			while (y < prow_min + 2)
 			{
-				prow_min -= ((hgt - 2) / 2);
+				prow_min -= (hgt / 2);
 			}
 
 			if (prow_min < 0) prow_min = 0;
@@ -1523,9 +1531,9 @@ void verify_panel(void)
 
 		if (y > panel_row_max - 2)
 		{
-			while (y > prow_min + hgt - 2 - 2)
+			while (y > prow_min + hgt - 2)
 			{
-				prow_min += ((hgt - 2) / 2);
+				prow_min += (hgt / 2);
 			}
 
 			if (prow_min > max_prow_min) prow_min = max_prow_min;
@@ -1536,7 +1544,7 @@ void verify_panel(void)
 		{
 			while (x < pcol_min + 4)
 			{
-				pcol_min -= ((wid - 14) / 2);
+				pcol_min -= (wid / 2);
 			}
 
 			if (pcol_min < 0) pcol_min = 0;
@@ -1544,9 +1552,9 @@ void verify_panel(void)
 
 		if (x > panel_col_max - 4)
 		{
-			while (x > pcol_min + wid - 14 - 4)
+			while (x > pcol_min + wid - 4)
 			{
-				pcol_min += ((wid - 14) / 2);
+				pcol_min += (wid / 2);
 			}
 
 			if (pcol_min > max_pcol_min) pcol_min = max_pcol_min;

@@ -998,6 +998,9 @@ void map_panel_size(void)
 	/* Get size */
 	Term_get_size(&wid, &hgt);
 
+	/* Offset */
+	wid -= COL_MAP + 1;
+
 	/* reset panels */
 	if (dun_level)
 	{
@@ -1030,20 +1033,20 @@ void map_panel_size(void)
 	if (mp_c) C_KILL(mp_c, map_wid_old, char);
 	
 	/* Save size */
-	map_wid_old = wid - 14;
+	map_wid_old = wid;
 	
 	/* Make the new lines */
 
 #ifdef USE_TRANSPARENCY
 	/* String of terrain characters along one row of the map */
-	C_MAKE(mp_ta, wid - 14, byte);
-	C_MAKE(mp_tc, wid - 14, char);
+	C_MAKE(mp_ta, wid, byte);
+	C_MAKE(mp_tc, wid, char);
 	
 #endif /* USE_TRANSPARENCY */	
 	
 	/* String of characters along one row of the map */
-	C_MAKE(mp_a, wid - 14, byte);
-	C_MAKE(mp_c, wid - 14, char);
+	C_MAKE(mp_a, wid, byte);
+	C_MAKE(mp_c, wid, char);
 }
 
 /* Make a real level */

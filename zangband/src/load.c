@@ -2804,8 +2804,8 @@ static errr rd_dungeon(void)
 	
 	if (sf_version < 12)
 	{
-		max_panel_cols = max_panel_cols * (wid - 14) / 2;
-		max_panel_rows = max_panel_rows * (hgt - 2) / 2;
+		max_panel_cols = max_panel_cols * (wid - COL_MAP - 1) / 2;
+		max_panel_rows = max_panel_rows * (hgt - ROW_MAP - 1) / 2;
 		
 		/* Reset the panel */
 		panel_row_min = max_panel_rows;

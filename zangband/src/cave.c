@@ -939,8 +939,12 @@ void map_info(int y, int x, byte *ap, char *cp)
 	object_type *o_ptr;
 	
 	monster_type *m_ptr;
+	
+	field_type *fld_ptr;
 
 	s16b this_o_idx, next_o_idx;
+	
+	s16b this_f_idx, next_f_idx;
 
 	byte feat;
 	byte info;
@@ -1173,6 +1177,52 @@ void map_info(int y, int x, byte *ap, char *cp)
 
 		/* Done */
 		return;	
+	}
+
+	/* Fields */
+	for (this_f_idx = c_ptr->fld_idx; this_f_idx; this_f_idx = next_f_idx)
+	{
+		/* Acquire field */
+		fld_ptr = &fld_list[this_f_idx];
+
+		/* Acquire next field */
+		next_f_idx = fld_ptr->next_f_idx;
+
+		/* Memorized, visible fields */
+		if ((fld_ptr->info & (FIELD_INFO_MARK | FIELD_INFO_VIS)) ==
+			 (FIELD_INFO_MARK | FIELD_INFO_VIS))
+		{
+			
+			/* Which display level to use? */
+			if (fld_ptr->info & FIELD_INFO_FEAT)
+			{
+				/* Terrain level */
+			
+				/* Normal char */
+				c = fld_ptr->f_char;
+				
+				/* Normal attr */
+				a = fld_ptr->f_attr;
+			}
+			else
+			{
+				/* Above objects */
+				
+				/* Normal char */
+				(*cp) = fld_ptr->f_char;
+				
+				/* Normal attr */
+				(*ap) = fld_ptr->f_attr;
+				
+				/* Hack - no monochrome effects.  Add them later? */
+				
+				/* Done */
+				return;
+			}
+
+			/* Done */
+			break;
+		}
 	}
 
 	/* Objects */
@@ -1590,6 +1640,10 @@ void prt_map(void)
 	/* Get size */
 	Term_get_size(&wid, &hgt);
 
+	/* Remove map offset */
+	wid -= COL_MAP + 1;
+	hgt -= ROW_MAP + 1;
+
 	/* Access the cursor state */
 	(void)Term_get_cursor(&v);
 
@@ -1619,14 +1673,14 @@ void prt_map(void)
 	for (y = 1; y <= ymin - panel_row_prt; y++)
 	{
 		/* Erase the section */
-		Term_erase(13, y, wid - 14);
+		Term_erase(COL_MAP, y, wid);
 	}
 	
 	/* Top section of screen */
-	for (y = ymax - panel_row_prt; y <= hgt - 2; y++)
+	for (y = ymax - panel_row_prt; y <= hgt; y++)
 	{
 		/* Erase the section */
-		Term_erase(13, y, wid - 14);
+		Term_erase(COL_MAP, y, wid);
 	}
 	
 	/* Sides of screen */
@@ -1640,8 +1694,8 @@ void prt_map(void)
 	for (y = ymin - panel_row_prt; y <= ymax - panel_row_prt; y++)
 	{
 		/* Erase the sections */
-		Term_erase(13, y, l1);
-		Term_erase(l2, y, l3);
+		Term_erase(COL_MAP, y, l1);
+		Term_erase(l2, y, COL_MAP);
 	}
 	
 	/* Pointers to current position in the string */
@@ -1915,8 +1969,8 @@ void display_map(int *cy, int *cx)
 		if (y < 0) y = 0;
 
 		/* Player location in wilderness */
-		(*cy) += py / 16 - y + 1 + ROW_MAP;
-		(*cx) += px / 16 - x + 1 + COL_MAP;
+		(*cy) += py / 16 - y + ROW_MAP;
+		(*cx) += px / 16 - x + COL_MAP;
 
 		/* Fill in the map */
 		for (i = 0; i < wid; ++i)
@@ -1977,8 +2031,8 @@ void display_map(int *cy, int *cx)
 	else
 	{
 		/* Player location in dungeon */
-		(*cy) = py / yrat + 1 + ROW_MAP;
-		(*cx) = px / xrat + 1 + COL_MAP;
+		(*cy) = py / yrat + ROW_MAP;
+		(*cx) = px / xrat + COL_MAP;
 
 		/* Fill in the map of dungeon */
 		for (i = 0; i < cur_wid; ++i)
@@ -2042,7 +2096,7 @@ void display_map(int *cy, int *cx)
 	for (j = 0; j < hgt + 2; ++j)
 	{
 		/* Start a new line */
-		Term_gotoxy(COL_MAP, j);
+		Term_gotoxy(COL_MAP - 1, j);
 
 		/* Display the line */
 		for (i = 0; i < wid + 2; ++i)
@@ -2116,7 +2170,7 @@ void do_cmd_view_map(void)
 		display_map(&cy, &cx);
 
 		/* Wait for it */
-		put_str("Hit any key to continue", hgt - 1, COL_MAP + (wid - COL_MAP) / 2 - 11);
+		put_str("Hit any key to continue", hgt - 1, (wid - COL_MAP) / 2);
 
 		/* Hilite the player */
 		move_cursor(cy, cx);
@@ -2148,7 +2202,7 @@ void do_cmd_view_map(void)
 
 			/* Wait for it */
 			put_str("Move around, or hit any other key to continue.",
-			        hgt - 1, COL_MAP + (wid - COL_MAP) / 2 - 23);
+			        hgt - 1, COL_MAP - 11 + (wid - COL_MAP) / 2);
 
 			/* Hilite the player */
 			move_cursor(cy, cx);

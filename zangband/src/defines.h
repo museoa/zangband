@@ -810,8 +810,8 @@
 #define ROW_INFO                20
 #define COL_INFO                0       /* "xxxxxxxxxxxx" */
 
-#define ROW_MAP						0
-#define COL_MAP                  12
+#define ROW_MAP						1
+#define COL_MAP                  13
 
 #define ROW_CUT                 21
 #define COL_CUT                 0       /* <cut> */

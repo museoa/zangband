@@ -1073,6 +1073,10 @@ void do_cmd_locate(void)
 
 	/* Get size */
 	Term_get_size(&wid, &hgt);
+	
+	/* Offset */
+	wid -= COL_MAP + 1;
+	hgt -= ROW_MAP + 1;
 
 	/* Start at current panel */
 	y2 = y1 = panel_row_min;
@@ -1096,8 +1100,8 @@ void do_cmd_locate(void)
 		/* Prepare to ask which way to look */
 		sprintf(out_val,
 		        "Map sector [%d(%02d),%d(%02d)], which is%s your sector.  Direction?",
-		        y2 / ((hgt - 2) / 2), y2 % ((hgt - 2) / 2),
-		        x2 / ((wid - 14) / 2), x2 % ((wid - 14) / 2), tmp_val);
+		        y2 / (hgt / 2), y2 % (hgt / 2),
+		        x2 / (wid / 2), x2 % (wid / 2), tmp_val);
 
 		/* Assume no direction */
 		dir = 0;
