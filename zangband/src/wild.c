@@ -510,9 +510,17 @@ static void init_towns(void)
 {
 	int i, j, k;
 	int x, y;
+	
+	wild_done_type *w_ptr;
+	
+	/* Variables to pick "easiest" town. */
+	int best_town, town_value;
 
 	/* No towns yet */
 	town_count = 0;
+	
+	best_town = 0;
+	town_value = 256;
 
 	/*
 	 * Hack - Try to add max_towns towns.
@@ -540,8 +548,17 @@ static void init_towns(void)
 		{
 			for (i = 0; i < (SCREEN_WID / 16 +1); i++)
 			{
-				wild[town[town_count].y + j][town[town_count].x + i]
-					.done.town = town_count;
+				w_ptr = &wild[town[town_count].y + j][town[town_count].x + i].done;
+				
+				/* Select easiest town */
+				if (w_ptr->mon_gen < town_value)
+				{
+					town_value = w_ptr->mon_gen;
+					best_town = town_count;
+				}
+				
+				/* Add town to wilderness */
+				w_ptr->town = town_count;
 			}
 		}
 		
@@ -552,9 +569,9 @@ static void init_towns(void)
 	/* No current town in cave[][] */
 	cur_town = 0;
 	
-	/* Hack - Reset player position to just next to town 1 */
-	p_ptr->wilderness_x = town[1].x * 16;
-	p_ptr->wilderness_y = town[1].y * 16;
+	/* Hack - Reset player position to just next to the easiest town */
+	p_ptr->wilderness_x = town[best_town].x * 16;
+	p_ptr->wilderness_y = town[best_town].y * 16;
 }
 
 /* Place a single town in the middle of the tiny wilderness */
