@@ -544,7 +544,7 @@ void monster_death(int m_idx)
 		/* Hack - corpses only appear on certain floors */
 		if ((feat == FEAT_FLOOR) ||
 			((feat >= FEAT_SAND) && (feat <= FEAT_SOLID_LAVA)) ||
-			((feat >= FEAT_DIRT) && (feat <= FEAT_PILLAR)) ||
+			((feat >= FEAT_DIRT) && (feat <= FEAT_OBELISK)) ||
 			((feat >= FEAT_BUSH) && (feat <= FEAT_SHAL_SWAMP)))
 		{
 			if (corpse)

@@ -2318,7 +2318,6 @@ void move_player(int dir, int do_pickup)
 	else if ((c_ptr->feat == FEAT_MOUNTAIN) ||
 		(c_ptr->feat == FEAT_SNOW_MOUNTAIN) ||
 		(c_ptr->feat == FEAT_OBELISK) ||
-		(c_ptr->feat == FEAT_PILLAR) ||
 		(c_ptr->feat == FEAT_BOULDER))
 	{
 		oktomove = TRUE;
@@ -2405,20 +2404,9 @@ void move_player(int dir, int do_pickup)
 		if ((!(c_ptr->info & (CAVE_MARK))) &&
 		    (p_ptr->blind || !(c_ptr->info & (CAVE_LITE))))
 		{
-			/* Rubble */
-			if (c_ptr->feat == FEAT_RUBBLE)
-			{
-				msg_print("You feel some rubble blocking your way.");
-				c_ptr->info |= (CAVE_MARK);
-				lite_spot(y, x);
-			}
-			/* Wall (or secret door) */
-			else
-			{
-				msg_print("You feel a wall blocking your way.");
-				c_ptr->info |= (CAVE_MARK);
-				lite_spot(y, x);
-			}
+			msg_print("You feel something blocking your way.");
+			c_ptr->info |= (CAVE_MARK);
+			lite_spot(y, x);
 		}
 		/* Notice things */
 		else
@@ -2442,6 +2430,15 @@ void move_player(int dir, int do_pickup)
 			else if (c_ptr->feat == FEAT_JUNGLE)
 			{
 				msg_print("The jungle is impassable.");
+
+				if (!(p_ptr->confused || p_ptr->stun || p_ptr->image))
+					energy_use = 0;
+			}
+			
+			/* Pillar */
+			else if (c_ptr->feat == FEAT_PILLAR)
+			{
+				msg_print("There is a pillar blocking your way.");
 
 				if (!(p_ptr->confused || p_ptr->stun || p_ptr->image))
 					energy_use = 0;

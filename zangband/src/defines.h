@@ -868,7 +868,7 @@
 
 /* Closed Door */
 #define FEAT_CLOSED				0x20
-
+#define FEAT_PILLAR         	0x21
 /* A big gap for expansion */
 
 /* Extra */
@@ -936,7 +936,7 @@
 #define FEAT_PINE_TREE		0x64
 #define FEAT_SNOW_TREE		0x65
 #define FEAT_OBELISK		0x66
-#define FEAT_PILLAR         0x67
+
 
 /* Gap */
 
