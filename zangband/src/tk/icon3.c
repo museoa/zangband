@@ -1322,23 +1322,13 @@ static int init_ascii_data(Tcl_Interp *interp, t_icon_data *icon_data_ptr)
  *		ascii create forground background
  *		ascii font typeName ?fontSpec?
  *		ascii index typeName char attr -- Return index for character & attr
- *		ascii delay ?ticks?
  *		ascii inset ?y x?
  */
 
-/* The current index into the g_term_colormap[] array */
-int g_ascii_multi = 0;
-
-/* The "frame delay" for animated ascii configurations */
-int g_ascii_delay = 1000;
-
-/* The current character for shapechanging ascii configurations */
-int g_ascii_char = 0;
 
 static int objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
-	static cptr cmdOption[] = {"count", "create", "font", "index",
-		"delay", "configure", "isascii", NULL};
+	static cptr cmdOption[] = {"count", "create", "font", "index", "configure", "isascii", NULL};
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 	int index;
 
@@ -1566,30 +1556,7 @@ static int objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj 
 			}
 			break;
 
-		case 4: /* delay */
-
-			if (objc < 2)
-			{
-				Tcl_WrongNumArgs(interp, 2, objv, (char *) "?delay?");
-				return TCL_ERROR;
-			}
-
-			/* A new value was given */
-			if (objc == 3)
-			{
-				/* Get the new value */
-				if (Tcl_GetIntFromObj(interp, objv[2], &g_ascii_delay) != TCL_OK)
-				{
-					return TCL_ERROR;
-				}
-				/* VERIFY g_ascii_delay */
-			}
-
-			/* Return the current value */
-			Tcl_SetIntObj(resultPtr, g_ascii_delay);
-			break;
-
-		case 5: /* configure */
+		case 4: /* configure */
 
 			if (objc < 4)
 			{
@@ -1683,7 +1650,7 @@ static int objcmd_ascii(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj 
 			/* VERIFY objc */
 			break;
 
-		case 6: /* isascii */
+		case 5: /* isascii */
 
 			if (objc < 3)
 			{

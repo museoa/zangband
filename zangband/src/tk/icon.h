@@ -84,7 +84,7 @@ typedef struct t_ascii {
 
 extern t_ascii *g_ascii; /* Array of "ascii" icon info */
 extern int g_ascii_count; /* Number of elements in g_ascii[] array */
-extern int g_ascii_delay, g_ascii_multi, g_ascii_char;
+extern int g_ascii_delay;
 
 #define ICON_STYLE_ICON 0
 extern int g_icon_style;
