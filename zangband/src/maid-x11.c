@@ -70,7 +70,7 @@
 /* Table of gamma values */
 static byte gamma_table[256];
 
-/* Table of ln(x) * 256 for x going from 0 -> 255 */
+/* Table of ln(x/256) * 256 for x going from 0 -> 255 */
 static s16b gamma_helper[256] =
 {
 0,-1420,-1242,-1138,-1065,-1007,-961,-921,-887,-857,-830,-806,-783,-762,-744,-726,
@@ -107,10 +107,11 @@ static void build_gamma_table(byte gamma)
 	 */
 	long value, diff;
 	
-	/* Hack - convergence is bad in this case. */
+	/* Hack - convergence is bad in these cases. */
 	gamma_table[0] = 0;
+	gamma_table[255] = 255;
 	
-	for(i = 1; i < 256; i++)
+	for(i = 1; i < 255; i++)
 	{
 		/* 
 		 * Initialise the Taylor series
@@ -140,7 +141,13 @@ static void build_gamma_table(byte gamma)
 			 *
 			 * In this case:
 			 * a is i / 256
-			 * b is gamma / 256.
+			 * b is gamma.
+			 *
+			 * Note that everything is scaled by 256 for accuracy,
+			 * plus another factor of 256 for the final result to
+			 * be from 0-255.  Thus gamma_helper[] * gamma must be
+			 * divided by 256*256 each itteration, to get back to
+			 * the original power series.
 			 */
 			diff = (((diff * gamma_helper[i]) / 256) * gamma) / ((long)(256 * n));
 		}
