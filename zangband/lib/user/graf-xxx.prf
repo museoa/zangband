@@ -2934,8 +2934,8 @@ R:884:0xC4:0x9F
 
 # Feature attr/char definitions
 
-# nothing
-F:0:0x81:0x80
+# nothing  (Commented out for speedup.  Drawing a space is quicker.)
+#F:0:0x81:0x80
 
 # open floor
 F:1:0x80:0x80
