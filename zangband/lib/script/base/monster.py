@@ -16,6 +16,8 @@ class monster(monster_type, monster_typePtr):
 	version = 0
 	current_num = 0 # Number of current monsters of this type
 
+	subclasses = []
+
 	def __init__(self, m_ptr=None):
 		# Check if the monster already exists
 		if m_ptr:
@@ -75,19 +77,46 @@ class demon(monster):
 	pass
 
 
-class undead:
+class undead(monster):
 	pass
 
-class spellcaster:
+class spellcaster(monster):
 	pass
+
+
+class factory:
+	def __init__(self):
+		self.__classes = []
+
+	def select(self):
+		import random
+		return random.choice(self.__classes)
+
+	def filter(self, func):
+		return filter(func, self.subclasses)
+
+	def append(self, value):
+		self.__classes.append(value)
+
+	def __len__(self):
+		return len(self.__classes)
+	def __getitem__(self, key):
+		return self.__classes[key]
+	def __setitem__(self, key, value):
+		self.__classes[key] = value
+	def __delitem__(self, key):
+		del self.__classes[key]
 
 
 #####################################################################
 # Storage for the monsters
 #####################################################################
-class monster_data:
+class monster_data(factory):
 	def __init__(self):
 		debug.trace("monster_data.__init__(%s)" % (self))
+
+		# Inherited
+		factory.__init__(self)
 
 		self.monsters = {}
 		self.races = {}
@@ -128,19 +157,6 @@ class monster_data:
 		self.monsters[i2] = self.monsters[i1]
 		del self.monsters[i1]
 
-#	def __len__(self):
-#		return len(self.monsters)
-#	def __getitem(self, key):
-#		return self.monsters[key]
-#	def __setitem__(self, key, value):
-#		self.monsters[key] = value
-#	def __delitem__(self, key):
-#		del self.monsters[key]
-
-#	# Add a new monster
-#	def append(self, monster):
-#		self.monsters.append(monster)
-
 	def monster_move_hook(self, index):
 		debug.trace("monster_data.monster_move_hook(%s, %s)" % (self, index))
 		return self.monsters[index].move()
@@ -157,4 +173,5 @@ class monster_data:
 
 	def register_race(self, monster_class):
 		self.races[monster_class.r_idx] = monster_class
+		self.append(monster_class)
 

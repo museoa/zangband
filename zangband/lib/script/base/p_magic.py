@@ -16,8 +16,37 @@ from variable import events, debug, player
 #####################################################################
 class spellcaster_class:
 	def __init__(self):
-		self.realms = []
+		self.realms = {}
+		self.picks = 0
 		events.get_player_realms.append(self)
+
+	def check_picks(self):
+		return 1
+
+	def assign_realms(self):
+		# Clean up the realms
+		for realm in self.realms.keys():
+			if self.realms[realm].player_picks == 0:
+				del self.realms[realm]
+			else:
+				self.realms[realm].picks = self.realms[realm].player_picks
+
+		# XXX
+		if 0:
+			# Let the player select his spells
+			for realm in self.realms.values():
+				c1, c2, u1, u2, r1, r2 = realm.spell_distribution[realm.picks]
+
+				if 0 < c1 < 16:
+					for i in range(0, c1):
+						pass
+		else:
+			for realm in self.realms.values():
+				for spell in realm.spells:
+					player.skills.append(spell())
+
+		# Remove the event
+		events.get_player_realms.remove(self)
 
 	def get_player_realms_hook(self, args):
 		# XXX This section should be moved to the gui-package
@@ -33,77 +62,67 @@ class spellcaster_class:
 #		io.Term_putstr(5, 17, -1, io.TERM_WHITE,
 #			"Nature has both defensive and offensive spells.")
 
-		row = 15
+		while 1:
+			letters = {}
 
-		# Print the header
-		io.Term_putstr( 5, row, -1, io.TERM_WHITE, "Realm")
-		io.Term_putstr(30, row, -1, io.TERM_WHITE, "Picks")
-		io.Term_putstr(40, row, -1, io.TERM_WHITE, "Common")
-		io.Term_putstr(50, row, -1, io.TERM_WHITE, "Uncommon")
-		io.Term_putstr(60, row, -1, io.TERM_WHITE, "Rare")
+			row = 15
 
-		for realm in self.realms:
-			row = row + 1
-			io.Term_putstr(5, row, -1, io.TERM_YELLOW, realm.name)
+			# Print the header
+			io.Term_putstr( 5, row, -1, io.TERM_WHITE, "Realm")
+			io.Term_putstr(30, row, -1, io.TERM_WHITE, "Picks")
+			io.Term_putstr(40, row, -1, io.TERM_WHITE, "Common")
+			io.Term_putstr(50, row, -1, io.TERM_WHITE, "Uncommon")
+			io.Term_putstr(60, row, -1, io.TERM_WHITE, "Rare")
 
+			for realm in self.realms.values():
+				letter = "%c" % (I2A(row - 15))
+				letters[letter] = realm
+				row = row + 1
+				c1, c2, u1, u2, r1, r2 = realm.spell_distribution[realm.player_picks]
+				io.Term_putstr( 1, row, -1, io.TERM_YELLOW, "%c/%c" % (letter, string.upper(letter)))
+				io.Term_putstr( 5, row, -1, io.TERM_YELLOW, realm.name)
+				io.Term_putstr(30, row, -1, io.TERM_YELLOW, "%2d" % (realm.player_picks))
+				io.Term_putstr(40, row, -1, io.TERM_YELLOW, "%2d+%2d" % (c1, c2))
+				io.Term_putstr(50, row, -1, io.TERM_YELLOW, "%2d+%2d" % (u1, u2))
+				io.Term_putstr(60, row, -1, io.TERM_YELLOW, "%2d+%2d" % (r1, r2))
 
-		io.inkey()
+			c = io.inkey()
 
-		if 0:
-			# Init some temporary helper variables
-			n = 0
-			dict = {}
-
-			# Print all available realms and remember the letter for the selection
-			for realm in self.realms:
-				if n < 26:
-					letter = "%c" % I2A(n)
-				else:
-					letter = "%d" % (n - 26)
-				io.put_str("%c) %s" % (letter, realm.name), 19 + (n/3), 2 + 20 * (n%3))
-				dict[letter] = realm
-				n = n + 1
-
-			# Wait for player input
-			while 1:
-				# Print prompt
-				io.put_str("Choose a realm (%c-%c), or * for random: " % (I2A(0), I2A(n-1)), 18, 2)
-
-				# Get a key
-				c = io.inkey()
-
-				# Quit
-				if c == 'Q':
-					remove_loc()
-					quit(NULL)
-				# Restart
-				elif c == 'S':
-					return -1
-				# Random selection
-				elif c == '*':
-					from angband.random import randint
-					selected = self.realms[randint(len(self.realms)) - 1]
+			if letters.has_key(c):
+				realm = letters[c]
+				if self.picks > 0 and realm.player_picks < 16:
+					realm.player_picks = realm.player_picks + 1
+					self.picks = self.picks - 1
+			elif letters.has_key(string.lower(c)):
+				realm = letters[string.lower(c)]
+				if realm.player_picks > realm.picks:
+					realm.player_picks = realm.player_picks - 1
+					self.picks = self.picks + 1
+			# Quit
+			elif c == 'Q':
+				remove_loc()
+				quit(NULL)
+			# Restart
+			elif c == 'S':
+				return -1
+			# Help
+			elif c == '?':
+				commands.do_cmd_help()
+			# Startup-options
+			elif c == '=':
+				io.screen_save()
+				commands.do_cmd_options_aux(6, "Startup Options")
+				io.screen_load()
+			# Return/Enter
+			elif ord(c) == 13:
+				if self.check_picks():
+					self.assign_realms()
 					break
-				# Help
-				elif c == '?':
-					commands.do_cmd_help()
-				# Startup-options
-				elif c == '=':
-					io.screen_save()
-					commands.do_cmd_options_aux(6, "Startup Options")
-					io.screen_load()
-				# Class selection
-				elif c in dict.keys():
-					selected = dict[c]
-					break
-				# Error
 				else:
 					io.bell()
-
-			self.magic[selected.name] = apply(selected, ())
-
-			io.put_str("Magic       :", 6, 1)
-			io.c_put_str(io.TERM_L_BLUE, selected.name, 6, 15);
+			# Error
+			else:
+				io.bell()
 
 			io.clear_from(15)
 	
@@ -119,7 +138,25 @@ class spellcaster_mage_class(spellcaster_class):
 	def __init__(self):
 		spellcaster_class.__init__(self)
 		from magic.life import life
-		self.realms = [life]
+		from magic.sorcery import sorcery
+		from magic.arcane import arcane
+		from magic.death import death
+		from magic.nature import nature
+		from magic.trump import trump
+		from magic.chaos import chaos
+
+		self.realms["arcane"] = arcane()
+		self.realms["arcane"].picks = 4
+		self.realms["arcane"].player_picks = 4
+		self.realms["sorcery"] = sorcery()
+		self.realms["life"] = life()
+		self.realms["death"] = death()
+		self.realms["nature"] = nature()
+		self.realms["trump"] = trump()
+		self.realms["chaos"] = chaos()
+
+		self.picks = 12
+
 		# Spell stat is Int
 		from angband import player
 		self.spell_stat = player.A_INT

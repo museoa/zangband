@@ -198,6 +198,8 @@ class event_data_class:
 		self._set_callback(MONSTER_MOVE_EVENT, "monster_move")
 		self._set_callback(COPY_MONSTER_EVENT, "copy_monster")
 
+		self._set_callback(USE_SKILL_EVENT, "use_skill")
+
 		self._set_special_callback(grid_event_class, PLAYER_SEARCH_GRID_EVENT, "player_search_grid")
 		self._set_special_callback(grid_event_class, PLAYER_ENTER_GRID_EVENT, "player_enter_grid")
 
