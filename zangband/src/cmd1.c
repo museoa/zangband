@@ -2518,11 +2518,62 @@ void move_player(int dir, int do_pickup)
 		oktomove = TRUE;
 		if (p_ptr->pclass != CLASS_RANGER) energy_use += 10;
 	}
-
+	/* Quest features */
 	else if ((c_ptr->feat >= FEAT_QUEST_ENTER) &&
-		(c_ptr->feat <= FEAT_QUEST_EXIT))
+	         (c_ptr->feat <= FEAT_QUEST_EXIT))
 	{
 		oktomove = TRUE;
+	}
+	/* Closed door */
+	else if ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
+	         (c_ptr->feat <= FEAT_DOOR_TAIL))
+	{
+		/* Pass through the door? */
+		if (p_can_pass_walls)
+		{
+#ifdef ALLOW_EASY_OPEN
+			/* Automatically open the door? */
+			if (easy_open && easy_open_door(y, x))
+			{
+				oktomove = FALSE;
+
+				/* Disturb the player */
+				disturb(0, 0);
+			}
+#endif /* ALLOW_EASY_OPEN */
+		}
+		else
+		{
+			oktomove = FALSE;
+
+			/* Disturb the player */
+			disturb(0, 0);
+
+			/* Notice things in the dark */
+			if ((!(c_ptr->info & CAVE_MARK)) &&
+				(p_ptr->blind || !(c_ptr->info & CAVE_LITE)))
+			{
+				msg_print("You feel a closed door blocking your way.");
+				c_ptr->info |= (CAVE_MARK);
+				lite_spot(y, x);
+			}
+
+			/* Notice things */
+			else
+			{
+#ifdef ALLOW_EASY_OPEN
+				if (easy_open && easy_open_door(y, x)) return;
+#endif /* ALLOW_EASY_OPEN */
+
+				msg_print("There is a closed door blocking your way.");
+
+				if (!(p_ptr->confused || p_ptr->stun || p_ptr->image))
+					energy_use = 0;
+			}
+
+			/* Sound */
+			sound(SOUND_HITWALL);
+		}
 	}
 
 #ifdef ALLOW_EASY_DISARM /* TNB */
@@ -2590,15 +2641,6 @@ void move_player(int dir, int do_pickup)
 				c_ptr->info |= (CAVE_MARK);
 				lite_spot(y, x);
 			}
-
-			/* Closed door */
-			else if (c_ptr->feat < FEAT_SECRET)
-			{
-				msg_print("You feel a closed door blocking your way.");
-				c_ptr->info |= (CAVE_MARK);
-				lite_spot(y, x);
-			}
-
 			/* Wall (or secret door) */
 			else
 			{
@@ -2607,7 +2649,6 @@ void move_player(int dir, int do_pickup)
 				lite_spot(y, x);
 			}
 		}
-
 		/* Notice things */
 		else
 		{
@@ -2625,19 +2666,6 @@ void move_player(int dir, int do_pickup)
 				 * typing mistakes should not cost you a turn...
 				 */
 			}
-			/* Closed doors */
-			else if (c_ptr->feat < FEAT_SECRET)
-			{
-#ifdef ALLOW_EASY_OPEN
-				if (easy_open && easy_open_door(y, x)) return;
-#endif /* ALLOW_EASY_OPEN */
-
-				msg_print("There is a closed door blocking your way.");
-
-				if (!(p_ptr->confused || p_ptr->stun || p_ptr->image))
-					energy_use = 0;
-			}
-
 			/* Wall (or secret door) */
 			else
 			{
