@@ -3747,17 +3747,22 @@ static u16b flow_y = 0;
 static void update_flow_aux(int y, int x, int n)
 {
 	cave_type *c_ptr;
+	
+	byte feat;
 
 	int old_head = flow_head;
 
 	/* Get the grid */
 	c_ptr = area(y,x);
+	
+	feat = c_ptr->feat;
 
 	/* Ignore "pre-stamped" entries */
 	if (c_ptr->when == flow_n) return;
 
-	/* Ignore "walls" and "rubble" */
-	if (!cave_floor_grid(c_ptr)) return;
+	/* Ignore all "walls" except doors */
+	if (!(((feat >= FEAT_DOOR_HEAD) && (feat <= FEAT_DOOR_TAIL))
+		 || (feat & 0x20))) return;
 
 	/* Save the time-stamp */
 	c_ptr->when = flow_n;
