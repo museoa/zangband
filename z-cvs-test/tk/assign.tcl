@@ -34,8 +34,6 @@ proc NSAssign::InitModule {} {
 
 	MsgCatInit know assign
 
-	InitImageIfNeeded Image_Sound sound.gif
-
 	NSModule::LoadIfNeeded NSIconBrowser
 
 	set Priv(hook) {}
@@ -1477,7 +1475,7 @@ proc NSAssign::StatusBar {oop text zap} {
 # Results:
 #	What happened.
 
-proc NSAssign::NewItemCmd {oop canvistId y icon text {hasSound 0}} {
+proc NSAssign::NewItemCmd {oop canvistId y icon text} {
 
 	set c [NSCanvist::Info $canvistId canvas]
 	set lineHeight [NSCanvist::Info $canvistId rowHgt]
@@ -1499,11 +1497,7 @@ proc NSAssign::NewItemCmd {oop canvistId y icon text {hasSound 0}} {
 		set iw [icon size]
 		set ih [icon size]
 	}
-if 0 {
-	set wid [expr {$iw + 8}]
-	set xdiff [expr {int([expr {($wid - $iw) / 2}])}]
-	set ydiff [expr {int([expr {($lineHeight - $ih) / 2}])}]
-}
+
 	lappend itemIdList [$c create widget [expr {4 + $iw / 2}] \
 		[expr {$y + 4 + $ih / 2}] \
 		-assign $icon -anchor center -tags icon]
@@ -1513,18 +1507,6 @@ if 0 {
 	set textLeft [expr {4 + $iw + 4 + 1}]
 	lappend itemIdList [$c create text $textLeft [expr {$y + $diff}] \
 		-text $text -anchor nw -font $font -fill $fill -tags text]
-
-	# Sound image
-	set image Image_Empty
-	if {$hasSound} {
-		set image Image_Sound
-	}
-	set iw [image width Image_Sound]
-	set ih [image height Image_Sound]
-	set ydiff [expr {int([expr {($lineHeight - $ih) / 2}])}]
-	set x [expr {$textLeft + [font measure $font $text] + 4}]
-	lappend itemIdList [$c create image $x [expr {$y + $diff}] \
-		-image $image -anchor nw -tags image]
 
 	return $itemIdList
 }
@@ -2357,7 +2339,6 @@ proc NSAssign::hook_monster {oop message args} {
 
 		set_list_member {
 
-			set config [Info $oop sound,config]
 			set canvistId [Info $oop member,canvistId]
 
 			set group [lindex $args 0]
@@ -2376,11 +2357,8 @@ proc NSAssign::hook_monster {oop message args} {
 				set icon [angband r_info info $index icon]
 				set name [angband r_info info $index name]
 
-				# Are sounds assigned?
-				set hasSound 0
-
 				# Collect info for each row
-				lappend itemList [list $icon $name $hasSound]
+				lappend itemList [list $icon $name]
 			}
 
 			# Add each row to the list
