@@ -516,11 +516,11 @@ errr get_mon_num_prep(monster_hook_type monster_hook,
  */
 s16b get_mon_num(int level)
 {
-	int			i, j, p;
+	int			i, p;
 
 	int			r_idx;
 
-	long		value, total;
+	long		value1, value2, total;
 
 	monster_race	*r_ptr;
 
@@ -574,7 +574,8 @@ s16b get_mon_num(int level)
 		r_ptr = &r_info[r_idx];
 
 		/* Hack -- "unique" monsters must be "unique" */
-		if (((r_ptr->flags1 & (RF1_UNIQUE)) || (r_ptr->flags3 & (RF3_UNIQUE_7))) &&
+		if (((r_ptr->flags1 & (RF1_UNIQUE)) ||
+			 (r_ptr->flags3 & (RF3_UNIQUE_7))) &&
 		    (r_ptr->cur_num >= r_ptr->max_num))
 		{
 			continue;
@@ -604,68 +605,46 @@ s16b get_mon_num(int level)
 
 
 	/* Pick a monster */
-	value = randint0(total);
-
-	/* Find the monster */
-	for (i = 0; i < alloc_race_size; i++)
-	{
-		/* Found the entry */
-		if (value < table[i].prob3) break;
-
-		/* Decrement */
-		value = value - table[i].prob3;
-	}
-
+	value1 = randint0(total);
 
 	/* Power boost */
 	p = randint0(100);
 
-	/* Try for a "harder" monster once (50%) or twice (10%) */
+	/* Try for a "better" monster once (50%) or twice (10%) */
 	if (p < 60)
 	{
-		/* Save old */
-		j = i;
-
-		/* Pick a monster */
-		value = randint0(total);
-
-		/* Find the monster */
-		for (i = 0; i < alloc_race_size; i++)
+		value2 = randint0(total);
+		
+		/* Is it better? */
+		if (value2 > value1)
 		{
-			/* Found the entry */
-			if (value < table[i].prob3) break;
-
-			/* Decrement */
-			value = value - table[i].prob3;
+			/* This hack works because the monster table is sorted by depth */
+			value1 = value2;
 		}
-
-		/* Keep the "best" one */
-		if (table[i].level < table[j].level) i = j;
 	}
-
-	/* Try for a "harder" monster twice (10%) */
+	
+	/* Try for a "better" monster twice (10%) */
 	if (p < 10)
 	{
-		/* Save old */
-		j = i;
-
-		/* Pick a monster */
-		value = randint0(total);
-
-		/* Find the monster */
-		for (i = 0; i < alloc_race_size; i++)
+		value2 = randint0(total);
+		
+		/* Is it better? */
+		if (value2 > value1)
 		{
-			/* Found the entry */
-			if (value < table[i].prob3) break;
-
-			/* Decrement */
-			value = value - table[i].prob3;
+			/* This hack works because the monster table is sorted by depth */
+			value1 = value2;
 		}
-
-		/* Keep the "best" one */
-		if (table[i].level < table[j].level) i = j;
 	}
 
+	/* Find the monster */
+	for (i = 0; i < alloc_kind_size; i++)
+	{
+		/* Found the entry */
+		if (value1 < table[i].prob3) break;
+
+		/* Decrement */
+		value1 = value1 - table[i].prob3;
+	}
 
 	/* Result */
 	return (table[i].index);
