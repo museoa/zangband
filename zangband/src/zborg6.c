@@ -47,7 +47,7 @@ static bool borg_desperate = FALSE;
  *
  * We return "5" if no motion is needed.
  */
-static int borg_extract_dir(int y1, int x1, int y2, int x2)
+static int borg_extract_dir(int x1, int y1, int x2, int y2)
 {
 	/* No movement required */
 	if ((y1 == y2) && (x1 == x2)) return (5);
@@ -80,7 +80,7 @@ static int borg_extract_dir(int y1, int x1, int y2, int x2)
  *
  * We return "5" if no motion is needed.
  */
-static int borg_goto_dir(int y1, int x1, int y2, int x2)
+static int borg_goto_dir(int x1, int y1, int x2, int y2)
 {
 	int d, e;
 
@@ -91,7 +91,7 @@ static int borg_goto_dir(int y1, int x1, int y2, int x2)
 
 
 	/* Default direction */
-	e = borg_extract_dir(y1, x1, y2, x2);
+	e = borg_extract_dir(x1, y1, x2, y2);
 
 
 	/* Adjacent location, use default */
@@ -128,7 +128,7 @@ static int borg_goto_dir(int y1, int x1, int y2, int x2)
 
 
 	/* Try diagonal */
-	d = borg_extract_dir(y1, x1, y2, x2);
+	d = borg_extract_dir(x1, y1, x2, y2);
 
 	/* Check for walls */
 
@@ -3439,7 +3439,7 @@ bool borg_caution(void)
 				map_block *mb_ptr;
 
 				/* Obtain direction */
-				d = borg_goto_dir(y1, x1, y2, x2);
+				d = borg_goto_dir(x1, y1, x2, y2);
 
 				/* Verify direction */
 				if ((d == 0) || (d == 5)) break;
@@ -3512,7 +3512,7 @@ bool borg_caution(void)
 		if (b_r >= 0)
 		{
 			/* Save direction */
-			b_d = borg_goto_dir(c_y, c_x, b_y, b_x);
+			b_d = borg_goto_dir(c_x, c_y, b_x, b_y);
 
 			/* Hack -- set goal */
 			g_x = c_x + ddx[b_d];
@@ -4333,7 +4333,7 @@ extern int borg_attack_aux_thrust(void)
 			  ("# Attacking with weapon '%s'", borg_items[INVEN_WIELD].desc));
 
 	/* Get a direction for attacking */
-	dir = borg_extract_dir(c_y, c_x, g_y, g_x);
+	dir = borg_extract_dir(c_x, c_y, g_x, g_y);
 
 	/* Attack the grid */
 	borg_keypress('+');
@@ -7401,7 +7401,7 @@ static int borg_attack_aux_racial_thrust(int race, int level, int dam)
 	borg_note(format("# Attacking with Racial Attack '%d'", b_d));
 
 	/* Get a direction for attacking */
-	dir = borg_extract_dir(c_y, c_x, g_y, g_x);
+	dir = borg_extract_dir(c_x, c_y, g_x, g_y);
 
 	/* Activate */
 	borg_keypress('U');
@@ -12923,7 +12923,7 @@ static bool borg_play_step(int y2, int x2)
 		if (door_found)
 		{
 			/* Get a direction, if possible */
-			dir = borg_goto_dir(c_y, c_x, c_y + o_y, c_x + o_x);
+			dir = borg_goto_dir(c_x, c_y, c_x + o_x, c_y + o_y);
 
 			/* Obtain the destination */
 			x = c_x + ddx[dir];
@@ -12961,7 +12961,7 @@ static bool borg_play_step(int y2, int x2)
 	}
 
 	/* Get a direction, if possible */
-	dir = borg_goto_dir(c_y, c_x, y2, x2);
+	dir = borg_goto_dir(c_x, c_y, x2, y2);
 
 	/* We have arrived */
 	if (dir == 5) return (FALSE);
