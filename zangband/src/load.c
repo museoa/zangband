@@ -857,6 +857,10 @@ static errr rd_store(int town_number, int store_number)
 	{
 		store_init(town_number, store_number, type);
 	}
+	else
+	{
+		st_ptr->type = type;
+	}
 	
 	/* Restore the saved parameters */
 	st_ptr->store_open = store_open;
