@@ -1,4 +1,4 @@
-/* File: zbmagic3.c */
+/* File: zborg6.c */
 /* Purpose: Medium level stuff for the Borg -BEN- */
 
 #include "angband.h"
