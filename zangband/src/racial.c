@@ -75,7 +75,7 @@ static void eat_corpse(void)
 	s16b fld_idx;
 	field_type *f_ptr;
 	
-	fld_idx = area(p_ptr->px, p_ptr->py)->fld_idx;
+	fld_idx = area(p_ptr->py, p_ptr->px)->fld_idx;
 	
 	/* While there are fields in the linked list */
 	while (fld_idx)
