@@ -1345,6 +1345,30 @@ static void square_to_pixel(int *x, int *y, int ox, int oy)
 }
 
 
+
+/*
+ * Painting where text would be
+ */
+static errr Infofnt_text_non(int x, int y, int len)
+{
+	int x1, y1, x2, y2;
+
+	/*** Find the dimensions ***/
+	square_to_pixel(&x1, &y1, x, y);
+	square_to_pixel(&x2, &y2, x + len, y);
+	
+	/*** Actually 'paint' the area ***/
+	
+	/* Just do a Fill Rectangle */
+	XFillRectangle(Metadpy->dpy, Infowin->win, Infoclr->gc,
+					x1, y1,
+					x2 - x1, Infofnt->hgt);
+
+	/* Success */
+	return (0);
+}
+
+
 /*
  * Standard Text
  */
@@ -1363,14 +1387,12 @@ static errr Infofnt_text_std(int cx, int cy, cptr str, int len)
 	/* Get the length of the string */
 	if (len < 0) len = strlen(str);
 
-
 	/*** Decide where to place the string, vertically ***/
 
 	square_to_pixel(&x, &y, cx, cy);
 	
 	/* Ignore Vertical Justifications */
 	y += Infofnt->asc;
-	
 	
 
 	/*** Actually draw 'str' onto the infowin ***/
@@ -1415,30 +1437,6 @@ static errr Infofnt_text_std(int cx, int cy, cptr str, int len)
 		                 x, y, str, len);
 	}
 
-
-	/* Success */
-	return (0);
-}
-
-
-
-/*
- * Painting where text would be
- */
-static errr Infofnt_text_non(int x, int y, int len)
-{
-	int x1, y1, x2, y2;
-
-	/*** Find the dimensions ***/
-	square_to_pixel(&x1, &y1, x, y);
-	square_to_pixel(&x2, &y2, x + len, y);
-	
-	/*** Actually 'paint' the area ***/
-
-	/* Just do a Fill Rectangle */
-	XFillRectangle(Metadpy->dpy, Infowin->win, Infoclr->gc,
-					x1, y1,
-					x2 - x1, Infofnt->hgt);
 
 	/* Success */
 	return (0);
@@ -2377,7 +2375,7 @@ static errr Term_wipe_x11(int x, int y, int n)
 	/* Erase (use black) */
 	Infoclr_set(clr[TERM_DARK]);
 
-	/* Mega-Hack -- Erase some space */
+	/* Erase some space */
 	Infofnt_text_non(x, y, n);
 	
 	/* Redraw the selection if any, as it may have been obscured. (later) */
@@ -2393,6 +2391,9 @@ static errr Term_wipe_x11(int x, int y, int n)
  */
 static errr Term_text_x11(int x, int y, int n, byte a, cptr s)
 {
+	/* Erase area first */
+	Term_wipe_x11(x, y, n);
+
 	/* Draw the text */
 	Infoclr_set(clr[a]);
 
@@ -2486,7 +2487,7 @@ static errr Term_pict_x11(int ox, int oy, int n, const byte *ap, const char *cp,
 			if (arg_graphics == GRAPHICS_DAVID_GERVAIS)
 				blank = XGetPixel(tiles, 0, 0);
 			else
-				blank = XGetPixel(tiles, 0, td->fnt->hgt * 6);
+				blank = XGetPixel(tiles, 0, hgt * 6);
 	
 			for (k = 0; k < wid; k++)
 			{

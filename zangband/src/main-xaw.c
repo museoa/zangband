@@ -433,7 +433,7 @@ static void AngbandClearArea(AngbandWidget widget, int x, int y, int w)
 	XFillRectangle(XtDisplay(widget), XtWindow(widget),
 					widget->angband.gc[0],
 					x1, y1,
-					x2 - x1, y2 - y1 + widget->angband.fontheight);
+					x2 - x1, widget->angband.fontheight);
 }
 
 
@@ -565,7 +565,7 @@ static void AngbandOutputPict(AngbandWidget widget, int ox, int oy, int n,
 			if (arg_graphics == GRAPHICS_DAVID_GERVAIS)
 				blank = XGetPixel(tiles, 0, 0);
 			else
-				blank = XGetPixel(tiles, 0, widget->angband.fontheight * 6);
+				blank = XGetPixel(tiles, 0, hgt * 6);
 
 			for (k = 0; k < wid; k++)
 			{
@@ -1507,6 +1507,9 @@ static errr Term_curs_xaw(int x, int y)
 static errr Term_text_xaw(int x, int y, int n, byte a, cptr s)
 {
 	term_data *td = (term_data*)(Term->data);
+	
+	/* Wipe region first */
+	Term_wipe_xaw(x, y, n);
 
 	/* Draw the text */
 	AngbandOutputText(td->widget, x, y, (String)s, n, a);
