@@ -222,16 +222,30 @@ AC_CHECK_FUNCS([mkstemp usleep getpwuid getpwnam shmget])
 
 dnl A nice function to test compiler options (like warnings)
 AC_DEFUN(AC_CHECK_CC_OPT,
-[AC_MSG_CHECKING(whether ${CC-cc} accepts [$1])
-echo 'void f(void); void f(){}' > conftest.c
+[FLAG=`echo zangband_cv_cflag_$1 | sed s/-/_/g`
+AC_CACHE_CHECK([whether ${CC-cc} accepts $1],
+[$FLAG],
+[echo 'void f(void); void f(){}' > conftest.c
 if test -z "`${CC-cc} -c ${CFLAGS} $1 conftest.c 2>&1`"; then
-  CFLAGS="$1 $CFLAGS"
-  AC_MSG_RESULT(yes)
+  eval $FLAG=yes
 else
-  AC_MSG_RESULT(no)
+  eval $FLAG=no
+fi])
+if test $!FLAG = yes ; then
+  CFLAGS="$1 $CFLAGS"
 fi
-rm -f conftest*
 ])
+#AC_DEFUN(AC_CHECK_CC_OPT,
+#[AC_MSG_CHECKING(whether ${CC-cc} accepts [$1])
+#echo 'void f(void); void f(){}' > conftest.c
+#if test -z "`${CC-cc} -c ${CFLAGS} $1 conftest.c 2>&1`"; then
+#  CFLAGS="$1 $CFLAGS"
+#  AC_MSG_RESULT(yes)
+#else
+#  AC_MSG_RESULT(no)
+#fi
+#rm -f conftest*
+#])
 
 dnl Check for lots of extra warning options
 AC_CHECK_CC_OPT(-pedantic)
