@@ -39,7 +39,6 @@ proc NSDebug::InitModule {} {
 	MsgCatInit
 
 	lappend Priv(hook) debug_hook_character Character
-	lappend Priv(hook) debug_hook_monster Monsters
 
 	# Create the Debug Window
 	NSObject::New NSDebug
@@ -67,8 +66,6 @@ proc NSDebug::NSDebug {oop} {
 
 	Info $oop display,current -1
 	Info $oop detail,current -1
-
-#	SetHook $oop debug_hook_monster
 
 	if {[Platform windows]} {
 		wm withdraw $win
@@ -388,8 +385,6 @@ proc NSDebug::InitMenus {oop} {
 	lappend entries [list -type command -label "Mass Genocide" -command "DoCommandIfAllowed ^Az" -identifier E_MASS_GENOCIDE -accelerator z]
 	lappend entries [list -type checkbutton -label "See Monsters *" -command "debug command see_monsters" -onvalue 1 -offvalue 0 -variable NSDebug::see_monsters -identifier E_SEE_MONSTERS]
 	lappend entries [list -type command -label "Summon Random" -command "DoCommandIfAllowed ^As" -identifier E_SUMMON_ANY -accelerator s]
-	lappend entries [list -type separator]
-	lappend entries [list -type command -label "Monster List" -command "NSDebug::SetHook $oop debug_hook_monster" -identifier E_MONSTER_LIST]
 	
 	NSMenu::MenuInsertEntries $mbar -end MENU_MONSTER $entries
 
@@ -883,132 +878,6 @@ proc NSDebug::debug_hook_character {oop message args} {
 			set title [lindex [struct set player_type 0] [expr {$row * 2}]]
 			set text [format "%-22s%22s" $title $value]
 			UpdateList_Detail $oop $row $text White
-		}
-	}
-
-	return
-}
-
-
-proc NSDebug::debug_hook_monster {oop message args} {
-
-	switch -- $message {
-
-		open {
-			SetList_Display $oop 
-		}
-
-		close {
-		}
-
-		set_list_display {
-
-			set canvistId [Info $oop display,canvistId]
-
-			# Number of characters on a line, minus "NNN: " and "  ABCD"
-			set max [expr {[CalcLineLength $oop] - 10 - 1}]
-
-			set colorList {}
-			set textList {}
-
-			set match [angband m_list find -field r_idx != 0]
-			foreach m_idx $match {
-
-				# Set array with field/value pairs
-				array set m_attrib [angband m_list set $m_idx]
-
-				# Get the icon and name
-				set icon [angband r_info info $m_attrib(r_idx) icon]
-				set name [angband r_info info $m_attrib(r_idx) name]
-
-				lappend colorList White
-
-				# Flags
-				set flag_M [set flag_P [set flag_U [set flag_C " "]]]
-
-				# Flag Carrying 'C'
-				if {$m_attrib(hold_o_idx)} {
-					set flag_C C
-				}
-
-				# Flag Unique 'U'
-				if {[angband r_info info $m_attrib(r_idx) unique]} {
-					set flag_U U
-				}
-
-				# Flag Multiply 'M'
-				set flags [struct flags monster_race $m_attrib(r_idx) flags2]
-				if {[lsearch -exact $flags MULTIPLY] != -1} {
-					set flag_M M
-				}
-
-				# Flag Pet 'P'
-				if {$m_attrib(smart) & 0x00800000} {
-					set flag_P P
-				}
-				set flags "$flag_U$flag_C$flag_P$flag_M"
-
-				lappend textList [format "%3d: %-*s %s" $m_idx $max $name $flags]
-			}
-
-			NSTexist::SetList $canvistId $textList $colorList
-
-			Info $oop display,match $match
-		}
-
-		set_list_detail {
-
-			set canvistId [Info $oop detail,canvistId]
-			set row [Info $oop display,current]
-			set m_idx [lindex [Info $oop display,match] $row]
-			set colorList {}
-			set textList {}
-			foreach {title value} [angband m_list set $m_idx] {
-				lappend textList [format "%-11s%11s" $title $value]
-				lappend colorList White
-			}
-			NSTexist::SetList $canvistId $textList $colorList
-		}
-
-		select_display {
-
-			set row [lindex $args 0]
-
-			SetList_Detail $oop
-
-			set m_idx [lindex [Info $oop display,match] $row]
-			set r_idx [angband m_list set $m_idx r_idx]
-			NSRecall::RecallMonster $r_idx
-
-			# Display total number of these monsters.
-			set match [angband m_list find -field r_idx == $r_idx]
-			set count [llength $match]
-			[Info $oop win].statusBar itemconfigure t2 -text "$count in cave"
-		}
-
-		select_detail {
-			set row [lindex $args 0]
-			set m_idx [lindex [Info $oop display,match] [Info $oop display,current]]
-			[Info $oop valueEntry] delete 0 end
-			[Info $oop valueEntry] insert end [struct set monster_type $m_idx $row]
-		}
-
-		accept_value {
-			set value [lindex $args 0]
-			set m_idx [lindex [Info $oop display,match] [Info $oop display,current]]
-			set row [Info $oop detail,current]
-			struct set monster_type $m_idx $row $value
-
-			# Update the detail-list
-			set title [lindex [struct set monster_type $m_idx] [expr {$row * 2}]]
-			set text [format "%-11s%11s" $title $value]
-			UpdateList_Detail $oop $row $text White
-		}
-
-		edit {
-			set row [Info $oop display,current]
-			set m_idx [lindex [Info $oop display,match] $row]
-			EditField $oop monster_type $m_idx [lindex $args 0]
 		}
 	}
 
