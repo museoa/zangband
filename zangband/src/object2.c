@@ -4661,7 +4661,10 @@ static void item_describe_aux(object_type *o_ptr, bool back_step)
 			/* Item is in the equipment */
 			item = GET_ARRAY_INDEX(p_ptr->equipment, o_ptr);
 
-			msgf("%^s: %s (%c).", describe_use(item), o_name, I2A(item));
+			if (show_labels)
+				msgf("%^s: %s (%c).", describe_use(item), o_name, I2A(item));
+			else
+				msgf("%s (%c).", o_name, I2A(item));
 		}
 		else if (list == &p_ptr->inventory)
 		{

@@ -845,6 +845,9 @@ static void roff_obj_aux(const object_type *o_ptr)
 
 void identify_fully_aux(const object_type *o_ptr)
 {
+	/* Remember the value of this option */
+	bool show_lab = show_labels;
+
 	/* Books, a hack */
 	if ((o_ptr->tval >= TV_BOOKS_MIN) && (o_ptr->tval <= TV_BOOKS_MAX))
 	{
@@ -855,8 +858,14 @@ void identify_fully_aux(const object_type *o_ptr)
 	/* Save the screen */
 	screen_save();
 
+	/* Leave out the long description for packs */
+	show_labels = FALSE;
+
 	/* Show the item in a message including its pack letter */
-	msgf("Examining %v:", OBJECT_STORE_FMT(o_ptr, TRUE, 3));
+	item_describe((object_type *)o_ptr);
+
+	/* Set it back to what it was */
+	show_labels = show_lab;
 
 	/* Begin recall */
 	clear_row(1);
