@@ -1,556 +1,300 @@
 # This file was created automatically by SWIG.
 import objectsc
-class object_kindPtr :
+import new
+class object_kind:
+    def __init__(self,this):
+        self.this = this
+
+    __setmethods__ = {
+        "name" : objectsc.object_kind_name_set,
+        "text" : objectsc.object_kind_text_set,
+        "tval" : objectsc.object_kind_tval_set,
+        "sval" : objectsc.object_kind_sval_set,
+        "pval" : objectsc.object_kind_pval_set,
+        "to_h" : objectsc.object_kind_to_h_set,
+        "to_d" : objectsc.object_kind_to_d_set,
+        "to_a" : objectsc.object_kind_to_a_set,
+        "ac" : objectsc.object_kind_ac_set,
+        "dd" : objectsc.object_kind_dd_set,
+        "ds" : objectsc.object_kind_ds_set,
+        "weight" : objectsc.object_kind_weight_set,
+        "cost" : objectsc.object_kind_cost_set,
+        "flags1" : objectsc.object_kind_flags1_set,
+        "flags2" : objectsc.object_kind_flags2_set,
+        "flags3" : objectsc.object_kind_flags3_set,
+        "level" : objectsc.object_kind_level_set,
+        "extra" : objectsc.object_kind_extra_set,
+        "d_attr" : objectsc.object_kind_d_attr_set,
+        "d_char" : objectsc.object_kind_d_char_set,
+        "x_attr" : objectsc.object_kind_x_attr_set,
+        "x_char" : objectsc.object_kind_x_char_set,
+        "flavor" : objectsc.object_kind_flavor_set,
+        "easy_know" : objectsc.object_kind_easy_know_set,
+        "aware" : objectsc.object_kind_aware_set,
+        "tried" : objectsc.object_kind_tried_set,
+    }
+    def __setattr__(self,name,value):
+        if (name == "this") or (name == "thisown"): self.__dict__[name] = value; return
+        method = object_kind.__setmethods__.get(name,None)
+        if method: return method(self,value)
+        self.__dict__[name] = value
+    __getmethods__ = {
+        "name" : objectsc.object_kind_name_get,
+        "text" : objectsc.object_kind_text_get,
+        "tval" : objectsc.object_kind_tval_get,
+        "sval" : objectsc.object_kind_sval_get,
+        "pval" : objectsc.object_kind_pval_get,
+        "to_h" : objectsc.object_kind_to_h_get,
+        "to_d" : objectsc.object_kind_to_d_get,
+        "to_a" : objectsc.object_kind_to_a_get,
+        "ac" : objectsc.object_kind_ac_get,
+        "dd" : objectsc.object_kind_dd_get,
+        "ds" : objectsc.object_kind_ds_get,
+        "weight" : objectsc.object_kind_weight_get,
+        "cost" : objectsc.object_kind_cost_get,
+        "flags1" : objectsc.object_kind_flags1_get,
+        "flags2" : objectsc.object_kind_flags2_get,
+        "flags3" : objectsc.object_kind_flags3_get,
+        "locale" : objectsc.object_kind_locale_get,
+        "chance" : objectsc.object_kind_chance_get,
+        "level" : objectsc.object_kind_level_get,
+        "extra" : objectsc.object_kind_extra_get,
+        "d_attr" : objectsc.object_kind_d_attr_get,
+        "d_char" : objectsc.object_kind_d_char_get,
+        "x_attr" : objectsc.object_kind_x_attr_get,
+        "x_char" : objectsc.object_kind_x_char_get,
+        "flavor" : objectsc.object_kind_flavor_get,
+        "easy_know" : objectsc.object_kind_easy_know_get,
+        "aware" : objectsc.object_kind_aware_get,
+        "tried" : objectsc.object_kind_tried_get,
+    }
+    def __getattr__(self,name):
+        method = object_kind.__getmethods__.get(name,None)
+        if method: return method(self)
+        raise AttributeError,name
+    def __repr__(self):
+        return "<C object_kind instance at %s>" % (self.this,)
+class object_kindPtr(object_kind):
     def __init__(self,this):
         self.this = this
         self.thisown = 0
-    def __setattr__(self,name,value):
-        if name == "name" :
-            objectsc.object_kind_name_set(self.this,value)
-            return
-        if name == "text" :
-            objectsc.object_kind_text_set(self.this,value)
-            return
-        if name == "tval" :
-            objectsc.object_kind_tval_set(self.this,value)
-            return
-        if name == "sval" :
-            objectsc.object_kind_sval_set(self.this,value)
-            return
-        if name == "pval" :
-            objectsc.object_kind_pval_set(self.this,value)
-            return
-        if name == "to_h" :
-            objectsc.object_kind_to_h_set(self.this,value)
-            return
-        if name == "to_d" :
-            objectsc.object_kind_to_d_set(self.this,value)
-            return
-        if name == "to_a" :
-            objectsc.object_kind_to_a_set(self.this,value)
-            return
-        if name == "ac" :
-            objectsc.object_kind_ac_set(self.this,value)
-            return
-        if name == "dd" :
-            objectsc.object_kind_dd_set(self.this,value)
-            return
-        if name == "ds" :
-            objectsc.object_kind_ds_set(self.this,value)
-            return
-        if name == "weight" :
-            objectsc.object_kind_weight_set(self.this,value)
-            return
-        if name == "cost" :
-            objectsc.object_kind_cost_set(self.this,value)
-            return
-        if name == "flags1" :
-            objectsc.object_kind_flags1_set(self.this,value)
-            return
-        if name == "flags2" :
-            objectsc.object_kind_flags2_set(self.this,value)
-            return
-        if name == "flags3" :
-            objectsc.object_kind_flags3_set(self.this,value)
-            return
-        if name == "locale" :
-            objectsc.object_kind_locale_set(self.this,value)
-            return
-        if name == "chance" :
-            objectsc.object_kind_chance_set(self.this,value)
-            return
-        if name == "level" :
-            objectsc.object_kind_level_set(self.this,value)
-            return
-        if name == "extra" :
-            objectsc.object_kind_extra_set(self.this,value)
-            return
-        if name == "d_attr" :
-            objectsc.object_kind_d_attr_set(self.this,value)
-            return
-        if name == "d_char" :
-            objectsc.object_kind_d_char_set(self.this,value)
-            return
-        if name == "x_attr" :
-            objectsc.object_kind_x_attr_set(self.this,value)
-            return
-        if name == "x_char" :
-            objectsc.object_kind_x_char_set(self.this,value)
-            return
-        if name == "flavor" :
-            objectsc.object_kind_flavor_set(self.this,value)
-            return
-        if name == "easy_know" :
-            objectsc.object_kind_easy_know_set(self.this,value)
-            return
-        if name == "aware" :
-            objectsc.object_kind_aware_set(self.this,value)
-            return
-        if name == "tried" :
-            objectsc.object_kind_tried_set(self.this,value)
-            return
-        self.__dict__[name] = value
-    def __getattr__(self,name):
-        if name == "name" : 
-            return objectsc.object_kind_name_get(self.this)
-        if name == "text" : 
-            return objectsc.object_kind_text_get(self.this)
-        if name == "tval" : 
-            return objectsc.object_kind_tval_get(self.this)
-        if name == "sval" : 
-            return objectsc.object_kind_sval_get(self.this)
-        if name == "pval" : 
-            return objectsc.object_kind_pval_get(self.this)
-        if name == "to_h" : 
-            return objectsc.object_kind_to_h_get(self.this)
-        if name == "to_d" : 
-            return objectsc.object_kind_to_d_get(self.this)
-        if name == "to_a" : 
-            return objectsc.object_kind_to_a_get(self.this)
-        if name == "ac" : 
-            return objectsc.object_kind_ac_get(self.this)
-        if name == "dd" : 
-            return objectsc.object_kind_dd_get(self.this)
-        if name == "ds" : 
-            return objectsc.object_kind_ds_get(self.this)
-        if name == "weight" : 
-            return objectsc.object_kind_weight_get(self.this)
-        if name == "cost" : 
-            return objectsc.object_kind_cost_get(self.this)
-        if name == "flags1" : 
-            return objectsc.object_kind_flags1_get(self.this)
-        if name == "flags2" : 
-            return objectsc.object_kind_flags2_get(self.this)
-        if name == "flags3" : 
-            return objectsc.object_kind_flags3_get(self.this)
-        if name == "locale" : 
-            return objectsc.object_kind_locale_get(self.this)
-        if name == "chance" : 
-            return objectsc.object_kind_chance_get(self.this)
-        if name == "level" : 
-            return objectsc.object_kind_level_get(self.this)
-        if name == "extra" : 
-            return objectsc.object_kind_extra_get(self.this)
-        if name == "d_attr" : 
-            return objectsc.object_kind_d_attr_get(self.this)
-        if name == "d_char" : 
-            return objectsc.object_kind_d_char_get(self.this)
-        if name == "x_attr" : 
-            return objectsc.object_kind_x_attr_get(self.this)
-        if name == "x_char" : 
-            return objectsc.object_kind_x_char_get(self.this)
-        if name == "flavor" : 
-            return objectsc.object_kind_flavor_get(self.this)
-        if name == "easy_know" : 
-            return objectsc.object_kind_easy_know_get(self.this)
-        if name == "aware" : 
-            return objectsc.object_kind_aware_get(self.this)
-        if name == "tried" : 
-            return objectsc.object_kind_tried_get(self.this)
-        raise AttributeError,name
-    def __repr__(self):
-        return "<C object_kind instance>"
-class object_kind(object_kindPtr):
-    def __init__(self,this):
-        self.this = this
 
 
 
-
-class object_typePtr :
-    def __init__(self,this):
-        self.this = this
-        self.thisown = 0
-    def __del__(self):
-        if self.thisown == 1 :
-            objectsc.delete_object_type(self.this)
-    def object_wipe(self):
-        val = objectsc.object_type_object_wipe(self.this)
-        return val
-    def object_copy(self,arg0):
-        val = objectsc.object_type_object_copy(self.this,arg0.this)
-        return val
-    def object_prep(self,arg0):
-        val = objectsc.object_type_object_prep(self.this,arg0)
-        return val
-    def drop_near(self,arg0,arg1,arg2):
-        val = objectsc.object_type_drop_near(self.this,arg0,arg1,arg2)
-        return val
-    def activation(self):
-        val = objectsc.object_type_activation(self.this)
-        return val
-    def identify_fully_aux(self):
-        val = objectsc.object_type_identify_fully_aux(self.this)
-        return val
-    def object_known(self):
-        val = objectsc.object_type_object_known(self.this)
-        return val
-    def object_aware(self):
-        val = objectsc.object_type_object_aware(self.this)
-        return val
-    def set_python(self,arg0):
-        val = objectsc.object_type_set_python(self.this,arg0)
-        return val
-    def __setattr__(self,name,value):
-        if name == "k_idx" :
-            objectsc.object_type_k_idx_set(self.this,value)
-            return
-        if name == "iy" :
-            objectsc.object_type_iy_set(self.this,value)
-            return
-        if name == "ix" :
-            objectsc.object_type_ix_set(self.this,value)
-            return
-        if name == "tval" :
-            objectsc.object_type_tval_set(self.this,value)
-            return
-        if name == "sval" :
-            objectsc.object_type_sval_set(self.this,value)
-            return
-        if name == "pval" :
-            objectsc.object_type_pval_set(self.this,value)
-            return
-        if name == "discount" :
-            objectsc.object_type_discount_set(self.this,value)
-            return
-        if name == "number" :
-            objectsc.object_type_number_set(self.this,value)
-            return
-        if name == "weight" :
-            objectsc.object_type_weight_set(self.this,value)
-            return
-        if name == "name1" :
-            objectsc.object_type_name1_set(self.this,value)
-            return
-        if name == "name2" :
-            objectsc.object_type_name2_set(self.this,value)
-            return
-        if name == "xtra1" :
-            objectsc.object_type_xtra1_set(self.this,value)
-            return
-        if name == "xtra2" :
-            objectsc.object_type_xtra2_set(self.this,value)
-            return
-        if name == "to_h" :
-            objectsc.object_type_to_h_set(self.this,value)
-            return
-        if name == "to_d" :
-            objectsc.object_type_to_d_set(self.this,value)
-            return
-        if name == "to_a" :
-            objectsc.object_type_to_a_set(self.this,value)
-            return
-        if name == "ac" :
-            objectsc.object_type_ac_set(self.this,value)
-            return
-        if name == "dd" :
-            objectsc.object_type_dd_set(self.this,value)
-            return
-        if name == "ds" :
-            objectsc.object_type_ds_set(self.this,value)
-            return
-        if name == "timeout" :
-            objectsc.object_type_timeout_set(self.this,value)
-            return
-        if name == "ident" :
-            objectsc.object_type_ident_set(self.this,value)
-            return
-        if name == "marked" :
-            objectsc.object_type_marked_set(self.this,value)
-            return
-        if name == "inscription" :
-            objectsc.object_type_inscription_set(self.this,value)
-            return
-        if name == "art_name" :
-            objectsc.object_type_art_name_set(self.this,value)
-            return
-        if name == "art_flags1" :
-            objectsc.object_type_art_flags1_set(self.this,value)
-            return
-        if name == "art_flags2" :
-            objectsc.object_type_art_flags2_set(self.this,value)
-            return
-        if name == "art_flags3" :
-            objectsc.object_type_art_flags3_set(self.this,value)
-            return
-        if name == "next_o_idx" :
-            objectsc.object_type_next_o_idx_set(self.this,value)
-            return
-        if name == "held_m_idx" :
-            objectsc.object_type_held_m_idx_set(self.this,value)
-            return
-        self.__dict__[name] = value
-    def __getattr__(self,name):
-        if name == "k_idx" : 
-            return objectsc.object_type_k_idx_get(self.this)
-        if name == "iy" : 
-            return objectsc.object_type_iy_get(self.this)
-        if name == "ix" : 
-            return objectsc.object_type_ix_get(self.this)
-        if name == "tval" : 
-            return objectsc.object_type_tval_get(self.this)
-        if name == "sval" : 
-            return objectsc.object_type_sval_get(self.this)
-        if name == "pval" : 
-            return objectsc.object_type_pval_get(self.this)
-        if name == "discount" : 
-            return objectsc.object_type_discount_get(self.this)
-        if name == "number" : 
-            return objectsc.object_type_number_get(self.this)
-        if name == "weight" : 
-            return objectsc.object_type_weight_get(self.this)
-        if name == "name1" : 
-            return objectsc.object_type_name1_get(self.this)
-        if name == "name2" : 
-            return objectsc.object_type_name2_get(self.this)
-        if name == "xtra1" : 
-            return objectsc.object_type_xtra1_get(self.this)
-        if name == "xtra2" : 
-            return objectsc.object_type_xtra2_get(self.this)
-        if name == "to_h" : 
-            return objectsc.object_type_to_h_get(self.this)
-        if name == "to_d" : 
-            return objectsc.object_type_to_d_get(self.this)
-        if name == "to_a" : 
-            return objectsc.object_type_to_a_get(self.this)
-        if name == "ac" : 
-            return objectsc.object_type_ac_get(self.this)
-        if name == "dd" : 
-            return objectsc.object_type_dd_get(self.this)
-        if name == "ds" : 
-            return objectsc.object_type_ds_get(self.this)
-        if name == "timeout" : 
-            return objectsc.object_type_timeout_get(self.this)
-        if name == "ident" : 
-            return objectsc.object_type_ident_get(self.this)
-        if name == "marked" : 
-            return objectsc.object_type_marked_get(self.this)
-        if name == "inscription" : 
-            return objectsc.object_type_inscription_get(self.this)
-        if name == "art_name" : 
-            return objectsc.object_type_art_name_get(self.this)
-        if name == "art_flags1" : 
-            return objectsc.object_type_art_flags1_get(self.this)
-        if name == "art_flags2" : 
-            return objectsc.object_type_art_flags2_get(self.this)
-        if name == "art_flags3" : 
-            return objectsc.object_type_art_flags3_get(self.this)
-        if name == "next_o_idx" : 
-            return objectsc.object_type_next_o_idx_get(self.this)
-        if name == "held_m_idx" : 
-            return objectsc.object_type_held_m_idx_get(self.this)
-        raise AttributeError,name
-    def __repr__(self):
-        return "<C object_type instance>"
-class object_type(object_typePtr):
-    def __init__(self) :
-        self.this = objectsc.new_object_type()
+class object_type:
+    def __init__(self,*args):
+        self.this = apply(objectsc.new_object_type,args)
         self.thisown = 1
 
-
-
-
-class artifact_typePtr :
+    def __del__(self,objectsc=objectsc):
+        if self.thisown == 1 :
+            objectsc.delete_object_type(self)
+    __setmethods__ = {
+        "k_idx" : objectsc.object_type_k_idx_set,
+        "iy" : objectsc.object_type_iy_set,
+        "ix" : objectsc.object_type_ix_set,
+        "tval" : objectsc.object_type_tval_set,
+        "sval" : objectsc.object_type_sval_set,
+        "pval" : objectsc.object_type_pval_set,
+        "discount" : objectsc.object_type_discount_set,
+        "number" : objectsc.object_type_number_set,
+        "weight" : objectsc.object_type_weight_set,
+        "name1" : objectsc.object_type_name1_set,
+        "name2" : objectsc.object_type_name2_set,
+        "xtra1" : objectsc.object_type_xtra1_set,
+        "xtra2" : objectsc.object_type_xtra2_set,
+        "to_h" : objectsc.object_type_to_h_set,
+        "to_d" : objectsc.object_type_to_d_set,
+        "to_a" : objectsc.object_type_to_a_set,
+        "ac" : objectsc.object_type_ac_set,
+        "dd" : objectsc.object_type_dd_set,
+        "ds" : objectsc.object_type_ds_set,
+        "timeout" : objectsc.object_type_timeout_set,
+        "ident" : objectsc.object_type_ident_set,
+        "marked" : objectsc.object_type_marked_set,
+        "inscription" : objectsc.object_type_inscription_set,
+        "art_name" : objectsc.object_type_art_name_set,
+        "art_flags1" : objectsc.object_type_art_flags1_set,
+        "art_flags2" : objectsc.object_type_art_flags2_set,
+        "art_flags3" : objectsc.object_type_art_flags3_set,
+        "next_o_idx" : objectsc.object_type_next_o_idx_set,
+        "held_m_idx" : objectsc.object_type_held_m_idx_set,
+    }
+    def __setattr__(self,name,value):
+        if (name == "this") or (name == "thisown"): self.__dict__[name] = value; return
+        method = object_type.__setmethods__.get(name,None)
+        if method: return method(self,value)
+        self.__dict__[name] = value
+    __getmethods__ = {
+        "k_idx" : objectsc.object_type_k_idx_get,
+        "iy" : objectsc.object_type_iy_get,
+        "ix" : objectsc.object_type_ix_get,
+        "tval" : objectsc.object_type_tval_get,
+        "sval" : objectsc.object_type_sval_get,
+        "pval" : objectsc.object_type_pval_get,
+        "discount" : objectsc.object_type_discount_get,
+        "number" : objectsc.object_type_number_get,
+        "weight" : objectsc.object_type_weight_get,
+        "name1" : objectsc.object_type_name1_get,
+        "name2" : objectsc.object_type_name2_get,
+        "xtra1" : objectsc.object_type_xtra1_get,
+        "xtra2" : objectsc.object_type_xtra2_get,
+        "to_h" : objectsc.object_type_to_h_get,
+        "to_d" : objectsc.object_type_to_d_get,
+        "to_a" : objectsc.object_type_to_a_get,
+        "ac" : objectsc.object_type_ac_get,
+        "dd" : objectsc.object_type_dd_get,
+        "ds" : objectsc.object_type_ds_get,
+        "timeout" : objectsc.object_type_timeout_get,
+        "ident" : objectsc.object_type_ident_get,
+        "marked" : objectsc.object_type_marked_get,
+        "inscription" : objectsc.object_type_inscription_get,
+        "art_name" : objectsc.object_type_art_name_get,
+        "art_flags1" : objectsc.object_type_art_flags1_get,
+        "art_flags2" : objectsc.object_type_art_flags2_get,
+        "art_flags3" : objectsc.object_type_art_flags3_get,
+        "next_o_idx" : objectsc.object_type_next_o_idx_get,
+        "held_m_idx" : objectsc.object_type_held_m_idx_get,
+    }
+    def __getattr__(self,name):
+        method = object_type.__getmethods__.get(name,None)
+        if method: return method(self)
+        raise AttributeError,name
+    def __repr__(self):
+        return "<C object_type instance at %s>" % (self.this,)
+class object_typePtr(object_type):
     def __init__(self,this):
         self.this = this
         self.thisown = 0
-    def __setattr__(self,name,value):
-        if name == "name" :
-            objectsc.artifact_type_name_set(self.this,value)
-            return
-        if name == "text" :
-            objectsc.artifact_type_text_set(self.this,value)
-            return
-        if name == "tval" :
-            objectsc.artifact_type_tval_set(self.this,value)
-            return
-        if name == "sval" :
-            objectsc.artifact_type_sval_set(self.this,value)
-            return
-        if name == "pval" :
-            objectsc.artifact_type_pval_set(self.this,value)
-            return
-        if name == "to_h" :
-            objectsc.artifact_type_to_h_set(self.this,value)
-            return
-        if name == "to_d" :
-            objectsc.artifact_type_to_d_set(self.this,value)
-            return
-        if name == "to_a" :
-            objectsc.artifact_type_to_a_set(self.this,value)
-            return
-        if name == "ac" :
-            objectsc.artifact_type_ac_set(self.this,value)
-            return
-        if name == "dd" :
-            objectsc.artifact_type_dd_set(self.this,value)
-            return
-        if name == "ds" :
-            objectsc.artifact_type_ds_set(self.this,value)
-            return
-        if name == "weight" :
-            objectsc.artifact_type_weight_set(self.this,value)
-            return
-        if name == "cost" :
-            objectsc.artifact_type_cost_set(self.this,value)
-            return
-        if name == "flags1" :
-            objectsc.artifact_type_flags1_set(self.this,value)
-            return
-        if name == "flags2" :
-            objectsc.artifact_type_flags2_set(self.this,value)
-            return
-        if name == "flags3" :
-            objectsc.artifact_type_flags3_set(self.this,value)
-            return
-        if name == "level" :
-            objectsc.artifact_type_level_set(self.this,value)
-            return
-        if name == "rarity" :
-            objectsc.artifact_type_rarity_set(self.this,value)
-            return
-        if name == "cur_num" :
-            objectsc.artifact_type_cur_num_set(self.this,value)
-            return
-        if name == "max_num" :
-            objectsc.artifact_type_max_num_set(self.this,value)
-            return
-        self.__dict__[name] = value
-    def __getattr__(self,name):
-        if name == "name" : 
-            return objectsc.artifact_type_name_get(self.this)
-        if name == "text" : 
-            return objectsc.artifact_type_text_get(self.this)
-        if name == "tval" : 
-            return objectsc.artifact_type_tval_get(self.this)
-        if name == "sval" : 
-            return objectsc.artifact_type_sval_get(self.this)
-        if name == "pval" : 
-            return objectsc.artifact_type_pval_get(self.this)
-        if name == "to_h" : 
-            return objectsc.artifact_type_to_h_get(self.this)
-        if name == "to_d" : 
-            return objectsc.artifact_type_to_d_get(self.this)
-        if name == "to_a" : 
-            return objectsc.artifact_type_to_a_get(self.this)
-        if name == "ac" : 
-            return objectsc.artifact_type_ac_get(self.this)
-        if name == "dd" : 
-            return objectsc.artifact_type_dd_get(self.this)
-        if name == "ds" : 
-            return objectsc.artifact_type_ds_get(self.this)
-        if name == "weight" : 
-            return objectsc.artifact_type_weight_get(self.this)
-        if name == "cost" : 
-            return objectsc.artifact_type_cost_get(self.this)
-        if name == "flags1" : 
-            return objectsc.artifact_type_flags1_get(self.this)
-        if name == "flags2" : 
-            return objectsc.artifact_type_flags2_get(self.this)
-        if name == "flags3" : 
-            return objectsc.artifact_type_flags3_get(self.this)
-        if name == "level" : 
-            return objectsc.artifact_type_level_get(self.this)
-        if name == "rarity" : 
-            return objectsc.artifact_type_rarity_get(self.this)
-        if name == "cur_num" : 
-            return objectsc.artifact_type_cur_num_get(self.this)
-        if name == "max_num" : 
-            return objectsc.artifact_type_max_num_get(self.this)
-        raise AttributeError,name
-    def __repr__(self):
-        return "<C artifact_type instance>"
-class artifact_type(artifact_typePtr):
+
+
+object_type.object_wipe = new.instancemethod(objectsc.object_type_object_wipe, None, object_type)
+object_type.object_copy = new.instancemethod(objectsc.object_type_object_copy, None, object_type)
+object_type.object_prep = new.instancemethod(objectsc.object_type_object_prep, None, object_type)
+object_type.drop_near = new.instancemethod(objectsc.object_type_drop_near, None, object_type)
+object_type.activation = new.instancemethod(objectsc.object_type_activation, None, object_type)
+object_type.identify_fully_aux = new.instancemethod(objectsc.object_type_identify_fully_aux, None, object_type)
+object_type.object_known = new.instancemethod(objectsc.object_type_object_known, None, object_type)
+object_type.object_aware = new.instancemethod(objectsc.object_type_object_aware, None, object_type)
+object_type.set_python = new.instancemethod(objectsc.object_type_set_python, None, object_type)
+
+class artifact_type:
     def __init__(self,this):
         self.this = this
 
-
-
-
-class ego_item_typePtr :
+    __setmethods__ = {
+        "name" : objectsc.artifact_type_name_set,
+        "text" : objectsc.artifact_type_text_set,
+        "tval" : objectsc.artifact_type_tval_set,
+        "sval" : objectsc.artifact_type_sval_set,
+        "pval" : objectsc.artifact_type_pval_set,
+        "to_h" : objectsc.artifact_type_to_h_set,
+        "to_d" : objectsc.artifact_type_to_d_set,
+        "to_a" : objectsc.artifact_type_to_a_set,
+        "ac" : objectsc.artifact_type_ac_set,
+        "dd" : objectsc.artifact_type_dd_set,
+        "ds" : objectsc.artifact_type_ds_set,
+        "weight" : objectsc.artifact_type_weight_set,
+        "cost" : objectsc.artifact_type_cost_set,
+        "flags1" : objectsc.artifact_type_flags1_set,
+        "flags2" : objectsc.artifact_type_flags2_set,
+        "flags3" : objectsc.artifact_type_flags3_set,
+        "level" : objectsc.artifact_type_level_set,
+        "rarity" : objectsc.artifact_type_rarity_set,
+        "cur_num" : objectsc.artifact_type_cur_num_set,
+        "max_num" : objectsc.artifact_type_max_num_set,
+    }
+    def __setattr__(self,name,value):
+        if (name == "this") or (name == "thisown"): self.__dict__[name] = value; return
+        method = artifact_type.__setmethods__.get(name,None)
+        if method: return method(self,value)
+        self.__dict__[name] = value
+    __getmethods__ = {
+        "name" : objectsc.artifact_type_name_get,
+        "text" : objectsc.artifact_type_text_get,
+        "tval" : objectsc.artifact_type_tval_get,
+        "sval" : objectsc.artifact_type_sval_get,
+        "pval" : objectsc.artifact_type_pval_get,
+        "to_h" : objectsc.artifact_type_to_h_get,
+        "to_d" : objectsc.artifact_type_to_d_get,
+        "to_a" : objectsc.artifact_type_to_a_get,
+        "ac" : objectsc.artifact_type_ac_get,
+        "dd" : objectsc.artifact_type_dd_get,
+        "ds" : objectsc.artifact_type_ds_get,
+        "weight" : objectsc.artifact_type_weight_get,
+        "cost" : objectsc.artifact_type_cost_get,
+        "flags1" : objectsc.artifact_type_flags1_get,
+        "flags2" : objectsc.artifact_type_flags2_get,
+        "flags3" : objectsc.artifact_type_flags3_get,
+        "level" : objectsc.artifact_type_level_get,
+        "rarity" : objectsc.artifact_type_rarity_get,
+        "cur_num" : objectsc.artifact_type_cur_num_get,
+        "max_num" : objectsc.artifact_type_max_num_get,
+    }
+    def __getattr__(self,name):
+        method = artifact_type.__getmethods__.get(name,None)
+        if method: return method(self)
+        raise AttributeError,name
+    def __repr__(self):
+        return "<C artifact_type instance at %s>" % (self.this,)
+class artifact_typePtr(artifact_type):
     def __init__(self,this):
         self.this = this
         self.thisown = 0
-    def __setattr__(self,name,value):
-        if name == "name" :
-            objectsc.ego_item_type_name_set(self.this,value)
-            return
-        if name == "text" :
-            objectsc.ego_item_type_text_set(self.this,value)
-            return
-        if name == "slot" :
-            objectsc.ego_item_type_slot_set(self.this,value)
-            return
-        if name == "rating" :
-            objectsc.ego_item_type_rating_set(self.this,value)
-            return
-        if name == "level" :
-            objectsc.ego_item_type_level_set(self.this,value)
-            return
-        if name == "rarity" :
-            objectsc.ego_item_type_rarity_set(self.this,value)
-            return
-        if name == "max_to_h" :
-            objectsc.ego_item_type_max_to_h_set(self.this,value)
-            return
-        if name == "max_to_d" :
-            objectsc.ego_item_type_max_to_d_set(self.this,value)
-            return
-        if name == "max_to_a" :
-            objectsc.ego_item_type_max_to_a_set(self.this,value)
-            return
-        if name == "max_pval" :
-            objectsc.ego_item_type_max_pval_set(self.this,value)
-            return
-        if name == "cost" :
-            objectsc.ego_item_type_cost_set(self.this,value)
-            return
-        if name == "flags1" :
-            objectsc.ego_item_type_flags1_set(self.this,value)
-            return
-        if name == "flags2" :
-            objectsc.ego_item_type_flags2_set(self.this,value)
-            return
-        if name == "flags3" :
-            objectsc.ego_item_type_flags3_set(self.this,value)
-            return
-        self.__dict__[name] = value
-    def __getattr__(self,name):
-        if name == "name" : 
-            return objectsc.ego_item_type_name_get(self.this)
-        if name == "text" : 
-            return objectsc.ego_item_type_text_get(self.this)
-        if name == "slot" : 
-            return objectsc.ego_item_type_slot_get(self.this)
-        if name == "rating" : 
-            return objectsc.ego_item_type_rating_get(self.this)
-        if name == "level" : 
-            return objectsc.ego_item_type_level_get(self.this)
-        if name == "rarity" : 
-            return objectsc.ego_item_type_rarity_get(self.this)
-        if name == "max_to_h" : 
-            return objectsc.ego_item_type_max_to_h_get(self.this)
-        if name == "max_to_d" : 
-            return objectsc.ego_item_type_max_to_d_get(self.this)
-        if name == "max_to_a" : 
-            return objectsc.ego_item_type_max_to_a_get(self.this)
-        if name == "max_pval" : 
-            return objectsc.ego_item_type_max_pval_get(self.this)
-        if name == "cost" : 
-            return objectsc.ego_item_type_cost_get(self.this)
-        if name == "flags1" : 
-            return objectsc.ego_item_type_flags1_get(self.this)
-        if name == "flags2" : 
-            return objectsc.ego_item_type_flags2_get(self.this)
-        if name == "flags3" : 
-            return objectsc.ego_item_type_flags3_get(self.this)
-        raise AttributeError,name
-    def __repr__(self):
-        return "<C ego_item_type instance>"
-class ego_item_type(ego_item_typePtr):
+
+
+
+class ego_item_type:
     def __init__(self,this):
         self.this = this
 
+    __setmethods__ = {
+        "name" : objectsc.ego_item_type_name_set,
+        "text" : objectsc.ego_item_type_text_set,
+        "slot" : objectsc.ego_item_type_slot_set,
+        "rating" : objectsc.ego_item_type_rating_set,
+        "level" : objectsc.ego_item_type_level_set,
+        "rarity" : objectsc.ego_item_type_rarity_set,
+        "max_to_h" : objectsc.ego_item_type_max_to_h_set,
+        "max_to_d" : objectsc.ego_item_type_max_to_d_set,
+        "max_to_a" : objectsc.ego_item_type_max_to_a_set,
+        "max_pval" : objectsc.ego_item_type_max_pval_set,
+        "cost" : objectsc.ego_item_type_cost_set,
+        "flags1" : objectsc.ego_item_type_flags1_set,
+        "flags2" : objectsc.ego_item_type_flags2_set,
+        "flags3" : objectsc.ego_item_type_flags3_set,
+    }
+    def __setattr__(self,name,value):
+        if (name == "this") or (name == "thisown"): self.__dict__[name] = value; return
+        method = ego_item_type.__setmethods__.get(name,None)
+        if method: return method(self,value)
+        self.__dict__[name] = value
+    __getmethods__ = {
+        "name" : objectsc.ego_item_type_name_get,
+        "text" : objectsc.ego_item_type_text_get,
+        "slot" : objectsc.ego_item_type_slot_get,
+        "rating" : objectsc.ego_item_type_rating_get,
+        "level" : objectsc.ego_item_type_level_get,
+        "rarity" : objectsc.ego_item_type_rarity_get,
+        "max_to_h" : objectsc.ego_item_type_max_to_h_get,
+        "max_to_d" : objectsc.ego_item_type_max_to_d_get,
+        "max_to_a" : objectsc.ego_item_type_max_to_a_get,
+        "max_pval" : objectsc.ego_item_type_max_pval_get,
+        "cost" : objectsc.ego_item_type_cost_get,
+        "flags1" : objectsc.ego_item_type_flags1_get,
+        "flags2" : objectsc.ego_item_type_flags2_get,
+        "flags3" : objectsc.ego_item_type_flags3_get,
+    }
+    def __getattr__(self,name):
+        method = ego_item_type.__getmethods__.get(name,None)
+        if method: return method(self)
+        raise AttributeError,name
+    def __repr__(self):
+        return "<C ego_item_type instance at %s>" % (self.this,)
+class ego_item_typePtr(ego_item_type):
+    def __init__(self,this):
+        self.this = this
+        self.thisown = 0
 
 
 

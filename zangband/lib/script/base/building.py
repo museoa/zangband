@@ -120,7 +120,7 @@ class quest_command(building_command):
 	def execute(self, building):
 		debug.trace("quest_command.__init__(%s, %s)" % (self, building))
 
-		from variable import gui
+		from variable import ui
 
 		# Check the players quests for a quest from this building
 		from variable import player
@@ -128,7 +128,7 @@ class quest_command(building_command):
 			if quest.quest_giver == building.quest_giver:
 				if quest.unfinished():
 					quest.execute()
-					gui.print_quest_info(quest.get_description())
+					ui.print_quest_info(quest.get_description())
 					return
 
 		# Get a new quest
@@ -139,7 +139,7 @@ class quest_command(building_command):
 			quest.assign(building.quest_giver)
 
 			# Print the description
-			gui.print_quest_info(quest.get_description())
+			ui.print_quest_info(quest.get_description())
 		else:
-			gui.print_quest_info(["I don't have a quest for you at the moment."])
+			ui.print_quest_info(["I don't have a quest for you at the moment."])
 

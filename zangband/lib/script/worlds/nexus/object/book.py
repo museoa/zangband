@@ -1,6 +1,7 @@
 from angband import objects
 from base.object import object_class
 from variable import player
+import variable
 
 class spell_book_class(object_class):
 	def object_browse_hook(self):
@@ -8,8 +9,8 @@ class spell_book_class(object_class):
 			# Create a list of spells in the book
 			list = self.create_spell_list()
 
-			from variable import gui
-			gui.browse_book(list)
+			from variable import ui
+			ui.browse_book(list)
 			return 1
 		except:
 			from traceback import print_exc
@@ -31,8 +32,8 @@ class spell_book_class(object_class):
 				io.msg_format("You don't know any %ss in that book.", prayer)
 				return 1
 
-			from variable import gui
-			spell = gui.cast_spell(list)
+			from variable import ui
+			spell = ui.cast_spell(list)
 			if spell:
 				spell.cast()
 			return 1
@@ -63,7 +64,6 @@ class life_book_1_class(life_book_class):
 	spells = ["Detect Evil",
 	          "Cure Light Wounds"]
 
-from base.object import objects
-objects.announce(life_book_class)
-objects.announce(life_book_1_class)
+variable.objects.announce(life_book_class)
+variable.objects.announce(life_book_1_class)
 

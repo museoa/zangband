@@ -23,10 +23,6 @@ class player_data_class(player_typePtr):
 		import base.quest
 		self.quests = base.quest.quests_data()
 
-		# Loading/saving
-		events.load_game.append(self)
-		events.save_game.append(self)
-
 		# Create the support for the player race and class
 		import birth
 		birth.player_sex_birth()
@@ -35,17 +31,11 @@ class player_data_class(player_typePtr):
 
 		import base.skill
 		self.skills = base.skill.skills()
-
+		
 	def give(self, object):
 		debug.trace("player_data_class.give(%s, %s)" % (self, object))
 
 		object.object_aware()
 		object.object_known()
 		self.carry(object.this)
-
-	def load_game_hook(self, dict):
-		self.__dict__ = dict["player"]
-
-	def save_game_hook(self):
-		return ("player", self.__dict__)
 

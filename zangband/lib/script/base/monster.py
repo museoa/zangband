@@ -127,10 +127,6 @@ class monster_data(factory):
 		events.delete_monster.append(self)
 		events.copy_monster.append(self)
 
-		# Loading/saving
-		events.load_game.append(self)
-		events.save_game.append(self)
-
 	def create_monster_hook(self, index):
 		debug.trace("monster_data.create_monster_hook(%s, %s)" % (self, index))
 
@@ -165,9 +161,11 @@ class monster_data(factory):
 		debug.trace("monster_data.kill_monster_hook(%s, %s)" % (self, index))
 		return self.monsters[index].kill()
 
+	# XXX
 	def load_game_hook(self, dict):
 		self.monsters = dict["monsters"]
 
+	# XXX
 	def save_game_hook(self):
 		return ("monsters", self.monsters)
 

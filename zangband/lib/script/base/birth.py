@@ -10,7 +10,7 @@
 from variable import events, debug
 
 #####################################################################
-# Support for birth/loading of the player
+#
 #####################################################################
 class player_race_birth:
 	version = 0
@@ -31,8 +31,8 @@ class player_race_birth:
 		autorun_dir("worlds", player.world.directory, "player", "race")
 
 		# Select the race
-		from variable import gui
-		selected = gui.birth.select_race(self.races)
+		from variable import ui
+		selected = ui.birth.select_race(self.races)
 
 		# Restart character generation
 		if not selected:
@@ -47,6 +47,9 @@ class player_race_birth:
 		return 1
 
 
+#####################################################################
+#
+#####################################################################
 class player_class_birth:
 	version = 0
 	classes = []
@@ -61,13 +64,13 @@ class player_class_birth:
 	def get_player_class_hook(self, args):
 		from variable import player
 
-		# Load all available player-races
+		# Load all available player-classes
 		from util.autorun import autorun_dir
 		autorun_dir("worlds", player.world.directory, "player", "pclass")
 
 		# Select the class
-		from variable import gui
-		selected = gui.birth.select_class(self.classes)
+		from variable import ui
+		selected = ui.birth.select_class(self.classes)
 
 		# Restart character generation
 		if not selected:
@@ -80,10 +83,15 @@ class player_class_birth:
 		import realmsc
 		realmsc.cvar.mp_ptr = realmsc.get_player_magic(player.pclass)
 
-		# Remove the events since we no longer need them
+		# Remove the event since we no longer need it
 		events.get_player_class.remove(self)
 
 		return 1
 
+
+#####################################################################
+#
+#####################################################################
 class player_sex_birth:
 	pass
+

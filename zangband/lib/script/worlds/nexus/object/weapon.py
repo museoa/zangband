@@ -1,5 +1,6 @@
 from angband import objects
 from base.object import object_class
+import variable
 
 class weapon_class(object_class):
 	pass
@@ -30,11 +31,9 @@ class mace_class(hafted_class):
 	sval = objects.SV_MACE
 	name = "mace"
 
-
-from base.object import objects
-objects.announce(broad_sword_class)
-objects.announce(dagger_class)
-objects.announce(short_sword_class)
-objects.announce(small_sword_class)
-objects.announce(mace_class)
+variable.objects.announce(broad_sword_class)
+variable.objects.announce(dagger_class)
+variable.objects.announce(short_sword_class)
+variable.objects.announce(small_sword_class)
+variable.objects.announce(mace_class)
 

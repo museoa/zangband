@@ -8,7 +8,13 @@
 
 from variable import events
 from angband.objects import object_type, object_typePtr
-import pickle
+
+try:
+	import cPickle
+	pickle = cPickle
+except ImportError:
+	import pickle
+
 
 #####################################################################
 # Object base class
@@ -98,14 +104,7 @@ class object_data_class:
 		return the_object
 
 	def object_load_hook(self, data):
-		print "loading ", data
 		the_object = pickle.loads(data)
 		self.data.append(the_object)
 		return the_object
-
-
-#####################################################################
-# Object storage
-#####################################################################
-objects = object_data_class()
 

@@ -71,29 +71,26 @@ class player_race(angband.prace.player_race):
 		return 1
 
 	def give_food_rations(self):
-		from variable import player
-		from base.object import objects
+		import variable
 		from angband.random import rand_range
-		food = objects.create("food ration")
+		food = variable.objects.create("food ration")
 		food.number = rand_range(2, 5)
-		player.give(food)
+		variable.player.give(food)
 
 	def give_satisfy_hunger_scrolls(self):
-		from variable import player
-		from base.object import objects
+		import variable
 		from angband.random import rand_range
-		scroll = objects.create("scroll of satisfy hunger")
+		scroll = variable.objects.create("scroll of satisfy hunger")
 		scroll.number = rand_range(2, 5)
-		player.give(scroll)
+		variable.player.give(scroll)
 
 	def give_torches(self):
-		from variable import player
-		from base.object import objects
+		import variable
 		from angband.random import rand_range
-		lite = objects.create("wooden torch")
+		lite = variable.objects.create("wooden torch")
 		lite.number = rand_range(3, 7)
 		lite.pval = rand_range(3, 7) * 500
-		player.give(lite)
+		variable.player.give(lite)
 
 	# Make sure the constructor gets called when unpickling
 	def __getinitargs__(self):

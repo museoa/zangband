@@ -1,5 +1,6 @@
 from angband import objects
 from base.object import object_class
+import variable
 
 class armor_class(object_class):
 	pass
@@ -22,8 +23,7 @@ class soft_leather_armor_class(soft_armor_class):
 	sval = objects.SV_SOFT_LEATHER_ARMOR
 	name = "soft leather armor"
 
-from base.object import objects
-objects.announce(chain_mail_class)
-objects.announce(metal_scale_mail_class)
-objects.announce(soft_leather_armor_class)
+variable.objects.announce(chain_mail_class)
+variable.objects.announce(metal_scale_mail_class)
+variable.objects.announce(soft_leather_armor_class)
 

@@ -8,7 +8,7 @@
 
 def autorun_dir(*path):
 	import os
-	import sys;
+	import sys
 
 	# Initialize
 	directory = sys.path[0]
@@ -23,8 +23,8 @@ def autorun_dir(*path):
 	try:
 		files = os.listdir(directory)
 	except os.error:
-		print "Can't list", directory
 		files = []
+		raise "Can't list", directory		
 	files.sort()
 
 	# Filter out the relevant files

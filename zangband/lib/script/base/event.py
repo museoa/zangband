@@ -6,6 +6,7 @@
 #
 #####################################################################
 
+from variable import debug
 from angband.event import *
 
 #####################################################################
@@ -16,15 +17,8 @@ class event_class:
 		self.hooks = []
 		self.version = 0
 		self.method = hookname
+		self.eventnumber = eventnumber
 		set_callback(eventnumber, self)
-#	def __len__(self):
-#		return len(self.hooks)
-#	def __getitem(self, key):
-#		return self.hooks[key]
-#	def __setitem__(self, key, value):
-#		self.hooks[key] = value
-#	def __delitem__(self, key):
-#		del self.hooks[key]
 
 	# Add a new hook
 	def append(self, hook):
@@ -130,7 +124,11 @@ class save_event_class(event_class):
 					traceback.print_exc()
 					print "when calling : %s" % (my_hook)
 				dict[tag] = data
-			import pickle
+			try:
+				import cPickle
+				pickle = cPickle
+			except ImportError:
+				import pickle
 			return pickle.dumps(dict)
 		except:
 			import traceback
@@ -146,7 +144,12 @@ class load_event_class(event_class):
 	def __call__(self, args):
 		try:
 			dict = {}
-			import pickle
+			try:
+				import cPickle
+				pickle = cPickle	
+			except ImportError:
+				import pickle
+
 			dict = pickle.loads(args)
 
 			version = dict["version"]
@@ -164,8 +167,14 @@ class load_event_class(event_class):
 #####################################################################
 class event_data_class:
 	def __init__(self):
-		# Storage for the callbacks
-		self.callbacks = {}
+		self.callbacks = []
+
+		# Set the temporary callbacks
+		load_game = load_event_class(LOAD_GAME_EVENT, "load_game_hook")
+		load_game.append(self)
+
+		new_game = event_class(NEW_GAME_EVENT, "new_game_hook")
+		new_game.append(self)
 
 		# Set the various events
 		self._set_callback(CMD_EAT_EVENT, "cmd_eat")
@@ -200,6 +209,8 @@ class event_data_class:
 
 		self._set_callback(USE_SKILL_EVENT, "use_skill")
 
+		self._set_callback(GET_SCRIPT_WINDOW_LINE_EVENT, "get_script_window_line")
+
 		self._set_special_callback(grid_event_class, PLAYER_SEARCH_GRID_EVENT, "player_search_grid")
 		self._set_special_callback(grid_event_class, PLAYER_ENTER_GRID_EVENT, "player_enter_grid")
 
@@ -209,32 +220,48 @@ class event_data_class:
 		self.leave_wilderness.append(self.player_search_grid)
 		self.leave_wilderness.append(self.player_enter_grid)
 
-		self._set_special_callback(load_event_class, CALLBACKS_LOAD_EVENT, "load_game")
-		self._set_special_callback(save_event_class, CALLBACKS_SAVE_EVENT, "save_game")
+		self._set_special_callback(save_event_class, SAVE_GAME_EVENT, "save_game")
 
-		# Hook in for loading and saving the callbacks
-		self.load_game.append(self)
+		# Hook for saving the callbacks
 		self.save_game.append(self)
-
-	# Loading the callbacks
-	def load_game_hook(self, dict):
-		self.__dict__.update(dict["callbacks"])
-		for i in self.callbacks.keys():
-			set_callback(i, self.callbacks[i])
 
 	# Saving the callbacks
 	def save_game_hook(self):
-		return ("callbacks", self.__dict__)
+		import variable
+		return ("variable", variable.get_save_data())
+
+	# Loading the game
+	def load_game_hook(self, dict):
+		self.remove()
+		import variable
+		variable.set_save_data(dict["variable"])
+
+	# New game
+	def new_game_hook(self, args):
+		self.remove()
+
+	# Remove all hooks
+	def remove(self):
+		remove_callback(LOAD_GAME_EVENT)
+		remove_callback(NEW_GAME_EVENT)
 
 	# Helper-function for setting the callbacks
 	def _set_callback(self, event, name):
 		the_event = event_class(event, name + "_hook")
-		self.callbacks[event] = the_event
+		self.callbacks.append(the_event)
 		setattr(self, name, the_event)
 
 	# Helper-function for setting special callbacks
 	def _set_special_callback(self, event_class, event, name):
 		the_event = apply(event_class, (event, name + "_hook"))
-		self.callbacks[event] = the_event
+		self.callbacks.append(the_event)
 		setattr(self, name, the_event)
+
+	def __getstate__(self):
+		return self.callbacks
+
+	def __setstate__(self, data):
+		self.callbacks = data
+		for event in self.callbacks:
+			set_callback(event.eventnumber, event)
 

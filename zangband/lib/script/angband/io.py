@@ -1,8 +1,11 @@
 # This file was created automatically by SWIG.
 import ioc
+import new
 
 
 #-------------- FUNCTION WRAPPERS ------------------
+
+get_line = ioc.get_line
 
 path_parse = ioc.path_parse
 
@@ -105,6 +108,8 @@ request_command = ioc.request_command
 is_a_vowel = ioc.is_a_vowel
 
 get_keymap_dir = ioc.get_keymap_dir
+
+get_aim_dir = ioc.get_aim_dir
 
 Term_user = ioc.Term_user
 
@@ -263,3 +268,43 @@ SOUND_SHOW = ioc.SOUND_SHOW
 SOUND_UNUSED = ioc.SOUND_UNUSED
 SOUND_EXPLODE = ioc.SOUND_EXPLODE
 SOUND_MAX = ioc.SOUND_MAX
+PR_MISC = ioc.PR_MISC
+PR_TITLE = ioc.PR_TITLE
+PR_LEV = ioc.PR_LEV
+PR_EXP = ioc.PR_EXP
+PR_STATS = ioc.PR_STATS
+PR_ARMOR = ioc.PR_ARMOR
+PR_HP = ioc.PR_HP
+PR_MANA = ioc.PR_MANA
+PR_GOLD = ioc.PR_GOLD
+PR_DEPTH = ioc.PR_DEPTH
+PR_EQUIPPY = ioc.PR_EQUIPPY
+PR_HEALTH = ioc.PR_HEALTH
+PR_CUT = ioc.PR_CUT
+PR_STUN = ioc.PR_STUN
+PR_HUNGER = ioc.PR_HUNGER
+PR_STATUS = ioc.PR_STATUS
+PR_BLIND = ioc.PR_BLIND
+PR_CONFUSED = ioc.PR_CONFUSED
+PR_AFRAID = ioc.PR_AFRAID
+PR_POISONED = ioc.PR_POISONED
+PR_STATE = ioc.PR_STATE
+PR_SPEED = ioc.PR_SPEED
+PR_STUDY = ioc.PR_STUDY
+PR_EXTRA = ioc.PR_EXTRA
+PR_BASIC = ioc.PR_BASIC
+PR_MAP = ioc.PR_MAP
+PR_WIPE = ioc.PR_WIPE
+PW_INVEN = ioc.PW_INVEN
+PW_EQUIP = ioc.PW_EQUIP
+PW_SPELL = ioc.PW_SPELL
+PW_PLAYER = ioc.PW_PLAYER
+PW_MESSAGE = ioc.PW_MESSAGE
+PW_OVERHEAD = ioc.PW_OVERHEAD
+PW_MONSTER = ioc.PW_MONSTER
+PW_OBJECT = ioc.PW_OBJECT
+PW_DUNGEON = ioc.PW_DUNGEON
+PW_SNAPSHOT = ioc.PW_SNAPSHOT
+PW_SCRIPT = ioc.PW_SCRIPT
+PW_BORG_1 = ioc.PW_BORG_1
+PW_BORG_2 = ioc.PW_BORG_2

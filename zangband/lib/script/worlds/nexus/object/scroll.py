@@ -1,5 +1,6 @@
 from angband import objects
 from base.object import object_class
+import variable
 
 class scroll_class(object_class):
 	tval = objects.TV_SCROLL
@@ -16,8 +17,7 @@ class protection_from_evil_class(scroll_class):
 	sval = objects.SV_SCROLL_PROTECTION_FROM_EVIL
 	name = "scroll of protection from evil"
 
-from base.object import objects
-objects.announce(satisfy_hunger_class)
-objects.announce(darkness_class)
-objects.announce(protection_from_evil_class)
+variable.objects.announce(satisfy_hunger_class)
+variable.objects.announce(darkness_class)
+variable.objects.announce(protection_from_evil_class)
 

@@ -1,8 +1,17 @@
 # This file was created automatically by SWIG.
 import eventc
+import new
 
 
 #-------------- FUNCTION WRAPPERS ------------------
+
+new_game_callback = eventc.new_game_callback
+
+load_game_callback = eventc.load_game_callback
+
+save_game_callback = eventc.save_game_callback
+
+play_game_callback = eventc.play_game_callback
 
 eat_callback = eventc.eat_callback
 
@@ -19,10 +28,6 @@ cmd_feeling_callback = eventc.cmd_feeling_callback
 cmd_go_up_callback = eventc.cmd_go_up_callback
 
 building_command_callback = eventc.building_command_callback
-
-callbacks_load_callback = eventc.callbacks_load_callback
-
-callbacks_save_callback = eventc.callbacks_save_callback
 
 player_enter_grid_callback = eventc.player_enter_grid_callback
 
@@ -112,14 +117,21 @@ init_object_kind_list_callback = eventc.init_object_kind_list_callback
 
 use_skill_callback = eventc.use_skill_callback
 
+get_script_window_line = eventc.get_script_window_line
+
 set_callback = eventc.set_callback
 
 get_callback = eventc.get_callback
+
+remove_callback = eventc.remove_callback
 
 
 
 #-------------- VARIABLE WRAPPERS ------------------
 
+NEW_GAME_EVENT = eventc.NEW_GAME_EVENT
+LOAD_GAME_EVENT = eventc.LOAD_GAME_EVENT
+SAVE_GAME_EVENT = eventc.SAVE_GAME_EVENT
 CMD_EAT_EVENT = eventc.CMD_EAT_EVENT
 PLAYER_MOVE_EVENT = eventc.PLAYER_MOVE_EVENT
 CMD_OPEN_EVENT = eventc.CMD_OPEN_EVENT
@@ -127,8 +139,6 @@ CMD_SEARCH_EVENT = eventc.CMD_SEARCH_EVENT
 PLAYER_SEARCH_GRID_EVENT = eventc.PLAYER_SEARCH_GRID_EVENT
 CMD_FEELING_EVENT = eventc.CMD_FEELING_EVENT
 CMD_GO_UP_EVENT = eventc.CMD_GO_UP_EVENT
-CALLBACKS_LOAD_EVENT = eventc.CALLBACKS_LOAD_EVENT
-CALLBACKS_SAVE_EVENT = eventc.CALLBACKS_SAVE_EVENT
 KILL_MONSTER_EVENT = eventc.KILL_MONSTER_EVENT
 BUILDING_COMMAND_EVENT = eventc.BUILDING_COMMAND_EVENT
 LEAVE_LEVEL_EVENT = eventc.LEAVE_LEVEL_EVENT
@@ -159,4 +169,6 @@ GET_PLAYER_REALMS_EVENT = eventc.GET_PLAYER_REALMS_EVENT
 GET_WORLD_EVENT = eventc.GET_WORLD_EVENT
 COPY_MONSTER_EVENT = eventc.COPY_MONSTER_EVENT
 USE_SKILL_EVENT = eventc.USE_SKILL_EVENT
+GET_SCRIPT_WINDOW_LINE_EVENT = eventc.GET_SCRIPT_WINDOW_LINE_EVENT
+PLAY_GAME_EVENT = eventc.PLAY_GAME_EVENT
 MAX_EVENT = eventc.MAX_EVENT

@@ -1,5 +1,6 @@
 # This file was created automatically by SWIG.
 import commandsc
+import new
 
 
 #-------------- FUNCTION WRAPPERS ------------------
@@ -72,8 +73,6 @@ do_cmd_query_symbol = commandsc.do_cmd_query_symbol
 
 do_cmd_redraw = commandsc.do_cmd_redraw
 
-do_cmd_change_name = commandsc.do_cmd_change_name
-
 do_cmd_message_one = commandsc.do_cmd_message_one
 
 do_cmd_messages = commandsc.do_cmd_messages
@@ -143,10 +142,6 @@ do_cmd_save_and_exit = commandsc.do_cmd_save_and_exit
 do_cmd_racial_power = commandsc.do_cmd_racial_power
 
 do_cmd_store = commandsc.do_cmd_store
-
-do_cmd_bldg = commandsc.do_cmd_bldg
-
-do_cmd_quest = commandsc.do_cmd_quest
 
 do_cmd_mindcraft = commandsc.do_cmd_mindcraft
 

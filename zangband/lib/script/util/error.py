@@ -12,7 +12,7 @@ from ioc import msg_print
 import os.path
 from angband import system
 
-class ErrorClass:
+class error_handler:
 	def write(self, text):
 		if text:
 			filename = os.path.join(system.cvar.ANGBAND_DIR_SCRIPT, "error.txt")
@@ -24,9 +24,7 @@ class ErrorClass:
 				msg_print(text[0:-1])
 			else:
 				msg_print(text)
-	def read(self, n = -1):
-		pass
 
-# Redirect stderr and stdout
-sys.stderr = sys.stdout = ErrorClass()
+# Redirect stderr, stdout, and stdin
+sys.stderr = error_handler()
 

@@ -1,5 +1,6 @@
 # This file was created automatically by SWIG.
 import randomc
+import new
 
 
 #-------------- FUNCTION WRAPPERS ------------------

@@ -68,10 +68,6 @@ class world_data:
 		# Register the birth event
 		events.get_world.append(self)
 
-		# Loading/saving
-		events.load_game.append(self)
-		events.save_game.append(self)
-
 	# Register a new worlds
 	def register(self, world):
 		debug.trace("world_data.register(%s, %s)" % (self, world))
@@ -82,8 +78,8 @@ class world_data:
 		debug.trace("world_data.get_world_hook(%s, %s)" % (self, args))
 
 		# Select the world
-		from variable import gui
-		selected = gui.birth.select_world(self.data)
+		from variable import ui
+		selected = ui.birth.select_world(self.data)
 
 		# Restart character generation
 		if not selected:
@@ -98,12 +94,6 @@ class world_data:
 		player.world = world
 
 		return 1
-
-	def load_game_hook(self, dict):
-		self.worlds.update(dict["worlds"])
-
-	def save_game_hook(self):
-		return ("worlds", self.worlds)
 
 	# Pretend to be a dictionary
 	def __len__(self):

@@ -64,6 +64,10 @@ class player_class_class(player_class):
 		events.sense_inventory.append(self)
 		events.player_outfit.append(self)
 
+	def get_beam_chance(self):
+		from variable import player
+		return player.level / 2
+
 	# Make sure the constructor gets called when unpickling
 	def __getinitargs__(self):
 		return ()
@@ -75,41 +79,5 @@ class player_class_class(player_class):
 		pass
 
 	def player_outfit_hook(self, data):
-		return 1
-
-
-#####################################################################
-#
-# Player-class selection
-#
-#####################################################################
-class player_class_data_class:
-	def __init__(self):
-		self.classes = []
-
-	def append(self, p_class):
-		self.classes.append(p_class)
-
-	def get_player_class_hook(self, args):
-		# Load all available player-classes
-		from util.autorun import autorun_dir
-		autorun_dir(player.world.directory, "player", "pclass")
-
-		# Select the class
-		from variable import gui
-		selected = gui.birth.select_class(self.classes)
-
-		# Restart character generation
-		if not selected:
-			return -1
-
-		# Initialize the player-class
-		player.p_class = apply(selected, ())
-		player.pclass = selected.number
-
-		# XXX !!! MEGA-HACK !!!
-		import realmsc
-		realmsc.cvar.mp_ptr = realmsc.get_player_magic(player.pclass)
-		
 		return 1
 

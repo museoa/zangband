@@ -1,407 +1,223 @@
 # This file was created automatically by SWIG.
 import monsterc
-class monster_typePtr :
-    def __init__(self,this):
-        self.this = this
-        self.thisown = 0
+import new
+class monster_type:
+    def __init__(self,*args):
+        self.this = apply(monsterc.new_monster_type,args)
+        self.thisown = 1
+
     def __del__(self,monsterc=monsterc):
         if self.thisown == 1 :
             monsterc.delete_monster_type(self)
+    __setmethods__ = {
+        "r_idx" : monsterc.monster_type_r_idx_set,
+        "fy" : monsterc.monster_type_fy_set,
+        "fx" : monsterc.monster_type_fx_set,
+        "hp" : monsterc.monster_type_hp_set,
+        "maxhp" : monsterc.monster_type_maxhp_set,
+        "csleep" : monsterc.monster_type_csleep_set,
+        "mspeed" : monsterc.monster_type_mspeed_set,
+        "energy" : monsterc.monster_type_energy_set,
+        "stunned" : monsterc.monster_type_stunned_set,
+        "confused" : monsterc.monster_type_confused_set,
+        "monfear" : monsterc.monster_type_monfear_set,
+        "cdis" : monsterc.monster_type_cdis_set,
+        "mflag" : monsterc.monster_type_mflag_set,
+        "ml" : monsterc.monster_type_ml_set,
+        "hold_o_idx" : monsterc.monster_type_hold_o_idx_set,
+        "smart" : monsterc.monster_type_smart_set,
+    }
     def __setattr__(self,name,value):
-        if name == "r_idx" :
-            monsterc.monster_type_r_idx_set(self,value)
-            return
-        if name == "fy" :
-            monsterc.monster_type_fy_set(self,value)
-            return
-        if name == "fx" :
-            monsterc.monster_type_fx_set(self,value)
-            return
-        if name == "hp" :
-            monsterc.monster_type_hp_set(self,value)
-            return
-        if name == "maxhp" :
-            monsterc.monster_type_maxhp_set(self,value)
-            return
-        if name == "csleep" :
-            monsterc.monster_type_csleep_set(self,value)
-            return
-        if name == "mspeed" :
-            monsterc.monster_type_mspeed_set(self,value)
-            return
-        if name == "energy" :
-            monsterc.monster_type_energy_set(self,value)
-            return
-        if name == "stunned" :
-            monsterc.monster_type_stunned_set(self,value)
-            return
-        if name == "confused" :
-            monsterc.monster_type_confused_set(self,value)
-            return
-        if name == "monfear" :
-            monsterc.monster_type_monfear_set(self,value)
-            return
-        if name == "cdis" :
-            monsterc.monster_type_cdis_set(self,value)
-            return
-        if name == "mflag" :
-            monsterc.monster_type_mflag_set(self,value)
-            return
-        if name == "ml" :
-            monsterc.monster_type_ml_set(self,value)
-            return
-        if name == "hold_o_idx" :
-            monsterc.monster_type_hold_o_idx_set(self,value)
-            return
-        if name == "smart" :
-            monsterc.monster_type_smart_set(self,value)
-            return
+        if (name == "this") or (name == "thisown"): self.__dict__[name] = value; return
+        method = monster_type.__setmethods__.get(name,None)
+        if method: return method(self,value)
         self.__dict__[name] = value
+    __getmethods__ = {
+        "r_idx" : monsterc.monster_type_r_idx_get,
+        "fy" : monsterc.monster_type_fy_get,
+        "fx" : monsterc.monster_type_fx_get,
+        "hp" : monsterc.monster_type_hp_get,
+        "maxhp" : monsterc.monster_type_maxhp_get,
+        "csleep" : monsterc.monster_type_csleep_get,
+        "mspeed" : monsterc.monster_type_mspeed_get,
+        "energy" : monsterc.monster_type_energy_get,
+        "stunned" : monsterc.monster_type_stunned_get,
+        "confused" : monsterc.monster_type_confused_get,
+        "monfear" : monsterc.monster_type_monfear_get,
+        "cdis" : monsterc.monster_type_cdis_get,
+        "mflag" : monsterc.monster_type_mflag_get,
+        "ml" : monsterc.monster_type_ml_get,
+        "hold_o_idx" : monsterc.monster_type_hold_o_idx_get,
+        "smart" : monsterc.monster_type_smart_get,
+    }
     def __getattr__(self,name):
-        if name == "r_idx" : 
-            return monsterc.monster_type_r_idx_get(self)
-        if name == "fy" : 
-            return monsterc.monster_type_fy_get(self)
-        if name == "fx" : 
-            return monsterc.monster_type_fx_get(self)
-        if name == "hp" : 
-            return monsterc.monster_type_hp_get(self)
-        if name == "maxhp" : 
-            return monsterc.monster_type_maxhp_get(self)
-        if name == "csleep" : 
-            return monsterc.monster_type_csleep_get(self)
-        if name == "mspeed" : 
-            return monsterc.monster_type_mspeed_get(self)
-        if name == "energy" : 
-            return monsterc.monster_type_energy_get(self)
-        if name == "stunned" : 
-            return monsterc.monster_type_stunned_get(self)
-        if name == "confused" : 
-            return monsterc.monster_type_confused_get(self)
-        if name == "monfear" : 
-            return monsterc.monster_type_monfear_get(self)
-        if name == "cdis" : 
-            return monsterc.monster_type_cdis_get(self)
-        if name == "mflag" : 
-            return monsterc.monster_type_mflag_get(self)
-        if name == "ml" : 
-            return monsterc.monster_type_ml_get(self)
-        if name == "hold_o_idx" : 
-            return monsterc.monster_type_hold_o_idx_get(self)
-        if name == "smart" : 
-            return monsterc.monster_type_smart_get(self)
+        method = monster_type.__getmethods__.get(name,None)
+        if method: return method(self)
         raise AttributeError,name
     def __repr__(self):
         return "<C monster_type instance at %s>" % (self.this,)
-class monster_type(monster_typePtr):
-    def __init__(self,*_args,**_kwargs):
-        self.this = apply(monsterc.new_monster_type,_args,_kwargs)
-        self.thisown = 1
-
-
-
-
-class monster_blowPtr :
+class monster_typePtr(monster_type):
     def __init__(self,this):
         self.this = this
         self.thisown = 0
+
+
+
+class monster_blow:
+    def __init__(self,this):
+        self.this = this
+
+    __setmethods__ = {
+        "method" : monsterc.monster_blow_method_set,
+        "effect" : monsterc.monster_blow_effect_set,
+        "d_dice" : monsterc.monster_blow_d_dice_set,
+        "d_side" : monsterc.monster_blow_d_side_set,
+    }
     def __setattr__(self,name,value):
-        if name == "method" :
-            monsterc.monster_blow_method_set(self,value)
-            return
-        if name == "effect" :
-            monsterc.monster_blow_effect_set(self,value)
-            return
-        if name == "d_dice" :
-            monsterc.monster_blow_d_dice_set(self,value)
-            return
-        if name == "d_side" :
-            monsterc.monster_blow_d_side_set(self,value)
-            return
+        if (name == "this") or (name == "thisown"): self.__dict__[name] = value; return
+        method = monster_blow.__setmethods__.get(name,None)
+        if method: return method(self,value)
         self.__dict__[name] = value
+    __getmethods__ = {
+        "method" : monsterc.monster_blow_method_get,
+        "effect" : monsterc.monster_blow_effect_get,
+        "d_dice" : monsterc.monster_blow_d_dice_get,
+        "d_side" : monsterc.monster_blow_d_side_get,
+    }
     def __getattr__(self,name):
-        if name == "method" : 
-            return monsterc.monster_blow_method_get(self)
-        if name == "effect" : 
-            return monsterc.monster_blow_effect_get(self)
-        if name == "d_dice" : 
-            return monsterc.monster_blow_d_dice_get(self)
-        if name == "d_side" : 
-            return monsterc.monster_blow_d_side_get(self)
+        method = monster_blow.__getmethods__.get(name,None)
+        if method: return method(self)
         raise AttributeError,name
     def __repr__(self):
         return "<C monster_blow instance at %s>" % (self.this,)
-class monster_blow(monster_blowPtr):
-    def __init__(self,this):
-        self.this = this
-
-
-
-
-class monster_racePtr :
+class monster_blowPtr(monster_blow):
     def __init__(self,this):
         self.this = this
         self.thisown = 0
-    def __setattr__(self,name,value):
-        if name == "name" :
-            monsterc.monster_race_name_set(self,value)
-            return
-        if name == "text" :
-            monsterc.monster_race_text_set(self,value)
-            return
-        if name == "hdice" :
-            monsterc.monster_race_hdice_set(self,value)
-            return
-        if name == "hside" :
-            monsterc.monster_race_hside_set(self,value)
-            return
-        if name == "ac" :
-            monsterc.monster_race_ac_set(self,value)
-            return
-        if name == "sleep" :
-            monsterc.monster_race_sleep_set(self,value)
-            return
-        if name == "aaf" :
-            monsterc.monster_race_aaf_set(self,value)
-            return
-        if name == "speed" :
-            monsterc.monster_race_speed_set(self,value)
-            return
-        if name == "mexp" :
-            monsterc.monster_race_mexp_set(self,value)
-            return
-        if name == "extra" :
-            monsterc.monster_race_extra_set(self,value)
-            return
-        if name == "freq_inate" :
-            monsterc.monster_race_freq_inate_set(self,value)
-            return
-        if name == "freq_spell" :
-            monsterc.monster_race_freq_spell_set(self,value)
-            return
-        if name == "flags1" :
-            monsterc.monster_race_flags1_set(self,value)
-            return
-        if name == "flags2" :
-            monsterc.monster_race_flags2_set(self,value)
-            return
-        if name == "flags3" :
-            monsterc.monster_race_flags3_set(self,value)
-            return
-        if name == "flags4" :
-            monsterc.monster_race_flags4_set(self,value)
-            return
-        if name == "flags5" :
-            monsterc.monster_race_flags5_set(self,value)
-            return
-        if name == "flags6" :
-            monsterc.monster_race_flags6_set(self,value)
-            return
-        if name == "flags7" :
-            monsterc.monster_race_flags7_set(self,value)
-            return
-        if name == "flags8" :
-            monsterc.monster_race_flags8_set(self,value)
-            return
-        if name == "flags9" :
-            monsterc.monster_race_flags9_set(self,value)
-            return
-        if name == "blow" :
-            monsterc.monster_race_blow_set(self,value.this)
-            return
-        if name == "level" :
-            monsterc.monster_race_level_set(self,value)
-            return
-        if name == "rarity" :
-            monsterc.monster_race_rarity_set(self,value)
-            return
-        if name == "d_attr" :
-            monsterc.monster_race_d_attr_set(self,value)
-            return
-        if name == "d_char" :
-            monsterc.monster_race_d_char_set(self,value)
-            return
-        if name == "x_attr" :
-            monsterc.monster_race_x_attr_set(self,value)
-            return
-        if name == "x_char" :
-            monsterc.monster_race_x_char_set(self,value)
-            return
-        if name == "max_num" :
-            monsterc.monster_race_max_num_set(self,value)
-            return
-        if name == "cur_num" :
-            monsterc.monster_race_cur_num_set(self,value)
-            return
-        if name == "r_sights" :
-            monsterc.monster_race_r_sights_set(self,value)
-            return
-        if name == "r_deaths" :
-            monsterc.monster_race_r_deaths_set(self,value)
-            return
-        if name == "r_pkills" :
-            monsterc.monster_race_r_pkills_set(self,value)
-            return
-        if name == "r_tkills" :
-            monsterc.monster_race_r_tkills_set(self,value)
-            return
-        if name == "r_wake" :
-            monsterc.monster_race_r_wake_set(self,value)
-            return
-        if name == "r_ignore" :
-            monsterc.monster_race_r_ignore_set(self,value)
-            return
-        if name == "r_xtra1" :
-            monsterc.monster_race_r_xtra1_set(self,value)
-            return
-        if name == "r_xtra2" :
-            monsterc.monster_race_r_xtra2_set(self,value)
-            return
-        if name == "r_drop_gold" :
-            monsterc.monster_race_r_drop_gold_set(self,value)
-            return
-        if name == "r_drop_item" :
-            monsterc.monster_race_r_drop_item_set(self,value)
-            return
-        if name == "r_cast_inate" :
-            monsterc.monster_race_r_cast_inate_set(self,value)
-            return
-        if name == "r_cast_spell" :
-            monsterc.monster_race_r_cast_spell_set(self,value)
-            return
-        if name == "r_blows" :
-            monsterc.monster_race_r_blows_set(self,value)
-            return
-        if name == "r_flags1" :
-            monsterc.monster_race_r_flags1_set(self,value)
-            return
-        if name == "r_flags2" :
-            monsterc.monster_race_r_flags2_set(self,value)
-            return
-        if name == "r_flags3" :
-            monsterc.monster_race_r_flags3_set(self,value)
-            return
-        if name == "r_flags4" :
-            monsterc.monster_race_r_flags4_set(self,value)
-            return
-        if name == "r_flags5" :
-            monsterc.monster_race_r_flags5_set(self,value)
-            return
-        if name == "r_flags6" :
-            monsterc.monster_race_r_flags6_set(self,value)
-            return
-        if name == "r_flags7" :
-            monsterc.monster_race_r_flags7_set(self,value)
-            return
-        self.__dict__[name] = value
-    def __getattr__(self,name):
-        if name == "name" : 
-            return monsterc.monster_race_name_get(self)
-        if name == "text" : 
-            return monsterc.monster_race_text_get(self)
-        if name == "hdice" : 
-            return monsterc.monster_race_hdice_get(self)
-        if name == "hside" : 
-            return monsterc.monster_race_hside_get(self)
-        if name == "ac" : 
-            return monsterc.monster_race_ac_get(self)
-        if name == "sleep" : 
-            return monsterc.monster_race_sleep_get(self)
-        if name == "aaf" : 
-            return monsterc.monster_race_aaf_get(self)
-        if name == "speed" : 
-            return monsterc.monster_race_speed_get(self)
-        if name == "mexp" : 
-            return monsterc.monster_race_mexp_get(self)
-        if name == "extra" : 
-            return monsterc.monster_race_extra_get(self)
-        if name == "freq_inate" : 
-            return monsterc.monster_race_freq_inate_get(self)
-        if name == "freq_spell" : 
-            return monsterc.monster_race_freq_spell_get(self)
-        if name == "flags1" : 
-            return monsterc.monster_race_flags1_get(self)
-        if name == "flags2" : 
-            return monsterc.monster_race_flags2_get(self)
-        if name == "flags3" : 
-            return monsterc.monster_race_flags3_get(self)
-        if name == "flags4" : 
-            return monsterc.monster_race_flags4_get(self)
-        if name == "flags5" : 
-            return monsterc.monster_race_flags5_get(self)
-        if name == "flags6" : 
-            return monsterc.monster_race_flags6_get(self)
-        if name == "flags7" : 
-            return monsterc.monster_race_flags7_get(self)
-        if name == "flags8" : 
-            return monsterc.monster_race_flags8_get(self)
-        if name == "flags9" : 
-            return monsterc.monster_race_flags9_get(self)
-        if name == "blow" : 
-            return monster_blowPtr(monsterc.monster_race_blow_get(self))
-        if name == "level" : 
-            return monsterc.monster_race_level_get(self)
-        if name == "rarity" : 
-            return monsterc.monster_race_rarity_get(self)
-        if name == "d_attr" : 
-            return monsterc.monster_race_d_attr_get(self)
-        if name == "d_char" : 
-            return monsterc.monster_race_d_char_get(self)
-        if name == "x_attr" : 
-            return monsterc.monster_race_x_attr_get(self)
-        if name == "x_char" : 
-            return monsterc.monster_race_x_char_get(self)
-        if name == "max_num" : 
-            return monsterc.monster_race_max_num_get(self)
-        if name == "cur_num" : 
-            return monsterc.monster_race_cur_num_get(self)
-        if name == "r_sights" : 
-            return monsterc.monster_race_r_sights_get(self)
-        if name == "r_deaths" : 
-            return monsterc.monster_race_r_deaths_get(self)
-        if name == "r_pkills" : 
-            return monsterc.monster_race_r_pkills_get(self)
-        if name == "r_tkills" : 
-            return monsterc.monster_race_r_tkills_get(self)
-        if name == "r_wake" : 
-            return monsterc.monster_race_r_wake_get(self)
-        if name == "r_ignore" : 
-            return monsterc.monster_race_r_ignore_get(self)
-        if name == "r_xtra1" : 
-            return monsterc.monster_race_r_xtra1_get(self)
-        if name == "r_xtra2" : 
-            return monsterc.monster_race_r_xtra2_get(self)
-        if name == "r_drop_gold" : 
-            return monsterc.monster_race_r_drop_gold_get(self)
-        if name == "r_drop_item" : 
-            return monsterc.monster_race_r_drop_item_get(self)
-        if name == "r_cast_inate" : 
-            return monsterc.monster_race_r_cast_inate_get(self)
-        if name == "r_cast_spell" : 
-            return monsterc.monster_race_r_cast_spell_get(self)
-        if name == "r_blows" : 
-            return monsterc.monster_race_r_blows_get(self)
-        if name == "r_flags1" : 
-            return monsterc.monster_race_r_flags1_get(self)
-        if name == "r_flags2" : 
-            return monsterc.monster_race_r_flags2_get(self)
-        if name == "r_flags3" : 
-            return monsterc.monster_race_r_flags3_get(self)
-        if name == "r_flags4" : 
-            return monsterc.monster_race_r_flags4_get(self)
-        if name == "r_flags5" : 
-            return monsterc.monster_race_r_flags5_get(self)
-        if name == "r_flags6" : 
-            return monsterc.monster_race_r_flags6_get(self)
-        if name == "r_flags7" : 
-            return monsterc.monster_race_r_flags7_get(self)
-        raise AttributeError,name
-    def __repr__(self):
-        return "<C monster_race instance at %s>" % (self.this,)
-class monster_race(monster_racePtr):
+
+
+
+class monster_race:
     def __init__(self,this):
         self.this = this
 
+    __setmethods__ = {
+        "name" : monsterc.monster_race_name_set,
+        "text" : monsterc.monster_race_text_set,
+        "hdice" : monsterc.monster_race_hdice_set,
+        "hside" : monsterc.monster_race_hside_set,
+        "ac" : monsterc.monster_race_ac_set,
+        "sleep" : monsterc.monster_race_sleep_set,
+        "aaf" : monsterc.monster_race_aaf_set,
+        "speed" : monsterc.monster_race_speed_set,
+        "mexp" : monsterc.monster_race_mexp_set,
+        "extra" : monsterc.monster_race_extra_set,
+        "freq_inate" : monsterc.monster_race_freq_inate_set,
+        "freq_spell" : monsterc.monster_race_freq_spell_set,
+        "flags1" : monsterc.monster_race_flags1_set,
+        "flags2" : monsterc.monster_race_flags2_set,
+        "flags3" : monsterc.monster_race_flags3_set,
+        "flags4" : monsterc.monster_race_flags4_set,
+        "flags5" : monsterc.monster_race_flags5_set,
+        "flags6" : monsterc.monster_race_flags6_set,
+        "flags7" : monsterc.monster_race_flags7_set,
+        "flags8" : monsterc.monster_race_flags8_set,
+        "flags9" : monsterc.monster_race_flags9_set,
+        "level" : monsterc.monster_race_level_set,
+        "rarity" : monsterc.monster_race_rarity_set,
+        "d_attr" : monsterc.monster_race_d_attr_set,
+        "d_char" : monsterc.monster_race_d_char_set,
+        "x_attr" : monsterc.monster_race_x_attr_set,
+        "x_char" : monsterc.monster_race_x_char_set,
+        "max_num" : monsterc.monster_race_max_num_set,
+        "cur_num" : monsterc.monster_race_cur_num_set,
+        "r_sights" : monsterc.monster_race_r_sights_set,
+        "r_deaths" : monsterc.monster_race_r_deaths_set,
+        "r_pkills" : monsterc.monster_race_r_pkills_set,
+        "r_tkills" : monsterc.monster_race_r_tkills_set,
+        "r_wake" : monsterc.monster_race_r_wake_set,
+        "r_ignore" : monsterc.monster_race_r_ignore_set,
+        "r_xtra1" : monsterc.monster_race_r_xtra1_set,
+        "r_xtra2" : monsterc.monster_race_r_xtra2_set,
+        "r_drop_gold" : monsterc.monster_race_r_drop_gold_set,
+        "r_drop_item" : monsterc.monster_race_r_drop_item_set,
+        "r_cast_inate" : monsterc.monster_race_r_cast_inate_set,
+        "r_cast_spell" : monsterc.monster_race_r_cast_spell_set,
+        "r_flags1" : monsterc.monster_race_r_flags1_set,
+        "r_flags2" : monsterc.monster_race_r_flags2_set,
+        "r_flags3" : monsterc.monster_race_r_flags3_set,
+        "r_flags4" : monsterc.monster_race_r_flags4_set,
+        "r_flags5" : monsterc.monster_race_r_flags5_set,
+        "r_flags6" : monsterc.monster_race_r_flags6_set,
+        "r_flags7" : monsterc.monster_race_r_flags7_set,
+    }
+    def __setattr__(self,name,value):
+        if (name == "this") or (name == "thisown"): self.__dict__[name] = value; return
+        method = monster_race.__setmethods__.get(name,None)
+        if method: return method(self,value)
+        self.__dict__[name] = value
+    __getmethods__ = {
+        "name" : monsterc.monster_race_name_get,
+        "text" : monsterc.monster_race_text_get,
+        "hdice" : monsterc.monster_race_hdice_get,
+        "hside" : monsterc.monster_race_hside_get,
+        "ac" : monsterc.monster_race_ac_get,
+        "sleep" : monsterc.monster_race_sleep_get,
+        "aaf" : monsterc.monster_race_aaf_get,
+        "speed" : monsterc.monster_race_speed_get,
+        "mexp" : monsterc.monster_race_mexp_get,
+        "extra" : monsterc.monster_race_extra_get,
+        "freq_inate" : monsterc.monster_race_freq_inate_get,
+        "freq_spell" : monsterc.monster_race_freq_spell_get,
+        "flags1" : monsterc.monster_race_flags1_get,
+        "flags2" : monsterc.monster_race_flags2_get,
+        "flags3" : monsterc.monster_race_flags3_get,
+        "flags4" : monsterc.monster_race_flags4_get,
+        "flags5" : monsterc.monster_race_flags5_get,
+        "flags6" : monsterc.monster_race_flags6_get,
+        "flags7" : monsterc.monster_race_flags7_get,
+        "flags8" : monsterc.monster_race_flags8_get,
+        "flags9" : monsterc.monster_race_flags9_get,
+        "blow" : lambda x : monster_blowPtr(monsterc.monster_race_blow_get(x)),
+        "level" : monsterc.monster_race_level_get,
+        "rarity" : monsterc.monster_race_rarity_get,
+        "d_attr" : monsterc.monster_race_d_attr_get,
+        "d_char" : monsterc.monster_race_d_char_get,
+        "x_attr" : monsterc.monster_race_x_attr_get,
+        "x_char" : monsterc.monster_race_x_char_get,
+        "max_num" : monsterc.monster_race_max_num_get,
+        "cur_num" : monsterc.monster_race_cur_num_get,
+        "r_sights" : monsterc.monster_race_r_sights_get,
+        "r_deaths" : monsterc.monster_race_r_deaths_get,
+        "r_pkills" : monsterc.monster_race_r_pkills_get,
+        "r_tkills" : monsterc.monster_race_r_tkills_get,
+        "r_wake" : monsterc.monster_race_r_wake_get,
+        "r_ignore" : monsterc.monster_race_r_ignore_get,
+        "r_xtra1" : monsterc.monster_race_r_xtra1_get,
+        "r_xtra2" : monsterc.monster_race_r_xtra2_get,
+        "r_drop_gold" : monsterc.monster_race_r_drop_gold_get,
+        "r_drop_item" : monsterc.monster_race_r_drop_item_get,
+        "r_cast_inate" : monsterc.monster_race_r_cast_inate_get,
+        "r_cast_spell" : monsterc.monster_race_r_cast_spell_get,
+        "r_blows" : monsterc.monster_race_r_blows_get,
+        "r_flags1" : monsterc.monster_race_r_flags1_get,
+        "r_flags2" : monsterc.monster_race_r_flags2_get,
+        "r_flags3" : monsterc.monster_race_r_flags3_get,
+        "r_flags4" : monsterc.monster_race_r_flags4_get,
+        "r_flags5" : monsterc.monster_race_r_flags5_get,
+        "r_flags6" : monsterc.monster_race_r_flags6_get,
+        "r_flags7" : monsterc.monster_race_r_flags7_get,
+    }
+    def __getattr__(self,name):
+        method = monster_race.__getmethods__.get(name,None)
+        if method: return method(self)
+        raise AttributeError,name
+    def __repr__(self):
+        return "<C monster_race instance at %s>" % (self.this,)
+class monster_racePtr(monster_race):
+    def __init__(self,this):
+        self.this = this
+        self.thisown = 0
 
 
 
@@ -409,12 +225,10 @@ class monster_race(monster_racePtr):
 
 #-------------- FUNCTION WRAPPERS ------------------
 
-def get_monster(*_args, **_kwargs):
-    val = apply(monsterc.get_monster,_args,_kwargs)
+def get_monster(*args, **kwargs):
+    val = apply(monsterc.get_monster,args,kwargs)
     if val: val = monster_typePtr(val)
     return val
-
-get_wilderness_flag = monsterc.get_wilderness_flag
 
 sanity_blast = monsterc.sanity_blast
 
@@ -472,33 +286,15 @@ monster_shore = monsterc.monster_shore
 
 monster_town = monsterc.monster_town
 
-monster_wood = monsterc.monster_wood
-
-monster_volcano = monsterc.monster_volcano
-
-monster_mountain = monsterc.monster_mountain
-
 monster_grass = monsterc.monster_grass
-
-monster_deep_water = monsterc.monster_deep_water
-
-monster_shallow_water = monsterc.monster_shallow_water
-
-monster_lava = monsterc.monster_lava
 
 get_monster_hook = monsterc.get_monster_hook
 
 get_monster_hook2 = monsterc.get_monster_hook2
 
-is_friendly = monsterc.is_friendly
-
 set_friendly = monsterc.set_friendly
 
-is_pet = monsterc.is_pet
-
 set_pet = monsterc.set_pet
-
-is_hostile = monsterc.is_hostile
 
 set_hostile = monsterc.set_hostile
 
