@@ -1393,7 +1393,18 @@ bool set_stun(int v)
 			break;
 		}
 
-		if (randint(1000) < v || randint(16) == 1)
+		/* 
+		 * XXX XXX Hack -
+		 * Mindcrafters cannot get this effect when
+		 * casting a spell.  It really doesn't make sense.
+		 * Unfortunately, there is no way to know if this is
+		 * the case... so it is disabled in all circumstances
+		 * if you are a Mindcrafter.  (Perhaps it can be
+		 * explained away by their "superior mental skills" or
+		 * something...
+		 */
+		if ((randint(1000) < v || randint(16) == 1) && 
+		 (!(p_ptr->pclass == CLASS_MINDCRAFTER)))
 		{
 			msg_print("A vicious blow hits your head.");
 			if (randint(3) == 1)
