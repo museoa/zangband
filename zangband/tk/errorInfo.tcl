@@ -125,6 +125,7 @@ proc tracesetup {} {
 
 	set win .errors
 	set text $win.text
+
 	trace variable errorInfo w "tracecmd $text"
 	set traceId ""
 	set traceInfo ""
@@ -150,58 +151,5 @@ proc Debug {what} {
 	return
 }
 
-
-proc InitCommandWindow {} {
-
-	global CommandHistory
-
-	set win .command
-
-	toplevel $win
-	wm title $win Command
-
-	entry $win.entry -width 60
-
-	bind $win.entry <Return> {
-		lappend CommandHistory(line) [%W get]
-		if {[incr CommandHistory(count)] > 20} {
-			set CommandHistory(line) [lrange $CommandHistory(line) \
-				[expr {$CommandHistory(count) - 20}] end]
-			set CommandHistory(count) [llength $CommandHistory(line)]
-		}
-		set CommandHistory(index) $CommandHistory(count)
-		catch {eval [%W get]} result
-		%W delete 0 end
-		%W insert 0 $result
-	}
-
-	bind $win.entry <KeyPress-Up> {
-		if {$CommandHistory(index) > 0} {
-			incr CommandHistory(index) -1
-		}
-		%W delete 0 end
-		%W insert 0 [lindex $CommandHistory(line) $CommandHistory(index)]
-	}
-
-	bind $win.entry <KeyPress-Down> {
-		if {$CommandHistory(index) < $CommandHistory(count) - 1} {
-			incr CommandHistory(index)
-		}
-		%W delete 0 end
-		%W insert 0 [lindex $CommandHistory(line) $CommandHistory(index)]
-	}
-
-	pack $win.entry -side top -expand yes -fill x
-
-	set CommandHistory(line) {}
-	set CommandHistory(count) 0
-	set CommandHistory(index) 0
-
-	focus $win.entry
-
-	return
-}
-
 tracesetup
-# InitCommandWindow
 
