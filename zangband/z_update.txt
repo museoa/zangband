@@ -82,6 +82,19 @@ ZAngband 2.7.0:
 - Some of the racial activation names were too long.
 - Searching is renamed to "sensing", and now has an additional affect on
   psuedo-id rate.
+- Fixed display glitch with hitpoint warning menu.
+- Fixed the rarity inversion of monster pits/nests.
+- Added the new improved autoroller from Antiband.
+- Use "player_base".prf for player-specific pref file name.
+- Cleaned up the AI code somewhat, using some code from Oangband.
+- Gremlins should have the SILLY flag.
+- Enabled comments in get_rnd_line()
+- Added more lines for speaking uniques.
+- Monsters and objects are not quite so out of depth in vaults.
+- Passed the code through a hacked-up version of gnu-indent that
+  understands most of the angband coding style.
+- The svga port now knows about the font location on debian boxes.
+- Added patch to only darken rods if the whole stack is charging.
 
 
 ZAngband 2.6.2:
