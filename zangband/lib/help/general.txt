@@ -72,7 +72,7 @@ memory (see attack.txt#MonsterMemory [4]) and your option choices. It
 may be restored, in which case the new character is generated exactly
 as if the file was not there, but the new player will find his monster
 memory containing all the experience of past incarnations.
-<A HREF="#top">[Back to Top]</A>
+
 
  
 ***** <DevTeam>

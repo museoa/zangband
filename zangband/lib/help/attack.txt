@@ -34,15 +34,17 @@ even when your target is next to you.
 Whenever you give a command to fire a weapon, cast a spell, or use an
 attacking magical device (unless the spell or device has an area
 effect), you will be prompted for a direction. You may choose any of
-the eight movement directions or press '*' to enter targetting mode. A
-detailed explanation of targetting mode can be found in commdesc.txt.
+the eight movement directions or press '*' to enter targeting mode. A
+detailed explanation of targeting mode can be found in the section on
+Command Descriptions (see commdesc.txt#ThrowFire [1]).
 
-You may also wish to make use of the option to automatically use the
-last target. This prevents you from having to target the same monster
-every time you attack it. An explanation of this option is found in
-option.txt.
+You may also wish to make use of the use_old_target option which
+automatically selects the last target. This prevents you from having to
+target the same monster every time you attack it. An explanation of
+this option is found the section on User Interface Options (see
+option.txt#UserInterface [2]).
 
-****** <AttackWalls>
+***** <AttackWalls>
 --- Attacking Monsters in Walls ---
 
 You should note that some creatures, for example ghosts, can pass
@@ -112,7 +114,7 @@ Firing a missile while wielding the appropriate launcher is the only
 way to get the "full" power out of the missile. You may of course throw
 an arrow at a monster without firing it from a bow, but you will find
 the effects may not be what you had hoped. Slings will fire pebbles or
-shots, bows will fire arows and crossbows will fire bolts. Missiles of
+shots, bows will fire arrows and crossbows will fire bolts. Missiles of
 varying type and quality can be bought in the town and may be found
 throughout the dungeon.
 
@@ -131,17 +133,14 @@ will also reduce the damage from a strike that actually occurs.
 The varying types of missile launchers each have their own strengths
 and weaknesses. Which can be summarized as follows:
 
-                 energy to fire   multiplier
+                 energy to fire   multiplier   remarks
 Sling:                  50             2
 Short Bow:             100             2
-Long Bow:              100             3
+Long Bow:              100             2       strength  <  16
+                       100             3       strength  >= 16
 Light Crossbow:        120             4
-HeavyXbow:             150             5
-
-Additionally, a player needs >=16 strength to get the higher damage
-multiplier on the longbow and a player needs >=16 DEX, to get the
-listed energy for the heavy crossbow.  Otherwise, the energy required
-is 200.
+Heavy Crossbow:        150             5       dexterity >= 16
+                       200             5       dexterity <  16
 
 Bows tend to be good at dealing constant streams of damage.  A sling is
 good for killing many small monsters - it even does more damage per
@@ -153,7 +152,7 @@ Certain classes automatically receive additional shots as they become
 more experienced. Rangers receive an additional shot with a bow at
 level 20 and at level 40 and an additional shot with a crossbow at
 level 30. Rogues receive an extra shot with a sling at level 20 and at
-leve 40. Warriors receive an additional shot with any missile launcher
+level 40. Warriors receive an additional shot with any missile launcher
 at level 40.
 
 
@@ -171,19 +170,19 @@ In general, artifacts and ego weapons may boost one or more of your
 primary statistics, may confer certain abilities upon your character,
 may grant resistance to certain forms of attack and may be especially
 deadly against certain types of creature. Take note that if your weapon
-has two attributes that make it deadly to your oponent (for example you
-are fighting a demon and your weapon slays both evil and demons (demons
-are evil)), only the most effective slay will apply.
+has two attributes that make it deadly to your opponent (for example
+you are fighting a demon and your weapon slays both evil and demons
+(demons are evil)), only the most effective slay will apply.
 
 Zangband has extended the original Angband's concept of adding random
 abilities to the various Ego types considerably. These can be either
 guaranteed or have only a varying chance of being granted. (See
-'Randabil.spo' for details of the the random powers of Ego Weapons).
- 
+'Randabil.spo' for details of the random powers of Ego Weapons).
+
 
 (Defender)
     A magical weapon that actually helps the wielder defend himself,
-    by increasing his/her armour class, and providing resistance
+    by increasing his/her armor class, and providing resistance
     against damage from fire, cold, acid and lightning attacks. It also
     grants levitation, increases your stealth, let you see invisible
     creatures and protects from paralyzation and some slowing attacks.
@@ -191,7 +190,7 @@ guaranteed or have only a varying chance of being granted. (See
 
 (Holy Avenger)
     A Holy Avenger is one of the more powerful of weapons. It will
-    increase your wisdom and your armour class and prevent you from
+    increase your wisdom and your armor class and prevent you from
     becoming afraid. This weapon will do extra damage when used against
     evil, demonic and undead creatures, and will also give you the
     ability to see invisible creatures. These weapons are also blessed
@@ -207,7 +206,7 @@ Weapon of Westernesse
     A Trump Weapon is especially deadly against evil creatures and will
     increase your ability to discover hidden dungeon features. It will
     help you regenerate hit-points and mana faster and at the same time
-    wll reduce your rate of food consumption. It provides resistance
+    will reduce your rate of food consumption. It provides resistance
     to nexus and protects from paralyzation and some slowing attacks.
     In addition it may cause you to teleport randomly and can be
     activated for teleport once every 50+1d50 turns.
@@ -225,7 +224,7 @@ Weapon of Westernesse
     priests with no penalty.
 
 Weapon of Extra Attacks
-    Thses weapons will grant the user additional attacks per round.
+    These weapons will grant the user additional attacks per round.
 
 Weapon of Sharpness (edged weapon only)
     These are known to occasionally score vorpal hits (see below) and
@@ -235,7 +234,7 @@ Weapon of Sharpness (edged weapon only)
 Weapon of Earthquakes (hafted weapon only)
     These weapons may cause an earthquake when they strike an opponent
     which potentially may cause other monsters in the area to take
-    damage from falling rocks and wil destry a small portion of the
+    damage from falling rocks and will destroy a small portion of the
     surrounding dungeon. They also increase your ability to tunnel
     through the dungeon walls.
 
@@ -253,7 +252,7 @@ Implement of Digging
     These bizarre, feared weapons have been manufactured in the Courts
     of Chaos, and are very unpredictable in combat often producing
     chaotic effects when they strike your opponent. Effects include
-    *destruction*, teleport away and vampiric drain amoung others. A
+    *destruction*, teleport away and vampiric drain among others. A
     Chaotic weapon grants resistance to chaos attacks and cannot be
     damaged by acid, fire and electricity.
 
@@ -385,15 +384,15 @@ Launcher of Extra Shots
 --- Ammunition ---
 
 Ammunition of Hurt Animal
-    This ammunition is especialy effective against natural creatures
+    This ammunition is especially effective against natural creatures
     and will do three times the normal damage against such creatures.
 
 Ammunition of Hurt Evil
-    This ammunition is especialy effective against evil creatures and
+    This ammunition is especially effective against evil creatures and
     will do two times the normal damage against such creatures.
 
 Ammunition of Hurt Dragon
-    This ammunition is especialy effective against dragons and will do
+    This ammunition is especially effective against dragons and will do
     three times the normal damage against such creatures.
 
 Ammunition of Shocking
@@ -433,7 +432,7 @@ on the slays, +to-dam, etc.)
 === Magical Aids to Physical Combat ===
 
 There are several magical means of increasing your physical combat
-ability. The most common of these are potions of herosim and beserk
+ability. The most common of these are potions of heroism and berserk
 strength and various scrolls (blessing, holy prayer, etc.). Typically,
 these grant small cumulative bonuses to your combat skill. Some magic
 realms contain equivalent spells.
@@ -597,7 +596,7 @@ base damage dice are XdY is as follows:
 === Monk Attacks ===
 
 The Monk character is designed to be a barehanded fighter rather than
-using a wepaon like the other Zangband classes. As a Monk's level
+using a weapon like the other Zangband classes. As a Monk's level
 increases the number of attacks they get per round increases and new,
 increasingly powerful attacks become available. Higher level attacks
 have a chance to stun the Monk's opponent.
@@ -633,7 +632,7 @@ Dragon Fist     45       7d10     16
 Crushing Blow   48       7d12     18
 
 
-***** <Tactics>
+***** <MeleeTactics>
 === Basic Tactics ===
 
 
@@ -641,12 +640,12 @@ Pillardancing
 -------------
 Requires that you be at least twice as fast as the monster you are
 fighting. Find a single block of wall, freestanding, and lure your
-enemy to it. When both you and your eneny are standing next to the
+enemy to it. When both you and your enemy are standing next to the
 pillar, hit him, and then move so that you are opposite the pillar from
 him. He will use his turn to move so that he's standing next to you.
 Hit him again, and then move again. Repeat until he's dead.
 
-Note: Some monsters move eratically, and cannot be relied upon to move
+Note: Some monsters move erratically, and cannot be relied upon to move
 in the method expected. Also, some monsters (mostly Ghosts) can move
 through walls, and a small number of monsters can chew through walls.
 
@@ -696,3 +695,7 @@ Original   : (??) and Leon Marrick
 Updated    : (??)
 Updated    : Zangband DevTeam
 Last update: January 6, 2000
+
+***** Begin Hyperlinks
+***** [1] commdesc.txt#ThrowFire
+***** [2] option.txt#UserInterface

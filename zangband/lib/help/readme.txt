@@ -48,7 +48,7 @@ original author.
 
 1.  All documents should be named using the standard 8.3 format since
     Zangband is played on systems which do not support long filenames.
-2.  Menus files should be named *.hlp, non-spoiler help files *.txt and
+2.  Menu files should be named *.hlp, non-spoiler help files *.txt and
     spoiler helpfiles *.spo.
 3.  All documents should be in a fixed font, plain text format.
 4.  Line length should be between 70 and 75 characters.
@@ -61,7 +61,7 @@ original author.
 10. Sub-section headings are denoted by '--- Sub-section Heading ---'.
 11. Information on document authors and editors and revisions should
     be included at the end of each document.
-12. Indenting increments by 5 spaces each time.
+12. Indenting increments by 4 or 5 spaces each time.
 
 
 === Hyperlinks ===
@@ -94,7 +94,7 @@ in a document and may also implement histories to allow 'back' and
 A "tag" is something like a bookmark, it marks a line for reference by
 a hyperlink.  A tag is specified with:
 
-	***** <name of the tag>
+	***** <tag_name>
 
 (the name of the tag can not be longer than 15 characters).
 
@@ -108,5 +108,5 @@ filename of the current file in the link).
 
 -- 
 Original    : Zangband DevTeam
-Last update : December 19, 1999
+Last update : January 11, 1999
 

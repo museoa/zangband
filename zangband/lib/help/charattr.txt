@@ -977,5 +977,5 @@ Last update: January 5, 1999
 ***** Begin Hyperlinks
 ***** [1] birth.txt
 ***** [2] charattr.txt#PrimaryStats
-***** [3] combat.txt#Armor
+***** [3] defend.txt#Armor
 ***** [4] charattr.txt#PrimarySkills

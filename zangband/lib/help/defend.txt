@@ -3,7 +3,7 @@
 In Zangband, monsters may damage and otherwise harm you in a number of
 ways: in direct melee combat, by exploding next to you, by breathing
 on you and by casting spells. Some monsters referred to as "summoners"
-may not drectly harm you but may summon other monsters to do their
+may not directly harm you but may summon other monsters to do their
 dirty work for them.
 
 Creatures will attack you in the same manner in which you attack them.
@@ -32,11 +32,11 @@ Many monsters also have an array of magical spells which they may use
 against you and others can use various breath attacks on you from a
 distance. For example, a red dragon might breathe fire at you. You can
 defend yourself from the side-effects of melee attacks, monster spells
-and breath attacks by seraching for armor that is resistant to that
+and breath attacks by searching for armor that is resistant to that
 form of attack.
 
 As you move down deeper into the dungeon in search of better items,
-you will need to steadily improve your defences against pure damage,
+you will need to steadily improve your defenses against pure damage,
 wounds, stunning, bolts, balls, and breaths of various kinds,
 reductions of exp and stats, theft, and a variety of miscellaneous
 magical attacks.
@@ -116,9 +116,9 @@ damage potential.
 A common misconception amongst new players is that having multiple
 sources of a particular resistance will increase your character's
 resistance to attacks of that form. This is not true. You will get the
-same benefit from weilding a single Amulet of Resist Acid as wielding a
+same benefit from wielding a single Amulet of Resist Acid as wielding a
 Shield of Resist Acid, an {Armor-type} of Resist Acid and an artifact
-weapon which grants acid reistance all at the same time.
+weapon which grants acid resistance all at the same time.
 
 As stated above, however, it is possible to get double resistance for
 the low resists (and also poison). This is because these resistances
@@ -149,7 +149,7 @@ Shield of Elvenkind but not Boots of Elvenkind.
 Note: Zangband has extended the original Angband's concept of adding
 random abilities to the various Ego types considerably. These can be
 either guaranteed or have only a varying chance of being granted. (See
-'Randabil.spo' for details of the the random powers of Ego Armor).
+'Randabil.spo' for details of the random powers of Ego Armor).
 
 
 --- Armor/Shields ---
@@ -177,13 +177,13 @@ of Resistance.
      above.
 
 of Elvenkind.
-     This is the same as Resistance armour, only generally better
+     This is the same as Resistance armor, only generally better
      enchanted. It will also make you more stealthy.
 
 of Permanence (Robes Only)
      These robes provide resistance to fire, cold, acid, and
      electricity and cannot be damaged by acid. They also resist life
-     draining attacks and sustain all your primary stats. 
+     draining attacks and sustain all your primary statistics. 
 
 of Reflection (Shields Only)
      These shields reflect missiles and bolt spells preventing damage
@@ -207,7 +207,7 @@ of the Magi
 
 of Might
      This item will both increase and sustain your strength, dexterity,
-     and constituion and will also make you immune to any foe's attempt
+     and constitution and will also make you immune to any foe's attempt
      to slow or paralyze you.
 
 of Lordliness
@@ -294,8 +294,8 @@ of Speed
 --- Special Items ---
      
 Dragon Scale Mails.
-     These extremely rare pieces of armour come in many different
-     colors, each protecting you against the relevent dragons.
+     These extremely rare pieces of armor come in many different
+     colors, each protecting you against the relevant dragons.
      Naturally they are all resistant to acid damage. They also
      occasionally allow you to breathe as a dragon would!
 
@@ -304,7 +304,7 @@ Dragon Shields and Helms
      random resistances.
 
 Other items
-     Apart from these there are some very rare, and well made armours
+     Apart from these there are some very rare, and well made armors
      in the dungeon with not necessarily any special abilities. These
      include Adamantite Plate Mail, Mithril Plate Mail, Mithril Chain
      Mail, Shields of Deflection, and Shadow Cloaks. The first four
@@ -313,6 +313,7 @@ Other items
      attacks.
 
 
+***** <Resistances>
 === The Resistances ===
 
 This section describes the various attack-types available to monsters
@@ -359,7 +360,7 @@ Poison
     temporary resistance will only take one-ninth of the original
     damage. Poison resistance will also protect you from becoming
     'poisoned' but characters will not be healed of their 'poisoned'
-    status if they become resistant to posion after already being
+    status if they become resistant to poison after already being
     poisoned. This must be cured by other means.
 
 Confusion
@@ -373,16 +374,16 @@ Confusion
 
 Light
     Light breaths damage the player and cause blindness as a
-    side-effect. Light resistance reduces the damagae and also
+    side-effect. Light resistance reduces the damage and also
     prevents blindness caused from light attacks (but not from other
     attacks.
 
 Dark
     Dark breaths damage the player and cause blindness as a
-    side-effect.  Dark resistance reduces the damagae and also
+    side-effect.  Dark resistance reduces the damage and also
     prevents blindness caused from dark attacks (but not from other
     attacks. In addition, some high-level monsters can cast Darkness
-    Storms, these are a particualrly dangerous form of attack but are
+    Storms, these are a particularly dangerous form of attack but are
     resisted if you gave Dark resistance.
 
 Blindness
@@ -399,7 +400,7 @@ Sound
     against stunning from melee attacks.
 
 Fear
-    Fear resistance gives immunity to attacs which make your character
+    Fear resistance gives immunity to attacks which make your character
     'Afraid' (being afraid prevents your character from participating
     in melee combat but does not otherwise affect you).
 
@@ -412,11 +413,11 @@ Shards
 
 Nexus
     Nexus attacks are one of the most annoying attacks in Zangband but
-    will rarely kill you directly. A Nexus atack will damage the player
+    will rarely kill you directly. A Nexus attack will damage the player
     and may teleport the player, teleport-level the player or swap two
     of your primary statistics around. Nexus resistance will reduce the
     damage taken from such attacks and prevent the side-effects but
-    will not prevent you from being teleported by non-nexus atacks (for
+    will not prevent you from being teleported by non-nexus attacks (for
     this you will need an item granting anti-teleportation).
 
 Chaos
@@ -436,7 +437,7 @@ Nether
 
 Gravity
     Gravity attacks damage the player and also cause you (and monsters
-    they hit) to be teleprted a short distance. A side-effect of this
+    they hit) to be teleported a short distance. A side-effect of this
     is that since the effect is calculated on each spot in turn, it is
     possible to be blinked into a spot which hasn't been calculated yet
     but is in line to be affected by the breath - the net result is to
@@ -448,9 +449,9 @@ Gravity
 
 Disenchantment
     Disenchantment attacks damage the player and may result in the
-    to-hit, to-dam and to-AC bonii on your wielded equipment being
+    to-hit, to-dam and to-AC bonuses on your wielded equipment being
     reduced. Disenchantment resistance will reduce the damage you take
-    and will prevent the disnchantment of your equipment.
+    and will prevent the disenchantment of your equipment.
 
 ***** <Unresistable>
 --- Unresistable Attacks ---
@@ -465,7 +466,7 @@ Toxic Waste
 
 Time
     Time attacks damage the player, drain experience and may reduce one
-    or more stats.
+    or more of your primary statistics.
 
 Plasma
     Plasma can damage you, stun you and burn your equipment. Fire
@@ -502,7 +503,7 @@ on this page.
 
 Free Action
     Free action is immunity to paralysis: this is foolproof except in
-    the special case of the Curse of Topi Ylinen which requires a
+    the special case of the Ancient and Foul Curse which requires a
     successful saving throw as well as free action to avoid should it
     attempt to paralyze you. Spells, potions of paralysis and being
     hit-to-paralyze are completely protected against.
@@ -518,7 +519,7 @@ Hold-life
 
 You cannot combat with the creatures in Zangband and expect to come out
 unscathed every time. When a monster inflicts damage on you, you will
-need to take steps to recover from the damage as soon aspossible.
+need to take steps to recover from the damage as soon as possible.
 
 --- Healing Items ---
 
@@ -536,7 +537,7 @@ Cure Light/Serious/Critical Wounds
 
 Healing
      restores 300 hitpoints and removes all temporary bad effects with
-     the exceptionn of fear and cures all wounds.
+     the exception of fear and cures all wounds.
 
 *Healing*
      restores 1000 hitpoints and removes all temporary bad effects and
