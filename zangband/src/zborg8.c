@@ -1083,8 +1083,6 @@ static bool borg_think_home_grab_aux(void)
 }
 
 
-static int min_use = 0;
-
 /*
  * Choose a shop to visit (see above)
  */
@@ -1123,13 +1121,11 @@ static bool borg_choose_shop(void)
 		{
 			goal_shop = i;
 			bu = use;
-			
-			if (use > min_use) min_use = use;
 		}
 	}
 
 	/* Is it worth our while to continue? */
-	if (bu > min_use)
+	if (bu > SHOP_SCAN_THRESHOLD)
 	{
 		/* We want to shop */
 		borg_note(format("# Goal shop: %d, use: %d", goal_shop, bu));
