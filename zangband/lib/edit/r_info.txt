@@ -13257,7 +13257,8 @@ F:NO_STUN | NO_CONF | NO_SLEEP | CAN_SWIM |
 F:WILD_WOOD | WILD_MOUNTAIN |
 D:"The Behinder flung itself on his shoulders. Then I knew why
 D: nobody's supposed to see one. I wish I hadn't. To this day I
-D: can see it, plain as a fence at noon, and fore."
+D: can see it, plain as a fence at noon, and forever I will be
+D: able to see it."
 
 N:869:Boadile
 G:S:g
