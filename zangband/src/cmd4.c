@@ -505,7 +505,7 @@ static bool do_cmd_options_cheat_aux(int option)
 	char buf[1024];
 
 	/* Toggle the option */
-	(*cheat_info[option].o_var) = ~(*cheat_info[option].o_var);
+	(*cheat_info[option].o_var) = !(*cheat_info[option].o_var);
 	
 	if (*cheat_info[option].o_var)
 	{
@@ -622,7 +622,7 @@ static bool do_cmd_options_autosave_aux(int option)
 	char buf[1024];
 	
 	/* Toggle the option */
-	(*autosave_info[option].o_var) = ~(*autosave_info[option].o_var);
+	(*autosave_info[option].o_var) = !(*autosave_info[option].o_var);
 		
 	/* Change the option text */
 	strnfmt(buf, 1024, "%-48s: %s  (%s)",
@@ -693,6 +693,84 @@ static bool do_cmd_options_autosave(int dummy)
 /* Current option flags */
 static byte option_flags;
 
+static int option_page;
+
+/* Forward declare */
+extern menu_type options_aux_menu[25];
+
+/*
+ * Toggle the selected option
+ */
+static bool do_cmd_options_aux2(int option)
+{
+	int i, j = option;
+	char buf[1024];
+
+	/* Find the option to change */
+	for (i = 0; option_info[i].o_desc; i++)
+	{
+		/* Notice options on this "page" */
+		if ((option_info[i].o_page == option_page) &&
+			(option_info[i].o_text))
+		{
+			if (!j)
+			{
+				option_info[i].o_val = !option_info[i].o_val;
+				
+				strnfmt(buf, 1024, "%-48s: %s  (%.23s)",
+						option_info[i].o_desc,
+						(option_info[i].o_val ? "yes" : "no "),
+						option_info[i].o_text);
+			
+				/* Update the description */
+				string_free(options_aux_menu[option].text);
+				options_aux_menu[option].text = string_make(buf);
+				
+				/* Done */
+				break;
+			}
+			else
+			{
+				/* Count down until we get to the required option */
+				j--;
+			}
+		}
+	}
+
+	return (FALSE);
+}
+
+
+menu_type options_aux_menu[25] =
+{
+	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	MENU_END
+};
+
+
 /*
  * Screen titles for each option sub-window
  */
@@ -708,31 +786,42 @@ static cptr option_window_title[8] =
 	"Testing Options"
 };
 
-
 /*
  * Interact with some options
  */
 static bool do_cmd_options_aux(int page)
 {
-	char ch;
-	int i, k = 0, n = 0;
-	int opt[24];
-	char buf[80];
+	int i, n = 0;
 	
-	cptr info = option_window_title[page];
+	char buf[1024];
 	
-	screen_save();
-	
-	page++;
+	/* Save the current page */
+	option_page = page + 1;
 
-	/* Lookup the options */
-	for (i = 0; i < 24; i++) opt[i] = 0;
+	/* Clear the options (24 options max + MENU_END) */
+	for (i = 0; i < 25; i++)
+	{
+		string_free(options_aux_menu[i].text);
+		options_aux_menu[i].text = NULL;
+	}
 
 	/* Scan the options */
 	for (i = 0; option_info[i].o_desc; i++)
 	{
 		/* Notice options on this "page" */
-		if (option_info[i].o_page == page) opt[n++] = i;
+		if (option_info[i].o_page == option_page)
+		{
+			strnfmt(buf, 1024, "%-48s: %s  (%.23s)",
+					option_info[i].o_desc,
+					(option_info[i].o_val ? "yes" : "no "),
+					option_info[i].o_text);
+			
+			/* Update the description */
+			string_free(options_aux_menu[n].text);
+			options_aux_menu[n].text = string_make(buf);
+
+			n++;
+		}
 	}
 
 
@@ -742,85 +831,14 @@ static bool do_cmd_options_aux(int page)
 		/* There are no options */
 		msg_print("There are no available options there at the moment.");
 		message_flush();
-		
-		screen_load();
 
 		/* Bail out */
 		return (FALSE);
 	}
-
-	/* Clear screen */
-	Term_clear();
-
-	/* Interact with the player */
-	while (TRUE)
-	{
-		/* Prompt XXX XXX XXX */
-		put_fstr(0, 0, "%s (RET to advance, y/n to set, ESC to accept) ", info);
-
-		/* Display the options */
-		for (i = 0; i < n; i++)
-		{
-			cptr a = CLR_WHITE;
-
-			/* Color current option */
-			if (i == k) a = CLR_L_BLUE;
-
-			/* Display the option text */
-			prtf(0, i + 2, "%s%-48s: %s  (%.23s)",
-					a, option_info[opt[i]].o_desc,
-					(option_info[opt[i]].o_val ? "yes" : "no "),
-					option_info[opt[i]].o_text);
-		}
-
-		/* Hilite current option */
-		Term_gotoxy(50, k + 2);
-
-		/* Get a key */
-		ch = inkey();
-
-		/* Analyze */
-		switch (ch)
-		{
-			case ESCAPE:
-			{
-				screen_load();
-				return (FALSE);
-			}
-
-			case '-':
-			case '8':
-			{
-				k = (n + k - 1) % n;
-				break;
-			}
-
-			case ' ':
-			case '\n':
-			case '\r':
-			case '2':
-			{
-				k = (k + 1) % n;
-				break;
-			}
-
-			case 'y':
-			case 'Y':
-			case '6':
-			{
-				(option_info[opt[k]].o_val) = TRUE;
-				k = (k + 1) % n;
-				break;
-			}
-
-			case 'n':
-			case 'N':
-			case '4':
-			{
-				(option_info[opt[k]].o_val) = FALSE;
-				k = (k + 1) % n;
-				break;
-			}
+	
+	display_menu(options_aux_menu, 0, TRUE, option_window_title[page]);
+	
+#if 0
 
 			case '?':
 			{
@@ -828,15 +846,8 @@ static bool do_cmd_options_aux(int page)
 				(void)show_file(buf, NULL, 0, 0);
 				Term_clear();
 				break;
-			}
 
-			default:
-			{
-				bell("Illegal command for normal options!");
-				break;
-			}
-		}
-	}
+#endif /* 0 */
 	
 	/* Save the changes */
 	init_options(option_flags);
@@ -1162,14 +1173,14 @@ static bool do_cmd_options_dump(int dummy)
 /* The main options menu */
 static menu_type options_menu[OPTION_MENU_MAX] =
 {
-	{"User Interface Options", do_cmd_options_aux, MN_AVAILABLE},
-	{"Disturbance Options", do_cmd_options_aux, MN_AVAILABLE},
-	{"Game-Play Options", do_cmd_options_aux, MN_AVAILABLE},
-	{"Efficiency Options", do_cmd_options_aux, MN_AVAILABLE},
-	{"Display Options", do_cmd_options_aux, MN_AVAILABLE},
-	{"Birth Options", do_cmd_options_aux, MN_AVAILABLE},
-	{"Artificial Intelligence Options", do_cmd_options_aux, MN_AVAILABLE},
-	{"Testing Options", do_cmd_options_aux, MN_AVAILABLE},
+	{"User Interface Options", do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
+	{"Disturbance Options", do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
+	{"Game-Play Options", do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
+	{"Efficiency Options", do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
+	{"Display Options", do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
+	{"Birth Options", do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
+	{"Artificial Intelligence Options", do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
+	{"Testing Options", do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
 	MENU_SEPERATOR,
 	{"Cheating Options", do_cmd_options_cheat, MN_AVAILABLE | MN_CLEAR},
 	{"Base Delay Factor", do_cmd_options_delay, MN_AVAILABLE},
