@@ -91,11 +91,6 @@ proc angband_display {window action args} {
 #return
 			}
 
-			info {
-				# Don't show the window when the Borg is *Identifying*
-				if {[Global borg,active]} return
-			}
-
 			map {
 				set mainId [Global main,oop]
 				set mapId [Global bigmap,mapId]
@@ -118,7 +113,6 @@ proc angband_display {window action args} {
 			}
 
 			store {
-if {[Global borg,active]} return
 				if {[string equal [Value store,style] new]} {
 					set window store2
 				} else {
@@ -279,7 +273,6 @@ if {[Global borg,active]} return
 			}
 
 			info {
-if {[Global borg,active]} return
 				NSModule::LoadIfNeeded NSInfoWindow
 				NSInfoWindow::SetList [Global info,oop] [lindex $args 0] \
 					[lindex $args 1]
@@ -358,7 +351,6 @@ if {[Global borg,active]} return
 			}
 
 			store {
-if {[Global borg,active]} return
 				if {[string equal [Value store,style] new]} {
 					NSModule::LoadIfNeeded NSStore2
 					set window store2
@@ -554,8 +546,6 @@ proc angband_prompt {action args} {
 
 	global AngbandPriv
 
-	if {[Global borg,active]} return
-
 	switch -- $action {
 
 		open {
@@ -600,8 +590,6 @@ proc angband_prompt {action args} {
 
 proc angband_store {action {arg1 ""}} {
 
-if {[Global borg,active]} return
-
 	if {[string equal [Value store,style] new]} {
 		set command Store2Obj
 		set window store2
@@ -628,191 +616,6 @@ if {[Global borg,active]} return
 	return
 }
 
-# angband_borg --
-#
-#	C-to-Tcl Borg callback.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-Global borg,active 0
-Global borg,initialized 0
-
-proc angband_borg {command} {
-
-	if {![NSModule::Exists NSBorg]} {
-		tk_messageBox -title "No Borg" -icon error \
-			-message "The Borg is not installed."
-		return
-	}
-
-	switch -- $command {
-		preinit {
-
-			# Load (but don't display) the Borg Window. Always do this
-			# so that the preference files will be loaded.
-			NSModule::LoadIfNeeded NSBorg
-
-			# Determine which DLL to use
-			set prefix [Value borg,prefix]
-			set shLib borg[info sharedlibextension]
-			if {[string length $prefix] &&
-				[file exists [PathTk borg $prefix $shLib]]} {
-
-				# Tell the binary which directory to use
-				borg path [PathTk borg $prefix]
-
-				# Tell the binary which DLL to load
-				borg dll [PathTk borg $prefix $shLib]
-
-				# Remember the prefix. "Value borg,prefix" may be changed
-				# by the user in the Borg Window, but "Global borg,prefix"
-				# must not change once the borg is loaded.
-				Global borg,prefix $prefix
-
-			# No DLL is specified. Display the Borg Window so the user
-			# can choose one.
-			} else {
-				NSWindowManager::Display borg
-			}
-		}
-		postinit {
-			NSBorg::Initialize
-			Global borg,initialized 1
-		}
-		activate {
-			Global borg,active 1
-
-			set widget [Global main,widget]
-
-			qeconfigure $widget <Cursor-hide> -active no
-			qeconfigure $widget <Cursor-show> -active no
-			qeconfigure $widget <Target-set> -active no
-			qeconfigure $widget <Target-unset> -active no
-			qeconfigure $widget <Target-visibility> -active no
-			qeconfigure $widget <Track-grid> -active no
-
-			if {[Global borg,detach_interface]} {
-
-				# Disable Main Window
-				$widget configure -noupdate yes
-				qeconfigure $widget <Position> -active no
-				qeconfigure $widget <Inkey> -active no
-				qeconfigure $widget <Track-health> -active no
-
-				# Disable status messages
-				qeconfigure $widget <Status> -active no
-
-				# Disable Micro Map
-				set widget [Global micromap,widget]
-				$widget configure -noupdate yes
-				qeconfigure MicroMap <Position> -active no
-
-				# Disable status bars
-				qeconfigure NSMiscWindow <Py-hitpoints> -active no
-				qeconfigure NSMiscWindow <Py-mana> -active no
-				qeconfigure NSMiscWindow <Py-food> -active no
-
-				# Disable monster recall
-				if {[Value recall,show]} {
-					qeconfigure NSRecall <Track-race> -active no
-				}
-
-				# Disable Choice Window
-				if {[info exists ::Windows(choice)] && [winfo ismapped [Window choice]]} {
-					qeconfigure NSChoiceWindow <Choose> -active no
-					qeconfigure NSChoiceWindow <Track> -active no
-				}
-
-				# Disable Messages Window
-				if {[info exists ::Windows(message2)] && [winfo ismapped [Window message2]]} {
-					qeconfigure NSMessageWindow <Track-message> -active no
-				}
-
-				# Zero delay factor
-				Borg::SettingSet delay_factor 0
-			}
-		}
-		deactivate {
-			Global borg,active 0
-
-			set widget [Global main,widget]
-
-			qeconfigure $widget <Cursor-hide> -active yes
-			qeconfigure $widget <Cursor-show> -active yes
-			qeconfigure $widget <Target-set> -active yes
-			qeconfigure $widget <Target-unset> -active yes
-			qeconfigure $widget <Target-visibility> -active yes
-			qeconfigure $widget <Track-grid> -active yes
-
-			if {[Global borg,detach_interface]} {
-
-				# Enable Main Window
-				$widget configure -noupdate no
-				qeconfigure $widget <Position> -active yes
-				qeconfigure $widget <Inkey> -active yes
-				qeconfigure $widget <Track-health> -active yes
-
-				# Enable status messages
-				qeconfigure $widget <Status> -active yes
-
-				# Enable Micro Map
-				set widget [Global micromap,widget]
-				$widget configure -noupdate no
-				qeconfigure MicroMap <Position> -active yes
-
-				# Enable status bars
-				qeconfigure NSMiscWindow <Py-hitpoints> -active yes
-				qeconfigure NSMiscWindow <Py-mana> -active yes
-				qeconfigure NSMiscWindow <Py-food> -active yes
-
-				# Enable monster recall
-				if {[Value recall,show]} {
-					qeconfigure NSRecall <Track-race> -active yes
-				}
-
-				# Enable Choice Window
-				if {[info exists ::Windows(choice)] && [winfo ismapped [Window choice]]} {
-					qeconfigure NSChoiceWindow <Choose> -active yes
-					qeconfigure NSChoiceWindow <Track> -active yes
-				}
-
-				# Enable Messages Window
-				if {[info exists ::Windows(message2)] && [winfo ismapped [Window message2]]} {
-					qeconfigure NSMessageWindow <Track-message> -active yes
-				}
-
-				# Enable delay factor
-				Borg::SettingSet delay_factor [Global borg,delay_factor]
-			}
-		}
-		rebirth {
-
-			# Display race and class
-			set canvas [Global misc,canvas]
-			$canvas itemconfigure class -text [angband player class]
-			$canvas itemconfigure race -text [angband player race]
-
-			# Choose a new icon
-			if {[Global autoAssign]} {
-				AutoAssignCharacterIcon
-			}
-
-			# Clean up temp files
-			if {[info exists ::Global(photoText)]} {
-				set tempFile [Global photoText]
-				if {[string length $tempFile] && [file exists $tempFile]} {
-					file delete $tempFile
-				}
-			}
-		}
-	}
-
-	return
-}
 
 # angband_generate --
 #

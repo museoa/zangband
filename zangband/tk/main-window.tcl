@@ -775,9 +775,6 @@ proc NSMainWindow::InitMenus {oop} {
 	set entries {}
 	lappend entries [list -type command -label [mc Alternate] -identifier E_PREF_ALTERNATE]
 	lappend entries [list -type command -label [mc Assign] -identifier E_PREF_ASSIGN]
-	if {[file exists [PathTk borg borg.tcl]]} {
-		lappend entries [list -type command -label [mc Borg] -identifier E_PREF_BORG]
-	}
 	lappend entries [list -type command -label [mc Color] -identifier E_PREF_COLOR]
 	lappend entries [list -type command -label [mc Font] -identifier E_PREF_FONT]
 	lappend entries [list -type command -label [mc Keymap] -identifier E_PREF_KEYMAP]
@@ -907,10 +904,6 @@ proc NSMainWindow::SetupMenus {oop mbarId} {
 		E_PREF_ALTERNATE
 	lappend identList M_PHOTO E_PHOTO_NEW E_PHOTO_OPEN
 
-	if {[file exists [PathTk borg borg.tcl]]} {
-		lappend identList E_PREF_BORG
-	}
-
 	lappend identList E_CHOICEWINDOW E_WINDOW_MESSAGE E_WINDOW_MESSAGES \
 		E_WINDOW_MAP E_WINDOW_MISC E_WINDOW_RECALL
 	if {[info exists Windows(choice)]} {
@@ -1037,10 +1030,6 @@ proc NSMainWindow::MenuInvoke {oop menuId ident} {
 		E_PREF_ASSIGN {
 			NSModule::LoadIfNeeded NSAssign
 			NSWindowManager::Display assign
-		}
-		E_PREF_BORG {
-			NSModule::LoadIfNeeded NSBorg
-			NSWindowManager::Display borg
 		}
 		E_PREF_COLOR {
 			NSModule::LoadIfNeeded NSColorPreferences
