@@ -6866,18 +6866,12 @@ const field_action f_action[] =
 	
 	/* Tunnel into a "standard" wall to pass */
 	{field_action_wall_tunnel, "field_action_wall_tunnel"},
-	
-	/* Walls interact with GF_KILL_WALL */
-	{field_action_wall_gf, "field_action_wall_gf"},
 			
 	/* Trap init function */
 	{field_action_trap_init, "field_action_trap_init"},
 	
 	/* Trap disarming function */
 	{field_action_trap_disarm, "field_action_trap_disarm"},
-
-	/* Trap magical interaction */
-	{field_action_trap_gf, "field_action_trap_gf"},
 	
 	/* Trapdoor */
 	{field_action_hit_trap_door, "field_action_hit_trap_door"},
@@ -6971,10 +6965,7 @@ const field_action f_action[] =
 	
 	/* Monster attemts to enter jammed door */
 	{field_action_door_jam_monster, "field_action_door_jam_monster"},
-	
-	/* Doors interact with magic */
-	{field_action_door_gf, "field_action_door_gf"},
-	
+		
 	/* Stores open when walked on */
 	{field_action_door_store, "field_action_door_store"},
 	

@@ -1126,7 +1126,52 @@ void field_hook(cave_type *c_ptr, int action, ...)
 
 
 /*
- * Call the "special" action function for fields
+ * Call the specified action script for each field
+ * in the list at the square c_ptr
+ *
+ * Note the code must take into account fields deleting
+ * themselves.
+ */
+void field_script(cave_type *c_ptr, int action, cptr format, ...)
+{
+	field_type *f_ptr;
+	field_thaum *t_ptr;
+	
+	cptr script;
+
+	FLD_ITT_START (c_ptr->fld_idx, f_ptr);
+	{
+		/* Point to the field */
+		t_ptr = &t_info[f_ptr->t_idx];
+		
+		/* Get script to use */
+		script = quark_str(t_ptr->action[action]);
+
+		/* Paranoia - Is there a function to call? */
+		if (script)
+		{
+			va_list vp;
+		
+			/* Begin the Varargs Stuff */
+			va_start(vp, format);
+					
+			/* Call the action script */
+			if (apply_field_trigger(script, f_ptr, format, vp))
+			{
+				/* The field wants to be deleted */
+				delete_field_ptr(f_ptr);
+			}
+			
+			/* End the Varargs Stuff */
+			va_end(vp);
+		}
+	}
+	FLD_ITT_END;
+}
+
+
+/*
+ * Call the "special" action script for fields
  * in the specified list which match the required
  * field type.
  */
@@ -1751,43 +1796,6 @@ bool field_action_wall_tunnel(field_type *f_ptr, va_list vp)
 
 
 /*
- * Invisible walls interact with GF_KILL_WALL
- */
-bool field_action_wall_gf(field_type *f_ptr, va_list vp)
-{
-	int who = va_arg(vp, int);
-    int dist = va_arg(vp, int);
-    int dam = va_arg(vp, int);
-    int type = va_arg(vp, int);
-    bool known = va_arg(vp, int);
-    bool *notice = va_arg(vp, bool *);
-
-	/* Ignore unused parameters */
-    (void) who;
-    (void) dist;
-    (void) dam;
-    
-	/* Hack - ignore 'f_ptr' */
-	(void)f_ptr;
-
-	if (type == GF_KILL_WALL)
-	{
-		/* Check line of sight */
-		if (known)
-		{
-			*notice = TRUE;
-		}
-
-		/* Delete field */
-		return (TRUE);
-	}
-
-	/* Done */
-	return (FALSE);
-}
-
-
-/*
  * Traps code.
  *
  * data[0]  Trap power  (used to be always 5).
@@ -2035,55 +2043,6 @@ bool field_action_trap_disarm(field_type *f_ptr, va_list vp)
 	}
 
 	/* Done */
-	return (FALSE);
-}
-
-
-/*
- * Traps interact with magic.
- */
-bool field_action_trap_gf(field_type *f_ptr, va_list vp)
-{
-	int who = va_arg(vp, int);
-    int dist = va_arg(vp, int);
-    int dam = va_arg(vp, int);
-    int type = va_arg(vp, int);
-    bool known = va_arg(vp, int);
-    bool *notice = va_arg(vp, bool *);
-
-	/* Ignore unused parameters */
-    (void) who;
-    (void) dist;
-
-	/* Destroy traps */
-	if ((type == GF_KILL_TRAP) || (type == GF_KILL_DOOR))
-	{
-		/* Extract trap "power" */
-		int power = f_ptr->data[0];
-
-		/* Extract the difficulty */
-		int j = dam - power;
-
-		/* Always have a small chance of success */
-		if (j < 2) j = 2;
-
-		if (randint0(100) < j)
-		{
-			/* Success */
-
-			/* Check line of sight */
-			if (known)
-			{
-				*notice = TRUE;
-
-				msgf("There is a bright flash of light!");
-			}
-
-			/* Delete the field */
-			return (TRUE);
-		}
-	}
-
 	return (FALSE);
 }
 
@@ -3373,61 +3332,6 @@ bool field_action_door_jam_monster(field_type *f_ptr, va_list vp)
 	return (FALSE);
 }
 
-/*
- * Doors interact with various magic effects
- */
-bool field_action_door_gf(field_type *f_ptr, va_list vp)
-{
-	int who = va_arg(vp, int);
-    int dist = va_arg(vp, int);
-    int dam = va_arg(vp, int);
-    int type = va_arg(vp, int);
-    bool known = va_arg(vp, int);
-    bool *notice = va_arg(vp, bool *);
-
-	/* Ignore unused parameters */
-    (void) who;
-    (void) dist;
-    (void) dam;
-
-	if (type == GF_KILL_WALL)
-	{
-		/* Hack - no message */
-
-		/* Delete the field */
-		return (TRUE);
-	}
-	else if (type == GF_KILL_DOOR)
-	{
-		/* Destroy the door */
-		if (known)
-		{
-			msgf("There is a bright flash of light!");
-			*notice = TRUE;
-		}
-
-		/* Destroy the feature */
-		cave_set_feat(f_ptr->fx, f_ptr->fy, the_floor());
-
-		/* Delete the field */
-		return (TRUE);
-	}
-	else if (type == GF_KILL_TRAP)
-	{
-		/* Unlock the door */
-		if (known)
-		{
-			msgf("Click!");
-			*notice = TRUE;
-		}
-
-		/* Delete the field */
-		return (TRUE);
-	}
-
-	/* Done */
-	return (FALSE);
-}
 
 /*
  * Interact with a store

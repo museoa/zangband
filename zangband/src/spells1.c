@@ -4548,9 +4548,11 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 
 
 				/* Affect fields on the grid */
-				field_hook(area(x, y), FIELD_ACT_MAGIC_TARGET,
-                			who, d, dam, typ, player_can_see_bold(x, y),
-                            &notice);
+				field_script(area(x, y), FIELD_ACT_MAGIC_TARGET, "iiiib:b", 
+                			LUA_VAR(who), LUA_VAR_NAMED(d, "dist"),
+							LUA_VAR(dam), LUA_VAR_NAMED(typ, "type"),
+							LUA_VAR_NAMED(player_can_see_bold(x, y), "known"),
+							LUA_RETURN(notice));
 			}
 			else
 			{
@@ -4558,9 +4560,11 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 				if (project_f(who, dist, x, y, dam, typ)) notice = TRUE;
 
 				/* Affect fields on the grid */
-				field_hook(area(x, y), FIELD_ACT_MAGIC_TARGET,
-                			who, dist, dam, typ, player_can_see_bold(x, y),
-                            &notice);
+				field_script(area(x, y), FIELD_ACT_MAGIC_TARGET, "iiiib:b", 
+                			LUA_VAR(who), LUA_VAR(dist),
+							LUA_VAR(dam), LUA_VAR_NAMED(typ, "type"),
+							LUA_VAR_NAMED(player_can_see_bold(x, y), "known"),
+							LUA_RETURN(notice));
 			}
 		}
 	}
