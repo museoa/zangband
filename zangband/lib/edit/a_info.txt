@@ -105,13 +105,9 @@ F:STR | CON | INFRA | HIDE_TYPE |
 F:SEE_INVIS | FREE_ACT | REGEN | LITE | INSTA_ART
 
 
-# The Incandescent Light of Edison
-# Thomas Alva Edison the "Wizard of Menlo Park"
-# patented 1,093 inventions.
-# inventor of the incandescent lightbulb
-# Default reward for The Dark Elven Lords Quest
+# The Incandescent Globe of Sawall
 
-N:7:of Edison
+N:7:of Sawall
 I:39:3:3
 W:35:10:5:20000
 P:0:1d1:0:0:0
