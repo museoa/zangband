@@ -400,7 +400,7 @@ static void prt_exp(void)
 	{
 		if (p_ptr->lev >= PY_MAX_LEVEL)
 		{
-			put_fstr(COL_EXP, ROW_EXP, "NEED%s********", attr);
+			put_fstr(COL_EXP, ROW_EXP, "NEED %s*******", attr);
 		}
 		else
 		{

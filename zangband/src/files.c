@@ -3513,7 +3513,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 	while (TRUE)
 	{
 		/* Read a line or stop */
-		if (my_fgets(fff, buf, 1024)) break;
+		if (my_raw_fgets(fff, buf, 1024)) break;
 
 		/* XXX Parse "menu" items */
 		if (prefix(buf, "***** "))
@@ -3600,7 +3600,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 		while (next < line)
 		{
 			/* Get a line */
-			if (my_fgets(fff, buf, 1024)) break;
+			if (my_raw_fgets(fff, buf, 1024)) break;
 
 			/* Skip tags/links */
 			if (prefix(buf, "***** ")) continue;
@@ -3616,7 +3616,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 			if (!i) line = next;
 
 			/* Get a line of the file or stop */
-			if (my_fgets(fff, buf, 1024)) break;
+			if (my_raw_fgets(fff, buf, 1024)) break;
 
 			/* Hack -- skip "special" lines */
 			if (prefix(buf, "***** ")) continue;
@@ -3862,7 +3862,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 			}
 
 			/* Write the file line by line */
-			while (!my_fgets(fff, xtmp, 80))
+			while (!my_raw_fgets(fff, xtmp, 80))
 				my_fputs(ffp, xtmp, 80);
 
 			/* Close the files */

@@ -398,9 +398,9 @@ FILE *my_fopen_temp(char *buf, int max)
  *
  * Read a string, without a newline, to a file
  *
- * Process tabs, strip internal non-printables
+ * Process tabs, strip internal non-printables if told.
  */
-errr my_fgets(FILE *fff, char *buf, huge n)
+static errr my_fgets_aux(FILE *fff, char *buf, huge n, bool strip)
 {
 	huge i = 0;
 
@@ -436,15 +436,10 @@ errr my_fgets(FILE *fff, char *buf, huge n)
 				/* Append some more spaces */
 				while (!(i % 8)) buf[i++] = ' ';
 			}
-			else
-			{
-				/*
-				 * Hack - removed the isprint() test so
-				 * that extended ascii displays properly.
-				 *
-				 * If needed, that should be at a higher level.
-				 */
 			
+			/* Strip non-printables if asked */
+			else if(!strip || isprint(*s))
+			{
 				/* Copy */
 				buf[i++] = *s;
 
@@ -460,6 +455,32 @@ errr my_fgets(FILE *fff, char *buf, huge n)
 	/* Failure */
 	return (1);
 }
+
+
+/*
+ * Hack -- replacement for "fgets()"
+ *
+ * Read a string, without a newline, to a file
+ *
+ * Process tabs, strip internal non-printables
+ */
+errr my_fgets(FILE *fff, char *buf, huge n)
+{
+	return (my_fgets_aux(fff, buf, n, TRUE));
+}
+
+/*
+ * Hack -- replacement for "fgets()"
+ *
+ * Read a string, without a newline, to a file
+ *
+ * Process tabs, do not strip internal non-printables
+ */
+errr my_raw_fgets(FILE *fff, char *buf, huge n)
+{
+	return (my_fgets_aux(fff, buf, n, FALSE));
+}
+
 
 
 /*
