@@ -1333,6 +1333,8 @@ bool detect_traps(void)
 	{
 		for (x = panel_col_min; x <= panel_col_max; x++)
 		{
+			if(!in_bounds2(y, x)) continue;
+			
 			/* Access the grid */
 			c_ptr = area(y,x);
 
@@ -1387,6 +1389,8 @@ bool detect_doors(void)
 	{
 		for (x = panel_col_min; x <= panel_col_max; x++)
 		{
+			if(!in_bounds2(y, x)) continue;
+			
 			c_ptr = area(y,x);
 
 			/* Detect secret doors */
@@ -1442,6 +1446,8 @@ bool detect_stairs(void)
 	{
 		for (x = panel_col_min; x <= panel_col_max; x++)
 		{
+			if(!in_bounds2(y, x)) continue;
+			
 			c_ptr = area(y,x);
 
 			/* Detect stairs */
@@ -1488,6 +1494,8 @@ bool detect_treasure(void)
 	{
 		for (x = panel_col_min; x <= panel_col_max; x++)
 		{
+			if(!in_bounds2(y, x)) continue;
+			
 			c_ptr = area(y,x);
 
 			/* Notice embedded gold */
@@ -2730,6 +2738,8 @@ bool earthquake(int cy, int cx, int r)
 			y = py + ddy_ddd[i];
 			x = px + ddx_ddd[i];
 
+			if(!in_bounds2(y, x)) continue;
+			
 			/* Access the grid */
 			c_ptr = area(y, x);
 			
@@ -2851,6 +2861,8 @@ bool earthquake(int cy, int cx, int r)
 			/* Skip unaffected grids */
 			if (!map[16 + yy - cy][16 + xx - cx]) continue;
 
+			if(!in_bounds2(yy, xx)) continue;
+			
 			/* Access the grid */
 			c_ptr = area(yy, xx);
 
@@ -2888,6 +2900,8 @@ bool earthquake(int cy, int cx, int r)
 							y = yy + ddy_ddd[i];
 							x = xx + ddx_ddd[i];
 
+							if(!in_bounds2(y, x)) continue;
+							
 							/* Access the grid */
 							c_ptr = area(y, x);
 							
@@ -2987,6 +3001,8 @@ bool earthquake(int cy, int cx, int r)
 			/* Skip unaffected grids */
 			if (!map[16+yy-cy][16+xx-cx]) continue;
 
+			if(!in_bounds2(yy, xx)) continue;
+			
 			/* Access the cave grid */
 			c_ptr = area(yy,xx);
 
@@ -3232,6 +3248,8 @@ static int next_to_open(int cy, int cx)
 		y = cy + ddy_cdd[i % 8];
 		x = cx + ddx_cdd[i % 8];
 
+		if(!in_bounds2(y, x)) continue;
+		
 		c_ptr = area(y, x);
 
 		/* Found a wall, break the length */
@@ -3270,6 +3288,8 @@ static int next_to_walls_adj(int cy, int cx)
 		y = cy + ddy_ddd[i];
 		x = cx + ddx_ddd[i];
 
+		if(!in_bounds2(y, x)) continue;
+		
 		c_ptr = area(y, x);
 		
 		if (!cave_floor_grid(c_ptr)) c++;
@@ -3508,6 +3528,15 @@ bool teleport_swap(int dir)
 		tx = px + ddx[dir];
 		ty = py + ddy[dir];
 	}
+	
+	if(!in_bounds2(ty, tx))
+	{
+		msg_print("You can't trade places with that!");
+
+		/* Failure */
+		return FALSE;
+	}
+	
 	c_ptr = area(ty,tx);
 
 	if (!c_ptr->m_idx)
