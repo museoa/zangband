@@ -2231,7 +2231,11 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			if (seen) obvious = TRUE;
 
 			/* Speed up */
-			if (m_ptr->mspeed < 150) m_ptr->mspeed += 10;
+			if (m_ptr->mspeed < 150)
+			{
+				m_ptr->mspeed += (40 - m_ptr->mspeed + r_ptr->speed) / 4;
+			}
+			
 			note = " starts moving faster.";
 
 			if (r_ptr->flags1 & RF1_UNIQUE)
@@ -2261,7 +2265,11 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			/* Normal monsters slow down */
 			else
 			{
-				if (m_ptr->mspeed > 60) m_ptr->mspeed -= 10;
+				if (m_ptr->mspeed > 60)
+				{
+					m_ptr->mspeed -= (40 + m_ptr->mspeed - r_ptr->speed) / 4;
+				
+				}
 				note = " starts moving slower.";
 			}
 
