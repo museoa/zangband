@@ -2505,16 +2505,16 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 				s2 = "in ";
 			}
 
-			if (cave_wall_grid(pc_ptr) || cave_perma_grid(pc_ptr))
-			{
-				s3 = "";
-			}
-			else
+			if (f_info[feat].flags & FF_OBJECT)
 			{
 				/* Pick proper indefinite article */
 				s3 = (is_a_vowel(name[0])) ? "an " : "a ";
 			}
-
+			else
+			{
+				s3 = "";
+			}
+			
 			/* Display a message */
 			if (p_ptr->wizard)
 				sprintf(out_val, "%s%s%s%s [%s] (%d:%d)", s1, s2, s3, name,

@@ -59,7 +59,7 @@ static cptr f_info_flags[] =
 	"USE_TRANS",
 	"ICKY",
 	"PERM",
-	"DUMMY3",
+	"OBJECT",
 	"DUMMY4",
 	"DUMMY5"
 };
