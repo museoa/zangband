@@ -270,7 +270,6 @@ void compact_fields(int size)
 {
 	int y, x, num, cnt;
 	int cur_lev, cur_dis, chance;
-	int dummy;
 	s16b i;
 	
 	s16b *fld_ptr;
@@ -336,7 +335,7 @@ void compact_fields(int size)
 			if (rand_int(100) < chance) continue;
 
 			/* Call completion routine */
-			if (field_hook_single(fld_ptr, FIELD_ACT_EXIT, (void *) &dummy))
+			if (field_hook_single(fld_ptr, FIELD_ACT_EXIT, NULL))
 			{
 				/* It didn't delete itself (naughty) so we do it now */
 				delete_field_aux(fld_ptr);
@@ -862,7 +861,6 @@ void process_fields(void)
 {
 	s16b fld_idx;
 	field_type *f_ptr;
-	int dummy;
 	
 	s16b *fld_ptr;
 
@@ -887,8 +885,7 @@ void process_fields(void)
 			if (!f_ptr->counter)
 			{
 				/* Call completion routine */
-				if (field_hook_single(fld_ptr, FIELD_ACT_EXIT,
-					 (void *) &dummy));
+				if (field_hook_single(fld_ptr, FIELD_ACT_EXIT, NULL));
 				{
 					/* It didn't delete itself - do it now */
 					delete_field_aux(fld_ptr);
@@ -901,7 +898,7 @@ void process_fields(void)
 		}
 
 		/* If acts every turn */
-		(void) field_hook_single(fld_ptr, FIELD_ACT_ALWAYS, (void *) &dummy);
+		(void) field_hook_single(fld_ptr, FIELD_ACT_ALWAYS, NULL);
 	}
 }
 
@@ -987,9 +984,9 @@ void test_field_data_integtrity(void)
  *
  * FIELD_ACT_INIT			Not implemented yet.
  * FIELD_ACT_ALWAYS			NULL
- * FIELD_ACT_PLAYER_ENTER	NULL
- * FIELD_ACT_PLAYER_ON		NULL
- * FIELD_ACT_PLAYER_LEAVE	NULL	
+ * FIELD_ACT_PLAYER_ENTER	player_type*	(p_ptr)
+ * FIELD_ACT_PLAYER_ON		player_type*	(p_ptr)
+ * FIELD_ACT_PLAYER_LEAVE	player_type*	(p_ptr)
  * FIELD_ACT_MONSTER_ENTER	monster_type*	(m_ptr)
  * FIELD_ACT_MONSTER_ON		monster_type*	(m_ptr)
  * FIELD_ACT_MONSTER_LEAVE	monster_type*	(m_ptr)

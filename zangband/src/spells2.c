@@ -2733,7 +2733,6 @@ bool earthquake(int cy, int cx, int r)
 	bool            hurt = FALSE;
 	cave_type       *c_ptr;
 	bool            map[32][32];
-	byte			dummy;
 	field_mon_test	mon_enter_test;
 
 	/* Prevent destruction of quest levels and town */
@@ -2891,7 +2890,7 @@ bool earthquake(int cy, int cx, int r)
 
 			/* Process fields under the player. */
 			field_hook(&area(py, px)->fld_idx,
-				 FIELD_ACT_PLAYER_LEAVE, (void *) &dummy);
+				 FIELD_ACT_PLAYER_LEAVE, (void *) p_ptr);
 
 			/* Move the player */
 			py = sy;
@@ -2899,7 +2898,7 @@ bool earthquake(int cy, int cx, int r)
 		
 			/* Process fields under the player. */
 			field_hook(&area(py, px)->fld_idx,
-				 FIELD_ACT_PLAYER_ENTER, (void *) &dummy);
+				 FIELD_ACT_PLAYER_ENTER, (void *) p_ptr);
 
 			if (!dun_level)
 			{
@@ -3621,7 +3620,6 @@ bool teleport_swap(int dir)
 	cave_type * c_ptr;
 	monster_type * m_ptr;
 	monster_race * r_ptr;
-	byte dummy;
 
 	if ((dir == 5) && target_okay())
 	{
@@ -3672,7 +3670,7 @@ bool teleport_swap(int dir)
 
 	/* Process fields under the player. */
 	field_hook(&area(py, px)->fld_idx,
-		 FIELD_ACT_PLAYER_LEAVE, (void *) &dummy);
+		 FIELD_ACT_PLAYER_LEAVE, (void *) p_ptr);
 	
 	
 	/* Move the monster */
@@ -3688,7 +3686,7 @@ bool teleport_swap(int dir)
 	
 	/* Process fields under the player. */
 	field_hook(&area(py, px)->fld_idx,
-		FIELD_ACT_PLAYER_ENTER, (void *) &dummy);
+		FIELD_ACT_PLAYER_ENTER, (void *) p_ptr);
 
 	/* Update the monster (new location) */
 	update_mon(area(ty, tx)->m_idx, TRUE);

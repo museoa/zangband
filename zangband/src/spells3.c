@@ -331,8 +331,6 @@ void teleport_player(int dis)
 	bool look = TRUE;
 	cave_type *c_ptr;
 
-	byte dummy;
-
 	if (p_ptr->anti_tele)
 	{
 		msg_print("A mysterious force prevents you from teleporting!");
@@ -408,7 +406,7 @@ void teleport_player(int dis)
 
 	/* Process fields under the player. */
 	field_hook(&area(py, px)->fld_idx,
-		 FIELD_ACT_PLAYER_LEAVE, (void *) &dummy);
+		 FIELD_ACT_PLAYER_LEAVE, (void *) p_ptr);
 
 	/* Move the player */
 	py = y;
@@ -416,7 +414,7 @@ void teleport_player(int dis)
 		
 	/* Process fields under the player. */
 	field_hook(&area(py, px)->fld_idx,
-		 FIELD_ACT_PLAYER_ENTER, (void *) &dummy);
+		 FIELD_ACT_PLAYER_ENTER, (void *) p_ptr);
 
 	if (!dun_level)
 	{
@@ -496,8 +494,6 @@ void teleport_player_to(int ny, int nx)
 
 	cave_type *c_ptr;
 
-	byte dummy;
-
 	if (p_ptr->anti_tele)
 	{
 		msg_print("A mysterious force prevents you from teleporting!");
@@ -539,7 +535,7 @@ void teleport_player_to(int ny, int nx)
 
 	/* Process fields under the player. */
 	field_hook(&area(py, px)->fld_idx,
-		 FIELD_ACT_PLAYER_LEAVE, (void *) &dummy);
+		 FIELD_ACT_PLAYER_LEAVE, (void *) p_ptr);
 
 	/* Move the player */
 	py = y;
@@ -547,7 +543,7 @@ void teleport_player_to(int ny, int nx)
 		
 	/* Process fields under the player. */
 	field_hook(&area(py, px)->fld_idx,
-		 FIELD_ACT_PLAYER_ENTER, (void *) &dummy);
+		 FIELD_ACT_PLAYER_ENTER, (void *) p_ptr);
 
 	if (!dun_level)
 	{

@@ -2893,7 +2893,6 @@ void move_player(int dir, int do_pickup)
 	if (oktomove)
 	{
 		int oy, ox;
-		byte dummy;
 
 #ifdef USE_SCRIPT
 		if (player_enter_grid_callback(y, x)) return;
@@ -2908,7 +2907,7 @@ void move_player(int dir, int do_pickup)
 
 		/* Process fields under the player. */
 		field_hook(&area(py, px)->fld_idx,
-			 FIELD_ACT_PLAYER_LEAVE, (void *) &dummy);
+			 FIELD_ACT_PLAYER_LEAVE, (void *) p_ptr);
 
 		/* Move the player */
 		py = y;
@@ -2916,7 +2915,7 @@ void move_player(int dir, int do_pickup)
 		
 		/* Process fields under the player. */
 		field_hook(&area(py, px)->fld_idx,
-			 FIELD_ACT_PLAYER_ENTER, (void *) &dummy);
+			 FIELD_ACT_PLAYER_ENTER, (void *) p_ptr);
 
 		if (!dun_level)
 		{
