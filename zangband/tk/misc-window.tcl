@@ -1,6 +1,6 @@
 # File: misc-window.tcl
 
-# Purpose: Message, Micro Map, Misc and Progress Windows
+# Purpose: Message, Misc and Progress Windows
 
 #
 # Copyright (c) 1997-2001 Tim Baker
@@ -164,29 +164,6 @@ pack $child -expand yes -fill y
 		-expand no
 
 	#
-	# Micro-map window
-	#
-
-	set win .micromap
-	toplevel $win
-	wm title $win [mc "Micro Map"]
-	wm resizable $win yes yes
-	wm transient $win $winMain
-	wm protocol $win WM_DELETE_WINDOW {
-		NSMainWindow::Info [Global main,oop] mapWindow 0
-		NSMainWindow::MenuInvoke [Global main,oop] ignore E_WINDOW_MAP
-	}
-	Term_KeyPress_Bind $win
-
-	# Start out withdrawn (hidden)
-	wm withdraw $win
-
-	Window micromap $win
-
-	set child [InitDisplay_MicroMap $win]
-	place $child -relx 0.5 -rely 0.5 -anchor center
-
-	#
 	# Progress window
 	#
 
@@ -331,105 +308,6 @@ proc NSMiscWindow::ContextMenu_Message {menu x y} {
 	return
 }
 
-proc NSMiscWindow::InitDisplay_MicroMap {parent} {
-
-	global PYPX
-
-	set scale [Value micromap,scale]
-
-	# Make room for buttons on small monitors
-	if {[winfo screenwidth .] < 800} {
-		set height [expr {38 * 4}]
-	} else {
-		set height [expr {43 * 4}]
-	}
-
-	# I want this window as wide as the Misc Window
-	if {[Value misc,float] && ([Value misc,layout] == "wide")} {
-		set width [winfo reqwidth [Window misc].misc]
-	} else {
-		set width $height
-	}
-
-	set widgetId [NSObject::New NSWidget $parent $width $height $scale $scale]
-	set widget [NSWidget::Info $widgetId widget]
-
-	NSWidget::Info $widgetId examineCmd \
-		NSMiscWindow::ExamineLocation
-
-	NSWidget::Info $widgetId scaleCmd \
-		"Value micromap,scale \[NSWidget::Info $widgetId scale\]"
-if 0 {
-	$parent configure -width $width -height [NSWidget::Info $widgetId height]
-}
-	# Global access
-	Global micromap,widgetId $widgetId
-	Global micromap,widget $widget
-if 0 {
-	# Because the map supports different resolutions, and the
-	# different resolutions result in slightly different-sized
-	# maps, I make the background black so the edges don't show.
-	$parent configure -background Black
-}
-	# Shift-click to center the Main Window Widget
-	bind $widget <Shift-ButtonPress-1> {
-		Global main,widget,center [NSWidget::PointToCave \
-			[Global micromap,widgetId] %x %y]
-	}
-
-	# Don't display the Big Map after a Shift-click
-	bind $widget <Shift-ButtonRelease-1> break
-
-	# When the the left mouse button is released, and the mouse
-	# did not move (ie, the user wasn't dragging the map), then
-	# display the Big Map.
-	bind $widget <ButtonRelease-1> {
-		if {![NSWidget::Info [Global micromap,widgetId] track,mouseMoved]} {
-			if {[string equal [angband inkey_flags] INKEY_TARGET]} {
-				scan [NSWidget::Info [Global micromap,widgetId] examined] "%%d %%d" y x
-				angband keypress @$y\n$x\n
-			} else {
-				DoUnderlyingCommand M
-			}
-		}
-	}
-	
-	# If the cursor was showing, recenter the Main Window Widget on the
-	# cursor's location. If the cursor was not showing (meaning we displayed
-	# it) then hide the cursor and recenter on the character's location.
-	bind $widget <Leave> {+
-		if {[Global cursor,visible]} {
-			[Global main,widget] center [Global cursor,y] [Global cursor,x]
-		} else {
-			eval [Global main,widget] center [Global main,widget,center]
-			[Global main,widget] itemconfigure [Global cursor,itemId] \
-				-visible no
-		}
-		NSMainWindow::StatusText [Global main,oop] {}
-	}
-	bind $widget <Shift-Leave> break
-
-	# When the toplevel is resized, resize the Micro Map Widget
-	bindtags $parent [concat [bindtags $parent] MicroMapBindTag]
-	bind MicroMapBindTag <Configure> \
-		"NSMiscWindow::ConfigureMicroMap %w %h"
-
-	# This Widget is used to display detail while examining the dungeon map
-	set gsize [icon size]
-	set widgetId [NSObject::New NSWidget $parent $width $height \
-		$gsize $gsize]
-	set widget2 [NSWidget::Info $widgetId widget]
-
-	# Cursor for detail widget
-	set itemId [$widget2 create cursor -color yellow -linewidth 2]
-
-	# Global access
-	Global mapdetail,widgetId $widgetId
-	Global mapdetail,widget $widget2
-	Global mapdetail,cursor $itemId
-
-	return $widget
-}
 
 proc NSMiscWindow::InitDisplay_Misc {parent} {
 
@@ -1181,34 +1059,6 @@ proc NSMiscWindow::ToggleProgress {which} {
 	return
 }
 
-# NSMiscWindow::ConfigureMicroMap --
-#
-#	Called when the Micro Map Window is resized
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSMiscWindow::ConfigureMicroMap {width height} {
-
-	set win [Window micromap]
-
-	# Resize micromap,widget
-	set widgetId [Global micromap,widgetId]
-	if {[NSWidget::Resize $widgetId $width $height]} {
-		# Nothing
-	}
-
-	# Resize mapdetail,widget
-	set widgetId [Global mapdetail,widgetId]
-	if {[NSWidget::Resize $widgetId $width $height]} {
-		# Nothing
-	}
-
-	return
-}
 
 # NSMiscWindow::CanvasAddTextItem --
 #
@@ -1397,28 +1247,6 @@ proc NSMiscWindow::bind_Py_level {cur max} {
 	return
 }
 
-# NSMiscWindow::PositionChanged --
-#
-#	Called as a qebind <Position> script. Update the Micro Map Window
-#	when the character's position changes.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSMiscWindow::PositionChanged {y x} {
-
-	global PYPX
-
-	set widget [Global micromap,widget]
-
-	# Keep character centered in the display
-	$widget center $y $x
-
-	return
-}
 
 # NSMiscWindow::CanvasFeedbackInit --
 #
@@ -1725,38 +1553,6 @@ proc NSMiscWindow::InventoryPopup {menu canvas invOrEquip cmdChar args} {
 	return
 }
 
-# NSMiscWindow::ExamineLocation --
-#
-#	Called when the mouse moves over the MicroMap. Displays
-#	a description (if any) of what the character knows about
-#	the given cave location. If the screen cursor is not
-#	currently visible, it is displayed at the given location.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSMiscWindow::ExamineLocation {widgetId y x} {
-
-	set widget [Global main,widget]
-
-	# Center the Main Window Widget at the location pointed to in the
-	# Micro Map Window
-	$widget center $y $x
-
-	# Display information about the given location
-	NSMainWindow::ExamineLocation [Global main,widgetId] $y $x
-
-	# If the cursor isn't already visible because of target/look, then
-	# center the cursor at the given location.
-	if {![Global cursor,visible]} {
-		$widget itemconfigure [Global cursor,itemId] -y $y -x $x -visible yes
-	}
-
-	return
-}
 
 # NSMiscWindow::ValueChanged_font_message --
 #

@@ -84,19 +84,6 @@ proc angband_display {window action args} {
 #return
 			}
 
-			map {
-				set mainId [Global main,oop]
-				set mapId [Global bigmap,mapId]
-				place forget [NSMap::Info $mapId frame]
-				pack forget [Global mapdetail,widget]
-				place [Global micromap,widget] \
-					-relx 0.5 -rely 0.5 -anchor center
-					
-				# Focus for KeyPress bindings
-				focus [Window main]
-				return
-			}
-
 			message {
 				set window messages
 			}
@@ -207,27 +194,6 @@ proc angband_display {window action args} {
 
 			knowledge {
 				NSModule::LoadIfNeeded NSKnowledge
-			}
-	
-			map {
-				set mainId [Global main,oop]
-				set mapId [Global bigmap,mapId]
-				place [NSMap::Info $mapId frame] -x 0 -y 0 \
-					-relwidth 1.0 -relheight 1.0
-				place forget [Global micromap,widget]
-				pack [Global mapdetail,widget] \
-					-expand yes -fill both
-				update idletasks
-
-				# We must map the widget so it may resize to fit its parent
-				# before setting the view. Also, the scrollbars must be
-				# mapped before they will update properly.
-				eval NSMap::SetView $mapId $PYPX
-				eval [Global mapdetail,widget] center $PYPX
-
-				# Focus for KeyPress bindings
-				focus [Global bigmap,widget]
-				return
 			}
 	
 			message {

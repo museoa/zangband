@@ -116,8 +116,6 @@ Manage map,detail high
 Manage message,float 0
 Manage message2window,show 0
 Manage messages,max 256
-Manage micromap,float 1
-Manage micromap,scale 4
 Manage misc,float 0
 Manage misc,layout tall
 Manage misc,mode,armor_class 1

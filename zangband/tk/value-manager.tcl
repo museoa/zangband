@@ -154,8 +154,6 @@ proc NSValueManager::InitModule {} {
 	Manage record,photo 1
 
 	Manage bigmap,scale 4
-	Manage micromap,scale 4
-	Manage micromap,float 1
 	Manage map,detail high
 
 	Manage main,statusbar,color White ; # #80FFFF

@@ -206,12 +206,6 @@ proc NSMainWindow::InitWindow {oop} {
 	grid $win.statusBar.depth \
 		-row 0 -column 2 -rowspan 1 -columnspan 1
 
-	# The small "C" in the status bar can be clicked to recenter the
-	# Main widget and Micro Map widget on the character's location.
-	bind $win.statusBar.center <ButtonPress-1> {
-		Global main,widget,center [WidgetCenter [Global main,widget]]
-		WidgetCenter [Global micromap,widget]
-	}
 	bind $win.statusBar.center <Enter> "
 		%W configure -foreground gray60
 		NSMainWindow::StatusText $oop {Click to recenter the display.}
@@ -645,9 +639,6 @@ proc NSMainWindow::InitMenus {oop} {
 	Info $oop messagesWindow 0
 	lappend entries [list -type checkbutton -label [mc "Messages Window"] \
 		-variable ::NSMainWindow($oop,messagesWindow) -identifier E_WINDOW_MESSAGES]
-	Info $oop mapWindow [Value micromap,float]
-	lappend entries [list -type checkbutton -label [mc "Micro Map Window"] \
-		-variable ::NSMainWindow($oop,mapWindow) -identifier E_WINDOW_MAP]
 	Info $oop miscWindow [Value misc,float]
 	lappend entries [list -type checkbutton -label [mc "Misc Window"] \
 		-variable ::NSMainWindow($oop,miscWindow) -identifier E_WINDOW_MISC]
@@ -705,7 +696,7 @@ proc NSMainWindow::SetupMenus {oop mbarId} {
 		E_PREF_FONT
 
 	lappend identList E_CHOICEWINDOW E_WINDOW_MESSAGE E_WINDOW_MESSAGES \
-		E_WINDOW_MAP E_WINDOW_MISC E_WINDOW_RECALL
+		E_WINDOW_MISC E_WINDOW_RECALL
 	if {[info exists Windows(choice)]} {
 		Info $oop choiceWindow [winfo ismapped [Window choice]]
 	}
@@ -713,7 +704,6 @@ proc NSMainWindow::SetupMenus {oop mbarId} {
 	if {[info exists Windows(message2)]} {
 		Info $oop messagesWindow [winfo ismapped [Window message2]]
 	}
-	Info $oop mapWindow [winfo ismapped [Window micromap]]
 	Info $oop miscWindow [winfo ismapped [Window misc]]
 	Info $oop recallWindow [winfo ismapped [Window recall]]
 
@@ -889,14 +879,6 @@ proc NSMainWindow::MenuInvoke {oop menuId ident} {
 			} else {
 				NSWindowManager::Undisplay choice
 			}
-		}
-		E_WINDOW_MAP {
-			if {[Info $oop mapWindow]} {
-				wm deiconify [Window micromap]
-			} else {
-				wm withdraw [Window micromap]
-			}
-			Value micromap,float [Info $oop mapWindow]
 		}
 		E_WINDOW_MESSAGES {
 			if {[Info $oop messagesWindow]} {

@@ -106,10 +106,6 @@ proc NSMap::NSMap {oop parent width height gwidth gheight} {
 		"NSWidget::yview $widgetId moveto 0"
 	bind $widget <Control-KeyPress-Down> \
 		"NSWidget::yview $widgetId moveto 1"
-	bind $widget <KeyPress-plus> \
-		"NSWidget::IncrScale $widgetId +1"
-	bind $widget <KeyPress-minus> \
-		"NSWidget::IncrScale $widgetId -1"
 	
 	#
 	# Synch the scrollbars when window is shown.

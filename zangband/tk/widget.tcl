@@ -88,34 +88,6 @@ proc NSWidget::NSWidget {oop parent width height gwidth gheight} {
 	Info $oop track,mouseMoved 0
 	Info $oop caveyx 0
 
-	# Micro-map Widgets get a popup menu to change the scale
-	set menu $widget.context
-	menu $menu -tearoff 0
-	foreach n $ConfigMap::MapSizes {
-		$menu add radiobutton -label "${n}x$n" \
-			-variable ::NSWidget($oop,scale) -value $n \
-			-command "NSWidget::SetScale $oop $n"
-	}
-	menu $menu.detail -tearoff 0
-	$menu.detail add radiobutton -label Low \
-		-command "ConfigMap::Config low" \
-		-variable ::ConfigMap::Detail -value low
-	$menu.detail add radiobutton -label Medium \
-		-command "ConfigMap::Config medium" \
-		-variable ::ConfigMap::Detail -value medium
-	$menu.detail add radiobutton -label High \
-		-command "ConfigMap::Config high" \
-		-variable ::ConfigMap::Detail -value high
-	$menu add separator
-	$menu add cascade -label Detail -menu $menu.detail
-
-	# Popup the menu when the right mouse button is clicked
-	bind $widget <ButtonPress-3> "
-		if {\$::NSWidget($oop,scale) != \[icon size]} {
-			tk_popup $menu %X %Y
-		}
-	"
-
 	# Set the checkmark for the current scale
 	Info $oop scale $gwidth
 
@@ -267,38 +239,6 @@ proc NSWidget::SetScale {oop scale} {
 	if {[string length $command]} {
 		uplevel #0 $command
 	}
-
-	return
-}
-
-# NSWidget::IncrScale --
-#
-#	Increments the scale of the Widget, wrapping if needed.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSWidget::IncrScale {oop offset} {
-
-	set widget [Info $oop widget]
-
-	set scale [$widget cget -gwidth]
-	if {$scale == [icon size]} return
-
-	set index [lsearch -exact $ConfigMap::MapSizes $scale]
-	incr index $offset
-	set maxIndex [llength $ConfigMap::MapSizes]
-	if {$index >= $maxIndex} {
-		set index 0
-	} elseif {$index < 0} {
-		set index [expr {$maxIndex - 1}]
-	}
-	set scale [lindex $ConfigMap::MapSizes $index]
-
-	SetScale $oop $scale
 
 	return
 }

@@ -111,16 +111,6 @@ proc NSConfig::Load {} {
 	# Try prefixNN.cfg
 	regsub {(16|24|32)} $prefix NN prefix
 	SourceOne $prefix.cfg
-
-	# These next files are automatically generated at shutdown
-	# Source [Global config,assign] Config::Assign
-	
-	# Map symbols
-	angband_load note "Initializing map..."
-	SourceOne config-map 1
-
-#Colormapify
-
 	return
 }
 
@@ -213,11 +203,6 @@ proc NSConfig::ShareConfigFile {which file} {
 proc NSConfig::SourceOne {fileName {required 0}} {
 
 	set fileName [file tail $fileName]
-	set path [PathTk config $fileName]
-	if {[file exists $path]} {
-		uplevel #0 source $path
-		return
-	}
 	set path [PathTk config $fileName]
 	if {[file exists $path]} {
 		uplevel #0 source $path
@@ -508,36 +493,6 @@ proc NSConfig::NoMoreIcons {} {
 	return
 }
 
-# NSConfig::Colormapify --
-#
-#	After all the icon types have been created, the masks assigned,
-#	and Maskify has been called where needed, then convert from the
-#	palette-indexed data to colormap-indexed data.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-#UNUSED
-proc NSConfig::Colormapify {} {
-
-	foreach type [icon gettypes] {
-		switch -- $type {
-			blank -
-			default -
-			none {
-			}
-			default {
-				if {[icon ascii isascii $type]} continue
-				icon colormapify $type
-			}
-		}
-	}
-
-	return
-}
 
 # Config::Assign --
 #

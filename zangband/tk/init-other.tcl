@@ -308,19 +308,6 @@ proc HardcodeGeometry {} {
 	wm geometry $win1 +$x+$y
 	update idletasks
 
-	# Micro Map Window
-	set win1 [Window main]
-	set win2 [Window message]
-	set win3 [Window micromap]
-	set x [expr {[NSToplevel::FrameRight $win1] + $spacing}]
-	if {$x + [NSToplevel::TotalWidth $win3] > $offset + $offset} {
-		set x [expr {$offset + $offset - [NSToplevel::TotalWidth $win3]}]
-	}
-#	set y [expr {[NSToplevel::FrameBottom $win2] + $spacing}]
-	set y [NSToplevel::FrameTop $win1]
-	wm geometry $win3 +$x+$y
-	update idletasks
-
 	# Misc Window
 	set y [expr {[NSToplevel::FrameBottom $win3] + $spacing}]
 	set win1 [Window misc]
@@ -334,11 +321,10 @@ proc HardcodeGeometry {} {
 	update idletasks
 
 	# Message Window (width)
-	set win1 [Window micromap]
 	set win2 [Window message]
 	set x 0 ; incr x $offset
 	set width [NSToplevel::ContentWidth $win2 \
-		[expr {[NSToplevel::FrameRight $win1] - $x}]]
+		[expr {0 - $x}]]
 	wm geometry $win2 ${width}x[winfo height $win2]+$x+0
 	update idletasks
 
@@ -431,19 +417,6 @@ proc HardcodeGeometry {} {
 	wm geometry $win1 +$x+$y
 	update
 
-	# Micro Map Window
-	set win1 [Window main]
-	set win2 [Window message]
-	set win3 [Window micromap]
-	set x [expr {[NSToplevel::FrameRight $win1] + $spacing}]
-	if {$x + [NSToplevel::TotalWidth $win3] > $screenWidth} {
-		set x [expr {$screenWidth - [NSToplevel::TotalWidth $win3]}]
-	}
-	set y [NSToplevel::FrameTop $win1]
-	set win3 [Window micromap]
-	wm geometry $win3 +$x+$y
-	update
-
 	# Misc Window
 	set y [expr {[NSToplevel::FrameBottom $win3] + $spacing}]
 	set win1 [Window misc]
@@ -457,11 +430,10 @@ proc HardcodeGeometry {} {
 	update
 
 	# Message Window (width)
-	set win1 [Window micromap]
 	set win2 [Window message]
 	set x 0
 	set width [NSToplevel::ContentWidth $win2 \
-		[expr {[NSToplevel::FrameRight $win1] - $x}]]
+		[expr {0 - $x}]]
 	wm geometry $win2 ${width}x[winfo height $win2]+$x+0
 	update
 
@@ -532,27 +504,11 @@ proc MaximizeWindows {} {
 
 	set winMessage [Window message]
 	set winMain [Window main]
-	set winMicro [Window micromap]
 	set winMisc [Window misc]
 	set winRecall [Window recall]
 
-	# Subtract the width of the Micro Map Window, or the Misc Window,
-	# whichever is the greater.
-	if {[Value micromap,float]} {
-		set widthMicro [NSToplevel::TotalWidth $winMicro]
-	} else {
-		set widthMicro 0
-	}
-	if {[Value misc,float]} {
-		set widthMisc [NSToplevel::TotalWidth $winMisc]
-	} else {
-		set widthMisc 0
-	}
-	if {$widthMicro > $widthMisc} {
-		set width [expr {$width - $widthMicro}]
-	} else {
-		set width [expr {$width - $widthMisc}]
-	}
+	# Subtract the width of the  Misc Window.
+	set width [expr {$width - $widthMisc}]
 
 	# Sutbtract the height of the Message Window
 	if {[Value message,float]} {
@@ -593,27 +549,6 @@ proc MaximizeWindows {} {
 	# Set the geometry of the Main Window
 	wm geometry $winMain ${width}x$height
 	update idletasks
-
-	if {[Value micromap,float]} {
-		# Grow the Micro Map Window
-		set width [expr {$right - [NSToplevel::TotalWidth $winMain]}]
-		set width [NSToplevel::ContentWidth $winMicro $width]
-		set height [expr {$bottom - $top}]
-		if {[Value message,float]} {
-			incr height -[NSToplevel::TotalHeight $winMessage]
-		}
-		if {[Value misc,float]} {
-			incr height -[NSToplevel::TotalHeight $winMisc]
-			if {[Value misc,layout] == "wide"} {
-				incr height -[NSToplevel::TotalHeight [Window progress]]
-			}
-		}
-		set height [NSToplevel::ContentHeight $winMicro $height]
-		if {$height > [Value micromap,scale] * 66} {
-			set height [expr {[Value micromap,scale] * 66}]
-		}
-		wm geometry $winMicro ${width}x$height
-	}
 
 	if {[Value recall,show]} {
 		# Grow the Recall Window vertically
@@ -954,7 +889,6 @@ proc InitOther {} {
 			wm geometry [Window main] +0+0
 			wm geometry [Window message] +0+0
 			wm geometry [Window recall] +0+0
-			wm geometry [Window micromap] +0+0
 			wm geometry [Window misc] +0+0
 			wm geometry [Window progress] +0+0
 			update idletasks
@@ -966,9 +900,6 @@ proc InitOther {} {
 			if {[Value recall,show]} {
 #				wm state [Window recall] normal
 				NSWindowManager::Display recall
-			}
-			if {[Value micromap,float]} {
-				wm state [Window micromap] normal
 			}
 			if {[Value misc,float]} {
 				wm state [Window misc] normal
@@ -1009,9 +940,6 @@ proc InitOther {} {
 #				wmStateNormal [Window recall]
 				NSWindowManager::Display recall
 			}
-			if {[Value micromap,float]} {
-				wmStateNormal [Window micromap]
-			}
 			if {[Value misc,float]} {
 				wmStateNormal [Window misc]
 				if {[Value misc,layout] == "wide"} {
@@ -1031,10 +959,6 @@ proc InitOther {} {
 #			wm state [Window recall] normal
 			update
 		}
-		if {[Value micromap,float]} {
-			wm state [Window micromap] normal
-		}
-		update
 		if {[Value misc,float]} {
 			wm state [Window misc] normal
 			update
