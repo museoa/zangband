@@ -1722,6 +1722,16 @@ monster_hook_type get_monster_hook2(int y, int x)
 		/* Shore */
 		wild_mon_hook = &monster_shore;
 	}
+	else if (w_ptr->info & WILD_INFO_ACID)
+	{
+		/* Acid */
+		wild_mon_hook = &monster_acid_wild;
+	}
+	else if (w_ptr->info & WILD_INFO_LAVA)
+	{
+		/* Lava */
+		wild_mon_hook = &monster_lava_wild;
+	}
 	else
 	{
 		/*
