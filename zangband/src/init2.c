@@ -988,13 +988,6 @@ static errr init_other(void)
 
 	/*** Prepare dungeon arrays ***/
 
-	/* Allocate and Wipe the object list */
-	C_MAKE(o_list, z_info->o_max, object_type);
-
-	/* Allocate and Wipe the monster list */
-	C_MAKE(m_list, z_info->m_max, monster_type);
-
-
 	/* Allocate and wipe each line of the cave */
 	for (i = 0; i < MAX_HGT; i++)
 	{
