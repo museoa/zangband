@@ -2320,8 +2320,7 @@ static void road_connect(u16b *x, u16b *y, u16b town_num)
 	
 	/* Big distance */
 	int dist = max_wild * 2;
-	int cdist = 0;
-	int k;
+	int cdist, k;
 	
 	u16b x1 = *x, y1 = *y;
 	
@@ -2343,29 +2342,29 @@ static void road_connect(u16b *x, u16b *y, u16b town_num)
 				{			
 					case 0:
 					{
-						*x = t_ptr->x + (t_ptr->gates_x[k] + 1) / 2;
-						*y = t_ptr->y + t_ptr->gates_y[k] / 2;				
+						*x = t_ptr->x + (t_ptr->gates_x[0] + 1) / 2;
+						*y = t_ptr->y + t_ptr->gates_y[0] / 2;				
 						break;
 					}
 					
 					case 1:
 					{
-						*x = t_ptr->x + (t_ptr->gates_x[k] - 1) / 2;
-						*y = t_ptr->y + t_ptr->gates_y[k] / 2;
+						*x = t_ptr->x + (t_ptr->gates_x[1] - 1) / 2;
+						*y = t_ptr->y + t_ptr->gates_y[1] / 2;
 						break;
 					}
 					
 					case 2:
 					{
-						*x = t_ptr->x + t_ptr->gates_x[k] / 2;
-						*y = t_ptr->y + (t_ptr->gates_y[k] + 1) / 2;
+						*x = t_ptr->x + t_ptr->gates_x[2] / 2;
+						*y = t_ptr->y + (t_ptr->gates_y[2] + 1) / 2;
 						break;
 					}
 					
 					case 3:
 					{
-						*x = t_ptr->x + t_ptr->gates_x[k] / 2;
-						*y = t_ptr->y + (t_ptr->gates_y[k] - 1) / 2;
+						*x = t_ptr->x + t_ptr->gates_x[3] / 2;
+						*y = t_ptr->y + (t_ptr->gates_y[3] - 1) / 2;
 						break;
 					}
 				}
