@@ -1610,8 +1610,8 @@ void map_info(int y, int x, byte *ap, char *cp)
 					else
 					{
 						c = (one_in_(25) ?
-							image_object_hack[randint1(strlen(image_object_hack))] :
-							image_monster_hack[randint1(strlen(image_monster_hack))]);
+							image_object_hack[randint0(strlen(image_object_hack))] :
+							image_monster_hack[randint0(strlen(image_monster_hack))]);
 					}
 				}
 
