@@ -4048,7 +4048,7 @@ static void dump_dungeon_info(FILE *fff, int town, bool ignore)
 
 		/* Give the dungeon name and location*/
 		froff(fff, "%s dungeon %s of %s",
-			count, dungeon_type_name(d_ptr->habitat), place_dir, place_name);
+			dungeon_type_name(d_ptr->habitat), place_dir, place_name);
 
 		/* Did the player go into the dungeon? */
 		if (!depth)
