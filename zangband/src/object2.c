@@ -416,49 +416,78 @@ void wipe_objects(int rg_idx)
 	}
 }
 
+
+/* Current object counter */
+static s16b o_cur = 0;
+
 /*
  * Acquires and returns the index of a "free" object.
  *
  * This routine should almost never fail, but in case it does,
  * we must be sure to handle "failure" of this routine.
+ *
+ *
+ * We have a choice... scan from o_cur onwards, or use o_max.
+ *
+ * Using o_max is fast, but it leads to fragmentation.
+ * Using o_cur is slower (and might not even give a better
+ * result than using o_max), but it leads to a more compact
+ * object distribution.
  */
 static s16b o_pop(void)
 {
-	int i;
-
-	/* Initial allocation */
-	if (o_max < z_info->o_max)
+	/* Wrap counter */
+	if (o_cur > o_max) o_cur = 0;
+	
+	
+	/*
+	 * If the number remaining is less than one third of the
+	 * total number of allocated objects, then add a new object
+	 * to the end of the list.
+	 *
+	 * Feel free to tune this parameter.
+	 */
+	if ((o_max - o_cur) * 3 < o_max)
 	{
-		/* Get next space */
-		i = o_max;
+		/* Initial allocation */
+		if (o_max < z_info->o_max)
+		{
+			/* Expand object array */
+			o_max++;
 
-		/* Expand object array */
-		o_max++;
+			/* Count objects */
+			o_cnt++;
 
-		/* Count objects */
-		o_cnt++;
-
-		/* Use this object */
-		return (i);
+			/* Use this object */
+			return (o_max - 1);
+		}
 	}
 
-
 	/* Recycle dead objects */
-	for (i = 1; i < o_max; i++)
+	while (TRUE)
 	{
 		object_type *o_ptr;
 
 		/* Acquire object */
-		o_ptr = &o_list[i];
+		o_ptr = &o_list[o_cur];
 
 		/* Skip live objects */
-		if (o_ptr->k_idx) continue;
-
+		if (o_ptr->k_idx)
+		{
+			/* Increment counter */
+			o_cur++;
+			
+			/* Wrap counter */
+			if (o_cur >= o_max) o_cur = 0;
+			
+			continue;
+		}
+		
 		/* Count objects */
 		o_cnt++;
 
 		/* Use this object */
-		return (i);
+		return (o_cur);
 	}
 
 
