@@ -2672,7 +2672,7 @@ void do_cmd_character(void)
  */
 errr file_character(cptr name, bool full)
 {
-	int	  	i, j, x, y;
+	int	  	i, j, k, x, y;
 	byte		a;
 	char		c;
 	cptr		paren = ")";
@@ -2977,30 +2977,35 @@ errr file_character(cptr name, bool full)
 
 	/* Add an empty line */
 	fprintf(fff, "\n\n");
-
+	
 	/* Print all homes in the different towns */
-	for (j = 1; j < max_towns; j++)
+	for (i = 1; i < max_towns; i++)
 	{
-		st_ptr = &town[j].store[STORE_HOME];
-
-		/* Home -- if anything there */
-		if (st_ptr->stock_num)
+		for (j = 0; j < town[i].numstores; j++)
 		{
-			/* Header with name of the town */
-			fprintf(fff, "  [Home Inventory - %s]\n\n", town[j].name);
-
-			/* Dump all available items */
-			for (i = 0; i < st_ptr->stock_num; i++)
+			st_ptr = &town[i].store[j];
+			
+			if (st_ptr->type == STORE_HOME)
 			{
-				object_desc(o_name, &st_ptr->stock[i], TRUE, 3);
-				fprintf(fff, "%c%s %s\n", I2A(i), paren, o_name);
-			}
+				/* Home -- if anything there */
+				if (st_ptr->stock_num)
+				{
+					/* Header with name of the town */
+					fprintf(fff, "  [Home Inventory - %s]\n\n", town[j].name);
 
-			/* Add an empty line */
-			fprintf(fff, "\n\n");
+					/* Dump all available items */
+					for (k = 0; k < st_ptr->stock_num; k++)
+					{
+						object_desc(o_name, &st_ptr->stock[k], TRUE, 3);
+						fprintf(fff, "%c%s %s\n", I2A(i), paren, o_name);
+					}
+	
+					/* Add an empty line */
+					fprintf(fff, "\n\n");
+				}
+			}
 		}
 	}
-
 
 	fprintf(fff, "  [Message Log (last %d messages)]\n\n", msg_max);
 
@@ -4108,25 +4113,31 @@ static void show_info(void)
 
 	for (i = 1; i < max_towns; i++)
 	{
-		st_ptr = &town[i].store[STORE_HOME];
-
-		/* Hack -- Know everything in the home */
-		for (j = 0; j < st_ptr->stock_num; j++)
+		for (j = 0; j < town[i].numstores; j++)
 		{
-			o_ptr = &st_ptr->stock[j];
+			st_ptr = &town[i].store[j];
+			
+			if (st_ptr->type == STORE_HOME)
+			{
+				/* Hack -- Know everything in the home */
+				for (k = 0; k < st_ptr->stock_num; k++)
+				{
+					o_ptr = &st_ptr->stock[k];
 
-			/* Skip non-objects */
-			if (!o_ptr->k_idx) continue;
+					/* Skip non-objects */
+					if (!o_ptr->k_idx) continue;
 
-			/* Aware and Known */
-			object_aware(o_ptr);
-			object_known(o_ptr);
-			o_ptr->ident |= IDENT_MENTAL;
+					/* Aware and Known */
+					object_aware(o_ptr);
+					object_known(o_ptr);
+					o_ptr->ident |= IDENT_MENTAL;
 
-			/* Save all the known flags */
-			o_ptr->kn_flags1 = o_ptr->flags1;
-			o_ptr->kn_flags2 = o_ptr->flags2;
-			o_ptr->kn_flags3 = o_ptr->flags3;
+					/* Save all the known flags */
+					o_ptr->kn_flags1 = o_ptr->flags1;
+					o_ptr->kn_flags2 = o_ptr->flags2;
+					o_ptr->kn_flags3 = o_ptr->flags3;
+				}
+			}
 		}
 	}
 
@@ -4182,47 +4193,54 @@ static void show_info(void)
 
 		if (inkey() == ESCAPE) return;
 	}
-
-	/* Homes in the different towns */
-	for (l = 1; l < max_towns; l++)
+	
+	for (i = 1; i < max_towns; i++)
 	{
-		st_ptr = &town[l].store[STORE_HOME];
-
-		/* Home -- if anything there */
-		if (st_ptr->stock_num)
+		for (l = 0; l < town[i].numstores; l++)
 		{
-			/* Display contents of the home */
-			for (k = 0, i = 0; i < st_ptr->stock_num; k++)
+			st_ptr = &town[i].store[l];
+			
+			if (st_ptr->type == STORE_HOME)
 			{
-				/* Clear screen */
-				Term_clear();
-
-				/* Show 12 items */
-				for (j = 0; (j < 12) && (i < st_ptr->stock_num); j++, i++)
+				/* Home -- if anything there */
+				if (st_ptr->stock_num)
 				{
-					char o_name[80];
-					char tmp_val[80];
+					/* Display contents of the home */
+					for (k = 0, i = 0; i < st_ptr->stock_num; k++)
+					{
+						/* Clear screen */
+						Term_clear();
 
-					/* Acquire item */
-					o_ptr = &st_ptr->stock[i];
+						/* Show 12 items */
+						for (j = 0; (j < 12) && (i < st_ptr->stock_num);
+							 j++, i++)
+						{
+							char o_name[80];
+							char tmp_val[80];
 
-					/* Print header, clear line */
-					sprintf(tmp_val, "%c) ", I2A(j));
-					prt(tmp_val, j+2, 4);
+							/* Acquire item */
+							o_ptr = &st_ptr->stock[i];
 
-					/* Display object description */
-					object_desc(o_name, o_ptr, TRUE, 3);
-					c_put_str(tval_to_attr[o_ptr->tval], o_name, j+2, 7);
+							/* Print header, clear line */
+							sprintf(tmp_val, "%c) ", I2A(j));
+							prt(tmp_val, j+2, 4);
+
+							/* Display object description */
+							object_desc(o_name, o_ptr, TRUE, 3);
+							c_put_str(tval_to_attr[o_ptr->tval], o_name, j+2,
+								 7);
+						}
+
+						/* Caption */
+						prt(format("Your home contains (page %d): -more-", k+1), 0, 0);
+
+						/* Flush keys */
+						flush();
+		
+						/* Wait for it */
+						if (inkey() == ESCAPE) return;
+					}
 				}
-
-				/* Caption */
-				prt(format("Your home contains (page %d): -more-", k+1), 0, 0);
-
-				/* Flush keys */
-				flush();
-
-				/* Wait for it */
-				if (inkey() == ESCAPE) return;
 			}
 		}
 	}
