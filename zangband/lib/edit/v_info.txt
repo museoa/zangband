@@ -2904,7 +2904,7 @@ D:    %%  %%%%%%%  %%
 # Eric Bock
 #
 N:116:Pattern vault (grand quartet)
-X:8:50:44:62             
+X:8:50:44:62
 D: %%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%% 
 D:%%.X,9,,,,+^^^^^^&&&@@&&&^^^^^^^^^^^^&&&@@&&&^^^^^^+,,,,9,X.%%
 D:%..X,,,,9,XXXXXXXXXXXXXXXXXXXX++XXXXXXXXXXXXXXXXXXXX,9,,,,X..%
