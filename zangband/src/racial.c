@@ -123,7 +123,6 @@ static void eat_corpse(void)
 }
 
 
-
 /*
  * Note: return value indicates that we have succesfully used the power
  */
@@ -633,11 +632,29 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 }
 
 
+/*
+ * Header for racial menu
+ */
+static int display_racial_header(int num)
+{
+	/* Print header(s) */
+	if (num < 18)
+		prtf(0, 2, "                            Lv Cost Fail");
+	else
+		prtf(0, 2, "                            Lv Cost Fail                            Lv Cost Fail");
+		
+	
+	/* Move the options down one row */
+	return (1);
+}
+
+
+
 typedef struct power_desc_type power_desc_type;
 
 struct power_desc_type
 {
-	char name[40];
+	cptr name;
 	int level;
 	int cost;
 	int fail;
@@ -645,35 +662,40 @@ struct power_desc_type
 	const mutation_type *power;
 };
 
+static power_desc_type power_desc[36];
+
+/*
+ * Access the power and use it.
+ */
+static bool do_cmd_power_aux(int num)
+{
+	if (power_desc[num].number == -1)
+	{
+		/* A racial power */
+		cmd_racial_power_aux(power_desc[num].power);
+	}
+	else
+	{
+		/* A mutation */
+		mutation_power_aux(power_desc[num].power);
+	}
+
+	/* Exit the menu */
+	return (TRUE);
+}
+
 
 /*
  * Allow user to choose a power (racial / mutation) to activate
  */
 void do_cmd_racial_power(void)
 {
-	power_desc_type power_desc[36];
-	int num, ask, i = 0;
-	bool flag;
-	char choice;
-	char out_val[160];
+	menu_type racial_menu[37];
+	int num = 0, i = 0;
+	
+	char buf[1024];
 
 	const mutation_type *mut_ptr;
-	
-	byte y = 1, x = 0;
-	int ctr = 0;
-	char dummy[80];
-	char letter;
-	int x1, y1;
-
-	/* Wipe desc */
-	for (num = 0; num < 36; num++)
-	{
-		strcpy(power_desc[num].name, "");
-		power_desc[num].number = 0;
-	}
-
-	/* Reset num */
-	num = 0;
 
 	/* Not when we're confused */
 	if (p_ptr->confused)
@@ -690,156 +712,74 @@ void do_cmd_racial_power(void)
 
 		if (mut_ptr->which == p_ptr->prace)
 		{
-			strcpy(power_desc[num].name, mut_ptr->name);
+			power_desc[num].name = mut_ptr->name;
 			power_desc[num].level = mut_ptr->level;
 			power_desc[num].cost = mut_ptr->cost;
 			power_desc[num].fail = 100 -
 				racial_chance(mut_ptr->level, mut_ptr->stat, mut_ptr->diff);
 			power_desc[num].number = -1;
-			power_desc[num++].power = mut_ptr;
+			power_desc[num].power = mut_ptr;
+			num++;
 		}
 	}
 
+	/* Look for appropriate mutations */
+	for (i = 0; i < MUT_PER_SET; i++)
+	{
+		mut_ptr = &mutations[i];
+
+		if (p_ptr->muta1 & mut_ptr->which)
+		{
+			power_desc[num].name = mut_ptr->name;
+			power_desc[num].level = mut_ptr->level;
+			power_desc[num].cost = mut_ptr->cost;
+			power_desc[num].fail = 100 -
+				racial_chance(mut_ptr->level, mut_ptr->stat, mut_ptr->diff);
+			power_desc[num].number = mut_ptr->which;
+			power_desc[num].power = mut_ptr;
+			num++;
+		}
+	}
+	
 	/* Not if we don't have any */
-	if (num == 0 && !p_ptr->muta1)
+	if (num == 0)
 	{
 		msg_print("You have no powers to activate.");
 		p_ptr->energy_use = 0;
 		return;
 	}
-
-	/* Look for appropriate mutations */
-	if (p_ptr->muta1)
+	
+	/* Initialise the options for the menu */
+	for (i = 0; i < num; i++)
 	{
-		for (i = 0; i < MUT_PER_SET; i++)
-		{
-			mut_ptr = &mutations[i];
-
-			if (p_ptr->muta1 & mut_ptr->which)
-			{
-				strcpy(power_desc[num].name, mut_ptr->name);
-				power_desc[num].level = mut_ptr->level;
-				power_desc[num].cost = mut_ptr->cost;
-				power_desc[num].fail = 100 -
-					racial_chance(mut_ptr->level, mut_ptr->stat, mut_ptr->diff);
-				power_desc[num].number = mut_ptr->which;
-				power_desc[num++].power = mut_ptr;
-			}
-		}
+		strnfmt(buf, 1024, "%-23.23s %2d %4d %3d%%",
+				power_desc[i].name,
+				power_desc[i].level,
+				power_desc[i].cost, power_desc[i].fail);
+		
+		/* Add option to menu */
+		racial_menu[i].text = string_make(buf);
+		racial_menu[i].help = NULL;
+		racial_menu[i].action = do_cmd_power_aux;
+		racial_menu[i].flags = MN_ACTIVE;
 	}
-
-	/* Nothing chosen yet */
-	flag = FALSE;
-
-	strcpy(dummy, "");
-
-	/* Save the screen */
-	screen_save();
-
-	/* Print header(s) */
-	if (num < 17)
-		prtf(x, y++, "                            Lv Cost Fail");
-	else
-		prtf(x, y++, "                            Lv Cost Fail                            Lv Cost Fail");
-
-	/* Print list */
-	while (ctr < num)
+	
+	/* Make sure the menu is terminated */
+	racial_menu[num].text = NULL;
+	racial_menu[num].help = NULL;
+	racial_menu[num].action = NULL;
+	racial_menu[num].flags = 0x00;
+	
+	
+	if (!display_menu(racial_menu, -1, FALSE, display_racial_header, "Use which power?"))
 	{
-		/* letter/number for power selection */
-		if (ctr < 26)
-			letter = I2A(ctr);
-		else
-			letter = '0' + ctr - 26;
-		x1 = ((ctr < 17) ? x : x + 40);
-		y1 = ((ctr < 17) ? y + ctr : y + ctr - 17);
-
-		prtf(x1, y1, " %c) %-23.23s %2d %4d %3d%%",
-				letter,
-				power_desc[ctr].name,
-				power_desc[ctr].level,
-				power_desc[ctr].cost, power_desc[ctr].fail);
-		ctr++;
+		/* We aborted */
+		p_ptr->energy_use = 0;
 	}
-
-	/* Build a prompt */
-	(void)strnfmt(out_val, 78,
-				  "(Powers %c-%c, ESC=exit) Use which power? ", I2A(0),
-				  (num <= 26) ? I2A(num - 1) : '0' + num - 27);
-
-	if (!repeat_pull(&i) || i < 0 || i >= num)
+	
+	/* Free the allocated strings */
+	for (i = 0; i < num; i++)
 	{
-		/* Get a spell from the user */
-		while (!flag && get_com(out_val, &choice))
-		{
-
-			if (choice == '\r' && num == 1)
-			{
-				choice = 'a';
-			}
-
-			if (isalpha(choice))
-			{
-				/* Note verify */
-				ask = (isupper(choice));
-
-				/* Lowercase */
-				if (ask) choice = tolower(choice);
-
-				/* Extract request */
-				i = (islower(choice) ? A2I(choice) : -1);
-			}
-			else
-			{
-				ask = FALSE;	/* Can't uppercase digits */
-
-				i = choice - '0' + 26;
-			}
-
-			/* Totally Illegal */
-			if ((i < 0) || (i >= num))
-			{
-				bell("Illegal racial power choice!");
-				continue;
-			}
-
-			/* Verify it */
-			if (ask)
-			{
-				/* Belay that order */
-				if (!get_check("Use %s? ", power_desc[i].name)) continue;
-			}
-
-			/* Stop the loop */
-			flag = TRUE;
-		}
-
-		/* Restore the screen */
-		screen_load();
-
-		/* Abort if needed */
-		if (!flag)
-		{
-			p_ptr->energy_use = 0;
-			return;
-		}
-
-		repeat_push(i);
+		string_free(racial_menu[i].text);
 	}
-	else
-	{
-		/* Restore the screen */
-		screen_load();
-	}
-
-	if (power_desc[i].number == -1)
-	{
-		cmd_racial_power_aux(power_desc[i].power);
-	}
-	else
-	{
-		mutation_power_aux(power_desc[i].power);
-	}
-
-	/* Success */
-	return;
 }

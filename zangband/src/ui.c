@@ -367,52 +367,54 @@ static bool show_option(int x, int y, menu_type *option, char c, bool scroll, bo
  * We return the number of active options.
  */
 static int show_menu(int num, menu_type *options, int select, bool scroll,
-					 void (* disp)(void), cptr prompt)
+					 int (* disp)(int), cptr prompt)
 {
 	int cnt = 0;
 	int i;
 	
 	int x, y;
 	
+	int offset = 0;
+	
 	/*
 	 * Display 'special' information
 	 */
-	if (disp) disp();
+	if (disp) offset = disp(num);
 
 	/* Border on top of menu */
 	clear_row(1);
-	
+		
 	/* Will they fit in one column? */
-	if (num < 17)
+	if (num < 18)
 	{
 		for (i = 0; i < num; i++)
 		{
-			if (show_option(0, i + 2, &options[i], I2A(cnt), scroll, i == select))
+			if (show_option(0, i + 2 + offset, &options[i], I2A(cnt), scroll, i == select))
 			{
 				cnt++;
 			}
 		}
 	
 		/* Border below menu */
-		clear_row(num + 2);
+		clear_row(num + 2 + offset);
 	}
 	
 	/* Two columns (use numbers as well) */
-	else if (num < 34)
+	else if (num < 36)
 	{
 		for (i = 0; i < num; i++)
 		{
-			x = (i / 17) * 40;
-			y = (i % 17) + 2;
+			x = (i / 18) * 40;
+			y = (i % 18) + 2;
 				
-			if (show_option(x, y, &options[i], listsym[cnt], scroll, i == select))
+			if (show_option(x, y + offset, &options[i], listsym[cnt], scroll, i == select))
 			{
 				cnt++;
 			}
 		}
 		
 		/* Border below menu */
-		clear_row(19);
+		clear_row(20 + offset);
 	}
 	
 	/* Three columns - need to use upper case letters */
@@ -423,14 +425,14 @@ static int show_menu(int num, menu_type *options, int select, bool scroll,
 			x = (i / 20) * 30;
 			y = (i % 20) + 2;
 			
-			if (show_option(x, y, &options[i], listsym[cnt], scroll, i == select))
+			if (show_option(x, y + offset, &options[i], listsym[cnt], scroll, i == select))
 			{
 				cnt++;
 			}
 		}
 	
 		/* Border below menu */
-		clear_row(22);
+		clear_row(22 + offset);
 	}
 	
 	/*
@@ -468,7 +470,7 @@ static int get_choice(char c, int num, bool *ask)
 	
 	int i;
 
-	if (num < 17)
+	if (num < 18)
 	{
 		if (isalpha(c))
 		{
@@ -478,7 +480,7 @@ static int get_choice(char c, int num, bool *ask)
 			/* Lowercase */
 			if (asked) c = tolower(c);
 			
-			*ask = (ask != FALSE);
+			*ask = (asked != FALSE);
 
 			/* Extract request */
 			return(islower(c) ? A2I(c) : -1);
@@ -522,7 +524,7 @@ static int get_choice(char c, int num, bool *ask)
  *       information when constucting the menu.
  * 'prompt' is an optional prompt.
  */
-bool display_menu(menu_type *options, int select, bool scroll, void (* disp)(void),
+bool display_menu(menu_type *options, int select, bool scroll, int (* disp)(int),
 					cptr prompt)
 {
 	int i = -1, j, cnt;
@@ -571,7 +573,7 @@ bool display_menu(menu_type *options, int select, bool scroll, void (* disp)(voi
 		if (!repeat_pull(&i))
 		{
 			/* Try to match with available options */
-			i = get_choice(choice, cnt, &ask);
+			i = get_choice(choice, num, &ask);
     	}
 		
 		/* No match? */
@@ -673,7 +675,12 @@ bool display_menu(menu_type *options, int select, bool scroll, void (* disp)(voi
 					if (ask)
 					{
 						/* Belay that order */
-						if (!get_check("Use %s? ", options[j].text)) continue;
+						if (!get_check("Use %s? ", options[j].text))
+						{
+							/* Show the list */
+							show_menu(num, options, select, scroll, disp, prompt);
+							break;
+						}
 					}
 					
 					/* Hack - restore the screen */

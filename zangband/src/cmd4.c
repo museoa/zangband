@@ -1502,9 +1502,12 @@ static bool do_cmd_pref_key_load(int dummy)
 
 #ifdef ALLOW_MACROS
 
-static void display_cur_action(void)
+static int display_cur_action(int dummy)
 {
 	char buf[1024];
+	
+	/* Hack - ignore parameter */
+	(void) dummy;
 	
 	Term_clear();
 
@@ -1512,7 +1515,10 @@ static void display_cur_action(void)
 	ascii_to_text(buf, macro__buf);
 
 	/* Describe + display that action */
-	prtf(0, 20, "Current action (if any) shown below:\n\n%s",buf);
+	prtf(0, 20, "Current action (if any) shown below:\n\n%s", buf);
+	
+	/* No offset */
+	return (0);
 }
 
 
