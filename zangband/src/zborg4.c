@@ -2484,7 +2484,7 @@ static void borg_notice_aux2(void)
 	 * Correct the high and low calorie foods for the correct
 	 * races.
 	 */
-	if ((borg_race >= RACE_IMP) && (borg_race >= RACE_SPRITE))
+	if ((borg_race <= RACE_IMP) || (borg_race >= RACE_SPRITE))
 	{
 		borg_skill[BI_FOOD] += amt_food_hical;
 		if (borg_skill[BI_FOOD] <= 4)
