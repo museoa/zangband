@@ -2137,8 +2137,6 @@ void message_add(cptr str, u16b type)
 
 	char w[1024];
 
-	cptr s;
-	cptr t;
 	cptr u;
 	char *v;
 
@@ -2158,7 +2156,10 @@ void message_add(cptr str, u16b type)
 	/*** Step 2 -- Attempt to optimize ***/
 
 	/* Limit number of messages to check */
-	k = message_num() / 4;
+	m = message_num();
+
+	/* Limit number of messages to check */
+	k = m / 4;
 
 	/* Limit number of messages to check */
 	if (k > 32) k = 32;
