@@ -146,7 +146,7 @@ static int critical_melee(int chance, int sleeping_bonus, cptr m_name,
 
 			bonus *= psi_bonus;
 			
-			p_ptr->csp -= PSI_COST * bonus;
+			p_ptr->csp -= PSI_COST * psi_bonus;
 			p_ptr->redraw |= (PR_MANA);
 			p_ptr->window |= (PW_PLAYER);
 			p_ptr->window |= (PW_SPELL);
