@@ -1502,8 +1502,8 @@ bool borg_crush_junk(void)
 		if (!l_ptr->k_idx) continue;
 
 		/* Don't crush our spell books */
-		if ((l_ptr->tval == bp_ptr->realm1) ||
-			(l_ptr->tval == bp_ptr->realm2)) continue;
+		if ((l_ptr->tval == (TV_BOOKS_MIN - 1 + bp_ptr->realm1)) ||
+			(l_ptr->tval == (TV_BOOKS_MIN - 1 + bp_ptr->realm2))) continue;
 
 		/* Hack - we need to work this out properly */
 		value = 0;
@@ -1628,9 +1628,9 @@ bool borg_crush_hole(void)
 		/* Hack -- skip "artifacts" */
 		if (l_ptr->kn_flags3 & TR3_INSTA_ART) continue;
 
-		/* dont crush our spell books */
-		if ((l_ptr->tval == bp_ptr->realm1) ||
-			(l_ptr->tval == bp_ptr->realm2)) continue;
+		/* Don't crush our spell books */
+		if ((l_ptr->tval == (TV_BOOKS_MIN - 1 + bp_ptr->realm1)) ||
+			(l_ptr->tval == (TV_BOOKS_MIN - 1 + bp_ptr->realm2))) continue;
 
 		/* Hack -- skip artifacts and ego items not fully identified */
 		if (borg_obj_is_ego_art(l_ptr) && !borg_obj_known_full(l_ptr)) continue;
