@@ -1094,20 +1094,6 @@ typedef int sint;
 
 
 /*
- * Special Monster Flags (all temporary)
- */
-#define MFLAG_VIEW      0x01    /* Monster is in line of sight */
-#define MFLAG_TEMP      0x02    /* Monster is marked for project_hack() */
-#define MFLAG_XXX2      0x04    /* (unused) */
-#define MFLAG_XXX3      0x08    /* (unused) */
-#define MFLAG_BORN      0x10    /* Monster is still being born */
-#define MFLAG_NICE      0x20    /* Monster is still being nice */
-#define MFLAG_SHOW      0x40    /* Monster is recently memorized */
-#define MFLAG_MARK      0x80    /* Monster is currently memorized */
-
-
-
-/*
  * As of 2.7.8, the "object flags" are valid for all objects, and as
  * of 2.7.9, these flags are not actually stored with the object.
  *

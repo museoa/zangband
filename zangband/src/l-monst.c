@@ -3088,7 +3088,7 @@ int tolua_monster_open (lua_State* tolua_S)
  tolua_constant(tolua_S,NULL,"MFLAG_TEMP",MFLAG_TEMP);
  tolua_constant(tolua_S,NULL,"MFLAG_XXX2",MFLAG_XXX2);
  tolua_constant(tolua_S,NULL,"MFLAG_XXX3",MFLAG_XXX3);
- tolua_constant(tolua_S,NULL,"MFLAG_BORN",MFLAG_BORN);
+ tolua_constant(tolua_S,NULL,"MFLAG_MOVE",MFLAG_MOVE);
  tolua_constant(tolua_S,NULL,"MFLAG_NICE",MFLAG_NICE);
  tolua_constant(tolua_S,NULL,"MFLAG_SHOW",MFLAG_SHOW);
  tolua_constant(tolua_S,NULL,"MFLAG_MARK",MFLAG_MARK);
@@ -3591,7 +3591,7 @@ void tolua_monster_close (lua_State* tolua_S)
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"MFLAG_TEMP");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"MFLAG_XXX2");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"MFLAG_XXX3");
- lua_pushnil(tolua_S); lua_setglobal(tolua_S,"MFLAG_BORN");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"MFLAG_MOVE");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"MFLAG_NICE");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"MFLAG_SHOW");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"MFLAG_MARK");

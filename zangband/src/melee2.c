@@ -2949,7 +2949,7 @@ static void process_monster(int m_idx)
  * Most of the rest of the time is spent in "update_view()" and "lite_spot()",
  * especially when the player is running.
  *
- * Note the special "MFLAG_BORN" flag, which allows us to ignore "fresh"
+ * Note the special "MFLAG_MOVE" flag, which allows us to ignore "fresh"
  * monsters while they are still being "born".  A monster is "fresh" only
  * during the turn in which it is created, and we use the "hack_m_idx" to
  * determine if the monster is yet to be processed during the current turn.
@@ -3061,10 +3061,10 @@ void process_monsters(int min_energy)
 		}
 
 		/* Handle "fresh" monsters */
-		if (m_ptr->mflag & MFLAG_BORN)
+		if (m_ptr->mflag & MFLAG_MOVE)
 		{
 			/* No longer "fresh" */
-			m_ptr->mflag &= ~(MFLAG_BORN);
+			m_ptr->mflag &= ~(MFLAG_MOVE);
 
 			/* Skip */
 			continue;

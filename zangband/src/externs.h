@@ -500,6 +500,7 @@ extern errr rd_savefile_new(void);
 extern bool make_attack_normal(int m_idx);
 extern bool make_attack_spell(int m_idx);
 extern void process_monsters(int min_energy);
+extern void reset_monsters(void);
 extern void curse_equipment(int chance, int heavy_chance);
 extern void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note);
 

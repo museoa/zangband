@@ -2773,7 +2773,7 @@
 #define MFLAG_TEMP      0x02    /* Monster is marked for project_hack() */
 #define MFLAG_XXX2      0x04    /* (unused) */
 #define MFLAG_XXX3      0x08    /* (unused) */
-#define MFLAG_BORN      0x10    /* Monster is still being born */
+#define MFLAG_MOVE      0x10    /* Monster has moved this turn */
 #define MFLAG_NICE      0x20    /* Monster is still being nice */
 #define MFLAG_SHOW      0x40    /* Monster is recently memorized */
 #define MFLAG_MARK      0x80    /* Monster is currently memorized */
