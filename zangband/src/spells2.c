@@ -2267,6 +2267,10 @@ void aggravate_monsters(int who)
 				/* Wake up */
 				m_ptr->csleep = 0;
 				sleep = TRUE;
+
+				/* Redraw (later) if needed */
+				if (p_ptr->health_who == i)
+						p_ptr->redraw |= (PR_HEALTH);
 			}
 		}
 
@@ -3151,6 +3155,10 @@ static void cave_temp_room_lite(void)
 
 						/* Dump a message */
 						msg_format("%^s wakes up.", m_name);
+
+						/* Redraw the health bar */
+						if (p_ptr->health_who == c_ptr->m_idx)
+							p_ptr->redraw |= (PR_HEALTH);
 					}
 				}
 			}

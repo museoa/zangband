@@ -1865,6 +1865,10 @@ static void process_monster(int m_idx)
 					/* Dump a message */
 					msg_format("%^s wakes up.", m_name);
 
+					/* Redraw the health bar */
+					if (p_ptr->health_who == m_idx)
+						p_ptr->redraw |= (PR_HEALTH);
+
 					/* Hack -- Count the wakings */
 					if (r_ptr->r_wake < MAX_UCHAR)
 					{
