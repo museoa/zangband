@@ -3828,6 +3828,8 @@ static bool CheckEvents(bool wait)
 					int x, y;
 
 					term *old = Term;
+					
+					bool redraw_it = TRUE;
 
 					/* Oops */
 					if (!td) break;
