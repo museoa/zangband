@@ -1508,9 +1508,10 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 	c_ptr = area(y,x);
 
 	/* Require empty space (if not ghostly) */
-	if(((!cave_perma_grid(c_ptr) && (r_ptr->flags2 & RF2_PASS_WALL)) || 
-		cave_floor_grid(c_ptr)) && 
-		 (!((c_ptr->m_idx) || (c_ptr == area(py, px))))) return FALSE;
+	if(!(((!cave_perma_grid(c_ptr) && (r_ptr->flags2 & RF2_PASS_WALL)) || 
+		cave_floor_grid(c_ptr) ||
+		 ((c_ptr->feat & 0x60) == 0x60)) && 
+		 (!((c_ptr->m_idx) || (c_ptr == area(py, px)))))) return FALSE;
 
 	/* Hack -- no creation on glyph of warding */
 	if (c_ptr->feat == FEAT_GLYPH) return (FALSE);
