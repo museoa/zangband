@@ -1082,25 +1082,25 @@ static void store_create(void)
 	/* Paranoia -- no room left */
 	if (st_ptr->stock_num >= st_ptr->max_stock) return;
 
+	/* Set theme */
+	theme.treasure = f_ptr->data[3];
+	theme.combat = f_ptr->data[4];
+	theme.magic = f_ptr->data[5];
+	theme.tools = f_ptr->data[6];
+		
+	/* Select items based on "theme" */
+	init_match_theme(theme);
+
+	/* Activate restriction */
+	get_obj_num_hook = kind_is_theme;
+
+	/* Prepare allocation table */
+	get_obj_num_prep();
+
 
 	/* Hack -- consider up to four items */
 	for (tries = 0; tries < 4; tries++)
 	{
-		/* Set theme */
-		theme.treasure = f_ptr->data[3];
-		theme.combat = f_ptr->data[4];
-		theme.magic = f_ptr->data[5];
-		theme.tools = f_ptr->data[6];
-		
-		/* Select items based on "theme" */
-		init_match_theme(theme);
-
-		/* Activate restriction */
-		get_obj_num_hook = kind_is_theme;
-
-		/* Prepare allocation table */
-		get_obj_num_prep();
-		
 		/* Get level to use */
 		level = rand_range(f_ptr->data[1], f_ptr->data[2]);
 		
