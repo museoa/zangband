@@ -4231,14 +4231,12 @@ static void close_game_handle_death(void)
 	/* Flush all input keys */
 	flush();
 
-	/* Save screen here out of loop to avoid saving more than once */
-	Term_save();
-
 	/* Player selection */
 	while (TRUE)
 	{
-		/* Load screen */
-		Term_load();
+		/* Save screen */
+		/* Note that Term_save() and Term_load() must match in pairs */
+		Term_save();
 
 		/* Flush all input keys */
 		flush();
@@ -4265,6 +4263,10 @@ static void close_game_handle_death(void)
 					/* Dump bones file */
 					make_bones();
 #endif
+
+					/* XXX We now have an unmatched Term_save() */
+					Term_load();
+
 					/* Go home, we're done */
 					return;
 				}
@@ -4284,10 +4286,10 @@ static void close_game_handle_death(void)
 				put_fstr(0, 23, "Filename: ");
 
 				/* Ask for filename (or abort) */
-				if (!askfor_aux(tmp, 60)) continue;
+				if (!askfor_aux(tmp, 60)) break;
 
 				/* Ignore Return */
-				if (!tmp[0]) continue;
+				if (!tmp[0]) break;
 
 				/* Dump a character file */
 				(void)file_character(tmp, FALSE);
@@ -4311,6 +4313,9 @@ static void close_game_handle_death(void)
 				break;
 			}
 		}
+
+		/* Restore the screen */
+		Term_load();
 	}
 }
 
