@@ -136,8 +136,12 @@ uninstall:
 dist: installbase
 	-mkdir $(addprefix $(DESTDIR),$(srcdirlist))
 	for i in $(srcfiles) ; do \
-	    cp $$i $(DESTDIR)$$i; \
+		cp $$i $(DESTDIR)$$i; \
 	done
+	for i in $(notsrcfiles) ; do \
+		rm $(DESTDIR)$$i; \
+	done
+
 	chmod -R +rw $(DESTDIR)
 
 distcheck: dist

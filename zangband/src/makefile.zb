@@ -202,11 +202,10 @@ clean-files += src/*.bak src/*.o src/l-*.c
 distclean-files += autoconf.h
 
 srcdirlist += src
-notsrcfiles += compress.c autoconf.h
+notsrcfiles += src/compress.c src/autoconf.h
 
-srcfiles += $(filter-out $(notsrcfiles), \
-		 src/*.c src/*.h src/angband.rc src/angband.ico \
-		 src/angband.xpm src/zangband.icns src/makefile* src/l-*.pkg) \
+srcfiles += src/*.c src/*.h src/angband.rc src/angband.ico \
+		 src/angband.xpm src/zangband.icns src/makefile* src/l-*.pkg \
 		 src/autoconf.h.in
 
 # scan other source directories
