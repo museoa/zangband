@@ -2367,13 +2367,12 @@ void angtk_init(void)
 			break;
 		}
 	}
-
+	
 	/* Tcl commands */
 	CommandInfo_Init(g_interp, commandInit, NULL);
 
-
 	/* Cool quasi-event bindings */
-	/* init_bindings(); */
+	init_bindings();
 
 	init_const(g_interp);
 

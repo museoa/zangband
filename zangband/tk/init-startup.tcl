@@ -114,8 +114,8 @@ proc Source {args} {
 	global Angband
 
 	set path [eval file join [list $Angband(dirTk)] $args]
-	if {![file exists $args]} {
-		error "file not found:\n$args"
+	if {![file exists $path]} {
+		error "file not found:\n $args, $path"
 	}
 	if {[Global tclCompiler]} {
 		set path [TbcCompile $args]
@@ -920,7 +920,7 @@ proc NSInitStartup::InitStartup {} {
 	global auto_path
 	global Angband
 	global DEBUG
-		
+			
 	# The tk directory
 	set Angband(dirTk) [angband game tkdir]
 	set Angband(dirTk) [LongName $Angband(dirTk)]
@@ -966,29 +966,15 @@ Global tclCompiler 0
 	}
 
 	# Development debug support
-	set path [file join $Angband(dirTk) errorInfo.tcl]
-	if {[file exists $path]} {
+	set DEBUG 1
 	
-		set DEBUG 1
+	Source errorInfo.tcl
 	
-#		debughook bindings no
-#		debughook commands no
-#		debughook widgets no
-		
-		Source errorInfo.tcl
-	
-		proc ::ASSERT {condition message} {
-			if {![uplevel expr $condition]} {
-				error $message
-			}
-			return
+	proc ::ASSERT {condition message} {
+		if {![uplevel expr $condition]} {
+			error $message
 		}
-	
-	} else {
-	
-		set DEBUG 0
-		proc ::Debug {string} {}
-		proc ::ASSERT {condition message} {}
+		return
 	}
 	
 	# Error handling
@@ -999,13 +985,7 @@ Global tclCompiler 0
 	
 	# Internationalization
 	MsgCatInit startup
-			
-	# Global program name
-	set Angband(name) ZAngbandTk
-	
-	# Global version string
-	set Angband(vers) [angband game version]r5
-	
+		
 	# Global copyright blurb
 	set Angband(copy) [mc original-z]
 	
