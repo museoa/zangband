@@ -2131,7 +2131,7 @@ static byte pick_feat(byte feat1, byte feat2, byte feat3, byte feat4,
 		}
 		else
 		{
-			c1 = 0x1000000 / (((long) prob1 - prob) * ((long) prob1 - prob));
+			c1 = 0x1000000 / abs((long) prob1 - prob);
 		}
 	}
 	if (feat2)
@@ -2142,7 +2142,7 @@ static byte pick_feat(byte feat1, byte feat2, byte feat3, byte feat4,
 		}
 		else
 		{
-			c2 = 0x1000000 / (((long) prob2 - prob) * ((long) prob2 - prob));
+			c2 = 0x1000000 / abs((long) prob2 - prob);
 		}
 	}
 	if (feat3)
@@ -2153,7 +2153,7 @@ static byte pick_feat(byte feat1, byte feat2, byte feat3, byte feat4,
 		}
 		else
 		{
-			c3 = 0x1000000 / (((long) prob3 - prob) * ((long) prob3 - prob));
+			c3 = 0x1000000 / abs((long) prob3 - prob);
 		}
 	}
 	
@@ -2165,7 +2165,7 @@ static byte pick_feat(byte feat1, byte feat2, byte feat3, byte feat4,
 		}
 		else
 		{
-			c4 = 0x1000000 / (((long) prob4 - prob) * ((long) prob4 - prob));
+			c4 = 0x1000000 / abs((long) prob4 - prob);
 		}
 	}
 
@@ -2201,7 +2201,7 @@ static void make_wild_sea(blk_ptr block_ptr,int sea_type)
 		for (i = 0; i < WILD_BLOCK_SIZE; i++)
 		{
 			block_ptr[j][i].feat = pick_feat(FEAT_SHAL_WATER, FEAT_DEEP_WATER,
-					FEAT_OCEAN_WATER, FEAT_NONE, 0, 5, 10, 20, sea_type);
+					FEAT_OCEAN_WATER, FEAT_NONE, 0, 10, 20, 40, sea_type);
 			block_ptr[j][i].info = CAVE_GLOW|CAVE_MARK;
 		}
 	}
