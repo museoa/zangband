@@ -2637,13 +2637,8 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 	/* Save the old "wall" or "door" */
 	old_wall = !borg_cave_floor_grid(mb_ptr);
 
-	/* Save the information used by the borg */
-	mb_ptr->object = map->object;
-	mb_ptr->monster = map->monster;
-    mb_ptr->field = map->field;
-    mb_ptr->unknown = map->unknown;
-
     /* Don't overwrite known info with unknown */
+    /* XXX This needs fixing */
     if (map->terrain != FEAT_NONE)
     {
         mb_ptr->terrain = map->terrain;
@@ -2652,7 +2647,7 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 	/*
 	 * Examine monsters
 	 */
-	if (mb_ptr->monster)
+	if (map->monster)
 	{
 		borg_wank *wank;
 
@@ -2672,7 +2667,7 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 	/*
 	 * Examine objects
 	 */
-	if (mb_ptr->object)
+	if (map->object)
 	{
 		borg_wank *wank;
 
@@ -2690,7 +2685,7 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 	}
 
 	/* Analyze terrain */
-	switch (mb_ptr->terrain)
+	switch (map->terrain)
 	{
 			/* Up stairs */
 		case FEAT_LESS:
@@ -2794,8 +2789,12 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 #endif /* 0 */
 	}
 
-	/* Save the new "wall" or "door" */
-	new_wall = !borg_cave_floor_grid(mb_ptr);
+    /* Save the new "wall" or "door" */
+    /*
+     * XXX This depends in a very unhealthy way on borg_cave_floor grid
+     * being a macro.
+     */
+	new_wall = !borg_cave_floor_grid(map);
 
 	/* Notice wall changes */
 	if (old_wall != new_wall)

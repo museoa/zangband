@@ -634,6 +634,14 @@ static void save_map_location(int x, int y, term_map *map)
     /* Save the flags */
 	mb_ptr->flags = map->flags;
 
+#ifdef TERM_CAVE_MAP
+	/* Save the information used by the borg */
+	mb_ptr->object = map->object;
+	mb_ptr->monster = map->monster;
+    mb_ptr->field = map->field;
+    mb_ptr->unknown = map->unknown;
+#endif /* TERM_CAVE_MAP */
+
 	/* XXX XXX Hack */
 	player_x = p_ptr->px;
 	player_y = p_ptr->py;
