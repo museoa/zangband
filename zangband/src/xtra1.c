@@ -2128,15 +2128,6 @@ sint add_special_melee_skill(byte pclass, s16b weight, object_type *o_ptr)
 			add_skill = 30 + (1 * p_ptr->lev / 2) - (weight / 4);
 			if (add_skill > 0) add_skill = 0;
 			if (add_skill < -25) add_skill = -25;
-
-			/* Priest penalty for non-blessed edged weapons. */
-			if (((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM)) && ((!p_ptr->bless_blade)))
-			{
-				add_skill -= 4 + p_ptr->lev / 3;
-
-				/* Icky weapon */
-				p_ptr->icky_wield = TRUE;
-			}
 			break;
 		}
 
@@ -2176,16 +2167,6 @@ sint add_special_melee_skill(byte pclass, s16b weight, object_type *o_ptr)
 			add_skill = 25 + p_ptr->lev - (weight / 6);
 			if (add_skill > 0) add_skill = 0;
 			if (add_skill < -10) add_skill = -10;
-
-			/* Paladin penalty for non-blessed edged weapons. */
-			if (((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM)) &&
-			    (!p_ptr->bless_blade))
-			{
-				add_skill -= 4 + p_ptr->lev / 3;
-
-				/* Icky weapon */
-				p_ptr->icky_wield = TRUE;
-			}
 			break;
 		}
 
