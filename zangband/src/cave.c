@@ -3403,6 +3403,32 @@ void update_mon_lite(void)
 	s16b fx, fy;
 
 	s16b end_temp;
+	
+	/* Blindness check */
+	if (p_ptr->blind)
+	{
+		/* Clear all the monster lit squares */
+		for (i = 0; i < lite_n; i++)
+		{
+			fx = lite_x[i];
+			fy = lite_y[i];
+			
+			/* Point to grid */
+			c_ptr = area(fy, fx);
+
+			/* Clear monster illumination flag */
+			c_ptr->info &= ~(CAVE_MNLT);
+			
+			/* It is now unlit */
+			note_spot(fy, fx);
+		}
+		
+		/* Clear the lit list */
+		lite_n = 0;
+		
+		/* Done */
+		return;
+	}
 
 	/* Clear all monster lit squares */
 	for (i = 0; i < lite_n; i++)
