@@ -267,7 +267,7 @@ int random_resistance(object_type *o_ptr, int specific, int artifact_bias)
 	/* Paranoia */
 	if (specific && artifact_bias)
 	{
-		msg_format("Invalid call to 'random_resistance', %d, %d",
+		msgf("Invalid call to 'random_resistance', %d, %d",
 				   specific, artifact_bias);
 
 		/* Bail out */
@@ -1511,7 +1511,7 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 					  TR3_IGNORE_FIRE | TR3_IGNORE_COLD);
 
 	total_flags = flag_cost(o_ptr, o_ptr->pval);
-	if (cheat_peek) msg_format("%ld", total_flags);
+	if (cheat_peek) msgf("%ld", total_flags);
 
 	if (a_cursed) curse_artifact(o_ptr);
 
@@ -1584,9 +1584,9 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 	if (cheat_xtra)
 	{
 		if (artifact_bias)
-			msg_format("Biased artifact: %d.", artifact_bias);
+			msgf("Biased artifact: %d.", artifact_bias);
 		else
-			msg_print("No bias in artifact.");
+			msgf("No bias in artifact.");
 	}
 
 	chg_virtue(V_INDIVIDUALISM, 2);
@@ -1634,7 +1634,7 @@ bool activate_effect(object_type *o_ptr)
 		{
 			case ART_GALADRIEL:
 			{
-				msg_print("The phial wells with clear light...");
+				msgf("The phial wells with clear light...");
 				(void)lite_area(damroll(2, 15), 3);
 				o_ptr->timeout = (s16b)rand_range(10, 20);
 				break;
@@ -1642,7 +1642,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_ELENDIL:
 			{
-				msg_print("The star shines brightly...");
+				msgf("The star shines brightly...");
 				map_area();
 				(void)lite_area(damroll(2, 15), 3);
 				o_ptr->timeout = (s16b)rand_range(50, 100);
@@ -1651,9 +1651,9 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_THRAIN:
 			{
-				msg_print("The Jewel flashes bright red!");
+				msgf("The Jewel flashes bright red!");
 				wiz_lite();
-				msg_print("The Jewel drains your vitality...");
+				msgf("The Jewel drains your vitality...");
 				take_hit(damroll(3, 8), "the Jewel of Judgement");
 				(void)detect_traps();
 				(void)detect_doors();
@@ -1670,7 +1670,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_CARLAMMAS:
 			{
-				msg_print("The amulet lets out a shrill wail...");
+				msgf("The amulet lets out a shrill wail...");
 				k = 3 * p_ptr->lev;
 				(void)set_protevil(p_ptr->protevil + randint1(25) + k);
 				o_ptr->timeout = (s16b)rand_range(225, 450);
@@ -1679,7 +1679,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_INGWE:
 			{
-				msg_print("The amulet floods the area with goodness...");
+				msgf("The amulet floods the area with goodness...");
 				(void)dispel_evil(p_ptr->lev * 5);
 				o_ptr->timeout = (s16b)rand_range(300, 600);
 				break;
@@ -1687,7 +1687,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_BARAHIR:
 			{
-				msg_print("You order Frakir to strangle your opponent.");
+				msgf("You order Frakir to strangle your opponent.");
 				if (!get_aim_dir(&dir)) return FALSE;
 				if (drain_life(dir, 200))
 					o_ptr->timeout = (s16b)rand_range(100, 200);
@@ -1696,7 +1696,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_TULKAS:
 			{
-				msg_print("The ring glows brightly...");
+				msgf("The ring glows brightly...");
 				if (!p_ptr->fast)
 				{
 					(void)set_fast(rand_range(75, 150));
@@ -1711,7 +1711,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_NARYA:
 			{
-				msg_print("The ring glows deep red...");
+				msgf("The ring glows deep red...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				(void)fire_ball(GF_FIRE, dir, 250, 3);
 				o_ptr->timeout = (s16b)rand_range(225, 450);
@@ -1720,7 +1720,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_NENYA:
 			{
-				msg_print("The ring glows bright white...");
+				msgf("The ring glows bright white...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				(void)fire_ball(GF_COLD, dir, 400, 3);
 				o_ptr->timeout = (s16b)rand_range(325, 650);
@@ -1729,7 +1729,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_VILYA:
 			{
-				msg_print("The ring glows deep blue...");
+				msgf("The ring glows deep blue...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				(void)fire_ball(GF_ELEC, dir, 500, 3);
 				o_ptr->timeout = (s16b)rand_range(425, 850);
@@ -1738,7 +1738,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_POWER:
 			{
-				msg_print("The ring glows intensely black...");
+				msgf("The ring glows intensely black...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				ring_of_power(dir);
 				o_ptr->timeout = (s16b)rand_range(450, 900);
@@ -1747,7 +1747,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_ELEMENTS:
 			{
-				msg_print("The ring glows in multiple colours...");
+				msgf("The ring glows in multiple colours...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				fire_ball(GF_MISSILE, dir, 800, 3);
 				o_ptr->timeout = (s16b)rand_range(250, 500);
@@ -1761,7 +1761,7 @@ bool activate_effect(object_type *o_ptr)
 				int attempts;
 				cave_type *c_ptr;
 
-				msg_print("Your armor is surrounded by lightning...");
+				msgf("Your armor is surrounded by lightning...");
 
 				for (k = 0; k < num; k++)
 				{
@@ -1792,9 +1792,9 @@ bool activate_effect(object_type *o_ptr)
 			case ART_BLADETURNER:
 			{
 				if (!get_aim_dir(&dir)) return FALSE;
-				msg_print("You breathe the elements.");
+				msgf("You breathe the elements.");
 				(void)fire_ball(GF_MISSILE, dir, 1000, 4);
-				msg_print("Your armor glows many colours...");
+				msgf("Your armor glows many colours...");
 				(void)set_afraid(0);
 				(void)set_shero(p_ptr->shero + rand_range(50, 100));
 				(void)hp_player(30);
@@ -1810,8 +1810,8 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_SOULKEEPER:
 			{
-				msg_print("Your armor glows a bright white...");
-				msg_print("You feel much better...");
+				msgf("Your armor glows a bright white...");
+				msgf("You feel much better...");
 				(void)hp_player(1000);
 				(void)set_cut(0);
 				o_ptr->timeout = 888;
@@ -1820,7 +1820,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_BELEGENNON:
 			{
-				msg_print("A heavenly choir sings...");
+				msgf("A heavenly choir sings...");
 				(void)set_poisoned(0);
 				(void)set_cut(0);
 				(void)set_stun(0);
@@ -1834,7 +1834,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_CELEBORN:
 			{
-				msg_print("Your armor glows deep blue...");
+				msgf("Your armor glows deep blue...");
 				(void)genocide(TRUE);
 				o_ptr->timeout = 500;
 				break;
@@ -1842,7 +1842,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_CASPANION:
 			{
-				msg_print("Your armor glows bright red...");
+				msgf("Your armor glows bright red...");
 				(void)destroy_doors_touch();
 				o_ptr->timeout = 10;
 				break;
@@ -1858,8 +1858,8 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_HOLHENNETH:
 			{
-				msg_print("Your helm glows bright white...");
-				msg_print("An image forms in your mind...");
+				msgf("Your helm glows bright white...");
+				msgf("An image forms in your mind...");
 				(void)detect_all();
 				o_ptr->timeout = (s16b)rand_range(55, 110);
 				break;
@@ -1867,8 +1867,8 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_GONDOR:
 			{
-				msg_print("Your crown glows deep blue...");
-				msg_print("You feel a warm tingling inside...");
+				msgf("Your crown glows deep blue...");
+				msgf("You feel a warm tingling inside...");
 				(void)hp_player(700);
 				(void)set_cut(0);
 				o_ptr->timeout = 250;
@@ -1879,7 +1879,7 @@ bool activate_effect(object_type *o_ptr)
 			{
 				object_type *q_ptr;
 
-				msg_print("Your rag feels warm for a moment...");
+				msgf("Your rag feels warm for a moment...");
 
 				/* Hack - Create the food ration */
 				q_ptr = object_prep(lookup_kind(TV_FOOD, SV_FOOD_RATION));
@@ -1894,7 +1894,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_COLLUIN:
 			{
-				msg_print("Your cloak glows many colours...");
+				msgf("Your cloak glows many colours...");
 				(void)set_oppose_acid(p_ptr->oppose_acid + rand_range(20, 40));
 				(void)set_oppose_elec(p_ptr->oppose_elec + rand_range(20, 40));
 				(void)set_oppose_fire(p_ptr->oppose_fire + rand_range(20, 40));
@@ -1906,7 +1906,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_HOLCOLLETH:
 			{
-				msg_print("Your cloak glows deep blue...");
+				msgf("Your cloak glows deep blue...");
 				(void)sleep_monsters_touch();
 				o_ptr->timeout = 55;
 				break;
@@ -1914,7 +1914,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_THINGOL:
 			{
-				msg_print("Your cloak glows bright yellow...");
+				msgf("Your cloak glows bright yellow...");
 				(void)recharge(130);
 				o_ptr->timeout = 70;
 				break;
@@ -1922,7 +1922,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_COLANNON:
 			{
-				msg_print("Your cloak twists space around you...");
+				msgf("Your cloak twists space around you...");
 				teleport_player(100);
 				o_ptr->timeout = 45;
 				break;
@@ -1930,7 +1930,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_LUTHIEN:
 			{
-				msg_print("Your cloak glows a deep red...");
+				msgf("Your cloak glows a deep red...");
 				(void)restore_level();
 				o_ptr->timeout = 450;
 				break;
@@ -1938,7 +1938,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_CAMMITHRIM:
 			{
-				msg_print("Your gloves glow extremely brightly...");
+				msgf("Your gloves glow extremely brightly...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				(void)fire_bolt(GF_MISSILE, dir, damroll(3, 6));
 				o_ptr->timeout = 2;
@@ -1947,7 +1947,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_PAURHACH:
 			{
-				msg_print("Your gauntlets are covered in fire...");
+				msgf("Your gauntlets are covered in fire...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				(void)fire_bolt(GF_FIRE, dir, damroll(11, 8));
 				o_ptr->timeout = (s16b)rand_range(8, 16);
@@ -1956,7 +1956,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_CORWIN:
 			{
-				msg_print("Your gauntlets are covered in frost...");
+				msgf("Your gauntlets are covered in frost...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				(void)fire_bolt(GF_COLD, dir, damroll(8, 8));
 				o_ptr->timeout = (s16b)rand_range(7, 14);
@@ -1965,7 +1965,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_PAURAEGEN:
 			{
-				msg_print("Your gauntlets are covered in sparks...");
+				msgf("Your gauntlets are covered in sparks...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				(void)fire_bolt(GF_ELEC, dir, damroll(6, 8));
 				o_ptr->timeout = (s16b)rand_range(6, 12);
@@ -1974,7 +1974,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_PAURNEN:
 			{
-				msg_print("Your gauntlets are covered in acid...");
+				msgf("Your gauntlets are covered in acid...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				(void)fire_bolt(GF_ACID, dir, damroll(8, 8));
 				o_ptr->timeout = (s16b)rand_range(5, 10);
@@ -1983,7 +1983,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_FINGOLFIN:
 			{
-				msg_print("Your cesti grows magical spikes...");
+				msgf("Your cesti grows magical spikes...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				(void)fire_bolt(GF_ARROW, dir, 250);
 				o_ptr->timeout = (s16b)rand_range(90, 180);
@@ -1992,7 +1992,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_FEANOR:
 			{
-				msg_print("Your boots glow bright green...");
+				msgf("Your boots glow bright green...");
 				if (!p_ptr->fast)
 				{
 					(void)set_fast(rand_range(20, 40));
@@ -2007,7 +2007,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_DAL:
 			{
-				msg_print("Your boots glow deep blue...");
+				msgf("Your boots glow deep blue...");
 				(void)set_afraid(0);
 				(void)set_poisoned(0);
 				o_ptr->timeout = 5;
@@ -2016,7 +2016,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_NARTHANC:
 			{
-				msg_print("Your dagger is covered in fire...");
+				msgf("Your dagger is covered in fire...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				(void)fire_bolt(GF_FIRE, dir, damroll(11, 8));
 				o_ptr->timeout = (s16b)rand_range(8, 16);
@@ -2025,7 +2025,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_NIMTHANC:
 			{
-				msg_print("Your dagger is covered in frost...");
+				msgf("Your dagger is covered in frost...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				(void)fire_bolt(GF_COLD, dir, damroll(8, 8));
 				o_ptr->timeout = (s16b)rand_range(7, 14);
@@ -2034,7 +2034,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_DETHANC:
 			{
-				msg_print("Your dagger is covered in sparks...");
+				msgf("Your dagger is covered in sparks...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				(void)fire_bolt(GF_ELEC, dir, damroll(6, 8));
 				o_ptr->timeout = (s16b)rand_range(6, 12);
@@ -2043,7 +2043,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_RILIA:
 			{
-				msg_print("Your dagger throbs deep green...");
+				msgf("Your dagger throbs deep green...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				(void)fire_ball(GF_POIS, dir, 25, 3);
 				o_ptr->timeout = (s16b)rand_range(4, 8);
@@ -2052,7 +2052,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_BELANGIL:
 			{
-				msg_print("Your dagger is covered in frost...");
+				msgf("Your dagger is covered in frost...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				(void)fire_ball(GF_COLD, dir, 100, 2);
 				o_ptr->timeout = (s16b)rand_range(5, 10);
@@ -2087,7 +2087,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_RINGIL:
 			{
-				msg_print("Your sword glows an intense blue...");
+				msgf("Your sword glows an intense blue...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				(void)fire_ball(GF_COLD, dir, 200, 2);
 				o_ptr->timeout = 300;
@@ -2096,7 +2096,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_DAWN:
 			{
-				msg_print("You summon the Legion of the Dawn.");
+				msgf("You summon the Legion of the Dawn.");
 				(void)summon_specific(-1, px, py, p_ptr->depth, SUMMON_DAWN,
 									  TRUE, TRUE, TRUE);
 				o_ptr->timeout = (s16b)rand_range(500, 1000);
@@ -2105,7 +2105,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_ANDURIL:
 			{
-				msg_print("Your sword glows an intense red...");
+				msgf("Your sword glows an intense red...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				(void)fire_ball(GF_FIRE, dir, 150, 2);
 				o_ptr->timeout = 400;
@@ -2114,7 +2114,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_THEODEN:
 			{
-				msg_print("Your axe blade glows black...");
+				msgf("Your axe blade glows black...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				(void)drain_life(dir, 200);
 				o_ptr->timeout = 400;
@@ -2123,7 +2123,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_AEGLOS:
 			{
-				msg_print("Your spear crackles with electricity...");
+				msgf("Your spear crackles with electricity...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				(void)fire_ball(GF_ELEC, dir, 200, 3);
 				o_ptr->timeout = 500;
@@ -2132,7 +2132,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_OROME:
 			{
-				msg_print("Your spear pulsates...");
+				msgf("Your spear pulsates...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				(void)wall_to_mud(dir);
 				o_ptr->timeout = 5;
@@ -2141,7 +2141,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_EONWE:
 			{
-				msg_print("Your axe lets out a long, shrill note...");
+				msgf("Your axe lets out a long, shrill note...");
 				(void)mass_genocide(TRUE);
 				o_ptr->timeout = 1000;
 				break;
@@ -2149,7 +2149,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_LOTHARANG:
 			{
-				msg_print("Your battle axe radiates deep purple...");
+				msgf("Your battle axe radiates deep purple...");
 				(void)hp_player(100);
 				(void)set_cut((p_ptr->cut / 2) - 50);
 				o_ptr->timeout = (s16b)rand_range(3, 6);
@@ -2158,7 +2158,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_ULMO:
 			{
-				msg_print("Your trident glows deep red...");
+				msgf("Your trident glows deep red...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				(void)teleport_monster(dir);
 				o_ptr->timeout = 150;
@@ -2167,7 +2167,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_AVAVIR:
 			{
-				msg_print("Your scythe glows soft white...");
+				msgf("Your scythe glows soft white...");
 
 				word_of_recall();
 
@@ -2177,7 +2177,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_TOTILA:
 			{
-				msg_print("Your flail glows in scintillating colours...");
+				msgf("Your flail glows in scintillating colours...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				(void)confuse_monster(dir, 50);
 				o_ptr->timeout = 15;
@@ -2190,7 +2190,7 @@ bool activate_effect(object_type *o_ptr)
 				cave_type *c_ptr;
 				monster_type *m_ptr;
 
-				msg_print("Your ball and chain swings through the air...");
+				msgf("Your ball and chain swings through the air...");
 
 				for (dir = 0; dir <= 9; dir++)
 				{
@@ -2215,7 +2215,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_FIRESTAR:
 			{
-				msg_print("Your morning star rages in fire...");
+				msgf("Your morning star rages in fire...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				(void)fire_ball(GF_FIRE, dir, 200, 3);
 				o_ptr->timeout = 100;
@@ -2224,7 +2224,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_ENERGY:
 			{
-				msg_print("Your scythe glows bright green...");
+				msgf("Your scythe glows bright green...");
 				if (!p_ptr->fast)
 				{
 					(void)set_fast(rand_range(20, 40));
@@ -2239,7 +2239,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_ERIRIL:
 			{
-				msg_print("Your quarterstaff glows yellow...");
+				msgf("Your quarterstaff glows yellow...");
 				if (!ident_spell()) return FALSE;
 				o_ptr->timeout = 10;
 				break;
@@ -2247,7 +2247,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_OLORIN:
 			{
-				msg_print("Your quarterstaff glows brightly...");
+				msgf("Your quarterstaff glows brightly...");
 				(void)detect_all();
 				(void)probing();
 				(void)identify_fully();
@@ -2257,7 +2257,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_TURMIL:
 			{
-				msg_print("Your hammer glows white...");
+				msgf("Your hammer glows white...");
 				if (!get_aim_dir(&dir)) return FALSE;
 				(void)drain_life(dir, 200);
 				o_ptr->timeout = 70;
@@ -2266,7 +2266,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_CATAPULT:
 			{
-				msg_print("Your sling hums...");
+				msgf("Your sling hums...");
 				(void)set_afraid(0);
 				(void)hp_player(45);
 				o_ptr->timeout = 10;
@@ -2275,7 +2275,7 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_BRAND:
 			{
-				msg_print("Your crossbow glows deep red...");
+				msgf("Your crossbow glows deep red...");
 				(void)brand_bolts();
 				o_ptr->timeout = 999;
 				break;
@@ -2292,7 +2292,7 @@ bool activate_effect(object_type *o_ptr)
 		case ACT_SUNLIGHT:
 		{
 			if (!get_aim_dir(&dir)) return FALSE;
-			msg_print("A line of sunlight appears.");
+			msgf("A line of sunlight appears.");
 			(void)lite_line(dir);
 			o_ptr->timeout = 10;
 			break;
@@ -2300,7 +2300,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_BO_MISS_1:
 		{
-			msg_format("The %s glows extremely brightly...", o_name);
+			msgf("The %s glows extremely brightly...", o_name);
 			if (!get_aim_dir(&dir)) return FALSE;
 			(void)fire_bolt(GF_MISSILE, dir, damroll(3, 6));
 			o_ptr->timeout = 2;
@@ -2309,7 +2309,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_BA_POIS_1:
 		{
-			msg_format("The %s throbs deep green...", o_name);
+			msgf("The %s throbs deep green...", o_name);
 			if (!get_aim_dir(&dir)) return FALSE;
 			(void)fire_ball(GF_POIS, dir, 25, 3);
 			o_ptr->timeout = (s16b)rand_range(4, 8);
@@ -2318,7 +2318,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_BO_ELEC_1:
 		{
-			msg_format("The %s is covered in sparks...", o_name);
+			msgf("The %s is covered in sparks...", o_name);
 			if (!get_aim_dir(&dir)) return FALSE;
 			(void)fire_bolt(GF_ELEC, dir, damroll(6, 8));
 			o_ptr->timeout = (s16b)rand_range(6, 12);
@@ -2327,7 +2327,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_BO_ACID_1:
 		{
-			msg_format("The %s is covered in acid...", o_name);
+			msgf("The %s is covered in acid...", o_name);
 			if (!get_aim_dir(&dir)) return FALSE;
 			(void)fire_bolt(GF_ACID, dir, damroll(8, 8));
 			o_ptr->timeout = (s16b)rand_range(5, 10);
@@ -2336,7 +2336,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_BO_COLD_1:
 		{
-			msg_format("The %s is covered in frost...", o_name);
+			msgf("The %s is covered in frost...", o_name);
 			if (!get_aim_dir(&dir)) return FALSE;
 			(void)fire_bolt(GF_COLD, dir, damroll(9, 8));
 			o_ptr->timeout = (s16b)rand_range(7, 14);
@@ -2345,7 +2345,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_BO_FIRE_1:
 		{
-			msg_format("The %s is covered in fire...", o_name);
+			msgf("The %s is covered in fire...", o_name);
 			if (!get_aim_dir(&dir)) return FALSE;
 			(void)fire_bolt(GF_FIRE, dir, damroll(11, 8));
 			o_ptr->timeout = (s16b)rand_range(8, 16);
@@ -2354,7 +2354,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_BA_COLD_1:
 		{
-			msg_format("The %s is covered in frost...", o_name);
+			msgf("The %s is covered in frost...", o_name);
 			if (!get_aim_dir(&dir)) return FALSE;
 			(void)fire_ball(GF_COLD, dir, 100, 2);
 			o_ptr->timeout = 400;
@@ -2363,7 +2363,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_BA_FIRE_1:
 		{
-			msg_format("The %s glows an intense red...", o_name);
+			msgf("The %s glows an intense red...", o_name);
 			if (!get_aim_dir(&dir)) return FALSE;
 			(void)fire_ball(GF_FIRE, dir, 150, 2);
 			o_ptr->timeout = 400;
@@ -2372,7 +2372,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_DRAIN_1:
 		{
-			msg_format("The %s glows black...", o_name);
+			msgf("The %s glows black...", o_name);
 			if (!get_aim_dir(&dir)) return FALSE;
 			if (drain_life(dir, 200))
 				o_ptr->timeout = (s16b)rand_range(100, 200);
@@ -2381,7 +2381,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_BA_COLD_2:
 		{
-			msg_format("The %s glows an intense blue...", o_name);
+			msgf("The %s glows an intense blue...", o_name);
 			if (!get_aim_dir(&dir)) return FALSE;
 			(void)fire_ball(GF_COLD, dir, 200, 2);
 			o_ptr->timeout = 300;
@@ -2390,7 +2390,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_BA_ELEC_2:
 		{
-			msg_format("The crackles with electricity...", o_name);
+			msgf("The crackles with electricity...", o_name);
 			if (!get_aim_dir(&dir)) return FALSE;
 			(void)fire_ball(GF_ELEC, dir, 200, 3);
 			o_ptr->timeout = 500;
@@ -2399,7 +2399,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_DRAIN_2:
 		{
-			msg_format("The %s glows black...", o_name);
+			msgf("The %s glows black...", o_name);
 			if (!get_aim_dir(&dir)) return FALSE;
 			(void)drain_life(dir, 250);
 			o_ptr->timeout = 400;
@@ -2410,7 +2410,7 @@ bool activate_effect(object_type *o_ptr)
 		{
 			if (!get_aim_dir(&dir)) return FALSE;
 
-			msg_format("The %s throbs red...", o_name);
+			msgf("The %s throbs red...", o_name);
 			for (dummy = 0; dummy < 3; dummy++)
 			{
 				(void)drain_gain_life(dir, 100);
@@ -2421,7 +2421,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_BO_MISS_2:
 		{
-			msg_format("The %s grows magical spikes...", o_name);
+			msgf("The %s grows magical spikes...", o_name);
 			if (!get_aim_dir(&dir)) return FALSE;
 			(void)fire_bolt(GF_ARROW, dir, 250);
 			o_ptr->timeout = (s16b)rand_range(90, 180);
@@ -2430,7 +2430,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_BA_FIRE_2:
 		{
-			msg_format("The %s glows deep red...", o_name);
+			msgf("The %s glows deep red...", o_name);
 			if (!get_aim_dir(&dir)) return FALSE;
 			(void)fire_ball(GF_FIRE, dir, 250, 3);
 			o_ptr->timeout = (s16b)rand_range(225, 450);
@@ -2439,7 +2439,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_BA_COLD_3:
 		{
-			msg_format("The %s glows bright white...", o_name);
+			msgf("The %s glows bright white...", o_name);
 			if (!get_aim_dir(&dir)) return FALSE;
 			(void)fire_ball(GF_COLD, dir, 400, 3);
 			o_ptr->timeout = (s16b)rand_range(325, 650);
@@ -2448,7 +2448,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_BA_ELEC_3:
 		{
-			msg_format("The %s glows deep blue...", o_name);
+			msgf("The %s glows deep blue...", o_name);
 			if (!get_aim_dir(&dir)) return FALSE;
 			(void)fire_ball(GF_ELEC, dir, 500, 3);
 			o_ptr->timeout = (s16b)rand_range(425, 850);
@@ -2461,7 +2461,7 @@ bool activate_effect(object_type *o_ptr)
 			cave_type *c_ptr;
 			monster_type *m_ptr;
 
-			msg_format("The %s emits a blast of air...", o_name);
+			msgf("The %s emits a blast of air...", o_name);
 
 			for (dir = 0; dir <= 9; dir++)
 			{
@@ -2488,7 +2488,7 @@ bool activate_effect(object_type *o_ptr)
 		{
 			if (!get_aim_dir(&dir)) return FALSE;
 
-			msg_format("The %s throbs red...", o_name);
+			msgf("The %s throbs red...", o_name);
 
 			for (dummy = 0; dummy < 3; dummy++)
 			{
@@ -2502,7 +2502,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_CALL_CHAOS:
 		{
-			msg_format("The %s glows in scintillating colours...", o_name);
+			msgf("The %s glows in scintillating colours...", o_name);
 			call_chaos();
 			o_ptr->timeout = 350;
 			break;
@@ -2511,7 +2511,7 @@ bool activate_effect(object_type *o_ptr)
 		case ACT_ROCKET:
 		{
 			if (!get_aim_dir(&dir)) return FALSE;
-			msg_print("You launch a rocket!");
+			msgf("You launch a rocket!");
 			(void)fire_ball(GF_ROCKET, dir, 300 + plev, 2);
 			o_ptr->timeout = 400;
 			break;
@@ -2519,7 +2519,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_DISP_EVIL:
 		{
-			msg_format("The %s floods the area with goodness...", o_name);
+			msgf("The %s floods the area with goodness...", o_name);
 			(void)dispel_evil(p_ptr->lev * 5);
 			o_ptr->timeout = (s16b)rand_range(300, 600);
 			break;
@@ -2527,7 +2527,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_DISP_GOOD:
 		{
-			msg_format("The %s floods the area with evil...", o_name);
+			msgf("The %s floods the area with evil...", o_name);
 			(void)dispel_good(p_ptr->lev * 5);
 			o_ptr->timeout = (s16b)rand_range(300, 600);
 			break;
@@ -2536,7 +2536,7 @@ bool activate_effect(object_type *o_ptr)
 		case ACT_BA_MISS_3:
 		{
 			if (!get_aim_dir(&dir)) return FALSE;
-			msg_print("You breathe the elements.");
+			msgf("You breathe the elements.");
 			(void)fire_ball(GF_MISSILE, dir, 600, 4);
 			o_ptr->timeout = 500;
 			break;
@@ -2546,7 +2546,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_CONFUSE:
 		{
-			msg_format("The %s glows in scintillating colours...", o_name);
+			msgf("The %s glows in scintillating colours...", o_name);
 			if (!get_aim_dir(&dir)) return FALSE;
 			(void)confuse_monster(dir, 50);
 			o_ptr->timeout = 15;
@@ -2555,7 +2555,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_SLEEP:
 		{
-			msg_format("The %s glows deep blue...", o_name);
+			msgf("The %s glows deep blue...", o_name);
 			(void)sleep_monsters_touch();
 			o_ptr->timeout = 55;
 			break;
@@ -2563,7 +2563,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_QUAKE:
 		{
-			msg_format("The %s vibrates...", o_name);
+			msgf("The %s vibrates...", o_name);
 
 			(void)earthquake(px, py, 10);
 			o_ptr->timeout = 50;
@@ -2572,7 +2572,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_TERROR:
 		{
-			msg_format("The %s emits a loud blast...", o_name);
+			msgf("The %s emits a loud blast...", o_name);
 
 			(void)turn_monsters(40 + p_ptr->lev);
 			o_ptr->timeout = 3 * (p_ptr->lev + 10);
@@ -2581,7 +2581,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_TELE_AWAY:
 		{
-			msg_format("The %s glows violet...", o_name);
+			msgf("The %s glows violet...", o_name);
 
 			if (!get_aim_dir(&dir)) return FALSE;
 			(void)fire_beam(GF_AWAY_ALL, dir, plev);
@@ -2593,7 +2593,7 @@ bool activate_effect(object_type *o_ptr)
 		{
 			if (banish_evil(200))
 			{
-				msg_print("The power of the artifact banishes evil!");
+				msgf("The power of the artifact banishes evil!");
 			}
 			o_ptr->timeout = (s16b)rand_range(250, 500);
 			break;
@@ -2601,7 +2601,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_GENOCIDE:
 		{
-			msg_format("The %s glows deep blue...", o_name);
+			msgf("The %s glows deep blue...", o_name);
 			(void)genocide(TRUE);
 			o_ptr->timeout = 500;
 			break;
@@ -2609,7 +2609,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_MASS_GENO:
 		{
-			msg_format("The %s lets out a long, shrill note...", o_name);
+			msgf("The %s lets out a long, shrill note...", o_name);
 			(void)mass_genocide(TRUE);
 			o_ptr->timeout = 1000;
 			break;
@@ -2619,7 +2619,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_CHARM_ANIMAL:
 		{
-			msg_format("The %s twists in your hands...", o_name);
+			msgf("The %s twists in your hands...", o_name);
 			if (!get_aim_dir(&dir)) return FALSE;
 			(void)charm_animal(dir, plev);
 			o_ptr->timeout = 300;
@@ -2628,7 +2628,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_CHARM_UNDEAD:
 		{
-			msg_format("The %s shudders...", o_name);
+			msgf("The %s shudders...", o_name);
 			if (!get_aim_dir(&dir)) return FALSE;
 			(void)control_one_undead(dir, plev);
 			o_ptr->timeout = 333;
@@ -2637,7 +2637,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_CHARM_OTHER:
 		{
-			msg_format("The %s fades in and out...", o_name);
+			msgf("The %s fades in and out...", o_name);
 			if (!get_aim_dir(&dir)) return FALSE;
 			(void)charm_monster(dir, plev);
 			o_ptr->timeout = 400;
@@ -2646,7 +2646,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_CHARM_ANIMALS:
 		{
-			msg_format("The %s hums softly...", o_name);
+			msgf("The %s hums softly...", o_name);
 			(void)charm_animals(plev * 2);
 			o_ptr->timeout = 500;
 			break;
@@ -2654,7 +2654,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_CHARM_OTHERS:
 		{
-			msg_format("The %s blinks in and out...", o_name);
+			msgf("The %s blinks in and out...", o_name);
 			(void)charm_monsters(plev * 2);
 			o_ptr->timeout = 750;
 			break;
@@ -2662,7 +2662,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_SUMMON_ANIMAL:
 		{
-			msg_print("You summon a beast.");
+			msgf("You summon a beast.");
 			(void)summon_specific(-1, px, py, plev, SUMMON_ANIMAL_RANGER, TRUE,
 								  TRUE, TRUE);
 			o_ptr->timeout = (s16b)rand_range(200, 500);
@@ -2671,7 +2671,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_SUMMON_PHANTOM:
 		{
-			msg_print("You summon a phantasmal servant.");
+			msgf("You summon a phantasmal servant.");
 			(void)summon_specific(-1, px, py, p_ptr->depth, SUMMON_PHANTOM,
 								  TRUE, TRUE, TRUE);
 			o_ptr->timeout = (s16b)rand_range(200, 400);
@@ -2687,12 +2687,12 @@ bool activate_effect(object_type *o_ptr)
 				((pet ? -1 : 0), px, py, ((plev * 3) / 2), SUMMON_ELEMENTAL,
 				 group, FALSE, pet))
 			{
-				msg_print("An elemental materializes...");
+				msgf("An elemental materializes...");
 
 				if (pet)
-					msg_print("It seems obedient to you.");
+					msgf("It seems obedient to you.");
 				else
-					msg_print("You fail to control it!");
+					msgf("You fail to control it!");
 			}
 
 			o_ptr->timeout = 750;
@@ -2708,12 +2708,12 @@ bool activate_effect(object_type *o_ptr)
 				((pet ? -1 : 0), px, py, ((plev * 3) / 2), SUMMON_DEMON, group,
 				 FALSE, pet))
 			{
-				msg_print
+				msgf
 					("The area fills with a stench of sulphur and brimstone.");
 				if (pet)
-					msg_print("'What is thy bidding... Master?'");
+					msgf("'What is thy bidding... Master?'");
 				else
-					msg_print
+					msgf
 						("'NON SERVIAM! Wretch! I shall feast on thy mortal soul!'");
 			}
 
@@ -2742,13 +2742,13 @@ bool activate_effect(object_type *o_ptr)
 			if (summon_specific((pet ? -1 : 0), px, py, ((plev * 3) / 2), type,
 								group, FALSE, pet))
 			{
-				msg_print
+				msgf
 					("Cold winds begin to blow around you, carrying with them the stench of decay...");
 				if (pet)
-					msg_print
+					msgf
 						("Ancient, long-dead forms arise from the ground to serve you!");
 				else
-					msg_print
+					msgf
 						("'The dead arise... to punish you for disturbing them!'");
 			}
 
@@ -2760,7 +2760,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_CURE_LW:
 		{
-			msg_format("The %s radiates light blue...", o_name);
+			msgf("The %s radiates light blue...", o_name);
 			(void)set_afraid(0);
 			(void)hp_player(30);
 			o_ptr->timeout = 10;
@@ -2769,7 +2769,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_CURE_MW:
 		{
-			msg_format("The %s radiates deep purple...", o_name);
+			msgf("The %s radiates deep purple...", o_name);
 			(void)hp_player(75);
 			(void)set_cut((p_ptr->cut / 2) - 50);
 			o_ptr->timeout = (s16b)rand_range(3, 6);
@@ -2778,7 +2778,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_CURE_POISON:
 		{
-			msg_format("The %s glows deep blue...", o_name);
+			msgf("The %s glows deep blue...", o_name);
 			(void)set_afraid(0);
 			(void)set_poisoned(0);
 			o_ptr->timeout = 5;
@@ -2787,7 +2787,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_REST_LIFE:
 		{
-			msg_format("The %s glows a deep red...", o_name);
+			msgf("The %s glows a deep red...", o_name);
 			(void)restore_level();
 			o_ptr->timeout = 450;
 			break;
@@ -2795,7 +2795,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_REST_ALL:
 		{
-			msg_format("The %s glows a deep green...", o_name);
+			msgf("The %s glows a deep green...", o_name);
 			(void)do_res_stat(A_STR);
 			(void)do_res_stat(A_INT);
 			(void)do_res_stat(A_WIS);
@@ -2809,8 +2809,8 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_CURE_700:
 		{
-			msg_format("The %s glows deep blue...", o_name);
-			msg_print("You feel a warm tingling inside...");
+			msgf("The %s glows deep blue...", o_name);
+			msgf("You feel a warm tingling inside...");
 			(void)hp_player(700);
 			(void)set_cut(0);
 			o_ptr->timeout = 250;
@@ -2819,8 +2819,8 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_CURE_1000:
 		{
-			msg_format("The %s glows a bright white...", o_name);
-			msg_print("You feel much better...");
+			msgf("The %s glows a bright white...", o_name);
+			msgf("You feel much better...");
 			(void)hp_player(1000);
 			(void)set_cut(0);
 			o_ptr->timeout = 888;
@@ -2831,7 +2831,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_ESP:
 		{
-			msg_format("The %s enters your thoughts...", o_name);
+			msgf("The %s enters your thoughts...", o_name);
 			(void)set_tim_esp(p_ptr->tim_esp + rand_range(25, 55));
 			o_ptr->timeout = 200;
 			break;
@@ -2839,7 +2839,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_BERSERK:
 		{
-			msg_format("The %s angers you...", o_name);
+			msgf("The %s angers you...", o_name);
 			(void)set_shero(p_ptr->shero + rand_range(50, 100));
 			(void)set_blessed(p_ptr->blessed + rand_range(50, 100));
 			o_ptr->timeout = (s16b)rand_range(100, 200);
@@ -2848,7 +2848,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_PROT_EVIL:
 		{
-			msg_format("The %s lets out a shrill wail...", o_name);
+			msgf("The %s lets out a shrill wail...", o_name);
 			k = 3 * p_ptr->lev;
 			(void)set_protevil(p_ptr->protevil + randint1(25) + k);
 			o_ptr->timeout = (s16b)rand_range(225, 450);
@@ -2857,7 +2857,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_RESIST_ALL:
 		{
-			msg_format("The %s glows many colours...", o_name);
+			msgf("The %s glows many colours...", o_name);
 			(void)set_oppose_acid(p_ptr->oppose_acid + rand_range(40, 80));
 			(void)set_oppose_elec(p_ptr->oppose_elec + rand_range(40, 80));
 			(void)set_oppose_fire(p_ptr->oppose_fire + rand_range(40, 80));
@@ -2869,7 +2869,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_SPEED:
 		{
-			msg_format("The %s glows bright green...", o_name);
+			msgf("The %s glows bright green...", o_name);
 			if (!p_ptr->fast)
 			{
 				(void)set_fast(rand_range(20, 40));
@@ -2884,7 +2884,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_XTRA_SPEED:
 		{
-			msg_format("The %s glows brightly...", o_name);
+			msgf("The %s glows brightly...", o_name);
 			if (!p_ptr->fast)
 			{
 				(void)set_fast(rand_range(75, 150));
@@ -2899,7 +2899,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_WRAITH:
 		{
-			msg_format("The %s fades out...", o_name);
+			msgf("The %s fades out...", o_name);
 			(void)set_wraith_form(p_ptr->wraith_form +
 								  rand_range(plev / 2, plev));
 			o_ptr->timeout = 1000;
@@ -2908,7 +2908,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_INVULN:
 		{
-			msg_format("The %s fires a beam of bright white light at you...",
+			msgf("The %s fires a beam of bright white light at you...",
 					   o_name);
 			(void)set_invuln(p_ptr->invuln + rand_range(8, 16));
 			o_ptr->timeout = 1000;
@@ -2917,7 +2917,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_TELEPORT_1:
 		{
-			msg_format("The %s twists space around you...", o_name);
+			msgf("The %s twists space around you...", o_name);
 			teleport_player(100);
 			o_ptr->timeout = (s16b)rand_range(50, 100);
 			break;
@@ -2927,7 +2927,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_LIGHT:
 		{
-			msg_format("The %s wells with clear light...", o_name);
+			msgf("The %s wells with clear light...", o_name);
 			(void)lite_area(damroll(2, 15), 3);
 			o_ptr->timeout = (s16b)rand_range(10, 20);
 			break;
@@ -2935,7 +2935,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_MAP_LIGHT:
 		{
-			msg_format("The %s shines brightly...", o_name);
+			msgf("The %s shines brightly...", o_name);
 			map_area();
 			(void)lite_area(damroll(2, 15), 3);
 			o_ptr->timeout = (s16b)rand_range(50, 100);
@@ -2944,8 +2944,8 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_DETECT_ALL:
 		{
-			msg_format("The %s glows bright white...", o_name);
-			msg_print("An image forms in your mind...");
+			msgf("The %s glows bright white...", o_name);
+			msgf("An image forms in your mind...");
 			(void)detect_all();
 			o_ptr->timeout = (s16b)rand_range(55, 110);
 			break;
@@ -2953,7 +2953,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_DETECT_XTRA:
 		{
-			msg_format("The %s glows brightly...", o_name);
+			msgf("The %s glows brightly...", o_name);
 			(void)detect_all();
 			(void)probing();
 			(void)identify_fully();
@@ -2963,7 +2963,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_ID_FULL:
 		{
-			msg_format("The %s glows yellow...", o_name);
+			msgf("The %s glows yellow...", o_name);
 			(void)identify_fully();
 			o_ptr->timeout = 750;
 			break;
@@ -2978,7 +2978,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_RUNE_EXPLO:
 		{
-			msg_format("The %s glows bright red...", o_name);
+			msgf("The %s glows bright red...", o_name);
 			(void)explosive_rune();
 			o_ptr->timeout = 200;
 			break;
@@ -2986,7 +2986,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_RUNE_PROT:
 		{
-			msg_format("The %s glows light blue...", o_name);
+			msgf("The %s glows light blue...", o_name);
 			(void)warding_glyph();
 			o_ptr->timeout = 400;
 			break;
@@ -2994,7 +2994,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_SATIATE:
 		{
-			msg_format("The %s glows brown...", o_name);
+			msgf("The %s glows brown...", o_name);
 			(void)set_food(PY_FOOD_MAX - 1);
 			o_ptr->timeout = 200;
 			break;
@@ -3002,7 +3002,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_DEST_DOOR:
 		{
-			msg_format("The %s glows bright red...", o_name);
+			msgf("The %s glows bright red...", o_name);
 			(void)destroy_doors_touch();
 			o_ptr->timeout = 10;
 			break;
@@ -3010,7 +3010,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_STONE_MUD:
 		{
-			msg_format("The %s pulsates...", o_name);
+			msgf("The %s pulsates...", o_name);
 			if (!get_aim_dir(&dir)) return FALSE;
 			(void)wall_to_mud(dir);
 			o_ptr->timeout = 5;
@@ -3019,7 +3019,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_RECHARGE:
 		{
-			msg_format("The %s hums...", o_name);
+			msgf("The %s hums...", o_name);
 			(void)recharge(130);
 			o_ptr->timeout = 70;
 			break;
@@ -3027,7 +3027,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_ALCHEMY:
 		{
-			msg_format("The %s glows bright yellow...", o_name);
+			msgf("The %s glows bright yellow...", o_name);
 			(void)alchemy();
 			o_ptr->timeout = 500;
 			break;
@@ -3035,7 +3035,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_DIM_DOOR:
 		{
-			msg_print("You open a dimensional gate. Choose a destination.");
+			msgf("You open a dimensional gate. Choose a destination.");
 			if (!dimension_door()) return FALSE;
 			o_ptr->timeout = 100;
 			break;
@@ -3044,7 +3044,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_TELEPORT_2:
 		{
-			msg_format("The %s twists space around you...", o_name);
+			msgf("The %s twists space around you...", o_name);
 			teleport_player(100);
 			o_ptr->timeout = 45;
 			break;
@@ -3060,7 +3060,7 @@ bool activate_effect(object_type *o_ptr)
 
 		default:
 		{
-			msg_format("Unknown activation effect: %d.", o_ptr->activate);
+			msgf("Unknown activation effect: %d.", o_ptr->activate);
 			return FALSE;
 		}
 	}

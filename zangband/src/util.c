@@ -2552,38 +2552,6 @@ static void msg_print_aux(u16b type, cptr msg)
 }
 
 
-/*
- * Print a message in the default color (white)
- */
-void msg_print(cptr msg)
-{
-	msg_print_aux(MSG_GENERIC, msg);
-}
-
-
-/*
- * Display a formatted message, using "vstrnfmt()" and "msg_print()".
- */
-void msg_format(cptr fmt, ...)
-{
-	va_list vp;
-
-	char buf[1024];
-
-	/* Begin the Varargs Stuff */
-	va_start(vp, fmt);
-
-	/* Format the args, save the length */
-	(void)vstrnfmt(buf, 1024, fmt, &vp);
-
-	/* End the Varargs Stuff */
-	va_end(vp);
-
-	/* Display */
-	msg_print_aux(MSG_GENERIC, buf);
-}
-
-
 static int current_message_type = MSG_GENERIC;
 
 /*
@@ -2642,48 +2610,6 @@ void msg_effect(u16b type, s16b extra)
 	/* Unused parameters */
 	(void)type;
 	(void)extra;
-}
-
-
-/*
- * Display a message and play the associated sound.
- *
- * The "extra" parameter is currently unused.
- */
-void message(u16b message_type, s16b extra, cptr message)
-{
-	/* Unused parameter */
-	(void)extra;
-
-	sound(message_type);
-
-	msg_print_aux(message_type, message);
-}
-
-
-
-/*
- * Display a formatted message and play the associated sound.
- *
- * The "extra" parameter is currently unused.
- */
-void message_format(u16b message_type, s16b extra, cptr fmt, ...)
-{
-	va_list vp;
-
-	char buf[1024];
-
-	/* Begin the Varargs Stuff */
-	va_start(vp, fmt);
-
-	/* Format the args, save the length */
-	(void)vstrnfmt(buf, 1024, fmt, &vp);
-
-	/* End the Varargs Stuff */
-	va_end(vp);
-
-	/* Display */
-	message(message_type, extra, buf);
 }
 
 
