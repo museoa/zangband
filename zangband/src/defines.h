@@ -3711,13 +3711,13 @@ extern int PlayerUID;
 #define FIELD_ACT_MONSTER_LEAVE	7	/* Monster leaves square */
 #define FIELD_ACT_OBJECT_DROP	8	/* Object lands on square */
 #define FIELD_ACT_OBJECT_ON		9	/* Object is on square */
-#define FIELD_ACT_XXXX10		10
+#define FIELD_ACT_TUNNEL		10  /* Something trys to tunnel into grid */
 #define FIELD_ACT_MAGIC_TARGET	11	/* Targeting this square */
 #define FIELD_ACT_COMPACT		12	/* Compaction hook */
 #define FIELD_ACT_EXIT			13	/* Field is destroyed */
-#define FIELD_ACT_MONSTER_AI	14 /* Monster AI hook */
-#define FIELD_ACT_XXXX15		15
-#define FIELD_ACT_PLAYER_INTERACT	16 /* The player interacts with grid */
+#define FIELD_ACT_MONSTER_AI	14	/* Monster AI hook */
+#define FIELD_ACT_OPEN			15	/* Attempt to "open" grid */
+#define FIELD_ACT_CLOSE			16 	/* Attempt to "close" grid */
 #define FIELD_ACT_XXXX17		17
 
 #define FIELD_ACTION_MAX		18	/* The last action + 1 */
