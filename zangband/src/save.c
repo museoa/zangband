@@ -1496,7 +1496,7 @@ static bool wr_savefile_new(void)
 	/* Dump the quests */
 	wr_s16b(q_max);
 
-	for (i = 0; i < q_max; i++)
+	for (i = 1; i < q_max; i++)
 	{
 		wr_byte(quest[i].status);
 		wr_byte(quest[i].flags);

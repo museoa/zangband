@@ -2608,7 +2608,7 @@ static void rd_quests(int max_quests)
 	
 	quest_type *q_ptr;
 	
-	for (i = 0; i < max_quests; i++)
+	for (i = 1; i < max_quests; i++)
 	{
 		q_idx = q_pop();
 		
