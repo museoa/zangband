@@ -344,8 +344,9 @@ static errr term_win_init(term_win *s, int w, int h)
 
 /*
  * Copy a "term_win" from another
+ * If bigtile is set, then copy bigtile region.
  */
-static errr term_win_copy(term_win *s, term_win *f, int w, int h)
+static errr term_win_copy(term_win *s, term_win *f, int w, int h, bool bigtile)
 {
 	int x, y;
 
@@ -366,6 +367,9 @@ static errr term_win_copy(term_win *s, term_win *f, int w, int h)
 
 		for (x = 0; x < w; x++)
 		{
+			if ((!bigtile) && (x > s->big_x1) &&
+					(y >= s->big_y1) && (y <= s->big_y2)) continue;
+			
 			*s_aa++ = *f_aa++;
 			*s_cc++ = *f_cc++;
 
@@ -389,8 +393,6 @@ static errr term_win_copy(term_win *s, term_win *f, int w, int h)
 
 
 /*
- * Hack XXX XXX XXX  Should do this only for the main window.
- *
  * Resize a "term_win"
  *
  * wn, hn are the new width / height
@@ -405,7 +407,7 @@ static errr Term_resize_win(int wn, int hn, int wo, int ho, term_win *win)
 	(void) term_win_init(&tmp, wn, hn);
 	
 	/* Copy in the information from the old window */
-	(void) term_win_copy(&tmp, win, wo, ho);
+	(void) term_win_copy(&tmp, win, wo, ho, TRUE);
 
 	/* Nuke the old window */
 	(void) term_win_nuke(win);
@@ -2007,7 +2009,7 @@ void Term_save(void)
 	(void)term_win_init(tmp, w, h);
 	
 	/* Grab */
-	(void)term_win_copy(tmp, Term->scr, w, h);
+	(void)term_win_copy(tmp, Term->scr, w, h, FALSE);
 
 	/* Add the front of the list */
 	tmp->next = Term->scr;
@@ -2056,6 +2058,9 @@ void Term_load(void)
 	/* Assume change */
 	Term->y1 = 0;
 	Term->y2 = h - 1;
+	
+	/* Hack - is bigtile on? */
+	if (Term->scr->big_x1 != -1) Term_redraw();
 }
 
 
