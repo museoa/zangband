@@ -28,7 +28,7 @@
 ?:[EQU $SYS lsl]
 %:graf-lsl.prf
 
-?:[EQU $SYS gcu]
+?:[IOR [EQU $SYS gcu] [EQU $SYS vcs]]
 %:graf-gcu.prf
 
 ?:[EQU $SYS ami]
