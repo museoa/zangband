@@ -27,7 +27,7 @@ static int borg_danger_aux1(int r_idx)
 	int pfe = 0;
 	int power, chance;
 
-	s16b ac = borg_skill[BI_ARMOR];
+	s16b ac = bp_ptr->ac;
 
 	monster_race *r_ptr = &r_info[r_idx];
 
@@ -2965,33 +2965,33 @@ static s32b borg_power_aux3(void)
 		damage = (l_ptr->dd * l_ptr->ds * 20L);
 
 		/* Reward "damage" and increased blows per round */
-		value += damage * (borg_skill[BI_BLOWS] + 1);
+		value += damage * (bp_ptr->blows + 1);
 
 		/* Reward "bonus to hit" */
 		if (l_ptr->to_h > 8 || bp_ptr->lev < 25)
-			value += ((borg_skill[BI_TOHIT] + l_ptr->to_h) * 30L);
+			value += (bp_ptr->to_h + l_ptr->to_h) * 30L;
 		else
-			value += ((borg_skill[BI_TOHIT] + 8) * 30L);
+			value += (bp_ptr->to_h + 8) * 30L;
 
 		/* Reward "bonus to dam" */
-		value += ((borg_skill[BI_TODAM] + l_ptr->to_d) * 30L);
+		value += (bp_ptr->to_d + l_ptr->to_d) * 30L;
 
 		/* extra boost for deep dungeon */
 		if (bp_ptr->max_depth >= 75)
 		{
-			value += ((borg_skill[BI_TOHIT] + l_ptr->to_h) * 15L);
+			value += (bp_ptr->to_h + l_ptr->to_h) * 15L;
 
-			value += l_ptr->dd * l_ptr->ds * 20L * 2 * borg_skill[BI_BLOWS];
+			value += l_ptr->dd * l_ptr->ds * 20L * 2 * bp_ptr->blows;
 		}
 
 		/* assume 2x base damage for x% of creatures */
-		dam = damage * 2 * borg_skill[BI_BLOWS];
+		dam = damage * 2 * bp_ptr->blows;
 		if (bp_ptr->flags1 & TR1_SLAY_ANIMAL) value += (dam * 2) / 2;
 		if (bp_ptr->flags1 & TR1_BRAND_POIS) value += (dam * 2) / 2;
 		if (bp_ptr->flags1 & TR1_SLAY_EVIL) value += (dam * 7) / 2;
 
 		/* assume 3x base damage for x% of creatures */
-		dam = damage * 3 * borg_skill[BI_BLOWS];
+		dam = damage * 3 * bp_ptr->blows;
 		if (bp_ptr->flags1 & TR1_SLAY_UNDEAD) value += (dam * 5) / 2;
 		if (bp_ptr->flags1 & TR1_SLAY_DEMON) value += (dam * 3) / 2;
 		if ((bp_ptr->flags1 & TR1_SLAY_DRAGON) &&
@@ -3014,7 +3014,7 @@ static s32b borg_power_aux3(void)
 			!(bp_ptr->flags1 & TR1_SLAY_EVIL)) value += (dam * 1) / 2;
 
 		/* assume 5x base damage for x% of creatures */
-		dam = damage * 5 * borg_skill[BI_BLOWS];
+		dam = damage * 5 * bp_ptr->blows;
 		if (bp_ptr->flags1 & TR1_KILL_DRAGON) value += (dam * 5) / 2;
 	}
 	else if (borg_class == CLASS_MONK)
@@ -3042,20 +3042,20 @@ static s32b borg_power_aux3(void)
 
 
 		/* Reward "damage" and increased blows per round */
-		value += damage * (borg_skill[BI_BLOWS] + 1);
+		value += damage * (bp_ptr->blows + 1);
 
 		/* Reward "bonus to hit" */
-		value += (borg_skill[BI_TOHIT] * 30L);
+		value += bp_ptr->to_h * 30L;
 
 		/* Reward "bonus to dam" */
-		value += (borg_skill[BI_TODAM] * 30L);
+		value += bp_ptr->to_d * 30L;
 
 		/* extra boost for deep dungeon */
 		if (bp_ptr->max_depth >= 75)
 		{
-			value += ((borg_skill[BI_TOHIT]) * 15L);
+			value += bp_ptr->to_h * 15L;
 
-			value += ma_ptr->dd * ma_ptr->ds * 20L * 2 * borg_skill[BI_BLOWS];
+			value += ma_ptr->dd * ma_ptr->ds * 20L * 2 * bp_ptr->blows;
 		}
 
 	}
@@ -3073,13 +3073,13 @@ static s32b borg_power_aux3(void)
 	if (l_ptr)
 	{
 		/* Calculate "average" damage per "normal" shot (times 2) */
-		value += (borg_skill[BI_BMAXDAM] * 20L);
+		value += bp_ptr->b_max_dam * 20L;
 
 		/* Reward "bonus to hit" */
 		if (l_ptr->to_h > 8 || bp_ptr->lev < 25)
-			value += ((borg_skill[BI_TOHIT] + l_ptr->to_h) * 7L);
+			value += (bp_ptr->to_h + l_ptr->to_h) * 7L;
 		else
-			value += ((borg_skill[BI_TOHIT] + 8) * 7L);
+			value += (bp_ptr->to_h + 8) * 7L;
 
 		/* Hack -- It is hard to hold a heavy weapon */
 		if (hold < l_ptr->weight / 10) value -= 500000L;
@@ -3443,13 +3443,12 @@ static s32b borg_power_aux3(void)
 
 
 	/*** Reward powerful armor ***/
-	if (borg_skill[BI_ARMOR] < 15) value += borg_skill[BI_ARMOR] * 2000L;
-	if ((borg_skill[BI_ARMOR] >= 15) && (borg_skill[BI_ARMOR] < 75))
+	if (bp_ptr->ac < 15) value += bp_ptr->ac * 2000L;
+	if ((bp_ptr->ac >= 15) && (bp_ptr->ac < 75))
 	{
-		value += borg_skill[BI_ARMOR] * 1500L + 28350L;
+		value += bp_ptr->ac * 1500L + 28350L;
 	}
-	if (borg_skill[BI_ARMOR] >= 75) value +=
-			borg_skill[BI_ARMOR] * 500L + 73750L;
+	if (bp_ptr->ac >= 75) value += bp_ptr->ac * 500L + 73750L;
 
 	/*** Penalize various things ***/
 

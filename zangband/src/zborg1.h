@@ -333,6 +333,14 @@ struct borg_player
 	s16b food;	/* Power of food */
 	s16b recall;	/* Power of recall */
 
+	/* Combat stats */
+	s16b ac;
+	s16b to_h;
+	s16b to_d;
+	s16b w_to_d;
+	s16b b_to_d;
+	s16b b_max_dam;
+	s16b blows;
 
 	u32b value;	/* Cost of items we are carrying */
 
@@ -356,22 +364,9 @@ struct borg_player
 extern borg_player *bp_ptr;
 
 
-#define BI_ARMOR	25
-#define BI_TOHIT	26
-#define BI_TODAM	27
-#define BI_WTOHIT	28
-#define BI_WTODAM	29
-#define BI_BTOHIT	30
-#define BI_BTODAM	31
-#define BI_BLOWS	32
-#define BI_SHOTS	33
-#define BI_WMAXDAM	34
-#define BI_WBASEDAM	35
-#define BI_BMAXDAM	36
 
 
-
-#define BI_MAX		37
+#define BI_MAX		1
 
 
 /*

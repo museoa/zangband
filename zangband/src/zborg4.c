@@ -304,11 +304,11 @@ static void borg_notice_player(void)
 	u32b f1, f2, f3;
 
 	/* Recalc some Variables */
-	borg_skill[BI_ARMOR] = 0;
+	bp_ptr->ac = 0;
 	bp_ptr->speed = 110;
 
 	/* Start with a single blow per turn */
-	borg_skill[BI_BLOWS] = 1;
+	bp_ptr->blows = 1;
 
 	/* Base infravision (purely racial) */
 	bp_ptr->see_infra = rb_ptr->infra;
@@ -510,10 +510,10 @@ static void borg_notice_equip(int *extra_blows, int *extra_shots,
 		if (l_ptr->kn_flags2 & TR2_SUST_CHR) bp_ptr->sust[A_CHR] = TRUE;
 
 		/* Modify the base armor class */
-		borg_skill[BI_ARMOR] += l_ptr->ac;
+		bp_ptr->ac += l_ptr->ac;
 
 		/* Apply the bonuses to armor class */
-		borg_skill[BI_ARMOR] += l_ptr->to_a;
+		bp_ptr->ac += l_ptr->to_a;
 
 		/* Keep track of weight */
 		bp_ptr->weight += l_ptr->weight;
@@ -525,8 +525,8 @@ static void borg_notice_equip(int *extra_blows, int *extra_shots,
 		if (i == EQUIP_BOW) continue;
 
 		/* Apply the bonuses to hit/damage */
-		borg_skill[BI_TOHIT] += l_ptr->to_h;
-		borg_skill[BI_TODAM] += l_ptr->to_d;
+		bp_ptr->to_h += l_ptr->to_h;
+		bp_ptr->to_d += l_ptr->to_d;
 	}
 }
 
@@ -572,9 +572,9 @@ static void borg_notice_stats(void)
 	}
 
 	/* Actual Modifier Bonuses (Un-inflate stat bonuses) */
-	borg_skill[BI_ARMOR] += ((int)(adj_dex_ta[my_stat_ind[A_DEX]]) - 128);
-	borg_skill[BI_TODAM] += ((int)(adj_str_td[my_stat_ind[A_STR]]) - 128);
-	borg_skill[BI_TOHIT] += ((int)(adj_dex_th[my_stat_ind[A_DEX]]) - 128);
+	bp_ptr->ac += ((int)(adj_dex_ta[my_stat_ind[A_DEX]]) - 128);
+	bp_ptr->to_d += ((int)(adj_str_td[my_stat_ind[A_STR]]) - 128);
+	bp_ptr->to_h += ((int)(adj_dex_th[my_stat_ind[A_DEX]]) - 128);
 }
 
 
@@ -603,20 +603,16 @@ static void borg_notice_shooter(int hold, int extra_might, int extra_shots)
 	/* No bow? */
 	if (!l_ptr) return;
 
-	/* and assume we can enchant up to +8 if bp_ptr->lev > 25 */
-	borg_skill[BI_BTOHIT] = l_ptr->to_h;
-	if (borg_skill[BI_BTOHIT] < 8 && bp_ptr->lev >= 25)
-		borg_skill[BI_BTOHIT] = 8;
 
-	borg_skill[BI_BTODAM] = l_ptr->to_d;
-	if (borg_skill[BI_BTODAM] < 8 && bp_ptr->lev >= 25)
-		borg_skill[BI_BTODAM] = 8;
+	bp_ptr->b_to_d = l_ptr->to_d;
+	if (bp_ptr->b_to_d < 8 && bp_ptr->lev >= 25)
+		bp_ptr->b_to_d = 8;
 
 	/* It is hard to carry a heavy bow */
 	if (hold < l_ptr->weight / 10)
 	{
 		/* Hard to wield a heavy bow */
-		borg_skill[BI_TOHIT] += 2 * (hold - l_ptr->weight / 10);
+		bp_ptr->to_h += 2 * (hold - l_ptr->weight / 10);
 	}
 
 	/* Compute "extra shots" if needed */
@@ -757,12 +753,11 @@ static void borg_notice_shooter(int hold, int extra_might, int extra_shots)
 		/* Require at least one shot */
 		if (my_num_fire < 1) my_num_fire = 1;
 	}
-	borg_skill[BI_SHOTS] = my_num_fire;
 
 	/* Calculate "average" damage per "normal" shot (times 2) */
-	borg_skill[BI_BMAXDAM] = my_ammo_power *
-		(borg_skill[BI_BTODAM] + 100) * 3 / 100;
-	borg_skill[BI_BMAXDAM] *= (my_num_fire + 1) / 2;
+	bp_ptr->b_max_dam = my_ammo_power *
+		(bp_ptr->b_to_d + 100) * 3 / 100;
+	bp_ptr->b_max_dam *= (my_num_fire + 1) / 2;
 }
 
 
@@ -779,13 +774,9 @@ static void borg_notice_weapon(int hold, int extra_blows)
 	/* No weapon? */
 	if (!l_ptr) return;
 
-	/* and assume we can enchant up to +8 if bp_ptr->lev > 25 */
-	borg_skill[BI_WTOHIT] = l_ptr->to_h;
-	if (borg_skill[BI_WTOHIT] < 8 && bp_ptr->lev >= 25)
-		borg_skill[BI_WTOHIT] = 8;
-	borg_skill[BI_WTODAM] = l_ptr->to_d;
-	if (borg_skill[BI_WTODAM] < 8 && bp_ptr->lev >= 25)
-		borg_skill[BI_WTODAM] = 8;
+	bp_ptr->w_to_d = l_ptr->to_d;
+	if (bp_ptr->w_to_d < 8 && bp_ptr->lev >= 25)
+		bp_ptr->w_to_d = 8;
 
 	/* It is hard to hold a heavy weapon */
 	if (hold < l_ptr->weight / 10)
@@ -793,7 +784,7 @@ static void borg_notice_weapon(int hold, int extra_blows)
 		bp_ptr->status.hvy_weapon = TRUE;
 
 		/* Hard to wield a heavy weapon */
-		borg_skill[BI_TOHIT] += 2 * (hold - l_ptr->weight / 10);
+		bp_ptr->to_h += 2 * (hold - l_ptr->weight / 10);
 	}
 	else
 	{
@@ -909,16 +900,16 @@ static void borg_notice_weapon(int hold, int extra_blows)
 		if (dex_index > 11) dex_index = 11;
 
 		/* Use the blows table */
-		borg_skill[BI_BLOWS] = blows_table[str_index][dex_index];
+		bp_ptr->blows = blows_table[str_index][dex_index];
 
 		/* Maximal value */
-		if (borg_skill[BI_BLOWS] > num) borg_skill[BI_BLOWS] = num;
+		if (bp_ptr->blows > num) bp_ptr->blows = num;
 
 		/* Add in the "bonus blows" */
-		borg_skill[BI_BLOWS] += extra_blows;
+		bp_ptr->blows += extra_blows;
 
 		/* Require at least one blow */
-		if (borg_skill[BI_BLOWS] < 1) borg_skill[BI_BLOWS] = 1;
+		if (bp_ptr->blows < 1) bp_ptr->blows = 1;
 
 		/* Boost digging skill by weapon weight */
 		bp_ptr->skill_dig += (l_ptr->weight / 10);
@@ -930,17 +921,9 @@ static void borg_notice_weapon(int hold, int extra_blows)
 		(!(l_ptr->kn_flags3 & TR3_BLESSED)))
 	{
 		/* Reduce the real bonuses */
-		borg_skill[BI_TOHIT] -= 5;
-		borg_skill[BI_TODAM] -= 5;
+		bp_ptr->to_h -= 5;
+		bp_ptr->to_d -= 5;
 	}
-
-	/* Calculate "max" damage per "normal" blow  */
-	/* and assume we can enchant up to +8 if bp_ptr->lev > 25 */
-	borg_skill[BI_WMAXDAM] =
-		(l_ptr->dd * l_ptr->ds + borg_skill[BI_TODAM] + borg_skill[BI_WTODAM]);
-
-	/* Calculate base damage, used to calculating slays */
-	borg_skill[BI_WBASEDAM] = (l_ptr->dd * l_ptr->ds);
 }
 
 
@@ -1026,26 +1009,26 @@ static void borg_recalc_monk(int extra_blows)
 	/* Consider the Martial Arts */
 	if (!look_up_equip_slot(EQUIP_WIELD))
 	{
-		borg_skill[BI_BLOWS] = 2;
+		bp_ptr->blows = 2;
 
-		if (bp_ptr->lev > 9) borg_skill[BI_BLOWS]++;
-		if (bp_ptr->lev > 14) borg_skill[BI_BLOWS]++;
-		if (bp_ptr->lev > 24) borg_skill[BI_BLOWS]++;
-		if (bp_ptr->lev > 34) borg_skill[BI_BLOWS]++;
-		if (bp_ptr->lev > 44) borg_skill[BI_BLOWS]++;
-		if (bp_ptr->lev > 49) borg_skill[BI_BLOWS]++;
+		if (bp_ptr->lev > 9) bp_ptr->blows++;
+		if (bp_ptr->lev > 14) bp_ptr->blows++;
+		if (bp_ptr->lev > 24) bp_ptr->blows++;
+		if (bp_ptr->lev > 34) bp_ptr->blows++;
+		if (bp_ptr->lev > 44) bp_ptr->blows++;
+		if (bp_ptr->lev > 49) bp_ptr->blows++;
 
 		if (monk_arm_wgt < (100 + (bp_ptr->lev * 4)))
 		{
-			borg_skill[BI_TOHIT] += (bp_ptr->lev / 3);
-			borg_skill[BI_TODAM] += (bp_ptr->lev / 3);
+			bp_ptr->to_h += (bp_ptr->lev / 3);
+			bp_ptr->to_d += (bp_ptr->lev / 3);
 		}
 		else
 		{
-			borg_skill[BI_BLOWS] /= 2;
+			bp_ptr->blows /= 2;
 		}
 
-		borg_skill[BI_BLOWS] += extra_blows;
+		bp_ptr->blows += extra_blows;
 
 		/* Calculate best Monk Attacks */
 		while (ma != 0)
@@ -1060,12 +1043,6 @@ static void borg_recalc_monk(int extra_blows)
 			ma--;
 		}
 
-		/* Calculate "max" damage per monk blow  */
-		borg_skill[BI_WMAXDAM] =
-			(ma_ptr->dd * ma_ptr->ds + borg_skill[BI_TODAM]);
-
-		/* Calculate base damage, used to calculating slays */
-		borg_skill[BI_WBASEDAM] = (ma_ptr->dd * ma_ptr->ds);
 	}
 
 	/** Monk Armour **/
@@ -1077,27 +1054,27 @@ static void borg_recalc_monk(int extra_blows)
 
 		if (!look_up_equip_slot(EQUIP_BODY))
 		{
-			borg_skill[BI_ARMOR] += (bp_ptr->lev * 3) / 2;
+			bp_ptr->ac += (bp_ptr->lev * 3) / 2;
 		}
 		if (!look_up_equip_slot(EQUIP_OUTER) && (bp_ptr->lev > 15))
 		{
-			borg_skill[BI_ARMOR] += ((bp_ptr->lev - 13) / 3);
+			bp_ptr->ac += ((bp_ptr->lev - 13) / 3);
 		}
 		if (!look_up_equip_slot(EQUIP_ARM) && (bp_ptr->lev > 10))
 		{
-			borg_skill[BI_ARMOR] += ((bp_ptr->lev - 8) / 3);
+			bp_ptr->ac += ((bp_ptr->lev - 8) / 3);
 		}
 		if (!look_up_equip_slot(EQUIP_HEAD) && (bp_ptr->lev > 4))
 		{
-			borg_skill[BI_ARMOR] += (bp_ptr->lev - 2) / 3;
+			bp_ptr->ac += (bp_ptr->lev - 2) / 3;
 		}
 		if (!look_up_equip_slot(EQUIP_HANDS))
 		{
-			borg_skill[BI_ARMOR] += (bp_ptr->lev / 2);
+			bp_ptr->ac += (bp_ptr->lev / 2);
 		}
 		if (!look_up_equip_slot(EQUIP_FEET))
 		{
-			borg_skill[BI_ARMOR] += (bp_ptr->lev / 3);
+			bp_ptr->ac += (bp_ptr->lev / 3);
 		}
 	}
 }
@@ -2873,12 +2850,12 @@ static void borg_notice_home_weapon(list_item *l_ptr)
 	if (l_ptr->to_d > 8 || bp_ptr->lev < 15)
 	{
 		home_damage += num_blow * (l_ptr->dd * l_ptr->ds +
-								   (borg_skill[BI_TODAM] + l_ptr->to_d));
+								   (bp_ptr->to_d + l_ptr->to_d));
 	}
 	else
 	{
 		home_damage += num_blow * (l_ptr->dd * l_ptr->ds +
-								   (borg_skill[BI_TODAM] + 8));
+								   (bp_ptr->to_d + 8));
 	}
 }
 

@@ -1042,7 +1042,7 @@ void borg_update_frame(void)
 	if (borg_speed) bp_ptr->speed -= 10;
 
 	/* Extract "Cur AC xxxxx" */
-	borg_skill[BI_ARMOR] = p_ptr->dis_ac + p_ptr->dis_to_a;
+	bp_ptr->ac = p_ptr->dis_ac + p_ptr->dis_to_a;
 
 	/* Extract "Cur HP xxxxx" */
 	bp_ptr->chp = p_ptr->chp;
