@@ -503,6 +503,14 @@ static void display_build(field_type *f_ptr, store_type *b_ptr)
 			c_put_str(TERM_YELLOW, tmp_str, 19, 30);
 			break;
 		}
+		
+		case BLDG_MAP:
+		{
+			sprintf(tmp_str, " B) Buy Map (%dgp)",
+				 f_ptr->data[1] * bo_ptr->inflate);
+			c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+			break;
+		}
 	}
 
 
@@ -2009,6 +2017,27 @@ static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
 					{
 						(void) gain_random_mutation(0);
 					}
+				}
+				
+				done = TRUE;
+			}
+			
+			break;
+		}
+		
+		case BLDG_MAP:
+		{
+			if (p_ptr->command_cmd == 'B')
+			{
+				cost = f_ptr->data[1] * bo_ptr->inflate;
+				
+				if (test_gold(&cost))
+				{
+					msg_print("You learn of the lay of the lands.");
+					
+					/* Map a radius-20 circle around the player */
+					map_wilderness(20,
+						 p_ptr->wilderness_x / 16, p_ptr->wilderness_y / 16);
 				}
 				
 				done = TRUE;

@@ -4317,3 +4317,32 @@ bool dimension_door(void)
 
 	return (TRUE);
 }
+
+
+/*
+ * Map the wilderness
+ */
+void map_wilderness(int radius, u16b x, u16b y)
+{
+	int i, j;
+	int dist;
+	
+	/* Map a rough circle around the target position in the wilderness */
+	for (i = x - radius; i < x + radius + 1; i++)
+	{
+		for (j = y - radius; j < y + radius + 1; j++)
+		{
+			/* In bounds? */
+			if ((i >= 0) && (i < max_wild) && (j >=0) && (j < max_wild))
+			{
+				dist = distance(i, j, x, y);
+				
+				if ((randint0(dist) < radius / 2) && (dist < radius))
+				{
+					/* Memorise the location */
+					wild[j][i].done.info |= WILD_INFO_SEEN;
+				}
+			}
+		}
+	}
+}

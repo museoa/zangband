@@ -1443,6 +1443,11 @@ b_own_type b_owners[MAX_BLDG][MAX_B_OWN] =
 		/* Mutations */
 		{ "Aaognwth",			120,			RACE_HUMAN},
 	},
+	
+	{
+		/* Maps */
+		{ "Fsanong of the East", 90,			RACE_HUMAN},
+	},
 };
 
 

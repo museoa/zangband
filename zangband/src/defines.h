@@ -150,11 +150,12 @@
 #define BLDG_PLUS_WEAPON	2
 #define BLDG_PLUS_ARMOUR	3
 #define BLDG_MUTATE			4
+#define BLDG_MAP			5
 
 /*
  * Total number of buildings (see "bldg.c", etc)
  */
-#define MAX_BLDG		5
+#define MAX_BLDG		6
 
 /* List of building types */
 #define	BUILD_STORE_GENERAL		0
@@ -174,9 +175,10 @@
 #define BUILD_MUTATE			14
 #define BUILD_NONE				15
 #define BUILD_BLANK				16
+#define BUILD_MAP				17
 
 /* Maximum number of "building" types in a city */
-#define MAX_CITY_BUILD			17
+#define MAX_CITY_BUILD			18
 
 
 /*
@@ -1057,6 +1059,7 @@
 #define FT_BUILD_PLUS_WEAPON	0x002D
 #define FT_BUILD_PLUS_ARMOUR	0x002E
 #define FT_BUILD_MUTATE			0x002F
+#define FT_BUILD_MAP			0x0030
 
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
 

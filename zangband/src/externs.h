@@ -848,6 +848,8 @@ extern bool curse_weapon(void);
 extern bool brand_bolts(void);
 extern bool polymorph_monster(int y, int x);
 extern bool dimension_door(void);
+extern void map_wilderness(int radius, u16b x, u16b y);
+
 
 /* store.c */
 extern bool allocate_store(store_type *st_ptr);
