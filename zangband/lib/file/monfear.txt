@@ -340,8 +340,9 @@ howls with pain and fear.
 #N:813:Eric the Usurper
 
 N:820:Corwin, Lord of Avalon
-1
-says, 'Let's play fair, like the Olympic Games!"
+2
+says, 'Let's play fair, like the Olympic Games!'
+asks, 'Who am I? Where is here? Why you attack me!?"
 
 #N:824:Benedict, the Ideal Warrior
 
