@@ -1691,10 +1691,10 @@ void py_attack(int y, int x)
 			}
 
 			/* Ghoul paralysis */
-			if ((ghoul_paral > -1) && !(r_ptr->flags3 & RF3_NO_SLEEP)
-			    && (r_ptr->level < randint0(1+((p_ptr->lev)*2))))
+			if ((ghoul_paral > -1) && !(r_ptr->flags3 & RF3_NO_SLEEP) &&
+			    (r_ptr->level < randint0(1 + ((p_ptr->lev) * 2))))
 			{
- 				ghoul_paral += 25 +  randint1(p_ptr->lev/2);
+ 				ghoul_paral += 25 +  randint1(p_ptr->lev / 2);
 			}
 
 			/* Monk attack? */
@@ -1821,7 +1821,8 @@ void py_attack(int y, int x)
 			else
 			{
 				msg_format("You %s %s.",
-					 (p_ptr->prace == RACE_GHOUL?"claw":"punch"), m_name);
+				           ((p_ptr->prace == RACE_GHOUL) ? "claw" : "punch"),
+				           m_name);
 			}
 
 			/* No negative damage */

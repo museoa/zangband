@@ -1137,7 +1137,7 @@ static void give_activation_power(object_type *o_ptr, int artifact_bias)
 		
 		case BIAS_NECROMANTIC:
 			chance = 101;
-			if (randint1(66) )
+			if (randint1(66))
 				type = ACT_WRAITH;
 			else if (one_in_(13))
 				type = ACT_DISP_GOOD;

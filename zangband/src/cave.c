@@ -1292,7 +1292,7 @@ static void variable_player_graph(byte *a, char *c)
 							*c = 181;
 						break;
 					case RACE_ZOMBIE:
-				        case RACE_GHOUL:
+					case RACE_GHOUL:
 						*c = 221;
 						break;
 					case RACE_VAMPIRE:

@@ -1325,11 +1325,11 @@ bool make_attack_normal(int m_idx)
 
 						/* Heal the attacker? */
 						if (!(p_ptr->prace == RACE_ZOMBIE ||
-							  p_ptr->prace == RACE_VAMPIRE ||
-							  p_ptr->prace == RACE_SPECTRE ||
-							  p_ptr->prace == RACE_SKELETON ||
-							  p_ptr->prace == RACE_GOLEM ||
-						          p_ptr->prace == RACE_GHOUL) &&
+						      p_ptr->prace == RACE_VAMPIRE ||
+						      p_ptr->prace == RACE_SPECTRE ||
+						      p_ptr->prace == RACE_SKELETON ||
+						      p_ptr->prace == RACE_GOLEM ||
+						      p_ptr->prace == RACE_GHOUL) &&
 							(damage > 2) && !(resist_drain))
 						{
 							bool did_heal = FALSE;

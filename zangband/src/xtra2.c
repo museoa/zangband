@@ -386,9 +386,10 @@ bool monster_death(int m_idx, bool explode)
 				for (i2 = min_wid; i2 < max_wid; ++i2)
 					for (j2 = min_hgt; j2 < max_hgt; j2++)
 						if (area(j2,i2)->m_idx > 0)
-							if (is_hostile(&m_list[area(j2,i2)->m_idx])
-								&& area(j2,i2)->m_idx!=m_idx)
+							if (is_hostile(&m_list[area(j2,i2)->m_idx]) &&
+								area(j2,i2)->m_idx != m_idx)
 									number_mon++;
+
 				if (number_mon == 0)
 				{
 					/* completed */
@@ -420,6 +421,7 @@ bool monster_death(int m_idx, bool explode)
 				{
 					/* completed quest */
 					quest[i].status = QUEST_STATUS_COMPLETED;
+
 					if (!p_ptr->inside_quest)
 						create_stairs = TRUE;
 

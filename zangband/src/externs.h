@@ -125,7 +125,6 @@ extern s32b old_turn;
 extern bool use_sound;
 extern bool use_graphics;
 extern bool use_transparency;
-extern bool can_save;
 extern s16b signal_count;
 extern bool inkey_base;
 extern bool inkey_xtra;

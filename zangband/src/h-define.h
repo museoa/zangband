@@ -132,7 +132,7 @@
 			"on line ", __LINE__);\
 		}\
 	}\
-	while(FALSE)
+	while (FALSE)
 #endif
 	
 

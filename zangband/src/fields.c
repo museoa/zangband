@@ -1122,7 +1122,7 @@ void field_hook(s16b *field_ptr, int action, vptr action_struct)
 		if (t_ptr->action[action])
 		{
 			/* Call the action function */
-			if( t_ptr->action[action](f_ptr, action_struct))
+			if (t_ptr->action[action](f_ptr, action_struct))
 			{
 				/* The field wants to be deleted */
 				delete_field_ptr(field_ptr);

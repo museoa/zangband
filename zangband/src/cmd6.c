@@ -348,7 +348,7 @@ static void do_cmd_eat_food_aux(int item)
 	else if ((p_ptr->prace == RACE_GOLEM) ||
 	         (p_ptr->prace == RACE_ZOMBIE) ||
 	         (p_ptr->prace == RACE_SPECTRE) ||
-		 (p_ptr->prace == RACE_GHOUL))
+	         (p_ptr->prace == RACE_GHOUL))
 	{
 		msg_print("The food of mortals is poor sustenance for you.");
 		(void)set_food(p_ptr->food + ((o_ptr->pval) / 20));
@@ -1099,9 +1099,6 @@ static void do_cmd_read_scroll_aux(int item)
 	char        Rumor[1024];
 
 
-	/* Don't save while reading the scroll */
-	can_save = FALSE;
-
 	/* Get the item (in the pack) */
 	if (item >= 0)
 	{
@@ -1540,13 +1537,7 @@ static void do_cmd_read_scroll_aux(int item)
 
 
 	/* Hack -- allow certain scrolls to be "preserved" */
-	if (!used_up)
-	{
-		/* Can save again */
-		can_save = TRUE;
-
-		return;
-	}
+	if (!used_up) return;
 
 	sound(SOUND_SCROLL);
 
@@ -1565,9 +1556,6 @@ static void do_cmd_read_scroll_aux(int item)
 		floor_item_describe(0 - item);
 		floor_item_optimize(0 - item);
 	}
-
-	/* Can save again */
-	can_save = TRUE;
 }
 
 

@@ -2084,8 +2084,6 @@ static void calc_torch(void)
 				p_ptr->cur_lite += 1;
 				continue;
 			}
-			
-			/* notreached */
 		}
 		else
 		{
@@ -2098,7 +2096,6 @@ static void calc_torch(void)
 			/* does this item glow? */
 			if (f3 & TR3_LITE) p_ptr->cur_lite++;
 		}
-
 	}
 
 	/*

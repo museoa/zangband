@@ -8257,7 +8257,7 @@ const mutation_type race_powers[MAX_RACE_POWERS] =
 	},
 
 	{
-            RACE_GHOUL,
+		RACE_GHOUL,
 	    "You can eat corpses and skeletons to gain nutrition.",
 	    "(nothing)",
 	    "(nothing)",
@@ -8267,7 +8267,7 @@ const mutation_type race_powers[MAX_RACE_POWERS] =
 	},
 	
 	{
-            RACE_GHOUL,
+		RACE_GHOUL,
 	    "You can sense living creatures.",
 	    "(nothing)",
 	    "(nothing)",

@@ -86,7 +86,7 @@ void have_nightmare(int r_idx)
 		case RACE_ZOMBIE:
 		case RACE_SPECTRE:
 		case RACE_VAMPIRE:
-	        case RACE_GHOUL:
+		case RACE_GHOUL:
 		{
 			if (saving_throw(10 + p_ptr->lev)) return;
 

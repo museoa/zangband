@@ -682,7 +682,7 @@ static void flush_arith(block_handle *h_ptr)
 	 *
 	 * Then we output all the pending ones.
 	 */
-	for(run_bits++; run_bits > 0; run_bits--)
+	for (run_bits++; run_bits > 0; run_bits--)
 	{
 		write_block_bit(h_ptr, !(bound1 & NEXT_BIT_16));
 	}

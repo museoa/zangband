@@ -85,7 +85,7 @@ static void eat_corpse(void)
 		/* Want a corpse / skeleton */
 		if ((f_ptr->t_idx == FT_CORPSE || f_ptr->t_idx == FT_SKELETON))
 		{
-			if(f_ptr->t_idx == FT_CORPSE)
+			if (f_ptr->t_idx == FT_CORPSE)
 			{
 				msg_print("The corpse tastes delicious!");
 				(void)set_food(p_ptr->food + 2000);
@@ -598,7 +598,7 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 					(void)sleep_monsters();
 				break;
 			}
-		        case RACE_GHOUL:
+			case RACE_GHOUL:
 			{
 				if (mut_ptr->level == 30)
 				{
