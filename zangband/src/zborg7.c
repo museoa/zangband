@@ -1232,7 +1232,6 @@ static bool borg_enchant_artifact(void)
 static bool borg_wears_cursed(bool heavy)
 {
 	int i;
-	bool result = FALSE;
 	list_item *l_ptr;
 
 	for (i = 0; i < equip_num; i++)
@@ -1245,42 +1244,36 @@ static bool borg_wears_cursed(bool heavy)
 		/* Are we looking for a heavy curse? */
 		if (heavy)
 		{
-			result |= KN_FLAG(l_ptr, TR_HEAVY_CURSE);
+			if (KN_FLAG(l_ptr, TR_HEAVY_CURSE)) return (TRUE);
 		}
 		/* It is a normal curse */
 		else
 		{
-			result |= KN_FLAG(l_ptr, TR_CURSED);
+			if (KN_FLAG(l_ptr, TR_CURSED)) return (TRUE);
 		}
 	}
-
-	/* Cursed item in the equipment */
-	if (result) return (TRUE);
 
 	for (i = 0; i < inven_num; i++)
 	{
 		l_ptr = &inventory[i];
 
-		/* Yeah well */
-		if (!l_ptr) continue;
-
 		/* Only interesting items */
-		if (!borg_obj_known_p(l_ptr) && !borg_obj_is_ego_art(l_ptr)) continue;
+		if (!borg_obj_known_p(l_ptr) || !borg_obj_is_ego_art(l_ptr)) continue;
 
 		/* Are we looking for a heavy curse? */
 		if (heavy)
 		{
-			result |= KN_FLAG(l_ptr, TR_HEAVY_CURSE);
+			if (KN_FLAG(l_ptr, TR_HEAVY_CURSE)) return (TRUE);
 		}
 		/* It is a normal curse */
 		else
 		{
-			result |= KN_FLAG(l_ptr, TR_CURSED);
+			if (KN_FLAG(l_ptr, TR_CURSED)) return (TRUE);
 		}
 	}
 
-	/* Ready */
-	return (result);
+	/* No curse found */
+	return (FALSE);
 }
 
 
@@ -2462,11 +2455,8 @@ bool borg_wear_stuff(void)
 		/* Skip empty / unaware items */
 		if (!l_ptr->k_idx) continue;
 
-		/* Require "known" (or average, good, etc) */
-		if (!borg_obj_known_p(l_ptr) &&
-			!strstr(l_ptr->o_name, "{average") &&
-			!strstr(l_ptr->o_name, "{good") &&
-			!strstr(l_ptr->o_name, "{excellent")) continue;
+		/* Skip useless items */
+		if (borg_worthless_item(l_ptr)) continue;
 
 		/* apw do not wear not *id* artifacts */
 		if (!borg_obj_known_full(l_ptr) &&

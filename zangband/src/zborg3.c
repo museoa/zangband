@@ -1145,8 +1145,44 @@ bool borg_worthless_item(list_item *l_ptr)
 	int sval;
 	list_item *q_ptr;
 
-	/* This proc is there for unid'd items */
-	if (!l_ptr || borg_obj_known_p(l_ptr)) return (FALSE);
+	/* Is this item for real? */
+	if (!l_ptr) return (FALSE);
+
+	/* pick up the items sval */
+	sval = k_info[l_ptr->k_idx].sval;
+
+	/* This item needs identification first */
+	if (!sval) return (FALSE);
+
+	/* Discard some junk items */
+	switch (l_ptr->tval)
+	{
+		case TV_RING:
+		{
+			if (sval <= SV_RING_TELEPORTATION) return (TRUE);
+			break;
+		}
+		case TV_AMULET:
+		{
+			if (sval <= SV_AMULET_TELEPORT) return (TRUE);
+			break;
+		}
+		case TV_STAFF:
+		{
+			if (sval == SV_STAFF_DARKNESS &&
+				!FLAG(bp_ptr, TR_HURT_LITE)) return (TRUE);
+			if (sval >= SV_STAFF_SLOWNESS &&
+				sval <= SV_STAFF_SUMMONING) return (TRUE);
+			break;
+		}
+		case TV_WAND:
+		{
+			if (sval == SV_WAND_CLONE_MONSTER) return (TRUE);
+			if (sval == SV_WAND_HASTE_MONSTER) return (TRUE);
+			if (sval == SV_WAND_HEAL_MONSTER) return (TRUE);
+			break;
+		}
+	}
 
 	/* Just checking */
 	if (streq(l_ptr->o_name, "")) return (FALSE);
@@ -1186,38 +1222,6 @@ bool borg_worthless_item(list_item *l_ptr)
 
 	/* Is there something known about this item? */
 	if (!l_ptr->k_idx) return (FALSE);
-
-	/* pick up the items sval */
-	sval = k_info[l_ptr->k_idx].sval;
-
-	switch (l_ptr->tval)
-	{
-		case TV_RING:
-		{
-			if (sval <= SV_RING_TELEPORTATION) return (TRUE);
-			break;
-		}
-		case TV_AMULET:
-		{
-			if (sval <= SV_AMULET_TELEPORT) return (TRUE);
-			break;
-		}
-		case TV_STAFF:
-		{
-			if (sval == SV_STAFF_DARKNESS &&
-				!FLAG(bp_ptr, TR_HURT_LITE)) return (TRUE);
-			if (sval >= SV_STAFF_SLOWNESS &&
-				sval <= SV_STAFF_SUMMONING) return (TRUE);
-			break;
-		}
-		case TV_WAND:
-		{
-			if (sval == SV_WAND_CLONE_MONSTER) return (TRUE);
-			if (sval == SV_WAND_HASTE_MONSTER) return (TRUE);
-			if (sval == SV_WAND_HEAL_MONSTER) return (TRUE);
-			break;
-		}
-	}
 
 	/* If your pseudo capabilities are good then wait for pseudo id */
 	if (borg_calc_pseudo() < 100) return (FALSE);
