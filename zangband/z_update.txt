@@ -42,7 +42,25 @@ ZAngband 2.6.2:
 - The monster list term works properly even when the term is too small.
 - When you punch monsters, you do the damage shown on the information
   screen.
-
+- Graphics now works on 8bit screens in X.  (Affects all X windows ports.)
+- Ghouls gain the 'sense living' ability when they get to level 30.
+- Increased the price of potions of experience.
+- The Unicorn of Order can bash down doors.
+- You can now open chests on the same square as yourself.
+- Fixed crash when starting with no savefile, and graphics is turned on.
+- Figurines are no longer found cursed in the dungeon.
+- Removed two obsolete los options.
+- The birth screen now shows race and class modifiers when you make your
+  choice.
+- Added an option to show the 'experience to go until next level' instead
+  of the total experience.
+- Cheerful leprechauns are affected by the silly monster birth option.
+- Added a command line option so that you can choose the tileset to the
+  unix ports.
+- Changed the formatting in the unique killed list to be like [V]2.9.3
+- The gtk port is now of at least beta quality.  It has been added to
+  the makefile.  It supports graphics and bigscreen resizing.
+- The spell-list term type now adjusts to window size.
 
 ZAngband 2.6.1:
 - The supplies store can sell ammo.
