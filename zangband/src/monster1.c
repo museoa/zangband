@@ -371,15 +371,33 @@ static void roff_aux(int r_idx, int remem)
 	}
 	else if (r_ptr->r_tkills || cheat_know)
 	{
-		if (depth_in_feet)
+		roff(CLR_SLATE "%^s is ", wd_he[msex]);
+
+		if (r_ptr->r_tkills * r_ptr->rarity >= 30 || cheat_know)
 		{
-			roff(CLR_SLATE "%^s is normally found at depths of %d feet",
-						  wd_he[msex], r_ptr->level * 50);
+			if (r_ptr->rarity < 2)
+				roff(CLR_SLATE "very common");
+			else if (r_ptr->rarity < 4)
+				roff(CLR_SLATE "common");
+			else if (r_ptr->rarity < 8)
+				roff(CLR_SLATE "uncommon");
+			else if (r_ptr->rarity < 16)
+				roff(CLR_SLATE "rare");
+			else
+				roff(CLR_SLATE "very rare");
 		}
 		else
 		{
-			roff(CLR_SLATE "%^s is normally found on dungeon level %d",
-						  wd_he[msex], r_ptr->level);
+			roff(CLR_SLATE "normally found");
+		}
+		
+		if (depth_in_feet)
+		{
+			roff(CLR_SLATE "at depths of %d feet", r_ptr->level * 50);
+		}
+		else
+		{
+			roff(CLR_SLATE "on dungeon level %d", r_ptr->level);
 		}
 		old = TRUE;
 	}
