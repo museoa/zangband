@@ -1,0 +1,6 @@
+## makefile.zb
+
+dirs := font graf help music sound
+
+dirlist := $(dirlist) $(addprefix $(subdir),$(dirs))
+include $(scandir)

@@ -1,0 +1,11 @@
+## makefile.zb
+
+files += $(addprefix lib/script/tk/library/,\
+	menu.tcl progress2.tcl text-list.tcl utils.tcl balloon.tcl \
+	module.tcl status-text.tcl title-frame.tcl win98ToolbarButton.tcl \
+	buttonlabel.tcl moduleIndex.tcl statusbar.tcl toolbar.tcl \
+	window-manager.tcl canvist.tcl object.tcl tabbed-frame.tcl \
+	toplevel.tcl canvist2.tcl progress-window.tcl tabs.tcl \
+	updowncontrol.tcl color-picker.tcl progress1.tcl texist.tcl \
+	updownentry.tcl \
+	)

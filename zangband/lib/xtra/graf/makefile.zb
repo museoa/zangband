@@ -1,0 +1,7 @@
+## makefile.zb
+
+files += lib/xtra/graf/16x16.bmp \
+		lib/xtra/graf/8x13.bmp \
+		lib/xtra/graf/8x8.bmp \
+		lib/xtra/graf/mask.bmp
+

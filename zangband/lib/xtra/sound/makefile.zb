@@ -1,0 +1,3 @@
+## makefile.zb
+
+files += lib/xtra/sound/sound.cfg

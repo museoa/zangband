@@ -1,0 +1,8 @@
+## makefile.zb
+
+files += lib/apex/readme.txt lib/apex/z_scores.raw
+
+INSTALL += \
+		touch "$(DESTDIR)/lib/apex/scores.raw"\
+		chown -R $(GAMEGROUP) "$(DESTDIR)/lib/apex"\
+		chmod -R g+w "$(DESTDIR)/lib/apex"
