@@ -2418,7 +2418,7 @@
 #define FF_USE_TRANS	0x04	/* Use transparency light effects */
 #define FF_ICKY			0x08	/* Terrain can not have objects */
 #define FF_PERM			0x10	/* Permanent terrain */
-
+#define FF_OBJECT		0x20	/* Terrain is described like an object */
 
 /*
  * Bit flags for the "project()" function
