@@ -3194,8 +3194,17 @@ static void process_player(void)
 		hack_mutation = FALSE;
 	}
 
-	/* Give the player some energy */
-	p_ptr->energy += extract_energy[p_ptr->pspeed];
+	
+	if ((p_ptr->pspeed>199)||(p_ptr->pspeed<0))
+		{
+		/* player has speed outside range of table : punish him/her */
+		p_ptr->energy += 0;
+		}
+	else
+		{
+		/* Give the player some energy */
+		p_ptr->energy += extract_energy[p_ptr->pspeed];
+		}
 
 	/* No turn yet */
 	if (p_ptr->energy < 100) return;
