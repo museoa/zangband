@@ -197,116 +197,6 @@ static void WishPanic TCL_VARARGS_DEF(char *,arg1)
     ExitProcess(1);
 }
 
-#if 0
-
-static void setargv(
-    int *argcPtr,		/* Filled with number of argument strings. */
-    char ***argvPtr		/* Filled with argument strings (malloc'd). */
-)
-{
-	char *cmdLine, *p, *arg, *argSpace;
-	char **argv;
-	int argc, size, inquote, copy, slashes;
-	
-	cmdLine = GetCommandLine();
-
-	/*
-	 * Precompute an overly pessimistic guess at the number of arguments
-	 * in the command line by counting non-space spans.
-	 */
-
-	size = 2;
-	for (p = cmdLine; *p != '\0'; p++)
-	{
-		if (isspace(*p))
-		{
-			size++;
-			while (isspace(*p))
-			{
-				p++;
-			}
-			if (*p == '\0')
-			{
-				break;
-			}
-		}
-	}
-	argSpace = (char *) ckalloc((unsigned) (size * sizeof(char *) 
-		+ strlen(cmdLine) + 1));
-	argv = (char **) argSpace;
-	argSpace += size * sizeof(char *);
-	size--;
-
-	p = cmdLine;
-	for (argc = 0; argc < size; argc++)
-	{
-		argv[argc] = arg = argSpace;
-		while (isspace(*p))
-		{
-			p++;
-		}
-		if (*p == '\0')
-		{
-			break;
-		}
-
-		inquote = 0;
-		slashes = 0;
-		while (1)
-		{
-			copy = 1;
-			while (*p == '\\')
-			{
-				slashes++;
-				p++;
-			}
-			if (*p == '"')
-			{
-				if ((slashes & 1) == 0)
-				{
-					copy = 0;
-					if ((inquote) && (p[1] == '"'))
-					{
-						p++;
-						copy = 1;
-					}
-					else
-					{
-						inquote = !inquote;
-					}
-				}
-				slashes >>= 1;
-			}
-
-			while (slashes)
-			{
-				*arg = '\\';
-				arg++;
-				slashes--;
-			}
-
-			if ((*p == '\0') || (!inquote && isspace(*p)))
-			{
-				break;
-			}
-			if (copy != 0)
-			{
-				*arg = *p;
-				arg++;
-			}
-			p++;
-		}
-		*arg = '\0';
-		argSpace = arg + 1;
-	}
-	argv[argc] = NULL;
-
-	*argcPtr = argc;
-	*argvPtr = argv;
-}
-
-#endif /* 0 */
-
 void TclTk_Exit(Tcl_Interp *interp)
 {
 	Tcl_DeleteInterp(interp);
@@ -318,6 +208,7 @@ void TclTk_Exit(Tcl_Interp *interp)
 #ifdef PLATFORM_X11
 #define HAVE_LIMITS_H
 #define HAVE_UNISTD_H
+#define _TCLINTDECLS
 #include <tkInt.h>
 #include <unistd.h>
 #include "tcltk.h"
@@ -362,19 +253,19 @@ Tcl_Interp *TclTk_Init(int argc, char **argv)
 
 	args = Tcl_Merge(argc-1, argv+1);
 	Tcl_ExternalToUtfDString(NULL, args, -1, &argString);
-	Tcl_SetVar(interp, "argv", Tcl_DStringValue(&argString), TCL_GLOBAL_ONLY);
+	Tcl_SetVar(interp, (char *) "argv", Tcl_DStringValue(&argString), TCL_GLOBAL_ONLY);
 	Tcl_DStringFree(&argString);
 	Tcl_Free(args);
 	sprintf(buf, "%d", argc-1);
 
 	Tcl_ExternalToUtfDString(NULL, argv[0], -1, &argString);
-	Tcl_SetVar(interp, "argc", buf, TCL_GLOBAL_ONLY);
-	Tcl_SetVar(interp, "argv0", Tcl_DStringValue(&argString), TCL_GLOBAL_ONLY);
+	Tcl_SetVar(interp, (char *) "argc", buf, TCL_GLOBAL_ONLY);
+	Tcl_SetVar(interp, (char *) "argv0", Tcl_DStringValue(&argString), TCL_GLOBAL_ONLY);
 	Tcl_DStringFree(&argString);
 
 	tsdPtr->tty = isatty(0);
-	Tcl_SetVar(interp, "tcl_interactive",
-		tsdPtr->tty ? "1" : "0", TCL_GLOBAL_ONLY);
+	Tcl_SetVar(interp, (char *) "tcl_interactive",
+		(char *) (tsdPtr->tty ? "1" : "0"), TCL_GLOBAL_ONLY);
 
 	/*** from tk83/unix/tkAppInit.c (Tcl_AppInit) ***/
 
@@ -386,7 +277,7 @@ Tcl_Interp *TclTk_Init(int argc, char **argv)
 	{
 		goto error;
 	}
-	Tcl_StaticPackage(interp, "Tk", Tk_Init, Tk_SafeInit);
+	Tcl_StaticPackage(interp, (char *) "Tk", Tk_Init, Tk_SafeInit);
 
 	/*** From tk83/generic/TkMain.c (again) ***/
 
@@ -420,7 +311,7 @@ Tcl_Interp *TclTk_Init(int argc, char **argv)
 	return interp;
 
 error:
-	TkpDisplayWarning(Tcl_GetStringResult(interp), "TclTk_Init Failed!");
+	TkpDisplayWarning(Tcl_GetStringResult(interp), (char *)"TclTk_Init Failed!");
 	Tcl_DeleteInterp(interp);
 	Tcl_Exit(1);
 	return NULL;
@@ -452,11 +343,7 @@ void TclTk_Exit(Tcl_Interp *interp)
  *----------------------------------------------------------------------
  */
 
-    /* ARGSUSED */
-static void
-StdinProc(clientData, mask)
-    ClientData clientData;		/* Not used. */
-    int mask;				/* Not used. */
+static void StdinProc(ClientData clientData, int mask)
 {
     static int gotPartial = 0;
     char *cmd;
@@ -465,6 +352,9 @@ StdinProc(clientData, mask)
     ThreadSpecificData *tsdPtr = (ThreadSpecificData *) 
             Tcl_GetThreadData(&dataKey, sizeof(ThreadSpecificData));
     Tcl_Interp *interp = tsdPtr->interp;
+
+	/* Hack - ignore parameter */
+	(void) mask;
 
     count = Tcl_Gets(chan, &tsdPtr->line);
 
@@ -545,19 +435,20 @@ StdinProc(clientData, mask)
  *----------------------------------------------------------------------
  */
 
-static void
-Prompt(interp, partial)
-    Tcl_Interp *interp;			/* Interpreter to use for prompting. */
-    int partial;			/* Non-zero means there already
-					 * exists a partial command, so use
-					 * the secondary prompt. */
+/*
+ * Interpreter to use for prompting.
+ * Non-zero 'partial' means there already
+ * exists a partial command, so use
+ * the secondary prompt.
+ */
+static void Prompt(Tcl_Interp *interp, int partial)
 {
     char *promptCmd;
     int code;
     Tcl_Channel outChannel, errChannel;
 
     promptCmd = Tcl_GetVar(interp,
-	partial ? "tcl_prompt2" : "tcl_prompt1", TCL_GLOBAL_ONLY);
+	(char *) (partial ? "tcl_prompt2" : "tcl_prompt1"), TCL_GLOBAL_ONLY);
     if (promptCmd == NULL) {
 defaultPrompt:
 	if (!partial) {
@@ -568,7 +459,7 @@ defaultPrompt:
              * this interpreter with "interp transfer".
              */
 
-	    outChannel = Tcl_GetChannel(interp, "stdout", NULL);
+	    outChannel = Tcl_GetChannel(interp, (char *) "stdout", NULL);
             if (outChannel != (Tcl_Channel) NULL) {
                 Tcl_WriteChars(outChannel, "% ", 2);
             }
@@ -577,22 +468,22 @@ defaultPrompt:
 	code = Tcl_Eval(interp, promptCmd);
 	if (code != TCL_OK) {
 	    Tcl_AddErrorInfo(interp,
-		    "\n    (script that generates prompt)");
+		    (char *) "\n    (script that generates prompt)");
             /*
              * We must check that errChannel is a real channel - it
              * is possible that someone has transferred stderr out of
              * this interpreter with "interp transfer".
              */
             
-	    errChannel = Tcl_GetChannel(interp, "stderr", NULL);
+	    errChannel = Tcl_GetChannel(interp, (char *) "stderr", NULL);
             if (errChannel != (Tcl_Channel) NULL) {
                 Tcl_WriteObj(errChannel, Tcl_GetObjResult(interp));
-                Tcl_WriteChars(errChannel, "\n", 1);
+                Tcl_WriteChars(errChannel, (char *) "\n", 1);
             }
 	    goto defaultPrompt;
 	}
     }
-    outChannel = Tcl_GetChannel(interp, "stdout", NULL);
+    outChannel = Tcl_GetChannel(interp, (char *) "stdout", NULL);
     if (outChannel != (Tcl_Channel) NULL) {
         Tcl_Flush(outChannel);
     }
