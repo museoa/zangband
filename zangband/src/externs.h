@@ -1004,7 +1004,6 @@ extern bool monst_spell_monst(int m_idx);
 
 /* artifact.c */
 extern bool create_artifact(object_type *o_ptr, int level, bool a_scroll);
-extern void random_resistance(object_type *o_ptr, int specific);
 extern void random_artifact_resistance(object_type *o_ptr);
 extern void create_named_art(int a_idx, int x, int y);
 

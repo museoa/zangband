@@ -2839,11 +2839,13 @@
 /* Sustain one stat */
 #define EGO_XTRA_SUSTAIN        1
 
-/* High resist */
-#define EGO_XTRA_POWER          2
+/* Resistances */
+#define EGO_XTRA_LO_RESIST      2
+#define EGO_XTRA_HI_RESIST      3
+#define EGO_XTRA_ANY_RESIST     4
 
 /* Special ability */
-#define EGO_XTRA_ABILITY        3
+#define EGO_XTRA_ABILITY        5
 
 
 /*** Object flag values ***/

@@ -78,7 +78,7 @@ static void random_plus(object_type *o_ptr)
 }
 
 
-void random_resistance(object_type *o_ptr, int specific)
+static void random_resistance(object_type *o_ptr, int specific)
 {
 	switch (specific ? specific : randint1(42))
 	{
@@ -2444,7 +2444,7 @@ void random_artifact_resistance(object_type *o_ptr)
 
 	if (give_resistance)
 	{
-		random_resistance(o_ptr, rand_range(17, 38));
+		add_ego_power(EGO_XTRA_HI_RESIST, o_ptr);
 	}
 }
 

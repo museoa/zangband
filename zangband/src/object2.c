@@ -2548,14 +2548,14 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 							o_ptr->flags2 |= TR2_RES_POIS;
 						}
 
-						random_resistance(o_ptr, rand_range(17, 38));
+						add_ego_power(EGO_XTRA_HI_RESIST, o_ptr);
 						add_ego_power(EGO_XTRA_SUSTAIN, o_ptr);
 						break;
 					}
 
 					case EGO_SLAY_DRAGON:
 					{
-						random_resistance(o_ptr, rand_range(5, 16));
+						add_ego_power(EGO_XTRA_LO_RESIST, o_ptr);
 
 						break;
 					}
@@ -2567,8 +2567,8 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 							o_ptr->flags2 |= TR2_RES_POIS;
 						}
 
-						random_resistance(o_ptr, rand_range(5, 16));
-						random_resistance(o_ptr, rand_range(5, 18));
+						add_ego_power(EGO_XTRA_LO_RESIST, o_ptr);
+						add_ego_power(EGO_XTRA_LO_RESIST, o_ptr);
 
 						break;
 					}
@@ -2604,7 +2604,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 
 					case EGO_CHAOTIC:
 					{
-						random_resistance(o_ptr, rand_range(5, 38));
+						add_ego_power(EGO_XTRA_ANY_RESIST, o_ptr);
 
 						break;
 					}
@@ -2632,7 +2632,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 						{
 							add_ego_power(EGO_XTRA_ABILITY, o_ptr);
 						}
-						random_resistance(o_ptr, rand_range(17, 38));
+						add_ego_power(EGO_XTRA_HI_RESIST, o_ptr);
 
 						break;
 					}
@@ -2653,7 +2653,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 							o_ptr->flags2 |= TR2_RES_FEAR;
 						}
 
-						random_resistance(o_ptr, rand_range(17, 38));
+						add_ego_power(EGO_XTRA_HI_RESIST, o_ptr);
 
 						break;
 					}
@@ -2748,7 +2748,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 				/* Extra powers */
 				if (ego == EGO_EXTRA_MIGHT)
 				{
-					random_resistance(o_ptr, rand_range(5, 38));
+					add_ego_power(EGO_XTRA_ANY_RESIST, o_ptr);
 				}
 			}
 
@@ -2811,10 +2811,7 @@ static void dragon_resist(object_type *o_ptr)
 {
 	do
 	{
-		if (one_in_(4))
-			random_resistance(o_ptr, rand_range(5, 18));
-		else
-			random_resistance(o_ptr, rand_range(17, 38));
+		add_ego_power(EGO_XTRA_ANY_RESIST, o_ptr);
 	}
 	while (one_in_(2));
 }
@@ -2911,7 +2908,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 						}
 						else
 						{
-							add_ego_power(EGO_XTRA_POWER, o_ptr);
+							add_ego_power(EGO_XTRA_HI_RESIST, o_ptr);
 						}
 
 						break;
@@ -2923,14 +2920,14 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 							o_ptr->flags2 |= TR2_RES_POIS;
 						}
 
-						random_resistance(o_ptr, rand_range(17, 38));
+						add_ego_power(EGO_XTRA_HI_RESIST, o_ptr);
 
 						break;
 					}
 
 					case EGO_ELVENKIND:
 					{
-						add_ego_power(EGO_XTRA_POWER, o_ptr);
+						add_ego_power(EGO_XTRA_HI_RESIST, o_ptr);
 
 						break;
 					}
@@ -2975,7 +2972,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 					/* Extra powers */
 					if (ego == EGO_ENDURANCE)
 					{
-						random_resistance(o_ptr, rand_range(5, 38));
+						add_ego_power(EGO_XTRA_ANY_RESIST, o_ptr);
 
 						if (one_in_(4))
 						{
@@ -3009,7 +3006,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				/* Extra powers */
 				if (ego == EGO_POWER)
 				{
-					random_resistance(o_ptr, rand_range(17, 38));
+					add_ego_power(EGO_XTRA_HI_RESIST, o_ptr);
 				}
 			}
 
@@ -3050,7 +3047,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				{
 					if (one_in_(2))
 					{
-						random_resistance(o_ptr, rand_range(17, 38));
+						add_ego_power(EGO_XTRA_HI_RESIST, o_ptr);
 					}
 				}
 			}
@@ -3092,20 +3089,20 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				{
 					case EGO_MAGI:
 					{
-						random_resistance(o_ptr, rand_range(17, 38));
+						add_ego_power(EGO_XTRA_HI_RESIST, o_ptr);
 						add_ego_power(EGO_XTRA_ABILITY, o_ptr);
 
 						break;
 					}
 					case EGO_MIGHT:
 					{
-						random_resistance(o_ptr, rand_range(17, 38));
+						add_ego_power(EGO_XTRA_HI_RESIST, o_ptr);
 
 						break;
 					}
 					case EGO_LORDLINESS:
 					{
-						random_resistance(o_ptr, rand_range(17, 38));
+						add_ego_power(EGO_XTRA_HI_RESIST, o_ptr);
 
 						break;
 					}
@@ -3215,7 +3212,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				/* Extra powers */
 				if (ego == EGO_AMAN)
 				{
-					add_ego_power(EGO_XTRA_POWER, o_ptr);
+					add_ego_power(EGO_XTRA_HI_RESIST, o_ptr);
 				}
 			}
 
@@ -3367,7 +3364,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 				{
 					do
 					{
-						random_resistance(o_ptr, rand_range(19, 38));
+						add_ego_power(EGO_XTRA_HI_RESIST, o_ptr);
 					}
 					while (one_in_(4));
 
@@ -3593,7 +3590,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 				{
 					if (one_in_(3))
 					{
-						random_resistance(o_ptr, rand_range(5, 38));
+						add_ego_power(EGO_XTRA_HI_RESIST, o_ptr);
 					}
 
 					if (one_in_(5))
@@ -3856,6 +3853,14 @@ static void a_m_aux_4(object_type *o_ptr, int level, byte flags)
 
 void add_ego_power(int power, object_type *o_ptr)
 {
+	if (power == EGO_XTRA_ANY_RESIST)
+	{
+		if (one_in_(4))
+			power = EGO_XTRA_LO_RESIST;
+		else
+			power = EGO_XTRA_HI_RESIST;
+	}
+
 	switch (power)
 	{
 		case EGO_XTRA_ABILITY:
@@ -3947,10 +3952,40 @@ void add_ego_power(int power, object_type *o_ptr)
 			break;
 		}
 
-		case EGO_XTRA_POWER:
+		case EGO_XTRA_LO_RESIST:
+		{
+			/* Choose a low resistance */
+			switch (randint0(4))
+			{
+				case 0:
+				{
+					(o_ptr->flags2) |= (TR2_RES_ACID);
+					break;
+				}
+				case 1:
+				{
+					(o_ptr->flags2) |= (TR2_RES_ELEC);
+					break;
+				}
+				case 2:
+				{
+					(o_ptr->flags2) |= (TR2_RES_FIRE);
+					break;
+				}
+				case 3:
+				{
+					(o_ptr->flags2) |= (TR2_RES_COLD);
+					break;
+				}
+			}
+
+			break;
+		}
+
+		case EGO_XTRA_HI_RESIST:
 		{
 			/* Choose a power */
-			switch (randint0(11))
+			switch (randint0(12))
 			{
 				case 0:
 				{
@@ -4005,6 +4040,11 @@ void add_ego_power(int power, object_type *o_ptr)
 				case 10:
 				{
 					(o_ptr->flags2) |= (TR2_RES_LITE);
+					break;
+				}
+				case 11:
+				{
+					(o_ptr->flags2) |= (TR2_RES_FEAR);
 					break;
 				}
 			}
