@@ -3147,34 +3147,34 @@ struct vinfo_hack
 
 
 /*
- * Sorting hook -- comp function -- array of long's (see below)
+ * Sorting hook -- comp function -- array of s32b (see below)
  *
- * We use "u" to point to an array of long integers.
+ * We use "u" to point to an array of s32b.
  */
-static bool ang_sort_comp_hook_longs(const vptr u, const vptr v, int a, int b)
+static bool ang_sort_comp_hook_s32b(const vptr u, const vptr v, int a, int b)
 {
-	long *x = (long*)(u);
+	s32b *x = (s32b*)(u);
 
 	/* Hack - ignore v */
-	(void) v;
+	(void)v;
 	
 	return (x[a] <= x[b]);
 }
 
 
 /*
- * Sorting hook -- comp function -- array of long's (see below)
+ * Sorting hook -- comp function -- array of s32b (see below)
  *
- * We use "u" to point to an array of long integers.
+ * We use "u" to point to an array of s32b.
  */
-static void ang_sort_swap_hook_longs(const vptr u, const vptr v, int a, int b)
+static void ang_sort_swap_hook_s32b(const vptr u, const vptr v, int a, int b)
 {
-	long *x = (long*)(u);
+	s32b *x = (s32b*)(u);
 
-	long temp;
+	s32b temp;
 
 	/* Hack - ignore v */
-	(void) v;
+	(void)v;
 	
 	/* Swap */
 	temp = x[a];
@@ -3187,7 +3187,7 @@ static void ang_sort_swap_hook_longs(const vptr u, const vptr v, int a, int b)
 /*
  * Save a slope
  */
-static void vinfo_init_aux(vinfo_hack *hack, int y, int x, long m)
+static void vinfo_init_aux(vinfo_hack *hack, int y, int x, s32b m)
 {
 	int i;
 
@@ -3239,7 +3239,7 @@ errr vinfo_init(void)
 	int i, j;
 	int y, x;
 
-	long m;
+	s32b m;
 
 	vinfo_hack *hack;
 
@@ -3325,10 +3325,10 @@ errr vinfo_init(void)
 
 
 	/* Sort slopes numerically */
-	ang_sort_comp = ang_sort_comp_hook_longs;
+	ang_sort_comp = ang_sort_comp_hook_s32b;
 
 	/* Sort slopes numerically */
-	ang_sort_swap = ang_sort_swap_hook_longs;
+	ang_sort_swap = ang_sort_swap_hook_s32b;
 
 	/* Sort the (unique) slopes */
 	ang_sort(hack->slopes, NULL, hack->num_slopes);
