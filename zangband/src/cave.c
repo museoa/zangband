@@ -2414,13 +2414,13 @@ void forget_lite(void)
  * have already been placed into the "lite" array, and we are never
  * called when the "lite" array is full.
  */
+
 #define cave_lite_hack(Y,X) \
     if(in_bounds2(Y,X)){\
     area(Y,X)->info |= (CAVE_LITE); \
     lite_y[lite_n] = (Y); \
     lite_x[lite_n] = (X); \
     lite_n++;}
-
 
 
 /*
@@ -2591,20 +2591,39 @@ void update_lite(void)
 
 		/* Maximal north */
 		min_y = py - p;
-		if (min_y < 0) min_y = 0;
+		
 
 		/* Maximal south */
 		max_y = py + p;
-		if (max_y > cur_hgt-1) max_y = cur_hgt-1;
+		
 
 		/* Maximal west */
 		min_x = px - p;
-		if (min_x < 0) min_x = 0;
+		
 
 		/* Maximal east */
 		max_x = px + p;
-		if (max_x > cur_wid-1) max_x = cur_wid-1;
+		
 
+		/* Bounds Checking */
+		if(dun_level)
+		{
+			/* Inside Dungeon */
+			if (min_y < 0) min_y = 0;
+			if (max_y > cur_hgt-1) max_y = cur_hgt-1;
+			if (min_x < 0) min_x = 0;
+			if (max_x > cur_wid-1) max_x = cur_wid-1;		
+		}
+		else
+		{
+			/* Inside Wilderness */
+			if (min_y < wild_grid.y_min) min_y = wild_grid.y_min;
+			if (max_y > wild_grid.y_max-1) max_y = wild_grid.y_max-1;
+			if (min_x < wild_grid.x_min) min_x = wild_grid.x_min;
+			if (max_x > wild_grid.x_max-1) max_x = wild_grid.x_max-1;		
+		}
+		
+		
 		/* Scan the maximal box */
 		for (y = min_y; y <= max_y; y++)
 		{
