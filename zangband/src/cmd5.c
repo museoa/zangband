@@ -1983,19 +1983,20 @@ static bool cast_trump_spell(int spell, bool success)
 				dun_type *d_ptr = dungeon();
 				
 				s16b max_depth = MAX(p_ptr->depth, d_ptr->recall_depth);
+				s16b min_depth = d_ptr->min_level;
 			
 				/* Default */
-				strnfmt(tmp_val, 160, "%d", MAX(max_depth, 1));
+				strnfmt(tmp_val, 160, "%d", MAX(max_depth, min_depth));
 
 				/* Ask for a level */
-				if (get_string(tmp_val, 11, "Reset to which level (1-%d): ",
-								 max_depth))
+				if (get_string(tmp_val, 11, "Reset to which level (%d-%d): ",
+								 min_depth, max_depth))
 				{
 					/* Extract request */
 					dummy = atoi(tmp_val);
 
 					/* Paranoia */
-					if (dummy < 1) dummy = 1;
+					if (dummy < min_depth) dummy = min_depth;
 
 					/* Paranoia */
 					if (dummy > max_depth) dummy = max_depth;
