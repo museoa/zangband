@@ -2718,8 +2718,6 @@ static void process_player(void)
 		{
 			int i = 0;
 
-			char o_name[256];
-
 			object_type *o_ptr;
 
 			/* Scan pack */
@@ -2736,18 +2734,9 @@ static void process_player(void)
 
 					/* Warning */
 					msg_print("Your pack overflows!");
-
-					/* Describe */
-					object_desc(o_name, o_ptr, TRUE, 3, 256);
-
-					/* Message */
-					msg_format("You drop %s (%c).", o_name, I2A(i));
-
-					/* Drop it (carefully) near the player */
-					drop_near(o_ptr, 0, p_ptr->px, p_ptr->py);
-
-					/* Modify, Describe, Optimize */
-					item_increase(o_ptr, -255);
+					
+					/* Drop the excess item(s) */
+					inven_drop(o_ptr, o_ptr->number);
 				}
 
 			}
