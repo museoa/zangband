@@ -559,6 +559,9 @@ static void save_map_location(int x, int y, term_map *map)
 	map_blk_ptr mbp_ptr;
 	map_block *mb_ptr;
 	
+	int x1 = x / WILD_BLOCK_SIZE;
+	int y1 = y / WILD_BLOCK_SIZE;
+	
 	int block_num;
 	
 	/* Does the location exist? */
@@ -568,16 +571,16 @@ static void save_map_location(int x, int y, term_map *map)
 		block_num = get_empty_block();	
 	
 		/* Set this block up */
-		map_refcount[y / WILD_BLOCK_SIZE][x / WILD_BLOCK_SIZE] = 1;
+		map_refcount[y1][x1] = 0;
 		
 		mbp_ptr = map_cache[block_num];
 
 		/* Link to the map */
-		map_grid[y / WILD_BLOCK_SIZE][x / WILD_BLOCK_SIZE] = block_num;
+		map_grid[y1][x1] = block_num;
 	}
 	else
 	{
-		block_num = map_grid[y / WILD_BLOCK_SIZE][x / WILD_BLOCK_SIZE];
+		block_num = map_grid[y1][x1];
 		mbp_ptr = map_cache[block_num];
 	}
 	
@@ -597,6 +600,9 @@ static void save_map_location(int x, int y, term_map *map)
 		/* Was seen, and now is not */
 		if (mb_ptr->flags & MAP_SEEN)
 		{
+			/* Paranoia */
+			if (!map_cache_refcount[block_num]) quit("Decrementing invalid overhead map loc");
+			
 			map_cache_refcount[block_num]--;
 		}
 	}
@@ -609,13 +615,10 @@ static void save_map_location(int x, int y, term_map *map)
 	
 	/* Save the flags */
 	mb_ptr->flags = map->flags;
-
-	/* Hack - save player location */
-	if (map->monster == -1)
-	{
-		player_x = x;
-		player_y = y;
-	}
+	
+	/* XXX XXX Hack */
+	player_x = p_ptr->px;
+	player_y = p_ptr->py;
 }
 
 
@@ -627,17 +630,6 @@ map_block *map_loc(int x, int y)
 	return (&map_cache[map_grid[y / WILD_BLOCK_SIZE][x / WILD_BLOCK_SIZE]]
 				[y & 15][x & 15]);
 }
-
-
-/*
- * Hook to send map information
- */
-errr (*term_map_hook) (int x, int y, term_map *map) = NULL;
-
-/*
- * Hook to erase the map
- */
-errr (*term_erase_map_hook) (void) = NULL;
 
 
 /*
@@ -662,6 +654,9 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 
 	/* Paranoia */
 	if (!map_init) return;
+	
+	/* clear map info */
+	(void)WIPE(&map, term_map);
 
 	/* Visible, and not hallucinating */
 	if (visible && !p_ptr->image)
@@ -669,6 +664,7 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 		/* Save known data */
 		map.terrain = pc_ptr->feat;
 
+		/* Save known monsters */
 		if (c_ptr->m_idx)
 		{
 			m_ptr = &m_list[c_ptr->m_idx];
@@ -723,13 +719,6 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 	{
 		map.flags = glow ? MAP_GLOW : 0;
 	}
-	
-	/* Hack - check if is player location */
-	if ((p_ptr->px == x) && (p_ptr->py = y))
-	{
-		/* Hack - set monster as a flag */
-		map.monster = -1;
-	}
 
 	/* Save information in map */
 	save_map_location(x,y, &map);
@@ -740,6 +729,7 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
  */
 void Term_erase_map(void)
 {
+	/* Paranoia */
 	if (!map_init) return;
 	
 	/* Notify erasure of the map */
