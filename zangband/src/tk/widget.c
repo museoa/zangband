@@ -1305,6 +1305,9 @@ redraw:
 }
 
 
+/* Hack - Tk versions before 8.4 used an internal interface for this */
+#ifdef HAVE_TK_SETCLASSPROCS
+
 /* Table of procedures for the "Widget" class */
 static Tk_ClassProcs widgetProcs = {
 	sizeof(Tk_ClassProcs),
@@ -1312,6 +1315,41 @@ static Tk_ClassProcs widgetProcs = {
 	NULL,							/* createProc. */
     NULL							/* modalProc. */ 
 };
+
+#else /* HAVE_TK_SETCLASSPROCS */
+
+typedef Window (TkClassCreateProc) _ANSI_ARGS_((Tk_Window tkwin,
+	 Window parent, ClientData instanceData));
+typedef void (TkClassGeometryProc) _ANSI_ARGS_((ClientData instanceData));
+typedef void (TkClassModalProc) _ANSI_ARGS_((Tk_Window tkwin,
+	 XEvent *eventPtr));
+
+typedef struct TkClassProcs {
+    TkClassCreateProc *createProc;
+			 /* Procedure to invoke when the
+			    platform-dependent window needs to be
+			    created. */
+    TkClassGeometryProc *geometryProc;
+			 /* Procedure to invoke when the geometry of a
+			    window needs to be recalculated as a result
+			    of some change in the system. */
+    TkClassModalProc *modalProc;
+			 /* Procedure to invoke after all bindings on a
+			    widget have been triggered in order to
+			    handle a modal loop. */
+} TkClassProcs;
+
+struct TkClassProcs widgetProcs = {
+	NULL,
+	Widget_WorldChanged,
+	NULL
+};
+
+extern void TkSetClassProcs(Tk_Window, TkClassProcs *, ClientData);
+
+#define Tk_SetClassProcs TkSetClassProcs
+
+#endif /* !HAVE_TK_SETCLASSPROCS */
 
 
 /*

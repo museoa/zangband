@@ -169,7 +169,7 @@ void *Plat_PaletteInit(unsigned char *rgb)
 #include <sys/ipc.h>
 #include <sys/shm.h>
 
-#include <tkIntPlatDecls.h>
+/* #include <tkIntPlatDecls.h> */
 
 struct PlatBitmap
 {
