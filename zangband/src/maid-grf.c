@@ -1750,7 +1750,7 @@ static void map_info(int x, int y, byte *ap, char *cp, byte *tap, char *tcp)
 			map.flags |= MAP_ONCE;
 			
 			/* High priority tile */
-			map.priority = 30;
+			map.priority = 20;
 		
 			/* Which display level to use? */
 			if (fld_ptr->info & FIELD_INFO_FEAT)
@@ -1818,7 +1818,7 @@ static void map_info(int x, int y, byte *ap, char *cp, byte *tap, char *tcp)
 			map.flags |= MAP_ONCE;
 			
 			/* High priority tile */
-			map.priority = 30;
+			map.priority = 20;
 		
 			/* A field is obscuring the view to the object */
 			if (float_field) break;
@@ -1864,7 +1864,7 @@ static void map_info(int x, int y, byte *ap, char *cp, byte *tap, char *tcp)
 		}
 		
 		/* High priority tile */
-		map.priority = 40;
+		map.priority = 24;
 	}
 
 	/* Hack -- fake monochrome */
@@ -2214,8 +2214,8 @@ static byte priority(byte feat)
 		i++;
 	}
 
-	/* Default  (The player /objects/fields?) */
-	return (20);
+	/* Default - assume floor */
+	return (5);
 }
 
 
