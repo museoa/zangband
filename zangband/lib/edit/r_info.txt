@@ -944,7 +944,7 @@ F:ANIMAL
 D:It is six inches long.
 
 N:70:Piranha
-G:~:B
+G:l:B
 I:120:2d5:20:10:5
 W:3:1:0:8
 B:BITE:HURT:9d1
@@ -1140,7 +1140,7 @@ D:A pathetic breed of tiny snaga-like creatures. They are running
 D:wild and screaming all the time!
 
 N:88:Swordfish
-G:~:W
+G:l:W
 I:120:4d10:14:15:20
 W:4:2:0:15
 B:STING:HURT:5d1
@@ -1228,7 +1228,7 @@ F:ANIMAL | AQUATIC | WEIRD_MIND | RAND_25
 D:Yech! The disgusting thing only wants your blood!
 
 N:96:Barracuda
-G:~:b
+G:l:b
 I:120:5d10:20:30:20
 W:5:2:0:30
 B:BITE:HURT:10d1
@@ -2338,7 +2338,7 @@ D:"Grishnakh [was] a short crook-legged creature, very broad and with
 D:long arms that hung almost to the ground." 
 
 N:187:Giant piranha
-G:~:B
+G:l:B
 I:120:5d8:30:20:10
 W:10:2:0:40
 B:BITE:HURT:9d1
@@ -2743,7 +2743,7 @@ S:ARROW_2
 D:A warrior trained in melee as well as missile weapons.
 
 N:220:Ixitxachitl
-G:~:s
+G:l:s
 I:110:9d8:20:15:20
 W:12:1:0:40
 B:STING:POISON:2d5
@@ -3320,7 +3320,7 @@ D:A giant snake-like figure with a woman's torso. Not as strong
 D:as other nagas, but more talented in magic.
 
 N:266:Giant octopus
-G:~:v
+G:l:v
 I:105:22d11:60:30:60
 W:15:2:0:60
 B:SPIT:BLIND:1d3
@@ -3660,7 +3660,7 @@ F:EVIL
 D:A short and swarthy Easterling.
 
 N:292:Hammerhead
-G:~:b
+G:l:b
 I:115:11d10:20:30:20
 W:16:3:0:40
 B:BITE:HURT:4d4
@@ -3996,7 +3996,7 @@ D:A pile of rotting vegetation that slides towards you with a disgusting
 D:stench, waking all it nears.
 
 N:317:White shark
-G:~:W
+G:l:W
 I:120:7d10:20:25:10
 W:18:1:0:68
 B:BITE:HURT:3d5
@@ -4133,7 +4133,7 @@ D:Its face is curiously human despite the absence of a nose, a
 D:forehead, and "other important particulars".
 
 N:328:Ixitxachitl priest
-G:~:s
+G:l:s
 I:110:7d10:20:20:20
 W:19:1:0:80
 B:STING:POISON:2d7
@@ -4366,7 +4366,7 @@ F:ANIMAL | EVIL | FRIENDS
 D:It is a tracker; half human, half beast.
 
 N:345:Whale
-G:~:G
+G:l:G
 I:110:22d20:15:25:70
 W:20:4:0:175
 B:CRUSH:HURT:1d20
@@ -4570,7 +4570,7 @@ S:BR_ELEC
 D:A shimmering tornado of air, sparks crackle along its length.
 
 N:360:Globefish
-G:~:w
+G:l:w
 I:110:14d10:20:15:30
 W:21:1:0:200
 B:BITE:POISON:5d5
@@ -4610,7 +4610,7 @@ F:NO_CONF | NO_SLEEP | NO_FEAR
 D:It is an orcish figure covered in wrappings.
 
 N:363:Killer whale
-G:~:w
+G:l:w
 I:115:22d11:12:26:30
 W:22:1:0:85
 B:BITE:HURT:8d3
@@ -4916,7 +4916,7 @@ F:FORCE_MAXHP | RES_TELE | EMPTY_MIND | CAN_FLY
 D:A creature that is half real, half illusion.
 
 N:386:Great white shark
-G:~:w
+G:l:w
 I:120:75d6:20:35:20
 W:24:2:0:250
 B:BITE:HURT:3d6
@@ -5197,7 +5197,7 @@ F:ANIMAL | CAN_FLY
 D:A giant beetle with poisonous mandibles.
 
 N:406:Vampiric ixitxachitl
-G:~:D
+G:l:D
 I:110:17d22:20:25:20
 W:26:1:0:120
 B:STING:POISON:2d8
@@ -5728,7 +5728,7 @@ D:He is a figure encased in deep black plate armour; he looks at you
 D:menacingly.
 
 N:443:Seahorse
-G:~:o
+G:l:o
 I:120:83d11:20:30:20
 W:28:2:0:360
 B:BITE:PARALYZE:4d5
@@ -6095,7 +6095,7 @@ F:NO_CONF | NO_SLEEP | NO_FEAR
 D:It is the skeleton of a tyrannosaurus, animated by dark dweomers.
 
 N:467:Jaws
-G:~:w
+G:l:w
 I:120:54d12:10:40:12
 W:30:2:0:500
 B:BITE:HURT:11d2
@@ -6309,7 +6309,7 @@ D:which may be her downfall.  She used to guard the pass through Cirith
 D:Ungol, but has not been seen there for many eons.
 
 N:482:Giant squid
-G:~:g
+G:l:g
 I:110:80d7:8:40:80
 W:32:3:0:600
 B:CRUSH:HURT:8d4
@@ -7820,7 +7820,7 @@ S:SLOW | BR_TIME |
 D:You have not seen it yet.
 
 N:580:Flying polyp
-G:~:R
+G:l:R
 I:120:35d7:90:35:10
 W:37:2:0:1000
 B:CRUSH:PARALYZE:8d4
@@ -8046,7 +8046,7 @@ S:BR_ACID | BR_FIRE | BR_COLD | BR_ELEC | BR_POIS
 D:A large dragon, scales shimmering many colours.
 
 N:594:Sky whale
-G:~:B
+G:l:B
 I:110:60d10:20:37:30
 W:38:6:0:1750
 B:CRUSH:HURT:20d2
@@ -8972,7 +8972,7 @@ D:It is a demon of small stature, but its armoured frame moves with
 D:lightning speed and its powers make it a tornado of death and destruction.
 
 N:650:Giganto the Gargantuan
-G:~:s
+G:l:s
 I:110:60d25:20:35:30
 W:38:6:0:7750
 B:CRUSH:HURT:33d2
@@ -9327,7 +9327,7 @@ S:BR_POIS | BR_DARK | BR_NETH
 D:A large basilisk, whose shape resembles that of a great wyrm.
 
 N:669:Charybdis
-G:~:r
+G:l:r
 I:120:40d70:20:50:70
 W:42:1:0:13000
 B:ENGULF:HURT:10d8
@@ -10616,7 +10616,7 @@ D:was concentrated in their lean, hungry bodies. Or had they
 D:bodies? I saw them only for a moment, I cannot be certain."
 
 N:740:Lesser kraken
-G:~:G
+G:l:G
 I:120:112d22:30:75:80
 W:54:2:0:20000
 B:CRUSH:HURT:16d12
@@ -11331,7 +11331,7 @@ D:An aura of hatred, cowardice and falsehood surrounds you as this
 D:cloaked figure floats towards you.
 
 N:775:Greater kraken
-G:~:G
+G:l:G
 I:120:40d70:30:62:80
 W:63:2:0:25000
 B:CRUSH:HURT:15d15
@@ -11579,7 +11579,7 @@ D:bearded face, curved, smiling lips, Olympian brow; and dense locks
 D:waving and poppy-crowned."
 
 N:788:Glaaki
-G:~:g
+G:l:g
 I:130:52d70:20:75:10
 W:67:2:0:36000
 B:STING:HURT:20d1
