@@ -2680,14 +2680,14 @@ bool earthquake(int cx, int cy, int r)
 				{
 					msgf("You are bashed by rubble!");
 					damage = damroll(10, 4);
-					(void)set_stun(p_ptr->tim.stun + randint1(50));
+					(void)inc_stun(randint1(50));
 					break;
 				}
 				case 3:
 				{
 					msgf("You are crushed between the floor and ceiling!");
 					damage = damroll(10, 4);
-					(void)set_stun(p_ptr->tim.stun + randint1(50));
+					(void)inc_stun(randint1(50));
 					break;
 				}
 			}

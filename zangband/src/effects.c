@@ -1509,7 +1509,7 @@ bool inc_oppose_pois(int v)
  *
  * Note the special code to only notice "range" changes.
  */
-bool set_stun(int v)
+static bool set_stun(int v)
 {
 	int old_aux, new_aux;
 	bool notice = FALSE;
@@ -1684,11 +1684,29 @@ bool set_stun(int v)
 
 
 /*
+ * Increase the "stun" counter
+ */
+bool inc_stun(int v)
+{
+	return(set_stun(p_ptr->tim.stun + v));
+}
+
+
+/*
+ * No more "stun"
+ */
+bool clear_stun(void)
+{
+	return(set_stun(0));
+}
+
+
+/*
  * Set "p_ptr->cut", notice observable changes
  *
  * Note the special code to only notice "range" changes.
  */
-bool set_cut(int v)
+static bool set_cut(int v)
 {
 	int old_aux, new_aux;
 
@@ -1908,6 +1926,24 @@ bool set_cut(int v)
 
 	/* Result */
 	return (TRUE);
+}
+
+
+/*
+ * Increase the "cut" counter
+ */
+bool inc_cut(int v)
+{
+	return(set_cut(p_ptr->tim.cut + v));
+}
+
+
+/*
+ * No more "cuts"
+ */
+bool clear_cut(void)
+{
+	return(set_cut(0));
 }
 
 

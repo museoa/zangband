@@ -1243,8 +1243,8 @@ static void do_cmd_wiz_cure_all(void)
 	(void)clear_afraid();
 	(void)clear_paralyzed();
 	(void)clear_image();
-	(void)set_stun(0);
-	(void)set_cut(0);
+	(void)clear_stun();
+	(void)clear_cut();
 	(void)clear_slow();
 
 	/* No longer hungry */

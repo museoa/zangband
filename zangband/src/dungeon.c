@@ -544,8 +544,8 @@ static bool pattern_effect(void)
 	{
 		(void)clear_poisoned();
 		(void)clear_image();
-		(void)set_stun(0);
-		(void)set_cut(0);
+		(void)clear_stun();
+		(void)clear_cut();
 		(void)clear_blind();
 		(void)clear_afraid();
 		(void)do_res_stat(A_STR);
@@ -1544,7 +1544,7 @@ static void process_world(void)
 		int adjust = adj_con_fix[p_ptr->stat[A_CON].ind] + 1;
 
 		/* Apply some healing */
-		(void)set_stun(p_ptr->tim.stun - adjust);
+		(void)inc_stun(-adjust);
 	}
 
 	/* Cut */
@@ -1559,7 +1559,7 @@ static void process_world(void)
 		if (p_ptr->tim.cut > 1000) adjust = 0;
 
 		/* Apply some healing */
-		(void)set_cut(p_ptr->tim.cut - adjust);
+		(void)inc_cut(-adjust);
 	}
 
 	/*** Process mutation effects ***/
@@ -3586,8 +3586,8 @@ void play_game(bool new_game)
 				(void)clear_afraid();
 				(void)clear_paralyzed();
 				(void)clear_image();
-				(void)set_stun(0);
-				(void)set_cut(0);
+				(void)clear_stun();
+				(void)clear_cut();
 
 				/* Hack"-- Prevent starvation */
 				(void)set_food(PY_FOOD_MAX - 1);

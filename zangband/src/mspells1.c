@@ -1611,7 +1611,7 @@ bool make_attack_spell(int m_idx)
 			else
 			{
 				take_hit(damroll(15, 15), ddesc);
-				(void)set_cut(p_ptr->tim.cut + damroll(10, 10));
+				(void)inc_cut(damroll(10, 10));
 			}
 			break;
 		}

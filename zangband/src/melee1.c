@@ -1444,7 +1444,7 @@ bool make_attack_normal(int m_idx)
 				}
 
 				/* Apply the cut */
-				if (k) (void)set_cut(p_ptr->tim.cut + k);
+				if (k) (void)inc_cut(k);
 			}
 
 			/* Handle stun */
@@ -1499,7 +1499,7 @@ bool make_attack_normal(int m_idx)
 				}
 
 				/* Apply the stun */
-				if (k) (void)set_stun(p_ptr->tim.stun + k);
+				if (k) (void)inc_stun(k);
 			}
 
 			if (explode)

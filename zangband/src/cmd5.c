@@ -608,7 +608,7 @@ static bool cast_life_spell(int spell)
 			break;
 		case 1:				/* Cure Light Wounds */
 			(void)hp_player(damroll(2, 10));
-			(void)set_cut(p_ptr->tim.cut - 10);
+			(void)inc_cut(-10);
 			break;
 		case 2:				/* Bless */
 			(void)inc_blessed(rand_range(12, 24));
@@ -626,7 +626,7 @@ static bool cast_life_spell(int spell)
 			break;
 		case 6:				/* Cure Medium Wounds */
 			(void)hp_player(damroll(4, 10));
-			(void)set_cut((p_ptr->tim.cut / 2) - 20);
+			(void)inc_cut(-40);
 			break;
 		case 7:				/* Satisfy Hunger */
 			(void)set_food(PY_FOOD_MAX - 1);
@@ -639,8 +639,8 @@ static bool cast_life_spell(int spell)
 			break;
 		case 10:				/* Cure Critical Wounds */
 			(void)hp_player(damroll(8, 10));
-			(void)set_stun(0);
-			(void)set_cut(0);
+			(void)clear_stun();
+			(void)clear_cut();
 			break;
 		case 11:				/* Sense Unseen */
 			(void)inc_tim_invis(rand_range(24, 48));
@@ -661,8 +661,8 @@ static bool cast_life_spell(int spell)
 			break;
 		case 14:				/* Healing */
 			(void)hp_player(300);
-			(void)set_stun(0);
-			(void)set_cut(0);
+			(void)clear_stun();
+			(void)clear_cut();
 			break;
 		case 15:				/* Glyph of Warding */
 			(void)warding_glyph();
@@ -696,8 +696,8 @@ static bool cast_life_spell(int spell)
 			(void)hp_player(1000);
 			(void)clear_afraid();
 			(void)clear_poisoned();
-			(void)set_stun(0);
-			(void)set_cut(0);
+			(void)clear_stun();
+			(void)clear_cut();
 			break;
 		case 23:				/* Warding True */
 			(void)warding_glyph();
@@ -724,8 +724,8 @@ static bool cast_life_spell(int spell)
 			break;
 		case 28:				/* Healing True */
 			(void)hp_player(2000);
-			(void)set_stun(0);
-			(void)set_cut(0);
+			(void)clear_stun();
+			(void)clear_cut();
 			break;
 		case 29:				/* Holy Vision */
 			return identify_fully();
@@ -914,7 +914,7 @@ static bool cast_nature_spell(int spell)
 			break;
 		case 1:				/* First Aid */
 			(void)hp_player(damroll(2, 8));
-			(void)set_cut(p_ptr->tim.cut - 15);
+			(void)inc_cut(-15);
 			break;
 		case 2:				/* Detect Doors + Traps */
 			(void)detect_traps();
@@ -945,7 +945,7 @@ static bool cast_nature_spell(int spell)
 			(void)inc_oppose_elec(rand_range(20, 40));
 			break;
 		case 7:				/* Cure Wounds + Poison */
-			(void)set_cut(0);
+			(void)clear_cut();
 			(void)clear_poisoned();
 			break;
 		case 8:				/* Stone to Mud */
@@ -987,8 +987,8 @@ static bool cast_nature_spell(int spell)
 			break;
 		case 15:				/* Herbal Healing */
 			(void)hp_player(1000);
-			(void)set_stun(0);
-			(void)set_cut(0);
+			(void)clear_stun();
+			(void)clear_cut();
 			(void)clear_poisoned();
 			break;
 		case 16:				/* Door Building */
@@ -2515,7 +2515,7 @@ static bool cast_arcane_spell(int spell)
 			break;
 		case 7:				/* Cure Light Wounds */
 			(void)hp_player(damroll(2, 8));
-			(void)set_cut(p_ptr->tim.cut - 10);
+			(void)inc_cut(-10);
 			break;
 		case 8:				/* Detect Doors & Traps */
 			(void)detect_traps();
@@ -2552,7 +2552,7 @@ static bool cast_arcane_spell(int spell)
 			break;
 		case 18:				/* Cure Medium Wounds */
 			(void)hp_player(damroll(4, 8));
-			(void)set_cut((p_ptr->tim.cut / 2) - 50);
+			(void)inc_cut(-50);
 			break;
 		case 19:				/* Teleport */
 			teleport_player(plev * 5);

@@ -3573,8 +3573,8 @@ void gain_level_reward(int chosen_reward)
 			(void)clear_blind();
 			(void)clear_confused();
 			(void)clear_image();
-			(void)set_stun(0);
-			(void)set_cut(0);
+			(void)clear_stun();
+			(void)clear_cut();
 			for (i = 0; i < A_MAX; i++)
 			{
 				(void)do_res_stat(i);

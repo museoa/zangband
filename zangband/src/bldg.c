@@ -1715,7 +1715,7 @@ static void bldg_process_command(building_type * bldg, int i)
 			clear_blind();
 			clear_confused();
 			set_cut(0);
-			set_stun(0);
+			clear_stun();
 			paid = TRUE;
 			break;
 		}

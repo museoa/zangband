@@ -2397,7 +2397,7 @@ void do_cmd_fire_aux(object_type *o_ptr, const object_type *j_ptr)
 
 		/* Inflict both normal and wound damage. */
 		take_hit(tdam, "ammo of backbiting.");
-		set_cut(randint1(tdam * 3));
+		inc_cut(randint1(tdam * 3));
 
 		/* That ends that shot! */
 		return;

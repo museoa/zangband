@@ -392,7 +392,7 @@ static bool cast_mindcrafter_spell(int spell)
 		case MINDCRAFT_ADRENALINE_CHANNELING:
 			/* Adrenaline */
 			(void)clear_afraid();
-			(void)set_stun(0);
+			(void)clear_stun();
 
 			/*
 			 * Only heal when Adrenalin Channeling is not active. We check
@@ -533,7 +533,7 @@ void do_cmd_mindcraft(void)
 			}
 			else if (b < 90)
 			{
-				(void)set_stun(p_ptr->tim.stun + randint1(8));
+				(void)inc_stun(randint1(8));
 			}
 			else
 			{

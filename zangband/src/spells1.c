@@ -1514,7 +1514,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 									(void)inc_confused(3 + randint1(dam));
 									break;
 								case 2:
-									(void)set_stun(p_ptr->tim.stun + randint1(dam));
+									(void)inc_stun(randint1(dam));
 									break;
 								case 3:
 								{
@@ -1690,7 +1690,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 						switch (randint1(4))
 						{
 							case 1:
-								(void)set_stun(p_ptr->tim.stun + dam / 2);
+								(void)inc_stun(dam / 2);
 								break;
 							case 2:
 								(void)inc_confused(dam / 2);
@@ -3310,8 +3310,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 
 			if (!(p_ptr->flags2 & (TR2_RES_SOUND)))
 			{
-				(void)set_stun(p_ptr->tim.stun +
-							   randint1((dam > 40) ? 35 : (dam * 3 / 4 + 5)));
+				(void)inc_stun(randint1((dam > 40) ? 35 : (dam * 3 / 4 + 5)));
 			}
 
 			if (!((p_ptr->flags2 & (TR2_RES_FIRE)) ||
@@ -3371,7 +3370,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			if (fuzzy) msgf("You are hit by something wet!");
 			if (!(p_ptr->flags2 & (TR2_RES_SOUND)))
 			{
-				(void)set_stun(p_ptr->tim.stun + randint1(40));
+				(void)inc_stun(randint1(40));
 			}
 			if (!(p_ptr->flags2 & (TR2_RES_CONF)))
 			{
@@ -3447,7 +3446,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			}
 			else
 			{
-				(void)set_cut(p_ptr->tim.cut + dam);
+				(void)inc_cut(dam);
 			}
 
 			if (!(p_ptr->flags2 & (TR2_RES_SHARDS)) || one_in_(13))
@@ -3470,8 +3469,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			}
 			else
 			{
-				(void)set_stun(p_ptr->tim.stun +
-							   randint1((dam > 90) ? 35 : (dam / 3 + 5)));
+				(void)inc_stun(randint1((dam > 90) ? 35 : (dam / 3 + 5)));
 			}
 
 			if (!(p_ptr->flags2 & (TR2_RES_SOUND)) || one_in_(13))
@@ -3550,7 +3548,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			if (fuzzy) msgf("You are hit by kinetic force!");
 			if (!(p_ptr->flags2 & (TR2_RES_SOUND)))
 			{
-				(void)set_stun(p_ptr->tim.stun + randint1(20));
+				(void)inc_stun(randint1(20));
 			}
 			take_hit(dam, killer);
 			break;
@@ -3562,7 +3560,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			if (fuzzy) msgf("There is an explosion!");
 			if (!(p_ptr->flags2 & (TR2_RES_SOUND)))
 			{
-				(void)set_stun(p_ptr->tim.stun + randint1(20));
+				(void)inc_stun(randint1(20));
 			}
 			if (p_ptr->flags2 & (TR2_RES_SHARDS))
 			{
@@ -3570,7 +3568,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			}
 			else
 			{
-				(void)set_cut(p_ptr->tim.cut + (dam / 2));
+				(void)inc_cut(dam / 2);
 			}
 
 			if (!(p_ptr->flags2 & (TR2_RES_SHARDS)) || one_in_(12))
@@ -3753,8 +3751,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			if (!((p_ptr->flags2 & (TR2_RES_SOUND)) ||
 				 (p_ptr->flags3 & (TR3_FEATHER))))
 			{
-				(void)set_stun(p_ptr->tim.stun +
-							   randint1((dam > 90) ? 35 : (dam / 3 + 5)));
+				(void)inc_stun(randint1((dam > 90) ? 35 : (dam / 3 + 5)));
 			}
 			if (p_ptr->flags3 & (TR3_FEATHER))
 			{
@@ -3851,11 +3848,11 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			cold_dam(dam, killer);
 			if (!(p_ptr->flags2 & (TR2_RES_SHARDS)))
 			{
-				(void)set_cut(p_ptr->tim.cut + damroll(5, 8));
+				(void)inc_cut(damroll(5, 8));
 			}
 			if (!(p_ptr->flags2 & (TR2_RES_SOUND)))
 			{
-				(void)set_stun(p_ptr->tim.stun + randint1(15));
+				(void)inc_stun(randint1(15));
 			}
 
 			if (!((p_ptr->flags2 & (TR2_IM_COLD)) || p_ptr->tim.oppose_cold) ||

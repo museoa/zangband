@@ -808,8 +808,8 @@ static void do_cmd_zap_rod_aux(object_type *o_ptr)
 			if (clear_blind()) ident = TRUE;
 			if (clear_poisoned()) ident = TRUE;
 			if (clear_confused()) ident = TRUE;
-			if (set_stun(0)) ident = TRUE;
-			if (set_cut(0)) ident = TRUE;
+			if (clear_stun()) ident = TRUE;
+			if (clear_cut()) ident = TRUE;
 			if (clear_image()) ident = TRUE;
 			break;
 		}
@@ -817,8 +817,8 @@ static void do_cmd_zap_rod_aux(object_type *o_ptr)
 		case SV_ROD_HEALING:
 		{
 			if (hp_player(500)) ident = TRUE;
-			if (set_stun(0)) ident = TRUE;
-			if (set_cut(0)) ident = TRUE;
+			if (clear_stun()) ident = TRUE;
+			if (clear_cut()) ident = TRUE;
 			break;
 		}
 

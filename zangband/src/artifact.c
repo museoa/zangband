@@ -1795,7 +1795,7 @@ bool activate_effect(object_type *o_ptr)
 				msgf("Your armor glows a bright white...");
 				msgf("You feel much better...");
 				(void)hp_player(1000);
-				(void)set_cut(0);
+				(void)clear_cut();
 				o_ptr->timeout = 888;
 				break;
 			}
@@ -1804,8 +1804,8 @@ bool activate_effect(object_type *o_ptr)
 			{
 				msgf("A heavenly choir sings...");
 				(void)clear_poisoned();
-				(void)set_cut(0);
-				(void)set_stun(0);
+				(void)clear_cut();
+				(void)clear_stun();
 				(void)clear_confused();
 				(void)clear_blind();
 				(void)inc_hero(rand_range(25, 50));
@@ -1852,7 +1852,7 @@ bool activate_effect(object_type *o_ptr)
 				msgf("Your crown glows deep blue...");
 				msgf("You feel a warm tingling inside...");
 				(void)hp_player(700);
-				(void)set_cut(0);
+				(void)clear_cut();
 				o_ptr->timeout = 250;
 				break;
 			}
@@ -2126,7 +2126,7 @@ bool activate_effect(object_type *o_ptr)
 			{
 				msgf("Your battle axe radiates deep purple...");
 				(void)hp_player(100);
-				(void)set_cut((p_ptr->tim.cut / 2) - 50);
+				(void)inc_cut(-50);
 				o_ptr->timeout = (s16b)rand_range(3, 6);
 				break;
 			}
@@ -2739,7 +2739,7 @@ bool activate_effect(object_type *o_ptr)
 		{
 			msgf("The %s radiates deep purple...", o_name);
 			(void)hp_player(75);
-			(void)set_cut((p_ptr->tim.cut / 2) - 50);
+			(void)inc_cut(-50);
 			o_ptr->timeout = (s16b)rand_range(3, 6);
 			break;
 		}
@@ -2780,7 +2780,7 @@ bool activate_effect(object_type *o_ptr)
 			msgf("The %s glows deep blue...", o_name);
 			msgf("You feel a warm tingling inside...");
 			(void)hp_player(700);
-			(void)set_cut(0);
+			(void)clear_cut();
 			o_ptr->timeout = 250;
 			break;
 		}
@@ -2790,7 +2790,7 @@ bool activate_effect(object_type *o_ptr)
 			msgf("The %s glows a bright white...", o_name);
 			msgf("You feel much better...");
 			(void)hp_player(1000);
-			(void)set_cut(0);
+			(void)clear_cut();
 			o_ptr->timeout = 888;
 			break;
 		}
