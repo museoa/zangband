@@ -8,9 +8,7 @@
 # G: symbol : color
 # W: priority : type : counter initial value 
 # I: flag | flag | flag
-# D: Data[8] 
-# F: location,function | location,function | location,function
-
+# D: Data[8]
 
 # 'N' indicates the beginning of an entry. The serial number must
 # increase for each new item.  It also is used to store the name of
@@ -35,10 +33,6 @@
 
 # 'D' 8 bytes of data for the field.  How this is used depends on the
 # functions called in the 'F' section below.
-
-# 'F' The list of functions used by the field.  "Location" refurs to the
-# entry in the action[] array.  See defines.h for the various action types.
-# Note the lack of space between the two parts.  The comma is the seperator.
 
 
 ##### Something special #####
@@ -404,7 +398,7 @@ L:PENTER:		do_dec_stat(A_STR)
 L:PENTER:	else
 L:PENTER:		msgf("A small dart barely misses you.")
 L:PENTER:	end
-L:PENTER:else if (field.data[3] == 1) then
+L:PENTER:elseif (field.data[3] == 1) then
 L:PENTER:	if (check_trap_hit(125) == TRUE) then
 L:PENTER:		msgf("A small dart hits you!")
 L:PENTER:		take_hit(randint1(4), "a dart trap")
@@ -412,7 +406,7 @@ L:PENTER:		do_dec_stat(A_DEX)
 L:PENTER:	else
 L:PENTER:		msgf("A small dart barely misses you.")
 L:PENTER:	end
-L:PENTER:else if (field.data[3] == 2) then
+L:PENTER:elseif (field.data[3] == 2) then
 L:PENTER:	if (check_trap_hit(125) == TRUE) then
 L:PENTER:		msgf("A small dart hits you!")
 L:PENTER:		take_hit(randint1(4), "a dart trap")
@@ -857,20 +851,42 @@ G:7:r
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:0:0:0:0:0:0:0:0
-F:19,field_action_weaponmaster2
 L:PENTER:do_cmd_bldg(field)
-L:BUILD1:building_options("E) Examine Weapons ("..factor*3 .."gp)")
+L:BUILD1:building_options("E) Examine Weapons (".. factor * 3 .."gp)")
+L:BUILD2:local cost
+L:BUILD2:if (command == 'E') then
+L:BUILD2:	cost = factor * 3
+L:BUILD2:	if (test_gold(cost) == TRUE) then
+L:BUILD2:		if compare_weapons() == TRUE then
+L:BUILD2:			player.au = player.au - cost
+L:BUILD2:		end
+L:BUILD2:	end
+L:BUILD2:	done = TRUE
+L:BUILD2:end
 
 # Zymurgist
 N:44:Zymurgist
 G:7:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:1:1:0:0:0:0:0:0
-F:19,field_action_recharge2
+D:1:0:0:0:0:0:0:0
 L:PENTER:do_cmd_bldg(field)
 L:BUILD1:building_options("R) Recharge Items",
-L:BUILD1:					"I) Identify Items ("..factor*5 .."gp)")
+L:BUILD1:					"I) Identify Items (".. factor * 5 .."gp)")
+L:BUILD2:local cost
+L:BUILD2:if (command == 'R') then
+L:BUILD2:	building_recharge(factor)
+L:BUILD2:	done = TRUE
+L:BUILD2:elseif (command == 'I') then
+L:BUILD2:	cost = factor * 5
+L:BUILD2:	if (test_gold(cost) == TRUE) then
+L:BUILD2:		identify_pack()
+L:BUILD2:		msgf("Your posessions have been identified.")
+L:BUILD2:		message_flush()
+L:BUILD2:		player.au = player.au - cost
+L:BUILD2:	end
+L:BUILD2:	done = TRUE
+L:BUILD2:end
 
 # Magesmith (weapon)
 N:45:Magesmith (weapons)
@@ -878,9 +894,12 @@ G:7:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:0:0:0:0:0:0:0
-F:19,field_action_weaponplus2
 L:PENTER:do_cmd_bldg(field)
-L:BUILD1:building_options("E) Enchant Weapons ("..factor*5 .."gp)")
+L:BUILD1:building_options("E) Enchant Weapons (".. factor * 5 .."gp)")
+L:BUILD2:if (command == 'E') then
+L:BUILD2:	enchant_item(factor * 5, TRUE, TRUE, FALSE, TRUE)
+L:BUILD2:	done = TRUE
+L:BUILD2:end
 
 # Magesmith (armour)
 N:46:Magesmith (armor)
@@ -888,9 +907,12 @@ G:7:s
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:3:0:0:0:0:0:0:0
-F:19,field_action_armourplus2
 L:PENTER:do_cmd_bldg(field)
-L:BUILD1:building_options("E) Enchant Armour ("..factor*5 .."gp)")
+L:BUILD1:building_options("E) Enchant Armour (".. factor * 5 .."gp)")
+L:BUILD2:if (command == 'E') then
+L:BUILD2:	enchant_item(factor * 5, FALSE, FALSE, TRUE, FALSE)
+L:BUILD2:	done = TRUE
+L:BUILD2:end
 
 # Mutatalist
 N:47:Mutatalist
@@ -898,9 +920,22 @@ G:9:R
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:4:0:0:0:0:0:0:0
-F:19,field_action_mutate2
 L:PENTER:do_cmd_bldg(field)
 L:BUILD1:building_options("E) Expose yourself to raw chaos (".. 50 * factor * (count_mutations() + 1).."gp)")
+L:BUILD2:local cost
+L:BUILD2:if (command == 'E') then
+L:BUILD2:	cost = 50 * factor * (count_mutations() + 1)
+L:BUILD2:	if (test_gold(cost) == TRUE) then
+L:BUILD2:		if (lose_mutation(0) == TRUE) then
+L:BUILD2:			msgf("You feel oddly normal.")
+L:BUILD2:		else
+L:BUILD2:			gain_mutation(0)
+L:BUILD2:		end
+L:BUILD2:		player.au = player.au - cost
+L:BUILD2:		message_flush()
+L:BUILD2:	end
+L:BUILD2:	done = TRUE
+L:BUILD2:end
 
 # Map Maker
 N:48:Map Maker
@@ -908,9 +943,18 @@ G:9:g
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:5:0:0:0:0:0:0:0
-F:19,field_action_buymap2
 L:PENTER:do_cmd_bldg(field)
-L:BUILD1:building_options("E) Examine Map ("..factor*5 .."gp)")
+L:BUILD1:building_options("E) Examine Map (".. factor * 5 .."gp)")
+L:BUILD2:local cost
+L:BUILD2:if (command == 'E') then
+L:BUILD2:	cost = factor * 5
+L:BUILD2:	if (test_gold(cost) == TRUE) then
+L:BUILD2:		msgf("You learn of the lay of the lands.")
+L:BUILD2:		map_wilderness(20, player.wilderness_x / 16, player.wilderness_y / 16)
+L:BUILD2:		player.au = player.au - cost
+L:BUILD2:	end
+L:BUILD2:	done = TRUE
+L:BUILD2:end
 
 # Weapon Smiths
 N:49:Advanced Weapon Smiths
@@ -1726,9 +1770,18 @@ G:9:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:6:0:0:0:0:0:0:0
-F:19,field_action_library2
 L:PENTER:do_cmd_bldg(field)
-L:BUILD1:building_options("R) Read about monsters (".. 100*factor .."gp)")
+L:BUILD1:building_options("R) Read about monsters (".. 100 * factor .."gp)")
+L:BUILD2:local cost
+L:BUILD2:if (command == 'R') then
+L:BUILD2:	cost = 100 * factor
+L:BUILD2:	if (test_gold(cost) == TRUE) then
+L:BUILD2:		if (research_mon() == TRUE) then
+L:BUILD2:			player.au = player.au - cost
+L:BUILD2:		end
+L:BUILD2:	end
+L:BUILD2:	done = TRUE
+L:BUILD2:end
 
 # Casino
 N:139:Casino
@@ -1736,13 +1789,28 @@ G:0:o
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:7:0:0:0:0:0:0:0
-F:19,field_action_casino2
 L:PENTER:do_cmd_bldg(field)
 L:BUILD1:building_options("H) Help",
 L:BUILD1:					"I) In Between",
 L:BUILD1:					"C) Craps",
 L:BUILD1:					"S) Spin the wheel",
 L:BUILD1:					"D) Dice slots")
+L:BUILD2:if (command == 'H') then
+L:BUILD2:	gamble_help()
+L:BUILD2:	done = TRUE
+L:BUILD2:elseif (command == 'I') then
+L:BUILD2:	gamble_in_between()
+L:BUILD2:	done = TRUE
+L:BUILD2:elseif (command == 'C') then
+L:BUILD2:	gamble_craps()
+L:BUILD2:	done = TRUE
+L:BUILD2:elseif (command == 'S') then
+L:BUILD2:	gamble_spin_wheel()
+L:BUILD2:	done = TRUE
+L:BUILD2:elseif (command == 'D') then
+L:BUILD2:	gamble_dice_slots()
+L:BUILD2:	done = TRUE
+L:BUILD2:end
 
 # Inn
 N:140:Inn
@@ -1750,20 +1818,47 @@ G:0:y
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:8:0:0:0:0:0:0:0
-F:19,field_action_inn2
 L:PENTER:do_cmd_bldg(field)
-L:BUILD1:building_options("E) Eat ("..factor / 20 .."gp)",
-L:BUILD1:					"R) Rest ("..factor / 4 .."gp)")
+L:BUILD1:building_options("E) Eat (".. factor / 20 .."gp)",
+L:BUILD1:					"R) Rest (".. factor / 4 .."gp)")
+L:BUILD2:local cost
+L:BUILD2:if (command == 'E') then
+L:BUILD2:	cost = factor / 20
+L:BUILD2:	if (test_gold(cost) == TRUE) then
+L:BUILD2:		msgf("The barkeeper gives you some gruel and a beer.")
+L:BUILD2:		message_flush()
+L:BUILD2:		set_food(PY_FOOD_MAX - 1)
+L:BUILD2:		player.au = player.au - cost
+L:BUILD2:	end
+L:BUILD2:	done = TRUE
+L:BUILD2:elseif (command == 'R') then
+L:BUILD2:	cost = factor / 4
+L:BUILD2:	if (test_gold(cost) == TRUE) then
+L:BUILD2:		if (inn_rest() == TRUE) then
+L:BUILD2:			player.au = player.au - cost
+L:BUILD2:		end
+L:BUILD2:	end
+L:BUILD2:	done = TRUE
+L:BUILD2:end
 
 # Restore stats
 N:141:Healer
 G:9:y
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:9:20:0:0:0:0:0:0
-F:19,field_action_healer2
+D:9:0:0:0:0:0:0:0
 L:PENTER:do_cmd_bldg(field)
 L:BUILD1:building_options("R) Restore Stats (".. 20 * factor .."gp)")
+L:BUILD2:local cost
+L:BUILD2:if (command == 'R') then
+L:BUILD2:	cost = 20 * factor
+L:BUILD2:	if (test_gold(cost) == TRUE) then
+L:BUILD2:		if (building_healer() == TRUE) then
+L:BUILD2:			player.au = player.au - cost
+L:BUILD2:		end
+L:BUILD2:	end
+L:BUILD2:	done = TRUE
+L:BUILD2:end
 
 # Black Market
 N:142:Bazaar
@@ -1779,9 +1874,20 @@ G:9:v
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:0:0:0:0:0:0:0
-F:19,field_action_magetower2
 L:PENTER:do_cmd_bldg(field)
 L:BUILD1:building_magetower(factor, TRUE)
+L:BUILD2:local cost
+L:BUILD2:if (command == 'R') then
+L:BUILD2:	cost = factor * 5
+L:BUILD2:	if (test_gold(cost) == TRUE) then
+L:BUILD2:		record_aura()
+L:BUILD2:		player.au = player.au - cost
+L:BUILD2:	end
+L:BUILD2:	done = TRUE
+L:BUILD2:elseif (command = 'T') then
+L:BUILD2:	building_magetower(factor, FALSE)
+L:BUILD2:	done = TRUE
+L:BUILD2:end
 
 # Teleport
 N:144:Large Magetower
@@ -1789,34 +1895,51 @@ G:9:v
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:0:0:0:0:0:0:0
-F:19,field_action_magetower2
 L:PENTER:do_cmd_bldg(field)
 L:BUILD1:building_magetower(factor, TRUE)
+L:BUILD2:local cost
+L:BUILD2:if (command == 'R') then
+L:BUILD2:	cost = factor * 5
+L:BUILD2:	if (test_gold(cost) == TRUE) then
+L:BUILD2:		record_aura()
+L:BUILD2:		player.au = player.au - cost
+L:BUILD2:	end
+L:BUILD2:	done = TRUE
+L:BUILD2:elseif (command = 'T') then
+L:BUILD2:	building_magetower(factor, FALSE)
+L:BUILD2:	done = TRUE
+L:BUILD2:end
 
 # Quest-giver
 N:145:Small Castle
 G:0:v
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:1:10:0:0:0:0:0:0
-F:19,field_action_castlequest2
+D:1:0:0:0:0:0:0:0
 L:PENTER:do_cmd_bldg(field)
 L:BUILD1:if (build_has_quest() == TRUE) then
 L:BUILD1:	building_options("R) Request Reward")
 L:BUILD1:else
 L:BUILD1:	building_options("R) Request Quest")
 L:BUILD1:end
+L:BUILD2:if (command == 'R') then
+L:BUILD2:	build_cmd_quest(10)
+L:BUILD2:	done = TRUE
+L:BUILD2:end
 
 # Quest-giver
 N:146:Large Castle
 G:0:v
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:1:25:0:0:0:0:0:0
-F:19,field_action_castlequest2
+D:1:0:0:0:0:0:0:0
 L:PENTER:do_cmd_bldg(field)
 L:BUILD1:if (build_has_quest() == TRUE) then
 L:BUILD1:	building_options("R) Request Reward")
 L:BUILD1:else
 L:BUILD1:	building_options("R) Request Quest")
 L:BUILD1:end
+L:BUILD2:if (command == 'R') then
+L:BUILD2:	build_cmd_quest(25)
+L:BUILD2:	done = TRUE
+L:BUILD2:end
