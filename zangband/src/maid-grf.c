@@ -672,7 +672,16 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 	{
 		/* Save known data */
 		map.terrain = pc_ptr->feat;
+		
+		map.flags = MAP_SEEN;
 
+		if (glow) map.flags |= MAP_GLOW;
+		if (lite) map.flags |= MAP_LITE;
+	}
+	
+	/* Not hallucinating */
+	if (!p_ptr->image)
+	{
 		/* Save known monsters */
 		if (c_ptr->m_idx)
 		{
@@ -718,11 +727,6 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 				break;
 			}
 		}
-
-		map.flags = MAP_SEEN;
-
-		if (glow) map.flags |= MAP_GLOW;
-		if (lite) map.flags |= MAP_LITE;
 	}
 	else
 	{
