@@ -892,13 +892,13 @@ static void Term_fresh_row_both(int y, int x1, int x2)
 
 #ifdef USE_TRANSPARENCY
 
-		/* Hack -- Draw the special attr/char pair */
-		(void)((*Term->pict_hook)(x, y, 1, &na, &nc, &nta, &ntc));
+			/* Hack -- Draw the special attr/char pair */
+			(void)((*Term->pict_hook)(x, y, 1, &na, &nc, &nta, &ntc));
 
 #else /* USE_TRANSPARENCY */
 
-		/* Hack -- Draw the special attr/char pair */
-		(void)((*Term->pict_hook)(x, y, 1, &na, &nc));
+			/* Hack -- Draw the special attr/char pair */
+			(void)((*Term->pict_hook)(x, y, 1, &na, &nc));
 
 #endif /* USE_TRANSPARENCY */
 
