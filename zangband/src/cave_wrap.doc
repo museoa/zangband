@@ -120,8 +120,3 @@ self.wid
         [ Member data: returns byte  ]
         Vault width 
 
-----------
-
-generate_wilderness_area(terrain,seed,border,corner)
-        [ returns void  ]
-

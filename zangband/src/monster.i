@@ -188,7 +188,6 @@ struct monster_race
 };
 
 
-extern int get_wilderness_flag(void);
 extern void sanity_blast(monster_type *m_ptr, bool necro);
 extern void delete_monster_idx(int i);
 extern void delete_monster(int y, int x);
@@ -206,7 +205,7 @@ extern bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, bool 
 extern bool place_monster(int y, int x, bool slp, bool grp);
 extern bool alloc_horde(int y, int x);
 extern bool alloc_monster(int dis, bool slp);
-extern bool summon_specific(int y1, int x1, int lev, int type, bool group, bool friendly, bool pet);
+extern bool summon_specific(int who, int y1, int x1, int lev, int type, bool group, bool friendly, bool pet);
 extern bool multiply_monster(int m_idx, bool clone, bool friendly, bool pet);
 extern void update_smart_learn(int m_idx, int what);
 extern bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pet);
@@ -228,11 +227,8 @@ extern bool monster_shallow_water(int r_idx);
 extern bool monster_lava(int r_idx);
 extern monster_hook_type get_monster_hook(void);
 extern monster_hook_type get_monster_hook2(int y, int x);
-extern bool is_friendly(monster_type *m_ptr);
 extern void set_friendly(monster_type *m_ptr);
-extern bool is_pet(monster_type *m_ptr);
 extern void set_pet(monster_type *m_ptr);
-extern bool is_hostile(monster_type *m_ptr);
 extern void set_hostile(monster_type *m_ptr);
 extern bool monster_can_cross_terrain(byte feat, monster_race *r_ptr);
 extern bool are_enemies(monster_type *m_ptr1, monster_type *m_ptr2);

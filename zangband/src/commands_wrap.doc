@@ -213,9 +213,6 @@ do_cmd_store()
 do_cmd_bldg()
         [ returns void  ]
 
-do_cmd_quest()
-        [ returns void  ]
-
 do_cmd_mindcraft()
         [ returns void  ]
 

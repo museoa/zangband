@@ -84,7 +84,6 @@ extern void do_cmd_save_and_exit(void);
 extern void do_cmd_racial_power(void);
 extern void do_cmd_store(void);
 extern void do_cmd_bldg(void);
-extern void do_cmd_quest(void);
 extern void do_cmd_mindcraft(void);
 extern void do_cmd_knowledge_mutations(void);
 extern bool do_cmd_disarm_aux(int y, int x, int dir);

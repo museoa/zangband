@@ -307,9 +307,6 @@ self.r_flags7
 
 ----------
 
-get_wilderness_flag()
-        [ returns int  ]
-
 sanity_blast(m_ptr,necro)
         [ returns void  ]
 
@@ -361,7 +358,7 @@ alloc_horde(y,x)
 alloc_monster(dis,slp)
         [ returns bool  ]
 
-summon_specific(y1,x1,lev,type,group,friendly,pet)
+summon_specific(who,y1,x1,lev,type,group,friendly,pet)
         [ returns bool  ]
 
 multiply_monster(m_idx,clone,friendly,pet)
@@ -421,20 +418,11 @@ get_monster_hook()
 get_monster_hook2(y,x)
         [ returns monster_hook_type  ]
 
-is_friendly(m_ptr)
-        [ returns bool  ]
-
 set_friendly(m_ptr)
         [ returns void  ]
 
-is_pet(m_ptr)
-        [ returns bool  ]
-
 set_pet(m_ptr)
         [ returns void  ]
-
-is_hostile(m_ptr)
-        [ returns bool  ]
 
 set_hostile(m_ptr)
         [ returns void  ]

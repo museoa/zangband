@@ -512,7 +512,6 @@ extern void do_cmd_save_and_exit();
 extern void do_cmd_racial_power();
 extern void do_cmd_store();
 extern void do_cmd_bldg();
-extern void do_cmd_quest();
 extern void do_cmd_mindcraft();
 extern void do_cmd_knowledge_mutations();
 extern bool do_cmd_disarm_aux(int ,int ,int );
@@ -1365,18 +1364,6 @@ static PyObject *_wrap_do_cmd_bldg(PyObject *self, PyObject *args) {
     return _resultobj;
 }
 
-static PyObject *_wrap_do_cmd_quest(PyObject *self, PyObject *args) {
-    PyObject * _resultobj;
-
-    self = self;
-    if(!PyArg_ParseTuple(args,":do_cmd_quest")) 
-        return NULL;
-    do_cmd_quest();
-    Py_INCREF(Py_None);
-    _resultobj = Py_None;
-    return _resultobj;
-}
-
 static PyObject *_wrap_do_cmd_mindcraft(PyObject *self, PyObject *args) {
     PyObject * _resultobj;
 
@@ -1420,7 +1407,6 @@ static PyMethodDef commandscMethods[] = {
 	 { "do_cmd_disarm_aux", _wrap_do_cmd_disarm_aux, METH_VARARGS },
 	 { "do_cmd_knowledge_mutations", _wrap_do_cmd_knowledge_mutations, METH_VARARGS },
 	 { "do_cmd_mindcraft", _wrap_do_cmd_mindcraft, METH_VARARGS },
-	 { "do_cmd_quest", _wrap_do_cmd_quest, METH_VARARGS },
 	 { "do_cmd_bldg", _wrap_do_cmd_bldg, METH_VARARGS },
 	 { "do_cmd_store", _wrap_do_cmd_store, METH_VARARGS },
 	 { "do_cmd_racial_power", _wrap_do_cmd_racial_power, METH_VARARGS },

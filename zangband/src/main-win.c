@@ -3912,13 +3912,13 @@ static void hook_quit(cptr str)
 #ifdef USE_GRAPHICS
 	if (infGraph.hPalette) DeleteObject(infGraph.hPalette);
 	if (infGraph.hBitmap) DeleteObject(infGraph.hBitmap);
-#endif /* USE_GRAPHICS */
 
 #ifdef USE_TRANSPARENCY
 	if (infMask.hPalette) DeleteObject(infMask.hPalette);
 	if (infMask.hBitmap) DeleteObject(infMask.hBitmap);
 #endif /* USE_TRANSPARENCY */
 
+#endif /* USE_GRAPHICS */
 
 	/*** Free some other stuff ***/
 

@@ -135,5 +135,3 @@ struct vault_type
 	byte wid;			/* Vault width */
 };
 
-
-extern void generate_wilderness_area(int terrain, u32b seed, bool border, bool corner);
