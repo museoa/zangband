@@ -2555,19 +2555,25 @@ static void msg_print_aux(u16b type, cptr msg)
 static int current_message_type = MSG_GENERIC;
 
 /*
- * Change the message type
+ * Change the message type, and parse the following
+ * format string.  See defines.h for the macro this
+ * is used in.
  */
 void set_message_type(char *buf, uint max, cptr fmt, va_list *vp)
 {
-	/* Unused parameters */
+	cptr str;
+
+	/* Unused parameter */
 	(void)fmt;
-	(void)max;
-	
-	/* Hack - zero length string */
-	buf[0] = '\0';
-    
+   
     /* Get the argument - and set the message type */
 	current_message_type = va_arg(*vp, int);
+	
+	/* Get the string to format with. */
+	str = va_arg(*vp, cptr);
+	
+	/* Expand the string */
+	vstrnfmt(buf, max, str, vp);
 }
 
 /*

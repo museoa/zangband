@@ -4181,10 +4181,10 @@ extern int PlayerUID;
 
 /*
  * 'Magic' macro that changes the default message type.
- * It uses the '%S' directive to parse the format string
- * following this...
+ * set_message_type sets a static variable to be T, and
+ * then parses the following string as a format string.
  */
-#define MESSAGE_TYPE(T)		"%v%S", set_message_type, (T)
+#define MESSAGE_TYPE(T)		"%v", set_message_type, (T)
 
 /*
  * Message types used for msgf()  (See util.c)

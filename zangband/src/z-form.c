@@ -46,7 +46,7 @@
  * removed from the "format sequence", and replaced by the textual form
  * of the next argument in the argument list.  See examples below.
  *
- * Legal format characters: %,n,p,c,s,d,i,o,u,X,x,v,S.
+ * Legal format characters: %,n,p,c,s,d,i,o,u,X,x,v.
  *
  * Format("%%")
  *   Append the literal "%".
@@ -92,11 +92,6 @@
  *   Append the string "s".
  *   Do not use the "+" or "0" flags.
  *   Note that a "NULL" value of "s" is converted to the empty string.
- *
- * Format ("%S", cptr fmt, extra information...)
- *   Append the string created by using
- *   strnfmt(fmt, extra information).
- *   This allows recursive formatting.
  *
  * Format("%v", vstrnfmt_aux_func function_name, extra_args...)
  *   Append the object "v", using function_name, called with
@@ -426,21 +421,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list *vp)
 				/* Done */
 				break;
 			}
-						
-			case 'S':
-			{
-				/* Use a format string */
-				cptr arg;
-				
-				arg = va_arg(*vp, cptr);
-
-				/* Format the string */
-				(void)vstrnfmt(tmp, 1000, arg, vp);
-				
-				/* Done */
-				break;
-			}
-
+			
 			case 'u':  case 'o':  case 'x':  case 'X':
 			{
 				/* Unsigned Integers -- various formats */

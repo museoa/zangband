@@ -3836,7 +3836,7 @@ static void center_string(char *buf, uint max, cptr fmt, va_list *vp)
 	(void)fmt;
 	    
     /* Get the size of the string to center in */
-	size = va_arg(*vp, u32b);
+	size = va_arg(*vp, int);
 	
 	/* Get the string to center with. */
 	str = va_arg(*vp, cptr);
