@@ -1115,7 +1115,7 @@ static void panel_recalc_bounds(void)
  *
  * Also used in do_cmd_locate
  */
-bool change_panel(int dy, int dx)
+bool change_panel(int dx, int dy)
 {
 	int y, x;
 	int wid, hgt;
@@ -2652,7 +2652,7 @@ bool target_set(int mode)
 				while (flag && (i < 0))
 				{
 					/* Note the change */
-					if (change_panel(ddy[d], ddx[d]))
+					if (change_panel(ddx[d], ddy[d]))
 					{
 						int v = temp_y[m];
 						int u = temp_x[m];
@@ -2721,7 +2721,7 @@ bool target_set(int mode)
 						if ((y >= panel_row_min + hgt - 2) || (y < panel_row_min) ||
 						    (x >= panel_col_min + wid - 14) || (x < panel_col_min))
 						{
-							if (change_panel(dy, dx)) target_set_prepare(mode);
+							if (change_panel(dx, dy)) target_set_prepare(mode);
 						}
 
 						/* Slide into legality */
@@ -2879,7 +2879,7 @@ bool target_set(int mode)
 				if ((y >= panel_row_min + hgt - 2) || (y < panel_row_min) ||
 					 (x >= panel_col_min + wid - 14) || (x < panel_col_min))
 				{
-					if (change_panel(dy, dx)) target_set_prepare(mode);
+					if (change_panel(dx, dy)) target_set_prepare(mode);
 				}
 
 				/* Slide into legality */

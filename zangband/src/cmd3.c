@@ -1129,7 +1129,7 @@ void do_cmd_locate(void)
 		if (!dir) break;
 
 		/* Apply the motion */
-		if (change_panel(ddy[dir], ddx[dir]))
+		if (change_panel(ddx[dir], ddy[dir]))
 		{
 			y2 = panel_row_min;
 			x2 = panel_col_min;

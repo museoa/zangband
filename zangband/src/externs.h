@@ -979,7 +979,7 @@ extern void check_experience(void);
 extern bool monster_death(int m_idx, bool explode);
 extern bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note);
 extern void panel_center(void);
-extern bool change_panel(int dy, int dx);
+extern bool change_panel(int dx, int dy);
 extern void verify_panel(void);
 extern cptr look_mon_desc(int m_idx);
 extern void ang_sort_aux(vptr u, vptr v, int p, int q);
