@@ -2056,7 +2056,7 @@ void message_add(cptr str)
 	if (k > MESSAGE_MAX / 32) k = MESSAGE_MAX / 32;
 
 	/* Check previous message */
-	for(i = message__next; m; m--)
+	for (i = message__next; m; m--)
 	{
 		int j = 1;
 
