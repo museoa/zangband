@@ -3855,6 +3855,8 @@ void update_flow(void)
 			/* Child location */
 			y = ty + ddy_ddd[d];
 			x = tx + ddx_ddd[d];
+			
+			if (!in_bounds2(y, x)) continue;
 
 			c_ptr = area(y, x);
 			

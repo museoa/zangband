@@ -40,7 +40,7 @@
 #define VERSION_MINOR   8
 #define VERSION_PATCH   1
 
-#define SAVEFILE_VERSION 12
+#define SAVEFILE_VERSION 13
 
 /* Added for ZAngband */
 #ifdef USE_SCRIPT
@@ -408,13 +408,14 @@
 
 /*
  * Maximum size of the "temp" array (see "cave.c")
- * We must be as large as "VIEW_MAX" and "LITE_MAX" for proper functioning
- * of "update_view()" and "update_lite()".  We must also be as large as the
+ * We must be as large as "VIEW_MAX" for proper functioning
+ * of "update_view()".  We must also be as large as the
  * largest illuminatable room, but no room is larger than 800 grids.  We
  * must also be large enough to allow "good enough" use as a circular queue,
- * to calculate monster flow, but note that the flow code is "paranoid".
+ * to calculate monster flow.  The larger size is due to use as a circular
+ * queue for the fractal caves patch fill routine.
  */
-#define TEMP_MAX 1536
+#define TEMP_MAX 4096
 
 
 /*

@@ -2825,21 +2825,48 @@ static bool hack_isnt_wall(int y, int x, int c1, int c2, int c3, int feat1, int 
 }
 
 
-
-
 /*
- * Quick and nasty fill routine used to find the connected region
- * of floor in the middle of the cave
+ * Fill the fractal height-map using the features specified in in fill_data.
+ *
+ * This routine is similar to the method used to update the monster flow
+ * information.  It uses the temp grids as a circular queue.
  */
-static void fill_hack(byte y, byte x)
+static void cave_fill(byte y, byte x)
 {
-	byte i, j;
 
-	/* check 8 neighbours + self (self is caught in the isnt_wall function) */
-	for (i = x - 1; i <= x + 1; i++)
+	int i, j, d;
+	int ty, tx;
+		
+	int flow_tail = 1;
+	int flow_head = 0;
+	
+	
+	/*** Start Grid ***/
+
+	/* Enqueue that entry */
+	temp_y[0] = y;
+	temp_x[0] = x;
+	
+	
+	/* Now process the queue */
+	while (flow_head != flow_tail)
 	{
-		for (j = y - 1; j <= y + 1; j++)
+		/* Extract the next entry */
+		ty = temp_y[flow_head];
+		tx = temp_x[flow_head];
+
+		/* Forget that entry */
+		if (++flow_head == TEMP_MAX) flow_head = 0;
+
+		/* Add the "children" */
+		for (d = 0; d < 8; d++)
 		{
+			int old_head = flow_tail;
+
+			/* Child location */
+			j = ty + ddy_ddd[d];
+			i = tx + ddx_ddd[d];
+			
 			/* Paranoia Don't leave the cave */
 			if (!in_bounds(j, i)) return;
 
@@ -2852,11 +2879,24 @@ static void fill_hack(byte y, byte x)
 					fill_data.c1, fill_data.c2, fill_data.c3,
 					fill_data.feat1, fill_data.feat2, fill_data.feat3))
 		 		{
-					/* then fill from the new point */
-					fill_hack(j, i);
+					
+					/* Enqueue that entry */
+					temp_y[flow_tail] = j;
+					temp_x[flow_tail] = i;
 
-					/* keep tally of size of cave system */
-					(fill_data.amount)++;
+					/* Advance the queue */
+					if (++flow_tail == TEMP_MAX) flow_tail = 0;
+
+					/* Hack -- Overflow by forgetting new entry */
+					if (flow_tail == flow_head)
+					{
+						flow_tail = old_head;
+					}
+					else
+					{
+						/* keep tally of size of cave system */
+						(fill_data.amount)++;
+					}
 				}
 			}
 			else
@@ -2867,6 +2907,9 @@ static void fill_hack(byte y, byte x)
 		}
 	}
 }
+
+
+
 
 
 static bool generate_fracave(int y0, int x0, int xsize, int ysize, int cutoff, bool light, bool room)
@@ -2898,7 +2941,7 @@ static bool generate_fracave(int y0, int x0, int xsize, int ysize, int cutoff, b
 	/* number of filled squares */
 	fill_data.amount = 0;
 
-	fill_hack(y0, x0);
+	cave_fill(y0, x0);
 
 	/* if tally too small, try again */
 	if (fill_data.amount < 10)
@@ -3216,7 +3259,7 @@ static bool generate_lake(int y0, int x0, int xsize, int ysize, int c1, int c2, 
 	/* select region connected to center of cave system
 	* this gets rid of alot of isolated one-sqaures that
 	* can make teleport traps instadeaths... */
-	fill_hack(y0, x0);
+	cave_fill(y0, x0);
 
 	/* if tally too small, try again */
 	if (fill_data.amount < 10)
