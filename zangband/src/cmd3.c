@@ -1190,58 +1190,6 @@ void ang_sort_swap_hook(const vptr u, const vptr v, int a, int b)
 }
 
 
-
-/*
- * Hack -- Display the "name" and "attr/chars" of a monster race
- */
-static void roff_top(int r_idx)
-{
-	monster_race *r_ptr = &r_info[r_idx];
-
-	byte a1, a2;
-	char c1, c2;
-
-
-	/* Access the chars */
-	c1 = r_ptr->d_char;
-	c2 = r_ptr->x_char;
-
-	/* Access the attrs */
-	a1 = r_ptr->d_attr;
-	a2 = r_ptr->x_attr;
-
-	/* Hack -- fake monochrome */
-	if (!use_color || ironman_moria) a1 = TERM_WHITE;
-	if (!use_color || ironman_moria) a2 = TERM_WHITE;
-
-
-	/* Clear the top line */
-	Term_erase(0, 0, 255);
-
-	/* Reset the cursor */
-	Term_gotoxy(0, 0);
-
-	/* A title (use "The" for non-uniques) */
-	if (!(r_ptr->flags1 & (RF1_UNIQUE)))
-	{
-		Term_addstr(-1, TERM_WHITE, "The ");
-	}
-
-	/* Dump the name */
-	Term_addstr(-1, TERM_WHITE, (r_name + r_ptr->name));
-
-	/* Append the "standard" attr/char info */
-	Term_addstr(-1, TERM_WHITE, " ('");
-	Term_addch(a1, c1);
-	Term_addstr(-1, TERM_WHITE, "')");
-
-	/* Append the "optional" attr/char info */
-	Term_addstr(-1, TERM_WHITE, "/('");
-	Term_addch(a2, c2);
-	Term_addstr(-1, TERM_WHITE, "'):");
-}
-
-
 /*
  * Identify a character, allow recall of monsters
  *

@@ -499,6 +499,7 @@ extern void curse_equipment(int chance, int heavy_chance);
 extern void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note);
 
 /* monster1.c */
+extern void roff_top(int r_idx);
 extern void screen_roff(int r_idx, int remember);
 extern void display_roff(int r_idx);
 extern void display_visible(void);

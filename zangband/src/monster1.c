@@ -1468,7 +1468,7 @@ static void roff_aux(int r_idx, int remem)
 /*
  * Hack -- Display the "name" and "attr/chars" of a monster race
  */
-static void roff_top(int r_idx)
+void roff_top(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
