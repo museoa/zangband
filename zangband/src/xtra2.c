@@ -935,7 +935,7 @@ bool monster_death(int m_idx)
 #endif /* USE_SCRIPT */
 
 	/* Only process "Quest Monsters" */
-	if (!(r_ptr->flags1 & RF1_QUESTOR)) return FALSE;
+	if (!(r_ptr->flags1 & RF1_QUESTOR)) return (dropped_corpse);
 
 	/* Winner? */
 	if (strstr((r_name + r_ptr->name), "Serpent of Chaos"))
