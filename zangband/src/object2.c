@@ -422,7 +422,7 @@ void wipe_objects(int rg_idx)
  * This routine should almost never fail, but in case it does,
  * we must be sure to handle "failure" of this routine.
  */
-s16b o_pop(void)
+static s16b o_pop(void)
 {
 	int i;
 

@@ -621,7 +621,6 @@ extern void drop_object_list(s16b *o_idx_ptr, int x, int y);
 extern void compact_objects(int size);
 extern void wipe_o_list(void);
 extern void wipe_objects(int rg_idx);
-extern s16b o_pop(void);
 extern object_type *add_object_list(s16b *o_idx_ptr, object_type *o_ptr);
 extern void move_object(s16b *tgt_list_ptr, s16b *cur_list_ptr,
 						object_type *o_ptr);
