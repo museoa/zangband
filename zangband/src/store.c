@@ -1136,8 +1136,8 @@ static void store_create(void)
 	/* Limit table with store-only items */
 	get_obj_store_prep();
 
-	/* Hack -- consider up to twenty items */
-	for (tries = 0; tries < 20; tries++)
+	/* Hack -- consider up to fifty items */
+	for (tries = 0; tries < 50; tries++)
 	{
 		/* Get level to use */
 		level = rand_range(f_ptr->data[1], f_ptr->data[2]);
