@@ -2039,6 +2039,103 @@ static byte breath_attr(const monster_race *r_ptr)
 
 
 /*
+ * Extract tile info for monster.
+ *
+ * Note how we manually alter the tile type to simulate effects
+ * in ascii mode.  We must make sure not to break the images
+ * when in (semi) graphics mode, where either the monster
+ * or the floor it is standing on is non-ascii.
+ */
+static void map_mon_info(monster_type *m_ptr, byte *a, char *c)
+{
+	monster_race *r_ptr;
+	
+	byte feat_not_ascii;
+
+	byte ma = *a;
+	char mc = *c;
+
+	/* Visible monster */
+	if (m_ptr->ml)
+	{
+		r_ptr = &r_info[m_ptr->r_idx];
+			
+		/* Hack -- hallucination */
+		if (p_ptr->tim.image)
+		{
+			/* Hallucinatory monster */
+			image_monster(a, c);
+			return;
+		}
+		else
+		{		
+			feat_not_ascii = ((*a) & 0x80);
+
+			/* Desired attr */
+			if (!(r_ptr->flags1 & (RF1_ATTR_CLEAR)) || feat_not_ascii)
+			{
+				ma = r_ptr->x_attr;
+			}
+
+			/* Desired char */
+			if (!(r_ptr->flags1 & (RF1_CHAR_CLEAR)) || feat_not_ascii)
+			{
+				mc = r_ptr->x_char;
+			}
+
+			/* Ignore weird codes + graphics */
+			if (!(ma & 0x80))
+			{
+				/* Multi-hued monster */
+				if (r_ptr->flags1 & (RF1_ATTR_MULTI))
+				{
+					/* Is it a shapechanger? */
+					if (r_ptr->flags2 & (RF2_SHAPECHANGER))
+					{
+						if (use_graphics)
+						{
+							mc = r_info[randint1(z_info->r_max - 1)].x_char;
+							ma = r_info[randint1(z_info->r_max - 1)].x_attr;
+						}
+						else
+						{
+							mc = (one_in_(25) ?
+								 image_object_hack[randint0
+											   (strlen(image_object_hack))] :
+								 image_monster_hack[randint0
+												(strlen(image_monster_hack))]);
+						}
+					}
+
+					/* Multi-hued attr */
+					if (r_ptr->flags2 & RF2_ATTR_ANY)
+						ma = randint1(15);
+					else
+					{
+						/* Pick colour based on breaths */
+						ma = breath_attr(r_ptr);
+					}
+				}
+				/* Mimics' colors vary */
+				else if (((mc == '\"') || (mc == '!') || (mc == '='))
+						 && !(r_ptr->flags1 & RF1_UNIQUE))
+				{
+					/* Use char */ ;
+
+					/* Use semi-random attr */
+					ma = GET_ARRAY_INDEX(m_list, m_ptr) % 15 + 1;
+				}
+			}
+		}
+	}
+	
+	/* Save results */
+	*a = ma;
+	*c = mc;
+}
+
+
+/*
  * Extract the attr/char to display at the given (legal) map location
  *
  * Basically, we "paint" the chosen attr/char in several passes, starting
@@ -2122,7 +2219,6 @@ static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 	byte a;
 	char c;
 
-	byte feat_not_ascii;
 	s16b halluc = p_ptr->tim.image;
 	
 	bool float_field = FALSE;
@@ -2304,80 +2400,8 @@ static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 	{
 		m_ptr = &m_list[c_ptr->m_idx];
 
-		/* Visible monster */
-		if (m_ptr->ml)
-		{
-			monster_race *r_ptr = &r_info[m_ptr->r_idx];
-			
-			/* Hack -- hallucination */
-			if (halluc)
-			{
-				/* Hallucinatory monster */
-				image_monster(&a, &c);
-			}
-			else
-			{		
-				feat_not_ascii = (a & 0x80);
-
-				/* Desired attr */
-				if (!(r_ptr->flags1 & (RF1_ATTR_CLEAR)) || feat_not_ascii)
-				{
-					a = r_ptr->x_attr;
-				}
-
-				/* Desired char */
-				if (!(r_ptr->flags1 & (RF1_CHAR_CLEAR)) || feat_not_ascii)
-				{
-					c = r_ptr->x_char;
-				}
-
-				/* Ignore weird codes + graphics */
-				if (a & 0x80)
-				{
-					/* Do nothing */
-				}
-
-				/* Multi-hued monster */
-				else if (r_ptr->flags1 & (RF1_ATTR_MULTI))
-				{
-					/* Is it a shapechanger? */
-					if (r_ptr->flags2 & (RF2_SHAPECHANGER))
-					{
-						if (use_graphics)
-						{
-							c = r_info[randint1(z_info->r_max - 1)].x_char;
-							a = r_info[randint1(z_info->r_max - 1)].x_attr;
-						}
-						else
-						{
-							c = (one_in_(25) ?
-								 image_object_hack[randint0
-											   (strlen(image_object_hack))] :
-								 image_monster_hack[randint0
-												(strlen(image_monster_hack))]);
-						}
-					}
-
-					/* Multi-hued attr */
-					if (r_ptr->flags2 & RF2_ATTR_ANY)
-						a = randint1(15);
-					else
-					{
-						/* Pick colour based on breaths */
-						a = breath_attr(r_ptr);
-					}
-				}
-				/* Mimics' colors vary */
-				else if (((c == '\"') || (c == '!') || (c == '='))
-						 && !(r_ptr->flags1 & RF1_UNIQUE))
-				{
-					/* Use char */ ;
-
-					/* Use semi-random attr */
-					a = c_ptr->m_idx % 15 + 1;
-				}
-			}
-		}
+		/* Get monster tile info */
+		map_mon_info(m_ptr, &a, &c);
 	}
 
 	/* Hack -- fake monochrome */
