@@ -4730,7 +4730,7 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 		     (j_ptr->tval == TV_SCROLL) ||
 		     (j_ptr->tval == TV_WAND)))
 		{
-			/* only display messages if player thows */
+			/* only display messages if player throws */
 			if (!chance)
 			{
 				/* Message */
@@ -4748,11 +4748,11 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 		/* Check to see if the object will disappear in water. */
 		if ((c_ptr->feat == FEAT_SHAL_WATER) && (j_ptr->tval == TV_RING))
 		{
-			/* only display messages if player thows */
+			/* only display messages if player throws */
 			if (!chance)
 			{
 				/* Message */
-				msg_format("The %s disappear%.",
+				msg_format("The %s disappear%s.",
 					o_name, (plural ? "" : "s"));
 			}
 

@@ -1504,8 +1504,6 @@ void verify_panel(void)
 		pcol_min = x - (wid - 14) / 2;
 		if (pcol_min > max_pcol_min) pcol_min = max_pcol_min;
 		else if (pcol_min < 0) pcol_min = 0;
-
-
 	}
 	else
 	{
