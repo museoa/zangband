@@ -545,6 +545,8 @@ static s16b o_pop(void)
  * not to be in the standard object array.
  *
  * We do not adjust position, held or region information.
+ *
+ * The old object is wiped.
  */
 object_type *add_object_list(s16b *o_idx_ptr, const object_type *o_ptr)
 {
@@ -561,12 +563,8 @@ object_type *add_object_list(s16b *o_idx_ptr, const object_type *o_ptr)
 	/* Point to the object */
 	j_ptr = &o_list[o_idx];
 
-	/* Copy */
-    object_copy(j_ptr, o_ptr);
-
-	/* Allocate quarks */
-	quark_dup(j_ptr->xtra_name);
-	quark_dup(j_ptr->inscription);
+	/* Move to the list */
+    swap_objects(j_ptr, o_ptr);
 
 	/* Add to the list */
 	j_ptr->next_o_idx = *o_idx_ptr;
