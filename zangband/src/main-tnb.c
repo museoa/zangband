@@ -215,15 +215,6 @@ static errr Term_xtra_tnb(int n, int v)
 	return 1;
 }
 
-static errr Term_curs_tnb(int x, int y)
-{
-	/* Hack - ignore parameters for now */
-	(void) x;
-	(void) y;
-
-	return 0;
-}
-
 
 static void term_data_link(term *t)
 {
