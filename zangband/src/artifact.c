@@ -557,15 +557,34 @@ static cptr glow_desc[] =
 	"glows", "shines", "pulses", "throbs", "radiates", "sparks"
 };
 
-static void apply_activation_power(object_type *o_ptr, cptr text, cptr desc, cptr effect, bool aimed, int charge_min)
+static void apply_activation_power(object_type *o_ptr, cptr text, cptr desc, cptr effect, bool aimed, int pp, int level)
 {
 	char buf[1024];
 	char text_buf[256];
 	int len;
+	int charge_min;
 
 	/* Don't add a power if there already is one */
 	if (o_ptr->flags3 & TR3_ACTIVATE)
 		return;
+
+	/* Calculate charge time */
+	charge_min = pp / level;
+
+	/* Round to nice numbers */
+	if (charge_min >= 1000)
+		charge_min -= charge_min % 100;
+	else if (charge_min >= 250)
+		charge_min -= charge_min % 50;
+	else if (charge_min >= 100)
+		charge_min -= charge_min % 10;
+	else if (charge_min >= 25)
+		charge_min -= charge_min % 5;
+
+	/* Enforce minimum & maximum charge time */
+	if (charge_min < 1) charge_min = 1;
+	if (charge_min > 5000) charge_min = 5000;
+
 
 	/* Get a description if needed */
 	if (text == NULL)
@@ -595,10 +614,120 @@ static void apply_activation_power(object_type *o_ptr, cptr text, cptr desc, cpt
 	o_ptr->timeout = 0;
 }
 
+static void attack_activation_power(object_type *o_ptr, int level, cptr fix_element)
+{
+	static char text[256];
+	char effect[256] = "";
+	char desc[256] = "";
+	int element;
+	int dice = 0;
+	int sides = 1;
+	int radius = 0;
+	int pp = 0;	/* Charge time * level */
+	bool aimed = TRUE;
+
+	int rlev = level * rand_range(50, 150) / 100;
+	if (rlev < 1) rlev = 1;
+
+	if (fix_element == NULL)
+	{
+		/* Pick a low or high element */
+		if (level <= randint1(60))
+			element = randint0(5);
+		else
+			element = randint0(NUM_ELEMENTS(element_list));
+	}
+	else
+	{
+		for (element = 0; strcmp(fix_element, element_list[element]) != 0; element++)
+			;
+	}
+
+	/* Describe the visual */
+	strnfmt(text, 256, "The %%v %s %s...", glow_desc[randint0(NUM_ELEMENTS(glow_desc))], element_colors[element]);
+
+	switch (randint1(10))
+	{
+	/* Breathe */
+	case 1:
+		strnfmt(text, 256, "You breathe %s.", element_names[element]);
+
+		/* Dice, radius, and charge time */
+		dice = rlev * 5;
+		radius = 2 + dice / rand_range(100, 200);
+		pp = dice * 10 * radius;
+
+		/* Create the lua */
+		strnfmt(desc, 256, "breathe %s (%i, rad. %i)", element_names[element], dice, radius);
+		strnfmt(effect, 256, "fire_ball(%s, dir, %i, %i)", element_list[element], dice, radius);
+
+		break;
+
+	/* Emit a blast */
+	case 2:
+		strnfmt(text, 256, "The %%v emits a blast of %s...", element_names[element]);
+
+		/* Dice, radius, and charge time */
+		dice = rlev * 10;
+		radius = 2 + dice / rand_range(50, 100);
+		pp = dice * 2 * radius;
+			
+		aimed = FALSE;
+
+		/* Create the lua */
+		strnfmt(desc, 256, "%s blast (%i, rad. %i)", element_names[element], dice, radius);
+		strnfmt(effect, 256, "fire_ball(%s, 0, %i, %i)", element_list[element], dice, radius);
+
+		break;
+
+	/* Fire a ball */
+	case 3:
+	case 4:
+	case 5:
+		/* Dice, radius, and charge time */
+		dice = 5 * (1 + rlev / 2);
+		radius = 2 + dice / rand_range(100, 200);
+		pp = dice * 10 * radius;
+
+		/* Create the lua */
+		strnfmt(desc, 256, "%s%s ball (%i)", radius > 2 ? "large " : "", element_names[element], dice);
+		strnfmt(effect, 256, "fire_ball(%s, dir, %i, %i)", element_list[element], dice, radius);
+
+		break;
+
+	/* Fire a beam */
+	case 6:
+		/* Dice and charge time */
+		dice = 1 + rlev / 3;
+		sides = rand_range(5, 8);
+		pp = dice * sides * 10;
+
+		/* Create the lua */
+		strnfmt(desc, 256, "%s beam (%id%i)", element_names[element], dice, sides);
+		strnfmt(effect, 256, "fire_beam(%s, dir, damroll(%i, %i))", element_list[element], dice, sides);
+
+		break;
+
+	/* Fire a bolt */
+	default:
+		/* Dice and charge time */
+		dice = 1 + rlev / 2;
+		sides = rand_range(5, 8);
+		pp = dice * sides * 5;
+
+		/* Create the lua */
+		strnfmt(desc, 256, "%s bolt (%id%i)", element_names[element], dice, sides);
+		strnfmt(effect, 256, "fire_bolt(%s, dir, damroll(%i, %i))", element_list[element], dice, sides);
+
+		break;
+	}
+
+	apply_activation_power(o_ptr, text, desc, effect, aimed, pp, level);
+}
+
 static void random_activation_power(object_type *o_ptr, int level)
 {
 	cptr text = NULL;
-	int charge_min = 10;
 	int dice = 0;
 	int sides = 1;
 	int radius = 0;
@@ -611,98 +740,14 @@ static void random_activation_power(object_type *o_ptr, int level)
 	int rlev = level * rand_range(50, 150) / 100;
 	if (rlev < 1) rlev = 1;
 
-	if (randint0(100) < 40)
+	/* 50% chance of a random attack */
+	if (randint0(100) < 50)
 	{
-		static char buf1[40];
-		int element;
-
-		/* Pick a low or high element */
-		if (level <= randint1(60))
-			element = randint0(5);
-		else
-			element = randint0(NUM_ELEMENTS(element_list));
-
-		/* Describe the visual */
-		strnfmt(buf1, 256, "The %%v %s %s...", glow_desc[randint0(NUM_ELEMENTS(glow_desc))], element_colors[element]);
-		text = buf1;
-
-		switch (randint1(10))
-		{
-		/* Breathe */
-		case 1:
-			strnfmt(buf1, 256, "You breathe %s.", element_names[element]);
-
-			/* Dice, radius, and charge time */
-			dice = rlev * 5;
-			radius = 2 + dice / rand_range(100, 200);
-			pp = dice * 10 * radius;
-
-			/* Create the lua */
-			strnfmt(desc, 256, "breathe %s (%i, rad. %i)", element_names[element], dice, radius);
-			strnfmt(effect, 256, "fire_ball(%s, dir, %i, %i)", element_list[element], dice, radius);
-
-			break;
-
-		/* Emit a blast */
-		case 2:
-			strnfmt(buf1, 256, "The %%v emits a blast of %s...", element_names[element]);
-
-			/* Dice, radius, and charge time */
-			dice = rlev * 10;
-			radius = 2 + dice / rand_range(50, 100);
-			pp = dice * 2 * radius;
-			
-			aimed = FALSE;
-
-			/* Create the lua */
-			strnfmt(desc, 256, "%s blast (%i, rad. %i)", element_names[element], dice, radius);
-			strnfmt(effect, 256, "fire_ball(%s, 0, %i, %i)", element_list[element], dice, radius);
-
-			break;
-
-		/* Fire a ball */
-		case 3:
-		case 4:
-		case 5:
-			/* Dice, radius, and charge time */
-			dice = 5 * (1 + rlev / 2);
-			radius = 2 + dice / rand_range(100, 200);
-			pp = dice * 10 * radius;
-
-			/* Create the lua */
-			strnfmt(desc, 256, "%s%s ball (%i)", radius > 2 ? "large " : "", element_names[element], dice);
-			strnfmt(effect, 256, "fire_ball(%s, dir, %i, %i)", element_list[element], dice, radius);
-
-			break;
-
-		/* Fire a beam */
-		case 6:
-			/* Dice and charge time */
-			dice = 1 + rlev / 3;
-			sides = rand_range(5, 8);
-			pp = dice * sides * 10;
-
-			/* Create the lua */
-			strnfmt(desc, 256, "%s beam (%id%i)", element_names[element], dice, sides);
-			strnfmt(effect, 256, "fire_beam(%s, dir, damroll(%i, %i))", element_list[element], dice, sides);
-
-			break;
-
-		/* Fire a bolt */
-		default:
-			/* Dice and charge time */
-			dice = 1 + rlev / 2;
-			sides = rand_range(5, 8);
-			pp = dice * sides * 5;
-
-			/* Create the lua */
-			strnfmt(desc, 256, "%s bolt (%id%i)", element_names[element], dice, sides);
-			strnfmt(effect, 256, "fire_bolt(%s, dir, damroll(%i, %i))", element_list[element], dice, sides);
-
-			break;
-		}
+		attack_activation_power(o_ptr, level, NULL);
+		return;
 	}
-	else switch (randint1(84))
+
+	switch (randint1(84))
 	{
 		case 43:
 			strcpy(desc, "remove fear & cure poison");
@@ -842,7 +887,7 @@ static void random_activation_power(object_type *o_ptr, int level)
 			break;
 
 		case 26:
-			text = "The power of the artifact banishes evil!";
+			text = "The power of the %v banishes evil!";
 			strcpy(desc, "banish evil");
 			strcpy(effect, "banish_evil(200)");
 			aimed = FALSE;
@@ -1208,25 +1253,7 @@ static void random_activation_power(object_type *o_ptr, int level)
 			
 	}
 
-	if (pp) 
-	{
-		charge_min = pp / level;
-
-		/* Round to nice numbers */
-		if (charge_min >= 1000)
-			charge_min -= charge_min % 100;
-		else if (charge_min >= 250)
-			charge_min -= charge_min % 50;
-		else if (charge_min >= 100)
-			charge_min -= charge_min % 10;
-		else if (charge_min >= 25)
-			charge_min -= charge_min % 5;
-	}
-
-	if (charge_min < 1) charge_min = 1;
-	if (charge_min > 5000) charge_min = 5000;
-
-	apply_activation_power(o_ptr, text, desc, effect, aimed, charge_min);
+	apply_activation_power(o_ptr, text, desc, effect, aimed, pp, level);
 }
 
 static void get_random_name(char *return_name, byte tval, int power)
@@ -1281,7 +1308,7 @@ static void get_random_name(char *return_name, byte tval, int power)
 }
 
 
-static int random_minor_theme_weapon(object_type *o_ptr)
+static int random_minor_theme_weapon(object_type *o_ptr, int level)
 {
 	int activate = 0;
 
@@ -1302,10 +1329,8 @@ static int random_minor_theme_weapon(object_type *o_ptr)
 			if (o_ptr->tval == TV_SWORD && one_in_(3))
 				o_ptr->flags1 |= TR1_TUNNEL;
 
-#if 0
 			if (one_in_(2))
-				activate = ACT_BO_ACID_1;
-#endif
+				attack_activation_power(o_ptr, level, "GF_ACID");
 			
 			break;
 
@@ -1314,14 +1339,8 @@ static int random_minor_theme_weapon(object_type *o_ptr)
 			o_ptr->flags1 |= TR1_BRAND_ELEC;
 			o_ptr->flags2 |= TR2_RES_ELEC;
 
-#if 0
-			if (one_in_(4))
-				activate = ACT_BO_ELEC_1;
-			else if (one_in_(5))
-				activate = ACT_BA_ELEC_2;
-			else if (one_in_(5))
-				activate = ACT_BA_ELEC_3;
-#endif
+			if (one_in_(2))
+				attack_activation_power(o_ptr, level, "GF_ELEC");
 
 			break;
 
@@ -1332,14 +1351,8 @@ static int random_minor_theme_weapon(object_type *o_ptr)
 			o_ptr->flags2 |= TR2_RES_FIRE;
 			o_ptr->flags3 |= TR3_LITE;
 
-#if 0
-			if (one_in_(5))
-				activate = ACT_BO_FIRE_1;
-			else if (one_in_(5))
-				activate = ACT_BA_FIRE_1;
-			else if (one_in_(5))
-				activate = ACT_BA_FIRE_2;
-#endif
+			if (one_in_(2))
+				attack_activation_power(o_ptr, level, "GF_FIRE");
 
 			break;
 
@@ -1349,14 +1362,8 @@ static int random_minor_theme_weapon(object_type *o_ptr)
 			o_ptr->flags1 |= TR1_BRAND_COLD;
 			o_ptr->flags2 |= TR2_RES_COLD;
 
-#if 0
-			if (one_in_(6))
-				activate = ACT_BO_COLD_1;
-			else if (one_in_(6))
-				activate = ACT_BA_COLD_1;
-			else if (one_in_(6))
-				activate = ACT_BA_COLD_2;
-#endif
+			if (one_in_(2))
+				attack_activation_power(o_ptr, level, "GF_COLD");
 
 			break;
 
@@ -1365,10 +1372,8 @@ static int random_minor_theme_weapon(object_type *o_ptr)
 			o_ptr->flags1 |= TR1_BRAND_POIS;
 			o_ptr->flags2 |= TR2_RES_POIS;
 
-#if 0
 			if (one_in_(3))
-				activate = ACT_BA_POIS_1;
-#endif
+				attack_activation_power(o_ptr, level, "GF_POIS");
 
 			break;
 
@@ -1379,10 +1384,15 @@ static int random_minor_theme_weapon(object_type *o_ptr)
 			if (one_in_(3))
 				o_ptr->flags4 |= TR4_PATRON;
 
-#if 0
 			if (one_in_(11))
-				activate = ACT_CALL_CHAOS;
-#endif
+			{
+				apply_activation_power(o_ptr, "The %v glows in scintillating colours...",
+					"call chaos", "call_chaos()", FALSE, 25000, level);
+			}
+			else if (one_in_(3))
+			{
+				attack_activation_power(o_ptr, level, "GF_CHAOS");
+			}
 			
 			break;
 
@@ -1468,24 +1478,18 @@ static int random_minor_theme_weapon(object_type *o_ptr)
 			o_ptr->flags1 |= TR1_VAMPIRIC;
 			o_ptr->flags2 |= TR2_HOLD_LIFE;
 
-#if 0
-			if (one_in_(6))
-				activate = ACT_VAMPIRE_1;
-			else if (one_in_(9))
-				activate = ACT_VAMPIRE_2;
-#endif
+			if (one_in_(5))
+			{
+				apply_activation_power(o_ptr, "The %v throbs red...", "vampiric drain (66 + plev)",
+					"drain_gain_life(dir, 66 + plev)", TRUE, 1500, level);
+			}
 
 			break;
 
 		case 36:
 			o_ptr->flags2 |= TR2_HOLD_LIFE;
-
-#if 0
-			if (!one_in_(3))
-				activate = ACT_DRAIN_1;
-			else
-				activate = ACT_DRAIN_2;
-#endif
+			apply_activation_power(o_ptr, "The %v glows black...", "drain life (plev * 5)",
+				"drain_life(dir, plev * 5)", TRUE, 1500, level);
 
 			break;
 
@@ -1493,30 +1497,24 @@ static int random_minor_theme_weapon(object_type *o_ptr)
 			o_ptr->to_h += rand_range(5, 15);
 			o_ptr->to_d += rand_range(5, 15);
 
-#if 0
-			activate = ACT_WHIRLWIND;
-#endif
+			apply_activation_power(o_ptr, "The %v emits a blast of air...", "whirlwind attack",
+				"whirlwind_attack()", FALSE, 20000, level);
 
 			break;
 
 		case 38:
 			o_ptr->flags1 |= TR1_SLAY_ANIMAL;
 
-#if 0
-			if (!one_in_(3))
-				activate = ACT_CHARM_ANIMAL;
-			else
-				activate = ACT_CHARM_ANIMALS;
-#endif
+			apply_activation_power(o_ptr, NULL, "charm animal", "charm_animal(dir, plev)",
+				TRUE, 5000, level);
 
 			break;
 
 		case 39:
 			o_ptr->flags1 |= TR1_SLAY_UNDEAD;
 
-#if 0
-			activate = ACT_CHARM_UNDEAD;
-#endif
+			apply_activation_power(o_ptr, NULL, "enslave undead", "control_one_undead(dir, plev)",
+				TRUE, 7500, level);
 
 			break;
 
@@ -1534,7 +1532,7 @@ static int random_minor_theme_weapon(object_type *o_ptr)
 	return activate;
 }
 
-static int random_major_theme_weapon(object_type *o_ptr)
+static int random_major_theme_weapon(object_type *o_ptr, int level)
 {
 	int activate = 0;
 	
@@ -1548,12 +1546,11 @@ static int random_major_theme_weapon(object_type *o_ptr)
 		o_ptr->flags3 |= TR3_SEE_INVIS;
 		o_ptr->flags3 |= TR3_BLESSED;
 
-#if 0
-		if (one_in_(4))
-			activate = ACT_DISP_EVIL;
-		else if (one_in_(7))
-			activate = ACT_CURE_700;
-#endif
+		if (one_in_(3))
+		{
+			apply_activation_power(o_ptr, "The %v floods the area with goodness...",
+				"dispel evil (plev * 5)", "dispel_evil(plev * 5)", FALSE, 15000, level);
+		}
 		
 		break;
 
@@ -1607,7 +1604,7 @@ static int random_major_theme_weapon(object_type *o_ptr)
 		if (one_in_(2))
 		{
 			apply_activation_power(o_ptr, "The %v twists space around you...", "teleport (100)",
-					"teleport_player(100)", FALSE, 100);
+					"teleport_player(100)", FALSE, 1000, level);
 		}
 		
 		break;
@@ -1668,7 +1665,7 @@ static int random_major_theme_weapon(object_type *o_ptr)
 	return activate;
 }
 
-static int random_minor_theme_armor(object_type *o_ptr)
+static int random_minor_theme_armor(object_type *o_ptr, int level)
 {
 	int activate = 0;
 
@@ -1689,11 +1686,6 @@ static int random_minor_theme_armor(object_type *o_ptr)
 			if (one_in_(3))
 				o_ptr->flags2 |= TR2_RES_FEAR;
 
-#if 0
-			if (one_in_(8))
-				activate = ACT_BERSERK;
-#endif
-			
 			break;
 
 		case 6:
@@ -1703,11 +1695,6 @@ static int random_minor_theme_armor(object_type *o_ptr)
 			if (one_in_(3))
 				o_ptr->flags3 |= TR3_FEATHER;
 
-#if 0			
-			if (one_in_(8))
-				activate = ACT_ID_PLAIN;
-#endif
-			
 			break;
 
 		case 8:
@@ -1717,11 +1704,6 @@ static int random_minor_theme_armor(object_type *o_ptr)
 			if (one_in_(3))
 				o_ptr->flags3 |= TR3_SEE_INVIS;
 
-#if 0
-			if (one_in_(8))
-				activate = ACT_DETECT_ALL;
-#endif
-			
 			break;
 
 		case 10:
@@ -1731,11 +1713,6 @@ static int random_minor_theme_armor(object_type *o_ptr)
 			if (one_in_(3))
 				o_ptr->flags2 |= TR2_FREE_ACT;
 
-#if 0
-			if (one_in_(8))
-				activate = ACT_SPEED;
-#endif
-			
 			break;
 
 		case 12:
@@ -1745,11 +1722,6 @@ static int random_minor_theme_armor(object_type *o_ptr)
 			if (one_in_(3))
 				o_ptr->flags3 |= TR3_REGEN;
 
-#if 0
-			if (one_in_(8))
-				activate = ACT_SATIATE;
-#endif
-			
 			break;
 
 		case 14:
@@ -1759,21 +1731,17 @@ static int random_minor_theme_armor(object_type *o_ptr)
 			if (one_in_(3))
 				o_ptr->flags3 |= TR3_LITE;
 
-#if 0
-			if (one_in_(8))
-				activate = ACT_RECALL;
-#endif
-			
 			break;
 
 		case 16:
 			o_ptr->flags3 |= TR3_LITE;
 			o_ptr->flags2 |= TR2_RES_LITE;
 
-#if 0
 			if (one_in_(3))
-				activate = ACT_LIGHT;
-#endif
+			{
+				apply_activation_power(o_ptr, "The %v wells with clear light...",
+					"light area (5d10)", "lite_area(damroll(5, 10), 3)", FALSE, 120, level);
+			}
 
 			break;
 
@@ -1813,41 +1781,32 @@ static int random_minor_theme_armor(object_type *o_ptr)
 		case 23:
 			o_ptr->flags1 |= TR1_SLAY_EVIL;
 
-#if 0
-			if (one_in_(3))
-				activate = ACT_DISP_EVIL;
-			else if (one_in_(2))
-				activate = ACT_BANISH_EVIL;
-			else
-				activate = ACT_PROT_EVIL;
-#endif
+			apply_activation_power(o_ptr, "The power of the %v banishes evil!", "banish evil",
+				"banish_evil(200)", FALSE, 10000, level);
 
 			break;
 
 		case 24:
 			o_ptr->flags1 |= TR1_STEALTH;
 
-#if 0
-			activate = ACT_SLEEP;
-#endif
+			apply_activation_power(o_ptr, NULL, "sleep nearby monsters", "sleep_monsters_touch()",
+				FALSE, 1000, level);
 
 			break;
 
 		case 25:
 			o_ptr->flags1 |= TR1_WIS;
 
-#if 0
-			activate = ACT_ESP;
-#endif
+			apply_activation_power(o_ptr, "The %v enters your thoughts...", "telepathy (25-50 turns)",
+				"inc_time_esp(rand_range(25, 50))", FALSE, 5000, level);
 
 			break;
 
 		case 26:
 			o_ptr->flags2 |= TR2_RES_DARK;
 
-#if 0
-			activate = ACT_SUNLIGHT;
-#endif
+			apply_activation_power(o_ptr, "A line of sunlight appears.", "beam of sunlight",
+				"lite_line(dir)", TRUE, 50, level);
 
 			break;
 
@@ -1861,10 +1820,11 @@ static int random_minor_theme_armor(object_type *o_ptr)
 			o_ptr->flags2 |= TR2_RES_NETHER;
 			o_ptr->flags2 |= TR2_HOLD_LIFE;
 
-#if 0
 			if (one_in_(6))
-				activate = ACT_REST_LIFE;
-#endif
+			{
+				apply_activation_power(o_ptr, NULL, "restore life levels", "restore_level()",
+					FALSE, 5000, level);
+			}
 
 			break;
 
@@ -1877,9 +1837,8 @@ static int random_minor_theme_armor(object_type *o_ptr)
 		case 30:
 			o_ptr->flags2 |= TR2_RES_FEAR;
 
-#if 0
-			activate = ACT_TERROR;
-#endif
+			apply_activation_power(o_ptr, "The %v emits a loud blast...", "terror",
+				"turn_monsters(40 + player.lev)", FALSE, 2500, level);
 
 			break;
 
@@ -1922,7 +1881,7 @@ static int random_minor_theme_armor(object_type *o_ptr)
 	return activate;
 }
 
-static int random_major_theme_armor(object_type *o_ptr)
+static int random_major_theme_armor(object_type *o_ptr, int level)
 {
 	int activate = 0;
 
@@ -2080,18 +2039,19 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 		
 		if (o_ptr->tval < TV_BOOTS)
 		{
-			act = random_major_theme_weapon(o_ptr);
+			act = random_major_theme_weapon(o_ptr, level);
 			o_ptr->to_h += rand_range(5, 15);
 			o_ptr->to_d += rand_range(5, 15);
 		}
 		else
 		{
-			act = random_major_theme_armor(o_ptr);
+			act = random_major_theme_armor(o_ptr, level);
 			o_ptr->to_a += rand_range(5, 15);
 		}
 		powers -= 3;
 	}
 
+	/* Possibly apply a power typical for the item's slot */
 	if (one_in_(3))
 	{
 		switch (o_ptr->tval)
@@ -2153,13 +2113,13 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 				random_misc(o_ptr);
 				break;
 			case 6:  case 7:
-				act = random_minor_theme_armor(o_ptr);
+				act = random_minor_theme_armor(o_ptr, level);
 				break;
 			case 8:  case 9:
 				random_slay(o_ptr);
 				break;
 			case 10:  case 11:
-				act = random_minor_theme_weapon(o_ptr);
+				act = random_minor_theme_weapon(o_ptr, level);
 				break;
 		}
 		given++;
