@@ -925,6 +925,7 @@ static bool cave_gen(void)
 	return TRUE;
 }
 
+#if 0
 
 /*
  * Builds the arena after it is entered -KMW-
@@ -1042,6 +1043,8 @@ static void arena_gen(void)
 	place_monster_aux(py + 5, px, arena_monsters[p_ptr->arena_number],
 	    FALSE, FALSE, FALSE, FALSE);
 }
+
+#endif
 
 
 #if 0
@@ -1242,6 +1245,8 @@ void generate_cave(void)
 		if (!generate_level_callback(dun_level))
 #endif /* USE_SCRIPT */
 		{
+			
+#if 0			
 			/* Build the arena -KMW- */
 			if (p_ptr->inside_arena)
 			{
@@ -1255,9 +1260,9 @@ void generate_cave(void)
 			{
 				quest_gen();
 			}*/
-
+#endif
 			/* Build the town */
-			else if (!dun_level)
+			if (!dun_level)
 			{
 				/* Hack XXX XXX */
 				/* Exit, information is already in other data type. */

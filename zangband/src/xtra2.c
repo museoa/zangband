@@ -1822,10 +1822,6 @@ static bool target_set_accept(int y, int x)
 		if ((c_ptr->feat >= FEAT_SHOP_HEAD) &&
 		    (c_ptr->feat <= FEAT_SHOP_TAIL)) return (TRUE);
 
-		/* Notice buildings -KMW- */
-		if ((c_ptr->feat >= FEAT_BLDG_HEAD) &&
-		    (c_ptr->feat <= FEAT_BLDG_TAIL)) return (TRUE);
-
 		/* Notice traps */
 		if (is_trap(c_ptr->feat)) return (TRUE);
 
@@ -1840,7 +1836,6 @@ static bool target_set_accept(int y, int x)
 		if (c_ptr->feat == FEAT_MAGMA_K) return (TRUE);
 		if (c_ptr->feat == FEAT_QUARTZ_K) return (TRUE);
 
-#if 0
 		/* Notice water, lava, ... */
 		if (c_ptr->feat == FEAT_DEEP_WATER) return (TRUE);
 		if (c_ptr->feat == FEAT_SHAL_WATER) return (TRUE);
@@ -1851,13 +1846,13 @@ static bool target_set_accept(int y, int x)
 		if (c_ptr->feat == FEAT_DARK_PIT) return (TRUE);
 		if (c_ptr->feat == FEAT_TREES) return (TRUE);
 		if (c_ptr->feat == FEAT_MOUNTAIN) return (TRUE);
-#endif
-
+#if 0
 		/* Notice quest features */
 		if (c_ptr->feat == FEAT_QUEST_ENTER) return (TRUE);
 		if (c_ptr->feat == FEAT_QUEST_EXIT) return (TRUE);
 		if (c_ptr->feat == FEAT_QUEST_DOWN) return (TRUE);
 		if (c_ptr->feat == FEAT_QUEST_UP) return (TRUE);
+#endif
 	}
 
 	/* Nope */
@@ -2275,6 +2270,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 			/* Forget feature */
 			feat = FEAT_NONE;
 		}
+#if 0
 
 		/* Terrain feature if needed */
 		if (boring || (feat > FEAT_INVIS))
@@ -2356,6 +2352,8 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 			/* Always stop at "normal" keys */
 			if ((query != '\r') && (query != '\n') && (query != ' ')) break;
 		}
+
+#endif
 
 		/* Stop on everything but "return" */
 		if ((query != '\r') && (query != '\n')) break;

@@ -1712,14 +1712,14 @@ static void bldg_process_command(building_type *bldg, int i)
 	}
 
 #ifdef USE_SCRIPT
-
+#if 0 /* FEAT_BLDG_* replaced by fields */
 	if (building_command_callback(area(py,px)->feat - FEAT_BLDG_HEAD, i))
 	{
 		/* Script paid the price */
 		paid = TRUE;
 	}
 	else
-
+#endif
 #endif /* USE_SCRIPT */
 
 	{
@@ -1902,6 +1902,8 @@ void do_cmd_quest(void)
 
 #endif
 
+
+#if 0
 /*
  * Do building commands
  */
@@ -1911,7 +1913,6 @@ void do_cmd_bldg(void)
 	char            command;
 	bool            validcmd;
 	building_type   *bldg;
-
 
 	if (!((area(py,px)->feat >= FEAT_BLDG_HEAD) &&
 		  (area(py,px)->feat <= FEAT_BLDG_TAIL)))
@@ -2021,6 +2022,7 @@ void do_cmd_bldg(void)
 	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
 }
 
+#endif
 
 /* Array of places to find an inscription */
 static cptr find_quest[] =

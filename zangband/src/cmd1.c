@@ -2515,12 +2515,16 @@ void move_player(int dir, int do_pickup)
 		oktomove = TRUE;
 		if (p_ptr->pclass != CLASS_RANGER) energy_use += 10;
 	}
+#if 0
+
 	/* Quest features */
 	else if ((c_ptr->feat >= FEAT_QUEST_ENTER) &&
 	         (c_ptr->feat <= FEAT_QUEST_EXIT))
 	{
 		oktomove = TRUE;
 	}
+	
+#endif
 	/* Closed door */
 	else if ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
 	         (c_ptr->feat <= FEAT_DOOR_TAIL))
@@ -2786,7 +2790,7 @@ void move_player(int dir, int do_pickup)
 			/* Hack -- Enter store */
 			command_new = '_';
 		}
-
+#if 0
 		/* Handle "building doors" -KMW- */
 		else if ((c_ptr->feat >= FEAT_BLDG_HEAD) &&
 		    (c_ptr->feat <= FEAT_BLDG_TAIL))
@@ -2797,7 +2801,7 @@ void move_player(int dir, int do_pickup)
 			/* Hack -- Enter building */
 			command_new = ']';
 		}
-
+#endif
 #if 0
 
 		/* Handle quest areas -KMW- */
@@ -2888,9 +2892,10 @@ static int see_wall(int dir, int y, int x)
 	if ((area(y,x)->feat >= FEAT_SHOP_HEAD) &&
 	    (area(y,x)->feat <= FEAT_SHOP_TAIL)) return (FALSE);
 
+#if 0
 	if ((area(y,x)->feat >= FEAT_BLDG_HEAD) &&
 	    (area(y,x)->feat <= FEAT_BLDG_TAIL)) return (FALSE);
-
+#endif
 	if (area(y,x)->feat == FEAT_TREES) return (FALSE);
 
 	/* Must be known to the player */
@@ -3315,7 +3320,7 @@ static bool run_test(void)
 					/* Done */
 					break;
 				}
-
+#if 0
 				/* quest features */
 				case FEAT_QUEST_ENTER:
 				case FEAT_QUEST_EXIT:
@@ -3326,7 +3331,7 @@ static bool run_test(void)
 					/* Done */
 					break;
 				}
-
+#endif
 				case FEAT_DEEP_LAVA:
 				case FEAT_SHAL_LAVA:
 				{

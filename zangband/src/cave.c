@@ -1786,11 +1786,6 @@ static byte priority_table[][2] =
 	{ FEAT_LESS, 25 },
 	{ FEAT_MORE, 25 },
 
-	{ FEAT_QUEST_ENTER, 25 },
-	{ FEAT_QUEST_EXIT, 25 },
-	{ FEAT_QUEST_DOWN, 25 },
-	{ FEAT_QUEST_UP, 25 },
-
 	/* End */
 	{ 0, 0 }
 };

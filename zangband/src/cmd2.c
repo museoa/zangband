@@ -1440,8 +1440,7 @@ void do_cmd_tunnel(void)
 
 		/* No tunnelling through doors */
 		if (((c_ptr->feat >= FEAT_DOOR_HEAD) && (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
-		    ((c_ptr->feat >= FEAT_BLDG_HEAD) && (c_ptr->feat <= FEAT_BLDG_TAIL)) ||
-		    ((c_ptr->feat >= FEAT_SHOP_HEAD) && (c_ptr->feat <= FEAT_SHOP_TAIL)))
+		((c_ptr->feat >= FEAT_SHOP_HEAD) && (c_ptr->feat <= FEAT_SHOP_TAIL)))
 		{
 			/* Message */
 			msg_print("You cannot tunnel through doors.");
@@ -2403,7 +2402,7 @@ void do_cmd_stay(int pickup)
 		/* Hack -- enter store */
 		command_new = '_';
 	}
-
+#if 0
 	/* Hack -- enter a building if we are on one -KMW- */
 	else if ((c_ptr->feat >= FEAT_BLDG_HEAD) &&
 	    (c_ptr->feat <= FEAT_BLDG_TAIL))
@@ -2414,7 +2413,7 @@ void do_cmd_stay(int pickup)
 		/* Hack -- enter building */
 		command_new = ']';
 	}
-
+#endif
 #if 0
 
 	/* Exit a quest if reach the quest exit */

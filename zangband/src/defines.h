@@ -890,13 +890,19 @@
 #define FEAT_LESS               0x06
 #define FEAT_MORE               0x07
 
-/* Quest features -KMW- */
-#define FEAT_QUEST_ENTER		0x08
-#define FEAT_QUEST_EXIT			0x09
-#define FEAT_QUEST_DOWN			0x0A
-#define FEAT_QUEST_UP			0x0B
+/* Quest features are gone - use "fields" from now on if required. */
 
-/* Feature 0x0C - 0x0F unused */
+/* Passable floors */
+
+#define FEAT_SAND		0x08
+#define FEAT_SALT		0x09
+#define FEAT_WET_MUD		0x0A
+#define FEAT_DRY_MUD		0x0B
+#define FEAT_FLOOR_TILE		0x0C
+#define FEAT_FLOOR_WOOD		0x0D
+#define FEAT_PEBBLES		0x0E
+#define FEAT_SOLID_LAVA		0x0F
+
 
 /* Traps */
 #define FEAT_TRAP_TRAPDOOR      0x10
@@ -971,42 +977,46 @@
 
 #define FEAT_TRAP_TRAPS         0x5A
 
-#define FEAT_WALL_INVIS			  0x5B
+#define FEAT_WALL_INVIS		0x5B
 
-/* Feature 0x5A - 0x5F unused */
+#define FEAT_OCEAN_WATER	0x5C
+#define FEAT_DEEP_ACID		0x5D
+#define FEAT_SHAL_ACID		0x5E
+#define FEAT_TREE_WATER		0x5F
 
-/* Terrain */
+/* Terrain semi-transparent*/
 #define FEAT_TREES              0x60
 #define FEAT_MOUNTAIN           0x61
+#define FEAT_SNOW_MOUNTAIN	0x62
+#define FEAT_BOULDER		0x63
+#define FEAT_PINE_TREE		0x64
+#define FEAT_SNOW_TREE		0x65
+#define FEAT_OBLISK		0x66
+#define FEAT_PILLAR		0x67
 
-/* Feature 0x62 - 0x7F unused */
+/* Feature 0x68 - 0x6F unused */
 
-/* Buildings */
-#define FEAT_BLDG_HEAD          0x80
-#define FEAT_BLDG_TAIL          0x9F
+/* Slow "floor" terrains */
 
-
-
-/*
- * Wilderness terrains
- */
-#define TERRAIN_EDGE             0 /* Edge of the World */
-#define TERRAIN_TOWN             1 /* Town */
-#define TERRAIN_DEEP_WATER       2 /* Deep water */
-#define TERRAIN_SHALLOW_WATER    3 /* Shallow water */
-#define TERRAIN_SWAMP            4 /* Swamp */
-#define TERRAIN_DIRT             5 /* Dirt */
-#define TERRAIN_GRASS            6 /* Grass */
-#define TERRAIN_TREES            7 /* Trees */
-#define TERRAIN_DESERT           8 /* Desert */
-#define TERRAIN_SHALLOW_LAVA     9 /* Shallow lava */
-#define TERRAIN_DEEP_LAVA       10 /* Deep lava */
-#define TERRAIN_MOUNTAIN        11 /* Mountain */
-
-#define MAX_WILDERNESS          12 /* Maximum wilderness index */
+#define FEAT_BUSH		0x70
+#define FEAT_DEAD_BUSH		0x71
+#define FEAT_GRASS_LONG		0x72
+#define FEAT_ROCK_GEN		0x73
+#define FEAT_ROCK_SNOW		0x74
+#define FEAT_TREE_GEN		0x75
+#define FEAT_TREE_SNOW		0x76
+#define FEAT_SNOW		0x77
+#define FEAT_DEEP_SWAMP		0x78
+#define FEAT_SHAL_SWAMP		0x79
+/* Buildings - removed (replaced with fields) */
 
 
+/* Impassible terrains */
 
+#define FEAT_FENCE		0x80
+#define FEAT_WELL		0x81
+#define FEAT_FOUNTAIN		0x82
+#define FEAT_JUNGLE		0x83
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
 
 /* Lites */
@@ -3132,10 +3142,10 @@
 
 /*
  * Used to see if square is transparent.
- * Trees now block sight only half the time.
+ * Some things block LOS half the time.
  */
 #define cave_half_bold(Y,X) \
-	((area(Y,X)->feat == FEAT_TREES) && (quick_rand()))
+	((area(Y,X)->feat & 0x60) && (quick_rand()))
 
 /*
  * Determine if a "legal" grid is a "clean" floor grid
@@ -3213,8 +3223,6 @@
 	((area(Y,X)->feat >= FEAT_PERM_EXTRA) || \
 	((area(Y,X)->feat == FEAT_LESS) || \
 	 (area(Y,X)->feat == FEAT_MORE)) || \
-	((area(Y,X)->feat >= FEAT_BLDG_HEAD) && \
-	 (area(Y,X)->feat <= FEAT_BLDG_TAIL)) || \
 	((area(Y,X)->feat >= FEAT_SHOP_HEAD) && \
 	 (area(Y,X)->feat <= FEAT_SHOP_TAIL)))
 
@@ -3229,7 +3237,7 @@
  * True half the time for trees. (Block line of sight half the time.)
  */
 #define cave_half_grid(C) \
-    (((C)->feat == FEAT_TREES) && (quick_rand()))
+    (((C)->feat & 0x60) && (quick_rand()))
 
 
 /*
@@ -3266,14 +3274,10 @@
 	  ((C)->feat == FEAT_LESS) || \
 	  ((C)->feat == FEAT_MORE) || \
 	  ((C)->feat == FEAT_MOUNTAIN) || \
-	 (((C)->feat >= FEAT_QUEST_ENTER) && \
-	  ((C)->feat <= FEAT_QUEST_UP)) || \
 	 (((C)->feat >= FEAT_PATTERN_START) && \
 	  ((C)->feat <= FEAT_PATTERN_XTRA2)) || \
 	 (((C)->feat >= FEAT_SHOP_HEAD) && \
-	  ((C)->feat <= FEAT_SHOP_TAIL)) || \
-	 (((C)->feat >= FEAT_BLDG_HEAD) && \
-	  ((C)->feat <= FEAT_BLDG_TAIL)))
+	  ((C)->feat <= FEAT_SHOP_TAIL)))
 
 
 
@@ -3474,7 +3478,7 @@ extern int PlayerUID;
  * Buildings actions
  */
 #define BACT_NOTHING                 0
-#define BACT_RESEARCH_ITEM		     1
+#define BACT_RESEARCH_ITEM	     1
 #define BACT_TOWN_HISTORY            2
 #define BACT_RACE_LEGENDS            3
 #define BACT_GREET_KING              4

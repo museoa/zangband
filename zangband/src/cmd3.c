@@ -1156,7 +1156,7 @@ static cptr ident_info[] =
 	"\":An amulet (or necklace)",
 	"#:A wall (or secret door)",
 	"$:Treasure (gold or gems)",
-	"%:A vein (magma or quartz)",
+	"%:Trees",
 	"&:A chest",
 	"':An open door",
 	"(:Soft armor",
@@ -1177,8 +1177,8 @@ static cptr ident_info[] =
 	"7:Entrance to Black Market",
 	"8:Entrance to your home",
 	"9:Entrance to the bookstore",
-	"::Rubble",
-	";:A glyph of warding / explosive rune",
+	"::Rubble / Rock",
+	";:Swamp / Rune",
 	"<:An up staircase",
 	"=:A ring",
 	">:A down staircase",
@@ -1227,7 +1227,7 @@ static cptr ident_info[] =
 	"i:Icky Thing",
 	"j:Jelly",
 	"k:Kobold",
-	"l:Louse",
+	"l:Aquatic monster",
 	"m:Mold",
 	"n:Naga",
 	"o:Orc",
@@ -1245,7 +1245,7 @@ static cptr ident_info[] =
 	"{:A missile (arrow/bolt/shot)",
 	"|:An edged weapon (sword/dagger/etc)",
 	"}:A launcher (bow/crossbow/sling)",
-	"~:Aquatic monster (or miscellaneous item)",
+	"~:Fluid terrain (or miscellaneous item)",
 	NULL
 };
 

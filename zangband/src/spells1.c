@@ -4102,9 +4102,7 @@ int dist_to_line(int y, int x, int y1, int x1, int y2, int x2)
 	  (area(Y,X)->feat <= FEAT_PERM_SOLID)) || \
 	  (area(Y,X)->feat == FEAT_MOUNTAIN) || \
 	 ((area(Y,X)->feat >= FEAT_SHOP_HEAD) && \
-	  (area(Y,X)->feat <= FEAT_SHOP_TAIL)) || \
-	 ((area(Y,X)->feat >= FEAT_BLDG_HEAD) && \
-	  (area(Y,X)->feat <= FEAT_BLDG_TAIL)))
+	  (area(Y,X)->feat <= FEAT_SHOP_TAIL)))
 
 
 /*
