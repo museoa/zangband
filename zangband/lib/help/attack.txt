@@ -515,7 +515,7 @@ firing ammunition whose base damage dice are XdY is as follows:
 
     Example 1
     ---------
-    You use a long bow to hit a Dragon with an arrow (3d5)
+    You use a long bow to hit a Dragon with an arrow (3d4)
 
     there are three damage dice                  :  3x damage
     its a long bow, and you have high strength   :  3x damage
@@ -527,7 +527,7 @@ firing ammunition whose base damage dice are XdY is as follows:
 
     Z = 3 * 3 * 2 * 1 * 2 = 36
 
-    Rolling a five-sided dice 36 times yields an average damage of 108
+    Rolling a four-sided dice 36 times yields an average damage of 90
     per blow.
 
 
