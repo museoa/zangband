@@ -18,14 +18,11 @@
  */
 void do_cmd_go_up(void)
 {
-	int py = p_ptr->py;
-	int px = p_ptr->px;
-
 	bool go_up = FALSE;
 	cave_type *c_ptr;
 
 	/* Player grid */
-	c_ptr = area(py, px);
+	c_ptr = area(p_ptr->py, p_ptr->px);
 #if 0
 	/* Quest up stairs */
 	if (c_ptr->feat == FEAT_QUEST_UP)
@@ -148,14 +145,11 @@ void do_cmd_go_up(void)
  */
 void do_cmd_go_down(void)
 {
-	int py = p_ptr->py;
-	int px = p_ptr->px;
-
 	cave_type *c_ptr;
 	bool go_down = FALSE;
 
 	/* Player grid */
-	c_ptr = area(py, px);
+	c_ptr = area(p_ptr->py, p_ptr->px);
 
 #if 0
 
@@ -248,11 +242,6 @@ void do_cmd_go_down(void)
  */
 void do_cmd_search(void)
 {
-#ifdef USE_SCRIPT
-	int py = p_ptr->py;
-	int px = p_ptr->px;
-#endif /* USE_SCRIPT */
-
 	/* Allow repeated command */
 	if (p_ptr->command_arg)
 	{
@@ -270,7 +259,7 @@ void do_cmd_search(void)
 	p_ptr->energy_use = 100;
 
 #ifdef USE_SCRIPT
-	if (cmd_search_callback(py, px))
+	if (cmd_search_callback(p_ptr->py, p_ptr->px))
 	{
 		/* Disturb */
 		disturb(0, 0);
@@ -691,9 +680,6 @@ static bool is_closed(int feat)
  */
 int count_traps(int *y, int *x, bool under)
 {
-	int py = p_ptr->py;
-	int px = p_ptr->px;
-
 	int d;
 	int xx, yy;
 	int count = 0; /* Count how many matches */
@@ -705,8 +691,8 @@ int count_traps(int *y, int *x, bool under)
 		if ((d == 8) && !under) continue;
 
 		/* Extract adjacent (legal) location */
-		yy = py + ddy_ddd[d];
-		xx = px + ddx_ddd[d];
+		yy = p_ptr->py + ddy_ddd[d];
+		xx = p_ptr->px + ddx_ddd[d];
 
 		/* paranoia */
 		if (!in_bounds2(yy, xx)) continue;
@@ -731,9 +717,6 @@ int count_traps(int *y, int *x, bool under)
  */
 static int count_doors(int *y, int *x, bool (*test)(int feat), bool under)
 {
-	int py = p_ptr->py;
-	int px = p_ptr->px;
-
 	int d;
 	int xx, yy;
 	int count = 0; /* Count how many matches */
@@ -745,8 +728,8 @@ static int count_doors(int *y, int *x, bool (*test)(int feat), bool under)
 		if ((d == 8) && !under) continue;
 
 		/* Extract adjacent (legal) location */
-		yy = py + ddy_ddd[d];
-		xx = px + ddx_ddd[d];
+		yy = p_ptr->py + ddy_ddd[d];
+		xx = p_ptr->px + ddx_ddd[d];
 
 		/* paranoia */
 		if (!in_bounds2(yy, xx)) continue;
@@ -778,9 +761,6 @@ static int count_doors(int *y, int *x, bool (*test)(int feat), bool under)
  */
 static int count_chests(int *y, int *x, bool trapped)
 {
-	int py = p_ptr->py;
-	int px = p_ptr->px;
-
 	int d, count, o_idx;
 
 	object_type *o_ptr;
@@ -792,8 +772,8 @@ static int count_chests(int *y, int *x, bool trapped)
 	for (d = 0; d < 9; d++)
 	{
 		/* Extract adjacent (legal) location */
-		int yy = py + ddy_ddd[d];
-		int xx = px + ddx_ddd[d];
+		int yy = p_ptr->py + ddy_ddd[d];
+		int xx = p_ptr->px + ddx_ddd[d];
 
 		/* No (visible) chest is there */
 		if ((o_idx = chest_check(yy, xx)) == 0) continue;
@@ -826,14 +806,9 @@ static int count_chests(int *y, int *x, bool trapped)
  */
 static int coords_to_dir(int y, int x)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
 	int d[3][3] = { {7, 4, 1}, {8, 5, 2}, {9, 6, 3} };
-	int dy, dx;
-
-	dy = y - py;
-	dx = x - px;
+	int dy = y - p_ptr->py;
+	int dx = x - p_ptr->px;
 
 	/* Paranoia */
 	if (ABS(dx) > 1 || ABS(dy) > 1) return (0);
@@ -933,9 +908,6 @@ bool do_cmd_open_aux(int y, int x)
  */
 void do_cmd_open(void)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
 	int y, x, dir;
 
 	s16b o_idx;
@@ -979,8 +951,8 @@ void do_cmd_open(void)
 	if (get_rep_dir(&dir,FALSE))
 	{
 		/* Get requested location */
-		y = py + ddy[dir];
-		x = px + ddx[dir];
+		y = p_ptr->py + ddy[dir];
+		x = p_ptr->px + ddx[dir];
 
 #ifdef USE_SCRIPT
 		if (cmd_open_callback(y, x))
@@ -1093,9 +1065,6 @@ static bool do_cmd_close_aux(int y, int x)
  */
 void do_cmd_close(void)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
 	int y, x, dir;
 
 	cave_type *c_ptr;
@@ -1129,8 +1098,8 @@ void do_cmd_close(void)
 	if (get_rep_dir(&dir,FALSE))
 	{
 		/* Get requested location */
-		y = py + ddy[dir];
-		x = px + ddx[dir];
+		y = p_ptr->py + ddy[dir];
+		x = p_ptr->px + ddx[dir];
 
 		/* paranoia */
 		if (!in_bounds2(y, x))
@@ -1520,9 +1489,6 @@ static bool do_cmd_tunnel_aux(int y, int x)
  */
 void do_cmd_tunnel(void)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
 	int			y, x, dir;
 
 	cave_type	*c_ptr;
@@ -1547,8 +1513,8 @@ void do_cmd_tunnel(void)
 	if (get_rep_dir(&dir,FALSE))
 	{
 		/* Get location */
-		y = py + ddy[dir];
-		x = px + ddx[dir];
+		y = p_ptr->py + ddy[dir];
+		x = p_ptr->px + ddx[dir];
 
 		/* Cannot escape the wilderness by tunneling */
 		if (!in_bounds2(y, x))
@@ -1791,9 +1757,6 @@ bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
  */
 void do_cmd_disarm(void)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
 	int y, x, dir;
 
 	s16b o_idx;
@@ -1839,8 +1802,8 @@ void do_cmd_disarm(void)
 	if (get_rep_dir(&dir,TRUE))
 	{
 		/* Get location */
-		y = py + ddy[dir];
-		x = px + ddx[dir];
+		y = p_ptr->py + ddy[dir];
+		x = p_ptr->px + ddx[dir];
 
 		/* paranoia */
 		if (!in_bounds2(y, x))
@@ -1907,9 +1870,6 @@ void do_cmd_disarm(void)
  */
 void do_cmd_alter(void)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
 	int			y, x, dir;
 	int			action;
 
@@ -1935,8 +1895,8 @@ void do_cmd_alter(void)
 	if (get_rep_dir(&dir,TRUE))
 	{
 		/* Get location */
-		y = py + ddy[dir];
-		x = px + ddx[dir];
+		y = p_ptr->py + ddy[dir];
+		x = p_ptr->px + ddx[dir];
 
 		/* paranoia */
 		if (!in_bounds2(y, x))
@@ -2071,9 +2031,6 @@ static bool get_spike(int *ip)
  */
 void do_cmd_spike(void)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
 	int dir, item;
 	s16b y, x;
 
@@ -2084,8 +2041,8 @@ void do_cmd_spike(void)
 	if (get_rep_dir(&dir,FALSE))
 	{
 		/* Get location */
-		y = py + ddy[dir];
-		x = px + ddx[dir];
+		y = p_ptr->py + ddy[dir];
+		x = p_ptr->px + ddx[dir];
 
 		/* paranoia */
 		if (!in_bounds2(y, x))
@@ -2224,9 +2181,6 @@ void do_cmd_run(void)
  */
 void do_cmd_stay(int pickup)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
 	/* Allow repeated command */
 	if (p_ptr->command_arg)
 	{
@@ -2298,7 +2252,7 @@ void do_cmd_stay(int pickup)
 			quest[leaving_quest].status = QUEST_STATUS_FAILED;
 		}
 
-		p_ptr->inside_quest = area(py, px)->special;
+		p_ptr->inside_quest = area(p_ptr->py, p_ptr->px)->special;
 		p_ptr->depth = 0;
 		p_ptr->leaving = TRUE;
 	}

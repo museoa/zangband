@@ -2496,31 +2496,23 @@ void move_player(int dir, int do_pickup)
 			 FIELD_ACT_PLAYER_LEAVE, NULL);
 
 		/* Move the player */
-		/* py = y; */
-		/* px = x; */
-
-		/* Move the player */
-		py = y;
-		px = x;
-
-		/* Move the player */
 		p_ptr->py = y;
 		p_ptr->px = x;
 
 		if (!p_ptr->depth)
 		{
 			/* Scroll wilderness */
-			p_ptr->wilderness_x = px;
-			p_ptr->wilderness_y = py;
+			p_ptr->wilderness_x = x;
+			p_ptr->wilderness_y = y;
 			move_wild();
 		}
 		
 		/* Process fields under the player. */
-		field_hook(&area(py, px)->fld_idx,
+		field_hook(&area(y, x)->fld_idx,
 			 FIELD_ACT_PLAYER_ENTER, NULL);
 		
 		/* Redraw new spot */
-		lite_spot(py, px);		
+		lite_spot(y, x);		
 
 		/* Redraw old spot */
 		lite_spot(oy, ox);
@@ -2548,7 +2540,7 @@ void move_player(int dir, int do_pickup)
 		 * we are running?
 		 */
 		if (disturb_traps && p_ptr->detected && p_ptr->running && 
-			(distance(py, px, p_ptr->detecty, p_ptr->detectx) >= MAX_DETECT))
+			(distance(y, x, p_ptr->detecty, p_ptr->detectx) >= MAX_DETECT))
 		{
 			/* We are out of range */
 				
@@ -3419,14 +3411,11 @@ static bool run_test(void)
  */
 void run_step(int dir)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
 	/* Start running */
 	if (dir)
 	{
 		/* Hack -- do not start silly run */
-		if (see_wall(dir, py, px))
+		if (see_wall(dir, p_ptr->py, p_ptr->px))
 		{
 			/* Message */
 			msg_print("You cannot run in that direction.");

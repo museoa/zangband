@@ -4932,9 +4932,6 @@ static bool in_ball_range(int y1, int x1, int y2, int x2)
  */
 bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 {
-	int py = p_ptr->py;
-	int px = p_ptr->px;
-
 	int i, t, dist;
 
 	int y1, x1;
@@ -5001,8 +4998,8 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 	/* Start at player */
 	else if (who <= 0)
 	{
-		x1 = px;
-		y1 = py;
+		x1 = p_ptr->px;
+		y1 = p_ptr->py;
 	}
 
 	/* Start at monster */

@@ -2373,9 +2373,6 @@ void aggravate_monsters(int who)
  */
 bool genocide(int player_cast)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
 	int     i;
 	char    typ;
 	bool    result = FALSE;
@@ -2425,7 +2422,7 @@ bool genocide(int player_cast)
 		}
 
 		/* Visual feedback */
-		move_cursor_relative(py, px);
+		move_cursor_relative(p_ptr->py, p_ptr->px);
 
 		/* Redraw */
 		p_ptr->redraw |= (PR_HP);
@@ -2458,9 +2455,6 @@ bool genocide(int player_cast)
  */
 bool mass_genocide(int player_cast)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
 	int     i;
 	bool    result = FALSE;
 	int     msec = op_ptr->delay_factor * op_ptr->delay_factor * op_ptr->delay_factor;
@@ -2506,7 +2500,7 @@ bool mass_genocide(int player_cast)
 			take_hit(randint1(3), "the strain of casting Mass Genocide");
 		}
 
-		move_cursor_relative(py, px);
+		move_cursor_relative(p_ptr->py, p_ptr->px);
 
 		/* Redraw */
 		p_ptr->redraw |= (PR_HP);
@@ -3447,9 +3441,6 @@ static int next_to_walls_adj(int cy, int cx)
  */
 static void cave_temp_room_aux(int y, int x)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
 	cave_type *c_ptr;
 
 	/* Verify */
@@ -3465,7 +3456,7 @@ static void cave_temp_room_aux(int y, int x)
 	if (!cave_floor_grid(c_ptr)) return;
 
 	/* Do not exceed the maximum spell range */
-	if (distance(py, px, y, x) > MAX_RANGE) return;
+	if (distance(p_ptr->py, p_ptr->px, y, x) > MAX_RANGE) return;
 
 
 	/* Verify this grid */
@@ -3580,9 +3571,6 @@ void unlite_room(int y1, int x1)
  */
 bool lite_area(int dam, int rad)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
 	u16b flg = PROJECT_GRID | PROJECT_KILL;
 
 	/* Hack -- Message */
@@ -3592,10 +3580,10 @@ bool lite_area(int dam, int rad)
 	}
 
 	/* Hook into the "project()" function */
-	(void)project(0, rad, py, px, dam, GF_LITE_WEAK, flg);
+	(void)project(0, rad, p_ptr->py, p_ptr->px, dam, GF_LITE_WEAK, flg);
 
 	/* Lite up the room */
-	lite_room(py, px);
+	lite_room(p_ptr->py, p_ptr->px);
 
 	/* Assume seen */
 	return (TRUE);
@@ -3608,9 +3596,6 @@ bool lite_area(int dam, int rad)
  */
 bool unlite_area(int dam, int rad)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
 	u16b flg = PROJECT_GRID | PROJECT_KILL;
 
 	/* Hack -- Message */
@@ -3620,10 +3605,10 @@ bool unlite_area(int dam, int rad)
 	}
 
 	/* Hook into the "project()" function */
-	(void)project(0, rad, py, px, dam, GF_DARK_WEAK, flg);
+	(void)project(0, rad, p_ptr->py, p_ptr->px, dam, GF_DARK_WEAK, flg);
 
 	/* Lite up the room */
-	unlite_room(py, px);
+	unlite_room(p_ptr->py, p_ptr->px);
 
 	/* Assume seen */
 	return (TRUE);
@@ -3639,16 +3624,13 @@ bool unlite_area(int dam, int rad)
  */
 bool fire_ball(int typ, int dir, int dam, int rad)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
 	int tx, ty;
 
 	u16b flg = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 
 	/* Use the given direction */
-	tx = px + 99 * ddx[dir];
-	ty = py + 99 * ddy[dir];
+	tx = p_ptr->px + 99 * ddx[dir];
+	ty = p_ptr->py + 99 * ddy[dir];
 
 	/* Hack -- Use an actual "target" */
 	if ((dir == 5) && target_okay())
@@ -3805,17 +3787,14 @@ bool teleport_swap(int dir)
  */
 bool project_hook(int typ, int dir, int dam, u16b flg)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
 	int tx, ty;
 
 	/* Pass through the target if needed */
 	flg |= (PROJECT_THRU);
 
 	/* Use the given direction */
-	tx = px + ddx[dir];
-	ty = py + ddy[dir];
+	tx = p_ptr->px + ddx[dir];
+	ty = p_ptr->py + ddy[dir];
 
 	/* Hack -- Use an actual "target" */
 	if ((dir == 5) && target_okay())
@@ -4014,42 +3993,30 @@ bool teleport_monster(int dir)
  */
 bool door_creation(void)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
 	u16b flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
-	return (project(0, 1, py, px, 0, GF_MAKE_DOOR, flg));
+	return (project(0, 1, p_ptr->py, p_ptr->px, 0, GF_MAKE_DOOR, flg));
 }
 
 
 bool trap_creation(void)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
 	u16b flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
-	return (project(0, 1, py, px, 0, GF_MAKE_TRAP, flg));
+	return (project(0, 1, p_ptr->py, p_ptr->px, 0, GF_MAKE_TRAP, flg));
 }
 
 
 bool glyph_creation(void)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
 	u16b flg = PROJECT_GRID | PROJECT_ITEM;
-	return (project(0, 1, py, px, 0, GF_MAKE_GLYPH, flg));
+	return (project(0, 1, p_ptr->py, p_ptr->px, 0, GF_MAKE_GLYPH, flg));
 }
 
 
 bool wall_stone(void)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
 	u16b flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
 
-	bool dummy = (project(0, 1, py, px, 0, GF_STONE_WALL, flg));
+	bool dummy = (project(0, 1, p_ptr->py, p_ptr->px, 0, GF_STONE_WALL, flg));
 
 	/* Update stuff */
 	p_ptr->update |= (PU_VIEW | PU_FLOW);
@@ -4069,21 +4036,15 @@ bool wall_stone(void)
 
 bool destroy_doors_touch(void)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
 	u16b flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
-	return (project(0, 1, py, px, 0, GF_KILL_DOOR, flg));
+	return (project(0, 1, p_ptr->py, p_ptr->px, 0, GF_KILL_DOOR, flg));
 }
 
 
 bool sleep_monsters_touch(void)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
 	u16b flg = PROJECT_KILL | PROJECT_HIDE;
-	return (project(0, 1, py, px, p_ptr->lev, GF_OLD_SLEEP, flg));
+	return (project(0, 1, p_ptr->py, p_ptr->px, p_ptr->lev, GF_OLD_SLEEP, flg));
 }
 
 

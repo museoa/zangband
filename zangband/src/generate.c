@@ -1162,9 +1162,6 @@ void generate_cave(void)
 		/* Hack XXX XXX */
 		/* Exit, information is already in other data type. */
 
-		/* px = (s16b)p_ptr->wilderness_x; */
-		/* py = (s16b)p_ptr->wilderness_y; */
-
 		p_ptr->px = (s16b)p_ptr->wilderness_x;
 		p_ptr->py = (s16b)p_ptr->wilderness_y;
 
