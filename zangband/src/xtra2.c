@@ -2405,6 +2405,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 					((feat & 0xF8) == 0x08) ||
 					(feat == FEAT_DEEP_WATER) ||
 					(feat == FEAT_SHAL_WATER) ||
+					(feat == FEAT_OCEAN_WATER) ||
 					(feat == FEAT_DEEP_LAVA) ||
 					(feat == FEAT_SHAL_LAVA) ||
 					(feat == FEAT_DIRT) ||
@@ -2414,10 +2415,6 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 					(feat == FEAT_GRASS_LONG))
 			{
 				s3 ="";
-			}
-			else if (feat == FEAT_OCEAN_WATER)
-			{
-				s3 ="the ";
 			}
 			else
 			{

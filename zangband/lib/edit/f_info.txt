@@ -472,7 +472,7 @@ N:91:invisible wall
 G:.:w
 M:1
 
-N:92:ocean
+N:92:very deep water
 G:~:D
 
 N:93:deep acid
