@@ -19,84 +19,6 @@ byte *best;
 s32b *b_home_power;
 
 
-/* money Scumming is a type of town scumming for money */
-static void borg_money_scum(void)
-{
-
-	int dir;
-
-	/* Take note */
-	borg_note(format
-			  ("# Waiting for towns people to breed.  I need %d...",
-			   borg_money_scum_amount - borg_gold));
-
-	/* Rest for 9 months */
-	if (borg_skill[BI_CLEVEL] >= 35)
-	{
-		borg_keypress(ESCAPE);
-		borg_keypress('R');
-		borg_keypress('9');
-		borg_keypress('9');
-		borg_keypress('9');
-		borg_keypress('9');
-		borg_keypress('\n');
-	}
-	else if (borg_skill[BI_CLEVEL] >= 15)
-	{
-		borg_keypress(ESCAPE);
-		borg_keypress('R');
-		borg_keypress('2');
-		borg_keypress('5');
-		borg_keypress('\n');
-	}
-	else						/* Low level, dont want to get mobbed */
-	{
-		borg_keypress(ESCAPE);
-		borg_keypress('R');
-		borg_keypress('5');
-		borg_keypress('\n');
-	}
-
-	/* sometimes twitch in order to move around some */
-	if (borg_t % 10)
-	{
-		borg_keypress(ESCAPE);
-
-		/* Pick a random direction */
-		dir = randint1(9);
-
-		/* Hack -- set goal */
-		g_x = c_x + ddx[dir];
-		g_y = c_y + ddy[dir];
-
-		/* Maybe alter */
-		if (randint0(100) < 10 && dir != 5)
-		{
-			/* Send action (alter) */
-			borg_keypress('+');
-
-			/* Send direction */
-			borg_keypress(I2D(dir));
-		}
-
-		/* Normally move */
-		else
-		{
-			/* Send direction */
-			borg_keypress(I2D(dir));
-		}
-	}
-
-	/* reset the clocks */
-	borg_t = 10;
-	time_this_panel = 1;
-	borg_began = 1;
-
-	/* Done */
-	return;
-}
-
-
 /*
  * Determine if an item can "absorb" a second item
  *
@@ -2217,26 +2139,6 @@ static bool borg_choose_shop(void)
 	/* Assume no important shop */
 	goal_shop = goal_ware = goal_item = -1;
 
-	/* if the borg is scumming for cash, we dont want him messing with the
-	   home inventory */
-	if (borg_gold < borg_money_scum_amount && borg_money_scum_amount != 0 &&
-		!borg_skill[BI_CDEPTH] && borg_skill[BI_LITE])
-	{
-		/* Step 0 -- Buy items from the shops (for the player while scumming) */
-		if (borg_think_shop_buy_aux())
-		{
-			/* Message */
-			/*  borg_note(format("# Buying '%s' at '%s' (money scumming)",
-			   borg_shops[goal_shop].ware[goal_ware].desc,
-			   (f_name + f_info[FEAT_SHOP_HEAD+goal_shop].name))); */
-
-			/* Success */
-			return (TRUE);
-		}
-		else
-			return (FALSE);
-	}
-
 	/* Step 1 -- Sell items to the home */
 	if (borg_think_home_sell_aux(FALSE))
 	{
@@ -2772,20 +2674,6 @@ bool borg_think_dungeon(void)
 		borg_stop_dlevel) borg_oops("Auto-stop for user DLevel.");
 	if (borg_skill[BI_CLEVEL] ==
 		borg_stop_clevel) borg_oops("Auto-stop for user CLevel.");
-
-	/* HACK to end all hacks,,, allow the borg to stop if money scumming */
-	if (borg_gold > borg_money_scum_amount && borg_money_scum_amount != 0 &&
-		!borg_skill[BI_CDEPTH])
-	{
-		borg_oops("Money Scum complete.");
-	}
-
-	/* Hack -- Stop the borg if money scumming and the shops are out of food. */
-	if (!borg_skill[BI_CDEPTH] && borg_money_scum_amount != 0 &&
-		borg_food_onsale == 0)
-	{
-		borg_oops("Money Scum stopped.  No more food in shop.");
-	}
 
 	/* Hack -- prevent clock wrapping Step 1 */
 	if (borg_t >= 12000 && borg_t <= 12025)
@@ -3423,16 +3311,7 @@ bool borg_think_dungeon(void)
 	/* Explore interesting grids */
 	if (borg_flow_dark(TRUE)) return (TRUE);
 
-	/* Leave the level (if needed) */
-	if (borg_gold < borg_money_scum_amount && borg_money_scum_amount != 0 &&
-		!borg_skill[BI_CDEPTH] && borg_skill[BI_LITE])
-	{
-		/* Stay in town and scum for money after shopping */
-	}
-	else
-	{
-		if (borg_leave_level(FALSE)) return (TRUE);
-	}
+  	if (borg_leave_level(FALSE)) return (TRUE);
 
 	/* Explore interesting grids */
 	if (borg_flow_dark(FALSE)) return (TRUE);
@@ -3466,20 +3345,7 @@ bool borg_think_dungeon(void)
 	/* Recharge items before leaving the level */
 	if (borg_wear_recharge()) return (TRUE);
 
-	/* Leave the level (if possible) */
-	if (borg_gold < borg_money_scum_amount && borg_money_scum_amount != 0 &&
-		!borg_skill[BI_CDEPTH] && borg_skill[BI_LITE])
-	{
-		/* Stay in town, scum for money now that shopping is done. */
-		borg_money_scum();
-
-		/* Done */
-		return (TRUE);
-	}
-	else
-	{
-		if (borg_leave_level(TRUE)) return (TRUE);
-	}
+   	if (borg_leave_level(TRUE)) return (TRUE);
 
 
 	/* Search for secret doors */

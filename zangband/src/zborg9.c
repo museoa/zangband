@@ -3109,8 +3109,6 @@ static void init_borg_txt_file(void)
 		borg_chest_fail_tolerance = 13;
 		borg_delay_factor = 1;
 		if (delay_factor == 0) delay_factor = 1;
-		borg_money_scum_amount = 0;
-		borg_scums_money = FALSE;
 
 		return;
 	}
@@ -3313,24 +3311,6 @@ TRUE;
 				   &borg_chest_fail_tolerance);
 			continue;
 		}
-
-		if (prefix(buf, "borg_money_scum_amount ="))
-		{
-			sscanf(buf + strlen("borg_money_scum_amount =") + 1, "%d",
-				   &borg_money_scum_amount);
-			continue;
-		}
-		if (prefix(buf, "borg_scums_money ="))
-		{
-			if (buf[strlen("borg_scums_money =") + 1] == 'T' ||
-				buf[strlen("borg_scums_money =") + 1] == '1' ||
-				buf[strlen("borg_scums_money =") + 1] == 't') borg_scums_money =
-TRUE;
-			else
-				borg_scums_money = FALSE;
-			continue;
-		}
-
 
 		if (prefix(buf, "borg_delay_factor ="))
 		{

@@ -1841,7 +1841,7 @@ bool borg_crush_junk(void)
 			 * nothing, except {cursed} is junk
 			 */
 			if (item->value > 0 &&
-				(borg_worships_gold || borg_money_scum_amount > borg_gold) &&
+				(borg_worships_gold) &&
 				borg_skill[BI_MAXCLEVEL] <= 20 &&
 				!(strstr(item->desc, "{cursed"))) continue;
 

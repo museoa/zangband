@@ -82,8 +82,6 @@ bool borg_slow_optimizehome;
 bool borg_scums_uniques;
 bool borg_engage_cloak;
 int borg_chest_fail_tolerance;
-int borg_money_scum_amount;
-bool borg_scums_money;
 
 /* HACK... this should really be a parm into borg_prepared */
 /*         I am just being lazy */
