@@ -88,7 +88,7 @@ I:80:1:500
 W:9:0:1:0
 A:9/2
 F:EASY_KNOW
-L:USE:	ident = not player_res(TR2_RES_BLIND) and inc_blind(rand_range(200, 400))
+L:USE:	ident = not player_res(TR1_RES_BLIND) and inc_blind(rand_range(200, 400))
 
 N:2:Paranoia
 G:,:d
@@ -96,7 +96,7 @@ I:80:2:500
 W:9:0:1:0
 A:9/2
 F:EASY_KNOW
-L:USE:	ident = not player_res(TR2_RES_FEAR) and inc_afraid(rand_range(10, 20))
+L:USE:	ident = not player_res(TR1_RES_FEAR) and inc_afraid(rand_range(10, 20))
 
 N:3:Confusion
 G:,:d
@@ -104,7 +104,7 @@ I:80:3:500
 W:9:0:1:0
 A:9/2
 F:EASY_KNOW
-L:USE:	ident = not player_res(TR2_RES_CONF) and inc_confused(rand_range(10, 20))
+L:USE:	ident = not player_res(TR1_RES_CONF) and inc_confused(rand_range(10, 20))
 
 N:4:Hallucination
 G:,:d
@@ -112,7 +112,7 @@ I:80:4:500
 W:17:0:1:0
 A:17/2
 F:EASY_KNOW
-L:USE:	ident = not player_res(TR2_RES_CHAOS) and inc_image(rand_range(250, 500))
+L:USE:	ident = not player_res(TR1_RES_CHAOS) and inc_image(rand_range(250, 500))
 
 N:5:Cure Poison
 G:,:d
@@ -225,7 +225,7 @@ I:80:5:500
 W:35:0:1:0
 A:35/2
 F:EASY_KNOW
-L:USE:	ident = not player_res(TR2_FREE_ACT) and inc_paralyzed(rand_range(10, 20))
+L:USE:	ident = not player_res(TR1_FREE_ACT) and inc_paralyzed(rand_range(10, 20))
 
 N:18:Restore Strength
 G:,:d
@@ -1567,7 +1567,7 @@ A:80/1
 F:IGNORE_FIRE | IGNORE_ACID | IGNORE_COLD | IGNORE_ELEC
 F:EASY_KNOW
 L:USE:	fire_ball(GF_CHAOS, 0, 400, 4)
-L:USE:	if not player_res(TR2_RES_CHAOS) then take_hit(rand_range(150, 300),
+L:USE:	if not player_res(TR1_RES_CHAOS) then take_hit(rand_range(150, 300),
 L:USE:		"a Scroll of Logrus") end
 D:The chaotic runes on this scroll look very dangerous.
 
@@ -1819,7 +1819,7 @@ I:70:0:0
 W:1:0:5:0
 A:1/2
 F:EASY_KNOW
-L:USE:	if not player_res(TR2_RES_BLIND) and not player_res(TR2_RES_DARK) then
+L:USE:	if not player_res(TR1_RES_BLIND) and not player_res(TR1_RES_DARK) then
 L:USE:		inc_blind(rand_range(3, 8))
 L:USE:	end
 L:USE:	ident = unlite_area(10, 3)
@@ -2180,7 +2180,7 @@ W:0:0:4:0
 A:0/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
-L:USE:	ident = not player_res(TR2_RES_BLIND) and inc_blind(rand_range(100, 200))
+L:USE:	ident = not player_res(TR1_RES_BLIND) and inc_blind(rand_range(100, 200))
 L:SMASH:project(who, 2, x, y, 0, GF_DARK,
 L:SMASH:    (PROJECT_JUMP + PROJECT_ITEM + PROJECT_KILL)); return TRUE,TRUE
 
@@ -2191,10 +2191,10 @@ W:0:0:4:1
 A:0/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
-L:USE:	ident = not player_res(TR2_RES_CONF) and inc_confused(rand_range(15, 35))
-L:USE:	if not player_res(TR2_RES_CHAOS) and (one_in_(2) ~= 0) and
+L:USE:	ident = not player_res(TR1_RES_CONF) and inc_confused(rand_range(15, 35))
+L:USE:	if not player_res(TR1_RES_CHAOS) and (one_in_(2) ~= 0) and
 L:USE:		inc_image(rand_range(150, 300)) then ident = TRUE end
-L:USE:	if not player_res(TR2_RES_CHAOS) and (one_in_(13) ~= 0) then
+L:USE:	if not player_res(TR1_RES_CHAOS) and (one_in_(13) ~= 0) then
 L:USE:		ident = TRUE
 L:USE:		if player.depth > 0 then
 L:USE:			if (one_in_(3) ~= 0) then lose_all_info() else wiz_dark() end
@@ -2277,7 +2277,7 @@ W:17:0:4:0
 A:17/2
 P:0:1d1:0:0:0
 F:EASY_KNOW
-L:USE:	if not player_res(TR2_HOLD_LIFE) and player.exp > 0 then
+L:USE:	if not player_res(TR1_HOLD_LIFE) and player.exp > 0 then
 L:USE:		msgf("You feel your memories fade.")
 L:USE:		lose_exp(player.exp / 4)
 L:USE:	else ident = FALSE end
@@ -2894,7 +2894,7 @@ I:55:0:17
 W:5:0:50:50
 A:9/1
 P:0:1d2:0:0:0
-L:USE:	ident = not player_res(TR2_RES_BLIND) and not player_res(TR2_RES_DARK)
+L:USE:	ident = not player_res(TR1_RES_BLIND) and not player_res(TR1_RES_DARK)
 L:USE:		and inc_blind(rand_range(4, 8))
 L:USE:	if unlite_area(10, 3) then ident = TRUE end
 
