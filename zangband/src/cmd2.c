@@ -1607,7 +1607,11 @@ bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
 	fld_ptr = field_first_known(&c_ptr->fld_idx, FTYPE_TRAP);
 	
 	/* This should never happen - no trap here to disarm */
-	if (!(*fld_ptr)) return (FALSE);
+	if (!(*fld_ptr))
+	{
+		msg_print("Error condition:  Trying to disarm a non-existant trap.");	
+		return (FALSE);
+	}
 	
 	/* Take a turn */
 	energy_use = 100;
