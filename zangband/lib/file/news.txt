@@ -16,7 +16,7 @@
  Visit "Thangorodrim - The Angband Page" at "http://thangorodrim.angband.org/"
 
              Send all comments, patches, etc, to "rr9@angband.org".
-                Send bug reports to "zangbugs@pino.selwerd.cx".
+                Send bug reports to "zangbugs@pino.selwerd.nl".
 
 
           Press ? for help and = for the options screen while playing.
