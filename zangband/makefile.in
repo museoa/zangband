@@ -62,7 +62,7 @@ include $(scandir)
 INSTALL = mkdir $(DESTDIR)
 
 makedirs:
-	mkdir $(dirlist)
+	mkdir $(addprefix $(DESTDIR),$(dirlist))
 
 install-files: makedirs
 	for i in $(files) ; do \
