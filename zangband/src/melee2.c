@@ -1366,8 +1366,15 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 			/* Message */
 			if (act && see_either)
 			{
-				strfmt(temp, act, t_name);
-				msg_format("%^s %s", m_name, temp);
+			          if ((p_ptr->image) && (randint(3)==1))
+				  {
+                                        strfmt(temp, "%s %s.",
+                                                        silly_attacks[randint(MAX_SILLY_ATTACK)-1],t_name);
+				  }
+                                else
+                                        strfmt(temp, act, t_name);
+
+                                msg_format("%^s %s", m_name, temp);
 			}
 
 			/* Hack -- assume all attacks are obvious */

@@ -359,6 +359,8 @@
 /* Mindcraft */
 #define MAX_MINDCRAFT_POWERS  12
 
+/* Hallucination stuff */
+#define MAX_SILLY_ATTACK 28
 
 /* A hack for cave.c */
 #define BMP_FIRST_PC_CLASS 164
