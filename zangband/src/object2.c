@@ -3202,7 +3202,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 				case SV_RING_LORDLY:
 				{
 					if (randint(7)==1)
-					{
+					{ 
 						/* Randart ring */
 						create_artifact(o_ptr, FALSE);
 					}
@@ -3450,6 +3450,11 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 					{
 						/* Randart amulet */
 						create_artifact(o_ptr, FALSE);
+						if (o_ptr->pval==0)
+						{
+							/* No amulets of"+0 searching" */
+							o_ptr->pval=1;
+						}
 					}
 					else
 					{					
