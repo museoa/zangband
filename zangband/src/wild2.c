@@ -332,7 +332,7 @@ static void draw_general(int x0, int y0, store_type *st_ptr, int x, int y)
 			x2 = x0 + randint1(3);
 
 			/* Build an invulnerable rectangular building */
-			generate_fill(y1, x1, y2, x2, FEAT_PERM_EXTRA);
+			generate_fill(x1, y1, x2, y2, FEAT_PERM_EXTRA);
 
 			/* No doors */
 
@@ -361,7 +361,7 @@ static void draw_store(int x0, int y0, store_type *st_ptr, int x, int y)
 	x2 = x0 + randint1(3);
 
 	/* Build an invulnerable rectangular building */
-	generate_fill(y1, x1, y2, x2, FEAT_PERM_EXTRA);
+	generate_fill(x1, y1, x2, y2, FEAT_PERM_EXTRA);
 
 	/* Pick a door direction (S,N,E,W) */
 	tmp = randint0(4);
@@ -484,7 +484,7 @@ static void draw_gates(int x, int y, byte i, byte j, town_type *t_ptr)
 					y = yy;
 
 					/* Draw an empty square */
-					generate_fill(y + 3, x + 3, y + 4, x + 4, FEAT_FLOOR);
+					generate_fill(x + 3, y + 3, x + 4, y + 4, FEAT_FLOOR);
 
 					/* Right gate */
 					cave[y + 3][x + 4].fld_idx = FT_LOCK_DOOR;
@@ -504,7 +504,7 @@ static void draw_gates(int x, int y, byte i, byte j, town_type *t_ptr)
 					y = yy;
 
 					/* Draw an empty square */
-					generate_fill(y + 3, x + 3, y + 4, x + 4, FEAT_FLOOR);
+					generate_fill(x + 3, y + 3, x + 4, y + 4, FEAT_FLOOR);
 
 					/* Left gate */
 					cave[y + 3][x + 3].fld_idx = FT_LOCK_DOOR;
@@ -524,7 +524,7 @@ static void draw_gates(int x, int y, byte i, byte j, town_type *t_ptr)
 					x = xx;
 
 					/* Draw an empty square */
-					generate_fill(y + 3, x + 3, y + 4, x + 4, FEAT_FLOOR);
+					generate_fill(x + 3, y + 3, x + 4, y + 4, FEAT_FLOOR);
 
 					/* Bottom gate */
 					cave[y + 4][x + 3].fld_idx = FT_LOCK_DOOR;
@@ -544,7 +544,7 @@ static void draw_gates(int x, int y, byte i, byte j, town_type *t_ptr)
 					x = xx;
 
 					/* Draw an empty square */
-					generate_fill(y + 3, x + 3, y + 4, x + 4, FEAT_FLOOR);
+					generate_fill(x + 3, y + 3, x + 4, y + 4, FEAT_FLOOR);
 
 					/* Top gate */
 					cave[y + 3][x + 3].fld_idx = FT_LOCK_DOOR;
@@ -703,28 +703,28 @@ void draw_city(u16b town_num)
 					/* Wall goes up */
 					if ((j > 0) && (temp_block[j - 1][i] == 1))
 					{
-						generate_fill(y, x + 3, y + 4, x + 4,
+						generate_fill(x + 3, y, x + 4, y + 4,
 							 FEAT_PERM_SOLID);
 					}
 
 					/* Wall goes left */
 					if ((i > 0) && (temp_block[j][i - 1] == 1))
 					{
-						generate_fill(y + 3, x, y + 4, x + 4,
+						generate_fill(x, y + 3, x + 4, y + 4,
 							 FEAT_PERM_SOLID);
 					}
 
 					/* Wall goes right */
 					if ((i < WILD_BLOCK_SIZE-1) && (temp_block[j][i + 1] == 1))
 					{
-						generate_fill(y + 3, x + 3, y + 4, x + 7,
+						generate_fill(x + 3, y + 3, x + 7, y + 4,
 							FEAT_PERM_SOLID);
 					}
 
 					/* Wall goes down */
 					if ((j < WILD_BLOCK_SIZE-1) && (temp_block[j + 1][i] == 1))
 					{
-						generate_fill(y + 3, x + 3, y + 7, x + 4,
+						generate_fill(x + 3, y + 3, x + 4, y + 7,
 							FEAT_PERM_SOLID);
 					}
 

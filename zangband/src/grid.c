@@ -378,7 +378,7 @@ int next_to_walls(int x, int y)
 /*
  * Generate helper -- create a new room with optional light
  */
-void generate_room(int y1, int x1, int y2, int x2, int light)
+void generate_room(int x1, int y1, int x2, int y2, int light)
 {
 	int y, x;
 	
@@ -401,7 +401,7 @@ void generate_room(int y1, int x1, int y2, int x2, int light)
 /*
  * Generate helper -- set flags for random vault.
  */
-void generate_vault(int y1, int x1, int y2, int x2)
+void generate_vault(int x1, int y1, int x2, int y2)
 {
 	int y, x;
 
@@ -418,7 +418,7 @@ void generate_vault(int y1, int x1, int y2, int x2)
 /*
  * Generate helper -- unset the CAVE_ICKY flag in a region.
  */
-void clear_vault(int y1, int x1, int y2, int x2)
+void clear_vault(int x1, int y1, int x2, int y2)
 {
 	int y, x;
 
@@ -435,7 +435,7 @@ void clear_vault(int y1, int x1, int y2, int x2)
 /*
  * Generate helper -- fill a rectangle with a feature
  */
-void generate_fill(int y1, int x1, int y2, int x2, int feat)
+void generate_fill(int x1, int y1, int x2, int y2, int feat)
 {
 	int y, x;
 
@@ -453,7 +453,7 @@ void generate_fill(int y1, int x1, int y2, int x2, int feat)
 /*
  * Generate helper -- draw a rectangle with a feature
  */
-void generate_draw(int y1, int x1, int y2, int x2, int feat)
+void generate_draw(int x1, int y1, int x2, int y2, int feat)
 {
 	int y, x;
 
@@ -474,7 +474,7 @@ void generate_draw(int y1, int x1, int y2, int x2, int feat)
 /*
  * Generate helper -- split a rectangle with a feature
  */
-void generate_plus(int y1, int x1, int y2, int x2, int feat)
+void generate_plus(int x1, int y1, int x2, int y2, int feat)
 {
 	int y, x;
 	int y0, x0;
@@ -494,11 +494,11 @@ void generate_plus(int y1, int x1, int y2, int x2, int feat)
 	}
 }
 
-
+#ifdef UNUSED_FUNCTION
 /*
  * Generate helper -- open all sides of a rectangle with a feature
  */
-void generate_open(int y1, int x1, int y2, int x2, int feat)
+void generate_open(int x1, int y1, int x2, int y2, int feat)
 {
 	int y0, x0;
 
@@ -517,7 +517,7 @@ void generate_open(int y1, int x1, int y2, int x2, int feat)
 /*
  * Generate helper -- open one side of a rectangle with a feature
  */
-void generate_hole(int y1, int x1, int y2, int x2, int feat)
+void generate_hole(int x1, int y1, int x2, int y2, int feat)
 {
 	int y0, x0;
 
@@ -551,11 +551,12 @@ void generate_hole(int y1, int x1, int y2, int x2, int feat)
 	}
 }
 
+#endif /* UNUSED_FUNCTION */
 
 /*
  * Generate helper -- open one side of a rectangle with a door
  */
-void generate_door(int y1, int x1, int y2, int x2, bool secret)
+void generate_door(int x1, int y1, int x2, int y2, bool secret)
 {
 	int y0, x0;
 
@@ -1813,12 +1814,12 @@ bool generate_fracave(int y0, int x0, int xsize, int ysize, int cutoff,
 		/* too small - clear area and try again later */
 		
 		/* Clear the height map */
-		generate_fill(y0 - yhsize , x0 - xhsize,
-			 y0 - yhsize + ysize - 1, x0 - xhsize + xsize - 1, FEAT_WALL_EXTRA);
+		generate_fill(x0 - xhsize , y0 - yhsize,
+			 x0 - xhsize + xsize - 1, y0 - yhsize + ysize - 1, FEAT_WALL_EXTRA);
 		
 		/* Clear the icky flag */
-		clear_vault(y0 - yhsize , x0 - xhsize,
-			 y0 - yhsize + ysize - 1, x0 - xhsize + xsize - 1);		
+		clear_vault(x0 - xhsize , y0 - yhsize,
+			 x0 - xhsize + xsize - 1, y0 - yhsize + ysize - 1);		
 		
 		/* Try again */
 		return FALSE;
@@ -1921,8 +1922,8 @@ bool generate_fracave(int y0, int x0, int xsize, int ysize, int cutoff,
 	}
 	
 	/* Clear the icky flag */
-	clear_vault(y0 - yhsize , x0 - xhsize,
-		 y0 - yhsize + ysize - 1, x0 - xhsize + xsize - 1);
+	clear_vault(x0 - xhsize , y0 - yhsize,
+		 x0 - xhsize + xsize - 1, y0 - yhsize + ysize - 1);
 
 	/*
 	 * XXX XXX XXX There is a slight problem when tunnels pierce the caves:
@@ -2087,20 +2088,20 @@ bool generate_lake(int y0, int x0, int xsize, int ysize,
 		/* too small -clear area and try again later */
 		
 		/* Clear the height map */
-		generate_fill(y0 - yhsize , x0 - xhsize,
-			 y0 - yhsize + ysize - 1, x0 - xhsize + xsize - 1, FEAT_WALL_EXTRA);
+		generate_fill(x0 - xhsize, y0 - yhsize,
+			 x0 - xhsize + xsize - 1, y0 - yhsize + ysize - 1, FEAT_WALL_EXTRA);
 		
 		/* Clear the icky flag */
-		clear_vault(y0 - yhsize , x0 - xhsize,
-			 y0 - yhsize + ysize - 1, x0 - xhsize + xsize - 1);
+		clear_vault(x0 - xhsize, y0 - yhsize,
+			 x0 - xhsize + xsize - 1, y0 - yhsize + ysize - 1);
 			 
 		/* Try again */
 		return FALSE;
 	}
 
 	/* Do boundarys- set to normal granite */
-	generate_draw(y0 - yhsize , x0 - xhsize,
-		y0 - yhsize + ysize, x0 - xhsize + xsize, FEAT_WALL_EXTRA);
+	generate_draw(x0 - xhsize, y0 - yhsize,
+		x0 - xhsize + xsize, y0 - yhsize + ysize, FEAT_WALL_EXTRA);
 
 	/* Do the rest: convert back to the normal format */
 	for (x = 1; x < xsize; ++x)
@@ -2126,8 +2127,8 @@ bool generate_lake(int y0, int x0, int xsize, int ysize,
 	}
 
 	/* Clear the icky flag */
-	clear_vault(y0 - yhsize , x0 - xhsize,
-		 y0 - yhsize + ysize - 1, x0 - xhsize + xsize - 1);
+	clear_vault(x0 - xhsize , y0 - yhsize,
+		 x0 - xhsize + xsize - 1, y0 - yhsize + ysize - 1);
 
 	/* Done */
 	return TRUE;

@@ -44,15 +44,13 @@ extern void vault_monsters(int x1, int y1, int num);
 
 extern int next_to_walls(int x, int y);
 
-extern void generate_room(int y1, int x1, int y2, int x2, int light);
-extern void generate_vault(int y1, int x1, int y2, int x2);
-extern void clear_vault(int y1, int x1, int y2, int x2);
-extern void generate_fill(int y1, int x1, int y2, int x2, int feat);
-extern void generate_draw(int y1, int x1, int y2, int x2, int feat);
-extern void generate_plus(int y1, int x1, int y2, int x2, int feat);
-extern void generate_open(int y1, int x1, int y2, int x2, int feat);
-extern void generate_hole(int y1, int x1, int y2, int x2, int feat);
-extern void generate_door(int y1, int x1, int y2, int x2, bool secret);
+extern void generate_room(int x1, int y1, int x2, int y2, int light);
+extern void generate_vault(int x1, int y1, int x2, int y2);
+extern void clear_vault(int x1, int y1, int x2, int y2);
+extern void generate_fill(int x1, int y1, int x2, int y2, int feat);
+extern void generate_draw(int x1, int y1, int x2, int y2, int feat);
+extern void generate_plus(int x1, int y1, int x2, int y2, int feat);
+extern void generate_door(int x1, int y1, int x2, int y2, bool secret);
 
 
 extern bool get_is_floor(int x, int y);
