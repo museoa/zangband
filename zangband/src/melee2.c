@@ -2497,7 +2497,7 @@ static void process_monster(int m_idx)
 
 		if ((cave[ny][nx].feat >= FEAT_PATTERN_START) &&
 			(cave[ny][nx].feat <= FEAT_PATTERN_XTRA2) &&
-			do_turn == FALSE)
+			(do_turn == FALSE) && !(r_ptr->flags7 & RF7_CAN_FLY))
 		{
 			do_move = FALSE;
 		}

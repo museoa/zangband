@@ -2022,123 +2022,6 @@ void py_attack(int y, int x)
 }
 
 
-
-static bool pattern_tile(int y, int x)
-{
-	return ((cave[y][x].feat <= FEAT_PATTERN_XTRA2) &&
-	    (cave[y][x].feat >= FEAT_PATTERN_START));
-}
-
-
-static bool pattern_seq(int c_y, int c_x, int n_y, int n_x)
-{
-	if (!pattern_tile(c_y, c_x) && !pattern_tile(n_y, n_x))
-		return TRUE;
-
-	if (cave[n_y][n_x].feat == FEAT_PATTERN_START)
-	{
-		if (!pattern_tile(c_y, c_x) &&
-		    !p_ptr->confused && !p_ptr->stun && !p_ptr->image)
-		{
-			if (get_check("If you start walking the Pattern, you must walk the whole way. Ok? "))
-				return TRUE;
-			else
-				return FALSE;
-		}
-		else
-			return TRUE;
-	}
-	else if ((cave[n_y][n_x].feat == FEAT_PATTERN_OLD) ||
-	         (cave[n_y][n_x].feat == FEAT_PATTERN_END) ||
-	         (cave[n_y][n_x].feat == FEAT_PATTERN_XTRA2))
-	{
-		if (pattern_tile(c_y, c_x))
-		{
-			return TRUE;
-		}
-		else
-		{
-			msg_print("You must start walking the Pattern from the startpoint.");
-			return FALSE;
-		}
-	}
-	else if ((cave[n_y][n_x].feat == FEAT_PATTERN_XTRA1) ||
-	         (cave[c_y][c_x].feat == FEAT_PATTERN_XTRA1))
-	{
-		return TRUE;
-	}
-	else if (cave[c_y][c_x].feat == FEAT_PATTERN_START)
-	{
-		if (pattern_tile(n_y, n_x))
-			return TRUE;
-		else
-		{
-			msg_print("You must walk the Pattern in correct order.");
-			return FALSE;
-		}
-	}
-	else if ((cave[c_y][c_x].feat == FEAT_PATTERN_OLD) ||
-	         (cave[c_y][c_x].feat == FEAT_PATTERN_END) ||
-	         (cave[c_y][c_x].feat == FEAT_PATTERN_XTRA2))
-	{
-		if (!pattern_tile(n_y, n_x))
-		{
-			msg_print("You may not step off from the Pattern.");
-			return FALSE;
-		}
-		else
-		{
-			return TRUE;
-		}
-	}
-	else
-	{
-		if (!pattern_tile(c_y, c_x))
-		{
-			msg_print("You must start walking the Pattern from the startpoint.");
-			return FALSE;
-		}
-		else
-		{
-			byte ok_move = FEAT_PATTERN_START;
-			switch (cave[c_y][c_x].feat)
-			{
-				case FEAT_PATTERN_1:
-					ok_move = FEAT_PATTERN_2;
-					break;
-				case FEAT_PATTERN_2:
-					ok_move = FEAT_PATTERN_3;
-					break;
-				case FEAT_PATTERN_3:
-					ok_move = FEAT_PATTERN_4;
-					break;
-				case FEAT_PATTERN_4:
-					ok_move = FEAT_PATTERN_1;
-					break;
-				default:
-					if (wizard)
-						msg_format("Funny Pattern walking, %d.", cave[c_y][c_x]);
-					return TRUE; /* Goof-up */
-			}
-
-			if ((cave[n_y][n_x].feat == ok_move) ||
-			    (cave[n_y][n_x].feat == cave[c_y][c_x].feat))
-				return TRUE;
-			else
-			{
-				if (!pattern_tile(n_y, n_x))
-					msg_print("You may not step off from the Pattern.");
-				else
-					msg_print("You must walk the Pattern in correct order.");
-
-				return FALSE;
-			}
-		}
-	}
-}
-
-
-
 bool player_can_enter(byte feature)
 {
 	bool pass_wall;
@@ -2197,6 +2080,213 @@ bool player_can_enter(byte feature)
 
 	return (TRUE);
 }
+
+
+static void summon_pattern_vortex(int y, int x)
+{
+	int i;
+
+	/* Remember our position */
+	int opy = py;
+	int opx = px;
+
+	/* Hack - do not summon where we will move to */
+	py = y;
+	px = x;
+
+	/* Find the pattern vortex */
+	for (i = 1; i < max_r_idx; i++)
+	{
+		monster_race *r_ptr = &r_info[i];
+
+		/* Summon it */
+		if (strstr(r_name + r_ptr->name, "Pattern") && (r_ptr->d_char == 'v'))
+		{
+			if (summon_named_creature(y, x, i, FALSE, FALSE, FALSE))
+			{
+				msg_print("You hear a bell chime.");
+			}
+
+			break;
+		}
+	}
+
+	/* Restore our position */
+	py = opy;
+	px = opx;
+}
+
+
+static bool pattern_tile(int y, int x)
+{
+	return ((cave[y][x].feat <= FEAT_PATTERN_XTRA2) &&
+		 (cave[y][x].feat >= FEAT_PATTERN_START));
+}
+
+
+static bool pattern_seq(int c_y, int c_x, int n_y, int n_x)
+{
+	/* Ignore illegal moves */
+	if (!player_can_enter(cave[n_y][n_x].feat)) return FALSE;
+
+	if (!pattern_tile(c_y, c_x) && !pattern_tile(n_y, n_x))
+		return TRUE;
+
+	if (cave[n_y][n_x].feat == FEAT_PATTERN_START)
+	{
+		if (!pattern_tile(c_y, c_x) &&
+			 !p_ptr->confused && !p_ptr->stun && !p_ptr->image)
+		{
+			if (get_check("If you start walking the Pattern, you must walk the whole way. Ok? "))
+				return TRUE;
+			else
+				return FALSE;
+		}
+		else
+			return TRUE;
+	}
+	else if ((cave[n_y][n_x].feat == FEAT_PATTERN_OLD) ||
+				(cave[n_y][n_x].feat == FEAT_PATTERN_END) ||
+				(cave[n_y][n_x].feat == FEAT_PATTERN_XTRA2))
+	{
+		if (pattern_tile(c_y, c_x))
+		{
+			return TRUE;
+		}
+		else
+		{
+			if (get_check("Really step onto the Pattern here? "))
+			{
+				take_hit(100, "Stepping onto the Pattern");
+
+				if (one_in_(3)) summon_pattern_vortex(n_y, n_x);
+
+				return TRUE;
+			}
+			else
+			{
+				return FALSE;
+			}
+		}
+	}
+	else if ((cave[n_y][n_x].feat == FEAT_PATTERN_XTRA1) ||
+				(cave[c_y][c_x].feat == FEAT_PATTERN_XTRA1))
+	{
+		return TRUE;
+	}
+	else if (cave[c_y][c_x].feat == FEAT_PATTERN_START)
+	{
+		if (pattern_tile(n_y, n_x))
+			return TRUE;
+		else
+		{
+			if (get_check("Really step off of the Pattern? "))
+			{
+				take_hit(10, "Stepping off of the Pattern");
+
+				if (one_in_(6)) summon_pattern_vortex(n_y, n_x);
+
+				return TRUE;
+			}
+
+			return FALSE;
+		}
+	}
+	else if ((cave[c_y][c_x].feat == FEAT_PATTERN_OLD) ||
+				(cave[c_y][c_x].feat == FEAT_PATTERN_END) ||
+				(cave[c_y][c_x].feat == FEAT_PATTERN_XTRA2))
+	{
+		if (!pattern_tile(n_y, n_x))
+		{
+			if (get_check("Really step off of the Pattern? "))
+			{
+				take_hit(100, "Stepping off of the Pattern");
+
+				if (one_in_(2)) summon_pattern_vortex(n_y, n_x);
+
+				return TRUE;
+			}
+			else
+			{
+				return FALSE;
+			}
+		}
+		else
+		{
+			return TRUE;
+		}
+	}
+	else
+	{
+		if (!pattern_tile(c_y, c_x))
+		{
+			if (get_check("Really step onto the Pattern here? "))
+			{
+				take_hit(25, "Stepping onto the Pattern");
+
+				if (one_in_(6)) summon_pattern_vortex(n_y, n_x);
+
+				return TRUE;
+			}
+			else
+			{
+				return FALSE;
+			}
+		}
+		else
+		{
+			byte ok_move = FEAT_PATTERN_START;
+
+			switch (cave[c_y][c_x].feat)
+			{
+				case FEAT_PATTERN_1:
+					ok_move = FEAT_PATTERN_2;
+					break;
+				case FEAT_PATTERN_2:
+					ok_move = FEAT_PATTERN_3;
+					break;
+				case FEAT_PATTERN_3:
+					ok_move = FEAT_PATTERN_4;
+					break;
+				case FEAT_PATTERN_4:
+					ok_move = FEAT_PATTERN_1;
+					break;
+				default:
+					if (wizard)
+						msg_format("Funny Pattern walking, %d.", cave[c_y][c_x]);
+					return TRUE; /* Goof-up */
+			}
+
+			if ((cave[n_y][n_x].feat == ok_move) ||
+				 (cave[n_y][n_x].feat == cave[c_y][c_x].feat))
+				return TRUE;
+
+			else
+			{
+				if (!pattern_tile(n_y, n_x) && get_check("Really step off of the Pattern? "))
+				{
+					take_hit(50, "Stepping off of the Pattern");
+
+					if (one_in_(3)) summon_pattern_vortex(n_y, n_x);
+
+					return TRUE;
+				}
+
+				else if (pattern_tile(n_y, n_x) && get_check("Really stray from the proper path? "))
+				{
+					take_hit(25, "Walking backwards along the Pattern");
+
+					if (one_in_(5)) summon_pattern_vortex(n_y, n_x);
+
+					return TRUE;
+				}
+
+				return FALSE;
+			}
+		}
+	}
+}
+
 
 
 /*
