@@ -1741,7 +1741,7 @@ static bool cast_death_spell(int spell)
 #else /* 0 */
 
 			/* Testing the new corpse-raising code. */
-			if (raise_dead(py, px, (randint(3) != 1)))
+			if (raise_dead(py, px, (bool)(randint(3) != 1)))
 			{
 				msg_print("Cold winds begin to blow around you, carrying with them the stench of decay...");
 				chg_virtue(V_UNLIFE, 1);
