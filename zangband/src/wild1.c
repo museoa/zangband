@@ -3885,7 +3885,7 @@ void create_wilderness(void)
 	byte hgt, pop, law;
 	long hgt_scale, pop_scale, law_scale;
 
-	wild_tp_ptr w_ptr;
+	wild_type *w_ptr;
 
 
 	/* Test wilderness generation information */

@@ -2408,13 +2408,13 @@ void display_map(int *cy, int *cx)
 	view_granite_lite = FALSE;
 
 	/* Allocate the maps */
-	C_MAKE(ma, (hgt + 2), byte_ptr);
-	C_MAKE(mc, (hgt + 2), char_ptr);
-	C_MAKE(mp, (hgt + 2), byte_ptr);
+	C_MAKE(ma, (hgt + 2), byte*);
+	C_MAKE(mc, (hgt + 2), char*);
+	C_MAKE(mp, (hgt + 2), byte*);
 
 #ifdef USE_TRANSPARENCY
-	C_MAKE(mta, (hgt + 2), byte_ptr);
-	C_MAKE(mtc, (hgt + 2), char_ptr);
+	C_MAKE(mta, (hgt + 2), byte*);
+	C_MAKE(mtc, (hgt + 2), char*);
 #endif /* USE_TRANSPARENCY */
 
 
@@ -2678,13 +2678,13 @@ void display_map(int *cy, int *cx)
 	}
 
 	/* Free the maps */
-	C_FREE(ma, (hgt + 2), byte_ptr);
-	C_FREE(mc, (hgt + 2), char_ptr);
+	C_FREE(ma, (hgt + 2), byte*);
+	C_FREE(mc, (hgt + 2), char*);
 #ifdef USE_TRANSPARENCY
-	C_FREE(mta, (hgt + 2), byte_ptr);
-	C_FREE(mtc, (hgt + 2), char_ptr);
+	C_FREE(mta, (hgt + 2), byte*);
+	C_FREE(mtc, (hgt + 2), char*);
 #endif /* USE_TRANSPARENCY */
-	C_FREE(mp, (hgt + 2), byte_ptr);
+	C_FREE(mp, (hgt + 2), byte*);
 }
 
 

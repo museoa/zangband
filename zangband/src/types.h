@@ -522,10 +522,6 @@ struct coord
 
 typedef cave_type **blk_ptr;
 
-/* Hack - to get the C_MAKE to work in init2.c */
-
-typedef cave_type *cave_tp_ptr;
-
 
 /*
  * Grid of blocks around the player.
@@ -626,7 +622,6 @@ union wild_type
 	wild_done_type	done;
 };
 
-typedef wild_type *wild_tp_ptr;
 
 /*
  * An array of this structure is used to work out what wilderness type
@@ -1654,8 +1649,6 @@ struct store_type
 	u16b x;					/* Location x coord. */
 	u16b y;					/* Location y coord. */
 };
-
-typedef store_type *store_ptr;
 
 
 
