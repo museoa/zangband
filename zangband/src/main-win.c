@@ -2735,6 +2735,7 @@ static void init_windows(void)
 	term_data_link(td);
 	angband_term[0] = &td->t;
 
+
 	/*
 	 * Reset map size if required
 	 */
@@ -3622,7 +3623,6 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
 
 		case WM_GETMINMAXINFO:
 		{
-#if 0
 			MINMAXINFO FAR *lpmmi;
 			RECT rc;
 
@@ -3631,10 +3631,10 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
 			/* this message was sent before WM_NCCREATE */
 			if (!td) return 1;
 
-			/* Minimum window size is 8x2 */
+			/* Minimum window size is 80x24 */
 			rc.left = rc.top = 0;
-			rc.right = rc.left + 8 * td->tile_wid + td->size_ow1 + td->size_ow2;
-			rc.bottom = rc.top + 2 * td->tile_hgt + td->size_oh1 + td->size_oh2 + 1;
+			rc.right = rc.left + 80 * td->tile_wid + td->size_ow1 + td->size_ow2;
+			rc.bottom = rc.top + 24 * td->tile_hgt + td->size_oh1 + td->size_oh2 + 1;
 
 			/* Adjust */
 			AdjustWindowRectEx(&rc, td->dwStyle, TRUE, td->dwExStyle);
@@ -3643,26 +3643,6 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
 			lpmmi->ptMinTrackSize.x = rc.right - rc.left;
 			lpmmi->ptMinTrackSize.y = rc.bottom - rc.top;
 
-			/* Maximum window size */
-			rc.left = rc.top = 0;
-			rc.right = rc.left + 80 * td->tile_wid + td->size_ow1 + td->size_ow2;
-			rc.bottom = rc.top + 24 * td->tile_hgt + td->size_oh1 + td->size_oh2;
-
-			/* Paranoia */
-			rc.right  += (td->tile_wid - 1);
-			rc.bottom += (td->tile_hgt - 1);
-
-			/* Adjust */
-			AdjustWindowRectEx(&rc, td->dwStyle, TRUE, td->dwExStyle);
-
-			/* Save maximum size */
-			lpmmi->ptMaxSize.x = rc.right - rc.left;
-			lpmmi->ptMaxSize.y = rc.bottom - rc.top;
-
-			/* Save maximum size */
-			lpmmi->ptMaxTrackSize.x = rc.right - rc.left;
-			lpmmi->ptMaxTrackSize.y = rc.bottom - rc.top;
-#endif /* 0 */
 			return 0;
 		}
 
@@ -3793,22 +3773,40 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
 
 				case SIZE_RESTORED:
 				{
-					uint old_tile_wid = td->tile_wid;
-					uint old_tile_hgt = td->tile_hgt;
+					uint cols = (LOWORD(lParam) - td->size_ow1) / td->tile_wid;
+					uint rows = (HIWORD(lParam) - td->size_oh1) / td->tile_hgt;
 
-					td->size_hack = TRUE;
-
-					td->tile_wid = LOWORD(lParam) / td->cols;
-					td->tile_hgt = HIWORD(lParam) / td->rows;
-
-					if ((td->tile_wid != old_tile_wid) ||
-						(td->tile_hgt != old_tile_hgt))
+					/* New size */
+					if ((td->cols != cols) || (td->rows != rows))
 					{
-						term_getsize(td);
+						/* Save the new size */
+						td->cols = cols;
+						td->rows = rows;
+
+						/* Activate */
+						Term_activate(&td->t);
+
+						/* Resize the term */
+						Term_resize(td->cols, td->rows);
 
 						/* Redraw later */
 						InvalidateRect(td->w, NULL, TRUE);
+
+						/* MEGAHACK - Only if the map exists */
+						if (character_dungeon)
+						{
+							/* Adjust to bigscreen */
+							map_panel_size();
+
+							/* Re-adjust panel borders and redraw map */
+							verify_panel();
+
+							/* HACK - Force complete redraw */
+							do_cmd_redraw();
+						}
 					}
+
+					td->size_hack = TRUE;
 
 					/* Show sub-windows */
 					for (i = 1; i < MAX_TERM_DATA; i++)
@@ -3957,9 +3955,9 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg,
 
 		case WM_SIZE:
 		{
-			uint old_tile_wid = td->tile_wid;
-			uint old_tile_hgt = td->tile_hgt;
-
+			uint cols;
+			uint rows;
+			
 			/* this message was sent before WM_NCCREATE */
 			if (!td) return 1;
 
@@ -3971,29 +3969,34 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg,
 
 			td->size_hack = TRUE;
 
-			td->tile_wid = LOWORD(lParam) / td->cols;
-			td->tile_hgt = HIWORD(lParam) / td->rows;
+			cols = (LOWORD(lParam) - td->size_ow1) / td->tile_wid;
+			rows = (HIWORD(lParam) - td->size_oh1) / td->tile_hgt;
 
-			if ((td->tile_wid != old_tile_wid) ||
-				(td->tile_hgt != old_tile_hgt))
+			/* New size */
+			if ((td->cols != cols) || (td->rows != rows))
 			{
-				if (((td->tile_wid < td->font_wid) ||
-					 (td->tile_hgt < td->font_hgt)) ||
-					((td->cols < 80) || (td->rows < 24)))
-				{
-					td->tile_wid = td->font_wid;
-					td->tile_hgt = td->font_hgt;
+				/* Save old term */
+				term *old_term = Term;
 
-					td->cols = (LOWORD(lParam) - td->size_ow1 - td->size_ow2) / td->tile_wid;
-					td->rows = (HIWORD(lParam) - td->size_oh1 - td->size_oh2) / td->tile_hgt;
-				}
+				/* Save the new size */
+				td->cols = cols;
+				td->rows = rows;
 
-				term_getsize(td);
+				/* Activate */
+				Term_activate(&td->t);
 
-				MoveWindow(hWnd, td->pos_x, td->pos_y, td->size_wid, td->size_hgt, TRUE);
+				/* Resize the term */
+				Term_resize(td->cols, td->rows);
+
+				/* Activate */
+				Term_activate(old_term);
 
 				/* Redraw later */
 				InvalidateRect(td->w, NULL, TRUE);
+
+				/* HACK - Redraw all windows */
+				p_ptr->window = 0xFFFFFFFF;
+				window_stuff();
 			}
 
 			td->size_hack = FALSE;
