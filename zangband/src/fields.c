@@ -268,11 +268,10 @@ static void compact_fields_aux(int i1, int i2)
  */
 void compact_fields(int size)
 {
-	int i, y, x, num, cnt;
-
+	int y, x, num, cnt;
 	int cur_lev, cur_dis, chance;
-
 	int dummy;
+	s16b i;
 
 
 	/* Compact */
@@ -637,7 +636,7 @@ void field_prep(field_type *f_ptr, int t_idx)
 		/* Randomize some of them */
 		if ((i < 4) && (t_ptr->info & FIELD_INFO_RAND))
 		{
-			f_ptr->data[i] = rand_int(f_ptr->data[i]);
+			f_ptr->data[i] = (byte)rand_int(f_ptr->data[i]);
 		}
 	}
 
