@@ -1280,14 +1280,14 @@ static void do_cmd_read_scroll_aux(int item)
 
 		case SV_SCROLL_STAR_ENCHANT_ARMOR:
 		{
-			if (!enchant_spell(0, 0, randint(3) + 2)) used_up = FALSE;
+			if (!enchant_spell(0, 0, randint(5) + 2)) used_up = FALSE;
 			ident = TRUE;
 			break;
 		}
 
 		case SV_SCROLL_STAR_ENCHANT_WEAPON:
 		{
-			if (!enchant_spell(randint(3), randint(3), 0)) used_up = FALSE;
+			if (!enchant_spell(randint(5), randint(5), 0)) used_up = FALSE;
 			ident = TRUE;
 			break;
 		}
@@ -1454,7 +1454,7 @@ static void do_cmd_read_scroll_aux(int item)
 		/* New Zangband scrolls */
 		case SV_SCROLL_FIRE:
 		{
-			fire_ball(GF_FIRE, 0, 150, 4);
+			fire_ball(GF_FIRE, 0, 300, 4);
 			/* Note: "Double" damage since it is centered on the player ... */
 			if (!(p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire))
 				take_hit(50 + randint(50), "a Scroll of Fire");
@@ -1465,7 +1465,7 @@ static void do_cmd_read_scroll_aux(int item)
 
 		case SV_SCROLL_ICE:
 		{
-			fire_ball(GF_ICE, 0, 175, 4);
+			fire_ball(GF_ICE, 0, 350, 4);
 			if (!(p_ptr->oppose_cold || p_ptr->resist_cold || p_ptr->immune_cold))
 				take_hit(100 + randint(100), "a Scroll of Ice");
 			ident = TRUE;
@@ -1474,9 +1474,9 @@ static void do_cmd_read_scroll_aux(int item)
 
 		case SV_SCROLL_CHAOS:
 		{
-			fire_ball(GF_CHAOS, 0, 222, 4);
+			fire_ball(GF_CHAOS, 0, 400, 4);
 			if (!p_ptr->resist_chaos)
-				take_hit(111 + randint(111), "a Scroll of Logrus");
+				take_hit(150 + randint(150), "a Scroll of Logrus");
 			ident = TRUE;
 			break;
 		}
@@ -1933,13 +1933,13 @@ static void do_cmd_use_staff_aux(int item)
 
 		case SV_STAFF_POWER:
 		{
-			if (dispel_monsters(120)) ident = TRUE;
+			if (dispel_monsters(300)) ident = TRUE;
 			break;
 		}
 
 		case SV_STAFF_HOLINESS:
 		{
-			if (dispel_evil(120)) ident = TRUE;
+			if (dispel_evil(300)) ident = TRUE;
 			k = 3 * p_ptr->lev;
 			if (set_protevil(p_ptr->protevil + randint(25) + k)) ident = TRUE;
 			if (set_poisoned(0)) ident = TRUE;
@@ -2243,19 +2243,19 @@ static void do_cmd_aim_wand_aux(int item)
 
 		case SV_WAND_CONFUSE_MONSTER:
 		{
-			if (confuse_monster(dir, 10)) ident = TRUE;
+			if (confuse_monster(dir, 20)) ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_FEAR_MONSTER:
 		{
-			if (fear_monster(dir, 10)) ident = TRUE;
+			if (fear_monster(dir, 20)) ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_DRAIN_LIFE:
 		{
-			if (drain_life(dir, 75)) ident = TRUE;
+			if (drain_life(dir, 150)) ident = TRUE;
 			break;
 		}
 
@@ -2267,7 +2267,7 @@ static void do_cmd_aim_wand_aux(int item)
 
 		case SV_WAND_STINKING_CLOUD:
 		{
-			fire_ball(GF_POIS, dir, 12, 2);
+			fire_ball(GF_POIS, dir, 15, 2);
 			ident = TRUE;
 			break;
 		}
@@ -2281,7 +2281,7 @@ static void do_cmd_aim_wand_aux(int item)
 
 		case SV_WAND_ACID_BOLT:
 		{
-			fire_bolt_or_beam(20, GF_ACID, dir, damroll(3, 8));
+			fire_bolt_or_beam(20, GF_ACID, dir, damroll(6, 8));
 			ident = TRUE;
 			break;
 		}
@@ -2295,42 +2295,42 @@ static void do_cmd_aim_wand_aux(int item)
 
 		case SV_WAND_FIRE_BOLT:
 		{
-			fire_bolt_or_beam(20, GF_FIRE, dir, damroll(6, 8));
+			fire_bolt_or_beam(20, GF_FIRE, dir, damroll(10, 8));
 			ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_COLD_BOLT:
 		{
-			fire_bolt_or_beam(20, GF_COLD, dir, damroll(3, 8));
+			fire_bolt_or_beam(20, GF_COLD, dir, damroll(6, 8));
 			ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_ACID_BALL:
 		{
-			fire_ball(GF_ACID, dir, 60, 2);
+			fire_ball(GF_ACID, dir, 125, 2);
 			ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_ELEC_BALL:
 		{
-			fire_ball(GF_ELEC, dir, 32, 2);
+			fire_ball(GF_ELEC, dir, 75, 2);
 			ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_FIRE_BALL:
 		{
-			fire_ball(GF_FIRE, dir, 72, 2);
+			fire_ball(GF_FIRE, dir, 150, 2);
 			ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_COLD_BALL:
 		{
-			fire_ball(GF_COLD, dir, 48, 2);
+			fire_ball(GF_COLD, dir, 100, 2);
 			ident = TRUE;
 			break;
 		}
@@ -2343,14 +2343,14 @@ static void do_cmd_aim_wand_aux(int item)
 
 		case SV_WAND_DRAGON_FIRE:
 		{
-			fire_ball(GF_FIRE, dir, 100, 3);
+			fire_ball(GF_FIRE, dir, 250, 3);
 			ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_DRAGON_COLD:
 		{
-			fire_ball(GF_COLD, dir, 80, 3);
+			fire_ball(GF_COLD, dir, 200, 3);
 			ident = TRUE;
 			break;
 		}
@@ -2361,31 +2361,31 @@ static void do_cmd_aim_wand_aux(int item)
 			{
 				case 1:
 				{
-					fire_ball(GF_ACID, dir, 100, 3);
+					fire_ball(GF_ACID, dir, 250, 3);
 					break;
 				}
 
 				case 2:
 				{
-					fire_ball(GF_ELEC, dir, 80, 3);
+					fire_ball(GF_ELEC, dir, 150, 3);
 					break;
 				}
 
 				case 3:
 				{
-					fire_ball(GF_FIRE, dir, 100, 3);
+					fire_ball(GF_FIRE, dir, 200, 3);
 					break;
 				}
 
 				case 4:
 				{
-					fire_ball(GF_COLD, dir, 80, 3);
+					fire_ball(GF_COLD, dir, 200, 3);
 					break;
 				}
 
 				default:
 				{
-					fire_ball(GF_POIS, dir, 60, 3);
+					fire_ball(GF_POIS, dir, 200, 3);
 					break;
 				}
 			}
@@ -2607,7 +2607,7 @@ static void do_cmd_zap_rod_aux(int item)
 
 		case SV_ROD_ILLUMINATION:
 		{
-			if (lite_area(damroll(2, 8), 2)) ident = TRUE;
+			if (lite_area(damroll(4, 8), 2)) ident = TRUE;
 			break;
 		}
 
@@ -2717,7 +2717,7 @@ static void do_cmd_zap_rod_aux(int item)
 
 		case SV_ROD_DRAIN_LIFE:
 		{
-			if (drain_life(dir, 75)) ident = TRUE;
+			if (drain_life(dir, 150)) ident = TRUE;
 			break;
 		}
 
@@ -2736,49 +2736,49 @@ static void do_cmd_zap_rod_aux(int item)
 
 		case SV_ROD_ELEC_BOLT:
 		{
-			fire_bolt_or_beam(10, GF_ELEC, dir, damroll(3, 8));
+			fire_bolt_or_beam(10, GF_ELEC, dir, damroll(5, 8));
 			ident = TRUE;
 			break;
 		}
 
 		case SV_ROD_FIRE_BOLT:
 		{
-			fire_bolt_or_beam(10, GF_FIRE, dir, damroll(8, 8));
+			fire_bolt_or_beam(10, GF_FIRE, dir, damroll(10, 8));
 			ident = TRUE;
 			break;
 		}
 
 		case SV_ROD_COLD_BOLT:
 		{
-			fire_bolt_or_beam(10, GF_COLD, dir, damroll(5, 8));
+			fire_bolt_or_beam(10, GF_COLD, dir, damroll(6, 8));
 			ident = TRUE;
 			break;
 		}
 
 		case SV_ROD_ACID_BALL:
 		{
-			fire_ball(GF_ACID, dir, 60, 2);
+			fire_ball(GF_ACID, dir, 125, 2);
 			ident = TRUE;
 			break;
 		}
 
 		case SV_ROD_ELEC_BALL:
 		{
-			fire_ball(GF_ELEC, dir, 32, 2);
+			fire_ball(GF_ELEC, dir, 75, 2);
 			ident = TRUE;
 			break;
 		}
 
 		case SV_ROD_FIRE_BALL:
 		{
-			fire_ball(GF_FIRE, dir, 72, 2);
+			fire_ball(GF_FIRE, dir, 150, 2);
 			ident = TRUE;
 			break;
 		}
 
 		case SV_ROD_COLD_BALL:
 		{
-			fire_ball(GF_COLD, dir, 48, 2);
+			fire_ball(GF_COLD, dir, 100, 2);
 			ident = TRUE;
 			break;
 		}
@@ -3087,7 +3087,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("You order Frakir to strangle your opponent.");
 				if (!get_aim_dir(&dir)) return;
-				if (drain_life(dir, 100))
+				if (drain_life(dir, 200))
 				o_ptr->timeout = rand_int(100) + 100;
 				break;
 			}
@@ -3111,7 +3111,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("The ring glows deep red...");
 				if (!get_aim_dir(&dir)) return;
-				fire_ball(GF_FIRE, dir, 120, 3);
+				fire_ball(GF_FIRE, dir, 250, 3);
 				o_ptr->timeout = rand_int(225) + 225;
 				break;
 			}
@@ -3120,7 +3120,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("The ring glows bright white...");
 				if (!get_aim_dir(&dir)) return;
-				fire_ball(GF_COLD, dir, 200, 3);
+				fire_ball(GF_COLD, dir, 400, 3);
 				o_ptr->timeout = rand_int(325) + 325;
 				break;
 			}
@@ -3129,7 +3129,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("The ring glows deep blue...");
 				if (!get_aim_dir(&dir)) return;
-				fire_ball(GF_ELEC, dir, 250, 3);
+				fire_ball(GF_ELEC, dir, 500, 3);
 				o_ptr->timeout = rand_int(425) + 425;
 				break;
 			}
@@ -3308,7 +3308,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("Your gloves glow extremely brightly...");
 				if (!get_aim_dir(&dir)) return;
-				fire_bolt(GF_MISSILE, dir, damroll(2, 6));
+				fire_bolt(GF_MISSILE, dir, damroll(3, 6));
 				o_ptr->timeout = 2;
 				break;
 			}
@@ -3317,7 +3317,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("Your gauntlets are covered in fire...");
 				if (!get_aim_dir(&dir)) return;
-				fire_bolt(GF_FIRE, dir, damroll(9, 8));
+				fire_bolt(GF_FIRE, dir, damroll(11, 8));
 				o_ptr->timeout = rand_int(8) + 8;
 				break;
 			}
@@ -3326,7 +3326,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("Your gauntlets are covered in frost...");
 				if (!get_aim_dir(&dir)) return;
-				fire_bolt(GF_COLD, dir, damroll(6, 8));
+				fire_bolt(GF_COLD, dir, damroll(8, 8));
 				o_ptr->timeout = rand_int(7) + 7;
 				break;
 			}
@@ -3335,7 +3335,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("Your gauntlets are covered in sparks...");
 				if (!get_aim_dir(&dir)) return;
-				fire_bolt(GF_ELEC, dir, damroll(4, 8));
+				fire_bolt(GF_ELEC, dir, damroll(6, 8));
 				o_ptr->timeout = rand_int(6) + 6;
 				break;
 			}
@@ -3344,7 +3344,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("Your gauntlets are covered in acid...");
 				if (!get_aim_dir(&dir)) return;
-				fire_bolt(GF_ACID, dir, damroll(5, 8));
+				fire_bolt(GF_ACID, dir, damroll(8, 8));
 				o_ptr->timeout = rand_int(5) + 5;
 				break;
 			}
@@ -3353,7 +3353,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("Your cesti grows magical spikes...");
 				if (!get_aim_dir(&dir)) return;
-				fire_bolt(GF_ARROW, dir, 150);
+				fire_bolt(GF_ARROW, dir, 250);
 				o_ptr->timeout = rand_int(90) + 90;
 				break;
 			}
@@ -3386,7 +3386,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("Your dagger is covered in fire...");
 				if (!get_aim_dir(&dir)) return;
-				fire_bolt(GF_FIRE, dir, damroll(9, 8));
+				fire_bolt(GF_FIRE, dir, damroll(11, 8));
 				o_ptr->timeout = rand_int(8) + 8;
 				break;
 			}
@@ -3395,7 +3395,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("Your dagger is covered in frost...");
 				if (!get_aim_dir(&dir)) return;
-				fire_bolt(GF_COLD, dir, damroll(6, 8));
+				fire_bolt(GF_COLD, dir, damroll(8, 8));
 				o_ptr->timeout = rand_int(7) + 7;
 				break;
 			}
@@ -3404,7 +3404,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("Your dagger is covered in sparks...");
 				if (!get_aim_dir(&dir)) return;
-				fire_bolt(GF_ELEC, dir, damroll(4, 8));
+				fire_bolt(GF_ELEC, dir, damroll(6, 8));
 				o_ptr->timeout = rand_int(6) + 6;
 				break;
 			}
@@ -3413,7 +3413,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("Your dagger throbs deep green...");
 				if (!get_aim_dir(&dir)) return;
-				fire_ball(GF_POIS, dir, 12, 3);
+				fire_ball(GF_POIS, dir, 25, 3);
 				o_ptr->timeout = rand_int(4) + 4;
 				break;
 			}
@@ -3422,7 +3422,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("Your dagger is covered in frost...");
 				if (!get_aim_dir(&dir)) return;
-				fire_ball(GF_COLD, dir, 48, 2);
+				fire_ball(GF_COLD, dir, 100, 2);
 				o_ptr->timeout = rand_int(5) + 5;
 				break;
 			}
@@ -3457,7 +3457,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("Your sword glows an intense blue...");
 				if (!get_aim_dir(&dir)) return;
-				fire_ball(GF_COLD, dir, 100, 2);
+				fire_ball(GF_COLD, dir, 200, 2);
 				o_ptr->timeout = 300;
 				break;
 			}
@@ -3474,7 +3474,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("Your sword glows an intense red...");
 				if (!get_aim_dir(&dir)) return;
-				fire_ball(GF_FIRE, dir, 72, 2);
+				fire_ball(GF_FIRE, dir, 150, 2);
 				o_ptr->timeout = 400;
 				break;
 			}
@@ -3483,7 +3483,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("Your axe blade glows black...");
 				if (!get_aim_dir(&dir)) return;
-				drain_life(dir, 120);
+				drain_life(dir, 200);
 				o_ptr->timeout = 400;
 				break;
 			}
@@ -3492,7 +3492,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("Your spear crackles with electricity...");
 				if (!get_aim_dir(&dir)) return;
-				fire_ball(GF_ELEC, dir, 100, 3);
+				fire_ball(GF_ELEC, dir, 200, 3);
 				o_ptr->timeout = 500;
 				break;
 			}
@@ -3517,7 +3517,7 @@ static void do_cmd_activate_aux(int item)
 			case ART_LOTHARANG:
 			{
 				msg_print("Your battle axe radiates deep purple...");
-				hp_player(damroll(4, 8));
+				hp_player(100);
 				(void)set_cut((p_ptr->cut / 2) - 50);
 				o_ptr->timeout = rand_int(3) + 3;
 				break;
@@ -3561,7 +3561,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("Your flail glows in scintillating colours...");
 				if (!get_aim_dir(&dir)) return;
-				confuse_monster(dir, 20);
+				confuse_monster(dir, 50);
 				o_ptr->timeout = 15;
 				break;
 			}
@@ -3570,7 +3570,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("Your morning star rages in fire...");
 				if (!get_aim_dir(&dir)) return;
-				fire_ball(GF_FIRE, dir, 72, 3);
+				fire_ball(GF_FIRE, dir, 200, 3);
 				o_ptr->timeout = 100;
 				break;
 			}
@@ -3612,7 +3612,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("Your hammer glows white...");
 				if (!get_aim_dir(&dir)) return;
-				drain_life(dir, 90);
+				drain_life(dir, 200);
 				o_ptr->timeout = 70;
 				break;
 			}
@@ -3801,25 +3801,25 @@ static void do_cmd_activate_aux(int item)
 		{
 			case SV_RING_ACID:
 			{
-				fire_ball(GF_ACID, dir, 50, 2);
+				fire_ball(GF_ACID, dir, 100, 2);
 				(void)set_oppose_acid(p_ptr->oppose_acid + randint(20) + 20);
-				o_ptr->timeout = rand_int(50) + 50;
+				o_ptr->timeout = rand_int(25) + 25;
 				break;
 			}
 
 			case SV_RING_ICE:
 			{
-				fire_ball(GF_COLD, dir, 50, 2);
+				fire_ball(GF_COLD, dir, 100, 2);
 				(void)set_oppose_cold(p_ptr->oppose_cold + randint(20) + 20);
-				o_ptr->timeout = rand_int(50) + 50;
+				o_ptr->timeout = rand_int(25) + 25;
 				break;
 			}
 
 			case SV_RING_FLAMES:
 			{
-				fire_ball(GF_FIRE, dir, 50, 2);
+				fire_ball(GF_FIRE, dir, 100, 2);
 				(void)set_oppose_fire(p_ptr->oppose_fire + randint(20) + 20);
-				o_ptr->timeout = rand_int(50) + 50;
+				o_ptr->timeout = rand_int(25) + 25;
 				break;
 			}
 		}

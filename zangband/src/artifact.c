@@ -1607,7 +1607,7 @@ bool activate_random_artifact(object_type * o_ptr)
 		{
 			msg_print("It glows extremely brightly...");
 			if (!get_aim_dir(&dir)) return FALSE;
-			fire_bolt(GF_MISSILE, dir, damroll(2, 6));
+			fire_bolt(GF_MISSILE, dir, damroll(3, 6));
 			o_ptr->timeout = 2;
 			break;
 		}
@@ -1616,7 +1616,7 @@ bool activate_random_artifact(object_type * o_ptr)
 		{
 			msg_print("It throbs deep green...");
 			if (!get_aim_dir(&dir)) return FALSE;
-			fire_ball(GF_POIS, dir, 12, 3);
+			fire_ball(GF_POIS, dir, 25, 3);
 			o_ptr->timeout = rand_int(4) + 4;
 			break;
 		}
@@ -1625,7 +1625,7 @@ bool activate_random_artifact(object_type * o_ptr)
 		{
 			msg_print("It is covered in sparks...");
 			if (!get_aim_dir(&dir)) return FALSE;
-			fire_bolt(GF_ELEC, dir, damroll(4, 8));
+			fire_bolt(GF_ELEC, dir, damroll(6, 8));
 			o_ptr->timeout = rand_int(6) + 6;
 			break;
 		}
@@ -1634,7 +1634,7 @@ bool activate_random_artifact(object_type * o_ptr)
 		{
 			msg_print("It is covered in acid...");
 			if (!get_aim_dir(&dir)) return FALSE;
-			fire_bolt(GF_ACID, dir, damroll(5, 8));
+			fire_bolt(GF_ACID, dir, damroll(8, 8));
 			o_ptr->timeout = rand_int(5) + 5;
 			break;
 		}
@@ -1643,7 +1643,7 @@ bool activate_random_artifact(object_type * o_ptr)
 		{
 			msg_print("It is covered in frost...");
 			if (!get_aim_dir(&dir)) return FALSE;
-			fire_bolt(GF_COLD, dir, damroll(6, 8));
+			fire_bolt(GF_COLD, dir, damroll(9, 8));
 			o_ptr->timeout = rand_int(7) + 7;
 			break;
 		}
@@ -1652,7 +1652,7 @@ bool activate_random_artifact(object_type * o_ptr)
 		{
 			msg_print("It is covered in fire...");
 			if (!get_aim_dir(&dir)) return FALSE;
-			fire_bolt(GF_FIRE, dir, damroll(9, 8));
+			fire_bolt(GF_FIRE, dir, damroll(11, 8));
 			o_ptr->timeout = rand_int(8) + 8;
 			break;
 		}
@@ -1661,7 +1661,7 @@ bool activate_random_artifact(object_type * o_ptr)
 		{
 			msg_print("It is covered in frost...");
 			if (!get_aim_dir(&dir)) return FALSE;
-			fire_ball(GF_COLD, dir, 48, 2);
+			fire_ball(GF_COLD, dir, 100, 2);
 			o_ptr->timeout = 400;
 			break;
 		}
@@ -1670,7 +1670,7 @@ bool activate_random_artifact(object_type * o_ptr)
 		{
 			msg_print("It glows an intense red...");
 			if (!get_aim_dir(&dir)) return FALSE;
-			fire_ball(GF_FIRE, dir, 72, 2);
+			fire_ball(GF_FIRE, dir, 150, 2);
 			o_ptr->timeout = 400;
 			break;
 		}
@@ -1679,7 +1679,7 @@ bool activate_random_artifact(object_type * o_ptr)
 		{
 			msg_print("It glows black...");
 			if (!get_aim_dir(&dir)) return FALSE;
-			if (drain_life(dir, 100))
+			if (drain_life(dir, 200))
 			o_ptr->timeout = rand_int(100) + 100;
 			break;
 		}
@@ -1688,7 +1688,7 @@ bool activate_random_artifact(object_type * o_ptr)
 		{
 			msg_print("It glows an intense blue...");
 			if (!get_aim_dir(&dir)) return FALSE;
-			fire_ball(GF_COLD, dir, 100, 2);
+			fire_ball(GF_COLD, dir, 200, 2);
 			o_ptr->timeout = 300;
 			break;
 		}
@@ -1697,7 +1697,7 @@ bool activate_random_artifact(object_type * o_ptr)
 		{
 			msg_print("It crackles with electricity...");
 			if (!get_aim_dir(&dir)) return FALSE;
-			fire_ball(GF_ELEC, dir, 100, 3);
+			fire_ball(GF_ELEC, dir, 200, 3);
 			o_ptr->timeout = 500;
 			break;
 		}
@@ -1706,7 +1706,7 @@ bool activate_random_artifact(object_type * o_ptr)
 		{
 			msg_print("It glows black...");
 			if (!get_aim_dir(&dir)) return FALSE;
-			drain_life(dir, 120);
+			drain_life(dir, 250);
 			o_ptr->timeout = 400;
 			break;
 		}
@@ -1716,8 +1716,8 @@ bool activate_random_artifact(object_type * o_ptr)
 			if (!get_aim_dir(&dir)) return FALSE;
 			for (dummy = 0; dummy < 3; dummy++)
 			{
-				if (drain_life(dir, 50))
-				hp_player(50);
+				if (drain_life(dir, 100))
+				hp_player(100);
 			}
 			o_ptr->timeout = 400;
 			break;
@@ -1727,7 +1727,7 @@ bool activate_random_artifact(object_type * o_ptr)
 		{
 			msg_print("It grows magical spikes...");
 			if (!get_aim_dir(&dir)) return FALSE;
-			fire_bolt(GF_ARROW, dir, 150);
+			fire_bolt(GF_ARROW, dir, 250);
 			o_ptr->timeout = rand_int(90) + 90;
 			break;
 		}
@@ -1736,7 +1736,7 @@ bool activate_random_artifact(object_type * o_ptr)
 		{
 			msg_print("It glows deep red...");
 			if (!get_aim_dir(&dir)) return FALSE;
-			fire_ball(GF_FIRE, dir, 120, 3);
+			fire_ball(GF_FIRE, dir, 250, 3);
 			o_ptr->timeout = rand_int(225) + 225;
 			break;
 		}
@@ -1745,7 +1745,7 @@ bool activate_random_artifact(object_type * o_ptr)
 		{
 			msg_print("It glows bright white...");
 			if (!get_aim_dir(&dir)) return FALSE;
-			fire_ball(GF_COLD, dir, 200, 3);
+			fire_ball(GF_COLD, dir, 400, 3);
 			o_ptr->timeout = rand_int(325) + 325;
 			break;
 		}
@@ -1754,7 +1754,7 @@ bool activate_random_artifact(object_type * o_ptr)
 		{
 			msg_print("It glows deep blue...");
 			if (!get_aim_dir(&dir)) return FALSE;
-			fire_ball(GF_ELEC, dir, 250, 3);
+			fire_ball(GF_ELEC, dir, 500, 3);
 			o_ptr->timeout = rand_int(425) + 425;
 			break;
 		}
@@ -1789,8 +1789,8 @@ bool activate_random_artifact(object_type * o_ptr)
 			if (!get_aim_dir(&dir)) return FALSE;
 			for (dummy = 0; dummy < 3; dummy++)
 			{
-				if (drain_life(dir, 100))
-				hp_player(100);
+				if (drain_life(dir, 200))
+				hp_player(200);
 			}
 
 			o_ptr->timeout = 400;
@@ -1810,7 +1810,7 @@ bool activate_random_artifact(object_type * o_ptr)
 		{
 			if (!get_aim_dir(&dir)) return FALSE;
 			msg_print("You launch a rocket!");
-			fire_ball(GF_ROCKET, dir, 120 + plev, 2);
+			fire_ball(GF_ROCKET, dir, 300 + plev, 2);
 			o_ptr->timeout = 400;
 			break;
 		}
@@ -1835,7 +1835,7 @@ bool activate_random_artifact(object_type * o_ptr)
 		{
 			if (!get_aim_dir(&dir)) return FALSE;
 			msg_print("You breathe the elements.");
-			fire_ball(GF_MISSILE, dir, 300, 4);
+			fire_ball(GF_MISSILE, dir, 600, 4);
 			o_ptr->timeout = 500;
 			break;
 		}
@@ -1846,7 +1846,7 @@ bool activate_random_artifact(object_type * o_ptr)
 		{
 			msg_print("It glows in scintillating colours...");
 			if (!get_aim_dir(&dir)) return FALSE;
-			confuse_monster(dir, 20);
+			confuse_monster(dir, 50);
 			o_ptr->timeout = 15;
 			break;
 		}
@@ -1883,7 +1883,7 @@ bool activate_random_artifact(object_type * o_ptr)
 
 		case ACT_BANISH_EVIL:
 		{
-			if (banish_evil(100))
+			if (banish_evil(200))
 			{
 				msg_print("The power of the artifact banishes evil!");
 			}
@@ -2043,7 +2043,7 @@ bool activate_random_artifact(object_type * o_ptr)
 		case ACT_CURE_MW:
 		{
 			msg_print("It radiates deep purple...");
-			hp_player(damroll(4, 8));
+			hp_player(75);
 			(void)set_cut((p_ptr->cut / 2) - 50);
 			o_ptr->timeout = rand_int(3) + 3;
 			break;

@@ -406,71 +406,71 @@ cptr item_activation(object_type *o_ptr)
 			}
 			case ACT_BO_MISS_1:
 			{
-				return "magic missile (2d6) every 2 turns";
+				return "magic missile (3d6) every 2 turns";
 			}
 			case ACT_BA_POIS_1:
 			{
-				return "stinking cloud (12), rad. 3, every 4+d4 turns";
+				return "stinking cloud (25), rad. 3, every 4+d4 turns";
 			}
 			case ACT_BO_ELEC_1:
 			{
-				return "lightning bolt (4d8) every 6+d6 turns";
+				return "lightning bolt (6d8) every 6+d6 turns";
 			}
 			case ACT_BO_ACID_1:
 			{
-				return "acid bolt (5d8) every 5+d5 turns";
+				return "acid bolt (8d8) every 5+d5 turns";
 			}
 			case ACT_BO_COLD_1:
 			{
-				return "frost bolt (6d8) every 7+d7 turns";
+				return "frost bolt (9d8) every 7+d7 turns";
 			}
 			case ACT_BO_FIRE_1:
 			{
-				return "fire bolt (9d8) every 8+d8 turns";
+				return "fire bolt (11d8) every 8+d8 turns";
 			}
 			case ACT_BA_COLD_1:
 			{
-				return "ball of cold (48) every 400 turns";
+				return "ball of cold (100) every 400 turns";
 			}
 			case ACT_BA_FIRE_1:
 			{
-				return "ball of fire (72) every 400 turns";
+				return "ball of fire (150) every 400 turns";
 			}
 			case ACT_DRAIN_1:
 			{
-				return "drain life (100) every 100+d100 turns";
+				return "drain life (200) every 100+d100 turns";
 			}
 			case ACT_BA_COLD_2:
 			{
-				return "ball of cold (100) every 300 turns";
+				return "ball of cold (200) every 300 turns";
 			}
 			case ACT_BA_ELEC_2:
 			{
-				return "ball of lightning (100) every 500 turns";
+				return "ball of lightning (200) every 500 turns";
 			}
 			case ACT_DRAIN_2:
 			{
-				return "drain life (120) every 400 turns";
+				return "drain life (250) every 400 turns";
 			}
 			case ACT_VAMPIRE_1:
 			{
-				return "vampiric drain (3*50) every 400 turns";
+				return "vampiric drain (3*100) every 400 turns";
 			}
 			case ACT_BO_MISS_2:
 			{
-				return "arrows (150) every 90+d90 turns";
+				return "arrows (250) every 90+d90 turns";
 			}
 			case ACT_BA_FIRE_2:
 			{
-				return "fire ball (120) every 225+d225 turns";
+				return "fire ball (250) every 225+d225 turns";
 			}
 			case ACT_BA_COLD_3:
 			{
-				return "ball of cold (200) every 325+d325 turns";
+				return "ball of cold (400) every 325+d325 turns";
 			}
 			case ACT_BA_ELEC_3:
 			{
-				return "ball of lightning (250) every 425+d425 turns";
+				return "ball of lightning (500) every 425+d425 turns";
 			}
 			case ACT_WHIRLWIND:
 			{
@@ -478,7 +478,7 @@ cptr item_activation(object_type *o_ptr)
 			}
 			case ACT_VAMPIRE_2:
 			{
-				return "vampiric drain (3*100) every 400 turns";
+				return "vampiric drain (3*200) every 400 turns";
 			}
 			case ACT_CALL_CHAOS:
 			{
@@ -486,7 +486,7 @@ cptr item_activation(object_type *o_ptr)
 			}
 			case ACT_ROCKET:
 			{
-				return "launch rocket (120+level) every 400 turns";
+				return "launch rocket (300+level) every 400 turns";
 			}
 			case ACT_DISP_EVIL:
 			{
@@ -494,7 +494,7 @@ cptr item_activation(object_type *o_ptr)
 			}
 			case ACT_BA_MISS_3:
 			{
-				return "elemental breath (300) every 500 turns";
+				return "elemental breath (500) every 500 turns";
 			}
 			case ACT_DISP_GOOD:
 			{
@@ -578,7 +578,7 @@ cptr item_activation(object_type *o_ptr)
 			}
 			case ACT_CURE_MW:
 			{
-				return "heal 4d8 & wounds every 3+d3 turns";
+				return "heal 75 hp & wounds every 3+d3 turns";
 			}
 			case ACT_CURE_POISON:
 			{
@@ -708,23 +708,23 @@ cptr item_activation(object_type *o_ptr)
 	{
 		case ART_NARTHANC:
 		{
-			return "fire bolt (9d8) every 8+d8 turns";
+			return "fire bolt (11d8) every 8+d8 turns";
 		}
 		case ART_NIMTHANC:
 		{
-			return "frost bolt (6d8) every 7+d7 turns";
+			return "frost bolt (8d8) every 7+d7 turns";
 		}
 		case ART_DETHANC:
 		{
-			return "lightning bolt (4d8) every 6+d6 turns";
+			return "lightning bolt (6d8) every 6+d6 turns";
 		}
 		case ART_RILIA:
 		{
-			return "stinking cloud (12) every 4+d4 turns";
+			return "stinking cloud (25) every 4+d4 turns";
 		}
 		case ART_BELANGIL:
 		{
-			return "frost ball (48) every 5+d5 turns";
+			return "frost ball (100) every 5+d5 turns";
 		}
 		case ART_DAL:
 		{
@@ -732,7 +732,7 @@ cptr item_activation(object_type *o_ptr)
 		}
 		case ART_RINGIL:
 		{
-			return "frost ball (100) every 300 turns";
+			return "frost ball (200) every 300 turns";
 		}
 		case ART_DAWN:
 		{
@@ -740,11 +740,11 @@ cptr item_activation(object_type *o_ptr)
 		}
 		case ART_ANDURIL:
 		{
-			return "fire ball (72) every 400 turns";
+			return "fire ball (150) every 400 turns";
 		}
 		case ART_FIRESTAR:
 		{
-			return "large fire ball (72) every 100 turns";
+			return "large fire ball (200) every 100 turns";
 		}
 		case ART_FEANOR:
 		{
@@ -752,11 +752,11 @@ cptr item_activation(object_type *o_ptr)
 		}
 		case ART_THEODEN:
 		{
-			return "drain life (120) every 400 turns";
+			return "drain life (200) every 400 turns";
 		}
 		case ART_TURMIL:
 		{
-			return "drain life (90) every 70 turns";
+			return "drain life (200) every 70 turns";
 		}
 		case ART_CASPANION:
 		{
@@ -784,7 +784,7 @@ cptr item_activation(object_type *o_ptr)
 		}
 		case ART_LOTHARANG:
 		{
-			return "cure wounds (4d7) every 3+d3 turns";
+			return "cure wounds (100) every 3+d3 turns";
 		}
 		case ART_BRAND:
 		{
@@ -796,7 +796,7 @@ cptr item_activation(object_type *o_ptr)
 		}
 		case ART_AEGLOS:
 		{
-			return "lightning ball (100) every 500 turns";
+			return "lightning ball (200) every 500 turns";
 		}
 		case ART_OROME:
 		{
@@ -832,7 +832,7 @@ cptr item_activation(object_type *o_ptr)
 		}
 		case ART_THINGOL:
 		{
-			return "recharge item I every 70 turns";
+			return "recharge item every 70 turns";
 		}
 		case ART_COLANNON:
 		{
@@ -844,27 +844,27 @@ cptr item_activation(object_type *o_ptr)
 		}
 		case ART_CAMMITHRIM:
 		{
-			return "magic missile (2d6) every 2 turns";
+			return "magic missile (3d6) every 2 turns";
 		}
 		case ART_PAURHACH:
 		{
-			return "fire bolt (9d8) every 8+d8 turns";
+			return "fire bolt (11d8) every 8+d8 turns";
 		}
 		case ART_CORWIN:
 		{
-			return "frost bolt (6d8) every 7+d7 turns";
+			return "frost bolt (8d8) every 7+d7 turns";
 		}
 		case ART_PAURAEGEN:
 		{
-			return "lightning bolt (4d8) every 6+d6 turns";
+			return "lightning bolt (6d8) every 6+d6 turns";
 		}
 		case ART_PAURNEN:
 		{
-			return "acid bolt (5d8) every 5+d5 turns";
+			return "acid bolt (8d8) every 5+d5 turns";
 		}
 		case ART_FINGOLFIN:
 		{
-			return "a magical arrow (150) every 90+d90 turns";
+			return "a magical arrow (250) every 90+d90 turns";
 		}
 		case ART_HOLHENNETH:
 		{
@@ -904,7 +904,7 @@ cptr item_activation(object_type *o_ptr)
 		}
 		case ART_BARAHIR:
 		{
-			return "a strangling attack (100) every 100+d100 turns";
+			return "a strangling attack (200) every 100+d100 turns";
 		}
 		case ART_TULKAS:
 		{
@@ -912,15 +912,15 @@ cptr item_activation(object_type *o_ptr)
 		}
 		case ART_NARYA:
 		{
-			return "large fire ball (120) every 225+d225 turns";
+			return "large fire ball (250) every 225+d225 turns";
 		}
 		case ART_NENYA:
 		{
-			return "large frost ball (200) every 325+d325 turns";
+			return "large frost ball (400) every 325+d325 turns";
 		}
 		case ART_VILYA:
 		{
-			return "large lightning ball (250) every 425+d425 turns";
+			return "large lightning ball (500) every 425+d425 turns";
 		}
 		case ART_POWER:
 		{
