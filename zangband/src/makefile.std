@@ -269,10 +269,10 @@ dos: LIBS := -lpc -lalleg
 dos: INSTALL := copy zangband ../zangband.exe
 dos: LUA := lua\# Dos has different path seperators
 dos_clean:
-	del *.o \
-	del lua\*.o \
-	del *.exe \
-	del lua\*.exe
+	-del *.o \
+	-del lua\*.o \
+	-del *.exe \
+	-del lua\*.exe
 
 ##
 ## Variation -- Compile using the main-ibm.c port
@@ -281,10 +281,10 @@ ibm: CFLAGS += -DUSE_IBM
 ibm: LIBS := -lpc
 ibm: LUA := lua\# Dos has different path seperators
 ibm_clean:
-	del *.o \
-	del lua\*.o \
-	del *.exe \
-	del lua\*.exe
+	-del *.o \
+	-del lua\*.o \
+	-del *.exe \
+	-del lua\*.exe
 
 
 ##
@@ -300,9 +300,9 @@ lcc: ANGOBJS += angband.res readdib.o
 lcc: INSTALL := copy zangband ..\zangband.exe
 lcc: LUA := lua\# Dos has different path seperators
 lcc_clean:
-	del *.obj \
-	del *.res \
-	del *.exe;
+	-del *.obj \
+	-del *.res \
+	-del *.exe;
 
 ##
 ## Variation -- Compile for Risc OS 3.10 or later  (Acorn)
@@ -487,4 +487,4 @@ $(LUAWSRCS): %.c: %.pkg $(LUA)tolua
 ##
 ## Phony targets
 ##
-.PHONY: install clean depend $(PORTS)
+.PHONY: install clean depend $(PORTS) lcc_clean dos_clean ibm_clean
