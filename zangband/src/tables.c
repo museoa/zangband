@@ -1745,8 +1745,7 @@ player_sex sex_info[MAX_SEXES] =
  *      Age (Base, Mod),
  *      Male (Hgt, Wgt),
  *      Female (Hgt, Wgt)
- *      infra,
- *      class-choices
+ *      infra
  */
 player_race race_info[MAX_RACES] =
 {
@@ -1759,7 +1758,6 @@ player_race race_info[MAX_RACES] =
 		72,  6, 180, 25,
 		66,  4, 150, 20,
 		0,
-		0x7FF,
 	},
 	{
 		"Half-Elf",
@@ -1770,7 +1768,6 @@ player_race race_info[MAX_RACES] =
 		66,  6, 130, 15,
 		62,  6, 100, 10,
 		2,
-		0x7FF,
 	},
 	{
 		"Elf",
@@ -1781,7 +1778,6 @@ player_race race_info[MAX_RACES] =
 		60,  4, 100,  6,
 		54,  4, 80,  6,
 		3,
-		0x75F,
 	},
 	{
 		"Hobbit",
@@ -1792,7 +1788,6 @@ player_race race_info[MAX_RACES] =
 		36,  3, 60,  3,
 		33,  3, 50,  3,
 		4,
-		0x40B,
 	},
 	{
 		"Gnome",
@@ -1803,7 +1798,6 @@ player_race race_info[MAX_RACES] =
 		42,  3, 90,  6,
 		39,  3, 75,  3,
 		4,
-		0x60F,
 	},
 	{
 		"Dwarf",
@@ -1814,7 +1808,6 @@ player_race race_info[MAX_RACES] =
 		48,  3, 150, 10,
 		46,  3, 120, 10,
 		5,
-		0x005,
 	},
 	{
 		"Half-Orc",
@@ -1825,7 +1818,6 @@ player_race race_info[MAX_RACES] =
 		66,  1, 150,  5,
 		62,  1, 120,  5,
 		3,
-		0x18D,
 	},
 	{
 		"Half-Troll",
@@ -1836,7 +1828,6 @@ player_race race_info[MAX_RACES] =
 		96, 10, 250, 50,
 		84,  8, 225, 40,
 		3,
-		0x005,
 	},
 	{
 		"Amberite",
@@ -1847,7 +1838,6 @@ player_race race_info[MAX_RACES] =
 		82, 5, 190, 20,
 		78,  6, 180, 15,
 		0,
-		0x7FF,
 	},
 	{
 		"High-Elf",
@@ -1858,7 +1848,6 @@ player_race race_info[MAX_RACES] =
 		90, 10, 190, 20,
 		82, 10, 180, 15,
 		4,
-		0x75F,
 	},
 	{
 		"Barbarian",
@@ -1869,7 +1858,6 @@ player_race race_info[MAX_RACES] =
 		82, 5, 200, 20,
 		78,  6, 190, 15,
 		0,
-		0x09D,
 	},
 	{
 		"Half-Ogre",
@@ -1880,7 +1868,6 @@ player_race race_info[MAX_RACES] =
 		92, 10, 255, 60,
 		80,  8, 235, 60,
 		3,
-		0x407,
 	},
 	{
 		"Half-Giant",
@@ -1891,7 +1878,6 @@ player_race race_info[MAX_RACES] =
 		100, 10, 255, 65,
 		80, 10, 240, 64,
 		3,
-		0x011,
 	},
 	{
 		"Half-Titan",
@@ -1902,7 +1888,6 @@ player_race race_info[MAX_RACES] =
 		111, 11, 255, 86,
 		99, 11, 250, 86,
 		0,
-		0x727,
 	},
 	{
 		"Cyclops",
@@ -1913,7 +1898,6 @@ player_race race_info[MAX_RACES] =
 		92, 10, 255, 60,
 		80,  8, 235, 60,
 		1,
-		0x005,
 	},
 	{
 		"Yeek",
@@ -1924,7 +1908,6 @@ player_race race_info[MAX_RACES] =
 		50,  3, 90,  6,
 		50,  3, 75,  3,
 		2,
-		0x60F,
 	},
 	{
 		"Klackon",
@@ -1935,7 +1918,6 @@ player_race race_info[MAX_RACES] =
 		60,  3, 80,  4,
 		54,  3, 70,  4,
 		2,
-		0x011,
 	},
 	{
 		"Kobold",
@@ -1946,7 +1928,6 @@ player_race race_info[MAX_RACES] =
 		60,  1, 130,  5,
 		55,  1, 100,  5,
 		3,
-		0x009,
 	},
 	{
 		"Nibelung",
@@ -1957,7 +1938,6 @@ player_race race_info[MAX_RACES] =
 		43,  3, 92,  6,
 		40,  3, 78,  3,
 		5,
-		0x40F,
 	},
 	{
 		"Dark-Elf",
@@ -1968,7 +1948,6 @@ player_race race_info[MAX_RACES] =
 		60,  4, 100,  6,
 		54,  4, 80,  6,
 		5,
-		0x7DF,
 	},
 	{
 		"Draconian",
@@ -1979,7 +1958,6 @@ player_race race_info[MAX_RACES] =
 		76,  1, 160,  5,
 		72,  1, 130,  5,
 		2,
-		0x757,
 	},
 	{
 		"Mindflayer",
@@ -1990,7 +1968,6 @@ player_race race_info[MAX_RACES] =
 		68,  6, 142, 15,
 		63,  6, 112, 10,
 		4,
-		0x746,
 	},
 	{
 		"Imp",
@@ -2001,7 +1978,6 @@ player_race race_info[MAX_RACES] =
 		68,  1, 150,  5,
 		64,  1, 120,  5,
 		3,
-		0x7CB,
 	},
 	{
 		"Golem",
@@ -2012,7 +1988,6 @@ player_race race_info[MAX_RACES] =
 		66,  1, 200,  6,
 		62,  1, 180,  6,
 		4,
-		0x001,
 	},
 	{
 		"Skeleton",
@@ -2023,7 +1998,6 @@ player_race race_info[MAX_RACES] =
 		72,  6, 50, 5,
 		66,  4, 50, 5,
 		2,
-		0x70F,
 	},
 	{
 		"Zombie",
@@ -2034,7 +2008,6 @@ player_race race_info[MAX_RACES] =
 		72, 6, 100, 25,
 		66, 4, 100, 20,
 		2,
-		0x001,
 	},
 	{
 		"Vampire",
@@ -2045,7 +2018,6 @@ player_race race_info[MAX_RACES] =
 		72,  6, 180, 25,
 		66,  4, 150, 20,
 		5,
-		0x7FF,
 	},
 	{
 		"Spectre",
@@ -2056,7 +2028,6 @@ player_race race_info[MAX_RACES] =
 		72, 6, 100, 25,
 		66, 4, 100, 20,
 		5,
-		0x74E,    /* Mage, Priest, Rogue, Warrior-Mage, Monk */
 	},
 	{
 		"Sprite",
@@ -2067,7 +2038,6 @@ player_race race_info[MAX_RACES] =
 		32,  2, 75,  2,
 		29,  2, 65,  2,
 		4,
-		0x65E,
 	},
 	{
 		"Beastman",
@@ -2078,7 +2048,6 @@ player_race race_info[MAX_RACES] =
 		65,  6, 150, 20,
 		61,  6, 120, 15,
 		0,
-		0x7CF,
 	},
 	{
 		"Ghoul",
@@ -2089,7 +2058,6 @@ player_race race_info[MAX_RACES] =
 		72, 6, 100, 25,
 		66, 4, 100, 20,
 		2,
-		0x70F,
 	}
 };
 

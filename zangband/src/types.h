@@ -1180,8 +1180,6 @@ struct player_race
 	byte f_m_wt;	/* mod weight (females) */
 
 	byte infra;	/* Infra-vision range */
-
-	u16b choice;	/* Legal class choices */
 };
 
 

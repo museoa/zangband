@@ -869,7 +869,6 @@ static void class_aux_hook(cptr c_str)
 static bool get_player_class(void)
 {
 	int i;
-	char buf[80];
 	cptr classes[MAX_CLASS];
 
 
@@ -881,18 +880,7 @@ static bool get_player_class(void)
 	/* Tabulate classes */
 	for (i = 0; i < MAX_CLASS; i++)
 	{
-		/* Analyze */
-		if (!(rp_ptr->choice & (1L << i)))
-		{
-			strnfmt(buf, 80, "(%s)", class_info[i].title);
-		}
-		else
-		{
-			strnfmt(buf, 80, "%s", class_info[i].title);
-		}
-
-		/* Save the string */
-		classes[i] = string_make(buf);
+		classes[i] = class_info[i].title;
 	}
 
 	p_ptr->rp.pclass = get_player_choice(classes, MAX_CLASS, CLASS_COL, 20,
@@ -904,24 +892,12 @@ static bool get_player_class(void)
 	{
 		p_ptr->rp.pclass = 0;
 
-		for (i = 0; i < MAX_CLASS; i++)
-		{
-			/* Free the strings */
-			string_free(classes[i]);
-		}
-
 		return (FALSE);
 	}
 
 	/* Set class */
 	cp_ptr = &class_info[p_ptr->rp.pclass];
 	mp_ptr = &magic_info[p_ptr->rp.pclass];
-
-	for (i = 0; i < MAX_CLASS; i++)
-	{
-		/* Free the strings */
-		string_free(classes[i]);
-	}
 
 	return (TRUE);
 }
