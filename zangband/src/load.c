@@ -2736,7 +2736,7 @@ static errr rd_dungeon(void)
 
 	u16b limit;
 	cave_type *c_ptr;
-	u16b dun_level_backup;
+	u16b dun_level_backup, px_back, py_back;
 
 	/*** Basic info ***/
 
@@ -2774,12 +2774,27 @@ static errr rd_dungeon(void)
 		dun_level_backup = dun_level;
 		dun_level = 0;
 		
+		/* Save player location */
+		px_back = px;
+		py_back = py;
+		
 		create_wilderness();
+		
+		/* Clear new monsters / objects */
+		wipe_o_list();
+		wipe_m_list();
 		
 		/* Hack - do not load data into wilderness */
 		change_level(1);
 
 		dun_level = dun_level_backup;
+		
+		/* if in the dungeon - restore the player location */
+		if (dun_level)
+		{
+			px = px_back;
+			py = py_back;
+		}
 		
 		/* Load dungeon map*/
 		load_map(cur_hgt, 0, cur_wid, 0);
@@ -2960,6 +2975,18 @@ static errr rd_dungeon(void)
 	/* Hack - make new level only after objects + monsters are loaded */
 	if (sf_version < 7)
 	{		
+		/* In the wilderness - old monsters in 'wrong' positions */
+		if (!dun_level)
+		{
+			/* Clear old monsters / objects */
+			wipe_o_list();
+			wipe_m_list();		
+			
+			/* refresh wilderness */
+			character_dungeon = FALSE;		
+		}
+		
+		/* enter the level */
 		change_level(dun_level);
 	}
 
