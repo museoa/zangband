@@ -1911,7 +1911,7 @@ static void display_player_flag_aux(int col, int row,
 
 
 	/* Header */
-	c_put_str(TERM_WHITE, header, col, row);
+	put_str(header, col, row);
 
 	/* Advance */
 	col += strlen(header) + 1;
@@ -2316,8 +2316,8 @@ static void display_player_top(void)
 
 	if (p_ptr->realm2)
 	{
-		c_put_str(TERM_L_BLUE, realm_names[p_ptr->realm2], COL_NAME + WID_NAME,
-				  7);
+		put_fstr(COL_NAME + WID_NAME, 7, CLR_L_BLUE "%s",
+				 realm_names[p_ptr->realm2]);
 	}
 
 	/* Age, Height, Weight, Social */
@@ -4184,7 +4184,8 @@ static void show_info(void)
 
 						/* Display object description */
 						object_desc(o_name, o_ptr, TRUE, 3, 256);
-						c_put_str(tval_to_attr[o_ptr->tval], o_name, 7, j + 2);
+						put_fstr(7, j + 2, "%s%s",
+								 color_seq[tval_to_attr[o_ptr->tval]], o_name);
 
 						/* Show 12 items at a time */
 						if (j == 12)

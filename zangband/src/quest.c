@@ -974,7 +974,7 @@ static void get_questinfo(int questnum)
 
 	for (i = 0; i < 10; i++)
 	{
-		c_put_str(TERM_YELLOW, quest_text[i], 0, i + 8);
+		put_fstr(0, i + 8, CLR_YELLOW "%s", quest_text[i]);
 	}
 }
 

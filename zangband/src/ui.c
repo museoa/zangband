@@ -388,23 +388,10 @@ void screen_load(void)
 }
 
 /*
- * Display a string on the screen using an attribute.
+ * Display a string on the screen in white.
  *
- * At the given location, using the given attribute, if allowed,
- * add the given string.  Do not clear the line.
- */
-void c_put_str(byte attr, cptr str, int col, int row)
-{
-	/* Hack -- fake monochrome */
-	if (!use_color || ironman_moria) attr = TERM_WHITE;
-
-	/* Position cursor, Dump the attr/text */
-	Term_putstr(col, row, -1, attr, str);
-}
-
-
-/*
- * As above, but in "white"
+ * At the given location, if allowed add the given string.
+ * Do not clear the line.
  */
 void put_str(cptr str, int col, int row)
 {

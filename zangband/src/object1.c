@@ -2546,14 +2546,13 @@ void show_list(s16b o_list_ptr)
 		Term_draw(col + 3, j + 1, a, c);
 
 		/* Display the entry itself */
-		c_put_str(out_color[j], out_desc[j], col + 5, j + 1);
+		put_fstr(col + 5, j + 1, "%s%s", color_seq[out_color[j]], out_desc[j]);
 
 		/* Display the weight if needed */
 		if (show_weights)
 		{
 			int wgt = o_ptr->weight * o_ptr->number;
-			(void)sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
-			put_str(tmp_val, lim, j + 1);
+			put_fstr(lim, j + 1, "%3d.%1d lb", wgt / 10, wgt % 10);
 		}
 	}
 
@@ -2706,18 +2705,19 @@ void show_equip(void)
 		if (show_labels)
 		{
 			/* Mention the use */
-			(void)sprintf(tmp_val, "%-14s: ", mention_use(i));
-			put_str(tmp_val, col + 5, j + 1);
+			put_fstr(col + 5, j + 1, "%-14s: ", mention_use(i));
 
 			/* Display the entry itself */
-			c_put_str(out_color[j], out_desc[j], col + 21, j + 1);
+			put_fstr(col + 21, j + 1, "%s%s", color_seq[out_color[j]],
+					 out_desc[j]);
 		}
 
 		/* No labels */
 		else
 		{
 			/* Display the entry itself */
-			c_put_str(out_color[j], out_desc[j], col + 5, j + 1);
+			put_fstr(col + 5, j + 1, "%s%s", color_seq[out_color[j]],
+					 out_desc[j]);
 		}
 
 		/* Display the weight if needed */

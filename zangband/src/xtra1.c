@@ -43,7 +43,7 @@ static void prt_field(cptr info, int col, int row)
 	put_str("             ", col, row);
 
 	/* Dump the info itself */
-	c_put_str(TERM_L_BLUE, info, col, row);
+	put_fstr(col, row, CLR_L_BLUE "%s", info);
 }
 
 
@@ -402,7 +402,6 @@ static void prt_level(void)
  */
 static void prt_exp(void)
 {
-	char out_val[32];
 	byte attr;
 
 	if (p_ptr->exp >= p_ptr->max_exp)
@@ -421,27 +420,21 @@ static void prt_exp(void)
 
 		if (p_ptr->lev >= PY_MAX_LEVEL)
 		{
-			c_put_str(attr, "********", COL_EXP + 4, ROW_EXP);
+			put_fstr(COL_EXP + 4, ROW_EXP, "%s********", color_seq[attr]);
 		}
 		else
 		{
 			/* Print the amount of experience to go until the next level */
-			(void)sprintf(out_val, "%8ld",
+			put_fstr(COL_EXP + 4, ROW_EXP, "%s%8ld", color_seq[attr],
 						  (long)(player_exp[p_ptr->lev - 1] * p_ptr->expfact /
 								 100L) - (long)p_ptr->exp);
-
-			c_put_str(attr, out_val, COL_EXP + 4, ROW_EXP);
 		}
 	}
 	else
 	{
-
-		put_str("EXP ", 0, ROW_EXP);
-
 		/* Use the 'old' experience display */
-		(void)sprintf(out_val, "%8ld", (long)p_ptr->exp);
-
-		c_put_str(attr, out_val, COL_EXP + 4, ROW_EXP);
+		put_fstr(COL_EXP, ROW_EXP, "EXP %s%8ld", color_seq[attr],
+				 (long)p_ptr->exp);
 	}
 }
 
@@ -504,7 +497,7 @@ static void prt_hp(void)
 		color = TERM_RED;
 	}
 
-	c_put_str(color, tmp, COL_CURHP + 7, ROW_CURHP);
+	put_fstr(COL_CURHP + 7, ROW_CURHP, "%s%s", color_seq[color], tmp);
 
 #ifndef VARIABLE_PLAYER_GRAPH
 
@@ -573,7 +566,7 @@ static void prt_sp(void)
 	}
 
 	/* Show mana */
-	c_put_str(color, tmp, COL_CURSP + 7, ROW_CURSP);
+	put_fstr(COL_CURSP + 7, ROW_CURSP, "%s%s", color_seq[color], tmp);
 }
 
 
@@ -824,7 +817,7 @@ static void prt_state(void)
 	}
 
 	/* Display the info (or blanks) */
-	c_put_str(attr, text, COL_STATE, Term->hgt - 1);
+	put_fstr(COL_STATE, Term->hgt - 1, "%s%s", color_seq[attr], text);
 }
 
 
@@ -884,7 +877,7 @@ static void prt_speed(void)
 	}
 
 	/* Display the speed */
-	c_put_str(attr, format("%-10s", buf), COL_SPEED, Term->hgt - 1);
+	put_fstr(COL_SPEED, Term->hgt - 1, "%s%-10s", color_seq[attr], buf);
 }
 
 

@@ -995,7 +995,8 @@ static void display_entry(int pos)
 
 		/* Describe the object */
 		object_desc(o_name, o_ptr, TRUE, 3, maxwid);
-		c_put_str(tval_to_attr[o_ptr->tval], o_name, 5, i + 6);
+		put_fstr(5, i + 6, "%s%s",
+					color_seq[tval_to_attr[o_ptr->tval]], o_name);
 
 		/* Show weights */
 		if (show_weights)
@@ -1018,7 +1019,8 @@ static void display_entry(int pos)
 
 		/* Describe the object (fully) */
 		object_desc_store(o_name, o_ptr, TRUE, 3, maxwid);
-		c_put_str(tval_to_attr[o_ptr->tval], o_name, 5, i + 6);
+		put_fstr(5, i + 6, "%s%s",
+					color_seq[tval_to_attr[o_ptr->tval]], o_name);
 
 		/* Show weights */
 		if (show_weights)

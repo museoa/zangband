@@ -951,7 +951,7 @@ static void compare_weapon_aux2(const object_type *o_ptr, int numblows,
 	intmindam = mindam / 100;
 
 	/* Print the intro text */
-	c_put_str(color, attr, WEP_MAST_COL2, r);
+	put_fstr(WEP_MAST_COL2, r, "%s%s", color_seq[color], attr);
 
 	/* Print the damage */
 	put_fstr(WEP_MAST_COL2 + 8, r, " %d-%d damage", intmindam, intmaxdam);
@@ -1110,7 +1110,7 @@ static void list_weapon(const object_type *o_ptr)
 
 	/* Print the weapon name */
 	object_desc(o_name, o_ptr, TRUE, 0, 256);
-	c_put_str(TERM_L_BLUE, o_name, WEP_MAST_COL1, 6);
+	put_fstr(WEP_MAST_COL1, 6, CLR_L_BLUE "%s", o_name);
 
 	/* Print to_hit and to_dam of the weapon */
 	put_fstr(WEP_MAST_COL1, 8, "To Hit: %d  Deadliness: %d", o_ptr->to_h, o_ptr->to_d);

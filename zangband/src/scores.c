@@ -315,7 +315,7 @@ void display_scores_aux(int from, int to, int note, const high_score *score)
 			if (mlev > clev) strcat(out_val, format(" (Max %d)", mlev));
 
 			/* Dump the first line */
-			c_put_str(attr, out_val, 0, n * 4 + 2);
+			put_fstr(0, n * 4 + 2, "%s%s", color_seq[attr], out_val);
 
 			/* Some people die outside of the dungeon */
 			if (cdun)
@@ -337,13 +337,12 @@ void display_scores_aux(int from, int to, int note, const high_score *score)
 			if (mdun > cdun) strcat(out_val, format(" (Max %d)", mdun));
 
 			/* Dump the info */
-			c_put_str(attr, out_val, 0, n * 4 + 3);
+			put_fstr(0, n * 4 + 3, "%s%s", color_seq[attr], out_val);
 
 			/* And still another line of info */
-			sprintf(out_val,
-					"               (User %s, Date %s, Gold %s, Turn %s).",
-					user, when, gold, aged);
-			c_put_str(attr, out_val, 0, n * 4 + 4);
+			put_fstr(0, n * 4 + 4,
+				"%s               (User %s, Date %s, Gold %s, Turn %s).",
+					 color_seq[attr], user, when, gold, aged);
 		}
 
 
