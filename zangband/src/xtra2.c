@@ -3929,7 +3929,7 @@ int adjust_stat(int stat, int value, int amount)
 			{
 				value = 18;
 			}
-			else
+			else if (value > 3)
 			{
 				value--;
 			}
