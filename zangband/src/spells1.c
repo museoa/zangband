@@ -472,7 +472,8 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 {
 	cave_type       *c_ptr = &cave[y][x];
 
-	bool            obvious = FALSE;
+	bool obvious = FALSE;
+	bool known = player_has_los_bold(y, x);
 
 
 	/* XXX XXX XXX */
@@ -518,7 +519,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 				place_closed_door(y, x);
 
 				/* Check line of sight */
-				if (player_has_los_bold(y, x))
+				if (known)
 				{
 					obvious = TRUE;
 				}
@@ -528,7 +529,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			if ((c_ptr->feat == FEAT_INVIS) || is_trap(c_ptr->feat))
 			{
 				/* Check line of sight */
-				if (player_has_los_bold(y, x))
+				if (known)
 				{
 					msg_print("There is a bright flash of light!");
 					obvious = TRUE;
@@ -543,13 +544,13 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 
 			/* Locked doors are unlocked */
 			else if ((c_ptr->feat >= FEAT_DOOR_HEAD + 0x01) &&
-			          (c_ptr->feat <= FEAT_DOOR_HEAD + 0x07))
+						 (c_ptr->feat <= FEAT_DOOR_HEAD + 0x07))
 			{
 				/* Unlock the door */
 				cave_set_feat(y, x, FEAT_DOOR_HEAD + 0x00);
 
 				/* Check line of sound */
-				if (player_has_los_bold(y, x))
+				if (known)
 				{
 					msg_print("Click!");
 					obvious = TRUE;
@@ -564,14 +565,14 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 		{
 			/* Destroy all doors and traps */
 			if ((c_ptr->feat == FEAT_OPEN) ||
-			    (c_ptr->feat == FEAT_BROKEN) ||
-			    (c_ptr->feat == FEAT_INVIS) ||
-			   (is_trap(c_ptr->feat)) ||
-			   ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
-			    (c_ptr->feat <= FEAT_DOOR_TAIL)))
+				 (c_ptr->feat == FEAT_BROKEN) ||
+				 (c_ptr->feat == FEAT_INVIS) ||
+				(is_trap(c_ptr->feat)) ||
+				((c_ptr->feat >= FEAT_DOOR_HEAD) &&
+				 (c_ptr->feat <= FEAT_DOOR_TAIL)))
 			{
 				/* Check line of sight */
-				if (player_has_los_bold(y, x))
+				if (known)
 				{
 					/* Message */
 					msg_print("There is a bright flash of light!");
@@ -579,7 +580,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 
 					/* Visibility change */
 					if ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
-					    (c_ptr->feat <= FEAT_DOOR_TAIL))
+						 (c_ptr->feat <= FEAT_DOOR_TAIL))
 					{
 						/* Update some things */
 						p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
@@ -599,7 +600,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 		case GF_JAM_DOOR: /* Jams a door (as if with a spike) */
 		{
 			if ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
-			    (c_ptr->feat <= FEAT_DOOR_TAIL))
+				 (c_ptr->feat <= FEAT_DOOR_TAIL))
 			{
 				/* Convert "locked" to "stuck" XXX XXX XXX */
 				if (c_ptr->feat < FEAT_DOOR_HEAD + 0x08) c_ptr->feat += 0x08;
@@ -608,7 +609,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 				if (c_ptr->feat < FEAT_DOOR_TAIL) c_ptr->feat++;
 
 				/* Check line of sight */
-				if (player_has_los_bold(y, x))
+				if (known)
 				{
 					/* Message */
 					msg_print("The door seems stuck.");
@@ -631,7 +632,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			if (c_ptr->feat >= FEAT_WALL_EXTRA)
 			{
 				/* Message */
-				if (c_ptr->info & (CAVE_MARK))
+				if (known && (c_ptr->info & (CAVE_MARK)))
 				{
 					msg_print("The wall turns into mud!");
 					obvious = TRUE;
@@ -648,7 +649,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			else if (c_ptr->feat >= FEAT_MAGMA_H)
 			{
 				/* Message */
-				if (c_ptr->info & (CAVE_MARK))
+				if (known && (c_ptr->info & (CAVE_MARK)))
 				{
 					msg_print("The vein turns into mud!");
 					msg_print("You have found something!");
@@ -669,7 +670,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			else if (c_ptr->feat >= FEAT_MAGMA)
 			{
 				/* Message */
-				if (c_ptr->info & (CAVE_MARK))
+				if (known && (c_ptr->info & (CAVE_MARK)))
 				{
 					msg_print("The vein turns into mud!");
 					obvious = TRUE;
@@ -686,7 +687,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			else if (c_ptr->feat == FEAT_RUBBLE)
 			{
 				/* Message */
-				if (c_ptr->info & (CAVE_MARK))
+				if (known && (c_ptr->info & (CAVE_MARK)))
 				{
 					msg_print("The rubble turns into mud!");
 					obvious = TRUE;
@@ -717,7 +718,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			else /* if (c_ptr->feat >= FEAT_DOOR_HEAD) */
 			{
 				/* Hack -- special message */
-				if (c_ptr->info & (CAVE_MARK))
+				if (known && (c_ptr->info & (CAVE_MARK)))
 				{
 					msg_print("The door turns into mud!");
 					obvious = TRUE;
@@ -762,8 +763,8 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 		{
 			/* Require a "naked" floor grid */
 			if ((cave[y][x].feat != FEAT_FLOOR) &&
-			    (cave[y][x].o_idx == 0) &&
-			    (cave[y][x].m_idx == 0))
+				 (cave[y][x].o_idx == 0) &&
+				 (cave[y][x].m_idx == 0))
 				 break;
 
 			/* Place a trap */
@@ -883,6 +884,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 	s16b this_o_idx, next_o_idx = 0;
 
 	bool obvious = FALSE;
+	bool known = player_has_los_bold(y, x);
 
 	u32b f1, f2, f3;
 
@@ -1081,7 +1083,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 						object_known(o_ptr);
 
 						/* Notice */
-						if (o_ptr->marked)
+						if (known && o_ptr->marked)
 						{
 							msg_print("Click!");
 							obvious = TRUE;
@@ -1098,7 +1100,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 		if (do_kill)
 		{
 			/* Effect "observed" */
-			if (o_ptr->marked)
+			if (known && o_ptr->marked)
 			{
 				obvious = TRUE;
 				object_desc(o_name, o_ptr, FALSE, 0);
@@ -1108,10 +1110,10 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 			if (is_art || ignore)
 			{
 				/* Observe the resist */
-				if (o_ptr->marked)
+				if (known && o_ptr->marked)
 				{
 					msg_format("The %s %s unaffected!",
-						   o_name, (plural ? "are" : "is"));
+							o_name, (plural ? "are" : "is"));
 				}
 			}
 
@@ -1119,7 +1121,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 			else
 			{
 				/* Describe if needed */
-				if (o_ptr->marked && note_kill)
+				if (known && o_ptr->marked && note_kill)
 				{
 					msg_format("The %s%s", o_name, note_kill);
 				}
@@ -1221,6 +1223,9 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 	/* Were the effects "obvious" (if seen)? */
 	bool obvious = FALSE;
 
+	/* Can the player know about this effect? */
+	bool known = (m_ptr->cdis <= MAX_SIGHT);
+
 	/* Were the effects "irrelevant"? */
 	bool skipped = FALSE;
 
@@ -1254,14 +1259,6 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 
 	/* Assume a default death */
 	cptr note_dies = " dies.";
-
-
-
-	/* Walls protect monsters */
-	/* (No, they don't)  */
-#if 0
-	if (!cave_floor_bold(y, x)) return (FALSE);
-#endif
 
 	/* Nobody here */
 	if (!c_ptr->m_idx) return (FALSE);
@@ -1739,16 +1736,16 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 				dam = 0;
 				note = " can't see you, and isn't affected!";
 			}
-			
+
 			if (r_ptr->flags2 & RF2_EMPTY_MIND)
 			{
 				dam = 0;
 				note = " is immune!";
 			}
 			else if ((r_ptr->flags2 & RF2_STUPID) ||
-			         (r_ptr->flags2 & RF2_WEIRD_MIND) ||
-			         (r_ptr->flags3 & RF3_ANIMAL) ||
-			         (r_ptr->level > randint(3 * dam)))
+						(r_ptr->flags2 & RF2_WEIRD_MIND) ||
+						(r_ptr->flags3 & RF3_ANIMAL) ||
+						(r_ptr->level > randint(3 * dam)))
 			{
 				dam /= 3;
 				note = " resists.";
@@ -1758,9 +1755,9 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 				 * attacks back on them
 				 */
 				if (((r_ptr->flags3 & RF3_UNDEAD) ||
-				     (r_ptr->flags3 & RF3_DEMON)) &&
-				     (r_ptr->level > p_ptr->lev / 2) &&
-				     (randint(2) == 1))
+					  (r_ptr->flags3 & RF3_DEMON)) &&
+					  (r_ptr->level > p_ptr->lev / 2) &&
+					  (randint(2) == 1))
 				{
 					note = NULL;
 					msg_format("%^s%s corrupted mind backlashes your attack!",
@@ -1839,7 +1836,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			else if ((r_ptr->flags2 & RF2_STUPID) ||
 			         (r_ptr->flags2 & RF2_WEIRD_MIND) ||
 			         (r_ptr->flags3 & RF3_ANIMAL) ||
-			         (r_ptr->level > randint(3 * dam)))
+						(r_ptr->level > randint(3 * dam)))
 			{
 				dam /= 3;
 				note = " resists.";
@@ -2305,20 +2302,10 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 
 			/* Attempt a saving throw */
 			if ((r_ptr->flags1 & RF1_UNIQUE) ||
-			    (r_ptr->flags1 & RF1_QUESTOR) ||
+				 (r_ptr->flags1 & RF1_QUESTOR) ||
 			  (!(r_ptr->flags3 & RF3_UNDEAD)) ||
-			    (r_ptr->level > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10))
+				 (r_ptr->level > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10))
 			{
-
-#if 0
-				/* Memorize a flag */
-				if (r_ptr->flags3 & (RF3_NO_CONF))
-				{
-					if (seen) r_ptr->r_flags3 |= (RF3_NO_CONF);
-				}
-#endif
-
-				/* Resist */
 				/* No obvious effect */
 				note = " is unaffected!";
 				obvious = FALSE;
@@ -2345,10 +2332,10 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 
 			/* Attempt a saving throw */
 			if ((r_ptr->flags1 & (RF1_UNIQUE)) ||
-			    (r_ptr->flags1 & (RF1_QUESTOR)) ||
+				 (r_ptr->flags1 & (RF1_QUESTOR)) ||
 			  (!(r_ptr->flags3 & (RF3_ANIMAL))) ||
-			    (r_ptr->flags3 & (RF3_NO_CONF)) ||
-			    (r_ptr->level > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10))
+				 (r_ptr->flags3 & (RF3_NO_CONF)) ||
+				 (r_ptr->level > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10))
 			{
 				/* Memorize a flag */
 				if (r_ptr->flags3 & (RF3_NO_CONF))
@@ -3104,7 +3091,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			delete_monster_idx(c_ptr->m_idx);
 
 			/* Give detailed messages if destroyed */
-			if (note) msg_format("%^s%s", m_name, note);
+			if (known && note) msg_format("%^s%s", m_name, note);
 
 			if (sad)
 			{
@@ -3148,8 +3135,10 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 				msg_format("%^s%s", m_name, note);
 
 			/* Hack -- Pain message */
-			else
+			else if (known)
+			{
 				message_pain(c_ptr->m_idx, dam);
+			}
 
 			/* Anger monsters */
 			if (((dam > 0) || get_angry) && !do_sleep)

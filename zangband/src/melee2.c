@@ -163,6 +163,15 @@ void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
 
 	monster_race	*r_ptr = &r_info[m_ptr->r_idx];
 
+	char m_name[160];
+
+	bool seen = m_ptr->ml;
+
+	/* Can the player be aware of this attack? */
+	bool known = (m_ptr->cdis <= MAX_SIGHT);
+
+	/* Extract monster name */
+	monster_desc(m_name, m_ptr, 0);
 
 	/* Redraw (later) if needed */
 	if (p_ptr->health_who == m_idx) p_ptr->redraw |= (PR_HEALTH);
@@ -170,15 +179,10 @@ void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
 	/* Wake it up */
 	m_ptr->csleep = 0;
 
-	if ((m_ptr->invulner) && !(randint(PENETRATE_INVULNERABILITY) == 1))
+	if (m_ptr->invulner && rand_int(PENETRATE_INVULNERABILITY))
 	{
-		if (m_ptr->ml)
+		if (seen)
 		{
-			char m_name[80];
-
-			/* Extract monster name */
-			monster_desc(m_name, m_ptr, 0);
-
 			msg_format("%^s is unharmed.", m_name);
 		}
 
@@ -198,11 +202,6 @@ void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
 		}
 		else
 		{
-			char m_name[80];
-
-			/* Extract monster name */
-			monster_desc(m_name, m_ptr, 0);
-
 			/* Make a sound */
 			if (!monster_living(r_ptr))
 			{
@@ -213,24 +212,28 @@ void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
 				sound(SOUND_KILL);
 			}
 
-			/* Death by Missile/Spell attack */
-			if (note)
+			if (known)
 			{
-				msg_format("%^s%s", m_name, note);
-			}
-			/* Death by Physical attack -- living monster */
-			else if (!m_ptr->ml)
-			{
-				/* Do nothing */
-			}
-			/* Death by Physical attack -- non-living monster */
-			else if (!monster_living(r_ptr))
-			{
-				msg_format("%^s is destroyed.", m_name);
-			}
-			else
-			{
-				msg_format("%^s is killed.", m_name);
+				/* Death by special attack */
+				if (note)
+				{
+					msg_format("%^s%s", m_name, note);
+				}
+				/* Unseen death by normal attack */
+				else if (!seen)
+				{
+					/* Do nothing */
+				}
+				/* Death by normal attack -- nonliving monster */
+				else if (!monster_living(r_ptr))
+				{
+					msg_format("%^s is destroyed.", m_name);
+				}
+				/* Death by normal attack -- living monster */
+				else
+				{
+					msg_format("%^s is killed.", m_name);
+				}
 			}
 
 			/* Generate treasure */
@@ -1060,9 +1063,12 @@ static int check_hit2(int power, int level, int ac)
 /* Monster attacks monster */
 static bool monst_attack_monst(int m_idx, int t_idx)
 {
-	monster_type    *m_ptr = &m_list[m_idx],*t_ptr = &m_list[t_idx];
-	monster_race    *r_ptr = &r_info[m_ptr->r_idx];
-	monster_race	*tr_ptr = &r_info[t_ptr->r_idx];
+	monster_type *m_ptr = &m_list[m_idx];
+	monster_type *t_ptr = &m_list[t_idx];
+
+	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+	monster_race *tr_ptr = &r_info[t_ptr->r_idx];
+
 	int             ap_cnt;
 	int             ac, rlev, pt;
 	char            m_name[80], t_name[80];
@@ -1073,6 +1079,13 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 	bool			heal_effect = FALSE;
 	byte            y_saver = t_ptr->fy;
 	byte            x_saver = t_ptr->fx;
+
+	bool see_m = m_ptr->ml;
+	bool see_t = t_ptr->ml;
+	bool see_either = see_m || see_t;
+
+	/* Can the player be aware of this attack? */
+	bool known = (m_ptr->cdis <= MAX_SIGHT) || (t_ptr->cdis <= MAX_SIGHT);
 
 	/* Cannot attack self */
 	if (m_idx == t_idx) return FALSE;
@@ -1101,7 +1114,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 	/* Assume no blink */
 	blinked = FALSE;
 
-	if (!(m_ptr->ml || t_ptr->ml))
+	if (!see_either && known)
 	{
 		msg_print("You hear noise.");
 	}
@@ -1134,9 +1147,6 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 		{
 			/* break; */
 		}
-
-		/* Extract visibility (before blink) */
-		if (m_ptr->ml) visible = TRUE;
 
 		/* Extract the attack "power" */
 		switch (effect)
@@ -1178,9 +1188,6 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 		/* Monster hits*/
 		if (!effect || check_hit2(power, rlev, ac))
 		{
-			/* Always disturbing */
-			disturb(1, 0);
-
 			/* Describe the attack method */
 			switch (method)
 			{
@@ -1290,6 +1297,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 
 			case RBM_EXPLODE:
 				{
+					if (see_either) disturb(1, 0);
 					act = "explodes.";
 					explode = TRUE;
 					touched = FALSE;
@@ -1354,13 +1362,10 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 			}
 
 			/* Message */
-			if (act)
+			if (act && see_either)
 			{
-				if (m_ptr->ml || t_ptr->ml)
-				{
-					strfmt(temp, act, t_name);
-					msg_format("%^s %s", m_name, temp);
-				}
+				strfmt(temp, act, t_name);
+				msg_format("%^s %s", m_name, temp);
 			}
 
 			/* Hack -- assume all attacks are obvious */
@@ -1536,7 +1541,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 						if (p_ptr->health_who == m_idx) p_ptr->redraw |= (PR_HEALTH);
 
 						/* Special message */
-						if ((m_ptr->ml) && (did_heal))
+						if (see_m && did_heal)
 						{
 							msg_format("%^s appears healthier.", m_name);
 						}
@@ -1549,7 +1554,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 					if ((tr_ptr->flags2 & RF2_AURA_FIRE) &&
 						!(r_ptr->flags3 & RF3_IM_FIRE))
 					{
-						if (m_ptr->ml || t_ptr->ml)
+						if (see_either)
 						{
 							blinked = FALSE;
 							msg_format("%^s is suddenly very hot!", m_name);
@@ -1566,7 +1571,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 					if ((tr_ptr->flags3 & RF3_AURA_COLD) &&
 						!(r_ptr->flags3 & RF3_IM_COLD))
 					{
-						if (m_ptr->ml || t_ptr->ml)
+						if (see_either)
 						{
 							blinked = FALSE;
 							msg_format("%^s is suddenly very cold!", m_name);
@@ -1582,7 +1587,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 					/* Aura elec */
 					if ((tr_ptr->flags2 & (RF2_AURA_ELEC)) && !(r_ptr->flags3 & (RF3_IM_ELEC)))
 					{
-						if (m_ptr->ml || t_ptr->ml)
+						if (see_either)
 						{
 							blinked = FALSE;
 							msg_format("%^s gets zapped!", m_name);
@@ -1619,11 +1624,8 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 			case RBM_CHARGE:
 				{
 					/* Visible monsters */
-					if (m_ptr->ml)
+					if (see_m)
 					{
-						/* Disturbing */
-						disturb(1, 0);
-
 						/* Message */
 						msg_format("%^s misses %s.", m_name, t_name);
 					}
@@ -1635,7 +1637,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 
 
 		/* Analyze "visible" monsters only */
-		if (visible)
+		if (see_m)
 		{
 			/* Count "obvious" attacks (and ones that cause damage) */
 			if (obvious || damage || (r_ptr->r_blows[ap_cnt] > 10))
@@ -1665,11 +1667,11 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 	/* Blink away */
 	if (blinked)
 	{
-		if (m_ptr->ml)
+		if (see_m)
 		{
 			msg_print("The thief flees laughing!");
 		}
-		else
+		else if (known)
 		{
 			msg_print("You hear laughter!");
 		}

@@ -1115,7 +1115,7 @@ bool make_attack_spell(int m_idx)
 		{
 			disturb(1, 0);
 			if (blind) msg_format("%^s makes a strange noise.", m_name);
-			else msg_format("%^s fires a missile.", m_name);
+			else msg_format("%^s fires a bolt.", m_name);
 			bolt(m_idx, GF_ARROW, damroll(5, 6));
 			update_smart_learn(m_idx, DRS_REFLECT);
 			break;
@@ -1126,7 +1126,7 @@ bool make_attack_spell(int m_idx)
 		{
 			disturb(1, 0);
 			if (blind) msg_format("%^s makes a strange noise.", m_name);
-			else msg_format("%^s fires a missile!", m_name);
+			else msg_format("%^s fires a bolt!", m_name);
 			bolt(m_idx, GF_ARROW, damroll(7, 6));
 			update_smart_learn(m_idx, DRS_REFLECT);
 			break;
@@ -1361,7 +1361,7 @@ bool make_attack_spell(int m_idx)
 		{
 			disturb(1, 0);
 			if (blind) msg_format("%^s breathes.", m_name);
-			else msg_format("%^s breathes magical energy.", m_name);
+			else msg_format("%^s breathes mana.", m_name);
 			breath(m_idx, GF_MANA,
 				((m_ptr->hp / 3) > 250 ? 250 : (m_ptr->hp / 3)),0, TRUE);
 			break;
