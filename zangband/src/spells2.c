@@ -2982,7 +2982,7 @@ static void cave_temp_room_lite(void)
 			cave_type *c_ptr = &cave[y][x];
 
 			/* Verify */
-			if (!in_bounds(y, x)) continue;
+			if (!in_bounds2(y, x)) continue;
 
 			/* No longer in the array */
 			c_ptr->info &= ~(CAVE_TEMP);
@@ -3071,7 +3071,7 @@ static void cave_temp_room_unlite(void)
 			cave_type *c_ptr = &cave[y][x];
 
 			/* Verify */
-			if (!in_bounds(y, x)) continue;
+			if (!in_bounds2(y, x)) continue;
 			
 			/* No longer in the array */
 			c_ptr->info &= ~(CAVE_TEMP);
@@ -3179,6 +3179,9 @@ static void cave_temp_room_aux(int y, int x)
 	
 	/* Verify */
 	if (!in_bounds(y, x)) return;
+	
+	/* If a wall, exit */
+	if (!cave_floor_bold(y, x)) return;
 
 #if 0
 	/* Do not "leave" the current room */
