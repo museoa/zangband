@@ -2445,13 +2445,22 @@ errr init_x11(int argc, char *argv[])
 		for (i = 0; i < num_term; i++)
 		{
 			term_data *td = &data[i];
+			int ii, jj;
+			int depth = DefaultDepth(dpy, DefaultScreen(dpy));
+			Visual *visual = DefaultVisual(dpy, DefaultScreen(dpy));
+			int total;
 
-			TmpData = (char *)malloc(td->fnt->wid * td->fnt->hgt
-		 		* DefaultDepth(dpy, DefaultScreen(dpy)) / 8);
 
-			td->TmpImage = XCreateImage(dpy,
-				DefaultVisual(dpy, DefaultScreen(dpy)),
-				DefaultDepth(dpy, DefaultScreen(dpy)),
+			/* Determine total bytes needed for image */
+			ii = 1;
+			jj = (depth - 1) >> 2;
+			while (jj >>= 1) ii <<= 1;
+			total = td->fnt->wid * td->fnt->hgt * ii;
+			
+			
+			TmpData = (char *)malloc(total);
+
+			td->TmpImage = XCreateImage(dpy,visual,depth,
 				ZPixmap, 0, TmpData,
 				td->fnt->wid, td->fnt->hgt, 8, 0);
 
