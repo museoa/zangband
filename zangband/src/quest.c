@@ -1690,7 +1690,7 @@ void draw_quest(u16b place_num)
 	}
 	
 	/* Activate quest + create quest + we know about the quest */
-	q_ptr->flags |= (QUEST_FLAG_ACTIVE | QUEST_FLAG_CREATED | QUEST_FLAG_KNOWN);
+	q_ptr->flags |= (QUEST_FLAG_ACTIVE | QUEST_FLAG_CREATED);
 	
 	/* Hack - we now take this quest */
 	if (q_ptr->status == QUEST_STATUS_UNTAKEN)
@@ -1700,6 +1700,9 @@ void draw_quest(u16b place_num)
 	
 	/* Mega-hack Give a message if we "discover" it */
 	quest_discovery();
+	
+	/* We know about it now */
+	q_ptr->flags |= QUEST_FLAG_KNOWN;
 	
 	/* Hack XXX XXX (No quest-giving store yet) */
 	
