@@ -39,7 +39,7 @@
 
 
 /* What variant is this? Used in the highscore dump */
-#define VARIANT "Zangband 2.7.1"
+#define VARIANT "Zangband 2.7.2"
 
 /* Main 'assign' needed. Kick2.0+ systems usually don't need it anyway */
 #define VERPATH "Zangband:"
@@ -54,7 +54,11 @@
 
 #ifdef USE_AMI
 
-#include "maid-grf.h"
+cptr help_ami[] = 
+{
+	"Amiga module with graphics and sound",
+	NULL
+};
 
 #ifndef __CEXTRACT__
 
@@ -126,6 +130,8 @@
 #endif
 
 #endif
+
+#include "maid-grf.h"
 
 #define MAX_TERM_DATA 8
 
@@ -506,7 +512,6 @@ struct NewMenu window_menu[] =
 /* Menu array */
 static struct NewMenu newmenu[ MENUMAX ];
 
-extern void center_string( char *buf, cptr str );
 extern void amiga_gfxmap(void);
 
 static errr amiga_pict( int x, int y, int n, const byte *ap, const char *cp, const byte *tap, const char *tcp );
@@ -2377,10 +2382,14 @@ static void process_gfx(char *param)
 	use_graphics = GRAPHICS_NONE;
 	if (*param == 'Y' || *param == 'y' || *param == '1' ||
 		 *param == 'T' || *param == 't')
+	{
 		use_graphics = GRAPHICS_ORIGINAL;
+		arg_graphics = use_graphics;
+	}
 	if (*param == 'E' || *param == 'e')
 	{
 		use_graphics = GRAPHICS_ORIGINAL;
+		arg_graphics = use_graphics;
 		screen_enhanced = TRUE;
 	}
 }
@@ -4122,9 +4131,9 @@ static void amiga_map( void )
 
 
 	/* Draw all "interesting" features */
-	for ( i = 0; i < MAX_WID; i++ )
+	for ( i = 0; i < max_wid; i++ )
 	{
-		for ( j = 0; j < MAX_HGT; j++ )
+		for ( j = 0; j < max_hgt; j++ )
 		{
 			/* Get frame tile */
 			if ( (i == 0) || (i == max_wid - 1) || (j == 0) || (j == max_hgt - 1) )
