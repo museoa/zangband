@@ -2704,14 +2704,14 @@ static errr Term_pict_xpj(int x, int y, int n, const byte *ap, const char *cp, c
 		c = *cp++;
 
 		/* For extra speed - cache these values */
-		x1 = (c&0x7F) * wid;
+		x1 = (c&0x3F) * wid;
 		y1 = (a&0x7F) * hgt;
 
 		ta = *tap++;
 		tc = *tcp++;
 
 		/* For extra speed - cache these values */
-		x2 = (tc&0x7F) * wid;
+		x2 = (tc&0x3F) * wid;
 		y2 = (ta&0x7F) * hgt;
 		
 		/* Optimise the common case */
