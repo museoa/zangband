@@ -471,7 +471,7 @@ static void add_monsters(int count)
 	/* Sometimes have lots of monster of a given type */
 	if (one_in_(10))
 	{
-		level = p_ptr->depth * 2 + 6;
+		level = p_ptr->depth + 6;
 
 		best_r_idx = 1;
 		best_level = 1;
