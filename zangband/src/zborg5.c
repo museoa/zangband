@@ -1981,10 +1981,6 @@ static int borg_locate_kill(cptr who, int y, int x, int r)
         /* Timestamp */
         kill->when = borg_t;
 
-        /* Known identity */
-        if (!r) kill->known = TRUE;
-
-
         /* Return the index */
         return (b_i);
     }
@@ -2050,10 +2046,6 @@ static int borg_locate_kill(cptr who, int y, int x, int r)
         /* Update the monster */
         borg_update_kill_old(b_i);
 
-        /* Known identity */
-        if (!r) kill->known = TRUE;
-
-
         /* Recalculate danger */
         borg_danger_wipe = TRUE;
 
@@ -2108,9 +2100,6 @@ static int borg_locate_kill(cptr who, int y, int x, int r)
         borg_note(format("# Matched a monster '%s' at (%d,%d)",
                          (r_name + r_info[kill->r_idx].name),
                          kill->y, kill->x));
-
-        /* Known identity */
-        if (!r) kill->known = TRUE;
 
 
         /* Index */

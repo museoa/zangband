@@ -186,8 +186,8 @@ struct borg_kill
 {
     s16b    r_idx;      /* Race index */
 
-    bool    known;      /* Verified race */
     bool    awake;      /* Probably awake */
+	bool	friendly;	/* friend/pet */
 
     bool    confused;   /* Probably confused */
     bool    afraid;     /* Probably afraid */
@@ -210,7 +210,7 @@ struct borg_kill
     s16b    other;      /* Estimated something */
     s16b    level;      /* Monsters Level */
 
-	bool	friendly;	/* friend/pet */
+	
     s16b    when;       /* When last seen */
 };
 
