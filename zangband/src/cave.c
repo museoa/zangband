@@ -891,13 +891,6 @@ static void variable_player_graph(byte *a, char *c)
  * and these are the only features which get drawn using the special
  * lighting effects activated by "view_special_lite".
  *
- * Note the use of the "mimic" field in the "terrain feature" processing,
- * which allows any feature to "pretend" to be another feature.  This is
- * used to "hide" secret doors, and to make all "doors" appear the same,
- * and all "walls" appear the same, and "hidden" treasure stay hidden.
- * It is possible to use this field to make a feature "look" like a floor,
- * but the "special lighting effects" for floors will not be used.
- *
  * Note the use of the new "terrain feature" information.  Note that the
  * assumption that all interesting "objects" and "terrain features" are
  * memorized allows extremely optimized processing below.  Note the use
@@ -990,8 +983,8 @@ void map_info(int y, int x, byte *ap, char *cp)
 	{
 		feat = c_ptr->feat;
 
-		/* point to the feat ("mimic"ed) */
-		f_ptr = &f_info[f_info[feat].mimic];
+		/* Pointer to the feature */
+		f_ptr = &f_info[feat];
 
 		/* The feats attr */
 		a = f_ptr->x_attr;
@@ -1307,7 +1300,7 @@ void map_info(int y, int x, byte *ap, char *cp)
  */
 void move_cursor_relative(int row, int col)
 {
-	/* Real coordinates convert to screen positions */
+	/* Real co-ords convert to screen positions */
 	row -= panel_row_prt;
 	col -= panel_col_prt;
 
@@ -1333,7 +1326,7 @@ void print_rel(char c, byte a, int y, int x)
 		}
 
 		/* Draw the char using the attr */
-		Term_draw(x - panel_col_prt, y - panel_row_prt, a, c);
+		Term_draw(x-panel_col_prt, y-panel_row_prt, a, c);
 	}
 }
 

@@ -1345,8 +1345,10 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 
 /*
  * Calculates current boundaries
+ * Called below and from "do_cmd_locate()".
+ * Modified for "centering player on screen"
  */
-void panel_recalc_bounds(void)
+void panel_bounds_center(void)
 {
 	int wid, hgt;
 
@@ -1403,7 +1405,7 @@ bool change_panel(int dy, int dx)
 		panel_col_min = x;
 
 		/* Recalculate the boundaries */
-		panel_recalc_bounds();
+		panel_bounds_center();
 
 		/* Update stuff */
 		p_ptr->update |= (PU_MONSTERS);
@@ -1423,6 +1425,14 @@ bool change_panel(int dy, int dx)
 }
 
 
+/*
+ * Given an row (y) and col (x), this routine detects when a move
+ * off the screen has occurred and figures new borders. -RAK-
+ *
+ * "Update" forces a "full update" to take place.
+ *
+ * The map is reprinted if necessary, and "TRUE" is returned.
+ */
 void verify_panel(void)
 {
 	int py = p_ptr->py;
@@ -1533,67 +1543,7 @@ void verify_panel(void)
 	if (disturb_panel && !center_player) disturb(0, 0);
 
 	/* Recalculate the boundaries */
-	panel_recalc_bounds();
-
-	/* Update stuff */
-	p_ptr->update |= (PU_MONSTERS);
-
-	/* Redraw map */
-	p_ptr->redraw |= (PR_MAP);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
-}
-
-
-/*
- * Center the dungeon display around the player
- */
-void panel_center(void)
-{
-	int wid, hgt;
-	int new_panel_row, new_panel_col;
-
-
-	/* Hack - in vanilla town mode - do not move the screen */
-	if (vanilla_town && (!p_ptr->depth))
-	{
-		(void)change_panel(0, 0);
-		return;
-	}
-
-	/* Get the screen size */
-	Term_get_size(&wid, &hgt);
-	
-	/* Calculate the dimensions of the displayed map */
-	hgt -= ROW_MAP + 1;
-	wid -= COL_MAP + 1;
-
-	/* Center the map around the player */
-	new_panel_row = p_ptr->py - (hgt / 2);
-	new_panel_col = p_ptr->px - (wid / 2);
-
-	/* Move the map so that it only shows the dungeon */
-	if (new_panel_row + hgt > max_hgt) new_panel_row = max_hgt - hgt;
-	if (new_panel_col + wid > max_wid) new_panel_col = max_wid - wid;
-
-	/* Verify the lower panel bounds */
-	if (new_panel_row < 0) new_panel_row = 0;
-	if (new_panel_col < 0) new_panel_col = 0;
-
-	/* Check for "no change" */
-	if ((new_panel_row == panel_row_min) && (new_panel_col == panel_col_min))
-		return;
-
-	/* Save the new panel info */
-	panel_row_min = new_panel_row;
-	panel_col_min = new_panel_col;
-
-	/* Hack -- optional disturb on "panel change" */
-	if (disturb_panel && !center_player) disturb(0, 0);
-
-	/* Recalculate the boundaries */
-	panel_recalc_bounds();
+	panel_bounds_center();
 
 	/* Update stuff */
 	p_ptr->update |= (PU_MONSTERS);
@@ -2483,7 +2433,8 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 			}
 		}
 
-		feat = f_info[c_ptr->feat].mimic;
+		/* Get terrain feature */
+		feat = c_ptr->feat;
 
 		/* Require knowledge about grid, or ability to see grid */
 		if (!(c_ptr->info & CAVE_MARK) && !player_can_see_bold(y, x))
@@ -2830,7 +2781,7 @@ bool target_set(int mode)
 						/* Restore previous position */
 						panel_row_min = y2;
 						panel_col_min = x2;
-						panel_recalc_bounds();
+						panel_bounds_center();
 
 						/* Update stuff */
 						p_ptr->update |= (PU_MONSTERS);
