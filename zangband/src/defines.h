@@ -1638,7 +1638,7 @@
 /* xxx */
 /* xxx */
 /* xxx */
-/* xxx */
+#define EGO_RETURNING           117
 #define EGO_EXPLOSION           118
 #define EGO_HURT_DRAGON         119
 #define EGO_SLAYING_BOLT        120
