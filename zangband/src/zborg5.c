@@ -2941,7 +2941,6 @@ static s32b borg_power_aux3(void)
 		/* and assume we can enchant up to +8 if borg_skill[BI_CLEVEL] > 25 */
 		damage = (l_ptr->dd * l_ptr->ds * 20L);
 
-
 		/* Reward "damage" and increased blows per round */
 		value += damage * (borg_skill[BI_BLOWS] + 1);
 
@@ -2995,7 +2994,7 @@ static s32b borg_power_aux3(void)
 		dam = damage * 5 * borg_skill[BI_BLOWS];
 		if (borg_skill[BI_WK_DRAGON]) value += (dam * 5) / 2;
 	}
-	else
+	else if (borg_class == CLASS_MONK)
 	{
 		/* Martial Artists */
 		int ma = MAX_MA - 1;
@@ -3016,7 +3015,6 @@ static s32b borg_power_aux3(void)
 		}
 
 		/* Calculate "average" damage per "normal" blow  */
-		/* and assume we can enchant up to +8 if borg_skill[BI_CLEVEL] > 25 */
 		damage = (ma_ptr->dd * ma_ptr->ds * 20L);
 
 
@@ -3024,10 +3022,10 @@ static s32b borg_power_aux3(void)
 		value += damage * (borg_skill[BI_BLOWS] + 1);
 
 		/* Reward "bonus to hit" */
-		value += ((borg_skill[BI_TOHIT] + 8) * 30L);
+		value += (borg_skill[BI_TOHIT] * 30L);
 
 		/* Reward "bonus to dam" */
-		value += ((borg_skill[BI_TODAM]) * 30L);
+		value += (borg_skill[BI_TODAM] * 30L);
 
 		/* extra boost for deep dungeon */
 		if (borg_skill[BI_MAXDEPTH] >= 75)
@@ -3038,6 +3036,7 @@ static s32b borg_power_aux3(void)
 		}
 
 	}
+	
 	/* It is only on Grond */
 	if (borg_skill[BI_W_IMPACT]) value += 5000L;
 
@@ -3615,8 +3614,6 @@ static s32b borg_power_aux4(void)
 	for (k = 0; k < 25 && k < borg_skill[BI_FOOD]; k++) value += 10000L;
 	for (; k < 35 && k < borg_skill[BI_FOOD]; k++) value += 200L;
 
-	/* borg_note_fmt("# Have food: %d (value now : %ld)", borg_skill[BI_FOOD], (long) value); */
-
 	if (borg_skill[BI_REG] && !borg_skill[BI_SDIG])
 	{
 		for (k = 0; k < 10 && k < borg_skill[BI_FOOD]; k++) value += 500L;
@@ -4002,10 +3999,10 @@ s32b borg_power(void)
 
 	/* Process the equipment */
 	value += borg_power_aux3();
-
+	
 	/* Process the inventory */
 	value += borg_power_aux4();
-
+	
 	/* Add a bonus for deep level prep */
 	/* Dump prep codes */
 	for (i = 1; i <= borg_skill[BI_MAXDEPTH] + 10; i++)
