@@ -8,6 +8,12 @@
 
 #ifdef ALLOW_BORG
 
+#define BORG_SHOW_FEAT	1
+#define BORG_SHOW_INFO	2
+#define BORG_SHOW_FLAG	3
+#define BORG_SHOW_FLOW	4
+
+
 /*
  * This file provides support for "borg9.c".
  */

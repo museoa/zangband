@@ -4024,6 +4024,101 @@ void borg_init_9(void)
 }
 
 
+static void borg_display_map_info(byte data, byte type)
+{
+	int x, y;
+	
+	char c = ' ';
+	byte a = TERM_DARK;
+
+	int wid, hgt;
+	
+	map_block *mb_ptr;
+	
+	/* Get size */
+	Term_get_size(&wid, &hgt);
+	
+	/* Remove map offset */
+	wid -= COL_MAP + 1;
+	hgt -= ROW_MAP + 1;
+	
+	for (x = panel_col_min; x < panel_col_max; x++)
+	{
+		for (y = panel_row_min; y < panel_row_max; y++)
+		{
+			if (!map_in_bounds(x, y))
+			{
+				a = TERM_DARK;
+				c = ' ';
+			}
+			else
+			{
+				mb_ptr = map_loc(x, y);
+				
+				switch (type)
+				{
+					case BORG_SHOW_FEAT:
+					{
+						if (mb_ptr->terrain == data)
+						{
+							a = TERM_WHITE;
+							c = '*';
+						}
+						
+						break;
+					}
+					
+					case BORG_SHOW_INFO:
+					{
+						if (mb_ptr->info & data)
+						{
+							a = TERM_WHITE;
+							c = '*';
+						}
+						
+						break;
+					}
+					
+					case BORG_SHOW_FLAG:
+					{
+						if (mb_ptr->flags & data)
+						{
+							a = TERM_WHITE;
+							c = '*';
+						}
+						
+						break;
+					}
+					
+					case BORG_SHOW_FLOW:
+					{
+						if (mb_ptr->flow == data)
+						{
+							a = TERM_WHITE;
+							c = '*';
+						}
+						
+						break;
+					}
+				}
+			
+			}
+		
+		
+#ifdef USE_TRANSPARENCY
+
+			/* Hack -- Queue it */
+			Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c, a, c);
+#else  /* USE_TRANSPARENCY */
+
+			Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c);
+#endif /* USE_TRANSPARENCY */
+		
+		}
+	}
+}
+
+
 /* DVE's function for displaying the status of various info */
 /* Display what the borg is thinking DvE*/
 void borg_status(void)
@@ -4909,9 +5004,8 @@ void do_cmd_borg(void)
 		case 'G':
 		{
 			/* Command: check Grid "feature" flags */
-			int x, y;
 
-			u16b low = 0, high = 0;
+			u16b feat = 0;
 
 			/* Get a "Borg command", or abort */
 			if (!get_com("Borg command: Show grids: ", &cmd)) return;
@@ -4921,173 +5015,137 @@ void do_cmd_borg(void)
 			{
 				case '0':
 				{
-					low = high = 1 << 0;
+					feat = 1 << 0;
 					break;
 				}
 				case '1':
 				{
-					low = high = 1 << 1;
+					feat = 1 << 1;
 					break;
 				}
 				case '2':
 				{
-					low = high = 1 << 2;
+					feat = 1 << 2;
 					break;
 
 				}
 				case '3':
 				{
-					low = high = 1 << 3;
+					feat = 1 << 3;
 					break;
 				}
 				case '4':
 				{
-					low = high = 1 << 4;
+					feat = 1 << 4;
 					break;
 				}
 				case '5':
 				{
-					low = high = 1 << 5;
+					feat = 1 << 5;
 					break;
 				}
 				case '6':
 				{
-					low = high = 1 << 6;
+					feat = 1 << 6;
 					break;
 				}
 				case '7':
 				{
-					low = high = 1 << 7;
+					feat = 1 << 7;
 					break;
 				}
 
 				case '.':
 				{
-					low = high = FEAT_FLOOR;
+					feat = FEAT_FLOOR;
 					break;
 				}
 				case 'i':
 				{
-					low = high = FEAT_INVIS;
+					feat = FEAT_INVIS;
 					break;
 				}
 				case ',':
 				{
-					low = high = FEAT_OPEN;
+					feat = FEAT_OPEN;
 					break;
 				}
 				case 'x':
 				{
-					low = high = FEAT_BROKEN;
+					feat = FEAT_BROKEN;
 					break;
 				}
 				case '<':
 				{
-					low = high = FEAT_LESS;
+					feat = FEAT_LESS;
 					break;
 				}
 				case '>':
 				{
-					low = high = FEAT_MORE;
+					feat = FEAT_MORE;
 					break;
 				}
 				case '+':
 				{
-					low = high = FEAT_CLOSED;
+					feat = FEAT_CLOSED;
 					break;
 				}
 				case 's':
 				{
-					low = high = FEAT_SECRET;
+					feat = FEAT_SECRET;
 					break;
 				}
 				case ':':
 				{
-					low = high = FEAT_RUBBLE;
-					break;
-				}
-				case 'q':
-				{
-					low = FEAT_MAGMA;
-					high = FEAT_QUARTZ_K;
-					break;
-				}
-				case 'm':
-				{
-					low = high = FEAT_MOUNTAIN;
+					feat = FEAT_RUBBLE;
 					break;
 				}
 				case 't':
 				{
-					low = high = FEAT_TREES;
+					feat = FEAT_TREES;
 					break;
 				}
 				case 'l':
 				{
-					low = high = FEAT_SHAL_LAVA;
+					feat = FEAT_SHAL_LAVA;
 					break;
 				}
 				case 'L':
 				{
-					low = high = FEAT_DEEP_LAVA;
+					feat = FEAT_DEEP_LAVA;
 					break;
 				}
 				case 'a':
 				{
-					low = high = FEAT_SHAL_WATER;
+					feat = FEAT_SHAL_WATER;
 					break;
 				}
 				case 'A':
 				{
-					low = high = FEAT_DEEP_WATER;
+					feat = FEAT_DEEP_WATER;
 					break;
 				}
 
 				case 'w':
 				{
-					low = FEAT_WALL_EXTRA;
-					high = FEAT_WALL_SOLID;
+					feat = FEAT_WALL_EXTRA;
 					break;
 				}
 				case 'p':
 				{
-					low = FEAT_PERM_EXTRA;
-					high = FEAT_PERM_SOLID;
+					feat = FEAT_PERM_EXTRA;
 					break;
 				}
 
 				default:
 				{
-					low = high = FEAT_NONE;
+					feat = FEAT_NONE;
 					break;
 				}
 			}
-
-			/* Scan map */
-			for (y = w_y; y < w_y + SCREEN_HGT; y++)
-			{
-				for (x = w_x; x < w_x + SCREEN_WID; x++)
-				{
-					byte a = TERM_RED;
-
-					map_block *mb_ptr;
-
-					/* Bounds checking */
-					if (!map_in_bounds(x, y)) continue;
-
-					mb_ptr = map_loc(x, y);
-
-					/* show only those grids */
-					if (!(mb_ptr->terrain >= low
-						  && mb_ptr->terrain <= high)) continue;
-
-					/* Color */
-					if (borg_cave_floor_grid(mb_ptr)) a = TERM_YELLOW;
-
-					/* Display */
-					print_rel('*', a, y, x);
-				}
-			}
+			
+			/* Show it */
+			borg_display_map_info(feat, BORG_SHOW_FEAT);
 
 			/* Get keypress */
 			msg_print("Press any key.");
@@ -5329,43 +5387,19 @@ void do_cmd_borg(void)
 		case '%':
 		{
 			/* Command: debug -- current flow */
-			int i, x, y;
+			int i;
 
 			/* Flow */
 			for (i = 0; i < 250; i++)
 			{
-				int n = 0;
-				map_block *mb_ptr;
-
-				/* Scan map */
-				for (y = w_y; y < w_y + SCREEN_HGT; y++)
-				{
-					for (x = w_x; x < w_x + SCREEN_WID; x++)
-					{
-						byte a = TERM_RED;
-
-						/* Bounds checking */
-						if (!map_in_bounds(x, y)) continue;
-
-						mb_ptr = map_loc(x, y);
-
-						/* Verify flow cost */
-						if (mb_ptr->flow != i) continue;
-
-						/* Display */
-						print_rel('*', a, y, x);
-
-						/* Count */
-						n++;
-					}
-				}
-
-				/* Nothing */
-				if (!n) break;
+				/* Show it */
+				borg_display_map_info(i, BORG_SHOW_FLOW);
 
 				/* Get keypress */
 				msg_format("Flow depth %d.", i);
 				msg_print(NULL);
+				
+				if (!get_check("Continue?")) break;
 
 				/* Redraw map */
 				prt_map();
