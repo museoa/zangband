@@ -2310,29 +2310,21 @@ static const byte priority_table[][2] =
 /*
  * Hack -- a priority function (see below)
  */
-static byte priority(byte a, char c)
+static byte priority(byte feat)
 {
-	int i, p0, p1;
-
-	feature_type *f_ptr;
-
+	int i = 0;
+	
 	/* Scan the table */
-	for (i = 0; TRUE; i++)
+	while (priority_table[i][1])
 	{
-		/* Priority level */
-		p1 = priority_table[i][1];
-
-		/* End of table */
-		if (!p1) break;
-
-		/* Feature index */
-		p0 = priority_table[i][0];
-
-		/* Access the feature */
-		f_ptr = &f_info[p0];
-
-		/* Check character and attribute, accept matches */
-		if ((f_ptr->x_char == c) && (f_ptr->x_attr == a)) return (p1);
+		/* Does the feature match? */
+		if (priority_table[i][0] == feat)
+		{
+			return (priority_table[i][1]);
+		}
+		
+		/* Next entry */
+		i++;
 	}
 
 	/* Default  (The player /objects/fields?) */
@@ -2614,7 +2606,7 @@ void display_map(int *cx, int *cy)
 #endif /* USE_TRANSPARENCY */
 
 				/* Extract the priority of that attr/char */
-				tp = priority(ta, tc);
+				tp = priority(pc_ptr->feat);
 
 				/* Save "best" */
 				if (mp[y][x] < tp)
