@@ -1221,18 +1221,6 @@ extern bool borg_save_game(void);
  */
 extern void borg_update_frame(void);
 
-/*
- * Calc a formula out in RPN
- */
-extern int borg_calc_formula(int *);
-/*
- * check out a formula in RPN
- */
-extern int borg_check_formula(int *);
-/*
- * return a string for the formula
- */
-extern cptr borg_prt_formula(int *formula);
 
 /*
  * Print the string for an item
