@@ -2551,7 +2551,7 @@ static bool player_birth_aux_2(void)
 
 
 		/* Prompt XXX XXX XXX */
-		sprintf(buf, "Total Cost %2d/48.  Use 2/8 to move, 4/6 to modify, ESC to accept.", cost);
+		sprintf(buf, "Total Cost %2d/48.  Use 2/8 to move, 4/6 to modify, Enter to accept.", cost);
 		prt(buf, 0, 0);
 
 		/* Place cursor just after cost of current stat */
@@ -2561,13 +2561,13 @@ static bool player_birth_aux_2(void)
 		ch = inkey();
 
 		/* Quit */
-		if (ch == 'Q') quit(NULL);
+		if (ch == KTRL('X')) quit(NULL);
 
 		/* Start over */
-		if (ch == 'S') return (FALSE);
+		if (ch == ESCAPE) return (FALSE);
 
 		/* Done */
-		if (ch == ESCAPE) break;
+		if ((ch == '\r') || (ch == '\n')) break;
 
 		/* Prev stat */
 		if (ch == '8')
@@ -2920,20 +2920,20 @@ static bool player_birth_aux_3(void)
 			Term_addstr(-1, TERM_WHITE, "'r' to reroll");
 			if (previous) Term_addstr(-1, TERM_WHITE, ", 'p' for prev");
 			Term_addstr(-1, TERM_WHITE, ", 'h' for history");
-			Term_addstr(-1, TERM_WHITE, ", or ESC to accept");
+			Term_addstr(-1, TERM_WHITE, ", or Enter to accept");
 			Term_addch(TERM_WHITE, b2);
 
 			/* Prompt and get a command */
 			ch = inkey();
 
 			/* Quit */
-			if (ch == 'Q') quit(NULL);
+			if (ch == KTRL('X')) quit(NULL);
 
 			/* Start over */
-			if (ch == 'S') return (FALSE);
+			if (ch == ESCAPE) return (FALSE);
 
-			/* Escape accepts the roll */
-			if (ch == ESCAPE) break;
+			/* Enter accepts the roll */
+			if ((ch == '\r') || (ch == '\n')) break;
 
 			/* Reroll this character */
 			if ((ch == ' ') || (ch == 'r')) break;
@@ -3019,16 +3019,16 @@ static bool player_birth_aux(void)
 	display_player(DISPLAY_PLAYER_STANDARD);
 
 	/* Prompt for it */
-	prt("['Q' to suicide, 'S' to start over, or ESC to continue]", 23, 10);
+	prt("['Ctrl-X' to suicide, 'Esc' to start over, or Enter to continue]", 23, 10);
 
 	/* Get a key */
 	ch = inkey();
 
 	/* Quit */
-	if (ch == 'Q') quit(NULL);
+	if (ch == KTRL('X')) quit(NULL);
 
 	/* Start over */
-	if (ch == 'S') return (FALSE);
+	if (ch == ESCAPE) return (FALSE);
 
 	/* Accept */
 	return (TRUE);
