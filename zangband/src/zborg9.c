@@ -898,6 +898,24 @@ static void borg_parse_aux(cptr msg, int len)
 
 		return;
 	}
+	
+	/* Hack -- Notice "failure" */
+	if (prefix(msg, "Illegal "))
+	{
+		/* Hack -- store the keypress */
+		borg_note("# Failure?");
+
+		/* Set the failure flag */
+		borg_failure = TRUE;
+
+		/* Flush our key-buffer */
+		borg_flush();
+		
+		/* Stop borg so we can debug the problem. */
+		borg_active = FALSE;
+
+		return;
+	}
 
 
 	/* Ignore teleport trap */
@@ -2102,7 +2120,7 @@ static char borg_inkey_hack(int flush_first)
 
 		/* Remove hook */
 		inkey_hack = NULL;
-
+\
 		/* Flush keys */
 		borg_flush();
 
@@ -3099,7 +3117,7 @@ void do_cmd_borg(void)
 		            "Command 's' activates search mode.\n"
 		            "Command 'g' displays grid feature.\n"
 		            "Command 'k' displays monster info.\n"
-		            "Command '%' displays current flow.\n"
+		            "Command '%%' displays current flow.\n"
 		            "Command '_' Regional Fear info.\n"
 		            "Command 'R' Respawn Borg.\n"
         		    "Command 'e' Examine Equip Item.\n"
