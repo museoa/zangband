@@ -3815,7 +3815,7 @@ static bool in_bounds_wild_player(int x, int y)
 
 
 /* Allocate all grids around player */
-void init_wild_cache(void)
+static void init_wild_cache(void)
 {
 	int x = p_ptr->old_wild_x, y = p_ptr->old_wild_y;
 	int i, j;

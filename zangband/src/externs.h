@@ -1055,7 +1055,6 @@ extern void test_decision_tree(void);
 extern void repopulate_wilderness(void);
 extern void create_wilderness(void);
 extern void move_wild(void);
-extern void init_wild_cache(void);
 extern void shift_in_bounds(int *x, int *y);
 extern void change_level(int);
 extern int base_level(void);

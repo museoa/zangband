@@ -3390,9 +3390,6 @@ void play_game(bool new_game)
 			turn = 1;
 		}
 		
-		/* The player now exists */
-		character_loaded = TRUE;
-
 		/* Create a new wilderness for the player */
 		create_wilderness();
 
