@@ -25,6 +25,7 @@ RC         = brc32
 
 EXE_FILE = zangband.exe
 
+
 ###################################################################
 #
 # Debug mode (un-comment for debugging)
@@ -36,7 +37,9 @@ EXE_FILE = zangband.exe
 #
 # Set any compiler options
 
-CCOPTS = -jb -j1 -Hc -tW -lGn -e$(EXE_FILE) -w-
+CCOPTS = -jb -j1 -Hc -tW -lGn -e$(EXE_FILE) -w- \
+  -D_WIN32_WINNT=0x0400 -DWINVER=0x0400
+
 
 # Compile flags:
 CPPFLAGS= $(CCOPTS) $(DBGOPT)
