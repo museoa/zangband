@@ -1363,7 +1363,7 @@ static int borg_defend_aux_genocide(int p1, int *genocide_target)
 			/* report the danger and most dangerous race */
 			if (b_threat_id)
 			{
-				borg_note_fmt
+				borg_note
 					("# Race '%c' is a real threat with total danger %d from %d individuals.",
 					 b_threat_id, b_threat[b_threat_id], b_threat_num[b_threat_id]);
 			}
@@ -1402,7 +1402,7 @@ static int borg_defend_aux_genocide(int p1, int *genocide_target)
 		return (0);
 	}
 
-	borg_note_fmt
+	borg_note
 		("# Genociding race '%c' (%d)", *genocide_target, *genocide_target);
 
 	/* do it! ---use scrolls first since they clutter inventory */
@@ -1507,7 +1507,8 @@ static int borg_defend_aux_earthquake(int p1)
 
 	if (borg_simulate)
 	{
-		if (!borg_spell_okay_fail(REALM_NATURE, 3, 0, 35)) return (0);
+		if (!borg_spell_okay_fail(REALM_NATURE, 3, 0, 35) &&
+			!borg_equips_staff_fail(SV_STAFF_EARTHQUAKES)) return (0);
 
 		/* See if he is in real danger or fighting summoner */
 		if (p1 < avoidance) return (0);
@@ -1565,7 +1566,8 @@ static int borg_defend_aux_earthquake(int p1)
 	}
 
 	/* Cast the spell */
-	return (borg_spell(REALM_NATURE, 3, 0));
+	return (borg_spell(REALM_NATURE, 3, 0) ||
+			borg_use_staff(SV_STAFF_EARTHQUAKES));
 }
 
 /* Word of Destruction, priest and mage spells.  Death is right around the
@@ -2053,7 +2055,7 @@ static int borg_defend_aux(int what, int p1, int *key)
 		}
 	}
 
-	borg_oops_fmt("# Trying invalid BD type. (%d)", what);
+	borg_oops("# Trying invalid BD type. (%d)", what);
 
 	return (0);
 }
@@ -2080,8 +2082,8 @@ static bool borg_refresh_goi(void)
 				borg_spell(REALM_LIFE, 3, 7))
 			{
 				/* Make a note */
-				borg_note_fmt("# refreshing GOI.  borg_goi = %d", borg_goi);
-				borg_note_fmt("# p_ptr->invuln = %d, (ratio = %d)",
+				borg_note("# refreshing GOI.  borg_goi = %d", borg_goi);
+				borg_note("# p_ptr->invuln = %d, (ratio = %d)",
 					p_ptr->tim.invuln, borg_game_ratio);
 
 				/* Declare success */
@@ -2135,7 +2137,7 @@ bool borg_defend(int p1)
 	}
 
 	/* Note */
-	borg_note_fmt("# Performing defence type %d with value %d", b_g, b_n);
+	borg_note("# Performing defence type %d with value %d", b_g, b_n);
 
 	/* Instantiate */
 	borg_simulate = FALSE;
@@ -3135,7 +3137,7 @@ bool borg_perma_spell()
 	if (b_n <= 0) return (FALSE);
 
 	/* Note */
-	borg_note_fmt("# Performing perma-spell type %d with value %d", b_g, b_n);
+	borg_note("# Performing perma-spell type %d with value %d", b_g, b_n);
 
 	/* Instantiate */
 	borg_simulate = FALSE;
