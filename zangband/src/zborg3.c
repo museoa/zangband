@@ -750,66 +750,6 @@ static cptr *borg_artego_text;	/* Textual prefixes for "artegos" */
 static cptr *borg_sv_art_text;	/* Save textual prefixes for "artifacts" (in kind order) */
 
 /*
- * Hack - save old hook for object lists.
- *
- * We chain into this after storing our information.
- * (This is so multiple sub-systems can hook into
- * object changes.)
- */
-list_notice_hook_type old_list_hook = NULL;
-
-void borg_list_info(byte list_type)
-{
-	/* Don't do anything if the borg is inactive */
-	if (!borg_active)
-	{
-		/* Chain into the old hook, if it exists */
-		if (old_list_hook) old_list_hook(list_type);
-
-		/* Done */
-		return;
-	}
-
-	/* Notice changes */
-	switch (list_type)
-	{
-		case LIST_INVEN:
-		{
-		
-			break;
-		}
-		
-		case LIST_EQUIP:
-		{
-		
-			break;
-		}
-	
-		case LIST_FLOOR:
-		{
-		
-		
-			break;
-		}
-		
-		case LIST_STORE_BUY:
-		{
-		
-			break;
-		}
-		
-		case LIST_STORE_SELL:
-		{
-		
-			break;
-		}
-	}
-	
-	/* Finally - chain into the old hook, if it exists */
-	if (old_list_hook) old_list_hook(list_type);
-}
-
-/*
  * Return the slot that items of the given type are wielded into
  *
  * Note that "rings" are tough because there are two slots

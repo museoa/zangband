@@ -237,7 +237,9 @@ struct list_item
 	u16b feature_code;
 #endif /* TERM_OBJ_GLYPH */
 
-	/* Store extra info here */
+#ifdef ALLOW_BORG
+	byte treat_as;	/* Treat item as if it is in a different list */
+#endif /* ALLOW_BORG */
 };
 
 typedef void (*list_notice_hook_type) (byte);

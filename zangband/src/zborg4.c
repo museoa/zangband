@@ -11,6 +11,71 @@
 #include "zborg4.h"
 
 
+/*
+ * Hack - save old hook for object lists.
+ *
+ * We chain into this after storing our information.
+ * (This is so multiple sub-systems can hook into
+ * object changes.)
+ */
+list_notice_hook_type old_list_hook = NULL;
+
+void borg_list_info(byte list_type)
+{
+	/* Don't do anything if the borg is inactive */
+	if (!borg_active)
+	{
+		/* Chain into the old hook, if it exists */
+		if (old_list_hook) old_list_hook(list_type);
+
+		/* Done */
+		return;
+	}
+
+	/* Notice changes */
+	switch (list_type)
+	{
+		case LIST_INVEN:
+		{
+			/* Notice changes */
+			borg_notice(TRUE);
+		
+			break;
+		}
+		
+		case LIST_EQUIP:
+		{
+			/* Notice changes */
+			borg_notice(TRUE);
+		
+			break;
+		}
+	
+		case LIST_FLOOR:
+		{
+			/* Notice changes */
+			borg_notice(TRUE);
+			
+			break;
+		}
+		
+		case LIST_STORE_BUY:
+		{
+		
+			break;
+		}
+		
+		case LIST_STORE_SELL:
+		{
+		
+			break;
+		}
+	}
+	
+	/* Finally - chain into the old hook, if it exists */
+	if (old_list_hook) old_list_hook(list_type);
+}
+
 
 /*
  * Note that we assume that any item with quantity zero does not exist,
