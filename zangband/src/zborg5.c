@@ -2928,7 +2928,8 @@ static s32b borg_power_aux3(void)
 
 	s32b value = 0L;
 
-	list_item *l_ptr;
+	/* Heavily penalize various flags */
+	list_item temp, *l_ptr;
 
 
 	/* Obtain the "hold" value (weight limit for weapons) */
@@ -3448,11 +3449,11 @@ static s32b borg_power_aux3(void)
 
 	/*** Penalize various things ***/
 
-	/* Heavily penalize various flags */
-	if (FLAG(bp_ptr, TR_TY_CURSE)) value -= 1000000L;
-	if (FLAG(bp_ptr, TR_NO_TELE)) value -= 1000000L;
-	if (FLAG(bp_ptr, TR_NO_MAGIC) &&
-		borg_class != CLASS_WARRIOR) value -= 1000000L;
+	/* Hack the flags so that they can be tested for bad curses */
+	for (i = 0; i < 4; i++) temp.kn_flags[i] = bp_ptr->flags[i];
+
+	/* If there is a bad flag it will cost the borg big */
+	if (borg_test_bad_curse(&temp)) value -= 1000000L;
 
 	/* Slightly penalize some flags */
 	if (FLAG(bp_ptr, TR_AGGRAVATE)) value -= 2000L;
