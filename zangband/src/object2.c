@@ -4146,7 +4146,6 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 		return;
 	}
 
-
 	/* Find a grid */
 	for (i = 0; !flag; i++)
 	{
@@ -4155,6 +4154,12 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 		{
 			ty = rand_spread(by, 1);
 			tx = rand_spread(bx, 1);
+
+			/* Do some bound checking */
+			ty = MAX(ty, p_ptr->min_hgt);
+			ty = MIN(ty, p_ptr->max_hgt - 1);
+			tx = MAX(tx, p_ptr->min_wid);
+			tx = MIN(tx, p_ptr->max_wid - 1);
 		}
 
 		/* Random locations */
