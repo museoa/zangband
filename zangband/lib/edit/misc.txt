@@ -49,8 +49,8 @@ M:W:N:250
 # Maximum number of wilderness block generation types
 M:W:T:300
 
-# Maximum number of "places" in the wilderness
-M:W:P:20
+# Maximum number of "places" in the wilderness (towns + quests)
+M:W:P:40
 
 # Maximum number of active "regions" in dungeon / wilderness
 M:G:10
