@@ -1929,7 +1929,7 @@ bool load_player(void)
 	if (fd < 0)
 	{
 		/* Give a message */
-		msg_print("Savefile does not exist.");
+		msgf("Savefile does not exist.");
 		message_flush();
 
 		/* Allow this */
@@ -1969,7 +1969,7 @@ bool load_player(void)
 			my_fclose(fkk);
 
 			/* Message */
-			msg_print("Savefile is currently in use.");
+			msgf("Savefile is currently in use.");
 			message_flush();
 
 			/* Oops */
@@ -2134,12 +2134,12 @@ bool load_player(void)
 		{
 			if (z_major == 2 && z_minor == 0 && z_patch == 6)
 			{
-				msg_print("Converted a 2.0.* savefile.");
+				msgf("Converted a 2.0.* savefile.");
 			}
 			else
 			{
 				/* Message */
-				msg_format("Converted a %d.%d.%d savefile.",
+				msgf("Converted a %d.%d.%d savefile.",
 						   z_major, z_minor, z_patch);
 			}
 			message_flush();
@@ -2218,7 +2218,7 @@ bool load_player(void)
 
 
 	/* Message */
-	msg_format("Error (%s) reading %d.%d.%d savefile.",
+	msgf("Error (%s) reading %d.%d.%d savefile.",
 			   what, z_major, z_minor, z_patch);
 	message_flush();
 

@@ -241,7 +241,7 @@ void compact_objects(int size)
 	if (size)
 	{
 		/* Message */
-		msg_print("Compacting objects...");
+		msgf("Compacting objects...");
 
 		/* Redraw map */
 		p_ptr->redraw |= (PR_MAP);
@@ -532,7 +532,7 @@ static s16b o_pop(void)
 
 
 	/* Warn the player (except during dungeon creation) */
-	if (character_dungeon) msg_print("Too many objects!");
+	if (character_dungeon) msgf("Too many objects!");
 
 	/* Oops */
 	return (0);
@@ -1819,7 +1819,7 @@ s16b lookup_kind(int tval, int sval)
 	}
 
 	/* Oops */
-	msg_format("No object (%d,%d)", tval, sval);
+	msgf("No object (%d,%d)", tval, sval);
 
 	/* Oops */
 	return (0);
@@ -2048,12 +2048,12 @@ static void object_mention(object_type *o_ptr)
 		if (o_ptr->activate > 127)
 		{
 			/* Silly message */
-			msg_format("Artifact (%s)", o_name);
+			msgf("Artifact (%s)", o_name);
 		}
 		else
 		{
 			/* Silly message */
-			msg_format("Random artifact (%s)", o_name);
+			msgf("Random artifact (%s)", o_name);
 		}
 	}
 
@@ -2061,14 +2061,14 @@ static void object_mention(object_type *o_ptr)
 	else if (ego_item_p(o_ptr))
 	{
 		/* Silly message */
-		msg_format("Ego-item (%s)", o_name);
+		msgf("Ego-item (%s)", o_name);
 	}
 
 	/* Normal item */
 	else
 	{
 		/* Silly message */
-		msg_format("Object (%s)", o_name);
+		msgf("Object (%s)", o_name);
 	}
 }
 
@@ -3779,7 +3779,7 @@ static void a_m_aux_4(object_type *o_ptr, int level, byte flags)
 
 			if (cheat_peek)
 			{
-				msg_format("Figurine of %s", r_name + r_ptr->name);
+				msgf("Figurine of %s", r_name + r_ptr->name);
 			}
 
 			break;
@@ -3808,7 +3808,7 @@ static void a_m_aux_4(object_type *o_ptr, int level, byte flags)
 
 			if (cheat_peek)
 			{
-				msg_format("Statue of %s", r_name + r_ptr->name);
+				msgf("Statue of %s", r_name + r_ptr->name);
 			}
 
 			break;
@@ -4048,10 +4048,10 @@ void apply_magic(object_type *o_ptr, int lev, int lev_dif, byte flags)
 	if (o_ptr->flags3 & TR3_INSTA_ART)
 	{
 		/* Paranoia - we have an artifact!!! */
-		msg_print("Error Condition - artifact passed to apply_magic");
-		msg_format("Object sval:%d Object flags3:%d",
+		msgf("Error Condition - artifact passed to apply_magic");
+		msgf("Object sval:%d Object flags3:%d",
 				   o_ptr->sval, o_ptr->flags3);
-		msg_print("Submit a bugreport please. :-)");
+		msgf("Submit a bugreport please. :-)");
 		return;
 	}
 
@@ -4411,7 +4411,7 @@ static bool put_object(object_type *o_ptr, int x, int y)
 	}
 
 	/* Warn the player */
-	msg_print("Failed to place object!");
+	msgf("Failed to place object!");
 
 	/* Paranoia - preserve artifacts */
 	if ((preserve_mode) && (o_ptr->flags3 & TR3_INSTA_ART) &&
@@ -4645,10 +4645,10 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 	if (!(j_ptr->flags3 & TR3_INSTA_ART) && (randint0(100) < chance))
 	{
 		/* Message */
-		msg_format("The %s disappear%s.", o_name, (plural ? "" : "s"));
+		msgf("The %s disappear%s.", o_name, (plural ? "" : "s"));
 
 		/* Debug */
-		if (p_ptr->wizard) msg_print("(breakage)");
+		if (p_ptr->wizard) msgf("(breakage)");
 
 		/* Failure */
 		return;
@@ -4758,10 +4758,10 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 	if (!flag && !(j_ptr->flags3 & TR3_INSTA_ART))
 	{
 		/* Message */
-		msg_format("The %s disappear%s.", o_name, (plural ? "" : "s"));
+		msgf("The %s disappear%s.", o_name, (plural ? "" : "s"));
 
 		/* Debug */
-		if (p_ptr->wizard) msg_print("(no floor space)");
+		if (p_ptr->wizard) msgf("(no floor space)");
 
 		/* Failure */
 		return;
@@ -4823,12 +4823,12 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 			if (!chance)
 			{
 				/* Message */
-				msg_format("The %s%s burns in the lava.",
+				msgf("The %s%s burns in the lava.",
 						   o_name, (plural ? "" : "s"));
 			}
 
 			/* Debug */
-			if (p_ptr->wizard) msg_print("(contact with lava)");
+			if (p_ptr->wizard) msgf("(contact with lava)");
 
 			/* Failure */
 			return;
@@ -4841,11 +4841,11 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 			if (!chance)
 			{
 				/* Message */
-				msg_format("The %s disappear%s.", o_name, (plural ? "" : "s"));
+				msgf("The %s disappear%s.", o_name, (plural ? "" : "s"));
 			}
 
 			/* Debug */
-			if (p_ptr->wizard) msg_print("(contact with water)");
+			if (p_ptr->wizard) msgf("(contact with water)");
 
 			/* Failure */
 			return;
@@ -4877,10 +4877,10 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 		if (!put_object(j_ptr, bx, by))
 		{
 			/* Message */
-			msg_format("The %s disappear%s.", o_name, (plural ? "" : "s"));
+			msgf("The %s disappear%s.", o_name, (plural ? "" : "s"));
 
 			/* Debug */
-			if (p_ptr->wizard) msg_print("(too many objects)");
+			if (p_ptr->wizard) msgf("(too many objects)");
 
 			/* Failure */
 			return;
@@ -4894,7 +4894,7 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 	/* Message when an object falls under the player */
 	if (chance && (by == p_ptr->py) && (bx == p_ptr->px))
 	{
-		msg_print("You feel something roll beneath your feet.");
+		msgf("You feel something roll beneath your feet.");
 	}
 
 	/* Fields may interact with an object in some way */
@@ -5127,7 +5127,7 @@ void item_charges(object_type *o_ptr)
 	if (!object_known_p(o_ptr)) return;
 
 	/* Print a message */
-	msg_format("%s %d charge%s remaining.",
+	msgf("%s %d charge%s remaining.",
 			   floor_item(o_ptr) ? "It has" : "You have", o_ptr->pval,
 			   (o_ptr->pval != 1) ? "s" : "");
 }
@@ -5155,18 +5155,18 @@ void item_describe(object_type *o_ptr)
 		/* Item is in the equipment */
 		item = GET_ARRAY_INDEX(p_ptr->equipment, o_ptr);
 
-		msg_format("%^s: %s (%c).", describe_use(item), o_name, I2A(item));
+		msgf("%^s: %s (%c).", describe_use(item), o_name, I2A(item));
 	}
 	else if (list == &p_ptr->inventory)
 	{
 		/* Get number of item in inventory */
 		item = get_item_position(p_ptr->inventory, o_ptr);
 
-		msg_format("In your pack: %s (%c).", o_name, I2A(item));
+		msgf("In your pack: %s (%c).", o_name, I2A(item));
 	}
 	else if (list == &c_ptr->o_idx)
 	{
-		msg_format("On the ground: %s.", o_name);
+		msgf("On the ground: %s.", o_name);
 	}
 
 	/* Elsewhere??? */
@@ -5580,12 +5580,12 @@ object_type *inven_takeoff(object_type *o_ptr)
 	/* Paranoia */
 	if (!q_ptr)
 	{
-		msg_print("You cannot take off the item - too many dungeon objects!");
+		msgf("You cannot take off the item - too many dungeon objects!");
 		return (NULL);
 	}
 
 	/* Message */
-	msg_format("%s %s (%c).", act, o_name, I2A(item));
+	msgf("%s %s (%c).", act, o_name, I2A(item));
 
 	/* Wipe the old object */
 	object_wipe(o_ptr);
@@ -5653,7 +5653,7 @@ void inven_drop(object_type *o_ptr, int amt)
 	object_desc(o_name, q_ptr, TRUE, 3, 256);
 
 	/* Message */
-	msg_format("You drop %s (%c).", o_name, I2A(slot));
+	msgf("You drop %s (%c).", o_name, I2A(slot));
 
 	/* Drop it near the player */
 	drop_near(q_ptr, 0, p_ptr->px, p_ptr->py);
@@ -5703,7 +5703,7 @@ void combine_pack(void)
 	OBJ_ITT_END;
 
 	/* Message */
-	if (flag) msg_print("You combine some items in your pack.");
+	if (flag) msgf("You combine some items in your pack.");
 }
 
 

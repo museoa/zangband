@@ -27,7 +27,7 @@ bool set_blind(int v)
 	{
 		if (!p_ptr->blind)
 		{
-			msg_print("You are blind!");
+			msgf("You are blind!");
 			notice = TRUE;
 
 			chg_virtue(V_ENLIGHTEN, -1);
@@ -39,7 +39,7 @@ bool set_blind(int v)
 	{
 		if (p_ptr->blind)
 		{
-			msg_print("You can see again.");
+			msgf("You can see again.");
 			notice = TRUE;
 		}
 	}
@@ -91,7 +91,7 @@ bool set_confused(int v)
 	{
 		if (!p_ptr->confused)
 		{
-			msg_print("You are confused!");
+			msgf("You are confused!");
 			notice = TRUE;
 
 			chg_virtue(V_HARMONY, -1);
@@ -103,7 +103,7 @@ bool set_confused(int v)
 	{
 		if (p_ptr->confused)
 		{
-			msg_print("You feel less confused now.");
+			msgf("You feel less confused now.");
 			notice = TRUE;
 		}
 	}
@@ -146,7 +146,7 @@ bool set_poisoned(int v)
 	{
 		if (!p_ptr->poisoned)
 		{
-			msg_print("You are poisoned!");
+			msgf("You are poisoned!");
 			notice = TRUE;
 		}
 	}
@@ -156,7 +156,7 @@ bool set_poisoned(int v)
 	{
 		if (p_ptr->poisoned)
 		{
-			msg_print("You are no longer poisoned.");
+			msgf("You are no longer poisoned.");
 			notice = TRUE;
 		}
 	}
@@ -196,7 +196,7 @@ bool set_afraid(int v)
 	{
 		if (!p_ptr->afraid)
 		{
-			msg_print("You are terrified!");
+			msgf("You are terrified!");
 			notice = TRUE;
 
 			chg_virtue(V_VALOUR, -1);
@@ -208,7 +208,7 @@ bool set_afraid(int v)
 	{
 		if (p_ptr->afraid)
 		{
-			msg_print("You feel bolder now.");
+			msgf("You feel bolder now.");
 			notice = TRUE;
 		}
 	}
@@ -248,7 +248,7 @@ bool set_paralyzed(int v)
 	{
 		if (!p_ptr->paralyzed)
 		{
-			msg_print("You are paralyzed!");
+			msgf("You are paralyzed!");
 			notice = TRUE;
 		}
 	}
@@ -258,7 +258,7 @@ bool set_paralyzed(int v)
 	{
 		if (p_ptr->paralyzed)
 		{
-			msg_print("You can move again.");
+			msgf("You can move again.");
 			notice = TRUE;
 		}
 	}
@@ -303,7 +303,7 @@ bool set_image(int v)
 	{
 		if (!p_ptr->image)
 		{
-			msg_print("Oh, wow! Everything looks so cosmic now!");
+			msgf("Oh, wow! Everything looks so cosmic now!");
 			notice = TRUE;
 
 			/* Update the monster vis window */
@@ -316,7 +316,7 @@ bool set_image(int v)
 	{
 		if (p_ptr->image)
 		{
-			msg_print("You can see clearly again.");
+			msgf("You can see clearly again.");
 			notice = TRUE;
 
 			/* Update the monster vis window */
@@ -368,7 +368,7 @@ bool set_fast(int v)
 	{
 		if (!p_ptr->fast)
 		{
-			msg_print("You feel yourself moving faster!");
+			msgf("You feel yourself moving faster!");
 			notice = TRUE;
 
 			chg_virtue(V_PATIENCE, -1);
@@ -381,7 +381,7 @@ bool set_fast(int v)
 	{
 		if (p_ptr->fast)
 		{
-			msg_print("You feel yourself slow down.");
+			msgf("You feel yourself slow down.");
 			notice = TRUE;
 		}
 	}
@@ -424,7 +424,7 @@ bool set_slow(int v)
 	{
 		if (!p_ptr->slow)
 		{
-			msg_print("You feel yourself moving slower!");
+			msgf("You feel yourself moving slower!");
 			notice = TRUE;
 		}
 	}
@@ -434,7 +434,7 @@ bool set_slow(int v)
 	{
 		if (p_ptr->slow)
 		{
-			msg_print("You feel yourself speed up.");
+			msgf("You feel yourself speed up.");
 			notice = TRUE;
 		}
 	}
@@ -477,7 +477,7 @@ bool set_shield(int v)
 	{
 		if (!p_ptr->shield)
 		{
-			msg_print("Your skin turns to stone.");
+			msgf("Your skin turns to stone.");
 			notice = TRUE;
 		}
 	}
@@ -487,7 +487,7 @@ bool set_shield(int v)
 	{
 		if (p_ptr->shield)
 		{
-			msg_print("Your skin returns to normal.");
+			msgf("Your skin returns to normal.");
 			notice = TRUE;
 		}
 	}
@@ -531,7 +531,7 @@ bool set_blessed(int v)
 	{
 		if (!p_ptr->blessed)
 		{
-			msg_print("You feel righteous!");
+			msgf("You feel righteous!");
 			notice = TRUE;
 		}
 	}
@@ -541,7 +541,7 @@ bool set_blessed(int v)
 	{
 		if (p_ptr->blessed)
 		{
-			msg_print("The prayer has expired.");
+			msgf("The prayer has expired.");
 			notice = TRUE;
 		}
 	}
@@ -584,7 +584,7 @@ bool set_hero(int v)
 	{
 		if (!p_ptr->hero)
 		{
-			msg_print("You feel like a hero!");
+			msgf("You feel like a hero!");
 			notice = TRUE;
 		}
 	}
@@ -594,7 +594,7 @@ bool set_hero(int v)
 	{
 		if (p_ptr->hero)
 		{
-			msg_print("The heroism wears off.");
+			msgf("The heroism wears off.");
 			notice = TRUE;
 		}
 	}
@@ -640,7 +640,7 @@ bool set_shero(int v)
 	{
 		if (!p_ptr->shero)
 		{
-			msg_print("You feel like a killing machine!");
+			msgf("You feel like a killing machine!");
 			notice = TRUE;
 		}
 	}
@@ -650,7 +650,7 @@ bool set_shero(int v)
 	{
 		if (p_ptr->shero)
 		{
-			msg_print("You feel less Berserk.");
+			msgf("You feel less Berserk.");
 			notice = TRUE;
 		}
 	}
@@ -696,7 +696,7 @@ bool set_protevil(int v)
 	{
 		if (!p_ptr->protevil)
 		{
-			msg_print("You feel safe from evil!");
+			msgf("You feel safe from evil!");
 			notice = TRUE;
 		}
 	}
@@ -706,7 +706,7 @@ bool set_protevil(int v)
 	{
 		if (p_ptr->protevil)
 		{
-			msg_print("You no longer feel safe from evil.");
+			msgf("You no longer feel safe from evil.");
 			notice = TRUE;
 		}
 	}
@@ -745,7 +745,7 @@ bool set_wraith_form(int v)
 	{
 		if (!p_ptr->wraith_form)
 		{
-			msg_print
+			msgf
 				("You leave the physical world and turn into a wraith-being!");
 			notice = TRUE;
 
@@ -765,7 +765,7 @@ bool set_wraith_form(int v)
 	{
 		if (p_ptr->wraith_form)
 		{
-			msg_print("You feel opaque.");
+			msgf("You feel opaque.");
 			notice = TRUE;
 
 			/* Redraw map */
@@ -818,7 +818,7 @@ bool set_invuln(int v)
 	{
 		if (!p_ptr->invuln)
 		{
-			msg_print("Invulnerability!");
+			msgf("Invulnerability!");
 			notice = TRUE;
 
 			chg_virtue(V_TEMPERANCE, -5);
@@ -842,7 +842,7 @@ bool set_invuln(int v)
 	{
 		if (p_ptr->invuln)
 		{
-			msg_print("The invulnerability wears off.");
+			msgf("The invulnerability wears off.");
 			notice = TRUE;
 
 			/* Redraw map */
@@ -894,7 +894,7 @@ bool set_tim_esp(int v)
 	{
 		if (!p_ptr->tim_esp)
 		{
-			msg_print("You feel your consciousness expand!");
+			msgf("You feel your consciousness expand!");
 			notice = TRUE;
 		}
 	}
@@ -904,7 +904,7 @@ bool set_tim_esp(int v)
 	{
 		if (p_ptr->tim_esp)
 		{
-			msg_print("Your consciousness contracts again.");
+			msgf("Your consciousness contracts again.");
 			notice = TRUE;
 		}
 	}
@@ -950,7 +950,7 @@ bool set_tim_invis(int v)
 	{
 		if (!p_ptr->tim_invis)
 		{
-			msg_print("Your eyes feel very sensitive!");
+			msgf("Your eyes feel very sensitive!");
 			notice = TRUE;
 		}
 	}
@@ -960,7 +960,7 @@ bool set_tim_invis(int v)
 	{
 		if (p_ptr->tim_invis)
 		{
-			msg_print("Your eyes feel less sensitive.");
+			msgf("Your eyes feel less sensitive.");
 			notice = TRUE;
 		}
 	}
@@ -1006,7 +1006,7 @@ bool set_tim_infra(int v)
 	{
 		if (!p_ptr->tim_infra)
 		{
-			msg_print("Your eyes begin to tingle!");
+			msgf("Your eyes begin to tingle!");
 			notice = TRUE;
 		}
 	}
@@ -1016,7 +1016,7 @@ bool set_tim_infra(int v)
 	{
 		if (p_ptr->tim_infra)
 		{
-			msg_print("Your eyes stop tingling.");
+			msgf("Your eyes stop tingling.");
 			notice = TRUE;
 		}
 	}
@@ -1062,7 +1062,7 @@ bool set_oppose_acid(int v)
 	{
 		if (!p_ptr->oppose_acid)
 		{
-			msg_print("You feel resistant to acid!");
+			msgf("You feel resistant to acid!");
 			notice = TRUE;
 		}
 	}
@@ -1072,7 +1072,7 @@ bool set_oppose_acid(int v)
 	{
 		if (p_ptr->oppose_acid)
 		{
-			msg_print("You feel less resistant to acid.");
+			msgf("You feel less resistant to acid.");
 			notice = TRUE;
 		}
 	}
@@ -1112,7 +1112,7 @@ bool set_oppose_elec(int v)
 	{
 		if (!p_ptr->oppose_elec)
 		{
-			msg_print("You feel resistant to electricity!");
+			msgf("You feel resistant to electricity!");
 			notice = TRUE;
 		}
 	}
@@ -1122,7 +1122,7 @@ bool set_oppose_elec(int v)
 	{
 		if (p_ptr->oppose_elec)
 		{
-			msg_print("You feel less resistant to electricity.");
+			msgf("You feel less resistant to electricity.");
 			notice = TRUE;
 		}
 	}
@@ -1162,7 +1162,7 @@ bool set_oppose_fire(int v)
 	{
 		if (!p_ptr->oppose_fire)
 		{
-			msg_print("You feel resistant to fire!");
+			msgf("You feel resistant to fire!");
 			notice = TRUE;
 		}
 	}
@@ -1172,7 +1172,7 @@ bool set_oppose_fire(int v)
 	{
 		if (p_ptr->oppose_fire)
 		{
-			msg_print("You feel less resistant to fire.");
+			msgf("You feel less resistant to fire.");
 			notice = TRUE;
 		}
 	}
@@ -1212,7 +1212,7 @@ bool set_oppose_cold(int v)
 	{
 		if (!p_ptr->oppose_cold)
 		{
-			msg_print("You feel resistant to cold!");
+			msgf("You feel resistant to cold!");
 			notice = TRUE;
 		}
 	}
@@ -1222,7 +1222,7 @@ bool set_oppose_cold(int v)
 	{
 		if (p_ptr->oppose_cold)
 		{
-			msg_print("You feel less resistant to cold.");
+			msgf("You feel less resistant to cold.");
 			notice = TRUE;
 		}
 	}
@@ -1262,7 +1262,7 @@ bool set_oppose_pois(int v)
 	{
 		if (!p_ptr->oppose_pois)
 		{
-			msg_print("You feel resistant to poison!");
+			msgf("You feel resistant to poison!");
 			notice = TRUE;
 		}
 	}
@@ -1272,7 +1272,7 @@ bool set_oppose_pois(int v)
 	{
 		if (p_ptr->oppose_pois)
 		{
-			msg_print("You feel less resistant to poison.");
+			msgf("You feel less resistant to poison.");
 			notice = TRUE;
 		}
 	}
@@ -1382,21 +1382,21 @@ bool set_stun(int v)
 			case 1:
 			{
 				/* Stun */
-				msg_print("You have been stunned.");
+				msgf("You have been stunned.");
 				break;
 			}
 
 			case 2:
 			{
 				/* Heavy stun */
-				msg_print("You have been heavily stunned.");
+				msgf("You have been heavily stunned.");
 				break;
 			}
 
 			case 3:
 			{
 				/* Knocked out */
-				msg_print("You have been knocked out.");
+				msgf("You have been knocked out.");
 				break;
 			}
 		}
@@ -1414,7 +1414,7 @@ bool set_stun(int v)
 		if ((randint1(1000) < v || one_in_(16)) &&
 			(!(p_ptr->pclass == CLASS_MINDCRAFTER)))
 		{
-			msg_print("A vicious blow hits your head.");
+			msgf("A vicious blow hits your head.");
 			if (one_in_(3))
 			{
 				if (!p_ptr->sustain_int) (void)do_dec_stat(A_INT);
@@ -1443,7 +1443,7 @@ bool set_stun(int v)
 			case 0:
 			{
 				/* None */
-				msg_print("You are no longer stunned.");
+				msgf("You are no longer stunned.");
 				if (disturb_state) disturb(FALSE);
 				break;
 			}
@@ -1601,49 +1601,49 @@ bool set_cut(int v)
 			case 1:
 			{
 				/* Graze */
-				msg_print("You have been given a graze.");
+				msgf("You have been given a graze.");
 				break;
 			}
 
 			case 2:
 			{
 				/* Light cut */
-				msg_print("You have been given a light cut.");
+				msgf("You have been given a light cut.");
 				break;
 			}
 
 			case 3:
 			{
 				/* Bad cut */
-				msg_print("You have been given a bad cut.");
+				msgf("You have been given a bad cut.");
 				break;
 			}
 
 			case 4:
 			{
 				/* Nasty cut */
-				msg_print("You have been given a nasty cut.");
+				msgf("You have been given a nasty cut.");
 				break;
 			}
 
 			case 5:
 			{
 				/* Severe cut */
-				msg_print("You have been given a severe cut.");
+				msgf("You have been given a severe cut.");
 				break;
 			}
 
 			case 6:
 			{
 				/* Deep gash */
-				msg_print("You have been given a deep gash.");
+				msgf("You have been given a deep gash.");
 				break;
 			}
 
 			case 7:
 			{
 				/* Mortal wound */
-				msg_print("You have been given a mortal wound.");
+				msgf("You have been given a mortal wound.");
 				break;
 			}
 		}
@@ -1655,7 +1655,7 @@ bool set_cut(int v)
 		{
 			if (!p_ptr->sustain_chr)
 			{
-				msg_print("You have been horribly scarred.");
+				msgf("You have been horribly scarred.");
 
 				(void)do_dec_stat(A_CHR);
 			}
@@ -1671,7 +1671,7 @@ bool set_cut(int v)
 			case 0:
 			{
 				/* None */
-				msg_print("You are no longer bleeding.");
+				msgf("You are no longer bleeding.");
 				if (disturb_state) disturb(FALSE);
 				break;
 			}
@@ -1825,35 +1825,35 @@ bool set_food(int v)
 			case 1:
 			{
 				/* Weak */
-				msg_print("You are still weak.");
+				msgf("You are still weak.");
 				break;
 			}
 
 			case 2:
 			{
 				/* Hungry */
-				msg_print("You are still hungry.");
+				msgf("You are still hungry.");
 				break;
 			}
 
 			case 3:
 			{
 				/* Normal */
-				msg_print("You are no longer hungry.");
+				msgf("You are no longer hungry.");
 				break;
 			}
 
 			case 4:
 			{
 				/* Full */
-				msg_print("You are full!");
+				msgf("You are full!");
 				break;
 			}
 
 			case 5:
 			{
 				/* Bloated */
-				msg_print("You have gorged yourself!");
+				msgf("You have gorged yourself!");
 
 				chg_virtue(V_HARMONY, -1);
 				chg_virtue(V_PATIENCE, -1);
@@ -1875,35 +1875,35 @@ bool set_food(int v)
 			case 0:
 			{
 				/* Fainting / Starving */
-				msg_print("You are getting faint from hunger!");
+				msgf("You are getting faint from hunger!");
 				break;
 			}
 
 			case 1:
 			{
 				/* Weak */
-				msg_print("You are getting weak from hunger!");
+				msgf("You are getting weak from hunger!");
 				break;
 			}
 
 			case 2:
 			{
 				/* Hungry */
-				msg_print("You are getting hungry.");
+				msgf("You are getting hungry.");
 				break;
 			}
 
 			case 3:
 			{
 				/* Normal */
-				msg_print("You are no longer full.");
+				msgf("You are no longer full.");
 				break;
 			}
 
 			case 4:
 			{
 				/* Full */
-				msg_print("You are no longer gorged.");
+				msgf("You are no longer gorged.");
 				break;
 			}
 		}
@@ -2163,25 +2163,25 @@ bool hp_player(int num)
 		/* Heal 0-4 */
 		if (num < 5)
 		{
-			msg_print("You feel a little better.");
+			msgf("You feel a little better.");
 		}
 
 		/* Heal 5-14 */
 		else if (num < 15)
 		{
-			msg_print("You feel better.");
+			msgf("You feel better.");
 		}
 
 		/* Heal 15-34 */
 		else if (num < 35)
 		{
-			msg_print("You feel much better.");
+			msgf("You feel much better.");
 		}
 
 		/* Heal 35+ */
 		else
 		{
-			msg_print("You feel very good.");
+			msgf("You feel very good.");
 		}
 
 		/* Notice */
@@ -2267,7 +2267,7 @@ bool do_dec_stat(int stat)
 	if (sust && !(ironman_nightmare && one_in_(13)))
 	{
 		/* Message */
-		msg_format("You feel %s for a moment, but the feeling passes.",
+		msgf("You feel %s for a moment, but the feeling passes.",
 				   desc_stat_neg[stat]);
 
 		/* Notice effect */
@@ -2278,7 +2278,7 @@ bool do_dec_stat(int stat)
 	if (dec_stat(stat, 10, (ironman_nightmare && !one_in_(13))))
 	{
 		/* Message */
-		msg_format("You feel very %s.", desc_stat_neg[stat]);
+		msgf("You feel very %s.", desc_stat_neg[stat]);
 
 		/* Notice effect */
 		return (TRUE);
@@ -2298,7 +2298,7 @@ bool do_res_stat(int stat)
 	if (res_stat(stat))
 	{
 		/* Message */
-		msg_format("You feel less %s.", desc_stat_neg[stat]);
+		msgf("You feel less %s.", desc_stat_neg[stat]);
 
 		/* Notice */
 		return (TRUE);
@@ -2336,7 +2336,7 @@ bool do_inc_stat(int stat)
 			chg_virtue(V_VITALITY, 1);
 
 		/* Message */
-		msg_format("Wow!  You feel very %s!", desc_stat_pos[stat]);
+		msgf("Wow!  You feel very %s!", desc_stat_pos[stat]);
 
 		/* Notice */
 		return (TRUE);
@@ -2346,7 +2346,7 @@ bool do_inc_stat(int stat)
 	if (res)
 	{
 		/* Message */
-		msg_format("You feel less %s.", desc_stat_neg[stat]);
+		msgf("You feel less %s.", desc_stat_neg[stat]);
 
 		/* Notice */
 		return (TRUE);
@@ -2366,7 +2366,7 @@ bool restore_level(void)
 	if (p_ptr->exp < p_ptr->max_exp)
 	{
 		/* Message */
-		msg_print("You feel your life energies returning.");
+		msgf("You feel your life energies returning.");
 
 		/* Restore the experience */
 		p_ptr->exp = p_ptr->max_exp;
@@ -2482,11 +2482,11 @@ void do_poly_wounds(void)
 
 	if (!(wounds || hit_p || Nasty_effect)) return;
 
-	msg_print("Your wounds are polymorphed into less serious ones.");
+	msgf("Your wounds are polymorphed into less serious ones.");
 	(void)hp_player(change);
 	if (Nasty_effect)
 	{
-		msg_print("A new wound was created!");
+		msgf("A new wound was created!");
 		take_hit(change / 2, "a polymorphed wound");
 		(void)set_cut(change);
 	}
@@ -2502,7 +2502,7 @@ void do_poly_self(void)
 	int i;
 	int power = p_ptr->lev;
 
-	msg_print("You feel a change coming over you...");
+	msgf("You feel a change coming over you...");
 
 	chg_virtue(V_CHANCE, 1);
 
@@ -2569,7 +2569,7 @@ void do_poly_self(void)
 			power -= 10;
 
 			if (!lose_mutation(0))
-				msg_print("You feel oddly normal.");
+				msgf("You feel oddly normal.");
 		}
 
 		/*
@@ -2590,7 +2590,7 @@ void do_poly_self(void)
 
 		if (!effect_msg[0])
 		{
-			msg_format("You turn into a%s %s!",
+			msgf("You turn into a%s %s!",
 					   (((new_race == RACE_AMBERITE) ||
 						 (new_race == RACE_ELF) ||
 						 (new_race == RACE_IMP)) ? "n" : ""),
@@ -2598,7 +2598,7 @@ void do_poly_self(void)
 		}
 		else
 		{
-			msg_format("You turn into a %s%s!", effect_msg,
+			msgf("You turn into a %s%s!", effect_msg,
 					   race_info[new_race].title);
 		}
 
@@ -2658,7 +2658,7 @@ void do_poly_self(void)
 		/* Abomination! */
 		power -= 20;
 
-		msg_print("Your internal organs are rearranged!");
+		msgf("Your internal organs are rearranged!");
 		while (tmp < A_MAX)
 		{
 			(void)dec_stat(tmp, rand_range(6, 12), one_in_(3));
@@ -2666,7 +2666,7 @@ void do_poly_self(void)
 		}
 		if (one_in_(6))
 		{
-			msg_print("You find living difficult in your present form!");
+			msgf("You find living difficult in your present form!");
 			take_hit(damroll(randint1(10), p_ptr->lev), "a lethal mutation");
 			power -= 10;
 		}
@@ -2761,7 +2761,7 @@ void take_hit(int damage, cptr hit_from)
 	p_ptr->skip_more = FALSE;
 
 	if (pen_invuln)
-		msg_print("The attack penetrates your shield of invulnerability!");
+		msgf("The attack penetrates your shield of invulnerability!");
 
 	if (!(p_ptr->invuln) || (pen_invuln))
 	{
@@ -2783,13 +2783,13 @@ void take_hit(int damage, cptr hit_from)
 		/* Hack -- Note death */
 		if (!last_words)
 		{
-			message(MSG_DEATH, 0, "You die.");
+			msgf(MSGT_DEATH, "You die.");
 			message_flush();
 		}
 		else
 		{
 			if (!get_rnd_line("death.txt", 0, death_message))
-				msg_print(death_message);
+				msgf(death_message);
 		}
 
 		/* Note cause of death */
@@ -2824,7 +2824,7 @@ void take_hit(int damage, cptr hit_from)
 		sound(SOUND_WARN);
 
 		/* Message */
-		message(MSG_HITPOINT_WARN, 0, "*** LOW HITPOINT WARNING! ***");
+		msgf(MSGT_HITPOINT_WARN, "*** LOW HITPOINT WARNING! ***");
 		message_flush();
 	}
 }

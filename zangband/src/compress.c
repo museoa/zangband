@@ -903,7 +903,7 @@ static void arth_blocks_decode(block_handle *h1_ptr)
 	/* Paranoia */
 	if (b_ptr->size <= 6)
 	{
-		msg_format("Stream too small to decode %d", b_ptr->size);
+		msgf("Stream too small to decode %d", b_ptr->size);
 
 		return;
 	}

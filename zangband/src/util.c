@@ -2431,12 +2431,12 @@ static int message_column = 0;
  * "pending" messages still on the screen, instead of using "msg_flush()".
  * This should only be done when the user is known to have read the message.
  *
- * We must be very careful about using the "msg_print()" functions without
+ * We must be very careful about using the "msgf()" functions without
  * explicitly calling the special "message_flush()" function, since this may
  * result in the loss of information if the screen is cleared, or if anything
  * is displayed on the top line.
  *
- * Hack -- Note that "msg_print(NULL)" will clear the top line
+ * Hack -- Note that "msgf(NULL)" will clear the top line
  * even if no messages are pending.  This is probably a hack.
  */
 static void msg_print_aux(u16b type, cptr msg)

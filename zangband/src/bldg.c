@@ -48,7 +48,7 @@ void have_nightmare(int r_idx)
 
 	if (saving_throw(p_ptr->skill_sav * 100 / power))
 	{
-		msg_format("%^s chases you through your dreams.", m_name);
+		msgf("%^s chases you through your dreams.", m_name);
 
 		/* Safe */
 		return;
@@ -57,12 +57,12 @@ void have_nightmare(int r_idx)
 	if (p_ptr->image)
 	{
 		/* Something silly happens... */
-		msg_format("You behold the %s visage of %s!",
+		msgf("You behold the %s visage of %s!",
 				   funny_desc[randint0(MAX_SAN_FUNNY)], m_name);
 
 		if (one_in_(3))
 		{
-			msg_print(funny_comments[randint0(MAX_SAN_COMMENT)]);
+			msgf(funny_comments[randint0(MAX_SAN_COMMENT)]);
 			p_ptr->image = p_ptr->image + randint1(r_ptr->level);
 		}
 
@@ -71,7 +71,7 @@ void have_nightmare(int r_idx)
 	}
 
 	/* Something frightening happens... */
-	msg_format("You behold the %s visage of %s!",
+	msgf("You behold the %s visage of %s!",
 			   horror_desc[randint0(MAX_SAN_HORROR)], desc);
 
 	r_ptr->r_flags4 |= RF4_ELDRITCH_HORROR;
@@ -154,7 +154,7 @@ void have_nightmare(int r_idx)
 		if (dec_stat(A_WIS, 10, TRUE)) happened = TRUE;
 		if (happened)
 		{
-			msg_print("You feel much less sane than before.");
+			msgf("You feel much less sane than before.");
 		}
 		return;
 	}
@@ -164,7 +164,7 @@ void have_nightmare(int r_idx)
 	{
 		if (lose_all_info())
 		{
-			msg_print("You forget everything in your utmost terror!");
+			msgf("You forget everything in your utmost terror!");
 		}
 		return;
 	}
@@ -186,10 +186,10 @@ void have_nightmare(int r_idx)
 			{
 				if (!(p_ptr->muta3 & MUT3_MORONIC))
 				{
-					msg_print("You turn into an utter moron!");
+					msgf("You turn into an utter moron!");
 					if (p_ptr->muta3 & MUT3_HYPER_INT)
 					{
-						msg_print("Your brain is no longer a living computer.");
+						msgf("Your brain is no longer a living computer.");
 						p_ptr->muta3 &= ~(MUT3_HYPER_INT);
 					}
 					p_ptr->muta3 |= MUT3_MORONIC;
@@ -201,12 +201,12 @@ void have_nightmare(int r_idx)
 			{
 				if (!(p_ptr->muta2 & MUT2_COWARDICE) && !p_ptr->resist_fear)
 				{
-					msg_print("You become paranoid!");
+					msgf("You become paranoid!");
 
 					/* Duh, the following should never happen, but anyway... */
 					if (p_ptr->muta3 & MUT3_FEARLESS)
 					{
-						msg_print("You are no longer fearless.");
+						msgf("You are no longer fearless.");
 						p_ptr->muta3 &= ~(MUT3_FEARLESS);
 					}
 
@@ -219,7 +219,7 @@ void have_nightmare(int r_idx)
 			{
 				if (!(p_ptr->muta2 & MUT2_HALLU) && !p_ptr->resist_chaos)
 				{
-					msg_print("You are afflicted by a hallucinatory insanity!");
+					msgf("You are afflicted by a hallucinatory insanity!");
 					p_ptr->muta2 |= MUT2_HALLU;
 					happened = TRUE;
 				}
@@ -229,7 +229,7 @@ void have_nightmare(int r_idx)
 			{
 				if (!(p_ptr->muta2 & MUT2_BERS_RAGE))
 				{
-					msg_print("You become subject to fits of berserk rage!");
+					msgf("You become subject to fits of berserk rage!");
 					p_ptr->muta2 |= MUT2_BERS_RAGE;
 					happened = TRUE;
 				}
@@ -270,7 +270,7 @@ bool test_gold(s32b *cost)
 	{
 		/* Player does not have enough gold */
 
-		msg_format("You need %ld gold to do this!", (long)*cost);
+		msgf("You need %ld gold to do this!", (long)*cost);
 		message_flush();
 
 		*cost = 0;
@@ -448,7 +448,7 @@ static s32b gamble_init(void)
 	/* No money */
 	if (p_ptr->au < 1)
 	{
-		msg_print("Hey! You don't have gold - get out of here!");
+		msgf("Hey! You don't have gold - get out of here!");
 
 		screen_load();
 		return (0);
@@ -486,19 +486,19 @@ static s32b gamble_init(void)
 
 	if (wager > p_ptr->au)
 	{
-		msg_print("Hey! You don't have the gold - get out of here!");
+		msgf("Hey! You don't have the gold - get out of here!");
 
 		screen_load();
 		return (0);
 	}
 	else if (wager > maxbet)
 	{
-		msg_format("I'll take %ld gold of that. Keep the rest.", maxbet);
+		msgf("I'll take %ld gold of that. Keep the rest.", maxbet);
 		wager = maxbet;
 	}
 	else if (wager < 1)
 	{
-		msg_print("Ok, we'll start with 1 gold.");
+		msgf("Ok, we'll start with 1 gold.");
 		wager = 1;
 	}
 
@@ -543,7 +543,7 @@ static bool gamble_again(bool win, int odds, s32b wager)
 
 	if (wager > p_ptr->au)
 	{
-		msg_print("Hey! You don't have the gold - get out of here!");
+		msgf("Hey! You don't have the gold - get out of here!");
 		message_flush();
 
 		/* Get out here */
@@ -565,9 +565,9 @@ static void gamble_done(void)
 
 	prtf(37, 18, "");
 	if (p_ptr->au >= gamble_oldgold)
-		msg_print("You came out a winner! We'll win next time, I'm sure.");
+		msgf("You came out a winner! We'll win next time, I'm sure.");
 	else
-		msg_print("You lost gold! Haha, better head home.");
+		msgf("You lost gold! Haha, better head home.");
 
 	message_flush();
 
@@ -647,7 +647,7 @@ void gamble_craps(void)
 			while (TRUE)
 			{
 				/* Ok - we need to roll a few more times */
-				msg_print("Hit any key to roll again");
+				msgf("Hit any key to roll again");
 				message_flush();
 
 				roll1 = randint1(6);
@@ -788,7 +788,7 @@ bool inn_rest(void)
 	/* Only at night time */
 	if ((turn % (10L * TOWN_DAWN)) < 50000)
 	{
-		msg_print("The rooms are available only at night.");
+		msgf("The rooms are available only at night.");
 		message_flush();
 
 		return (FALSE);
@@ -797,9 +797,9 @@ bool inn_rest(void)
 	/* Hurt? */
 	if ((p_ptr->poisoned) || (p_ptr->cut))
 	{
-		msg_print("You need a healer, not a room.");
+		msgf("You need a healer, not a room.");
 		message_flush();
-		msg_print("Sorry, but don't want anyone dying in here.");
+		msgf("Sorry, but don't want anyone dying in here.");
 		message_flush();
 
 		return (FALSE);
@@ -815,7 +815,7 @@ bool inn_rest(void)
 	 */
 	if (ironman_nightmare)
 	{
-		msg_print("Horrible visions flit through your mind as you sleep.");
+		msgf("Horrible visions flit through your mind as you sleep.");
 
 		/* Pick a nightmare */
 		get_mon_num_prep(get_nightmare, NULL);
@@ -831,7 +831,7 @@ bool inn_rest(void)
 		/* Remove the monster restriction */
 		get_mon_num_prep(NULL, NULL);
 
-		msg_print("You awake screaming.");
+		msgf("You awake screaming.");
 		message_flush();
 
 		return (TRUE);
@@ -843,7 +843,7 @@ bool inn_rest(void)
 	p_ptr->stun = 0;
 	p_ptr->csp = p_ptr->msp;
 
-	msg_print("You awake refreshed for the new day.");
+	msgf("You awake refreshed for the new day.");
 	message_flush();
 
 	return (TRUE);
@@ -1112,7 +1112,7 @@ bool compare_weapons(void)
 	/* Check to see if we have one */
 	if (!o_ptr->k_idx)
 	{
-		msg_print("You need to wield a weapon.");
+		msgf("You need to wield a weapon.");
 		return (FALSE);
 	}
 
@@ -1178,7 +1178,7 @@ bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac)
 	if (p_ptr->au < (cost * o_ptr->number))
 	{
 		object_desc(tmp_str, o_ptr, TRUE, 0, 256);
-		msg_format("You do not have the gold to improve %s!", tmp_str);
+		msgf("You do not have the gold to improve %s!", tmp_str);
 		message_flush();
 		return (FALSE);
 	}
@@ -1213,14 +1213,14 @@ bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac)
 		if (flush_failure) flush();
 
 		/* Message */
-		msg_print("The improvement failed.");
+		msgf("The improvement failed.");
 
 		return (FALSE);
 	}
 	else
 	{
 		object_desc(tmp_str, o_ptr, TRUE, 1, 256);
-		msg_format("Improved %s for %d gold.", tmp_str, cost * o_ptr->number);
+		msgf("Improved %s for %d gold.", tmp_str, cost * o_ptr->number);
 		message_flush();
 
 		/* Charge the money */
@@ -1280,7 +1280,7 @@ void building_recharge(s32b cost)
 	/* The item must be "known" */
 	if (!object_known_p(o_ptr))
 	{
-		msg_format("The item must be identified first!");
+		msgf("The item must be identified first!");
 		message_flush();
 
 		if ((p_ptr->au >= 50) && get_check("Identify for 50 gold? "))
@@ -1294,7 +1294,7 @@ void building_recharge(s32b cost)
 			/* Description */
 			object_desc(tmp_str, o_ptr, TRUE, 3, 256);
 
-			msg_format("You have: %s.", tmp_str);
+			msgf("You have: %s.", tmp_str);
 		}
 		else
 		{
@@ -1316,7 +1316,7 @@ void building_recharge(s32b cost)
 		else
 		{
 			/* No recharge necessary */
-			msg_format("That doesn't need to be recharged.");
+			msgf("That doesn't need to be recharged.");
 			message_flush();
 			return;
 		}
@@ -1349,13 +1349,13 @@ void building_recharge(s32b cost)
 		(o_ptr->pval / o_ptr->number >= k_ptr->pval))
 	{
 		if ((o_ptr->tval == TV_WAND) && (o_ptr->number == 1))
-			msg_print("This wand is already fully charged.");
+			msgf("This wand is already fully charged.");
 		else if ((o_ptr->tval == TV_WAND) && (o_ptr->number > 1))
-			msg_print("These wands are already fully charged.");
+			msgf("These wands are already fully charged.");
 		else if ((o_ptr->tval == TV_STAFF) && (o_ptr->number == 1))
-			msg_print("This staff is already fully charged.");
+			msgf("This staff is already fully charged.");
 		else if ((o_ptr->tval == TV_STAFF) && (o_ptr->number > 1))
-			msg_print("These staffs are already fully charged.");
+			msgf("These staffs are already fully charged.");
 
 		message_flush();
 		return;
@@ -1368,7 +1368,7 @@ void building_recharge(s32b cost)
 	if (p_ptr->au < price)
 	{
 		object_desc(tmp_str, o_ptr, TRUE, 0, 256);
-		msg_format("You need %d gold to recharge %s!", price, tmp_str);
+		msgf("You need %d gold to recharge %s!", price, tmp_str);
 		message_flush();
 		return;
 	}
@@ -1416,7 +1416,7 @@ void building_recharge(s32b cost)
 
 	/* Give feedback */
 	object_desc(tmp_str, o_ptr, TRUE, 3, 256);
-	msg_format("%^s %s recharged for %d gold.", tmp_str,
+	msgf("%^s %s recharged for %d gold.", tmp_str,
 			   ((o_ptr->number > 1) ? "were" : "was"), price);
 	message_flush();
 
@@ -1447,7 +1447,7 @@ bool building_healer(void)
 
 	if (paid)
 	{
-		msg_print("You are infused with magic, and your ailments disappear.");
+		msgf("You are infused with magic, and your ailments disappear.");
 		message_flush();
 	}
 
@@ -1546,7 +1546,7 @@ bool building_magetower(int factor, bool display)
 
 		if (max_link == 0)
 		{
-			msg_print("You do not know any other towns to teleport to.");
+			msgf("You do not know any other towns to teleport to.");
 			return (FALSE);
 		}
 
@@ -1658,7 +1658,7 @@ static void bldg_process_command(building_type * bldg, int i)
 			/* Combine / Reorder the pack (later) */
 			p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-			msg_print("Your posessions have been identified.");
+			msgf("Your posessions have been identified.");
 			message_flush();
 			paid = TRUE;
 			break;
@@ -1701,7 +1701,7 @@ static void bldg_process_command(building_type * bldg, int i)
 			}
 			else
 			{
-				msg_print("You just had your daily allowance!");
+				msgf("You just had your daily allowance!");
 				message_flush();
 			}
 			break;
@@ -1721,7 +1721,7 @@ static void bldg_process_command(building_type * bldg, int i)
 		case BACT_RECALL:
 		{
 			p_ptr->word_recall = 1;
-			msg_print("The air about you becomes charged...");
+			msgf("The air about you becomes charged...");
 			paid = TRUE;
 			p_ptr->redraw |= (PR_STATUS);
 			break;
@@ -1733,7 +1733,7 @@ static void bldg_process_command(building_type * bldg, int i)
 			{
 				p_ptr->word_recall = 1;
 				p_ptr->max_depth = amt;
-				msg_print("The air about you becomes charged...");
+				msgf("The air about you becomes charged...");
 				paid = TRUE;
 				p_ptr->redraw |= (PR_STATUS);
 			}
@@ -1955,7 +1955,7 @@ static bool build_process_command(field_type *f_ptr, store_type *b_ptr)
 		default:
 		{
 			/* Hack -- Unknown command */
-			msg_print("That command does not work in buildings.");
+			msgf("That command does not work in buildings.");
 			break;
 		}
 	}
@@ -1988,7 +1988,7 @@ void do_cmd_bldg(field_type *f_ptr)
 	/* Paranoia */
 	if (which == -1)
 	{
-		msg_print("Could not locate building!");
+		msgf("Could not locate building!");
 		return;
 	}
 

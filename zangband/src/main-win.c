@@ -3260,7 +3260,7 @@ static void process_menus(WORD wCmd)
 			/* Paranoia -- No score file */
 			if (highscore_fd < 0)
 			{
-				msg_print("Score file unavailable.");
+				msgf("Score file unavailable.");
 			}
 			else
 			{

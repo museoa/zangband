@@ -406,7 +406,7 @@ void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
 	{
 		if (m_ptr->ml)
 		{
-			msg_format("%^s is unharmed.", m_name);
+			msgf("%^s is unharmed.", m_name);
 		}
 
 		return;
@@ -445,17 +445,17 @@ void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
 				/* Death by special attack */
 				else if (note)
 				{
-					msg_format("%^s%s", m_name, note);
+					msgf("%^s%s", m_name, note);
 				}
 				/* Death by normal attack -- nonliving monster */
 				else if (!monster_living(r_ptr))
 				{
-					msg_format("%^s is destroyed.", m_name);
+					msgf("%^s is destroyed.", m_name);
 				}
 				/* Death by normal attack -- living monster */
 				else
 				{
-					msg_format("%^s is killed.", m_name);
+					msgf("%^s is killed.", m_name);
 				}
 			}
 
@@ -1306,7 +1306,7 @@ static bool get_move_retreat(monster_type *m_ptr, int *tx, int *ty)
 				monster_desc(m_name, m_ptr, 0);
 
 				/* Dump a message */
-				msg_format("%^s turns to fight!", m_name);
+				msgf("%^s turns to fight!", m_name);
 			}
 
 			/* Charge! */
@@ -1804,7 +1804,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 					update_mon_vis(m_ptr->r_idx, 1);
 
 					/* We've spotted it */
-					msg_format("You see %s!", m_name2);
+					msgf("You see %s!", m_name2);
 				}
 
 				/* Look to see if we've spotted a mimic */
@@ -1822,7 +1822,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 					update_mon_vis(t_ptr->r_idx, 1);
 
 					/* We've spotted it */
-					msg_format("You see %s!", t_name2);
+					msgf("You see %s!", t_name2);
 				}
 
 				if ((p_ptr->image) && one_in_(3))
@@ -1834,7 +1834,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 				else
 					strnfmt(temp, 80, act, t_name);
 
-				msg_format("%^s %s", m_name, temp);
+				msgf("%^s %s", m_name, temp);
 			}
 
 			/* Hack -- assume all attacks are obvious */
@@ -2014,7 +2014,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 						/* Special message */
 						if (see_m && did_heal)
 						{
-							msg_format("%^s appears healthier.", m_name);
+							msgf("%^s appears healthier.", m_name);
 						}
 					}
 				}
@@ -2028,7 +2028,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 						if (see_either)
 						{
 							blinked = FALSE;
-							msg_format("%^s is suddenly very hot!", m_name);
+							msgf("%^s is suddenly very hot!", m_name);
 							if (see_t)
 								tr_ptr->r_flags2 |= RF2_AURA_FIRE;
 						}
@@ -2045,7 +2045,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 						if (see_either)
 						{
 							blinked = FALSE;
-							msg_format("%^s is suddenly very cold!", m_name);
+							msgf("%^s is suddenly very cold!", m_name);
 							if (see_t)
 								tr_ptr->r_flags3 |= RF3_AURA_COLD;
 						}
@@ -2062,7 +2062,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 						if (see_either)
 						{
 							blinked = FALSE;
-							msg_format("%^s gets zapped!", m_name);
+							msgf("%^s gets zapped!", m_name);
 							if (see_t)
 								tr_ptr->r_flags2 |= RF2_AURA_ELEC;
 						}
@@ -2099,7 +2099,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 					if (see_m)
 					{
 						/* Message */
-						msg_format("%^s misses %s.", m_name, t_name);
+						msgf("%^s misses %s.", m_name, t_name);
 					}
 
 					break;
@@ -2142,7 +2142,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 	{
 		if (see_m)
 		{
-			msg_print("The thief flees laughing!");
+			msgf("The thief flees laughing!");
 		}
 		else if (known)
 		{
@@ -2274,7 +2274,7 @@ static void take_move(int m_idx, int *mm)
 
 			if (one_in_(GRINDNOISE))
 			{
-				msg_print("There is a grinding sound.");
+				msgf("There is a grinding sound.");
 			}
 
 			/* Notice */
@@ -2467,7 +2467,7 @@ static void take_move(int m_idx, int *mm)
 				update_mon_vis(m_ptr->r_idx, 1);
 
 				/* We've spotted it */
-				msg_format("You see %s!", m_name2);
+				msgf("You see %s!", m_name2);
 			}
 
 			/* Process fields under the monster. */
@@ -2574,7 +2574,7 @@ static void take_move(int m_idx, int *mm)
 							if (m_ptr->ml && see_grid)
 							{
 								/* Dump a message */
-								msg_format
+								msgf
 									("%^s tries to pick up %s, but fails.",
 									 m_name, o_name);
 							}
@@ -2591,7 +2591,7 @@ static void take_move(int m_idx, int *mm)
 						if (see_grid)
 						{
 							/* Dump a message */
-							msg_format("%^s picks up %s.", m_name, o_name);
+							msgf("%^s picks up %s.", m_name, o_name);
 						}
 
 						/* Forget mark */
@@ -2617,7 +2617,7 @@ static void take_move(int m_idx, int *mm)
 						if (see_grid)
 						{
 							/* Dump a message */
-							msg_format("%^s destroys %s.", m_name, o_name);
+							msgf("%^s destroys %s.", m_name, o_name);
 						}
 
 						/* Delete the object */
@@ -2686,7 +2686,7 @@ static void take_move(int m_idx, int *mm)
 			monster_desc(m_name, m_ptr, 0);
 
 			/* Dump a message */
-			msg_format("%^s turns to fight!", m_name);
+			msgf("%^s turns to fight!", m_name);
 
 			chg_virtue(V_COMPASSION, -1);
 		}
@@ -2759,7 +2759,7 @@ static void process_monster(int m_idx)
 				monster_desc(m_name, m_ptr, 0);
 
 				/* Oops */
-				msg_format("%^s disappears!", m_name);
+				msgf("%^s disappears!", m_name);
 			}
 
 			/* Generate treasure, etc */
@@ -2770,7 +2770,7 @@ static void process_monster(int m_idx)
 
 			if (sad)
 			{
-				msg_print("You feel sad for a moment.");
+				msgf("You feel sad for a moment.");
 			}
 
 			return;
@@ -2840,7 +2840,7 @@ static void process_monster(int m_idx)
 					monster_desc(m_name, m_ptr, 0);
 
 					/* Dump a message */
-					msg_format("%^s wakes up.", m_name);
+					msgf("%^s wakes up.", m_name);
 
 					/* Redraw the health bar */
 					if (p_ptr->health_who == m_idx)
@@ -2892,7 +2892,7 @@ static void process_monster(int m_idx)
 				monster_desc(m_name, m_ptr, 0);
 
 				/* Dump a message */
-				msg_format("%^s is no longer stunned.", m_name);
+				msgf("%^s is no longer stunned.", m_name);
 			}
 		}
 
@@ -2927,7 +2927,7 @@ static void process_monster(int m_idx)
 				monster_desc(m_name, m_ptr, 0);
 
 				/* Dump a message */
-				msg_format("%^s is no longer confused.", m_name);
+				msgf("%^s is no longer confused.", m_name);
 			}
 		}
 	}
@@ -2944,7 +2944,7 @@ static void process_monster(int m_idx)
 			monster_desc(m_name, m_ptr, 0);
 
 			/* Dump a message */
-			msg_format("%^s is no longer invulnerable.", m_name);
+			msgf("%^s is no longer invulnerable.", m_name);
 		}
 	}
 
@@ -2957,7 +2957,7 @@ static void process_monster(int m_idx)
 
 	if (gets_angry)
 	{
-		msg_format("%^s suddenly becomes hostile!", m_name);
+		msgf("%^s suddenly becomes hostile!", m_name);
 		set_hostile(m_ptr);
 	}
 
@@ -2989,7 +2989,7 @@ static void process_monster(int m_idx)
 				monster_desc(m_poss, m_ptr, 0x22);
 
 				/* Dump a message */
-				msg_format("%^s recovers %s courage.", m_name, m_poss);
+				msgf("%^s recovers %s courage.", m_name, m_poss);
 			}
 		}
 	}
@@ -3036,7 +3036,7 @@ static void process_monster(int m_idx)
 	if (strstr((r_name + r_ptr->name), "Cyber") && one_in_(CYBERNOISE) &&
 		!m_ptr->ml && (m_ptr->cdis <= MAX_SIGHT))
 	{
-		msg_print("You hear heavy steps.");
+		msgf("You hear heavy steps.");
 	}
 
 	/* Access that cave grid */
@@ -3065,7 +3065,7 @@ static void process_monster(int m_idx)
 		if (get_rnd_line(filename, m_ptr->r_idx, monmessage) == 0)
 		{
 			/* Say something */
-			msg_format("%^s %s", m_name, monmessage);
+			msgf("%^s %s", m_name, monmessage);
 		}
 	}
 

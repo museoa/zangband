@@ -354,7 +354,7 @@ static bool cast_mindcrafter_spell(int spell)
 				(void)set_tim_esp(p_ptr->tim_esp + plev);
 			}
 
-			if (!b) msg_print("You feel safe.");
+			if (!b) msgf("You feel safe.");
 			break;
 		case MINDCRAFT_MINOR_DISPLACEMENT:
 			/* Minor displace */
@@ -364,7 +364,7 @@ static bool cast_mindcrafter_spell(int spell)
 			}
 			else
 			{
-				msg_print("You open a dimensional gate. Choose a destination.");
+				msgf("You open a dimensional gate. Choose a destination.");
 				return dimension_door();
 			}
 			break;
@@ -411,7 +411,7 @@ static bool cast_mindcrafter_spell(int spell)
 				return ident_spell();
 		case MINDCRAFT_MIND_WAVE:
 			/* Mindwave */
-			msg_print("Mind-warping forces emanate from your brain!");
+			msgf("Mind-warping forces emanate from your brain!");
 			if (plev < 25)
 				(void)project(0, 2 + plev / 10, p_ptr->px, p_ptr->py,
 							  (plev * 3) / 2, GF_PSI, PROJECT_KILL);
@@ -454,14 +454,14 @@ static bool cast_mindcrafter_spell(int spell)
 			break;
 		case MINDCRAFT_TELEKINETIC_WAVE:
 			/* Telekinesis */
-			msg_print
+			msgf
 				("A wave of pure physical force radiates out from your body!");
 			(void)project(0, 3 + plev / 10, p_ptr->px, p_ptr->py,
 						  plev * (plev > 39 ? 4 : 3), GF_TELEKINESIS,
 						  PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID);
 			break;
 		default:
-			msg_print("Unknown Mindcrafter power!");
+			msgf("Unknown Mindcrafter power!");
 	}
 
 	return TRUE;
@@ -486,7 +486,7 @@ void do_cmd_mindcraft(void)
 	/* not if confused */
 	if (p_ptr->confused)
 	{
-		msg_print("You are too confused!");
+		msgf("You are too confused!");
 		return;
 	}
 
@@ -499,7 +499,7 @@ void do_cmd_mindcraft(void)
 	if (spell.mana_cost > p_ptr->csp)
 	{
 		/* Warning */
-		msg_print("You do not have enough mana to use this power.");
+		msgf("You do not have enough mana to use this power.");
 
 		/* Verify */
 		if (!get_check("Attempt it anyway? ")) return;
@@ -537,7 +537,7 @@ void do_cmd_mindcraft(void)
 	if (randint0(100) < chance)
 	{
 		if (flush_failure) flush();
-		msg_format("You failed to concentrate hard enough!");
+		msgf("You failed to concentrate hard enough!");
 		sound(SOUND_FAIL);
 
 		/* Backfire */
@@ -547,17 +547,17 @@ void do_cmd_mindcraft(void)
 
 			if (b < 5)
 			{
-				msg_print("Oh, no! Your mind has gone blank!");
+				msgf("Oh, no! Your mind has gone blank!");
 				(void)lose_all_info();
 			}
 			else if (b < 15)
 			{
-				msg_print("Weird visions seem to dance before your eyes...");
+				msgf("Weird visions seem to dance before your eyes...");
 				(void)set_image(p_ptr->image + rand_range(5, 15));
 			}
 			else if (b < 45)
 			{
-				msg_print("Your brain is addled!");
+				msgf("Your brain is addled!");
 				(void)set_confused(p_ptr->confused + randint1(8));
 			}
 			else if (b < 90)
@@ -567,7 +567,7 @@ void do_cmd_mindcraft(void)
 			else
 			{
 				/* Mana storm */
-				msg_print
+				msgf
 					("Your mind unleashes its power in an uncontrollable storm!");
 				(void)project(1, 2 + plev / 10, p_ptr->px, p_ptr->py, plev * 2,
 							  GF_MANA,
@@ -610,7 +610,7 @@ void do_cmd_mindcraft(void)
 		p_ptr->csp_frac = 0;
 
 		/* Message */
-		msg_print("You faint from the effort!");
+		msgf("You faint from the effort!");
 
 		/* Hack -- Bypass free action */
 		(void)set_paralyzed(p_ptr->paralyzed + randint1(5 * oops + 1));
@@ -621,7 +621,7 @@ void do_cmd_mindcraft(void)
 			bool perm = (randint0(100) < 25);
 
 			/* Message */
-			msg_print("You have damaged your mind!");
+			msgf("You have damaged your mind!");
 
 			/* Reduce constitution */
 			(void)dec_stat(A_WIS, rand_range(15, 25), perm);

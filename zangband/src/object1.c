@@ -3345,7 +3345,7 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 	if (!allow_inven && !allow_equip && !allow_floor)
 	{
 		/* Warning if needed */
-		if (str) msg_print(str);
+		if (str) msgf(str);
 
 		/* Forget the item_tester_tval restriction */
 		item_tester_tval = 0;

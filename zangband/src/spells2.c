@@ -843,7 +843,7 @@ bool detect_traps(void)
 	/* Describe */
 	if (detect)
 	{
-		msg_print("You sense the presence of traps!");
+		msgf("You sense the presence of traps!");
 	}
 
 	/* Result */
@@ -948,7 +948,7 @@ bool detect_doors(void)
 	/* Describe */
 	if (detect)
 	{
-		msg_print("You sense the presence of doors!");
+		msgf("You sense the presence of doors!");
 	}
 
 	/* Result */
@@ -1001,7 +1001,7 @@ bool detect_stairs(void)
 	/* Describe */
 	if (detect)
 	{
-		msg_print("You sense the presence of stairs!");
+		msgf("You sense the presence of stairs!");
 	}
 
 	/* Result */
@@ -1054,7 +1054,7 @@ bool detect_treasure(void)
 	/* Describe */
 	if (detect)
 	{
-		msg_print("You sense the presence of buried treasure!");
+		msgf("You sense the presence of buried treasure!");
 	}
 
 
@@ -1111,7 +1111,7 @@ bool detect_objects_gold(void)
 	/* Describe */
 	if (detect)
 	{
-		msg_print("You sense the presence of treasure!");
+		msgf("You sense the presence of treasure!");
 	}
 
 	if (detect_monsters_string("$"))
@@ -1171,7 +1171,7 @@ bool detect_objects_normal(void)
 	/* Describe */
 	if (detect)
 	{
-		msg_print("You sense the presence of objects!");
+		msgf("You sense the presence of objects!");
 	}
 
 	if (detect_monsters_string("!=?|"))
@@ -1255,7 +1255,7 @@ bool detect_objects_magic(void)
 	/* Describe */
 	if (detect)
 	{
-		msg_print("You sense the presence of magic objects!");
+		msgf("You sense the presence of magic objects!");
 	}
 
 	/* Return result */
@@ -1316,7 +1316,7 @@ bool detect_monsters_normal(void)
 	if (flag)
 	{
 		/* Describe result */
-		msg_print("You sense the presence of monsters!");
+		msgf("You sense the presence of monsters!");
 	}
 
 	/* Result */
@@ -1378,7 +1378,7 @@ bool detect_monsters_invis(void)
 	if (flag)
 	{
 		/* Describe result */
-		msg_print("You sense the presence of invisible creatures!");
+		msgf("You sense the presence of invisible creatures!");
 	}
 
 	/* Result */
@@ -1445,7 +1445,7 @@ bool detect_monsters_evil(void)
 	if (flag)
 	{
 		/* Describe result */
-		msg_print("You sense the presence of evil creatures!");
+		msgf("You sense the presence of evil creatures!");
 	}
 
 	/* Result */
@@ -1508,7 +1508,7 @@ bool detect_monsters_nonliving(void)
 	if (flag)
 	{
 		/* Describe result */
-		msg_print("You sense the presence of unnatural beings!");
+		msgf("You sense the presence of unnatural beings!");
 	}
 
 	/* Result */
@@ -1571,7 +1571,7 @@ bool detect_monsters_living(void)
 	if (flag)
 	{
 		/* Describe result */
-		msg_print("You sense the presence of natural beings!");
+		msgf("You sense the presence of natural beings!");
 	}
 
 	/* Result */
@@ -1634,7 +1634,7 @@ bool detect_monsters_string(cptr match)
 	if (flag)
 	{
 		/* Describe result */
-		msg_print("You sense the presence of monsters!");
+		msgf("You sense the presence of monsters!");
 	}
 
 	/* Result */
@@ -1711,7 +1711,7 @@ bool detect_monsters_xxx(u32b match_flag)
 		}
 
 		/* Describe result */
-		msg_format("You sense the presence of %s!", desc_monsters);
+		msgf("You sense the presence of %s!", desc_monsters);
 		message_flush();
 	}
 
@@ -1994,8 +1994,8 @@ void aggravate_monsters(int who)
 	}
 
 	/* Messages */
-	if (speed) msg_print("You feel a sudden stirring nearby!");
-	else if (sleep) msg_print("You hear a sudden stirring in the distance!");
+	if (speed) msgf("You feel a sudden stirring nearby!");
+	else if (sleep) msgf("You hear a sudden stirring in the distance!");
 }
 
 
@@ -2191,13 +2191,13 @@ bool probing(void)
 			char m_name[80];
 
 			/* Start the message */
-			if (!probe) msg_print("Probing...");
+			if (!probe) msgf("Probing...");
 
 			/* Get "the monster" or "something" */
 			monster_desc(m_name, m_ptr, 0x04);
 
 			/* Describe the monster */
-			msg_format("%^s has %d hit points.", m_name, m_ptr->hp);
+			msgf("%^s has %d hit points.", m_name, m_ptr->hp);
 
 			/* Learn all of the non-spell, non-treasure flags */
 			lore_do_probe(i);
@@ -2213,7 +2213,7 @@ bool probing(void)
 		if (probe)
 			chg_virtue(V_KNOWLEDGE, 1);
 
-		msg_print("That's all.");
+		msgf("That's all.");
 	}
 
 	/* Result */
@@ -2350,7 +2350,7 @@ bool destroy_area(int x1, int y1, int r)
 	if (flag)
 	{
 		/* Message */
-		msg_print("There is a searing blast of light!");
+		msgf("There is a searing blast of light!");
 
 		/* Blind the player */
 		if (!p_ptr->resist_blind && !p_ptr->resist_lite)
@@ -2499,17 +2499,17 @@ bool earthquake(int cx, int cy, int r)
 		{
 			case 1:
 			{
-				msg_print("The cave ceiling collapses!");
+				msgf("The cave ceiling collapses!");
 				break;
 			}
 			case 2:
 			{
-				msg_print("The cave floor twists in an unnatural way!");
+				msgf("The cave floor twists in an unnatural way!");
 				break;
 			}
 			default:
 			{
-				msg_print("The cave quakes!  You are pummeled with debris!");
+				msgf("The cave quakes!  You are pummeled with debris!");
 				break;
 			}
 		}
@@ -2518,7 +2518,7 @@ bool earthquake(int cx, int cy, int r)
 		if (!sn)
 		{
 			/* Message and damage */
-			msg_print("You are severely crushed!");
+			msgf("You are severely crushed!");
 			damage = 300;
 		}
 
@@ -2530,20 +2530,20 @@ bool earthquake(int cx, int cy, int r)
 			{
 				case 1:
 				{
-					msg_print("You nimbly dodge the blast!");
+					msgf("You nimbly dodge the blast!");
 					damage = 0;
 					break;
 				}
 				case 2:
 				{
-					msg_print("You are bashed by rubble!");
+					msgf("You are bashed by rubble!");
 					damage = damroll(10, 4);
 					(void)set_stun(p_ptr->stun + randint1(50));
 					break;
 				}
 				case 3:
 				{
-					msg_print("You are crushed between the floor and ceiling!");
+					msgf("You are crushed between the floor and ceiling!");
 					damage = damroll(10, 4);
 					(void)set_stun(p_ptr->stun + randint1(50));
 					break;
@@ -2705,7 +2705,7 @@ bool earthquake(int cx, int cy, int r)
 					monster_desc(m_name, m_ptr, 0);
 
 					/* Scream in pain */
-					msg_format("%^s wails out in pain!", m_name);
+					msgf("%^s wails out in pain!", m_name);
 
 					/* Take damage from the quake */
 					damage = (sn ? damroll(4, 8) : (m_ptr->hp + 1));
@@ -2720,7 +2720,7 @@ bool earthquake(int cx, int cy, int r)
 					if (m_ptr->hp < 0)
 					{
 						/* Message */
-						msg_format("%^s is embedded in the rock!", m_name);
+						msgf("%^s is embedded in the rock!", m_name);
 
 						/* Delete the monster */
 						delete_monster(xx, yy);
@@ -2910,7 +2910,7 @@ static void cave_temp_room_lite(void)
 						monster_desc(m_name, m_ptr, 0);
 
 						/* Dump a message */
-						msg_format("%^s wakes up.", m_name);
+						msgf("%^s wakes up.", m_name);
 
 						/* Redraw the health bar */
 						if (p_ptr->health_who == c_ptr->m_idx)
@@ -3229,7 +3229,7 @@ bool lite_area(int dam, int rad)
 	/* Hack -- Message */
 	if (!p_ptr->blind)
 	{
-		msg_print("You are surrounded by a white light.");
+		msgf("You are surrounded by a white light.");
 	}
 
 	/* Hook into the "project()" function */
@@ -3254,7 +3254,7 @@ bool unlite_area(int dam, int rad)
 	/* Hack -- Message */
 	if (!p_ptr->blind)
 	{
-		msg_print("Darkness surrounds you.");
+		msgf("Darkness surrounds you.");
 	}
 
 	/* Hook into the "project()" function */
@@ -3326,7 +3326,7 @@ bool teleport_swap(int dir)
 
 	if (!in_bounds2(tx, ty))
 	{
-		msg_print("You can't trade places with that!");
+		msgf("You can't trade places with that!");
 
 		/* Failure */
 		return FALSE;
@@ -3336,7 +3336,7 @@ bool teleport_swap(int dir)
 
 	if (!c_ptr->m_idx)
 	{
-		msg_print("You can't trade places with that!");
+		msgf("You can't trade places with that!");
 
 		/* Failure */
 		return FALSE;
@@ -3347,7 +3347,7 @@ bool teleport_swap(int dir)
 
 	if (r_ptr->flags3 & RF3_RES_TELE)
 	{
-		msg_print("Your teleportation is blocked!");
+		msgf("Your teleportation is blocked!");
 
 		/* Failure */
 		return FALSE;
@@ -3772,7 +3772,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 			{
 				if (!(*count))
 				{
-					msg_print("The ground trembles...");
+					msgf("The ground trembles...");
 					(void)earthquake(px, py, rand_range(5, 15));
 					if (!one_in_(6)) break;
 				}
@@ -3783,7 +3783,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 			{
 				if (!(*count))
 				{
-					msg_print("A portal opens to a plane of raw mana!");
+					msgf("A portal opens to a plane of raw mana!");
 					(void)destroy_area(px, py, 20);
 					project(1, 3, px, py, damroll(10, 5), GF_MANA, flg);
 					if (!one_in_(6)) break;
@@ -3795,7 +3795,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 			{
 				if (!(*count))
 				{
-					msg_print("Space warps about you!");
+					msgf("Space warps about you!");
 					teleport_player(damroll(10, 10));
 					if (!one_in_(13)) (*count) += activate_hi_summon();
 					if (!one_in_(6)) break;
@@ -3805,7 +3805,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 			}
 			case 34:
 			{
-				msg_print("You feel a surge of energy!");
+				msgf("You feel a surge of energy!");
 				wall_breaker();
 				if (one_in_(7))
 				{
@@ -3840,7 +3840,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 			}
 			case 10:  case 11:  case 12:
 			{
-				msg_print("You feel your life draining away...");
+				msgf("You feel your life draining away...");
 				lose_exp(p_ptr->exp / 16);
 				if (!one_in_(6)) break;
 
@@ -3855,7 +3855,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 				}
 				else
 				{
-					msg_print("You feel like a statue!");
+					msgf("You feel like a statue!");
 					if (p_ptr->free_act)
 					{
 						(void)set_paralyzed(p_ptr->paralyzed + randint1(3));
@@ -3879,7 +3879,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 			}
 			case 24:
 			{
-				msg_print("Huh? Who am I? What am I doing here?");
+				msgf("Huh? Who am I? What am I doing here?");
 				(void)lose_all_info();
 				if (!one_in_(6)) break;
 

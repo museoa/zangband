@@ -1417,7 +1417,7 @@ static void dos_dump_screen(void)
 	if (bmp) destroy_bitmap(bmp);
 
 	/* Success message */
-	msg_print("Screen dump saved.");
+	msgf("Screen dump saved.");
 	message_flush();
 }
 

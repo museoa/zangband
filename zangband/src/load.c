@@ -91,7 +91,7 @@ static bool z_older_than(byte x, byte y, byte z)
 /*
  * Hack -- Show information on the screen, one line at a time.
  *
- * Avoid the top two lines, to avoid interference with "msg_print()".
+ * Avoid the top two lines, to avoid interference with "msgf()".
  */
 static void note(cptr msg)
 {

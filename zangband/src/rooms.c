@@ -1623,7 +1623,7 @@ static void build_type5(int bx0, int by0)
 	if (cheat_room)
 	{
 		/* Room type */
-		msg_format("Monster nest (%s)", n_ptr->name);
+		msgf("Monster nest (%s)", n_ptr->name);
 	}
 
 	/* Shrink to contents of nest */
@@ -1853,7 +1853,7 @@ static void build_type6(int bx0, int by0)
 	if (cheat_room)
 	{
 		/* Room type */
-		msg_format("Monster pit (%s)", n_ptr->name);
+		msgf("Monster pit (%s)", n_ptr->name);
 	}
 
 	/* Create a random pit layout - EB */
@@ -2300,7 +2300,7 @@ static void build_type7(int bx0, int by0)
 	if (dummy >= SAFE_MAX_ATTEMPTS)
 	{
 		if (cheat_room)
-			msg_print("Warning! Could not place lesser vault!");
+			msgf("Warning! Could not place lesser vault!");
 
 		return;
 	}
@@ -2311,7 +2311,7 @@ static void build_type7(int bx0, int by0)
 #endif
 
 	/* Message */
-	if (cheat_room) msg_format("%s", v_name + v_ptr->name);
+	if (cheat_room) msgf("%s", v_name + v_ptr->name);
 
 	/* Boost the rating */
 	dun_ptr->rating += v_ptr->rat;
@@ -2397,7 +2397,7 @@ static void build_type8(int bx0, int by0)
 	if (dummy >= SAFE_MAX_ATTEMPTS)
 	{
 		if (cheat_room)
-			msg_print("Warning! Could not place greater vault!");
+			msgf("Warning! Could not place greater vault!");
 
 		return;
 	}
@@ -2408,7 +2408,7 @@ static void build_type8(int bx0, int by0)
 #endif
 
 	/* Message */
-	if (cheat_room) msg_format("%s", v_name + v_ptr->name);
+	if (cheat_room) msgf("%s", v_name + v_ptr->name);
 
 	/* Boost the rating */
 	dun_ptr->rating += v_ptr->rat;
@@ -2705,7 +2705,7 @@ static void build_bubble_vault(int x0, int y0, int xsize, int ysize)
 	cave_type *c_ptr;
 
 
-	if (cheat_room) msg_print("Bubble Vault");
+	if (cheat_room) msgf("Bubble Vault");
 
 	/* Allocate center of bubbles */
 	for (i = 0; i < BUBBLENUM; i++)
@@ -2862,7 +2862,7 @@ static void build_room_vault(int x0, int y0, int xsize, int ysize)
 	xhsize = xsize / 2;
 	yhsize = ysize / 2;
 
-	if (cheat_room) msg_print("Room Vault");
+	if (cheat_room) msgf("Room Vault");
 
 	/* fill area so don't get problems with arena levels */
 	generate_fill(x0 - xhsize, y0 - yhsize,
@@ -2916,7 +2916,7 @@ static void build_cave_vault(int x0, int y0, int xsiz, int ysiz)
 	xsize = xhsize * 2;
 	ysize = yhsize * 2;
 
-	if (cheat_room) msg_print("Cave Vault");
+	if (cheat_room) msgf("Cave Vault");
 
 	done = FALSE;
 
@@ -3094,7 +3094,7 @@ static void build_maze_vault(int x0, int y0, int xsize, int ysize)
 	int y1, x1, y2, x2;
 	int m, n, num_vertices, *visited;
 
-	if (cheat_room) msg_print("Maze Vault");
+	if (cheat_room) msgf("Maze Vault");
 
 	/* Pick a random room size - randomized by calling routine */
 	dy = ysize / 2 - 1;
@@ -3149,7 +3149,7 @@ static void build_mini_c_vault(int x0, int y0, int xsize, int ysize)
 
 	cave_type *c_ptr;
 
-	if (cheat_room) msg_print("Mini Checker Board Vault");
+	if (cheat_room) msgf("Mini Checker Board Vault");
 
 	/* Pick a random room size */
 	dy = ysize / 2 - 1;
@@ -3412,7 +3412,7 @@ static void build_castle_vault(int x0, int y0, int xsize, int ysize)
 	y2 = y0 + dy;
 	x2 = x0 + dx;
 
-	if (cheat_room) msg_print("Castle Vault");
+	if (cheat_room) msgf("Castle Vault");
 
 	/* generate the room */
 	generate_vault(x1 - 1, y1 - 1, x2 + 1, y2 + 1);
@@ -3524,7 +3524,7 @@ static void build_target_vault(int x0, int y0, int xsize, int ysize)
 	h3 = randint1(32);
 	h4 = randint1(32) - 16;
 
-	if (cheat_room) msg_print("Target Vault");
+	if (cheat_room) msgf("Target Vault");
 
 	/* work out outer radius */
 	if (xsize > ysize)
@@ -3627,7 +3627,7 @@ static void build_elemental_vault(int x0, int y0, int xsiz, int ysiz)
 	int type;
 
 
-	if (cheat_room) msg_print("Elemental Vault");
+	if (cheat_room) msgf("Elemental Vault");
 
 	/* round to make sizes even */
 	xhsize = xsiz / 2;
@@ -3718,7 +3718,7 @@ static void build_micro_room_vault(int x0, int y0, int xsize, int ysize)
 	y2 = y0 + dy;
 	x2 = x0 + dx;
 
-	if (cheat_room) msg_print("Micro-Room Vault");
+	if (cheat_room) msgf("Micro-Room Vault");
 
 	/* generate the room */
 	generate_vault(x1 - 1, y1 - 1, x2 + 1, y2 + 1);

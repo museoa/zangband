@@ -213,7 +213,7 @@ void compact_monsters(int size)
 	int cur_lev, cur_dis, chance;
 
 	/* Message (only if compacting) */
-	if (size) msg_print("Compacting monsters...");
+	if (size) msgf("Compacting monsters...");
 
 
 	/* Compact at least 'size' objects */
@@ -425,7 +425,7 @@ s16b m_pop(void)
 
 
 	/* Warn the player (except during dungeon creation) */
-	if (character_dungeon) msg_print("Too many monsters!");
+	if (character_dungeon) msgf("Too many monsters!");
 
 	/* Try not to crash */
 	return (0);
@@ -640,7 +640,7 @@ s16b get_mon_num(int level)
 		value1 -= table[i].prob3;
 	}
 
-	msg_format("Aborting - Could not generate a monster!!!! %d", total);
+	msgf("Aborting - Could not generate a monster!!!! %d", total);
 
 	/* Result */
 	return (0);
@@ -1492,7 +1492,7 @@ bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
 		if (r_ptr->flags1 & (RF1_UNIQUE))
 		{
 			/* Message for cheaters */
-			if (cheat_hear) msg_format("Deep Unique (%s).", name);
+			if (cheat_hear) msgf("Deep Unique (%s).", name);
 
 			/* Boost rating by twice delta-depth */
 			dun_ptr->rating += (r_ptr->level - p_ptr->depth) * 2;
@@ -1502,7 +1502,7 @@ bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
 		else
 		{
 			/* Message for cheaters */
-			if (cheat_hear) msg_format("Deep Monster (%s).", name);
+			if (cheat_hear) msgf("Deep Monster (%s).", name);
 
 			/* Boost rating by delta-depth */
 			dun_ptr->rating += (r_ptr->level - p_ptr->depth);
@@ -1513,7 +1513,7 @@ bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
 	else if (r_ptr->flags1 & (RF1_UNIQUE))
 	{
 		/* Unique monsters induce message */
-		if (cheat_hear) msg_format("Unique (%s).", name);
+		if (cheat_hear) msgf("Unique (%s).", name);
 	}
 
 	/* Make a new monster */
@@ -2034,8 +2034,7 @@ bool alloc_monster(int dis, bool slp)
 	{
 		if (cheat_xtra || cheat_hear)
 		{
-			msg_print
-				("Warning! Could not allocate a new monster. Small level?");
+			msgf("Warning! Could not allocate a new monster. Small level?");
 		}
 
 		return (FALSE);
@@ -2047,7 +2046,7 @@ bool alloc_monster(int dis, bool slp)
 	{
 		if (alloc_horde(x, y))
 		{
-			if (cheat_hear) msg_print("Monster horde.");
+			if (cheat_hear) msgf("Monster horde.");
 			return (TRUE);
 		}
 	}
@@ -2565,7 +2564,7 @@ void message_pain(int m_idx, int dam)
 	/* Notice non-damage */
 	if (dam == 0)
 	{
-		msg_format("%^s is unharmed.", m_name);
+		msgf("%^s is unharmed.", m_name);
 		return;
 	}
 
@@ -2580,19 +2579,19 @@ void message_pain(int m_idx, int dam)
 	if (strchr(",ejmvwQ", r_ptr->d_char))
 	{
 		if (percentage > 95)
-			msg_format("%^s barely notices.", m_name);
+			msgf("%^s barely notices.", m_name);
 		else if (percentage > 75)
-			msg_format("%^s flinches.", m_name);
+			msgf("%^s flinches.", m_name);
 		else if (percentage > 50)
-			msg_format("%^s squelches.", m_name);
+			msgf("%^s squelches.", m_name);
 		else if (percentage > 35)
-			msg_format("%^s quivers in pain.", m_name);
+			msgf("%^s quivers in pain.", m_name);
 		else if (percentage > 20)
-			msg_format("%^s writhes about.", m_name);
+			msgf("%^s writhes about.", m_name);
 		else if (percentage > 10)
-			msg_format("%^s writhes in agony.", m_name);
+			msgf("%^s writhes in agony.", m_name);
 		else
-			msg_format("%^s jerks limply.", m_name);
+			msgf("%^s jerks limply.", m_name);
 	}
 
 
@@ -2600,19 +2599,19 @@ void message_pain(int m_idx, int dam)
 	else if (strchr("~", r_ptr->d_char))
 	{
 		if (percentage > 95)
-			msg_format("%^s barely notices.", m_name);
+			msgf("%^s barely notices.", m_name);
 		else if (percentage > 75)
-			msg_format("%^s flinches.", m_name);
+			msgf("%^s flinches.", m_name);
 		else if (percentage > 50)
-			msg_format("%^s hesitates.", m_name);
+			msgf("%^s hesitates.", m_name);
 		else if (percentage > 35)
-			msg_format("%^s quivers in pain.", m_name);
+			msgf("%^s quivers in pain.", m_name);
 		else if (percentage > 20)
-			msg_format("%^s writhes about.", m_name);
+			msgf("%^s writhes about.", m_name);
 		else if (percentage > 10)
-			msg_format("%^s writhes in agony.", m_name);
+			msgf("%^s writhes in agony.", m_name);
 		else
-			msg_format("%^s jerks limply.", m_name);
+			msgf("%^s jerks limply.", m_name);
 	}
 
 
@@ -2620,19 +2619,19 @@ void message_pain(int m_idx, int dam)
 	else if (strchr("g#+<>", r_ptr->d_char))
 	{
 		if (percentage > 95)
-			msg_format("%^s ignores the attack.", m_name);
+			msgf("%^s ignores the attack.", m_name);
 		else if (percentage > 75)
-			msg_format("%^s shrugs off the attack.", m_name);
+			msgf("%^s shrugs off the attack.", m_name);
 		else if (percentage > 50)
-			msg_format("%^s roars thunderously.", m_name);
+			msgf("%^s roars thunderously.", m_name);
 		else if (percentage > 35)
-			msg_format("%^s rumbles.", m_name);
+			msgf("%^s rumbles.", m_name);
 		else if (percentage > 20)
-			msg_format("%^s grunts.", m_name);
+			msgf("%^s grunts.", m_name);
 		else if (percentage > 10)
-			msg_format("%^s hesitates.", m_name);
+			msgf("%^s hesitates.", m_name);
 		else
-			msg_format("%^s crumples.", m_name);
+			msgf("%^s crumples.", m_name);
 	}
 
 
@@ -2640,19 +2639,19 @@ void message_pain(int m_idx, int dam)
 	else if (strchr("JMR", r_ptr->d_char) || !isalpha(r_ptr->d_char))
 	{
 		if (percentage > 95)
-			msg_format("%^s barely notices.", m_name);
+			msgf("%^s barely notices.", m_name);
 		else if (percentage > 75)
-			msg_format("%^s hisses.", m_name);
+			msgf("%^s hisses.", m_name);
 		else if (percentage > 50)
-			msg_format("%^s rears up in anger.", m_name);
+			msgf("%^s rears up in anger.", m_name);
 		else if (percentage > 35)
-			msg_format("%^s hisses furiously.", m_name);
+			msgf("%^s hisses furiously.", m_name);
 		else if (percentage > 20)
-			msg_format("%^s writhes about.", m_name);
+			msgf("%^s writhes about.", m_name);
 		else if (percentage > 10)
-			msg_format("%^s writhes in agony.", m_name);
+			msgf("%^s writhes in agony.", m_name);
 		else
-			msg_format("%^s jerks limply.", m_name);
+			msgf("%^s jerks limply.", m_name);
 	}
 
 
@@ -2660,19 +2659,19 @@ void message_pain(int m_idx, int dam)
 	else if (strchr("f", r_ptr->d_char))
 	{
 		if (percentage > 95)
-			msg_format("%^s shrugs off the attack.", m_name);
+			msgf("%^s shrugs off the attack.", m_name);
 		else if (percentage > 75)
-			msg_format("%^s roars.", m_name);
+			msgf("%^s roars.", m_name);
 		else if (percentage > 50)
-			msg_format("%^s growls angrily.", m_name);
+			msgf("%^s growls angrily.", m_name);
 		else if (percentage > 35)
-			msg_format("%^s hisses with pain.", m_name);
+			msgf("%^s hisses with pain.", m_name);
 		else if (percentage > 20)
-			msg_format("%^s mewls in pain.", m_name);
+			msgf("%^s mewls in pain.", m_name);
 		else if (percentage > 10)
-			msg_format("%^s hisses in agony.", m_name);
+			msgf("%^s hisses in agony.", m_name);
 		else
-			msg_format("%^s mewls pitifully.", m_name);
+			msgf("%^s mewls pitifully.", m_name);
 	}
 
 
@@ -2680,19 +2679,19 @@ void message_pain(int m_idx, int dam)
 	else if (strchr("acFIKS", r_ptr->d_char))
 	{
 		if (percentage > 95)
-			msg_format("%^s ignores the attack.", m_name);
+			msgf("%^s ignores the attack.", m_name);
 		else if (percentage > 75)
-			msg_format("%^s chitters.", m_name);
+			msgf("%^s chitters.", m_name);
 		else if (percentage > 50)
-			msg_format("%^s scuttles about.", m_name);
+			msgf("%^s scuttles about.", m_name);
 		else if (percentage > 35)
-			msg_format("%^s twitters.", m_name);
+			msgf("%^s twitters.", m_name);
 		else if (percentage > 20)
-			msg_format("%^s jerks in pain.", m_name);
+			msgf("%^s jerks in pain.", m_name);
 		else if (percentage > 10)
-			msg_format("%^s jerks in agony.", m_name);
+			msgf("%^s jerks in agony.", m_name);
 		else
-			msg_format("%^s twitches.", m_name);
+			msgf("%^s twitches.", m_name);
 	}
 
 
@@ -2700,19 +2699,19 @@ void message_pain(int m_idx, int dam)
 	else if (strchr("B", r_ptr->d_char))
 	{
 		if (percentage > 95)
-			msg_format("%^s chirps.", m_name);
+			msgf("%^s chirps.", m_name);
 		else if (percentage > 75)
-			msg_format("%^s twitters.", m_name);
+			msgf("%^s twitters.", m_name);
 		else if (percentage > 50)
-			msg_format("%^s squawks.", m_name);
+			msgf("%^s squawks.", m_name);
 		else if (percentage > 35)
-			msg_format("%^s chatters.", m_name);
+			msgf("%^s chatters.", m_name);
 		else if (percentage > 20)
-			msg_format("%^s jeers.", m_name);
+			msgf("%^s jeers.", m_name);
 		else if (percentage > 10)
-			msg_format("%^s flutters about.", m_name);
+			msgf("%^s flutters about.", m_name);
 		else
-			msg_format("%^s squeaks.", m_name);
+			msgf("%^s squeaks.", m_name);
 	}
 
 
@@ -2720,19 +2719,19 @@ void message_pain(int m_idx, int dam)
 	else if (strchr("duDLUW", r_ptr->d_char))
 	{
 		if (percentage > 95)
-			msg_format("%^s ignores the attack.", m_name);
+			msgf("%^s ignores the attack.", m_name);
 		else if (percentage > 75)
-			msg_format("%^s flinches.", m_name);
+			msgf("%^s flinches.", m_name);
 		else if (percentage > 50)
-			msg_format("%^s hisses in pain.", m_name);
+			msgf("%^s hisses in pain.", m_name);
 		else if (percentage > 35)
-			msg_format("%^s snarls with pain.", m_name);
+			msgf("%^s snarls with pain.", m_name);
 		else if (percentage > 20)
-			msg_format("%^s roars with pain.", m_name);
+			msgf("%^s roars with pain.", m_name);
 		else if (percentage > 10)
-			msg_format("%^s gasps.", m_name);
+			msgf("%^s gasps.", m_name);
 		else
-			msg_format("%^s snarls feebly.", m_name);
+			msgf("%^s snarls feebly.", m_name);
 	}
 
 
@@ -2740,19 +2739,19 @@ void message_pain(int m_idx, int dam)
 	else if (strchr("s", r_ptr->d_char))
 	{
 		if (percentage > 95)
-			msg_format("%^s ignores the attack.", m_name);
+			msgf("%^s ignores the attack.", m_name);
 		else if (percentage > 75)
-			msg_format("%^s shrugs off the attack.", m_name);
+			msgf("%^s shrugs off the attack.", m_name);
 		else if (percentage > 50)
-			msg_format("%^s rattles.", m_name);
+			msgf("%^s rattles.", m_name);
 		else if (percentage > 35)
-			msg_format("%^s stumbles.", m_name);
+			msgf("%^s stumbles.", m_name);
 		else if (percentage > 20)
-			msg_format("%^s rattles.", m_name);
+			msgf("%^s rattles.", m_name);
 		else if (percentage > 10)
-			msg_format("%^s staggers.", m_name);
+			msgf("%^s staggers.", m_name);
 		else
-			msg_format("%^s clatters.", m_name);
+			msgf("%^s clatters.", m_name);
 	}
 
 
@@ -2760,19 +2759,19 @@ void message_pain(int m_idx, int dam)
 	else if (strchr("z", r_ptr->d_char))
 	{
 		if (percentage > 95)
-			msg_format("%^s ignores the attack.", m_name);
+			msgf("%^s ignores the attack.", m_name);
 		else if (percentage > 75)
-			msg_format("%^s shrugs off the attack.", m_name);
+			msgf("%^s shrugs off the attack.", m_name);
 		else if (percentage > 50)
-			msg_format("%^s groans.", m_name);
+			msgf("%^s groans.", m_name);
 		else if (percentage > 35)
-			msg_format("%^s moans.", m_name);
+			msgf("%^s moans.", m_name);
 		else if (percentage > 20)
-			msg_format("%^s hesitates.", m_name);
+			msgf("%^s hesitates.", m_name);
 		else if (percentage > 10)
-			msg_format("%^s grunts.", m_name);
+			msgf("%^s grunts.", m_name);
 		else
-			msg_format("%^s staggers.", m_name);
+			msgf("%^s staggers.", m_name);
 	}
 
 
@@ -2780,19 +2779,19 @@ void message_pain(int m_idx, int dam)
 	else if (strchr("G", r_ptr->d_char))
 	{
 		if (percentage > 95)
-			msg_format("%^s ignores the attack.", m_name);
+			msgf("%^s ignores the attack.", m_name);
 		else if (percentage > 75)
-			msg_format("%^s shrugs off the attack.", m_name);
+			msgf("%^s shrugs off the attack.", m_name);
 		else if (percentage > 50)
-			msg_format("%^s moans.", m_name);
+			msgf("%^s moans.", m_name);
 		else if (percentage > 35)
-			msg_format("%^s wails.", m_name);
+			msgf("%^s wails.", m_name);
 		else if (percentage > 20)
-			msg_format("%^s howls.", m_name);
+			msgf("%^s howls.", m_name);
 		else if (percentage > 10)
-			msg_format("%^s moans softly.", m_name);
+			msgf("%^s moans softly.", m_name);
 		else
-			msg_format("%^s sighs.", m_name);
+			msgf("%^s sighs.", m_name);
 	}
 
 
@@ -2800,57 +2799,57 @@ void message_pain(int m_idx, int dam)
 	else if (strchr("CZ", r_ptr->d_char))
 	{
 		if (percentage > 95)
-			msg_format("%^s shrugs off the attack.", m_name);
+			msgf("%^s shrugs off the attack.", m_name);
 		else if (percentage > 75)
-			msg_format("%^s snarls with pain.", m_name);
+			msgf("%^s snarls with pain.", m_name);
 		else if (percentage > 50)
-			msg_format("%^s yelps in pain.", m_name);
+			msgf("%^s yelps in pain.", m_name);
 		else if (percentage > 35)
-			msg_format("%^s howls in pain.", m_name);
+			msgf("%^s howls in pain.", m_name);
 		else if (percentage > 20)
-			msg_format("%^s howls in agony.", m_name);
+			msgf("%^s howls in agony.", m_name);
 		else if (percentage > 10)
-			msg_format("%^s writhes in agony.", m_name);
+			msgf("%^s writhes in agony.", m_name);
 		else
-			msg_format("%^s yelps feebly.", m_name);
+			msgf("%^s yelps feebly.", m_name);
 	}
 
 	/* One type of monsters (ignore,squeal,shriek) */
 	else if (strchr("Xbilqrt", r_ptr->d_char))
 	{
 		if (percentage > 95)
-			msg_format("%^s ignores the attack.", m_name);
+			msgf("%^s ignores the attack.", m_name);
 		else if (percentage > 75)
-			msg_format("%^s grunts with pain.", m_name);
+			msgf("%^s grunts with pain.", m_name);
 		else if (percentage > 50)
-			msg_format("%^s squeals in pain.", m_name);
+			msgf("%^s squeals in pain.", m_name);
 		else if (percentage > 35)
-			msg_format("%^s shrieks in pain.", m_name);
+			msgf("%^s shrieks in pain.", m_name);
 		else if (percentage > 20)
-			msg_format("%^s shrieks in agony.", m_name);
+			msgf("%^s shrieks in agony.", m_name);
 		else if (percentage > 10)
-			msg_format("%^s writhes in agony.", m_name);
+			msgf("%^s writhes in agony.", m_name);
 		else
-			msg_format("%^s cries out feebly.", m_name);
+			msgf("%^s cries out feebly.", m_name);
 	}
 
 	/* Another type of monsters (shrug,cry,scream) */
 	else
 	{
 		if (percentage > 95)
-			msg_format("%^s shrugs off the attack.", m_name);
+			msgf("%^s shrugs off the attack.", m_name);
 		else if (percentage > 75)
-			msg_format("%^s grunts with pain.", m_name);
+			msgf("%^s grunts with pain.", m_name);
 		else if (percentage > 50)
-			msg_format("%^s cries out in pain.", m_name);
+			msgf("%^s cries out in pain.", m_name);
 		else if (percentage > 35)
-			msg_format("%^s screams in pain.", m_name);
+			msgf("%^s screams in pain.", m_name);
 		else if (percentage > 20)
-			msg_format("%^s screams in agony.", m_name);
+			msgf("%^s screams in agony.", m_name);
 		else if (percentage > 10)
-			msg_format("%^s writhes in agony.", m_name);
+			msgf("%^s writhes in agony.", m_name);
 		else
-			msg_format("%^s cries out feebly.", m_name);
+			msgf("%^s cries out feebly.", m_name);
 	}
 }
 

@@ -366,7 +366,7 @@ void compact_fields(int size)
 	if (size)
 	{
 		/* Message */
-		msg_print("Compacting fields...");
+		msgf("Compacting fields...");
 
 		/* Redraw map */
 		p_ptr->redraw |= (PR_MAP);
@@ -639,7 +639,7 @@ s16b f_pop(void)
 
 
 	/* Warn the player (except during dungeon creation) */
-	if (character_dungeon) msg_print("Too many fields!");
+	if (character_dungeon) msgf("Too many fields!");
 
 	/* Oops */
 	return (0);
@@ -1375,20 +1375,20 @@ void test_field_data_integrity(void)
 				/* Dead field? */
 				if (!f_ptr->t_idx)
 				{
-					msg_print("Dead Field");
-					msg_format("Field %d", fld_idx);
+					msgf("Dead Field");
+					msgf("Field %d", fld_idx);
 				}
 
 				if (fld_idx > fld_max)
 				{
-					msg_print("Field index inconsistancy.");
+					msgf("Field index inconsistancy.");
 				}
 
 				if ((f_ptr->fy != j) || (f_ptr->fx != i))
 				{
-					msg_print("Field location inconsistancy.");
-					msg_format("Field x, cave x,%d,%d", f_ptr->fx, i);
-					msg_format("Field y, cave y,%d,%d", f_ptr->fy, j);
+					msgf("Field location inconsistancy.");
+					msgf("Field x, cave x,%d,%d", f_ptr->fx, i);
+					msgf("Field y, cave y,%d,%d", f_ptr->fy, j);
 				}
 
 				fld_idx = f_ptr->next_f_idx;
@@ -1490,7 +1490,7 @@ bool field_action_glyph_warding(field_type *f_ptr, va_list vp)
 		/* Describe observable breakage */
 		if (player_has_los_grid(parea(f_ptr->fx, f_ptr->fy)))
 		{
-			msg_print("The rune of protection is broken!");
+			msgf("The rune of protection is broken!");
 		}
 
 		/* Destroyed the rune */
@@ -1543,12 +1543,12 @@ bool field_action_glyph_explode(field_type *f_ptr, va_list vp)
 	{
 		if ((f_ptr->fy == p_ptr->py) && (f_ptr->fx == p_ptr->px))
 		{
-			msg_print("The rune explodes!");
+			msgf("The rune explodes!");
 			(void)fire_ball(GF_MANA, 0, 2 * ((p_ptr->lev / 2) + damroll(7, 7)),
 							2);
 		}
 		else
-			msg_print("An explosive rune was disarmed.");
+			msgf("An explosive rune was disarmed.");
 
 		/* Forced a rune */
 		*flags |= MEG_FORCE;
@@ -1595,7 +1595,7 @@ bool field_action_corpse_decay(field_type *f_ptr, va_list vp)
 		{
 			if (player_has_los_grid(parea(f_ptr->fx, f_ptr->fy)))
 			{
-				if (disturb_minor) msg_format("The %s rises.", t_ptr->name);
+				if (disturb_minor) msgf("The %s rises.", t_ptr->name);
 			}
 
 			/* Set the cloned flag, so no treasure is dropped */
@@ -1606,7 +1606,7 @@ bool field_action_corpse_decay(field_type *f_ptr, va_list vp)
 		else if (player_has_los_grid(parea(f_ptr->fx, f_ptr->fy)))
 		{
 			/* Let player know what happened. */
-			if (disturb_minor) msg_format("The %s decays.", t_ptr->name);
+			if (disturb_minor) msgf("The %s decays.", t_ptr->name);
 		}
 
 	}
@@ -1615,7 +1615,7 @@ bool field_action_corpse_decay(field_type *f_ptr, va_list vp)
 		if (player_has_los_grid(parea(f_ptr->fx, f_ptr->fy)))
 		{
 			/* Let player know what happened. */
-			if (disturb_minor) msg_format("The %s decays.", t_ptr->name);
+			if (disturb_minor) msgf("The %s decays.", t_ptr->name);
 		}
 	}
 
@@ -1821,7 +1821,7 @@ bool field_action_wall_tunnel(field_type *f_ptr, va_list vp)
 	{
 		/* Success */
 
-		msg_print("You have finished the tunnel.");
+		msgf("You have finished the tunnel.");
 
 		/* Delete field */
 		return (TRUE);
@@ -1829,7 +1829,7 @@ bool field_action_wall_tunnel(field_type *f_ptr, va_list vp)
 
 	/* Failure */
 
-	msg_print("You tunnel into it.");
+	msgf("You tunnel into it.");
 
 	return (FALSE);
 }
@@ -2206,7 +2206,7 @@ bool field_action_trap_gf(field_type *f_ptr, va_list vp)
 			{
 				*notice = TRUE;
 
-				msg_print("There is a bright flash of light!");
+				msgf("There is a bright flash of light!");
 			}
 
 			/* Delete the field */
@@ -2236,7 +2236,7 @@ static void hit_trap(field_type *f_ptr)
 		f_ptr->info &= ~(FIELD_INFO_NO_LOOK);
 
 		/* Message */
-		msg_print("You found a trap!");
+		msgf("You found a trap!");
 
 		/* Notice the changes */
 		notice_field(f_ptr);
@@ -2266,13 +2266,13 @@ bool field_action_hit_trap_door(field_type *f_ptr, va_list vp)
 
 	if (p_ptr->ffall)
 	{
-		msg_print("You fly over a trap door.");
+		msgf("You fly over a trap door.");
 	}
 	else
 	{
 		if (!p_ptr->leaving)
 		{
-			msg_print("You have fallen through a trap door!");
+			msgf("You have fallen through a trap door!");
 			sound(SOUND_FALL);
 			dam = damroll(4, 8);
 			name = "a trap door";
@@ -2309,11 +2309,11 @@ bool field_action_hit_trap_pit(field_type *f_ptr, va_list vp)
 
 	if (p_ptr->ffall)
 	{
-		msg_print("You fly over a pit trap.");
+		msgf("You fly over a pit trap.");
 	}
 	else
 	{
-		msg_print("You have fallen into a pit!");
+		msgf("You have fallen into a pit!");
 		dam = damroll(3, 8);
 		name = "a pit trap";
 		take_hit(dam, name);
@@ -2338,11 +2338,11 @@ bool field_action_hit_trap_spike(field_type *f_ptr, va_list vp)
 
 	if (p_ptr->ffall)
 	{
-		msg_print("You fly over a spiked pit.");
+		msgf("You fly over a spiked pit.");
 	}
 	else
 	{
-		msg_print("You fall into a spiked pit!");
+		msgf("You fall into a spiked pit!");
 
 		/* Base damage */
 		name = "a pit trap";
@@ -2351,7 +2351,7 @@ bool field_action_hit_trap_spike(field_type *f_ptr, va_list vp)
 		/* Extra spike damage */
 		if (randint0(100) < 50)
 		{
-			msg_print("You are impaled!");
+			msgf("You are impaled!");
 
 			name = "a spiked pit";
 			dam *= 2;
@@ -2381,11 +2381,11 @@ bool field_action_hit_trap_poison_pit(field_type *f_ptr, va_list vp)
 
 	if (p_ptr->ffall)
 	{
-		msg_print("You fly over a spiked pit.");
+		msgf("You fly over a spiked pit.");
 	}
 	else
 	{
-		msg_print("You fall into a spiked pit!");
+		msgf("You fall into a spiked pit!");
 
 		/* Base damage */
 		dam = damroll(6, 8);
@@ -2395,7 +2395,7 @@ bool field_action_hit_trap_poison_pit(field_type *f_ptr, va_list vp)
 		/* Extra spike damage */
 		if (randint0(100) < 50)
 		{
-			msg_print("You are impaled on poisonous spikes!");
+			msgf("You are impaled on poisonous spikes!");
 
 			name = "a spiked pit";
 
@@ -2404,7 +2404,7 @@ bool field_action_hit_trap_poison_pit(field_type *f_ptr, va_list vp)
 
 			if (p_ptr->resist_pois || p_ptr->oppose_pois)
 			{
-				msg_print("The poison does not affect you!");
+				msgf("The poison does not affect you!");
 			}
 			else
 			{
@@ -2433,7 +2433,7 @@ bool field_action_hit_trap_curse(field_type *f_ptr, va_list vp)
 	/* Saving throw */
 	if (!check_save(f_ptr->data[1])) return (FALSE);
 
-	msg_print("There is a flash of shimmering light!");
+	msgf("There is a flash of shimmering light!");
 
 	/* Curse the equipment */
 	curse_equipment(p_ptr->depth, p_ptr->depth / 10);
@@ -2479,7 +2479,7 @@ bool field_action_hit_trap_teleport(field_type *f_ptr, va_list vp)
 	/* Saving throw */
 	if (!check_save(f_ptr->data[1])) return (FALSE);
 
-	msg_print("You hit a teleport trap!");
+	msgf("You hit a teleport trap!");
 	teleport_player(100);
 
 	/* Done */
@@ -2502,7 +2502,7 @@ bool field_action_hit_trap_element(field_type *f_ptr, va_list vp)
 	{
 		case 0:
 		{
-			msg_print("You are enveloped in flames!");
+			msgf("You are enveloped in flames!");
 			dam = damroll(4, 6);
 			fire_dam(dam, "a fire trap");
 			break;
@@ -2510,7 +2510,7 @@ bool field_action_hit_trap_element(field_type *f_ptr, va_list vp)
 
 		case 1:
 		{
-			msg_print("You are splashed with acid!");
+			msgf("You are splashed with acid!");
 			dam = damroll(4, 6);
 			acid_dam(dam, "an acid trap");
 			break;
@@ -2518,7 +2518,7 @@ bool field_action_hit_trap_element(field_type *f_ptr, va_list vp)
 
 		case 2:
 		{
-			msg_print("A pungent green gas surrounds you!");
+			msgf("A pungent green gas surrounds you!");
 			if (!p_ptr->resist_pois && !p_ptr->oppose_pois)
 			{
 				(void)set_poisoned(p_ptr->poisoned + rand_range(10, 30));
@@ -2528,7 +2528,7 @@ bool field_action_hit_trap_element(field_type *f_ptr, va_list vp)
 
 		case 3:
 		{
-			msg_print("You are splashed with freezing liquid!");
+			msgf("You are splashed with freezing liquid!");
 			dam = damroll(4, 6);
 			cold_dam(dam, "a cold trap");
 			break;
@@ -2536,7 +2536,7 @@ bool field_action_hit_trap_element(field_type *f_ptr, va_list vp)
 
 		case 4:
 		{
-			msg_print("You are hit by a spark!");
+			msgf("You are hit by a spark!");
 			dam = damroll(4, 6);
 			elec_dam(dam, "an electric trap");
 			break;
@@ -2561,7 +2561,7 @@ bool field_action_hit_trap_ba_element(field_type *f_ptr, va_list vp)
 	{
 		case 0:
 		{
-			msg_print("You are enveloped in a ball of flames!");
+			msgf("You are enveloped in a ball of flames!");
 			(void)fire_ball(GF_FIRE, 0, 350, 4);
 
 			fire_dam(150, "a fire trap");
@@ -2570,7 +2570,7 @@ bool field_action_hit_trap_ba_element(field_type *f_ptr, va_list vp)
 
 		case 1:
 		{
-			msg_print("You are soaked with acid!");
+			msgf("You are soaked with acid!");
 			(void)fire_ball(GF_ACID, 0, 350, 4);
 
 			acid_dam(150, "an acid trap");
@@ -2579,7 +2579,7 @@ bool field_action_hit_trap_ba_element(field_type *f_ptr, va_list vp)
 
 		case 2:
 		{
-			msg_print("A pungent grey gas surrounds you!");
+			msgf("A pungent grey gas surrounds you!");
 			(void)fire_ball(GF_POIS, 0, 350, 4);
 
 			if (!p_ptr->resist_pois && !p_ptr->oppose_pois)
@@ -2591,7 +2591,7 @@ bool field_action_hit_trap_ba_element(field_type *f_ptr, va_list vp)
 
 		case 3:
 		{
-			msg_print("You are soaked with freezing liquid!");
+			msgf("You are soaked with freezing liquid!");
 			(void)fire_ball(GF_ICE, 0, 350, 4);
 
 			cold_dam(150, "a cold trap");
@@ -2600,7 +2600,7 @@ bool field_action_hit_trap_ba_element(field_type *f_ptr, va_list vp)
 
 		case 4:
 		{
-			msg_print("You are hit by lightning!");
+			msgf("You are hit by lightning!");
 			(void)fire_ball(GF_ELEC, 0, 350, 4);
 
 			elec_dam(150, "a lightning trap");
@@ -2626,14 +2626,14 @@ bool field_action_hit_trap_gas(field_type *f_ptr, va_list vp)
 	{
 		case 0:
 		{
-			msg_print("A blue gas surrounds you!");
+			msgf("A blue gas surrounds you!");
 			(void)set_slow(p_ptr->slow + rand_range(20, 40));
 			break;
 		}
 
 		case 1:
 		{
-			msg_print("A black gas surrounds you!");
+			msgf("A black gas surrounds you!");
 			if (!p_ptr->resist_blind)
 			{
 				(void)set_blind(p_ptr->blind + rand_range(25, 75));
@@ -2643,7 +2643,7 @@ bool field_action_hit_trap_gas(field_type *f_ptr, va_list vp)
 
 		case 2:
 		{
-			msg_print("A gas of scintillating colors surrounds you!");
+			msgf("A gas of scintillating colors surrounds you!");
 			if (!p_ptr->resist_confu)
 			{
 				(void)set_confused(p_ptr->confused + rand_range(10, 30));
@@ -2653,14 +2653,14 @@ bool field_action_hit_trap_gas(field_type *f_ptr, va_list vp)
 
 		case 3:
 		{
-			msg_print("A strange white mist surrounds you!");
+			msgf("A strange white mist surrounds you!");
 			if (!p_ptr->free_act)
 			{
-				msg_print("You fall asleep.");
+				msgf("You fall asleep.");
 
 				if (ironman_nightmare)
 				{
-					msg_print("A horrible vision enters your mind.");
+					msgf("A horrible vision enters your mind.");
 
 					/* Pick a nightmare */
 					get_mon_num_prep(get_nightmare, NULL);
@@ -2678,7 +2678,7 @@ bool field_action_hit_trap_gas(field_type *f_ptr, va_list vp)
 
 		case 4:
 		{
-			msg_print("A gas of scintillating colors surrounds you!");
+			msgf("A gas of scintillating colors surrounds you!");
 
 			if (!p_ptr->resist_chaos)
 			{
@@ -2704,7 +2704,7 @@ bool field_action_hit_trap_traps(field_type *f_ptr, va_list vp)
 	/* Saving throw */
 	if (!check_save(f_ptr->data[1])) return (FALSE);
 
-	msg_print("There is a bright flash of light!");
+	msgf("There is a bright flash of light!");
 
 	/* Make some new traps */
 	(void)project(0, 1, p_ptr->px, p_ptr->py, 0, GF_MAKE_TRAP,
@@ -2732,14 +2732,14 @@ bool field_action_hit_trap_temp_stat(field_type *f_ptr, va_list vp)
 		{
 			if (check_hit(f_ptr->data[1]))
 			{
-				msg_print("A small dart hits you!");
+				msgf("A small dart hits you!");
 				dam = damroll(1, 4);
 				take_hit(dam, "a dart trap");
 				(void)do_dec_stat(A_STR);
 			}
 			else
 			{
-				msg_print("A small dart barely misses you.");
+				msgf("A small dart barely misses you.");
 			}
 			break;
 		}
@@ -2748,14 +2748,14 @@ bool field_action_hit_trap_temp_stat(field_type *f_ptr, va_list vp)
 		{
 			if (check_hit(f_ptr->data[1]))
 			{
-				msg_print("A small dart hits you!");
+				msgf("A small dart hits you!");
 				dam = damroll(1, 4);
 				take_hit(dam, "a dart trap");
 				(void)do_dec_stat(A_DEX);
 			}
 			else
 			{
-				msg_print("A small dart barely misses you.");
+				msgf("A small dart barely misses you.");
 			}
 			break;
 		}
@@ -2764,14 +2764,14 @@ bool field_action_hit_trap_temp_stat(field_type *f_ptr, va_list vp)
 		{
 			if (check_hit(f_ptr->data[1]))
 			{
-				msg_print("A small dart hits you!");
+				msgf("A small dart hits you!");
 				dam = damroll(1, 4);
 				take_hit(dam, "a dart trap");
 				(void)do_dec_stat(A_CON);
 			}
 			else
 			{
-				msg_print("A small dart barely misses you.");
+				msgf("A small dart barely misses you.");
 			}
 			break;
 		}
@@ -2794,14 +2794,14 @@ bool field_action_hit_trap_perm_stat(field_type *f_ptr, va_list vp)
 
 	if (check_hit(f_ptr->data[1]))
 	{
-		msg_print("A small dart hits you!");
+		msgf("A small dart hits you!");
 		dam = damroll(1, 4);
 		take_hit(dam, "a dart trap");
 		(void)dec_stat(f_ptr->data[3], 30, TRUE);
 	}
 	else
 	{
-		msg_print("A small dart barely misses you.");
+		msgf("A small dart barely misses you.");
 	}
 
 	/* Done */
@@ -2820,7 +2820,7 @@ bool field_action_hit_trap_lose_xp(field_type *f_ptr, va_list vp)
 	/* Hit the trap */
 	hit_trap(f_ptr);
 
-	msg_print("Your head throbs!");
+	msgf("Your head throbs!");
 	lose_exp(p_ptr->exp / 5);
 
 	/* Done */
@@ -2841,12 +2841,12 @@ bool field_action_hit_trap_disenchant(field_type *f_ptr, va_list vp)
 
 	if (!p_ptr->resist_disen)
 	{
-		msg_print("There is a bright flash of light!");
+		msgf("There is a bright flash of light!");
 		(void)apply_disenchant();
 	}
 	else
 	{
-		msg_print("You feel the air throb.");
+		msgf("You feel the air throb.");
 	}
 
 	/* Done */
@@ -2869,7 +2869,7 @@ bool field_action_hit_trap_drop_item(field_type *f_ptr, va_list vp)
 	/* Saving throw */
 	if (!check_save(f_ptr->data[1])) return (FALSE);
 
-	msg_print("You fumble with your pack!");
+	msgf("You fumble with your pack!");
 
 	/* Get the item to drop */
 	item = randint1(get_list_length(p_ptr->inventory));
@@ -2922,7 +2922,7 @@ bool field_action_hit_trap_new_life(field_type *f_ptr, va_list vp)
 
 	if (p_ptr->muta1 || p_ptr->muta2 || p_ptr->muta3)
 	{
-		msg_print("You are cured of all mutations.");
+		msgf("You are cured of all mutations.");
 		p_ptr->muta1 = p_ptr->muta2 = p_ptr->muta3 = 0;
 		p_ptr->update |= PU_BONUS;
 		handle_stuff();
@@ -2946,7 +2946,7 @@ bool field_action_hit_trap_no_lite(field_type *f_ptr, va_list vp)
 	/* Saving throw */
 	if (!check_save(f_ptr->data[1])) return (FALSE);
 
-	msg_print("Darkness surrounds you!");
+	msgf("Darkness surrounds you!");
 
 	/* Access the lite */
 	o_ptr = &p_ptr->equipment[EQUIP_LITE];
@@ -2983,7 +2983,7 @@ bool field_action_hit_trap_hunger(field_type *f_ptr, va_list vp)
 	/* Saving throw */
 	if (!check_save(f_ptr->data[1])) return (FALSE);
 
-	msg_print("You suddenly feel very, very hungry!");
+	msgf("You suddenly feel very, very hungry!");
 
 	/* Only effect non-starving people */
 	if (p_ptr->food > PY_FOOD_WEAK)
@@ -3008,7 +3008,7 @@ bool field_action_hit_trap_no_gold(field_type *f_ptr, va_list vp)
 	/* Saving throw */
 	if (!check_save(f_ptr->data[1])) return (FALSE);
 
-	msg_print("Your purse becomes weightless!");
+	msgf("Your purse becomes weightless!");
 
 	/* No gold! */
 	p_ptr->au = p_ptr->au / 2;
@@ -3035,7 +3035,7 @@ bool field_action_hit_trap_haste_mon(field_type *f_ptr, va_list vp)
 	/* Saving throw */
 	if (!check_save(f_ptr->data[1])) return (FALSE);
 
-	msg_print("A shrill note sounds!");
+	msgf("A shrill note sounds!");
 
 	(void)speed_monsters();
 
@@ -3055,7 +3055,7 @@ bool field_action_hit_trap_raise_mon(field_type *f_ptr, va_list vp)
 	/* Saving throw */
 	if (!check_save(f_ptr->data[1])) return (FALSE);
 
-	msg_print("You smell something musty.");
+	msgf("You smell something musty.");
 
 	(void)raise_dead(p_ptr->px, p_ptr->py, FALSE);
 
@@ -3077,7 +3077,7 @@ bool field_action_hit_trap_drain_magic(field_type *f_ptr, va_list vp)
 	/* Saving throw */
 	if (!check_save(f_ptr->data[1])) return (FALSE);
 
-	msg_print("Static fills the air.");
+	msgf("Static fills the air.");
 
 	/* Find an item */
 	OBJ_ITT_START (p_ptr->inventory, o_ptr)
@@ -3119,7 +3119,7 @@ bool field_action_hit_trap_aggravate(field_type *f_ptr, va_list vp)
 	/* Saving throw */
 	if (!check_save(f_ptr->data[1])) return (FALSE);
 
-	msg_print("Shouts fill the air!");
+	msgf("Shouts fill the air!");
 
 	aggravate_monsters(0);
 
@@ -3139,7 +3139,7 @@ bool field_action_hit_trap_summon(field_type *f_ptr, va_list vp)
 	/* Saving throw */
 	if (!check_save(f_ptr->data[1])) return (FALSE);
 
-	msg_print("Zap!");
+	msgf("Zap!");
 
 	/* Summon monsters */
 	(void)summon_specific(0, p_ptr->px, p_ptr->py, p_ptr->depth,
@@ -3167,7 +3167,7 @@ bool field_action_hit_trap_lose_memory(field_type *f_ptr, va_list vp)
 		return (FALSE);
 	}
 
-	msg_print("You are not sure what just happened!");
+	msgf("You are not sure what just happened!");
 
 	(void)lose_all_info();
 
@@ -3208,7 +3208,7 @@ void make_lockjam_door(int x, int y, int power, bool jam)
 			 * Probably a store or building... exit.
 			 */
 
-			msg_print("Cannot make door! Already one there!");
+			msgf("Cannot make door! Already one there!");
 
 			/* Exit */
 			return;
@@ -3235,7 +3235,7 @@ void make_lockjam_door(int x, int y, int power, bool jam)
 
 	if (!fld_idx)
 	{
-		msg_print("Cannot make door! Too many fields.");
+		msgf("Cannot make door! Too many fields.");
 		return;
 	}
 
@@ -3303,7 +3303,7 @@ bool field_action_door_unlock(field_type *f_ptr, va_list vp)
 		/* Success */
 
 		/* Message */
-		msg_print("The door is unlocked.");
+		msgf("The door is unlocked.");
 
 		/* Open the door */
 		cave_set_feat(f_ptr->fx, f_ptr->fy, FEAT_OPEN);
@@ -3315,7 +3315,7 @@ bool field_action_door_unlock(field_type *f_ptr, va_list vp)
 	/* Failure */
 
 	/* Message */
-	msg_print("You failed to unlock the door.");
+	msgf("You failed to unlock the door.");
 
 	/* We know the door is locked */
 	f_ptr->info |= FIELD_INFO_NFT_LOOK;
@@ -3338,7 +3338,7 @@ bool field_action_door_bash(field_type *f_ptr, va_list vp)
 		/* Success */
 
 		/* Message */
-		msg_print("The door crashes open!");
+		msgf("The door crashes open!");
 
 		/* Break down the door */
 		if (randint0(100) < 50)
@@ -3459,7 +3459,7 @@ bool field_action_door_jam_monster(field_type *f_ptr, va_list vp)
 		if (randint0(m_ptr->hp) > f_ptr->counter * f_ptr->counter)
 		{
 			/* Message */
-			msg_print("You hear a door burst open!");
+			msgf("You hear a door burst open!");
 
 			/* Disturb (sometimes) */
 			if (disturb_minor) disturb(FALSE);
@@ -3522,7 +3522,7 @@ bool field_action_door_gf(field_type *f_ptr, va_list vp)
 		/* Destroy the door */
 		if (known)
 		{
-			msg_print("There is a bright flash of light!");
+			msgf("There is a bright flash of light!");
 			*notice = TRUE;
 		}
 
@@ -3537,7 +3537,7 @@ bool field_action_door_gf(field_type *f_ptr, va_list vp)
 		/* Unlock the door */
 		if (known)
 		{
-			msg_print("Click!");
+			msgf("Click!");
 			*notice = TRUE;
 		}
 
@@ -3676,7 +3676,7 @@ bool field_action_recharge2(field_type *f_ptr, va_list vp)
 			/* Combine / Reorder the pack (later) */
 			p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-			msg_print("Your posessions have been identified.");
+			msgf("Your posessions have been identified.");
 			message_flush();
 		}
 
@@ -3804,7 +3804,7 @@ bool field_action_mutate2(field_type *f_ptr, va_list vp)
 		{
 			if (lose_mutation(0))
 			{
-				msg_print("You feel oddly normal.");
+				msgf("You feel oddly normal.");
 			}
 			else
 			{
@@ -3863,7 +3863,7 @@ bool field_action_buymap2(field_type *f_ptr, va_list vp)
 
 		if (test_gold(&cost))
 		{
-			msg_print("You learn of the lay of the lands.");
+			msgf("You learn of the lay of the lands.");
 
 			/* Map a radius-20 circle around the player */
 			map_wilderness(20,
@@ -4051,7 +4051,7 @@ bool field_action_inn2(field_type *f_ptr, va_list vp)
 
 		if (test_gold(&cost))
 		{
-			msg_print("The barkeeper gives you some gruel and a beer.");
+			msgf("The barkeeper gives you some gruel and a beer.");
 			message_flush();
 			(void)set_food(PY_FOOD_MAX - 1);
 
@@ -4187,7 +4187,7 @@ bool field_action_magetower2(field_type *f_ptr, va_list vp)
 				/* Subtract off cost */
 				p_ptr->au -= cost;
 
-				msg_print("The portal keeper notes your aura.");
+				msgf("The portal keeper notes your aura.");
 			}
 		}
 

@@ -421,7 +421,7 @@ void enter_score(void)
 	/* Wizard-mode pre-empts scoring */
 	if (p_ptr->noscore & 0x003F)
 	{
-		msg_print("Score not registered for wizards.");
+		msgf("Score not registered for wizards.");
 		message_flush();
 		score_idx = -1;
 		return;
@@ -432,7 +432,7 @@ void enter_score(void)
 	/* Borg-mode pre-empts scoring */
 	if (p_ptr->noscore & 0x00C0)
 	{
-		msg_print("Score not registered for borgs.");
+		msgf("Score not registered for borgs.");
 		message_flush();
 		score_idx = -1;
 		return;
@@ -443,7 +443,7 @@ void enter_score(void)
 	/* Cheaters are not scored */
 	if (p_ptr->noscore & 0xFF00)
 	{
-		msg_print("Score not registered for cheaters.");
+		msgf("Score not registered for cheaters.");
 		message_flush();
 		score_idx = -1;
 		return;
@@ -453,7 +453,7 @@ void enter_score(void)
 	/* Interupted */
 	if (!p_ptr->total_winner && streq(p_ptr->died_from, "Interrupting"))
 	{
-		msg_print("Score not registered due to interruption.");
+		msgf("Score not registered due to interruption.");
 		message_flush();
 		score_idx = -1;
 		return;
@@ -462,7 +462,7 @@ void enter_score(void)
 	/* Quitter */
 	if (!p_ptr->total_winner && streq(p_ptr->died_from, "Quitting"))
 	{
-		msg_print("Score not registered due to quitting.");
+		msgf("Score not registered due to quitting.");
 		message_flush();
 		score_idx = -1;
 		return;
@@ -567,7 +567,7 @@ void top_twenty(void)
 	/* No score file */
 	if (highscore_fd < 0)
 	{
-		msg_print("Score file unavailable.");
+		msgf("Score file unavailable.");
 		message_flush();
 		return;
 	}
@@ -602,7 +602,7 @@ void predict_score(void)
 	/* No score file */
 	if (highscore_fd < 0)
 	{
-		msg_print("Score file unavailable.");
+		msgf("Score file unavailable.");
 		message_flush();
 		return;
 	}
@@ -680,7 +680,7 @@ void show_highclass(void)
 
 	if (highscore_fd < 0)
 	{
-		msg_print("Score file unavailable.");
+		msgf("Score file unavailable.");
 		message_flush();
 		return;
 	}
@@ -713,7 +713,7 @@ void show_highclass(void)
 
 	(void)fd_close(highscore_fd);
 	highscore_fd = -1;
-	msg_print("Hit any key to continue");
+	msgf("Hit any key to continue");
 	message_flush();
 
 	clear_region(0, 5, 17);
@@ -743,7 +743,7 @@ void race_score(int race_num)
 
 	if (highscore_fd < 0)
 	{
-		msg_print("Score file unavailable.");
+		msgf("Score file unavailable.");
 		message_flush();
 		return;
 	}
@@ -799,7 +799,7 @@ void race_legends(void)
 	for (i = 0; i < MAX_RACES; i++)
 	{
 		race_score(i);
-		msg_print("Hit any key to continue");
+		msgf("Hit any key to continue");
 		message_flush();
         clear_region(0, 5, 18);
 	}

@@ -783,8 +783,8 @@ static cptr suffix_spell[] =
 
 #if 0
 /* XXX XXX XXX */
-msg_format("%^s looks healthier.", m_name);
-msg_format("%^s looks REALLY healthy!", m_name);
+msgf("%^s looks healthier.", m_name);
+msgf("%^s looks REALLY healthy!", m_name);
 #endif
 
 
@@ -3129,8 +3129,8 @@ void do_cmd_borg(void)
 			    	"Command 'o' Examine Inven Item.");
 
 		/* Prompt for key */
-		msg_print("Commands: ");
-		msg_print(NULL);
+		msgf("Commands: ");
+		message_flush();
 
 		/* Restore the screen */
 		Term_load();
@@ -3339,7 +3339,7 @@ void do_cmd_borg(void)
 				{
 					/* Dump savefile at each death */
 					borg_flag_dump = !borg_flag_dump;
-					msg_format("Borg -- borg_flag_dump is now %d.",
+					msgf("Borg -- borg_flag_dump is now %d.",
 							   borg_flag_dump);
 					break;
 				}
@@ -3362,7 +3362,7 @@ void do_cmd_borg(void)
 				case 'D':
 				{
 					borg_cheat_death = !borg_cheat_death;
-					msg_format("Borg -- borg_cheat_death is now %d.",
+					msgf("Borg -- borg_cheat_death is now %d.",
 							   borg_cheat_death);
 					break;
 				}
@@ -3394,7 +3394,7 @@ void do_cmd_borg(void)
 				borg_fff = my_fopen(buf, "w");
 
 				/* Failure */
-				if (!borg_fff) msg_print("Cannot open that file.");
+				if (!borg_fff) msgf("Cannot open that file.");
 			}
 
 			/* Hack -- grab permissions */
@@ -3414,7 +3414,7 @@ void do_cmd_borg(void)
 				strcpy(borg_match, "");
 
 				/* Message */
-				msg_print("Borg Match String de-activated.");
+				msgf("Borg Match String de-activated.");
 			}
 			break;
 		}
@@ -3520,8 +3520,8 @@ void do_cmd_borg(void)
 			borg_display_map_info(feat, BORG_SHOW_FEAT);
 
 			/* Get keypress */
-			msg_print("Press any key.");
-			msg_print(NULL);
+			msgf("Press any key.");
+			message_flush();
 
 			/* Redraw map */
 			prt_map();
@@ -3592,8 +3592,8 @@ void do_cmd_borg(void)
 			borg_display_map_info(mask, BORG_SHOW_FLAG);
 
 			/* Get keypress */
-			msg_print("Press any key.");
-			msg_print(NULL);
+			msgf("Press any key.");
+			message_flush();
 
 			/* Redraw map */
 			prt_map();
@@ -3609,8 +3609,8 @@ void do_cmd_borg(void)
 			borg_display_map_info(0, BORG_SHOW_AVOID);
 
 			/* Get keypress */
-			msg_format("(%d,%d) Avoidance value %d.", c_x, c_y, avoidance);
-			msg_print(NULL);
+			msgf("(%d,%d) Avoidance value %d.", c_x, c_y, avoidance);
+			message_flush();
 
 			/* Redraw map */
 			prt_map();
@@ -3625,8 +3625,8 @@ void do_cmd_borg(void)
 			borg_display_map_info(0, BORG_SHOW_STEP);
 
 			/* Get keypress */
-			msg_format("(%d) Steps noted", track_step_num);
-			msg_print(NULL);
+			msgf("(%d) Steps noted", track_step_num);
+			message_flush();
 
 			/* Redraw map */
 			prt_map();
@@ -3659,8 +3659,8 @@ void do_cmd_borg(void)
 			}
 
 			/* Get keypress */
-			msg_format("There are %d known monsters.", n);
-			msg_print(NULL);
+			msgf("There are %d known monsters.", n);
+			message_flush();
 
 			/* Redraw map */
 			prt_map();
@@ -3693,8 +3693,8 @@ void do_cmd_borg(void)
 			}
 
 			/* Get keypress */
-			msg_format("There are %d known objects.", n);
-			msg_print(NULL);
+			msgf("There are %d known objects.", n);
+			message_flush();
 
 			/* Redraw map */
 			prt_map();
@@ -3716,8 +3716,8 @@ void do_cmd_borg(void)
 			}
 
 			/* Get keypress */
-			msg_format("There are %d known shops.", n);
-			msg_print(NULL);
+			msgf("There are %d known shops.", n);
+			message_flush();
 
 			/* Redraw map */
 			prt_map();
@@ -3736,8 +3736,8 @@ void do_cmd_borg(void)
 				borg_display_map_info(i, BORG_SHOW_FLOW);
 
 				/* Get keypress */
-				msg_format("Flow depth %d.", i);
-				msg_print(NULL);
+				msgf("Flow depth %d.", i);
+				message_flush();
 
 				if (!get_check("Continue?")) break;
 
@@ -3821,8 +3821,8 @@ void do_cmd_borg(void)
 				}
 
 			}
-			msg_print("Probable Flow Path");
-			msg_print(NULL);
+			msgf("Probable Flow Path");
+			message_flush();
 
 			/* Redraw map */
 			prt_map();
@@ -3838,7 +3838,7 @@ void do_cmd_borg(void)
 			n = (p_ptr->command_arg ? p_ptr->command_arg : 1);
 
 			/* Danger of grid */
-			msg_format("Danger(%d,%d,%d) is %d",
+			msgf("Danger(%d,%d,%d) is %d",
 					   p_ptr->target_col, p_ptr->target_row, n,
 					   borg_danger(p_ptr->target_col, p_ptr->target_row, n,
 								   TRUE));
@@ -3853,8 +3853,8 @@ void do_cmd_borg(void)
 			borg_display_map_info(0, BORG_SHOW_FEAR);
 
 			/* Get keypress */
-			msg_format("(%d,%d) Regional Fear.", c_x, c_y);
-			msg_print(NULL);
+			msgf("(%d,%d) Regional Fear.", c_x, c_y);
+			message_flush();
 
 			/* Redraw map */
 			prt_map();
@@ -3880,8 +3880,8 @@ void do_cmd_borg(void)
 			p = borg_power();
 
 			/* Report it */
-			msg_format("Current Borg Power %ld", p);
-			msg_format("Current Home Power %ld", borg_power_home());
+			msgf("Current Borg Power %ld", p);
+			msgf("Current Home Power %ld", borg_power_home());
 
 			break;
 		}
@@ -3891,11 +3891,11 @@ void do_cmd_borg(void)
 			/* Command: Show time */
 			s32b time = borg_t - borg_began;
 
-			msg_format("time: (%d) ", (int)time);
+			msgf("time: (%d) ", (int)time);
 			time = (borg_time_town + (borg_t - borg_began));
 
-			msg_format("; from town (%d)", (int)time);
-			msg_format("; need inviso (%d)", (int)need_see_inviso);
+			msgf("; from town (%d)", (int)time);
+			msgf("; need inviso (%d)", (int)need_see_inviso);
 			break;
 		}
 
@@ -3941,7 +3941,7 @@ void do_cmd_borg(void)
 				if (borg_prepared(i)) break;
 			}
 
-			msg_format("Max Level: %d  Prep'd For: %d  Reason: %s",
+			msgf("Max Level: %d  Prep'd For: %d  Reason: %s",
 					   bp_ptr->max_depth, i - 1, borg_prepared(i));
 
 			break;
@@ -3964,8 +3964,8 @@ void do_cmd_borg(void)
 			borg_display_item(&inventory[n]);
 
 			/* pause for study */
-			msg_format("Borg believes: ");
-			msg_print(NULL);
+			msgf("Borg believes: ");
+			message_flush();
 
 			/* Restore the screen */
 			Term_load();
@@ -3991,8 +3991,8 @@ void do_cmd_borg(void)
 			borg_display_item(&equipment[n]);
 
 			/* pause for study */
-			msg_format("Borg believes: ");
-			msg_print(NULL);
+			msgf("Borg believes: ");
+			message_flush();
 
 			/* Restore the screen */
 			Term_load();
@@ -4058,7 +4058,7 @@ void do_cmd_borg(void)
 			/* Oops */
 
 			/* Message */
-			msg_print("That is not a legal Borg command.");
+			msgf("That is not a legal Borg command.");
 			break;
 		}
 	}

@@ -4184,7 +4184,7 @@ extern int PlayerUID;
  * It uses the '%S' directive to parse the format string
  * following this...
  */
-#define MESSAGE_TYPE (T)	"%r%v%S", set_message_type, (T),
+#define MESSAGE_TYPE(T)		"%r%v%S", set_message_type, (T)
 
 /*
  * Message types used for msgf()  (See util.c)

@@ -143,7 +143,7 @@ void do_cmd_wield(void)
 		object_desc(o_name, o_ptr, FALSE, 0, 256);
 
 		/* Message */
-		msg_format("The %s you are %s appears to be cursed.",
+		msgf("The %s you are %s appears to be cursed.",
 				   o_name, describe_use(slot));
 
 		/* Cancel the command */
@@ -210,13 +210,13 @@ void do_cmd_wield(void)
 	object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 	/* Message */
-	msg_format("%s %s (%c).", act, o_name, I2A(slot));
+	msgf("%s %s (%c).", act, o_name, I2A(slot));
 
 	/* Cursed! */
 	if (cursed_p(o_ptr))
 	{
 		/* Warn the player */
-		msg_print("Oops! It feels deathly cold!");
+		msgf("Oops! It feels deathly cold!");
 
 		chg_virtue(V_HARMONY, -1);
 
@@ -269,7 +269,7 @@ void do_cmd_takeoff(void)
 	if (cursed_p(o_ptr))
 	{
 		/* Oops */
-		msg_print("Hmmm, it seems to be cursed.");
+		msgf("Hmmm, it seems to be cursed.");
 
 		/* Nope */
 		return;
@@ -309,7 +309,7 @@ void do_cmd_drop(void)
 	if ((!o_ptr->allocated) && cursed_p(o_ptr))
 	{
 		/* Oops */
-		msg_print("Hmmm, it seems to be cursed.");
+		msgf("Hmmm, it seems to be cursed.");
 
 		/* Nope */
 		return;
@@ -369,7 +369,7 @@ bool destroy_item_aux(object_type *o_ptr, int amt)
 	if (!can_player_destroy_object(o_ptr))
 	{
 		/* Message */
-		msg_format("You cannot destroy %s.", o_name);
+		msgf("You cannot destroy %s.", o_name);
 
 		/* Done */
 		return (FALSE);
@@ -382,7 +382,7 @@ bool destroy_item_aux(object_type *o_ptr, int amt)
 	object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 	/* Message */
-	msg_format("You destroy %s.", o_name);
+	msgf("You destroy %s.", o_name);
 	sound(SOUND_DESTITEM);
 
 	if (high_level_book(o_ptr))
@@ -410,7 +410,7 @@ bool destroy_item_aux(object_type *o_ptr, int amt)
 			if (o_ptr->sval < 3) tester_exp /= 4;
 			if (tester_exp < 1) tester_exp = 1;
 
-			msg_print("You feel more experienced.");
+			msgf("You feel more experienced.");
 			gain_exp(tester_exp * amt);
 		}
 
@@ -539,10 +539,10 @@ void do_cmd_observe(void)
 	object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 	/* Describe */
-	msg_format("Examining %s...", o_name);
+	msgf("Examining %s...", o_name);
 
 	/* Describe it fully */
-	if (!identify_fully_aux(o_ptr)) msg_print("You see nothing special.");
+	if (!identify_fully_aux(o_ptr)) msgf("You see nothing special.");
 }
 
 
@@ -569,12 +569,12 @@ void do_cmd_uninscribe(void)
 	/* Nothing to remove */
 	if (!o_ptr->inscription)
 	{
-		msg_print("That item had no inscription to remove.");
+		msgf("That item had no inscription to remove.");
 		return;
 	}
 
 	/* Message */
-	msg_print("Inscription removed.");
+	msgf("Inscription removed.");
 
     /* Remove the incription */
     quark_remove(&o_ptr->inscription);
@@ -615,7 +615,7 @@ void do_cmd_inscribe(void)
 	object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 	/* Message */
-	msg_format("Inscribing %s.", o_name);
+	msgf("Inscribing %s.", o_name);
 	message_flush();
 
 	/* Start with nothing */
@@ -707,13 +707,13 @@ static void do_cmd_refill_lamp(void)
 	}
 
 	/* Message */
-	msg_print("You fuel your lamp.");
+	msgf("You fuel your lamp.");
 
 	/* Comment */
 	if (j_ptr->timeout >= FUEL_LAMP)
 	{
 		j_ptr->timeout = FUEL_LAMP;
-		msg_print("Your lamp is full.");
+		msgf("Your lamp is full.");
 	}
 
 	/* Decrease the item */
@@ -785,19 +785,19 @@ static void do_cmd_refill_torch(void)
 	j_ptr->timeout += o_ptr->timeout + 5;
 
 	/* Message */
-	msg_print("You combine the torches.");
+	msgf("You combine the torches.");
 
 	/* Over-fuel message */
 	if (j_ptr->timeout >= FUEL_TORCH)
 	{
 		j_ptr->timeout = FUEL_TORCH;
-		msg_print("Your torch is fully fueled.");
+		msgf("Your torch is fully fueled.");
 	}
 
 	/* Refuel message */
 	else
 	{
-		msg_print("Your torch glows more brightly.");
+		msgf("Your torch glows more brightly.");
 	}
 
 	/* Decrease the item */
@@ -821,7 +821,7 @@ void do_cmd_refill(void)
 	/* It is nothing */
 	if (o_ptr->tval != TV_LITE)
 	{
-		msg_print("You are not wielding a light.");
+		msgf("You are not wielding a light.");
 	}
 
 	/* It's a lamp */
@@ -839,7 +839,7 @@ void do_cmd_refill(void)
 	/* No torch to refill */
 	else
 	{
-		msg_print("Your light cannot be refilled.");
+		msgf("Your light cannot be refilled.");
 	}
 }
 
@@ -852,13 +852,13 @@ void do_cmd_target(void)
 	/* Target set */
 	if (target_set(TARGET_KILL))
 	{
-		msg_print("Target Selected.");
+		msgf("Target Selected.");
 	}
 
 	/* Target aborted */
 	else
 	{
-		msg_print("Target Aborted.");
+		msgf("Target Aborted.");
 	}
 }
 
@@ -872,7 +872,7 @@ void do_cmd_look(void)
 	/* Look around */
 	if (target_set(TARGET_LOOK))
 	{
-		msg_print("Target Selected.");
+		msgf("Target Selected.");
 	}
 }
 

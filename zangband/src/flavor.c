@@ -1442,7 +1442,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 				}
 				default:
 				{
-					msg_print("Unknown firing multiplier.");
+					msgf("Unknown firing multiplier.");
 					power = 0;
 				}
 			}

@@ -375,7 +375,7 @@ static u16b select_building(byte pop, byte magic, byte law, u16b *build,
 
 
 	/* paranoia - we didn't find it */
-	msg_print("FAILED to generate building!");
+	msgf("FAILED to generate building!");
 
 	return (0);
 }
@@ -2933,7 +2933,7 @@ static void blend_helper(cave_type *c_ptr, byte *data, int g_type)
 		}
 		default:
 		{
-			msg_format("Illegal wilderness type %d ", g_type);
+			msgf("Illegal wilderness type %d ", g_type);
 		}
 	}
 }

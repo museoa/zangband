@@ -30,7 +30,7 @@ static cptr comment_1[MAX_COMMENT_1] =
  */
 static void say_comment_1(void)
 {
-	msg_print(comment_1[randint0(MAX_COMMENT_1)]);
+	msgf(comment_1[randint0(MAX_COMMENT_1)]);
 }
 
 
@@ -90,7 +90,7 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
 	if ((value <= 0) && (price > value))
 	{
 		/* Comment */
-		message(MSG_STORE1, 0, comment_7a[randint0(MAX_COMMENT_7A)]);
+		msgf(MSGT_STORE1, comment_7a[randint0(MAX_COMMENT_7A)]);
 
 		chg_virtue(V_HONOUR, -1);
 		chg_virtue(V_JUSTICE, -1);
@@ -103,7 +103,7 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
 	else if ((value < guess) && (price > value))
 	{
 		/* Comment */
-		message(MSG_STORE2, 0, comment_7b[randint0(MAX_COMMENT_7B)]);
+		msgf(MSGT_STORE2, comment_7b[randint0(MAX_COMMENT_7B)]);
 
 		chg_virtue(V_JUSTICE, -1);
 		if (one_in_(4)) chg_virtue(V_HONOUR, -1);
@@ -116,7 +116,7 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
 	else if ((value > guess) && (value < (4 * guess)) && (price < value))
 	{
 		/* Comment */
-		message(MSG_STORE3, 0, comment_7c[randint0(MAX_COMMENT_7C)]);
+		msgf(MSGT_STORE3, comment_7c[randint0(MAX_COMMENT_7C)]);
 
 		if (one_in_(4))
 			chg_virtue(V_HONOUR, -1);
@@ -131,7 +131,7 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
 	else if ((value > guess) && (price < value))
 	{
 		/* Comment */
-		message(MSG_STORE4, 0, comment_7d[randint0(MAX_COMMENT_7D)]);
+		msgf(MSGT_STORE4, comment_7d[randint0(MAX_COMMENT_7D)]);
 
 		if (one_in_(2))
 			chg_virtue(V_HONOUR, -1);
@@ -392,7 +392,7 @@ static void mass_produce(object_type *o_ptr)
 	{
 		if (cheat_peek && discount)
 		{
-			msg_print("No discount on powerful items.");
+			msgf("No discount on powerful items.");
 		}
 		discount = 0;
 	}
@@ -1375,9 +1375,9 @@ static void store_purchase(int *store_top)
 	if (!st_ptr->stock)
 	{
 		if (st_ptr->type == BUILD_STORE_HOME)
-			msg_print("Your home is empty.");
+			msgf("Your home is empty.");
 		else
-			msg_print("I am currently out of stock.");
+			msgf("I am currently out of stock.");
 		return;
 	}
 
@@ -1421,7 +1421,7 @@ static void store_purchase(int *store_top)
 	/* Hack -- require room in pack */
 	if (!inven_carry_okay(j_ptr))
 	{
-		msg_print("You cannot carry that many different items.");
+		msgf("You cannot carry that many different items.");
 		return;
 	}
 
@@ -1453,7 +1453,7 @@ static void store_purchase(int *store_top)
 	/* Hack -- require room in pack */
 	if (!inven_carry_okay(j_ptr))
 	{
-		msg_print("You cannot carry that many items.");
+		msgf("You cannot carry that many items.");
 		return;
 	}
 
@@ -1467,7 +1467,7 @@ static void store_purchase(int *store_top)
 		if (p_ptr->au < price)
 		{
 			/* Simple message (no insult) */
-			msg_print("You do not have enough gold.");
+			msgf("You do not have enough gold.");
 
 		}
 
@@ -1493,7 +1493,7 @@ static void store_purchase(int *store_top)
 			object_desc(o_name, j_ptr, TRUE, 3, 256);
 
 			/* Message */
-			msg_format("You bought %s for %ld gold.", o_name, (long)price);
+			msgf("You bought %s for %ld gold.", o_name, (long)price);
 
             /* Erase the inscription */
             quark_remove(&j_ptr->inscription);
@@ -1507,7 +1507,7 @@ static void store_purchase(int *store_top)
 			/* Paranoia */
 			if (!j_ptr)
 			{
-				msg_print("Too many allocated objects!");
+				msgf("Too many allocated objects!");
 				return;
 			}
 
@@ -1518,7 +1518,7 @@ static void store_purchase(int *store_top)
 			item_new = get_item_position(p_ptr->inventory, j_ptr);
 
 			/* Message */
-			msg_format("You have %s (%c).", o_name, I2A(item_new));
+			msgf("You have %s (%c).", o_name, I2A(item_new));
 
 			/* Now, reduce the original stack's pval. */
 			if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
@@ -1545,7 +1545,7 @@ static void store_purchase(int *store_top)
 				if (one_in_(STORE_SHUFFLE))
 				{
 					/* Message */
-					msg_print("The shopkeeper retires.");
+					msgf("The shopkeeper retires.");
 
 					/* Shuffle the store */
 					store_shuffle(st_ptr);
@@ -1555,7 +1555,7 @@ static void store_purchase(int *store_top)
 				else
 				{
 					/* Message */
-					msg_print("The shopkeeper brings out some new stock.");
+					msgf("The shopkeeper brings out some new stock.");
 				}
 
 				/* New inventory */
@@ -1606,7 +1606,7 @@ static void store_purchase(int *store_top)
 		/* Paranoia */
 		if (!j_ptr)
 		{
-			msg_print("Too many allocated objects!");
+			msgf("Too many allocated objects!");
 			return;
 		}
 
@@ -1617,7 +1617,7 @@ static void store_purchase(int *store_top)
 		item_new = get_item_position(p_ptr->inventory, j_ptr);
 
 		/* Message */
-		msg_format("You have %s (%c).", o_name, I2A(item_new));
+		msgf("You have %s (%c).", o_name, I2A(item_new));
 
 		/* Handle stuff */
 		handle_stuff();
@@ -1704,7 +1704,7 @@ static void store_sell(int *store_top)
 	if ((!o_ptr->allocated) && cursed_p(o_ptr))
 	{
 		/* Oops */
-		msg_print("Hmmm, it seems to be cursed.");
+		msgf("Hmmm, it seems to be cursed.");
 
 		/* Nope */
 		return;
@@ -1767,9 +1767,9 @@ static void store_sell(int *store_top)
 	if (!store_check_num(q_ptr))
 	{
 		if (st_ptr->type == BUILD_STORE_HOME)
-			msg_print("Your home is full.");
+			msgf("Your home is full.");
 		else
-			msg_print("I have not the room in my store to keep it.");
+			msgf("I have not the room in my store to keep it.");
 		return;
 	}
 
@@ -1819,7 +1819,7 @@ static void store_sell(int *store_top)
 			object_desc(o_name, q_ptr, TRUE, 3, 256);
 
 			/* Describe the result (in message buffer) */
-			msg_format("You sold %s for %ld gold.", o_name, (long)price);
+			msgf("You sold %s for %ld gold.", o_name, (long)price);
 
 			if (!((q_ptr->tval == TV_FIGURINE) && (value > 0)))
 			{
@@ -1870,7 +1870,7 @@ static void store_sell(int *store_top)
 		distribute_charges(o_ptr, q_ptr, amt);
 
 		/* Describe */
-		msg_format("You drop %s.", o_name);
+		msgf("You drop %s.", o_name);
 
 		/* Take it from the players inventory */
 		item_increase(o_ptr, -amt);
@@ -1910,9 +1910,9 @@ static void store_examine(int store_top)
 	if (!st_ptr->stock)
 	{
 		if (st_ptr->type == BUILD_STORE_HOME)
-			msg_print("Your home is empty.");
+			msgf("Your home is empty.");
 		else
-			msg_print("I am currently out of stock.");
+			msgf("I am currently out of stock.");
 		return;
 	}
 
@@ -1939,11 +1939,11 @@ static void store_examine(int store_top)
 	object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 	/* Describe */
-	msg_format("Examining %s...", o_name);
+	msgf("Examining %s...", o_name);
 
 	/* Describe it fully */
 	if (!identify_fully_aux(o_ptr))
-		msg_print("You see nothing special.");
+		msgf("You see nothing special.");
 
 	return;
 }
@@ -1996,7 +1996,7 @@ static void store_process_command(int *store_top)
 			/* Browse */
 			if (stocknum <= 12)
 			{
-				msg_print("Entire inventory is shown.");
+				msgf("Entire inventory is shown.");
 			}
 			else
 			{
@@ -2241,7 +2241,7 @@ static void store_process_command(int *store_top)
 		default:
 		{
 			/* Hack -- Unknown command */
-			msg_print("That command does not work in stores.");
+			msgf("That command does not work in stores.");
 			break;
 		}
 	}
@@ -2377,7 +2377,7 @@ store_type *get_current_store(void)
 	/* Paranoia */
 	if (which == -1)
 	{
-		msg_print("Could not locate building!");
+		msgf("Could not locate building!");
 		return (NULL);
 	}
 
@@ -2421,7 +2421,7 @@ void do_cmd_store(const field_type *f1_ptr)
 	/* Hack -- Check the "locked doors" */
 	if (ironman_shops)
 	{
-		msg_print("The doors are locked.");
+		msgf("The doors are locked.");
 		return;
 	}
 
@@ -2618,7 +2618,7 @@ void do_cmd_store(const field_type *f1_ptr)
 		if (get_list_length(p_ptr->inventory) > INVEN_PACK)
 		{
 			/* Message */
-			msg_print("Your pack is so full that you flee outside...");
+			msgf("Your pack is so full that you flee outside...");
 
 			/* Leave */
 			leave_store = TRUE;

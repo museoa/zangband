@@ -505,6 +505,9 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list *vp)
 
 				/* Format the string */
 				(void)vstrnfmt(tmp, 1000, arg, vp);
+				
+				/* Done */
+				break;
 			}
 
 			case 'u':  case 'o':  case 'x':  case 'X':

@@ -1530,7 +1530,7 @@ static void calc_spells(void)
 			}
 
 			/* Message */
-			msg_format("You have forgotten the %s of %s.", p,
+			msgf("You have forgotten the %s of %s.", p,
 					   spell_names[which][j % 32]);
 
 			/* One more can be learned */
@@ -1574,7 +1574,7 @@ static void calc_spells(void)
 			}
 
 			/* Message */
-			msg_format("You have forgotten the %s of %s.", p,
+			msgf("You have forgotten the %s of %s.", p,
 					   spell_names[which][j % 32]);
 
 			/* One more can be learned */
@@ -1627,7 +1627,7 @@ static void calc_spells(void)
 			}
 
 			/* Message */
-			msg_format("You have remembered the %s of %s.",
+			msgf("You have remembered the %s of %s.",
 					   p, spell_names[which][j % 32]);
 
 			/* One less can be learned */
@@ -1673,7 +1673,7 @@ static void calc_spells(void)
 		if (p_ptr->new_spells)
 		{
 			/* Message */
-			msg_format("You can learn %d more %s%s.",
+			msgf("You can learn %d more %s%s.",
 					   p_ptr->new_spells, p,
 					   (p_ptr->new_spells != 1) ? "s" : "");
 		}
@@ -1864,11 +1864,11 @@ static void calc_mana(void)
 		/* Message */
 		if (p_ptr->cumber_glove)
 		{
-			msg_print("Your covered hands feel unsuitable for spellcasting.");
+			msgf("Your covered hands feel unsuitable for spellcasting.");
 		}
 		else
 		{
-			msg_print("Your hands feel more suitable for spellcasting.");
+			msgf("Your hands feel more suitable for spellcasting.");
 		}
 	}
 
@@ -1879,11 +1879,11 @@ static void calc_mana(void)
 		/* Message */
 		if (p_ptr->cumber_armor)
 		{
-			msg_print("The weight of your armor encumbers your movement.");
+			msgf("The weight of your armor encumbers your movement.");
 		}
 		else
 		{
-			msg_print("You feel able to move more freely.");
+			msgf("You feel able to move more freely.");
 		}
 	}
 }
@@ -3526,15 +3526,15 @@ static void calc_bonuses(void)
 		/* Message */
 		if (p_ptr->heavy_shoot)
 		{
-			msg_print("You have trouble wielding such a heavy bow.");
+			msgf("You have trouble wielding such a heavy bow.");
 		}
 		else if (p_ptr->equipment[EQUIP_BOW].k_idx)
 		{
-			msg_print("You have no trouble wielding your bow.");
+			msgf("You have no trouble wielding your bow.");
 		}
 		else
 		{
-			msg_print("You feel relieved to put down your heavy bow.");
+			msgf("You feel relieved to put down your heavy bow.");
 		}
 	}
 
@@ -3545,15 +3545,15 @@ static void calc_bonuses(void)
 		/* Message */
 		if (p_ptr->heavy_wield)
 		{
-			msg_print("You have trouble wielding such a heavy weapon.");
+			msgf("You have trouble wielding such a heavy weapon.");
 		}
 		else if (p_ptr->equipment[EQUIP_WIELD].k_idx)
 		{
-			msg_print("You have no trouble wielding your weapon.");
+			msgf("You have no trouble wielding your weapon.");
 		}
 		else
 		{
-			msg_print("You feel relieved to put down your heavy weapon.");
+			msgf("You feel relieved to put down your heavy weapon.");
 		}
 	}
 
@@ -3564,15 +3564,15 @@ static void calc_bonuses(void)
 		/* Message */
 		if (p_ptr->icky_wield)
 		{
-			msg_print("You do not feel comfortable with your weapon.");
+			msgf("You do not feel comfortable with your weapon.");
 		}
 		else if (p_ptr->equipment[EQUIP_WIELD].k_idx)
 		{
-			msg_print("You feel comfortable with your weapon.");
+			msgf("You feel comfortable with your weapon.");
 		}
 		else
 		{
-			msg_print("You feel more comfortable after removing your weapon.");
+			msgf("You feel more comfortable after removing your weapon.");
 		}
 	}
 
@@ -3581,10 +3581,10 @@ static void calc_bonuses(void)
 	{
 		if (p_ptr->monk_armour_stat)
 		{
-			msg_print("The weight of your armor disrupts your balance.");
+			msgf("The weight of your armor disrupts your balance.");
 		}
 		else
-			msg_print("You regain your balance.");
+			msgf("You regain your balance.");
 	}
 
 	p_ptr->align = friend_align;

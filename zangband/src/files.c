@@ -1003,8 +1003,8 @@ static errr process_pref_file_aux(cptr name)
 	{
 		/* Print error message */
 		/* ToDo: Add better error messages */
-		msg_format("Error %d in line %d of file '%s'.", err, line, name);
-		msg_format("Parsing '%s'", old);
+		msgf("Error %d in line %d of file '%s'.", err, line, name);
+		msgf("Parsing '%s'", old);
 		message_flush();
 	}
 
@@ -2670,7 +2670,7 @@ errr file_character(cptr name, bool full)
 	if (!fff)
 	{
 		/* Message */
-		msg_format("Character dump failed!");
+		msgf("Character dump failed!");
 		message_flush();
 
 		/* Error */
@@ -2959,7 +2959,7 @@ errr file_character(cptr name, bool full)
 
 
 	/* Message */
-	msg_print("Character dump successful.");
+	msgf("Character dump successful.");
 	message_flush();
 
 	/* Success */
@@ -3116,7 +3116,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 	if (!fff)
 	{
 		/* Message */
-		msg_format("Cannot open '%s'.", name);
+		msgf("Cannot open '%s'.", name);
 		message_flush();
 
 		/* Oops */
@@ -3470,7 +3470,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 			/* Oops */
 			if (!(fff && ffp))
 			{
-				msg_print("Failed to open file.");
+				msgf("Failed to open file.");
 				k = ESCAPE;
 				break;
 			}
@@ -3743,7 +3743,7 @@ void do_cmd_save_game(int is_autosave)
 	/* Autosaves do not disturb */
 	if (is_autosave)
 	{
-		msg_print("Autosaving the game...");
+		msgf("Autosaving the game...");
 	}
 	else
 	{
@@ -4144,7 +4144,7 @@ static void close_game_handle_death(void)
 	/* Save memories */
 	if (!munchkin_death || get_check("Save death? "))
 	{
-		if (!save_player()) msg_print("death save failed!");
+		if (!save_player()) msgf("death save failed!");
 	}
 
 #if 0
@@ -4207,7 +4207,7 @@ static void close_game_handle_death(void)
 					/* Save dead player */
 					if (!save_player())
 					{
-						msg_print("Death save failed!");
+						msgf("Death save failed!");
 						message_flush();
 					}
 
@@ -4354,7 +4354,7 @@ void exit_game_panic(void)
 	/* If nothing important has happened, just quit */
 	if (!character_generated || character_saved) quit("panic");
 
-	/* Mega-Hack -- see "msg_print()" */
+	/* Mega-Hack -- see "msgf()" */
 	msg_flag = FALSE;
 
 	/* Clear the top line */
@@ -4423,7 +4423,7 @@ errr get_rnd_line(cptr file_name, int entry, char *output)
 				else
 				{
 					/* Error while converting the monster number */
-					msg_print("Error - end of file.");
+					msgf("Error - end of file.");
 
 					my_fclose(fp);
 					return (-1);
@@ -4456,7 +4456,7 @@ errr get_rnd_line(cptr file_name, int entry, char *output)
 		else
 		{
 			/* Reached end of file without finding the number */
-			msg_print("Error - end of file.");
+			msgf("Error - end of file.");
 
 			my_fclose(fp);
 			return (-1);
@@ -4481,7 +4481,7 @@ errr get_rnd_line(cptr file_name, int entry, char *output)
 			if (test != 0)
 			{
 				/* Error - End of file */
-				msg_format("Error - end of file.");
+				msgf("Error - end of file.");
 
 				my_fclose(fp);
 				return (-1);

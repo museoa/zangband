@@ -976,8 +976,8 @@ static errr process_sound_config_file( const char *name, const char *section )
 	if (err)
 	{
 		/* Useful error message */
-		msg_format("Error %d in line %d of file '%s'.", err, num, name);
-		msg_format("Parsing '%s'", buf);
+		msgf("Error %d in line %d of file '%s'.", err, num, name);
+		msgf("Parsing '%s'", buf);
 	}
 
 	/* Close the file */
@@ -1191,8 +1191,8 @@ static errr process_music_config_file( const char *name, const char *section )
 	if (err)
 	{
 		/* Useful error message */
-		msg_format("Error %d in line %d of file '%s'.", err, num, name);
-		msg_format("Parsing '%s'", buf);
+		msgf("Error %d in line %d of file '%s'.", err, num, name);
+		msgf("Parsing '%s'", buf);
 	}
 
 	/* Close the file */

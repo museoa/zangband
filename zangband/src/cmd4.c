@@ -841,7 +841,7 @@ static bool do_cmd_options_aux(int page)
 	if (n == 0)
 	{
 		/* There are no options */
-		msg_print("There are no available options there at the moment.");
+		msgf("There are no available options there at the moment.");
 		message_flush();
 
 		/* Bail out */
@@ -1159,7 +1159,7 @@ static bool do_cmd_options_dump(int dummy)
 	clear_msg();
 
 	/* Success message */
-	msg_print("Saved default options.");
+	msgf("Saved default options.");
 
 	screen_load();
 
@@ -1494,7 +1494,7 @@ static bool do_cmd_pref_key_load(int dummy)
 	if (0 != process_pref_file("%s", tmp))
 	{
 		/* Prompt */
-		msg_print("Could not load file!");
+		msgf("Could not load file!");
 	}
 
 	return (FALSE);
@@ -1549,7 +1549,7 @@ static bool do_cmd_macro_append(int dummy)
 	(void)macro_dump(tmp);
 
 	/* Prompt */
-	msg_print("Appended macros.");
+	msgf("Appended macros.");
 	
 	return (FALSE);
 }
@@ -1580,7 +1580,7 @@ static bool do_cmd_macro_query(int dummy)
 	if (k < 0)
 	{
 		/* Prompt */
-		msg_print("Found no macro.");
+		msgf("Found no macro.");
 	}
 
 	/* Found one */
@@ -1596,7 +1596,7 @@ static bool do_cmd_macro_query(int dummy)
 		prtf(0, 22, tmp);
 
 		/* Prompt */
-		msg_print("Found a macro.");
+		msgf("Found a macro.");
 	}
 
 	return (FALSE);
@@ -1639,7 +1639,7 @@ static bool do_cmd_macro_create(int dummy)
 		macro_add(tmp, macro__buf);
 
 		/* Prompt */
-		msg_print("Added a macro.");
+		msgf("Added a macro.");
 	}
 
 	return (FALSE);
@@ -1667,7 +1667,7 @@ static bool do_cmd_macro_remove(int dummy)
 	macro_add(tmp, tmp);
 
 	/* Prompt */
-	msg_print("Removed a macro.");
+	msgf("Removed a macro.");
 
 	return (FALSE);
 }
@@ -1700,7 +1700,7 @@ static bool do_cmd_keymap_append(int dummy)
 	(void)keymap_dump(tmp);
 
 	/* Prompt */
-	msg_print("Appended keymaps.");
+	msgf("Appended keymaps.");
 	
 	return (FALSE);
 }
@@ -1746,7 +1746,7 @@ static bool do_cmd_keymap_query(int dummy)
 	if (!act)
 	{
 		/* Prompt */
-		msg_print("Found no keymap.");
+		msgf("Found no keymap.");
 	}
 
 	/* Found one */
@@ -1762,7 +1762,7 @@ static bool do_cmd_keymap_query(int dummy)
 		prtf(0, 22, buf);
 
 		/* Prompt */
-		msg_print("Found a keymap.");
+		msgf("Found a keymap.");
 	}
 	
 	return (FALSE);
@@ -1823,7 +1823,7 @@ static bool do_cmd_keymap_create(int dummy)
 		keymap_act[mode][(byte)(buf[0])] = string_make(macro__buf);
 
 		/* Prompt */
-		msg_print("Added a keymap.");
+		msgf("Added a keymap.");
 	}
 
 	return (FALSE);
@@ -1868,7 +1868,7 @@ static bool do_cmd_keymap_remove(int dummy)
 	keymap_act[mode][(byte)(buf[0])] = NULL;
 
 	/* Prompt */
-	msg_print("Removed a keymap.");
+	msgf("Removed a keymap.");
 
 	return (FALSE);
 }
@@ -1981,7 +1981,7 @@ static bool do_cmd_pref_vis_load(int dummy)
 	if (0 != process_pref_file("%s", tmp))
 	{
 		/* Prompt */
-		msg_print("Could not load file!");
+		msgf("Could not load file!");
 	}
 	
 	screen_load();
@@ -2057,7 +2057,7 @@ static bool do_cmd_dump_monster(int dummy)
 	my_fclose(fff);
 
 	/* Message */
-	msg_print("Dumped monster attr/chars.");
+	msgf("Dumped monster attr/chars.");
 
 	screen_load();
 	return (FALSE);
@@ -2131,7 +2131,7 @@ static bool do_cmd_dump_object(int dummy)
 	my_fclose(fff);
 
 	/* Message */
-	msg_print("Dumped object attr/chars.");
+	msgf("Dumped object attr/chars.");
 
 	screen_load();
 
@@ -2206,7 +2206,7 @@ static bool do_cmd_dump_feature(int dummy)
 	my_fclose(fff);
 
 	/* Message */
-	msg_print("Dumped feature attr/chars.");
+	msgf("Dumped feature attr/chars.");
 	
 	screen_load();
 	
@@ -2281,7 +2281,7 @@ static bool do_cmd_dump_field(int dummy)
 	my_fclose(fff);
 
 	/* Message */
-	msg_print("Dumped field attr/chars.");
+	msgf("Dumped field attr/chars.");
 
 	screen_load();
 
@@ -2559,7 +2559,7 @@ static bool do_cmd_reset_visuals(int dummy)
 	reset_visuals();
 
 	/* Message */
-	msg_print("Visual attr/char tables reset.");
+	msgf("Visual attr/char tables reset.");
 
 	return (FALSE);
 }
@@ -2633,7 +2633,7 @@ static bool do_cmd_pref_col_load(int dummy)
 	if (0 != process_pref_file("%s", tmp))
 	{
 		/* Prompt */
-		msg_print("Could not load file!");
+		msgf("Could not load file!");
 	}
 	
 	/* Mega-Hack -- react to changes */
@@ -2723,7 +2723,7 @@ static bool do_cmd_dump_colour(int dummy)
 	my_fclose(fff);
 
 	/* Message */
-	msg_print("Dumped color redefinitions.");
+	msgf("Dumped color redefinitions.");
 
 	screen_load();
 	return (FALSE);
@@ -2801,7 +2801,7 @@ static bool do_cmd_dump_message(int dummy)
 	my_fclose(fff);
 
 	/* Message */
-	msg_print("Dumped message color definitions.");
+	msgf("Dumped message color definitions.");
 	
 	screen_load();
 	return (FALSE);
@@ -3010,7 +3010,7 @@ void do_cmd_note(void)
 	else
 	{
 		/* Add note to message recall */
-		msg_format("Note: %s", buf);
+		msgf("Note: %s", buf);
 	}
 }
 
@@ -3021,7 +3021,7 @@ void do_cmd_note(void)
 void do_cmd_version(void)
 {
 	/* Silly message */
-	msg_print("You are playing " VERSION_NAME " " VERSION_STRING ".");
+	msgf("You are playing " VERSION_NAME " " VERSION_STRING ".");
 }
 
 
@@ -3058,12 +3058,12 @@ void do_cmd_feeling(void)
 		if (place[p_ptr->place_num].quest_num)
 		{
 			/* No useful feeling in a wilderness quest */
-			msg_print("Looks like a typical quest.");
+			msgf("Looks like a typical quest.");
 		}
 		else
 		{
 			/* No useful feeling in town */
-			msg_print("Looks like a typical town.");
+			msgf("Looks like a typical town.");
 		}
 
 		return;
@@ -3072,25 +3072,25 @@ void do_cmd_feeling(void)
 	/* No useful feeling in the wilderness */
 	if (!p_ptr->depth)
 	{
-		msg_print("Looks like a typical wilderness.");
+		msgf("Looks like a typical wilderness.");
 		return;
 	}
 
 	/* No useful feeling in quests */
 	if (is_quest_level(p_ptr->depth))
 	{
-		msg_print("Looks like a typical quest level.");
+		msgf("Looks like a typical quest level.");
 		return;
 	}
 
 	/* Display the feeling */
 	if (turn - old_turn >= 1000)
 	{
-		msg_print(do_cmd_feeling_text[dun_ptr->feeling]);
+		msgf(do_cmd_feeling_text[dun_ptr->feeling]);
 	}
 	else
 	{
-		msg_print(do_cmd_feeling_text[0]);
+		msgf(do_cmd_feeling_text[0]);
 	}
 }
 
@@ -3185,7 +3185,7 @@ void do_cmd_load_screen(void)
 
 
 	/* Message */
-	msg_print("Screen dump loaded.");
+	msgf("Screen dump loaded.");
 
 	/* Restore the screen */
 	screen_load();
@@ -3292,7 +3292,7 @@ void do_cmd_save_screen(void)
 
 
 		/* Message */
-		msg_print("Screen dump saved.");
+		msgf("Screen dump saved.");
 
 		/* Restore the screen */
 		screen_load();
@@ -3339,7 +3339,7 @@ static bool do_cmd_knowledge_uniques(int dummy)
 	if (!n)
 	{
 		/* No monsters to recall */
-		msg_print("No known uniques.");
+		msgf("No known uniques.");
 
 		/* XXX XXX Free the "who" array */
 		KILL(who);
@@ -3588,7 +3588,7 @@ static bool do_cmd_knowledge_kill_count(int dummy)
 	if (!n)
 	{
 		/* No monsters to recall */
-		msg_print("No known monsters!");
+		msgf("No known monsters!");
 
 		/* XXX XXX Free the "who" array */
 		KILL(who);
@@ -4046,7 +4046,7 @@ void do_cmd_time(void)
 	strcpy(desc, "It is a strange time.");
 
 	/* Message */
-	msg_format("This is day %d. The time is %d:%02d %s.",
+	msgf("This is day %d. The time is %d:%02d %s.",
 			   day, (hour % 12 == 0) ? 12 : (hour % 12),
 			   min, (hour < 12) ? "AM" : "PM");
 
@@ -4115,7 +4115,7 @@ void do_cmd_time(void)
 	}
 
 	/* Message */
-	msg_print(desc);
+	msgf(desc);
 
 	/* Close the file */
 	my_fclose(fff);

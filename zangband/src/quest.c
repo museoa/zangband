@@ -45,7 +45,7 @@ u16b q_pop(void)
 	}
 
 	/* Warn the player */
-	msg_print("Too many quests!");
+	msgf("Too many quests!");
 
 	/* Oops */
 	return (0);
@@ -486,7 +486,7 @@ void quest_discovery(void)
 				if (r_ptr->flags1 & RF1_UNIQUE)
 				{
 					/* Unique */
-					msg_format("%s: Beware, this level is protected by %s!",
+					msgf("%s: Beware, this level is protected by %s!",
 							   find_quest[rand_range(0, 5)], name);
 				}
 				else
@@ -494,7 +494,7 @@ void quest_discovery(void)
 					/* Normal monsters */
 					if (q_num > 1) plural_aux(name);
 
-					msg_format("%s: Be warned, this level is guarded by %d %s!",
+					msgf("%s: Be warned, this level is guarded by %d %s!",
 							   find_quest[rand_range(0, 5)], q_num, name);
 				}
 
@@ -506,7 +506,7 @@ void quest_discovery(void)
 
 			case QUEST_TYPE_WILD:
 			{
-				msg_print("You discover something unusual in the wilderness.");
+				msgf("You discover something unusual in the wilderness.");
 
 				/* Disturb */
 				disturb(FALSE);
@@ -645,7 +645,7 @@ static void create_stairs(int x, int y)
 	}
 
 	/* Explain the staircase */
-	msg_print("A magical staircase appears...");
+	msgf("A magical staircase appears...");
 
 	/* Create stairs down */
 	cave_set_feat(x, y, FEAT_MORE);
@@ -878,9 +878,9 @@ void trigger_quest_complete(byte x_type, vptr data)
 						p_ptr->redraw |= (PR_TITLE);
 
 						/* Congratulations */
-						msg_print("*** CONGRATULATIONS ***");
-						msg_print("You have won the game!");
-						msg_print
+						msgf("*** CONGRATULATIONS ***");
+						msgf("You have won the game!");
+						msgf
 							("You may retire (commit suicide) when you are ready.");
 					}
 					else
@@ -888,9 +888,9 @@ void trigger_quest_complete(byte x_type, vptr data)
 						/* Oberon */
 
 						/* A message */
-						msg_print("Well done!");
-						msg_print("You have beaten Oberon.");
-						msg_print
+						msgf("Well done!");
+						msgf("You have beaten Oberon.");
+						msgf
 							("You now can meet the final challenge of the Serpent of Chaos.");
 					}
 
@@ -933,7 +933,7 @@ void trigger_quest_complete(byte x_type, vptr data)
 			}
 #endif /* 0 */
 
-			msg_print("You just completed your quest!");
+			msgf("You just completed your quest!");
 		}
 
 	}
@@ -1054,7 +1054,7 @@ static void castle_quest(void)
 
 			q_ptr->cur_num = 0;
 			name = (r_name + r_ptr->name);
-			msg_format("Your quest: kill %d %s", q_ptr->max_num, name);
+			msgf("Your quest: kill %d %s", q_ptr->max_num, name);
 			message_flush();
 		}
 		else

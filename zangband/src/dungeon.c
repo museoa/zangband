@@ -228,7 +228,7 @@ static void sense_item(object_type *o_ptr, bool heavy, bool wield)
 	{
 		slot = GET_ARRAY_INDEX(p_ptr->equipment, o_ptr);
 
-		msg_format("You feel the %s (%c) you are %s %s %s...",
+		msgf("You feel the %s (%c) you are %s %s %s...",
 				   o_name, I2A(slot), describe_use(slot),
 				   ((o_ptr->number == 1) ? "is" : "are"),
 				   game_inscriptions[feel]);
@@ -239,7 +239,7 @@ static void sense_item(object_type *o_ptr, bool heavy, bool wield)
 	{
 		slot = get_item_position(p_ptr->inventory, o_ptr);
 
-		msg_format("You feel the %s (%c) in your pack %s %s...",
+		msgf("You feel the %s (%c) in your pack %s %s...",
 				   o_name, I2A(slot),
 				   ((o_ptr->number == 1) ? "is" : "are"),
 				   game_inscriptions[feel]);
@@ -484,7 +484,7 @@ static void pattern_teleport(void)
 	if (p_ptr->command_arg > max_level) p_ptr->command_arg = max_level;
 
 	/* Accept request */
-	msg_format("You teleport to dungeon level %d.", p_ptr->command_arg);
+	msgf("You teleport to dungeon level %d.", p_ptr->command_arg);
 
 	if (autosave_l) do_cmd_save_game(TRUE);
 
@@ -509,8 +509,8 @@ static void wreck_the_pattern(void)
 		return;
 	}
 
-	msg_print("You bleed on the Pattern!");
-	msg_print("Something terrible happens!");
+	msgf("You bleed on the Pattern!");
+	msgf("Something terrible happens!");
 
 	if (!p_ptr->invuln)
 		take_hit(damroll(10, 8), "corrupting the Pattern");
@@ -565,7 +565,7 @@ static bool pattern_effect(void)
 		(void)restore_level();
 		(void)hp_player(1000);
 		cave_set_feat(p_ptr->px, p_ptr->py, FEAT_PATTERN_OLD);
-		msg_print("This section of the Pattern looks less powerful.");
+		msgf("This section of the Pattern looks less powerful.");
 	}
 
 
@@ -762,7 +762,7 @@ void notice_lite_change(object_type *o_ptr)
 	else if (o_ptr->timeout == 0)
 	{
 		disturb(FALSE);
-		msg_print("Your light has gone out!");
+		msgf("Your light has gone out!");
 
 		/* Calculate torch radius */
 		p_ptr->update |= (PU_TORCH);
@@ -772,7 +772,7 @@ void notice_lite_change(object_type *o_ptr)
 	else if ((o_ptr->timeout < 100) && (!(o_ptr->timeout % 10)))
 	{
 		if (disturb_minor) disturb(FALSE);
-		msg_print("Your light is growing faint.");
+		msgf("Your light is growing faint.");
 	}
 }
 
@@ -809,7 +809,7 @@ bool psychometry(void)
 	/* It is fully known, no information needed */
 	if (object_known_p(o_ptr))
 	{
-		msg_print("You cannot find out anything more about that.");
+		msgf("You cannot find out anything more about that.");
 		return TRUE;
 	}
 
@@ -822,12 +822,12 @@ bool psychometry(void)
 	/* Skip non-feelings */
 	if (!feel)
 	{
-		msg_format("You do not perceive anything unusual about the %s.",
+		msgf("You do not perceive anything unusual about the %s.",
 				   o_name);
 		return TRUE;
 	}
 
-	msg_format("You feel that the %s %s %s...",
+	msgf("You feel that the %s %s %s...",
 			   o_name, ((o_ptr->number == 1) ? "is" : "are"),
 			   game_inscriptions[feel]);
 
@@ -875,9 +875,9 @@ static void recharged_notice(const object_type *o_ptr)
 
 			/* Notify the player */
 			if (o_ptr->number > 1)
-				msg_format("Your %s are recharged.", o_name);
+				msgf("Your %s are recharged.", o_name);
 			else
-				msg_format("Your %s is recharged.", o_name);
+				msgf("Your %s is recharged.", o_name);
 
 			/* Done. */
 			return;
@@ -932,15 +932,15 @@ static void process_world(void)
 				closing_flag++;
 
 				/* Message */
-				msg_print("The gates to ANGBAND are closing...");
-				msg_print("Please finish up and/or save your game.");
+				msgf("The gates to ANGBAND are closing...");
+				msgf("Please finish up and/or save your game.");
 			}
 
 			/* Slam the gate */
 			else
 			{
 				/* Message */
-				msg_print("The gates to ANGBAND are now closed.");
+				msgf("The gates to ANGBAND are now closed.");
 
 				/* Stop playing */
 				p_ptr->playing = FALSE;
@@ -960,7 +960,7 @@ static void process_world(void)
 
 	if (p_ptr->mon_fight)
 	{
-		msg_print("You hear noise.");
+		msgf("You hear noise.");
 	}
 
 	/*** Handle the wilderness/town (sunshine) ***/
@@ -980,12 +980,12 @@ static void process_world(void)
 			if (dawn)
 			{
 				/* Message */
-				msg_print("The sun has risen.");
+				msgf("The sun has risen.");
 			}
 			else
 			{
 				/* Message */
-				msg_print("The sun has fallen.");
+				msgf("The sun has fallen.");
 			}
 
 			/* Light up or darken the area */
@@ -1041,7 +1041,7 @@ static void process_world(void)
 			if (c_ptr->info & CAVE_GLOW)
 			{
 				/* Take damage */
-				msg_print("The sun's rays scorch your undead flesh!");
+				msgf("The sun's rays scorch your undead flesh!");
 				take_hit(1, "sunlight");
 				cave_no_regen = TRUE;
 			}
@@ -1059,7 +1059,7 @@ static void process_world(void)
 			/* Get an object description */
 			object_desc(o_name, o_ptr, FALSE, 0, 256);
 
-			msg_format("The %s scorches your undead flesh!", o_name);
+			msgf("The %s scorches your undead flesh!", o_name);
 
 			cave_no_regen = TRUE;
 
@@ -1082,7 +1082,7 @@ static void process_world(void)
 		if (damage)
 		{
 			/* Take damage */
-			msg_print("The lava burns you!");
+			msgf("The lava burns you!");
 			take_hit(damage, "shallow lava");
 			cave_no_regen = TRUE;
 		}
@@ -1114,7 +1114,7 @@ static void process_world(void)
 		if (damage)
 		{
 			/* Take damage */
-			msg_print(message);
+			msgf(message);
 			take_hit(damage, hit_from);
 
 			cave_no_regen = TRUE;
@@ -1132,7 +1132,7 @@ static void process_world(void)
 		if (damage)
 		{
 			/* Take damage */
-			msg_print("The acid burns you!");
+			msgf("The acid burns you!");
 			take_hit(damage, "shallow acid");
 			cave_no_regen = TRUE;
 		}
@@ -1164,7 +1164,7 @@ static void process_world(void)
 		if (damage)
 		{
 			/* Take damage */
-			msg_print(message);
+			msgf(message);
 			take_hit(damage, hit_from);
 
 			cave_no_regen = TRUE;
@@ -1181,7 +1181,7 @@ static void process_world(void)
 		if (damage)
 		{
 			/* Take damage */
-			msg_print("The plants poison you!");
+			msgf("The plants poison you!");
 			take_hit(damage, "swamp");
 			cave_no_regen = TRUE;
 		}
@@ -1212,7 +1212,7 @@ static void process_world(void)
 		if (damage)
 		{
 			/* Take damage */
-			msg_print(message);
+			msgf(message);
 			take_hit(damage, hit_from);
 
 			cave_no_regen = TRUE;
@@ -1226,7 +1226,7 @@ static void process_world(void)
 			((adj_str_wgt[p_ptr->stat_ind[A_STR]] * 100) / 2))
 		{
 			/* Take damage */
-			msg_print("You are drowning!");
+			msgf("You are drowning!");
 			take_hit(randint1(p_ptr->lev), "drowning");
 			cave_no_regen = TRUE;
 		}
@@ -1250,12 +1250,12 @@ static void process_world(void)
 
 			if (p_ptr->pass_wall)
 			{
-				msg_print("Your molecules feel disrupted!");
+				msgf("Your molecules feel disrupted!");
 				dam_desc = "density";
 			}
 			else
 			{
-				msg_print("You are being crushed!");
+				msgf("You are being crushed!");
 				dam_desc = "solid rock";
 			}
 
@@ -1291,22 +1291,22 @@ static void process_world(void)
 				{
 					case 0:
 					{
-						msg_print("You hear a distant bell toll ominously.");
+						msgf("You hear a distant bell toll ominously.");
 						break;
 					}
 					case 1:
 					{
-						msg_print("A distant bell sounds twice.");
+						msgf("A distant bell sounds twice.");
 						break;
 					}
 					case 2:
 					{
-						msg_print("A distant bell sounds three times.");
+						msgf("A distant bell sounds three times.");
 						break;
 					}
 					case 3:
 					{
-						msg_print("A distant bell tolls four times.");
+						msgf("A distant bell tolls four times.");
 						break;
 					}
 				}
@@ -1318,7 +1318,7 @@ static void process_world(void)
 				int count = 0;
 
 				disturb(TRUE);
-				msg_print
+				msgf
 					("A distant bell tolls many times, fading into an deathly silence.");
 				(void)activate_ty_curse(FALSE, &count);
 			}
@@ -1425,7 +1425,7 @@ static void process_world(void)
 			if (!p_ptr->paralyzed && (randint0(100) < 10))
 			{
 				/* Message */
-				msg_print("You faint from the lack of food.");
+				msgf("You faint from the lack of food.");
 				disturb(TRUE);
 
 				/* Hack -- faint (bypass free action) */
@@ -1590,7 +1590,7 @@ static void process_world(void)
 		if ((p_ptr->equipment[EQUIP_LITE].tval) && !p_ptr->invuln &&
 			(p_ptr->equipment[EQUIP_LITE].sval == SV_LITE_THRAIN))
 		{
-			msg_print("The Jewel of Judgement drains life from you!");
+			msgf("The Jewel of Judgement drains life from you!");
 			take_hit(MIN(p_ptr->lev, 50), "the Jewel of Judgement");
 		}
 	}
@@ -1621,7 +1621,7 @@ static void process_world(void)
 		{
 			char noise[1024];
 			if (!get_rnd_line("chainswd.txt", 0, noise))
-				msg_print(noise);
+				msgf(noise);
 			disturb(FALSE);
 		}
 
@@ -1645,7 +1645,7 @@ static void process_world(void)
 										(quark_str(o_ptr->inscription), '.'))))
 				{
 					/* Do nothing */
-					/* msg_print("Teleport aborted.") */ ;
+					/* msgf("Teleport aborted.") */ ;
 				}
 				else if (get_check("Teleport? "))
 				{
@@ -1814,13 +1814,13 @@ static void process_world(void)
 			/* Determine the level */
 			if (p_ptr->depth)
 			{
-				msg_print("You feel yourself yanked upwards!");
+				msgf("You feel yourself yanked upwards!");
 
 				p_ptr->depth = 0;
 			}
 			else
 			{
-				msg_print("You feel yourself yanked downwards!");
+				msgf("You feel yourself yanked downwards!");
 
 				/* New depth */
 				p_ptr->depth = p_ptr->max_depth;
@@ -1866,8 +1866,8 @@ static bool enter_wizard_mode(void)
 #endif
 	{
 		/* Mention effects */
-		msg_print("Wizard mode is for debugging and experimenting.");
-		msg_print("The game will not be scored if you enter wizard mode.");
+		msgf("Wizard mode is for debugging and experimenting.");
+		msgf("The game will not be scored if you enter wizard mode.");
 		message_flush();
 
 		/* Verify request */
@@ -1900,8 +1900,8 @@ static bool enter_debug_mode(void)
 #endif
 	{
 		/* Mention effects */
-		msg_print("The debug commands are for debugging and experimenting.");
-		msg_print("The game will not be scored if you use debug commands.");
+		msgf("The debug commands are for debugging and experimenting.");
+		msgf("The game will not be scored if you use debug commands.");
 		message_flush();
 
 		/* Verify request */
@@ -1937,8 +1937,8 @@ static bool enter_borg_mode(void)
 	if (!(p_ptr->noscore & 0x0040))
 	{
 		/* Mention effects */
-		msg_print("The borg commands are for debugging and experimenting.");
-		msg_print("The game will not be scored if you use borg commands.");
+		msgf("The borg commands are for debugging and experimenting.");
+		msgf("The game will not be scored if you use borg commands.");
 		message_flush();
 
 		/* Verify request */
@@ -1994,12 +1994,12 @@ static void process_command(void)
 			if (p_ptr->wizard)
 			{
 				p_ptr->wizard = FALSE;
-				msg_print("Wizard mode off.");
+				msgf("Wizard mode off.");
 			}
 			else if (enter_wizard_mode())
 			{
 				p_ptr->wizard = TRUE;
-				msg_print("Wizard mode on.");
+				msgf("Wizard mode on.");
 			}
 
 			/* Update monsters */
@@ -2254,7 +2254,7 @@ static void process_command(void)
 				else if (mp_ptr->spell_book == TV_LIFE_BOOK)
 					which_power = "prayer";
 
-				msg_format("An anti-magic shell disrupts your %s!",
+				msgf("An anti-magic shell disrupts your %s!",
 						   which_power);
 
 				p_ptr->energy_use = 0;
@@ -2579,7 +2579,7 @@ static void process_command(void)
 				char error_m[1024];
 				sound(SOUND_ILLEGAL);
 				if (!get_rnd_line("error.txt", 0, error_m))
-					msg_print(error_m);
+					msgf(error_m);
 			}
 			else
 				prtf(0, 0, "Type '?' for help.");
@@ -2604,7 +2604,7 @@ static void process_player(void)
 
 	if (hack_mutation)
 	{
-		msg_print("You feel different!");
+		msgf("You feel different!");
 		(void)gain_mutation(0);
 		hack_mutation = FALSE;
 	}
@@ -2659,7 +2659,7 @@ static void process_player(void)
 			disturb(FALSE);
 
 			/* Hack -- Show a Message */
-			msg_print("Cancelled.");
+			msgf("Cancelled.");
 		}
 	}
 
@@ -2701,7 +2701,7 @@ static void process_player(void)
 					disturb(FALSE);
 
 					/* Warning */
-					msg_print("Your pack overflows!");
+					msgf("Your pack overflows!");
 
 					/* Drop the excess item(s) */
 					inven_drop(o_ptr, o_ptr->number);
@@ -3549,7 +3549,7 @@ void play_game(bool new_game)
 				p_ptr->noscore |= 0x0001;
 
 				/* Message */
-				msg_print("You invoke wizard mode and cheat death.");
+				msgf("You invoke wizard mode and cheat death.");
 				message_flush();
 
 				/* Restore hit points */
@@ -3577,7 +3577,7 @@ void play_game(bool new_game)
 				if (p_ptr->word_recall)
 				{
 					/* Message */
-					msg_print("A tension leaves the air around you...");
+					msgf("A tension leaves the air around you...");
 					message_flush();
 
 					/* Hack -- Prevent recall */

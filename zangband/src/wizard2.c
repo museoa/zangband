@@ -68,7 +68,7 @@ void do_cmd_rerate(void)
 	handle_stuff();
 
 	/* Message */
-	msg_format("Current Life Rating is %d/100.", percent);
+	msgf("Current Life Rating is %d/100.", percent);
 }
 
 
@@ -87,7 +87,7 @@ static void wiz_create_named_art(int a_idx)
 	create_named_art(a_idx, px, py);
 
 	/* All done */
-	msg_print("Allocated.");
+	msgf("Allocated.");
 }
 
 
@@ -97,7 +97,7 @@ static void wiz_create_named_art(int a_idx)
 static void do_cmd_wiz_hack_ben(void)
 {
 	/* Oops */
-	msg_print("Oops.");
+	msgf("Oops.");
 	(void)probing();
 }
 
@@ -1116,7 +1116,7 @@ static void do_cmd_wiz_play(void)
 		if (!get_com("[a]ccept [r]eroll [t]weak [q]uantity? ", &ch))
 		{
 			/* Ignore changes */
-			msg_print("Changes ignored.");
+			msgf("Changes ignored.");
 
 			/* Done */
 			break;
@@ -1126,7 +1126,7 @@ static void do_cmd_wiz_play(void)
 		if (ch == 'A' || ch == 'a')
 		{
 			/* Message */
-			msg_print("Changes accepted.");
+			msgf("Changes accepted.");
 
 			/* Swap the objects */
 			swap_objects(q_ptr, o_ptr);
@@ -1206,7 +1206,7 @@ static void wiz_create_item(void)
 	place_specific_object(p_ptr->px, p_ptr->py, p_ptr->depth, k_idx);
 
 	/* All done */
-	msg_print("Allocated.");
+	msgf("Allocated.");
 }
 
 
@@ -1284,7 +1284,7 @@ static void do_cmd_wiz_jump(void)
 	if (p_ptr->command_arg > MAX_DEPTH - 1) p_ptr->command_arg = MAX_DEPTH - 1;
 
 	/* Accept request */
-	msg_format("You jump to dungeon level %d.", p_ptr->command_arg);
+	msgf("You jump to dungeon level %d.", p_ptr->command_arg);
 
 	if (autosave_l) do_cmd_save_game(TRUE);
 
@@ -1514,7 +1514,7 @@ void do_cmd_debug(void)
 		case 'A':
 		{
 			/* Know alignment */
-			msg_format("Your alignment is %d.", p_ptr->align);
+			msgf("Your alignment is %d.", p_ptr->align);
 			break;
 		}
 
@@ -1747,7 +1747,7 @@ void do_cmd_debug(void)
 				}
 			}
 
-			msg_format("%i towns, %i stairs", towns, stairs);
+			msgf("%i towns, %i stairs", towns, stairs);
 			break;
 		}
 
@@ -1825,7 +1825,7 @@ void do_cmd_debug(void)
 		default:
 		{
 			/* Not a Debug Command */
-			msg_print("That is not a valid debug command.");
+			msgf("That is not a valid debug command.");
 			break;
 		}
 	}

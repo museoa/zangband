@@ -391,9 +391,9 @@ static void display_parse_error(cptr filename, errr err, cptr buf)
 	oops = (((err > 0) && (err < PARSE_ERROR_MAX)) ? err_str[err] : "unknown");
 
 	/* Oops */
-	msg_format("Error at line %d of '%s'.", error_line, filename);
-	msg_format("Record %d contains a '%s' error.", error_idx, oops);
-	msg_format("Parsing '%s'.", buf);
+	msgf("Error at line %d of '%s'.", error_line, filename);
+	msgf("Record %d contains a '%s' error.", error_idx, oops);
+	msgf("Parsing '%s'.", buf);
 	message_flush();
 
 	/* Quit */
@@ -819,9 +819,9 @@ errr init_w_info(void)
 			(((err > 0) && (err < PARSE_ERROR_MAX)) ? err_str[err] : "unknown");
 
 		/* Oops */
-		msg_format("Error %d at line %d of 'w_info.txt'.", err, error_line);
-		msg_format("Record %d contains a '%s' error.", error_idx, oops);
-		msg_format("Parsing '%s'.", buf);
+		msgf("Error %d at line %d of 'w_info.txt'.", err, error_line);
+		msgf("Record %d contains a '%s' error.", error_idx, oops);
+		msgf("Parsing '%s'.", buf);
 		message_flush();
 
 		/* Quit */
@@ -876,9 +876,9 @@ errr init_t_info(void)
 			(((err > 0) && (err < PARSE_ERROR_MAX)) ? err_str[err] : "unknown");
 
 		/* Oops */
-		msg_format("Error %d at line %d of 't_info.txt'.", err, error_line);
-		msg_format("Record %d contains a '%s' error.", error_idx, oops);
-		msg_format("Parsing '%s'.", buf);
+		msgf("Error %d at line %d of 't_info.txt'.", err, error_line);
+		msgf("Record %d contains a '%s' error.", error_idx, oops);
+		msgf("Parsing '%s'.", buf);
 		message_flush();
 
 		/* Quit */

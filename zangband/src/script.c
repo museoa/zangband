@@ -20,10 +20,10 @@
 static lua_State* L = NULL;
 
 
-static int xxx_msg_print(lua_State *L)
+static int xxx_msgf(lua_State *L)
 {
 	cptr text = lua_tostring(L, 1);
-	if (text) msg_print(text);
+	if (text) msgf(text);
 	lua_pop(L, 1);
 
 	return 0;
@@ -123,7 +123,7 @@ static int xxx_fire_beam(lua_State *L)
 
 static const struct luaL_reg anglib[] =
 {
-	{"msg_print", xxx_msg_print},
+	{"msg_print", xxx_msgf},
 	{"msg_flush", xxx_msg_flush},
 	{"get_aim_dir", xxx_get_aim_dir},
 	{"fire_beam", xxx_fire_beam},
