@@ -1123,6 +1123,16 @@ void fetch(int dir, int wgt, bool require_los)
 		msg_print("The object is too heavy.");
 		return;
 	}
+	
+	/* 
+	 * Hack - do not get artifacts.
+	 * This interacts badly with preserve mode.
+	 */
+	if (o_ptr->flags3 & TR3_INSTA_ART)
+	{
+		msg_print("The object seems to have a will of its own!");
+		return;
+	}
 
 	i = c_ptr->o_idx;
 	c_ptr->o_idx = o_ptr->next_o_idx;
