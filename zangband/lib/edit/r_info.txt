@@ -9978,7 +9978,7 @@ D:A treeherd, a sentient, moving tree. Its wrath is fearsome!
 N:709:Hru
 G:P:s
 I:120:40d100:30:150:15
-W:46:3:0:14500
+W:56:3:0:14500
 B:HIT:SHATTER:12d13
 B:HIT:SHATTER:12d13
 B:HIT:SHATTER:12d13
