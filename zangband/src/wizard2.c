@@ -130,7 +130,7 @@ static void do_cmd_summon_horde(void)
 		if ((wy == py) && (wx == px)) break;
 	}
 
-	(void)alloc_horde(wy, wx);
+	(void)alloc_horde(wx, wy);
 }
 
 #endif /* MONSTER_HORDES */
@@ -1332,7 +1332,7 @@ static void do_cmd_wiz_summon(int num)
 
 	for (i = 0; i < num; i++)
 	{
-		(void)summon_specific(0, py, px, p_ptr->depth, 0, TRUE, FALSE, FALSE);
+		(void)summon_specific(0, px, py, p_ptr->depth, 0, TRUE, FALSE, FALSE);
 	}
 }
 
@@ -1376,7 +1376,7 @@ static void do_cmd_wiz_named(int r_idx, bool slp)
 		if ((x == px) && (y == py)) continue;
 
 		/* Place it (allow groups) */
-		if (place_monster_aux(y, x, r_idx, slp, TRUE, FALSE, FALSE)) break;
+		if (place_monster_aux(x, y, r_idx, slp, TRUE, FALSE, FALSE)) break;
 	}
 }
 
@@ -1388,7 +1388,7 @@ static void do_cmd_wiz_named(int r_idx, bool slp)
  */
 static void do_cmd_wiz_named_friendly(int r_idx, bool slp)
 {
-	(void)summon_named_creature(p_ptr->py, p_ptr->px, r_idx, slp, TRUE, TRUE);
+	(void)summon_named_creature(p_ptr->px, p_ptr->py, r_idx, slp, TRUE, TRUE);
 }
 
 

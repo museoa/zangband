@@ -721,7 +721,7 @@ void trigger_quest_create(byte c_type, void *data)
 								group = TRUE;
 
 							/* Try to place the monster */
-							if (place_monster_aux(y, x, q_ptr->data.dun.r_idx, FALSE, group, FALSE, FALSE))
+							if (place_monster_aux(x, y, q_ptr->data.dun.r_idx, FALSE, group, FALSE, FALSE))
 							{
 								/* Success */
 								break;

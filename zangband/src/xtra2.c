@@ -446,7 +446,7 @@ bool monster_death(int m_idx, bool explode)
 
 			if (attempts > 0)
 			{
-				if (summon_specific((pet ? -1 : 0), wy, wx, 100, SUMMON_DAWN,
+				if (summon_specific((pet ? -1 : 0), wx, wy, 100, SUMMON_DAWN,
 										  FALSE, is_friendly(m_ptr), pet))
 				{
 					if (player_can_see_bold(wx, wy))
@@ -466,7 +466,7 @@ bool monster_death(int m_idx, bool explode)
 			int wy = y, wx = x;
 			bool pet = is_pet(m_ptr);
 
-			if (summon_specific((pet ? -1 : 0), wy, wx, 100, SUMMON_BLUE_HORROR,
+			if (summon_specific((pet ? -1 : 0), wx, wy, 100, SUMMON_BLUE_HORROR,
 									  FALSE, is_friendly(m_ptr), pet))
 			{
 				if (player_can_see_bold(wx, wy))
@@ -3349,7 +3349,7 @@ void gain_level_reward(int chosen_reward)
 			msg_print("'My pets, destroy the arrogant mortal!'");
 			for (i = 0; i < rand_range(2, 6); i++)
 			{
-				(void)summon_specific(0, py, px, p_ptr->depth, 0, TRUE, FALSE, FALSE);
+				(void)summon_specific(0, px, py, p_ptr->depth, 0, TRUE, FALSE, FALSE);
 			}
 			break;
 		case REW_H_SUMMON:
@@ -3521,17 +3521,17 @@ void gain_level_reward(int chosen_reward)
 			break;
 		case REW_SER_DEMO:
 			msg_format("%s rewards you with a demonic servant!", chaos_patrons[p_ptr->chaos_patron]);
-			if (!summon_specific(-1, py, px, p_ptr->depth, SUMMON_DEMON, FALSE, TRUE, TRUE))
+			if (!summon_specific(-1, px, py, p_ptr->depth, SUMMON_DEMON, FALSE, TRUE, TRUE))
 				msg_print("Nobody ever turns up...");
 			break;
 		case REW_SER_MONS:
 			msg_format("%s rewards you with a servant!", chaos_patrons[p_ptr->chaos_patron]);
-			if (!summon_specific(-1, py, px, p_ptr->depth, SUMMON_NO_UNIQUES, FALSE, TRUE, TRUE))
+			if (!summon_specific(-1, px, py, p_ptr->depth, SUMMON_NO_UNIQUES, FALSE, TRUE, TRUE))
 				msg_print("Nobody ever turns up...");
 			break;
 		case REW_SER_UNDE:
 			msg_format("%s rewards you with an undead servant!", chaos_patrons[p_ptr->chaos_patron]);
-			if (!summon_specific(-1, py, px, p_ptr->depth, SUMMON_UNDEAD, FALSE, TRUE, TRUE))
+			if (!summon_specific(-1, px, py, p_ptr->depth, SUMMON_UNDEAD, FALSE, TRUE, TRUE))
 				msg_print("Nobody ever turns up...");
 			break;
 		default:

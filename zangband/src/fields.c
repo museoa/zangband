@@ -1513,7 +1513,7 @@ bool field_action_corpse_decay(field_type *f_ptr, vptr nothing)
 	if (ironman_nightmare)
 	{
 		/* Make a monster nearby if possible */
-		if (summon_named_creature(f_ptr->fy, f_ptr->fx,
+		if (summon_named_creature(f_ptr->fx, f_ptr->fy,
 				 r_idx, FALSE, FALSE, FALSE))
 		{
 			if (player_has_los_grid(parea(f_ptr->fy, f_ptr->fx)))
@@ -1562,7 +1562,7 @@ bool field_action_corpse_raise(field_type *f_ptr, vptr input)
 	u16b r_idx = ((u16b) f_ptr->data[1]) * 256 + f_ptr->data[2];
 
 	/* Make a monster nearby if possible */
-	if (summon_named_creature(f_ptr->fy, f_ptr->fx,
+	if (summon_named_creature(f_ptr->fx, f_ptr->fy,
 	                          r_idx, FALSE, FALSE, want_pet))
 	{
 		/* Set the cloned flag, so no treasure is dropped */
@@ -3048,7 +3048,7 @@ bool field_action_hit_trap_summon(field_type *f_ptr, vptr nothing)
 	msg_print("Zap!");
 	
 	/* Summon monsters */
-	(void)summon_specific(0, p_ptr->py, p_ptr->px, p_ptr->depth,
+	(void)summon_specific(0, p_ptr->px, p_ptr->py, p_ptr->depth,
 		 0, TRUE, FALSE, FALSE);
 	
 	/* Delete the field */

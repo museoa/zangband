@@ -468,7 +468,7 @@ static void chest_trap(int x, int y, s16b o_idx)
 			if (randint1(100) < p_ptr->depth)
 				(void)activate_hi_summon();
 			else
-				(void)summon_specific(0, y, x, p_ptr->depth, 0, TRUE, FALSE, FALSE);
+				(void)summon_specific(0, x, y, p_ptr->depth, 0, TRUE, FALSE, FALSE);
 		}
 	}
 
@@ -3220,7 +3220,7 @@ void do_cmd_throw_aux(int mult)
 		/* Always break */
 		breakage = 100;
 
-		if (!(summon_named_creature(y, x, q_ptr->pval, FALSE, FALSE, TRUE)))
+		if (!(summon_named_creature(x, y, q_ptr->pval, FALSE, FALSE, TRUE)))
 		{
 			msg_print("The Figurine writhes and then shatters.");
 		}

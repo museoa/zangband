@@ -1943,12 +1943,12 @@ static void add_monsters_block(int x, int y)
 				if (one_in_(2))
 				{
 					/* Monsters are awake */
-					(void)place_monster(yy + j, xx + i, FALSE, TRUE);
+					(void)place_monster(xx + i, yy + j, FALSE, TRUE);
 				}
 				else
 				{
 					/* Monsters are asleep */
-					(void)place_monster(yy + j, xx + i, TRUE, TRUE);
+					(void)place_monster(xx + i, yy + j, TRUE, TRUE);
 				}
 			}
 		}

@@ -626,7 +626,7 @@ static void wild_magic(int spell)
 
 			for (i = 0; i < 8; i++)
 			{
-				(void)summon_specific(0, py, px, (p_ptr->depth * 3) / 2, type, TRUE, FALSE, FALSE);
+				(void)summon_specific(0, px, py, (p_ptr->depth * 3) / 2, type, TRUE, FALSE, FALSE);
 			}
 			break;
 		}
@@ -798,7 +798,7 @@ static bool cast_life_spell(int spell)
 		(void)confuse_monsters(plev * 4);
 		(void)turn_monsters(plev * 4);
 		(void)stasis_monsters(plev * 4);
-		(void)summon_specific(-1, py, px, plev, SUMMON_ANGEL, TRUE, TRUE, TRUE);
+		(void)summon_specific(-1, px, py, plev, SUMMON_ANGEL, TRUE, TRUE, TRUE);
 		(void)set_shero(p_ptr->shero + rand_range(25, 50));
 		(void)hp_player(300);
 
@@ -1051,7 +1051,7 @@ static bool cast_nature_spell(int spell)
 		(void)slow_monsters();
 		break;
 	case 14: /* Summon Animals */
-		if (!(summon_specific(-1, py, px, plev, SUMMON_ANIMAL_RANGER, TRUE, TRUE, TRUE)))
+		if (!(summon_specific(-1, px, py, plev, SUMMON_ANIMAL_RANGER, TRUE, TRUE, TRUE)))
 			no_trump = TRUE;
 		break;
 	case 15: /* Herbal Healing */
@@ -1350,7 +1350,7 @@ static bool cast_chaos_spell(int spell)
 			bool pet = (one_in_(3));
 			bool group = !(pet && (plev < 50));
 
-			if (summon_specific((pet ? -1 : 0), py, px, (plev * 3) / 2, SUMMON_DEMON, group, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), px, py, (plev * 3) / 2, SUMMON_DEMON, group, FALSE, pet))
 			{
 				msg_print("The area fills with a stench of sulphur and brimstone.");
 
@@ -1577,7 +1577,7 @@ static bool cast_death_spell(int spell)
 			if (die < 8)
 			{
 				msg_print("Oh no! Mouldering forms rise from the earth around you!");
-				(void)summon_specific(0, py, px, p_ptr->depth, SUMMON_UNDEAD, TRUE, FALSE, FALSE);
+				(void)summon_specific(0, px, py, p_ptr->depth, SUMMON_UNDEAD, TRUE, FALSE, FALSE);
 
 				chg_virtue(V_UNLIFE, 1);
 			}
@@ -1902,7 +1902,7 @@ static bool cast_trump_spell(int spell, bool success)
 				else if (die < 14)
 				{
 					msg_print("Oh no! It's the Devil!");
-					(void)summon_specific(0, py, px, p_ptr->depth, SUMMON_DEMON, TRUE, FALSE, FALSE);
+					(void)summon_specific(0, px, py, p_ptr->depth, SUMMON_DEMON, TRUE, FALSE, FALSE);
 				}
 				else if (die < 18)
 				{
@@ -1925,7 +1925,7 @@ static bool cast_trump_spell(int spell, bool success)
 				else if (die < 30)
 				{
 					msg_print("It's the picture of a strange monster.");
-					if (!(summon_specific(0, py, px, (p_ptr->depth * 3) / 2, rand_range(33, 38), TRUE, FALSE, FALSE)))
+					if (!(summon_specific(0, px, py, (p_ptr->depth * 3) / 2, rand_range(33, 38), TRUE, FALSE, FALSE)))
 						no_trump = TRUE;
 				}
 				else if (die < 33)
@@ -1976,25 +1976,25 @@ static bool cast_trump_spell(int spell, bool success)
 				else if (die < 82)
 				{
 					msg_print("It's the picture of a friendly monster.");
-					if (!(summon_specific(-1, py, px, (p_ptr->depth * 3) / 2, SUMMON_BIZARRE1, FALSE, TRUE, TRUE)))
+					if (!(summon_specific(-1, px, py, (p_ptr->depth * 3) / 2, SUMMON_BIZARRE1, FALSE, TRUE, TRUE)))
 						no_trump = TRUE;
 				}
 				else if (die < 84)
 				{
 					msg_print("It's the picture of a friendly monster.");
-					if (!(summon_specific(-1, py, px, (p_ptr->depth * 3) / 2, SUMMON_BIZARRE2, FALSE, TRUE, TRUE)))
+					if (!(summon_specific(-1, px, py, (p_ptr->depth * 3) / 2, SUMMON_BIZARRE2, FALSE, TRUE, TRUE)))
 						no_trump = TRUE;
 				}
 				else if (die < 86)
 				{
 					msg_print("It's the picture of a friendly monster.");
-					if (!(summon_specific(-1, py, px, (p_ptr->depth * 3) / 2, SUMMON_BIZARRE4, FALSE, TRUE, TRUE)))
+					if (!(summon_specific(-1, px, py, (p_ptr->depth * 3) / 2, SUMMON_BIZARRE4, FALSE, TRUE, TRUE)))
 						no_trump = TRUE;
 				}
 				else if (die < 88)
 				{
 					msg_print("It's the picture of a friendly monster.");
-					if (!(summon_specific(-1, py, px, (p_ptr->depth * 3) / 2, SUMMON_BIZARRE5, FALSE, TRUE, TRUE)))
+					if (!(summon_specific(-1, px, py, (p_ptr->depth * 3) / 2, SUMMON_BIZARRE5, FALSE, TRUE, TRUE)))
 						no_trump = TRUE;
 				}
 				else if (die < 96)
@@ -2112,7 +2112,7 @@ static bool cast_trump_spell(int spell, bool success)
 			if (success)
 				msg_print("You concentrate on the trump of an animal...");
 
-			if (summon_specific((pet ? -1 : 0), py, px, plev, type, group, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), px, py, plev, type, group, FALSE, pet))
 			{
 				if (!pet)
 					msg_print("An angry animal appears!");
@@ -2127,7 +2127,7 @@ static bool cast_trump_spell(int spell, bool success)
 		case 10: /* Phantasmal Servant */
 			if (success)
 			{
-				if (summon_specific(-1, py, px, (plev * 3) / 2, SUMMON_PHANTOM, FALSE, TRUE, TRUE))
+				if (summon_specific(-1, px, py, (plev * 3) / 2, SUMMON_PHANTOM, FALSE, TRUE, TRUE))
 				{
 					msg_print("'Your wish, master?'");
 				}
@@ -2146,7 +2146,7 @@ static bool cast_trump_spell(int spell, bool success)
 			if (success)
 				msg_print("You concentrate on the trump of a monster...");
 
-			if (summon_specific((pet ? -1 : 0), py, px, (plev * 3) / 2, type, group, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), px, py, (plev * 3) / 2, type, group, FALSE, pet))
 			{
 				if (!pet)
 					msg_print("An angry monster appears!");
@@ -2166,7 +2166,7 @@ static bool cast_trump_spell(int spell, bool success)
 			if (success)
 				msg_print("You concentrate on the trump of a monster...");
 
-			if (summon_specific((pet ? -1 : 0), py, px, (plev * 3) / 2, SUMMON_ELEMENTAL, group, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), px, py, (plev * 3) / 2, SUMMON_ELEMENTAL, group, FALSE, pet))
 			{
 				if (!pet)
 					msg_print("An angry elemental appears!");
@@ -2212,7 +2212,7 @@ static bool cast_trump_spell(int spell, bool success)
 				case 4: dummy = SUMMON_BIZARRE5; break;
 			}
 
-			if (summon_specific((pet ? -1 : 0), py, px, (plev * 3) / 2, dummy, group, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), px, py, (plev * 3) / 2, dummy, group, FALSE, pet))
 			{
 				if (!pet)
 					msg_print("An angry creature appears!");
@@ -2231,7 +2231,7 @@ static bool cast_trump_spell(int spell, bool success)
 			if (success)
 				msg_print("You concentrate on the trump of a spider...");
 
-			if (summon_specific((pet ? -1 : 0), py, px, plev, SUMMON_SPIDER, group, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), px, py, plev, SUMMON_SPIDER, group, FALSE, pet))
 			{
 				if (!pet)
 					msg_print("An angry spiders appears!");
@@ -2251,7 +2251,7 @@ static bool cast_trump_spell(int spell, bool success)
 			if (success)
 				msg_print("You concentrate on the trump of a reptile...");
 
-			if (summon_specific((pet ? -1 : 0), py, px, (plev * 3) / 2, SUMMON_HYDRA, group, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), px, py, (plev * 3) / 2, SUMMON_HYDRA, group, FALSE, pet))
 			{
 				if (!pet)
 					msg_print("An angry reptile appears!");
@@ -2270,7 +2270,7 @@ static bool cast_trump_spell(int spell, bool success)
 			if (success)
 				msg_print("You concentrate on the trump of a hound...");
 
-			if (summon_specific((pet ? -1 : 0), py, px, plev, SUMMON_HOUND, TRUE, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), px, py, plev, SUMMON_HOUND, TRUE, FALSE, pet))
 			{
 				if (!pet)
 					msg_print("Angry barking surrounds you!");
@@ -2316,7 +2316,7 @@ static bool cast_trump_spell(int spell, bool success)
 			if (success)
 				msg_print("You concentrate on the trump of a Cyberdemon...");
 
-			if (summon_specific((pet ? -1 : 0), py, px, plev * 2, SUMMON_CYBER, FALSE, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), px, py, plev * 2, SUMMON_CYBER, FALSE, FALSE, pet))
 			{
 				if (!pet)
 					msg_print("An angry Cyberdemon appears!");
@@ -2348,7 +2348,7 @@ static bool cast_trump_spell(int spell, bool success)
 			if (success)
 				msg_print("You concentrate on the trump of an undead creature...");
 
-			if (summon_specific((pet ? -1 : 0), py, px, plev * 2, SUMMON_UNDEAD, group, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), px, py, plev * 2, SUMMON_UNDEAD, group, FALSE, pet))
 			{
 				if (!pet)
 					msg_print("An angry undead creature appears!");
@@ -2368,7 +2368,7 @@ static bool cast_trump_spell(int spell, bool success)
 			if (success)
 				msg_print("You concentrate on the trump of a dragon...");
 
-			if (summon_specific((pet ? -1 : 0), py, px, plev * 2, SUMMON_DRAGON, group, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), px, py, plev * 2, SUMMON_DRAGON, group, FALSE, pet))
 			{
 				if (!pet)
 					msg_print("An angry dragon appears!");
@@ -2393,7 +2393,7 @@ static bool cast_trump_spell(int spell, bool success)
 				bool group = (pet ? FALSE : TRUE);
 				int type = (pet ? SUMMON_NO_UNIQUES : 0);
 
-				if (summon_specific((pet ? -1 : 0), py, px, (plev * 3) / 2, type, group, FALSE, pet))
+				if (summon_specific((pet ? -1 : 0), px, py, (plev * 3) / 2, type, group, FALSE, pet))
 				{
 					if (!pet)
 						msg_print("An angry creature appears!");
@@ -2410,7 +2410,7 @@ static bool cast_trump_spell(int spell, bool success)
 			if (success)
 				msg_print("You concentrate on the trump of a demon...");
 
-			if (summon_specific((pet ? -1 : 0), py, px, plev * 2, SUMMON_DEMON, group, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), px, py, plev * 2, SUMMON_DEMON, group, FALSE, pet))
 			{
 				if (!pet)
 					msg_print("An angry demon appears!");
@@ -2431,7 +2431,7 @@ static bool cast_trump_spell(int spell, bool success)
 			if (success)
 				msg_print("You concentrate on the trump of an ancient dragon...");
 
-			if (summon_specific((pet ? -1 : 0), py, px, plev * 2, type, group, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), px, py, plev * 2, type, group, FALSE, pet))
 			{
 				if (!pet)
 					msg_print("An angry ancient dragon appears!");
@@ -2452,7 +2452,7 @@ static bool cast_trump_spell(int spell, bool success)
 			if (success)
 				msg_print("You concentrate on the trump of a greater undead being...");
 
-			if (summon_specific((pet ? -1 : 0), py, px, plev * 2, type, group, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), px, py, plev * 2, type, group, FALSE, pet))
 			{
 				if (!pet)
 					msg_print("An angry greater undead creature appears!");

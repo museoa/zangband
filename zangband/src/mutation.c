@@ -1155,7 +1155,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 
 		for (i = 0; i < 8; i++)
 		{
-			(void)summon_specific(-1, py, px, lvl, SUMMON_BIZARRE1, FALSE, TRUE, TRUE);
+			(void)summon_specific(-1, px, py, lvl, SUMMON_BIZARRE1, FALSE, TRUE, TRUE);
 		}
 	}
 
@@ -1486,7 +1486,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 	{
 		bool pet = (one_in_(6));
 
-		if (summon_specific((pet ? -1 : 0), p_ptr->py, p_ptr->px,
+		if (summon_specific((pet ? -1 : 0), p_ptr->px, p_ptr->py,
 				 p_ptr->depth, SUMMON_DEMON, TRUE, FALSE, pet))
 		{
 			msg_print("You have attracted a demon!");
@@ -1578,7 +1578,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 	{
 		bool pet = (one_in_(3));
 
-		if (summon_specific((pet ? -1 : 0), p_ptr->py, p_ptr->px,
+		if (summon_specific((pet ? -1 : 0), p_ptr->px, p_ptr->py,
 			 p_ptr->depth, SUMMON_ANIMAL, TRUE, FALSE, pet))
 		{
 			msg_print("You have attracted an animal!");
@@ -1663,7 +1663,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 	{
 		bool pet = (one_in_(5));
 
-		if (summon_specific((pet ? -1 : 0), p_ptr->py, p_ptr->px,
+		if (summon_specific((pet ? -1 : 0), p_ptr->px, p_ptr->py,
 			 p_ptr->depth, SUMMON_DRAGON, TRUE, FALSE, pet))
 		{
 			msg_print("You have attracted a dragon!");

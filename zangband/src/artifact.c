@@ -2073,7 +2073,7 @@ bool activate_effect(object_type *o_ptr)
 			case ART_DAWN:
 			{
 				msg_print("You summon the Legion of the Dawn.");
-				(void)summon_specific(-1, py, px, p_ptr->depth, SUMMON_DAWN, TRUE, TRUE, TRUE);
+				(void)summon_specific(-1, px, py, p_ptr->depth, SUMMON_DAWN, TRUE, TRUE, TRUE);
 				o_ptr->timeout = (s16b)rand_range(500, 1000);
 				break;
 			}
@@ -2600,7 +2600,7 @@ bool activate_effect(object_type *o_ptr)
 		case ACT_SUMMON_ANIMAL:
 		{
 			msg_print("You summon a beast.");
-			(void)summon_specific(-1, py, px, plev, SUMMON_ANIMAL_RANGER, TRUE, TRUE, TRUE);
+			(void)summon_specific(-1, px, py, plev, SUMMON_ANIMAL_RANGER, TRUE, TRUE, TRUE);
 			o_ptr->timeout = (s16b)rand_range(200, 500);
 			break;
 		}
@@ -2608,7 +2608,7 @@ bool activate_effect(object_type *o_ptr)
 		case ACT_SUMMON_PHANTOM:
 		{
 			msg_print("You summon a phantasmal servant.");
-			(void)summon_specific(-1, py, px, p_ptr->depth, SUMMON_PHANTOM, TRUE, TRUE, TRUE);
+			(void)summon_specific(-1, px, py, p_ptr->depth, SUMMON_PHANTOM, TRUE, TRUE, TRUE);
 			o_ptr->timeout = (s16b)rand_range(200, 400);
 			break;
 		}
@@ -2618,7 +2618,7 @@ bool activate_effect(object_type *o_ptr)
 			bool pet = one_in_(3);
 			bool group = !(pet && (plev < 50));
 
-			if (summon_specific((pet ? -1 : 0), py, px, ((plev * 3) / 2), SUMMON_ELEMENTAL, group, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), px, py, ((plev * 3) / 2), SUMMON_ELEMENTAL, group, FALSE, pet))
 			{
 				msg_print("An elemental materializes...");
 
@@ -2637,7 +2637,7 @@ bool activate_effect(object_type *o_ptr)
 			bool pet = one_in_(3);
 			bool group = !(pet && (plev < 50));
 
-			if (summon_specific((pet ? -1 : 0), py, px, ((plev * 3) / 2), SUMMON_DEMON, group, FALSE, pet))
+			if (summon_specific((pet ? -1 : 0), px, py, ((plev * 3) / 2), SUMMON_DEMON, group, FALSE, pet))
 			{
 				msg_print("The area fills with a stench of sulphur and brimstone.");
 				if (pet)
@@ -2667,7 +2667,7 @@ bool activate_effect(object_type *o_ptr)
 				group = TRUE;
 			}
 
-			if (summon_specific((pet ? -1 : 0), py, px, ((plev * 3) / 2), type,
+			if (summon_specific((pet ? -1 : 0), px, py, ((plev * 3) / 2), type,
 				                group, FALSE, pet))
 			{
 				msg_print("Cold winds begin to blow around you, carrying with them the stench of decay...");

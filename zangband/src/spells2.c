@@ -3803,7 +3803,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 			}
 			case 7: case 8: case 9: case 18:
 			{
-				(*count) += summon_specific(0, py, px, p_ptr->depth, 0, TRUE, FALSE, FALSE);
+				(*count) += summon_specific(0, px, py, p_ptr->depth, 0, TRUE, FALSE, FALSE);
 				if (!one_in_(6)) break;
 				
 				/* Fall through */
@@ -3905,46 +3905,46 @@ int activate_hi_summon(void)
 		switch (randint1(26) + (p_ptr->depth / 20))
 		{
 			case 1: case 2:
-				count += summon_specific(0, py, px, p_ptr->depth, SUMMON_ANT, TRUE, FALSE, FALSE);
+				count += summon_specific(0, px, py, p_ptr->depth, SUMMON_ANT, TRUE, FALSE, FALSE);
 				break;
 			case 3: case 4:
-				count += summon_specific(0, py, px, p_ptr->depth, SUMMON_SPIDER, TRUE, FALSE, FALSE);
+				count += summon_specific(0, px, py, p_ptr->depth, SUMMON_SPIDER, TRUE, FALSE, FALSE);
 				break;
 			case 5: case 6:
-				count += summon_specific(0, py, px, p_ptr->depth, SUMMON_HOUND, TRUE, FALSE, FALSE);
+				count += summon_specific(0, px, py, p_ptr->depth, SUMMON_HOUND, TRUE, FALSE, FALSE);
 				break;
 			case 7: case 8:
-				count += summon_specific(0, py, px, p_ptr->depth, SUMMON_HYDRA, TRUE, FALSE, FALSE);
+				count += summon_specific(0, px, py, p_ptr->depth, SUMMON_HYDRA, TRUE, FALSE, FALSE);
 				break;
 			case 9: case 10:
-				count += summon_specific(0, py, px, p_ptr->depth, SUMMON_ANGEL, TRUE, FALSE, FALSE);
+				count += summon_specific(0, px, py, p_ptr->depth, SUMMON_ANGEL, TRUE, FALSE, FALSE);
 				break;
 			case 11: case 12:
-				count += summon_specific(0, py, px, p_ptr->depth, SUMMON_UNDEAD, TRUE, FALSE, FALSE);
+				count += summon_specific(0, px, py, p_ptr->depth, SUMMON_UNDEAD, TRUE, FALSE, FALSE);
 				break;
 			case 13: case 14:
-				count += summon_specific(0, py, px, p_ptr->depth, SUMMON_DRAGON, TRUE, FALSE, FALSE);
+				count += summon_specific(0, px, py, p_ptr->depth, SUMMON_DRAGON, TRUE, FALSE, FALSE);
 				break;
 			case 15: case 16:
-				count += summon_specific(0, py, px, p_ptr->depth, SUMMON_DEMON, TRUE, FALSE, FALSE);
+				count += summon_specific(0, px, py, p_ptr->depth, SUMMON_DEMON, TRUE, FALSE, FALSE);
 				break;
 			case 17:
-				count += summon_specific(0, py, px, p_ptr->depth, SUMMON_AMBERITES, TRUE, FALSE, FALSE);
+				count += summon_specific(0, px, py, p_ptr->depth, SUMMON_AMBERITES, TRUE, FALSE, FALSE);
 				break;
 			case 18: case 19:
-				count += summon_specific(0, py, px, p_ptr->depth, SUMMON_UNIQUE, TRUE, FALSE, FALSE);
+				count += summon_specific(0, px, py, p_ptr->depth, SUMMON_UNIQUE, TRUE, FALSE, FALSE);
 				break;
 			case 20: case 21:
-				count += summon_specific(0, py, px, p_ptr->depth, SUMMON_HI_UNDEAD, TRUE, FALSE, FALSE);
+				count += summon_specific(0, px, py, p_ptr->depth, SUMMON_HI_UNDEAD, TRUE, FALSE, FALSE);
 				break;
 			case 22: case 23:
-				count += summon_specific(0, py, px, p_ptr->depth, SUMMON_HI_DRAGON, TRUE, FALSE, FALSE);
+				count += summon_specific(0, px, py, p_ptr->depth, SUMMON_HI_DRAGON, TRUE, FALSE, FALSE);
 				break;
 			case 24: case 25:
-				count += summon_specific(0, py, px, 100, SUMMON_CYBER, TRUE, FALSE, FALSE);
+				count += summon_specific(0, px, py, 100, SUMMON_CYBER, TRUE, FALSE, FALSE);
 				break;
 			default:
-				count += summon_specific(0, py, px, (((p_ptr->depth * 3) / 2) + 5), 0, TRUE, FALSE, FALSE);
+				count += summon_specific(0, px, py, (((p_ptr->depth * 3) / 2) + 5), 0, TRUE, FALSE, FALSE);
 		}
 	}
 
@@ -3972,7 +3972,7 @@ int summon_cyber(int who, int y, int x)
 
 	for (i = 0; i < max_cyber; i++)
 	{
-		count += summon_specific(who, y, x, 100, SUMMON_CYBER, FALSE, friendly, pet);
+		count += summon_specific(who, x, y, 100, SUMMON_CYBER, FALSE, friendly, pet);
 	}
 
 	return count;

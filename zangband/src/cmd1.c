@@ -2016,7 +2016,7 @@ static void summon_pattern_vortex(int x, int y)
 		/* Summon it */
 		if (strstr(r_name + r_ptr->name, "Pattern") && (r_ptr->d_char == 'v'))
 		{
-			if (summon_named_creature(y, x, i, FALSE, FALSE, FALSE))
+			if (summon_named_creature(x, y, i, FALSE, FALSE, FALSE))
 			{
 				msg_print("You hear a bell chime.");
 			}
