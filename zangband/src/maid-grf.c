@@ -965,7 +965,13 @@ static bool do_cmd_view_map_aux(char c, int town)
 	my_fclose(fff);
 
 	/* If there is no success don't show anything */
-	if (!success) return (FALSE);
+	if (!success)
+	{
+		/* Remove the file */
+		(void)fd_kill(file_name);
+
+		return (FALSE);
+	}
 	
 	/* Display the file contents */
 	(void)show_file(file_name, title, 0, 0);
