@@ -714,7 +714,7 @@ static void do_cmd_quaff_potion_aux(int item)
 			break;
 		}
 
-		case SV_POTION_BESERK_STRENGTH:
+		case SV_POTION_BERSERK_STRENGTH:
 		{
 			if (set_afraid(0)) ident = TRUE;
 			if (set_shero(p_ptr->shero + rand_range(25, 50))) ident = TRUE;
