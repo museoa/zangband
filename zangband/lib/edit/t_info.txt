@@ -84,10 +84,13 @@ I:TEMP | VIS | IGNORE
 D:0:0:0:0:0:0:0:0
 F:0,field_action_corpse_init 
 F:12,field_action_corpse_look | 13,field_action_corpse_decay
-F:15,field_action_corpse_raise
 L:LOAD:local race
 L:LOAD:race = monst_race(field.data[1] * 256 + field.data[2])
 L:LOAD:set_corpse_size(field, corpse_type(race))
+L:SPEC:local race
+L:SPEC:race = monst_race(field.data[1] * 256 + field.data[2])
+L:SPEC:summon_cloned_creature(field.fx, field.fy, race, pet)
+L:SPEC:deleteme
 
 # Skeleton
 N:5:skeleton
@@ -97,10 +100,14 @@ I:TEMP | VIS | IGNORE
 D:0:0:0:0:0:0:0:0
 F:0,field_action_corpse_init
 F:12,field_action_corpse_look | 13,field_action_corpse_decay
-F:15,field_action_corpse_raise
 L:LOAD:local race
 L:LOAD:race = monst_race(field.data[1] * 256 + field.data[2])
 L:LOAD:set_corpse_size(field, corpse_type(race))
+L:SPEC:local race
+L:SPEC:race = monst_race(field.data[1] * 256 + field.data[2])
+L:SPEC:summon_cloned_creature(field.fx, field.fy, race, pet)
+L:SPEC:deleteme
+
 
 # Trapdoor
 N:6:trap door
@@ -109,7 +116,7 @@ W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:6:125:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_door
-F:10,field_action_trap_disarm | 15,field_action_trap_disarm
+F:10,field_action_trap_disarm
 F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
 
@@ -120,7 +127,7 @@ W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:5:125:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_pit
-F:10,field_action_trap_disarm | 15,field_action_trap_disarm
+F:10,field_action_trap_disarm
 F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
 
@@ -131,7 +138,7 @@ W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:5:125:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_spike
-F:10,field_action_trap_disarm | 15,field_action_trap_disarm
+F:10,field_action_trap_disarm
 F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
 
@@ -142,7 +149,7 @@ W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:10:125:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_poison_pit
-F:10,field_action_trap_disarm | 15,field_action_trap_disarm
+F:10,field_action_trap_disarm
 F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
 
@@ -153,7 +160,7 @@ W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:5:50:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_curse
-F:10,field_action_trap_disarm | 15,field_action_trap_disarm
+F:10,field_action_trap_disarm
 F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
 
@@ -164,7 +171,7 @@ W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:10:50:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_teleport
-F:10,field_action_trap_disarm | 15,field_action_trap_disarm
+F:10,field_action_trap_disarm
 F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
 
@@ -175,7 +182,7 @@ W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:8:125:0:5:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_element
-F:10,field_action_trap_disarm | 15,field_action_trap_disarm
+F:10,field_action_trap_disarm
 F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
 
@@ -186,7 +193,7 @@ W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:10:125:0:5:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_ba_element
-F:10,field_action_trap_disarm | 15,field_action_trap_disarm
+F:10,field_action_trap_disarm
 F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
 
@@ -197,7 +204,7 @@ W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:5:125:0:5:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_gas
-F:10,field_action_trap_disarm | 15,field_action_trap_disarm
+F:10,field_action_trap_disarm
 F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
 
@@ -208,7 +215,7 @@ W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:10:50:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_trap
-F:10,field_action_trap_disarm | 15,field_action_trap_disarm
+F:10,field_action_trap_disarm
 F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
 
@@ -219,7 +226,7 @@ W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:5:125:0:3:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_temp_stat
-F:10,field_action_trap_disarm | 15,field_action_trap_disarm
+F:10,field_action_trap_disarm
 F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
 
@@ -230,7 +237,7 @@ W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:20:125:0:6:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_perm_stat
-F:10,field_action_trap_disarm | 15,field_action_trap_disarm
+F:10,field_action_trap_disarm
 F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
 
@@ -241,7 +248,7 @@ W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:40:125:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_lose_xp
-F:10,field_action_trap_disarm | 15,field_action_trap_disarm
+F:10,field_action_trap_disarm
 F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
 
@@ -252,7 +259,7 @@ W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:10:100:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_disenchant
-F:10,field_action_trap_disarm | 15,field_action_trap_disarm
+F:10,field_action_trap_disarm
 F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
 
@@ -263,7 +270,7 @@ W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:10:100:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_drop_item
-F:10,field_action_trap_disarm | 15,field_action_trap_disarm
+F:10,field_action_trap_disarm
 F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
 
@@ -274,7 +281,7 @@ W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:15:75:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_mutate
-F:10,field_action_trap_disarm | 15,field_action_trap_disarm
+F:10,field_action_trap_disarm
 F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
 
@@ -285,7 +292,7 @@ W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:50:125:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_new_life
-F:10,field_action_trap_disarm | 15,field_action_trap_disarm
+F:10,field_action_trap_disarm
 F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
 
@@ -296,7 +303,7 @@ W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:2:125:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_no_lite
-F:10,field_action_trap_disarm | 15,field_action_trap_disarm
+F:10,field_action_trap_disarm
 F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
 
@@ -307,7 +314,7 @@ W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:2:25:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_hunger
-F:10,field_action_trap_disarm | 15,field_action_trap_disarm
+F:10,field_action_trap_disarm
 F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
 
@@ -318,7 +325,7 @@ W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:10:75:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_no_gold
-F:10,field_action_trap_disarm | 15,field_action_trap_disarm
+F:10,field_action_trap_disarm
 F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
 
@@ -329,7 +336,7 @@ W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:5:125:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_haste_monster
-F:10,field_action_trap_disarm | 15,field_action_trap_disarm
+F:10,field_action_trap_disarm
 F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
 
@@ -340,7 +347,7 @@ W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:5:125:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_raise_mon
-F:10,field_action_trap_disarm | 15,field_action_trap_disarm
+F:10,field_action_trap_disarm
 F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
 
@@ -351,7 +358,7 @@ W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:5:100:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_drain_magic
-F:10,field_action_trap_disarm | 15,field_action_trap_disarm
+F:10,field_action_trap_disarm
 F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
 
@@ -362,7 +369,7 @@ W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:5:125:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_aggravate
-F:10,field_action_trap_disarm | 15,field_action_trap_disarm
+F:10,field_action_trap_disarm
 F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
 
@@ -373,7 +380,7 @@ W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:5:50:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_summon
-F:10,field_action_trap_disarm | 15,field_action_trap_disarm
+F:10,field_action_trap_disarm
 F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
 
@@ -384,7 +391,7 @@ W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:5:75:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_lose_memory
-F:10,field_action_trap_disarm | 15,field_action_trap_disarm
+F:10,field_action_trap_disarm
 F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
 
@@ -396,7 +403,7 @@ I:NO_LOOK | MERGE
 D:0:0:0:0:0:0:255:255
 F:0,field_action_counter_init
 F:10,field_action_door_unlock | 11,field_action_door_gf
-F:15,field_action_delete | 17,field_action_door_lock_monster
+F:17,field_action_door_lock_monster
 L:INTERT:action = ACT_OPEN
 
 # Jammed door
@@ -407,7 +414,7 @@ I:NO_LOOK | MERGE
 D:15:1:0:0:0:0:255:255
 F:0,field_action_counter_init
 F:10,field_action_door_bash | 11,field_action_door_gf
-F:15,field_action_delete | 17,field_action_door_jam_monster
+F:17,field_action_door_jam_monster
 L:INTERT:action = ACT_OPEN
 
 #
