@@ -555,11 +555,11 @@ static bool cave_gen(void)
 				/* Type 5 -- Monster nest (8%) */
 				if ((k < 18) && room_build(y, x, 5)) continue;
 
-				/* Type 6 -- Monster pit (6%) */
-				if ((k < 24) && room_build(y, x, 6)) continue;
+				/* Type 6 -- Monster pit (10%) */
+				if ((k < 28) && room_build(y, x, 6)) continue;
 
 				/* Type 10 -- Random vault (4%) */
-				if ((k < 28) && room_build(y, x, 10)) continue;
+				if ((k < 32) && room_build(y, x, 10)) continue;
 #endif
 
 			}
