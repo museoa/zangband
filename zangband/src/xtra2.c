@@ -2095,18 +2095,9 @@ static bool target_set_accept(int y, int x)
 		/* Notice doors */
 		if (c_ptr->feat == FEAT_CLOSED) return (TRUE);
 
-		/* Notice rubble */
-		if (c_ptr->feat == FEAT_RUBBLE) return (TRUE);
-
 		/* Notice veins with treasure */
 		if (c_ptr->feat == FEAT_MAGMA_K) return (TRUE);
 		if (c_ptr->feat == FEAT_QUARTZ_K) return (TRUE);
-
-		/* Notice water, lava, ... */
-		if (c_ptr->feat == FEAT_DEEP_WATER) return (TRUE);
-		if (c_ptr->feat == FEAT_SHAL_WATER) return (TRUE);
-		if (c_ptr->feat == FEAT_DEEP_LAVA) return (TRUE);
-		if (c_ptr->feat == FEAT_SHAL_LAVA) return (TRUE);
 	}
 
 	/* Nope */
@@ -2156,6 +2147,9 @@ static void target_set_prepare(int mode)
 				continue;
 			}
 
+			/* Paranoia */
+			if (temp_n >= TEMP_MAX) continue;
+			
 			/* Save the location */
 			temp_x[temp_n] = x;
 			temp_y[temp_n] = y;
