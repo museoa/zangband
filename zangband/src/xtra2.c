@@ -3496,7 +3496,7 @@ void gain_level_reward(int chosen_reward)
 			msg_format("The voice of %s booms out:",
 				chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Death and destruction! This pleaseth me!'");
-			(void)destroy_area(py, px, 25);
+			(void)destroy_area(px, py, 25);
 			break;
 		case REW_GENOCIDE:
 			msg_format("The voice of %s booms out:",

@@ -1097,7 +1097,7 @@ void call_the_(void)
 			((mp_ptr->spell_book == TV_LIFE_BOOK) ? "prayer" : "spell"));
 		msg_print("There is a loud explosion!");
 
-		if (destroy_area(py, px, 20 + p_ptr->lev))
+		if (destroy_area(px, py, 20 + p_ptr->lev))
 			msg_print("The dungeon collapses...");
 		else
 			msg_print("The dungeon trembles.");

@@ -1096,7 +1096,7 @@ bool make_attack_normal(int m_idx)
 						/* Radius 8 earthquake centered at the monster */
 						if (damage > 23)
 						{
-							(void)earthquake(m_ptr->fy, m_ptr->fx, 8);
+							(void)earthquake(m_ptr->fx, m_ptr->fy, 8);
 						}
 
 						break;

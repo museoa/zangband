@@ -1193,7 +1193,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 
 	else if (mut_ptr->which == MUT1_EARTHQUAKE)
 	{
-		(void)earthquake(py, px, 10);
+		(void)earthquake(px, py, 10);
 	}
 
 	else if (mut_ptr->which == MUT1_EAT_MAGIC)

@@ -2502,7 +2502,7 @@ bool activate_effect(object_type *o_ptr)
 		{
 			msg_format("The %s vibrates...", o_name);
 			
-			(void)earthquake(py, px, 10);
+			(void)earthquake(px, py, 10);
 			o_ptr->timeout = 50;
 			break;
 		}

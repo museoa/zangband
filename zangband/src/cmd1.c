@@ -1999,7 +1999,7 @@ void py_attack(int x, int y)
 		int px = p_ptr->px;
 		int py = p_ptr->py;
 
-		(void) earthquake(py, px, 10);
+		(void) earthquake(px, py, 10);
 	}
 }
 

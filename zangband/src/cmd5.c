@@ -588,7 +588,7 @@ static void wild_magic(int spell)
 		}
 		case 26:
 		{
-			(void)earthquake(py, px, 5);
+			(void)earthquake(px, py, 5);
 			break;
 		}
 		case 27:
@@ -1087,7 +1087,7 @@ static bool cast_nature_spell(int spell)
 	case 23: /* Protection from Corrosion */
 		return rustproof();
 	case 24: /* Earthquake */
-		(void)earthquake(py, px, 10);
+		(void)earthquake(px, py, 10);
 		break;
 	case 25: /* Whirlwind Attack */
 		{
@@ -1140,7 +1140,7 @@ static bool cast_nature_spell(int spell)
 		break;
 	case 31: /* Nature's Wrath */
 		(void)dispel_monsters(plev * 4);
-		(void)earthquake(py, px, 20 + (plev / 2));
+		(void)earthquake(px, py, 20 + (plev / 2));
 		(void)project(0, 1 + plev / 12, px, py,
 			100 + plev, GF_DISINTEGRATE, PROJECT_KILL | PROJECT_ITEM);
 		break;
@@ -1266,11 +1266,11 @@ static bool cast_chaos_spell(int spell)
 			else if (die < 101) (void)drain_life(dir, 100 + plev);
 			else if (die < 104)
 			{
-				(void)earthquake(py, px, 12);
+				(void)earthquake(px, py, 12);
 			}
 			else if (die < 106)
 			{
-				(void)destroy_area(py, px, 15);
+				(void)destroy_area(px, py, 15);
 			}
 			else if (die < 108)
 			{
@@ -1313,7 +1313,7 @@ static bool cast_chaos_spell(int spell)
 		(void)fire_beam(GF_AWAY_ALL, dir, plev);
 		break;
 	case 14: /* Word of Destruction */
-		(void)destroy_area(py, px, 15);
+		(void)destroy_area(px, py, 15);
 		break;
 	case 15: /* Invoke Logrus */
 		if (!get_aim_dir(&dir)) return FALSE;
@@ -1658,11 +1658,11 @@ static bool cast_death_spell(int spell)
 			}
 			else if (die < 104)
 			{
-				(void)earthquake(py, px, 12);
+				(void)earthquake(px, py, 12);
 			}
 			else if (die < 106)
 			{
-				(void)destroy_area(py, px, 15);
+				(void)destroy_area(px, py, 15);
 			}
 			else if (die < 108)
 			{
@@ -1971,7 +1971,7 @@ static bool cast_trump_spell(int spell, bool success)
 				else if (die < 80)
 				{
 					msg_print("It's the Tower.");
-					(void)earthquake(py, px, 5);
+					(void)earthquake(px, py, 5);
 				}
 				else if (die < 82)
 				{

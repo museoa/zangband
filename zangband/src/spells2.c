@@ -2205,7 +2205,7 @@ bool probing(void)
  * "earthquake" by using the (removed) "full" parameter 
  * to select "destruction".
  */
-bool destroy_area(int y1, int x1, int r)
+bool destroy_area(int x1, int y1, int r)
 {
 	int       y, x, k, t;
 	bool      flag = FALSE;
@@ -2370,7 +2370,7 @@ bool destroy_area(int y1, int x1, int r)
  * for a single turn, unless that monster can pass_walls or kill_walls.
  * This has allowed massive simplification of the "monster" code.
  */
-bool earthquake(int cy, int cx, int r)
+bool earthquake(int cx, int cy, int r)
 {
 	int py = p_ptr->py;
 	int px = p_ptr->px;
@@ -3745,7 +3745,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 				if (!(*count))
 				{
 					msg_print("The ground trembles...");
-					(void)earthquake(py, px, rand_range(5, 15));
+					(void)earthquake(px, py, rand_range(5, 15));
 					if (!one_in_(6)) break;
 				}
 				
@@ -3756,7 +3756,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 				if (!(*count))
 				{
 					msg_print("A portal opens to a plane of raw mana!");
-					(void)destroy_area(py, px, 20);
+					(void)destroy_area(px, py, 20);
 					project(1, 3, px, py, damroll(10, 5), GF_MANA, flg);
 					if (!one_in_(6)) break;
 				}
@@ -4002,7 +4002,7 @@ void wall_breaker(void)
 	}
 	else if (randint1(100) > 30)
 	{
-		(void)earthquake(py, px, 1);
+		(void)earthquake(px, py, 1);
 	}
 	else
 	{
