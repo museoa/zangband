@@ -3459,8 +3459,6 @@ static void process_menus(WORD wCmd)
 		/* Show scores */
 		case IDM_FILE_SCORE:
 		{
-			char buf[1024];
-
 			if (!initialized)
 			{
 				plog("You may not do that right now.");
