@@ -160,10 +160,6 @@ proc angband_display {window action args} {
 				NSModule::LoadIfNeeded NSBuilding
 			}
 
-			displayinfo {
-				NSModule::LoadIfNeeded NSDisplayInfo
-			}
-
 			equip {
 				if {[string equal [Value inventory,style] new]} {
 					NSModule::LoadIfNeeded NSInventory2
