@@ -209,7 +209,7 @@ static const struct luaL_reg intMathLib[] =
 
 static char string_buf[200];
 
-char *apply_object_trigger_str(int trigger_id, object_type *o_ptr)
+cptr apply_object_trigger_str(int trigger_id, const object_type *o_ptr)
 {
 	char *result;
 	

@@ -1196,6 +1196,10 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 static int choose_activation_power(object_type *o_ptr, int level)
 {
 	int type = 0, chance = 0;
+	
+	/* Hack - ignore parameters */
+	(void) o_ptr;
+	(void) level;
 
 	while (!type || (randint1(100) >= chance))
 	{
@@ -1587,7 +1591,7 @@ static int random_minor_theme_weapon(object_type *o_ptr)
 
 static int random_major_theme_weapon(object_type *o_ptr)
 {
-	int activate;
+	int activate = 0;
 	
 	switch (randint1(7))
 	{
