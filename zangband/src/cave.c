@@ -2415,10 +2415,11 @@ void forget_lite(void)
  * called when the "lite" array is full.
  */
 #define cave_lite_hack(Y,X) \
+    if(in_bounds2(Y,X)){\
     area(Y,X)->info |= (CAVE_LITE); \
     lite_y[lite_n] = (Y); \
     lite_x[lite_n] = (X); \
-    lite_n++
+    lite_n++;}
 
 
 
@@ -2478,6 +2479,8 @@ void update_lite(void)
 		y = lite_y[i];
 		x = lite_x[i];
 
+		if (!in_bounds2(y,x)) continue;
+		
 		/* Mark the grid as not "lite" */
 		area(y,x)->info &= ~(CAVE_LITE);
 
