@@ -1128,6 +1128,11 @@ static const byte darking_colours[16] =
 
 
 #ifdef VARIABLE_PLAYER_GRAPH
+
+/* Magic numbers */
+#define BMP_FIRST_PC_CLASS		164
+#define BMP_FIRST_PC_RACE		128
+
 static void variable_player_graph(byte *a, char *c)
 {
 	if (!streq(ANGBAND_GRAF, "new"))
