@@ -2152,9 +2152,10 @@ static int weight_limit(void)
  * a large, heavy weapon - training that many classes simply do not have the
  * time or inclination for.  -LM-
  */
-static sint add_special_melee_skill(byte pclass, s16b weight, object_type *o_ptr)
+static sint add_special_melee_skill(byte pclass, object_type *o_ptr)
 {
 	int add_skill = 0;
+	s16b weight = o_ptr->weight;
 
 	switch (pclass)
 	{
@@ -3355,116 +3356,75 @@ static void calc_bonuses(void)
 	if (o_ptr->k_idx && !p_ptr->heavy_wield)
 	{
 		int str_index, dex_index;
+		
+		int effective_weight = 0, mul = 6;
 
-		int num = 0, wgt = 0, mul = 0, div;
-
-		/* Analyze the class */
-		switch (p_ptr->pclass)
-		{
-			/* Warrior */
-			case CLASS_WARRIOR:
-				num = 5; wgt = 30; mul = 5; break;
-
-			/* Mage */
-			case CLASS_MAGE:
-			case CLASS_HIGH_MAGE:
-				num = 2; wgt = 40; mul = 2; break;
-
-			/* Priest, Mindcrafter */
-			case CLASS_PRIEST:
-			case CLASS_MINDCRAFTER:
-				num = 4; wgt = 35; mul = 3; break;
-
-			/* Rogue */
-			case CLASS_ROGUE:
-				num = 4; wgt = 30; mul = 3; break;
-
-			/* Ranger */
-			case CLASS_RANGER:
-				num = 4; wgt = 35; mul = 4; break;
-
-			/* Paladin */
-			case CLASS_PALADIN:
-				num = 4; wgt = 30; mul = 4; break;
-
-			/* Warrior-Mage */
-			case CLASS_WARRIOR_MAGE:
-				num = 4; wgt = 35; mul = 3; break;
-
-			/* Chaos Warrior */
-			case CLASS_CHAOS_WARRIOR:
-				num = 4; wgt = 30; mul = 4; break;
-
-			/* Monk */
-			case CLASS_MONK:
-				num = ((p_ptr->lev < 40) ? 2 : 3); wgt = 40; mul = 4; break;
-		}
-
-		/* Enforce a minimum "weight" (tenth pounds) */
-		div = ((o_ptr->weight < wgt) ? wgt : o_ptr->weight);
-
-		/* Access the strength vs weight */
-		str_index = (adj_str_blow[p_ptr->stat_ind[A_STR]] * mul / div);
-
+		/* Enforce a minimum weight of three pounds. */
+		effective_weight = (o_ptr->weight < 30 ? 30 : o_ptr->weight);
+		
+		/* Compare strength and weapon weight. */
+		str_index = mul * adj_str_blow[p_ptr->stat_ind[A_STR]] /
+			 effective_weight;
+		
 		/* Maximal value */
 		if (str_index > 11) str_index = 11;
-
+		
 		/* Index by dexterity */
 		dex_index = (adj_dex_blow[p_ptr->stat_ind[A_DEX]]);
 
 		/* Maximal value */
 		if (dex_index > 11) dex_index = 11;
 
+
 		/* Use the blows table */
 		p_ptr->num_blow = blows_table[str_index][dex_index];
 
-		/* Maximal value */
-		if (p_ptr->num_blow > num) p_ptr->num_blow = num;
-
-		/* Add in the "bonus blows" */
-		p_ptr->num_blow += extra_blows;
-
-		/* Require at least one blow */
+		/* Paranoia - require at least one blow */
 		if (p_ptr->num_blow < 1) p_ptr->num_blow = 1;
+
 
 		/* Boost digging skill by weapon weight */
 		p_ptr->skill_dig += (o_ptr->weight / 10);
 	}
 
-
-	/* Different calculation for monks with empty hands */
-	else if ((p_ptr->pclass == CLASS_MONK) &&
-				 (!(inventory[INVEN_WIELD].k_idx)))
+	else if(!(inventory[INVEN_WIELD].k_idx))
 	{
-		p_ptr->num_blow = 2;
-
-		if (p_ptr->lev > 9) p_ptr->num_blow++;
-		if (p_ptr->lev > 14) p_ptr->num_blow++;
-		if (p_ptr->lev > 24) p_ptr->num_blow++;
-		if (p_ptr->lev > 34) p_ptr->num_blow++;
-		if (p_ptr->lev > 44) p_ptr->num_blow++;
-		if (p_ptr->lev > 49) p_ptr->num_blow++;
-
-		if (p_ptr->monk_armour_stat)
+		/* Different calculation for monks with empty hands */
+		if (p_ptr->pclass == CLASS_MONK)
 		{
-			p_ptr->num_blow /= 2;
+			p_ptr->num_blow = 2;
+
+			if (p_ptr->lev > 9) p_ptr->num_blow++;
+			if (p_ptr->lev > 14) p_ptr->num_blow++;
+			if (p_ptr->lev > 24) p_ptr->num_blow++;
+			if (p_ptr->lev > 34) p_ptr->num_blow++;
+			if (p_ptr->lev > 44) p_ptr->num_blow++;
+			if (p_ptr->lev > 49) p_ptr->num_blow++;
+
+			if (p_ptr->monk_armour_stat)
+			{
+				p_ptr->num_blow /= 2;
+			}
+			else
+			{
+				p_ptr->to_h += (p_ptr->lev / 3);
+				p_ptr->to_d += (p_ptr->lev / 3);
+
+				p_ptr->dis_to_h += (p_ptr->lev / 3);
+				p_ptr->dis_to_d += (p_ptr->lev / 3);
+			}
+		
+			p_ptr->num_blow += extra_blows;
 		}
 		else
 		{
-			p_ptr->to_h += (p_ptr->lev / 3);
-			p_ptr->to_d += (p_ptr->lev / 3);
-
-			p_ptr->dis_to_h += (p_ptr->lev / 3);
-			p_ptr->dis_to_d += (p_ptr->lev / 3);
-		}
-		
-		p_ptr->num_blow += extra_blows;
+			/* Everyone gets two blows if not wielding a weapon. -LM- */
+			p_ptr->num_blow = 2;
+		} 
 	}
-	/* Everyone gets two blows if not wielding a weapon. -LM- */
-	else if (!o_ptr->k_idx) p_ptr->num_blow = 2;
 
 	/* Add all other class-specific adjustments to melee Skill. -LM- */
-	p_ptr->skill_thn += add_special_melee_skill(p_ptr->pclass, o_ptr->weight, o_ptr);
+	p_ptr->skill_thn += add_special_melee_skill(p_ptr->pclass, o_ptr);
 
 	/* Assume okay */
 	p_ptr->icky_wield = FALSE;
@@ -3484,12 +3444,12 @@ static void calc_bonuses(void)
 		 ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM)))
 	{
 		/* Reduce the real bonuses */
-		p_ptr->to_h -= 2;
-		p_ptr->to_d -= 2;
+		p_ptr->to_h -= (p_ptr->lev / 5);
+		p_ptr->to_d -= (p_ptr->lev / 5);
 
 		/* Reduce the mental bonuses */
-		p_ptr->dis_to_h -= 2;
-		p_ptr->dis_to_d -= 2;
+		p_ptr->dis_to_h -= (p_ptr->lev / 5);
+		p_ptr->dis_to_d -= (p_ptr->lev / 5);
 
 		/* Icky weapon */
 		p_ptr->icky_wield = TRUE;

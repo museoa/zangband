@@ -1014,73 +1014,43 @@ const byte adj_con_mhp[] =
 };
 
 
+
 /*
- * This table is used to help calculate the number of blows the player can
- * make in a single round of attacks (one player turn) with a normal weapon.
+ * This is changed for [O] combat V2.  (From L.M.)
  *
- * This number ranges from a single blow/round for weak players to up to six
- * blows/round for powerful warriors.
+ * This table is used to help calculate the number of blows the player 
+ * can make in a single round of attacks (one player turn) with a 
+ * weapon that is not too heavy to wield effectively.
  *
- * Note that certain artifacts and ego-items give "bonus" blows/round.
- *
- * First, from the player class, we extract some values:
- *
- *    Warrior --> num = 6; mul = 5; div = MAX(30, weapon_weight);
- *    Mage    --> num = 4; mul = 2; div = MAX(40, weapon_weight);
- *    Priest  --> num = 5; mul = 3; div = MAX(35, weapon_weight);
- *    Rogue   --> num = 5; mul = 3; div = MAX(30, weapon_weight);
- *    Ranger  --> num = 5; mul = 4; div = MAX(35, weapon_weight);
- *    Paladin --> num = 5; mul = 4; div = MAX(30, weapon_weight);
+ * The player gets "blows_table[P][D]" blows/round, as shown below.
  *
  * To get "P", we look up the relevant "adj_str_blow[]" (see above),
- * multiply it by "mul", and then divide it by "div", rounding down.
+ * multiply it by 6, and then divide it by the effective weapon 
+ * weight (in deci-pounds), rounding down.
  *
- * To get "D", we look up the relevant "adj_dex_blow[]" (see above),
- * note especially column 6 (DEX 18/101) and 11 (DEX 18/150).
+ * To get "D", we look up the relevant "adj_dex_blow[]" (see above).
  *
- * The player gets "blows_table[P][D]" blows/round, as shown below,
- * up to a maximum of "num" blows/round, plus any "bonus" blows/round.
+ * (Some interesting calculations)
+ * The character cannot get five blows with any weapon greater than 36 
+ * lb, and cannot get six with any weapon greater than 20 lb.
  */
 const byte blows_table[12][12] =
 {
-	/* P/D */
-	/* 0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11+ */
+	            /*  <- Dexterity factor -> */
+	/* 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11+ */
 
-	/* 0  */
-	{  2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2},
-
-	/* 1  */
-	{  2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   3,   3},
-
-	/* 2  */
-	{  2,   2,   2,   2,   2,   2,   2,   2,   3,   3,   3,   3},
-
-	/* 3  */
-	{  2,   2,   2,   2,   2,   2,   2,   3,   3,   3,   3,   3},
-
-	/* 4  */
-	{  2,   2,   2,   2,   2,   3,   3,   3,   3,   3,   3,   4},
-
-	/* 5  */
-	{  2,   2,   2,   2,   3,   3,   3,   3,   3,   4,   4,   4},
-
-	/* 6  */
-	{  2,   2,   2,   2,   3,   3,   3,   3,   4,   4,   4,   4},
-
-	/* 7  */
-	{  2,   2,   2,   3,   3,   3,   3,   4,   4,   4,   4,   4},
-
-	/* 8  */
-	{  2,   2,   3,   3,   3,   3,   4,   4,   4,   4,   4,   4},
-
-	/* 9  */
-	{  2,   2,   3,   3,   3,   4,   4,   4,   4,   4,   4,   5},
-
-	/* 10 */
-	{  2,   3,   3,   3,   3,   4,   4,   4,   4,   4,   5,   5},
-
-	/* 11+ */
-	{  2,   3,   3,   3,   4,   4,   4,   4,   4,   4,   5,   5}
+	{  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2 }, /*  0         */
+	{  2,  2,  2,  2,  2,  2,  2,  2,  2,  3,  3,  3 }, /*  1    ^    */
+	{  2,  2,  2,  2,  2,  3,  3,  3,  3,  4,  4,  4 }, /*  2    |    */
+	{  2,  2,  2,  3,  3,  3,  4,  4,  4,  4,  4,  4 }, /*  3         */
+	{  2,  2,  3,  3,  3,  4,  4,  4,  4,  4,  5,  5 }, /*  4  Ratio  */
+	{  2,  2,  3,  3,  4,  4,  4,  4,  4,  5,  5,  5 }, /*  5  of STR */
+	{  2,  3,  3,  3,  4,  4,  4,  4,  5,  5,  5,  5 }, /*  6  over   */
+	{  2,  3,  3,  4,  4,  4,  4,  5,  5,  5,  5,  6 }, /*  7  weight */
+	{  2,  3,  3,  4,  4,  4,  5,  5,  5,  5,  6,  6 }, /*  8         */
+	{  2,  3,  4,  4,  4,  4,  5,  5,  5,  5,  6,  6 }, /*  9    |    */
+	{  2,  3,  4,  4,  4,  4,  5,  5,  5,  6,  6,  6 }, /* 10    V    */
+	{  2,  3,  4,  4,  4,  4,  5,  5,  6,  6,  6,  6 }  /* 11+        */
 };
 
 
