@@ -1960,7 +1960,14 @@ void do_cmd_debug(void)
 			/* Phase Door */
 			teleport_player(10);
 			break;
-		}
+        }
+
+        case 'P':
+        {
+            /* Polymorph self */
+            do_poly_self();
+            break;
+        }
 
 		case 'u':
 		{

@@ -881,7 +881,8 @@ bool apply_disenchant(void)
 
 void mutate_player(void)
 {
-	int max1, cur1, max2, cur2, ii, jj;
+    int max1, cur1, max2, cur2, ii, jj;
+    int bonus1, bonus2;
 
 	/* Pick a pair of stats */
 	ii = randint0(A_MAX);
@@ -890,7 +891,18 @@ void mutate_player(void)
 	max1 = p_ptr->stat_max[ii];
 	cur1 = p_ptr->stat_cur[ii];
 	max2 = p_ptr->stat_max[jj];
-	cur2 = p_ptr->stat_cur[jj];
+    cur2 = p_ptr->stat_cur[jj];
+
+    /* Adjust the swapped stats... */
+    bonus1 = rp_ptr->r_adj[ii] + cp_ptr->c_adj[ii];
+    bonus2 = rp_ptr->r_adj[jj] + cp_ptr->c_adj[jj];
+
+    max1 = adjust_stat(jj, max1, bonus2 - bonus1);
+    max2 = adjust_stat(ii, max2, bonus1 - bonus2);
+
+    /* Hack - restore both stats rather than figure try to swap drainage */
+    cur1 = max1;
+    cur2 = max2;
 
 	p_ptr->stat_max[ii] = max2;
 	p_ptr->stat_cur[ii] = cur2;

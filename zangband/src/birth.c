@@ -746,57 +746,6 @@ static void load_prev_data(void)
 }
 
 
-static int adjust_stat(int stat, int value, int amount)
-{
-    int i;
-
-    int cap = stat_cap(stat);
-
-    /* Negative amounts */
-    if (amount < 0)
-    {
-        /* Apply penalty */
-        for (i = 0; i < (0 - amount); i++)
-        {
-            if (value >= 18+10)
-            {
-                value -= 10;
-            }
-            else if (value > 18)
-            {
-                value = 18;
-            }
-            else
-            {
-                value--;
-            }
-        }
-    }
-
-    /* Positive amounts */
-    else if (amount > 0)
-    {
-        /* Apply reward */
-        for (i = 0; i < amount; i++)
-        {
-            if (value < 18)
-            {
-                value++;
-            }
-            else
-            {
-                value += rand_range(5, 15);
-            }
-        }
-    }
-
-    /* Cap value */
-    if (value > cap) value = cap;
-
-    /* Return the result */
-    return (value);
-}
-
 /*
  * Roll for a characters stats
  *
