@@ -1256,11 +1256,14 @@ s32b object_value_real(object_type *o_ptr)
 		case TV_HARD_ARMOR:
 		case TV_DRAG_ARMOR:
 		{
-			/* Hack -- negative armor bonus */
-			if (o_ptr->to_a < 0) return (0L);
+			/* Give credit for hit bonus */
+			value += ((o_ptr->to_h - k_ptr->to_h) * 100L);
 
-			/* Give credit for bonuses */
-			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
+			/* Give credit for damage bonus */
+			value += ((o_ptr->to_d - k_ptr->to_d) * 100L);
+
+			/* Give credit for armor bonus */
+			value += ((o_ptr->to_a - k_ptr->to_a) * 100L);
 
 			/* Done */
 			break;
@@ -1317,6 +1320,9 @@ s32b object_value_real(object_type *o_ptr)
 			break;
 		}
 	}
+
+	/* No negative value */
+	if (value < 0) value = 0;
 
 	/* Return the value */
 	return (value);
