@@ -12,7 +12,6 @@
 
 
 #include "angband.h"
-#include "wild.h"
 
 
 /*
