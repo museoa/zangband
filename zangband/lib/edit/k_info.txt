@@ -2896,7 +2896,7 @@ A:9/1
 P:0:1d2:0:0:0
 L:USE:	ident = not player_res(TR2_RES_BLIND) and not player_res(TR2_RES_DARK)
 L:USE:		and inc_blind(rand_range(4, 8))
-L:USE:	if unlite_area(10, 3) then ident = TRUE
+L:USE:	if unlite_area(10, 3) then ident = TRUE end
 
 N:323:Genocide
 G:_:d
