@@ -425,11 +425,14 @@ errr top_twenty(void)
 
 	/* Remove the century */
 	j = 7;
-	do
+	while (1)
 	{    
 		j++;
 		long_day[j-2] = long_day[j];
-	} while (long_day[j]);
+		
+		/* Exit if get a zero */
+		if(long_day[j]) break;
+	}
 
         /* Save the date in standard form (8 chars) */
        (void)strnfmt(the_score.day, 9, "%s", long_day);
