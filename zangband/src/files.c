@@ -1266,6 +1266,17 @@ static cptr likert(int x, int y)
 	}
 }
 
+/* Monk average attack damage - only used here, so not in tables.c */
+int monk_avg_damage[PY_MAX_LEVEL+1] =
+{ 
+	0,
+	250, 275, 299, 299, 306, 309, 321, 325, 328, 332,
+	347, 353, 375, 450, 463, 507, 523, 537, 551, 575,
+	680, 704, 723, 738, 768, 792, 812, 925, 1008, 1032,
+	1061, 1074, 1160, 1178, 1303, 1326, 1400, 1435, 1476, 1500,
+	1669, 1809, 1836, 1875, 2155, 2190, 2227, 2587, 2769, 2811
+};
+
 
 /*
  * Prints ratings on certain abilities
@@ -1408,7 +1419,7 @@ static void display_player_abilities(void)
 	if (avgdam == 0)
 	{
 		if ((p_ptr->pclass == CLASS_MONK) && (!o_ptr->k_idx))
-			desc = "Special";
+			desc = format("%d", monk_avg_damage[p_ptr->lev] * blows / 100);
 		else
 			desc = "nil!";
 	}
