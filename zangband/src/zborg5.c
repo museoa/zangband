@@ -2307,8 +2307,14 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 			/* Track the newly discovered shop */
 			if (i == track_shop_num)
 			{
+				/* Position */
 				borg_shops[i].x = x;
 				borg_shops[i].y = y;
+				
+				/* Hack - we have never been here before */
+				borg_shops[i].when = borg_t - 1000;
+				
+				/* One more shop */
 				track_shop_num++;
 			}
 		}
@@ -2970,10 +2976,6 @@ void borg_update(void)
 
 		/* Mega-Hack -- Clear "detect evil" stamp */
 		when_detect_evil = 0;
-
-		/* Hack -- Clear "shop visit" stamps */
-		for (i = 0; i < (track_shop_size); i++) borg_shops[i].when = 0;
-
 
 		/* No goal yet */
 		goal = 0;

@@ -1582,9 +1582,6 @@ bool borg_crush_junk(void)
 		/* Message */
 		borg_note(format("# Destroying %s.", l_ptr->o_name));
 
-		/* Destroy one item */
-		borg_keypresses("01");
-
 		/* Destroy that item */
 		if (!(l_ptr->kn_flags3 & TR3_INSTA_ART))
 			borg_keypress('k');
@@ -1611,6 +1608,9 @@ bool borg_crush_junk(void)
 			}
 		}
 		borg_keypress(I2A(i));
+
+		/* Default is one item */
+		borg_keypress('\r');
 
 		/* Verify destruction */
 		borg_keypress('y');
@@ -2489,8 +2489,6 @@ bool borg_wear_stuff(void)
 			/* Fix later */
 			fix = TRUE;
 			
-			borg_note(format("# Trying slot (%d) for %s", slot, l_ptr->o_name));
-
 			/* Examine the inventory */
 			borg_notice();
 

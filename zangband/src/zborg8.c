@@ -1099,7 +1099,7 @@ static bool borg_choose_shop(void)
 		
 		/* How useful is this shop? */
 		use = time / (dist * dist + 1);
-		use *= borg_shops[i].b_count / (borg_shops[i].u_count + 1);
+		use *= (borg_shops[i].b_count + 1) / (borg_shops[i].u_count + 1);
 		
 		/* Track most-useful shop */
 		if (use > bu)
@@ -1112,12 +1112,18 @@ static bool borg_choose_shop(void)
 	/* Is it worth our while to continue? */
 	if (bu > SHOP_SCAN_THRESHOLD)
 	{
+		/* We want to shop */
+		borg_note(format("# Goal shop: %d", goal_shop));
+	
 		/* Success */
 		return (TRUE);
 	}
 	
 	/* Assume no important shop */
 	goal_shop = -1;
+	
+	/* Let us know what the value is when we fail */
+	borg_note(format("# No more shopping - value: %d", bu));
 
 	/* Failure */
 	return (FALSE);
@@ -1162,11 +1168,14 @@ bool borg_think_store(void)
 		if (borg_think_shop_grab_aux(shop_num)) return (TRUE);
 	}
 
+#if 0
 	/* Choose a shop to visit */
 	if (borg_choose_shop()) return (TRUE);
 
 	/* No shop */
 	shop_num = -1;
+
+#endif /* 0 */
 
 	/* Leave the store */
 	borg_keypress(ESCAPE);
@@ -1368,9 +1377,9 @@ bool borg_think_dungeon(void)
 		borg_keypress(ESCAPE);
 		borg_keypress(ESCAPE);
 
-		/* enter a special routine to handle this behavior.  Messing with
-		 * the old_level forces him to re-explore this level, and reshop,
-		 * if in town.
+		/*
+		 * Messing with the old_level forces him to
+		 * re-explore this level, and reshop, if in town.
 		 */
 		old_depth = 126;
 
@@ -1774,6 +1783,9 @@ bool borg_think_dungeon(void)
 	{
 		/* Try and visit a shop, if so desired */
 		if (borg_flow_shop_entry(goal_shop)) return (TRUE);
+		
+		/* Let us know what the value is when we fail */
+		borg_note("# Failed to get good shop!");
 	}
 
 
@@ -1851,14 +1863,11 @@ bool borg_think_dungeon(void)
 		/* Re-calculate danger */
 		borg_danger_wipe = TRUE;
 
-		/* Forget goals */
-/*        goal = 0;*/
-
 		/* Done */
 		if (done) return (TRUE);
 	}
 
-	/* try phase before boosting bravery further and acting goofy */
+	/* Try phase before boosting bravery further and acting goofy */
 	borg_times_twitch++;
 
 	/* Phase to get out of being twitchy up to 3 times per level. */
@@ -1908,9 +1917,6 @@ bool borg_think_dungeon(void)
 		/* Re-calculate danger */
 		borg_danger_wipe = TRUE;
 
-		/* Forget goals */
-/*        goal = 0;*/
-
 		/* Done */
 		if (done) return (TRUE);
 	}
@@ -1938,9 +1944,6 @@ bool borg_think_dungeon(void)
 
 		/* Re-calculate danger */
 		borg_danger_wipe = TRUE;
-
-		/* Forget goals */
-/*        goal = 0;*/
 
 		/* Done */
 		if (done) return (TRUE);

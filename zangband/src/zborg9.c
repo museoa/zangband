@@ -2520,6 +2520,13 @@ void borg_init_9(void)
 	/* Allow items to stack */
 	stack_force_notes = TRUE;
 	stack_force_costs = TRUE;
+	
+	/* Hack - we don't understand this */
+	auto_destroy = FALSE;
+	
+	/* Do not confirm actions */
+	confirm_wear = FALSE;
+	confirm_stairs = FALSE;
 
 
 	/* Zangband Commands */
@@ -2531,8 +2538,10 @@ void borg_init_9(void)
 	/* Ignore inscriptions */
 	stack_force_notes = TRUE;
 
-	/* The borg doesn't understand this */
+	/* The borg doesn't understand the easy options */
 	easy_floor = FALSE;
+	easy_disarm = FALSE;
+	easy_open = FALSE;
 
 	/* The borg doesn't understand speaking uniques */
 	speak_unique = FALSE;

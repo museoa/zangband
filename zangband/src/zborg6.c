@@ -3854,198 +3854,169 @@ bool borg_caution(void)
  *   Activating Artifacts
  *   Activate Dragon Armour
  */
-enum
-{
-	BF_LAUNCH_NORMAL,
-	BF_LAUNCH_SEEKER,
-	BF_LAUNCH_FLAME,
-	BF_LAUNCH_FROST,
-	BF_LAUNCH_ANIMAL,
-	BF_LAUNCH_EVIL,
-	BF_LAUNCH_DRAGON,
-	BF_LAUNCH_WOUNDING,
-	BF_OBJECT,
-	BF_THRUST,
 
-	BF_LIFE_CALL_LIGHT,
-	BF_LIFE_HOLY_ORB,
-	BF_LIFE_EXORCISM,
-	BF_LIFE_DISP_UNDEAD,
-	BF_LIFE_DISP_EVIL,
-	BF_LIFE_HOLY_WORD,
-	BF_LIFE_DIVINE_INT,
+#define	BF_LAUNCH_NORMAL		0
+#define BF_LAUNCH_SEEKER		1
+#define BF_LAUNCH_FLAME			2
+#define BF_LAUNCH_FROST			3
+#define BF_LAUNCH_ANIMAL		4
+#define BF_LAUNCH_EVIL 			5
+#define BF_LAUNCH_DRAGON		6
+#define BF_LAUNCH_WOUNDING		7
+#define BF_OBJECT				8
+#define BF_THRUST				9
 
-	BF_ARCANE_ZAP,
-	BF_ARCANE_ZAP_RESERVE,
-	BF_ARCANE_LAREA,
-	BF_ARCANE_STONEMUD,
-	BF_ARCANE_LBEAM,
-	BF_ARCANE_ELEM_BALL,
+#define BF_LIFE_CALL_LIGHT		10
+#define BF_LIFE_HOLY_ORB		11
+#define BF_LIFE_EXORCISM		12
+#define BF_LIFE_DISP_UNDEAD		13
+#define BF_LIFE_DISP_EVIL		14
+#define BF_LIFE_HOLY_WORD		15
+#define	BF_LIFE_DIVINE_INT		16
 
-	BF_SORC_LAREA,
-	BF_SORC_CONF_MON,
-	BF_SORC_SLEEP_I,
-	BF_SORC_SLOW_MON,
-	BF_SORC_SLEEP_III,
-	BF_SORC_STASIS,
+#define	BF_ARCANE_ZAP			17
+#define	BF_ARCANE_ZAP_RESERVE	18
+#define	BF_ARCANE_LAREA			19
+#define	BF_ARCANE_STONEMUD		20
+#define	BF_ARCANE_LBEAM			21
+#define	BF_ARCANE_ELEM_BALL		22
 
-	BF_NATURE_DAYL,
-	BF_NATURE_STONEMUD,
-	BF_NATURE_ELECBOLT,
-	BF_NATURE_FROSTBOLT,
-	BF_NATURE_SUNL,
-	BF_NATURE_ENTANGLE,
-	BF_NATURE_WHIRLWIND,
-	BF_NATURE_BLIZZARD,
-	BF_NATURE_ELECSTORM,
-	BF_NATURE_WHIRLPOOL,
-	BF_NATURE_SUNLIGHT,
-	BF_NATURE_NATWRATH,
+#define	BF_SORC_LAREA			23
+#define	BF_SORC_CONF_MON		24
+#define	BF_SORC_SLEEP_I			25
+#define	BF_SORC_SLOW_MON		26
+#define	BF_SORC_SLEEP_III		27
+#define	BF_SORC_STASIS			28
 
-	BF_TRUMP_MINDBLAST,
-	BF_TRUMP_MINDBLAST_RESERVE,
+#define	BF_NATURE_DAYL			29
+#define	BF_NATURE_STONEMUD		30
+#define	BF_NATURE_ELECBOLT		31
+#define	BF_NATURE_FROSTBOLT		32
+#define	BF_NATURE_SUNL			33
+#define	BF_NATURE_ENTANGLE		34
+#define	BF_NATURE_WHIRLWIND		35
+#define	BF_NATURE_BLIZZARD		36
+#define	BF_NATURE_ELECSTORM		37
+#define	BF_NATURE_WHIRLPOOL		38
+#define	BF_NATURE_SUNLIGHT		39
+#define	BF_NATURE_NATWRATH		40
 
-	BF_CHAOS_MMISSILE,
-	BF_CHAOS_MMISSILE_RESERVE,
-	BF_CHAOS_FLASHLIGHT,
-	BF_CHAOS_MANABURST,
-	BF_CHAOS_FIREBOLT,
-	BF_CHAOS_FISTFORCE,
-	BF_CHAOS_CHAOSBOLT,
-	BF_CHAOS_SONICBOOM,
-	BF_CHAOS_DOOMBOLT,
-	BF_CHAOS_FIREBALL,
-	BF_CHAOS_INVOKELOGRUS,
-	BF_CHAOS_POLYMORPH,
-	BF_CHAOS_CHAINLIGHT,
-	BF_CHAOS_DISINTEG,
-	BF_CHAOS_GRAVITY,
-	BF_CHAOS_METEORSWARM,
-	BF_CHAOS_FLAMESTRIKE,
-	BF_CHAOS_ROCKET,
-	BF_CHAOS_MANASTORM,
-	BF_CHAOS_BRLOGRUS,
-	BF_CHAOS_CALLVOID,
+#define	BF_TRUMP_MINDBLAST		41
+#define	BF_TRUMP_MINDBLAST_RESERVE	42
 
-	BF_DEATH_MALEDICTION,
-	BF_DEATH_MALEDICTION_RESERVE,
-	BF_DEATH_STINKCLOUD,
-	BF_DEATH_SLEEP_I,
-	BF_DEATH_HORRIFY,
-	BF_DEATH_ENTROPY,
-	BF_DEATH_NETHERBOLT,
-	BF_DEATH_TERROR,
-	BF_DEATH_VAMPDRAIN,
-	BF_DEATH_DISPELGOOD,
-	BF_DEATH_DARKBOLT,
-	BF_DEATH_VAMPIRISM,
-	BF_DEATH_DARKNESS,
-	BF_DEATH_DEATHRAY,
-	BF_DEATH_WORDOFDEATH,
-	BF_DEATH_EVOCATION,
-	BF_DEATH_HELLFIRE,
+#define	BF_CHAOS_MMISSILE		43
+#define	BF_CHAOS_MMISSILE_RESERVE	44
+#define	BF_CHAOS_FLASHLIGHT		45
+#define	BF_CHAOS_MANABURST		46
+#define	BF_CHAOS_FIREBOLT		47
+#define	BF_CHAOS_FISTFORCE		48
+#define	BF_CHAOS_CHAOSBOLT		49
+#define	BF_CHAOS_SONICBOOM		50
+#define	BF_CHAOS_DOOMBOLT		51
+#define	BF_CHAOS_FIREBALL		52
+#define	BF_CHAOS_INVOKELOGRUS	53
+#define	BF_CHAOS_POLYMORPH		54
+#define	BF_CHAOS_CHAINLIGHT		55
+#define	BF_CHAOS_DISINTEG		56
+#define	BF_CHAOS_GRAVITY		57
+#define	BF_CHAOS_METEORSWARM	58
+#define	BF_CHAOS_FLAMESTRIKE	59
+#define	BF_CHAOS_ROCKET			60
+#define	BF_CHAOS_MANASTORM		61
+#define	BF_CHAOS_BRLOGRUS		62
+#define	BF_CHAOS_CALLVOID		63
 
-	BF_MIND_NEURAL,
-	BF_MIND_PULVERISE,
-	BF_MIND_MINDWAVE,
-	BF_MIND_PSYCH_DRAIN,
-	BF_MIND_TELE_WAVE,
+#define	BF_DEATH_MALEDICTION	64
+#define	BF_DEATH_MALEDICTION_RESERVE	65
+#define	BF_DEATH_STINKCLOUD		66
+#define	BF_DEATH_SLEEP_I		67
+#define	BF_DEATH_HORRIFY		68
+#define	BF_DEATH_ENTROPY		69
+#define	BF_DEATH_NETHERBOLT		70
+#define	BF_DEATH_TERROR			71
+#define	BF_DEATH_VAMPDRAIN		72
+#define	BF_DEATH_DISPELGOOD		73
+#define	BF_DEATH_DARKBOLT		74
+#define	BF_DEATH_VAMPIRISM		75
+#define	BF_DEATH_DARKNESS		76
+#define	BF_DEATH_DEATHRAY		77
+#define	BF_DEATH_WORDOFDEATH	78
+#define	BF_DEATH_EVOCATION		79
+#define	BF_DEATH_HELLFIRE		80
 
-	BF_ROD_ELEC_BOLT,
-	BF_ROD_COLD_BOLT,
-	BF_ROD_ACID_BOLT,
-	BF_ROD_FIRE_BOLT,
-	BF_ROD_LITE_BEAM,
-	BF_ROD_DRAIN_LIFE,
-	BF_ROD_ELEC_BALL,
-	BF_ROD_COLD_BALL,
-	BF_ROD_ACID_BALL,
-	BF_ROD_FIRE_BALL,
-	BF_ROD_SLOW_MONSTER,
-	BF_ROD_SLEEP_MONSTER,
-	BF_ROD_PESTICIDE,
+#define	BF_MIND_NEURAL			81
+#define	BF_MIND_PULVERISE		82
+#define	BF_MIND_MINDWAVE		83
+#define	BF_MIND_PSYCH_DRAIN		84
+#define	BF_MIND_TELE_WAVE		85
 
-	BF_STAFF_SLEEP_MONSTERS,
-	BF_STAFF_SLOW_MONSTERS,
-	BF_STAFF_DISPEL_EVIL,
-	BF_STAFF_POWER,
-	BF_STAFF_HOLINESS,
+#define	BF_ROD_ELEC_BOLT		86
+#define	BF_ROD_COLD_BOLT		87
+#define	BF_ROD_ACID_BOLT		88
+#define	BF_ROD_FIRE_BOLT		89
+#define	BF_ROD_LITE_BEAM		90
+#define	BF_ROD_DRAIN_LIFE		91
+#define	BF_ROD_ELEC_BALL		92
+#define	BF_ROD_COLD_BALL		93
+#define	BF_ROD_ACID_BALL		94
+#define	BF_ROD_FIRE_BALL		95
+#define	BF_ROD_SLOW_MONSTER		96
+#define	BF_ROD_SLEEP_MONSTER	97
+#define	BF_ROD_PESTICIDE		98
 
-	BF_WAND_MAGIC_MISSILE,
-/*    BF_WAND_CHARM_MONSTERS, */
-	BF_WAND_COLD_BOLT,
-	BF_WAND_ACID_BOLT,
-	BF_WAND_FIRE_BOLT,
-	BF_WAND_SLOW_MONSTER,
-	BF_WAND_SLEEP_MONSTER,
-	BF_WAND_CONFUSE_MONSTER,
-	BF_WAND_FEAR_MONSTER,
-	BF_WAND_ANNIHILATION,
-	BF_WAND_DRAIN_LIFE,
-	BF_WAND_LITE_BEAM,
-	BF_WAND_STINKING_CLOUD,
-	BF_WAND_ELEC_BALL,
-	BF_WAND_COLD_BALL,
-	BF_WAND_ACID_BALL,
-	BF_WAND_FIRE_BALL,
-	BF_WAND_WONDER,
-	BF_WAND_DRAGON_COLD,
-	BF_WAND_DRAGON_FIRE,
-	BF_WAND_ROCKETS,
+#define	BF_STAFF_SLEEP_MONSTERS	99
+#define	BF_STAFF_SLOW_MONSTERS	100
+#define	BF_STAFF_DISPEL_EVIL	101
+#define	BF_STAFF_POWER			102
+#define	BF_STAFF_HOLINESS		103
 
-	BF_ART_NARTHANC,
-	BF_ART_NIMTHANC,
-	BF_ART_DETHANC,
-	BF_ART_RILIA,
-	BF_ART_BELANGIL,
-	BF_ART_ARUNRUTH,
-	BF_ART_RINGIL,
-	BF_ART_ANDURIL,
-	BF_ART_THEODEN,
-	BF_ART_AEGLOS,
-	BF_ART_TOTILA,
-	BF_ART_FIRESTAR,
-	BF_ART_TURMIL,
-	BF_ART_RAZORBACK,
-	BF_ART_CAMMITHRIM,
-	BF_ART_PAURHACH,
-	BF_ART_PAURNIMMEN,
-	BF_ART_HOLCOLLETH,
-	BF_ART_PAURAEGEN,
-	BF_ART_PAURNEN,
-	BF_ART_FINGOLFIN,
-	BF_ART_INGWE,
-	BF_ART_NARYA,
-	BF_ART_NENYA,
-	BF_ART_VILYA,
+#define	BF_WAND_MAGIC_MISSILE	104
+#define	BF_WAND_COLD_BOLT		105
+#define	BF_WAND_ACID_BOLT		106
+#define	BF_WAND_FIRE_BOLT		107
+#define	BF_WAND_SLOW_MONSTER	108
+#define	BF_WAND_SLEEP_MONSTER	109
+#define	BF_WAND_CONFUSE_MONSTER	110
+#define	BF_WAND_FEAR_MONSTER	111
+#define	BF_WAND_ANNIHILATION	112
+#define	BF_WAND_DRAIN_LIFE		113
+#define	BF_WAND_LITE_BEAM		114
+#define	BF_WAND_STINKING_CLOUD	115
+#define	BF_WAND_ELEC_BALL		116
+#define	BF_WAND_COLD_BALL		117
+#define	BF_WAND_ACID_BALL		118
+#define	BF_WAND_FIRE_BALL		119
+#define	BF_WAND_WONDER			120
+#define	BF_WAND_DRAGON_COLD		121
+#define	BF_WAND_DRAGON_FIRE		122
+#define	BF_WAND_ROCKETS			123
 
-	BF_DRAGON_BLUE,
-	BF_DRAGON_WHITE,
-	BF_DRAGON_BLACK,
-	BF_DRAGON_GREEN,
-	BF_DRAGON_RED,
-	BF_DRAGON_MULTIHUED,
-	BF_DRAGON_BRONZE,
-	BF_DRAGON_GOLD,
-	BF_DRAGON_CHAOS,
-	BF_DRAGON_LAW,
-	BF_DRAGON_BALANCE,
-	BF_DRAGON_SHINING,
-	BF_DRAGON_POWER,
+#define	BF_DRAGON_BLUE			124
+#define	BF_DRAGON_WHITE			125
+#define	BF_DRAGON_BLACK			126
+#define	BF_DRAGON_GREEN			127
+#define	BF_DRAGON_RED			128
+#define	BF_DRAGON_MULTIHUED		129
+#define	BF_DRAGON_BRONZE		130
+#define	BF_DRAGON_GOLD			131
+#define	BF_DRAGON_CHAOS			132
+#define	BF_DRAGON_LAW			133
+#define	BF_DRAGON_BALANCE		134
+#define	BF_DRAGON_SHINING		135
+#define	BF_DRAGON_POWER			136
 
-	BF_RACIAL_VAMP,
-	BF_RACIAL_CYCLOPS,
-	BF_RACIAL_DARK_ELF,
-	BF_RACIAL_DRACONIAN,
-	BF_RACIAL_IMP,
-	BF_RACIAL_KLACKON,
-	BF_RACIAL_KOBOLD,
-	BF_RACIAL_MINDFLAYER,
-	BF_RACIAL_SPRITE,
-	BF_RACIAL_YEEK,
+#define	BF_RACIAL_VAMP			137
+#define	BF_RACIAL_CYCLOPS		138
+#define	BF_RACIAL_DARK_ELF		139
+#define	BF_RACIAL_DRACONIAN		140
+#define	BF_RACIAL_IMP			141
+#define	BF_RACIAL_KLACKON		142
+#define	BF_RACIAL_KOBOLD		143
+#define	BF_RACIAL_MINDFLAYER	144
+#define	BF_RACIAL_SPRITE		145
+#define	BF_RACIAL_YEEK			146
 
-	BF_MAX
-};
+#define	BF_MAX					147
 
 
 
@@ -5084,7 +5055,8 @@ int borg_launch_damage_one(int i, int dam, int typ)
 	if ((r_ptr->flags1 & RF1_UNIQUE) && borg_skill[BI_CDEPTH] >= 1)
 		dam = (dam * 5);
 
-	/* Hack -- ignore Maggot until later.  Player will chase Maggot
+	/*
+	 * Hack -- ignore Maggot until later.  Player will chase Maggot
 	 * down all accross the screen waking up all the monsters.  Then
 	 * he is stuck in a comprimised situation.
 	 */
@@ -5100,7 +5072,8 @@ int borg_launch_damage_one(int i, int dam, int typ)
 	if (r_ptr->flags2 & RF2_MULTIPLY)
 		dam = (dam * 3 / 2);
 
-	/* Enhance the preceived damage to summoner in order to influence the
+	/*
+	 * Enhance the preceived damage to summoner in order to influence the
 	 * choice of targets.
 	 */
 	if ((r_ptr->flags6 & RF6_S_KIN) ||
@@ -5121,13 +5094,14 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		(r_ptr->flags6 & RF6_S_UNIQUE) || (r_ptr->flags1 & RF1_QUESTOR))
 		dam += ((dam * 3) / 2);
 
-	/*  Try to conserve missiles.
-	 */
+	/* Try to conserve missiles. */
 	if (typ < BF_THRUST)
 	{
 		if (!borg_use_missile)
-			/* set damage to zero, force borg to melee attack */
+		{
+			/* Set damage to zero, force borg to melee attack */
 			dam = 0;
+		}
 	}
 
 	/* Damage */
@@ -7188,12 +7162,6 @@ static int borg_attack_aux(int what)
 	/* Analyze */
 	switch (what)
 	{
-		case BF_THRUST:
-		{
-			/* Physical attack */
-			return (borg_attack_aux_thrust());
-		}
-
 		case BF_LAUNCH_NORMAL:
 		{
 			/* Missile attack */
@@ -7246,6 +7214,12 @@ static int borg_attack_aux(int what)
 		{
 			/* Object attack */
 			return (borg_attack_aux_object());
+		}
+		
+		case BF_THRUST:
+		{
+			/* Physical attack */
+			return (borg_attack_aux_thrust());
 		}
 
 		case BF_LIFE_CALL_LIGHT:
@@ -7438,22 +7412,6 @@ static int borg_attack_aux(int what)
 					(REALM_SORCERY, 3, 0, rad, dam, GF_STASIS));
 		}
 
-		case BF_TRUMP_MINDBLAST:
-		{
-			/* Spell -- Mind Blast */
-			dam = 3 * ((borg_skill[BI_CLEVEL] - 1) / 5);
-			return (borg_attack_aux_spell_bolt
-					(REALM_TRUMP, 0, 1, rad, dam, GF_PSI));
-		}
-
-		case BF_TRUMP_MINDBLAST_RESERVE:
-		{
-			/* Spell -- Mind Blast Reserve */
-			dam = 3 * ((borg_skill[BI_CLEVEL] - 1) / 5);
-			return (borg_attack_aux_spell_bolt_reserve
-					(REALM_TRUMP, 0, 1, rad, dam, GF_PSI));
-		}
-
 		case BF_NATURE_DAYL:
 		{
 			/* Spell -- Day Light */
@@ -7555,6 +7513,22 @@ static int borg_attack_aux(int what)
 			rad = (borg_skill[BI_CLEVEL] / 12) + 1 + 10;
 			return (borg_attack_aux_spell_dispel
 					(REALM_NATURE, 3, 7, rad, dam, GF_DISINTEGRATE));
+		}
+		
+		case BF_TRUMP_MINDBLAST:
+		{
+			/* Spell -- Mind Blast */
+			dam = 3 * ((borg_skill[BI_CLEVEL] - 1) / 5);
+			return (borg_attack_aux_spell_bolt
+					(REALM_TRUMP, 0, 1, rad, dam, GF_PSI));
+		}
+
+		case BF_TRUMP_MINDBLAST_RESERVE:
+		{
+			/* Spell -- Mind Blast Reserve */
+			dam = 3 * ((borg_skill[BI_CLEVEL] - 1) / 5);
+			return (borg_attack_aux_spell_bolt_reserve
+					(REALM_TRUMP, 0, 1, rad, dam, GF_PSI));
 		}
 
 		case BF_CHAOS_MMISSILE:
@@ -7949,22 +7923,6 @@ static int borg_attack_aux(int what)
 					(MIND_TELE_WAVE, 28, rad, dam, GF_TELEKINESIS));
 		}
 
-		case BF_ROD_SLOW_MONSTER:
-		{
-			/* Rod -- slow monster */
-			dam = 10;
-			return (borg_attack_aux_rod_bolt
-					(SV_ROD_SLOW_MONSTER, rad, dam, GF_OLD_SLOW));
-		}
-
-		case BF_ROD_SLEEP_MONSTER:
-		{
-			/* Rod -- sleep monster */
-			dam = 10;
-			return (borg_attack_aux_rod_bolt
-					(SV_ROD_SLEEP_MONSTER, rad, dam, GF_OLD_SLEEP));
-		}
-
 		case BF_ROD_ELEC_BOLT:
 		{
 			/* Rod -- elec bolt */
@@ -8049,7 +8007,23 @@ static int borg_attack_aux(int what)
 			return (borg_attack_aux_rod_bolt
 					(SV_ROD_FIRE_BALL, rad, dam, GF_FIRE));
 		}
+		
+		case BF_ROD_SLOW_MONSTER:
+		{
+			/* Rod -- slow monster */
+			dam = 10;
+			return (borg_attack_aux_rod_bolt
+					(SV_ROD_SLOW_MONSTER, rad, dam, GF_OLD_SLOW));
+		}
 
+		case BF_ROD_SLEEP_MONSTER:
+		{
+			/* Rod -- sleep monster */
+			dam = 10;
+			return (borg_attack_aux_rod_bolt
+					(SV_ROD_SLEEP_MONSTER, rad, dam, GF_OLD_SLEEP));
+		}
+		
 		case BF_ROD_PESTICIDE:
 		{
 			/* Rod -- Pesticide */
@@ -8059,13 +8033,53 @@ static int borg_attack_aux(int what)
 					(SV_ROD_PESTICIDE, rad, dam, GF_POIS));
 		}
 
-		case BF_WAND_ROCKETS:
+		case BF_STAFF_SLEEP_MONSTERS:
 		{
-			/* Wand -- Rocket */
-			dam = 250;
-			return (borg_attack_aux_wand_bolt
-					(SV_WAND_ROCKETS, rad, dam, GF_ROCKET));
+			/* Staff -- Sleep Monsters */
+			dam = 60;
+			rad = MAX_SIGHT + 10;
+			return (borg_attack_aux_staff_dispel
+					(SV_STAFF_SLEEP_MONSTERS, rad, dam, GF_OLD_SLEEP));
 		}
+
+		case BF_STAFF_SLOW_MONSTERS:
+		{
+			/* Staff -- Slow Monsters */
+			dam = 60;
+			rad = MAX_SIGHT + 10;
+			return (borg_attack_aux_staff_dispel
+					(SV_STAFF_SLOW_MONSTERS, rad, dam, GF_OLD_SLOW));
+		}
+
+		case BF_STAFF_DISPEL_EVIL:
+		{
+			/* Staff -- Dispel Evil */
+			dam = 60;
+			rad = MAX_SIGHT + 10;
+			return (borg_attack_aux_staff_dispel
+					(SV_STAFF_DISPEL_EVIL, rad, dam, GF_DISP_EVIL));
+		}
+
+		case BF_STAFF_POWER:
+		{
+			/* Staff -- Power */
+			dam = 120;
+			rad = MAX_SIGHT + 10;
+			return (borg_attack_aux_staff_dispel
+					(SV_STAFF_POWER, rad, dam, GF_TURN_ALL));
+		}
+
+		case BF_STAFF_HOLINESS:
+		{
+			/* Staff -- holiness */
+			rad = MAX_SIGHT + 10;
+			if (borg_skill[BI_CURHP] < borg_skill[BI_MAXHP] / 2) dam = 500;
+			else
+				dam = 120;
+			return (borg_attack_aux_staff_dispel
+					(SV_STAFF_HOLINESS, rad, dam, GF_DISP_EVIL));
+		}
+
 
 		case BF_WAND_MAGIC_MISSILE:
 		{
@@ -8074,39 +8088,7 @@ static int borg_attack_aux(int what)
 			return (borg_attack_aux_wand_bolt
 					(SV_WAND_MAGIC_MISSILE, rad, dam, GF_MISSILE));
 		}
-
-		case BF_WAND_SLOW_MONSTER:
-		{
-			/* Wand -- slow monster */
-			dam = 10;
-			return (borg_attack_aux_wand_bolt
-					(SV_WAND_SLOW_MONSTER, rad, dam, GF_OLD_SLOW));
-		}
-
-		case BF_WAND_SLEEP_MONSTER:
-		{
-			/* Wand -- sleep monster */
-			dam = 10;
-			return (borg_attack_aux_wand_bolt
-					(SV_WAND_SLEEP_MONSTER, rad, dam, GF_OLD_SLEEP));
-		}
-
-		case BF_WAND_FEAR_MONSTER:
-		{
-			/* Wand -- fear monster */
-			dam = 2 * (6 + 1) / 2;
-			return (borg_attack_aux_wand_bolt
-					(SV_WAND_FEAR_MONSTER, rad, dam, GF_TURN_ALL));
-		}
-
-		case BF_WAND_CONFUSE_MONSTER:
-		{
-			/* Wand -- conf monster */
-			dam = 2 * (6 + 1) / 2;
-			return (borg_attack_aux_wand_bolt
-					(SV_WAND_CONFUSE_MONSTER, rad, dam, GF_OLD_CONF));
-		}
-
+		
 		case BF_WAND_COLD_BOLT:
 		{
 			/* Wand -- cold bolt */
@@ -8129,6 +8111,54 @@ static int borg_attack_aux(int what)
 			dam = 6 * (8 + 1) / 2;
 			return (borg_attack_aux_wand_bolt
 					(SV_WAND_FIRE_BOLT, rad, dam, GF_FIRE));
+		}
+
+		case BF_WAND_SLOW_MONSTER:
+		{
+			/* Wand -- slow monster */
+			dam = 10;
+			return (borg_attack_aux_wand_bolt
+					(SV_WAND_SLOW_MONSTER, rad, dam, GF_OLD_SLOW));
+		}
+
+		case BF_WAND_SLEEP_MONSTER:
+		{
+			/* Wand -- sleep monster */
+			dam = 10;
+			return (borg_attack_aux_wand_bolt
+					(SV_WAND_SLEEP_MONSTER, rad, dam, GF_OLD_SLEEP));
+		}
+		
+		case BF_WAND_CONFUSE_MONSTER:
+		{
+			/* Wand -- conf monster */
+			dam = 2 * (6 + 1) / 2;
+			return (borg_attack_aux_wand_bolt
+					(SV_WAND_CONFUSE_MONSTER, rad, dam, GF_OLD_CONF));
+		}
+
+		case BF_WAND_FEAR_MONSTER:
+		{
+			/* Wand -- fear monster */
+			dam = 2 * (6 + 1) / 2;
+			return (borg_attack_aux_wand_bolt
+					(SV_WAND_FEAR_MONSTER, rad, dam, GF_TURN_ALL));
+		}
+		
+		case BF_WAND_ANNIHILATION:
+		{
+			/* Wand -- annihilation */
+			dam = 125;
+			return (borg_attack_aux_wand_bolt
+					(SV_WAND_ANNIHILATION, rad, dam, GF_OLD_DRAIN));
+		}
+
+		case BF_WAND_DRAIN_LIFE:
+		{
+			/* Wand -- drain life */
+			dam = 75;
+			return (borg_attack_aux_wand_bolt
+					(SV_WAND_DRAIN_LIFE, rad, dam, GF_OLD_DRAIN));
 		}
 
 		case BF_WAND_LITE_BEAM:
@@ -8184,6 +8214,14 @@ static int borg_attack_aux(int what)
 			return (borg_attack_aux_wand_bolt
 					(SV_WAND_FIRE_BALL, rad, dam, GF_FIRE));
 		}
+		
+		case BF_WAND_WONDER:
+		{
+			/* Wand -- wand of wonder */
+			dam = 35;
+			return (borg_attack_aux_wand_bolt
+					(SV_WAND_WONDER, rad, dam, GF_MISSILE));
+		}
 
 		case BF_WAND_DRAGON_COLD:
 		{
@@ -8203,75 +8241,12 @@ static int borg_attack_aux(int what)
 					(SV_WAND_DRAGON_FIRE, rad, dam, GF_FIRE));
 		}
 
-		case BF_WAND_ANNIHILATION:
+		case BF_WAND_ROCKETS:
 		{
-			/* Wand -- annihilation */
-			dam = 125;
+			/* Wand -- Rocket */
+			dam = 250;
 			return (borg_attack_aux_wand_bolt
-					(SV_WAND_ANNIHILATION, rad, dam, GF_OLD_DRAIN));
-		}
-
-		case BF_WAND_DRAIN_LIFE:
-		{
-			/* Wand -- drain life */
-			dam = 75;
-			return (borg_attack_aux_wand_bolt
-					(SV_WAND_DRAIN_LIFE, rad, dam, GF_OLD_DRAIN));
-		}
-
-		case BF_WAND_WONDER:
-		{
-			/* Wand -- wand of wonder */
-			dam = 35;
-			return (borg_attack_aux_wand_bolt
-					(SV_WAND_WONDER, rad, dam, GF_MISSILE));
-		}
-
-		case BF_STAFF_SLEEP_MONSTERS:
-		{
-			/* Staff -- Sleep Monsters */
-			dam = 60;
-			rad = MAX_SIGHT + 10;
-			return (borg_attack_aux_staff_dispel
-					(SV_STAFF_SLEEP_MONSTERS, rad, dam, GF_OLD_SLEEP));
-		}
-
-		case BF_STAFF_SLOW_MONSTERS:
-		{
-			/* Staff -- Slow Monsters */
-			dam = 60;
-			rad = MAX_SIGHT + 10;
-			return (borg_attack_aux_staff_dispel
-					(SV_STAFF_SLOW_MONSTERS, rad, dam, GF_OLD_SLOW));
-		}
-
-		case BF_STAFF_DISPEL_EVIL:
-		{
-			/* Staff -- Dispel Evil */
-			dam = 60;
-			rad = MAX_SIGHT + 10;
-			return (borg_attack_aux_staff_dispel
-					(SV_STAFF_DISPEL_EVIL, rad, dam, GF_DISP_EVIL));
-		}
-
-		case BF_STAFF_POWER:
-		{
-			/* Staff -- Power */
-			dam = 120;
-			rad = MAX_SIGHT + 10;
-			return (borg_attack_aux_staff_dispel
-					(SV_STAFF_POWER, rad, dam, GF_TURN_ALL));
-		}
-
-		case BF_STAFF_HOLINESS:
-		{
-			/* Staff -- holiness */
-			rad = MAX_SIGHT + 10;
-			if (borg_skill[BI_CURHP] < borg_skill[BI_MAXHP] / 2) dam = 500;
-			else
-				dam = 120;
-			return (borg_attack_aux_staff_dispel
-					(SV_STAFF_HOLINESS, rad, dam, GF_DISP_EVIL));
+					(SV_WAND_ROCKETS, rad, dam, GF_ROCKET));
 		}
 
 
@@ -8646,39 +8621,38 @@ bool borg_attack(bool boosted_bravery)
  * * and many others
  *
  */
-enum
-{
-	BD_SPEED,
-	BD_PROT_FROM_EVIL,
-	BD_BLESS,
-	BD_BERSERK,
-	BD_HERO,
-	BD_RESIST_FCE,
-	BD_RESIST_FECAP,
-	BD_RESIST_F,
-	BD_RESIST_C,
-	BD_RESIST_A,
-	BD_RESIST_E,
-	BD_RESIST_P,
-	BD_SHIELD,
-	BD_GOI,
-	BD_GOI_POT,
-	BD_GLYPH,
-	BD_WARDING,
-	BD_TELL_AWAY,
-	BD_CREATE_WALLS,
-	BD_MASS_GENOCIDE,
-	BD_GENOCIDE,
-	BD_GENOCIDE_HOUNDS,
-	BD_EARTHQUAKE,
-	BD_DESTRUCTION,
-	BD_BANISHMENT,
-	BD_DETECT_INVISO,
-	BD_LIGHT_BEAM,
-	BD_TRUMP_SERVANT,
 
-	BD_MAX
-};
+
+#define BD_SPEED			0
+#define BD_PROT_FROM_EVIL	1
+#define BD_BLESS			2
+#define BD_BERSERK			3
+#define BD_HERO				4
+#define BD_RESIST_FCE		5
+#define BD_RESIST_FECAP		6
+#define BD_RESIST_F			7
+#define BD_RESIST_C			8
+#define BD_RESIST_A			9
+#define BD_RESIST_P			10
+#define BD_SHIELD			11
+#define BD_GOI				12
+#define BD_GOI_POT			13
+#define BD_GLYPH			14
+#define BD_WARDING			15
+#define BD_TELL_AWAY		16
+#define BD_CREATE_WALLS		17
+#define BD_MASS_GENOCIDE	18
+#define BD_GENOCIDE			19
+#define BD_GENOCIDE_HOUNDS	20
+#define BD_EARTHQUAKE		21
+#define BD_DESTRUCTION		22
+#define BD_BANISHMENT		23
+#define BD_DETECT_INVISO	24
+#define BD_LIGHT_BEAM		25
+#define BD_TRUMP_SERVANT	26
+
+#define BD_MAX				27
+
 
 /*
  * Bless/Prayer to prepare for battle
@@ -8737,42 +8711,53 @@ static int borg_defend_aux_speed(int p1)
 	bool speed_rod = FALSE;
 	int fail_allowed = 39;
 
-	/* already fast */
-	if (borg_speed)
-		return (0);
+	/* Already fast */
+	if (borg_speed) return (0);
 
-	/* if very scary, do not allow for much chance of fail */
+	/* If very scary, do not allow for much chance of fail */
 	if (p1 > avoidance)
+	{
 		fail_allowed -= 19;
+	}
 	else
+	{
 		/* a little scary */
-	if (p1 > (avoidance * 2) / 3)
-		fail_allowed -= 10;
-	else
-		/* not very scary, allow lots of fail */
-	if (p1 < avoidance / 3)
-		fail_allowed += 10;
-
-	/* only cast defence spells if fail rate is not too high */
+		if (p1 > (avoidance * 2) / 3)
+		{
+			fail_allowed -= 10;
+		}
+		else
+		{
+			/* not very scary, allow lots of fail */
+			if (p1 < avoidance / 3)
+			{
+				fail_allowed += 10;
+			}
+		}
+	}
+	
+	/* Only cast defence spells if fail rate is not too high */
 	if (borg_spell_okay_fail(REALM_SORCERY, 1, 5, fail_allowed) ||
 		borg_spell_okay_fail(REALM_DEATH, 2, 3, fail_allowed) ||
 		borg_mindcr_okay_fail(MIND_ADRENALINE, 35, fail_allowed))
 		speed_spell = TRUE;
 
-	/* staff must have charges */
+	/* Staff must have charges */
 	if (borg_equips_staff_fail(SV_STAFF_SPEED))
 		speed_staff = TRUE;
 
-	/* rod can't be charging */
+	/* Rod can't be charging */
 	if (borg_equips_rod(SV_ROD_SPEED))
 		speed_rod = TRUE;
 
-	if (borg_slot(TV_POTION, SV_POTION_SPEED) && !speed_staff && !speed_rod &&
+	if (!borg_slot(TV_POTION, SV_POTION_SPEED) && !speed_staff && !speed_rod &&
 		!speed_spell)
 		return (0);
 
-	/* if we have an infinite/large suppy of speed we can */
-	/* be generious with our use */
+	/*
+	 * If we have an infinite/large suppy of speed we can
+	 * be generious with our use
+	 */
 	if (speed_rod || speed_spell || speed_staff)
 		good_speed = TRUE;
 
@@ -8799,50 +8784,34 @@ static int borg_defend_aux_speed(int p1)
 		p2 = p2 * 5 / 10;
 	}
 
-	/* Attempt to conserve Speed at end of game */
-	if (borg_skill[BI_CDEPTH] >= 97 && !borg_fighting_unique &&
-		!good_speed) p2 = 9999;
-
-	/* if this is an improvement and we may not avoid monster now and */
-	/* we may have before */
+	/*
+	 * If this is an improvement and we may
+	 * not avoid monster now and we may have before
+	 */
 	if (((p1 > p2) &&
 		 p2 <= (borg_fighting_unique ? ((avoidance * 2) / 3) : (avoidance / 2))
-		 && (p1 > (avoidance / 5)) && good_speed) || ((p1 > p2) &&
-													  p2 <=
-													  (borg_fighting_unique
-													   ? ((avoidance * 2) /
-														  3) : (avoidance / 3))
-													  && (p1 >
-														  (avoidance / 7))))
+		 && (p1 > (avoidance / 5)) && good_speed) ||
+		 	((p1 > p2) &&
+				p2 <= (borg_fighting_unique ? ((avoidance * 2) / 3) :
+					 (avoidance / 3)) && (p1 > (avoidance / 7))))
 	{
-		/* if we just did GOI do a speed right after. */
-		if (good_speed && borg_goi)
-		{
-			/* HACK pretend that it was scary and will be very safe */
-			/* This is done because GOI messes up our calculations */
-			p1 = 10000;
-			p2 = 1;
-		}
-
 		/* Simulation */
 		if (borg_simulate) return (p1 - p2 + (borg_goi / 100) * 50);
 
-		/* do it! */
+		/* Do it! */
 		if (borg_spell_fail(REALM_SORCERY, 1, 5, fail_allowed) ||
 			borg_spell_fail(REALM_DEATH, 2, 3, fail_allowed) ||
 			borg_mindcr_fail(MIND_ADRENALINE, 35, fail_allowed))
 			return (p1 - p2);
 
-		if (borg_zap_rod(SV_ROD_SPEED)	/*||
-										   borg_activate_artifact(ART_FEANOR, FALSE) ||
-										   borg_activate_artifact(ART_TARATOL, FALSE) ||
-										   borg_activate_artifact(ART_TULKAS, FALSE) */  ||
+		if (borg_zap_rod(SV_ROD_SPEED) ||
 			borg_use_staff(SV_STAFF_SPEED) ||
 			borg_quaff_potion(SV_POTION_SPEED))
 
 			/* Value */
 			return (p1 - p2 + borg_goi * 50);
 	}
+	
 	/* default to can't do it. */
 	return (0);
 }
@@ -10767,10 +10736,21 @@ static int borg_defend_aux(int what, int p1)
 		{
 			return (borg_defend_aux_speed(p1));
 		}
-
 		case BD_PROT_FROM_EVIL:
 		{
 			return (borg_defend_aux_prot_evil(p1));
+		}
+		case BD_BLESS:
+		{
+			return (borg_defend_aux_bless(p1));
+		}
+		case BD_BERSERK:
+		{
+			return (borg_defend_aux_berserk(p1));
+		}
+		case BD_HERO:
+		{
+			return (borg_defend_aux_hero(p1));
 		}
 		case BD_RESIST_FCE:
 		{
@@ -10796,19 +10776,6 @@ static int borg_defend_aux(int what, int p1)
 		{
 			return (borg_defend_aux_resist_p(p1));
 		}
-		case BD_BLESS:
-		{
-			return (borg_defend_aux_bless(p1));
-		}
-
-		case BD_HERO:
-		{
-			return (borg_defend_aux_hero(p1));
-		}
-		case BD_BERSERK:
-		{
-			return (borg_defend_aux_berserk(p1));
-		}
 		case BD_SHIELD:
 		{
 			return (borg_defend_aux_shield(p1));
@@ -10821,11 +10788,6 @@ static int borg_defend_aux(int what, int p1)
 		{
 			return (borg_defend_aux_goi_pot(p1));
 		}
-
-		case BD_TELL_AWAY:
-		{
-			return (borg_defend_aux_tell_away(p1));
-		}
 		case BD_GLYPH:
 		{
 			return (borg_defend_aux_glyph(p1));
@@ -10833,6 +10795,10 @@ static int borg_defend_aux(int what, int p1)
 		case BD_WARDING:
 		{
 			return (borg_defend_aux_true_warding(p1));
+		}
+		case BD_TELL_AWAY:
+		{
+			return (borg_defend_aux_tell_away(p1));
 		}
 		case BD_CREATE_WALLS:
 		{
@@ -10875,6 +10841,9 @@ static int borg_defend_aux(int what, int p1)
 			return (borg_defend_aux_servant(p1));
 		}
 	}
+
+	borg_oops(format("# Trying invalid BD type. (%d)",what));
+
 	return (0);
 }
 
@@ -10944,6 +10913,7 @@ bool borg_defend(int p1)
 
 	/* Instantiate */
 	(void)borg_defend_aux(b_g, p1);
+	
 	/* Success */
 	return (TRUE);
 
@@ -13297,17 +13267,12 @@ bool borg_flow_shop_entry(int i)
 {
 	int x, y;
 
-	/* cptr name = (f_name + f_info[FEAT_SHOP_HEAD+i].name); */
-
 	/* Must be in town */
 	if (borg_skill[BI_CDEPTH]) return (FALSE);
 
 	/* Obtain the location */
 	x = borg_shops[i].x;
 	y = borg_shops[i].y;
-
-	/* Hack -- Must be known */
-	if (!x || !y) return (FALSE);
 
 	/* Hack -- re-enter a shop if needed */
 	if ((x == c_x) && (y == c_y))
@@ -13330,9 +13295,13 @@ bool borg_flow_shop_entry(int i)
 
 	/* Spread the flow */
 	borg_flow_spread(250, TRUE, FALSE, FALSE);
+	
+	borg_note("# About to commit flow");
 
 	/* Attempt to Commit the flow */
 	if (!borg_flow_commit("shop", GOAL_MISC)) return (FALSE);
+	
+	borg_note("# About to take step");
 
 	/* Take one step */
 	if (!borg_flow_old(GOAL_MISC)) return (FALSE);
