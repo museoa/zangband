@@ -1334,65 +1334,13 @@ void test_field_data_integrity(void)
 	}
 }
 
-
-/* Field action functions - later will be implemented in lua */
-
-
 /*
- * The type of the void pointer is:
- *
- * FIELD_ACT_INIT			Function dependent.  (Be careful)
- * FIELD_ACT_LOAD			NULL
- * FIELD_ACT_PLAYER_ENTER	NULL
- * FIELD_ACT_PLAYER_ON		NULL
- * FIELD_ACT_PLAYER_LEAVE	NULL
- * FIELD_ACT_MONSTER_ENTER	monster_type*	(m_ptr)
- * FIELD_ACT_MONSTER_ON		monster_type*	(m_ptr)
- * FIELD_ACT_MONSTER_LEAVE	monster_type*	(m_ptr)
- * FIELD_ACT_OBJECT_DROP	object_type*	(o_ptr)	 
- * FIELD_ACT_OBJECT_ON		object_type*	(o_ptr)	 
- * FIELD_ACT_INTERACT		int
- * FIELD_ACT_MAGIC_TARGET	int who, int dist, int dam, int type,
- 								bool known, bool *notice
- * FIELD_ACT_LOOK			char*
- * FIELD_ACT_EXIT			NULL
- * FIELD_ACT_MONSTER_AI		Not implemented yet.
- * FIELD_ACT_SPECIAL		Function dependent.   (Be careful)
- * FIELD_ACT_INTERACT_TEST	int*
- * FIELD_ACT_MON_ENTER_TEST monster_type *(m_ptr), byte *(flags)
- * FIELD_ACT_STORE_ACT1		int or (object_type *, bool *) (building/ store)
- * FIELD_ACT_STORE_ACT2		int* or (object_type *, bool *) (building/ store)
+ * Helper functions for fields lua scripts.
  */
 
-
-/* Simple function that does nothing */
-bool field_action_nothing(field_type *f_ptr, va_list vp)
-{
-	/* Hack - ignore 'f_ptr' */
-	(void)f_ptr;
-
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
-	/* Action: Do nothing at all */
-	return (FALSE);
-}
-
-
-/* Simple function that deletes the field */
-bool field_action_delete(field_type *f_ptr, va_list vp)
-{
-	/* Hack - ignore 'f_ptr' */
-	(void)f_ptr;
-
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
-	/* Delete ourself */
-	return (TRUE);
-}
-
-
+/*
+ * Set the size of a corpse - and change the fields picture.
+ */
 void set_corpse_size(field_type *f_ptr, int size)
 {
 	/* Initialise the graphic */
@@ -1423,7 +1371,7 @@ void set_corpse_size(field_type *f_ptr, int size)
  * Always miss 5% of the time, Always hit 5% of the time.
  * Otherwise, match trap power against player armor.
  */
-static bool check_hit(int power)
+bool check_trap_hit(int power)
 {
 	int k, ac;
 
@@ -1452,7 +1400,7 @@ static bool check_hit(int power)
  * Always miss 5% of the time, Always hit 5% of the time.
  * Otherwise, match trap power against players saving throw.
  */
-static bool check_save(int power)
+bool dont_save(int power)
 {
 	int k;
 
@@ -1611,7 +1559,7 @@ void place_trap(int x, int y)
  *
  * The trap is noticed, and the player is disturbed
  */
-static void hit_trap(field_type *f_ptr)
+void hit_trap(field_type *f_ptr)
 {
 	/* Look for invisible traps and detect them. */
 	if (!(f_ptr->info & FIELD_INFO_VIS))
@@ -1639,162 +1587,12 @@ static void hit_trap(field_type *f_ptr)
  * What horrible fate awaits the player after stepping
  * on this particular trap?
  */
-bool field_action_hit_trap_door(field_type *f_ptr, va_list vp)
+
+/*
+ * Nasty cursing of equipment and player
+ */
+void evil_trap(void)
 {
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
-	/* Hit the trap */
-	hit_trap(f_ptr);
-
-	if (FLAG(p_ptr, TR_FEATHER))
-	{
-		msgf("You fly over a trap door.");
-	}
-	else
-	{
-		if (!p_ptr->state.leaving)
-		{
-			msgf("You have fallen through a trap door!");
-			sound(SOUND_FALL);
-			take_hit(damroll(4, 8), "a trap door");
-
-			p_ptr->depth++;
-
-			/* Leaving */
-			p_ptr->state.leaving = TRUE;
-		}
-	}
-
-	/* Done */
-	return (FALSE);
-}
-
-
-bool field_action_hit_trap_pit(field_type *f_ptr, va_list vp)
-{
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
-	/* Hit the trap */
-	hit_trap(f_ptr);
-
-	if (FLAG(p_ptr, TR_FEATHER))
-	{
-		msgf("You fly over a pit trap.");
-	}
-	else
-	{
-		msgf("You have fallen into a pit!");
-		take_hit(damroll(3, 8), "a pit trap");
-	}
-
-	/* Done */
-	return (FALSE);
-}
-
-
-bool field_action_hit_trap_spike(field_type *f_ptr, va_list vp)
-{
-	int dam;
-
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
-	/* Hit the trap */
-	hit_trap(f_ptr);
-
-	if (FLAG(p_ptr, TR_FEATHER))
-	{
-		msgf("You fly over a spiked pit.");
-	}
-	else
-	{
-		msgf("You fall into a spiked pit!");
-
-		/* Base damage */
-		dam = damroll(4, 8);
-
-		/* Extra spike damage */
-		if (randint0(100) < 50)
-		{
-			msgf("You are impaled!");
-
-			dam *= 2;
-			(void)inc_cut(randint1(dam));
-		}
-
-		/* Take the damage */
-		take_hit(dam, "a spiked pit trap");
-	}
-
-	/* Done */
-	return (FALSE);
-}
-
-
-bool field_action_hit_trap_poison_pit(field_type *f_ptr, va_list vp)
-{
-	int dam;
-
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
-	/* Hit the trap */
-	hit_trap(f_ptr);
-
-	if (FLAG(p_ptr, TR_FEATHER))
-	{
-		msgf("You fly over a spiked pit.");
-	}
-	else
-	{
-		msgf("You fall into a spiked pit!");
-
-		/* Base damage */
-		dam = damroll(6, 8);
-
-		/* Extra spike damage */
-		if (randint0(100) < 50)
-		{
-			msgf("You are impaled on poisonous spikes!");
-
-			dam *= 2;
-			(void)inc_cut(randint1(dam));
-
-			if (res_pois_lvl() <= 3)
-			{
-				msgf("The poison does not affect you!");
-			}
-			else
-			{
-				dam *= 2;
-				(void)pois_dam(10, "poison", randint1(dam));
-			}
-		}
-
-		/* Take the damage */
-		take_hit(dam, "a spiked pit");
-	}
-
-	/* Done */
-	return (FALSE);
-}
-
-
-bool field_action_hit_trap_curse(field_type *f_ptr, va_list vp)
-{
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
-	/* Hit the trap */
-	hit_trap(f_ptr);
-
-	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return (FALSE);
-
-	msgf("There is a flash of shimmering light!");
-
 	/* Curse the equipment */
 	curse_equipment(p_ptr->depth, p_ptr->depth / 10);
 
@@ -1822,389 +1620,15 @@ bool field_action_hit_trap_curse(field_type *f_ptr, va_list vp)
 	{
 		(void)curse_armor();
 	}
-
-	/* Delete the field */
-	return (TRUE);
 }
 
 
-bool field_action_hit_trap_teleport(field_type *f_ptr, va_list vp)
-{
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
-	/* Hit the trap */
-	hit_trap(f_ptr);
-
-	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return (FALSE);
-
-	msgf("You hit a teleport trap!");
-	teleport_player(100);
-
-	/* Done */
-	return (FALSE);
-}
-
-
-bool field_action_hit_trap_element(field_type *f_ptr, va_list vp)
-{
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
-	/* Hit the trap */
-	hit_trap(f_ptr);
-
-	/* Analyze type of element */
-	switch (f_ptr->data[3])
-	{
-		case 0:
-		{
-			msgf("You are enveloped in flames!");
-			(void)fire_dam(damroll(4, 6), "a fire trap");
-			break;
-		}
-
-		case 1:
-		{
-			msgf("You are splashed with acid!");
-			(void)acid_dam(damroll(4, 6), "an acid trap");
-			break;
-		}
-
-		case 2:
-		{
-			msgf("A pungent green gas surrounds you!");
-			(void) pois_dam(10, "poison", rand_range(10, 30));
-			break;
-		}
-
-		case 3:
-		{
-			msgf("You are splashed with freezing liquid!");
-			(void)cold_dam(damroll(4, 6), "a cold trap");
-			break;
-		}
-
-		case 4:
-		{
-			msgf("You are hit by a spark!");
-			(void)elec_dam(damroll(4, 6), "an electric trap");
-			break;
-		}
-	}
-
-	/* Done */
-	return (FALSE);
-}
-
-
-bool field_action_hit_trap_ba_element(field_type *f_ptr, va_list vp)
-{
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
-	/* Hit the trap */
-	hit_trap(f_ptr);
-
-	/* Analyze type of element */
-	switch (f_ptr->data[3])
-	{
-		case 0:
-		{
-			msgf("You are enveloped in a ball of flames!");
-			(void)fire_ball(GF_FIRE, 0, 350, 4);
-
-			(void)fire_dam(150, "a fire trap");
-			break;
-		}
-
-		case 1:
-		{
-			msgf("You are soaked with acid!");
-			(void)fire_ball(GF_ACID, 0, 350, 4);
-
-			(void)acid_dam(150, "an acid trap");
-			break;
-		}
-
-		case 2:
-		{
-			msgf("A pungent grey gas surrounds you!");
-			(void)fire_ball(GF_POIS, 0, 350, 4);
-
-			/* Special damage */
-			(void)pois_dam(10, "poison", rand_range(100, 150));
-			break;
-		}
-
-		case 3:
-		{
-			msgf("You are soaked with freezing liquid!");
-			(void)fire_ball(GF_ICE, 0, 350, 4);
-
-			(void)cold_dam(150, "a cold trap");
-			break;
-		}
-
-		case 4:
-		{
-			msgf("You are hit by lightning!");
-			(void)fire_ball(GF_ELEC, 0, 350, 4);
-
-			(void)elec_dam(150, "a lightning trap");
-			break;
-		}
-	}
-
-	/* Done */
-	return (FALSE);
-}
-
-
-bool field_action_hit_trap_gas(field_type *f_ptr, va_list vp)
-{
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
-	/* Hit the trap */
-	hit_trap(f_ptr);
-
-	/* Analyze type of trap */
-	switch (f_ptr->data[3])
-	{
-		case 0:
-		{
-			msgf("A blue gas surrounds you!");
-			(void)inc_slow(rand_range(20, 40));
-			break;
-		}
-
-		case 1:
-		{
-			msgf("A black gas surrounds you!");
-			if (!(FLAG(p_ptr, TR_RES_BLIND)))
-			{
-				(void)inc_blind(rand_range(25, 75));
-			}
-			break;
-		}
-
-		case 2:
-		{
-			msgf("A gas of scintillating colors surrounds you!");
-			if (!(FLAG(p_ptr, TR_RES_CONF)))
-			{
-				(void)inc_confused(rand_range(10, 30));
-			}
-			break;
-		}
-
-		case 3:
-		{
-			msgf("A strange white mist surrounds you!");
-			if (!(FLAG(p_ptr, TR_FREE_ACT)))
-			{
-				msgf("You fall asleep.");
-
-				if (ironman_nightmare)
-				{
-					msgf("A horrible vision enters your mind.");
-
-					/* Have some nightmares */
-					have_nightmare();
-				}
-				(void)inc_paralyzed(rand_range(5, 15));
-			}
-			break;
-		}
-
-		case 4:
-		{
-			msgf("A gas of scintillating colors surrounds you!");
-
-			if (!(FLAG(p_ptr, TR_RES_CHAOS)))
-			{
-				(void)inc_image(rand_range(10, 30));
-			}
-			break;
-		}
-	}
-
-	/* Done */
-	return (FALSE);
-}
-
-
-bool field_action_hit_trap_traps(field_type *f_ptr, va_list vp)
-{
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
-	/* Hit the trap */
-	hit_trap(f_ptr);
-
-	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return (FALSE);
-
-	msgf("There is a bright flash of light!");
-
-	/* Make some new traps */
-	(void)project(0, 1, p_ptr->px, p_ptr->py, 0, GF_MAKE_TRAP,
-				  PROJECT_HIDE | PROJECT_JUMP | PROJECT_GRID);
-
-	/* Delete the field */
-	return (TRUE);
-}
-
-
-bool field_action_hit_trap_temp_stat(field_type *f_ptr, va_list vp)
-{
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
-	/* Hit the trap */
-	hit_trap(f_ptr);
-
-	/* Analyze type of trap */
-	switch (f_ptr->data[3])
-	{
-		case 0:
-		{
-			if (check_hit(f_ptr->data[1]))
-			{
-				msgf("A small dart hits you!");
-				take_hit(randint1(4), "a dart trap");
-				(void)do_dec_stat(A_STR);
-			}
-			else
-			{
-				msgf("A small dart barely misses you.");
-			}
-			break;
-		}
-
-		case 1:
-		{
-			if (check_hit(f_ptr->data[1]))
-			{
-				msgf("A small dart hits you!");
-				take_hit(randint1(4), "a dart trap");
-				(void)do_dec_stat(A_DEX);
-			}
-			else
-			{
-				msgf("A small dart barely misses you.");
-			}
-			break;
-		}
-
-		case 2:
-		{
-			if (check_hit(f_ptr->data[1]))
-			{
-				msgf("A small dart hits you!");
-				take_hit(randint1(4), "a dart trap");
-				(void)do_dec_stat(A_CON);
-			}
-			else
-			{
-				msgf("A small dart barely misses you.");
-			}
-			break;
-		}
-	}
-
-	/* Done */
-	return (FALSE);
-}
-
-
-bool field_action_hit_trap_perm_stat(field_type *f_ptr, va_list vp)
-{
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
-	/* Hit the trap */
-	hit_trap(f_ptr);
-
-	if (check_hit(f_ptr->data[1]))
-	{
-		msgf("A small dart hits you!");
-		take_hit(randint1(4), "a dart trap");
-		(void)dec_stat(f_ptr->data[3], 30, TRUE);
-	}
-	else
-	{
-		msgf("A small dart barely misses you.");
-	}
-
-	/* Done */
-	return (FALSE);
-}
-
-
-bool field_action_hit_trap_lose_xp(field_type *f_ptr, va_list vp)
-{
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
-	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return (FALSE);
-
-	/* Hit the trap */
-	hit_trap(f_ptr);
-
-	msgf("Your head throbs!");
-	lose_exp(p_ptr->exp / 5);
-
-	/* Done */
-	return (FALSE);
-}
-
-
-bool field_action_hit_trap_disenchant(field_type *f_ptr, va_list vp)
-{
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
-	/* Hit the trap */
-	hit_trap(f_ptr);
-
-	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return (FALSE);
-
-	if (!(FLAG(p_ptr, TR_RES_DISEN)))
-	{
-		msgf("There is a bright flash of light!");
-		(void)apply_disenchant();
-	}
-	else
-	{
-		msgf("You feel the air throb.");
-	}
-
-	/* Done */
-	return (FALSE);
-}
-
-
-bool field_action_hit_trap_drop_item(field_type *f_ptr, va_list vp)
+/* Drop a random item from the players inventory */
+void drop_random_item(void)
 {
 	int item;
 
 	object_type *o_ptr;
-
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
-	/* Hit the trap */
-	hit_trap(f_ptr);
-
-	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return (FALSE);
-
-	msgf("You fumble with your pack!");
 
 	/* Get the item to drop */
 	item = randint1(get_list_length(p_ptr->inventory));
@@ -2212,7 +1636,7 @@ bool field_action_hit_trap_drop_item(field_type *f_ptr, va_list vp)
 	o_ptr = get_list_item(p_ptr->inventory, item);
 
 	/* Paranoia */
-	if (!o_ptr) return (FALSE);
+	if (!o_ptr) return;
 
 	/* Only if not cursed */
 	if (!cursed_p(o_ptr))
@@ -2220,68 +1644,12 @@ bool field_action_hit_trap_drop_item(field_type *f_ptr, va_list vp)
 		/* Drop it */
 		inven_drop(o_ptr, o_ptr->number);
 	}
-
-	/* Done */
-	return (FALSE);
 }
 
 
-bool field_action_hit_trap_mutate(field_type *f_ptr, va_list vp)
-{
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
-	/* Hit the trap */
-	hit_trap(f_ptr);
-
-	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return (FALSE);
-
-	(void)gain_mutation(0);
-
-	/* Done */
-	return (FALSE);
-}
-
-
-bool field_action_hit_trap_new_life(field_type *f_ptr, va_list vp)
-{
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
-	/* Hit the trap */
-	hit_trap(f_ptr);
-
-	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return (FALSE);
-
-	if (p_ptr->muta1 || p_ptr->muta2 || p_ptr->muta3)
-	{
-		msgf("You are cured of all mutations.");
-		p_ptr->muta1 = p_ptr->muta2 = p_ptr->muta3 = 0;
-		p_ptr->update |= PU_BONUS;
-		handle_stuff();
-	}
-
-	/* Delete the field */
-	return (TRUE);
-}
-
-
-bool field_action_hit_trap_no_lite(field_type *f_ptr, va_list vp)
+void drain_lite(void)
 {
 	object_type *o_ptr;
-
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
-	/* Hit the trap */
-	hit_trap(f_ptr);
-
-	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return (FALSE);
-
-	msgf("Darkness surrounds you!");
 
 	/* Access the lite */
 	o_ptr = &p_ptr->equipment[EQUIP_LITE];
@@ -2292,128 +1660,32 @@ bool field_action_hit_trap_no_lite(field_type *f_ptr, va_list vp)
 		/* Drain all light. */
 		o_ptr->timeout = 0;
 	}
-
-	/* Darkeness */
-	unlite_room(p_ptr->px, p_ptr->py);
-
+	
 	/* Recalculate torch */
 	p_ptr->update |= (PU_TORCH);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_EQUIP);
-
-	/* Done */
-	return (FALSE);
+	
+	/* Darkeness */
+	unlite_room(p_ptr->px, p_ptr->py);
 }
 
 
-bool field_action_hit_trap_hunger(field_type *f_ptr, va_list vp)
+void drain_food(void)
 {
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
-	/* Hit the trap */
-	hit_trap(f_ptr);
-
-	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return (FALSE);
-
-	msgf("You suddenly feel very, very hungry!");
-
 	/* Only effect non-starving people */
 	if (p_ptr->food > PY_FOOD_WEAK)
 	{
 		/* You are very hungry */
 		(void)set_food(PY_FOOD_WEAK);
 	}
-
-	/* Delete the field */
-	return (TRUE);
 }
 
-
-bool field_action_hit_trap_no_gold(field_type *f_ptr, va_list vp)
-{
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
-	/* Hit the trap */
-	hit_trap(f_ptr);
-
-	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return (FALSE);
-
-	msgf("Your purse becomes weightless!");
-
-	/* No gold! */
-	p_ptr->au = p_ptr->au / 2;
-
-	/* Redraw gold */
-	p_ptr->redraw |= (PR_GOLD);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_PLAYER);
-
-	/* Done */
-	return (FALSE);
-}
-
-
-bool field_action_hit_trap_haste_mon(field_type *f_ptr, va_list vp)
-{
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
-	/* Hit the trap */
-	hit_trap(f_ptr);
-
-	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return (FALSE);
-
-	msgf("A shrill note sounds!");
-
-	(void)speed_monsters();
-
-	/* Delete the field */
-	return (TRUE);
-}
-
-
-bool field_action_hit_trap_raise_mon(field_type *f_ptr, va_list vp)
-{
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
-	/* Hit the trap */
-	hit_trap(f_ptr);
-
-	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return (FALSE);
-
-	msgf("You smell something musty.");
-
-	(void)raise_dead(p_ptr->px, p_ptr->py, FALSE);
-
-	/* Done */
-	return (FALSE);
-}
-
-
-bool field_action_hit_trap_drain_magic(field_type *f_ptr, va_list vp)
+void drain_magic(void)
 {
 	object_type *o_ptr;
-
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
-	/* Hit the trap */
-	hit_trap(f_ptr);
-
-	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return (FALSE);
-
-	msgf("Static fills the air.");
-
+	
 	/* Find an item */
 	OBJ_ITT_START (p_ptr->inventory, o_ptr)
 	{
@@ -2438,78 +1710,8 @@ bool field_action_hit_trap_drain_magic(field_type *f_ptr, va_list vp)
 	}
 	OBJ_ITT_END;
 
-	/* Done */
-	return (FALSE);
+
 }
-
-
-bool field_action_hit_trap_aggravate(field_type *f_ptr, va_list vp)
-{
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
-	/* Hit the trap */
-	hit_trap(f_ptr);
-
-	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return (FALSE);
-
-	msgf("Shouts fill the air!");
-
-	aggravate_monsters(0);
-
-	/* Done */
-	return (FALSE);
-}
-
-
-bool field_action_hit_trap_summon(field_type *f_ptr, va_list vp)
-{
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
-	/* Hit the trap */
-	hit_trap(f_ptr);
-
-	/* Saving throw */
-	if (!check_save(f_ptr->data[1])) return (FALSE);
-
-	msgf("Zap!");
-
-	/* Summon monsters */
-	(void)summon_specific(0, p_ptr->px, p_ptr->py, p_ptr->depth,
-						  0, TRUE, FALSE, FALSE);
-
-	/* Delete the field */
-	return (TRUE);
-}
-
-
-bool field_action_hit_trap_lose_memory(field_type *f_ptr, va_list vp)
-{
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
-	/* Disturb the player */
-	disturb(FALSE);
-
-	/* Saving throw */
-	if (!check_save(f_ptr->data[1]))
-	{
-		/* Find the trap */
-		hit_trap(f_ptr);
-
-		return (FALSE);
-	}
-
-	msgf("You are not sure what just happened!");
-
-	(void)lose_all_info();
-
-	/* Done */
-	return (FALSE);
-}
-
 
 /*
  * Make a locked or jammed door on a square
@@ -2616,48 +1818,6 @@ void make_lockjam_door(int x, int y, int power, bool jam)
 bool monster_can_open(monster_race *r_ptr, int power)
 {
 	return (randint0(r_ptr->hdice * r_ptr->hside / 4) > power * power);
-}
-
-
-/*
- * Interact with a store
- */
-bool field_action_door_store(field_type *f_ptr, va_list vp)
-{
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
-	/* Disturb */
-	disturb(FALSE);
-
-	/*
-	 * data[0] contains the type of store.
-	 */
-	do_cmd_store(f_ptr);
-
-	/* Done */
-	return (FALSE);
-}
-
-
-/*
- * Interact with a building
- */
-bool field_action_door_build(field_type *f_ptr, va_list vp)
-{
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
-	/* Disturb */
-	disturb(FALSE);
-
-	/*
-	 * data[0] contains the type of building.
-	 */
-	do_cmd_bldg(f_ptr);
-
-	/* Done */
-	return (FALSE);
 }
 
 

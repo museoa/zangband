@@ -394,3 +394,6 @@ extern bool restore_level(void);
 extern bool player_res(u32b flag);
 extern void have_nightmare(void);
 extern void disturb(bool stop_search);
+extern void move_dun_level(int direction);
+extern void do_cmd_store(const field_type *f_ptr);
+extern void do_cmd_bldg(field_type *f_ptr);

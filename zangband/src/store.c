@@ -2371,6 +2371,9 @@ void do_cmd_store(const field_type *f1_ptr)
 	int i;
 
 	object_type *o_ptr;
+	
+	/* Disturb */
+	disturb(FALSE);
 
 	/* Hack - save f1_ptr for later */
 	f_ptr = f1_ptr;

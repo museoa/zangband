@@ -599,20 +599,16 @@ void teleport_player_level(void)
 	if (!p_ptr->depth || ironman_downward)
 	{
 		msgf(MSGT_TPLEVEL, "You sink through the floor.");
-
-		p_ptr->depth++;
-
-		/* Leaving */
-		p_ptr->state.leaving = TRUE;
+		
+		/* Go down */
+		move_dun_level(1);
 	}
 	else if (is_special_level(p_ptr->depth))
 	{
 		msgf(MSGT_TPLEVEL, "You rise up through the ceiling.");
-
-		p_ptr->depth--;
-
-		/* Leaving */
-		p_ptr->state.leaving = TRUE;
+		
+		/* Go up */
+		move_dun_level(-1);
 	}
 	else if (one_in_(2) || (p_ptr->depth >= dungeon()->max_level))
 	{

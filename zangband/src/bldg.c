@@ -1868,6 +1868,9 @@ void do_cmd_bldg(field_type *f_ptr)
 	store_type *b_ptr;
 	bool leave_build = FALSE;
 
+	/* Disturb */
+	disturb(FALSE);
+
 	b_ptr = get_current_store();
 	
 	/* Paranoia */
