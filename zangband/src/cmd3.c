@@ -1275,7 +1275,7 @@ void do_cmd_query_symbol(void)
 			{
 				if (isupper(temp1[xx])) temp1[xx] = tolower(temp1[xx]);
 			}
-			strcpy(temp2, r_name + r_ptr->name);
+			strcpy(temp2, mon_race_name(r_ptr));
 
 			for (xx = 0; temp2[xx] && (xx < 80); xx++)
 			{

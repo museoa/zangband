@@ -741,7 +741,7 @@ void borg_target(int x, int y)
 	if (mb_ptr->monster)
 	{
 		borg_note_fmt("# Targeting %s, from (%d, %d) to (%d, %d).",
-					  (r_name + r_info[mb_ptr->monster].name), c_x, c_y, x, y);
+					  mon_race_name(&r_info[mb_ptr->monster]), c_x, c_y, x, y);
 	}
 	else
 	{

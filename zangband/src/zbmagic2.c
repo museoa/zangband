@@ -346,7 +346,7 @@ static int borg_attack_thrust(void)
 	/* Note */
 	borg_note_fmt
 		("# Facing %s at (%d,%d).",
-		 (r_name + r_info[mb_ptr->monster].name), g_x, g_y);
+		 mon_race_name(&r_info[mb_ptr->monster]), g_x, g_y);
 	borg_note_fmt
 		("# Attacking with weapon '%s'", equipment[EQUIP_WIELD].o_name);
 

@@ -3240,7 +3240,7 @@ errr file_character(cptr name, bool full)
                 monster_race *r_ptr = &r_info[who[i]];
 
                 froff(fff, "%2i %-36s Level %i (%i')\n", r_ptr->r_pkills,
-                        (r_ptr->name + r_name), r_ptr->level, r_ptr->level * 50);
+                        mon_race_name(r_ptr), r_ptr->level, r_ptr->level * 50);
             }
         }
 

@@ -588,7 +588,7 @@ static bool borg_play_step(int y2, int x2)
 
 		/* Message */
 		borg_note_fmt("# Walking into a '%s' at (%d,%d)",
-					  r_name + r_info[mb_ptr->monster].name, x, y);
+					  mon_race_name(&r_info[mb_ptr->monster]), x, y);
 
 		/* Walk into it */
 		if (my_no_alter)

@@ -894,7 +894,7 @@ static bool vault_aux_chapel(int r_idx)
 	if (!vault_monster_okay(r_idx)) return (FALSE);
 
 	/* Require "priest" or Angel */
-	if ((r_ptr->d_char != 'A') && !strstr((r_name + r_ptr->name), "riest"))
+	if ((r_ptr->d_char != 'A') && !mon_name_cont(r_ptr, "riest"))
 	{
 		return (FALSE);
 	}

@@ -911,7 +911,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 
 	char killer[80];
 
-	cptr name = (r_name + r_ptr->name);
+	cptr name = mon_race_name(r_ptr);
 
 	/* Is the monster "seen"? */
 	bool seen = m_ptr->ml;
@@ -1171,7 +1171,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 			if (seen) obvious = TRUE;
 			if ((r_ptr->d_char == 'E') &&
 				(prefix(name, "W") ||
-				 (strstr((r_name + r_ptr->name), "Unmaker"))))
+				 (mon_name_cont(r_ptr, "Unmaker"))))
 			{
 				note = " is immune.";
 				dam = 0;
@@ -1911,7 +1911,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 					chg_virtue(V_COMPASSION, 1);
 			}
 
-			if (strstr((r_name + r_ptr->name), "leper"))
+			if (mon_name_cont(r_ptr, "leper"))
 			{
 				heal_leper = TRUE;
 				chg_virtue(V_COMPASSION, 5);

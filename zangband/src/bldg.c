@@ -25,7 +25,7 @@ static void have_nightmare_aux(int r_idx)
 	char m_name[80];
 	bool happened = FALSE;
 	int power = r_ptr->level + 10;
-	cptr desc = r_name + r_ptr->name;
+	cptr desc = mon_race_name(r_ptr);
 
 
 	if (!FLAG(r_ptr, RF_UNIQUE))

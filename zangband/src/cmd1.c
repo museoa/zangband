@@ -2058,7 +2058,7 @@ static void summon_pattern_vortex(int x, int y)
 		monster_race *r_ptr = &r_info[i];
 
 		/* Summon it */
-		if (strstr(r_name + r_ptr->name, "Pattern") && (r_ptr->d_char == 'v'))
+		if (mon_name_cont(r_ptr, "Pattern") && (r_ptr->d_char == 'v'))
 		{
 			if (summon_named_creature(x, y, i, FALSE, FALSE, FALSE))
 			{

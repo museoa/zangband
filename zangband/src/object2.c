@@ -3144,7 +3144,7 @@ static void a_m_aux_4(object_type *o_ptr, int level, byte flags)
 
 			if (cheat_peek)
 			{
-				msgf("Figurine of %s", r_name + r_ptr->name);
+				msgf("Figurine of %s", mon_race_name(r_ptr));
 			}
 
 			break;
@@ -3173,7 +3173,7 @@ static void a_m_aux_4(object_type *o_ptr, int level, byte flags)
 
 			if (cheat_peek)
 			{
-				msgf("Statue of %s", r_name + r_ptr->name);
+				msgf("Statue of %s", mon_race_name(r_ptr));
 			}
 
 			break;

@@ -2050,7 +2050,7 @@ static bool do_cmd_dump_monster(int dummy)
 		if (!r_ptr->name) continue;
 
 		/* Dump a comment */
-		froff(fff, "# %s\n", (r_name + r_ptr->name));
+		froff(fff, "# %s\n", mon_race_name(r_ptr));
 
 		/* Dump the monster attr/char info */
 		froff(fff, "R:%d:0x%02X:0x%02X\n\n", i,
@@ -2325,7 +2325,7 @@ static bool do_cmd_change_monster(int dummy)
 
 		/* Label the object */
 		prtf(5, 7, "Monster = %d, Name = %-40.40s",
-						   r, (r_name + r_ptr->name));
+						   r, mon_race_name(r_ptr));
 
 		/* Label the Default values */
 		prtf(10, 9, "Default attr/char = %3u / %3u", da, dc);
@@ -3401,14 +3401,14 @@ static bool do_cmd_knowledge_uniques(int dummy)
 		{
 			/* Dead */
 			print_monster_string(fff, r_ptr->x_attr, r_ptr->x_char,
-				format(CLR_L_DARK "%s is dead.", (r_name + r_ptr->name)),
+				format(CLR_L_DARK "%s is dead.", mon_race_name(r_ptr)),
 					 0);
 		}
 		else
 		{
 			/* Alive */
 			print_monster_string(fff, r_ptr->x_attr, r_ptr->x_char, 
-				format(CLR_L_BLUE "%s is alive.", (r_name + r_ptr->name)),
+				format(CLR_L_BLUE "%s is alive.", mon_race_name(r_ptr)),
 					0);
 		}
 	}
@@ -3701,7 +3701,7 @@ static bool do_cmd_knowledge_kill_count(int dummy)
 
 			if (dead)
 			{
-				print_monster_string(fff, r_ptr->x_attr, r_ptr->x_char, (r_name + r_ptr->name), 0);
+				print_monster_string(fff, r_ptr->x_attr, r_ptr->x_char, mon_race_name(r_ptr), 0);
 				total++;
 			}
 		}
@@ -3713,12 +3713,12 @@ static bool do_cmd_knowledge_kill_count(int dummy)
 			{
 				if (this < 2)
 				{
-					print_monster_string(fff, r_ptr->x_attr, r_ptr->x_char, (r_name + r_ptr->name), 1);
+					print_monster_string(fff, r_ptr->x_attr, r_ptr->x_char, mon_race_name(r_ptr), 1);
 				}
 				else
 				{
 					char ToPlural[80];
-					strcpy(ToPlural, (r_name + r_ptr->name));
+					strcpy(ToPlural, mon_race_name(r_ptr));
 					plural_aux(ToPlural);
 					print_monster_string(fff, r_ptr->x_attr, r_ptr->x_char, ToPlural, this);
 				}

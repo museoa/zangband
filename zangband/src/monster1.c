@@ -21,6 +21,29 @@ static cptr wd_he[3] =
 static cptr wd_his[3] =
 { "its", "his", "her" };
 
+/*
+ * Get the monster race in r_info[]
+ */
+monster_race *monst_race(int r_idx)
+{
+	return (&r_info[r_idx]);
+}
+
+/*
+ * Get the monster name from r_info[]
+ */
+cptr mon_race_name(const monster_race *r_ptr)
+{
+	return (r_name + r_ptr->name);
+}
+
+/*
+ * Does the monster name contain string str?
+ */
+bool mon_name_cont(const monster_race *r_ptr, cptr str)
+{
+	return (strstr(mon_race_name(r_ptr), str) ? TRUE : FALSE);
+}
 
 /*
  * Pluralizer.  Args(count, singular, plural)
@@ -1508,7 +1531,7 @@ void roff_mon_top(int r_idx)
 	}
 
 	/* Dump the name */
-	roff(r_name + r_ptr->name);
+	roff(mon_race_name(r_ptr));
 
 	/* Append the "standard" attr/char info */
 	roff(" ('");
@@ -1624,15 +1647,15 @@ void display_visible(void)
 		/* Dump the name */
 		if (FLAG(r_ptr, RF_UNIQUE))
 		{
-			roff(CLR_L_BLUE "%s", (r_name + r_ptr->name));
+			roff(CLR_L_BLUE "%s", mon_race_name(r_ptr));
 		}
 		else if (FLAG(r_ptr, RF_QUESTOR))
 		{
-			roff(CLR_L_RED "%s", (r_name + r_ptr->name));
+			roff(CLR_L_RED "%s", mon_race_name(r_ptr));
 		}
 		else
 		{
-			roff("%s", r_name + r_ptr->name);
+			roff("%s", mon_race_name(r_ptr));
 		}
 
 		/* Append the "standard" attr/char info */

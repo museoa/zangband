@@ -1783,7 +1783,7 @@ void borg_delete_kill(int who, cptr reason)
 
 	/* Note */
 	borg_note_fmt("# Removing a monster '%s' (%i) at (%d,%d) [%s]",
-				  (r_name + r_info[kill->r_idx].name), who,
+				  mon_race_name(&r_info[kill->r_idx]), who,
 				  kill->x, kill->y, reason);
 
 	/* Kill the monster */
@@ -1980,7 +1980,7 @@ static void borg_new_kill(int r_idx, int n, int x, int y)
 
 	/* Note */
 	borg_note_fmt("# Creating a monster '%s' (%d) at (%d, %d)",
-				  (r_name + r_info[kill->r_idx].name), n, x, y);
+				  mon_race_name(&r_info[kill->r_idx]), n, x, y);
 
 	/* Recalculate danger */
 	borg_danger_wipe = TRUE;
@@ -2307,7 +2307,7 @@ static int borg_locate_kill(cptr who, int x, int y, int r)
 
 	/* Note */
 	borg_note_fmt("# There is a monster '%s' within %d grids of %d,%d",
-				  (r_name + r_ptr->name), r, x, y);
+				  mon_race_name(r_ptr), r, x, y);
 
 
 	/* Handle trappers and lurkers and mimics */
@@ -2359,7 +2359,7 @@ static int borg_locate_kill(cptr who, int x, int y, int r)
 
 		/* Note */
 		borg_note_fmt("# Matched a monster '%s' at (%d,%d)",
-					  (r_name + r_info[kill->r_idx].name), kill->x, kill->y);
+					  mon_race_name(&r_info[kill->r_idx]), kill->x, kill->y);
 
 
 		/* Index */
@@ -2371,7 +2371,7 @@ static int borg_locate_kill(cptr who, int x, int y, int r)
 
 	/* Note */
 	borg_note_fmt("# Ignoring a monster '%s' near (%d,%d)",
-				  (r_name + r_ptr->name), x, y);
+				  mon_race_name(r_ptr), x, y);
 
 	/* Oops */
 	/* this is the case where we know the name of the monster */
@@ -4654,7 +4654,7 @@ void borg_init_2(void)
 		if (!FLAG(r_ptr, RF_UNIQUE)) continue;
 
 		/* Use it */
-		text[size] = r_name + r_ptr->name;
+		text[size] = mon_race_name(r_ptr);
 		what[size] = i;
 		size++;
 	}
@@ -4695,7 +4695,7 @@ void borg_init_2(void)
 		if (FLAG(r_ptr, RF_UNIQUE)) continue;
 
 		/* Use it */
-		text[size] = r_name + r_ptr->name;
+		text[size] = mon_race_name(r_ptr);
 		what[size] = i;
 		size++;
 	}

@@ -152,7 +152,7 @@ u16b insert_dungeon_monster_quest(u16b r_idx, u16b num, u16b level)
 	if (num != 1)
 	{
 		char buf[80];
-		strcpy(buf, r_name + r_ptr->name);
+		strcpy(buf, mon_race_name(r_ptr));
 		plural_aux(buf);
 
 		/* XXX XXX Create quest name */
@@ -161,7 +161,7 @@ u16b insert_dungeon_monster_quest(u16b r_idx, u16b num, u16b level)
 	else
 	{
 		/* XXX XXX Create quest name */
-		(void)strnfmt(q_ptr->name, 128, "Kill %s.", r_name + r_ptr->name);
+		(void)strnfmt(q_ptr->name, 128, "Kill %s.", mon_race_name(r_ptr));
 	}
 
 	/* Save the quest data */
@@ -456,7 +456,7 @@ void quest_discovery(void)
 				int q_num = q_ptr->data.dun.max_num - q_ptr->data.dun.cur_num;
 
 				/* Assume the quest is a 'kill n monsters quest' for now. */
-				strcpy(name, (r_name + r_ptr->name));
+				strcpy(name, mon_race_name(r_ptr));
 
 				if (FLAG(r_ptr, RF_UNIQUE))
 				{
@@ -877,7 +877,7 @@ void trigger_quest_complete(byte x_type, vptr data)
 				if (q_ptr->data.dun.r_idx == m_ptr->r_idx)
 				{
 					/* Winner? */
-					if (strstr((r_name + r_ptr->name), "Serpent of Chaos"))
+					if (mon_name_cont(r_ptr, "Serpent of Chaos"))
 					{
 						/* Total winner */
 						p_ptr->state.total_winner = TRUE;
@@ -1342,7 +1342,7 @@ static quest_type *insert_bounty_quest(u16b r_idx, u16b num)
 	if (num != 1)
 	{
 		char buf[80];
-		strcpy(buf, r_name + r_ptr->name);
+		strcpy(buf, mon_race_name(r_ptr));
 		plural_aux(buf);
 
 		/* XXX XXX Create quest name */
@@ -1351,7 +1351,7 @@ static quest_type *insert_bounty_quest(u16b r_idx, u16b num)
 	else
 	{
 		/* XXX XXX Create quest name */
-		(void)strnfmt(q_ptr->name, 128, "Kill %s.", r_name + r_ptr->name);
+		(void)strnfmt(q_ptr->name, 128, "Kill %s.", mon_race_name(r_ptr));
 	}
 	
 	/* No need to specially create anything */
@@ -1757,7 +1757,7 @@ bool do_cmd_knowledge_quests(int dummy)
 
 				char level[20];
 
-				strncpy(name, r_name + r_ptr->name, 79);
+				strncpy(name, mon_race_name(r_ptr), 79);
 
 				/* In feet, or in levels */
 				if (depth_in_feet)

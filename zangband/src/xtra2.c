@@ -153,7 +153,7 @@ void check_experience(void)
  */
 static int get_coin_type(const monster_race *r_ptr)
 {
-	cptr name = (r_name + r_ptr->name);
+	cptr name = mon_race_name(r_ptr);
 
 	/* Analyze "coin" monsters */
 	if (r_ptr->d_char == '$')
@@ -499,7 +499,7 @@ bool monster_death(int m_idx, bool explode)
 	 * Mega^3-hack: killing a 'Warrior of the Dawn' is likely to
 	 * spawn another in the fallen one's place!
 	 */
-	if (strstr((r_name + r_ptr->name), "the Dawn"))
+	if (mon_name_cont(r_ptr, "the Dawn"))
 	{
 		if (!one_in_(20))
 		{
@@ -527,7 +527,7 @@ bool monster_death(int m_idx, bool explode)
 	}
 
 	/* Pink horrors are replaced with 2 Blue horrors */
-	else if (strstr((r_name + r_ptr->name), "ink horror"))
+	else if (mon_name_cont(r_ptr, "ink horror"))
 	{
 		bool notice = FALSE;
 
@@ -549,14 +549,14 @@ bool monster_death(int m_idx, bool explode)
 	}
 
 	/* One more ultra-hack: An Unmaker goes out with a big bang! */
-	else if (strstr((r_name + r_ptr->name), "Unmaker") && explode)
+	else if (mon_name_cont(r_ptr, "Unmaker") && explode)
 	{
 		u16b flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 		(void)project(m_idx, 6, x, y, 100, GF_CHAOS, flg);
 	}
 
 	/* Bloodletters of Khorne may drop a blade of chaos */
-	else if (strstr((r_name + r_ptr->name), "Bloodletter") &&
+	else if (mon_name_cont(r_ptr, "Bloodletter") &&
 			 (randint1(100) < 15))
 	{
 		/* Prepare to make a Blade of Chaos */
@@ -570,7 +570,7 @@ bool monster_death(int m_idx, bool explode)
 
 	/* Mega^2-hack -- Get a t-shirt from our first Greater Hell-beast kill */
 	else if (!r_ptr->r_pkills
-			 && strstr((r_name + r_ptr->name), "Greater hell-beast"))
+			 && mon_name_cont(r_ptr, "Greater hell-beast"))
 	{
 		/* Prepare to make the T-shirt */
 		q_ptr = object_prep(lookup_kind(TV_SOFT_ARMOR, SV_T_SHIRT));
@@ -590,7 +590,7 @@ bool monster_death(int m_idx, bool explode)
 	/* Mega-Hack -- drop "winner" treasures */
 	else if (FLAG(r_ptr, RF_DROP_CHOSEN))
 	{
-		if (strstr((r_name + r_ptr->name), "Serpent of Chaos"))
+		if (mon_name_cont(r_ptr, "Serpent of Chaos"))
 		{
 			/* Make Grond */
 			create_named_art(ART_GROND, x, y);
@@ -598,7 +598,7 @@ bool monster_death(int m_idx, bool explode)
 			/* Make Crown of Morgoth */
 			create_named_art(ART_MORGOTH, x, y);
 		}
-		else if (strstr((r_name + r_ptr->name), "Stormbringer"))
+		else if (mon_name_cont(r_ptr, "Stormbringer"))
 		{
 			/* Create the artifact */
 			create_named_art(ART_STORMBRINGER, x, y);
@@ -611,7 +611,7 @@ bool monster_death(int m_idx, bool explode)
 			byte a_idx = 0;
 			int chance = 0;
 
-			if (strstr((r_name + r_ptr->name), "Oberon,"))
+			if (mon_name_cont(r_ptr, "Oberon,"))
 			{
 				if (one_in_(3))
 				{
@@ -624,17 +624,17 @@ bool monster_death(int m_idx, bool explode)
 					chance = 50;
 				}
 			}
-			else if (strstr((r_name + r_ptr->name), "Barimen"))
+			else if (mon_name_cont(r_ptr, "Barimen"))
 			{
 				a_idx = ART_THRAIN;
 				chance = 20;
 			}
-			else if (strstr((r_name + r_ptr->name), "Sauron,"))
+			else if (mon_name_cont(r_ptr, "Sauron,"))
 			{
 				a_idx = ART_POWER;
 				chance = 25;
 			}
-			else if (strstr((r_name + r_ptr->name), "Brand, "))
+			else if (mon_name_cont(r_ptr, "Brand, "))
 			{
 				if (one_in_(3))
 				{
@@ -647,7 +647,7 @@ bool monster_death(int m_idx, bool explode)
 					chance = 25;
 				}
 			}
-			else if (strstr((r_name + r_ptr->name), "Corwin,"))
+			else if (mon_name_cont(r_ptr, "Corwin,"))
 			{
 				if (one_in_(3))
 				{
@@ -660,37 +660,37 @@ bool monster_death(int m_idx, bool explode)
 					chance = 33;
 				}
 			}
-			else if (strstr((r_name + r_ptr->name), "Saruman of"))
+			else if (mon_name_cont(r_ptr, "Saruman of"))
 			{
 				a_idx = ART_ELENDIL;
 				chance = 20;
 			}
-			else if (strstr((r_name + r_ptr->name), "Fiona the"))
+			else if (mon_name_cont(r_ptr, "Fiona the"))
 			{
 				a_idx = ART_BELANGIL;
 				chance = 50;
 			}
-			else if (strstr((r_name + r_ptr->name), "Julian, "))
+			else if (mon_name_cont(r_ptr, "Julian, "))
 			{
 				a_idx = ART_CELEBORN;
 				chance = 45;
 			}
-			else if (strstr((r_name + r_ptr->name), "Klings"))
+			else if (mon_name_cont(r_ptr, "Klings"))
 			{
 				a_idx = ART_OROME;
 				chance = 40;
 			}
-			else if (strstr((r_name + r_ptr->name), "Groo"))
+			else if (mon_name_cont(r_ptr, "Groo"))
 			{
 				a_idx = ART_GROO;
 				chance = 75;
 			}
-			else if (strstr((r_name + r_ptr->name), "Hagen,"))
+			else if (mon_name_cont(r_ptr, "Hagen,"))
 			{
 				a_idx = ART_NIMLOTH;
 				chance = 66;
 			}
-			else if (strstr((r_name + r_ptr->name), "Caine,"))
+			else if (mon_name_cont(r_ptr, "Caine,"))
 			{
 				a_idx = ART_ANGRIST;
 				chance = 50;
@@ -938,8 +938,8 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		if ((FLAG(r_ptr, RF_UNIQUE)) && one_in_(3))
 			chg_virtue(V_INDIVIDUALISM, -1);
 
-		if ((strstr((r_name + r_ptr->name), "beggar")) ||
-			(strstr((r_name + r_ptr->name), "leper")))
+		if (mon_name_cont(r_ptr, "beggar") ||
+			mon_name_cont(r_ptr, "leper"))
 		{
 			chg_virtue(V_COMPASSION, -1);
 		}
@@ -1080,7 +1080,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		if ((FLAG(r_ptr, RF_UNIQUE)) && take_notes && auto_notes)
 		{
 			/* Get true name even if blinded/hallucinating and write note */
-			add_note('U', "Killed %s", r_name + r_ptr->name);
+			add_note('U', "Killed %s", mon_race_name(r_ptr));
 		}
 
 		/* When the player kills a Nazgul, it stays dead */
@@ -1646,20 +1646,20 @@ static bool mimic_desc(char *m_name, const monster_race *r_ptr)
 		case '$':
 		{
 			/* XXX XXX XXX Mega-Hack */
-			strcpy(m_name, r_name + r_ptr->name + sizeof("Creeping ") - 1);
+			strcpy(m_name, mon_race_name(r_ptr) + sizeof("Creeping ") - 1);
 			return (TRUE);
 		}
 
 		case '|':
 		{
 			/* Hack */
-			strcpy(m_name, r_name + r_ptr->name);
+			strcpy(m_name, mon_race_name(r_ptr));
 			return (TRUE);
 		}
 
 		case '?':
 		{
-			if (strstr(r_ptr->name + r_name, "Tome "))
+			if (mon_name_cont(r_ptr, "Tome "))
 			{
 				strcpy(m_name, "tome");
 			}

@@ -3067,7 +3067,7 @@ void borg_status_window(void)
 			else
 				attr = CLR_SLATE;
 			prtf(42, 2, "%sUnique on level", attr);
-			if (unique_on_level) prtf(58, 2, "(%s)",																	 r_name + r_info[(int)unique_on_level].name);
+			if (unique_on_level) prtf(58, 2, "(%s)",																	 mon_race_name(&r_info[(int)unique_on_level]));
 			else
 				prtf(58, 2, "");
 			if (breeder_level) attr = CLR_WHITE;

@@ -797,7 +797,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 		case TV_STATUE:
 		{
 			/* Figurines/Statues */
-			cptr tmp = r_name + r_ptr->name;
+			cptr tmp = mon_race_name(r_ptr);
 			
 			char idol_name[512];
 

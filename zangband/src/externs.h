@@ -480,6 +480,9 @@ extern void curse_equipment(int chance, int heavy_chance);
 extern void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note);
 
 /* monster1.c */
+extern monster_race *monst_race(int r_idx);
+extern cptr mon_race_name(const monster_race *r_ptr);
+extern bool mon_name_cont(const monster_race *r_ptr, cptr str);
 extern void roff_mon_top(int r_idx);
 extern void screen_roff_mon(int r_idx, int remember);
 extern void display_roff_mon(int r_idx);
@@ -1206,8 +1209,6 @@ extern void do_cmd_borg(void);
 /* script.c */
 extern void deleteme(void);
 extern bool player_res(u32b flag);
-extern monster_race *monst_race(int r_idx);
-extern cptr mon_race_name(monster_race *r_ptr);
 
 /*
  * Hack -- conditional (or "bizarre") externs

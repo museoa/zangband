@@ -2991,7 +2991,7 @@ static void process_monster(int m_idx)
 
 
 	/* Hack! "Cyber" monster makes noise... */
-	if (strstr((r_name + r_ptr->name), "Cyber") && one_in_(CYBERNOISE) &&
+	if (mon_name_cont(r_ptr, "Cyber") && one_in_(CYBERNOISE) &&
 		!m_ptr->ml && (m_ptr->cdis <= MAX_SIGHT))
 	{
 		msgf("You hear heavy steps.");

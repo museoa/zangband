@@ -961,7 +961,7 @@ void monster_desc(char *desc, const monster_type *m_ptr, int mode, int max)
 {
 	cptr res;
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
-	cptr name = (r_name + r_ptr->name);
+	cptr name = mon_race_name(r_ptr);
 	char silly_name[1024];
 	bool seen, pron;
 	bool named = FALSE;
@@ -987,7 +987,7 @@ void monster_desc(char *desc, const monster_type *m_ptr, int mode, int max)
 			}
 			while (FLAG(hallu_race, RF_UNIQUE));
 
-			strcpy(silly_name, (r_name + hallu_race->name));
+			strcpy(silly_name, mon_race_name(hallu_race));
 		}
 
 		/* Better not strcpy it, or we could corrupt r_info... */
@@ -1700,7 +1700,7 @@ monster_type *place_monster_one(int x, int y, int r_idx, bool slp, bool friendly
 	if (!r_ptr->name) return (NULL);
 	
 	/* Lookup the name of the monster */
-	name = (r_name + r_ptr->name);
+	name = mon_race_name(r_ptr);
 
 	/* Verify location */
 	if (!in_bounds2(x, y)) return (NULL);
@@ -2525,7 +2525,7 @@ static bool summon_specific_okay(int r_idx)
 
 		case SUMMON_DAWN:
 		{
-			okay = ((strstr((r_name + r_ptr->name), "the Dawn"))
+			okay = (mon_name_cont(r_ptr, "the Dawn")
 					&& !(FLAG(r_ptr, RF_UNIQUE)));
 			break;
 		}
@@ -2573,21 +2573,21 @@ static bool summon_specific_okay(int r_idx)
 
 		case SUMMON_PHANTOM:
 		{
-			okay = ((strstr((r_name + r_ptr->name), "Phantom"))
+			okay = (mon_name_cont(r_ptr, "Phantom")
 					&& !(FLAG(r_ptr, RF_UNIQUE)));
 			break;
 		}
 
 		case SUMMON_ELEMENTAL:
 		{
-			okay = ((strstr((r_name + r_ptr->name), "lemental"))
+			okay = (mon_name_cont(r_ptr, "lemental")
 					&& !(FLAG(r_ptr, RF_UNIQUE)));
 			break;
 		}
 
 		case SUMMON_BLUE_HORROR:
 		{
-			okay = ((strstr((r_name + r_ptr->name), "lue horror"))
+			okay = (mon_name_cont(r_ptr, "lue horror")
 					&& !(FLAG(r_ptr, RF_UNIQUE)));
 			break;
 		}
