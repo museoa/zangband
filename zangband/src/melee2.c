@@ -777,10 +777,11 @@ static bool find_safety(int m_idx, int *yp, int *xp)
 				/* Ignore too-distant grids */
 				if (c_ptr->cost > area(fy,fx)->cost + 2 * d) continue;
 			}
-
+			
 			/* Check for absence of shot (more or less) */
-			if (!player_has_los_grid(c_ptr) && clean_shot(fy, fx, y, x, FALSE))
+			if (clean_shot(fy, fx, y, x, FALSE))
 			{
+							
 				/* Calculate distance from player */
 				dis = distance(y, x, py, px);
 
@@ -789,13 +790,20 @@ static bool find_safety(int m_idx, int *yp, int *xp)
 				{
 					gy = y;
 					gx = x;
-					gdis = dis;
+					if (!player_has_los_grid(c_ptr))
+					{
+						gdis = dis * 5;
+					}
+					else
+					{
+						gdis = dis;
+					}
 				}
 			}
 		}
 
 		/* Check for success */
-		if (gdis > 0)
+		if (gdis > d + m_ptr->cdis)
 		{
 			/* Good location */
 			(*yp) = fy - gy;
@@ -807,7 +815,13 @@ static bool find_safety(int m_idx, int *yp, int *xp)
 	}
 
 	/* No safe place */
-	return (FALSE);
+	
+	/* Save farthest location from player in LOS of monster */
+	(*yp) = fy - gy;
+	(*xp) = fx - gx;
+	
+	/* Hack - return TRUE anyway. */
+	return (TRUE);
 }
 
 
