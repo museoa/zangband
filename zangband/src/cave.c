@@ -875,12 +875,6 @@ static void variable_player_graph(byte *a, char *c)
  * ignored if the "avoid_other" option is set, since checking for these
  * conditions is expensive and annoying on some systems.
  *
- * Currently, we do nothing with multi-hued objects, because there are
- * not any.  If there were, they would have to set "shimmer_objects"
- * when they were created, and then new "shimmer" code in "dungeon.c"
- * would have to be created handle the "shimmer" effect, and the code
- * in "cave.c" would have to be updated to create the shimmer effect.
- *
  * Note the effects of hallucination.  Objects always appear as random
  * "objects", monsters as random "monsters", and normal grids occasionally
  * appear as random "monsters" or "objects", but note that these random
