@@ -535,26 +535,26 @@ s16b get_mon_num(int level)
 		}
 		else
 		{
-		/* Occasional "nasty" monster */
+			/* Occasional "nasty" monster */
 			if (!rand_int(NASTY_MON))
-		{
-			/* Pick a level bonus */
-			int d = level / 4 + 2;
+			{
+				/* Pick a level bonus */
+				int d = level / 4 + 2;
 
-			/* Boost the level */
-			level += ((d < 5) ? d : 5);
-		}
+				/* Boost the level */
+				level += ((d < 5) ? d : 5);
+			}
 
-		/* Occasional "nasty" monster */
+			/* Occasional "nasty" monster */
 			if (!rand_int(NASTY_MON))
-		{
-			/* Pick a level bonus */
-			int d = level / 4 + 2;
+			{
+				/* Pick a level bonus */
+				int d = level / 4 + 2;
 
-			/* Boost the level */
-			level += ((d < 5) ? d : 5);
+				/* Boost the level */
+				level += ((d < 5) ? d : 5);
+			}
 		}
-	}
 	}
 
 
