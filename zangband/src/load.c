@@ -1875,6 +1875,9 @@ static errr rd_dungeon(void)
 	rd_s16b(&max_panel_rows);
 	rd_s16b(&max_panel_cols);
 
+	/* The player may not be in the dungeon */ 
+	character_dungeon = FALSE;
+	
 	/* Assume we are in the dungeon */
 	max_hgt = cur_hgt;
 	min_hgt = 0;

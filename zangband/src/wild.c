@@ -144,59 +144,6 @@ static cave_type *access_wild(int y, int x)
 
 
 /*
- * This function _must_ be called whenever the dungeon level changes.
- * It makes sure the bounds and access functions point to the correct
- * functions.  If this is not done - bad things happen.
- */
-
-void change_level(int level)
-{
-	/* Hack - reset trap detection flag */
-	p_ptr->detected = FALSE;
-
-	/* Clear the monster lights */
-	clear_mon_lite();
-
-	if (level == 0)
-	{
-		/* In the wilderness */
-
-		/* Reset the bounds */
-		min_hgt = wild_grid.y_min;
-		max_hgt = wild_grid.y_max;
-		min_wid = wild_grid.x_min;
-		max_wid = wild_grid.x_max;
-
-		/* Access the wilderness */
-		area = access_wild;
-
-		if (p_ptr->depth == 0)
-		{
-			/* Lighten / darken wilderness */
-			day_night();
-		}
-	}
-	else
-	{
-		/* In the dungeon */
-
-		/* Reset the bounds */
-		min_hgt = 0;
-		max_hgt = MAX_HGT;
-		min_wid = 0;
-		max_wid = MAX_WID;
-
-		/* Access the cave */
-		area = access_cave;
-
-		/* No town stored in cave[][] */
-		cur_town = 0;
-	}
-}
-
-
-
-/*
  * Builds a store at a given pseudo-location
  *
  * As of Z 2.5.0 the town is moved back to (0,0) - and is overlayed
@@ -794,6 +741,95 @@ static void init_vanilla_town(void)
 
 	/* One town + 1 for bounds*/
 	town_count = 2;
+}
+
+
+/*
+ * This function _must_ be called whenever the dungeon level changes.
+ * It makes sure the bounds and access functions point to the correct
+ * functions.  If this is not done - bad things happen.
+ */
+
+void change_level(int level)
+{
+	int x, y;	
+	int dummy1, dummy2;
+	
+	/* Hack - reset trap detection flag */
+	p_ptr->detected = FALSE;
+
+	/* Clear the monster lights */
+	clear_mon_lite();
+
+	if (level == 0)
+	{
+		/* In the wilderness */
+
+		/* Reset the bounds */
+		min_hgt = wild_grid.y_min;
+		max_hgt = wild_grid.y_max;
+		min_wid = wild_grid.x_min;
+		max_wid = wild_grid.x_max;
+
+		/* Access the wilderness */
+		area = access_wild;
+
+		if (p_ptr->depth == 0)
+		{
+			/* Lighten / darken wilderness */
+			day_night();
+		}
+		
+		/* Only do this if everything is initialised */
+		if (!character_dungeon) return;
+		
+		/* 
+		 * Restore the outside town if it exists
+		 * This is mainly done to reinit the fields
+		 */
+		for (x = wild_grid.x; x < WILD_GRID_SIZE + wild_grid.x; x++)
+		{
+			for (y = wild_grid.y; y < WILD_GRID_SIZE + wild_grid.y; y++)
+			{
+				/* The block to use */
+				blk_ptr block_ptr =
+					 wild_grid.block_ptr[y - wild_grid.y][x - wild_grid.x];
+				
+				/* Overlay town */
+				u16b w_town = wild[y][x].done.town;
+				
+				/* Is there a town? */
+				if (w_town)
+				{
+					/* Is it the right town? */
+					if (cur_town != w_town)
+					{
+						/* Make the town */
+						town_gen(w_town, &dummy1, &dummy2);
+					}
+
+					/* overlay town on wilderness */
+					overlay_town(y, x, w_town, block_ptr);
+				}
+			}
+		}
+	}
+	else
+	{
+		/* In the dungeon */
+
+		/* Reset the bounds */
+		min_hgt = 0;
+		max_hgt = MAX_HGT;
+		min_wid = 0;
+		max_wid = MAX_WID;
+
+		/* Access the cave */
+		area = access_cave;
+
+		/* No town stored in cave[][] */
+		cur_town = 0;
+	}
 }
 
 
@@ -5234,6 +5270,9 @@ static void wild_done(void)
 
 	/* hack */
 	p_ptr->depth = 1;
+
+	/* Not in dungeon yet */
+	character_dungeon = FALSE;
 
 	/* Change to the wilderness - but do not light anything yet.*/
 	change_level(0);

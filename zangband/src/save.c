@@ -1338,6 +1338,9 @@ static void wr_dungeon(void)
 		/* Save dungeon map */
 		save_map(max_hgt, min_hgt, max_wid, min_wid);
 
+		/* Hack - the player is not in this dungeon */
+		character_dungeon = FALSE;
+		
 		/* Save wilderness map */
 		change_level(0);
 
@@ -1345,6 +1348,9 @@ static void wr_dungeon(void)
 		         wild_grid.x_max, wild_grid.x_min);
 
 		change_level(p_ptr->depth);
+		
+		/* The character is back in the dungeon */
+		character_dungeon = TRUE;
 		
 		/* Restore bounds */
 		max_hgt = cur_hgt;
