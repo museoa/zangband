@@ -135,7 +135,7 @@ CFLAGS = -Wall -O2 -fno-strength-reduce -m486 -pipe -g \
 LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib
 
 #CFLAGS = -Wall -O2 -fno-strength-reduce -m486 -pipe -g \
-          -D"USE_XAW" -D"USE_GCU"
+#          -D"USE_XAW" -D"USE_GCU" -D"USE_TRANSPARENCY"
 #LIBS = -L/usr/X11R6/lib -lXaw -lXext -lSM -lICE -lXmu -lXt -lX11 -lcurses
 
 

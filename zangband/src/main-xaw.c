@@ -489,8 +489,6 @@ static void AngbandOutputPict(AngbandWidget widget, int x, int y, int n,
 
 #endif /* USE_GRAPHICS */
 
-
-
 /*
  * Private procedures
  */
@@ -519,20 +517,20 @@ static void Initialize(AngbandWidget request, AngbandWidget wnew)
 	                                angband_color_table[0][1],
 	                                angband_color_table[0][2],
 	                                angband_color_table[0][3]);
-
+	
 	/* Default foreground pixel */
 	unsigned long fg = create_pixel(dpy,
 	                                angband_color_table[1][1],
 	                                angband_color_table[1][2],
 	                                angband_color_table[1][3]);
-
+	
 	/* Fix the background color */
 	wnew->core.background_pixel = bg;
 
 	/* Get some information about the font */
 	wnew->angband.fnt = getFont(wnew, wnew->angband.font, TRUE);
 	wnew->angband.fontheight = wnew->angband.fnt->ascent +
-	wnew->angband.fnt->descent;
+		wnew->angband.fnt->descent;
 	wnew->angband.fontwidth = wnew->angband.fnt->max_bounds.width;
 	wnew->angband.fontascent = wnew->angband.fnt->ascent;
 
@@ -540,11 +538,10 @@ static void Initialize(AngbandWidget request, AngbandWidget wnew)
 	gcv.font = wnew->angband.fnt->fid;
 	gcv.graphics_exposures = FALSE;
 	gcv.background = bg;
-
+	
 	for (i = 0; i < NUM_COLORS; i++)
 	{
-		/* Default to background */
-		unsigned long pixel = bg;
+		unsigned long pixel;
 
 		/* Acquire Angband colors */
 		wnew->angband.color[i][0] = angband_color_table[i][0];
@@ -567,19 +564,24 @@ static void Initialize(AngbandWidget request, AngbandWidget wnew)
 		}
 
 		gcv.foreground = pixel;
+		
+		/* Copy */
+		gcv.function = 3;
 
 		wnew->angband.gc[i] = XtGetGC((Widget)wnew,
-		                              (GCFont | GCForeground |
+		                              (GCFont | GCForeground | GCFunction |
 		                               GCBackground | GCGraphicsExposures),
 		                              &gcv);
 	}
 
-	/* Create a special GC for highlighting */
+	/* Create a special GC for highlighting */	
 	gcv.foreground = (BlackPixelOfScreen(XtScreen((Widget)wnew)) ^
 	                  WhitePixelOfScreen(XtScreen((Widget)wnew)));
+	gcv.background = 0;
+	
 	gcv.function = GXxor;
 	wnew->angband.gc[COLOR_XOR] = XtGetGC((Widget)wnew,
-	                                      (GCFunction | GCForeground |
+	                                      (GCFunction | GCForeground | GCBackground |
 	                                       GCGraphicsExposures),
 	                                      &gcv);
 
@@ -676,7 +678,7 @@ static Boolean SetValues(AngbandWidget current, AngbandWidget request,
 			XFreeFont(XtDisplay((Widget)wnew), current->angband.fnt);
 			/* Update font information */
 			wnew->angband.fontheight = wnew->angband.fnt->ascent +
-			wnew->angband.fnt->descent;
+				wnew->angband.fnt->descent;
 			wnew->angband.fontwidth = wnew->angband.fnt->max_bounds.width;
 			wnew->angband.fontascent = wnew->angband.fnt->ascent;
 		}
@@ -849,6 +851,11 @@ struct term_data
  */
 static term_data data[MAX_TERM_DATA];
 
+
+/*
+ * Current number of windows open
+ */	
+static int num_term = MAX_TERM_DATA;
 
 /*
  * The names of the term_data's
@@ -1138,7 +1145,7 @@ static void Term_xtra_xaw_react_aux(term_data *td)
 	int depth = DefaultDepthOfScreen(XtScreen((Widget) wnew));
 
 	int i;
-
+	
 	/* See if any colors need to be changed */
 	for (i = 0; i < NUM_COLORS; i++)
 	{
@@ -1150,7 +1157,7 @@ static void Term_xtra_xaw_react_aux(term_data *td)
 			    (wnew->angband.color[i][3] != angband_color_table[i][3]))
 			{
 				unsigned long pixel;
-
+				
 				/* Save new values */
 				wnew->angband.color[i][0] = angband_color_table[i][0];
 				wnew->angband.color[i][1] = angband_color_table[i][1];
@@ -1163,6 +1170,7 @@ static void Term_xtra_xaw_react_aux(term_data *td)
 				                     wnew->angband.color[i][2],
 				                     wnew->angband.color[i][3]);
 
+				
 				/* Change */
 				XSetForeground(dpy, wnew->angband.gc[i], pixel);
 			}
@@ -1177,9 +1185,9 @@ static void Term_xtra_xaw_react_aux(term_data *td)
 static errr Term_xtra_xaw_react(void)
 {
 	int i;
-
+	
 	/* Initialize the windows */
-	for (i = 0; i < MAX_TERM_DATA; i++)
+	for (i = 0; i < num_term; i++)
 	{
 		term_data *td = &data[i];
 
@@ -1410,7 +1418,6 @@ errr init_xaw(int argc, char *argv[])
 
 	cptr dpy_name = "";
 
-	int num_term = MAX_TERM_DATA;
 
 #ifdef USE_GRAPHICS
 
@@ -1570,14 +1577,24 @@ errr init_xaw(int argc, char *argv[])
 		for (i = 0; i < num_term; i++)
 		{
 			term_data *td = &data[i];
+			int ii, jj;
+			int depth = DefaultDepth(dpy, DefaultScreen(dpy));
+			Visual *visual = DefaultVisual(dpy, DefaultScreen(dpy));
+			int total;
 
-			TmpData = (char *)malloc(td->widget->angband.fontwidth
-			        * td->widget->angband.fontheight
-		 		* DefaultDepth(dpy, DefaultScreen(dpy)) / 8);
+
+			/* Determine total bytes needed for image */
+			ii = 1;
+			jj = (depth - 1) >> 2;
+			while (jj >>= 1) ii <<= 1;
+			total = td->widget->angband.fontwidth *
+				 td->widget->angband.fontheight * ii;
+			
+			
+			TmpData = (char *)malloc(total);
 
 			td->widget->angband.TmpImage = XCreateImage(dpy,
-				DefaultVisual(dpy, DefaultScreen(dpy)),
-				DefaultDepth(dpy, DefaultScreen(dpy)),
+				visual,depth,
 				ZPixmap, 0, TmpData,
 				td->widget->angband.fontwidth,
 			        td->widget->angband.fontheight, 8, 0);
