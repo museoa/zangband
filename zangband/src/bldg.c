@@ -1863,17 +1863,21 @@ static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
  * Process a command in a building
  *
  * Note that we must disable some commands which are allowed
- * in the dungeon but not in the stores, to prevent chaos.
+ * in the dungeon / stores but not in the buildings, to prevent chaos,
+ * and also to give more free keys in order to have building
+ * specific commands.
+ *
+ * Hack - we buypass macros / keymaps to prevent silliness when
+ * people use the roguelike keyset and press a 'direction' key
+ * which also corresponds to a building command.
  */
 static bool build_process_command(field_type *f_ptr, store_type *b_ptr)
 {
+	/* Hack - Get a command */
+	p_ptr->command_cmd = inkey();
+
 	/* Handle repeating the last command */
 	repeat_check();
-
-	if (rogue_like_commands && p_ptr->command_cmd == 'l')
-	{
-		p_ptr->command_cmd = 'x';	/* hack! */
-	}
 
 	/* Process the building-specific commands */
 	if (process_build_hook(f_ptr, b_ptr)) return (FALSE);
@@ -1901,52 +1905,8 @@ static bool build_process_command(field_type *f_ptr, store_type *b_ptr)
 			break;
 		}
 
-		/*** Inventory Commands ***/
-
-		case 'w':
-		{
-			/* Wear/wield equipment */
-			do_cmd_wield();
-			break;
-		}
-
-		case 't':
-		{
-			/* Take off equipment */
-			do_cmd_takeoff();
-			break;
-		}
-
-		case 'k':
-		{
-			/* Destroy an item */
-			do_cmd_destroy();
-			break;
-		}
-
-		case 'e':
-		{
-			/* Equipment list */
-			do_cmd_equip();
-			break;
-		}
-
-		case 'i':
-		{
-			/* Inventory list */
-			do_cmd_inven();
-			break;
-		}
-
 
 		/*** Various commands ***/
-
-		case 'I':
-		{
-			/* Identify an object */
-			do_cmd_observe();
-			break;
-		}
 
 		case KTRL('I'):
 		{
@@ -1954,31 +1914,6 @@ static bool build_process_command(field_type *f_ptr, store_type *b_ptr)
 			toggle_inven_equip();
 			break;
 		}
-
-
-		/*** Use various objects ***/
-
-		case 'b':
-		{
-			/* Browse a book */
-			do_cmd_browse();
-			break;
-		}
-
-		case '{':
-		{
-			/* Inscribe an object */
-			do_cmd_inscribe();
-			break;
-		}
-
-		case '}':
-		{
-			/* Uninscribe an object */
-			do_cmd_uninscribe();
-			break;
-		}
-
 
 		/*** Help and Such ***/
 
@@ -2182,9 +2117,6 @@ void do_cmd_bldg(field_type *f_ptr)
 
 		/* Show your gold */
 		building_prt_gold();
-
-		/* Get a command */
-		request_command(FALSE);
 
 		/* Process the command */
 		leave_build = build_process_command(f_ptr, b_ptr);
