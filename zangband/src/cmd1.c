@@ -2214,11 +2214,11 @@ static bool pattern_tile(int y, int x)
 
 static bool pattern_seq(int c_y, int c_x, int n_y, int n_x)
 {
-	/* Ignore illegal moves */
-	if (!player_can_enter(area(n_y,n_x)->feat)) return FALSE;
-
 	if (!pattern_tile(c_y, c_x) && !pattern_tile(n_y, n_x))
 		return TRUE;
+	
+	/* Ignore illegal moves */
+	if (!player_can_enter(area(n_y,n_x)->feat)) return FALSE;
 
 	if (area(n_y,n_x)->feat == FEAT_PATTERN_START)
 	{
