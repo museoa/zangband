@@ -360,7 +360,6 @@ proc angband_initialized {} {
 	angband_startup "    window-manager.tcl"
 	Source library window-manager.tcl
 
-	NSModule::AddModule NSChooseGame [PathTk choose-game.tcl]
 	NSModule::IndexLoad [PathTk library moduleIndex.tcl]
 	
 	destroy .filler
