@@ -1113,7 +1113,7 @@ N:133:Dexterity
 G:=:d
 I:45:26:5
 W:52:0:2:500
-A:52/2
+A:52/1
 F:DEX | HIDE_TYPE
 
 N:134:Constitution
