@@ -556,17 +556,41 @@ static void image_random(byte *ap, char *cp)
 /*
  * The 16x16 tile of the terrain supports lighting
  */
-static bool feat_supports_lighting(byte feat)
+static bool feat_supports_lighting[256] =
 {
-	if ((feat == FEAT_OPEN) ||
-	(feat == FEAT_BROKEN) ||
-	((feat >= FEAT_DOOR_HEAD) && (feat <= FEAT_DOOR_TAIL)) ||
-	((feat >= FEAT_PATTERN_START) && (feat <= FEAT_PATTERN_XTRA2)) ||
-	((feat >= FEAT_SHOP_HEAD) && (feat <= FEAT_SHOP_TAIL)))
-		return FALSE;
+	TRUE,  TRUE,  TRUE,  TRUE,  FALSE, FALSE, TRUE,  TRUE, /* 0x08 */
+	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0x10 */
+	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0x18 */
+	FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,/* 0x20 */
+	FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, /* 0x28 */
+	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0x30 */
+	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0x38 */
+	TRUE,  FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,/* 0x40 */
+	FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,/* 0x48 */
+	FALSE, FALSE, FALSE, TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0x50 */
+	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0x58 */
+	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0x60 */
+	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0x68 */
+	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0x70 */
+	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0x78 */
+	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0x80 */
+	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0x88 */
+	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0x90 */
+	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0x98 */
+	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0xA0 */
+	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0xA8 */
+	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0xB0 */
+	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0xB8 */
+	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0xC0 */
+	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0xC8 */
+	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0xD8 */
+	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0xD8 */
+	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0xE0 */
+	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0xE8 */
+	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, /* 0xF0 */
+	TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE /* 0xF8 */
+};	
 
-	return TRUE;
-}
 
 /*
  * This array lists the effects of "brightness" on various "base" colours.
@@ -756,6 +780,8 @@ void map_info(int y, int x, byte *ap, char *cp)
 
 	byte a;
 	byte c;
+	
+	bool feat_s_light;
 
 	/* Get the cave */
 	c_ptr = area(y,x);
@@ -766,6 +792,9 @@ void map_info(int y, int x, byte *ap, char *cp)
 
 	/* Apply mimic field */
 	feat = f_info[feat].mimic;
+	
+	/* Does the feat support lighting? */
+	feat_s_light = feat_supports_lighting[feat];
 
 	/* Hack - Non LOS blocking terrains */
 	if (cave_floor_grid(c_ptr))
@@ -787,7 +816,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 			a = f_ptr->x_attr;
 
 			/* Special lighting effects */
-			if (view_special_lite && (!use_transparency || feat_supports_lighting(feat) || is_ascii_graphics(c,a)))
+			if (view_special_lite && (!use_transparency || feat_s_light || is_ascii_graphics(c,a)))
 			{
 				/* Handle "blind" */
 				if (p_ptr->blind)
@@ -797,7 +826,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 						/* Use darkened colour */
 						a = lighting_colours[a][1];
 					}
-					else if (use_transparency && feat_supports_lighting(feat))
+					else if (use_transparency && feat_s_light)
 					{
 						/* Use a dark tile */
 						c++;
@@ -815,8 +844,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 							/* Use lightened colour */
 							a = lighting_colours[a][0];
 						}
-						else if (use_transparency &&
-							 feat_supports_lighting(feat))
+						else if (use_transparency && feat_s_light)
 						{
 							/* Use a brightly lit tile */
 							c += 2;
@@ -832,7 +860,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 						/* Use darkened colour */
 						a = lighting_colours[a][1];
 					}
-					else if (use_transparency && feat_supports_lighting(feat))
+					else if (use_transparency && feat_s_light)
 					{
 						/* Use a dark tile */
 						c++;
@@ -850,7 +878,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 							/* Use darkened colour */
 							a = lighting_colours[a][1];
 						}
-						else if (use_transparency && feat_supports_lighting(feat))
+						else if (use_transparency && feat_s_light)
 						{
 							/* Use a dark tile */
 							c++;
@@ -897,7 +925,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 					/* Use darkened colour */
 					a = lighting_colours[a][1];
 				}
-				else if (use_transparency && feat_supports_lighting(feat))
+				else if (use_transparency && feat_s_light)
 				{
 					/* Use a dark tile */
 					c++;
@@ -908,14 +936,14 @@ void map_info(int y, int x, byte *ap, char *cp)
 			else if (info & CAVE_LITE)
 			{
 				/* Torch lite */
-				if (view_yellow_lite && (!use_transparency || feat_supports_lighting(feat) || is_ascii_graphics(c,a)))
+				if (view_yellow_lite && (!use_transparency || feat_s_light || is_ascii_graphics(c,a)))
 				{
 					if (is_ascii_graphics(c,a))
 					{
 						/* Use lightened colour */
 						a = lighting_colours[a][0];
 					}
-					else if (use_transparency && feat_supports_lighting(feat))
+					else if (use_transparency && feat_s_light)
 					{
 						/* Use a brightly lit tile */
 						c += 2;
@@ -924,7 +952,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 			}
 
 			/* Handle "view_bright_lite" */
-			else if (view_bright_lite && (!use_transparency || feat_supports_lighting(feat) || is_ascii_graphics(c,a)))
+			else if (view_bright_lite && (!use_transparency || feat_s_light || is_ascii_graphics(c,a)))
 
 			{
 				/* Not viewable */
@@ -935,7 +963,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 						/* Use darkened colour */
 						a = lighting_colours[a][1];
 					}
-					else if (use_transparency && feat_supports_lighting(feat))
+					else if (use_transparency && feat_s_light)
 					{
 						/* Use a dark tile */
 						c++;
