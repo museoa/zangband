@@ -1333,12 +1333,12 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 		int d_dice = r_ptr->blow[ap_cnt].d_dice;
 		int d_side = r_ptr->blow[ap_cnt].d_side;
 
-		/* Stop attacking if the target dies! */
+		/* Stop attacking if the target teleports away */
 		if (t_ptr->fx != x_saver || t_ptr->fy != y_saver)
 			break;
 
 		/* Stop attacking if the aggressor dies (fire sheath etc.) */
-		if (m_ptr->hp < 0) return TRUE;
+		if ((!m_ptr->r_idx) || (!t_ptr->r_idx)) return TRUE;
 
 		/* Hack -- no more attacks */
 		if (!method) break;
@@ -1847,7 +1847,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 			}
 		}
 
-		/* Monster missed player */
+		/* Monster missed the monster */
 		else
 		{
 			/* Analyze failed attacks */
