@@ -594,8 +594,8 @@ int main(int argc, char *argv[])
 	/* Attempt to use the "main-gcu.c" support */
 	if (!done && (!mstr || (streq(mstr, "gcu"))))
 	{
-		extern errr init_gcu(int, char**);
-		if (0 == init_gcu(argc, argv))
+		extern errr init_gcu(void);
+		if (0 == init_gcu())
 		{
 			ANGBAND_SYS = "gcu";
 			done = TRUE;

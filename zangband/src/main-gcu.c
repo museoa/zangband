@@ -951,7 +951,7 @@ static errr term_data_init_gcu(term_data *td, int rows, int cols, int y, int x, 
  *
  * Someone should really check the semantics of "initscr()"
  */
-errr init_gcu(int argc, char *argv[])
+errr init_gcu(void)
 {
 	int i;
 
