@@ -1779,6 +1779,24 @@ errr parse_a_info(char *buf, header *head)
 		}
 	}
 
+	/* Process 'D' for "Description" */
+	else if (buf[0] == 'D')
+	{
+		/* There better be a current k_ptr */
+		if (!a_ptr) return (PARSE_ERROR_MISSING_RECORD_HEADER);
+
+		/* Get the text */
+		s = buf + 2;
+
+		/* Store the text */
+		if (!add_text(&(a_ptr->text), head, s))
+		{
+			msgf("Icky Description!!");
+			message_flush();
+			return (PARSE_ERROR_OUT_OF_MEMORY);
+		}
+	}
+
 	/* Process 'L' for "Lua script" */
 	else if (buf[0] == 'L')
 	{

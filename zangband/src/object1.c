@@ -197,17 +197,26 @@ static void roff_obj_aux(const object_type *o_ptr)
 	/* Extract the flags */
 	object_flags_known(o_ptr, &f1, &f2, &f3, &f4);
 
-	/* Add the 'description' if any */
-	if (object_known_p(o_ptr) && k_ptr->text)
-	{
-		roff(k_text + k_ptr->text);
-		roff("  ");
-	}
-
 	/* Indicate if fully known */
 	if (object_known_full(o_ptr))
 	{
 		roff("You have full knowledge of this item.  ");
+	}
+
+	/* Add the 'description' if any */
+	if (object_known_p(o_ptr))
+	{
+		artifact_type *a_ptr = NULL;
+		if (o_ptr->activate) a_ptr = &a_info[o_ptr->activate];
+
+		if (a_ptr && a_ptr->text)
+		{
+			roff("%s  ", a_text + a_ptr->text);
+		}
+		else if (k_ptr->text)
+		{
+			roff("%s  ", k_text + k_ptr->text);
+		}
 	}
 
 	/* Mega-Hack -- describe activation if item is identified */

@@ -457,6 +457,10 @@ L:USE:	end
 L:USE:	object.timeout = 1000
 L:DESC:	return "heavenly blessing and heal (500) every 1000 turns"
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
+D:According to legend, a celestial maiden was bathing in a stream when 
+D:a man came and took her hagaromo. Unable to return to heaven without 
+D:it, she had no choice but to marry the man and hope to eventually 
+D:find her robe.
 
 # The Leather Scale Mail 'Thalkettoth'
 
