@@ -1409,10 +1409,13 @@ static bool uncurse_item(object_type *o_ptr, bool all)
 	/* Heavy sensing? */
 	heavy = class_info[p_ptr->rp.pclass].heavy_sense;
 	
-	/* Hack -- assume no feeling */
+	/* Take away the feeling */
 	o_ptr->feeling = FEEL_NONE;
 
-	/* Hack -- Update feeling */
+	/* Strip awareness of feeling */
+	o_ptr->info &= ~(OB_SENSE);
+
+	/* Renew feeling */
 	sense_item(o_ptr, heavy, TRUE, FALSE);
 
 	/* Recalculate the bonuses */
