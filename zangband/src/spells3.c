@@ -3158,7 +3158,7 @@ static void spell_info(char *p, int spell, int realm)
 					case 23: strcpy (p, " dur 24+d24"); break;
 					case 28: sprintf(p, " dam %d", 75 + plev); break;
 					case 30: strcpy (p, " delay 15+d21"); break;
-					case 31: strcpy (p, " dur 25+30"); break;
+					case 31: strcpy (p, " dur 25+d30"); break;
 				}
 				break;
 
