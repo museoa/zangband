@@ -1172,7 +1172,7 @@ int FeatFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr, int *f_idx)
 	}
 
 	/* Verify the feature index */
-	if ((*f_idx < 0) || (*f_idx >= MAX_F_IDX))
+	if ((*f_idx < 0) || (*f_idx >= max_f_idx))
 	{
 		/* Get the interpreter result object */
 		Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
@@ -1180,7 +1180,7 @@ int FeatFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr, int *f_idx)
 		/* Set the error */
 		Tcl_SetStringObj(resultPtr,
 			format("bad f_info index \"%d\": must be between 0 and %d",
-			*f_idx, (int) MAX_F_IDX - 1), -1);
+			*f_idx, (int) max_f_idx - 1), -1);
 	
 		/* Failure */
 		return TCL_ERROR;
@@ -1231,7 +1231,7 @@ int objcmd_feature_assignshape(ClientData clientData, Tcl_Interp *interp, int ob
 		return TCL_ERROR;
 	}
 
-if (objC == 5) g_assignshape[shape][MAX_F_IDX + f_idx] = assign;
+if (objC == 5) g_assignshape[shape][max_f_idx + f_idx] = assign;
 else
 	g_assignshape[shape][f_idx] = assign;
 	g_icon_map_changed = TRUE;
@@ -2257,7 +2257,7 @@ int objcmd_sprite_insert(ClientData clientData, Tcl_Interp *interp, int objc,
 }
 
 CommandInit assignCmdInit[] = {
-	{0, "alternate", 0, 0, (char *) NULL, (Tcl_ObjCmdProc *) NULL, (ClientData) 0},
+	{0, "alternate", 0, 0, NULL, NULL, (ClientData) 0},
 		{1, "assign", 3, 0, "alternateIndex frameIndex ?args ...?", objcmd_alternate_assign, (ClientData) 0},
 		{1, "configure", 2, 0, "alternateIndex ?option? ?value? ?option value ...?", objcmd_alternate_configure, (ClientData) 0},
 		{1, "count", 1, 2, "?alternateIndex?", objcmd_alternate_count, (ClientData) 0},
@@ -2265,34 +2265,34 @@ CommandInit assignCmdInit[] = {
 		{1, "delete", 2, 3, "alternateIndex ?frameIndex?", objcmd_alternate_delete, (ClientData) 0},
 		{1, "get", 2, 3, "alternateIndex ?frameIndex?", objcmd_alternate_get, (ClientData) 0},
 		{1, "insert", 3, 0, "alternateIndex frameIndex ?args ...?", objcmd_alternate_insert, (ClientData) 0},
-	{0, "assign", 0, 0, (char *) NULL, (Tcl_ObjCmdProc *) NULL, (ClientData) 0},
+	{0, "assign", 0, 0, NULL, NULL, (ClientData) 0},
 		{1, "count", 2, 2, "group", objcmd_assign_count, (ClientData) 0},
-		{1, "groups", 1, 1, (char *) NULL, objcmd_assign_groups, (ClientData) 0},
-		{1, "types", 1, 1, (char *) NULL, objcmd_assign_types, (ClientData) 0},
+		{1, "groups", 1, 1, NULL, objcmd_assign_groups, (ClientData) 0},
+		{1, "types", 1, 1, NULL, objcmd_assign_types, (ClientData) 0},
 		{1, "set", 3, 4, "group member ?assign?", objcmd_assign_set, (ClientData) 0},
 		{1, "toicon", 2, 2, "assign", objcmd_assign_toicon, (ClientData) 0},
 		{1, "validate", 2, 2, "assign", objcmd_assign_validate, (ClientData) 0},
-	{0, "effect", 0, 0, (char *) NULL, (Tcl_ObjCmdProc *) NULL, (ClientData) 0},
+	{0, "effect", 0, 0, NULL, NULL, (ClientData) 0},
 		{1, "assign", 3, 0, "group effect ?args ...?", objcmd_effect_assign, (ClientData) 0},
-		{1, "groups", 1, 1, (char *) NULL, objcmd_effect_groups, (ClientData) 0},
+		{1, "groups", 1, 1, NULL, objcmd_effect_groups, (ClientData) 0},
 		{1, "names", 2, 2, "group", objcmd_effect_names, (ClientData) 0},
-	{0, "feature", 0, 0, (char *) NULL, (Tcl_ObjCmdProc *) NULL, (ClientData) 0},
+	{0, "feature", 0, 0, NULL, NULL, (ClientData) 0},
 		{1, "assignshape", 3, 5, "f_idx shape ?assign? ?hack?", objcmd_feature_assignshape, (ClientData) 0},
 		{1, "configure", 2, 0, "f_idx ?option? ?value? ?option value ...?", objcmd_feature_configure, (ClientData) 0},
 		{1, "lighting", 3, 0, "-radius r ?option? ?value? ?option value ...?", objcmd_lighting, (ClientData) 0},
 		{1, "torch", 1, 2, "paletteIndex opacity", objcmd_feature_torch, (ClientData) 0},
 		{1, "torchlite", 1, 2, "?boolean?", objcmd_feature_torchlite, (ClientData) 0},
-	{0, "flavor", 0, 0, (char *) NULL, (Tcl_ObjCmdProc *) NULL, (ClientData) 0},
+	{0, "flavor", 0, 0, NULL, NULL, (ClientData) 0},
 		{1, "assign", 3, 0, "flavorName flavorIndex ?args ...?", objcmd_flavor_assign, (ClientData) 0},
 		{1, "count", 2, 2, "flavorName", objcmd_flavor_count, (ClientData) 0},
-	{0, "sprite", 0, 0, (char *) NULL, (Tcl_ObjCmdProc *) NULL, (ClientData) 0},
+	{0, "sprite", 0, 0, NULL, NULL, (ClientData) 0},
 		{1, "assign", 3, 0, "spriteIndex frameIndex ?args ...?", objcmd_sprite_assign, (ClientData) 0},
 		{1, "configure", 2, 0, "spriteIndex ?option? ?value? ?option value ...?", objcmd_sprite_configure, (ClientData) 0},
 		{1, "count", 1, 2, "?spriteIndex?", objcmd_sprite_count, (ClientData) 0},
-		{1, "create", 1, 1, (char *) NULL, objcmd_sprite_create, (ClientData) 0},
+		{1, "create", 1, 1, NULL, objcmd_sprite_create, (ClientData) 0},
 		{1, "delete", 2, 3, "spriteIndex ?frameIndex?", objcmd_sprite_delete, (ClientData) 0},
 		{1, "get", 2, 3, "spriteIndex ?frameIndex?", objcmd_sprite_get, (ClientData) 0},
 		{1, "insert", 3, 0, "spriteIndex frameIndex ?args ...?", objcmd_sprite_insert, (ClientData) 0},
-	{0, (char *) NULL, 0, 0, (char *) NULL, (Tcl_ObjCmdProc *) NULL, (ClientData) 0}
+	{0, NULL, 0, 0, NULL, NULL, (ClientData) 0}
 };
 

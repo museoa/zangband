@@ -1704,7 +1704,7 @@ void init_struct(void)
 	type.name = "artifact_type";
 	type.elem = (unsigned char *) a_info;
 	type.elem_size = sizeof(artifact_type);
-	type.max = MAX_A_IDX;
+	type.max = max_a_idx;
 	type.info = struct_artifact_type;
 	type.infoProc = (StructInfoProc) struct_info_artifact_type;
 	type.findProc = struct_find_artifact_type;
@@ -1714,7 +1714,7 @@ void init_struct(void)
 	type.name = "feature_type";
 	type.elem = (unsigned char *) f_info;
 	type.elem_size = sizeof(feature_type);
-	type.max = MAX_F_IDX;
+	type.max = max_f_idx;
 	type.info = struct_feature_type;
 	type.infoProc = (StructInfoProc) struct_info_feature_type;
 	type.findProc = struct_find_feature_type;

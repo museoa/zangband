@@ -22,21 +22,21 @@
 extern int objcmd_fontdesc(ClientData clientData, Tcl_Interp *interp,
 	int objc, Tcl_Obj *CONST objv[]);
 
-#if TK_MINOR_VERSION >= 2
 extern int objcmd_menuentrystate(ClientData clientData, Tcl_Interp *interp,
 	int objc, Tcl_Obj *CONST objv[]);
 extern int objcmd_photo_get(ClientData clientData, Tcl_Interp *interp,
 	int objc, Tcl_Obj *CONST objv[]);
 extern int objcmd_photo_mask(ClientData clientData, Tcl_Interp *interp,
 	int objc, Tcl_Obj *CONST objv[]);
-#endif /* Tk 8.2 or 8.3 */
-#if TK_MINOR_VERSION == 2
-extern int objcmd_photo_copy(ClientData clientData, Tcl_Interp *interp,
-	int objc, Tcl_Obj *CONST objv[]);
-#endif /* Tk 8.2 */
 
 /* d_attr characters */
 char *g_attr_str = "dwsorgbuDWvyRGBU";
+
+/* Last known target state */
+int target_state = 0;
+
+/* Visibility of target */
+bool target_vis = FALSE;
 
 /* TRUE if current command is repeated */
 bool command_repeating = FALSE;
@@ -385,9 +385,9 @@ int dump_object_info(char *varName, object_type *o_ptr, int index)
 	}
 
 	/* Inscription */
-	if (get_user_inscription(o_ptr))
+	if (o_ptr->inscription)
 	{
-		strcpy(buf, quark_str(get_user_inscription(o_ptr)));
+		strcpy(buf, quark_str(o_ptr->inscription));
 	}
 	else
 	{
@@ -729,9 +729,9 @@ static char *state_state(void)
 	}
 
 	/* Resting */
-	else if (p_ptr_resting)
+	else if (resting)
 	{
-		int n = p_ptr_resting;
+		int n = resting;
 
 		/* Rest until healed */
 		if (n == -1)
@@ -752,9 +752,9 @@ static char *state_state(void)
 	}
 
 	/* Repeating */
-	else if (p_ptr_command_rep)
+	else if (command_rep)
 	{
-		int n = p_ptr_command_rep;
+		int n = command_rep;
 
 		s_status_value = trunc_num(n);
 
@@ -884,13 +884,13 @@ static char *state_stun(void)
 static char *state_winner(void)
 {
 	/* Wizard */
-	if (p_ptr_wizard)
+	if (wizard)
 	{
 		return "Wizard";
 	}
 
 	/* Winner */
-	else if (p_ptr_total_winner || (p_ptr->lev > PY_MAX_LEVEL))
+	else if (total_winner || (p_ptr->lev > PY_MAX_LEVEL))
 	{
 		return "Winner";
 	}
@@ -1249,16 +1249,16 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 	    case IDX_DEPTH: /* depth */
-			Tcl_SetIntObj(resultPtr, p_ptr_depth);
+			Tcl_SetIntObj(resultPtr, dun_level);
 			break; 
 
 		case IDX_DIED_FROM: /* died_from */
-			if (!p_ptr_is_dead)
+			if (!death)
 			{
 				Tcl_SetStringObj(resultPtr, "character is not dead", -1);
 				return TCL_ERROR;
 			}
-			ExtToUtf_SetResult(interp, p_ptr_died_from);
+			ExtToUtf_SetResult(interp, died_from);
 			break;
 
 		case IDX_EXP: /* exp */
@@ -1287,7 +1287,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			buf[0] = '\0';
 			for (i = 0; i < 4; i++)
 			{
-				(void) strcat(buf, format("%s\n", p_ptr_history[i]));
+				(void) strcat(buf, format("%s\n", history[i]));
 			}
 			i = strlen(buf) - 1;
 			while (buf[i] == '\n') buf[i--] = '\0';
@@ -1316,7 +1316,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 	    case IDX_MAX_DEPTH: /* max_depth */
-			Tcl_SetIntObj(resultPtr, p_ptr_max_depth);
+			Tcl_SetIntObj(resultPtr, p_ptr->max_dlv);
 			break; 
 
  		case IDX_NAME: /* name */
@@ -1331,15 +1331,15 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 						"invalid character name \"", t, "\"", NULL);
 					return TCL_ERROR;
 				}
-				(void) strcpy(op_ptr_full_name, t);
+				(void) strcpy(player_name, t);
 				process_player_name(FALSE);
 				Bind_Generic(EVENT_PY, KEYWORD_PY_NAME + 1);
 			}
-			ExtToUtf_SetResult(interp, (char *) op_ptr_full_name);
+			ExtToUtf_SetResult(interp, (char *) player_name);
 			break;
 
 		case IDX_POSITION: /* position */
-			Tcl_SetStringObj(resultPtr, format("%d %d", p_ptr_py, p_ptr_px),
+			Tcl_SetStringObj(resultPtr, format("%d %d", py, px),
 				-1);
 			break;
 
@@ -1487,15 +1487,15 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 		case IDX_MAXIMIZE: /* maximize */
-			Tcl_SetIntObj(resultPtr, p_ptr_maximize);
+			Tcl_SetIntObj(resultPtr, maximize_mode);
 			break;
 
 		case IDX_PRESERVE: /* preserve */
-			Tcl_SetIntObj(resultPtr, p_ptr_preserve);
+			Tcl_SetIntObj(resultPtr, preserve_mode);
 			break;
 
 		case IDX_BASE_NAME: /* base_name */
-			ExtToUtf_SetResult(interp, (char *) op_ptr_base_name);
+			ExtToUtf_SetResult(interp, (char *) player_base);
 			break;
 
 		case IDX_FLAGS: /* flags */
@@ -1508,7 +1508,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 		case IDX_IS_DEAD: /* is_dead */
-			Tcl_SetBooleanObj(resultPtr, p_ptr_is_dead);
+			Tcl_SetBooleanObj(resultPtr, death);
 			break;
 
 		case IDX_TURN: /* turn */
@@ -1516,7 +1516,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 		case IDX_MAX_LEVEL: /* max_level */
-			Tcl_SetIntObj(resultPtr, p_ptr_max_lev);
+			Tcl_SetIntObj(resultPtr, p_ptr->max_plv);
 			break;
 
 		case IDX_DISTURB: /* disturb */
@@ -1534,22 +1534,22 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 				return TCL_ERROR;
 		    }
 			t = Tcl_GetStringFromObj(objV[2], NULL);
-			if (SetArrayValueLong(t, "death", (p_ptr_noscore & 0x0001) != 0)
+			if (SetArrayValueLong(t, "death", (noscore & 0x0001) != 0)
 				!= TCL_OK)
 			{
 				return TCL_ERROR;
 			}
-			if (SetArrayValueLong(t, "wizard", (p_ptr_noscore & 0x0002) != 0)
+			if (SetArrayValueLong(t, "wizard", (noscore & 0x0002) != 0)
 				!= TCL_OK)
 			{
 				return TCL_ERROR;
 			}
-			if (SetArrayValueLong(t, "debug", (p_ptr_noscore & 0x0008) != 0)
+			if (SetArrayValueLong(t, "debug", (noscore & 0x0008) != 0)
 				!= TCL_OK)
 			{
 				return TCL_ERROR;
 			}
-			if (SetArrayValueLong(t, "borg", (p_ptr_noscore & 0x0010) != 0)
+			if (SetArrayValueLong(t, "borg", (noscore & 0x0010) != 0)
 				!= TCL_OK)
 			{
 				return TCL_ERROR;
@@ -1574,11 +1574,11 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 		case IDX_COMMAND_REP: /* command_rep */
-			Tcl_SetIntObj(resultPtr, p_ptr_command_rep);
+			Tcl_SetIntObj(resultPtr, command_rep);
 			break;
 
 		case IDX_RUNNING: /* running */
-			Tcl_SetIntObj(resultPtr, p_ptr_running);
+			Tcl_SetIntObj(resultPtr, running);
 			break;
 
 		case IDX_PRAYER_OR_SPELL: /* prayer_or_spell */
@@ -1636,11 +1636,11 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 				{
 					return TCL_ERROR;
 				}
-				if ((r_idx < 0) || (r_idx >= max_r_idx))
+				if (!((r_idx >= 0) && (r_idx < max_r_idx)))
 				{
 					Tcl_SetStringObj(resultPtr,
 						format("bad r_info index \"%d\": must be between 0 and %d",
-						r_idx, (int) MAX_VALID_R_IDX - 1), -1);
+						r_idx, (int) max_r_idx - 1), -1);
 					return TCL_ERROR;
 				}
 				p_ptr->monster_race_idx = r_idx;
@@ -1650,7 +1650,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 		case IDX_LIFE_RATING: /* life_rating */
-			i = (int) (((long) p_ptr_player_hp[PY_MAX_LEVEL - 1] * 200L) / 
+			i = (int) (((long) player_hp[PY_MAX_LEVEL - 1] * 200L) / 
 				(2 * p_ptr->hitdie + ((PY_MAX_LEVEL - 1) *
 				(p_ptr->hitdie + 1))));
 			Tcl_SetIntObj(resultPtr, i);
@@ -2403,7 +2403,7 @@ static int GetBookFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr, int *bookNum)
 	}
 
 	/* Verify the book number */
-	if ((k_idx <= 0) || (k_idx >= MAX_K_IDX))
+	if ((k_idx <= 0) || (k_idx >= max_k_idx))
 	{
 		/* Set the error */
 		Tcl_SetStringObj(resultPtr,
@@ -2852,12 +2852,12 @@ static void init_keyword_misc(void)
 	keyword_class[MAX_CLASS] = NULL;
 
 	/* A list of race names */
-	C_MAKE(keyword_race, MAX_P_IDX + 1, cptr);
-	for (i = 0; i < MAX_P_IDX; i++)
+	C_MAKE(keyword_race, MAX_RACES + 1, cptr);
+	for (i = 0; i < MAX_RACES; i++)
 	{
 		keyword_race[i] = (char *) race_info[i].title;
 	}
-	keyword_race[MAX_P_IDX] = NULL;
+	keyword_race[MAX_RACES] = NULL;
 }
 
 /*
@@ -3261,6 +3261,18 @@ bad_index:
 	return TCL_ERROR;
 }
 
+#if 0
+
+/*
+ * As one hack, I have Term_fresh() calling the "update" Tcl command. But
+ * that get's called during startup before angtk_init() is called. So
+ * I add this variable to fix my hack.
+ */
+
+static int Tcl_Initialized = 0;
+
+#endif
+
 /*
  *--------------------------------------------------------------
  *
@@ -3278,6 +3290,11 @@ void angtk_eval(char *command, ...)
 	int objc = 0;
 	Tcl_Obj *objv[40];
 	int i, result;
+
+#if 0
+	/* Oops. Tcl isn't initialized yet */
+	if (!Tcl_Initialized) return;
+#endif
 
 	/* Start processing variable argument list */
 	va_start(vp, command);
@@ -3418,73 +3435,67 @@ void HandleError(void)
 }
 
 static CommandInit commandInit[] = {
-	{0, "angband", 0, 0, (char *) NULL, (Tcl_ObjCmdProc *) NULL, (ClientData) 0},
-		{1, "a_info", 0, 0, (char *) NULL, (Tcl_ObjCmdProc *) NULL, (ClientData) 0},
-			{2, "find", 1, 0, (char *) NULL, objcmd_ARRAY_find, (ClientData) "artifact_type"},
+	{0, "angband", 0, 0, NULL, NULL, (ClientData) 0},
+		{1, "a_info", 0, 0, NULL, NULL, (ClientData) 0},
+			{2, "find", 1, 0, NULL, objcmd_ARRAY_find, (ClientData) "artifact_type"},
 			{2, "info", 3, 0, "a_idx option ?args ...?", objcmd_ARRAY_info, (ClientData) "artifact_type"},
-			{2, "max", 1, 1, (char *) NULL, objcmd_ARRAY_max, (ClientData) "artifact_type"},
+			{2, "max", 1, 1, NULL, objcmd_ARRAY_max, (ClientData) "artifact_type"},
 			{2, "set", 2, 4, "a_idx ?field? ?value?", objcmd_ARRAY_set, (ClientData) "artifact_type"},
-		{1, "f_info", 0, 0, (char *) NULL, (Tcl_ObjCmdProc *) NULL, (ClientData) 0},
-			{2, "find", 1, 0, (char *) NULL, objcmd_ARRAY_find, (ClientData) "feature_type"},
+		{1, "f_info", 0, 0, NULL, NULL, (ClientData) 0},
+			{2, "find", 1, 0, NULL, objcmd_ARRAY_find, (ClientData) "feature_type"},
 			{2, "info", 3, 0, "f_idx option ?args ...?", objcmd_ARRAY_info, (ClientData) "feature_type"},
-			{2, "max", 1, 1, (char *) NULL, objcmd_ARRAY_max, (ClientData) "feature_type"},
+			{2, "max", 1, 1, NULL, objcmd_ARRAY_max, (ClientData) "feature_type"},
 			{2, "set", 2, 4, "f_idx ?field? ?value?", objcmd_ARRAY_set, (ClientData) "feature_type"},
-		{1, "k_info", 0, 0, (char *) NULL, (Tcl_ObjCmdProc *) NULL, (ClientData) 0},
-			{2, "find", 1, 0, (char *) NULL, objcmd_ARRAY_find, (ClientData) "object_kind"},
+		{1, "k_info", 0, 0, NULL, NULL, (ClientData) 0},
+			{2, "find", 1, 0, NULL, objcmd_ARRAY_find, (ClientData) "object_kind"},
 			{2, "info", 3, 0, "k_idx option ?args ...?", objcmd_ARRAY_info, (ClientData) "object_kind"},
-			{2, "max", 1, 1, (char *) NULL, objcmd_ARRAY_max, (ClientData) "object_kind"},
+			{2, "max", 1, 1, NULL, objcmd_ARRAY_max, (ClientData) "object_kind"},
 			{2, "set", 2, 4, "k_idx ?field? ?value?", objcmd_ARRAY_set, (ClientData) "object_kind"},
-		{1, "r_info", 0, 0, (char *) NULL, (Tcl_ObjCmdProc *) NULL, (ClientData) 0},
-			{2, "find", 1, 0, (char *) NULL, objcmd_ARRAY_find, (ClientData) "monster_race"},
+		{1, "r_info", 0, 0, NULL, NULL, (ClientData) 0},
+			{2, "find", 1, 0, NULL, objcmd_ARRAY_find, (ClientData) "monster_race"},
 			{2, "info", 3, 0, "r_idx option ?args ...?", objcmd_ARRAY_info, (ClientData) "monster_race"},
-			{2, "max", 1, 1, (char *) NULL, objcmd_ARRAY_max, (ClientData) "monster_race"},
+			{2, "max", 1, 1, NULL, objcmd_ARRAY_max, (ClientData) "monster_race"},
 			{2, "set", 2, 4, "r_idx ?field? ?value?", objcmd_ARRAY_set, (ClientData) "monster_race"},
-		{1, "m_list", 0, 0, (char *) NULL, (Tcl_ObjCmdProc *) NULL, (ClientData) 0},
-			{2, "find", 1, 0, (char *) NULL, objcmd_ARRAY_find, (ClientData) "monster_type"},
+		{1, "m_list", 0, 0, NULL, NULL, (ClientData) 0},
+			{2, "find", 1, 0, NULL, objcmd_ARRAY_find, (ClientData) "monster_type"},
 			{2, "info", 3, 0, "m_idx option ?args ...?", objcmd_ARRAY_info, (ClientData) "monster_type"},
-			{2, "max", 1, 1, (char *) NULL, objcmd_ARRAY_max, (ClientData) "monster_type"},
+			{2, "max", 1, 1, NULL, objcmd_ARRAY_max, (ClientData) "monster_type"},
 			{2, "set", 2, 4, "m_idx ?field? ?value?", objcmd_ARRAY_set, (ClientData) "monster_type"},
-		{1, "o_list", 0, 0, (char *) NULL, (Tcl_ObjCmdProc *) NULL, (ClientData) 0},
-			{2, "find", 1, 0, (char *) NULL, objcmd_ARRAY_find, (ClientData) "object_type"},
+		{1, "o_list", 0, 0, NULL, NULL, (ClientData) 0},
+			{2, "find", 1, 0, NULL, objcmd_ARRAY_find, (ClientData) "object_type"},
 			{2, "info", 3, 0, "o_idx option ?args ...?", objcmd_ARRAY_info, (ClientData) "object_type"},
-			{2, "max", 1, 1, (char *) NULL, objcmd_ARRAY_max, (ClientData) "object_type"},
+			{2, "max", 1, 1, NULL, objcmd_ARRAY_max, (ClientData) "object_type"},
 			{2, "set", 2, 4, "o_idx ?field? ?value?", objcmd_ARRAY_set, (ClientData) "object_type"},
-		{1, "cave", 0, 0, (char *) NULL, objcmd_cave, (ClientData) 0},
-		{1, "equipment", 0, 0, (char *) NULL, objcmd_equipment, (ClientData) 0},
-		{1, "game", 0, 0, (char *) NULL, objcmd_game, (ClientData) 0},
+		{1, "cave", 0, 0, NULL, objcmd_cave, (ClientData) 0},
+		{1, "equipment", 0, 0, NULL, objcmd_equipment, (ClientData) 0},
+		{1, "game", 0, 0, NULL, objcmd_game, (ClientData) 0},
 		{1, "home", 3, 0, "option town ?args ...?", objcmd_home, (ClientData) 0},
-		{1, "info", 0, 0, (char *) NULL, objcmd_info, (ClientData) 0},
-		{1, "inkey_flags", 1, 1, (char *) NULL, objcmd_inkey_flags, (ClientData) 0},
-		{1, "inkey_other", 1, 1, (char *) NULL, objcmd_inkey_other, (ClientData) 0},
-		{1, "inventory", 0, 0, (char *) NULL, objcmd_inventory, (ClientData) 0},
+		{1, "info", 0, 0, NULL, objcmd_info, (ClientData) 0},
+		{1, "inkey_flags", 1, 1, NULL, objcmd_inkey_flags, (ClientData) 0},
+		{1, "inkey_other", 1, 1, NULL, objcmd_inkey_other, (ClientData) 0},
+		{1, "inventory", 0, 0, NULL, objcmd_inventory, (ClientData) 0},
 		{1, "keypress", 2, 2, "string", objcmd_keypress, (ClientData) 0},
-		{1, "macro", 0, 0, (char *) NULL, objcmd_macro, (ClientData) 0},
-		{1, "message", 0, 0, (char *) NULL, objcmd_message, (ClientData) 0},
-		{1, "player", 0, 0, (char *) NULL, objcmd_player, (ClientData) 0},
-		{1, "setting", 0, 0, (char *) NULL, objcmd_setting, (ClientData) 0},
-		{1, "spell", 0, 0, (char *) NULL, objcmd_spell, (ClientData) 0},
-		{1, "store", 0, 0, (char *) NULL, objcmd_store, (ClientData) 0},
+		{1, "macro", 0, 0, NULL, objcmd_macro, (ClientData) 0},
+		{1, "message", 0, 0, NULL, objcmd_message, (ClientData) 0},
+		{1, "player", 0, 0, NULL, objcmd_player, (ClientData) 0},
+		{1, "setting", 0, 0, NULL, objcmd_setting, (ClientData) 0},
+		{1, "spell", 0, 0, NULL, objcmd_spell, (ClientData) 0},
+		{1, "store", 0, 0, NULL, objcmd_store, (ClientData) 0},
 		{1, "equipinfo", 3, 3, "slot arrayName", objcmd_equipinfo, (ClientData) 0},
 		{1, "inveninfo", 3, 3, "slot arrayName", objcmd_inveninfo, (ClientData) 0},
-		{1, "keymap", 0, 0, (char *) NULL, objcmd_keymap, (ClientData) 0},
+		{1, "keymap", 0, 0, NULL, objcmd_keymap, (ClientData) 0},
 		{1, "init_icons", 3, 3, "size depth", objcmd_init_icons, (ClientData) 0},
-		{1, "highscore", 0, 0, (char *) NULL, objcmd_highscore, (ClientData) 0},
-		{1, "floor", 0, 0, (char *) NULL, objcmd_floor, (ClientData) 0},
-		{1, "system", 0, 0, (char *) NULL, objcmd_system, (ClientData) 0},
-		{1, "keycount", 0, 0, (char *) NULL, objcmd_keycount, (ClientData) 0},
-		{1, "building", 0, 0, (char *) NULL, objcmd_building, (ClientData) 0},
-		{1, "mindcraft", 0, 0, (char *) NULL, objcmd_mindcraft, (ClientData) 0},
-		{1, "power", 0, 0, (char *) NULL, objcmd_power, (ClientData) 0},
-#if TK_MINOR_VERSION >= 2
-	{0, "menuentrystate", 0, 0, (char *) NULL, objcmd_menuentrystate, (ClientData) 0},
-	{0, "photoget", 0, 0, (char *) NULL, objcmd_photo_get, (ClientData) 0},
+		{1, "highscore", 0, 0, NULL, objcmd_highscore, (ClientData) 0},
+		{1, "floor", 0, 0, NULL, objcmd_floor, (ClientData) 0},
+		{1, "system", 0, 0, NULL, objcmd_system, (ClientData) 0},
+		{1, "keycount", 0, 0, NULL, objcmd_keycount, (ClientData) 0},
+		{1, "mindcraft", 0, 0, NULL, objcmd_mindcraft, (ClientData) 0},
+		{1, "power", 0, 0, NULL, objcmd_power, (ClientData) 0},
+	{0, "menuentrystate", 0, 0, NULL, objcmd_menuentrystate, (ClientData) 0},
+	{0, "photoget", 0, 0, NULL, objcmd_photo_get, (ClientData) 0},
 	{0, "photomask", 2, 3, "imageDst ?imageMask?", objcmd_photo_mask, (ClientData) 0},
-#endif /* Tk 8.2 or 8.3 */
-#if TK_MINOR_VERSION == 2
-	{0, "photocopy", 7, 7, "imageSrc imageDst srcX srcY width height", objcmd_photo_copy, (ClientData) 0},
-#endif /* Tk 8.2 */
 	{0, "fontdesc", 2, 2, "font", objcmd_fontdesc, (ClientData) 0},
-	{0, (char *) NULL, 0, 0, (char *) NULL, (Tcl_ObjCmdProc *) NULL, (ClientData) 0}
+	{0, NULL, 0, 0, NULL, NULL, (ClientData) 0}
 };
 
 extern void validate_file(cptr s, cptr fmt);
@@ -3528,8 +3539,9 @@ void angtk_init(void)
 	init_palette();
 
 	/* Source the "startup script" */
-	path_build(path, 1024, ANGBAND_DIR_COMMON_TK, "init-startup.tcl");
-	validate_file(path, "Could not find a required file:\n\"%s\"\nMake sure your unzip utility supports long filenames.");	
+	path_build(path, 1024, ANGBAND_DIR_TK, "init-startup.tcl");
+	validate_file(path, "Could not find a required file:\n\"%s\"\n"
+		"Make sure your unzip utility supports long filenames.");	
 	if (angtk_eval_file(path) == TCL_ERROR)
 	{
 		HandleError();
@@ -3547,22 +3559,20 @@ void angtk_angband_initialized(void)
 	/* Names of gender, race and class */
 	init_keyword_misc();
 
-	C_MAKE(g_feat_flag, MAX_F_IDX, byte);
-	for (i = 0; i < MAX_F_IDX; i++)
+	C_MAKE(g_feat_flag, max_f_idx, byte);
+	for (i = 0; i < max_f_idx; i++)
 	{
 		g_feat_flag[i] = 0;
 	}
 
 	/* These are required for savefile loading (see lite_spot()) */
-	for (i = 0; i < DUNGEON_HGT; i++)
+	for (i = 0; i < MAX_HGT; i++)
 	{
 		/* Info about what feature/monster/object is known. */
-		C_MAKE(g_grid[i], DUNGEON_WID, t_grid);
+		C_MAKE(g_grid[i], MAX_WID, t_grid);
 	}
 
 	init_map();
-
-	init_debug();
 
 	init_struct();
 
@@ -3621,7 +3631,7 @@ void angtk_cave_generated(void)
 	{
 		for (x = 0; x < g_cave_wid; x++)
 		{
-			int feat = cave_feat(y, x);
+			int feat = cave[y][x].feat;
 
 			/* This is a door (or secret door) */
 			if ((feat == FEAT_OPEN) || (feat == FEAT_BROKEN) ||
@@ -3664,7 +3674,7 @@ void angtk_character_generated(void)
 	int y, x;
 
 	/* Source a file to create the interface */
-	path_build(path, 1024, ANGBAND_DIR_COMMON_TK, "init-other.tcl");
+	path_build(path, 1024, ANGBAND_DIR_TK, "init-other.tcl");
 	if (angtk_eval_file(path) == TCL_ERROR)
 	{
 		HandleError();
@@ -3679,9 +3689,9 @@ void angtk_character_generated(void)
 
 #if 1
 	/* Process each grid */
-	for (y = 0; y < DUNGEON_HGT; y++)
+	for (y = 0; y < MAX_HGT; y++)
 	{
-		for (x = 0; x < DUNGEON_WID; x++)
+		for (x = 0; x < MAX_WID; x++)
 		{
 			/* A wall or secret door */
 			if (is_wall(y, x))
@@ -3708,11 +3718,11 @@ void angtk_character_generated(void)
 	if (!g_grid_xtra_init)
 	{
 		/* Process each grid */
-		for (y = 0; y < DUNGEON_HGT; y++)
+		for (y = 0; y < MAX_HGT; y++)
 		{
-			for (x = 0; x < DUNGEON_WID; x++)
+			for (x = 0; x < MAX_WID; x++)
 			{
-				int feat = cave_feat(y, x);
+				int feat = cave[y][x].feat;
 	
 				/* This is a door (or secret door) */
 				if ((feat == FEAT_OPEN) || (feat == FEAT_BROKEN) ||
@@ -3730,22 +3740,6 @@ void angtk_character_generated(void)
 		/* Note that g_grid[].xtra is initialized. */
 		g_grid_xtra_init = TRUE;
     }
-
-	if (vanilla_town && (p_ptr_depth == 0))
-	{
-		angtk_rebuild_town();
-	}
-
-	/*
-	 * wilderness_gen() calls town_illuminate() but g_feat_flag[] isn't
-	 * initialized yet. This is a problem because Undead characters
-	 * start at night, resulting in incorrect illumination.
-	 */
-	else if (p_ptr_depth == 0 && (turn == (30L * TOWN_DAWN) / 4 + 1))
-	{
-		town_illuminate(FALSE);
-	}
-
 
 	if (!g_cave_hgt)
 	{
@@ -3792,7 +3786,7 @@ void angtk_examine(int y, int x, char *out_val)
 	(void) strcpy(out_val, "");
 
 	/* Not in bounds */
-	if (!in_bounds_test(y, x)) return;
+	if (!in_bounds2(y, x)) return;
 
 	/* Assume boring */
 	boring = TRUE;
@@ -3803,7 +3797,7 @@ void angtk_examine(int y, int x, char *out_val)
 	s3 = "";
 
 	/* The player */
-	if ((y == p_ptr->py) && (x == p_ptr->px))
+	if ((py == y) && (px == x))
 	{
 		/* Description */
 		s1 = "You are ";
@@ -3827,9 +3821,9 @@ void angtk_examine(int y, int x, char *out_val)
 
 
 	/* Actual monsters */
-	if (cave_m_idx(y, x) > 0)
+	if (cave[y][x].m_idx > 0)
 	{
-		monster_type *m_ptr = &m_list[cave_m_idx(y, x)];
+		monster_type *m_ptr = &m_list[cave[y][x].m_idx];
 
 		/* Visible */
 		if (m_ptr->ml)
@@ -3904,7 +3898,7 @@ void angtk_examine(int y, int x, char *out_val)
 #endif /* ALLOW_EASY_FLOOR */
 
 	/* Scan all objects in the grid */
-	for (this_o_idx = cave_o_idx(y, x); this_o_idx; this_o_idx = next_o_idx)
+	for (this_o_idx = cave[y][x].o_idx; this_o_idx; this_o_idx = next_o_idx)
 	{
 		object_type *o_ptr;
 
@@ -3931,7 +3925,7 @@ void angtk_examine(int y, int x, char *out_val)
 	}
 
 	/* Get feature */
-	feat = cave_feat(y, x);
+	feat = cave[y][x].feat;
 
 	if (cave[y][x].mimic)
 	{
@@ -3942,7 +3936,7 @@ void angtk_examine(int y, int x, char *out_val)
 	feat = f_info[feat].mimic;
 
 	/* Require knowledge about grid, or ability to see grid */
-	if (!(cave_info(y, x) & (CAVE_MARK)) && !player_can_see_bold(y,x))
+	if (!(cave[y][x].info & (CAVE_MARK)) && !player_can_see_bold(y,x))
 	{
 		/* Forget feature */
 		feat = FEAT_NONE;

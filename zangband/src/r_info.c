@@ -38,7 +38,7 @@ static bool know_armour(int r_idx)
 
 	s32b level = r_ptr->level;
 
-	s32b kills = r_info[r_idx].r_tkills;
+	s32b kills = r_ptr->r_tkills;
 
 	/* Normal monsters */
 	if (kills > 304 / (4 + level)) return (TRUE);
@@ -65,7 +65,7 @@ static bool know_damage(int r_idx, int i)
 
 	s32b level = r_ptr->level;
 
-	s32b a = r_info[r_idx].r_blows[i];
+	s32b a = r_ptr->r_blows[i];
 
 	s32b d1 = r_ptr->blow[i].d_dice;
 	s32b d2 = r_ptr->blow[i].d_side;
@@ -163,7 +163,7 @@ long angtk_roff(int r_idx, char *buffer)
 		/* XXX XXX XXX */
 
 		/* Hack -- save memory */
-		COPY(&save_mem, r_ptr, monster_type);
+		COPY(&save_mem, r_ptr, monster_race);
 
 		/* Hack -- Maximal kills */
 		r_ptr->r_tkills = MAX_SHORT;
@@ -387,30 +387,6 @@ long angtk_roff(int r_idx, char *buffer)
 			pos += r_head->head_size;
 			pos += r_head->info_size;
 			pos += r_head->name_size;
-
-#if 0
-
-			/* Maximal length */
-			len = r_head->text_size - r_ptr->text;
-
-			/* Actual length */
-			for (i = r_idx+1; i < MAX_R_IDX; i++)
-			{
-				/* Actual length */
-				if (r_info[i].text > r_ptr->text)
-				{
-					/* Extract length */
-					len = r_info[i].text - r_ptr->text;
-
-					/* Done */
-					break;
-				}
-			}
-
-			/* Maximal length */
-			if (len > 2048) len = 2048;
-
-#endif
 
 			/* Seek */
 			fd_seek(fd, pos);
@@ -1404,7 +1380,7 @@ long angtk_roff(int r_idx, char *buffer)
 	if (cheat_know)
 	{
 		/* Hack -- restore memory */
-		COPY(r_ptr, &save_mem, monster_type);
+		COPY(r_ptr, &save_mem, monster_race);
 	}
 
 	n = s_buffer - buffer;

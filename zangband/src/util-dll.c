@@ -501,7 +501,7 @@ int objcmd_palette_set(ClientData clientData, Tcl_Interp *interp, int objc,
 }
 
 static CommandInit commandInit[] = {
-	{0, "palette", 0, 0, (char *) NULL, (Tcl_ObjCmdProc *) NULL, (ClientData) 0},
+	{0, "palette", 0, 0, NULL, NULL, (ClientData) 0},
 		{1, "nearest", 2, 2, "color", objcmd_palette_nearest, (ClientData) 0},
 		{1, "set", 2, 3, "?color?", objcmd_palette_set, (ClientData) 0},
 	{0, NULL, 0, 0, NULL, NULL, 0}
@@ -726,10 +726,6 @@ void Tcl_FreeDebug(char *ptr)
 		Tcl_Panic("Tcl_FreeDebug: magic number not found");
 	size = ((int *) ptr)[1];
 
-#ifdef USE_STARTUP_LOG
-startup_log("Tcl_FreeDebug: size is %d", size);
-#endif
-
 	/* Zero the memory to catch other errors */
 	for (i = 0; i < size; i++)
 		ptr[i] = 0;
@@ -950,10 +946,6 @@ void Bitmap_New(Tcl_Interp *interp, BitmapPtr bitmapPtr)
 	bitmapPtr->pixmap = (Pixmap) &bitmapPtr->twd;
 }
 
-#ifdef USE_STARTUP_LOG
-extern void startup_log(char *fmt, ...);
-#endif
-
 /*
  * Delete a bitmap.
  */
@@ -961,32 +953,16 @@ void Bitmap_Delete(BitmapPtr bitmapPtr)
 {
 	int i, size;
 
-#ifdef USE_STARTUP_LOG
-startup_log("AngTk_DeleteBitmap: entry");
-#endif
-
 	/* Hack -- See Tcl_FreeDebug() */
 	if (((int *) bitmapPtr)[0] != TCL_FREE_MAGIC)
 		Tcl_Panic("Tcl_FreeDebug: magic number not found");
 	size = ((int *) bitmapPtr)[1];
 
-#ifdef USE_STARTUP_LOG
-startup_log("AngTk_DeleteBitmap: size is %d", size);
-#endif
-
 	DeleteObject(bitmapPtr->hbm);
-
-#ifdef USE_STARTUP_LOG
-startup_log("AngTk_DeleteBitmap: DeleteObject() okay");
-#endif
 
 	/* Hack -- See Tcl_FreeDebug() */
 	for (i = 0; i < size; i++)
-		((char *) bitmapPtr)[i] = 0;	
-
-#ifdef USE_STARTUP_LOG
-startup_log("AngTk_DeleteBitmap: leave");
-#endif
+		((char *) bitmapPtr)[i] = 0;
 }
 
 #endif /* PLATFORM_WIN */

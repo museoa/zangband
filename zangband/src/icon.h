@@ -124,7 +124,7 @@ ICON_LAYER_MAX
 };
 
 /* Per-layer assignment for each cave location */
-extern t_assign *g_icon_map[ICON_LAYER_MAX][DUNGEON_HGT];
+extern t_assign *g_icon_map[ICON_LAYER_MAX][MAX_HGT];
 
 /*
  * Information about what to display.

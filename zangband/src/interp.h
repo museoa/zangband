@@ -56,8 +56,6 @@ extern int objcmd_system _ANSI_ARGS_((ClientData clientData,
 		    Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]));
 
 /* interp2.c */
-extern int objcmd_building _ANSI_ARGS_((ClientData clientData,
-		    Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]));
 extern int objcmd_cave _ANSI_ARGS_((ClientData clientData,
 		    Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]));
 extern int objcmd_equipment _ANSI_ARGS_((ClientData clientData,

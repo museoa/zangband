@@ -26,7 +26,7 @@ extern int AngbandTk_CmdChooseFont _ANSI_ARGS_((ClientData clientData,
 unsigned char *g_palette_rgb;
 t_assign_group g_assign[ASSIGN_MAX];
 t_assign g_assign_none;
-t_grid *g_grid[DUNGEON_HGT] = {0};
+t_grid *g_grid[MAX_HGT] = {0};
 int g_grid_xtra_init = 0;
 t_flavor *g_flavor = NULL; /* Array of flavor types */
 int g_flavor_count = 0; /* Number of flavors */
@@ -41,7 +41,7 @@ int *g_background = NULL;
 byte *g_feat_flag = NULL;
 t_darken g_darken[3];
 TintTable g_yellow;
-t_assign *g_icon_map[ICON_LAYER_MAX][DUNGEON_HGT];
+t_assign *g_icon_map[ICON_LAYER_MAX][MAX_HGT];
 t_assign *g_assignshape[GRID_SHAPE_MAX] = {NULL};
 bool g_icon_map_changed = FALSE;
 int g_torchlite; /* Use 4 levels of torch lite */
@@ -51,43 +51,6 @@ bool g_daytime; /* Day or night */
 cptr keyword_wall[] = { "not", "single", "ns", "we", "corner_nw",
 	"corner_ne", "corner_sw", "corner_se", "tri_n", "tri_s",
 	"tri_w", "tri_e", "quad", NULL };
-
-/* #define USE_STARTUP_LOG */
-
-#ifdef USE_STARTUP_LOG
-
-static FILE *startup_fp = NULL;
-
-static void startup_log_open(void)
-{
-	char path[1024];
-
-	path_build(path, 1024, ANGBAND_DIR_ROOT, "startup-bin.log");
-	startup_fp = fopen(path, "w");
-}
-
-static void startup_log_close(void)
-{
-	if (startup_fp)
-		fclose(startup_fp);
-}
-
-void startup_log(char *fmt, ...)
-{
-	va_list args;
-    char buf[512];
-
-	if (!startup_fp) return;
-	
-	va_start(args, fmt);
-	vsprintf(buf, fmt, args);
-	va_end(args);
-   
-	fprintf(startup_fp, "%s\n", buf);
-	fflush(startup_fp);
-}
-
-#endif /* USE_STARTUP_LOG */
 
 /*
  * Calculate the light radius for this floor grid
@@ -183,17 +146,6 @@ void angtk_view_wall(int y, int x, int info, int torch)
 }
 
 /*
- * Visually flicker the character's light source
- */
-void angtk_flicker(void)
-{
-	forget_lite(); Term_fresh(); Term_xtra(TERM_XTRA_DELAY, 20);
-	update_lite(); Term_fresh(); Term_xtra(TERM_XTRA_DELAY, 20);
-	forget_lite(); Term_fresh(); Term_xtra(TERM_XTRA_DELAY, 20);
-	update_lite(); Term_fresh();
-}
-
-/*
  * This routine fills the given t_grid struct with the indices of
  * any known feature, object or monster at the given cave location.
  * This routine does not consider light radius.
@@ -216,24 +168,8 @@ void get_grid_info(int y, int x, t_grid *gridPtr)
 	gridPtr->o_idx = 0;
 	gridPtr->m_idx = 0;
 
-#ifdef ALLOW_PILE_IMAGE
-
-	/*
-	 * Note: This doesn't really depend on the easy_floor option.
-	 * We could add another option just for this.
-	 */
-
-	/* Option: Use a unique icon for piles */
-	if (easy_floor)
-	{
-		/* Forget the pile */
-		gridPtr->xtra &= ~(GRID_XTRA_PILE);
-	}
-	
-#endif /* ALLOW_PILE_IMAGE */
-
 	/* Feature */
-	feat = cave_feat(y, x);
+	feat = cave[y][x].feat;
 
 	/* Apply "mimic" field */
 	if (cave[y][x].mimic)
@@ -243,9 +179,9 @@ void get_grid_info(int y, int x, t_grid *gridPtr)
 	feat = f_info[feat].mimic;
 
 	/* Monster/Player */
-	m_idx = cave_m_idx(y, x);
+	m_idx = cave[y][x].m_idx;
 
-	if ((y == p_ptr_py) && (x == p_ptr_px))
+	if ((y == py) && (x == px))
 		m_idx = -1;
 
 	/* Handle "player" */
@@ -262,7 +198,7 @@ void get_grid_info(int y, int x, t_grid *gridPtr)
 	}
 
 	/* Cave flags */
-	info = cave_info(y, x);
+	info = cave[y][x].info;
 
 	/* Boring grids (floors, etc) */
 	if (g_feat_flag[feat] & FEAT_FLAG_BORING)
@@ -303,7 +239,7 @@ void get_grid_info(int y, int x, t_grid *gridPtr)
 	}
 
 	/* Objects */
-	for (this_o_idx = cave_o_idx(y, x); this_o_idx; this_o_idx = next_o_idx)
+	for (this_o_idx = cave[y][x].o_idx; this_o_idx; this_o_idx = next_o_idx)
 	{
 		object_type *o_ptr;
 
@@ -315,31 +251,7 @@ void get_grid_info(int y, int x, t_grid *gridPtr)
 
 		/* Memorized objects */
 		if (!o_ptr->marked) continue;
-		
-#ifdef ALLOW_PILE_IMAGE
-
-		/* Option: Use a unique icon for piles */
-		if (easy_floor)
-		{
-			/* We already saw a marked object */
-			if (gridPtr->o_idx)
-			{
-				/* This is a pile */
-				gridPtr->xtra |= (GRID_XTRA_PILE);
-
-				/* Stop */
-				break;
-			}
-
-			/* Remember the top-most object index */
-			gridPtr->o_idx = this_o_idx;
-
-			/* Next */
-			continue;
-		}
-
-#endif /* ALLOW_PILE_IMAGE */
-		
+				
 		/* Remember the top-most object index */
 		gridPtr->o_idx = this_o_idx;
 
@@ -377,7 +289,7 @@ void get_display_info(int y, int x, t_display *displayPtr)
 	int dark = gridPtr->dark;
 
 	/* Determine if there is daylight in the town */
-	int daytime = !p_ptr_depth && g_daytime;
+	int daytime = !dun_level && g_daytime;
 
 	int layer;
 
@@ -438,42 +350,12 @@ void get_display_info(int y, int x, t_display *displayPtr)
 	
 		/* Object */
 		else if (o_idx)
-		{
-#ifdef ALLOW_PILE_IMAGE
-	
-			/* This a pile of objects */
-			if (easy_floor && (gridPtr->xtra & GRID_XTRA_PILE))
-			{
-				/* Get the icon assigned to object kind zero */
-				assign = g_assign[ASSIGN_OBJECT].assign[0];
-			}
-	
-			/* Not a pile */
-			else
-			{
-				/* Get the object kind */
-				int k_idx = o_list[o_idx].k_idx;
-	
-				/* XXX Hack -- Hallucination */
-				if (p_ptr->image)
-				{
-					/* Get a random object kind */
-					k_idx = g_image_object[k_idx];
-				}
-		
-				/* Get the icon assigned to the object kind */
-				assign = g_assign[ASSIGN_OBJECT].assign[k_idx];
-			}
-			
-#else /* ALLOW_PILE_IMAGE */
-	
+		{	
 			/* Get the object kind */
 			int k_idx = o_list[o_idx].k_idx;
 	
 			/* Get the icon assigned to the object kind */
 			assign = g_assign[ASSIGN_OBJECT].assign[k_idx];
-	
-#endif /* ALLOW_PILE_IMAGE */
 		}
 
 		/*
@@ -603,9 +485,9 @@ void get_display_info(int y, int x, t_display *displayPtr)
 	{
 		int y, x;
 		
-		for (y = 0; y < DUNGEON_HGT; y++)
+		for (y = 0; y < MAX_HGT; y++)
 		{
-			for (x = 0; x < DUNGEON_WID; x++)
+			for (x = 0; x < MAX_WID; x++)
 			{
 				set_grid_assign(y, x);
 			}
@@ -620,7 +502,7 @@ void get_display_info(int y, int x, t_display *displayPtr)
 		if (dark == GRID_LITE_TORCH)
 		{
 			/* Calculate distance from py,px */
-			dark = MAX(ABS(x - p_ptr_px), ABS(y - p_ptr_py)) - 1;
+			dark = MAX(ABS(x - px), ABS(y - py)) - 1;
 
 			/* We may have dark == -1 at py,px */
 			if (dark < 0) dark = 0;
@@ -648,7 +530,7 @@ void get_display_info(int y, int x, t_display *displayPtr)
 	 * Get the icon from the global icon map. The g_icon_map[]
 	 * array allows us to use different icons for the same
 	 * feature index. For example, doors may be vertical or
-	 * horizontal, and some walls are actually pillars.
+	 * horizontal.
 	 */
 	for (layer = 0; layer < ICON_LAYER_MAX; layer++)
 	{
@@ -742,7 +624,7 @@ void get_display_info(int y, int x, t_display *displayPtr)
 
 bool is_wall(int y, int x)
 {
-	int f_idx = cave_feat(y, x);
+	int f_idx = cave[y][x].feat;
 
 	/* Apply "mimic" field */
 	if (cave[y][x].mimic)
@@ -751,7 +633,6 @@ bool is_wall(int y, int x)
 	/* Apply mimic field */
 	f_idx = f_info[f_idx].mimic;
 
-	/* FIXME: wall for each variant */
 	if ((f_idx == FEAT_SECRET) ||
 		((f_idx >= FEAT_MAGMA) && (f_idx <= FEAT_PERM_SOLID)))
 	{
@@ -762,7 +643,7 @@ bool is_wall(int y, int x)
 
 bool is_door(int y, int x)
 {
-	int f_idx = cave_feat(y, x);
+	int f_idx = cave[y][x].feat;
 
 	/* Apply "mimic" field */
 	if (cave[y][x].mimic)
@@ -787,11 +668,11 @@ int wall_shape(int y, int x, bool force)
 	int row0n = 0, row2n = 0;
 	int shape;
 
-	if (!in_bounds_test(y, x))
+	if (!in_bounds2(y, x))
 		return GRID_SHAPE_NOT;
 
 	/* Require knowledge unless forced */
-	if (!force && !(cave_info(y, x) & CAVE_MARK))
+	if (!force && !(cave[y][x].info & CAVE_MARK))
 		return GRID_SHAPE_NOT;
 
 	/* Require wall or secret door */
@@ -810,13 +691,13 @@ int wall_shape(int y, int x, bool force)
 			if ((i == 1) && (j == 1))
 				continue;
 
-			if (!in_bounds_test(yy, xx))
+			if (!in_bounds2(yy, xx))
 			{
 				wall[j][i] = FALSE;
 				continue;
 			}
 
-			known = force || ((cave_info(yy, xx) & CAVE_MARK) != 0);
+			known = force || ((cave[yy][xx].info & CAVE_MARK) != 0);
 
 			wall[j][i] = known &&
 				(g_grid[yy][xx].xtra & (GRID_XTRA_WALL | GRID_XTRA_DOOR));
@@ -1130,9 +1011,9 @@ void angtk_cave_changed(void)
 
 	/* Do not use g_cave_hgt/_wid */
 
-	for (y = 0; y < DUNGEON_HGT; y++)
+	for (y = 0; y < MAX_HGT; y++)
 	{
-		for (x = 0; x < DUNGEON_WID; x++)
+		for (x = 0; x < MAX_WID; x++)
 		{
 			get_grid_info(y, x, &g_grid[y][x]);
 			g_grid[y][x].shape = wall_shape(y, x, FALSE);
@@ -1180,7 +1061,7 @@ void angtk_feat_changed(int y, int x)
 		int yy = y + ddy_ddd[d];
 		int xx = x + ddx_ddd[d];
 		
-		if (in_bounds_test(yy, xx) && (g_grid[yy][xx].xtra & GRID_XTRA_WALL))
+		if (in_bounds2(yy, xx) && (g_grid[yy][xx].xtra & GRID_XTRA_WALL))
 		{
 			shape = wall_shape(yy, xx, FALSE);
 			if (shape != g_grid[yy][xx].shape)
@@ -1216,7 +1097,7 @@ void angtk_feat_known(int y, int x)
 				int yy = y + ddy_ddd[d];
 				int xx = x + ddx_ddd[d];
 				
-				if (in_bounds_test(yy, xx) && (g_grid[yy][xx].xtra & GRID_XTRA_WALL))
+				if (in_bounds2(yy, xx) && (g_grid[yy][xx].xtra & GRID_XTRA_WALL))
 				{
 					shape = wall_shape(yy, xx, FALSE);
 					if (shape != g_grid[yy][xx].shape)
@@ -1234,12 +1115,12 @@ void angtk_feat_known(int y, int x)
  * This routine determines the icon to use for the given cave
  * location. It is called after the dungeon is created or loaded
  * from the savefile, and whenever a feature changes. It handles
- * the possible TYPE_ALTERNATE assignments used to display doors
- * and pillars. It handles any special vault icons as well.
+ * the possible TYPE_ALTERNATE assignments used to display doors.
+ * It handles any special vault icons as well.
  */
 void set_grid_assign(int y, int x)
 {
-	int feat = cave_feat(y, x);
+	int feat = cave[y][x].feat;
 	t_assign assign, assignArray[ICON_LAYER_MAX];
 	IconSpec iconSpec;
 	int layer, shape;
@@ -1258,16 +1139,6 @@ void set_grid_assign(int y, int x)
 	feat = f_info[feat].mimic;
 
 g_grid[y][x].xtra &= ~0x0001;
-
-	/* If there is a custom vault for this level, use it */
-	if (vault_icon(y, x, TRUE, assignArray))
-	{
-		for (layer = 0; layer < ICON_LAYER_MAX; layer++)
-		{
-			g_icon_map[layer][y][x] = assignArray[layer];
-		}
-		return;
-	}
 
 	/* Get the assignment for this feature */
 	assign = g_assign[ASSIGN_FEATURE].assign[feat];
@@ -1304,7 +1175,7 @@ g_grid[y][x].xtra &= ~0x0001;
 		 * XXX Hack -- Remember if there is a second shape assignment.
 		 * The second assignment uses an "unknown" floor.
 		 */
-		assign2 = g_assignshape[shape][MAX_F_IDX + feat];
+		assign2 = g_assignshape[shape][max_f_idx + feat];
 		if ((assign2.assignType != ASSIGN_TYPE_ICON) ||
 			(assign2.icon.type != ICON_TYPE_DEFAULT))
 		{
@@ -1339,10 +1210,9 @@ g_grid[y][x].xtra &= ~0x0001;
 		{
 			/* The reason must be REASON_FEATURE */
 			t_alternate *alternatePtr = &g_alternate[assign.alternate.index];
-			int pillar = (g_grid[y][x].xtra & GRID_XTRA_PILLAR) != 0;
 	
 			/* Index 0 is normal granite wall, 1 is pillar */
-			iconSpec = alternatePtr->icon[pillar];
+			iconSpec = alternatePtr->icon[0];
 
 			assign.assignType = ASSIGN_TYPE_ICON;
 			assign.icon.type = iconSpec.type;
@@ -1389,10 +1259,9 @@ g_grid[y][x].xtra &= ~0x0001;
 			{
 				/* The reason must be REASON_FEATURE */
 				t_alternate *alternatePtr = &g_alternate[assign.alternate.index];
-				int pillar = (g_grid[y][x].xtra & GRID_XTRA_PILLAR) != 0;
 		
 				/* Index 0 is normal granite wall, 1 is pillar */
-				iconSpec = alternatePtr->icon[pillar];
+				iconSpec = alternatePtr->icon[0];
 
 				assign.assignType = ASSIGN_TYPE_ICON;
 				assign.icon.type = iconSpec.type;
@@ -1547,12 +1416,6 @@ int read_dark_file(char *fileName)
 	return TCL_OK;
 }
 
-#ifdef USE_HERMES
-#include "Hermes.h"
-HermesHandle g_hermes_conv;
-HermesHandle g_hermes_palette;
-#endif /* USE_HERMES */
-
 void init_palette(void)
 {
 	char path[1024], path2[1024];
@@ -1563,7 +1426,6 @@ void init_palette(void)
 	 * of icon data.
 	 */
 	path_build(path2, 1024, ANGBAND_DIR_TK, "config");
-path_build(path2, 1024, ANGBAND_DIR_COMMON_TK, "config");
 	path_build(path, 1024, path2, "palette_256");
 
 	if (Palette_Init(g_interp, path) != TCL_OK)
@@ -1582,27 +1444,11 @@ path_build(path2, 1024, ANGBAND_DIR_COMMON_TK, "config");
 		Colormap_One2OneTable(g_darken[i].table);
 	}
 	path_build(path2, 1024, ANGBAND_DIR_TK, "config");
-path_build(path2, 1024, ANGBAND_DIR_COMMON_TK, "config");
 	path_build(path, 1024, path2, "dark");
 	if (read_dark_file(path) != TCL_OK)
 	{
 		quit_fmt("error reading \"%s\"", path);
 	}
-
-#ifdef USE_HERMES
-	if (!Hermes_Init()) quit_fmt("Hermes_Init() failed");
-	g_hermes_conv = Hermes_ConverterInstance(HERMES_CONVERT_NORMAL);
-	if (!g_hermes_conv) quit_fmt("Hermes_ConverterInstance() failed");
-	g_hermes_palette = Hermes_PaletteInstance();
-	for (i = 0; i < 256; i++)
-	{
-		int32 *p = Hermes_PaletteGet(g_hermes_palette) + i;
-		*p =
-			g_palette_rgb[i * 3] << 16L |
-			g_palette_rgb[i * 3 + 1] << 8L |
-			g_palette_rgb[i * 3 + 2];
-	}
-#endif /* USE_HERMES */
 }
 
 /* 
@@ -1628,8 +1474,8 @@ bool door_vertical(int y, int x)
 	if (wall_above && wall_below) return (1);
 	
 	/* Check for doors on either horizontal side */
-	f_left = cave_feat(y, x - 1);
-	f_right = cave_feat(y, x + 1);
+	f_left = cave[y][x - 1].feat;
+	f_right = cave[y][x + 1].feat;
 	
 	/* Note we also check secret doors */
 	door_left = (f_left == FEAT_OPEN) || (f_left == FEAT_BROKEN) ||
@@ -1745,6 +1591,17 @@ IconPtr SetIconBits(IconPtr bg, IconPtr fg, IconPtr mk, TintTable t, IconPtr b)
 
 	/* Return the address of the buffer we wrote into */
 	return b - ICON_LENGTH;
+}
+
+/* Return the number of milliseconds */
+unsigned long Milliseconds(void)
+{
+#ifdef PLATFORM_WIN
+	return GetTickCount();
+#endif
+#ifdef PLATFORM_X11
+	return TclpGetClicks() / 1000;
+#endif
 }
 
 int update_sprites(void)
@@ -1922,7 +1779,7 @@ void angtk_image_reset(void)
 	int i;
 
 	/* Randomize monsters */
-	for (i = 1; i < MAX_R_IDX; i++)
+	for (i = 1; i < max_r_idx; i++)
 	{
 		int r_idx;
 		monster_race *r_ptr;
@@ -1931,7 +1788,7 @@ void angtk_image_reset(void)
 		while (1)
 		{
 			/* Pick a random non-unique */
-			r_idx = randint(MAX_R_IDX - 1);
+			r_idx = randint(max_r_idx - 1);
 
 			/* Access the monster race */
 			r_ptr = &r_info[r_idx];
@@ -1951,7 +1808,7 @@ void angtk_image_reset(void)
 	}
 
 	/* Randomize objects */
-	for (i = 1; i < MAX_K_IDX; i++)
+	for (i = 1; i < max_k_idx; i++)
 	{
 		int k_idx;
 		object_kind *k_ptr;
@@ -1960,7 +1817,7 @@ void angtk_image_reset(void)
 		while (1)
 		{
 			/* Pick a random object kind */
-			k_idx = randint(MAX_K_IDX - 1);
+			k_idx = randint(max_k_idx - 1);
 
 			/* Access the object kind */
 			k_ptr = &k_info[k_idx];
@@ -2070,21 +1927,7 @@ static void AngbandTimerProc(ClientData clientData)
 	g_timer_token = Tcl_CreateTimerHandler(TIMER_TICKS, AngbandTimerProc, 0);
 
 	/* No animation while repeating a command */
-#if 0
-	if (p_ptr_running || p_ptr_resting) return;
-
-	/*
-	 * If you look at do_cmd_bash() in ZAngband, command_rep is
-	 * set before get_rep_dir() is called, disabling animation
-	 * when asking for a direction. So if the command is repeated
-	 * and we are not actively waiting for a key, then skip animation.
-	 */
-	if (p_ptr_command_rep &&
-		(!inkey_flags || (inkey_flags == INKEY_DISTURB))) return;
-		
-#else
-	if (p_ptr_running || p_ptr_command_rep || p_ptr_resting) return;
-#endif
+	if (running || command_rep || resting) return;
 
 #ifdef TIMER_STATS
 
@@ -2358,12 +2201,12 @@ void init_icons(int size, int depth)
 	Icon_AddType(icon_data_ptr);
 
 	/* Allocate array of t_assign for each monster */
-	g_assign[ASSIGN_MONSTER].count = MAX_R_IDX;
-	C_MAKE(g_assign[ASSIGN_MONSTER].assign, MAX_R_IDX, t_assign);
+	g_assign[ASSIGN_MONSTER].count = max_r_idx;
+	C_MAKE(g_assign[ASSIGN_MONSTER].assign, max_r_idx, t_assign);
 
 	/* Allocate array of t_assign for each object */
-	g_assign[ASSIGN_OBJECT].count = MAX_K_IDX;
-	C_MAKE(g_assign[ASSIGN_OBJECT].assign, MAX_K_IDX, t_assign);
+	g_assign[ASSIGN_OBJECT].count = max_k_idx;
+	C_MAKE(g_assign[ASSIGN_OBJECT].assign, max_k_idx, t_assign);
 
 	/* Allocate array of t_assign for the character */
 	n = 1;
@@ -2371,8 +2214,8 @@ void init_icons(int size, int depth)
 	C_MAKE(g_assign[ASSIGN_CHARACTER].assign, n, t_assign);
 
 	/* Allocate array of t_assign for each feature */
-	g_assign[ASSIGN_FEATURE].count = MAX_F_IDX;
-	C_MAKE(g_assign[ASSIGN_FEATURE].assign, MAX_F_IDX, t_assign);
+	g_assign[ASSIGN_FEATURE].count = max_f_idx;
+	C_MAKE(g_assign[ASSIGN_FEATURE].assign, max_f_idx, t_assign);
 
 	assign.assignType = ASSIGN_TYPE_ICON;
 	assign.icon.type = ICON_TYPE_DEFAULT;
@@ -2406,14 +2249,14 @@ void init_icons(int size, int depth)
 	 * are not calculated for visibility or light radius. This
 	 * array allows different icons to be assigned to the same
 	 * feature type. For example, doors are horizontal or vertical,
-	 * and pillars have different icons, and the town has a varied
+	 * and have different icons, and the town has a varied
 	 * set of icons.
 	 */
-	for (i = 0; i < DUNGEON_HGT; i++)
+	for (i = 0; i < MAX_HGT; i++)
 	{
 		int layer;
 		for (layer = 0; layer < ICON_LAYER_MAX; layer++)
-			C_MAKE(g_icon_map[layer][i], DUNGEON_WID, t_assign);
+			C_MAKE(g_icon_map[layer][i], MAX_WID, t_assign);
 	}
 
 	/*
@@ -2422,14 +2265,14 @@ void init_icons(int size, int depth)
 	 * (2) FT_LIGHT_ICON means use a sequence of icons
 	 * (3) FT_LIGHT_TINT means use the g_darken[] tint table (slow)
 	 */
-	C_MAKE(g_feat_lite, MAX_F_IDX, int);
+	C_MAKE(g_feat_lite, max_f_idx, int);
 
 	/*
 	 * When a feature is masked, or a masked icon is drawn on
 	 * a feature, we may use the icon assigned to a different feature
 	 * as the background.
 	 */
-	C_MAKE(g_background, MAX_F_IDX, int);
+	C_MAKE(g_background, max_f_idx, int);
 
 	/* Set default icon for each feature */
 	for (i = 0; i < g_assign[ASSIGN_FEATURE].count; i++)
@@ -2443,8 +2286,8 @@ void init_icons(int size, int depth)
 	for (i = 0; i < GRID_SHAPE_MAX; i++)
 	{
 		int j;
-		C_MAKE(g_assignshape[i], MAX_F_IDX * 2, t_assign);
-		for (j = 0; j < MAX_F_IDX * 2; j++)
+		C_MAKE(g_assignshape[i], max_f_idx * 2, t_assign);
+		for (j = 0; j < max_f_idx * 2; j++)
 		{
 			g_assignshape[i][j] = assign;
 		}
@@ -2485,9 +2328,6 @@ void init_icons(int size, int depth)
 		g_effect[EFFECT_AMMO].icon[i] = iconDefault;
 	}
 
-	/* Initialize the custom town display stuff */
-	init_vault();
-
 	/* Clear the color hash table */
 	Palette_ResetHash();
 
@@ -2517,18 +2357,14 @@ void init_icons(int size, int depth)
 		quit(Tcl_GetStringFromObj(Tcl_GetObjResult(g_interp), NULL));
 
 	/* Hack -- indices for hallucination */
-	C_MAKE(g_image_monster, MAX_R_IDX, int);
-	C_MAKE(g_image_object, MAX_K_IDX, int);
+	C_MAKE(g_image_monster, max_r_idx, int);
+	C_MAKE(g_image_object, max_k_idx, int);
 
 	/* Randomize the hallucination indices */
 	angtk_image_reset();
 	
 	/* Initialize the animation timer */
 	init_timer();
-
-#ifdef USE_STARTUP_LOG
-	startup_log_open();
-#endif /* USE_STARTUP_LOG */
 
 	/* Now we can safely use lite_spot() */
 	angtk_lite_spot = angtk_lite_spot_real;
@@ -2544,8 +2380,4 @@ void free_icons(void)
 
 	/* Free the animation timer */
 	free_timer();
-
-#ifdef USE_STARTUP_LOG
-	startup_log_close();
-#endif /* USE_STARTUP_LOG */
 }

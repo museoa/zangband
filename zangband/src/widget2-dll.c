@@ -100,22 +100,9 @@ static void CalcLimits(Widget *widgetPtr, WidgetItem *itemPtr)
 	dy = widgetPtr->by;
 	dx = widgetPtr->bx;
 
-	if (widgetPtr->style != WIDGET_STYLE_ISO)
-	{
-		height = widgetPtr->gheight;
-		width = widgetPtr->gwidth;
-		my = 1;
-	}
-	else
-	{
-		height = ISO_FH2;
-		width = ISO_WID2;
-		my = 2;
-
-		/* BitmapToCanvas */
-		dy += widgetPtr->cy - (ISO_HGT - ISO_FH);
-		dx += widgetPtr->cx;
-	}
+	height = widgetPtr->gheight;
+	width = widgetPtr->gwidth;
+	my = 1;
 	
 	itemPtr->minY = (dy + itemPtr->y1) / height * my;
 	itemPtr->maxY = (dy + itemPtr->y2) / height * my;
@@ -168,60 +155,60 @@ typedef struct ProgressItem {
 #define PROGRESS_DISPLAY 0x8000
 
 static Tk_OptionSpec optionSpecProgress[] = {
-    {TK_OPTION_INT, "-x", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-x", NULL, NULL,
      "0", -1, Tk_Offset(ProgressItem, x), 0, 0,
      PROGRESS_MOVE | PROGRESS_DISPLAY},
-    {TK_OPTION_INT, "-y", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-y", NULL, NULL,
      "0", -1, Tk_Offset(ProgressItem, y), 0, 0,
      PROGRESS_MOVE | PROGRESS_DISPLAY},
-    {TK_OPTION_INT, "-width", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-width", NULL, NULL,
      "160", -1, Tk_Offset(ProgressItem, width), 0, 0,
      PROGRESS_SIZE | PROGRESS_DRAW | PROGRESS_DISPLAY},
-    {TK_OPTION_INT, "-height", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-height", NULL, NULL,
      "7", -1, Tk_Offset(ProgressItem, height), 0, 0,
      PROGRESS_SIZE | PROGRESS_DRAW | PROGRESS_DISPLAY},
-    {TK_OPTION_COLOR, "-done", (char *) NULL, (char *) NULL,
+    {TK_OPTION_COLOR, "-done", NULL, NULL,
      "Black", -1, Tk_Offset(ProgressItem, done), 0, 0,
      PROGRESS_DONE | PROGRESS_DISPLAY},
-    {TK_OPTION_COLOR, "-todo", (char *) NULL, (char *) NULL,
+    {TK_OPTION_COLOR, "-todo", NULL, NULL,
      "White", -1, Tk_Offset(ProgressItem, todo), 0, 0,
      PROGRESS_TODO | PROGRESS_DISPLAY},
-    {TK_OPTION_BOOLEAN, "-bevel", (char *) NULL, (char *) NULL,
+    {TK_OPTION_BOOLEAN, "-bevel", NULL, NULL,
      "1", -1, Tk_Offset(ProgressItem, bevel), 0, 0, 0},
-    {TK_OPTION_COLOR, "-bevellight", (char *) NULL, (char *) NULL,
+    {TK_OPTION_COLOR, "-bevellight", NULL, NULL,
      DEF_BEVEL_LIGHT, -1, Tk_Offset(ProgressItem, bevelLight), 0, 0,
      PROGRESS_BEVEL_L | PROGRESS_DISPLAY},
-    {TK_OPTION_COLOR, "-beveldark", (char *) NULL, (char *) NULL,
+    {TK_OPTION_COLOR, "-beveldark", NULL, NULL,
      DEF_BEVEL_DARK, -1, Tk_Offset(ProgressItem, bevelDark), 0, 0,
      PROGRESS_BEVEL_D | PROGRESS_DISPLAY},
 /* WIDGET_TRANSPARENCY */
-    {TK_OPTION_INT, "-done2", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-done2", NULL, NULL,
      "0", -1, Tk_Offset(ProgressItem, done2), 0, 0,
      PROGRESS_DONE | PROGRESS_DISPLAY},
-    {TK_OPTION_INT, "-todo2", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-todo2", NULL, NULL,
      "0", -1, Tk_Offset(ProgressItem, todo2), 0, 0,
      PROGRESS_TODO | PROGRESS_DISPLAY},
-    {TK_OPTION_INT, "-bevellight2", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-bevellight2", NULL, NULL,
      DEF_BEVEL_OPACITY, -1, Tk_Offset(ProgressItem, bevelLight2), 0, 0,
      PROGRESS_BEVEL_L | PROGRESS_DISPLAY},
-    {TK_OPTION_INT, "-beveldark2", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-beveldark2", NULL, NULL,
      DEF_BEVEL_OPACITY, -1, Tk_Offset(ProgressItem, bevelDark2), 0, 0,
      PROGRESS_BEVEL_D | PROGRESS_DISPLAY},
 /* */
-    {TK_OPTION_INT, "-current", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-current", NULL, NULL,
      "0", -1, Tk_Offset(ProgressItem, cur), 0, 0,
      PROGRESS_VAL | PROGRESS_DRAW | PROGRESS_DISPLAY},
-    {TK_OPTION_INT, "-maximum", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-maximum", NULL, NULL,
      "1", -1, Tk_Offset(ProgressItem, max), 0, 0, 
      PROGRESS_VAL | PROGRESS_DRAW | PROGRESS_DISPLAY},
-    {TK_OPTION_BOOLEAN, "-visible", (char *) NULL, (char *) NULL,
+    {TK_OPTION_BOOLEAN, "-visible", NULL, NULL,
      "1", -1, Tk_Offset(WidgetItem, visible), 0, 0,
      PROGRESS_DISPLAY},
-    {TK_OPTION_ANCHOR, "-anchor", (char *) NULL, (char *) NULL,
+    {TK_OPTION_ANCHOR, "-anchor", NULL, NULL,
 	 "center", -1, Tk_Offset(ProgressItem, anchor), 0, 0,
 	 PROGRESS_MOVE | PROGRESS_DISPLAY},
-    {TK_OPTION_END, (char *) NULL, (char *) NULL, (char *) NULL,
-     (char *) NULL, 0, -1, 0, 0, 0}
+    {TK_OPTION_END, NULL, NULL, NULL,
+     NULL, 0, -1, 0, 0, 0}
 };
 
 static int	CreateProgress _ANSI_ARGS_((Tcl_Interp *interp,
@@ -251,7 +238,7 @@ WidgetItemType ProgressType = {
 	DisplayProgress,
 	ChangedProgress,
 	DeleteProgress,
-	(WidgetItemType *) NULL
+	NULL
 };
 
 /* 
@@ -363,13 +350,13 @@ static int ConfigureProgress(Tcl_Interp *interp, Widget *widgetPtr,
 			if ((barPtr->header.x1 < 0) || (barPtr->width < 0) ||
 				(barPtr->header.x2 >= widgetPtr->width))
 			{
-				Tcl_AppendResult(interp, "illegal x size or position", (char *) NULL);
+				Tcl_AppendResult(interp, "illegal x size or position", NULL);
 				continue;
 			}
 			if ((barPtr->header.y1 < 0) || (barPtr->height < 0) ||
 				(barPtr->header.y2 >= widgetPtr->height))
 			{
-				Tcl_AppendResult(interp, "illegal y size or position", (char *) NULL);
+				Tcl_AppendResult(interp, "illegal y size or position", NULL);
 				continue;
 			}
 		
@@ -397,7 +384,7 @@ static int ConfigureProgress(Tcl_Interp *interp, Widget *widgetPtr,
 				
 				if (BAD_COLOR(barPtr->done2) || BAD_COLOR(barPtr->todo2))
 				{
-					Tcl_AppendResult(interp, "bad opacity", (char *) NULL);
+					Tcl_AppendResult(interp, "bad opacity", NULL);
 					continue;
 				}
 			
@@ -415,7 +402,7 @@ static int ConfigureProgress(Tcl_Interp *interp, Widget *widgetPtr,
 			if ((barPtr->cur < 0) || (barPtr->cur > barPtr->max) ||
 				(barPtr->max < 1))
 			{
-				Tcl_AppendResult(interp, "bad min/max value", (char *) NULL);
+				Tcl_AppendResult(interp, "bad min/max value", NULL);
 				continue;
 			}
 			barPtr->length = (barPtr->width - 2) * ((long) barPtr->cur) / barPtr->max;
@@ -439,14 +426,14 @@ static int ConfigureProgress(Tcl_Interp *interp, Widget *widgetPtr,
 					(barPtr->header.x2 >= widgetPtr->width))
 				{
 					Tcl_AppendResult(interp, "illegal x size or position",
-						(char *) NULL);
+						 NULL);
 					continue;
 				}
 				if ((barPtr->header.y1 < 0) || (barPtr->height < 0) ||
 					(barPtr->header.y2 >= widgetPtr->height))
 				{
 					Tcl_AppendResult(interp, "illegal y size or position",
-						(char *) NULL);
+						NULL);
 					continue;
 				}
 			
@@ -483,7 +470,7 @@ static int ConfigureProgress(Tcl_Interp *interp, Widget *widgetPtr,
 				if (BAD_COLOR(barPtr->done1) || BAD_COLOR(barPtr->done2) ||
 					BAD_COLOR(barPtr->todo1) || BAD_COLOR(barPtr->todo2))
 				{
-					Tcl_AppendResult(interp, "bad color or opacity", (char *) NULL);
+					Tcl_AppendResult(interp, "bad color or opacity", NULL);
 					continue;
 				}
 			
@@ -527,7 +514,7 @@ static int ConfigureProgress(Tcl_Interp *interp, Widget *widgetPtr,
 				if ((barPtr->cur < 0) || (barPtr->cur > barPtr->max) ||
 					(barPtr->max < 1))
 				{
-					Tcl_AppendResult(interp, "bad min/max value", (char *) NULL);
+					Tcl_AppendResult(interp, "bad min/max value", NULL);
 					continue;
 				}
 				barPtr->length = (barPtr->width - 2) * ((long) barPtr->cur) / barPtr->max;
@@ -880,77 +867,77 @@ static char *keyword_config_text[] = {
 	NULL};
 	
 static Tk_OptionSpec optionSpecText[] = {
-    {TK_OPTION_PIXELS, "-x", (char *) NULL, (char *) NULL,
+    {TK_OPTION_PIXELS, "-x", NULL, NULL,
      "0", -1, Tk_Offset(TextItem, x), 0, 0, 0},
-    {TK_OPTION_PIXELS, "-y", (char *) NULL, (char *) NULL,
+    {TK_OPTION_PIXELS, "-y", NULL, NULL,
      "0", -1, Tk_Offset(TextItem, y), 0, 0, 0},
-    {TK_OPTION_ANCHOR, "-anchor", (char *) NULL, (char *) NULL,
+    {TK_OPTION_ANCHOR, "-anchor", NULL, NULL,
 	 "center", -1, Tk_Offset(TextItem, anchor), 0, 0, 0},
-    {TK_OPTION_FONT, "-font", (char *) NULL, (char *) NULL,
+    {TK_OPTION_FONT, "-font", NULL, NULL,
 	 "{MS Sans Serif} 8", -1, Tk_Offset(TextItem, tkfont), 0, 0,
 	 TEXT_FONT | TEXT_TEXT | TEXT_DRAW | TEXT_DISPLAY},
-    {TK_OPTION_JUSTIFY, "-justify", (char *) NULL, (char *) NULL,
+    {TK_OPTION_JUSTIFY, "-justify", NULL, NULL,
 	 "left", -1, Tk_Offset(TextItem, justify), 0, 0,
 	 TEXT_TEXT | TEXT_DRAW | TEXT_DISPLAY},
-    {TK_OPTION_STRING, "-text", (char *) NULL, (char *) NULL,
+    {TK_OPTION_STRING, "-text", NULL, NULL,
 	 "", -1, Tk_Offset(TextItem, text), 0, 0,
 	 TEXT_TEXT | TEXT_DRAW | TEXT_DISPLAY},
-    {TK_OPTION_PIXELS, "-width", (char *) NULL, (char *) NULL,
+    {TK_OPTION_PIXELS, "-width", NULL, NULL,
      "160", -1, Tk_Offset(TextItem, width), 0, 0,
      TEXT_SIZE | TEXT_DRAW | TEXT_DISPLAY},
-    {TK_OPTION_PIXELS, "-height", (char *) NULL, (char *) NULL,
+    {TK_OPTION_PIXELS, "-height", NULL, NULL,
      "7", -1, Tk_Offset(TextItem, height), 0, 0,
      TEXT_SIZE | TEXT_DRAW | TEXT_DISPLAY},
-    {TK_OPTION_COLOR, "-fill", (char *) NULL, (char *) NULL,
+    {TK_OPTION_COLOR, "-fill", NULL, NULL,
      DEF_TEXT_FILL, -1, Tk_Offset(TextItem, fill), 0, 0,
      TEXT_FILL | TEXT_DISPLAY},
-    {TK_OPTION_COLOR, "-background", (char *) NULL, (char *) NULL,
+    {TK_OPTION_COLOR, "-background", NULL, NULL,
      DEF_TEXT_BACK, -1, Tk_Offset(TextItem, background),
      TK_OPTION_NULL_OK, 0,
      TEXT_BACKGROUND | TEXT_DISPLAY},
-    {TK_OPTION_BOOLEAN, "-bevel", (char *) NULL, (char *) NULL,
+    {TK_OPTION_BOOLEAN, "-bevel", NULL, NULL,
      "1", -1, Tk_Offset(TextItem, bevel), 0, 0, 0},
-    {TK_OPTION_COLOR, "-bevellight", (char *) NULL, (char *) NULL,
+    {TK_OPTION_COLOR, "-bevellight", NULL, NULL,
      DEF_BEVEL_LIGHT, -1, Tk_Offset(TextItem, bevelLight), 0, 0,
      TEXT_BEVEL_L | TEXT_DISPLAY},
-    {TK_OPTION_COLOR, "-beveldark", (char *) NULL, (char *) NULL,
+    {TK_OPTION_COLOR, "-beveldark", NULL, NULL,
      DEF_BEVEL_DARK, -1, Tk_Offset(TextItem, bevelDark), 0, 0,
      TEXT_BEVEL_D | TEXT_DISPLAY},
 /* WIDGET_TRANSPARENCY */
-    {TK_OPTION_INT, "-fill2", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-fill2", NULL, NULL,
      DEF_TEXT_OPACITY, -1, Tk_Offset(TextItem, fill2), 0, 0,
      TEXT_FILL | TEXT_DISPLAY},
-    {TK_OPTION_INT, "-background2", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-background2", NULL, NULL,
      DEF_TEXT_OPACITY, -1, Tk_Offset(TextItem, background2), 0, 0,
      TEXT_BACKGROUND | TEXT_DISPLAY},
-    {TK_OPTION_INT, "-bevellight2", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-bevellight2", NULL, NULL,
      DEF_BEVEL_OPACITY, -1, Tk_Offset(TextItem, bevelLight2), 0, 0,
      TEXT_BEVEL_L | TEXT_DISPLAY},
-    {TK_OPTION_INT, "-beveldark2", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-beveldark2", NULL, NULL,
      DEF_BEVEL_OPACITY, -1, Tk_Offset(TextItem, bevelDark2), 0, 0,
      TEXT_BEVEL_D | TEXT_DISPLAY},
 /* */
-    {TK_OPTION_BOOLEAN, "-clipx", (char *) NULL, (char *) NULL,
+    {TK_OPTION_BOOLEAN, "-clipx", NULL, NULL,
      "0", -1, Tk_Offset(TextItem, clipX), 0, 0, 0},
-    {TK_OPTION_BOOLEAN, "-clipy", (char *) NULL, (char *) NULL,
+    {TK_OPTION_BOOLEAN, "-clipy", NULL, NULL,
      "0", -1, Tk_Offset(TextItem, clipY), 0, 0, 0},
-    {TK_OPTION_BOOLEAN, "-expandx", (char *) NULL, (char *) NULL,
+    {TK_OPTION_BOOLEAN, "-expandx", NULL, NULL,
      "0", -1, Tk_Offset(TextItem, expandX), 0, 0, 0},
-    {TK_OPTION_BOOLEAN, "-expandy", (char *) NULL, (char *) NULL,
+    {TK_OPTION_BOOLEAN, "-expandy", NULL, NULL,
      "0", -1, Tk_Offset(TextItem, expandY), 0, 0, 0},
-    {TK_OPTION_PIXELS, "-padleft", (char *) NULL, (char *) NULL,
+    {TK_OPTION_PIXELS, "-padleft", NULL, NULL,
      "2", -1, Tk_Offset(TextItem, padLeft), 0, 0, 0},
-    {TK_OPTION_PIXELS, "-padright", (char *) NULL, (char *) NULL,
+    {TK_OPTION_PIXELS, "-padright", NULL, NULL,
      "2", -1, Tk_Offset(TextItem, padRight), 0, 0, 0},
-    {TK_OPTION_PIXELS, "-padtop", (char *) NULL, (char *) NULL,
+    {TK_OPTION_PIXELS, "-padtop", NULL, NULL,
      "0", -1, Tk_Offset(TextItem, padTop), 0, 0, 0},
-    {TK_OPTION_PIXELS, "-padbottom", (char *) NULL, (char *) NULL,
+    {TK_OPTION_PIXELS, "-padbottom", NULL, NULL,
      "0", -1, Tk_Offset(TextItem, padBottom), 0, 0, 0},
-    {TK_OPTION_BOOLEAN, "-visible", (char *) NULL, (char *) NULL,
+    {TK_OPTION_BOOLEAN, "-visible", NULL, NULL,
      "0", -1, Tk_Offset(WidgetItem, visible), 0, 0,
      TEXT_DISPLAY},
-    {TK_OPTION_END, (char *) NULL, (char *) NULL, (char *) NULL,
-     (char *) NULL, 0, -1, 0, 0, 0}
+    {TK_OPTION_END, NULL, NULL, NULL,
+     NULL, 0, -1, 0, 0, 0}
 };
 
 static int	CreateText _ANSI_ARGS_((Tcl_Interp *interp,
@@ -981,7 +968,7 @@ WidgetItemType TextType = {
 	DisplayText,
 	ChangedText,
 	DeleteText,
-	(WidgetItemType *) NULL
+	NULL
 };
 
 /*
@@ -1581,7 +1568,7 @@ static int SanityCheckText(Widget *widgetPtr, TextItem *textPtr)
 		BAD_COLOR(textPtr->fill2) || BAD_COLOR(textPtr->background2))
 	{
 		Tcl_AppendResult(widgetPtr->interp, "bad color or opacity",
-			(char *) NULL);
+			NULL);
 		return TCL_ERROR;
 	}
 #endif
@@ -1591,7 +1578,7 @@ static int SanityCheckText(Widget *widgetPtr, TextItem *textPtr)
 		((itemPtr->x2 - itemPtr->x1) > textPtr->width))
 	{
 		Tcl_AppendResult(widgetPtr->interp, "illegal x size or position",
-			(char *) NULL);
+			NULL);
 		return TCL_ERROR;
 	}
 
@@ -1601,7 +1588,7 @@ static int SanityCheckText(Widget *widgetPtr, TextItem *textPtr)
 		((itemPtr->y2 - itemPtr->y1) > textPtr->height))
 	{
 		Tcl_AppendResult(widgetPtr->interp, "illegal y size or position",
-			(char *) NULL);
+			NULL);
 		return TCL_ERROR;
 	}
 
@@ -1815,18 +1802,18 @@ typedef struct CursorItem {
 } CursorItem;
 
 static Tk_OptionSpec optionSpecCursor[] = {
-    {TK_OPTION_BOOLEAN, "-visible", (char *) NULL, (char *) NULL,
+    {TK_OPTION_BOOLEAN, "-visible", NULL, NULL,
      "1", -1, Tk_Offset(WidgetItem, visible), 0, 0, 0},
-    {TK_OPTION_PIXELS, "-x", (char *) NULL, (char *) NULL,
+    {TK_OPTION_PIXELS, "-x", NULL, NULL,
      "0", -1, Tk_Offset(CursorItem, x), 0, 0, 0},
-    {TK_OPTION_PIXELS, "-y", (char *) NULL, (char *) NULL,
+    {TK_OPTION_PIXELS, "-y", NULL, NULL,
      "0", -1, Tk_Offset(CursorItem, y), 0, 0, 0},
-    {TK_OPTION_COLOR, "-color", (char *) NULL, (char *) NULL,
+    {TK_OPTION_COLOR, "-color", NULL, NULL,
      "yellow", -1, Tk_Offset(CursorItem, color), 0, 0, 0},
-    {TK_OPTION_INT, "-linewidth", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-linewidth", NULL, NULL,
      "2", -1, Tk_Offset(CursorItem, lineWidth), 0, 0, 0},
-    {TK_OPTION_END, (char *) NULL, (char *) NULL, (char *) NULL,
-     (char *) NULL, 0, -1, 0, 0, 0}
+    {TK_OPTION_END, NULL, NULL, NULL,
+     NULL, 0, -1, 0, 0, 0}
 };
 
 static int	KreateCursor _ANSI_ARGS_((Tcl_Interp *interp,
@@ -1851,7 +1838,7 @@ WidgetItemType CursorType = {
 	DisplayCursor,
 	NULL,
 	DeleteCursor,
-	(WidgetItemType *) NULL
+	NULL
 };
 
 /*
@@ -1988,6 +1975,8 @@ static int DisplayCursor(Tcl_Interp *interp, Widget *widgetPtr,
 	if (CalcCursorPosition(widgetPtr, cursorPtr))
 	{
 		int lineWidth = cursorPtr->lineWidth;
+		int gHeight = widgetPtr->gheight;
+		int gWidth = widgetPtr->gwidth;
 		
 		col = cursorPtr->col, row = cursorPtr->row;
 	
@@ -1995,38 +1984,13 @@ static int DisplayCursor(Tcl_Interp *interp, Widget *widgetPtr,
 		gcValues.line_width = lineWidth;
 		gc = Tk_GetGC(widgetPtr->tkwin, GCForeground | GCLineWidth, &gcValues);
 
-		if (widgetPtr->style != WIDGET_STYLE_ISO)
-		{
-			int gHeight = widgetPtr->gheight;
-			int gWidth = widgetPtr->gwidth;
-
-		    XDrawRectangle(widgetPtr->display,
-		    	widgetPtr->bitmap.pixmap, gc,
-				col * gWidth + lineWidth / 2,
-				row * gHeight + lineWidth / 2,
-				gWidth - lineWidth / 2 - 1,
-				gHeight - lineWidth / 2 - 1);
-		}
-		else
-		{
-			XPoint points[10];
-			int tile = row * widgetPtr->cc + col;
-			int yp = widgetPtr->yp[tile];
-			int xp = widgetPtr->xp[tile];
-			int np = 0;
-
-			points[np].x = xp, points[np++].y = yp + ISO_HGT - ISO_FH2 / 2 - 1;
-			points[np].x = xp + ISO_WID / 2, points[np++].y = yp + ISO_HGT - ISO_FH2 - 1;
-			points[np].x = xp + ISO_WID / 2 - 1, points[np++].y = yp + ISO_HGT - ISO_FH2 - 1;
-			points[np].x = xp + ISO_WID - 1, points[np++].y = yp + ISO_HGT - ISO_FH2 / 2 - 1;
-			points[np].x = xp + ISO_WID / 2 - 1, points[np++].y = yp + ISO_HGT - 1;
-			points[np].x = xp + ISO_WID / 2, points[np++].y = yp + ISO_HGT - 1;
-			points[np++] = points[0];
-
-			XDrawLines(widgetPtr->display,
-		    	widgetPtr->bitmap.pixmap, gc,
-		    	points, np, CoordModeOrigin);
-		}
+		XDrawRectangle(widgetPtr->display,
+			widgetPtr->bitmap.pixmap, gc,
+			col * gWidth + lineWidth / 2,
+			row * gHeight + lineWidth / 2,
+			gWidth - lineWidth / 2 - 1,
+			gHeight - lineWidth / 2 - 1);
+		
 		
 		Tk_FreeGC(widgetPtr->display, gc);
 
@@ -2051,6 +2015,9 @@ static int CalcCursorPosition(Widget *widgetPtr, CursorItem *cursorPtr)
 {
 	WidgetItem *itemPtr = (WidgetItem *) cursorPtr;
 	int row, col;
+	
+	int gHeight = widgetPtr->gheight;
+	int gWidth = widgetPtr->gwidth;
 
 	if (!Widget_CaveToView(widgetPtr, cursorPtr->y, cursorPtr->x, &row, &col))
 		return 0;
@@ -2060,26 +2027,10 @@ static int CalcCursorPosition(Widget *widgetPtr, CursorItem *cursorPtr)
 	itemPtr->minX = itemPtr->maxX = col;
 	itemPtr->minY = itemPtr->maxY = row;
 
-	if (widgetPtr->style == WIDGET_STYLE_ISO)
-	{
-		int tile = row * widgetPtr->cc + col;
-		int yp = widgetPtr->yp[tile];
-		int xp = widgetPtr->xp[tile];
-		itemPtr->x1 = xp + ISO_LAPX - widgetPtr->bx;
-		itemPtr->y1 = yp + ISO_HGT - ISO_FH - widgetPtr->by;
-		itemPtr->x2 = itemPtr->x1 + ISO_WID;
-		itemPtr->y2 = itemPtr->y1 + ISO_HGT;
-	}
-	else
-	{
-		int gHeight = widgetPtr->gheight;
-		int gWidth = widgetPtr->gwidth;
-
-		itemPtr->x1 = col * gWidth - widgetPtr->bx;
-		itemPtr->x2 = itemPtr->x1 + gWidth;
-		itemPtr->y1 = row * gHeight - widgetPtr->by;
-		itemPtr->y2 = itemPtr->y1 + gHeight;
-	}
+	itemPtr->x1 = col * gWidth - widgetPtr->bx;
+	itemPtr->x2 = itemPtr->x1 + gWidth;
+	itemPtr->y1 = row * gHeight - widgetPtr->by;
+	itemPtr->y2 = itemPtr->y1 + gHeight;
 
 	return 1;
 }
@@ -2100,22 +2051,22 @@ typedef struct RectItem {
 } RectItem;
 
 static Tk_OptionSpec optionSpecRect[] = {
-    {TK_OPTION_BOOLEAN, "-visible", (char *) NULL, (char *) NULL,
+    {TK_OPTION_BOOLEAN, "-visible", NULL, NULL,
      "0", -1, Tk_Offset(WidgetItem, visible), 0, 0, 0},
-    {TK_OPTION_PIXELS, "-x1", (char *) NULL, (char *) NULL,
+    {TK_OPTION_PIXELS, "-x1", NULL, NULL,
      "0", -1, Tk_Offset(RectItem, x1), 0, 0, RECT_BOUNDS},
-    {TK_OPTION_PIXELS, "-y1", (char *) NULL, (char *) NULL,
+    {TK_OPTION_PIXELS, "-y1", NULL, NULL,
      "0", -1, Tk_Offset(RectItem, y1), 0, 0, RECT_BOUNDS},
-    {TK_OPTION_PIXELS, "-x2", (char *) NULL, (char *) NULL,
+    {TK_OPTION_PIXELS, "-x2", NULL, NULL,
      "0", -1, Tk_Offset(RectItem, x2), 0, 0, RECT_BOUNDS},
-    {TK_OPTION_PIXELS, "-y2", (char *) NULL, (char *) NULL,
+    {TK_OPTION_PIXELS, "-y2", NULL, NULL,
      "0", -1, Tk_Offset(RectItem, y2), 0, 0, RECT_BOUNDS},
-    {TK_OPTION_COLOR, "-color", (char *) NULL, (char *) NULL,
+    {TK_OPTION_COLOR, "-color", NULL, NULL,
      "yellow", -1, Tk_Offset(RectItem, color), 0, 0, 0},
-    {TK_OPTION_INT, "-linewidth", (char *) NULL, (char *) NULL,
+    {TK_OPTION_INT, "-linewidth", NULL, NULL,
      "2", -1, Tk_Offset(RectItem, lineWidth), 0, 0, 0},
-    {TK_OPTION_END, (char *) NULL, (char *) NULL, (char *) NULL,
-     (char *) NULL, 0, -1, 0, 0, 0}
+    {TK_OPTION_END, NULL, NULL, NULL,
+     NULL, 0, -1, 0, 0, 0}
 };
 
 static int CreateRect _ANSI_ARGS_((Tcl_Interp *interp,
@@ -2140,7 +2091,7 @@ WidgetItemType RectType = {
 	DisplayRect,
 	NULL,
 	DeleteRect,
-	(WidgetItemType *) NULL
+	NULL
 };
 
 /*
@@ -2245,41 +2196,20 @@ static int ConfigureRect(Tcl_Interp *interp, Widget *widgetPtr,
 
 	Tk_FreeSavedOptions(&savedOptions);
 
-#if 1
 	if (redisplay && (itemPtr->visible || wasVisible))
 	{
-		if (widgetPtr->style == WIDGET_STYLE_ISO)
+		if (rectPtr->hasDirty)
 		{
-			Widget_Wipe(widgetPtr);
+			Widget_InvalidateArea(widgetPtr,
+				rectPtr->dirty[0], rectPtr->dirty[1],
+				rectPtr->dirty[2], rectPtr->dirty[3]);
+			rectPtr->hasDirty = FALSE;
 		}
-		else
-		{
-			if (rectPtr->hasDirty)
-			{
-				Widget_InvalidateArea(widgetPtr,
-					rectPtr->dirty[0], rectPtr->dirty[1],
-					rectPtr->dirty[2], rectPtr->dirty[3]);
-				rectPtr->hasDirty = FALSE;
-			}
-			Widget_InvalidateArea(widgetPtr, itemPtr->minY, itemPtr->minX,
-				itemPtr->maxY, itemPtr->maxX);
-			widgetPtr->flags |= WIDGET_DRAW_INVALID;
-			Widget_EventuallyRedraw(widgetPtr);
-		}
-	}
-#else
-	if (redisplay && (itemPtr->visible || wasVisible))
-	{
-		if (itemPtr->visible && (!wasVisible || (mask & RECT_BOUNDS)))
-		{
-			Widget_InvalidateArea(widgetPtr, itemPtr->minY, itemPtr->minX,
-				itemPtr->maxY, itemPtr->maxX);
-		}
-
+		Widget_InvalidateArea(widgetPtr, itemPtr->minY, itemPtr->minX,
+			itemPtr->maxY, itemPtr->maxX);
 		widgetPtr->flags |= WIDGET_DRAW_INVALID;
 		Widget_EventuallyRedraw(widgetPtr);
 	}
-#endif
 
 	/* Success */
 	return TCL_OK;
@@ -2305,65 +2235,20 @@ static int DisplayRect(Tcl_Interp *interp, Widget *widgetPtr,
 	if (CalcRectPosition(widgetPtr, rectPtr))
 	{
     	int lineWidth = rectPtr->lineWidth;
+		
+		int gHeight = widgetPtr->gheight;
+		int gWidth = widgetPtr->gwidth;
 
 		gcValues.foreground = rectPtr->color->pixel;
 		gcValues.line_width = lineWidth;
 		gc = Tk_GetGC(widgetPtr->tkwin, GCForeground | GCLineWidth, &gcValues);
 
-		if (widgetPtr->style != WIDGET_STYLE_ISO)
-		{
-			int gHeight = widgetPtr->gheight;
-			int gWidth = widgetPtr->gwidth;
-
-		    XDrawRectangle(widgetPtr->display, widgetPtr->bitmap.pixmap, gc,
-				rectPtr->x_min * gWidth + lineWidth / 2,
-				rectPtr->y_min * gHeight + lineWidth / 2,
-				rectPtr->width * gWidth - lineWidth / 2 - 1,
-				rectPtr->height * gHeight - lineWidth / 2 - 1);
-		}
-		else
-		{
-			int cy, cx, cyp, cxp;
-			int yp[4], xp[4], y, x;
-			XPoint points[10];
-			int np = 0;
-			
-			cy = widgetPtr->y; cx = widgetPtr->x;
-			cyp = widgetPtr->yp[widgetPtr->centerTile] + (ISO_HGT - ISO_FH);
-			cxp = widgetPtr->xp[widgetPtr->centerTile] + ISO_LAPX;
-
-			y = rectPtr->y1; x = rectPtr->x1;
-			yp[0] = cyp + (y - cy) * ISO_FH2 / 2 + (x - cx) * ISO_FH2 / 2;
-			xp[0] = cxp + (x - cx) * ISO_WID2 / 2 - (y - cy) * ISO_WID2 / 2;
-			xp[0] += ISO_WID2 / 2;
-
-			y = rectPtr->y1; x = rectPtr->x2;
-			yp[1] = cyp + (y - cy) * ISO_FH2 / 2 + (x - cx) * ISO_FH2 / 2;
-			xp[1] = cxp + (x - cx) * ISO_WID2 / 2 - (y - cy) * ISO_WID2 / 2;
-			yp[1] += ISO_FH2 / 2;
-			xp[1] += ISO_WID2;
-
-			y = rectPtr->y2; x = rectPtr->x2;
-			yp[2] = cyp + (y - cy) * ISO_FH2 / 2 + (x - cx) * ISO_FH2 / 2;
-			xp[2] = cxp + (x - cx) * ISO_WID2 / 2 - (y - cy) * ISO_WID2 / 2;
-			yp[2] += ISO_FH2;
-			xp[2] += ISO_WID2 / 2;
-
-			y = rectPtr->y2; x = rectPtr->x1;
-			yp[3] = cyp + (y - cy) * ISO_FH2 / 2 + (x - cx) * ISO_FH2 / 2;
-			xp[3] = cxp + (x - cx) * ISO_WID2 / 2 - (y - cy) * ISO_WID2 / 2;
-			yp[3] += ISO_FH2 / 2;
-
-			points[np].x = xp[0], points[np++].y = yp[0];
-			points[np].x = xp[1], points[np++].y = yp[1];
-			points[np].x = xp[2], points[np++].y = yp[2];
-			points[np].x = xp[3], points[np++].y = yp[3];
-			points[np++] = points[0];
-
-			XDrawLines(widgetPtr->display,
-		    	widgetPtr->bitmap.pixmap, gc,
-		    	points, np, CoordModeOrigin);
-		}
+		XDrawRectangle(widgetPtr->display, widgetPtr->bitmap.pixmap, gc,
+			rectPtr->x_min * gWidth + lineWidth / 2,
+			rectPtr->y_min * gHeight + lineWidth / 2,
+			rectPtr->width * gWidth - lineWidth / 2 - 1,
+			rectPtr->height * gHeight - lineWidth / 2 - 1);
+		
 
 		Tk_FreeGC(widgetPtr->display, gc);
 
@@ -2388,52 +2273,28 @@ static int CalcRectPosition(Widget *widgetPtr, RectItem *rectPtr)
 {
 	WidgetItem *itemPtr = (WidgetItem *) rectPtr;
 
-	if (widgetPtr->style != WIDGET_STYLE_ISO)
-	{
-		int x_min, x_max, y_min, y_max;
+	int x_min, x_max, y_min, y_max;
 	
-		y_min = widgetPtr->y_min, y_max = widgetPtr->y_max;
-		x_min = widgetPtr->x_min, x_max = widgetPtr->x_max;
+	y_min = widgetPtr->y_min, y_max = widgetPtr->y_max;
+	x_min = widgetPtr->x_min, x_max = widgetPtr->x_max;
 	
-		rectPtr->x_min = rectPtr->x1 - x_min;
-		rectPtr->y_min = rectPtr->y1 - y_min;
-		rectPtr->x_max = rectPtr->x_min + rectPtr->width - 1;
-		rectPtr->y_max = rectPtr->y_min + rectPtr->height - 1;
+	rectPtr->x_min = rectPtr->x1 - x_min;
+	rectPtr->y_min = rectPtr->y1 - y_min;
+	rectPtr->x_max = rectPtr->x_min + rectPtr->width - 1;
+	rectPtr->y_max = rectPtr->y_min + rectPtr->height - 1;
 	
-		if ((rectPtr->x2 < x_min) || (rectPtr->x1 >= x_max)) return 0;
-		if ((rectPtr->y2 < y_min) || (rectPtr->y1 >= y_max)) return 0;
+	if ((rectPtr->x2 < x_min) || (rectPtr->x1 >= x_max)) return 0;
+	if ((rectPtr->y2 < y_min) || (rectPtr->y1 >= y_max)) return 0;
 	
-		itemPtr->minX = MAX(rectPtr->x_min, 0);
-		itemPtr->maxX = MIN(rectPtr->x_max, widgetPtr->cc - 1);
-		itemPtr->minY = MAX(rectPtr->y_min, 0);
-		itemPtr->maxY = MIN(rectPtr->y_max, widgetPtr->rc - 1);
+	itemPtr->minX = MAX(rectPtr->x_min, 0);
+	itemPtr->maxX = MIN(rectPtr->x_max, widgetPtr->cc - 1);
+	itemPtr->minY = MAX(rectPtr->y_min, 0);
+	itemPtr->maxY = MIN(rectPtr->y_max, widgetPtr->rc - 1);
 
-		itemPtr->x1 = itemPtr->minX * widgetPtr->gwidth - widgetPtr->bx;
-		itemPtr->x2 = (itemPtr->maxX + 1) * widgetPtr->gwidth - widgetPtr->bx;
-		itemPtr->y1 = itemPtr->minY * widgetPtr->gheight - widgetPtr->by;
-		itemPtr->y2 = (itemPtr->maxY + 1) * widgetPtr->gheight - widgetPtr->by;
-	}
-	else
-	{
-#if 1
-		itemPtr->minX = 0;
-		itemPtr->maxX = widgetPtr->cc - 1;
-		itemPtr->minY = 0;
-		itemPtr->maxY = widgetPtr->rc - 1;
-#else
-		int cy = widgetPtr->y;
-		int cx = widgetPtr->x;
-		int ct = widgetPtr->centerTile;
-		int cc = widgetPtr->cc;
-		int row = ct / cc, col = ct % cc;
-
-		itemPtr->minY = row + (rectPtr->y1 - cy) + (rectPtr->x1 - cx);
-		itemPtr->minX = col - (rectPtr->y2 - cy) + (rectPtr->x1 - cx);
-
-		itemPtr->maxY = row + (rectPtr->y2 - cy) + (rectPtr->x2 - cx);
-		itemPtr->maxX = col - (rectPtr->y1 - cy) + (rectPtr->x2 - cx);
-#endif
-	}
+	itemPtr->x1 = itemPtr->minX * widgetPtr->gwidth - widgetPtr->bx;
+	itemPtr->x2 = (itemPtr->maxX + 1) * widgetPtr->gwidth - widgetPtr->bx;
+	itemPtr->y1 = itemPtr->minY * widgetPtr->gheight - widgetPtr->by;
+	itemPtr->y2 = (itemPtr->maxY + 1) * widgetPtr->gheight - widgetPtr->by;
 
 	return 1;
 }

@@ -13,74 +13,29 @@
 #ifndef _INCLUDE_TNB_H_
 #define _INCLUDE_TNB_H_
 
+#include <tk.h>
+
 #if !defined(PLATFORM_MAC) && !defined(PLATFORM_WIN) && !defined(PLATFORM_X11)
-#error "you must define one of PLATFORM_MAC, PLATFORM_WIN or PLATFORM_X11"
+#error "You must define one of PLATFORM_MAC, PLATFORM_WIN or PLATFORM_X11"
 #endif /* */
 
-/*
- * These macros mask some differences between different variants
- * to make the code cleaner.
- */
-
-#define MAX_A_IDX max_a_idx
-#define MAX_F_IDX max_f_idx
-#define MAX_K_IDX max_k_idx
-#define MAX_M_IDX max_m_idx
-#define MAX_O_IDX max_o_idx
-#define MAX_R_IDX max_r_idx
-#define MAX_V_IDX max_v_idx
-#define MAX_P_IDX MAX_RACES
-#define MAX_QUESTS max_quests
-#define DUNGEON_WID MAX_WID
-#define DUNGEON_HGT MAX_HGT
-#define cave_feat(y,x) cave[y][x].feat
-#define cave_info(y,x) cave[y][x].info
-#define cave_m_idx(y,x) cave[y][x].m_idx
-#define cave_o_idx(y,x) cave[y][x].o_idx
-#define in_bounds_test in_bounds2
-#define in_bounds_fully_test in_bounds
-#define p_ptr_depth dun_level
-#define p_ptr_max_depth p_ptr->max_dlv
-#define p_ptr_max_lev p_ptr->max_plv
-#define op_ptr_base_name player_base
-#define op_ptr_delay_factor delay_factor
-#define op_ptr_hitpoint_warn hitpoint_warn
-#define op_ptr_full_name player_name
-#define p_ptr_py py
-#define p_ptr_px px
-#define p_ptr_running running
-#define p_ptr_resting resting
-#define p_ptr_command_arg command_arg
-#define p_ptr_command_cmd command_cmd
-#define p_ptr_command_rep command_rep
-#define p_ptr_command_wrk command_wrk
-#define p_ptr_target_who target_who
-#define p_ptr_target_col target_col
-#define p_ptr_target_row target_row
-#define p_ptr_is_dead death
-#define p_ptr_died_from died_from
-#define p_ptr_wizard wizard
-#define p_ptr_total_winner total_winner
-#define p_ptr_history history
-#define p_ptr_player_hp player_hp
-#define p_ptr_noscore noscore
-#define p_ptr_energy_use energy_use
-#define p_ptr_equip_cnt equip_cnt
-#define p_ptr_point_based point_based
-#define p_ptr_auto_roller autoroller
-#define p_ptr_maximize maximize_mode
-#define p_ptr_preserve preserve_mode
-#define Rand_normal randnor
-#define MAX_VALID_R_IDX max_r_idx
-#define set_user_inscription(o,q) o->inscription = q
-#define get_user_inscription(o) o->inscription
+#if (TK_MINOR_VERSION != 3)
+#error "(1) You must use tcl/tk version 8.3.3"
+#endif /* */
+#if (TK_RELEASE_SERIAL < 3)
+#error "(2) You must use tcl/tk version 8.3.3"
+#endif /* */
 
 
+#define PU_MAP_INFO 0x04000000L	/* Update g_grid[] */
 
 /* cmd4.c */
 
 #define CHEAT_MAX 6
 extern option_type cheat_info[];
+
+/* files.c */
+extern void player_flags(u32b *f1, u32b *f2, u32b *f3);
 
 /* init1.c */
 extern char **r_info_flags[10];
@@ -101,12 +56,8 @@ extern void spell_info(char *p, int spell, int realm);
 /* main-tnb.c */
 extern bool g_initialized;
 extern bool game_in_progress;
-extern cptr ANGBAND_DIR_XTRA_HELP;
-extern cptr ANGBAND_DIR_SOUND;
 extern cptr ANGBAND_DIR_ROOT;
 extern cptr ANGBAND_DIR_TK;
-extern cptr ANGBAND_DIR_COMMON;
-extern cptr ANGBAND_DIR_COMMON_TK;
 
 /* canv-widget.c */
 extern void CanvasWidget_Idle(void);
@@ -137,21 +88,10 @@ extern byte *g_feat_flag;
 #define GRID_LITE_DARK 2
 
 /* Constants for t_grid.xtra */
-#define GRID_XTRA_LITE_0 0x0001 /* Light radius bit 1/2 (NOT USED) */
-#define GRID_XTRA_LITE_1 0x0002 /* Light radius bit 2/2 (NOT USED) */
-#define GRID_XTRA_PILLAR 0x0004 /* Grid is a pillar */
 #define GRID_XTRA_ISVERT 0x0008 /* Door is vertical */
 #define GRID_XTRA_WALL 0x0010 /* Is a wall or secret door */
 #define GRID_XTRA_DOOR 0x0020 /* Is a door */
 
-/*
- * Option: Use unique image/description for floor stack of items.
- */
-#define ALLOW_PILE_IMAGE
-
-#ifdef ALLOW_PILE_IMAGE
-#define GRID_XTRA_PILE   0x8000 /* Pile of items */
-#endif /* ALLOW_PILE_IMAGE */
 
 /* Constants for t_grid.shape */
 enum {
@@ -171,7 +111,6 @@ GRID_SHAPE_QUAD,
 GRID_SHAPE_MAX
 };
 
-extern int wall_shape(int y, int x, bool force);
 extern bool is_door(int y, int x);
 extern bool is_wall(int y, int x);
 
@@ -187,7 +126,7 @@ typedef struct t_grid {
 	int shape; /* GRID_SHAPE_XXX enum */
 } t_grid;
 
-extern t_grid *g_grid[DUNGEON_HGT];
+extern t_grid *g_grid[MAX_HGT];
 
 /* TRUE if g_grid[].xtra was initialized */
 extern int g_grid_xtra_init;
@@ -197,7 +136,6 @@ extern bool g_daytime; /* Day or night */
 /* Cave location -> t_grid */
 extern void get_grid_info(int y, int x, t_grid *gridPtr);
 
-extern void angtk_flicker(void);
 extern void angtk_image_reset(void);
 extern void angtk_cave_changed(void);
 extern void angtk_feat_known(int y, int x);
@@ -208,7 +146,6 @@ extern void set_grid_assign(int y, int x);
 extern bool door_vertical(int y, int x);
 extern void free_icons(void);
 extern void init_palette(void);
-extern unsigned long Milliseconds(void);
 
 /* widget.c */
 extern void angtk_widget_lock(bool lock);
@@ -216,14 +153,10 @@ extern void angtk_effect_clear(int y, int x);
 extern bool angtk_effect_spell(int y, int x, int typ, int bolt);
 extern bool angtk_effect_ammo(int y, int x, object_type *o_ptr, int dir);
 extern bool angtk_effect_object(int y, int x, object_type *o_ptr);
-extern void angtk_invert_spot(int y, int x);
-extern void angtk_detect_radius(int y, int x, int r);
-extern void angtk_destroy_area(int arg);
 extern void (*angtk_lite_spot)(int y, int x);
 extern void angtk_lite_spot_real(int y, int x);
 extern void angtk_wipe_spot(int y, int x);
 extern void angtk_idle(void);
-extern void angtk_project_hint(int action, int rad, int y, int x, int flg);
 extern void angtk_locate(int dir);
 
 /* interp1.c */
@@ -239,7 +172,6 @@ extern cptr *keyword_class;
 
 extern char *g_attr_str;
 extern cptr keyword_artifact_location[];
-extern int debug_commands;
 extern int exit_skip_save;
 extern bool command_repeating;
 extern int g_cave_hgt, g_cave_wid;
@@ -266,6 +198,14 @@ extern char *player_status(int status, int *value);
 extern void blows_per_round(int *_blows, int *_muta_att);
 extern void shots_per_round(int *shots, int *shots_frac);
 
+#define TARGET_STATE_SET 0x0001 /* Target is set */
+#define TARGET_STATE_VIS 0x0002 /* Target is visible */
+#define TARGET_STATE_CHANGE 0x0004 /* Target changed */
+extern int target_state;
+extern bool target_vis;
+
+#define PR_POSITION 0x20000000L /* p_ptr->redraw: player position changed */
+#define PR_TARGET 0x40000000L /* p_ptr->redraw: target visibility changed */
 
 /*
  * XXXXX Important!
@@ -297,8 +237,6 @@ typedef struct _buildingdata {
 	int building_loc;
 	building_type *bldg;
 } _buildingdata;
-
-extern _buildingdata g_buildingdata;
 
 /* store.c */
 typedef struct _storedata {
@@ -420,12 +358,6 @@ extern void Bind_Option(const char *name, int value);
 /* birth-tnb.c */
 extern void init_birth(void);
 
-/* debug.c */
-extern int wiz_see_monsters;
-extern int wiz_auto_lite;
-extern int wiz_free_moves;
-extern void init_debug(void);
-
 /* describe.c */
 extern cptr keyword_slot[];
 extern int strcpy_len(char *s1, const char *s2);
@@ -483,12 +415,6 @@ extern int ExtToUtf_SetArrayValueString(char *varName, char *field, char *value)
 #define VERSION_MINOR_TNB 0
 
 #define VERSION_PATCH_TNB 0
-
-/*
- * Hack -- When using the Trump Tower to teleport to a level, ignore the
- * remember_recall option
- */
-extern bool wor_trump_hack;
 
 /* Constants for racial and mutation powers */
 enum {

@@ -29,220 +29,12 @@ static char *object_inscription(object_type *o_ptr, char *buf)
 	buf[0] = '\0';
 
 	/* Use the user's inscription if available */
-	if (get_user_inscription(o_ptr))
+	if (o_ptr->inscription)
 	{
-		(void) strcpy(buf, quark_str(get_user_inscription(o_ptr)));
+		(void) strcpy(buf, quark_str(o_ptr->inscription));
 	}
 
 	return buf;
-}
-
-/* This is an information block set in building.c */
-_buildingdata g_buildingdata = {0};
-
-/* From bldg.c */
-static bool is_owner(building_type *bldg)
-{
-	if (bldg->member_class[p_ptr->pclass] == BUILDING_OWNER)
-	{
-		return (TRUE);	
-	}
-
-	if (bldg->member_race[p_ptr->prace] == BUILDING_OWNER)
-	{
-		return (TRUE);	
-	}
-
-	if ((bldg->member_realm[p_ptr->realm1] == BUILDING_OWNER) ||
-		(bldg->member_realm[p_ptr->realm2] == BUILDING_OWNER))
-	{
-		return (TRUE);
-	}
-
-	return (FALSE);
-}
-
-/* From bldg.c */
-static bool is_member(building_type *bldg)
-{
-	if (bldg->member_class[p_ptr->pclass])
-	{
-		return (TRUE);	
-	}
-
-	if (bldg->member_race[p_ptr->prace])
-	{
-		return (TRUE);	
-	}
-
-	if ((bldg->member_realm[p_ptr->realm1]) || (bldg->member_realm[p_ptr->realm2]))
-	{
-		return (TRUE);
-	}
-	
-	return (FALSE);
-}
-
-/*
- *--------------------------------------------------------------
- *
- * objcmd_building --
- *
- *	Implements the "building" script command.
- * 	Syntax:
- *		building ownername -- name of owner
- *		building ownerrace -- race of owner
- *		building buildingename -- building name
- *		building action -- List of action chars/text
- *
- *--------------------------------------------------------------
- */
-
-int
-objcmd_building(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
-{
-	CommandInfo *infoCmd = (CommandInfo *) clientData;
-	int objC = objc - infoCmd->depth;
-	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
-
-	static char *cmdOptions[] = {"ownername", "ownerrace", "buildingname",
-		"actions", "index", NULL};
-	enum {IDX_OWNERNAME, IDX_OWNERRACE, IDX_BUILDINGNAME,
-		IDX_ACTIONS, IDX_INDEX} option;
-	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
-
-	building_type *bldg;
-	char buff[20];
-	int i;
-	Tcl_Obj *listObjPtr;
-
-    if (objC < 2)
-    {
-		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, "option ?arg ...?");
-		return TCL_ERROR;
-    }
-
-    if (Tcl_GetIndexFromObj(interp, objV[1], cmdOptions, "option", 0, 
-		(int *) &option) != TCL_OK)
-	{
-		return TCL_ERROR;
-    }
-
-	if (!g_buildingdata.inside)
-	{
-		Tcl_SetStringObj(resultPtr, "character isn't inside a building", -1);
-		return TCL_ERROR;
-	}
-
-	bldg = g_buildingdata.bldg;
-
-	switch (option)
-	{
-		case IDX_OWNERNAME: /* ownername */
-			ExtToUtf_SetResult(interp, (char *) bldg->owner_name);
-			break;
-
-		case IDX_OWNERRACE: /* ownerrace */
-			ExtToUtf_SetResult(interp, (char *) bldg->owner_race);
-			break;
-
-		case IDX_BUILDINGNAME: /* buildingname */
-			ExtToUtf_SetResult(interp, (char *) bldg->name);
-			break;
-
-		case IDX_ACTIONS: /* actions */
-		{
-			Tcl_Obj *elemObjv[8];			
-			int elemObjc;
-
-			listObjPtr = Tcl_NewListObj(0, NULL);
-			for (i = 0; i < 6; i++)
-			{
-				if (!bldg->letters[i]) continue;
-				if (bldg->action_restr[i] == 0)
-				{
-					if ((is_owner(bldg) && (bldg->member_costs[i] == 0)) ||
-						(!is_owner(bldg) && (bldg->other_costs[i] == 0)))
-					{
-						buff[0] = '\0';
-					}
-					else if (is_owner(bldg))
-					{
-						sprintf(buff, " (%dgp)", bldg->member_costs[i]);
-					}
-					else
-					{
-						sprintf(buff, " (%dgp)", bldg->other_costs[i]);
-					}
-				}
-				else if (bldg->action_restr[i] == 1)
-				{
-					if (!is_member(bldg))
-					{
-						strcpy(buff, " (closed)");
-					}
-					else if ((is_owner(bldg) && (bldg->member_costs[i] == 0)) ||
-						(is_member(bldg) && (bldg->other_costs[i] == 0)))
-					{
-						buff[0] = '\0';
-					}
-					else if (is_owner(bldg))
-					{
-						sprintf(buff, " (%dgp)", bldg->member_costs[i]);
-					}
-					else
-					{
-						sprintf(buff, " (%dgp)", bldg->other_costs[i]);
-					}
-				}
-				else
-				{
-					if (!is_owner(bldg))
-					{
-						strcpy(buff, " (closed)");
-					}
-					else if (bldg->member_costs[i] != 0)
-					{
-						sprintf(buff, " (%dgp)", bldg->member_costs[i]);
-					}
-					else
-					{
-						buff[0] = '\0';
-					}
-				}
-
-				/* Reset */
-				elemObjc = 0;
-
-				/* char */
-				elemObjv[elemObjc++] = Tcl_NewStringObj("char", -1);
-				elemObjv[elemObjc++] = Tcl_NewStringObj(&bldg->letters[i], 1);
-
-				/* label */
-				elemObjv[elemObjc++] = Tcl_NewStringObj("label", -1);
-				elemObjv[elemObjc++] = ExtToUtf_NewStringObj(bldg->act_names[i], -1);
-
-				/* info */
-				elemObjv[elemObjc++] = Tcl_NewStringObj("info", -1);
-				elemObjv[elemObjc++] = ExtToUtf_NewStringObj(buff, -1);
-
-				/* action */
-				elemObjv[elemObjc++] = Tcl_NewStringObj("action", -1);
-				elemObjv[elemObjc++] = Tcl_NewIntObj(bldg->actions[i]);
-
-				Tcl_ListObjAppendElement(interp, listObjPtr,
-					Tcl_NewListObj(elemObjc, elemObjv));
-			}
-			Tcl_SetObjResult(interp, listObjPtr);
-			break;
-		}
-
-		case IDX_INDEX: /* index */
-			Tcl_SetIntObj(resultPtr, bldg - building);
-			break;
-	}
-
-	return TCL_OK;
 }
 
 /*
@@ -318,7 +110,7 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 			{
 				return TCL_ERROR;
 			}
-			if (!in_bounds_test(y, x))
+			if (!in_bounds2(y, x))
 			{
 				goto bad_location;
 			}
@@ -360,7 +152,7 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 				return TCL_ERROR;
 			}
 	
-			if (!in_bounds_test(y, x))
+			if (!in_bounds2(y, x))
 			{
 				goto bad_location;
 			}
@@ -430,7 +222,7 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 			}
 
 			/* Validate coordinates */
-			if (!in_bounds_test(y, x))
+			if (!in_bounds2(y, x))
 			{
 				goto bad_location;
 			}
@@ -439,7 +231,7 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 			varName = Tcl_GetStringFromObj(objV[4], NULL);
 
 			/* Get the feature index */
-			feat = cave_feat(y, x);
+			feat = cave[y][x].feat;
 			feat = f_info[feat].mimic;
 
 			if (SetArrayValueLong(varName, "special", cave[y][x].special) != TCL_OK)
@@ -456,11 +248,11 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 			{
 				return TCL_ERROR;
 			}
-			if (SetArrayValueLong(varName, "m_idx", cave_m_idx(y, x)) != TCL_OK)
+			if (SetArrayValueLong(varName, "m_idx", cave[y][x].m_idx) != TCL_OK)
 			{
 				return TCL_ERROR;
 			}
-			if (SetArrayValueLong(varName, "o_idx", cave_o_idx(y, x)) != TCL_OK)
+			if (SetArrayValueLong(varName, "o_idx", cave[y][x].o_idx) != TCL_OK)
 			{
 				return TCL_ERROR;
 			}
@@ -484,9 +276,9 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 			}
 
 			if (option == IDX_IN_BOUNDS)
-				Tcl_SetBooleanObj(resultPtr, in_bounds_test(y, x));
+				Tcl_SetBooleanObj(resultPtr, in_bounds2(y, x));
 			else
-				Tcl_SetBooleanObj(resultPtr, in_bounds_fully_test(y, x));
+				Tcl_SetBooleanObj(resultPtr, in_bounds(y, x));
 			break;
 
 		case IDX_EXISTS: /* exists */
@@ -514,7 +306,7 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 
 		case IDX_DAY: /* day */
 		{
-			Tcl_SetStringObj(resultPtr, (!p_ptr_depth && g_daytime) ?
+			Tcl_SetStringObj(resultPtr, (!dun_level && g_daytime) ?
 				"day" : "night", -1);
 			break;
 		}
@@ -878,12 +670,12 @@ objcmd_equipment(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 				if (strlen(t))
 				{
 					/* Save the inscription */
-					set_user_inscription(o_ptr, quark_add(t));
+					o_ptr->inscription = quark_add(t);
 				}
 				else
 				{
 					/* Clear the inscription */
-					set_user_inscription(o_ptr, 0);
+					o_ptr->inscription =  0;
 				}
 		
 				/* Combine the pack */
@@ -988,8 +780,8 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 	fx = floor_x;
 	if (fy == -1)
 	{
-		fy = p_ptr_py;
-		fx = p_ptr_px;
+		fy = py;
+		fx = px;
 	}
 
 	switch (option)
@@ -1073,7 +865,7 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 			listObjPtr = Tcl_NewListObj(0, NULL);
 
 			/* Scan all objects in the grid */
-			for (this_o_idx = cave_o_idx(fy, fx); this_o_idx; this_o_idx = next_o_idx)
+			for (this_o_idx = cave[fy][fx].o_idx; this_o_idx; this_o_idx = next_o_idx)
 			{
 				/* Acquire object */
 				o_ptr = &o_list[this_o_idx];
@@ -1212,12 +1004,12 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 				if (strlen(t))
 				{
 					/* Save the inscription */
-					set_user_inscription(o_ptr, quark_add(t));
+					o_ptr->inscription = quark_add(t);
 				}
 				else
 				{
 					/* Clear the inscription */
-					set_user_inscription(o_ptr, 0);
+					o_ptr->inscription = 0;
 				}
 		
 				/* Combine the pack */
@@ -1258,14 +1050,12 @@ bad_index:
  * 	Syntax:
  *		game abort ?confirm? -- Quit without saving
  *		game directory -- Get a directory pathname
- *		game file_character -- Dump a character file
  *		game keymap_dump -- Dump a keymap file
  *		game macro_dump -- Dump a macro file
  *		game new -- Start a new game
  *		game open -- Open a save file
  *		game process_pref_file -- Process a preference file
  *		game quit -- Quit with save
- *		game variant -- Which variant is this?
  *
  *--------------------------------------------------------------
  */
@@ -1278,7 +1068,6 @@ char *keyword_path[] = {
 	"ANGBAND_DIR_ROOT",
 	"ANGBAND_DIR_USER",
 	"ANGBAND_DIR_TK",
-	"ANGBAND_DIR_COMMON_TK",
 	NULL
 };
 
@@ -1287,7 +1076,6 @@ static bool s_edit_path[] = {
 	FALSE,
 	FALSE,
 	FALSE,
-	TRUE,
 	TRUE
 };
 
@@ -1300,13 +1088,13 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 	int objC = objc - infoCmd->depth;
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
-	static char *cmdOptions[] = {"abort", "directory", "file_character",
+	static char *cmdOptions[] = {"abort", "directory",
 		"macro_dump", "new", "open", "process_pref_file", "quit",
-		"keymap_dump", "savefile_info", "version", "variant",
+		"keymap_dump", "savefile_info", "version",
 		"savefile", NULL};
-	enum {IDX_ABORT, IDX_DIRECTORY, IDX_FILE_CHARACTER,
+	enum {IDX_ABORT, IDX_DIRECTORY,
 		IDX_MACRO_DUMP, IDX_NEW, IDX_OPEN, IDX_PROCESS_PREF_FILE, IDX_QUIT,
-		IDX_KEYMAP_DUMP, IDX_SAVEFILE_INFO, IDX_VERSION, IDX_VARIANT,
+		IDX_KEYMAP_DUMP, IDX_SAVEFILE_INFO, IDX_VERSION,
 		IDX_SAVEFILE} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 	int index;
@@ -1345,7 +1133,6 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 			}
 			if (confirm && game_in_progress && character_generated)
 			{
-#if 1 /* def PLATFORM_X11 */
 				int result;
 
 				result = Tcl_EvalEx(g_interp,
@@ -1356,20 +1143,6 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 					char *s = Tcl_GetStringResult(g_interp);
 					if (!strcmp(s, "cancel")) break;
 				}
-#endif /* PLATFORM_X11 */
-
-#ifdef PLATFORM_WINxx
-				int oldMode;
-				int winResult;
-
-				oldMode = Tcl_SetServiceMode(TCL_SERVICE_ALL);
-				winResult = MessageBox(NULL,
-					"Your character will not be saved!", "Quit Without Saving",
-					MB_ICONEXCLAMATION | MB_OKCANCEL);
-				(void) Tcl_SetServiceMode(oldMode);
-				
-				if (winResult == IDCANCEL) break;
-#endif /* PLATFORM_WIN */
 			}
 			quit(NULL);
 			break;
@@ -1390,8 +1163,6 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 			angband_path[0] = &ANGBAND_DIR_ROOT;
 			angband_path[1] = &ANGBAND_DIR_USER;
 			angband_path[2] = &ANGBAND_DIR_TK;
-			angband_path[3] = &ANGBAND_DIR_COMMON;
-			angband_path[4] = &ANGBAND_DIR_COMMON_TK;
 			
 			if (objC == 4)
 			{
@@ -1445,43 +1216,6 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 			ExtToUtf_SetResult(interp, (char *) *angband_path[index]);
 			break;
 			
-		case IDX_FILE_CHARACTER: /* file_character */
-			if (objC != 3)
-			{
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, "filename");
-				return TCL_ERROR;
-			}
-
-			/* Get the file path */
-			t = Tcl_GetStringFromObj(objV[2], NULL);
-
-			/* */
-			if (t[0] && t[0] != ' ')
-			{
-				/* Translate the file path */
-				extString = UtfToExt_TranslateFileName(interp, t, &extDString);
-				if (extString == NULL) return TCL_ERROR;
-
-				/* Create a character dump */
-				if (file_character(extString, FALSE) == -1)
-				{
-					/* Set the error */
-					Tcl_AppendStringsToObj(resultPtr,
-						"character dump failed to \"", t, "\"",
-						NULL);
-
-					/* Clean up */
-					Tcl_DStringFree(&extDString);
-
-					/* Failure */
-					return TCL_ERROR;
-				}
-
-				/* Clean up */
-				Tcl_DStringFree(&extDString);
-			}
-			break;
-
 		case IDX_MACRO_DUMP: /* macro_dump */
 			if (objC != 3)
 			{
@@ -1721,11 +1455,6 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 				FAKE_VER_MINOR, FAKE_VER_PATCH), -1);
 			break;
 
-		case IDX_VARIANT: /* variant */
-			/* Try char *g_variant = "ANGBANDTK" */
-			Tcl_SetStringObj(resultPtr, "ZANGBANDTK", -1);
-			break;
-
 		case IDX_SAVEFILE: /* savefile */
 			if (!g_initialized)
 			{
@@ -1910,7 +1639,7 @@ void race_legends(void)
 {
 	int i;
 
-	for (i = 0; i < MAX_P_IDX; i++)
+	for (i = 0; i < MAX_RACES; i++)
 	{
 		race_score(i);
 	}
@@ -2118,11 +1847,11 @@ objcmd_highscore(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 						{
 							goto close_err;
 						}
-						if (match_race < 0 || match_race >= MAX_P_IDX)
+						if (match_race < 0 || match_race >= MAX_RACES)
 						{
 							Tcl_SetStringObj(resultPtr,
 								format("bad race \"%d\": must be between 0 and %d",
-									match_race, MAX_P_IDX - 1), -1);
+									match_race, MAX_RACES - 1), -1);
 							goto close_err;
 						}
 						request_race = 1;
@@ -2326,7 +2055,7 @@ objcmd_info(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 
 		case IDX_RACE_NAME: /* race_name */
 			names = (char **) keyword_race;
-			nameCount = MAX_P_IDX;
+			nameCount = MAX_RACES;
 			break;
 
 		case IDX_TVAL: /* tval */
@@ -2439,8 +2168,8 @@ objcmd_inkey_other(ClientData clientData, Tcl_Interp *interp, int objc,
 		if (easy_floor)
 		{
 			Tcl_SetResult(interp,
-				(p_ptr_command_wrk == (USE_EQUIP)) ? "equipment" : 
-				(p_ptr_command_wrk == (USE_INVEN)) ? "inventory" :
+				(command_wrk == (USE_EQUIP)) ? "equipment" : 
+				(command_wrk == (USE_INVEN)) ? "inventory" :
 				"floor", TCL_VOLATILE);
 		}
 		else
@@ -2448,7 +2177,7 @@ objcmd_inkey_other(ClientData clientData, Tcl_Interp *interp, int objc,
 #endif /* ALLOW_EASY_FLOOR */
 
 		Tcl_SetResult(interp,
-			p_ptr_command_wrk ? "equipment" : "inventory", TCL_VOLATILE);
+			command_wrk ? "equipment" : "inventory", TCL_VOLATILE);
 	}
 	else if (inkey_flags == INKEY_SPELL)
 	{
@@ -2808,12 +2537,12 @@ objcmd_inventory(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 				if (strlen(t))
 				{
 					/* Save the inscription */
-					set_user_inscription(o_ptr, quark_add(t));
+					o_ptr->inscription = quark_add(t);
 				}
 				else
 				{
 					/* Clear the inscription */
-					set_user_inscription(o_ptr, 0);
+					o_ptr->inscription = 0;
 				}
 		
 				/* Combine the pack */

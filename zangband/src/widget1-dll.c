@@ -20,11 +20,8 @@
 #include "plat-dll.h"
 #include "widget-dll.h"
 
-extern char *format(char *fmt, ...);
-
 char *keyword_widget_style[] = {
-	"icon", "map", "iso",
-	NULL
+	"icon", "map", NULL
 };
 
 /*
@@ -45,16 +42,10 @@ static Tk_OptionSpec optionSpecs[20] = {
 	 "no", -1, Tk_Offset(Widget, setGrid), 0, 0, 0},
     {TK_OPTION_BOOLEAN, "-noupdate", "noUpdate", "NoUpdate",
 	 "no", -1, Tk_Offset(Widget, noUpdate), 0, 0, 0},
-   {TK_OPTION_STRING_TABLE, "-style", "style", "Style",
+	{TK_OPTION_STRING_TABLE, "-style", "style", "Style",
 	 "icon", -1, Tk_Offset(Widget, style), 0, keyword_widget_style, 0},
-    {TK_OPTION_INT, "-hit", "", "",
-     "-1", -1, Tk_Offset(Widget, hit), 0, 0, 0},
-    {TK_OPTION_INT, "-hitx", "", "",
-     "-1", -1, Tk_Offset(Widget, hitx), 0, 0, 0},
-    {TK_OPTION_INT, "-hity", "", "",
-     "-1", -1, Tk_Offset(Widget, hity), 0, 0, 0},
-    {TK_OPTION_END, (char *) NULL, (char *) NULL, (char *) NULL,
-     (char *) NULL, 0, -1, 0, 0, 0}
+    {TK_OPTION_END, NULL, NULL, NULL,
+     NULL, 0, -1, 0, 0, 0}
 };
 
 static Tk_OptionTable optionTable = None;
@@ -74,14 +65,9 @@ int Widget_WidgetObjCmd _ANSI_ARGS_((ClientData clientData,
 int Widget_Photo(ClientData clientData, Tcl_Interp *interp,
 	int objc, Tcl_Obj *CONST objv[]);
 void Widget_Calc(Widget *widgetPtr);
-void IsoView_Calc(Widget *widgetPtr);
 
 static void Widget_CreateBitmap(Widget *widgetPtr);
 static void Widget_DeleteBitmap(Widget *widgetPtr);
-
-static void WindowToBitmap(Widget *widgetPtr, int *y, int *x);
-int PointToTile(Widget *widgetPtr, int x, int y, int *colPtr, int *rowPtr,
-	int *xcPtr, int *ycPtr);
 
 /* Table of procedures for the "Widget" class */
 TkClassProcs widgetProcs = { 
@@ -100,6 +86,12 @@ DoubleLinker WidgetListMap;
 
 static Widget_CreateProc *g_create_proc;
 
+static void WindowToBitmap(Widget *widgetPtr, int *y, int *x)
+{
+	*y += widgetPtr->by;
+	*x += widgetPtr->bx;
+}
+
 #define BAD_COLOR(c) (((c) < 0) || ((c) > 255))
 
 /* Array of all allocated Widget item colors */
@@ -107,11 +99,6 @@ t_widget_color **g_widget_color;
 
 /* Number of allocated Widget item colors */
 int g_widget_color_count;
-
-#ifdef USE_HERMES
-BitmapType g_hermes_bitmap;
-Widget *g_hermes_widget = NULL;
-#endif /* USE_HERMES */
 
 /*
  * Initialize the Widget item color package
@@ -287,7 +274,7 @@ int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
 
 	/* Create a new Tk window with the given name */
     tkwin = Tk_CreateWindowFromPath(interp, Tk_MainWindow(interp),
-	    Tcl_GetString(objv[1]), (char *) NULL);
+	    Tcl_GetString(objv[1]), NULL);
 
 	/* The window could not be created */
 	if (tkwin == NULL)
@@ -355,7 +342,6 @@ widgetPtr->linkerItemVis.what = "itemVis";
 	widgetPtr->invalid = NULL;
 	widgetPtr->anim = NULL;
 	widgetPtr->yp = widgetPtr->xp = NULL;
-	widgetPtr->yo = widgetPtr->xo = NULL;
 
 	/*
 	 * Arrange for our routine to be called when any of the specified
@@ -404,11 +390,11 @@ int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl
 {
 	static char *commandNames[] = {"caveyx", "center", "cget", "configure",
 		"coloralloc", "colorderef", "create", "itemcget", "itemconfigure",
-		"photo", "wipe", "bounds", "isoinfo", "visible", "wipespot",
+		"photo", "wipe", "bounds", "visible", "wipespot",
 		"hittest", NULL};
 	enum {IDX_CAVEYX, IDX_CENTER, IDX_CGET, IDX_CONFIGURE,
 		IDX_COLORALLOC, IDX_COLORDEREF, IDX_CREATE, IDX_ITEMCGET, IDX_ITEMCONFIGURE,
-		IDX_PHOTO, IDX_WIPE, IDX_BOUNDS, IDX_ISOINFO, IDX_VISIBLE,
+		IDX_PHOTO, IDX_WIPE, IDX_BOUNDS, IDX_VISIBLE,
 		IDX_WIPESPOT, IDX_HITTEST} option;
 	Widget *widgetPtr = (Widget *) clientData;
 	int result;
@@ -459,25 +445,18 @@ int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl
 				goto error;
 			}
 
-			if (widgetPtr->style != WIDGET_STYLE_ISO)
-			{
-				if (x < 0 || x >= widgetPtr->width)
-					break;
-				if (y < 0 || y >= widgetPtr->height)
-					break;
+			if (x < 0 || x >= widgetPtr->width)
+				break;
+			if (y < 0 || y >= widgetPtr->height)
+				break;
 
-				WindowToBitmap(widgetPtr, &y, &x);
+			WindowToBitmap(widgetPtr, &y, &x);
 	
-				row = y / widgetPtr->gheight;
-				col = x / widgetPtr->gwidth;
+			row = y / widgetPtr->gheight;
+			col = x / widgetPtr->gwidth;
 	
-				yc = widgetPtr->y_min + row;
-				xc = widgetPtr->x_min + col;
-			}
-			else
-			{
-				PointToTile(widgetPtr, x, y, &col, &row, &xc, &yc);
-			}
+			yc = widgetPtr->y_min + row;
+			xc = widgetPtr->x_min + col;
 				
 			(void) sprintf(buffer, "%d %d", yc, xc);
 			Tcl_SetStringObj(Tcl_GetObjResult(interp), buffer, -1);
@@ -550,7 +529,7 @@ int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl
 			if (objc <= 3)
 			{
 				objPtr = Tk_GetOptionInfo(interp, (char *) widgetPtr,
-					optionTable, (objc == 3) ? objv[2] : (Tcl_Obj *) NULL,
+					optionTable, (objc == 3) ? objv[2] : NULL,
 					widgetPtr->tkwin);
 				if (objPtr == NULL)
 				{
@@ -742,21 +721,6 @@ int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl
 			break;
 		}
 
-		case IDX_ISOINFO: /* isoinfo */
-		{
-			char buf[32];
-			(void) sprintf(buf, "%d %d %d %d %d %d %d %d %d %d",
-				widgetPtr->rc,
-				widgetPtr->cc,
-				widgetPtr->rTop, widgetPtr->rBottom,
-				widgetPtr->cLeft, widgetPtr->cRight,
-				widgetPtr->ignoreTop, widgetPtr->ignoreBottom,
-				widgetPtr->ignoreLeft, widgetPtr->ignoreRight
-				);
-			Tcl_SetStringObj(Tcl_GetObjResult(interp), buf, -1);
-			break;
-		}
-
 		case IDX_VISIBLE: /* visible */
 		{
 			int y, x, r, c, vis;
@@ -787,20 +751,12 @@ int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl
 			if (vis)
 			{
 				int yp, xp, h, w;
-				if (widgetPtr->style == WIDGET_STYLE_ISO)
-				{
-					yp = widgetPtr->yp[r * widgetPtr->cc + c] - widgetPtr->by;
-					xp = widgetPtr->xp[r * widgetPtr->cc + c] - widgetPtr->bx;
-					h = ISO_HGT;
-					w = ISO_WID;
-				}
-				else
-				{
-					yp = r * widgetPtr->gheight - widgetPtr->by;
-					xp = c * widgetPtr->gwidth - widgetPtr->bx;
-					h = widgetPtr->gheight;
-					w = widgetPtr->gwidth;
-				}
+
+				yp = r * widgetPtr->gheight - widgetPtr->by;
+				xp = c * widgetPtr->gwidth - widgetPtr->bx;
+				h = widgetPtr->gheight;
+				w = widgetPtr->gwidth;
+				
 				if (yp < 0 || yp + h > widgetPtr->height ||
 					xp < 0 || xp + w > widgetPtr->width)
 				{
@@ -855,27 +811,18 @@ int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl
 				goto error;
 			}
 
-			if (widgetPtr->style != WIDGET_STYLE_ISO)
-			{
-				if (x < 0 || x >= widgetPtr->width)
-					break;
-				if (y < 0 || y >= widgetPtr->height)
-					break;
+			if (x < 0 || x >= widgetPtr->width)
+				break;
+			if (y < 0 || y >= widgetPtr->height)
+				break;
 
-				WindowToBitmap(widgetPtr, &y, &x);
+			WindowToBitmap(widgetPtr, &y, &x);
 	
-				row = y / widgetPtr->gheight;
-				col = x / widgetPtr->gwidth;
+			row = y / widgetPtr->gheight;
+			col = x / widgetPtr->gwidth;
 	
-				yc = widgetPtr->y_min + row;
-				xc = widgetPtr->x_min + col;
-			}
-			else
-			{
-				/* Find the *floor tile* containing point */
-				if (PointToTile(widgetPtr, x, y, &col, &row, &xc, &yc))
-					break;
-			}
+			yc = widgetPtr->y_min + row;
+			xc = widgetPtr->x_min + col;
 
 			/* Refine the hit */
 			if (widgetPtr->hitTestProc)
@@ -978,10 +925,6 @@ void Widget_Destroy(Widget *widgetPtr)
 		Tcl_FreeDebug(widgetPtr->yp);
 	if (widgetPtr->xp)
 		Tcl_FreeDebug(widgetPtr->xp);
-	if (widgetPtr->yo)
-		Tcl_FreeDebug(widgetPtr->yo);
-	if (widgetPtr->xo)
-		Tcl_FreeDebug(widgetPtr->xo);
 
 	widgetPtr->tkwin = NULL;
 
@@ -1013,7 +956,7 @@ int Widget_Configure(Tcl_Interp *interp, Widget *widgetPtr, int objc, Tcl_Obj *C
 		     * First pass: set options to new values.
 		     */
 			if (Tk_SetOptions(interp, (char *) widgetPtr, optionTable, objc, objv,
-				widgetPtr->tkwin, &savedOptions, (int *) NULL) != TCL_OK)
+				widgetPtr->tkwin, &savedOptions, NULL) != TCL_OK)
 			{
 				continue;
 			}
@@ -1117,39 +1060,16 @@ void Widget_WorldChanged(ClientData instanceData)
 			Tcl_FreeDebug((char *) widgetPtr->xp);
 			widgetPtr->xp = NULL;
 		}
-		if (widgetPtr->yo)
-		{
-			Tcl_FreeDebug((char *) widgetPtr->yo);
-			widgetPtr->yo = NULL;
-		}
-		if (widgetPtr->xo)
-		{
-			Tcl_FreeDebug((char *) widgetPtr->xo);
-			widgetPtr->xo = NULL;
-		}
 	}
 
-	if (widgetPtr->style != WIDGET_STYLE_ISO)
+	/* Style or size changed */
+	if ((widgetPtr->style != widgetPtr->oldStyle) ||
+		(widgetPtr->width != widgetPtr->oldWidth) ||
+		(widgetPtr->height != widgetPtr->oldHeight) ||
+		(widgetPtr->gwidth != widgetPtr->oldGWidth) ||
+		(widgetPtr->gheight != widgetPtr->oldGHeight))
 	{
-		/* Style or size changed */
-		if ((widgetPtr->style != widgetPtr->oldStyle) ||
-			(widgetPtr->width != widgetPtr->oldWidth) ||
-			(widgetPtr->height != widgetPtr->oldHeight) ||
-			(widgetPtr->gwidth != widgetPtr->oldGWidth) ||
-			(widgetPtr->gheight != widgetPtr->oldGHeight))
-		{
-			Widget_Calc(widgetPtr);
-		}
-	}
-	else
-	{
-		/* Style or size changed */
-		if ((widgetPtr->style != widgetPtr->oldStyle) ||
-			(widgetPtr->width != widgetPtr->oldWidth) ||
-			(widgetPtr->height != widgetPtr->oldHeight))
-		{
-			IsoView_Calc(widgetPtr);
-		}
+		Widget_Calc(widgetPtr);
 	}
 
 	/* The bitmap is not the right size */
@@ -1168,11 +1088,6 @@ void Widget_WorldChanged(ClientData instanceData)
 	if (widgetPtr->bitmap.pixelPtr == NULL)
 	{
 		DoubleLink *link;
-
-#ifdef USE_HERMES
-		if (WidgetList.head == &widgetPtr->link)
-			g_hermes_widget = widgetPtr;
-#endif /* USE_HERMES */
 
 		/* Allocate bitmap */
 		Widget_CreateBitmap(widgetPtr);
@@ -1315,12 +1230,6 @@ void Widget_CmdDeletedProc(ClientData clientData)
 	}
 }
 
-#ifdef USE_HERMES
-#include "Hermes.h"
-extern HermesHandle g_hermes_conv;
-extern HermesHandle g_hermes_palette;
-#endif /* USE_HERMES */
-
 /*
  * Actually draw stuff into the Widget's display. This routine is
  * usually passed to Tcl_DoWhenIdle().
@@ -1459,164 +1368,6 @@ void Widget_Calc(Widget *widgetPtr)
 	}
 }
 
-void IsoView_Calc(Widget *widgetPtr)
-{
-	int cc, rc, r, c, yy, xx, yp, xp, yo, xo;
-	int dLeft, cLeft, dRight, cRight;
-	int dTop, rTop, dBottom, rBottom;
-	int ignoreLeft, ignoreRight;
-	int ignoreTop, ignoreBottom;
-
-	dLeft = (widgetPtr->width - ISO_WID2) / 2;
-	cLeft = dLeft / ISO_WID2;
-	if (dLeft % ISO_WID2)
-		++cLeft;
-	if (!(dLeft % ISO_WID2) || ((dLeft % ISO_WID2) > ISO_WID2 / 2))
-	{
-		++cLeft;
-		ignoreLeft = 1;
-	}
-	else
-		ignoreLeft = 0;
-
-	dRight = widgetPtr->width - dLeft - ISO_WID2;
-	cRight = dRight / ISO_WID2;
-	if (dRight % ISO_WID2)
-		++cRight;
-	if (!(dRight % ISO_WID2) || ((dRight % ISO_WID2) > ISO_WID2 / 2))
-	{
-		++cRight;
-		ignoreRight = 1;
-	}
-	else
-		ignoreRight = 0;
-
-	dTop = (widgetPtr->height - ISO_FH2) / 2;
-	rTop = dTop / ISO_FH2;
-	if (dTop % ISO_FH2)
-		++rTop;
-	if (!(dTop % ISO_FH2) || ((dTop % ISO_FH2) > ISO_FH2 / 2))
-	{
-		++rTop;
-		ignoreTop = 1;
-	}
-	else
-		ignoreTop = 0;
-
-	dBottom = widgetPtr->height - dTop - ISO_FH2;
-	rBottom = dBottom / ISO_FH2;
-	if (dBottom % ISO_FH2)
-		++rBottom;
-	if (!(dBottom % ISO_FH2) || ((dBottom % ISO_FH2) > ISO_FH2 / 2))
-	{
-		++rBottom;
-		ignoreBottom = 1;
-	}
-	else
-		ignoreBottom = 0;
-
-	cc = cLeft + 1 + cRight;
-	rc = (rTop + 1 + rBottom) * 2;
-	
-	widgetPtr->tc = rc * cc;
-	widgetPtr->rc = rc;
-	widgetPtr->cc = cc;
-
-	widgetPtr->cLeft = cLeft;
-	widgetPtr->cRight = cRight;
-	widgetPtr->rTop = rTop;
-	widgetPtr->rBottom = rBottom;
-
-	widgetPtr->bw = (cc - ignoreLeft - ignoreRight) * ISO_WID2 +
-		(ignoreLeft + ignoreRight) * (ISO_WID2 / 2) + 4;
-	widgetPtr->bh = (ISO_HGT - ISO_FH) + (rc - ignoreTop - ignoreBottom + 1) * (ISO_FH2 / 2) + 2;
-
-	widgetPtr->bx = cLeft * ISO_WID2 - ignoreLeft * (ISO_WID2 / 2) - dLeft + 1;
-	widgetPtr->by = (ISO_HGT - ISO_FH) + (rTop * 2 - ignoreTop) * (ISO_FH2 / 2) - dTop;
-
-	widgetPtr->cx = ignoreLeft ? (ISO_WID2 / 2) : 0;
-	widgetPtr->cy = ignoreTop ? (ISO_FH2 / 2) : 0;
-
-	widgetPtr->ignoreLeft = ignoreLeft;
-	widgetPtr->ignoreTop = ignoreTop;
-	widgetPtr->ignoreRight = ignoreRight;
-	widgetPtr->ignoreBottom = ignoreBottom;
-
-	widgetPtr->centerTile = (rTop * 2) * cc + cLeft;
-
-	if (widgetPtr->anim)
-		Tcl_FreeDebug((char *) widgetPtr->anim);
-	if (widgetPtr->info)
-		Tcl_FreeDebug((char *) widgetPtr->info);
-	if (widgetPtr->invalid)
-		Tcl_FreeDebug((char *) widgetPtr->invalid);
-	if (widgetPtr->yp)
-		Tcl_FreeDebug((char *) widgetPtr->yp);
-	if (widgetPtr->xp)
-		Tcl_FreeDebug((char *) widgetPtr->xp);
-	if (widgetPtr->yo)
-		Tcl_FreeDebug((char *) widgetPtr->yo);
-	if (widgetPtr->xo)
-		Tcl_FreeDebug((char *) widgetPtr->xo);
-
-	widgetPtr->anim = (int *) Tcl_AllocDebug(sizeof(int) * rc * cc);
-	widgetPtr->animCnt = 0;
-	widgetPtr->info = (short *) Tcl_AllocDebug(sizeof(short) * rc * cc);
-	widgetPtr->invalid = (int *) Tcl_AllocDebug(sizeof(int) * rc * cc);
-	widgetPtr->invalidCnt = 0;
-	widgetPtr->yp = (int *) Tcl_AllocDebug(sizeof(int) * rc * cc);
-	widgetPtr->xp = (int *) Tcl_AllocDebug(sizeof(int) * rc * cc);
-	widgetPtr->yo = (int *) Tcl_AllocDebug(sizeof(int) * rc * cc);
-	widgetPtr->xo = (int *) Tcl_AllocDebug(sizeof(int) * rc * cc);
-
-	yy = 0;
-	xx = 0;
-
-	for (r = 0; r < rc; r++)
-	{
-		yp = r * (ISO_FH2 / 2);
-		if (ignoreTop)
-			yp -= (ISO_FH2 / 2);
-
-		if (r & 1)
-			++xx;
-		else if (r)
-			++yy;
-
-		yo = yy;
-		xo = xx;
-
-		for (c = 0; c < cc; c++)
-		{
-			widgetPtr->info[r * cc + c] = 0;
-
-			if ((ignoreLeft && !c && !(r & 1)) ||
-				(ignoreTop && !r) ||
-				(!ignoreRight && (c == cc - 1) && (r & 1)) ||
-				(ignoreRight && (c == cc - 1) && !(r & 1)) ||
-				(ignoreBottom && (r == rc - 1)))
-			{
-				widgetPtr->info[r * cc + c] |= WIDGET_INFO_IGNORE;
-			}
-
-			xp = c * ISO_WID2;
-			if (ignoreLeft)
-				xp -= (ISO_WID2 / 2);
-			if (r & 1)
-				xp += (ISO_WID2 / 2);
-
-			widgetPtr->yp[r * cc + c] = yp;
-			widgetPtr->xp[r * cc + c] = xp;
-
-			widgetPtr->yo[r * cc + c] = yo;
-			widgetPtr->xo[r * cc + c] = xo;
-
-			++xo;
-			--yo;
-		}
-	}
-}
-
 /*
  * Create a bitmap as big as the given Widget. We get the address of
  * the bits so we can write directly into the bitmap. The bitmap is
@@ -1635,30 +1386,12 @@ static void Widget_CreateBitmap(Widget *widgetPtr)
 
 	/* Create the bitmap */
 	Bitmap_New(widgetPtr->interp, &widgetPtr->bitmap);
-
-#if 0
-	Tk_SetWindowBackgroundPixmap(widgetPtr->tkwin, widgetPtr->bitmap.pixmap);
-#endif
-
-#ifdef USE_HERMES
-	if (widgetPtr == g_hermes_widget)
-	{
-		g_hermes_bitmap.width = widgetPtr->width * widgetPtr->gwidth;
-		g_hermes_bitmap.height = widgetPtr->height * widgetPtr->gheight;
-		Bitmap_NewScreen(&g_hermes_bitmap);
-	}
-#endif /* USE_HERMES */
 }
 
 /* Free the bitmap for this Widget */
 static void Widget_DeleteBitmap(Widget *widgetPtr)
 {
 	Bitmap_Delete(&widgetPtr->bitmap);
-
-#ifdef USE_HERMES
-	if (widgetPtr == g_hermes_widget)
-		Bitmap_Delete(&g_hermes_bitmap);
-#endif /* USE_HERMES */
 }
 
 /* List of all Widget item types */
@@ -1690,19 +1423,11 @@ void Widget_Center(Widget *widgetPtr, int cy, int cx)
 	/* Remember new center */
 	widgetPtr->y = cy, widgetPtr->x = cx;
 
-	if (widgetPtr->style != WIDGET_STYLE_ISO)
-	{
-		/* Calculate the limits of visibility */
-		widgetPtr->y_min = cy - widgetPtr->rc / 2;
-		widgetPtr->y_max = widgetPtr->y_min + widgetPtr->rc;
-		widgetPtr->x_min = cx - widgetPtr->cc / 2;
-		widgetPtr->x_max = widgetPtr->x_min + widgetPtr->cc;
-	}
-	else
-	{
-		widgetPtr->y0 = cy - widgetPtr->yo[widgetPtr->centerTile];
-		widgetPtr->x0 = cx - widgetPtr->xo[widgetPtr->centerTile];
-	}
+	/* Calculate the limits of visibility */
+	widgetPtr->y_min = cy - widgetPtr->rc / 2;
+	widgetPtr->y_max = widgetPtr->y_min + widgetPtr->rc;
+	widgetPtr->x_min = cx - widgetPtr->cc / 2;
+	widgetPtr->x_max = widgetPtr->x_min + widgetPtr->cc;
 
 	Widget_Wipe(widgetPtr);
 }
@@ -1739,13 +1464,6 @@ if (widgetPtr->flags & WIDGET_WIPE) return;
 			return;
 		widgetPtr->info[tile] |= WIDGET_INFO_DIRTY;
 		widgetPtr->invalid[widgetPtr->invalidCnt++] = tile;
-
-		/* XXX Hack -- Lighting up rooms is slow */
-		if (widgetPtr->style == WIDGET_STYLE_ISO)
-		{
-			if (widgetPtr->invalidCnt >= 40)
-				widgetPtr->flags |= WIDGET_WIPE;
-		}
 	}
 	else
 	{
@@ -1810,192 +1528,15 @@ void Widget_EventuallyRedraw(Widget *widgetPtr)
 	widgetPtr->flags |= WIDGET_REDRAW;
 }
 
-static void WindowToBitmap(Widget *widgetPtr, int *y, int *x)
-{
-	*y += widgetPtr->by;
-	*x += widgetPtr->bx;
-}
-
-static void BitmapToCanvas(Widget *widgetPtr, int *y, int *x)
-{
-	*y += widgetPtr->cy - (ISO_HGT - ISO_FH);
-	*x += widgetPtr->cx;
-}
-
-int PointToTile(Widget *widgetPtr, int x, int y, int *colPtr, int *rowPtr,
-	int *xcPtr, int *ycPtr)
-{
-	int row, col;
-	int yt, xt, y1, x1, y2;
-	float m;
-	int b;
-
-	if (x < 0 || x >= widgetPtr->width)
-		return 1;
-	if (y < 0 || y >= widgetPtr->height)
-		return 1;
-
-	/* Get cave coords of top-left tile */
-	yt = widgetPtr->y0;
-	xt = widgetPtr->x0;
-
-	WindowToBitmap(widgetPtr, &y, &x);
-	BitmapToCanvas(widgetPtr, &y, &x);
-
-	/* This gives us only *even* rows and columns */
-	row = y / ISO_FH2 * 2;
-	col = x / ISO_WID2;
-
-	/* Zero-based coords within box */
-	y1 = y - row * (ISO_FH2 / 2);
-	x1 = x - col * ISO_WID2;
-
-	/* See if the point is above or below 4 lines */
-	
-	m = 0.5;
-	b = -(ISO_FH2 / 2);
-	y2 = m * x1 + b;
-	if (y2 > y1)
-	{
-		--row;
-		goto finish;
-	}
-
-	b = (ISO_FH2 / 2);
-	y2 = m * x1 + b;
-	if (y2 < y1)
-	{
-		--col;
-		++row;
-		goto finish;
-	}
-
-	m = -0.5;
-	b = (ISO_FH2 / 2);
-	y2 = m * x1 + b;
-	if (y2 > y1)
-	{
-		--col;
-		--row;
-		goto finish;
-	}
-
-	b = ISO_FH2 + (ISO_FH2 / 2);
-	y2 = m * x1 + b;
-	if (y2 < y1)
-	{
-		++row;
-		goto finish;
-	}
-
-finish:
-	*rowPtr = row;
-	*colPtr = col;
-	*ycPtr = yt + widgetPtr->yo[row * widgetPtr->cc + col];
-	*xcPtr = xt + widgetPtr->xo[row * widgetPtr->cc + col];
-
-	return 0;
-}
-
 int Widget_CaveToView(Widget *widgetPtr, int y, int x, int *rowPtr, int *colPtr)
 {
-	int rc = widgetPtr->rc;
-	int cc = widgetPtr->cc;
-	int *pyo = widgetPtr->yo;
-	int *pxo = widgetPtr->xo;
-	int r, c, yt, xt, yy, xx;
-int y1, x1, y2, x2, isoy, isox,  isoy1, isox1,  isoy2, isox2;
-int guess, row = 0, col = 0;
-
-	if (widgetPtr->style != WIDGET_STYLE_ISO)
-	{
-		if ((y < widgetPtr->y_min) || (y >= widgetPtr->y_max))
-			return FALSE;
-		if ((x < widgetPtr->x_min) || (x >= widgetPtr->x_max))
-			return FALSE;
-		*rowPtr = y - widgetPtr->y_min;
-		*colPtr = x - widgetPtr->x_min;
-		return TRUE;
-	}
-
-#if 1
-
-	/* Get cave coords of top-left tile */
-	y1 = widgetPtr->y0;
-	x1 = widgetPtr->x0;
-
-	/* Get cave coords of bottom-right tile */
-	y2 = y1 + pyo[rc * cc - 1];
-	x2 = x1 + pxo[rc * cc - 1];
-
-	/* Cave x,y -> Iso x-y,x+y */
-	isoy1 = x1 + y1;
-	isox1 = x1 - y1;
-
-	/* Cave x,y -> Iso x-y,x+y */
-	isoy2 = x2 + y2;
-	isox2 = x2 - y2;
-
-	/* Cave x,y -> Iso x-y,x+y */
-	isoy = x + y;
-	isox = x - y;
-
-	guess = TRUE;
-	if (isoy < isoy1 || isoy > isoy2) guess = FALSE;
-	if (isox < isox1 || isox > isox2) guess = FALSE;
-	if (guess)
-	{
-		row = isoy - isoy1;
-		col = (isox - isox1) / 2;
-
-		if (row < 0 || col < 0 || row >= rc || col >= cc)
-		{
-		}
-		else
-		{
-			/* Verify */
-			yy = y1 + pyo[row * cc + col];
-			xx = x1 + pxo[row * cc + col];
-
-			if (y != yy || x != xx)
-			{
-			}
-			else
-			{
-				(*rowPtr) = row;
-				(*colPtr) = col;
-				return TRUE;
-			}
-		}
-	}
-
-#endif
-
-	if (!(debug_widgets & DEBUG_WIDGET_ISO)) return FALSE;
-
-	/* Get cave coords of top-left tile */
-	yt = widgetPtr->y0;
-	xt = widgetPtr->x0;
-
-	/* Slow method, checks every tile until done */
-	for (r = 0; r < rc; r++)
-	{
-		for (c = 0; c < cc; c++)
-		{
-			/* Calculate cave coords */
-			yy = yt + pyo[r * cc + c];
-			xx = xt + pxo[r * cc + c];
-
-			if ((yy == y) && (xx == x))
-			{
-				(*rowPtr) = r;
-				(*colPtr) = c;
-				return TRUE;
-			}
-		}
-	}
-
-	return FALSE;
+	if ((y < widgetPtr->y_min) || (y >= widgetPtr->y_max))
+		return FALSE;
+	if ((x < widgetPtr->x_min) || (x >= widgetPtr->x_max))
+		return FALSE;
+	*rowPtr = y - widgetPtr->y_min;
+	*colPtr = x - widgetPtr->x_min;
+	return TRUE;
 }
 
 /*
@@ -2098,7 +1639,7 @@ badType:
 
 	/* Set the error */
     Tcl_AppendResult(interp, "unknown or ambiguous item type \"",
-		t, "\"", (char *) NULL);
+		t, "\"", NULL);
 error:
 
 	/* Failure */
@@ -2140,7 +1681,7 @@ int WidgetItem_Cget(Tcl_Interp *interp, Widget *widgetPtr,
 	{
 		/* Set the error */
 		Tcl_AppendResult(interp, format("bad item index \"%d\"", index),
-			(char *) NULL);
+			NULL);
 
 		/* Failure */
 		return TCL_ERROR;
@@ -2201,7 +1742,7 @@ int WidgetItem_Configure(Tcl_Interp *interp, Widget *widgetPtr,
 	{
 		/* Set the error */
 		Tcl_AppendResult(interp, format("bad item index \"%d\"", index),
-			(char *) NULL);
+			NULL);
 
 		/* Failure */
 		return TCL_ERROR;
@@ -2218,7 +1759,7 @@ int WidgetItem_Configure(Tcl_Interp *interp, Widget *widgetPtr,
 	{
 		objPtr = Tk_GetOptionInfo(interp, (char *) itemPtr,
 			itemPtr->typePtr->optionTable,
-			(objc == 4) ? objv[3] : (Tcl_Obj *) NULL,
+			(objc == 4) ? objv[3] : NULL,
 			widgetPtr->tkwin);
 		if (objPtr == NULL)
 		{

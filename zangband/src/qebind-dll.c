@@ -28,7 +28,6 @@
  * string, just like the usual "bind" command. Bindings are not automatically
  * deleted when a widget is destroyed.
  */
-
 #include <ctype.h>
 #include <string.h>
 #include <tcl.h>
@@ -778,7 +777,7 @@ int QE_BindCmd(ClientData clientData, Tcl_Interp *interp, int argc,
 	if ((argc < 2) || (argc > 4))
 	{
 		Tcl_AppendResult(interp, "wrong # args: should be \"", argv[0],
-			" window ?pattern? ?command?\"", (char *) NULL);
+			" window ?pattern? ?command?\"", NULL);
 		return TCL_ERROR;
 	}
 

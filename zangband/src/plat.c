@@ -37,18 +37,18 @@ int AngbandTk_CmdChooseFont(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_
     /* Initialize members of the CHOOSEFONT structure. */ 
  
     cf.lStructSize = sizeof(CHOOSEFONT); 
-    cf.hwndOwner = (HWND)NULL; 
-    cf.hDC = (HDC)NULL; 
+    cf.hwndOwner = NULL; 
+    cf.hDC = NULL; 
     cf.lpLogFont = &lf; 
     cf.iPointSize = 0; 
     cf.Flags = CF_SCREENFONTS; 
     cf.rgbColors = RGB(0,0,0); 
     cf.lCustData = 0L; 
-    cf.lpfnHook = (LPCFHOOKPROC)NULL; 
-    cf.lpTemplateName = (LPSTR)NULL; 
+    cf.lpfnHook = NULL; 
+    cf.lpTemplateName = NULL; 
 
-    cf.hInstance = (HINSTANCE) NULL; 
-    cf.lpszStyle = (LPSTR)NULL; 
+    cf.hInstance = NULL; 
+    cf.lpszStyle = NULL; 
     cf.nFontType = SCREEN_FONTTYPE; 
     cf.nSizeMin = 0; 
     cf.nSizeMax = 0; 
@@ -163,16 +163,8 @@ objcmd_system(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 	int objC = objc - infoCmd->depth;
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
-	static char *cmdOptions[] = {"color", "mouse", "workarea", "osversion",
-#if (TK_MINOR_VERSION == 3) && (TK_RELEASE_SERIAL < 3)
- 		"windowicon",
-#endif /* version < 8.3.3 */
- 		NULL};
-	enum {IDX_COLOR, IDX_MOUSE, IDX_WORKAREA, IDX_OSVERSION
-#if (TK_MINOR_VERSION == 3) && (TK_RELEASE_SERIAL < 3)
-		IDX_WINDOWICON
-#endif /* version < 8.3.3 */
-	} option;
+	static char *cmdOptions[] = {"color", "mouse", "workarea", "osversion", NULL};
+	enum {IDX_COLOR, IDX_MOUSE, IDX_WORKAREA, IDX_OSVERSION} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 
 	char *t, buf[128];
@@ -239,38 +231,6 @@ objcmd_system(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			Tcl_SetStringObj(resultPtr, buf, -1);
 			break;
 
-#if (TK_MINOR_VERSION == 3) && (TK_RELEASE_SERIAL < 3)
-
-		/*
-		 * Set the window icon to the ANGBAND icon. This was taken from
-		 * the "winico" Tcl extension Copyright(c) 1999 Brueckner&Jarosch.
-		 */
-		case IDX_WINDOWICON:
-		{
-			char *t = Tcl_GetString(objV[2]);
-			HICON hIcon;
-			char cmdBuf[1024];
-			HWND hWnd;
-
-			hIcon = LoadIcon(GetModuleHandle(NULL), "ANGBAND");
-			if (hIcon == NULL)
-			{
-				Tcl_SetResult(interp, "can't load icon", TCL_STATIC);
-				return TCL_ERROR;
-			}
-			(void) sprintf(cmdBuf, "wm frame %s", t);
-			if (Tcl_Eval(interp, cmdBuf) != TCL_OK)
-				return TCL_ERROR;
-			(void) sscanf(Tcl_GetStringResult(interp), "0x%x",
-				(unsigned int *) &hWnd);
-			Tcl_ResetResult(interp);
-			(void) SendMessage(hWnd, WM_SETICON, ICON_SMALL, (LPARAM) hIcon);
-			(void) SendMessage(hWnd, WM_SETICON, ICON_BIG, (LPARAM) hIcon);
-			break;
-		}
-
-#endif /* version < 8.3.3 */
-
 		/* Same as tcl_platform(os), but detects 95/98/ME/NT/2000 */
 		case IDX_OSVERSION:
 		{
@@ -315,14 +275,5 @@ objcmd_system(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 #endif /* PLATFORM_WIN */
 }
 
-/* Return the number of milliseconds */
-unsigned long Milliseconds(void)
-{
-#ifdef PLATFORM_WIN
-	return GetTickCount();
-#endif
-#ifdef PLATFORM_X11
-	return TclpGetClicks() / 1000;
-#endif
-}
+
 

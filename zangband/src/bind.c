@@ -210,7 +210,7 @@ static void ExpandDungeon(char which, ClientData object, QE_Event *eventPtr,
 	switch (which)
 	{
 		case 'c': /* depth */
-			QE_ExpandNumber(p_ptr_depth, result);
+			QE_ExpandNumber(dun_level, result);
 			break;
 		
 		default:
@@ -358,11 +358,11 @@ static void ExpandPy(char which, ClientData object, QE_Event *eventPtr,
 			switch (which)
 			{
 				case 'c': /* current */
-					QE_ExpandNumber(p_ptr_depth, result);
+					QE_ExpandNumber(dun_level, result);
 					return;
 		
 				case 'm': /* max_depth */
-					QE_ExpandNumber(p_ptr_max_depth, result);
+					QE_ExpandNumber(p_ptr->max_dlv, result);
 					return;
 			}
 			break;
@@ -400,7 +400,7 @@ static void ExpandPy(char which, ClientData object, QE_Event *eventPtr,
 					return;
 
 				case 'm': /* max_lev */
-					QE_ExpandNumber(p_ptr_max_lev, result);
+					QE_ExpandNumber(p_ptr->max_dlv, result);
 					return;
 			}
 			break;
@@ -422,7 +422,7 @@ static void ExpandPy(char which, ClientData object, QE_Event *eventPtr,
 			switch (which)
 			{
 				case 'c': /* name */
-					ExtToUtf_ExpandString(op_ptr_full_name, result);
+					ExtToUtf_ExpandString(player_name, result);
 					return;
 			}
 			break;
@@ -510,13 +510,13 @@ static void ExpandTarget(char which, ClientData object, QE_Event *eventPtr,
 	switch (which)
 	{
 		case 'w': /* who */
-			QE_ExpandNumber(p_ptr_target_who, result);
+			QE_ExpandNumber(target_who, result);
 			break;
 
 		case 'r': /* r_idx */
-			if (p_ptr_target_who > 0)
+			if (target_who > 0)
 			{
-				monster_type *m_ptr = &m_list[p_ptr_target_who];
+				monster_type *m_ptr = &m_list[target_who];
 				QE_ExpandNumber(m_ptr->r_idx, result);
 			}
 			else
@@ -526,11 +526,15 @@ static void ExpandTarget(char which, ClientData object, QE_Event *eventPtr,
 			break;
 
 		case 'y': /* y */
-			QE_ExpandNumber(p_ptr_target_row, result);
+			QE_ExpandNumber(target_row, result);
 			break;
 
 		case 'x': /* x */
-			QE_ExpandNumber(p_ptr_target_col, result);
+			QE_ExpandNumber(target_col, result);
+			break;
+
+		case 'v': /* visibility */
+			QE_ExpandNumber(target_vis, result);
 			break;
 		
 		default:
@@ -552,7 +556,7 @@ static void ExpandTrack(char which, ClientData object, QE_Event *eventPtr,
 
 		case 'f': /* friend */
 			m_ptr = &m_list[clientData->who];
-			QE_ExpandNumber(!is_hostile(m_ptr), result);
+			QE_ExpandNumber((is_friendly(m_ptr) || is_pet(m_ptr)), result);
 			break;
 
 		case 'w': /* who */

@@ -15,11 +15,6 @@
 
 #include <tk.h>
 
-#if !defined(PLATFORM_MAC) && !defined(PLATFORM_WIN) && !defined(PLATFORM_X11)
-#error "you must define one of PLATFORM_MAC, PLATFORM_WIN or PLATFORM_X11"
-#endif /* */
-
-
 typedef struct IconSpec {
 	int type;
 	int index;
@@ -65,7 +60,6 @@ typedef struct t_icon_data {
 #define ICON_FLAG_DARK 0x0001 /* Recalculate dark_data before display */
 #define ICON_FLAG_LEFT 0x0002 /* back2front */
 #define ICON_FLAG_RIGHT 0x0004 /* back2front */
-#define ICON_FLAG_ISO 0x0008 /* "Non-transparent" isometric tile */
 	short *flags; /* Per-icon flags */
 
 	IconPtr rle_data; /* Address of RLE data */
@@ -100,7 +94,6 @@ int g_ascii_count; /* Number of elements in g_ascii[] array */
 int g_ascii_delay, g_ascii_multi, g_ascii_ticks, g_ascii_char;
 
 #define ICON_STYLE_ICON 0
-#define ICON_STYLE_ISO 1
 int g_icon_style;
 
 void PixelSet_RGB(IconPtr dst, int r, int g, int b, int bypp);

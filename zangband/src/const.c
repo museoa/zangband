@@ -124,7 +124,7 @@ int objcmd_const(ClientData clientData, Tcl_Interp *interp, int objc,
 
 static CommandInit commandInit[] = {
 	{0, "const", 2, 3, "name ?index?", objcmd_const, (ClientData) 0},
-	{0, (char *) NULL, 0, 0, (char *) NULL, (Tcl_ObjCmdProc *) NULL, (ClientData) 0}
+	{0, NULL, 0, 0, NULL, NULL, (ClientData) 0}
 };
 
 int Const_Init(Tcl_Interp *interp)

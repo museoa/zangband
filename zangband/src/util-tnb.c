@@ -10,7 +10,6 @@
  * included in all such copies.
  */
 
-#include <tk.h>
 #include "angband.h"
 #include "tnb.h"
 #include "interp.h"
@@ -24,7 +23,7 @@
 #include <tkUnixInt.h>
 #endif
 #include <tkFont.h>
-
+#include "tkMenu.h"
 /*
  * Return a "standardized" string describing a font.
  */
@@ -63,10 +62,6 @@ int objcmd_fontdesc(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 	return TCL_OK;
 }
 
-#if TK_MINOR_VERSION >= 2
-
-#include "tkMenu.h"
-
 /*
  * This is a colossal hack to counterattack the abysmal performance of
  * "$menu entryconfigure $index -state $state" under Tk 8.2. It allows
@@ -78,7 +73,7 @@ int objcmd_fontdesc(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 int objcmd_menuentrystate(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	static char *tkMenuStateStrings[] = {"active", "normal", "disabled",
-		(char *) NULL};
+		NULL};
 	Tcl_HashEntry *hashEntryPtr;
 	Tcl_HashTable *menuTablePtr;
 	TkMenu *menuPtr;
@@ -144,8 +139,6 @@ int objcmd_menuentrystate(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Ob
 	/* Success */
 	return TCL_OK;
 }
-
-#endif /* Tk 8.2 */
 
 byte g_prompt_attr = TERM_WHITE;
 
@@ -226,7 +219,7 @@ void any_more(cptr prompt)
 
 	/* Display the message, wait for a response */
 	msg_print(prompt);
-	message_flush();
+	msg_print(NULL);
 
 	/* Restore quick_messages */
 	quick_messages = old_quick;
@@ -305,125 +298,6 @@ void redraw_init(void)
 
 #endif /* ALLOW_STATUS_EXTRA */
 
-#if TK_MINOR_VERSION == 2
-
-typedef struct PhotoMaster {
-    Tk_ImageMaster tkMaster;	/* Tk's token for image master.  NULL means
-				 * the image is being deleted. */
-    Tcl_Interp *interp;		/* Interpreter associated with the
-				 * application using this image. */
-    Tcl_Command imageCmd;	/* Token for image command (used to delete
-				 * it when the image goes away).  NULL means
-				 * the image command has already been
-				 * deleted. */
-    int	flags;			/* Sundry flags, defined below. */
-    int	width, height;		/* Dimensions of image. */
-    int userWidth, userHeight;	/* User-declared image dimensions. */
-    Tk_Uid palette;		/* User-specified default palette for
-				 * instances of this image. */
-    double gamma;		/* Display gamma value to correct for. */
-    char *fileString;		/* Name of file to read into image. */
-    char *dataString;		/* String value to use as contents of image. */
-    char *format;		/* User-specified format of data in image
-				 * file or string value. */
-    unsigned char *pix24;	/* Local storage for 24-bit image. */
-    int ditherX, ditherY;	/* Location of first incorrectly
-				 * dithered pixel in image. */
-    TkRegion validRegion;	/* Tk region indicating which parts of
-				 * the image have valid image data. */
-    struct PhotoInstance *instancePtr;
-				/* First in the list of instances
-				 * associated with this master. */
-} PhotoMaster;
-
-/*
- * photocopy $imageSrc $imageDst $srcX $srcY $srcW $srcH
- * Like "$imageName copy args..." but considers transparency.
- */
-int
-objcmd_photo_copy(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
-{
-	Tk_PhotoHandle photoH;
-	Tk_PhotoImageBlock photoBlock;
-	char *imageName;
-	int y, x, width, height;
-	PhotoMaster *masterPtr, *masterDstPtr;
-	TkRegion validRegion;
-	XRectangle rect;
-
-	/* Get the name of the Tk photo image. It must already exist */
-	imageName = Tcl_GetStringFromObj(objv[1], NULL);
-
-	/* Lookup the photo by name */
-	photoH = Tk_FindPhoto(interp, imageName);
-
-	/* The photo was not found */
-	if (photoH == NULL)
-	{
-		/* Failure */
-		return TCL_ERROR;
-	}
-
-	(void) Tk_PhotoGetImage(photoH, &photoBlock);
-
-	masterPtr = (PhotoMaster *) photoH;
-
-	/* Get the name of the Tk photo image. It must already exist */
-	imageName = Tcl_GetStringFromObj(objv[2], NULL);
-
-	/* Lookup the photo by name */
-	photoH = Tk_FindPhoto(interp, imageName);
-
-	/* The photo was not found */
-	if (photoH == NULL)
-	{
-		/* Failure */
-		return TCL_ERROR;
-	}
-
-	masterDstPtr = (PhotoMaster *) photoH;
-
-	if (Tcl_GetIntFromObj(interp, objv[3], &x) != TCL_OK ||
-		Tcl_GetIntFromObj(interp, objv[4], &y) != TCL_OK ||
-		Tcl_GetIntFromObj(interp, objv[5], &width) != TCL_OK ||
-		Tcl_GetIntFromObj(interp, objv[6], &height) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	if ((x < 0) || (x + width > photoBlock.width)
-		|| (y < 0) || (y + height > photoBlock.height))
-	{
-	    Tcl_AppendResult(interp, "coordinates out of range", (char *) NULL);
-	    return TCL_ERROR;
-	}
-
-	photoBlock.pixelPtr += x * photoBlock.pixelSize +
-		y * photoBlock.pitch;
-	photoBlock.width = width;
-	photoBlock.height = height;
-	Tk_PhotoPutBlock(photoH, &photoBlock, 0, 0, width, height);
-
-	/* The big hack: Intersect the valid regions */
-	rect.x = x;
-	rect.y = y;
-	rect.width = width;
-	rect.height = height;
-	validRegion = TkCreateRegion();
-	TkUnionRectWithRegion(&rect, validRegion, validRegion);
-	TkIntersectRegion(masterPtr->validRegion, validRegion, validRegion);
-	OffsetRgn((HRGN) validRegion, -x, -y);
-	TkIntersectRegion(validRegion, masterDstPtr->validRegion,
-		masterDstPtr->validRegion);
-	TkDestroyRegion(validRegion);
-
-	return TCL_OK;
-}
-
-#endif /* Tk 8.2 */
-
-#if TK_MINOR_VERSION >= 3
-
 typedef struct PhotoMaster {
     Tk_ImageMaster tkMaster;	/* Tk's token for image master.  NULL means
 				 * the image is being deleted. */
@@ -452,10 +326,6 @@ typedef struct PhotoMaster {
 				/* First in the list of instances
 				 * associated with this master. */
 } PhotoMaster;
-
-#endif /* Tk 8.3 */
-
-#if TK_MINOR_VERSION >= 2
 
 /*
  * photoget $imageName $x $y
@@ -499,7 +369,7 @@ objcmd_photo_get(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 	if ((x < 0) || (x >= masterPtr->width)
 		|| (y < 0) || (y >= masterPtr->height))
 	{
-	    Tcl_AppendResult(interp, "coordinates out of range", (char *) NULL);
+	    Tcl_AppendResult(interp, "coordinates out of range", NULL);
 	    return TCL_ERROR;
 	}
 
@@ -596,14 +466,12 @@ objcmd_photo_mask(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 				while ((x < width) && ((pixelPtr[0] + pixelPtr[1] + pixelPtr[2]) == 255 * 3))
 				{
 					x++;
-#if TK_MINOR_VERSION >= 3
 					/* Write to the alpha channel */
 					if (loop)
 					{
 						pixelDstPtr[0] = pixelDstPtr[1] = pixelDstPtr[2] = 0xd9;
 						pixelDstPtr[3] = 0;
 					}
-#endif
 					pixelPtr += photoBlockPtr->pixelSize;
 					pixelDstPtr += 4;
 				}
@@ -735,11 +603,9 @@ objcmd_photo_mask(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 			while ((x < width) && ((pixelPtr[0] + pixelPtr[1] + pixelPtr[2]) == 255 * 3))
 			{
 				x++;
-#if TK_MINOR_VERSION >= 3
 				/* Write to the alpha channel */
 				pixelDstPtr[0] = pixelDstPtr[1] = pixelDstPtr[2] = 0xd9;
 				pixelDstPtr[3] = 0;
-#endif /* Tk >= 8.3 */
 				pixelPtr += photoBlockPtr->pixelSize;
 				pixelDstPtr += 4;
 			}
@@ -774,7 +640,6 @@ objcmd_photo_mask(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 	return TCL_OK;
 }
 
-#endif /* Tk 8.2 or 8.3 */
 
 int ExtToUtf_SetArrayValueString(char *varName, char *field, char *value)
 {
