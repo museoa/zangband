@@ -305,7 +305,7 @@ void place_trees(int x, int y)
 				}
 
 				/* Light area since is open above */
-				cave[j][i].info |= CAVE_GLOW;
+				cave[j][i].info |= (CAVE_GLOW | CAVE_ROOM);
 			}
 		}
 	}
