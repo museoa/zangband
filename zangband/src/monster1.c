@@ -1361,7 +1361,7 @@ static void roff_aux(int r_idx, int remem)
 			}
 			case RBE_TIME:
 			{
-				q = "time";
+				q = "distrupt the time continuum";
 				break;
 			}
 			case RBE_EXP_VAMP:
