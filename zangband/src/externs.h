@@ -322,7 +322,7 @@ extern cave_type *(*area)(int, int);
 extern bool (*in_bounds)(int, int);
 extern bool (*in_bounds2)(int, int);
 extern u16b *temp_block[WILD_BLOCK_SIZE+1];
-extern wild_cache_type wild_cache[WILD_BLOCKS];
+extern cave_type **wild_cache[WILD_BLOCKS];
 extern wild_grid_type wild_grid;
 extern wild_type *wild[WILD_SIZE];
 extern object_type *o_list;
