@@ -17,6 +17,14 @@
 /* Number of river starting points - must be less than TEMP_MAX */
 #define WILD_RIVER_START	10
 
+/* 
+ * Helper functions that can be called recursively.  (Need function prototypes.)
+ * See make_wild_03() for an instance of this.
+ * This ability will also be used by other routines in the future.
+ */ 
+void gen_block_helper(blk_ptr block_ptr, byte *data, int gen_type);
+void blend_helper(cave_type *c_ptr, byte *data,int g_type);
+
 
 
 /* Lighten / Darken new block depending on Day/ Night */
@@ -2407,6 +2415,10 @@ static void wild_add_gradient(blk_ptr block_ptr, byte feat1, byte feat2)
 	}
 }
 
+
+
+
+
 /*
  * Make wilderness generation type 1
  *
@@ -2504,9 +2516,68 @@ static void make_wild_02(blk_ptr block_ptr, byte *data)
 }
 
 /*
+ * This function makes a wilderness type specifed by data[0].
+ * It then overlays a "circle" of other terrain on top.
+ * data[1], [2] and [3] specify these.
+ * Note - this function is a major hack.  It uses the _number_
+ * of another wilderness type - which in turn has its own data[]
+ * and generation type.
+ * It is possible to use recursion to make some interesting effects.
+ * These include:  Tiny lakes of water, lava, acid.  Craters.  Rock pillars.
+ *   Bogs.  Clumps of trees. etc.
+ */
+static void make_wild_03(blk_ptr block_ptr, byte *data)
+{
+	int i, j, element;
+	
+	/* Call the other routine to make the "base" terrain. */
+	gen_block_helper(block_ptr, wild_gen_data[data[0]].data, 
+		wild_gen_data[data[0]].gen_routine);
+	
+	/* Initialise temporary block */
+	clear_temp_block();
+	
+	/* Large in center - small on sides */
+	set_temp_corner_val(WILD_BLOCK_SIZE * 64);
+	set_temp_mid(WILD_BLOCK_SIZE * 256);
+	
+	/* Generate plasma factal */
+	frac_block();
+	
+	/* Overlay the "circle" of terrain */
+	for(i = 0; i < WILD_BLOCK_SIZE; i++)
+	{
+		for(j = 0; j < WILD_BLOCK_SIZE; j++)
+		{
+			element = temp_block[j][i];
+			
+			/* Outside circle? */
+			if (element < WILD_BLOCK_SIZE * 128) continue;
+			
+			if ((element < WILD_BLOCK_SIZE * 171) && (rand_int(2) == 1))
+			{
+				/* Outermost terrain */
+				block_ptr[j][i].feat = data[1];
+				continue;			
+			}
+			
+			if ((element < WILD_BLOCK_SIZE * 213) && (rand_int(2) == 1))
+			{
+				/* Middle terrain */
+				block_ptr[j][i].feat = data[2];
+				continue;
+			}
+		
+			/* Inner terrain */
+			block_ptr[j][i].feat = data[3];
+		}
+	}
+}
+
+/*
  * The function that picks a "blending feature" for wild. gen. type 1
  */
-static void blend_wild_01(cave_type *c_ptr, byte data[8])
+static void blend_wild_01(cave_type *c_ptr, byte *data)
 {	
 	/* Store an "average" terrain feature */ 
 	c_ptr->feat = pick_feat(data[0], data[2], data[4], data[6],
@@ -2516,12 +2587,37 @@ static void blend_wild_01(cave_type *c_ptr, byte data[8])
 /*
  * The function that picks a "blending feature" for wild. gen. type 2
  */
-static void blend_wild_02(cave_type *c_ptr, byte data[8])
+static void blend_wild_02(cave_type *c_ptr, byte *data)
 {	
 	/* Store the most likely terrain feature */ 
 	c_ptr->feat = data[0];
 }
 
+void blend_helper(cave_type *c_ptr, byte *data,int g_type)
+{	
+	/* Based on type - choose wilderness block generation function */
+	switch (g_type)
+	{
+		case 1:
+			/* Fractal plasma with weighted terrain probabilites */
+			blend_wild_01(c_ptr, data);
+			break;
+					
+		case 2:
+			/* Simple weighted probabilities on flat distribution */
+			blend_wild_02(c_ptr, data);
+			break;
+					
+		case 3:	
+			/* Use the other terrain's blend function */
+			blend_helper(c_ptr, wild_gen_data[data[0]].data,
+				 wild_gen_data[data[0]].gen_routine);
+			break;
+					
+		default:
+		quit("Illegal wilderness block type.");
+	}
+}
 
 /* 
  * Blend a block based on the adjacent blocks
@@ -2531,7 +2627,7 @@ static void blend_block(int x, int y, blk_ptr block_ptr, u16b type)
 {
 	int i, j, dx, dy;
 	
-	u16b w_type, g_type;
+	u16b w_type;
 	
 	/* Initialise temporary block */
 	clear_temp_block();
@@ -2595,40 +2691,48 @@ static void blend_block(int x, int y, blk_ptr block_ptr, u16b type)
 			/* If adjacent type is the same as this one - don't blend */
 			if (w_type == type) continue;
 			
-			/* Get generation type */
-			g_type = wild_gen_data[w_type].gen_routine;
-			
-			/* Based on type - choose wilderness block generation function */
-			switch (g_type)
-			{
-				case 1:
-					/* Fractal plasma with weighted terrain probabilites */
-					blend_wild_01(&block_ptr[j][i], wild_gen_data[w_type].data);
-					break;
-				case 2:
-					/* Simple weighted probabilities on flat distribution */
-					blend_wild_02(&block_ptr[j][i], wild_gen_data[w_type].data);
-					break;
-				default:
-					quit("Illegal wilderness block type.");
-			}
+			/* Blend with generation type specified by gen_routine */
+			blend_helper(&block_ptr[j][i], wild_gen_data[w_type].data,
+				 wild_gen_data[w_type].gen_routine);
 		}
 	}
 }
 
+/* Make the specified terrain type at a wilderness block */
+void gen_block_helper(blk_ptr block_ptr, byte *data, int gen_type)
+{
+	/* Based on type - choose wilderness block generation function */
+	switch (gen_type)
+	{
+		case 1:
+		/* Fractal plasma with weighted terrain probabilites */
+		make_wild_01(block_ptr, data);
+		break;
+			
+		case 2:
+		/* Uniform field + rare "out-crops" */
+		make_wild_02(block_ptr, data);			
+		break;
+				
+		case 3:
+		/* Use another type + overlay a "circle" of terrain. */
+		make_wild_03(block_ptr, data);
+		break;
+				
+		default:
+		quit("Illegal wilderness block type.");
+	}
+}
+
+
+
 /* Make a new block based on the terrain type */
 static void gen_block(int x, int y, blk_ptr block_ptr)
 {
-	u16b w_town;
-	u16b w_type;
-	u16b gen_type;
+	u16b w_town, w_type;
 	
 	/*
-	 * Since only grass has been "turned on", this function
-	 * is rather simple at the moment.
-	 * Eventually there will be a switch statement for each
-	 * terrain type.
-	 * Even later - most of this will be table driven.
+	 * XXX XXX Later - most of this will be table driven.
 	 */
 
 	/* Hack -- Use the "simple" RNG */
@@ -2649,25 +2753,9 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 	}
 	else
 	{
-		/* Get generation type */
-		gen_type = wild_gen_data[w_type].gen_routine;
-	
-		/* Based on type - choose wilderness block generation function */
-		switch (gen_type)
-		{
-			case 1:
-				/* Fractal plasma with weighted terrain probabilites */
-				make_wild_01(block_ptr, wild_gen_data[w_type].data);
-				break;
-			
-			case 2:
-				/* Uniform field + rare "out-crops" */
-				make_wild_02(block_ptr, wild_gen_data[w_type].data);			
-				break;
-		
-			default:
-				quit("Illegal wilderness block type.");
-		}
+		/* Make terrain based on wilderness generation type */
+		gen_block_helper(block_ptr, wild_gen_data[w_type].data, 
+			wild_gen_data[w_type].gen_routine);		
 	
 		/* Blend with adjacent terrains */
 		blend_block(x, y, block_ptr, w_type);
