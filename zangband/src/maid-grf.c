@@ -2134,6 +2134,9 @@ static void map_info(int x, int y, byte *ap, char *cp, byte *tap, char *tcp)
 	map.y = y;
 
 	
+	/* Default priority */
+	map.priority = 0;
+	
 	/* Pointer to the feature */
 	f_ptr = &f_info[feat];
 		
@@ -2706,6 +2709,7 @@ static void copy_list(term_list *t_ptr, int num1, list_item **l_ptr_ptr,
 		l_ptr->kn_flags1 = tl_ptr->kn_flags1;
 		l_ptr->kn_flags2 = tl_ptr->kn_flags2;
 		l_ptr->kn_flags3 = tl_ptr->kn_flags3;
+		l_ptr->kn_flags4 = tl_ptr->kn_flags4;
 
 		/* Duplicate cost */
 		l_ptr->cost = tl_ptr->cost;
