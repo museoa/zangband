@@ -1861,7 +1861,7 @@ static bool check_save(int power)
 	if (power <= 0) return (FALSE);
 
 	/* Power competes against saving throw */
-	if (randint1(power) > (p_ptr->skill_sav)) return (TRUE);
+	if (randint1(power) > randint1(p_ptr->skill_sav)) return (TRUE);
 
 	/* Assume miss */
 	return (FALSE);
@@ -2282,7 +2282,7 @@ void field_action_hit_trap_curse(s16b *field_ptr, void *nothing)
 	hit_trap(f_ptr);
 	
 	/* Saving throw */
-	if (!check_hit(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return;
 	
 	msg_print("There is a flash of shimmering light!");
 	
@@ -2327,7 +2327,7 @@ void field_action_hit_trap_teleport(s16b *field_ptr, void *nothing)
 	hit_trap(f_ptr);
 	
 	/* Saving throw */
-	if (!check_hit(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return;
 	
 	msg_print("You hit a teleport trap!");
 	teleport_player(100);
@@ -2538,7 +2538,7 @@ void field_action_hit_trap_traps(s16b *field_ptr, void *nothing)
 	hit_trap(f_ptr);
 	
 	/* Saving throw */
-	if (!check_hit(f_ptr->data[1])) return;
+	if (!check_save(f_ptr->data[1])) return;
 	
 	msg_print("There is a bright flash of light!");
 
