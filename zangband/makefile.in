@@ -81,7 +81,7 @@ configure: configure.in
 
 dirs:
 	-mkdir $(DESTDIR)
-	-mkdir $(addprefix $(DESTDIR),$(dirlist))
+	-mkdir $(addprefix $(DESTDIR),$(filter-out $(srcdirlist), $(dirlist)))
 
 installbase: dirs zangband
 	for i in $(files) ; do \
@@ -112,7 +112,13 @@ distcheck: dist
 	-rm -rf temp1
 	-rm -rf temp2
 	-rm -rf $(DESTDIR)
-	
+
+distgz: dist
+	cd $(datadir)/games && tar -cvf zangband.tar zangband
+	mv $(datadir)/games/zangband.tar ./
+	gzip -9 zangband.tar
+	-rm -rf $(DESTDIR)
+
 clean:
 	-rm -f $(clean-files)
 
@@ -132,4 +138,5 @@ test:
 	@echo I will distinstall:
 	@echo $(srcdirlist) $(srcfiles)
 
-.PHONY: dirs installbase install uninstall dist distcheck clean distclean test
+.PHONY: dirs installbase install uninstall dist distcheck distgz \
+		 clean distclean test
