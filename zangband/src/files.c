@@ -4115,6 +4115,7 @@ static long equip_value(void)
 /*
  * Hack -- Calculates the total number of points earned         -JWT-
  * Now with up to 80% penalty for having mutations & other extra things  -GSN-
+ * Fixed this up to be "fairer" -CK-
  */
 long total_points(void)
 {
@@ -4123,14 +4124,15 @@ long total_points(void)
 
 	if (preserve_mode) mult -= 10; /* Penalize preserve, maximize modes */
 	if (maximize_mode) mult -= 15;
-	if (auto_scum) mult -= 50;
-	if (stupid_monsters) mult -= 50;
-	if (vanilla_town)    mult += 30; /* Vanilla town is harder */
-	if (ironman_hard_quests) mult += 30; /* so are hard quests */
-	if (small_levels)    mult += ((ironman_small_levels) ? 20 : 50);
-	if (empty_levels)    mult += 10;
-	if (smart_learn) mult += 20;
-	if (smart_cheat) mult += 20;
+	if (stupid_monsters) mult -= 20; /* AI is not that big a deal (yet) */
+	if (vanilla_town)    mult += 5; /* Vanilla town is harder */
+	if (ironman_hard_quests) mult += 10; /* so are hard quests */
+	if (ironman_small_levels) mult += 5; /* not too much of a reward since some people 
+                                               * like playing with this */
+        if (ironman_downward)  mult +=10;
+	if (ironman_empty_levels)    mult += 10;
+	if (ironman_nightmare) mult += 20;
+        if (ironman_rooms) mult +=10;
 
 	if (mult < 5) mult = 5; /* At least 5% of the original score */
 
