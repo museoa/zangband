@@ -1069,7 +1069,7 @@ static void wr_extra(void)
  * Save the dungeon or wilderness
  */
 
-static void save_map(int ymax, int ymin, int xmax, int xmin)
+static void save_map(int xmin, int ymin, int xmax, int ymax)
 {
 	int y, x;
 
@@ -1305,7 +1305,7 @@ static void wr_dungeon(void)
 	if (p_ptr->depth)
 	{
 		/* Save dungeon map */
-		save_map(p_ptr->max_hgt, p_ptr->min_hgt, p_ptr->max_wid, p_ptr->min_wid);
+		save_map(p_ptr->min_wid, p_ptr->min_hgt, p_ptr->max_wid, p_ptr->max_hgt);
 #if 0
 		/* Hack - the player is not in this dungeon */
 		character_dungeon = FALSE;
@@ -1329,7 +1329,7 @@ static void wr_dungeon(void)
 	else
 	{
 		/* Save wilderness map */
-		save_map(p_ptr->max_hgt, p_ptr->min_hgt, p_ptr->max_wid, p_ptr->min_wid);
+		save_map(p_ptr->min_wid, p_ptr->min_hgt, p_ptr->max_wid, p_ptr->max_hgt);
 	}
 
 
