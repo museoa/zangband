@@ -60,6 +60,82 @@ static int racial_chance(s16b min_level, int use_stat, int difficulty)
 		return (((sum * 100) / difficulty) / stat);
 }
 
+/* 
+ * Helper function for ghouls, hacked from the raise dead function.
+ * I realize it is somewhat illogical to have this as a "power" rather
+ * than an extension of the "eat" command, but I could not think of
+ * a handy solution to the conceptual/UI problem of having food objects AND
+ * an edible corpse in the same square...
+ * Eating corpses should probably take more than 1 turn (realistically). 
+ * (OTOH, you can swap your full-plate armour for a dragonscalemail in
+ * 1 turn *shrug*) 
+ */
+
+void eat_corpse(void)
+{
+
+	s16b i;
+	int fx, fy;
+	bool corpse_here = FALSE;
+	field_type *f_ptr = NULL;
+
+	/* Find the field in the player square */
+	for (i = 1; i < fld_max; i++)
+	{
+	 
+	        f_ptr = &fld_list[i]; 
+
+		/* Paranoia -- Skip missing objects */
+		if (!f_ptr->t_idx) continue;
+
+		/* Location */
+		fy = f_ptr->fy;
+		fx = f_ptr->fx;
+
+		/* Is it in the player square? */
+		if (!(fy == p_ptr->py && fx == p_ptr->px))
+		{
+		  continue;
+		}
+
+		/* Want a corpse / skeleton */
+		if (!(f_ptr->t_idx == FT_CORPSE ||
+		    f_ptr->t_idx == FT_SKELETON)) continue;
+		else
+		{
+		  corpse_here = TRUE;
+		  break;
+		}
+	}
+
+	if (!corpse_here)
+	{
+	  msg_print("There is no fresh skeleton or corpse here!");
+	  p_ptr->energy_use = 0;
+	  return;
+	}
+
+	if(f_ptr->t_idx == FT_CORPSE)
+	{
+	  msg_print("The corpse tastes delicious!");
+	  (void)set_food(p_ptr->food + 2000);
+	}
+	else
+	{
+	  msg_print("The bones taste delicious!");
+	  (void)set_food(p_ptr->food + 1000);
+	}
+
+	/* Sound */
+	sound(SOUND_EAT);
+
+	delete_field_idx(i);
+
+        return;
+
+}
+
+
 
 /*
  * Note: return value indicates that we have succesfully used the power
@@ -542,7 +618,8 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 			}
 		        case RACE_GHOUL:
 			{
-			        msg_print("Power not implemented yet. Sorry.");
+			        eat_corpse();
+				break;
 			}
 			default:
 				msg_print("This race has no bonus power.");

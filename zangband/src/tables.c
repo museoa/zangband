@@ -8261,7 +8261,7 @@ const mutation_type race_powers[MAX_RACE_POWERS] =
 	    "You can eat corpses and skeletons to gain nutrition.",
 	    "(nothing)",
 	    "(nothing)",
-	    "Eat corpse",
+	    "Eat corpse/skeleton",
 	    1, 0, A_CON, 0,
 	}
 
