@@ -15165,10 +15165,10 @@ bool borg_flow_spastic(bool bored)
             int yy = c_y + ddy_ddd[i];
 
             /* Current grid */
-            ag = &borg_grids[yy][xx];
+            mb_ptr = map_loc(xx, yy);
 
             /* Tweak -- Remember the search */
-            if (ag->xtra < 100) ag->xtra += 5;
+            if (mb_ptr->xtra < 100) mb_ptr->xtra += 5;
         }
 
         /* Tweak -- Search a little */
@@ -15189,11 +15189,13 @@ bool borg_flow_spastic(bool bored)
     {
         for (x = 1; x < AUTO_MAX_X-1; x++)
         {
-            borg_grid *ag_ptr[8];
+			map_block *mb_array[8];
 
             int wall = 0;
             int supp = 0;
             int diag = 0;
+			
+			byte xtra_val;
 
 
             /* Acquire the grid */
@@ -15212,13 +15214,14 @@ bool borg_flow_spastic(bool bored)
             /* Skip "unreachable" grids */
             if (cost >= 250) continue;
 
+			xtra_val = mb_ptr->xtra;
 
             /* Tweak -- Limit total searches */
-            if (ag->xtra >= 50) continue;
-			if (ag->xtra >= borg_skill[BI_CLEVEL] * 5) continue;
+            if (xtra_val >= 50) continue;
+			if (xtra_val >= borg_skill[BI_CLEVEL] * 5) continue;
 
             /* Limit initial searches until bored */
-            if (!bored && (ag->xtra > 5)) continue;
+            if (!bored && (xtra_val > 5)) continue;
 
             /* Avoid searching detected sectors */
             if (borg_detect_door[y/11][x/33]) continue;
@@ -15237,8 +15240,6 @@ bool borg_flow_spastic(bool bored)
                       j >= borg_skill[BI_CLEVEL] * 5 + 9 ) continue;
             }
 
-
-
             /* Extract adjacent locations */
             for (i = 0; i < 8; i++)
             {
@@ -15247,14 +15248,14 @@ bool borg_flow_spastic(bool bored)
                 int yy = y + ddy_ddd[i];
 
                 /* Get the grid contents */
-                ag_ptr[i] = &borg_grids[yy][xx];
+				mb_array[i] = map_loc(xx, yy);
             }
 
 
             /* Count possible door locations */
             for (i = 0; i < 4; i++)
             {
-                ag = ag_ptr[i];
+                mb_ptr = mb_array[i];
                 if (mb_ptr->terrain >= FEAT_WALL_EXTRA) wall++;
             }
 
@@ -15265,7 +15266,7 @@ bool borg_flow_spastic(bool bored)
             /* Count supporting evidence for secret doors */
             for (i = 0; i < 4; i++)
             {
-                ag = ag_ptr[i];
+                mb_ptr = mb_array[i];
 
                 /* Rubble */
                 if (mb_ptr->terrain == FEAT_RUBBLE) continue;
@@ -15282,7 +15283,7 @@ bool borg_flow_spastic(bool bored)
             /* Count supporting evidence for secret doors */
             for (i = 4; i < 8; i++)
             {
-                ag = ag_ptr[i];
+                mb_ptr = mb_array[i];
 
                 /* Rubble */
                 if (mb_ptr->terrain == FEAT_RUBBLE) continue;
@@ -15297,9 +15298,8 @@ bool borg_flow_spastic(bool bored)
             /* No possible secret doors */
             if (diag < 2) continue;
 
-
             /* Tweak -- Reward walls, punish visitation and distance */
-            v = (supp * 500) + (diag * 100) - (ag->xtra * 20) - (cost * 1);
+            v = (supp * 500) + (diag * 100) - (xtra_val * 20) - (cost * 1);
 
             /* The grid is not searchable */
             if (v <= 0) continue;
