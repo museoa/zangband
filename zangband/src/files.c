@@ -3291,8 +3291,16 @@ errr file_character(cptr name, bool full)
 	froff(fff, "  [Character Equipment]\n\n");
 	for (i = 0; i < EQUIP_MAX; i++)
 	{
-		froff(fff, "%c%s %v\n", I2A(i), paren,
-				OBJECT_FMT(&p_ptr->equipment[i], TRUE, 3));
+		char o_name[256];
+
+		/* Describe object */
+		object_desc(o_name, &p_ptr->equipment[i], TRUE, 3, 256);
+						
+		/* Clean formatting escape sequences */
+		fmt_clean(o_name);
+		
+		/* Dump the equipment slot */
+		froff(fff, "%c%s %s\n", I2A(i), paren, o_name);
 	}
 	froff(fff, "\n\n");
 
