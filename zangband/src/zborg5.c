@@ -2922,9 +2922,6 @@ static void borg_update_map(void)
             /* Notice "on-screen" */
             ag->info |= BORG_OKAY;
 
-            /* Notice "knowledge" */
-            if (t_c != ' ') ag->info |= BORG_MARK;
-
             /* Notice the player */
             if (t_c == '@')
             {
