@@ -316,8 +316,22 @@
 # define MA_KNEE 1
 # define MA_SLOW 2
 
-/* Mindcraft */
-#define MAX_MINDCRAFT_POWERS  12
+/* Mindcrafter */
+#define MINDCRAFT_NEURAL_BLAST           0
+#define MINDCRAFT_PRECOGNITION           1
+#define MINDCRAFT_MINOR_DISPLACEMENT     2
+#define MINDCRAFT_MAJOR_DISPLACEMENT     3
+#define MINDCRAFT_DOMINATION             4
+#define MINDCRAFT_PULVERISE              5
+#define MINDCRAFT_CHARACTER_ARMOUR       6
+#define MINDCRAFT_PSYCHOMETRY            7
+#define MINDCRAFT_MIND_WAVE              8
+#define MINDCRAFT_ADRENALINE_CHANNELING  9
+#define MINDCRAFT_PSYCHIC_DRAIN         10
+#define MINDCRAFT_TELEKINETIC_WAVE      11
+
+#define MINDCRAFT_MAX                   12
+
 
 /* Hallucination stuff */
 #define MAX_SILLY_ATTACK 28

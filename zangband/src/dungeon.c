@@ -3291,9 +3291,10 @@ static void process_player(void)
 	/* Handle "abort" */
 	if (!avoid_abort)
 	{
-		/* Check for "player abort" (semi-efficiently for resting) */
-		if (p_ptr->running || p_ptr->command_rep ||
-		    (p_ptr->resting && !(p_ptr->resting & 0x0F)))
+		/* Check for "player abort" */
+		if (p_ptr->running ||
+		    p_ptr->command_rep ||
+		    p_ptr->resting)
 		{
 			/* Do not wait */
 			inkey_scan = TRUE;
@@ -3743,14 +3744,8 @@ static void dungeon(void)
 	}
 
 
-	/* Verify the panel */
-	verify_panel();
-
-	/* Validate the panel */
-	if (vanilla_town && !p_ptr->depth)
-	{
-		panel_bounds_center();
-	}
+	/* Center the panel */
+	panel_center();
 
 	/* Flush messages */
 	msg_print(NULL);

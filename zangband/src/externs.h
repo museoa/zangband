@@ -490,7 +490,6 @@ extern void change_player_name(void);
 extern void do_cmd_suicide(void);
 extern void do_cmd_save_game(int is_autosave);
 extern void do_cmd_save_and_exit(void);
-extern long total_points(void);
 extern void close_game(void);
 extern void exit_game_panic(void);
 extern void signals_ignore_tstp(void);
@@ -993,9 +992,9 @@ extern void do_poly_self(void);
 extern void check_experience(void);
 extern void monster_death(int m_idx);
 extern bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note);
-extern void panel_bounds_center(void);
 extern bool change_panel(int dy, int dx);
 extern void verify_panel(void);
+extern void panel_center(void);
 extern cptr look_mon_desc(int m_idx);
 extern void ang_sort_aux(vptr u, vptr v, int p, int q);
 extern void ang_sort(vptr u, vptr v, int n);
@@ -1031,6 +1030,7 @@ extern void create_named_art(int a_idx, int y, int x);
 extern void display_scores_aux(int from, int to, int note, high_score *score);
 extern void display_scores(int from, int to);
 extern void kingly(void);
+extern errr enter_score(void);
 extern errr top_twenty(void);
 extern errr predict_score(void);
 extern void race_legends(void);
@@ -1038,7 +1038,7 @@ extern void race_score(int race_num);
 extern void show_highclass(void);
 
 /* mind.c */
-extern mindcraft_power mindcraft_powers[MAX_MINDCRAFT_POWERS];
+extern mindcraft_power mindcraft_powers[MINDCRAFT_MAX];
 extern void mindcraft_info(char *p, int power);
 extern void do_cmd_mindcraft(void);
 

@@ -2951,7 +2951,7 @@ void display_spell_list(void)
 		put_str("Lv Mana Fail Info", y, x + 35);
 
 		/* Dump the spells */
-		for (i = 0; i < MAX_MINDCRAFT_POWERS; i++)
+		for (i = 0; i < MINDCRAFT_MAX; i++)
 		{
 			byte a = TERM_WHITE;
 

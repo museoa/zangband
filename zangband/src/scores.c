@@ -115,6 +115,68 @@ static int highscore_add(high_score *score)
 }
 
 
+/*
+ * How much valuable stuff do we carry. Returns total cost of all found
+ * items currently in equipment (ie. those that haven't been storebought
+ * or started with)
+ */
+static long equip_value(void)
+{
+	object_type *o_ptr;
+	long total = 0L;
+	int i;
+
+	for (i = 1; i < INVEN_TOTAL; i++)
+	{
+		o_ptr = &inventory[i];
+
+		if (o_ptr->ident & IDENT_STOREB) continue;
+		if (!(o_ptr->ident & IDENT_KNOWN)) continue;
+
+		total += object_value(o_ptr);
+	}
+
+	return (total);
+}
+
+
+/*
+ * Hack -- Calculates the total number of points earned         -JWT-
+ * Now with up to 80% penalty for having mutations & other extra things  -GSN-
+ * Fixed this up to be "fairer" -CK-
+ */
+static long total_points(void)
+{
+	long temp;
+	long mult = 100;
+
+	if (preserve_mode) mult -= 10; /* Penalize preserve, maximize modes */
+	if (maximize_mode) mult -= 15;
+	if (stupid_monsters) mult -= 20; /* AI is not that big a deal (yet) */
+	if (vanilla_town) mult += 5; /* Vanilla town is harder */
+	if (ironman_hard_quests) mult += 10; /* so are hard quests */
+
+	/* Not too much of a reward since some people like playing with this. */
+	if (ironman_small_levels) mult += 5;
+
+	if (ironman_downward) mult +=10;
+	if (ironman_empty_levels) mult += 10;
+	if (ironman_nightmare) mult += 20;
+	if (ironman_rooms) mult +=10;
+
+	if (mult < 5) mult = 5; /* At least 5% of the original score */
+
+	temp = p_ptr->max_exp + (100 * p_ptr->max_depth);
+
+	temp = (temp * mult) / race_info[p_ptr->prace].r_exp;
+
+	temp += equip_value() / 10;
+
+	if (ironman_downward) temp *= 2;
+
+	return (temp);
+}
+
 
 /*
  * Display the scores in a given range.
@@ -313,17 +375,20 @@ void display_scores(int from, int to)
 }
 
 
+/*
+ * Hack - save index of player's high score
+ */
+static int score_idx = -1;
+
 
 /*
- * Enters a players name on a hi-score table, if "legal", and in any
- * case, displays some relevant portion of the high score list.
+ * Enters a players name on a hi-score table, if "legal".
  *
  * Assumes "signals_ignore_tstp()" has been called.
  */
-errr top_twenty(void)
+errr enter_score(void)
 {
-	int          j;
-
+	int i;
 	high_score   the_score;
 
 #ifndef HIGHSCORE_DATE_HACK
@@ -332,15 +397,9 @@ errr top_twenty(void)
 
 	time_t ct = time((time_t*)0);
 
-
-	/* Clear screen */
-	Term_clear();
-
 	/* No score file */
 	if (highscore_fd < 0)
 	{
-		msg_print("Score file unavailable.");
-		msg_print(NULL);
 		return (0);
 	}
 
@@ -350,7 +409,7 @@ errr top_twenty(void)
 	{
 		msg_print("Score not registered for wizards.");
 		msg_print(NULL);
-		display_scores_aux(0, 10, -1, NULL);
+		score_idx = -1;
 		return (0);
 	}
 #endif
@@ -361,7 +420,7 @@ errr top_twenty(void)
 	{
 		msg_print("Score not registered for borgs.");
 		msg_print(NULL);
-		display_scores_aux(0, 10, -1, NULL);
+		score_idx = -1;
 		return (0);
 	}
 #endif
@@ -372,7 +431,7 @@ errr top_twenty(void)
 	{
 		msg_print("Score not registered for cheaters.");
 		msg_print(NULL);
-		display_scores_aux(0, 10, -1, NULL);
+		score_idx = -1;
 		return (0);
 	}
 #endif
@@ -382,7 +441,7 @@ errr top_twenty(void)
 	{
 		msg_print("Score not registered due to interruption.");
 		msg_print(NULL);
-		display_scores_aux(0, 10, -1, NULL);
+		score_idx = -1;
 		return (0);
 	}
 
@@ -391,7 +450,7 @@ errr top_twenty(void)
 	{
 		msg_print("Score not registered due to quitting.");
 		msg_print(NULL);
-		display_scores_aux(0, 10, -1, NULL);
+		score_idx = -1;
 		return (0);
 	}
 
@@ -423,14 +482,14 @@ errr top_twenty(void)
 	(void)strftime(long_day, 11, "%m/%d/%Y", localtime(&ct));
 
 	/* Remove the century */
-	j = 7;
+	i = 7;
 	while (1)
 	{
-		j++;
-		long_day[j-2] = long_day[j];
+		i++;
+		long_day[i-2] = long_day[i];
 
 		/* Exit if get a zero */
-		if (long_day[j]) break;
+		if (long_day[i]) break;
 	}
 
 	/* Save the date in standard form (8 chars) */
@@ -460,25 +519,45 @@ errr top_twenty(void)
 	if (fd_lock(highscore_fd, F_WRLCK)) return (1);
 
 	/* Add a new entry to the score list, see where it went */
-	j = highscore_add(&the_score);
+	score_idx = highscore_add(&the_score);
 
 	/* Unlock the highscore file, or fail */
 	if (fd_lock(highscore_fd, F_UNLCK)) return (1);
 
+	/* Success */
+	return (0);
+}
+
+
+
+/*
+ * Displays some relevant portion of the high score list.
+ */
+errr top_twenty(void)
+{
+	/* Clear screen */
+	Term_clear();
+
+	/* No score file */
+	if (highscore_fd < 0)
+	{
+		msg_print("Score file unavailable.");
+		msg_print(NULL);
+		return (0);
+	}
 
 	/* Hack -- Display the top fifteen scores */
-	if (j < 10)
+	if (score_idx < 10)
 	{
-		display_scores_aux(0, 15, j, NULL);
+		display_scores_aux(0, 15, score_idx, NULL);
 	}
 
 	/* Display the scores surrounding the player */
 	else
 	{
-		display_scores_aux(0, 5, j, NULL);
-		display_scores_aux(j - 2, j + 7, j, NULL);
+		display_scores_aux(0, 5, score_idx, NULL);
+		display_scores_aux(score_idx - 2, score_idx + 7, score_idx, NULL);
 	}
-
 
 	/* Success */
 	return (0);

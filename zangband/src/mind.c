@@ -13,11 +13,11 @@
 #include "angband.h"
 
 
-mindcraft_power mindcraft_powers[MAX_MINDCRAFT_POWERS] =
+mindcraft_power mindcraft_powers[MINDCRAFT_MAX] =
 {
 	/* Level gained, cost, %fail, name */
-	{ 1,   1,  15, "Precognition" },          /* Det. monsters/traps */
-	{ 2,   1,  20, "Neural Blast" },          /* ~MM */
+	{ 1,   1,  15, "Neural Blast" },          /* ~MM */
+	{ 2,   1,  20, "Precognition" },          /* Det. monsters/traps */
 	{ 3,   2,  25, "Minor Displacement" },    /* Phase door */
 	{ 7,   6,  35, "Major Displacement" },    /* Tele. Self / All */
 	{ 9,   7,  50, "Domination" },
@@ -39,18 +39,39 @@ void mindcraft_info(char *p, int power)
 
 	switch (power)
 	{
-		case 0:  break;
-		case 1:  sprintf(p, " dam %dd%d", 3 + ((plev - 1) / 4), 3 + plev/15); break;
-		case 2:  sprintf(p, " range %d", (plev < 25 ? 10 : plev + 2)); break;
-		case 3:  sprintf(p, " range %d", plev * 5); break;
-		case 4:  break;
-		case 5:  sprintf(p, " dam %dd8", 8 + ((plev - 5) / 4)); break;
-		case 6:  sprintf(p, " dur %d", plev); break;
-		case 7:  break;
-		case 8:  sprintf(p, " dam %d", plev * ((plev - 5) / 10 + 1)); break;
-		case 9:  sprintf(p, " dur 11-%d", plev + plev / 2 + 10); break;
-		case 10: sprintf(p, " dam %dd6", plev / 2); break;
-		case 11: sprintf(p, " dam %d", plev * (plev > 39 ? 4: 3)); break;
+		case MINDCRAFT_NEURAL_BLAST:
+			sprintf(p, " dam %dd%d", 3 + ((plev - 1) / 4), 3 + plev / 15);
+			break;
+		case MINDCRAFT_PRECOGNITION:
+			break;
+		case MINDCRAFT_MINOR_DISPLACEMENT:
+			sprintf(p, " range %d", (plev < 25 ? 10 : plev + 2));
+			break;
+		case MINDCRAFT_MAJOR_DISPLACEMENT:
+			sprintf(p, " range %d", plev * 5);
+			break;
+		case MINDCRAFT_DOMINATION:
+			break;
+		case MINDCRAFT_PULVERISE:
+			sprintf(p, " dam %dd8", 8 + ((plev - 5) / 4));
+			break;
+		case MINDCRAFT_CHARACTER_ARMOUR:
+			sprintf(p, " dur %d", plev);
+			break;
+		case MINDCRAFT_PSYCHOMETRY:
+			break;
+		case MINDCRAFT_MIND_WAVE:
+			sprintf(p, " dam %d", plev * ((plev - 5) / 10 + 1));
+			break;
+		case MINDCRAFT_ADRENALINE_CHANNELING:
+			sprintf(p, " dur 11-%d", plev + plev / 2 + 10);
+			break;
+		case MINDCRAFT_PSYCHIC_DRAIN:
+			sprintf(p, " dam %dd6", plev / 2);
+			break;
+		case MINDCRAFT_TELEKINETIC_WAVE:
+			sprintf(p, " dam %d", plev * (plev > 39 ? 4: 3));
+			break;
 	}
 }
 
@@ -106,7 +127,7 @@ static int get_mindcraft_power(int *sn)
 	/* No redraw yet */
 	redraw = FALSE;
 
-	for (i = 0; i < MAX_MINDCRAFT_POWERS; i++)
+	for (i = 0; i < MINDCRAFT_MAX; i++)
 	{
 		if (mindcraft_powers[i].min_lev <= plev)
 		{
@@ -141,7 +162,7 @@ static int get_mindcraft_power(int *sn)
 				put_str("Lv Mana Fail Info", y, x + 35);
 
 				/* Dump the spells */
-				for (i = 0; i < MAX_MINDCRAFT_POWERS; i++)
+				for (i = 0; i < MINDCRAFT_MAX; i++)
 				{
 					/* Access the spell */
 					spell = mindcraft_powers[i];
@@ -274,7 +295,16 @@ static bool cast_mindcrafter_spell(int spell)
 	/* spell code */
 	switch (spell)
 	{
-	case 0:   /* Precog */
+	case MINDCRAFT_NEURAL_BLAST:
+		/* Mindblast */
+		if (!get_aim_dir(&dir)) return FALSE;
+
+		if (randint1(100) < plev * 2)
+			fire_beam(GF_PSI, dir, damroll(3 + ((plev - 1) / 4), (3 + plev / 15)));
+		else
+			fire_ball(GF_PSI, dir, damroll(3 + ((plev - 1) / 4), (3 + plev / 15)), 0);
+		break;
+	case MINDCRAFT_PRECOGNITION:
 		if (plev > 44)
 			wiz_lite();
 		else if (plev > 19)
@@ -302,16 +332,7 @@ static bool cast_mindcrafter_spell(int spell)
 
 		if (!b) msg_print("You feel safe.");
 		break;
-	case 1:
-		/* Mindblast */
-		if (!get_aim_dir(&dir)) return FALSE;
-
-		if (randint1(100) < plev * 2)
-			fire_beam(GF_PSI, dir, damroll(3 + ((plev - 1) / 4), (3 + plev / 15)));
-		else
-			fire_ball(GF_PSI, dir, damroll(3 + ((plev - 1) / 4), (3 + plev / 15)), 0);
-		break;
-	case 2:
+	case MINDCRAFT_MINOR_DISPLACEMENT:
 		/* Minor displace */
 		if (plev < 40)
 		{
@@ -323,14 +344,14 @@ static bool cast_mindcrafter_spell(int spell)
 			return dimension_door();
 		}
 		break;
-	case 3:
+	case MINDCRAFT_MAJOR_DISPLACEMENT:
 		/* Major displace */
 		if (plev > 29)
 			banish_monsters(plev);
 
 		teleport_player(plev * 5);
 		break;
-	case 4:
+	case MINDCRAFT_DOMINATION:
 		/* Domination */
 		if (plev < 30)
 		{
@@ -343,14 +364,14 @@ static bool cast_mindcrafter_spell(int spell)
 			charm_monsters(plev * 2);
 		}
 		break;
-	case 5:
+	case MINDCRAFT_PULVERISE:
 		/* Fist of Force  ---  not 'true' TK */
 		if (!get_aim_dir(&dir)) return FALSE;
 
 		fire_ball(GF_SOUND, dir, damroll(8 + ((plev - 5) / 4), 8),
 		          (plev > 20 ? (plev - 20) / 8 + 1 : 0));
 		break;
-	case 6:
+	case MINDCRAFT_CHARACTER_ARMOUR:
 		/* Character Armour */
 		set_shield(p_ptr->shield + plev);
 		if (plev > 14) set_oppose_acid(p_ptr->oppose_acid + plev);
@@ -359,13 +380,13 @@ static bool cast_mindcrafter_spell(int spell)
 		if (plev > 29) set_oppose_elec(p_ptr->oppose_elec + plev);
 		if (plev > 34) set_oppose_pois(p_ptr->oppose_pois + plev);
 		break;
-	case 7:
+	case MINDCRAFT_PSYCHOMETRY:
 		/* Psychometry */
 		if (plev < 25)
 			return psychometry();
 		else
 			return ident_spell();
-	case 8:
+	case MINDCRAFT_MIND_WAVE:
 		/* Mindwave */
 		msg_print("Mind-warping forces emanate from your brain!");
 		if (plev < 25)
@@ -374,7 +395,7 @@ static bool cast_mindcrafter_spell(int spell)
 		else
 			(void)mindblast_monsters(plev * ((plev - 5) / 10 + 1));
 		break;
-	case 9:
+	case MINDCRAFT_ADRENALINE_CHANNELING:
 		/* Adrenaline */
 		set_afraid(0);
 		set_stun(0);
@@ -404,7 +425,7 @@ static bool cast_mindcrafter_spell(int spell)
 			(void)set_fast(p_ptr->fast + b);
 		}
 		break;
-	case 10:
+	case MINDCRAFT_PSYCHIC_DRAIN:
 		/* Psychic Drain */
 		if (!get_aim_dir(&dir)) return FALSE;
 
@@ -414,14 +435,14 @@ static bool cast_mindcrafter_spell(int spell)
 		if (fire_ball(GF_PSI_DRAIN, dir, b, 0))
 			p_ptr->energy -= randint1(150);
 		break;
-	case 11:
+	case MINDCRAFT_TELEKINETIC_WAVE:
 		/* Telekinesis */
 		msg_print("A wave of pure physical force radiates out from your body!");
 		project(0, 3 + plev / 10, p_ptr->py, p_ptr->px,
 			plev * (plev > 39 ? 4 : 3), GF_TELEKINESIS, PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID);
 		break;
 	default:
-		msg_print("Zap?");
+		msg_print("Unknown Mindcrafter power!");
 	}
 
 	return TRUE;

@@ -3942,70 +3942,6 @@ void do_cmd_save_and_exit(void)
 
 
 /*
- * How much valuable stuff do we carry. Returns total cost of all found
- * items currently in equipment (ie. those that haven't been storebought
- * or started with)
- */
-
-static long equip_value(void)
-{
-	object_type *o_ptr;
-	long total = 0L;
-	int i;
-
-	for (i = 1; i < INVEN_TOTAL; i++)
-	{
-	    o_ptr = &inventory[i];
-
-		 if (o_ptr->ident & IDENT_STOREB) continue;
-		 if (!(o_ptr->ident & IDENT_KNOWN)) continue;
-	    total += object_value(o_ptr);
-	}
-
-	return (total);
-
-}
-
-/*
- * Hack -- Calculates the total number of points earned         -JWT-
- * Now with up to 80% penalty for having mutations & other extra things  -GSN-
- * Fixed this up to be "fairer" -CK-
- */
-long total_points(void)
-{
-	long temp;
-	long mult = 0;
-
-	if (preserve_mode) mult -= 10; /* Penalize preserve, maximize modes */
-	if (maximize_mode) mult -= 15;
-	if (stupid_monsters) mult -= 20; /* AI is not that big a deal (yet) */
-	if (vanilla_town) mult += 5; /* Vanilla town is harder */
-	if (ironman_hard_quests) mult += 10; /* so are hard quests */
-
-	/* Not too much of a reward since some people like playing with this. */
-	if (ironman_small_levels) mult += 5;
-
-	if (ironman_downward) mult +=10;
-	if (ironman_empty_levels) mult += 10;
-	if (ironman_nightmare) mult += 20;
-	if (ironman_rooms) mult +=10;
-
-	if (mult < 5) mult = 5; /* At least 5% of the original score */
-
-	temp = p_ptr->max_exp + (100 * p_ptr->max_depth);
-
-	temp = (temp * mult / race_info[p_ptr->prace].r_exp);
-
-	temp += (long)(equip_value() / 10);
-
-	if (ironman_downward) temp *= 2;
-
-	return (temp);
-}
-
-
-
-/*
  * Centers a string within a 31 character string		-JWT-
  */
 static void center_string(char *buf, cptr str)
@@ -4404,6 +4340,9 @@ static void close_game_handle_death(void)
 		output_note(buf);
 	}
 
+	/* Enter player in high score list */
+	enter_score();
+
 	/* You are dead */
 	print_tomb();
 
@@ -4419,8 +4358,6 @@ static void close_game_handle_death(void)
 	/* Save screen here out of loop to avoid saving more than once */
 	Term_save();
 
-	/* Player selection */
-	/* Escape key is the only thing that will exit this loop */
 	while (TRUE)
 	{
 		/* Load screen */
