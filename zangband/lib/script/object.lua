@@ -120,7 +120,7 @@ function quaff_potion(object)
 		if inc_slow(rand_range(15, 40)) then ident = TRUE end
 	elseif object.sval == SV_POTION_SALT_WATER then
 		msgf("The potion makes you vomit!")
-		if player.tim.food > PY_FOOD_STARVE - 1 then
+		if player.food > PY_FOOD_STARVE - 1 then
 			set_food(PY_FOOD_STARVE - 1)
 		end
 		clear_poisoned()
