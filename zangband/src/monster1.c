@@ -1717,7 +1717,7 @@ monster_hook_type get_monster_hook2(int y, int x)
 		/* Ocean */
 		wild_mon_hook = &monster_ocean;
 	}
-	else if (w_ptr->info & WILD_INFO_RIVER)
+	else if (w_ptr->info & WILD_INFO_WATER)
 	{
 		/* Shore */
 		wild_mon_hook = &monster_shore;

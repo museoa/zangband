@@ -1918,7 +1918,7 @@ void display_map(int *cy, int *cx)
 
 	byte tp;
 
-	u16b w_type, town;
+	u16b w_type, w_info, town;
 
 	byte **ma;
 	char **mc;
@@ -2000,17 +2000,17 @@ void display_map(int *cy, int *cx)
 				if (!(wild[j + y][i + x].done.info & WILD_INFO_SEEN)) continue;
 
 				w_type = wild[j + y][i + x].done.wild;
+				w_info = wild[j + y][i + x].done.info;
 
 				/* Get attr / char pair for wilderness block type */
 
 				/* Add in effects of sea / roads */
-				if (w_type >= WILD_SEA)
+				if ((w_type >= WILD_SEA) || (w_info & (WILD_INFO_WATER)))
 				{
 					ma[j + 1][i + 1] = TERM_BLUE;
 					mc[j + 1][i + 1] = '~';
 				}
-				else if (wild[j + y][i + x].done.info &
-					 (WILD_INFO_ROAD | WILD_INFO_TRACK))
+				else if (w_info & (WILD_INFO_ROAD | WILD_INFO_TRACK))
 				{
 					ma[j + 1][i + 1] = TERM_UMBER;
 					mc[j + 1][i + 1] = '+';

@@ -544,14 +544,32 @@ struct wild_grid_type
  * for the wilderness generation type and wandering monster type.
  */
 
-typedef struct wild_gen_type wild_gen_type;
+typedef struct wild_gen1_type wild_gen1_type;
 
-struct wild_gen_type
+struct wild_gen1_type
 {
 	u16b	hgt_map;
 	u16b	pop_map;
 	u16b	law_map;
 };
+
+/*
+ * Structure used during creation of wilderness.
+ * It contains the transition state between the above
+ * structure and the one that follows.
+ */
+typedef struct wild_gen2_type wild_gen2_type;
+
+struct wild_gen2_type
+{
+	byte	hgt_map;
+	byte	pop_map;
+	byte	law_map;
+	byte	town;
+	byte	town_type;
+	byte	info;
+};
+
 
 /* Structure used to hold the completed wilderness */
 
@@ -575,7 +593,8 @@ struct wild_done_type
 typedef union wild_type wild_type;
 union wild_type
 {
-	wild_gen_type	gen;
+	wild_gen1_type	gen;
+	wild_gen2_type	trans;
 	wild_done_type	done;
 };
 

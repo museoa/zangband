@@ -966,11 +966,11 @@
 
 #define WILD_INFO_TRACK		0x01
 #define WILD_INFO_ROAD		0x02
-#define WILD_INFO_RIVER		0x04
+#define WILD_INFO_WATER		0x04
 #define WILD_INFO_LAVA		0x08
 #define WILD_INFO_OBJECT	0x10
 #define WILD_INFO_SEEN		0x20
-#define WILD_INFO_DUMMY1	0x40
+#define WILD_INFO_ACID		0x40
 #define WILD_INFO_DUMMY2	0x80
 
 /*** Field Thaumatergical types - (see "fields.c" and t_info.txt) ***/
