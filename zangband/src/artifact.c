@@ -286,6 +286,13 @@ int random_resistance(object_type *o_ptr, int specific, int artifact_bias)
 				o_ptr->flags2 |= TR2_RES_ACID;
 				if (one_in_(2)) return (artifact_bias);
 			}
+			if ((o_ptr->tval >= TV_CLOAK) &&
+				(o_ptr->tval <= TV_HARD_ARMOR) &&
+				!(o_ptr->flags4 & TR4_SH_ACID) && one_in_(3))
+			{
+				o_ptr->flags4 |= TR4_SH_ACID;
+				if (one_in_(2)) return (artifact_bias);
+			}
 			if (one_in_(BIAS_LUCK) && !(o_ptr->flags2 & TR2_IM_ACID))
 			{
 				o_ptr->flags2 |= TR2_IM_ACID;
@@ -318,10 +325,6 @@ int random_resistance(object_type *o_ptr, int specific, int artifact_bias)
 				o_ptr->flags2 |= TR2_RES_FIRE;
 				if (one_in_(2)) return (artifact_bias);
 			}
-			if (one_in_(13))
-			{
-				o_ptr->flags4 |= TR4_HURT_COLD;
-			}
 			if ((o_ptr->tval >= TV_CLOAK) &&
 				(o_ptr->tval <= TV_HARD_ARMOR) &&
 				!(o_ptr->flags3 & TR3_SH_FIRE))
@@ -342,9 +345,12 @@ int random_resistance(object_type *o_ptr, int specific, int artifact_bias)
 				o_ptr->flags2 |= TR2_RES_COLD;
 				if (one_in_(2)) return (artifact_bias);
 			}
-			if (one_in_(13))
+			if ((o_ptr->tval >= TV_CLOAK) &&
+				(o_ptr->tval <= TV_HARD_ARMOR) &&
+				!(o_ptr->flags4 & TR4_SH_COLD))
 			{
-				o_ptr->flags4 |= TR4_HURT_FIRE;
+				o_ptr->flags4 |= TR4_SH_COLD;
+				if (one_in_(2)) return (artifact_bias);
 			}
 			if (one_in_(BIAS_LUCK) && !(o_ptr->flags2 & TR2_IM_COLD))
 			{
@@ -411,7 +417,7 @@ int random_resistance(object_type *o_ptr, int specific, int artifact_bias)
 			break;
 	}
 
-	switch (specific ? specific : randint1(41))
+	switch (specific ? specific : randint1(42))
 	{
 		case 1:
 			if (!one_in_(WEIRD_LUCK))
@@ -584,6 +590,15 @@ int random_resistance(object_type *o_ptr, int specific, int artifact_bias)
 				artifact_bias = BIAS_FIRE;
 			break;
 		case 41:
+			if (o_ptr->tval >= TV_CLOAK && o_ptr->tval <= TV_HARD_ARMOR)
+				o_ptr->flags4 |= TR4_SH_COLD;
+			else
+				o_ptr->flags2 |= TR2_RES_COLD;
+			if (!artifact_bias)
+				artifact_bias = BIAS_COLD;
+			break;
+		/* Note: SH_ACID is deliberately omitted here */
+		case 42:
 			if (o_ptr->tval == TV_SHIELD || o_ptr->tval == TV_CLOAK ||
 				o_ptr->tval == TV_HELM || o_ptr->tval == TV_HARD_ARMOR)
 				o_ptr->flags2 |= TR2_REFLECT;
@@ -673,7 +688,7 @@ static int random_misc(object_type *o_ptr, int artifact_bias)
 			break;
 	}
 
-	switch (randint1(35))
+	switch (randint1(31))
 	{
 		case 1:
 			o_ptr->flags2 |= TR2_SUST_STR;
@@ -787,24 +802,77 @@ static int random_misc(object_type *o_ptr, int artifact_bias)
 		case 31:
 			o_ptr->flags3 |= TR3_NO_TELE;
 			break;
-		/* Bad flags! */
-		case 32:
-			o_ptr->flags4 |= TR4_HURT_ACID;
-			break;
-		case 33:
-			o_ptr->flags4 |= TR4_HURT_ELEC;
-			break;
-		case 34:
-			o_ptr->flags4 |= TR4_HURT_FIRE;
-			break;
-		case 35:
-			o_ptr->flags4 |= TR4_HURT_COLD;
-			break;
 	}
 
 	return (artifact_bias);
 }
 
+static int random_curse(object_type *o_ptr, int artifact_bias)
+{
+	switch (artifact_bias)
+	{
+		case BIAS_COLD:
+			if (!(o_ptr->flags4 & TR4_HURT_FIRE))
+			{
+				o_ptr->flags4 |= TR4_HURT_FIRE;
+				if (one_in_(2)) return (artifact_bias);
+			}
+			break;
+
+		case BIAS_FIRE:
+			if (!(o_ptr->flags4 & TR4_HURT_COLD))
+			{
+				o_ptr->flags4 |= TR4_HURT_COLD;
+				if (one_in_(2)) return (artifact_bias);
+			}
+			break;
+
+		case BIAS_NECROMANTIC:
+			if (!(o_ptr->flags4 & TR4_HURT_LITE))
+			{
+				o_ptr->flags4 |= TR4_HURT_LITE;
+				if (one_in_(2)) return (artifact_bias);
+			}
+			break;
+
+		case BIAS_WARRIOR:
+			if (!(o_ptr->flags3 & TR3_AGGRAVATE))
+			{
+				o_ptr->flags3 |= TR3_AGGRAVATE;
+				if (one_in_(2)) return (artifact_bias);
+			}
+			break;
+
+	}
+
+	switch (randint1(6))
+	{
+		case 1:
+			o_ptr->flags4 |= TR4_HURT_ACID;
+			break;
+		case 2:
+			o_ptr->flags4 |= TR4_HURT_ELEC;
+			break;
+		case 3:
+			o_ptr->flags4 |= TR4_HURT_FIRE;
+			break;
+		case 4:
+			o_ptr->flags4 |= TR4_HURT_COLD;
+			break;
+		case 5:
+			o_ptr->flags4 |= TR4_HURT_LITE;
+			break;
+		case 6:
+			o_ptr->flags4 |= TR4_HURT_DARK;
+			break;
+		case 7:
+		case 8:
+			o_ptr->flags3 |= TR3_AGGRAVATE;
+			break;
+	}
+
+	return (artifact_bias);
+}
 
 static int random_slay(object_type *o_ptr, int artifact_bias)
 {
@@ -1537,6 +1605,15 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 	/* Just to be sure */
 	o_ptr->flags3 |= (TR3_IGNORE_ACID | TR3_IGNORE_ELEC |
 					  TR3_IGNORE_FIRE | TR3_IGNORE_COLD);
+
+	/* Possibly add some curses ... */
+	total_flags = flag_cost(o_ptr, o_ptr->pval);
+	if (one_in_(13))
+		artifact_bias = random_curse(o_ptr, artifact_bias);
+	if (total_flags >= 10000 && one_in_(4))
+		artifact_bias = random_curse(o_ptr, artifact_bias);
+	if (total_flags >= 25000 && one_in_(2))
+		artifact_bias = random_curse(o_ptr, artifact_bias);
 
 	total_flags = flag_cost(o_ptr, o_ptr->pval);
 	if (cheat_peek) msgf("%ld", total_flags);

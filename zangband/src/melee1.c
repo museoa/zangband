@@ -1533,6 +1533,56 @@ bool make_attack_normal(int m_idx)
 							r_ptr->r_flags3 |= RF3_IM_ELEC;
 					}
 				}
+
+				if ((p_ptr->flags4 & (TR4_SH_ACID)) && alive)
+				{
+					if (!(r_ptr->flags3 & RF3_IM_ACID))
+					{
+						int dam = damroll(2, 6);
+
+						/* Modify the damage */
+						dam = mon_damage_mod(m_ptr, dam, 0);
+
+						msgf("%^s gets melted!", m_name);
+
+						if (mon_take_hit(m_idx, dam, &fear,
+										 " turns into a puddle of goo."))
+						{
+							blinked = FALSE;
+							alive = FALSE;
+						}
+					}
+					else
+					{
+						if (visible)
+							r_ptr->r_flags3 |= RF3_IM_ACID;
+					}
+				}
+
+				if ((p_ptr->flags4 & (TR4_SH_COLD)) && alive)
+				{
+					if (!(r_ptr->flags3 & RF3_IM_COLD))
+					{
+						int dam = damroll(2, 6);
+
+						/* Modify the damage */
+						dam = mon_damage_mod(m_ptr, dam, 0);
+
+						msgf("%^s gets frozen!", m_name);
+
+						if (mon_take_hit(m_idx, dam, &fear,
+										 " turns into an icicle."))
+						{
+							blinked = FALSE;
+							alive = FALSE;
+						}
+					}
+					else
+					{
+						if (visible)
+							r_ptr->r_flags3 |= RF3_IM_COLD;
+					}
+				}
 				touched = FALSE;
 			}
 		}
