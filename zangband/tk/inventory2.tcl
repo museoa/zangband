@@ -228,33 +228,6 @@ proc NSInventory2::InitWindow {oop} {
 	Info $oop toolbar,menu $menu
 
 	#
-	# Entry for editing the inscription
-	#
-
-	set frame [NSToolbar::Info $toolId frame].frameInscription
-	frame $frame \
-		-borderwidth 0
-	MakeDivider $frame.divider y
-	label $frame.label \
-		-text [mc Inscription:]
-	set entry $frame.entry
-	entry $entry -width 25
-
-	bind $entry <KeyPress-Return> \
-		"NSInventory2::CommitInscription $oop"
-
-	pack $frame.divider \
-		-side left -fill y -padx 2
-	pack $frame.label \
-		-side left
-	pack $entry \
-		-side left
-	pack $frame \
-		-expand no -padx 2 -pady 2 -side left
-
-	Info $oop inscription,entry $frame.entry
-
-	#
 	# Canvas
 	#
 
@@ -917,7 +890,6 @@ proc NSInventory2::Highlight {oop state where index} {
 	Info $oop busy 1
 
 	set canvas [Info $oop canvas]
-	set entry [Info $oop inscription,entry]
 
 	if {$state} {
 
@@ -943,11 +915,6 @@ proc NSInventory2::Highlight {oop state where index} {
 		# Ignore non-objects in equipment
 		if {[string compare $attrib(tval) TV_NONE]} {
 	
-			# Display the inscription for possible editing
-			$entry configure -state normal
-			$entry delete 0 end
-			$entry insert end [angband $whereItem inscription $item]
-
 			NSRecall::RecallObject $whereItem $item
 
 			set weight [expr {$attrib(weight) * $attrib(number)}]
@@ -970,9 +937,6 @@ proc NSInventory2::Highlight {oop state where index} {
 
 		$canvas itemconfigure sel,$where,$index \
 			-outline [Info $oop color2,$where,$index]
-
-		$entry delete 0 end
-		$entry configure -state disabled
 
 		$canvas itemconfigure $where,status,right \
 			-text [fmt_wgt [Info $oop $where,weight] 1]
@@ -1168,10 +1132,6 @@ if 0 {
 		-command "DoKeymapCmd {} I $toggleChar$itemKey"
 	$menu add command -label [mc Inscribe] \
 		-command "DoKeymapCmd {} braceleft $toggleChar$itemKey"
-	if {[string length [angband $where inscription $index]]} {
-		$menu add command -label [mc Uninscribe] \
-			-command "DoKeymapCmd {} braceright $toggleChar$itemKey"
-	}
 
 	# We are looking in the inventory
 	if {[string equal $where inventory]} {
@@ -1745,34 +1705,6 @@ proc NSInventory2::HideBox {oop where index} {
 	return
 }
 
-# NSInventory2::CommitInscription --
-#
-#	Set the inscription of the selected item to the string in the
-#	inscription Entry.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSInventory2::CommitInscription {oop} {
-
-	set entry [Info $oop inscription,entry]
-	set where [Info $oop select,where]
-	set index [Info $oop select,index]
-
-	# Make sure something is selected
-	if {![string length $where]} return
-
-	# Hack -- Set the inscription.
-	angband $where inscription $index [$entry get]
-
-	# Hack
-	focus [Info $oop canvas]
-
-	return
-}
 
 # NSInventory2::Button1 --
 #

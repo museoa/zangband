@@ -216,40 +216,6 @@ proc NSInventory::InitWindow {oop} {
 	Info $oop toolbar,menu $menu
 
 	#
-	# Entry for editing the inscription
-	#
-
-	set frame [NSToolbar::Info $toolId frame].frameInscription
-	frame $frame \
-		-borderwidth 0
-	MakeDivider $frame.divider y
-	label $frame.label \
-		-text [mc Inscription:]
-	set entry $frame.entry
-	entry $entry -width 25
-
-	bind $entry <KeyPress-Return> \
-		"NSInventory::CommitInscription $oop"
-
-	pack $frame.divider \
-		-side left -fill y -padx 2
-	pack $frame.label \
-		-side left
-	pack $entry \
-		-side left
-	pack $frame \
-		-expand no -padx 2 -pady 2 -side left
-
-	Info $oop inscription,entry $frame.entry
-
-	#
-	# Divider
-	#
-
-#	frame $win.divider2 \
-#		-borderwidth 1 -height 2 -relief groove
-
-	#
 	# List
 	#
 
@@ -275,10 +241,6 @@ proc NSInventory::InitWindow {oop} {
 
 	pack $win.frame.scroll -side right -fill y
 	pack $canvas -side left -expand yes -fill both
-
-	# When an item is selected, recall it
-	NSCanvist::Info $canvistId selectionCmd \
-		"NSInventory::SelectionChanged $oop"
 
 	# Double-click to select item
 	NSCanvist::Info $canvistId invokeCmd \
@@ -724,61 +686,6 @@ proc NSInventory::Invoke {oop canvistId x y} {
 	return
 }
 
-# NSInventory::SelectionChanged --
-#
-#	Called when the list selection changes.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSInventory::SelectionChanged {oop canvistId select deselect} {
-
-	variable Priv
-
-	set canvas [NSCanvist::Info $canvistId canvas]
-	set entry [Info $oop inscription,entry]
-	set invOrEquip [Info $oop invOrEquip]
-
-	# Disable the inscription entry by default. Only enable it if
-	# a non-empty object is selected
-	$entry delete 0 end
-	$entry configure -state disabled
-
-	# Nothing was selected
-	if {![llength $select]} {
-		$entry delete 0 end
-		Info $oop current -1
-		return
-	}
-
-	# Get the (first) row
-	set row [lindex $select 0]
-	Info $oop current $row
-
-	# Get the object index
-	set index [lindex $Priv(index) $row]
-
-	# Display memory for this object
-	NSRecall::RecallObject $invOrEquip $index
-
-	# Get object info
-	angband $invOrEquip info $index attrib
-
-	# Ignore non-objects in equipment
-	if {[string compare $attrib(tval) TV_NONE]} {
-
-		# Display the inscription for possible editing
-		$entry configure -state normal
-		$entry delete 0 end
-		$entry insert end [angband $invOrEquip inscription $index]
-	}
-
-	return
-}
-
 # NSInventory::ContextMenu --
 #
 #	When an inventory item is right-clicked, pop up a context
@@ -915,10 +822,6 @@ proc NSInventory::ContextMenu {oop menu x y} {
 		-command "DoKeymapCmd {} I $itemKey"
 	$menu add command -label [mc Inscribe] \
 		-command "DoKeymapCmd {} braceleft $itemKey"
-	if {[string length [angband $where inscription $index]]} {
-		$menu add command -label [mc Uninscribe] \
-			-command "DoKeymapCmd {} braceright $itemKey"
-	}
 
 	# We are looking in the inventory
 	if {[string equal $where inventory]} {
@@ -1312,47 +1215,6 @@ proc NSInventory::HighlightItemCmd {oop canvistId state args} {
 	return
 }
 
-# NSInventory::CommitInscription --
-#
-#	Set the inscription of the selected item to the string in the
-#	inscription Entry.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSInventory::CommitInscription {oop} {
-
-	variable Priv
-
-	set canvistId [Info $oop canvistId]
-	set canvas [NSCanvist::Info $canvistId canvas]
-	set entry [Info $oop inscription,entry]
-	set row [Info $oop current]
-	
-	# Get the object index
-	set index [lindex $Priv(index) $row]
-
-	# Hack -- Set the inscription.
-	angband [Info $oop invOrEquip] inscription $index [$entry get]
-
-	# Get object info
-	angband [Info $oop invOrEquip] info $index attrib
-
-	# Update the list. If there was another inventory window it would
-	# also need to be updated!
-	set rowTag [lindex [NSCanvist::Info $canvistId rowTags] $row]
-	set itemIdList [$canvas find withtag $rowTag]
-	set itemId [FindItemByTag $canvas $itemIdList description]
-	$canvas itemconfigure $itemId -text $attrib(name)
-
-	# Hack -- Focus on the list again
-	focus $canvas
-
-	return
-}
 
 # NSInventory::ValueChanged_font_inventory --
 #
