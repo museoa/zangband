@@ -613,53 +613,24 @@ void strnfcat(char *str, int max, int *end, cptr fmt, ...)
 }
 
 
-static char *format_buf = NULL;
-static huge format_len = 0;
+static char format_buf[1024];
 
 
 /*
- * Do a vstrnfmt (see above) into a (growable) static buffer.
+ * Do a vstrnfmt (see above) into a static buffer.
  * This buffer is usable for very short term formatting of results.
  */
-char *vformat(cptr fmt, va_list vp)
+static char *vformat(cptr fmt, va_list *vp)
 {
-	/* Initial allocation */
-	if (!format_buf)
-	{
-		format_len = 1024;
-		C_MAKE(format_buf, format_len, char);
-	}
-
 	/* Null format yields last result */
-	if (!fmt) return (format_buf);
-
-	/* Keep going until successful */
-	while (1)
+	if (fmt)
 	{
-		uint len;
-		
-		/* Hack - use copy of vp so that vstrnfmt can be called again */
-		va_list vp_copy = vp;
-
-		/* Build the string */
-		len = vstrnfmt(format_buf, format_len, fmt, &vp_copy);
-
-		/* Success */
-		if (len < format_len - 1) break;
-
-		/* Grow the buffer */
-		KILL(format_buf);
-		format_len = format_len * 2;
-		C_MAKE(format_buf, format_len, char);
+		/* Otherwise - just use vstrnfmt */
+		vstrnfmt(format_buf, 1024, fmt, &vp);
 	}
-
+	
 	/* Return the new buffer */
 	return (format_buf);
-}
-
-void vformat_kill(void)
-{
-	KILL(format_buf);
 }
 
 
@@ -701,7 +672,7 @@ char *format(cptr fmt, ...)
 	va_start(vp, fmt);
 
 	/* Format the args */
-	res = vformat(fmt, vp);
+	res = vformat(fmt, &vp);
 
 	/* End the Varargs Stuff */
 	va_end(vp);
@@ -725,7 +696,7 @@ void plog_fmt(cptr fmt, ...)
 	va_start(vp, fmt);
 
 	/* Format the args */
-	res = vformat(fmt, vp);
+	res = vformat(fmt, &vp);
 
 	/* End the Varargs Stuff */
 	va_end(vp);
@@ -748,7 +719,7 @@ void quit_fmt(cptr fmt, ...)
 	va_start(vp, fmt);
 
 	/* Format */
-	res = vformat(fmt, vp);
+	res = vformat(fmt, &vp);
 
 	/* End the Varargs Stuff */
 	va_end(vp);
@@ -771,7 +742,7 @@ void core_fmt(cptr fmt, ...)
 	va_start(vp, fmt);
 
 	/* If requested, Do a virtual fprintf to stderr */
-	res = vformat(fmt, vp);
+	res = vformat(fmt, &vp);
 
 	/* End the Varargs Stuff */
 	va_end(vp);

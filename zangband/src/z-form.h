@@ -45,9 +45,6 @@ extern uint strnfmt(char *buf, uint max, cptr fmt, ...);
 /* Append a formatted string to another string */
 extern void strnfcat(char *str, int max, int *end, cptr fmt, ...);
 
-/* Format arguments into a static resizing buffer */
-extern char *vformat(cptr fmt, va_list vp);
-
 /* Free the memory allocated for the format buffer */
 extern void vformat_kill(void);
 

@@ -1553,9 +1553,6 @@ void cleanup_angband(void)
 	free_info(&f_head);
 	free_info(&z_head);
 
-	/* Free the format() buffer */
-	vformat_kill();
-
 	/* Free the interface callbacks */
 	free_term_callbacks();
 
