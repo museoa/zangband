@@ -1004,9 +1004,9 @@ void exp_for_kill(monster_race *r_ptr, s32b *new_exp, s32b *new_exp_frac)
 
 	if (r_ptr->mexp)
 	{
-		div = p_ptr->lev * 7;
+		div = p_ptr->lev;
 
-		exp = r_ptr->mexp * r_ptr->level * 4;
+		exp = r_ptr->mexp;
 
 		/* calculate the integer exp part */
 		*new_exp = ((long) exp / div);
