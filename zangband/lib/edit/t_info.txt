@@ -618,4 +618,164 @@ D:1:50:100:0:100:0:0:30
 F:2,field_action_door_store
 F:19,field_action_isarmour_tester
 
+# Swordsman
+N:59:Swordsman
+G:3:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:20:50:0:100:0:0:0
+F:2,field_action_door_store
+F:19,field_action_issword_tester
 
+# Swordsman
+N:60:Advanced Swordsman
+G:3:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:20:50:0:100:0:0:0
+F:2,field_action_door_store
+F:19,field_action_issword_tester
+
+# Swordsman
+N:61:Expert Swordsman
+G:3:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:50:75:0:100:0:0:0
+F:2,field_action_door_store
+F:19,field_action_issword_tester
+
+# Swordsman
+N:62:Arcane Swordsman
+G:3:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:75:127:0:100:0:0:24
+F:2,field_action_door_store
+F:19,field_action_issword_tester
+
+# Swordsman
+N:63:Obscure Swordsman
+G:3:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:50:100:0:100:0:0:26
+F:2,field_action_door_store
+F:19,field_action_issword_tester
+
+# Swordsman
+N:64:Rare Swordsman
+G:3:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:50:100:0:100:0:0:30
+F:2,field_action_door_store
+F:19,field_action_issword_tester
+
+# Shieldsman
+N:65:Sheildsman
+G:2:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:1:20:50:0:100:0:0:0
+F:2,field_action_door_store
+F:19,field_action_isshield_tester
+
+# Shieldsman
+N:66:Advanced Shieldsman
+G:2:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:1:20:50:0:100:0:0:0
+F:2,field_action_door_store
+F:19,field_action_isshield_tester
+
+# Shieldsman
+N:67:Expert Shieldsman
+G:2:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:1:50:75:0:100:0:0:0
+F:2,field_action_door_store
+F:19,field_action_isshield_tester
+
+# Shieldsman
+N:68:Arcane Shieldsman
+G:2:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:1:75:127:0:100:0:0:24
+F:2,field_action_door_store
+F:19,field_action_isshield_tester
+
+# Sheildsman
+N:69:Obscure Shieldsman
+G:2:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:1:50:100:0:100:0:0:26
+F:2,field_action_door_store
+F:19,field_action_isshield_tester
+
+# Shieldsman
+N:70:Rare Shieldsman
+G:2:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:1:50:100:0:100:0:0:30
+F:2,field_action_door_store
+F:19,field_action_isshield_tester
+
+# Axesman
+N:71:Axesman
+G:3:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:20:50:0:100:0:0:0
+F:2,field_action_door_store
+F:19,field_action_isnonsword_tester
+
+# Axesman
+N:72:Advanced Axesman
+G:3:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:20:50:0:100:0:0:0
+F:2,field_action_door_store
+F:19,field_action_isnonsword_tester
+
+# Axesman
+N:73:Expert Axesman
+G:3:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:50:75:0:100:0:0:0
+F:2,field_action_door_store
+F:19,field_action_isnonsword_tester
+
+# Axesman
+N:74:Arcane Axesman
+G:3:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:75:127:0:100:0:0:24
+F:2,field_action_door_store
+F:19,field_action_isnonsword_tester
+
+# Axesman
+N:75:Obscure Axesman
+G:3:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:50:100:0:100:0:0:26
+F:2,field_action_door_store
+F:19,field_action_isnonsword_tester
+
+# Axesman
+N:76:Rare Axesman
+G:3:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:50:100:0:100:0:0:30
+F:2,field_action_door_store
+F:19,field_action_isnonsword_tester
