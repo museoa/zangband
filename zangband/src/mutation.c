@@ -787,11 +787,12 @@ void do_cmd_knowledge_mutations(void)
 	FILE *fff;
 	char file_name[1024];
 
-	/* Temporary file */
-	if (path_temp(file_name, 1024)) return;
 
-	/* Open a new file */
-	fff = my_fopen(file_name, "w");
+	/* Open a temporary file */
+	fff = my_fopen_temp(file_name, sizeof(file_name));
+
+	/* Failure */
+	if (!fff) return;
 
 	/* Dump the mutations to file */
 	if (fff) dump_mutations(fff);
