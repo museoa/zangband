@@ -3240,7 +3240,7 @@ void plural_aux(char *name)
 	/* Find the appropriate plural */
 	for (i = 0;; i += 2)
 	{
-		if (len >= strlen(plural_table[i]) &&
+		if ((len >= (int) strlen(plural_table[i])) &&
 			streq(buf + len - strlen(plural_table[i]), plural_table[i]))
 		{
 			strcpy(buf + len - strlen(plural_table[i]), plural_table[i + 1]);
