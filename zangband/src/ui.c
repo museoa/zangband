@@ -1486,11 +1486,12 @@ bool get_check(cptr prompt, ...)
 	/* Success? */
 	switch (i)
 	{
-		case 'y': case 'Y':
-		case '\r': case '\n':
-			return (TRUE);
-		default:
+		case 'n': case 'N':
+		case ESCAPE:
 			return (FALSE);
+	
+		default:
+			return (TRUE);
 	}
 }
 
