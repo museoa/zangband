@@ -520,9 +520,6 @@ extern s16b goal_shop;	/* Next shop to visit */
  * Other variables
  */
 
-extern int w_x;	/* Current panel offset (X) */
-extern int w_y;	/* Current panel offset (Y) */
-
 extern int c_x;	/* Current location (X) */
 extern int c_y;	/* Current location (Y) */
 
@@ -615,12 +612,6 @@ extern int borg_stat[6];	/* Current stats */
 extern int borg_book[8][4];	/* Current book slots, Realm,sval */
 
 
-/*
- * State variables extracted from the inventory/equipment
- */
-
-extern int borg_cur_wgt;	/* Current weight */
-
 
 /*
  * Constant state variables
@@ -701,9 +692,7 @@ extern int *track_door_y;
 /*
  * The object list.  This list is used to "track" objects.
  */
-
 extern s16b borg_takes_cnt;
-
 extern s16b borg_takes_nxt;
 
 extern borg_take *borg_takes;
@@ -712,7 +701,6 @@ extern borg_take *borg_takes;
 /*
  * The monster list.  This list is used to "track" monsters.
  */
-
 extern s16b borg_kills_cnt;
 extern s16b borg_kills_nxt;
 
@@ -758,9 +746,6 @@ extern s16b borg_temp_n;
 extern byte borg_temp_y[AUTO_TEMP_MAX];
 extern byte borg_temp_x[AUTO_TEMP_MAX];
 
-extern byte offset_y;
-extern byte offset_x;
-
 
 /*
  * Maintain a set of grids (flow calculations)
@@ -785,10 +770,6 @@ extern int flow_tail;
 extern bool borg_do_frame;	/* Acquire "frame" info */
 
 extern bool borg_do_spell;	/* Acquire "spell" info */
-
-extern bool borg_do_browse;	/* Acquire "store" info */
-
-extern byte borg_do_browse_what;	/* Hack -- store for "borg_do_browse" */
 
 
 /*

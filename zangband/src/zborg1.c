@@ -295,13 +295,6 @@ int borg_book[8][4];	/* Current book slots, [realm][sval] */
 
 
 /*
- * State variables extracted from the inventory/equipment
- */
-
-int borg_cur_wgt;	/* Current weight */
-
-
-/*
  * Constant state variables
  */
 
@@ -435,10 +428,6 @@ s16b borg_temp_n = 0;
 byte borg_temp_x[AUTO_TEMP_MAX];
 byte borg_temp_y[AUTO_TEMP_MAX];
 
-byte offset_x;
-byte offset_y;
-
-
 /*
  * Maintain a circular queue of grids
  */
@@ -464,10 +453,6 @@ int flow_tail = 0;
 bool borg_do_frame = TRUE;	/* Acquire "frame" info */
 
 bool borg_do_spell = TRUE;	/* Acquire "spell" info */
-
-bool borg_do_browse = 0;	/* Acquire "store" info */
-
-byte borg_do_browse_what = 0;	/* Hack -- store for "borg_do_browse" */
 
 
 /*
