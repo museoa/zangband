@@ -3532,9 +3532,11 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
  *
  * Hack -- note the special code for various items
  */
-static void a_m_aux_4(object_type *o_ptr)
+static void a_m_aux_4(object_type *o_ptr, int level, byte flags)
 {
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
+	
+	byte ego = 0;
 
 	/* Apply magic (good or bad) according to type */
 	switch (o_ptr->tval)
@@ -3555,6 +3557,23 @@ static void a_m_aux_4(object_type *o_ptr)
 			
 			/* Hack - remove pval */
 			o_ptr->pval = 0;
+			
+			if (flags & OC_FORCE_GOOD)
+			{
+				/* Roll for a random ego */
+				if (get_ego_prep(INVEN_LITE, TRUE))
+				{
+					ego = get_ego_num(level);
+					
+					/* Initialise the ego item, if one is picked */
+					if (ego)
+					{
+						add_ego_flags(o_ptr, ego);
+						init_ego_item(o_ptr, ego);
+					}
+				}
+			}
+			
 			
 			break;
 		}
@@ -3831,7 +3850,7 @@ void apply_magic(object_type *o_ptr, int lev, int lev_dif, byte flags)
 
 		default:
 		{
-			a_m_aux_4(o_ptr);
+			a_m_aux_4(o_ptr, lev, flags);
 			break;
 		}
 	}

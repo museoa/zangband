@@ -1634,11 +1634,15 @@ static void process_world(void)
 		/* Recharge activatable objects */
 		if (o_ptr->timeout > 0)
 		{
-			/* Recharge */
-			o_ptr->timeout--;
+			/* Hack lights with the LITE flag are everburning */
+			if (!(o_ptr->flags3 & TR3_LITE) && (o_ptr->tval == TV_LITE))
+			{
+				/* Recharge */
+				o_ptr->timeout--;
+			}
 			
 			/* Lights are special */
-			if ((o_ptr->tval == TV_LITE) && !(o_ptr->flags3 & TR3_LITE))
+			if (o_ptr->tval == TV_LITE)
 			{
 				/* Notice interesting fuel steps */
 				notice_lite_change(o_ptr);

@@ -2088,7 +2088,7 @@ static void calc_torch(void)
 		if ((i == INVEN_LITE) && (o_ptr->k_idx) && (o_ptr->tval == TV_LITE))
 		{
 			/* Artifact Lites provide permanent, bright, lite */
-			if (o_ptr->flags3 & TR3_LITE)
+			if (o_ptr->flags3 & TR3_INSTA_ART)
 			{
 				p_ptr->cur_lite += 3;
 				continue;

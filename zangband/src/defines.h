@@ -1471,10 +1471,13 @@
 #define EGO_ELVENKIND           9
 /* xxx */
 #define EGO_PERMANENCE          11
-/* xxx */
-/* xxx */
-/* xxx */
-/* xxx */
+
+/* Lites */
+#define EGO_EVERBURN			12
+#define EGO_VISION              13
+#define EGO_WARMTH				14
+#define EGO_SEARCH              15
+
 
 /* Shields */
 #define EGO_ENDURE_ACID         16
