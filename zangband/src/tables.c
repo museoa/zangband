@@ -1,3 +1,4 @@
+
 /* File: tables.c */
 
 /* Purpose: Angband Tables */
@@ -8254,5 +8255,15 @@ const mutation_type race_powers[MAX_RACE_POWERS] =
 	    12, 12, A_INT, 15,
 	    0
 	},
+
+	{
+            RACE_GHOUL,
+	    "You can eat corpses and skeletons to gain nutrition.",
+	    "(nothing)",
+	    "(nothing)",
+	    "Eat corpse",
+	    1, 0, A_CON, 0,
+	}
+
 };    
 
