@@ -1259,6 +1259,9 @@ extern int get_keymap_dir(char ch);
 /* borg.c */
 extern void do_cmd_borg(void);
 
+/* script.c */
+extern bool player_res(u32b flag);
+
 /*
  * Hack -- conditional (or "bizarre") externs
  */

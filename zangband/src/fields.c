@@ -2355,7 +2355,7 @@ bool field_action_hit_trap_spike(field_type *f_ptr, va_list vp)
 
 			name = "a spiked pit";
 			dam *= 2;
-			(void)set_cut(p_ptr->tim.cut + randint1(dam));
+			(void)inc_cut(randint1(dam));
 		}
 
 		/* Take the damage */
@@ -2400,7 +2400,7 @@ bool field_action_hit_trap_poison_pit(field_type *f_ptr, va_list vp)
 			name = "a spiked pit";
 
 			dam *= 2;
-			(void)set_cut(p_ptr->tim.cut + randint1(dam));
+			(void)inc_cut(randint1(dam));
 
 			if ((p_ptr->flags2 & (TR2_RES_POIS)) || p_ptr->tim.oppose_pois)
 			{
