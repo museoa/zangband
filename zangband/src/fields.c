@@ -1655,20 +1655,6 @@ void field_action_interact_open(s16b **field_ptr, void *output)
 	return;
 }
 
-void field_action_interact_bash(s16b **field_ptr, void *output)
-{
-	field_type *f_ptr = &fld_list[**field_ptr];
-
-	int *action = (int *) output;
-	
-	/* Bash flag */
-	*action = 3;
-
-	/* Update *field_ptr to point to the next field in the list */
-	*field_ptr = &(f_ptr->next_f_idx);
-	return;
-}
-
 /*
  * Traps code.
  *
@@ -3076,20 +3062,6 @@ void field_action_door_unlock(s16b **field_ptr, void *input)
 }
 
 
-void field_action_door_unlock_jammed(s16b **field_ptr, void *input)
-{	
-	field_type *f_ptr = &fld_list[**field_ptr];
-	
-	/* Stuck */
-	msg_print("The door appears to be stuck.");
-		
-	/* Update *field_ptr to point to the next field in the list */
-	*field_ptr = &(f_ptr->next_f_idx);
-		
-	return;
-}
-
-
 void field_action_door_bash(s16b **field_ptr, void *input)
 {	
 	field_type *f_ptr = &fld_list[**field_ptr];
@@ -3097,7 +3069,8 @@ void field_action_door_bash(s16b **field_ptr, void *input)
 	int *jam = (int *) input;
 	
 	/* Extract door "power" */
-	int power = *jam - f_ptr->counter * 2;
+	int power = *jam / 2 + adj_str_blow[p_ptr->stat_ind[A_STR]] / 2
+		 - f_ptr->counter * 2;
 	
 	/* Always have a small chance of success */
 	if (power < 1) power = 1;

@@ -3760,7 +3760,7 @@ extern int PlayerUID;
 #define FIELD_ACT_OBJECT_ON		9	/* Object is on square */
 #define FIELD_ACT_INTERACT		10  /* Type-specific interation */
 #define FIELD_ACT_MAGIC_TARGET	11	/* Targeting this square */
-#define FIELD_ACT_BASH			12	/* Bashing the square */
+#define FIELD_ACT_LOOK			12	/* Hook for name of field when looking */
 #define FIELD_ACT_EXIT			13	/* Field is destroyed */
 #define FIELD_ACT_MONSTER_AI	14	/* Monster AI hook */
 #define FIELD_ACT_SPECIAL		15	/* Special, type specific action */
@@ -3770,7 +3770,7 @@ extern int PlayerUID;
 #define FIELD_ACTION_MAX		18	/* The last action + 1 */
 
 
-#define FIELD_ACTION_TYPES  46 /* Number of FIELD_ACT functions in tables.c */
+#define FIELD_ACTION_TYPES  44 /* Number of FIELD_ACT functions in tables.c */
 
 
 

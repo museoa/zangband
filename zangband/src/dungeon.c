@@ -2843,13 +2843,6 @@ static void process_command(void)
 			break;
 		}
 
-		/* Bash a door */
-		case 'B':
-		{
-			do_cmd_bash();
-			break;
-		}
-
 		/* Disarm a trap or chest */
 		case 'D':
 		{

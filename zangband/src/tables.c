@@ -6523,10 +6523,7 @@ field_action f_action[FIELD_ACTION_TYPES] =
 	
 	/* Interact with grid 'opens' */
 	{field_action_interact_open, "field_action_interact_open"},
-	
-	/* Interact with grid 'bashes' */
-	{field_action_interact_bash, "field_action_interact_bash"},
-	
+		
 	/* Trap init function */
 	{field_action_trap_init, "field_action_trap_init"},
 	
@@ -6613,10 +6610,7 @@ field_action f_action[FIELD_ACTION_TYPES] =
 	
 	/* Attempt to unlock a door */
 	{field_action_door_unlock, "field_action_door_unlock"},
-	
-	/* Attempt to unlock a jammed door */
-	{field_action_door_unlock_jammed, "field_action_door_unlock_jammed"},
-	
+		
 	/* Attempt to bash a door */
 	{field_action_door_bash, "field_action_door_bash"},
 	

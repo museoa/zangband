@@ -1632,6 +1632,8 @@ bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
 	s16b fld_idx;
 
 	bool more = FALSE;
+	
+	int xp;
 
 	/* Take a turn */
 	energy_use = 100;
@@ -1641,6 +1643,9 @@ bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
 	
 	/* Point to field */
 	f_ptr = &fld_list[fld_idx];
+	
+	/* Get amount of xp for a successful disarm */
+	xp = f_ptr->data[0] * f_ptr->data[0];
 	
 	/* Get type of trap */
 	t_ptr = &t_info[f_ptr->t_idx];
@@ -1659,14 +1664,7 @@ bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
 		msg_format("You have disarmed the %s.", t_ptr->name);
 
 		/* Reward */
-		gain_exp(f_ptr->data[0] * f_ptr->data[0]);
-		
-		/* Call completion routine */
-		if (field_hook_single(&fld_idx, FIELD_ACT_EXIT, NULL))
-		{
-			/* It didn't delete itself, so we do it now */
-			delete_field_idx(fld_idx);
-		}
+		gain_exp(xp);
 	}
 
 	/* Failure -- Keep trying */
@@ -1804,166 +1802,6 @@ void do_cmd_disarm(void)
 
 
 /*
- * Perform the basic "bash" command
- *
- * Assume destination is a closed/locked/jammed door
- *
- * Assume there is no monster blocking the destination
- *
- * Returns TRUE if repeated commands may continue
- */
-static bool do_cmd_bash_aux(int y, int x, int dir)
-{
-	int			bash;
-
-	cave_type	*c_ptr;
-
-	bool		more = FALSE;
-
-
-	/* Take a turn */
-	energy_use = 100;
-
-	/* Get grid */
-	c_ptr = area(y,x);
-
-	/* Message */
-	msg_print("You smash into the door!");
-
-	/* Hack -- Bash power based on strength */
-	/* (Ranges from 3 to 20 to 100 to 200) */
-	bash = adj_str_blow[p_ptr->stat_ind[A_STR]];
-	
-	/* Success */
-	if (!field_hook_single(&c_ptr->fld_idx, FIELD_ACT_BASH, (void *) &bash))
-	{
-		/* Sound */
-		sound(SOUND_OPENDOOR);
-
-		/* Hack -- Fall through the door */
-		move_player(dir, FALSE);
-
-		/* Update some things */
-		p_ptr->update |= (PU_VIEW | PU_MON_LITE);
-		p_ptr->update |= (PU_DISTANCE);
-	}
-
-	/* Saving throw against stun */
-	else if (rand_int(100) < adj_dex_safe[p_ptr->stat_ind[A_DEX]] +
-	         p_ptr->lev)
-	{
-		/* Message */
-		msg_print("The door holds firm.");
-
-		/* Allow repeated bashing */
-		more = TRUE;
-	}
-
-	/* High dexterity yields coolness */
-	else
-	{
-		/* Message */
-		msg_print("You are off-balance.");
-
-		/* Hack -- Lose balance ala paralysis */
-		(void)set_paralyzed(p_ptr->paralyzed + 2 + rand_int(2));
-	}
-
-	/* Result */
-	return (more);
-}
-
-
-/*
- * Bash open a door, success based on character strength
- *
- * For a closed door, pval is positive if locked; negative if stuck.
- *
- * For an open door, pval is positive for a broken door.
- *
- * A closed door can be opened - harder if locked. Any door might be
- * bashed open (and thereby broken). Bashing a door is (potentially)
- * faster! You move into the door way. To open a stuck door, it must
- * be bashed. A closed door can be jammed (see do_cmd_spike()).
- *
- * Creatures can also open or bash doors, see elsewhere.
- */
-void do_cmd_bash(void)
-{
-	int			y, x, dir;
-
-	cave_type	*c_ptr;
-
-	bool		more = FALSE;
-
-
-	/* Allow repeated command */
-	if (command_arg)
-	{
-		/* Set repeat count */
-		command_rep = command_arg - 1;
-
-		/* Redraw the state */
-		p_ptr->redraw |= (PR_STATE);
-
-		/* Cancel the arg */
-		command_arg = 0;
-	}
-
-	/* Get a "repeated" direction */
-	if (get_rep_dir(&dir,FALSE))
-	{
-		/* Bash location */
-		y = py + ddy[dir];
-		x = px + ddx[dir];
-
-		if (!in_bounds2(y, x))
-		{
-			/* Message */
-			msg_print("You see nothing there to bash.");
-
-			disturb(0, 0);
-			return;
-
-		}
-
-		/* Get grid */
-		c_ptr = area(y,x);
-
-		/* Nothing useful */
-		if (c_ptr->feat != FEAT_CLOSED)
-		{
-			/* Message */
-			msg_print("You see nothing there to bash.");
-		}
-
-		/* Monster in the way */
-		else if (c_ptr->m_idx)
-		{
-			/* Take a turn */
-			energy_use = 100;
-
-			/* Message */
-			msg_print("There is a monster in the way!");
-
-			/* Attack */
-			py_attack(y, x);
-		}
-
-		/* Bash a closed door */
-		else
-		{
-			/* Bash the door */
-			more = do_cmd_bash_aux(y, x, dir);
-		}
-	}
-
-	/* Unless valid action taken, cancel bash */
-	if (!more) disturb(0, 0);
-}
-
-
-/*
  * Manipulate an adjacent grid in some way
  *
  * Attack monsters, tunnel through walls, disarm traps, open doors.
@@ -2049,13 +1887,6 @@ void do_cmd_alter(void)
 				{
 					/* Unlock / open */
 					more = do_cmd_open_aux(y, x);
-					break;
-				}
-				
-				case 3:
-				{
-					/* Bash */
-					more = do_cmd_bash_aux(y, x, dir);
 					break;
 				}
 			}
