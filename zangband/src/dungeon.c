@@ -4294,12 +4294,7 @@ void play_game(bool new_game)
 		seed_town = 0;
 	}
 
-	/* Hack - if note file exists, load it */
-	if (!new_game && take_notes)
-	{
-		add_note_type(NOTE_ENTER_DUNGEON);
-	}
-
+	
 	/* Normal machine (process player name) */
 	if (savefile[0])
 	{
@@ -4310,6 +4305,12 @@ void play_game(bool new_game)
 	else
 	{
 		process_player_name(TRUE);
+	}
+
+	/* Hack - if note file exists, load it */
+	if (!new_game && take_notes)
+	{
+		add_note_type(NOTE_ENTER_DUNGEON);
 	}
 
 	/* Flash a message */
