@@ -517,7 +517,7 @@ static void borg_merge_kill(int who)
 #if 0
 	/* Reduce the regional fear with this guy dead */
 	borg_fear_grid(NULL, kill->y, kill->x,
-				   -(borg_danger(kill->y, kill->x, 1, TRUE)), TRUE);
+				   -(borg_danger(kill->x, kill->y, 1, TRUE)), TRUE);
 #endif
 
 	/* Kill the monster */
@@ -545,7 +545,7 @@ void borg_delete_kill(int who, cptr reason)
 #if 0
 	/* Reduce the regional fear with this guy dead */
 	borg_fear_grid(NULL, kill->y, kill->x,
-				   -(borg_danger(kill->y, kill->x, 1, TRUE)), TRUE);
+				   -(borg_danger(kill->x, kill->y, 1, TRUE)), TRUE);
 #endif
 
 	/* Kill the monster */
@@ -681,7 +681,7 @@ static void borg_new_kill(int r_idx, int n, int x, int y)
 
 #if 0
 	/* Danger of this monster to its grid (used later) */
-	p = borg_danger(y, x, 1, FALSE);
+	p = borg_danger(x, y, 1, FALSE);
 
 	/* Add some regional fear (2%) due to this monster */
 	borg_fear_grid(NULL, y, x, p * 2 / 100, TRUE);

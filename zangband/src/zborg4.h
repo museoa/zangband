@@ -51,12 +51,12 @@ extern s32b borg_power_home(void);
 /*
  * Calculate danger to a grid from a monster
  */
-extern int borg_danger_aux(int y, int x, int c, int i, bool average);
+extern int borg_danger_aux(int x, int y, int c, int i, bool average);
 
 /*
  * Hack -- Calculate the "danger" of the given grid.
  */
-extern int borg_danger(int y, int x, int c, bool average);
+extern int borg_danger(int x, int y, int c, bool average);
 
 
 /*

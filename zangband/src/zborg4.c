@@ -8538,7 +8538,7 @@ static int borg_danger_aux2(int i, bool average)
  * We attempt to take into account things like monsters which sometimes
  * "stumble", and monsters which only "sometimes" use powerful spells.
  */
-int borg_danger_aux(int y, int x, int c, int i, bool average)
+int borg_danger_aux(int x, int y, int c, int i, bool average)
 {
 	borg_kill *kill = &borg_kills[i];
 
@@ -8935,7 +8935,7 @@ int borg_danger_aux(int y, int x, int c, int i, bool average)
  *
  * Generally bool Average is TRUE.
  */
-int borg_danger(int y, int x, int c, bool average)
+int borg_danger(int x, int y, int c, bool average)
 {
 	int i, p = 1000;
 	int grid_fear = 1000;
@@ -8975,7 +8975,7 @@ int borg_danger(int y, int x, int c, bool average)
 		if (!kill->r_idx) continue;
 
 		/* Collect danger from monster */
-		p += borg_danger_aux(y, x, c, i, average);
+		p += borg_danger_aux(x, y, c, i, average);
 	}
 
 	borg_full_damage = FALSE;
@@ -9001,7 +9001,7 @@ int borg_danger(int y, int x, int c, bool average)
 			if (!kill->r_idx) continue;
 
 			/* Collect danger from monster */
-			p += borg_danger_aux(y, x, c, i, average);
+			p += borg_danger_aux(x, y, c, i, average);
 		}
 	}
 

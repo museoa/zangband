@@ -3312,7 +3312,7 @@ static void borg_display_map_info(byte data, byte type)
 					case BORG_SHOW_AVOID:
 					{
 						/* Obtain danger */
-						int p = borg_danger(y, x, 1, TRUE);
+						int p = borg_danger(x, y, 1, TRUE);
 
 						/* Skip non-avoidances */
 						if (p <= avoidance / 3) break;
@@ -4682,7 +4682,7 @@ void do_cmd_borg(void)
 			/* Danger of grid */
 			msg_format("Danger(%d,%d,%d) is %d",
 					   p_ptr->target_col, p_ptr->target_row, n,
-					   borg_danger(p_ptr->target_row, p_ptr->target_col, n,
+					   borg_danger(p_ptr->target_col, p_ptr->target_row, n,
 								   TRUE));
 			break;
 		}

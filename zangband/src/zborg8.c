@@ -3105,7 +3105,7 @@ bool borg_think_dungeon(void)
 				goal_less = FALSE;
 
 				/* if not dangerous, wait here */
-				if (borg_danger(c_y, c_x, 1, TRUE) == 0)
+				if (borg_danger(c_x, c_y, 1, TRUE) == 0)
 				{
 					/* rest here a moment */
 					borg_note("# Resting on stair to gain Mana.");
@@ -3151,7 +3151,7 @@ bool borg_think_dungeon(void)
 				/* I am standing on a stair */
 
 				/* if not dangerous, wait here */
-				if (borg_danger(c_y, c_x, 1, TRUE) == 0)
+				if (borg_danger(c_x, c_y, 1, TRUE) == 0)
 				{
 					/* rest here a moment */
 					borg_note("# Resting on town stair to gain Mana.");
@@ -3381,7 +3381,7 @@ bool borg_think_dungeon(void)
 	/*** Wait for recall ***/
 
 	/* Wait for recall, unless in danger */
-	if (goal_recalling && (borg_danger(c_y, c_x, 1, TRUE) <= 0))
+	if (goal_recalling && (borg_danger(c_x, c_y, 1, TRUE) <= 0))
 	{
 		/* Take note */
 		borg_note("# Waiting for Recall...");

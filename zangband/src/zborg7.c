@@ -1732,7 +1732,7 @@ bool borg_crush_junk(void)
 	if (!borg_do_crush_junk) return (FALSE);
 
 	/* No crush if even slightly dangerous */
-	if (borg_danger(c_y, c_x, 1, TRUE) >
+	if (borg_danger(c_x, c_y, 1, TRUE) >
 		borg_skill[BI_CURHP] / 10) return (FALSE);
 
 	/* Destroy actual "junk" items */
@@ -1967,9 +1967,9 @@ bool borg_crush_hole(void)
 	if (!borg_items[INVEN_PACK - 1].iqty) return (FALSE);
 #if 0
 	/* No crush if even slightly dangerous */
-	if (borg_danger(c_y, c_x, 1, TRUE) > borg_skill[BI_CURHP] / 10 &&
+	if (borg_danger(c_x, c_y, 1, TRUE) > borg_skill[BI_CURHP] / 10 &&
 		(borg_skill[BI_CURHP] != borg_skill[BI_MAXHP] ||
-		 borg_danger(c_y, c_x, 1, TRUE) > (borg_skill[BI_CURHP] * 2) / 3))
+		 borg_danger(c_x, c_y, 1, TRUE) > (borg_skill[BI_CURHP] * 2) / 3))
 		return (FALSE);
 #endif /* 0 */
 	/* Scan the inventory */
@@ -2362,7 +2362,7 @@ bool borg_crush_slow(void)
 	bool fix = FALSE;
 
 	/* No crush if even slightly dangerous */
-	if (borg_danger(c_y, c_x, 1, TRUE) >
+	if (borg_danger(c_x, c_y, 1, TRUE) >
 		borg_skill[BI_CURHP] / 20) return (FALSE);
 
 	/* Hack -- never in town */
@@ -2535,7 +2535,7 @@ bool borg_test_stuff(bool star_id)
 		return (FALSE);
 
 	/* No ID if in danger */
-	if (borg_danger(c_y, c_x, 1, TRUE) > 1) return (FALSE);
+	if (borg_danger(c_x, c_y, 1, TRUE) > 1) return (FALSE);
 
 	/* Look for an item to identify (equipment) */
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
@@ -3325,7 +3325,7 @@ bool borg_backup_swap(int p)
 	borg_notice(FALSE);
 
 	/* Evaluate the power with the new item worn */
-	b_p1 = borg_danger(c_y, c_x, 1, TRUE);
+	b_p1 = borg_danger(c_x, c_y, 1, TRUE);
 
 	/* Note the considerations if fighting a unique */
 	if (borg_fighting_unique)
@@ -3406,7 +3406,7 @@ bool borg_backup_swap(int p)
 
 
 	/* Evaluate the power with the new item worn */
-	b_p2 = borg_danger(c_y, c_x, 1, TRUE);
+	b_p2 = borg_danger(c_x, c_y, 1, TRUE);
 
 	/* Note the considerations if fighting a unique */
 	if (borg_fighting_unique)
@@ -3726,7 +3726,7 @@ bool borg_wear_stuff(void)
 #endif /* 0 */
 
 		/* Obtain danger */
-		danger = borg_danger(c_y, c_x, 1, TRUE);
+		danger = borg_danger(c_x, c_y, 1, TRUE);
 
 		/* If this is a ring and both hands are full, then check each hand
 		 * and compare the two.  If needed the tight ring can be removed then
@@ -3771,7 +3771,7 @@ bool borg_wear_stuff(void)
 			p = borg_power();
 
 			/* Evaluate local danger */
-			d = borg_danger(c_y, c_x, 1, TRUE);
+			d = borg_danger(c_x, c_y, 1, TRUE);
 #if 0
 			/* dump list and power...  for debugging */
 			borg_note(format
@@ -3847,7 +3847,7 @@ bool borg_wear_stuff(void)
 				p = borg_power();
 
 				/* Evaluate local danger */
-				d = borg_danger(c_y, c_x, 1, TRUE);
+				d = borg_danger(c_x, c_y, 1, TRUE);
 
 #if 0
 				/* dump list and power...  for debugging */
