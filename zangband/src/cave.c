@@ -1758,17 +1758,6 @@ void prt_map(void)
 
 
 /*
- * Display highest priority object in the RATIO by RATIO area
- */
-#define RATIO 3
-
-/*
- * Display the entire map
- */
-#define MAP_HGT (MAX_HGT / RATIO)
-#define MAP_WID (MAX_WID / RATIO)
-
-/*
  * Hack -- priority array (see below)
  *
  * Note that all "walls" always look like "secret doors" (see "map_info()").
@@ -1884,15 +1873,18 @@ void display_map(int *cy, int *cx)
 
 	byte tp;
 
-	byte ma[MAP_HGT + 2][MAP_WID + 2];
-	char mc[MAP_HGT + 2][MAP_WID + 2];
+	byte ma[SCREEN_HGT + 2][SCREEN_WID + 2];
+	char mc[SCREEN_HGT + 2][SCREEN_WID + 2];
 
-	byte mp[MAP_HGT + 2][MAP_WID + 2];
+	byte mp[SCREEN_HGT + 2][SCREEN_WID + 2];
 
 	bool old_view_special_lite;
 	bool old_view_granite_lite;
 
 	bool fake_monochrome = (!use_graphics || streq(ANGBAND_SYS, "ibm"));
+
+	int yrat = cur_hgt / SCREEN_HGT;
+	int xrat = cur_wid / SCREEN_WID;
 
 
 	/* Save lighting effects */
@@ -1905,9 +1897,9 @@ void display_map(int *cy, int *cx)
 
 
 	/* Clear the chars and attributes */
-	for (y = 0; y < MAP_HGT + 2; ++y)
+	for (y = 0; y < SCREEN_HGT + 2; ++y)
 	{
-		for (x = 0; x < MAP_WID + 2; ++x)
+		for (x = 0; x < SCREEN_WID + 2; ++x)
 		{
 			/* Nothing here */
 			ma[y][x] = TERM_WHITE;
@@ -1924,8 +1916,8 @@ void display_map(int *cy, int *cx)
 		for (j = 0; j < cur_hgt; ++j)
 		{
 			/* Location */
-			x = i / RATIO + 1;
-			y = j / RATIO + 1;
+			x = i / xrat + 1;
+			y = j / yrat + 1;
 
 			/* Extract the current attr/char at that map location */
 #ifdef USE_TRANSPARENCY
@@ -1954,27 +1946,27 @@ void display_map(int *cy, int *cx)
 
 
 	/* Corners */
-	x = MAP_WID + 1;
-	y = MAP_HGT + 1;
+	x = SCREEN_WID + 1;
+	y = SCREEN_HGT + 1;
 
 	/* Draw the corners */
 	mc[0][0] = mc[0][x] = mc[y][0] = mc[y][x] = '+';
 
 	/* Draw the horizontal edges */
-	for (x = 1; x <= MAP_WID; x++) mc[0][x] = mc[y][x] = '-';
+	for (x = 1; x <= SCREEN_WID; x++) mc[0][x] = mc[y][x] = '-';
 
 	/* Draw the vertical edges */
-	for (y = 1; y <= MAP_HGT; y++) mc[y][0] = mc[y][x] = '|';
+	for (y = 1; y <= SCREEN_HGT; y++) mc[y][0] = mc[y][x] = '|';
 
 
 	/* Display each map line in order */
-	for (y = 0; y < MAP_HGT+2; ++y)
+	for (y = 0; y < SCREEN_HGT+2; ++y)
 	{
 		/* Start a new line */
-		Term_gotoxy(0, y);
+		Term_gotoxy(COL_MAP, y);
 
 		/* Display the line */
-		for (x = 0; x < MAP_WID+2; ++x)
+		for (x = 0; x < SCREEN_WID+2; ++x)
 		{
 			ta = ma[y][x];
 			tc = mc[y][x];
@@ -1993,8 +1985,8 @@ void display_map(int *cy, int *cx)
 
 
 	/* Player location */
-	(*cy) = py / RATIO + 1;
-	(*cx) = px / RATIO + 1;
+	(*cy) = py / yrat + 1 + ROW_MAP;
+	(*cx) = px / xrat + 1 + COL_MAP;
 
 
 	/* Restore lighting effects */
@@ -2029,7 +2021,7 @@ void do_cmd_view_map(void)
 	display_map(&cy, &cx);
 
 	/* Wait for it */
-	put_str("Hit any key to continue", 23, 23);
+	put_str("Hit any key to continue", 23, 35);
 
 	/* Hilite the player */
 	move_cursor(cy, cx);
