@@ -103,6 +103,44 @@ Simply use your old savefile as the base for creating your new
 character.
 
 
+*****<Uniques>
+=== Unique Monsters ===
+
+The monsters in Zangband are unique in that each variety of monster
+has its own set of physical and, where applicable, magical abilities.
+However, some monsters in Zangband are truly unique and this group
+of monsters are often referred to as "Uniques".
+
+The Unique monsters are made unique for several reasons. Primarily,
+their name derives from the fact that unlike regular monsters which
+can appear numerous times during the course of a game, the Unique
+monsters will never be regenerated once they have been killed and
+the game will never generate two copies of the same Unique monster
+at a time so that effectively there is only one of each Unique
+monster.
+
+Unique monsters are typically based on a normal monster. For example,
+Tom the Stone Troll is based on the Stone Troll monster. However,
+Unique monsters usually have more hitpoints, hit harder and cast
+spells more effectively than the monster on which they are based.
+Unique monsters are often a different color from other monsters of
+their type to allow the player to more easily distinguish them but
+this is not always true.
+
+--- Keeping Track of Uniques ---
+
+Since Unique monsters are often very difficult to defeat, most
+players will attempt to kill them all before attempting to battle
+the Serpent of Chaos (itself a Unique monster). This avoids the
+need to battle two very difficult oponents at the same time.
+
+Each time your character happens upon a new Unique, this is
+recorded in your monster memory. Under the knowledge command ('~')
+is a menu item which allows you to look at which Uniques you have
+met and which of these have been defeated. It is a good idea to
+check this periodically to gauge your progress.
+
+
 *****<Pets>
 === Pets ===
 
