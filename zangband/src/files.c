@@ -2298,7 +2298,7 @@ static cptr object_flag_names[96] =
 	"Imm Elec",
 	"Imm Fire",
 	"Imm Cold",
-	NULL,
+	"Throwing",
 	"Reflect",
 	"Free Act",
 	"Hold Life",
