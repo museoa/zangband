@@ -1108,7 +1108,7 @@ extern void field_destroy_type(s16b fld_idx, byte typ);
 extern s16b place_field(int x, int y, s16b t_idx);
 extern bool field_hook_single(field_type *f_ptr, int action, ...);
 extern void field_hook(cave_type *c_ptr, int action, ...);
-extern bool field_hook_special(s16b *field_ptr, u16b t_idx, ...);
+extern bool field_hook_special(cave_type *c_ptr, u16b t_idx, ...);
 extern s16b *field_hook_find(s16b *field_ptr, int action, ...);
 extern void process_fields(void);
 extern void test_field_data_integrity(void);

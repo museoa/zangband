@@ -1154,50 +1154,40 @@ void field_hook(cave_type *c_ptr, int action, ...)
  * in the specified list which match the required
  * field type.
  */
-bool field_hook_special(s16b *field_ptr, u16b ftype, ...)
+bool field_hook_special(cave_type *c_ptr, u16b ftype, ...)
 {
-	va_list vp;
-
 	field_type *f_ptr;
 	field_thaum *t_ptr;
 
 	bool deleted = FALSE;
     
-    /* Begin the Varargs Stuff */
-	va_start(vp, ftype);
-
-	while (*field_ptr)
+	FLD_ITT_START(c_ptr->fld_idx, f_ptr)
 	{
 		/* Point to the field */
-		f_ptr = &fld_list[*field_ptr];
 		t_ptr = &t_info[f_ptr->t_idx];
 
 		/* Check for the right field + existance of a function to call */
 		if ((t_ptr->type == ftype) && (t_ptr->action[FIELD_ACT_SPECIAL]))
 		{
+			va_list vp;
+		
+			/* Begin the Varargs Stuff */
+			va_start(vp, ftype);
+		
 			/* Call the action function */
 			if (t_ptr->action[FIELD_ACT_SPECIAL] (f_ptr, vp))
 			{
 				/* The field wants to be deleted */
-				delete_field_ptr(field_ptr);
+				delete_field_ptr(field_find(f_ptr));
 
 				deleted = TRUE;
 			}
-			else
-			{
-				/* Get next field in the list */
-				field_ptr = &f_ptr->next_f_idx;
-			}
-		}
-		else
-		{
-			/* Get next field in the list */
-			field_ptr = &f_ptr->next_f_idx;
+			
+			/* End the Varargs Stuff */
+			va_end(vp);
 		}
 	}
-    
-    /* End the Varargs Stuff */
-	va_end(vp);
+	FLD_ITT_END;
 
 	/* Was a field deleted? */
 	return (deleted);
