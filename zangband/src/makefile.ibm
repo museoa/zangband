@@ -34,7 +34,7 @@ OBJS = \
 	xtra2.o z-form.o z-rand.o z-term.o \
 	z-util.o z-virt.o \
 	script.o \
-	l-monst.o l-object.o l-player.o l-random.o \
+	l-monst.o l-object.o l-player.o l-random.o l-ui.o \
 	$(LUAOBJS)
 
 # Compiler
@@ -95,6 +95,9 @@ l-player.c: lua\tolua l-player.pkg
 
 l-random.c: lua\tolua l-random.pkg
 	lua\tolua -n random -o l-random.c l-random.pkg
+
+l-ui.c: lua\tolua l-ui.pkg
+	lua\tolua -n ui -o l-ui.c l-ui.pkg
 
 #
 # Clean up

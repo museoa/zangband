@@ -2,7 +2,7 @@
 
 noinst_LIBRARIES = liblua.a
 
-EXTRA_PROGRAMS = tolua
+noinst_PROGRAMS = tolua
 
 liblua_a_SOURCES = \
   lapi.c ldebug.c lmem.c lstrlib.c lvm.c \

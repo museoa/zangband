@@ -118,10 +118,10 @@ MONADIC(intBitNot,  ~ )
 static const struct luaL_reg intMathLib[] =
 {
     {"mod",    intMod    },
-    {"band",   intAnd    },
-    {"bor",    intOr     },
-    {"bxor",   intXor    },
-    {"bnot",   intBitNot },
+    {"bAnd",   intAnd    },
+    {"bOr",    intOr     },
+    {"bXor",   intXor    },
+    {"bNot",   intBitNot },
     {"shiftl", intShiftl },
     {"shiftr", intShiftr },
 };
@@ -151,6 +151,8 @@ extern int tolua_monster_open(lua_State* tolua_S);
 extern void tolua_monster_close(lua_State* tolua_S);
 extern int tolua_random_open(lua_State* tolua_S);
 extern void tolua_random_close(lua_State* tolua_S);
+extern int tolua_ui_open(lua_State* tolua_S);
+extern void tolua_ui_close(lua_State* tolua_S);
 
 
 /*
@@ -179,6 +181,7 @@ errr script_init(void)
 	tolua_object_open(L);
 	tolua_monster_open(L);
 	tolua_random_open(L);
+	tolua_ui_open(L);
 
 	/* Initialization code */
 	path_build(buf, 1024, ANGBAND_DIR_SCRIPT, "init.lua");

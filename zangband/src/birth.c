@@ -1997,7 +1997,7 @@ static void race_aux_hook(cptr r_str)
 
 	sprintf(s, "Hit die: %d ", race_info[race].r_mhp);
 	Term_putstr(RACE_AUX_COL, TABLE_ROW + A_MAX, -1, TERM_WHITE, s);
-	sprintf(s, "Experience: %d%%", race_info[race].r_exp);
+	sprintf(s, "Experience: %2d%%", race_info[race].r_exp);
 	Term_putstr(RACE_AUX_COL, TABLE_ROW + A_MAX + 1, -1, TERM_WHITE, s);
 	sprintf(s, "Infravision: %d ft ", race_info[race].infra * 10);
 	Term_putstr(RACE_AUX_COL, TABLE_ROW + A_MAX + 2, -1, TERM_WHITE, s);

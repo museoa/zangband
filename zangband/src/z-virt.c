@@ -127,8 +127,6 @@ cptr string_make(cptr str)
  */
 errr string_free(cptr str)
 {
-	huge len = 0;
-
 	/* Succeed on non-strings */
 	if (!str) return (0);
 
