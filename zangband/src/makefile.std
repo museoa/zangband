@@ -339,7 +339,7 @@ freebsd-tk: CFLAGS += -D"USE_TNB" -D"USE_X11" -D"PLATFORM_X11"\
 				 -Wredundant-decls #-Wunreachable-code
  
 freebsd-tk: LIBS := -lX11 -lcurses -lncurses -L/usr/X11R6/lib -L/usr/local/lib \
-               -lXaw -lXext -lSM -lICE -lXmu -lXt -ltcl8.4 -ltk8.4
+               -lXaw -lXext -lSM -lICE -lXmu -lXt -ltcl84 -ltk84
 freebsd-tk: tk-objs
 	cp $^ ../zangband
 
