@@ -336,10 +336,13 @@ int get_player_sort_choice(cptr *choices, int num, int col, int wid,
  *;
  * We return the number of active options.
  */
-static int show_menu(int num, menu_type *options, int select, bool scroll)
+static int show_menu(int num, menu_type *options, int select, bool scroll, cptr prompt)
 {
 	int cnt = 0;
 	int i;
+
+	/* Border on top of menu */
+	clear_row(1);
 	
 	for (i = 0; i < num; i++)
 	{
@@ -374,6 +377,26 @@ static int show_menu(int num, menu_type *options, int select, bool scroll)
 	/* Border below menu */
 	clear_row(num + 2);
 	
+	/*
+	 * Display the prompt.
+	 * (Do this last, so we get the cursor in the right spot)
+	 */
+	if (!cnt)
+	{
+		prtf(0, 0, "(No commands available, ESC=exit) %s", prompt);
+	}
+	else if (cnt == 1)
+	{
+		/* Display the prompt */
+		prtf(0, 0, "(Command (a), ESC=exit) %s", prompt ? prompt : "Select a command: ");
+	}
+	else
+	{
+		/* Display the prompt */
+		prtf(0, 0, "(Command (a-%c), ESC=exit) %s", I2A(cnt - 1),
+			 prompt ? prompt : "Select a command: ");
+	}
+	
 	return (cnt);
 }
 
@@ -398,8 +421,6 @@ bool display_menu(menu_type *options, int select, bool scroll, cptr prompt)
 	char choice;
 	int num = 0;
 	
-	int x, y;
-	
 	/* Calculate the number of strings we have */
 	while (options[num].text) num++;
                   
@@ -408,18 +429,13 @@ bool display_menu(menu_type *options, int select, bool scroll, cptr prompt)
 
 	/* Save the screen */
 	Term_save();
-
-	/* Border on top of menu */
-	clear_row(1);
     
 	/* Show the list */
-	cnt = show_menu(num, options, select, scroll);
+	cnt = show_menu(num, options, select, scroll, prompt);
 		
 	/* Paranoia */
 	if (!cnt)
 	{
-		prtf(0, 0, "(No commands available, ESC=exit) %s", prompt);
-		
 		while (inkey() != ESCAPE)
 		{
 			/* Do nothing */
@@ -429,21 +445,7 @@ bool display_menu(menu_type *options, int select, bool scroll, cptr prompt)
 		Term_load();
 		return (FALSE);
 	}
-	else if (cnt == 1)
-	{
-		/* Display the prompt */
-		prtf(0, 0, "(Command (a), ESC=exit) %s", prompt ? prompt : "Select a command: ");
-	}
-	else
-	{
-		/* Display the prompt */
-		prtf(0, 0, "(Command (a-%c), ESC=exit) %s", I2A(cnt - 1),
-			 prompt ? prompt : "Select a command: ");
-	}
-	
-	/* Locate the cursor */
-	(void)Term_locate(&x, &y);
-    
+   
 	/* Get a command from the user */
 	while ((choice = inkey()))
 	{
@@ -494,11 +496,8 @@ bool display_menu(menu_type *options, int select, bool scroll, cptr prompt)
 				while(!options[select].flags & MN_SELECT);
 				
 				/* Show the list */
-				show_menu(num, options, select, scroll);
-						
-				/* Reset the cursor */
-				Term_gotoxy(x, y);
-				
+				show_menu(num, options, select, scroll, prompt);
+
 				/* Next time */
 				continue;
 			}
@@ -517,14 +516,16 @@ bool display_menu(menu_type *options, int select, bool scroll, cptr prompt)
 				while(!options[select].flags & MN_SELECT);
 				
 				/* Show the list */
-				show_menu(num, options, select, scroll);
-						
-				/* Reset the cursor */
-				Term_gotoxy(x, y);
+				show_menu(num, options, select, scroll, prompt);
 				
 				/* Next time */
 				continue;
 			}
+		}
+		else
+		{
+			/* Hack - set illegal value */
+			i = -1;
 		}
 
 		/* Totally Illegal */
@@ -547,6 +548,13 @@ bool display_menu(menu_type *options, int select, bool scroll, cptr prompt)
 						/* Belay that order */
 						if (!get_check("Use %s? ", options[j].text)) continue;
 					}
+					
+					/* Hack - clear the screen */
+					if (options[j].flags & MN_CLEAR)
+					{
+						Term_load();
+						Term_save();
+					}
 				
 					if (options[j].action(j))
 					{
@@ -568,10 +576,7 @@ bool display_menu(menu_type *options, int select, bool scroll, cptr prompt)
 						}
 						
 						/* Show the list */
-						show_menu(num, options, select, scroll);
-						
-						/* Reset the cursor */
-						Term_gotoxy(x, y);
+						show_menu(num, options, select, scroll, prompt);
 						
 						/* Get a new command */
 						break;

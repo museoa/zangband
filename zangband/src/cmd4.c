@@ -1197,7 +1197,7 @@ static menu_type options_menu[OPTION_MENU_MAX] =
 	{"Artificial Intelligence Options", do_cmd_options_aux, MN_AVAILABLE},
 	{"Testing Options", do_cmd_options_aux, MN_AVAILABLE},
 	MENU_SEPERATOR,
-	{"Cheating Options", do_cmd_options_cheat, MN_AVAILABLE},
+	{"Cheating Options", do_cmd_options_cheat, MN_AVAILABLE | MN_CLEAR},
 	{"Base Delay Factor", do_cmd_options_delay, MN_AVAILABLE},
 	{"Hitpoint Warning", do_cmd_options_hitpoint, MN_AVAILABLE},
 	MENU_SEPERATOR,
