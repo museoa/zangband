@@ -35,5 +35,13 @@ extern bool script_do_file(cptr filename);
  */
 extern bool use_object(object_type *o_ptr, bool *ident);
 
+/*
+ * Does the player have a certain resistance?
+ */
+bool player_res(u32b flag)
+{
+	return ((p_ptr->flags2 & flag) ? TRUE : FALSE);
+}
+
 #endif /* INCLUDED_SCRIPT_H */
 

@@ -496,3 +496,10 @@ bool script_do_file(cptr filename)
 	return FALSE;
 }
 
+/*
+ * Does the player have a certain resistance?
+ */
+bool player_res(u32b flag)
+{
+	return ((p_ptr->flags2 & flag) ? TRUE : FALSE);
+}
