@@ -2415,7 +2415,13 @@ static bool player_birth_aux_2(void)
 
 	/* Roll for social class */
 	get_history();
+	
+	/* Hack -- get a chaos patron even if you are not a chaos warrior */
+	p_ptr->chaos_patron = (s16b)rand_int(MAX_PATRON);
 
+	p_ptr->muta1 = 0;
+	p_ptr->muta2 = 0;
+	p_ptr->muta3 = 0;
 
 	/* Interact */
 	while (1)
