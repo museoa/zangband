@@ -1033,7 +1033,7 @@ static errr Term_user_dos(int n)
 		}
 
 		/* Flush messages */
-		msg_print(NULL);
+		message_flush();
 	}
 
 	/* Redraw it */
@@ -1456,7 +1456,7 @@ static void dos_dump_screen(void)
 
 	/* Success message */
 	msg_print("Screen dump saved.");
-	msg_print(NULL);
+	message_flush();
 }
 
 
