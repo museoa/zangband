@@ -2621,33 +2621,7 @@ static void process_monster(int m_idx)
 			}
 		}
 
-		/* Hack -- check for Glyph of Warding */
-		if (do_move && (c_ptr->feat == FEAT_GLYPH) &&
-		    !(r_ptr->flags1 & RF1_NEVER_BLOW))
-		{
-			/* Assume no move allowed */
-			do_move = FALSE;
-
-			/* Break the ward */
-			if (randint(BREAK_GLYPH) < r_ptr->level)
-			{
-				/* Describe observable breakage */
-				if (c_ptr->info & CAVE_MARK)
-				{
-					msg_print("The rune of protection is broken!");
-				}
-
-				/* Forget the rune */
-				c_ptr->info &= ~(CAVE_MARK);
-
-				/* Break the rune */
-				cave_set_feat(ny, nx, FEAT_FLOOR);
-
-				/* Allow movement */
-				do_move = TRUE;
-			}
-		}
-		else if (do_move && (c_ptr->feat == FEAT_MINOR_GLYPH) &&
+		if (do_move && (c_ptr->feat == FEAT_MINOR_GLYPH) &&
 		         !(r_ptr->flags1 & RF1_NEVER_BLOW))
 		{
 			/* Assume no move allowed */

@@ -2734,6 +2734,7 @@ bool earthquake(int cy, int cx, int r)
 	cave_type       *c_ptr;
 	bool            map[32][32];
 	byte			dummy;
+	field_mon_test	mon_enter_test;
 
 	/* Prevent destruction of quest levels and town */
 	if (p_ptr->inside_quest || !dun_level)
@@ -2984,9 +2985,29 @@ bool earthquake(int cy, int cx, int r)
 
 							/* Skip non-empty grids */
 							if (!cave_empty_grid(c_ptr)) continue;
+							
+							/* Check for a field that blocks movement */
+							if (fields_have_flags(c_ptr->fld_idx,
+									 FIELD_INFO_NO_ENTER)) continue;
+							
+							/* 
+							 * Test for fields that will not allow this
+							 * specific monster to pass. (i.e. Glyph of warding)
+							 */
+		 
+							/* Initialise info to pass to action functions */
+							mon_enter_test.m_ptr = NULL;
+							mon_enter_test.do_move = TRUE;
+		
+							/* Call the hook */
+							field_hook(&c_ptr->fld_idx,
+								 FIELD_ACT_MON_ENTER_TEST, 
+								 (void *) &mon_enter_test);
+			 
+							/* Get result */
+							if(!mon_enter_test.do_move) continue;
 
 							/* Hack -- no safety on glyph of warding */
-							if (c_ptr->feat == FEAT_GLYPH) continue;
 							if (c_ptr->feat == FEAT_MINOR_GLYPH) continue;
 
 							/* ... nor on the Pattern */

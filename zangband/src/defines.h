@@ -852,7 +852,7 @@
 /* Various */
 #define FEAT_FLOOR              0x01
 #define FEAT_INVIS              0x02
-#define FEAT_GLYPH              0x03
+/* #define FEAT_GLYPH              0x03 Now is a field */
 #define FEAT_OPEN               0x04
 #define FEAT_BROKEN             0x05
 #define FEAT_LESS               0x06
@@ -998,7 +998,7 @@
 
 /*** Field Thaumatergical types - (see "fields.c" and t_info.txt) ***/
 #define FT_WALL_INVIS		0x0001
-
+#define FT_GLYPH_WARDING	0x0002
 
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
 
@@ -3341,6 +3341,7 @@
 	  ((C)->feat == FEAT_DIRT)) && \
 	  ((C)->o_idx == 0) && \
 	  ((C)->m_idx == 0) && \
+	  ((C)->fld_idx == 0) && \
 	  !((C) == area(py, px)))
 
 
@@ -3726,7 +3727,7 @@ extern int PlayerUID;
 #define FIELD_ACTION_MAX		18	/* The last action + 1 */
 
 
-#define FIELD_ACTION_TYPES  4 /* Number of FIELD_ACT functions in tables.c */
+#define FIELD_ACTION_TYPES  5 /* Number of FIELD_ACT functions in tables.c */
 
 
 

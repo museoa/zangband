@@ -2257,7 +2257,7 @@ static errr rd_dungeon_aux(void)
 				/* Glyph of Warding */
 				case 459:
 				{
-					k = FEAT_GLYPH;
+					k = 0x03;
 					break;
 				}
 
@@ -2537,6 +2537,15 @@ static errr rd_dungeon_aux(void)
 					(void) place_field(y, x, FT_WALL_INVIS);
 				}
 				
+				/* Glyph of warding */
+				if (c_ptr->feat == 0x03)
+				{
+					/* Get rid of it */
+					c_ptr->feat = FEAT_NONE;
+					
+					/* Add the glyph here as a field */
+					(void) place_field(y, x, FT_GLYPH_WARDING);
+				}
 			}
 
 			/* Hack -- convert nothing-ness into floors */

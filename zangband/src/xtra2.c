@@ -1949,7 +1949,6 @@ static bool target_set_accept(int y, int x)
 	if (c_ptr->info & (CAVE_MARK))
 	{
 		/* Notice glyphs */
-		if (c_ptr->feat == FEAT_GLYPH) return (TRUE);
 		if (c_ptr->feat == FEAT_MINOR_GLYPH) return (TRUE);
 
 		/* Notice the Pattern */

@@ -1009,10 +1009,7 @@ void test_field_data_integtrity(void)
 /* Simple function that does nothing */
 void field_action_nothing(s16b *field_ptr, void *nothing)
 {
-	field_type *f_ptr;
-
-	/* Point to the field */
-	f_ptr = &fld_list[*field_ptr];
+	field_type *f_ptr = &fld_list[*field_ptr];
 
 	/* Action: Do nothing at all */
 
@@ -1024,11 +1021,6 @@ void field_action_nothing(s16b *field_ptr, void *nothing)
 /* Simple function that deletes the field */
 void field_action_delete(s16b *field_ptr, void *nothing)
 {
-	field_type *f_ptr;
-
-	/* Point to the field */
-	f_ptr = &fld_list[*field_ptr];
-
 	/* Action: Do nothing at all */
 
 	/* Delete the field */
@@ -1128,5 +1120,66 @@ void field_action_compact_basic(s16b *field_ptr, void *compact_val)
 	/* Update *field_ptr to point to the next field in the list */
 	field_ptr = &(f_ptr->next_f_idx);
 	
+	return;
+}
+
+
+/* The function that now controls the glyph of warding rune. */
+void field_action_glyph_warding(s16b *field_ptr, void *mon_enter_test)
+{
+	field_type *f_ptr = &fld_list[*field_ptr];
+	
+	/* Look at input data */
+	field_mon_test *mon_enter = (field_mon_test *) mon_enter_test;
+
+	monster_type *m_ptr = mon_enter->m_ptr;
+	
+	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+	
+	bool do_move = mon_enter->do_move;
+	
+	/* Hack: No monster - just test for existance of glyph */
+	if (!m_ptr)
+	{
+		/* Monsters cannot be generated / teleported onto glyph */
+		mon_enter->do_move = FALSE;
+		
+		/* Update *field_ptr to point to the next field in the list */
+		field_ptr = &(f_ptr->next_f_idx);
+		
+		/* Done */
+		return;
+	}
+	
+	if (do_move && !(r_ptr->flags1 & RF1_NEVER_BLOW) && 
+		(randint(BREAK_GLYPH) < r_ptr->level)) 
+	{
+		/* Describe observable breakage */
+		if (area(f_ptr->fy, f_ptr->fx)->info & CAVE_MARK)
+		{
+			msg_print("The rune of protection is broken!");
+		}
+
+		/* Delete the field */
+		delete_field_aux(field_ptr);
+			
+		/* Note that *field_ptr does not need to be updated */
+
+		/* Allow movement */
+		do_move = TRUE;
+	}
+	else
+	{
+		/* No move allowed */
+		do_move = FALSE;
+			
+		/* Update *field_ptr to point to the next field in the list */
+		field_ptr = &(f_ptr->next_f_idx);
+	}
+
+	/* Save result */
+	mon_enter->do_move = do_move;
+	
+	/* Done */
 	return;
 }

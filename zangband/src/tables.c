@@ -6497,7 +6497,10 @@ field_action f_action[FIELD_ACTION_TYPES] =
 	/* Delete the field */
 	{field_action_delete, "field_action_delete"},
 	
-	/*basic compaction chance */ 
-	{field_action_compact_basic, "field_action_compact_basic"} 
+	/* Basic compaction chance */ 
+	{field_action_compact_basic, "field_action_compact_basic"},
+	
+	/* Glyph of warding function */
+	{field_action_glyph_warding, "field_action_glyph_warding"}
 };
 

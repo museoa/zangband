@@ -826,7 +826,8 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			/* Require a "naked" floor grid */
 			if (!cave_naked_grid(c_ptr)) break;
 
-			cave_set_feat(y, x, FEAT_GLYPH);
+			/* Add the glyph here as a field */
+			(void) place_field(y, x, FT_GLYPH_WARDING);
 
 			break;
 		}

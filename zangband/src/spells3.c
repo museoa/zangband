@@ -90,7 +90,6 @@ bool teleport_away(int m_idx, int dis)
 			if (!cave_empty_grid(c_ptr)) continue;
 
 			/* Hack -- no teleport onto glyph of warding */
-			if (c_ptr->feat == FEAT_GLYPH) continue;
 			if (c_ptr->feat == FEAT_MINOR_GLYPH) continue;
 
 			/* ...nor onto the Pattern */
@@ -248,7 +247,6 @@ void teleport_to_player(int m_idx)
 			if (!cave_empty_grid(c_ptr)) continue;
 
 			/* Hack -- no teleport onto glyph of warding */
-			if (c_ptr->feat == FEAT_GLYPH) continue;
 			if (c_ptr->feat == FEAT_MINOR_GLYPH) continue;
 
 			/* ...nor onto the Pattern */
@@ -1153,14 +1151,14 @@ bool warding_glyph(void)
 	cave_type *c_ptr = area(py, px);
 
 	/* XXX XXX XXX */
-	if (!cave_clean_grid(c_ptr))
+	if (!cave_naked_grid(c_ptr))
 	{
 		msg_print("The object resists the spell.");
 		return FALSE;
 	}
 
-	/* Create a glyph */
-	cave_set_feat(py, px, FEAT_GLYPH);
+	/* Add the glyph here as a field */
+	(void) place_field(py, px, FT_GLYPH_WARDING);
 
 	return TRUE;
 }

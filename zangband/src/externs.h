@@ -1235,6 +1235,7 @@ extern void test_field_data_integtrity(void);
 extern void field_action_nothing(s16b *field_ptr, void *nothing);
 extern void field_action_delete(s16b *field_ptr, void *nothing);
 extern void field_action_compact_basic(s16b *field_ptr, void *compact_val);
+extern void field_action_glyph_warding(s16b *field_ptr, void *mon_enter_test);
 
 
 /*

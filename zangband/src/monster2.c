@@ -1515,7 +1515,6 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 		 (!((c_ptr->m_idx) || (c_ptr == area(py, px)))))) return FALSE;
 
 	/* Hack -- no creation on glyph of warding */
-	if (c_ptr->feat == FEAT_GLYPH) return (FALSE);
 	if (c_ptr->feat == FEAT_MINOR_GLYPH) return (FALSE);
 
 	/* Nor on the Pattern */
@@ -2490,7 +2489,6 @@ bool summon_specific(int who, int y1, int x1, int lev, int type, bool group, boo
 		if (!cave_empty_grid(c_ptr)) continue;
 
 		/* Hack -- no summon on glyph of warding */
-		if (c_ptr->feat == FEAT_GLYPH) continue;
 		if (c_ptr->feat == FEAT_MINOR_GLYPH) continue;
 
 		/* ... nor on the Pattern */

@@ -363,7 +363,6 @@ static bool summon_possible(int y1, int x1)
 			c_ptr = area(y, x);
 
 			/* Hack: no summon on glyph of warding */
-			if (c_ptr->feat == FEAT_GLYPH) continue;
 			if (c_ptr->feat == FEAT_MINOR_GLYPH) continue;
 
 			/* ...nor on the Pattern */
