@@ -2269,7 +2269,7 @@ static int critical_shot(int chance, int sleeping_bonus, cptr o_name,
  * thrown item.
  */
 static void throw_item_effect(object_type *o_ptr, bool hit_body, bool hit_wall,
-                              int x, int y)
+                              bool hit_success, int x, int y)
 {
 	/* Chance of breakage (during attacks) */
 	int breakage = (hit_body ? breakage_chance(o_ptr) : 0);
@@ -2296,7 +2296,7 @@ static void throw_item_effect(object_type *o_ptr, bool hit_body, bool hit_wall,
 	}
 
 	/* Exploding arrows */
-	if ((o_ptr->flags4 & TR4_EXPLODE) && hit_body)
+	if ((o_ptr->flags4 & TR4_EXPLODE) && hit_body && hit_success)
 	{
 		project(0, 2, x, y, 100, GF_FIRE, (PROJECT_JUMP |
 					PROJECT_ITEM | PROJECT_KILL));
@@ -2777,7 +2777,7 @@ void do_cmd_fire_aux(int mult, object_type *o_ptr, const object_type *j_ptr)
 				tdam = mon_damage_mod(m_ptr, tdam, 0);
 								
 				/* Drop (or break) near that location (i_ptr is now invalid) */
-				throw_item_effect(i_ptr, TRUE, FALSE, x, y);
+				throw_item_effect(i_ptr, TRUE, FALSE, TRUE, x, y);
 
 				/* Complex message */
 				if (p_ptr->state.wizard)
@@ -2811,7 +2811,7 @@ void do_cmd_fire_aux(int mult, object_type *o_ptr, const object_type *j_ptr)
 			else
 			{
 				/* Drop (or break) near that location (i_ptr is now invalid) */
-				throw_item_effect(i_ptr, TRUE, FALSE, x, y);
+				throw_item_effect(i_ptr, TRUE, FALSE, FALSE, x, y);
 			}
 
 			/* Stop looking */
@@ -2820,7 +2820,7 @@ void do_cmd_fire_aux(int mult, object_type *o_ptr, const object_type *j_ptr)
 	}
 
 	/* Drop (or break) near that location (i_ptr is now invalid) */
-	throw_item_effect(i_ptr, FALSE, hit_wall, x, y);
+	throw_item_effect(i_ptr, FALSE, hit_wall, FALSE, x, y);
 }
 
 
