@@ -481,12 +481,6 @@ extern void map_panel_size(void);
 extern void generate_cave(void);
 
 /* init1.c */
-extern errr init_v_info_txt(FILE *fp, char *buf, bool start);
-extern errr init_f_info_txt(FILE *fp, char *buf);
-extern errr init_k_info_txt(FILE *fp, char *buf);
-extern errr init_a_info_txt(FILE *fp, char *buf);
-extern errr init_e_info_txt(FILE *fp, char *buf);
-extern errr init_r_info_txt(FILE *fp, char *buf);
 extern errr init_w_info_txt(FILE *fp, char *buf);
 extern errr init_t_info_txt(FILE *fp, char *buf);
 extern errr process_dungeon_file(cptr name, int init_flags);
