@@ -3366,6 +3366,14 @@ static void allocate_block(int x, int y)
 
 void shift_in_bounds(int *x, int *y)
 {
+	/* Vanilla town is special */
+	if (vanilla_town)
+	{
+		*x = 0;
+		*y = 0;
+		return;
+	}
+
 	/* Recenter map */
 	*x -= WILD_VIEW / 2;
 	*y -= WILD_VIEW / 2;
