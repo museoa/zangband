@@ -125,6 +125,9 @@ struct feature_type
 
 	byte x_attr;		/* Desired feature attribute */
 	char x_char;		/* Desired feature character */
+	
+	byte w_attr;		/* Desired extra feature attribute */
+	char w_char;		/* Desired extra feature character */
 };
 
 

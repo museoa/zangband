@@ -429,6 +429,23 @@ errr process_pref_file_aux(char *buf)
 			return (0);
 		}
 	}
+	
+	/* Process "W:<num>:<a>/<c>" -- xtra attr/char for terrain features */
+	else if (buf[0] == 'W')
+	{
+		if (tokenize(buf+2, 3, zz, TOKENIZE_CHECKQUOTE) == 3)
+		{
+			feature_type *f_ptr;
+			i = (huge)strtol(zz[0], NULL, 0);
+			n1 = strtol(zz[1], NULL, 0);
+			n2 = strtol(zz[2], NULL, 0);
+			if ((i < 0) || (i >= max_f_idx)) return (1);
+			f_ptr = &f_info[i];
+			if (n1) f_ptr->w_attr = n1;
+			if (n2) f_ptr->w_char = n2;
+			return (0);
+		}
+	}
 
 	/* Process "S:<num>:<a>/<c>" -- attr/char for special things */
 	else if (buf[0] == 'S')

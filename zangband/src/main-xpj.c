@@ -2085,7 +2085,6 @@ static errr draw_rect_t1(int x, int y, term_data *td, int xp, int yp)
 			
 			while (pixel == pix_blank)
 			{
-				
 				/* Get the number of the bit to look at */
 				val = bit_high_lookup[value / 256];
 	

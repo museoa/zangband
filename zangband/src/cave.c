@@ -1065,9 +1065,22 @@ void map_info(int y, int x, byte *ap, char *cp)
 
 #ifdef USE_TRANSPARENCY
 	/* Save the terrain info for the transparency effects */
-	(*tap) = a;
-	(*tcp) = c;
-
+	
+	/* Does the feature have "extended terrain" information? */
+	if (f_ptr->w_attr)
+	{
+		/*
+		 * Store extended terrain information. 
+		 * Note hack to get lighting right.
+		 */
+		(*tap) = f_ptr->w_attr + a - f_ptr->x_attr;
+		(*tcp) = f_ptr->w_char + c - f_ptr->x_char;
+	}
+	else
+	{
+		(*tap) = a;
+		(*tcp) = c;
+	}
 #endif /* USE_TRANSPARENCY */
 
 	/* Handle "player" */

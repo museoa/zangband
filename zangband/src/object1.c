@@ -39,6 +39,10 @@ void reset_visuals(void)
 		/* Assume we will use the underlying values */
 		f_ptr->x_attr = f_ptr->d_attr;
 		f_ptr->x_char = f_ptr->d_char;
+		
+		/* No extra information */
+		f_ptr->w_attr = 0;
+		f_ptr->w_char = 0;
 	}
 
 	/* Extract default attr/char code for objects */
