@@ -912,7 +912,7 @@ static void copy_list(term_list *t_ptr, int num1, list_item **l_ptr_ptr,
 	int i;
 
 	/* Paranoia */
-	if (!(*l_ptr_ptr)) quit("Trying to copy over an allocated list.");
+	if (*l_ptr_ptr) quit("Trying to copy over an allocated list.");
 
 	/* Save number of items in list */
 	*num2 = num1;
