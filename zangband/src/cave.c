@@ -3182,7 +3182,7 @@ static bool ang_sort_comp_hook_s32b(const vptr u, const vptr v, int a, int b)
 
 
 /*
- * Sorting hook -- comp function -- array of s32b (see below)
+ * Sorting hook -- swap function -- array of s32b (see below)
  *
  * We use "u" to point to an array of s32b.
  */
