@@ -3573,3 +3573,13 @@ extern int PlayerUID;
 #define PARSE_ERROR_OUT_OF_BOUNDS            8
 #define PARSE_ERROR_TOO_FEW_ARGUMENTS        9
 #define PARSE_ERROR_MAX                     10
+
+/*
+ * Automatic note taking types
+ */
+#define NOTE_BIRTH		1
+#define NOTE_WINNER		2
+#define NOTE_SAVE_GAME		3
+#define NOTE_ENTER_DUNGEON	4
+
+

@@ -31,7 +31,7 @@ OBJS = \
 	effects.o files.o flavor.o generate.o \
 	grid.o init1.o init2.o load.o \
 	melee1.o melee2.o mind.o monster1.o \
-	monster2.o mspells1.o mspells2.o mutation.o \
+	monster2.o mspells1.o mspells2.o mutation.o notes.o\
 	obj_kind.o object1.o object2.o racial.o \
 	rooms.o save.o scores.o script.o \
 	spells1.o spells2.o spells3.o store.o \
@@ -128,6 +128,7 @@ monster2.o: monster2.c $(INCS)
 mspells1.o: mspells1.c $(INCS)
 mspells2.o: mspells2.c $(INCS)
 mutation.o: mutation.c $(INCS)
+notes.o: notes.c $(INCS)
 object1.o: object1.c $(INCS)
 object2.o: object2.c $(INCS)
 obj_kind.o: obj_kind.c $(INCS)

@@ -23,7 +23,7 @@ OBJS = &
   effects.obj racial.obj grid.obj streams.obj rooms.obj &
   artifact.obj mutation.obj flavor.obj spells3.obj &
   mspells1.obj mspells2.obj scores.obj mind.obj &
-  bldg.obj obj_kind.obj wild.obj avatar.obj &
+  bldg.obj obj_kind.obj wild.obj avatar.obj notes.obj &
   main-ibm.obj main.obj
 
 all: angband.exe gredit.exe makepref.exe

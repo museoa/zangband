@@ -64,6 +64,7 @@ SRCS		= \
 	$(SRCDIR)/mspells1.c \
 	$(SRCDIR)/mspells2.c \
 	$(SRCDIR)/mutation.c \
+	$(SRCDIR)/notes.c \
 	$(SRCDIR)/obj_kind.c \
 	$(SRCDIR)/object1.c \
 	$(SRCDIR)/object2.c \
@@ -124,6 +125,7 @@ EXOBJS	= \
 	$(OBJDIR)/mspells1.o \
 	$(OBJDIR)/mspells2.o \
 	$(OBJDIR)/mutation.o \
+	$(OBJDIR)/notes.o \
 	$(OBJDIR)/obj_kind.o \
 	$(OBJDIR)/object1.o \
 	$(OBJDIR)/object2.o \
@@ -306,6 +308,9 @@ $(OBJDIR)/mspells2.o: $(SRCDIR)/mspells2.c $(INCS)
 	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $<
 
 $(OBJDIR)/mutation.o: $(SRCDIR)/mutation.c $(INCS)
+	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $<
+	
+$(OBJDIR)/notes.o: $(SRCDIR)/notes.c $(INCS)
 	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $<
 
 $(OBJDIR)/object1.o: $(SRCDIR)/object1.c $(INCS)

@@ -2812,42 +2812,10 @@ void player_birth(void)
 
 
 	/* Create a note file if that option is set */
-	if (take_notes) {
-
-	  /* Variables */
-	  char long_day[30];
-	  time_t ct = time((time_t*)0);
-	  FILE *fff;
-	  char player[100];
-
-	  /* Open the File */
-	  fff = my_fopen(notes_file(), "a");
-
-	  /* Get the date */
-	  strftime(long_day, 30, "%Y-%m-%d at %H:%M:%S", localtime(&ct));
-
-	  /* Build the string containing the player information */
-	  sprintf(player, "the %s %s", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title);
-
-	  if (p_ptr->realm1 != REALM_NONE) {
-	    strcat(player, "of ");
-	    strcat(player, realm_names[p_ptr->realm1]);
-	  }
-	 
-	  if (p_ptr->realm2 != REALM_NONE) {
-	    strcat(player, " and ");
-	    strcat(player, realm_names[p_ptr->realm2]);
-	  }
-
-	  /* Add in "character start" information */
-	  fprintf(fff, "\n================================================\n");
-	  fprintf(fff, "%s the %s\n", player_name, player);
-	  fprintf(fff, "Born on %s\n",long_day);
-	  fprintf(fff, "================================================\n\n");
-
-	  my_fclose(fff);
-
-	} /* if (take_notes) */
+	if (take_notes)
+	{
+		 add_note_type(NOTE_BIRTH);
+	}
 
 	/* Hack -- outfit the player */
 	player_outfit();

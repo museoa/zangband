@@ -60,7 +60,7 @@ OBJ = \
   main-win.obj readdib.obj \
   effects.obj racial.obj \
   artifact.obj mutation.obj flavor.obj spells3.obj \
-  mspells1.obj mspells2.obj scores.obj mind.obj \
+  mspells1.obj mspells2.obj scores.obj mind.obj notes.obj\
   bldg.obj obj_kind.obj wild.obj avatar.obj
 
 all : $(EXE_FILE)

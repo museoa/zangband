@@ -19,7 +19,7 @@ OBJS = \
   effects.o racial.o \
   artifact.o mutation.o flavor.o spells3.o \
   mspells1.o mspells2.o scores.o mind.o \
-  bldg.o obj_kind.o wild.o avatar.o\
+  bldg.o obj_kind.o wild.o avatar.o notes.o\
   main-ami.o sound-ami.o main.o
 
 # Header files
@@ -84,6 +84,7 @@ mspells1.o: mspells1.c $(INCS)
 mspells2.o: mspells2.c $(INCS)
 scores.o: scores.c $(INCS)
 mind.o: mind.c $(INCS)
+notes.o notes.c $(INCS)
 save.o: save.c $(INCS)
 sound-ami.o: sound-ami.c sound-ami.h
 spells1.o: spells1.c $(INCS)

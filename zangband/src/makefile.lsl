@@ -13,7 +13,7 @@ SRCS = \
   store.c birth.c load.c \
   wizard1.c wizard2.c grid.c streams.c rooms.c \
   generate.c dungeon.c init1.c init2.c \
-  effects.c racial.c \
+  effects.c racial.c notes.c\
   artifact.c mutation.c flavor.c spells3.c \
   mspells1.c mspells2.c scores.c mind.c \
   bldg.c obj_kind.c wild.c avatar.c\
@@ -29,7 +29,7 @@ OBJS = \
   store.o birth.o load.o \
   wizard1.o wizard2.o grid.o streams.o rooms.o \
   generate.o dungeon.o init1.o init2.o \
-  effects.o racial.o \
+  effects.o racial.o notes.o\
   artifact.o mutation.o flavor.o spells3.o \
   mspells1.o mspells2.o scores.o mind.o \
   bldg.o obj_kind.o wild.o avatar.o\
@@ -121,6 +121,7 @@ monster2.o: monster2.c $(INCS)
 mspells1.o: mspells1.c $(INCS)
 mspells2.o: mspells2.c $(INCS)
 mutation.o: mutation.c $(INCS)
+notes.o: notes.c $(INCS)
 object1.o: object1.c $(INCS)
 object2.o: object2.c $(INCS)
 obj_kind.o: obj_kind.c $(INCS)

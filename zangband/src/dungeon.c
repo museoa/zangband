@@ -4192,22 +4192,7 @@ void play_game(bool new_game)
 	/* Hack - if note file exists, load it */
 	if (!new_game && take_notes)
 	{
-		char long_day[30];
-		time_t ct = time((time_t*)NULL);
-		FILE *fff;
- 
-		/* Open file */
-		fff = my_fopen(notes_file(), "a");
-  
-		/* Get the date */
-		strftime(long_day, 30, "%Y-%m-%d at %H:%M:%S", localtime(&ct));
-  
-		/* Add in continuation info */
-		fprintf(fff, "================================================\n");
-		fprintf(fff, "New session start: %s\n\n", long_day);
-  
-		/* Close file */
-		my_fclose(fff);
+		add_note_type(NOTE_ENTER_DUNGEON);
 	}
 
 	/* Flash a message */

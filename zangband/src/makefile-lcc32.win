@@ -50,6 +50,7 @@ OBJS		=\
 	melee1.obj \
 	main.obj \
 	main-win.obj \
+	notes.obj
 	load.obj \
 	init2.obj \
 	init1.obj \
@@ -815,6 +816,24 @@ MAIN-WIN_C=\
 
 main-win.obj: $(MAIN-WIN_C) $(SRCDIR)\main-win.c
 	$(CC) -c $(CFLAGS) $(SRCDIR)\main-win.c
+
+# Build NOTES.C
+NOTES_C=\
+	$(SRCDIR)\angband.h\
+	$(SRCDIR)\h-basic.h\
+	$(SRCDIR)\h-config.h\
+	$(SRCDIR)\h-system.h\
+	$(SRCDIR)\h-type.h\
+	$(SRCDIR)\h-define.h\
+	$(SRCDIR)\z-util.h\
+	$(SRCDIR)\z-virt.h\
+	$(SRCDIR)\z-form.h\
+	$(SRCDIR)\z-rand.h\
+	$(SRCDIR)\z-term.h\
+	$(SRCDIR)\z-config.h\
+	$(SRCDIR)\defines.h\
+	$(SRCDIR)\types.h\
+	$(SRCDIR)\externs.h\
 
 # Build LOAD.C
 LOAD_C=\

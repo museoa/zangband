@@ -49,7 +49,6 @@ void check_experience(void)
 
 	/* Handle stuff */
 	handle_stuff();
- 
 
 	/* Lose levels while possible */
 	while ((p_ptr->lev > 1) &&
@@ -90,6 +89,7 @@ void check_experience(void)
                 {
                   char note[80];
 
+		  /* Write note */
 		  sprintf(note, "Reached level %d", p_ptr->lev);
 
 		  add_note(note, 'L');
@@ -120,7 +120,7 @@ void check_experience(void)
 
 		/* Message */
 		msg_format("Welcome to level %d.", p_ptr->lev);
-              
+
 		/* Update some stuff */
 		p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS);
 
@@ -1214,17 +1214,19 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		/* When the player kills a Unique, it stays dead */
 		if (r_ptr->flags1 & RF1_UNIQUE) r_ptr->max_num = 0;
 
-                /* If the player kills a Unique, and the notes options are on, write a note */
-                if ((r_ptr->flags1 & RF1_UNIQUE) && take_notes && auto_notes) {
-
-                   char note[80];
+                /* 
+		 * If the player kills a Unique,
+		 * and the notes options are on, write a note
+		 */
+                if ((r_ptr->flags1 & RF1_UNIQUE) && take_notes && auto_notes)
+		{
+			char note[80];
  
-                   /* Write note */
-                   sprintf(note, "Killed %s", m_name);
+			/* Write note */
+			sprintf(note, "Killed %s", m_name);
  
-		   add_note(note, 'U');
-                  
-                }
+			add_note(note, 'U');
+		}
 
 		/* When the player kills a Nazgul, it stays dead */
 		if (r_ptr->flags3 & RF3_UNIQUE_7) r_ptr->max_num--;

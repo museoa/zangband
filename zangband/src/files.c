@@ -4528,31 +4528,16 @@ void close_game(void)
 	/* Handle death */
 	if (death)
 	{
-	  
-	  /* Variable for the date */
-	  time_t ct = time((time_t*)0);
-	  char long_day[25];
-	  FILE *fff;
-
 		/* Handle retirement */
-		if (total_winner) {
-
-		  if (take_notes) {
-
-		    /* Open notes file */
-		    fff = my_fopen(notes_file(), "a");
-
-		    strftime(long_day, 30, "%Y-%m-%d at %H:%M:%S", localtime(&ct));
-		    fprintf(fff, "%s slew the Serpent of Chaos on %s\n.", player_name, long_day);
-		    fprintf(fff, "Long live %s!\n", player_name);
-		    fprintf(fff, "================================================\n");
-
-		    my_fclose(fff);
-
-		  }
-
-		  kingly();
-		  
+		if (total_winner)
+		{
+			/* Save winning message to notes file. */
+			if (take_notes)
+			{
+				add_note_type(NOTE_WINNER);
+			}
+		
+		kingly();
 		}
 
 		/* Save memories */
@@ -4564,22 +4549,23 @@ void close_game(void)
 		make_bones();
 #endif
 
-		/* You are dead */
-		if (take_notes) {
-
-		 
-		  /* Open file */
-		  fff = my_fopen(notes_file(), "a");
-
-		  /* Get time */
-		  (void)strftime(long_day, 30, "%Y-%m-%d at %H:%M:%S", localtime(&ct));
-		 
-		  /* Add note */
-		  fprintf(fff, "\n%s was killed by %s on %s\n",player_name, died_from, long_day);
-
-		  /* Close file */
-		  my_fclose(fff);
-
+		/* Inform notes file that you are dead */
+		if (take_notes)
+		{
+			char long_day[30];
+			char buf[80];
+			time_t ct = time((time_t*)NULL);
+			
+			/* Get the date */
+			strftime(long_day, 30, 
+				"%Y-%m-%d at %H:%M:%S", localtime(&ct));
+			
+			/* Create string */
+			sprintf(buf, "\n%s was killed by %s on %s\n", player_name,
+				 died_from, long_day);
+			
+			/* Output to the notes file */
+			output_note(buf);
 		}
 
 		print_tomb();
@@ -4598,21 +4584,9 @@ void close_game(void)
 		do_cmd_save_game(FALSE);
                 
                 /* If note-taking enabled, write session end to notes file */
-                if (take_notes) {
-                  
-                  char long_day[25];
-                  time_t ct = time((time_t*)NULL);
-		  FILE *fff;
-
-		  fff = my_fopen(notes_file(), "a");
-
-                  /* Get date and time */
-                  (void)strftime(long_day, 30, "%Y-%m-%d at %H:%M:%S", localtime(&ct));
-
-                  fprintf(fff, "\nSession end: %s\n", long_day);
-
-		  my_fclose(fff);
-
+                if (take_notes)
+		{
+			add_note_type(NOTE_SAVE_GAME);
                 }
 
 		/* Prompt for scores XXX XXX XXX */

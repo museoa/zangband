@@ -541,8 +541,6 @@ extern void do_cmd_macros(void);
 extern void do_cmd_visuals(void);
 extern void do_cmd_colors(void);
 extern void do_cmd_note(void);
-extern void add_note(char *note, char code);
-extern char *notes_file(void);
 extern void do_cmd_version(void);
 extern void do_cmd_feeling(void);
 extern void do_cmd_load_screen(void);
@@ -1254,4 +1252,8 @@ extern void get_virtues(void);
 extern void chg_virtue(int virtue, int amount);
 extern void dump_virtues(FILE * OutFile);
 
-
+/* notes.c */
+extern cptr notes_file(void);
+extern void output_note(char *final_note);
+extern void add_note(char *note, char code);
+extern void add_note_type(int note_number);
