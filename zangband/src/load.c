@@ -1159,14 +1159,9 @@ static void rd_extra(void)
 		rd_s16b(&p_ptr->town_num);
 
 		/* Read arena and rewards information */
-		rd_s16b(&p_ptr->arena_number);
-		rd_s16b(&p_ptr->inside_arena);
+		strip_bytes(4); /* oops */
 		rd_s16b(&p_ptr->inside_quest);
-		rd_byte(&p_ptr->exit_bldg);
-		rd_byte(&p_ptr->leftbldg);
-
-		rd_s16b(&p_ptr->oldpx);
-		rd_s16b(&p_ptr->oldpy);
+		strip_bytes(6); /* oops */
 
 		rd_s16b(&tmp16s);
 
@@ -1183,16 +1178,10 @@ static void rd_extra(void)
 		/* Town index */
 		rd_s16b(&tmp16s);
 		p_ptr->town_num = 1;
-		p_ptr->oldpx = 0;
-		p_ptr->oldpy = 0;
 
-		/* read arena information and rewards -KMW- */
-		rd_s16b(&p_ptr->arena_number);
-
-		rd_s16b(&p_ptr->inside_arena);
+		strip_bytes(4); /* oops */
 		rd_s16b(&p_ptr->inside_quest);
-		rd_byte(&p_ptr->exit_bldg);
-		rd_byte(&p_ptr->leftbldg);
+		strip_bytes(2); /* oops */
 
 		/* Throw away old quest informations */
 		for (i = 0; i < 100; i++) rd_s16b(&tmp16s);
@@ -1204,15 +1193,9 @@ static void rd_extra(void)
 	else /* 2.1.0 or older */
 	{
 		p_ptr->town_num = 1;
-		p_ptr->oldpx = 0;
-		p_ptr->oldpy = 0;
 
-		/* Initialize arena information -KMW- */
-		p_ptr->arena_number = 0;
-		p_ptr->inside_arena = 0;
+		/* Initialize quest information -KMW- */
 		p_ptr->inside_quest = 0;
-		p_ptr->leftbldg = TRUE;
-		p_ptr->exit_bldg = TRUE;
 
 		for (i = 0; i < MAX_BACT; ++i) p_ptr->rewards[i] = 0;
 	}

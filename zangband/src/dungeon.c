@@ -1032,8 +1032,7 @@ static void process_world(void)
 	/*** Process the monsters ***/
 
 	/* Check for creature generation. */
-	if ((randint0(MAX_M_ALLOC_CHANCE) == 0) &&
-	    !p_ptr->inside_arena && !p_ptr->inside_quest)
+	if ((randint0(MAX_M_ALLOC_CHANCE) == 0) && !p_ptr->inside_quest)
 	{
 		/* Make a new monster */
 		(void)alloc_monster(MAX_SIGHT + 5, FALSE);
@@ -2449,10 +2448,6 @@ static void process_world(void)
 					}
 				}
 
-				/* Save player position */
-				p_ptr->oldpx = px;
-				p_ptr->oldpy = py;
-
 				/* Leaving */
 				p_ptr->leaving = TRUE;
 			}
@@ -2888,34 +2883,27 @@ static void process_command(void)
 		/* Cast a spell */
 		case 'm':
 		{
-			if (!p_ptr->inside_arena)
+			
+			if (p_ptr->anti_magic)
 			{
-				/* -KMW- */
-				if (p_ptr->anti_magic)
-				{
-					cptr which_power = "magic";
-					if (p_ptr->pclass == CLASS_MINDCRAFTER)
-						which_power = "psionic powers";
-					else if (mp_ptr->spell_book == TV_LIFE_BOOK)
-						which_power = "prayer";
+				cptr which_power = "magic";
+				if (p_ptr->pclass == CLASS_MINDCRAFTER)
+					which_power = "psionic powers";
+				else if (mp_ptr->spell_book == TV_LIFE_BOOK)
+					which_power = "prayer";
 
-					msg_format("An anti-magic shell disrupts your %s!", which_power);
+				msg_format("An anti-magic shell disrupts your %s!", which_power);
 
-					p_ptr->energy_use = 0;
-				}
-				else
-				{
-					if (p_ptr->pclass == CLASS_MINDCRAFTER)
-						do_cmd_mindcraft();
-					else
-						do_cmd_cast();
-				}
+				p_ptr->energy_use = 0;
 			}
 			else
 			{
-				msg_print("The arena absorbs all attempted magic!");
-				msg_print(NULL);
+				if (p_ptr->pclass == CLASS_MINDCRAFTER)
+					do_cmd_mindcraft();
+				else
+					do_cmd_cast();
 			}
+			
 			break;
 		}
 
@@ -2945,13 +2933,7 @@ static void process_command(void)
 		/* Activate an artifact */
 		case 'A':
 		{
-			if (!p_ptr->inside_arena)
-				do_cmd_activate();
-			else
-			{
-				msg_print("The arena absorbs all attempted magic!");
-				msg_print(NULL);
-			}
+			do_cmd_activate();
 			break;
 		}
 
@@ -2972,39 +2954,21 @@ static void process_command(void)
 		/* Fire an item */
 		case 'f':
 		{
-			if (!p_ptr->inside_arena)
-				do_cmd_fire();
-			else
-			{
-				msg_print("You're in the arena now. This is hand-to-hand!");
-				msg_print(NULL);
-			}
+			do_cmd_fire();
 			break;
 		}
 
 		/* Throw an item */
 		case 'v':
 		{
-			if (!p_ptr->inside_arena)
-				do_cmd_throw();
-			else
-			{
-				msg_print("You're in the arena now. This is hand-to-hand!");
-				msg_print(NULL);
-			}
+			do_cmd_throw();
 			break;
 		}
 
 		/* Aim a wand */
 		case 'a':
 		{
-			if (!p_ptr->inside_arena)
-				do_cmd_aim_wand();
-			else
-			{
-				msg_print("The arena absorbs all attempted magic!");
-				msg_print(NULL);
-			}
+			do_cmd_aim_wand();
 			break;
 		}
 
@@ -3015,14 +2979,9 @@ static void process_command(void)
 			{
 				do_cmd_use();
 			}
-			else if (!p_ptr->inside_arena)
-			{
-				do_cmd_zap_rod();
-			}
 			else
 			{
-				msg_print("The arena absorbs all attempted magic!");
-				msg_print(NULL);
+				do_cmd_zap_rod();
 			}
 			break;
 		}
@@ -3030,26 +2989,14 @@ static void process_command(void)
 		/* Quaff a potion */
 		case 'q':
 		{
-			if (!p_ptr->inside_arena)
-				do_cmd_quaff_potion();
-			else
-			{
-				msg_print("The arena absorbs all attempted magic!");
-				msg_print(NULL);
-			}
+			do_cmd_quaff_potion();
 			break;
 		}
 
 		/* Read a scroll */
 		case 'r':
 		{
-			if (!p_ptr->inside_arena)
-				do_cmd_read_scroll();
-			else
-			{
-				msg_print("The arena absorbs all attempted magic!");
-				msg_print(NULL);
-			}
+			do_cmd_read_scroll();
 			break;
 		}
 
@@ -3060,12 +3007,9 @@ static void process_command(void)
 			{
 				do_cmd_use();
 			}
-			else if (!p_ptr->inside_arena)
-				do_cmd_use_staff();
 			else
 			{
-				msg_print("The arena absorbs all attempted magic!");
-				msg_print(NULL);
+				do_cmd_use_staff();
 			}
 			break;
 		}
@@ -3073,13 +3017,7 @@ static void process_command(void)
 		/* Use racial power */
 		case 'U':
 		{
-			if (!p_ptr->inside_arena)
-				do_cmd_racial_power();
-			else
-			{
-				msg_print("The arena absorbs all attempted magic!");
-				msg_print(NULL);
-			}
+			do_cmd_racial_power();
 			break;
 		}
 
@@ -4245,7 +4183,6 @@ void play_game(bool new_game)
 
 		/* Start in town */
 		p_ptr->inside_quest = 0;
-		p_ptr->inside_arena = 0;
 
 		/* Add monsters to the wilderness */
 		repopulate_wilderness();
@@ -4465,7 +4402,6 @@ void play_game(bool new_game)
 				p_ptr->depth = 0;
 				change_level(p_ptr->depth);
 
-				p_ptr->inside_arena = 0;
 				leaving_quest = 0;
 				p_ptr->inside_quest = 0;
 

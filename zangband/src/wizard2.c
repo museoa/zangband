@@ -1278,8 +1278,6 @@ static void do_cmd_wiz_jump(void)
 
 	/* Change level */
 	p_ptr->depth = p_ptr->command_arg;
-
-	p_ptr->inside_arena = 0;
 	leaving_quest = p_ptr->inside_quest;
 
 	/* Leaving an 'only once' quest marks it as failed */
@@ -1291,7 +1289,6 @@ static void do_cmd_wiz_jump(void)
 	}
 
 	p_ptr->inside_quest = 0;
-	p_ptr->leftbldg = FALSE;
 
 	/* Leaving */
 	p_ptr->leaving = TRUE;

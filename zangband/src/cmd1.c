@@ -2630,8 +2630,6 @@ void move_player(int dir, int do_pickup)
 
 			p_ptr->inside_quest = area(y,x)->special;
 			p_ptr->depth = 0;
-			p_ptr->oldpx = 0;
-			p_ptr->oldpy = 0;
 			p_ptr->leaving = TRUE;
 		}
 #endif

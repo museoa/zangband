@@ -108,11 +108,6 @@
 #define QUEST_OBERON         8
 #define QUEST_SERPENT        9
 
-/*
- * Arena constants
- */
-#define MAX_ARENA_MONS		29	/* -KMW- */
-
 
 /*
  * Total number of stores (see "store.c", etc)

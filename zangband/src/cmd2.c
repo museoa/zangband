@@ -62,10 +62,6 @@ void do_cmd_go_up(void)
 
 		/* Leaving */
 		p_ptr->leaving = TRUE;
-		p_ptr->leftbldg = TRUE;
-
-		p_ptr->oldpx = 0;
-		p_ptr->oldpy = 0;
 	}
 
 	/* Normal up stairs */
@@ -135,10 +131,6 @@ void do_cmd_go_up(void)
 			/* New depth */
 			p_ptr->depth--;
 
-			/* Leaving the dungeon to town */
-			if (!p_ptr->depth && p_ptr->town_num && !leaving_quest)
-				p_ptr->leaving_dungeon = TRUE;
-
 			/* Leaving */
 			p_ptr->leaving = TRUE;
 		}
@@ -198,10 +190,6 @@ void do_cmd_go_down(void)
 
 		/* Leaving */
 		p_ptr->leaving = TRUE;
-		p_ptr->leftbldg = TRUE;
-
-		p_ptr->oldpx = 0;
-		p_ptr->oldpy = 0;
 	}
 	/* Verify stairs */
 	else if (c_ptr->feat != FEAT_MORE)
@@ -218,10 +206,6 @@ void do_cmd_go_down(void)
 		if (!p_ptr->depth)
 		{
 			go_down = TRUE;
-
-			/* Save old player position */
-			p_ptr->oldpx = px;
-			p_ptr->oldpy = py;
 		}
 		else
 		{
@@ -2332,8 +2316,6 @@ void do_cmd_stay(int pickup)
 
 		p_ptr->inside_quest = area(py, px)->special;
 		p_ptr->depth = 0;
-		p_ptr->oldpx = 0;
-		p_ptr->oldpy = 0;
 		p_ptr->leaving = TRUE;
 	}
 #endif /* 0 */
@@ -3475,7 +3457,7 @@ void do_cmd_throw_aux(int mult)
 	j = (hit_body ? breakage_chance(q_ptr) : 0);
 
 	/* Figurines transform */
-	if ((q_ptr->tval == TV_FIGURINE) && !(p_ptr->inside_arena))
+	if (q_ptr->tval == TV_FIGURINE)
 	{
 		j = 100;
 

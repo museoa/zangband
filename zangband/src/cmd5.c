@@ -506,9 +506,6 @@ void do_cmd_study(void)
 			(p_ptr->new_spells != 1) ? "s" : "");
 	}
 
-	/* Save the new_spells value */
-	p_ptr->old_spells = p_ptr->new_spells;
-
 	/* Redraw Study Status */
 	p_ptr->redraw |= (PR_STUDY);
 }

@@ -3670,12 +3670,6 @@ static errr process_dungeon_file_aux(char *buf, int ymin, int xmin, int ymax, in
 					/* Delete the monster (if any) */
 					delete_monster(p_ptr->py, p_ptr->px);
 				}
-				/* Place player in the town */
-				else if (!p_ptr->oldpx && !p_ptr->oldpy)
-				{
-					p_ptr->oldpy = atoi(zz[0]);
-					p_ptr->oldpx = atoi(zz[1]);
-				}
 			}
 		}
 #endif
@@ -4025,13 +4019,6 @@ static cptr process_dungeon_file_expr(char **sp, char *fp)
 			else if (streq(b+1, "LEAVING_QUEST"))
 			{
 				sprintf(tmp, "%d", leaving_quest);
-				v = tmp;
-			}
-
-			/* Leaving the dungeon by stairs? */
-			else if (streq(b+1, "LEAVING_DUNGEON"))
-			{
-				sprintf(tmp, "%d", p_ptr->leaving_dungeon);
 				v = tmp;
 			}
 

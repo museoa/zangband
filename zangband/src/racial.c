@@ -239,7 +239,7 @@ static void cmd_racial_power_aux(s32b command)
 				if (racial_aux(30, 50, A_INT, 50))
 				{
 					/* No effect in arena or quest */
-					if (p_ptr->inside_arena || p_ptr->inside_quest)
+					if (p_ptr->inside_quest)
 					{
 						msg_print("There is no effect.");
 					}

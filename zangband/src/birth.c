@@ -1104,12 +1104,8 @@ static void get_extra(void)
 	/* Experience factor */
 	p_ptr->expfact = rp_ptr->r_exp + cp_ptr->c_exp;
 
-	/* Initialize arena and rewards information -KMW- */
-	p_ptr->arena_number = 0;
-	p_ptr->inside_arena = 0;
+	/* Initialize rewards information -KMW- */
 	p_ptr->inside_quest = 0;
-	p_ptr->leftbldg = FALSE;
-	p_ptr->exit_bldg = TRUE; /* only used for arena now -KMW- */
 
 	/* Reset rewards */
 	for (i = 0; i < MAX_BACT; i++)

@@ -111,7 +111,7 @@ bool teleport_away(int m_idx, int dis)
 			if (!mon_enter_test.do_move) continue;
 
 			/* No teleporting into vaults and such */
-			if (!(p_ptr->inside_quest || p_ptr->inside_arena))
+			if (!(p_ptr->inside_quest))
 				if (c_ptr->info & CAVE_ICKY) continue;
 
 			/* This grid looks good */
@@ -616,8 +616,8 @@ void teleport_player_to(int ny, int nx)
  */
 void teleport_player_level(void)
 {
-	/* No effect in arena or quest */
-	if (p_ptr->inside_arena || p_ptr->inside_quest ||
+	/* No effect in quest */
+	if (p_ptr->inside_quest ||
 	    (quest_number(p_ptr->depth) && (p_ptr->depth > 1) && ironman_downward))
 	{
 		msg_print("There is no effect.");
@@ -1511,7 +1511,7 @@ void stair_creation(void)
 	delete_object(py, px);
 
 	/* Create a staircase */
-	if (p_ptr->inside_arena || p_ptr->inside_quest)
+	if (p_ptr->inside_quest)
 	{
 		/* arena or quest */
 		msg_print("There is no effect!");

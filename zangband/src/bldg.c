@@ -1937,9 +1937,6 @@ void do_cmd_quest(void)
 	else
 	{
 		/* Player enters a new quest */
-		p_ptr->oldpy = 0;
-		p_ptr->oldpx = 0;
-
 		leaving_quest = p_ptr->inside_quest;
 
 		/* Leaving an 'only once' quest marks it as failed */
@@ -1986,22 +1983,6 @@ void do_cmd_bldg(void)
 	/* Don't re-init the wilderness */
 	reinit_wilderness = FALSE;
 
-	if ((which == 2) && p_ptr->inside_arena && !p_ptr->exit_bldg)
-	{
-		prt("The gates are closed.  The monster awaits!", 0, 0);
-		return;
-	}
-	else if ((which == 2) && p_ptr->inside_arena)
-	{
-		p_ptr->leaving = TRUE;
-		p_ptr->inside_arena = FALSE;
-	}
-	else
-	{
-		p_ptr->oldpy = py;
-		p_ptr->oldpx = px;
-	}
-
 	/* Forget the view */
 	forget_view();
 
@@ -2027,7 +2008,6 @@ void do_cmd_bldg(void)
 		if (command == ESCAPE)
 		{
 			leave_bldg = TRUE;
-			p_ptr->inside_arena = FALSE;
 			break;
 		}
 

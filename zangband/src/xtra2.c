@@ -250,14 +250,6 @@ void monster_death(int m_idx)
 	y = m_ptr->fy;
 	x = m_ptr->fx;
 
-	/* Handle the possibility of player vanquishing arena combatant -KMW- */
-	if (p_ptr->inside_arena)
-	{
-		p_ptr->exit_bldg = TRUE;
-		msg_print("Victorious! You're on your way to becoming Champion.");
-		p_ptr->arena_number++;
-	}
-
 	if (m_ptr->smart & SM_CLONED)
 		cloned = TRUE;
 

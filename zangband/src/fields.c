@@ -1976,7 +1976,7 @@ void place_trap(int y, int x)
 		if (t_idx != FT_TRAP_DOOR) break;
 
 		/* Hack -- no trap doors on special levels */
-		if (p_ptr->inside_arena || quest_number(p_ptr->depth)) continue;
+		if (quest_number(p_ptr->depth)) continue;
 
 		/* Hack -- no trap doors on the deepest level */
 		if (p_ptr->depth >= MAX_DEPTH-1) continue;

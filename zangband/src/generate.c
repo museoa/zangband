@@ -1244,19 +1244,11 @@ void generate_cave(void)
 		{
 
 #if 0
-			/* Build the arena -KMW- */
-			if (p_ptr->inside_arena)
-			{
-				/* Small arena */
-				arena_gen();
-			}
 
-			/* Quest levels -KMW- */
-			/* Hack - disabled.
-			else if (p_ptr->inside_quest)
+			if (p_ptr->inside_quest)
 			{
 				quest_gen();
-			}*/
+			}
 #endif
 
 			okay = level_gen(&why);

@@ -981,14 +981,15 @@ static void wr_extra(void)
 	wr_s16b(p_ptr->town_num); /* -KMW- */
 
 	/* Write arena and rewards information -KMW- */
-	wr_s16b(p_ptr->arena_number);
-	wr_s16b(p_ptr->inside_arena);
+	wr_s16b(0);
+	wr_s16b(0);
 	wr_s16b(p_ptr->inside_quest);
-	wr_byte(p_ptr->exit_bldg);
-	wr_byte(p_ptr->leftbldg); /* save building leave status -KMW- */
+	wr_byte(0);
+	wr_byte(0);
 
-	wr_s16b(p_ptr->oldpx);
-	wr_s16b(p_ptr->oldpy);
+	/* oldpy and px are not required any more. */
+	wr_s16b(0);
+	wr_s16b(0);
 
 	/* Save builing rewards */
 	wr_s16b(MAX_BACT);

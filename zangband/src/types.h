@@ -1327,42 +1327,31 @@ struct player_type
 	s16b px;			/* Player location */
 	s16b py;			/* Player location */
 
-	s16b oldpy;			/* Previous player location -KMW- */
-	s16b oldpx;			/* Previous player location -KMW- */
-
 	byte psex;			/* Sex index */
 	byte prace;			/* Race index */
 	byte pclass;		/* Class index */
 	byte realm1;		/* First magic realm */
+	
 	byte realm2;		/* Second magic realm */
-	byte oops;			/* Unused */
-
 	byte hitdie;		/* Hit dice (sides) */
-	u16b expfact;		/* Experience factor
-						 * Note: was byte, causing overflow for Amberite
-						 * characters (such as Amberite Paladins)
-						 */
-
 	s16b age;			/* Characters age */
+	
 	s16b ht;			/* Height */
 	s16b wt;			/* Weight */
 	s16b sc;			/* Social Class */
-
-	s32b au;			/* Current Gold */
-
 	s16b max_depth;		/* Max depth */
 	s16b depth;			/* Cur depth */
-
 	s16b max_lev;		/* Max level */
 	s16b lev;			/* Cur level */
-
-	s32b max_exp;		/* Max experience */
-	s32b exp;			/* Cur experience */
 	u16b exp_frac;		/* Cur exp frac (times 2^16) */
 
+	s32b max_exp;		/* Max experience */
+	s32b exp;			/* Cur experience */	
+	
+	s32b au;			/* Current Gold */
+
 	s16b town_num;		/* Current town number */
-	s16b arena_number;	/* monster number in arena -KMW- */
-	s16b inside_arena;	/* Is character inside arena? */
+
 	s16b inside_quest;	/* Inside quest level */
 
 	s16b rewards[MAX_BACT];	/* Status of rewards in town */
@@ -1406,12 +1395,10 @@ struct player_type
 	s16b oppose_fire;		/* Timed -- oppose heat */
 	s16b oppose_cold;		/* Timed -- oppose cold */
 	s16b oppose_pois;		/* Timed -- oppose poison */
-
-
 	s16b tim_esp;		/* Timed ESP */
 	s16b wraith_form;		/* Timed wraithform */
-
 	s16b resist_magic;	/* Timed Resist Magic (later) */
+	
 	s16b tim_xtra1;		/* Later */
 	s16b tim_xtra2;		/* Later */
 	s16b tim_xtra3;		/* Later */
@@ -1421,22 +1408,18 @@ struct player_type
 	s16b tim_xtra7;		/* Later */
 	s16b tim_xtra8;		/* Later */
 
-	s16b chaos_patron;	/* Players Chaos Patron */
 	u32b muta1;			/* Mutations */
 	u32b muta2;			/* Mutations */
 	u32b muta3;			/* Mutations */
 
 	s16b virtues[MAX_PLAYER_VIRTUES];
 	s16b vir_types[MAX_PLAYER_VIRTUES];
-
+	
+	s16b chaos_patron;	/* Players Chaos Patron */
 	s16b word_recall;		/* Word of recall counter */
 
 	s16b energy;		/* Current energy */
-
 	s16b food;			/* Current nutrition */
-
-	byte confusing;		/* Glowing hands */
-	byte searching;		/* Currently searching */
 
 	u32b spell_learned1;	/* Spell flags */
 	u32b spell_learned2;	/* Spell flags */
@@ -1452,25 +1435,26 @@ struct player_type
 	char died_from[80];	/* Cause of death */
 	char history[4][60];	/* Initial history */
 
-	u16b total_winner;	/* Total winner */
-	u16b panic_save;		/* Panic save */
+	byte confusing;		/* Glowing hands */
+	byte searching;		/* Currently searching */
 
+	u16b total_winner;	/* Total winner */
+	
+	u16b panic_save;		/* Panic save */
 	u16b noscore;		/* Cheating flags */
 
 	bool is_dead;		/* Player is dead */
-
 	bool wizard;		/* Player is in wizard mode */
-
+	u16b expfact;		/* Experience factor
+						 * Note: was byte, causing overflow for Amberite
+						 * characters (such as Amberite Paladins)
+						 */
 
 	/*** Temporary fields ***/
 
 	bool playing;		/* True if player is playing */
 
 	bool leaving;		/* True if player is leaving */
-	bool leaving_dungeon;	/* True if player is leaving the dungeon */
-
-	byte exit_bldg;		/* Goal obtained in arena? -KMW- */
-	byte leftbldg;		/* did we just leave a special area? -KMW- */
 
 	bool create_up_stair;	/* Create up stair on next level */
 	bool create_down_stair;	/* Create down stair on next level */
@@ -1480,6 +1464,7 @@ struct player_type
 	s16b detectx;		/* Coords of last detect traps casting */
 	s16b detecty;		/* Coords of last detect traps casting */
 	bool detected;		/* Have cast detect_traps on this level */
+	bool det_pad;		/* Padding byte */
 
 	s16b total_weight;	/* Total weight being carried */
 
@@ -1521,24 +1506,12 @@ struct player_type
 
 	s16b new_spells;		/* Number of spells available */
 
-	s16b old_spells;
-
-	bool old_cumber_armor;
-	bool old_cumber_glove;
-	bool old_heavy_wield;
-	bool old_heavy_shoot;
-	bool old_icky_wield;
-
-	s16b old_lite;		/* Old radius of lite (if any) */
-	s16b old_view;		/* Old radius of view (if any) */
-
-	s16b old_food_aux;	/* Old value of food */
-
 	bool cumber_armor;	/* Mana draining armor */
 	bool cumber_glove;	/* Mana draining gloves */
 	bool heavy_wield;		/* Heavy weapon */
 	bool heavy_shoot;		/* Heavy shooter */
 	bool icky_wield;		/* Icky weapon */
+	bool pad_byte;		/* Yet more padding */
 
 	s16b cur_lite;		/* Radius of lite (if any) */
 
@@ -1639,8 +1612,6 @@ struct player_type
 
 	s16b num_blow;		/* Number of blows */
 	s16b num_fire;		/* Number of shots */
-
-	byte tval_xtra;		/* Correct xtra tval */
 
 	byte ammo_mult;		/* Ammo multiplier */
 
