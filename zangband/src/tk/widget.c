@@ -218,11 +218,119 @@ byte *get_icon_ptr(BitmapPtr bitmap_ptr, int x, int y)
 	return (bitmap_ptr->pixelPtr + x * bitmap_ptr->pixelSize + y * bitmap_ptr->pitch);
 }
 
+/* Colours for the text */
+static u32b colors[16];
+
+static void set_colours(void)
+{
+	int i;
+		
+	for (i = 0; i < 16; i++)
+	{
+		u32b r, g, b;
+		
+		r = angband_color_table[i][1];
+		g = angband_color_table[i][2];
+		b = angband_color_table[i][3];
+		
+		colors[i] = (r << 16) + (g << 8) + b;
+	}
+}
+
 
 /*
  * Draw stuff at this location
  */
-static void DrawIconSpec(int x, int y, map_block *mb_ptr, Widget *widgetPtr)
+static void draw_char(int x, int y, byte a, char c, Widget *widgetPtr)
+{
+	int i, j;
+	
+	
+	int depth = widgetPtr->bitmap->depth;
+	
+	byte *src, *dest;
+	
+	u32b pixel;
+	
+	u32b r, g, b;
+		
+	/* Draw a blank square first */
+	DrawBlank(x, y, widgetPtr);
+	
+	/* Only draw characters */
+	if (a & 0x80) return;
+	
+	/* Loop over bitmap size */
+	for (i = 0; i < widgetPtr->gwidth; i++)
+	{
+		for (j = 0; j < widgetPtr->gheight; j++)
+		{
+			/* Get address of icon data in tiles bitmap */	
+			src = get_icon_ptr(widgetPtr->font, c  * tnb_font_size + i, j);
+
+			/* Get destination */
+			dest = get_icon_ptr(widgetPtr->bitmap, x + i, y + j);
+				
+			/* Get pixel */
+			if (*src)
+			{
+				pixel = colors[a];
+			}
+			else
+			{
+				pixel = 0;
+			}
+						
+			b = (pixel & 0x00FF0000) >> 16;
+			g = (pixel & 0x0000FF00) >> 8;
+			r = pixel & 0xFF;
+						
+			
+			/* Convert to bitdepth of screen bitmap and display */
+			
+			switch (depth)
+			{
+				case 8:
+				{
+					*dest = Palette_RGB2Index(r, g, b);
+		
+					break;
+				}
+			
+				case 16:
+				{
+					u16b p;
+					
+					/* Convert to 16bit colour */
+					
+					p = (r << r16shift) & r16mask;
+					p += (g << g16shift) & g16mask;
+					p += (b >> b16shift) & b16mask;
+					
+					dest[1] = (byte) ((p & 0xFF00) >> 8);
+					dest[0] = (byte) (p & 0x00FF);
+					
+					break;
+				}
+		
+				case 24:
+				{
+					dest[0] = r;
+					dest[1] = g;
+					dest[2] = b;
+					
+					break;
+				}
+			}
+		}
+	}
+}
+
+
+/*
+ * Draw pict
+ */
+static void draw_pict(int x, int y, byte a, char c, byte ta, char tc, Widget *widgetPtr)
 {
 	u32b *src1, *src2;
 	byte *dest;
@@ -236,16 +344,16 @@ static void DrawIconSpec(int x, int y, map_block *mb_ptr, Widget *widgetPtr)
 	
 	int s1x = 0, s2x = 0, s1y = 0, s2y = 0;
 	
-	if (mb_ptr->a & 0x80)
+	if (a & 0x80)
 	{
-		s1x = (mb_ptr->c & 0x7F) * widgetPtr->gwidth;
-		s1y = (mb_ptr->a & 0x7F) * widgetPtr->gheight;
+		s1x = (c & 0x7F) * widgetPtr->gwidth;
+		s1y = (a & 0x7F) * widgetPtr->gheight;
 	}
 	
-	if (mb_ptr->ta & 0x80)
+	if (ta & 0x80)
 	{
-		s2x = (mb_ptr->tc & 0x7F) * widgetPtr->gwidth;
-		s2y = (mb_ptr->ta & 0x7F) * widgetPtr->gheight;
+		s2x = (tc & 0x7F) * widgetPtr->gwidth;
+		s2y = (ta & 0x7F) * widgetPtr->gheight;
 	}
 	
 	
@@ -351,7 +459,7 @@ static void widget_draw_all(Widget *widgetPtr)
 			mb_ptr = map_loc(x, y);
 		
 			/* Draw stuff at that location */
-			DrawIconSpec(xp, yp, mb_ptr, widgetPtr);
+			draw_pict(xp, yp, mb_ptr->a, mb_ptr->c, mb_ptr->ta, mb_ptr->tc, widgetPtr);
 		}
 	}
 
@@ -667,7 +775,7 @@ static void Widget_map_info(map_block *mb_ptr, term_map *map, vptr data)
 	yp = (y - widgetPtr->y_min) * widgetPtr->gheight;
 		
 	/* Draw stuff at this location */
-	DrawIconSpec(xp, yp, mb_ptr, widgetPtr);
+	draw_pict(xp, yp, mb_ptr->a, mb_ptr->c, mb_ptr->ta, mb_ptr->tc, widgetPtr);
 	
 	/* Dirty bounds */
 	if (xp < dl) dl = xp;
