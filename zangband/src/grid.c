@@ -63,7 +63,7 @@ bool new_player_spot(void)
 /*
  * Place an up/down staircase at given location
  */
-void place_random_stairs(int y, int x)
+void place_random_stairs(int x, int y)
 {
 	bool up_stairs = TRUE;
 	bool down_stairs = TRUE;
@@ -114,7 +114,7 @@ void place_random_stairs(int y, int x)
 /*
  * Place a random type of door at the given location
  */
-void place_random_door(int y, int x)
+void place_random_door(int x, int y)
 {
 	int tmp;
 
@@ -155,14 +155,14 @@ void place_random_door(int y, int x)
 	}
 
 	/* Closed, locked, or stuck doors (400/1000) */
-	else place_closed_door(y, x);
+	else place_closed_door(x, y);
 }
 
 
 /*
  * Place a random type of normal door at the given location.
  */
-void place_closed_door(int y, int x)
+void place_closed_door(int x, int y)
 {
 	int tmp;
 
@@ -595,7 +595,7 @@ void generate_door(int y1, int x1, int y2, int x2, bool secret)
 	}
 	else
 	{
-		place_closed_door(y0, x0);
+		place_closed_door(x0, y0);
 	}
 }
 

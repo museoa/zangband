@@ -887,7 +887,7 @@ bool detect_doors(void)
 			if (c_ptr->feat == FEAT_SECRET)
 			{
 				/* Pick a door */
-				place_closed_door(y, x);
+				place_closed_door(x, y);
 			}
 
 			/* Detect doors */

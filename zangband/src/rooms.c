@@ -390,7 +390,7 @@ static void build_type1(int by0, int bx0)
 			cave[y2 + 1][xval].feat = FEAT_WALL_SOLID;
 		}
 
-		place_random_door(yval, xval);
+		place_random_door(xval, yval);
 	}
 }
 
@@ -707,7 +707,7 @@ static void build_type4(int by0, int bx0)
 			/* Stairs (20%) */
 			else
 			{
-				place_random_stairs(yval, xval);
+				place_random_stairs(xval, yval);
 			}
 
 			/* Traps to protect the treasure */

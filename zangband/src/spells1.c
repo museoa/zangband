@@ -295,7 +295,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			if (c_ptr->feat == FEAT_SECRET)
 			{
 				/* Pick a door */
-				place_closed_door(y, x);
+				place_closed_door(x, y);
 
 				/* Check line of sight */
 				if (known)
