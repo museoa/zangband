@@ -840,6 +840,7 @@ extern void build_init(int town_num, int build_num, byte build_type);
 /* util.c */
 extern void safe_setuid_drop(void);
 extern void safe_setuid_grab(void);
+extern void init_setuid(void);
 extern void signals_ignore_tstp(void);
 extern void signals_handle_tstp(void);
 extern void signals_init(void);

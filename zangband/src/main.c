@@ -130,36 +130,6 @@ extern unsigned _ovrbuffer = 0x1500;
 #endif /* USE_286 */
 
 
-#ifdef PRIVATE_USER_PATH
-
-/*
- * Create an ".angband/" directory in the users home directory.
- *
- * ToDo: Add error handling.
- * ToDo: Only create the directories when actually writing files.
- */
-static void create_user_dir(void)
-{
-	char dirpath[1024];
-	char subdirpath[1024];
-
-
-	/* Get an absolute path from the filename */
-	path_parse(dirpath, 1024, PRIVATE_USER_PATH);
-
-	/* Create the ~/.angband/ directory */
-	mkdir(dirpath, 0700);
-
-	/* Build the path to the variant-specific sub-directory */
-	path_make(subdirpath, dirpath, VERSION_NAME);
-
-	/* Create the directory */
-	mkdir(subdirpath, 0700);
-}
-
-#endif /* PRIVATE_USER_PATH */
-
-
 /*
  * Initialize and verify the file paths, and the score file.
  *
@@ -478,84 +448,8 @@ int main(int argc, char *argv[])
 	/* Get the file paths */
 	init_stuff();
 
-
-#ifdef SET_UID
-
-	/* Get the user id (?) */
-	player_uid = getuid();
-
-#ifdef VMS
-	/* Mega-Hack -- Factor group id */
-	player_uid += (getgid() * 1000);
-#endif /* VMS */
-
-#ifdef SAFE_SETUID
-
-#if defined(HAVE_SETEGID) || defined(SAFE_SETUID_POSIX)
-
-	/* Save some info for later */
-	player_euid = geteuid();
-	player_egid = getegid();
-
-#endif /* defined(HAVE_SETEGID) || defined(SAFE_SETUID_POSIX) */
-
-	/* XXX XXX XXX */
-#if 0
-
-	/* Redundant setting necessary in case root is running the game */
-	/* If not root or game not setuid the following two calls do nothing */
-
-	if (setgid(getegid()) != 0)
-	{
-		quit("setgid(): cannot set permissions correctly!");
-	}
-
-	if (setuid(geteuid()) != 0)
-	{
-		quit("setuid(): cannot set permissions correctly!");
-	}
-
-#endif /* 0 */
-
-#endif /* SAFE_SETUID */
-
-#endif /* SET_UID */
-
-
-	/* Drop permissions */
-	safe_setuid_drop();
-
-
-#ifdef SET_UID
-
-	/* Initialize the "time" checker */
-	if (check_time_init() || check_time())
-	{
-		quit("The gates to Angband are closed (bad time).");
-	}
-
-	/* Initialize the "load" checker */
-	if (check_load_init() || check_load())
-	{
-		quit("The gates to Angband are closed (bad load).");
-	}
-
-	/* Get the "user name" as a default player name */
-#ifdef ANGBAND_2_8_1
-	user_name(player_name, player_uid);
-#else  /* ANGBAND_2_8_1 */
-	user_name(op_ptr->full_name, player_uid);
-#endif /* ANGBAND_2_8_1 */
-
-#ifdef PRIVATE_USER_PATH
-
-	/* Create a directory for the users files. */
-	create_user_dir();
-
-#endif /* PRIVATE_USER_PATH */
-
-#endif /* SET_UID */
-
+	/* Drop permissions and initialize multiuser stuff */
+	init_setuid();
 
 	/* Process the command line arguments */
 	for (i = 1; args && (i < argc); i++)
@@ -634,19 +528,12 @@ int main(int argc, char *argv[])
 			case 'U':
 			{
 				if (!argv[i][2]) game_usage();
-#ifdef ANGBAND_2_8_1
+
 				/* Get the savefile name */
 				strncpy(player_name, &argv[i][2], 32);
 
 				/* Make sure it's terminated */
 				player_name[31] = '\0';
-#else  /* ANGBAND_2_8_1 */
-				/* Get the savefile name */
-				strncpy(op_ptr->full_name, &argv[i][2], 32);
-
-				/* Make sure it's terminated */
-				op_ptr->full_name[31] = '\0';
-#endif /* ANGBAND_2_8_1 */
 				break;
 			}
 

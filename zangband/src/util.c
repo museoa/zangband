@@ -6,14 +6,43 @@
 #include "angband.h"
 
 
+#ifdef SET_UID
+
+#ifdef PRIVATE_USER_PATH
+
+/*
+ * Create an ".angband/" directory in the users home directory.
+ *
+ * ToDo: Add error handling.
+ * ToDo: Only create the directories when actually writing files.
+ */
+static void create_user_dir(void)
+{
+	char dirpath[1024];
+	char subdirpath[1024];
+
+
+	/* Get an absolute path from the filename */
+	path_parse(dirpath, 1024, PRIVATE_USER_PATH);
+
+	/* Create the ~/.angband/ directory */
+	mkdir(dirpath, 0700);
+
+	/* Build the path to the variant-specific sub-directory */
+	path_make(subdirpath, dirpath, VERSION_NAME);
+
+	/* Create the directory */
+	mkdir(subdirpath, 0700);
+}
+
+#endif /* PRIVATE_USER_PATH */
+
 
 /*
  * Hack -- drop permissions
  */
 void safe_setuid_drop(void)
 {
-
-#ifdef SET_UID
 
 #ifdef SAFE_SETUID
 
@@ -46,8 +75,6 @@ void safe_setuid_drop(void)
 
 #endif /* SAFE_SETUID */
 
-#endif /* SET_UID */
-
 }
 
 
@@ -56,8 +83,6 @@ void safe_setuid_drop(void)
  */
 void safe_setuid_grab(void)
 {
-
-#ifdef SET_UID
 
 #ifdef SAFE_SETUID
 
@@ -90,9 +115,94 @@ void safe_setuid_grab(void)
 
 #endif /* SAFE_SETUID */
 
-#endif /* SET_UID */
+}
+
+
+void init_setuid(void)
+{
+	/* Get the user id (?) */
+	player_uid = getuid();
+
+#ifdef VMS
+	/* Mega-Hack -- Factor group id */
+	player_uid += (getgid() * 1000);
+#endif /* VMS */
+
+#ifdef SAFE_SETUID
+
+#if defined(HAVE_SETEGID) || defined(SAFE_SETUID_POSIX)
+
+	/* Save some info for later */
+	player_euid = geteuid();
+	player_egid = getegid();
+
+#endif /* defined(HAVE_SETEGID) || defined(SAFE_SETUID_POSIX) */
+
+	/* XXX XXX XXX */
+#if 0
+
+	/* Redundant setting necessary in case root is running the game */
+	/* If not root or game not setuid the following two calls do nothing */
+
+	if (setgid(getegid()) != 0)
+	{
+		quit("setgid(): cannot set permissions correctly!");
+	}
+
+	if (setuid(geteuid()) != 0)
+	{
+		quit("setuid(): cannot set permissions correctly!");
+	}
+
+#endif /* 0 */
+
+#endif /* SAFE_SETUID */
+
+	/* Drop permissions */
+	safe_setuid_drop();
+	
+	/* Initialize the "time" checker */
+	if (check_time_init() || check_time())
+	{
+		quit("The gates to Angband are closed (bad time).");
+	}
+
+	/* Initialize the "load" checker */
+	if (check_load_init() || check_load())
+	{
+		quit("The gates to Angband are closed (bad load).");
+	}
+
+	/* Get the "user name" as a default player name */
+	user_name(player_name, player_uid);
+
+#ifdef PRIVATE_USER_PATH
+
+	/* Create a directory for the users files. */
+	create_user_dir();
+
+#endif /* PRIVATE_USER_PATH */
+}
+
+
+#else /* SET_UID */
+
+void safe_setuid_drop(void)
+{
 
 }
+
+void safe_setuid_grab(void)
+{
+
+}
+
+void init_setuid(void)
+{
+
+}
+
+#endif /* SET_UID */
 
 
 
@@ -460,7 +570,7 @@ int usleep(huge usecs)
 	return 0;
 }
 
-# endif
+# endif /* !HAS_USLEEP */
 
 /*
  * Hack -- External functions
@@ -479,7 +589,6 @@ extern struct passwd *getpwnam();
  */
 void user_name(char *buf, int id)
 {
-#ifdef SET_UID
 	struct passwd *pw;
 
 	/* Look up the user name */
@@ -496,7 +605,6 @@ void user_name(char *buf, int id)
 
 		return;
 	}
-#endif /* SET_UID */
 
 	/* Oops.  Hack -- default to "PLAYER" */
 	strcpy(buf, "PLAYER");
