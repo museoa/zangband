@@ -2837,7 +2837,7 @@ void do_cmd_note(void)
 	if (take_notes)
 	{
 		/* Add note to file */
-		add_note(buf, ' ');
+		add_note(' ', buf);
 	}
 	else
 	{

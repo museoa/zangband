@@ -1084,7 +1084,7 @@ extern void dump_virtues(FILE *OutFile);
 /* notes.c */
 extern cptr notes_file(void);
 extern void output_note(cptr final_note, ...);
-extern void add_note(cptr note, char code);
+extern void add_note(char code, cptr note, ...);
 extern void add_note_type(int note_number);
 
 /* fields.c */

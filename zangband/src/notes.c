@@ -75,12 +75,24 @@ void output_note(cptr final_note, ...)
  * to specify its type so that the notes file can be
  * searched easily by external utilities.
  */
-void add_note(cptr note, char code)
+void add_note(char code, cptr note, ...)
 {
 	char long_day[25];
 	time_t ct = time((time_t *) NULL);
 	char depths[32];
 
+	va_list vp;
+
+	char buf[1024];
+
+	/* Begin the Varargs Stuff */
+	va_start(vp, note);
+
+	/* Format the args, save the length */
+	(void)vstrnfmt(buf, 1024, note, vp);
+
+	/* End the Varargs Stuff */
+	va_end(vp);
 
 	/* Get depth */
 	if (!p_ptr->depth)
@@ -115,7 +127,7 @@ void add_note(cptr note, char code)
 
 	/* Output to the notes file */
 	output_note("%s %9ld %s %c: %s\n", long_day, turn,
-				  depths, code, note);
+				  depths, code, buf);
 }
 
 

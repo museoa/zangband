@@ -2088,14 +2088,11 @@ void identify_item(object_type *o_ptr)
 			 */
 			if (auto_notes && take_notes)
 			{
-				char note[280];
 				char item_name[256];
 				object_desc(item_name, o_ptr, FALSE, 0, 256);
 
-				/* Build note and write */
-				sprintf(note, "Found The %s", item_name);
-
-				add_note(note, 'A');
+				/* Write note */
+				add_note('A', "Found The %s", item_name);
 			}
 		}
 

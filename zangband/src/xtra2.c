@@ -81,12 +81,8 @@ void check_experience(void)
 		 */
 		if (take_notes && auto_notes && (p_ptr->lev > p_ptr->max_lev))
 		{
-			char note[80];
-
 			/* Write note */
-			sprintf(note, "Reached level %d", p_ptr->lev);
-
-			add_note(note, 'L');
+			add_note('L', "Reached level %d", p_ptr->lev);
 		}
 
 		/* Save the highest level */
@@ -1115,15 +1111,8 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		 */
 		if ((r_ptr->flags1 & RF1_UNIQUE) && take_notes && auto_notes)
 		{
-			char notes[80];
-
-			/* Get true name even if blinded/hallucinating */
-			cptr monst = (r_name + r_ptr->name);
-
-			/* Write note */
-			sprintf(notes, "Killed %s", monst);
-
-			add_note(notes, 'U');
+			/* Get true name even if blinded/hallucinating and write note */
+			add_note('U', "Killed %s", r_name + r_ptr->name);
 		}
 
 		/* When the player kills a Nazgul, it stays dead */

@@ -927,13 +927,9 @@ void trigger_quest_complete(byte x_type, vptr data)
 			/* Take note */
 			if (auto_notes)
 			{
-				char note[80];
-
-				sprintf(note, "Finished quest: %d %s",
+				add_note('Q', "Finished quest: %d %s",
 						quest[i].max_num,
 						(r_name + r_info[quest[i].r_idx].name));
-
-				add_note(note, 'Q');
 			}
 #endif /* 0 */
 
