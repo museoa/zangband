@@ -171,18 +171,18 @@ void do_cmd_message_one(void)
 void do_cmd_messages(void)
 {
 	int i, j, k, n;
-	uint q;
+	int q;
 
 	char shower[80];
 	char finder[80];
 
+	int wid, hgt;
 
 	/* Wipe finder */
 	strcpy(finder, "");
 
 	/* Wipe shower */
 	strcpy(shower, "");
-
 
 	/* Total messages */
 	n = message_num();
@@ -196,14 +196,17 @@ void do_cmd_messages(void)
 	/* Save the screen */
 	screen_save();
 
+	/* Get size */
+	Term_get_size(&wid, &hgt);
+
 	/* Process requests until done */
 	while (1)
 	{
 		/* Clear screen */
 		Term_clear();
 
-		/* Dump up to 20 lines of messages */
-		for (j = 0; (j < 20) && (i + j < n); j++)
+		/* Dump messages */
+		for (j = 0; (j < hgt-4) && (i + j < n); j++)
 		{
 			cptr msg = message_str(i+j);
 			byte attr = message_color(i+j);
@@ -212,10 +215,10 @@ void do_cmd_messages(void)
 			if (!use_color) attr = TERM_WHITE;
 
 			/* Apply horizontal scroll */
-			msg = (strlen(msg) >= q) ? (msg + q) : "";
+			msg = ((int)strlen(msg) >= q) ? (msg + q) : "";
 
 			/* Dump the messages, bottom to top */
-			Term_putstr(0, 21 - j, -1, attr, msg);
+			Term_putstr(0, hgt-3 - j, -1, attr, msg);
 
 			/* Hilite "shower" */
 			if (shower[0])
@@ -228,7 +231,7 @@ void do_cmd_messages(void)
 					int len = strlen(shower);
 
 					/* Display the match */
-					Term_putstr(str - msg, 21 - j, len, TERM_YELLOW, shower);
+					Term_putstr(str - msg, hgt-3 - j, len, TERM_YELLOW, shower);
 
 					/* Advance */
 					str += len;
@@ -241,7 +244,7 @@ void do_cmd_messages(void)
 		    i, i + j - 1, n, q), 0, 0);
 
 		/* Display prompt (not very informative) */
-		prt("[Press 'p' for older, 'n' for newer, ..., or ESCAPE]", 23, 0);
+		prt("[Press 'p' for older, 'n' for newer, ..., or ESCAPE]", hgt-1, 0);
 
 		/* Get a command */
 		k = inkey();
@@ -256,7 +259,7 @@ void do_cmd_messages(void)
 		if (k == '4')
 		{
 			/* Scroll left */
-			q = (q >= 40) ? (q - 40) : 0;
+			q = (q >= wid / 2) ? (q - wid / 2) : 0;
 
 			/* Success */
 			continue;
@@ -266,7 +269,7 @@ void do_cmd_messages(void)
 		if (k == '6')
 		{
 			/* Scroll right */
-			q = q + 40;
+			q = q + wid / 2;
 
 			/* Success */
 			continue;
@@ -276,7 +279,7 @@ void do_cmd_messages(void)
 		if (k == '=')
 		{
 			/* Prompt */
-			prt("Show: ", 23, 0);
+			prt("Show: ", hgt-1, 0);
 
 			/* Get a "shower" string, or continue */
 			if (!askfor_aux(shower, 80)) continue;
@@ -291,7 +294,7 @@ void do_cmd_messages(void)
 			int z;
 
 			/* Prompt */
-			prt("Find: ", 23, 0);
+			prt("Find: ", hgt-1, 0);
 
 			/* Get a "finder" string, or continue */
 			if (!askfor_aux(finder, 80)) continue;
