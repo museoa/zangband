@@ -1098,8 +1098,6 @@ void brand_weapon(int brand_type)
 				act = "seems very unstable now.";
 				ego = EGO_TRUMP;
 				o_ptr->pval = randint1(2);
-				o_ptr->trigger[TRIGGER_USE] = quark_add(TRUMP_WEAPON_USE_LUA);
-				o_ptr->trigger[TRIGGER_DESC] = quark_add(TRUMP_WEAPON_DESC_LUA);
 				break;
 			}
 

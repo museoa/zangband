@@ -111,13 +111,6 @@
 #define TRIGGER_SMASH   3
 #define TRIGGER_DESC	4
 
-/* A couple of lua code fragments used for creating trump weapons */
-#define TRUMP_WEAPON_USE_LUA \
-	"msgf(\"Your weapon twists space around you...\"); " \
-	"teleport_player(100); " \
-	"object.timeout = rand_range(50, 100)"
-#define TRUMP_WEAPON_DESC_LUA \
-	"return \"teleport every 50-100 turns\""
 
 /*
  * Defines used by the wilderness data structures

@@ -1777,6 +1777,41 @@ errr parse_a_info(char *buf, header *head)
 		}
 	}
 
+	/* Process 'L' for "Lua script" */
+	else if (buf[0] == 'L')
+	{
+		int n;
+		
+		/* There better be a current a_ptr */
+		if (!a_ptr) return (PARSE_ERROR_MISSING_RECORD_HEADER);
+
+		/* Analyze the first field */
+		for (s = t = buf + 2; *t && (*t != ':'); t++) /* loop */ ;
+
+		/* Terminate the field (if necessary) */
+		if (*t == ':') *t++ = '\0';
+
+		/* Analyze the trigger */
+		for (n = 0; k_info_triggers[n]; n++)
+		{
+			if (streq(s, k_info_triggers[n])) break;
+		}
+
+		/* Invalid trigger */
+		if (!k_info_triggers[n]) return (PARSE_ERROR_GENERIC);
+
+		/* Get the text */
+		s = t;
+
+		/* Store the text */
+		if (!add_text(&(a_ptr->trigger[n]), head, s))
+		{
+			msgf("Icky Trigger!!");
+			message_flush();
+			return (PARSE_ERROR_OUT_OF_MEMORY);
+		}
+	}
+
 	else
 	{
 		/* Oops */
@@ -1952,6 +1987,42 @@ errr parse_e_info(char *buf, header *head)
 			s = t;
 		}
 	}
+
+	/* Process 'L' for "Lua script" */
+	else if (buf[0] == 'L')
+	{
+		int n;
+		
+		/* There better be a current e_ptr */
+		if (!e_ptr) return (PARSE_ERROR_MISSING_RECORD_HEADER);
+
+		/* Analyze the first field */
+		for (s = t = buf + 2; *t && (*t != ':'); t++) /* loop */ ;
+
+		/* Terminate the field (if necessary) */
+		if (*t == ':') *t++ = '\0';
+
+		/* Analyze the trigger */
+		for (n = 0; k_info_triggers[n]; n++)
+		{
+			if (streq(s, k_info_triggers[n])) break;
+		}
+
+		/* Invalid trigger */
+		if (!k_info_triggers[n]) return (PARSE_ERROR_GENERIC);
+
+		/* Get the text */
+		s = t;
+
+		/* Store the text */
+		if (!add_text(&(e_ptr->trigger[n]), head, s))
+		{
+			msgf("Icky Trigger!!");
+			message_flush();
+			return (PARSE_ERROR_OUT_OF_MEMORY);
+		}
+	}
+
 	else
 	{
 		/* Oops */

@@ -616,6 +616,10 @@ W:30:3:0:1500
 C:4:4:0:2
 F:SLAY_EVIL | TELEPORT | FREE_ACT | SENSE |
 F:REGEN | SLOW_DIGEST | RES_NEXUS | ACTIVATE
+L:USE:	msgf("Your weapon twists space around you...")
+L:USE:	teleport_player(100)
+L:USE:	object.timeout = rand_range(50, 100)
+L:DESC:	return "teleport every 50-100 turns"
 
 N:99:(Pattern Weapon)
 X:24:26

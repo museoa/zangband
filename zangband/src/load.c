@@ -313,7 +313,7 @@ static void rd_item(object_type *o_ptr)
 	object_kind *k_ptr;
 
 	char buf[128];
-
+	
 	/* Old flags from pre [Z] 2.5.3 */
 	byte name1, name2, xtra1, xtra2;
 
@@ -615,13 +615,6 @@ static void rd_item(object_type *o_ptr)
 				/* Keep the damage dice */
 				o_ptr->dd = old_dd;
 				o_ptr->ds = old_ds;
-
-				if (name2 == EGO_TRUMP)
-				{
-					/* Mega-Hack -- set activation */
-					o_ptr->trigger[TRIGGER_USE] = quark_add(TRUMP_WEAPON_USE_LUA);
-					o_ptr->trigger[TRIGGER_DESC] = quark_add(TRUMP_WEAPON_DESC_LUA);
-				}
 
 				/* Change the price */
 				if (!e_ptr->cost)

@@ -2210,6 +2210,8 @@ static void init_ego_item(object_type *o_ptr, byte ego)
  */
 void add_ego_flags(object_type *o_ptr, byte ego)
 {
+	int i;
+
 	ego_item_type *e_ptr = &e_info[ego];
 
 	/* Set the flags */
@@ -2226,6 +2228,13 @@ void add_ego_flags(object_type *o_ptr, byte ego)
 
 	/* Save the inscription */
 	o_ptr->xtra_name = quark_add(e_name + e_ptr->name);
+
+	/* Add any special scripts */
+	for (i = 0; i < MAX_TRIGGER; i++)
+	{
+		if (e_ptr->trigger[i])
+			o_ptr->trigger[i] = quark_add(e_text + e_ptr->trigger[i]);
+	}
 
 	if (!e_ptr->cost)
 	{
@@ -2608,10 +2617,6 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 						{
 							o_ptr->flags1 |= TR1_SLAY_DEMON;
 						}
-
-						/* Add activation */
-						o_ptr->trigger[TRIGGER_USE] = quark_add(TRUMP_WEAPON_USE_LUA);
-						o_ptr->trigger[TRIGGER_DESC] = quark_add(TRUMP_WEAPON_DESC_LUA);
 
 						if (one_in_(7))
 						{

@@ -244,6 +244,8 @@ struct artifact_type
 	byte level;	/* Artifact level */
 	byte rarity;	/* Artifact rarity */
 
+	u32b trigger[MAX_TRIGGER]; /* Special object scripts */
+
 	byte cur_num;	/* Number created (0 or 1) */
 	byte max_num;	/* Unused (should be "1") */
 };
@@ -278,6 +280,8 @@ struct ego_item_type
 	u32b flags2;	/* Ego-Item Flags, set 2 */
 	u32b flags3;	/* Ego-Item Flags, set 3 */
 	u32b flags4;    /* Ego-Item Flags, set 4 */
+
+	u32b trigger[MAX_TRIGGER]; /* Special object scripts */
 };
 
 
