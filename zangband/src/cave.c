@@ -3467,8 +3467,9 @@ void map_area(void)
 			/* All non-walls are "checked" */
 			if ((c_ptr->feat < FEAT_SECRET) ||
 			    (c_ptr->feat == FEAT_RUBBLE) ||
-			   ((c_ptr->feat >= FEAT_MINOR_GLYPH) &&
-			    (c_ptr->feat <= FEAT_TREES)))
+				 ((c_ptr->feat >= FEAT_MINOR_GLYPH) &&
+				  (c_ptr->feat <= FEAT_TREES) &&
+				  (c_ptr->feat != FEAT_WALL_INVIS)))
 			{
 				/* Memorize normal features */
 				if (c_ptr->feat > FEAT_INVIS)
@@ -3483,7 +3484,7 @@ void map_area(void)
 					c_ptr = &cave[y + ddy_ddd[i]][x + ddx_ddd[i]];
 
 					/* Memorize walls (etc) */
-					if (c_ptr->feat >= FEAT_SECRET)
+					if ((c_ptr->feat >= FEAT_SECRET) && (c_ptr->feat != FEAT_WALL_INVIS))
 					{
 						/* Memorize the walls */
 						c_ptr->info |= (CAVE_MARK);
