@@ -133,7 +133,7 @@ extern int tolua_tag_function;
 
 #define TOLUA_ERR_ASSIGN tolua_error(tolua_S,"#vinvalid type in variable assignment.")
 #define TOLUA_ERR_FN(F) tolua_error(tolua_S,"#ferror in function" #F); return 0;
-#define TOLUA_DEF(L,N) tolua_constant(tolua_S,NULL, #L, N)
+#define TOLUA_DEF(N) tolua_constant(tolua_S,NULL, #N, N)
 #define TOLUA_FUN(L,N) tolua_function(tolua_S,NULL, #L, N)
 #define TOLUA_UNDEF(L) lua_pushnil(tolua_S); lua_setglobal(tolua_S,#L)
 

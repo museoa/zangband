@@ -26,7 +26,7 @@ function classDefine:register ()
  if p then
   output(' tolua_constant(tolua_S,"'..p..'","'..self.lname..'",'..self.name..');') 
  else
-  output(' TOLUA_DEF('..self.lname..','..self.name..');') 
+  output(' TOLUA_DEF('..self.name..');') 
  end
 end
 
