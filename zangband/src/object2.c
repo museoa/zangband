@@ -2173,21 +2173,32 @@ static void init_ego_item(object_type *o_ptr, byte ego)
 	if (cursed_p(o_ptr) || !o_ptr->cost)
 	{
 		/* Hack -- obtain bonuses */
-		if (e_ptr->max_to_h) o_ptr->to_h -= randint1(e_ptr->max_to_h);
-		if (e_ptr->max_to_d) o_ptr->to_d -= randint1(e_ptr->max_to_d);
-		if (e_ptr->max_to_a) o_ptr->to_a -= randint1(e_ptr->max_to_a);
+		if (e_ptr->max_to_h) o_ptr->to_h -= randint1(abs(e_ptr->max_to_h));
+		if (e_ptr->max_to_d) o_ptr->to_d -= randint1(abs(e_ptr->max_to_d));
+		if (e_ptr->max_to_a) o_ptr->to_a -= randint1(abs(e_ptr->max_to_a));
 
 		/* Hack -- obtain pval */
-		if (e_ptr->max_pval) o_ptr->pval -= randint1(e_ptr->max_pval);
+		if (e_ptr->max_pval) o_ptr->pval -= randint1(abs(e_ptr->max_pval));
 	}
 
 	/* Hack -- apply extra bonuses if needed */
 	else
 	{
 		/* Hack -- obtain bonuses */
-		if (e_ptr->max_to_h) o_ptr->to_h += randint1(e_ptr->max_to_h);
-		if (e_ptr->max_to_d) o_ptr->to_d += randint1(e_ptr->max_to_d);
-		if (e_ptr->max_to_a) o_ptr->to_a += randint1(e_ptr->max_to_a);
+		if (e_ptr->max_to_h > 0) 
+			o_ptr->to_h += randint1(e_ptr->max_to_h);
+		else if (e_ptr->max_to_h < 0) 
+			o_ptr->to_h -= randint1(-e_ptr->max_to_h);
+
+		if (e_ptr->max_to_d > 0) 
+			o_ptr->to_d += randint1(e_ptr->max_to_d);
+		else if (e_ptr->max_to_d < 0) 
+			o_ptr->to_d -= randint1(-e_ptr->max_to_d);
+
+		if (e_ptr->max_to_a > 0) 
+			o_ptr->to_a += randint1(e_ptr->max_to_a);
+		else if (e_ptr->max_to_a < 0) 
+			o_ptr->to_a -= randint1(-e_ptr->max_to_a);
 
 		/* Hack -- obtain pval */
 		if ((e_ptr->max_pval) && ((!o_ptr->pval) || k_info[o_ptr->k_idx].pval))
@@ -2197,7 +2208,10 @@ static void init_ego_item(object_type *o_ptr, byte ego)
 			 * has a pval - in which case the bonus should be added.
 			 * (Eg with diggers)
 			 */
-			o_ptr->pval += randint1(e_ptr->max_pval);
+			if (e_ptr->max_pval > 0)
+				o_ptr->pval += randint1(e_ptr->max_pval);
+			else
+				o_ptr->pval -= randint1(-e_ptr->max_pval);
 		}
 	}
 
