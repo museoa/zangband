@@ -2423,7 +2423,13 @@ static errr rd_dungeon(void)
 			{
 				note(format("Monster allocation error (%d <> %d)", i, m_idx));
 				return (162);
-			}
+            }
+
+            if (!in_bounds(m_ptr->fx, m_ptr->fy))
+            {
+                note(format("Monster placement error (%d,%d)", m_ptr->fx, m_ptr->fy));
+                return (162);
+            }
 
 			/* Access grid */
 			c_ptr = area(m_ptr->fx, m_ptr->fy);
