@@ -2110,6 +2110,12 @@ static void display_player_stat_info(void)
 					/* Label boost */
 					if (o_ptr->pval < 10) c = '0' + o_ptr->pval;
 				}
+				
+				if (f2 & 1 << stat)
+				{
+					/* Dark green for sustained stats. */
+					a = TERM_GREEN;
+				}
 
 				/* Bad */
 				if (o_ptr->pval < 0)
@@ -2123,7 +2129,7 @@ static void display_player_stat_info(void)
 			}
 
 			/* Sustain */
-			if (f2 & 1 << stat)
+			else if (f2 & 1 << stat)
 			{
 				/* Dark green "s" */
 				a = TERM_GREEN;
