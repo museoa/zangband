@@ -371,7 +371,7 @@ static void try_door(int y, int x)
 	if (cave[y][x].info & (CAVE_ROOM)) return;
 
 	/* Occasional door (if allowed) */
-	if ((rand_int(100) < dun_tun_jct) && possible_doorway(y, x))
+	if ((randint0(100) < dun_tun_jct) && possible_doorway(y, x))
 	{
 		/* Place a door */
 		place_random_door(y, x);
@@ -421,7 +421,7 @@ static bool cave_gen(void)
 	dun_tun_jct = rand_range(DUN_TUN_JCT_MIN, DUN_TUN_JCT_MAX);
 
 	/* Empty arena levels */
-	if (ironman_empty_levels || (empty_levels && (randint(EMPTY_LEVEL) == 1)))
+	if (ironman_empty_levels || (empty_levels && (randint1(EMPTY_LEVEL) == 1)))
 	{
 		empty_level = TRUE;
 
@@ -446,7 +446,7 @@ static bool cave_gen(void)
 	}
 
 	/* Possible "destroyed" level */
-	if ((dun_level > 15) && (rand_int(DUN_DEST) == 0) && (small_levels))
+	if ((dun_level > 15) && (randint0(DUN_DEST) == 0) && (small_levels))
 	{
 		destroyed = TRUE;
 
@@ -455,7 +455,7 @@ static bool cave_gen(void)
 	}
 
 	/* Make a lake some of the time */
-	if ((rand_int(LAKE_LEVEL) == 0) && !empty_level && !destroyed && terrain_streams)
+	if ((randint0(LAKE_LEVEL) == 0) && !empty_level && !destroyed && terrain_streams)
 	{
 		/* Lake of Water */
 		if (dun_level > 52) laketype = LAKE_WATER;
@@ -471,7 +471,7 @@ static bool cave_gen(void)
 		}
 	}
 
-	if ((rand_int(DUN_CAV1/(dun_level + DUN_CAV2)) == 0) && !empty_level &&
+	if ((randint0(DUN_CAV1/(dun_level + DUN_CAV2)) == 0) && !empty_level &&
 	    (laketype == 0) && !destroyed && (dun_level >= MIN_CAVERN))
 	{
 		cavern = TRUE;
@@ -512,8 +512,8 @@ static bool cave_gen(void)
 	for (i = 0; i < dun_rooms; i++)
 	{
 		/* Pick a block for the room */
-		y = rand_int(dun->row_rooms);
-		x = rand_int(dun->col_rooms);
+		y = randint0(dun->row_rooms);
+		x = randint0(dun->col_rooms);
 
 		/* Align dungeon rooms */
 		if (dungeon_align)
@@ -526,14 +526,14 @@ static bool cave_gen(void)
 		}
 
 		/* Attempt an "unusual" room */
-		if (ironman_rooms || (rand_int(DUN_UNUSUAL) < dun_level))
+		if (ironman_rooms || (randint0(DUN_UNUSUAL) < dun_level))
 		{
 			/* Roll for room type */
-			k = rand_int(100);
+			k = randint0(100);
 
 			/* Attempt a very unusual room */
-			if ((ironman_rooms && (rand_int(DUN_UNUSUAL) < dun_level * 2)) ||
-				 (rand_int(DUN_UNUSUAL) < dun_level))
+			if ((ironman_rooms && (randint0(DUN_UNUSUAL) < dun_level * 2)) ||
+				 (randint0(DUN_UNUSUAL) < dun_level))
 			{
 #ifdef FORCE_V_IDX
 				if (room_build(y, x, 8)) continue;
@@ -603,7 +603,7 @@ static bool cave_gen(void)
 		}
 
 		/* The deeper you are, the more cavelike the rooms are */
-		k = randint(100);
+		k = randint1(100);
 
 		/* No caves when a cavern exists: they look bad */
 		if ((k < dun_level) && (!cavern) && (!empty_level) && (laketype == 0))
@@ -620,7 +620,7 @@ static bool cave_gen(void)
 	/* Make a hole in the dungeon roof sometimes at level 1 */
 	if ((dun_level == 1) && terrain_streams)
 	{
-		while (randint(DUN_MOS_DEN) == 1)
+		while (randint1(DUN_MOS_DEN) == 1)
 		{
 			place_trees(rand_range(min_wid + 1, max_wid - 2),
 				 rand_range(min_hgt + 1, max_hgt - 2));
@@ -631,10 +631,10 @@ static bool cave_gen(void)
 	if (destroyed) destroy_level();
 
 	/* Hack -- Add some rivers */
-	if ((randint(3) == 1) && (randint(dun_level) > 5) && terrain_streams)
+	if ((randint1(3) == 1) && (randint1(dun_level) > 5) && terrain_streams)
 	{
 	 	/* Choose water or lava */
-		if (randint(MAX_DEPTH * 2) - 1 > dun_level)
+		if (randint1(MAX_DEPTH * 2) - 1 > dun_level)
 		{
 			feat1 = FEAT_DEEP_WATER;
 			feat2 = FEAT_SHAL_WATER;
@@ -695,8 +695,8 @@ static bool cave_gen(void)
 	/* Hack -- Scramble the room order */
 	for (i = 0; i < dun->cent_n; i++)
 	{
-		int pick1 = rand_int(dun->cent_n);
-		int pick2 = rand_int(dun->cent_n);
+		int pick1 = randint0(dun->cent_n);
+		int pick2 = randint0(dun->cent_n);
 		y1 = dun->cent[pick1].y;
 		x1 = dun->cent[pick1].x;
 		dun->cent[pick1].y = dun->cent[pick2].y;
@@ -723,14 +723,14 @@ static bool cave_gen(void)
 		/* Connect the room to the previous room */
 #if PILLAR_TUNNELS
 
-		if ((randint(20) > dun_level) && (randint(100) < 25))
+		if ((randint1(20) > dun_level) && (randint1(100) < 25))
 		{
 			/* make catacomb-like tunnel */
 			build_tunnel2(dun->cent[i].x, dun->cent[i].y, x, y, 3, 30);
 		}
-		else if (randint(dun_level) > 50)
+		else if (randint1(dun_level) > 50)
 #else
-		if (randint(dun_level) > 50)
+		if (randint1(dun_level) > 50)
 #endif /* PILLAR_TUNNELS */
 		{
 			/* make cave-like tunnel */
@@ -780,7 +780,7 @@ static bool cave_gen(void)
 			c_ptr->feat = FEAT_FLOOR;
 
 			/* Occasional doorway */
-			if (rand_int(100) < dun_tun_pen)
+			if (randint0(100) < dun_tun_pen)
 			{
 				/* Place a random door */
 				place_random_door(y, x);
@@ -918,7 +918,7 @@ static bool cave_gen(void)
 		}
 	}
 
-	i += randint(8);
+	i += randint1(8);
 
 	/* Put some monsters in the dungeon */
 	for (i = i + k; i > 0; i--)
@@ -927,10 +927,10 @@ static bool cave_gen(void)
 	}
 
 	/* Place some traps in the dungeon */
-	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_TRAP, randint(k));
+	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_TRAP, randint1(k));
 
 	/* Put some rubble in corridors */
-	alloc_object(ALLOC_SET_CORR, ALLOC_TYP_RUBBLE, randint(k));
+	alloc_object(ALLOC_SET_CORR, ALLOC_TYP_RUBBLE, randint1(k));
 
 	/* Put some objects in rooms */
 	alloc_object(ALLOC_SET_ROOM, ALLOC_TYP_OBJECT, randnor(DUN_AMT_ROOM, 3));
@@ -945,7 +945,7 @@ static bool cave_gen(void)
 		alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_INVIS, randnor(DUN_AMT_INVIS, 3));
 	}
 
-	if (empty_level && ((randint(DARK_EMPTY) != 1) || (randint(100) > dun_level)))
+	if (empty_level && ((randint1(DARK_EMPTY) != 1) || (randint1(100) > dun_level)))
 	{
 		/* Lite the cave */
 		for (y = min_hgt; y < max_hgt; y++)
@@ -1070,15 +1070,15 @@ static bool level_gen(cptr *why)
 	int level_height, level_width;
 
 	if (ironman_small_levels ||
-		((randint(SMALL_LEVEL) == 1) && small_levels))
+		((randint1(SMALL_LEVEL) == 1) && small_levels))
 	{
 		if (cheat_room)
 		  msg_print("A 'small' dungeon level.");
 
 		while (TRUE)
 		{
-			level_height = randint(MAX_HGT / BLOCK_HGT);
-			level_width = randint(MAX_WID / BLOCK_WID);
+			level_height = randint1(MAX_HGT / BLOCK_HGT);
+			level_width = randint1(MAX_WID / BLOCK_WID);
 			
 			/* Exit if larger than one screen, but less than normal dungeon */
 			if ((level_height < (MAX_HGT / BLOCK_HGT)) &&

@@ -116,12 +116,12 @@ bool racial_aux(s16b min_level, int cost, int use_stat, int difficulty)
 
 	if (use_hp)
 	{
-		take_hit((cost / 2) + randint(cost / 2),
+		take_hit((cost / 2) + randint1(cost / 2),
 			"concentrating too hard");
 	}
 	else
 	{
-		p_ptr->csp -= (cost / 2) + randint(cost / 2);
+		p_ptr->csp -= (cost / 2) + randint1(cost / 2);
 	}
 
 
@@ -132,8 +132,8 @@ bool racial_aux(s16b min_level, int cost, int use_stat, int difficulty)
 	p_ptr->window |= (PW_PLAYER | PW_SPELL);
 
 	/* Success? */
-	if (randint(p_ptr->stat_cur[use_stat]) >=
-	    ((difficulty / 2) + randint(difficulty / 2)))
+	if (randint1(p_ptr->stat_cur[use_stat]) >=
+	    ((difficulty / 2) + randint1(difficulty / 2)))
 	{
 		return TRUE;
 	}
@@ -207,7 +207,7 @@ static void cmd_racial_power_aux(s32b command)
 				msg_print("RAAAGH!");
 				(void)set_afraid(0);
 
-				(void)set_shero(p_ptr->shero + 10 + randint(plev));
+				(void)set_shero(p_ptr->shero + 10 + randint1(plev));
 				(void)hp_player(30);
 			}
 			break;
@@ -262,7 +262,7 @@ static void cmd_racial_power_aux(s32b command)
 				msg_print("Raaagh!");
 				(void)set_afraid(0);
 
-				(void)set_shero(p_ptr->shero + 10 + randint(plev));
+				(void)set_shero(p_ptr->shero + 10 + randint1(plev));
 				(void)hp_player(30);
 			}
 			break;
@@ -354,16 +354,16 @@ static void cmd_racial_power_aux(s32b command)
 		case RACE_DRACONIAN:
 			if (racial_aux(1, plev, A_CON, 12))
 			{
-				int  Type = ((randint(3) == 1) ? GF_COLD : GF_FIRE);
+				int  Type = ((randint1(3) == 1) ? GF_COLD : GF_FIRE);
 				cptr Type_desc = ((Type == GF_COLD) ? "cold" : "fire");
 
-				if (randint(100) < plev)
+				if (randint1(100) < plev)
 				{
 					switch (p_ptr->pclass)
 					{
 						case CLASS_WARRIOR:
 						case CLASS_RANGER:
-							if (randint(3) == 1)
+							if (randint1(3) == 1)
 							{
 								Type = GF_MISSILE;
 								Type_desc = "the elements";
@@ -377,7 +377,7 @@ static void cmd_racial_power_aux(s32b command)
 						case CLASS_MAGE:
 						case CLASS_WARRIOR_MAGE:
 						case CLASS_HIGH_MAGE:
-							if (randint(3) == 1)
+							if (randint1(3) == 1)
 							{
 								Type = GF_MANA;
 								Type_desc = "mana";
@@ -389,7 +389,7 @@ static void cmd_racial_power_aux(s32b command)
 							}
 							break;
 						case CLASS_CHAOS_WARRIOR:
-							if (randint(3) != 1)
+							if (randint1(3) != 1)
 							{
 								Type = GF_CONFUSION;
 								Type_desc = "confusion";
@@ -401,7 +401,7 @@ static void cmd_racial_power_aux(s32b command)
 							}
 							break;
 						case CLASS_MONK:
-							if (randint(3) != 1)
+							if (randint1(3) != 1)
 							{
 								Type = GF_CONFUSION;
 								Type_desc = "confusion";
@@ -413,7 +413,7 @@ static void cmd_racial_power_aux(s32b command)
 							}
 							break;
 						case CLASS_MINDCRAFTER:
-							if (randint(3) != 1)
+							if (randint1(3) != 1)
 							{
 								Type = GF_CONFUSION;
 								Type_desc = "confusion";
@@ -426,7 +426,7 @@ static void cmd_racial_power_aux(s32b command)
 							break;
 						case CLASS_PRIEST:
 						case CLASS_PALADIN:
-							if (randint(3) == 1)
+							if (randint1(3) == 1)
 							{
 								Type = GF_HELL_FIRE;
 								Type_desc = "hellfire";
@@ -438,7 +438,7 @@ static void cmd_racial_power_aux(s32b command)
 							}
 							break;
 						case CLASS_ROGUE:
-							if (randint(3) == 1)
+							if (randint1(3) == 1)
 							{
 								Type = GF_DARK;
 								Type_desc = "darkness";
@@ -491,7 +491,7 @@ static void cmd_racial_power_aux(s32b command)
 		case RACE_GOLEM:
 			if (racial_aux(20, 15, A_CON, 8))
 			{
-				(void)set_shield(p_ptr->shield + randint(20) + 30);
+				(void)set_shield(p_ptr->shield + randint1(20) + 30);
 			}
 			break;
 
@@ -527,7 +527,7 @@ static void cmd_racial_power_aux(s32b command)
 				}
 
 				msg_print("You grin and bare your fangs...");
-				dummy = plev + randint(plev) * MAX(1, plev / 10);   /* Dmg */
+				dummy = plev + randint1(plev) * MAX(1, plev / 10);   /* Dmg */
 				if (drain_gain_life(dir, dummy))
 				{
 					/* Gain nutritional sustenance: 150/hp drained */

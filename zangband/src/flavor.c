@@ -385,19 +385,19 @@ static bool object_flavor(int k_idx)
 
 void get_table_name(char *out_string)
 {
-	int testcounter = randint(3) + 1;
+	int testcounter = randint1(3) + 1;
 
 	strcpy(out_string, "'");
 
-	if (randint(3) == 2)
+	if (randint1(3) == 2)
 	{
 		while (testcounter--)
-			strcat(out_string, syllables[rand_int(MAX_SYLLABLES)]);
+			strcat(out_string, syllables[randint0(MAX_SYLLABLES)]);
 	}
 	else
 	{
 		char Syllable[80];
-		testcounter = randint(2) + 1;
+		testcounter = randint1(2) + 1;
 		while (testcounter--)
 		{
 			(void)get_rnd_line("elvish.txt", 0, Syllable);
@@ -473,7 +473,7 @@ void flavor_init(void)
 	/* Rings have "ring colors" */
 	for (i = 0; i < MAX_ROCKS; i++)
 	{
-		j = rand_int(MAX_ROCKS);
+		j = randint0(MAX_ROCKS);
 		temp_adj = ring_adj[i];
 		ring_adj[i] = ring_adj[j];
 		ring_adj[j] = temp_adj;
@@ -485,7 +485,7 @@ void flavor_init(void)
 	/* Amulets have "amulet colors" */
 	for (i = 0; i < MAX_AMULETS; i++)
 	{
-		j = rand_int(MAX_AMULETS);
+		j = randint0(MAX_AMULETS);
 		temp_adj = amulet_adj[i];
 		amulet_adj[i] = amulet_adj[j];
 		amulet_adj[j] = temp_adj;
@@ -497,7 +497,7 @@ void flavor_init(void)
 	/* Staffs */
 	for (i = 0; i < MAX_WOODS; i++)
 	{
-		j = rand_int(MAX_WOODS);
+		j = randint0(MAX_WOODS);
 		temp_adj = staff_adj[i];
 		staff_adj[i] = staff_adj[j];
 		staff_adj[j] = temp_adj;
@@ -509,7 +509,7 @@ void flavor_init(void)
 	/* Wands */
 	for (i = 0; i < MAX_METALS; i++)
 	{
-		j = rand_int(MAX_METALS);
+		j = randint0(MAX_METALS);
 		temp_adj = wand_adj[i];
 		wand_adj[i] = wand_adj[j];
 		wand_adj[j] = temp_adj;
@@ -521,7 +521,7 @@ void flavor_init(void)
 	/* Rods */
 	for (i = 0; i < MAX_METALS; i++)
 	{
-		j = rand_int(MAX_METALS);
+		j = randint0(MAX_METALS);
 		temp_adj = rod_adj[i];
 		rod_adj[i] = rod_adj[j];
 		rod_adj[j] = temp_adj;
@@ -533,7 +533,7 @@ void flavor_init(void)
 	/* Foods (Mushrooms) */
 	for (i = 0; i < MAX_SHROOM; i++)
 	{
-		j = rand_int(MAX_SHROOM);
+		j = randint0(MAX_SHROOM);
 		temp_adj = food_adj[i];
 		food_adj[i] = food_adj[j];
 		food_adj[j] = temp_adj;
@@ -545,7 +545,7 @@ void flavor_init(void)
 	/* Potions */
 	for (i = 4; i < MAX_COLORS; i++)
 	{
-		j = rand_int(MAX_COLORS - 4) + 4;
+		j = randint0(MAX_COLORS - 4) + 4;
 		temp_adj = potion_adj[i];
 		potion_adj[i] = potion_adj[j];
 		potion_adj[j] = temp_adj;
@@ -578,13 +578,13 @@ void flavor_init(void)
 				tmp[0] = '\0';
 
 				/* Choose one or two syllables */
-				s = ((rand_int(100) < 30) ? 1 : 2);
+				s = ((randint0(100) < 30) ? 1 : 2);
 
 				/* Add a one or two syllable word */
 				for (q = 0; q < s; q++)
 				{
 					/* Add the syllable */
-					strcat(tmp, syllables[rand_int(MAX_SYLLABLES)]);
+					strcat(tmp, syllables[randint0(MAX_SYLLABLES)]);
 				}
 
 				/* Stop before getting too long */

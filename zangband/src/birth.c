@@ -735,7 +735,7 @@ static byte choose_realm(byte choices)
 		}
 		if (c == '*')
 		{
-			k = rand_int(n);
+			k = randint0(n);
 			break;
 		}
 		k = (islower(c) ? A2I(c) : -1);
@@ -991,11 +991,11 @@ static int adjust_stat(int value, int amount, int auto_roll)
 			}
 			else if (value < 18+70)
 			{
-				value += ((auto_roll ? 15 : randint(15)) + 5);
+				value += ((auto_roll ? 15 : randint1(15)) + 5);
 			}
 			else if (value < 18+90)
 			{
-				value += ((auto_roll ? 6 : randint(6)) + 2);
+				value += ((auto_roll ? 6 : randint1(6)) + 2);
 			}
 			else if (value < 18+100)
 			{
@@ -1032,7 +1032,7 @@ static void get_stats(void)
 		for (j = i = 0; i < 18; i++)
 		{
 			/* Roll the dice */
-			dice[i] = randint(3 + i % 3);
+			dice[i] = randint1(3 + i % 3);
 
 			/* Collect the maximum */
 			j += dice[i];
@@ -1132,13 +1132,13 @@ static void get_extra(void)
 		for (i = 1; i < PY_MAX_LEVEL; i++)
 		{
 			/* Add in racial hit dice */
-			j = randint(rp_ptr->r_mhp);
+			j = randint1(rp_ptr->r_mhp);
 			player_hp[i] = player_hp[i - 1] + j;
 
 			/* If class hit dice is non zero - add it on */
 			if (cp_ptr->c_mhp)
 			{
-				player_hp[i] += randint(cp_ptr->c_mhp);
+				player_hp[i] += randint1(cp_ptr->c_mhp);
 			}
 		}
 
@@ -1184,7 +1184,7 @@ static void get_history(void)
 	buf[0] = '\0';
 
 	/* Initial social class */
-	social_class = randint(4);
+	social_class = randint1(4);
 
 	/* Starting place */
 	switch (p_ptr->prace)
@@ -1346,7 +1346,7 @@ static void get_history(void)
 		i = 0;
 
 		/* Roll for nobility */
-		roll = randint(100);
+		roll = randint1(100);
 
 
 		/* Access the proper entry in the table */
@@ -1427,7 +1427,7 @@ static void get_ahw(void)
 	int h_percent; 
 
 	/* Calculate the age */
-	p_ptr->age = rp_ptr->b_age + randint(rp_ptr->m_age);
+	p_ptr->age = rp_ptr->b_age + randint1(rp_ptr->m_age);
 	
 	/* Calculate the height/weight for males */
 	if (p_ptr->psex == SEX_MALE)
@@ -1459,7 +1459,7 @@ static void get_money(void)
 	int i, gold;
 
 	/* Social Class determines starting gold */
-	gold = (p_ptr->sc * 6) + randint(100) + 300;
+	gold = (p_ptr->sc * 6) + randint1(100) + 300;
 
 	/* Process the stats */
 	for (i = 0; i < A_MAX; i++)
@@ -1933,7 +1933,7 @@ static bool get_player_race(void)
 		if (c == 'S') return (FALSE);
 		if (c == '*')
 		{
-			k = rand_int(MAX_RACES);
+			k = randint0(MAX_RACES);
 			break;
 		}
 		if (c == '1')
@@ -2053,7 +2053,7 @@ static bool get_player_class(void)
 		if (c == 'S') return (FALSE);
 		if (c == '*')
 		{
-			k = rand_int(n);
+			k = randint0(n);
 			break;
 		}
 		k = (islower(c) ? A2I(c) : -1);
@@ -2177,7 +2177,7 @@ static bool player_birth_aux_1(void)
 		if (ch == ESCAPE) ch = '*';
 		if (ch == '*')
 		{
-			k = rand_int(MAX_SEXES);
+			k = randint0(MAX_SEXES);
 			break;
 		}
 
@@ -2258,7 +2258,7 @@ static bool player_birth_aux_1(void)
 			if (inp[0] == '*')
 			{
 				/* 0 to 49 random quests */
-				v = rand_int(50);
+				v = randint0(50);
 			}
 			else
 			{
@@ -2300,8 +2300,8 @@ static bool player_birth_aux_1(void)
 			 * (depending on level + number of quests)
 			 */
 			level = q_ptr->level + 6 +
-			        randint(q_ptr->level * v / 200 + 1) +
-			        randint(q_ptr->level * v / 200 + 1);
+			        randint1(q_ptr->level * v / 200 + 1) +
+			        randint1(q_ptr->level * v / 200 + 1);
 
 			r_idx = get_mon_num(level);
 			r_ptr = &r_info[r_idx];
@@ -2334,11 +2334,11 @@ static bool player_birth_aux_1(void)
 			/* Mark uniques */
 			quest_r_ptr->flags1 |= RF1_QUESTOR;
 
-			q_ptr->max_num = randint(quest_r_ptr->max_num);
+			q_ptr->max_num = randint1(quest_r_ptr->max_num);
 		}
 		else
 		{
-			q_ptr->max_num = 5 + (s16b)rand_int(q_ptr->level / 3 + 5) /
+			q_ptr->max_num = 5 + (s16b)randint0(q_ptr->level / 3 + 5) /
 									quest_r_ptr->rarity;
 		}
 	}
@@ -2418,7 +2418,7 @@ static bool player_birth_aux_2(void)
 	get_history();
 	
 	/* Hack -- get a chaos patron even if you are not a chaos warrior */
-	p_ptr->chaos_patron = (s16b)rand_int(MAX_PATRON);
+	p_ptr->chaos_patron = (s16b)randint0(MAX_PATRON);
 
 	p_ptr->muta1 = 0;
 	p_ptr->muta2 = 0;
@@ -2842,7 +2842,7 @@ static bool player_birth_aux_3(void)
 		get_money();
 
 		/* Hack -- get a chaos patron even if you are not a chaos warrior */
-		p_ptr->chaos_patron = (s16b)rand_int(MAX_PATRON);
+		p_ptr->chaos_patron = (s16b)randint0(MAX_PATRON);
 
 		p_ptr->muta1 = 0;
 		p_ptr->muta2 = 0;

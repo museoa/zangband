@@ -36,13 +36,13 @@ void do_cmd_rerate(void)
 		for (i = 1; i < PY_MAX_LEVEL; i++)
 		{
 			/* Add in racial hit dice */
-			j = randint(rp_ptr->r_mhp);
+			j = randint1(rp_ptr->r_mhp);
 			player_hp[i] = player_hp[i - 1] + j;
 
 			/* If class hit dice is non zero - add it on */
 			if (cp_ptr->c_mhp)
 			{
-				player_hp[i] += randint(cp_ptr->c_mhp);
+				player_hp[i] += randint1(cp_ptr->c_mhp);
 			}
 		}
 

@@ -45,7 +45,7 @@ static void recursive_river(int x1, int y1, int x2, int y2, int feat1, int feat2
 		if (dy != 0)
 		{
 			/* perturbation perpendicular to path */
-			changex = randint(abs(dy)) * 2 - abs(dy);
+			changex = randint1(abs(dy)) * 2 - abs(dy);
 		}
 		else
 		{
@@ -55,7 +55,7 @@ static void recursive_river(int x1, int y1, int x2, int y2, int feat1, int feat2
 		if (dx != 0)
 		{
 			/* perturbation perpendicular to path */
-			changey = randint(abs(dx)) * 2 - abs(dx);
+			changey = randint1(abs(dx)) * 2 - abs(dx);
 		}
 		else
 		{
@@ -73,7 +73,7 @@ static void recursive_river(int x1, int y1, int x2, int y2, int feat1, int feat2
 		recursive_river(x1 + dx + changex, y1 + dy + changey, x2, y2, feat1, feat2, width);
 
 		/* Split the river some of the time - junctions look cool */
-		if ((randint(DUN_WAT_CHG) == 1) && (width > 0))
+		if ((randint1(DUN_WAT_CHG) == 1) && (width > 0))
 		{
 			recursive_river(x1 + dx + changex, y1 + dy + changey,
 			                x1 + 8 * (dx + changex), y1 + 8 * (dy + changey),
@@ -153,7 +153,7 @@ void add_river(int feat1, int feat2)
 	x2 = rand_range(min_wid + 1, max_wid - 2);
 
 	/* Hack -- Choose ending point somewhere on boundary */
-	switch(randint(4))
+	switch(randint1(4))
 	{
 		case 1:
 		{
@@ -185,7 +185,7 @@ void add_river(int feat1, int feat2)
 		}
 	}
 
-	wid = randint(DUN_WAT_RNG);
+	wid = randint1(DUN_WAT_RNG);
 	recursive_river(x1, y1, x2, y2, feat1, feat2, wid);
 
 	/* Hack - Save the location as a "room" */
@@ -219,7 +219,7 @@ void build_streamer(int feat, int chance)
 	x = rand_spread(max_wid / 2, (max_wid / 2 > 15? 15: max_wid / 2));
 
 	/* Choose a random compass direction */
-	dir = ddd[rand_int(8)];
+	dir = ddd[randint0(8)];
 
 	/* Place streamer into dungeon */
 	while (dummy < SAFE_MAX_ATTEMPTS)
@@ -251,7 +251,7 @@ void build_streamer(int feat, int chance)
 			c_ptr->feat = feat;
 
 			/* Hack -- Add some (known) treasure */
-			if (rand_int(chance) == 0) c_ptr->feat += 0x04;
+			if (randint0(chance) == 0) c_ptr->feat += 0x04;
 		}
 
 		if (dummy >= SAFE_MAX_ATTEMPTS)
@@ -300,9 +300,9 @@ void place_trees(int x, int y)
 				 * Clear previous contents, add feature
 				 * The border mainly gets trees, while the center gets rubble
 				 */
-				if ((distance(j, i, y, x) > 1) || (randint(100) < 25))
+				if ((distance(j, i, y, x) > 1) || (randint1(100) < 25))
 				{
-					if (randint(100) < 75)
+					if (randint1(100) < 75)
 						cave[j][i].feat = FEAT_TREES;
 				}
 				else
@@ -317,7 +317,7 @@ void place_trees(int x, int y)
 	}
 
 	/* No up stairs in ironman mode */
-	if (!ironman_downward && (randint(3) == 1))
+	if (!ironman_downward && (randint1(3) == 1))
 	{
 		/* up stair */
 		cave[y][x].feat = FEAT_LESS;
@@ -338,7 +338,7 @@ void destroy_level(void)
 	if (cheat_room) msg_print("Destroyed Level");
 
 	/* Drop a few epi-centers (usually about two) */
-	for (n = 0; n < randint(5); n++)
+	for (n = 0; n < randint1(5); n++)
 	{
 		/* Pick an epi-center */
 		x1 = rand_range(min_wid + 5, max_wid - 1 - 5);
@@ -374,7 +374,7 @@ void destroy_level(void)
 					delete_field_location(c_ptr);
 
 					/* Wall (or floor) type */
-					t = rand_int(200);
+					t = randint0(200);
 
 					/* Granite */
 					if (t < 20)
@@ -439,10 +439,10 @@ void build_cavern(void)
 	while (!done)
 	{
 		/* testing values for these parameters: feel free to adjust */
-		grd = randint(4) + 4;
+		grd = randint1(4) + 4;
 
 		/* want average of about 16 */
-		roug = randint(8) * randint(4);
+		roug = randint1(8) * randint1(4);
 
 		/* about size/2 */
 		cutoff = xsize / 2;
@@ -485,17 +485,17 @@ void build_lake(int type)
 	while (!done)
 	{
 		/* testing values for these parameters: feel free to adjust */
-		grd = randint(3) + 4;
+		grd = randint1(3) + 4;
 
 		/* want average of about 16 */
-		roug = randint(8) * randint(4);
+		roug = randint1(8) * randint1(4);
 
 		/* Make up size of various componants */
 		/* Floor */
 		c3 = 3 * xsize / 4;
 
 		/* Deep water/lava */
-		c1 = rand_int(c3 / 2) + rand_int(c3 / 2) - 5;
+		c1 = randint0(c3 / 2) + randint0(c3 / 2) - 5;
 
 		/* Shallow boundary */
 		c2 = (c1 + c3) / 2;

@@ -2376,7 +2376,7 @@ bool genocide(int player_cast)
 		if (player_cast)
 		{
 			/* Take damage */
-			take_hit(randint(4), "the strain of casting Genocide");
+			take_hit(randint1(4), "the strain of casting Genocide");
 		}
 
 		/* Visual feedback */
@@ -2448,7 +2448,7 @@ bool mass_genocide(int player_cast)
 		if (player_cast)
 		{
 			/* Hack -- visual feedback */
-			take_hit(randint(3), "the strain of casting Mass Genocide");
+			take_hit(randint1(3), "the strain of casting Mass Genocide");
 		}
 
 		move_cursor_relative(py, px);
@@ -2617,7 +2617,7 @@ bool destroy_area(int y1, int x1, int r, int full)
 				delete_object(y, x);
 
 				/* Wall (or floor) type */
-				t = rand_int(200);
+				t = randint0(200);
 
 				/* Granite */
 				if (t < 20)
@@ -2661,7 +2661,7 @@ bool destroy_area(int y1, int x1, int r, int full)
 		if (!p_ptr->resist_blind && !p_ptr->resist_lite)
 		{
 			/* Become blind */
-			(void)set_blind(p_ptr->blind + 10 + randint(10));
+			(void)set_blind(p_ptr->blind + 10 + randint1(10));
 		}
 	}
 
@@ -2760,7 +2760,7 @@ bool earthquake(int cy, int cx, int r)
 			if (!dx && !dy) continue;
 
 			/* Skip most grids */
-			if (rand_int(100) < 85) continue;
+			if (randint0(100) < 85) continue;
 
 			/* Damage this grid */
 			map[16+yy-cy][16+xx-cx] = TRUE;
@@ -2801,14 +2801,14 @@ bool earthquake(int cy, int cx, int r)
 			sn++;
 
 			/* Randomize choice */
-			if (rand_int(sn) > 0) continue;
+			if (randint0(sn) > 0) continue;
 
 			/* Save the safe location */
 			sy = y; sx = x;
 		}
 
 		/* Random message */
-		switch (randint(3))
+		switch (randint1(3))
 		{
 			case 1:
 			{
@@ -2839,7 +2839,7 @@ bool earthquake(int cy, int cx, int r)
 		else
 		{
 			/* Calculate results */
-			switch (randint(3))
+			switch (randint1(3))
 			{
 				case 1:
 				{
@@ -2851,14 +2851,14 @@ bool earthquake(int cy, int cx, int r)
 				{
 					msg_print("You are bashed by rubble!");
 					damage = damroll(10, 4);
-					(void)set_stun(p_ptr->stun + randint(50));
+					(void)set_stun(p_ptr->stun + randint1(50));
 					break;
 				}
 				case 3:
 				{
 					msg_print("You are crushed between the floor and ceiling!");
 					damage = damroll(10, 4);
-					(void)set_stun(p_ptr->stun + randint(50));
+					(void)set_stun(p_ptr->stun + randint1(50));
 					break;
 				}
 			}
@@ -2997,7 +2997,7 @@ bool earthquake(int cy, int cx, int r)
 							sn++;
 
 							/* Randomize choice */
-							if (rand_int(sn) > 0) continue;
+							if (randint0(sn) > 0) continue;
 
 							/* Save the safe grid */
 							sy = y; sx = x;
@@ -3091,7 +3091,7 @@ bool earthquake(int cy, int cx, int r)
 				delete_object(yy, xx);
 
 				/* Wall (or floor) type */
-				t = (floor ? rand_int(100) : 200);
+				t = (floor ? randint0(100) : 200);
 
 				/* Granite */
 				if (t < 20)
@@ -3208,7 +3208,7 @@ static void cave_temp_room_lite(void)
 				if (r_ptr->flags2 & (RF2_SMART)) chance = 100;
 
 				/* Sometimes monsters wake up */
-				if (m_ptr->csleep && (rand_int(100) < chance))
+				if (m_ptr->csleep && (randint0(100) < chance))
 				{
 					/* Wake up! */
 					m_ptr->csleep = 0;
@@ -3769,7 +3769,7 @@ bool fire_beam(int typ, int dir, int dam)
  */
 bool fire_bolt_or_beam(int prob, int typ, int dir, int dam)
 {
-	if (rand_int(100) < prob)
+	if (randint0(100) < prob)
 	{
 		return (fire_beam(typ, dir, dam));
 	}
@@ -3806,14 +3806,14 @@ bool drain_gain_life(int dir, int dam)
 bool wall_to_mud(int dir)
 {
 	u16b flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
-	return (project_hook(GF_KILL_WALL, dir, 20 + randint(30), flg));
+	return (project_hook(GF_KILL_WALL, dir, 20 + randint1(30), flg));
 }
 
 
 bool wizard_lock(int dir)
 {
 	u16b flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
-	return (project_hook(GF_JAM_DOOR, dir, 20 + randint(30), flg));
+	return (project_hook(GF_JAM_DOOR, dir, 20 + randint1(30), flg));
 }
 
 
@@ -3998,10 +3998,10 @@ void call_chaos(void)
 		GF_HELL_FIRE, GF_DISINTEGRATE
 	};
 
-	Chaos_type = hurt_types[rand_int(30)];
-	if (randint(4) == 1) line_chaos = TRUE;
+	Chaos_type = hurt_types[randint0(30)];
+	if (randint1(4) == 1) line_chaos = TRUE;
 
-	if (randint(6) == 1)
+	if (randint1(6) == 1)
 	{
 		for (dummy = 1; dummy < 10; dummy++)
 		{
@@ -4014,7 +4014,7 @@ void call_chaos(void)
 			}
 		}
 	}
-	else if (randint(3) == 1)
+	else if (randint1(3) == 1)
 	{
 		fire_ball(Chaos_type, 0, 300, 8);
 	}
@@ -4042,15 +4042,15 @@ bool activate_ty_curse(bool stop_ty, int *count)
 
 	do
 	{
-		switch (randint(34))
+		switch (randint1(34))
 		{
 			case 28: case 29:
 			{
 				if (!(*count))
 				{
 					msg_print("The ground trembles...");
-					earthquake(py, px, 5 + rand_int(10));
-					if (randint(6) != 1) break;
+					earthquake(py, px, 5 + randint0(10));
+					if (randint1(6) != 1) break;
 				}
 			}
 			case 30: case 31:
@@ -4060,7 +4060,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 					msg_print("A portal opens to a plane of raw mana!");
 					destroy_area(py, px, 20, TRUE);
 					project(1, 3, py, px, damroll(10, 5), GF_MANA, flg);
-					if (randint(6) != 1) break;
+					if (randint1(6) != 1) break;
 				}
 			}
 			case 32: case 33:
@@ -4069,44 +4069,44 @@ bool activate_ty_curse(bool stop_ty, int *count)
 				{
 					msg_print("Space warps about you!");
 					teleport_player(damroll(10, 10));
-					if (rand_int(13)) (*count) += activate_hi_summon();
-					if (randint(6) != 1) break;
+					if (randint0(13)) (*count) += activate_hi_summon();
+					if (randint1(6) != 1) break;
 				}
 			}
 			case 34:
 			{
 				msg_print("You feel a surge of energy!");
 				wall_breaker();
-				if (!rand_int(7))
+				if (!randint0(7))
 				{
 					project(1, 7, py, px, 50, GF_KILL_WALL, flg);
 				}
-				if (randint(6) != 1) break;
+				if (randint1(6) != 1) break;
 			}
 			case 1: case 2: case 3: case 16: case 17:
 			{
 				aggravate_monsters(0);
-				if (randint(6) != 1) break;
+				if (randint1(6) != 1) break;
 			}
 			case 4: case 5: case 6:
 			{
 				(*count) += activate_hi_summon();
-				if (randint(6) != 1) break;
+				if (randint1(6) != 1) break;
 			}
 			case 7: case 8: case 9: case 18:
 			{
 				(*count) += summon_specific(0, py, px, dun_level, 0, TRUE, FALSE, FALSE);
-				if (randint(6) != 1) break;
+				if (randint1(6) != 1) break;
 			}
 			case 10: case 11: case 12:
 			{
 				msg_print("You feel your life draining away...");
 				lose_exp(p_ptr->exp / 16);
-				if (randint(6) != 1) break;
+				if (randint1(6) != 1) break;
 			}
 			case 13: case 14: case 15: case 19: case 20:
 			{
-				if (stop_ty || (p_ptr->free_act && (randint(100) < p_ptr->skill_sav)))
+				if (stop_ty || (p_ptr->free_act && (randint1(100) < p_ptr->skill_sav)))
 				{
 					/* Do nothing */ ;
 				}
@@ -4115,26 +4115,26 @@ bool activate_ty_curse(bool stop_ty, int *count)
 					msg_print("You feel like a statue!");
 					if (p_ptr->free_act)
 					{
-						set_paralyzed(p_ptr->paralyzed + randint(3));
+						set_paralyzed(p_ptr->paralyzed + randint1(3));
 					}
 					else
 					{
-						set_paralyzed(p_ptr->paralyzed + randint(13));
+						set_paralyzed(p_ptr->paralyzed + randint1(13));
 					}
 					stop_ty = TRUE;
 				}
-				if (randint(6) != 1) break;
+				if (randint1(6) != 1) break;
 			}
 			case 21: case 22: case 23:
 			{
-				(void)do_dec_stat(rand_int(6));
-				if (randint(6) != 1) break;
+				(void)do_dec_stat(randint0(6));
+				if (randint1(6) != 1) break;
 			}
 			case 24:
 			{
 				msg_print("Huh? Who am I? What am I doing here?");
 				lose_all_info();
-				if (randint(6) != 1) break;
+				if (randint1(6) != 1) break;
 			}
 			case 25:
 			{
@@ -4147,7 +4147,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 					stop_ty = TRUE;
 					break;
 				}
-				if (randint(6) != 1) break;
+				if (randint1(6) != 1) break;
 			}
 			default:
 			{
@@ -4157,14 +4157,14 @@ bool activate_ty_curse(bool stop_ty, int *count)
 					{
 						(void)do_dec_stat(stat);
 					}
-					while (randint(2) == 1);
+					while (randint1(2) == 1);
 
 					stat++;
 				}
 			}
 		}
 	}
-	while ((randint(3) == 1) && !stop_ty);
+	while ((randint1(3) == 1) && !stop_ty);
 
 	return stop_ty;
 }
@@ -4175,9 +4175,9 @@ int activate_hi_summon(void)
 	int i;
 	int count = 0;
 
-	for (i = 0; i < (randint(9) + (dun_level / 40)); i++)
+	for (i = 0; i < (randint1(9) + (dun_level / 40)); i++)
 	{
-		switch (randint(26) + (dun_level / 20))
+		switch (randint1(26) + (dun_level / 20))
 		{
 			case 1: case 2:
 				count += summon_specific(0, py, px, dun_level, SUMMON_ANT, TRUE, FALSE, FALSE);
@@ -4231,7 +4231,7 @@ int activate_hi_summon(void)
 int summon_cyber(int who, int y, int x)
 {
 	int i;
-	int max_cyber = (dun_level / 50) + randint(6);
+	int max_cyber = (dun_level / 50) + randint1(6);
 	int count = 0;
 
 	bool friendly = FALSE;
@@ -4260,7 +4260,7 @@ void wall_breaker(void)
 	int y, x;
 	int attempts = 1000;
 
-	if (randint(80 + p_ptr->lev) < 70)
+	if (randint1(80 + p_ptr->lev) < 70)
 	{
 		while (attempts--)
 		{
@@ -4269,10 +4269,10 @@ void wall_breaker(void)
 			if ((y != py) || (x != px)) break;
 		}
 
-		project(0, 0, y, x, 20 + randint(30), GF_KILL_WALL,
+		project(0, 0, y, x, 20 + randint1(30), GF_KILL_WALL,
 				  (PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL));
 	}
-	else if (randint(100) > 30)
+	else if (randint1(100) > 30)
 	{
 		earthquake(py, px, 1);
 	}
@@ -4289,7 +4289,7 @@ void wall_breaker(void)
 				if ((y != py) || (x != px)) break;
 			}
 
-			project(0, 0, y, x, 20 + randint(30), GF_KILL_WALL,
+			project(0, 0, y, x, 20 + randint1(30), GF_KILL_WALL,
 					  (PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL));
 		}
 	}

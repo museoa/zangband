@@ -305,7 +305,7 @@ static bool cast_mindcrafter_spell(int spell)
 		/* Mindblast */
 		if (!get_aim_dir(&dir)) return FALSE;
 
-		if (randint(100) < plev * 2)
+		if (randint1(100) < plev * 2)
 			fire_beam(GF_PSI, dir, damroll(3 + ((plev - 1) / 4), (3 + plev / 15)));
 		else
 			fire_ball(GF_PSI, dir, damroll(3 + ((plev - 1) / 4), (3 + plev / 15)), 0);
@@ -386,7 +386,7 @@ static bool cast_mindcrafter_spell(int spell)
 			hp_player(plev);
 		}
 
-		b = 10 + randint((plev * 3) / 2);
+		b = 10 + randint1((plev * 3) / 2);
 		if (plev < 35)
 			set_hero(p_ptr->hero + b);
 		else
@@ -410,7 +410,7 @@ static bool cast_mindcrafter_spell(int spell)
 
 		/* This is always a radius-0 ball now */
 		if (fire_ball(GF_PSI_DRAIN, dir, b, 0))
-			p_ptr->energy -= randint(150);
+			p_ptr->energy -= randint1(150);
 		break;
 	case 11:
 		/* Telekinesis */
@@ -492,16 +492,16 @@ void do_cmd_mindcraft(void)
 	if (chance > 95) chance = 95;
 
 	/* Failed spell */
-	if (rand_int(100) < chance)
+	if (randint0(100) < chance)
 	{
 		if (flush_failure) flush();
 		msg_format("You failed to concentrate hard enough!");
 		sound(SOUND_FAIL);
 
 		/* Backfire */
-		if (randint(100) < (chance / 2))
+		if (randint1(100) < (chance / 2))
 		{
-			int b = randint(100);
+			int b = randint1(100);
 
 			if (b < 5)
 			{
@@ -511,16 +511,16 @@ void do_cmd_mindcraft(void)
 			else if (b < 15)
 			{
 				msg_print("Weird visions seem to dance before your eyes...");
-				set_image(p_ptr->image + 5 + randint(10));
+				set_image(p_ptr->image + 5 + randint1(10));
 			}
 			else if (b < 45)
 			{
 				msg_print("Your brain is addled!");
-				set_confused(p_ptr->confused + randint(8));
+				set_confused(p_ptr->confused + randint1(8));
 			}
 			else if (b < 90)
 			{
-				set_stun(p_ptr->stun + randint(8));
+				set_stun(p_ptr->stun + randint1(8));
 			}
 			else
 			{
@@ -568,18 +568,18 @@ void do_cmd_mindcraft(void)
 		msg_print("You faint from the effort!");
 
 		/* Hack -- Bypass free action */
-		(void)set_paralyzed(p_ptr->paralyzed + randint(5 * oops + 1));
+		(void)set_paralyzed(p_ptr->paralyzed + randint1(5 * oops + 1));
 
 		/* Damage WIS (possibly permanently) */
-		if (rand_int(100) < 50)
+		if (randint0(100) < 50)
 		{
-			bool perm = (rand_int(100) < 25);
+			bool perm = (randint0(100) < 25);
 
 			/* Message */
 			msg_print("You have damaged your mind!");
 
 			/* Reduce constitution */
-			(void)dec_stat(A_WIS, 15 + randint(10), perm);
+			(void)dec_stat(A_WIS, 15 + randint1(10), perm);
 		}
 	}
 

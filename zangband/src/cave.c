@@ -457,16 +457,16 @@ static void image_monster(byte *ap, char *cp)
 	/* Random symbol from set above */
 	if (use_graphics)
 	{
-		(*cp) = r_info[randint(max_r_idx-1)].x_char;
-		(*ap) = r_info[randint(max_r_idx-1)].x_attr;
+		(*cp) = r_info[randint1(max_r_idx-1)].x_char;
+		(*ap) = r_info[randint1(max_r_idx-1)].x_attr;
 	}
 	else
 	/* Text mode */
 	{
-		(*cp) = (image_monster_hack[rand_int(n)]);
+		(*cp) = (image_monster_hack[randint0(n)]);
 
 		/* Random color */
-		(*ap) = randint(15);
+		(*ap) = randint1(15);
 	}
 }
 
@@ -488,15 +488,15 @@ static void image_object(byte *ap, char *cp)
 
 	if (use_graphics)
 	{
-		(*cp) = k_info[randint(max_k_idx-1)].x_char;
-		(*ap) = k_info[randint(max_k_idx-1)].x_attr;
+		(*cp) = k_info[randint1(max_k_idx-1)].x_char;
+		(*ap) = k_info[randint1(max_k_idx-1)].x_attr;
 	}
 	else
 	{
-		(*cp) = (image_object_hack[rand_int(n)]);
+		(*cp) = (image_object_hack[randint0(n)]);
 
 		/* Random color */
-		(*ap) = randint(15);
+		(*ap) = randint1(15);
 	}
 }
 
@@ -508,7 +508,7 @@ static void image_object(byte *ap, char *cp)
 static void image_random(byte *ap, char *cp)
 {
 	/* Normally, assume monsters */
-	if (rand_int(100) < 75)
+	if (randint0(100) < 75)
 	{
 		image_monster(ap, cp);
 	}
@@ -707,7 +707,7 @@ static void variable_player_graph(byte *a, char *c)
 							*a = TERM_VIOLET;
 						break;
 					case CLASS_CHAOS_WARRIOR:
-						*a = rand_int(14) + 1;
+						*a = randint0(14) + 1;
 						break;
 					case CLASS_MAGE:
 					case CLASS_HIGH_MAGE:
@@ -1035,7 +1035,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 		}
 
 		/* Hack -- rare random hallucination, except on outer dungeon walls */
-		if (halluc && !((feat == FEAT_PERM_SOLID) || rand_int(256)))
+		if (halluc && !((feat == FEAT_PERM_SOLID) || randint0(256)))
 		{
 			/* Hallucinate */
 			image_random(&a, &c);
@@ -1125,21 +1125,21 @@ void map_info(int y, int x, byte *ap, char *cp)
 				{
 					if (use_graphics)
 					{
-						c = r_info[randint(max_r_idx-1)].x_char;
-						a = r_info[randint(max_r_idx-1)].x_attr;
+						c = r_info[randint1(max_r_idx-1)].x_char;
+						a = r_info[randint1(max_r_idx-1)].x_attr;
 					}
 					else
 					{
-						c = (randint(25) == 1 ?
-							image_object_hack[randint(strlen(image_object_hack))] :
-							image_monster_hack[randint(strlen(image_monster_hack))]);
+						c = (randint1(25) == 1 ?
+							image_object_hack[randint1(strlen(image_object_hack))] :
+							image_monster_hack[randint1(strlen(image_monster_hack))]);
 					}
 				}
 
 				/* Multi-hued attr */
 				if (r_ptr->flags2 & RF2_ATTR_ANY)
-					a = randint(15);
-				else switch (randint(7))
+					a = randint1(15);
+				else switch (randint1(7))
 				{
 					case 1:
 						a = TERM_RED;
@@ -3869,10 +3869,10 @@ void map_area(void)
 
 
 	/* Pick an area to map */
-	y1 = py - MAX_DETECT - randint(10);
-	y2 = py + MAX_DETECT + randint(10);
-	x1 = px - MAX_DETECT - randint(20);
-	x2 = px + MAX_DETECT + randint(20);
+	y1 = py - MAX_DETECT - randint1(10);
+	y2 = py + MAX_DETECT + randint1(10);
+	x1 = px - MAX_DETECT - randint1(20);
+	x2 = px + MAX_DETECT + randint1(20);
 
 	/* Speed -- shrink to fit legal bounds */
 	if (y1 < min_hgt + 1) y1 = min_hgt + 1;

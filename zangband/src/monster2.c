@@ -292,7 +292,7 @@ void compact_monsters(int size)
 			if (r_ptr->flags1 & (RF1_UNIQUE)) chance = 99;
 
 			/* All monsters get a saving throw */
-			if (rand_int(100) < chance) continue;
+			if (randint0(100) < chance) continue;
 
 			/* Delete the monster */
 			delete_monster_idx(i);
@@ -531,22 +531,22 @@ s16b get_mon_num(int level)
 	if (level > 0)
 	{
 		/* Nightmare mode allows more out-of depth monsters */
-		if (ironman_nightmare && !rand_int(NASTY_MON))
+		if (ironman_nightmare && !randint0(NASTY_MON))
 		{
 			/* What a bizarre calculation */
-			level = 1 + (level * MAX_DEPTH / randint(MAX_DEPTH));
+			level = 1 + (level * MAX_DEPTH / randint1(MAX_DEPTH));
 		}
 		else
 		{
 			/* Occasional "nasty" monster */
-			if (!rand_int(NASTY_MON))
+			if (!randint0(NASTY_MON))
 			{
 				/* Boost the level */
 				level += 7;
 			}
 
 			/* Occasional "nasty" monster */
-			if (!rand_int(NASTY_MON))
+			if (!randint0(NASTY_MON))
 			{
 				/* Boost the level */
 				level += 7;
@@ -604,7 +604,7 @@ s16b get_mon_num(int level)
 
 
 	/* Pick a monster */
-	value = rand_int(total);
+	value = randint0(total);
 
 	/* Find the monster */
 	for (i = 0; i < alloc_race_size; i++)
@@ -618,7 +618,7 @@ s16b get_mon_num(int level)
 
 
 	/* Power boost */
-	p = rand_int(100);
+	p = randint0(100);
 
 	/* Try for a "harder" monster once (50%) or twice (10%) */
 	if (p < 60)
@@ -627,7 +627,7 @@ s16b get_mon_num(int level)
 		j = i;
 
 		/* Pick a monster */
-		value = rand_int(total);
+		value = randint0(total);
 
 		/* Find the monster */
 		for (i = 0; i < alloc_race_size; i++)
@@ -650,7 +650,7 @@ s16b get_mon_num(int level)
 		j = i;
 
 		/* Pick a monster */
-		value = rand_int(total);
+		value = randint0(total);
 
 		/* Find the monster */
 		for (i = 0; i < alloc_race_size; i++)
@@ -732,7 +732,7 @@ void monster_desc(char *desc, monster_type *m_ptr, int mode)
 	/* Are we hallucinating? (Idea from Nethack...) */
 	if (p_ptr->image)
 	{
-		if (randint(2) == 1)
+		if (randint1(2) == 1)
 		{
 			if (!get_rnd_line("silly.txt", m_ptr->r_idx, silly_name))
 				named = TRUE;
@@ -744,7 +744,7 @@ void monster_desc(char *desc, monster_type *m_ptr, int mode)
 
 			do
 			{
-				hallu_race = &r_info[randint(max_r_idx - 1)];
+				hallu_race = &r_info[randint1(max_r_idx - 1)];
 			}
 			while (hallu_race->flags1 & RF1_UNIQUE);
 
@@ -969,7 +969,7 @@ void sanity_blast(monster_type *m_ptr, bool necro)
 		if (!(r_ptr->flags2 & RF2_ELDRITCH_HORROR))
 			return; /* oops */
 
-		if (is_pet(m_ptr) && (randint(8) != 1))
+		if (is_pet(m_ptr) && (randint1(8) != 1))
 			return; /* Pet eldritch horrors are safe most of the time */
 
 		if (saving_throw(p_ptr->skill_sav * 100 / power))
@@ -981,12 +981,12 @@ void sanity_blast(monster_type *m_ptr, bool necro)
 		{
 			/* Something silly happens... */
 			msg_format("You behold the %s visage of %s!",
-				funny_desc[rand_int(MAX_SAN_FUNNY)], m_name);
+				funny_desc[randint0(MAX_SAN_FUNNY)], m_name);
 
-			if (randint(3) == 1)
+			if (randint1(3) == 1)
 			{
-				msg_print(funny_comments[rand_int(MAX_SAN_COMMENT)]);
-				p_ptr->image = p_ptr->image + randint(r_ptr->level);
+				msg_print(funny_comments[randint0(MAX_SAN_COMMENT)]);
+				p_ptr->image = p_ptr->image + randint1(r_ptr->level);
 			}
 
 			return; /* Never mind; we can't see it clearly enough */
@@ -994,7 +994,7 @@ void sanity_blast(monster_type *m_ptr, bool necro)
 
 		/* Something frightening happens... */
 		msg_format("You behold the %s visage of %s!",
-			horror_desc[rand_int(MAX_SAN_HORROR)], m_name);
+			horror_desc[randint0(MAX_SAN_HORROR)], m_name);
 
 		r_ptr->r_flags2 |= RF2_ELDRITCH_HORROR;
 
@@ -1019,11 +1019,11 @@ void sanity_blast(monster_type *m_ptr, bool necro)
 	{
 		if (!p_ptr->resist_conf)
 		{
-			(void)set_confused(p_ptr->confused + rand_int(4) + 4);
+			(void)set_confused(p_ptr->confused + randint0(4) + 4);
 		}
 		if (!p_ptr->resist_chaos && one_in_(3))
 		{
-			(void)set_image(p_ptr->image + rand_int(250) + 150);
+			(void)set_image(p_ptr->image + randint0(250) + 150);
 		}
 		return;
 	}
@@ -1039,19 +1039,19 @@ void sanity_blast(monster_type *m_ptr, bool necro)
 	{
 		if (!p_ptr->resist_conf)
 		{
-			(void)set_confused(p_ptr->confused + rand_int(4) + 4);
+			(void)set_confused(p_ptr->confused + randint0(4) + 4);
 		}
 		if (!p_ptr->free_act)
 		{
-			(void)set_paralyzed(p_ptr->paralyzed + rand_int(4) + 4);
+			(void)set_paralyzed(p_ptr->paralyzed + randint0(4) + 4);
 		}
-		while (rand_int(100) > p_ptr->skill_sav)
+		while (randint0(100) > p_ptr->skill_sav)
 			(void)do_dec_stat(A_INT);
-		while (rand_int(100) > p_ptr->skill_sav)
+		while (randint0(100) > p_ptr->skill_sav)
 			(void)do_dec_stat(A_WIS);
 		if (!p_ptr->resist_chaos)
 		{
-			(void)set_image(p_ptr->image + rand_int(250) + 150);
+			(void)set_image(p_ptr->image + randint0(250) + 150);
 		}
 	}
 
@@ -1076,7 +1076,7 @@ void sanity_blast(monster_type *m_ptr, bool necro)
 
 	while (!happened)
 	{
-		switch (randint(4))
+		switch (randint1(4))
 		{
 			case 1:
 				if (!(p_ptr->muta3 & MUT3_MORONIC))
@@ -1652,7 +1652,7 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 	if (slp && r_ptr->sleep && !ironman_nightmare)
 	{
 		int val = r_ptr->sleep;
-		m_ptr->csleep = ((val * 2) + randint(val * 10));
+		m_ptr->csleep = ((val * 2) + randint1(val * 10));
 	}
 
 	/* Assign maximal hitpoints */
@@ -1690,7 +1690,7 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 
 
 	/* Give a random starting energy */
-	m_ptr->energy = (byte)rand_int(100);
+	m_ptr->energy = (byte)randint0(100);
 
 	/* Nightmare monsters are more prepared */
 	if (ironman_nightmare)
@@ -1764,20 +1764,20 @@ static bool place_monster_group(int y, int x, int r_idx, bool slp, bool friendly
 	cave_type *c_ptr;
 
 	/* Pick a group size */
-	total = randint(13);
+	total = randint1(13);
 
 	/* Hard monsters, small groups */
 	if (r_ptr->level > dun_level)
 	{
 		extra = r_ptr->level - dun_level;
-		extra = 0 - randint(extra);
+		extra = 0 - randint1(extra);
 	}
 
 	/* Easy monsters, large groups */
 	else if (r_ptr->level < dun_level)
 	{
 		extra = dun_level - r_ptr->level;
-		extra = randint(extra);
+		extra = randint1(extra);
 	}
 
 	/* Hack -- limit group reduction */
@@ -2051,7 +2051,7 @@ bool alloc_horde(int y, int x)
 
 	summon_kin_type = r_ptr->d_char;
 
-	for (attempts = randint(10) + 5; attempts; attempts--)
+	for (attempts = randint1(10) + 5; attempts; attempts--)
 	{
 		scatter(&cy, &cx, y, x, 5, 0);
 
@@ -2110,7 +2110,7 @@ bool alloc_monster(int dis, bool slp)
 
 
 #ifdef MONSTER_HORDES
-	if (randint(5000) <= dun_level)
+	if (randint1(5000) <= dun_level)
 	{
 		if (alloc_horde(y, x))
 		{
@@ -2950,7 +2950,7 @@ void update_smart_learn(int m_idx, int what)
 	if (r_ptr->flags2 & (RF2_STUPID)) return;
 
 	/* Not intelligent, only learn sometimes */
-	if (!(r_ptr->flags2 & (RF2_SMART)) && (rand_int(100) < 50)) return;
+	if (!(r_ptr->flags2 & (RF2_SMART)) && (randint0(100) < 50)) return;
 
 
 	/* XXX XXX XXX */

@@ -304,7 +304,7 @@ s16b randnor(int mean, int stand)
 	if (stand < 1) return (mean);
 
 	/* Roll for probability */
-	tmp = (s16b)rand_int(32768);
+	tmp = (s16b)randint0(32768);
 
 	/* Binary Search */
 	while (low < high)
@@ -328,7 +328,7 @@ s16b randnor(int mean, int stand)
 	offset = (long)stand * (long)low / RANDNOR_STD;
 
 	/* One half should be negative */
-	if (rand_int(100) < 50) return (mean - offset);
+	if (randint0(100) < 50) return (mean - offset);
 
 	/* One half should be positive */
 	return (mean + offset);
@@ -342,7 +342,7 @@ s16b randnor(int mean, int stand)
 s16b damroll(int num, int sides)
 {
 	int i, sum = 0;
-	for (i = 0; i < num; i++) sum += randint(sides);
+	for (i = 0; i < num; i++) sum += randint1(sides);
 	return (sum);
 }
 
@@ -417,5 +417,5 @@ bool quick_rand(void)
  */
 void quick_rand_add(void)
 {
-	qrand_table[quick_rand_place++] = (randint(2) == 1);
+	qrand_table[quick_rand_place++] = (!randint0(2));
 }

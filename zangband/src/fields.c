@@ -493,7 +493,7 @@ void compact_fields(int size)
 			chance = 90;
 
 			/* Apply the saving throw */
-			if (rand_int(100) < chance) continue;
+			if (randint0(100) < chance) continue;
 			
 			fld_ptr = field_find(i);
 
@@ -1379,7 +1379,7 @@ void field_action_glyph_warding(s16b *field_ptr, void *input)
 	r_ptr = &r_info[m_ptr->r_idx];
 	
 	if (mon_enter->do_move && !(r_ptr->flags1 & RF1_NEVER_BLOW) && 
-		(randint(BREAK_GLYPH) < r_ptr->level)) 
+		(randint1(BREAK_GLYPH) < r_ptr->level)) 
 	{
 		/* Describe observable breakage */
 		if (area(f_ptr->fy, f_ptr->fx)->info & CAVE_MARK)
@@ -1431,7 +1431,7 @@ void field_action_glyph_explode(s16b *field_ptr, void *input)
 	r_ptr = &r_info[m_ptr->r_idx];
 	
 	if (do_move && !(r_ptr->flags1 & RF1_NEVER_BLOW) && 
-		(randint(BREAK_GLYPH) < r_ptr->level)) 
+		(randint1(BREAK_GLYPH) < r_ptr->level)) 
 	{
 		if (f_ptr->fy == py && f_ptr->fx == px)
 		{
@@ -1687,7 +1687,7 @@ void field_action_wall_tunnel(s16b *field_ptr, void *input)
 {	
 	int *dig = (int *) input;
 	
-	if (*dig > 40 + rand_int(1600))
+	if (*dig > 40 + randint0(1600))
 	{
 		/* Success */
 		
@@ -1759,7 +1759,7 @@ static int check_hit(int power)
 	int k, ac;
 
 	/* Percentile dice */
-	k = rand_int(100);
+	k = randint0(100);
 
 	/* Hack -- 5% hit, 5% miss */
 	if (k < 10) return (k < 5);
@@ -1771,7 +1771,7 @@ static int check_hit(int power)
 	ac = p_ptr->ac + p_ptr->to_a;
 
 	/* Power competes against Armor */
-	if (randint(power) > ((ac * 3) / 4)) return (TRUE);
+	if (randint1(power) > ((ac * 3) / 4)) return (TRUE);
 
 	/* Assume miss */
 	return (FALSE);
@@ -1844,7 +1844,7 @@ void place_trap(int y, int x)
 	while (1)
 	{
 		/* Pick a random type */
-		tmp = rand_int(total);
+		tmp = randint0(total);
 
 		/* Find this type */
 		for (n_ptr = trap_num, i = 0; TRUE; n_ptr++)
@@ -1902,11 +1902,11 @@ void field_action_trap_init(s16b *field_ptr, void *input)
 	byte *rand = (byte *)input;
 	
 	/*
-	 * Data[3] is equal to rand_int(rand)
+	 * Data[3] is equal to randint0(rand)
 	 */
 	
 	/* Some traps use this field to store their sub-type. */
-	f_ptr->data[3] = (byte)rand_int(*rand);
+	f_ptr->data[3] = (byte)randint0(*rand);
 
 	/* Initialize the name here? */
 	
@@ -1930,7 +1930,7 @@ void field_action_trap_disarm(s16b *field_ptr, void *input)
 	/* Always have a small chance of success */
 	if (j < 2) j = 2;
 	
-	if (rand_int(100) < j)
+	if (randint0(100) < j)
 	{
 		/* Success */
 		
@@ -2060,13 +2060,13 @@ void field_action_hit_trap_spike(s16b *field_ptr, void *nothing)
 		dam = damroll(4, 8);
 
 		/* Extra spike damage */
-		if (rand_int(100) < 50)
+		if (randint0(100) < 50)
 		{
 			msg_print("You are impaled!");
 
 			name = "a spiked pit";
 			dam *= 2;
-			(void)set_cut(p_ptr->cut + randint(dam));
+			(void)set_cut(p_ptr->cut + randint1(dam));
 		}
 
 		/* Take the damage */
@@ -2100,14 +2100,14 @@ void field_action_hit_trap_poison_pit(s16b *field_ptr, void *nothing)
 		name = "a pit trap";
 
 		/* Extra spike damage */
-		if (rand_int(100) < 50)
+		if (randint0(100) < 50)
 		{
 			msg_print("You are impaled on poisonous spikes!");
 
 			name = "a spiked pit";
 
 			dam *= 2;
-			(void)set_cut(p_ptr->cut + randint(dam));
+			(void)set_cut(p_ptr->cut + randint1(dam));
 
 			if (p_ptr->resist_pois || p_ptr->oppose_pois)
 			{
@@ -2116,7 +2116,7 @@ void field_action_hit_trap_poison_pit(s16b *field_ptr, void *nothing)
 			else
 			{
 				dam *= 2;
-				(void)set_poisoned(p_ptr->poisoned + randint(dam));
+				(void)set_poisoned(p_ptr->poisoned + randint1(dam));
 			}
 		}
 
@@ -2139,7 +2139,7 @@ void field_action_hit_trap_curse(s16b *field_ptr, void *nothing)
 	curse_equipment(dun_level, dun_level / 10);	
 	
 	/* TY Curse */
-	if (dun_level > randint(100)) /* No nasty effect for low levels */
+	if (dun_level > randint1(100)) /* No nasty effect for low levels */
 	{
 		bool stop_ty = FALSE;
 		int count = 0;
@@ -2148,17 +2148,17 @@ void field_action_hit_trap_curse(s16b *field_ptr, void *nothing)
 		{
 			stop_ty = activate_ty_curse(stop_ty, &count);
 		}
-		while (randint(6) == 1);
+		while (randint1(6) == 1);
 	}
 	
 	/* Blast weapon */
-	if (dun_level > randint(200)) /* No nasty effect for low levels */
+	if (dun_level > randint1(200)) /* No nasty effect for low levels */
 	{
 		(void) curse_weapon();
 	}
 	
 	/* Blast armour */
-	if (dun_level > randint(200)) /* No nasty effect for low levels */
+	if (dun_level > randint1(200)) /* No nasty effect for low levels */
 	{
 		(void) curse_armor();
 	}
@@ -2213,7 +2213,7 @@ void field_action_hit_trap_element(s16b *field_ptr, void *nothing)
 			msg_print("A pungent green gas surrounds you!");
 			if (!p_ptr->resist_pois && !p_ptr->oppose_pois)
 			{
-				(void)set_poisoned(p_ptr->poisoned + rand_int(20) + 10);
+				(void)set_poisoned(p_ptr->poisoned + randint0(20) + 10);
 			}
 			break;
 		}
@@ -2271,7 +2271,7 @@ void field_action_hit_trap_ba_element(s16b *field_ptr, void *nothing)
 			
 			if (!p_ptr->resist_pois && !p_ptr->oppose_pois)
 			{
-				(void)set_poisoned(p_ptr->poisoned + rand_int(50) + 100);
+				(void)set_poisoned(p_ptr->poisoned + randint0(50) + 100);
 			}
 			break;
 		}
@@ -2310,7 +2310,7 @@ void field_action_hit_trap_gas(s16b *field_ptr, void *nothing)
 		case 0:
 		{
 			msg_print("A blue gas surrounds you!");
-			(void)set_slow(p_ptr->slow + rand_int(20) + 20);
+			(void)set_slow(p_ptr->slow + randint0(20) + 20);
 		}
 
 		case 1:
@@ -2318,7 +2318,7 @@ void field_action_hit_trap_gas(s16b *field_ptr, void *nothing)
 			msg_print("A black gas surrounds you!");
 			if (!p_ptr->resist_blind)
 			{
-				(void)set_blind(p_ptr->blind + rand_int(50) + 25);
+				(void)set_blind(p_ptr->blind + randint0(50) + 25);
 			}
 			break;
 		}
@@ -2328,7 +2328,7 @@ void field_action_hit_trap_gas(s16b *field_ptr, void *nothing)
 			msg_print("A gas of scintillating colors surrounds you!");
 			if (!p_ptr->resist_conf)
 			{
-				(void)set_confused(p_ptr->confused + rand_int(20) + 10);
+				(void)set_confused(p_ptr->confused + randint0(20) + 10);
 			}
 			break;
 		}
@@ -2353,7 +2353,7 @@ void field_action_hit_trap_gas(s16b *field_ptr, void *nothing)
 					/* Remove the monster restriction */
 					get_mon_num_prep(NULL, NULL);
 				}
-				(void)set_paralyzed(p_ptr->paralyzed + rand_int(10) + 5);
+				(void)set_paralyzed(p_ptr->paralyzed + randint0(10) + 5);
 			}
 			break;
 		}
@@ -2363,7 +2363,7 @@ void field_action_hit_trap_gas(s16b *field_ptr, void *nothing)
 			msg_print("A gas of scintillating colors surrounds you!");
 			if (!p_ptr->resist_chaos)
 			{
-				(void)set_image(p_ptr->image + rand_int(20) + 10);
+				(void)set_image(p_ptr->image + randint0(20) + 10);
 			}
 			break;
 		}
@@ -2510,7 +2510,7 @@ void field_action_hit_trap_drop_item(s16b *field_ptr, void *nothing)
 	msg_print("You fumble with your equipment!");
 	
 	/* Get the item to drop */
-	item = randint(inven_cnt);
+	item = randint1(inven_cnt);
 	
 	if (inventory[item].k_idx)
 	{
@@ -2664,7 +2664,7 @@ void field_action_hit_trap_drain_magic(s16b *field_ptr, void *nothing)
 	for (k = 0; k < 10; k++)
 	{
 		/* Pick an item */
-		i = rand_int(INVEN_PACK);
+		i = randint0(INVEN_PACK);
 
 		/* Obtain the item */
 		o_ptr = &inventory[i];
@@ -2818,7 +2818,7 @@ void field_action_door_unlock(s16b *field_ptr, void *input)
 	/* Always have a small chance of success */
 	if (power < 2) power = 2;
 		
-	if (rand_int(100) < power)
+	if (randint0(100) < power)
 	{
 		/* Success */
 			
@@ -2854,7 +2854,7 @@ void field_action_door_bash(s16b *field_ptr, void *input)
 	/* Extract unjamming "power" */
 	int power = *jam / 10 + adj_str_wgt[p_ptr->stat_ind[A_STR]] / 2;
 		
-	if (rand_int(power) > f_ptr->counter)
+	if (randint0(power) > f_ptr->counter)
 	{
 		/* Success */
 			
@@ -2862,7 +2862,7 @@ void field_action_door_bash(s16b *field_ptr, void *input)
 		msg_print("The door crashes open!");
 		
 		/* Break down the door */
-		if (rand_int(100) < 50)
+		if (randint0(100) < 50)
 		{
 			cave_set_feat(f_ptr->fy, f_ptr->fx, FEAT_BROKEN);
 		}
@@ -2919,7 +2919,7 @@ void field_action_door_lock_monster(s16b *field_ptr, void *input)
 			(!is_pet(m_ptr) || p_ptr->pet_open_doors))
 	{
 		/* Attempt to Unlock */
-		if (rand_int(m_ptr->hp) > f_ptr->counter * f_ptr->counter)
+		if (randint0(m_ptr->hp) > f_ptr->counter * f_ptr->counter)
 		{
 			/* Open the door */
 			cave_set_feat(f_ptr->fy, f_ptr->fx, FEAT_OPEN);
@@ -2980,7 +2980,7 @@ void field_action_door_jam_monster(s16b *field_ptr, void *input)
 			(!is_pet(m_ptr) || p_ptr->pet_open_doors))
 	{
 		/* Attempt to Bash */
-		if (rand_int(m_ptr->hp) > f_ptr->counter * f_ptr->counter)
+		if (randint0(m_ptr->hp) > f_ptr->counter * f_ptr->counter)
 		{
 			/* Message */
 			msg_print("You hear a door burst open!");
@@ -2989,7 +2989,7 @@ void field_action_door_jam_monster(s16b *field_ptr, void *input)
 			if (disturb_minor) disturb(0, 0);
 
 			/* Break down the door */
-			if (rand_int(100) < 50)
+			if (randint0(100) < 50)
 			{
 				cave_set_feat(f_ptr->fy, f_ptr->fx, FEAT_BROKEN);
 			}

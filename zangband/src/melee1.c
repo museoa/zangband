@@ -29,7 +29,7 @@ static int monster_critical(int dice, int sides, int dam)
 	if (dam < total * 19 / 20) return (0);
 
 	/* Weak blows rarely work */
-	if ((dam < 20) && (rand_int(100) >= dam)) return (0);
+	if ((dam < 20) && (randint0(100) >= dam)) return (0);
 
 	/* Perfect damage */
 	if (dam == total) max++;
@@ -37,7 +37,7 @@ static int monster_critical(int dice, int sides, int dam)
 	/* Super-charge */
 	if (dam >= 20)
 	{
-		while (rand_int(100) < 2) max++;
+		while (randint0(100) < 2) max++;
 	}
 
 	/* Critical damage */
@@ -63,7 +63,7 @@ static int check_hit(int power, int level)
 	int i, k, ac;
 
 	/* Percentile dice */
-	k = rand_int(100);
+	k = randint0(100);
 
 	/* Hack -- Always miss or hit */
 	if (k < 10) return (k < 5);
@@ -75,7 +75,7 @@ static int check_hit(int power, int level)
 	ac = p_ptr->ac + p_ptr->to_a;
 
 	/* Power and Level compete against Armor */
-	if ((i > 0) && (randint(i) > ((ac * 3) / 4))) return (TRUE);
+	if ((i > 0) && (randint1(i) > ((ac * 3) / 4))) return (TRUE);
 
 	/* Assume miss */
 	return (FALSE);
@@ -245,7 +245,7 @@ bool make_attack_normal(int m_idx)
 			if ((p_ptr->protevil > 0) &&
 			    (r_ptr->flags3 & RF3_EVIL) &&
 			    (p_ptr->lev >= rlev) &&
-			    ((rand_int(100) + p_ptr->lev) > 50))
+			    ((randint0(100) + p_ptr->lev) > 50))
 			{
 				/* Remember the Evil-ness */
 				if (m_ptr->ml)
@@ -432,21 +432,21 @@ bool make_attack_normal(int m_idx)
 
 				case RBM_INSULT:
 				{
-					act = desc_insult[rand_int(8)];
+					act = desc_insult[randint0(8)];
 					sound(SOUND_MOAN);
 					break;
 				}
 
 				case RBM_MOAN:
 				{
-					act = desc_moan[rand_int(4)];
+					act = desc_moan[randint0(4)];
 					sound(SOUND_MOAN);
 					break;
 				}
 
 				case RBM_SHOW:
 				{
-					if (randint(3) == 1)
+					if (randint1(3) == 1)
 						act = "sings 'We are a happy family.'";
 					else
 						act = "sings 'I love you, you love me.'";
@@ -458,10 +458,10 @@ bool make_attack_normal(int m_idx)
 			/* Message */
 			if (act)
 			{
-				if ((p_ptr->image) && (randint(3) == 1))
+				if ((p_ptr->image) && (randint1(3) == 1))
 				{
 					msg_format("%^s %s you.", m_name,
-					           silly_attacks[randint(MAX_SILLY_ATTACK) - 1]);
+					           silly_attacks[randint1(MAX_SILLY_ATTACK) - 1]);
 				}
 				else
 					msg_format("%^s %s", m_name, act);
@@ -515,7 +515,7 @@ bool make_attack_normal(int m_idx)
 						/* Take "poison" effect */
 						if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
 						{
-							if (set_poisoned(p_ptr->poisoned + randint(rlev) + 5))
+							if (set_poisoned(p_ptr->poisoned + randint1(rlev) + 5))
 							{
 								obvious = TRUE;
 							}
@@ -554,7 +554,7 @@ bool make_attack_normal(int m_idx)
 						for (k = 0; k < 10; k++)
 						{
 							/* Pick an item */
-							i = rand_int(INVEN_PACK);
+							i = randint0(INVEN_PACK);
 
 							/* Obtain the item */
 							o_ptr = &inventory[i];
@@ -615,22 +615,22 @@ bool make_attack_normal(int m_idx)
 
 						/* Saving throw (unless paralyzed) based on dex and level */
 						if (!p_ptr->paralyzed &&
-							(rand_int(100) < (adj_dex_safe[p_ptr->stat_ind[A_DEX]] +
+							(randint0(100) < (adj_dex_safe[p_ptr->stat_ind[A_DEX]] +
 											  p_ptr->lev)))
 						{
 							/* Saving throw message */
 							msg_print("You quickly protect your money pouch!");
 
 							/* Occasional blink anyway */
-							if (rand_int(3)) blinked = TRUE;
+							if (randint0(3)) blinked = TRUE;
 						}
 
 						/* Eat gold */
 						else
 						{
-							gold = (p_ptr->au / 10) + randint(25);
+							gold = (p_ptr->au / 10) + randint1(25);
 							if (gold < 2) gold = 2;
-							if (gold > 5000) gold = (p_ptr->au / 20) + randint(3000);
+							if (gold > 5000) gold = (p_ptr->au / 20) + randint1(3000);
 							if (gold > p_ptr->au) gold = p_ptr->au;
 							p_ptr->au -= gold;
 							if (gold <= 0)
@@ -675,7 +675,7 @@ bool make_attack_normal(int m_idx)
 
 						/* Saving throw (unless paralyzed) based on dex and level */
 						if (!p_ptr->paralyzed &&
-							(rand_int(100) < (adj_dex_safe[p_ptr->stat_ind[A_DEX]] +
+							(randint0(100) < (adj_dex_safe[p_ptr->stat_ind[A_DEX]] +
 											  p_ptr->lev)))
 						{
 							/* Saving throw message */
@@ -695,7 +695,7 @@ bool make_attack_normal(int m_idx)
 						for (k = 0; k < 10; k++)
 						{
 							/* Pick an item */
-							i = rand_int(INVEN_PACK);
+							i = randint0(INVEN_PACK);
 
 							/* Obtain the item */
 							o_ptr = &inventory[i];
@@ -765,7 +765,7 @@ bool make_attack_normal(int m_idx)
 							else
 							{
 								if (strstr((r_name + r_ptr->name), "black market") &&
-									randint(2) != 1)
+									randint1(2) != 1)
 								{
 									s16b o_idx;
 
@@ -833,7 +833,7 @@ bool make_attack_normal(int m_idx)
 						for (k = 0; k < 10; k++)
 						{
 							/* Pick an item from the pack */
-							i = rand_int(INVEN_PACK);
+							i = randint0(INVEN_PACK);
 
 							/* Get the item */
 							o_ptr = &inventory[i];
@@ -878,7 +878,7 @@ bool make_attack_normal(int m_idx)
 						if ((o_ptr->pval > 0) && (!artifact_p(o_ptr)))
 						{
 							/* Reduce fuel */
-							o_ptr->pval -= (250 + randint(250));
+							o_ptr->pval -= (250 + randint1(250));
 							if (o_ptr->pval < 1) o_ptr->pval = 1;
 
 							/* Notice */
@@ -971,7 +971,7 @@ bool make_attack_normal(int m_idx)
 						/* Increase "blind" */
 						if (!p_ptr->resist_blind)
 						{
-							if (set_blind(p_ptr->blind + 10 + randint(rlev)))
+							if (set_blind(p_ptr->blind + 10 + randint1(rlev)))
 							{
 								obvious = TRUE;
 							}
@@ -991,7 +991,7 @@ bool make_attack_normal(int m_idx)
 						/* Increase "confused" */
 						if (!p_ptr->resist_conf)
 						{
-							if (set_confused(p_ptr->confused + 3 + randint(rlev)))
+							if (set_confused(p_ptr->confused + 3 + randint1(rlev)))
 							{
 								obvious = TRUE;
 							}
@@ -1014,14 +1014,14 @@ bool make_attack_normal(int m_idx)
 							msg_print("You stand your ground!");
 							obvious = TRUE;
 						}
-						else if (rand_int(100) < p_ptr->skill_sav)
+						else if (randint0(100) < p_ptr->skill_sav)
 						{
 							msg_print("You stand your ground!");
 							obvious = TRUE;
 						}
 						else
 						{
-							if (set_afraid(p_ptr->afraid + 3 + randint(rlev)))
+							if (set_afraid(p_ptr->afraid + 3 + randint1(rlev)))
 							{
 								obvious = TRUE;
 							}
@@ -1047,14 +1047,14 @@ bool make_attack_normal(int m_idx)
 							msg_print("You are unaffected!");
 							obvious = TRUE;
 						}
-						else if (rand_int(100) < p_ptr->skill_sav)
+						else if (randint0(100) < p_ptr->skill_sav)
 						{
 							msg_print("You resist the effects!");
 							obvious = TRUE;
 						}
 						else
 						{
-							if (set_paralyzed(p_ptr->paralyzed + 3 + randint(rlev)))
+							if (set_paralyzed(p_ptr->paralyzed + 3 + randint1(rlev)))
 							{
 								obvious = TRUE;
 							}
@@ -1176,7 +1176,7 @@ bool make_attack_normal(int m_idx)
 						/* Take damage */
 						take_hit(damage, ddesc);
 
-						if (p_ptr->hold_life && (rand_int(100) < 95))
+						if (p_ptr->hold_life && (randint0(100) < 95))
 						{
 							msg_print("You keep hold of your life force!");
 						}
@@ -1205,7 +1205,7 @@ bool make_attack_normal(int m_idx)
 						/* Take damage */
 						take_hit(damage, ddesc);
 
-						if (p_ptr->hold_life && (rand_int(100) < 90))
+						if (p_ptr->hold_life && (randint0(100) < 90))
 						{
 							msg_print("You keep hold of your life force!");
 						}
@@ -1234,7 +1234,7 @@ bool make_attack_normal(int m_idx)
 						/* Take damage */
 						take_hit(damage, ddesc);
 
-						if (p_ptr->hold_life && (rand_int(100) < 75))
+						if (p_ptr->hold_life && (randint0(100) < 75))
 						{
 							msg_print("You keep hold of your life force!");
 						}
@@ -1263,7 +1263,7 @@ bool make_attack_normal(int m_idx)
 						/* Take damage */
 						take_hit(damage, ddesc);
 
-						if (p_ptr->hold_life && (rand_int(100) < 50))
+						if (p_ptr->hold_life && (randint0(100) < 50))
 						{
 							msg_print("You keep hold of your life force!");
 						}
@@ -1292,25 +1292,25 @@ bool make_attack_normal(int m_idx)
 						/* Take "poison" effect */
 						if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
 						{
-							if (set_poisoned(p_ptr->poisoned + randint(rlev) + 5))
+							if (set_poisoned(p_ptr->poisoned + randint1(rlev) + 5))
 							{
 								obvious = TRUE;
 							}
 						}
 
 						/* Damage CON (10% chance) */
-						if (randint(100) < 11)
+						if (randint1(100) < 11)
 						{
 							/* 1% chance for perm. damage */
-							bool perm = (randint(10) == 1);
-							if (dec_stat(A_CON, randint(10), perm)) obvious = TRUE;
+							bool perm = (randint1(10) == 1);
+							if (dec_stat(A_CON, randint1(10), perm)) obvious = TRUE;
 						}
 
 						break;
 					}
 					case RBE_TIME:
 					{
-						switch (randint(10))
+						switch (randint1(10))
 						{
 							case 1: case 2: case 3: case 4: case 5:
 							{
@@ -1321,7 +1321,7 @@ bool make_attack_normal(int m_idx)
 
 							case 6: case 7: case 8: case 9:
 							{
-								int stat = rand_int(6);
+								int stat = randint0(6);
 
 								switch (stat)
 								{
@@ -1366,7 +1366,7 @@ bool make_attack_normal(int m_idx)
 						/* Take damage */
 						take_hit(damage, ddesc);
 
-						if (p_ptr->hold_life && (rand_int(100) < 50))
+						if (p_ptr->hold_life && (randint0(100) < 50))
 						{
 							msg_print("You keep hold of your life force!");
 							resist_drain = TRUE;
@@ -1419,7 +1419,7 @@ bool make_attack_normal(int m_idx)
 			if (do_cut && do_stun)
 			{
 				/* Cancel cut */
-				if (rand_int(100) < 50)
+				if (randint0(100) < 50)
 				{
 					do_cut = 0;
 				}
@@ -1443,11 +1443,11 @@ bool make_attack_normal(int m_idx)
 				switch (tmp)
 				{
 					case 0: k = 0; break;
-					case 1: k = randint(5); break;
-					case 2: k = randint(5) + 5; break;
-					case 3: k = randint(20) + 20; break;
-					case 4: k = randint(50) + 50; break;
-					case 5: k = randint(100) + 100; break;
+					case 1: k = randint1(5); break;
+					case 2: k = randint1(5) + 5; break;
+					case 3: k = randint1(20) + 20; break;
+					case 4: k = randint1(50) + 50; break;
+					case 5: k = randint1(100) + 100; break;
 					case 6: k = 300; break;
 					default: k = 500; break;
 				}
@@ -1468,11 +1468,11 @@ bool make_attack_normal(int m_idx)
 				switch (tmp)
 				{
 					case 0: k = 0; break;
-					case 1: k = randint(5); break;
-					case 2: k = randint(10) + 10; break;
-					case 3: k = randint(20) + 20; break;
-					case 4: k = randint(30) + 30; break;
-					case 5: k = randint(40) + 40; break;
+					case 1: k = randint1(5); break;
+					case 2: k = randint1(10) + 10; break;
+					case 3: k = randint1(20) + 20; break;
+					case 4: k = randint1(30) + 30; break;
+					case 5: k = randint1(40) + 40; break;
 					case 6: k = 100; break;
 					default: k = 200; break;
 				}

@@ -49,7 +49,7 @@
  */
 
 #define int_outof(dumb, prob) \
-	(randint((dumb) ? ((prob) / 2) : (prob)) < 100)
+	(randint1((dumb) ? ((prob) / 2) : (prob)) < 100)
 
 /*
  * Remove the "bad" spells from a spell list
@@ -78,7 +78,7 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 	if (smart_learn)
 	{
 		/* Hack -- Occasionally forget player status */
-		if (m_ptr->smart && (rand_int(100) < 1)) m_ptr->smart = 0L;
+		if (m_ptr->smart && (randint0(100) < 1)) m_ptr->smart = 0L;
 
 		/* Use the memorized flags */
 		smart = m_ptr->smart;
@@ -216,7 +216,7 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 		f4 &= ~(RF4_BR_POIS);
 		f5 &= ~(RF5_BA_POIS);
 
-		if (rand_int(2))
+		if (randint0(2))
 		{
 			f4 &= ~(RF4_BA_NUKE | RF4_BR_NUKE);
 		}
@@ -257,7 +257,7 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 	{
 		f5 &= ~(RF5_CONF);
 
-		if (rand_int(2))
+		if (randint0(2))
 		{
 			f4 &= ~(RF4_BR_CONF);
 		}
@@ -296,7 +296,7 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 	{
 		f4 &= ~(RF4_BR_SHAR);
 
-		if (rand_int(2))
+		if (randint0(2))
 		{
 			f4 &= ~(RF4_ROCKET);
 		}
@@ -480,9 +480,9 @@ void curse_equipment(int chance, int heavy_chance)
 {
 	bool        changed = FALSE;
 	u32b        o1, o2, o3;
-	object_type *o_ptr = &inventory[INVEN_WIELD + rand_int(12)];
+	object_type *o_ptr = &inventory[INVEN_WIELD + randint0(12)];
 
-	if (randint(100) > chance) return;
+	if (randint1(100) > chance) return;
 
 	if (!o_ptr->k_idx) return;
 
@@ -490,7 +490,7 @@ void curse_equipment(int chance, int heavy_chance)
 
 
 	/* Extra, biased saving throw for blessed items */
-	if ((o3 & TR3_BLESSED) && (randint(888) > chance))
+	if ((o3 & TR3_BLESSED) && (randint1(888) > chance))
 	{
 		char o_name[256];
 		object_desc(o_name, o_ptr, FALSE, 0);
@@ -498,7 +498,7 @@ void curse_equipment(int chance, int heavy_chance)
 		return;
 	}
 
-	if ((randint(100) <= heavy_chance) &&
+	if ((randint1(100) <= heavy_chance) &&
 		(o_ptr->name1 || o_ptr->name2 || o_ptr->art_name))
 	{
 		if (!(o3 & TR3_HEAVY_CURSE))
@@ -587,7 +587,7 @@ static int choose_attack_spell(int m_idx, u32b f4, u32b f5, u32b f6)
 
 		/* Hurt badly or afraid, attempt to flee */
 		if (has_escape && ((m_ptr->hp < m_ptr->maxhp / 4) ||
-			 m_ptr->monfear) && (!rand_int(2)))
+			 m_ptr->monfear) && (!randint0(2)))
 		{
 			/* Choose escape spell */
 			f4_mask = (RF4_ESCAPE_MASK);
@@ -597,7 +597,7 @@ static int choose_attack_spell(int m_idx, u32b f4, u32b f5, u32b f6)
 
 		/* Still hurt badly, couldn't flee, attempt to heal */
 		else if (has_heal && (m_ptr->hp < m_ptr->maxhp / 4) &&
-			 (!rand_int(2)))
+			 (!randint0(2)))
 		{
 			/* Choose heal spell */
 			f4_mask = (RF4_HEAL_MASK);
@@ -607,7 +607,7 @@ static int choose_attack_spell(int m_idx, u32b f4, u32b f5, u32b f6)
 
 		/* Player is close and we have attack spells, blink away */
 		else if (has_tactic && (m_ptr->cdis < 4) && has_attack &&
-			 (rand_int(100) < 75))
+			 (randint0(100) < 75))
 		{
 			/* Choose tactical spell */
 			f4_mask = (RF4_TACTIC_MASK);
@@ -617,7 +617,7 @@ static int choose_attack_spell(int m_idx, u32b f4, u32b f5, u32b f6)
 
 		/* We're hurt (not badly), try to heal */
 		else if ((m_ptr->hp < m_ptr->maxhp * 3 / 4)
-			 && (rand_int(100) < 60))
+			 && (randint0(100) < 60))
 		{
 			/* Choose heal spell */
 			f4_mask = (RF4_HEAL_MASK);
@@ -626,7 +626,7 @@ static int choose_attack_spell(int m_idx, u32b f4, u32b f5, u32b f6)
 		}
 
 		/* Summon if possible (sometimes) */
-		else if (has_summon && (rand_int(100) < 50))
+		else if (has_summon && (randint0(100) < 50))
 		{
 			/* Choose summon spell */
 			f4_mask = (RF4_SUMMON_MASK);
@@ -635,7 +635,7 @@ static int choose_attack_spell(int m_idx, u32b f4, u32b f5, u32b f6)
 		}
 
 		/* Attack spell (most of the time) */
-		else if (has_attack && (rand_int(100) < 85))
+		else if (has_attack && (randint0(100) < 85))
 		{
 			/* Choose attack spell */
 			f4_mask = (RF4_ATTACK_MASK);
@@ -644,7 +644,7 @@ static int choose_attack_spell(int m_idx, u32b f4, u32b f5, u32b f6)
 		}
 
 		/* Try another tactical spell (sometimes) */
-		else if (has_tactic && (rand_int(100) < 50))
+		else if (has_tactic && (randint0(100) < 50))
 		{
 			/* Choose tactic spell */
 			f4_mask = (RF4_TACTIC_MASK);
@@ -654,7 +654,7 @@ static int choose_attack_spell(int m_idx, u32b f4, u32b f5, u32b f6)
 
 		/* Cast globe of invulnerability if not already in effect */
 		else if (has_invul && !(m_ptr->invulner)
-			 && (rand_int(100) < 50))
+			 && (randint0(100) < 50))
 		{
 			/* Choose Globe of Invulnerability */
 			f4_mask = (RF4_INVULN_MASK);
@@ -663,7 +663,7 @@ static int choose_attack_spell(int m_idx, u32b f4, u32b f5, u32b f6)
 		}
 
 		/* Haste self if we aren't already somewhat hasted (rarely) */
-		else if (has_haste && (rand_int(100) < (20 + r_ptr->speed
+		else if (has_haste && (randint0(100) < (20 + r_ptr->speed
 			 - m_ptr->mspeed)))
 		{
 			/* Choose haste spell */
@@ -673,7 +673,7 @@ static int choose_attack_spell(int m_idx, u32b f4, u32b f5, u32b f6)
 		}
 
 		/* Annoy player (most of the time) */
-		else if (has_annoy && (rand_int(100) < 85))
+		else if (has_annoy && (randint0(100) < 85))
 		{
 			/* Choose annoyance spell */
 			f4_mask = (RF4_ANNOY_MASK);
@@ -714,7 +714,7 @@ static int choose_attack_spell(int m_idx, u32b f4, u32b f5, u32b f6)
 	if (num == 0) return 0;
 
 	/* Pick at random */
-	return (spells[rand_int(num)]);
+	return (spells[randint0(num)]);
 }
 
 
@@ -824,14 +824,14 @@ bool make_attack_spell(int m_idx)
 	if (stupid_monsters)
 	{
 		/* Only do spells occasionally */
-		if (rand_int(100) >= chance) return (FALSE);
+		if (randint0(100) >= chance) return (FALSE);
 	}
 	else
 	{
-		if (rand_int(100) >= chance) return (FALSE);
+		if (randint0(100) >= chance) return (FALSE);
 
 		/* Sometimes forbid inate attacks (breaths) */
-		if (rand_int(100) >= (chance * 2)) no_inate = TRUE;
+		if (randint0(100) >= (chance * 2)) no_inate = TRUE;
 	}
 
 	/* XXX XXX XXX Handle "track_target" option (?) */
@@ -861,7 +861,7 @@ bool make_attack_spell(int m_idx)
 	/* Hack -- allow "desperate" spells */
 	if ((r_ptr->flags2 & (RF2_SMART)) &&
 		(m_ptr->hp < m_ptr->maxhp / 10) &&
-		(rand_int(100) < 50))
+		(randint0(100) < 50))
 	{
 		/* Require intelligent spells */
 		f4 &= (RF4_INT_MASK);
@@ -934,7 +934,7 @@ bool make_attack_spell(int m_idx)
 	if (r_ptr->flags2 & RF2_STUPID) failrate = 0;
 
 	/* Check for spell failure (inate attacks never fail) */
-	if ((thrown_spell >= 128) && (rand_int(100) < failrate))
+	if ((thrown_spell >= 128) && (randint0(100) < failrate))
 	{
 		/* Message */
 		msg_format("%^s tries to cast a spell, but fails.", m_name);
@@ -1312,7 +1312,7 @@ bool make_attack_spell(int m_idx)
 			if (blind) msg_format("%^s mumbles.", m_name);
 			else msg_format("%^s casts an acid ball.", m_name);
 			breath(m_idx, GF_ACID,
-				randint(rlev * 3) + 15, 2, FALSE);
+				randint1(rlev * 3) + 15, 2, FALSE);
 			update_smart_learn(m_idx, DRS_ACID);
 			break;
 		}
@@ -1324,7 +1324,7 @@ bool make_attack_spell(int m_idx)
 			if (blind) msg_format("%^s mumbles.", m_name);
 			else msg_format("%^s casts a lightning ball.", m_name);
 			breath(m_idx, GF_ELEC,
-				randint(rlev * 3 / 2) + 8, 2, FALSE);
+				randint1(rlev * 3 / 2) + 8, 2, FALSE);
 			update_smart_learn(m_idx, DRS_ELEC);
 			break;
 		}
@@ -1336,7 +1336,7 @@ bool make_attack_spell(int m_idx)
 			if (blind) msg_format("%^s mumbles.", m_name);
 			else msg_format("%^s casts a fire ball.", m_name);
 			breath(m_idx, GF_FIRE,
-				randint(rlev * 7 / 2) + 10, 2, FALSE);
+				randint1(rlev * 7 / 2) + 10, 2, FALSE);
 			update_smart_learn(m_idx, DRS_FIRE);
 			break;
 		}
@@ -1348,7 +1348,7 @@ bool make_attack_spell(int m_idx)
 			if (blind) msg_format("%^s mumbles.", m_name);
 			else msg_format("%^s casts a frost ball.", m_name);
 			breath(m_idx, GF_COLD,
-				randint(rlev * 3 / 2) + 10, 2, FALSE);
+				randint1(rlev * 3 / 2) + 10, 2, FALSE);
 			update_smart_learn(m_idx, DRS_COLD);
 			break;
 		}
@@ -1385,7 +1385,7 @@ bool make_attack_spell(int m_idx)
 			else msg_format("%^s gestures fluidly.", m_name);
 			msg_print("You are engulfed in a whirlpool.");
 			breath(m_idx, GF_WATER,
-				randint(rlev * 5 / 2) + 50, 4, FALSE);
+				randint1(rlev * 5 / 2) + 50, 4, FALSE);
 			break;
 		}
 
@@ -1427,7 +1427,7 @@ bool make_attack_spell(int m_idx)
 				msg_format("%^s draws psychic energy from you!", m_name);
 
 				/* Attack power */
-				r1 = (randint(rlev) / 2) + 1;
+				r1 = (randint1(rlev) / 2) + 1;
 
 				/* Full drain */
 				if (r1 >= p_ptr->csp)
@@ -1485,7 +1485,7 @@ bool make_attack_spell(int m_idx)
 				msg_format("%^s gazes deep into your eyes.", m_name);
 			}
 
-			if (rand_int(100) < p_ptr->skill_sav)
+			if (randint0(100) < p_ptr->skill_sav)
 			{
 				msg_print("You resist the effects!");
 			}
@@ -1495,12 +1495,12 @@ bool make_attack_spell(int m_idx)
 
 				if (!p_ptr->resist_conf)
 				{
-					(void)set_confused(p_ptr->confused + rand_int(4) + 4);
+					(void)set_confused(p_ptr->confused + randint0(4) + 4);
 				}
 
 				if (!p_ptr->resist_chaos && one_in_(3))
 				{
-					(void)set_image(p_ptr->image + rand_int(250) + 150);
+					(void)set_image(p_ptr->image + randint0(250) + 150);
 				}
 
 				take_hit(damroll(8, 8), ddesc);
@@ -1522,7 +1522,7 @@ bool make_attack_spell(int m_idx)
 				msg_format("%^s looks deep into your eyes.", m_name);
 			}
 
-			if (rand_int(100) < p_ptr->skill_sav)
+			if (randint0(100) < p_ptr->skill_sav)
 			{
 				msg_print("You resist the effects!");
 			}
@@ -1532,26 +1532,26 @@ bool make_attack_spell(int m_idx)
 				take_hit(damroll(12, 15), ddesc);
 				if (!p_ptr->resist_blind)
 				{
-					(void)set_blind(p_ptr->blind + 8 + rand_int(8));
+					(void)set_blind(p_ptr->blind + 8 + randint0(8));
 				}
 				if (!p_ptr->resist_conf)
 				{
-					(void)set_confused(p_ptr->confused + rand_int(4) + 4);
+					(void)set_confused(p_ptr->confused + randint0(4) + 4);
 				}
 				if (!p_ptr->free_act)
 				{
-					(void)set_paralyzed(p_ptr->paralyzed + rand_int(4) + 4);
+					(void)set_paralyzed(p_ptr->paralyzed + randint0(4) + 4);
 				}
-				(void)set_slow(p_ptr->slow + rand_int(4) + 4);
+				(void)set_slow(p_ptr->slow + randint0(4) + 4);
 
-				while (rand_int(100) > p_ptr->skill_sav)
+				while (randint0(100) > p_ptr->skill_sav)
 					(void)do_dec_stat(A_INT);
-				while (rand_int(100) > p_ptr->skill_sav)
+				while (randint0(100) > p_ptr->skill_sav)
 					(void)do_dec_stat(A_WIS);
 
 				if (!p_ptr->resist_chaos)
 				{
-					(void)set_image(p_ptr->image + rand_int(250) + 150);
+					(void)set_image(p_ptr->image + randint0(250) + 150);
 				}
 			}
 			break;
@@ -1564,7 +1564,7 @@ bool make_attack_spell(int m_idx)
 			disturb(1, 0);
 			if (blind) msg_format("%^s mumbles.", m_name);
 			else msg_format("%^s points at you and curses.", m_name);
-			if (rand_int(100) < p_ptr->skill_sav)
+			if (randint0(100) < p_ptr->skill_sav)
 			{
 				msg_print("You resist the effects!");
 			}
@@ -1583,7 +1583,7 @@ bool make_attack_spell(int m_idx)
 			disturb(1, 0);
 			if (blind) msg_format("%^s mumbles.", m_name);
 			else msg_format("%^s points at you and curses horribly.", m_name);
-			if (rand_int(100) < p_ptr->skill_sav)
+			if (randint0(100) < p_ptr->skill_sav)
 			{
 				msg_print("You resist the effects!");
 			}
@@ -1602,7 +1602,7 @@ bool make_attack_spell(int m_idx)
 			disturb(1, 0);
 			if (blind) msg_format("%^s mumbles loudly.", m_name);
 			else msg_format("%^s points at you, incanting terribly!", m_name);
-			if (rand_int(100) < p_ptr->skill_sav)
+			if (randint0(100) < p_ptr->skill_sav)
 			{
 				msg_print("You resist the effects!");
 			}
@@ -1621,7 +1621,7 @@ bool make_attack_spell(int m_idx)
 			disturb(1, 0);
 			if (blind) msg_format("%^s screams the word 'DIE!'", m_name);
 			else msg_format("%^s points at you, screaming the word DIE!", m_name);
-			if (rand_int(100) < p_ptr->skill_sav)
+			if (randint0(100) < p_ptr->skill_sav)
 			{
 				msg_print("You resist the effects!");
 			}
@@ -1717,7 +1717,7 @@ bool make_attack_spell(int m_idx)
 			disturb(1, 0);
 			if (blind) msg_format("%^s mumbles.", m_name);
 			else msg_format("%^s casts a mana bolt.", m_name);
-			bolt(m_idx, GF_MANA, randint(rlev * 7 / 2) + 50);
+			bolt(m_idx, GF_MANA, randint1(rlev * 7 / 2) + 50);
 			update_smart_learn(m_idx, DRS_REFLECT);
 			break;
 		}
@@ -1767,13 +1767,13 @@ bool make_attack_spell(int m_idx)
 			{
 				msg_print("You refuse to be frightened.");
 			}
-			else if (rand_int(100) < p_ptr->skill_sav)
+			else if (randint0(100) < p_ptr->skill_sav)
 			{
 				msg_print("You refuse to be frightened.");
 			}
 			else
 			{
-				(void)set_afraid(p_ptr->afraid + rand_int(4) + 4);
+				(void)set_afraid(p_ptr->afraid + randint0(4) + 4);
 			}
 			update_smart_learn(m_idx, DRS_FEAR);
 			break;
@@ -1790,13 +1790,13 @@ bool make_attack_spell(int m_idx)
 			{
 				msg_print("You are unaffected!");
 			}
-			else if (rand_int(100) < p_ptr->skill_sav)
+			else if (randint0(100) < p_ptr->skill_sav)
 			{
 				msg_print("You resist the effects!");
 			}
 			else
 			{
-				(void)set_blind(12 + rand_int(4));
+				(void)set_blind(12 + randint0(4));
 			}
 			update_smart_learn(m_idx, DRS_BLIND);
 			break;
@@ -1813,13 +1813,13 @@ bool make_attack_spell(int m_idx)
 			{
 				msg_print("You disbelieve the feeble spell.");
 			}
-			else if (rand_int(100) < p_ptr->skill_sav)
+			else if (randint0(100) < p_ptr->skill_sav)
 			{
 				msg_print("You disbelieve the feeble spell.");
 			}
 			else
 			{
-				(void)set_confused(p_ptr->confused + rand_int(4) + 4);
+				(void)set_confused(p_ptr->confused + randint0(4) + 4);
 			}
 			update_smart_learn(m_idx, DRS_CONF);
 			break;
@@ -1835,13 +1835,13 @@ bool make_attack_spell(int m_idx)
 			{
 				msg_print("You are unaffected!");
 			}
-			else if (rand_int(100) < p_ptr->skill_sav)
+			else if (randint0(100) < p_ptr->skill_sav)
 			{
 				msg_print("You resist the effects!");
 			}
 			else
 			{
-				(void)set_slow(p_ptr->slow + rand_int(4) + 4);
+				(void)set_slow(p_ptr->slow + randint0(4) + 4);
 			}
 			update_smart_learn(m_idx, DRS_FREE);
 			break;
@@ -1858,13 +1858,13 @@ bool make_attack_spell(int m_idx)
 			{
 				msg_print("You are unaffected!");
 			}
-			else if (rand_int(100) < p_ptr->skill_sav)
+			else if (randint0(100) < p_ptr->skill_sav)
 			{
 				msg_format("You resist the effects!");
 			}
 			else
 			{
-				(void)set_paralyzed(p_ptr->paralyzed + rand_int(4) + 4);
+				(void)set_paralyzed(p_ptr->paralyzed + randint0(4) + 4);
 			}
 			update_smart_learn(m_idx, DRS_FREE);
 			break;
@@ -1905,13 +1905,13 @@ bool make_attack_spell(int m_idx)
 		{
 			disturb(1, 0);
 			msg_format("%^s invokes the Hand of Doom!", m_name);
-			if (rand_int(100) < p_ptr->skill_sav)
+			if (randint0(100) < p_ptr->skill_sav)
 			{
 				msg_format("You resist the effects!");
 			}
 			else
 			{
-				int dummy = (((s32b) ((65 + randint(25)) * (p_ptr->chp))) / 100);
+				int dummy = (((s32b) ((65 + randint1(25)) * (p_ptr->chp))) / 100);
 				msg_print("Your feel your life fade away!");
 				take_hit(dummy, m_name);
 				curse_equipment(100, 20);
@@ -2001,7 +2001,7 @@ bool make_attack_spell(int m_idx)
 			}
 
 			if (!(m_ptr->invulner))
-				m_ptr->invulner = randint(4) + 4;
+				m_ptr->invulner = randint1(4) + 4;
 
 			break;
 		}
@@ -2067,7 +2067,7 @@ bool make_attack_spell(int m_idx)
 			{
 				msg_print("You are unaffected!");
 			}
-			else if (rand_int(100) < p_ptr->skill_sav)
+			else if (randint0(100) < p_ptr->skill_sav)
 			{
 				msg_print("You resist the effects!");
 			}
@@ -2114,7 +2114,7 @@ bool make_attack_spell(int m_idx)
 			disturb(1, 0);
 			msg_format("%^s tries to blank your mind.", m_name);
 
-			if (rand_int(100) < p_ptr->skill_sav)
+			if (randint0(100) < p_ptr->skill_sav)
 			{
 				msg_print("You resist the effects!");
 			}

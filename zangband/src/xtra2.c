@@ -103,7 +103,7 @@ void check_experience(void)
 				 */
 				for (i = p_ptr->max_plv; i < p_ptr->lev; i++)
 				{
-					if (randint(5) == 1) level_mutation = TRUE;
+					if (randint1(5) == 1) level_mutation = TRUE;
 				}
 			}
 
@@ -509,7 +509,7 @@ void monster_death(int m_idx)
 	/* Drop a dead corpse? */
 
 	/* Hack: Do not drop a corpse in a random quest.  (reward is set) */
-	if (((randint(r_ptr->flags1 & RF1_UNIQUE ? 1 : 2) == 1) &&
+	if (((randint1(r_ptr->flags1 & RF1_UNIQUE ? 1 : 2) == 1) &&
 	    ((r_ptr->flags9 & RF9_DROP_CORPSE) ||
 	    (r_ptr->flags9 & RF9_DROP_SKELETON))) && !reward)
 	{
@@ -530,11 +530,11 @@ void monster_death(int m_idx)
 			/* Lots of damage in one blow */
 			if ((0 - ((m_ptr->maxhp) / 4)) > m_ptr->hp)
 			{
-				if (randint(3) == 1) corpse = TRUE;
+				if (randint1(3) == 1) corpse = TRUE;
 			}
 			else
 			{
-				if (randint(3) != 1) corpse = TRUE;
+				if (randint1(3) != 1) corpse = TRUE;
 			}
 		}
 
@@ -605,7 +605,7 @@ void monster_death(int m_idx)
 		q_ptr->art_flags3 |= (TR3_CURSED | TR3_HEAVY_CURSE);
 		q_ptr->ident |= IDENT_CURSED;
 
-		if (randint(2) == 1)
+		if (randint1(2) == 1)
 			q_ptr->art_flags3 |= (TR3_DRAIN_EXP);
 		else
 			q_ptr->art_flags3 |= (TR3_AGGRAVATE);
@@ -624,7 +624,7 @@ void monster_death(int m_idx)
 	 */
 	else if (strstr((r_name + r_ptr->name), "the Dawn"))
 	{
-		if (randint(20) != 13)
+		if (randint1(20) != 13)
 		{
 			int wy = y, wx = x;
 			int attempts = 100;
@@ -679,7 +679,7 @@ void monster_death(int m_idx)
 
 	/* Bloodletters of Khorne may drop a blade of chaos */
 	else if (strstr((r_name + r_ptr->name), "Bloodletter") &&
-	         (randint(100) < 15))
+	         (randint1(100) < 15))
 	{
 		/* Get local object */
 		q_ptr = &forge;
@@ -770,7 +770,7 @@ void monster_death(int m_idx)
 
 			if (strstr((r_name + r_ptr->name), "Oberon,"))
 			{
-				if (randint(3) == 1)
+				if (randint1(3) == 1)
 				{
 					a_idx = ART_THRAIN;
 					chance = 33;
@@ -793,7 +793,7 @@ void monster_death(int m_idx)
 			}
 			else if (strstr((r_name + r_ptr->name), "Brand, "))
 			{
-				if (randint(3) != 1)
+				if (randint1(3) != 1)
 				{
 					a_idx = ART_BRAND;
 					chance = 25;
@@ -806,7 +806,7 @@ void monster_death(int m_idx)
 			}
 			else if (strstr((r_name + r_ptr->name), "Corwin,"))
 			{
-				if (randint(3) != 1)
+				if (randint1(3) != 1)
 				{
 					a_idx = ART_GRAYSWANDIR;
 					chance = 33;
@@ -853,7 +853,7 @@ void monster_death(int m_idx)
 				chance = 50;
 			}
 
-			if ((a_idx > 0) && ((randint(99) < chance) || (wizard)))
+			if ((a_idx > 0) && ((randint1(99) < chance) || (wizard)))
 			{
 				if (a_info[a_idx].cur_num == 0)
 				{
@@ -867,8 +867,8 @@ void monster_death(int m_idx)
 	}
 
 	/* Determine how much we can drop */
-	if ((r_ptr->flags1 & RF1_DROP_60) && (rand_int(100) < 60)) number++;
-	if ((r_ptr->flags1 & RF1_DROP_90) && (rand_int(100) < 90)) number++;
+	if ((r_ptr->flags1 & RF1_DROP_60) && (randint0(100) < 60)) number++;
+	if ((r_ptr->flags1 & RF1_DROP_90) && (randint0(100) < 90)) number++;
 	if  (r_ptr->flags1 & RF1_DROP_1D2) number += damroll(1, 2);
 	if  (r_ptr->flags1 & RF1_DROP_2D2) number += damroll(2, 2);
 	if  (r_ptr->flags1 & RF1_DROP_3D2) number += damroll(3, 2);
@@ -892,7 +892,7 @@ void monster_death(int m_idx)
 		object_wipe(q_ptr);
 
 		/* Make Gold */
-		if (do_gold && (!do_item || (rand_int(100) < 50)))
+		if (do_gold && (!do_item || (randint0(100) < 50)))
 		{
 			/* Make some gold */
 			if (!make_gold(q_ptr)) continue;
@@ -945,7 +945,7 @@ void monster_death(int m_idx)
 		object_wipe(q_ptr);
 
 		/* Average of 20 great objects per game */
-		if (rand_int(number_of_quests() + 1) < 20)
+		if (randint0(number_of_quests() + 1) < 20)
 		{
 			/* Make a great object */
 			make_object(q_ptr, TRUE, TRUE);
@@ -998,7 +998,7 @@ void monster_death(int m_idx)
  */
 int mon_damage_mod(monster_type *m_ptr, int dam, int type)
 {
-	if (m_ptr->invulner && !(randint(PENETRATE_INVULNERABILITY) == 1))
+	if (m_ptr->invulner && !(randint1(PENETRATE_INVULNERABILITY) == 1))
 		return (0);
 	else
 		return (dam);
@@ -1091,12 +1091,12 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 					msg_format("%^s says: %s", m_name, line_got);
 			}
 
-			if ((r_ptr->flags1 & RF1_UNIQUE) && (randint(REWARD_CHANCE) == 1) &&
+			if ((r_ptr->flags1 & RF1_UNIQUE) && (randint1(REWARD_CHANCE) == 1) &&
 			    !(r_ptr->flags7 & RF7_FRIENDLY))
 			{
 				if (!get_rnd_line("crime.txt", m_ptr->r_idx, line_got))
 				{
-					int reward = 250 * (randint(10) + r_ptr->level - 5);
+					int reward = 250 * (randint1(10) + r_ptr->level - 5);
 
 					/* Force 'good' values */
 					if (reward > 32000) reward = 32000;
@@ -1116,7 +1116,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 
 		if (r_ptr->level > dun_level)
 		{
-			if (randint(10) <= (dun_level - r_ptr->level))
+			if (randint1(10) <= (dun_level - r_ptr->level))
 				chg_virtue(V_VALOUR, 1);
 		}
 		if (r_ptr->level >= 2 * (p_ptr->lev))
@@ -1133,7 +1133,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 			chg_virtue(V_VITALITY, -2);
 		}
 
-		if ((r_ptr->flags1 & RF1_UNIQUE) & (randint(3) == 1))
+		if ((r_ptr->flags1 & RF1_UNIQUE) & (randint1(3) == 1))
 			chg_virtue(V_INDIVIDUALISM, -1);
 
 		if ((strstr((r_name + r_ptr->name),"beggar")) ||
@@ -1143,7 +1143,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		}
 
 		if ((r_ptr->flags1 & RF3_GOOD) &&
-			((r_ptr->level) / 10 + (3 * dun_level) >= randint(100)))
+			((r_ptr->level) / 10 + (3 * dun_level) >= randint1(100)))
 
 			chg_virtue(V_UNLIFE, 1);
 
@@ -1152,7 +1152,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		{
 			if (r_ptr->flags1 & RF1_UNIQUE)
 				chg_virtue(V_FAITH, -2);
-			else if ((r_ptr->level) / 10 + (3 * dun_level) >= randint(100))
+			else if ((r_ptr->level) / 10 + (3 * dun_level) >= randint1(100))
 				chg_virtue(V_FAITH, -1);
 		}
 
@@ -1162,7 +1162,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		{
 			if (r_ptr->flags1 & RF1_UNIQUE)
 				chg_virtue(V_FAITH, 2);
-			else if ((r_ptr->level) / 10 + (3 * dun_level) >= randint(100))
+			else if ((r_ptr->level) / 10 + (3 * dun_level) >= randint1(100))
 				chg_virtue(V_FAITH, 1);
 		}
 
@@ -1175,7 +1175,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 			{
 				chg_virtue(V_HONOUR, 10);
 			}
-			else if ((r_ptr->level) / 10 + (2 * dun_level) >= randint(100))
+			else if ((r_ptr->level) / 10 + (2 * dun_level) >= randint1(100))
 			{
 				chg_virtue(V_HONOUR, 1);
 			}
@@ -1197,7 +1197,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		{
 			if (r_ptr->flags1 & RF1_UNIQUE)
 				chg_virtue(V_JUSTICE, 3);
-			else if (1 + (r_ptr->level / 10 + (2 * dun_level)) >= randint(100))
+			else if (1 + (r_ptr->level / 10 + (2 * dun_level)) >= randint1(100))
 				chg_virtue(V_JUSTICE, 1);
 		}
 		else if (innocent)
@@ -1207,7 +1207,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 
 		if ((r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags3 & RF3_EVIL))
 		{
-			if (randint(3) == 1) chg_virtue(V_NATURE, -1);
+			if (randint1(3) == 1) chg_virtue(V_NATURE, -1);
 		}
 
 		/* Make a sound */
@@ -1297,9 +1297,9 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		}
 		
 		/* Don't kill Amberites */
-		if ((r_ptr->flags3 & RF3_AMBERITE) && (randint(2) == 1))
+		if ((r_ptr->flags3 & RF3_AMBERITE) && (randint1(2) == 1))
 		{
-			int curses = 1 + randint(3);
+			int curses = 1 + randint1(3);
 			bool stop_ty = FALSE;
 			int count = 0;
 
@@ -1329,7 +1329,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 	/* Mega-Hack -- Pain cancels fear */
 	if (m_ptr->monfear && (dam > 0))
 	{
-		int tmp = randint(dam);
+		int tmp = randint1(dam);
 
 		/* Cure a little fear */
 		if (tmp < m_ptr->monfear)
@@ -1361,14 +1361,14 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		 * Run (sometimes) if at 10% or less of max hit points,
 		 * or (usually) when hit for half its current hit points
 		 */
-		if (((percentage <= 10) && (rand_int(10) < percentage)) ||
-		    ((dam >= m_ptr->hp) && (rand_int(100) < 80)))
+		if (((percentage <= 10) && (randint0(10) < percentage)) ||
+		    ((dam >= m_ptr->hp) && (randint0(100) < 80)))
 		{
 			/* Hack -- note fear */
 			(*fear) = TRUE;
 
 			/* XXX XXX XXX Hack -- Add some timed fear */
-			m_ptr->monfear = (randint(10) +
+			m_ptr->monfear = (randint1(10) +
 			                  (((dam >= m_ptr->hp) && (percentage > 7)) ?
 			                   20 : ((11 - percentage) * 5)));
 		}
@@ -3160,7 +3160,7 @@ bool get_aim_dir(int *dp)
 	if (p_ptr->confused)
 	{
 		/* Random direction */
-		dir = ddd[rand_int(8)];
+		dir = ddd[randint0(8)];
 	}
 
 	/* Notice confusion */
@@ -3240,10 +3240,10 @@ bool get_rep_dir(int *dp, bool under)
 	if (p_ptr->confused)
 	{
 		/* Standard confusion */
-		if (rand_int(100) < 75)
+		if (randint0(100) < 75)
 		{
 			/* Random direction */
-			dir = ddd[rand_int(8)];
+			dir = ddd[randint0(8)];
 		}
 	}
 
@@ -3293,10 +3293,10 @@ void gain_level_reward(int chosen_reward)
 	else if (!(p_ptr->lev % 13)) nasty_chance = 3;
 	else if (!(p_ptr->lev % 14)) nasty_chance = 12;
 
-	if (randint(nasty_chance) == 1)
-		type = randint(20); /* Allow the 'nasty' effects */
+	if (randint1(nasty_chance) == 1)
+		type = randint1(20); /* Allow the 'nasty' effects */
 	else
-		type = randint(15) + 5; /* Or disallow them */
+		type = randint1(15) + 5; /* Or disallow them */
 
 	if (type < 1) type = 1;
 	if (type > 20) type = 20;
@@ -3308,7 +3308,7 @@ void gain_level_reward(int chosen_reward)
 
 	effect = chaos_rewards[p_ptr->chaos_patron][type];
 
-	if ((randint(6) == 1) && !chosen_reward)
+	if ((randint1(6) == 1) && !chosen_reward)
 	{
 		msg_format("%^s rewards you with a mutation!",
 			chaos_patrons[p_ptr->chaos_patron]);
@@ -3361,7 +3361,7 @@ void gain_level_reward(int chosen_reward)
 			/* Get local object */
 			q_ptr = &forge;
 			tval = TV_SWORD;
-			switch (randint(p_ptr->lev))
+			switch (randint1(p_ptr->lev))
 			{
 				case 0: case 1:
 					sval = SV_DAGGER;
@@ -3449,9 +3449,9 @@ void gain_level_reward(int chosen_reward)
 			}
 
 			object_prep(q_ptr, lookup_kind(tval, sval));
-			q_ptr->to_h = 3 + randint(dun_level) % 10;
-			q_ptr->to_d = 3 + randint(dun_level) % 10;
-			random_resistance(q_ptr, FALSE, randint(34) + 4);
+			q_ptr->to_h = 3 + randint1(dun_level) % 10;
+			q_ptr->to_d = 3 + randint1(dun_level) % 10;
+			random_resistance(q_ptr, FALSE, randint1(34) + 4);
 			q_ptr->name2 = EGO_CHAOTIC;
 
 #ifdef USE_SCRIPT
@@ -3465,13 +3465,13 @@ void gain_level_reward(int chosen_reward)
 			msg_format("The voice of %s booms out:",
 				chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Thy deed hath earned thee a worthy reward.'");
-			acquirement(py, px, randint(2) + 1, FALSE, FALSE);
+			acquirement(py, px, randint1(2) + 1, FALSE, FALSE);
 			break;
 		case REW_GREA_OBS:
 			msg_format("The voice of %s booms out:",
 				chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Behold, mortal, how generously I reward thy loyalty.'");
-			acquirement(py, px, randint(2) + 1, TRUE, FALSE);
+			acquirement(py, px, randint1(2) + 1, TRUE, FALSE);
 			break;
 		case REW_TY_CURSE:
 		{
@@ -3485,7 +3485,7 @@ void gain_level_reward(int chosen_reward)
 			msg_format("The voice of %s booms out:",
 				chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'My pets, destroy the arrogant mortal!'");
-			for (i = 0; i < randint(5) + 1; i++)
+			for (i = 0; i < randint1(5) + 1; i++)
 			{
 				(void)summon_specific(0, py, px, dun_level, 0, TRUE, FALSE, FALSE);
 			}
@@ -3506,19 +3506,19 @@ void gain_level_reward(int chosen_reward)
 			msg_format("The voice of %s rings out:",
 				chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Stay, mortal, and let me mold thee.'");
-			if ((randint(3) == 1) && !(chaos_stats[p_ptr->chaos_patron] < 0))
+			if ((randint1(3) == 1) && !(chaos_stats[p_ptr->chaos_patron] < 0))
 				do_inc_stat(chaos_stats[p_ptr->chaos_patron]);
 			else
-				do_inc_stat(rand_int(A_MAX));
+				do_inc_stat(randint0(A_MAX));
 			break;
 		case REW_LOSE_ABL:
 			msg_format("The voice of %s booms out:",
 				chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'I grow tired of thee, mortal.'");
-			if ((randint(3) == 1) && !(chaos_stats[p_ptr->chaos_patron] < 0))
+			if ((randint1(3) == 1) && !(chaos_stats[p_ptr->chaos_patron] < 0))
 				do_dec_stat(chaos_stats[p_ptr->chaos_patron]);
 			else
-				(void)do_dec_stat(rand_int(A_MAX));
+				(void)do_dec_stat(randint0(A_MAX));
 			break;
 		case REW_RUIN_ABL:
 			msg_format("The voice of %s thunders:",
@@ -3527,7 +3527,7 @@ void gain_level_reward(int chosen_reward)
 			msg_print("You feel less powerful!");
 			for (i = 0; i < A_MAX; i++)
 			{
-				(void)dec_stat(i, 10 + randint(15), TRUE);
+				(void)dec_stat(i, 10 + randint1(15), TRUE);
 			}
 			break;
 		case REW_POLY_WND:
@@ -3584,7 +3584,7 @@ void gain_level_reward(int chosen_reward)
 			msg_format("The voice of %s whispers:",
 				chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Now thou shalt pay for annoying me.'");
-			switch (randint(4))
+			switch (randint1(4))
 			{
 				case 1:
 				{
@@ -3595,13 +3595,13 @@ void gain_level_reward(int chosen_reward)
 					activate_hi_summon();
 					break;
 				case 3:
-					if (randint(2) == 1) (void)curse_weapon();
+					if (randint1(2) == 1) (void)curse_weapon();
 					else (void)curse_armor();
 					break;
 				default:
 					for (i = 0; i < A_MAX; i++)
 					{
-						(void)dec_stat(i, 10 + randint(15), TRUE);
+						(void)dec_stat(i, 10 + randint1(15), TRUE);
 					}
 			}
 			break;
@@ -3615,14 +3615,14 @@ void gain_level_reward(int chosen_reward)
 
 			for (i = 0; i < A_MAX; i++)
 			{
-				(void)dec_stat(i, 10 + randint(15), FALSE);
+				(void)dec_stat(i, 10 + randint1(15), FALSE);
 			}
 
 			activate_hi_summon();
 			(void)activate_ty_curse(FALSE, &count);
 
-			if (randint(2) == 1) (void)curse_weapon();
-			if (randint(2) == 1) (void)curse_armor();
+			if (randint1(2) == 1) (void)curse_weapon();
+			if (randint1(2) == 1) (void)curse_armor();
 
 			break;
 		}
@@ -3816,7 +3816,7 @@ bool get_hack_dir(int *dp)
 	{
 		/* XXX XXX XXX */
 		/* Random direction */
-		dir = ddd[rand_int(8)];
+		dir = ddd[randint0(8)];
 	}
 
 	/* Notice confusion */

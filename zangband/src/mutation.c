@@ -26,7 +26,7 @@ bool gain_random_mutation(int choose_mut)
 
 	while (attempts_left--)
 	{
-		switch (choose_mut ? choose_mut : randint(193))
+		switch (choose_mut ? choose_mut : randint1(193))
 		{
 		case 1: case 2: case 3: case 4:
 			muta_class = &(p_ptr->muta1);
@@ -546,7 +546,7 @@ bool gain_random_mutation(int choose_mut)
 
 		if (p_ptr->prace == RACE_VAMPIRE &&
 		  !(p_ptr->muta1 & MUT1_HYPN_GAZE) &&
-		   (randint(10) < 7))
+		   (randint1(10) < 7))
 		{
 			muta_class = &(p_ptr->muta1);
 			muta_which = MUT1_HYPN_GAZE;
@@ -555,7 +555,7 @@ bool gain_random_mutation(int choose_mut)
 
 		else if (p_ptr->prace == RACE_IMP &&
 			!(p_ptr->muta2 & MUT2_HORNS) &&
-			(randint(10) < 7))
+			(randint1(10) < 7))
 		{
 			muta_class = &(p_ptr->muta2);
 			muta_which = MUT2_HORNS;
@@ -564,7 +564,7 @@ bool gain_random_mutation(int choose_mut)
 
 		else if (p_ptr->prace == RACE_YEEK &&
 			!(p_ptr->muta1 & MUT1_SHRIEK) &&
-			(randint(10) < 7))
+			(randint1(10) < 7))
 		{
 			muta_class = &(p_ptr->muta1);
 			muta_which = MUT1_SHRIEK;
@@ -573,7 +573,7 @@ bool gain_random_mutation(int choose_mut)
 
 		else if (p_ptr->prace == RACE_BEASTMAN &&
 			!(p_ptr->muta1 & MUT1_POLYMORPH) &&
-			(randint(10) < 2))
+			(randint1(10) < 2))
 		{
 			muta_class = &(p_ptr->muta1);
 			muta_which = MUT1_POLYMORPH;
@@ -582,7 +582,7 @@ bool gain_random_mutation(int choose_mut)
 
 		else if (p_ptr->prace == RACE_MIND_FLAYER &&
 			!(p_ptr->muta2 & MUT2_TENTACLES) &&
-			(randint(10) < 7))
+			(randint1(10) < 7))
 		{
 			muta_class = &(p_ptr->muta2);
 			muta_which = MUT2_TENTACLES;
@@ -744,7 +744,7 @@ bool lose_mutation(int choose_mut)
 
 	while (attempts_left--)
 	{
-		switch (choose_mut ? choose_mut : randint(194))
+		switch (choose_mut ? choose_mut : randint1(194))
 		{
 		case 1: case 2: case 3: case 4:
 			muta_class = &(p_ptr->muta1);
@@ -2039,7 +2039,7 @@ void mutation_power_aux(u32b power)
 		case MUT1_BERSERK:
 			if (racial_aux(8, 8, A_STR, 14))
 			{
-				(void)set_shero(p_ptr->shero + randint(25) + 25);
+				(void)set_shero(p_ptr->shero + randint1(25) + 25);
 				(void)hp_player(30);
 				(void)set_afraid(0);
 			}
@@ -2075,24 +2075,24 @@ void mutation_power_aux(u32b power)
 			if (racial_aux(10, 12, A_CON, 12))
 			{
 				int num = lvl / 10;
-				int dur = randint(20) + 20;
+				int dur = randint1(20) + 20;
 
-				if (rand_int(5) < num)
+				if (randint0(5) < num)
 				{
 					(void)set_oppose_acid(p_ptr->oppose_acid + dur);
 					num--;
 				}
-				if (rand_int(4) < num)
+				if (randint0(4) < num)
 				{
 					(void)set_oppose_elec(p_ptr->oppose_elec + dur);
 					num--;
 				}
-				if (rand_int(3) < num)
+				if (randint0(3) < num)
 				{
 					(void)set_oppose_fire(p_ptr->oppose_fire + dur);
 					num--;
 				}
-				if (rand_int(2) < num)
+				if (randint0(2) < num)
 				{
 					(void)set_oppose_cold(p_ptr->oppose_cold + dur);
 					num--;
@@ -2184,7 +2184,7 @@ void mutation_power_aux(u32b power)
 			{
 				/* Fake a population explosion. */
 				msg_print("You suddenly have a headache!");
-				take_hit(randint(17) + 17, "the strain of forcing abstinence");
+				take_hit(randint1(17) + 17, "the strain of forcing abstinence");
 				num_repro += MAX_REPRO;
 			}
 			break;
@@ -2247,7 +2247,7 @@ void mutation_power_aux(u32b power)
 					}
 					if (!p_ptr->word_recall)
 					{
-						p_ptr->word_recall = rand_int(21) + 15;
+						p_ptr->word_recall = randint0(21) + 15;
 						msg_print("The air about you becomes charged...");
 						p_ptr->redraw |= (PR_STATUS);
 					}

@@ -67,7 +67,7 @@ static void get_random_virtue(int which)
 	/* Randomly choose a type */
 	while (!type || exist_virtue(type))
 	{
-		switch (randint(29))
+		switch (randint1(29))
 		{
 		case 1: case 2: case 3:
 			type = V_SACRIFICE;

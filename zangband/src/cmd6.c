@@ -98,7 +98,7 @@ static void do_cmd_eat_food_aux(int item)
 			{
 				if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
 				{
-					if (set_poisoned(p_ptr->poisoned + rand_int(10) + 10))
+					if (set_poisoned(p_ptr->poisoned + randint0(10) + 10))
 					{
 						ident = TRUE;
 					}
@@ -110,7 +110,7 @@ static void do_cmd_eat_food_aux(int item)
 			{
 				if (!p_ptr->resist_blind)
 				{
-					if (set_blind(p_ptr->blind + rand_int(200) + 200))
+					if (set_blind(p_ptr->blind + randint0(200) + 200))
 					{
 						ident = TRUE;
 					}
@@ -122,7 +122,7 @@ static void do_cmd_eat_food_aux(int item)
 			{
 				if (!p_ptr->resist_fear)
 				{
-					if (set_afraid(p_ptr->afraid + rand_int(10) + 10))
+					if (set_afraid(p_ptr->afraid + randint0(10) + 10))
 					{
 						ident = TRUE;
 					}
@@ -134,7 +134,7 @@ static void do_cmd_eat_food_aux(int item)
 			{
 				if (!p_ptr->resist_conf)
 				{
-					if (set_confused(p_ptr->confused + rand_int(10) + 10))
+					if (set_confused(p_ptr->confused + randint0(10) + 10))
 					{
 						ident = TRUE;
 					}
@@ -146,7 +146,7 @@ static void do_cmd_eat_food_aux(int item)
 			{
 				if (!p_ptr->resist_chaos)
 				{
-					if (set_image(p_ptr->image + rand_int(250) + 250))
+					if (set_image(p_ptr->image + randint0(250) + 250))
 					{
 						ident = TRUE;
 					}
@@ -158,7 +158,7 @@ static void do_cmd_eat_food_aux(int item)
 			{
 				if (!p_ptr->free_act)
 				{
-					if (set_paralyzed(p_ptr->paralyzed + rand_int(10) + 10))
+					if (set_paralyzed(p_ptr->paralyzed + randint0(10) + 10))
 					{
 						ident = TRUE;
 					}
@@ -481,7 +481,7 @@ static void do_cmd_quaff_potion_aux(int item)
 
 		case SV_POTION_SLOWNESS:
 		{
-			if (set_slow(p_ptr->slow + randint(25) + 15)) ident = TRUE;
+			if (set_slow(p_ptr->slow + randint1(25) + 15)) ident = TRUE;
 			break;
 		}
 
@@ -499,7 +499,7 @@ static void do_cmd_quaff_potion_aux(int item)
 		{
 			if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
 			{
-				if (set_poisoned(p_ptr->poisoned + rand_int(15) + 10))
+				if (set_poisoned(p_ptr->poisoned + randint0(15) + 10))
 				{
 					ident = TRUE;
 				}
@@ -511,7 +511,7 @@ static void do_cmd_quaff_potion_aux(int item)
 		{
 			if (!p_ptr->resist_blind)
 			{
-				if (set_blind(p_ptr->blind + rand_int(100) + 100))
+				if (set_blind(p_ptr->blind + randint0(100) + 100))
 				{
 					ident = TRUE;
 				}
@@ -525,7 +525,7 @@ static void do_cmd_quaff_potion_aux(int item)
 
 			if (!p_ptr->resist_conf)
 			{
-				if (set_confused(p_ptr->confused + rand_int(20) + 15))
+				if (set_confused(p_ptr->confused + randint0(20) + 15))
 				{
 					ident = TRUE;
 				}
@@ -535,7 +535,7 @@ static void do_cmd_quaff_potion_aux(int item)
 			{
 				if (one_in_(2))
 				{
-					if (set_image(p_ptr->image + rand_int(150) + 150))
+					if (set_image(p_ptr->image + randint0(150) + 150))
 					{
 						ident = TRUE;
 					}
@@ -573,7 +573,7 @@ static void do_cmd_quaff_potion_aux(int item)
 					/* Remove the monster restriction */
 					get_mon_num_prep(NULL, NULL);
 				}
-				if (set_paralyzed(p_ptr->paralyzed + rand_int(4) + 4))
+				if (set_paralyzed(p_ptr->paralyzed + randint0(4) + 4))
 				{
 					ident = TRUE;
 				}
@@ -668,7 +668,7 @@ static void do_cmd_quaff_potion_aux(int item)
 
 		case SV_POTION_INFRAVISION:
 		{
-			if (set_tim_infra(p_ptr->tim_infra + 100 + randint(100)))
+			if (set_tim_infra(p_ptr->tim_infra + 100 + randint1(100)))
 			{
 				ident = TRUE;
 			}
@@ -677,7 +677,7 @@ static void do_cmd_quaff_potion_aux(int item)
 
 		case SV_POTION_DETECT_INVIS:
 		{
-			if (set_tim_invis(p_ptr->tim_invis + 12 + randint(12)))
+			if (set_tim_invis(p_ptr->tim_invis + 12 + randint1(12)))
 			{
 				ident = TRUE;
 			}
@@ -706,7 +706,7 @@ static void do_cmd_quaff_potion_aux(int item)
 		{
 			if (!p_ptr->fast)
 			{
-				if (set_fast(randint(25) + 15)) ident = TRUE;
+				if (set_fast(randint1(25) + 15)) ident = TRUE;
 			}
 			else
 			{
@@ -717,7 +717,7 @@ static void do_cmd_quaff_potion_aux(int item)
 
 		case SV_POTION_RESIST_HEAT:
 		{
-			if (set_oppose_fire(p_ptr->oppose_fire + randint(10) + 10))
+			if (set_oppose_fire(p_ptr->oppose_fire + randint1(10) + 10))
 			{
 				ident = TRUE;
 			}
@@ -726,7 +726,7 @@ static void do_cmd_quaff_potion_aux(int item)
 
 		case SV_POTION_RESIST_COLD:
 		{
-			if (set_oppose_cold(p_ptr->oppose_cold + randint(10) + 10))
+			if (set_oppose_cold(p_ptr->oppose_cold + randint1(10) + 10))
 			{
 				ident = TRUE;
 			}
@@ -736,7 +736,7 @@ static void do_cmd_quaff_potion_aux(int item)
 		case SV_POTION_HEROISM:
 		{
 			if (set_afraid(0)) ident = TRUE;
-			if (set_hero(p_ptr->hero + randint(25) + 25)) ident = TRUE;
+			if (set_hero(p_ptr->hero + randint1(25) + 25)) ident = TRUE;
 			if (hp_player(10)) ident = TRUE;
 			break;
 		}
@@ -744,7 +744,7 @@ static void do_cmd_quaff_potion_aux(int item)
 		case SV_POTION_BESERK_STRENGTH:
 		{
 			if (set_afraid(0)) ident = TRUE;
-			if (set_shero(p_ptr->shero + randint(25) + 25)) ident = TRUE;
+			if (set_shero(p_ptr->shero + randint1(25) + 25)) ident = TRUE;
 			if (hp_player(30)) ident = TRUE;
 			break;
 		}
@@ -982,11 +982,11 @@ static void do_cmd_quaff_potion_aux(int item)
 
 		case SV_POTION_RESISTANCE:
 		{
-			(void)set_oppose_acid(p_ptr->oppose_acid + randint(20) + 20);
-			(void)set_oppose_elec(p_ptr->oppose_elec + randint(20) + 20);
-			(void)set_oppose_fire(p_ptr->oppose_fire + randint(20) + 20);
-			(void)set_oppose_cold(p_ptr->oppose_cold + randint(20) + 20);
-			(void)set_oppose_pois(p_ptr->oppose_pois + randint(20) + 20);
+			(void)set_oppose_acid(p_ptr->oppose_acid + randint1(20) + 20);
+			(void)set_oppose_elec(p_ptr->oppose_elec + randint1(20) + 20);
+			(void)set_oppose_fire(p_ptr->oppose_fire + randint1(20) + 20);
+			(void)set_oppose_cold(p_ptr->oppose_cold + randint1(20) + 20);
+			(void)set_oppose_pois(p_ptr->oppose_pois + randint1(20) + 20);
 			ident = TRUE;
 			break;
 		}
@@ -1005,7 +1005,7 @@ static void do_cmd_quaff_potion_aux(int item)
 
 		case SV_POTION_INVULNERABILITY:
 		{
-			(void)set_invuln(p_ptr->invuln + randint(7) + 7);
+			(void)set_invuln(p_ptr->invuln + randint1(7) + 7);
 			ident = TRUE;
 			break;
 		}
@@ -1142,7 +1142,7 @@ static void do_cmd_read_scroll_aux(int item)
 		{
 			if (!(p_ptr->resist_blind) && !(p_ptr->resist_dark))
 			{
-				(void)set_blind(p_ptr->blind + 3 + randint(5));
+				(void)set_blind(p_ptr->blind + 3 + randint1(5));
 			}
 			if (unlite_area(10, 3)) ident = TRUE;
 			break;
@@ -1170,7 +1170,7 @@ static void do_cmd_read_scroll_aux(int item)
 
 		case SV_SCROLL_SUMMON_MONSTER:
 		{
-			for (k = 0; k < randint(3); k++)
+			for (k = 0; k < randint1(3); k++)
 			{
 				if (summon_specific(0, py, px, dun_level, 0, TRUE, FALSE, FALSE))
 				{
@@ -1182,7 +1182,7 @@ static void do_cmd_read_scroll_aux(int item)
 
 		case SV_SCROLL_SUMMON_UNDEAD:
 		{
-			for (k = 0; k < randint(3); k++)
+			for (k = 0; k < randint1(3); k++)
 			{
 				if (summon_specific(0, py, px, dun_level, SUMMON_UNDEAD, TRUE, FALSE, FALSE))
 				{
@@ -1280,14 +1280,14 @@ static void do_cmd_read_scroll_aux(int item)
 
 		case SV_SCROLL_STAR_ENCHANT_ARMOR:
 		{
-			if (!enchant_spell(0, 0, randint(5) + 2)) used_up = FALSE;
+			if (!enchant_spell(0, 0, randint1(5) + 2)) used_up = FALSE;
 			ident = TRUE;
 			break;
 		}
 
 		case SV_SCROLL_STAR_ENCHANT_WEAPON:
 		{
-			if (!enchant_spell(randint(5), randint(5), 0)) used_up = FALSE;
+			if (!enchant_spell(randint1(5), randint1(5), 0)) used_up = FALSE;
 			ident = TRUE;
 			break;
 		}
@@ -1359,19 +1359,19 @@ static void do_cmd_read_scroll_aux(int item)
 
 		case SV_SCROLL_BLESSING:
 		{
-			if (set_blessed(p_ptr->blessed + randint(12) + 6)) ident = TRUE;
+			if (set_blessed(p_ptr->blessed + randint1(12) + 6)) ident = TRUE;
 			break;
 		}
 
 		case SV_SCROLL_HOLY_CHANT:
 		{
-			if (set_blessed(p_ptr->blessed + randint(24) + 12)) ident = TRUE;
+			if (set_blessed(p_ptr->blessed + randint1(24) + 12)) ident = TRUE;
 			break;
 		}
 
 		case SV_SCROLL_HOLY_PRAYER:
 		{
-			if (set_blessed(p_ptr->blessed + randint(48) + 24)) ident = TRUE;
+			if (set_blessed(p_ptr->blessed + randint1(48) + 24)) ident = TRUE;
 			break;
 		}
 
@@ -1390,7 +1390,7 @@ static void do_cmd_read_scroll_aux(int item)
 		case SV_SCROLL_PROTECTION_FROM_EVIL:
 		{
 			k = 3 * p_ptr->lev;
-			if (set_protevil(p_ptr->protevil + randint(25) + k)) ident = TRUE;
+			if (set_protevil(p_ptr->protevil + randint1(25) + k)) ident = TRUE;
 			break;
 		}
 
@@ -1446,7 +1446,7 @@ static void do_cmd_read_scroll_aux(int item)
 
 		case SV_SCROLL_STAR_ACQUIREMENT:
 		{
-			acquirement(py, px, randint(2) + 1, TRUE, FALSE);
+			acquirement(py, px, randint1(2) + 1, TRUE, FALSE);
 			ident = TRUE;
 			break;
 		}
@@ -1457,7 +1457,7 @@ static void do_cmd_read_scroll_aux(int item)
 			fire_ball(GF_FIRE, 0, 300, 4);
 			/* Note: "Double" damage since it is centered on the player ... */
 			if (!(p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire))
-				take_hit(50 + randint(50), "a Scroll of Fire");
+				take_hit(50 + randint1(50), "a Scroll of Fire");
 			ident = TRUE;
 			break;
 		}
@@ -1467,7 +1467,7 @@ static void do_cmd_read_scroll_aux(int item)
 		{
 			fire_ball(GF_ICE, 0, 350, 4);
 			if (!(p_ptr->oppose_cold || p_ptr->resist_cold || p_ptr->immune_cold))
-				take_hit(100 + randint(100), "a Scroll of Ice");
+				take_hit(100 + randint1(100), "a Scroll of Ice");
 			ident = TRUE;
 			break;
 		}
@@ -1476,7 +1476,7 @@ static void do_cmd_read_scroll_aux(int item)
 		{
 			fire_ball(GF_CHAOS, 0, 400, 4);
 			if (!p_ptr->resist_chaos)
-				take_hit(150 + randint(150), "a Scroll of Logrus");
+				take_hit(150 + randint1(150), "a Scroll of Logrus");
 			ident = TRUE;
 			break;
 		}
@@ -1485,7 +1485,7 @@ static void do_cmd_read_scroll_aux(int item)
 		{
 			errr err;
 
-			switch (randint(20))
+			switch (randint1(20))
 			{
 				case 1:
 					err = get_rnd_line("chainswd.txt", 0, Rumor);
@@ -1672,13 +1672,13 @@ static void do_cmd_use_staff_aux(int item)
 	chance = chance - lev / 2;
 
 	/* Give everyone a (slight) chance */
-	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
+	if ((chance < USE_DEVICE) && (randint0(USE_DEVICE - chance + 1) == 0))
 	{
 		chance = USE_DEVICE;
 	}
 
 	/* Roll for usage */
-	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE))
+	if ((chance < USE_DEVICE) || (randint1(chance) < USE_DEVICE))
 	{
 		if (flush_failure) flush();
 		msg_print("You failed to use the staff properly.");
@@ -1711,7 +1711,7 @@ static void do_cmd_use_staff_aux(int item)
 		{
 			if (!(p_ptr->resist_blind) && !(p_ptr->resist_dark))
 			{
-				if (set_blind(p_ptr->blind + 3 + randint(5))) ident = TRUE;
+				if (set_blind(p_ptr->blind + 3 + randint1(5))) ident = TRUE;
 			}
 			if (unlite_area(10, 3)) ident = TRUE;
 			break;
@@ -1719,7 +1719,7 @@ static void do_cmd_use_staff_aux(int item)
 
 		case SV_STAFF_SLOWNESS:
 		{
-			if (set_slow(p_ptr->slow + randint(30) + 15)) ident = TRUE;
+			if (set_slow(p_ptr->slow + randint1(30) + 15)) ident = TRUE;
 			break;
 		}
 
@@ -1731,7 +1731,7 @@ static void do_cmd_use_staff_aux(int item)
 
 		case SV_STAFF_SUMMONING:
 		{
-			for (k = 0; k < randint(4); k++)
+			for (k = 0; k < randint1(4); k++)
 			{
 				if (summon_specific(0, py, px, dun_level, 0, TRUE, FALSE, FALSE))
 				{
@@ -1915,7 +1915,7 @@ static void do_cmd_use_staff_aux(int item)
 		{
 			if (!p_ptr->fast)
 			{
-				if (set_fast(randint(30) + 15)) ident = TRUE;
+				if (set_fast(randint1(30) + 15)) ident = TRUE;
 			}
 			else
 			{
@@ -1947,7 +1947,7 @@ static void do_cmd_use_staff_aux(int item)
 		{
 			if (dispel_evil(300)) ident = TRUE;
 			k = 3 * p_ptr->lev;
-			if (set_protevil(p_ptr->protevil + randint(25) + k)) ident = TRUE;
+			if (set_protevil(p_ptr->protevil + randint1(25) + k)) ident = TRUE;
 			if (set_poisoned(0)) ident = TRUE;
 			if (set_afraid(0)) ident = TRUE;
 			if (hp_player(50)) ident = TRUE;
@@ -2139,13 +2139,13 @@ static void do_cmd_aim_wand_aux(int item)
 	chance = chance - lev / 2;
 
 	/* Give everyone a (slight) chance */
-	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
+	if ((chance < USE_DEVICE) && (randint0(USE_DEVICE - chance + 1) == 0))
 	{
 		chance = USE_DEVICE;
 	}
 
 	/* Roll for usage */
-	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE))
+	if ((chance < USE_DEVICE) || (randint1(chance) < USE_DEVICE))
 	{
 		if (flush_failure) flush();
 		msg_print("You failed to use the wand properly.");
@@ -2177,7 +2177,7 @@ static void do_cmd_aim_wand_aux(int item)
 	/* XXX Hack -- Wand of wonder can do anything before it */
 	if (sval == SV_WAND_WONDER)
 	{
-		sval = rand_int(SV_WAND_WONDER);
+		sval = randint0(SV_WAND_WONDER);
 		if (sval < SV_WAND_TELEPORT_AWAY)
 			chg_virtue(V_CHANCE, 1);
 	}
@@ -2363,7 +2363,7 @@ static void do_cmd_aim_wand_aux(int item)
 
 		case SV_WAND_DRAGON_BREATH:
 		{
-			switch (randint(5))
+			switch (randint1(5))
 			{
 				case 1:
 				{
@@ -2402,7 +2402,7 @@ static void do_cmd_aim_wand_aux(int item)
 
 		case SV_WAND_ANNIHILATION:
 		{
-			fire_ball(GF_DISINTEGRATE, dir, 125 + randint(100), 2);
+			fire_ball(GF_DISINTEGRATE, dir, 125 + randint1(100), 2);
 			ident = TRUE;
 			break;
 		}
@@ -2544,13 +2544,13 @@ static void do_cmd_zap_rod_aux(int item)
 	chance = chance - lev / 2;
 
 	/* Give everyone a (slight) chance */
-	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
+	if ((chance < USE_DEVICE) && (randint0(USE_DEVICE - chance + 1) == 0))
 	{
 		chance = USE_DEVICE;
 	}
 
 	/* Roll for usage */
-	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE))
+	if ((chance < USE_DEVICE) || (randint1(chance) < USE_DEVICE))
 	{
 		if (flush_failure) flush();
 		msg_print("You failed to use the rod properly.");
@@ -2673,7 +2673,7 @@ static void do_cmd_zap_rod_aux(int item)
 		{
 			if (!p_ptr->fast)
 			{
-				if (set_fast(randint(30) + 15)) ident = TRUE;
+				if (set_fast(randint1(30) + 15)) ident = TRUE;
 			}
 			else
 			{
@@ -2880,7 +2880,7 @@ static bool item_tester_hook_activate(object_type *o_ptr)
 void ring_of_power(int dir)
 {
 	/* Pick a random effect */
-	switch (randint(10))
+	switch (randint1(10))
 	{
 		case 1:
 		case 2:
@@ -2990,13 +2990,13 @@ static void do_cmd_activate_aux(int item)
 	chance = chance - lev / 2;
 
 	/* Give everyone a (slight) chance */
-	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
+	if ((chance < USE_DEVICE) && (randint0(USE_DEVICE - chance + 1) == 0))
 	{
 		chance = USE_DEVICE;
 	}
 
 	/* Roll for usage */
-	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE))
+	if ((chance < USE_DEVICE) || (randint1(chance) < USE_DEVICE))
 	{
 		if (flush_failure) flush();
 		msg_print("You failed to activate it properly.");
@@ -3040,7 +3040,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("The phial wells with clear light...");
 				lite_area(damroll(2, 15), 3);
-				o_ptr->timeout = rand_int(10) + 10;
+				o_ptr->timeout = randint0(10) + 10;
 				break;
 			}
 
@@ -3049,7 +3049,7 @@ static void do_cmd_activate_aux(int item)
 				msg_print("The star shines brightly...");
 				map_area();
 				lite_area(damroll(2, 15), 3);
-				o_ptr->timeout = rand_int(50) + 50;
+				o_ptr->timeout = randint0(50) + 50;
 				break;
 			}
 
@@ -3068,7 +3068,7 @@ static void do_cmd_activate_aux(int item)
 					word_of_recall();
 				}
 
-				o_ptr->timeout = rand_int(20) + 20;
+				o_ptr->timeout = randint0(20) + 20;
 				break;
 			}
 
@@ -3076,8 +3076,8 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("The amulet lets out a shrill wail...");
 				k = 3 * p_ptr->lev;
-				(void)set_protevil(p_ptr->protevil + randint(25) + k);
-				o_ptr->timeout = rand_int(225) + 225;
+				(void)set_protevil(p_ptr->protevil + randint1(25) + k);
+				o_ptr->timeout = randint0(225) + 225;
 				break;
 			}
 
@@ -3085,7 +3085,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("The amulet floods the area with goodness...");
 				dispel_evil(p_ptr->lev * 5);
-				o_ptr->timeout = rand_int(300) + 300;
+				o_ptr->timeout = randint0(300) + 300;
 				break;
 			}
 
@@ -3094,7 +3094,7 @@ static void do_cmd_activate_aux(int item)
 				msg_print("You order Frakir to strangle your opponent.");
 				if (!get_aim_dir(&dir)) return;
 				if (drain_life(dir, 200))
-				o_ptr->timeout = rand_int(100) + 100;
+				o_ptr->timeout = randint0(100) + 100;
 				break;
 			}
 
@@ -3103,13 +3103,13 @@ static void do_cmd_activate_aux(int item)
 				msg_print("The ring glows brightly...");
 				if (!p_ptr->fast)
 				{
-					(void)set_fast(randint(75) + 75);
+					(void)set_fast(randint1(75) + 75);
 				}
 				else
 				{
 					(void)set_fast(p_ptr->fast + 5);
 				}
-				o_ptr->timeout = rand_int(150) + 150;
+				o_ptr->timeout = randint0(150) + 150;
 				break;
 			}
 
@@ -3118,7 +3118,7 @@ static void do_cmd_activate_aux(int item)
 				msg_print("The ring glows deep red...");
 				if (!get_aim_dir(&dir)) return;
 				fire_ball(GF_FIRE, dir, 250, 3);
-				o_ptr->timeout = rand_int(225) + 225;
+				o_ptr->timeout = randint0(225) + 225;
 				break;
 			}
 
@@ -3127,7 +3127,7 @@ static void do_cmd_activate_aux(int item)
 				msg_print("The ring glows bright white...");
 				if (!get_aim_dir(&dir)) return;
 				fire_ball(GF_COLD, dir, 400, 3);
-				o_ptr->timeout = rand_int(325) + 325;
+				o_ptr->timeout = randint0(325) + 325;
 				break;
 			}
 
@@ -3136,7 +3136,7 @@ static void do_cmd_activate_aux(int item)
 				msg_print("The ring glows deep blue...");
 				if (!get_aim_dir(&dir)) return;
 				fire_ball(GF_ELEC, dir, 500, 3);
-				o_ptr->timeout = rand_int(425) + 425;
+				o_ptr->timeout = randint0(425) + 425;
 				break;
 			}
 
@@ -3145,7 +3145,7 @@ static void do_cmd_activate_aux(int item)
 				msg_print("The ring glows intensely black...");
 				if (!get_aim_dir(&dir)) return;
 				ring_of_power(dir);
-				o_ptr->timeout = rand_int(450) + 450;
+				o_ptr->timeout = randint0(450) + 450;
 				break;
 			}
 
@@ -3190,14 +3190,14 @@ static void do_cmd_activate_aux(int item)
 				fire_ball(GF_MISSILE, dir, 1500, 4);
 				msg_print("Your armor glows many colours...");
 				(void)set_afraid(0);
-				(void)set_shero(p_ptr->shero + randint(50) + 50);
+				(void)set_shero(p_ptr->shero + randint1(50) + 50);
 				(void)hp_player(30);
-				(void)set_blessed(p_ptr->blessed + randint(50) + 50);
-				(void)set_oppose_acid(p_ptr->oppose_acid + randint(50) + 50);
-				(void)set_oppose_elec(p_ptr->oppose_elec + randint(50) + 50);
-				(void)set_oppose_fire(p_ptr->oppose_fire + randint(50) + 50);
-				(void)set_oppose_cold(p_ptr->oppose_cold + randint(50) + 50);
-				(void)set_oppose_pois(p_ptr->oppose_pois + randint(50) + 50);
+				(void)set_blessed(p_ptr->blessed + randint1(50) + 50);
+				(void)set_oppose_acid(p_ptr->oppose_acid + randint1(50) + 50);
+				(void)set_oppose_elec(p_ptr->oppose_elec + randint1(50) + 50);
+				(void)set_oppose_fire(p_ptr->oppose_fire + randint1(50) + 50);
+				(void)set_oppose_cold(p_ptr->oppose_cold + randint1(50) + 50);
+				(void)set_oppose_pois(p_ptr->oppose_pois + randint1(50) + 50);
 				o_ptr->timeout = 100;
 				break;
 			}
@@ -3220,7 +3220,7 @@ static void do_cmd_activate_aux(int item)
 				(void)set_stun(0);
 				(void)set_confused(0);
 				(void)set_blind(0);
-				(void)set_hero(p_ptr->hero + randint(25) + 25);
+				(void)set_hero(p_ptr->hero + randint1(25) + 25);
 				(void)hp_player(777);
 				o_ptr->timeout = 300;
 				break;
@@ -3255,7 +3255,7 @@ static void do_cmd_activate_aux(int item)
 				msg_print("Your helm glows bright white...");
 				msg_print("An image forms in your mind...");
 				detect_all();
-				o_ptr->timeout = rand_int(55) + 55;
+				o_ptr->timeout = randint0(55) + 55;
 				break;
 			}
 
@@ -3272,11 +3272,11 @@ static void do_cmd_activate_aux(int item)
 			case ART_COLLUIN:
 			{
 				msg_print("Your cloak glows many colours...");
-				(void)set_oppose_acid(p_ptr->oppose_acid + randint(20) + 20);
-				(void)set_oppose_elec(p_ptr->oppose_elec + randint(20) + 20);
-				(void)set_oppose_fire(p_ptr->oppose_fire + randint(20) + 20);
-				(void)set_oppose_cold(p_ptr->oppose_cold + randint(20) + 20);
-				(void)set_oppose_pois(p_ptr->oppose_pois + randint(20) + 20);
+				(void)set_oppose_acid(p_ptr->oppose_acid + randint1(20) + 20);
+				(void)set_oppose_elec(p_ptr->oppose_elec + randint1(20) + 20);
+				(void)set_oppose_fire(p_ptr->oppose_fire + randint1(20) + 20);
+				(void)set_oppose_cold(p_ptr->oppose_cold + randint1(20) + 20);
+				(void)set_oppose_pois(p_ptr->oppose_pois + randint1(20) + 20);
 				o_ptr->timeout = 111;
 				break;
 			}
@@ -3327,7 +3327,7 @@ static void do_cmd_activate_aux(int item)
 				msg_print("Your gauntlets are covered in fire...");
 				if (!get_aim_dir(&dir)) return;
 				fire_bolt(GF_FIRE, dir, damroll(11, 8));
-				o_ptr->timeout = rand_int(8) + 8;
+				o_ptr->timeout = randint0(8) + 8;
 				break;
 			}
 
@@ -3336,7 +3336,7 @@ static void do_cmd_activate_aux(int item)
 				msg_print("Your gauntlets are covered in frost...");
 				if (!get_aim_dir(&dir)) return;
 				fire_bolt(GF_COLD, dir, damroll(8, 8));
-				o_ptr->timeout = rand_int(7) + 7;
+				o_ptr->timeout = randint0(7) + 7;
 				break;
 			}
 
@@ -3345,7 +3345,7 @@ static void do_cmd_activate_aux(int item)
 				msg_print("Your gauntlets are covered in sparks...");
 				if (!get_aim_dir(&dir)) return;
 				fire_bolt(GF_ELEC, dir, damroll(6, 8));
-				o_ptr->timeout = rand_int(6) + 6;
+				o_ptr->timeout = randint0(6) + 6;
 				break;
 			}
 
@@ -3354,7 +3354,7 @@ static void do_cmd_activate_aux(int item)
 				msg_print("Your gauntlets are covered in acid...");
 				if (!get_aim_dir(&dir)) return;
 				fire_bolt(GF_ACID, dir, damroll(8, 8));
-				o_ptr->timeout = rand_int(5) + 5;
+				o_ptr->timeout = randint0(5) + 5;
 				break;
 			}
 
@@ -3363,7 +3363,7 @@ static void do_cmd_activate_aux(int item)
 				msg_print("Your cesti grows magical spikes...");
 				if (!get_aim_dir(&dir)) return;
 				fire_bolt(GF_ARROW, dir, 250);
-				o_ptr->timeout = rand_int(90) + 90;
+				o_ptr->timeout = randint0(90) + 90;
 				break;
 			}
 
@@ -3372,7 +3372,7 @@ static void do_cmd_activate_aux(int item)
 				msg_print("Your boots glow bright green...");
 				if (!p_ptr->fast)
 				{
-					(void)set_fast(randint(20) + 20);
+					(void)set_fast(randint1(20) + 20);
 				}
 				else
 				{
@@ -3396,7 +3396,7 @@ static void do_cmd_activate_aux(int item)
 				msg_print("Your dagger is covered in fire...");
 				if (!get_aim_dir(&dir)) return;
 				fire_bolt(GF_FIRE, dir, damroll(11, 8));
-				o_ptr->timeout = rand_int(8) + 8;
+				o_ptr->timeout = randint0(8) + 8;
 				break;
 			}
 
@@ -3405,7 +3405,7 @@ static void do_cmd_activate_aux(int item)
 				msg_print("Your dagger is covered in frost...");
 				if (!get_aim_dir(&dir)) return;
 				fire_bolt(GF_COLD, dir, damroll(8, 8));
-				o_ptr->timeout = rand_int(7) + 7;
+				o_ptr->timeout = randint0(7) + 7;
 				break;
 			}
 
@@ -3414,7 +3414,7 @@ static void do_cmd_activate_aux(int item)
 				msg_print("Your dagger is covered in sparks...");
 				if (!get_aim_dir(&dir)) return;
 				fire_bolt(GF_ELEC, dir, damroll(6, 8));
-				o_ptr->timeout = rand_int(6) + 6;
+				o_ptr->timeout = randint0(6) + 6;
 				break;
 			}
 
@@ -3423,7 +3423,7 @@ static void do_cmd_activate_aux(int item)
 				msg_print("Your dagger throbs deep green...");
 				if (!get_aim_dir(&dir)) return;
 				fire_ball(GF_POIS, dir, 25, 3);
-				o_ptr->timeout = rand_int(4) + 4;
+				o_ptr->timeout = randint0(4) + 4;
 				break;
 			}
 
@@ -3432,13 +3432,13 @@ static void do_cmd_activate_aux(int item)
 				msg_print("Your dagger is covered in frost...");
 				if (!get_aim_dir(&dir)) return;
 				fire_ball(GF_COLD, dir, 100, 2);
-				o_ptr->timeout = rand_int(5) + 5;
+				o_ptr->timeout = randint0(5) + 5;
 				break;
 			}
 
 			case ART_ANGUIREL:
 			{
-				switch (randint(13))
+				switch (randint1(13))
 				{
 				case 1: case 2: case 3: case 4: case 5:
 					teleport_player(10);
@@ -3475,7 +3475,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("You summon the Legion of the Dawn.");
 				(void)summon_specific(-1, py, px, dun_level, SUMMON_DAWN, TRUE, TRUE, TRUE);
-				o_ptr->timeout = 500 + randint(500);
+				o_ptr->timeout = 500 + randint1(500);
 				break;
 			}
 
@@ -3528,7 +3528,7 @@ static void do_cmd_activate_aux(int item)
 				msg_print("Your battle axe radiates deep purple...");
 				hp_player(100);
 				(void)set_cut((p_ptr->cut / 2) - 50);
-				o_ptr->timeout = rand_int(3) + 3;
+				o_ptr->timeout = randint0(3) + 3;
 				break;
 			}
 
@@ -3552,7 +3552,7 @@ static void do_cmd_activate_aux(int item)
 				msg_print("Your scythe glows soft white...");
 				if (!p_ptr->word_recall)
 				{
-					p_ptr->word_recall = randint(20) + 15;
+					p_ptr->word_recall = randint1(20) + 15;
 					msg_print("The air about you becomes charged...");
 					p_ptr->redraw |= (PR_STATUS);
 				}
@@ -3589,13 +3589,13 @@ static void do_cmd_activate_aux(int item)
 				msg_print("Your mace glows bright green...");
 				if (!p_ptr->fast)
 				{
-					(void)set_fast(randint(20) + 20);
+					(void)set_fast(randint1(20) + 20);
 				}
 				else
 				{
 					(void)set_fast(p_ptr->fast + 5);
 				}
-				o_ptr->timeout = rand_int(100) + 100;
+				o_ptr->timeout = randint0(100) + 100;
 				break;
 			}
 
@@ -3646,7 +3646,7 @@ static void do_cmd_activate_aux(int item)
 	else if (o_ptr->name2 == EGO_TRUMP)
 	{
 		teleport_player(100);
-		o_ptr->timeout = 50 + randint(50);
+		o_ptr->timeout = 50 + randint1(50);
 
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
@@ -3669,7 +3669,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("You breathe lightning.");
 				fire_ball(GF_ELEC, dir, 500, 2);
-				o_ptr->timeout = rand_int(50) + 50;
+				o_ptr->timeout = randint0(50) + 50;
 				break;
 			}
 
@@ -3677,7 +3677,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("You breathe frost.");
 				fire_ball(GF_COLD, dir, 550, 2);
-				o_ptr->timeout = rand_int(50) + 50;
+				o_ptr->timeout = randint0(50) + 50;
 				break;
 			}
 
@@ -3685,7 +3685,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("You breathe acid.");
 				fire_ball(GF_ACID, dir, 650, 2);
-				o_ptr->timeout = rand_int(50) + 50;
+				o_ptr->timeout = randint0(50) + 50;
 				break;
 			}
 
@@ -3693,7 +3693,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("You breathe poison gas.");
 				fire_ball(GF_POIS, dir, 750, 2);
-				o_ptr->timeout = rand_int(50) + 50;
+				o_ptr->timeout = randint0(50) + 50;
 				break;
 			}
 
@@ -3701,13 +3701,13 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("You breathe fire.");
 				fire_ball(GF_FIRE, dir, 1000, 2);
-				o_ptr->timeout = rand_int(50) + 50;
+				o_ptr->timeout = randint0(50) + 50;
 				break;
 			}
 
 			case SV_DRAGON_MULTIHUED:
 			{
-				chance = rand_int(5);
+				chance = randint0(5);
 				msg_format("You breathe %s.",
 				           ((chance == 1) ? "lightning" :
 				            ((chance == 2) ? "frost" :
@@ -3718,7 +3718,7 @@ static void do_cmd_activate_aux(int item)
 				            ((chance == 3) ? GF_ACID :
 				             ((chance == 4) ? GF_POIS : GF_FIRE)))),
 				          dir, 1250, 2);
-				o_ptr->timeout = rand_int(25) + 25;
+				o_ptr->timeout = randint0(25) + 25;
 				break;
 			}
 
@@ -3726,7 +3726,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("You breathe confusion.");
 				fire_ball(GF_CONFUSION, dir, 600, 2);
-				o_ptr->timeout = rand_int(50) + 50;
+				o_ptr->timeout = randint0(50) + 50;
 				break;
 			}
 
@@ -3734,35 +3734,35 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("You breathe sound.");
 				fire_ball(GF_SOUND, dir, 650, 2);
-				o_ptr->timeout = rand_int(50) + 50;
+				o_ptr->timeout = randint0(50) + 50;
 				break;
 			}
 
 			case SV_DRAGON_CHAOS:
 			{
-				chance = rand_int(2);
+				chance = randint0(2);
 				msg_format("You breathe %s.",
 				           ((chance == 1 ? "chaos" : "disenchantment")));
 				fire_ball((chance == 1 ? GF_CHAOS : GF_DISENCHANT),
 				          dir, 1100, 2);
-				o_ptr->timeout = rand_int(30) + 30;
+				o_ptr->timeout = randint0(30) + 30;
 				break;
 			}
 
 			case SV_DRAGON_LAW:
 			{
-				chance = rand_int(2);
+				chance = randint0(2);
 				msg_format("You breathe %s.",
 				           ((chance == 1 ? "sound" : "shards")));
 				fire_ball((chance == 1 ? GF_SOUND : GF_SHARDS),
 				          dir, 1150, 2);
-				o_ptr->timeout = rand_int(30) + 30;
+				o_ptr->timeout = randint0(30) + 30;
 				break;
 			}
 
 			case SV_DRAGON_BALANCE:
 			{
-				chance = rand_int(4);
+				chance = randint0(4);
 				msg_format("You breathe %s.",
 				           ((chance == 1) ? "chaos" :
 				            ((chance == 2) ? "disenchantment" :
@@ -3771,17 +3771,17 @@ static void do_cmd_activate_aux(int item)
 				           ((chance == 2) ? GF_DISENCHANT :
 				            ((chance == 3) ? GF_SOUND : GF_SHARDS))),
 				          dir, 1250, 2);
-				o_ptr->timeout = rand_int(30) + 30;
+				o_ptr->timeout = randint0(30) + 30;
 				break;
 			}
 
 			case SV_DRAGON_SHINING:
 			{
-				chance = rand_int(2);
+				chance = randint0(2);
 				msg_format("You breathe %s.",
 				           ((chance == 0 ? "light" : "darkness")));
 				fire_ball((chance == 0 ? GF_LITE : GF_DARK), dir, 1000, 2);
-				o_ptr->timeout = rand_int(30) + 30;
+				o_ptr->timeout = randint0(30) + 30;
 				break;
 			}
 
@@ -3789,7 +3789,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("You breathe the elements.");
 				fire_ball(GF_MISSILE, dir, 1500, 3);
-				o_ptr->timeout = rand_int(30) + 30;
+				o_ptr->timeout = randint0(30) + 30;
 				break;
 			}
 		}
@@ -3811,24 +3811,24 @@ static void do_cmd_activate_aux(int item)
 			case SV_RING_ACID:
 			{
 				fire_ball(GF_ACID, dir, 100, 2);
-				(void)set_oppose_acid(p_ptr->oppose_acid + randint(20) + 20);
-				o_ptr->timeout = rand_int(25) + 25;
+				(void)set_oppose_acid(p_ptr->oppose_acid + randint1(20) + 20);
+				o_ptr->timeout = randint0(25) + 25;
 				break;
 			}
 
 			case SV_RING_ICE:
 			{
 				fire_ball(GF_COLD, dir, 100, 2);
-				(void)set_oppose_cold(p_ptr->oppose_cold + randint(20) + 20);
-				o_ptr->timeout = rand_int(25) + 25;
+				(void)set_oppose_cold(p_ptr->oppose_cold + randint1(20) + 20);
+				o_ptr->timeout = randint0(25) + 25;
 				break;
 			}
 
 			case SV_RING_FLAMES:
 			{
 				fire_ball(GF_FIRE, dir, 100, 2);
-				(void)set_oppose_fire(p_ptr->oppose_fire + randint(20) + 20);
-				o_ptr->timeout = rand_int(25) + 25;
+				(void)set_oppose_fire(p_ptr->oppose_fire + randint1(20) + 20);
+				o_ptr->timeout = randint0(25) + 25;
 				break;
 			}
 		}

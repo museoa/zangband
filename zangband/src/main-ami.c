@@ -4720,7 +4720,7 @@ static void play_sound( int v )
 			return;
 
 		/* Just pick 1st sound available at the moment */
-		snd = sound_ref[v][vnum = 1 + rand_int( (int)sound_ref[v][0] )];
+		snd = sound_ref[v][vnum = 1 + randint0( (int)sound_ref[v][0] )];
 
 		/* Channel number */
 		channel = snd->Channel;
@@ -4733,7 +4733,7 @@ static void play_sound( int v )
 
 		/* Random rate on some sounds */
 		if ( v == SOUND_HIT || v == SOUND_MISS )
-			rate = rate - 50 + rand_int( 150 );
+			rate = rate - 50 + randint0( 150 );
 
 		/* Pointer to old sound data */
 		old_snd = (old >= 0) ? (sound_ref[old][channel_num[channel]]) : NULL;

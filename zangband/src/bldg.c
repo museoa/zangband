@@ -54,12 +54,12 @@ void have_nightmare(int r_idx)
 	{
 		/* Something silly happens... */
 		msg_format("You behold the %s visage of %s!",
-					  funny_desc[rand_int(MAX_SAN_FUNNY)], m_name);
+					  funny_desc[randint0(MAX_SAN_FUNNY)], m_name);
 
 		if (one_in_(3))
 		{
-			msg_print(funny_comments[rand_int(MAX_SAN_COMMENT)]);
-			p_ptr->image = p_ptr->image + randint(r_ptr->level);
+			msg_print(funny_comments[randint0(MAX_SAN_COMMENT)]);
+			p_ptr->image = p_ptr->image + randint1(r_ptr->level);
 		}
 
 		/* Never mind; we can't see it clearly enough */
@@ -68,7 +68,7 @@ void have_nightmare(int r_idx)
 
 	/* Something frightening happens... */
 	msg_format("You behold the %s visage of %s!",
-				  horror_desc[rand_int(MAX_SAN_HORROR)], desc);
+				  horror_desc[randint0(MAX_SAN_HORROR)], desc);
 
 	r_ptr->r_flags2 |= RF2_ELDRITCH_HORROR;
 
@@ -98,11 +98,11 @@ void have_nightmare(int r_idx)
 	{
 		if (!p_ptr->resist_conf)
 		{
-			(void)set_confused(p_ptr->confused + rand_int(4) + 4);
+			(void)set_confused(p_ptr->confused + randint0(4) + 4);
 		}
 		if (!p_ptr->resist_chaos && one_in_(3))
 		{
-			(void)set_image(p_ptr->image + rand_int(250) + 150);
+			(void)set_image(p_ptr->image + randint0(250) + 150);
 		}
 		return;
 	}
@@ -120,11 +120,11 @@ void have_nightmare(int r_idx)
 	{
 		if (!p_ptr->resist_conf)
 		{
-			(void)set_confused(p_ptr->confused + rand_int(4) + 4);
+			(void)set_confused(p_ptr->confused + randint0(4) + 4);
 		}
 		if (!p_ptr->free_act)
 		{
-			(void)set_paralyzed(p_ptr->paralyzed + rand_int(4) + 4);
+			(void)set_paralyzed(p_ptr->paralyzed + randint0(4) + 4);
 		}
 		while (!saving_throw(p_ptr->skill_sav))
 		{
@@ -136,7 +136,7 @@ void have_nightmare(int r_idx)
 		}
 		if (!p_ptr->resist_chaos)
 		{
-			(void)set_image(p_ptr->image + rand_int(250) + 150);
+			(void)set_image(p_ptr->image + randint0(250) + 150);
 		}
 		return;
 	}
@@ -174,7 +174,7 @@ void have_nightmare(int r_idx)
 
 	while (!happened)
 	{
-		switch (randint(4))
+		switch (randint1(4))
 		{
 			case 1:
 			{
@@ -808,9 +808,9 @@ static bool gamble_comm(int cmd)
 					c_put_str(TERM_GREEN, "In Between", 5, 2);
 					odds = 3;
 					win = FALSE;
-					roll1 = randint(10);
-					roll2 = randint(10);
-					choice = randint(10);
+					roll1 = randint1(10);
+					roll2 = randint1(10);
+					choice = randint1(10);
 					sprintf(tmp_str, "Black die: %d       Black Die: %d", roll1, roll2);
 					prt(tmp_str, 8, 3);
 					sprintf(tmp_str, "Red die: %d", choice);
@@ -823,8 +823,8 @@ static bool gamble_comm(int cmd)
 					c_put_str(TERM_GREEN, "Craps", 5, 2);
 					win = 3;
 					odds = 1;
-					roll1 = randint(6);
-					roll2 = randint(6);
+					roll1 = randint1(6);
+					roll2 = randint1(6);
 					roll3 = roll1 + roll2;
 					choice = roll3;
 					sprintf(tmp_str, "First roll: %d %d    Total: %d", roll1,
@@ -839,8 +839,8 @@ static bool gamble_comm(int cmd)
 						{
 							msg_print("Hit any key to roll again");
 							msg_print(NULL);
-							roll1 = randint(6);
-							roll2 = randint(6);
+							roll1 = randint1(6);
+							roll2 = randint1(6);
 							roll3 = roll1 + roll2;
 
 							sprintf(tmp_str, "Roll result: %d %d   Total:     %d",
@@ -874,7 +874,7 @@ static bool gamble_comm(int cmd)
 						choice = 9;
 					}
 					msg_print(NULL);
-					roll1 = rand_int(10);
+					roll1 = randint0(10);
 					sprintf(tmp_str, "The wheel spins to a stop and the winner is %d",
 						roll1);
 					prt(tmp_str, 13, 3);
@@ -887,9 +887,9 @@ static bool gamble_comm(int cmd)
 				case BACT_DICE_SLOTS: /* The Dice Slots */
 					c_put_str(TERM_GREEN, "Dice Slots", 5, 2);
 					win = FALSE;
-					roll1 = randint(6);
-					roll2 = randint(6);
-					choice = randint(6);
+					roll1 = randint1(6);
+					roll2 = randint1(6);
+					choice = randint1(6);
 					(void)sprintf(tmp_str, "%s %s %s", fruit[roll1 - 1], fruit[roll2 - 1],
 						 fruit[choice - 1]);
 					prt(tmp_str, 15, 37);
@@ -1173,24 +1173,24 @@ static void castle_quest(void)
 			if (q_ptr->r_idx == 0)
 			{
 				/* Random monster at least 5 - 10 levels out of deep */
-				q_ptr->r_idx = get_mon_num(q_ptr->level + 4 + randint(6));
+				q_ptr->r_idx = get_mon_num(q_ptr->level + 4 + randint1(6));
 			}
 
 			r_ptr = &r_info[q_ptr->r_idx];
 
 			while ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->rarity != 1))
 			{
-				q_ptr->r_idx = get_mon_num(q_ptr->level) + 4 + randint(6);
+				q_ptr->r_idx = get_mon_num(q_ptr->level) + 4 + randint1(6);
 				r_ptr = &r_info[q_ptr->r_idx];
 			}
 
 			if (q_ptr->max_num == 0)
 			{
 				/* Random monster number */
-				if (randint(10) > 7)
+				if (randint1(10) > 7)
 					q_ptr->max_num = 1;
 				else
-					q_ptr->max_num = randint(3) + 1;
+					q_ptr->max_num = randint1(3) + 1;
 			}
 
 			q_ptr->cur_num = 0;

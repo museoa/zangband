@@ -1950,13 +1950,13 @@ static void clean_square(int y, int x, cave_type *c_ptr)
 		if ((c_ptr->feat > 0x20) && (c_ptr->feat < 0x28))
 		{
 			/* Locked door */
-			make_lockjam_door(y, x, randint(10) + dun_level / 10, FALSE);
+			make_lockjam_door(y, x, randint1(10) + dun_level / 10, FALSE);
 		}
 				
 		if ((c_ptr->feat >= 0x28) && (c_ptr->feat <= 0x2F))
 		{
 			/* Stuck door */
-			make_lockjam_door(y, x, randint(10) + dun_level / 10, TRUE);
+			make_lockjam_door(y, x, randint1(10) + dun_level / 10, TRUE);
 		}
 	}
 }
@@ -3780,7 +3780,7 @@ static errr rd_savefile_new_aux(void)
 			for (j = 0; j < MAX_TRIES; j++)
 			{
 				/* Random monster 5 - 10 levels out of depth */
-				q_ptr->r_idx = get_mon_num(q_ptr->level + 4 + randint(6));
+				q_ptr->r_idx = get_mon_num(q_ptr->level + 4 + randint1(6));
 
 				r_ptr = &r_info[q_ptr->r_idx];
 
@@ -3798,7 +3798,7 @@ static errr rd_savefile_new_aux(void)
 			}
 			else
 			{
-				q_ptr->max_num = 5 + (s16b)rand_int(q_ptr->level/3 + 5);
+				q_ptr->max_num = 5 + (s16b)randint0(q_ptr->level/3 + 5);
 			}
 		}
 
@@ -3849,7 +3849,7 @@ static errr rd_savefile_new_aux(void)
 			if (c == '*')
 			{
 				c = 'y';
-				if (randint(2) == 1)
+				if (randint1(2) == 1)
 					c = 'n';
 				break;
 			}
@@ -3898,7 +3898,7 @@ static errr rd_savefile_new_aux(void)
 			if (c == '*')
 			{
 				c = 'y';
-				if (randint(2) == 1)
+				if (randint1(2) == 1)
 					c = 'n';
 				break;
 			}

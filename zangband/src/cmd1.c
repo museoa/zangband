@@ -26,7 +26,7 @@ static bool test_hit_combat(int chance, int ac, int vis)
 	int k;
 
 	/* Percentile dice */
-	k = rand_int(100);
+	k = randint0(100);
 
 	/* Hack -- Instant hit.  Chance to miss removed in Oangband because
 	 * of the way monster ACs now work (fewer truly easy targets).
@@ -37,7 +37,7 @@ static bool test_hit_combat(int chance, int ac, int vis)
 	if (!vis) chance = chance / 2;
 
 	/* Power competes against armor. */
-	if ((chance > 0) && (rand_int(chance) >= ac)) return (TRUE);
+	if ((chance > 0) && (randint0(chance) >= ac)) return (TRUE);
 
 	/* Assume miss */
 	return (FALSE);
@@ -50,7 +50,7 @@ bool test_hit_fire(int chance, int ac, int vis)
 	int k;
 
 	/* Percentile dice */
-	k = rand_int(100);
+	k = randint0(100);
 
 	/* Hack -- Instant hit.  Chance to miss removed in Oangband because
 	 * of the way monster ACs now work (fewer truly easy targets).
@@ -61,7 +61,7 @@ bool test_hit_fire(int chance, int ac, int vis)
 	if (!vis) chance = chance / 2;
 
 	/* Power competes against armor. */
-	if ((chance > 0) && (rand_int(chance) >= ac)) return (TRUE);
+	if ((chance > 0) && (randint0(chance) >= ac)) return (TRUE);
 
 	/* Assume miss */
 	return (FALSE);
@@ -80,7 +80,7 @@ static sint critical_melee(int chance, int sleeping_bonus, char m_name[], object
 	i = (chance + sleeping_bonus);
 
 	/* Test for critical hit. */
-	if (randint(i + 200) <= i)
+	if (randint1(i + 200) <= i)
 	{
 		/* Encourage the player to make sneak attacks on
 		 * sleeping monsters. -LM-
@@ -98,7 +98,7 @@ static sint critical_melee(int chance, int sleeping_bonus, char m_name[], object
 
 
 		/* Determine level of critical hit */
-		k = randint(i) + randint(100);
+		k = randint1(i) + randint1(100);
 
 		/* This portion of the function determines the level of critical hit,
 		 * the critical mult_m_crit, and displays an appropriate combat
@@ -188,9 +188,9 @@ static s16b critical_norm(int weight, int plus, int dam)
 	i = (weight + ((p_ptr->to_h + plus) * 5) + (p_ptr->lev * 3));
 
 	/* Chance */
-	if (randint(5000) <= i)
+	if (randint1(5000) <= i)
 	{
-		k = weight + randint(650);
+		k = weight + randint1(650);
 
 		if (k < 400)
 		{
@@ -509,7 +509,7 @@ void search(void)
 		for (x = (px - 1); x <= (px + 1); x++)
 		{
 			/* Sometimes, notice things */
-			if (rand_int(100) < chance)
+			if (randint0(100) < chance)
 			{
 				/* do not search outside the wilderness */
 				if (!in_bounds2(y, x)) continue;
@@ -1127,7 +1127,7 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 	chance = (p_ptr->skill_thn + (bonus * BTH_PLUS_ADJ));
 
 	/* Test for hit */
-	if ((!(r_ptr->flags2 & RF2_QUANTUM) || !rand_int(2)) &&
+	if ((!(r_ptr->flags2 & RF2_QUANTUM) || !randint0(2)) &&
 	    test_hit_combat(chance, r_ptr->ac, m_ptr->ml))
 	{
 		/* Sound */
@@ -1234,7 +1234,7 @@ static bool monster_bash(int *blows, int sleeping_bonus, cave_type *c_ptr,
 	}
 
 	/* Try to get in a shield bash. */
-	if (bash_chance > rand_int(240 + r_ptr->level * 9))
+	if (bash_chance > randint0(240 + r_ptr->level * 9))
 	{
 		msg_print("You get in a shield bash!");
 
@@ -1255,7 +1255,7 @@ static bool monster_bash(int *blows, int sleeping_bonus, cave_type *c_ptr,
 		if (bash_dam > 125) bash_dam = 125;
 
 		/* Encourage the player to keep wearing that heavy shield. */
-		if (randint(bash_dam) > 30 + randint(bash_dam / 2))
+		if (randint1(bash_dam) > 30 + randint1(bash_dam / 2))
 			msg_print("WHAMM!");
 
 		/* Complex message */
@@ -1272,26 +1272,26 @@ static bool monster_bash(int *blows, int sleeping_bonus, cave_type *c_ptr,
 		}
 
 		/* Stunning. */
-		if (bash_quality + p_ptr->lev > randint(200 + r_ptr->level * 8))
+		if (bash_quality + p_ptr->lev > randint1(200 + r_ptr->level * 8))
 		{
 			msg_format("%^s is stunned.", m_name);
 
-			m_ptr->stunned += rand_int(p_ptr->lev / 5) + 4;
+			m_ptr->stunned += randint0(p_ptr->lev / 5) + 4;
 			if (m_ptr->stunned > 24) m_ptr->stunned = 24;
 		}
 
 		/* Confusion. */
-		if (bash_quality + p_ptr->lev > randint(300 + r_ptr->level * 6) &&
+		if (bash_quality + p_ptr->lev > randint1(300 + r_ptr->level * 6) &&
 			(!r_ptr->flags3 & (RF3_NO_CONF)))
 		{
 			msg_format("%^s appears confused.", m_name);
 
-			m_ptr->confused += rand_int(p_ptr->lev / 5) + 4;
+			m_ptr->confused += randint0(p_ptr->lev / 5) + 4;
 		}
 
 		/* The player will sometimes stumble. */
-		if ((30 + adj_dex_th[p_ptr->stat_ind[A_DEX]] - 128) < randint(60))
-			*blows -= randint(*blows);
+		if ((30 + adj_dex_th[p_ptr->stat_ind[A_DEX]] - 128) < randint1(60))
+			*blows -= randint1(*blows);
 	}
 
 	/* Monster is not dead */
@@ -1321,10 +1321,10 @@ static void monk_attack(monster_type *m_ptr, long *k, char *m_name)
 	{
 		do
 		{
-			ma_ptr = &ma_blows[rand_int(MAX_MA)];
+			ma_ptr = &ma_blows[randint0(MAX_MA)];
 		}
 		while ((ma_ptr->min_level > p_ptr->lev) ||
-			(randint(p_ptr->lev) < ma_ptr->chance));
+			(randint1(p_ptr->lev) < ma_ptr->chance));
 
 		/* keep the highest level attack available we found */
 		if ((ma_ptr->min_level > old_ptr->min_level) &&
@@ -1371,25 +1371,25 @@ static void monk_attack(monster_type *m_ptr, long *k, char *m_name)
 	{
 		if (ma_ptr->effect)
 		{
-			stun_effect = (ma_ptr->effect / 2) + randint(ma_ptr->effect / 2);
+			stun_effect = (ma_ptr->effect / 2) + randint1(ma_ptr->effect / 2);
 		}
 
 		msg_format(ma_ptr->desc, m_name);
 	}
 
-	*k = critical_norm(p_ptr->lev * randint(10), ma_ptr->min_level, *k);
+	*k = critical_norm(p_ptr->lev * randint1(10), ma_ptr->min_level, *k);
 
 	if ((special_effect == MA_KNEE) && ((*k + p_ptr->to_d) < m_ptr->hp))
 	{
 		msg_format("%^s moans in agony!", m_name);
-		stun_effect = 7 + randint(13);
+		stun_effect = 7 + randint1(13);
 		resist_stun /= 3;
 	}
 
 	else if ((special_effect == MA_SLOW) && ((*k + p_ptr->to_d) < m_ptr->hp))
 	{
 		if (!(r_ptr->flags1 & RF1_UNIQUE) &&
-			(randint(p_ptr->lev) > r_ptr->level) &&
+			(randint1(p_ptr->lev) > r_ptr->level) &&
 			m_ptr->mspeed > 60)
 		{
 			msg_format("%^s starts limping slower.", m_name);
@@ -1399,7 +1399,7 @@ static void monk_attack(monster_type *m_ptr, long *k, char *m_name)
 
 	if (stun_effect && ((*k + p_ptr->to_d) < m_ptr->hp))
 	{
-		if (p_ptr->lev > randint(r_ptr->level + resist_stun + 10))
+		if (p_ptr->lev > randint1(r_ptr->level + resist_stun + 10))
 		{
 			if (m_ptr->stunned)
 				msg_format("%^s is more stunned.", m_name);
@@ -1594,27 +1594,27 @@ void py_attack(int y, int x)
 			object_flags(o_ptr, &f1, &f2, &f3);
 
 			/* Select a chaotic effect (50% chance) */
-			if ((f1 & TR1_CHAOTIC) && (randint(2) == 1))
+			if ((f1 & TR1_CHAOTIC) && (randint1(2) == 1))
 			{
-				if (randint(10) == 1)
+				if (randint1(10) == 1)
 					chg_virtue(V_CHANCE, 1);
 
-				if (randint(5) < 3)
+				if (randint1(5) < 3)
 				{
 					/* Vampiric (20%) */
 					chaos_effect = 1;
 				}
-				else if (randint(250) == 1)
+				else if (randint1(250) == 1)
 				{
 					/* Quake (0.12%) */
 					chaos_effect = 2;
 				}
-				else if (randint(10) != 1)
+				else if (randint1(10) != 1)
 				{
 					/* Confusion (26.892%) */
 					chaos_effect = 3;
 				}
-				else if (randint(2) == 1)
+				else if (randint1(2) == 1)
 				{
 					/* Teleport away (1.494%) */
 					chaos_effect = 4;
@@ -1636,7 +1636,7 @@ void py_attack(int y, int x)
 					drain_result = 0;
 			}
 
-			if ((f1 & TR1_VORPAL) && (randint((o_ptr->name1 == ART_VORPAL_BLADE) ? 3 : 6) == 1))
+			if ((f1 & TR1_VORPAL) && (randint1((o_ptr->name1 == ART_VORPAL_BLADE) ? 3 : 6) == 1))
 				vorpal_cut = TRUE;
 			else vorpal_cut = FALSE;
 
@@ -1687,7 +1687,7 @@ void py_attack(int y, int x)
 
 
 
-				if ((p_ptr->impact && ((k > 50) || randint(7) == 1)) ||
+				if ((p_ptr->impact && ((k > 50) || randint1(7) == 1)) ||
 					 (chaos_effect == 2))
 				{
 					do_quake = TRUE;
@@ -1708,7 +1708,7 @@ void py_attack(int y, int x)
 
 					int inc_chance = (o_ptr->name1 == ART_VORPAL_BLADE) ? 2 : 4;
 
-					if ((o_ptr->name1 == ART_CHAINSWORD) && (randint(2) != 1))
+					if ((o_ptr->name1 == ART_CHAINSWORD) && (randint1(2) != 1))
 					{
 						char chainsword_noise[1024];
 						if (!get_rnd_line("chainswd.txt", 0, chainsword_noise))
@@ -1860,14 +1860,14 @@ void py_attack(int y, int x)
 
 					msg_format("%^s is unaffected.", m_name);
 				}
-				else if (rand_int(100) < r_ptr->level)
+				else if (randint0(100) < r_ptr->level)
 				{
 					msg_format("%^s is unaffected.", m_name);
 				}
 				else
 				{
 					msg_format("%^s appears confused.", m_name);
-					m_ptr->confused += 10 + rand_int(p_ptr->lev) / 5;
+					m_ptr->confused += 10 + randint0(p_ptr->lev) / 5;
 				}
 			}
 
@@ -1883,7 +1883,7 @@ void py_attack(int y, int x)
 						msg_format("%^s is unaffected!", m_name);
 						resists_tele = TRUE;
 					}
-					else if (r_ptr->level > randint(100))
+					else if (r_ptr->level > randint1(100))
 					{
 						if (m_ptr->ml) r_ptr->r_flags3 |= RF3_RES_TELE;
 						msg_format("%^s resists!", m_name);
@@ -1901,7 +1901,7 @@ void py_attack(int y, int x)
 			}
 
 			else if ((chaos_effect == 5) && cave_floor_grid(c_ptr) &&
-			         (randint(90) > r_ptr->level))
+			         (randint1(90) > r_ptr->level))
 			{
 				if (!(r_ptr->flags1 & RF1_UNIQUE) &&
 				    !(r_ptr->flags4 & RF4_BR_CHAO) &&
@@ -1969,7 +1969,7 @@ void py_attack(int y, int x)
 
 	if (drain_left != MAX_VAMPIRIC_DRAIN)
 	{
-		if (randint(4) == 1)
+		if (randint1(4) == 1)
 			chg_virtue(V_VITALITY, 1);
 	}
 
@@ -2262,7 +2262,7 @@ void move_player(int dir, int do_pickup)
 			if (m_ptr->ml) health_track(c_ptr->m_idx);
 
 			/* displace? */
-			if (stormbringer && (randint(1000) > 666))
+			if (stormbringer && (randint1(1000) > 666))
 			{
 				py_attack(y, x);
 			}
@@ -2550,7 +2550,7 @@ void move_player(int dir, int do_pickup)
 
 		/* Spontaneous Searching */
 		if ((p_ptr->skill_fos >= 50) ||
-		    (0 == rand_int(50 - p_ptr->skill_fos)))
+		    (0 == randint0(50 - p_ptr->skill_fos)))
 		{
 			search();
 		}

@@ -51,7 +51,7 @@ bool teleport_away(int m_idx, int dis)
 	min = dis / 2;
 
 	if ((((p_ptr->chp * 10) / p_ptr->mhp) < 5) &&
-		(randint(5) > ((p_ptr->chp * 10) / p_ptr->mhp)))
+		(randint1(5) > ((p_ptr->chp * 10) / p_ptr->mhp)))
 	{
 		chg_virtue(V_VALOUR, -1);
 	}
@@ -191,7 +191,7 @@ void teleport_to_player(int m_idx)
 	if (!m_ptr->r_idx) return;
 
 	/* "Skill" test */
-	if (randint(100) > r_info[m_ptr->r_idx].level) return;
+	if (randint1(100) > r_info[m_ptr->r_idx].level) return;
 
 	/* Initialize */
 	ny = m_ptr->fy;
@@ -634,7 +634,7 @@ void teleport_player_level(void)
 		/* Leaving */
 		p_ptr->leaving = TRUE;
 	}
-	else if (rand_int(100) < 50)
+	else if (randint0(100) < 50)
 	{
 		msg_print("You rise up through the ceiling.");
 
@@ -703,7 +703,7 @@ void recall_player(int turns)
 
 void word_of_recall(void)
 {
-	recall_player(rand_int(21) + 15);
+	recall_player(randint0(21) + 15);
 }
 
 
@@ -724,7 +724,7 @@ bool apply_disenchant(int mode)
 
 
 	/* Pick a random slot */
-	switch (randint(8))
+	switch (randint1(8))
 	{
 		case 1: t = INVEN_WIELD; break;
 		case 2: t = INVEN_BOW; break;
@@ -756,7 +756,7 @@ bool apply_disenchant(int mode)
 
 
 	/* Artifacts have 71% chance to resist */
-	if ((artifact_p(o_ptr) || o_ptr->art_name) && (rand_int(100) < 71))
+	if ((artifact_p(o_ptr) || o_ptr->art_name) && (randint0(100) < 71))
 	{
 		/* Message */
 		msg_format("Your %s (%c) resist%s disenchantment!",
@@ -770,15 +770,15 @@ bool apply_disenchant(int mode)
 
 	/* Disenchant tohit */
 	if (o_ptr->to_h > 0) o_ptr->to_h--;
-	if ((o_ptr->to_h > 5) && (rand_int(100) < 20)) o_ptr->to_h--;
+	if ((o_ptr->to_h > 5) && (randint0(100) < 20)) o_ptr->to_h--;
 
 	/* Disenchant todam */
 	if (o_ptr->to_d > 0) o_ptr->to_d--;
-	if ((o_ptr->to_d > 5) && (rand_int(100) < 20)) o_ptr->to_d--;
+	if ((o_ptr->to_d > 5) && (randint0(100) < 20)) o_ptr->to_d--;
 
 	/* Disenchant toac */
 	if (o_ptr->to_a > 0) o_ptr->to_a--;
-	if ((o_ptr->to_a > 5) && (rand_int(100) < 20)) o_ptr->to_a--;
+	if ((o_ptr->to_a > 5) && (randint0(100) < 20)) o_ptr->to_a--;
 
 	/* Message */
 	msg_format("Your %s (%c) %s disenchanted!",
@@ -804,8 +804,8 @@ void mutate_player(void)
 	int max1, cur1, max2, cur2, ii, jj;
 
 	/* Pick a pair of stats */
-	ii = rand_int(6);
-	for (jj = ii; jj == ii; jj = rand_int(6)) /* loop */;
+	ii = randint0(6);
+	for (jj = ii; jj == ii; jj = randint0(6)) /* loop */;
 
 	max1 = p_ptr->stat_max[ii];
 	cur1 = p_ptr->stat_cur[ii];
@@ -826,7 +826,7 @@ void mutate_player(void)
  */
 void apply_nexus(monster_type *m_ptr)
 {
-	switch (randint(7))
+	switch (randint1(7))
 	{
 		case 1: case 2: case 3:
 		{
@@ -842,7 +842,7 @@ void apply_nexus(monster_type *m_ptr)
 
 		case 6:
 		{
-			if (rand_int(100) < p_ptr->skill_sav)
+			if (randint0(100) < p_ptr->skill_sav)
 			{
 				msg_print("You resist the effects!");
 				break;
@@ -855,7 +855,7 @@ void apply_nexus(monster_type *m_ptr)
 
 		case 7:
 		{
-			if (rand_int(100) < p_ptr->skill_sav)
+			if (randint0(100) < p_ptr->skill_sav)
 			{
 				msg_print("You resist the effects!");
 				break;
@@ -947,7 +947,7 @@ void brand_weapon(int brand_type)
 		case 4:
 			act = "seems very unstable now.";
 			o_ptr->name2 = EGO_TRUMP;
-			o_ptr->pval = randint(2);
+			o_ptr->pval = randint1(2);
 			break;
 		case 3:
 			act = "thirsts for blood!";
@@ -962,7 +962,7 @@ void brand_weapon(int brand_type)
 			o_ptr->name2 = EGO_CHAOTIC;
 			break;
 		default:
-			if (rand_int(100) < 25)
+			if (randint0(100) < 25)
 			{
 				act = "is covered in a fiery shield!";
 				o_ptr->name2 = EGO_BRAND_FIRE;
@@ -976,7 +976,7 @@ void brand_weapon(int brand_type)
 
 		msg_format("Your %s %s", o_name, act);
 
-		enchant(o_ptr, rand_int(3) + 4, ENCH_TOHIT | ENCH_TODAM);
+		enchant(o_ptr, randint0(3) + 4, ENCH_TOHIT | ENCH_TODAM);
 	}
 	else
 	{
@@ -1030,7 +1030,7 @@ void call_the_(void)
 		else
 			msg_print("The dungeon trembles.");
 
-		take_hit(100 + randint(150), "a suicidal Call the Void");
+		take_hit(100 + randint1(150), "a suicidal Call the Void");
 	}
 }
 
@@ -1473,7 +1473,7 @@ void stair_creation(void)
 		/* Quest level */
 		cave_set_feat(py, px, FEAT_LESS);
 	}
-	else if (rand_int(100) < 50)
+	else if (randint0(100) < 50)
 	{
 		cave_set_feat(py, px, FEAT_MORE);
 	}
@@ -1553,7 +1553,7 @@ static void break_curse(object_type *o_ptr)
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3);
 
-	if (cursed_p(o_ptr) && !(f3 & TR3_PERMA_CURSE) && (rand_int(100) < 25))
+	if (cursed_p(o_ptr) && !(f3 & TR3_PERMA_CURSE) && (randint0(100) < 25))
 	{
 		msg_print("The curse is broken!");
 
@@ -1608,7 +1608,7 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 	for (i = 0; i < n; i++)
 	{
 		/* Hack -- Roll for pile resistance */
-		if (!force && rand_int(prob) >= 100) continue;
+		if (!force && randint0(prob) >= 100) continue;
 
 		/* Enchant to hit */
 		if (eflag & ENCH_TOHIT)
@@ -1617,7 +1617,7 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 			else if (o_ptr->to_h > 15) chance = 1000;
 			else chance = enchant_table[o_ptr->to_h];
 
-			if (force || ((randint(1000) > chance) && (!a || (rand_int(100) < 50))))
+			if (force || ((randint1(1000) > chance) && (!a || (randint0(100) < 50))))
 			{
 				o_ptr->to_h++;
 				res = TRUE;
@@ -1635,7 +1635,7 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 			else if (o_ptr->to_d > 15) chance = 1000;
 			else chance = enchant_table[o_ptr->to_d];
 
-			if (force || ((randint(1000) > chance) && (!a || (rand_int(100) < 50))))
+			if (force || ((randint1(1000) > chance) && (!a || (randint0(100) < 50))))
 			{
 				o_ptr->to_d++;
 				res = TRUE;
@@ -1653,7 +1653,7 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 			else if (o_ptr->to_a > 15) chance = 1000;
 			else chance = enchant_table[o_ptr->to_a];
 
-			if (force || ((randint(1000) > chance) && (!a || (rand_int(100) < 50))))
+			if (force || ((randint1(1000) > chance) && (!a || (randint0(100) < 50))))
 			{
 				o_ptr->to_a++;
 				res = TRUE;
@@ -1743,7 +1743,7 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 		/* Message */
 		msg_print("The enchantment failed.");
 
-		if (randint(3) == 1) chg_virtue(V_ENCHANT, -1);
+		if (randint1(3) == 1) chg_virtue(V_ENCHANT, -1);
 	}
 	else
 		chg_virtue(V_ENCHANT, 1);
@@ -1842,7 +1842,7 @@ bool artifact_scroll(void)
 
 		/* Message */
 		msg_print("The enchantment failed.");
-		if (randint(3) == 1) chg_virtue(V_ENCHANT, -1);
+		if (randint1(3) == 1) chg_virtue(V_ENCHANT, -1);
 	}
 	else
 		chg_virtue(V_ENCHANT, 1);
@@ -1863,7 +1863,7 @@ static void bad_luck(object_type *o_ptr)
 	if (wield_slot(o_ptr) == -1) return;
 
 	/* Objects become worse sometimes */
-	if (!rand_int(13))
+	if (!randint0(13))
 	{
 		int number = o_ptr->number;
 
@@ -1889,14 +1889,14 @@ static void bad_luck(object_type *o_ptr)
 	}
 
 	/* Objects are blasted sometimes */
-	if (!rand_int(666) && (!is_art || !rand_int(3)))
+	if (!randint0(666) && (!is_art || !randint0(3)))
 	{
 		/* Blast it */
 		o_ptr->name1 = 0;
 		o_ptr->name2 = EGO_BLASTED;
-		if (o_ptr->to_a) o_ptr->to_a = 0 - randint(5) - randint(5);
-		if (o_ptr->to_h) o_ptr->to_h = 0 - randint(5) - randint(5);
-		if (o_ptr->to_d) o_ptr->to_d = 0 - randint(5) - randint(5);
+		if (o_ptr->to_a) o_ptr->to_a = 0 - randint1(5) - randint1(5);
+		if (o_ptr->to_h) o_ptr->to_h = 0 - randint1(5) - randint1(5);
+		if (o_ptr->to_d) o_ptr->to_d = 0 - randint1(5) - randint1(5);
 		o_ptr->ac = 0;
 		o_ptr->dd = 1;
 		o_ptr->ds = 1;
@@ -2306,7 +2306,7 @@ bool recharge(int power)
 
 
 		/* Back-fire */
-		if (rand_int(recharge_strength) == 0)
+		if (randint0(recharge_strength) == 0)
 		{
 			/* Activate the failure code. */
 			fail = TRUE;
@@ -2343,7 +2343,7 @@ bool recharge(int power)
 
 		/* Back-fire */
 		if ((recharge_strength < 0) ||
-			 (rand_int(recharge_strength) == 0))
+			 (randint0(recharge_strength) == 0))
 		{
 			/* Activate the failure code. */
 			fail = TRUE;
@@ -2353,13 +2353,13 @@ bool recharge(int power)
 		else
 		{
 			/* Recharge based on the standard number of charges. */
-			recharge_amount = randint(1 + k_ptr->pval);
+			recharge_amount = randint1(1 + k_ptr->pval);
 
 			/* Multiple wands in a stack increase recharging somewhat. */
 			if ((o_ptr->tval == TV_WAND) && (o_ptr->number > 1))
 			{
 				recharge_amount +=
-					(randint(recharge_amount * (o_ptr->number - 1))) / 2;
+					(randint1(recharge_amount * (o_ptr->number - 1))) / 2;
 				if (recharge_amount < 1) recharge_amount = 1;
 				if (recharge_amount > 12) recharge_amount = 12;
 			}
@@ -2417,19 +2417,19 @@ bool recharge(int power)
 				/* 10% chance to blow up one rod, otherwise draining. */
 				if (o_ptr->tval == TV_ROD)
 				{
-					if (randint(10) == 1) fail_type = 2;
+					if (randint1(10) == 1) fail_type = 2;
 					else fail_type = 1;
 				}
 				/* 75% chance to blow up one wand, otherwise draining. */
 				else if (o_ptr->tval == TV_WAND)
 				{
-					if (randint(3) != 1) fail_type = 2;
+					if (randint1(3) != 1) fail_type = 2;
 					else fail_type = 1;
 				}
 				/* 50% chance to blow up one staff, otherwise no effect. */
 				else if (o_ptr->tval == TV_STAFF)
 				{
-					if (randint(2) == 1) fail_type = 2;
+					if (randint1(2) == 1) fail_type = 2;
 					else fail_type = 0;
 				}
 			}
@@ -2440,13 +2440,13 @@ bool recharge(int power)
 				/* 33% chance to blow up one rod, otherwise draining. */
 				if (o_ptr->tval == TV_ROD)
 				{
-					if (randint(3) == 1) fail_type = 2;
+					if (randint1(3) == 1) fail_type = 2;
 					else fail_type = 1;
 				}
 				/* 20% chance of the entire stack, else destroy one wand. */
 				else if (o_ptr->tval == TV_WAND)
 				{
-					if (randint(5) == 1) fail_type = 3;
+					if (randint1(5) == 1) fail_type = 3;
 					else fail_type = 2;
 				}
 				/* Blow up one staff. */
@@ -2584,7 +2584,7 @@ bool bless_weapon(void)
 
 	if (o_ptr->ident & IDENT_CURSED)
 	{
-		if (((f3 & TR3_HEAVY_CURSE) && (randint(100) < 33)) ||
+		if (((f3 & TR3_HEAVY_CURSE) && (randint1(100) < 33)) ||
 		    (f3 & TR3_PERMA_CURSE))
 		{
 			msg_format("The black aura on %s %s disrupts the blessing!",
@@ -2627,7 +2627,7 @@ bool bless_weapon(void)
 		return TRUE;
 	}
 
-	if (!(o_ptr->art_name || o_ptr->name1) || (randint(3) == 1))
+	if (!(o_ptr->art_name || o_ptr->name1) || (randint1(3) == 1))
 	{
 		/* Describe */
 		msg_format("%s %s shine%s!",
@@ -2648,7 +2648,7 @@ bool bless_weapon(void)
 			dis_happened = TRUE;
 		}
 
-		if ((o_ptr->to_h > 5) && (rand_int(100) < 33)) o_ptr->to_h--;
+		if ((o_ptr->to_h > 5) && (randint0(100) < 33)) o_ptr->to_h--;
 
 		/* Disenchant todam */
 		if (o_ptr->to_d > 0)
@@ -2657,7 +2657,7 @@ bool bless_weapon(void)
 			dis_happened = TRUE;
 		}
 
-		if ((o_ptr->to_d > 5) && (rand_int(100) < 33)) o_ptr->to_d--;
+		if ((o_ptr->to_d > 5) && (randint0(100) < 33)) o_ptr->to_d--;
 
 		/* Disenchant toac */
 		if (o_ptr->to_a > 0)
@@ -2666,7 +2666,7 @@ bool bless_weapon(void)
 			dis_happened = TRUE;
 		}
 
-		if ((o_ptr->to_a > 5) && (rand_int(100) < 33)) o_ptr->to_a--;
+		if ((o_ptr->to_a > 5) && (randint0(100) < 33)) o_ptr->to_a--;
 
 		if (dis_happened)
 		{
@@ -3642,7 +3642,7 @@ int inven_damage(inven_func typ, int perc)
 			/* Count the casualties */
 			for (amt = j = 0; j < o_ptr->number; ++j)
 			{
-				if (rand_int(100) < perc) amt++;
+				if (randint0(100) < perc) amt++;
 			}
 
 			/* Some casualities */
@@ -3698,7 +3698,7 @@ static int minus_ac(void)
 
 
 	/* Pick a (possibly empty) inventory slot */
-	switch (randint(6))
+	switch (randint1(6))
 	{
 		case 1: o_ptr = &inventory[INVEN_BODY]; break;
 		case 2: o_ptr = &inventory[INVEN_ARM]; break;
@@ -3764,7 +3764,7 @@ void acid_dam(int dam, cptr kb_str)
 	if (p_ptr->oppose_acid) dam = (dam + 2) / 3;
 
 	if ((!(p_ptr->oppose_acid || p_ptr->resist_acid)) &&
-	    randint(HURT_CHANCE) == 1)
+	    randint1(HURT_CHANCE) == 1)
 		(void)do_dec_stat(A_CHR);
 
 	/* If any armor gets hit, defend the player */
@@ -3797,7 +3797,7 @@ void elec_dam(int dam, cptr kb_str)
 	if (p_ptr->resist_elec) dam = (dam + 2) / 3;
 
 	if ((!(p_ptr->oppose_elec || p_ptr->resist_elec)) &&
-	    randint(HURT_CHANCE) == 1)
+	    randint1(HURT_CHANCE) == 1)
 		(void)do_dec_stat(A_DEX);
 
 	/* Take damage */
@@ -3827,7 +3827,7 @@ void fire_dam(int dam, cptr kb_str)
 	if (p_ptr->oppose_fire) dam = (dam + 2) / 3;
 
 	if ((!(p_ptr->oppose_fire || p_ptr->resist_fire)) &&
-	    randint(HURT_CHANCE) == 1)
+	    randint1(HURT_CHANCE) == 1)
 		(void)do_dec_stat(A_STR);
 
 	/* Take damage */
@@ -3857,7 +3857,7 @@ void cold_dam(int dam, cptr kb_str)
 	if (p_ptr->oppose_cold) dam = (dam + 2) / 3;
 
 	if ((!(p_ptr->oppose_cold || p_ptr->resist_cold)) &&
-	    randint(HURT_CHANCE) == 1)
+	    randint1(HURT_CHANCE) == 1)
 		(void)do_dec_stat(A_STR);
 
 	/* Take damage */
@@ -3939,7 +3939,7 @@ bool curse_armor(void)
 	object_desc(o_name, o_ptr, FALSE, 3);
 
 	/* Attempt a saving throw for artifacts */
-	if ((o_ptr->art_name || artifact_p(o_ptr)) && (rand_int(100) < 50))
+	if ((o_ptr->art_name || artifact_p(o_ptr)) && (randint0(100) < 50))
 	{
 		/* Cool */
 		msg_format("A %s tries to %s, but your %s resists the effects!",
@@ -3957,7 +3957,7 @@ bool curse_armor(void)
 		/* Blast the armor */
 		o_ptr->name1 = 0;
 		o_ptr->name2 = EGO_BLASTED;
-		o_ptr->to_a = 0 - randint(5) - randint(5);
+		o_ptr->to_a = 0 - randint1(5) - randint1(5);
 		o_ptr->to_h = 0;
 		o_ptr->to_d = 0;
 		o_ptr->ac = 0;
@@ -4008,7 +4008,7 @@ bool curse_weapon(void)
 	object_desc(o_name, o_ptr, FALSE, 3);
 
 	/* Attempt a saving throw */
-	if ((artifact_p(o_ptr) || o_ptr->art_name) && (rand_int(100) < 50))
+	if ((artifact_p(o_ptr) || o_ptr->art_name) && (randint0(100) < 50))
 	{
 		/* Cool */
 		msg_format("A %s tries to %s, but your %s resists the effects!",
@@ -4026,8 +4026,8 @@ bool curse_weapon(void)
 		/* Shatter the weapon */
 		o_ptr->name1 = 0;
 		o_ptr->name2 = EGO_SHATTERED;
-		o_ptr->to_h = 0 - randint(5) - randint(5);
-		o_ptr->to_d = 0 - randint(5) - randint(5);
+		o_ptr->to_h = 0 - randint1(5) - randint1(5);
+		o_ptr->to_d = 0 - randint1(5) - randint1(5);
 		o_ptr->to_a = 0;
 		o_ptr->ac = 0;
 		o_ptr->dd = 1;
@@ -4081,7 +4081,7 @@ bool brand_bolts(void)
 		if (cursed_p(o_ptr) || broken_p(o_ptr)) continue;
 
 		/* Randomize */
-		if (rand_int(100) < 75) continue;
+		if (randint0(100) < 75) continue;
 
 		/* Message */
 		msg_print("Your bolts are covered in a fiery aura!");
@@ -4090,7 +4090,7 @@ bool brand_bolts(void)
 		o_ptr->name2 = EGO_FLAME;
 
 		/* Enchant */
-		enchant(o_ptr, rand_int(3) + 4, ENCH_TOHIT | ENCH_TODAM);
+		enchant(o_ptr, randint0(3) + 4, ENCH_TOHIT | ENCH_TODAM);
 
 		/* Notice */
 		return (TRUE);
@@ -4124,8 +4124,8 @@ static s16b poly_r_idx(int r_idx)
 		return (r_idx);
 
 	/* Allowable range of "levels" for resulting monster */
-	lev1 = r_ptr->level - ((randint(20) / randint(9)) + 1);
-	lev2 = r_ptr->level + ((randint(20) / randint(9)) + 1);
+	lev1 = r_ptr->level - ((randint1(20) / randint1(9)) + 1);
+	lev2 = r_ptr->level + ((randint1(20) / randint1(9)) + 1);
 
 	/* Pick a (possibly new) non-unique race */
 	for (i = 0; i < 1000; i++)
@@ -4221,7 +4221,7 @@ bool dimension_door(void)
 
 	if (!cave_empty_grid(c_ptr) || (c_ptr->info & CAVE_ICKY) ||
 		(distance(y, x, py, px) > plev + 2) ||
-		(!rand_int(plev * plev / 2)))
+		(!randint0(plev * plev / 2)))
 	{
 		msg_print("You fail to exit the astral plane correctly!");
 		p_ptr->energy -= 100;

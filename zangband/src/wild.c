@@ -224,10 +224,10 @@ static void build_store(int n, int yy, int xx)
 	x0 = xx * 17 + 8;
 
 	/* Determine the store boundaries */
-	y1 = y0 - randint(2);
-	y2 = y0 + randint(2);
-	x1 = x0 - randint(5);
-	x2 = x0 + randint(5);
+	y1 = y0 - randint1(2);
+	y2 = y0 + randint1(2);
+	x1 = x0 - randint1(5);
+	x2 = x0 + randint1(5);
 
 	/* Build an invulnerable rectangular building */
 	for (y = y1; y <= y2; y++)
@@ -240,7 +240,7 @@ static void build_store(int n, int yy, int xx)
 	}
 
 	/* Pick a door direction (S,N,E,W) */
-	tmp = rand_int(4);
+	tmp = randint0(4);
 
 	/* Re-roll "annoying" doors */
 	if (((tmp == 0) && (yy == 2)) ||
@@ -249,7 +249,7 @@ static void build_store(int n, int yy, int xx)
 	    ((tmp == 3) && (xx == 0)))
 	{
 		/* Pick a new direction */
-		tmp = rand_int(4);
+		tmp = randint0(4);
 	}
 
 	/* Extract a "door location" */
@@ -368,7 +368,7 @@ static void town_gen_hack(u16b town_num, int *xx, int *yy)
 		for (x = 0; x < 3; x++)
 		{
 			/* Pick a random unplaced store */
-			k = ((n <= 1) ? 0 : rand_int(n));
+			k = ((n <= 1) ? 0 : randint0(n));
 
 			/* Build that store at the proper location */
 			build_store(rooms[k], y, x);
@@ -478,13 +478,13 @@ static void town_gen(u16b town_num, int *xx, int *yy)
 				cave[y][x].feat = FEAT_PEBBLES;
 
 				/* Create Dirt */
-				if (!rand_int(3))
+				if (!randint0(3))
 				{
 					cave[y][x].feat = FEAT_DIRT;
 				}
 
 				/* Create see-through terrain */
-				else if (!rand_int(20))
+				else if (!randint0(20))
 				{
 					cave[y][x].feat = FEAT_NONE;
 				}
@@ -597,15 +597,15 @@ static void init_towns(void)
 	while (town_count < max_towns)
 	{
 		/* Get random position */
-		x = randint(max_wild);
-		y = randint(max_wild);
+		x = randint1(max_wild);
+		y = randint1(max_wild);
 
 		/* See if space is free */
 		if (!town_blank(x, y, TOWN_WID / 16 + 1, TOWN_HGT / 16 + 1)) continue;
 
 		/* Add town */
 		strcpy(town[town_count].name, "town");
-		town[town_count].seed = rand_int(0x10000000);
+		town[town_count].seed = randint0(0x10000000);
 		town[town_count].numstores = 9;
 		town[town_count].type = 1;
 		town[town_count].x = x;
@@ -695,7 +695,7 @@ static void init_vanilla_town(void)
 
 	/* Only one town */
 	strcpy(town[1].name, "town");
-	town[1].seed = rand_int(0x10000000);
+	town[1].seed = randint0(0x10000000);
 	town[1].numstores = 9;
 	town[1].type = 1;
 	town[1].x = (max_wild / 2) - TOWN_WID / (WILD_BLOCK_SIZE * 2) - 1;
@@ -780,7 +780,7 @@ static u16b get_gen_type(byte hgt, byte pop, byte law)
 		if (tree_ptr->cutoff == 0)
 		{
 			/* randomly choose branch */
-			if (randint(tree_ptr->chance1 + tree_ptr->chance2) >
+			if (randint1(tree_ptr->chance1 + tree_ptr->chance2) >
 			   tree_ptr->chance2)
 			{
 				/* Chance1 of going "left" */
@@ -2492,7 +2492,7 @@ static void frac_block(void)
 					/* Average of left and right points +random bit */
 					temp_block[j][i] = ((temp_block[j][i - hstep] + 
 					temp_block[j][i + hstep]) >> 1) +
-					((randint(lstep << 8) - (hstep << 8)) >> 1);
+					((randint1(lstep << 8) - (hstep << 8)) >> 1);
 				}
 			}
 		}
@@ -2509,7 +2509,7 @@ static void frac_block(void)
 					/* Average of up and down points +random bit */
 					temp_block[j][i] =((temp_block[j - hstep][i]
 					+ temp_block[j + hstep][i]) >> 1)
-					+ ((randint(lstep << 8) - (hstep << 8)) >> 1);
+					+ ((randint1(lstep << 8) - (hstep << 8)) >> 1);
 				}
 			}
 		}
@@ -2531,7 +2531,7 @@ static void frac_block(void)
 					+ temp_block[j + hstep][i - hstep]
 					+ temp_block[j - hstep][i + hstep]
 					+ temp_block[j + hstep][i + hstep]) >> 2)
-					+ (((randint(lstep << 8) - (hstep << 8)) * 181) >> 8);
+					+ (((randint1(lstep << 8) - (hstep << 8)) * 181) >> 8);
 				}
 			}
 		}
@@ -2715,7 +2715,7 @@ static void make_wild_road(blk_ptr block_ptr, int x, int y)
 				}
 				else
 				{
-					if (rand_int(3))
+					if (randint0(3))
 					{
 						c_ptr->feat = FEAT_DIRT;
 					}
@@ -2748,7 +2748,7 @@ static void wild_add_gradient(blk_ptr block_ptr, byte feat1, byte feat2)
 			if (temp_block[j][i] >= WILD_BLOCK_SIZE * 213)
 			{
 				/* 25% of the time use the other tile : it looks better this way */
-				if (randint(100) < 75)
+				if (randint1(100) < 75)
 				{
 					block_ptr[j][i].feat = feat2;
 				}
@@ -2760,7 +2760,7 @@ static void wild_add_gradient(blk_ptr block_ptr, byte feat1, byte feat2)
 			else if (temp_block[j][i] >= WILD_BLOCK_SIZE * 128)
 			{
 				/* 25% of the time use the other tile : it looks better this way */
-				if (randint(100) < 75)
+				if (randint1(100) < 75)
 				{
 					block_ptr[j][i].feat = feat1;
 				}
@@ -2866,7 +2866,7 @@ static void make_wild_02(blk_ptr block_ptr, byte *data)
 				if (!chance) break;
 
 				/* Stop if chance fails */
-				if (rand_int(chance + 1)) break;
+				if (randint0(chance + 1)) break;
 
 				/* Increment counter + loop */
 				k++;
@@ -2917,14 +2917,14 @@ static void make_wild_03(blk_ptr block_ptr, byte *data)
 			/* Outside circle? */
 			if (element < WILD_BLOCK_SIZE * 128) continue;
 
-			if ((element < WILD_BLOCK_SIZE * 171) && (rand_int(2) == 1))
+			if ((element < WILD_BLOCK_SIZE * 171) && (randint0(2) == 1))
 			{
 				/* Outermost terrain */
 				block_ptr[j][i].feat = data[1];
 				continue;
 			}
 
-			if ((element < WILD_BLOCK_SIZE * 213) && (rand_int(2) == 1))
+			if ((element < WILD_BLOCK_SIZE * 213) && (randint0(2) == 1))
 			{
 				/* Middle terrain */
 				block_ptr[j][i].feat = data[2];
@@ -3010,7 +3010,7 @@ static void blend_block(int x, int y, blk_ptr block_ptr, u16b type)
 		for (i = 0; i < WILD_BLOCK_SIZE; i++)
 		{
 			/* Chance to blend is based on element in fractal */
-			if (rand_int(WILD_BLOCK_SIZE * 256) > temp_block[j][i]) continue;
+			if (randint0(WILD_BLOCK_SIZE * 256) > temp_block[j][i]) continue;
 
 			/* Work out adjacent block */
 			if (i < WILD_BLOCK_SIZE / 4)
@@ -3135,9 +3135,9 @@ static void add_monsters_block(int x, int y)
 		for (j = 0; j < 16; j++)
 		{
 			/* See if monster should go on square */
-			if (!rand_int(prob))
+			if (!randint0(prob))
 			{
-				if (rand_int(2))
+				if (randint0(2))
 				{
 					/* Monsters are awake */
 					(void)place_monster(yy + j, xx + i, FALSE, TRUE);
@@ -3670,7 +3670,7 @@ static void create_roads(void)
 		/* Get new point */
 		r_ptr = &road_pt[road_pt_max];
 
-		switch (rand_int(4))
+		switch (randint0(4))
 		{
 			case 0:
 				r_ptr->x = x;
@@ -3709,15 +3709,15 @@ static void create_roads(void)
 		 */
 
 		/* Get a random starting point */
-		r_ptr = &road_pt[rand_int(road_pt_max)];
+		r_ptr = &road_pt[randint0(road_pt_max)];
 
 		for (i = 0; i < 5; i++)
 		{
 			/* Get a new point */
-			j_ptr =  &road_pt[rand_int(road_pt_max)];
+			j_ptr =  &road_pt[randint0(road_pt_max)];
 
 			/* Chance to keep based on # of connections */
-			if (j_ptr->connect < randint(6)) r_ptr = j_ptr;
+			if (j_ptr->connect < randint1(6)) r_ptr = j_ptr;
 		}
 
  		/* Initialise variables */
@@ -3817,7 +3817,7 @@ static void create_roads(void)
 
 			/* See if want to delete j_ptr */
 			if (((!wild[j_ptr->y][j_ptr->x].done.town)
-				 && (j_ptr->connect > rand_int(3) + 1)) || (j_ptr->connect >= 4))
+				 && (j_ptr->connect > randint0(3) + 1)) || (j_ptr->connect >= 4))
 			{
 				/* Look for special case */
 				if (r_ptr == &road_pt[road_pt_max - 1])
@@ -3841,7 +3841,7 @@ static void create_roads(void)
 
 			/* See if want to delete r_ptr */
 			if (((!wild[r_ptr->y][r_ptr->x].done.town)
-				 && (r_ptr->connect > rand_int(3) + 1)) || (r_ptr->connect >= 4))
+				 && (r_ptr->connect > randint0(3) + 1)) || (r_ptr->connect >= 4))
 			{
 				/* Structure Copy */
 				*r_ptr = road_pt[road_pt_max - 1];
@@ -3864,7 +3864,7 @@ static void create_roads(void)
 
 		if (dx > 0)
 		{
-			ny = randint(dx) - dx / 2;
+			ny = randint1(dx) - dx / 2;
 		}
 		else
 		{
@@ -3873,7 +3873,7 @@ static void create_roads(void)
 
 		if (dy > 0)
 		{
-			nx = randint(dy) - dy / 2;
+			nx = randint1(dy) - dy / 2;
 		}
 		else
 		{
@@ -3897,7 +3897,7 @@ static void create_roads(void)
 		if (wild[ny][nx].done.info & WILD_INFO_WATER) continue;
 
 		/* Chance to add based on strength of monsters */
-		/*if (wild[ny][nx].done.mon_gen > (randint(40) + 20)) continue;*/
+		/*if (wild[ny][nx].done.mon_gen > (randint1(40) + 20)) continue;*/
 
 		/* write to point */
 
@@ -3908,12 +3908,12 @@ static void create_roads(void)
 		if (road_pt_max >= points)
 		{
 			/* Get a random point in the list */
-			n_ptr = &road_pt[rand_int(road_pt_max)];
+			n_ptr = &road_pt[randint0(road_pt_max)];
 
 			while ((n_ptr == r_ptr) || (n_ptr == j_ptr))
 			{
 				/* Get a random point in the list */
-				n_ptr = &road_pt[rand_int(road_pt_max)];
+				n_ptr = &road_pt[randint0(road_pt_max)];
 			}
 		}
 		else
@@ -4007,7 +4007,7 @@ static void link_river(int x1, int x2, int y1, int y2)
 		if (dy != 0)
 		{
 			/* perturbation perpendicular to path */
-			changex = randint(abs(dy)) * 2 - abs(dy);
+			changex = randint1(abs(dy)) * 2 - abs(dy);
 		}
 		else
 		{
@@ -4017,7 +4017,7 @@ static void link_river(int x1, int x2, int y1, int y2)
 		if (dx != 0)
 		{
 			/* perturbation perpendicular to path */
-			changey = randint(abs(dx)) * 2 - abs(dx);
+			changey = randint1(abs(dx)) * 2 - abs(dx);
 		}
 		else
 		{
@@ -4076,8 +4076,8 @@ static void create_rivers(void)
 	/* Make some random starting positions */
 	for (i = 0; i < river_start; i++)
 	{
-		temp_y[i] = (s16b)rand_int(max_wild);
-		temp_x[i] = (s16b)rand_int(max_wild);
+		temp_y[i] = (s16b)randint0(max_wild);
+		temp_x[i] = (s16b)randint0(max_wild);
 	}
 
 	temp_n = river_start;
@@ -4198,8 +4198,8 @@ void create_lakes(void)
 		frac_block();
 		
 		/* Get location */
-		x = randint(max_wild - 16 - 1);
-		y = randint(max_wild - 16 - 1);
+		x = randint1(max_wild - 16 - 1);
+		y = randint1(max_wild - 16 - 1);
 			
 		/* Clear river flag */
 		river = FALSE;
@@ -4350,10 +4350,10 @@ static void create_hgt_map(void)
 	grd = 16 * 16;
 
 	/* Set the corner values just in case grd > size. */
-	store_hgtmap(0, 0, rand_int(size));
-	store_hgtmap(size, 0, rand_int(size));
-	store_hgtmap(0, size, rand_int(size));
-	store_hgtmap(size, size, rand_int(size));
+	store_hgtmap(0, 0, randint0(size));
+	store_hgtmap(size, 0, randint0(size));
+	store_hgtmap(0, size, randint0(size));
+	store_hgtmap(size, size, randint0(size));
 
 	/* Initialize the step sizes */
 	lstep = hstep = size * 16;
@@ -4384,7 +4384,7 @@ static void create_hgt_map(void)
 					if (hstep > grd)
 					{
 						/* If greater than 'grid' level then is random */
-						store_hgtmap(ii, jj, randint(max_wild * 16));
+						store_hgtmap(ii, jj, randint1(max_wild * 16));
 					}
 			   		else
 					{
@@ -4392,7 +4392,7 @@ static void create_hgt_map(void)
 						store_hgtmap(ii, jj,
 						((wild[jj][(i - hstep) >> 4].gen.hgt_map +
 						wild[jj][(i + hstep) >> 4].gen.hgt_map) >> 1) +
-						((randint(lstep) - hstep) >> 1));
+						((randint1(lstep) - hstep) >> 1));
 					}
 				}
 			}
@@ -4414,7 +4414,7 @@ static void create_hgt_map(void)
 					if (hstep > grd)
 					{
 						/* If greater than 'grid' level then is random */
-						store_hgtmap(ii, jj, randint(max_wild * 16));
+						store_hgtmap(ii, jj, randint1(max_wild * 16));
 					}
 		   			else
 					{
@@ -4422,7 +4422,7 @@ static void create_hgt_map(void)
 						store_hgtmap(ii, jj,
 						((wild[(j - hstep) >> 4][ii].gen.hgt_map
 						+ wild[(j + hstep) >> 4][ii].gen.hgt_map) >> 1)
-						+ ((randint(lstep) - hstep) >> 1));
+						+ ((randint1(lstep) - hstep) >> 1));
 					}
 				}
 			}
@@ -4443,7 +4443,7 @@ static void create_hgt_map(void)
 					if (hstep > grd)
 					{
 						/* If greater than 'grid' level then is random */
-						store_hgtmap(ii, jj, randint(max_wild * 16));
+						store_hgtmap(ii, jj, randint1(max_wild * 16));
 					}
 		   			else
 					{
@@ -4454,7 +4454,7 @@ static void create_hgt_map(void)
 						+ wild[(j + hstep) >> 4][(i - hstep) >> 4].gen.hgt_map
 						+ wild[(j - hstep) >> 4][(i + hstep) >> 4].gen.hgt_map
 						+ wild[(j + hstep) >> 4][(i + hstep) >> 4].gen.hgt_map) >> 2)
-						+ (((randint(lstep) - hstep) * 181) >> 8));
+						+ (((randint1(lstep) - hstep) * 181) >> 8));
 					}
 				}
 			}
@@ -4514,10 +4514,10 @@ static void create_pop_map(u16b sea)
 	grd = 16 * 16;
 
 	/* Set the corner values just in case grd > size. */
-	store_popmap(0, 0, rand_int(size), sea);
-	store_popmap(size, 0, rand_int(size), sea);
-	store_popmap(0, size, rand_int(size), sea);
-	store_popmap(size, size, rand_int(size), sea);
+	store_popmap(0, 0, randint0(size), sea);
+	store_popmap(size, 0, randint0(size), sea);
+	store_popmap(0, size, randint0(size), sea);
+	store_popmap(size, size, randint0(size), sea);
 
 	/* Initialize the step sizes */
 	lstep = hstep = size * 16;
@@ -4548,7 +4548,7 @@ static void create_pop_map(u16b sea)
 					if (hstep > grd)
 					{
 						/* If greater than 'grid' level then is random */
-						store_popmap(ii, jj, randint(max_wild * 16), sea);
+						store_popmap(ii, jj, randint1(max_wild * 16), sea);
 					}
 			   		else
 					{
@@ -4556,7 +4556,7 @@ static void create_pop_map(u16b sea)
 						store_popmap(ii, jj,
 						((wild[jj][(i - hstep) >> 4].gen.pop_map +
 						wild[jj][(i + hstep) >> 4].gen.pop_map) >> 1) +
-						((randint(lstep) - hstep) >> 1), sea);
+						((randint1(lstep) - hstep) >> 1), sea);
 					}
 				}
 			}
@@ -4578,7 +4578,7 @@ static void create_pop_map(u16b sea)
 					if (hstep > grd)
 					{
 						/* If greater than 'grid' level then is random */
-						store_popmap(ii, jj, randint(max_wild * 16), sea);
+						store_popmap(ii, jj, randint1(max_wild * 16), sea);
 					}
 		   			else
 					{
@@ -4586,7 +4586,7 @@ static void create_pop_map(u16b sea)
 						store_popmap(ii, jj,
 						((wild[(j - hstep) >> 4][ii].gen.pop_map
 						+ wild[(j + hstep) >> 4][ii].gen.pop_map) >> 1)
-						+ ((randint(lstep) - hstep) >> 1), sea);
+						+ ((randint1(lstep) - hstep) >> 1), sea);
 					}
 				}
 			}
@@ -4607,7 +4607,7 @@ static void create_pop_map(u16b sea)
 					if (hstep > grd)
 					{
 						/* If greater than 'grid' level then is random */
-						store_popmap(ii, jj, randint(max_wild * 16), sea);
+						store_popmap(ii, jj, randint1(max_wild * 16), sea);
 					}
 		   			else
 					{
@@ -4618,7 +4618,7 @@ static void create_pop_map(u16b sea)
 						+ wild[(j + hstep) >> 4][(i - hstep) >> 4].gen.pop_map
 						+ wild[(j - hstep) >> 4][(i + hstep) >> 4].gen.pop_map
 						+ wild[(j + hstep) >> 4][(i + hstep) >> 4].gen.pop_map) >> 2)
-						+ (((randint(lstep) - hstep) * 181) >> 8), sea);
+						+ (((randint1(lstep) - hstep) * 181) >> 8), sea);
 					}
 				}
 			}
@@ -4682,10 +4682,10 @@ static void create_law_map(u16b sea)
 	grd = 16 * 16;
 
 	/* Set the corner values just in case grd > size. */
-	store_lawmap(0, 0, rand_int(size), sea);
-	store_lawmap(size, 0, rand_int(size), sea);
-	store_lawmap(0, size, rand_int(size), sea);
-	store_lawmap(size, size, rand_int(size), sea);
+	store_lawmap(0, 0, randint0(size), sea);
+	store_lawmap(size, 0, randint0(size), sea);
+	store_lawmap(0, size, randint0(size), sea);
+	store_lawmap(size, size, randint0(size), sea);
 
 	/* Initialize the step sizes */
 	lstep = hstep = size * 16;
@@ -4716,7 +4716,7 @@ static void create_law_map(u16b sea)
 					if (hstep > grd)
 					{
 						/* If greater than 'grid' level then is random */
-						store_lawmap(ii, jj, randint(max_wild * 16), sea);
+						store_lawmap(ii, jj, randint1(max_wild * 16), sea);
 					}
 			   		else
 					{
@@ -4724,7 +4724,7 @@ static void create_law_map(u16b sea)
 						store_lawmap(ii, jj,
 						((wild[jj][(i - hstep) >> 4].gen.law_map +
 						wild[jj][(i + hstep) >> 4].gen.law_map) >> 1) +
-						((randint(lstep) - hstep) >> 1), sea);
+						((randint1(lstep) - hstep) >> 1), sea);
 					}
 				}
 			}
@@ -4746,7 +4746,7 @@ static void create_law_map(u16b sea)
 					if (hstep > grd)
 					{
 						/* If greater than 'grid' level then is random */
-						store_lawmap(ii, jj, randint(max_wild * 16), sea);
+						store_lawmap(ii, jj, randint1(max_wild * 16), sea);
 					}
 		   			else
 					{
@@ -4754,7 +4754,7 @@ static void create_law_map(u16b sea)
 						store_lawmap(ii, jj,
 						((wild[(j - hstep) >> 4][ii].gen.law_map
 						+ wild[(j + hstep) >> 4][ii].gen.law_map) >> 1)
-						+ ((randint(lstep) - hstep) >> 1), sea);
+						+ ((randint1(lstep) - hstep) >> 1), sea);
 					}
 				}
 			}
@@ -4775,7 +4775,7 @@ static void create_law_map(u16b sea)
 					if (hstep > grd)
 					{
 						/* If greater than 'grid' level then is random */
-						store_lawmap(ii, jj, randint(max_wild * 16), sea);
+						store_lawmap(ii, jj, randint1(max_wild * 16), sea);
 					}
 		   			else
 					{
@@ -4786,7 +4786,7 @@ static void create_law_map(u16b sea)
 						+ wild[(j + hstep) >> 4][(i - hstep) >> 4].gen.law_map
 						+ wild[(j - hstep) >> 4][(i + hstep) >> 4].gen.law_map
 						+ wild[(j + hstep) >> 4][(i + hstep) >> 4].gen.law_map) >> 2)
-						+ (((randint(lstep) - hstep) * 181) >> 8), sea);
+						+ (((randint1(lstep) - hstep) * 181) >> 8), sea);
 					}
 				}
 			}
@@ -4831,7 +4831,7 @@ static void wild_done(void)
 	dun_level = 0;
 
 	/* Refresh random number seed */
-	wild_grid.wild_seed = rand_int(0x10000000);
+	wild_grid.wild_seed = randint0(0x10000000);
 
 	/* Make the wilderness block cache. */
 	move_wild();

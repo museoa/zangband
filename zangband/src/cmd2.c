@@ -404,7 +404,7 @@ static void chest_death(int y, int x, s16b o_idx)
 		object_wipe(q_ptr);
 
 		/* Small chests often drop gold */
-		if (small && (rand_int(100) < 25))
+		if (small && (randint0(100) < 25))
 		{
 			/* Make some gold */
 			if (!make_gold(q_ptr)) continue;
@@ -480,7 +480,7 @@ static void chest_trap(int y, int x, s16b o_idx)
 		msg_print("A puff of green gas surrounds you!");
 		if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
 		{
-			(void)set_poisoned(p_ptr->poisoned + 10 + randint(20));
+			(void)set_poisoned(p_ptr->poisoned + 10 + randint1(20));
 		}
 	}
 
@@ -491,19 +491,19 @@ static void chest_trap(int y, int x, s16b o_idx)
 
 		if (!p_ptr->free_act)
 		{
-			(void)set_paralyzed(p_ptr->paralyzed + 10 + randint(20));
+			(void)set_paralyzed(p_ptr->paralyzed + 10 + randint1(20));
 		}
 	}
 
 	/* Summon monsters */
 	if (trap & (CHEST_SUMMON))
 	{
-		int num = 2 + randint(3);
+		int num = 2 + randint1(3);
 		msg_print("You are enveloped in a cloud of smoke!");
 
 		for (i = 0; i < num; i++)
 		{
-			if (randint(100) < dun_level)
+			if (randint1(100) < dun_level)
 				(void)activate_hi_summon();
 			else
 				(void)summon_specific(0, y, x, dun_level, 0, TRUE, FALSE, FALSE);
@@ -563,7 +563,7 @@ static bool do_cmd_open_chest(int y, int x, s16b o_idx)
 		if (j < 2) j = 2;
 
 		/* Success -- May still have traps */
-		if (rand_int(100) < j)
+		if (randint0(100) < j)
 		{
 			msg_print("You have picked the lock.");
 			gain_exp(1);
@@ -1195,7 +1195,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 		(c_ptr->feat == FEAT_SNOW_TREE))
 	{
 		/* Chop Down */
-		if ((p_ptr->skill_dig > 10 + rand_int(400)) && twall(y, x, FEAT_SNOW))
+		if ((p_ptr->skill_dig > 10 + randint0(400)) && twall(y, x, FEAT_SNOW))
 		{
 			msg_print("You have cleared away the trees.");
 
@@ -1211,7 +1211,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 			more = TRUE;
 
 			/* Occasional Search XXX XXX */
-			if (rand_int(100) < 25) search();
+			if (randint0(100) < 25) search();
 		}
 	}
 
@@ -1219,7 +1219,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 	else if (c_ptr->feat == FEAT_JUNGLE)
 	{
 		/* Chop Down */
-		if ((p_ptr->skill_dig > 10 + rand_int(800)) && twall(y, x, FEAT_BUSH))
+		if ((p_ptr->skill_dig > 10 + randint0(800)) && twall(y, x, FEAT_BUSH))
 		{
 			msg_print("You have cleared away the jungle.");
 
@@ -1235,7 +1235,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 			more = TRUE;
 
 			/* Occasional Search XXX XXX */
-			if (rand_int(100) < 25) search();
+			if (randint0(100) < 25) search();
 		}
 	}
 
@@ -1247,7 +1247,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 		 (c_ptr->feat == FEAT_SNOW_MOUNTAIN))
 	{
 		/* Tunnel */
-		if ((p_ptr->skill_dig > 40 + rand_int(1600)) && twall(y, x, FEAT_FLOOR))
+		if ((p_ptr->skill_dig > 40 + randint0(1600)) && twall(y, x, FEAT_FLOOR))
 		{
 			msg_print("You have finished the tunnel.");
 
@@ -1282,13 +1282,13 @@ static bool do_cmd_tunnel_aux(int y, int x)
 		/* Quartz */
 		if (hard)
 		{
-			okay = (p_ptr->skill_dig > 20 + rand_int(800));
+			okay = (p_ptr->skill_dig > 20 + randint0(800));
 		}
 
 		/* Magma */
 		else
 		{
-			okay = (p_ptr->skill_dig > 10 + rand_int(400));
+			okay = (p_ptr->skill_dig > 10 + randint0(400));
 		}
 
 		/* Success */
@@ -1336,13 +1336,13 @@ static bool do_cmd_tunnel_aux(int y, int x)
 	else if (c_ptr->feat == FEAT_RUBBLE)
 	{
 		/* Remove the rubble */
-		if ((p_ptr->skill_dig > rand_int(200)) && twall(y, x, FEAT_FLOOR))
+		if ((p_ptr->skill_dig > randint0(200)) && twall(y, x, FEAT_FLOOR))
 		{
 			/* Message */
 			msg_print("You have removed the rubble.");
 
 			/* Hack -- place an object */
-			if (rand_int(100) < 10)
+			if (randint0(100) < 10)
 			{
 				/* Create a simple object */
 				place_object(y, x, FALSE, FALSE);
@@ -1367,7 +1367,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 	else if (c_ptr->feat >= FEAT_SECRET)
 	{
 		/* Tunnel */
-		if ((p_ptr->skill_dig > 30 + rand_int(1200)) && twall(y, x, FEAT_FLOOR))
+		if ((p_ptr->skill_dig > 30 + randint0(1200)) && twall(y, x, FEAT_FLOOR))
 		{
 			msg_print("You have finished the tunnel.");
 		}
@@ -1380,7 +1380,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 			more = TRUE;
 
 			/* Occasional Search XXX XXX */
-			if (rand_int(100) < 25) search();
+			if (randint0(100) < 25) search();
 		}
 	}
 
@@ -1552,7 +1552,7 @@ static bool do_cmd_disarm_chest(int y, int x, s16b o_idx)
 	}
 
 	/* Success (get a lot of experience) */
-	else if (rand_int(100) < j)
+	else if (randint0(100) < j)
 	{
 		msg_print("You have disarmed the chest.");
 		gain_exp(o_ptr->pval);
@@ -1560,7 +1560,7 @@ static bool do_cmd_disarm_chest(int y, int x, s16b o_idx)
 	}
 
 	/* Failure -- Keep trying */
-	else if ((i > 5) && (randint(i) > 5))
+	else if ((i > 5) && (randint1(i) > 5))
 	{
 		/* We may keep trying */
 		more = TRUE;
@@ -1643,7 +1643,7 @@ bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
 	}
 
 	/* Failure -- Keep trying */
-	else if ((i > 5) && (randint(i) > 5))
+	else if ((i > 5) && (randint1(i) > 5))
 	{
 		/* Failure */
 		if (flush_failure) flush();
@@ -2122,7 +2122,7 @@ void do_cmd_stay(int pickup)
 
 
 	/* Spontaneous Searching */
-	if ((p_ptr->skill_fos >= 50) || (0 == rand_int(50 - p_ptr->skill_fos)))
+	if ((p_ptr->skill_fos >= 50) || (0 == randint0(50 - p_ptr->skill_fos)))
 	{
 		search();
 	}
@@ -2331,7 +2331,7 @@ static sint critical_shot(int chance, int sleeping_bonus,
 	i = (chance + sleeping_bonus);
 
 	/* Test for critical hit. */
-	if (randint(i + 200) <= i)
+	if (randint1(i + 200) <= i)
 	{
 		/* Encourage the player to throw weapons at sleeping
 		 * monsters. -LM-
@@ -2342,7 +2342,7 @@ static sint critical_shot(int chance, int sleeping_bonus,
 		}
 
 		/* Determine level of critical hit */
-		k = randint(i) + randint(100);
+		k = randint1(i) + randint1(100);
 
 		/* This portion of the function determines the level of critical hit,
 		 * then adjusts the damage dice multiplier and displays an appropriate
@@ -2470,7 +2470,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	if ((j_ptr->name2 == EGO_VELOCITY) || (j_ptr->name2 == EGO_ACCURACY))
 	{
 		/* Occasional boost to shot. */
-		if (randint(16) == 1)
+		if (randint1(16) == 1)
 		{
 			if (j_ptr->name2 == EGO_VELOCITY) special_dam = TRUE;
 			else if (j_ptr->name2 == EGO_ACCURACY) special_hit = TRUE;
@@ -2621,7 +2621,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 
 		/* Inflict both normal and wound damage. */
 		take_hit(tdam, "ammo of backbiting.");
-		set_cut(randint(tdam * 3));
+		set_cut(randint1(tdam * 3));
 
 		/* That ends that shot! */
 		return;
@@ -3325,7 +3325,7 @@ void do_cmd_throw_aux(int mult)
 	/* Potions smash open */
 	if (object_is_potion(q_ptr))
 	{
-		if (hit_body || hit_wall || (randint(100) < j))
+		if (hit_body || hit_wall || (randint1(100) < j))
 		{
 			/* Message */
 			msg_format("The %s shatters!", o_name);

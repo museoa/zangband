@@ -183,7 +183,7 @@ void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
 	/* Wake it up */
 	m_ptr->csleep = 0;
 
-	if (m_ptr->invulner && rand_int(PENETRATE_INVULNERABILITY))
+	if (m_ptr->invulner && randint0(PENETRATE_INVULNERABILITY))
 	{
 		if (seen)
 		{
@@ -260,7 +260,7 @@ void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
 	/* Mega-Hack -- Pain cancels fear */
 	if (m_ptr->monfear && (dam > 0))
 	{
-		int tmp = randint(dam / 4);
+		int tmp = randint1(dam / 4);
 
 		/* Cure a little fear */
 		if (tmp < m_ptr->monfear)
@@ -292,14 +292,14 @@ void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
 		* Run (sometimes) if at 10% or less of max hit points,
 		* or (usually) when hit for half its current hit points
 		*/
-		if (((percentage <= 10) && (rand_int(10) < percentage)) ||
-			((dam >= m_ptr->hp) && (rand_int(100) < 80)))
+		if (((percentage <= 10) && (randint0(10) < percentage)) ||
+			((dam >= m_ptr->hp) && (randint0(100) < 80)))
 		{
 			/* Hack -- note fear */
 			(*fear) = TRUE;
 
 			/* XXX XXX XXX Hack -- Add some timed fear */
-			m_ptr->monfear += (randint(10) +
+			m_ptr->monfear += (randint1(10) +
 				(((dam >= m_ptr->hp) && (percentage > 7)) ?
 				20 : ((11 - percentage) * 5)));
 		}
@@ -1231,7 +1231,7 @@ static int check_hit2(int power, int level, int ac)
 	int i, k;
 
 	/* Percentile dice */
-	k = rand_int(100);
+	k = randint0(100);
 
 	/* Hack -- Always miss or hit */
 	if (k < 10) return (k < 5);
@@ -1240,7 +1240,7 @@ static int check_hit2(int power, int level, int ac)
 	i = (power + (level * 3));
 
 	/* Power and Level compete against Armor */
-	if ((i > 0) && (randint(i) > ((ac * 3) / 4))) return (TRUE);
+	if ((i > 0) && (randint1(i) > ((ac * 3) / 4))) return (TRUE);
 
 	/* Assume miss */
 	return (FALSE);
@@ -1551,10 +1551,10 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 			/* Message */
 			if (act && see_either)
 			{
-				if ((p_ptr->image) && (randint(3) == 1))
+				if ((p_ptr->image) && (randint1(3) == 1))
 				{
 					strfmt(temp, "%s %s.",
-					       silly_attacks[randint(MAX_SILLY_ATTACK)-1],t_name);
+					       silly_attacks[randint1(MAX_SILLY_ATTACK)-1],t_name);
 				}
 				else
 					strfmt(temp, act, t_name);
@@ -1614,7 +1614,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 			case RBE_EAT_GOLD:
 				{
 					pt = damage = 0;
-					if (randint(2) == 1) blinked = TRUE;
+					if (randint1(2) == 1) blinked = TRUE;
 					break;
 				}
 
@@ -1940,10 +1940,10 @@ static void process_monster(int m_idx)
 	if (r_ptr->flags2 & (RF2_QUANTUM))
 	{
 		/* Sometimes skip move */
-		if (!rand_int(2)) return;
+		if (!randint0(2)) return;
 
 		/* Sometimes die */
-		if (!rand_int((m_idx % 100) + 10) && !(r_ptr->flags1 & RF1_QUESTOR))
+		if (!randint0((m_idx % 100) + 10) && !(r_ptr->flags1 & RF1_QUESTOR))
 		{
 			bool sad = FALSE;
 
@@ -1992,7 +1992,7 @@ static void process_monster(int m_idx)
 		u32b notice = 0;
 
 		/* Hack -- handle non-aggravation */
-		if (!p_ptr->aggravate) notice = rand_int(1024);
+		if (!p_ptr->aggravate) notice = randint0(1024);
 
 		/* Nightmare monsters are more alert */
 		if (ironman_nightmare) notice /= 2;
@@ -2067,7 +2067,7 @@ static void process_monster(int m_idx)
 		int d = 1;
 
 		/* Make a "saving throw" against stun */
-		if (rand_int(10000) <= r_ptr->level * r_ptr->level)
+		if (randint0(10000) <= r_ptr->level * r_ptr->level)
 		{
 			/* Recover fully */
 			d = m_ptr->stunned;
@@ -2108,7 +2108,7 @@ static void process_monster(int m_idx)
 	if (m_ptr->confused)
 	{
 		/* Amount of "boldness" */
-		int d = randint(r_ptr->level / 20 + 1);
+		int d = randint1(r_ptr->level / 20 + 1);
 
 		/* Still confused */
 		if (m_ptr->confused > d)
@@ -2180,7 +2180,7 @@ static void process_monster(int m_idx)
 	if (m_ptr->monfear)
 	{
 		/* Amount of "boldness" */
-		int d = randint(r_ptr->level / 20 + 1);
+		int d = randint1(r_ptr->level / 20 + 1);
 
 		/* Still afraid */
 		if (m_ptr->monfear > d)
@@ -2232,7 +2232,7 @@ static void process_monster(int m_idx)
 		}
 
 		/* Hack -- multiply slower in crowded areas */
-		if ((k < 4) && (!k || !rand_int(k * MON_MULT_ADJ)))
+		if ((k < 4) && (!k || !randint0(k * MON_MULT_ADJ)))
 		{
 			/* Try to multiply */
 			if (multiply_monster(m_idx, FALSE, is_friendly(m_ptr), is_pet(m_ptr)))
@@ -2252,7 +2252,7 @@ static void process_monster(int m_idx)
 
 	/* Hack! "Cyber" monster makes noise... */
 	if (strstr((r_name + r_ptr->name), "Cyber") &&
-	    (randint(CYBERNOISE) == 1) &&
+	    (randint1(CYBERNOISE) == 1) &&
 	    !m_ptr->ml && (m_ptr->cdis <= MAX_SIGHT))
 	{
 		msg_print("You hear heavy steps.");
@@ -2264,7 +2264,7 @@ static void process_monster(int m_idx)
 	/* Some monsters can speak */
 	if (speak_unique &&
 	    (r_ptr->flags2 & RF2_CAN_SPEAK) &&
-		(randint(SPEAK_CHANCE) == 1) &&
+		(randint1(SPEAK_CHANCE) == 1) &&
 		player_has_los_grid(c_ptr))
 	{
 		char m_name[80];
@@ -2326,7 +2326,7 @@ static void process_monster(int m_idx)
 	/* 75% random movement */
 	else if ((r_ptr->flags1 & RF1_RAND_50) &&
 				(r_ptr->flags1 & RF1_RAND_25) &&
-	         (rand_int(100) < 75))
+	         (randint0(100) < 75))
 	{
 		/* Memorize flags */
 		if (m_ptr->ml) r_ptr->r_flags1 |= (RF1_RAND_50);
@@ -2338,7 +2338,7 @@ static void process_monster(int m_idx)
 
 	/* 50% random movement */
 	else if ((r_ptr->flags1 & RF1_RAND_50) &&
-				(rand_int(100) < 50))
+				(randint0(100) < 50))
 	{
 		/* Memorize flags */
 		if (m_ptr->ml) r_ptr->r_flags1 |= (RF1_RAND_50);
@@ -2349,7 +2349,7 @@ static void process_monster(int m_idx)
 
 	/* 25% random movement */
 	else if ((r_ptr->flags1 & RF1_RAND_25) &&
-				(rand_int(100) < 25))
+				(randint0(100) < 25))
 	{
 		/* Memorize flags */
 		if (m_ptr->ml) r_ptr->r_flags1 |= RF1_RAND_25;
@@ -2453,7 +2453,7 @@ static void process_monster(int m_idx)
 		d = mm[i];
 
 		/* Hack -- allow "randomized" motion */
-		if (d == 5) d = ddd[rand_int(8)];
+		if (d == 5) d = ddd[randint0(8)];
 
 		/* Get the destination */
 		ny = oy + ddy[d];
@@ -2520,7 +2520,7 @@ static void process_monster(int m_idx)
 			/* Monster destroyed a wall */
 			did_kill_wall = TRUE;
 
-			if (randint(GRINDNOISE) == 1)
+			if (randint1(GRINDNOISE) == 1)
 			{
 				msg_print("There is a grinding sound.");
 			}
