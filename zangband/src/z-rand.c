@@ -130,7 +130,7 @@ s32b Rand_mod(s32b m)
 		r = (Rand_value = LCRNG(Rand_value));
 
 		/* Mutate a 28-bit "random" number */
-		r = ((r >> 4) % m);
+		r = ((r >> 4) & 0x0FFFFFFF) % m;
 	}
 
 	/* Use the "complex" RNG */
@@ -191,7 +191,7 @@ s32b Rand_div(u32b m)
 			r = (Rand_value = LCRNG(Rand_value));
 
 			/* Mutate a 28-bit "random" number */
-			r = (r >> 4) / n;
+			r = ((r >> 4) & 0x0FFFFFFF) / n;
 
 			/* Done */
 			if (r < m) break;
