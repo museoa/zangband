@@ -145,6 +145,36 @@ static void borg_follow_take(int i)
 }
 
 
+/*
+ * Guess the kidx for an unknown item.
+ */
+static int borg_guess_kidx(int unknown)
+{
+    int k;
+
+    for (k = 1; k < z_info->k_max; k++)
+    {
+        object_kind *k_ptr = &k_info[k];
+
+        /* Skip "empty" items */
+        if (!k_ptr->name) continue;
+
+        /* Skip identified items */
+        if (k_ptr->aware) continue;
+
+        /* Skip items with the wrong symbol */
+        if (unknown != k_ptr->d_char) continue;
+
+        /* Valueless items are boring */
+        if (k_ptr->cost <= 0) continue;
+
+        /* Return the result */
+        return k;
+    }
+
+    /* Didn't find anything */
+    return (0);
+}
 
 /*
  * Obtain a new "take" index
@@ -190,7 +220,7 @@ static int borg_new_take(int k_idx, int y, int x)
 	borg_takes_cnt++;
 
 	/* Obtain the object */
-	take = &borg_takes[n];
+    take = &borg_takes[n];
 
 	/* Save the kind */
 	take->k_idx = k_idx;
@@ -231,8 +261,15 @@ static bool observe_take_diff(int y, int x)
 	/* Get grid */
 	mb_ptr = map_loc(x, y);
 
-	/* Get the kind */
-	k_idx = mb_ptr->object;
+    if (mb_ptr->object)
+    {
+        /* Get the kind */
+        k_idx = mb_ptr->object;
+    }
+    else
+    {
+        k_idx = borg_guess_kidx(mb_ptr->unknown);
+    }
 
 	/* Oops */
 	if (!k_idx) return (FALSE);
@@ -2667,7 +2704,7 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 	/*
 	 * Examine objects
 	 */
-	if (map->object)
+	if (map->object || map->unknown)
 	{
 		borg_wank *wank;
 
