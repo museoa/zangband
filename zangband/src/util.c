@@ -2038,6 +2038,18 @@ static u16b *message__type;
  */
 static byte message__color[MSG_MAX];
 
+/*
+ * Wrapper function to get values out of message__color
+ */
+byte get_msg_type_color(byte a)
+{
+	/* Paranoia */
+	if (a >= MSG_MAX) return TERM_WHITE;
+
+	/* Return the color */
+	return (message__color[(int) a]);
+}
+
 
 /*
  * How many messages are "available"?
@@ -2109,7 +2121,7 @@ errr message_color_define(u16b type, byte color)
 	if (type >= MSG_MAX) return (1);
 
 	/* Store the color */
-	message__color[type] = color;
+	message__color[type] = color % 16;
 
 	/* Success */
 	return (0);

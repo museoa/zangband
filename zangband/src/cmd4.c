@@ -2569,11 +2569,13 @@ void do_cmd_colors(void)
 		prt("(1) Load a user pref file", 5, 4);
 #ifdef ALLOW_COLORS
 		prt("(2) Dump colors", 5, 5);
-		prt("(3) Modify colors", 5, 6);
+		prt("(3) Dump message colors", 5, 6);
+		prt("(4) Modify colors", 5, 7);
+		prt("(5) Modify message colors", 5, 8);
 #endif
 
 		/* Prompt */
-		prt("Command: ", 0, 8);
+		prt("Command: ", 0, 10);
 
 		/* Prompt */
 		i = inkey();
@@ -2585,10 +2587,10 @@ void do_cmd_colors(void)
 		if (i == '1')
 		{
 			/* Prompt */
-			prt("Command: Load a user pref file", 0, 8);
+			prt("Command: Load a user pref file", 0, 10);
 
 			/* Prompt */
-			prt("File: ", 0, 10);
+			prt("File: ", 0, 12);
 
 			/* Default file */
 			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
@@ -2612,10 +2614,10 @@ void do_cmd_colors(void)
 		else if (i == '2')
 		{
 			/* Prompt */
-			prt("Command: Dump colors", 0, 8);
+			prt("Command: Dump colors", 0, 10);
 
 			/* Prompt */
-			prt("File: ", 0, 10);
+			prt("File: ", 0, 12);
 
 			/* Default filename */
 			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
@@ -2669,14 +2671,69 @@ void do_cmd_colors(void)
 			/* Message */
 			msg_print("Dumped color redefinitions.");
 		}
+		
+		/* Dump message colors */
+		else if (i == '3')
+		{
+			/* Prompt */
+			prt("Command: Dump message colors", 0, 10);
+
+			/* Prompt */
+			prt("File: ", 0, 12);
+
+			/* Default filename */
+			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
+
+			/* Get a filename */
+			if (!askfor_aux(tmp, 70)) continue;
+
+			/* Build the filename */
+			path_build(buf, 1024, ANGBAND_DIR_USER, tmp);
+
+			/* Append to the file */
+			fff = my_fopen(buf, "a");
+
+			/* Failure */
+			if (!fff) continue;
+
+			/* Start dumping */
+			fprintf(fff, "\n\n");
+			fprintf(fff, "# Message color definitions\n\n");
+
+			/* Dump message colors */
+			for (i = 0; i < MSG_MAX; i++)
+			{
+				byte color = get_msg_type_color(i);
+
+				cptr name = "unknown";
+
+				/* Extract the message type name */
+				name = msg_names[i];
+
+				/* Dump a comment */
+				fprintf(fff, "# Message type: %s\n", name);
+
+				/* Dump the message color */
+				fprintf(fff, "M:%d:%c\n\n", i, color_char[color]);
+			}
+
+			/* All done */
+			fprintf(fff, "\n\n\n\n");
+
+			/* Close */
+			my_fclose(fff);
+
+			/* Message */
+			msg_print("Dumped message color definitions.");
+		}
 
 		/* Edit colors */
-		else if (i == '3')
+		else if (i == '4')
 		{
 			static byte a = 0;
 
 			/* Prompt */
-			prt("Command: Modify colors", 0, 8);
+			prt("Command: Modify colors", 0, 10);
 
 			/* Hack -- query until done */
 			while (1)
@@ -2685,7 +2742,7 @@ void do_cmd_colors(void)
 				byte j;
 
 				/* Clear */
-				clear_from(10);
+				clear_from(12);
 
 				/* Exhibit the normal colors */
 				for (j = 0; j < 16; j++)
@@ -2701,11 +2758,11 @@ void do_cmd_colors(void)
 				name = ((a < 16) ? color_names[a] : "undefined");
 
 				/* Describe the color */
-				Term_putstr(5, 10, -1, TERM_WHITE,
+				Term_putstr(5, 12, -1, TERM_WHITE,
 							format("Color = %d, Name = %s", a, name));
 
 				/* Label the Current values */
-				Term_putstr(5, 12, -1, TERM_WHITE,
+				Term_putstr(5, 14, -1, TERM_WHITE,
 							format("K = 0x%02x / R,G,B = 0x%02x,0x%02x,0x%02x",
 								   angband_color_table[a][0],
 								   angband_color_table[a][1],
@@ -2713,7 +2770,7 @@ void do_cmd_colors(void)
 								   angband_color_table[a][3]));
 
 				/* Prompt */
-				Term_putstr(0, 14, -1, TERM_WHITE,
+				Term_putstr(0, 16, -1, TERM_WHITE,
 							"Command (n/N/k/K/r/R/g/G/b/B): ");
 
 				/* Get a command */
@@ -2749,7 +2806,53 @@ void do_cmd_colors(void)
 				Term_redraw();
 			}
 		}
+		
+		/* Edit message colors */
+		else if (i == '5')
+		{
+			static byte a = 0;
+			byte color;
 
+			/* Prompt */
+			prt("Command: Modify message colors", 0, 10);
+
+			/* Hack -- query until done */
+			while (1)
+			{
+				/* Clear */
+				clear_from(12);
+			
+				/* Describe the message */
+				Term_putstr(5, 12, -1, TERM_WHITE,
+						format("Message = %d, Type = %s", a, msg_names[a]));
+
+				/* Show current color */
+				color = get_msg_type_color(a);
+				
+				/* Paranoia */
+				if (color >= 16) color = 0;
+				
+				Term_putstr(5, 14, -1, TERM_WHITE,
+							format("Current color: %c / ",
+							color_char[color]));
+				Term_putstr(24, 14, -1, color, color_names[color]);
+
+				/* Prompt */
+				Term_putstr(0, 16, -1, TERM_WHITE, "Command (n/N/c/C): ");
+
+				/* Get a command */
+				i = inkey();
+
+				/* All done */
+				if (i == ESCAPE) break;
+			
+				/* Analyze */
+				if (i == 'n') a = (a + MSG_MAX + 1) % MSG_MAX;
+				if (i == 'N') a = (a + MSG_MAX - 1) % MSG_MAX;
+				if (i == 'c') message_color_define(a, (byte)(color + 1));
+				if (i == 'C') message_color_define(a, (byte)(color - 1));
+			}
+		}
 #endif
 
 		/* Unknown option */

@@ -6020,6 +6020,46 @@ cptr color_names[16] =
 	"Light Umber",
 };
 
+/*
+ * Hack -- the message colour names (MSG_* in defines.h)
+ * Several are unused, although the corresponding sounds are not.
+ * ToDo: Use colours where appropriate (eg where sounds are used).
+ */
+cptr msg_names[MSG_MAX] =
+{
+	"Generic",
+	"Hit monster",
+	"Miss monster",
+	"Monster flees",
+	"Monster drop (unused)",
+	"Monster kill",
+	"Gain level",
+	"Player death",
+	"Spell/prayer gained",
+	"Teleport (unused)",
+	"Shoot (unused)",
+	"Quaff (unused)",
+	"Activate artifact",
+	"Walk (unused)",
+	"Teleport other (unused)",
+	"Hit wall",
+	"Eat (unused)",
+	"Sell worthless (unidentified) item (unused)",
+	"Sell poor (unidentified) item (unused)",
+	"Sell good (unidentified) item (unused)",
+	"Sell excellent (unidentified) item (unused)",
+	"Dig (unused)",
+	"Pick chest", /* sound is for opening doors */
+	"Shut door",
+	"Teleport level", /* sound also for recall */
+	"Error",
+	"Nothing to open",
+	"Fail to pick lock",
+	"Use stairs",
+	"Hitpoint warning"
+};
+
+
 
 /*
  * Abbreviations of healthy stats
