@@ -2325,12 +2325,14 @@ static errr Term_pict_win(int x, int y, int n, const byte *ap, const char *cp)
 #ifdef USE_GRAPHICS
 
 	int i;
-	int x1, y1, w1, h1;
-	int x2, y2, w2, h2;
+	int src_x, src_y;
+	int src_wid, src_hgt;
+	int dest_x, dest_y;
+	int dest_wid, dest_hgt;
 
 # ifdef USE_TRANSPARENCY
 
-	int x3, y3;
+	int tsrc_x, tsrc_y;
 
 	HDC hdcMask;
 
@@ -2348,24 +2350,24 @@ static errr Term_pict_win(int x, int y, int n, const byte *ap, const char *cp)
 	}
 
 	/* Size of bitmap cell */
-	w1 = infGraph.CellWidth;
-	h1 = infGraph.CellHeight;
+	src_wid = infGraph.CellWidth;
+	src_hgt = infGraph.CellHeight;
 
 	/* Size of window cell */
 	if (td->map_active)
 	{
-		w2 = td->map_tile_wid;
-		h2 = td->map_tile_hgt;
+		dest_wid = td->map_tile_wid;
+		dest_hgt = td->map_tile_hgt;
 	}
 	else
 	{
-		w2 = td->tile_wid;
-		h2 = td->tile_hgt;
+		dest_wid = td->tile_wid;
+		dest_hgt = td->tile_hgt;
 	}
 
 	/* Location of window cell */
-	x2 = x * w2 + td->size_ow1;
-	y2 = y * h2 + td->size_oh1;
+	dest_x = x * dest_wid + td->size_ow1;
+	dest_y = y * dest_hgt + td->size_oh1;
 
 	/* Info */
 	hdc = GetDC(td->w);
@@ -2389,7 +2391,7 @@ static errr Term_pict_win(int x, int y, int n, const byte *ap, const char *cp)
 # endif /* USE_TRANSPARENCY */
 
 	/* Draw attr/char pairs */
-	for (i = 0; i < n; i++, x2 += w2)
+	for (i = 0; i < n; i++, dest_x += dest_wid)
 	{
 		byte a = ap[i];
 		char c = cp[i];
@@ -2399,27 +2401,27 @@ static errr Term_pict_win(int x, int y, int n, const byte *ap, const char *cp)
 		int col = (c & 0x7F);
 
 		/* Location of bitmap cell */
-		x1 = col * w1;
-		y1 = row * h1;
+		src_x = col * src_wid;
+		src_y = row * src_hgt;
 
 # ifdef USE_TRANSPARENCY
 
 		if (arg_graphics == GRAPHICS_ADAM_BOLT)
 		{
-			x3 = (tcp[i] & 0x7F) * w1;
-			y3 = (tap[i] & 0x7F) * h1;
+			tsrc_x = (tcp[i] & 0x7F) * src_wid;
+			tsrc_y = (tap[i] & 0x7F) * src_hgt;
 
 			/* Perfect size */
-			if ((w1 == w2) && (h1 == h2))
+			if ((src_wid == dest_wid) && (src_hgt == dest_hgt))
 			{
 				/* Copy the terrain picture from the bitmap to the window */
-				BitBlt(hdc, x2, y2, w2, h2, hdcSrc, x3, y3, SRCCOPY);
+				BitBlt(hdc, dest_x, dest_y, dest_wid, dest_hgt, hdcSrc, tsrc_x, tsrc_y, SRCCOPY);
 
 				/* Mask out the tile */
-				BitBlt(hdc, x2, y2, w2, h2, hdcMask, x1, y1, SRCAND);
+				BitBlt(hdc, dest_x, dest_y, dest_wid, dest_hgt, hdcMask, src_x, src_y, SRCAND);
 
 				/* Draw the tile */
-				BitBlt(hdc, x2, y2, w2, h2, hdcSrc, x1, y1, SRCPAINT);
+				BitBlt(hdc, dest_x, dest_y, dest_wid, dest_hgt, hdcSrc, src_x, src_y, SRCPAINT);
 			}
 
 			/* Need to stretch */
@@ -2429,16 +2431,16 @@ static errr Term_pict_win(int x, int y, int n, const byte *ap, const char *cp)
 				SetStretchBltMode(hdc, COLORONCOLOR);
 
 				/* Copy the terrain picture from the bitmap to the window */
-				StretchBlt(hdc, x2, y2, w2, h2, hdcSrc, x3, y3, w1, h1, SRCCOPY);
+				StretchBlt(hdc, dest_x, dest_y, dest_wid, dest_hgt, hdcSrc, tsrc_x, tsrc_y, src_wid, src_hgt, SRCCOPY);
 
 				/* Only draw if terrain and overlay are different */
-				if ((x1 != x3) || (y1 != y3))
+				if ((src_x != tsrc_x) || (src_y != tsrc_y))
 				{
 					/* Mask out the tile */
-					StretchBlt(hdc, x2, y2, w2, h2, hdcMask, x1, y1, w1, h1, SRCAND);
+					StretchBlt(hdc, dest_x, dest_y, dest_wid, dest_hgt, hdcMask, src_x, src_y, src_wid, src_hgt, SRCAND);
 
 					/* Draw the tile */
-					StretchBlt(hdc, x2, y2, w2, h2, hdcSrc, x1, y1, w1, h1, SRCPAINT);
+					StretchBlt(hdc, dest_x, dest_y, dest_wid, dest_hgt, hdcSrc, src_x, src_y, src_wid, src_hgt, SRCPAINT);
 				}
 			}
 		}
@@ -2448,10 +2450,10 @@ static errr Term_pict_win(int x, int y, int n, const byte *ap, const char *cp)
 
 		{
 			/* Perfect size */
-			if ((w1 == w2) && (h1 == h2))
+			if ((src_wid == dest_wid) && (src_hgt == dest_hgt))
 			{
 				/* Copy the picture from the bitmap to the window */
-				BitBlt(hdc, x2, y2, w2, h2, hdcSrc, x1, y1, SRCCOPY);
+				BitBlt(hdc, dest_x, dest_y, dest_wid, dest_hgt, hdcSrc, src_x, src_y, SRCCOPY);
 			}
 
 			/* Need to stretch */
@@ -2461,7 +2463,7 @@ static errr Term_pict_win(int x, int y, int n, const byte *ap, const char *cp)
 				SetStretchBltMode(hdc, COLORONCOLOR);
 
 				/* Copy the picture from the bitmap to the window */
-				StretchBlt(hdc, x2, y2, w2, h2, hdcSrc, x1, y1, w1, h1, SRCCOPY);
+				StretchBlt(hdc, dest_x, dest_y, dest_wid, dest_hgt, hdcSrc, src_x, src_y, src_wid, src_hgt, SRCCOPY);
 			}
 		}
 	}
