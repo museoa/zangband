@@ -4657,7 +4657,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 					}
 
 					/* Recursion... */
-					project(area(y,x)->m_idx, 0, t_y, t_x,  dam, typ, flg);
+					project(area(y, x)->m_idx, 0, t_y, t_x,  dam, typ, flg);
 				}
 				else
 				{

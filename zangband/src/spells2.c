@@ -1631,12 +1631,8 @@ bool project_hack(int typ, int dam)
 		/* Remove mark */
 		m_ptr->mflag &= ~(MFLAG_TEMP);
 
-		/* Location */
-		y = m_ptr->fy;
-		x = m_ptr->fx;
-
 		/* Jump directly to the target monster */
-		if (project(0, 0, y, x, dam, typ, flg)) obvious = TRUE;
+		if (project(0, 0, m_ptr->fy, m_ptr->fx, dam, typ, flg)) obvious = TRUE;
 	}
 
 	/* Result */
@@ -3284,8 +3280,8 @@ bool project_hook(int typ, int dir, int dam, u16b flg)
 	flg |= (PROJECT_THRU);
 
 	/* Use the given direction */
-	tx = p_ptr->px + ddx[dir];
-	ty = p_ptr->py + ddy[dir];
+	tx = p_ptr->px + 99 * ddx[dir];
+	ty = p_ptr->py + 99 * ddy[dir];
 
 	/* Hack -- Use an actual "target" */
 	if (!ironman_moria && (dir == 5) && target_okay())
