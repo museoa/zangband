@@ -202,7 +202,7 @@ N:20:Cure Serious Wounds
 G:,:d
 I:80:16:500
 W:27:0:1:75
-A:27/1
+A:16/1
 
 ##### Normal Food #####
 
@@ -777,7 +777,7 @@ N:92:& Pair~ of Hard Leather Boots
 G:]:U
 I:30:3:0
 W:5:0:40:12
-A:9/1
+A:9/1:43/1
 P:3:1d1:0:0:0
 
 N:93:& Pair~ of Metal Shod Boots
@@ -1055,14 +1055,14 @@ N:129:& Large Leather Shield~
 G:):U
 I:34:4:0
 W:26:0:100:120
-A:26/1
+A:26/1:60/1
 P:6:1d4:0:0:0
 
 N:130:& Small Metal Shield~
 G:):s
 I:34:3:0
 W:17:0:65:50
-A:17/1
+A:17/1:40/1
 P:5:1d3:0:0:0
 
 N:131:& Large Metal Shield~
@@ -1305,14 +1305,14 @@ N:164:Charisma
 G:":d
 I:40:7:0
 W:35:0:3:250
-A:35/2
+A:20/2
 F:CHR | HIDE_TYPE
 
 N:165:Searching
 G:":d
 I:40:5:0
 W:30:0:3:100
-A:52/4
+A:12/2
 F:SEARCH | HIDE_TYPE
 
 N:166:Teleportation
@@ -1340,7 +1340,7 @@ N:169:Adornment
 G:":d
 I:40:2:0
 W:10:0:3:20
-A:26/2
+A:10/2
 F:EASY_KNOW
 
 ##### Extra armor #####
@@ -2638,7 +2638,7 @@ N:352:Trap Location
 G:-:d
 I:66:0:15
 W:3:0:15:100
-A:5/2
+A:8/2
 P:0:1d1:0:0:0
 
 N:353:Probing
@@ -3286,7 +3286,7 @@ N:437:Cure Light Wounds
 G:!:d
 I:75:34:50
 W:0:0:4:35
-A:0/1:1/1
+A:0/1:3/1
 P:0:1d1:0:0:0
 
 N:438:Clumsiness
@@ -3969,7 +3969,7 @@ N:566:Mundanity
 G:?:d
 I:70:23:0
 W:40:0:5:0
-A:23/10
+A:23/10:63/10
 
 N:567:& Magical Figurine~ of #
 G:`:b
