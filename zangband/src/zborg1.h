@@ -1099,15 +1099,6 @@ extern s16b *borg_race_count;
 extern s16b *borg_race_death;
 
 
-/*
- * Classification of map symbols
- */
-
-extern bool borg_is_take[256];	/* Symbol may be an object */
-
-extern bool borg_is_kill[256];	/* Symbol may be a monster */
-
-
 
 /*
  * Maintain a set of glow grids (liteable grids)

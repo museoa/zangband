@@ -941,15 +941,6 @@ s16b *borg_race_death;
 
 
 /*
- * Classification of map symbols
- */
-
-bool borg_is_take[256];	/* Symbol may be an object */
-
-bool borg_is_kill[256];	/* Symbol may be a monster */
-
-
-/*
  * Maintain a set of grids marked as "BORG_GLOW"
  */
 
@@ -2448,18 +2439,6 @@ void borg_init_1(void)
 	/* Array of objects */
 	C_MAKE(borg_takes, BORG_TAKES_MAX, borg_take);
 
-	/* Scan the objects */
-	for (i = 0; i < z_info->k_max; i++)
-	{
-		object_kind *k_ptr = &k_info[i];
-
-		/* Skip non-items */
-		if (!k_ptr->name) continue;
-
-		/* Notice this object */
-		borg_is_take[(byte)(k_ptr->d_char)] = TRUE;
-	}
-
 	/*** Monster tracking ***/
 
 	/* No monsters yet */
@@ -2468,19 +2447,6 @@ void borg_init_1(void)
 
 	/* Array of monsters */
 	C_MAKE(borg_kills, 256, borg_kill);
-
-	/* Scan the monsters */
-	for (i = 1; i < z_info->r_max; i++)
-	{
-		monster_race *r_ptr = &r_info[i];
-
-		/* Skip non-monsters */
-		if (!r_ptr->name) continue;
-
-		/* Notice this monster */
-		borg_is_kill[(byte)(r_ptr->d_char)] = TRUE;
-	}
-
 
 	/*** Special counters ***/
 
