@@ -225,7 +225,8 @@ bool borg_use_things(void)
 	if (bp_ptr->status.hungry)
 	{
 		/* Attempt to satisfy hunger */
-		if (borg_spell_fail(REALM_LIFE, 0, 7, 40) ||
+		if (borg_activate(BORG_ACT_SATISFY) ||
+			borg_spell_fail(REALM_LIFE, 0, 7, 40) ||
 			borg_spell_fail(REALM_ARCANE, 2, 6, 40) ||
 			borg_spell_fail(REALM_NATURE, 0, 3, 40) ||
 			borg_eat_food(SV_FOOD_BISCUIT) ||
@@ -234,6 +235,7 @@ bool borg_use_things(void)
 			borg_eat_food(SV_FOOD_PINT_OF_ALE) ||
 			borg_eat_food(SV_FOOD_PINT_OF_WINE) ||
 			borg_activate(BORG_ACT_CREATE_FOOD) ||
+			borg_racial(RACE_HOBBIT) ||
 			borg_eat_food(SV_FOOD_RATION) ||
 			borg_read_scroll(SV_SCROLL_SATISFY_HUNGER) ||
 			borg_eat_food(SV_FOOD_WAYBREAD))
