@@ -28,10 +28,11 @@ Zangband 2.3.3:
 -You can now teleport into forested areas. This will prevent getting
  trapped in the wilderness.
 -Fixed a bug preventing the loading of 2.2.7 save files.
+-Fixed a bug with the {cursed} inscription.
 -Fixed a bug preventing Ravens and Crows from appearing.
 -Fixed the maximize mode -> nightmare mode bug.
 -Fixed a bug with tunneling.
--Another attempt at fixing the 'more-than-seven-unamed-Nazguls' bug.
+-Another attempt at fixing the 'more-than-seven-unnamed-Nazguls' bug.
 -Fixed a bug which could cause crashes when *id-ing* an object.
 -Fixed a bug that prevented monsters from casting spells correctly.
 -Fixed a bug in the wand/rod selling code.
@@ -42,7 +43,7 @@ Zangband 2.3.3:
 -Numerous spelling and grammar changes in, and additions to, various
  flavor messages.
 -Added multiple message tracking (ie. 'You tunnel into the granite wall
- <30x>'.
+ <30x>').
 -Added main-lsl.c from Angband 2.7.9v6.  This is untested.
 -Added code to support monster invulnerability and vampirism.
 -Removed the 'Unbiased RNG' option.
@@ -82,30 +83,30 @@ ZAngband 2.3.1:
 -Due to popular demand, multiple rings are supported.  Additional rings 
  can be obtained upon reaching an appropriate level.
 -New ironman option: Nightmare mode.  It isn't even remotely fair.
--Fixed a bug that prevented pets from casting spells under the AI code
--Fixed a bug that made them cast spells at unreachable targets
--Introduced pref files for options (for new savefiles)
--Made amulet, potion, ring mimics slightly more troublesome
--Added an option for monster memory in wizard mode
--Searching in help files is now case insensitive
--Charging items now have a darker colour in inventory
+-Fixed a bug that prevented pets from casting spells under the AI code.
+-Fixed a bug that made them cast spells at unreachable targets.
+-Introduced pref files for options (for new savefiles).
+-Made amulet, potion, ring mimics slightly more troublesome.
+-Added an option for monster memory in wizard mode.
+-Searching in help files is now case insensitive.
+-Charging items now have a darker colour in inventory.
 -Lifted many shopkeepers from CthAngband, no more five copies of
- the same 5k shopkeeper (unless the RNG is really after you)
--Monster groups now appear "scattered"
--Added conical breath attacks
+ the same 5k shopkeeper (unless the RNG is really after you).
+-Monster groups now appear "scattered".
+-Added conical breath attacks.
 -Changed the savefile version numbering somewhat, because of problems
  with the Linux version scheme and savefiles.
--Kicked out a lot of old vanilla savefile code
+-Kicked out a lot of old vanilla savefile code.
 -Changed the way game-created inscriptions work. They're seperate from
  player inscriptions now. No more problem with priests cursing and
  scrolls of remove curse that mess up your own inscriptions.
 -Fixed a bug in patterns in *greater* vaults that made it impossible
  to walk them.
 -Added new quests (and changed ones) by Shayne Steele.
--Changed the rewards for two quests
+-Changed the rewards for two quests.
 -Toned down Jack of Shadows, changed the level of Hrus, Shudde M'Ell.
  Fixed some monster typos. Added new Revenant monster.
--Fixed a bug that crashed the ^Q command now and then
+-Fixed a bug that crashed the ^Q command now and then.
 
 ZAngband 2.3.0
 -Maximize mode, preserve mode, and the autoroller are now specified in
