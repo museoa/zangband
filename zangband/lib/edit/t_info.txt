@@ -141,7 +141,7 @@ N:10:evil rune
 G:^:G
 W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
-D:12:125:0:0:0:0:0:0
+D:12:50:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_curse
 F:10,field_action_trap_disarm | 15,field_action_trap_disarm
 F:16,field_action_interact_disarm
@@ -151,7 +151,7 @@ N:11:strange rune
 G:^:o
 W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
-D:20:125:0:0:0:0:0:0
+D:20:50:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_teleport
 F:10,field_action_trap_disarm | 15,field_action_trap_disarm
 F:16,field_action_interact_disarm
@@ -191,7 +191,7 @@ N:15:compact rune
 G:^:D
 W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
-D:25:125:0:0:0:0:0:0
+D:25:50:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_trap
 F:10,field_action_trap_disarm | 15,field_action_trap_disarm
 F:16,field_action_interact_disarm
@@ -231,7 +231,7 @@ N:19:geometric rune
 G:^:v
 W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
-D:12:125:0:0:0:0:0:0
+D:12:100:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_disenchant
 F:10,field_action_trap_disarm | 15,field_action_trap_disarm
 F:16,field_action_interact_disarm
@@ -241,7 +241,7 @@ N:20:glowing rune
 G:^:y
 W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
-D:24:125:0:0:0:0:0:0
+D:24:100:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_drop_item
 F:10,field_action_trap_disarm | 15,field_action_trap_disarm
 F:16,field_action_interact_disarm
@@ -251,7 +251,7 @@ N:21:jagged rune
 G:^:b
 W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
-D:20:125:0:0:0:0:0:0
+D:20:75:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_mutate
 F:10,field_action_trap_disarm | 15,field_action_trap_disarm
 F:16,field_action_interact_disarm
@@ -281,7 +281,7 @@ N:24:flashing rune
 G:^:R
 W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
-D:2:125:0:0:0:0:0:0
+D:2:25:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_hunger
 F:10,field_action_trap_disarm | 15,field_action_trap_disarm
 F:16,field_action_interact_disarm
@@ -291,7 +291,7 @@ N:25:weird rune
 G:^:B
 W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
-D:13:125:0:0:0:0:0:0
+D:13:75:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_no_gold
 F:10,field_action_trap_disarm | 15,field_action_trap_disarm
 F:16,field_action_interact_disarm
@@ -321,7 +321,7 @@ N:28:intricate rune
 G:^:v
 W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
-D:27:125:0:0:0:0:0:0
+D:27:100:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_drain_magic
 F:10,field_action_trap_disarm | 15,field_action_trap_disarm
 F:16,field_action_interact_disarm
@@ -341,7 +341,7 @@ N:30:blurry rune
 G:^:b
 W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
-D:10:125:0:0:0:0:0:0
+D:10:50:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_summon
 F:10,field_action_trap_disarm | 15,field_action_trap_disarm
 F:16,field_action_interact_disarm
@@ -351,7 +351,7 @@ N:31:spiral rune
 G:^:W
 W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
-D:15:125:0:0:0:0:0:0
+D:15:75:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_lose_memory
 F:10,field_action_trap_disarm | 15,field_action_trap_disarm
 F:16,field_action_interact_disarm
