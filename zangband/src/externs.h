@@ -300,6 +300,7 @@ extern u16b message__head;
 extern u16b message__tail;
 extern u16b *message__ptr;
 extern char *message__buf;
+extern byte *message__color;
 extern u32b option_flag[8];
 extern u32b option_mask[8];
 extern u32b window_flag[8];
@@ -994,11 +995,12 @@ extern cptr quark_str(s16b num);
 extern s16b quark_add(cptr str);
 extern s16b message_num(void);
 extern cptr message_str(int age);
-extern void message_add(cptr msg);
+extern byte message_color(s16b age);
+extern void message_add(cptr msg, byte attr);
 extern void msg_print(cptr msg);
-#ifndef SWIG
+extern void msg_print_color(byte attr, cptr msg);
 extern void msg_format(cptr fmt, ...);
-#endif /* SWIG */
+extern void msg_format_color(byte attr, cptr fmt, ...);
 extern void screen_save(void);
 extern void screen_load(void);
 extern void c_put_str(byte attr, cptr str, int row, int col);

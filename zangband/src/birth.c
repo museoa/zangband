@@ -2804,11 +2804,11 @@ void player_birth(void)
 
 
 	/* Note player birth in the message recall */
-	message_add(" ");
-	message_add("  ");
-	message_add("====================");
-	message_add("  ");
-	message_add(" ");
+	message_add(" ", TERM_WHITE);
+	message_add("  ", TERM_WHITE);
+	message_add("====================", TERM_WHITE);
+	message_add("  ", TERM_WHITE);
+	message_add(" ", TERM_WHITE);
 
 
 	/* Create a note file if that option is set */

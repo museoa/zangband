@@ -1294,7 +1294,8 @@ static void fix_message(void)
 		for (i = 0; i < h; i++)
 		{
 			/* Dump the message on the appropriate line */
-			Term_putstr(0, (h - 1) - i, -1, TERM_WHITE, message_str((s16b)i));
+			Term_putstr(0, (h - 1) - i, -1, message_color((s16b)i),
+			            message_str((s16b)i));
 
 			/* Cursor */
 			Term_locate(&x, &y);

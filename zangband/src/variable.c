@@ -478,6 +478,12 @@ u16b *message__ptr;
  */
 char *message__buf;
 
+/*
+ * The array[MESSAGE_MAX] of bytes for the colors of messages
+ */
+byte *message__color;
+
+
 
 /*
  * The array of normal options

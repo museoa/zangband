@@ -93,7 +93,7 @@ void do_cmd_redraw(void)
 void do_cmd_message_one(void)
 {
 	/* Recall one message XXX XXX XXX */
-	prt(format("> %s", message_str(0)), 0, 0);
+	c_prt(message_color(0), format("> %s", message_str(0)), 0, 0);
 }
 
 
@@ -150,12 +150,13 @@ void do_cmd_messages(void)
 		for (j = 0; (j < 20) && (i + j < n); j++)
 		{
 			cptr msg = message_str(i+j);
+			byte attr = message_color(i+j);
 
 			/* Apply horizontal scroll */
 			msg = (strlen(msg) >= q) ? (msg + q) : "";
 
 			/* Dump the messages, bottom to top */
-			Term_putstr(0, 21 - j, -1, TERM_WHITE, msg);
+			Term_putstr(0, 21 - j, -1, attr, msg);
 
 			/* Hilite "shower" */
 			if (shower[0])

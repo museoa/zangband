@@ -1467,10 +1467,11 @@ static bool wr_savefile_new(void)
 	if (compress_savefile && (tmp16u > 40)) tmp16u = 40;
 	wr_u16b(tmp16u);
 
-	/* Dump the messages (oldest first!) */
+	/* Dump the messages and colors (oldest first!) */
 	for (i = tmp16u - 1; i >= 0; i--)
 	{
 		wr_string(message_str((s16b)i));
+		wr_byte(message_color((s16b)i));
 	}
 
 

@@ -2022,11 +2022,28 @@ cptr message_str(int age)
 }
 
 
+/*
+ * Recall the "color" of a saved message
+ */
+byte message_color(s16b age)
+{
+	s16b x;
+
+	/* Forgotten messages have no special color */
+	if ((age < 0) || (age >= message_num())) return (TERM_WHITE);
+
+	/* Get the "logical" index */
+	x = (message__next + MESSAGE_MAX - (age + 1)) % MESSAGE_MAX;
+
+	/* Return the message color */
+	return (message__color[x]);
+}
+
 
 /*
  * Add a new message, with great efficiency
  */
-void message_add(cptr str)
+void message_add(cptr str, byte attr)
 {
 	int i, k, x, m, n;
 
@@ -2151,6 +2168,9 @@ void message_add(cptr str)
 		/* Assign the starting address */
 		message__ptr[x] = message__ptr[i];
 
+		/* Store the color */
+		message__color[x] = attr;
+
 		/* Success */
 		return;
 	}
@@ -2250,6 +2270,9 @@ void message_add(cptr str)
 
 	/* Advance the "head" pointer */
 	message__head += n + 1;
+
+	/* Store the color */
+	message__color[x] = attr;
 }
 
 
@@ -2307,7 +2330,7 @@ static void msg_flush(int x)
  * XXX XXX XXX Note that "msg_print(NULL)" will clear the top line
  * even if no messages are pending.  This is probably a hack.
  */
-void msg_print(cptr msg)
+void msg_print_color(byte attr, cptr msg)
 {
 	static int p = 0;
 
@@ -2346,7 +2369,7 @@ void msg_print(cptr msg)
 
 
 	/* Memorize the message */
-	if (character_generated) message_add(msg);
+	if (character_generated) message_add(msg, attr);
 
 
 	/* Copy it */
@@ -2379,13 +2402,13 @@ void msg_print(cptr msg)
 		t[split] = '\0';
 
 		/* Display part of the message */
-		Term_putstr(0, 0, split, TERM_WHITE, t);
+		Term_putstr(0, 0, split, attr, t);
 
 		/* Flush it */
 		msg_flush(split + 1);
 
 		/* Memorize the piece */
-		/* if (character_generated) message_add(t); */
+		/* if (character_generated) message_add(t, attr); */
 
 		/* Restore the split character */
 		t[split] = oops;
@@ -2399,10 +2422,10 @@ void msg_print(cptr msg)
 
 
 	/* Display the tail of the message */
-	Term_putstr(p, 0, n, TERM_WHITE, t);
+	Term_putstr(p, 0, n, attr, t);
 
 	/* Memorize the tail */
-	/* if (character_generated) message_add(t); */
+	/* if (character_generated) message_add(t, attr); */
 
 	/* Window stuff */
 	p_ptr->window |= (PW_MESSAGE);
@@ -2415,6 +2438,12 @@ void msg_print(cptr msg)
 
 	/* Optional refresh */
 	if (fresh_message) Term_fresh();
+}
+
+
+void msg_print(cptr msg)
+{
+	msg_print_color(TERM_WHITE, msg);
 }
 
 
@@ -2482,6 +2511,29 @@ void msg_format(cptr fmt, ...)
 	msg_print(buf);
 }
 
+
+
+/*
+ * Display a formatted message, using "vstrnfmt()" and "msg_print()".
+ */
+void msg_format_color(byte attr, cptr fmt, ...)
+{
+	va_list vp;
+
+	char buf[1024];
+
+	/* Begin the Varargs Stuff */
+	va_start(vp, fmt);
+
+	/* Format the args, save the length */
+	(void)vstrnfmt(buf, 1024, fmt, vp);
+
+	/* End the Varargs Stuff */
+	va_end(vp);
+
+	/* Display */
+	msg_print_color(attr, buf);
+}
 
 
 /*

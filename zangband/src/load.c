@@ -1815,6 +1815,7 @@ static void rd_messages(void)
 {
 	int i;
 	char buf[128];
+	byte tmp8u;
 
 	s16b num;
 
@@ -1827,8 +1828,14 @@ static void rd_messages(void)
 		/* Read the message */
 		rd_string(buf, 128);
 
+		/* Read the color */
+		if (sf_version > 10)
+			rd_byte(&tmp8u);
+		else
+			tmp8u = TERM_WHITE;
+
 		/* Save the message */
-		message_add(buf);
+		message_add(buf, tmp8u);
 	}
 }
 
