@@ -499,7 +499,7 @@ static void display_build(field_type *f_ptr, store_type *b_ptr)
 		case BLDG_MUTATE:
 		{
 			sprintf(tmp_str, " E) Expose yourself to raw chaos (%dgp)",
-				 f_ptr->data[1] * bo_ptr->inflate);
+				 f_ptr->data[1] * bo_ptr->inflate * (count_mutations() + 1));
 			c_put_str(TERM_YELLOW, tmp_str, 19, 30);
 			break;
 		}
@@ -2005,7 +2005,7 @@ static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
 		{
 			if (p_ptr->command_cmd == 'E')
 			{
-				cost = f_ptr->data[1] * bo_ptr->inflate;
+				cost = f_ptr->data[1] * bo_ptr->inflate * (count_mutations()+1);
 				
 				if (test_gold(&cost))
 				{

@@ -1721,7 +1721,7 @@ static int count_bits(u32b x)
 }
 
 
-static int count_mutations(void)
+int count_mutations(void)
 {
 	return (count_bits(p_ptr->muta1) +
 	        count_bits(p_ptr->muta2) +
