@@ -1469,7 +1469,7 @@ static quest_type *insert_message_quest(int dist)
 	
 	quest_type *q_ptr;
 	store_type *st_ptr;
-	
+
 	int store;
 	u16b place_num;
 
@@ -1498,7 +1498,7 @@ static quest_type *insert_message_quest(int dist)
 	
 	/* Get the place */
 	pl_ptr = &place[place_num];
-	
+
 	/* Find a store at that town */
 	do
 	{
@@ -1508,7 +1508,10 @@ static quest_type *insert_message_quest(int dist)
 		
 		/* Want a store with an owner */
 	}
-	while (!st_ptr->owner_name);
+	while (st_ptr->type == BUILD_NONE ||
+		   st_ptr->type == BUILD_STAIRS ||
+		   st_ptr->type == BUILD_BLANK ||
+		   st_ptr->type == BUILD_STORE_HOME);
 
 	/* XXX XXX Create quest name */
 	(void)strnfmt(q_ptr->name, 128, "Carry a message to %s in %s.",
