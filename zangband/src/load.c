@@ -1799,7 +1799,7 @@ static void load_map(int xmin, int ymin, int xmax, int ymax)
 /*
  * Strip old dungeon or wilderness map from the savefile
  */
-static void strip_map(int ymax, int ymin, int xmax, int xmin)
+static void strip_map(int xmin, int ymin, int xmax, int ymax)
 {
 	int i, y, x;
 	byte count;
@@ -2167,8 +2167,8 @@ static errr rd_dungeon(void)
 			load_map(0, 0, cur_wid, cur_hgt);
 
 			/* Strip the wilderness map */
-			strip_map(p_ptr->max_hgt, p_ptr->min_hgt,
-			         p_ptr->max_wid, p_ptr->min_wid);
+			strip_map(p_ptr->min_wid, p_ptr->min_hgt,
+			         p_ptr->max_wid, p_ptr->max_hgt);
 			
 			px = px_back;
 			py = py_back;
@@ -2182,8 +2182,8 @@ static errr rd_dungeon(void)
 		else
 		{
 			/* Strip the wilderness map */
-			strip_map(p_ptr->max_hgt, p_ptr->min_hgt,
-			         p_ptr->max_wid, p_ptr->min_wid);
+			strip_map(p_ptr->min_wid, p_ptr->min_hgt,
+			         p_ptr->max_wid, p_ptr->max_hgt);
 
 			/* Make a new wilderness */
 			create_wilderness();
