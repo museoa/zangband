@@ -615,7 +615,6 @@ void angtk_cave_changed(void)
 		for (x = 0; x < MAX_WID; x++)
 		{
 			get_grid_info(y, x, &g_grid[y][x]);
-			g_grid[y][x].shape = GRID_SHAPE_NOT;
 			set_grid_assign(y, x);
 			map_symbol_set(y, x);
 		}
@@ -628,9 +627,6 @@ void angtk_cave_changed(void)
  */
 void angtk_feat_changed(int y, int x)
 {
-	/* Forget shape */
-	g_grid[y][x].shape = 0;
-
 	set_grid_assign(y, x);
 }
 
@@ -647,7 +643,7 @@ void set_grid_assign(int y, int x)
 	int feat = area(x, y)->feat;
 	t_assign assign;
 	IconSpec iconSpec;
-	int layer, shape;
+	int layer;
 
 	/* The dungeon isn't ready yet */
 	if (!character_dungeon) return;
@@ -657,9 +653,6 @@ void set_grid_assign(int y, int x)
 
 	/* Get the assignment for this feature */
 	assign = g_assign[ASSIGN_FEATURE].assign[feat];
-
-	/* Get the shape of this grid */
-	shape = g_grid[y][x].shape;
 
 	if (assign.assignType == ASSIGN_TYPE_ALTERNATE)
 	{

@@ -57,11 +57,11 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
 	static cptr cmdOptions[] = {"assign", "blocked",
-		"info", "in_bounds", "in_bounds_fully", "exists", "shape", "day",
+		"info", "in_bounds", "in_bounds_fully", "exists", "day",
 		"wild_name",
 		NULL};
 	enum {IDX_ASSIGN, IDX_BLOCKED,
-		IDX_INFO, IDX_IN_BOUNDS, IDX_IN_BOUNDS_FULLY, IDX_EXISTS, IDX_SHAPE,
+		IDX_INFO, IDX_IN_BOUNDS, IDX_IN_BOUNDS_FULLY, IDX_EXISTS,
 		IDX_DAY , IDX_WILD_NAME
 		} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
@@ -226,25 +226,6 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 		case IDX_EXISTS: /* exists */
 			Tcl_SetBooleanObj(resultPtr, character_dungeon);
 			break;
-
-		case IDX_SHAPE: /* shape */
-		{
-			if (objC != 4)
-			{
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, (char *) "y x");
-				return TCL_ERROR;
-			}
-			if (Tcl_GetIntFromObj(interp, objV[2], &y) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			if (Tcl_GetIntFromObj(interp, objV[3], &x) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			Tcl_SetStringObj(resultPtr, (char *) keyword_wall[g_grid[y][x].shape], -1);
-			break;
-		}
 
 		case IDX_DAY: /* day */
 		{

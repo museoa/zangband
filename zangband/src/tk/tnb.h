@@ -137,27 +137,6 @@ extern byte *g_feat_flag;
 #define GRID_LITE_DARK 2
 
 
-/* Constants for t_grid.shape */
-enum {
-GRID_SHAPE_NOT,
-GRID_SHAPE_SINGLE,
-GRID_SHAPE_NS,
-GRID_SHAPE_WE,
-GRID_SHAPE_CORNER_NW,
-GRID_SHAPE_CORNER_NE,
-GRID_SHAPE_CORNER_SW,
-GRID_SHAPE_CORNER_SE,
-GRID_SHAPE_TRI_N,
-GRID_SHAPE_TRI_S,
-GRID_SHAPE_TRI_W,
-GRID_SHAPE_TRI_E,
-GRID_SHAPE_QUAD,
-GRID_SHAPE_MAX
-};
-
-extern bool is_door(int y, int x);
-extern bool is_wall(int y, int x);
-
 /*
  * Memory of what is seen at a cave location for the entire cave.
  */
@@ -166,7 +145,6 @@ typedef struct t_grid {
 	int f_idx; /* Feature */
 	object_type *o_ptr; /* Object */
 	int m_idx; /* Character/Monster */
-	int shape; /* GRID_SHAPE_XXX enum */
 } t_grid;
 
 extern t_grid *g_grid[MAX_HGT];
