@@ -4945,9 +4945,10 @@ s16b *look_up_list(object_type *o_ptr)
 		if (o_ptr == j_ptr) return (&c_ptr->o_idx);
 	}
     OBJ_ITT_END;
-
-    /* Not here, so it must be an equipment item */
-    return (NULL);
+	
+	/* Failure - the object is inconsistant */
+	quit("Failed to look up object.");
+	return (NULL);
 }
 
 /*
