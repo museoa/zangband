@@ -28,8 +28,6 @@ struct WidgetItem  {
 	Tk_Anchor anchor;
 	t_assign_icon assign;
 	int gwidth, gheight;
-	XColor *borderColor;
-	int borderWidth;
 };
 
 static int Assign_ParseProc _ANSI_ARGS_((
@@ -63,11 +61,6 @@ static Tk_ConfigSpec configSpecs[] = {
     {TK_CONFIG_ANCHOR, (char *) "-anchor", NULL, NULL,
 	 "nw", Tk_Offset(WidgetItem, anchor),
 	 TK_CONFIG_DONT_SET_DEFAULT, NULL},
-    {TK_CONFIG_COLOR, (char *) "-bordercolor", NULL, NULL,
-	 "Yellow", Tk_Offset(WidgetItem, borderColor),
-	 TK_CONFIG_DONT_SET_DEFAULT | TK_CONFIG_NULL_OK, NULL},
-    {TK_CONFIG_INT, (char *) "-borderwidth", NULL, NULL,
-	 "2", Tk_Offset(WidgetItem, borderWidth), 0, NULL},
     {TK_CONFIG_CUSTOM, (char *) "-assign", NULL, NULL,
 	 NULL, Tk_Offset(WidgetItem, assign), TK_CONFIG_USER_BIT,
 	 &assignOption},
@@ -166,8 +159,6 @@ CreateWidget(
 	widgetPtr->assign = none;
 	widgetPtr->gwidth = widgetPtr->gheight = g_icon_size;
 	widgetPtr->anchor = TK_ANCHOR_NW;
-	widgetPtr->borderColor = NULL;
-	widgetPtr->borderWidth = 0;
 
     /*
      * Process the arguments to fill in the item record.
@@ -283,7 +274,6 @@ ComputeWidgetBbox(
 )
 {
 	int x, y;
-	int borderSize = 0;
     Tk_State state = widgetPtr->header.state;
 
 	if(state == TK_STATE_NULL)
@@ -340,15 +330,10 @@ ComputeWidgetBbox(
 			break;
 	}
 
-	if (widgetPtr->borderColor && widgetPtr->borderWidth)
-	{
-		borderSize = widgetPtr->borderWidth + 1;
-	}
-
-    widgetPtr->header.x1 = x - borderSize;
-    widgetPtr->header.y1 = y - borderSize;
-    widgetPtr->header.x2 = x + widgetPtr->gwidth + borderSize;
-    widgetPtr->header.y2 = y + widgetPtr->gheight + borderSize;
+    widgetPtr->header.x1 = x;
+    widgetPtr->header.y1 = y;
+    widgetPtr->header.x2 = x + widgetPtr->gwidth;
+    widgetPtr->header.y2 = y + widgetPtr->gheight;
 }
 
 /*
@@ -388,7 +373,6 @@ static void DisplayWidget(Tk_Canvas canvas, Tk_Item *itemPtr,
 {
 	WidgetItem *widgetPtr = (WidgetItem *) itemPtr;
 	short drawableX, drawableY;	
-	int borderSize = 0;
 	IconSpec iconSpecFG;
 	
 #ifdef PLATFORM_WIN
@@ -419,12 +403,6 @@ static void DisplayWidget(Tk_Canvas canvas, Tk_Item *itemPtr,
 
 	FinalIcon(&iconSpecFG, &widgetPtr->assign);
 
-	if (widgetPtr->borderColor && widgetPtr->borderWidth)
-	{
-		borderSize = widgetPtr->borderWidth + 1;
-	}
-
-
 	if (iconSpecFG.type != ICON_TYPE_NONE)
 	{
 
@@ -449,7 +427,7 @@ static void DisplayWidget(Tk_Canvas canvas, Tk_Item *itemPtr,
 		
 		
 #ifdef PLATFORM_WIN
-		BitBlt(dc, drawableX + borderSize, drawableY + borderSize,
+		BitBlt(dc, drawableX, drawableY,
 			widgetPtr->gwidth, widgetPtr->gheight, dc2, 0, 0, SRCCOPY);
 	
 		TkWinReleaseDrawableDC(CanvWidgetBitmap.pixmap, dc2, &state2);
@@ -465,34 +443,14 @@ static void DisplayWidget(Tk_Canvas canvas, Tk_Item *itemPtr,
 			0, 0, /* source top-left */
 			(unsigned int) widgetPtr->gwidth, /* width */
 			(unsigned int) widgetPtr->gheight, /* height */
-			drawableX + borderSize, /* dest top-left */
-			drawableY + borderSize
+			drawableX, /* dest top-left */
+			drawableY
 		);
 	
 		Tk_FreeGC(display, gc);
 
 #endif /* PLATFORM_X11 */
 
-	}
-
-	if (borderSize)
-	{
-		XGCValues gcValues;
-		GC gc;
-		int lineWidth = widgetPtr->borderWidth;
-
-		gcValues.foreground = widgetPtr->borderColor->pixel;
-		gcValues.line_width = lineWidth;
-		gc = Tk_GetGC(Tk_CanvasTkwin(canvas), GCForeground | GCLineWidth,
-			&gcValues);
-
-	    XDrawRectangle(display, drawable, gc,
-			drawableX + lineWidth / 2,
-			drawableY + lineWidth / 2,
-			(widgetPtr->header.x2 - widgetPtr->header.x1) - lineWidth / 2 - 1,
-			(widgetPtr->header.y2 - widgetPtr->header.y1) - lineWidth / 2 - 1);
-
-		Tk_FreeGC(display, gc);
 	}
 	
 	/* Since multiple items may be drawn into CanvWidgetBitmap */
