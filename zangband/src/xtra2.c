@@ -1890,6 +1890,7 @@ static bool target_set_accept(int y, int x)
 	cave_type *c_ptr;
 
 	s16b this_o_idx, next_o_idx = 0;
+	s16b this_f_idx, next_f_idx = 0;
 
 
 	/* Player grid is always interesting */
@@ -1927,6 +1928,21 @@ static bool target_set_accept(int y, int x)
 
 		/* Memorized object */
 		if (o_ptr->marked) return (TRUE);
+	}
+	
+	/* Scan all fields in the grid */
+	for (this_f_idx = c_ptr->fld_idx; this_f_idx; this_f_idx = next_f_idx)
+	{
+		field_type *f_ptr;
+
+		/* Acquire field */
+		f_ptr = &fld_list[this_f_idx];
+
+		/* Acquire next field */
+		next_f_idx = f_ptr->next_f_idx;
+
+		/* Memorized field */
+		if (f_ptr->info & FIELD_INFO_MARK) return (TRUE);
 	}
 
 	/* Interesting memorized features */
