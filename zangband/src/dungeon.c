@@ -4097,6 +4097,16 @@ void play_game(bool new_game)
 	/* Make sure main term is active */
 	Term_activate(angband_term[0]);
 
+	/* Add in resizing for map */
+	angband_term[0]->resize_hook = resize_map;
+
+	/* Add in redraw hooks */
+	for (i = 1; i < 8; i++)
+	{
+		angband_term[i]->resize_hook = redraw_window;
+	}
+
+
 	/* Verify minimum size */
 	if ((Term->hgt < 24) || (Term->wid < 80))
 	{

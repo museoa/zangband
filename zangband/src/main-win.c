@@ -1825,9 +1825,6 @@ static errr Term_xtra_win_react(void)
 			/* Hack -- Resize the term */
 			Term_resize(td->cols, td->rows);
 
-			/* Redraw the contents */
-			Term_redraw();
-
 			/* Restore */
 			Term_activate(old);
 		}
@@ -3803,19 +3800,6 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
 
 						/* Redraw later */
 						InvalidateRect(td->w, NULL, TRUE);
-
-						/* MEGAHACK - Only if the map exists */
-						if (character_dungeon)
-						{
-							/* Adjust to bigscreen */
-							map_panel_size();
-
-							/* Re-adjust panel borders and redraw map */
-							verify_panel();
-
-							/* Redraw the main window */
-							do_cmd_redraw_term(0);
-						}
 					}
 
 					td->size_hack = TRUE;

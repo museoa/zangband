@@ -2317,11 +2317,6 @@ errr Term_exchange(void)
 	return (0);
 }
 
-
-/* Function hook for Term_resize() post-processing */
-errr (*Term_resize_hook)(void);
-
-
 /*
  * React to a new physical window size.
  */
@@ -2489,10 +2484,11 @@ errr Term_resize(int w, int h)
 	Term->y1 = 0;
 	Term->y2 = h - 1;
 
-
-	/* Execute the "Term_resize_hook" hook, if available */
-	if (Term_resize_hook) (void)((*Term_resize_hook)());
-
+	/* Execute the "resize_hook" hook, if available */
+	if (Term->resize_hook)
+	{
+		Term->resize_hook();
+	}
 
 	/* Success */
 	return (0);

@@ -86,49 +86,77 @@ void do_cmd_redraw(void)
 
 
 /*
- * Redraw the current term.
- *
- * This is used when the map is resized.
+ * Map resizing whenever the main term changes size
  */
-void do_cmd_redraw_term(int window)
+void resize_map(void)
 {
+	/* Only if the dungeon exists */
+	if (!character_dungeon) return;
+	
+	/* Mega-Hack -- no panel yet */
+	panel_row_min = 0;
+	panel_row_max = 0;
+	panel_col_min = 0;
+	panel_col_max = 0;
+
+	/* Reset the panels */
+	map_panel_size();
+				
+	if (character_dungeon)
+	{
+		verify_panel();
+	}
+
+	/* Combine and Reorder the pack (later) */
+	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
+	/* Update torch */
+	p_ptr->update |= (PU_TORCH);
+
+	/* Update stuff */
+	p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS);
+
+	/* Forget view */
+	p_ptr->update |= (PU_UN_VIEW);
+
+	/* Update view */
+	p_ptr->update |= (PU_VIEW | PU_MON_LITE);
+
+	/* Update monsters */
+	p_ptr->update |= (PU_MONSTERS);
+
+	/* Redraw everything */
+	p_ptr->redraw |= (PR_WIPE | PR_BASIC | PR_EXTRA | PR_MAP | PR_EQUIPPY);
+
+	/* Hack -- update */
+	handle_stuff();
+	
+	/* Redraw */
+	Term_redraw();
+
+	/* Refresh */
+	Term_fresh();
+}
+
+/*
+ * Redraw a term when it is resized
+ */
+void redraw_window(void)
+{
+	/* Only if the dungeon exists */
+	if (!character_dungeon) return;
+	
+	/* Hack - Activate term zero for the redraw */
+	Term_activate(&data[0].t);
+	
 	/* Hack -- react to changes */
 	Term_xtra(TERM_XTRA_REACT, 0);
 
-	/* The main window */
-	if (window == 0)
-	{
-		/* Combine and Reorder the pack (later) */
-		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
 
-		/* Update torch */
-		p_ptr->update |= (PU_TORCH);
-
-		/* Update stuff */
-		p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS);
-
-		/* Forget view */
-		p_ptr->update |= (PU_UN_VIEW);
-
-		/* Update view */
-		p_ptr->update |= (PU_VIEW | PU_MON_LITE);
-
-		/* Update monsters */
-		p_ptr->update |= (PU_MONSTERS);
-
-		/* Redraw everything */
-		p_ptr->redraw |= (PR_WIPE | PR_BASIC | PR_EXTRA | PR_MAP | PR_EQUIPPY);
-	}
-	else
-	{
-		/* Other windows */
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_MESSAGE | PW_OVERHEAD | PW_DUNGEON | PW_MONSTER | PW_OBJECT);
-	}
+	/* Window stuff */
+	p_ptr->window |= (PW_MESSAGE | PW_OVERHEAD | PW_DUNGEON | PW_MONSTER | PW_OBJECT);
 
 	/* Hack -- update */
 	handle_stuff();
@@ -139,7 +167,6 @@ void do_cmd_redraw_term(int window)
 	/* Refresh */
 	Term_fresh();
 }
-
 
 
 /*

@@ -217,6 +217,8 @@ struct term
 	errr (*wipe_hook)(int x, int y, int n);
 
 	errr (*text_hook)(int x, int y, int n, byte a, cptr s);
+	
+	void (*resize_hook)(void);
 
 #ifdef USE_TRANSPARENCY
 	errr (*pict_hook)(int x, int y, int n, const byte *ap, const char *cp, const byte *tap, const char *tcp);
@@ -323,11 +325,6 @@ extern errr Term_activate(term *t);
 
 extern errr term_nuke(term *t);
 extern errr term_init(term *t, int w, int h, int k);
-
-
-/**** Available Function hooks ****/
-
-extern errr (*Term_resize_hook)(void);
 
 #endif
 
