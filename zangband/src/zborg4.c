@@ -7151,13 +7151,16 @@ static int borg_danger_aux1(int i)
  *
  * We reduce the danger if the monster is immobile or not LOS
  */
-static int borg_danger_aux2(int i, int y, int x, bool average)
+static int borg_danger_aux2(int i, bool average)
 {
-    int q, k, n= 0, pfe =0, glyph= 0, glyph_check =0;
+    int q, k, n = 0, pfe = 0;
+	bool glyph = FALSE;
 
     int true_borg_goi = borg_goi;
 
-    int spot_x, spot_y, spot_safe=1;
+    int spot_x, spot_y, spot_safe = 1;
+	
+	int x, y;
 
     int lev, hp, total_dam = 0, av;
 
@@ -7187,9 +7190,12 @@ static int borg_danger_aux2(int i, int y, int x, bool average)
     {
         glyph = 1;
     }
+#if 0
     else if (track_glyph_num)
     {
-        /* Check all existing glyphs */
+        int glyph_check;
+		
+		/* Check all existing glyphs */
         for (glyph_check = 0; glyph_check < track_glyph_num; glyph_check++)
         {
             if ((track_glyph_y[glyph_check] == y) && (track_glyph_x[glyph_check] == x))
@@ -7199,6 +7205,7 @@ static int borg_danger_aux2(int i, int y, int x, bool average)
             }
         }
     }
+#endif /* 0 */
 
     /* This is used to calculate the free squares next to us.
      * This is important when dealing with summoners.
@@ -8716,7 +8723,7 @@ int borg_danger_aux(int y, int x, int c, int i, bool average)
         int chance;
 
         /* Spell attacks */
-        v2 = borg_danger_aux2(i,y,x,average);
+        v2 = borg_danger_aux2(i,average);
 
         /* Hack -- Under Stressful Situation.
          */
