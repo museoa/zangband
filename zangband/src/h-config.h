@@ -313,16 +313,11 @@
 /*
  * Try to use save tempfile handling on multi-user machines.
  *
- * Comment this out if you don't have mkstemp()
- *
- * Note - I don't know how widely used this function is.
- * Feedback would be helpful, so we can remove some platforms
- * from this 'catch-all' statement.
+ * Activate this if you have mkstemp().
  */
 #ifdef SET_UID
-#define HAVE_MKSTEMP
+/* #define HAVE_MKSTEMP */
 #endif
 
 #endif
-
 
