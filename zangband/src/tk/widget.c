@@ -257,9 +257,6 @@ static void draw_char(int x, int y, byte a, char c, Widget *widgetPtr)
 	/* Draw a blank square first */
 	DrawBlank(x, y, widgetPtr);
 	
-	/* Only draw characters */
-	if (a & 0x80) return;
-	
 	/* Loop over bitmap size */
 	for (i = 0; i < widgetPtr->gwidth; i++)
 	{
@@ -420,6 +417,20 @@ static void draw_pict(int x, int y, byte a, char c, byte ta, char tc, Widget *wi
 	}
 }
 
+static void draw_square(int x, int y, byte a, char c, byte ta, char tc, Widget *widgetPtr)
+{
+	if ((a & 0x80) || (ta & 0x80))
+	{
+		/* Graphical tiles */
+		draw_pict(x, y, a, c, ta, tc, widgetPtr);
+	}
+	else
+	{
+		/* Characters */
+		draw_char(x, y, a, c, widgetPtr);
+	}
+}
+
 
 /*
  * Redraw everything.
@@ -459,7 +470,7 @@ static void widget_draw_all(Widget *widgetPtr)
 			mb_ptr = map_loc(x, y);
 		
 			/* Draw stuff at that location */
-			draw_pict(xp, yp, mb_ptr->a, mb_ptr->c, mb_ptr->ta, mb_ptr->tc, widgetPtr);
+			draw_square(xp, yp, mb_ptr->a, mb_ptr->c, mb_ptr->ta, mb_ptr->tc, widgetPtr);
 		}
 	}
 
@@ -775,7 +786,7 @@ static void Widget_map_info(map_block *mb_ptr, term_map *map, vptr data)
 	yp = (y - widgetPtr->y_min) * widgetPtr->gheight;
 		
 	/* Draw stuff at this location */
-	draw_pict(xp, yp, mb_ptr->a, mb_ptr->c, mb_ptr->ta, mb_ptr->tc, widgetPtr);
+	draw_square(xp, yp, mb_ptr->a, mb_ptr->c, mb_ptr->ta, mb_ptr->tc, widgetPtr);
 	
 	/* Dirty bounds */
 	if (xp < dl) dl = xp;
@@ -1350,6 +1361,9 @@ int init_widget(Tcl_Interp *interp, int g_icon_depth)
 	
 	/* Initialise palette stuff */
 	if (g_icon_depth == 16) init_masks(interp);
+	
+	/* Initialize colours */
+	set_colours();
 
 	/* Success */
     return TCL_OK;
