@@ -972,6 +972,12 @@ static void object_analyze(object_type *o_ptr, obj_desc_list *desc_ptr)
 	analyze_misc(o_ptr, desc_ptr->misc_desc);
 
 	desc_ptr->activation = item_activation(o_ptr);
+
+	if (streq("nothing", desc_ptr->activation)
+	{
+		/* Display nothing, if there is no activation */
+		desc_ptr->activation = "";
+	}
 }
 
 
