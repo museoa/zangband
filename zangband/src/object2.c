@@ -2192,15 +2192,12 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 						{
 							o_ptr->flags1 |= TR1_BLOWS;
 
-							if (o_ptr->pval > 2) o_ptr->pval -= 2;
+							o_ptr->pval =  randint1(4);
 
 							/* tone down number of attacks */
-							if (o_ptr->pval > 0)
-							{
-								o_ptr->pval -= o_ptr->dd / 2;
+							o_ptr->pval -= o_ptr->dd / 2;
 
-								if (o_ptr->pval < 1) o_ptr->pval = 1;
-							}
+							if (o_ptr->pval < 1) o_ptr->pval = 1;
 						}
 						break;
 					}
@@ -2360,13 +2357,13 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 					{
 						ego = EGO_ATTACKS;
 
+						o_ptr->pval = randint1(3);
+						
 						/* tone down number of attacks */
-						if (o_ptr->pval > 0)
-						{
-							o_ptr->pval -= o_ptr->dd / 2;
+						o_ptr->pval -= o_ptr->dd / 2;
 
-							if (o_ptr->pval < 1) o_ptr->pval = 1;
-						}
+						if (o_ptr->pval < 1) o_ptr->pval = 1;
+
 						break;
 					}
 
@@ -2473,12 +2470,9 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 								o_ptr->flags1 |= TR1_BLOWS;
 
 								/* tone down number of attacks */
-								if (o_ptr->pval > 0)
-								{
-									o_ptr->pval -= o_ptr->dd / 2;
+								o_ptr->pval -= o_ptr->dd / 2;
 
-									if (o_ptr->pval < 1) o_ptr->pval = 1;
-								}
+								if (o_ptr->pval < 1) o_ptr->pval = 1;
 							}
 						}
 					}
