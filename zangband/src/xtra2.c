@@ -233,6 +233,13 @@ void monster_death(int m_idx)
 
 	cave_type *c_ptr;
 
+	/* Notice changes in view */
+	if (r_ptr->flags7 & (RF7_LITE_1 | RF7_LITE_2))
+	{
+		/* Update some things */
+		p_ptr->update |= (PU_MON_LITE);
+	}
+	
 	/* Get the location */
 	y = m_ptr->fy;
 	x = m_ptr->fx;
