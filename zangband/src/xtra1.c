@@ -101,7 +101,7 @@ s16b modify_stat_value(int value, int amount)
 /*
  * Print character info at given row, column in a 13 char field
  */
-static void prt_field(cptr info, int row, int col)
+static void prt_field(cptr info, int col, int row)
 {
 	/* Dump 13 spaces to clear */
 	c_put_str(TERM_WHITE, "             ", col, row);
@@ -440,7 +440,7 @@ static void prt_title(void)
 
 	}
 
-	prt_field(p, ROW_TITLE, COL_TITLE);
+	prt_field(p, COL_TITLE, ROW_TITLE);
 }
 
 
@@ -1130,8 +1130,8 @@ static void prt_frame_basic(void)
 	int i;
 
 	/* Race and Class */
-	prt_field(rp_ptr->title, ROW_RACE, COL_RACE);
-	prt_field(cp_ptr->title, ROW_CLASS, COL_CLASS);
+	prt_field(rp_ptr->title, COL_RACE, ROW_RACE);
+	prt_field(cp_ptr->title, COL_CLASS, ROW_CLASS);
 
 	/* Title */
 	prt_title();
@@ -3756,8 +3756,8 @@ void redraw_stuff(void)
 	if (p_ptr->redraw & (PR_MISC))
 	{
 		p_ptr->redraw &= ~(PR_MISC);
-		prt_field(rp_ptr->title, ROW_RACE, COL_RACE);
-		prt_field(cp_ptr->title, ROW_CLASS, COL_CLASS);
+		prt_field(rp_ptr->title, COL_RACE, ROW_RACE);
+		prt_field(cp_ptr->title, COL_CLASS, ROW_CLASS);
 	}
 
 	if (p_ptr->redraw & (PR_TITLE))
