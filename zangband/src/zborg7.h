@@ -1,6 +1,6 @@
 /* File: zborg7.h */
 
-/* Purpose: Header file for "borg7.c" -BEN- */
+/* Purpose: Header file for "zborg7.c" -BEN- */
 
 #ifndef INCLUDED_BORG7_H
 #define INCLUDED_BORG7_H
@@ -10,18 +10,13 @@
 #ifdef ALLOW_BORG
 
 /*
- * This file provides support for "borg7.c".
+ * This file provides support for "zborg7.c".
  */
 
 #include "zborg1.h"
 #include "zborg2.h"
 #include "zborg3.h"
 
-
-/*
- * Determine if an item is "icky"
- */
-extern bool borg_item_icky(list_item *l_ptr);
 
 /*
  * Various functions
@@ -32,13 +27,11 @@ extern bool borg_check_lite(void);
 extern bool borg_enchanting(void);
 extern bool borg_recharging(void);
 extern bool borg_destroy(void);
-extern bool borg_obj_star_id_able(list_item *l_ptr);
 extern bool borg_id_meta(void);
 extern bool borg_wear_stuff(void);
 extern bool borg_unwear_stuff(void);
-extern bool borg_wears_cursed(bool heavy);
 extern bool borg_play_magic(bool bored);
-extern bool borg_wear_recharge(void);
+extern bool borg_wait_recharge(void);
 
 /*
  * Attempt to leave the level

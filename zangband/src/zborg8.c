@@ -347,12 +347,6 @@ static int borg_think_home_sell_aux2(void)
 		/* Require "known" */
 		if (!borg_obj_known_p(l_ptr)) continue;
 
-		/*
-		 * Do not dump stuff at home that is not fully id'd and should be
-		 * This is good with random artifacts.
-		 */
-		if (!borg_obj_known_full(l_ptr) && borg_obj_star_id_able(l_ptr)) continue;
-
 		/* Is there room for this item at home? */
 		if (home_num >= STORE_INVEN_MAX && !borg_can_merge_home(l_ptr)) continue;
 
@@ -463,8 +457,7 @@ static bool borg_good_sell(list_item *l_ptr)
 			if (strstr(l_ptr->o_name, "{average")) break;
 
 			/* Only sell "known" items (unless "icky") */
-			if (!borg_obj_known_p(l_ptr) &&
-				!borg_item_icky(l_ptr)) return (FALSE);
+			if (!borg_item_icky(l_ptr)) return (FALSE);
 
 			break;
 		}
@@ -480,7 +473,6 @@ static bool borg_good_sell(list_item *l_ptr)
 	/* Assume we can */
 	return (TRUE);
 }
-
 
 
 /*
@@ -533,7 +525,7 @@ static bool borg_think_shop_sell_aux(int shop)
 		 * This is done because we may have to buy the item back
 		 * in some very strange circumstances.
 		 */
-		if ((p == b_p) && (c >= b_c)) continue;
+		if (p == b_p && c >= b_c) continue;
 
 		/* Maintain the "best" */
 		b_i = i;
@@ -719,7 +711,7 @@ static bool borg_think_shop_buy_aux(int shop)
 		if (p < b_p) continue;
 
 		/* Ignore "expensive" purchases */
-		if ((p == b_p) && (c >= b_c)) continue;
+		if (p == b_p && c >= b_c) continue;
 
 		/* Save the item and cost */
 		b_n = n;
@@ -756,8 +748,6 @@ static bool borg_think_home_buy_aux(void)
 	int slot;
 	int n, b_n = -1;
 	s32b p = 0L, b_p = 0L;
-	s32b p_left = 0;
-	s32b p_right = 0;
 
 	/* Require one empty slot */
 	if (inven_num >= INVEN_PACK - 1) return (FALSE);
@@ -779,22 +769,14 @@ static bool borg_think_home_buy_aux(void)
 		/* Consider new equipment */
 		if (slot >= 0)
 		{
+			/* Get power for doing swap */
+			p = borg_think_buy_slot(l_ptr, slot, TRUE);
+
 			/* Rings can be put into two slots */
 			if (slot == EQUIP_LEFT)
 			{
-				/** First Check Left Hand **/
-
-				/* Get power for doing swaps */
-				p_left = borg_think_buy_slot(l_ptr, EQUIP_LEFT, TRUE);
-				p_right = borg_think_buy_slot(l_ptr, EQUIP_RIGHT, TRUE);
-
-				/* Is this ring better than one of mine? */
-				p = MAX(p_right, p_left);
-			}
-			else
-			{
-				/* Get power for doing swap */
-				p = borg_think_buy_slot(l_ptr, slot, TRUE);
+				/* Try this ring for the other finger too. */
+				p = MAX(p, borg_think_buy_slot(l_ptr, EQUIP_RIGHT, TRUE));
 			}
 		}
 
@@ -820,7 +802,7 @@ static bool borg_think_home_buy_aux(void)
 	}
 
 	/* Buy something */
-	if ((b_n >= 0) && (b_p > borg_power()))
+	if (b_n != -1)
 	{
 		/* Go to the home */
 		goal_shop = home_shop;
@@ -897,7 +879,7 @@ static bool borg_think_shop_grab_aux(int shop)
 		if (s < b_s) continue;
 
 		/* Ignore "expensive" purchases */
-		if ((s == b_s) && (c >= b_c)) continue;
+		if (s == b_s && c >= b_c) continue;
 
 		/* Save the item and cost */
 		b_n = n;
@@ -958,7 +940,7 @@ static bool borg_think_home_grab_aux(void)
 		l_ptr->treat_as = TREAT_AS_NORM;
 
 		/* Ignore "bad" sales */
-		if (s < b_s) continue;
+		if (s <= b_s) continue;
 
 		/* Maintain the "best" */
 		b_n = n;
@@ -1709,7 +1691,7 @@ bool borg_think_dungeon(void)
 	if (borg_flow_spastic(FALSE)) return (TRUE);
 
 	/* Recharge items before leaving the level */
-	if (borg_wear_recharge()) return (TRUE);
+	if (borg_wait_recharge()) return (TRUE);
 
 	/* Leave the level (bored) */
 	if (borg_leave_level(TRUE)) return (TRUE);

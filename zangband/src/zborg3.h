@@ -1,5 +1,5 @@
 /* File: zborg3.h */
-/* Purpose: Header file for "borg3.c" -BEN- */
+/* Purpose: Header file for "zborg3.c" -BEN- */
 
 #ifndef INCLUDED_BORG3_H
 #define INCLUDED_BORG3_H
@@ -9,7 +9,7 @@
 #ifdef ALLOW_BORG
 
 /*
- * This file provides support for "borg3.c".
+ * This file provides support for "zborg3.c".
  */
 
 #include "zborg1.h"
@@ -165,6 +165,11 @@ extern list_item *borg_slot(int tval, int sval);
 extern int borg_slot_from(int tval, int sval, int from);
 extern object_kind *borg_get_kind(int tval, int sval);
 extern int look_up_index(list_item *l_ptr);
+extern bool borg_obj_star_id_able(list_item *l_ptr);
+extern bool borg_keep_unidentified(list_item *l_ptr);
+extern long borg_calc_pseudo(void);
+extern bool borg_item_icky(list_item *l_ptr);
+
 extern bool borg_refuel(void);
 extern bool borg_eat_food(int sval);
 extern bool borg_quaff_crit(bool no_check);

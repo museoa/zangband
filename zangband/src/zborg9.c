@@ -1449,8 +1449,7 @@ static void borg_parse_aux(cptr msg, int len)
 		(suffix(msg, " seems to be cursed.")))
 	{
 		/* Hack -- Oops */
-		borg_wearing_cursed = TRUE;
-		(void) borg_wears_cursed(FALSE);
+		bp_ptr->status.cursed = TRUE;
 		return;
 	}
 
@@ -2390,9 +2389,6 @@ static void borg_cheat_temp_bools(void)
 	borg_hero = (p_ptr->tim.hero ? TRUE : FALSE);
 	borg_berserk = (p_ptr->tim.shero ? TRUE : FALSE);
 	borg_esp = (p_ptr->tim.esp ? TRUE : FALSE);
-
-	/* Is there something cursed? */
-	borg_wearing_cursed = borg_wears_cursed(FALSE);
 }
 
 /* Turn on the right options */
@@ -2877,7 +2873,10 @@ void borg_status_window(void)
 			/* Display the Concerns */
 			prtf(36, 10, "Concerns:");
 
-			if (borg_wearing_cursed) attr = CLR_BLUE;
+			if (bp_ptr->status.cursed)
+				attr = CLR_BLUE;
+			else if (bp_ptr->status.heavy_curse)
+				attr = CLR_ORANGE;
 			else
 				attr = CLR_SLATE;
 			prtf(29, 11, "%sCursed", attr);

@@ -4006,13 +4006,24 @@ static s32b borg_power_aux4(void)
 	if (amt_add_stat[A_CHR]) value += 10000;
 
 	/* Reward Remove Curse */
-	if (borg_wearing_cursed && bp_ptr->able.remove_curse) value += 90000;
+	if (bp_ptr->status.cursed &&
+		bp_ptr->able.remove_curse) value += 90000;
+ 
+ 	/* Reward *Remove Curse* (Pick them up from home) */
+	if (bp_ptr->status.heavy_curse &&
+		bp_ptr->able.star_remove_curse) value += 90000;
 
-	/* Reward *Remove Curse* (Pick them up from home) */
-	if (borg_heavy_curse && bp_ptr->able.star_remove_curse) value += 90000;
+	/* Reward id */
+	if (bp_ptr->able.id &&
+		bp_ptr->able.id_item) value += 10000;
 
+	/* Reward star_id */
+	if (bp_ptr->able.star_id &&
+		bp_ptr->able.star_id_item) value += 50000;
+ 
 	/* Reward restore experience */
-	if (bp_ptr->lev < bp_ptr->max_lev && bp_ptr->status.fixexp) value += 50000;
+	if (bp_ptr->lev < bp_ptr->max_lev &&
+		bp_ptr->status.fixexp) value += 50000;
 
 	/* Reward getting stat restore potions when needed */
 	for (i = 0; i < A_MAX; i++)

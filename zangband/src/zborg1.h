@@ -214,7 +214,9 @@ struct borg_ability
 	s16b heal;
 	s16b easy_heal;
 	s16b id;
+	s16b id_item;
 	s16b star_id;
+	s16b star_id_item;
 	s16b berserk;
 	s16b speed;
 
@@ -235,7 +237,9 @@ struct borg_ability
 
 	s16b recharge;
 	s16b remove_curse;
+	s16b remove_curse_item;
 	s16b star_remove_curse;
+	s16b star_remove_curse_item;
 	s16b pfe;
 	s16b glyph;
 
@@ -296,6 +300,10 @@ struct borg_status
 	
 	/* Heavy stuff */
 	bool hvy_weapon;
+
+	/* Cursedness */
+	bool cursed;
+	bool heavy_curse;
 };
 
 
@@ -548,9 +556,6 @@ extern bool my_need_stat_check[6];	/* do I need to check my stats */
 extern s16b my_stat_add[6];	/* aditions to stats */
 
 extern s16b home_stat_add[6];
-
-extern bool borg_wearing_cursed;
-extern bool borg_heavy_curse;
 
 extern s16b weapon_swap_digger;
 

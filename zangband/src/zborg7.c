@@ -87,236 +87,6 @@ static s16b value_feeling[] =
 	0
 };
 
-
-
-
-/* This function (copied from dungeon.c) delivers the chance for pseudo-id. */
-static long borg_calc_pseudo(void)
-{
-	long difficulty;
-
-	/* Based on race get the basic feel factor. */
-	switch (borg_class)
-	{
-		case CLASS_WARRIOR:
-		{
-			/* Good (heavy) sensing */
-			difficulty = 9000L;
-
-			/* Done */
-			break;
-		}
-
-		case CLASS_MAGE:
-		case CLASS_HIGH_MAGE:
-		{
-			/* Very bad (light) sensing */
-			difficulty = 240000L;
-
-			/* Done */
-			break;
-		}
-
-		case CLASS_PRIEST:
-		{
-			/* Good (light) sensing */
-			difficulty = 10000L;
-
-			/* Done */
-			break;
-		}
-
-		case CLASS_ROGUE:
-		{
-			/* Okay sensing */
-			difficulty = 20000L;
-
-			/* Done */
-			break;
-		}
-
-		case CLASS_RANGER:
-		{
-			/* Bad (heavy) sensing */
-			difficulty = 95000L;
-
-			/* Done */
-			break;
-		}
-
-		case CLASS_PALADIN:
-		{
-			/* Bad (heavy) sensing */
-			difficulty = 77777L;
-
-			/* Done */
-			break;
-		}
-
-		case CLASS_WARRIOR_MAGE:
-		{
-			/* Bad sensing */
-			difficulty = 75000L;
-
-			/* Done */
-			break;
-		}
-
-		case CLASS_MINDCRAFTER:
-		{
-			/* Bad sensing */
-			difficulty = 55000L;
-	
-			/* Done */
-			break;
-		}
-
-		case CLASS_CHAOS_WARRIOR:
-		{
-			/* Bad (heavy) sensing */
-			difficulty = 80000L;
-
-			/* Done */
-			break;
-		}
-
-		case CLASS_MONK:
-		{
-			/* Okay sensing */
-			difficulty = 20000L;
-
-			/* Done */
-			break;
-		}
-
-		default:
-		{
-			/* Paranoia */
-			difficulty = 0;
-		}
-	}
-
-	/* Factor in the sensing ability */
-	difficulty /= MAX(bp_ptr->skill_sns, 1);
-
-	/* Rescale larger by a facter of 25 */
-	difficulty *= 25;
-
-	/* Sensing gets better as you get more experienced */
-	difficulty /= p_ptr->lev * p_ptr->lev + 40;
-
-	/* Give the answer */
-	return (difficulty);
-}
-
-/*
- * Determine if an item is "probably" worthless
- *
- * This (very heuristic) function is a total hack, designed only to prevent
- * a very specific annoying situation described below.
- *
- * Note that a "cautious" priest (or low level mage/ranger) will leave town
- * with a few identify scrolls, wander around dungeon level 1 for a few turns,
- * and use all of the scrolls on leather gloves and broken daggers, and must
- * then return to town for more scrolls.  This may repeat indefinitely.
- *
- * The problem is that some characters (priests, mages, rangers) never get an
- * "average" feeling about items, and have no way to keep track of how long
- * they have been holding a given item for, so they cannot even attempt to
- * gain knowledge from the lack of "good" or "cursed" feelings.  But they
- * cannot afford to just identify everything they find by using scrolls of
- * identify, because, in general, some items are, on average, "icky", and
- * not even worth the price of a new scroll of identify.
- *
- * Even worse, the current algorithm refuses to sell un-identified items, so
- * the poor character will throw out all his good stuff to make room for crap.
- *
- * This function simply examines the item and assumes that certain items are
- * "icky", which is probably a total hack.  Perhaps we could do something like
- * compare the item to the item we are currently wearing, or perhaps we could
- * analyze the expected value of the item, or guess at the likelihood that the
- * item might be a blessed, or something.
- *
- */
-bool borg_item_icky(list_item *l_ptr)
-{
-	int sval = k_info[l_ptr->k_idx].sval;
-
-	/* if its average, dump it if you want to. */
-	if (strstr(l_ptr->o_name, "{average")) return (TRUE);
-
-	/* items that are terrible/excellent/special/tainted need ID */
-	if (strstr(l_ptr->o_name, "{special") ||
-		strstr(l_ptr->o_name, "{terrible") ||
-		strstr(l_ptr->o_name, "{excellent") ||
-		strstr(l_ptr->o_name, "{tainted")) return (FALSE);
-
-	/* If your pseudo capabilities are non-existent */
-	if (borg_calc_pseudo() > 100)
-	{
-
-		/* Swords */
-		if (l_ptr->tval == TV_SWORD)
-				return (sval == SV_BROKEN_DAGGER ||
-						sval == SV_BROKEN_SWORD ||
-						sval == SV_DAGGER);
-
-		/* Hafted */
-		if (l_ptr->tval == TV_HAFTED)
-			return (sval == SV_CLUB ||
-					sval == SV_WHIP);
-
-		/* Sling */
-		if (l_ptr->tval == TV_BOW) return (sval == SV_SLING);
-
-		/* Rags and Robes */
-		if (l_ptr->tval == TV_SOFT_ARMOR)
-			return (sval == SV_FILTHY_RAG ||
-					sval == SV_SOFT_LEATHER_ARMOR ||
-					sval == SV_SOFT_STUDDED_LEATHER ||
-					sval == SV_ROBE);
-
-		/* Cloak */
-		if (l_ptr->tval == TV_CLOAK) return (sval == SV_CLOAK);
-
-		/* Leather Gloves */
-		if (l_ptr->tval == TV_GLOVES)
-			return (sval == SV_SET_OF_LEATHER_GLOVES);
-
-		/* Helmet */
-		if (l_ptr->tval == TV_HELM) return (sval == SV_HARD_LEATHER_CAP);
-
-		/* Assume the item is not icky */
-		return (FALSE);
-	}
-
-
-	/*** {Good} items in inven, But I have {excellent} in equip ***/
-
-	if (strstr(l_ptr->o_name, "{good"))
-	{
-		int slot;
-
-		/* Obtain the slot of the suspect item */
-		slot = borg_wield_slot(l_ptr);
-
-		/* Obtain my equipped item in the slot */
-		l_ptr = look_up_equip_slot(slot);
-
-		/* Is the equipped item an ego or artifact? */
-		if (l_ptr &&
-			(borg_obj_is_ego_art(l_ptr) ||
-			strstr(l_ptr->o_name, "{special") ||
-			strstr(l_ptr->o_name, "{terrible") ||
-			strstr(l_ptr->o_name, "{excellent") ||
-			strstr(l_ptr->o_name, "{tainted"))) return (TRUE);
-	}
-
-	/* Assume not icky, I should have extra ID for the item */
-	return (FALSE);
-}
-
-
 /*
  * Use things in a useful, but non-essential, manner
  */
@@ -1445,85 +1215,93 @@ static bool borg_enchant_artifact(void)
 
 
 /* Find out if the borg wears a cursed item */
-bool borg_wears_cursed(bool heavy)
+static bool borg_wears_cursed(bool heavy)
 {
 	int i;
 	bool result = FALSE;
+	list_item *l_ptr;
 
 	for (i = 0; i < equip_num; i++)
 	{
-		list_item *l_ptr = look_up_equip_slot(i);
+		l_ptr = look_up_equip_slot(i);
 
-		/* If this slot is not empty */
+		/* Yeah well */
 		if (!l_ptr) continue;
 
-		/* And the item in this slot has a name */
-		if (streq(l_ptr->o_name,"")) continue;
-
-		/* And the name is cursed then the borg wears a cursed item */
-		if (strstr(l_ptr->o_name, "cursed"))
+		/* Are we looking for a heavy curse? */
+		if (heavy)
 		{
-			result = TRUE;
-			if (heavy)
-			{
-				l_ptr->kn_flags[2] |= TR2_HEAVY_CURSE;
-			}
-			else
-			{
-				l_ptr->kn_flags[2] |= TR2_CURSED;
-			}
+			result |= KN_FLAG(l_ptr, TR_HEAVY_CURSE);
+		}
+		/* It is a normal curse */
+		else
+		{
+			result |= KN_FLAG(l_ptr, TR_CURSED);
 		}
 	}
 
+	/* Cursed item in the equipment */
+	if (result) return (TRUE);
+
+	for (i = 0; i < inven_num; i++)
+	{
+		l_ptr = &inventory[i];
+
+		/* Yeah well */
+		if (!l_ptr) continue;
+
+		/* Only interesting items */
+		if (!borg_obj_known_p(l_ptr) && !borg_obj_is_ego_art(l_ptr)) continue;
+
+		/* Are we looking for a heavy curse? */
+		if (heavy)
+		{
+			result |= KN_FLAG(l_ptr, TR_HEAVY_CURSE);
+		}
+		/* It is a normal curse */
+		else
+		{
+			result |= KN_FLAG(l_ptr, TR_CURSED);
+		}
+	}
+
+	/* Ready */
 	return (result);
 }
 
 
-/*
- * Remove Curse
- */
+/* Remove Curse */
 static bool borg_decurse(void)
 {
 	/* Nothing to decurse */
-	if (!borg_wearing_cursed) return (FALSE);
+	if (!borg_wears_cursed(FALSE)) return (FALSE);
 
 	/* remove the curse */
-	if (borg_spell_fail(REALM_LIFE, 1, 0, 40) ||
+	if (borg_spell_fail(REALM_LIFE, 1, 0, 60) ||
+		borg_spell_fail(REALM_LIFE, 2, 1, 60) ||
 		borg_use_staff_fail(SV_STAFF_REMOVE_CURSE) ||
 		borg_read_scroll(SV_SCROLL_REMOVE_CURSE))
 	{
 		/* Shekockazol! */
-		borg_wearing_cursed = FALSE;
-		borg_heavy_curse = borg_wears_cursed(TRUE);
 		return (TRUE);
-	}
-
-	/* Try *remove curse* if unlimited available */
-	if (bp_ptr->able.star_remove_curse >= 1000)
-	{
-		/* pretend there is a heavy curse */
-		borg_heavy_curse = TRUE;
 	}
 
 	/* Nothing to do */
 	return (FALSE);
 }
 
-/*
- * Remove Heavy Curse
- */
+
+/* Remove Heavy Curse */
 static bool borg_star_decurse(void)
 {
 	/* Nothing to *decurse* */
-	if (!borg_heavy_curse) return (FALSE);
+	if (!borg_wears_cursed(TRUE)) return (FALSE);
 
 	/* remove the curse */
-	if (borg_spell_fail(REALM_LIFE, 2, 1, 40) ||
+	if (borg_spell_fail(REALM_LIFE, 2, 1, 60) ||
 		borg_read_scroll(SV_SCROLL_STAR_REMOVE_CURSE))
 	{
 		/* Shekockazol! */
-		borg_wearing_cursed = FALSE;
-		borg_heavy_curse = FALSE;
 		return (TRUE);
 	}
 
@@ -1531,9 +1309,8 @@ static bool borg_star_decurse(void)
 	return (FALSE);
 }
 
-/*
- * Enchant things
- */
+
+/* Enchant things */
 bool borg_enchanting(void)
 {
 	/* Forbid blind/confused */
@@ -1788,66 +1565,6 @@ static bool borg_consume(list_item *l_ptr)
 	return (FALSE);
 }
 
-/*
- * Should we *id* this item?
- */
-bool borg_obj_star_id_able(list_item *l_ptr)
-{
-	/* Is there an object at all? */
-	if (!l_ptr) return (FALSE);
-
-	/* Demand that the item is identified */
-	if (!borg_obj_known_p(l_ptr)) return (FALSE);
-	
-	/* Some non-ego items should be *id'ed too */
-	if (l_ptr->tval == TV_SHIELD &&
-	 	k_info[l_ptr->k_idx].sval == SV_DRAGON_SHIELD) return (TRUE);
-	if (l_ptr->tval == TV_HELM &&
-	 	k_info[l_ptr->k_idx].sval == SV_DRAGON_HELM) return (TRUE);
-	if (l_ptr->tval == TV_CLOAK &&
-	 	k_info[l_ptr->k_idx].sval == SV_SHADOW_CLOAK) return (TRUE);
-	if (l_ptr->tval == TV_RING &&
-	 	k_info[l_ptr->k_idx].sval == SV_RING_LORDLY) return (TRUE);
-
-	/* not an ego object */
-	if (!borg_obj_is_ego_art(l_ptr)) return (FALSE);
-
-	/* Artifacts */
-	if (KN_FLAG(l_ptr, TR_INSTA_ART)) return (TRUE);
-
-	/* Weapons */
-	if (streq(l_ptr->xtra_name, "(Holy Avenger)")) return (TRUE);
-	if (streq(l_ptr->xtra_name, "(Defender)")) return (TRUE);
-	if (streq(l_ptr->xtra_name, "(Blessed)")) return (TRUE);
-	if (streq(l_ptr->xtra_name, "of Westernesse")) return (TRUE);
-	if (streq(l_ptr->xtra_name, "of Slay Dragon")) return (TRUE);
-	if (streq(l_ptr->xtra_name, "of *Slay* Dragon")) return (TRUE);
-	if (streq(l_ptr->xtra_name, "(Chaotic)")) return (TRUE);
-	if (streq(l_ptr->xtra_name, "of Slaying")) return (TRUE);
-	if (streq(l_ptr->xtra_name, "(Vampiric)")) return (TRUE);
-	if (streq(l_ptr->xtra_name, "(Trump Weapon)")) return (TRUE);
-	if (streq(l_ptr->xtra_name, "(Pattern Weapon)")) return (TRUE);
-
-	/* Bow */
-	if (streq(l_ptr->xtra_name, "of Might")) return (TRUE);
-
-	/* Armour */
-	if (streq(l_ptr->xtra_name, "of Permanence")) return (TRUE);
-	if (streq(l_ptr->xtra_name, "of Resistance")) return (TRUE);
-	if (streq(l_ptr->xtra_name, "of Elvenkind")) return (TRUE);
-
-	/* Hat */
-	if (streq(l_ptr->xtra_name, "of the Magi")) return (TRUE);
-	if (streq(l_ptr->xtra_name, "of Lordliness")) return (TRUE);
-	if (streq(l_ptr->xtra_name, "of Seeing")) return (TRUE);
-
-	/* Cloak */
-	if (streq(l_ptr->xtra_name, "of Aman")) return (TRUE);
-
-	/* Any object that reaches here has nothing interesting to *id* */
-	return (FALSE);
-}
-
 
 static bool borg_heavy_sense(void)
 {
@@ -1925,60 +1642,6 @@ static void borg_destroy_item(list_item *l_ptr, int slot, int number)
 	}
 
 	borg_keypress(I2A(slot));
-}
-
-/*
- * Which items can you destroy without identifying
- * despite their unidentified status.
- */
-static bool borg_destroy_unidentified(list_item *l_ptr)
-{
-	int sval;
-
-	/* This proc is there for unid'd items */
-	if (!l_ptr || borg_obj_known_p(l_ptr)) return (FALSE);
-
-	/* If this item has been pseudo id'd with boring results */
-	if (strstr(l_ptr->o_name, "{average") ||
-		strstr(l_ptr->o_name, "{cursed") ||
-		strstr(l_ptr->o_name, "{bad") ||
-		strstr(l_ptr->o_name, "{broken") ||
-		strstr(l_ptr->o_name, "{dubious") ||
-		strstr(l_ptr->o_name, "{worthless")) return (TRUE);
-
-	sval = k_info[l_ptr->k_idx].sval;
-
-	switch (l_ptr->tval)
-	{
-		case TV_RING:
-		{
-			if (sval <= SV_RING_TELEPORTATION) return (TRUE);
-			break;
-		}
-		case TV_AMULET:
-		{
-			if (sval <= SV_AMULET_TELEPORT) return (TRUE);
-			break;
-		}
-		case TV_STAFF:
-		{
-			if (sval == SV_STAFF_DARKNESS &&
-				!FLAG(bp_ptr, TR_HURT_LITE)) return (TRUE);
-			if (sval >= SV_STAFF_SLOWNESS &&
-				sval <= SV_STAFF_SUMMONING) return (TRUE);
-			break;
-		}
-		case TV_WAND:
-		{
-			if (sval == SV_WAND_CLONE_MONSTER) return (TRUE);
-			if (sval == SV_WAND_HASTE_MONSTER) return (TRUE);
-			if (sval == SV_WAND_HEAL_MONSTER) return (TRUE);
-			break;
-		}
-	}
-
-	/* This item needs to be identified */
-	return (FALSE);
 }
 
 
@@ -2079,7 +1742,7 @@ static bool borg_destroy_aux(bool must_destroy)
 		if (!l_ptr->k_idx) continue;
 
 		/* unknown? */
-		if (borg_destroy_unidentified(l_ptr))
+		if (borg_keep_unidentified(l_ptr))
 		{
 			/* Some unknown items are valueless */
 			value = 0;
@@ -2088,7 +1751,6 @@ static bool borg_destroy_aux(bool must_destroy)
 		{
 			/* Skip "good" unknown items (unless "icky") */
 			if (!must_destroy && !destroy_weight &&
-				!borg_obj_known_p(l_ptr) &&
 				!borg_item_icky(l_ptr)) continue;
 
 			/* Skip items that need to be *id*'d */
@@ -2670,14 +2332,14 @@ bool borg_id_meta(void)
 	/* don't ID stuff when you can't recover spent spell point immediately */
 	if (bp_ptr->csp < 50 &&	!borg_check_rest()) return (FALSE);
 
+	/* Pseudo identify unknown things */
+	if (borg_test_stuff_pseudo()) return (TRUE);
+
 	/* Identify unknown things */
 	if (borg_test_stuff()) return (TRUE);
 
 	/* *Id* unknown things */
 	if (borg_test_stuff_star()) return (TRUE);
-
-	/* Pseudo identify unknown things */
-	if (borg_test_stuff_pseudo()) return (TRUE);
 
 	/* nothing */
 	return (FALSE);
@@ -2794,7 +2456,7 @@ bool borg_wear_stuff(void)
 	l_ptr = &inventory[b_i];
 
 	/* Log */
-	borg_note_fmt("# Wearing %s. (%c)", l_ptr->o_name, b_i);
+	borg_note_fmt("# Wearing %s. (%c)", l_ptr->o_name, I2A(b_i));
 
 	/* Wear it */
 	borg_keypress('w');
@@ -3283,13 +2945,10 @@ static int borg_count_sell(void)
 }
 
 
-/*
- * Scan the item list and recharge items before leaving the
- * level.  Right now rod are not recharged from this.
- */
-bool borg_wear_recharge(void)
+/* Scan the item list and recharge items before leaving the level. */
+bool borg_wait_recharge(void)
 {
-	int i, b_i = -1;
+	int i;
 	int slot = -1;
 
 	/* No resting in danger */
@@ -3315,43 +2974,48 @@ bool borg_wear_recharge(void)
 		/* Where does this belong? */
 		slot = borg_wield_slot(l_ptr);
 
-		/* Skip stuff that can't be worn */
-		if (slot < 0) continue;
+		l_ptr = look_up_equip_slot(slot);
 
-		/* note this one */
-		b_i = i;
+		/* If the slot has a cursed item */
+		if (l_ptr && slot >= 0 &&
+			(KN_FLAG(l_ptr, TR_CURSED) || KN_FLAG(l_ptr, TR_HEAVY_CURSE)))
+		{
+			/* then don't bother swapping */
+			continue;
+		}
 
+		/* There is an item to recharge */
 		break;
 	}
 
-	/*
-	 *Item must be worn to be recharged
-	 * But, none if some equip is cursed
-	 */
-	if ((b_i >= 0) && !borg_wearing_cursed)
+	/* nothing to recharge */
+	if (i == inven_num) return (FALSE);
+
+	/* Was it a rod or an equipable item? */
+	if (slot == -1)
 	{
+		/* Note the rod */
+		borg_note_fmt("Waiting for %s to recharge.", inventory[i].o_name);
+	}
+	else
+	{
+		/* Note the swapping */
+		borg_note_fmt("Swapping %s to recharge it.", inventory[i].o_name);
 
 		/* wear the item */
 		borg_note("# Swapping Item for Recharge.");
-		borg_keypress(ESCAPE);
 		borg_keypress('w');
-		borg_keypress(I2A(b_i));
-		borg_keypress(' ');
-		borg_keypress(' ');
-
-		/* rest for a while */
-		borg_keypress('R');
-		borg_keypress('7');
-		borg_keypress('5');
-		borg_keypress('\n');
-
-		/* done */
-		return (TRUE);
-
+		borg_keypress(I2A(i));
 	}
 
-	/* nothing to recharge */
-	return (FALSE);
+	/* rest for a while */
+	borg_keypress('R');
+	borg_keypress('7');
+	borg_keypress('5');
+	borg_keypress('\n');
+
+	/* done */
+	return (TRUE);
 }
 
 

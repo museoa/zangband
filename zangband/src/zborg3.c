@@ -867,6 +867,340 @@ int look_up_index(list_item *l_ptr)
 }
 
 
+/* Should the borg *id* this item? */
+bool borg_obj_star_id_able(list_item *l_ptr)
+{
+	/* Is there an object at all? */
+	if (!l_ptr) return (FALSE);
+
+	/* Demand that the item is identified */
+	if (!borg_obj_known_p(l_ptr)) return (FALSE);
+	
+	/* Some non-ego items should be *id'ed too */
+	if (l_ptr->tval == TV_SHIELD &&
+	 	k_info[l_ptr->k_idx].sval == SV_DRAGON_SHIELD) return (TRUE);
+	if (l_ptr->tval == TV_HELM &&
+	 	k_info[l_ptr->k_idx].sval == SV_DRAGON_HELM) return (TRUE);
+	if (l_ptr->tval == TV_CLOAK &&
+	 	k_info[l_ptr->k_idx].sval == SV_SHADOW_CLOAK) return (TRUE);
+	if (l_ptr->tval == TV_RING &&
+	 	k_info[l_ptr->k_idx].sval == SV_RING_LORDLY) return (TRUE);
+
+	/* not an ego object */
+	if (!borg_obj_is_ego_art(l_ptr)) return (FALSE);
+
+	/* Artifacts */
+	if (KN_FLAG(l_ptr, TR_INSTA_ART)) return (TRUE);
+
+	/* Weapons */
+	if (streq(l_ptr->xtra_name, "(Holy Avenger)")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "(Defender)")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "(Blessed)")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "of Westernesse")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "of Slay Dragon")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "of *Slay* Dragon")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "(Chaotic)")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "of Slaying")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "(Vampiric)")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "(Trump Weapon)")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "(Pattern Weapon)")) return (TRUE);
+
+	/* Bow */
+	if (streq(l_ptr->xtra_name, "of Might")) return (TRUE);
+
+	/* Armour */
+	if (streq(l_ptr->xtra_name, "of Permanence")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "of Resistance")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "of Elvenkind")) return (TRUE);
+
+	/* Hat */
+	if (streq(l_ptr->xtra_name, "of the Magi")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "of Lordliness")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "of Seeing")) return (TRUE);
+
+	/* Cloak */
+	if (streq(l_ptr->xtra_name, "of Aman")) return (TRUE);
+
+	/* Any object that reaches here has nothing interesting to *id* */
+	return (FALSE);
+}
+
+
+/* Which items can be kept unidentified */
+bool borg_keep_unidentified(list_item *l_ptr)
+{
+	int sval;
+
+	/* This proc is there for unid'd items */
+	if (!l_ptr || borg_obj_known_p(l_ptr)) return (FALSE);
+
+	/* If this item has been pseudo id'd with boring results */
+	if (strstr(l_ptr->o_name, "{average") ||
+		strstr(l_ptr->o_name, "{cursed") ||
+		strstr(l_ptr->o_name, "{bad") ||
+		strstr(l_ptr->o_name, "{broken") ||
+		strstr(l_ptr->o_name, "{dubious") ||
+		strstr(l_ptr->o_name, "{worthless")) return (TRUE);
+
+	sval = k_info[l_ptr->k_idx].sval;
+
+	switch (l_ptr->tval)
+	{
+		case TV_RING:
+		{
+			if (sval <= SV_RING_TELEPORTATION) return (TRUE);
+			break;
+		}
+		case TV_AMULET:
+		{
+			if (sval <= SV_AMULET_TELEPORT) return (TRUE);
+			break;
+		}
+		case TV_STAFF:
+		{
+			if (sval == SV_STAFF_DARKNESS &&
+				!FLAG(bp_ptr, TR_HURT_LITE)) return (TRUE);
+			if (sval >= SV_STAFF_SLOWNESS &&
+				sval <= SV_STAFF_SUMMONING) return (TRUE);
+			break;
+		}
+		case TV_WAND:
+		{
+			if (sval == SV_WAND_CLONE_MONSTER) return (TRUE);
+			if (sval == SV_WAND_HASTE_MONSTER) return (TRUE);
+			if (sval == SV_WAND_HEAL_MONSTER) return (TRUE);
+			break;
+		}
+	}
+
+	/* This item needs to be identified */
+	return (FALSE);
+}
+
+
+/* This function (copied from dungeon.c) delivers the chance for pseudo-id. */
+long borg_calc_pseudo(void)
+{
+	long difficulty;
+
+	/* Based on race get the basic feel factor. */
+	switch (borg_class)
+	{
+		case CLASS_WARRIOR:
+		{
+			/* Good (heavy) sensing */
+			difficulty = 9000L;
+
+			/* Done */
+			break;
+		}
+
+		case CLASS_MAGE:
+		case CLASS_HIGH_MAGE:
+		{
+			/* Very bad (light) sensing */
+			difficulty = 240000L;
+
+			/* Done */
+			break;
+		}
+
+		case CLASS_PRIEST:
+		{
+			/* Good (light) sensing */
+			difficulty = 10000L;
+
+			/* Done */
+			break;
+		}
+
+		case CLASS_ROGUE:
+		{
+			/* Okay sensing */
+			difficulty = 20000L;
+
+			/* Done */
+			break;
+		}
+
+		case CLASS_RANGER:
+		{
+			/* Bad (heavy) sensing */
+			difficulty = 95000L;
+
+			/* Done */
+			break;
+		}
+
+		case CLASS_PALADIN:
+		{
+			/* Bad (heavy) sensing */
+			difficulty = 77777L;
+
+			/* Done */
+			break;
+		}
+
+		case CLASS_WARRIOR_MAGE:
+		{
+			/* Bad sensing */
+			difficulty = 75000L;
+
+			/* Done */
+			break;
+		}
+
+		case CLASS_MINDCRAFTER:
+		{
+			/* Bad sensing */
+			difficulty = 55000L;
+	
+			/* Done */
+			break;
+		}
+
+		case CLASS_CHAOS_WARRIOR:
+		{
+			/* Bad (heavy) sensing */
+			difficulty = 80000L;
+
+			/* Done */
+			break;
+		}
+
+		case CLASS_MONK:
+		{
+			/* Okay sensing */
+			difficulty = 20000L;
+
+			/* Done */
+			break;
+		}
+
+		default:
+		{
+			/* Paranoia */
+			difficulty = 0;
+		}
+	}
+
+	/* Factor in the sensing ability */
+	difficulty /= MAX(bp_ptr->skill_sns, 1);
+
+	/* Rescale larger by a facter of 25 */
+	difficulty *= 25;
+
+	/* Sensing gets better as you get more experienced */
+	difficulty /= p_ptr->lev * p_ptr->lev + 40;
+
+	/* Give the answer */
+	return (difficulty);
+}
+
+
+/*
+ * Determine if an item is "probably" worthless
+ *
+ * This (very heuristic) function is a total hack, designed only to prevent
+ * a very specific annoying situation described below.
+ *
+ * Note that a "cautious" priest (or low level mage/ranger) will leave town
+ * with a few identify scrolls, wander around dungeon level 1 for a few turns,
+ * and use all of the scrolls on leather gloves and broken daggers, and must
+ * then return to town for more scrolls.  This may repeat indefinitely.
+ *
+ * The problem is that some characters (priests, mages, rangers) never get an
+ * "average" feeling about items, and have no way to keep track of how long
+ * they have been holding a given item for, so they cannot even attempt to
+ * gain knowledge from the lack of "good" or "cursed" feelings.  But they
+ * cannot afford to just identify everything they find by using scrolls of
+ * identify, because, in general, some items are, on average, "icky", and
+ * not even worth the price of a new scroll of identify.
+ *
+ */
+bool borg_item_icky(list_item *l_ptr)
+{
+	int slot;
+	int sval = k_info[l_ptr->k_idx].sval;
+
+	list_item *q_ptr;
+
+	/* Not existing or identified items are not icky */
+	if (!l_ptr || borg_obj_known_p(l_ptr)) return (FALSE);
+
+	/* if its average, dump it if you want to. */
+	if (strstr(l_ptr->o_name, "{average")) return (TRUE);
+
+	/* items that are terrible/excellent/special/tainted need ID */
+	if (strstr(l_ptr->o_name, "{special") ||
+		strstr(l_ptr->o_name, "{terrible") ||
+		strstr(l_ptr->o_name, "{excellent") ||
+		strstr(l_ptr->o_name, "{tainted")) return (FALSE);
+
+	/* If your pseudo capabilities are non-existent */
+	if (borg_calc_pseudo() > 100)
+	{
+
+		/* Swords */
+		if (l_ptr->tval == TV_SWORD)
+				return (sval == SV_BROKEN_DAGGER ||
+						sval == SV_BROKEN_SWORD ||
+						sval == SV_DAGGER);
+
+		/* Hafted */
+		if (l_ptr->tval == TV_HAFTED)
+			return (sval == SV_CLUB ||
+					sval == SV_WHIP);
+
+		/* Sling */
+		if (l_ptr->tval == TV_BOW) return (sval == SV_SLING);
+
+		/* Rags and Robes */
+		if (l_ptr->tval == TV_SOFT_ARMOR)
+			return (sval == SV_FILTHY_RAG ||
+					sval == SV_SOFT_LEATHER_ARMOR ||
+					sval == SV_SOFT_STUDDED_LEATHER ||
+					sval == SV_ROBE);
+
+		/* Cloak */
+		if (l_ptr->tval == TV_CLOAK) return (sval == SV_CLOAK);
+
+		/* Leather Gloves */
+		if (l_ptr->tval == TV_GLOVES)
+			return (sval == SV_SET_OF_LEATHER_GLOVES);
+
+		/* Helmet */
+		if (l_ptr->tval == TV_HELM) return (sval == SV_HARD_LEATHER_CAP);
+
+		/* Assume the item is not icky */
+		return (FALSE);
+	}
+
+
+	/*** {Good} items in inven, But I have {excellent} in equip ***/
+
+	if (strstr(l_ptr->o_name, "{good"))
+	{
+		/* Obtain the slot of the suspect item */
+		slot = borg_wield_slot(l_ptr);
+
+		/* Obtain my equipped item in the slot */
+		q_ptr = &equipment[slot];
+
+		/* Is the equipped item an ego or artifact? */
+		if (q_ptr->k_idx &&
+			(borg_obj_is_ego_art(q_ptr) ||
+			strstr(q_ptr->o_name, "{special") ||
+			strstr(q_ptr->o_name, "{terrible") ||
+			strstr(q_ptr->o_name, "{excellent") ||
+			strstr(q_ptr->o_name, "{tainted"))) return (TRUE);
+	}
+
+	/* Assume not icky, I should have extra ID for the item */
+	return (FALSE);
+}
+
+
 /* Refuel a torch with the minimal torch */
 static bool borg_refuel_torch(void)
 {

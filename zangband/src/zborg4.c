@@ -19,6 +19,7 @@ int num_food;
 int num_food_scroll;
 int num_ident;
 int num_star_ident;
+int num_remove_curse;
 int num_star_remove_curse;
 int num_recall;
 int num_phase;
@@ -95,6 +96,7 @@ int num_sustain_dex;
 int num_sustain_con;
 int num_sustain_all;
 
+int num_artifact;
 int num_speed;
 int num_edged_weapon;
 int num_bad_gloves;
@@ -428,6 +430,39 @@ list_item *look_up_equip_slot(int slot)
 	return (NULL);
 }
 
+
+/* Determine if this item should be id'd or something. */
+static void borg_notice_improve_item(list_item *l_ptr, bool equip)
+{
+	/* Paranoia */
+	if (!l_ptr) return;
+
+	/* Does it need to be id'd? */
+	if (!borg_obj_known_p(l_ptr))
+	{
+		if (!borg_item_icky(l_ptr) &&
+			!borg_keep_unidentified(l_ptr)) bp_ptr->able.id_item += 1;
+	}
+	/* Do the other checks only for identified items */
+	else
+	{
+		/* Does it need to be star_id'd? */
+		if (!borg_obj_known_full(l_ptr) && 
+			borg_obj_star_id_able(l_ptr)) bp_ptr->able.star_id_item += 1;
+
+		/* All equipment or interesting items from the inventory */
+		if (equip || borg_obj_is_ego_art(l_ptr))
+		{
+			/* Check for cursed items */
+			if (KN_FLAG(l_ptr, TR_CURSED)) bp_ptr->status.cursed = TRUE;
+
+			/* Maybe try a *remove curse* on this item */
+			if (KN_FLAG(l_ptr, TR_HEAVY_CURSE)) bp_ptr->status.heavy_curse = TRUE;
+		}
+	}
+}
+
+
 /*
  * Notice the effects of equipment
  */
@@ -443,12 +478,11 @@ static void borg_notice_equip(int *extra_blows, int *extra_shots,
 	{
 		l_ptr = look_up_equip_slot(i);
 
-		/* Pretend item isn't there */
+		/* Ignore empty slots */
 		if (!l_ptr) continue;
 
-		/* Check for cursed items */
-		if (KN_FLAG(l_ptr, TR_CURSED)) borg_wearing_cursed = TRUE;
-		if (KN_FLAG(l_ptr, TR_HEAVY_CURSE)) borg_heavy_curse = TRUE;
+		/* Does this item need id or remove curse? */
+		borg_notice_improve_item(l_ptr, TRUE);
 
 		/* Affect stats */
 		if (KN_FLAG(l_ptr, TR_STR)) my_stat_add[A_STR] += l_ptr->pval;
@@ -2306,6 +2340,9 @@ static void borg_notice_inven_item(list_item *l_ptr)
 			number = l_ptr->number;
 		}
 	}
+
+	/* Does this item need id or remove curse? */
+	borg_notice_improve_item(l_ptr, FALSE);
 	
 	/* Keep track of weight */
 	bp_ptr->weight += l_ptr->weight * number;
@@ -3187,6 +3224,7 @@ static void borg_notice_home_clear(void)
 	num_food_scroll = 0;
 	num_ident = 0;
 	num_star_ident = 0;
+	num_remove_curse = 0;
 	num_star_remove_curse = 0;
 	num_recall = 0;
 	num_phase = 0;
@@ -3203,7 +3241,6 @@ static void borg_notice_home_clear(void)
 	num_pot_rheat = 0;
 	num_pot_rcold = 0;
 	num_pot_resist = 0;
-	num_speed = 0;
 	num_goi_pot = 0;
 
 	num_slow_digest = 0;
@@ -3246,6 +3283,7 @@ static void borg_notice_home_clear(void)
 	home_stat_add[A_CON] = 0;
 	home_stat_add[A_CHR] = 0;
 
+	num_artifact = 0;
 	num_weapons = 0;
 
 	num_bow = 0;
@@ -3790,6 +3828,12 @@ static void borg_notice_home_scroll(list_item *l_ptr)
 			break;
 		}
 
+		case SV_SCROLL_REMOVE_CURSE:
+		{
+			num_remove_curse += l_ptr->number;
+			break;
+		}
+
 		case SV_SCROLL_STAR_REMOVE_CURSE:
 		{
 			num_star_remove_curse += l_ptr->number;
@@ -3891,6 +3935,13 @@ static void borg_notice_home_spells(void)
 	{
 		num_ident += 1000;
 		num_star_ident += 1000;
+	}
+
+	/* Handle "remove curse" -> infinite remove curses */
+	if (borg_spell_legal_fail(REALM_LIFE, 1, 0, 40) ||
+		borg_spell_legal_fail(REALM_LIFE, 2, 1, 40))
+	{
+		num_remove_curse += 1000;
 	}
 
 	/* Handle "*remove curse*" -> infinite *remove curses* */
@@ -4010,6 +4061,14 @@ static void borg_notice_home_player(void)
  */
 static void borg_notice_home_item(list_item *l_ptr, int i)
 {
+	 /* If this item needs a scroll of *id* */
+	if (borg_obj_star_id_able(l_ptr) && !borg_obj_known_full(l_ptr))
+	{
+		/* count it */
+		num_artifact++;
+	}
+
+
 	/* Analyze the item */
 	switch (l_ptr->tval)
 	{
@@ -4773,6 +4832,9 @@ static s32b borg_power_home_aux1(void)
 	else if (num_sustain_all > 2)
 		value += 1500L + (num_sustain_all - 2) * 1L;
 
+	/* Count the artifacts stored at home */
+	value += num_artifact * 10000;
+
 	/*
 	 * Do a minus for too many duplicates.
 	 * This way we do not store useless items
@@ -4839,6 +4901,7 @@ static s32b borg_power_home_aux1(void)
 static s32b borg_power_home_aux2(void)
 {
 	int book = 0, realm = 0;
+	int pile = 2 * bp_ptr->lev - 1;
 
 	s32b value = 0L;
 
@@ -4846,73 +4909,77 @@ static s32b borg_power_home_aux2(void)
 
 	/* Collect food */
 	value += 500 * MIN(num_food, 10);
-	value += 50 * MIN_FLOOR(num_food, 10, 2 * bp_ptr->lev - 1);
+	value += 50 * MIN_FLOOR(num_food, 10, pile);
 
 	/* Emphasize on collecting scrolls of food above mere rations */
-	value += 10 * MIN(num_food_scroll, 2 * bp_ptr->lev - 1);
+	value += 10 * MIN(num_food_scroll, pile);
 
 	/* Collect ident */
 	value += 1500 * MIN(num_ident, 20);
-	value += 150 * MIN_FLOOR(num_ident, 20, 2 * bp_ptr->lev - 1);
+	value += 150 * MIN_FLOOR(num_ident, 20, pile);
 
 	/* Collect *id*ent */
 	value += 1700 * MIN(num_star_ident, 10);
-	value += 170 * MIN_FLOOR(num_star_ident, 10, 2 * bp_ptr->lev - 1);
+	value += 170 * MIN_FLOOR(num_star_ident, 10, pile);
+
+	/* Collect remove curse */
+	value += 500 * MIN(num_remove_curse, 5);
+	value += 75 * MIN_FLOOR(num_remove_curse, 5, pile);
 
 	/* Collect *remove curse* */
 	value += 5000 * MIN(num_star_remove_curse, 5);
-	value += 750 * MIN_FLOOR(num_star_remove_curse, 5, bp_ptr->lev * 2 - 1);
+	value += 750 * MIN_FLOOR(num_star_remove_curse, 5, pile);
 
 	/* apw Collect pfe */
-	value += 300 * MIN(num_pfe, bp_ptr->lev * 2 - 1);
+	value += 300 * MIN(num_pfe, pile);
 
 	/* apw Collect glyphs */
-	value += 1000 * MIN(num_glyph, bp_ptr->lev * 2 - 1);
+	value += 1000 * MIN(num_glyph, pile);
 
 	/* Reward Genocide scrolls. Just scrolls, mainly used for the Serpent */
-	value += 1000 * MIN(num_genocide, bp_ptr->lev * 2 - 1);
+	value += 1000 * MIN(num_genocide, pile);
 
 	/* Reward Mass Genocide scrolls. Just scrolls, mainly used for Serpent */
-	value += 1000 * MIN(num_mass_genocide, bp_ptr->lev * 2 - 1);
+	value += 1000 * MIN(num_mass_genocide, pile);
 
 	/* Reward Resistance Potions for Warriors */
 	if (borg_class == CLASS_WARRIOR)
 	{
-		value += 200 * MIN(num_pot_rheat, bp_ptr->lev * 2 - 1);
-		value += 200 * MIN(num_pot_rcold, bp_ptr->lev * 2 - 1);
-		value += 200 * MIN(num_pot_resist, bp_ptr->lev * 2 - 1);
+		value += 200 * MIN(num_pot_rheat, pile);
+		value += 200 * MIN(num_pot_rcold, pile);
+		value += 200 * MIN(num_pot_resist, pile);
 	}
 
 	/* Collect recall */
 	value += 1700 * MIN(num_recall, 20);
-	value += 70 * MIN_FLOOR(num_recall, 20, bp_ptr->lev * 2 - 1);
+	value += 70 * MIN_FLOOR(num_recall, 20, pile);
 
 	/* Collect phase door */
 	value += 1700 * MIN(num_phase, 20);
-	value += 70 * MIN_FLOOR(num_phase, 20, bp_ptr->lev * 2 - 1);
+	value += 70 * MIN_FLOOR(num_phase, 20, pile);
 
 	/* Collect escape */
 	value += 3000 * MIN(num_escape, 20);
-	value += 300 * MIN_FLOOR(num_escape, 20, bp_ptr->lev * 2 - 1);
+	value += 300 * MIN_FLOOR(num_escape, 20, pile);
 
 	/* Collect teleport */
 	value += 1000 * MIN(num_teleport, 20);
-	value += 100 * MIN_FLOOR(num_teleport, 20, bp_ptr->lev * 2 - 1);
+	value += 100 * MIN_FLOOR(num_teleport, 20, pile);
 
 	/* Collect teleport level scrolls */
 	value += 1000 * MIN(num_teleport_level, 20);
-	value += 100 * MIN_FLOOR(num_teleport_level, 20, bp_ptr->lev * 2 - 1);
+	value += 100 * MIN_FLOOR(num_teleport_level, 20, pile);
 
 	/* Collect Speed */
 	value += 3000 * MIN(num_speed, 20);
-	value += 300 * MIN_FLOOR(num_speed, 20, bp_ptr->lev * 2 - 1);
+	value += 300 * MIN_FLOOR(num_speed, 20, pile);
 
 	/* Collect Berserk */
 	value += 400 * MIN(num_berserk, 20);
-	value += 40 * MIN_FLOOR(num_berserk, 20, bp_ptr->lev * 2 - 1);
+	value += 40 * MIN_FLOOR(num_berserk, 20, pile);
 
 	/* Collect Invuln Potions (As if you'd ever find so many potions) */
-	value += 5000 * MIN(num_goi_pot, bp_ptr->lev * 2 - 1);
+	value += 5000 * MIN(num_goi_pot, pile);
 
 	/* Collect heal */
 	value += 3000 * MIN(num_heal, 99);
@@ -4940,11 +5007,11 @@ static s32b borg_power_home_aux2(void)
 	else
 	{
 		value += 5000 * MIN(num_fix_exp, 5);
-		value += 500 * MIN_FLOOR(num_fix_exp, 5, bp_ptr->lev * 2 - 1);
+		value += 500 * MIN_FLOOR(num_fix_exp, 5, pile);
 	}
 
 	/* Keep shrooms in the house */
-	value += 5000 * MIN(num_fix_stat[6], bp_ptr->lev * 2 - 1);
+	value += 5000 * MIN(num_fix_stat[6], pile);
 
 	/*** Hack -- books ***/
 
@@ -4971,7 +5038,7 @@ static s32b borg_power_home_aux2(void)
 			if (book < 2 || realm == REALM_ARCANE)
 			{
 				/* Assign value to keep extra books */
-				value += 100 * MIN(num_book[realm][book], bp_ptr->lev * 2 - 1);
+				value += 100 * MIN(num_book[realm][book], pile);
 			}
 		}
 	}
