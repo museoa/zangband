@@ -899,6 +899,9 @@ static errr Term_pict_gtk(int x, int y, int n, const byte *ap, const char *cp)
 			gdk_draw_image(td->pixmap, td->gc, td->temp,
 				 0, 0, x, y,
 				 td->font_wid, td->font_hgt);
+		
+			/* Hack - flush the changes */
+			gdk_flush();
 		}
 
 #else /* USE_TRANSPARENCY */
