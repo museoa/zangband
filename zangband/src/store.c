@@ -218,7 +218,7 @@ static s32b price_item(object_type *o_ptr, bool flip)
 		if ((info_flags & ST_GREED) || (info_flags & ST_ULTRA_GREED))
 		{
 			price = price / 2;
-		}
+        }
 	}
 
 	/* Shop is selling */
@@ -240,6 +240,12 @@ static s32b price_item(object_type *o_ptr, bool flip)
 
 	/* Compute the final price (with rounding) */
 	price = (price * adjust + 50L) / 100L;
+
+    /* Cap the price */
+    if (flip && price > ot_ptr->max_cost * 100L)
+    {
+        price = ot_ptr->max_cost * 100L;
+    }
 
 	/* Note -- Never become "free" */
 	if (price <= 0L) return (1L);
