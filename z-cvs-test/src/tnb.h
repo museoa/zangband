@@ -24,37 +24,6 @@
 
 #define in_bounds_test in_bounds2
 #define in_bounds_fully_test in_bounds
-#define p_ptr_depth dun_level
-#define p_ptr_max_depth p_ptr->max_dlv
-#define p_ptr_max_lev p_ptr->max_plv
-#define op_ptr_base_name player_base
-#define op_ptr_delay_factor delay_factor
-#define op_ptr_hitpoint_warn hitpoint_warn
-#define op_ptr_full_name player_name
-#define p_ptr_py py
-#define p_ptr_px px
-#define p_ptr_running running
-#define p_ptr_resting resting
-#define p_ptr_command_arg command_arg
-#define p_ptr_command_cmd command_cmd
-#define p_ptr_command_rep command_rep
-#define p_ptr_command_wrk command_wrk
-#define p_ptr_target_who target_who
-#define p_ptr_target_col target_col
-#define p_ptr_target_row target_row
-#define p_ptr_is_dead death
-#define p_ptr_died_from died_from
-#define p_ptr_wizard wizard
-#define p_ptr_total_winner total_winner
-#define p_ptr_history history
-#define p_ptr_player_hp player_hp
-#define p_ptr_noscore noscore
-#define p_ptr_energy_use energy_use
-#define p_ptr_equip_cnt equip_cnt
-#define p_ptr_point_based point_based
-#define p_ptr_auto_roller autoroller
-#define p_ptr_maximize maximize_mode
-#define p_ptr_preserve preserve_mode
 
 /*
  * Angband, KAngband and OAngband have monster_lore, while

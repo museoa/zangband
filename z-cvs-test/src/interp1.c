@@ -735,9 +735,9 @@ static char *state_state(void)
 	}
 
 	/* Resting */
-	else if (p_ptr_resting)
+	else if (resting)
 	{
-		int n = p_ptr_resting;
+		int n = resting;
 
 		/* Rest until healed */
 		if (n == -1)
@@ -758,9 +758,9 @@ static char *state_state(void)
 	}
 
 	/* Repeating */
-	else if (p_ptr_command_rep)
+	else if (command_rep)
 	{
-		int n = p_ptr_command_rep;
+		int n = command_rep;
 
 		s_status_value = trunc_num(n);
 
@@ -890,13 +890,13 @@ static char *state_stun(void)
 static char *state_winner(void)
 {
 	/* Wizard */
-	if (p_ptr_wizard)
+	if (wizard)
 	{
 		return "Wizard";
 	}
 
 	/* Winner */
-	else if (p_ptr_total_winner || (p_ptr->lev > PY_MAX_LEVEL))
+	else if (total_winner || (p_ptr->lev > PY_MAX_LEVEL))
 	{
 		return "Winner";
 	}
@@ -1255,16 +1255,16 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 	    case IDX_DEPTH: /* depth */
-			Tcl_SetIntObj(resultPtr, p_ptr_depth);
+			Tcl_SetIntObj(resultPtr, dun_level);
 			break; 
 
 		case IDX_DIED_FROM: /* died_from */
-			if (!p_ptr_is_dead)
+			if (!death)
 			{
 				Tcl_SetStringObj(resultPtr, "character is not dead", -1);
 				return TCL_ERROR;
 			}
-			ExtToUtf_SetResult(interp, p_ptr_died_from);
+			ExtToUtf_SetResult(interp, died_from);
 			break;
 
 		case IDX_EXP: /* exp */
@@ -1293,7 +1293,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			buf[0] = '\0';
 			for (i = 0; i < 4; i++)
 			{
-				(void) strcat(buf, format("%s\n", p_ptr_history[i]));
+				(void) strcat(buf, format("%s\n", history[i]));
 			}
 			i = strlen(buf) - 1;
 			while (buf[i] == '\n') buf[i--] = '\0';
@@ -1322,7 +1322,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 	    case IDX_MAX_DEPTH: /* max_depth */
-			Tcl_SetIntObj(resultPtr, p_ptr_max_depth);
+			Tcl_SetIntObj(resultPtr, p_ptr->max_dlv);
 			break; 
 
  		case IDX_NAME: /* name */
@@ -1337,15 +1337,15 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 						"invalid character name \"", t, "\"", NULL);
 					return TCL_ERROR;
 				}
-				(void) strcpy(op_ptr_full_name, t);
+				(void) strcpy(player_name, t);
 				process_player_name(FALSE);
 				Bind_Generic(EVENT_PY, KEYWORD_PY_NAME + 1);
 			}
-			ExtToUtf_SetResult(interp, (char *) op_ptr_full_name);
+			ExtToUtf_SetResult(interp, (char *) player_name);
 			break;
 
 		case IDX_POSITION: /* position */
-			Tcl_SetStringObj(resultPtr, format("%d %d", p_ptr_py, p_ptr_px),
+			Tcl_SetStringObj(resultPtr, format("%d %d", py, px),
 				-1);
 			break;
 
@@ -1493,15 +1493,15 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 		case IDX_MAXIMIZE: /* maximize */
-			Tcl_SetIntObj(resultPtr, p_ptr_maximize);
+			Tcl_SetIntObj(resultPtr, maximize_mode);
 			break;
 
 		case IDX_PRESERVE: /* preserve */
-			Tcl_SetIntObj(resultPtr, p_ptr_preserve);
+			Tcl_SetIntObj(resultPtr, preserve_mode);
 			break;
 
 		case IDX_BASE_NAME: /* base_name */
-			ExtToUtf_SetResult(interp, (char *) op_ptr_base_name);
+			ExtToUtf_SetResult(interp, (char *) player_base);
 			break;
 
 		case IDX_FLAGS: /* flags */
@@ -1514,7 +1514,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 		case IDX_IS_DEAD: /* is_dead */
-			Tcl_SetBooleanObj(resultPtr, p_ptr_is_dead);
+			Tcl_SetBooleanObj(resultPtr, death);
 			break;
 
 		case IDX_TURN: /* turn */
@@ -1522,7 +1522,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 		case IDX_MAX_LEVEL: /* max_level */
-			Tcl_SetIntObj(resultPtr, p_ptr_max_lev);
+			Tcl_SetIntObj(resultPtr, p_ptr->max_plv);
 			break;
 
 		case IDX_DISTURB: /* disturb */
@@ -1540,22 +1540,22 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 				return TCL_ERROR;
 		    }
 			t = Tcl_GetStringFromObj(objV[2], NULL);
-			if (SetArrayValueLong(t, "death", (p_ptr_noscore & 0x0001) != 0)
+			if (SetArrayValueLong(t, "death", (noscore & 0x0001) != 0)
 				!= TCL_OK)
 			{
 				return TCL_ERROR;
 			}
-			if (SetArrayValueLong(t, "wizard", (p_ptr_noscore & 0x0002) != 0)
+			if (SetArrayValueLong(t, "wizard", (noscore & 0x0002) != 0)
 				!= TCL_OK)
 			{
 				return TCL_ERROR;
 			}
-			if (SetArrayValueLong(t, "debug", (p_ptr_noscore & 0x0008) != 0)
+			if (SetArrayValueLong(t, "debug", (noscore & 0x0008) != 0)
 				!= TCL_OK)
 			{
 				return TCL_ERROR;
 			}
-			if (SetArrayValueLong(t, "borg", (p_ptr_noscore & 0x0010) != 0)
+			if (SetArrayValueLong(t, "borg", (noscore & 0x0010) != 0)
 				!= TCL_OK)
 			{
 				return TCL_ERROR;
@@ -1580,11 +1580,11 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 		case IDX_COMMAND_REP: /* command_rep */
-			Tcl_SetIntObj(resultPtr, p_ptr_command_rep);
+			Tcl_SetIntObj(resultPtr, command_rep);
 			break;
 
 		case IDX_RUNNING: /* running */
-			Tcl_SetIntObj(resultPtr, p_ptr_running);
+			Tcl_SetIntObj(resultPtr, running);
 			break;
 
 		case IDX_PRAYER_OR_SPELL: /* prayer_or_spell */
@@ -1656,7 +1656,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 		case IDX_LIFE_RATING: /* life_rating */
-			i = (int) (((long) p_ptr_player_hp[PY_MAX_LEVEL - 1] * 200L) / 
+			i = (int) (((long) player_hp[PY_MAX_LEVEL - 1] * 200L) / 
 				(2 * p_ptr->hitdie + ((PY_MAX_LEVEL - 1) *
 				(p_ptr->hitdie + 1))));
 			Tcl_SetIntObj(resultPtr, i);

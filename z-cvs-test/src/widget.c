@@ -1928,7 +1928,7 @@ void angtk_locate(int dir)
 
 		if (dir == -1)
 		{
-			Widget_Center(widgetPtr, p_ptr_py, p_ptr_px);
+			Widget_Center(widgetPtr, py, px);
 			break;
 		}
 

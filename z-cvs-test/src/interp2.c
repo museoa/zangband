@@ -514,7 +514,7 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 
 		case IDX_DAY: /* day */
 		{
-			Tcl_SetStringObj(resultPtr, (!p_ptr_depth && g_daytime) ?
+			Tcl_SetStringObj(resultPtr, (!dun_level && g_daytime) ?
 				"day" : "night", -1);
 			break;
 		}
@@ -988,8 +988,8 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 	fx = floor_x;
 	if (fy == -1)
 	{
-		fy = p_ptr_py;
-		fx = p_ptr_px;
+		fy = py;
+		fx = px;
 	}
 
 	switch (option)
@@ -2401,8 +2401,8 @@ objcmd_inkey_other(ClientData clientData, Tcl_Interp *interp, int objc,
 		if (easy_floor)
 		{
 			Tcl_SetResult(interp,
-				(p_ptr_command_wrk == (USE_EQUIP)) ? "equipment" : 
-				(p_ptr_command_wrk == (USE_INVEN)) ? "inventory" :
+				(command_wrk == (USE_EQUIP)) ? "equipment" : 
+				(command_wrk == (USE_INVEN)) ? "inventory" :
 				"floor", TCL_VOLATILE);
 		}
 		else
@@ -2410,7 +2410,7 @@ objcmd_inkey_other(ClientData clientData, Tcl_Interp *interp, int objc,
 #endif /* ALLOW_EASY_FLOOR */
 
 		Tcl_SetResult(interp,
-			p_ptr_command_wrk ? "equipment" : "inventory", TCL_VOLATILE);
+			command_wrk ? "equipment" : "inventory", TCL_VOLATILE);
 	}
 	else if (inkey_flags == INKEY_SPELL)
 	{

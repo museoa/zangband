@@ -733,7 +733,7 @@ void iso_wtd(Widget *widgetPtr, int y, int x, t_display *wtd)
 	dark = gridPtr->dark;
 
 	/* Determine if there is daylight in the town */
-	daytime = !p_ptr_depth && g_daytime;
+	daytime = !dun_level && g_daytime;
 	
 	m_idx = gridPtr->m_idx;
 	o_idx = gridPtr->o_idx;
@@ -955,7 +955,7 @@ void iso_wtd(Widget *widgetPtr, int y, int x, t_display *wtd)
 		if (dark == GRID_LITE_TORCH)
 		{
 			/* Calculate distance from py,px */
-			dark = MAX(ABS(x - p_ptr_px), ABS(y - p_ptr_py)) - 1;
+			dark = MAX(ABS(x - px), ABS(y - py)) - 1;
 
 			/* We may have dark == -1 at py,px */
 			if (dark < 0) dark = 0;
@@ -983,7 +983,7 @@ void iso_wtd(Widget *widgetPtr, int y, int x, t_display *wtd)
 if (!daytime && !dark && (g_grid[y][x].xtra & GRID_XTRA_WALL) &&
 	(g_grid[y][x].shape != GRID_SHAPE_SINGLE))
 {
-	if (p_ptr_py < y && p_ptr_px < x)
+	if (py < y && px < x)
 		dark = 2;
 }
 #endif

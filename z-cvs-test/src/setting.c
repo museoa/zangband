@@ -166,7 +166,7 @@ static int SettingProc_delay_factor(SettingParam *param)
 	switch (param->cmd)
 	{
 		case SETTING_GET:
-			Tcl_SetIntObj(resultPtr, op_ptr_delay_factor);
+			Tcl_SetIntObj(resultPtr, delay_factor);
 			break;
 		case SETTING_DEFAULT:
 			break;
@@ -176,7 +176,7 @@ static int SettingProc_delay_factor(SettingParam *param)
 				return TCL_ERROR;
 			}
 			if (value < 0 || value > 9) value = 9;
-			op_ptr_delay_factor = value;
+			delay_factor = value;
 			Bind_Setting(param->setting->detail, value);
 			break;
 	}
@@ -196,7 +196,7 @@ static int SettingProc_hitpoint_warn(SettingParam *param)
 	switch (param->cmd)
 	{
 		case SETTING_GET:
-			Tcl_SetIntObj(resultPtr, op_ptr_hitpoint_warn);
+			Tcl_SetIntObj(resultPtr, hitpoint_warn);
 			break;
 		case SETTING_DEFAULT:
 			break;
@@ -206,7 +206,7 @@ static int SettingProc_hitpoint_warn(SettingParam *param)
 				return TCL_ERROR;
 			}
 			if (value < 0 || value > 9) value = 9;
-			op_ptr_hitpoint_warn = value;
+			hitpoint_warn = value;
 			Bind_Setting(param->setting->detail, value);
 			break;
 	}

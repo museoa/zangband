@@ -683,12 +683,12 @@ static void save_prev_data(void)
 	/* Save the history */
 	for (i = 0; i < 4; i++)
 	{
-		strcpy(birth_ptr->prev.history[i], p_ptr_history[i]);
+		strcpy(birth_ptr->prev.history[i], history[i]);
 	}
 
 	/* Save player_hp */
 	for (i = 0; i < PY_MAX_LEVEL; i++)
-		birth_ptr->prev.player_hp[i] = p_ptr_player_hp[i];
+		birth_ptr->prev.player_hp[i] = player_hp[i];
 
 	birth_ptr->prev.chaos_patron = p_ptr->chaos_patron;
 }
@@ -722,12 +722,12 @@ static void load_prev_data(void)
 	/* Save the history */
 	for (i = 0; i < 4; i++)
 	{
-		strcpy(temp.history[i], p_ptr_history[i]);
+		strcpy(temp.history[i], history[i]);
 	}
 
 	/* Save player_hp */
 	for (i = 0; i < PY_MAX_LEVEL; i++)
-		temp.player_hp[i] = p_ptr_player_hp[i];
+		temp.player_hp[i] = player_hp[i];
 
 	temp.chaos_patron = p_ptr->chaos_patron;
 
@@ -750,12 +750,12 @@ static void load_prev_data(void)
 	/* Load the history */
 	for (i = 0; i < 4; i++)
 	{
-		strcpy(p_ptr_history[i], birth_ptr->prev.history[i]);
+		strcpy(history[i], birth_ptr->prev.history[i]);
 	}
 
 	/* Load player_hp */
 	for (i = 0; i < PY_MAX_LEVEL; i++)
-		p_ptr_player_hp[i] = birth_ptr->prev.player_hp[i];
+		player_hp[i] = birth_ptr->prev.player_hp[i];
 
 	p_ptr->chaos_patron = birth_ptr->prev.chaos_patron;
 
@@ -802,7 +802,7 @@ static void load_prev_data(void)
 static int adjust_stat(int value, int amount, int auto_roll)
 {
 	/* Negative amounts or maximize mode */
-	if ((amount < 0) || p_ptr_maximize)
+	if ((amount < 0) || maximize_mode)
 	{
 		return (modify_stat_value(value, amount));
 	}
@@ -852,13 +852,13 @@ static void get_stats(void)
 	int dice[18];
 
 	/* Using point-based generation */
-	if (p_ptr_point_based)
+	if (point_based)
 	{
 		/* Process stats */
 		for (i = 0; i < A_MAX; i++)
 		{
 			/* Variable stat maxes */
-			if (p_ptr_maximize)
+			if (maximize_mode)
 			{
 				/* Reset stats */
 				p_ptr->stat_cur[i] = p_ptr->stat_max[i] = birth_ptr->stats[i];
@@ -910,7 +910,7 @@ static void get_stats(void)
 		bonus = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
 
 		/* Variable stat maxes */
-		if (p_ptr_maximize)
+		if (maximize_mode)
 		{
 			/* Start fully healed */
 			p_ptr->stat_cur[i] = p_ptr->stat_max[i];
@@ -945,7 +945,7 @@ static void get_extra(void)
 #endif
 
 	/* Level one */
-	p_ptr_max_lev = p_ptr->lev = 1;
+	p_ptr->max_plv = p_ptr->lev = 1;
 
 	/* Experience factor */
 	p_ptr->expfact = rp_ptr->r_exp + cp_ptr->c_exp;
@@ -978,7 +978,7 @@ static void get_extra(void)
 	max_value += PY_MAX_LEVEL;
 
 	/* Pre-calculate level 1 hitdice */
-	p_ptr_player_hp[0] = p_ptr->hitdie;
+	player_hp[0] = p_ptr->hitdie;
 
 	/* Roll out the hitpoints */
 	while (TRUE)
@@ -988,7 +988,7 @@ static void get_extra(void)
 		{
 			/* Add in racial hit dice */
 			j = randint(rp_ptr->r_mhp);
-			p_ptr_player_hp[i] = p_ptr_player_hp[i - 1] + j;
+			player_hp[i] = player_hp[i - 1] + j;
 
 			/* If class hit dice is non zero - add it on */
 			if (cp_ptr->c_mhp)
@@ -1000,8 +1000,8 @@ static void get_extra(void)
 		/* XXX Could also require acceptable "mid-level" hitpoints */
 
 		/* Require "valid" hitpoints at highest level */
-		if (p_ptr_player_hp[PY_MAX_LEVEL-1] < min_value) continue;
-		if (p_ptr_player_hp[PY_MAX_LEVEL-1] > max_value) continue;
+		if (player_hp[PY_MAX_LEVEL-1] < min_value) continue;
+		if (player_hp[PY_MAX_LEVEL-1] > max_value) continue;
 
 		/* Acceptable */
 		break;
@@ -1157,7 +1157,7 @@ static void get_history(void)
 
 
 	/* Clear the previous history strings */
-	for (i = 0; i < 4; i++) p_ptr_history[i][0] = '\0';
+	for (i = 0; i < 4; i++) history[i][0] = '\0';
 
 	/* Clear the history text */
 	buf[0] = '\0';
@@ -1375,7 +1375,7 @@ static void get_history(void)
 		if (n < 60)
 		{
 			/* Save one line of history */
-			strcpy(p_ptr_history[i++], s);
+			strcpy(history[i++], s);
 
 			/* All done */
 			break;
@@ -1392,7 +1392,7 @@ static void get_history(void)
 			s[--n] = '\0';
 
 		/* Save one line of history */
-		strcpy(p_ptr_history[i++], s);
+		strcpy(history[i++], s);
 
 		/* Start next line */
 		for (s = t; *s == ' '; s++) /* loop */ ;
@@ -1437,7 +1437,7 @@ static void get_money(void)
 {
 	int i, gold;
 
-	if (p_ptr_point_based)
+	if (point_based)
 	{
 		int cost = 0;
 
@@ -2369,7 +2369,7 @@ objcmd_birth_name(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
 		return TCL_ERROR;
 	}
 
-	(void) strcpy(op_ptr_full_name, s);
+	(void) strcpy(player_name, s);
 	process_player_name(FALSE);
 
 	return TCL_OK;
@@ -2495,7 +2495,7 @@ objcmd_birth_points_cost(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 		return TCL_ERROR;
 	}
 
-	if (!p_ptr_point_based)
+	if (!point_based)
 	{
 		Tcl_SetResult(interp, "not using point-based generation", TCL_STATIC);
 		return TCL_ERROR;
@@ -2534,7 +2534,7 @@ objcmd_birth_points_stat(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 		return TCL_ERROR;
 	}
 
-	if (!p_ptr_point_based)
+	if (!point_based)
 	{
 		Tcl_SetResult(interp, "not using point-based generation", TCL_STATIC);
 		return TCL_ERROR;
@@ -2587,7 +2587,7 @@ objcmd_birth_points_stat(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 		birth_ptr->stats[stat] = value;
 
 		/* Variable stat maxes */
-		if (p_ptr_maximize)
+		if (maximize_mode)
 		{
 			/* Reset stats */
 			p_ptr->stat_cur[stat] = p_ptr->stat_max[stat] =

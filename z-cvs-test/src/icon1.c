@@ -245,7 +245,7 @@ void get_grid_info(int y, int x, t_grid *gridPtr)
 	/* Monster/Player */
 	m_idx = cave[y][x].m_idx;
 
-	if ((y == p_ptr_py) && (x == p_ptr_px))
+	if ((y == py) && (x == px))
 		m_idx = -1;
 
 	/* Handle "player" */
@@ -377,7 +377,7 @@ void get_display_info(int y, int x, t_display *displayPtr)
 	int dark = gridPtr->dark;
 
 	/* Determine if there is daylight in the town */
-	int daytime = !p_ptr_depth && g_daytime;
+	int daytime = !dun_level && g_daytime;
 
 	int layer;
 
@@ -620,7 +620,7 @@ void get_display_info(int y, int x, t_display *displayPtr)
 		if (dark == GRID_LITE_TORCH)
 		{
 			/* Calculate distance from py,px */
-			dark = MAX(ABS(x - p_ptr_px), ABS(y - p_ptr_py)) - 1;
+			dark = MAX(ABS(x - px), ABS(y - py)) - 1;
 
 			/* We may have dark == -1 at py,px */
 			if (dark < 0) dark = 0;
@@ -2061,7 +2061,7 @@ static void AngbandTimerProc(ClientData clientData)
 
 	/* No animation while repeating a command */
 #if 0
-	if (p_ptr_running || p_ptr_resting) return;
+	if (running || resting) return;
 
 	/*
 	 * If you look at do_cmd_bash() in ZAngband, command_rep is
@@ -2069,11 +2069,11 @@ static void AngbandTimerProc(ClientData clientData)
 	 * when asking for a direction. So if the command is repeated
 	 * and we are not actively waiting for a key, then skip animation.
 	 */
-	if (p_ptr_command_rep &&
+	if (command_rep &&
 		(!inkey_flags || (inkey_flags == INKEY_DISTURB))) return;
 		
 #else
-	if (p_ptr_running || p_ptr_command_rep || p_ptr_resting) return;
+	if (running || command_rep || resting) return;
 #endif
 
 #ifdef TIMER_STATS

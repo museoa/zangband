@@ -211,7 +211,7 @@ void Widget_DrawMap(Widget *widgetPtr, int y, int x)
 	symbolProc = symbolProcTable[g_pixel_size - 1][size - 4];
 	tilePtr = g_bits[size - 4];
 
-	night = (p_ptr_depth || !g_daytime);
+	night = (dun_level || !g_daytime);
 
 	if (in_bounds_test(widgetPtr->y_min + y, widgetPtr->x_min + x))
 	{
@@ -243,7 +243,7 @@ void Widget_DrawMap(Widget *widgetPtr, int y, int x)
 /* ExWidget.symbolProc() */
 int map_symbol_proc(Widget *widgetPtr, int y, int x)
 {
-	int night = (p_ptr_depth || !g_daytime);
+	int night = (dun_level || !g_daytime);
 	int symbol = -1;
 
 	if (in_bounds_test(y, x))
