@@ -45,6 +45,11 @@
 #define TOWN_WID	66
 #define TOWN_HGT	22
 
+#define V_TOWN_BLOCK_WID	\
+	(((TOWN_WID / WILD_BLOCK_SIZE) + 1) * WILD_BLOCK_SIZE)
+#define V_TOWN_BLOCK_HGT	\
+	(((TOWN_HGT / WILD_BLOCK_SIZE) + 1) * WILD_BLOCK_SIZE)
+
 /* Starting town has pre-defined stores */
 #define START_STORE_NUM		6
 

@@ -3272,6 +3272,9 @@ static void dungeon(void)
 		/* Count game turns */
 		turn++;
 	}
+	
+	/* The dungeon is not ready */
+	character_dungeon = FALSE;
 }
 
 

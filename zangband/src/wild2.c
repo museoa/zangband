@@ -174,8 +174,6 @@ static void place_player_start(s32b *x, s32b *y, u16b this_town)
 	/* Get corner of visible region */
 	shift_in_bounds(&tempx, &tempy);
 	
-	/* assert(!wc_cnt); */
-	
 	/* Set corner of visible region */
 	p_ptr->old_wild_x = tempx;
 	p_ptr->old_wild_y = tempy;
@@ -1674,14 +1672,15 @@ void van_town_gen(u16b town_num)
 	if (t_ptr->region) quit("Town already has region during creation.");
 	
 	/* Get region */
-	t_ptr->region = (s16b) create_region(MAX_WID, MAX_HGT, REGION_NULL);
+	t_ptr->region = (s16b) create_region(V_TOWN_BLOCK_WID, V_TOWN_BLOCK_HGT,
+											 REGION_NULL);
 	
 	/* Hack - do not increment refcount here - let allocate_block do that */
 
 	/* Place transparent area */
-	for (y = 0; y < MAX_HGT; y++)
+	for (y = 0; y < V_TOWN_BLOCK_HGT; y++)
 	{
-		for (x = 0; x < MAX_WID; x++)
+		for (x = 0; x < V_TOWN_BLOCK_WID; x++)
 		{
 			c_ptr = cave_p(x, y);
 			
@@ -1720,14 +1719,18 @@ void van_town_gen(u16b town_num)
 void init_vanilla_town(void)
 {
 	int i, j;
+	
+	town_type *t_ptr = &town[1];
 
 	/* Only one town */
-	strcpy(town[1].name, "Town");
-	town[1].seed = randint0(0x10000000);
-	town[1].numstores = 9;
-	town[1].type = TOWN_OLD;
-	town[1].x = (max_wild / 2) - TOWN_WID / (WILD_BLOCK_SIZE * 2) - 1;
-	town[1].y = (max_wild / 2) - TOWN_HGT / (WILD_BLOCK_SIZE * 2) - 1;
+	strcpy(t_ptr->name, "Town");
+	t_ptr->seed = randint0(0x10000000);
+	t_ptr->numstores = 9;
+	t_ptr->type = TOWN_OLD;
+	t_ptr->x = (max_wild / 2) - TOWN_WID / (WILD_BLOCK_SIZE * 2) - 1;
+	t_ptr->y = (max_wild / 2) - TOWN_HGT / (WILD_BLOCK_SIZE * 2) - 1;
+	t_ptr->xsize = V_TOWN_BLOCK_WID / WILD_BLOCK_SIZE;
+	t_ptr->ysize = V_TOWN_BLOCK_HGT / WILD_BLOCK_SIZE;
 
 	/* Allocate the stores */
 	C_MAKE(town[1].store, MAX_STORES, store_type);
@@ -1740,11 +1743,11 @@ void init_vanilla_town(void)
 	}
 
 	/* Place town on wilderness */
-	for (j = 0; j < (TOWN_HGT / 16 + 1); j++)
+	for (i = t_ptr->x; i < t_ptr->x + t_ptr->xsize; i++)
 	{
-		for (i = 0; i < (TOWN_WID / 16 + 1); i++)
+		for (j = t_ptr->y; j < t_ptr->y + t_ptr->ysize; j++)
 		{
-			wild[town[1].y + j][town[1].x + i].done.town = 1;
+			wild[j][i].done.town = 1;
 		}
 	}
 
