@@ -2070,6 +2070,25 @@ static void summon_pattern_vortex(int x, int y)
 	}
 }
 
+/*
+ * Ask if the player wants to step off the pattern.
+ *
+ * Chance is the fraction of times that a pattern vortex
+ * will be summoned.
+ */
+static bool step_off_pattern(int chance, int hurt, int n_x, int n_y)
+{
+	if (!get_check("Stepping on the Pattern is dangerous.  Stop here? "))
+	{
+		if (hurt) take_hit(hurt, "Stepping onto the Pattern");
+
+		if (one_in_(chance)) summon_pattern_vortex(n_x, n_y);
+
+		return TRUE;
+	}
+			
+	return FALSE;
+}
 
 static bool pattern_seq(int c_x, int c_y, int n_x, int n_y)
 {
@@ -2087,10 +2106,10 @@ static bool pattern_seq(int c_x, int c_y, int n_x, int n_y)
 			!p_ptr->tim.confused && !p_ptr->tim.stun && !p_ptr->tim.image)
 		{
 			if (get_check
-				("If you start walking the Pattern, you must walk the whole way. Ok? "))
-				return TRUE;
-			else
+				("If you start walking the Pattern, you must walk the whole way.  Stop now? "))
 				return FALSE;
+			else
+				return TRUE;
 		}
 		else
 			return TRUE;
@@ -2105,18 +2124,7 @@ static bool pattern_seq(int c_x, int c_y, int n_x, int n_y)
 		}
 		else
 		{
-			if (get_check("Really step onto the Pattern here? "))
-			{
-				take_hit(100, "Stepping onto the Pattern");
-
-				if (one_in_(3)) summon_pattern_vortex(n_x, n_y);
-
-				return TRUE;
-			}
-			else
-			{
-				return FALSE;
-			}
+			return (step_off_pattern(3, 100, n_x, n_y));
 		}
 	}
 	else if ((c2_ptr->feat == FEAT_PATTERN_XTRA1) ||
@@ -2130,16 +2138,7 @@ static bool pattern_seq(int c_x, int c_y, int n_x, int n_y)
 			return TRUE;
 		else
 		{
-			if (get_check("Really step off of the Pattern? "))
-			{
-				take_hit(10, "Stepping off of the Pattern");
-
-				if (one_in_(6)) summon_pattern_vortex(n_x, n_y);
-
-				return TRUE;
-			}
-
-			return FALSE;
+			return (step_off_pattern(6, 10, n_x, n_y));
 		}
 	}
 	else if ((c1_ptr->feat == FEAT_PATTERN_OLD) ||
@@ -2148,18 +2147,7 @@ static bool pattern_seq(int c_x, int c_y, int n_x, int n_y)
 	{
 		if (!cave_pattern_grid(c2_ptr))
 		{
-			if (get_check("Really step off of the Pattern? "))
-			{
-				take_hit(100, "Stepping off of the Pattern");
-
-				if (one_in_(2)) summon_pattern_vortex(n_x, n_y);
-
-				return TRUE;
-			}
-			else
-			{
-				return FALSE;
-			}
+			return (step_off_pattern(2, 100, n_x, n_y));
 		}
 		else
 		{
@@ -2170,18 +2158,7 @@ static bool pattern_seq(int c_x, int c_y, int n_x, int n_y)
 	{
 		if (!cave_pattern_grid(c1_ptr))
 		{
-			if (get_check("Really step onto the Pattern here? "))
-			{
-				take_hit(25, "Stepping onto the Pattern");
-
-				if (one_in_(6)) summon_pattern_vortex(n_x, n_y);
-
-				return TRUE;
-			}
-			else
-			{
-				return FALSE;
-			}
+			return (step_off_pattern(2, 25, n_x, n_y));
 		}
 		else
 		{
@@ -2225,24 +2202,21 @@ static bool pattern_seq(int c_x, int c_y, int n_x, int n_y)
 
 			else
 			{
-				if (!cave_pattern_grid(c2_ptr)
-					&& get_check("Really step off of the Pattern? "))
+				if (!cave_pattern_grid(c2_ptr))
 				{
-					take_hit(50, "Stepping off of the Pattern");
-
-					if (one_in_(3)) summon_pattern_vortex(n_x, n_y);
-
-					return TRUE;
+					return (step_off_pattern(3, 50, n_x, n_y));
 				}
 
-				else if (cave_pattern_grid(c2_ptr)
-						 && get_check("Really stray from the proper path? "))
+				else if (cave_pattern_grid(c2_ptr))
 				{
-					take_hit(25, "Walking backwards along the Pattern");
+					if (!get_check("Straying from the proper path is dangrous.  Stop now? "))
+					{
+						take_hit(25, "Walking backwards along the Pattern");
 
-					if (one_in_(5)) summon_pattern_vortex(n_x, n_y);
+						if (one_in_(5)) summon_pattern_vortex(n_x, n_y);
 
-					return TRUE;
+						return TRUE;
+					}
 				}
 
 				return FALSE;
