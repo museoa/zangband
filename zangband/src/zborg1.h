@@ -159,8 +159,6 @@ struct borg_kill
 	s16b power;	/* Estimated hit-points */
 	s16b when;	/* When last seen */
 
-	bool seen;	/* Assigned motion */
-
 	byte x, y;	/* Location */
 
 	bool ranged_attack;	/* can attack from a dx */
