@@ -3042,8 +3042,13 @@ static void store_sell(void)
 
 			/* Reset timeouts of the sold items */
 			q_ptr->timeout = 0;
-			q_ptr->ac = 0;
-
+			
+			if (q_ptr->tval == TV_WAND)
+			{
+				/* Reset the "used" charges. */
+				q_ptr->ac = 0;
+			}
+			
 			/* Take the item from the player, describe the result */
 			inven_item_increase(item, -amt);
 			inven_item_describe(item);
