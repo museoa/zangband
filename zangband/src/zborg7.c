@@ -1815,10 +1815,6 @@ bool borg_crush_slow(void)
  */
 bool borg_test_stuff(bool star_id)
 {
-	/* Hack - ignore parameter */
-	(void)star_id;
-#if 0
-
 	int i, b_i = -1;
 	s32b v, b_v = -1;
 
@@ -2106,7 +2102,6 @@ bool borg_test_stuff(bool star_id)
 #endif /* 0 */
 	}
 
-#endif /* 0 */
 	/* Nothing to do */
 	return (FALSE);
 }
