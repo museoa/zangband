@@ -3491,11 +3491,7 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 					if ((command_wrk == (USE_FLOOR)) || (!carry_query_flag))
 					{
 						/* Allow player to "refuse" certain actions */
-						if (!get_item_allow(fo_ptr))
-						{
-							done = TRUE;
-							break;
-						}
+						if (!get_item_allow(fo_ptr)) continue;
 
 						/* We use the first floor item */
 						o_ptr = fo_ptr;
@@ -3557,11 +3553,7 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 				}
 
 				/* Allow player to "refuse" certain actions */
-				if (!get_item_allow(o_ptr))
-				{
-					done = TRUE;
-					break;
-				}
+				if (!get_item_allow(o_ptr)) continue;
 
 				/* Accept that choice */
 				done = TRUE;
@@ -3594,11 +3586,7 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 				}
 
 				/* Allow player to "refuse" certain actions */
-				if (!get_item_allow(o_ptr))
-				{
-					done = TRUE;
-					break;
-				}
+				if (!get_item_allow(o_ptr)) continue;
 
 				/* Accept that choice */
 				done = TRUE;
@@ -3656,11 +3644,7 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 				}
 
 				/* Allow player to "refuse" certain actions */
-				if (!get_item_allow(o_ptr))
-				{
-					done = TRUE;
-					break;
-				}
+				if (!get_item_allow(o_ptr)) continue;
 
 				/* Accept that choice */
 				done = TRUE;
