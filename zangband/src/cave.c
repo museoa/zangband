@@ -3529,7 +3529,7 @@ void update_mon_lite(void)
 		if (rad >= 2)
 		{
 			/* South of the monster */
-			if (cave_floor_grid(area(fy + 1, fx)))
+			if (in_bounds2(fy + 1, fx) && cave_floor_grid(area(fy + 1, fx)))
 			{
 				mon_lite_hack(fy + 2, fx + 1);
 				mon_lite_hack(fy + 2, fx);
@@ -3550,7 +3550,7 @@ void update_mon_lite(void)
 			}
 
 			/* North of the monster */
-			if (cave_floor_grid(area(fy - 1, fx)))
+			if (in_bounds2(fy - 1, fx) && cave_floor_grid(area(fy - 1, fx)))
 			{
 				mon_lite_hack(fy - 2, fx + 1);
 				mon_lite_hack(fy - 2, fx);
@@ -3571,7 +3571,7 @@ void update_mon_lite(void)
 			}
 
 			/* East of the monster */
-			if (cave_floor_grid(area(fy, fx + 1)))
+			if (in_bounds2(fy, fx + 1) && cave_floor_grid(area(fy, fx + 1)))
 			{
 				mon_lite_hack(fy + 1, fx + 2);
 				mon_lite_hack(fy, fx + 2);
@@ -3592,7 +3592,7 @@ void update_mon_lite(void)
 			}
 
 			/* West of the monster */
-			if (cave_floor_grid(area(fy, fx - 1)))
+			if (in_bounds2(fy, fx - 1) && cave_floor_grid(area(fy, fx - 1)))
 			{
 				mon_lite_hack(fy + 1, fx - 2);
 				mon_lite_hack(fy, fx - 2);
