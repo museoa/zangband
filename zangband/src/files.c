@@ -3353,7 +3353,15 @@ bool show_file(cptr name, cptr what, int line, int mode)
 		k = inkey();
 
 		/* Hack -- return to last screen */
-		if (k == '?') break;
+		if (k == '<') break;
+
+		/* Show the help for the help */
+		if (k == '?')
+		{
+			/* Hack - prevent silly recursion */
+			if (strcmp(name, "helpinfo.txt") != 0)
+				show_file("helpinfo.txt", NULL, 0, mode);
+		}
 
 		/* Hack -- try showing */
 		if (k == '=')
@@ -3435,12 +3443,12 @@ bool show_file(cptr name, cptr what, int line, int mode)
 		/* Recurse on numbers */
 		if (menu)
 		{
-			int key = 0;
+			int key = -1;
 
 			if (isdigit(k)) key = D2I(k);
 			else if isalpha(k) key = A2I(k) + 10;
 
-			if (key && hook[key][0])
+			if ((key > -1) && hook[key][0])
 			{
 				/* Recurse on that file */
 				if (!show_file(hook[key], NULL, 0, mode))
@@ -3449,7 +3457,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 		}
 
 		/* Hack, dump to file */
-		if (k == 'f' || k == 'F')
+		if (k == '|')
 		{
 			FILE *ffp;
 			char buff[1024];
