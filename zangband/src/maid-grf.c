@@ -753,109 +753,132 @@ map_block *map_loc(int x, int y)
 
 
 /* put the banners on the screen */
-static void display_banner(place_type *pl_ptr, int wid, int hgt)
+static void display_banner(wild_done_type *w_ptr)
 {
-	cptr banner;
-	cptr place_dir;
-	int i;
+	int wid, hgt;
 
-	bool visited_town = FALSE;
-	bool home_in_town = FALSE;
-	bool castle_in_town = FALSE;
+	place_type *pl_ptr;
 
-	/* Is it a town */
-	if (pl_ptr->numstores)
+	/* Get size */
+	Term_get_size(&wid, &hgt);
+
+	/* Do we have a place here? */
+	pl_ptr = (w_ptr->place ? &place[w_ptr->place] : NULL);
+
+	/* Show the place name, if it is on the map */
+	if (pl_ptr && (w_ptr->info & WILD_INFO_SEEN))
 	{
-		/* Upper banner */
-		banner = pl_ptr->name;
+		cptr banner;
+		cptr place_dir;
+		int i;
 
-		/* Display town name */
-		put_fstr(1 + (wid - strlen(banner)) / 2, 0, banner);
+		bool visited_town = FALSE;
+		bool home_in_town = FALSE;
+		bool castle_in_town = FALSE;
 
-		/* Find out if there are homes or castles here */
-		for (i = 0; i < pl_ptr->numstores; i++)
+		/* Is it a town */
+		if (pl_ptr->numstores)
 		{
-			store_type *st_ptr = &pl_ptr->store[i];
+			/* Upper banner */
+			banner = pl_ptr->name;
 
-			/* Is there a home? */
-			if (st_ptr->type == BUILD_STORE_HOME) home_in_town = TRUE;
+			/* Display town name */
+			put_fstr(1 + (wid - strlen(banner)) / 2, 0, banner);
 
-			/* Is there a castle? */
-			if (st_ptr->type == BUILD_CASTLE0 ||
-				st_ptr->type == BUILD_CASTLE1) castle_in_town = TRUE;
-
-			/* Stores are not given coordinates until you visit a town */
-			if (st_ptr->x != 0 && st_ptr->y != 0) visited_town = TRUE;
-		}
-
-		/* Prevent knowledge from leaking out */
-		home_in_town   &= visited_town;
-		castle_in_town &= visited_town;
-
-		/* Find out the lower banner */
-		if (home_in_town)
-		{
-			if (castle_in_town)
+			/* Find out if there are homes or castles here */
+			for (i = 0; i < pl_ptr->numstores; i++)
 			{
-				/* Town with home and castle */
-				banner = "Move around, press * for town, h for home, c for castle or any key to exit.";
+				store_type *st_ptr = &pl_ptr->store[i];
+
+				/* Is there a home? */
+				if (st_ptr->type == BUILD_STORE_HOME) home_in_town = TRUE;
+
+				/* Is there a castle? */
+				if (st_ptr->type == BUILD_CASTLE0 ||
+					st_ptr->type == BUILD_CASTLE1) castle_in_town = TRUE;
+
+				/* Stores are not given coordinates until you visit a town */
+				if (st_ptr->x != 0 && st_ptr->y != 0) visited_town = TRUE;
 			}
+
+			/* Prevent knowledge from leaking out */
+			home_in_town   &= visited_town;
+			castle_in_town &= visited_town;
+
+			/* Find out the lower banner */
+			if (home_in_town)
+			{
+				if (castle_in_town)
+				{
+					/* Town with home and castle */
+					banner = "Move around, press * for town, h for home, c for castle or any key to exit.";
+				}
+				else
+				{
+					/* Town with home and no castle */
+					banner = "Move around, press * for town, h for home or any key to exit.";
+				}
+			}
+			/* Town with no home */
 			else
 			{
-				/* Town with home and no castle */
-				banner = "Move around, press * for town, h for home or any key to exit.";
+				if (castle_in_town)
+				{
+					/* Town with castle and no home */
+					banner = "Move around, press * for town, c for castle or any key to exit.";
+				}
+				else
+				{
+					/* Town with no castle and no home */
+					banner = "Move around, press * for town or any key to exit.";
+				}
 			}
+
+			/* Display lower banner */
+			put_fstr(1 + (wid - strlen(banner)) / 2, hgt - 1, banner);
 		}
-		/* Town with no home */
+		/* So it is in the wilderness */
 		else
 		{
-			if (castle_in_town)
+			/* Display standard bottom line */
+			put_fstr(wid / 2 - 23, hgt - 1,
+					"Move around or hit any other key to continue.");
+
+			/* It is a wilderness dungeon */
+			if (pl_ptr->dungeon)
 			{
-				/* Town with castle and no home */
-				banner = "Move around, press * for town, c for castle or any key to exit.";
+				/* Fetch closest known town and direction */
+				banner = describe_quest_location(&place_dir,
+								pl_ptr->x, pl_ptr->y, TRUE);
+
+				/* Did the player go into the dungeon? */
+				if (pl_ptr->dungeon->recall_depth == 0)
+				{
+					/* It is still guarded by monsters */
+					banner = format("Guarded dungeon %s of %s.", place_dir, banner);
+				}
+				else
+				{
+					/* No monsters to guard it */
+					banner = format("Unguarded dungeon %s of %s.", place_dir, banner);
+				}
 			}
+			/* It is a wilderness quest */
 			else
 			{
-				/* Town with no castle and no home */
-				banner = "Move around, press * for town or any key to exit.";
+				/* Fetch wilderness quest name */
+				banner = quest[pl_ptr->quest_num].name;
 			}
-		}
 
-		/* Display lower banner */
-		put_fstr(1 + (wid - strlen(banner)) / 2, hgt - 1, banner);
+			/* Display wilderness place name */
+			put_fstr((wid - strlen(banner)) / 2, 0, banner);
+		}
 	}
 	else
 	{
-		/* Display standard prompt */
+		/* Display standard bottom line */
 		put_fstr(wid / 2 - 23, hgt - 1,
 				"Move around or hit any other key to continue.");
-
-		if (pl_ptr->dungeon)
-		{
-			/* Fetch closest known town and direction */
-			banner = describe_quest_location(&place_dir,
-							pl_ptr->x, pl_ptr->y, TRUE);
-
-			/* Did the player go into the dungeon? */
-			if (pl_ptr->dungeon->recall_depth == 0)
-			{
-				/* It is still guarded by monsters */
-				banner = format("Guarded dungeon %s of %s.", place_dir, banner);
-			}
-			else
-			{
-				/* No monsters to guard it */
-				banner = format("Unguarded dungeon %s of %s.", place_dir, banner);
-			}
-		}
-		else
-		{
-			/* Fetch wilderness quest name */
-			banner = quest[pl_ptr->quest_num].name;
-		}
-
-		/* Display wilderness quest name */
-		put_fstr((wid - strlen(banner)) / 2, 0, banner);
 	}
 }
 
@@ -1050,6 +1073,31 @@ static bool do_cmd_view_map_aux(char c, int town)
 	return (TRUE);
 }
 
+/* Keep the offset for the resize */
+static int map_cx = 0;
+static int map_cy = 0;
+
+static void resize_map(void)
+{
+	int cx, cy;
+	wild_done_type *w_ptr;
+
+	cx = map_cx;
+	cy = map_cy;
+
+	/* Make a new map */
+	display_map(&cx, &cy);
+
+	/* Get wilderness square */
+	w_ptr = &wild[map_cy + p_ptr->py / WILD_BLOCK_SIZE]
+				 [map_cx + p_ptr->px / WILD_BLOCK_SIZE].done;
+
+	/* print the banners */
+	display_banner(w_ptr);
+
+	/* Show the cursor */
+	Term_gotoxy(cx, cy);
+}
 
 /*
  * Display a "small-scale" map of the dungeon for the player
@@ -1064,16 +1112,16 @@ void do_cmd_view_map(void)
 	int cy, cx;
 	int wid, hgt;
 
-	place_type *pl_ptr;
+	void (*hook) (void);
 
 	/* No overhead map in vanilla town mode. */
 	if (!p_ptr->depth && vanilla_town) return;
 
-	/* Get size */
-	Term_get_size(&wid, &hgt);
+	/* Remember what the resize hook was */
+	hook = angband_term[0]->resize_hook;
 
-	/* Save the screen */
-	screen_save();
+	/* Hack - change the redraw hook so bigscreen works */
+	angband_term[0]->resize_hook = resize_map;
 
 	/* Note */
 	prtf(0, 0, "Please wait...");
@@ -1088,9 +1136,16 @@ void do_cmd_view_map(void)
 	{
 		/* In the dungeon - All we have to do is display the map */
 
+		/* Get size */
+		Term_get_size(&wid, &hgt);
+
 		/* No offset from player */
 		cx = 0;
 		cy = 0;
+
+		/* Match offset for the resize */
+		map_cx = cx;
+		map_cy = cy;
 
 		/* Display the map */
 		display_map(&cx, &cy);
@@ -1129,26 +1184,17 @@ void do_cmd_view_map(void)
 			cx = x;
 			cy = y;
 
+			/* Match offset for the resize */
+			map_cx = cx;
+			map_cy = cy;
+
 			display_map(&cx, &cy);
 
 			/* Get wilderness square */
 			w_ptr = &wild[y + py / WILD_BLOCK_SIZE][x + px / WILD_BLOCK_SIZE].done;
 
-			/* Do we have a place here? */
-			pl_ptr = (w_ptr->place ? &place[w_ptr->place] : NULL);
-
-			/* Show the town name, if it exists */
-			if (pl_ptr && (w_ptr->info & WILD_INFO_SEEN))
-			{
-				/* put various banners on the screen */
-				display_banner(pl_ptr, wid, hgt);
-			}
-			else
-			{
-				/* Display standard prompt -MT */
-				put_fstr(wid / 2 - 23, hgt - 1,
-						"Move around or hit any other key to continue.");
-			}
+			/* Get the banners on the screen */
+			display_banner(w_ptr);
 
 			/* Show the cursor */
 			Term_gotoxy(cx, cy);
@@ -1203,8 +1249,14 @@ void do_cmd_view_map(void)
 		}
 	}
 
-	/* Restore the screen */
-	screen_load();
+	/* Hack - change the redraw hook so bigscreen works */
+	angband_term[0]->resize_hook = hook;
+
+	/* The size may have changed during the scores display */
+	angband_term[0]->resize_hook();
+
+	/* Hack - Flush it */
+	Term_fresh();
 }
 
 
