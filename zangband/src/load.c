@@ -3005,7 +3005,7 @@ static errr rd_savefile_new_aux(void)
 	if (!z_older_than(2, 2, 1) && z_older_than(2, 2, 3))
 	{
 		/* "Hard quests" flag */
-		rd_byte((byte *)&ironman_hard_quests);
+		rd_byte((byte *)&tmp8u);
 
 		/* Inverted "Wilderness" flag */
 		rd_byte((byte *)&vanilla_town);

@@ -361,18 +361,10 @@ void get_player_quests(int q_num)
 			int depth;
 			int min_depth;
 
-			if (!ironman_deep_quests)
-			{
-				depth = level + 6 +
+			depth = level + 6 +
 					randint1(level * v / 200 + 1) +
 					randint1(level * v / 200 + 1);
-				min_depth = level + (level / 20) + 1;
-			}
-			else
-			{
-				depth = level + rand_range(15, 30);
-				min_depth = level + v / 10 + 10;
-			}
+			min_depth = level + (level / 20) + 1;
 
 			/*
 			 * Random monster out of depth
@@ -761,12 +753,6 @@ void trigger_quest_create(byte c_type, vptr data)
 				else
 				{
 					bool group;
-
-					/* Hard quests -> revive all monsters */
-					if (ironman_hard_quests)
-					{
-						q_ptr->data.dun.cur_num = 0;
-					}
 
 					for (j = 0;
 						 j <

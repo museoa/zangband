@@ -3063,10 +3063,6 @@ errr file_character(cptr name, bool full)
 	else
 		froff(fff, "\n Arena Levels:       OFF");
 
-	if (ironman_hard_quests) froff(fff, "\n Hard Quests:        ON");
-
-	froff(fff, "\n Number of Quests: %d", number_of_quests());
-
 	if (ironman_nightmare) froff(fff, "\n Nightmare Mode:     ON");
 
 	froff(fff, "\n Recall Depth:       Level %d (%d')\n", p_ptr->max_depth,

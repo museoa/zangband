@@ -1825,9 +1825,8 @@ static bool set_stun(int v)
 	 * designed for newbies - not scummers.)
 	 */
 	if ((p_ptr->rp.prace == RACE_GOLEM) &&
-		!(ironman_shops || ironman_downward || ironman_hard_quests ||
-		  ironman_empty_levels || ironman_nightmare ||
-		  ironman_deep_quests))
+		!(ironman_shops || ironman_downward ||
+		  ironman_empty_levels || ironman_nightmare))
 	{
 		v = 0;
 	}

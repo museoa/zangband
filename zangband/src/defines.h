@@ -3885,7 +3885,7 @@
 #define ironman_small_levels	p_ptr->birth[3]
 #define ironman_downward		p_ptr->birth[4]
 /* {TRUE,  0, NULL,					"Number 197" }, p_ptr->birth[5] */
-#define ironman_hard_quests		p_ptr->birth[6]
+/* {TRUE,  0, NULL,					"Number 198" }, p_ptr->birth[6] */
 /* {TRUE,  0, NULL,					"Number 199" }, p_ptr->birth[7] */
 #define ironman_empty_levels	p_ptr->birth[8]
 #define terrain_streams			p_ptr->birth[9]
@@ -3898,7 +3898,7 @@
 #define point_based				p_ptr->birth[16]
 #define silly_monsters			p_ptr->birth[17]
 #define ironman_nightmare		p_ptr->birth[18]
-#define ironman_deep_quests     p_ptr->birth[19]
+/* {TRUE,  0, NULL,					"Number 211" }, p_ptr->birth[19] */
 /* {TRUE,  0, NULL,					"Number 212" }, p_ptr->birth[20] */
 /* {TRUE,  0, NULL,					"Number 213" }, p_ptr->birth[21] */
 /* {TRUE,  0, NULL,					"Number 214" }, p_ptr->birth[22] */
