@@ -1213,7 +1213,7 @@ static void player_wipe(void)
 	/*
 	 * Delete the carried objects
 	 */
-	delete_object_list(&p_ptr->inventory);
+	if (p_ptr->inventory) delete_object_list(&p_ptr->inventory);
 
 	/* Hack -- zero the struct */
 	(void)WIPE(p_ptr, player_type);
