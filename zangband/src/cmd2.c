@@ -926,7 +926,7 @@ void do_cmd_open(void)
 		    !o_idx)
 		{
 			/* Message */
-			msg_print_color(TERM_YELLOW, "You see nothing there to open.");
+			msg_print("You see nothing there to open.");
 		}
 
 		/* Monster in the way */
