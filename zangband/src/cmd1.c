@@ -37,11 +37,7 @@
 *     The adjusted weapon proficiancy hasn't been done either.
 *  - The number of blows for each class have been changed.
 *
-* Thrown items - This needs to be converted to the [O] system
-*      At the moment, there needs to be a "throwing item" flag to
-*      properly simulate the characteristics of [O]
-*      The critical hit part of this is broken - waiting so can implement
-*      the [O] version.
+* Thrown items - done
 * Shift - C command (info screen)
 *      (deadliness instead of + to dam.)
 *  - done (but the formula need to be checked.)
