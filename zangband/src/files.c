@@ -2027,8 +2027,8 @@ static void display_player_flag_info(void)
 	display_player_flag_aux(col, row++, "AuraElec:", 3, TR3_SH_ELEC, 0);
 	display_player_flag_aux(col, row++, "NoTelprt:", 3, TR3_NO_TELE, 0);
 	display_player_flag_aux(col, row++, "No Magic:", 3, TR3_NO_MAGIC, 0);
-	display_player_flag_aux(col, row++, "Cursed  :", 3, TR3_HEAVY_CURSE,
-							TR3_PERMA_CURSE);
+	display_player_flag_aux(col, row++, "Cursed  :", 3, TR3_CURSED,
+							TR3_HEAVY_CURSE | TR3_PERMA_CURSE);
 	display_player_flag_aux(col, row++, "DrainExp:", 3, TR3_DRAIN_EXP, 0);
 	display_player_flag_aux(col, row++, "Teleport:", 3, TR3_TELEPORT, 0);
 
