@@ -80,9 +80,19 @@ function classFunction:supcode ()
    i = i+1
   end
  end
- -- check end of list 
- output('     !tolua_isnoobj(tolua_S,'..narg..')\n )\n  goto tolua_lerror;')
 
+ -- check end of list 
+ output('     !tolua_isnoobj(tolua_S,'..narg..')\n )\n')
+ output(' {')
+ -- call overloaded function or generate error
+ local overload = strsub(self.cname,-2,-1) - 1
+ if overload >= 0 then
+  output('  return '..strsub(self.cname,1,-3)..format("%02d",overload)..'(tolua_S);')
+ else
+  output('  tolua_error(tolua_S,"#ferror in function \''..self.lname..'\'.");')
+  output('  return 0;')
+ end
+ output(' }')
  output(' else\n {')
  
  -- declare self, if the case
@@ -210,16 +220,6 @@ function classFunction:supcode ()
 
  output(' }')
  output(' return '..nret..';')
-
- -- call overloaded function or generate error
- output('tolua_lerror:\n')
- local overload = strsub(self.cname,-2,-1) - 1
- if overload >= 0 then
-  output(' return '..strsub(self.cname,1,-3)..format("%02d",overload)..'(tolua_S);')
- else
-  output(' tolua_error(tolua_S,"#ferror in function \''..self.lname..'\'.");')
-  output(' return 0;')
- end
 
  output('}')
  output('\n')
