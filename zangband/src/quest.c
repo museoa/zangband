@@ -198,14 +198,12 @@ u16b insert_dungeon_monster_quest(u16b r_idx, u16b num, u16b level)
 		plural_aux(buf);
 
 		/* XXX XXX Create quest name */
-		(void)strnfmt(q_ptr->name, 60, "Kill %d %s on level %d.",
-					  (int)num, buf, (int)level);
+		(void)strnfmt(q_ptr->name, 60, "Kill %d %s.", (int)num, buf);
 	}
 	else
 	{
 		/* XXX XXX Create quest name */
-		(void)strnfmt(q_ptr->name, 60, "Kill %s on level %d.",
-					  r_name + r_ptr->name, (int)level);
+		(void)strnfmt(q_ptr->name, 60, "Kill %s.", r_name + r_ptr->name);
 	}
 
 	/* Save the quest data */
@@ -1115,7 +1113,20 @@ void do_cmd_knowledge_quests(void)
 				monster_race *r_ptr = &r_info[q_ptr->data.dun.r_idx];
 
 				strncpy(name, r_name + r_ptr->name, 80);
-
+				
+				char level[20];
+				
+				/* In feet, or in levels */
+				if (depth_in_feet)
+				{
+					strnfmt(level, 20, "%4dft",
+							(int)q_ptr->data.dun.level * 50);
+				}
+				else
+				{
+					strnfmt(level, 20, "%3d", (int)q_ptr->data.dun.level);
+				}
+				
 				if (q_ptr->status == QUEST_STATUS_TAKEN)
 				{
 					/* Hack - assume kill n monsters of type m */
@@ -1124,15 +1135,15 @@ void do_cmd_knowledge_quests(void)
 						plural_aux(name);
 
 						strnfmt(tmp_str, 256,
-								"%s (Dungeon level: %d)\n\n  Kill %d %s, have killed %d.\n\n",
-								q_ptr->name, (int)q_ptr->data.dun.level,
+								"%s (Dungeon level: %s)\n\n  Kill %d %s, have killed %d.\n\n",
+								q_ptr->name, level,
 								(int)q_ptr->data.dun.max_num, name,
 								(int)q_ptr->data.dun.cur_num);
 					}
 					else
 					{
-						strnfmt(tmp_str, 256, "%s (Dungeon level: %d)\n\n",
-								q_ptr->name, (int)q_ptr->data.dun.level, name);
+						strnfmt(tmp_str, 256, "%s (Dungeon level: %s)\n\n",
+								q_ptr->name, level, name);
 					}
 				}
 				else
@@ -1140,7 +1151,7 @@ void do_cmd_knowledge_quests(void)
 					/* Assume we've completed it for now */
 					strnfmt(tmp_str, 256,
 							"%s (Completed on dungeon level %d). \n",
-							q_ptr->name, (int)q_ptr->data.dun.level, name);
+							q_ptr->name, level, name);
 				}
 
 				break;
