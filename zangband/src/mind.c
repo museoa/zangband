@@ -350,7 +350,7 @@ static bool cast_mindcrafter_spell(int spell)
 		}
 		break;
 	case 5:
-		/* Fist of Force  ---  not 'true' TK  */
+		/* Fist of Force  ---  not 'true' TK */
 		if (!get_aim_dir(&dir)) return FALSE;
 
 		fire_ball(GF_SOUND, dir, damroll(8 + ((plev - 5) / 4), 8),

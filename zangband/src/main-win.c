@@ -1186,7 +1186,7 @@ static int new_palette(void)
 static bool init_graphics(void)
 {
 	/* Initialize once */
-	/*if (can_use_graphics != arg_graphics) */
+	/* if (can_use_graphics != arg_graphics) */
 	{
 		char buf[1024];
 		int wid, hgt;

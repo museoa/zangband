@@ -363,9 +363,11 @@ static owner_type *ot_ptr = NULL;
  */
 static byte rgold_adj[MAX_RACES][MAX_RACES] =
 {
-	/*Hum, HfE, Elf,  Hal, Gno, Dwa, HfO, HfT, Dun, HiE, Barbarian,
-	 HfOg, HGn, HTn, Cyc, Yek, Klc, Kbd, Nbl, DkE, Drc, Mind Flayer,
-	 Imp,  Glm, Skl, Zombie, Vampire, Spectre */
+	/*
+	 * Hum, HfE, Elf,  Hal, Gno, Dwa, HfO, HfT, Dun, HiE, Barbarian,
+	 * HfOg, HGn, HTn, Cyc, Yek, Klc, Kbd, Nbl, DkE, Drc, Mind Flayer,
+	 * Imp,  Glm, Skl, Zombie, Vampire, Spectre
+	 */
 
 	/* Human */
 	{ 100, 105, 105, 110, 113, 115, 120, 125, 100, 105, 100,
@@ -1620,7 +1622,7 @@ static void display_entry(int pos)
 	(void)sprintf(out_val, "%c) ", I2A(i));
 	prt(out_val, i+6, 0);
 
-	/* Show_store_graph perm on.*/ 
+	/* Show_store_graph perm on. */ 
 	a = object_attr(o_ptr);
 	c = object_char(o_ptr);
 
@@ -3010,8 +3012,8 @@ static void store_sell(void)
 
 			if (!((o_ptr->tval == TV_FIGURINE) && (value > 0)))
 			{
-			 /* Analyze the prices (and comment verbally) unless a figurine*/
-			purchase_analyze(price, value, dummy);
+				/* Analyze the prices (and comment verbally) unless a figurine */
+				purchase_analyze(price, value, dummy);
 			}
 
 			/*

@@ -414,7 +414,7 @@ static void town_gen_hack(u16b town_num, int *xx, int *yy)
 	/* Put dungeon floor next to stairs so they are easy to find. */
 	for (y = -1; y <= 1; y++)
 	{
-		for(x = -1; x <= 1; x++)
+		for (x = -1; x <= 1; x++)
 		{
 			/* Get feat at location */
 			feat = cave[*yy + y][*xx + x].feat;
@@ -478,7 +478,7 @@ static void town_gen(u16b town_num, int *xx, int *yy)
 	{
 		for (x = 1; x < SCREEN_WID - 1; x++)
 		{
-			if(vanilla_town)
+			if (vanilla_town)
 			{
 				cave[y][x].feat = FEAT_FLOOR;
 			
@@ -547,32 +547,32 @@ static bool town_blank(int x, int y, int xsize, int ysize)
 	int i, j;
 	wild_done_type *w_ptr;
 	
-	for(i = x; i < x + xsize + 1; i++)
+	for (i = x; i < x + xsize + 1; i++)
 	{
-		for(j = y; j < y + ysize + 1; j++)
+		for (j = y; j < y + ysize + 1; j++)
 		{ 
 			/* Hack - Not next to boundary */
 			if ((x + i <= 0) || (x + i >= max_wild - 1)
 				 || (y + j <= 0) || (y + j >= max_wild - 1))
 			{
-				return(FALSE);
+				return (FALSE);
 			}
 			
 			w_ptr = &wild[j][i].done;
 			
 			/* No town already */
-			if (w_ptr->town) return(FALSE);
+			if (w_ptr->town) return (FALSE);
 
 			/* No water or lava */
-			if (w_ptr->info & (WILD_INFO_RIVER | WILD_INFO_LAVA)) return(FALSE);
+			if (w_ptr->info & (WILD_INFO_RIVER | WILD_INFO_LAVA)) return (FALSE);
 	
 			/* No Ocean */
-			if (w_ptr->wild >= WILD_SEA) return(FALSE);
+			if (w_ptr->wild >= WILD_SEA) return (FALSE);
 		}
 	}
 
 	/* Ok then */
-	return(TRUE);
+	return (TRUE);
 }
 
 
@@ -745,7 +745,7 @@ static u16b get_gen_type(byte hgt, byte pop, byte law)
 	/* Find matching generation type */
 	
 	/* The while loop is used instead of the "obvious" recursion */
-	while(1)
+	while (1)
 	{
 		/* Access Node */
 		tree_ptr = &wild_choice_tree[node];
@@ -867,7 +867,7 @@ static u16b get_gen_type(byte hgt, byte pop, byte law)
 	}
 
 	/* Paranoia - should never get to here */
-	return(0);
+	return (0);
 }
 
 /* The number of allocated nodes in the decsion tree */
@@ -902,7 +902,7 @@ static u16b create_node(u16b node, bool branch)
 		 * The number of nodes required is roughly proportional
 		 * to nlog(n) for a random input of ranges.
 		 */
-		 return(0);	
+		 return (0);	
 	}
 	
 	/* Get location of new node */
@@ -931,7 +931,7 @@ static u16b create_node(u16b node, bool branch)
 	/* Increase count of allocated nodes */
 	d_tree_count++;
 	
-	return(new_node);	
+	return (new_node);	
 }
 
 /*
@@ -995,7 +995,7 @@ static u16b add_node_chance(u16b type, u16b node, bool branch)
 		 	tree_ptr->ptrnode1 = type;
 			
 			/* Return current node. */
-			return(node);
+			return (node);
 		}
 		
 		/* Get left leaf status */
@@ -1013,7 +1013,7 @@ static u16b add_node_chance(u16b type, u16b node, bool branch)
 		 	tree_ptr->ptrnode2 = type;
 			
 			/* Return current node. */
-			return(node);
+			return (node);
 		}
 		
 		/* Get right leaf status */
@@ -1027,7 +1027,7 @@ static u16b add_node_chance(u16b type, u16b node, bool branch)
 	if (new_node==0)
 	{
 		/* Return zero as error code */
-		return(0);
+		return (0);
 	}	
 	
 	/* Access node */
@@ -1067,7 +1067,7 @@ static u16b add_node_chance(u16b type, u16b node, bool branch)
 	}
 	
 	/* Return location of new node if required */
-	return(new_node);
+	return (new_node);
 }
 
 
@@ -1116,7 +1116,7 @@ static u16b copy_branch(u16b node1, bool branch1, u16b node2, bool branch2)
 	/* work out what has to be copied. */
 	if (branch1)
 	{
-		if(tree_ptr1->info & 4)
+		if (tree_ptr1->info & 4)
 		{
 			/* need to copy tree of nodes */
 			
@@ -1124,7 +1124,7 @@ static u16b copy_branch(u16b node1, bool branch1, u16b node2, bool branch2)
 			new_node = create_node(node2, branch2);
 			
 			/* Exit on failure */
-			if(new_node == 0) return(0);
+			if (new_node == 0) return (0);
 			
 			/* Point to block to copy */
 			temp_node = tree_ptr1->ptrnode1;
@@ -1142,22 +1142,22 @@ static u16b copy_branch(u16b node1, bool branch1, u16b node2, bool branch2)
 			tree_ptr2->ptrnode2 = tree_ptr1->ptrnode2;
 			
 			/* Recurse along branches to this node */
-			if(!(tree_ptr2->info & 4))
+			if (!(tree_ptr2->info & 4))
 			{
 				/* Recurse along "left" branch */
-				if(copy_branch(temp_node, TRUE, new_node, TRUE) == 0)
-					return(0);		
+				if (copy_branch(temp_node, TRUE, new_node, TRUE) == 0)
+					return (0);		
 			}
 			
-			if(!(tree_ptr2->info & 8))
+			if (!(tree_ptr2->info & 8))
 			{
 				/* Recurse along "right" branch */
-				if(copy_branch(temp_node, TRUE, new_node, TRUE) == 0)
-					return(0);
+				if (copy_branch(temp_node, TRUE, new_node, TRUE) == 0)
+					return (0);
 			}
 			
 			/* Done */
-			return(new_node);
+			return (new_node);
 		}
 		else
 		{
@@ -1165,7 +1165,7 @@ static u16b copy_branch(u16b node1, bool branch1, u16b node2, bool branch2)
 			tree_ptr2 = &wild_choice_tree[node2];
 			
 			/* only need to copy a single wild. gen. type */
-			if(branch2)
+			if (branch2)
 			{
 				/* terminal branch */
 				tree_ptr2->info |= 4;
@@ -1185,12 +1185,12 @@ static u16b copy_branch(u16b node1, bool branch1, u16b node2, bool branch2)
 			}
 			
 			/* done */
-			return(node2);
+			return (node2);
 		}
 	}
 	else
 	{
-		if(tree_ptr1->info & 8)
+		if (tree_ptr1->info & 8)
 		{
 			/* need to copy tree of nodes */
 			
@@ -1198,7 +1198,7 @@ static u16b copy_branch(u16b node1, bool branch1, u16b node2, bool branch2)
 			new_node = create_node(node2, branch2);
 			
 			/* Exit on failure */
-			if(new_node == 0) return(0);
+			if (new_node == 0) return (0);
 			
 			/* Point to block to copy */
 			temp_node = tree_ptr1->ptrnode2;
@@ -1216,22 +1216,22 @@ static u16b copy_branch(u16b node1, bool branch1, u16b node2, bool branch2)
 			tree_ptr2->ptrnode2 = tree_ptr1->ptrnode2;
 			
 			/* Recurse along branches to this node */
-			if(!(tree_ptr2->info & 4))
+			if (!(tree_ptr2->info & 4))
 			{
 				/* Recurse along "left" branch */
-				if(copy_branch(temp_node, TRUE, new_node, TRUE) == 0)
-					return(0);		
+				if (copy_branch(temp_node, TRUE, new_node, TRUE) == 0)
+					return (0);		
 			}
 			
-			if(!(tree_ptr2->info & 8))
+			if (!(tree_ptr2->info & 8))
 			{
 				/* Recurse along "right" branch */
-				if(copy_branch(temp_node, TRUE, new_node, TRUE) == 0)
-					return(0);
+				if (copy_branch(temp_node, TRUE, new_node, TRUE) == 0)
+					return (0);
 			}
 			
 			/* Done */
-			return(new_node);
+			return (new_node);
 		}
 		else
 		{
@@ -1239,7 +1239,7 @@ static u16b copy_branch(u16b node1, bool branch1, u16b node2, bool branch2)
 			tree_ptr2 = &wild_choice_tree[node2];
 			
 			/* only need to copy a single wild. gen. type */
-			if(branch2)
+			if (branch2)
 			{
 				/* terminal branch */
 				tree_ptr2->info |= 4;
@@ -1259,7 +1259,7 @@ static u16b copy_branch(u16b node1, bool branch1, u16b node2, bool branch2)
 			}
 			
 			/* done */
-			return(node2);
+			return (node2);
 		}
 	}
 }
@@ -1291,7 +1291,7 @@ static u16b add_node_inside(u16b node, u16b type1, wild_bound_box_type *bound1,
 	
 	tree_ptr = &wild_choice_tree[node];
 	
-	if(bound1->hgtmin != bound2->hgtmin)
+	if (bound1->hgtmin != bound2->hgtmin)
 	{
 		/* Split node along face of region */
 		tree_ptr->cutoff = bound2->hgtmin;
@@ -1310,14 +1310,14 @@ static u16b add_node_inside(u16b node, u16b type1, wild_bound_box_type *bound1,
 		new_node = create_node(node, FALSE);
 		
 		/* Exit if out of space */
-		if (new_node == 0) return(0);
+		if (new_node == 0) return (0);
 	
 		/* reset node to current end of tree */
 		node = new_node;
 		tree_ptr = &wild_choice_tree[node];
 	}
 	
-	if(bound1->hgtmax != bound2->hgtmax)
+	if (bound1->hgtmax != bound2->hgtmax)
 	{
 		/* Split node along face of region */
 		tree_ptr->cutoff = bound2->hgtmax;
@@ -1336,14 +1336,14 @@ static u16b add_node_inside(u16b node, u16b type1, wild_bound_box_type *bound1,
 		new_node = create_node(node, TRUE);
 		
 		/* Exit if out of space */
-		if (new_node == 0) return(0);
+		if (new_node == 0) return (0);
 	
 		/* reset node to current end of tree */
 		node = new_node;
 		tree_ptr = &wild_choice_tree[node];
 	}
 	
-	if(bound1->popmin != bound2->popmin)
+	if (bound1->popmin != bound2->popmin)
 	{
 		/* Split node along face of region */
 		tree_ptr->cutoff = bound2->popmin;
@@ -1362,14 +1362,14 @@ static u16b add_node_inside(u16b node, u16b type1, wild_bound_box_type *bound1,
 		new_node = create_node(node, FALSE);
 		
 		/* Exit if out of space */
-		if (new_node == 0) return(0);
+		if (new_node == 0) return (0);
 	
 		/* reset node to current end of tree */
 		node = new_node;
 		tree_ptr = &wild_choice_tree[node];
 	}
 	
-	if(bound1->popmax != bound2->popmax)
+	if (bound1->popmax != bound2->popmax)
 	{
 		/* Split node along face of region */
 		tree_ptr->cutoff = bound2->popmax;
@@ -1388,14 +1388,14 @@ static u16b add_node_inside(u16b node, u16b type1, wild_bound_box_type *bound1,
 		new_node = create_node(node, TRUE);
 		
 		/* Exit if out of space */
-		if (new_node == 0) return(0);
+		if (new_node == 0) return (0);
 	
 		/* reset node to current end of tree */
 		node = new_node;
 		tree_ptr = &wild_choice_tree[node];
 	}
 	
-	if(bound1->lawmin != bound2->lawmin)
+	if (bound1->lawmin != bound2->lawmin)
 	{
 		/* Split node along face of region */
 		tree_ptr->cutoff = bound2->lawmin;
@@ -1414,14 +1414,14 @@ static u16b add_node_inside(u16b node, u16b type1, wild_bound_box_type *bound1,
 		new_node = create_node(node, FALSE);
 		
 		/* Exit if out of space */
-		if (new_node == 0) return(0);
+		if (new_node == 0) return (0);
 	
 		/* reset node to current end of tree */
 		node = new_node;
 		tree_ptr = &wild_choice_tree[node];
 	}
 	
-	if(bound1->lawmax != bound2->lawmax)
+	if (bound1->lawmax != bound2->lawmax)
 	{
 		/* Split node along face of region */
 		tree_ptr->cutoff = bound2->lawmax;
@@ -1440,7 +1440,7 @@ static u16b add_node_inside(u16b node, u16b type1, wild_bound_box_type *bound1,
 		new_node = create_node(node, TRUE);
 		
 		/* Exit if out of space */
-		if (new_node == 0) return(0);
+		if (new_node == 0) return (0);
 	
 		/* reset node to current end of tree */
 		node = new_node;
@@ -1468,10 +1468,10 @@ static u16b add_node_inside(u16b node, u16b type1, wild_bound_box_type *bound1,
 		tree_ptr = &wild_choice_tree[node];
 		
 		/* look "left" for null */
-		if(tree_ptr->ptrnode1 == 0)
+		if (tree_ptr->ptrnode1 == 0)
 		{
 			/* Paranoia - check for both branches null */
-			if(tree_ptr->ptrnode2 == 0) return(0);
+			if (tree_ptr->ptrnode2 == 0) return (0);
 			
 			/* link to wild. gen. type. */
 			tree_ptr->ptrnode2 = type2;
@@ -1480,14 +1480,14 @@ static u16b add_node_inside(u16b node, u16b type1, wild_bound_box_type *bound1,
 			tree_ptr->info |= 8;
 		
 			/* Done */
-			return(node);
+			return (node);
 		}
 		
 		/* look "right" for null */
-		if(tree_ptr->ptrnode2 == 0)
+		if (tree_ptr->ptrnode2 == 0)
 		{
 			/* Paranoia - check for both branches null */
-			if(tree_ptr->ptrnode1 == 0) return(0);
+			if (tree_ptr->ptrnode1 == 0) return (0);
 			
 			/* link to wild. gen. type. */
 			tree_ptr->ptrnode1 = type2;
@@ -1496,7 +1496,7 @@ static u16b add_node_inside(u16b node, u16b type1, wild_bound_box_type *bound1,
 			tree_ptr->info |= 4;
 		
 			/* Done */
-			return(node);
+			return (node);
 		}		
 	}
 	
@@ -1522,7 +1522,7 @@ static u16b add_node_inside(u16b node, u16b type1, wild_bound_box_type *bound1,
 	tree_ptr->chance2 = wild_gen_data[type2].chance;
 
 	/* Done */
-	return(node);
+	return (node);
 }
 
 /*
@@ -1531,7 +1531,7 @@ static u16b add_node_inside(u16b node, u16b type1, wild_bound_box_type *bound1,
 
 static bool compare_bounds(wild_bound_box_type *bound1, wild_bound_box_type *bound2)
 {
-	return((bound2->hgtmin == bound1->hgtmin) &&
+	return ((bound2->hgtmin == bound1->hgtmin) &&
 		(bound2->hgtmax == bound1->hgtmax) &&
 	
 		(bound2->popmin == bound1->popmin) &&
@@ -1562,10 +1562,10 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
 	
 	tree_ptr = &wild_choice_tree[node];
 		
-	if(bound1->hgtmin != bound2->hgtmin)
+	if (bound1->hgtmin != bound2->hgtmin)
 	{
 		/* Record branch node */
-		if(branch)
+		if (branch)
 		{
 			branch_node = tree_ptr->ptrnode1;
 		}
@@ -1577,15 +1577,15 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
 		
 		/* Make empty node connected along branch */
 		new_node = create_node(node, branch);
-		if(new_node == 0) return(0);
+		if (new_node == 0) return (0);
 		
 		/* Reconnect to new node */
 		tree_ptr = &wild_choice_tree[new_node];
 		tree_ptr->ptrnode1 = branch_node;
 		
 		/* Copy so that leaf is duplicated */
-		if(copy_branch(new_node, TRUE, new_node, FALSE) == 0)
-			return(0);
+		if (copy_branch(new_node, TRUE, new_node, FALSE) == 0)
+			return (0);
 		
 		/* Split node along face of region */
 		tree_ptr->cutoff = bound2->hgtmin;
@@ -1597,11 +1597,11 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
 		branch = FALSE;
 	}
 
-	if(bound1->hgtmax != bound2->hgtmax)
+	if (bound1->hgtmax != bound2->hgtmax)
 	{
 		
 		/* Record branch node */
-		if(branch)
+		if (branch)
 		{
 			branch_node = tree_ptr->ptrnode1;
 		}
@@ -1613,15 +1613,15 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
 		
 		/* Make empty node connected along branch */
 		new_node = create_node(node, branch);
-		if(new_node == 0) return(0);
+		if (new_node == 0) return (0);
 		
 		/* Reconnect to new node */
 		tree_ptr = &wild_choice_tree[new_node];
 		tree_ptr->ptrnode1 = branch_node;
 		
 		/* Copy so that leaf is duplicated */
-		if(copy_branch(new_node, TRUE, new_node, FALSE) == 0)
-			return(0);
+		if (copy_branch(new_node, TRUE, new_node, FALSE) == 0)
+			return (0);
 		
 		/* Split node along face of region */
 		tree_ptr->cutoff = bound2->hgtmax;
@@ -1633,11 +1633,11 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
 		branch = TRUE;
 	}
 
-	if(bound1->popmin != bound2->popmin)
+	if (bound1->popmin != bound2->popmin)
 	{
 		
 		/* Record branch node */
-		if(branch)
+		if (branch)
 		{
 			branch_node = tree_ptr->ptrnode1;
 		}
@@ -1649,15 +1649,15 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
 		
 		/* Make empty node connected along branch */
 		new_node = create_node(node, branch);
-		if(new_node == 0) return(0);
+		if (new_node == 0) return (0);
 		
 		/* Reconnect to new node */
 		tree_ptr = &wild_choice_tree[new_node];
 		tree_ptr->ptrnode1 = branch_node;
 		
 		/* Copy so that leaf is duplicated */
-		if(copy_branch(new_node, TRUE, new_node, FALSE) == 0)
-			return(0);
+		if (copy_branch(new_node, TRUE, new_node, FALSE) == 0)
+			return (0);
 		
 		/* Split node along face of region */
 		tree_ptr->cutoff = bound2->popmin;
@@ -1669,11 +1669,11 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
 		branch = FALSE;
 	}
 
-	if(bound1->popmax != bound2->popmax)
+	if (bound1->popmax != bound2->popmax)
 	{
 		
 		/* Record branch node */
-		if(branch)
+		if (branch)
 		{
 			branch_node = tree_ptr->ptrnode1;
 		}
@@ -1685,15 +1685,15 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
 		
 		/* Make empty node connected along branch */
 		new_node = create_node(node, branch);
-		if(new_node == 0) return(0);
+		if (new_node == 0) return (0);
 		
 		/* Reconnect to new node */
 		tree_ptr = &wild_choice_tree[new_node];
 		tree_ptr->ptrnode1 = branch_node;
 		
 		/* Copy so that leaf is duplicated */
-		if(copy_branch(new_node, TRUE, new_node, FALSE) == 0)
-			return(0);
+		if (copy_branch(new_node, TRUE, new_node, FALSE) == 0)
+			return (0);
 		
 		/* Split node along face of region */
 		tree_ptr->cutoff = bound2->popmax;
@@ -1705,11 +1705,11 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
 		branch = TRUE;
 	}
 	
-	if(bound1->lawmin != bound2->lawmin)
+	if (bound1->lawmin != bound2->lawmin)
 	{
 		
 		/* Record branch node */
-		if(branch)
+		if (branch)
 		{
 			branch_node = tree_ptr->ptrnode1;
 		}
@@ -1721,15 +1721,15 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
 		
 		/* Make empty node connected along branch */
 		new_node = create_node(node, branch);
-		if(new_node == 0) return(0);
+		if (new_node == 0) return (0);
 		
 		/* Reconnect to new node */
 		tree_ptr = &wild_choice_tree[new_node];
 		tree_ptr->ptrnode1 = branch_node;
 		
 		/* Copy so that leaf is duplicated */
-		if(copy_branch(new_node, TRUE, new_node, FALSE) == 0)
-			return(0);
+		if (copy_branch(new_node, TRUE, new_node, FALSE) == 0)
+			return (0);
 		
 		/* Split node along face of region */
 		tree_ptr->cutoff = bound2->lawmin;
@@ -1741,11 +1741,11 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
 		branch = FALSE;
 	}
 
-	if(bound1->lawmax != bound2->lawmax)
+	if (bound1->lawmax != bound2->lawmax)
 	{
 		
 		/* Record branch node */
-		if(branch)
+		if (branch)
 		{
 			branch_node = tree_ptr->ptrnode1;
 		}
@@ -1757,15 +1757,15 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
 		
 		/* Make empty node connected along branch */
 		new_node = create_node(node, branch);
-		if(new_node == 0) return(0);
+		if (new_node == 0) return (0);
 		
 		/* Reconnect to new node */
 		tree_ptr = &wild_choice_tree[new_node];
 		tree_ptr->ptrnode1 = branch_node;
 		
 		/* Copy so that leaf is duplicated */
-		if(copy_branch(new_node, TRUE, new_node, FALSE) == 0)
-			return(0);
+		if (copy_branch(new_node, TRUE, new_node, FALSE) == 0)
+			return (0);
 		
 		/* Split node along face of region */
 		tree_ptr->cutoff = bound2->lawmax;
@@ -1778,7 +1778,7 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
 	}
 	
 	/* Finally - merge wild. gen. type with leaf of the same size */
-	return(add_node_chance(type, node, branch));
+	return (add_node_chance(type, node, branch));
 }
 
 
@@ -1833,7 +1833,7 @@ static u16b add_node(wild_bound_box_type *bound,
 	/* Scan tree until hit a leaf or split required region */
 	
 	/* Use a while loop instead of recursion to follow tree */
-	while(1) 
+	while (1) 
 	{
 		/* Access Node */
 		tree_ptr = &wild_choice_tree[node];
@@ -1846,7 +1846,7 @@ static u16b add_node(wild_bound_box_type *bound,
 		if (tree_ptr->cutoff == 0)
 		{
 			/* leaf node */	
-			return(inside_leaf(oldnode, type, bound, cur_bound, branch));
+			return (inside_leaf(oldnode, type, bound, cur_bound, branch));
 		}
 		else
 		{
@@ -1884,7 +1884,7 @@ static u16b add_node(wild_bound_box_type *bound,
 						
 						/* rescan with smaller domain */
 						if (!add_node(&temp_bound1, &temp_bound2, type, node))
-							return(0);
+							return (0);
 						
 						/* make backups before recursion */
 						copy_bounds(bound, &temp_bound1);
@@ -1895,7 +1895,7 @@ static u16b add_node(wild_bound_box_type *bound,
 						temp_bound2.hgtmin = tree_ptr->cutoff;
 						
 						/* rescan with smaller domain */
-						return(add_node(&temp_bound1, &temp_bound2, type, node));
+						return (add_node(&temp_bound1, &temp_bound2, type, node));
 					}
 					break;
 				}
@@ -1926,7 +1926,7 @@ static u16b add_node(wild_bound_box_type *bound,
 						
 						/* rescan with smaller domain */
 						if (!add_node(&temp_bound1, &temp_bound2, type, node))
-							return(0);
+							return (0);
 						
 						/* make backups before recursion */
 						copy_bounds(bound, &temp_bound1);
@@ -1937,7 +1937,7 @@ static u16b add_node(wild_bound_box_type *bound,
 						temp_bound2.popmin = tree_ptr->cutoff;
 						
 						/* rescan with smaller domain */
-						return(add_node(&temp_bound1, &temp_bound2, type, node));
+						return (add_node(&temp_bound1, &temp_bound2, type, node));
 					}
 					break;
 				}
@@ -1968,7 +1968,7 @@ static u16b add_node(wild_bound_box_type *bound,
 						
 						/* rescan with smaller domain */
 						if (!add_node(&temp_bound1, &temp_bound2, type, node))
-							return(0);
+							return (0);
 						
 						/* make backups before recursion */
 						copy_bounds(bound, &temp_bound1);
@@ -1979,7 +1979,7 @@ static u16b add_node(wild_bound_box_type *bound,
 						temp_bound2.lawmin = tree_ptr->cutoff;
 						
 						/* rescan with smaller domain */
-						return(add_node(&temp_bound1, &temp_bound2, type, node));
+						return (add_node(&temp_bound1, &temp_bound2, type, node));
 					}
 					break;
 				}
@@ -2014,14 +2014,14 @@ static u16b add_node(wild_bound_box_type *bound,
 					tree_ptr->ptrnode1 = type;
 					
 					/* done - don't return zero as can happen with the root node */
-					return(1);
+					return (1);
 				}
 				
 				/* Make new node */
 				node = create_node(node, TRUE);
 				if (node == 0) return (0);
 				
-				return(add_node_inside(node, oldnode, cur_bound, type, bound));
+				return (add_node_inside(node, oldnode, cur_bound, type, bound));
 			}
 			else
 			{
@@ -2050,14 +2050,14 @@ static u16b add_node(wild_bound_box_type *bound,
 					tree_ptr->ptrnode2 = type;
 					
 					/* done - don't return zero as can happen with the root node */
-					return(1);
+					return (1);
 				}
 				
 				/* Make new node */
 				node = create_node(node, FALSE);
 				if (node == 0) return (0);
 				
-				return(add_node_inside(node, oldnode, cur_bound, type, bound));		
+				return (add_node_inside(node, oldnode, cur_bound, type, bound));		
 			}
 			else
 			{
@@ -2069,7 +2069,7 @@ static u16b add_node(wild_bound_box_type *bound,
 	}
 	
 	/* Paranoia - should never get to here */
-	return(0);
+	return (0);
 }
 
 /*
@@ -2104,7 +2104,7 @@ u16b init_choice_tree(wild_bound_box_type *bound, u16b type)
 	 * the whole parameter space.  (Note this routine requires one empty node.
 	 * - that is why d_tree_count starts out as one.)
 	 */
-	return(add_node_inside(0, 0, &start_bounds, type, bound));
+	return (add_node_inside(0, 0, &start_bounds, type, bound));
 }
 
 
@@ -2123,7 +2123,7 @@ u16b add_node_tree_root(wild_bound_box_type *bound, u16b type)
 	start_bounds.lawmax = 255;
 
 	/* Add to root of tree */
-	return(add_node(bound, &start_bounds, type, 0));
+	return (add_node(bound, &start_bounds, type, 0));
 }
 
 
@@ -2170,9 +2170,9 @@ void test_mon_wild_integrity(void)
 	if (dun_level) return;
 	
 	/* Check the wilderness */
-	for(i = wild_grid.x_min; i < wild_grid.x_max; i++)
+	for (i = wild_grid.x_min; i < wild_grid.x_max; i++)
 	{
-		for(j = wild_grid.y_min; j < wild_grid.y_max; j++)
+		for (j = wild_grid.y_min; j < wild_grid.y_max; j++)
 		{
 			/* Point to location */
 			c_ptr = area(j, i);
@@ -2193,7 +2193,7 @@ void test_mon_wild_integrity(void)
 				msg_print("Monster index inconsistancy.");
 			}
 			
-			if((m_ptr->fy != j) || (m_ptr->fx != i))
+			if ((m_ptr->fy != j) || (m_ptr->fx != i))
 			{
 				msg_print("Monster location inconsistancy.");
 				msg_format("Monster x, cave x,%d,%d",m_ptr->fx, i);
@@ -2315,7 +2315,7 @@ static bool wild_info_bounds(int x, int y, byte info)
 		grad1[i] = FALSE;
 		
 		/* Check bounds */
-		if((x1 >= 0) && (x1 < max_wild) && (y1 >= 0) && (y1 < max_wild))
+		if ((x1 >= 0) && (x1 < max_wild) && (y1 >= 0) && (y1 < max_wild))
 		{
 			/* Check flag status */
 			if (wild[y1][x1].done.info & info)
@@ -2340,7 +2340,7 @@ static bool wild_info_bounds(int x, int y, byte info)
 	}		
 	
 	/* Exit if there are no set flags */
-	if (any == FALSE) return(FALSE);
+	if (any == FALSE) return (FALSE);
 	
 	/* Clear temporary block */
 	clear_temp_block();
@@ -2414,7 +2414,7 @@ static bool wild_info_bounds(int x, int y, byte info)
 	}
 	
 	/* There are flags set */
-	return(TRUE);
+	return (TRUE);
 }
 
 /*
@@ -2440,8 +2440,10 @@ static bool wild_info_bounds(int x, int y, byte info)
 
 static void frac_block(void)
 {
-	/* fixed point variables- these are stored as 256 x normal value
-	* this gives 8 binary places of fractional part + 8 places of normal part*/
+	/*
+	 * fixed point variables- these are stored as 256 x normal value
+	 * this gives 8 binary places of fractional part + 8 places of normal part
+	 */
 
 	u16b lstep, hstep, i, j, ii, jj, size;
 
@@ -2462,7 +2464,7 @@ static void frac_block(void)
 		lstep = hstep;
 		hstep /= 2;
 
-		/* middle top to bottom.*/
+		/* middle top to bottom. */
 		for (i = hstep; i <= size - hstep; i += lstep)
 		{
 			for (j = 0; j <= size; j += lstep)
@@ -2484,7 +2486,7 @@ static void frac_block(void)
 		}
 
 
-		/* middle left to right.*/
+		/* middle left to right. */
 		for (j = hstep; j <= size - hstep; j += lstep)
 		{
 			for (i = 0; i <= size; i += lstep)
@@ -2505,7 +2507,7 @@ static void frac_block(void)
 			}
 		}
 
-		/* center.*/
+		/* center. */
 		for (i = hstep; i <= size - hstep; i += lstep)
 		{
 			for (j = hstep; j <= size - hstep; j += lstep)
@@ -2601,15 +2603,15 @@ static byte pick_feat(byte feat1, byte feat2, byte feat3, byte feat4,
 	choice = Rand_div(c1 + c2 + c3 + c4);
 	
 	/* Return terrain feature based on weighted chance */
-	if (choice < c1) return(feat1);
+	if (choice < c1) return (feat1);
 	
 	choice -= c1;
-	if (choice < c2) return(feat2);
+	if (choice < c2) return (feat2);
 	
 	choice -= c2;
-	if (choice < c3) return(feat3);
+	if (choice < c3) return (feat3);
 	
-	return(feat4);
+	return (feat4);
 }
 
 /*
@@ -2741,9 +2743,9 @@ static void make_wild_02(blk_ptr block_ptr, byte *data)
 	int i, j, k;
 	byte new_feat, feat, chance;
 	
-	for(i = 0; i < WILD_BLOCK_SIZE; i++)
+	for (i = 0; i < WILD_BLOCK_SIZE; i++)
 	{
-		for(j = 0; j < WILD_BLOCK_SIZE; j++)
+		for (j = 0; j < WILD_BLOCK_SIZE; j++)
 		{
 			/* Init. counter */
 			k = 0;
@@ -2751,7 +2753,7 @@ static void make_wild_02(blk_ptr block_ptr, byte *data)
 			/* Hack - if first feature is zero - use grass */
 			feat = FEAT_GRASS;
 			
-			while(1)
+			while (1)
 			{
 				/* Get feature */
 				new_feat = data[k * 2];
@@ -2813,9 +2815,9 @@ static void make_wild_03(blk_ptr block_ptr, byte *data)
 	frac_block();
 	
 	/* Overlay the "circle" of terrain */
-	for(i = 0; i < WILD_BLOCK_SIZE; i++)
+	for (i = 0; i < WILD_BLOCK_SIZE; i++)
 	{
-		for(j = 0; j < WILD_BLOCK_SIZE; j++)
+		for (j = 0; j < WILD_BLOCK_SIZE; j++)
 		{
 			element = temp_block[j][i];
 			
@@ -2999,9 +3001,9 @@ static void fill_perm_wall(blk_ptr block_ptr)
 {
 	int i, j;
 	/* Overlay the block with grass */
-	for(i = 0; i < WILD_BLOCK_SIZE; i++)
+	for (i = 0; i < WILD_BLOCK_SIZE; i++)
 	{
-		for(j = 0; j < WILD_BLOCK_SIZE; j++)
+		for (j = 0; j < WILD_BLOCK_SIZE; j++)
 		{
 			block_ptr[j][i].feat = FEAT_PERM_OUTER;
 		}
@@ -3035,14 +3037,14 @@ static void add_monsters_block(int x, int y)
 	xx = x * 16;
 	yy = y * 16;
 		
-	for(i = 0; i < 16; i++)
+	for (i = 0; i < 16; i++)
 	{
-		for(j = 0; j < 16; j++)
+		for (j = 0; j < 16; j++)
 		{
 			/* See if monster should go on square */
 			if (!rand_int(prob))
 			{
-				if(rand_int(2))
+				if (rand_int(2))
 				{
 					/* Monsters are awake */
 					(void) place_monster(yy + j, xx + i, FALSE, TRUE);
@@ -3057,7 +3059,7 @@ static void add_monsters_block(int x, int y)
 	}
 }
 
-/* Add monsters to the boundary of the visible grid.*/
+/* Add monsters to the boundary of the visible grid. */
 static void add_monsters(void)
 {	
 	int x, y;
@@ -3065,7 +3067,7 @@ static void add_monsters(void)
 	/* Add monsters */
 	for (x = 0; x < WILD_GRID_SIZE; x++)
 	{
-		for(y = 0; y < WILD_GRID_SIZE; y++)
+		for (y = 0; y < WILD_GRID_SIZE; y++)
 		{
 			/* Only on bounding blocks */
 			if (!((x == 0) || (x == WILD_GRID_SIZE - 1))) continue;
@@ -3077,7 +3079,7 @@ static void add_monsters(void)
 			
 			/* Set the monster generation level */
 
-			/*Hack - use a number based on "law" statistic */
+			/* Hack - use a number based on "law" statistic */
 			monster_level = wild[y + wild_grid.y][x + wild_grid.x].done.mon_gen;
 	
 			/* Add monsters to block */
@@ -3095,11 +3097,11 @@ void repopulate_wilderness(void)
 	/* Add monsters */
 	for (x = 0; x < WILD_GRID_SIZE; x++)
 	{
-		for(y = 0; y < WILD_GRID_SIZE; y++)
+		for (y = 0; y < WILD_GRID_SIZE; y++)
 		{
 			/* Set the monster generation level */
 
-			/*Hack - use a number based on "law" statistic */
+			/* Hack - use a number based on "law" statistic */
 			monster_level = wild[y + wild_grid.y][x + wild_grid.x].done.mon_gen;
 	
 			/* Add monsters to block */
@@ -3125,7 +3127,7 @@ static void gen_block(u16b x, u16b y, blk_ptr block_ptr)
 	/* Hack -- Induce consistant wilderness blocks */
 	Rand_value = wild_grid.wild_seed + x + y * max_wild;
 
-	/* Generate a terrain block*/
+	/* Generate a terrain block */
 
 	/* Get wilderness type */
 	w_type = wild[y][x].done.wild;
@@ -3137,7 +3139,7 @@ static void gen_block(u16b x, u16b y, blk_ptr block_ptr)
 	}
 	
 	/* Hack -Check for the vanilla town grass option. */
-	else if(w_type == 0)
+	else if (w_type == 0)
 	{
 		/* Fill the block with grass */
 		fill_perm_wall(block_ptr);	
@@ -3151,7 +3153,7 @@ static void gen_block(u16b x, u16b y, blk_ptr block_ptr)
 		/* Blend with adjacent terrains */
 		blend_block(x, y, block_ptr, w_type);
 				
-		/* Add water boundary effects.  (Rivers / Ocean)*/
+		/* Add water boundary effects.  (Rivers / Ocean) */
 		if (wild_info_bounds(x, y, WILD_INFO_RIVER))
 		{
 			/* Hack, above function sets bounds */
@@ -3163,7 +3165,7 @@ static void gen_block(u16b x, u16b y, blk_ptr block_ptr)
 			wild_add_gradient(block_ptr, FEAT_SHAL_WATER, FEAT_DEEP_WATER);		
 		}
 		
-		/* Add roads / lava (Not done)*/
+		/* Add roads / lava (Not done) */
 
 	}
 	/* Hack -- Use the "complex" RNG */
@@ -3397,7 +3399,7 @@ void move_wild(void)
 	
 	/* Get upper left hand block in grid. */
 
-	/* Divide by 16 to get block from (x,y) coord*/
+	/* Divide by 16 to get block from (x,y) coord */
 	x = ((u16b) p_ptr->wilderness_x>>4);
 	y = ((u16b) p_ptr->wilderness_y>>4);
 
@@ -3650,7 +3652,7 @@ static void create_rivers(int sea_level)
 	 * Stop when all positions above sea level are used, or
 	 * (rarely) if there is only one left in the array.
 	 */
-	while((ch > sea_level) && (temp_n > cur_posn + 1))
+	while ((ch > sea_level) && (temp_n > cur_posn + 1))
 	{
 		/* The highest position is at (0,0) in the array. */
 		
@@ -3753,8 +3755,10 @@ static void create_hgt_map(void)
 {
 	int grd;
 
-	/* fixed point variables- these are stored as 16 x normal value
-	* this gives 4 binary places of fractional part + 12 places of normal part*/
+	/*
+	 * fixed point variables- these are stored as 16 x normal value
+	 * this gives 4 binary places of fractional part + 12 places of normal part
+	 */
 
 	int lstep, hstep, i, j, ii, jj, size;
 	
@@ -3797,7 +3801,7 @@ static void create_hgt_map(void)
 		lstep = hstep;
 		hstep /= 2;
 
-		/* middle top to bottom.*/
+		/* middle top to bottom. */
 		for (i = hstep; i <= size - hstep; i += lstep)
 		{
 			for (j = 0; j <= size; j += lstep)
@@ -3827,7 +3831,7 @@ static void create_hgt_map(void)
 		}
 
 
-		/* middle left to right.*/
+		/* middle left to right. */
 		for (j = hstep; j <= size - hstep; j += lstep)
 		{
 			for (i = 0; i <= size; i += lstep)
@@ -3856,7 +3860,7 @@ static void create_hgt_map(void)
 			}
 		}
 
-		/* center.*/
+		/* center. */
 		for (i = hstep; i <= size - hstep; i += lstep)
 		{
 			for (j = hstep; j <= size - hstep; j += lstep)
@@ -3898,7 +3902,7 @@ static void store_popmap(int x, int y, int val, u16b sea)
 	if (val < 0) val = 0;
 	if ((val >> 4) >= max_wild) val = (max_wild << 4) - 1;
 	
-	/* Save distribution information (only if not below sea level)*/	
+	/* Save distribution information (only if not below sea level) */	
 	if (wild[y][x].gen.hgt_map > sea) wild_temp_dist[val >> 4] = 1;
 	
 	/* store the value in height-map format */
@@ -3915,8 +3919,10 @@ static void create_pop_map(u16b sea)
 {
 	int grd;
 
-	/* fixed point variables- these are stored as 16 x normal value
-	* this gives 4 binary places of fractional part + 12 places of normal part*/
+	/*
+	 * fixed point variables- these are stored as 16 x normal value
+	 * this gives 4 binary places of fractional part + 12 places of normal part
+	 */
 
 	int lstep, hstep, i, j, ii, jj, size;
 
@@ -3959,7 +3965,7 @@ static void create_pop_map(u16b sea)
 		lstep = hstep;
 		hstep /= 2;
 
-		/* middle top to bottom.*/
+		/* middle top to bottom. */
 		for (i = hstep; i <= size - hstep; i += lstep)
 		{
 			for (j = 0; j <= size; j += lstep)
@@ -3989,7 +3995,7 @@ static void create_pop_map(u16b sea)
 		}
 
 
-		/* middle left to right.*/
+		/* middle left to right. */
 		for (j = hstep; j <= size - hstep; j += lstep)
 		{
 			for (i = 0; i <= size; i += lstep)
@@ -4018,7 +4024,7 @@ static void create_pop_map(u16b sea)
 			}
 		}
 
-		/* center.*/
+		/* center. */
 		for (i = hstep; i <= size - hstep; i += lstep)
 		{
 			for (j = hstep; j <= size - hstep; j += lstep)
@@ -4060,7 +4066,7 @@ static void store_lawmap(int x, int y, int val, u16b sea)
 	if (val < 0) val = 0;
 	if ((val >> 4) >= max_wild) val = (max_wild << 4) - 1;
 	
-	/* Save distribution information (only if not below sea level)*/	
+	/* Save distribution information (only if not below sea level) */	
 	if (wild[y][x].gen.hgt_map > sea) wild_temp_dist[val >> 4] = 1;
 	
 	/* store the value in height-map format */
@@ -4077,8 +4083,10 @@ static void create_law_map(u16b sea)
 {
 	int grd;
 
-	/* fixed point variables- these are stored as 16 x normal value
-	* this gives 4 binary places of fractional part + 12 places of normal part*/
+	/*
+	 * fixed point variables- these are stored as 16 x normal value
+	 * this gives 4 binary places of fractional part + 12 places of normal part
+	 */
 
 	int lstep, hstep, i, j, ii, jj, size;
 
@@ -4121,7 +4129,7 @@ static void create_law_map(u16b sea)
 		lstep = hstep;
 		hstep /= 2;
 
-		/* middle top to bottom.*/
+		/* middle top to bottom. */
 		for (i = hstep; i <= size - hstep; i += lstep)
 		{
 			for (j = 0; j <= size; j += lstep)
@@ -4151,7 +4159,7 @@ static void create_law_map(u16b sea)
 		}
 
 
-		/* middle left to right.*/
+		/* middle left to right. */
 		for (j = hstep; j <= size - hstep; j += lstep)
 		{
 			for (i = 0; i <= size; i += lstep)
@@ -4180,7 +4188,7 @@ static void create_law_map(u16b sea)
 			}
 		}
 
-		/* center.*/
+		/* center. */
 		for (i = hstep; i <= size - hstep; i += lstep)
 		{
 			for (j = hstep; j <= size - hstep; j += lstep)

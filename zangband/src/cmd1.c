@@ -121,7 +121,7 @@ static sint critical_melee(int chance, int sleeping_bonus, char m_name[], object
 	int i, k;
 	int mult_m_crit;
 
-	/* Extract melee attack power.  */
+	/* Extract melee attack power. */
 	i = (chance + sleeping_bonus);
 
 	/* Test for critical hit. */
@@ -390,7 +390,7 @@ s16b tot_dam_aux(object_type *o_ptr, int tdam, monster_type *m_ptr)
 				if (mult < 20) mult = 20;
 			}
 
-			/* Slay Dragon  */
+			/* Slay Dragon */
 			if ((f1 & TR1_SLAY_DRAGON) &&
 			    (r_ptr->flags3 & RF3_DRAGON))
 			{
@@ -1439,7 +1439,7 @@ static bool monster_bash(int *blows, int sleeping_bonus, cave_type *c_ptr,
 	monster_type    *m_ptr = &m_list[c_ptr->m_idx];
 	monster_race    *r_ptr = &r_info[m_ptr->r_idx];
 	
-	/* No shield on arm, no bash.  */
+	/* No shield on arm, no bash. */
 	if (!inventory[INVEN_ARM].k_idx)
 	{
 		bash_chance = 0;
@@ -1533,7 +1533,7 @@ static bool monster_bash(int *blows, int sleeping_bonus, cave_type *c_ptr,
 	}
 
 	/* Monster is not dead */	
-	return(FALSE);
+	return (FALSE);
 }
 
 /*
@@ -2714,7 +2714,7 @@ void move_player(int dir, int do_pickup)
 
 #endif /* ALLOW_EASY_DISARM -- TNB */
 
-	/* Player can not walk through "walls" unless in wraith form...*/
+	/* Player can not walk through "walls" unless in wraith form... */
 	else if (!cave_floor_grid(c_ptr) && !p_can_pass_walls)
 	{
 		oktomove = FALSE;
@@ -3364,7 +3364,7 @@ static bool run_test(void)
 		row = py + ddy[new_dir];
 		col = px + ddx[new_dir];
 		
-		if(!in_bounds2(row, col)) continue;
+		if (!in_bounds2(row, col)) continue;
 		
 		/* Access grid */
 		c_ptr = area(row, col);
@@ -3628,7 +3628,7 @@ static bool run_test(void)
 			row = py + ddy[new_dir];
 			col = px + ddx[new_dir];
 			
-			if(!in_bounds2(row, col)) continue;
+			if (!in_bounds2(row, col)) continue;
 
 			/* Unknown grid or non-wall XXX XXX XXX cave_floor_grid(c_ptr)) */
 			if (!see_wall(new_dir, py, px))
@@ -3660,7 +3660,7 @@ static bool run_test(void)
 			row = py + ddy[new_dir];
 			col = px + ddx[new_dir];
 			
-			if(!in_bounds2(row, col)) continue;
+			if (!in_bounds2(row, col)) continue;
 
 			/* Access grid */
 			c_ptr = area(row, col);

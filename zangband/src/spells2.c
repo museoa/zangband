@@ -3752,7 +3752,7 @@ bool poly_monster(int dir)
 	if (tester)
 		chg_virtue(V_CHANCE, 1);
 
-	return(tester);
+	return (tester);
 }
 
 

@@ -899,7 +899,7 @@ static bool cast_sorcery_spell(int spell)
 		break;
 	case 15: /* Identify True */
 		return identify_fully();
-	case 16: /* Detect Objects and Treasure*/
+	case 16: /* Detect Objects and Treasure */
 		(void)detect_objects_normal();
 		(void)detect_treasure();
 		(void)detect_objects_gold();
@@ -1354,7 +1354,7 @@ static bool cast_chaos_spell(int spell)
 
 		fire_beam(GF_GRAVITY, dir, damroll(9 + ((plev - 5) / 4), 8));
 		break;
-	case 25: /* Meteor Swarm  */
+	case 25: /* Meteor Swarm */
 		{
 			int x, y, dx, dy, d;
 			int b = 10 + randint(10);
@@ -2754,7 +2754,7 @@ void do_cmd_cast(void)
 				chg_virtue(V_KNOWLEDGE, 1);
 		}
 
-		/* Spells.  */
+		/* Spells. */
 		switch (realm)
 		{
 		case REALM_LIFE: /* * LIFE * */

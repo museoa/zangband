@@ -1923,11 +1923,11 @@ bool ident_spell(void)
 			   o_name);
 	}
 
-        /*
+	/*
 	 * If the item was an artifact, and if the
 	 * auto-note is selected, write a message.
 	 */
-        if (auto_notes && take_notes && (artifact_p(o_ptr) || o_ptr->art_name) && a_info[o_ptr->name1].cur_num != 2)
+	if (auto_notes && take_notes && (artifact_p(o_ptr) || o_ptr->art_name) && a_info[o_ptr->name1].cur_num != 2)
 	{
 		char note[80];
 		char item_name[80];
@@ -1938,10 +1938,9 @@ bool ident_spell(void)
 	   
 		add_note(note, 'A');	
 
-                /* Mark item as found */
-                a_info[o_ptr->name1].cur_num = 2;
-
-        }
+		/* Mark item as found */
+		a_info[o_ptr->name1].cur_num = 2;
+	}
 
 	/* Something happened */
 	return (TRUE);
@@ -2104,11 +2103,11 @@ bool identify_fully(void)
 			   o_name);
 	}
 
-        /*
+	/*
 	 * If the item was an artifact, and if the
 	 * auto-note is selected, write a message (if not written before).
 	 */
-        if (auto_notes && take_notes && (artifact_p(o_ptr) || o_ptr->art_name) && a_info[o_ptr->name1].cur_num != 2)
+	if (auto_notes && take_notes && (artifact_p(o_ptr) || o_ptr->art_name) && a_info[o_ptr->name1].cur_num != 2)
 	{
 		char note[80];
 		char item_name[80];
@@ -2119,10 +2118,10 @@ bool identify_fully(void)
 	   
 		add_note(note, 'A');	
 
-                /* Mark item as found */
-                a_info[o_ptr->name1].cur_num = 2;
+		/* Mark item as found */
+		a_info[o_ptr->name1].cur_num = 2;
+	}
 
-        }
 	/* Describe it fully */
 	(void)identify_fully_aux(o_ptr);
 

@@ -1476,7 +1476,7 @@ bool object_similar(object_type *o_ptr, object_type *j_ptr)
 	/* Analyze the items */
 	switch (o_ptr->tval)
 	{
-		/* Chests and Statues*/
+		/* Chests and Statues */
 		case TV_CHEST:
 		case TV_STATUE:
 		{
@@ -1484,7 +1484,7 @@ bool object_similar(object_type *o_ptr, object_type *j_ptr)
 			return (0);
 		}
 
-		/* Figurines and Corpses*/
+		/* Figurines and Corpses */
 		case TV_FIGURINE:
 		case TV_CORPSE:
 		{
@@ -1529,7 +1529,7 @@ bool object_similar(object_type *o_ptr, object_type *j_ptr)
 				(!(j_ptr->ident & (IDENT_EMPTY)) &&
 				!object_known_p(j_ptr))) return (0);
 
-			/* Wand charges combine in O&ZAngband.  */
+			/* Wand charges combine in O&ZAngband. */
 
 			/* Assume okay */
 			break;
@@ -3999,7 +3999,7 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great, 
 
 					if (o_ptr->pval > 2) o_ptr->pval -= 2;
 
-					/* tone down number of attacks*/
+					/* tone down number of attacks */
 					if (o_ptr->pval > 0)
 					{
 						o_ptr->pval -= o_ptr->dd / 2;
@@ -4035,7 +4035,7 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great, 
 			{
 				o_ptr->art_flags1 |= TR1_BLOWS;
 
-				/* tone down number of attacks*/
+				/* tone down number of attacks */
 				if (o_ptr->pval > 0)
 				{
 					o_ptr->pval -= o_ptr->dd / 2;
@@ -4051,7 +4051,7 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great, 
 				{
 					o_ptr->art_flags1 |= TR1_BLOWS;
 
-					/* tone down number of attacks*/
+					/* tone down number of attacks */
 					if (o_ptr->pval > 0)
 					{
 						o_ptr->pval -= o_ptr->dd / 2;

@@ -429,9 +429,9 @@ static void do_cmd_wiz_feature(int feat)
 void learn_map(void)
 {
 	int i, j;
-	for(i = 0; i < max_wild; i++)
+	for (i = 0; i < max_wild; i++)
 	{
-		for(j = 0; j < max_wild; j++)
+		for (j = 0; j < max_wild; j++)
 		{
 			wild[j][i].done.info |= WILD_INFO_SEEN;
 		}	
@@ -1646,10 +1646,10 @@ static void outflagmatlab(u32b flag, FILE *fff)
 	char buf[3];
 	
 	i = 1;
-	for(j = 0; j < 32; j++, i<<=1)
+	for (j = 0; j < 32; j++, i<<=1)
 	{
 		/* If the bit is set */
-		if(flag & i)
+		if (flag & i)
 		{
 			sprintf(buf, "1 "); 
 		}
@@ -1679,10 +1679,10 @@ static void outflagmatlab2(u32b flag, FILE *fff, int hp)
 	char buf[10];
 	
 	i = 1;
-	for(j = 0; j < 32; j++, i<<=1)
+	for (j = 0; j < 32; j++, i<<=1)
 	{
 		/* If the bit is set */
-		if(flag & i)
+		if (flag & i)
 		{
 			if (i < 256)
 			{
@@ -1690,7 +1690,7 @@ static void outflagmatlab2(u32b flag, FILE *fff, int hp)
 			}
 			else
 			{
-				/* A breath - scale it by the hp*/
+				/* A breath - scale it by the hp */
 				sprintf(buf, "%d ", hp);
 			} 
 		}
@@ -1724,7 +1724,7 @@ static void outblowsmatlab(monster_race *r_ptr, char *buf2)
 	for (i = 0; i < 4; i++)
 	{
 		/* Only count real blows */
-		if(!r_ptr->blow[i].method) continue;
+		if (!r_ptr->blow[i].method) continue;
 		
 		/* damage x2 */
 		effect = r_ptr->blow[i].d_dice * (r_ptr->blow[i].d_side + 1);
@@ -1758,9 +1758,9 @@ static void outblowsmatlab(monster_race *r_ptr, char *buf2)
  */
 static int monster_power_mat(int level)
 {		
-	if (level < 40) return(35*level / 4);
-	if (level < 70) return(5*(level - 40) + 350);
-	return(((level-70)*5)/3 + 500);
+	if (level < 40) return (35 * level / 4);
+	if (level < 70) return (5 * (level - 40) + 350);
+	return (((level - 70) * 5) / 3 + 500);
 }
 
 /*
@@ -1801,7 +1801,7 @@ void output_monster_matlab(void)
 	unsigned int hp;
 	FILE *fff;
 	
-	/* Create the file name  */
+	/* Create the file name */
 	path_build(buf, 500, ANGBAND_DIR_SAVE, "monmatlb.m");
 	
 	/* Drop priv's */
@@ -1823,7 +1823,7 @@ void output_monster_matlab(void)
 	max = max_r_idx;
 	min = 20;
 	
-	for(i = min; i < max; i++)
+	for (i = min; i < max; i++)
 	{
 		fprintf(fff, "x=[");
 		
@@ -1866,7 +1866,7 @@ void output_monster_matlab(void)
 	/* Output the power information */
 	fprintf(fff, "y=[");
 	
-	for(i = min; i < max; i++)
+	for (i = min; i < max; i++)
 	{
 		/* Get race */
 		r_ptr =  &r_info[i];
@@ -1882,7 +1882,7 @@ void output_monster_matlab(void)
 	/* Output the XP information */
 	fprintf(fff, "xp=[");
 	
-	for(i = min; i < max; i++)
+	for (i = min; i < max; i++)
 	{
 		/* Get race */
 		r_ptr =  &r_info[i];
@@ -2090,7 +2090,7 @@ void do_cmd_debug(void)
 		/* Make every dungeon square "known" to test streamers -KMW- */
 		case 'u':
 		{
-			/* Only make squares glow in dungeon.*/
+			/* Only make squares glow in dungeon. */
 			/* Daytime in the wilderness does this for you outside. */
 			if (dun_level)
 			{

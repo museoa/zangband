@@ -2055,8 +2055,10 @@ static void calc_torch(void)
 	/* see cave.c:update_lite() and defines.h:LITE_MAX */
 	if (p_ptr->cur_lite > 5) p_ptr->cur_lite = 5;
 
-	/* check if the player doesn't have a lite source, */
-	/* but does glow as an intrinsic.                  */
+	/*
+	 * Check if the player doesn't have a lite source,
+	 * but does glow as an intrinsic.
+	 */
 	if (p_ptr->cur_lite == 0 && p_ptr->lite) p_ptr->cur_lite = 1;
 
 	/* end experimental mods */
@@ -2139,7 +2141,7 @@ sint add_special_melee_skill(byte pclass, s16b weight, object_type *o_ptr)
 
 		/* Rogue.  Can use 10 lb weapons without penalty at level 1, and 20 lb
 		* weapons without penalty at 50th level. Can get a bonus for using light
-		* weapons.  */
+		* weapons. */
 		case CLASS_ROGUE:
 		{
 			if (!o_ptr->k_idx) add_skill = 0;
@@ -3294,7 +3296,7 @@ void calc_bonuses(void)
 				if (p_ptr->lev >= 40) p_ptr->num_fire++;
 			}
 
-			/* Hack -- Rangers can use XBows as well*/
+			/* Hack -- Rangers can use XBows as well */
 			if ((p_ptr->pclass == CLASS_RANGER) &&
 			    (p_ptr->tval_ammo == TV_BOLT))
 			{
@@ -4113,7 +4115,7 @@ int number_of_quests(void)
 	
 	for (j = MIN_RANDOM_QUEST; j < MAX_RANDOM_QUEST; j++)
 	{
-		if(quest[j].status != QUEST_STATUS_UNTAKEN)
+		if (quest[j].status != QUEST_STATUS_UNTAKEN)
 		{
 			/* Increment count of quests taken. */
 			i++;
@@ -4121,6 +4123,6 @@ int number_of_quests(void)
 	}
 	
 	/* Return the number of quests taken */
-	return(i);
+	return (i);
 }
 

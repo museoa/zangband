@@ -2556,7 +2556,7 @@ errr init_w_info_txt(FILE *fp, char *buf)
 				&hgtmin, &hgtmax, &popmin, &popmax,
 					&lawmin, &lawmax)) return (1);
 
-			/* Save the values into bounds*/
+			/* Save the values into bounds */
 			bound.hgtmin = hgtmin;
 			bound.hgtmax = hgtmax;
 			
@@ -2638,13 +2638,13 @@ errr init_w_info_txt(FILE *fp, char *buf)
 			if (i == 1)
 			{
 				init_choice_tree(&bound, i);
-				/*if(init_choice_tree(&bound, i+1) == 0)
+				/* if (init_choice_tree(&bound, i+1) == 0)
 					return (2);*/
 			}
 			else
 			{
 				/* Add type to decision tree */
-				if(add_node_tree_root(&bound, i) == 0)
+				if (add_node_tree_root(&bound, i) == 0)
 					return (7);
 			}
 			
@@ -3266,9 +3266,9 @@ static errr process_dungeon_file_aux(char *buf, int ymin, int xmin, int ymax, in
 	/* Process "W:<command>: ..." -- info for the wilderness */
 	else if (buf[0] == 'W')
 	{
-		/* Hack - turned off for now.*/
+		/* Hack - turned off for now. */
 		return (0);
-		/*return parse_line_wilderness(buf, ymin, xmin, ymax, xmax, y, x); */
+		/* return parse_line_wilderness(buf, ymin, xmin, ymax, xmax, y, x); */
 	}
 
 	/* Process "P:<y>:<x>" -- player position */

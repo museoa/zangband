@@ -510,7 +510,7 @@ static void roff_aux(int r_idx, int remem)
 			exp_for_kill(r_ptr, &new_exp, &new_exp_frac);
 
 			/* calculate the fractional exp part scaled by 100, */
-			/* must use long arithmetic to avoid overflow  */
+			/* must use long arithmetic to avoid overflow */
 			new_exp_frac = (((long)new_exp_frac + 0x10000L / 50) * 100) / 0x10000L;
 
 			/* Mention the experience */
@@ -1449,7 +1449,7 @@ static bool validate_mon_wild(int r_idx)
 	monster_race *r_ptr = &r_info[r_idx];
 	
 	/* Want first 8 flags, do not want next 8. */
-	return((r_ptr->flags8 & 0x000000FF) &&( !(r_ptr->flags8 & 0x0000FF00)));
+	return ((r_ptr->flags8 & 0x000000FF) &&( !(r_ptr->flags8 & 0x0000FF00)));
 }
 
 bool monster_quest(int r_idx)
@@ -1704,7 +1704,7 @@ monster_hook_type get_monster_hook2(int y, int x)
 		}
 	}
 	
-	/* Point to wilderness block info*/
+	/* Point to wilderness block info */
 	w_ptr = &wild[y / 16][x / 16].done;
 	
 	

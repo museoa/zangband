@@ -1929,7 +1929,7 @@ errr init_w_info(void)
 	wild_gen_data[0].w_char = '.';
 		
 	/* Success */
-	return(0);
+	return (0);
 }
 
 
@@ -2495,7 +2495,7 @@ static errr init_towns(void)
 			/* Assume full stock */
 			st_ptr->stock_size = STORE_INVEN_MAX;
 
-			/* Do not allocate the stock yet.*/
+			/* Do not allocate the stock yet. */
 			st_ptr->stock = NULL;
 
 			/* No table for the black market or home */

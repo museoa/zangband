@@ -76,25 +76,24 @@ void check_experience(void)
 	while ((p_ptr->lev < PY_MAX_LEVEL) &&
 	       (p_ptr->exp >= (player_exp[p_ptr->lev-1] * p_ptr->expfact / 100L)))
 	{
-                
 		/* Gain a level */
 		p_ptr->lev++;
 		lite_spot(py, px);
 
-                /* If auto-note taking enabled, write a note to the file. 
-                 * Only write this note when the level is gained for the first
-                 * time.
-                 */
-                if (take_notes && auto_notes && (p_ptr->lev > p_ptr->max_plv))
-                {
-                  char note[80];
+		/*
+		 * If auto-note taking enabled, write a note to the file. 
+		 * Only write this note when the level is gained for the first time.
+		 */
+		if (take_notes && auto_notes && (p_ptr->lev > p_ptr->max_plv))
+		{
+			char note[80];
 
-		  /* Write note */
-		  sprintf(note, "Reached level %d", p_ptr->lev);
+			/* Write note */
+			sprintf(note, "Reached level %d", p_ptr->lev);
 
-		  add_note(note, 'L');
+			add_note(note, 'L');
+		}
 
-                }
 		/* Save the highest level */
 		if (p_ptr->lev > p_ptr->max_plv)
 		{
@@ -109,6 +108,7 @@ void check_experience(void)
 			{
 				level_reward = TRUE;
 			}
+
 			if (p_ptr->prace == RACE_BEASTMAN)
 			{
 				if (randint(5) == 1) level_mutation = TRUE;
@@ -418,9 +418,8 @@ void monster_death(int m_idx)
 						sprintf(note, "Finished quest: %d %s", quest[i].max_num, (r_name + r_info[quest[i].r_idx].name));
 
 						add_note(note, 'Q');
-
 					}
-					    
+
 					if (!(quest[i].flags & QUEST_FLAG_SILENT))
 					{
 						msg_print("You just completed your quest!");
@@ -551,7 +550,7 @@ void monster_death(int m_idx)
 		/* Prepare to make the Stormbringer */
 		object_prep(q_ptr, lookup_kind(TV_SWORD, SV_BLADE_OF_CHAOS));
 
-		/* Mega-Hack -- Name the sword  */
+		/* Mega-Hack -- Name the sword */
 		q_ptr->art_name = quark_add("'Stormbringer'");
 		q_ptr->to_h = 16;
 		q_ptr->to_d = 16;
@@ -674,7 +673,7 @@ void monster_death(int m_idx)
 		/* Prepare to make the Stormbringer */
 		object_prep(q_ptr, lookup_kind(TV_SOFT_ARMOR, SV_T_SHIRT));
 
-		/* Mega-Hack -- Name the shirt  */
+		/* Mega-Hack -- Name the shirt */
 		q_ptr->art_name = quark_add("'I killed the GHB and all I got was this lousy t-shirt!'");
 
 		q_ptr->art_flags3 |= (TR3_IGNORE_ACID | TR3_IGNORE_ELEC |
@@ -1248,17 +1247,17 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		/* When the player kills a Unique, it stays dead */
 		if (r_ptr->flags1 & RF1_UNIQUE) r_ptr->max_num = 0;
 
-                /* 
+		/* 
 		 * If the player kills a Unique,
 		 * and the notes options are on, write a note
 		 */
-                if ((r_ptr->flags1 & RF1_UNIQUE) && take_notes && auto_notes)
+		if ((r_ptr->flags1 & RF1_UNIQUE) && take_notes && auto_notes)
 		{
 			char note[80];
 
-                        /* Get true name even if blinded/hallucinating */
-                        cptr monst = (r_name + r_ptr->name);
- 
+			/* Get true name even if blinded/hallucinating */
+			cptr monst = (r_name + r_ptr->name);
+
 			/* Write note */
 			sprintf(note, "Killed %s", monst);
  

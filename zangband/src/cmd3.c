@@ -92,7 +92,7 @@ void do_cmd_equip(void)
 	/* Note that we are in "equipment" mode */
 	if (easy_floor) command_wrk = (USE_EQUIP);
 
-#endif /* ALLOW_EASY_FLOOR  */
+#endif /* ALLOW_EASY_FLOOR */
 
 	/* Save the screen */
 	screen_save();

@@ -2793,7 +2793,7 @@ static errr rd_dungeon(void)
 			py = py_back;
 		}
 		
-		/* Load dungeon map*/
+		/* Load dungeon map */
 		load_map(cur_hgt, 0, cur_wid, 0);
 	}
 	else
@@ -2811,7 +2811,7 @@ static errr rd_dungeon(void)
 			/* Set pointers to wilderness - but do not make towns */
 			change_level(0);
 
-			/* Load wilderness map*/
+			/* Load wilderness map */
 			load_map(wild_grid.y_max, wild_grid.y_min,
 			         wild_grid.x_max, wild_grid.x_min);
 				 

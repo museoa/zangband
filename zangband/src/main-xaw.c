@@ -440,7 +440,7 @@ static void AngbandOutputPict(AngbandWidget widget, int x, int y, int n,
 		
 		for (k = 0; k < widget->angband.fontwidth; k++)
 		{
-			for(l = 0; l < widget->angband.fontheight; l++)
+			for (l = 0; l < widget->angband.fontheight; l++)
 			{
 				/* If mask set... */
 				if ((pixel = XGetPixel(widget->angband.tiles,

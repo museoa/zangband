@@ -864,7 +864,7 @@ void do_cmd_open(void)
 	{
 		int num_doors, num_chests;
 
-		/* Count closed doors*/
+		/* Count closed doors */
 		num_doors = count_dt(&y, &x, is_closed, FALSE);
 
 		/* Count chests (locked) */
@@ -2609,7 +2609,7 @@ static sint critical_shot(int chance, int sleeping_bonus,
 		msg_format("The %s finds a mark.", o_name);
 	}
 
-	/* Extract missile power.  */
+	/* Extract missile power. */
 	i = (chance + sleeping_bonus);
 
 	/* Test for critical hit. */
@@ -3063,11 +3063,12 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 				/* multiply by slays or brands. (10x inflation) */
 				tdam = tot_dam_aux(i_ptr, tdam, m_ptr);
 
-				/* multiply by critical shot. (10x inflation) + level damage bonus*/
+				/* multiply by critical shot. (10x inflation) + level damage bonus */
 				tdam *= critical_shot(chance2, sleeping_bonus,
 					o_name, m_name, visible);
 
-				/* Convert total Deadliness into a percentage, and apply
+				/*
+				 * Convert total Deadliness into a percentage, and apply
 				 * it as a bonus or penalty. (100x inflation)
 				 */
 				if (total_deadliness > 0)
@@ -3085,7 +3086,8 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 				/* Calculate the remainder (the fractional die, x10000). */
 				tdam_remainder = tdam % 10000;
 
-				/* Calculate and combine the damages of the whole and
+				/*
+				 * Calculate and combine the damages of the whole and
 				 * fractional dice.
 				 */
 				tdam = damroll(tdam_whole, o_ptr->ds) +

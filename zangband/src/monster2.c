@@ -1210,7 +1210,7 @@ void update_mon(int m_idx, bool full)
 	cave_type *c_ptr;
 	
 	/* Exit if monster does not exist. */
-	if(!m_idx) return;
+	if (!m_idx) return;
 	
 	/* Compute distance */
 	if (full)
@@ -1508,7 +1508,7 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 	c_ptr = area(y,x);
 
 	/* Require empty space (if not ghostly) */
-	if(!(((!cave_perma_grid(c_ptr) && (r_ptr->flags2 & RF2_PASS_WALL)) || 
+	if (!(((!cave_perma_grid(c_ptr) && (r_ptr->flags2 & RF2_PASS_WALL)) || 
 		cave_floor_grid(c_ptr) ||
 		 ((c_ptr->feat & 0x60) == 0x60)) && 
 		 (!((c_ptr->m_idx) || (c_ptr == area(py, px)))))) return FALSE;

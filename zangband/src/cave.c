@@ -400,7 +400,7 @@ bool player_can_see_bold(int y, int x)
 	if (p_ptr->blind) return (FALSE);
 
 	/* Access the cave grid */
-	c_ptr = area(y,x);
+	c_ptr = area(y, x);
 
 	/* Note that "torch-lite" yields "illumination" */
 	if (c_ptr->info & (CAVE_LITE)) return (TRUE);
@@ -1933,10 +1933,10 @@ static int priority_tunnel(int y, int x)
 	}
 
 	/* Three or less floor squares - Important */
-	if (count < 4) return(19);
+	if (count < 4) return (19);
 
 	/* Not important. */	
-	return(0); 
+	return (0); 
 }
 
 /*
@@ -2019,14 +2019,15 @@ void display_map(int *cy, int *cx)
 			for (j = 0; j < SCREEN_HGT; ++j)
 			{
 				/* Only draw blocks inside map */
-				if(((x + i + 1) >= max_wild) || ((y + j + 1) >= max_wild)) continue;
+				if (((x + i + 1) >= max_wild) || ((y + j + 1) >= max_wild)) continue;
+
 				/* Only draw blocks that have been seen */
 				if (!(wild[j + y][i + x].done.info & WILD_INFO_SEEN)) continue;
 							
 				w_type = wild[j + y][i + x].done.wild;
 				
 				/* Get attr / char pair for wilderness block type */
-				if(w_type >= WILD_SEA)
+				if (w_type >= WILD_SEA)
 				{
 					ma[j + 1][i + 1] = TERM_BLUE;
 					mc[j + 1][i + 1] = '~';
@@ -2046,7 +2047,7 @@ void display_map(int *cy, int *cx)
 				town = wild[j + y][i + x].done.town;
 				
 				/* If there is a town... */
-				if(town)
+				if (town)
 				{
 					/* Hack make a char /attr */
 					ma[j + 1][i + 1] = TERM_WHITE;
@@ -2149,13 +2150,13 @@ void display_map(int *cy, int *cx)
 
 	if (!dun_level)
 	{
-		/* Player location in wilderness*/
+		/* Player location in wilderness */
 		(*cy) = py / 16 - y + 1 + ROW_MAP;
 		(*cx) = px / 16 - x + 1 + COL_MAP;
 	}
 	else
 	{
-		/* Player location in dungeon*/
+		/* Player location in dungeon */
 		(*cy) = py / yrat + 1 + ROW_MAP;
 		(*cx) = px / xrat + 1 + COL_MAP;
 	}
@@ -2461,7 +2462,7 @@ void forget_lite(void)
  */
 
 #define cave_lite_hack(Y,X) \
-    if(in_bounds2(Y,X)){\
+    if (in_bounds2(Y,X)){\
     area(Y,X)->info |= (CAVE_LITE); \
     lite_y[lite_n] = (Y); \
     lite_x[lite_n] = (X); \
@@ -2686,7 +2687,7 @@ void update_lite(void)
 		
 
 		/* Bounds Checking */
-		if(dun_level)
+		if (dun_level)
 		{
 			/* Inside Dungeon */
 			if (min_y < 0) min_y = 0;
@@ -3116,7 +3117,7 @@ void update_view(void)
 		y = view_y[n];
 		x = view_x[n];
 
-		if(!in_bounds2(y,x)) continue;
+		if (!in_bounds2(y, x)) continue;
 		
 		/* Access the grid */
 		c_ptr = area(y,x);

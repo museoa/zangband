@@ -3599,7 +3599,7 @@ static void do_cmd_knowledge_quests(void)
 		}
 	}
 
-	/* Print the current random quest  */
+	/* Print the current random quest */
 	fprintf(fff, rand_tmp_str);
 
 	/* Close the file */
@@ -3612,11 +3612,13 @@ static void do_cmd_knowledge_quests(void)
 	fd_kill(file_name);
 }
 
-/* Print notes file */
 
+/*
+ * Print notes file
+ */
 void do_cmd_knowledge_notes(void)
 {
-        char fname[80];
+	char fname[80];
 
 	strcpy(fname, notes_file());
 
@@ -3656,7 +3658,7 @@ void do_cmd_knowledge(void)
 		prt("(7) Display current quests", 10, 5);
 		prt("(8) Display virtues", 11, 5);
 		if (take_notes)
-		  prt("(9) Display notes", 12, 5);
+			prt("(9) Display notes", 12, 5);
 
 		/* Prompt */
 		prt("Command: ", 14, 0);
@@ -3694,12 +3696,11 @@ void do_cmd_knowledge(void)
 			do_cmd_knowledge_virtues();
 			break;
 		case '9': /* Notes */
-		        if (take_notes)
-                          do_cmd_knowledge_notes();
+			if (take_notes)
+				do_cmd_knowledge_notes();
 			else
-			  bell();
+				bell();
 			break;
-
 		default: /* Unknown option */
 			bell();
 		}

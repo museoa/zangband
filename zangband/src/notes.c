@@ -80,7 +80,7 @@ void add_note(char *note, char code)
 	strcpy(buf, "");
 	strncpy(buf, note, 60);
 
-	/* Get depth  */
+	/* Get depth */
  
 	if (!dun_level)
 	{

@@ -5937,7 +5937,7 @@ option_type option_info[] =
 	{ &stack_allow_wands,           TRUE, 1, 1, 3,
 	"stack_allow_wands",            "Allow wands/staffs/rods to stack" },
 
-        { &auto_destroy,                FALSE, 1, 5, 3,
+	{ &auto_destroy,                FALSE, 1, 5, 3,
 	"auto_destroy",                 "No query to destroy known worthless items" },
 
 	{ &wear_confirm,                FALSE, 1, 5, 4,
@@ -5945,6 +5945,7 @@ option_type option_info[] =
 
 	{ &confirm_stairs,              FALSE, 1, 5, 5,
 	"confirm_stairs",               "Prompt before exiting a dungeon level" },
+
 	{ &expand_look,                 TRUE, 1, 1, 4,
 	"expand_look",                  "Expand the power of the look command" },
 
@@ -5964,7 +5965,7 @@ option_type option_info[] =
 	{ &auto_haggle,                 TRUE, 1, 1, 0,
 	"auto_haggle",                  "Auto-haggle in stores" },
 	
-	#ifdef ALLOW_EASY_FLOOR /* TNB */
+#ifdef ALLOW_EASY_FLOOR /* TNB */
 	{ &easy_floor,                  FALSE, 1, 5, 9,
 	"easy_floor",                   "Display floor stacks in a list" },
 #endif /* ALLOW_EASY_FLOOR -- TNB */
@@ -6002,7 +6003,7 @@ option_type option_info[] =
 	{ &disturb_minor,               TRUE, 2, 0, 24,
 	"disturb_minor",                "Disturb whenever boring things happen" },
 
-        { &disturb_other,               TRUE, 2, 0, 25,
+	{ &disturb_other,               TRUE, 2, 0, 25,
 	"disturb_other",                "Disturb whenever random things happen" },
 
 	{ &alert_failure,               FALSE, 2, 0, 27,
@@ -6029,7 +6030,7 @@ option_type option_info[] =
 	{ &dungeon_stair,               TRUE, 3, 1, 9,
 	"dungeon_stair",                "Generate dungeons with connected stairs" },
 
-        { &last_words,                  TRUE, 3, 0, 28,
+	{ &last_words,                  TRUE, 3, 0, 28,
 	"last_words",                   "Get last words when the character dies" },
 
 	{ &speak_unique,                TRUE, 3, 0, 29,
@@ -6047,12 +6048,11 @@ option_type option_info[] =
 	{ &testing_carry,               TRUE, 3, 7, 31,
 	"testing_carry",                "Allow monsters to carry objects" },
 
-        { &take_notes,                  FALSE, 3, 7, 28,
-           "take_notes",                "Allow notes to be appended to a file" },
+	{ &take_notes,                  FALSE, 3, 7, 28,
+	"take_notes",                   "Allow notes to be appended to a file" },
 
-        { &auto_notes,                  FALSE, 3, 7, 27,
-           "auto_notes",                 "Automatically note important events" },
-
+	{ &auto_notes,                  FALSE, 3, 7, 27,
+	"auto_notes",                   "Automatically note important events" },
 
 
 	/*** Efficiency ***/
@@ -6090,12 +6090,13 @@ option_type option_info[] =
 	{ &compress_savefile,           TRUE, 4, 1, 26,
 	"compress_savefile",            "Compress messages in savefiles" },
 	
+
 	/*** Display Options ***/
 
 	{ &depth_in_feet,               FALSE, 5, 0, 7,
 	"depth_in_feet",                "Show dungeon level in feet" },
 
-        { &show_labels,                 TRUE, 5, 0, 10,
+	{ &show_labels,                 TRUE, 5, 0, 10,
 	"show_labels",                  "Show labels in object listings" },
 
 	{ &show_weights,                TRUE, 5, 0, 11,
@@ -6119,8 +6120,6 @@ option_type option_info[] =
 	{ &view_special_lite,           FALSE, 5, 1, 31,
 	"view_special_lite",            "Use special colors for floor grids (slow)" },
 
-
-
 	{ &hilite_player,               TRUE, 5, 1, 27,
 	"hilite_player",                "Hilite the player with the cursor" },
 	
@@ -6130,10 +6129,12 @@ option_type option_info[] =
 	{ &avoid_center,                FALSE, 5, 5, 12,
 	"avoid_center",                 "Avoid centering while running" },
 
-	/* Birth options */
+
+	/*** Birth options ***/
 	
 	{ &vanilla_town,                FALSE, 6, 6, 0,
 	"vanilla_town",                 "Use 'vanilla' town without quests and wilderness" },
+
 	{ &stupid_monsters,             FALSE, 6, 5, 2,
 	"stupid_monsters",              "Monsters behave stupidly" },
 	
@@ -6176,11 +6177,11 @@ option_type option_info[] =
 	{ &autoroller,                  TRUE, 6, 6, 15,
 	"autoroller",                   "Specify 'minimal' stats" },
 
-       	{ &point_based,                 FALSE, 6, 6, 16,
-	  "point_based",                 "Generate character using a point system" },
+	{ &point_based,                 FALSE, 6, 6, 16,
+	"point_based",                 "Generate character using a point system" },
 
 
-        /*** Artificial Intelligence Options ***/
+	/*** Artificial Intelligence Options ***/
 
 	{ &flow_by_sound,               TRUE, 7, 1, 10,
 	"flow_by_sound",                "Monsters chase current location (v.slow)" },
@@ -6194,10 +6195,12 @@ option_type option_info[] =
 	{ &smart_cheat,                 FALSE, 7, 1, 15,
 	"smart_cheat",                  "Monsters exploit players weaknesses" },
 
+
 	/*** Testing options ***/
 
 	{ &destroy_worthless,           FALSE, 8, 7, 0,
 	"destroy_worthless",            "Auto-destroy known worthless items" },
+
 
 	/*** End of Table ***/
 

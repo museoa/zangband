@@ -900,7 +900,7 @@ static errr Term_user_dos(int n)
 				break;
 			}
 
-#endif /*USE_SOUND */
+#endif /* USE_SOUND */
 
 #ifdef USE_GRAPHICS
 

@@ -799,7 +799,7 @@ static bool set_tunnel(int *x, int *y, bool affectwall)
 
 		if (i == 0)
 		{
-			/* Failed for some reason: hack - ignore the solidness*/
+			/* Failed for some reason: hack - ignore the solidness */
 			cave[*y][*x].feat = FEAT_WALL_OUTER;
 			dx = 0;
 			dy = 0;
@@ -1016,7 +1016,7 @@ bool build_tunnel2(int x1, int y1, int x2, int y2, int type, int cutoff)
 		x3 = x1 + dx + changex;
 		y3 = y1 + dy + changey;
 
-		/* See if in bounds - if not - do not perturb point*/
+		/* See if in bounds - if not - do not perturb point */
 		if (!in_bounds(y3, x3))
 		{
 			x3 = (x1 + x2) / 2;
@@ -1046,7 +1046,7 @@ bool build_tunnel2(int x1, int y1, int x2, int y2, int type, int cutoff)
 
 			if (i == 0)
 			{
-				/* Failed for some reason: hack - ignore the solidness*/
+				/* Failed for some reason: hack - ignore the solidness */
 				cave[y3][x3].feat = FEAT_WALL_OUTER;
 				dx = 0;
 				dy = 0;

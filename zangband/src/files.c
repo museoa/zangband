@@ -1354,6 +1354,7 @@ static void display_player_abilities(void)
 
 
 	put_str("Blows/Round :", 16, COL_SKILLS3);
+
 	if (!muta_att)
 		put_str(format("%d", p_ptr->num_blow), 16, COL_SKILLS3 + WID_SKILLS);
 	else
@@ -1371,16 +1372,17 @@ static void display_player_abilities(void)
 		avgdam = (100 - deadliness_conversion[ABS(dambonus)]);
 	else
 		avgdam = 0;
+
 	/* Effect of damage dice x2 */
 	avgdam *= damdice * (damsides + 1);
 
 	/* number of blows */
 	avgdam *= blows;
 
-	/*rescale*/
+	/* Rescale */
 	avgdam /= 200;
 
-	/* see if have a weapon with extra power*/
+	/* See if have a weapon with extra power */
 	if (o_ptr->k_idx)
 	{
 		/* Is there a vorpal effect we know about? */
@@ -4561,8 +4563,8 @@ void close_game(void)
 			{
 				add_note_type(NOTE_WINNER);
 			}
-		
-		kingly();
+
+			kingly();
 		}
 
 		/* Save memories */
@@ -4580,18 +4582,17 @@ void close_game(void)
 			char long_day[30];
 			char buf[80];
 			time_t ct = time((time_t*)NULL);
-			
+
 			/* Get the date */
 			strftime(long_day, 30, 
 				"%Y-%m-%d at %H:%M:%S", localtime(&ct));
-			
+
 			/* Create string */
 			sprintf(buf, "\n%s was killed by %s on %s\n", player_name,
 				 died_from, long_day);
-			
+
 			/* Output to the notes file */
 			output_note(buf);
-
 		}
 
 		print_tomb();
@@ -4609,11 +4610,11 @@ void close_game(void)
 		/* Save the game */
 		do_cmd_save_game(FALSE);
                 
-                /* If note-taking enabled, write session end to notes file */
-                if (take_notes)
+		/* If note-taking enabled, write session end to notes file */
+		if (take_notes)
 		{
 			add_note_type(NOTE_SAVE_GAME);
-                }
+		}
 
 		/* Prompt for scores XXX XXX XXX */
 		prt("Press Return (or Escape).", 0, 40);

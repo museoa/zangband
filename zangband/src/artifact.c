@@ -1770,7 +1770,7 @@ bool activate_random_artifact(object_type * o_ptr)
 				{
 					y = py + ddy[dir];
 					x = px + ddx[dir];
-					c_ptr = area(y,x);
+					c_ptr = area(y, x);
 
 					/* Get the monster */
 					m_ptr = &m_list[c_ptr->m_idx];
