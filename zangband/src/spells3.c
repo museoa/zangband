@@ -2529,7 +2529,7 @@ bool recharge(int power)
 				}
 				else if (o_ptr->tval == TV_WAND)
 				{
-					msgf("You save your %v from destruction, but all charges are lost.",
+					msgf("You save your %s from destruction, but all charges are lost.",
 						 o_name);
 					o_ptr->ac += o_ptr->pval;
 					o_ptr->pval = 0;
