@@ -226,7 +226,7 @@ void any_more(cptr prompt)
 
 	/* Display the message, wait for a response */
 	msg_print(prompt);
-	message_flush();
+	msg_print(NULL);
 
 	/* Restore quick_messages */
 	quick_messages = old_quick;

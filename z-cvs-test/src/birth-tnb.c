@@ -1014,7 +1014,7 @@ static void get_extra(void)
 			((PY_MAX_LEVEL - 1) * (p_ptr->hitdie + 1))));
 
 	msg_format("Current Life Rating is %d/100.", percent);
-	message_flush();
+	msg_print(NULL);
 
 #endif /* SHOW_LIFE_RATE */
 }

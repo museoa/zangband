@@ -18,11 +18,6 @@
 #endif /* */
 
 
-#ifndef PY_MAX_SPELLS
-#define PY_MAX_SPELLS 64
-#endif
-#define message_flush() msg_print(NULL)
-
 #define PU_MAP_INFO 0x04000000L	/* Update g_grid[] */
 
 /* cmd4.c */
