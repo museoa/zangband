@@ -22,41 +22,11 @@
 
 
 /*
- * Acquires and returns the index of a "free" quest.
- *
- * This routine should almost never fail, but in case it does,
- * we must be sure to handle "failure" of this routine.
- */
-u16b q_pop(void)
-{
-	int i;
-
-	/* Initial allocation */
-	if (q_max < z_info->q_max)
-	{
-		/* Get next space */
-		i = q_max;
-
-		/* Count quests */
-		q_max++;
-
-		/* Use this quest */
-		return (i);
-	}
-
-	/* Warn the player */
-	msgf("Too many quests!");
-
-	/* Oops */
-	return (0);
-}
-
-/*
  * Wipe a quest
  */
-static void quest_wipe(int q_idx)
+static void quest_wipe(int i)
 {
-	quest_type *q_ptr = &quest[q_idx];
+	quest_type *q_ptr = &quest[i];
 
 	q_ptr->status = QUEST_STATUS_UNTAKEN;
 	q_ptr->flags = 0x00;
@@ -88,72 +58,63 @@ static void quest_wipe(int q_idx)
 	 */
 }
 
-/* The quest list will be dynamic soon... */
-#if 0
+/* Current location in scan for completed quests */
+static s16b q_cnt = 0;
 
 /*
- * Copy a quest from one slot to another
+ * Acquires and returns the index of a "free" quest.
+ *
+ * This routine should almost never fail, but in case it does,
+ * we must be sure to handle "failure" of this routine.
  */
-static void quest_copy(int src, int dst)
-{
-	/* Copy the structure */
-	COPY(&quest[src], &quest[dst], quest_type);
-
-	/* Insert other needed copy code here - ie fixing info / item array */
-}
-
-
-/*
- * Remove a quest from the list
- */
-static void quest_remove(int q_idx)
+u16b q_pop(void)
 {
 	int i;
-
-	/* Paranoia */
-	if ((q_idx < 0) || (q_idx >= q_max)) return;
-
-	/* Shift quests down */
-	for (i = q_idx + 1; i < q_max; i++)
+	
+	/* Initial allocation */
+	if (q_max < z_info->q_max)
 	{
-		quest_copy(i, i - 1);
+		/* Get next space */
+		i = q_max;
+
+		/* Count quests */
+		q_max++;
+		
+		/* Use this quest */
+		return (i);
+	}
+	
+	/* Recycle finished quests */
+	for (i = 1; i < q_max; i++)
+	{
+		quest_type *q_ptr;
+		
+		/* Make sure we have a linear algorithm */
+		q_cnt++;
+		
+		/* loop back to start */
+		if (q_cnt >= q_max) q_cnt = 0;
+
+		/* Acquire quest */
+		q_ptr = &quest[q_cnt];
+
+		/* Skip live quests */
+		if (q_ptr->status != QUEST_STATUS_FINISHED) continue;
+		
+		/* Clear the old data */
+		quest_wipe(q_cnt);
+
+		/* Use this field */
+		return (q_cnt);
 	}
 
-	/* Paranoia */
-	if (!q_max) return;
+	/* Warn the player */
+	msgf("Too many quests!");
 
-	/* Wipe empty slot */
-	quest_wipe(q_max);
-
-	/* Decrease total number of quests */
-	q_max--;
+	/* Oops */
+	return (0);
 }
 
-
-/*
- * Clean the list of quests, removing 'completed' ones
- */
-static void prune_quests(void)
-{
-	int i;
-
-	quest_type *q_ptr;
-
-	for (i = 0; i < q_max; i++)
-	{
-		q_ptr = &quest[i];
-
-		/*
-		 * Remove 'completed' quests.
-		 */
-		if (q_ptr->status == QUEST_STATUS_COMPLETED)
-		{
-			quest_remove(i);
-		}
-	}
-}
-
-#endif /* 0 */
 
 /*
  * Make a quest for killing n monsters of a certain type on a certain level
@@ -331,111 +292,6 @@ static cptr describe_quest_location(cptr * dirn, int x, int y)
 }
 
 
-static void insert_artifact_quest(u16b a_idx)
-{
-	artifact_type *a_ptr = &a_info[a_idx];
-	
-	quest_type *q_ptr;
-
-	int q_num;
-	
-	/* Skip "empty" artifacts */
-	if (!a_ptr->name) return;
-		
-	/* Cannot make an artifact twice */
-	if (a_ptr->cur_num) return;
-
-	/* No quest items */
-	if (TR_FLAG(a_ptr->flags, 2, QUESTITEM)) return;
-	
-	/* get a new quest */
-	q_num = q_pop();
-
-	/* Paranoia */
-	if (!q_num) return;
-
-	q_ptr = &quest[q_num];
-
-	/* Store in information */
-	q_ptr->type = QUEST_TYPE_FIND_ITEM;
-
-	/* We need to place the artifact in the dungeon */
-	q_ptr->c_type = QC_DUN_ARTIFACT;
-	
-	/* Finished when the player identifies it */
-	q_ptr->x_type = QX_KNOW_ARTIFACT;
-	
-	/* XXX XXX Create quest name */
-	(void)strnfmt(q_ptr->name, 60, "Find the relic %s.", a_name + a_ptr->name);
-	
-	/* Find an available dungeon to place it in */
-	
-	/* Save the quest data */
-	q_ptr->data.fit.a_idx = a_idx;
-	q_ptr->data.fit.place = find_good_dungeon(a_ptr->level);
-	
-	/* Artifact is now a quest item */
-	SET_FLAG(a_ptr->flags, 2, TR2_QUESTITEM);
-}
-
-
-static quest_type *insert_bounty_quest(u16b r_idx, u16b num)
-{
-	quest_type *q_ptr;
-
-	int q_num;
-	
-	monster_race *r_ptr = &r_info[r_idx];
-	
-	/* get a new quest */
-	q_num = q_pop();
-
-	/* Paranoia */
-	if (!q_num) return (NULL);
-
-	q_ptr = &quest[q_num];
-
-	/* Bounty quest */
-	q_ptr->type = QUEST_TYPE_BOUNTY;
-	
-	if (num != 1)
-	{
-		char buf[80];
-		strcpy(buf, r_name + r_ptr->name);
-		plural_aux(buf);
-
-		/* XXX XXX Create quest name */
-		(void)strnfmt(q_ptr->name, 60, "Kill %d %s.", (int)num, buf);
-	}
-	else
-	{
-		/* XXX XXX Create quest name */
-		(void)strnfmt(q_ptr->name, 60, "Kill %s.", r_name + r_ptr->name);
-	}
-	
-	/* No need to specially create anything */
-	q_ptr->c_type = QC_NONE;
-
-	/* We need to trigger when the monsters are killed */
-	if (RF_FLAG(r_ptr->flags, 0, UNIQUE))
-	{
-		q_ptr->x_type = QX_KILL_UNIQUE;
-	}
-	else
-	{
-		q_ptr->x_type = QX_KILL_MONST;
-	}
-	
-	/* Save the quest data */
-	q_ptr->data.bnt.r_idx = r_idx;
-	q_ptr->data.bnt.cur_num = 0;
-	q_ptr->data.bnt.max_num = num;
-
-	/* Done */
-	return (q_ptr);
-}
-
-
 /*
  * Initialise the quests
  */
@@ -458,31 +314,6 @@ errr init_quests(void)
 	return (0);
 }
 
-
-#if 0
-static bool monster_quest(int r_idx)
-{
-	monster_race *r_ptr = &r_info[r_idx];
-
-	/* Random quests are in the dungeon */
-	if (!(RF_FLAG(r_ptr->flags, 7, DUNGEON))) return FALSE;
-
-	/* No random quests for aquatic monsters */
-	if (RF_FLAG(r_ptr->flags, 6, AQUATIC)) return FALSE;
-
-	/* No random quests for multiplying monsters */
-	if (RF_FLAG(r_ptr->flags, 1, MULTIPLY)) return FALSE;
-
-	/* No quests to kill friendly monsters */
-	if (RF_FLAG(r_ptr->flags, 6, FRIENDLY)) return FALSE;
-	
-	/* Only "hard" monsters for quests */
-	if (TEST_FLAG(r_ptr->flags, 0, RF0_NEVER_MOVE | RF0_FRIENDS)) return FALSE;
-
-	return TRUE;
-}
-
-#endif /* 0 */
 
 
 /*
@@ -509,13 +340,6 @@ void init_player_quests(void)
 
 	/* Hack XXX XXX Serpent, hard coded */
 	insert_winner_quest(QW_SERPENT, 1, 100);
-	
-	/* Insert some artifact quests */
-	for (i = 0; i < z_info->a_max / 2; i++)
-	{
-		/* Pick a random artifact to add to the list */
-		insert_artifact_quest(randint1(z_info->a_max));
-	}
 }
 
 
@@ -844,7 +668,7 @@ static void display_monster_quest(quest_type *q_ptr)
 	if ((RF_FLAG(r_ptr->flags, 0, UNIQUE)) &&
 		(r_ptr->cur_num >= r_ptr->max_num))
 	{
-		/* The unique is already dead */
+		/* Hack - the unique is already dead */
 		q_ptr->status = QUEST_STATUS_FINISHED;
 	}
 	else
@@ -1052,7 +876,7 @@ void trigger_quest_complete(byte x_type, vptr data)
 					}
 
 					/* Complete the quest */
-					q_ptr->status = QUEST_STATUS_FINISHED;
+					q_ptr->status = QUEST_STATUS_COMPLETED;
 
 					/* Mega-hack */
 					create_stairs(m_ptr->fx, m_ptr->fy);
@@ -1067,7 +891,7 @@ void trigger_quest_complete(byte x_type, vptr data)
 				if (q_ptr != data) continue;
 
 				/* Complete the quest */
-				q_ptr->status = QUEST_STATUS_FINISHED;
+				q_ptr->status = QUEST_STATUS_COMPLETED;
 
 				break;
 			}
@@ -1077,7 +901,7 @@ void trigger_quest_complete(byte x_type, vptr data)
 				if (*((int *) data) == q_ptr->data.fit.a_idx)
 				{
 					/* Complete the quest */
-					q_ptr->status = QUEST_STATUS_FINISHED;
+					q_ptr->status = QUEST_STATUS_COMPLETED;
 				}
 			}
 		}
@@ -1134,13 +958,16 @@ void reward_quest(quest_type *q_ptr)
 	{
 		case QUEST_TYPE_FIND_ITEM:
 		{
-			if (q_ptr->status == QUEST_STATUS_FINISHED)
+			if (q_ptr->status == QUEST_STATUS_COMPLETED)
 			{
 				msgf("You can keep it if you like.");
 				
 				/* Allow another quest to be selected */
 				q_ptr->place = 0;
 				q_ptr->shop = 0;
+				
+				/* Allow this quest to be deleted if needed */
+				q_ptr->status = QUEST_STATUS_FINISHED;
 			}
 			else
 			{
@@ -1193,10 +1020,66 @@ static void set_quest_giver(quest_type *q_ptr)
 	q_ptr->shop = GET_ARRAY_INDEX(pl_ptr->store, curr_build);
 }
 
-static bool request_find_item(int dummy)
+
+static quest_type *insert_artifact_quest(u16b a_idx)
 {
-	int i;
+	artifact_type *a_ptr = &a_info[a_idx];
 	
+	quest_type *q_ptr;
+
+	int q_num;
+	
+	/* Skip "empty" artifacts */
+	if (!a_ptr->name) return (NULL);
+		
+	/* Cannot make an artifact twice */
+	if (a_ptr->cur_num) return (NULL);
+
+	/* No quest items */
+	if (TR_FLAG(a_ptr->flags, 2, QUESTITEM)) return (NULL);
+	
+	/* get a new quest */
+	q_num = q_pop();
+
+	/* Paranoia */
+	if (!q_num) return (NULL);
+
+	q_ptr = &quest[q_num];
+
+	/* Store in information */
+	q_ptr->type = QUEST_TYPE_FIND_ITEM;
+	
+	/* We have taken the quest */
+	q_ptr->status = QUEST_STATUS_TAKEN;
+
+	/* We need to place the artifact in the dungeon */
+	q_ptr->c_type = QC_DUN_ARTIFACT;
+	
+	/* Finished when the player identifies it */
+	q_ptr->x_type = QX_KNOW_ARTIFACT;
+	
+	/* XXX XXX Create quest name */
+	(void)strnfmt(q_ptr->name, 60, "Find the relic %s.", a_name + a_ptr->name);
+	
+	/* Find an available dungeon to place it in */
+	
+	/* Save the quest data */
+	q_ptr->data.fit.a_idx = a_idx;
+	q_ptr->data.fit.place = find_good_dungeon(a_ptr->level);
+	
+	/* Artifact is now a quest item */
+	SET_FLAG(a_ptr->flags, 2, TR2_QUESTITEM);
+	
+	/* Done */
+	return (q_ptr);
+}
+
+
+static bool bad_item_quest = FALSE;
+static const store_type *bad_item_quest_giver = NULL;
+
+static bool request_find_item(int dummy)
+{	
 	quest_type *q_ptr;
 	place_type *pl_ptr;
 
@@ -1204,60 +1087,219 @@ static bool request_find_item(int dummy)
 
 	/* Hack - ignore parameter */
 	(void) dummy;
-
-	/* Scan for the first item-search quest on the list */
-	for (i = 0; i < q_max; i++)
+	
+	/* Hack - if we have tried before, break out early */
+	if (bad_item_quest && (bad_item_quest_giver == curr_build))
 	{
-		q_ptr = &quest[i];
+		msgf("I still don't know of any lost relics!");
+	
+		message_flush();
 		
-		if (q_ptr->type == QUEST_TYPE_FIND_ITEM)
-		{
-			if (q_ptr->status != QUEST_STATUS_UNTAKEN) continue;
-			
-			/* Notice the quest */
-			q_ptr->status = QUEST_STATUS_TAKEN;
-			
-			/* Show it on the screen? */
-			
-			/* Where is it? */
-			pl_ptr = &place[q_ptr->data.fit.place];
-			
-			/* Get name of closest town + direction away from it */
-			town_name = describe_quest_location(&town_dir, pl_ptr->x, pl_ptr->y);
-			
-			/* Display a helpful message. */
-			msgf("%s.  I've heard it is hidden %s of %s.",
-				  q_ptr->name, town_dir, town_name);
-				  
-			message_flush();
-			
-			/* Remember who gave us the quest */
-			set_quest_giver(q_ptr);
-			
-			/* Exit */
-			return (TRUE);
-		}
+		/* No available quests. */
+		return (FALSE);
 	}
 	
-	msgf("Sorry, I don't know of any other missing relics to find.");
+	/* Try to find a artifact to quest for */
+	q_ptr = insert_artifact_quest(randint1(z_info->a_max));
 	
+	if (!q_ptr)
+	{
+		msgf("Sorry, I don't know of any missing relics to find right now.");
+	
+		message_flush();
+		
+		bad_item_quest = TRUE;
+		bad_item_quest_giver = curr_build;
+	
+		/* No available quests, unfortunately. */
+		return (FALSE);
+	}
+		
+	/* Show it on the screen? */
+			
+	/* Where is it? */
+	pl_ptr = &place[q_ptr->data.fit.place];
+			
+	/* Get name of closest town + direction away from it */
+	town_name = describe_quest_location(&town_dir, pl_ptr->x, pl_ptr->y);
+			
+	/* Display a helpful message. */
+	msgf("%s.  I've heard it is hidden %s of %s.", q_ptr->name, town_dir, town_name);
+				  
 	message_flush();
+			
+	/* Remember who gave us the quest */
+	set_quest_giver(q_ptr);
+			
+	/* Exit */
+	return (TRUE);
+}
+
+
+static bool monster_quest(const monster_race *r_ptr)
+{
+	/* No bounty quests for multiplying monsters */
+	if (RF_FLAG(r_ptr->flags, 1, MULTIPLY)) return FALSE;
+
+	/* No bounty to kill friendly monsters */
+	if (RF_FLAG(r_ptr->flags, 6, FRIENDLY)) return FALSE;
 	
-	/* XXX XXX No available quests, unfortunately. */
-	return (FALSE);
+	/* Only "hard" monsters for quests */
+	if (TEST_FLAG(r_ptr->flags, 0, RF0_NEVER_MOVE | RF0_FRIENDS)) return FALSE;
+	
+	/* No uniques that are already dead */
+	if (((TEST_FLAG(r_ptr->flags, 0, RF0_UNIQUE))
+		 || (TEST_FLAG(r_ptr->flags, 2, RF2_UNIQUE_7)))
+			&& (r_ptr->cur_num >= r_ptr->max_num))
+		{
+			return FALSE;
+		}
+
+	return TRUE;
+}
+
+
+static quest_type *insert_bounty_quest(u16b r_idx, u16b num)
+{
+	quest_type *q_ptr;
+
+	int q_num;
+	
+	monster_race *r_ptr = &r_info[r_idx];
+	
+	/* get a new quest */
+	q_num = q_pop();
+
+	/* Paranoia */
+	if (!q_num) return (NULL);
+
+	q_ptr = &quest[q_num];
+
+	/* Bounty quest */
+	q_ptr->type = QUEST_TYPE_BOUNTY;
+	
+	/* We have taken the quest */
+	q_ptr->status = QUEST_STATUS_TAKEN;
+	
+	if (num != 1)
+	{
+		char buf[80];
+		strcpy(buf, r_name + r_ptr->name);
+		plural_aux(buf);
+
+		/* XXX XXX Create quest name */
+		(void)strnfmt(q_ptr->name, 60, "Kill %d %s.", (int)num, buf);
+	}
+	else
+	{
+		/* XXX XXX Create quest name */
+		(void)strnfmt(q_ptr->name, 60, "Kill %s.", r_name + r_ptr->name);
+	}
+	
+	/* No need to specially create anything */
+	q_ptr->c_type = QC_NONE;
+
+	/* We need to trigger when the monsters are killed */
+	if (RF_FLAG(r_ptr->flags, 0, UNIQUE))
+	{
+		q_ptr->x_type = QX_KILL_UNIQUE;
+	}
+	else
+	{
+		q_ptr->x_type = QX_KILL_MONST;
+	}
+	
+	/* Save the quest data */
+	q_ptr->data.bnt.r_idx = r_idx;
+	q_ptr->data.bnt.cur_num = 0;
+	q_ptr->data.bnt.max_num = num;
+
+	/* Done */
+	return (q_ptr);
 }
 
 static bool request_bounty(int dummy)
 {
+	int i, num;
+	
+	int best_r_idx = 1;
+	int best_level = 1;
+
+	int r_idx;
+	monster_race *r_ptr;
+	
+	quest_type *q_ptr;
+	
 	/* Hack - ignore parameter */
 	(void) dummy;
+
+	/* Get monster */
+	for (i = 0; i < MAX_TRIES; i++)
+	{
+		/*
+		 * Random monster out of depth
+		 * (depending on level + number of quests)
+		 */
+		r_idx = get_mon_num(p_ptr->max_depth + 6);
+
+		r_ptr = &r_info[r_idx];
+		
+		/* Look at the monster - only "hard" monsters for quests */
+		if (!monster_quest(r_ptr)) continue;
+
+		/* Save the index if the monster is deeper than current monster */
+		if (!best_r_idx || (r_info[r_idx].level > best_level))
+		{
+			best_r_idx = r_idx;
+			best_level = r_info[r_idx].level;
+		}
+
+		/* Accept monsters that are a few levels out of depth */
+		if (best_level > p_ptr->max_depth) break;
+	}
+
+	r_ptr = &r_info[best_r_idx];
+
+	/* Get the number of monsters */
+	if (RF_FLAG(r_ptr->flags, 0, UNIQUE))
+	{
+		num = 1;
+	}
+	else if (RF_FLAG(r_ptr->flags, 2, UNIQUE_7))
+	{
+		num = randint1(r_ptr->max_num - r_ptr->cur_num);
+	}
+	else
+	{
+		num = 5 + randint0(p_ptr->max_depth / 4 + 5) / r_ptr->rarity;
+	}
 	
-	/* XXX XXX XXX Hack - we need dynamic quests, so abort */
-	msgf("Sorry - disabled due to non dynamic quest allocation.");
+	/* Generate the quest */
+	q_ptr = insert_bounty_quest(best_r_idx, num);
+
+	if (!q_ptr)
+	{
+		msgf("Sorry, I don't need any bounties today.");
 	
+		message_flush();
+	
+		/* No available quests, unfortunately. */
+		return (FALSE);
+	}
+		
+	/* Show it on the screen? */
+			
+			
+	/* Display a helpful message. */
+	msgf("My bounty is: %s.", q_ptr->name);
+				  
 	message_flush();
-	
-	return (FALSE);
+			
+	/* Remember who gave us the quest */
+	set_quest_giver(q_ptr);
+			
+	/* Exit */
+	return (TRUE);
 }
 
 
