@@ -1201,7 +1201,7 @@ static cptr ident_info[] =
 	"]:Misc. armor",
 	"^:A trap",
 	"_:A staff",
-	/* "`:unused", */
+	"`:A figurine or statue",
 	"a:Ant",
 	"b:Bat",
 	"c:Centipede",
@@ -1231,7 +1231,7 @@ static cptr ident_info[] =
 	"{:A missile (arrow/bolt/shot)",
 	"|:An edged weapon (sword/dagger/etc)",
 	"}:A launcher (bow/crossbow/sling)",
-	"~:Aquatic monster, tool (or miscellaneous item)",
+	"~:Aquatic monster (or miscellaneous item)",
 	NULL
 };
 
