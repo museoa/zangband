@@ -53,15 +53,15 @@ C:0:X
 ##### Roguelike Keyset Mappings #####
 
 # Run
-A:.
+A:,
 C:1:.
 
 # Stay still
-A:,
+A:.
 C:1:,
 
 # Stay still
-A:,
+A:.
 C:1:5
 
 # Movement
