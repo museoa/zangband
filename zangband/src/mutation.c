@@ -1525,11 +1525,6 @@ void mutation_random_aux(mutation_type *mut_ptr)
 		disturb(FALSE);
 		msg_print("You suddenly feel almost lonely.");
 		banish_monsters(100);
-		if (!p_ptr->depth && p_ptr->town_num)
-		{
-			msg_print("You see one of the shopkeepers running for the hills!");
-			store_shuffle(randint0(town[p_ptr->town_num].numstores));
-		}
 		msg_print(NULL);
 	}
 
