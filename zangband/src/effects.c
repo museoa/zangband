@@ -1942,7 +1942,8 @@ bool set_food(int v)
  */
 bool inc_stat(int stat)
 {
-	int value, gain;
+    int value, gain;
+    int min_gain, max_gain;
 
 	int cap = stat_cap(stat);
 
@@ -1951,37 +1952,19 @@ bool inc_stat(int stat)
 
 	/* Cannot go above limit */
 	if (value < cap)
-	{
-		/* Gain one (sometimes two) points */
-		if (value < 180)
-		{
-			gain = ((randint0(100) < 75) ? 10 : 20);
-			value += gain;
-		}
+    {
+        min_gain = (cap - value) / 6;
+        max_gain = (cap - value) / 3;
 
-		/* Gain 1/6 to 1/3 of distance to limit */
-		else if (value < cap - 2)
-		{
-			/* Approximate gain value */
-			gain = ((cap - value) / 2 + 3) / 2;
+        if (min_gain > 5)  min_gain = 5;
+        if (min_gain < 1)  min_gain = 1;
+        if (max_gain > 20) max_gain = 20;
+        if (max_gain < 1)  max_gain = 1;
 
-			/* Paranoia */
-			if (gain < 1) gain = 1;
+        gain = rand_range(min_gain, max_gain);
+        value += gain;
 
-			/* Apply the bonus */
-			value += randint1(gain) + gain / 2;
-
-			/* Maximal value */
-			if (value > cap - 1) value = cap - 1;
-		}
-
-		/* Gain one point at a time */
-		else
-		{
-			value++;
-		}
-
-		/* Save the new value */
+        /* Save the new value */
 		p_ptr->stat_cur[stat] = value;
 
 		/* Bring up the maximum too */
