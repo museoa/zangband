@@ -142,3 +142,43 @@ function werewindle()
 	end
 end
 
+function restore_all_stats()
+	do_res_stat(A_STR)
+	do_res_stat(A_INT)
+	do_res_stat(A_WIS)
+	do_res_stat(A_DEX)
+	do_res_stat(A_CON)
+	do_res_stat(A_CHR)
+end
+
+function summon_controlled(specific)
+	summon_specific(-1, player.px, player.py, plev, specific, TRUE, TRUE, TRUE)
+end
+
+function summon_unsafe(specific)
+	if one_in_(3) then
+		if summon_specific(0, player.px, player.py, plev * 3 / 2, specific, TRUE, FALSE, FALSE) then
+			if specific == SUMMON_UNDEAD or specific == SUMMON_HI_UNDEAD then
+				msgf("The dead arise... to punish you for disturbing them!")
+			elseif specific == SUMMON_DEMON then
+				msgf("'NON SERVIAM! Wretch! I shall feast on thy mortal soul!'")
+			else
+				msgf("You fail to control it!")
+			end
+		end
+	else
+		summon_specific(-1, player.px, player.py, plev * 3 / 2, specific, TRUE, FALSE, TRUE)
+	end
+end
+
+function rand_range2(i)
+	return rand_range(i, i * 2)
+end
+
+function inc_oppose_all(turns)
+	inc_oppose_acid(turns)
+	inc_oppose_elec(turns)
+	inc_oppose_fire(turns)
+	inc_oppose_cold(turns)
+	inc_oppose_pois(turns)
+end

@@ -1940,3 +1940,21 @@ struct menu_type
 
 	byte flags;					/* Flags controling option behaviour */
 };
+
+
+/*
+ * An activation for random artifacts
+ */
+typedef struct randart_activation randart_activation;
+
+struct randart_activation
+{
+	cptr text;
+	cptr desc;
+	cptr effect;
+	int freq;
+	bool aimed;
+	int pp;
+	int dice;
+	int bonus;
+};
