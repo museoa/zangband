@@ -269,18 +269,18 @@ F:RAND_25 | WILD_TOWN | WILD_ONLY
 F:TAKE_ITEM | OPEN_DOOR
 D:You feel it isn't safe to touch him.
 
-N:14:Juvenile Thief
+N:14:Agent of black market
 G:t:D
 I:110:2d8:10:8:99
 W:0:1:0:0
 B:HIT:HURT:1d6
-B:TOUCH:EAT_GOLD
+B:TOUCH:EAT_ITEM
 F:MALE | DROP_CORPSE | DROP_SKELETON
 F:DROP_60 | WILD_TOWN |
 F:WILD_SWAMP | WILD_WOOD | WILD_GRASS | WILD_MOUNTAIN | WILD_ONLY
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR |
 F:EVIL
-D:This town kid doesn't really have a handle on stealing yet. 
+D:He 'finds' new wares for the Black Market. From unwary adventurers... 
 
 N:15:Singing, happy drunk
 G:t:y
