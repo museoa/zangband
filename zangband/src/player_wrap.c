@@ -1446,20 +1446,6 @@ static PyObject *_wrap_player_type_stat_max_get(PyObject *self, PyObject *args) 
     return _resultobj;
 }
 
-#define player_type_stat_cur_get(_swigobj) ((s16b *) _swigobj->stat_cur)
-static PyObject *_wrap_player_type_stat_cur_get(PyObject *self, PyObject *args) {
-    PyObject  *_resultobj,*_argo0=0;
-    s16b  *_result;
-    player_type  *_arg0;
-    self = self;
-    if(!PyArg_ParseTuple(args,"O:player_type_stat_cur_get",&_argo0)) 
-        return NULL;
-    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
-    _result = (s16b *)player_type_stat_cur_get(_arg0);
-    _resultobj = SWIG_NewPointerObj((void *) _result, SWIGTYPE_s16b_p);
-    return _resultobj;
-}
-
 #define player_type_fast_set(_swigobj,_swigval) (_swigobj->fast = _swigval,_swigval)
 static PyObject *_wrap_player_type_fast_set(PyObject *self, PyObject *args) {
     PyObject  *_resultobj,*_argo0=0;
@@ -5765,6 +5751,22 @@ static PyObject *_wrap_player_type_history_get(PyObject *self, PyObject *args) {
     return _resultobj;
 }
 
+static int  player_type_stat_cur_get(player_type *self,int  index) {
+		return p_ptr->stat_cur[index];
+	}
+static PyObject *_wrap_player_type_stat_cur_get(PyObject *self, PyObject *args) {
+    int  _result,_arg1;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_stat_cur_get",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (int )player_type_stat_cur_get(_arg0,_arg1);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
 static object_type * player_type_inventory(player_type *self,int  index) {
 		return &inventory[index];
 	}
@@ -6070,6 +6072,57 @@ static PyObject *_wrap_player_type_alter_reality(PyObject *self, PyObject *args)
     return _resultobj;
 }
 
+static bool  player_type_set_afraid(player_type *self,int  v) {
+		return set_afraid(v);
+	}
+static PyObject *_wrap_player_type_set_afraid(PyObject *self, PyObject *args) {
+    int  _arg1;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_set_afraid",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_set_afraid(_arg0,_arg1);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
+static bool  player_type_set_shero(player_type *self,int  v) {
+		return set_shero(v);
+	}
+static PyObject *_wrap_player_type_set_shero(PyObject *self, PyObject *args) {
+    int  _arg1;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_set_shero",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_set_shero(_arg0,_arg1);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
+static bool  player_type_hp_player(player_type *self,int  num) {
+		return hp_player(num);
+	}
+static PyObject *_wrap_player_type_hp_player(PyObject *self, PyObject *args) {
+    int  _arg1;
+    PyObject  *_resultobj,*_argo0=0;
+    player_type  *_arg0;
+    bool  _result;
+    self = self;
+    if(!PyArg_ParseTuple(args,"Oi:player_type_hp_player",&_argo0,&_arg1)) 
+        return NULL;
+    if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_player_type_p,1)) == -1) return NULL;
+    _result = (bool )player_type_hp_player(_arg0,_arg1);
+    _resultobj = Py_BuildValue("i",_result);
+    return _resultobj;
+}
+
 static void  player_type_gain_exp(player_type *self,s32b  amount) {
 		gain_exp(amount);
 	}
@@ -6089,6 +6142,9 @@ static PyObject *_wrap_player_type_gain_exp(PyObject *self, PyObject *args) {
 
 static PyMethodDef playercMethods[] = {
 	 { "player_type_gain_exp", _wrap_player_type_gain_exp, METH_VARARGS },
+	 { "player_type_hp_player", _wrap_player_type_hp_player, METH_VARARGS },
+	 { "player_type_set_shero", _wrap_player_type_set_shero, METH_VARARGS },
+	 { "player_type_set_afraid", _wrap_player_type_set_afraid, METH_VARARGS },
 	 { "player_type_alter_reality", _wrap_player_type_alter_reality, METH_VARARGS },
 	 { "player_type_fetch", _wrap_player_type_fetch, METH_VARARGS },
 	 { "player_type_call_the_void", _wrap_player_type_call_the_void, METH_VARARGS },
@@ -6107,6 +6163,7 @@ static PyMethodDef playercMethods[] = {
 	 { "player_type_inven_item_optimize", _wrap_player_type_inven_item_optimize, METH_VARARGS },
 	 { "player_type_inven_item_increase", _wrap_player_type_inven_item_increase, METH_VARARGS },
 	 { "player_type_inventory", _wrap_player_type_inventory, METH_VARARGS },
+	 { "player_type_stat_cur_get", _wrap_player_type_stat_cur_get, METH_VARARGS },
 	 { "player_type_history_get", _wrap_player_type_history_get, METH_VARARGS },
 	 { "player_type_history_set", _wrap_player_type_history_set, METH_VARARGS },
 	 { "player_type_died_from_get", _wrap_player_type_died_from_get, METH_VARARGS },
@@ -6401,7 +6458,6 @@ static PyMethodDef playercMethods[] = {
 	 { "player_type_slow_set", _wrap_player_type_slow_set, METH_VARARGS },
 	 { "player_type_fast_get", _wrap_player_type_fast_get, METH_VARARGS },
 	 { "player_type_fast_set", _wrap_player_type_fast_set, METH_VARARGS },
-	 { "player_type_stat_cur_get", _wrap_player_type_stat_cur_get, METH_VARARGS },
 	 { "player_type_stat_max_get", _wrap_player_type_stat_max_get, METH_VARARGS },
 	 { "player_type_max_dlv_get", _wrap_player_type_max_dlv_get, METH_VARARGS },
 	 { "player_type_max_dlv_set", _wrap_player_type_max_dlv_set, METH_VARARGS },
