@@ -2715,8 +2715,8 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 		if (panel_contains(ny, nx) && player_can_see_bold(ny, nx))
 		{
 			int p = bolt_pict(y, x, ny, nx, GF_ARROW);
-			int c = PICT_C(p);
-			int a = object_attr(q_ptr);
+			char c = PICT_C(p);
+			byte a = object_attr(q_ptr);
 
 			/* Draw, Hilite, Fresh, Pause, Erase */
 			print_rel(c, a, ny, nx);
@@ -3038,8 +3038,8 @@ void do_cmd_throw_aux(int mult)
 		if (panel_contains(ny, nx) && player_can_see_bold(ny, nx))
 		{
 			int p = bolt_pict(y, x, ny, nx, GF_ARROW);
-			int c = PICT_C(p);
-			int a = object_attr(q_ptr);
+			char c = PICT_C(p);
+			byte a = object_attr(q_ptr);
 
 			/* Draw, Hilite, Fresh, Pause, Erase */
 			print_rel(c, a, ny, nx);
