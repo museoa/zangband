@@ -2258,7 +2258,7 @@ static int borg_attack_dragon(void)
 		list_item *l_ptr = look_up_equip_slot(EQUIP_BODY);
 
 		/* Skip incorrect armours */
-		if (l_ptr || l_ptr->tval != TV_DRAG_ARMOR) return (0);
+		if (!l_ptr || l_ptr->tval != TV_DRAG_ARMOR) return (0);
 
 		/* Make Sure Mail is IDed */
 		if (!borg_obj_known_p(l_ptr)) return (0);
