@@ -3162,9 +3162,6 @@ static void cave_temp_room_aux(int y, int x)
 	/* Avoid infinite recursion */
 	if (c_ptr->info & (CAVE_TEMP)) return;
 
-	/* Verify */
-	if (!in_bounds(y, x)) return;
-
 	/* Do not exceed the maximum spell range */
 	if (distance(py, px, y, x) > MAX_RANGE) return;
 
@@ -3172,9 +3169,13 @@ static void cave_temp_room_aux(int y, int x)
 	/* Do not "leave" the current room */
 	if (!(c_ptr->info & (CAVE_ROOM))) return;
 #endif
-
-	/* Verify this grid */
-	if ((next_to_walls_adj(y, x) > 5) && (next_to_open(y, x) <= 1)) return;
+	
+	/* Verify in bounds before checking.*/
+	if (in_bounds(y, x))
+	{
+		/* Verify this grid */
+		if ((next_to_walls_adj(y, x) > 5) && (next_to_open(y, x) <= 1)) return;
+	}
 
 	/* Paranoia -- verify space */
 	if (temp_n == TEMP_MAX) return;
@@ -3187,7 +3188,6 @@ static void cave_temp_room_aux(int y, int x)
 	temp_x[temp_n] = x;
 	temp_n++;
 }
-
 
 
 
@@ -3205,6 +3205,9 @@ void lite_room(int y1, int x1)
 	for (i = 0; i < temp_n; i++)
 	{
 		x = temp_x[i], y = temp_y[i];
+		
+		/* Verify */
+		if (!in_bounds(y, x)) continue;
 
 		/* Walls get lit, but stop light */
 		if (!cave_floor_bold(y, x)) continue;
@@ -3241,6 +3244,9 @@ void unlite_room(int y1, int x1)
 	for (i = 0; i < temp_n; i++)
 	{
 		x = temp_x[i], y = temp_y[i];
+				
+		/* Verify */
+		if (!in_bounds(y, x)) return;
 
 		/* Walls get dark, but stop darkness */
 		if (!cave_floor_bold(y, x)) continue;
