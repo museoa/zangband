@@ -692,4 +692,4 @@ Necronomicon
 Original : (??)
 Updated : (??)
 Updated : Zangband DevTeam
-Last update: December 5, 1999
+Last update: December 12, 1999

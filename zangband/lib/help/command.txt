@@ -349,6 +349,6 @@ use the "d" command.
 Original   : Alexander Cutler and Andy Astrand
 Updated    : (2.7.6) by Russ Allbery (rra@cs.stanford.edu)
 Updated    : (2.7.9) by Ben Harrison (benh@phial.com)
-Updated    : Zangband 2.2.0 through 2.2.6c by Robert Ruhlmann
+Updated    : Zangband 2.2.0 through 2.2.6c by Robert Ruehlmann
 Updated    : Zangband DevTeam
-Last update: December 3, 1999
+Last update: December 12, 1999

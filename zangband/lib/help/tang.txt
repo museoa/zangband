@@ -618,4 +618,4 @@ The Anti-Summoning Corridor.
 --
 Original   : Chris Weisiger (TANG version 1.6.2)
 Updated    : Zangband DevTeam
-Last Update: December 8, 1999
+Last Update: December 12, 1999

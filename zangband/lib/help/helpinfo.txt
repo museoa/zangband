@@ -18,4 +18,4 @@ Return : Advance one line (wraps to the start at the end of the file).
 --
 Original   : (??)
 Updated    : Zangband DevTeam
-Last update: November 29, 1999
+Last update: December 12, 1999

@@ -108,4 +108,4 @@ the current file in the link).
 
 -- 
 Original    : Zangband DevTeam
-Last update : November 26, 1999
+Last update : December 12, 1999

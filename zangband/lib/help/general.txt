@@ -21,7 +21,7 @@ adventuring...
 
 Zangband is currently maintained by a small development team which
 includes both Zangband's original creator, Topi Ylinen, and Robert
-Ruhlmann who maintained and developed the game from versions 2.01d
+Ruehlmann who maintained and developed the game from versions 2.01d
 through to 2.2.6c. Robert coordinates the efforts of the DevTeam and
 is the designated project leader.
 
@@ -37,7 +37,7 @@ denies its intention to live up to this perception.
 
 --- Thangorodrim ---
 
-Robert Ruhlmann maintains the official Zangband website - Thangorodrim
+Robert Ruehlmann maintains the official Zangband website - Thangorodrim
 (http://thangorodrim.angband.org/). It includes information on where
 to download the Zangband source code and current executables for most
 popular operating systems as well as information on current development
@@ -129,4 +129,4 @@ likely to contain bugs of varying significance.
 Original   : (??)
 Updated    : (??)
 Updated    : Zangband DevTeam
-Last update: December 3, 1999
+Last update: December 12, 1999

@@ -1146,4 +1146,4 @@ High Mage     30+7    36+13  30+9     2    15/20   34+15  20+15   +30%
 Original   : (??)
 Updated    : (??)
 Updated    : Zangband DevTeam
-Last update: December 3, 1999
+Last update: December 12, 1999
