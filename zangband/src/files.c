@@ -2999,7 +2999,7 @@ errr file_character(cptr name, bool full)
 					for (k = 0; k < st_ptr->stock_num; k++)
 					{
 						object_desc(o_name, &st_ptr->stock[k], TRUE, 3);
-						fprintf(fff, "%c%s %s\n", I2A(i), paren, o_name);
+						fprintf(fff, "%c%s %s\n", I2A(k), paren, o_name);
 					}
 	
 					/* Add an empty line */
