@@ -823,8 +823,8 @@ static void wr_options(void)
 {
 	int i, n;
 
-	u16b c, flag = 0;
-
+	u16b c;
+	u32b flag = 0;
 
 	/*** Oops ***/
 

@@ -2762,7 +2762,7 @@ static errr init_other(void)
 	/* Analyze the options */
 	for (i = 0; i < OPT_MAX; i++)
 	{
-		if (option_info[i].o_desc)
+		if (option_info[i].o_text)
 		{
 			/* Accept */
 			option_mask[i / 32] |= (1L << (i % 32));
