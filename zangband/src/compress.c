@@ -36,7 +36,7 @@
  * The larger this is, the faster we adapt to changes, but the
  * less accurate symbol frequencies become.
  */
-#define PROB_CHANCE_INC	0x0020
+#define PROB_CHANCE_INC	0x0010
 
 typedef struct block_type block_type;
 
@@ -115,6 +115,8 @@ static block_type *del_block(block_type *b_ptr)
 	return (temp_ptr);
 }
 
+#ifdef UNUSED_FUNC
+
 /* Read a byte from the stream of blocks */
 static int read_block_byte(block_handle *h_ptr)
 {
@@ -133,6 +135,8 @@ static int read_block_byte(block_handle *h_ptr)
 	
 	return (h_ptr->b_ptr->block_data[h_ptr->counter++]);
 }
+
+#endif /* UNUSED_FUNC */
 
 /* Read a byte from the stream of blocks - erasing as we go*/
 static int rerase_block_byte(block_handle *h_ptr)
@@ -348,6 +352,7 @@ static void delete_handle(block_handle *h_ptr)
 	h_ptr->b_ptr = NULL;
 }
 
+#ifdef UNUSED_FUNC
 
 /*
  * RLE encode this list of blocks - inserting new blocks as needed
@@ -503,13 +508,108 @@ static void rle_blocks_decode(block_handle *h1_ptr)
 	}
 }
 
+#endif /* UNUSED_FUNC */
 
-/*
- * Function pointers used to
- * change the compression model.
- */
-static void (*init_compress_hook)(u16b *prob_table);
-static void (*calc_prob_hook)(byte symbol, u16b *prob_table);
+
+/* Data modeling */
+
+/* Variables for move-to-front probability model */
+static int mtf_table[256];
+static int inverse_mtf_table[256];
+static u16b mtf_prob_table[256];
+
+/* Variable for simple-probability model */
+static u16b prob_count[256];
+
+static void init_compress_mtf(u16b *prob_table)
+{
+	int i;
+	u16b value;
+	
+	/* Reset the move-to-front table */
+	for (i = 0; i < 255; i++)
+	{
+		mtf_table[i] = i;
+		inverse_mtf_table[i] = i;
+	}
+
+	/* Reset the probability table */
+	
+	prob_table[0] = 0;
+	for (i = 0; i < 256; i++)
+	{
+		/* Hack - we are going to assume fixed probabilities for now */
+		if (i > 128)		value = 1;
+		else if (i > 64)	value = 2;
+		else if (i > 32)	value = 4;
+		else if (i > 16)	value = 8;
+		else if (i > 8)		value = 16;
+		else if (i == 4)	value = 32;
+		else if (i == 3)	value = 50;
+		else if (i == 2)	value = 64;
+		else if (i == 1)	value = 128;
+		else				value = 256;
+	
+		/* Save table of probs for later */
+		mtf_prob_table[i] = value * PROB_CHANCE_INC;
+		
+		/* Set up probability table */
+		prob_table[i + 1] = prob_table[i] + mtf_prob_table[i];
+		
+		/* Record base probability */
+		prob_count[i] = 1;
+	}
+}
+
+static void calc_prob_mtf(byte symbol, u16b *prob_table)
+{
+	int i;
+	
+	/* The position of the symbol in the table */
+	int symbol_val = mtf_table[symbol];
+	
+	if (prob_table[256] >= PROB_TABLE_MAX)
+	{
+		/* Rescale probabilities */
+		for (i = 0; i < 256; i++)
+		{
+			mtf_prob_table[i] = (mtf_prob_table[i] + 1) / 2;
+			prob_count[i] = (prob_count[i] + 1) / 2;
+		}
+	}
+	
+	/* Increase the local probability */
+	mtf_prob_table[symbol_val] += PROB_CHANCE_INC;
+	prob_count[symbol] += PROB_CHANCE_INC;
+	
+	/* Shift the symbol to half its current position */
+	for (i = symbol_val; i > 0; i--)
+	{
+		/* Shift everything over */
+		inverse_mtf_table[i] = inverse_mtf_table[i - 1];
+		mtf_table[inverse_mtf_table[i]] = i;
+	}
+	
+	/* Move the symbol into location */
+	inverse_mtf_table[0] = symbol;
+	mtf_table[symbol] = 0;
+	
+	/* Recalculate the probability table */
+	for (i = 0; i < 256; i++)
+	{
+		/*
+		 * Get the new cumulative probabilities
+		 *
+		 * Here we assume that the mtf and cumulative probabilities
+		 * are orthogonal in information content.  Thus, taking the
+		 * sqrt of both squared (ie the distance function) gives a
+		 * good guess of the 'real' probability for each particular
+		 * symbol.
+		 */
+		prob_table[i + 1] = prob_table[i] +
+			 distance(0, 0, mtf_prob_table[mtf_table[i]], prob_count[i]);
+	}
+}
 
 
 /* Bounds of arithmetic code value */
@@ -739,7 +839,7 @@ static void arth_blocks_encode(block_handle *h1_ptr)
 	run_bits = 0;
 	
 	/* Init the compression model */
-	init_compress_hook(prob_table);
+	init_compress_mtf(prob_table);
 	
 	/* Init the bitwise stream */
 	init_block_bit();
@@ -762,7 +862,7 @@ static void arth_blocks_encode(block_handle *h1_ptr)
 		arth_symbol_encode(h1_ptr, prob_table, symbol);
 		
 		/* Update probability table */
-		calc_prob_hook(symbol, prob_table);
+		calc_prob_mtf(symbol, prob_table);
 	}
 }
 
@@ -813,7 +913,7 @@ static void arth_blocks_decode(block_handle *h1_ptr)
 	size |= (rerase_block_byte(h2_ptr) << 24);
 
 	/* Init the compression model */
-	init_compress_hook(prob_table);
+	init_compress_mtf(prob_table);
 	
 	/* Init the bitwise stream */
 	init_block_bit();
@@ -835,7 +935,7 @@ static void arth_blocks_decode(block_handle *h1_ptr)
 		write_block_byte(h1_ptr, symbol);
 			
 		/* Update probability table */
-		calc_prob_hook(symbol, prob_table);
+		calc_prob_mtf(symbol, prob_table);
 	}
 	
 	/* Paranoia - Get rid of the rest of the input stream */
@@ -1377,148 +1477,6 @@ static void ibw_blocks_trans(block_handle *h1_ptr)
 	}
 }
 
-/* Data modeling */
-
-/* Variables for move-to-front probability model */
-static int mtf_table[256];
-static int inverse_mtf_table[256];
-static u16b mtf_prob_table[256];
-
-static void init_compress_mtf(u16b *prob_table)
-{
-	int i;
-	u16b value;
-	
-	/* Reset the move-to-front table */
-	for (i = 0; i < 255; i++)
-	{
-		mtf_table[i] = i;
-		inverse_mtf_table[i] = i;
-	}
-
-	/* Reset the probability table */
-	
-	prob_table[0] = 0;
-	for (i = 0; i < 256; i++)
-	{
-		/* Hack - we are going to assume fixed probabilities for now */
-		if (i > 128)		value = 1;
-		else if (i > 64)	value = 2;
-		else if (i > 32)	value = 4;
-		else if (i > 16)	value = 8;
-		else if (i > 8)		value = 16;
-		else if (i == 4)	value = 32;
-		else if (i == 3)	value = 50;
-		else if (i == 2)	value = 64;
-		else if (i == 1)	value = 128;
-		else				value = 256;
-	
-		/* Save table of probs for later */
-		mtf_prob_table[i] = value;
-		
-		/* Set up probability table */
-		prob_table[i + 1] = prob_table[i] + value;
-	}
-}
-
-static void calc_prob_mtf(byte symbol, u16b *prob_table)
-{
-	int i;
-	
-	/* The position of the symbol in the table */
-	int symbol_val = mtf_table[symbol];
-	
-	/* Shift the symbol to half its current position */
-	for (i = symbol_val; i > symbol_val / 2; i--)
-	{
-		/* Shift everything over */
-		inverse_mtf_table[i] = inverse_mtf_table[i - 1];
-		mtf_table[inverse_mtf_table[i]] = i;
-	}
-	
-	/* Move the symbol into location */
-	inverse_mtf_table[symbol_val / 2] = symbol;
-	mtf_table[symbol] = symbol_val / 2;
-	
-	/* Recalculate the probability table */
-	for (i = 0; i < 256; i++)
-	{
-		/* Get the new cumulative probabilities */
-		prob_table[i + 1] = prob_table[i] + mtf_prob_table[mtf_table[i]];
-	}
-}
-
-static void init_mtf_model(void)
-{
-	/*
-	 * Initialise the function hooks to point to
-	 * the Move-to-Front model.
-	 */
-	init_compress_hook = init_compress_mtf;
-	calc_prob_hook = calc_prob_mtf;
-}
-
-/* Variables for simple-probability model */
-static u16b prob_count[256];
-
-static void init_compress_simple(u16b *prob_table)
-{
-	int i;
-	
-	/* Everything has equal probability to start with */
-	for (i = 0; i < 256; i++)
-	{
-		prob_count[i] = 1;
-	}
-	
-	/* Init prob_table[] */
-	for (i = 0; i <= 256; i++)
-	{
-		prob_table[i] = i;
-	}
-}
-
-static void calc_prob_simple(byte symbol, u16b *prob_table)
-{
-	int i;
-		
-	/* If counter gets too high - we need to rescale everything */
-	if (prob_table[256] >= PROB_TABLE_MAX)
-	{
-		for (i = 0; i < 256; i++)
-		{
-			/* Halve all the counts - rounding up so don't get zero */
-			prob_count[i] = (prob_count[i] + 1) / 2;
-		}
-	
-		/* Reset the probability table */
-		prob_table[0] = 0;
-		for (i = 0; i < 256; i++)
-		{
-			prob_table[i + 1] = prob_table[i] + prob_count[i];
-		}
-	}
-	
-	/* Increment the count for the symbol */
-	prob_count[symbol] += PROB_CHANCE_INC;
-
-	/* Need to redo the counters */
-	for (i = symbol + 1; i < 257; i++)
-	{
-		/* Update the cumluative frequencies */
-		prob_table[i] += PROB_CHANCE_INC;
-	}
-}
-
-static void init_simple_model(void)
-{
-	/*
-	 * Initialise the function hooks to point to
-	 * the simple probability model.
-	 */
-	init_compress_hook = init_compress_simple;
-	calc_prob_hook = calc_prob_simple;
-}
 
 /*
  * Read a file into an empty stream of blocks.
@@ -1629,16 +1587,12 @@ void test_compress_module(void)
 	
 	bw_blocks_trans(h_ptr);
 	
-	init_mtf_model();
-	
 	arth_blocks_encode(h_ptr);
 	
 	/* Build the filename */
 	(void) path_build(buf, 1024, ANGBAND_DIR, outfile);
 
 	(void) write_file(h_ptr, buf);
-	
-	init_mtf_model();
 	
 	arth_blocks_decode(h_ptr);
 	
