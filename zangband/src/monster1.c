@@ -2184,6 +2184,8 @@ static char *orc_syllable3[] =
  */
 void create_name(int type, char *name)
 {
+	int cs = sizeof(char*);
+	
 	/* Paranoia */
 	if (!name) return;
 
@@ -2192,38 +2194,61 @@ void create_name(int type, char *name)
 	{
 		/* Create the monster name */
 		case NAME_DWARF:
-			strcpy(name, dwarf_syllable1[randint0(sizeof(dwarf_syllable1) / sizeof(char*))]);
-			strcat(name, dwarf_syllable2[randint0(sizeof(dwarf_syllable2) / sizeof(char*))]);
-			strcat(name, dwarf_syllable3[randint0(sizeof(dwarf_syllable3) / sizeof(char*))]);
+		{
+			strcpy(name, dwarf_syllable1[randint0(sizeof(dwarf_syllable1)/cs)]);
+			strcat(name, dwarf_syllable2[randint0(sizeof(dwarf_syllable2)/cs)]);
+			strcat(name, dwarf_syllable3[randint0(sizeof(dwarf_syllable3)/cs)]);
 			break;
+		}
+		
 		case NAME_ELF:
-			strcpy(name, elf_syllable1[randint0(sizeof(elf_syllable1) / sizeof(char*))]);
-			strcat(name, elf_syllable2[randint0(sizeof(elf_syllable2) / sizeof(char*))]);
-			strcat(name, elf_syllable3[randint0(sizeof(elf_syllable3) / sizeof(char*))]);
+		{
+			strcpy(name, elf_syllable1[randint0(sizeof(elf_syllable1) / cs)]);
+			strcat(name, elf_syllable2[randint0(sizeof(elf_syllable2) / cs)]);
+			strcat(name, elf_syllable3[randint0(sizeof(elf_syllable3) / cs)]);
 			break;
+		}
+		
 		case NAME_GNOME:
-			strcpy(name, gnome_syllable1[randint0(sizeof(gnome_syllable1) / sizeof(char*))]);
-			strcat(name, gnome_syllable2[randint0(sizeof(gnome_syllable2) / sizeof(char*))]);
-			strcat(name, gnome_syllable3[randint0(sizeof(gnome_syllable3) / sizeof(char*))]);
+		{
+			strcpy(name, gnome_syllable1[randint0(sizeof(gnome_syllable1)/cs)]);
+			strcat(name, gnome_syllable2[randint0(sizeof(gnome_syllable2)/cs)]);
+			strcat(name, gnome_syllable3[randint0(sizeof(gnome_syllable3)/cs)]);
 			break;
+		}
+		
 		case NAME_HOBBIT:
-			strcpy(name, hobbit_syllable1[randint0(sizeof(hobbit_syllable1) / sizeof(char*))]);
-			strcat(name, hobbit_syllable2[randint0(sizeof(hobbit_syllable2) / sizeof(char*))]);
-			strcat(name, hobbit_syllable3[randint0(sizeof(hobbit_syllable3) / sizeof(char*))]);
+		{
+			strcpy(name, hobbit_syllable1[randint0(sizeof(hobbit_syllable1)
+				/ cs)]);
+			strcat(name, hobbit_syllable2[randint0(sizeof(hobbit_syllable2)
+				/ cs)]);
+			strcat(name, hobbit_syllable3[randint0(sizeof(hobbit_syllable3)
+				/ cs)]);
 			break;
+		}
+		
 		case NAME_HUMAN:
-			strcpy(name, human_syllable1[randint0(sizeof(human_syllable1) / sizeof(char*))]);
-			strcat(name, human_syllable2[randint0(sizeof(human_syllable2) / sizeof(char*))]);
-			strcat(name, human_syllable3[randint0(sizeof(human_syllable3) / sizeof(char*))]);
+		{
+			strcpy(name, human_syllable1[randint0(sizeof(human_syllable1)/cs)]);
+			strcat(name, human_syllable2[randint0(sizeof(human_syllable2)/cs)]);
+			strcat(name, human_syllable3[randint0(sizeof(human_syllable3)/cs)]);
 			break;
+		}
+		
 		case NAME_ORC:
-			strcpy(name, orc_syllable1[randint0(sizeof(orc_syllable1) / sizeof(char*))]);
-			strcat(name, orc_syllable2[randint0(sizeof(orc_syllable2) / sizeof(char*))]);
-			strcat(name, orc_syllable3[randint0(sizeof(orc_syllable3) / sizeof(char*))]);
+		{
+			strcpy(name, orc_syllable1[randint0(sizeof(orc_syllable1) / cs)]);
+			strcat(name, orc_syllable2[randint0(sizeof(orc_syllable2) / cs)]);
+			strcat(name, orc_syllable3[randint0(sizeof(orc_syllable3) / cs)]);
 			break;
+		}
+			
 		/* Create an empty name */
 		default:
+		{
 			name[0] = '\0';
 			break;
+		}
 	}
 }
