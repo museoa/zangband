@@ -297,7 +297,7 @@ G:#:s
 # 0x33 --> quartz vein
 
 N:51:quartz vein
-G:#:w
+G:#:W
 
 # 0x34 --> magma vein + treasure
 
@@ -308,7 +308,7 @@ M:50
 # 0x35 --> quartz vein + treasure
 
 N:53:quartz vein
-G:#:w
+G:#:W
 M:51
 
 # 0x36 --> magma vein + known treasure
@@ -506,7 +506,7 @@ N:102:obelisk
 G:;:b
 
 N:103:pillar
-G:#:w
+G:#:u
 
 
 
