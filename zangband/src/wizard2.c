@@ -585,12 +585,22 @@ static void learn_map(void)
 static void wiz_display_item(const object_type *o_ptr)
 {
 	int j = 13;
+	byte hack_info = o_ptr->info;
+
+	/* Hack - we will reset the object to exactly like it was */
+	object_type *q_ptr = (object_type *)o_ptr;
+
+	/* Hack the visibility by (see object_desc_store) */
+	q_ptr->info |= (OB_STOREB);
 
 	/* Clear the screen */
     clear_region(13 - 2, 1, 23);
 
 	/* Describe fully */
-	prtf(j, 2, "%v", OBJECT_STORE_FMT(o_ptr, TRUE, 3));
+	prtf(j, 2, "%v", OBJECT_STORE_FMT(q_ptr, TRUE, 3));
+
+	/* Undo visibility hack */
+	q_ptr->info = hack_info;
 
 	prtf(j, 4, "kind = %-5d  level = %-4d  tval = %-5d  sval = %-5d",
 			   o_ptr->k_idx, get_object_level(o_ptr),
