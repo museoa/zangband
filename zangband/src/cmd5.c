@@ -2306,7 +2306,7 @@ static bool cast_trump_spell(int spell, bool success)
 
 			msg_print("You concentrate on the trump of a Cyberdemon...");
 
-			if (summon_specific(py, px, plev, SUMMON_CYBER, FALSE, FALSE, pet))
+			if (summon_specific(py, px, plev * 2, SUMMON_CYBER, FALSE, FALSE, pet))
 			{
 				if (!pet)
 					msg_print("The summoned Cyberdemon gets angry!");
