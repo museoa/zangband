@@ -77,6 +77,9 @@ bool monst_spell_monst(int m_idx)
 
 	u32b f4, f5, f6;
 
+	/* Expected ball spell radius */
+	int rad = (r_ptr->flags2 & RF2_POWERFUL) ? 3 : 2;
+
 	bool wake_up = FALSE;
 	bool fear = FALSE;
 
@@ -134,6 +137,15 @@ bool monst_spell_monst(int m_idx)
 		f5 = r_ptr->flags5;
 		f6 = r_ptr->flags6;
 
+		/* Disallow blink unless close */
+		if ((distance(m_ptr->fy, m_ptr->fx, y, x) > 1) || !rand_int(3)) f6 &= ~(RF6_BLINK);
+
+		/* Disallow teleport unless wounded */
+		if (m_ptr->hp > m_ptr->maxhp / 2) f6 &= ~(RF6_TPORT);
+
+		/* Disallow teleport away unless a friend is wounded */
+		if (friendly && (p_ptr->chp > p_ptr->mhp / 4)) f6 &= ~(RF6_TELE_AWAY);
+
 		/* Remove some spells if necessary */
 		if (!stupid_monsters &&
 			 ((f4 & RF4_BOLT_MASK) ||
@@ -145,6 +157,24 @@ bool monst_spell_monst(int m_idx)
 			f4 &= ~(RF4_BOLT_MASK);
 			f5 &= ~(RF5_BOLT_MASK);
 			f6 &= ~(RF6_BOLT_MASK);
+		}
+
+		/* Prevent collateral damage */
+		if (friendly && (distance(py, px, y, x) <= rad))
+		{
+			f4 &= ~(RF4_BALL_MASK);
+			f5 &= ~(RF5_BALL_MASK);
+			f6 &= ~(RF6_BALL_MASK);
+		}
+
+		/* Find another target if no spells available */
+		if (!f4 && !f5 && !f6)
+		{
+			f4 = r_ptr->flags4;
+			f5 = r_ptr->flags5;
+			f6 = r_ptr->flags6;
+
+			continue;
 		}
 
 		/* Hack -- allow "desperate" spells */

@@ -4511,6 +4511,8 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 
 	bool jump = FALSE;
 
+	/* Hack -- some weapons always stop at monsters */
+	if (typ == GF_ROCKET) flg |= PROJECT_STOP;
 
 	/* Hack -- Jump to target */
 	if (flg & (PROJECT_JUMP))

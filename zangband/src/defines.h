@@ -2885,7 +2885,7 @@
  * Hack -- "bolt" spells that may hurt fellow monsters
  */
 #define RF4_BOLT_MASK \
-  (RF4_ARROW_1 | RF4_ARROW_2 | RF4_ARROW_3 | RF4_ARROW_4)
+  (RF4_ROCKET | RF4_ARROW_1 | RF4_ARROW_2 | RF4_ARROW_3 | RF4_ARROW_4)
 
 #define RF5_BOLT_MASK \
    (RF5_BO_ACID | RF5_BO_ELEC | RF5_BO_FIRE | RF5_BO_COLD | \
@@ -2894,6 +2894,24 @@
 
 #define RF6_BOLT_MASK \
    0L
+
+/*
+ * Hack -- 'ball' spells that may hurt friends
+ */
+#define RF4_BALL_MASK \
+	(RF4_ROCKET | RF4_BR_ACID | RF4_BR_ELEC | RF4_BR_FIRE | \
+	RF4_BR_COLD | RF4_BR_POIS | RF4_BR_NETH | RF4_BR_LITE | \
+	RF4_BR_DARK | RF4_BR_CONF | RF4_BR_SOUN | RF4_BR_CHAO | \
+	RF4_BR_DISE | RF4_BR_NEXU | RF4_BR_SHAR | \
+	RF4_BR_SOUN | RF4_BR_TIME | RF4_BR_INER | RF4_BR_GRAV | \
+	RF4_BR_PLAS | RF4_BR_WALL | RF4_BR_MANA)
+
+#define RF5_BALL_MASK \
+	(RF5_BA_ACID | RF5_BA_ELEC | RF5_BA_FIRE | RF5_BA_COLD | \
+	RF5_BA_NETH | RF5_BA_DARK | RF5_BA_WATE | RF5_BA_MANA)
+
+#define RF6_BALL_MASK \
+	0L
 
 
 /* Hack -- summon spells */
