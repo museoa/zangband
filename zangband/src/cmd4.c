@@ -2830,7 +2830,7 @@ void do_cmd_feeling(void)
 	}
 	
 	/* No useful feeling in quests */
-	if (quest_number())
+	if (is_quest_level(p_ptr->depth))
 	{
 		msg_print("Looks like a typical quest level.");
 		return;

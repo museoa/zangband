@@ -500,29 +500,25 @@ void quest_discovery(void)
 
 
 /*
- * Hack -- Check if a level is a "quest" level
- */
-int quest_number(void)
+ * Is this dungeon level a quest level? */
+bool is_quest_level(int level)
 {
 	int i;
-	
-	int count = 0;
-	
+
 	quest_type *q_ptr;
 
 	for (i = 0; i < q_max; i++)
 	{
 		q_ptr = &quest[i];
 		
-		/* Quest needs to be taken. */
-		if (q_ptr->status != QUEST_STATUS_TAKEN) continue;
-
-		/* Is the quest active? */
-		if (q_ptr->flags & QUEST_FLAG_ACTIVE) count++;
+		/* Must be dungeon quest */
+		if (q_ptr->type != QUEST_TYPE_DUNGEON) continue;
+		
+		/* Does the level match? */
+		if (q_ptr->data.dun.level == level) return (TRUE);
 	}
-
-	/* Return number of active quests */
-	return (count);
+	
+	return (FALSE);
 }
 
 /*
@@ -540,7 +536,8 @@ void activate_quests(int level)
 		
 		/* Is the quest relevant? */
 		if ((q_ptr->type == QUEST_TYPE_GENERAL)
-			|| ((q_ptr->type == QUEST_TYPE_DUNGEON) && (level)))
+			|| ((q_ptr->type == QUEST_TYPE_DUNGEON)
+				 && (q_ptr->data.dun.level == level)))
 		{
 			q_ptr->flags |= QUEST_FLAG_ACTIVE;
 			
@@ -1487,7 +1484,7 @@ bool create_quest(int x, int y, int town_num)
 	q_ptr->x_type = QX_WILD_ENTER;
 	
 	/* XXX XXX Create quest name */
-	(void)strnfmt(q_ptr->name, 60, "Defeat the %d camp.",
+	(void)strnfmt(q_ptr->name, 60, "Defeat the %s camp.",
 		 camp_types[qtype].name);
 	
 	/* Save the quest data */

@@ -3017,7 +3017,7 @@ static void dungeon(void)
 	}
 
 	/* No stairs down from Quest */
-	if (quest_number())
+	if (is_quest_level(p_ptr->depth))
 	{
 		p_ptr->create_down_stair = FALSE;
 	}
@@ -3636,7 +3636,7 @@ void play_game(bool new_game)
 				(void)set_stun(0);
 				(void)set_cut(0);
 
-				/* Hack -- Prevent starvation */
+				/* Hack"-- Prevent starvation */
 				(void)set_food(PY_FOOD_MAX - 1);
 
 				/* Hack -- cancel recall */

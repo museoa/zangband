@@ -2204,7 +2204,7 @@ bool destroy_area(int x1, int y1, int r)
 	pcave_type *pc_ptr;
 
 	/* Prevent destruction of quest levels and town */
-	if (!p_ptr->depth || quest_number())
+	if (!p_ptr->depth || is_quest_level(p_ptr->depth))
 	{
 		return (FALSE);
 	}
@@ -2364,7 +2364,7 @@ bool earthquake(int cx, int cy, int r)
 	field_mon_test	mon_enter_test;
 
 	/* Prevent destruction of quest levels and town */
-	if (!p_ptr->depth || quest_number())
+	if (!p_ptr->depth || is_quest_level(p_ptr->depth))
 	{
 		return (FALSE);
 	}
