@@ -475,30 +475,15 @@ static void do_cmd_use_staff_aux(object_type *o_ptr)
 	/* Hack -- some uses are "free" */
 	if (!use_charge) return;
 
-
-	/* Use a single charge */
-	o_ptr->pval--;
-
 	/* XXX Hack -- unstack if necessary */
 	if (o_ptr->number > 1)
 	{
-		object_type forge;
 		object_type *q_ptr;
 
-		/* Get local object */
-		q_ptr = &forge;
-
-		/* Obtain a local object */
-		object_copy(q_ptr, o_ptr);
-
-		/* Modify quantity */
-		q_ptr->number = 1;
-
-		/* Restore the charges */
-		o_ptr->pval++;
+		/* Split object */
+		q_ptr = item_split(o_ptr, 1);
 
 		/* Unstack the used item */
-		o_ptr->number--;
 		o_ptr = inven_carry(q_ptr);
 
 		/* Message */
@@ -507,6 +492,9 @@ static void do_cmd_use_staff_aux(object_type *o_ptr)
 		/* Notice weight changes */
 		p_ptr->update |= PU_WEIGHT;
 	}
+	
+	/* Use a single charge */
+	o_ptr->pval--;
 
 	/* Describe charges in the pack */
 	item_charges(o_ptr);

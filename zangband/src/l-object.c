@@ -2414,6 +2414,30 @@ tolua_lerror:
  return 0;
 }
 
+/* function: item_split */
+static int toluaI_object_item_split00(lua_State* tolua_S)
+{
+ if (
+     !tolua_istype(tolua_S,1,tolua_tag(tolua_S,"object_type"),0) ||
+     !tolua_istype(tolua_S,2,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,3)
+ )
+  goto tolua_lerror;
+ else
+ {
+  object_type* o_ptr = ((object_type*)  tolua_getusertype(tolua_S,1,0));
+  int num = ((int)  tolua_getnumber(tolua_S,2,0));
+  {
+   object_type* toluaI_ret = (object_type*)  item_split(o_ptr,num);
+   tolua_pushusertype(tolua_S,(void*)toluaI_ret,tolua_tag(tolua_S,"object_type"));
+  }
+ }
+ return 1;
+tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'item_split'.");
+ return 0;
+}
+
 /* function: item_increase */
 static int toluaI_object_item_increase00(lua_State* tolua_S)
 {
@@ -3855,11 +3879,10 @@ static int toluaI_object_make_gold00(lua_State* tolua_S)
   object_type* j_ptr = ((object_type*)  tolua_getusertype(tolua_S,1,0));
   int coin_type = ((int)  tolua_getnumber(tolua_S,2,0));
   {
-   bool toluaI_ret = (bool)  make_gold(j_ptr,coin_type);
-   tolua_pushbool(tolua_S,(int)toluaI_ret);
+   make_gold(j_ptr,coin_type);
   }
  }
- return 1;
+ return 0;
 tolua_lerror:
  tolua_error(tolua_S,"#ferror in function 'make_gold'.");
  return 0;
@@ -5532,6 +5555,7 @@ int tolua_object_open (lua_State* tolua_S)
  tolua_function(tolua_S,NULL,"describe_use",toluaI_object_describe_use00);
  tolua_function(tolua_S,NULL,"item_charges",toluaI_object_item_charges00);
  tolua_function(tolua_S,NULL,"item_describe",toluaI_object_item_describe00);
+ tolua_function(tolua_S,NULL,"item_split",toluaI_object_item_split00);
  tolua_function(tolua_S,NULL,"item_increase",toluaI_object_item_increase00);
  tolua_function(tolua_S,NULL,"item_optimize",toluaI_object_item_optimize00);
  tolua_function(tolua_S,NULL,"inven_carry_okay",toluaI_object_inven_carry_okay00);
@@ -6612,6 +6636,7 @@ void tolua_object_close (lua_State* tolua_S)
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"describe_use");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"item_charges");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"item_describe");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"item_split");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"item_increase");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"item_optimize");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"inven_carry_okay");

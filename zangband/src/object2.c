@@ -12,6 +12,10 @@
 
 #include "angband.h"
 
+/*
+ * A temp object used to split piles
+ */
+static object_type temp_object;
 
 
 /*
@@ -164,23 +168,13 @@ void delete_object_list(s16b *o_idx_ptr)
  */
 void drop_object_list(s16b *o_idx_ptr, int x, int y)
 {
-	object_type forge;
 	object_type *o_ptr, *q_ptr;
-
-	/* Get local object */
-	q_ptr = &forge;
 
 	/* Drop objects being carried */
 	OBJ_ITT_START (*o_idx_ptr, o_ptr)
 	{
-		/* Copy the object */
-		object_copy(q_ptr, o_ptr);
-
-		/* Delete the object */
-		object_wipe(o_ptr);
-
-		/* Count objects */
-		o_cnt--;
+		/* Get the object */
+		q_ptr = item_split(o_ptr, o_ptr->number);
 
 		/* Drop it */
 		drop_near(q_ptr, -1, x, y);
@@ -4278,7 +4272,6 @@ bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme)
 
 void place_specific_object(int x, int y, int level, int k_idx)
 {
-	object_type forge;
 	object_type *q_ptr;
 	object_kind *k_ptr;
 
@@ -4288,7 +4281,7 @@ void place_specific_object(int x, int y, int level, int k_idx)
 	if (!k_idx) return;
 
 	/* Get local object */
-	q_ptr = &forge;
+	q_ptr = &temp_object;
 
 	/* Create the item */
 	object_prep(q_ptr, k_idx);
@@ -4340,7 +4333,6 @@ void place_object(int x, int y, bool good, bool great)
 
 	cave_type *c_ptr;
 
-	object_type forge;
 	object_type *q_ptr;
 
 	/* Paranoia -- check bounds */
@@ -4360,10 +4352,7 @@ void place_object(int x, int y, bool good, bool great)
 	}
 
 	/* Get local object */
-	q_ptr = &forge;
-
-	/* Wipe the object */
-	object_wipe(q_ptr);
+	q_ptr = &temp_object;
 
 	/* Make an object (if possible) */
 	if (!make_object(q_ptr, (u16b)((good ? 15 : 0) + (great ? 15 : 0)),
@@ -4418,7 +4407,7 @@ void place_object(int x, int y, bool good, bool great)
  *
  * The location must be a legal, clean, floor grid.
  */
-bool make_gold(object_type *j_ptr, int coin_type)
+void make_gold(object_type *j_ptr, int coin_type)
 {
 	s16b i;
 
@@ -4452,9 +4441,6 @@ bool make_gold(object_type *j_ptr, int coin_type)
 
 	/* Determine how much the treasure is "worth" */
 	j_ptr->pval = (base + (8L * randint1(base)) + randint1(8));
-
-	/* Success */
-	return (TRUE);
 }
 
 
@@ -4469,10 +4455,6 @@ void place_gold(int x, int y)
 
 	cave_type *c_ptr;
 
-	object_type forge;
-	object_type *q_ptr;
-
-
 	/* Paranoia -- check bounds */
 	if (!in_bounds(x, y)) return;
 
@@ -4481,15 +4463,6 @@ void place_gold(int x, int y)
 
 	/* Require nice floor space */
 	if (!cave_nice_grid(c_ptr)) return;
-
-	/* Get local object */
-	q_ptr = &forge;
-
-	/* Wipe the object */
-	object_wipe(q_ptr);
-
-	/* Make some gold */
-	if (!make_gold(q_ptr, 0)) return;
 
 	/* Make an object */
 	o_idx = o_pop();
@@ -4501,9 +4474,9 @@ void place_gold(int x, int y)
 
 		/* Acquire object */
 		o_ptr = &o_list[o_idx];
-
-		/* Copy the object */
-		object_copy(o_ptr, q_ptr);
+		
+		/* Make some gold */
+		make_gold(o_ptr, 0);
 
 		/* Save location */
 		o_ptr->iy = y;
@@ -5084,6 +5057,52 @@ void item_describe(object_type *o_ptr)
 
 }
 
+/*
+ * Split a pile into two bits.  Return a pointer to
+ * the split off piece.  This piece will not be in the
+ * original pile's list, but will be in the static
+ * temp_object defined above. 
+ */
+object_type *item_split(object_type *o_ptr, int num)
+{
+	object_type *q_ptr = &temp_object;
+
+	/* Paranoia */
+	if (o_ptr->number > num) num = o_ptr->number;
+
+	/* Obtain a local object */
+	object_copy(q_ptr, o_ptr);
+	
+	/* Update item totals */
+	o_ptr->number -= num;
+	q_ptr->number = num;
+	
+	/* Notice the change */
+	if (num && !floor_item(o_ptr))
+	{
+		/* Recalculate bonuses and weight */
+		p_ptr->update |= (PU_BONUS | PU_WEIGHT);
+
+		/* Recalculate mana */
+		p_ptr->update |= (PU_MANA);
+
+		/* Combine the pack */
+		p_ptr->notice |= (PN_COMBINE);
+
+		/* Window stuff */
+		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+	}
+	
+	/* Distribute charges of wands or rods */
+	distribute_charges(o_ptr, q_ptr, num);
+	
+	/* Fill in holes... */
+	item_optimize(o_ptr);
+	
+	/* Done - return new item */
+	return (q_ptr);
+}
+
 
 /*
  * Increase the "number" of an item in the inventory
@@ -5103,7 +5122,7 @@ void item_increase(object_type *o_ptr, int num)
 	/* Add the number */
 	o_ptr->number += num;
 
-	/* Change the number and weight */
+	/* Notice the change */
 	if (num && !floor_item(o_ptr))
 	{
 		/* Recalculate bonuses and weight */
@@ -5381,26 +5400,15 @@ object_type *inven_takeoff(object_type *o_ptr, int amt)
 	int item;
 
 	char o_name[256];
-
-	object_type forge;
 	object_type *q_ptr;
 
 	cptr act;
 
 	/* Paranoia */
 	if (amt <= 0) return (NULL);
-
-	/* Verify */
-	if (amt > o_ptr->number) amt = o_ptr->number;
-
-	/* Get local object */
-	q_ptr = &forge;
-
-	/* Obtain a local object */
-	object_copy(q_ptr, o_ptr);
-
-	/* Modify quantity */
-	q_ptr->number = amt;
+	
+	/* Split item */
+	q_ptr = item_split(o_ptr, amt);
 
 	/* Describe the object */
 	object_desc(o_name, q_ptr, TRUE, 3, 256);
@@ -5432,10 +5440,6 @@ object_type *inven_takeoff(object_type *o_ptr, int amt)
 		act = "You were wearing";
 	}
 
-	/* Modify, Optimize */
-	item_increase(o_ptr, -amt);
-	item_optimize(o_ptr);
-
 	/* Carry the object */
 	q_ptr = inven_carry(q_ptr);
 
@@ -5457,7 +5461,6 @@ object_type *inven_takeoff(object_type *o_ptr, int amt)
  */
 void inven_drop(object_type *o_ptr, int amt)
 {
-	object_type forge;
 	object_type *q_ptr;
 
 	char o_name[256];
@@ -5468,9 +5471,9 @@ void inven_drop(object_type *o_ptr, int amt)
 
 	/* Error check */
 	if (amt <= 0) return;
-
-	/* Not too many */
-	if (amt > o_ptr->number) amt = o_ptr->number;
+	
+	/* Describe item */
+	item_describe(o_ptr);
 
 	/* Get list */
 	list = look_up_list(o_ptr);
@@ -5481,18 +5484,9 @@ void inven_drop(object_type *o_ptr, int amt)
 		/* Take off first */
 		o_ptr = inven_takeoff(o_ptr, amt);
 	}
-
+		
 	/* Get local object */
-	q_ptr = &forge;
-
-	/* Obtain local object */
-	object_copy(q_ptr, o_ptr);
-
-	/* Distribute charges of wands or rods */
-	distribute_charges(o_ptr, q_ptr, amt);
-
-	/* Modify quantity */
-	q_ptr->number = amt;
+	q_ptr = item_split(o_ptr, amt);
 
 	/* Describe local object */
 	object_desc(o_name, q_ptr, TRUE, 3, 256);
@@ -5505,11 +5499,6 @@ void inven_drop(object_type *o_ptr, int amt)
 
 	/* Drop it near the player */
 	drop_near(q_ptr, 0, p_ptr->px, p_ptr->py);
-
-	/* Modify, Describe, Optimize */
-	item_increase(o_ptr, -amt);
-	item_describe(o_ptr);
-	item_optimize(o_ptr);
 	
 	/* Update total weight */
 	p_ptr->update |= PU_WEIGHT;
@@ -5616,11 +5605,10 @@ void display_koff(int k_idx)
 {
 	int y;
 
-	object_type forge;
-	object_type *q_ptr;
+	/* Get local object */
+	object_type *q_ptr = &temp_object;
 
 	char o_name[256];
-
 
 	/* Erase the window */
 	for (y = 0; y < Term->hgt; y++)
@@ -5631,9 +5619,6 @@ void display_koff(int k_idx)
 
 	/* No info */
 	if (!k_idx) return;
-
-	/* Get local object */
-	q_ptr = &forge;
 
 	/* Prepare the object */
 	object_prep(q_ptr, k_idx);

@@ -775,14 +775,11 @@ bool monster_death(int m_idx, bool explode)
 		/* Get local object */
 		q_ptr = &forge;
 
-		/* Wipe the object */
-		object_wipe(q_ptr);
-
 		/* Make Gold */
 		if (do_gold && (!do_item || one_in_(2)))
 		{
 			/* Make some gold */
-			if (!make_gold(q_ptr, force_coin)) continue;
+			make_gold(q_ptr, force_coin);
 
 			/* XXX XXX XXX */
 			dump_gold++;

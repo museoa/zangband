@@ -226,9 +226,9 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 
 				/* Get local object */
 				q_ptr = &forge;
-
-				/* Create the food ration */
-				object_prep(q_ptr, 21);
+				
+				/* Hack - Create the food ration */
+				object_prep(q_ptr, lookup_kind(TV_FOOD, SV_FOOD_RATION));
 
 				/* Drop the object from heaven */
 				drop_near(q_ptr, -1, p_ptr->px, p_ptr->py);

@@ -662,9 +662,6 @@ static void quest_reward(int num, int x, int y)
 		/* Get local object */
 		o_ptr = &forge;
 
-		/* Wipe the object */
-		object_wipe(o_ptr);
-
 		/* Average of 20 great objects per game */
 		if (randint0(number_of_quests()) < 20)
 		{
@@ -680,9 +677,6 @@ static void quest_reward(int num, int x, int y)
 		/* We need a 'good' item - so check the price */
 		if (object_value_real(o_ptr) > 100 * p_ptr->depth) break;
 	}
-
-	/* We need to be given a location... */
-
 
 	/* Drop it in the dungeon */
 	drop_near(o_ptr, -1, x, y);

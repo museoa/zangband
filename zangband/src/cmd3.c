@@ -129,7 +129,6 @@ void do_cmd_wield(void)
 {
 	int slot;
 
-	object_type forge;
 	object_type *q_ptr;
 
 	object_type *o_ptr;
@@ -186,18 +185,8 @@ void do_cmd_wield(void)
 	/* Take a turn */
 	p_ptr->energy_use = 100;
 
-	/* Get local object */
-	q_ptr = &forge;
-
-	/* Obtain local object */
-	object_copy(q_ptr, o_ptr);
-
-	/* Modify quantity */
-	q_ptr->number = 1;
-
-	/* Decrease the item */
-	item_increase(o_ptr, -1);
-	item_optimize(o_ptr);
+	/* Split object */
+	q_ptr = item_split(o_ptr, 1);
 
 	/* Access the wield slot */
 	o_ptr = &p_ptr->equipment[slot];

@@ -348,14 +348,11 @@ static void chest_death(int x, int y, object_type *o_ptr)
 		/* Get local object */
 		q_ptr = &forge;
 
-		/* Wipe the object */
-		object_wipe(q_ptr);
-
 		/* Small chests often drop gold */
 		if (small && one_in_(4))
 		{
 			/* Make some gold */
-			if (!make_gold(q_ptr, 0)) continue;
+			make_gold(q_ptr, 0);
 		}
 
 		/* Otherwise drop an item */
@@ -2758,7 +2755,6 @@ void do_cmd_throw_aux(int mult)
 	int sleeping_bonus = 0;
 	int terrain_bonus = 0;
 
-	object_type forge;
 	object_type *q_ptr;
 
 	object_type *o_ptr;
@@ -2800,25 +2796,11 @@ void do_cmd_throw_aux(int mult)
 	if (!get_aim_dir(&dir)) return;
 
 
-	/* Get local object */
-	q_ptr = &forge;
-
-	/* Obtain a local object */
-	object_copy(q_ptr, o_ptr);
+	/* Split object */
+	q_ptr = item_split(o_ptr, 1);
 
 	/* Extract the thrown object's flags. */
 	object_flags(q_ptr, &f1, &f2, &f3);
-
-	/* Distribute the charges of rods/wands between the stacks */
-	distribute_charges(o_ptr, q_ptr, 1);
-
-	/* Single object */
-	q_ptr->number = 1;
-
-	/* Reduce and describe object */
-	item_increase(o_ptr, -1);
-	item_describe(o_ptr);
-	item_optimize(o_ptr);
 
 	/* Description */
 	object_desc(o_name, q_ptr, FALSE, 3, 256);
