@@ -980,6 +980,9 @@ void phlogiston(void)
 
 	/* Recalculate torch */
 	p_ptr->update |= (PU_TORCH);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_EQUIP);
 }
 
 
