@@ -142,20 +142,6 @@ struct borg_take
 };
 
 /*
- * MT - A trap
- */
-typedef struct borg_trap borg_trap;
-
-struct borg_trap
-{
-	s16b t_idx;	/* Trap index */
-
-	/* Location */
-	s16b x;
-	s16b y;
-};
-
-/*
  * Monster information
  */
 typedef struct borg_kill borg_kill;
@@ -500,15 +486,6 @@ extern borg_shop *borg_shops;
  */
 extern s16b track_shop_num;
 extern s16b track_shop_size;
-
-/* MT - Current "traps" */
-extern borg_trap *borg_traps;
-
-/*
- * Number of allocated traps
- */
-extern s16b track_trap_num;
-extern s16b track_trap_size;
 
 /*
  * Other variables

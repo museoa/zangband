@@ -201,14 +201,6 @@ s16b track_shop_size;
  */
 s16b shop_num = -1;
 
-
-/*
- * MT - Current "traps"
- */
-
-borg_trap *borg_traps;
-s16b track_trap_num;
-s16b track_trap_size;
 /*
  * Location variables
  */
