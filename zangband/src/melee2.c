@@ -2290,18 +2290,6 @@ static void process_monster(int m_idx)
 		{
 			do_move = TRUE;
 		}
-		
-		/* Hack -- "slow floor" terrains are no obstacle */
-		else if ((area(py, px)->feat & 0x80) == 0x80)
-		{
-			do_move = TRUE;
-		}
-
-		/* Hack -- floors are no obstacle */
-		else if ((area(py, px)->feat & 0xF8) == 0x8)
-		{
-			do_move = TRUE;
-		}
 
 		/* Hack -- player 'in' wall */
 		else if ((ny == py) && (nx == px))
@@ -2316,7 +2304,8 @@ static void process_monster(int m_idx)
 		}
 
 		/* Permanent wall */
-		else if (c_ptr->feat >= FEAT_PERM_EXTRA)
+		else if ((c_ptr->feat >= FEAT_PERM_EXTRA) &&
+			(c_ptr->feat <= FEAT_PERM_SOLID))
 		{
 			/* Nothing */
 		}
