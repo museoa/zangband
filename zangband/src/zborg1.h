@@ -1223,11 +1223,6 @@ extern void borg_update_frame(void);
 
 
 /*
- * Print the string for an item
- */
-extern cptr borg_prt_item(int item);
-
-/*
  * Initialize this file
  */
 extern void borg_init_1(void);

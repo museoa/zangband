@@ -3979,21 +3979,6 @@ void borg_init_3(void)
 	FREE(text);
 }
 
-cptr borg_prt_item(int item)
-{
-	if (item < z_info->k_max)
-	{
-		return borg_sv_plural_text[item];
-	}
-	if (item < z_info->k_max * 2)
-		return borg_sv_plural_text[item - z_info->k_max];
-	if (item < z_info->k_max * 2 + z_info->a_max)
-		return borg_sv_art_text[item - z_info->k_max * 2];
-	return (prefix_pref[item - z_info->k_max * 2 - z_info->a_max]);
-
-}
-
-
 #else
 
 #ifdef MACINTOSH
