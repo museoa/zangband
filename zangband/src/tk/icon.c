@@ -1,4 +1,4 @@
-/* File: icon3.c */
+/* File: icon.c */
 
 /* Purpose: icon stuff */
 
@@ -9,8 +9,886 @@
  * not for profit purposes provided that this copyright and statement are
  * included in all such copies.
  */
+
 #include "tnb.h"
 #include "icon.h"
+
+unsigned char *g_palette_rgb;
+t_assign_group g_assign[ASSIGN_MAX];
+t_assign_icon g_assign_none;
+t_grid *g_grid[MAX_HGT] = {0};
+
+int *g_background = NULL;
+
+t_assign_icon *g_icon_map[ICON_LAYER_MAX][MAX_HGT];
+bool g_icon_map_changed = FALSE;
+int *g_image_monster, *g_image_object;
+
+
+/*
+ * This routine fills the given t_grid struct with the indices of
+ * any known feature, object or monster at the given cave location.
+ * This routine does not consider light radius.
+ */
+void get_grid_info(int y, int x, t_grid *gridPtr)
+{
+	byte feat;
+
+	object_type *o_ptr;
+
+	s16b m_idx;
+
+	/*
+	 * Hallucination: The original game assigns a random image to
+	 * an object or monster, and sometimes (1 in 256) to a feature.
+	 */
+
+	gridPtr->f_idx = 0;
+	gridPtr->o_ptr = NULL;
+	gridPtr->m_idx = 0;
+
+	/* Feature */
+	feat = area(x, y)->feat;
+
+	/* Monster/Player */
+	m_idx = area(x, y)->m_idx;
+
+	if ((y == p_ptr->py) && (x == p_ptr->px)) m_idx = -1;
+
+	/* Handle "player" */
+	if (m_idx < 0)
+	{
+		/* Remember the character index */
+		gridPtr->m_idx = m_idx;
+
+		/* Remember the feature index (for masked icon) */
+		gridPtr->f_idx = feat;
+
+		/* Done */
+		return;
+	}
+
+	/* Remember the feature index */
+	gridPtr->f_idx = parea(x, y)->feat;
+
+	/* Objects */
+	OBJ_ITT_START (area(x, y)->o_idx, o_ptr)
+	{
+		/* Memorized objects */
+		if (!o_ptr->info & OB_SEEN) continue;
+				
+		/* Remember the top-most object */
+		gridPtr->o_ptr = o_ptr;
+
+		/* Stop */
+		break;
+	}
+	OBJ_ITT_END;
+
+	/* Monsters */
+	if (m_idx > 0)
+	{
+		/* Visible monster */
+		if (m_list[m_idx].ml)
+		{
+			/* Remember the monster index */
+			gridPtr->m_idx = m_idx;
+		}
+	}
+}
+
+/*
+ * This is the routine that determines the actual icon(s) used to
+ * represent the given cave location. We use the global g_grid[] array
+ * to first determine what monster/object/feature is visible at the
+ * given location. Then we read the assignment for the specific monster/
+ * object/feature from the g_assign[] array.
+ */
+void get_display_info(int y, int x, t_display *displayPtr)
+{
+	int m_idx, f_idx;
+	
+	object_type *o_ptr;
+
+	/* Access the global cave memory */
+	t_grid *gridPtr = &g_grid[y][x];
+
+	int layer;
+
+	t_assign_icon assign;
+	IconSpec iconSpec;
+	
+	m_idx = gridPtr->m_idx;
+	o_ptr = gridPtr->o_ptr;
+	f_idx = gridPtr->f_idx;
+
+	/* The grid is completely uninteresting */
+	if (!m_idx && !o_ptr && !f_idx)
+	{
+		/* All other values are uninitialized */
+		displayPtr->blank = TRUE;
+		
+		/* Done */
+		return;
+	}
+
+	/* */
+	displayPtr->blank = FALSE;
+
+	if (m_idx || o_ptr)
+	{
+		/* Character */
+		if (m_idx == -1)
+		{
+			int k = 0;
+	
+			/*
+			 * Currently only one icon is assigned to the character. We
+			 * could allow different icons to be used depending on the
+			 * state of the character (badly wounded, invincible, etc).
+			 */
+		
+			assign = g_assign[ASSIGN_CHARACTER].assign[k];
+		}
+	
+		/* Monster */
+		else if (m_idx > 0)
+		{
+			/* Get the monster race */
+			int r_idx = m_list[m_idx].r_idx;
+	
+			/* XXX Hack -- Hallucination */
+			if (p_ptr->image)
+			{
+				/* Get a random monster race */
+				r_idx = g_image_monster[r_idx];
+			}
+	
+			/* Get the icon assigned to the monster race */
+			assign = g_assign[ASSIGN_MONSTER].assign[r_idx];
+		}
+	
+		/* Object */
+		else if (o_ptr)
+		{	
+			/* Get the icon assigned to the object kind */
+			assign = g_assign[ASSIGN_OBJECT].assign[o_ptr->k_idx];
+		}
+
+		/*
+		 * Now we have the assignment for the character, monster, or object.
+		 */
+	
+		iconSpec.type = assign.type;
+		iconSpec.index = assign.index;
+		iconSpec.ascii = assign.ascii;
+	}
+
+	/* No character, monster or object */
+	else
+	{
+		iconSpec.type = ICON_TYPE_NONE;
+	}
+
+	/* Set the foreground icon */
+	displayPtr->fg = iconSpec;
+	
+	/* Don't bother calculating background if foreground is not masked */
+	if (g_icon_data[iconSpec.type].rle_data == NULL)
+	{
+		/* Other layers uninitialized */
+		displayPtr->bg[ICON_LAYER_1].type = ICON_TYPE_NONE;
+
+		/* Done */
+		return;
+	}
+
+	/* The feature is not known */
+	if (f_idx == 0)
+	{
+		/* Other layers uninitialized */
+		displayPtr->bg[ICON_LAYER_1].type = ICON_TYPE_BLANK;
+
+		/* Done */
+		return;
+	}
+
+	if (g_icon_map_changed)
+	{
+		int y, x;
+		
+		for (y = 0; y < MAX_HGT; y++)
+		{
+			for (x = 0; x < MAX_WID; x++)
+			{
+				set_grid_assign(y, x);
+			}
+		}
+		g_icon_map_changed = FALSE;
+	}
+
+	/*
+	 * Get the icon from the global icon map. The g_icon_map[]
+	 * array allows us to use different icons for the same
+	 * feature index. For example, doors may be vertical or
+	 * horizontal.
+	 */
+	for (layer = 0; layer < ICON_LAYER_MAX; layer++)
+	{
+		assign = g_icon_map[layer][y][x];
+
+		iconSpec.type = assign.type;
+		iconSpec.index = assign.index;
+		iconSpec.ascii = assign.ascii;
+
+		/* Only layer 1 is required */
+		if (iconSpec.type == ICON_TYPE_NONE)
+		{
+			displayPtr->bg[layer] = iconSpec;
+			break;
+		}
+
+		displayPtr->bg[layer] = iconSpec;
+	}
+}
+
+
+/*
+ * This routine determines the icon to use for the given cave
+ * location. It is called after the dungeon is created or loaded
+ * from the savefile, and whenever a feature changes.
+ * It handles any special vault icons as well.
+ */
+void set_grid_assign(int y, int x)
+{
+	int feat = area(x, y)->feat;
+	t_assign_icon assign;
+	int layer;
+
+	/* The dungeon isn't ready yet */
+	if (!character_dungeon) return;
+
+	/* Paranoia */
+	if (g_icon_map[ICON_LAYER_1][0] == NULL) return;
+
+	/* Get the assignment for this feature */
+	assign = g_assign[ASSIGN_FEATURE].assign[feat];
+
+	/* Remember the icon in the global icon map */
+	g_icon_map[ICON_LAYER_1][y][x] = assign;
+
+	layer = ICON_LAYER_2;
+
+	if (feat != g_background[feat])
+	{
+		/* Swap foreground & background */
+		g_icon_map[ICON_LAYER_2][y][x] = assign;
+
+		feat = g_background[feat];
+		assign = g_assign[ASSIGN_FEATURE].assign[feat];
+
+		/* Swap foreground & background */
+		g_icon_map[ICON_LAYER_1][y][x] = assign;
+
+		/* Wipe layers 3 & 4 */
+		layer = ICON_LAYER_3;
+	}
+
+	/* Wipe the remaining layers */
+	for (; layer < ICON_LAYER_MAX; layer++)
+	{
+		g_icon_map[layer][y][x] = g_assign_none;
+	}
+}
+
+/*
+ * Determine the icon type/index of a real icon type from the given
+ * icon type/index. This routine is used to get the actual frame of
+ * a sprite for example. Usually the given icon type/index is returned.
+ */
+void FinalIcon(IconSpec *iconOut, t_assign_icon *assignPtr, int hack, object_type *o_ptr)
+{
+	iconOut->type = assignPtr->type;
+	iconOut->index = assignPtr->index;
+	iconOut->ascii = assignPtr->ascii;
+}
+
+
+void init_palette(void)
+{
+	char path[1024], path2[1024];
+
+	/*
+	 * The colors in this 256-color palette are indexed by each byte
+	 * of icon data.
+	 */
+	path_build(path2, 1024, ANGBAND_DIR_TK, "config");
+	path_build(path, 1024, path2, "palette_256");
+
+	if (Palette_Init(g_interp, path) != TCL_OK)
+		quit(Tcl_GetStringResult(g_interp));
+
+	g_palette_rgb = Palette_GetRGB();
+}
+
+/*
+ * bg -- background bits
+ * fg -- foreground bits, or NULL
+ * mk -- mask bits for fg, or also NULL
+ * t  -- tint table, or NULL
+ * b  -- result bits
+ *
+ * The tint could be applied to the fg + bg, or to the bg only. Since
+ * tint tables are currently only used for lighting purposes, we tint
+ * the background but not the foreground.
+ *
+ * This is not quite right. We should be able to tint the foreground
+ * and/or the background separately. For example, if Rubble is masked,
+ * the foreground should be tinted, and the background may or may not
+ * be tinted (depending on whether the floor is tinted).
+ */
+IconPtr SetIconBits(IconPtr bg, IconPtr fg, IconPtr mk, TintTable t, IconPtr b)
+{
+	int i;
+
+	/* Masked */
+	if (fg)
+	{
+		/* Tint */
+		if (t)
+		{
+			for (i = 0; i < ICON_LENGTH; i++)
+			{
+				*b++ = (*(t + *bg++) & *mk++) | *fg++;
+			}
+		}
+
+		/* No tint */
+		else
+		{
+			for (i = 0; i < ICON_LENGTH; i++)
+			{
+				*b++ = (*bg++ & *mk++) | *fg++;
+			}
+		}
+	}
+
+	/* Not masked */
+	else
+	{
+		/* Tint */
+		if (t)
+		{
+			for (i = 0; i < ICON_LENGTH; i++)
+			{
+				*b++ = *(t + *bg++);
+			}
+		}
+
+		/* No tint */
+		else
+		{
+			/*
+			 * In the simplest case (non-masked, non-tinted), just return
+			 * the given address of the icon data.
+			 */
+			return bg;
+		}
+	}
+
+	/* Return the address of the buffer we wrote into */
+	return b - ICON_LENGTH;
+}
+
+
+/*
+ * Recalculate the indices used for monsters and objects during
+ * hallucination.
+ */
+void angtk_image_reset(void)
+{
+	int i;
+
+	/* Randomize monsters */
+	for (i = 1; i < z_info->r_max; i++)
+	{
+		int r_idx;
+		monster_race *r_ptr;
+
+		/* Infinite loop */
+		while (1)
+		{
+			/* Pick a random non-unique */
+			r_idx = randint1(z_info->r_max - 1);
+
+			/* Access the monster race */
+			r_ptr = &r_info[r_idx];
+
+			/* Require real race */
+			if (!r_ptr->name) continue;
+
+			/* Skip uniques */
+			if (r_ptr->flags1 & RF1_UNIQUE) continue;
+
+			/* Stop */
+			break;
+		}
+
+		/* Remember the monster race */
+		g_image_monster[i] = r_idx;
+	}
+
+	/* Randomize objects */
+	for (i = 1; i < z_info->k_max; i++)
+	{
+		int k_idx;
+		object_kind *k_ptr;
+
+		/* Infinite loop */
+		while (1)
+		{
+			/* Pick a random object kind */
+			k_idx = randint1(z_info->k_max - 1);
+
+			/* Access the object kind */
+			k_ptr = &k_info[k_idx];
+
+			/* Require real kind */
+			if (!k_ptr->name) continue;
+
+			/* Skip artifacts */
+			if (k_ptr->flags3 & (TR3_INSTA_ART)) continue;
+			
+			/* Stop */
+			break;
+		}
+
+		/* Remember the object kind */
+		g_image_object[i] = k_idx;
+	}
+}
+
+
+
+
+char *AssignToString_Icon(char *buf, t_assign_icon *assign)
+{
+	if (assign->ascii == -1)
+	{
+		(void) sprintf(buf, "icon %s %d",
+			g_icon_data[assign->type].desc,
+			assign->index);
+	}
+	else
+	{
+		(void) sprintf(buf,"icon %s %d %d",
+			g_icon_data[assign->type].desc,
+			assign->index, assign->ascii);
+	}
+
+	return buf;
+}
+
+static int StringToAssign_Icon(Tcl_Interp *interp, t_assign_icon *assignPtr, cptr desc)
+{
+	char option[64], typeName[64];
+	IconSpec iconSpec;
+
+	iconSpec.ascii = -1;
+	if (sscanf(desc, "%s %s %d %d", option, typeName, &iconSpec.index,
+		&iconSpec.ascii) < 3)
+	{
+		Tcl_SetResult(interp, format("malformed assignment \"%s\"",
+			desc), TCL_VOLATILE);
+		return TCL_ERROR;
+	}
+
+	if (Icon_Validate(interp, typeName, iconSpec.index, iconSpec.ascii,
+		&iconSpec) != TCL_OK)
+	{
+		return TCL_ERROR;
+	}
+
+	assignPtr->type = iconSpec.type;
+	assignPtr->index = iconSpec.index;
+	assignPtr->ascii = iconSpec.ascii;
+
+	return TCL_OK;
+}
+
+
+cptr keyword_assign_type[] = {"icon", NULL};
+
+int assign_parse(Tcl_Interp *interp, t_assign_icon *assignPtr, cptr desc)
+{
+	char option[64];
+	Tcl_Obj *objPtr;
+	int assignType;
+
+	/* Ex. "icon dungeon 10" or "icon ascii 12 10" */
+	if (sscanf(desc, "%s", option) != 1)
+	{
+		Tcl_SetResult(interp, format("malformed assignment \"%s\"",
+			desc), TCL_VOLATILE);
+		return TCL_ERROR;
+	}
+
+	objPtr = Tcl_NewStringObj(option, -1);
+	if (Tcl_GetIndexFromObj(interp, objPtr, keyword_assign_type,
+		"option", 0, &assignType) != TCL_OK)
+	{
+		Tcl_DecrRefCount(objPtr);
+		return TCL_ERROR;
+	}
+	Tcl_DecrRefCount(objPtr);
+
+	return StringToAssign_Icon(interp, assignPtr, desc);
+}
+
+char *assign_print2(char *buf, int assignType)
+{
+	t_assign_icon *assignPtr = &g_assign[assignType].assign[0];
+	return AssignToString_Icon(buf, assignPtr);
+}
+
+char *assign_print_object(char *buf, object_type *o_ptr)
+{
+	t_assign_icon assign;
+	get_object_assign(&assign, o_ptr);
+	return AssignToString_Icon(buf, &assign);
+}
+
+/*
+ * Get the assignment for the given object. Handle "empty" objects and
+ * resolve alternate assignments.
+ */
+void get_object_assign(t_assign_icon *assignPtr, object_type *o_ptr)
+{
+	t_assign_icon assign;
+
+	if (o_ptr->k_idx)
+	{
+		assign = g_assign[ASSIGN_OBJECT].assign[o_ptr->k_idx];
+	}
+	else
+	{
+		/*
+		 * Use ICON_TYPE_NONE icon. This is needed because the "pile" icon is
+		 * assigned to object zero.
+		 */
+		assign.type = ICON_TYPE_NONE;
+		assign.index = 0;
+		assign.ascii = -1;
+	}
+
+	(*assignPtr) = assign;
+}
+
+
+/* (assign) types */
+static int objcmd_assign_types(ClientData clientData, Tcl_Interp *interp, int objc,
+	Tcl_Obj *CONST objv[])
+{
+	int i;
+	Tcl_Obj *listObjPtr;
+
+	/* Hack - ignore parameters */
+	(void) objc;
+	(void) objv;
+	(void) clientData;
+
+	listObjPtr = Tcl_NewListObj(0, NULL);
+	
+	for (i = 0; i < ASSIGN_TYPE_MAX; i++)
+	{
+		Tcl_ListObjAppendElement(interp, listObjPtr,
+			Tcl_NewStringObj(keyword_assign_type[i], -1));
+	}
+
+	Tcl_SetObjResult(interp, listObjPtr);
+
+	return TCL_OK;
+}
+
+
+/* (assign) toicon $assign */
+static int objcmd_assign_toicon(ClientData clientData, Tcl_Interp *interp, int objc,
+	Tcl_Obj *CONST objv[])
+{
+	CommandInfo *infoCmd = (CommandInfo *) clientData;
+	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
+	char buf[128], *t;
+	IconSpec iconSpec;
+	t_assign_icon assign;
+
+	/* Hack - ignore parameter */
+	(void) objc;
+
+	t = Tcl_GetString(objV[1]);
+	if (assign_parse(interp, &assign, t) != TCL_OK)
+	{
+		return TCL_ERROR;
+	}
+
+	FinalIcon(&iconSpec, &assign, 0, NULL);
+	(void) AssignToString_Icon(buf, &assign);
+	Tcl_SetResult(interp, buf + 5, TCL_VOLATILE);
+
+	return TCL_OK;
+}
+
+/* (assign) validate $assign */
+static int objcmd_assign_validate(ClientData clientData, Tcl_Interp *interp, int objc,
+	Tcl_Obj *CONST objv[])
+{
+	CommandInfo *infoCmd = (CommandInfo *) clientData;
+	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
+	char *t;
+	t_assign_icon assign;
+
+	/* Hack - ignore parameter */
+	(void) objc;
+
+	t = Tcl_GetString(objV[1]);
+    return assign_parse(interp, &assign, t);
+}
+
+
+CommandInit assignCmdInit[] = {
+	{0, "assign", 0, 0, NULL, NULL, (ClientData) 0},
+		{1, "types", 1, 1, NULL, objcmd_assign_types, (ClientData) 0},
+		{1, "toicon", 2, 2, "assign", objcmd_assign_toicon, (ClientData) 0},
+		{1, "validate", 2, 2, "assign", objcmd_assign_validate, (ClientData) 0},
+	{0, NULL, 0, 0, NULL, NULL, (ClientData) 0}
+};
+
+
+/*
+ * Initialize the icon environment. This should be called once with
+ * the desired dimensions of the icons to use (16x16, 24x24 or 32x32).
+ */
+void init_icons(int size, int depth)
+{
+	int i, n, y, x, y2, x2;
+	t_assign_icon assign;
+	t_icon_data icon_data, *icon_data_ptr = &icon_data;
+	unsigned char *rgb = Colormap_GetRGB();
+
+	/* Initialize the Icon library */
+	if (Icon_Init(g_interp, size, depth) != TCL_OK)
+	{
+		quit(Tcl_GetStringFromObj(Tcl_GetObjResult(g_interp), NULL));
+	}
+
+	/*
+	 * The TYPE_NONE/"none" type icon is a single masked icon with an empty
+	 * mask. It is suitable for equipment displays when no item is present
+	 * in a slot.
+	 */
+	icon_data_ptr->desc = "none";
+	icon_data_ptr->icon_count = 1;
+	C_MAKE(icon_data_ptr->icon_data, ICON_LENGTH, byte);
+	icon_data_ptr->char_table = NULL;
+	icon_data_ptr->font = NULL;
+	for (i = 0; i < ICON_LENGTH; i++)
+	{
+		icon_data_ptr->icon_data[i] = 0x00;
+	}
+
+	icon_data_ptr->depth = g_icon_depth;
+	icon_data_ptr->bypp = g_pixel_size;
+	icon_data_ptr->width = g_icon_size;
+	icon_data_ptr->height = g_icon_size;
+	icon_data_ptr->pitch = g_icon_size * g_pixel_size;
+	icon_data_ptr->length = g_icon_size * g_icon_size * g_pixel_size;
+	icon_data_ptr->pixels = g_icon_size * g_icon_size;
+
+	Icon_AddType(icon_data_ptr);
+
+	g_icon_data[ICON_TYPE_NONE].rle_pixel = 0;
+	Icon_MakeRLE(&g_icon_data[ICON_TYPE_NONE]);
+
+	/*
+	 * The TYPE_BLANK/"blank" icon type is a single black unmasked icon
+	 */
+	icon_data_ptr->desc = "blank";
+	icon_data_ptr->icon_count = 1;
+	C_MAKE(icon_data_ptr->icon_data, ICON_LENGTH, byte);
+	icon_data_ptr->char_table = NULL;
+	icon_data_ptr->font = NULL;
+	for (i = 0; i < ICON_LENGTH; i++)
+	{
+		if (g_icon_depth != 8)
+			icon_data_ptr->icon_data[i] = 0; /* Black (RGB 0,0,0) */
+		else
+			icon_data_ptr->icon_data[i] = COLORMAP_BLACK;
+	}
+
+	icon_data_ptr->depth = g_icon_depth;
+	icon_data_ptr->bypp = g_pixel_size;
+	icon_data_ptr->width = g_icon_size;
+	icon_data_ptr->height = g_icon_size;
+	icon_data_ptr->pitch = g_icon_size * g_pixel_size;
+	icon_data_ptr->length = g_icon_size * g_icon_size * g_pixel_size;
+	icon_data_ptr->pixels = g_icon_size * g_icon_size;
+
+	Icon_AddType(icon_data_ptr);
+
+	/*
+	 * The TYPE_DEFAULT/"default" icon type is a single multicolored
+	 * unmasked icon. If we see it, it probably means we forgot to
+	 * assign an icon to something.
+	 */
+	icon_data_ptr->desc = "default";
+	icon_data_ptr->icon_count = 1;
+	C_MAKE(icon_data_ptr->icon_data, ICON_LENGTH, byte);
+	icon_data_ptr->char_table = NULL;
+	icon_data_ptr->font = NULL;
+	n = 0, y2 = 0;
+	for (y = 0; y < 16; y++)
+	{
+		int dy = 0;
+		if (g_icon_size == 24)
+		{
+			if (!(y & 1)) dy++;
+		}
+		if (g_icon_size == 32) dy++;
+		x2 = 0;
+		for (x = 0; x < 16; x++)
+		{
+			int dx = 0;
+			if (g_icon_size == 24)
+			{
+				if (!(x & 1)) dx++;
+			}
+			if (g_icon_size == 32) dx++;
+			PixelSet_RGB(icon_data_ptr->icon_data + (x2 * g_pixel_size) + (y2 * g_icon_size * g_pixel_size),
+				rgb[0], rgb[1], rgb[2], g_pixel_size);
+			PixelSet_RGB(icon_data_ptr->icon_data + ((x2 + dx) * g_pixel_size) + (y2 * g_icon_size * g_pixel_size),
+				rgb[0], rgb[1], rgb[2], g_pixel_size);
+			PixelSet_RGB(icon_data_ptr->icon_data + (x2 * g_pixel_size) + ((y2 + dy) * g_icon_size * g_pixel_size),
+				rgb[0], rgb[1], rgb[2], g_pixel_size);
+			PixelSet_RGB(icon_data_ptr->icon_data + ((x2 + dx) * g_pixel_size) + ((y2 + dy) * g_icon_size * g_pixel_size),
+				rgb[0], rgb[1], rgb[2], g_pixel_size);
+			rgb += 3;
+
+			n++;
+			x2 += dx ? 2 : 1;
+		}
+		y2 += dy ? 2 : 1;
+	}
+
+	icon_data_ptr->depth = g_icon_depth;
+	icon_data_ptr->bypp = g_pixel_size;
+	icon_data_ptr->width = g_icon_size;
+	icon_data_ptr->height = g_icon_size;
+	icon_data_ptr->pitch = g_icon_size * g_pixel_size;
+	icon_data_ptr->length = g_icon_size * g_icon_size * g_pixel_size;
+	icon_data_ptr->pixels = g_icon_size * g_icon_size;
+
+	Icon_AddType(icon_data_ptr);
+
+	/* Allocate array of t_assign_icon for each monster */
+	g_assign[ASSIGN_MONSTER].count = z_info->r_max;
+	C_MAKE(g_assign[ASSIGN_MONSTER].assign, z_info->r_max, t_assign_icon);
+
+	/* Allocate array of t_assign_icon for each object */
+	g_assign[ASSIGN_OBJECT].count = z_info->k_max;
+	C_MAKE(g_assign[ASSIGN_OBJECT].assign, z_info->k_max, t_assign_icon);
+
+	/* Allocate array of t_assign_icon for the character */
+	n = 1;
+	g_assign[ASSIGN_CHARACTER].count = n;
+	C_MAKE(g_assign[ASSIGN_CHARACTER].assign, n, t_assign_icon);
+
+	/* Allocate array of t_assign_icon for each feature */
+	g_assign[ASSIGN_FEATURE].count = z_info->f_max;
+	C_MAKE(g_assign[ASSIGN_FEATURE].assign, z_info->f_max, t_assign_icon);
+
+	assign.type = ICON_TYPE_DEFAULT;
+	assign.index = 0;
+	assign.ascii = -1;
+
+	/* Set default icon for the character */
+	for (i = 0; i < g_assign[ASSIGN_CHARACTER].count; i++)
+	{
+		g_assign[ASSIGN_CHARACTER].assign[i] = assign;
+	}
+
+	/* Set default icon for each monster */
+	for (i = 0; i < g_assign[ASSIGN_MONSTER].count; i++)
+	{
+		g_assign[ASSIGN_MONSTER].assign[i] = assign;
+	}
+	g_assign[ASSIGN_MONSTER].assign[0].type = ICON_TYPE_NONE;
+
+	/* Set default icon for each object */
+	for (i = 0; i < g_assign[ASSIGN_OBJECT].count; i++)
+	{
+		g_assign[ASSIGN_OBJECT].assign[i] = assign;
+	}
+	g_assign[ASSIGN_OBJECT].assign[0].type = ICON_TYPE_NONE;
+
+	/*
+	 * This is an array of t_icon types, one for every grid in
+	 * the cave! The icons are only those assigned to features,
+	 * never to monsters, objects, or the character. The icons
+	 * are not calculated for visibility or light radius. This
+	 * array allows different icons to be assigned to the same
+	 * feature type. For example, doors are horizontal or vertical,
+	 * and have different icons, and the town has a varied
+	 * set of icons.
+	 */
+	for (i = 0; i < MAX_HGT; i++)
+	{
+		int layer;
+		for (layer = 0; layer < ICON_LAYER_MAX; layer++)
+			C_MAKE(g_icon_map[layer][i], MAX_WID, t_assign_icon);
+	}
+
+	/*
+	 * When a feature is masked, or a masked icon is drawn on
+	 * a feature, we may use the icon assigned to a different feature
+	 * as the background.
+	 */
+	C_MAKE(g_background, z_info->f_max, int);
+
+	/* Set default icon for each feature */
+	for (i = 0; i < g_assign[ASSIGN_FEATURE].count; i++)
+	{
+		g_assign[ASSIGN_FEATURE].assign[i] = assign;
+		g_background[i] = i;
+	}
+	g_assign[ASSIGN_FEATURE].assign[FEAT_NONE].type = ICON_TYPE_NONE;
+
+	/* Clear the color hash table */
+	Palette_ResetHash();
+
+	/* Add some new commands to the global interpreter */
+	CommandInfo_Init(g_interp, assignCmdInit, NULL);
+
+	g_assign_none.type = ICON_TYPE_NONE;
+	g_assign_none.index = 0;
+	g_assign_none.ascii = -1;
+	
+	if (init_widget(g_interp) != TCL_OK)
+		quit(Tcl_GetStringFromObj(Tcl_GetObjResult(g_interp), NULL));
+
+	if (CanvasWidget_Init(g_interp) != TCL_OK)
+		quit(Tcl_GetStringFromObj(Tcl_GetObjResult(g_interp), NULL));
+
+	/* Hack -- indices for hallucination */
+	C_MAKE(g_image_monster, z_info->r_max, int);
+	C_MAKE(g_image_object, z_info->k_max, int);
+
+	/* Randomize the hallucination indices */
+	angtk_image_reset();
+	
+	/* Now we can safely use lite_spot() */
+	angtk_lite_spot = angtk_lite_spot_real;
+}
+
+
 
 #include <limits.h>
 #ifndef USHRT_MAX
@@ -32,8 +910,6 @@ t_ascii *g_ascii; /* Array of ascii info */
 int g_ascii_count;  /* Number of elems in g_ascii[] array */
 int g_pixel_size; /* Num bytes per pixel (1, 2, 3 or 4) */
 int g_icon_pixels; /* Num pixels per icon (16x16, 24x24, 32x32) */
-
-unsigned char *g_palette_rgb;
 
 /* Hack -- Standard 16 "term" colors. User should be able to change */
 IconValue g_term_palette[16] = {255, 0, 250, 17, 217, 196, 199, 101, 129,
