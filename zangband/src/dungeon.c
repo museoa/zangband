@@ -1284,7 +1284,9 @@ static void process_world(void)
 		if (!(turn % 100))
 		{
 			/* Basic digestion rate based on speed */
-			i = extract_energy[p_ptr->pspeed] * 2;
+			i = ((p_ptr->pspeed > 199) ? 49 : (
+				(p_ptr->pspeed < 0) ? 1 :
+			 		extract_energy[p_ptr->pspeed])) * 2;
 
 			/* Regeneration takes more food */
 			if (p_ptr->regenerate) i += 30;
@@ -3213,16 +3215,9 @@ static void process_player(void)
 		hack_mutation = FALSE;
 	}
 
-	if ((p_ptr->pspeed > 199) || (p_ptr->pspeed < 0))
-	{
-		/* player has speed outside range of table : punish him/her */
-		p_ptr->energy += 0;
-	}
-	else
-	{
-		/* Give the player some energy */
-		p_ptr->energy += extract_energy[p_ptr->pspeed];
-	}
+	i = (p_ptr->pspeed > 199) ? 49 : 
+		((p_ptr->pspeed < 0) ? 1 : 
+			extract_energy[p_ptr->pspeed]);
 
 	/* No turn yet */
 	if (p_ptr->energy < 100) return;
