@@ -756,7 +756,7 @@ static bool find_safety(int m_idx, int *xp, int *yp)
 			if (c_ptr->cost > area(fy, fx)->cost + 2 * d) continue;
 
 			/* Check for absence of shot (more or less) */
-			if (clean_shot(fy, fx, y, x, FALSE))
+			if (clean_shot(fx, fy, x, y, FALSE))
 			{
 
 				/* Calculate distance from player */
@@ -855,7 +855,7 @@ static bool find_hiding(int m_idx, int *xp, int *yp)
 
 			/* Check for hidden, available grid */
 			if (!player_has_los_grid(parea(y, x))
-					 && clean_shot(fy, fx, y, x, FALSE))
+					 && clean_shot(fx, fy, x, y, FALSE))
 			{
 				/* Calculate distance from player */
 				dis = distance(y, x, py, px);

@@ -369,7 +369,7 @@ static bool summon_possible(int x1, int y1)
  * and simpler than before.
  */
 /* Must be the same as projectable() */
-bool clean_shot(int y1, int x1, int y2, int x2, bool friendly)
+bool clean_shot(int x1, int y1, int x2, int y2, bool friendly)
 {
 	int grid_n;
 	coord grid_g[512];
@@ -853,7 +853,7 @@ bool make_attack_spell(int m_idx)
 		     (f5 & RF5_BOLT_MASK) ||
 		     (f6 & RF6_BOLT_MASK)) &&
 		     !(r_ptr->flags2 & RF2_STUPID) &&
-		     !clean_shot(m_ptr->fy, m_ptr->fx, py, px, FALSE))
+		     !clean_shot(m_ptr->fx, m_ptr->fy, px, py, FALSE))
 		{
 			/* Remove spells that will only hurt friends */
 			f4 &= ~(RF4_BOLT_MASK);

@@ -156,7 +156,7 @@ bool monst_spell_monst(int m_idx)
 			  (f5 & RF5_BOLT_MASK) ||
 			  (f6 & RF6_BOLT_MASK)) &&
 			 !(r_ptr->flags2 & RF2_STUPID) &&
-			 !clean_shot(m_ptr->fy, m_ptr->fx, t_ptr->fy, t_ptr->fx, is_pet(m_ptr)))
+			 !clean_shot(m_ptr->fx, m_ptr->fy, t_ptr->fx, t_ptr->fy, is_pet(m_ptr)))
 		{
 			f4 &= ~(RF4_BOLT_MASK);
 			f5 &= ~(RF5_BOLT_MASK);

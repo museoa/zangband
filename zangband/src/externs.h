@@ -1003,7 +1003,7 @@ extern int mon_damage_mod(const monster_type *m_ptr, int dam, int type);
 extern void exp_for_kill(const monster_race *r_ptr, s32b *new_exp, s32b *new_exp_frac);
 
 /* mspells1.c */
-extern bool clean_shot(int y1, int x1, int y2, int x2, bool friendly);
+extern bool clean_shot(int x1, int y1, int x2, int y2, bool friendly);
 
 /* mspells2.c */
 extern bool monst_spell_monst(int m_idx);
