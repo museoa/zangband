@@ -69,7 +69,9 @@ SRCS = \
 	main-cap.c main-gcu.c main-x11.c main-xaw.c main-xpj.c\
 	main-lsl.c main-vcs.c main-gtk.c main.c \
 	l-monst.c l-object.c l-player.c l-random.c l-ui.c \
-	maid-grf.c l-misc.c l-spell.c
+	maid-grf.c l-misc.c l-spell.c \
+	zborg1.c zborg2.c zborg3.c zborg4.c zborg5.c \
+	zborg6.c zborg7.c zborg8.c zborg9.c
 
 OBJS = \
 	z-util.o z-virt.o z-form.o z-rand.o z-term.o \
@@ -89,6 +91,8 @@ OBJS = \
 	main-lsl.o main-vcs.o main-gtk.o main.o\
 	l-monst.o l-object.o l-player.o l-random.o l-ui.o \
 	maid-grf.o l-misc.o l-spell.o \
+	zborg1.o zborg2.o zborg3.o zborg4.o zborg5.o \
+	zborg6.o zborg7.o zborg8.o zborg9.o \
 	$(LUAOBJS)
 
 ##
@@ -431,6 +435,20 @@ z-rand.o: z-rand.c $(HDRS) z-rand.h
 z-term.o: z-term.c $(HDRS) z-term.h z-virt.h
 z-util.o: z-util.c $(HDRS) z-util.h
 z-virt.o: z-virt.c $(HDRS) z-virt.h z-util.h
+
+# Each borg file depends on the one before it.
+# Hack - the dependance on the .o files encodes this.
+
+zborg1.o: zborg1.c $(HDRS) zborg1.h
+zborg2.o: zborg2.c $(HDRS) zborg2.h zborg1.o
+zborg3.o: zborg3.c $(HDRS) zborg3.h zborg2.o
+zborg4.o: zborg4.c $(HDRS) zborg4.h zborg3.o
+zborg5.o: zborg5.c $(HDRS) zborg5.h zborg4.o
+zborg6.o: zborg6.c $(HDRS) zborg6.h zborg5.o
+zborg7.o: zborg7.c $(HDRS) zborg7.h zborg6.o
+zborg8.o: zborg8.c $(HDRS) zborg8.h zborg7.o
+zborg9.o: zborg9.c $(HDRS) zborg9.h zborg8.o
+
 
 #
 # Build wrappers

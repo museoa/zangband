@@ -27,6 +27,15 @@ CFLAGS	=	-I$(INCS) -DUSE_TRANSPARENCY
 # Project files
 #
 OBJS=\
+	zborg9.obj \
+	zborg8.obj \
+	zborg7.obj \
+	zborg6.obj \
+	zborg5.obj \
+	zborg4.obj \
+	zborg3.obj \
+	zborg2.obj \
+	zborg1.obj \
 	z-virt.obj \
 	z-util.obj \
 	z-term.obj \
@@ -106,6 +115,239 @@ clean:
 cleanall: clean
 	del *.exe
 
+# BUILD ZBORG1.C
+ZBORG1_C=\
+	angband.h\
+	h-basic.h\
+	h-config.h\
+	h-system.h\
+	h-type.h\
+	h-define.h\
+	z-util.h\
+	z-virt.h\
+	z-form.h\
+	z-rand.h\
+	z-term.h\
+	z-config.h\
+	defines.h\
+	types.h\
+	externs.h\
+	zborg1.h\
+
+zborg1.obj: $(ZBORG1_C) zborg1.c
+	$(CC) -c $(CFLAGS) zborg1.c
+
+# BUILD ZBORG2.C
+ZBORG2_C=\
+	angband.h\
+	h-basic.h\
+	h-config.h\
+	h-system.h\
+	h-type.h\
+	h-define.h\
+	z-util.h\
+	z-virt.h\
+	z-form.h\
+	z-rand.h\
+	z-term.h\
+	z-config.h\
+	defines.h\
+	types.h\
+	externs.h\
+	zborg1.h\
+	zborg2.h\
+
+zborg2.obj: $(ZBORG2_C) zborg2.c
+	$(CC) -c $(CFLAGS) zborg2.c
+
+# BUILD ZBORG3.C
+ZBORG3_C=\
+	angband.h\
+	h-basic.h\
+	h-config.h\
+	h-system.h\
+	h-type.h\
+	h-define.h\
+	z-util.h\
+	z-virt.h\
+	z-form.h\
+	z-rand.h\
+	z-term.h\
+	z-config.h\
+	defines.h\
+	types.h\
+	externs.h\
+	zborg1.h\
+	zborg2.h\
+	zborg3.h\
+
+zborg3.obj: $(ZBORG3_C) zborg3.c
+	$(CC) -c $(CFLAGS) zborg3.c
+
+# BUILD ZBORG4.C
+ZBORG4_C=\
+	angband.h\
+	h-basic.h\
+	h-config.h\
+	h-system.h\
+	h-type.h\
+	h-define.h\
+	z-util.h\
+	z-virt.h\
+	z-form.h\
+	z-rand.h\
+	z-term.h\
+	z-config.h\
+	defines.h\
+	types.h\
+	externs.h\
+	zborg1.h\
+	zborg2.h\
+	zborg3.h\
+	zborg4.h\
+
+zborg4.obj: $(ZBORG4_C) zborg4.c
+	$(CC) -c $(CFLAGS) zborg4.c
+
+# BUILD ZBORG5.C
+ZBORG5_C=\
+	angband.h\
+	h-basic.h\
+	h-config.h\
+	h-system.h\
+	h-type.h\
+	h-define.h\
+	z-util.h\
+	z-virt.h\
+	z-form.h\
+	z-rand.h\
+	z-term.h\
+	z-config.h\
+	defines.h\
+	types.h\
+	externs.h\
+	zborg1.h\
+	zborg2.h\
+	zborg3.h\
+	zborg4.h\
+	zborg5.h\
+
+zborg5.obj: $(ZBORG5_C) zborg5.c
+	$(CC) -c $(CFLAGS) zborg5.c
+
+# BUILD ZBORG6.C
+ZBORG6_C=\
+	angband.h\
+	h-basic.h\
+	h-config.h\
+	h-system.h\
+	h-type.h\
+	h-define.h\
+	z-util.h\
+	z-virt.h\
+	z-form.h\
+	z-rand.h\
+	z-term.h\
+	z-config.h\
+	defines.h\
+	types.h\
+	externs.h\
+	zborg1.h\
+	zborg2.h\
+	zborg3.h\
+	zborg4.h\
+	zborg5.h\
+	zborg6.h\
+
+zborg6.obj: $(ZBORG6_C) zborg6.c
+	$(CC) -c $(CFLAGS) zborg6.c
+
+# BUILD ZBORG7.C
+ZBORG7_C=\
+	angband.h\
+	h-basic.h\
+	h-config.h\
+	h-system.h\
+	h-type.h\
+	h-define.h\
+	z-util.h\
+	z-virt.h\
+	z-form.h\
+	z-rand.h\
+	z-term.h\
+	z-config.h\
+	defines.h\
+	types.h\
+	externs.h\
+	zborg1.h\
+	zborg2.h\
+	zborg3.h\
+	zborg4.h\
+	zborg5.h\
+	zborg6.h\
+	zborg7.h\
+
+zborg7.obj: $(ZBORG7_C) zborg7.c
+	$(CC) -c $(CFLAGS) zborg7.c
+
+# BUILD ZBORG8.C
+ZBORG8_C=\
+	angband.h\
+	h-basic.h\
+	h-config.h\
+	h-system.h\
+	h-type.h\
+	h-define.h\
+	z-util.h\
+	z-virt.h\
+	z-form.h\
+	z-rand.h\
+	z-term.h\
+	z-config.h\
+	defines.h\
+	types.h\
+	externs.h\
+	zborg1.h\
+	zborg2.h\
+	zborg3.h\
+	zborg4.h\
+	zborg5.h\
+	zborg6.h\
+	zborg7.h\
+	zborg8.h\
+
+zborg8.obj: $(ZBORG8_C) zborg8.c
+	$(CC) -c $(CFLAGS) zborg8.c
+
+# BUILD ZBORG9.C
+ZBORG9_C=\
+	angband.h\
+	h-basic.h\
+	h-config.h\
+	h-system.h\
+	h-type.h\
+	h-define.h\
+	z-util.h\
+	z-virt.h\
+	z-form.h\
+	z-rand.h\
+	z-term.h\
+	z-config.h\
+	defines.h\
+	types.h\
+	externs.h\
+	zborg1.h\
+	zborg2.h\
+	zborg3.h\
+	zborg4.h\
+	zborg5.h\
+	zborg6.h\
+	zborg7.h\
+	zborg8.h\
+	zborg9.h\
+
+zborg9.obj: $(ZBORG9_C) zborg9.c
+	$(CC) -c $(CFLAGS) zborg9.c
 
 # Build Z-VIRT.C
 Z-VIRT_C=\
