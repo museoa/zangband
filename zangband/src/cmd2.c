@@ -2376,7 +2376,7 @@ static int breakage_chance(object_type *o_ptr)
  * Calculation of critical hits for objects fired or thrown by the player. -LM-
  */
 static sint critical_shot(int chance, int sleeping_bonus,
-	char o_name[], char m_name[], int visible)
+	cptr o_name, cptr m_name, int visible)
 {
 	int i, k;
 	int mult_a_crit;
