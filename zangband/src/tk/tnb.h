@@ -399,7 +399,6 @@ extern void Plat_SyncDisplay(Display *display);
 /* DECLARE_TK_HOOK(angband); */
 DECLARE_TK_HOOK(player);
 DECLARE_TK_HOOK(power);
-DECLARE_TK_HOOK(setting);
 DECLARE_TK_HOOK(spell);
 DECLARE_TK_HOOK(cave);
 DECLARE_TK_HOOK(equipment);

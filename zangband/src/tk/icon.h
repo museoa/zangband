@@ -364,9 +364,6 @@ typedef struct t_darken {
 } t_darken;
 extern t_darken g_darken[3];
 
-/* Tint table for torchlite -- NOT USED */
-extern TintTable g_yellow;
-
 /* Recalculate g_icon_map[] */
 extern bool g_icon_map_changed;
 

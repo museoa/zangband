@@ -29,7 +29,6 @@ t_effect *g_effect; /* Array of effect icon info */
 int *g_feat_lite = NULL;
 int *g_background = NULL;
 t_darken g_darken[3];
-TintTable g_yellow;
 t_assign *g_icon_map[ICON_LAYER_MAX][MAX_HGT];
 bool g_icon_map_changed = FALSE;
 int g_torchlite; /* Use 4 levels of torch lite */

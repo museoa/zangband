@@ -1075,73 +1075,6 @@ static int objcmd_effect_names(ClientData clientData, Tcl_Interp *interp, int ob
 	return TCL_OK;;
 }
 
-cptr keyword_feat_lite[] = {"none", "icon", "tint", NULL};
-
-/*
- * (feature) torchlite ?boolean?
- */
-static int objcmd_feature_torchlite(ClientData clientData, Tcl_Interp *interp, int objc,
-	Tcl_Obj *CONST objv[])
-{
-	CommandInfo *infoCmd = (CommandInfo *) clientData;
-	int objC = objc - infoCmd->depth;
-	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
-	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
-
-	/* New value given */
-	if (objC == 3)
-	{
-		if (Tcl_GetBooleanFromObj(interp, objV[1], &g_torchlite) != TCL_OK)
-		{
-			return TCL_ERROR;
-		}
-	}
-
-	/* Return the current value */
-	Tcl_SetBooleanObj(resultPtr, g_torchlite);
-
-	/* Success */
-	return TCL_OK;
-}
-
-/*
- * (feature) torch paletteIndex opacity
- */
-static int objcmd_feature_torch(ClientData clientData, Tcl_Interp *interp, int objc,
-	Tcl_Obj *CONST objv[])
-{
-	CommandInfo *infoCmd = (CommandInfo *) clientData;
-/*	int objC = objc - infoCmd->depth; */
-	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
-
-	int tint, opacity;
-
-	/* Hack - ignore parameter */
-	(void) objc;
-
-	/* Get the palette index */
-	if (Tcl_GetIntFromObj(interp, objV[1], &tint) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* VERIFY tint */
-	
-	/* Get the opacity */
-	if (Tcl_GetIntFromObj(interp, objV[2], &opacity) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* VERIFY opacity */
-
-	/* Set the tint table */
-	Palette_TintTable(tint, opacity, g_yellow);
-
-	/* Success */
-	return TCL_OK;
-}
-
 /* (flavor) assign $group $index ?-type $type -index $index -ascii $ascii? */
 static int
 objcmd_flavor_assign(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
@@ -1955,16 +1888,6 @@ static int objcmd_sprite_insert(ClientData clientData, Tcl_Interp *interp, int o
 	return TCL_OK;
 }
 
-/*
- * One-time initialization for the animation timer
- */
-static void init_timer(void)
-{
-#ifdef TIMER_STATS
-	Tcl_CreateObjCommand(g_interp, "timer", objcmd_timer, NULL, NULL);
-#endif /* TIMER_STATS */
-}
-
 
 CommandInit assignCmdInit[] = {
 	{0, "alternate", 0, 0, NULL, NULL, (ClientData) 0},
@@ -1985,8 +1908,6 @@ CommandInit assignCmdInit[] = {
 		{1, "names", 2, 2, "group", objcmd_effect_names, (ClientData) 0},
 	{0, "feature", 0, 0, NULL, NULL, (ClientData) 0},
 		{1, "lighting", 3, 0, "-radius r ?option? ?value? ?option value ...?", objcmd_lighting, (ClientData) 0},
-		{1, "torch", 1, 2, "paletteIndex opacity", objcmd_feature_torch, (ClientData) 0},
-		{1, "torchlite", 1, 2, "?boolean?", objcmd_feature_torchlite, (ClientData) 0},
 	{0, "flavor", 0, 0, NULL, NULL, (ClientData) 0},
 		{1, "assign", 3, 0, "flavorName flavorIndex ?args ...?", objcmd_flavor_assign, (ClientData) 0},
 		{1, "count", 2, 2, "flavorName", objcmd_flavor_count, (ClientData) 0},
@@ -2257,13 +2178,8 @@ void init_icons(int size, int depth)
 	/* Clear the color hash table */
 	Palette_ResetHash();
 
-	/* Initialize a tint table for drawing torch light (NOT USED) */
-	Palette_TintTable(5, 127, g_yellow);
-
 	/* Add some new commands to the global interpreter */
-	{
-		(void) CommandInfo_Init(g_interp, assignCmdInit, NULL);
-	}
+	CommandInfo_Init(g_interp, assignCmdInit, NULL);
 
 	g_assign_none.assignType = ASSIGN_TYPE_ICON;
 	g_assign_none.icon.type = ICON_TYPE_NONE;
@@ -2283,9 +2199,6 @@ void init_icons(int size, int depth)
 	/* Randomize the hallucination indices */
 	angtk_image_reset();
 	
-	/* Initialize the animation timer */
-	init_timer();
-
 	/* Now we can safely use lite_spot() */
 	angtk_lite_spot = angtk_lite_spot_real;
 }

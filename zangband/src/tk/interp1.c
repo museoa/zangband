@@ -2237,7 +2237,6 @@ static CommandInit commandInit[] = {
 		{1, "macro", 0, 0, NULL, objcmd_macro, (ClientData) 0},
 		{1, "message", 0, 0, NULL, objcmd_message, (ClientData) 0},
 		{1, "player", 0, 0, NULL, objcmd_player, (ClientData) 0},
-		{1, "setting", 0, 0, NULL, objcmd_setting, (ClientData) 0},
 		{1, "spell", 0, 0, NULL, objcmd_spell, (ClientData) 0},
 		{1, "equipinfo", 3, 3, "slot arrayName", objcmd_equipinfo, (ClientData) 0},
 		{1, "inveninfo", 3, 3, "slot arrayName", objcmd_inveninfo, (ClientData) 0},
@@ -2263,7 +2262,6 @@ static CommandInit commandInit[] = {
 void angtk_init(void)
 {
 	char path[1024];
-	int i;
 
 	/* Hash table for object kind "tval" */
 	init_tval_hash();
