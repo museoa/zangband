@@ -394,7 +394,7 @@ errr top_twenty(void)
 
 
 	/* Clear the record */
-	WIPE(&the_score, high_score);
+	(void) WIPE(&the_score, high_score);
 
 	/* Save the version */
 	sprintf(the_score.what, "%u.%u.%u",

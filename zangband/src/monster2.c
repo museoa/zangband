@@ -151,7 +151,7 @@ void delete_monster_idx(int i)
 
 
 	/* Wipe the Monster */
-	WIPE(m_ptr, monster_type);
+	(void) WIPE(m_ptr, monster_type);
 
 	/* Count monsters */
 	m_cnt--;
@@ -239,7 +239,7 @@ static void compact_monsters_aux(int i1, int i2)
 	COPY(&m_list[i2], &m_list[i1], monster_type);
 
 	/* Wipe the hole */
-	WIPE(&m_list[i1], monster_type);
+	(void) WIPE(&m_list[i1], monster_type);
 
 #ifdef USE_SCRIPT
 	copy_monster_callback(i1, i2);
@@ -363,7 +363,7 @@ void wipe_m_list(void)
 		cave[m_ptr->fy][m_ptr->fx].m_idx = 0;
 
 		/* Wipe the Monster */
-		WIPE(m_ptr, monster_type);
+		(void) WIPE(m_ptr, monster_type);
 
 #ifdef USE_SCRIPT
 		delete_monster_callback(i);

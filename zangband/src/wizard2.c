@@ -159,9 +159,9 @@ static void prt_alloc(byte tval, byte sval, int row, int col)
 	alloc_entry *table = alloc_kind_table;
 
 	/* Wipe the tables */
-	C_WIPE(rarity, MAX_DEPTH, u32b);
-	C_WIPE(total, MAX_DEPTH, u32b);
-	C_WIPE(display, 20, u32b);
+	(void) C_WIPE(rarity, MAX_DEPTH, u32b);
+	(void) C_WIPE(total, MAX_DEPTH, u32b);
+	(void) C_WIPE(display, 20, u32b);
 
 	/* Scan all entries */
 	for (i = 0; i < MAX_DEPTH; i++)

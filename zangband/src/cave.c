@@ -3549,7 +3549,6 @@ void wiz_lite(void)
 	for (i = 1; i < m_max; i++)
 	{
 		monster_type *m_ptr = &m_list[i];
-		monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 		/* Skip dead monsters */
 		if (!m_ptr->r_idx) continue;

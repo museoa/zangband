@@ -1465,7 +1465,7 @@ static void player_wipe(void)
 
 
 	/* Hack -- zero the struct */
-	WIPE(p_ptr, player_type);
+	(void) WIPE(p_ptr, player_type);
 
 	/* Wipe the history */
 	for (i = 0; i < 4; i++)

@@ -1122,7 +1122,6 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 	/* Scan through all four blows */
 	for (ap_cnt = 0; ap_cnt < 4; ap_cnt++)
 	{
-		bool visible = FALSE;
 		bool obvious = FALSE;
 
 		int power = 0;

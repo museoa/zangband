@@ -2322,7 +2322,7 @@ static errr rd_dungeon_aux(void)
 		q_ptr = &forge;
 
 		/* Clear the monster */
-		WIPE(q_ptr, monster_type);
+		(void) WIPE(q_ptr, monster_type);
 
 		/* Read the monster */
 		rd_monster(q_ptr);
