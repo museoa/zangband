@@ -226,7 +226,6 @@ class player_type:
         "max_plv" : playerc.player_type_max_plv_get,
         "max_dlv" : playerc.player_type_max_dlv_get,
         "stat_max" : playerc.player_type_stat_max_get,
-        "stat_cur" : playerc.player_type_stat_cur_get,
         "fast" : playerc.player_type_fast_get,
         "slow" : playerc.player_type_slow_get,
         "blind" : playerc.player_type_blind_get,
@@ -389,6 +388,7 @@ class player_typePtr(player_type):
         self.thisown = 0
 
 
+player_type.stat_cur_get = new.instancemethod(playerc.player_type_stat_cur_get, None, player_type)
 player_type.inventory = new.instancemethod(playerc.player_type_inventory, None, player_type)
 player_type.inven_item_increase = new.instancemethod(playerc.player_type_inven_item_increase, None, player_type)
 player_type.inven_item_optimize = new.instancemethod(playerc.player_type_inven_item_optimize, None, player_type)
@@ -406,6 +406,9 @@ player_type.brand_weapon = new.instancemethod(playerc.player_type_brand_weapon, 
 player_type.call_the_void = new.instancemethod(playerc.player_type_call_the_void, None, player_type)
 player_type.fetch = new.instancemethod(playerc.player_type_fetch, None, player_type)
 player_type.alter_reality = new.instancemethod(playerc.player_type_alter_reality, None, player_type)
+player_type.set_afraid = new.instancemethod(playerc.player_type_set_afraid, None, player_type)
+player_type.set_shero = new.instancemethod(playerc.player_type_set_shero, None, player_type)
+player_type.hp_player = new.instancemethod(playerc.player_type_hp_player, None, player_type)
 player_type.gain_exp = new.instancemethod(playerc.player_type_gain_exp, None, player_type)
 
 
