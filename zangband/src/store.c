@@ -1556,9 +1556,6 @@ static void store_purchase(int *store_top)
 
 				/* Start over */
 				*store_top = 0;
-
-				/* Redraw everything */
-				display_inventory(*store_top);
 			}
 
 			/* The item is gone */
@@ -1569,17 +1566,10 @@ static void store_purchase(int *store_top)
 				{
 					*store_top -= 12;
 				}
-
-				/* Redraw everything */
-				display_inventory(*store_top);
 			}
-
-			/* Item is still here */
-			else
-			{
-				/* Redraw the item */
-				display_entry(item);
-			}
+			
+			/* Redraw everything */
+			display_inventory(*store_top);
 		}
 	}
 
