@@ -6773,7 +6773,7 @@ s32b borg_power_home(void)
  * We reduce the danger from distant "sleeping" monsters.
  * apw. PFE reduces my fear of an area.
  */
-static int borg_danger_aux1(int i)
+static int borg_danger_aux1(int r_idx)
 {
 	int k, n = 0;
 	int pfe = 0;
@@ -6781,9 +6781,7 @@ static int borg_danger_aux1(int i)
 
 	s16b ac = borg_skill[BI_ARMOR];
 
-	borg_kill *kill = &borg_kills[i];
-
-	monster_race *r_ptr = &r_info[kill->r_idx];
+	monster_race *r_ptr = &r_info[r_idx];
 
 	/* goi gives +100 to ac and deflects almost all missiles and balls */
 	if (borg_goi)
@@ -6800,10 +6798,6 @@ static int borg_danger_aux1(int i)
 	{
 		pfe = 1;
 	}
-
-
-	/* Mega-Hack -- unknown monsters */
-	if (kill->r_idx >= z_info->r_max) return (1000);
 
 	/* Analyze each physical attack */
 	for (k = 0; k < 4; k++)
@@ -7468,9 +7462,6 @@ static int borg_danger_aux2(int i, bool average)
 	{
 		borg_goi = 0;
 	}
-	/* Mega-Hack -- unknown monsters */
-	if (kill->r_idx >= z_info->r_max) return (1000);
-
 
 	/* Extract the "inate" spells */
 	for (k = 0; k < 32; k++)
@@ -9280,7 +9271,7 @@ int borg_danger_aux(int y, int x, int c, int i, bool average)
 	/** Danger from physical attacks **/
 
 	/* Physical attacks */
-	v1 = borg_danger_aux1(i);
+	v1 = borg_danger_aux1(kill->r_idx);
 
 	/* Hack -- Under Stressful Situation.
 	 */
@@ -9376,6 +9367,7 @@ int borg_danger_aux(int y, int x, int c, int i, bool average)
 			v1 = v1 * 8 / 10;
 		}
 	}
+	
 	/* Reduce danger from sleeping monsters with the sleep 2 spell */
 	if (borg_sleep_spell_ii)
 	{
@@ -9617,16 +9609,25 @@ int borg_danger_aux(int y, int x, int c, int i, bool average)
  */
 int borg_danger(int y, int x, int c, bool average)
 {
-	int i, p;
+	int i, p = 1000;
+	int grid_fear = 1000;
+
+	map_block *mb_ptr;
 
 	/* do twice.  Once to get full damage and once to get partial. */
-/* !FIX this is very slow.  I need to find a better way of doing this */
-/*      perhaps I should calc both at the same time and pass back */
-/*      the right one.  AJG */
-
-
-	/* Base danger (from fear) */
-	p = borg_fear_region[y / 11][x / 11] * c;
+	/* !FIX this is very slow.  I need to find a better way of doing this */
+	/* perhaps I should calc both at the same time and pass back */
+	/* the right one.  AJG */
+	
+	/* Bounds checking */
+	if (map_in_bounds(x, y))
+	{
+		mb_ptr = map_loc(x, y);
+		
+		/* Base danger (from fear) */
+		grid_fear = mb_ptr->fear * c;
+		p = grid_fear;
+	}
 
 	/* Reduce this fear if GOI is up */
 	if (borg_goi)
@@ -9636,6 +9637,7 @@ int borg_danger(int y, int x, int c, bool average)
 
 
 	borg_full_damage = TRUE;
+	
 	/* Examine all the monsters */
 	for (i = 1; i < borg_kills_nxt; i++)
 	{
@@ -9647,13 +9649,14 @@ int borg_danger(int y, int x, int c, bool average)
 		/* Collect danger from monster */
 		p += borg_danger_aux(y, x, c, i, average);
 	}
+	
 	borg_full_damage = FALSE;
 
 	/* if I can't be killed in one round (or severely wounded) use probablilities */
 	if (p < (avoidance * 85 / 100) && p != 0)
 	{
 		/* Base danger (from fear) */
-		p = borg_fear_region[y / 11][x / 11] * c;
+		p = grid_fear;
 
 		/* Reduce this fear if GOI is up */
 		if (borg_goi)

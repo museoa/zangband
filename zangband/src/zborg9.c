@@ -2424,9 +2424,6 @@ static void borg_parse_aux(cptr msg, int len)
 			borg_delete_kill(i);
 		}
 
-		/* Remove the region fear as well */
-		borg_fear_region[c_y / 11][c_x / 11] = 0;
-
 		return;
 	}
 
@@ -4120,6 +4117,26 @@ static void borg_display_map_info(byte data, byte type)
 						break;
 					}
 					
+					case BORG_SHOW_FEAR:
+					{
+						/* Obtain fear */
+						int p = mb_ptr->fear;
+						
+						/* Skip non-avoidances */
+						if (p <= avoidance / 10) break;
+						
+						if (p <= avoidance / 4)
+						{
+							a = TERM_YELLOW;
+						}
+						else
+						{
+							a = TERM_RED;
+						}
+						
+						break;
+					}
+					
 					case BORG_SHOW_STEP:
 					{
 						int i;
@@ -5451,28 +5468,9 @@ void do_cmd_borg(void)
 		case '_':
 		{
 			/* Command:  Regional Fear Info */
-			int x, y, p;
-
-			/* Scan map */
-			for (y = w_y; y < w_y + SCREEN_HGT; y++)
-			{
-				for (x = w_x; x < w_x + SCREEN_WID; x++)
-				{
-					byte a = TERM_RED;
-
-					/* Obtain danger */
-					p = borg_fear_region[y / 11][x / 11];
-
-					/* Skip non-fears */
-					if (p <= avoidance / 10) continue;
-
-					/* Use yellow for less painful */
-					if (p <= avoidance / 4) a = TERM_YELLOW;
-
-					/* Display */
-					print_rel('*', a, x, y);
-				}
-			}
+			
+			/* Show it */
+			borg_display_map_info(0, BORG_SHOW_FEAR);
 
 			/* Get keypress */
 			msg_format("(%d,%d) Regional Fear.", c_y, c_x);

@@ -1136,12 +1136,6 @@ extern borg_kill *borg_kills;
  */
 extern int borg_ready_morgoth;
 
-/*
- * Hack -- extra fear per "region"
- */
-
-extern u16b borg_fear_region[6][18];
-
 
 /*
  * Hack -- count racial appearances per level

@@ -25,14 +25,14 @@
 #ifdef TERM_USE_MAP
 
 /*
- * Constants used to pass lighting information to users
+ * Constants used to pass information to users
  * of the overhead map hooks.
  */
-#define MAP_SEEN	0x01
-#define MAP_GLOW	0x02
-#define MAP_LITE	0x04
-#define MAP_ONCE    0x08     /* This block has ever been seen */
-#define MAP_KEEP    0x10     /* Keep this block in cache even if not seen */
+#define MAP_SEEN	0x01	/* GRID_SEEN equivalent */
+#define MAP_GLOW	0x02	/* CAVE_GLOW equivalent */
+#define MAP_LITE	0x04	/* GRID_LITE equivalent */
+#define MAP_ONCE    0x08	/* This block has ever been seen */
+#define MAP_KEEP    0x10	/* Keep this block in cache even if not seen */
 
 /*
  * Make an itterator, so we can scan the map quickly
@@ -108,6 +108,8 @@ struct map_block
 
 	/* Borg-specific stuff */
 #ifdef ALLOW_BORG
+	u16b fear;	/* fear value */
+
 	byte info;	/* info flags */
 	byte xtra;	/* search count */
 

@@ -953,12 +953,6 @@ int borg_ready_morgoth;
 
 
 /*
- * Hack -- extra fear per "region"
- */
-u16b borg_fear_region[6][18];
-
-
-/*
  * Hack -- count racial appearances per level
  */
 s16b *borg_race_count;

@@ -487,7 +487,9 @@ static int borg_guess_race_name(cptr who)
  */
 static void borg_fear_grid(cptr who, int y, int x, uint k, bool seen_guy)
 {
-	int x0, y0, x1, x2, y1, y2;
+	int i, j;
+	
+	map_block *mb_ptr;
 
 	/* Reduce fear if GOI is on */
 	if (borg_goi)
@@ -508,32 +510,24 @@ static void borg_fear_grid(cptr who, int y, int x, uint k, bool seen_guy)
 	}
 
 	/* Current region */
-	y0 = (y / 11);
-	x0 = (x / 11);
+	
+	for (i = -15; i < 15; i++)
+	{
+		for (j = -15; j < 15; j++)
+		{
+			if (!map_in_bounds(i + x, j + y)) continue;
+			
+			mb_ptr = map_loc(i + x, j + y);
+			
+			/* Add some fear */
+			mb_ptr->fear += 2 * k /(8 + i + j);
+		}
+	}
 
-	/* Nearby regions */
-	y1 = (y0 > 0) ? (y0 - 1) : 0;
-	x1 = (x0 > 0) ? (x0 - 1) : 0;
-	y2 = (x0 < 5) ? (x0 + 1) : 5;
-	x2 = (x0 < 17) ? (x0 + 1) : 17;
-
-
-	/* Collect "fear", spread around */
-	borg_fear_region[y0][x0] += k;
-	borg_fear_region[y0][x1] += k;
-	borg_fear_region[y0][x2] += k;
-	borg_fear_region[y1][x0] += k / 2;
-	borg_fear_region[y2][x0] += k / 2;
-	borg_fear_region[y1][x1] += k / 2;
-	borg_fear_region[y1][x2] += k / 3;
-	borg_fear_region[y2][x1] += k / 3;
-	borg_fear_region[y2][x2] += k / 3;
 
 	/* there is some problems here, when the death of a monster decreases the fear,
 	 * it ends up making about 2000 danger pts.  It needs to be fixed.
 	 */
-
-
 }
 
 
@@ -3611,15 +3605,6 @@ void borg_update(void)
 			}
 		}
 
-		/* Hack -- Clear "fear" */
-		for (y = 0; y < 6; y++)
-		{
-			for (x = 0; x < 18; x++)
-			{
-				borg_fear_region[y][x] = 0;
-			}
-		}
-
 		/* Hack -- Clear "shop visit" stamps */
 		for (i = 0; i < (MAX_STORES); i++) borg_shops[i].when = 0;
 
@@ -3757,13 +3742,13 @@ void borg_update(void)
 		/* Reduce fear over time */
 		if (!(borg_t % 10))
 		{
-			for (y = 0; y < 6; y++)
+			map_block *mb_ptr;
+		
+			MAP_ITT_START(mb_ptr)
 			{
-				for (x = 0; x < 18; x++)
-				{
-					if (borg_fear_region[y][x]) borg_fear_region[y][x]--;
-				}
+				if (mb_ptr->fear) mb_ptr->fear--;
 			}
+			MAP_ITT_END;
 		}
 
 		/* Handle changing map panel */

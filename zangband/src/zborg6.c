@@ -2228,6 +2228,8 @@ static bool borg_heal(int danger)
 	int chance;
 
 	int stats_needing_fix = 0;
+	
+	map_block *mb_ptr = map_loc(c_x, c_y);
 
 	hp_down = borg_skill[BI_MAXHP] - borg_skill[BI_CURHP];
 
@@ -2358,8 +2360,8 @@ static bool borg_heal(int danger)
 
 	/*  Hack -- rest until healed */
 	if ((!borg_skill[BI_ISBLIND] && !borg_skill[BI_ISPOISONED] &&
-		 !borg_skill[BI_ISCUT] && !borg_goi && !borg_see_inv && (!borg_shield &&
-																 borg_skill
+		 !borg_skill[BI_ISCUT] && !borg_goi && !borg_see_inv && !borg_shield &&
+																 (borg_skill
 																 [BI_CDEPTH] !=
 																 100) &&
 		 !borg_skill[BI_ISWEAK] && !borg_skill[BI_ISHUNGRY] &&
@@ -2369,10 +2371,10 @@ static bool borg_heal(int danger)
 									 borg_skill[BI_ISSTUN] ||
 									 borg_skill[BI_ISHEAVYSTUN] ||
 									 borg_skill[BI_CURHP] < borg_skill[BI_MAXHP]
-									 || borg_skill[BI_CURSP] <
-									 borg_skill[BI_MAXSP] * 6 / 10) &&
+									 || (borg_skill[BI_CURSP] <
+									 borg_skill[BI_MAXSP] * 6 / 10)) &&
 		borg_check_rest() && !scaryguy_on_level &&
-		danger <= borg_fear_region[c_y / 11][c_x / 11] && !goal_fleeing)
+		(danger <= mb_ptr->fear) && !goal_fleeing)
 	{
 		/* check for then call lite in dark room before resting */
 		if (!borg_check_lite_only())
@@ -2961,6 +2963,8 @@ bool borg_caution(void)
 	int j, p;
 	bool borg_surround = FALSE;
 	bool nasty = FALSE;
+	
+	map_block *mb_ptr = map_loc(c_x, c_y);
 
 	/*** Notice "nasty" situations ***/
 
@@ -3072,8 +3076,7 @@ bool borg_caution(void)
 
 	/* Describe (briefly) the current situation */
 	/* Danger (ignore stupid "fear" danger) */
-	if (borg_goi || (p > avoidance / 10) ||
-		(p > borg_fear_region[c_y / 11][c_x / 11]))
+	if (borg_goi || (p > avoidance / 10) || (p > mb_ptr->fear))
 	{
 		/* Describe (briefly) the current situation */
 		borg_note(format
@@ -11546,6 +11549,8 @@ bool borg_defend(int p1)
 {
 	int n, b_n = 0;
 	int g, b_g = -1;
+	
+	map_block *mb_ptr = map_loc(c_x, c_y);
 
 	/* Simulate */
 	borg_simulate = TRUE;
@@ -11561,7 +11566,7 @@ bool borg_defend(int p1)
 		borg_attacking = TRUE;
 		p = borg_danger(c_y, c_x, 1, TRUE);
 		borg_attacking = FALSE;
-		if (p > borg_fear_region[c_y / 11][c_x / 11] || borg_fighting_unique)
+		if ((p > mb_ptr->fear) || borg_fighting_unique)
 		{
 			if (borg_spell(REALM_ARCANE, 3, 7) || borg_spell(REALM_LIFE, 3, 7))
 			{
@@ -12719,6 +12724,8 @@ bool borg_recover(void)
 {
 	int p = 0;
 	int q;
+	
+	map_block *mb_ptr = map_loc(c_x, c_y);
 
 	/*** Handle annoying situations ***/
 
@@ -13070,12 +13077,12 @@ bool borg_recover(void)
 		 borg_skill[BI_ISSTUN] || borg_skill[BI_ISHEAVYSTUN] ||
 		 (borg_skill[BI_CURHP] < borg_skill[BI_MAXHP]) ||
 		 (borg_skill[BI_CURSP] < borg_skill[BI_MAXSP] * 6 / 10)) &&
-		(!borg_takes_cnt || !goal_recalling) && !borg_goi && (!borg_shield &&
-															  borg_skill
+		(!borg_takes_cnt || !goal_recalling) && !borg_goi && !borg_shield &&
+															  (borg_skill
 															  [BI_CDEPTH] !=
 															  100) &&
 		!scaryguy_on_level && (randint0(100) < 90) && borg_check_rest() &&
-		p <= borg_fear_region[c_y / 11][c_x / 11] && !goal_fleeing)
+		(p <= mb_ptr->fear) && !goal_fleeing)
 	{
 		/* XXX XXX XXX */
 		if (!borg_skill[BI_ISWEAK] && !borg_skill[BI_ISCUT] &&
