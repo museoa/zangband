@@ -793,7 +793,7 @@ void predict_score(void)
 	score_score = &the_score;
 
 	/* Show the first page of the highscore */
-	cont = display_scores_aux(0, 5, score_idx, NULL);
+	cont = display_scores_aux(0, 5, score_idx, &the_score);
 
 	/* If the user didn't press ESC, show the second page too */
 	if (cont)
