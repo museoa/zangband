@@ -2368,8 +2368,8 @@ bool lose_all_info(void)
 	{
 		object_kind *k_ptr = &k_info[k];
 	
-		/* Look at flavored items */
-		if (k_ptr->flavor)
+		/* Forget flavored items, with saving throw */
+		if (k_ptr->flavor && one_in_(p_ptr->skill_sav))
 		{
 			/* Forget knowledge */
 			k_ptr->aware = FALSE;
