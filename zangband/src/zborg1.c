@@ -2362,7 +2362,7 @@ void borg_init_1(void)
     C_MAKE(borg_key_queue, KEY_SIZE, char);
 
     /* Prapare a local random number seed */
-	if (!borg_rand_local) borg_rand_local = rand_int(0x10000000);
+	if (!borg_rand_local) borg_rand_local = randint0(0x10000000);
 
 
     /*** Grids ***/

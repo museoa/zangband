@@ -1235,7 +1235,7 @@ static bool get_move_retreat(monster_type *m_ptr, int *tx, int *ty)
 	else
 	{
 		int prev_cost = c_ptr->cost;
-		int start = rand_int(8);
+		int start = randint0(8);
 
 		/* Look for adjacent hiding places */
 		for (i = start; i < 8 + start; i++)

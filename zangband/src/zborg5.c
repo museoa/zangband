@@ -356,7 +356,7 @@ static int borg_new_take(int k_idx, int y, int x)
         borg_note("# Too many objects");
 
         /* Hack -- Pick a random object */
-        n = rand_int(borg_takes_nxt-1) + 1;
+        n = randint1(borg_takes_nxt - 1);
 
         /* Delete it */
         borg_delete_take(n);
@@ -1333,7 +1333,7 @@ static void borg_follow_kill(int i)
     }
 
     /* Prevent loops */
-    if (rand_int(100) < 1)
+    if (one_in_(100))
     {
         /* Just delete the monster */
         borg_delete_kill(i);
@@ -1493,7 +1493,7 @@ static int borg_new_kill(int r_idx, int y, int x)
         borg_note("# Too many monsters");
 
         /* Hack -- Pick a random monster */
-        n = rand_int(borg_kills_nxt-1) + 1;
+        n = randint1(borg_kills_nxt - 1);
 
         /* Kill it */
         borg_delete_kill(n);

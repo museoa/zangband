@@ -66,14 +66,14 @@ static void borg_money_scum(void)
         borg_keypress(ESCAPE);
 
          /* Pick a random direction */
-        dir = randint(9);
+        dir = randint1(9);
 
         /* Hack -- set goal */
         g_x = c_x + ddx[dir];
         g_y = c_y + ddy[dir];
 
         /* Maybe alter */
-        if (rand_int(100) < 10 && dir != 5)
+        if (randint0(100) < 10 && dir != 5)
         {
             /* Send action (alter) */
             borg_keypress('+');

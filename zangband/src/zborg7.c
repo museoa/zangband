@@ -644,7 +644,7 @@ bool borg_check_lite(void)
     if (do_lite && (borg_skill[BI_CUR_LITE] >= 2) &&
         (c_x >= borg_skill[BI_CUR_LITE]) && (c_x < AUTO_MAX_X - borg_skill[BI_CUR_LITE]) &&
         (c_y >= borg_skill[BI_CUR_LITE]) && (c_y < AUTO_MAX_Y - borg_skill[BI_CUR_LITE]) &&
-        (rand_int(100) < 90))
+        (randint0(100) < 90))
     {
 
         floors = 0;
@@ -791,7 +791,7 @@ bool borg_check_lite_only(void)
     if (do_lite && (borg_skill[BI_CUR_LITE] >= 2) &&
         (c_x >= borg_skill[BI_CUR_LITE]) && (c_x < AUTO_MAX_X - borg_skill[BI_CUR_LITE]) &&
         (c_y >= borg_skill[BI_CUR_LITE]) && (c_y < AUTO_MAX_Y - borg_skill[BI_CUR_LITE]) &&
-        (rand_int(100) < 90))
+        (randint0(100) < 90))
     {
 
         floors = 0;
@@ -2728,7 +2728,7 @@ bool borg_test_stuff(bool star_id)
             }
 
             /* Mega-Hack -- mages get bored */
-            if ((borg_class == CLASS_MAGE) && (rand_int(1000) < borg_skill[BI_CLEVEL]))
+            if ((borg_class == CLASS_MAGE) && (randint0(1000) < borg_skill[BI_CLEVEL]))
             {
 
                 /* Mega-Hack -- ignore "icky" items */
@@ -2736,7 +2736,7 @@ bool borg_test_stuff(bool star_id)
             }
 
             /* Mega-Hack -- rangers get bored */
-            else if ((borg_class == CLASS_RANGER) && (rand_int(3000) < borg_skill[BI_CLEVEL]))
+            else if ((borg_class == CLASS_RANGER) && (randint0(3000) < borg_skill[BI_CLEVEL]))
             {
 
                 /* Mega-Hack -- ignore "icky" items */
@@ -2744,14 +2744,14 @@ bool borg_test_stuff(bool star_id)
             }
 
             /* Mega-Hack -- priests get bored */
-            else if ((borg_class == CLASS_PRIEST) && (rand_int(5000) < borg_skill[BI_CLEVEL]))
+            else if ((borg_class == CLASS_PRIEST) && (randint0(5000) < borg_skill[BI_CLEVEL]))
             {
 
                 /* Mega-Hack -- ignore "icky" items */
                 if (!borg_item_icky(item)) v = item->value;
             }
             /* Mega-Hack -- everyone else gets bored */
-            else if (rand_int(5000) < borg_skill[BI_CLEVEL])
+            else if (randint0(5000) < borg_skill[BI_CLEVEL])
             {
 
                 /* Mega-Hack -- ignore "icky" items */
@@ -3101,7 +3101,7 @@ bool borg_wear_rings(void)
         if (slot != INVEN_LEFT) continue;
 
         /* Occassionally evaluate swapping into the tight finger */
-        if (rand_int(100) > 75 /* || item->name1 == ART_POWER*/)
+        if (randint0(100) > 75 /* || item->name1 == ART_POWER*/)
         {
             slot = INVEN_RIGHT;
         }
@@ -4701,7 +4701,7 @@ bool borg_leave_level(bool bored)
         borg_note("# Choosing random stairs.");
 
         /* Use random stairs */
-        g = ((rand_int(100) < 50) ? -1 : 1);
+        g = ((randint0(100) < 50) ? -1 : 1);
     }
 
     /* Go Up */

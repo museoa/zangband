@@ -9737,7 +9737,7 @@ cptr borg_prepared(int depth)
            * get his butt to dlevel 98
            */
           if (borg_skill[BI_MAXDEPTH] == 99 && depth <= 98 &&
-              (rand_int(100) < 3 ||
+              (randint0(100) < 3 ||
     		   borg_spell_legal_fail(REALM_SORCERY,2, 6, 40) ||
                borg_spell_legal_fail(REALM_TRUMP, 1, 5, 40) ||
                borg_has[187]))

@@ -6138,7 +6138,7 @@ void do_cmd_borg(void)
 			            if (c < b_c) b_n = 0;
 
 			            /* Apply the randomizer to equivalent values */
-			            if ((++b_n >= 2) && (rand_int(b_n) != 0)) continue;
+			            if ((++b_n >= 2) && (randint0(b_n))) continue;
 
 			            /* Track it */
 			            b_i = i; b_c = c;

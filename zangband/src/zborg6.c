@@ -2058,7 +2058,7 @@ static bool borg_heal(int danger )
     /*  Hack -- heal when confused. This is deadly.*/
     /* This is checked twice, once, here, to see if he is in low danger
      * and again at the end of borg_caution, when all other avenues have failed */
-    if (borg_skill[BI_ISCONFUSED] && (rand_int(100) < 85))
+    if (borg_skill[BI_ISCONFUSED] && (randint0(100) < 85))
     {
         if ((hp_down >= 300) && danger - 300 < borg_skill[BI_CURHP] &&
             borg_quaff_potion(SV_POTION_HEALING))
@@ -2106,7 +2106,7 @@ static bool borg_heal(int danger )
 
     }
     /*  Hack -- heal when blind. This is deadly.*/
-    if (borg_skill[BI_ISBLIND] && (rand_int(100) < 85))
+    if (borg_skill[BI_ISBLIND] && (randint0(100) < 85))
     {
         /* if in extreme danger, use teleport then fix the
          * blindness later.
@@ -2212,7 +2212,7 @@ static bool borg_heal(int danger )
 
     /* restore Mana */
     /* note, blow the staff charges easy because the staff will not last. */
-    if (borg_skill[BI_CURSP] < (borg_skill[BI_MAXSP] / 5) && (rand_int(100) < 50))
+    if (borg_skill[BI_CURSP] < (borg_skill[BI_MAXSP] / 5) && (randint0(100) < 50))
     {
         if (borg_use_staff_fail(SV_STAFF_THE_MAGI))
         {
@@ -2272,7 +2272,7 @@ static bool borg_heal(int danger )
     /* 1/3 hp 75%                          */
     /* 1/4 hp 100%                         */
 
-    chance = rand_int(100);
+    chance = randint0(100);
 
     /* if we are fighting a unique increase the odds of healing */
     if (borg_fighting_unique) chance -= 10;
@@ -2547,7 +2547,7 @@ static bool borg_heal(int danger )
     }
 
     /* Hack -- cure wounds when bleeding, also critical check */
-    if (borg_skill[BI_ISCUT] && (borg_skill[BI_CURHP] < borg_skill[BI_MAXHP]/3 || rand_int(100) < 20) )
+    if (borg_skill[BI_ISCUT] && (borg_skill[BI_CURHP] < borg_skill[BI_MAXHP]/3 || randint0(100) < 20) )
     {
         if (borg_quaff_potion(SV_POTION_CURE_SERIOUS) ||
             borg_quaff_potion(SV_POTION_CURE_LIGHT) ||
@@ -3652,7 +3652,7 @@ bool borg_caution(void)
 
     /* Hack -- cure fear when afraid */
     if (borg_skill[BI_ISAFRAID] &&
-       (rand_int(100) < 70 ||
+       (randint0(100) < 70 ||
         (borg_class == CLASS_WARRIOR && borg_skill[BI_AMISSILES] <=0)))
     {
         if (borg_spell_fail(REALM_LIFE,0, 3,100) ||
@@ -3679,7 +3679,7 @@ bool borg_caution(void)
         (borg_skill[BI_AHEAL] < 1))
     {
         /* Flee from low hit-points */
-        if (borg_skill[BI_CDEPTH] && (rand_int(100) < 25))
+        if (borg_skill[BI_CDEPTH] && (randint0(100) < 25))
         {
             /* Start leaving */
             if (!goal_leaving)
@@ -3708,7 +3708,7 @@ bool borg_caution(void)
     if ((borg_skill[BI_ISCUT] || borg_skill[BI_ISPOISONED]) && (borg_skill[BI_CURHP] < borg_skill[BI_MAXHP] / 2) )
     {
         /* Flee from bleeding wounds */
-        if (borg_skill[BI_CDEPTH] && (rand_int(100) < 25))
+        if (borg_skill[BI_CDEPTH] && (randint0(100) < 25))
         {
             /* Start leaving */
             if (!goal_leaving)
@@ -5617,7 +5617,7 @@ static int borg_launch_bolt(int rad, int dam, int typ, int max)
                 if ((b_i >= 0) && (n > b_n)) num = 0;
 
                 /* Apply the randomizer */
-                if ((num > 1) && (rand_int(num) != 0)) continue;
+                if ((num > 1) && (randint0(num))) continue;
 
                 /* Track it */
                 b_i = i;
@@ -6433,7 +6433,7 @@ static int borg_attack_aux_spell_bolt(int realm, int book, int what, int rad, in
     if (borg_goi && ((borg_skill[BI_CURSP] - as->power) < 70)) return (0);
 
     /* Paranoia */
-    if (borg_simulate && (rand_int(100) < 5)) return (0);
+    if (borg_simulate && (randint0(100) < 5)) return (0);
 
     /* Require ability (right now) */
     if (!borg_spell_okay_fail(realm, book, what, (borg_fighting_unique ? 40 : 25))) return (0);
@@ -6601,7 +6601,7 @@ static int borg_attack_aux_spell_dispel(int realm, int book, int what, int rad, 
 
 
     /* Paranoia */
-    if (borg_simulate && (rand_int(100) < 5)) return (0);
+    if (borg_simulate && (randint0(100) < 5)) return (0);
 
 
     /* Require ability */
@@ -6655,7 +6655,7 @@ static int borg_attack_aux_mind_bolt(int spell, int level, int rad, int dam, int
     if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] || borg_skill[BI_ISIMAGE]) return (0);
 
     /* Paranoia */
-    if (borg_simulate && (rand_int(100) < 5)) return (0);
+    if (borg_simulate && (randint0(100) < 5)) return (0);
 
     /* Require ability (right now) */
     if (!borg_mindcr_okay_fail(spell, level, (borg_fighting_unique ? 40 : 25))) return (0);
@@ -6718,7 +6718,7 @@ static int borg_attack_aux_staff_dispel(int sval, int rad, int dam, int typ)
 
 
     /* Paranoia */
-    if (borg_simulate && (rand_int(100) < 5)) return (0);
+    if (borg_simulate && (randint0(100) < 5)) return (0);
 
     /* look for the staff */
     if (!borg_equips_staff_fail(sval)) return (0);
@@ -6756,7 +6756,7 @@ static int borg_attack_aux_rod_bolt(int sval, int rad, int dam, int typ)
 
 
     /* Paranoia */
-    if (borg_simulate && (rand_int(100) < 5)) return (0);
+    if (borg_simulate && (randint0(100) < 5)) return (0);
 
 
     /* Look for that rod */
@@ -6798,7 +6798,7 @@ static int borg_attack_aux_wand_bolt(int sval, int rad, int dam, int typ)
 
 
     /* Paranoia */
-    if (borg_simulate && (rand_int(100) < 5)) return (0);
+    if (borg_simulate && (randint0(100) < 5)) return (0);
 
 
     /* Look for that wand */
@@ -6869,7 +6869,7 @@ static int borg_attack_aux_artifact(int art_name, int art_loc, int rad, int dam,
 
 
     /* Paranoia */
-    if (borg_simulate && (rand_int(100) < 5)) return (0);
+    if (borg_simulate && (randint0(100) < 5)) return (0);
 
 
     /* Look for that artifact and to see if it is charged */
@@ -6911,7 +6911,7 @@ static int borg_attack_aux_dragon(int sval, int rad, int dam, int typ)
 
 
     /* Paranoia */
-    if (borg_simulate && (rand_int(100) < 5)) return (0);
+    if (borg_simulate && (randint0(100) < 5)) return (0);
 
 
     /* Look for that scale mail and charged*/
@@ -8126,7 +8126,7 @@ static int borg_attack_aux(int what)
 		return (borg_attack_aux_dragon(SV_DRAGON_RED, rad, dam, GF_FIRE));
 
 		case BF_DRAGON_MULTIHUED:
-			chance = rand_int(5);
+			chance = randint0(5);
 		rad =2;
 		dam=200;
 		return (borg_attack_aux_dragon(SV_DRAGON_MULTIHUED, rad, dam,
@@ -8146,21 +8146,21 @@ static int borg_attack_aux(int what)
 		return (borg_attack_aux_dragon(SV_DRAGON_GOLD, rad, dam, GF_SOUND));
 
 		case BF_DRAGON_CHAOS:
-		chance = rand_int(2);
+		chance = randint0(2);
 		rad =2;
 		dam=220;
 		return (borg_attack_aux_dragon(SV_DRAGON_CHAOS, rad, dam,
 			(chance == 1 ? GF_CHAOS : GF_DISENCHANT)) );
 
 		case BF_DRAGON_LAW:
-		chance = rand_int(2);
+		chance = randint0(2);
 		rad =2;
 		dam=230;
 		return (borg_attack_aux_dragon(SV_DRAGON_LAW, rad, dam,
 			(chance == 1 ? GF_SOUND : GF_SHARDS)) );
 
 		case BF_DRAGON_BALANCE:
-		chance = rand_int(4);
+		chance = randint0(4);
 		rad =2;
 		dam=230;
 		return (borg_attack_aux_dragon(SV_DRAGON_BALANCE, rad, dam,
@@ -8169,7 +8169,7 @@ static int borg_attack_aux(int what)
 						((chance == 3) ? GF_SOUND : GF_SHARDS))) )) );
 
 		case BF_DRAGON_SHINING:
-		chance = rand_int(2);
+		chance = randint0(2);
 		rad =2;
 		dam=200;
 		return (borg_attack_aux_dragon(SV_DRAGON_SHINING, rad, dam,
@@ -11976,7 +11976,7 @@ bool borg_recover(void)
     /*** Roll for "paranoia" ***/
 
     /* Base roll */
-    q = rand_int(100);
+    q = randint0(100);
 
     /* Half dead */
     if (borg_skill[BI_CURHP] < borg_skill[BI_MAXHP] / 2) q = q - 10;
@@ -12286,7 +12286,7 @@ bool borg_recover(void)
          (borg_skill[BI_CURHP] < borg_skill[BI_MAXHP]) || (borg_skill[BI_CURSP] < borg_skill[BI_MAXSP] * 6 / 10)) &&
          (!borg_takes_cnt || !goal_recalling) && !borg_goi &&
          (!borg_shield && borg_skill[BI_CDEPTH] != 100) && !scaryguy_on_level &&
-        (rand_int(100) < 90) && borg_check_rest() &&
+        (randint0(100) < 90) && borg_check_rest() &&
         p <= borg_fear_region[c_y/11][c_x/11] &&
         !goal_fleeing)
     {
@@ -12602,7 +12602,7 @@ static bool borg_play_step(int y2, int x2)
     if (ag->feat == FEAT_CLOSED)
     {
         /* Paranoia XXX XXX XXX */
-        if (!rand_int(100)) return (FALSE);
+        if (one_in_(100)) return (FALSE);
 
         /* Open */
         if (my_need_alter)
@@ -12627,7 +12627,7 @@ static bool borg_play_step(int y2, int x2)
     if ((ag->feat >= FEAT_DOOR_HEAD + 0x08) && (ag->feat <= FEAT_DOOR_TAIL))
     {
         /* Paranoia XXX XXX XXX */
-        if (!rand_int(100)) return (FALSE);
+        if (one_in_(100)) return (FALSE);
 
         /* Not if hungry */
         if (borg_skill[BI_ISWEAK]) return (FALSE);
@@ -12665,7 +12665,7 @@ static bool borg_play_step(int y2, int x2)
     {
 
         /* Mega-Hack -- prevent infinite loops */
-        if (rand_int(100) < 10) return (FALSE);
+        if (randint0(100) < 10) return (FALSE);
 
         /* Not if hungry */
         if (borg_skill[BI_ISWEAK]) return (FALSE);
@@ -12797,14 +12797,14 @@ bool borg_twitchy(void)
         return (TRUE);
     }
     /* Pick a random direction */
-    dir = randint(9);
+    dir = randint1(9);
 
     /* Hack -- set goal */
     g_x = c_x + ddx[dir];
     g_y = c_y + ddy[dir];
 
     /* Maybe alter */
-    if (rand_int(100) < 10 && dir != 5)
+    if (randint0(100) < 10 && dir != 5)
     {
         /* Send action (alter) */
         borg_keypress('+');
@@ -12924,7 +12924,7 @@ bool borg_flow_old(int why)
             if (c < b_c) b_n = 0;
 
             /* Apply the randomizer to equivalent values */
-            if ((++b_n >= 2) && (rand_int(b_n) != 0))
+            if ((++b_n >= 2) && (randint0(b_n)))
             {
 				continue;
 			}

@@ -1695,7 +1695,7 @@ bool borg_quaff_crit( bool no_check )
     /* Avoid drinking CCW twice in a row */
     if (when_last_quaff > (borg_t-4) &&
         when_last_quaff <= borg_t  &&
-        (rand_int(100) < 75))
+        (randint0(100) < 75))
         return FALSE;
 
     if (borg_quaff_potion(SV_POTION_CURE_CRITICAL))
@@ -3151,8 +3151,8 @@ extern bool borg_inscribe_food(void)
             if (item->sval == SV_FOOD_RATION)
             {
                 /* get a name */
-                strcpy(name, food_syllable1[rand_int(sizeof(food_syllable1) / sizeof(char*))]);
-                strcat(name, food_syllable2[rand_int(sizeof(food_syllable2) / sizeof(char*))]);
+                strcpy(name, food_syllable1[randint0(sizeof(food_syllable1) / sizeof(char*))]);
+                strcat(name, food_syllable2[randint0(sizeof(food_syllable2) / sizeof(char*))]);
 
                 borg_send_inscribe(ii, name);
                 return (TRUE);
@@ -3161,9 +3161,9 @@ extern bool borg_inscribe_food(void)
             if (item->sval == SV_FOOD_SLIME_MOLD)
             {
                 /* get a name */
-                strcpy(name, mold_syllable1[rand_int(sizeof(mold_syllable1) / sizeof(char*))]);
-                strcat(name, mold_syllable2[rand_int(sizeof(mold_syllable2) / sizeof(char*))]);
-                strcat(name, mold_syllable3[rand_int(sizeof(mold_syllable3) / sizeof(char*))]);
+                strcpy(name, mold_syllable1[randint0(sizeof(mold_syllable1) / sizeof(char*))]);
+                strcat(name, mold_syllable2[randint0(sizeof(mold_syllable2) / sizeof(char*))]);
+                strcat(name, mold_syllable3[randint0(sizeof(mold_syllable3) / sizeof(char*))]);
 
                 borg_send_inscribe(ii, name);
                 return (TRUE);
