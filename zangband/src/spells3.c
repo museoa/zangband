@@ -366,9 +366,7 @@ void teleport_player(int dis)
 			}
 			else
 			{
-				if (!in_bounds2(oy + yy, ox + xx)) continue;
-
-				if (area(oy + yy, ox + xx)->m_idx)
+				if (in_bounds2(oy + yy, ox + xx) && area(oy + yy, ox + xx)->m_idx)
 				{
 					if ((r_info[m_list[area(oy + yy, ox + xx)->m_idx].r_idx].flags6 & RF6_TPORT) &&
 					    !(r_info[m_list[area(oy + yy, ox + xx)->m_idx].r_idx].flags3 & RF3_RES_TELE))
