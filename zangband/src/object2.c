@@ -989,9 +989,9 @@ s32b flag_cost(const object_type *o_ptr, int plusses)
 	if (o_ptr->flags1 & TR1_XXX1) total += 0;
 	if (o_ptr->flags1 & TR1_XXX2) total += 0;
 	if (o_ptr->flags1 & TR1_SLAY_ANIMAL) total += 750;
-	if (o_ptr->flags1 & TR1_SLAY_EVIL) total += 750;
-	if (o_ptr->flags1 & TR1_SLAY_UNDEAD) total += 750;
-	if (o_ptr->flags1 & TR1_SLAY_DEMON) total += 750;
+	if (o_ptr->flags1 & TR1_SLAY_EVIL) total += 1000;
+	if (o_ptr->flags1 & TR1_SLAY_UNDEAD) total += 800;
+	if (o_ptr->flags1 & TR1_SLAY_DEMON) total += 800;
 	if (o_ptr->flags1 & TR1_SLAY_ORC) total += 300;
 	if (o_ptr->flags1 & TR1_SLAY_TROLL) total += 750;
 	if (o_ptr->flags1 & TR1_SLAY_GIANT) total += 750;
@@ -1073,6 +1073,39 @@ s32b flag_cost(const object_type *o_ptr, int plusses)
 	if (o_ptr->flags3 & TR3_CURSED) total -= 5000;
 	if (o_ptr->flags3 & TR3_HEAVY_CURSE) total -= 12500;
 	if (o_ptr->flags3 & TR3_PERMA_CURSE) total -= 15000;
+	if (o_ptr->flags4 & TR4_XXX1) total += 0;
+	if (o_ptr->flags4 & TR4_XXX2) total += 0;
+	if (o_ptr->flags4 & TR4_XXX3) total += 0;
+	if (o_ptr->flags4 & TR4_XXX4) total += 0;
+	if (o_ptr->flags4 & TR4_XXX5) total += 0;
+	if (o_ptr->flags4 & TR4_XXX6) total += 0;
+	if (o_ptr->flags4 & TR4_XXX7) total += 0;
+	if (o_ptr->flags4 & TR4_XXX8) total += 0;
+	if (o_ptr->flags4 & TR4_IM_LITE) total += 2500;
+	if (o_ptr->flags4 & TR4_IM_DARK) total += 5000;
+	if (o_ptr->flags4 & TR4_SH_ACID) total += 1250;
+	if (o_ptr->flags4 & TR4_SH_COLD) total += 1000;
+	if (o_ptr->flags4 & TR4_MUTATE) total += 500;
+	if (o_ptr->flags4 & TR4_PATRON) total += 1500;
+	if (o_ptr->flags4 & TR4_STRANGE_LUCK) total += 2000;
+	if (o_ptr->flags4 & TR4_PASS_WALL) total += 25000;
+	if (o_ptr->flags4 & TR4_GHOUL_TOUCH) total += 750;
+	if (o_ptr->flags4 & TR4_PSI_CRIT) total += 1500;
+	if (o_ptr->flags4 & TR4_XXX19) total += 0;
+	if (o_ptr->flags4 & TR4_XXX20) total += 0;
+	if (o_ptr->flags4 & TR4_HURT_ACID) total -= 5000;
+	if (o_ptr->flags4 & TR4_HURT_ELEC) total -= 5000;
+	if (o_ptr->flags4 & TR4_HURT_FIRE) total -= 5000;
+	if (o_ptr->flags4 & TR4_HURT_COLD) total -= 5000;
+	if (o_ptr->flags4 & TR4_HURT_LITE) total -= 2500;
+	if (o_ptr->flags4 & TR4_HURT_DARK) total -= 2500;
+	if (o_ptr->flags4 & TR4_XXX27) total += 0;
+	if (o_ptr->flags4 & TR4_XXX28) total += 0;
+	if (o_ptr->flags4 & TR4_AUTO_CURSE) total -= 2500;
+	if (o_ptr->flags4 & TR4_DRAIN_STATS) total -= 5000;
+	if (o_ptr->flags4 & TR4_CANT_EAT) total -= 500;
+	if (o_ptr->flags4 & TR4_SLOW_HEAL) total -= 2000;
+
 
 	/* Also, give some extra for activatable powers... */
 	if (o_ptr->xtra_name && (o_ptr->flags3 & TR3_ACTIVATE) &&
