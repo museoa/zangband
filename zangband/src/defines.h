@@ -1016,6 +1016,18 @@
 #define FEAT_SHAL_SWAMP		0x89
 
 
+/*** Wilderness Info flags - (see "wild.c") ***/
+
+#define WILD_INFO_TRACK		0x01
+#define WILD_INFO_ROAD		0x02
+#define WILD_INFO_RIVER		0x04
+#define WILD_INFO_LAVA		0x08
+#define WILD_INFO_OBJECT	0x10
+#define WILD_INFO_SEEN		0x20
+#define WILD_INFO_DUMMY1	0x40
+#define WILD_INFO_DUMMY2	0x80
+
+
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
 
 /* Lites */

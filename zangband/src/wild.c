@@ -15,12 +15,12 @@
 #include "angband.h"
 
 
-/* Lighten / Darken Wilderness */
-static void day_night(void)
-{	
-	bool daytime;
+/* Lighten / Darken new block depending on Day/ Night */
+void light_dark_block(blk_ptr block_ptr, u16b x, u16b y)
+{
+	int i, j;
 	
-	int x, y;
+	bool daytime;
 	cave_type *c_ptr;
 	
 	/* Day time */
@@ -29,14 +29,23 @@ static void day_night(void)
 	else
 		daytime = FALSE;
 
-	/* Light up or darken the area */
-	for (y = wild_grid.y_min; y < wild_grid.y_max; y++)
+	/* If is daytime - have seen this square */
+	if (daytime)
 	{
-		for (x = wild_grid.x_min; x < wild_grid.x_max; x++)
+		wild[y][x].done.info |= WILD_INFO_SEEN;
+	}
+	
+	/* Light up or darken the area */
+	for (j = 0; j < WILD_BLOCK_SIZE; j++)
+	{
+		for (i = 0; i < WILD_BLOCK_SIZE; i++)
 		{
 			/* Get the cave grid */
-			c_ptr = area(y,x);
+			c_ptr = &block_ptr[j][i];
 
+			/* Hack -- Notice spot */
+			note_wild_spot(c_ptr);
+			
 			if (daytime)
 			{
 				/* Assume lit */
@@ -63,6 +72,24 @@ static void day_night(void)
 					if (view_perma_grids) c_ptr->info |= (CAVE_MARK);
 				}
 			}
+		}
+	}
+}
+
+
+/* Lighten / Darken Wilderness */
+static void day_night(void)
+{	
+	int x, y;
+	
+	/* Light up or darken the area */
+	for (y = 0; y < WILD_GRID_SIZE; y++)
+	{
+		for (x = 0; x < WILD_GRID_SIZE; x++)
+		{
+			/* Light or darken wilderness block */
+			light_dark_block(wild_grid.block_ptr[y][x],
+			 x + wild_grid.x_min / 16, y + wild_grid.y_min / 16);
 		}
 	}
 }
@@ -2257,58 +2284,6 @@ static void make_wild_01(blk_ptr block_ptr, byte *data)
 }
 
 
-/* Lighten / Darken new block depending on Day/ Night */
-void light_dark_block(blk_ptr block_ptr)
-{
-	int i, j;
-	
-	bool daytime;
-	cave_type *c_ptr;
-	
-	/* Day time */
-	if ((turn % (10L * TOWN_DAWN)) < ((10L * TOWN_DAWN) / 2))
-		daytime = TRUE;
-	else
-		daytime = FALSE;
-
-	/* Light up or darken the area */
-	for (j = 0; j < WILD_BLOCK_SIZE; j++)
-	{
-		for (i = 0; i < WILD_BLOCK_SIZE; i++)
-		{
-			/* Get the cave grid */
-			c_ptr = &block_ptr[j][i];
-
-			if (daytime)
-			{
-				/* Assume lit */
-				c_ptr->info |= (CAVE_GLOW);
-
-				/* Hack -- Memorize lit grids if allowed */
-				if (view_perma_grids) c_ptr->info |= (CAVE_MARK);
-			}
-			else
-			{
-				/* Darken "boring" features */
-				if ((c_ptr->feat <= FEAT_INVIS) ||
-				    (c_ptr->feat >= FEAT_DEEP_WATER))
-				{
-					/* Forget the grid */
-					c_ptr->info &= ~(CAVE_GLOW | CAVE_MARK);
-				}
-				else
-				{
-					/* Assume lit */
-					c_ptr->info |= (CAVE_GLOW);
-
-					/* Hack -- Memorize lit grids if allowed */
-					if (view_perma_grids) c_ptr->info |= (CAVE_MARK);
-				}
-			}
-		}
-	}
-}
-
 /* Make a new block based on the terrain type */
 static void gen_block(int x, int y, blk_ptr block_ptr)
 {
@@ -2386,7 +2361,7 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 	}
 
 	/* Day / Night - lighten or darken the new block */
-	light_dark_block(block_ptr);
+	light_dark_block(block_ptr, x, y);
 
 	/* Set the monster generation level */
 
@@ -2399,6 +2374,7 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 	object_level = wild[y][x].done.mon_gen;
 
 	/* Add monsters. (Not done) */
+	
 
 #ifdef USE_SCRIPT
 	if (generate_wilderness_callback(y, x)) return;
@@ -2568,9 +2544,16 @@ void move_wild(void)
 
 	/* Get upper left hand block in grid. */
 
-	/* Divide by 16 to get block from (x,y) coord + shift it.*/
-	x = ((u16b) p_ptr->wilderness_x>>4) - WILD_GRID_SIZE / 2;
-	y = ((u16b) p_ptr->wilderness_y>>4) - WILD_GRID_SIZE / 2;
+	/* Divide by 16 to get block from (x,y) coord*/
+	x = ((u16b) p_ptr->wilderness_x>>4);
+	y = ((u16b) p_ptr->wilderness_y>>4);
+
+	/* The player sees the wilderness block he is on. */
+	wild[y][x].done.info |= WILD_INFO_SEEN;
+	
+	/* Recenter map */
+	x -= WILD_GRID_SIZE / 2;
+	y -= WILD_GRID_SIZE / 2;
 
 	/* Move if out of bounds */
 	if (x < 0) x = 0;

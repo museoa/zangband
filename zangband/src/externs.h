@@ -462,6 +462,7 @@ extern void map_info(int y, int x, byte *ap, char *cp);
 extern void move_cursor_relative(int row, int col);
 extern void print_rel(char c, byte a, int y, int x);
 extern void note_spot(int y, int x);
+extern void note_wild_spot(cave_type *c_ptr);
 extern void display_dungeon(void);
 extern void lite_spot(int y, int x);
 extern void prt_map(void);
@@ -1236,6 +1237,7 @@ extern errr init_object_alloc(void);
 extern void k_info_reset(void);
 
 /* wild.c */
+extern void light_dark_block(blk_ptr block_ptr, u16b x, u16b y);
 extern void change_level(int);
 extern void set_no_town(void);
 extern u16b init_choice_tree(wild_bound_box_type *bound, u16b type);

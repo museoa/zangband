@@ -866,7 +866,6 @@ static void process_world(void)
 	bool cave_no_regen = FALSE;
 	int upkeep_factor = 0;
 
-	cave_type *c_ptr;
 	int x, y;
 
 	object_type *o_ptr;
@@ -948,22 +947,14 @@ static void process_world(void)
 				/* Message */
 				msg_print("The sun has risen.");
 
-				/* Hack -- Scan the town */
-				for (y = wild_grid.y_min; y <  wild_grid.y_max; y++)
+				/* Light up or darken the area */
+				for (y = 0; y < WILD_GRID_SIZE; y++)
 				{
-					for (x = wild_grid.x_min; x <  wild_grid.x_max; x++)
+					for (x = 0; x < WILD_GRID_SIZE; x++)
 					{
-						/* Get the cave grid */
-						c_ptr = area(y,x);
-
-						/* Assume lit */
-						c_ptr->info |= (CAVE_GLOW);
-
-						/* Hack -- Memorize lit grids if allowed */
-						if (view_perma_grids) c_ptr->info |= (CAVE_MARK);
-
-						/* Hack -- Notice spot */
-						note_spot(y, x);
+						/* Lighten wilderness block */
+						light_dark_block(wild_grid.block_ptr[y][x],
+						 x + wild_grid.x_min / 16, y + wild_grid.y_min / 16);
 					}
 				}
 			}
@@ -974,35 +965,14 @@ static void process_world(void)
 				/* Message */
 				msg_print("The sun has fallen.");
 
-				/* Hack -- Scan the town */
-				for (y = wild_grid.y_min; y <  wild_grid.y_max; y++)
+				/* Light up or darken the area */
+				for (y = 0; y < WILD_GRID_SIZE; y++)
 				{
-					for (x = wild_grid.x_min; x <  wild_grid.x_max; x++)
+					for (x = 0; x < WILD_GRID_SIZE; x++)
 					{
-						/* Get the cave grid */
-						c_ptr = area(y,x);
-
-						/* Darken "boring" features */
-						if ((c_ptr->feat <= FEAT_INVIS) ||
-						    (c_ptr->feat >= FEAT_DEEP_WATER))
-						{
-							/* Forget the grid */
-							c_ptr->info &= ~(CAVE_GLOW | CAVE_MARK);
-
-							/* Hack -- Notice spot */
-							note_spot(y, x);
-						}
-						else
-						{
-							/* Assume lit */
-							c_ptr->info |= (CAVE_GLOW);
-
-							/* Hack -- Memorize lit grids if allowed */
-							if (view_perma_grids) c_ptr->info |= (CAVE_MARK);
-							
-							/* Hack -- Notice spot */
-							note_spot(y, x);
-						}
+						/* Darken wilderness block */
+						light_dark_block(wild_grid.block_ptr[y][x],
+						 x + wild_grid.x_min / 16, y + wild_grid.y_min / 16);
 					}
 				}
 			}

@@ -1530,6 +1530,87 @@ void note_spot(int y, int x)
 	}
 }
 
+/*
+ * This function is nearly identical to the above one - but since it
+ * is used in lighting / darkening the wilderness - it doesn't have to
+ * deal with walls next to lit rooms.
+ *
+ * This simplifies the code.
+ *
+ * Also note that FEAT_FLOOR is not common in the wilderness - this means
+ * that the optimisations in note_spot() probably are not useful.
+ */
+
+void note_wild_spot(cave_type *c_ptr)
+{
+	s16b this_o_idx, next_o_idx = 0;
+
+
+	/* Blind players see nothing */
+	if (p_ptr->blind) return;
+
+	/* Analyze non-torch-lit grids */
+	if (!(c_ptr->info & (CAVE_LITE)))
+	{
+		/* Require line of sight to the grid */
+		if (!(c_ptr->info & (CAVE_VIEW))) return;
+
+		/* Require "perma-lite" of the grid */
+		if (!(c_ptr->info & (CAVE_GLOW))) return;
+	}
+
+
+	/* Hack -- memorize objects */
+	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
+	{
+		object_type *o_ptr = &o_list[this_o_idx];
+
+		/* Acquire next object */
+		next_o_idx = o_ptr->next_o_idx;
+
+		/* Memorize objects */
+		o_ptr->marked = TRUE;
+	}
+
+
+	/* Hack -- memorize grids */
+	if (!(c_ptr->info & (CAVE_MARK)))
+	{
+		/* Handle floor grids first */
+		if ((c_ptr->feat <= FEAT_INVIS) || (c_ptr->feat == FEAT_WALL_INVIS))
+		{
+			/* Option -- memorize all torch-lit floors */
+			if (view_torch_grids && (c_ptr->info & (CAVE_LITE)))
+			{
+				/* Memorize */
+				c_ptr->info |= (CAVE_MARK);
+			}
+
+			/* Option -- memorize all perma-lit floors */
+			else if (view_perma_grids && (c_ptr->info & (CAVE_GLOW)))
+			{
+				/* Memorize */
+				c_ptr->info |= (CAVE_MARK);
+			}
+		}
+
+		/* Memorize normal grids */
+		else if (cave_floor_grid(c_ptr))
+		{
+			/* Memorize */
+			c_ptr->info |= (CAVE_MARK);
+		}
+
+		/* Memorize torch-lit walls */
+		else if (c_ptr->info & (CAVE_LITE))
+		{
+			/* Memorize */
+			c_ptr->info |= (CAVE_MARK);
+		}
+	}
+}
+
+
 
 void display_dungeon(void)
 {
@@ -1905,7 +1986,9 @@ void display_map(int *cy, int *cx)
 			{
 				/* Only draw blocks inside map */
 				if(((x + i + 1) >= max_wild) || ((y + j + 1) >= max_wild)) continue;
-				
+				/* Only draw blocks that have been seen */
+				if (!(wild[j + y][i + x].done.info & WILD_INFO_SEEN)) continue;
+							
 				w_type = wild[j + y][i + x].done.wild;
 				
 				/* Get attr / char pair for wilderness block type */
