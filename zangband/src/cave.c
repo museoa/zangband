@@ -3400,6 +3400,9 @@ void update_mon_lite(void)
 		/* Point to grid */
 		c_ptr = area(lite_y[i], lite_x[i]);
 		
+		/* Set temp flag */
+		c_ptr->info |= (CAVE_TEMP);
+		
 		/* Clear monster illumination flag */
 		c_ptr->info &= ~(CAVE_MNLT);	
 	}
@@ -3603,7 +3606,7 @@ void update_mon_lite(void)
 		}
 	}
 
-	/* Save end of temp array */
+	/* Save end of list of new squares */
 	end_temp = temp_n;
 	
 	/* 
@@ -3619,20 +3622,18 @@ void update_mon_lite(void)
 		/* Point to grid */
 		c_ptr = area(fy, fx);
 		
-		/* It it lit? */
-		if (c_ptr->info & CAVE_MNLT)
-		{
-			/* Just add to lit list */
-			temp_x[temp_n] = fx;
-			temp_y[temp_n] = fy;
-			temp_n++;
-		}
-		else if (player_has_los_grid(c_ptr))
+		/* It it no longer lit? */
+		if (!(c_ptr->info & CAVE_MNLT) && player_has_los_grid(c_ptr))
 		{
 			/* It is now unlit */
 			note_spot(fy, fx);
 			lite_spot(fy, fx);
 		}
+		
+		/* Add to end of temp array */
+		temp_x[temp_n] = fx;
+		temp_y[temp_n] = fy;
+		temp_n++;
 	}
 	
 	/* Clear the lite array */
@@ -3649,18 +3650,26 @@ void update_mon_lite(void)
 		/* Point to grid */
 		c_ptr = area(fy, fx);
 		
-		/* The first ones in the array are squares which are newly lit. */
-		if ((i < end_temp) && (player_has_los_grid(c_ptr)))
+		if (i >= end_temp)
 		{
-			/* It is now lit */
-			note_spot(fy, fx);
-			lite_spot(fy, fx);
+			/* Clear the temp flag for the old lit grids */
+			c_ptr->info &= ~(CAVE_TEMP);	
 		}
+		else
+		{
+			/* The is the square newly lit and visible? */
+			if ((c_ptr->info & (CAVE_VIEW | CAVE_TEMP)) == CAVE_VIEW)
+			{
+				/* It is now lit */
+				note_spot(fy, fx);
+				lite_spot(fy, fx);
+			}
 		
-		/* Save in the monster lit array */
-		lite_x[lite_n] = fx;
-		lite_y[lite_n] = fy;
-		lite_n++;
+			/* Save in the monster lit array */
+			lite_x[lite_n] = fx;
+			lite_y[lite_n] = fy;
+			lite_n++;
+		}
 	}
 	
 	/* Finished with temp_n */
