@@ -846,23 +846,21 @@ static errr Term_text_gcu(int x, int y, int n, byte a, cptr s)
 		/* Special characters? */
 		if (use_blocks)
 		{
+			
 			/* Determine picture to use */
-			switch (s[i])
+			if (s[i] == '#')
 			{
-				/* Wall */
-				case '#':
-					pic = ACS_CKBOARD;
-					break;
-
-				/* Mineral vein */
-				case '%':
-					pic = ACS_BOARD;
-					break;
-
-				/* XXX */
-				default:
-					pic = s[i];
-					break;
+				/* Walls */
+				pic = ACS_CKBOARD;
+				
+				/*
+				 *  Note that veins are '#' as well now.
+				 *  Trees are '%' now - and this looks bad when redefined.
+				 */
+			}
+			else
+			{
+			        pic = s[i];
 			}
 
 			/* Draw the picture */
