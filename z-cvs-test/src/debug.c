@@ -459,7 +459,7 @@ objcmd_debughook(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 			switch (index)
 			{
 				case 0: /* max */
-					Tcl_SetIntObj(Tcl_GetObjResult(interp), MAX_V_IDX);
+					Tcl_SetIntObj(Tcl_GetObjResult(interp), max_v_idx);
 					break;
 					
 				case 1: /* info */
@@ -470,7 +470,7 @@ objcmd_debughook(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 					}
 					if (Tcl_GetIntFromObj(interp, objv[3], &v_idx) != TCL_OK)
 						return TCL_ERROR;
-					if ((v_idx < 0) || (v_idx >= MAX_V_IDX))
+					if ((v_idx < 0) || (v_idx >= max_v_idx))
 					{
 						Tcl_SetStringObj(Tcl_GetObjResult(interp),
 							format("bad v_info[] index \"%d\"", v_idx), -1);

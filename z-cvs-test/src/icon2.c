@@ -1172,7 +1172,7 @@ int FeatFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr, int *f_idx)
 	}
 
 	/* Verify the feature index */
-	if ((*f_idx < 0) || (*f_idx >= MAX_F_IDX))
+	if ((*f_idx < 0) || (*f_idx >= max_f_idx))
 	{
 		/* Get the interpreter result object */
 		Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
@@ -1180,7 +1180,7 @@ int FeatFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr, int *f_idx)
 		/* Set the error */
 		Tcl_SetStringObj(resultPtr,
 			format("bad f_info index \"%d\": must be between 0 and %d",
-			*f_idx, (int) MAX_F_IDX - 1), -1);
+			*f_idx, (int) max_f_idx - 1), -1);
 	
 		/* Failure */
 		return TCL_ERROR;
@@ -1231,7 +1231,7 @@ int objcmd_feature_assignshape(ClientData clientData, Tcl_Interp *interp, int ob
 		return TCL_ERROR;
 	}
 
-if (objC == 5) g_assignshape[shape][MAX_F_IDX + f_idx] = assign;
+if (objC == 5) g_assignshape[shape][max_f_idx + f_idx] = assign;
 else
 	g_assignshape[shape][f_idx] = assign;
 	g_icon_map_changed = TRUE;

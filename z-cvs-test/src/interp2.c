@@ -1872,7 +1872,7 @@ void race_legends(void)
 {
 	int i;
 
-	for (i = 0; i < MAX_P_IDX; i++)
+	for (i = 0; i < MAX_RACES; i++)
 	{
 		race_score(i);
 	}
@@ -2080,11 +2080,11 @@ objcmd_highscore(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 						{
 							goto close_err;
 						}
-						if (match_race < 0 || match_race >= MAX_P_IDX)
+						if (match_race < 0 || match_race >= MAX_RACES)
 						{
 							Tcl_SetStringObj(resultPtr,
 								format("bad race \"%d\": must be between 0 and %d",
-									match_race, MAX_P_IDX - 1), -1);
+									match_race, MAX_RACES - 1), -1);
 							goto close_err;
 						}
 						request_race = 1;
@@ -2288,7 +2288,7 @@ objcmd_info(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 
 		case IDX_RACE_NAME: /* race_name */
 			names = (char **) keyword_race;
-			nameCount = MAX_P_IDX;
+			nameCount = MAX_RACES;
 			break;
 
 		case IDX_TVAL: /* tval */

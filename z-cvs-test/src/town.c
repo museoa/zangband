@@ -282,7 +282,7 @@ static int PlaneDataFromObj(Tcl_Interp *interp, void *dataPtr,
 		{
 			return TCL_ERROR;
 		}
-		if ((feat < 0) || (feat >= MAX_F_IDX))
+		if ((feat < 0) || (feat >= max_f_idx))
 		{
 			Tcl_SetResult(interp,
 				format("bad feature \"%d\"", feat), TCL_VOLATILE);
@@ -491,7 +491,7 @@ int vault_read(Tcl_Interp *interp, int vaultIndex, char *fileName)
 	{
 		rd_byte(&count);
 		rd_byte(&feat);
-		if (feat >= MAX_F_IDX)
+		if (feat >= max_f_idx)
 			feat = 0;
 		for (i = count; i > 0; --i)
 		{
@@ -715,8 +715,8 @@ int objcmd_vault_create(ClientData clientData, Tcl_Interp * interp, int objc,
 	}
 	if (fileName == NULL)
 	{
-		if (!height) height = DUNGEON_HGT;
-		if (!width) width = DUNGEON_WID;
+		if (!height) height = MAX_HGT;
+		if (!width) width = MAX_WID;
 	}
 	vaultPtr = (t_vault *) Tcl_AllocDebug(sizeof(t_vault));
 	vaultPtr->id = ++g_vault_id;
@@ -1223,7 +1223,7 @@ int objcmd_vault_symbol(ClientData clientData, Tcl_Interp * interp, int objc,
 	{
 		return TCL_ERROR;
 	}
-	if ((feat < 0) || (feat >= MAX_F_IDX))
+	if ((feat < 0) || (feat >= max_f_idx))
 	{
 		Tcl_SetResult(interp,
 			format("bad feature \"%d\"", feat), TCL_VOLATILE);
@@ -2190,9 +2190,9 @@ void angtk_rebuild_town(void)
 	cur_wid = vaultPtr->width;
 
 	/* Start with solid walls */
-	for (y = 0; y < DUNGEON_HGT; y++)
+	for (y = 0; y < MAX_HGT; y++)
 	{
-		for (x = 0; x < DUNGEON_WID; x++)
+		for (x = 0; x < MAX_WID; x++)
 		{
 			/* No flags */
 			cave_info(y, x) = 0;

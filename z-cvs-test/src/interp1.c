@@ -2409,7 +2409,7 @@ static int GetBookFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr, int *bookNum)
 	}
 
 	/* Verify the book number */
-	if ((k_idx <= 0) || (k_idx >= MAX_K_IDX))
+	if ((k_idx <= 0) || (k_idx >= max_k_idx))
 	{
 		/* Set the error */
 		Tcl_SetStringObj(resultPtr,
@@ -2858,12 +2858,12 @@ static void init_keyword_misc(void)
 	keyword_class[MAX_CLASS] = NULL;
 
 	/* A list of race names */
-	C_MAKE(keyword_race, MAX_P_IDX + 1, cptr);
-	for (i = 0; i < MAX_P_IDX; i++)
+	C_MAKE(keyword_race, MAX_RACES + 1, cptr);
+	for (i = 0; i < MAX_RACES; i++)
 	{
 		keyword_race[i] = (char *) race_info[i].title;
 	}
-	keyword_race[MAX_P_IDX] = NULL;
+	keyword_race[MAX_RACES] = NULL;
 }
 
 /*
@@ -3576,17 +3576,17 @@ void angtk_angband_initialized(void)
 	/* Names of gender, race and class */
 	init_keyword_misc();
 
-	C_MAKE(g_feat_flag, MAX_F_IDX, byte);
-	for (i = 0; i < MAX_F_IDX; i++)
+	C_MAKE(g_feat_flag, max_f_idx, byte);
+	for (i = 0; i < max_f_idx; i++)
 	{
 		g_feat_flag[i] = 0;
 	}
 
 	/* These are required for savefile loading (see lite_spot()) */
-	for (i = 0; i < DUNGEON_HGT; i++)
+	for (i = 0; i < MAX_HGT; i++)
 	{
 		/* Info about what feature/monster/object is known. */
-		C_MAKE(g_grid[i], DUNGEON_WID, t_grid);
+		C_MAKE(g_grid[i], MAX_WID, t_grid);
 	}
 
 	init_map();
@@ -3708,9 +3708,9 @@ void angtk_character_generated(void)
 
 #if 1
 	/* Process each grid */
-	for (y = 0; y < DUNGEON_HGT; y++)
+	for (y = 0; y < MAX_HGT; y++)
 	{
-		for (x = 0; x < DUNGEON_WID; x++)
+		for (x = 0; x < MAX_WID; x++)
 		{
 			/* A wall or secret door */
 			if (is_wall(y, x))
@@ -3737,9 +3737,9 @@ void angtk_character_generated(void)
 	if (!g_grid_xtra_init)
 	{
 		/* Process each grid */
-		for (y = 0; y < DUNGEON_HGT; y++)
+		for (y = 0; y < MAX_HGT; y++)
 		{
-			for (x = 0; x < DUNGEON_WID; x++)
+			for (x = 0; x < MAX_WID; x++)
 			{
 				int feat = cave_feat(y, x);
 	

@@ -26,7 +26,7 @@ extern int AngbandTk_CmdChooseFont _ANSI_ARGS_((ClientData clientData,
 unsigned char *g_palette_rgb;
 t_assign_group g_assign[ASSIGN_MAX];
 t_assign g_assign_none;
-t_grid *g_grid[DUNGEON_HGT] = {0};
+t_grid *g_grid[MAX_HGT] = {0};
 int g_grid_xtra_init = 0;
 t_flavor *g_flavor = NULL; /* Array of flavor types */
 int g_flavor_count = 0; /* Number of flavors */
@@ -41,7 +41,7 @@ int *g_background = NULL;
 byte *g_feat_flag = NULL;
 t_darken g_darken[3];
 TintTable g_yellow;
-t_assign *g_icon_map[ICON_LAYER_MAX][DUNGEON_HGT];
+t_assign *g_icon_map[ICON_LAYER_MAX][MAX_HGT];
 t_assign *g_assignshape[GRID_SHAPE_MAX] = {NULL};
 bool g_icon_map_changed = FALSE;
 int g_torchlite; /* Use 4 levels of torch lite */
@@ -603,9 +603,9 @@ void get_display_info(int y, int x, t_display *displayPtr)
 	{
 		int y, x;
 		
-		for (y = 0; y < DUNGEON_HGT; y++)
+		for (y = 0; y < MAX_HGT; y++)
 		{
-			for (x = 0; x < DUNGEON_WID; x++)
+			for (x = 0; x < MAX_WID; x++)
 			{
 				set_grid_assign(y, x);
 			}
@@ -1130,9 +1130,9 @@ void angtk_cave_changed(void)
 
 	/* Do not use g_cave_hgt/_wid */
 
-	for (y = 0; y < DUNGEON_HGT; y++)
+	for (y = 0; y < MAX_HGT; y++)
 	{
-		for (x = 0; x < DUNGEON_WID; x++)
+		for (x = 0; x < MAX_WID; x++)
 		{
 			get_grid_info(y, x, &g_grid[y][x]);
 			g_grid[y][x].shape = wall_shape(y, x, FALSE);
@@ -1304,7 +1304,7 @@ g_grid[y][x].xtra &= ~0x0001;
 		 * XXX Hack -- Remember if there is a second shape assignment.
 		 * The second assignment uses an "unknown" floor.
 		 */
-		assign2 = g_assignshape[shape][MAX_F_IDX + feat];
+		assign2 = g_assignshape[shape][max_f_idx + feat];
 		if ((assign2.assignType != ASSIGN_TYPE_ICON) ||
 			(assign2.icon.type != ICON_TYPE_DEFAULT))
 		{
@@ -1922,7 +1922,7 @@ void angtk_image_reset(void)
 	int i;
 
 	/* Randomize monsters */
-	for (i = 1; i < MAX_R_IDX; i++)
+	for (i = 1; i < max_r_idx; i++)
 	{
 		int r_idx;
 		monster_race *r_ptr;
@@ -1931,7 +1931,7 @@ void angtk_image_reset(void)
 		while (1)
 		{
 			/* Pick a random non-unique */
-			r_idx = randint(MAX_R_IDX - 1);
+			r_idx = randint(max_r_idx - 1);
 
 			/* Access the monster race */
 			r_ptr = &r_info[r_idx];
@@ -1951,7 +1951,7 @@ void angtk_image_reset(void)
 	}
 
 	/* Randomize objects */
-	for (i = 1; i < MAX_K_IDX; i++)
+	for (i = 1; i < max_k_idx; i++)
 	{
 		int k_idx;
 		object_kind *k_ptr;
@@ -1960,7 +1960,7 @@ void angtk_image_reset(void)
 		while (1)
 		{
 			/* Pick a random object kind */
-			k_idx = randint(MAX_K_IDX - 1);
+			k_idx = randint(max_k_idx - 1);
 
 			/* Access the object kind */
 			k_ptr = &k_info[k_idx];
@@ -2358,12 +2358,12 @@ void init_icons(int size, int depth)
 	Icon_AddType(icon_data_ptr);
 
 	/* Allocate array of t_assign for each monster */
-	g_assign[ASSIGN_MONSTER].count = MAX_R_IDX;
-	C_MAKE(g_assign[ASSIGN_MONSTER].assign, MAX_R_IDX, t_assign);
+	g_assign[ASSIGN_MONSTER].count = max_r_idx;
+	C_MAKE(g_assign[ASSIGN_MONSTER].assign, max_r_idx, t_assign);
 
 	/* Allocate array of t_assign for each object */
-	g_assign[ASSIGN_OBJECT].count = MAX_K_IDX;
-	C_MAKE(g_assign[ASSIGN_OBJECT].assign, MAX_K_IDX, t_assign);
+	g_assign[ASSIGN_OBJECT].count = max_k_idx;
+	C_MAKE(g_assign[ASSIGN_OBJECT].assign, max_k_idx, t_assign);
 
 	/* Allocate array of t_assign for the character */
 	n = 1;
@@ -2371,8 +2371,8 @@ void init_icons(int size, int depth)
 	C_MAKE(g_assign[ASSIGN_CHARACTER].assign, n, t_assign);
 
 	/* Allocate array of t_assign for each feature */
-	g_assign[ASSIGN_FEATURE].count = MAX_F_IDX;
-	C_MAKE(g_assign[ASSIGN_FEATURE].assign, MAX_F_IDX, t_assign);
+	g_assign[ASSIGN_FEATURE].count = max_f_idx;
+	C_MAKE(g_assign[ASSIGN_FEATURE].assign, max_f_idx, t_assign);
 
 	assign.assignType = ASSIGN_TYPE_ICON;
 	assign.icon.type = ICON_TYPE_DEFAULT;
@@ -2409,11 +2409,11 @@ void init_icons(int size, int depth)
 	 * and pillars have different icons, and the town has a varied
 	 * set of icons.
 	 */
-	for (i = 0; i < DUNGEON_HGT; i++)
+	for (i = 0; i < MAX_HGT; i++)
 	{
 		int layer;
 		for (layer = 0; layer < ICON_LAYER_MAX; layer++)
-			C_MAKE(g_icon_map[layer][i], DUNGEON_WID, t_assign);
+			C_MAKE(g_icon_map[layer][i], MAX_WID, t_assign);
 	}
 
 	/*
@@ -2422,14 +2422,14 @@ void init_icons(int size, int depth)
 	 * (2) FT_LIGHT_ICON means use a sequence of icons
 	 * (3) FT_LIGHT_TINT means use the g_darken[] tint table (slow)
 	 */
-	C_MAKE(g_feat_lite, MAX_F_IDX, int);
+	C_MAKE(g_feat_lite, max_f_idx, int);
 
 	/*
 	 * When a feature is masked, or a masked icon is drawn on
 	 * a feature, we may use the icon assigned to a different feature
 	 * as the background.
 	 */
-	C_MAKE(g_background, MAX_F_IDX, int);
+	C_MAKE(g_background, max_f_idx, int);
 
 	/* Set default icon for each feature */
 	for (i = 0; i < g_assign[ASSIGN_FEATURE].count; i++)
@@ -2443,8 +2443,8 @@ void init_icons(int size, int depth)
 	for (i = 0; i < GRID_SHAPE_MAX; i++)
 	{
 		int j;
-		C_MAKE(g_assignshape[i], MAX_F_IDX * 2, t_assign);
-		for (j = 0; j < MAX_F_IDX * 2; j++)
+		C_MAKE(g_assignshape[i], max_f_idx * 2, t_assign);
+		for (j = 0; j < max_f_idx * 2; j++)
 		{
 			g_assignshape[i][j] = assign;
 		}
@@ -2517,8 +2517,8 @@ void init_icons(int size, int depth)
 		quit(Tcl_GetStringFromObj(Tcl_GetObjResult(g_interp), NULL));
 
 	/* Hack -- indices for hallucination */
-	C_MAKE(g_image_monster, MAX_R_IDX, int);
-	C_MAKE(g_image_object, MAX_K_IDX, int);
+	C_MAKE(g_image_monster, max_r_idx, int);
+	C_MAKE(g_image_object, max_k_idx, int);
 
 	/* Randomize the hallucination indices */
 	angtk_image_reset();

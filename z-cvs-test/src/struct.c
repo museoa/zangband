@@ -293,8 +293,8 @@ static t_field player_stat_info[] = {
 
 static t_field struct_player_type[] =
 {
-{ FIELD_DESC(oldpy, player_type), FLD_INT16, EDIT_YES, 1, DUNGEON_HGT - 1},
-{ FIELD_DESC(oldpx, player_type), FLD_INT16, EDIT_YES, 1, DUNGEON_WID - 1},
+{ FIELD_DESC(oldpy, player_type), FLD_INT16, EDIT_YES, 1, MAX_HGT - 1},
+{ FIELD_DESC(oldpx, player_type), FLD_INT16, EDIT_YES, 1, MAX_WID - 1},
 
 { FIELD_DESC(psex, player_type), FLD_INT8U, EDIT_NO},
 { FIELD_DESC(prace, player_type), FLD_INT8U, EDIT_NO},
@@ -1704,7 +1704,7 @@ void init_struct(void)
 	type.name = "artifact_type";
 	type.elem = (unsigned char *) a_info;
 	type.elem_size = sizeof(artifact_type);
-	type.max = MAX_A_IDX;
+	type.max = max_a_idx;
 	type.info = struct_artifact_type;
 	type.infoProc = (StructInfoProc) struct_info_artifact_type;
 	type.findProc = struct_find_artifact_type;
@@ -1714,7 +1714,7 @@ void init_struct(void)
 	type.name = "feature_type";
 	type.elem = (unsigned char *) f_info;
 	type.elem_size = sizeof(feature_type);
-	type.max = MAX_F_IDX;
+	type.max = max_f_idx;
 	type.info = struct_feature_type;
 	type.infoProc = (StructInfoProc) struct_info_feature_type;
 	type.findProc = struct_find_feature_type;
@@ -1734,7 +1734,7 @@ void init_struct(void)
 	type.name = "monster_type";
 	type.elem = (unsigned char *) m_list;
 	type.elem_size = sizeof(monster_type);
-	type.max = MAX_M_IDX;
+	type.max = max_m_idx;
 	type.info = struct_monster_type;
 	type.infoProc = (StructInfoProc) struct_info_monster_type;
 	type.findProc = NULL;
@@ -1744,7 +1744,7 @@ void init_struct(void)
 	type.name = "object_kind";
 	type.elem = (unsigned char *) k_info;
 	type.elem_size = sizeof(object_kind);
-	type.max = MAX_K_IDX;
+	type.max = max_k_idx;
 	type.info = struct_object_kind;
 	type.infoProc = (StructInfoProc) struct_info_object_kind;
 	type.findProc = struct_find_object_kind;
@@ -1754,7 +1754,7 @@ void init_struct(void)
 	type.name = "object_type";
 	type.elem = (unsigned char *) o_list;
 	type.elem_size = sizeof(object_type);
-	type.max = MAX_O_IDX;
+	type.max = max_o_idx;
 	type.info = struct_object_type;
 	type.infoProc = (StructInfoProc) struct_info_object_type;
 	type.findProc = NULL /* struct_find_object_type */;
@@ -1770,18 +1770,6 @@ void init_struct(void)
 	type.findProc = NULL;
 	type.matchProc = NULL;
 	Struct_AddType(g_interp, &type);
-
-#if 0
-	type.name = "player_race";
-	type.elem = (unsigned char *) race_info;
-	type.elem_size = sizeof(player_race);
-	type.max = MAX_P_IDX;
-	type.info = struct_player_race;
-	type.infoProc = NULL;
-	type.findProc = NULL;
-	type.matchProc = NULL;
-	Struct_AddType(g_interp, &type);
-#endif
 
 	type.name = "player_type";
 	type.elem = (unsigned char *) p_ptr;
@@ -1806,7 +1794,7 @@ void init_struct(void)
 	type.name = "quest_type";
 	type.elem = (unsigned char *) q_list;
 	type.elem_size = sizeof(quest_type);
-	type.max = MAX_QUESTS;
+	type.max = max_quests;
 	type.info = struct_quest_type;
 	type.infoProc = (StructInfoProc) struct_info_quest_type;
 	type.findProc = NULL;

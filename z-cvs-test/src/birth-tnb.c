@@ -1091,7 +1091,7 @@ static void validate_bg(void)
 {
 	int i, race;
 
-	int race_chart[100 /* MAX_P_IDX */];
+	int race_chart[MAX_RACES];
 
 	bool chart_checked[512];
 
@@ -1131,7 +1131,7 @@ static void validate_bg(void)
 	race_chart[RACE_BEASTMAN] = 129;
 
 	/* Check each race */
-	for (race = 0; race < MAX_P_IDX; race++)
+	for (race = 0; race < MAX_RACES; race++)
 	{
 		/* Get the first chart for this race */
 		int chart = race_chart[race];
@@ -1520,7 +1520,7 @@ static void player_wipe(void)
 
 
 	/* Start with no artifacts made yet */
-	for (i = 0; i < MAX_A_IDX; i++)
+	for (i = 0; i < max_a_idx; i++)
 	{
 		artifact_type *a_ptr = &a_info[i];
 		ART_CURNUM(a_ptr) = 0;
@@ -1530,7 +1530,7 @@ static void player_wipe(void)
 	k_info_reset();
 
 	/* Reset the "monsters" */
-	for (i = 1; i < MAX_R_IDX; i++)
+	for (i = 1; i < max_r_idx; i++)
 	{
 		monster_race *r_ptr = &r_info[i];
 

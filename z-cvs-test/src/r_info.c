@@ -390,30 +390,6 @@ long angtk_roff(int r_idx, char *buffer)
 			pos += r_head->info_size;
 			pos += r_head->name_size;
 
-#if 0
-
-			/* Maximal length */
-			len = r_head->text_size - r_ptr->text;
-
-			/* Actual length */
-			for (i = r_idx+1; i < MAX_R_IDX; i++)
-			{
-				/* Actual length */
-				if (r_info[i].text > r_ptr->text)
-				{
-					/* Extract length */
-					len = r_info[i].text - r_ptr->text;
-
-					/* Done */
-					break;
-				}
-			}
-
-			/* Maximal length */
-			if (len > 2048) len = 2048;
-
-#endif
-
 			/* Seek */
 			fd_seek(fd, pos);
 

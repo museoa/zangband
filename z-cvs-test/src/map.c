@@ -23,7 +23,7 @@
 #define USE_MAP_PET /* Friends and pets use different color */
 
 /* Symbol for each cave grid */
-byte *g_map_symbol[DUNGEON_HGT];
+byte *g_map_symbol[MAX_HGT];
 
 #define SYMBOL_ASSIGN_CHARACTER 0
 #define SYMBOL_ASSIGN_FEATURE 1
@@ -424,25 +424,25 @@ void init_map(void)
 		(int *) Tcl_Alloc(1 * sizeof(int));
 	assign_wipe(&g_symbol_assign[SYMBOL_ASSIGN_CHARACTER]);
 
-	g_symbol_assign[SYMBOL_ASSIGN_FEATURE].count = MAX_F_IDX;
+	g_symbol_assign[SYMBOL_ASSIGN_FEATURE].count = max_f_idx;
 	g_symbol_assign[SYMBOL_ASSIGN_FEATURE].assign =
-		(int *) Tcl_Alloc(MAX_F_IDX * sizeof(int));
+		(int *) Tcl_Alloc(max_f_idx * sizeof(int));
 	assign_wipe(&g_symbol_assign[SYMBOL_ASSIGN_FEATURE]);
 
-	g_symbol_assign[SYMBOL_ASSIGN_MONSTER].count = MAX_R_IDX;
+	g_symbol_assign[SYMBOL_ASSIGN_MONSTER].count = max_r_idx;
 	g_symbol_assign[SYMBOL_ASSIGN_MONSTER].assign =
-		(int *) Tcl_Alloc(MAX_R_IDX * sizeof(int));
+		(int *) Tcl_Alloc(max_r_idx * sizeof(int));
 	assign_wipe(&g_symbol_assign[SYMBOL_ASSIGN_MONSTER]);
 
-	g_symbol_assign[SYMBOL_ASSIGN_OBJECT].count = MAX_K_IDX;
+	g_symbol_assign[SYMBOL_ASSIGN_OBJECT].count = max_k_idx;
 	g_symbol_assign[SYMBOL_ASSIGN_OBJECT].assign =
-		(int *) Tcl_Alloc(MAX_K_IDX * sizeof(int));
+		(int *) Tcl_Alloc(max_k_idx * sizeof(int));
 	assign_wipe(&g_symbol_assign[SYMBOL_ASSIGN_OBJECT]);
 
-	for (i = 0; i < DUNGEON_HGT; i++)
+	for (i = 0; i < MAX_HGT; i++)
 	{
 		/* Info about what feature/monster/object is known. */
-		C_MAKE(g_map_symbol[i], DUNGEON_WID, byte);
+		C_MAKE(g_map_symbol[i], MAX_WID, byte);
 	}
 
 	for (i = 0; i < SYMBOL_SPECIAL_MAX; i++)

@@ -22,17 +22,6 @@
  * to make the code cleaner.
  */
 
-#define MAX_A_IDX max_a_idx
-#define MAX_F_IDX max_f_idx
-#define MAX_K_IDX max_k_idx
-#define MAX_M_IDX max_m_idx
-#define MAX_O_IDX max_o_idx
-#define MAX_R_IDX max_r_idx
-#define MAX_V_IDX max_v_idx
-#define MAX_P_IDX MAX_RACES
-#define MAX_QUESTS max_quests
-#define DUNGEON_WID MAX_WID
-#define DUNGEON_HGT MAX_HGT
 #define cave_feat(y,x) cave[y][x].feat
 #define cave_info(y,x) cave[y][x].info
 #define cave_m_idx(y,x) cave[y][x].m_idx
@@ -216,7 +205,7 @@ typedef struct t_grid {
 	int shape; /* GRID_SHAPE_XXX enum */
 } t_grid;
 
-extern t_grid *g_grid[DUNGEON_HGT];
+extern t_grid *g_grid[MAX_HGT];
 
 /* TRUE if g_grid[].xtra was initialized */
 extern int g_grid_xtra_init;
@@ -520,12 +509,6 @@ extern int ExtToUtf_SetArrayValueString(char *varName, char *field, char *value)
 #define VERSION_MINOR_TNB 0
 
 #define VERSION_PATCH_TNB 0
-
-/*
- * Hack -- When using the Trump Tower to teleport to a level, ignore the
- * remember_recall option
- */
-extern bool wor_trump_hack;
 
 /* Constants for racial and mutation powers */
 enum {

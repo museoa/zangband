@@ -938,9 +938,9 @@ void iso_wtd(Widget *widgetPtr, int y, int x, t_display *wtd)
 	{
 		int y, x;
 		
-		for (y = 0; y < DUNGEON_HGT; y++)
+		for (y = 0; y < MAX_HGT; y++)
 		{
-			for (x = 0; x < DUNGEON_WID; x++)
+			for (x = 0; x < MAX_WID; x++)
 			{
 				set_grid_assign(y, x);
 			}
@@ -1006,7 +1006,7 @@ if (!daytime && !dark && (g_grid[y][x].xtra & GRID_XTRA_WALL) &&
 				is_unknown_floor(y+1, x, FALSE) ||
 				is_unknown_floor(y, x+1, FALSE)))
 			{
-				assign = g_assignshape[g_grid[y][x].shape][MAX_F_IDX + f_idx];
+				assign = g_assignshape[g_grid[y][x].shape][max_f_idx + f_idx];
 			}
 			else if (is_unknown_floor(y, x, FALSE))
 			{
@@ -1022,7 +1022,7 @@ if (!daytime && !dark && (g_grid[y][x].xtra & GRID_XTRA_WALL) &&
 			(((y == g_cave_hgt - 1) || !g_grid[y+1][x].f_idx) ||
 			((x == g_cave_wid - 1) || !g_grid[y][x+1].f_idx)))
 		{
-			assign = g_assignshape[g_grid[y][x].shape][MAX_F_IDX + f_idx];
+			assign = g_assignshape[g_grid[y][x].shape][max_f_idx + f_idx];
 		}
 
 		/*
