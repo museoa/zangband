@@ -371,20 +371,51 @@ bool make_attack_normal(int m_idx)
 		/* Monster hits player */
 		if (!effect || check_hit(power, rlev))
 		{
+			int protect = 0;
+			
 			/* Always disturbing */
 			disturb(TRUE);
 
+			if ((p_ptr->flags4 & TR4_PROT_DRAGON) &&
+					(r_ptr->flags3 & RF3_DRAGON))
+				protect = 5;
+			else if ((p_ptr->flags4 & TR4_PROT_DEMON) &&
+					(r_ptr->flags3 & RF3_DEMON))
+				protect = 5;
+			else if ((p_ptr->flags4 & TR4_PROT_UNDEAD) &&
+					(r_ptr->flags3 & RF3_UNDEAD))
+				protect = 4;
+			else if ((p_ptr->flags4 & TR4_PROT_ORC) &&
+					(r_ptr->flags3 & RF3_ORC))
+				protect = 4;
+			else if ((p_ptr->flags4 & TR4_PROT_TROLL) &&
+					(r_ptr->flags3 & RF3_TROLL))
+				protect = 4;
+			else if ((p_ptr->flags4 & TR4_PROT_GIANT) &&
+					(r_ptr->flags3 & RF3_GIANT))
+				protect = 4;
+			else if ((p_ptr->flags4 & TR4_PROT_ANIMAL) &&
+					(r_ptr->flags3 & RF3_ANIMAL))
+				protect = 3;
+			else if ((p_ptr->flags4 & TR4_PROT_EVIL) &&
+					(r_ptr->flags3 & RF3_EVIL))
+				protect = 3;
+			else if ((p_ptr->tim.protevil > 0) &&
+					(r_ptr->flags3 & RF3_EVIL))
+				protect = 3;
 
-			/* Hack -- Apply "protection from evil" */
-			if ((p_ptr->tim.protevil > 0) &&
-				(r_ptr->flags3 & RF3_EVIL) &&
-				(p_ptr->lev >= rlev) && ((randint0(100) + p_ptr->lev) > 50))
+			/* Apply "protection" */
+			if (protect > 0 && 
+					randint1(protect * p_ptr->lev) > 2 * rlev &&
+					!one_in_(20))
 			{
+#if 0
 				/* Remember the Evil-ness */
 				if (m_ptr->ml)
 				{
 					r_ptr->r_flags3 |= RF3_EVIL;
 				}
+#endif
 
 				/* Message */
 				msgf("%^s is repelled.", m_name);
