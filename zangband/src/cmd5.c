@@ -868,7 +868,7 @@ static bool cast_sorcery_spell(int spell)
 			break;
 		case 27:				/* Clairvoyance */
 			wiz_lite();
-			if (!(TEST_FLAG(p_ptr->flags, 2, TR2_TELEPATHY)))
+			if (!(OBJ_FLAG(p_ptr, 2, TELEPATHY)))
 			{
 				(void)inc_tim_esp(rand_range(25, 55));
 			}
@@ -927,9 +927,9 @@ static bool cast_nature_spell(int spell)
 			break;
 		case 4:				/* Daylight */
 			(void)lite_area(damroll(2, (plev / 2)), (plev / 10) + 1);
-			if ((TEST_FLAG(p_ptr->flags, 3, TR3_HURT_LITE)) &&
-				!(TEST_FLAG(p_ptr->flags, 1, TR1_RES_LITE)) &&
-				!(TEST_FLAG(p_ptr->flags, 3, TR3_IM_LITE)))
+			if ((OBJ_FLAG(p_ptr, 3, HURT_LITE)) &&
+				!(OBJ_FLAG(p_ptr, 1, RES_LITE)) &&
+				!(OBJ_FLAG(p_ptr, 3, IM_LITE)))
 			{
 				msgf("The daylight scorches your flesh!");
 				take_hit(damroll(2, 2), "daylight");
@@ -1040,9 +1040,9 @@ static bool cast_nature_spell(int spell)
 		case 29:				/* Call Sunlight */
 			(void)fire_ball(GF_LITE, 0, 150, 8);
 			wiz_lite();
-			if ((TEST_FLAG(p_ptr->flags, 3, TR3_HURT_LITE)) &&
-				!(TEST_FLAG(p_ptr->flags, 1, TR1_RES_LITE)) &&
-				!(TEST_FLAG(p_ptr->flags, 3, TR3_IM_LITE)))
+			if ((OBJ_FLAG(p_ptr, 3, HURT_LITE)) &&
+				!(OBJ_FLAG(p_ptr, 1, RES_LITE)) &&
+				!(OBJ_FLAG(p_ptr, 3, IM_LITE)))
 			{
 				msgf("The sunlight scorches your flesh!");
 				take_hit(50, "sunlight");
@@ -1705,7 +1705,7 @@ static bool cast_death_spell(int spell)
 				if (!m_ptr->r_idx) continue;
 
 				/* Hack -- Skip Unique Monsters */
-				if (TEST_FLAG(r_ptr->flags, 0, RF0_UNIQUE)) continue;
+				if (RF_FLAG(r_ptr->flags, 0, UNIQUE)) continue;
 
 				/* Hack -- Skip Quest Monsters */
 				if (RF_FLAG(r_ptr->flags, 0, QUESTOR)) continue;
@@ -2594,7 +2594,7 @@ static bool cast_arcane_spell(int spell)
 			break;
 		case 31:				/* Clairvoyance */
 			wiz_lite();
-			if (!(TEST_FLAG(p_ptr->flags, 2, TR2_TELEPATHY)))
+			if (!(OBJ_FLAG(p_ptr, 2, TELEPATHY)))
 			{
 				(void)inc_tim_esp(rand_range(25, 55));
 			}
@@ -2744,11 +2744,11 @@ void do_cmd_cast(void)
 				/* Mind blast */
 				if (!saving_throw(p_ptr->skills[SKILL_SAV]))
 				{
-					if (!(TEST_FLAG(p_ptr->flags, 1, TR1_RES_CONF)))
+					if (!(OBJ_FLAG(p_ptr, 1, RES_CONF)))
 					{
 						(void)inc_confused(rand_range(4, 8));
 					}
-					if (!(TEST_FLAG(p_ptr->flags, 1, TR1_RES_CHAOS)) && one_in_(3))
+					if (!(OBJ_FLAG(p_ptr, 1, RES_CHAOS)) && one_in_(3))
 					{
 						(void)inc_image(rand_range(150, 400));
 					}
@@ -2766,7 +2766,7 @@ void do_cmd_cast(void)
 				msgf("It hurts!");
 				take_hit(damroll(o_ptr->sval + 1, 6), "a miscast Death spell");
 				if ((spell > 15) && one_in_(6) &&
-					 !(TEST_FLAG(p_ptr->flags, 1, TR1_HOLD_LIFE)))
+					 !(OBJ_FLAG(p_ptr, 1, HOLD_LIFE)))
 					lose_exp(spell * 250);
 			}
 		}

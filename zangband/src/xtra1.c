@@ -1767,7 +1767,7 @@ static void calc_mana(void)
 
 		/* Normal gloves hurt mage-type spells */
 		if (o_ptr->k_idx && (o_ptr->pval > 0) &&
-			!((TR_FLAG(o_ptr->flags, 1, FREE_ACT)) || (TR_FLAG(o_ptr->flags, 0, DEX))))
+			!((OBJ_FLAG(o_ptr, 1, FREE_ACT)) || (OBJ_FLAG(o_ptr, 0, DEX))))
 		{
 			/* Encumbered */
 			p_ptr->cumber_glove = TRUE;
@@ -1983,7 +1983,7 @@ static void calc_torch(void)
 		if ((i == EQUIP_LITE) && (o_ptr->k_idx) && (o_ptr->tval == TV_LITE))
 		{
 			/* Artifact Lites provide permanent, bright, lite */
-			if (TR_FLAG(o_ptr->flags, 2, INSTA_ART))
+			if (OBJ_FLAG(o_ptr, 2, INSTA_ART))
 			{
 				p_ptr->cur_lite += 3;
 				continue;
@@ -2009,7 +2009,7 @@ static void calc_torch(void)
 			if (!o_ptr->k_idx) continue;
 
 			/* does this item glow? */
-			if (TR_FLAG(o_ptr->flags, 2, LITE)) p_ptr->cur_lite++;
+			if (OBJ_FLAG(o_ptr, 2, LITE)) p_ptr->cur_lite++;
 		}
 	}
 
@@ -2017,7 +2017,7 @@ static void calc_torch(void)
 	 * Check if the player doesn't have a lite source,
 	 * but does glow as an intrinsic.
 	 */
-	if ((p_ptr->cur_lite == 0) && (TEST_FLAG(p_ptr->flags, 2, TR2_LITE)))
+	if ((p_ptr->cur_lite == 0) && (OBJ_FLAG(p_ptr, 2, LITE)))
 	{
 		p_ptr->cur_lite = 1;
 	}
@@ -2329,8 +2329,8 @@ static void calc_bonuses(void)
 	old_speed = p_ptr->pspeed;
 
 	/* Save the old vision stuff */
-	old_telepathy = TEST_FLAG(p_ptr->flags, 2, TR2_TELEPATHY) ? TRUE : FALSE;
-	old_see_inv = TEST_FLAG(p_ptr->flags, 2, TR2_SEE_INVIS) ? TRUE : FALSE;
+	old_telepathy = OBJ_FLAG(p_ptr, 2, TELEPATHY) ? TRUE : FALSE;
+	old_see_inv = OBJ_FLAG(p_ptr, 2, SEE_INVIS) ? TRUE : FALSE;
 
 	/* Save the old armor class */
 	old_dis_ac = p_ptr->dis_ac;
@@ -2436,7 +2436,7 @@ static void calc_bonuses(void)
 	player_flags(ff);
 
 	/* Hack - handle speed from monk/sprite/klackon here */
-	if (TEST_FLAG(ff, 0, TR0_SPEED))
+	if (TR_FLAG(ff, 0, SPEED))
 	{
 		p_ptr->pspeed += (p_ptr->lev) / 10;
 		ff[0] &= ~(TR0_SPEED);
@@ -2467,42 +2467,42 @@ static void calc_bonuses(void)
 		p_ptr->flags[3] |= o_ptr->flags[3];
 
 		/* Affect stats */
-		if (TEST_FLAG(o_ptr->flags, 0, TR0_STR)) p_ptr->stat[A_STR].add += o_ptr->pval;
-		if (TEST_FLAG(o_ptr->flags, 0, TR0_INT)) p_ptr->stat[A_INT].add += o_ptr->pval;
-		if (TEST_FLAG(o_ptr->flags, 0, TR0_WIS)) p_ptr->stat[A_WIS].add += o_ptr->pval;
-		if (TEST_FLAG(o_ptr->flags, 0, TR0_DEX)) p_ptr->stat[A_DEX].add += o_ptr->pval;
-		if (TEST_FLAG(o_ptr->flags, 0, TR0_CON)) p_ptr->stat[A_CON].add += o_ptr->pval;
-		if (TEST_FLAG(o_ptr->flags, 0, TR0_CHR)) p_ptr->stat[A_CHR].add += o_ptr->pval;
+		if (OBJ_FLAG(o_ptr, 0, STR)) p_ptr->stat[A_STR].add += o_ptr->pval;
+		if (OBJ_FLAG(o_ptr, 0, INT)) p_ptr->stat[A_INT].add += o_ptr->pval;
+		if (OBJ_FLAG(o_ptr, 0, WIS)) p_ptr->stat[A_WIS].add += o_ptr->pval;
+		if (OBJ_FLAG(o_ptr, 0, DEX)) p_ptr->stat[A_DEX].add += o_ptr->pval;
+		if (OBJ_FLAG(o_ptr, 0, CON)) p_ptr->stat[A_CON].add += o_ptr->pval;
+		if (OBJ_FLAG(o_ptr, 0, CHR)) p_ptr->stat[A_CHR].add += o_ptr->pval;
 
 		/* Affect mana */
-		if (TEST_FLAG(o_ptr->flags, 0, TR0_SP)) p_ptr->sp_bonus += o_ptr->pval;
+		if (OBJ_FLAG(o_ptr, 0, SP)) p_ptr->sp_bonus += o_ptr->pval;
 
 		/* Affect stealth */
-		if (TEST_FLAG(o_ptr->flags, 0, TR0_STEALTH)) p_ptr->skills[SKILL_STL] += o_ptr->pval;
+		if (OBJ_FLAG(o_ptr, 0, STEALTH)) p_ptr->skills[SKILL_STL] += o_ptr->pval;
 
 		/* Affect sensing ability (factor of five) */
-		if (TEST_FLAG(o_ptr->flags, 0, TR0_SEARCH)) p_ptr->skills[SKILL_SNS] += (o_ptr->pval * 5);
+		if (OBJ_FLAG(o_ptr, 0, SEARCH)) p_ptr->skills[SKILL_SNS] += (o_ptr->pval * 5);
 
 		/* Affect searching frequency (factor of five) */
-		if (TEST_FLAG(o_ptr->flags, 0, TR0_SEARCH)) p_ptr->skills[SKILL_FOS] += (o_ptr->pval * 5);
+		if (OBJ_FLAG(o_ptr, 0, SEARCH)) p_ptr->skills[SKILL_FOS] += (o_ptr->pval * 5);
 
 		/* Affect infravision */
-		if (TEST_FLAG(o_ptr->flags, 0, TR0_INFRA)) p_ptr->see_infra += o_ptr->pval;
+		if (OBJ_FLAG(o_ptr, 0, INFRA)) p_ptr->see_infra += o_ptr->pval;
 
 		/* Affect digging (factor of 20) */
-		if (TEST_FLAG(o_ptr->flags, 0, TR0_TUNNEL)) p_ptr->skills[SKILL_DIG] += (o_ptr->pval * 20);
+		if (OBJ_FLAG(o_ptr, 0, TUNNEL)) p_ptr->skills[SKILL_DIG] += (o_ptr->pval * 20);
 
 		/* Affect speed */
-		if (TEST_FLAG(o_ptr->flags, 0, TR0_SPEED)) p_ptr->pspeed += o_ptr->pval;
+		if (OBJ_FLAG(o_ptr, 0, SPEED)) p_ptr->pspeed += o_ptr->pval;
 
 		/* Affect blows */
-		if (TEST_FLAG(o_ptr->flags, 0, TR0_BLOWS)) extra_blows += o_ptr->pval;
+		if (OBJ_FLAG(o_ptr, 0, BLOWS)) extra_blows += o_ptr->pval;
 
 		/* Boost shots */
-		if (TEST_FLAG(o_ptr->flags, 2, TR2_XTRA_SHOTS)) extra_shots++;
+		if (OBJ_FLAG(o_ptr, 2, XTRA_SHOTS)) extra_shots++;
 		
 		/* Boost saving throws */
-		if (TEST_FLAG(o_ptr->flags, 3, TR3_LUCK_10)) p_ptr->skills[SKILL_SAV] += 10;
+		if (OBJ_FLAG(o_ptr, 3, LUCK_10)) p_ptr->skills[SKILL_SAV] += 10;
 
 		/* Modify the base armor class */
 		p_ptr->ac += o_ptr->ac;
@@ -2567,7 +2567,7 @@ static void calc_bonuses(void)
 	}
 
 	/* Hack -- aura of fire also provides light */
-	if (TEST_FLAG(p_ptr->flags, 2, TR2_SH_FIRE)) SET_FLAG(p_ptr->flags, 2, TR2_LITE);
+	if (OBJ_FLAG(p_ptr, 2, SH_FIRE)) SET_FLAG(p_ptr->flags, 2, TR2_LITE);
 
 	/* Golems also get an intrinsic AC bonus */
 	if (p_ptr->rp.prace == RACE_GOLEM)
@@ -2773,13 +2773,13 @@ static void calc_bonuses(void)
 
 
 	/* Hack -- Telepathy Change */
-	if (((TEST_FLAG(p_ptr->flags, 2, TR2_TELEPATHY)) ? TRUE : FALSE) != old_telepathy)
+	if (((OBJ_FLAG(p_ptr, 2, TELEPATHY)) ? TRUE : FALSE) != old_telepathy)
 	{
 		p_ptr->update |= (PU_MONSTERS);
 	}
 
 	/* Hack -- See Invis Change */
-	if (((TEST_FLAG(p_ptr->flags, 2, TR2_SEE_INVIS)) ? TRUE : FALSE) != old_see_inv)
+	if (((OBJ_FLAG(p_ptr, 2, SEE_INVIS)) ? TRUE : FALSE) != old_see_inv)
 	{
 		p_ptr->update |= (PU_MONSTERS);
 	}
@@ -2989,7 +2989,7 @@ static void calc_bonuses(void)
 
 	/* Priest weapon penalty for non-blessed edged weapons */
 	if ((p_ptr->rp.pclass == CLASS_PRIEST) &&
-		(!(TEST_FLAG(p_ptr->flags, 2, TR2_BLESSED))) &&
+		(!(OBJ_FLAG(p_ptr, 2, BLESSED))) &&
 		((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM)))
 	{
 		/* Reduce the real bonuses */
@@ -3060,7 +3060,7 @@ static void calc_bonuses(void)
 	/* Apply Skill -- Extract noise from stealth */
 	p_ptr->noise = (1L << (30 - p_ptr->skills[SKILL_STL]));
 
-	if ((TEST_FLAG(p_ptr->flags, 2, TR2_NO_MAGIC)) && (p_ptr->skills[SKILL_SAV] < p_ptr->lev + 85))
+	if ((OBJ_FLAG(p_ptr, 2, NO_MAGIC)) && (p_ptr->skills[SKILL_SAV] < p_ptr->lev + 85))
 		 p_ptr->skills[SKILL_SAV] = p_ptr->lev + 85;
 
 	/* Assume not heavy */

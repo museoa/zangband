@@ -106,13 +106,13 @@ static int critical_melee(int chance, int sleeping_bonus, cptr m_name,
 	int bonus = 0;
 	int psi_hit = FALSE;
 
-	if ((TEST_FLAG(p_ptr->flags, 3, TR3_PSI_CRIT)) && (p_ptr->csp >= PSI_COST) && 
+	if ((OBJ_FLAG(p_ptr, 3, PSI_CRIT)) && (p_ptr->csp >= PSI_COST) && 
 			(randint(100) < 80))
 	{
 		psi_hit = TRUE;
 	}
 
-	if (TEST_FLAG(p_ptr->flags, 3, TR3_STRANGE_LUCK))
+	if (OBJ_FLAG(p_ptr, 3, STRANGE_LUCK))
 		power = power * 3 / 2;
 
 	/* Test for critical hit. */
@@ -212,7 +212,7 @@ static s16b critical_norm(int weight, int plus, int dam)
 	/* Extract "blow" power */
 	power = (weight + ((p_ptr->to_h + plus) * 5) + (p_ptr->lev * 3));
 
-	if (TEST_FLAG(p_ptr->flags, 3, TR3_STRANGE_LUCK))
+	if (OBJ_FLAG(p_ptr, 3, STRANGE_LUCK))
 		power = power * 3 / 2;
 
 	/* Chance */
@@ -946,7 +946,7 @@ static void touch_zap_player(const monster_type *m_ptr)
 
 	if (RF_FLAG(r_ptr->flags, 1, AURA_FIRE))
 	{
-		if (!(TEST_FLAG(p_ptr->flags, 1, TR1_IM_FIRE)))
+		if (!(OBJ_FLAG(p_ptr, 1, IM_FIRE)))
 		{
 			char aura_dam[80];
 
@@ -966,7 +966,7 @@ static void touch_zap_player(const monster_type *m_ptr)
 
 	if (RF_FLAG(r_ptr->flags, 2, AURA_COLD))
 	{
-		if (!(TEST_FLAG(p_ptr->flags, 1, TR1_IM_COLD)))
+		if (!(OBJ_FLAG(p_ptr, 1, IM_COLD)))
 		{
 			char aura_dam[80];
 
@@ -986,7 +986,7 @@ static void touch_zap_player(const monster_type *m_ptr)
 
 	if (RF_FLAG(r_ptr->flags, 1, AURA_ELEC))
 	{
-		if (!(TEST_FLAG(p_ptr->flags, 1, TR1_IM_ELEC)))
+		if (!(OBJ_FLAG(p_ptr, 1, IM_ELEC)))
 		{
 			char aura_dam[80];
 
@@ -1252,7 +1252,7 @@ static bool monster_bash(int *blows, int sleeping_bonus, const cave_type *c_ptr,
 
 		/* Confusion. */
 		if (bash_quality + p_ptr->lev > randint1(300 + r_ptr->level * 6) &&
-			!(TEST_FLAG(r_ptr->flags, 2, RF2_NO_CONF)))
+			!(RF_FLAG(r_ptr->flags, 2, NO_CONF)))
 		{
 			msgf("%^s appears confused.", m_name);
 
@@ -1453,7 +1453,7 @@ void py_attack(int x, int y)
 	blows = p_ptr->num_blow;
 
 	/* Prepare for ghoul paralysis? */
-	if (!(o_ptr->k_idx) && (TEST_FLAG(p_ptr->flags, 3, TR3_GHOUL_TOUCH)))
+	if (!(o_ptr->k_idx) && (OBJ_FLAG(p_ptr, 3, GHOUL_TOUCH)))
 	{
 		ghoul_paral = 0;
 
@@ -1546,8 +1546,8 @@ void py_attack(int x, int y)
 	}
 
 	/* Using a weapon can cause it to become cursed */
-	if ((TEST_FLAG(o_ptr->flags, 3, TR3_AUTO_CURSE)) && 
-			!(TEST_FLAG(o_ptr->flags, 2, TR2_CURSED)) && (randint(100) < 10))
+	if ((OBJ_FLAG(o_ptr, 3, AUTO_CURSE)) && 
+			!(OBJ_FLAG(o_ptr, 2, CURSED)) && (randint(100) < 10))
 	{
 		msgf("Your weapon glows black.");
 		SET_FLAG(o_ptr->flags, 2, TR2_CURSED);
@@ -1609,7 +1609,7 @@ void py_attack(int x, int y)
 			k = 1;
 
 			/* Select a chaotic effect (50% chance) */
-			if ((TR_FLAG(o_ptr->flags, 0, CHAOTIC)) && (one_in_(2)))
+			if ((OBJ_FLAG(o_ptr, 0, CHAOTIC)) && (one_in_(2)))
 			{
 				if (one_in_(10)) chg_virtue(V_CHANCE, 1);
 
@@ -1644,7 +1644,7 @@ void py_attack(int x, int y)
 			}
 
 			/* Vampiric drain */
-			if (TR_FLAG(o_ptr->flags, 0, VAMPIRIC))
+			if (OBJ_FLAG(o_ptr, 0, VAMPIRIC))
 			{
 				/* Only drain "living" monsters */
 				if (monster_living(r_ptr))
@@ -1712,7 +1712,7 @@ void py_attack(int x, int y)
 					LUA_RETURN(do_poly));
 
 				/* hack -- check for earthquake. */
-				if ((TEST_FLAG(p_ptr->flags, 0, TR0_IMPACT)) &&
+				if ((OBJ_FLAG(p_ptr, 0, IMPACT)) &&
 					((k > 50) || one_in_(7)))
 				{
 					do_quake = TRUE;
@@ -2319,7 +2319,7 @@ void move_player(int dir, int do_pickup)
 
 	/* Player can not walk through "walls"... */
 	/* unless in Shadow Form */
-	if (p_ptr->tim.wraith_form || (TEST_FLAG(p_ptr->flags, 3, TR3_PASS_WALL)))
+	if (p_ptr->tim.wraith_form || (OBJ_FLAG(p_ptr, 3, PASS_WALL)))
 		p_can_pass_walls = TRUE;
 
 	/* Never walk through permanent features */
@@ -3097,7 +3097,7 @@ static bool run_test(void)
 				case FEAT_SHAL_LAVA:
 				{
 					/* Ignore */
-					if (p_ptr->tim.invuln || (TEST_FLAG(p_ptr->flags, 1, TR1_IM_FIRE)))
+					if (p_ptr->tim.invuln || (OBJ_FLAG(p_ptr, 1, IM_FIRE)))
 						 notice = FALSE;
 
 					/* Done */
@@ -3108,7 +3108,7 @@ static bool run_test(void)
 				case FEAT_SHAL_ACID:
 				{
 					/* Ignore */
-					if (p_ptr->tim.invuln || (TEST_FLAG(p_ptr->flags, 1, TR1_IM_ACID)))
+					if (p_ptr->tim.invuln || (OBJ_FLAG(p_ptr, 1, IM_ACID)))
 						 notice = FALSE;
 
 					/* Done */
@@ -3130,7 +3130,7 @@ static bool run_test(void)
 				case FEAT_OCEAN_WATER:
 				{
 					/* Ignore */
-					if (TEST_FLAG(p_ptr->flags, 2, TR2_FEATHER)) notice = FALSE;
+					if (OBJ_FLAG(p_ptr, 2, FEATHER)) notice = FALSE;
 
 					/* Done */
 					break;

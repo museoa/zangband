@@ -1059,7 +1059,7 @@ static bool set_tim_esp(int v)
 	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
 
 	/* Don't notice if we have permanent telepathy */
-	if (!(TR_FLAG(p_ptr->flags, 2, TELEPATHY)))
+	if (!(OBJ_FLAG(p_ptr, 2, TELEPATHY)))
 	{
 		/* Open */
 		if (v)
@@ -1534,10 +1534,10 @@ byte res_acid_lvl(void)
 	byte level = 9;
 	
 	if (p_ptr->tim.invuln) return (0);
-	if (TR_FLAG(p_ptr->flags, 1, IM_ACID)) return (0);
-	if (TR_FLAG(p_ptr->flags, 1, RES_ACID)) level /= 3;
+	if (OBJ_FLAG(p_ptr, 1, IM_ACID)) return (0);
+	if (OBJ_FLAG(p_ptr, 1, RES_ACID)) level /= 3;
 	if (p_ptr->tim.oppose_acid) level /= 3;
-	if (TR_FLAG(p_ptr->flags, 3, HURT_ACID)) level *= 2;
+	if (OBJ_FLAG(p_ptr, 3, HURT_ACID)) level *= 2;
 
 	return (level);
 }
@@ -1550,10 +1550,10 @@ byte res_elec_lvl(void)
 	byte level = 9;
 	
 	if (p_ptr->tim.invuln) return (0);
-	if (TR_FLAG(p_ptr->flags, 1, IM_ELEC)) return (0);
-	if (TR_FLAG(p_ptr->flags, 1, RES_ELEC)) level /= 3;
+	if (OBJ_FLAG(p_ptr, 1, IM_ELEC)) return (0);
+	if (OBJ_FLAG(p_ptr, 1, RES_ELEC)) level /= 3;
 	if (p_ptr->tim.oppose_elec) level /= 3;
-	if (TR_FLAG(p_ptr->flags, 3, HURT_ELEC)) level *= 2;
+	if (OBJ_FLAG(p_ptr, 3, HURT_ELEC)) level *= 2;
 
 	return (level);
 }
@@ -1566,10 +1566,10 @@ byte res_fire_lvl(void)
 	byte level = 9;
 	
 	if (p_ptr->tim.invuln) return (0);
-	if (TR_FLAG(p_ptr->flags, 1, IM_FIRE)) return (0);
-	if (TR_FLAG(p_ptr->flags, 1, RES_FIRE)) level /= 3;
+	if (OBJ_FLAG(p_ptr, 1, IM_FIRE)) return (0);
+	if (OBJ_FLAG(p_ptr, 1, RES_FIRE)) level /= 3;
 	if (p_ptr->tim.oppose_fire) level /= 3;
-	if (TR_FLAG(p_ptr->flags, 3, HURT_FIRE)) level *= 2;
+	if (OBJ_FLAG(p_ptr, 3, HURT_FIRE)) level *= 2;
 
 	return (level);
 }
@@ -1582,10 +1582,10 @@ byte res_cold_lvl(void)
 	byte level = 9;
 	
 	if (p_ptr->tim.invuln) return (0);
-	if (TR_FLAG(p_ptr->flags, 1, IM_COLD)) return (0);
-	if (TR_FLAG(p_ptr->flags, 1, RES_COLD)) level /= 3;
+	if (OBJ_FLAG(p_ptr, 1, IM_COLD)) return (0);
+	if (OBJ_FLAG(p_ptr, 1, RES_COLD)) level /= 3;
 	if (p_ptr->tim.oppose_cold) level /= 3;
-	if (TR_FLAG(p_ptr->flags, 3, HURT_COLD)) level *= 2;
+	if (OBJ_FLAG(p_ptr, 3, HURT_COLD)) level *= 2;
 
 	return (level);
 }
@@ -1598,7 +1598,7 @@ byte res_pois_lvl(void)
 	byte level = 9;
 	
 	if (p_ptr->tim.invuln) return (0);
-	if (TR_FLAG(p_ptr->flags, 1, RES_POIS)) return(0);
+	if (OBJ_FLAG(p_ptr, 1, RES_POIS)) return(0);
 	if (p_ptr->tim.oppose_pois) return(0);
 
 	return (level);
@@ -1624,8 +1624,6 @@ int resist(int dam, byte (*f_func) (void))
 static int minus_ac(void)
 {
 	object_type *o_ptr = NULL;
-	char o_name[256];
-
 
 	/* Pick a (possibly empty) inventory slot */
 	switch (randint1(6))
@@ -1669,19 +1667,16 @@ static int minus_ac(void)
 	if (o_ptr->ac + o_ptr->to_a <= 0) return (FALSE);
 
 
-	/* Describe */
-	object_desc(o_name, o_ptr, FALSE, 0, 256);
-
 	/* Object resists */
-	if (TR_FLAG(o_ptr->flags, 2, IGNORE_ACID))
+	if (OBJ_FLAG(o_ptr, 2, IGNORE_ACID))
 	{
-		msgf("Your %s is unaffected!", o_name);
+		msgf("Your %v is unaffected!", OBJECT_FMT(o_ptr, FALSE, 0));
 
 		return (TRUE);
 	}
 
 	/* Message */
-	msgf("Your %s is damaged!", o_name);
+	msgf("Your %v is damaged!", OBJECT_FMT(o_ptr, FALSE, 0));
 
 	/* Damage the item */
 	o_ptr->to_a--;
@@ -1922,16 +1917,16 @@ static bool set_stun(int v)
 			msgf("A vicious blow hits your head.");
 			if (one_in_(3))
 			{
-				if (!(TEST_FLAG(p_ptr->flags, 1, TR1_SUST_INT))) (void)do_dec_stat(A_INT);
-				if (!(TEST_FLAG(p_ptr->flags, 1, TR1_SUST_WIS))) (void)do_dec_stat(A_WIS);
+				if (!(OBJ_FLAG(p_ptr, 1, SUST_INT))) (void)do_dec_stat(A_INT);
+				if (!(OBJ_FLAG(p_ptr, 1, SUST_WIS))) (void)do_dec_stat(A_WIS);
 			}
 			else if (one_in_(2))
 			{
-				if (!(TEST_FLAG(p_ptr->flags, 1, TR1_SUST_INT))) (void)do_dec_stat(A_INT);
+				if (!(OBJ_FLAG(p_ptr, 1, SUST_INT))) (void)do_dec_stat(A_INT);
 			}
 			else
 			{
-				if (!(TEST_FLAG(p_ptr->flags, 1, TR1_SUST_WIS))) (void)do_dec_stat(A_WIS);
+				if (!(OBJ_FLAG(p_ptr, 1, SUST_WIS))) (void)do_dec_stat(A_WIS);
 			}
 		}
 
@@ -2176,7 +2171,7 @@ static bool set_cut(int v)
 
 		if (randint1(1000) < v || one_in_(16))
 		{
-			if (!(TEST_FLAG(p_ptr->flags, 1, TR1_SUST_CHR)))
+			if (!(OBJ_FLAG(p_ptr, 1, SUST_CHR)))
 			{
 				msgf("You have been horribly scarred.");
 
@@ -2725,32 +2720,32 @@ bool do_dec_stat(int stat)
 	{
 		case A_STR:
 		{
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_SUST_STR)) sust = TRUE;
+			if (OBJ_FLAG(p_ptr, 1, SUST_STR)) sust = TRUE;
 			break;
 		}
 		case A_INT:
 		{
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_SUST_INT)) sust = TRUE;
+			if (OBJ_FLAG(p_ptr, 1, SUST_INT)) sust = TRUE;
 			break;
 		}
 		case A_WIS:
 		{
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_SUST_WIS)) sust = TRUE;
+			if (OBJ_FLAG(p_ptr, 1, SUST_WIS)) sust = TRUE;
 			break;
 		}
 		case A_DEX:
 		{
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_SUST_DEX)) sust = TRUE;
+			if (OBJ_FLAG(p_ptr, 1, SUST_DEX)) sust = TRUE;
 			break;
 		}
 		case A_CON:
 		{
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_SUST_CON)) sust = TRUE;
+			if (OBJ_FLAG(p_ptr, 1, SUST_CON)) sust = TRUE;
 			break;
 		}
 		case A_CHR:
 		{
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_SUST_CHR)) sust = TRUE;
+			if (OBJ_FLAG(p_ptr, 1, SUST_CHR)) sust = TRUE;
 			break;
 		}
 	}

@@ -320,7 +320,7 @@ static void spoil_obj_desc(cptr fname)
 			if (k_ptr->tval != group_item[i].tval) continue;
 
 			/* Hack -- Skip instant-artifacts */
-			if (TEST_FLAG(k_ptr->flags, 2, TR2_INSTA_ART)) continue;
+			if (OBJ_FLAG(k_ptr, 2, INSTA_ART)) continue;
 
 			/* Save the index */
 			who[n++] = k;
@@ -852,7 +852,7 @@ static void analyze_misc_magic(const object_type *o_ptr, cptr *misc_list)
 	/*
 	 * Artifact lights -- large radius light.
 	 */
-	if ((o_ptr->tval == TV_LITE) && (TR_FLAG(o_ptr->flags, 2, LITE)))
+	if ((o_ptr->tval == TV_LITE) && (OBJ_FLAG(o_ptr, 2, LITE)))
 	{
 		*misc_list++ = "Permanent Light(3)";
 	}
@@ -860,7 +860,7 @@ static void analyze_misc_magic(const object_type *o_ptr, cptr *misc_list)
 	/*
 	 * Glowing artifacts -- small radius light.
 	 */
-	else if (TEST_FLAG(o_ptr->flags, 2, TR2_LITE))
+	else if (OBJ_FLAG(o_ptr, 2, LITE))
 	{
 		*misc_list++ = "Permanent Light(1)";
 	}
@@ -873,15 +873,15 @@ static void analyze_misc_magic(const object_type *o_ptr, cptr *misc_list)
 
 	if (cursed_p(o_ptr))
 	{
-		if (TR_FLAG(o_ptr->flags, 2, TY_CURSE))
+		if (OBJ_FLAG(o_ptr, 2, TY_CURSE))
 		{
 			*misc_list++ = "Ancient Curse";
 		}
-		if (TR_FLAG(o_ptr->flags, 2, PERMA_CURSE))
+		if (OBJ_FLAG(o_ptr, 2, PERMA_CURSE))
 		{
 			*misc_list++ = "Permanently Cursed";
 		}
-		else if (TR_FLAG(o_ptr->flags, 2, HEAVY_CURSE))
+		else if (OBJ_FLAG(o_ptr, 2, HEAVY_CURSE))
 		{
 			*misc_list++ = "Heavily Cursed";
 		}

@@ -340,12 +340,12 @@ static void borg_notice_player(void)
 	/* XXX XXX XXX Don't handle flags4 yet */
 
 	/* Sustain flags */
-	if (TEST_FLAG(ff, 1, TR1_SUST_STR)) bp_ptr->sust[A_STR] = TRUE;
-	if (TEST_FLAG(ff, 1, TR1_SUST_INT)) bp_ptr->sust[A_INT] = TRUE;
-	if (TEST_FLAG(ff, 1, TR1_SUST_WIS)) bp_ptr->sust[A_WIS] = TRUE;
-	if (TEST_FLAG(ff, 1, TR1_SUST_DEX)) bp_ptr->sust[A_DEX] = TRUE;
-	if (TEST_FLAG(ff, 1, TR1_SUST_CON)) bp_ptr->sust[A_CON] = TRUE;
-	if (TEST_FLAG(ff, 1, TR1_SUST_CHR)) bp_ptr->sust[A_CHR] = TRUE;
+	if (TR_FLAG(ff, 1, SUST_STR)) bp_ptr->sust[A_STR] = TRUE;
+	if (TR_FLAG(ff, 1, SUST_INT)) bp_ptr->sust[A_INT] = TRUE;
+	if (TR_FLAG(ff, 1, SUST_WIS)) bp_ptr->sust[A_WIS] = TRUE;
+	if (TR_FLAG(ff, 1, SUST_DEX)) bp_ptr->sust[A_DEX] = TRUE;
+	if (TR_FLAG(ff, 1, SUST_CON)) bp_ptr->sust[A_CON] = TRUE;
+	if (TR_FLAG(ff, 1, SUST_CHR)) bp_ptr->sust[A_CHR] = TRUE;
 
 	/* Bloating slows the player down (a little) */
 	if (bp_ptr->status.gorged) bp_ptr->speed -= 10;
@@ -1240,7 +1240,7 @@ static void borg_notice_lite(void)
 			bp_ptr->able.fuel += 1000;
 
 			/* Vampires need to be concerned with Artifacts Lites */
-			if ((borg_race == RACE_VAMPIRE) && !(TR_FLAG(bp_ptr->flags, 1, RES_LITE)))
+			if ((borg_race == RACE_VAMPIRE) && !(OBJ_FLAG(bp_ptr, 1, RES_LITE)))
 			{
 				bp_ptr->cur_lite = 1;
 			}
@@ -1628,17 +1628,17 @@ static void borg_notice_scrolls(list_item *l_ptr, int number)
 		}
 		case SV_SCROLL_ICE:
 		{
-			if (TR_FLAG(bp_ptr->flags, 1, RES_COLD)) bp_ptr->able.logrus += number;
+			if (OBJ_FLAG(bp_ptr, 1, RES_COLD)) bp_ptr->able.logrus += number;
 			break;
 		}
 		case SV_SCROLL_FIRE:
 		{
-			if (TR_FLAG(bp_ptr->flags, 1, RES_FIRE)) bp_ptr->able.logrus += number;
+			if (OBJ_FLAG(bp_ptr, 1, RES_FIRE)) bp_ptr->able.logrus += number;
 			break;
 		}
 		case SV_SCROLL_CHAOS:
 		{
-			if (TR_FLAG(bp_ptr->flags, 1, RES_CHAOS)) bp_ptr->able.logrus += number;
+			if (OBJ_FLAG(bp_ptr, 1, RES_CHAOS)) bp_ptr->able.logrus += number;
 			break;
 		}
 		case SV_SCROLL_DISPEL_UNDEAD:
@@ -2439,7 +2439,7 @@ static void borg_notice_aux2(void)
 		 borg_spell_okay_fail(REALM_TRUMP, 0, 4, 5) ||
 		 borg_spell_okay_fail(REALM_CHAOS, 0, 7, 5) ||
 		 borg_mindcr_okay_fail(MIND_MAJOR_DISP, 7, 5)) &&
-		(TR_FLAG(bp_ptr->flags, 1, RES_BLIND)) && (TR_FLAG(bp_ptr->flags, 1, RES_CONF)))
+		(OBJ_FLAG(bp_ptr, 1, RES_BLIND)) && (OBJ_FLAG(bp_ptr, 1, RES_CONF)))
 	{
 		bp_ptr->able.teleport += 1000;
 	}
@@ -3534,48 +3534,48 @@ static void borg_notice_home_player(void)
 	player_flags(ff);
 
 	/* Good flags */
-	if (TEST_FLAG(ff, 2, TR2_SLOW_DIGEST)) num_slow_digest = TRUE;
-	if (TEST_FLAG(ff, 2, TR2_FEATHER)) num_ffall = TRUE;
-	if (TEST_FLAG(ff, 2, TR2_LITE)) num_lite = TRUE;
-	if (TEST_FLAG(ff, 2, TR2_REGEN)) num_regenerate = TRUE;
-	if (TEST_FLAG(ff, 2, TR2_TELEPATHY)) num_telepathy = TRUE;
-	if (TEST_FLAG(ff, 2, TR2_SEE_INVIS)) num_see_inv = TRUE;
-	if (TEST_FLAG(ff, 1, TR1_FREE_ACT)) num_free_act = TRUE;
-	if (TEST_FLAG(ff, 1, TR1_HOLD_LIFE)) num_hold_life = TRUE;
+	if (TR_FLAG(ff, 2, SLOW_DIGEST)) num_slow_digest = TRUE;
+	if (TR_FLAG(ff, 2, FEATHER)) num_ffall = TRUE;
+	if (TR_FLAG(ff, 2, LITE)) num_lite = TRUE;
+	if (TR_FLAG(ff, 2, REGEN)) num_regenerate = TRUE;
+	if (TR_FLAG(ff, 2, TELEPATHY)) num_telepathy = TRUE;
+	if (TR_FLAG(ff, 2, SEE_INVIS)) num_see_inv = TRUE;
+	if (TR_FLAG(ff, 1, FREE_ACT)) num_free_act = TRUE;
+	if (TR_FLAG(ff, 1, HOLD_LIFE)) num_hold_life = TRUE;
 
 	/* Weird flags */
 
 	/* Bad flags */
 
 	/* Immunity flags */
-	if (TEST_FLAG(ff, 1, TR1_IM_FIRE)) num_immune_fire = TRUE;
-	if (TEST_FLAG(ff, 1, TR1_IM_ACID)) num_immune_acid = TRUE;
-	if (TEST_FLAG(ff, 1, TR1_IM_COLD)) num_immune_cold = TRUE;
-	if (TEST_FLAG(ff, 1, TR1_IM_ELEC)) num_immune_elec = TRUE;
+	if (TR_FLAG(ff, 1, IM_FIRE)) num_immune_fire = TRUE;
+	if (TR_FLAG(ff, 1, IM_ACID)) num_immune_acid = TRUE;
+	if (TR_FLAG(ff, 1, IM_COLD)) num_immune_cold = TRUE;
+	if (TR_FLAG(ff, 1, IM_ELEC)) num_immune_elec = TRUE;
 
 	/* Resistance flags */
-	if (TEST_FLAG(ff, 1, TR1_RES_ACID)) num_resist_acid = TRUE;
-	if (TEST_FLAG(ff, 1, TR1_RES_ELEC)) num_resist_elec = TRUE;
-	if (TEST_FLAG(ff, 1, TR1_RES_FIRE)) num_resist_fire = TRUE;
-	if (TEST_FLAG(ff, 1, TR1_RES_COLD)) num_resist_cold = TRUE;
-	if (TEST_FLAG(ff, 1, TR1_RES_POIS)) num_resist_pois = TRUE;
-	if (TEST_FLAG(ff, 1, TR1_RES_LITE)) num_resist_lite = TRUE;
-	if (TEST_FLAG(ff, 1, TR1_RES_DARK)) num_resist_dark = TRUE;
-	if (TEST_FLAG(ff, 1, TR1_RES_BLIND)) num_resist_blind = TRUE;
-	if (TEST_FLAG(ff, 1, TR1_RES_CONF)) num_resist_conf = TRUE;
-	if (TEST_FLAG(ff, 1, TR1_RES_SOUND)) num_resist_sound = TRUE;
-	if (TEST_FLAG(ff, 1, TR1_RES_SHARDS)) num_resist_shard = TRUE;
-	if (TEST_FLAG(ff, 1, TR1_RES_NEXUS)) num_resist_nexus = TRUE;
-	if (TEST_FLAG(ff, 1, TR1_RES_NETHER)) num_resist_neth = TRUE;
-	if (TEST_FLAG(ff, 1, TR1_RES_CHAOS)) num_resist_chaos = TRUE;
-	if (TEST_FLAG(ff, 1, TR1_RES_DISEN)) num_resist_disen = TRUE;
+	if (TR_FLAG(ff, 1, RES_ACID)) num_resist_acid = TRUE;
+	if (TR_FLAG(ff, 1, RES_ELEC)) num_resist_elec = TRUE;
+	if (TR_FLAG(ff, 1, RES_FIRE)) num_resist_fire = TRUE;
+	if (TR_FLAG(ff, 1, RES_COLD)) num_resist_cold = TRUE;
+	if (TR_FLAG(ff, 1, RES_POIS)) num_resist_pois = TRUE;
+	if (TR_FLAG(ff, 1, RES_LITE)) num_resist_lite = TRUE;
+	if (TR_FLAG(ff, 1, RES_DARK)) num_resist_dark = TRUE;
+	if (TR_FLAG(ff, 1, RES_BLIND)) num_resist_blind = TRUE;
+	if (TR_FLAG(ff, 1, RES_CONF)) num_resist_conf = TRUE;
+	if (TR_FLAG(ff, 1, RES_SOUND)) num_resist_sound = TRUE;
+	if (TR_FLAG(ff, 1, RES_SHARDS)) num_resist_shard = TRUE;
+	if (TR_FLAG(ff, 1, RES_NEXUS)) num_resist_nexus = TRUE;
+	if (TR_FLAG(ff, 1, RES_NETHER)) num_resist_neth = TRUE;
+	if (TR_FLAG(ff, 1, RES_CHAOS)) num_resist_chaos = TRUE;
+	if (TR_FLAG(ff, 1, RES_DISEN)) num_resist_disen = TRUE;
 
 	/* Sustain flags */
-	if (TEST_FLAG(ff, 1, TR1_SUST_STR)) num_sustain_str = TRUE;
-	if (TEST_FLAG(ff, 1, TR1_SUST_INT)) num_sustain_int = TRUE;
-	if (TEST_FLAG(ff, 1, TR1_SUST_WIS)) num_sustain_wis = TRUE;
-	if (TEST_FLAG(ff, 1, TR1_SUST_DEX)) num_sustain_dex = TRUE;
-	if (TEST_FLAG(ff, 1, TR1_SUST_CON)) num_sustain_con = TRUE;
+	if (TR_FLAG(ff, 1, SUST_STR)) num_sustain_str = TRUE;
+	if (TR_FLAG(ff, 1, SUST_INT)) num_sustain_int = TRUE;
+	if (TR_FLAG(ff, 1, SUST_WIS)) num_sustain_wis = TRUE;
+	if (TR_FLAG(ff, 1, SUST_DEX)) num_sustain_dex = TRUE;
+	if (TR_FLAG(ff, 1, SUST_CON)) num_sustain_con = TRUE;
 }
 
 

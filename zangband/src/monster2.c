@@ -777,7 +777,7 @@ s16b get_mon_num(int level)
 			}
 
 			/* Luck gives occasional very out-of-depth monsters */
-			if ((TEST_FLAG(p_ptr->flags, 3, TR3_STRANGE_LUCK)) && one_in_(13))
+			if ((OBJ_FLAG(p_ptr, 3, STRANGE_LUCK)) && one_in_(13))
 			{
 				level += randint1(one_in_(7) ? 40 : 10);
 			}
@@ -1456,7 +1456,7 @@ void update_mon(int m_idx, bool full)
 	if (d <= MAX_SIGHT)
 	{
 		/* Basic telepathy */
-		if (TEST_FLAG(p_ptr->flags, 2, TR2_TELEPATHY))
+		if (OBJ_FLAG(p_ptr, 2, TELEPATHY))
 		{
 			/* Empty mind, no telepathy */
 			if (TEST_FLAG(r_ptr->flags, 1, RF1_EMPTY_MIND))
@@ -1538,7 +1538,7 @@ void update_mon(int m_idx, bool full)
 						do_invisible = TRUE;
 
 						/* See invisible */
-						if (TEST_FLAG(p_ptr->flags, 2, TR2_SEE_INVIS))
+						if (OBJ_FLAG(p_ptr, 2, SEE_INVIS))
 						{
 							/* Easy to see */
 							easy = flag = TRUE;
@@ -3144,96 +3144,96 @@ void update_smart_learn(int m_idx, int what)
 	{
 		case DRS_ACID:
 		{
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_RES_ACID)) m_ptr->smart |= (SM_RES_ACID);
+			if (OBJ_FLAG(p_ptr, 1, RES_ACID)) m_ptr->smart |= (SM_RES_ACID);
 			if (p_ptr->tim.oppose_acid) m_ptr->smart |= (SM_OPP_ACID);
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_IM_ACID)) m_ptr->smart |= (SM_IMM_ACID);
+			if (OBJ_FLAG(p_ptr, 1, IM_ACID)) m_ptr->smart |= (SM_IMM_ACID);
 			break;
 		}
 		case DRS_ELEC:
 		{
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_RES_ELEC)) m_ptr->smart |= (SM_RES_ELEC);
+			if (OBJ_FLAG(p_ptr, 1, RES_ELEC)) m_ptr->smart |= (SM_RES_ELEC);
 			if (p_ptr->tim.oppose_elec) m_ptr->smart |= (SM_OPP_ELEC);
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_IM_ELEC)) m_ptr->smart |= (SM_IMM_ELEC);
+			if (OBJ_FLAG(p_ptr, 1, IM_ELEC)) m_ptr->smart |= (SM_IMM_ELEC);
 			break;
 		}
 		case DRS_FIRE:
 		{
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_RES_FIRE)) m_ptr->smart |= (SM_RES_FIRE);
+			if (OBJ_FLAG(p_ptr, 1, RES_FIRE)) m_ptr->smart |= (SM_RES_FIRE);
 			if (p_ptr->tim.oppose_fire) m_ptr->smart |= (SM_OPP_FIRE);
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_IM_FIRE)) m_ptr->smart |= (SM_IMM_FIRE);
+			if (OBJ_FLAG(p_ptr, 1, IM_FIRE)) m_ptr->smart |= (SM_IMM_FIRE);
 			break;
 		}
 		case DRS_COLD:
 		{
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_RES_COLD)) m_ptr->smart |= (SM_RES_COLD);
+			if (OBJ_FLAG(p_ptr, 1, RES_COLD)) m_ptr->smart |= (SM_RES_COLD);
 			if (p_ptr->tim.oppose_cold) m_ptr->smart |= (SM_OPP_COLD);
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_IM_COLD)) m_ptr->smart |= (SM_IMM_COLD);
+			if (OBJ_FLAG(p_ptr, 1, IM_COLD)) m_ptr->smart |= (SM_IMM_COLD);
 			break;
 		}
 		case DRS_POIS:
 		{
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_RES_POIS)) m_ptr->smart |= (SM_RES_POIS);
+			if (OBJ_FLAG(p_ptr, 1, RES_POIS)) m_ptr->smart |= (SM_RES_POIS);
 			if (p_ptr->tim.oppose_pois) m_ptr->smart |= (SM_OPP_POIS);
 			break;
 		}
 		case DRS_NETH:
 		{
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_RES_NETHER)) m_ptr->smart |= (SM_RES_NETH);
+			if (OBJ_FLAG(p_ptr, 1, RES_NETHER)) m_ptr->smart |= (SM_RES_NETH);
 			break;
 		}
 		case DRS_LITE:
 		{
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_RES_LITE)) m_ptr->smart |= (SM_RES_LITE);
+			if (OBJ_FLAG(p_ptr, 1, RES_LITE)) m_ptr->smart |= (SM_RES_LITE);
 			break;
 		}
 		case DRS_DARK:
 		{
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_RES_DARK)) m_ptr->smart |= (SM_RES_DARK);
+			if (OBJ_FLAG(p_ptr, 1, RES_DARK)) m_ptr->smart |= (SM_RES_DARK);
 			break;
 		}
 		case DRS_FEAR:
 		{
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_RES_FEAR)) m_ptr->smart |= (SM_RES_FEAR);
+			if (OBJ_FLAG(p_ptr, 1, RES_FEAR)) m_ptr->smart |= (SM_RES_FEAR);
 			break;
 		}
 		case DRS_CONF:
 		{
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_RES_CONF)) m_ptr->smart |= (SM_RES_CONF);
+			if (OBJ_FLAG(p_ptr, 1, RES_CONF)) m_ptr->smart |= (SM_RES_CONF);
 			break;
 		}
 		case DRS_CHAOS:
 		{
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_RES_CHAOS)) m_ptr->smart |= (SM_RES_CHAOS);
+			if (OBJ_FLAG(p_ptr, 1, RES_CHAOS)) m_ptr->smart |= (SM_RES_CHAOS);
 			break;
 		}
 		case DRS_DISEN:
 		{
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_RES_DISEN)) m_ptr->smart |= (SM_RES_DISEN);
+			if (OBJ_FLAG(p_ptr, 1, RES_DISEN)) m_ptr->smart |= (SM_RES_DISEN);
 			break;
 		}
 		case DRS_BLIND:
 		{
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_RES_BLIND)) m_ptr->smart |= (SM_RES_BLIND);
+			if (OBJ_FLAG(p_ptr, 1, RES_BLIND)) m_ptr->smart |= (SM_RES_BLIND);
 			break;
 		}
 		case DRS_NEXUS:
 		{
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_RES_NEXUS)) m_ptr->smart |= (SM_RES_NEXUS);
+			if (OBJ_FLAG(p_ptr, 1, RES_NEXUS)) m_ptr->smart |= (SM_RES_NEXUS);
 			break;
 		}
 		case DRS_SOUND:
 		{
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_RES_SOUND)) m_ptr->smart |= (SM_RES_SOUND);
+			if (OBJ_FLAG(p_ptr, 1, RES_SOUND)) m_ptr->smart |= (SM_RES_SOUND);
 			break;
 		}
 		case DRS_SHARD:
 		{
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_RES_SHARDS)) m_ptr->smart |= (SM_RES_SHARD);
+			if (OBJ_FLAG(p_ptr, 1, RES_SHARDS)) m_ptr->smart |= (SM_RES_SHARD);
 			break;
 		}
 		case DRS_FREE:
 		{
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_FREE_ACT)) m_ptr->smart |= (SM_IMM_FREE);
+			if (OBJ_FLAG(p_ptr, 1, FREE_ACT)) m_ptr->smart |= (SM_IMM_FREE);
 			break;
 		}
 		case DRS_MANA:
@@ -3243,7 +3243,7 @@ void update_smart_learn(int m_idx, int what)
 		}
 		case DRS_REFLECT:
 		{
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_REFLECT)) m_ptr->smart |= (SM_IMM_REFLECT);
+			if (OBJ_FLAG(p_ptr, 1, REFLECT)) m_ptr->smart |= (SM_IMM_REFLECT);
 			break;
 		}
 	}

@@ -336,7 +336,7 @@ static bool object_easy_know(int i)
 {
 	object_kind *k_ptr = &k_info[i];
 
-	if (TEST_FLAG(k_ptr->flags, 2, TR2_EASY_KNOW)) return (TRUE);
+	if (OBJ_FLAG(k_ptr, 2, EASY_KNOW)) return (TRUE);
 
 	/* Nope */
 	return (FALSE);
@@ -768,7 +768,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 	if (object_known_p(o_ptr)) known = TRUE;
 
 	/* Artifacts are not "aware' unless "known" */
-	if ((TR_FLAG(o_ptr->flags, 2, INSTA_ART)) && !known) aware = FALSE;
+	if ((OBJ_FLAG(o_ptr, 2, INSTA_ART)) && !known) aware = FALSE;
 
 	/* Extract default "base" string */
 	basenm = get_object_name(o_ptr);
@@ -856,7 +856,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 			/* Amulets (including a few "Specials") */
 
 			/* Known artifacts */
-			if ((TR_FLAG(k_ptr->flags, 2, INSTA_ART)) && aware) break;
+			if ((OBJ_FLAG(k_ptr, 2, INSTA_ART)) && aware) break;
 
 			/* Color the object */
 			modstr = amulet_adj[o_ptr->sval];
@@ -874,7 +874,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 			/* Rings (including a few "Specials") */
 
 			/* Known artifacts */
-			if ((TR_FLAG(k_ptr->flags, 2, INSTA_ART)) && aware) break;
+			if ((OBJ_FLAG(k_ptr, 2, INSTA_ART)) && aware) break;
 
 			/* Color the object */
 			modstr = ring_adj[o_ptr->sval];
@@ -1079,7 +1079,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 		}
 
 		/* Hack -- The only one of its kind */
-		else if (known && (TR_FLAG(o_ptr->flags, 2, INSTA_ART)))
+		else if (known && (OBJ_FLAG(o_ptr, 2, INSTA_ART)))
 		{
 			strnfcat(buf, max, &len, "The ");
 		}
@@ -1128,7 +1128,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 		}
 
 		/* Hack -- The only one of its kind */
-		else if (known && (TR_FLAG(o_ptr->flags, 2, INSTA_ART)))
+		else if (known && (OBJ_FLAG(o_ptr, 2, INSTA_ART)))
 		{
 			strnfcat(buf, max, &len, "The ");
 		}
@@ -1293,7 +1293,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 
 
 	/* Display the item like a weapon */
-	if (TEST_FLAG(o_ptr->flags, 2, TR2_SHOW_MODS)) show_weapon = TRUE;
+	if (OBJ_FLAG(o_ptr, 2, SHOW_MODS)) show_weapon = TRUE;
 
 	/* Display the item like a weapon */
 	if (o_ptr->to_h && o_ptr->to_d) show_weapon = TRUE;
@@ -1369,7 +1369,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 			}
 
 			/* Apply the "Extra Might" flag */
-			if (TEST_FLAG(o_ptr->flags, 2, TR2_XTRA_MIGHT)) power++;
+			if (OBJ_FLAG(o_ptr, 2, XTRA_MIGHT)) power++;
 
 			/* Append a special "damage" string */
 			strnfcat(buf, max, &len, " (x%d)", power);
@@ -1435,7 +1435,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 		tmul = p_ptr->ammo_mult;
 
 		/* Get extra "power" from "extra might" */
-		if (TEST_FLAG(p_ptr->flags, 2, TR2_XTRA_MIGHT)) tmul++;
+		if (OBJ_FLAG(p_ptr, 2, XTRA_MIGHT)) tmul++;
 
 		/* launcher multiplier */
 		avgdam *= tmul;
@@ -1548,7 +1548,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 	/* Hack -- Process Lanterns/Torches */
 	else if (o_ptr->tval == TV_LITE)
 	{
-		if (TR_FLAG(o_ptr->flags, 2, LITE))
+		if (OBJ_FLAG(o_ptr, 2, LITE))
 		{
 			/* Hack - tell us when lites of everburning are "empty" */
 			if ((o_ptr->sval <= SV_LITE_LANTERN) && !o_ptr->timeout)
@@ -1565,26 +1565,26 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 
 
 	/* Dump "pval" flags for wearable items */
-	if (known && (TEST_FLAG(o_ptr->flags, 0, TR0_PVAL_MASK)))
+	if (known && (OBJ_FLAG(o_ptr, 0, PVAL_MASK)))
 	{
 		/* Start the display */
 		strnfcat(buf, max, &len, " (%+d", o_ptr->pval);
 
 		/* Do not display the "pval" flags */
-		if (TEST_FLAG(o_ptr->flags, 2, TR2_HIDE_TYPE))
+		if (OBJ_FLAG(o_ptr, 2, HIDE_TYPE))
 		{
 			/* Nothing */
 		}
 
 		/* Speed */
-		else if (TEST_FLAG(o_ptr->flags, 0, TR0_SPEED))
+		else if (OBJ_FLAG(o_ptr, 0, SPEED))
 		{
 			/* Dump " to speed" */
 			strnfcat(buf, max, &len, " to speed");
 		}
 
 		/* Attack speed */
-		else if (TEST_FLAG(o_ptr->flags, 0, TR0_BLOWS))
+		else if (OBJ_FLAG(o_ptr, 0, BLOWS))
 		{
 			if (ABS(o_ptr->pval) == 1)
 			{

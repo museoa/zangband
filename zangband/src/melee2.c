@@ -2540,18 +2540,18 @@ static void take_move(int m_idx, int *mm)
 					monster_desc(m_name, m_ptr, 0x04, 80);
 
 					/* React to objects that hurt the monster */
-					if (TR_FLAG(o_ptr->flags, 0, KILL_DRAGON)) flg3 |= (RF2_DRAGON);
-					if (TR_FLAG(o_ptr->flags, 0, SLAY_DRAGON)) flg3 |= (RF2_DRAGON);
-					if (TR_FLAG(o_ptr->flags, 0, SLAY_TROLL)) flg3 |= (RF2_TROLL);
-					if (TR_FLAG(o_ptr->flags, 0, SLAY_GIANT)) flg3 |= (RF2_GIANT);
-					if (TR_FLAG(o_ptr->flags, 0, SLAY_ORC)) flg3 |= (RF2_ORC);
-					if (TR_FLAG(o_ptr->flags, 0, SLAY_DEMON)) flg3 |= (RF2_DEMON);
-					if (TR_FLAG(o_ptr->flags, 0, SLAY_UNDEAD)) flg3 |= (RF2_UNDEAD);
-					if (TR_FLAG(o_ptr->flags, 0, SLAY_ANIMAL)) flg3 |= (RF2_ANIMAL);
-					if (TR_FLAG(o_ptr->flags, 0, SLAY_EVIL)) flg3 |= (RF2_EVIL);
+					if (OBJ_FLAG(o_ptr, 0, KILL_DRAGON)) flg3 |= (RF2_DRAGON);
+					if (OBJ_FLAG(o_ptr, 0, SLAY_DRAGON)) flg3 |= (RF2_DRAGON);
+					if (OBJ_FLAG(o_ptr, 0, SLAY_TROLL)) flg3 |= (RF2_TROLL);
+					if (OBJ_FLAG(o_ptr, 0, SLAY_GIANT)) flg3 |= (RF2_GIANT);
+					if (OBJ_FLAG(o_ptr, 0, SLAY_ORC)) flg3 |= (RF2_ORC);
+					if (OBJ_FLAG(o_ptr, 0, SLAY_DEMON)) flg3 |= (RF2_DEMON);
+					if (OBJ_FLAG(o_ptr, 0, SLAY_UNDEAD)) flg3 |= (RF2_UNDEAD);
+					if (OBJ_FLAG(o_ptr, 0, SLAY_ANIMAL)) flg3 |= (RF2_ANIMAL);
+					if (OBJ_FLAG(o_ptr, 0, SLAY_EVIL)) flg3 |= (RF2_EVIL);
 
 					/* The object cannot be picked up by the monster */
-					if ((TR_FLAG(o_ptr->flags, 2, INSTA_ART)) ||
+					if ((OBJ_FLAG(o_ptr, 2, INSTA_ART)) ||
 						(r_ptr->flags[2] & flg3))
 					{
 						/* Only give a message for "take_item" */
@@ -2777,7 +2777,7 @@ static void process_monster(int m_idx)
 		u32b notice = 0;
 
 		/* Hack -- handle non-aggravation */
-		if (!(TEST_FLAG(p_ptr->flags, 2, TR2_AGGRAVATE))) notice = randint0(1024);
+		if (!(OBJ_FLAG(p_ptr, 2, AGGRAVATE))) notice = randint0(1024);
 
 		/* Nightmare monsters are more alert */
 		if (ironman_nightmare) notice /= 2;
@@ -2792,7 +2792,7 @@ static void process_monster(int m_idx)
 			if (m_ptr->cdis < 50) d = (100 / m_ptr->cdis);
 
 			/* Hack -- handle aggravation */
-			if (TEST_FLAG(p_ptr->flags, 2, TR2_AGGRAVATE)) d = m_ptr->csleep;
+			if (OBJ_FLAG(p_ptr, 2, AGGRAVATE)) d = m_ptr->csleep;
 
 			/* Still asleep */
 			if (m_ptr->csleep > d)
@@ -2921,7 +2921,7 @@ static void process_monster(int m_idx)
 	}
 
 	/* No one wants to be your friend if you're aggravating */
-	if (!is_hostile(m_ptr) && (TEST_FLAG(p_ptr->flags, 2, TR2_AGGRAVATE)))
+	if (!is_hostile(m_ptr) && (OBJ_FLAG(p_ptr, 2, AGGRAVATE)))
 		gets_angry = TRUE;
 
 	/* Acquire the monster name */
@@ -3334,7 +3334,7 @@ void process_monsters(int min_energy)
 		/* Handle "sight" and "aggravation" */
 		else if ((m_ptr->cdis <= MAX_SIGHT) &&
 				 ((in_boundsp(fx, fy) && player_has_los_grid(parea(fx, fy)))
-				  || (TEST_FLAG(p_ptr->flags, 2, TR2_AGGRAVATE))))
+				  || (OBJ_FLAG(p_ptr, 2, AGGRAVATE))))
 		{
 			/* We can "see" or "feel" the player */
 			test = TRUE;

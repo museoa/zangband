@@ -102,11 +102,11 @@ static void have_nightmare_aux(int r_idx)
 	/* Mind blast */
 	if (!saving_throw(p_ptr->skills[SKILL_SAV] * 100 / power))
 	{
-		if (!(TEST_FLAG(p_ptr->flags, 1, TR1_RES_CONF)))
+		if (!(OBJ_FLAG(p_ptr, 1, RES_CONF)))
 		{
 			(void)inc_confused(rand_range(4, 8));
 		}
-		if (!(TEST_FLAG(p_ptr->flags, 1, TR1_RES_CHAOS)) && one_in_(3))
+		if (!(OBJ_FLAG(p_ptr, 1, RES_CHAOS)) && one_in_(3))
 		{
 			(void)inc_image(rand_range(250, 400));
 		}
@@ -124,11 +124,11 @@ static void have_nightmare_aux(int r_idx)
 	/* Brain smash */
 	if (!saving_throw(p_ptr->skills[SKILL_SAV] * 100 / power))
 	{
-		if (!(TEST_FLAG(p_ptr->flags, 1, TR1_RES_CONF)))
+		if (!(OBJ_FLAG(p_ptr, 1, RES_CONF)))
 		{
 			(void)inc_confused(rand_range(4, 8));
 		}
-		if (!(TEST_FLAG(p_ptr->flags, 1, TR1_FREE_ACT)))
+		if (!(OBJ_FLAG(p_ptr, 1, FREE_ACT)))
 		{
 			(void)inc_paralyzed(rand_range(4, 8));
 		}
@@ -140,7 +140,7 @@ static void have_nightmare_aux(int r_idx)
 		{
 			(void)do_dec_stat(A_WIS);
 		}
-		if (!(TEST_FLAG(p_ptr->flags, 1, TR1_RES_CHAOS)))
+		if (!(OBJ_FLAG(p_ptr, 1, RES_CHAOS)))
 		{
 			(void)inc_image(rand_range(250, 400));
 		}
@@ -171,8 +171,8 @@ static void have_nightmare_aux(int r_idx)
 
 	/* Else gain permanent insanity */
 	if ((p_ptr->muta3 & MUT3_MORONIC) && (p_ptr->muta2 & MUT2_BERS_RAGE) &&
-		((p_ptr->muta2 & MUT2_COWARDICE) || (TEST_FLAG(p_ptr->flags, 1, TR1_RES_FEAR))) &&
-		((p_ptr->muta2 & MUT2_HALLU) || (TEST_FLAG(p_ptr->flags, 1, TR1_RES_CHAOS))))
+		((p_ptr->muta2 & MUT2_COWARDICE) || (OBJ_FLAG(p_ptr, 1, RES_FEAR))) &&
+		((p_ptr->muta2 & MUT2_HALLU) || (OBJ_FLAG(p_ptr, 1, RES_CHAOS))))
 	{
 		/* The poor bastard already has all possible insanities! */
 		return;
@@ -200,7 +200,7 @@ static void have_nightmare_aux(int r_idx)
 			case 2:
 			{
 				if (!(p_ptr->muta2 & MUT2_COWARDICE) &&
-					!(TEST_FLAG(p_ptr->flags, 1, TR1_RES_FEAR)))
+					!(OBJ_FLAG(p_ptr, 1, RES_FEAR)))
 				{
 					msgf("You become paranoid!");
 
@@ -219,7 +219,7 @@ static void have_nightmare_aux(int r_idx)
 			case 3:
 			{
 				if (!(p_ptr->muta2 & MUT2_HALLU) &&
-					!(TEST_FLAG(p_ptr->flags, 1, TR1_RES_CHAOS)))
+					!(OBJ_FLAG(p_ptr, 1, RES_CHAOS)))
 				{
 					msgf("You are afflicted by a hallucinatory insanity!");
 					p_ptr->muta2 |= MUT2_HALLU;
@@ -912,72 +912,72 @@ static void compare_weapon_aux1(const object_type *o_ptr)
 	int r = 10;
 
 	/* Print the relevant lines */
-	if (TR_FLAG(o_ptr->flags, 0, SLAY_ANIMAL))
+	if (OBJ_FLAG(o_ptr, 0, SLAY_ANIMAL))
 	{
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
 							CLR_YELLOW "Animals:", 17);
 	}
-	if (TR_FLAG(o_ptr->flags, 0, SLAY_EVIL))
+	if (OBJ_FLAG(o_ptr, 0, SLAY_EVIL))
 	{
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
 							CLR_YELLOW "Evil:", 15);
 	}
-	if (TR_FLAG(o_ptr->flags, 0, SLAY_UNDEAD))
+	if (OBJ_FLAG(o_ptr, 0, SLAY_UNDEAD))
 	{
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
 							CLR_YELLOW "Undead:", 20);
 	}
-	if (TR_FLAG(o_ptr->flags, 0, SLAY_DEMON))
+	if (OBJ_FLAG(o_ptr, 0, SLAY_DEMON))
 	{
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
 							CLR_YELLOW "Demons:", 20);
 	}
-	if (TR_FLAG(o_ptr->flags, 0, SLAY_ORC))
+	if (OBJ_FLAG(o_ptr, 0, SLAY_ORC))
 	{
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
 							CLR_YELLOW "Orcs:", 20);
 	}
-	if (TR_FLAG(o_ptr->flags, 0, SLAY_TROLL))
+	if (OBJ_FLAG(o_ptr, 0, SLAY_TROLL))
 	{
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
 							CLR_YELLOW "Trolls:", 20);
 	}
-	if (TR_FLAG(o_ptr->flags, 0, SLAY_GIANT))
+	if (OBJ_FLAG(o_ptr, 0, SLAY_GIANT))
 	{
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
 							CLR_YELLOW "Giants:", 20);
 	}
-	if (TR_FLAG(o_ptr->flags, 0, SLAY_DRAGON))
+	if (OBJ_FLAG(o_ptr, 0, SLAY_DRAGON))
 	{
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
 							CLR_YELLOW "Dragons:", 20);
 	}
-	if (TR_FLAG(o_ptr->flags, 0, KILL_DRAGON))
+	if (OBJ_FLAG(o_ptr, 0, KILL_DRAGON))
 	{
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
 							CLR_YELLOW "Dragons:", 30);
 	}
-	if (TR_FLAG(o_ptr->flags, 0, BRAND_ACID))
+	if (OBJ_FLAG(o_ptr, 0, BRAND_ACID))
 	{
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
 							CLR_RED "Acid:", 20);
 	}
-	if (TR_FLAG(o_ptr->flags, 0, BRAND_ELEC))
+	if (OBJ_FLAG(o_ptr, 0, BRAND_ELEC))
 	{
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
 							CLR_RED "Elec:", 20);
 	}
-	if (TR_FLAG(o_ptr->flags, 0, BRAND_FIRE))
+	if (OBJ_FLAG(o_ptr, 0, BRAND_FIRE))
 	{
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
 							CLR_RED "Fire:", 20);
 	}
-	if (TR_FLAG(o_ptr->flags, 0, BRAND_COLD))
+	if (OBJ_FLAG(o_ptr, 0, BRAND_COLD))
 	{
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
 							CLR_RED "Cold:", 20);
 	}
-	if (TR_FLAG(o_ptr->flags, 0, BRAND_POIS))
+	if (OBJ_FLAG(o_ptr, 0, BRAND_POIS))
 	{
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
 							CLR_RED "Poison:", 20);

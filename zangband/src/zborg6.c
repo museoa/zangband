@@ -277,7 +277,7 @@ bool borg_on_safe_feat(byte feat)
 	if (feat == FEAT_DEEP_LAVA)
 	{
 		/* Immunity helps */
-		if (TR_FLAG(bp_ptr->flags, 1, IM_FIRE)) return (TRUE);
+		if (OBJ_FLAG(bp_ptr, 1, IM_FIRE)) return (TRUE);
 
 		/* Everything else hurts */
 		return (FALSE);
@@ -286,10 +286,10 @@ bool borg_on_safe_feat(byte feat)
 	if (feat == FEAT_SHAL_LAVA)
 	{
 		/* Levitation helps */
-		if (TR_FLAG(bp_ptr->flags, 2, FEATHER)) return (TRUE);
+		if (OBJ_FLAG(bp_ptr, 2, FEATHER)) return (TRUE);
 
 		/* Immunity helps */
-		if (TR_FLAG(bp_ptr->flags, 1, IM_FIRE)) return (TRUE);
+		if (OBJ_FLAG(bp_ptr, 1, IM_FIRE)) return (TRUE);
 
 		/* Everything else hurts */
 		return (FALSE);
@@ -300,7 +300,7 @@ bool borg_on_safe_feat(byte feat)
 	 	 feat == FEAT_OCEAN_WATER)
 	{
 		/* Levitation helps */
-		if (TR_FLAG(bp_ptr->flags, 2, FEATHER)) return (TRUE);
+		if (OBJ_FLAG(bp_ptr, 2, FEATHER)) return (TRUE);
 
 		/* Being non-encumbered helps */
 		if (!bp_ptr->encumber) return (TRUE);
@@ -313,17 +313,17 @@ bool borg_on_safe_feat(byte feat)
 	if (feat == FEAT_DEEP_SWAMP)
 	{
 		/* (temp) Resistance helps */
-		if ((TR_FLAG(bp_ptr->flags, 1, RES_POIS)) || my_oppose_pois) return (TRUE);
+		if ((OBJ_FLAG(bp_ptr, 1, RES_POIS)) || my_oppose_pois) return (TRUE);
 
 		return (FALSE);
 	}
 	if (feat == FEAT_SHAL_SWAMP)
 	{
 		/* (temp) Resistance helps */
-		if ((TR_FLAG(bp_ptr->flags, 1, RES_POIS)) || my_oppose_pois) return (TRUE);
+		if ((OBJ_FLAG(bp_ptr, 1, RES_POIS)) || my_oppose_pois) return (TRUE);
 
 		/* Levitation helps */
-		if (TR_FLAG(bp_ptr->flags, 2, FEATHER)) return (TRUE);
+		if (OBJ_FLAG(bp_ptr, 2, FEATHER)) return (TRUE);
 
 		/* Everything else hurts */
 		return (FALSE);
@@ -333,7 +333,7 @@ bool borg_on_safe_feat(byte feat)
 	if (feat == FEAT_DEEP_ACID)
 	{
 		/* Immunity helps */
-		if (TR_FLAG(bp_ptr->flags, 1, IM_ACID)) return (TRUE);
+		if (OBJ_FLAG(bp_ptr, 1, IM_ACID)) return (TRUE);
 
 		/* Everything else hurts */
 		return (FALSE);
@@ -342,10 +342,10 @@ bool borg_on_safe_feat(byte feat)
 	if (feat == FEAT_SHAL_ACID)
 	{
 		/* Immunity helps */
-		if (TR_FLAG(bp_ptr->flags, 1, IM_ACID)) return (TRUE);
+		if (OBJ_FLAG(bp_ptr, 1, IM_ACID)) return (TRUE);
 
 		/* Levitation helps */
-		if (TR_FLAG(bp_ptr->flags, 2, FEATHER)) return (TRUE);
+		if (OBJ_FLAG(bp_ptr, 2, FEATHER)) return (TRUE);
 
 		/* Everything else hurts */
 		return (FALSE);
@@ -1443,7 +1443,7 @@ static bool borg_escape(int b_q)
 	int sv_mana;
 
 	/* Not if locked down */
-	if (TR_FLAG(bp_ptr->flags, 2, NO_TELE)) return (FALSE);
+	if (OBJ_FLAG(bp_ptr, 2, NO_TELE)) return (FALSE);
 
 	/* if we have Dim Door spell */
 	amt_dim_door = (borg_spell_okay_fail(REALM_SORCERY, 2, 3, allow_fail) ||
@@ -2098,7 +2098,7 @@ static bool borg_heal(int danger)
 		/* Warriors with ESP won't need it so quickly */
 		if (!(borg_class == CLASS_WARRIOR &&
 			  bp_ptr->chp > bp_ptr->mhp / 4 &&
-			  (TR_FLAG(bp_ptr->flags, 2, TELEPATHY))))
+			  (OBJ_FLAG(bp_ptr, 2, TELEPATHY))))
 		{
 			if (borg_eat_food(SV_FOOD_CURE_BLINDNESS) ||
 				borg_quaff_potion(SV_POTION_CURE_SERIOUS) ||
@@ -4020,21 +4020,21 @@ static int borg_thrust_damage_one(int i)
 	/* here is the place for slays and such */
 	mult = 1;
 
-	if (((TR_FLAG(bp_ptr->flags, 0, SLAY_ANIMAL)) && (RF_FLAG(r_ptr->flags, 2, ANIMAL))) ||
-		((TR_FLAG(bp_ptr->flags, 0, SLAY_EVIL)) && (RF_FLAG(r_ptr->flags, 2, EVIL))))
+	if (((OBJ_FLAG(bp_ptr, 0, SLAY_ANIMAL)) && (RF_FLAG(r_ptr->flags, 2, ANIMAL))) ||
+		((OBJ_FLAG(bp_ptr, 0, SLAY_EVIL)) && (RF_FLAG(r_ptr->flags, 2, EVIL))))
 		mult = 2;
-	if (((TR_FLAG(bp_ptr->flags, 0, SLAY_UNDEAD)) && (RF_FLAG(r_ptr->flags, 2, ANIMAL))) ||
-		((TR_FLAG(bp_ptr->flags, 0, SLAY_DEMON)) && (RF_FLAG(r_ptr->flags, 2, DEMON))) ||
-		((TR_FLAG(bp_ptr->flags, 0, SLAY_ORC)) && (RF_FLAG(r_ptr->flags, 2, ORC))) ||
-		((TR_FLAG(bp_ptr->flags, 0, SLAY_TROLL)) && (RF_FLAG(r_ptr->flags, 2, TROLL))) ||
-		((TR_FLAG(bp_ptr->flags, 0, SLAY_GIANT)) && (RF_FLAG(r_ptr->flags, 2, GIANT))) ||
-		((TR_FLAG(bp_ptr->flags, 0, SLAY_DRAGON)) && (RF_FLAG(r_ptr->flags, 2, DRAGON))) ||
-		((TR_FLAG(bp_ptr->flags, 0, BRAND_ACID)) && !(RF_FLAG(r_ptr->flags, 2, IM_ACID))) ||
-		((TR_FLAG(bp_ptr->flags, 0, BRAND_FIRE)) && !(RF_FLAG(r_ptr->flags, 2, IM_FIRE))) ||
-		((TR_FLAG(bp_ptr->flags, 0, BRAND_COLD)) && !(RF_FLAG(r_ptr->flags, 2, IM_COLD))) ||
-		((TR_FLAG(bp_ptr->flags, 0, BRAND_ELEC)) && !(RF_FLAG(r_ptr->flags, 2, IM_ELEC))))
+	if (((OBJ_FLAG(bp_ptr, 0, SLAY_UNDEAD)) && (RF_FLAG(r_ptr->flags, 2, ANIMAL))) ||
+		((OBJ_FLAG(bp_ptr, 0, SLAY_DEMON)) && (RF_FLAG(r_ptr->flags, 2, DEMON))) ||
+		((OBJ_FLAG(bp_ptr, 0, SLAY_ORC)) && (RF_FLAG(r_ptr->flags, 2, ORC))) ||
+		((OBJ_FLAG(bp_ptr, 0, SLAY_TROLL)) && (RF_FLAG(r_ptr->flags, 2, TROLL))) ||
+		((OBJ_FLAG(bp_ptr, 0, SLAY_GIANT)) && (RF_FLAG(r_ptr->flags, 2, GIANT))) ||
+		((OBJ_FLAG(bp_ptr, 0, SLAY_DRAGON)) && (RF_FLAG(r_ptr->flags, 2, DRAGON))) ||
+		((OBJ_FLAG(bp_ptr, 0, BRAND_ACID)) && !(RF_FLAG(r_ptr->flags, 2, IM_ACID))) ||
+		((OBJ_FLAG(bp_ptr, 0, BRAND_FIRE)) && !(RF_FLAG(r_ptr->flags, 2, IM_FIRE))) ||
+		((OBJ_FLAG(bp_ptr, 0, BRAND_COLD)) && !(RF_FLAG(r_ptr->flags, 2, IM_COLD))) ||
+		((OBJ_FLAG(bp_ptr, 0, BRAND_ELEC)) && !(RF_FLAG(r_ptr->flags, 2, IM_ELEC))))
 		mult = 3;
-	if ((TR_FLAG(bp_ptr->flags, 0, KILL_DRAGON)) && (RF_FLAG(r_ptr->flags, 2, DRAGON)))
+	if ((OBJ_FLAG(bp_ptr, 0, KILL_DRAGON)) && (RF_FLAG(r_ptr->flags, 2, DRAGON)))
 		mult = 5;
 
 	/* add the multiplier */
@@ -5309,7 +5309,7 @@ static int borg_launch_bolt_aux(int x, int y, int rad, int dam, int typ,
 		 */
 
 		/* dont do the check if esp */
-		if (!(TR_FLAG(bp_ptr->flags, 2, TELEPATHY)))
+		if (!(OBJ_FLAG(bp_ptr, 2, TELEPATHY)))
 		{
 			/* Check the missile path */
 			if (dist && !bp_ptr->see_infra)
@@ -5653,7 +5653,7 @@ static int borg_attack_aux_scroll(void)
 				case SV_SCROLL_ICE:
 				{
 					/* With resistancy it is safe to read this scroll */
-					if (TR_FLAG(bp_ptr->flags, 1, RES_COLD))
+					if (OBJ_FLAG(bp_ptr, 1, RES_COLD))
 					{
 						/* How much damage from a cold ball? */
 						n = borg_launch_bolt_aux(c_x, c_y, 4, 150, GF_COLD, 0);
@@ -5664,7 +5664,7 @@ static int borg_attack_aux_scroll(void)
 				case SV_SCROLL_FIRE:
 				{
 					/* With resistancy it is safe to read this scroll */
-					if (TR_FLAG(bp_ptr->flags, 1, RES_FIRE))
+					if (OBJ_FLAG(bp_ptr, 1, RES_FIRE))
 					{
 						/* How much damage from a fire ball? */
 						n = borg_launch_bolt_aux(c_x, c_y, 4, 75, GF_FIRE, 0);
@@ -5676,7 +5676,7 @@ static int borg_attack_aux_scroll(void)
 				case SV_SCROLL_CHAOS:
 				{
 					/* With resistancy it is safe to read this scroll */
-					if (TR_FLAG(bp_ptr->flags, 1, RES_CHAOS))
+					if (OBJ_FLAG(bp_ptr, 1, RES_CHAOS))
 					{
 						/* How much damage from a chaos ball? */
 						n = borg_launch_bolt_aux(c_x, c_y, 4, 225, GF_CHAOS, 0);
@@ -10240,7 +10240,7 @@ static int borg_defend_aux_inviso(int p1)
 
 	/* No need? */
 	if (bp_ptr->status.blind || bp_ptr->status.confused ||
-		(TR_FLAG(bp_ptr->flags, 2, SEE_INVIS)) || borg_see_inv)
+		(OBJ_FLAG(bp_ptr, 2, SEE_INVIS)) || borg_see_inv)
 		return (0);
 
 	/* not recent */
@@ -10762,7 +10762,7 @@ static int borg_perma_aux_resist_f(void)
 	if (my_oppose_fire || !unique_on_level)
 		return (0);
 
-	if (TR_FLAG(bp_ptr->flags, 1, IM_FIRE)) return (0);
+	if (OBJ_FLAG(bp_ptr, 1, IM_FIRE)) return (0);
 
 	if (!borg_spell_okay_fail(REALM_ARCANE, 1, 6, fail_allowed))
 		return (0);
@@ -10806,7 +10806,7 @@ static int borg_perma_aux_resist_c(void)
 	if (my_oppose_cold || !unique_on_level)
 		return (0);
 
-	if (TR_FLAG(bp_ptr->flags, 1, IM_COLD)) return (0);
+	if (OBJ_FLAG(bp_ptr, 1, IM_COLD)) return (0);
 
 	/* Not needed if GOI is on */
 	if (borg_goi) return (0);
@@ -10934,17 +10934,17 @@ static int borg_perma_aux_resist_fce(void)
 
 	/* cast if one drops and unique is near */
 	if (borg_fighting_unique &&
-		(my_oppose_fire || (TR_FLAG(bp_ptr->flags, 1, IM_FIRE))) &&
-		(my_oppose_elec || (TR_FLAG(bp_ptr->flags, 1, IM_FIRE))) &&
-		(my_oppose_cold || (TR_FLAG(bp_ptr->flags, 1, IM_FIRE)))) return (0);
+		(my_oppose_fire || (OBJ_FLAG(bp_ptr, 1, IM_FIRE))) &&
+		(my_oppose_elec || (OBJ_FLAG(bp_ptr, 1, IM_FIRE))) &&
+		(my_oppose_cold || (OBJ_FLAG(bp_ptr, 1, IM_FIRE)))) return (0);
 
 
 	/* cast if both drop and no unique is near */
 	if (!borg_fighting_unique && (my_oppose_fire || my_oppose_cold)) return (0);
 
 	/* no need if immune */
-	if ((TR_FLAG(bp_ptr->flags, 1, IM_FIRE)) && (TR_FLAG(bp_ptr->flags, 1, IM_COLD)) &&
-		(TR_FLAG(bp_ptr->flags, 1, IM_ELEC))) return (0);
+	if ((OBJ_FLAG(bp_ptr, 1, IM_FIRE)) && (OBJ_FLAG(bp_ptr, 1, IM_COLD)) &&
+		(OBJ_FLAG(bp_ptr, 1, IM_ELEC))) return (0);
 
 	/* Not needed if GOI is on */
 	if (borg_goi) return (0);
@@ -11089,7 +11089,7 @@ static int borg_perma_aux_telepathy(void)
 	if (borg_fighting_unique) fail_allowed = 15;
 
 	/* already blessed */
-	if (borg_esp || (TR_FLAG(bp_ptr->flags, 2, TELEPATHY)))
+	if (borg_esp || (OBJ_FLAG(bp_ptr, 2, TELEPATHY)))
 		return (0);
 
 	/* must be able to */
@@ -11562,7 +11562,7 @@ bool borg_check_rest(void)
 {
 	int i;
 
-	if ((borg_race == RACE_VAMPIRE) && !(TR_FLAG(bp_ptr->flags, 1, RES_LITE)))
+	if ((borg_race == RACE_VAMPIRE) && !(OBJ_FLAG(bp_ptr, 1, RES_LITE)))
 	{
 		/* Do not rest in Sunlight */
 		if (!bp_ptr->depth)

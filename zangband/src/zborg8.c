@@ -1391,7 +1391,7 @@ bool borg_think_dungeon(void)
 	}
 
 	/* Avoid the burning sun */
-	if ((borg_race == RACE_VAMPIRE) && !(TR_FLAG(bp_ptr->flags, 1, RES_LITE)) &&
+	if ((borg_race == RACE_VAMPIRE) && !(OBJ_FLAG(bp_ptr, 1, RES_LITE)) &&
 		!bp_ptr->depth &&
 		(bp_ptr->hour >= 5) && (bp_ptr->hour <= 18))
 	{

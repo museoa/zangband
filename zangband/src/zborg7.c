@@ -456,7 +456,7 @@ bool borg_check_lite(void)
 		 183 - (20 - bp_ptr->max_lev))) do_evil = TRUE;
 
 	/* Dont bother if I have ESP */
-	if (TR_FLAG(bp_ptr->flags, 2, TELEPATHY)) do_evil = FALSE;
+	if (OBJ_FLAG(bp_ptr, 2, TELEPATHY)) do_evil = FALSE;
 
 	/* Do not do these if monsters near.  Save mana */
 	if (!borg_check_rest())
@@ -655,7 +655,7 @@ bool borg_check_lite(void)
 	if (floors <= 11) do_lite = do_lite_aux = FALSE;
 
 	/* Vampires need to be careful for Light */
-	if ((borg_race == RACE_VAMPIRE) && !(TR_FLAG(bp_ptr->flags, 1, RES_LITE)))
+	if ((borg_race == RACE_VAMPIRE) && !(OBJ_FLAG(bp_ptr, 1, RES_LITE)))
 		do_lite = do_lite_aux = FALSE;
 
 	/* Hack -- call lite */

@@ -1041,7 +1041,7 @@ bool cave_valid_grid(const cave_type *c_ptr)
 	OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 	{
 		/* Forbid artifact grids */
-		if (TR_FLAG(o_ptr->flags, 2, INSTA_ART)) return (FALSE);
+		if (OBJ_FLAG(o_ptr, 2, INSTA_ART)) return (FALSE);
 	}
 	OBJ_ITT_END;
 

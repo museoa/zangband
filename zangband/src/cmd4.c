@@ -3763,7 +3763,7 @@ static bool do_cmd_knowledge_objects(int dummy)
 		object_kind *k_ptr = &k_info[k];
 
 		/* Hack -- skip artifacts */
-		if (TEST_FLAG(k_ptr->flags, 2, TR2_INSTA_ART)) continue;
+		if (OBJ_FLAG(k_ptr, 2, INSTA_ART)) continue;
 
 		/* List known flavored objects */
 		if (k_ptr->flavor && k_ptr->aware)

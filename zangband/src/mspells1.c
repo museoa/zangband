@@ -448,7 +448,7 @@ void curse_equipment(int chance, int heavy_chance)
 	object_type *o_ptr = &p_ptr->equipment[randint0(EQUIP_MAX)];
 
 	/* Ow! */
-	if (TEST_FLAG(p_ptr->flags, 3, TR3_STRANGE_LUCK))
+	if (OBJ_FLAG(p_ptr, 3, STRANGE_LUCK))
 	{
 		chance = chance * 2;
 		heavy_chance = heavy_chance * 2;
@@ -459,7 +459,7 @@ void curse_equipment(int chance, int heavy_chance)
 	if (!o_ptr->k_idx) return;
 
 	/* Extra, biased saving throw for blessed items */
-	if ((TR_FLAG(o_ptr->flags, 2, BLESSED)) && (randint1(888) > chance))
+	if ((OBJ_FLAG(o_ptr, 2, BLESSED)) && (randint1(888) > chance))
 	{
 		msgf("Your %v resists cursing!", OBJECT_FMT(o_ptr, FALSE, 0));
 		return;
@@ -467,7 +467,7 @@ void curse_equipment(int chance, int heavy_chance)
 
 	if ((randint1(100) <= heavy_chance) && o_ptr->xtra_name)
 	{
-		if (!(TR_FLAG(o_ptr->flags, 2, HEAVY_CURSE)))
+		if (!(OBJ_FLAG(o_ptr, 2, HEAVY_CURSE)))
 		{
 			changed = TRUE;
 		}
@@ -1474,12 +1474,12 @@ bool make_attack_spell(int m_idx)
 			{
 				msgf("Your mind is blasted by psionic energy.");
 
-				if (!(TEST_FLAG(p_ptr->flags, 1, TR1_RES_CONF)))
+				if (!(OBJ_FLAG(p_ptr, 1, RES_CONF)))
 				{
 					(void)inc_confused(rand_range(4, 8));
 				}
 
-				if (!(TEST_FLAG(p_ptr->flags, 1, TR1_RES_CHAOS)) && one_in_(3))
+				if (!(OBJ_FLAG(p_ptr, 1, RES_CHAOS)) && one_in_(3))
 				{
 					(void)inc_image(rand_range(150, 400));
 				}
@@ -1511,15 +1511,15 @@ bool make_attack_spell(int m_idx)
 			{
 				msgf("Your mind is blasted by psionic energy.");
 				take_hit(damroll(12, 15), ddesc);
-				if (!(TEST_FLAG(p_ptr->flags, 1, TR1_RES_BLIND)))
+				if (!(OBJ_FLAG(p_ptr, 1, RES_BLIND)))
 				{
 					(void)inc_blind(rand_range(8, 16));
 				}
-				if (!(TEST_FLAG(p_ptr->flags, 1, TR1_RES_CONF)))
+				if (!(OBJ_FLAG(p_ptr, 1, RES_CONF)))
 				{
 					(void)inc_confused(rand_range(4, 8));
 				}
-				if (!(TEST_FLAG(p_ptr->flags, 1, TR1_FREE_ACT)))
+				if (!(OBJ_FLAG(p_ptr, 1, FREE_ACT)))
 				{
 					(void)inc_paralyzed(rand_range(4, 8));
 				}
@@ -1530,7 +1530,7 @@ bool make_attack_spell(int m_idx)
 				while (!saving_throw(p_ptr->skills[SKILL_SAV]))
 					(void)do_dec_stat(A_WIS);
 
-				if (!(TEST_FLAG(p_ptr->flags, 1, TR1_RES_CHAOS)))
+				if (!(OBJ_FLAG(p_ptr, 1, RES_CHAOS)))
 				{
 					(void)inc_image(rand_range(150, 400));
 				}
@@ -1761,7 +1761,7 @@ bool make_attack_spell(int m_idx)
 								  m_name);
 			else
 				msgf("%^s casts a fearful illusion.", m_name);
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_RES_FEAR))
+			if (OBJ_FLAG(p_ptr, 1, RES_FEAR))
 			{
 				msgf("You refuse to be frightened.");
 			}
@@ -1785,7 +1785,7 @@ bool make_attack_spell(int m_idx)
 			if (blind) msgf("%^s mumbles.", m_name);
 			else
 				msgf("%^s casts a spell, burning your eyes!", m_name);
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_RES_BLIND))
+			if (OBJ_FLAG(p_ptr, 1, RES_BLIND))
 			{
 				msgf("You are unaffected!");
 			}
@@ -1810,7 +1810,7 @@ bool make_attack_spell(int m_idx)
 								  m_name);
 			else
 				msgf("%^s creates a mesmerising illusion.", m_name);
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_RES_CONF))
+			if (OBJ_FLAG(p_ptr, 1, RES_CONF))
 			{
 				msgf("You disbelieve the feeble spell.");
 			}
@@ -1832,7 +1832,7 @@ bool make_attack_spell(int m_idx)
 			if (!direct) break;
 			disturb(TRUE);
 			msgf("%^s drains power from your muscles!", m_name);
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_FREE_ACT))
+			if (OBJ_FLAG(p_ptr, 1, FREE_ACT))
 			{
 				msgf("You are unaffected!");
 			}
@@ -1856,7 +1856,7 @@ bool make_attack_spell(int m_idx)
 			if (blind) msgf("%^s mumbles.", m_name);
 			else
 				msgf("%^s stares deep into your eyes!", m_name);
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_FREE_ACT))
+			if (OBJ_FLAG(p_ptr, 1, FREE_ACT))
 			{
 				msgf("You are unaffected!");
 			}
@@ -2066,7 +2066,7 @@ bool make_attack_spell(int m_idx)
 			if (blind) msgf("%^s mumbles strangely.", m_name);
 			else
 				msgf("%^s gestures at your feet.", m_name);
-			if (TEST_FLAG(p_ptr->flags, 1, TR1_RES_NEXUS))
+			if (OBJ_FLAG(p_ptr, 1, RES_NEXUS))
 			{
 				msgf("You are unaffected!");
 			}

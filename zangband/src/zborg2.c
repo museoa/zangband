@@ -1603,7 +1603,7 @@ static int borg_guess_kidx(char unknown)
 		s = s - ABS(k_ptr->level - bp_ptr->depth);
 
 		/* Hack -- Penalize INSTA_ART items */
-		if (TR_FLAG(k_ptr->flags, 2, INSTA_ART)) s = s - 1000;
+		if (OBJ_FLAG(k_ptr, 2, INSTA_ART)) s = s - 1000;
 
 		/* Desire "best" possible score */
 		if (b_i && (s < b_s)) continue;
@@ -1996,7 +1996,7 @@ static bool borg_follow_kill_aux(int i, int x, int y)
 		if (mb_ptr->flags & MAP_SEEN)
 		{
 			/* We can see invisible */
-			if ((TR_FLAG(bp_ptr->flags, 2, SEE_INVIS)) || borg_see_inv) return (TRUE);
+			if ((OBJ_FLAG(bp_ptr, 2, SEE_INVIS)) || borg_see_inv) return (TRUE);
 
 			/* Monster is not invisible */
 			if (!(RF_FLAG(r_ptr->flags, 1, INVISIBLE))) return (TRUE);
@@ -2012,7 +2012,7 @@ static bool borg_follow_kill_aux(int i, int x, int y)
 
 
 	/* Telepathy requires "telepathy" */
-	if (TR_FLAG(bp_ptr->flags, 2, TELEPATHY))
+	if (OBJ_FLAG(bp_ptr, 2, TELEPATHY))
 	{
 		/* Telepathy fails on "strange" monsters */
 		if (RF_FLAG(r_ptr->flags, 1, EMPTY_MIND)) return (FALSE);
@@ -2108,7 +2108,7 @@ static void observe_kill_move(int new_type, int old_type, int dist)
 			borg_danger_wipe = TRUE;
 
 			/* Clear goals */
-			if (!(TR_FLAG(bp_ptr->flags, 2, TELEPATHY)) && (goal == GOAL_TAKE))
+			if (!(OBJ_FLAG(bp_ptr, 2, TELEPATHY)) && (goal == GOAL_TAKE))
 			{
 				goal = 0;
 			}
@@ -2981,7 +2981,7 @@ static int borg_fear_spell(int i)
 		case 8:
 		{
 			/* RF3_BR_ACID */
-			if (TR_FLAG(bp_ptr->flags, 1, IM_ACID)) break;
+			if (OBJ_FLAG(bp_ptr, 1, IM_ACID)) break;
 			z = ouch;
 			p += 40;
 			break;
@@ -2990,7 +2990,7 @@ static int borg_fear_spell(int i)
 		case 9:
 		{
 			/* RF3_BR_ELEC */
-			if (TR_FLAG(bp_ptr->flags, 1, IM_ELEC)) break;
+			if (OBJ_FLAG(bp_ptr, 1, IM_ELEC)) break;
 			z = ouch;
 			p += 20;
 			break;
@@ -2999,7 +2999,7 @@ static int borg_fear_spell(int i)
 		case 10:
 		{
 			/* RF3_BR_FIRE */
-			if (TR_FLAG(bp_ptr->flags, 1, IM_FIRE)) break;
+			if (OBJ_FLAG(bp_ptr, 1, IM_FIRE)) break;
 			z = ouch;
 			p += 40;
 			break;
@@ -3008,7 +3008,7 @@ static int borg_fear_spell(int i)
 		case 11:
 		{
 			/* RF3_BR_COLD */
-			if (TR_FLAG(bp_ptr->flags, 1, IM_COLD)) break;
+			if (OBJ_FLAG(bp_ptr, 1, IM_COLD)) break;
 			z = ouch;
 			p += 20;
 			break;
@@ -3018,7 +3018,7 @@ static int borg_fear_spell(int i)
 		{
 			/* RF3_BR_POIS */
 			z = ouch;
-			if (TR_FLAG(bp_ptr->flags, 1, RES_POIS)) break;
+			if (OBJ_FLAG(bp_ptr, 1, RES_POIS)) break;
 			if (my_oppose_pois) break;
 			p += 20;
 			break;
@@ -3028,9 +3028,9 @@ static int borg_fear_spell(int i)
 		{
 			/* RF3_BR_NETH */
 			z = ouch + 100;
-			if (TR_FLAG(bp_ptr->flags, 1, RES_NETHER)) break;
+			if (OBJ_FLAG(bp_ptr, 1, RES_NETHER)) break;
 			p += 50;
-			if (TR_FLAG(bp_ptr->flags, 1, HOLD_LIFE)) break;
+			if (OBJ_FLAG(bp_ptr, 1, HOLD_LIFE)) break;
 			/* do not worry about drain exp after level 50 */
 			if (bp_ptr->lev >= 50) break;
 			p += 150;
@@ -3041,8 +3041,8 @@ static int borg_fear_spell(int i)
 		{
 			/* RF3_BR_LITE */
 			z = ouch;
-			if (TR_FLAG(bp_ptr->flags, 1, RES_LITE)) break;
-			if (TR_FLAG(bp_ptr->flags, 1, RES_BLIND)) break;
+			if (OBJ_FLAG(bp_ptr, 1, RES_LITE)) break;
+			if (OBJ_FLAG(bp_ptr, 1, RES_BLIND)) break;
 			p += 20;
 			break;
 		}
@@ -3051,8 +3051,8 @@ static int borg_fear_spell(int i)
 		{
 			/* RF3_BR_DARK */
 			z = ouch;
-			if (TR_FLAG(bp_ptr->flags, 1, RES_DARK)) break;
-			if (TR_FLAG(bp_ptr->flags, 1, RES_BLIND)) break;
+			if (OBJ_FLAG(bp_ptr, 1, RES_DARK)) break;
+			if (OBJ_FLAG(bp_ptr, 1, RES_BLIND)) break;
 			p += 20;
 			break;
 		}
@@ -3061,7 +3061,7 @@ static int borg_fear_spell(int i)
 		{
 			/* RF3_BR_CONF */
 			z = ouch;
-			if (TR_FLAG(bp_ptr->flags, 1, RES_CONF)) break;
+			if (OBJ_FLAG(bp_ptr, 1, RES_CONF)) break;
 			p += 100;
 			break;
 		}
@@ -3070,7 +3070,7 @@ static int borg_fear_spell(int i)
 		{
 			/* RF3_BR_SOUN */
 			z = ouch;
-			if (TR_FLAG(bp_ptr->flags, 1, RES_SOUND)) break;
+			if (OBJ_FLAG(bp_ptr, 1, RES_SOUND)) break;
 			p += 50;
 			break;
 		}
@@ -3079,11 +3079,11 @@ static int borg_fear_spell(int i)
 		{
 			/* RF3_BR_CHAO */
 			z = ouch;
-			if (TR_FLAG(bp_ptr->flags, 1, RES_CHAOS)) break;
+			if (OBJ_FLAG(bp_ptr, 1, RES_CHAOS)) break;
 			p += 200;
-			if (!(TR_FLAG(bp_ptr->flags, 1, RES_NETHER))) p += 50;
-			if (!(TR_FLAG(bp_ptr->flags, 1, HOLD_LIFE))) p += 50;
-			if (!(TR_FLAG(bp_ptr->flags, 1, RES_CONF))) p += 50;
+			if (!(OBJ_FLAG(bp_ptr, 1, RES_NETHER))) p += 50;
+			if (!(OBJ_FLAG(bp_ptr, 1, HOLD_LIFE))) p += 50;
+			if (!(OBJ_FLAG(bp_ptr, 1, RES_CONF))) p += 50;
 			if (bp_ptr->lev == 50) break;
 			p += 100;
 			break;
@@ -3093,7 +3093,7 @@ static int borg_fear_spell(int i)
 		{
 			/* RF3_BR_DISE */
 			z = ouch;
-			if (TR_FLAG(bp_ptr->flags, 1, RES_DISEN)) break;
+			if (OBJ_FLAG(bp_ptr, 1, RES_DISEN)) break;
 			p += 500;
 			break;
 		}
@@ -3102,7 +3102,7 @@ static int borg_fear_spell(int i)
 		{
 			/* RF3_BR_NEXU */
 			z = ouch;
-			if (TR_FLAG(bp_ptr->flags, 1, RES_NEXUS)) break;
+			if (OBJ_FLAG(bp_ptr, 1, RES_NEXUS)) break;
 			p += 100;
 			break;
 		}
@@ -3128,7 +3128,7 @@ static int borg_fear_spell(int i)
 			/* RF3_BR_GRAV */
 			z = ouch;
 			p += 50;
-			if (TR_FLAG(bp_ptr->flags, 1, RES_SOUND)) break;
+			if (OBJ_FLAG(bp_ptr, 1, RES_SOUND)) break;
 			p += 50;
 			break;
 		}
@@ -3137,7 +3137,7 @@ static int borg_fear_spell(int i)
 		{
 			/* RF3_BR_SHAR */
 			z = ouch;
-			if (TR_FLAG(bp_ptr->flags, 1, RES_SHARDS)) break;
+			if (OBJ_FLAG(bp_ptr, 1, RES_SHARDS)) break;
 			p += 50;
 			break;
 		}
@@ -3146,7 +3146,7 @@ static int borg_fear_spell(int i)
 		{
 			/* RF3_BR_PLAS */
 			z = ouch;
-			if (TR_FLAG(bp_ptr->flags, 1, RES_SOUND)) break;
+			if (OBJ_FLAG(bp_ptr, 1, RES_SOUND)) break;
 			p += 50;
 			break;
 		}
@@ -3155,7 +3155,7 @@ static int borg_fear_spell(int i)
 		{
 			/* RF3_BR_WALL */
 			z = ouch;
-			if (TR_FLAG(bp_ptr->flags, 1, RES_SOUND)) break;
+			if (OBJ_FLAG(bp_ptr, 1, RES_SOUND)) break;
 			p += 50;
 			break;
 		}
@@ -3194,7 +3194,7 @@ static int borg_fear_spell(int i)
 		case 32:
 		{
 			/* RF4_BA_ACID */
-			if (TR_FLAG(bp_ptr->flags, 1, IM_ACID)) break;
+			if (OBJ_FLAG(bp_ptr, 1, IM_ACID)) break;
 			z = ouch;
 			p += 40;
 			break;
@@ -3203,7 +3203,7 @@ static int borg_fear_spell(int i)
 		case 33:
 		{
 			/* RF4_BA_ELEC */
-			if (TR_FLAG(bp_ptr->flags, 1, IM_ELEC)) break;
+			if (OBJ_FLAG(bp_ptr, 1, IM_ELEC)) break;
 			z = ouch;
 			p += 20;
 			break;
@@ -3212,7 +3212,7 @@ static int borg_fear_spell(int i)
 		case 34:
 		{
 			/* RF4_BA_FIRE */
-			if (TR_FLAG(bp_ptr->flags, 1, IM_FIRE)) break;
+			if (OBJ_FLAG(bp_ptr, 1, IM_FIRE)) break;
 			z = ouch;
 			p += 40;
 			break;
@@ -3221,7 +3221,7 @@ static int borg_fear_spell(int i)
 		case 35:
 		{
 			/* RF4_BA_COLD */
-			if (TR_FLAG(bp_ptr->flags, 1, IM_COLD)) break;
+			if (OBJ_FLAG(bp_ptr, 1, IM_COLD)) break;
 			z = ouch;
 			p += 20;
 			break;
@@ -3231,7 +3231,7 @@ static int borg_fear_spell(int i)
 		{
 			/* RF4_BA_POIS */
 			z = ouch;
-			if (TR_FLAG(bp_ptr->flags, 1, RES_POIS)) break;
+			if (OBJ_FLAG(bp_ptr, 1, RES_POIS)) break;
 			p += 20;
 			break;
 		}
@@ -3240,7 +3240,7 @@ static int borg_fear_spell(int i)
 		{
 			/* RF4_BA_NETH */
 			z = ouch + 100;
-			if (TR_FLAG(bp_ptr->flags, 1, RES_NETHER)) break;
+			if (OBJ_FLAG(bp_ptr, 1, RES_NETHER)) break;
 			p += 300;
 			break;
 		}
@@ -3264,8 +3264,8 @@ static int borg_fear_spell(int i)
 		{
 			/* RF4_BA_DARK */
 			z = ouch;
-			if (TR_FLAG(bp_ptr->flags, 1, RES_DARK)) break;
-			if (TR_FLAG(bp_ptr->flags, 1, RES_BLIND)) break;
+			if (OBJ_FLAG(bp_ptr, 1, RES_DARK)) break;
+			if (OBJ_FLAG(bp_ptr, 1, RES_BLIND)) break;
 			p += 20;
 			break;
 		}
@@ -3324,7 +3324,7 @@ static int borg_fear_spell(int i)
 		case 48:
 		{
 			/* RF4_BO_ACID */
-			if (TR_FLAG(bp_ptr->flags, 1, IM_ACID)) break;
+			if (OBJ_FLAG(bp_ptr, 1, IM_ACID)) break;
 			z = ouch;
 			p += 40;
 			break;
@@ -3333,7 +3333,7 @@ static int borg_fear_spell(int i)
 		case 49:
 		{
 			/* RF4_BO_ELEC */
-			if (TR_FLAG(bp_ptr->flags, 1, IM_ELEC)) break;
+			if (OBJ_FLAG(bp_ptr, 1, IM_ELEC)) break;
 			z = ouch;
 			p += 20;
 			break;
@@ -3342,7 +3342,7 @@ static int borg_fear_spell(int i)
 		case 50:
 		{
 			/* RF4_BO_FIRE */
-			if (TR_FLAG(bp_ptr->flags, 1, IM_FIRE)) break;
+			if (OBJ_FLAG(bp_ptr, 1, IM_FIRE)) break;
 			z = ouch;
 			p += 40;
 			break;
@@ -3351,7 +3351,7 @@ static int borg_fear_spell(int i)
 		case 51:
 		{
 			/* RF4_BO_COLD */
-			if (TR_FLAG(bp_ptr->flags, 1, IM_COLD)) break;
+			if (OBJ_FLAG(bp_ptr, 1, IM_COLD)) break;
 			z = ouch;
 			p += 20;
 			break;
@@ -3368,7 +3368,7 @@ static int borg_fear_spell(int i)
 		{
 			/* RF4_BO_NETH */
 			z = ouch + 100;
-			if (TR_FLAG(bp_ptr->flags, 1, RES_NETHER)) break;
+			if (OBJ_FLAG(bp_ptr, 1, RES_NETHER)) break;
 			p += 200;
 			break;
 		}

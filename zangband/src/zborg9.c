@@ -2736,97 +2736,97 @@ void borg_status_window(void)
 
 			/* Basic four */
 			attr = CLR_SLATE;
-			if (TR_FLAG(bp_ptr->flags, 1, RES_ACID)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 1, RES_ACID)) attr = CLR_BLUE;
 			if (my_oppose_acid) attr = CLR_GREEN;
-			if (TR_FLAG(bp_ptr->flags, 1, IM_ACID)) attr = CLR_WHITE;
+			if (OBJ_FLAG(bp_ptr, 1, IM_ACID)) attr = CLR_WHITE;
 			prtf(1, 1, "%sAcid", attr);
 
 			attr = CLR_SLATE;
-			if (TR_FLAG(bp_ptr->flags, 1, RES_ELEC)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 1, RES_ELEC)) attr = CLR_BLUE;
 			if (my_oppose_elec) attr = CLR_GREEN;
-			if (TR_FLAG(bp_ptr->flags, 1, IM_ELEC)) attr = CLR_WHITE;
+			if (OBJ_FLAG(bp_ptr, 1, IM_ELEC)) attr = CLR_WHITE;
 			prtf(1, 2, "%sElec", attr);
 
 			attr = CLR_SLATE;
-			if (TR_FLAG(bp_ptr->flags, 1, RES_FIRE)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 1, RES_FIRE)) attr = CLR_BLUE;
 			if (my_oppose_fire) attr = CLR_GREEN;
-			if (TR_FLAG(bp_ptr->flags, 1, IM_FIRE)) attr = CLR_WHITE;
+			if (OBJ_FLAG(bp_ptr, 1, IM_FIRE)) attr = CLR_WHITE;
 			prtf(1, 3, "%sFire%s", attr);
 
 			attr = CLR_SLATE;
-			if (TR_FLAG(bp_ptr->flags, 1, RES_COLD)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 1, RES_COLD)) attr = CLR_BLUE;
 			if (my_oppose_cold) attr = CLR_GREEN;
-			if (TR_FLAG(bp_ptr->flags, 1, IM_COLD)) attr = CLR_WHITE;
+			if (OBJ_FLAG(bp_ptr, 1, IM_COLD)) attr = CLR_WHITE;
 			prtf(1, 4, "%sCold", attr);
 
 			/* High resists */
 			attr = CLR_SLATE;
-			if (TR_FLAG(bp_ptr->flags, 1, RES_POIS)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 1, RES_POIS)) attr = CLR_BLUE;
 			if (my_oppose_pois) attr = CLR_GREEN;
 			prtf(1, 5, "%sPois", attr);
 
-			if (TR_FLAG(bp_ptr->flags, 1, RES_FEAR)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 1, RES_FEAR)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(1, 6, "%sFear", attr);
 
-			if (TR_FLAG(bp_ptr->flags, 1, RES_LITE)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 1, RES_LITE)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(1, 7, "%sLite", attr);
 
-			if (TR_FLAG(bp_ptr->flags, 1, RES_DARK)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 1, RES_DARK)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(1, 8, "%sDark", attr);
 
-			if (TR_FLAG(bp_ptr->flags, 1, RES_BLIND)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 1, RES_BLIND)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(6, 1, "%sBlind", attr);
 
-			if (TR_FLAG(bp_ptr->flags, 1, RES_CONF)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 1, RES_CONF)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(6, 2, "%sConfu", attr);
 
-			if (TR_FLAG(bp_ptr->flags, 1, RES_SOUND)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 1, RES_SOUND)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(6, 3, "%sSound", attr);
 
-			if (TR_FLAG(bp_ptr->flags, 1, RES_SHARDS)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 1, RES_SHARDS)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(6, 4, "%sShard", attr);
 
-			if (TR_FLAG(bp_ptr->flags, 1, RES_NEXUS)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 1, RES_NEXUS)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(6, 5, "%sNexus", attr);
 
-			if (TR_FLAG(bp_ptr->flags, 1, RES_NETHER)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 1, RES_NETHER)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(6, 6, "%sNethr", attr);
 
-			if (TR_FLAG(bp_ptr->flags, 1, RES_CHAOS)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 1, RES_CHAOS)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(6, 7, "%sChaos", attr);
 
-			if (TR_FLAG(bp_ptr->flags, 1, RES_DISEN)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 1, RES_DISEN)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(6, 8, "%sDisen", attr);
 
 			/* Other abilities */
-			if (TR_FLAG(bp_ptr->flags, 2, SLOW_DIGEST)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 2, SLOW_DIGEST)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(12, 1, "%sS.Dig", attr);
 
-			if (TR_FLAG(bp_ptr->flags, 2, FEATHER)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 2, FEATHER)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(12, 2, "%sFeath", attr);
@@ -2836,27 +2836,27 @@ void borg_status_window(void)
 				attr = CLR_SLATE;
 			prtf(12, 3, "%sPLite", attr);
 
-			if (TR_FLAG(bp_ptr->flags, 2, REGEN)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 2, REGEN)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(12, 4, "%sRegen", attr);
 
-			if (TR_FLAG(bp_ptr->flags, 2, TELEPATHY)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 2, TELEPATHY)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(12, 5, "%sTelep", attr);
 
-			if (TR_FLAG(bp_ptr->flags, 2, SEE_INVIS)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 2, SEE_INVIS)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(12, 6, "%sInvis", attr);
 
-			if (TR_FLAG(bp_ptr->flags, 1, FREE_ACT)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 1, FREE_ACT)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(12, 7, "%sFrAct", attr);
 
-			if (TR_FLAG(bp_ptr->flags, 1, HOLD_LIFE)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 1, HOLD_LIFE)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(12, 8, "%sHLife", attr);
@@ -2864,63 +2864,63 @@ void borg_status_window(void)
 			/* Display the slays */
 			prtf(5, 10, "Weapon Slays:");
 
-			if (TR_FLAG(bp_ptr->flags, 0, SLAY_ANIMAL)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 0, SLAY_ANIMAL)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(1, 11, "%sAnimal", attr);
 
-			if (TR_FLAG(bp_ptr->flags, 0, SLAY_EVIL)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 0, SLAY_EVIL)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(8, 11, "%sEvil", attr);
 
-			if (TR_FLAG(bp_ptr->flags, 0, SLAY_UNDEAD)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 0, SLAY_UNDEAD)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(15, 11, "%sUndead", attr);
 
-			if (TR_FLAG(bp_ptr->flags, 0, SLAY_DEMON)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 0, SLAY_DEMON)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(22, 11, "%sDemon", attr);
 
-			if (TR_FLAG(bp_ptr->flags, 0, SLAY_ORC)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 0, SLAY_ORC)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(1, 12, "%sOrc", attr);
 
-			if (TR_FLAG(bp_ptr->flags, 0, SLAY_TROLL)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 0, SLAY_TROLL)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(8, 12, "%sTroll", attr);
 
-			if (TR_FLAG(bp_ptr->flags, 0, SLAY_GIANT)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 0, SLAY_GIANT)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(15, 12, "%sGiant", attr);
 
-			if (TR_FLAG(bp_ptr->flags, 0, SLAY_DRAGON)) attr = CLR_BLUE;
-			if (TR_FLAG(bp_ptr->flags, 0, KILL_DRAGON)) attr = CLR_GREEN;
+			if (OBJ_FLAG(bp_ptr, 0, SLAY_DRAGON)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 0, KILL_DRAGON)) attr = CLR_GREEN;
 			else
 				attr = CLR_SLATE;
 			prtf(22, 12, "%sDragon", attr);
 
-			if (TR_FLAG(bp_ptr->flags, 0, BRAND_ACID)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 0, BRAND_ACID)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(1, 13, "%sAcid", attr);
 
-			if (TR_FLAG(bp_ptr->flags, 0, BRAND_COLD)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 0, BRAND_COLD)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(8, 13, "%sCold", attr);
 
-			if (TR_FLAG(bp_ptr->flags, 0, BRAND_ELEC)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 0, BRAND_ELEC)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(15, 13, "%sElec", attr);
 
-			if (TR_FLAG(bp_ptr->flags, 0, BRAND_FIRE)) attr = CLR_BLUE;
+			if (OBJ_FLAG(bp_ptr, 0, BRAND_FIRE)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(22, 13, "%sFire", attr);

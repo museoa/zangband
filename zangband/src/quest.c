@@ -1092,7 +1092,7 @@ static quest_type *insert_artifact_quest(u16b a_idx)
 	if (a_ptr->cur_num) return (NULL);
 
 	/* No quest items */
-	if (TR_FLAG(a_ptr->flags, 2, QUESTITEM)) return (NULL);
+	if (OBJ_FLAG(a_ptr, 2, QUESTITEM)) return (NULL);
 	
 	/* get a new quest */
 	q_num = q_pop();
