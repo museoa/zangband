@@ -110,6 +110,11 @@ static bool game_in_progress = FALSE;
 static bool gtk_newgame;
 
 /*
+ * Hack - exit the game
+ */
+static bool gtk_exitgame = FALSE;
+
+/*
  * Number of active terms
  */
 static int num_term = 3;
@@ -1154,7 +1159,7 @@ static void font_ok_callback(GtkWidget *widget, GtkWidget *font_selector)
 	if (use_graphics)
 	{
 		/* Need to get a new tile image */	
-		gdk_image_destroy(td->tiles);
+		if (td->tiles) gdk_image_destroy(td->tiles);
 	
 		/* Resize tiles */
 		td->tiles = resize_tiles(td->font_wid, td->font_hgt);
@@ -1162,7 +1167,7 @@ static void font_ok_callback(GtkWidget *widget, GtkWidget *font_selector)
 #ifdef USE_TRANSPARENCY
 
 		/* Get a new temp */ 
-		gdk_image_destroy(td->temp);
+		if (td->temp) gdk_image_destroy(td->temp);
 	
 		/* Initialize the transparency temp storage*/			
 		td->temp = gdk_image_new(GDK_IMAGE_FASTEST,
@@ -2143,6 +2148,9 @@ static gboolean delete_event_handler(GtkWidget *widget, GdkEvent *event,
 	
 	save_game_gtk();
 
+	/* Hack - set exit flag */
+	gtk_exitgame = TRUE;
+
 	/* Don't prevent closure */
 	return (FALSE);
 }
@@ -2350,23 +2358,16 @@ GtkWidget *get_main_menu(term_data *td)
 	g_assert(accel_group);
 
 	/* Initialise the item factory */
-	item_factory = gtk_item_factory_new(
-		GTK_TYPE_MENU_BAR,
-		"<Angband>",
+	item_factory = gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<Angband>",
 		accel_group);
 	g_assert(item_factory);
 
 	/* Generate the menu items */
-	gtk_item_factory_create_items(
-		item_factory,
-		nmenu_items,
-		main_menu_items,
-		NULL);
+	gtk_item_factory_create_items(item_factory, nmenu_items,
+		main_menu_items, NULL);
 
 	/* Attach the new accelerator group to the window */
-	gtk_window_add_accel_group(
-		GTK_WINDOW(td->window),
-		accel_group);
+	gtk_window_add_accel_group(GTK_WINDOW(td->window), accel_group);
 
 	/* Return the actual menu bar created */
 	return (gtk_item_factory_get_widget(item_factory, "<Angband>"));
@@ -2454,10 +2455,31 @@ static void hook_plog(cptr str)
 /*
  * Handle destruction of Subwindows
  */
-static void destroy_sub_event_handler(
-	GtkWidget *window,
-	gpointer user_data)
+static void destroy_sub_event_handler(GtkWidget *window, gpointer user_data)
 {
+	term_data *td = (term_data *)user_data;
+	
+	/* Do nothing if window is not visible */
+	if (!td->shown) return;
+	
+	/* Hide the window */
+	gtk_widget_hide_all(window);
+
+}
+
+
+/*
+ * Handle deletion of Subwindows
+ */
+static void delete_sub_event_handler(GtkWidget *window, gpointer user_data)
+{
+	term_data *td = (term_data *)user_data;
+	
+	/* Do nothing if window is not visible */
+	if (!td->shown) return;
+	
+	td->shown = FALSE;
+	
 	/* Hide the window */
 	gtk_widget_hide_all(window);
 }
@@ -2474,6 +2496,9 @@ static errr term_data_init(term_data *td, int i)
 
 	/* Initialize the term */
 	term_init(t, td->cols, td->rows, 1024);
+	
+	/* Save the name */
+	td->name = angband_term_name[i];
 	
 	/* Use a "soft" cursor */
 	t->soft_cursor = TRUE;
@@ -2534,14 +2559,15 @@ static void init_gtk_window(term_data *td, int i)
 	
 	
 	/* Install window event handlers */
-	gtk_signal_connect(GTK_OBJECT(td->window), "delete_event",
-		GTK_SIGNAL_FUNC(delete_event_handler), NULL);
 	gtk_signal_connect(GTK_OBJECT(td->window), "key_press_event",
 		GTK_SIGNAL_FUNC(keypress_event_handler), NULL);
 	
 	/* Destroying the Angband window terminates the game */
 	if (main_win)
 	{
+		gtk_signal_connect(GTK_OBJECT(td->window), "delete_event",
+			GTK_SIGNAL_FUNC(delete_event_handler), NULL);
+		
 		gtk_signal_connect(GTK_OBJECT(td->window), "destroy_event",
 			GTK_SIGNAL_FUNC(destroy_event_handler), NULL);
 	}
@@ -2549,6 +2575,9 @@ static void init_gtk_window(term_data *td, int i)
 	/* The other windows are just hidden */
 	else
 	{
+		gtk_signal_connect(GTK_OBJECT(td->window), "delete_event",
+			GTK_SIGNAL_FUNC(delete_sub_event_handler), td);
+		
 		gtk_signal_connect(GTK_OBJECT(td->window), "destroy_event",
 			GTK_SIGNAL_FUNC(destroy_sub_event_handler), td);
 	}
@@ -2614,8 +2643,6 @@ errr init_gtk(unsigned char *new_game, int argc, char **argv)
 	int i;
 
 #ifdef USE_GRAPHICS
-
-	char filename[1024];
 	int graphmode = GRAPHICS_ANY;
 #endif /* USE_GRAPHICS */
 	
@@ -2664,35 +2691,10 @@ errr init_gtk(unsigned char *new_game, int argc, char **argv)
 
 #ifdef USE_GRAPHICS
 
-	/* Try graphics */
-	if (arg_graphics)
-	{
-		(void) pick_graphics(graphmode, &xsize, &ysize, filename);
-	}
-
-	/* Load graphics */
-	if (use_graphics)
-	{
-		/* Read the bitmap */
-		ReadBMP(filename);
-
-		/* Paranoia */
-		if (!tiles_norm)
-		{
-			plog("Could not load tiles properly.");
-			
-			/* No tiles */
-			use_graphics = GRAPHICS_NONE;
-		}
-	}
+	/* Set graphics mode */
+	set_graph_mode(arg_graphics);
 
 #endif /* USE_GRAPHICS */
-
-	/* Initialise the term names */
-	for (i = 0; i < MAX_TERM_DATA; i++)
-	{
-		data[i].name = angband_term_name[i];
-	}
 		
 	/*
 	 * Initialize the windows
@@ -2771,6 +2773,9 @@ errr init_gtk(unsigned char *new_game, int argc, char **argv)
 
 		/* Wait so we don't waste all the processor */
 		usleep(200);
+		
+		/* Die if window is closed */
+		if (gtk_exitgame) quit(NULL);
 	}
 	
 	/* Load 'newgame' flag */
