@@ -44,7 +44,10 @@
 		{ \
 			int _map_i, _map_j; \
 			\
-			if (!map_cache_refcount[_map_count]) continue; \
+			if (!map_cache_x[_map_count]) continue; \
+			\
+			if (!map_grid[map_cache_y[_map_count]][map_cache_x[_map_count]])\
+				 continue; \
 			\
 			for (_map_i = 0; _map_i < WILD_BLOCK_SIZE; _map_i++) \
 			{ \
@@ -135,6 +138,7 @@ extern map_blk_ptr *map_cache;
 extern byte *map_cache_refcount;
 extern int *map_cache_x;
 extern int *map_cache_y;
+extern int **map_grid;
 
 
 /* Extern Functions */

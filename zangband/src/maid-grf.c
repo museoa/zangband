@@ -298,10 +298,7 @@ int *map_cache_x;
 int *map_cache_y;
 
 /* The map itself - grid of 16x16 blocks*/
-static int **map_grid;
-
-/* Reference count of each 16x16 block */
-static byte **map_refcount;
+int **map_grid;
 
 /* Player location */
 static int player_x = 0;
@@ -386,13 +383,11 @@ void init_overhead_map(void)
 
 	/* Allocate the overhead map itself */
 	C_MAKE(map_grid, WILD_SIZE, int *);
-	C_MAKE(map_refcount, WILD_SIZE, byte *);
 
 	for (i = 0; i < WILD_SIZE; i++)
 	{
 		/* Allocate one row of the wilderness */
 		C_MAKE(map_grid[i], WILD_SIZE, int);
-		C_MAKE(map_refcount[i], WILD_SIZE, byte);
 	}
 
 	/* The map exists */
@@ -436,12 +431,10 @@ void del_overhead_map(void)
 	{
 		/* Free one row of the wilderness */
 		FREE(map_grid[i]);
-		FREE(map_refcount[i]);
 	}
 
 	/* Free the overhead map itself */
 	FREE(map_grid);
-	FREE(map_refcount);
 
 	/* The map no longer exists */
 	map_init = FALSE;
@@ -460,11 +453,8 @@ static void clear_map(void)
 	{
 		for (j = 0; j < WILD_SIZE; j++)
 		{
-			/* Not referenced */
-			map_refcount[i][j] = 0;
-
-			/* Hack - we don't need to do this */
-			/* map_grid[i][j] = -1; */
+			/* Set unused */
+			map_grid[i][j] = -1;
 		}
 	}
 
@@ -472,6 +462,9 @@ static void clear_map(void)
 	for (i = 0; i < MAP_CACHE; i++)
 	{
 		map_cache_refcount[i] = 0;
+		
+		/* Flag that the block isn't used */
+		map_cache_x[i] = -1;
 	}
 
 	/* Player doesn't have a position */
@@ -499,6 +492,16 @@ static void clear_block(int block)
 			(void)WIPE(mb_ptr, map_block);
 		}
 	}
+	
+	/* Was this used? */
+	if (map_cache_x[block] != -1)
+	{
+		/* Mark map block as unused */
+		map_grid[map_cache_y[block]][map_cache_x[block]] = -1;
+		
+		/* Set "unused block" flag */
+		map_cache_x[block] = -1;
+	}
 }
 
 
@@ -522,7 +525,14 @@ static int get_empty_block(void)
 	{
 		/* Get block out of los */
 		if (map_cache_refcount[i]) continue;
-
+		
+		/* Check to see if unused */
+		if (map_cache_x[i] < 0)
+		{
+			best_block = i;
+			break;
+		}
+		
 		/* Get rough dist from player */
 		dist = ABS(map_cache_x[i] - px) + ABS(map_cache_y[i] - py);
 
@@ -549,7 +559,7 @@ bool map_in_bounds(int x, int y)
 {
     if (x < 0 || x >= WILD_BLOCK_SIZE * WILD_SIZE) return (FALSE);
     if (y < 0 || y >= WILD_BLOCK_SIZE * WILD_SIZE) return (FALSE);
-	return (map_refcount[y >> 4][x >> 4] ? TRUE : FALSE);
+	return (map_grid[y >> 4][x >> 4] != -1);
 }
 
 
@@ -573,12 +583,14 @@ static void save_map_location(int x, int y, term_map *map)
 		block_num = get_empty_block();
 
 		/* Set this block up */
-		map_refcount[y1][x1] = 0;
-
 		mbp_ptr = map_cache[block_num];
 
 		/* Link to the map */
 		map_grid[y1][x1] = block_num;
+		
+		/* Save block coordinates */
+		map_cache_x[block_num] = x1;
+		map_cache_y[block_num] = y1;
 	}
 	else
 	{
@@ -595,7 +607,6 @@ static void save_map_location(int x, int y, term_map *map)
 		if (!(mb_ptr->flags & (MAP_ONCE)))
 		{
             map_cache_refcount[block_num]++;
-            map_refcount[y1][x1]++;
 		}
 	}
 	else if (!(mb_ptr->flags & MAP_ONCE))
@@ -608,7 +619,6 @@ static void save_map_location(int x, int y, term_map *map)
                 quit("Decrementing invalid overhead map loc");
 			
             map_cache_refcount[block_num]--;
-            map_refcount[y1][x1]--;
 		}
 	}
 
