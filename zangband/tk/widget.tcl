@@ -42,14 +42,8 @@ proc NSWidget::NSWidget {oop parent width height gwidth gheight} {
 
 	set widget $parent.widget$oop
 
-	if {$gwidth == [icon size]} {
-		set style icon
-	} else {
-		set style map
-	}
-
 	widget $widget -width $width -height $height \
-		-gwidth $gwidth -gheight $gheight -style $style
+		-gwidth $gwidth -gheight $gheight
 
 	bind $widget <Enter> "NSWidget::Motion $oop %x %y"
 	bind $widget <Motion> "NSWidget::Motion $oop %x %y"
@@ -220,13 +214,7 @@ proc NSWidget::SetScale {oop scale} {
 
 	if {$scale == [$widget cget -gwidth]} return
 
-	if {$scale == [icon size]} {
-		set style icon
-	} else {
-		set style map
-	}
-
-	$widget configure -gwidth $scale -gheight $scale -style $style
+	$widget configure -gwidth $scale -gheight $scale
 
 	# Context menu
 	Info $oop scale $scale
