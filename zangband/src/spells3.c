@@ -518,6 +518,9 @@ void teleport_player_to(int nx, int ny)
 	int y, x, oy, ox, dis = 0, ctr = 0;
 
 	cave_type *c_ptr;
+	
+	/* No movement at all */
+	if ((ny == py) && (nx == px)) return;
 
 	if (p_ptr->anti_tele)
 	{
