@@ -3646,7 +3646,7 @@ void play_game(bool new_game)
 	}
 
 	/* Init the RNG */
-	if (Rand_quick)
+	if (Rand_quick || new_game)
 	{
 		u32b seed;
 
