@@ -4103,15 +4103,15 @@ bool field_action_magetower1(field_type *f_ptr, vptr input)
 {
 	char tmp_str[80];
 
-    int factor = *((int *)input);
-	
+	int factor = *((int *)input);
+
 	store_type *st_ptr;
 
-    /* Display options */
-    building_magetower(factor, TRUE);
-	
+	/* Display options */
+	building_magetower(factor, TRUE);
+
 	st_ptr = get_current_store();
-	
+
 	/* We only need to do this once */
 	if (st_ptr && !st_ptr->insult_cur)
 	{
@@ -4122,8 +4122,8 @@ bool field_action_magetower1(field_type *f_ptr, vptr input)
 	sprintf(tmp_str, " T) Teleport");
 	c_put_str(TERM_YELLOW, tmp_str, 35, 19);
 
-    /* Done */
-    return (FALSE);
+	/* Done */
+	return (FALSE);
 }
 
 
@@ -4133,7 +4133,7 @@ bool field_action_magetower1(field_type *f_ptr, vptr input)
 bool field_action_magetower2(field_type *f_ptr, vptr input)
 {
 	int *factor = ((int *)input);
-	
+
 	store_type *st_ptr;
 
 	s32b cost;
@@ -4145,7 +4145,7 @@ bool field_action_magetower2(field_type *f_ptr, vptr input)
 		if (test_gold(&cost))
 		{
 			st_ptr = get_current_store();
-			
+
 			if (st_ptr && !st_ptr->insult_cur)
 			{
 				/*
@@ -4154,16 +4154,16 @@ bool field_action_magetower2(field_type *f_ptr, vptr input)
 				 * from store_type anyway.
 				 */
 				st_ptr->insult_cur = 1;
-			
+
 				/* Subtract off cost */
-            	p_ptr->au -= cost;
-				
+				p_ptr->au -= cost;
+
 				msg_print("The portal keeper notes your aura.");
 			}
-        }
+		}
 
-        /* Hack, use factor as a return value */
-        *factor = TRUE;
+		/* Hack, use factor as a return value */
+		*factor = TRUE;
 	}
 
 	if (p_ptr->command_cmd == 'T')
@@ -4172,8 +4172,8 @@ bool field_action_magetower2(field_type *f_ptr, vptr input)
 
 		building_magetower(*factor, FALSE);
 
-        /* Hack, use factor as a return value */
-        *factor = TRUE;
+		/* Hack, use factor as a return value */
+		*factor = TRUE;
 	}
 	else
 	{

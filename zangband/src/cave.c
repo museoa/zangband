@@ -2531,12 +2531,12 @@ void display_map(int *cx, int *cy)
 		y = py / 16 + *cy;
 
 		/* recenter */
-        x = x - wid / 2;
-        if (x + wid >= max_wild) x = max_wild - wid - 1;
+		x = x - wid / 2;
+		if (x + wid >= max_wild) x = max_wild - wid - 1;
 		if (x < 0) x = 0;
 
-        y = y - hgt / 2;
-        if (y + hgt >= max_wild) y = max_wild - hgt - 1;
+		y = y - hgt / 2;
+		if (y + hgt >= max_wild) y = max_wild - hgt - 1;
 		if (y < 0) y = 0;
 
 		/* Player location in wilderness */
@@ -2615,13 +2615,13 @@ void display_map(int *cx, int *cy)
 					/* Hack make a char /attr */
 					if (place[twn].quest_num)
 					{
-                        place_type *pl_ptr = &place[twn];
+						place_type *pl_ptr = &place[twn];
 
-                        wild_type *w_ptr = &wild[pl_ptr->y][pl_ptr->x];
+						wild_type *w_ptr = &wild[pl_ptr->y][pl_ptr->x];
 
-                        int depth = (w_ptr->done.mon_gen + 9) / 10;
+						int depth = (w_ptr->done.mon_gen + 9) / 10;
 
-                        if (depth > 9) depth = 9;
+						if (depth > 9) depth = 9;
 
 						/* Quests are red */
 						ma[j + 1][i + 1] = TERM_RED;

@@ -3386,10 +3386,10 @@ bool allocate_store(store_type *st_ptr)
 
 store_type *get_current_store(void)
 {
-   place_type *pl_ptr = &place[p_ptr->place_num];
-	
+	place_type *pl_ptr = &place[p_ptr->place_num];
+
 	int i, which = -1;
-	
+
 	/* Get the building the player is on */
 	for (i = 0; i < pl_ptr->numstores; i++)
 	{
@@ -3406,7 +3406,7 @@ store_type *get_current_store(void)
 		msg_print("Could not locate building!");
 		return (NULL);
 	}
-	
+
 	/* Return a pointer to the store */
 	return (&pl_ptr->store[which]);
 }
@@ -3434,7 +3434,7 @@ void do_cmd_store(field_type *f1_ptr)
 
 	/* Save the store pointer */
 	st_ptr = get_current_store();
-	
+
 	/* Paranoia */
 	if (!st_ptr) return;
 

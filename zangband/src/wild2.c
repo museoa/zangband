@@ -150,9 +150,9 @@ static wild_building_type wild_build[MAX_CITY_BUILD] =
 	{0, FT_BUILD_CASINO, BT_BUILD, 100, 200, 200, 20},
 	{0, FT_BUILD_INN, BT_BUILD, 100, 100, 200, 5},
 	{0, FT_BUILD_HEALER, BT_BUILD, 250, 250, 200, 20},
-    {0, FT_STORE_BLACK0, BT_STORE, 100, 100, 100, 10},
-    {0, FT_BUILD_MAGETOWER0, BT_BUILD, 100, 150, 100, 6},
-    {0, FT_BUILD_MAGETOWER1, BT_BUILD, 150, 250, 150, 20},
+	{0, FT_STORE_BLACK0, BT_STORE, 100, 100, 100, 10},
+	{0, FT_BUILD_MAGETOWER0, BT_BUILD, 100, 150, 100, 6},
+	{0, FT_BUILD_MAGETOWER1, BT_BUILD, 150, 250, 150, 20},
 };
 
 /* The stores in the starting town */
@@ -164,7 +164,7 @@ static int wild_first_town[START_STORE_NUM] =
 	BUILD_WARHALL0,
 	BUILD_STORE_TEMPLE,
 	BUILD_STORE_MAGIC,
-    BUILD_BLACK0
+	BUILD_BLACK0
 };
 
 
@@ -326,14 +326,14 @@ static u16b select_building(byte pop, byte magic, byte law, u16b *build,
 	if (build[BUILD_STORE_HOME])
 	{
 		wild_build[BUILD_STORE_HOME].gen = 0;
-    }
+	}
 
-    /* Hack - Not more than one magetower per city */
-    if (build[BUILD_MAGETOWER0] || build[BUILD_MAGETOWER1])
-    {
-        wild_build[BUILD_MAGETOWER0].gen = 0;
-        wild_build[BUILD_MAGETOWER1].gen = 0;
-    }
+	/* Hack - Not more than one magetower per city */
+	if (build[BUILD_MAGETOWER0] || build[BUILD_MAGETOWER1])
+	{
+		wild_build[BUILD_MAGETOWER0].gen = 0;
+		wild_build[BUILD_MAGETOWER1].gen = 0;
+	}
 
 	total = 0;
 
@@ -558,8 +558,8 @@ static bool create_city(int x, int y, int town_num)
 	/* Hack - fix this XXX XXX */
 
 	/* int pop = wild[y][x].trans.pop_map; */
-    int pop = ((wild[y][x].trans.pop_map + wild[y][x].trans.law_map) /
-               rand_range(4, 32)) + 128;
+	int pop = ((wild[y][x].trans.pop_map + wild[y][x].trans.law_map) /
+			   rand_range(4, 32)) + 128;
 	int law = wild[y][x].trans.law_map;
 	int magic;
 	int build_num = 0, build_tot;
@@ -1398,16 +1398,16 @@ bool init_places(int xx, int yy)
 			store_init(best_town, i, wild_first_town[i]);
 		}
 		else if (i < START_STORE_NUM)
-        {
-            if (build_is_store(wild_first_town[i]))
-            {
-                /* Hack - use the pre-defined stores */
-                store_init(best_town, i, wild_first_town[i]);
-            }
-            else
-            {
-                build_init(best_town, i, wild_first_town[i]);
-            }
+		{
+			if (build_is_store(wild_first_town[i]))
+			{
+				/* Hack - use the pre-defined stores */
+				store_init(best_town, i, wild_first_town[i]);
+			}
+			else
+			{
+				build_init(best_town, i, wild_first_town[i]);
+			}
 		}
 		else
 		{
@@ -1417,7 +1417,7 @@ bool init_places(int xx, int yy)
 	}
 
 	/* Paranoia */
-    if (!best_town) return (FALSE);
+	if (!best_town) return (FALSE);
 
 	/* Build starting city / town */
 	draw_city(best_town);
@@ -3943,19 +3943,19 @@ void change_level(int level)
  */
 void wipe_all_list(void)
 {
-    int i;
+	int i;
 
-    /* Clear the store cache */
-    for (i = 0; i < store_cache_num; i++)
-    {
-        if (store_cache[i]->stock != NULL)
-        {
-            FREE(store_cache[i]->stock);
-            store_cache[i]->stock_num = 0;
-            store_cache[i]->stock = NULL;
-        }
-    }
-    store_cache_num = 0;
+	/* Clear the store cache */
+	for (i = 0; i < store_cache_num; i++)
+	{
+		if (store_cache[i]->stock != NULL)
+		{
+			FREE(store_cache[i]->stock);
+			store_cache[i]->stock_num = 0;
+			store_cache[i]->stock = NULL;
+		}
+	}
+	store_cache_num = 0;
 
 	if (p_ptr->depth)
 	{

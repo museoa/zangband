@@ -5129,7 +5129,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 				dam = 0;
 				if (kill->
 					m_flags & (MONST_ASLEEP | MONST_CONFUSED | MONST_FEAR))
-				  break;
+					break;
 				if (r_ptr->level > borg_skill[BI_CLEVEL] - 5) break;
 				borg_fear_mon_spell = FALSE;
 				p1 = borg_danger_aux(c_y, c_x, 1, i, TRUE);

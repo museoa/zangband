@@ -1319,8 +1319,8 @@ bool set_stun(int v)
 	 */
 	if ((p_ptr->prace == RACE_GOLEM) &&
 		!(ironman_shops || ironman_downward || ironman_hard_quests ||
-          ironman_empty_levels || ironman_rooms || ironman_nightmare ||
-          ironman_deep_quests))
+		  ironman_empty_levels || ironman_rooms || ironman_nightmare ||
+		  ironman_deep_quests))
 	{
 		v = 0;
 	}

@@ -3176,26 +3176,26 @@ static void do_cmd_knowledge_uniques(void)
 
 static const cptr plural_table[] =
 {
-    "ex", "ices",
-    "ey", "eys",
-    "y", "ies",
-    "human", "humans",
-    "shaman", "shamans",
-    "man", "men",
-    "ouse", "ice",
-    "ff", "ffs",
-    "f", "ves",
-    "mage", "magi",
-    "geist", "geister",
-    "eraph", "eraphim",
-    "umak", "umakil",
-    "us", "i",
-    "s", "ses",
-    "x", "xes",
-    "sh", "shes",
-    "ch", "ches",
-    /* This last entry must match everything */
-    "", "s"
+	"ex", "ices",
+	"ey", "eys",
+	"y", "ies",
+	"human", "humans",
+	"shaman", "shamans",
+	"man", "men",
+	"ouse", "ice",
+	"ff", "ffs",
+	"f", "ves",
+	"mage", "magi",
+	"geist", "geister",
+	"eraph", "eraphim",
+	"umak", "umakil",
+	"us", "i",
+	"s", "ses",
+	"x", "xes",
+	"sh", "shes",
+	"ch", "ches",
+	/* This last entry must match everything */
+	"", "s"
 };
 
 /*
@@ -3203,57 +3203,57 @@ static const cptr plural_table[] =
  */
 void plural_aux(char *name)
 {
-    char *p;
-    char buf[80];
-    char tail[80];
-    int len = strlen(name);
-    int i;
+	char *p;
+	char buf[80];
+	char tail[80];
+	int len = strlen(name);
+	int i;
 
-    /* Don't overflow the buffer */
-    if (len > 70) return;
+	/* Don't overflow the buffer */
+	if (len > 70) return;
 
-    strcpy(buf, name);
-    tail[0] = '\0';
+	strcpy(buf, name);
+	tail[0] = '\0';
 
-    /* Total hack - handle Creeping coins */
-    if (len >= 6 && streq(buf + len - 6, " coins"))
-    {
-        strcpy(buf, "piles of ");
-        strcpy(buf + 9, name);
-        strcpy(name, buf);
-        return;
-    }
+	/* Total hack - handle Creeping coins */
+	if (len >= 6 && streq(buf + len - 6, " coins"))
+	{
+		strcpy(buf, "piles of ");
+		strcpy(buf + 9, name);
+		strcpy(name, buf);
+		return;
+	}
 
-    /* Find the trailing part we should ignore, if any */
-    p = strstr(buf, " out ");
-    if (!p) p = strstr(buf, " of ");
-    if (!p) p = strstr(buf, " that ");
-    if (!p) p = strstr(buf, " on ");
-    if (!p) p = strstr(buf, " to ");
-    if (p)
-    {
-        strcpy(tail, p);
-        *p = '\0';
-        len = strlen(buf);
-    }
+	/* Find the trailing part we should ignore, if any */
+	p = strstr(buf, " out ");
+	if (!p) p = strstr(buf, " of ");
+	if (!p) p = strstr(buf, " that ");
+	if (!p) p = strstr(buf, " on ");
+	if (!p) p = strstr(buf, " to ");
+	if (p)
+	{
+		strcpy(tail, p);
+		*p = '\0';
+		len = strlen(buf);
+	}
 
-    /* Find the appropriate plural */
-    for (i = 0; ; i += 2)
-    {
-        if (len >= strlen(plural_table[i]) &&
-            streq(buf + len - strlen(plural_table[i]), plural_table[i]))
-        {
-            strcpy(buf + len - strlen(plural_table[i]), plural_table[i + 1]);
-            break;
-        }
-    }
+	/* Find the appropriate plural */
+	for (i = 0;; i += 2)
+	{
+		if (len >= strlen(plural_table[i]) &&
+			streq(buf + len - strlen(plural_table[i]), plural_table[i]))
+		{
+			strcpy(buf + len - strlen(plural_table[i]), plural_table[i + 1]);
+			break;
+		}
+	}
 
-    /* Put the tail back on */
-    strcat(buf, tail);
+	/* Put the tail back on */
+	strcat(buf, tail);
 
-    /* Put it where it's expected */
-    strcpy(name, buf);
-    return;
+	/* Put it where it's expected */
+	strcpy(name, buf);
+	return;
 }
 
 

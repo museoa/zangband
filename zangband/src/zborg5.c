@@ -513,7 +513,7 @@ static int get_blank_kill(void)
 
 	/* Kill it */
 	borg_delete_kill(i);
-	
+
 	return (i);
 }
 
@@ -528,21 +528,21 @@ static void get_list(u16b **list_head, u16b **list_tail, byte type)
 			*list_tail = &mon_used_tail;
 			break;
 		}
-		
+
 		case BORG_MON_NEW:
 		{
 			*list_head = &mon_new_head;
 			*list_tail = &mon_new_tail;
 			break;
 		}
-	
+
 		case BORG_MON_OLD:
 		{
 			*list_head = &mon_old_head;
 			*list_tail = &mon_old_tail;
 			break;
 		}
-		
+
 		case BORG_MON_MOVE:
 		{
 			*list_head = &mon_move_head;
@@ -559,14 +559,14 @@ int get_new_mon(byte type)
 {
 	u16b *list_head = NULL;
 	u16b *list_tail = NULL;
-	
+
 	int new;
-	
+
 	borg_kill *kill;
-	
+
 	/* Get the required list */
 	get_list(&list_head, &list_tail, type);
-	
+
 	/* Do we already have a list? */
 	if (!(*list_head))
 	{
@@ -575,24 +575,24 @@ int get_new_mon(byte type)
 		*list_head = new;
 	}
 	else
-	{	
+	{
 		/* Get last node in list */
 		kill = &borg_kills[*list_tail];
-	
+
 		/* Get a new empty kill struct */
 		new = get_blank_kill();
-	
+
 		/* Link to new node */
 		kill->next_kill = new;
 	}
-	
+
 	/* Move the tail now */
 	*list_tail = new;
-	
+
 	/* Blank out the link */
 	kill = &borg_kills[new];
 	kill->next_kill = 0;
-	
+
 	/* Done */
 	return (new);
 }
@@ -603,22 +603,22 @@ int get_new_mon(byte type)
 void move_mon_entry(int i, u16b *node_ptr, byte type)
 {
 	borg_kill *kill = &borg_kills[i];
-	
+
 	u16b *list_head = NULL;
 	u16b *list_tail = NULL;
-	
+
 	/* Get the required list */
 	get_list(&list_head, &list_tail, type);
-	
+
 	/* Excise the node */
 	*node_ptr = kill->next_kill;
 	kill->next_kill = 0;
-	
+
 	if (*list_head)
 	{
 		/* Just connect to the tail of the list */
 		kill = &borg_kills[*list_tail];
-		
+
 		kill->next_kill = i;
 	}
 	else
@@ -626,7 +626,7 @@ void move_mon_entry(int i, u16b *node_ptr, byte type)
 		/* We need to make this the first node */
 		*list_head = i;
 	}
-	
+
 	/* This is now the list tail */
 	*list_tail = i;
 }

@@ -192,14 +192,14 @@ u16b insert_dungeon_monster_quest(u16b r_idx, u16b num, u16b level)
 	}
 
 	if (num != 1)
-    {
-        char buf[80];
-        strcpy(buf, r_name + r_ptr->name);
-        plural_aux(buf);
+	{
+		char buf[80];
+		strcpy(buf, r_name + r_ptr->name);
+		plural_aux(buf);
 
 		/* XXX XXX Create quest name */
 		(void)strnfmt(q_ptr->name, 60, "Kill %d %s on level %d.",
-                      (int)num, buf, (int)level);
+					  (int)num, buf, (int)level);
 	}
 	else
 	{
@@ -335,22 +335,22 @@ void get_player_quests(void)
 
 		/* Get monster */
 		for (j = 0; j < MAX_TRIES; j++)
-        {
-            int depth;
-            int min_depth;
+		{
+			int depth;
+			int min_depth;
 
-            if (!ironman_deep_quests)
-            {
-                depth = level + 6 +
-                    randint1(level * v / 200 + 1) +
-                    randint1(level * v / 200 + 1);
-                min_depth = level + (level / 20) + 1;
-            }
-            else
-            {
-                depth = level + rand_range(15, 30);
-                min_depth = level + v / 10 + 10;
-            }
+			if (!ironman_deep_quests)
+			{
+				depth = level + 6 +
+					randint1(level * v / 200 + 1) +
+					randint1(level * v / 200 + 1);
+				min_depth = level + (level / 20) + 1;
+			}
+			else
+			{
+				depth = level + rand_range(15, 30);
+				min_depth = level + v / 10 + 10;
+			}
 
 			/*
 			 * Random monster out of depth
@@ -371,7 +371,7 @@ void get_player_quests(void)
 			}
 
 			/* Accept monsters that are a few levels out of depth */
-            if (best_level > min_depth) break;
+			if (best_level > min_depth) break;
 		}
 
 		r_ptr = &r_info[best_r_idx];
@@ -1483,10 +1483,10 @@ bool quest_blank(int x, int y, int xsize, int ysize, int place_num, byte flags)
 bool create_quest(int x, int y, int place_num)
 {
 	int i, j;
-    int q_num, qtype;
-    int best_town, best_dist;
-    int dx, dy;
-    cptr town_name, town_dir;
+	int q_num, qtype;
+	int best_town, best_dist;
+	int dx, dy;
+	cptr town_name, town_dir;
 
 	wild_type *w_ptr = &wild[y][x];
 
@@ -1549,60 +1549,60 @@ bool create_quest(int x, int y, int place_num)
 	q_ptr->c_type = QC_NONE;
 
 	/* We need to trigger when the player enters the wilderness block */
-    q_ptr->x_type = QX_WILD_ENTER;
+	q_ptr->x_type = QX_WILD_ENTER;
 
-    /* Find the nearest town */
-    best_dist = 99999;
-    best_town = 0;
-    for (i = 0; i < place_count; i++)
-    {
-        int d;
+	/* Find the nearest town */
+	best_dist = 99999;
+	best_town = 0;
+	for (i = 0; i < place_count; i++)
+	{
+		int d;
 
-        /* Only real towns */
-        if (place[i].type != TOWN_FRACT)
-            continue;
+		/* Only real towns */
+		if (place[i].type != TOWN_FRACT)
+			continue;
 
-        /* Find closest town */
-        d = distance(pl_ptr->x, pl_ptr->y, place[i].x, place[i].y);
-        if (d < best_dist)
-        {
-            best_dist = d;
-            best_town = i;
-        }
-    }
+		/* Find closest town */
+		d = distance(pl_ptr->x, pl_ptr->y, place[i].x, place[i].y);
+		if (d < best_dist)
+		{
+			best_dist = d;
+			best_town = i;
+		}
+	}
 
-    town_name = place[best_town].name;
-    dx = pl_ptr->x - place[best_town].x;
-    dy = pl_ptr->y - place[best_town].y;
+	town_name = place[best_town].name;
+	dx = pl_ptr->x - place[best_town].x;
+	dy = pl_ptr->y - place[best_town].y;
 
-    if (ABS(dy) > ABS(dx) * 3)
-    {
-        if (dy > 0)
-            town_dir = "south";
-        else
-            town_dir = "north";
-    }
-    else if (ABS(dx) > ABS(dy) * 3)
-    {
-        if (dx > 0)
-            town_dir = "east";
-        else
-            town_dir = "west";
-    }
-    else if (dx > 0)
-    {
-        if (dy > 0)
-            town_dir = "south-east";
-        else
-            town_dir = "north-east";
-    }
-    else
-    {
-        if (dy > 0)
-            town_dir = "south-west";
-        else
-            town_dir = "north-west";
-    }
+	if (ABS(dy) > ABS(dx) * 3)
+	{
+		if (dy > 0)
+			town_dir = "south";
+		else
+			town_dir = "north";
+	}
+	else if (ABS(dx) > ABS(dy) * 3)
+	{
+		if (dx > 0)
+			town_dir = "east";
+		else
+			town_dir = "west";
+	}
+	else if (dx > 0)
+	{
+		if (dy > 0)
+			town_dir = "south-east";
+		else
+			town_dir = "north-east";
+	}
+	else
+	{
+		if (dy > 0)
+			town_dir = "south-west";
+		else
+			town_dir = "north-west";
+	}
 
 	/* Create quest name */
 	(void)strnfmt(q_ptr->name, 60, "Defeat the %s camp %s of %s.",

@@ -1549,137 +1549,137 @@ bool building_healer(void)
 
 
 static int collect_magetower_links(int n, int *link_p, int *link_w, s32b *cost,
-                                  int factor)
+                                   int factor)
 {
 	place_type *pl_ptr = &place[p_ptr->place_num];
-	
-    int i, j;
-    int max_link = 0;
-	
-	/* Get current town location*/
+
+	int i, j;
+	int max_link = 0;
+
+	/* Get current town location */
 	int x = pl_ptr->x, y = pl_ptr->y;
 
-    /* Find the magetowers we're linked to */
-    for (i = 0; i < place_count; i++)
-    {
-        place_type *pl_ptr = &place[i];
+	/* Find the magetowers we're linked to */
+	for (i = 0; i < place_count; i++)
+	{
+		place_type *pl_ptr = &place[i];
 
-        /* Skip current town */
-        if (i == p_ptr->place_num) continue;
+		/* Skip current town */
+		if (i == p_ptr->place_num) continue;
 
-        for (j = 0; j < pl_ptr->numstores; j++)
-        {
-            store_type *st_ptr = &pl_ptr->store[j];
+		for (j = 0; j < pl_ptr->numstores; j++)
+		{
+			store_type *st_ptr = &pl_ptr->store[j];
 
-            if (max_link >= n) return (max_link);
+			if (max_link >= n) return (max_link);
 
-            /* Hack - only allow teleportation to known magetowers */
-            if (!st_ptr->insult_cur) continue;
+			/* Hack - only allow teleportation to known magetowers */
+			if (!st_ptr->insult_cur) continue;
 
-            /* Is it a mage tower? */
-            if ((st_ptr->type == BUILD_MAGETOWER0) ||
-                (st_ptr->type == BUILD_MAGETOWER1))
-            {
-                link_p[max_link] = i;
-                link_w[max_link] = j;
-                cost[max_link] = distance(x, y, pl_ptr->x, pl_ptr->y) *
-                    factor * 2;
-                max_link++;
+			/* Is it a mage tower? */
+			if ((st_ptr->type == BUILD_MAGETOWER0) ||
+				(st_ptr->type == BUILD_MAGETOWER1))
+			{
+				link_p[max_link] = i;
+				link_w[max_link] = j;
+				cost[max_link] = distance(x, y, pl_ptr->x, pl_ptr->y) *
+					factor * 2;
+				max_link++;
 
-                /* Only collect 1 link per city */
-                break;
-            }
-        }
-    }
+				/* Only collect 1 link per city */
+				break;
+			}
+		}
+	}
 
-    return max_link;
+	return max_link;
 }
 
 bool building_magetower(int factor, bool display)
 {
 	store_type *st_ptr;
-   
-    int link_p[24], link_w[24];
-    int max_link = 0;
+
+	int link_p[24], link_w[24];
+	int max_link = 0;
 	int i;
-	
+
 	s32b cost[24];
-	
+
 	char out_val[160];
-	
+
 
 	/* Save the store pointer */
-    st_ptr = get_current_store();
-	
+	st_ptr = get_current_store();
+
 	/* Paranoia */
 	if (!st_ptr) return (FALSE);
 
-    /* Collect links */
-    max_link = collect_magetower_links(24, link_p, link_w, cost, factor);
+	/* Collect links */
+	max_link = collect_magetower_links(24, link_p, link_w, cost, factor);
 
-    if (display)
-    {
-        for (i = 0; i < max_link; i++)
-        {
-            int row = i % 12 + 4;
-            int col = (i / 12) * 40;
+	if (display)
+	{
+		for (i = 0; i < max_link; i++)
+		{
+			int row = i % 12 + 4;
+			int col = (i / 12) * 40;
 
-            /* Label it, clear the line --(-- */
-            (void)sprintf(out_val, "%c) ", I2A(i));
-            prt(out_val, col, row);
+			/* Label it, clear the line --(-- */
+			(void)sprintf(out_val, "%c) ", I2A(i));
+			prt(out_val, col, row);
 
-            /* Print place name */
-            prt(place[link_p[i]].name, col + 3, row);
-			
+			/* Print place name */
+			prt(place[link_p[i]].name, col + 3, row);
+
 			/* Print cost */
-			(void)sprintf(out_val, "%ld au", (long) cost[i]);
-            prt(out_val, col + 30, row);
-        }
-    }
-    else
-    {
-        char command;
+			(void)sprintf(out_val, "%ld au", (long)cost[i]);
+			prt(out_val, col + 30, row);
+		}
+	}
+	else
+	{
+		char command;
 
-        if (max_link == 0)
-        {
-            msg_print("You do not know any other towns to teleport to.");
-            return (FALSE);
-        }
+		if (max_link == 0)
+		{
+			msg_print("You do not know any other towns to teleport to.");
+			return (FALSE);
+		}
 
-        /* Build the prompt */
-        (void)sprintf(out_val, "(Towns %c-%c, ESC to exit)",
-                      I2A(0), I2A(max_link - 1));
+		/* Build the prompt */
+		(void)sprintf(out_val, "(Towns %c-%c, ESC to exit)",
+					  I2A(0), I2A(max_link - 1));
 
-        while (TRUE)
-        {
-            int k;
+		while (TRUE)
+		{
+			int k;
 
-            /* Escape */
-            if (!get_com(out_val, &command)) break;
+			/* Escape */
+			if (!get_com(out_val, &command)) break;
 
-            k = (islower(command) ? A2I(command) : -1);
+			k = (islower(command) ? A2I(command) : -1);
 
-            if ((k >= 0) && (k < max_link) && test_gold(&cost[k]))
-            {
+			if ((k >= 0) && (k < max_link) && test_gold(&cost[k]))
+			{
 				place_type *pl_ptr2 = &place[link_p[k]];
-	            store_type *st_ptr2 = &pl_ptr2->store[link_w[k]];
-				
-				/* Subtract off cost */
-            	p_ptr->au -= cost[k];
+				store_type *st_ptr2 = &pl_ptr2->store[link_w[k]];
 
-	            /* Move the player */
-	            p_ptr->px =  pl_ptr2->x * 16 + st_ptr2->x;
-    	        p_ptr->py =  pl_ptr2->y * 16 + st_ptr2->y;
-				
+				/* Subtract off cost */
+				p_ptr->au -= cost[k];
+
+				/* Move the player */
+				p_ptr->px = pl_ptr2->x * 16 + st_ptr2->x;
+				p_ptr->py = pl_ptr2->y * 16 + st_ptr2->y;
+
 				p_ptr->wilderness_x = p_ptr->px;
 				p_ptr->wilderness_y = p_ptr->py;
-				
+
 				/* Notice the move */
-	            move_wild();
+				move_wild();
 
 				/* Check for new panel (redraw map) */
-    	        verify_panel();
-				
+				verify_panel();
+
 				/* Update stuff */
 				p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MON_LITE);
 
@@ -1689,17 +1689,17 @@ bool building_magetower(int factor, bool display)
 				/* Window stuff */
 				p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
 
-        	    force_build_exit = TRUE;
+				force_build_exit = TRUE;
 
-	            return (TRUE);
-            }
+				return (TRUE);
+			}
 
-            /* Oops */
-            bell("Illegal choice!");
-        }
-    }
+			/* Oops */
+			bell("Illegal choice!");
+		}
+	}
 
-    return (FALSE);
+	return (FALSE);
 }
 
 #if 0
@@ -2193,13 +2193,13 @@ void do_cmd_bldg(field_type *f_ptr)
 		request_command(FALSE);
 
 		/* Process the command */
-        leave_build = build_process_command(f_ptr, b_ptr);
+		leave_build = build_process_command(f_ptr, b_ptr);
 
-        if (force_build_exit)
-        {
-            force_build_exit = FALSE;
-            break;
-        }
+		if (force_build_exit)
+		{
+			force_build_exit = FALSE;
+			break;
+		}
 
 		/* Hack -- Character is still in "icky" mode */
 		character_icky = TRUE;

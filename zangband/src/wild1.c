@@ -3165,8 +3165,8 @@ static void create_wild_info(int *bestx, int *besty)
 
 	byte hgt, pop, law;
 	u16b hgt_min, hgt_max, pop_min, pop_max;
-    byte sea_level;
-    int t;
+	byte sea_level;
+	int t;
 
 	long hgt_scale, pop_scale;
 
@@ -3245,14 +3245,14 @@ static void create_wild_info(int *bestx, int *besty)
 
 	create_law_map(sea_level * 16 + hgt_min);
 
-    /* Work out extremes of "lawfulness" so it can be scaled. */
+	/* Work out extremes of "lawfulness" so it can be scaled. */
 
-    /* Calculate lawfulness map */
-    for (i = t = 0; i < max_wild; i++)
-    {
-        t += wild_temp_dist[i];
-        wild_temp_dist[i] = t / (max_wild * max_wild / 256);
-    }
+	/* Calculate lawfulness map */
+	for (i = t = 0; i < max_wild; i++)
+	{
+		t += wild_temp_dist[i];
+		wild_temp_dist[i] = t / (max_wild * max_wild / 256);
+	}
 
 	/* Best place in wilderness for starting town */
 	x = -1;
@@ -3272,8 +3272,8 @@ static void create_wild_info(int *bestx, int *besty)
 			 */
 
 			hgt = (byte)((w_ptr->gen.hgt_map - hgt_min) * 16 / hgt_scale);
-            pop = (byte)((w_ptr->gen.pop_map - pop_min) * 16 / pop_scale);
-            law = wild_temp_dist[w_ptr->gen.law_map / 16];
+			pop = (byte)((w_ptr->gen.pop_map - pop_min) * 16 / pop_scale);
+			law = wild_temp_dist[w_ptr->gen.law_map / 16];
 
 			/*
 			 * Go to transition data structure
@@ -3373,8 +3373,8 @@ static void create_terrain(void)
 			/* Town */
 			w_ptr->done.place = place_num;
 
-			
-			
+
+
 			/* Set wilderness monsters to default values */
 
 			/* Toughness (level 0 - 64) */
@@ -3383,7 +3383,7 @@ static void create_terrain(void)
 
 			/* No monsters (probability 0 - 16) */
 			w_ptr->done.mon_prob = pop / 16;
-			
+
 			if (place_num)
 			{
 				/* Set values depending on type of place */

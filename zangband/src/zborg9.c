@@ -2107,7 +2107,7 @@ static void borg_parse_aux(cptr msg, int len)
 		goal = 0;
 		return;
 	}
-
+#if 0
 	/* check for mis-alter command.  Sometime induced by never_move guys */
 	if (streq(msg, "You attack the empty air.") && !borg_skill[BI_ISCONFUSED])
 	{
@@ -2139,7 +2139,7 @@ static void borg_parse_aux(cptr msg, int len)
 		goal = 0;
 		return;
 	}
-
+#endif /* 0 */
 	/* Feature XXX XXX XXX */
 	if (prefix(msg, "You see nothing there "))
 	{
