@@ -424,7 +424,7 @@ void enter_score(void)
 
 #ifndef SCORE_WIZARDS
 	/* Wizard-mode pre-empts scoring */
-	if (p_ptr->noscore & 0x000F)
+	if (p_ptr->noscore & 0x003F)
 	{
 		msg_print("Score not registered for wizards.");
 		message_flush();
@@ -435,7 +435,7 @@ void enter_score(void)
 
 #ifndef SCORE_BORGS
 	/* Borg-mode pre-empts scoring */
-	if (p_ptr->noscore & 0x00F0)
+	if (p_ptr->noscore & 0x00C0)
 	{
 		msg_print("Score not registered for borgs.");
 		message_flush();

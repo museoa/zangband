@@ -1937,7 +1937,7 @@ extern void do_cmd_debug(void);
 static bool enter_borg_mode(void)
 {
 	/* Ask first time */
-	if (!(p_ptr->noscore & 0x0010))
+	if (!(p_ptr->noscore & 0x0040))
 	{
 		/* Mention effects */
 		msg_print("The borg commands are for debugging and experimenting.");
@@ -1951,7 +1951,7 @@ static bool enter_borg_mode(void)
 		}
 
 		/* Mark savefile */
-		p_ptr->noscore |= 0x0010;
+		p_ptr->noscore |= 0x0040;
 	}
 
 	/* Success */
