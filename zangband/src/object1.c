@@ -838,7 +838,8 @@ bool identify_fully_aux(const object_type *o_ptr)
 
 	cptr info[128], reclaim[128], temp;
 	int num_reclaim = 0;
-
+	
+	int wid, hgt;
 
 	/* Extract the flags */
 	object_flags_known(o_ptr, &f1, &f2, &f3);
@@ -1414,13 +1415,15 @@ bool identify_fully_aux(const object_type *o_ptr)
 
 	/* No special effects */
 	if (!i) return (FALSE);
-
+	
+	/* Get size */
+	Term_get_size(&wid, &hgt);
 
 	/* Save the screen */
 	screen_save();
 
 	/* Erase the screen */
-	for (k = 1; k < 24; k++) prt("", 13, k);
+	for (k = 1; k < hgt; k++) prt("", 13, k);
 
 	/* Label the information */
 	prt("     Item Attributes:", 15, 1);
@@ -1431,8 +1434,8 @@ bool identify_fully_aux(const object_type *o_ptr)
 		/* Show the info */
 		prt(info[j], 15, k++);
 
-		/* Every 20 entries (lines 2 to 21), start over */
-		if ((k == 22) && (j + 1 < i))
+		/* Every hgt-2 entries (lines 2 to hgt-3), start over */
+		if ((k == hgt - 2) && (j + 1 < i))
 		{
 			prt("-- more --", 15, k);
 			(void)inkey();
