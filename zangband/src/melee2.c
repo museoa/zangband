@@ -1147,10 +1147,9 @@ static bool get_move_retreat(monster_type *m_ptr, int *tx, int *ty)
 	}
 
 	/* Monster has a target */
-	if ((m_ptr->tx) && (m_ptr->ty))
+	if ((m_ptr->tx) && (m_ptr->ty) && in_boundsp(m_ptr->tx, m_ptr->ty))
 	{
-		if (in_boundsp(m_ptr->tx, m_ptr->ty)
-			&& player_has_los_grid(parea(m_ptr->tx, m_ptr->ty)))
+		if (player_has_los_grid(parea(m_ptr->tx, m_ptr->ty)))
 		{
 			/* It's in LOS; cancel it. */
 			m_ptr->tx = 0;
@@ -1413,6 +1412,8 @@ static bool get_moves(int m_idx, int *mm)
 			{
 				xx = m_ptr->fx + ddx_ddd[i];
 				yy = m_ptr->fy + ddy_ddd[i];
+				
+				if (!in_bounds2(xx, yy)) continue;
 
 				/* Require next to player */
 				if (ABS(xx - px) > 1) continue;
@@ -1441,6 +1442,8 @@ static bool get_moves(int m_idx, int *mm)
 
 					xx = m_ptr->fx + ddx_ddd[i];
 					yy = m_ptr->fy + ddy_ddd[i];
+					
+					if (!in_bounds2(xx, yy)) continue;
 
 					c_ptr = area(xx, yy);
 
@@ -1459,6 +1462,8 @@ static bool get_moves(int m_idx, int *mm)
 					{
 						xx2 = fm_ptr->fx + ddx_ddd[i2];
 						yy2 = fm_ptr->fy + ddy_ddd[i2];
+						
+						if (!in_bounds2(xx2, yy2)) continue;
 
 						/* Require next to player */
 						if (ABS(xx2 - px) > 1) continue;
@@ -2436,7 +2441,6 @@ static void take_move(int m_idx, int *mm)
 			/* Do not move */
 			do_move = FALSE;
 		}
-
 
 
 		/* Creature has been allowed move */
