@@ -552,10 +552,10 @@ static void wr_item(const object_type *o_ptr)
 
 	wr_byte(o_ptr->info);
 
-	wr_u32b(o_ptr->flags1);
-	wr_u32b(o_ptr->flags2);
-	wr_u32b(o_ptr->flags3);
-	wr_u32b(o_ptr->flags4);
+	wr_u32b(o_ptr->flags[0]);
+	wr_u32b(o_ptr->flags[1]);
+	wr_u32b(o_ptr->flags[2]);
+	wr_u32b(o_ptr->flags[3]);
 
 	/* Next object in list */
 	wr_s16b(o_ptr->next_o_idx);
@@ -605,10 +605,10 @@ static void wr_item(const object_type *o_ptr)
 
 	wr_byte(o_ptr->activate);
 
-	wr_u32b(o_ptr->kn_flags1);
-	wr_u32b(o_ptr->kn_flags2);
-	wr_u32b(o_ptr->kn_flags3);
-	wr_u32b(o_ptr->kn_flags4);
+	wr_u32b(o_ptr->kn_flags[0]);
+	wr_u32b(o_ptr->kn_flags[1]);
+	wr_u32b(o_ptr->kn_flags[2]);
+	wr_u32b(o_ptr->kn_flags[3]);
 }
 
 
@@ -701,12 +701,12 @@ static void wr_lore(int r_idx)
 	wr_byte(r_ptr->r_blows[3]);
 
 	/* Memorize flags */
-	wr_u32b(r_ptr->r_flags1);
-	wr_u32b(r_ptr->r_flags2);
-	wr_u32b(r_ptr->r_flags3);
-	wr_u32b(r_ptr->r_flags4);
-	wr_u32b(r_ptr->r_flags5);
-	wr_u32b(r_ptr->r_flags6);
+	wr_u32b(r_ptr->r_flags[0]);
+	wr_u32b(r_ptr->r_flags[1]);
+	wr_u32b(r_ptr->r_flags[2]);
+	wr_u32b(r_ptr->r_flags[3]);
+	wr_u32b(r_ptr->r_flags[4]);
+	wr_u32b(r_ptr->r_flags[5]);
 
 
 	/* Monster limit per level */

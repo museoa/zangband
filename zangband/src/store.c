@@ -430,10 +430,10 @@ static bool store_object_similar(const object_type *o_ptr,
 	if (o_ptr->xtra_name || j_ptr->xtra_name) return (FALSE);
 
 	/* Hack -- Identical flags! */
-	if ((o_ptr->flags1 != j_ptr->flags1) ||
-		(o_ptr->flags2 != j_ptr->flags2) || 
-		(o_ptr->flags3 != j_ptr->flags3) ||
-		(o_ptr->flags4 != j_ptr->flags4))
+	if ((o_ptr->flags[0] != j_ptr->flags[0]) ||
+		(o_ptr->flags[1] != j_ptr->flags[1]) || 
+		(o_ptr->flags[2] != j_ptr->flags[2]) ||
+		(o_ptr->flags[3] != j_ptr->flags[3]))
 		return (FALSE);
 
 	/* Require identical recharge times / fuel level */
@@ -726,10 +726,10 @@ static object_type *store_carry(object_type *o_ptr)
 	object_mental(o_ptr);
 
 	/* Save all the known flags */
-	o_ptr->kn_flags1 = o_ptr->flags1;
-	o_ptr->kn_flags2 = o_ptr->flags2;
-	o_ptr->kn_flags3 = o_ptr->flags3;
-	o_ptr->kn_flags4 = o_ptr->flags4;
+	o_ptr->kn_flags[0] = o_ptr->flags[0];
+	o_ptr->kn_flags[1] = o_ptr->flags[1];
+	o_ptr->kn_flags[2] = o_ptr->flags[2];
+	o_ptr->kn_flags[3] = o_ptr->flags[3];
 
     /* Erase the inscription */
     quark_remove(&o_ptr->inscription);

@@ -139,7 +139,7 @@ static bool nice_target(monster_type *m_ptr, monster_race *r_ptr,
 	}
 
 	/* Monster must be projectable if we can't pass through walls */
-	if (!(r_ptr->flags2 & (RF2_PASS_WALL | RF2_KILL_WALL)) &&
+	if (!(TEST_FLAG(r_ptr->flags, 1, RF1_PASS_WALL | RF1_KILL_WALL)) &&
 		!projectable(m_ptr->fx, m_ptr->fy, t_ptr->fx, t_ptr->fy))
 	{
 		return (FALSE);
@@ -243,7 +243,7 @@ static int cave_passable_mon(monster_type *m_ptr, cave_type *c_ptr)
 	if (character_dungeon && (area(p_ptr->px, p_ptr->py) == c_ptr))
 	{
 		/* Monster has no melee blows - character's grid is off-limits. */
-		if (r_ptr->flags1 & (RF1_NEVER_BLOW)) return (0);
+		if (TEST_FLAG(r_ptr->flags, 0, RF0_NEVER_BLOW)) return (0);
 	}
 
 	/* The grid is occupied by a monster. */
@@ -253,7 +253,7 @@ static int cave_passable_mon(monster_type *m_ptr, cave_type *c_ptr)
 		monster_race *nr_ptr = &r_info[n_ptr->r_idx];
 
 		/* Kill weaker monsters + attack 'enemies' */
-		if (((r_ptr->flags2 & (RF2_KILL_BODY)) && (r_ptr->mexp > nr_ptr->mexp))
+		if (((TEST_FLAG(r_ptr->flags, 1, RF1_KILL_BODY)) && (r_ptr->mexp > nr_ptr->mexp))
 			|| are_enemies(m_ptr, n_ptr) || m_ptr->confused)
 		{
 			/* This is a null statement... */
@@ -261,7 +261,7 @@ static int cave_passable_mon(monster_type *m_ptr, cave_type *c_ptr)
 		}
 
 		/* Push past weaker or similar monsters */
-		else if ((r_ptr->flags2 & (RF2_MOVE_BODY))
+		else if ((TEST_FLAG(r_ptr->flags, 1, RF1_MOVE_BODY))
 				 && (r_ptr->mexp >= nr_ptr->mexp))
 		{
 			/* It's easier to push past weaker monsters */
@@ -291,15 +291,15 @@ static int cave_passable_mon(monster_type *m_ptr, cave_type *c_ptr)
 		/* Ocean */
 		if (feat == FEAT_OCEAN_WATER)
 		{
-			if (!(r_ptr->flags8 & RF8_WILD_OCEAN)) return (HURT_TERRAIN_CHANCE);
+			if (!(RF_FLAG(r_ptr->flags, 7, WILD_OCEAN))) return (HURT_TERRAIN_CHANCE);
 		}
 
 		/* Deep water */
 		else if (feat == FEAT_DEEP_WATER)
 		{
-			if (!((r_ptr->flags7 & RF7_AQUATIC) ||
-				  (r_ptr->flags7 & RF7_CAN_FLY) ||
-				  (r_ptr->flags7 & RF7_CAN_SWIM)))
+			if (!((RF_FLAG(r_ptr->flags, 6, AQUATIC)) ||
+				  (RF_FLAG(r_ptr->flags, 6, CAN_FLY)) ||
+				  (RF_FLAG(r_ptr->flags, 6, CAN_SWIM))))
 			{
 				return (HURT_TERRAIN_CHANCE);
 			}
@@ -308,11 +308,11 @@ static int cave_passable_mon(monster_type *m_ptr, cave_type *c_ptr)
 		/* Shallow water */
 		else if (feat == FEAT_SHAL_WATER)
 		{
-			if (r_ptr->flags2 & RF2_AURA_FIRE) return (0);
+			if (RF_FLAG(r_ptr->flags, 1, AURA_FIRE)) return (0);
 		}
 
 		/* Aquatic creatues need water */
-		if ((r_ptr->flags7 & RF7_AQUATIC) && !(r_ptr->flags7 & RF7_CAN_FLY))
+		if ((RF_FLAG(r_ptr->flags, 6, AQUATIC)) && !(RF_FLAG(r_ptr->flags, 6, CAN_FLY)))
 		{
 			return (0);
 		}
@@ -320,8 +320,8 @@ static int cave_passable_mon(monster_type *m_ptr, cave_type *c_ptr)
 		/* Lava */
 		if ((feat == FEAT_SHAL_LAVA) || (feat == FEAT_DEEP_LAVA))
 		{
-			if (!((r_ptr->flags3 & RF3_IM_FIRE) ||
-				  (r_ptr->flags7 & RF7_CAN_FLY)))
+			if (!((RF_FLAG(r_ptr->flags, 2, IM_FIRE)) ||
+				  (RF_FLAG(r_ptr->flags, 6, CAN_FLY))))
 			{
 				return (HURT_TERRAIN_CHANCE);
 			}
@@ -330,8 +330,8 @@ static int cave_passable_mon(monster_type *m_ptr, cave_type *c_ptr)
 		/* Acid */
 		else if ((feat == FEAT_SHAL_ACID) || (feat == FEAT_DEEP_ACID))
 		{
-			if (!((r_ptr->flags3 & RF3_IM_ACID) ||
-				  (r_ptr->flags7 & RF7_CAN_FLY)))
+			if (!((RF_FLAG(r_ptr->flags, 2, IM_ACID)) ||
+				  (RF_FLAG(r_ptr->flags, 6, CAN_FLY))))
 			{
 				return (HURT_TERRAIN_CHANCE);
 			}
@@ -340,8 +340,8 @@ static int cave_passable_mon(monster_type *m_ptr, cave_type *c_ptr)
 		/* Swamp */
 		else if ((feat == FEAT_SHAL_SWAMP) || (feat == FEAT_DEEP_SWAMP))
 		{
-			if (!((r_ptr->flags3 & RF3_IM_POIS) ||
-				  (r_ptr->flags7 & RF7_CAN_FLY)))
+			if (!((RF_FLAG(r_ptr->flags, 2, IM_POIS)) ||
+				  (RF_FLAG(r_ptr->flags, 6, CAN_FLY))))
 			{
 				return (HURT_TERRAIN_CHANCE);
 			}
@@ -354,8 +354,8 @@ static int cave_passable_mon(monster_type *m_ptr, cave_type *c_ptr)
 	/* Closed or secret doors can be opened */
 	if ((feat == FEAT_CLOSED) || (feat == FEAT_SECRET))
 	{
-		if (((r_ptr->flags2 & RF2_OPEN_DOOR)
-			 || (r_ptr->flags2 & RF2_BASH_DOOR))
+		if (((RF_FLAG(r_ptr->flags, 1, OPEN_DOOR))
+			 || (RF_FLAG(r_ptr->flags, 1, BASH_DOOR)))
 			&& (!is_pet(m_ptr) || p_ptr->pet_open_doors))
 		{
 			/* Opening doors takes time */
@@ -370,7 +370,7 @@ static int cave_passable_mon(monster_type *m_ptr, cave_type *c_ptr)
 	}
 
 	/* Monster can burrow through walls */
-	if ((r_ptr->flags2 & (RF2_PASS_WALL)) || (r_ptr->flags2 & (RF2_KILL_WALL)))
+	if ((TEST_FLAG(r_ptr->flags, 1, RF1_PASS_WALL)) || (TEST_FLAG(r_ptr->flags, 1, RF1_KILL_WALL)))
 	{
 		return (move_chance);
 	}
@@ -422,8 +422,8 @@ void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
 	/* It is dead now... or is it? */
 	if (m_ptr->hp < 0)
 	{
-		if ((r_ptr->flags1 & RF1_UNIQUE) ||
-			(r_ptr->flags1 & RF1_QUESTOR) || (r_ptr->flags3 & RF3_UNIQUE_7))
+		if ((RF_FLAG(r_ptr->flags, 0, UNIQUE)) ||
+			(RF_FLAG(r_ptr->flags, 0, QUESTOR)) || (RF_FLAG(r_ptr->flags, 2, UNIQUE_7)))
 		{
 			m_ptr->hp = 1;
 		}
@@ -501,7 +501,7 @@ void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
 	}
 
 	/* Sometimes a monster gets scared by damage */
-	if (!m_ptr->monfear && !(r_ptr->flags3 & RF3_NO_FEAR))
+	if (!m_ptr->monfear && !(RF_FLAG(r_ptr->flags, 2, NO_FEAR)))
 	{
 		int percentage;
 
@@ -626,7 +626,7 @@ static bool monster_can_smell(monster_type *m_ptr)
 	if (strchr("CZ", r_ptr->d_char)) return (TRUE);
 
 	/* So are the Nazgul */
-	else if ((strchr("W", r_ptr->d_char)) && (r_ptr->flags1 & (RF1_UNIQUE)))
+	else if ((strchr("W", r_ptr->d_char)) && (TEST_FLAG(r_ptr->flags, 0, RF0_UNIQUE)))
 	{
 		/* Bloodscent! */
 		return (TRUE);
@@ -997,7 +997,7 @@ static void get_move_advance(monster_type *m_ptr, int *tx, int *ty)
 
 
 	/* Hack - Monster can go through rocks - head straight for character */
-	if (r_ptr->flags2 & (RF2_PASS_WALL | RF2_KILL_WALL))
+	if (TEST_FLAG(r_ptr->flags, 1, RF1_PASS_WALL | RF1_KILL_WALL))
 	{
 		*tx = px;
 		*ty = py;
@@ -1011,9 +1011,9 @@ static void get_move_advance(monster_type *m_ptr, int *tx, int *ty)
 		if (m_ptr->cdis < MAX_RANGE / 2 &&
 			m_ptr->cdis > 2 &&
 			m_ptr->hp < p_ptr->lev * 3 &&
-			((r_ptr->flags4 & RF4_ATTACK_MASK) ||
-			 (r_ptr->flags5 & RF5_ATTACK_MASK) ||
-			 (r_ptr->flags6 & RF6_ATTACK_MASK)))
+			((RF_FLAG(r_ptr->flags, 3, ATTACK_MASK)) ||
+			 (RF_FLAG(r_ptr->flags, 4, ATTACK_MASK)) ||
+			 (RF_FLAG(r_ptr->flags, 5, ATTACK_MASK))))
 		{
 			/* Move directly away from character. */
 			*tx = mx + -(px - mx);
@@ -1211,7 +1211,7 @@ static bool get_move_retreat(monster_type *m_ptr, int *tx, int *ty)
 		&& !player_has_los_grid(parea(m_ptr->fx, m_ptr->fy)))
 	{
 		/* Monster cannot pass through walls */
-		if (!(r_ptr->flags2 & (RF2_PASS_WALL | RF2_KILL_WALL)))
+		if (!(TEST_FLAG(r_ptr->flags, 1, RF1_PASS_WALL | RF1_KILL_WALL)))
 		{
 			/* Run away from noise */
 			if (c_ptr->cost)
@@ -1361,9 +1361,9 @@ static bool get_moves(int m_idx, int *mm)
 		 * Animal packs try to get the player out of corridors
 		 * (...unless they can move through walls -- TY)
 		 */
-		if ((r_ptr->flags1 & RF1_FRIENDS) &&
-			(r_ptr->flags3 & RF3_ANIMAL) &&
-			!(r_ptr->flags2 & (RF2_PASS_WALL | RF2_KILL_WALL)) && smart_packs)
+		if ((RF_FLAG(r_ptr->flags, 0, FRIENDS)) &&
+			(RF_FLAG(r_ptr->flags, 2, ANIMAL)) &&
+			!(TEST_FLAG(r_ptr->flags, 1, RF1_PASS_WALL | RF1_KILL_WALL)) && smart_packs)
 		{
 			int i, room = 0;
 
@@ -1396,7 +1396,7 @@ static bool get_moves(int m_idx, int *mm)
 		}
 
 		/* Monster groups try to surround the player */
-		if (!done && (r_ptr->flags1 & RF1_FRIENDS) && randint0(2) == 0)
+		if (!done && (RF_FLAG(r_ptr->flags, 0, FRIENDS)) && randint0(2) == 0)
 		{
 			int i, i2;
 			int xx2, yy2;
@@ -1455,7 +1455,7 @@ static bool get_moves(int m_idx, int *mm)
 
 					/* Must be awake and mobile */
 					if (fm_ptr->csleep
-						|| (r_ptr->flags1 & RF1_NEVER_MOVE)) continue;
+						|| (RF_FLAG(r_ptr->flags, 0, NEVER_MOVE))) continue;
 
 					/* Check if this monster can move */
 					for (i2 = 0; i2 < 8; i2++)
@@ -1556,7 +1556,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 	if (m_idx == t_idx) return FALSE;
 
 	/* Not allowed to attack */
-	if (r_ptr->flags1 & RF1_NEVER_BLOW) return FALSE;
+	if (RF_FLAG(r_ptr->flags, 0, NEVER_BLOW)) return FALSE;
 
 	/* Wake it up */
 	t_ptr->csleep = 0;
@@ -2016,15 +2016,15 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 				if (touched)
 				{
 					/* Aura fire */
-					if ((tr_ptr->flags2 & RF2_AURA_FIRE) &&
-						!(r_ptr->flags3 & RF3_IM_FIRE))
+					if ((RF_FLAG(tr_ptr->flags, 1, AURA_FIRE)) &&
+						!(RF_FLAG(r_ptr->flags, 2, IM_FIRE)))
 					{
 						if (see_either)
 						{
 							blinked = FALSE;
 							msgf("%^s is suddenly very hot!", m_name);
 							if (see_t)
-								tr_ptr->r_flags2 |= RF2_AURA_FIRE;
+								tr_ptr->r_flags[1] |= RF1_AURA_FIRE;
 						}
 						(void)project(t_idx, 0, m_ptr->fx, m_ptr->fy,
 									  damroll(1 + ((tr_ptr->level) / 26),
@@ -2033,15 +2033,15 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 					}
 
 					/* Aura cold */
-					if ((tr_ptr->flags3 & RF3_AURA_COLD) &&
-						!(r_ptr->flags3 & RF3_IM_COLD))
+					if ((RF_FLAG(tr_ptr->flags, 2, AURA_COLD)) &&
+						!(RF_FLAG(r_ptr->flags, 2, IM_COLD)))
 					{
 						if (see_either)
 						{
 							blinked = FALSE;
 							msgf("%^s is suddenly very cold!", m_name);
 							if (see_t)
-								tr_ptr->r_flags3 |= RF3_AURA_COLD;
+								tr_ptr->r_flags[2] |= RF2_AURA_COLD;
 						}
 						(void)project(t_idx, 0, m_ptr->fx, m_ptr->fy,
 									  damroll(1 + ((tr_ptr->level) / 26),
@@ -2050,15 +2050,15 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 					}
 
 					/* Aura elec */
-					if ((tr_ptr->flags2 & (RF2_AURA_ELEC))
-						&& !(r_ptr->flags3 & (RF3_IM_ELEC)))
+					if ((TEST_FLAG(tr_ptr->flags, 1, RF1_AURA_ELEC))
+						&& !(TEST_FLAG(r_ptr->flags, 2, RF2_IM_ELEC)))
 					{
 						if (see_either)
 						{
 							blinked = FALSE;
 							msgf("%^s gets zapped!", m_name);
 							if (see_t)
-								tr_ptr->r_flags2 |= RF2_AURA_ELEC;
+								tr_ptr->r_flags[1] |= RF1_AURA_ELEC;
 						}
 						(void)project(t_idx, 0, m_ptr->fx, m_ptr->fy,
 									  damroll(1 + ((tr_ptr->level) / 26),
@@ -2248,7 +2248,7 @@ static void take_move(int m_idx, int *mm)
 		}
 
 		/* Monster moves through walls (and doors) */
-		else if (r_ptr->flags2 & RF2_PASS_WALL)
+		else if (RF_FLAG(r_ptr->flags, 1, PASS_WALL))
 		{
 			/* Pass through walls/doors/rubble */
 			do_move = TRUE;
@@ -2258,7 +2258,7 @@ static void take_move(int m_idx, int *mm)
 		}
 
 		/* Monster destroys walls (and doors) */
-		else if (r_ptr->flags2 & RF2_KILL_WALL)
+		else if (RF_FLAG(r_ptr->flags, 1, KILL_WALL))
 		{
 			/* Eat through walls/doors/rubble */
 			do_move = TRUE;
@@ -2322,10 +2322,10 @@ static void take_move(int m_idx, int *mm)
 
 		/* Some monsters never attack */
 		if (do_move && (ny == p_ptr->py) && (nx == p_ptr->px) &&
-			(r_ptr->flags1 & RF1_NEVER_BLOW))
+			(RF_FLAG(r_ptr->flags, 0, NEVER_BLOW)))
 		{
 			/* Hack -- memorize lack of attacks */
-			if (m_ptr->ml) r_ptr->r_flags1 |= (RF1_NEVER_BLOW);
+			if (m_ptr->ml) r_ptr->r_flags[0] |= (RF0_NEVER_BLOW);
 
 			/* Do not move */
 			do_move = FALSE;
@@ -2334,7 +2334,7 @@ static void take_move(int m_idx, int *mm)
 		/* Handle closed doors and secret doors */
 		if (do_move &&
 			((c_ptr->feat == FEAT_CLOSED) || (c_ptr->feat == FEAT_SECRET)) &&
-			(r_ptr->flags2 & RF2_OPEN_DOOR) &&
+			(RF_FLAG(r_ptr->flags, 1, OPEN_DOOR)) &&
 			(!is_pet(m_ptr) || p_ptr->pet_open_doors))
 		{
 			/* Open the door */
@@ -2371,7 +2371,7 @@ static void take_move(int m_idx, int *mm)
 
 		/* Not over the pattern */
 		if (cave_pattern_grid(c_ptr) && !do_turn &&
-			!(r_ptr->flags7 & RF7_CAN_FLY))
+			!(RF_FLAG(r_ptr->flags, 6, CAN_FLY)))
 		{
 			do_move = FALSE;
 		}
@@ -2387,15 +2387,15 @@ static void take_move(int m_idx, int *mm)
 			do_move = FALSE;
 
 			/* Attack 'enemies' */
-			if (((r_ptr->flags2 & (RF2_KILL_BODY)) &&
+			if (((TEST_FLAG(r_ptr->flags, 1, RF1_KILL_BODY)) &&
 				 (r_ptr->mexp * r_ptr->level > z_ptr->mexp * z_ptr->level) &&
 				 (cave_floor_grid(c_ptr))) ||
 				are_enemies(m_ptr, m2_ptr) || m_ptr->confused)
 			{
 				do_move = FALSE;
 
-				if (r_ptr->flags2 & RF2_KILL_BODY)
-					r_ptr->r_flags2 |= (RF2_KILL_BODY);
+				if (RF_FLAG(r_ptr->flags, 1, KILL_BODY))
+					r_ptr->r_flags[1] |= (RF1_KILL_BODY);
 
 				/* attack */
 				if ((m2_ptr->r_idx) && (m2_ptr->hp >= 0))
@@ -2406,7 +2406,7 @@ static void take_move(int m_idx, int *mm)
 			}
 
 			/* Push past weaker monsters (unless leaving a wall) */
-			else if ((r_ptr->flags2 & RF2_MOVE_BODY) &&
+			else if ((RF_FLAG(r_ptr->flags, 1, MOVE_BODY)) &&
 					 (r_ptr->mexp > z_ptr->mexp) && cave_floor_grid(c_ptr) &&
 					 (cave_floor_grid(area(m_ptr->fx, m_ptr->fy))))
 			{
@@ -2433,10 +2433,10 @@ static void take_move(int m_idx, int *mm)
 		}
 
 		/* Some monsters never move */
-		if (do_move && (r_ptr->flags1 & RF1_NEVER_MOVE))
+		if (do_move && (RF_FLAG(r_ptr->flags, 0, NEVER_MOVE)))
 		{
 			/* Hack -- memorize lack of attacks */
-			if (m_ptr->ml) r_ptr->r_flags1 |= (RF1_NEVER_MOVE);
+			if (m_ptr->ml) r_ptr->r_flags[0] |= (RF0_NEVER_MOVE);
 
 			/* Do not move */
 			do_move = FALSE;
@@ -2526,7 +2526,7 @@ static void take_move(int m_idx, int *mm)
 				if (o_ptr->tval == TV_STATUE) continue;
 
 				/* Take or Kill objects on the floor */
-				if ((r_ptr->flags2 & (RF2_TAKE_ITEM | RF2_KILL_ITEM)) &&
+				if ((TEST_FLAG(r_ptr->flags, 1, RF1_TAKE_ITEM | RF1_KILL_ITEM)) &&
 					(!is_pet(m_ptr) || p_ptr->pet_pickup_items))
 				{
 					u32b flg3 = 0L;
@@ -2540,23 +2540,23 @@ static void take_move(int m_idx, int *mm)
 					monster_desc(m_name, m_ptr, 0x04, 80);
 
 					/* React to objects that hurt the monster */
-					if (o_ptr->flags1 & TR1_KILL_DRAGON) flg3 |= (RF3_DRAGON);
-					if (o_ptr->flags1 & TR1_SLAY_DRAGON) flg3 |= (RF3_DRAGON);
-					if (o_ptr->flags1 & TR1_SLAY_TROLL) flg3 |= (RF3_TROLL);
-					if (o_ptr->flags1 & TR1_SLAY_GIANT) flg3 |= (RF3_GIANT);
-					if (o_ptr->flags1 & TR1_SLAY_ORC) flg3 |= (RF3_ORC);
-					if (o_ptr->flags1 & TR1_SLAY_DEMON) flg3 |= (RF3_DEMON);
-					if (o_ptr->flags1 & TR1_SLAY_UNDEAD) flg3 |= (RF3_UNDEAD);
-					if (o_ptr->flags1 & TR1_SLAY_ANIMAL) flg3 |= (RF3_ANIMAL);
-					if (o_ptr->flags1 & TR1_SLAY_EVIL) flg3 |= (RF3_EVIL);
+					if (TR_FLAG(o_ptr->flags, 0, KILL_DRAGON)) flg3 |= (RF2_DRAGON);
+					if (TR_FLAG(o_ptr->flags, 0, SLAY_DRAGON)) flg3 |= (RF2_DRAGON);
+					if (TR_FLAG(o_ptr->flags, 0, SLAY_TROLL)) flg3 |= (RF2_TROLL);
+					if (TR_FLAG(o_ptr->flags, 0, SLAY_GIANT)) flg3 |= (RF2_GIANT);
+					if (TR_FLAG(o_ptr->flags, 0, SLAY_ORC)) flg3 |= (RF2_ORC);
+					if (TR_FLAG(o_ptr->flags, 0, SLAY_DEMON)) flg3 |= (RF2_DEMON);
+					if (TR_FLAG(o_ptr->flags, 0, SLAY_UNDEAD)) flg3 |= (RF2_UNDEAD);
+					if (TR_FLAG(o_ptr->flags, 0, SLAY_ANIMAL)) flg3 |= (RF2_ANIMAL);
+					if (TR_FLAG(o_ptr->flags, 0, SLAY_EVIL)) flg3 |= (RF2_EVIL);
 
 					/* The object cannot be picked up by the monster */
-					if ((o_ptr->flags3 & TR3_INSTA_ART) ||
-						(r_ptr->flags3 & flg3))
+					if ((TR_FLAG(o_ptr->flags, 2, INSTA_ART)) ||
+						(r_ptr->flags[2] & flg3))
 					{
 						/* Only give a message for "take_item" */
-						if ((r_ptr->flags2 & (RF2_TAKE_ITEM))
-							&& (r_ptr->flags2 & (RF2_STUPID)))
+						if ((TEST_FLAG(r_ptr->flags, 1, RF1_TAKE_ITEM))
+							&& (TEST_FLAG(r_ptr->flags, 1, RF1_STUPID)))
 						{
 							/* Take note */
 							did_take_item = TRUE;
@@ -2572,7 +2572,7 @@ static void take_move(int m_idx, int *mm)
 					}
 
 					/* Pick up the item */
-					else if (r_ptr->flags2 & RF2_TAKE_ITEM)
+					else if (RF_FLAG(r_ptr->flags, 1, TAKE_ITEM))
 					{
 						/* Take note */
 						did_take_item = TRUE;
@@ -2631,7 +2631,7 @@ static void take_move(int m_idx, int *mm)
 	}
 
 	/* Notice changes in view */
-	if (do_move && (r_ptr->flags7 & (RF7_LITE_1 | RF7_LITE_2)))
+	if (do_move && (TEST_FLAG(r_ptr->flags, 6, RF6_LITE_1 | RF6_LITE_2)))
 	{
 		/* Update some things */
 		p_ptr->update |= (PU_MON_LITE);
@@ -2641,25 +2641,25 @@ static void take_move(int m_idx, int *mm)
 	if (m_ptr->ml)
 	{
 		/* Monster opened a door */
-		if (did_open_door) r_ptr->r_flags2 |= (RF2_OPEN_DOOR);
+		if (did_open_door) r_ptr->r_flags[1] |= (RF1_OPEN_DOOR);
 
 		/* Monster bashed a door */
-		if (did_bash_door) r_ptr->r_flags2 |= (RF2_BASH_DOOR);
+		if (did_bash_door) r_ptr->r_flags[1] |= (RF1_BASH_DOOR);
 
 		/* Monster tried to pick something up */
-		if (did_take_item) r_ptr->r_flags2 |= (RF2_TAKE_ITEM);
+		if (did_take_item) r_ptr->r_flags[1] |= (RF1_TAKE_ITEM);
 
 		/* Monster tried to crush something */
-		if (did_kill_item) r_ptr->r_flags2 |= (RF2_KILL_ITEM);
+		if (did_kill_item) r_ptr->r_flags[1] |= (RF1_KILL_ITEM);
 
 		/* Monster pushed past another monster */
-		if (did_move_body) r_ptr->r_flags2 |= (RF2_MOVE_BODY);
+		if (did_move_body) r_ptr->r_flags[1] |= (RF1_MOVE_BODY);
 
 		/* Monster passed through a wall */
-		if (did_pass_wall) r_ptr->r_flags2 |= (RF2_PASS_WALL);
+		if (did_pass_wall) r_ptr->r_flags[1] |= (RF1_PASS_WALL);
 
 		/* Monster destroyed a wall */
-		if (did_kill_wall) r_ptr->r_flags2 |= (RF2_KILL_WALL);
+		if (did_kill_wall) r_ptr->r_flags[1] |= (RF1_KILL_WALL);
 	}
 
 
@@ -2727,13 +2727,13 @@ static void process_monster(int m_idx)
 
 
 	/* Quantum monsters are odd */
-	if (r_ptr->flags2 & (RF2_QUANTUM))
+	if (TEST_FLAG(r_ptr->flags, 1, RF1_QUANTUM))
 	{
 		/* Sometimes skip move */
 		if (one_in_(2)) return;
 
 		/* Sometimes die */
-		if (one_in_((m_idx % 100) + 10) && !(r_ptr->flags1 & RF1_QUESTOR))
+		if (one_in_((m_idx % 100) + 10) && !(RF_FLAG(r_ptr->flags, 0, QUESTOR)))
 		{
 			bool sad = FALSE;
 
@@ -2777,7 +2777,7 @@ static void process_monster(int m_idx)
 		u32b notice = 0;
 
 		/* Hack -- handle non-aggravation */
-		if (!(p_ptr->flags3 & (TR3_AGGRAVATE))) notice = randint0(1024);
+		if (!(TEST_FLAG(p_ptr->flags, 2, TR2_AGGRAVATE))) notice = randint0(1024);
 
 		/* Nightmare monsters are more alert */
 		if (ironman_nightmare) notice /= 2;
@@ -2792,7 +2792,7 @@ static void process_monster(int m_idx)
 			if (m_ptr->cdis < 50) d = (100 / m_ptr->cdis);
 
 			/* Hack -- handle aggravation */
-			if (p_ptr->flags3 & (TR3_AGGRAVATE)) d = m_ptr->csleep;
+			if (TEST_FLAG(p_ptr->flags, 2, TR2_AGGRAVATE)) d = m_ptr->csleep;
 
 			/* Still asleep */
 			if (m_ptr->csleep > d)
@@ -2921,7 +2921,7 @@ static void process_monster(int m_idx)
 	}
 
 	/* No one wants to be your friend if you're aggravating */
-	if (!is_hostile(m_ptr) && (p_ptr->flags3 & (TR3_AGGRAVATE)))
+	if (!is_hostile(m_ptr) && (TEST_FLAG(p_ptr->flags, 2, TR2_AGGRAVATE)))
 		gets_angry = TRUE;
 
 	/* Acquire the monster name */
@@ -2964,7 +2964,7 @@ static void process_monster(int m_idx)
 
 
 	/* Attempt to "multiply" if able and allowed */
-	if ((r_ptr->flags2 & RF2_MULTIPLY) && (num_repro < MAX_REPRO))
+	if ((RF_FLAG(r_ptr->flags, 1, MULTIPLY)) && (num_repro < MAX_REPRO))
 	{
 		int k, y, x;
 
@@ -2990,7 +2990,7 @@ static void process_monster(int m_idx)
 				/* Take note if visible */
 				if (m_ptr->ml)
 				{
-					r_ptr->r_flags2 |= (RF2_MULTIPLY);
+					r_ptr->r_flags[1] |= (RF1_MULTIPLY);
 				}
 
 				/* Multiplying takes energy */
@@ -3012,7 +3012,7 @@ static void process_monster(int m_idx)
 
 	/* Some monsters can speak */
 	if (speak_unique &&
-		(r_ptr->flags2 & RF2_CAN_SPEAK) && one_in_(SPEAK_CHANCE)
+		(RF_FLAG(r_ptr->flags, 1, CAN_SPEAK)) && one_in_(SPEAK_CHANCE)
 		&& in_boundsp(ox, oy) && player_has_los_grid(parea(ox, oy)))
 	{
 		char monmessage[1024];
@@ -3052,8 +3052,8 @@ static void process_monster(int m_idx)
 	mm[0] = mm[1] = mm[2] = mm[3] = 0;
 	mm[4] = mm[5] = mm[6] = mm[7] = 0;
 
-	if (r_ptr->flags1 & RF1_RAND_50) rand_move += 50;
-	if (r_ptr->flags1 & RF1_RAND_25) rand_move += 25;
+	if (RF_FLAG(r_ptr->flags, 0, RAND_50)) rand_move += 50;
+	if (RF_FLAG(r_ptr->flags, 0, RAND_25)) rand_move += 25;
 
 	/* Confused -- 100% random */
 	if (m_ptr->confused)
@@ -3066,17 +3066,17 @@ static void process_monster(int m_idx)
 	else if (rand_move && (randint0(100) < rand_move))
 	{
 		/* Memorize flags */
-		if (m_ptr->ml && (r_ptr->flags1 & RF1_RAND_50))
-			r_ptr->r_flags1 |= (RF1_RAND_50);
-		if (m_ptr->ml && (r_ptr->flags1 & RF1_RAND_25))
-			r_ptr->r_flags1 |= (RF1_RAND_25);
+		if (m_ptr->ml && (RF_FLAG(r_ptr->flags, 0, RAND_50)))
+			r_ptr->r_flags[0] |= (RF0_RAND_50);
+		if (m_ptr->ml && (RF_FLAG(r_ptr->flags, 0, RAND_25)))
+			r_ptr->r_flags[0] |= (RF0_RAND_25);
 
 		/* Try four "random" directions */
 		mm[0] = mm[1] = mm[2] = mm[3] = 5;
 	}
 
 	/* Can't reach player - find something else to hit */
-	else if ((r_ptr->flags1 & RF1_NEVER_MOVE) && (m_ptr->cdis > 1))
+	else if ((RF_FLAG(r_ptr->flags, 0, NEVER_MOVE)) && (m_ptr->cdis > 1))
 	{
 		/* Try four "random" directions */
 		mm[0] = mm[1] = mm[2] = mm[3] = 5;
@@ -3243,12 +3243,12 @@ void process_monsters(int min_energy)
 		r_ptr = &r_info[p_ptr->monster_race_idx];
 
 		/* Memorize flags */
-		old_r_flags1 = r_ptr->r_flags1;
-		old_r_flags2 = r_ptr->r_flags2;
-		old_r_flags3 = r_ptr->r_flags3;
-		old_r_flags4 = r_ptr->r_flags4;
-		old_r_flags5 = r_ptr->r_flags5;
-		old_r_flags6 = r_ptr->r_flags6;
+		old_r_flags1 = r_ptr->r_flags[0];
+		old_r_flags2 = r_ptr->r_flags[1];
+		old_r_flags3 = r_ptr->r_flags[2];
+		old_r_flags4 = r_ptr->r_flags[3];
+		old_r_flags5 = r_ptr->r_flags[4];
+		old_r_flags6 = r_ptr->r_flags[5];
 
 		/* Memorize blows */
 		old_r_blows0 = r_ptr->r_blows[0];
@@ -3282,11 +3282,11 @@ void process_monsters(int min_energy)
 			total_friend_levels += r_ptr->level;
 
 			/* Determine pet alignment */
-			if (r_ptr->flags3 & RF3_GOOD)
+			if (RF_FLAG(r_ptr->flags, 2, GOOD))
 			{
 				friend_align += r_ptr->level;
 			}
-			else if (r_ptr->flags3 & RF3_EVIL)
+			else if (RF_FLAG(r_ptr->flags, 2, EVIL))
 			{
 				friend_align -= r_ptr->level;
 			}
@@ -3334,7 +3334,7 @@ void process_monsters(int min_energy)
 		/* Handle "sight" and "aggravation" */
 		else if ((m_ptr->cdis <= MAX_SIGHT) &&
 				 ((in_boundsp(fx, fy) && player_has_los_grid(parea(fx, fy)))
-				  || (p_ptr->flags3 & (TR3_AGGRAVATE))))
+				  || (TEST_FLAG(p_ptr->flags, 2, TR2_AGGRAVATE))))
 		{
 			/* We can "see" or "feel" the player */
 			test = TRUE;
@@ -3380,12 +3380,12 @@ void process_monsters(int min_energy)
 		r_ptr = &r_info[p_ptr->monster_race_idx];
 
 		/* Check for knowledge change */
-		if ((old_r_flags1 != r_ptr->r_flags1) ||
-			(old_r_flags2 != r_ptr->r_flags2) ||
-			(old_r_flags3 != r_ptr->r_flags3) ||
-			(old_r_flags4 != r_ptr->r_flags4) ||
-			(old_r_flags5 != r_ptr->r_flags5) ||
-			(old_r_flags6 != r_ptr->r_flags6) ||
+		if ((old_r_flags1 != r_ptr->r_flags[0]) ||
+			(old_r_flags2 != r_ptr->r_flags[1]) ||
+			(old_r_flags3 != r_ptr->r_flags[2]) ||
+			(old_r_flags4 != r_ptr->r_flags[3]) ||
+			(old_r_flags5 != r_ptr->r_flags[4]) ||
+			(old_r_flags6 != r_ptr->r_flags[5]) ||
 			(old_r_blows0 != r_ptr->r_blows[0]) ||
 			(old_r_blows1 != r_ptr->r_blows[1]) ||
 			(old_r_blows2 != r_ptr->r_blows[2]) ||

@@ -106,7 +106,7 @@ static void do_cmd_eat_food_aux(object_type *o_ptr)
 		if (p_ptr->food < PY_FOOD_ALERT)	/* Hungry */
 			msgf("Your hunger can only be satisfied with fresh blood!");
 	}
-	else if (p_ptr->flags4 & (TR4_CANT_EAT))
+	else if (TEST_FLAG(p_ptr->flags, 3, TR3_CANT_EAT))
 	{
 		if (p_ptr->rp.prace == RACE_SKELETON)
 		{
@@ -860,7 +860,7 @@ static bool item_tester_hook_activate(const object_type *o_ptr)
 	if (!object_known_p(o_ptr)) return (FALSE);
 
 	/* Check activation flag */
-	if (o_ptr->flags3 & (TR3_ACTIVATE)) return (TRUE);
+	if (TEST_FLAG(o_ptr->flags, 2, TR2_ACTIVATE)) return (TRUE);
 
 	/* Assume not */
 	return (FALSE);

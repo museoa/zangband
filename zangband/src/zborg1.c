@@ -32,9 +32,9 @@
 
 /* Needs code:
  *    _QUESTITEM
- * TR3_NO_TELE
- * TR3_NO_MAGIC
- * TR3_TY_CURSE
+ * TR2_NO_TELE
+ * TR2_NO_MAGIC
+ * TR2_TY_CURSE
  */
 
 /* Things that would be nice for the borg to know but would

@@ -215,7 +215,7 @@ void do_cmd_wield(void)
 	}
 
 	/* Learn some "obvious" things about the item */
-	o_ptr->kn_flags1 |= (o_ptr->flags1 & TR1_EASY_MASK);
+	o_ptr->kn_flags[0] |= (o_ptr->flags[0] & TR0_EASY_MASK);
 
 	/* Recalculate bonuses and weight */
 	p_ptr->update |= (PU_BONUS | PU_WEIGHT);
@@ -1258,10 +1258,10 @@ void do_cmd_query_symbol(void)
 		if (!cheat_know && !r_ptr->r_sights) continue;
 
 		/* Require non-unique monsters if needed */
-		if (norm && (r_ptr->flags1 & (RF1_UNIQUE))) continue;
+		if (norm && (TEST_FLAG(r_ptr->flags, 0, RF0_UNIQUE))) continue;
 
 		/* Require unique monsters if needed */
-		if (uniq && !(r_ptr->flags1 & (RF1_UNIQUE))) continue;
+		if (uniq && !(TEST_FLAG(r_ptr->flags, 0, RF0_UNIQUE))) continue;
 
 		/* Require killed monsters if needed */
 		if (killed && !r_ptr->r_pkills) continue;

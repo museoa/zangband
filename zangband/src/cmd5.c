@@ -868,7 +868,7 @@ static bool cast_sorcery_spell(int spell)
 			break;
 		case 27:				/* Clairvoyance */
 			wiz_lite();
-			if (!(p_ptr->flags3 & (TR3_TELEPATHY)))
+			if (!(TEST_FLAG(p_ptr->flags, 2, TR2_TELEPATHY)))
 			{
 				(void)inc_tim_esp(rand_range(25, 55));
 			}
@@ -927,9 +927,9 @@ static bool cast_nature_spell(int spell)
 			break;
 		case 4:				/* Daylight */
 			(void)lite_area(damroll(2, (plev / 2)), (plev / 10) + 1);
-			if ((p_ptr->flags4 & (TR4_HURT_LITE)) &&
-				!(p_ptr->flags2 & (TR2_RES_LITE)) &&
-				!(p_ptr->flags4 & (TR4_IM_LITE)))
+			if ((TEST_FLAG(p_ptr->flags, 3, TR3_HURT_LITE)) &&
+				!(TEST_FLAG(p_ptr->flags, 1, TR1_RES_LITE)) &&
+				!(TEST_FLAG(p_ptr->flags, 3, TR3_IM_LITE)))
 			{
 				msgf("The daylight scorches your flesh!");
 				take_hit(damroll(2, 2), "daylight");
@@ -1040,9 +1040,9 @@ static bool cast_nature_spell(int spell)
 		case 29:				/* Call Sunlight */
 			(void)fire_ball(GF_LITE, 0, 150, 8);
 			wiz_lite();
-			if ((p_ptr->flags4 & (TR4_HURT_LITE)) &&
-				!(p_ptr->flags2 & (TR2_RES_LITE)) &&
-				!(p_ptr->flags4 & (TR4_IM_LITE)))
+			if ((TEST_FLAG(p_ptr->flags, 3, TR3_HURT_LITE)) &&
+				!(TEST_FLAG(p_ptr->flags, 1, TR1_RES_LITE)) &&
+				!(TEST_FLAG(p_ptr->flags, 3, TR3_IM_LITE)))
 			{
 				msgf("The sunlight scorches your flesh!");
 				take_hit(50, "sunlight");
@@ -1705,13 +1705,13 @@ static bool cast_death_spell(int spell)
 				if (!m_ptr->r_idx) continue;
 
 				/* Hack -- Skip Unique Monsters */
-				if (r_ptr->flags1 & (RF1_UNIQUE)) continue;
+				if (TEST_FLAG(r_ptr->flags, 0, RF0_UNIQUE)) continue;
 
 				/* Hack -- Skip Quest Monsters */
-				if (r_ptr->flags1 & RF1_QUESTOR) continue;
+				if (RF_FLAG(r_ptr->flags, 0, QUESTOR)) continue;
 
 				/* Notice changes in view */
-				if (r_ptr->flags7 & (RF7_LITE_1 | RF7_LITE_2))
+				if (TEST_FLAG(r_ptr->flags, 6, RF6_LITE_1 | RF6_LITE_2))
 				{
 					/* Update some things */
 					p_ptr->update |= (PU_MON_LITE);
@@ -2590,7 +2590,7 @@ static bool cast_arcane_spell(int spell)
 			break;
 		case 31:				/* Clairvoyance */
 			wiz_lite();
-			if (!(p_ptr->flags3 & (TR3_TELEPATHY)))
+			if (!(TEST_FLAG(p_ptr->flags, 2, TR2_TELEPATHY)))
 			{
 				(void)inc_tim_esp(rand_range(25, 55));
 			}
@@ -2740,11 +2740,11 @@ void do_cmd_cast(void)
 				/* Mind blast */
 				if (!saving_throw(p_ptr->skill.sav))
 				{
-					if (!(p_ptr->flags2 & (TR2_RES_CONF)))
+					if (!(TEST_FLAG(p_ptr->flags, 1, TR1_RES_CONF)))
 					{
 						(void)inc_confused(rand_range(4, 8));
 					}
-					if (!(p_ptr->flags2 & (TR2_RES_CHAOS)) && one_in_(3))
+					if (!(TEST_FLAG(p_ptr->flags, 1, TR1_RES_CHAOS)) && one_in_(3))
 					{
 						(void)inc_image(rand_range(150, 400));
 					}
@@ -2762,7 +2762,7 @@ void do_cmd_cast(void)
 				msgf("It hurts!");
 				take_hit(damroll(o_ptr->sval + 1, 6), "a miscast Death spell");
 				if ((spell > 15) && one_in_(6) &&
-					 !(p_ptr->flags2 & (TR2_HOLD_LIFE)))
+					 !(TEST_FLAG(p_ptr->flags, 1, TR1_HOLD_LIFE)))
 					lose_exp(spell * 250);
 			}
 		}
@@ -2941,8 +2941,8 @@ static bool cmd_pets_dismiss(int dummy)
 			if (delete_this)
 			{
 				/* Notice changes in view */
-				if (r_info[m_ptr->r_idx].flags7 &
-					(RF7_LITE_1 | RF7_LITE_2))
+				if (r_info[m_ptr->r_idx].flags[6] &
+					(RF6_LITE_1 | RF6_LITE_2))
 				{
 					/* Update some things */
 					p_ptr->update |= (PU_MON_LITE);

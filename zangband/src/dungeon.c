@@ -23,7 +23,7 @@
 static byte value_check_aux1(const object_type *o_ptr)
 {
 	/* Artifacts */
-	if (o_ptr->flags3 & TR3_INSTA_ART)
+	if (TR_FLAG(o_ptr->flags, 2, INSTA_ART))
 	{
 		/* Cursed / Worthless */
 		if (cursed_p(o_ptr) || !o_ptr->cost) return FEEL_TERRIBLE;
@@ -36,7 +36,7 @@ static byte value_check_aux1(const object_type *o_ptr)
 	if (ego_item_p(o_ptr))
 	{
 		/* Cursed / Worthless */
-		if (o_ptr->flags3 & TR3_CURSED || !o_ptr->cost)
+		if (TR_FLAG(o_ptr->flags, 2, CURSED) || !o_ptr->cost)
 		{
 			return FEEL_WORTHLESS;
 		}
@@ -85,7 +85,7 @@ static byte value_check_aux2(const object_type *o_ptr)
 	if (!o_ptr->cost) return FEEL_BROKEN;
 
 	/* Artifacts -- except cursed/broken ones */
-	if (o_ptr->flags3 & TR3_INSTA_ART) return FEEL_GOOD;
+	if (TR_FLAG(o_ptr->flags, 2, INSTA_ART)) return FEEL_GOOD;
 
 	/* Ego-Items -- except cursed/broken ones */
 	if (ego_item_p(o_ptr)) return FEEL_GOOD;
@@ -720,7 +720,7 @@ static void regen_monsters(void)
 			if (!frac) frac = 1;
 
 			/* Hack -- Some monsters regenerate quickly */
-			if (r_ptr->flags2 & RF2_REGENERATE) frac *= 2;
+			if (RF_FLAG(r_ptr->flags, 1, REGENERATE)) frac *= 2;
 
 			/* Hack -- Regenerate */
 			m_ptr->hp += frac;
@@ -1015,10 +1015,10 @@ static void process_world(void)
 
 
 	/* (Vampires) Take damage from sunlight */
-	if (p_ptr->flags4 & (TR4_HURT_LITE))
+	if (TEST_FLAG(p_ptr->flags, 3, TR3_HURT_LITE))
 	{
-		if (!p_ptr->depth && !(p_ptr->flags2 & (TR2_RES_LITE)) &&
-			!(p_ptr->flags4 & (TR4_IM_LITE)) &&
+		if (!p_ptr->depth && !(TEST_FLAG(p_ptr->flags, 1, TR1_RES_LITE)) &&
+			!(TEST_FLAG(p_ptr->flags, 3, TR3_IM_LITE)) &&
 			!p_ptr->tim.invuln &&
 			(!((turn / ((10L * TOWN_DAWN) / 2)) % 2)))
 		{
@@ -1036,8 +1036,8 @@ static void process_world(void)
 		if (o_ptr->tval &&
 			(o_ptr->sval >= SV_LITE_GALADRIEL) &&
 			(o_ptr->sval < SV_LITE_THRAIN) && 
-			!(p_ptr->flags2 & (TR2_RES_LITE)) &&
-			!(p_ptr->flags4 & (TR4_IM_LITE)))
+			!(TEST_FLAG(p_ptr->flags, 1, TR1_RES_LITE)) &&
+			!(TEST_FLAG(p_ptr->flags, 3, TR3_IM_LITE)))
 		{
 			char o_name[256];
 			char ouch[280];
@@ -1057,7 +1057,7 @@ static void process_world(void)
 		}
 	}
 
-	if ((c_ptr->feat == FEAT_SHAL_LAVA) && !(p_ptr->flags3 & (TR3_FEATHER)))
+	if ((c_ptr->feat == FEAT_SHAL_LAVA) && !(TEST_FLAG(p_ptr->flags, 2, TR2_FEATHER)))
 	{
 		int damage = resist(p_ptr->lev, res_fire_lvl);
 
@@ -1076,7 +1076,7 @@ static void process_world(void)
 		cptr message;
 		cptr hit_from;
 
-		if (p_ptr->flags3 & (TR3_FEATHER))
+		if (TEST_FLAG(p_ptr->flags, 2, TR2_FEATHER))
 		{
 			damage = damage / 5;
 
@@ -1099,7 +1099,7 @@ static void process_world(void)
 		}
 	}
 
-	if ((c_ptr->feat == FEAT_SHAL_ACID) && !(p_ptr->flags3 & (TR3_FEATHER)))
+	if ((c_ptr->feat == FEAT_SHAL_ACID) && !(TEST_FLAG(p_ptr->flags, 2, TR2_FEATHER)))
 	{
 		int damage = resist(p_ptr->lev, res_acid_lvl);
 
@@ -1118,7 +1118,7 @@ static void process_world(void)
 		cptr message;
 		cptr hit_from;
 
-		if (p_ptr->flags3 & (TR3_FEATHER))
+		if (TEST_FLAG(p_ptr->flags, 2, TR2_FEATHER))
 		{
 			damage = damage / 5;
 
@@ -1141,7 +1141,7 @@ static void process_world(void)
 		}
 	}
 
-	if ((c_ptr->feat == FEAT_SHAL_SWAMP) &&	!(p_ptr->flags3 & (TR3_FEATHER)))
+	if ((c_ptr->feat == FEAT_SHAL_SWAMP) &&	!(TEST_FLAG(p_ptr->flags, 2, TR2_FEATHER)))
 	{
 		int damage = resist(p_ptr->lev, res_pois_lvl);
 
@@ -1160,7 +1160,7 @@ static void process_world(void)
 		cptr message;
 		cptr hit_from;
 
-		if (p_ptr->flags3 & (TR3_FEATHER))
+		if (TEST_FLAG(p_ptr->flags, 2, TR2_FEATHER))
 		{
 			damage = damage / 5;
 
@@ -1185,7 +1185,7 @@ static void process_world(void)
 
 	else if (((c_ptr->feat == FEAT_DEEP_WATER) ||
 			  (c_ptr->feat == FEAT_OCEAN_WATER)) &&
-			  !(p_ptr->flags3 & (TR3_FEATHER)))
+			  !(TEST_FLAG(p_ptr->flags, 2, TR2_FEATHER)))
 	{
 		if (p_ptr->total_weight >
 			((adj_str_wgt[p_ptr->stat[A_STR].ind] * 100) / 2))
@@ -1208,13 +1208,13 @@ static void process_world(void)
 	{
 		if (!p_ptr->tim.invuln && !p_ptr->tim.wraith_form &&
 			((p_ptr->chp > (p_ptr->lev / 5)) || 
-			 !(p_ptr->flags4 & (TR4_PASS_WALL))))
+			 !(TEST_FLAG(p_ptr->flags, 3, TR3_PASS_WALL))))
 		{
 			cptr dam_desc;
 
 			cave_no_regen = TRUE;
 
-			if (p_ptr->flags4 & (TR4_PASS_WALL))
+			if (TEST_FLAG(p_ptr->flags, 3, TR3_PASS_WALL))
 			{
 				msgf("Your molecules feel disrupted!");
 				dam_desc = "density";
@@ -1334,17 +1334,17 @@ static void process_world(void)
 			i *= 2;
 
 			/* Regeneration takes more food */
-			if (p_ptr->flags3 & (TR3_REGEN)) i += 30;
+			if (TEST_FLAG(p_ptr->flags, 2, TR2_REGEN)) i += 30;
 
 			/* Some specific mutations increase food requirement */
 			if (p_ptr->muta3 & (MUT3_RESILIENT)) i += 20;
 			if (p_ptr->muta1 & (MUT1_EAT_ROCK)) i += 20;
 
 			/* Slow digestion takes less food */
-			if (p_ptr->flags3 & (TR3_SLOW_DIGEST)) i -= 10;
+			if (TEST_FLAG(p_ptr->flags, 2, TR2_SLOW_DIGEST)) i -= 10;
 
 			/* Slow healing gives some benefit... */
-			if (p_ptr->flags4 & (TR4_SLOW_HEAL)) i -= 5;
+			if (TEST_FLAG(p_ptr->flags, 3, TR3_SLOW_HEAL)) i -= 5;
 
 			/* Wasting disease - almost no digestion */
 			if (p_ptr->muta2 & MUT2_WASTING) i -= 50;
@@ -1419,12 +1419,12 @@ static void process_world(void)
 	else
 	{
 		/* Regeneration ability */
-		if (p_ptr->flags3 & (TR3_REGEN))
+		if (TEST_FLAG(p_ptr->flags, 2, TR2_REGEN))
 		{
 			regen_amount = regen_amount * 2;
 		}
 	
-		if (p_ptr->flags4 & (TR4_SLOW_HEAL))
+		if (TEST_FLAG(p_ptr->flags, 3, TR3_SLOW_HEAL))
 		{
 			regen_amount = regen_amount / 4;
 		}
@@ -1528,7 +1528,7 @@ static void process_world(void)
 	{
 		int adjust = adj_con_fix[p_ptr->stat[A_CON].ind] + 1;
 
-		if (p_ptr->flags4 & (TR4_SLOW_HEAL))
+		if (TEST_FLAG(p_ptr->flags, 3, TR3_SLOW_HEAL))
 			adjust /= 2;
 
 		/* Hack -- Truly "mortal" wound */
@@ -1557,7 +1557,7 @@ static void process_world(void)
 	/*** Process Inventory ***/
 
 	/* Handle experience draining */
-	if (p_ptr->flags3 & (TR3_DRAIN_EXP))
+	if (TEST_FLAG(p_ptr->flags, 2, TR2_DRAIN_EXP))
 	{
 		if ((randint0(100) < 10) && (p_ptr->exp > 0))
 		{
@@ -1568,7 +1568,7 @@ static void process_world(void)
 	}
 
 	/* Handle stat draining */
-	if (p_ptr->flags4 & (TR4_DRAIN_STATS))
+	if (TEST_FLAG(p_ptr->flags, 3, TR3_DRAIN_STATS))
 	{
 		if (one_in_(250))
 		{
@@ -1595,7 +1595,7 @@ static void process_world(void)
 		apply_object_trigger(TRIGGER_TIMED, o_ptr, "");
 
 		/* TY Curse */
-		if ((o_ptr->flags3 & TR3_TY_CURSE) && one_in_(TY_CURSE_CHANCE))
+		if ((TR_FLAG(o_ptr->flags, 2, TY_CURSE)) && one_in_(TY_CURSE_CHANCE))
 		{
 			int count = 0;
 
@@ -1603,11 +1603,11 @@ static void process_world(void)
 		}
 
 		/* Auto-curse */
-		if ((o_ptr->flags4 & TR4_AUTO_CURSE) && 
-				!(o_ptr->flags3 & TR3_CURSED) && one_in_(1000))
+		if ((TR_FLAG(o_ptr->flags, 3, AUTO_CURSE)) && 
+				!(TR_FLAG(o_ptr->flags, 2, CURSED)) && one_in_(1000))
 		{
 			msgf("There is a malignant black aura surrounding you...");;
-			o_ptr->flags3 |= TR3_CURSED;
+			SET_FLAG(o_ptr->flags, 2, TR2_CURSED);
 			o_ptr->feeling = FEEL_NONE;
 		}
 
@@ -1615,9 +1615,9 @@ static void process_world(void)
 		 * Hack: Uncursed teleporting items (e.g. Trump Weapons)
 		 * can actually be useful!
 		 */
-		if ((o_ptr->flags3 & TR3_TELEPORT) && one_in_(100))
+		if ((TR_FLAG(o_ptr->flags, 2, TELEPORT)) && one_in_(100))
 		{
-			if (cursed_p(o_ptr) && !(p_ptr->flags3 & (TR3_NO_TELE)))
+			if (cursed_p(o_ptr) && !(TEST_FLAG(p_ptr->flags, 2, TR2_NO_TELE)))
 			{
 				disturb(FALSE);
 
@@ -1648,7 +1648,7 @@ static void process_world(void)
 			if (o_ptr->tval == TV_LITE)
 			{
 				/* Artifact lights decrease timeout */
-				if (o_ptr->flags3 & TR3_INSTA_ART)
+				if (TR_FLAG(o_ptr->flags, 2, INSTA_ART))
 				{
 					/* Recharge */
 					o_ptr->timeout--;
@@ -1661,7 +1661,7 @@ static void process_world(void)
 						p_ptr->window |= (PW_EQUIP);
 					}
 				}
-				else if (!(o_ptr->flags3 & TR3_LITE))
+				else if (!(TR_FLAG(o_ptr->flags, 2, LITE)))
 				{
 					/* Normal lights that are not everburning */
 					o_ptr->timeout--;
@@ -2243,7 +2243,7 @@ static void process_command(void)
 		case 'm':
 		{
 			/* Cast a spell */
-			if (p_ptr->flags3 & (TR3_NO_MAGIC))
+			if (TEST_FLAG(p_ptr->flags, 2, TR2_NO_MAGIC))
 			{
 				cptr which_power = "magic";
 				if (p_ptr->rp.pclass == CLASS_MINDCRAFTER)
@@ -2820,7 +2820,7 @@ static void process_player(void)
 					r_ptr = &r_info[m_ptr->r_idx];
 
 					/* Skip non-multi-hued monsters */
-					if (!(r_ptr->flags1 & RF1_ATTR_MULTI)) continue;
+					if (!(RF_FLAG(r_ptr->flags, 0, ATTR_MULTI))) continue;
 
 					/* Reset the flag */
 					shimmer_monsters = TRUE;

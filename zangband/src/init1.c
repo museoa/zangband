@@ -1328,16 +1328,16 @@ static errr grab_one_flag(u32b *flags, cptr names[], cptr what)
  */
 static errr grab_one_kind_flag(object_kind *k_ptr, cptr what)
 {
-	if (grab_one_flag(&k_ptr->flags1, k_info_flags1, what) == 0)
+	if (grab_one_flag(&k_ptr->flags[0], k_info_flags1, what) == 0)
 		return (0);
 
-	if (grab_one_flag(&k_ptr->flags2, k_info_flags2, what) == 0)
+	if (grab_one_flag(&k_ptr->flags[1], k_info_flags2, what) == 0)
 		return (0);
 
-	if (grab_one_flag(&k_ptr->flags3, k_info_flags3, what) == 0)
+	if (grab_one_flag(&k_ptr->flags[2], k_info_flags3, what) == 0)
 		return (0);
 
-	if (grab_one_flag(&k_ptr->flags4, k_info_flags4, what) == 0)
+	if (grab_one_flag(&k_ptr->flags[3], k_info_flags4, what) == 0)
 		return (0);
 
 	/* Oops */
@@ -1619,16 +1619,16 @@ errr parse_k_info(char *buf, header *head)
  */
 static errr grab_one_artifact_flag(artifact_type *a_ptr, cptr what)
 {
-	if (grab_one_flag(&a_ptr->flags1, k_info_flags1, what) == 0)
+	if (grab_one_flag(&a_ptr->flags[0], k_info_flags1, what) == 0)
 		return (0);
 
-	if (grab_one_flag(&a_ptr->flags2, k_info_flags2, what) == 0)
+	if (grab_one_flag(&a_ptr->flags[1], k_info_flags2, what) == 0)
 		return (0);
 
-	if (grab_one_flag(&a_ptr->flags3, k_info_flags3, what) == 0)
+	if (grab_one_flag(&a_ptr->flags[2], k_info_flags3, what) == 0)
 		return (0);
 
-	if (grab_one_flag(&a_ptr->flags4, k_info_flags4, what) == 0)
+	if (grab_one_flag(&a_ptr->flags[3], k_info_flags4, what) == 0)
 		return (0);
 
 	/* Oops */
@@ -1687,7 +1687,7 @@ errr parse_a_info(char *buf, header *head)
 			return (PARSE_ERROR_OUT_OF_MEMORY);
 
 		/* Ignore everything */
-		a_ptr->flags3 |= (TR3_IGNORE_MASK);
+		SET_FLAG(a_ptr->flags, 2, TR2_IGNORE_MASK);
 	}
 
 	/* Process 'I' for "Info" (one line only) */
@@ -1848,16 +1848,16 @@ errr parse_a_info(char *buf, header *head)
  */
 static bool grab_one_ego_item_flag(ego_item_type *e_ptr, cptr what)
 {
-	if (grab_one_flag(&e_ptr->flags1, k_info_flags1, what) == 0)
+	if (grab_one_flag(&e_ptr->flags[0], k_info_flags1, what) == 0)
 		return (0);
 
-	if (grab_one_flag(&e_ptr->flags2, k_info_flags2, what) == 0)
+	if (grab_one_flag(&e_ptr->flags[1], k_info_flags2, what) == 0)
 		return (0);
 
-	if (grab_one_flag(&e_ptr->flags3, k_info_flags3, what) == 0)
+	if (grab_one_flag(&e_ptr->flags[2], k_info_flags3, what) == 0)
 		return (0);
 
-	if (grab_one_flag(&e_ptr->flags4, k_info_flags4, what) == 0)
+	if (grab_one_flag(&e_ptr->flags[3], k_info_flags4, what) == 0)
 		return (0);
 
 	/* Oops */
@@ -2059,22 +2059,22 @@ errr parse_e_info(char *buf, header *head)
  */
 static errr grab_one_basic_flag(monster_race *r_ptr, cptr what)
 {
-	if (grab_one_flag(&r_ptr->flags1, r_info_flags1, what) == 0)
+	if (grab_one_flag(&r_ptr->flags[0], r_info_flags1, what) == 0)
 		return (0);
 
-	if (grab_one_flag(&r_ptr->flags2, r_info_flags2, what) == 0)
+	if (grab_one_flag(&r_ptr->flags[1], r_info_flags2, what) == 0)
 		return (0);
 
-	if (grab_one_flag(&r_ptr->flags3, r_info_flags3, what) == 0)
+	if (grab_one_flag(&r_ptr->flags[2], r_info_flags3, what) == 0)
 		return (0);
 
-	if (grab_one_flag(&r_ptr->flags7, r_info_flags7, what) == 0)
+	if (grab_one_flag(&r_ptr->flags[6], r_info_flags7, what) == 0)
 		return (0);
 
-	if (grab_one_flag(&r_ptr->flags8, r_info_flags8, what) == 0)
+	if (grab_one_flag(&r_ptr->flags[7], r_info_flags8, what) == 0)
 		return (0);
 
-	if (grab_one_flag(&r_ptr->flags9, r_info_flags9, what) == 0)
+	if (grab_one_flag(&r_ptr->flags[8], r_info_flags9, what) == 0)
 		return (0);
 
 	/* Oops */
@@ -2090,13 +2090,13 @@ static errr grab_one_basic_flag(monster_race *r_ptr, cptr what)
  */
 static errr grab_one_spell_flag(monster_race *r_ptr, cptr what)
 {
-	if (grab_one_flag(&r_ptr->flags4, r_info_flags4, what) == 0)
+	if (grab_one_flag(&r_ptr->flags[3], r_info_flags4, what) == 0)
 		return (0);
 
-	if (grab_one_flag(&r_ptr->flags5, r_info_flags5, what) == 0)
+	if (grab_one_flag(&r_ptr->flags[4], r_info_flags5, what) == 0)
 		return (0);
 
-	if (grab_one_flag(&r_ptr->flags6, r_info_flags6, what) == 0)
+	if (grab_one_flag(&r_ptr->flags[5], r_info_flags6, what) == 0)
 		return (0);
 
 	/* Oops */

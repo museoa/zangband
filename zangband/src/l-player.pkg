@@ -337,10 +337,7 @@ struct player_type
 	 * Flags on equipment items and the racial/class
 	 * effects logical-ored together.
 	 */
-	u32b flags1;
-	u32b flags2;
-	u32b flags3;
-	u32b flags4;
+	u32b flags[4];
 
 
 	/*** Extracted fields ***/

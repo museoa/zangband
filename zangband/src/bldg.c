@@ -28,12 +28,12 @@ static void have_nightmare_aux(int r_idx)
 	cptr desc = r_name + r_ptr->name;
 
 
-	if (!(r_ptr->flags1 & RF1_UNIQUE))
+	if (!(RF_FLAG(r_ptr->flags, 0, UNIQUE)))
 	{
 		/* Describe it */
 		strnfmt(m_name, 80, "%s %s", (is_a_vowel(desc[0]) ? "an" : "a"), desc);
 
-		if (r_ptr->flags1 & RF1_FRIENDS)
+		if (RF_FLAG(r_ptr->flags, 0, FRIENDS))
 		{
 			power /= 2;
 		}
@@ -74,7 +74,7 @@ static void have_nightmare_aux(int r_idx)
 	msgf("You behold the %s visage of %s!",
 			   horror_desc[randint0(MAX_SAN_HORROR)], desc);
 
-	r_ptr->r_flags4 |= RF4_ELDRITCH_HORROR;
+	r_ptr->r_flags[3] |= RF3_ELDRITCH_HORROR;
 
 	switch (p_ptr->rp.prace)
 	{
@@ -102,11 +102,11 @@ static void have_nightmare_aux(int r_idx)
 	/* Mind blast */
 	if (!saving_throw(p_ptr->skill.sav * 100 / power))
 	{
-		if (!(p_ptr->flags2 & (TR2_RES_CONF)))
+		if (!(TEST_FLAG(p_ptr->flags, 1, TR1_RES_CONF)))
 		{
 			(void)inc_confused(rand_range(4, 8));
 		}
-		if (!(p_ptr->flags2 & (TR2_RES_CHAOS)) && one_in_(3))
+		if (!(TEST_FLAG(p_ptr->flags, 1, TR1_RES_CHAOS)) && one_in_(3))
 		{
 			(void)inc_image(rand_range(250, 400));
 		}
@@ -124,11 +124,11 @@ static void have_nightmare_aux(int r_idx)
 	/* Brain smash */
 	if (!saving_throw(p_ptr->skill.sav * 100 / power))
 	{
-		if (!(p_ptr->flags2 & (TR2_RES_CONF)))
+		if (!(TEST_FLAG(p_ptr->flags, 1, TR1_RES_CONF)))
 		{
 			(void)inc_confused(rand_range(4, 8));
 		}
-		if (!(p_ptr->flags2 & (TR2_FREE_ACT)))
+		if (!(TEST_FLAG(p_ptr->flags, 1, TR1_FREE_ACT)))
 		{
 			(void)inc_paralyzed(rand_range(4, 8));
 		}
@@ -140,7 +140,7 @@ static void have_nightmare_aux(int r_idx)
 		{
 			(void)do_dec_stat(A_WIS);
 		}
-		if (!(p_ptr->flags2 & (TR2_RES_CHAOS)))
+		if (!(TEST_FLAG(p_ptr->flags, 1, TR1_RES_CHAOS)))
 		{
 			(void)inc_image(rand_range(250, 400));
 		}
@@ -171,8 +171,8 @@ static void have_nightmare_aux(int r_idx)
 
 	/* Else gain permanent insanity */
 	if ((p_ptr->muta3 & MUT3_MORONIC) && (p_ptr->muta2 & MUT2_BERS_RAGE) &&
-		((p_ptr->muta2 & MUT2_COWARDICE) || (p_ptr->flags2 & (TR2_RES_FEAR))) &&
-		((p_ptr->muta2 & MUT2_HALLU) || (p_ptr->flags2 & (TR2_RES_CHAOS))))
+		((p_ptr->muta2 & MUT2_COWARDICE) || (TEST_FLAG(p_ptr->flags, 1, TR1_RES_FEAR))) &&
+		((p_ptr->muta2 & MUT2_HALLU) || (TEST_FLAG(p_ptr->flags, 1, TR1_RES_CHAOS))))
 	{
 		/* The poor bastard already has all possible insanities! */
 		return;
@@ -200,7 +200,7 @@ static void have_nightmare_aux(int r_idx)
 			case 2:
 			{
 				if (!(p_ptr->muta2 & MUT2_COWARDICE) &&
-					!(p_ptr->flags2 & (TR2_RES_FEAR)))
+					!(TEST_FLAG(p_ptr->flags, 1, TR1_RES_FEAR)))
 				{
 					msgf("You become paranoid!");
 
@@ -219,7 +219,7 @@ static void have_nightmare_aux(int r_idx)
 			case 3:
 			{
 				if (!(p_ptr->muta2 & MUT2_HALLU) &&
-					!(p_ptr->flags2 & (TR2_RES_CHAOS)))
+					!(TEST_FLAG(p_ptr->flags, 1, TR1_RES_CHAOS)))
 				{
 					msgf("You are afflicted by a hallucinatory insanity!");
 					p_ptr->muta2 |= MUT2_HALLU;
@@ -263,7 +263,7 @@ bool get_nightmare(int r_idx)
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Require eldritch horrors */
-	if (!(r_ptr->flags4 & (RF4_ELDRITCH_HORROR))) return (FALSE);
+	if (!(TEST_FLAG(r_ptr->flags, 3, RF3_ELDRITCH_HORROR))) return (FALSE);
 
 	/* Require high level */
 	if (r_ptr->level <= p_ptr->lev) return (FALSE);
@@ -912,72 +912,72 @@ static void compare_weapon_aux1(const object_type *o_ptr)
 	int r = 10;
 
 	/* Print the relevant lines */
-	if (o_ptr->flags1 & TR1_SLAY_ANIMAL)
+	if (TR_FLAG(o_ptr->flags, 0, SLAY_ANIMAL))
 	{
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
 							CLR_YELLOW "Animals:", 17);
 	}
-	if (o_ptr->flags1 & TR1_SLAY_EVIL)
+	if (TR_FLAG(o_ptr->flags, 0, SLAY_EVIL))
 	{
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
 							CLR_YELLOW "Evil:", 15);
 	}
-	if (o_ptr->flags1 & TR1_SLAY_UNDEAD)
+	if (TR_FLAG(o_ptr->flags, 0, SLAY_UNDEAD))
 	{
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
 							CLR_YELLOW "Undead:", 20);
 	}
-	if (o_ptr->flags1 & TR1_SLAY_DEMON)
+	if (TR_FLAG(o_ptr->flags, 0, SLAY_DEMON))
 	{
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
 							CLR_YELLOW "Demons:", 20);
 	}
-	if (o_ptr->flags1 & TR1_SLAY_ORC)
+	if (TR_FLAG(o_ptr->flags, 0, SLAY_ORC))
 	{
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
 							CLR_YELLOW "Orcs:", 20);
 	}
-	if (o_ptr->flags1 & TR1_SLAY_TROLL)
+	if (TR_FLAG(o_ptr->flags, 0, SLAY_TROLL))
 	{
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
 							CLR_YELLOW "Trolls:", 20);
 	}
-	if (o_ptr->flags1 & TR1_SLAY_GIANT)
+	if (TR_FLAG(o_ptr->flags, 0, SLAY_GIANT))
 	{
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
 							CLR_YELLOW "Giants:", 20);
 	}
-	if (o_ptr->flags1 & TR1_SLAY_DRAGON)
+	if (TR_FLAG(o_ptr->flags, 0, SLAY_DRAGON))
 	{
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
 							CLR_YELLOW "Dragons:", 20);
 	}
-	if (o_ptr->flags1 & TR1_KILL_DRAGON)
+	if (TR_FLAG(o_ptr->flags, 0, KILL_DRAGON))
 	{
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
 							CLR_YELLOW "Dragons:", 30);
 	}
-	if (o_ptr->flags1 & TR1_BRAND_ACID)
+	if (TR_FLAG(o_ptr->flags, 0, BRAND_ACID))
 	{
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
 							CLR_RED "Acid:", 20);
 	}
-	if (o_ptr->flags1 & TR1_BRAND_ELEC)
+	if (TR_FLAG(o_ptr->flags, 0, BRAND_ELEC))
 	{
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
 							CLR_RED "Elec:", 20);
 	}
-	if (o_ptr->flags1 & TR1_BRAND_FIRE)
+	if (TR_FLAG(o_ptr->flags, 0, BRAND_FIRE))
 	{
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
 							CLR_RED "Fire:", 20);
 	}
-	if (o_ptr->flags1 & TR1_BRAND_COLD)
+	if (TR_FLAG(o_ptr->flags, 0, BRAND_COLD))
 	{
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
 							CLR_RED "Cold:", 20);
 	}
-	if (o_ptr->flags1 & TR1_BRAND_POIS)
+	if (TR_FLAG(o_ptr->flags, 0, BRAND_POIS))
 	{
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++,
 							CLR_RED "Poison:", 20);
@@ -1164,10 +1164,10 @@ bool compare_weapons(void)
 	object_mental(o_ptr);
 
 	/* Save all the known flags */
-	o_ptr->kn_flags1 = o_ptr->flags1;
-	o_ptr->kn_flags2 = o_ptr->flags2;
-	o_ptr->kn_flags3 = o_ptr->flags3;
-	o_ptr->kn_flags4 = o_ptr->flags4;
+	o_ptr->kn_flags[0] = o_ptr->flags[0];
+	o_ptr->kn_flags[1] = o_ptr->flags[1];
+	o_ptr->kn_flags[2] = o_ptr->flags[2];
+	o_ptr->kn_flags[3] = o_ptr->flags[3];
 
 	/* Erase the "feeling" */
 	o_ptr->feeling = FEEL_NONE;

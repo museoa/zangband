@@ -25,7 +25,7 @@ static int monster_critical(int dice, int sides, int dam)
 	int total = dice * sides;
 
 	/* Luck isn't always good for you... */
-	if (p_ptr->flags4 & (TR4_STRANGE_LUCK))
+	if (TEST_FLAG(p_ptr->flags, 3, TR3_STRANGE_LUCK))
 		dam = dam * 3 / 2;
 
 	/* Must do at least 95% of perfect */
@@ -119,7 +119,7 @@ void flee_message(cptr m_name, u16b r_idx)
 	monster_race *r_ptr = &r_info[r_idx];
 	
 	/* Immobile monsters can never flee */
-	if (r_ptr->flags1 & RF1_NEVER_MOVE) return;
+	if (RF_FLAG(r_ptr->flags, 0, NEVER_MOVE)) return;
 	
 	/* Sound */
 	sound(SOUND_FLEE);
@@ -161,7 +161,7 @@ bool make_attack_normal(int m_idx)
 	bool visible = m_ptr->ml;
 
 	/* Not allowed to attack */
-	if (r_ptr->flags1 & (RF1_NEVER_BLOW)) return (FALSE);
+	if (TEST_FLAG(r_ptr->flags, 0, RF0_NEVER_BLOW)) return (FALSE);
 
 	/* ...nor if friendly */
 	if (!is_hostile(m_ptr)) return FALSE;
@@ -380,32 +380,32 @@ bool make_attack_normal(int m_idx)
 			/* Always disturbing */
 			disturb(TRUE);
 
-			if ((p_ptr->flags1 & TR1_SLAY_DRAGON) &&
-					(r_ptr->flags3 & RF3_DRAGON))
+			if ((TR_FLAG(p_ptr->flags, 0, SLAY_DRAGON)) &&
+					(RF_FLAG(r_ptr->flags, 2, DRAGON)))
 				protect = 5;
-			else if ((p_ptr->flags1 & TR1_SLAY_DEMON) &&
-					(r_ptr->flags3 & RF3_DEMON))
+			else if ((TR_FLAG(p_ptr->flags, 0, SLAY_DEMON)) &&
+					(RF_FLAG(r_ptr->flags, 2, DEMON)))
 				protect = 5;
-			else if ((p_ptr->flags1 & TR1_SLAY_UNDEAD) &&
-					(r_ptr->flags3 & RF3_UNDEAD))
+			else if ((TR_FLAG(p_ptr->flags, 0, SLAY_UNDEAD)) &&
+					(RF_FLAG(r_ptr->flags, 2, UNDEAD)))
 				protect = 4;
-			else if ((p_ptr->flags1 & TR1_SLAY_ORC) &&
-					(r_ptr->flags3 & RF3_ORC))
+			else if ((TR_FLAG(p_ptr->flags, 0, SLAY_ORC)) &&
+					(RF_FLAG(r_ptr->flags, 2, ORC)))
 				protect = 4;
-			else if ((p_ptr->flags1 & TR1_SLAY_TROLL) &&
-					(r_ptr->flags3 & RF3_TROLL))
+			else if ((TR_FLAG(p_ptr->flags, 0, SLAY_TROLL)) &&
+					(RF_FLAG(r_ptr->flags, 2, TROLL)))
 				protect = 4;
-			else if ((p_ptr->flags1 & TR1_SLAY_GIANT) &&
-					(r_ptr->flags3 & RF3_GIANT))
+			else if ((TR_FLAG(p_ptr->flags, 0, SLAY_GIANT)) &&
+					(RF_FLAG(r_ptr->flags, 2, GIANT)))
 				protect = 4;
-			else if ((p_ptr->flags1 & TR1_SLAY_ANIMAL) &&
-					(r_ptr->flags3 & RF3_ANIMAL))
+			else if ((TR_FLAG(p_ptr->flags, 0, SLAY_ANIMAL)) &&
+					(RF_FLAG(r_ptr->flags, 2, ANIMAL)))
 				protect = 3;
-			else if ((p_ptr->flags1 & TR1_SLAY_EVIL) &&
-					(r_ptr->flags3 & RF3_EVIL))
+			else if ((TR_FLAG(p_ptr->flags, 0, SLAY_EVIL)) &&
+					(RF_FLAG(r_ptr->flags, 2, EVIL)))
 				protect = 3;
 			else if ((p_ptr->tim.protevil > 0) &&
-					(r_ptr->flags3 & RF3_EVIL))
+					(RF_FLAG(r_ptr->flags, 2, EVIL)))
 				protect = 3;
 
 			/* Protection gets stronger with experience */
@@ -418,7 +418,7 @@ bool make_attack_normal(int m_idx)
 				/* Remember the Evil-ness */
 				if (m_ptr->ml)
 				{
-					r_ptr->r_flags3 |= RF3_EVIL;
+					r_ptr->r_flags[2] |= RF2_EVIL;
 				}
 #endif
 
@@ -527,7 +527,7 @@ bool make_attack_normal(int m_idx)
 						take_hit(damage, ddesc);
 
 						/* Take "poison" effect */
-						if (!((p_ptr->flags2 & (TR2_RES_POIS)) ||
+						if (!((TEST_FLAG(p_ptr->flags, 1, TR1_RES_POIS)) ||
 							 p_ptr->tim.oppose_pois))
 						{
 							if (inc_poisoned(randint1(rlev) + 5))
@@ -548,7 +548,7 @@ bool make_attack_normal(int m_idx)
 						take_hit(damage, ddesc);
 
 						/* Allow complete resist */
-						if (!(p_ptr->flags2 & (TR2_RES_DISEN)))
+						if (!(TEST_FLAG(p_ptr->flags, 1, TR1_RES_DISEN)))
 						{
 							/* Apply disenchantment */
 							if (apply_disenchant()) obvious = TRUE;
@@ -716,7 +716,7 @@ bool make_attack_normal(int m_idx)
 							if (!one_in_(INVEN_PACK)) continue;
 
 							/* Skip artifacts */
-							if (o_ptr->flags3 & TR3_INSTA_ART) continue;
+							if (TR_FLAG(o_ptr->flags, 2, INSTA_ART)) continue;
 
 							/* Message */
 							msgf("%sour %v was stolen!",
@@ -792,7 +792,7 @@ bool make_attack_normal(int m_idx)
 
 						/* Drain fuel */
 						if ((o_ptr->pval > 0) &&
-							(!(o_ptr->flags3 & TR3_INSTA_ART)))
+							(!(TR_FLAG(o_ptr->flags, 2, INSTA_ART))))
 						{
 							/* Reduce fuel */
 							o_ptr->pval -= (s16b)rand_range(250, 500);
@@ -886,7 +886,7 @@ bool make_attack_normal(int m_idx)
 						take_hit(damage, ddesc);
 
 						/* Increase "blind" */
-						if (!(p_ptr->flags2 & (TR2_RES_BLIND)))
+						if (!(TEST_FLAG(p_ptr->flags, 1, TR1_RES_BLIND)))
 						{
 							if (inc_blind(10 + randint1(rlev)))
 							{
@@ -906,7 +906,7 @@ bool make_attack_normal(int m_idx)
 						take_hit(damage, ddesc);
 
 						/* Increase "confused" */
-						if (!(p_ptr->flags2 & (TR2_RES_CONF)))
+						if (!(TEST_FLAG(p_ptr->flags, 1, TR1_RES_CONF)))
 						{
 							if (inc_confused(3 + randint1(rlev)))
 							{
@@ -929,7 +929,7 @@ bool make_attack_normal(int m_idx)
 						take_hit(damage, ddesc);
 
 						/* Increase "afraid" */
-						if (p_ptr->flags2 & (TR2_RES_FEAR))
+						if (TEST_FLAG(p_ptr->flags, 1, TR1_RES_FEAR))
 						{
 							msgf("You stand your ground!");
 							obvious = TRUE;
@@ -965,7 +965,7 @@ bool make_attack_normal(int m_idx)
 						take_hit(damage, ddesc);
 
 						/* Increase "paralyzed" */
-						if (p_ptr->flags2 & (TR2_FREE_ACT))
+						if (TEST_FLAG(p_ptr->flags, 1, TR1_FREE_ACT))
 						{
 							msgf("You are unaffected!");
 							obvious = TRUE;
@@ -1099,7 +1099,7 @@ bool make_attack_normal(int m_idx)
 						/* Take damage */
 						take_hit(damage, ddesc);
 
-						if ((p_ptr->flags2 & (TR2_HOLD_LIFE)) && (randint0(100) < 95))
+						if ((TEST_FLAG(p_ptr->flags, 1, TR1_HOLD_LIFE)) && (randint0(100) < 95))
 						{
 							msgf("You keep hold of your life force!");
 						}
@@ -1108,7 +1108,7 @@ bool make_attack_normal(int m_idx)
 							s32b d = damroll(10,
 											 6) +
 								(p_ptr->exp / 100) * MON_DRAIN_LIFE;
-							if ((p_ptr->flags2 & (TR2_HOLD_LIFE)))
+							if ((TEST_FLAG(p_ptr->flags, 1, TR1_HOLD_LIFE)))
 							{
 								msgf("You feel your life slipping away!");
 								lose_exp(d / 10);
@@ -1130,7 +1130,7 @@ bool make_attack_normal(int m_idx)
 						/* Take damage */
 						take_hit(damage, ddesc);
 
-						if ((p_ptr->flags2 & (TR2_HOLD_LIFE)) && (randint0(100) < 90))
+						if ((TEST_FLAG(p_ptr->flags, 1, TR1_HOLD_LIFE)) && (randint0(100) < 90))
 						{
 							msgf("You keep hold of your life force!");
 						}
@@ -1138,7 +1138,7 @@ bool make_attack_normal(int m_idx)
 						{
 							s32b d = damroll(20, 6) +
 								(p_ptr->exp / 100) * MON_DRAIN_LIFE;
-							if (p_ptr->flags2 & (TR2_HOLD_LIFE))
+							if (TEST_FLAG(p_ptr->flags, 1, TR1_HOLD_LIFE))
 							{
 								msgf("You feel your life slipping away!");
 								lose_exp(d / 10);
@@ -1160,7 +1160,7 @@ bool make_attack_normal(int m_idx)
 						/* Take damage */
 						take_hit(damage, ddesc);
 
-						if ((p_ptr->flags2 & (TR2_HOLD_LIFE)) && (randint0(100) < 75))
+						if ((TEST_FLAG(p_ptr->flags, 1, TR1_HOLD_LIFE)) && (randint0(100) < 75))
 						{
 							msgf("You keep hold of your life force!");
 						}
@@ -1168,7 +1168,7 @@ bool make_attack_normal(int m_idx)
 						{
 							s32b d = damroll(40, 6) +
 								(p_ptr->exp / 100) * MON_DRAIN_LIFE;
-							if (p_ptr->flags2 & (TR2_HOLD_LIFE))
+							if (TEST_FLAG(p_ptr->flags, 1, TR1_HOLD_LIFE))
 							{
 								msgf("You feel your life slipping away!");
 								lose_exp(d / 10);
@@ -1190,7 +1190,7 @@ bool make_attack_normal(int m_idx)
 						/* Take damage */
 						take_hit(damage, ddesc);
 
-						if ((p_ptr->flags2 & (TR2_HOLD_LIFE)) && (randint0(100) < 50))
+						if ((TEST_FLAG(p_ptr->flags, 1, TR1_HOLD_LIFE)) && (randint0(100) < 50))
 						{
 							msgf("You keep hold of your life force!");
 						}
@@ -1198,7 +1198,7 @@ bool make_attack_normal(int m_idx)
 						{
 							s32b d = damroll(80, 6) +
 								(p_ptr->exp / 100) * MON_DRAIN_LIFE;
-							if ((p_ptr->flags2 & (TR2_HOLD_LIFE)))
+							if ((TEST_FLAG(p_ptr->flags, 1, TR1_HOLD_LIFE)))
 							{
 								msgf("You feel your life slipping away!");
 								lose_exp(d / 10);
@@ -1218,7 +1218,7 @@ bool make_attack_normal(int m_idx)
 						take_hit(damage, ddesc);
 
 						/* Take "poison" effect */
-						if (!((p_ptr->flags2 & (TR2_RES_POIS)) ||
+						if (!((TEST_FLAG(p_ptr->flags, 1, TR1_RES_POIS)) ||
 							 p_ptr->tim.oppose_pois))
 						{
 							if (inc_poisoned(randint1(rlev) + 5))
@@ -1329,7 +1329,7 @@ bool make_attack_normal(int m_idx)
 						/* Take damage */
 						take_hit(damage, ddesc);
 
-						if ((p_ptr->flags2 & (TR2_HOLD_LIFE)) && (randint0(100) < 50))
+						if ((TEST_FLAG(p_ptr->flags, 1, TR1_HOLD_LIFE)) && (randint0(100) < 50))
 						{
 							msgf("You keep hold of your life force!");
 							resist_drain = TRUE;
@@ -1339,7 +1339,7 @@ bool make_attack_normal(int m_idx)
 							s32b d = damroll(60,
 											 6) +
 								(p_ptr->exp / 100) * MON_DRAIN_LIFE;
-							if (p_ptr->flags2 & (TR2_HOLD_LIFE))
+							if (TEST_FLAG(p_ptr->flags, 1, TR1_HOLD_LIFE))
 							{
 								msgf("You feel your life slipping away!");
 								lose_exp(d / 10);
@@ -1522,9 +1522,9 @@ bool make_attack_normal(int m_idx)
 
 			if (touched)
 			{
-				if ((p_ptr->flags3 & (TR3_SH_FIRE)) && alive)
+				if ((TEST_FLAG(p_ptr->flags, 2, TR2_SH_FIRE)) && alive)
 				{
-					if (!(r_ptr->flags3 & RF3_IM_FIRE))
+					if (!(RF_FLAG(r_ptr->flags, 2, IM_FIRE)))
 					{
 						int dam = damroll(2, 6);
 
@@ -1543,13 +1543,13 @@ bool make_attack_normal(int m_idx)
 					else
 					{
 						if (visible)
-							r_ptr->r_flags3 |= RF3_IM_FIRE;
+							r_ptr->r_flags[2] |= RF2_IM_FIRE;
 					}
 				}
 
-				if ((p_ptr->flags3 & (TR3_SH_ELEC)) && alive)
+				if ((TEST_FLAG(p_ptr->flags, 2, TR2_SH_ELEC)) && alive)
 				{
-					if (!(r_ptr->flags3 & RF3_IM_ELEC))
+					if (!(RF_FLAG(r_ptr->flags, 2, IM_ELEC)))
 					{
 						int dam = damroll(2, 6);
 
@@ -1568,13 +1568,13 @@ bool make_attack_normal(int m_idx)
 					else
 					{
 						if (visible)
-							r_ptr->r_flags3 |= RF3_IM_ELEC;
+							r_ptr->r_flags[2] |= RF2_IM_ELEC;
 					}
 				}
 
-				if ((p_ptr->flags4 & (TR4_SH_ACID)) && alive)
+				if ((TEST_FLAG(p_ptr->flags, 3, TR3_SH_ACID)) && alive)
 				{
-					if (!(r_ptr->flags3 & RF3_IM_ACID))
+					if (!(RF_FLAG(r_ptr->flags, 2, IM_ACID)))
 					{
 						int dam = damroll(2, 6);
 
@@ -1593,13 +1593,13 @@ bool make_attack_normal(int m_idx)
 					else
 					{
 						if (visible)
-							r_ptr->r_flags3 |= RF3_IM_ACID;
+							r_ptr->r_flags[2] |= RF2_IM_ACID;
 					}
 				}
 
-				if ((p_ptr->flags4 & (TR4_SH_COLD)) && alive)
+				if ((TEST_FLAG(p_ptr->flags, 3, TR3_SH_COLD)) && alive)
 				{
-					if (!(r_ptr->flags3 & RF3_IM_COLD))
+					if (!(RF_FLAG(r_ptr->flags, 2, IM_COLD)))
 					{
 						int dam = damroll(2, 6);
 
@@ -1618,7 +1618,7 @@ bool make_attack_normal(int m_idx)
 					else
 					{
 						if (visible)
-							r_ptr->r_flags3 |= RF3_IM_COLD;
+							r_ptr->r_flags[2] |= RF2_IM_COLD;
 					}
 				}
 				touched = FALSE;

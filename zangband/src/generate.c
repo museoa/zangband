@@ -506,11 +506,11 @@ static void add_monsters(int count)
 		r_ptr = &r_info[best_r_idx];
 
 		/* Get the number of monsters */
-		if (r_ptr->flags1 & RF1_UNIQUE)
+		if (RF_FLAG(r_ptr->flags, 0, UNIQUE))
 		{
 			num = 1;
 		}
-		else if (r_ptr->flags3 & RF3_UNIQUE_7)
+		else if (RF_FLAG(r_ptr->flags, 2, UNIQUE_7))
 		{
 			num = randint1(r_ptr->max_num);
 		}
@@ -540,7 +540,7 @@ static void add_monsters(int count)
 					break;
 			}
 
-			if (r_ptr->flags1 & RF1_FRIENDS)
+			if (RF_FLAG(r_ptr->flags, 0, FRIENDS))
 				group = FALSE;
 			else
 				group = TRUE;
@@ -636,7 +636,7 @@ static bool cave_gen(dun_type *d_ptr)
 	}
 	
 	/* Empty arena levels only ever in "city" dungeons */
-	if ((d_ptr->habitat & RF8_DUN_CITY) && one_in_(EMPTY_LEVEL))
+	if ((d_ptr->habitat & RF7_DUN_CITY) && one_in_(EMPTY_LEVEL))
 	{
 		empty_level = TRUE;
 

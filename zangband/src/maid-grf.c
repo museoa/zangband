@@ -1356,38 +1356,38 @@ static void image_random(byte *ap, char *cp)
  */
 static int breath_gf[32] =
 {
-	GF_NONE,	/* RF4_SHRIEK */
-	GF_NONE,	/* RF4_ELDRITCH_HORROR */
-	GF_NONE,	/* RF4_XXX3X4 */
-	GF_NONE,	/* RF4_ROCKET */
-	GF_NONE,	/* RF4_ARROW_1 */
-	GF_NONE,	/* RF4_ARROW_2 */
-	GF_NONE,	/* RF4_ARROW_3 */
-	GF_NONE,	/* RF4_ARROW_4 */
-	GF_ACID,	/* RF4_BR_ACID */
-	GF_ELEC,	/* RF4_BR_ELEC */
-	GF_FIRE,	/* RF4_BR_FIRE */
-	GF_COLD,	/* RF4_BR_COLD */
-	GF_POIS,	/* RF4_BR_POIS */
-	GF_NETHER,	/* RF4_BR_NETH */
-	GF_LITE,	/* RF4_BR_LITE */
-	GF_DARK,	/* RF4_BR_DARK */
-	GF_CONFUSION,	/* RF4_BR_CONF */
-	GF_SOUND,	/* RF4_BR_SOUN */
-	GF_CHAOS,	/* RF4_BR_CHAO */
-	GF_DISENCHANT,	/* RF4_BR_DISE */
-	GF_NEXUS,	/* RF4_BR_NEXU */
-	GF_TIME,	/* RF4_BR_TIME */
-	GF_INERTIA,	/* RF4_BR_INER */
-	GF_GRAVITY,	/* RF4_BR_GRAV */
-	GF_SHARDS,	/* RF4_BR_SHAR */
-	GF_PLASMA,	/* RF4_BR_PLAS */
-	GF_FORCE,	/* RF4_BR_WALL */
-	GF_MANA,	/* RF4_BR_MANA */
-	GF_NONE,	/* RF4_BA_NUKE */
-	GF_NUKE,	/* RF4_BR_NUKE */
-	GF_NONE,	/* RF4_BA_CHAO */
-	GF_DISINTEGRATE	/* RF4_BR_DISI */
+	GF_NONE,	/* RF3_SHRIEK */
+	GF_NONE,	/* RF3_ELDRITCH_HORROR */
+	GF_NONE,	/* RF3_XXX3X4 */
+	GF_NONE,	/* RF3_ROCKET */
+	GF_NONE,	/* RF3_ARROW_1 */
+	GF_NONE,	/* RF3_ARROW_2 */
+	GF_NONE,	/* RF3_ARROW_3 */
+	GF_NONE,	/* RF3_ARROW_4 */
+	GF_ACID,	/* RF3_BR_ACID */
+	GF_ELEC,	/* RF3_BR_ELEC */
+	GF_FIRE,	/* RF3_BR_FIRE */
+	GF_COLD,	/* RF3_BR_COLD */
+	GF_POIS,	/* RF3_BR_POIS */
+	GF_NETHER,	/* RF3_BR_NETH */
+	GF_LITE,	/* RF3_BR_LITE */
+	GF_DARK,	/* RF3_BR_DARK */
+	GF_CONFUSION,	/* RF3_BR_CONF */
+	GF_SOUND,	/* RF3_BR_SOUN */
+	GF_CHAOS,	/* RF3_BR_CHAO */
+	GF_DISENCHANT,	/* RF3_BR_DISE */
+	GF_NEXUS,	/* RF3_BR_NEXU */
+	GF_TIME,	/* RF3_BR_TIME */
+	GF_INERTIA,	/* RF3_BR_INER */
+	GF_GRAVITY,	/* RF3_BR_GRAV */
+	GF_SHARDS,	/* RF3_BR_SHAR */
+	GF_PLASMA,	/* RF3_BR_PLAS */
+	GF_FORCE,	/* RF3_BR_WALL */
+	GF_MANA,	/* RF3_BR_MANA */
+	GF_NONE,	/* RF3_BA_NUKE */
+	GF_NUKE,	/* RF3_BR_NUKE */
+	GF_NONE,	/* RF3_BA_CHAO */
+	GF_DISINTEGRATE	/* RF3_BR_DISI */
 };
 
 
@@ -1399,7 +1399,7 @@ static int breath_gf[32] =
 static byte breath_attr(const monster_race *r_ptr)
 {
 	/* Mask out the breath flags */
-	u32b flags = r_ptr->flags4 & RF4_BREATHS;
+	u32b flags = RF_FLAG(r_ptr->flags, 3, BREATHS);
 	u32b mask;
 
 	/* See if we breathe anything at all */
@@ -1519,13 +1519,13 @@ static void map_mon_info(monster_type *m_ptr, monster_race *r_ptr, byte *a, char
 			feat_not_ascii = ((*a) & 0x80);
 
 			/* Desired attr */
-			if (!(r_ptr->flags1 & (RF1_ATTR_CLEAR)) || feat_not_ascii)
+			if (!(TEST_FLAG(r_ptr->flags, 0, RF0_ATTR_CLEAR)) || feat_not_ascii)
 			{
 				ma = r_ptr->x_attr;
 			}
 
 			/* Desired char */
-			if (!(r_ptr->flags1 & (RF1_CHAR_CLEAR)) || feat_not_ascii)
+			if (!(TEST_FLAG(r_ptr->flags, 0, RF0_CHAR_CLEAR)) || feat_not_ascii)
 			{
 				mc = r_ptr->x_char;
 			}
@@ -1534,10 +1534,10 @@ static void map_mon_info(monster_type *m_ptr, monster_race *r_ptr, byte *a, char
 			if (!(ma & 0x80))
 			{
 				/* Multi-hued monster */
-				if (r_ptr->flags1 & (RF1_ATTR_MULTI))
+				if (TEST_FLAG(r_ptr->flags, 0, RF0_ATTR_MULTI))
 				{
 					/* Is it a shapechanger? */
-					if (r_ptr->flags2 & (RF2_SHAPECHANGER))
+					if (TEST_FLAG(r_ptr->flags, 1, RF1_SHAPECHANGER))
 					{
 						if (use_graphics)
 						{
@@ -1555,7 +1555,7 @@ static void map_mon_info(monster_type *m_ptr, monster_race *r_ptr, byte *a, char
 					}
 
 					/* Multi-hued attr */
-					if (r_ptr->flags2 & RF2_ATTR_ANY)
+					if (RF_FLAG(r_ptr->flags, 1, ATTR_ANY))
 						ma = randint1(15);
 					else
 					{
@@ -1565,7 +1565,7 @@ static void map_mon_info(monster_type *m_ptr, monster_race *r_ptr, byte *a, char
 				}
 				/* Mimics' colors vary */
 				else if (((mc == '\"') || (mc == '!') || (mc == '='))
-						 && !(r_ptr->flags1 & RF1_UNIQUE))
+						 && !(RF_FLAG(r_ptr->flags, 0, UNIQUE)))
 				{
 					/* Use char */ ;
 
@@ -1918,7 +1918,7 @@ static void map_info(int x, int y, byte *ap, char *cp, byte *tap, char *tcp)
 		map_mon_info(m_ptr, r_ptr, &a, &c, &map);
 		
 		/* Not hallucinating and Mimic in los? */
-		if (!halluc && visible && !m_ptr->ml && (r_ptr->flags1 & RF1_CHAR_MIMIC))
+		if (!halluc && visible && !m_ptr->ml && (RF_FLAG(r_ptr->flags, 0, CHAR_MIMIC)))
 		{
 			/* Keep this grid */
 			map.flags |= MAP_ONCE;
@@ -2825,10 +2825,10 @@ static void copy_list(term_list *t_ptr, int num1, list_item **l_ptr_ptr,
 		tl_ptr = &t_ptr[i];
 
 		/* Duplicate flags */
-		l_ptr->kn_flags1 = tl_ptr->kn_flags1;
-		l_ptr->kn_flags2 = tl_ptr->kn_flags2;
-		l_ptr->kn_flags3 = tl_ptr->kn_flags3;
-		l_ptr->kn_flags4 = tl_ptr->kn_flags4;
+		l_ptr->kn_flags[0] = tl_ptr->kn_flags[0];
+		l_ptr->kn_flags[1] = tl_ptr->kn_flags[1];
+		l_ptr->kn_flags[2] = tl_ptr->kn_flags[2];
+		l_ptr->kn_flags[3] = tl_ptr->kn_flags[3];
 
 		/* Duplicate cost */
 		l_ptr->cost = tl_ptr->cost;
@@ -2914,9 +2914,7 @@ static void save_object_list(term_list *l_ptr, int num, byte list_type)
 static void set_basic_flags(term_list *l_ptr, object_type *o_ptr, bool in_store)
 {
 	/* Known flags */
-	object_flags_known(o_ptr, &l_ptr->kn_flags1,
-					   &l_ptr->kn_flags2, &l_ptr->kn_flags3,
-					   &l_ptr->kn_flags4);
+	object_flags_known(o_ptr, l_ptr->kn_flags);
 
 	/* Type of object */
 	if (object_aware_p(o_ptr) || in_store)
@@ -2971,7 +2969,7 @@ static void set_basic_flags(term_list *l_ptr, object_type *o_ptr, bool in_store)
 	}
 
 	/* Pval */
-	if (o_ptr->kn_flags1 & (TR1_PVAL_MASK))
+	if (o_ptr->kn_flags[0] & (TR0_PVAL_MASK))
 	{
 		/* Normal items with noticable pval */
 		l_ptr->pval = o_ptr->pval;

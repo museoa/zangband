@@ -3329,7 +3329,7 @@ static bool do_cmd_knowledge_uniques(int dummy)
 		if (!cheat_know && !r_ptr->r_sights) continue;
 
 		/* Require unique monsters if needed */
-		if (!(r_ptr->flags1 & (RF1_UNIQUE))) continue;
+		if (!(TEST_FLAG(r_ptr->flags, 0, RF0_UNIQUE))) continue;
 
 		/* Collect "appropriate" monsters */
 		who[n++] = i;
@@ -3621,7 +3621,7 @@ static bool do_cmd_knowledge_kill_count(int dummy)
 	{
 		monster_race *r_ptr = &r_info[kk];
 
-		if (r_ptr->flags1 & (RF1_UNIQUE))
+		if (TEST_FLAG(r_ptr->flags, 0, RF0_UNIQUE))
 		{
 			bool dead = (r_ptr->max_num == 0);
 
@@ -3659,7 +3659,7 @@ static bool do_cmd_knowledge_kill_count(int dummy)
 	{
 		monster_race *r_ptr = &r_info[who[i]];
 
-		if (r_ptr->flags1 & (RF1_UNIQUE))
+		if (TEST_FLAG(r_ptr->flags, 0, RF0_UNIQUE))
 		{
 			bool dead = (r_ptr->max_num == 0);
 
@@ -3763,7 +3763,7 @@ static bool do_cmd_knowledge_objects(int dummy)
 		object_kind *k_ptr = &k_info[k];
 
 		/* Hack -- skip artifacts */
-		if (k_ptr->flags3 & (TR3_INSTA_ART)) continue;
+		if (TEST_FLAG(k_ptr->flags, 2, TR2_INSTA_ART)) continue;
 
 		/* List known flavored objects */
 		if (k_ptr->flavor && k_ptr->aware)

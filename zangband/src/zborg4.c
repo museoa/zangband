@@ -290,7 +290,7 @@ void borg_list_info(byte list_type, vptr dummy)
  */
 static void borg_notice_player(void)
 {
-	u32b f1, f2, f3, f4;
+	u32b ff[4];
 
 	/* Recalc some Variables */
 	bp_ptr->ac = 0;
@@ -332,20 +332,20 @@ static void borg_notice_player(void)
 	/* Racial Skills */
 
 	/* Extract the player flags */
-	player_flags(&f1, &f2, &f3, &f4);
+	player_flags(ff);
 
-	bp_ptr->flags1 |= f1;
-	bp_ptr->flags2 |= f2;
-	bp_ptr->flags3 |= f3;
+	bp_ptr->flags[0] |= ff[0];
+	bp_ptr->flags[1] |= ff[1];
+	bp_ptr->flags[2] |= ff[2];
 	/* XXX XXX XXX Don't handle flags4 yet */
 
 	/* Sustain flags */
-	if (f2 & (TR2_SUST_STR)) bp_ptr->sust[A_STR] = TRUE;
-	if (f2 & (TR2_SUST_INT)) bp_ptr->sust[A_INT] = TRUE;
-	if (f2 & (TR2_SUST_WIS)) bp_ptr->sust[A_WIS] = TRUE;
-	if (f2 & (TR2_SUST_DEX)) bp_ptr->sust[A_DEX] = TRUE;
-	if (f2 & (TR2_SUST_CON)) bp_ptr->sust[A_CON] = TRUE;
-	if (f2 & (TR2_SUST_CHR)) bp_ptr->sust[A_CHR] = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_SUST_STR)) bp_ptr->sust[A_STR] = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_SUST_INT)) bp_ptr->sust[A_INT] = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_SUST_WIS)) bp_ptr->sust[A_WIS] = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_SUST_DEX)) bp_ptr->sust[A_DEX] = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_SUST_CON)) bp_ptr->sust[A_CON] = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_SUST_CHR)) bp_ptr->sust[A_CHR] = TRUE;
 
 	/* Bloating slows the player down (a little) */
 	if (bp_ptr->status.gorged) bp_ptr->speed -= 10;
@@ -447,64 +447,64 @@ static void borg_notice_equip(int *extra_blows, int *extra_shots,
 		if (!l_ptr) continue;
 
 		/* Check for cursed items */
-		if (l_ptr->kn_flags3 & TR3_CURSED) borg_wearing_cursed = TRUE;
-		if (l_ptr->kn_flags3 & TR3_HEAVY_CURSE) borg_heavy_curse = TRUE;
+		if (l_ptr->kn_flags[2] & TR2_CURSED) borg_wearing_cursed = TRUE;
+		if (l_ptr->kn_flags[2] & TR2_HEAVY_CURSE) borg_heavy_curse = TRUE;
 
 		/* Affect stats */
-		if (l_ptr->kn_flags1 & TR1_STR) my_stat_add[A_STR] += l_ptr->pval;
-		if (l_ptr->kn_flags1 & TR1_INT) my_stat_add[A_INT] += l_ptr->pval;
-		if (l_ptr->kn_flags1 & TR1_WIS) my_stat_add[A_WIS] += l_ptr->pval;
-		if (l_ptr->kn_flags1 & TR1_DEX) my_stat_add[A_DEX] += l_ptr->pval;
-		if (l_ptr->kn_flags1 & TR1_CON) my_stat_add[A_CON] += l_ptr->pval;
-		if (l_ptr->kn_flags1 & TR1_CHR) my_stat_add[A_CHR] += l_ptr->pval;
+		if (l_ptr->kn_flags[0] & TR0_STR) my_stat_add[A_STR] += l_ptr->pval;
+		if (l_ptr->kn_flags[0] & TR0_INT) my_stat_add[A_INT] += l_ptr->pval;
+		if (l_ptr->kn_flags[0] & TR0_WIS) my_stat_add[A_WIS] += l_ptr->pval;
+		if (l_ptr->kn_flags[0] & TR0_DEX) my_stat_add[A_DEX] += l_ptr->pval;
+		if (l_ptr->kn_flags[0] & TR0_CON) my_stat_add[A_CON] += l_ptr->pval;
+		if (l_ptr->kn_flags[0] & TR0_CHR) my_stat_add[A_CHR] += l_ptr->pval;
 
 		/* Affect flags */
-		bp_ptr->flags1 |= l_ptr->kn_flags1;
-		bp_ptr->flags2 |= l_ptr->kn_flags2;
-		bp_ptr->flags3 |= l_ptr->kn_flags3;
+		bp_ptr->flags[0] |= l_ptr->kn_flags[0];
+		bp_ptr->flags[1] |= l_ptr->kn_flags[1];
+		bp_ptr->flags[2] |= l_ptr->kn_flags[2];
 
 		/* Affect infravision */
-		if (l_ptr->kn_flags1 & TR1_INFRA) bp_ptr->see_infra += l_ptr->pval;
+		if (l_ptr->kn_flags[0] & TR0_INFRA) bp_ptr->see_infra += l_ptr->pval;
 
 		/* Affect stealth */
-		if (l_ptr->kn_flags1 & TR1_STEALTH) bp_ptr->skill_stl += l_ptr->pval;
+		if (l_ptr->kn_flags[0] & TR0_STEALTH) bp_ptr->skill_stl += l_ptr->pval;
 
 		/* Affect searching ability (factor of five) */
-		if (l_ptr->kn_flags1 & TR1_SEARCH) bp_ptr->skill_sns += l_ptr->pval * 5;
+		if (l_ptr->kn_flags[0] & TR0_SEARCH) bp_ptr->skill_sns += l_ptr->pval * 5;
 
 		/* Affect searching frequency (factor of five) */
-		if (l_ptr->kn_flags1 & TR1_SEARCH) bp_ptr->skill_fos +=
+		if (l_ptr->kn_flags[0] & TR0_SEARCH) bp_ptr->skill_fos +=
 				(l_ptr->pval * 5);
 
 		/* Affect digging (factor of 20) */
-		if (l_ptr->kn_flags1 & TR1_TUNNEL) bp_ptr->skill_dig +=
+		if (l_ptr->kn_flags[0] & TR0_TUNNEL) bp_ptr->skill_dig +=
 				l_ptr->pval * 20;
 
 		/* Affect speed */
-		if (l_ptr->kn_flags1 & TR1_SPEED) bp_ptr->speed += l_ptr->pval;
+		if (l_ptr->kn_flags[0] & TR0_SPEED) bp_ptr->speed += l_ptr->pval;
 
 		/* Affect blows */
-		if (l_ptr->kn_flags1 & TR1_BLOWS) *extra_blows += l_ptr->pval;
+		if (l_ptr->kn_flags[0] & TR0_BLOWS) *extra_blows += l_ptr->pval;
 
 		/* Boost shots */
-		if (l_ptr->kn_flags3 & TR3_XTRA_SHOTS) (*extra_shots)++;
+		if (l_ptr->kn_flags[2] & TR2_XTRA_SHOTS) (*extra_shots)++;
 
 		/* Boost might */
-		if (l_ptr->kn_flags3 & TR3_XTRA_MIGHT) (*extra_might)++;
+		if (l_ptr->kn_flags[2] & TR2_XTRA_MIGHT) (*extra_might)++;
 
 		/* Immunity flags */
-		if (l_ptr->kn_flags2 & TR2_IM_FIRE) my_oppose_fire = TRUE;
-		if (l_ptr->kn_flags2 & TR2_IM_ACID) my_oppose_elec = TRUE;
-		if (l_ptr->kn_flags2 & TR2_IM_COLD) my_oppose_elec = TRUE;
-		if (l_ptr->kn_flags2 & TR2_IM_ELEC) my_oppose_elec = TRUE;
+		if (l_ptr->kn_flags[1] & TR1_IM_FIRE) my_oppose_fire = TRUE;
+		if (l_ptr->kn_flags[1] & TR1_IM_ACID) my_oppose_elec = TRUE;
+		if (l_ptr->kn_flags[1] & TR1_IM_COLD) my_oppose_elec = TRUE;
+		if (l_ptr->kn_flags[1] & TR1_IM_ELEC) my_oppose_elec = TRUE;
 
 		/* Sustain flags */
-		if (l_ptr->kn_flags2 & TR2_SUST_STR) bp_ptr->sust[A_STR] = TRUE;
-		if (l_ptr->kn_flags2 & TR2_SUST_INT) bp_ptr->sust[A_INT] = TRUE;
-		if (l_ptr->kn_flags2 & TR2_SUST_WIS) bp_ptr->sust[A_WIS] = TRUE;
-		if (l_ptr->kn_flags2 & TR2_SUST_DEX) bp_ptr->sust[A_DEX] = TRUE;
-		if (l_ptr->kn_flags2 & TR2_SUST_CON) bp_ptr->sust[A_CON] = TRUE;
-		if (l_ptr->kn_flags2 & TR2_SUST_CHR) bp_ptr->sust[A_CHR] = TRUE;
+		if (l_ptr->kn_flags[1] & TR1_SUST_STR) bp_ptr->sust[A_STR] = TRUE;
+		if (l_ptr->kn_flags[1] & TR1_SUST_INT) bp_ptr->sust[A_INT] = TRUE;
+		if (l_ptr->kn_flags[1] & TR1_SUST_WIS) bp_ptr->sust[A_WIS] = TRUE;
+		if (l_ptr->kn_flags[1] & TR1_SUST_DEX) bp_ptr->sust[A_DEX] = TRUE;
+		if (l_ptr->kn_flags[1] & TR1_SUST_CON) bp_ptr->sust[A_CON] = TRUE;
+		if (l_ptr->kn_flags[1] & TR1_SUST_CHR) bp_ptr->sust[A_CHR] = TRUE;
 
 		/* Modify the base armor class */
 		bp_ptr->ac += l_ptr->ac;
@@ -915,7 +915,7 @@ static void borg_notice_weapon(int hold, int extra_blows)
 	/* priest weapon penalty for non-blessed edged weapons */
 	if ((borg_class == CLASS_PRIEST) &&
 		((l_ptr->tval == TV_SWORD) || (l_ptr->tval == TV_POLEARM)) &&
-		(!(l_ptr->kn_flags3 & TR3_BLESSED)))
+		(!(l_ptr->kn_flags[2] & TR2_BLESSED)))
 	{
 		/* Reduce the real bonuses */
 		bp_ptr->to_h -= 5;
@@ -1190,7 +1190,7 @@ static void borg_notice_lite(void)
 		/* If it is a torch with fuel or everburning */
 		if ((k_ptr->sval == SV_LITE_TORCH) &&
 			(l_ptr->timeout ||
-			(l_ptr->kn_flags3 & TR3_LITE)))
+			(l_ptr->kn_flags[2] & TR2_LITE)))
 
 		{
 			/* Torches -- radius one */
@@ -1208,7 +1208,7 @@ static void borg_notice_lite(void)
 			}
 			else
 			{
-				if (l_ptr->kn_flags3 & TR3_LITE)
+				if (l_ptr->kn_flags[2] & TR2_LITE)
 				{
 					/* Unfueled Lantern of Everburning still has radius 1 */
 					bp_ptr->cur_lite += 1;
@@ -1216,7 +1216,7 @@ static void borg_notice_lite(void)
 			}
 		}
 		
-		if (l_ptr->kn_flags3 & TR3_LITE)
+		if (l_ptr->kn_flags[2] & TR2_LITE)
 		{
 			/* Permanently glowing */
 			bp_ptr->britelite = TRUE;
@@ -1229,7 +1229,7 @@ static void borg_notice_lite(void)
 		}
 		
 		/* Artifact lites -- radius three */
-		if (l_ptr->kn_flags3 & TR3_INSTA_ART)
+		if (l_ptr->kn_flags[2] & TR2_INSTA_ART)
 		{
 			bp_ptr->cur_lite += 3;
 			
@@ -1240,7 +1240,7 @@ static void borg_notice_lite(void)
 			bp_ptr->able.fuel += 1000;
 
 			/* Vampires need to be concerned with Artifacts Lites */
-			if ((borg_race == RACE_VAMPIRE) && !(bp_ptr->flags2 & TR2_RES_LITE))
+			if ((borg_race == RACE_VAMPIRE) && !(TR_FLAG(bp_ptr->flags, 1, RES_LITE)))
 			{
 				bp_ptr->cur_lite = 1;
 			}
@@ -1628,17 +1628,17 @@ static void borg_notice_scrolls(list_item *l_ptr, int number)
 		}
 		case SV_SCROLL_ICE:
 		{
-			if (bp_ptr->flags2 & TR2_RES_COLD) bp_ptr->able.logrus += number;
+			if (TR_FLAG(bp_ptr->flags, 1, RES_COLD)) bp_ptr->able.logrus += number;
 			break;
 		}
 		case SV_SCROLL_FIRE:
 		{
-			if (bp_ptr->flags2 & TR2_RES_FIRE) bp_ptr->able.logrus += number;
+			if (TR_FLAG(bp_ptr->flags, 1, RES_FIRE)) bp_ptr->able.logrus += number;
 			break;
 		}
 		case SV_SCROLL_CHAOS:
 		{
-			if (bp_ptr->flags2 & TR2_RES_CHAOS) bp_ptr->able.logrus += number;
+			if (TR_FLAG(bp_ptr->flags, 1, RES_CHAOS)) bp_ptr->able.logrus += number;
 			break;
 		}
 		case SV_SCROLL_DISPEL_UNDEAD:
@@ -2018,7 +2018,7 @@ static void borg_notice_inven_item(list_item *l_ptr)
 			/* Shovels and such */
 
 			/* Hack -- ignore worthless ones (including cursed) */
-			if (l_ptr->kn_flags3 & TR3_CURSED) break;
+			if (l_ptr->kn_flags[2] & TR2_CURSED) break;
 
 			/* Do not carry if weak, won't be able to dig anyway */
 			if (bp_ptr->skill_dig < 30) break;
@@ -2439,7 +2439,7 @@ static void borg_notice_aux2(void)
 		 borg_spell_okay_fail(REALM_TRUMP, 0, 4, 5) ||
 		 borg_spell_okay_fail(REALM_CHAOS, 0, 7, 5) ||
 		 borg_mindcr_okay_fail(MIND_MAJOR_DISP, 7, 5)) &&
-		(bp_ptr->flags2 & TR2_RES_BLIND) && (bp_ptr->flags2 & TR2_RES_CONF))
+		(TR_FLAG(bp_ptr->flags, 1, RES_BLIND)) && (TR_FLAG(bp_ptr->flags, 1, RES_CONF)))
 	{
 		bp_ptr->able.teleport += 1000;
 	}
@@ -2892,95 +2892,95 @@ static void borg_notice_home_clear(void)
  */
 static void borg_notice_home_flags(list_item *l_ptr)
 {
-	if (l_ptr->kn_flags3 & TR3_SLOW_DIGEST) num_slow_digest += l_ptr->number;
-	if (l_ptr->kn_flags3 & TR3_REGEN) num_regenerate += l_ptr->number;
-	if (l_ptr->kn_flags3 & TR3_TELEPATHY) num_telepathy += l_ptr->number;
-	if (l_ptr->kn_flags3 & TR3_SEE_INVIS) num_see_inv += l_ptr->number;
-	if (l_ptr->kn_flags3 & TR3_FEATHER) num_ffall += l_ptr->number;
-	if (l_ptr->kn_flags2 & TR2_FREE_ACT) num_free_act += l_ptr->number;
-	if (l_ptr->kn_flags2 & TR2_HOLD_LIFE) num_hold_life += l_ptr->number;
-	if (l_ptr->kn_flags2 & TR2_IM_FIRE)
+	if (l_ptr->kn_flags[2] & TR2_SLOW_DIGEST) num_slow_digest += l_ptr->number;
+	if (l_ptr->kn_flags[2] & TR2_REGEN) num_regenerate += l_ptr->number;
+	if (l_ptr->kn_flags[2] & TR2_TELEPATHY) num_telepathy += l_ptr->number;
+	if (l_ptr->kn_flags[2] & TR2_SEE_INVIS) num_see_inv += l_ptr->number;
+	if (l_ptr->kn_flags[2] & TR2_FEATHER) num_ffall += l_ptr->number;
+	if (l_ptr->kn_flags[1] & TR1_FREE_ACT) num_free_act += l_ptr->number;
+	if (l_ptr->kn_flags[1] & TR1_HOLD_LIFE) num_hold_life += l_ptr->number;
+	if (l_ptr->kn_flags[1] & TR1_IM_FIRE)
 	{
 		num_immune_fire += l_ptr->number;
 		num_resist_fire += l_ptr->number;
 	}
-	if (l_ptr->kn_flags2 & TR2_IM_ACID)
+	if (l_ptr->kn_flags[1] & TR1_IM_ACID)
 	{
 		num_immune_acid += l_ptr->number;
 		num_resist_acid += l_ptr->number;
 	}
-	if (l_ptr->kn_flags2 & TR2_IM_COLD)
+	if (l_ptr->kn_flags[1] & TR1_IM_COLD)
 	{
 		num_immune_cold += l_ptr->number;
 		num_resist_cold += l_ptr->number;
 	}
-	if (l_ptr->kn_flags2 & TR2_IM_ELEC)
+	if (l_ptr->kn_flags[1] & TR1_IM_ELEC)
 	{
 		num_immune_elec += l_ptr->number;
 		num_resist_elec += l_ptr->number;
 	}
-	if (l_ptr->kn_flags2 & TR2_RES_ACID) num_resist_acid += l_ptr->number;
-	if (l_ptr->kn_flags2 & TR2_RES_ELEC) num_resist_elec += l_ptr->number;
-	if (l_ptr->kn_flags2 & TR2_RES_FIRE) num_resist_fire += l_ptr->number;
-	if (l_ptr->kn_flags2 & TR2_RES_COLD) num_resist_cold += l_ptr->number;
-	if (l_ptr->kn_flags2 & TR2_RES_POIS) num_resist_pois += l_ptr->number;
-	if (l_ptr->kn_flags2 & TR2_RES_SOUND) num_resist_sound += l_ptr->number;
-	if (l_ptr->kn_flags2 & TR2_RES_LITE) num_resist_lite += l_ptr->number;
-	if (l_ptr->kn_flags2 & TR2_RES_DARK) num_resist_dark += l_ptr->number;
-	if (l_ptr->kn_flags2 & TR2_RES_CHAOS) num_resist_chaos += l_ptr->number;
-	if (l_ptr->kn_flags2 & TR2_RES_CONF) num_resist_conf += l_ptr->number;
-	if (l_ptr->kn_flags2 & TR2_RES_DISEN) num_resist_disen += l_ptr->number;
-	if (l_ptr->kn_flags2 & TR2_RES_SHARDS) num_resist_shard += l_ptr->number;
-	if (l_ptr->kn_flags2 & TR2_RES_NEXUS) num_resist_nexus += l_ptr->number;
-	if (l_ptr->kn_flags2 & TR2_RES_BLIND) num_resist_blind += l_ptr->number;
-	if (l_ptr->kn_flags2 & TR2_RES_NETHER) num_resist_neth += l_ptr->number;
+	if (l_ptr->kn_flags[1] & TR1_RES_ACID) num_resist_acid += l_ptr->number;
+	if (l_ptr->kn_flags[1] & TR1_RES_ELEC) num_resist_elec += l_ptr->number;
+	if (l_ptr->kn_flags[1] & TR1_RES_FIRE) num_resist_fire += l_ptr->number;
+	if (l_ptr->kn_flags[1] & TR1_RES_COLD) num_resist_cold += l_ptr->number;
+	if (l_ptr->kn_flags[1] & TR1_RES_POIS) num_resist_pois += l_ptr->number;
+	if (l_ptr->kn_flags[1] & TR1_RES_SOUND) num_resist_sound += l_ptr->number;
+	if (l_ptr->kn_flags[1] & TR1_RES_LITE) num_resist_lite += l_ptr->number;
+	if (l_ptr->kn_flags[1] & TR1_RES_DARK) num_resist_dark += l_ptr->number;
+	if (l_ptr->kn_flags[1] & TR1_RES_CHAOS) num_resist_chaos += l_ptr->number;
+	if (l_ptr->kn_flags[1] & TR1_RES_CONF) num_resist_conf += l_ptr->number;
+	if (l_ptr->kn_flags[1] & TR1_RES_DISEN) num_resist_disen += l_ptr->number;
+	if (l_ptr->kn_flags[1] & TR1_RES_SHARDS) num_resist_shard += l_ptr->number;
+	if (l_ptr->kn_flags[1] & TR1_RES_NEXUS) num_resist_nexus += l_ptr->number;
+	if (l_ptr->kn_flags[1] & TR1_RES_BLIND) num_resist_blind += l_ptr->number;
+	if (l_ptr->kn_flags[1] & TR1_RES_NETHER) num_resist_neth += l_ptr->number;
 
 	/* Count Sustains */
-	if (l_ptr->kn_flags2 & TR2_SUST_STR) num_sustain_str += l_ptr->number;
-	if (l_ptr->kn_flags2 & TR2_SUST_INT) num_sustain_int += l_ptr->number;
-	if (l_ptr->kn_flags2 & TR2_SUST_WIS) num_sustain_wis += l_ptr->number;
-	if (l_ptr->kn_flags2 & TR2_SUST_DEX) num_sustain_dex += l_ptr->number;
-	if (l_ptr->kn_flags2 & TR2_SUST_CON) num_sustain_con += l_ptr->number;
-	if (l_ptr->kn_flags2 & TR2_SUST_STR &&
-		l_ptr->kn_flags2 & TR2_SUST_INT &&
-		l_ptr->kn_flags2 & TR2_SUST_WIS &&
-		l_ptr->kn_flags2 & TR2_SUST_DEX &&
-		l_ptr->kn_flags2 & TR2_SUST_CON) num_sustain_all += l_ptr->number;
+	if (l_ptr->kn_flags[1] & TR1_SUST_STR) num_sustain_str += l_ptr->number;
+	if (l_ptr->kn_flags[1] & TR1_SUST_INT) num_sustain_int += l_ptr->number;
+	if (l_ptr->kn_flags[1] & TR1_SUST_WIS) num_sustain_wis += l_ptr->number;
+	if (l_ptr->kn_flags[1] & TR1_SUST_DEX) num_sustain_dex += l_ptr->number;
+	if (l_ptr->kn_flags[1] & TR1_SUST_CON) num_sustain_con += l_ptr->number;
+	if (l_ptr->kn_flags[1] & TR1_SUST_STR &&
+		l_ptr->kn_flags[1] & TR1_SUST_INT &&
+		l_ptr->kn_flags[1] & TR1_SUST_WIS &&
+		l_ptr->kn_flags[1] & TR1_SUST_DEX &&
+		l_ptr->kn_flags[1] & TR1_SUST_CON) num_sustain_all += l_ptr->number;
 
 	/* count up bonus to stats */
-	if (l_ptr->kn_flags1 & TR1_STR)
+	if (l_ptr->kn_flags[0] & TR0_STR)
 	{
 		if (l_ptr->tval != TV_RING)
 			home_stat_add[A_STR] += l_ptr->pval * l_ptr->number;
 	}
-	if (l_ptr->kn_flags1 & TR1_INT)
+	if (l_ptr->kn_flags[0] & TR0_INT)
 	{
 		if (l_ptr->tval != TV_RING)
 			home_stat_add[A_INT] += l_ptr->pval * l_ptr->number;
 	}
-	if (l_ptr->kn_flags1 & TR1_WIS)
+	if (l_ptr->kn_flags[0] & TR0_WIS)
 	{
 		if (l_ptr->tval != TV_RING)
 			home_stat_add[A_WIS] += l_ptr->pval * l_ptr->number;
 	}
-	if (l_ptr->kn_flags1 & TR1_DEX)
+	if (l_ptr->kn_flags[0] & TR0_DEX)
 	{
 		if (l_ptr->tval != TV_RING)
 			home_stat_add[A_DEX] += l_ptr->pval * l_ptr->number;
 	}
-	if (l_ptr->kn_flags1 & TR1_CON)
+	if (l_ptr->kn_flags[0] & TR0_CON)
 	{
 		if (l_ptr->tval != TV_RING)
 			home_stat_add[A_CON] += l_ptr->pval * l_ptr->number;
 	}
-	if (l_ptr->kn_flags1 & TR1_CHR)
+	if (l_ptr->kn_flags[0] & TR0_CHR)
 	{
 		if (l_ptr->tval != TV_RING)
 			home_stat_add[A_CHR] += l_ptr->pval * l_ptr->number;
 	}
 
 	/* count up bonus to speed */
-	if (l_ptr->kn_flags1 & TR1_SPEED) num_speed += l_ptr->pval * l_ptr->number;
+	if (l_ptr->kn_flags[0] & TR0_SPEED) num_speed += l_ptr->pval * l_ptr->number;
 }
 
 
@@ -3068,7 +3068,7 @@ static void borg_notice_home_weapon(list_item *l_ptr)
 	{
 		/* Penalize non-blessed edged weapons */
 		if (((l_ptr->tval == TV_SWORD) || (l_ptr->tval == TV_POLEARM))
-			&& (!(l_ptr->kn_flags3 & TR3_BLESSED)))
+			&& (!(l_ptr->kn_flags[2] & TR2_BLESSED)))
 		{
 			num_edged_weapon += l_ptr->number;
 		}
@@ -3198,7 +3198,7 @@ static void borg_notice_home_weapon(list_item *l_ptr)
 	/* Require at least one blow */
 	if (num_blow < 1) num_blow = 1;
 
-	if (l_ptr->kn_flags1 & TR1_BLOWS) num_blow += l_ptr->pval;
+	if (l_ptr->kn_flags[0] & TR0_BLOWS) num_blow += l_ptr->pval;
 
 	num_blow *= l_ptr->number;
 
@@ -3513,7 +3513,7 @@ static void borg_notice_home_spells(void)
  */
 static void borg_notice_home_player(void)
 {
-	u32b f1, f2, f3, f4;
+	u32b ff[4];
 
 	int i;
 
@@ -3524,51 +3524,51 @@ static void borg_notice_home_player(void)
 	}
 
 	/* Extract the player flags */
-	player_flags(&f1, &f2, &f3, &f4);
+	player_flags(ff);
 
 	/* Good flags */
-	if (f3 & (TR3_SLOW_DIGEST)) num_slow_digest = TRUE;
-	if (f3 & (TR3_FEATHER)) num_ffall = TRUE;
-	if (f3 & (TR3_LITE)) num_lite = TRUE;
-	if (f3 & (TR3_REGEN)) num_regenerate = TRUE;
-	if (f3 & (TR3_TELEPATHY)) num_telepathy = TRUE;
-	if (f3 & (TR3_SEE_INVIS)) num_see_inv = TRUE;
-	if (f2 & (TR2_FREE_ACT)) num_free_act = TRUE;
-	if (f2 & (TR2_HOLD_LIFE)) num_hold_life = TRUE;
+	if (TEST_FLAG(ff, 2, TR2_SLOW_DIGEST)) num_slow_digest = TRUE;
+	if (TEST_FLAG(ff, 2, TR2_FEATHER)) num_ffall = TRUE;
+	if (TEST_FLAG(ff, 2, TR2_LITE)) num_lite = TRUE;
+	if (TEST_FLAG(ff, 2, TR2_REGEN)) num_regenerate = TRUE;
+	if (TEST_FLAG(ff, 2, TR2_TELEPATHY)) num_telepathy = TRUE;
+	if (TEST_FLAG(ff, 2, TR2_SEE_INVIS)) num_see_inv = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_FREE_ACT)) num_free_act = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_HOLD_LIFE)) num_hold_life = TRUE;
 
 	/* Weird flags */
 
 	/* Bad flags */
 
 	/* Immunity flags */
-	if (f2 & (TR2_IM_FIRE)) num_immune_fire = TRUE;
-	if (f2 & (TR2_IM_ACID)) num_immune_acid = TRUE;
-	if (f2 & (TR2_IM_COLD)) num_immune_cold = TRUE;
-	if (f2 & (TR2_IM_ELEC)) num_immune_elec = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_IM_FIRE)) num_immune_fire = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_IM_ACID)) num_immune_acid = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_IM_COLD)) num_immune_cold = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_IM_ELEC)) num_immune_elec = TRUE;
 
 	/* Resistance flags */
-	if (f2 & (TR2_RES_ACID)) num_resist_acid = TRUE;
-	if (f2 & (TR2_RES_ELEC)) num_resist_elec = TRUE;
-	if (f2 & (TR2_RES_FIRE)) num_resist_fire = TRUE;
-	if (f2 & (TR2_RES_COLD)) num_resist_cold = TRUE;
-	if (f2 & (TR2_RES_POIS)) num_resist_pois = TRUE;
-	if (f2 & (TR2_RES_LITE)) num_resist_lite = TRUE;
-	if (f2 & (TR2_RES_DARK)) num_resist_dark = TRUE;
-	if (f2 & (TR2_RES_BLIND)) num_resist_blind = TRUE;
-	if (f2 & (TR2_RES_CONF)) num_resist_conf = TRUE;
-	if (f2 & (TR2_RES_SOUND)) num_resist_sound = TRUE;
-	if (f2 & (TR2_RES_SHARDS)) num_resist_shard = TRUE;
-	if (f2 & (TR2_RES_NEXUS)) num_resist_nexus = TRUE;
-	if (f2 & (TR2_RES_NETHER)) num_resist_neth = TRUE;
-	if (f2 & (TR2_RES_CHAOS)) num_resist_chaos = TRUE;
-	if (f2 & (TR2_RES_DISEN)) num_resist_disen = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_RES_ACID)) num_resist_acid = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_RES_ELEC)) num_resist_elec = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_RES_FIRE)) num_resist_fire = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_RES_COLD)) num_resist_cold = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_RES_POIS)) num_resist_pois = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_RES_LITE)) num_resist_lite = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_RES_DARK)) num_resist_dark = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_RES_BLIND)) num_resist_blind = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_RES_CONF)) num_resist_conf = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_RES_SOUND)) num_resist_sound = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_RES_SHARDS)) num_resist_shard = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_RES_NEXUS)) num_resist_nexus = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_RES_NETHER)) num_resist_neth = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_RES_CHAOS)) num_resist_chaos = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_RES_DISEN)) num_resist_disen = TRUE;
 
 	/* Sustain flags */
-	if (f2 & (TR2_SUST_STR)) num_sustain_str = TRUE;
-	if (f2 & (TR2_SUST_INT)) num_sustain_int = TRUE;
-	if (f2 & (TR2_SUST_WIS)) num_sustain_wis = TRUE;
-	if (f2 & (TR2_SUST_DEX)) num_sustain_dex = TRUE;
-	if (f2 & (TR2_SUST_CON)) num_sustain_con = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_SUST_STR)) num_sustain_str = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_SUST_INT)) num_sustain_int = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_SUST_WIS)) num_sustain_wis = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_SUST_DEX)) num_sustain_dex = TRUE;
+	if (TEST_FLAG(ff, 1, TR1_SUST_CON)) num_sustain_con = TRUE;
 }
 
 
@@ -3638,8 +3638,8 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 			{
 				/* Penalize non-usable gloves */
 				if (l_ptr->number &&
-					(!(l_ptr->kn_flags2 & TR2_FREE_ACT)) &&
-					(!((l_ptr->kn_flags1 & TR1_DEX) && (l_ptr->pval > 0))))
+					(!(l_ptr->kn_flags[1] & TR1_FREE_ACT)) &&
+					(!((l_ptr->kn_flags[0] & TR0_DEX) && (l_ptr->pval > 0))))
 				{
 					num_bad_gloves += l_ptr->number;
 				}
@@ -3656,7 +3656,7 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 
 		case TV_LITE:
 		{
-			if (l_ptr->kn_flags3 & TR3_INSTA_ART)
+			if (l_ptr->kn_flags[2] & TR2_INSTA_ART)
 			{
 				num_lite += l_ptr->number;
 			}

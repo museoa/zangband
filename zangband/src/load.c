@@ -397,13 +397,13 @@ static void rd_item(object_type *o_ptr)
 	}
 
 	/* Old flags */
-	rd_u32b(&o_ptr->flags1);
-	rd_u32b(&o_ptr->flags2);
-	rd_u32b(&o_ptr->flags3);
+	rd_u32b(&o_ptr->flags[0]);
+	rd_u32b(&o_ptr->flags[1]);
+	rd_u32b(&o_ptr->flags[2]);
 	if (sf_version < 41)
-		o_ptr->flags4 = 0;
+		o_ptr->flags[3] = 0;
 	else
-		rd_u32b(&o_ptr->flags4);
+		rd_u32b(&o_ptr->flags[3]);
 
 	/* Lites changed in [Z] 2.6.0 */
 	if ((sf_version < 25) && (o_ptr->tval == TV_LITE))
@@ -417,7 +417,7 @@ static void rd_item(object_type *o_ptr)
 		else
 		{
 			/* Other lites are everburning. */
-			o_ptr->flags3 |= TR3_LITE;
+			SET_FLAG(o_ptr->flags, 2, TR2_LITE);
 		}
 	}
 
@@ -546,13 +546,13 @@ static void rd_item(object_type *o_ptr)
 
 		rd_byte(&o_ptr->activate);
 
-		rd_u32b(&o_ptr->kn_flags1);
-		rd_u32b(&o_ptr->kn_flags2);
-		rd_u32b(&o_ptr->kn_flags3);
+		rd_u32b(&o_ptr->kn_flags[0]);
+		rd_u32b(&o_ptr->kn_flags[1]);
+		rd_u32b(&o_ptr->kn_flags[2]);
 		if (sf_version < 41)
-			o_ptr->kn_flags4 = 0;
+			o_ptr->kn_flags[3] = 0;
 		else
-			rd_u32b(&o_ptr->kn_flags4);
+			rd_u32b(&o_ptr->kn_flags[3]);
 
 		if (o_ptr->activate && sf_version < 46)
 		{
@@ -560,7 +560,7 @@ static void rd_item(object_type *o_ptr)
 			{
 				/* Remove old randart activations */
 				o_ptr->activate = 0;
-				o_ptr->flags3 &= ~TR3_ACTIVATE;
+				o_ptr->flags[2] &= ~TR2_ACTIVATE;
 			}
 			else
 			{
@@ -589,11 +589,11 @@ static void rd_item(object_type *o_ptr)
 		}
 
 		/* 
-		 * XXX Some older buggy versions set TR3_PERMA_CURSE
+		 * XXX Some older buggy versions set TR2_PERMA_CURSE
 		 * on items where it shouldn't have been set.
 		 */
-		o_ptr->kn_flags3 &= o_ptr->flags3 |
-			~(TR3_HEAVY_CURSE | TR3_PERMA_CURSE);
+		o_ptr->kn_flags[2] &= o_ptr->flags[2] |
+			~(TR2_HEAVY_CURSE | TR2_PERMA_CURSE);
 	}
 	else
 	{
@@ -625,10 +625,10 @@ static void rd_item(object_type *o_ptr)
 		o_ptr->activate = 0;
 
 		/* Reset flags */
-		o_ptr->flags1 = k_ptr->flags1;
-		o_ptr->flags2 = k_ptr->flags2;
-		o_ptr->flags3 = k_ptr->flags3;
-		o_ptr->flags4 = k_ptr->flags4;
+		o_ptr->flags[0] = k_ptr->flags[0];
+		o_ptr->flags[1] = k_ptr->flags[1];
+		o_ptr->flags[2] = k_ptr->flags[2];
+		o_ptr->flags[3] = k_ptr->flags[3];
 
 		/* All done */
 		return;
@@ -689,10 +689,10 @@ static void rd_item(object_type *o_ptr)
 			o_ptr->weight = a_ptr->weight;
 
 			/* Save the artifact flags */
-			o_ptr->flags1 |= a_ptr->flags1;
-			o_ptr->flags2 |= a_ptr->flags2;
-			o_ptr->flags3 |= a_ptr->flags3;
-			o_ptr->flags4 |= a_ptr->flags4;
+			o_ptr->flags[0] |= a_ptr->flags[0];
+			o_ptr->flags[1] |= a_ptr->flags[1];
+			o_ptr->flags[2] |= a_ptr->flags[2];
+			o_ptr->flags[3] |= a_ptr->flags[3];
 
 			/* Mega-Hack -- set activation */
 			o_ptr->activate = name1;
@@ -718,11 +718,11 @@ static void rd_item(object_type *o_ptr)
 			/* Strip activation */
 			if (xtra2)
 			{
-				o_ptr->flags3 &= ~TR3_ACTIVATE;
+				o_ptr->flags[2] &= ~TR2_ACTIVATE;
 			}
 
 			/* Make the object an artifact */
-			o_ptr->flags3 |= TR3_INSTA_ART;
+			SET_FLAG(o_ptr->flags, 2, TR2_INSTA_ART);
 
 			/* Set the cost */
 			o_ptr->cost = k_info[o_ptr->k_idx].cost +
@@ -738,10 +738,10 @@ static void rd_item(object_type *o_ptr)
 		/* Identification status */
 		if (o_ptr->info & (OB_MENTAL))
 		{
-			o_ptr->kn_flags1 = o_ptr->flags1;
-			o_ptr->kn_flags2 = o_ptr->flags2;
-			o_ptr->kn_flags3 = o_ptr->flags3;
-			o_ptr->kn_flags4 = o_ptr->flags4;
+			o_ptr->kn_flags[0] = o_ptr->flags[0];
+			o_ptr->kn_flags[1] = o_ptr->flags[1];
+			o_ptr->kn_flags[2] = o_ptr->flags[2];
+			o_ptr->kn_flags[3] = o_ptr->flags[3];
 		}
 	}
 
@@ -917,12 +917,12 @@ static void rd_lore(int r_idx)
 		rd_byte(&r_ptr->r_blows[3]);
 
 		/* Memorize flags */
-		rd_u32b(&r_ptr->r_flags1);
-		rd_u32b(&r_ptr->r_flags2);
-		rd_u32b(&r_ptr->r_flags3);
-		rd_u32b(&r_ptr->r_flags4);
-		rd_u32b(&r_ptr->r_flags5);
-		rd_u32b(&r_ptr->r_flags6);
+		rd_u32b(&r_ptr->r_flags[0]);
+		rd_u32b(&r_ptr->r_flags[1]);
+		rd_u32b(&r_ptr->r_flags[2]);
+		rd_u32b(&r_ptr->r_flags[3]);
+		rd_u32b(&r_ptr->r_flags[4]);
+		rd_u32b(&r_ptr->r_flags[5]);
 
 
 		/* Read the "Racial" monster limit per level */
@@ -935,12 +935,12 @@ static void rd_lore(int r_idx)
 	}
 
 	/* Repair the lore flags */
-	r_ptr->r_flags1 &= r_ptr->flags1;
-	r_ptr->r_flags2 &= r_ptr->flags2;
-	r_ptr->r_flags3 &= r_ptr->flags3;
-	r_ptr->r_flags4 &= r_ptr->flags4;
-	r_ptr->r_flags5 &= r_ptr->flags5;
-	r_ptr->r_flags6 &= r_ptr->flags6;
+	r_ptr->r_flags[0] &= r_ptr->flags[0];
+	r_ptr->r_flags[1] &= r_ptr->flags[1];
+	r_ptr->r_flags[2] &= r_ptr->flags[2];
+	r_ptr->r_flags[3] &= r_ptr->flags[3];
+	r_ptr->r_flags[4] &= r_ptr->flags[4];
+	r_ptr->r_flags[5] &= r_ptr->flags[5];
 }
 
 
@@ -2803,7 +2803,7 @@ static void rd_quests(int max_quests)
 				rd_u16b(&q_ptr->data.fit.place);
 				
 				/* The artifact is a quest item */
-				a_info[q_ptr->data.fit.a_idx].flags3 |= TR3_QUESTITEM;
+				SET_FLAG(a_info[q_ptr->data.fit.a_idx].flags, 2, TR2_QUESTITEM);
 				break;
 			}
 			
@@ -2946,8 +2946,8 @@ static errr rd_savefile_new_aux(void)
 
 			/* Hack -- Reset the death counter */
 			r_ptr->max_num = 100;
-			if (r_ptr->flags1 & RF1_UNIQUE) r_ptr->max_num = 1;
-			if (r_ptr->flags3 & RF3_UNIQUE_7) r_ptr->max_num = 7;
+			if (RF_FLAG(r_ptr->flags, 0, UNIQUE)) r_ptr->max_num = 1;
+			if (RF_FLAG(r_ptr->flags, 2, UNIQUE_7)) r_ptr->max_num = 7;
 		}
 	}
 

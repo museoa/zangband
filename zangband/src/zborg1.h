@@ -334,9 +334,7 @@ struct borg_player
 	s16b max_depth;	/* Max depth */
 
 	/* Combined object flags */
-	u32b flags1;
-	u32b flags2;
-	u32b flags3;
+	u32b flags[4];
 
 	s16b food;	/* Power of food */
 	s16b recall;	/* Power of recall */

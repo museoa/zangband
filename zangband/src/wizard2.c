@@ -613,7 +613,7 @@ static void wiz_display_item(const object_type *o_ptr)
 	    		"siwdcc  ssidsahanvudotgddhuoclio\n"
 	    		"tnieoh strnipttmiinmrrnrrraiierl\n"
 	    		"rtsxna.plcfgdkcpmldncltggpksdced\n"
-                "%v", binary_fmt, o_ptr->flags1);
+                "%v", binary_fmt, o_ptr->flags[0]);
 
 	prtf(j, 17, "+------------FLAGS2------------+\n"
 	    		"SUST...IMMUN..RESIST............\n"
@@ -621,7 +621,7 @@ static void wiz_display_item(const object_type *o_ptr)
 	    		"siwdcc  clioheatcliooeialoshtncd\n"
 	    		"tnieoh  ierlrfraierliatrnnnrhehi\n"
 	    		"rtsxna..dcedwlatdcedsrekdfddrxss\n"
-                "%v", binary_fmt, o_ptr->flags2);
+                "%v", binary_fmt, o_ptr->flags[1]);
 
 	prtf(j + 32, 10,"+------------FLAGS3------------+\n"
 			"SH  NO tehsif itdrmsIGNRadtabchp\n"
@@ -629,7 +629,7 @@ static void wiz_display_item(const object_type *o_ptr)
 			"il  ea cktmativlgggocliotnorercm\n"
 			"re  lg rnyorhtiesehtierlvxrvssuc\n"
 			"ec  ec swpdtresptntsdcedtpttsers\n"
-                    "%v", binary_fmt, o_ptr->flags3);
+                    "%v", binary_fmt, o_ptr->flags[2]);
 
 	prtf(j + 32, 17,"+------------FLAGS4-------------\n"
 			"        IMSH p pt reHURT..  CURS\n"
@@ -637,7 +637,7 @@ static void wiz_display_item(const object_type *o_ptr)
 			"        iacomtusuptpclioia  utee\n"
 			"        trilurcscsrlierltr  taaa\n"
 			"        ekddtnkwhinodcedek  ottl\n"
-		    "%v", binary_fmt, o_ptr->flags4);
+		    "%v", binary_fmt, o_ptr->flags[3]);
 
 }
 
@@ -917,7 +917,7 @@ static object_type *wiz_reroll_item(object_type *o_ptr)
 	char ch;
 
 	/* Hack -- leave normal artifacts alone */
-	if ((o_ptr->flags3 & TR3_INSTA_ART) && o_ptr->activate) 
+	if ((TR_FLAG(o_ptr->flags, 2, INSTA_ART)) && o_ptr->activate) 
 		return (o_ptr);
 
 	/* Main loop. Ask for magification and artifactification */
@@ -931,7 +931,7 @@ static object_type *wiz_reroll_item(object_type *o_ptr)
 			("[a]ccept, [w]orthless, [n]ormal, [e]xcellent, [s]pecial? ", &ch))
 		{
 			/* Preserve wizard-generated artifacts */
-			if ((o_ptr->flags3 & TR3_INSTA_ART) && o_ptr->activate)
+			if ((TR_FLAG(o_ptr->flags, 2, INSTA_ART)) && o_ptr->activate)
 			{
 				a_info[o_ptr->activate].cur_num = 0;
 				o_ptr->activate = 0;
@@ -945,13 +945,13 @@ static object_type *wiz_reroll_item(object_type *o_ptr)
 		if (ch == 'A' || ch == 'a') break;
 
 		/* Preserve wizard-generated artifacts */
-		if ((o_ptr->flags3 & TR3_INSTA_ART) && o_ptr->activate)
+		if ((TR_FLAG(o_ptr->flags, 2, INSTA_ART)) && o_ptr->activate)
 		{
 			a_info[o_ptr->activate].cur_num = 0;
 			o_ptr->activate = 0;
 
 			/* Remove the artifact flag */
-			o_ptr->flags3 &= ~(TR3_INSTA_ART);
+			o_ptr->flags[2] &= ~(TR2_INSTA_ART);
 		}
 
 		switch (ch)
@@ -1041,7 +1041,7 @@ static void wiz_quantity_item(object_type *o_ptr)
 
 
 	/* Never duplicate artifacts */
-	if (o_ptr->flags3 & TR3_INSTA_ART) return;
+	if (TR_FLAG(o_ptr->flags, 2, INSTA_ART)) return;
 
 	/* Store old quantity. -LM- */
 	tmp_qnt = o_ptr->number;

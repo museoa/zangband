@@ -162,9 +162,9 @@ static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
 			if (borg_obj_star_id_able(l_ptr)) return (FALSE);
 
 			/* Hack -- Never stack "powerful" items */
-			if (l_ptr->kn_flags1 || q_ptr->kn_flags1) return (FALSE);
-			if (l_ptr->kn_flags2 || q_ptr->kn_flags2) return (FALSE);
-			if (l_ptr->kn_flags3 || q_ptr->kn_flags3) return (FALSE);
+			if (l_ptr->kn_flags[0] || q_ptr->kn_flags[0]) return (FALSE);
+			if (l_ptr->kn_flags[1] || q_ptr->kn_flags[1]) return (FALSE);
+			if (l_ptr->kn_flags[2] || q_ptr->kn_flags[2]) return (FALSE);
 
 			/* Require identical "values" */
 			if (l_ptr->ac != q_ptr->ac) return (FALSE);
@@ -665,9 +665,9 @@ static s32b borg_think_buy_slot(list_item *l_ptr, int slot, bool home)
 	s32b p;
 
 	/* Paranoia */
-	if ((q_ptr->kn_flags3 & TR3_CURSED) ||
-		(q_ptr->kn_flags3 & TR3_HEAVY_CURSE) ||
-		(q_ptr->kn_flags3 & TR3_PERMA_CURSE))
+	if ((q_ptr->kn_flags[2] & TR2_CURSED) ||
+		(q_ptr->kn_flags[2] & TR2_HEAVY_CURSE) ||
+		(q_ptr->kn_flags[2] & TR2_PERMA_CURSE))
 	{
 		/* Hack, trying to wield into cursed slot - avoid this */
 		p = borg_power();
@@ -1391,7 +1391,7 @@ bool borg_think_dungeon(void)
 	}
 
 	/* Avoid the burning sun */
-	if ((borg_race == RACE_VAMPIRE) && !(bp_ptr->flags2 & TR2_RES_LITE) &&
+	if ((borg_race == RACE_VAMPIRE) && !(TR_FLAG(bp_ptr->flags, 1, RES_LITE)) &&
 		!bp_ptr->depth &&
 		(bp_ptr->hour >= 5) && (bp_ptr->hour <= 18))
 	{
@@ -1418,7 +1418,7 @@ bool borg_think_dungeon(void)
 		if (kill->m_flags & MONST_ASLEEP) continue;
 
 		/* Count the monsters which are "breeders" */
-		if (r_info[kill->r_idx].flags2 & RF2_MULTIPLY) j++;
+		if (RF_FLAG(r_info[kill->r_idx].flags, 1, MULTIPLY)) j++;
 	}
 
 	/* hack -- close doors on breeder levles */

@@ -804,5 +804,5 @@ bool script_do_file(cptr filename)
  */
 bool player_res(u32b flag)
 {
-	return ((p_ptr->flags2 & flag) ? TRUE : FALSE);
+	return ((p_ptr->flags[1] & flag) ? TRUE : FALSE);
 }

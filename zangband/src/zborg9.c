@@ -313,12 +313,12 @@ static void borg_hidden(void)
 		if (!l_ptr) continue;
 
 		/* Affect stats */
-		if (l_ptr->kn_flags1 & TR1_STR) my_stat_add[A_STR] += l_ptr->pval;
-		if (l_ptr->kn_flags1 & TR1_INT) my_stat_add[A_INT] += l_ptr->pval;
-		if (l_ptr->kn_flags1 & TR1_WIS) my_stat_add[A_WIS] += l_ptr->pval;
-		if (l_ptr->kn_flags1 & TR1_DEX) my_stat_add[A_DEX] += l_ptr->pval;
-		if (l_ptr->kn_flags1 & TR1_CON) my_stat_add[A_CON] += l_ptr->pval;
-		if (l_ptr->kn_flags1 & TR1_CHR) my_stat_add[A_CHR] += l_ptr->pval;
+		if (l_ptr->kn_flags[0] & TR0_STR) my_stat_add[A_STR] += l_ptr->pval;
+		if (l_ptr->kn_flags[0] & TR0_INT) my_stat_add[A_INT] += l_ptr->pval;
+		if (l_ptr->kn_flags[0] & TR0_WIS) my_stat_add[A_WIS] += l_ptr->pval;
+		if (l_ptr->kn_flags[0] & TR0_DEX) my_stat_add[A_DEX] += l_ptr->pval;
+		if (l_ptr->kn_flags[0] & TR0_CON) my_stat_add[A_CON] += l_ptr->pval;
+		if (l_ptr->kn_flags[0] & TR0_CHR) my_stat_add[A_CHR] += l_ptr->pval;
 	}
 
 	/* Mega-Hack -- Guess at "my_stat_cur[]" */
@@ -658,8 +658,8 @@ static cptr suffix_blink[] =
 {
 	" disappears!",	/* from teleport other */
 	" changes!",	/* from polymorph spell */
-	" teleports away.",	/* RF6_TPORT */
-	" blinks away.",	/* RF6_BLINK */
+	" teleports away.",	/* RF5_TPORT */
+	" blinks away.",	/* RF5_BLINK */
 	NULL
 };
 
@@ -701,100 +701,100 @@ static cptr suffix_hit_by[] =
 /* AJG These had gotten out of synch with where they are used. */
 static cptr suffix_spell[] =
 {
-	" makes a high pitched shriek.",	/* 0 RF4_SHRIEK */
-	" tries to cast a spell, but fails.",	/* 1 RF4_FAILS */
-	" does something.",	/* 2 RF4_XXX3X4 */
-	" does something.",	/* 3 RF4_XXX4X4 */
-	" fires an arrow.",	/* 4 RF4_ARROW_1 */
-	" fires an arrow!",	/* 5 RF4_ARROW_2 */
-	" fires a missile.",	/* 6 RF4_ARROW_3 */
-	" fires a missile!",	/* 7 RF4_ARROW_4 */
-	" breathes acid.",	/* 8 RF4_BR_ACID */
-	" breathes lightning.",	/* 9 RF4_BR_ELEC */
-	" breathes fire.",	/*10 RF4_BR_FIRE */
-	" breathes frost.",	/*11 RF4_BR_COLD */
-	" breathes gas.",	/*12 RF4_BR_POIS */
-	" breathes nether.",	/*13 RF4_BR_NETH */
-	" breathes light.",	/*14 RF4_BR_LITE */
-	" breathes darkness.",	/*15 RF4_BR_DARK */
-	" breathes confusion.",	/*16 RF4_BR_CONF */
-	" breathes sound.",	/*17 RF4_BR_SOUN */
-	" breathes chaos.",	/*18 RF4_BR_CHAO */
-	" breathes disenchantment.",	/*19 RF4_BR_DISE */
-	" breathes nexus.",	/*20 RF4_BR_NEXU */
-	" breathes time.",	/*21 RF4_BR_TIME */
-	" breathes inertia.",	/*22 RF4_BR_INER */
-	" breathes gravity.",	/*23 RF4_BR_GRAV */
-	" breathes shards.",	/*24 RF4_BR_SHAR */
-	" breathes plasma.",	/*25 RF4_BR_PLAS */
-	" breathes force.",	/*26 RF4_BR_WALL */
-	" does something.",	/*27 RF4_BR_MANA */
-	" does something.",	/*28 RF4_XXX5X4 */
-	" does something.",	/*29 RF4_XXX6X4 */
-	" does something.",	/*30 RF4_XXX7X4 */
-	" does something.",	/*31 RF4_XXX8X4 */
-	" casts an acid ball.",	/*32 RF5_BA_ACID */
-	" casts a lightning ball.",	/*33 RF5_BA_ELEC */
-	" casts a fire ball.",	/*34 RF5_BA_FIRE */
-	" casts a frost ball.",	/*35 RF5_BA_COLD */
-	" casts a stinking cloud.",	/*36 RF5_BA_POIS */
-	" casts a nether ball.",	/*37 RF5_BA_NETH */
-	" gestures fluidly.",	/*38 RF5_BA_WATE */
-	" invokes a mana storm.",	/*39 RF5_BA_MANA */
-	" invokes a darkness storm.",	/*40 RF5_BA_DARK */
-	" draws psychic energy from you!",	/*41 RF5_DRAIN_MANA */
-	" gazes deep into your eyes.",	/*42 RF5_MIND_BLAST */
-	" looks deep into your eyes.",	/*43 RF5_BRAIN_SMASH */
-	" points at you and curses.",	/*44 RF5_CAUSE_1 */
-	" points at you and curses horribly.",	/*45 RF5_CAUSE_2 */
-	" points at you, incanting terribly!",	/*46 RF5_CAUSE_3 */
-	" points at you, screaming the word DIE!",	/*47 RF5_CAUSE_4 */
-	" casts a acid bolt.",	/*48 RF5_BO_ACID */
-	" casts a lightning bolt.",	/*49 RF5_BO_ELEC */
-	" casts a fire bolt.",	/*50 RF5_BO_FIRE */
-	" casts a frost bolt.",	/*51 RF5_BO_COLD */
-	" does something.",	/*52 RF5_BO_POIS */
-	" casts a nether bolt.",	/*53 RF5_BO_NETH */
-	" casts a water bolt.",	/*54 RF5_BO_WATE */
-	" casts a mana bolt.",	/*55 RF5_BO_MANA */
-	" casts a plasma bolt.",	/*56 RF5_BO_PLAS */
-	" casts an ice bolt.",	/*57 RF5_BO_ICEE */
-	" casts a magic missile.",	/*58 RF5_MISSILE */
-	" casts a fearful illusion.",	/*59 RF5_SCARE */
-	" casts a spell, burning your eyes!",	/*60 RF5_BLIND */
-	" creates a mesmerising illusion.",	/*61 RF5_CONF */
-	" drains power from your muscles!",	/*62 RF5_SLOW */
-	" stares deep into your eyes!",	/*63 RF5_HOLD */
-	" concentrates on XXX body.",	/*64 RF6_HASTE */
-	" does something.",	/*65 RF6_XXX1X6 */
-	" concentrates on XXX wounds.",	/*66 RF6_HEAL */
-	" does something.",	/*67 RF6_XXX2X6 */
-	" does something.",	/*68 RF6_XXX3X6 */
-	" does something.",	/*69 RF6_XXX4X6 */
-	" commands you to return.",	/*70 RF6_TELE_TO */
-	" teleports you away.",	/*71 RF6_TELE_AWAY */
-	" gestures at your feet.",	/*72 RF6_TELE_LEVEL */
-	" does something.",	/*73 RF6_XXX5 */
-	" gestures in shadow.",	/*74 RF6_DARKNESS */
-	" casts a spell and cackles evilly.",	/*75 RF6_TRAPS */
-	" tries to blank your mind.",	/*76 RF6_FORGET */
-	" does something.",	/*77 RF6_XXX6X6 */
-	" does something.",	/*78 RF6_XXX7X6 */
-	" does something.",	/*79 RF6_XXX8X6 */
-	" magically summons help!",	/*80 RF6_S_MONSTER */
-	" magically summons monsters!",	/*81 RF6_S_MONSTERS */
-	" magically summons ants.",	/*82 RF6_S_ANT */
-	" magically summons spiders.",	/*83 RF6_S_SPIDER */
-	" magically summons hounds.",	/*84 RF6_S_HOUND */
-	" magically summons hydras.",	/*85 RF6_S_HYDRA */
-	" magically summons an angel!",	/*86 RF6_S_ANGEL */
-	" magically summons a hellish adversary!",	/*87 RF6_S_DEMON */
-	" magically summons an undead adversary!",	/*88 RF6_S_UNDEAD */
-	" magically summons a dragon!",	/*89 RF6_S_DRAGON */
-	" magically summons greater undead!",	/*90 RF6_S_HI_UNDEAD */
-	" magically summons ancient dragons!",	/*91 RF6_S_HI_DRAGON */
-	" magically summons mighty undead opponents!",	/*92 RF6_S_WRAITH */
-	" magically summons special opponents!",	/*93 RF6_S_UNIQUE */
+	" makes a high pitched shriek.",	/* 0 RF3_SHRIEK */
+	" tries to cast a spell, but fails.",	/* 1 RF3_FAILS */
+	" does something.",	/* 2 RF3_XXX3X4 */
+	" does something.",	/* 3 RF3_XXX4X4 */
+	" fires an arrow.",	/* 4 RF3_ARROW_1 */
+	" fires an arrow!",	/* 5 RF3_ARROW_2 */
+	" fires a missile.",	/* 6 RF3_ARROW_3 */
+	" fires a missile!",	/* 7 RF3_ARROW_4 */
+	" breathes acid.",	/* 8 RF3_BR_ACID */
+	" breathes lightning.",	/* 9 RF3_BR_ELEC */
+	" breathes fire.",	/*10 RF3_BR_FIRE */
+	" breathes frost.",	/*11 RF3_BR_COLD */
+	" breathes gas.",	/*12 RF3_BR_POIS */
+	" breathes nether.",	/*13 RF3_BR_NETH */
+	" breathes light.",	/*14 RF3_BR_LITE */
+	" breathes darkness.",	/*15 RF3_BR_DARK */
+	" breathes confusion.",	/*16 RF3_BR_CONF */
+	" breathes sound.",	/*17 RF3_BR_SOUN */
+	" breathes chaos.",	/*18 RF3_BR_CHAO */
+	" breathes disenchantment.",	/*19 RF3_BR_DISE */
+	" breathes nexus.",	/*20 RF3_BR_NEXU */
+	" breathes time.",	/*21 RF3_BR_TIME */
+	" breathes inertia.",	/*22 RF3_BR_INER */
+	" breathes gravity.",	/*23 RF3_BR_GRAV */
+	" breathes shards.",	/*24 RF3_BR_SHAR */
+	" breathes plasma.",	/*25 RF3_BR_PLAS */
+	" breathes force.",	/*26 RF3_BR_WALL */
+	" does something.",	/*27 RF3_BR_MANA */
+	" does something.",	/*28 RF3_XXX5X4 */
+	" does something.",	/*29 RF3_XXX6X4 */
+	" does something.",	/*30 RF3_XXX7X4 */
+	" does something.",	/*31 RF3_XXX8X4 */
+	" casts an acid ball.",	/*32 RF4_BA_ACID */
+	" casts a lightning ball.",	/*33 RF4_BA_ELEC */
+	" casts a fire ball.",	/*34 RF4_BA_FIRE */
+	" casts a frost ball.",	/*35 RF4_BA_COLD */
+	" casts a stinking cloud.",	/*36 RF4_BA_POIS */
+	" casts a nether ball.",	/*37 RF4_BA_NETH */
+	" gestures fluidly.",	/*38 RF4_BA_WATE */
+	" invokes a mana storm.",	/*39 RF4_BA_MANA */
+	" invokes a darkness storm.",	/*40 RF4_BA_DARK */
+	" draws psychic energy from you!",	/*41 RF4_DRAIN_MANA */
+	" gazes deep into your eyes.",	/*42 RF4_MIND_BLAST */
+	" looks deep into your eyes.",	/*43 RF4_BRAIN_SMASH */
+	" points at you and curses.",	/*44 RF4_CAUSE_1 */
+	" points at you and curses horribly.",	/*45 RF4_CAUSE_2 */
+	" points at you, incanting terribly!",	/*46 RF4_CAUSE_3 */
+	" points at you, screaming the word DIE!",	/*47 RF4_CAUSE_4 */
+	" casts a acid bolt.",	/*48 RF4_BO_ACID */
+	" casts a lightning bolt.",	/*49 RF4_BO_ELEC */
+	" casts a fire bolt.",	/*50 RF4_BO_FIRE */
+	" casts a frost bolt.",	/*51 RF4_BO_COLD */
+	" does something.",	/*52 RF4_BO_POIS */
+	" casts a nether bolt.",	/*53 RF4_BO_NETH */
+	" casts a water bolt.",	/*54 RF4_BO_WATE */
+	" casts a mana bolt.",	/*55 RF4_BO_MANA */
+	" casts a plasma bolt.",	/*56 RF4_BO_PLAS */
+	" casts an ice bolt.",	/*57 RF4_BO_ICEE */
+	" casts a magic missile.",	/*58 RF4_MISSILE */
+	" casts a fearful illusion.",	/*59 RF4_SCARE */
+	" casts a spell, burning your eyes!",	/*60 RF4_BLIND */
+	" creates a mesmerising illusion.",	/*61 RF4_CONF */
+	" drains power from your muscles!",	/*62 RF4_SLOW */
+	" stares deep into your eyes!",	/*63 RF4_HOLD */
+	" concentrates on XXX body.",	/*64 RF5_HASTE */
+	" does something.",	/*65 RF5_XXX1X6 */
+	" concentrates on XXX wounds.",	/*66 RF5_HEAL */
+	" does something.",	/*67 RF5_XXX2X6 */
+	" does something.",	/*68 RF5_XXX3X6 */
+	" does something.",	/*69 RF5_XXX4X6 */
+	" commands you to return.",	/*70 RF5_TELE_TO */
+	" teleports you away.",	/*71 RF5_TELE_AWAY */
+	" gestures at your feet.",	/*72 RF5_TELE_LEVEL */
+	" does something.",	/*73 RF5_XXX5 */
+	" gestures in shadow.",	/*74 RF5_DARKNESS */
+	" casts a spell and cackles evilly.",	/*75 RF5_TRAPS */
+	" tries to blank your mind.",	/*76 RF5_FORGET */
+	" does something.",	/*77 RF5_XXX6X6 */
+	" does something.",	/*78 RF5_XXX7X6 */
+	" does something.",	/*79 RF5_XXX8X6 */
+	" magically summons help!",	/*80 RF5_S_MONSTER */
+	" magically summons monsters!",	/*81 RF5_S_MONSTERS */
+	" magically summons ants.",	/*82 RF5_S_ANT */
+	" magically summons spiders.",	/*83 RF5_S_SPIDER */
+	" magically summons hounds.",	/*84 RF5_S_HOUND */
+	" magically summons hydras.",	/*85 RF5_S_HYDRA */
+	" magically summons an angel!",	/*86 RF5_S_ANGEL */
+	" magically summons a hellish adversary!",	/*87 RF5_S_DEMON */
+	" magically summons an undead adversary!",	/*88 RF5_S_UNDEAD */
+	" magically summons a dragon!",	/*89 RF5_S_DRAGON */
+	" magically summons greater undead!",	/*90 RF5_S_HI_UNDEAD */
+	" magically summons ancient dragons!",	/*91 RF5_S_HI_DRAGON */
+	" magically summons mighty undead opponents!",	/*92 RF5_S_WRAITH */
+	" magically summons special opponents!",	/*93 RF5_S_UNIQUE */
 
 	NULL
 };
@@ -2329,7 +2329,7 @@ static void borg_display_item(list_item *l_ptr)
 				"siwdcc  ssidsahanvudotgddhuoclio\n"
 				"tnieoh  trnipttmiinmrrnrrraiierl\n"
 				"rtsxna..lcfgdkcpmldncltggpksdced\n"
-                "%v", binary_fmt, l_ptr->kn_flags1);
+                "%v", binary_fmt, l_ptr->kn_flags[0]);
 
 	prtf(j, 17, "+------------FLAGS2------------+\n"
 				"SUST...IMMUN..RESIST............\n"
@@ -2337,7 +2337,7 @@ static void borg_display_item(list_item *l_ptr)
 	    		"siwdcc  clioheatcliooeialoshtncd\n"
 			    "tnieoh  ierlrfraierliatrnnnrhehi\n"
 			    "rtsxna..dcedwlatdcedsrekdfddrxss\n"
-                "%v", binary_fmt, l_ptr->kn_flags2);
+                "%v", binary_fmt, l_ptr->kn_flags[1]);
 
 	prtf(j + 32, 10, "+------------FLAGS3------------+\n"
 				     "SH  NO tehsif itdrmsIGNRadtabchp\n"
@@ -2345,7 +2345,7 @@ static void borg_display_item(list_item *l_ptr)
 				     "il  ea cktmativlgggocliotnorercc\n"
 				     "re  lg rnyorhtiesehtierlvxrvssrr\n"
 	    			 "ec  ec swpdtresptntsdcedtpttsess\n"
-                     "%v", binary_fmt, l_ptr->kn_flags3);
+                     "%v", binary_fmt, l_ptr->kn_flags[2]);
 
 	prtf(j + 32, 17, "+------------FLAGS4------------+\n"
 				     "        IMSH p pt reHURT..  CURS\n"
@@ -2353,7 +2353,7 @@ static void borg_display_item(list_item *l_ptr)
 				     "        iacomtusupupclioia  utee\n"
 				     "        trilurcscsrlierltr  taaa\n"
 	    		 	 "        ekddtnkwhinodcedek  ottl\n"
-                     "%v", binary_fmt, l_ptr->kn_flags4);
+                     "%v", binary_fmt, l_ptr->kn_flags[3]);
 }
 
 /* Get all sorts of temporary values from the game. */
@@ -2736,97 +2736,97 @@ void borg_status_window(void)
 
 			/* Basic four */
 			attr = CLR_SLATE;
-			if (bp_ptr->flags2 & TR2_RES_ACID) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 1, RES_ACID)) attr = CLR_BLUE;
 			if (my_oppose_acid) attr = CLR_GREEN;
-			if (bp_ptr->flags2 & TR2_IM_ACID) attr = CLR_WHITE;
+			if (TR_FLAG(bp_ptr->flags, 1, IM_ACID)) attr = CLR_WHITE;
 			prtf(1, 1, "%sAcid", attr);
 
 			attr = CLR_SLATE;
-			if (bp_ptr->flags2 & TR2_RES_ELEC) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 1, RES_ELEC)) attr = CLR_BLUE;
 			if (my_oppose_elec) attr = CLR_GREEN;
-			if (bp_ptr->flags2 & TR2_IM_ELEC) attr = CLR_WHITE;
+			if (TR_FLAG(bp_ptr->flags, 1, IM_ELEC)) attr = CLR_WHITE;
 			prtf(1, 2, "%sElec", attr);
 
 			attr = CLR_SLATE;
-			if (bp_ptr->flags2 & TR2_RES_FIRE) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 1, RES_FIRE)) attr = CLR_BLUE;
 			if (my_oppose_fire) attr = CLR_GREEN;
-			if (bp_ptr->flags2 & TR2_IM_FIRE) attr = CLR_WHITE;
+			if (TR_FLAG(bp_ptr->flags, 1, IM_FIRE)) attr = CLR_WHITE;
 			prtf(1, 3, "%sFire%s", attr);
 
 			attr = CLR_SLATE;
-			if (bp_ptr->flags2 & TR2_RES_COLD) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 1, RES_COLD)) attr = CLR_BLUE;
 			if (my_oppose_cold) attr = CLR_GREEN;
-			if (bp_ptr->flags2 & TR2_IM_COLD) attr = CLR_WHITE;
+			if (TR_FLAG(bp_ptr->flags, 1, IM_COLD)) attr = CLR_WHITE;
 			prtf(1, 4, "%sCold", attr);
 
 			/* High resists */
 			attr = CLR_SLATE;
-			if (bp_ptr->flags2 & TR2_RES_POIS) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 1, RES_POIS)) attr = CLR_BLUE;
 			if (my_oppose_pois) attr = CLR_GREEN;
 			prtf(1, 5, "%sPois", attr);
 
-			if (bp_ptr->flags2 & TR2_RES_FEAR) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 1, RES_FEAR)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(1, 6, "%sFear", attr);
 
-			if (bp_ptr->flags2 & TR2_RES_LITE) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 1, RES_LITE)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(1, 7, "%sLite", attr);
 
-			if (bp_ptr->flags2 & TR2_RES_DARK) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 1, RES_DARK)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(1, 8, "%sDark", attr);
 
-			if (bp_ptr->flags2 & TR2_RES_BLIND) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 1, RES_BLIND)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(6, 1, "%sBlind", attr);
 
-			if (bp_ptr->flags2 & TR2_RES_CONF) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 1, RES_CONF)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(6, 2, "%sConfu", attr);
 
-			if (bp_ptr->flags2 & TR2_RES_SOUND) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 1, RES_SOUND)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(6, 3, "%sSound", attr);
 
-			if (bp_ptr->flags2 & TR2_RES_SHARDS) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 1, RES_SHARDS)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(6, 4, "%sShard", attr);
 
-			if (bp_ptr->flags2 & TR2_RES_NEXUS) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 1, RES_NEXUS)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(6, 5, "%sNexus", attr);
 
-			if (bp_ptr->flags2 & TR2_RES_NETHER) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 1, RES_NETHER)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(6, 6, "%sNethr", attr);
 
-			if (bp_ptr->flags2 & TR2_RES_CHAOS) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 1, RES_CHAOS)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(6, 7, "%sChaos", attr);
 
-			if (bp_ptr->flags2 & TR2_RES_DISEN) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 1, RES_DISEN)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(6, 8, "%sDisen", attr);
 
 			/* Other abilities */
-			if (bp_ptr->flags3 & TR3_SLOW_DIGEST) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 2, SLOW_DIGEST)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(12, 1, "%sS.Dig", attr);
 
-			if (bp_ptr->flags3 & TR3_FEATHER) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 2, FEATHER)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(12, 2, "%sFeath", attr);
@@ -2836,27 +2836,27 @@ void borg_status_window(void)
 				attr = CLR_SLATE;
 			prtf(12, 3, "%sPLite", attr);
 
-			if (bp_ptr->flags3 & TR3_REGEN) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 2, REGEN)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(12, 4, "%sRegen", attr);
 
-			if (bp_ptr->flags3 & TR3_TELEPATHY) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 2, TELEPATHY)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(12, 5, "%sTelep", attr);
 
-			if (bp_ptr->flags3 & TR3_SEE_INVIS) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 2, SEE_INVIS)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(12, 6, "%sInvis", attr);
 
-			if (bp_ptr->flags2 & TR2_FREE_ACT) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 1, FREE_ACT)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(12, 7, "%sFrAct", attr);
 
-			if (bp_ptr->flags2 & TR2_HOLD_LIFE) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 1, HOLD_LIFE)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(12, 8, "%sHLife", attr);
@@ -2864,63 +2864,63 @@ void borg_status_window(void)
 			/* Display the slays */
 			prtf(5, 10, "Weapon Slays:");
 
-			if (bp_ptr->flags1 & TR1_SLAY_ANIMAL) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 0, SLAY_ANIMAL)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(1, 11, "%sAnimal", attr);
 
-			if (bp_ptr->flags1 & TR1_SLAY_EVIL) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 0, SLAY_EVIL)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(8, 11, "%sEvil", attr);
 
-			if (bp_ptr->flags1 & TR1_SLAY_UNDEAD) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 0, SLAY_UNDEAD)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(15, 11, "%sUndead", attr);
 
-			if (bp_ptr->flags1 & TR1_SLAY_DEMON) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 0, SLAY_DEMON)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(22, 11, "%sDemon", attr);
 
-			if (bp_ptr->flags1 & TR1_SLAY_ORC) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 0, SLAY_ORC)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(1, 12, "%sOrc", attr);
 
-			if (bp_ptr->flags1 & TR1_SLAY_TROLL) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 0, SLAY_TROLL)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(8, 12, "%sTroll", attr);
 
-			if (bp_ptr->flags1 & TR1_SLAY_GIANT) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 0, SLAY_GIANT)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(15, 12, "%sGiant", attr);
 
-			if (bp_ptr->flags1 & TR1_SLAY_DRAGON) attr = CLR_BLUE;
-			if (bp_ptr->flags1 & TR1_KILL_DRAGON) attr = CLR_GREEN;
+			if (TR_FLAG(bp_ptr->flags, 0, SLAY_DRAGON)) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 0, KILL_DRAGON)) attr = CLR_GREEN;
 			else
 				attr = CLR_SLATE;
 			prtf(22, 12, "%sDragon", attr);
 
-			if (bp_ptr->flags1 & TR1_BRAND_ACID) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 0, BRAND_ACID)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(1, 13, "%sAcid", attr);
 
-			if (bp_ptr->flags1 & TR1_BRAND_COLD) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 0, BRAND_COLD)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(8, 13, "%sCold", attr);
 
-			if (bp_ptr->flags1 & TR1_BRAND_ELEC) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 0, BRAND_ELEC)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(15, 13, "%sElec", attr);
 
-			if (bp_ptr->flags1 & TR1_BRAND_FIRE) attr = CLR_BLUE;
+			if (TR_FLAG(bp_ptr->flags, 0, BRAND_FIRE)) attr = CLR_BLUE;
 			else
 				attr = CLR_SLATE;
 			prtf(22, 13, "%sFire", attr);

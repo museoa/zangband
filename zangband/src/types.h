@@ -155,10 +155,7 @@ struct object_kind
 
 	s32b cost;	/* Object "base cost" */
 
-	u32b flags1;	/* Flags, set 1 */
-	u32b flags2;	/* Flags, set 2 */
-	u32b flags3;	/* Flags, set 3 */
-	u32b flags4;    /* Flags, set 4 */
+	u32b flags[4];	/* Flags */
 
 	byte locale[4];	/* Allocation level(s) */
 	byte chance[4];	/* Allocation chance(s) */
@@ -236,10 +233,7 @@ struct artifact_type
 
 	s32b cost;	/* Artifact "cost" */
 
-	u32b flags1;	/* Artifact Flags, set 1 */
-	u32b flags2;	/* Artifact Flags, set 2 */
-	u32b flags3;	/* Artifact Flags, set 3 */
-	u32b flags4;    /* Artifact Flags, set 4 */
+	u32b flags[4];	/* Artifact Flags */
 
 	byte level;	/* Artifact level */
 	byte rarity;	/* Artifact rarity */
@@ -276,10 +270,7 @@ struct ego_item_type
 
 	s32b cost;	/* Ego-item "cost" */
 
-	u32b flags1;	/* Ego-Item Flags, set 1 */
-	u32b flags2;	/* Ego-Item Flags, set 2 */
-	u32b flags3;	/* Ego-Item Flags, set 3 */
-	u32b flags4;    /* Ego-Item Flags, set 4 */
+	u32b flags[4];	/* Ego-Item Flags */
 
 	u32b trigger[MAX_TRIGGER]; /* Special object scripts */
 };
@@ -352,15 +343,15 @@ struct monster_race
 	byte freq_inate;	/* Inate spell frequency */
 	byte freq_spell;	/* Other spell frequency */
 
-	u32b flags1;	/* Flags 1 (general) */
-	u32b flags2;	/* Flags 2 (abilities) */
-	u32b flags3;	/* Flags 3 (race/resist) */
-	u32b flags4;	/* Flags 4 (inate/breath) */
-	u32b flags5;	/* Flags 5 (normal spells) */
-	u32b flags6;	/* Flags 6 (special spells) */
-	u32b flags7;	/* Flags 7 (movement related abilities) */
-	u32b flags8;	/* Flags 8 (wilderness info) */
-	u32b flags9;	/* Flags 9 (drops info) */
+	u32b flags[9];	/* Flags 1 (general) */
+			/* Flags 2 (abilities) */
+			/* Flags 3 (race/resist) */
+			/* Flags 4 (inate/breath) */
+			/* Flags 5 (normal spells) */
+			/* Flags 6 (special spells) */
+			/* Flags 7 (movement related abilities) */
+			/* Flags 8 (wilderness info) */
+			/* Flags 9 (drops info) */
 
 	monster_blow blow[4];	/* Up to four blows per round */
 
@@ -402,13 +393,7 @@ struct monster_race
 
 	byte r_blows[4];	/* Number of times each blow type was seen */
 
-	u32b r_flags1;	/* Observed racial flags */
-	u32b r_flags2;	/* Observed racial flags */
-	u32b r_flags3;	/* Observed racial flags */
-	u32b r_flags4;	/* Observed racial flags */
-	u32b r_flags5;	/* Observed racial flags */
-	u32b r_flags6;	/* Observed racial flags */
-	u32b r_flags7;	/* Observed racial flags */
+	u32b r_flags[9];	/* Observed racial flags */
 
 	obj_theme obj_drop;	/* Type of objects to drop when killed */
 
@@ -779,15 +764,9 @@ struct object_type
 	s16b inscription;	/* Inscription index */
 	s16b xtra_name;	/* Extra Name (Artifacts and ego items) */
 
-	u32b flags1;	/* Flags, set 1 */
-	u32b flags2;	/* Flags, set 2 */
-	u32b flags3;	/* Flags, set 3 */
-	u32b flags4;    /* Flags, set 4 */
+	u32b flags[4];	/* Flags */
 
-	u32b kn_flags1;	/* Known Flags, set 1 */
-	u32b kn_flags2;	/* Known Flags, set 2 */
-	u32b kn_flags3;	/* Known Flags, set 3 */
-	u32b kn_flags4; /* Known Flags, set 4 */
+	u32b kn_flags[4];	/* Known Flags */
 
 	s32b cost;	/* Object "base cost" */
 	s32b temp_cost;	/* Cost including shopkeeper effects */
@@ -1588,10 +1567,7 @@ struct player_type
 	 * Flags on equipment items and the racial/class
 	 * effects logical-ored together.
 	 */
-	u32b flags1;
-	u32b flags2;
-	u32b flags3;
-	u32b flags4;
+	u32b flags[4];
 
 	/*** Extracted fields ***/
 	s16b dis_to_h;	/* Known bonus to hit */
