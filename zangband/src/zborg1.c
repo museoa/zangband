@@ -51,8 +51,6 @@
  */
 
 /* Dynamic borg stuff */
-bool borg_scums_uniques;
-
 borg_player *bp_ptr;
 
 /*
@@ -63,7 +61,6 @@ bool borg_active;	/* Actually active */
 
 bool borg_cancel;	/* Being cancelled */
 
-bool borg_stop_king = TRUE;
 bool borg_dont_react = FALSE;
 int successful_target = BORG_TARGET;
 
@@ -71,9 +68,12 @@ int successful_target = BORG_TARGET;
  * Various silly flags
  */
 
-bool borg_flag_save = FALSE;	/* Save savefile at each level */
+
+bool borg_stop_king = TRUE;		/* The borg stops when he wins */
+bool borg_cheat_death = FALSE;	/* Is there life after death? */
 bool borg_flag_dump = FALSE;	/* Save savefile at each death */
-bool borg_save = FALSE;	/* do a save next level */
+bool borg_flag_save = FALSE;	/* Save savefile at each level */
+bool borg_save = FALSE;			/* do a save next level */
 
 /*
  * Use a simple internal random number generator

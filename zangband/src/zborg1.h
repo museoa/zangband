@@ -177,6 +177,9 @@ struct borg_shop
 	s16b x;
 	s16b y;
 
+	/* Town */
+	char town[T_NAME_LEN];
+
 	/* Time stamp */
 	s32b when;
 
@@ -192,11 +195,8 @@ struct borg_shop
 extern bool borg_active;	/* Actually active */
 extern bool borg_cancel;	/* Being cancelled */
 
-extern bool borg_stop_king;
 extern bool borg_dont_react;
 extern int successful_target;
-
-extern bool borg_scums_uniques;
 
 /*
  * Borg-abilities
@@ -386,11 +386,11 @@ extern borg_player *bp_ptr;
  * Various silly flags
  */
 
-extern bool borg_flag_save;	/* Save savefile at each level */
-
-extern bool borg_flag_dump;	/* Save savefile at each death */
-
-extern bool borg_save;	/* do a save next time we get to press a key! */
+extern bool borg_stop_king;		/* The borg stops when he wins */
+extern bool borg_cheat_death;	/* Is there life after death? */
+extern bool borg_flag_dump;		/* Save savefile at each death */
+extern bool borg_flag_save;		/* Save savefile at each level */
+extern bool borg_save;			/* do a save next time we get to press a key! */
 
 /*
  * Use a simple internal random number generator

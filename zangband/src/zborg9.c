@@ -15,8 +15,6 @@
 #include "zborg8.h"
 #include "zborg9.h"
 
-bool borg_cheat_death;
-
 /*
  * This file implements the "APWBorg", an "Automatic Angband Player".
  *
@@ -286,9 +284,8 @@ bool borg_cheat_death;
  * Some variables
  */
 
-static bool initialized;	/* Hack -- Initialized */
-
-
+/* Is the borg initialized yet? */
+static bool initialized;
 
 /*
  * Mega-Hack -- extract some "hidden" variables
@@ -1955,19 +1952,6 @@ static void borg_parse(cptr msg)
  * Initialize zborg.txt
  */
 
-static void init_borg_txt_file(void)
-{
-	/* Make sure we know who and what we are */
-	borg_class = p_ptr->rp.pclass;
-
-	/* Use default values */
-	borg_scums_uniques = TRUE;
-	borg_stop_king = TRUE;
-
-	/* Success */
-	return;
-}
-
 static void borg_log_death(void)
 {
 	char buf[1024];
@@ -2417,21 +2401,14 @@ static void borg_cheat_options(void)
 	/* We use the original keypress codes */
 	rogue_like_commands = FALSE;
 
-	/* We pick up items when we step on them */
-	always_pickup = TRUE;
+	/* We must pick items up without verification */
+	carry_query_flag = FALSE;
 
 	/* We specify targets before casting the spells */
 	use_old_target = TRUE;
 
-	/* We must pick items up without verification */
-	carry_query_flag = FALSE;
-
-	/* We need space */
-	show_labels = FALSE;
-	show_weights = FALSE;
-
-	/* We need the dungeon level */
-	depth_in_feet = FALSE;
+	/* We pick up items when we step on them */
+	always_pickup = TRUE;
 
 	/* Hack - we don't understand this */
 	auto_destroy = FALSE;
@@ -2439,21 +2416,8 @@ static void borg_cheat_options(void)
 	/* Do not confirm actions */
 	confirm_wear = FALSE;
 
-	/* Zangband Commands */
-
-	/* The borg doesn't understand the easy options */
+	/* The borg doesn't understand the floor list */
 	easy_floor = FALSE;
-	easy_disarm = FALSE;
-	easy_open = FALSE;
-
-	/* The borg doesn't understand speaking uniques */
-	speak_unique = FALSE;
-
-	/* Hack -- notice "command" mode */
-	hilite_player = FALSE;
-
-	/* more cheating */
-	borg_cheat_death = FALSE;
 
 	/* set the continous play mode if the game cheat death is on */
 	if (cheat_live) borg_cheat_death = TRUE;
@@ -2471,8 +2435,6 @@ void borg_init_9(void)
 
 	/* Hack -- flush it */
 	Term_fresh();
-
-	init_borg_txt_file();
 
 	/* Initialise player position */
 	map_get_player(&c_x, &c_y);
