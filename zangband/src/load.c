@@ -1366,6 +1366,37 @@ static void rd_options(void)
 			}
 		}
 	}
+	
+	/* Mega - Hack  The option flags were re-arranged after 2.3.5 */
+	if (sf_version > 9) return;
+	
+	/* Scan the options and restore to defaults */
+	for (i = 0; option_info[i].o_desc; i++)
+	{
+		int os = option_info[i].o_set;
+		int ob = option_info[i].o_bit;
+
+		/* Set the "default" options */
+		if (option_info[i].o_var)
+		{
+			/* Accept */
+			option_mask[os] |= (1L << ob);
+
+			/* Set */
+			if (option_info[i].o_norm)
+			{
+				/* Set */
+				option_flag[os] |= (1L << ob);
+			}
+
+			/* Clear */
+			else
+			{
+				/* Clear */
+				option_flag[os] &= ~(1L << ob);
+			}
+		}
+	}
 }
 
 
@@ -3287,7 +3318,7 @@ static errr rd_savefile_new_aux(void)
 			if (ironman_hard_quests)
 			{
 				/* Set the option by hand */
-				option_flag[6] |= (1L << 6);
+				option_flag[5] |= (1L << 6);
 			}
 
 			/* Inverted "Wilderness" flag */
@@ -3298,7 +3329,7 @@ static errr rd_savefile_new_aux(void)
 			if (vanilla_town)
 			{
 				/* Set the option by hand */
-				option_flag[6] |= (1L);
+				option_flag[5] |= (1L);
 			}
 		}
 

@@ -5913,7 +5913,7 @@ option_type option_info[] =
 	{ &other_query_flag,            FALSE, 1, 0, 2,
 	"other_query_flag",             "Prompt for various information" },
 
-	{ &carry_query_flag,            FALSE, 1, 0, 3,
+	{ &carry_query_flag,            TRUE, 1, 0, 3,
 	"carry_query_flag",             "Prompt before picking things up" },
 
 	{ &use_old_target,              FALSE, 1, 0, 4,
@@ -5934,7 +5934,7 @@ option_type option_info[] =
 	{ &ring_bell,                   FALSE, 1, 0, 9,
 	"ring_bell",                    "Audible bell (on errors, etc)" },
 
-	{ &skip_mutations,              FALSE, 1, 0, 10,
+	{ &skip_mutations,              TRUE, 1, 0, 10,
 	"skip_mutations",               "Skip mutations in 'C'haracter Display" },
 
 	{ &plain_descriptions,          FALSE, 1, 0, 11,
@@ -5950,17 +5950,14 @@ option_type option_info[] =
 	"confirm_stairs",               "Prompt before exiting a dungeon level" },
 
 #ifdef ALLOW_EASY_OPEN
-	{ &easy_open,                   FALSE, 1, 0, 15,
+	{ &easy_open,                   TRUE, 1, 0, 15,
 	"easy_open",                    "Automatically open doors" },
 #endif /* ALLOW_EASY_OPEN */
 
 #ifdef ALLOW_EASY_DISARM
-	{ &easy_disarm,                 FALSE, 1, 0, 16,
+	{ &easy_disarm,                 TRUE, 1, 0, 16,
 	"easy_disarm",                  "Automatically disarm traps" },
 #endif /* ALLOW_EASY_DISARM */
-
-	{ &use_command,                 FALSE, 1, 0, 17,
-	"use_command",                  "Allow unified use command" },
 
 	/*** Disturbance ***/
 
@@ -5994,7 +5991,7 @@ option_type option_info[] =
         { &disturb_other,               TRUE, 2, 1, 9,
 	"disturb_other",                "Disturb whenever random things happen" },
 
-	{ &alert_hitpoint,              FALSE, 2, 1, 10,
+	{ &alert_hitpoint,              TRUE, 2, 1, 10,
 	"alert_hitpoint",               "Alert user to critical hitpoints" },
 
 	{ &alert_failure,               FALSE, 2, 1, 11,
@@ -6005,13 +6002,13 @@ option_type option_info[] =
 
 	/*** Game-Play ***/
 
-	{ &auto_haggle,                 FALSE, 3, 2, 0,
+	{ &auto_haggle,                 TRUE, 3, 2, 0,
 	"auto_haggle",                  "Auto-haggle in stores" },
 
 	{ &auto_scum,                   FALSE, 3, 2, 1,
 	"auto_scum",                    "Auto-scum for good levels" },
 
-	{ &stack_allow_items,           TRUE, 3, 2, 2,
+	{ &stack_allow_items,           FALSE, 3, 2, 2,
 	"stack_allow_items",            "Allow weapons and armor to stack" },
 
 	{ &stack_allow_wands,           TRUE, 3, 2, 3,
@@ -6029,7 +6026,7 @@ option_type option_info[] =
 	{ &view_torch_grids,            FALSE, 3, 2, 7,
 	"view_torch_grids",             "Map remembers all torch-lit grids" },
 
-	{ &dungeon_align,               TRUE, 3, 2, 8,
+	{ &dungeon_align,               FALSE, 3, 2, 8,
 	"dungeon_align",                "Generate dungeons with aligned rooms" },
 
 	{ &dungeon_stair,               TRUE, 3, 2, 9,
@@ -6106,15 +6103,6 @@ option_type option_info[] =
 	{ &view_special_lite,           FALSE, 4, 3, 16,
 	"view_special_lite",            "Use special colors for floor grids (slow)" },
 
-	{ &center_player,               FALSE, 4, 3, 17,
-	"center_player",                "Always center on the player (*slow*)" },
-
-	{ &avoid_center,                FALSE, 4, 3, 18,
-	"avoid_center",                 "Avoid centering while running" },
-
-	{ &pillar_tunnels,              FALSE, 4, 3, 19,
-	"pillar_tunnels",               "Allow pillared tunnels in the dungeon" },
-
 	/*** Display Options ***/
 
 	{ &depth_in_feet,               FALSE, 5, 4, 1,
@@ -6126,13 +6114,13 @@ option_type option_info[] =
 	{ &show_weights,                TRUE, 5, 4, 3,
 	"show_weights",                 "Show weights in object listings" },
 
-	{ &show_inven_graph,            FALSE, 5, 4, 4,
+	{ &show_inven_graph,            TRUE, 5, 4, 4,
 	"show_inven_graph",             "Show graphics in inventory list" },
 
-	{ &show_equip_graph,            FALSE, 5, 4, 5,
+	{ &show_equip_graph,            TRUE, 5, 4, 5,
 	"show_equip_graph",             "Show graphics in equipment list" },
 
-	{ &show_store_graph,            FALSE, 5, 4, 6,
+	{ &show_store_graph,            TRUE, 5, 4, 6,
 	"show_store_graph",             "Show graphics in stores" },
 
 	{ &show_choices,                TRUE, 5, 4, 7,
@@ -6221,13 +6209,13 @@ option_type option_info[] =
 
         /*** Artificial Intelligence Options ***/
 
-	{ &flow_by_sound,               FALSE, 7, 6, 1,
+	{ &flow_by_sound,               TRUE, 7, 6, 1,
 	"flow_by_sound",                "Monsters chase current location (v.slow)" },
 
-	{ &flow_by_smell,               FALSE, 7, 6, 2,
+	{ &flow_by_smell,               TRUE, 7, 6, 2,
 	"flow_by_smell",                "Monsters chase recent locations (v.slow)" },
 
-	{ &smart_learn,                 FALSE, 7, 6, 3,
+	{ &smart_learn,                 TRUE, 7, 6, 3,
 	"smart_learn",                  "Monsters learn from their mistakes" },
 
 	{ &smart_cheat,                 FALSE, 7, 6, 4,
