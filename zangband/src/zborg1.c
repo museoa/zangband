@@ -563,17 +563,6 @@ errr borg_what_text(int x, int y, int n, byte *a, char *s)
 
 
 /*
- * Log a message to a file
- */
-void borg_info(cptr what)
-{
-	/* Dump a log file message */
-	if (borg_fff) fprintf(borg_fff, "%s\n", what);
-}
-
-
-
-/*
  * Memorize a message, Log it, Search it, and Display it in pieces
  */
 void borg_note(cptr what)
@@ -588,10 +577,8 @@ void borg_note(cptr what)
 	/* Memorize it */
 	message_add(what, MSG_GENERIC);
 
-
 	/* Log the message */
-	borg_info(what);
-
+	if (borg_fff) fprintf(borg_fff, "%s\n", what);
 
 	/* Mega-Hack -- Check against the search string */
 	if (borg_match[0] && strstr(what, borg_match))
@@ -792,7 +779,7 @@ errr borg_keypress(char k)
 	(void)strnfmt(buf, 10, "& Key <%c>", k);
 
 	/* Hack -- note the keypress */
-	if (borg_fff) borg_info(buf);
+	if (borg_fff) fprintf(borg_fff, "%s\n", buf);
 
 	/* Store the char, advance the queue */
 	borg_key_queue[borg_key_head++] = k;

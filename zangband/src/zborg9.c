@@ -856,7 +856,7 @@ static void borg_parse_aux(cptr msg, int len)
 	char buf[256];
 
 	/* Log (if needed) */
-	if (borg_fff) borg_info(format("& Msg <%s>", msg));
+	if (borg_fff) fprintf(borg_fff, "& Msg <%s>\n", msg);
 
 
 	/* Hack -- Notice death */
