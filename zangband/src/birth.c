@@ -2625,6 +2625,9 @@ static bool player_birth_aux_3(void)
 		char inp[80];
 
 
+		/* Clean up */
+		clear_from(10);
+
 		/* Extra info */
 		Term_putstr(5, 10, -1, TERM_WHITE,
 		            "The auto-roller will automatically ignore characters which do");
