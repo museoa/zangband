@@ -2569,8 +2569,6 @@ static void init_borg_txt_file(void)
 	{
 		if (i != borg_class) continue;
 
-		C_MAKE(borg_required_item[i], 400, req_item);	/* externalize the 400 later */
-		n_req[i] = 0;
 		C_MAKE(borg_power_item[i], 400, power_item);	/* externalize the 400 later */
 		n_pwr[i] = 0;
 	}
@@ -4012,7 +4010,6 @@ void do_cmd_borg(void)
 			borg_note("Reloading the Borg rules... (zborg.txt)");
 			for (i = 0; i < MAX_CLASS; i++)
 			{
-				KILL(borg_required_item[i]);
 				KILL(borg_power_item[i]);
 			}
 			KILL(borg_has);

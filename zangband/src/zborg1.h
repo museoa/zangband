@@ -215,20 +215,6 @@ extern bool borg_engage_cloak;
 /*         I am just being lazy */
 extern bool borg_slow_return;
 
-/* dynamic required items */
-/* dynamic required items */
-typedef struct req_item
-{
-	int depth;
-	int item;
-	int number;
-
-}
-req_item;
-
-extern req_item *borg_required_item[MAX_CLASS];
-extern int n_req[MAX_CLASS];
-
 typedef struct power_item
 {
 	int depth;

@@ -64,8 +64,6 @@ bool borg_engage_cloak;
 /*         I am just being lazy */
 bool borg_slow_return = FALSE;
 
-req_item *borg_required_item[MAX_CLASS];
-int n_req[MAX_CLASS];
 power_item *borg_power_item[MAX_CLASS];
 int n_pwr[MAX_CLASS];
 
