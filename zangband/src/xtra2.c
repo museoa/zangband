@@ -507,6 +507,7 @@ void monster_death(int m_idx)
 	{
 		/* Assume skeleton */
 		bool corpse = FALSE;
+		byte feat;
 
 		/*
 		 * We cannot drop a skeleton? Note, if we are in this check,
@@ -529,22 +530,34 @@ void monster_death(int m_idx)
 			}
 		}
 
-		if (corpse)
+		/* Terrain to put corpse on. */
+		feat = area(y, x)->feat;
+
+		/* Hack - corpses only appear on certain floors */
+		if ((feat == FEAT_FLOOR) ||
+			((feat >= FEAT_SAND) && (feat <= FEAT_SOLID_LAVA)) ||
+			((feat >= FEAT_DIRT) && (feat <= FEAT_PILLAR)) ||
+			((feat >= FEAT_BUSH) && (feat <= FEAT_SHAL_SWAMP)))
 		{
-			/* Make a corpse */
-			if(place_field(y, x, FT_CORPSE))
+			if (corpse)
 			{
-				/* Initialise it */
-				(void) field_hook_single(hack_fld_ptr, FIELD_ACT_INIT, m_ptr);
+				/* Make a corpse */
+				if(place_field(y, x, FT_CORPSE))
+				{
+					/* Initialise it */
+					(void) field_hook_single(hack_fld_ptr,
+						 FIELD_ACT_INIT, m_ptr);
+				}
 			}
-		}
-		else
-		{
-			/* Make a skeleton */
-			if(place_field(y, x, FT_SKELETON))
+			else
 			{
-				/* Initialise it */
-				(void) field_hook_single(hack_fld_ptr, FIELD_ACT_INIT, m_ptr);
+				/* Make a skeleton */
+				if(place_field(y, x, FT_SKELETON))
+				{
+					/* Initialise it */
+					(void) field_hook_single(hack_fld_ptr,
+						 FIELD_ACT_INIT, m_ptr);
+				}
 			}		
 		}
 	}
