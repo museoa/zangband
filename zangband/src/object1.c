@@ -3384,6 +3384,9 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 	/* Repeat until done */
 	while (!done)
 	{
+		/* Make sure object is in the unselected state */
+		o_ptr = NULL;
+		
 		/* Activate the correct term info */
 		toggle = toggle_windows(toggle, command_wrk);
 
@@ -3639,11 +3642,13 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 				if (ver && !verify("Try", o_ptr))
 				{
 					done = TRUE;
+					o_ptr = NULL;
 					break;
 				}
 
 				/* Allow player to "refuse" certain actions */
 				if (!get_item_allow(o_ptr)) continue;
+					
 
 				/* Accept that choice */
 				done = TRUE;
