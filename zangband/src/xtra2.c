@@ -1872,7 +1872,11 @@ static void target_set_prepare(int mode)
 	{
 		for (x = panel_col_min; x <= panel_col_max; x++)
 		{
-			cave_type *c_ptr = area(y,x);
+			cave_type *c_ptr;
+			
+			if(!in_bounds2(y,x)) continue;
+			
+			c_ptr = area(y,x);
 
 			/* Require line of sight, unless "look" is "expanded" */
 			if (!expand_look && !player_has_los_bold(y, x)) continue;
