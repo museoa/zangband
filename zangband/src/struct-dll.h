@@ -44,20 +44,22 @@ EDIT_YES,
 EDIT_CALLBACK
 };
 
+typedef Tcl_Obj *(* struct_return) (void *input);
+
 /*
  * A single field in a structure
  */
 typedef struct t_field t_field;
 struct t_field
 {
-	char *text;		/* Title for list */
+	cptr text;		/* Title for list */
 	int fOffset;	/* Offset of field */
 	int fLength;	/* Size of field */
 	unsigned char type; /* Type of item */
 	unsigned char edit;	/* Edit this item? */
 	long min;		/* Min value */
 	long max;		/* Max value */
-	void *data;		/* Reference constant (flags, callback) */
+	struct_return data;		/* Reference constant (flags, callback) */
 };
 
 typedef struct StructType StructType;
@@ -79,7 +81,7 @@ typedef int (*StructFindMatchProc)(Tcl_Interp *interp, StructType *typePtr,
  * Info about a struct
  */
 struct StructType {
-	char *name;
+	cptr name;
 	unsigned char *elem;
 	int elem_size;
 	int max;

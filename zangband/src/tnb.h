@@ -38,9 +38,6 @@ extern option_type cheat_info[];
 extern char **r_info_flags[10];
 extern int r_info_flags_max;
 extern cptr k_info_flags1[], k_info_flags2[], k_info_flags3[];
-extern cptr r_info_flags1[], r_info_flags2[], r_info_flags3[],
-	r_info_flags4[], r_info_flags5[], r_info_flags6[], r_info_flags7[],
-	r_info_flags8[], r_info_flags9[];
 
 /* racial.c */
 extern int racial_chance(s16b min_level, int use_stat, int difficulty);
