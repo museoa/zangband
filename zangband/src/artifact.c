@@ -538,7 +538,7 @@ static cptr element_list[] =
 };
 static cptr element_names[] =
 {
-	"acid", "elec", "fire", "cold", "poison",
+	"acid", "lightning", "fire", "cold", "poison",
 	"plasma", "water", "light", "darkness", "shards",
 	"sound", "confusion", "force", "inertia", "mana",
 	"ice", "chaos", "nether", "nexus", "time",
@@ -557,28 +557,59 @@ static cptr glow_desc[] =
 	"glows", "shines", "pulses", "throbs", "radiates", "sparks"
 };
 
-static void apply_activation_power(object_type *o_ptr, int level)
+static void apply_activation_power(object_type *o_ptr, cptr text, cptr desc, cptr effect, bool aimed, int charge_min)
 {
-	cptr text = "";
+	char buf[1024];
+	char text_buf[256];
+	int len;
+
+	/* Don't add a power if there already is one */
+	if (o_ptr->flags3 & TR3_ACTIVATE)
+		return;
+
+	/* Get a description if needed */
+	if (text == NULL)
+		text = activation_text[randint0(NUM_ELEMENTS(activation_text))];
+
+	/* Get the basic name of the object in the description */
+	strnfmt(text_buf, 256, text, OBJECT_FMT(o_ptr, FALSE, 0));
+	
+	/* Construct the usage script */
+	len = strnfmt(buf, 1024, "msgf(\"%s\"); ", text_buf);
+	
+	if (aimed) strnfcat(buf, 1024, &len, 
+				"local success; local dir; "
+				"success, dir = get_aim_dir(); "
+				"if not success then return; end; ");
+
+	strnfcat(buf, 1024, &len, "%s; object.timeout = rand_range(%i, %i)", effect, charge_min, charge_min * 2);
+	
+	o_ptr->trigger[TRIGGER_USE] = quark_add(buf);
+	
+	
+	/* Description script */
+	len = strnfmt(buf, 1024, "return \"%s every %i-%i turns \"", desc, charge_min, charge_min * 2);
+	o_ptr->trigger[TRIGGER_DESC] = quark_fmt(buf);
+
+	o_ptr->flags3 |= TR3_ACTIVATE;
+	o_ptr->timeout = 0;
+}
+
+static void random_activation_power(object_type *o_ptr, int level)
+{
+	cptr text = NULL;
 	int charge_min = 10;
-	int charge_max = 0;
 	int dice = 0;
 	int sides = 1;
 	int radius = 0;
 	int pp = 0;	/* Charge time * level */
 	bool aimed = TRUE;
 	
-	int len;
-
-	char text_buf[256];
-	char buf[1024];
 	char effect[256] = "";
 	char desc[256] = "";
 
 	int rlev = level * rand_range(50, 150) / 100;
 	if (rlev < 1) rlev = 1;
-
-	text = activation_text[randint0(NUM_ELEMENTS(activation_text))];
 
 	if (randint0(100) < 40)
 	{
@@ -604,11 +635,11 @@ static void apply_activation_power(object_type *o_ptr, int level)
 			/* Dice, radius, and charge time */
 			dice = rlev * 5;
 			radius = 2 + dice / rand_range(100, 200);
-			pp = dice * 5 * radius;
+			pp = dice * 10 * radius;
 
 			/* Create the lua */
 			strnfmt(desc, 256, "breathe %s (%i, rad. %i)", element_names[element], dice, radius);
-			strnfmt(effect, 256, "fire_ball(\"%s\", dir, %i, %i)", element_list[element], dice, radius);
+			strnfmt(effect, 256, "fire_ball(%s, dir, %i, %i)", element_list[element], dice, radius);
 
 			break;
 
@@ -619,13 +650,13 @@ static void apply_activation_power(object_type *o_ptr, int level)
 			/* Dice, radius, and charge time */
 			dice = rlev * 10;
 			radius = 2 + dice / rand_range(50, 100);
-			pp = dice * radius;
+			pp = dice * 2 * radius;
 			
 			aimed = FALSE;
 
 			/* Create the lua */
 			strnfmt(desc, 256, "%s blast (%i, rad. %i)", element_names[element], dice, radius);
-			strnfmt(effect, 256, "fire_ball(\"%s\", 0, %i, %i)", element_list[element], dice, radius);
+			strnfmt(effect, 256, "fire_ball(%s, 0, %i, %i)", element_list[element], dice, radius);
 
 			break;
 
@@ -634,47 +665,280 @@ static void apply_activation_power(object_type *o_ptr, int level)
 		case 4:
 		case 5:
 			/* Dice, radius, and charge time */
-			dice = rlev * 5;
-			radius = (level >= rand_range(40, 80) ? 3 : 2);
-			pp = dice * 5 * radius;
+			dice = 5 * (1 + rlev / 2);
+			radius = 2 + dice / rand_range(100, 200);
+			pp = dice * 10 * radius;
 
 			/* Create the lua */
 			strnfmt(desc, 256, "%s%s ball (%i)", radius > 2 ? "large " : "", element_names[element], dice);
-			strnfmt(effect, 256, "fire_ball(\"%s\", dir, %i, %i)", element_list[element], dice, radius);
+			strnfmt(effect, 256, "fire_ball(%s, dir, %i, %i)", element_list[element], dice, radius);
+
+			break;
+
+		/* Fire a beam */
+		case 6:
+			/* Dice and charge time */
+			dice = 1 + rlev / 3;
+			sides = rand_range(5, 8);
+			pp = dice * sides * 10;
+
+			/* Create the lua */
+			strnfmt(desc, 256, "%s beam (%id%i)", element_names[element], dice, sides);
+			strnfmt(effect, 256, "fire_beam(%s, dir, damroll(%i, %i))", element_list[element], dice, sides);
 
 			break;
 
 		/* Fire a bolt */
 		default:
 			/* Dice and charge time */
-			dice = rlev / 2;
+			dice = 1 + rlev / 2;
 			sides = rand_range(5, 8);
-			pp = dice * sides * 2;
+			pp = dice * sides * 5;
 
 			/* Create the lua */
 			strnfmt(desc, 256, "%s bolt (%id%i)", element_names[element], dice, sides);
-			strnfmt(effect, 256, "fire_bolt(\"%s\", dir, damroll(%i, %i))", element_list[element], dice, sides);
+			strnfmt(effect, 256, "fire_bolt(%s, dir, damroll(%i, %i))", element_list[element], dice, sides);
 
 			break;
 		}
 	}
 	else switch (randint1(84))
 	{
+		case 43:
+			strcpy(desc, "remove fear & cure poison");
+			strcpy(effect, "clear_afraid(); clear_poisoned()");
+			aimed = FALSE;
+			pp = 100;
+			break;
+
+		case 78: case 79:
+			strcpy(desc, "stone to mud");
+			strcpy(effect, "wall_to_mud(dir)");
+			pp = 250;
+			break;
+
+		case 77:
+			strcpy(desc, "destroy doors");
+			strcpy(effect, "destroy_doors_touch()");
+			aimed = FALSE;
+			pp = 250;
+			break;
+
+		case 19: case 20:
+			strcpy(desc, "confuse monster");
+			strcpy(effect, "confuse_monster(dir, 50)");
+			pp = 250;
+			break;
+
+		case 68: case 69: case 70: case 71: case 72:
+			strcpy(desc, "identify");
+			strcpy(effect, "if not ident_spell() then return end");
+			aimed = FALSE;
+			pp = 1000;
+			break;
+
+		case 80:
+			strcpy(desc, "recharging");
+			strcpy(effect, "recharge(130)");
+			aimed = FALSE;
+			pp = 1000;
+			break;
+
+		case 21:
+			strcpy(desc, "sleep nearby monsters");
+			strcpy(effect, "sleep_monsters_touch()");
+			aimed = FALSE;
+			pp = 1000;
+			break;
+
+		case 82:
+			text = "You open a dimensional gate. Choose a destination.";
+			strcpy(desc, "dimension door");
+			strcpy(effect, "if not dimension_door() return end");
+			aimed = FALSE;
+			pp = 1000;
+			break;
+
+		case 57: case 58: case 59: case 60:
+			text = "The %v twists space around you...";
+			strcpy(desc, "teleport (100)");
+			strcpy(effect, "teleport_player(100)");
+			aimed = FALSE;
+			pp = 1000;
+			break;
+
+		case 65:
+			text = "An image forms in your mind...";
+			strcpy(desc, "detection");
+			strcpy(effect, "detect_all()");
+			aimed = FALSE;
+			pp = 1000;
+			break;
+
+		case 73:
+			text = "The %v glows bright red...";
+			strcpy(desc, "explosive rune");
+			strcpy(effect, "explosive_rune()");
+			aimed = FALSE;
+			pp = 5000;
+			break;
+
+		case 83: case 84:
+			strcpy(desc, "word of recall");
+			strcpy(effect, "word_of_recall()");
+			aimed = FALSE;
+			pp = 5000;
+			break;
+		case 44:
+			strcpy(desc, "restore life levels");
+			strcpy(effect, "restore_level()");
+			aimed = FALSE;
+			pp = 5000;
+			break;
+
+		case 24: case 25:
+			strcpy(desc, "teleport away");
+			strcpy(effect, "fire_beam(GF_AWAY_ALL, dir, plev)");
+			pp = 5000;
+			break;
+			
+		case 29:
+			strcpy(desc, "charm animal");
+			strcpy(effect, "charm_animal(dir, plev)");
+			pp = 5000;
+			break;
+
+		case 30:
+			strcpy(desc, "enslave undead");
+			strcpy(effect, "control_one_undead(dir, plev)");
+			pp = 7500;
+			break;
+
+		case 31:
+			strcpy(desc, "charm monster");
+			strcpy(effect, "charm_monster(dir, plev)");
+			pp = 10000;
+			break;
+
+		case 81:
+			strcpy(desc, "alchemy");
+			strcpy(effect, "alchemy()");
+			aimed = FALSE;
+			pp = 10000;
+			break;
+
+		case 74:
+			strcpy(desc, "rune of protection");
+			strcpy(effect, "warding_glyph()");
+			aimed = FALSE;
+			pp = 10000;
+			break;
+
+		case 32:
+			strcpy(desc, "animal friendship");
+			strcpy(effect, "charm_animals(plev * 2)");
+			aimed = FALSE;
+			pp = 10000;
+			break;
+
+		case 26:
+			text = "The power of the artifact banishes evil!";
+			strcpy(desc, "banish evil");
+			strcpy(effect, "banish_evil(200)");
+			aimed = FALSE;
+			pp = 10000;
+			break;
+
+		case 27:
+			strcpy(desc, "genocide");
+			strcpy(effect, "genocide(TRUE)");
+			aimed = FALSE;
+			pp = 10000;
+			break;
+
+		case 75: case 76:
+			strcpy(desc, "satisfy hunger");
+			strcpy(effect, "set_food(PY_FOOD_MAX - 1)");
+			aimed = FALSE;
+			pp = 10000;
+			break;
+
+		case 12:
+			text = "The %v emits a blast of air...";
+			strcpy(desc, "whirlwind attack");
+			strcpy(effect, "whirlwind_attack()");
+			aimed = FALSE;
+			pp = 20000;
+			break;
+
+		case 13:
+			text = "The %v glows in scintillating colours...";
+			strcpy(desc, "call chaos");
+			strcpy(effect, "call_chaos()");
+			aimed = FALSE;
+			pp = 25000;
+			break;
+
+		case 28:
+			strcpy(desc, "mass genocide");
+			strcpy(effect, "mass_genocide(TRUE)");
+			aimed = FALSE;
+			pp = 25000;
+			break;
+
+		case 33:
+			strcpy(desc, "mass charm");
+			strcpy(effect, "charm_monsters(plev * 2)");
+			aimed = FALSE;
+			pp = 25000;
+			break;
+
+		case 45:
+			strcpy(desc, "restore stats");
+			strcpy(effect, "do_res_stat(A_STR); do_res_stat(A_INT); "
+				"do_res_stat(A_WIS); do_res_stat(A_DEX); "
+				"do_res_stat(A_CON); do_res_stat(A_CHR); ");
+			aimed = FALSE;
+			pp = 15000;
+			break;
+
+		case 46:
+			strcpy(desc, "restore stats and life levels");
+			strcpy(effect, "do_res_stat(A_STR); do_res_stat(A_INT); "
+				"do_res_stat(A_WIS); do_res_stat(A_DEX); "
+				"do_res_stat(A_CON); do_res_stat(A_CHR); "
+				"restore_level()");
+			aimed = FALSE;
+			pp = 25000;
+			break;
+
+		case 67:
+			strcpy(desc, "identify true");
+			strcpy(effect, "identify_fully()");
+			aimed = FALSE;
+			pp = 25000;
+			break;
+
+		case 66:
+			strcpy(desc, "detection, probing and identify true");
+			strcpy(effect, "detect_all(); probing(); identify_fully()");
+			aimed = FALSE;
+			pp = 50000;
+			break;
+
+
 		case 1: case 2: case 3:
 			text = "A line of sunlight appears.";
 			strcpy(desc, "beam of sunlight");
 			strcpy(effect, "lite_line(dir)");
-			charge_min = rand_range(50, 100) / level;
-			if (charge_min > 10) charge_min = 10;
-			if (charge_min < 2) charge_min = 2;
-			charge_max = charge_min;
+			pp = 50;
 			break;
 
 		case 4: case 5: case 6:
 			text = "The %v glows extremely brightly...";
-			charge_max = charge_min = 2;
-			dice = randint1(3) + level / 10;
+			dice = randint1(3) + rlev / 10;
 			sides = 6;
+			pp = dice * sides * 2;
 			strnfmt(desc, 256, "magic missile (%id%i)", dice, sides);
 			strnfmt(effect, 256, "fire_bolt(GF_MISSILE, dir, damroll(%i, %i))", dice, sides);
 			break;
@@ -697,10 +961,10 @@ static void apply_activation_power(object_type *o_ptr, int level)
 
 		case 10:
 			text = "The %v throbs red...";
-			dice = 10 * rlev;
-			pp = dice * 20;
+			dice = 5 * rlev;
+			pp = dice * 15;
 			strnfmt(desc, 256, "vampiric drain (%i)", dice);
-			strnfmt(desc, 256, "drain_gain_life(dir, %i)", dice);
+			strnfmt(effect, 256, "drain_gain_life(dir, %i)", dice);
 			break;
 
 		case 11:
@@ -708,7 +972,7 @@ static void apply_activation_power(object_type *o_ptr, int level)
 			if (randint0(100) < 40)
 			{
 				dice = 5 * rlev;
-				pp = dice * 3;
+				pp = dice * 10;
 				strnfmt(desc, 256, "arrows (%i)", dice);
 				strnfmt(effect, 256, "fire_bolt(GF_ARROW, dir, %i)", dice);
 			}
@@ -716,31 +980,18 @@ static void apply_activation_power(object_type *o_ptr, int level)
 			{
 				dice = 1 + rlev / 3;
 				sides = 5 * rand_range(5, 10);
-				pp = dice * sides * 2;
+				pp = dice * sides * 5;
 				strnfmt(desc, 256, "arrows (%id%i)", dice, sides);
 				strnfmt(effect, 256, "fire_bolt(GF_ARROW, dir, damroll(%i, %i))", dice, sides);
 			}
 			break;
 
-		case 12:
-			text = "The %v emits a blast of air...";
-			strcpy(desc, "whirlwind attack");
-			strcpy(effect, "whirlwind_attack()");
-			aimed = FALSE;
-			pp = 20000;
-			break;
-
-		case 13:
-			text = "The %v glows in scintillating colours...";
-			strcpy(desc, "call chaos");
-			strcpy(effect, "call_chaos()");
-			aimed = FALSE;
-			pp = 25000;
-			break;
-
 		case 14:
 			text = "You launch a rocket!";
-			dice = 100 + 5 * rlev;
+			if (rlev < 20)
+				dice = 10 * rlev;
+			else
+				dice = 100 + 5 * rlev;
 			pp = dice * 20;
 			strnfmt(desc, 256, "launch rocket (%i)", dice);
 			strnfmt(effect, 256, "fire_ball(GF_ROCKET, dir, %i, 2)", dice);
@@ -750,7 +1001,7 @@ static void apply_activation_power(object_type *o_ptr, int level)
 			text = "The %v floods the area with goodness...";
 			aimed = FALSE;
 			dice = 5 * rlev;
-			pp = dice * 50;
+			pp = dice * 100;
 			strnfmt(desc, 256, "dispel evil (%i)", dice);
 			strnfmt(effect, 256, "dispel_evil(%i)", dice);
 			break;
@@ -759,7 +1010,7 @@ static void apply_activation_power(object_type *o_ptr, int level)
 			text = "The %v floods the area with evil...";
 			aimed = FALSE;
 			dice = 5 * rlev;
-			pp = dice * 50;
+			pp = dice * 100;
 			strnfmt(desc, 256, "dispel good (%i)", dice);
 			strnfmt(effect, 256, "dispel_good(%i)", dice);
 			break;
@@ -769,29 +1020,16 @@ static void apply_activation_power(object_type *o_ptr, int level)
 			text = "You breathe the elements.";
 			dice = 10 * rlev;
 			radius = 2 + dice / rand_range(100, 200);
-			pp = dice * 5 * radius;
+			pp = dice * 10 * radius;
 			strnfmt(desc, 256, "breathe the elements (%i, rad. %i)", dice, radius);
 			strnfmt(effect, 256, "fire_ball(GF_MISSILE, dir, %i, %i)", dice, radius);
-			break;
-
-		case 19: case 20:
-			strcpy(desc, "confuse monster");
-			strcpy(effect, "confuse_monster(dir, 50)");
-			pp = 250;
-			break;
-
-		case 21:
-			strcpy(desc, "sleep nearby monsters");
-			strcpy(effect, "sleep_monsters_touch()");
-			aimed = FALSE;
-			pp = 1000;
 			break;
 
 		case 22:
 			text = "The %v vibrates...";
 			aimed = FALSE;
 			radius = 5 + rlev / 4;
-			pp = radius * 100;
+			pp = radius * 250;
 			strnfmt(desc, 256, "earthquake (rad. %i)", radius);
 			strnfmt(effect, 256, "earthquake(px, py, %i)", radius);
 			break;
@@ -805,122 +1043,61 @@ static void apply_activation_power(object_type *o_ptr, int level)
 			aimed = FALSE;
 			break;
 
-		case 24: case 25:
-			strcpy(desc, "teleport away");
-			strcpy(effect, "fire_beam(GF_AWAY_ALL, dir, plev)");
-			pp = 5000;
-			break;
-			
-		case 26:
-			text = "The power of the artifact banishes evil!";
-			strcpy(desc, "banish evil");
-			strcpy(effect, "banish_evil(200)");
+		case 34: case 35: case 36: case 37: case 38:
 			aimed = FALSE;
-			pp = 10000;
-			break;
-
-		case 27:
-			strcpy(desc, "genocide");
-			strcpy(effect, "genocide(TRUE)");
-			aimed = FALSE;
-			pp = 10000;
-			break;
-
-		case 28:
-			strcpy(desc, "mass genocide");
-			strcpy(effect, "mass_genocide(TRUE)");
-			aimed = FALSE;
-			pp = 25000;
-			break;
-
-		case 29:
-			strcpy(desc, "charm animal");
-			strcpy(effect, "charm_animal(dir, plev)");
-			pp = 5000;
-			break;
-
-		case 30:
-			strcpy(desc, "enslave undead");
-			strcpy(effect, "control_one_undead(dir, plev)");
-			pp = 7500;
-			break;
-
-		case 31:
-			strcpy(desc, "charm monster");
-			strcpy(effect, "charm_monster(dir, plev)");
-			pp = 10000;
-			break;
-
-		case 32:
-			strcpy(desc, "animal friendship");
-			strcpy(effect, "charm_animals(plev * 2)");
-			aimed = FALSE;
-			pp = 10000;
-			break;
-
-		case 33:
-			strcpy(desc, "mass charm");
-			strcpy(effect, "charm_monsters(plev * 2)");
-			aimed = FALSE;
-			pp = 25000;
-			break;
-
-		case 34:
-			text = "You summon a beast.";
-			strcpy(desc, "summon animal");
-			strcpy(effect, "summon_specific(-1, px, py, plev, SUMMON_ANIMAL_RANGER, TRUE, TRUE, TRUE)");
-			aimed = FALSE;
-			pp = 10000;
-			break;
-
-		case 35:
-			text = "You summon a phantasmal servant.";
-			strcpy(desc, "summon phantasmal servant");
-			strcpy(effect, "summon_specific(-1, px, py, plev, SUMMON_PHANTOM, TRUE, TRUE, TRUE)");
-			aimed = FALSE;
-			pp = 10000;
-			break;
-
-		case 36:
-			text = "You summon an elemental.";
-			strcpy(desc, "summon elemental");
-			strcpy(effect, "summon_unsafe(SUMMON_ELEMENTAL, \"You fail to control it!\")");
-			aimed = FALSE;
-			pp = 25000;
-			break;
-
-		case 37:
-			/* XXX XXX XXX summon_unsafe() doesn't seem to be implemented anywhere */
-			text = "The area fills with the stench of sulphur and brimstone.";
-			strcpy(desc, "summon demon");
-			strcpy(effect, "summon_unsafe(SUMMON_DEMON, \"'NON SERVIAM! Wretch! I shall feast on thy mortal soul!'\")");
-			aimed = FALSE;
-			charge_min = 666;
-			charge_max = 333 * rand_range(2, 5);
-			break;
-
-		case 38:
-			text = "Ancient, long-dead forms rise from the ground.";
-			if (level < rand_range(60, 100))
+			switch (randint1(5 + rlev / 10))
 			{
+			case 1: case 2: case 3:
+				text = "You summon a beast.";
+				strcpy(desc, "summon animal");
+				strcpy(effect, "summon_specific(-1, px, py, plev, SUMMON_ANIMAL_RANGER, TRUE, TRUE, TRUE)");
+				pp = 10000;
+				break;
+
+			case 4: case 5: case 6:
+
+				text = "You summon a phantasmal servant.";
+				strcpy(desc, "summon phantasmal servant");
+				strcpy(effect, "summon_specific(-1, px, py, plev, SUMMON_PHANTOM, TRUE, TRUE, TRUE)");
+				pp = 10000;
+				break;
+
+			case 7: case 8: case 15:
+			/* XXX XXX XXX summon_unsafe() doesn't seem to be implemented anywhere */
+				text = "You summon an elemental.";
+				strcpy(desc, "summon elemental");
+				strcpy(effect, "summon_unsafe(SUMMON_ELEMENTAL, \"You fail to control it!\")");
+				pp = 25000;
+				break;
+
+			case 9: case 10: case 16:
+				text = "Ancient, long-dead forms rise from the ground.";
 				strcpy(desc, "summon undead");
 				strcpy(effect, "summon_unsafe(SUMMON_UNDEAD, \"'The dead arise... to punish you for disturbing them!'\")");
-			}
-			else
-			{
+				pp = 25000;
+				break;
+
+			case 11: case 12: case 17: case 19:
+				text = "The area fills with the stench of sulphur and brimstone.";
+				strcpy(desc, "summon demon");
+				strcpy(effect, "summon_unsafe(SUMMON_DEMON, \"'NON SERVIAM! Wretch! I shall feast on thy mortal soul!'\")");
+				pp = 25000;
+				break;
+
+			case 13: case 14: case 18: case 20:
+				text = "Ancient, long-dead forms rise from the ground.";
 				strcpy(desc, "summon greater undead");
 				strcpy(effect, "summon_unsafe(SUMMON_HI_UNDEAD, \"'The dead arise... to punish you for disturbing them!'\")");
+				pp = 50000;
+				break;
 			}
-			aimed = FALSE;
-			charge_min = 666;
-			charge_max = 333 * rand_range(2, 5);
 			break;
 
 		case 39:
 			aimed = FALSE;
 			dice = 1 + rlev / 3;
 			sides = rand_range(4, 8);
-			pp = dice * sides * 5;
+			pp = dice * sides * 10;
 			strnfmt(desc, 256, "remove fear & heal (%id%i)", dice, sides);
 			strnfmt(effect, 256, "clear_afraid(); hp_player(damroll(%i, %i))", dice, sides);
 			break;
@@ -929,48 +1106,15 @@ static void apply_activation_power(object_type *o_ptr, int level)
 			aimed = FALSE;
 			dice = rlev;
 			sides = rand_range(4, 8);
-			pp = dice * sides * 5;
+			pp = dice * sides * 10;
 			strnfmt(desc, 256, "cure wounds & heal (%id%i)", dice, sides);
 			strnfmt(effect, 256, "hp_player(damroll(%i, %i)); inc_cut(-%i)", dice, sides, 5 * rlev);
-			break;
-
-		case 43:
-			strcpy(desc, "remove fear & cure poison");
-			strcpy(effect, "clear_afraid(); clear_poisoned()");
-			aimed = FALSE;
-			pp = 50;
-			break;
-
-		case 44:
-			strcpy(desc, "restore life levels");
-			strcpy(effect, "restore_level()");
-			aimed = FALSE;
-			pp = 5000;
-			break;
-
-		case 45:
-			strcpy(desc, "restore stats");
-			strcpy(effect, "do_res_stat(A_STR); do_res_stat(A_INT); "
-				"do_res_stat(A_WIS); do_res_stat(A_DEX); "
-				"do_res_stat(A_CON); do_res_stat(A_CHR); ");
-			aimed = FALSE;
-			pp = 15000;
-			break;
-
-		case 46:
-			strcpy(desc, "restore stats and life levels");
-			strcpy(effect, "do_res_stat(A_STR); do_res_stat(A_INT); "
-				"do_res_stat(A_WIS); do_res_stat(A_DEX); "
-				"do_res_stat(A_CON); do_res_stat(A_CHR); "
-				"restore_level()");
-			aimed = FALSE;
-			pp = 25000;
 			break;
 
 		case 47: case 48:
 			aimed = FALSE;
 			dice = 10 * rlev;
-			pp = dice * 10;
+			pp = dice * 20;
 			strnfmt(desc, 256, "cure wounds & heal (%i)", dice);
 			strnfmt(effect, 256, "hp_player(%i); clear_cut()", dice);
 			break;
@@ -1040,14 +1184,6 @@ static void apply_activation_power(object_type *o_ptr, int level)
 			strnfmt(effect, 256, "inc_invuln(rand_range(%i, %i))", dice, dice * 2);
 			break;
 
-		case 57: case 58: case 59: case 60:
-			text = "The %v twists space around you...";
-			strcpy(desc, "teleport (100)");
-			strcpy(effect, "teleport_player(100)");
-			aimed = FALSE;
-			pp = 1000;
-			break;
-
 		case 61: case 62: case 63:
 			text = "The %v wells with clear light...";
 			aimed = FALSE;
@@ -1070,98 +1206,6 @@ static void apply_activation_power(object_type *o_ptr, int level)
 			strnfmt(effect, 256, "map_area(); lite_area(damroll(%i, %i), 3)", dice, sides);
 			break;
 			
-		case 65:
-			text = "An image forms in your mind...";
-			strcpy(desc, "detection");
-			strcpy(effect, "detect_all()");
-			aimed = FALSE;
-			pp = 1000;
-			break;
-
-		case 66:
-			strcpy(desc, "detection, probing and identify true");
-			strcpy(effect, "detect_all(); probing(); identify_fully()");
-			aimed = FALSE;
-			pp = 50000;
-			break;
-
-		case 67:
-			strcpy(desc, "identify true");
-			strcpy(effect, "identify_fully()");
-			aimed = FALSE;
-			pp = 25000;
-			break;
-
-		case 68: case 69: case 70: case 71: case 72:
-			strcpy(desc, "identify");
-			strcpy(effect, "if not ident_spell() then return end");
-			aimed = FALSE;
-			pp = 250;
-			break;
-
-		case 73:
-			text = "The %v glows bright red...";
-			strcpy(desc, "explosive rune");
-			strcpy(effect, "explosive_rune()");
-			aimed = FALSE;
-			pp = 5000;
-			break;
-
-		case 74:
-			strcpy(desc, "rune of protection");
-			strcpy(effect, "warding_glyph()");
-			aimed = FALSE;
-			pp = 10000;
-			break;
-
-		case 75: case 76:
-			strcpy(desc, "satisfy hunger");
-			strcpy(effect, "set_food(PY_FOOD_MAX - 1)");
-			aimed = FALSE;
-			pp = 25000;
-			break;
-
-		case 77:
-			strcpy(desc, "destroy doors");
-			strcpy(effect, "destroy_doors_touch()");
-			aimed = FALSE;
-			pp = 250;
-			break;
-
-		case 78: case 79:
-			strcpy(desc, "stone to mud");
-			strcpy(effect, "wall_to_mud(dir)");
-			pp = 100;
-			break;
-
-		case 80:
-			strcpy(desc, "recharging");
-			strcpy(effect, "recharge(130)");
-			aimed = FALSE;
-			pp = 1000;
-			break;
-
-		case 81:
-			strcpy(desc, "alchemy");
-			strcpy(effect, "alchemy()");
-			aimed = FALSE;
-			pp = 10000;
-			break;
-
-		case 82:
-			text = "You open a dimensional gate. Choose a destination.";
-			strcpy(desc, "dimension door");
-			strcpy(effect, "if not dimension_door() return end");
-			aimed = FALSE;
-			pp = 1000;
-			break;
-
-		case 83: case 84:
-			strcpy(desc, "word of recall");
-			strcpy(effect, "word_of_recall()");
-			aimed = FALSE;
-			pp = 5000;
-			break;
 	}
 
 	if (pp) 
@@ -1171,57 +1215,19 @@ static void apply_activation_power(object_type *o_ptr, int level)
 		/* Round to nice numbers */
 		if (charge_min >= 1000)
 			charge_min -= charge_min % 100;
-		else if (charge_min >= 500)
+		else if (charge_min >= 250)
 			charge_min -= charge_min % 50;
 		else if (charge_min >= 100)
 			charge_min -= charge_min % 10;
-		else if (charge_min >= 50)
+		else if (charge_min >= 25)
 			charge_min -= charge_min % 5;
 	}
 
 	if (charge_min < 1) charge_min = 1;
 	if (charge_min > 5000) charge_min = 5000;
-	if (!charge_max) charge_max = charge_min * 2;
 
-	if (sides > 1 && dice < 1) dice = 1;
-	
-	/* Get the basic name of the object in the description */
-	strnfmt(text_buf, 256, text, OBJECT_FMT(o_ptr, FALSE, 0));
-	
-	/* Construct the lua script */
-	len = strnfmt(buf, 1024, "msgf(\"%s\"); ", text_buf);
-	
-	if (aimed) strnfcat(buf, 1024, &len, 
-				"local success; local dir; "
-				"success, dir = get_aim_dir(); "
-				"if not success then return; end; ");
-
-	strnfcat(buf, 1024, &len, "%s; object.timeout = ", effect);
-
-	if (charge_min != charge_max)
-		strnfcat(buf, 1024, &len, "rand_range(%i, %i)", charge_min, charge_max);
-	else
-		strnfcat(buf, 1024, &len, "%i", charge_min);
-	
-	/* Usage script */
-	o_ptr->trigger[TRIGGER_USE] = quark_add(buf);
-	
-	
-	len = strnfmt(buf, 1024, "return \"%s", desc);
-	
-	if (charge_min != charge_max)
-		strnfcat(buf, 1024, &len, " every %i-%i turns \"", charge_min, charge_max);
-	else
-		strnfcat(buf, 1024, &len, " every %i turns \"", charge_min);
-	
-	/* Description script */
-	o_ptr->trigger[TRIGGER_DESC] = quark_fmt(buf);
-
-	o_ptr->flags3 |= TR3_ACTIVATE;
-	o_ptr->timeout = 0;
+	apply_activation_power(o_ptr, text, desc, effect, aimed, charge_min);
 }
-
-
 
 static void get_random_name(char *return_name, byte tval, int power)
 {
@@ -1598,13 +1604,12 @@ static int random_major_theme_weapon(object_type *o_ptr)
 		if (one_in_(2))
 			o_ptr->flags3 |= TR3_SLOW_DIGEST;
 
-#if 0
-		if (one_in_(3))
-			activate = ACT_TELEPORT_2;
-		else if (one_in_(3))
-			activate = ACT_TELEPORT_1;
-#endif
-
+		if (one_in_(2))
+		{
+			apply_activation_power(o_ptr, "The %v twists space around you...", "teleport (100)",
+					"teleport_player(100)", FALSE, 100);
+		}
+		
 		break;
 
 	case 5:
@@ -2250,7 +2255,7 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 		/* 
 		 * Get a random activation
 		 */
-		apply_activation_power(o_ptr, activation_level);
+		random_activation_power(o_ptr, activation_level);
 	}
 
 	if (o_ptr->dd && o_ptr->ds)
