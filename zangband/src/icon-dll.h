@@ -13,8 +13,6 @@
 #ifndef _INCLUDE_ICONDLL_H_
 #define _INCLUDE_ICONDLL_H_
 
-#include <tk.h>
-
 typedef struct IconSpec {
 	int type;
 	int index;

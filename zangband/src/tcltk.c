@@ -16,7 +16,6 @@
 
 #ifdef PLATFORM_WIN
 #include <windows.h>
-#include <tk.h>
 
 #define ALLOW_TK_CONSOLE
 
