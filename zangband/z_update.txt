@@ -2,6 +2,81 @@ This is a document file listing the changes in Zangband (compared to
 the standard Angband 2.8.1.) No long explanations, just a list. See
 code for details. In reversed chronological order (more or less):
 
+ZAngband 2.5.2:
+-Fixes to the gamma correction code.
+-Corpses now are dropped by monsters when they die.  These
+ automatically destroy themselves, and cannot be picked up.
+-Some monsters have a spell that raises all corpses in LOS.
+-More AI optimisations missed in 2.5.1
+-Removal of all C++ -like comments.
+-Fixed bug in the anti-double-move patch.
+-Fixed various bugs in dungeon generation.  Toned down the
+ "unusual rooms" option.  It now makes unusual rooms, not vaults.
+-Speedups to the term code allows quick redrawing of rectangular
+ sections of windows.  This speeds up redrawing as other windows
+ move in front of terms.
+-Updated makefiles for CygWin and LCC
+-Cleaned up the virtues code.  (It still doesn't affect anything
+ though)
+-Fired ammot goes further.  (Typo removed in range calculation.)
+-Fixed problems with the meteor storm spell.
+-Fur cloaks are cheaper.
+-Moved Earth hounds to the intended depth.
+-Changed the shots per round display.  Changed the formula for extra
+ shots.  Large numbers of "extra shots" are less powerful now.
+-You can now drown in the ocean.
+-Changed string functions called in notes.c to use buffer-bounded
+ versions.  This may prevent several crashes.
+-Fixed Scroll of Logrus typo.
+-Items are *identified* in death chardump.
+-The fields code is initialised from t_info.txt
+-Added gamma correction to the windows version.
+-Changed projection functions to give information only if hit squares
+ are in LOS.  This fixes bugs with identification of wands of stone to
+ mud.
+-Corpses are not dropped in random quests in nightmare mode.  (Stops an
+ abuse.)
+-Added Franks patch that fixes the confusion activation direction problem.
+-Added a version of the big screen patch.
+-Changed update_view() to use the angband version of that function.  This
+ should increase the speed of the game.
+-Major optimisation of functions in cave.c  The game may be twice as fast
+ in some situations.
+-Fixed some long standing bugs in the monster flow code.
+-Beastmen going up multiple levels get an increased chance to get a mutation.
+-Finally fixed the last of the problems with the fractal caves patch.  The
+ game shouldn't crash on dungeon creation any more.  (Stack overflow problem)
+-Ammo is found in bigger piles, and is easier to enchant.  Mushrooms are
+ found in clumps.
+-Wilderness panel initialisation fix.  This should stop the empty screens
+ appearing in vanilla town mode.
+-The help screen, as well as a few other windows now use the extra space on
+ larger than normal screens.
+-Cleaned up defines.h, removing things unused for a long time.
+-Fixed problems with bounds checking in random vaults.
+-The players name is initialised before we use it in the notes code.
+-Cleaned up the "Easy Patch".  The code is now integrated much better with
+ the normal behaviour of the game.
+-Chaos warriors are now initialised properly with the points based birth
+ system.
+-Implemented corpses, invisible walls, glyphs, traps, locked and stuck doors
+ as fields.
+-Fixed inconsistancy between monster-monster and monster-player spells.
+-Fixed the weaponmaster code.  (The building isn't used though.)
+-Grid bugs are less common now.
+-Mushrooms of cure serious wounds now weigh as much as every other mushroom.
+-Iron spikes are lighter now.  The stuck door formulae have changed. 
+-Weapons of poisoning are now known as weapons of venom.
+-Sting now gets +2 attacks.
+-Added monster lighting effects.  This is similar to the monster lighting
+ patch from APW, however it is much more efficient.  Also, there are three
+ possible light radii instead of one.
+-Removed the bash command.  Use disarm to open stuck doors.
+-Added 7 new corpse tiles, and one skeleton tile in 16x16.bmp  The tile used
+ depends on the type of monster.  The function that picks which one to use
+ is very stupid though.
+
+
 ZAngband 2.5.1:
 -Removed some compiler warnings.
 -Documentation updates.
