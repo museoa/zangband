@@ -2,6 +2,13 @@
 # File: Makefile.lsl
 
 # Purpose: Makefile for Linux + SVGA library
+#
+#
+# Do not use this makefile unless you want to play as root in the console.
+# (This file is officially depreciated...)
+#
+# Use makefile.std instead.  It will work "out of the box" on most machines.
+# (Although you may need to change the architecture type.)
 
 SRCS = \
   z-util.c z-virt.c z-form.c z-rand.c z-term.c \
