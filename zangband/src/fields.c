@@ -962,8 +962,11 @@ bool field_detect_type(s16b fld_idx, byte typ)
 			/* We found something */
 			flag = TRUE;
 			
-			/* Memorise it */
-			notice_field(f_ptr);
+			/* Note the spot */
+			note_spot(f_ptr->fy, f_ptr->fx);
+		
+			/* Visual update */
+			lite_spot(f_ptr->fy, f_ptr->fx);
 		}
 
 		/* If not, get next one. */
