@@ -2011,7 +2011,7 @@ bool dec_stat(int stat, int amount, int permanent)
 	same = (cur == max);
 
 	/* Damage "current" value */
-	if (cur > 3)
+	if (cur > 30)
 	{
 		/* Handle "low" values */
 		if (cur <= 180)
@@ -2043,30 +2043,30 @@ bool dec_stat(int stat, int amount, int permanent)
 			cur = cur - loss;
 
 			/* Hack -- Only reduce stat to 17 sometimes */
-			if (cur < 18) cur = (amount <= 20) ? 18 : 17;
+			if (cur < 180) cur = (amount <= 20) ? 180 : 170;
 		}
 
 		/* Prevent illegal values */
-		if (cur < 3) cur = 3;
+		if (cur < 30) cur = 30;
 
 		/* Something happened */
 		if (cur != p_ptr->stat_cur[stat]) res = TRUE;
 	}
 
 	/* Damage "max" value */
-	if (permanent && (max > 3))
+	if (permanent && (max > 30))
 	{
 		chg_virtue(V_SACRIFICE, 1);
 		if (stat == A_WIS || stat == A_INT)
 			chg_virtue(V_ENLIGHTEN, -2);
 
 		/* Handle "low" values */
-		if (max <= 18)
+		if (max <= 180)
 		{
-			if (amount > 90) max--;
-			if (amount > 50) max--;
-			if (amount > 20) max--;
-			max--;
+			if (amount > 90) max -= 10;
+			if (amount > 50) max -= 10;
+			if (amount > 20) max -= 10;
+			max -= 10;
 		}
 
 		/* Handle "high" values */
@@ -2075,7 +2075,7 @@ bool dec_stat(int stat, int amount, int permanent)
 			/* Hack -- Decrement by a random amount between one-quarter */
 			/* and one-half of the stat bonus times the percentage, with a */
 			/* minimum damage of half the percentage. -CWS */
-			loss = (((max - 18) / 2 + 1) / 2 + 1);
+			loss = (((max - 180) / 2 + 1) / 2 + 1);
 			loss = (rand_range(loss, loss * 2) * amount) / 100;
 			if (loss < amount / 2) loss = amount / 2;
 
@@ -2083,7 +2083,7 @@ bool dec_stat(int stat, int amount, int permanent)
 			max = max - loss;
 
 			/* Hack -- Only reduce stat to 17 sometimes */
-			if (max < 18) max = (amount <= 20) ? 18 : 17;
+			if (max < 180) max = (amount <= 20) ? 180 : 170;
 		}
 
 		/* Hack -- keep it clean */

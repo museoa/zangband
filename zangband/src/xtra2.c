@@ -3915,7 +3915,7 @@ int stat_cap(int stat)
 	int bonus = rp_ptr->r_adj[stat] + cp_ptr->c_adj[stat];
 
 	if (bonus > 12)
-		return 4000;
+		return 400;
 	else
 		return 280 + 10 * bonus;
 }

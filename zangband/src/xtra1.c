@@ -20,7 +20,10 @@
  */
 void cnv_stat(int val, char *out_val)
 {
-    sprintf(out_val, "  %2d.%d", val / 10, val % 10);
+    if (val >= 400)
+        sprintf(out_val, "  40+ ");
+    else
+        sprintf(out_val, "  %2d.%d", val / 10, val % 10);
 }
 
 
@@ -36,39 +39,9 @@ void cnv_stat(int val, char *out_val)
  */
 s16b modify_stat_value(int value, int amount)
 {
-	int i;
+    value += amount * 10;
 
-	/* Reward */
-	if (amount > 0)
-	{
-		/* Apply each point */
-		for (i = 0; i < amount; i++)
-		{
-			/* One point at a time */
-			if (value < 180) value += 10;
-
-			/* Ten "points" at a time */
-			else
-				value += 10;
-		}
-	}
-
-	/* Penalty */
-	else if (amount < 0)
-	{
-		/* Apply each point */
-		for (i = 0; i < (0 - amount); i++)
-		{
-			/* Ten points at a time */
-			if (value >= 180 + 10) value -= 10;
-
-			/* Hack -- prevent weirdness */
-			else if (value > 180) value = 180;
-
-			/* One point at a time */
-			else if (value > 30) value -= 10;
-		}
-	}
+    if (value < 30) value = 30;
 
 	/* Return new value */
 	return (value);
