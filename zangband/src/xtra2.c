@@ -1201,6 +1201,9 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		/* Get how much the kill was worth */
 		exp_for_kill(r_ptr, &new_exp, &new_exp_frac);
 
+		/* Generate treasure */
+		corpse = monster_death(m_idx, TRUE);
+		
 		/* Handle fractional experience */
 		new_exp_frac += p_ptr->exp_frac;
 
@@ -1217,9 +1220,6 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 
 		/* Gain experience */
 		gain_exp(new_exp);
-
-		/* Generate treasure */
-		corpse = monster_death(m_idx, TRUE);
 
 		/* When the player kills a Unique, it stays dead */
 		if (r_ptr->flags1 & RF1_UNIQUE) r_ptr->max_num = 0;
