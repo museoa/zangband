@@ -490,7 +490,7 @@ static void chest_death(int y, int x, s16b o_idx)
 		/* Otherwise drop an item */
 		else
 		{
-			/* Make a good object */
+			/* Make a good themed object */
 			if (!make_object(q_ptr, TRUE, FALSE)) continue;
 		}
 

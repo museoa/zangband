@@ -4278,7 +4278,7 @@ void init_match_hook(byte tval, byte sval)
 }
 
 /*
- * Hack -- match a certain types of object only
+ * Hack -- match certain types of object only.
  */
 bool kind_is_match(int k_idx)
 {
@@ -4289,7 +4289,7 @@ bool kind_is_match(int k_idx)
 	
 	/* Does the sval match? */
 	if ((match_sv == SV_ANY) || (k_ptr->sval == match_sv)) return (TRUE);
-
+	
 	/* Not a match */
 	return (FALSE);
 }
@@ -4322,7 +4322,7 @@ bool make_object(object_type *j_ptr, bool good, bool great)
 		int k_idx;
 
 		/* Good objects */
-		if (good)
+		if (good && !get_obj_num_hook)
 		{
 			/* Activate restriction */
 			get_obj_num_hook = kind_is_good;
@@ -4335,7 +4335,7 @@ bool make_object(object_type *j_ptr, bool good, bool great)
 		k_idx = get_obj_num(base);
 
 		/* Good objects */
-		if (good)
+		if (good && (get_obj_num_hook == kind_is_good))
 		{
 			/* Clear restriction */
 			get_obj_num_hook = NULL;
