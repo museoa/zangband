@@ -2949,28 +2949,238 @@ void do_cmd_pray(void)
 			   VERSION_NAME);
 }
 
+/* Forward declare */
+extern menu_type pet_menu[PET_CHOICE_MAX];
+
+
+/*
+ * Dismiss some pets
+ */
+static bool cmd_pets_dismiss(int dummy)
+{
+	int dismissed = 0;
+	
+	monster_type *m_ptr;
+	
+	int pet_ctr;
+	bool pets = FALSE, all_pets = FALSE;
+
+	/* Ignore parameter */
+	(void) dummy;
+
+	if (get_check("Dismiss all pets? ")) all_pets = TRUE;
+
+	/* Process the monsters (backwards) */
+	for (pet_ctr = m_max - 1; pet_ctr >= 1; pet_ctr--)
+	{
+		/* Access the monster */
+		m_ptr = &m_list[pet_ctr];
+
+		if (is_pet(m_ptr))
+		{
+			bool delete_this = FALSE;
+
+			if (all_pets)
+				delete_this = TRUE;
+			else
+			{
+				char friend_name[80];
+				monster_desc(friend_name, m_ptr, 0x80);
+
+				if (get_check("Dismiss %s? ", friend_name))
+					delete_this = TRUE;
+			}
+
+			if (delete_this)
+			{
+				/* Notice changes in view */
+				if (r_info[m_ptr->r_idx].flags7 &
+					(RF7_LITE_1 | RF7_LITE_2))
+				{
+					/* Update some things */
+					p_ptr->update |= (PU_MON_LITE);
+				}
+
+				delete_monster_idx(pet_ctr);
+				dismissed++;
+			}
+		}
+	}
+
+	msg_format("You have dismissed %d pet%s.", dismissed,
+			   (dismissed == 1 ? "" : "s"));
+	
+	/* Calculate pets */
+	/* Process the monsters (backwards) */
+	for (pet_ctr = m_max - 1; pet_ctr >= 1; pet_ctr--)
+	{
+		/* Access the monster */
+		m_ptr = &m_list[pet_ctr];
+
+		if (is_pet(m_ptr))
+		{
+			/* Is it a pet? */
+			pets = TRUE;
+			break;
+		}
+	}
+
+	/* Can only dismiss pets if actually have some */
+	pet_menu[PET_DISMISS].available = pets;
+
+	/* Stay at menu */
+	return (FALSE);
+}
+
+
+static bool cmd_pets_close(int dummy)
+{
+	/* Hack - ignore parameter */
+	(void) dummy;
+	
+	/* Change follow distance */
+	p_ptr->pet_follow_distance = PET_CLOSE_DIST;
+	
+	/* Stay at menu */
+	return (FALSE);
+}
+
+static bool cmd_pets_follow(int dummy)
+{
+	/* Hack - ignore parameter */
+	(void) dummy;
+	
+	/* Change follow distance */
+	p_ptr->pet_follow_distance = PET_FOLLOW_DIST;
+	
+	/* Stay at menu */
+	return (FALSE);
+}
+
+static bool cmd_pets_destroy(int dummy)
+{
+	/* Hack - ignore parameter */
+	(void) dummy;
+	
+	/* Change follow distance */
+	p_ptr->pet_follow_distance = PET_DESTROY_DIST;
+	
+	/* Stay at menu */
+	return (FALSE);
+}
+
+static bool cmd_pets_space(int dummy)
+{
+	/* Hack - ignore parameter */
+	(void) dummy;
+	
+	/* Change follow distance */
+	p_ptr->pet_follow_distance = PET_SPACE_DIST;
+	
+	/* Stay at menu */
+	return (FALSE);
+}
+
+static bool cmd_pets_away(int dummy)
+{
+	/* Hack - ignore parameter */
+	(void) dummy;
+	
+	/* Change follow distance */
+	p_ptr->pet_follow_distance = PET_AWAY_DIST;
+	
+	/* Stay at menu */
+	return (FALSE);
+}
+
+static bool cmd_pets_doors(int dummy)
+{
+	/* Hack - ignore parameter */
+	(void) dummy;
+	
+	/* Toggle the open doors flag */
+	p_ptr->pet_open_doors = !p_ptr->pet_open_doors;
+	
+	if (p_ptr->pet_open_doors)
+	{
+		pet_menu[PET_OPEN_DOORS].text = "pets may open doors";
+	}
+	else
+	{
+		pet_menu[PET_OPEN_DOORS].text = "pets may not open doors";
+	}
+
+		
+	/* Stay at menu */
+	return (FALSE);
+}
+
+static bool cmd_pets_items(int dummy)
+{
+	int pet_ctr;
+	
+	monster_type *m_ptr;
+	
+		/* Hack - ignore parameter */
+	(void) dummy;
+
+
+	/* Toggle pet pickup flag */
+	p_ptr->pet_pickup_items = !p_ptr->pet_pickup_items;
+
+	/* Drop objects being carried by pets */
+	if (!p_ptr->pet_pickup_items)
+	{
+		for (pet_ctr = m_max - 1; pet_ctr >= 1; pet_ctr--)
+		{
+			/* Access the monster */
+			m_ptr = &m_list[pet_ctr];
+
+			if (is_pet(m_ptr))
+			{
+				drop_object_list(&m_ptr->hold_o_idx,
+								 m_ptr->fx, m_ptr->fy);
+			}
+		}
+	}
+	
+	if (p_ptr->pet_pickup_items)
+	{
+		pet_menu[PET_TAKE_ITEMS].text = "pets may pick up items";
+	}
+	else
+	{
+		pet_menu[PET_TAKE_ITEMS].text = "pets may not pick up items";
+	}
+	
+	/* Stay at menu */
+	return (FALSE);
+}
+
+
+/* The menu used to interact with pets */
+menu_type pet_menu[PET_CHOICE_MAX] =
+{
+	{"dismiss pets", cmd_pets_dismiss, TRUE, FALSE},
+	{"stay close", cmd_pets_close, TRUE, TRUE},
+	{"follow me", cmd_pets_follow, TRUE, TRUE},
+	{"seek and destroy", cmd_pets_destroy, TRUE, TRUE},
+	{"give me space", cmd_pets_space, TRUE, TRUE},
+	{"stay away", cmd_pets_away, TRUE, TRUE},
+	{NULL, cmd_pets_doors, TRUE, FALSE},
+	{NULL, cmd_pets_items, TRUE, FALSE}
+};
+
 
 /*
  * Issue a pet command
  */
 void do_cmd_pet(void)
 {
-	int i = 0;
-	int powers[36];
-	cptr power_desc[36];
-	bool flag;
-	int ask;
-	char choice;
-	char out_val[160];
-	int pets = 0;
+	bool pets = FALSE;
 	int pet_ctr;
-	bool all_pets = FALSE;
 	monster_type *m_ptr;
-	int mode = 0;
-	byte y = 1, x = 0;
-	int ctr = 0;
-	int num = 0;
-
+	int pet_select = -1;
 
 	/* Calculate pets */
 	/* Process the monsters (backwards) */
@@ -2979,245 +3189,44 @@ void do_cmd_pet(void)
 		/* Access the monster */
 		m_ptr = &m_list[pet_ctr];
 
-		if (is_pet(m_ptr)) pets++;
+		if (is_pet(m_ptr))
+		{
+			/* Is it a pet? */
+			pets = TRUE;
+			break;
+		}
 	}
 
-	if (pets)
-	{
-		power_desc[num] = "dismiss pets";
-		powers[num++] = PET_DISMISS;
-	}
+	/* Can only dismiss pets if actually have some */
+	pet_menu[PET_DISMISS].available = pets;
 
-	power_desc[num] = "stay close";
-	if (p_ptr->pet_follow_distance == PET_CLOSE_DIST) mode = num;
-	powers[num++] = PET_STAY_CLOSE;
+	/* Get current option */
+	if (p_ptr->pet_follow_distance == PET_CLOSE_DIST) pet_select = PET_STAY_CLOSE;
+	if (p_ptr->pet_follow_distance == PET_FOLLOW_DIST) pet_select = PET_FOLLOW_ME;
+	if (p_ptr->pet_follow_distance == PET_DESTROY_DIST) pet_select = PET_SEEK_AND_DESTROY;
+	if (p_ptr->pet_follow_distance == PET_SPACE_DIST) pet_select = PET_ALLOW_SPACE;
+	if (p_ptr->pet_follow_distance == PET_AWAY_DIST) pet_select = PET_STAY_AWAY;
 
-	power_desc[num] = "follow me";
-	if (p_ptr->pet_follow_distance == PET_FOLLOW_DIST) mode = num;
-	powers[num++] = PET_FOLLOW_ME;
-
-	power_desc[num] = "seek and destroy";
-	if (p_ptr->pet_follow_distance == PET_DESTROY_DIST) mode = num;
-	powers[num++] = PET_SEEK_AND_DESTROY;
-
-	power_desc[num] = "give me space";
-	if (p_ptr->pet_follow_distance == PET_SPACE_DIST) mode = num;
-	powers[num++] = PET_ALLOW_SPACE;
-
-	power_desc[num] = "stay away";
-	if (p_ptr->pet_follow_distance == PET_AWAY_DIST) mode = num;
-	powers[num++] = PET_STAY_AWAY;
-
+	/* Change option text depending on flag */
 	if (p_ptr->pet_open_doors)
 	{
-		power_desc[num] = "pets may open doors";
+		pet_menu[PET_OPEN_DOORS].text = "pets may open doors";
 	}
 	else
 	{
-		power_desc[num] = "pets may not open doors";
+		pet_menu[PET_OPEN_DOORS].text = "pets may not open doors";
 	}
-	powers[num++] = PET_OPEN_DOORS;
 
+	/* Change option text depending on flag */
 	if (p_ptr->pet_pickup_items)
 	{
-		power_desc[num] = "pets may pick up items";
+		pet_menu[PET_TAKE_ITEMS].text = "pets may pick up items";
 	}
 	else
 	{
-		power_desc[num] = "pets may not pick up items";
-	}
-	powers[num++] = PET_TAKE_ITEMS;
-
-	/* Nothing chosen yet */
-	flag = FALSE;
-
-	/* Build a prompt */
-	(void)strnfmt(out_val, 78, "(Command (%c-%c), ESC=exit) Select a command: ",
-				  I2A(0), I2A(num - 1));
-
-	/* Save the screen */
-	Term_save();
-
-	prtf(x, y++, "");
-
-	/* Show the list */
-	while (ctr < num)
-	{
-		prtf(x, y + ctr, "%s%c) %s", (ctr == mode) ? "*" : " ", I2A(ctr),
-				power_desc[ctr]);
-		ctr++;
+		pet_menu[PET_TAKE_ITEMS].text = "pets may not pick up items";
 	}
 
-	if (ctr < 17)
-	{
-		prtf(x, y + ctr, "");
-	}
-	else
-	{
-		prtf(x, y + 17, "");
-	}
-
-	/* Get a command from the user */
-	while (!flag && get_com(out_val, &choice))
-	{
-		if (choice == '\r' && num == 1)
-		{
-			choice = 'a';
-		}
-
-		if (isalpha(choice))
-		{
-			/* Note verify */
-			ask = (isupper(choice));
-
-			/* Lowercase */
-			if (ask) choice = tolower(choice);
-
-			/* Extract request */
-			i = (islower(choice) ? A2I(choice) : -1);
-		}
-		else
-		{
-			ask = FALSE;		/* Can't uppercase digits */
-
-			i = choice - '0' + 26;
-		}
-
-		/* Totally Illegal */
-		if ((i < 0) || (i >= num))
-		{
-			bell("Illegal pet command!");
-			continue;
-		}
-
-		/* Verify it */
-		if (ask)
-		{
-			/* Belay that order */
-			if (!get_check("Use %s? ", power_desc[i])) continue;
-		}
-
-		/* Stop the loop */
-		flag = TRUE;
-	}
-
-	/* Restore the screen */
-	Term_load();
-
-	/* Abort if needed */
-	if (!flag)
-	{
-		p_ptr->energy_use = 0;
-		return;
-	}
-
-	switch (powers[i])
-	{
-		case PET_DISMISS:		/* Dismiss pets */
-		{
-			int Dismissed = 0;
-
-			if (get_check("Dismiss all pets? ")) all_pets = TRUE;
-
-			/* Process the monsters (backwards) */
-			for (pet_ctr = m_max - 1; pet_ctr >= 1; pet_ctr--)
-			{
-				/* Access the monster */
-				m_ptr = &m_list[pet_ctr];
-
-				if (is_pet(m_ptr))
-				{
-					bool delete_this = FALSE;
-
-					if (all_pets)
-						delete_this = TRUE;
-					else
-					{
-						char friend_name[80];
-						monster_desc(friend_name, m_ptr, 0x80);
-
-						if (get_check("Dismiss %s? ", friend_name))
-							delete_this = TRUE;
-					}
-
-					if (delete_this)
-					{
-						/* Notice changes in view */
-						if (r_info[m_ptr->r_idx].flags7 &
-							(RF7_LITE_1 | RF7_LITE_2))
-						{
-							/* Update some things */
-							p_ptr->update |= (PU_MON_LITE);
-						}
-
-						delete_monster_idx(pet_ctr);
-						Dismissed++;
-					}
-				}
-			}
-
-			msg_format("You have dismissed %d pet%s.", Dismissed,
-					   (Dismissed == 1 ? "" : "s"));
-			break;
-		}
-			/* Call pets */
-		case PET_STAY_CLOSE:
-		{
-			p_ptr->pet_follow_distance = PET_CLOSE_DIST;
-			break;
-		}
-			/* "Follow Me" */
-		case PET_FOLLOW_ME:
-		{
-			p_ptr->pet_follow_distance = PET_FOLLOW_DIST;
-			break;
-		}
-			/* "Seek and destoy" */
-		case PET_SEEK_AND_DESTROY:
-		{
-			p_ptr->pet_follow_distance = PET_DESTROY_DIST;
-			break;
-		}
-			/* "Give me space" */
-		case PET_ALLOW_SPACE:
-		{
-			p_ptr->pet_follow_distance = PET_SPACE_DIST;
-			break;
-		}
-			/* "Stay away" */
-		case PET_STAY_AWAY:
-		{
-			p_ptr->pet_follow_distance = PET_AWAY_DIST;
-			break;
-		}
-			/* flag - allow pets to open doors */
-		case PET_OPEN_DOORS:
-		{
-			p_ptr->pet_open_doors = !p_ptr->pet_open_doors;
-			break;
-		}
-			/* flag - allow pets to pickup items */
-		case PET_TAKE_ITEMS:
-		{
-			p_ptr->pet_pickup_items = !p_ptr->pet_pickup_items;
-
-			/* Drop objects being carried by pets */
-			if (!p_ptr->pet_pickup_items)
-			{
-				for (pet_ctr = m_max - 1; pet_ctr >= 1; pet_ctr--)
-				{
-					/* Access the monster */
-					m_ptr = &m_list[pet_ctr];
-
-					if (is_pet(m_ptr))
-					{
-						drop_object_list(&m_ptr->hold_o_idx,
-										 m_ptr->fx, m_ptr->fy);
-					}
-				}
-			}
-
-			break;
-		}
-	}
+	/* Interact with menu */
+	display_menu(PET_CHOICE_MAX, pet_menu, pet_select, NULL);
 }

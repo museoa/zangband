@@ -1792,7 +1792,7 @@ struct mutation_type
 /*
  * A function pointer used in displaying menus
  *
- * The function takes a string representing the option chosen,
+ * The function takes a number for the option chosen
  * and will return TRUE if the selection works, and FALSE
  * if the menu should stay up.
  */
@@ -1805,4 +1805,5 @@ struct menu_type
 	cptr text;	/* Option text */
 	menu_select_type action; /* Action to do */
 	bool available;	/* Is this action available? */
+	bool select; /* Is this action 'selectable'? */
 };
