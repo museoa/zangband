@@ -41,11 +41,11 @@ static int monster_critical(int dice, int sides, int dam)
 	}
 
 	/* Critical damage */
-	if (dam > 45) return (6 + max);
-	if (dam > 33) return (5 + max);
-	if (dam > 25) return (4 + max);
-	if (dam > 18) return (3 + max);
-	if (dam > 11) return (2 + max);
+	if (dam > 160) return (6 + max);
+	if (dam > 80) return (5 + max);
+	if (dam > 40) return (4 + max);
+	if (dam > 20) return (3 + max);
+	if (dam > 10) return (2 + max);
 	return (1 + max);
 }
 
