@@ -42,7 +42,7 @@ extern void vault_objects(int x, int y, int num);
 extern void vault_traps(int x, int y, int xd, int yd, int num);
 extern void vault_monsters(int x1, int y1, int num);
 
-extern int next_to_walls(int y, int x);
+extern int next_to_walls(int x, int y);
 
 extern void generate_room(int y1, int x1, int y2, int x2, int light);
 extern void generate_vault(int y1, int x1, int y2, int x2);

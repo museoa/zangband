@@ -163,7 +163,7 @@ static bool alloc_stairs(int feat, int num, int walls)
 				if (c_ptr->feat != FEAT_FLOOR) continue;
 
 				/* Require a certain number of adjacent walls */
-				if (next_to_walls(y, x) < walls) continue;
+				if (next_to_walls(x, y) < walls) continue;
 
 				/* Clear previous contents, add stairs */
 				c_ptr->feat = feat;

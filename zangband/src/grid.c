@@ -362,7 +362,7 @@ void vault_monsters(int x1, int y1, int num)
  *
  * We count only granite walls and permanent walls.
  */
-int next_to_walls(int y, int x)
+int next_to_walls(int x, int y)
 {
 	int	k = 0;
 
