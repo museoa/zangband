@@ -402,10 +402,10 @@ void wipe_o_list(void)
 
 		/* Preserve artifacts */
 		if (preserve_mode && (FLAG(o_ptr, TR_INSTA_ART)) &&
-			o_ptr->activate &&
-			(a_info[o_ptr->activate].cur_num == 1))
+			o_ptr->a_idx &&
+			(a_info[o_ptr->a_idx].cur_num == 1))
 		{
-			a_info[o_ptr->activate].cur_num = 0;
+			a_info[o_ptr->a_idx].cur_num = 0;
 		}
 
 		/* Access location */
@@ -449,10 +449,10 @@ void wipe_objects(int rg_idx)
 
 		/* Preserve artifacts */
 		if (preserve_mode && (FLAG(o_ptr, TR_INSTA_ART)) &&
-			o_ptr->activate &&
-			(a_info[o_ptr->activate].cur_num == 1))
+			o_ptr->a_idx &&
+			(a_info[o_ptr->a_idx].cur_num == 1))
 		{
-			a_info[o_ptr->activate].cur_num = 0;
+			a_info[o_ptr->a_idx].cur_num = 0;
 		}
 
 		/* Delete the object */
@@ -2032,7 +2032,7 @@ static void object_mention(object_type *o_ptr)
 	/* Artifact */
 	if (FLAG(o_ptr, TR_INSTA_ART))
 	{
-		if (o_ptr->activate)
+		if (o_ptr->a_idx)
 		{
 			/* Silly message */
 			type = "Artifact (";
@@ -2317,7 +2317,7 @@ static object_type *make_artifact(void)
 		o_ptr->weight = a_ptr->weight;
 
 		/* Mega-Hack XXX XXX -- set activation */
-		o_ptr->activate = i;
+		o_ptr->a_idx = i;
 
 		/* Add any special scripts */
 		for (i = 0; i < MAX_TRIGGER; i++)
@@ -3831,10 +3831,10 @@ static bool put_object(object_type *o_ptr, int x, int y)
 	msgf("Failed to place object!");
 
 	/* Paranoia - preserve artifacts */
-	if ((preserve_mode) && (FLAG(o_ptr, TR_INSTA_ART)) &&
-		o_ptr->activate)
+	if ((preserve_mode) && FLAG(o_ptr, TR_INSTA_ART) &&
+		o_ptr->a_idx)
 	{
-		a_info[o_ptr->activate].cur_num = 0;
+		a_info[o_ptr->a_idx].cur_num = 0;
 	}
 
 	/* Failure */

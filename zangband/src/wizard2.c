@@ -603,8 +603,8 @@ static void wiz_display_item(const object_type *o_ptr)
 	prtf(j, 6, "pval = %-5d  toac = %-5d  tohit = %-4d  todam = %-4d",
 			   o_ptr->pval, o_ptr->to_a, o_ptr->to_h, o_ptr->to_d);
 
-	prtf(j, 7, "activate = %-4d  cost = %ld",
-			   o_ptr->activate, (long)object_value_real(o_ptr));
+	prtf(j, 7, "a_idx = %-4d  cost = %ld",
+			   o_ptr->a_idx, (long)object_value_real(o_ptr));
 
 	prtf(j, 8, "info = %04x  timeout = %-d",
 			   o_ptr->info, o_ptr->timeout);
@@ -906,9 +906,9 @@ static void wiz_tweak_item(object_type *o_ptr)
 	wiz_display_item(o_ptr);
 
 	/* XXX XXX XXX Very dangerous... */
-	strnfmt(tmp_val, 80, "%d", (int)o_ptr->activate);
-	if (!get_string(tmp_val, 6, "Enter new 'activate' setting: ")) return;
-	o_ptr->activate = atoi(tmp_val);
+	strnfmt(tmp_val, 80, "%d", (int)o_ptr->a_idx);
+	if (!get_string(tmp_val, 6, "Enter new 'a_idx' setting: ")) return;
+	o_ptr->a_idx = atoi(tmp_val);
 	wiz_display_item(o_ptr);
 }
 
@@ -921,8 +921,7 @@ static object_type *wiz_reroll_item(object_type *o_ptr)
 	char ch;
 
 	/* Hack -- leave normal artifacts alone */
-	if ((FLAG(o_ptr, TR_INSTA_ART)) && o_ptr->activate) 
-		return (o_ptr);
+	if (FLAG(o_ptr, TR_INSTA_ART) && o_ptr->a_idx) return (o_ptr);
 
 	/* Main loop. Ask for magification and artifactification */
 	while (TRUE)
@@ -935,10 +934,10 @@ static object_type *wiz_reroll_item(object_type *o_ptr)
 			("[a]ccept, [w]orthless, [n]ormal, [e]xcellent, [s]pecial? ", &ch))
 		{
 			/* Preserve wizard-generated artifacts */
-			if ((FLAG(o_ptr, TR_INSTA_ART)) && o_ptr->activate)
+			if (FLAG(o_ptr, TR_INSTA_ART) && o_ptr->a_idx)
 			{
-				a_info[o_ptr->activate].cur_num = 0;
-				o_ptr->activate = 0;
+				a_info[o_ptr->a_idx].cur_num = 0;
+				o_ptr->a_idx = 0;
 			}
 
 			/* Done */
@@ -949,10 +948,10 @@ static object_type *wiz_reroll_item(object_type *o_ptr)
 		if (ch == 'A' || ch == 'a') break;
 
 		/* Preserve wizard-generated artifacts */
-		if ((FLAG(o_ptr, TR_INSTA_ART)) && o_ptr->activate)
+		if (FLAG(o_ptr, TR_INSTA_ART) && o_ptr->a_idx)
 		{
-			a_info[o_ptr->activate].cur_num = 0;
-			o_ptr->activate = 0;
+			a_info[o_ptr->a_idx].cur_num = 0;
+			o_ptr->a_idx = 0;
 
 			/* Remove the artifact flag */
 			o_ptr->flags[2] &= ~(TR2_INSTA_ART);

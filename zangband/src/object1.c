@@ -208,7 +208,7 @@ static void roff_obj_aux(const object_type *o_ptr)
 	if (object_known_p(o_ptr))
 	{
 		artifact_type *a_ptr = NULL;
-		if (o_ptr->activate) a_ptr = &a_info[o_ptr->activate];
+		if (o_ptr->a_idx) a_ptr = &a_info[o_ptr->a_idx];
 
 		if (a_ptr && a_ptr->text)
 		{

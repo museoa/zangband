@@ -603,7 +603,7 @@ static void wr_item(const object_type *o_ptr)
 	/* The new flags */
 	wr_s32b(o_ptr->cost);
 
-	wr_byte(o_ptr->activate);
+	wr_byte(o_ptr->a_idx);
 
 	wr_u32b(o_ptr->kn_flags[0]);
 	wr_u32b(o_ptr->kn_flags[1]);

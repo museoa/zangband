@@ -2061,12 +2061,12 @@ void identify_item(object_type *o_ptr)
 	object_known(o_ptr);
 
 	/* Save knowledge of artifact */
-	if (o_ptr->activate)
+	if (o_ptr->a_idx)
 	{
 		/* Have we seen it before? */
-		if (a_info[o_ptr->activate].cur_num != 2)
+		if (a_info[o_ptr->a_idx].cur_num != 2)
 		{
-			int artifact = o_ptr->activate;
+			int artifact = o_ptr->a_idx;
 			
 			/* Notice a quest for this artifact */
 			trigger_quest_complete(QX_KNOW_ARTIFACT, &artifact);
@@ -2082,7 +2082,7 @@ void identify_item(object_type *o_ptr)
 			}
 		}
 
-		a_info[o_ptr->activate].cur_num = 2;
+		a_info[o_ptr->a_idx].cur_num = 2;
 	}
 
 	/* Recalculate bonuses */
@@ -2192,8 +2192,8 @@ bool mundane_spell(void)
     /* Erase the inscription */
     quark_remove(&o_ptr->inscription);
 
-	/* Erase the activation */
-	o_ptr->activate = 0;
+	/* No longer a numbered artifact */
+	o_ptr->a_idx = 0;
 
 	/* Erase the "feeling" */
 	o_ptr->feeling = FEEL_NONE;

@@ -544,7 +544,7 @@ static void rd_item(object_type *o_ptr)
 		/* The new flags */
 		rd_s32b(&o_ptr->cost);
 
-		rd_byte(&o_ptr->activate);
+		rd_byte(&o_ptr->a_idx);
 
 		rd_u32b(&o_ptr->kn_flags[0]);
 		rd_u32b(&o_ptr->kn_flags[1]);
@@ -554,18 +554,18 @@ static void rd_item(object_type *o_ptr)
 		else
 			rd_u32b(&o_ptr->kn_flags[3]);
 
-		if (o_ptr->activate && sf_version < 46)
+		if (o_ptr->a_idx && sf_version < 46)
 		{
-			if (o_ptr->activate < 128)
+			if (o_ptr->a_idx < 128)
 			{
 				/* Remove old randart activations */
-				o_ptr->activate = 0;
+				o_ptr->a_idx = 0;
 				o_ptr->flags[2] &= ~TR2_ACTIVATE;
 			}
 			else
 			{
 				/* Now just use a_idx */
-				o_ptr->activate -= 128;
+				o_ptr->a_idx -= 128;
 			}
 		}
 
@@ -573,17 +573,17 @@ static void rd_item(object_type *o_ptr)
 		 * Add appropriate scripts to artifacts that are missing them,
 		 * for older savefiles
 		 */
-		if (o_ptr->activate)
+		if (o_ptr->a_idx)
 		{
 			int i;
 
 			for (i = 0; i < MAX_TRIGGER; i++)
 			{
-				if (a_info[o_ptr->activate].trigger[i] &&
+				if (a_info[o_ptr->a_idx].trigger[i] &&
 						!o_ptr->trigger[i])
 				{
 					o_ptr->trigger[i] = quark_add(
-						a_text + a_info[o_ptr->activate].trigger[i]);
+						a_text + a_info[o_ptr->a_idx].trigger[i]);
 				}
 			}
 		}
@@ -622,7 +622,7 @@ static void rd_item(object_type *o_ptr)
 		o_ptr->weight = k_ptr->weight;
 
 		/* Paranoia */
-		o_ptr->activate = 0;
+		o_ptr->a_idx = 0;
 
 		/* Reset flags */
 		o_ptr->flags[0] = k_ptr->flags[0];
@@ -695,7 +695,7 @@ static void rd_item(object_type *o_ptr)
 			o_ptr->flags[3] |= a_ptr->flags[3];
 
 			/* Mega-Hack -- set activation */
-			o_ptr->activate = name1;
+			o_ptr->a_idx = name1;
 
 			/* Save the inscription */
 			o_ptr->xtra_name = quark_add(a_name + a_ptr->name);

@@ -372,7 +372,7 @@ struct object_type
 	
 	byte feeling;       /* Game generated inscription number (eg, pseudo-id) */
 
-	byte activate;		/* Activation type */
+	byte a_idx;		/* Artifact number */
 	
 	byte info;			/* Special flags */
 

@@ -2191,7 +2191,7 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 	int given = 0;
 
 	/* No activation yet */
-	o_ptr->activate = 0;
+	o_ptr->a_idx = 0;
 
 	new_name[0] = 0;
 
@@ -2570,8 +2570,8 @@ void create_named_art(int a_idx, int x, int y)
 	/* Create the artifact */
 	q_ptr = object_prep(i);
 
-	/* Set the activation */
-	q_ptr->activate = a_idx;
+	/* Save the artifact number */
+	q_ptr->a_idx = a_idx;
 	
 	/* Add any special scripts */
 	for (i = 0; i < MAX_TRIGGER; i++)
