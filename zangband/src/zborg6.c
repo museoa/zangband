@@ -4230,7 +4230,7 @@ static int borg_thrust_damage_one(int i)
 	}
 
 	/* dont hurt friends or pets */
-	if (kill->friendly) dam = -10;
+	if (kill->m_flags & (MONST_FRIEND | MONST_PET)) dam = -10;
 
 	/* Invuln monsters take no dam */
 	if (kill->invulner) dam = 0;
@@ -5205,7 +5205,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 	borg_full_damage = FALSE;
 
 	/* dont hurt friends or pets */
-	if (kill->friendly) dam = -10;
+	if (kill->m_flags & (MONST_FRIEND | MONST_PET)) dam = -10;
 
 	/* Invuln monsters take no dam */
 	if (kill->invulner) dam = 0;
@@ -7345,7 +7345,7 @@ static int borg_attack_aux_racial_thrust(int race, int level, int dam)
 		r_ptr = &r_info[mb_ptr->monster];
 
 		/* Dont attack our buddies */
-		if (kill->friendly) continue;
+		if (kill->m_flags & MONST_PET) continue;
 
 		/* Base Dam */
 		d = dam;
@@ -11178,7 +11178,7 @@ static int borg_defend_aux_servant(int p1)
 		if (!kill->r_idx) continue;
 
 		/* Skip non Friendly */
-		if (!kill->friendly) continue;
+		if (!(kill->m_flags & MONST_PET)) continue;
 
 		/* Count Friendly */
 		friendlies++;
@@ -14295,7 +14295,7 @@ bool borg_flow_kill(bool viewable, int nearness)
 		if (scaryguy_on_level) continue;
 
 		/* Don't chase our friends or pets */
-		if (kill->friendly) continue;
+		if (kill->m_flags & (MONST_FRIEND | MONST_PET)) continue;
 
 		/* Avoid multiplying monsters when low level */
 		if (borg_skill[BI_CLEVEL] < 10 &&
@@ -14850,8 +14850,11 @@ static bool borg_flow_dark_reachable(int y, int x)
 			(!borg_skill[BI_ENCUMBERD] || borg_skill[BI_FEATH])) return (TRUE);
 
 		/* I can push pass friendly monsters */
-		if (mb_ptr->kill && borg_kills[mb_ptr->kill].friendly)
+		if (mb_ptr->kill &&
+				(borg_kills[mb_ptr->kill].m_flags & (MONST_FRIEND | MONST_PET)))
+		{
 			return (TRUE);
+		}
 	}
 
 	/* Failure */

@@ -8918,7 +8918,7 @@ int borg_danger_aux(int y, int x, int c, int i, bool average)
 	p = MAX(v1, v2);
 
 	/* No danger from friends or pets */
-	if (kill->friendly) p = 0;
+	if (kill->m_flags & (MONST_FRIEND | MONST_PET)) p = 0;
 
 	/* Result */
 	return (p);
