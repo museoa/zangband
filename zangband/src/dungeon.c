@@ -1138,7 +1138,7 @@ static void process_world(void)
 		int damage = resist(depth / 4 + 1, res_pois_lvl);
 
 		/* Hack - some resistance will save you */
-		if (damage >= p_ptr->depth / 4)
+		if (damage && damage >= p_ptr->depth / 4)
 		{
 			/* Take damage */
 			msgf("The plants poison you!");
