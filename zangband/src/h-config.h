@@ -327,4 +327,12 @@
 #define TERM_CAVE_MAP
 #endif /* USE_TNB */
 
+
+/* Autoconf derived stuff */
+#ifdef SIZEOF_LONG_INT
+#if SIZEOF_LONG_INT > 4
+#define L64
+#endif
+#endif
+
 #endif
