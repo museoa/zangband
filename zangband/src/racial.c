@@ -22,7 +22,12 @@ static int racial_chance(s16b min_level, int use_stat, int difficulty)
 	int i;
 	int val;
 	int sum = 0;
-	int stat = p_ptr->stat_cur[use_stat];
+    int stat = p_ptr->stat_cur[use_stat];
+
+    if (stat <= 180)
+        stat /= 10;
+    else
+        stat += 18-180;
 
 	/* No chance for success */
 	if ((p_ptr->lev < min_level) || p_ptr->confused)
@@ -52,7 +57,7 @@ static int racial_chance(s16b min_level, int use_stat, int difficulty)
 		val = i - difficulty;
 		if (val > 0)
 			sum += (val <= difficulty) ? val : difficulty;
-	}
+    }
 
 	if (difficulty == 0)
 		return (100);
@@ -124,7 +129,13 @@ static void eat_corpse(void)
  */
 bool racial_aux(s16b min_level, int cost, int use_stat, int difficulty)
 {
-	bool use_hp = FALSE;
+    bool use_hp = FALSE;
+    int stat = p_ptr->stat_cur[use_stat];
+
+    if (stat <= 180)
+        stat /= 10;
+    else
+        stat += 18-180;
 
 	/* Not enough mana - use hp */
 	if (p_ptr->csp < cost) use_hp = TRUE;
@@ -190,7 +201,7 @@ bool racial_aux(s16b min_level, int cost, int use_stat, int difficulty)
 	p_ptr->window |= (PW_PLAYER | PW_SPELL);
 
 	/* Success? */
-	if (randint1(p_ptr->stat_cur[use_stat]) >=
+	if (randint1(stat) >=
 		rand_range(difficulty / 2, difficulty))
 	{
 		return TRUE;

@@ -1953,9 +1953,9 @@ bool inc_stat(int stat)
 	if (value < cap)
 	{
 		/* Gain one (sometimes two) points */
-		if (value < 18)
+		if (value < 180)
 		{
-			gain = ((randint0(100) < 75) ? 1 : 2);
+			gain = ((randint0(100) < 75) ? 10 : 20);
 			value += gain;
 		}
 
@@ -2031,12 +2031,12 @@ bool dec_stat(int stat, int amount, int permanent)
 	if (cur > 3)
 	{
 		/* Handle "low" values */
-		if (cur <= 18)
+		if (cur <= 180)
 		{
-			if (amount > 90) cur--;
-			if (amount > 50) cur--;
-			if (amount > 20) cur--;
-			cur--;
+			if (amount > 90) cur -= 10;
+			if (amount > 50) cur -= 10;
+			if (amount > 20) cur -= 10;
+			cur -= 10;
 		}
 
 		/* Handle "high" values */
@@ -2045,7 +2045,7 @@ bool dec_stat(int stat, int amount, int permanent)
 			/* Hack -- Decrement by a random amount between one-quarter */
 			/* and one-half of the stat bonus times the percentage, with a */
 			/* minimum damage of half the percentage. -CWS */
-			loss = (((cur - 18) / 2 + 1) / 2 + 1);
+			loss = (((cur - 180) / 2 + 1) / 2 + 1);
 
 			/* Paranoia */
 			if (loss < 1) loss = 1;
@@ -2634,12 +2634,10 @@ void do_poly_self(void)
 			int change;
 
 			/* Calculate the amount the stat is drained */
-			if (p_ptr->stat_cur[i] > 18)
+			if (p_ptr->stat_cur[i] > 180)
 				drain = (p_ptr->stat_max[i] - p_ptr->stat_cur[i] + 9) / 10;
-			else if (p_ptr->stat_max[i] > 18)
-				drain =
-					(18 - p_ptr->stat_cur[i]) + (p_ptr->stat_max[i] - 18 +
-												 9) / 10;
+			else if (p_ptr->stat_max[i] > 180)
+				drain = (180 - p_ptr->stat_cur[i] + 9) / 10 + (p_ptr->stat_max[i] - 18 + 9) / 10;
 			else
 				drain = p_ptr->stat_max[i] - p_ptr->stat_cur[i];
 

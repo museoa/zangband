@@ -3691,6 +3691,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 
 					msg_format("You're not as %s as you used to be...", act);
 
+                                        /* Note: this is a change from old behavior -RML */
 					p_ptr->stat_cur[k] = (p_ptr->stat_cur[k] * 3) / 4;
 					if (p_ptr->stat_cur[k] < 3) p_ptr->stat_cur[k] = 3;
 					p_ptr->update |= (PU_BONUS);

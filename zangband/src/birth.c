@@ -788,7 +788,7 @@ static void get_stats(void)
 		bonus = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
 
 		/* Apply the bonus to the stat (somewhat randomly) */
-		stat_use[i] = adjust_stat(i, j, bonus);
+		stat_use[i] = adjust_stat(i, j * 10, bonus);
 
 		/* Start fully healed */
 		p_ptr->stat_cur[i] = p_ptr->stat_max[i] = stat_use[i];
@@ -2589,15 +2589,7 @@ static bool player_birth_aux_3(void)
 				cur_score = 0;
 				for (i = 0; i < A_MAX; i++)
 				{
-					if (p_ptr->stat_cur[i] <= 18)
-					{
-						cur_score += p_ptr->stat_cur[i] * stat_weight[i] * 10;
-					}
-					else
-					{
-						cur_score += (p_ptr->stat_cur[i] - 18 + 180) *
-							stat_weight[i];
-					}
+		   			cur_score += (p_ptr->stat_cur[i]) * stat_weight[i];
 				}
 
 				/* Compare current score against saved stats */

@@ -1249,10 +1249,11 @@ bool make_attack_normal(int m_idx)
 									("You're not as %s as you used to be...",
 									 act);
 
+                                /* Note: this is a change from old behavior -RML */
 								p_ptr->stat_cur[stat] =
 									(p_ptr->stat_cur[stat] * 3) / 4;
 								if (p_ptr->stat_cur[stat] <
-									3) p_ptr->stat_cur[stat] = 3;
+									30) p_ptr->stat_cur[stat] = 30;
 								p_ptr->update |= (PU_BONUS);
 								break;
 							}
@@ -1267,7 +1268,7 @@ bool make_attack_normal(int m_idx)
 									p_ptr->stat_cur[k] =
 										(p_ptr->stat_cur[k] * 3) / 4;
 									if (p_ptr->stat_cur[k] <
-										3) p_ptr->stat_cur[k] = 3;
+										30) p_ptr->stat_cur[k] = 30;
 								}
 								p_ptr->update |= (PU_BONUS);
 								break;

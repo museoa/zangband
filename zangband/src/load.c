@@ -1173,7 +1173,21 @@ static void rd_extra(void)
 			/* Hack - Restore all stats... */
 			p_ptr->stat_cur[i] = p_ptr->stat_max[i];
 		}
-	}
+        }
+        if (sf_version < 40)
+        {
+            for (i = 0; i < 6; i++)
+            {
+                if (p_ptr->stat_max[i] < 18)
+                    p_ptr->stat_max[i] *= 10;
+                else
+                    p_ptr->stat_max[i] += 180-18;
+                if (p_ptr->stat_cur[i] < 18)
+                    p_ptr->stat_cur[i] *= 10;
+                else
+                    p_ptr->stat_cur[i] += 180-18;
+            }
+        }
 
 	strip_bytes(24);			/* oops */
 

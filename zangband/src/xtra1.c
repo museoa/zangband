@@ -21,9 +21,9 @@
 void cnv_stat(int val, char *out_val)
 {
 	/* Above 18 */
-	if (val > 18)
+	if (val > 180)
 	{
-		int bonus = (val - 18);
+		int bonus = (val - 180);
 
 		if (bonus >= 220)
 		{
@@ -42,7 +42,7 @@ void cnv_stat(int val, char *out_val)
 	/* From 3 to 18 */
 	else
 	{
-		sprintf(out_val, "    %2d", val);
+		sprintf(out_val, "    %2d", val / 10);
 	}
 }
 
@@ -68,7 +68,7 @@ s16b modify_stat_value(int value, int amount)
 		for (i = 0; i < amount; i++)
 		{
 			/* One point at a time */
-			if (value < 18) value++;
+			if (value < 180) value += 10;
 
 			/* Ten "points" at a time */
 			else
@@ -83,13 +83,13 @@ s16b modify_stat_value(int value, int amount)
 		for (i = 0; i < (0 - amount); i++)
 		{
 			/* Ten points at a time */
-			if (value >= 18 + 10) value -= 10;
+			if (value >= 180 + 10) value -= 10;
 
 			/* Hack -- prevent weirdness */
-			else if (value > 18) value = 18;
+			else if (value > 180) value = 180;
 
 			/* One point at a time */
-			else if (value > 3) value--;
+			else if (value > 30) value -= 10;
 		}
 	}
 
@@ -3110,11 +3110,17 @@ static void calc_bonuses(void)
 		use = modify_stat_value(p_ptr->stat_cur[i], p_ptr->stat_add[i]);
 
 		if ((i == A_CHR) && (p_ptr->muta3 & MUT3_ILL_NORM))
-		{
+        {
+            int floor = 8 + 2 * p_ptr->lev;
+            if (floor <= 18)
+                floor *= 10;
+            else
+                floor += 180-18;
+
 			/* 10 to 18/90 charisma, guaranteed, based on level */
-			if (use < 8 + 2 * p_ptr->lev)
+			if (use < floor)
 			{
-				use = 8 + 2 * p_ptr->lev;
+				use = floor;
 			}
 		}
 
