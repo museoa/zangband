@@ -75,6 +75,9 @@
  * Format("%d", int i)
  *   Append the integer "i".
  *
+ * Format("%t", int stat)
+ *   Append the integer "stat" formatted like a stat.
+ *
  * Format("%lu", unsigned long int i)
  *   Append the unsigned long integer "i".
  *
@@ -498,6 +501,22 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 					sprintf(tmp, aux, arg);
 				}
 
+				/* Done */
+				break;
+			}
+			
+			case 't':
+			{
+				/* Stat values */
+				int arg;
+				
+				arg = va_arg(vp, int);
+				
+				if (arg >= 400)
+        			sprintf(tmp, "  40+ ");
+    			else
+        			sprintf(tmp, "  %2d.%d", arg / 10, arg % 10);
+			
 				/* Done */
 				break;
 			}
