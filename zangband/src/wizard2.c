@@ -287,7 +287,7 @@ static void do_cmd_wiz_bamf(void)
 	if (!p_ptr->target_who) return;
 
 	/* Teleport to the target */
-	teleport_player_to(p_ptr->target_row, p_ptr->target_col);
+	teleport_player_to(p_ptr->target_col, p_ptr->target_row);
 }
 
 

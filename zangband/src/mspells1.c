@@ -2013,7 +2013,7 @@ bool make_attack_spell(int m_idx)
 			if (!direct) break;
 			disturb(TRUE);
 			msg_format("%^s commands you to return.", m_name);
-			teleport_player_to(m_ptr->fy, m_ptr->fx);
+			teleport_player_to(m_ptr->fx, m_ptr->fy);
 			break;
 		}
 

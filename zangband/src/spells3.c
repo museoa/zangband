@@ -518,7 +518,7 @@ void teleport_player(int dis)
  * This function is slightly obsessive about correctness.
  * This function allows teleporting into vaults (!)
  */
-void teleport_player_to(int ny, int nx)
+void teleport_player_to(int nx, int ny)
 {
 	int py = p_ptr->py;
 	int px = p_ptr->px;
@@ -895,7 +895,7 @@ void apply_nexus(const monster_type *m_ptr)
 
 		case 4: case 5:
 		{
-			teleport_player_to(m_ptr->fy, m_ptr->fx);
+			teleport_player_to(m_ptr->fx, m_ptr->fy);
 			break;
 		}
 
@@ -4330,7 +4330,7 @@ bool dimension_door(void)
 		p_ptr->energy -= 100;
 		teleport_player(10);
 	}
-	else teleport_player_to(y, x);
+	else teleport_player_to(x, y);
 
 	return (TRUE);
 }
