@@ -239,7 +239,7 @@ L:INTERT:action = ACT_DISARM
 L:INTER:trap_disarm(5)
 L:TARGET:trap_gf()
 L:PENTER:hit_trap(field)
-L:PENTER:if (dont_save(50) == TRUE) then
+L:PENTER:if (player_save(player.depth) ~= TRUE) then
 L:PENTER:	msgf("There is a flash of shimmering light!")
 L:PENTER:	evil_trap()
 L:PENTER:	deleteme()
@@ -255,7 +255,7 @@ L:INTERT:action = ACT_DISARM
 L:INTER:trap_disarm(10)
 L:TARGET:trap_gf()
 L:PENTER:hit_trap(field)
-L:PENTER:if (dont_save(50) == TRUE) then
+L:PENTER:if (player_save(player.depth) ~= TRUE) then
 L:PENTER:	msgf("You hit a teleport trap!")
 L:PENTER:	teleport_player(100)
 L:PENTER:end
@@ -372,7 +372,7 @@ L:INTERT:action = ACT_DISARM
 L:INTER:trap_disarm(10)
 L:TARGET:trap_gf()
 L:PENTER:hit_trap(field)
-L:PENTER:if (dont_save(50) == TRUE) then
+L:PENTER:if (player_save(player.depth) ~= TRUE) then
 L:PENTER:	msgf("There is a bright flash of light!")
 L:PENTER:	project(0, 1, player.px, player.py, 0, GF_MAKE_TRAP,
 L:PENTER:			PROJECT_HIDE | PROJECT_JUMP | PROJECT_GRID)
@@ -445,7 +445,7 @@ L:INTERT:action = ACT_DISARM
 L:INTER:trap_disarm(40)
 L:TARGET:trap_gf()
 L:PENTER:hit_trap(field)
-L:PENTER:if (dont_save(125) == TRUE) then
+L:PENTER:if (player_save(player.depth) ~= TRUE) then
 L:PENTER:	msgf("Your head throbs!")
 L:PENTER:	lose_exp(player.exp / 5)
 L:PENTER:end
@@ -460,7 +460,7 @@ L:INTERT:action = ACT_DISARM
 L:INTER:trap_disarm(10)
 L:TARGET:trap_gf()
 L:PENTER:hit_trap(field)
-L:PENTER:if (dont_save(125) == TRUE) then
+L:PENTER:if (player_save(player.depth) ~= TRUE) then
 L:PENTER:	if (not player_res(TR1_RES_DISEN)) then
 L:PENTER:		msgf("There is a bright flash of light!")
 L:PENTER:		apply_disenchant()
@@ -479,7 +479,7 @@ L:INTERT:action = ACT_DISARM
 L:INTER:trap_disarm(10)
 L:TARGET:trap_gf()
 L:PENTER:hit_trap(field)
-L:PENTER:if (dont_save(100) == TRUE) then
+L:PENTER:if (player_save(player.depth) ~= TRUE) then
 L:PENTER:	msgf("You fumble with your pack!")
 L:PENTER:	drop_random_item()
 L:PENTER:end
@@ -494,7 +494,7 @@ L:INTERT:action = ACT_DISARM
 L:INTER:trap_disarm(15)
 L:TARGET:trap_gf()
 L:PENTER:hit_trap(field)
-L:PENTER:if (dont_save(75) == TRUE) then
+L:PENTER:if (player_save(player.depth) ~= TRUE) then
 L:PENTER:	gain_mutation(0)
 L:PENTER:end
 
@@ -508,7 +508,7 @@ L:INTERT:action = ACT_DISARM
 L:INTER:trap_disarm(50)
 L:TARGET:trap_gf()
 L:PENTER:hit_trap(field)
-L:PENTER:if (dont_save(125) == TRUE) then
+L:PENTER:if (player_save(player.depth) ~= TRUE) then
 L:PENTER:	cure_all_mutations()
 L:PENTER:end
 
@@ -522,7 +522,7 @@ L:INTERT:action = ACT_DISARM
 L:INTER:trap_disarm(2)
 L:TARGET:trap_gf()
 L:PENTER:hit_trap(field)
-L:PENTER:if (dont_save(125) == TRUE) then
+L:PENTER:if (player_save(player.depth) ~= TRUE) then
 L:PENTER:	msgf("Darkness surrounds you!")
 L:PENTER:	drain_lite()
 L:PENTER:end
@@ -537,7 +537,7 @@ L:INTERT:action = ACT_DISARM
 L:INTER:trap_disarm(2)
 L:TARGET:trap_gf()
 L:PENTER:hit_trap(field)
-L:PENTER:if (dont_save(25) == TRUE) then
+L:PENTER:if (player_save(player.depth) ~= TRUE) then
 L:PENTER:	msgf("You suddenly feel very, very hungry!")
 L:PENTER:	drain_food()
 L:PENTER:end
@@ -552,7 +552,7 @@ L:INTERT:action = ACT_DISARM
 L:INTER:trap_disarm(10)
 L:TARGET:trap_gf()
 L:PENTER:hit_trap(field)
-L:PENTER:if (dont_save(75) == TRUE) then
+L:PENTER:if (player_save(player.depth) ~= TRUE) then
 L:PENTER:	msgf("Your purse becomes weightless!")
 L:PENTER:	player.au = player.au / 2
 L:PENTER:	player.redraw = bOr(player.redraw, PR_GOLD)
@@ -569,7 +569,7 @@ L:INTERT:action = ACT_DISARM
 L:INTER:trap_disarm(5)
 L:TARGET:trap_gf()
 L:PENTER:hit_trap(field)
-L:PENTER:if (dont_save(125) == TRUE) then
+L:PENTER:if (player_save(player.depth) ~= TRUE) then
 L:PENTER:	msgf("A shrill note sounds!")
 L:PENTER:	speed_monsters()
 L:PENTER:	deleteme()
@@ -585,7 +585,7 @@ L:INTERT:action = ACT_DISARM
 L:INTER:trap_disarm(5)
 L:TARGET:trap_gf()
 L:PENTER:hit_trap(field)
-L:PENTER:if (dont_save(125) == TRUE) then
+L:PENTER:if (player_save(player.depth) ~= TRUE) then
 L:PENTER:	msgf("You smell something musty.")
 L:PENTER:	raise_dead(player.px, player.py, FALSE)
 L:PENTER:end
@@ -600,7 +600,7 @@ L:INTERT:action = ACT_DISARM
 L:INTER:trap_disarm(5)
 L:TARGET:trap_gf()
 L:PENTER:hit_trap(field)
-L:PENTER:if (dont_save(100) == TRUE) then
+L:PENTER:if (player_save(player.depth) ~= TRUE) then
 L:PENTER:	msgf("Static fills the air.")
 L:PENTER:	drain_magic()
 L:PENTER:end
@@ -615,7 +615,7 @@ L:INTERT:action = ACT_DISARM
 L:INTER:trap_disarm(5)
 L:TARGET:trap_gf()
 L:PENTER:hit_trap(field)
-L:PENTER:if (dont_save(125) == TRUE) then
+L:PENTER:if (player_save(player.depth) ~= TRUE) then
 L:PENTER:	msgf("Shouts fill the air!")
 L:PENTER:	aggravate_monsters(0)
 L:PENTER:end
@@ -630,7 +630,7 @@ L:INTERT:action = ACT_DISARM
 L:INTER:trap_disarm(5)
 L:TARGET:trap_gf()
 L:PENTER:hit_trap(field)
-L:PENTER:if (dont_save(50) == TRUE) then
+L:PENTER:if (player_save(player.depth) ~= TRUE) then
 L:PENTER:	msgf("Zap!")
 L:PENTER:	summon_specific(0, player.px, player.py, player.depth,
 L:PENTER:					0, TRUE, FALSE, FALSE)
@@ -647,7 +647,7 @@ L:INTERT:action = ACT_DISARM
 L:INTER:trap_disarm(5)
 L:TARGET:trap_gf()
 L:PENTER:disturb(FALSE)
-L:PENTER:if (dont_save(75) == TRUE) then
+L:PENTER:if (player_save(player.depth) ~= TRUE) then
 L:PENTER:	msgf("You are not sure what just happened!")
 L:PENTER:	lose_all_info()
 L:PENTER:else

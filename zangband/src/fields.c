@@ -1378,31 +1378,6 @@ bool check_trap_hit(int power)
 }
 
 
-/*
- * Determine if a trap affects the player.
- * Always miss 5% of the time, Always hit 5% of the time.
- * Otherwise, match trap power against players saving throw.
- */
-bool dont_save(int power)
-{
-	int k;
-
-	/* Percentile dice */
-	k = randint0(100);
-
-	/* Hack -- 5% hit, 5% miss */
-	if (k < 10) return (k < 5);
-
-	/* Paranoia -- No power */
-	if (power <= 0) return (FALSE);
-
-	/* Power competes against saving throw */
-	if (randint1(power) > randint1(p_ptr->skills[SKILL_SAV])) return (TRUE);
-
-	/* Assume miss */
-	return (FALSE);
-}
-
 typedef struct field_trap_type field_trap_type;
 
 struct field_trap_type
