@@ -1320,8 +1320,16 @@ static u16b dun_level;
  */
 static bool monster_habitat_ok(int r_idx)
 {
+	monster_race *r_ptr = &r_info[r_idx];
+
+	/* No multiplying monsters */
+	if (FLAG(r_ptr, RF_MULTIPLY)) return (FALSE);
+
+	/* Hack - no aquatic monsters */
+	if (FLAG(r_ptr, RF_AQUATIC)) return (FALSE);
+
 	/* In this dungeon? */
-	if (r_info[r_idx].flags[7] & dun_habitat) return (TRUE);
+	if (r_ptr->flags[7] & dun_habitat) return (TRUE);
 
 	/* Not here */
 	return (FALSE);
@@ -1337,7 +1345,7 @@ static void entrance_monsters(int x_max, int y_max)
 	
 	long size = x_max * y_max;
 	
-	int count = size / 10;
+	int count = size / 25;
 
 	cave_type *c_ptr;
 	
