@@ -315,19 +315,9 @@ void FinalIcon(IconSpec *iconOut, t_assign_icon *assignPtr, int hack, object_typ
 	iconOut->ascii = assignPtr->ascii;
 }
 
-
 void init_palette(void)
 {
-	char path[1024], path2[1024];
-
-	/*
-	 * The colors in this 256-color palette are indexed by each byte
-	 * of icon data.
-	 */
-	path_build(path2, 1024, ANGBAND_DIR_TK, "config");
-	path_build(path, 1024, path2, "palette_256");
-
-	if (Palette_Init(g_interp, path) != TCL_OK)
+	if (Palette_Init(g_interp) != TCL_OK)
 		quit(Tcl_GetStringResult(g_interp));
 
 	g_palette_rgb = Palette_GetRGB();

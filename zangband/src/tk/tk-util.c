@@ -26,27 +26,27 @@
 typedef struct
 {
 	int valid; /* The hash-table entry is valid */
-	unsigned long pixel; /* an RGB pixel value */
+	u32b pixel; /* an RGB pixel value */
 	int index; /* closest matching palette index for 'pixel' */
 } t_color_entry;
 
 typedef struct IndexedColor IndexedColor;
 struct IndexedColor
 {
-	unsigned char rgb[256 * 3];
+	byte rgb[256 * 3];
 	t_color_entry hash[MAX_COLOR_ENTRY];
 	void *platData;
 };
 
 static IndexedColor g_palette;
-static int Palette_Initialized = 0;
+static bool Palette_Initialized = 0;
 
 int g_palette_black = 255;
 int g_palette_white = 0;
 int g_colormap_black;
 int g_colormap_white;
 
-unsigned char g_palette2colormap[256];
+byte g_palette2colormap[256];
 
 /*
  * Append an element to an array
@@ -243,55 +243,61 @@ static CommandInit commandInit[] = {
 	{0, NULL, 0, 0, NULL, NULL, 0}
 };
 
-int Palette_Init(Tcl_Interp *interp, char *fileName)
+/* Uniform colour table */
+static byte def_pal1[6] = {255, 204, 153, 102, 51, 0};
+static byte def_pal2[10] = {238, 221, 187, 170, 136, 119, 85, 68, 34, 17};
+
+int Palette_Init(Tcl_Interp *interp)
 {
-	FILE *fp;
-	int count = 0, r, g, b;
-	char buf[80], errorMsg[512];
+	int i, j, k;
 	unsigned char *rgb;
 
 	if (Palette_Initialized) return TCL_OK;
 
 	rgb = g_palette.rgb;
 	g_palette.platData = NULL;
-
-	/* Try to open the palette file */
-	if ((fp = fopen(fileName, "r")) == NULL)
+	
+	/* Create colour cube */
+	for (i = 0; i < 6; i++)
 	{
-		(void) sprintf(errorMsg,
-			"can't open palette file \"%s\"", fileName);
-		goto error;
+		for (j = 0; j < 6; j++)
+		{
+			for (k = 0; k < 6; k++)
+			{
+				/* Write this color to the array */
+				*rgb++ = def_pal1[i];
+				*rgb++ = def_pal1[j];
+				*rgb++ = def_pal1[k];
+			}
+		}
+	}
+	
+	/* Create primary colours */
+	for (i = 0; i < 10; i++)
+	{
+		*rgb++ = def_pal2[i];
+		*rgb++ = 0;
+		*rgb++ = 0;
+	}
+	for (i = 0; i < 10; i++)
+	{
+		*rgb++ = 0;
+		*rgb++ = def_pal2[i];
+		*rgb++ = 0;
+	}
+	for (i = 0; i < 10; i++)
+	{
+		*rgb++ = 0;
+		*rgb++ = 0;
+		*rgb++ = def_pal2[i];
 	}
 
-	/* Read each line until done */
-	while (!feof(fp))
+	/* Create greys */
+	for (i = 0; i < 10; i++)
 	{
-		/* Get a line */
-		if (!fgets(buf, 80, fp)) continue;
-
-		/* Skip comments */
-		if (buf[0] == '#') continue;
-
-		/* Require RGB triplet */
-		if (sscanf(buf, "%d %d %d", &r, &g, &b) != 3) continue;
-
-		/* Write this color to the array */
-		*rgb++ = r, *rgb++ = g, *rgb++ = b;
-
-		/* Count the colors */
-		count++;
-	}
-
-	/* Close the file */
-	fclose(fp);
-
-	/* Require 256 colors exactly */
-	if (count != 256)
-	{
-		/* Fatal error */
-		(void) sprintf(errorMsg,
-			"expected 256 colors, got \"%d\"", count);
-		goto error;
+		*rgb++ = def_pal2[i];
+		*rgb++ = def_pal2[i];
+		*rgb++ = def_pal2[i];
 	}
 
 	g_palette.platData = Plat_PaletteInit(g_palette.rgb);
@@ -300,18 +306,11 @@ int Palette_Init(Tcl_Interp *interp, char *fileName)
 
 	Palette_ResetHash();
 
-	Palette_Initialized = 1;
+	Palette_Initialized = TRUE;
 
 	Colormap_Init(interp);
 
 	return TCL_OK;
-
-error:
-	/* Set the error */
-	Tcl_SetStringObj(Tcl_GetObjResult(interp), errorMsg, -1);
-
-	/* Failure */
-	return TCL_ERROR;
 }
 
 

@@ -240,7 +240,7 @@ extern int g_colormap_white, g_colormap_black;
 
 extern unsigned char g_palette2colormap[256];
 
-extern int Palette_Init(Tcl_Interp *interp, char *fileName);
+extern int Palette_Init(Tcl_Interp *interp);
 #ifdef PLATFORM_WIN
 /* HPALETTE */ extern void *Palette_GetHPal(void);
 #endif /* PLATFORM_WIN */
