@@ -404,10 +404,7 @@ bool player_can_see_bold(int y, int x)
  */
 bool no_lite(void)
 {
-	int py = p_ptr->py;
-	int px = p_ptr->px;
-
-	return (!player_can_see_bold(py, px));
+	return (!player_can_see_bold(p_ptr->py, p_ptr->px));
 }
 
 
@@ -419,7 +416,6 @@ bool no_lite(void)
 bool cave_valid_grid(const cave_type *c_ptr)
 {
 	s16b this_o_idx, next_o_idx = 0;
-
 
 	/* Forbid perma-grids */
 	if (cave_perma_grid(c_ptr)) return (FALSE);
@@ -572,7 +568,6 @@ static const bool feat_supports_lighting[256] =
  * and "darkness" on various "base" colours.
  *
  * This is used to do dynamic lighting effects in ascii :-)
- * At the moment, only the various "floor" tiles are affected.
  */
 
 static const byte lighting_colours[16] =
@@ -886,11 +881,6 @@ static void variable_player_graph(byte *a, char *c)
  * appear as random "monsters" or "objects", but note that these random
  * "monsters" and "objects" are really just "colored ascii symbols".
  *
- * Note that "floors" and "invisible traps" (and "zero" features) are
- * drawn as "floors" using a special check for optimization purposes,
- * and these are the only features which get drawn using the special
- * lighting effects activated by "view_special_lite".
- *
  * Note the use of the new "terrain feature" information.  Note that the
  * assumption that all interesting "objects" and "terrain features" are
  * memorized allows extremely optimized processing below.  Note the use
@@ -973,12 +963,19 @@ void map_info(int y, int x, byte *ap, char *cp)
 	s16b halluc = p_ptr->image;
 
 	/* Get the cave */
-	c_ptr = area(y,x);
+	c_ptr = area(y, x);
 
 	/* Info flags */
 	info = c_ptr->info;
 
-	/* Is this feature memorized? */
+	/*
+	 * Is this feature memorized?
+	 * 
+	 * If the player is blind - there are now CAVE_MNLT squares.
+	 * Also there are no CAVE_LITE squares.
+	 *
+	 * This means that blind players only see CAVE_MARK squares.
+	 */
 	if (info & (CAVE_MARK | CAVE_LITE | CAVE_MNLT))
 	{
 		feat = c_ptr->feat;
@@ -1001,12 +998,11 @@ void map_info(int y, int x, byte *ap, char *cp)
 		 * extremely important routine is good.)
 		 */
 		if (view_bright_lite && !p_ptr->blind
-			 && (!(feat & 0x20) || view_granite_lite))
+			 && (!(feat & 0x20) || (view_granite_lite && !view_torch_grids)))
 		{
-			/* It's not in view? */
+			/* It's not in view or no lighting effects? */
 			if (((!(info & (CAVE_VIEW))) && view_special_lite) ||
-				((!(info & (CAVE_GLOW | CAVE_LITE | CAVE_MNLT)))
-					 &&  view_torch_grids))
+				(!(info & (CAVE_GLOW | CAVE_LITE | CAVE_MNLT))))
 			{
 				/* If is ascii graphics */
 				if (a < 16)
@@ -1037,7 +1033,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 		}
 
 		/* Hack -- rare random hallucination, except on outer dungeon walls */
-		if (halluc && !((feat == FEAT_PERM_SOLID) || randint0(256)))
+		if (halluc && (feat != FEAT_PERM_SOLID) && one_in_(256))
 		{
 			/* Hallucinate */
 			image_random(&a, &c);
@@ -3476,6 +3472,7 @@ void update_view(void)
 		/* Was "CAVE_VIEW", is now not "CAVE_VIEW" */
 		if (!(info & (CAVE_VIEW)))
 		{
+			/* Forget memorized floor grids from view_torch_grids */
 			if ((info & (CAVE_GLOW) && !view_perma_grids)
 				 && cave_floor_grid(c_ptr))
 			{
@@ -3544,7 +3541,7 @@ static void mon_lite_hack(int y, int x)
  * denote squares illuminated by monsters.
  *
  * The CAVE_TEMP flag is used to store the state during the
- * updating.  Only squares in view of the player, whos state
+ * updating.  Only squares in view of the player, whose state
  * changes are drawn via lite_spot().
  */
 void update_mon_lite(void)
