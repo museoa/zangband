@@ -1951,7 +1951,7 @@ bool activate_random_artifact(object_type * o_ptr)
 
 		case ACT_SUMMON_ANIMAL:
 		{
-			(void)summon_specific(py, px, plev, SUMMON_ANIMAL_RANGER, TRUE, TRUE, TRUE);
+			(void)summon_specific(-1, py, px, plev, SUMMON_ANIMAL_RANGER, TRUE, TRUE, TRUE);
 			o_ptr->timeout = 200 + randint(300);
 			break;
 		}
@@ -1959,7 +1959,7 @@ bool activate_random_artifact(object_type * o_ptr)
 		case ACT_SUMMON_PHANTOM:
 		{
 			msg_print("You summon a phantasmal servant.");
-			(void)summon_specific(py, px, dun_level, SUMMON_PHANTOM, TRUE, TRUE, TRUE);
+			(void)summon_specific(-1, py, px, dun_level, SUMMON_PHANTOM, TRUE, TRUE, TRUE);
 			o_ptr->timeout = 200 + randint(200);
 			break;
 		}
@@ -1969,7 +1969,7 @@ bool activate_random_artifact(object_type * o_ptr)
 			bool pet = (randint(3) == 1);
 			bool group = !(pet && (plev < 50));
 
-			if (summon_specific(py, px, ((plev * 3) / 2), SUMMON_ELEMENTAL, group, FALSE, pet))
+			if (summon_specific(-1, py, px, ((plev * 3) / 2), SUMMON_ELEMENTAL, group, FALSE, pet))
 			{
 				msg_print("An elemental materializes...");
 
@@ -1988,7 +1988,7 @@ bool activate_random_artifact(object_type * o_ptr)
 			bool pet = (randint(3) == 1);
 			bool group = !(pet && (plev < 50));
 
-			if (summon_specific(py, px, ((plev * 3) / 2), SUMMON_DEMON, group, FALSE, pet))
+			if (summon_specific(-1, py, px, ((plev * 3) / 2), SUMMON_DEMON, group, FALSE, pet))
 			{
 				msg_print("The area fills with a stench of sulphur and brimstone.");
 				if (pet)
@@ -2018,7 +2018,7 @@ bool activate_random_artifact(object_type * o_ptr)
 				group = TRUE;
 			}
 
-			if (summon_specific(py, px, ((plev * 3) / 2), type,
+			if (summon_specific(-1, py, px, ((plev * 3) / 2), type,
 				                group, FALSE, pet))
 			{
 				msg_print("Cold winds begin to blow around you, carrying with them the stench of decay...");

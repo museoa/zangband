@@ -3934,7 +3934,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 			}
 			case 7: case 8: case 9: case 18:
 			{
-				(*count) += summon_specific(py, px, dun_level, 0, TRUE, FALSE, FALSE);
+				(*count) += summon_specific(-1, py, px, dun_level, 0, TRUE, FALSE, FALSE);
 				if (randint(6) != 1) break;
 			}
 			case 10: case 11: case 12:
@@ -3982,7 +3982,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 				 */
 				if ((dun_level > 65) && !stop_ty)
 				{
-					(*count) += summon_cyber(py, px);
+					(*count) += summon_cyber(-1, py, px);
 					stop_ty = TRUE;
 					break;
 				}
@@ -4019,46 +4019,46 @@ int activate_hi_summon(void)
 		switch (randint(26) + (dun_level / 20))
 		{
 			case 1: case 2:
-				count += summon_specific(py, px, dun_level, SUMMON_ANT, TRUE, FALSE, FALSE);
+				count += summon_specific(-1, py, px, dun_level, SUMMON_ANT, TRUE, FALSE, FALSE);
 				break;
 			case 3: case 4:
-				count += summon_specific(py, px, dun_level, SUMMON_SPIDER, TRUE, FALSE, FALSE);
+				count += summon_specific(-1, py, px, dun_level, SUMMON_SPIDER, TRUE, FALSE, FALSE);
 				break;
 			case 5: case 6:
-				count += summon_specific(py, px, dun_level, SUMMON_HOUND, TRUE, FALSE, FALSE);
+				count += summon_specific(-1, py, px, dun_level, SUMMON_HOUND, TRUE, FALSE, FALSE);
 				break;
 			case 7: case 8:
-				count += summon_specific(py, px, dun_level, SUMMON_HYDRA, TRUE, FALSE, FALSE);
+				count += summon_specific(-1, py, px, dun_level, SUMMON_HYDRA, TRUE, FALSE, FALSE);
 				break;
 			case 9: case 10:
-				count += summon_specific(py, px, dun_level, SUMMON_ANGEL, TRUE, FALSE, FALSE);
+				count += summon_specific(-1, py, px, dun_level, SUMMON_ANGEL, TRUE, FALSE, FALSE);
 				break;
 			case 11: case 12:
-				count += summon_specific(py, px, dun_level, SUMMON_UNDEAD, TRUE, FALSE, FALSE);
+				count += summon_specific(-1, py, px, dun_level, SUMMON_UNDEAD, TRUE, FALSE, FALSE);
 				break;
 			case 13: case 14:
-				count += summon_specific(py, px, dun_level, SUMMON_DRAGON, TRUE, FALSE, FALSE);
+				count += summon_specific(-1, py, px, dun_level, SUMMON_DRAGON, TRUE, FALSE, FALSE);
 				break;
 			case 15: case 16:
-				count += summon_specific(py, px, dun_level, SUMMON_DEMON, TRUE, FALSE, FALSE);
+				count += summon_specific(-1, py, px, dun_level, SUMMON_DEMON, TRUE, FALSE, FALSE);
 				break;
 			case 17:
-				count += summon_specific(py, px, dun_level, SUMMON_AMBERITES, TRUE, FALSE, FALSE);
+				count += summon_specific(-1, py, px, dun_level, SUMMON_AMBERITES, TRUE, FALSE, FALSE);
 				break;
 			case 18: case 19:
-				count += summon_specific(py, px, dun_level, SUMMON_UNIQUE, TRUE, FALSE, FALSE);
+				count += summon_specific(-1, py, px, dun_level, SUMMON_UNIQUE, TRUE, FALSE, FALSE);
 				break;
 			case 20: case 21:
-				count += summon_specific(py, px, dun_level, SUMMON_HI_UNDEAD, TRUE, FALSE, FALSE);
+				count += summon_specific(-1, py, px, dun_level, SUMMON_HI_UNDEAD, TRUE, FALSE, FALSE);
 				break;
 			case 22: case 23:
-				count += summon_specific(py, px, dun_level, SUMMON_HI_DRAGON, TRUE, FALSE, FALSE);
+				count += summon_specific(-1, py, px, dun_level, SUMMON_HI_DRAGON, TRUE, FALSE, FALSE);
 				break;
 			case 24: case 25:
-				count += summon_specific(py, px, 100, SUMMON_CYBER, TRUE, FALSE, FALSE);
+				count += summon_specific(-1, py, px, 100, SUMMON_CYBER, TRUE, FALSE, FALSE);
 				break;
 			default:
-				count += summon_specific(py, px, (((dun_level * 3) / 2) + 5), 0, TRUE, FALSE, FALSE);
+				count += summon_specific(-1, py, px, (((dun_level * 3) / 2) + 5), 0, TRUE, FALSE, FALSE);
 		}
 	}
 
@@ -4067,15 +4067,26 @@ int activate_hi_summon(void)
 
 
 /* ToDo: check */
-int summon_cyber(int y, int x)
+int summon_cyber(int who, int y, int x)
 {
 	int i;
 	int max_cyber = (dun_level / 50) + randint(6);
 	int count = 0;
 
+	bool friendly = FALSE;
+	bool pet = FALSE;
+
+	/* Summoned by a monster */
+	if (who > 0)
+	{
+		monster_type *m_ptr = &m_list[who];
+		friendly = is_friendly(m_ptr);
+		pet = is_pet(m_ptr);
+	}
+
 	for (i = 0; i < max_cyber; i++)
 	{
-		count += summon_specific(y, x, 100, SUMMON_CYBER, FALSE, FALSE, FALSE);
+		count += summon_specific(who, y, x, 100, SUMMON_CYBER, FALSE, friendly, pet);
 	}
 
 	return count;

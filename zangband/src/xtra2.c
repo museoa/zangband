@@ -573,7 +573,7 @@ void monster_death(int m_idx)
 
 			if (attempts > 0)
 			{
-				if (summon_specific(wy, wx, 100, SUMMON_DAWN, FALSE, is_friendly(m_ptr), is_pet(m_ptr)))
+				if (summon_specific(-1, wy, wx, 100, SUMMON_DAWN, FALSE, is_friendly(m_ptr), is_pet(m_ptr)))
 				{
 					if (player_can_see_bold(wy, wx))
 						msg_print("A new warrior steps forth!");
@@ -591,7 +591,7 @@ void monster_death(int m_idx)
 		{
 			int wy = y, wx = x;
 
-			if (summon_specific(wy, wx, 100, SUMMON_BLUE_HORROR, FALSE, is_friendly(m_ptr), is_pet(m_ptr)))
+			if (summon_specific(-1, wy, wx, 100, SUMMON_BLUE_HORROR, FALSE, is_friendly(m_ptr), is_pet(m_ptr)))
 			{
 				if (player_can_see_bold(wy, wx))
 					notice = TRUE;
@@ -3262,7 +3262,7 @@ void gain_level_reward(int chosen_reward)
 			msg_print("'My pets, destroy the arrogant mortal!'");
 			for (dummy = 0; dummy < randint(5) + 1; dummy++)
 			{
-				(void)summon_specific(py, px, dun_level, 0, TRUE, FALSE, FALSE);
+				(void)summon_specific(-1, py, px, dun_level, 0, TRUE, FALSE, FALSE);
 			}
 			break;
 		case REW_H_SUMMON:
@@ -3430,17 +3430,17 @@ void gain_level_reward(int chosen_reward)
 			break;
 		case REW_SER_DEMO:
 			msg_format("%s rewards you with a demonic servant!", chaos_patrons[p_ptr->chaos_patron]);
-			if (!summon_specific(py, px, dun_level, SUMMON_DEMON, FALSE, TRUE, TRUE))
+			if (!summon_specific(-1, py, px, dun_level, SUMMON_DEMON, FALSE, TRUE, TRUE))
 				msg_print("Nobody ever turns up...");
 			break;
 		case REW_SER_MONS:
 			msg_format("%s rewards you with a servant!", chaos_patrons[p_ptr->chaos_patron]);
-			if (!summon_specific(py, px, dun_level, SUMMON_NO_UNIQUES, FALSE, TRUE, TRUE))
+			if (!summon_specific(-1, py, px, dun_level, SUMMON_NO_UNIQUES, FALSE, TRUE, TRUE))
 				msg_print("Nobody ever turns up...");
 			break;
 		case REW_SER_UNDE:
 			msg_format("%s rewards you with an undead servant!", chaos_patrons[p_ptr->chaos_patron]);
-			if (!summon_specific(py, px, dun_level, SUMMON_UNDEAD, FALSE, TRUE, TRUE))
+			if (!summon_specific(-1, py, px, dun_level, SUMMON_UNDEAD, FALSE, TRUE, TRUE))
 				msg_print("Nobody ever turns up...");
 			break;
 		default:

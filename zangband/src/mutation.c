@@ -2037,7 +2037,7 @@ void mutation_power_aux(u32b power)
 				int i;
 				for (i = 0; i < 8; i++)
 				{
-					summon_specific(py, px, lvl, SUMMON_BIZARRE1, FALSE, TRUE, TRUE);
+					summon_specific(-1, py, px, lvl, SUMMON_BIZARRE1, FALSE, TRUE, TRUE);
 				}
 			}
 			break;

@@ -1406,7 +1406,7 @@ static void do_cmd_wiz_summon(int num)
 
 	for (i = 0; i < num; i++)
 	{
-		(void)summon_specific(py, px, dun_level, 0, TRUE, FALSE, FALSE);
+		(void)summon_specific(-1, py, px, dun_level, 0, TRUE, FALSE, FALSE);
 	}
 }
 

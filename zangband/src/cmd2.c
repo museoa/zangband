@@ -514,7 +514,7 @@ static void chest_trap(int y, int x, s16b o_idx)
 			if (randint(100) < dun_level)
 				(void)activate_hi_summon();
 			else
-				(void)summon_specific(y, x, dun_level, 0, TRUE, FALSE, FALSE);
+				(void)summon_specific(-1, y, x, dun_level, 0, TRUE, FALSE, FALSE);
 		}
 	}
 

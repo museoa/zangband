@@ -658,7 +658,7 @@ extern bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, bool 
 extern bool place_monster(int y, int x, bool slp, bool grp);
 extern bool alloc_horde(int y, int x);
 extern bool alloc_monster(int dis, bool slp);
-extern bool summon_specific(int y1, int x1, int lev, int type, bool group, bool friendly, bool pet);
+extern bool summon_specific(int who, int y1, int x1, int lev, int type, bool group, bool friendly, bool pet);
 extern bool summon_named_creature(int oy, int ox, int r_idx, bool slp, bool group_ok, bool pet);
 extern bool multiply_monster(int m_idx, bool clone, bool friendly, bool pet);
 extern void update_smart_learn(int m_idx, int what);
@@ -843,7 +843,7 @@ extern bool destroy_doors_touch(void);
 extern bool sleep_monsters_touch(void);
 extern bool activate_ty_curse(bool stop_ty, int *count);
 extern int activate_hi_summon(void);
-extern int summon_cyber(int y, int x);
+extern int summon_cyber(int who, int y, int x);
 extern void wall_breaker(void);
 extern bool confuse_monsters(int dam);
 extern bool charm_monsters(int dam);

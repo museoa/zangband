@@ -2389,7 +2389,7 @@ bool monst_spell_monst(int m_idx)
 
 				for (k = 0; k < 6; k++)
 				{
-					count += summon_specific(y, x, rlev, SUMMON_KIN, TRUE, friendly, pet);
+					count += summon_specific(m_idx, y, x, rlev, SUMMON_KIN, TRUE, friendly, pet);
 				}
 
 				if (known && !see_t && count)
@@ -2417,14 +2417,7 @@ bool monst_spell_monst(int m_idx)
 					}
 				}
 
-				if (friendly || pet)
-				{
-					count += summon_specific(y, x, rlev, SUMMON_CYBER, TRUE, TRUE, pet);
-				}
-				else
-				{
-					count += summon_cyber(y, x);
-				}
+				count += summon_cyber(m_idx, y, x);
 
 				if (known && !see_t && count)
 				{
@@ -2453,7 +2446,7 @@ bool monst_spell_monst(int m_idx)
 					}
 				}
 
-				count += summon_specific(y, x, rlev, type, FALSE, friendly, pet);
+				count += summon_specific(m_idx, y, x, rlev, type, FALSE, friendly, pet);
 
 				if (known && !see_t && count)
 				{
@@ -2484,7 +2477,7 @@ bool monst_spell_monst(int m_idx)
 
 				for (k = 0; k < 8; k++)
 				{
-					count += summon_specific(y, x, rlev, type, TRUE, friendly, pet);
+					count += summon_specific(m_idx, y, x, rlev, type, TRUE, friendly, pet);
 				}
 
 				if (known && !see_t && count)
@@ -2514,7 +2507,7 @@ bool monst_spell_monst(int m_idx)
 
 				for (k = 0; k < 6; k++)
 				{
-					count += summon_specific(y, x, rlev, SUMMON_ANT, TRUE, friendly, pet);
+					count += summon_specific(m_idx, y, x, rlev, SUMMON_ANT, TRUE, friendly, pet);
 				}
 
 				if (known && !see_t && count)
@@ -2544,7 +2537,7 @@ bool monst_spell_monst(int m_idx)
 
 				for (k = 0; k < 6; k++)
 				{
-					count += summon_specific(y, x, rlev, SUMMON_SPIDER, TRUE, friendly, pet);
+					count += summon_specific(m_idx, y, x, rlev, SUMMON_SPIDER, TRUE, friendly, pet);
 				}
 
 				if (known && !see_t && count)
@@ -2574,7 +2567,7 @@ bool monst_spell_monst(int m_idx)
 
 				for (k = 0; k < 6; k++)
 				{
-					count += summon_specific(y, x, rlev, SUMMON_HOUND, TRUE, friendly, pet);
+					count += summon_specific(m_idx, y, x, rlev, SUMMON_HOUND, TRUE, friendly, pet);
 				}
 
 				if (known && !see_t && count)
@@ -2604,7 +2597,7 @@ bool monst_spell_monst(int m_idx)
 
 				for (k = 0; k < 6; k++)
 				{
-					count += summon_specific(y, x, rlev, SUMMON_HYDRA, TRUE, friendly, pet);
+					count += summon_specific(m_idx, y, x, rlev, SUMMON_HYDRA, TRUE, friendly, pet);
 				}
 
 				if (known && !see_t && count)
@@ -2634,7 +2627,7 @@ bool monst_spell_monst(int m_idx)
 
 				for (k = 0; k < 1; k++)
 				{
-					count += summon_specific(y, x, rlev, SUMMON_ANGEL, TRUE, friendly, pet);
+					count += summon_specific(m_idx, y, x, rlev, SUMMON_ANGEL, TRUE, friendly, pet);
 				}
 
 				if (known && !see_t && count)
@@ -2664,7 +2657,7 @@ bool monst_spell_monst(int m_idx)
 
 				for (k = 0; k < 1; k++)
 				{
-					count += summon_specific(y, x, rlev, SUMMON_DEMON, TRUE, friendly, pet);
+					count += summon_specific(m_idx, y, x, rlev, SUMMON_DEMON, TRUE, friendly, pet);
 				}
 
 				if (known && !see_t && count)
@@ -2694,7 +2687,7 @@ bool monst_spell_monst(int m_idx)
 
 				for (k = 0; k < 1; k++)
 				{
-					count += summon_specific(y, x, rlev, SUMMON_UNDEAD, TRUE, friendly, pet);
+					count += summon_specific(m_idx, y, x, rlev, SUMMON_UNDEAD, TRUE, friendly, pet);
 				}
 
 				if (known && !see_t && count)
@@ -2724,7 +2717,7 @@ bool monst_spell_monst(int m_idx)
 
 				for (k = 0; k < 1; k++)
 				{
-					count += summon_specific(y, x, rlev, SUMMON_DRAGON, TRUE, friendly, pet);
+					count += summon_specific(m_idx, y, x, rlev, SUMMON_DRAGON, TRUE, friendly, pet);
 				}
 
 				if (known && !see_t && count)
@@ -2756,7 +2749,7 @@ bool monst_spell_monst(int m_idx)
 
 				for (k = 0; k < 8; k++)
 				{
-					count += summon_specific(y, x, rlev, type, TRUE, friendly, pet);
+					count += summon_specific(m_idx, y, x, rlev, type, TRUE, friendly, pet);
 				}
 
 				if (known && !see_t && count)
@@ -2788,7 +2781,7 @@ bool monst_spell_monst(int m_idx)
 
 				for (k = 0; k < 8; k++)
 				{
-					count += summon_specific(y, x, rlev, type, TRUE, friendly, pet);
+					count += summon_specific(m_idx, y, x, rlev, type, TRUE, friendly, pet);
 				}
 
 				if (known && !see_t && count)
@@ -2818,7 +2811,7 @@ bool monst_spell_monst(int m_idx)
 
 				for (k = 0; k < 8; k++)
 				{
-					count += summon_specific(y, x, rlev, SUMMON_AMBERITES, TRUE, FALSE, FALSE);
+					count += summon_specific(m_idx, y, x, rlev, SUMMON_AMBERITES, TRUE, FALSE, FALSE);
 				}
 
 				if (known && !see_t && count)
@@ -2848,7 +2841,7 @@ bool monst_spell_monst(int m_idx)
 
 				for (k = 0; k < 8; k++)
 				{
-					count += summon_specific(y, x, rlev, SUMMON_UNIQUE, TRUE, FALSE, FALSE);
+					count += summon_specific(m_idx, y, x, rlev, SUMMON_UNIQUE, TRUE, FALSE, FALSE);
 				}
 
 				if (known && !see_t && count)

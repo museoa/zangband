@@ -1733,8 +1733,8 @@ static void process_world(void)
 		{
 			bool pet = (randint(6) == 1);
 
-			if (summon_specific(py, px,
-				    dun_level, SUMMON_DEMON, TRUE, FALSE, pet))
+			if (summon_specific(-1, py, px,
+					 dun_level, SUMMON_DEMON, TRUE, FALSE, pet))
 			{
 				msg_print("You have attracted a demon!");
 				disturb(0, 0);
@@ -1829,8 +1829,8 @@ static void process_world(void)
 		{
 			bool pet = (randint(3) == 1);
 
-			if (summon_specific(py, px, dun_level, SUMMON_ANIMAL,
-			    TRUE, FALSE, pet))
+			if (summon_specific(-1, py, px, dun_level, SUMMON_ANIMAL,
+				 TRUE, FALSE, pet))
 			{
 				msg_print("You have attracted an animal!");
 				disturb(0, 0);
@@ -1904,8 +1904,8 @@ static void process_world(void)
 		{
 			bool pet = (randint(5) == 1);
 
-			if (summon_specific(py, px, dun_level, SUMMON_DRAGON,
-			    TRUE, FALSE, pet))
+			if (summon_specific(-1, py, px, dun_level, SUMMON_DRAGON,
+				 TRUE, FALSE, pet))
 			{
 				msg_print("You have attracted a dragon!");
 				disturb(0, 0);

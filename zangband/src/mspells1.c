@@ -2253,7 +2253,7 @@ bool make_attack_spell(int m_idx)
 
 			for (k = 0; k < 6; k++)
 			{
-				count += summon_specific(y, x, rlev, SUMMON_KIN, TRUE, FALSE, FALSE);
+				count += summon_specific(m_idx, y, x, rlev, SUMMON_KIN, TRUE, FALSE, FALSE);
 			}
 			if (blind && count) msg_print("You hear many things appear nearby.");
 
@@ -2267,7 +2267,7 @@ bool make_attack_spell(int m_idx)
 			if (blind) msg_format("%^s mumbles.", m_name);
 			else msg_format("%^s magically summons Cyberdemons!", m_name);
 			if (blind && count) msg_print("You hear heavy steps nearby.");
-			summon_cyber(y, x);
+			summon_cyber(m_idx, y, x);
 			break;
 		}
 
@@ -2279,7 +2279,7 @@ bool make_attack_spell(int m_idx)
 			else msg_format("%^s magically summons help!", m_name);
 			for (k = 0; k < 1; k++)
 			{
-				count += summon_specific(y, x, rlev, 0, TRUE, FALSE, FALSE);
+				count += summon_specific(m_idx, y, x, rlev, 0, TRUE, FALSE, FALSE);
 			}
 			if (blind && count) msg_print("You hear something appear nearby.");
 			break;
@@ -2293,7 +2293,7 @@ bool make_attack_spell(int m_idx)
 			else msg_format("%^s magically summons monsters!", m_name);
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(y, x, rlev, 0, TRUE, FALSE, FALSE);
+				count += summon_specific(m_idx, y, x, rlev, 0, TRUE, FALSE, FALSE);
 			}
 			if (blind && count) msg_print("You hear many things appear nearby.");
 			break;
@@ -2307,7 +2307,7 @@ bool make_attack_spell(int m_idx)
 			else msg_format("%^s magically summons ants.", m_name);
 			for (k = 0; k < 6; k++)
 			{
-				count += summon_specific(y, x, rlev, SUMMON_ANT, TRUE, FALSE, FALSE);
+				count += summon_specific(m_idx, y, x, rlev, SUMMON_ANT, TRUE, FALSE, FALSE);
 			}
 			if (blind && count) msg_print("You hear many things appear nearby.");
 			break;
@@ -2321,7 +2321,7 @@ bool make_attack_spell(int m_idx)
 			else msg_format("%^s magically summons spiders.", m_name);
 			for (k = 0; k < 6; k++)
 			{
-				count += summon_specific(y, x, rlev, SUMMON_SPIDER, TRUE, FALSE, FALSE);
+				count += summon_specific(m_idx, y, x, rlev, SUMMON_SPIDER, TRUE, FALSE, FALSE);
 			}
 			if (blind && count) msg_print("You hear many things appear nearby.");
 			break;
@@ -2335,7 +2335,7 @@ bool make_attack_spell(int m_idx)
 			else msg_format("%^s magically summons hounds.", m_name);
 			for (k = 0; k < 6; k++)
 			{
-				count += summon_specific(y, x, rlev, SUMMON_HOUND, TRUE, FALSE, FALSE);
+				count += summon_specific(m_idx, y, x, rlev, SUMMON_HOUND, TRUE, FALSE, FALSE);
 			}
 			if (blind && count) msg_print("You hear many things appear nearby.");
 			break;
@@ -2349,7 +2349,7 @@ bool make_attack_spell(int m_idx)
 			else msg_format("%^s magically summons hydras.", m_name);
 			for (k = 0; k < 6; k++)
 			{
-				count += summon_specific(y, x, rlev, SUMMON_HYDRA, TRUE, FALSE, FALSE);
+				count += summon_specific(m_idx, y, x, rlev, SUMMON_HYDRA, TRUE, FALSE, FALSE);
 			}
 			if (blind && count) msg_print("You hear many things appear nearby.");
 			break;
@@ -2363,7 +2363,7 @@ bool make_attack_spell(int m_idx)
 			else msg_format("%^s magically summons an angel!", m_name);
 			for (k = 0; k < 1; k++)
 			{
-				count += summon_specific(y, x, rlev, SUMMON_ANGEL, TRUE, FALSE, FALSE);
+				count += summon_specific(m_idx, y, x, rlev, SUMMON_ANGEL, TRUE, FALSE, FALSE);
 			}
 			if (blind && count) msg_print("You hear something appear nearby.");
 			break;
@@ -2377,7 +2377,7 @@ bool make_attack_spell(int m_idx)
 			else msg_format("%^s magically summons a demon from the Courts of Chaos!", m_name);
 			for (k = 0; k < 1; k++)
 			{
-				count += summon_specific(y, x, rlev, SUMMON_DEMON, TRUE, FALSE, FALSE);
+				count += summon_specific(m_idx, y, x, rlev, SUMMON_DEMON, TRUE, FALSE, FALSE);
 			}
 			if (blind && count) msg_print("You hear something appear nearby.");
 			break;
@@ -2391,7 +2391,7 @@ bool make_attack_spell(int m_idx)
 			else msg_format("%^s magically summons an undead adversary!", m_name);
 			for (k = 0; k < 1; k++)
 			{
-				count += summon_specific(y, x, rlev, SUMMON_UNDEAD, TRUE, FALSE, FALSE);
+				count += summon_specific(m_idx, y, x, rlev, SUMMON_UNDEAD, TRUE, FALSE, FALSE);
 			}
 			if (blind && count) msg_print("You hear something appear nearby.");
 			break;
@@ -2405,7 +2405,7 @@ bool make_attack_spell(int m_idx)
 			else msg_format("%^s magically summons a dragon!", m_name);
 			for (k = 0; k < 1; k++)
 			{
-				count += summon_specific(y, x, rlev, SUMMON_DRAGON, TRUE, FALSE, FALSE);
+				count += summon_specific(m_idx, y, x, rlev, SUMMON_DRAGON, TRUE, FALSE, FALSE);
 			}
 			if (blind && count) msg_print("You hear something appear nearby.");
 			break;
@@ -2419,7 +2419,7 @@ bool make_attack_spell(int m_idx)
 			else msg_format("%^s magically summons greater undead!", m_name);
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(y, x, rlev, SUMMON_HI_UNDEAD, TRUE, FALSE, FALSE);
+				count += summon_specific(m_idx, y, x, rlev, SUMMON_HI_UNDEAD, TRUE, FALSE, FALSE);
 			}
 			if (blind && count)
 			{
@@ -2436,7 +2436,7 @@ bool make_attack_spell(int m_idx)
 			else msg_format("%^s magically summons ancient dragons!", m_name);
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(y, x, rlev, SUMMON_HI_DRAGON, TRUE, FALSE, FALSE);
+				count += summon_specific(m_idx, y, x, rlev, SUMMON_HI_DRAGON, TRUE, FALSE, FALSE);
 			}
 			if (blind && count)
 			{
@@ -2455,7 +2455,7 @@ bool make_attack_spell(int m_idx)
 
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(y, x, rlev, SUMMON_AMBERITES, TRUE, FALSE, FALSE);
+				count += summon_specific(m_idx, y, x, rlev, SUMMON_AMBERITES, TRUE, FALSE, FALSE);
 			}
 			if (blind && count)
 			{
@@ -2472,11 +2472,11 @@ bool make_attack_spell(int m_idx)
 			else msg_format("%^s magically summons special opponents!", m_name);
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(y, x, rlev, SUMMON_UNIQUE, TRUE, FALSE, FALSE);
+				count += summon_specific(m_idx, y, x, rlev, SUMMON_UNIQUE, TRUE, FALSE, FALSE);
 			}
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(y, x, rlev, SUMMON_HI_UNDEAD, TRUE, FALSE, FALSE);
+				count += summon_specific(m_idx, y, x, rlev, SUMMON_HI_UNDEAD, TRUE, FALSE, FALSE);
 			}
 			if (blind && count)
 			{
