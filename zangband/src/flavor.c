@@ -1636,7 +1636,8 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 				/* Paranoia. */
 				if (k_ptr->pval == 0) k_ptr->pval = 1;
 
-				/* Find out how many rods are charging, by dividing
+				/*
+				 * Find out how many rods are charging, by dividing
 				 * current timeout by each rod's maximum timeout.
 				 * Ensure that any remainder is rounded up.  Display
 				 * very discharged stacks as merely fully discharged.
