@@ -2467,7 +2467,7 @@ void do_poly_self(void)
 			/* Harmful deformity */
 			power -= 15;
 
-			while (tmp < 6)
+			while (tmp < A_MAX)
 			{
 				if (one_in_(2))
 				{
@@ -2572,7 +2572,7 @@ void do_poly_self(void)
 		power -= 20;
 
 		msg_print("Your internal organs are rearranged!");
-		while (tmp < 6)
+		while (tmp < A_MAX)
 		{
 			(void)dec_stat(tmp, rand_range(6, 12), one_in_(3));
 			tmp++;

@@ -859,7 +859,7 @@ static void wiz_reroll_item(object_type *o_ptr)
 			o_ptr->flags3 &= ~(TR3_INSTA_ART);
 		}
 
-		switch(ch)
+		switch (ch)
 		{
 			/* Apply bad magic, but first clear object */
 			case 'w': case 'W':

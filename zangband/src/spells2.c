@@ -3594,10 +3594,8 @@ bool activate_ty_curse(bool stop_ty, int *count)
 {
 	int px = p_ptr->px;
 	int py = p_ptr->py;
-
-	int stat = 0;
-
 	u16b flg = (PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_JUMP);
+
 
 	do
 	{
@@ -3710,7 +3708,9 @@ bool activate_ty_curse(bool stop_ty, int *count)
 			}
 			default:
 			{
-				while (stat < 6)
+				int stat = 0;
+
+				while (stat < A_MAX)
 				{
 					do
 					{

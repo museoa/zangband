@@ -72,7 +72,7 @@ void have_nightmare(int r_idx)
 
 	r_ptr->r_flags4 |= RF4_ELDRITCH_HORROR;
 
-	switch(p_ptr->prace)
+	switch (p_ptr->prace)
 	{
 		/* Imps may make a saving throw */
 		case RACE_IMP:

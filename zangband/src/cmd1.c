@@ -1785,7 +1785,7 @@ void py_attack(int y, int x)
 					}
 					else
 					{
-						switch(mult)
+						switch (mult)
 						{
 							case 2: msg_format("You gouge %s!", m_name); break;
 							case 3: msg_format("You maim %s!", m_name); break;

@@ -769,7 +769,7 @@ struct object_type
 
 	byte dd, ds;		/* Damage dice/sides */	
 
-	byte ident;			/* Special flags  */
+	byte ident;			/* Special flags */
 
 	byte marked;		/* Object is marked */
 
@@ -1101,7 +1101,7 @@ struct player_magic
 	int spell_book;		/* Tval of spell books (if any) */
 	int spell_xtra;		/* Something for later */
 
-	int spell_stat;		/* Stat for spells (if any)  */
+	int spell_stat;		/* Stat for spells (if any) */
 	int spell_type;		/* Spell type (mage/priest) */
 
 	int spell_first;		/* Level of first spell */
@@ -1159,14 +1159,13 @@ struct player_race
 	byte m_m_wt;		/* mod weight (males) */
 
 	byte f_b_ht;		/* base height (females) */
-	byte f_m_ht;		/* mod height (females)	  */
+	byte f_m_ht;		/* mod height (females)	*/
 	byte f_b_wt;		/* base weight (females) */
 	byte f_m_wt;		/* mod weight (females) */
 
 	byte infra;			/* Infra-vision	range */
 
 	u16b choice;        /* Legal class choices */
-/*    byte choice_xtra;   */
 };
 
 

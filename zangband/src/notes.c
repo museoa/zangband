@@ -121,7 +121,7 @@ void add_note_type(int note_number)
 	/* Get the date */
 	strftime(long_day, 30, "%Y-%m-%d at %H:%M:%S", localtime(&ct));
 
-	switch(note_number)
+	switch (note_number)
 	{
 		case NOTE_BIRTH:
 		{

@@ -1072,7 +1072,7 @@ static u16b get_gen_type(byte hgt, byte pop, byte law)
 			 * Get lower two bits of type to decribe which of
 			 * (hgt,pop,law) cutoff refers to.
 			 */
-			switch(tree_ptr->info & 0x03)
+			switch (tree_ptr->info & 0x03)
 			{
 				case DT_HGT:
 				{
@@ -2148,7 +2148,7 @@ static u16b add_node(wild_bound_box_type *bound,
 			 * Get lower two bits of type to decribe which of
 			 * (hgt,pop,law) cutoff refers to.
 			 */
-			switch(tree_ptr->info & 3)
+			switch (tree_ptr->info & 3)
 			{
 				case DT_HGT:
 				{

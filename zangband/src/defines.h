@@ -621,7 +621,7 @@
 #define MON_MULT_ADJ    		8       /* High value slows multiplication */
 #define MON_SUMMON_ADJ  		2       /* Adjust level of summoned creatures */
 #define MON_DRAIN_LIFE  		2		/* Percent of player exp drained per hit */
-#define USE_DEVICE      		3       /* x> Harder devices x< Easier devices     */
+#define USE_DEVICE      		3       /* x> Harder devices x< Easier devices */
 
 
 /* "Biases" for random artifact gen */
@@ -1112,7 +1112,7 @@
 #define FEAT_FOUNTAIN       0x72
 #define FEAT_JUNGLE		    0x73
 
-/* Gap  */
+/* Gap */
 
 /* Slow "floor" terrains */
 #define FEAT_BUSH		    0x80
@@ -2313,7 +2313,7 @@
 #define CAVE_GLOW       0x02    /* self-illuminating */
 #define CAVE_ICKY       0x04    /* part of a vault */
 #define CAVE_ROOM       0x08    /* part of a room */
-#define CAVE_LITE       0x10    /* lite flag  */
+#define CAVE_LITE       0x10    /* lite flag */
 #define CAVE_VIEW       0x20    /* view flag */
 #define CAVE_TEMP       0x40    /* temp flag */
 #define CAVE_XTRA       0x80    /* misc flag */
@@ -3058,7 +3058,7 @@
  * New monster race bit flags
  */
 #define RF4_SHRIEK          0x00000001  /* Shriek for help */
-#define RF4_ELDRITCH_HORROR 0x00000002  /* Sanity-blasting horror    */
+#define RF4_ELDRITCH_HORROR 0x00000002  /* Sanity-blasting horror */
 #define RF4_XXX3            0x00000004  /* (?) */
 #define RF4_ROCKET          0x00000008  /* TY: Rocket */
 #define RF4_ARROW_1         0x00000010  /* Fire an arrow (light) */
@@ -4069,7 +4069,7 @@ extern int PlayerUID;
 #define SOUND_BITE      35 /* A monster bites you */
 #define SOUND_CLAW      36 /* A monster claws you */
 #define SOUND_M_SPELL   37 /* A monster casts a miscellaneous spell */
-#define SOUND_SUMMON    38 /* A monster casts a summoning spell  */
+#define SOUND_SUMMON    38 /* A monster casts a summoning spell */
 #define SOUND_BREATH    39 /* A monster breathes */
 #define SOUND_BALL      40 /* A monster casts a ball / bolt spell */
 #define SOUND_M_HEAL    41 /* A monster heals itself somehow */
@@ -4081,7 +4081,7 @@ extern int PlayerUID;
 #define SOUND_SLIME     47 /* A monster drools/spits/etc on you */
 #define SOUND_WAIL      48 /* A monster wails */
 #define SOUND_WINNER    49 /* Just won the game! */
-#define SOUND_FIRE      50 /* An item was burned  */
+#define SOUND_FIRE      50 /* An item was burned */
 #define SOUND_ACID      51 /* An item was destroyed by acid */
 #define SOUND_ELEC      52 /* An item was destroyed by electricity */
 #define SOUND_COLD      53 /* An item was shattered */
