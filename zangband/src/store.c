@@ -1117,6 +1117,35 @@ static void display_store(void)
 	/* Draw in the inventory */
 	display_inventory();
 	
+	/* Basic commands */
+	prtf(0, 22, " ESC) Exit from Building.");
+
+	/* Browse if necessary */
+	if (get_list_length(st_ptr->stock) > 12)
+	{
+		prtf(0, 23, " SPACE) Next page of stock");
+	}
+
+	/* Home commands */
+	if (st_ptr->type == BUILD_STORE_HOME)
+	{
+		prtf(31, 22, " g) Get an item.");
+		prtf(31, 23, " d) Drop an item.");
+	}
+
+	/* Shop commands XXX XXX XXX */
+	else
+	{
+		prtf(31, 22, " p) Purchase an item.");
+		prtf(31, 23, " s) Sell an item.");
+	}
+
+	/* Add in the eXamine option */
+	prtf(56, 22, " x) eXamine an item.");
+
+	/* Prompt */
+	prtf(0, 21, "You may: ");
+
 	/* Refresh */
 	Term_fresh();
 }
