@@ -196,7 +196,7 @@
 /*
  * Total number of owners per building (see "bldg.c", etc)
  */
-#define MAX_B_OWN			1
+#define MAX_B_OWN			5
 
 
 /*
