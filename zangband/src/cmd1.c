@@ -1557,18 +1557,17 @@ void py_attack(int y, int x)
 		if (randint(bash_dam) > 30 + randint(bash_dam / 2))
 			msg_print("WHAMM!");
 
+		/* Complex message */
+		if (wizard)
+		{
+			msg_format("You do %d (out of %d) damage.", bash_dam, m_ptr->hp);
+		}
 
 		/* Damage, check for fear and death. */
 		if (mon_take_hit(cave[y][x].m_idx, bash_dam, &fear, NULL))
 		{
 			/* Fight's over. */
 			return;
-		}
-
-		/* Complex message */
-		if (wizard)
-		{
-			msg_format("You do %d (out of %d) damage.", bash_dam, m_ptr->hp);
 		}
 
 		/* Stunning. */
