@@ -7,18 +7,6 @@
 # into your chosen directory and make sure your path points to
 # the directory in which gcc.exe is located. This will usually
 # be: c:\cygnus\cygwin-b20\h-i586-cygwin32\bin.
-#
-# The following changes to the source are required to make the
-# compile work:
-#
-# In lines 325 and 326 of readdib.c, remove the '(HPALETTE)'
-# and '(HBITMAP)' respectively so the the lines read as follows:
-# 
-# if (!MakeBitmapAndPalette(hDC, pInfo->hDIB, &(pInfo->hPalette),
-#                           &(pInfo->hBitmap)))
-#
-#
-
 
 
 #

@@ -115,9 +115,9 @@ void delete_monster_idx(int i)
 
 
 	/* Monster is gone */
-	if (in_bounds(y,x))
+	if (in_bounds(y, x))
 	{
-		area(y,x)->m_idx = 0;
+		area(y, x)->m_idx = 0;
 	}
 
 	/* Delete objects */

@@ -1,19 +1,6 @@
 #
 # Makefile for Zangband using the lcc32 compiler. This makefile
 # was kindly produced by 'Pinotage'.
-#
-# The following changes to the source are necessary for Zangband
-# to compile correctly:
-#
-# In lines 325 and 326 of readdib.c, remove the '(HPALETTE)'
-# and '(HBITMAP)' respectively so that the lines read as follows:
-# 
-# if (!MakeBitmapAndPalette(hDC, pInfo->hDIB, &(pInfo->hPalette),
-#                           &(pInfo->hBitmap)))
-#
-# In line 481 of cave.c, delete the second-to-last character (a
-# 'y' with an accent) in the definition of image_monster_hack_ibm
-#
 
 
 #

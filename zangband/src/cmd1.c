@@ -2219,9 +2219,9 @@ static bool pattern_seq(int c_y, int c_x, int n_y, int n_x)
 		else
 			return TRUE;
 	}
-	else if ((area(n_y,n_x)->feat == FEAT_PATTERN_OLD) ||
-				(area(n_y,n_x)->feat == FEAT_PATTERN_END) ||
-				(area(n_y,n_x)->feat == FEAT_PATTERN_XTRA2))
+	else if ((area(n_y, n_x)->feat == FEAT_PATTERN_OLD) ||
+				(area(n_y, n_x)->feat == FEAT_PATTERN_END) ||
+				(area(n_y, n_x)->feat == FEAT_PATTERN_XTRA2))
 	{
 		if (pattern_tile(c_y, c_x))
 		{
@@ -2243,12 +2243,12 @@ static bool pattern_seq(int c_y, int c_x, int n_y, int n_x)
 			}
 		}
 	}
-	else if ((area(n_y,n_x)->feat == FEAT_PATTERN_XTRA1) ||
-				(area(c_y,c_x)->feat == FEAT_PATTERN_XTRA1))
+	else if ((area(n_y, n_x)->feat == FEAT_PATTERN_XTRA1) ||
+				(area(c_y, c_x)->feat == FEAT_PATTERN_XTRA1))
 	{
 		return TRUE;
 	}
-	else if (area(c_y,c_x)->feat == FEAT_PATTERN_START)
+	else if (area(c_y, c_x)->feat == FEAT_PATTERN_START)
 	{
 		if (pattern_tile(n_y, n_x))
 			return TRUE;
@@ -3195,7 +3195,7 @@ static bool run_test(void)
 	cave_type   *c_ptr;
 
 	/* Hack - do not run next to edge of wilderness */
-	if (!in_bounds(py,px)) return TRUE;
+	if (!in_bounds(py, px)) return TRUE;
 
 	/* Where we came from */
 	prev_dir = find_prevdir;
