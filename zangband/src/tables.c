@@ -6172,7 +6172,7 @@ option_type option_info[OPT_MAX] =
 	{TRUE,  2, "disturb_minor",			"Disturb whenever boring things happen" },
 	{TRUE,  2, "disturb_other",			"Disturb whenever random things happen" },
 	{TRUE,  2, "disturb_traps",			"Disturb when you leave detection radius" },
-	{TRUE,  2, "auto_more",				"Automatically clear '-more-' prompts" },
+	{FALSE, 2, "auto_more",				"Automatically clear '-more-' prompts" },
 	{TRUE,  3, "last_words",			"Get last words when the character dies" },
 	{TRUE,  3, "speak_unique",			"Allow uniques to speak" },
 	{TRUE,  3, "small_levels",			"Allow unusually small dungeon levels" },
