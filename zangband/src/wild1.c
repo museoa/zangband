@@ -1878,7 +1878,7 @@ static void create_roads(void)
 		place3 = -1;
 
 		/* Max distance is 2x the dist between the two places */
-		max_dist += max_dist;
+		max_dist = ROAD_DIST;
 
 		/*
 		 * Compare the connections for the two places to see
@@ -1888,6 +1888,9 @@ static void create_roads(void)
 		 */
 		for (i = 0; i < places; i++)
 		{
+			/* Want a new town */
+			if ((i == place1) || (i == place2)) continue;
+		
 			/* Distance from place1 to the new place */
 			dist = link_list[place1][i];
 
@@ -1955,7 +1958,7 @@ static void create_roads(void)
 
 			/* Connect the three places to the midpoint */
 			x1 = x2;
-			x1 = y2;
+			y1 = y2;
 
 			/* Get connection square for place1 */
 			road_connect(&x1, &y1, place1);
@@ -1964,7 +1967,7 @@ static void create_roads(void)
 			road_link(x1, y1, x2, y2);
 
 			x1 = x2;
-			x1 = y2;
+			y1 = y2;
 
 			/* Get connection square for place2 */
 			road_connect(&x1, &y1, place2);
@@ -1973,7 +1976,7 @@ static void create_roads(void)
 			road_link(x1, y1, x2, y2);
 
 			x1 = x2;
-			x1 = y2;
+			y1 = y2;
 
 			/* Get connection square for place3 */
 			road_connect(&x1, &y1, place3);
@@ -1992,7 +1995,7 @@ static void create_roads(void)
 
 			/* Decrement link total */
 			links -= 2;
-
+;
 			/* Hack - save the place number in link_list */
 			place3 = place1;
 			place4 = place2;
