@@ -660,7 +660,7 @@ static bool borg_think_shop_buy_aux(int shop)
 	s32b c, b_c = 0L;
 
 	/* Require one empty slot */
-	if (inven_num >= INVEN_PACK - 1) return (FALSE);
+	if (inven_num == INVEN_PACK) return (FALSE);
 
 	/* Extract the "power" */
 	b_p = borg_power();
@@ -773,7 +773,7 @@ static bool borg_think_home_buy_aux(void)
 	s32b p = 0L, b_p = 0L;
 
 	/* Require one empty slot */
-	if (inven_num >= INVEN_PACK - 1) return (FALSE);
+	if (inven_num == INVEN_PACK) return (FALSE);
 
 	/* Extract the "power" */
 	b_p = borg_power() + borg_power_home();

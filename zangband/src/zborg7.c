@@ -1722,7 +1722,7 @@ static bool borg_destroy_aux(bool must_destroy)
 	int my_encumber, extra, number = 1;
 	bool destroy_weight;
 	s16b b_w = 0;
-	s32b value = -1, b_v = 1000L, my_power, my_home_power;
+	s32b value = -1, b_v = 100000L, my_power, my_home_power;
 	list_item *l_ptr;
 
 	/* Get the starting power and encumberment */
@@ -1999,8 +1999,8 @@ static bool borg_test_stuff(void)
 			else if (strstr(l_ptr->o_name, "{special")) v = 50000L;
 			else if (strstr(l_ptr->o_name, "{terrible")) v = 50000L;
 
-			/* Hack -- reward "unaware" items */
-			if (!l_ptr->k_idx)
+			/* Reward unencountered items */
+			else if (!l_ptr->k_idx)
 			{
 				/* Analyze the type */
 				switch (l_ptr->tval)
@@ -2022,6 +2022,7 @@ static bool borg_test_stuff(void)
 				{
 					case TV_LITE:
 					{
+						/* Must be artifact light */
 						v += 50000;
 
 						break;

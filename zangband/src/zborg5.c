@@ -4049,13 +4049,13 @@ static s32b borg_power_aux4(void)
 	/* Reward missiles, Rangers carry more */
 	if (borg_class == CLASS_RANGER)
 	{
-		value += 1000 * MIN(bp_ptr->able.missile, 30);
-		value += 100 * MIN_FLOOR(bp_ptr->able.missile, 30, 80);
+		value += 100 * MIN(bp_ptr->able.missile, 30);
+		value += 10 * MIN_FLOOR(bp_ptr->able.missile, 30, 80);
 	}
 	else
 	{
-		value += 1000 * MIN(bp_ptr->able.missile, 20);
-		value += 100 * MIN_FLOOR(bp_ptr->able.missile, 20, 50);
+		value += 100 * MIN(bp_ptr->able.missile, 20);
+		value += 10 * MIN_FLOOR(bp_ptr->able.missile, 20, 50);
 	}
 
 	/*** Various ***/
