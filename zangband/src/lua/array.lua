@@ -78,8 +78,13 @@ function classArray:supcode ()
  output('  tolua_error(tolua_S,"invalid type in array indexing.");')
  output(' toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;')
  output(' if (toluaI_index<0 || toluaI_index>='..self.dim..')')
- output('  tolua_error(tolua_S,"array indexing out of range.");')
 
+ if class then
+  output('  tolua_error(tolua_S,"array',class,':',self.name,' indexing out of range.");')
+ else
+  output('  tolua_error(tolua_S,"array:',self.name,' indexing out of range.");')
+ end
+ 
  -- return value
  local t,ct = isbasic(self.type)
  if t then
@@ -127,7 +132,12 @@ function classArray:supcode ()
   output('  tolua_error(tolua_S,"invalid type in array indexing.");')
   output(' toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;')
   output(' if (toluaI_index<0 || toluaI_index>='..self.dim..')')
-  output('  tolua_error(tolua_S,"array indexing out of range.");')
+  if class then
+   output('  tolua_error(tolua_S,"array',class,':',self.name,' indexing out of range.");')
+  else
+   output('  tolua_error(tolua_S,"array:',self.name,' indexing out of range.");')
+  end
+
 
   -- assign value
   local ptr = ''
