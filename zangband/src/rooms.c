@@ -1741,7 +1741,7 @@ static void build_type6(int bx0, int by0)
 			/* Paranoia */
 			if (power > 7) power = 7;
 		
-			(void)place_monster_aux(x, y, what[power],
+			(void)place_monster_aux(x, y, what[7 - power],
 								FALSE, FALSE, FALSE, FALSE);
 		}
 	}
