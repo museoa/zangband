@@ -329,6 +329,13 @@ extern int distance(int y1, int x1, int y2, int x2);
 extern bool is_trap(cave_type *c_ptr);
 extern bool is_visible_trap(cave_type *c_ptr);
 extern bool los(int y1, int x1, int y2, int x2);
+extern void mmove2(int *y, int *x, int y1, int x1, int y2, int x2, int *slope,
+	 int *sq);
+extern bool projectable(int y1, int x1, int y2, int x2);
+extern sint project_path(coord *gp, int y1, int x1, int y2, int x2, u16b flg);
+extern bool in_ball_range(int y1, int x1, int y2, int x2);
+extern bool in_disintegration_range(int y1, int x1, int y2, int x2);
+extern void scatter(int *yp, int *xp, int y, int x, int d);
 extern bool player_can_see_bold(int y, int x);
 extern bool cave_valid_grid(const cave_type *c_ptr);
 extern bool no_lite(void);
@@ -357,10 +364,7 @@ extern void map_area(void);
 extern void wiz_lite(void);
 extern void wiz_dark(void);
 extern void cave_set_feat(int y, int x, int feat);
-extern void mmove2(int *y, int *x, int y1, int x1, int y2, int x2, int *slope,
-	 int *sq);
-extern bool projectable(int y1, int x1, int y2, int x2);
-extern void scatter(int *yp, int *xp, int y, int x, int d);
+
 extern void health_track(int m_idx);
 extern void monster_race_track(int r_idx);
 extern void object_kind_track(int k_idx);
@@ -716,7 +720,6 @@ extern void remove_loc(void);
 /* spells1.c */
 extern void take_hit(int damage, cptr kb_str);
 extern u16b bolt_pict(int y, int x, int ny, int nx, int typ);
-extern sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, u16b flg);
 extern int dist_to_line(int y, int x, int y1, int x1, int y2, int x2);
 extern bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg);
 

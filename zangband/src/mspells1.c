@@ -373,16 +373,21 @@ bool clean_shot(int y1, int x1, int y2, int x2, bool friendly)
 {
 	int grid_n;
 	coord grid_g[512];
+	
+	u16b flg;
 
-	/* Check the projection path */
+	/* Try not to hit friends. */
 	if (friendly)
 	{
-		grid_n = project_path(grid_g, MAX_RANGE, y1, x1, y2, x2, PROJECT_FRND);
+		flg = PROJECT_FRND;
 	}
 	else
 	{
-		grid_n = project_path(grid_g, MAX_RANGE, y1, x1, y2, x2, PROJECT_STOP);
+		flg = PROJECT_STOP;
 	}
+	
+	/* Check the projection path */
+	grid_n = project_path(grid_g, y1, x1, y2, x2, flg);
 
 	/* No grid is ever projectable from itself */
 	if (!grid_n) return (FALSE);

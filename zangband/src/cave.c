@@ -87,27 +87,13 @@ bool is_visible_trap(cave_type *c_ptr)
 
 
 /*
- * Slow, but simple LOS routine.  This works in the same way as
- * the view code, so that if something is in view, los() behaves
- * as expected.
+ * This is a version of the los function that uses a
+ * tester function to determine whether or not to stop.
  *
- * The old routine was fast, but did not behave in the right way.
- * This new routine does not need to be fast, because it isn't
- * called in time-critical code.
- *
- *
- * It works by trying all slopes that connect (x1,y1) with (x2,y2)
- * If a wall is found, then it back-tracks to the 'best' square
- * to check next.  There may be cases where it checks the same
- * square multiple times, but a simple algorithm is much cleaner.
- *
- * Note that "line of sight" is not "reflexive" in all cases.
- *
- * Use the "projectable()" routine to test "spell/missile line of sight".
- *
- * Use the "update_view()" function to determine player line-of-sight.
+ * Use this function instead of cut+pasting los() everywhere
+ * with only tiny changes made to it.
  */
-bool los(int y1, int x1, int y2, int x2)
+static bool los_general(int y1, int x1, int y2, int x2, bool (*f)(cave_type*))
 {
 	int i, j, temp;
 	
@@ -152,19 +138,22 @@ bool los(int y1, int x1, int y2, int x2)
 			/* Done? */
 			if ((x == x2) && (y == y2)) return (TRUE);
 		
+			/* Stop if out of bounds */
+			if (!in_bounds(y, x)) return (FALSE);
+			
 			c_ptr = area(y, x);
 		
-			if (cave_floor_grid(c_ptr))
+			if ((*f)(c_ptr))
 			{
-				/* Advance along ray */
-				j++;
-			}
-			else
-			{
-				/* A wall - go to the best position we have not looked at yet */
+				/* Blocked: go to the best position we have not looked at yet */
 				temp = project_data[i][j].slope;
 				j = project_data[i][j].square;
 				i = temp;
+			}
+			else
+			{
+				/* Advance along ray */
+				j++;
 			}
 		}
 	}
@@ -182,19 +171,22 @@ bool los(int y1, int x1, int y2, int x2)
 			/* Done? */
 			if ((x == x2) && (y == y2)) return (TRUE);
 		
+			/* Stop if out of bounds */
+			if (!in_bounds(y, x)) return (FALSE);
+		
 			c_ptr = area(y, x);
 		
-			if (cave_floor_grid(c_ptr))
+			if ((*f)(c_ptr))
 			{
-				/* Advance along ray */
-				j++;
-			}
-			else
-			{
-				/* A wall - go to the best position we have not looked at yet */
+				/* Blocked: go to the best position we have not looked at yet */
 				temp = project_data[i][j].slope;
 				j = project_data[i][j].square;
 				i = temp;
+			}
+			else
+			{
+				/* Advance along ray */
+				j++;
 			}
 		}	
 	}
@@ -202,6 +194,47 @@ bool los(int y1, int x1, int y2, int x2)
 	/* No path */
 	return (FALSE);
 }
+
+/*
+ * Hack - a function to pass to los_general() used
+ * to simulate the old los()
+ */
+static bool cave_stop_wall(cave_type *c_ptr)
+{
+	/* Walls block the path */
+	if (!cave_floor_grid(c_ptr)) return (TRUE);
+	
+	/* Seems ok */
+	return (FALSE);
+}
+
+/*
+ * Slow, but simple LOS routine.  This works in the same way as
+ * the view code, so that if something is in view, los() behaves
+ * as expected.
+ *
+ * The old routine was fast, but did not behave in the right way.
+ * This new routine does not need to be fast, because it isn't
+ * called in time-critical code.
+ *
+ *
+ * It works by trying all slopes that connect (x1,y1) with (x2,y2)
+ * If a wall is found, then it back-tracks to the 'best' square
+ * to check next.  There may be cases where it checks the same
+ * square multiple times, but a simple algorithm is much cleaner.
+ *
+ * Note that "line of sight" is not "reflexive" in all cases.
+ *
+ * Use the "projectable()" routine to test "spell/missile line of sight".
+ *
+ * Use the "update_view()" function to determine player line-of-sight.
+ */
+bool los(int y1, int x1, int y2, int x2)
+{
+	return (los_general(y1, x1, y2, x2, cave_stop_wall));
+}
+
+
 
 
 /*
@@ -377,12 +410,12 @@ void mmove2(int *y, int *x, int y1, int x1, int y2, int x2, int *slope, int *sq)
 	(*sq)++;
 }
 
-
 /*
  * Determine if a bolt spell cast from (y1,x1) to (y2,x2) will arrive
  * at the final destination, assuming no monster gets in the way.
  *
- * This is slightly (but significantly) different from "los(y1,x1,y2,x2)".
+ * This needs to be as fast as possible - so do not use the general_los()
+ * function.
  */
 bool projectable(int y1, int x1, int y2, int x2)
 {
@@ -392,7 +425,7 @@ bool projectable(int y1, int x1, int y2, int x2)
 	coord grid_g[512];
 
 	/* Check the projection path */
-	grid_n = project_path(grid_g, MAX_RANGE, y1, x1, y2, x2, 0);
+	grid_n = project_path(grid_g, y1, x1, y2, x2, 0);
 
 	/* No grid is ever projectable from itself */
 	if (!grid_n) return (FALSE);
@@ -406,6 +439,279 @@ bool projectable(int y1, int x1, int y2, int x2)
 
 	/* Assume okay */
 	return (TRUE);
+}
+
+
+/* Does this square stop the projection? */
+static bool project_stop(cave_type *c_ptr, u16b flg)
+{
+	if (cave_floor_grid(c_ptr))
+	{
+		/* Require fields do not block magic */
+		if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC))
+		{
+			return (FALSE);
+		}
+		
+		/* Is the square occupied by a monster? */
+		if (c_ptr->m_idx != 0)
+		{
+			if (flg & (PROJECT_STOP))
+			{
+				return (FALSE);
+			}
+			if ((flg & (PROJECT_FRND)) && is_pet(&m_list[c_ptr->m_idx]))
+			{
+				return (FALSE);
+			}
+		}
+		
+		/* Seems ok */
+		return (TRUE);
+	}
+	
+	/* Blocked */	
+	return (FALSE);
+}
+
+
+/*
+ * Determine the path taken by a projection.
+ *
+ * The path grids are saved into the grid array pointed to by "gp", and
+ * there should be room for at least "range" grids in "gp".  Note that
+ * due to the way in which distance is calculated, this function normally
+ * uses fewer than "range" grids for the projection path, so the result
+ * of this function should never be compared directly to "range".  Note
+ * that the initial grid (y1,x1) is never saved into the grid array, not
+ * even if the initial grid is also the final grid.  XXX XXX XXX
+ *
+ * The "flg" flags can be used to modify the behavior of this function.
+ *
+ * In particular, the "PROJECT_STOP" and "PROJECT_THRU" flags have the same
+ * semantics as they do for the "project" function, namely, that the path
+ * will stop as soon as it hits a monster, or that the path will continue
+ * through the destination grid, respectively.
+ *
+ * This function returns the number of grids (if any) in the path.  This
+ * function will return zero if and only if (y1,x1) and (y2,x2) are equal.
+ *
+ * This algorithm is similar to, but slightly different from, the one used
+ * by "los()".
+ */
+sint project_path(coord *gp, int y1, int x1, int y2, int x2, u16b flg)
+{
+	int y, x, sx, sy, dx, dy;
+
+	int sq, sl;
+
+	/* Absolute */
+	int ay, ax;
+	
+	int dist, temp;
+
+	cave_type *c_ptr;
+	
+	/* No path necessary (or allowed) */
+	if ((x1 == x2) && (y1 == y2)) return (0);
+
+	/* Extract the offset */
+	dy = y2 - y1;
+	dx = x2 - x1;
+	
+	/*
+	 * We only work for points that are less than MAX_SIGHT appart.
+	 * Note that MAX_RANGE < MAX_SIGHT
+	 */
+	dist = distance(y1, x1, y2, x2);
+	
+	if (dist > MAX_RANGE)
+	{
+		dx = (dx * MAX_RANGE) / dist;
+		dy = (dy * MAX_RANGE) / dist;
+	}
+	
+	/* Extract the absolute offset */
+	ay = ABS(dy);
+	ax = ABS(dx);
+	
+	/* Extract some signs */
+	sx = (dx < 0) ? -1 : 1;
+	sy = (dy < 0) ? -1 : 1;
+
+
+	/*
+	 * Start at the first square in the list.
+	 * This is a square adjacent to (x1,y1)
+	 */
+	sq = 0;
+	
+	/* Hack - we need to stick to one octant */
+	if (ay < ax)
+	{
+		/* Look up the slope to use */
+		sl = p_slope_min[ax][ay];
+	
+		while (sl <= p_slope_max[ax][ay])
+		{
+			x = x1 + sx * project_data[sl][sq].x;
+			y = y1 + sy * project_data[sl][sq].y;
+		
+			/* Done? */
+			if ((x == x1 + dx) && (y == y1 + dy)) break;
+		
+			/* Stop if out of bounds */
+			if (!in_bounds(y, x)) break;
+			
+			c_ptr = area(y, x);
+			
+			if (project_stop(c_ptr, flg))
+			{
+				/* Advance to the best position we have not looked at yet */
+				temp = project_data[sl][sq].slope;
+				sq = project_data[sl][sq].square;
+				sl = temp;
+			}
+			else
+			{
+				/* Advance along ray */
+				sq++;
+			}			
+		}
+			
+		/* No match? */
+		if (sl > p_slope_max[ax][ay])
+		{
+			sl = (p_slope_min[ax][ay] + p_slope_max[ax][ay]) / 2;
+		}
+	}
+	else
+	{
+		/* Look up the slope to use */
+		sl = p_slope_min[ay][ax];
+	
+		while (sl <= p_slope_max[ay][ax])
+		{
+			/* Note that the data offsets have x,y swapped */
+			x = x1 + sx * project_data[sl][sq].y;
+			y = y1 + sy * project_data[sl][sq].x;
+		
+			/* Done? */
+			if ((x == x1 + dx) && (y == y1 + dy)) break;
+		
+			/* Stop if out of bounds */
+			if (!in_bounds(y, x)) break;
+			
+			c_ptr = area(y, x);
+		
+			if (project_stop(c_ptr, flg))
+			{
+				/* Advance to the best position we have not looked at yet */
+				temp = project_data[sl][sq].slope;
+				sq = project_data[sl][sq].square;
+				sl = temp;
+			}
+			else
+			{
+				/* Advance along ray */
+				sq++;
+			}
+		}
+			
+		/* No match? */
+		if (sl > p_slope_max[ay][ax])
+		{
+			sl = (p_slope_min[ay][ax] + p_slope_max[ay][ax]) / 2;
+		}
+	}
+	
+	/* Scan over squares along path */
+	for (sq = 0; sq < MAX_RANGE; sq++)
+	{
+		if (ay < ax)
+		{
+			/* Work out square to use */
+			x = x1 + sx * project_data[sl][sq].x;
+			y = y1 + sy * project_data[sl][sq].y;
+		}
+		else
+		{
+			/* Work out square to use */
+			x = x1 + sx * project_data[sl][sq].y;
+			y = y1 + sy * project_data[sl][sq].x;
+		}
+	
+		/* Save the square */
+		gp[sq].x = x;
+		gp[sq].y = y;
+		
+		/* Sometimes stop at destination grid */
+		if (!(flg & (PROJECT_THRU)))
+		{
+			if ((x == x2) && (y == y2)) break;
+		}
+
+		/* Stop if out of bounds */
+		if (!in_bounds(y, x)) break;
+
+		c_ptr = area(y, x);
+		
+		/* Does the grid stop projection? */
+		if (project_stop(c_ptr, flg)) break;
+	}
+
+	/* Length */
+	return (sq);
+}
+
+
+/* Will this square stop a ball spell? */
+static bool cave_stop_ball(cave_type *c_ptr)
+{
+	/* Walls block spells */
+	if (!cave_floor_grid(c_ptr)) return (TRUE);
+				
+	/* Fields can block magic */
+	if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC)) return (TRUE);
+	
+	/* Seems ok */
+	return (FALSE);
+}
+
+/*
+ * Use Modified version of los() for calculation of balls.
+ * Balls are stopped by walls, and by fields.
+ */
+bool in_ball_range(int y1, int x1, int y2, int x2)
+{
+	return (los_general(y1, x1, y2, x2, cave_stop_ball));
+}
+
+
+/*
+ * Does the grid stop disintegration?
+ */
+bool cave_stop_disintegration(cave_type *c_ptr)
+{
+	/* Some terrain block disintegration */
+	if (((c_ptr->feat >= FEAT_PERM_EXTRA) && 
+	  	(c_ptr->feat <= FEAT_PERM_SOLID)) || 
+	  	(c_ptr->feat == FEAT_MOUNTAIN)) return (TRUE);
+				
+	/* Fields can block disintegration to */
+	if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM)) return (TRUE);
+
+	/* Seems ok */
+	return (FALSE);
+}
+
+/*
+ * Use modified version of los() for calculation of disintegration balls.
+ * Disintegration effects are stopped by permanent walls and fields.
+ */
+bool in_disintegration_range(int y1, int x1, int y2, int x2)
+{
+	return (los_general(y1, x1, y2, x2, cave_stop_disintegration));
 }
 
 
@@ -451,7 +757,6 @@ void scatter(int *yp, int *xp, int y, int x, int d)
 	(*yp) = ny;
 	(*xp) = nx;
 }
-
 
 
 /*
@@ -3193,6 +3498,9 @@ errr vinfo_init(void)
 				
 				/* Did we find the blocking square? */
 				if (found) continue;
+				
+				/* Do we already have an answer? */
+				if (project_data[i][j].slope != VINFO_MAX_SLOPES) break;
 				
 				/* We did not find the square - save the row */
 				project_data[i][j].slope = x;
