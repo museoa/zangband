@@ -2960,12 +2960,6 @@ static void store_examine(int store_top)
 	if (!identify_fully_aux(o_ptr))
 		msg_print("You see nothing special.");
 
-#ifdef USE_SCRIPT
-
-	store_examine_callback(o_ptr);
-
-#endif /* USE_SCRIPT */
-
 	return;
 }
 

@@ -1,7 +1,6 @@
 #include "angband.h"
 #include "Python.h"
 
-#ifdef USE_SCRIPT
 extern void new_game_callback(void);
 extern void load_game_callback(char *data);
 extern cptr save_game_callback(void);
@@ -31,7 +30,6 @@ extern bool generate_wilderness_callback(int y, int x);
 extern bool enter_wilderness_callback(int y, int x);
 extern bool leave_wilderness_callback(int y, int x);
 
-extern void store_examine_callback(const object_type *o_ptr);
 extern bool monster_move_callback(int *mm, int m_idx);
 extern void create_monster_callback(int m_idx);
 extern void delete_monster_callback(int m_idx);
@@ -85,7 +83,7 @@ extern bool process_command_callback(char command);
 
 /* Script callbacks */
 extern cptr get_script_window_line(int line);
-#endif /* USE_SCRIPT */
+
 
 #define NEW_GAME_EVENT                1
 #define LOAD_GAME_EVENT               2
@@ -106,7 +104,7 @@ extern cptr get_script_window_line(int line);
 #define GENERATE_WILDERNESS_EVENT    17
 #define ENTER_WILDERNESS_EVENT       18
 #define LEAVE_WILDERNESS_EVENT       19
-#define STORE_EXAMINE_EVENT          20
+/* XXX */
 #define MONSTER_MOVE_EVENT           21
 #define CREATE_MONSTER_EVENT         22
 #define DELETE_MONSTER_EVENT         23
