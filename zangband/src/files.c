@@ -3836,7 +3836,9 @@ bool show_file(cptr name, cptr what, int line, int mode)
 
 			/* Write the file line by line */
 			while (!my_raw_fgets(fff, xtmp, 80))
-				my_fputs(ffp, xtmp, 80);
+			{
+				froff(ffp, "%s\n", xtmp);
+			}
 
 			/* Close the files */
 			my_fclose(fff);

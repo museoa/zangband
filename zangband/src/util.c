@@ -896,26 +896,6 @@ errr my_raw_fgets(FILE *fff, char *buf, huge n)
 
 
 
-/*
- * Hack -- replacement for "fputs()"
- *
- * Dump a string, plus a newline, to a file
- *
- * Perhaps this function should handle internal weirdness.
- */
-errr my_fputs(FILE *fff, cptr buf, huge n)
-{
-	/* Unused parameter */
-	(void)n;
-
-	/* Dump, ignore errors */
-	froff(fff, "%s\n", buf);
-
-	/* Success */
-	return (0);
-}
-
-
 #ifdef ACORN
 
 
@@ -998,28 +978,6 @@ errr fd_move(cptr file, cptr what)
 
 	/* Assume success XXX XXX XXX */
 	return (0);
-}
-
-
-/*
- * Hack -- attempt to copy a file
- */
-errr fd_copy(cptr file, cptr what)
-{
-	char buf[1024];
-	char aux[1024];
-
-	/* Hack -- Try to parse the path */
-	if (path_parse(buf, 1024, file)) return (-1);
-
-	/* Hack -- Try to parse the path */
-	if (path_parse(aux, 1024, what)) return (-1);
-
-	/* Copy XXX XXX XXX */
-	/* (void)rename(buf, aux); */
-
-	/* XXX XXX XXX */
-	return (1);
 }
 
 
@@ -1160,27 +1118,6 @@ errr fd_seek(int fd, huge n)
 
 	/* Failure */
 	if (p != n) return (1);
-
-	/* Success */
-	return (0);
-}
-
-
-/*
- * Hack -- attempt to truncate a file descriptor
- */
-errr fd_chop(int fd, huge n)
-{
-	/* XXX XXX */
-	n = n ? n : 0;
-
-	/* Verify the fd */
-	if (fd < 0) return (-1);
-
-#if defined(SUNOS) || defined(ULTRIX) || defined(NeXT)
-	/* Truncate */
-	ftruncate(fd, n);
-#endif
 
 	/* Success */
 	return (0);
