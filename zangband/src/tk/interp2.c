@@ -731,11 +731,11 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 	int objC = objc - infoCmd->depth;
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
-	static cptr cmdOptions[] = {"abort",
+	static cptr cmdOptions[] = {"abort", "tkdir"
 		"macro_dump", "new", "open", "process_pref_file", "quit",
 		"keymap_dump", "version",
 		"savefile", NULL};
-	enum {IDX_ABORT,
+	enum {IDX_ABORT, IDX_TKDIR,
 		IDX_MACRO_DUMP, IDX_NEW, IDX_OPEN, IDX_PROCESS_PREF_FILE, IDX_QUIT,
 		IDX_KEYMAP_DUMP, IDX_VERSION,
 		IDX_SAVEFILE} option;
@@ -789,6 +789,14 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 			quit(NULL);
 			break;
 		}
+		
+		case IDX_TKDIR: /* Tk directory for game .tcl files */
+		{
+		 	/* Return the current directory path */
+			ExtToUtf_SetResult(interp, (char *) ANGBAND_DIR_TK);
+			break;
+		}
+		
 					
 		case IDX_MACRO_DUMP: /* macro_dump */
 			if (objC != 3)

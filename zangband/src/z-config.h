@@ -571,7 +571,7 @@
  * Define where the tk directory is.
  * This probably should be moved into the lib directory.
  */
-#define DEFAULT_TK_PATH "./tk/"
+#define DEFAULT_TK_PATH "./tk"
 
 
 /* Include maid-grf.c */

@@ -25,6 +25,10 @@
  */
 static const module_type modules[] =
 {
+#ifdef USE_TNB
+	INIT_MODULE(tnb),
+#endif /* USE_TNB */
+
 #ifdef USE_GTK
 	INIT_MODULE(gtk),
 #endif /* USE_GTK */
