@@ -150,8 +150,8 @@ static bool alloc_stairs(int feat, int num, int walls)
 			for (j = 0; !flag && j <= 10000; j++)
 			{
 				/* Pick a random grid */
-				y = rand_range(min_hgt, max_hgt - 1);
-				x = rand_range(min_wid, max_wid - 1);
+				y = rand_range(min_hgt + 1, max_hgt - 2);
+				x = rand_range(min_wid + 1, max_wid - 2);
 
 				/* Access the grid */
 				c_ptr = &cave[y][x];
@@ -212,8 +212,8 @@ static void alloc_object(int set, int typ, int num)
 			dummy++;
 
 			/* Location */
-			y = rand_range(min_hgt, max_hgt - 1);
-			x = rand_range(min_wid, max_wid - 1);
+			y = rand_range(min_hgt + 1, max_hgt - 2);
+			x = rand_range(min_wid + 1, max_wid - 2);
 
 			c_ptr = &cave[y][x];
 
@@ -622,8 +622,8 @@ static bool cave_gen(void)
 	{
 		while (randint(DUN_MOS_DEN) == 1)
 		{
-			place_trees(rand_range(min_wid, max_wid - 1),
-				 rand_range(min_hgt, max_hgt - 1));
+			place_trees(rand_range(min_wid + 1, max_wid - 2),
+				 rand_range(min_hgt + 1, max_hgt - 2));
 		}
 	}
 
@@ -860,8 +860,8 @@ static bool cave_gen(void)
 						/* Find an empty grid */
 						while (TRUE)
 						{
-							y = rand_range(min_hgt, max_hgt - 1);
-							x = rand_range(min_wid, max_wid - 1);
+							y = rand_range(min_hgt + 1, max_hgt - 2);
+							x = rand_range(min_wid + 1, max_wid - 2);
 
 							/* Access the grid */
 							c_ptr = &cave[y][x];
