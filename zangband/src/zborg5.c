@@ -342,67 +342,6 @@ static bool observe_take_move(int y, int x, int d, byte a, char c)
 }
 
 
-
-
-/*
- * Attempt to guess what type of monster is at the given location.
- *
- * If we are unable to think of any monster that could be at the
- * given location, we will assume the monster is a player ghost.
- * This is a total hack, but may prevent crashes.
- *
- * The guess can be improved by the judicious use of a specialized
- * "attr/char" mapping, especially for unique monsters.  Currently,
- * the Borg does not stoop to such redefinitions.
- *
- * We will probably fail to identify "trapper" and "lurker" monsters,
- * since they look like whatever they are standing on.  Now we will
- * probably just assume they are player ghosts.  XXX XXX XXX
- *
- * Note that "town" monsters may only appear in town, and in "town",
- * only "town" monsters may appear, unless we summon or polymorph
- * a monster while in town, which should never happen.
- *
- * To guess which monster is at the given location, we consider every
- * possible race, keeping the race (if any) with the best "score".
- *
- * Certain monster races are "impossible", including town monsters
- * in the dungeon, dungeon monsters in the town, unique monsters
- * known to be dead, monsters more than 50 levels out of depth,
- * and monsters with an impossible char, or an impossible attr.
- *
- * Certain aspects of a monster race are penalized, including extreme
- * out of depth, minor out of depth, clear/multihued attrs.
- *
- * Certain aspects of a monster race are rewarded, including monsters
- * that appear in groups, monsters that reproduce, monsters that have
- * been seen on this level a lot.
- *
- * We are never called for "trapper", "lurker", or "mimic" monsters.
- *
- * The actual rewards and penalties probably need some tweaking.
- *
- * Hack -- try not to choose "unique" monsters, or we will flee a lot.
- */
-static int borg_guess_race(byte a, char c, bool multi, int y, int x)
-{
-    /* apw ok, this is an real cheat.  he ought to use the look command
-     * in order to correctly id the monster.  but i am passing that up for
-     * the sake of speed
-     */
-
-    map_block *mb_ptr = map_loc(x, y);
-	
-	/* Ignore unused parameters */
-	(void) a;
-	(void) c;
-	(void) multi;
-
-	/* Actual monsters */
-    return (mb_ptr->monster);
-}
-
-
 /*
  * Attempt to convert a monster name into a race index
  *
@@ -919,6 +858,7 @@ void borg_delete_kill(int i)
 
 }
 
+
 /*
  * Force sleep onto a "kill" record
  * ??? Since this check is done at update_kill should I have it here?
@@ -1039,19 +979,15 @@ static void borg_follow_kill(int i)
 
     borg_kill *kill = &borg_kills[i];
 
-
     /* Paranoia */
     if (!kill->r_idx) return;
-
 
     /* Old location */
     ox = kill->x;
     oy = kill->y;
 
-
     /* Out of sight */
     if (!borg_follow_kill_aux(i, oy, ox)) return;
-
 
     /* Note */
     borg_note(format("# There was a monster '%s' at (%d,%d)",
@@ -1326,14 +1262,11 @@ static bool observe_kill_diff(int y, int x)
  * Assume that the monster moved at most 'd' grids.
  * If "flag" is TRUE, allow monster "conversion"
  */
-static bool observe_kill_move(int y, int x, int d, byte a, char c, bool flag)
+static bool observe_kill_move(int y, int x, int d, bool flag)
 {
     int i, z, ox, oy;
-    int r_idx;
     borg_kill *kill;
     monster_race *r_ptr;
-
-    bool flicker = FALSE;
 
     /* Look at the monsters */
     for (i = 1; i < borg_kills_nxt; i++)
@@ -1362,58 +1295,10 @@ static bool observe_kill_move(int y, int x, int d, byte a, char c, bool flag)
         /* Access the monster race */
         r_ptr = &r_info[kill->r_idx];
 
-
-        /* Verify matching char */
-        if (c != r_ptr->d_char) continue;
-
-
-        /* Verify matching attr */
-          if (a != r_ptr->d_attr)
-        {
-            /* Require matching attr (for normal monsters) */
-            if (!(r_ptr->flags1 & (RF1_ATTR_MULTI | RF1_ATTR_CLEAR)))
-            {
-                /* Require flag */
-                if (!flag) continue;
-
-                /* Never flicker known monsters */
-                if (kill->known) continue;
-
-                /* Find a multi-hued monster */
-                r_idx = borg_guess_race(a, c, TRUE, y , x);
-
-                /* Handle failure */
-                if (r_idx == z_info->r_max) continue;
-
-                /* Note */
-                borg_note(format("# Flickering monster '%s' at (%d,%d)",
-                                 (r_name + r_info[r_idx].name),
-                                 y, x));
-
-                /* Note */
-                borg_note(format("# Converting a monster '%s' at (%d,%d)",
-                                 (r_name + r_info[kill->r_idx].name),
-                                 kill->y, kill->x));
-
-                /* Change the race */
-                kill->r_idx = r_idx;
-
-                /* Monster flickers */
-                flicker = TRUE;
-
-                /* Recalculate danger */
-                borg_danger_wipe = TRUE;
-
-                /* Clear goals */
-            if (!borg_skill[BI_ESP] && goal == GOAL_TAKE) goal = 0;
-            }
-        }
-
         /* Actual movement */
         if (z)
         {
-
-            /* Update the grids */
+			/* Update the grids */
             borg_grids[kill->y][kill->x].kill = 0;
 
             /* Save the old Location */
@@ -1441,14 +1326,6 @@ static bool observe_kill_move(int y, int x, int d, byte a, char c, bool flag)
 
         /* Note when last seen */
         kill->when = borg_t;
-
-
-        /* Monster flickered */
-        if (flicker)
-        {
-            /* Update the monster */
-            borg_update_kill_new(i);
-        }
 
         /* Update the monster */
         borg_update_kill_old(i);
@@ -4192,7 +4069,7 @@ void borg_update(void)
 
         /* Track stationary monsters */
         if (wank->is_kill &&
-            observe_kill_move(wank->y, wank->x, 0, wank->t_a, wank->t_c, FALSE))
+            observe_kill_move(wank->y, wank->x, 0, FALSE))
         {
             /* Hack -- excise the entry */
             borg_wanks[i] = borg_wanks[--borg_wank_num];
@@ -4218,7 +4095,7 @@ void borg_update(void)
 
         /* Track moving monsters */
         if (wank->is_kill &&
-            observe_kill_move(wank->y, wank->x, 1, wank->t_a, wank->t_c, FALSE))
+            observe_kill_move(wank->y, wank->x, 1, FALSE))
         {
             /* Hack -- excise the entry */
             borg_wanks[i] = borg_wanks[--borg_wank_num];
@@ -4231,7 +4108,7 @@ void borg_update(void)
 
         /* Track moving monsters */
         if (wank->is_kill &&
-            observe_kill_move(wank->y, wank->x, 2, wank->t_a, wank->t_c, FALSE))
+            observe_kill_move(wank->y, wank->x, 2, FALSE))
         {
             /* Hack -- excise the entry */
             borg_wanks[i] = borg_wanks[--borg_wank_num];
@@ -4244,7 +4121,7 @@ void borg_update(void)
 
         /* Track moving monsters */
         if (wank->is_kill &&
-            observe_kill_move(wank->y, wank->x, 3, wank->t_a, wank->t_c, FALSE))
+            observe_kill_move(wank->y, wank->x, 3, FALSE))
         {
             /* Hack -- excise the entry */
             borg_wanks[i] = borg_wanks[--borg_wank_num];
@@ -4257,7 +4134,7 @@ void borg_update(void)
 
         /* Track moving monsters */
         if (wank->is_kill &&
-            observe_kill_move(wank->y, wank->x, 3, wank->t_a, wank->t_c, TRUE))
+            observe_kill_move(wank->y, wank->x, 3, TRUE))
         {
             /* Hack -- excise the entry */
             borg_wanks[i] = borg_wanks[--borg_wank_num];
