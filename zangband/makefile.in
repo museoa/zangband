@@ -138,6 +138,7 @@ dist: installbase
 	for i in $(srcfiles) ; do \
 	    cp $$i $(DESTDIR)$$i; \
 	done
+	chmod -R +rw $(DESTDIR)
 
 distcheck: dist
 	cp -a $(DESTDIR) temp1
