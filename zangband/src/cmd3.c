@@ -210,8 +210,8 @@ void do_cmd_wield(void)
 	/* Forget Region */
 	o_ptr->region = 0;
 	
-	/* Now no longer "held" */
-	o_ptr->held = FALSE;
+	/* Now no longer allocated in o_list[] */
+	o_ptr->allocated = FALSE;
 
 	/* Where is the item now */
 	if (slot == EQUIP_WIELD)
@@ -333,7 +333,7 @@ void do_cmd_drop(void)
 	if (!o_ptr) return;
 
 	/* Hack -- Cannot remove cursed items */
-	if ((!o_ptr->held) && cursed_p(o_ptr))
+	if ((!o_ptr->allocated) && cursed_p(o_ptr))
 	{
 		/* Oops */
 		msg_print("Hmmm, it seems to be cursed.");

@@ -2780,7 +2780,7 @@ void do_cmd_throw_aux(int mult)
 	if (!o_ptr) return;
 
 	/* Hack -- Cannot remove cursed items */
-	if ((!o_ptr->held) && cursed_p(o_ptr))
+	if ((!o_ptr->allocated) && cursed_p(o_ptr))
 	{
 		/* Oops */
 		msg_print("Hmmm, it seems to be cursed.");

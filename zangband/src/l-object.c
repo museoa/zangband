@@ -1953,23 +1953,23 @@ static int toluaI_set_object_object_type_info(lua_State* tolua_S)
  return 0;
 }
 
-/* get function: held of class  object_type */
-static int toluaI_get_object_object_type_held(lua_State* tolua_S)
+/* get function: allocated of class  object_type */
+static int toluaI_get_object_object_type_allocated(lua_State* tolua_S)
 {
   object_type* self = (object_type*)  tolua_getusertype(tolua_S,1,0);
   if (!self) TOLUA_ERR_SELF;
-  tolua_pushbool(tolua_S,(int)self->held);
+  tolua_pushbool(tolua_S,(int)self->allocated);
  return 1;
 }
 
-/* set function: held of class  object_type */
-static int toluaI_set_object_object_type_held(lua_State* tolua_S)
+/* set function: allocated of class  object_type */
+static int toluaI_set_object_object_type_allocated(lua_State* tolua_S)
 {
   object_type* self = (object_type*)  tolua_getusertype(tolua_S,1,0);
   if (!self) TOLUA_ERR_SELF;
   if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
    TOLUA_ERR_ASSIGN;
-  self->held = ((bool)  tolua_getbool(tolua_S,2,0));
+  self->allocated = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
 
@@ -5507,7 +5507,7 @@ int tolua_object_open (lua_State* tolua_S)
  tolua_tablevar(tolua_S,"object_type","feeling",toluaI_get_object_object_type_feeling,toluaI_set_object_object_type_feeling);
  tolua_tablevar(tolua_S,"object_type","activate",toluaI_get_object_object_type_activate,toluaI_set_object_object_type_activate);
  tolua_tablevar(tolua_S,"object_type","info",toluaI_get_object_object_type_info,toluaI_set_object_object_type_info);
- tolua_tablevar(tolua_S,"object_type","held",toluaI_get_object_object_type_held,toluaI_set_object_object_type_held);
+ tolua_tablevar(tolua_S,"object_type","allocated",toluaI_get_object_object_type_allocated,toluaI_set_object_object_type_allocated);
  tolua_globalvar(tolua_S,"o_max",toluaI_get_object_o_max,toluaI_set_object_o_max);
  tolua_globalvar(tolua_S,"o_cnt",toluaI_get_object_o_cnt,toluaI_set_object_o_cnt);
  tolua_globalarray(tolua_S,"o_list",toluaI_get_object_o_list,toluaI_set_object_o_list);

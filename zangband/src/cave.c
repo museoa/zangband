@@ -4806,24 +4806,11 @@ void map_area(void)
 void wiz_lite(void)
 {
 	int i, y, x;
+	
+	object_type *o_ptr;
 
 	chg_virtue(V_KNOWLEDGE, 1);
 	chg_virtue(V_ENLIGHTEN, 1);
-
-	/* Memorize objects */
-	for (i = 1; i < o_max; i++)
-	{
-		object_type *o_ptr = &o_list[i];
-
-		/* Skip dead objects */
-		if (!o_ptr->k_idx) continue;
-
-		/* Skip held objects */
-		if (o_ptr->held) continue;
-
-		/* Memorize */
-		o_ptr->info |= OB_SEEN;
-	}
 
 	/* Detect monsters */
 	for (i = 1; i < m_max; i++)
@@ -4857,6 +4844,14 @@ void wiz_lite(void)
 				/* Memorize the grid */
 				remember_grid(c_ptr, pc_ptr);
 			}
+			
+			/* Remember items on the grid */
+			OBJ_ITT_START(c_ptr->o_idx, o_ptr)
+			{
+				/* Memorize */
+				o_ptr->info |= OB_SEEN;
+			}
+			OBJ_ITT_END;
 		}
 	}
 
@@ -4884,26 +4879,23 @@ void wiz_dark(void)
 	{
 		for (x = p_ptr->min_wid; x < p_ptr->max_wid; x++)
 		{
+			cave_type *c_ptr = area(x, y);
 			pcave_type *pc_ptr = parea(x, y);
+			
+			object_type *o_ptr;
 
 			/* Process the grid */
 			forget_grid(pc_ptr);
+			
+			/* Forget items on the grid */
+			OBJ_ITT_START(c_ptr->o_idx, o_ptr)
+			{
+				/* Forget the object */
+				o_ptr->info &= ~(OB_SEEN);
+			}
+			OBJ_ITT_END;
+			
 		}
-	}
-
-	/* Forget all objects */
-	for (i = 1; i < o_max; i++)
-	{
-		object_type *o_ptr = &o_list[i];
-
-		/* Skip dead objects */
-		if (!o_ptr->k_idx) continue;
-
-		/* Skip held objects */
-		if (o_ptr->held) continue;
-
-		/* Forget the object */
-		o_ptr->info &= ~(OB_SEEN);
 	}
 
 	/* Forget all fields */

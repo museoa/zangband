@@ -1876,7 +1876,7 @@ static void store_sell(int *store_top)
 	if (!o_ptr) return;
 
 	/* Hack -- Cannot remove cursed items */
-	if ((!o_ptr->held) && cursed_p(o_ptr))
+	if ((!o_ptr->allocated) && cursed_p(o_ptr))
 	{
 		/* Oops */
 		msg_print("Hmmm, it seems to be cursed.");

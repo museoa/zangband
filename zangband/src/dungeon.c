@@ -1761,7 +1761,7 @@ static void process_world(void)
 		if (!o_ptr->k_idx) continue;
 
 		/* Exit if not in dungeon */
-		if (o_ptr->held) continue;
+		if (!(o_ptr->ix || o_ptr->iy)) continue;
 
 		field_hook(&area(o_ptr->ix, o_ptr->iy)->fld_idx,
 				   FIELD_ACT_OBJECT_ON, (vptr)o_ptr);

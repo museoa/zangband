@@ -788,7 +788,7 @@ struct object_type
 
 	byte info;	/* Special flags */
 
-	bool held;	/* Held by something */
+	bool allocated;	/* Held in the o_list[] array */
 };
 
 

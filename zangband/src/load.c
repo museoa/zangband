@@ -320,16 +320,6 @@ static void rd_item(object_type *o_ptr)
 		rd_s16b(&o_ptr->ix);
 	}
 
-
-	if (sf_version < 37)
-	{
-		/* Mega - hack import player inventory properly */
-		if (!o_ptr->ix && !o_ptr->iy)
-		{
-			o_ptr->held = TRUE;
-		}
-	}
-
 	/* Type/Subtype */
 	rd_byte(&o_ptr->tval);
 	rd_byte(&o_ptr->sval);
@@ -404,16 +394,16 @@ static void rd_item(object_type *o_ptr)
 
 		if (tmps16b)
 		{
-			o_ptr->held = TRUE;
+			o_ptr->allocated = TRUE;
 		}
 		else
 		{
-			o_ptr->held = FALSE;
+			o_ptr->allocated = FALSE;
 		}
 	}
 	else
 	{
-		rd_byte((byte *)(&o_ptr->held));
+		rd_byte((byte *)(&o_ptr->allocated));
 	}
 
 	if (sf_version < 19)
@@ -923,6 +913,9 @@ static void rd_store(int town_num, int store_num)
 
 		/* Read the item */
 		rd_item(q_ptr);
+		
+		/* Hack - item is not allocated in o_list[] (yet) */
+		q_ptr->allocated = FALSE;
 
 		/* Acquire valid items */
 		if (st_ptr->stock_num < st_ptr->max_stock)
@@ -1390,6 +1383,9 @@ static errr rd_inventory(void)
 
 		/* Read the item */
 		rd_item(q_ptr);
+		
+		/* Hack - assume not allocated in o_list[] */
+		q_ptr->allocated = FALSE;
 
 		/* Hack -- verify item */
 		if (!q_ptr->k_idx) return (53);
@@ -2281,11 +2277,12 @@ static errr rd_dungeon(void)
 
 		/* Read the item */
 		rd_item(o_ptr);
-
-		/* XXX XXX XXX XXX XXX */
+		
+		/* Hack - import player inventory properly */
+		o_ptr->allocated = TRUE;
 
 		/* Dungeon items */
-		if (o_ptr->k_idx && !o_ptr->held && !ignore_stuff)
+		if (o_ptr->k_idx && !ignore_stuff && (o_ptr->ix || o_ptr->iy))
 		{
             if (!in_bounds(o_ptr->ix, o_ptr->iy))
             {

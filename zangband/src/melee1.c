@@ -704,8 +704,8 @@ bool make_attack_normal(int m_idx)
 								/* Forget mark */
 								j_ptr->info &= ~(OB_SEEN);
 
-								/* We are held */
-								j_ptr->held = TRUE;
+								/* Is allocated */
+								j_ptr->allocated = TRUE;
 
 								/* Build stack */
 								j_ptr->next_o_idx = m_ptr->hold_o_idx;

@@ -183,82 +183,6 @@ void drop_object_list(s16b *o_idx_ptr, int x, int y)
 	*o_idx_ptr = 0;
 }
 
-/*
- * Move an object from index i1 to index i2 in the object list
- *
- * This function only is designed to work on dungeon objects
- * and monster-held objects.
- */
-static void compact_objects_aux(int i1, int i2)
-{
-	int i;
-
-	cave_type *c_ptr;
-
-    object_type *o_ptr;
-
-    monster_type *m_ptr;
-
-	/* Do nothing */
-	if (i1 == i2) return;
-
-
-	/* Repair objects */
-	for (i = 1; i < o_max; i++)
-	{
-		/* Acquire object */
-		o_ptr = &o_list[i];
-
-		/* Skip "dead" objects */
-		if (!o_ptr->k_idx) continue;
-
-		/* Repair "next" pointers */
-		if (o_ptr->next_o_idx == i1)
-		{
-			/* Repair */
-			o_ptr->next_o_idx = i2;
-
-			break;
-		}
-	}
-
-	/* Acquire object */
-	o_ptr = &o_list[i1];
-
-	/* Check bounds */
-	if (in_bounds(o_ptr->ix, o_ptr->iy))
-	{
-		/* Acquire grid */
-		c_ptr = area(o_ptr->ix, o_ptr->iy);
-
-		/* Repair grid */
-		if (c_ptr->o_idx == i1) c_ptr->o_idx = i2;
-    }
-
-    /* Repair monster inventories */
-    for (i = 0; i < m_max; i++)
-    {
-        m_ptr = &m_list[i];
-
-        /* Skip dead monsters */
-        if (!m_ptr->r_idx) continue;
-
-        /* Repair inventory pointers */
-        if (m_ptr->hold_o_idx == i1)
-        {
-            m_ptr->hold_o_idx = i2;
-
-            break;
-        }
-    }
-
-	/* Structure copy */
-	o_list[i2] = o_list[i1];
-
-	/* Wipe the hole */
-	object_wipe(o_ptr);
-}
-
 
 /*
  * Compact and Reorder the object list
@@ -317,8 +241,8 @@ void compact_objects(int size)
 			/* Hack -- High level objects start out "immune" */
 			if (get_object_level(o_ptr) > cur_lev) continue;
 
-			/* Not held objects */
-			if (o_ptr->held) continue;
+			/* Only objects in the dungeon */
+			if (!((o_ptr->ix) && (o_ptr->iy))) continue;
 
 			/* Get the location */
 			x = o_ptr->ix;
@@ -393,14 +317,8 @@ void compact_objects(int size)
 	{
 		object_type *o_ptr = &o_list[i];
 		
-		/* Stop when we get to a held object */
-		if (o_ptr->held) break;
-
-		/* Skip real objects */
-		if (o_ptr->k_idx) continue;
-
-		/* Move last object into open hole */
-		compact_objects_aux(o_max - 1, i);
+		/* Stop when we get to an object */
+		if (o_ptr->k_idx) break;
 
 		/* Compress "o_max" */
 		o_max--;
@@ -435,8 +353,8 @@ void wipe_o_list(void)
 		/* Skip dead objects */
 		if (!o_ptr->k_idx) continue;
 
-		/* Skip held objects */
-		if (o_ptr->held) continue;
+		/* Skip non-dungeon objects */
+		if (!(o_ptr->ix || o_ptr->iy)) continue;
 
 		/* Preserve artifacts */
 		if (preserve_mode && (o_ptr->flags3 & TR3_INSTA_ART) &&
@@ -573,12 +491,15 @@ object_type *add_object_list(s16b *o_idx_ptr, object_type *o_ptr)
 	/* Point to the object */
 	j_ptr = &o_list[o_idx];
 
-	/* Structure copy */
-	*j_ptr = *o_ptr;
+	/* Copy */
+	object_copy(j_ptr, o_ptr);
 
 	/* Add to the list */
 	j_ptr->next_o_idx = *o_idx_ptr;
 	*o_idx_ptr = o_idx;
+	
+	/* Now held */
+	j_ptr->allocated = TRUE;
 
 	/* Return the new item */
 	return (j_ptr);
@@ -4401,6 +4322,9 @@ void place_object(int x, int y, bool good, bool great)
 
 		/* Region */
 		o_ptr->region = cur_region;
+		
+		/* Is allocated */
+		o_ptr->allocated = TRUE;
 
 		/* Build a stack */
 		o_ptr->next_o_idx = c_ptr->o_idx;
@@ -4509,6 +4433,9 @@ void place_gold(int x, int y)
 
 		/* Region */
 		o_ptr->region = cur_region;
+		
+		/* Is allocated */
+		o_ptr->allocated = TRUE;
 
 		/* Build a stack */
 		o_ptr->next_o_idx = c_ptr->o_idx;
@@ -4826,8 +4753,8 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 		/* Region */
 		o_ptr->region = cur_region;
 
-		/* Is 'held' */
-		o_ptr->held = TRUE;
+		/* Is allocated */
+		o_ptr->allocated = TRUE;
 
 		/* Build a stack */
 		o_ptr->next_o_idx = c_ptr->o_idx;
@@ -4925,8 +4852,8 @@ s16b *look_up_list(object_type *o_ptr)
 
 	cave_type *c_ptr;
 
-	/* Objects that are not held have no list */
-	if (!o_ptr->held) return (NULL);
+	/* Some objects have no list */
+	if (!o_ptr->allocated) return (NULL);
 
 	/* Scan player inventory */
 	OBJ_ITT_START (p_ptr->inventory, j_ptr)
@@ -5382,9 +5309,6 @@ object_type *inven_carry(object_type *o_ptr)
 
 	/* Add the item to the pack */
 	o_ptr = add_object_list(&p_ptr->inventory, o_ptr);
-
-	/* Now held */
-	o_ptr->held = TRUE;
 
 	/* Forget location */
 	o_ptr->iy = o_ptr->ix = 0;

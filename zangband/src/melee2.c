@@ -2585,9 +2585,6 @@ static void take_move(int m_idx, int *mm)
 						/* XXX Hack - Forget region */
 						o_ptr->region = 0;
 
-						/* We are held */
-						o_ptr->held = TRUE;
-
 						/* Hold the object */
 						move_object(&m_ptr->hold_o_idx, &c_ptr->o_idx, o_ptr);
 					}

@@ -921,7 +921,7 @@ static void wiz_reroll_item(object_type *o_ptr)
 		q_ptr->iy = o_ptr->iy;
 		q_ptr->ix = o_ptr->ix;
 		q_ptr->next_o_idx = o_ptr->next_o_idx;
-		q_ptr->held = o_ptr->held;
+		q_ptr->allocated = o_ptr->allocated;
 
 		/* Is the object in a list? */
 		if (o_list_ptr)
