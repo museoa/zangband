@@ -2604,8 +2604,12 @@ void field_action_hit_trap_drop_item(s16b *field_ptr, void *nothing)
 	
 	if (inventory[item].k_idx)
 	{
-		/* Drop it */
-		inven_drop(item, inventory[item].number);
+		/* Only if not cursed */
+		if (!cursed_p(&inventory[item]))
+		{
+			/* Drop it */
+			inven_drop(item, inventory[item].number);
+		}
 	}
 }
 

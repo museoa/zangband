@@ -2125,7 +2125,7 @@ static void process_world(void)
 
 			msg_print(NULL);
 			o_ptr = &inventory[INVEN_WIELD];
-			if (o_ptr->k_idx)
+			if ((o_ptr->k_idx) && !cursed_p(o_ptr))
 			{
 				msg_print("You drop your weapon!");
 				inven_drop(INVEN_WIELD, 1);
