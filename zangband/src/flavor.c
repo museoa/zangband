@@ -533,7 +533,7 @@ void flavor_init(void)
 	/* Potions */
 	for (i = 4; i < MAX_COLORS; i++)
 	{
-		j = rand_range(4, MAX_COLORS);
+		j = rand_range(4, MAX_COLORS - 1);
 		temp_adj = potion_adj[i];
 		potion_adj[i] = potion_adj[j];
 		potion_adj[j] = temp_adj;
