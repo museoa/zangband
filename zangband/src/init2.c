@@ -895,7 +895,7 @@ errr init_t_info(void)
  * (They should be in order of most-called
  *  through to least-called.)
  */
-static vstrnfmt_aux_func my_format_functions[8] =
+static vstrnfmt_aux_func my_format_functions[9] =
 {
 	set_message_type,
 	object_fmt,
