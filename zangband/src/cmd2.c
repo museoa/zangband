@@ -3029,11 +3029,16 @@ void do_cmd_throw_aux(int mult)
 {
 	int dir, item;
 	int j, y, x, ny, nx, ty, tx;
-	int chance, chance2, tdam, tdis;
+	int chance, chance2, tdis;
 	int mul, div;
 	int cur_dis, visible;
 
-	int terrain_bonus;
+	long tdam;
+	int tdam_remainder, tdam_whole;
+
+	int total_deadliness;
+	int sleeping_bonus = 0;
+	int terrain_bonus = 0;
 
 	object_type forge;
 	object_type *q_ptr;
@@ -3044,9 +3049,11 @@ void do_cmd_throw_aux(int mult)
 	bool hit_wall = FALSE;
 
 	char o_name[80];
+	char m_name[80];
 
 	int msec = delay_factor * delay_factor * delay_factor;
 
+	u32b f1, f2, f3;
 	cptr q, s;
 
 
@@ -3075,6 +3082,9 @@ void do_cmd_throw_aux(int mult)
 
 	/* Obtain a local object */
 	object_copy(q_ptr, o_ptr);
+
+	/* Extract the thrown object's flags. */
+	object_flags(q_ptr, &f1, &f2, &f3);
 
 	/* Distribute the charges of rods/wands between the stacks */
 	distribute_charges(o_ptr, q_ptr, 1);
@@ -3113,13 +3123,15 @@ void do_cmd_throw_aux(int mult)
 
 	/* Max distance of 10-18 */
 	if (tdis > mul) tdis = mul;
-
-	/* Hack -- Base damage from thrown object */
-	tdam = damroll(q_ptr->dd, q_ptr->ds) + q_ptr->to_d;
-	tdam *= mult;
-
-	/* Chance of hitting */
-	chance = (p_ptr->skill_tht + (p_ptr->to_h * BTH_PLUS_ADJ));
+	
+	/* Chance of hitting.  Other thrown objects are easier to use, but 
+	 * only throwing weapons take advantage of bonuses to Skill from 
+	 * other items. -LM-
+	 */
+	if (f2 & (TR2_THROW)) chance = ((p_ptr->skill_tht) + 
+		((p_ptr->to_h + q_ptr->to_h) * BTH_PLUS_ADJ));
+	else chance = ((3 * p_ptr->skill_tht / 2) + 
+		(q_ptr->to_h * BTH_PLUS_ADJ));
 
 
 	/* Take a turn */
@@ -3232,25 +3244,12 @@ void do_cmd_throw_aux(int mult)
 					note_dies = " is destroyed.";
 				}
 
-
-				/* Handle unseen monster */
-				if (!visible)
-				{
-					/* Invisible monster */
-					msg_format("The %s finds a mark.", o_name);
-				}
-
+				/* Get "the monster" or "it" */
+				monster_desc(m_name, m_ptr, 0);
+				
 				/* Handle visible monster */
-				else
+				if (visible)
 				{
-					char m_name[80];
-
-					/* Get "the monster" or "it" */
-					monster_desc(m_name, m_ptr, 0);
-
-					/* Message */
-					msg_format("The %s hits %s.", o_name, m_name);
-
 					/* Hack -- Track this monster race */
 					if (m_ptr->ml) monster_race_track(m_ptr->r_idx);
 
@@ -3258,16 +3257,81 @@ void do_cmd_throw_aux(int mult)
 					if (m_ptr->ml) health_track(c_ptr->m_idx);
 				}
 
-				/* Apply special damage XXX XXX XXX */
-				tdam = tot_dam_aux(q_ptr, tdam, m_ptr)/10;
+				/* sum all the applicable additions to Deadliness. */
+				total_deadliness = p_ptr->to_d + q_ptr->to_d;
 
-				/*
-				* Major hack - thrown weapons do not have an ego bonus.
-				* Waiting for tr1_thrown flag before can implement thrown
-				* weapons from Oangbnad properly.  -SF-
-				*/
-				/*tdam = critical_shot(q_ptr->weight, q_ptr->to_h, tdam);*/
 
+				/* The basic damage-determination formula is the same in
+				 * throwing as it is in melee (apart from the thrown weapon 
+				 * multiplier, and the ignoring of non-object bonuses to 
+				 * Deadliness for objects that are not thrown weapons).  See 
+				 * formula "py_attack" in "cmd1.c" for more details. -LM-
+				 */
+
+				tdam = q_ptr->dd;
+
+				/* Multiply the number of damage dice by the throwing weapon 
+				 * multiplier, if applicable.  This is not the prettiest 
+				 * equation, but it does at least try to keep throwing 
+				 * weapons competitive.
+				 */
+				if (f2 & (TR2_THROW))
+				{
+					tdam *= 4 + p_ptr->lev / 6;
+				}
+
+				
+				/* multiply by slays or brands. (10x inflation) */
+				tdam = tot_dam_aux(q_ptr,tdam, m_ptr);
+
+				/* Only allow critical hits if the object is a throwing 
+				 * weapon.  Otherwise, grant the default multiplier.
+				 * (10x inflation)
+				 */
+				if (f2 & (TR2_THROW)) tdam *= critical_shot
+					(chance2, sleeping_bonus, TRUE, o_name, m_name, visible);
+				else tdam *= 10;
+
+				/* Convert total or object-only Deadliness into a percen-
+				 * tage, and apply it as a bonus or penalty (100x inflation)
+				 */
+				if (f2 & (TR2_THROW))
+				{
+					if (total_deadliness > 0)
+						tdam *= (100 + 
+						deadliness_conversion[total_deadliness]);
+					else if (total_deadliness > -31)
+						tdam *= (100 - 
+						deadliness_conversion[ABS(total_deadliness)]);
+					else
+						tdam = 0;
+				}
+
+				else 
+				{
+					if (q_ptr->to_d > 0)
+						tdam *= (100 + 
+						deadliness_conversion[q_ptr->to_d]);
+					else if (q_ptr->to_d > -31)
+						tdam *= (100 - 
+						deadliness_conversion[ABS(q_ptr->to_d)]);
+					else
+						tdam = 0;
+				}
+
+				/* Get the whole number of dice by deflating the result. */
+				tdam_whole = tdam / 10000;
+
+				/* Calculate the remainder (the fractional die, x10000). */
+				tdam_remainder = tdam % 10000;
+
+
+				/* Calculate and combine the damages of the whole and 
+				 * fractional dice.
+				 */
+				tdam = damroll(tdam_whole, q_ptr->ds) + 
+					(tdam_remainder * damroll(1, q_ptr->ds) / 10000);
+				
 				/* No negative damage */
 				if (tdam < 0) tdam = 0;
 
