@@ -17,9 +17,6 @@
 #error "you must define one of PLATFORM_MAC, PLATFORM_WIN or PLATFORM_X11"
 #endif /* */
 
-#define USE_MAP_DATA 1
-#define USE_MAP_MIMIC 1
-
 typedef struct t_symbol t_symbol;
 
 struct t_symbol
@@ -34,21 +31,18 @@ struct t_symbol
 	IconValue bits6[36 * 4];
 	IconValue bits7[49 * 4];
 	IconValue bits8[64 * 4];
-#if USE_MAP_MIMIC
-	int mimic; /* Get info from another symbol */
-#endif
 };
 
-t_symbol **g_symbol;
-int g_symbol_count;
+extern t_symbol **g_symbol;
+extern int g_symbol_count;
 
-IconPtr *g_bits[5];
-int g_bits_count[5];
+extern IconPtr *g_bits[5];
+extern int g_bits_count[5];
 
-Tcl_HashTable g_symbol_hash;
+extern Tcl_HashTable g_symbol_hash;
 
 typedef void (*DrawSymbolProc)(long *srcPtr, long *dstPtr, long pitch);
-DrawSymbolProc symbolProcTable[4][5];
+extern DrawSymbolProc symbolProcTable[4][5];
 
 int Map_Init(Tcl_Interp *interp);
 void DrawMapSymbol(Widget *widgetPtr, int y, int x, int symbol);

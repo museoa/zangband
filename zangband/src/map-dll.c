@@ -10,22 +10,13 @@
  * included in all such copies.
  */
 
+#include "angband.h"
 #include <tcl.h>
-#include <string.h>
 #include "cmdinfo-dll.h"
 #include "util-dll.h"
 #include "icon-dll.h"
 #include "widget-dll.h"
 #include "map-dll.h"
-
-typedef unsigned char byte;
-typedef short s16b;
-typedef unsigned short u16b;
-typedef unsigned long u32b;
-
-extern int Image2Bits(Tcl_Interp *interp, t_icon_data *iconDataPtr,
-	Tk_PhotoHandle photoH, int imageW, int imageH, XColor *xColorPtr);
-extern char *string_make(char *str);
 
 #include <limits.h>
 #ifndef USHRT_MAX
@@ -40,33 +31,10 @@ int g_bits_count[5];
 
 Tcl_HashTable g_symbol_hash;
 
-#if !USE_MAP_DATA
-
-static void set_bits(IconPtr tile, int size, IconValue middle, IconValue color)
-{
-	int i, j, n;
-	
-	for (i = 0; i < size * size; ++i)
-	{
-		tile[i] = color;
-	}
-
-	n = (size > 6) ? 2 : 1;
-	for (j = n; j < size - n; ++j)
-	{
-		for (i = n; i < size - n; ++i)
-		{
-			tile[i + j * size] = middle;
-		}
-	}
-}
-
-#endif /* not USE_MAP_DATA */
-
 /*
  * Wipe map widgets when symbols change.
  */
-void symbol_changed(void)
+static void symbol_changed(void)
 {
 	DoubleLink *link;
 	Widget *widgetPtr;
@@ -123,40 +91,29 @@ int symbol_find(Tcl_Interp *interp, Tcl_Obj *objName, char *strName,
 	(p)[0] = b; (p)[1] = g; (p)[2] = r;
 
 /* ?-option value...? */
-int symbol_configure(Tcl_Interp *interp, t_symbol *symbolPtr, int objc,
+static int symbol_configure(Tcl_Interp *interp, t_symbol *symbolPtr, int objc,
 	Tcl_Obj *CONST objv[], int objOffset)
 {
 	Tcl_Obj *CONST *objPtr;
 	int objC;
 	int index;
 	t_symbol symbol;
-#if !USE_MAP_DATA
-	int i;
-#endif
 
 	symbol.inner = -1;
 	symbol.outer = -1;
 	symbol.light = -1;
-#if USE_MAP_MIMIC
-	symbol.mimic = -1;
-#endif
 
 	objPtr = objv + objOffset;
 	objC = objc - objOffset;
 
 	while (objC > 1)
 	{
-		static char *symbolOption[] = {"-inner", "-light", "-outer",
-#if USE_MAP_DATA
+		static cptr symbolOption[] = {"-inner", "-light", "-outer",
 			"-data",
-#endif
-#if USE_MAP_MIMIC
-			"-mimic",
-#endif
 			NULL};
 
-	    if (Tcl_GetIndexFromObj(interp, objPtr[0], symbolOption,
-			"option", 0, &index) != TCL_OK)
+	    if (Tcl_GetIndexFromObj(interp, objPtr[0], (char **) symbolOption,
+			(char *) "option", 0, &index) != TCL_OK)
 		{
 			return TCL_ERROR;
 	    }
@@ -189,7 +146,6 @@ int symbol_configure(Tcl_Interp *interp, t_symbol *symbolPtr, int objc,
 				/* VERIFY inner */
 				break;
 
-#if USE_MAP_DATA
 			case 3: /* -data */
 			{
 				Tk_Window tkwin = Tk_MainWindow(interp);
@@ -272,15 +228,6 @@ int symbol_configure(Tcl_Interp *interp, t_symbol *symbolPtr, int objc,
 				}
 				break;
 			}
-#endif /* USE_MAP_DATA */
-#if USE_MAP_MIMIC
-			case 4: /* mimic */
-				if (symbol_find(interp, objPtr[1], NULL, NULL, &symbol.mimic) != TCL_OK)
-				{
-					return TCL_ERROR;
-				}
-				break;
-#endif /* USE_MAP_MIMIC */
 		}
 		objPtr += 2;
 		objC -= 2;
@@ -291,7 +238,7 @@ int symbol_configure(Tcl_Interp *interp, t_symbol *symbolPtr, int objc,
 	{
 		/* Set the error */
 		Tcl_WrongNumArgs(interp, objOffset, objv,
-			"-inner inner -outer outer");
+			(char *) "-inner inner -outer outer");
 
 		/* Failure */
 		return TCL_ERROR;
@@ -301,44 +248,32 @@ int symbol_configure(Tcl_Interp *interp, t_symbol *symbolPtr, int objc,
 	if (symbol.outer != -1) symbolPtr->outer = symbol.outer;
 	if (symbol.light != -1) symbolPtr->light = symbol.light;
 
-#if !USE_MAP_DATA
-	for (i = 4; i <= 8; i++)
-	{
-		set_bits(symbolPtr->bits[i - 4], i,
-			symbolPtr->inner, symbolPtr->outer);
-	}
-#endif /* not USE_MAP_DATA */
-
-#if USE_MAP_MIMIC
-	if (symbol.mimic != -1) symbolPtr->mimic = symbol.mimic;
-#endif
-
 	symbol_changed();
 
 	return TCL_OK;
 }
 
 /* cget $name $option */
-int objcmd_symbol_cget(ClientData clientData, Tcl_Interp *interp,
+static int objcmd_symbol_cget(ClientData clientData, Tcl_Interp *interp,
 	int objc, Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
-	static char *symbolOption[] = {"-inner", "-light", "-outer",
-#if USE_MAP_MIMIC
-		"-mimic",
-#endif
+	static cptr symbolOption[] = {"-inner", "-light", "-outer",
 		NULL};
 	t_symbol *symbolPtr;
 	int index;
+
+	/* Hack - ignore parameter */
+	(void) objc;
 
 	if (symbol_find(interp, objV[1], NULL, &symbolPtr, NULL) != TCL_OK)
 	{
 		return TCL_ERROR;
 	}
 
-    if (Tcl_GetIndexFromObj(interp, objV[2], symbolOption,
-		"option", 0, &index) != TCL_OK)
+    if (Tcl_GetIndexFromObj(interp, objV[2], (char **) symbolOption,
+		(char *) "option", 0, &index) != TCL_OK)
 	{
 		return TCL_ERROR;
     }
@@ -355,20 +290,13 @@ int objcmd_symbol_cget(ClientData clientData, Tcl_Interp *interp,
 		case 2: /* -outer */
 			Tcl_SetObjResult(interp, Tcl_NewIntObj(symbolPtr->outer));
 			break;
-
-#if USE_MAP_MIMIC
-		case 3: /* -mimic */
-			Tcl_SetObjResult(interp, Tcl_NewStringObj(
-				g_symbol[symbolPtr->mimic]->name, -1));
-			break;
-#endif
 	}
 
 	return TCL_OK;
 }
 
 /* configure $name -inner $inner -outer $outer */
-int objcmd_symbol_configure(ClientData clientData, Tcl_Interp *interp,
+static int objcmd_symbol_configure(ClientData clientData, Tcl_Interp *interp,
 	int objc, Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -384,7 +312,7 @@ int objcmd_symbol_configure(ClientData clientData, Tcl_Interp *interp,
 		infoCmd->depth + 2));
 }
 
-void Pixel2RGB(unsigned char *p, int size, int *r, int *g, int *b)
+static void Pixel2RGB(unsigned char *p, int size, int *r, int *g, int *b)
 {
 	switch (size)
 	{
@@ -413,7 +341,7 @@ void Pixel2RGB(unsigned char *p, int size, int *r, int *g, int *b)
 }
 
 /* data $name $size */
-int objcmd_symbol_data(ClientData clientData, Tcl_Interp *interp,
+static int objcmd_symbol_data(ClientData clientData, Tcl_Interp *interp,
 	int objc, Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -422,6 +350,9 @@ int objcmd_symbol_data(ClientData clientData, Tcl_Interp *interp,
 	int size, row, col;
 	Tcl_Obj *listObjPtr, *rowPtr;
 	IconPtr bits;
+	
+	/* Hack - ignore parameter */
+	(void) objc;
 
 	if (symbol_find(interp, objV[1], NULL, &symbolPtr, NULL) != TCL_OK)
 	{
@@ -461,12 +392,13 @@ int objcmd_symbol_data(ClientData clientData, Tcl_Interp *interp,
 }
 
 /* image2bits $imageFile $size $symbolList */
-int objcmd_symbol_image2bits(ClientData clientData, Tcl_Interp *interp,
+static int objcmd_symbol_image2bits(ClientData clientData, Tcl_Interp *interp,
 	int objc, Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
-	char *imageFile, *imageName = "MakeIconImage";
+	char *imageFile;
+	cptr imageName = "MakeIconImage";
 	char buf[1024];
 	int i, length, numSymbols, size;
 	int result = TCL_OK;
@@ -474,6 +406,9 @@ int objcmd_symbol_image2bits(ClientData clientData, Tcl_Interp *interp,
 	Tk_PhotoHandle photoH;
 	t_symbol *symbolPtr;
 	t_icon_data iconData;
+	
+	/* Hack - ignore parameter */
+	(void) objc;
 
 	imageFile = Tcl_GetStringFromObj(objV[1], NULL);
 
@@ -499,7 +434,7 @@ int objcmd_symbol_image2bits(ClientData clientData, Tcl_Interp *interp,
 	Tcl_ResetResult(interp);
 
 	/* Lookup the photo by name */
-	photoH = Tk_FindPhoto(interp, imageName);
+	photoH = Tk_FindPhoto(interp, (char *) imageName);
 
 	/* The photo was not found */
 	if (photoH == NULL)
@@ -576,13 +511,18 @@ cleanup:
 }
 
 /* names */
-int objcmd_symbol_names(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_symbol_names(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 /*	CommandInfo *infoCmd = (CommandInfo *) clientData; */
 /*	Tcl_Obj *CONST *objV = objv + infoCmd->depth; */
 	int i;
 	Tcl_Obj *listObjPtr;
+
+	/* Hack - ignore parameters */
+	(void) objc;
+	(void) objv;
+	(void) clientData;
 
 	listObjPtr = Tcl_NewListObj(0, NULL);
 	
@@ -598,7 +538,7 @@ int objcmd_symbol_names(ClientData clientData, Tcl_Interp *interp, int objc,
 }
 
 /* new $name -inner $inner -outer $outer */
-int objcmd_symbol_new(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_symbol_new(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -628,9 +568,6 @@ int objcmd_symbol_new(ClientData clientData, Tcl_Interp *interp, int objc,
 	symbol.inner = 255;
 	symbol.outer = 255;
 	symbol.light = 0;
-#if USE_MAP_MIMIC
-	symbol.mimic = g_symbol_count;
-#endif
 
 	/* Add it to our list of symbols */
 	g_symbol = Array_Insert(g_symbol, &g_symbol_count,
@@ -642,9 +579,6 @@ int objcmd_symbol_new(ClientData clientData, Tcl_Interp *interp, int objc,
 	symbolPtr->inner = symbol.inner;
 	symbolPtr->outer = symbol.outer;
 	symbolPtr->light = symbol.light;
-#if USE_MAP_MIMIC
-	symbolPtr->mimic = symbol.mimic;
-#endif
 
 	symbolPtr->bits[0] = symbolPtr->bits4;
 	symbolPtr->bits[1] = symbolPtr->bits5;
@@ -966,10 +900,6 @@ void DrawMapSymbol(Widget *widgetPtr, int y, int x, int symbol)
 	IconPtr *tilePtr;
 	long *srcPtr, *dstPtr, pitch;
 
-#if USE_MAP_MIMIC
-	symbol = g_symbol[symbol]->mimic;
-#endif
-
 	tilePtr = g_bits[size - 4];
 	pitch = widgetPtr->bitmap.pitch;
 	srcPtr = (long *) tilePtr[symbol];
@@ -980,7 +910,7 @@ void DrawMapSymbol(Widget *widgetPtr, int y, int x, int symbol)
 }
 
 /* write $path */ 
-int objcmd_symbol_write(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_symbol_write(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -990,6 +920,9 @@ int objcmd_symbol_write(ClientData clientData, Tcl_Interp *interp, int objc,
 	s16b tmp16b;
 	int i;
 	Tcl_DString extDString;
+
+	/* Hack - ignore parameter */
+	(void) objc;
 
 	/* Get the name of the file to read */
 	fileName = Tcl_GetStringFromObj(objV[1], NULL);
@@ -1053,7 +986,7 @@ int objcmd_symbol_write(ClientData clientData, Tcl_Interp *interp, int objc,
 }
 
 /* read $path */ 
-int objcmd_symbol_read(ClientData clientData, Tcl_Interp *interp, int objc,
+static int objcmd_symbol_read(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -1063,6 +996,9 @@ int objcmd_symbol_read(ClientData clientData, Tcl_Interp *interp, int objc,
 	s16b count;
 	int i;
 	Tcl_DString extDString;
+
+	/* Hack - ignore parameter */
+	(void) objc;
 
 	/* Get the name of the file to read */
 	fileName = Tcl_GetStringFromObj(objV[1], NULL);
