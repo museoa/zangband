@@ -2998,7 +2998,7 @@ static int see_wall(int dir, int y, int x)
 	    (c_ptr->feat <= FEAT_SHOP_TAIL)) return (FALSE);
 
 	/* Semi - transparent terrains */
-	if ((c_ptr->feat & 60) == 60) return (FALSE);
+	if ((c_ptr->feat & 0x60) == 0x60) return (FALSE);
 	
 	if ((c_ptr->feat == FEAT_GRASS) ||
 		(c_ptr->feat == FEAT_DIRT) ||
@@ -3552,7 +3552,7 @@ static bool run_test(void)
 
 		/* Analyze unknown grids and floors */
 		if (inv || cave_floor_grid(c_ptr) ||
-		    ((c_ptr->feat & 60) == 60 ))
+		    ((c_ptr->feat & 0x60) == 0x60 ))
 		{
 			/* Looking for open area */
 			if (find_openarea)
