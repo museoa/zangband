@@ -4663,6 +4663,9 @@ static void close_game_handle_death(void)
 			case 'c':
 			case 'C':
 			{
+				/* Remove options line, so we don't dump it */
+				clear_row(23);
+
 				/* Show char info */
 				show_info();
 				break;
