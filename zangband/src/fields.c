@@ -3149,6 +3149,10 @@ void field_action_door_unlock(s16b *field_ptr, void *input)
 		
 		/* Message */
 		msg_print("You failed to unlock the door.");
+		
+		/* We know the door is locked */
+		f_ptr->info |= FIELD_INFO_NFT_LOOK;
+		f_ptr->info &= ~(FIELD_INFO_NO_LOOK);
 	}
 }
 
@@ -3184,6 +3188,10 @@ void field_action_door_bash(s16b *field_ptr, void *input)
 		/* Delete the field */
 		delete_field_ptr(field_ptr);
 	}
+	
+	/* We know the door is jammed */
+	f_ptr->info |= FIELD_INFO_NFT_LOOK;
+	f_ptr->info &= ~(FIELD_INFO_NO_LOOK);
 }
 
 

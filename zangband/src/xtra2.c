@@ -2055,6 +2055,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 	cptr s1, s2, s3;
 
 	bool boring;
+	bool seen = FALSE;
 
 	int feat;
 
@@ -2419,21 +2420,33 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 
 				/* Preposition */
 				s2 = "on ";
+				
+				/* Hack - we've seen a field here */
+				seen = TRUE;
 			}
 		}
 		
 		/* Sometimes a field stops the feat from being mentioned */
 		if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NFT_LOOK))
 		{
-			if ((query != '\r') && (query != '\n'))
+			/* 
+			 * Only if we know about the field will it stop the
+			 * feat from being described.
+			 */
+			
+			/* If we have seen something */
+			if (seen)
 			{
-				/* Just exit */
-				break;
-			}
-			else
-			{
-				/* Back for more */
-				continue;
+				if ((query != '\r') && (query != '\n'))
+				{
+					/* Just exit */
+					break;
+				}
+				else
+				{
+					/* Back for more */
+					continue;
+				}	
 			}
 		}
 
