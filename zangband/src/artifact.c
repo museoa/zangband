@@ -1187,7 +1187,10 @@ static void apply_activation_power(object_type *o_ptr, cptr text, cptr desc, cpt
 		return;
 
 	/* Calculate charge time */
-	charge_min = pp / level;
+	if (level > 0)
+		charge_min = pp / level;
+	else
+		charge_min = pp;
 
 	/* Round to nice numbers */
 	if (charge_min >= 1000)
