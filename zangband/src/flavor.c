@@ -1678,11 +1678,11 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		}
 		else
 		{
-			/* calc effects of energy */
-			avgdam *= p_ptr->num_fire;
+			/* calc effects of energy  x2 */
+			avgdam *= (1 + p_ptr->num_fire);
 
 			/* rescale */
-			avgdam /= 2 * energy_use;
+			avgdam /= 4 * energy_use;
 			t = object_desc_num(t, avgdam);
 		}
 
