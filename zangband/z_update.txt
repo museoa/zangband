@@ -75,6 +75,8 @@ ZAngband 2.5.2:
 -Added 7 new corpse tiles, and one skeleton tile in 16x16.bmp  The tile used
  depends on the type of monster.  The function that picks which one to use
  is very stupid though.
+-Redid the traps code.  The type of traps you see are now level dependent.
+ There are new types... and some old types are nastier.
 
 
 ZAngband 2.5.1:
