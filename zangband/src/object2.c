@@ -183,9 +183,8 @@ void drop_object_list(s16b *o_idx_ptr, int x, int y)
 /*
  * Move an object from index i1 to index i2 in the object list
  *
- * This function must handle all possible places an object's index may be
- * recorded, and fix them up, otherwise strange things will happen if an
- * object is moved.
+ * This function only is designed to work on dungeon objects
+ * and monster-held objects.
  */
 static void compact_objects_aux(int i1, int i2)
 {
@@ -233,9 +232,6 @@ static void compact_objects_aux(int i1, int i2)
 		if (c_ptr->o_idx == i1) c_ptr->o_idx = i2;
     }
 
-    /* Repair player inventory */
-    if (p_ptr->inventory == i1) p_ptr->inventory = i2;
-
     /* Repair monster inventories */
     for (i = 0; i < m_max; i++)
     {
@@ -272,10 +268,6 @@ static void compact_objects_aux(int i1, int i2)
  *
  * After "compacting" (if needed), we "reorder" the objects into a more
  * compact order, and we reset the allocation info, and the "live" array.
- *
- * It is important that this function actually removes all "dead" objects,
- * because the savefile code assumes that it does so, and if it doesn't
- * it will create broken savefiles.
  */
 void compact_objects(int size)
 {
@@ -397,6 +389,9 @@ void compact_objects(int size)
 	for (i = o_max - 1; i >= 1; i--)
 	{
 		object_type *o_ptr = &o_list[i];
+		
+		/* Stop when we get to a held object */
+		if (o_ptr->held) break;
 
 		/* Skip real objects */
 		if (o_ptr->k_idx) continue;
