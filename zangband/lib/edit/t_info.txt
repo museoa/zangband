@@ -57,8 +57,9 @@ G:.:w
 W:0:4:0
 I:FEAT | NO_LOOK | NO_ENTER | NO_MAGIC | NO_OBJECT
 D:0:0:0:0:0:0:0:0
-F:10,field_action_wall_tunnel | 11,field_action_wall_gf
+F:10,field_action_wall_tunnel
 L:INTERT:action = ACT_TUNNEL
+L:TARGET:wall_gf()
 
 # Glyph of Warding
 N:2:glyph of warding
@@ -117,8 +118,8 @@ I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:6:125:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_door
 F:10,field_action_trap_disarm
-F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
+L:TARGET:trap_gf()
 
 # Pit
 N:7:pit
@@ -128,8 +129,8 @@ I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:5:125:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_pit
 F:10,field_action_trap_disarm
-F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
+L:TARGET:trap_gf()
 
 # Spiked Pit
 N:8:spiked pit
@@ -139,8 +140,8 @@ I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:5:125:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_spike
 F:10,field_action_trap_disarm
-F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
+L:TARGET:trap_gf()
 
 # Poison Pit
 N:9:spiked pit
@@ -150,8 +151,8 @@ I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:10:125:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_poison_pit
 F:10,field_action_trap_disarm
-F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
+L:TARGET:trap_gf()
 
 # evil rune
 N:10:evil rune
@@ -161,8 +162,8 @@ I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:5:50:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_curse
 F:10,field_action_trap_disarm
-F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
+L:TARGET:trap_gf()
 
 # strange rune
 N:11:strange rune
@@ -172,8 +173,8 @@ I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:10:50:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_teleport
 F:10,field_action_trap_disarm
-F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
+L:TARGET:trap_gf()
 
 # discolored spot
 N:12:discolored spot
@@ -183,8 +184,8 @@ I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:8:125:0:5:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_element
 F:10,field_action_trap_disarm
-F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
+L:TARGET:trap_gf()
 
 # discolored spot
 N:13:discolored spot
@@ -194,8 +195,8 @@ I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:10:125:0:5:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_ba_element
 F:10,field_action_trap_disarm
-F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
+L:TARGET:trap_gf()
 
 # gas trap
 N:14:gas trap
@@ -205,8 +206,8 @@ I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:5:125:0:5:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_gas
 F:10,field_action_trap_disarm
-F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
+L:TARGET:trap_gf()
 
 # compact rune
 N:15:compact rune
@@ -216,8 +217,8 @@ I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:10:50:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_trap
 F:10,field_action_trap_disarm
-F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
+L:TARGET:trap_gf()
 
 # dart trap
 N:16:dart trap
@@ -227,8 +228,8 @@ I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:5:125:0:3:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_temp_stat
 F:10,field_action_trap_disarm
-F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
+L:TARGET:trap_gf()
 
 # dart trap
 N:17:dart trap
@@ -238,8 +239,8 @@ I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:20:125:0:6:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_perm_stat
 F:10,field_action_trap_disarm
-F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
+L:TARGET:trap_gf()
 
 # twisted rune
 N:18:twisted rune
@@ -249,8 +250,8 @@ I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:40:125:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_lose_xp
 F:10,field_action_trap_disarm
-F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
+L:TARGET:trap_gf()
 
 # geometric rune
 N:19:geometric rune
@@ -260,8 +261,8 @@ I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:10:100:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_disenchant
 F:10,field_action_trap_disarm
-F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
+L:TARGET:trap_gf()
 
 # glowing rune
 N:20:glowing rune
@@ -271,8 +272,8 @@ I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:10:100:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_drop_item
 F:10,field_action_trap_disarm
-F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
+L:TARGET:trap_gf()
 
 # jagged rune
 N:21:jagged rune
@@ -282,8 +283,8 @@ I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:15:75:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_mutate
 F:10,field_action_trap_disarm
-F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
+L:TARGET:trap_gf()
 
 # fractured rune
 N:22:fractured rune
@@ -293,8 +294,8 @@ I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:50:125:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_new_life
 F:10,field_action_trap_disarm
-F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
+L:TARGET:trap_gf()
 
 # faded rune
 N:23:faded rune
@@ -304,8 +305,8 @@ I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:2:125:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_no_lite
 F:10,field_action_trap_disarm
-F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
+L:TARGET:trap_gf()
 
 # flashing rune
 N:24:flashing rune
@@ -315,8 +316,8 @@ I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:2:25:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_hunger
 F:10,field_action_trap_disarm
-F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
+L:TARGET:trap_gf()
 
 # weird rune
 N:25:weird rune
@@ -326,8 +327,8 @@ I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:10:75:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_no_gold
 F:10,field_action_trap_disarm
-F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
+L:TARGET:trap_gf()
 
 # shimmering rune
 N:26:shimmering rune
@@ -337,8 +338,8 @@ I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:5:125:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_haste_monster
 F:10,field_action_trap_disarm
-F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
+L:TARGET:trap_gf()
 
 # smelly rune
 N:27:smelly rune
@@ -348,8 +349,8 @@ I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:5:125:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_raise_mon
 F:10,field_action_trap_disarm
-F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
+L:TARGET:trap_gf()
 
 # intricate rune
 N:28:intricate rune
@@ -359,8 +360,8 @@ I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:5:100:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_drain_magic
 F:10,field_action_trap_disarm
-F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
+L:TARGET:trap_gf()
 
 # bright rune
 N:29:bright rune
@@ -370,8 +371,8 @@ I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:5:125:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_aggravate
 F:10,field_action_trap_disarm
-F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
+L:TARGET:trap_gf()
 
 # blurry rune
 N:30:blurry rune
@@ -381,8 +382,8 @@ I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:5:50:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_summon
 F:10,field_action_trap_disarm
-F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
+L:TARGET:trap_gf()
 
 # spiral rune
 N:31:spiral rune
@@ -392,8 +393,8 @@ I:FEAT | TRANS | NO_OBJECT | NO_LOOK
 D:5:75:0:0:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_lose_memory
 F:10,field_action_trap_disarm
-F:11,field_action_trap_gf
 L:INTERT:action = ACT_DISARM
+L:TARGET:trap_gf()
 
 # Locked door
 N:32:locked door
@@ -402,9 +403,10 @@ W:100:2:0
 I:NO_LOOK | MERGE
 D:0:0:0:0:0:0:255:255
 F:0,field_action_counter_init
-F:10,field_action_door_unlock | 11,field_action_door_gf
+F:10,field_action_door_unlock
 F:17,field_action_door_lock_monster
 L:INTERT:action = ACT_OPEN
+L:TARGET:door_gf()
 
 # Jammed door
 N:33:stuck door
@@ -413,9 +415,10 @@ W:100:2:0
 I:NO_LOOK | MERGE
 D:15:1:0:0:0:0:255:255
 F:0,field_action_counter_init
-F:10,field_action_door_bash | 11,field_action_door_gf
+F:10,field_action_door_bash
 F:17,field_action_door_jam_monster
 L:INTERT:action = ACT_OPEN
+L:TARGET:door_gf()
 
 #
 # Stores use the D: line in the following way.
