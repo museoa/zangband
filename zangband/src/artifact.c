@@ -2217,7 +2217,12 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 	{
 		int act;
 		
-		if (o_ptr->tval < TV_BOOTS)
+		if (o_ptr->tval == TV_BOW)
+		{
+			/* Hack - bows don't have major themes yet */
+			random_slay(o_ptr);
+		}
+		else if (o_ptr->tval < TV_BOOTS)
 		{
 			act = random_major_theme_weapon(o_ptr, level);
 			o_ptr->to_h += rand_range(5, 15);
