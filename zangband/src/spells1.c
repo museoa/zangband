@@ -3216,8 +3216,8 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		{
 			/* Standard damage -- also poisons / mutates player */
 			if (blind) msgf("You are hit by radiation!");
-			if (FLAG(p_ptr, TR_RES_POIS)) dam = (2 * dam + 2) / 5;
-			if (p_ptr->tim.oppose_pois) dam = (2 * dam + 2) / 5;
+			dam = resist(dam, res_pois_lvl);
+
 			take_hit(dam, killer);
 			if (res_pois_lvl())
 			{
