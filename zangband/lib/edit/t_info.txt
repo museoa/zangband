@@ -673,7 +673,7 @@ F:2,field_action_door_store
 F:19,field_action_issword_tester
 
 # Shieldsman
-N:65:Sheildsman
+N:65:Shieldsman
 G:2:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
@@ -708,7 +708,7 @@ D:1:75:127:0:100:0:0:42
 F:2,field_action_door_store
 F:19,field_action_isshield_tester
 
-# Sheildsman
+# Shieldsman
 N:69:Obscure Shieldsman
 G:2:s
 W:100:3:0
