@@ -68,10 +68,10 @@ void do_cmd_go_up(void)
 
 	/* Normal up stairs */
 	else if (c_ptr->feat == FEAT_LESS)
-#else 0
+#else /* 0 */
 	if (c_ptr->feat == FEAT_LESS)
 
-#endif 0
+#endif /* 0 */
 	{
 		if (!dun_level)
 		{
@@ -131,7 +131,7 @@ void do_cmd_go_up(void)
 
 				p_ptr->inside_quest = c_ptr->special;
 			}
-#endif 0
+#endif /* 0 */
 
 			/* Create a way back */
 			create_down_stair = TRUE;
@@ -209,9 +209,9 @@ void do_cmd_go_down(void)
 	}
 	/* Verify stairs */
 	else if ((c_ptr->feat != FEAT_MORE) && !fall_trap)
-#else 0
+#else /* 0 */
 	if ((c_ptr->feat != FEAT_MORE) && !fall_trap)
-#endif 0
+#endif /* 0 */
 
 	{
 		msg_print("I see no down staircase here.");
@@ -2433,7 +2433,7 @@ void do_cmd_stay(int pickup)
 		p_ptr->oldpy = 0;
 		p_ptr->leaving = TRUE;
 	}
-#endif 0
+#endif /* 0 */
 }
 
 

@@ -14,9 +14,6 @@
 # In line 481 of cave.c, delete the second-to-last character (a
 # 'y' with an accent) in the definition of image_monster_hack_ibm
 #
-# In cmd2.c there are two instances where each of #else and #endif
-# are followed by a '0'. Delete all four '0's.
-#
 
 
 #
