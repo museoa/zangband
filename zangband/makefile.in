@@ -42,7 +42,16 @@ ifndef VERBOSE
   VERBOSE = 0
 endif
 
-
+#
+# Standard configuration method.
+#
+define CONFIGURE
+	if [ -x ./config.status ] ; then \
+	    ./config.status --recheck && ./config.status; \
+	else \
+		./configure; \
+	fi
+endef
 
 cygwin = @cygwin@
 TK_PORT = @TK_PORT@
@@ -101,11 +110,7 @@ zangband: $(objs-y)
 ## Hack - make sure the build system is consistant.
 ##
 makefile: configure makefile.in
-	if [ -x ./config.status ] ; then \
-	    ./config.status --recheck && ./config.status; \
-	else \
-		./configure; \
-	fi
+	$(CONFIGURE)
 	
 configure: configure.in
 	aclocal
