@@ -231,7 +231,7 @@ if test -z "`${CC-cc} -c ${CFLAGS} $1 conftest.c 2>&1`"; then
 else
   eval $FLAG=no
 fi])
-if test $!FLAG = yes ; then
+if test ${!FLAG} = yes ; then
   CFLAGS="$1 $CFLAGS"
 fi
 ])
