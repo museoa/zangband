@@ -188,7 +188,13 @@ F:SUST_INT | SUST_WIS | SUST_CHR |
 F:INSTA_ART
 
 
-# Artifact 14 is unused
+N:14:of Elemental Mastery
+I:45:50:4
+W:90:50:2:300000
+F:STR | INT | DEX | SPEED | STEALTH | HIDE_TYPE |
+F:RES_FIRE | RES_COLD | RES_ACID | RES_ELEC | RES_POIS |
+F:TELEPATHY |
+F:INSTA_ART | ACTIVATE
 
 
 # Artifact 15 is unused
@@ -221,7 +227,13 @@ F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD |
 F:ACTIVATE | INSTA_ART
 
 
-# Artifact 18 is unused
+# The Robe of the Thaumaturgist
+
+N:18:of the Thaumaturgist
+I:36:2:4
+W:10:5:20:20000
+P:2:0d0:0:0:3
+F:INT | STEALTH | FREE_ACT | RES_CONF | RES_BLIND | RES_NEXUS | HIDE_TYPE
 
 
 # The Adamantite Plate Mail 'Soulkeeper'
@@ -297,18 +309,14 @@ P:16:1d4:-2:0:20
 F:INT | WIS | CON | HIDE_TYPE | INSTA_ART
 F:RES_ACID | RES_POIS | RES_CONF | ACTIVATE
 
+# The Metal Scale Mail 'Nemovebla'
 
-# The Leather Jacket 'of Shiva's Avatar'
-# A reward for 'The Old Castle' quest
-
-N:26:of Shiva's Avatar
-I:36:12:0
-W:52:30:120:150000
-P:12:1d2:0:0:20
-F:HOLD_LIFE 
-F:SUST_STR | SUST_DEX | SUST_CON | SUST_INT | SUST_WIS | SUST_CHR |
-F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | INSTA_ART
-
+N:26:'Nemovebla'
+I:37:3:4
+W:25:8:225:22000
+P:13:1d4:0:0:10
+F:STR | CON | RES_NEXUS | RES_NETHER | NO_TELE | SLOW_DIGEST | HIDE_TYPE
+F:INSTA_ART
 
 # The Soft Leather Armour 'Hithlomir'
 
@@ -327,9 +335,13 @@ W:35:3:60:25000
 P:11:1d1:-1:0:25
 F:DEX | HIDE_TYPE | RES_ACID | RES_SHARDS | INSTA_ART
 
+# The Leather Jacket of Melman
 
-#  Artifact 29 is unused
-
+N:29:of Melman
+I:36:12:2
+W:52:30:120:30000
+P:12:1d2:0:0:20
+F:HOLD_LIFE | INT | WIS | RES_FIRE | RES_COLD | INSTA_ART
 
 # The Small Metal Shield of Thorin
 
@@ -359,12 +371,10 @@ F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | SUST_STR | SUST_INT |
 F:SUST_WIS | SUST_DEX | SUST_CON | SUST_CHR | INSTA_ART
 
 
-# The Hard Leather Cap of Ben Franklin
-# A Wise Brilliant Scientist and Politician
-# A reward for 'The Old Castle' quest
+# The Hard Leather Cap of Sawall
 
-N:33:of Ben Franklin
-I:32:2:5
+N:33:of Sawall
+I:32:2:3
 W:52:20:15:10000
 P:2:0d0:0:0:18
 F:INT | WIS | CHR | SUST_INT | SUST_WIS | SUST_CHR | RES_BLIND
@@ -460,12 +470,9 @@ F:STR | WIS | CON | HIDE_TYPE | SPEED |
 F:RES_COLD | RES_FIRE | RES_LITE | RES_BLIND | RES_ELEC | RES_CONF |
 F:RES_CHAOS | LITE | SEE_INVIS | REGEN | ACTIVATE | INSTA_ART
 
+# The Cloak of Benedict
 
-# The Cloak of Houdini
-# Escape Artist and Spiritualist
-# A reward for 'The Old Castle' quest
-
-N:43:of Houdini
+N:43:of Benedict
 I:35:1:7
 W:52:20:10:10000
 P:1:0d0:0:0:19
@@ -646,14 +653,13 @@ P:6:1d1:0:0:20
 F:STR | CON | HIDE_TYPE | SPEED | INSTA_ART
 
 
-# The Pair of Soft Leather Boots of Shiva's Avatar
-# Default reward for The Cloning Pits
+# The Pair of Soft Leather Boots of Bleys
 
-N:63:of Shiva's Avatar
+N:63:of Bleys
 I:30:2:4
 W:52:20:20:100000
 P:4:1d1:4:4:16
-F:SPEED | DEX | RES_NEXUS | FREE_ACT | INSTA_ART
+F:SPEED | DEX | RES_NEXUS | SUST_DEX | FREE_ACT | INSTA_ART
 
 
 # The Main Gauche of Maedhros
@@ -1041,15 +1047,15 @@ F:STEALTH | RES_DARK | INFRA | SPEED |
 F:BRAND_COLD | SLAY_UNDEAD | RES_COLD | SEE_INVIS | SHOW_MODS | THROW
 F:INSTA_ART
 
-# The Lance of Eorlingas
+# The Spear 'Soulsucker'
 
-N:100:of Eorlingas
-I:22:20:2
-W:35:23:360:55000
-P:0:1d22:3:21:0
-F:DEX | HIDE_TYPE |
-F:SLAY_EVIL | SLAY_TROLL | SLAY_ORC | SEE_INVIS | SHOW_MODS | INSTA_ART
-
+N:100:'Soulsucker'
+I:22:2:4
+W:35:20:50:33600
+P:0:1d8:16:20:0
+F:STEALTH | SEARCH | VAMPIRIC | BRAND_POIS | RES_POIS | RES_DARK | 
+F:RES_NETHER | HIDE_TYPE | SHOW_MODS | SEE_INVIS | DRAIN_EXP
+F:INSTA_ART
 
 # The Great Axe of Durin
 
@@ -1201,15 +1207,16 @@ F:SLAY_ANIMAL | BRAND_FIRE | BRAND_ELEC | SLAY_TROLL | SLAY_ORC |
 F:RES_ELEC | RES_FIRE | RES_DARK | SHOW_MODS | LITE | INSTA_ART
 
 
-# The Morning Star 'Bloodspike'
 
-N:114:'Bloodspike'
-I:21:12:4
-W:35:30:150:30000
-P:0:2d6:8:22:0
-F:STR | HIDE_TYPE |
-F:SLAY_ANIMAL | SLAY_TROLL | SLAY_ORC | RES_NEXUS | SEE_INVIS |
-F:SHOW_MODS | INSTA_ART
+# The Ball-and-Chain 'Whirlwind'
+
+N:114:'Whirlwind'
+I:21:6:2
+W:60:35:150:79000
+P:0:2d4:13:18:0
+F:DEX | SPEED | BLOWS | CHAOTIC | SLAY_EVIL | SUST_DEX | 
+F:FREE_ACT | RES_FEAR | RES_NEXUS | RES_CHAOS | NO_TELE |
+F:SHOW_MODS | FEATHER | ACTIVATE | INSTA_ART | HIDE_TYPE |
 
 
 # The Morning Star 'Firestar'
@@ -1221,14 +1228,14 @@ P:0:2d6:5:7:2
 F:BRAND_FIRE | RES_FIRE | ACTIVATE | SHOW_MODS | LITE | INSTA_ART
 
 
-# The Mace 'Taratol'
+# The Scythe of Energy
 
-N:116:'Taratol'
-I:21:5:0
-W:35:15:200:50000
-P:0:3d4:12:12:0
-F:KILL_DRAGON | BRAND_ELEC | IM_ELEC | ACTIVATE | SHOW_MODS | INSTA_ART
-
+N:116:of Energy
+I:22:17:4
+W:70:25:250:50000
+P:0:5d3:20:20:0
+F:CON | BRAND_ELEC | IM_ELEC | HIDE_TYPE | SHOW_MODS | KILL_DRAGON
+F:INSTA_ART | ACTIVATE
 
 # The War Hammer of Aule
 
@@ -1296,17 +1303,14 @@ F:WIS | INFRA | HIDE_TYPE | BLESSED |
 F:BRAND_COLD | SLAY_ORC | RES_COLD | RES_LITE | LITE | REGEN |
 F:ACTIVATE | SHOW_MODS | INSTA_ART
 
+# The Sling 'Catapult'
 
-# The Executioner's Sword 'Slayer'
-# Default reward for 'The Old Castle' quest
-
-N:123:'Slayer'
-I:23:28:0
-W:52:40:260:200000
-P:0:4d5:15:15:0
-F:VAMPIRIC | HOLD_LIFE | SLAY_UNDEAD | SLAY_EVIL |
-F:RES_FEAR | SHOW_MODS | INSTA_ART
-
+N:123:'Catapult'
+I:19:2:2
+W:10:3:5:7500
+P:0:0d0:20:10:0
+F:DEX | INFRA | HIDE_TYPE | SHOW_MODS | XTRA_MIGHT | ACTIVATE
+F:INSTA_ART
 
 # The Long Bow 'Belthronding'
 
@@ -1334,3 +1338,11 @@ W:80:25:60:50000
 P:0:0d0:10:14:0
 F:SPEED | RES_FIRE | XTRA_MIGHT | ACTIVATE | SHOW_MODS | INSTA_ART
 
+# The Short Bow of Marksmanship
+
+N:127:of Marksmanship
+I:19:12:4
+W:25:20:30:28000
+P:0:0d0:35:15:0
+F:DEX | SEARCH | INFRA | SUST_DEX | RES_BLIND | HIDE_TYPE | SHOW_MODS | 
+F:LITE | SEE_INVIS | XTRA_MIGHT | XTRA_SHOTS | INSTA_ART
