@@ -1346,6 +1346,8 @@ bool make_attack_normal(int m_idx)
 						}
 					}
 					take_hit(damage, ddesc);
+
+					break;
 				}
 				case RBE_EXP_VAMP:
 				{
