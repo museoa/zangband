@@ -1126,7 +1126,7 @@ static void get_history(void)
 		}
           	case RACE_GHOUL:
 		{
-          		/* The same as Zombie, for now */
+			/* The same as Zombie, for now */
 			chart = 107;
 			break;
 		}
@@ -1234,7 +1234,7 @@ static void get_ahw(void)
 		p_ptr->ht = randnor(rp_ptr->m_b_ht, rp_ptr->m_m_ht);
 		h_percent = (int)(p_ptr->ht) * 100 / (int)(rp_ptr->m_b_ht);
 		p_ptr->wt = randnor((int)(rp_ptr->m_b_wt) * h_percent / 100,
-			(int)(rp_ptr->m_m_wt) * h_percent / 300 );
+			(int)(rp_ptr->m_m_wt) * h_percent / 300);
 	}
 	/* Calculate the height/weight for females */
 	else if (p_ptr->psex == SEX_FEMALE)
@@ -1243,7 +1243,7 @@ static void get_ahw(void)
 
 		h_percent = (int)(p_ptr->ht) * 100 / (int)(rp_ptr->f_b_ht);
 		p_ptr->wt = randnor((int)(rp_ptr->f_b_wt) * h_percent / 100,
-			(int)(rp_ptr->f_m_wt) * h_percent / 300 );
+			(int)(rp_ptr->f_m_wt) * h_percent / 300);
 	}
 }
 
@@ -1488,11 +1488,11 @@ static void player_outfit(void)
 		case RACE_ZOMBIE:
 		case RACE_VAMPIRE:
 		case RACE_SPECTRE:
-	        case RACE_GHOUL:
+		case RACE_GHOUL:
 		{
 			/* Scrolls of satisfy hunger */
-			object_prep(q_ptr, lookup_kind(TV_SCROLL,
-				 SV_SCROLL_SATISFY_HUNGER));
+			object_prep(q_ptr,
+			            lookup_kind(TV_SCROLL, SV_SCROLL_SATISFY_HUNGER));
 			q_ptr->number = (byte)rand_range(2, 5);
 			object_aware(q_ptr);
 			object_known(q_ptr);
@@ -1639,7 +1639,9 @@ static void player_outfit(void)
 #define QUESTION_COL	3	
 #define SEX_COL			0
 #define RACE_COL		12
+#define RACE_AUX_COL    27
 #define CLASS_COL		27
+#define CLASS_AUX_COL   48
 #define REALM1_COL		48
 #define REALM2_COL		60
 
@@ -1665,23 +1667,33 @@ static void clear_question(void)
  * Generic "get choice from menu" function
  */
 static int get_player_choice(cptr *choices, int num, int col, int wid,
-	 cptr helpfile)
+                             cptr helpfile, void (*hook)(cptr))
 {
 	int top = 0, bot = 13, cur = 0;
 	int i, dir;
 	char c;
 	char buf[80];
 	bool done = FALSE;
+	int hgt;
 
 
 	/* Autoselect if able */
 	if (num == 1) done = TRUE;
 
+	/* Clear */
+	for (i = TABLE_ROW; i < Term->hgt; i++)
+	{
+		/* Clear */
+		Term_erase(col, i, Term->wid - wid);	
+	}
+
 	/* Choose */
 	while (TRUE)
 	{
+		hgt = Term->hgt - TABLE_ROW - 1;
+
 		/* Redraw the list */
-		for (i = 0; ((i < num) && (i <= bot - top));  i++)
+		for (i = 0; ((i + top < num) && (i <= hgt)); i++)
 		{
 			if (i + top < 26)
 			{
@@ -1708,10 +1720,13 @@ static int get_player_choice(cptr *choices, int num, int col, int wid,
 			}
 		}
 
+		if (done) return (cur);
+
+		/* Display auxiliary information if any is available. */
+		if (hook) hook(choices[cur]);
+
 		/* Move the cursor */
 		put_str("", TABLE_ROW + cur - top, col);
-
-		if (done) return (cur);
 
 		c = inkey();
 
@@ -1731,16 +1746,9 @@ static int get_player_choice(cptr *choices, int num, int col, int wid,
 			cur = randint0(num);
 
 			/* Move it onto the screen */
-			if (cur < top)
+			if ((cur < top) || (cur > top + hgt))
 			{
-				bot -= top - cur;
 				top = cur;
-			}
-
-			if (cur > bot)
-			{
-				top += cur - bot;
-				bot = cur;
 			}
 
 			/* Done */
@@ -1781,7 +1789,6 @@ static int get_player_choice(cptr *choices, int num, int col, int wid,
 				{
 					/* Scroll up */
 					top--;
-					bot--;
 				}
 			}
 
@@ -1794,11 +1801,10 @@ static int get_player_choice(cptr *choices, int num, int col, int wid,
 					cur++;
 				}
 
-				if ((bot < (num - 1)) && ((bot - cur) < 4))
+				if ((top + hgt < (num - 1)) && ((top + hgt - cur) < 4))
 				{
 					/* Scroll down */
 					top++;
-					bot++;
 				}
 			}
 		}
@@ -1821,16 +1827,9 @@ static int get_player_choice(cptr *choices, int num, int col, int wid,
 				cur = choice;
 
 				/* Move it onto the screen */
-				if (cur < top)
+				if ((cur < top) || (cur > top + hgt))
 				{
-					bot -= top - cur;
 					top = cur;
-				}
-
-				if (cur > bot)
-				{
-					top += cur - bot;
-					bot = cur;
 				}
 
 				/* Done */
@@ -1891,7 +1890,7 @@ static void ang_sort_swap_hook_string(const vptr u, const vptr v, int a, int b)
  * Present a sorted list to the player, and get a selection
  */
 static int get_player_sort_choice(cptr *choices, int num, int col, int wid,
-	 cptr helpfile)
+                                  cptr helpfile, void (*hook)(cptr))
 {
 	int i;
 	int choice;
@@ -1913,7 +1912,7 @@ static int get_player_sort_choice(cptr *choices, int num, int col, int wid,
 	ang_sort(strings, NULL, num);
 
 	/* Get the choice */
-	choice = get_player_choice(strings, num, col, wid, helpfile);
+	choice = get_player_choice(strings, num, col, wid, helpfile, hook);
 
 	/* Invert the choice */
 	for (i = 0; i < num; i++)
@@ -1954,7 +1953,7 @@ static bool get_player_sex(void)
 	}
 
 	p_ptr->psex = get_player_choice(genders, MAX_SEXES, SEX_COL, 15,
-		"charattr.txt#TheSexes");
+                                    "charattr.txt#TheSexes", NULL);
 
 	/* No selection? */
 	if (p_ptr->psex == INVALID_CHOICE)
@@ -1967,6 +1966,39 @@ static bool get_player_sex(void)
 	sp_ptr = &sex_info[p_ptr->psex];
 
 	return (TRUE);
+}
+
+
+/*
+ * Display additional information about each race during the selection.
+ */
+static void race_aux_hook(cptr r_str)
+{
+	int race, i;
+	char s[30];
+
+	/* Extract the proper race index from the string. */
+	for (race = 0; race < MAX_RACES; race++)
+	{
+		if (!strcmp(r_str, race_info[race].title)) break;
+	}
+
+	if (race == MAX_RACES) return;
+
+	/* Display relevant details. */
+	for (i = 0; i < A_MAX; i++)
+	{
+		sprintf(s, "%s%+d", stat_names_reduced[i],
+		race_info[race].r_adj[i]);
+		Term_putstr(RACE_AUX_COL, TABLE_ROW + i, -1, TERM_WHITE, s);
+	}
+
+	sprintf(s, "Hit die: %d ", race_info[race].r_mhp);
+	Term_putstr(RACE_AUX_COL, TABLE_ROW + A_MAX, -1, TERM_WHITE, s);
+	sprintf(s, "Experience: %d%%", race_info[race].r_exp);
+	Term_putstr(RACE_AUX_COL, TABLE_ROW + A_MAX + 1, -1, TERM_WHITE, s);
+	sprintf(s, "Infravision: %d ft ", race_info[race].infra * 10);
+	Term_putstr(RACE_AUX_COL, TABLE_ROW + A_MAX + 2, -1, TERM_WHITE, s);
 }
 
 
@@ -1989,7 +2021,8 @@ static bool get_player_race(void)
 	}
 
 	p_ptr->prace = get_player_sort_choice(races, MAX_RACES, RACE_COL, 15,
-		"charattr.txt#TheRaces");
+                                          "charattr.txt#TheRaces",
+                                          race_aux_hook);
 
 	/* No selection? */
 	if (p_ptr->prace == INVALID_CHOICE)
@@ -2017,6 +2050,41 @@ static bool get_player_race(void)
 
 
 /*
+ * Display additional information about each class during the selection.
+ */
+static void class_aux_hook(cptr c_str)
+{
+	int class_idx, i;
+	char s[128];
+
+	/* Extract the proper class index from the string. */
+	for (class_idx = 0; class_idx < MAX_CLASS; class_idx++)
+	{
+		if (!strcmp(c_str, class_info[class_idx].title)) break;
+
+		/* Also test for titles in parentheses */
+		sprintf(s, "(%s)", class_info[class_idx].title);
+		if (!strcmp(c_str, s)) break;
+	}
+
+	if (class_idx == MAX_CLASS) return;
+
+	/* Display relevant details. */
+	for (i = 0; i < A_MAX; i++)
+	{
+		sprintf(s, "%s%+d", stat_names_reduced[i],
+		class_info[class_idx].c_adj[i]);
+		Term_putstr(CLASS_AUX_COL, TABLE_ROW + i, -1, TERM_WHITE, s);
+	}
+
+	sprintf(s, "Hit die: %d ", class_info[class_idx].c_mhp);
+	Term_putstr(CLASS_AUX_COL, TABLE_ROW + A_MAX, -1, TERM_WHITE, s);
+	sprintf(s, "Experience: %d%%", class_info[class_idx].c_exp);
+	Term_putstr(CLASS_AUX_COL, TABLE_ROW + A_MAX + 1, -1, TERM_WHITE, s);
+}
+
+
+/*
  * Player class
  */
 static bool get_player_class(void)
@@ -2032,7 +2100,7 @@ static bool get_player_class(void)
 	Term_putstr(QUESTION_COL, QUESTION_ROW + 1, -1, TERM_WHITE,
 	    "Any entries in parentheses should only be used by advanced players.");
 
-	/* Tabulate races */
+	/* Tabulate classes */
 	for (i = 0; i < MAX_CLASS; i++)
 	{
 		/* Analyze */
@@ -2050,7 +2118,8 @@ static bool get_player_class(void)
 	}
 
 	p_ptr->pclass = get_player_choice(classes, MAX_CLASS, CLASS_COL, 20,
-		"charattr.txt#TheClasses");
+                                      "charattr.txt#TheClasses",
+                                      class_aux_hook);
 
 	/* No selection? */
 	if (p_ptr->pclass == INVALID_CHOICE)
@@ -2119,7 +2188,7 @@ static bool get_player_realms(void)
 		"Nature has both defensive and offensive spells.");
 
 	choose = get_player_choice(realms, count, REALM1_COL, 10,
-		"magic.txt#MagicRealms");
+                               "magic.txt#MagicRealms", NULL);
 
 	/* No selection? */
 	if (choose == INVALID_CHOICE) return (FALSE);
@@ -2153,7 +2222,7 @@ static bool get_player_realms(void)
 	if (!count) return (TRUE);
 
 	choose = get_player_choice(realms, count, REALM2_COL, 10,
-		"magic.txt#MagicRealms");
+                               "magic.txt#MagicRealms", NULL);
 
 	/* No selection? */
 	if (choose == INVALID_CHOICE) return (FALSE);
