@@ -111,6 +111,12 @@ void place_random_door(int y, int x)
 {
 	int tmp;
 
+	/* Making a door on top of a door is problematical */
+	if (field_is_type(cave[y][x].fld_idx, FTYPE_DOOR))
+	{
+		return;
+	}	
+	
 	/* Invisible wall */
 	if (ironman_nightmare && !rand_int(666))
 	{
