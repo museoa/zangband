@@ -1724,6 +1724,9 @@ void Term_redraw(void)
 errr Term_redraw_section(int x1, int y1, int x2, int y2)
 {
 	int i, j;
+	
+	int bx1, bx2;
+	int cx1, cx2;
 
 	char *c_ptr;
 
@@ -1736,17 +1739,42 @@ errr Term_redraw_section(int x1, int y1, int x2, int y2)
 	/* Set y limits */
 	Term->y1 = y1;
 	Term->y2 = y2;
+	
+	/* Get limits for bigtile */
+	bx1 = x1;
+	if ((y1 < Term->scr->big_y1) || (y1 > Term->scr->big_y2))
+	{
+		bx1  -= (x1 - Term->scr->big_x1 + 1) / 2;
+	}
+	
+	bx2 = x2;
+	if ((y2 < Term->scr->big_y1) || (y2 > Term->scr->big_y2))
+	{
+		bx2  -= (x2 - Term->scr->big_x1 + 1) / 2;
+	}
 
 	/* Set the x limits */
 	for (i = Term->y1; i <= Term->y2; i++)
 	{
-		Term->x1[i] = x1;
-		Term->x2[i] = x2;
+		/* Bigtile mode? */
+		if ((i >= Term->scr->big_y1) && (i <= Term->scr->big_y2))
+		{
+			cx1 = bx1;
+			cx2 = bx2;
+		}
+		else
+		{
+			cx1 = x1;
+			cx2 = x2;
+		}
+		
+		Term->x1[i] = cx1;
+		Term->x2[i] = cx2;
 
 		c_ptr = Term->old->c[i];
 
 		/* Clear the section so it is redrawn */
-		for (j = x1; j <= x2; j++)
+		for (j = cx1; j <= cx2; j++)
 		{
 			/* Hack - set the old character to "none" */
 			c_ptr[j] = 0;
