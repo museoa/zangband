@@ -112,7 +112,6 @@ s16b rg_cnt = 0;	/* Number of live regions */
 s16b q_max = 1;	/* Number of allocated quests */
 
 s16b hack_m_idx = 0;	/* Hack -- see "process_monsters()" */
-s16b hack_m_idx_ii = 0;
 
 /* Can we get rid of this at all? */
 char summon_kin_type;	/* Hack, by Julian Lighton: summon 'relatives' */

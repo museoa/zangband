@@ -1678,7 +1678,7 @@ void update_monsters(bool full)
  * This is the only function which may place a monster in the dungeon,
  * except for the savefile loading code.
  */
-bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
+monster_type *place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
                        bool pet)
 {
 	int i;
@@ -1693,16 +1693,16 @@ bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
 	byte flags;
 	
 	/* Paranoia */
-	if (!r_idx) return (FALSE);
+	if (!r_idx) return (NULL);
 
 	/* Paranoia */
-	if (!r_ptr->name) return (FALSE);
+	if (!r_ptr->name) return (NULL);
 	
 	/* Lookup the name of the monster */
 	name = (r_name + r_ptr->name);
 
 	/* Verify location */
-	if (!in_bounds2(x, y)) return (FALSE);
+	if (!in_bounds2(x, y)) return (NULL);
 
 	/* Access the location */
 	c_ptr = area(x, y);
@@ -1710,23 +1710,23 @@ bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
 	/* Walls also stops generation if we aren't ghostly */
 	if (cave_wall_grid(c_ptr) && !(FLAG(r_ptr, RF_PASS_WALL)))
 	{
-		return (FALSE);
+		return (NULL);
 	}
 
 	/* Not if other monster is here */
-	if (c_ptr->m_idx) return (FALSE);
+	if (c_ptr->m_idx) return (NULL);
 
 	/* Not if player is here */
-	if ((y == p_ptr->py) && (x == p_ptr->px)) return (FALSE);
+	if ((y == p_ptr->py) && (x == p_ptr->px)) return (NULL);
 	
-	if (!test_monster_square(c_ptr, r_ptr)) return (FALSE);
+	if (!test_monster_square(c_ptr, r_ptr)) return (NULL);
 
 	/* Hack -- "unique" monsters must be "unique" */
 	if ((FLAG(r_ptr, RF_UNIQUE) || FLAG(r_ptr, RF_UNIQUE_7))
 		&& (r_ptr->cur_num >= r_ptr->max_num))
 	{
 		/* Cannot create */
-		return (FALSE);
+		return (NULL);
 	}
 
 	/* Depth monsters may NOT be created out of depth, unless in Nightmare mode */
@@ -1734,7 +1734,7 @@ bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
 		&& (!ironman_nightmare || FLAG(r_ptr, RF_QUESTOR)))
 	{
 		/* Cannot create */
-		return (FALSE);
+		return (NULL);
 	}
 
 	/* 
@@ -1750,7 +1750,7 @@ bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
 			   (monster_type *) NULL, &flags);
 
 	/* Get result */
-	if (!(flags & (MEG_DO_MOVE))) return (FALSE);
+	if (!(flags & (MEG_DO_MOVE))) return (NULL);
 
 	/* Powerful monster */
 	if (r_ptr->level > p_ptr->depth)
@@ -1789,11 +1789,9 @@ bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
 
 	/* Make a new monster */
 	c_ptr->m_idx = m_pop();
-	hack_m_idx_ii = c_ptr->m_idx;
 
 	/* Mega-Hack -- catch "failure" */
-	if (!c_ptr->m_idx) return (FALSE);
-
+	if (!c_ptr->m_idx) return (NULL);
 
 	/* Get a new monster record */
 	m_ptr = &m_list[c_ptr->m_idx];
@@ -1926,7 +1924,7 @@ bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
 	if (FLAG(r_ptr, RF_ATTR_MULTI)) shimmer_monsters = TRUE;
 
 	/* Success */
-	return (TRUE);
+	return (m_ptr);
 }
 
 
@@ -2089,22 +2087,23 @@ static bool place_monster_okay(int r_idx)
  * Note the use of the new "monster allocation table" code to restrict
  * the "get_mon_num()" function to "legal" escort types.
  */
-bool place_monster_aux(int x, int y, int r_idx, bool slp, bool grp,
+monster_type *place_monster_aux(int x, int y, int r_idx, bool slp, bool grp,
                        bool friendly, bool pet, bool summon)
 {
 	int i;
 	monster_race *r_ptr = &r_info[r_idx];
 	cave_type *c_ptr;
 
+	monster_type *m_ptr;
+
 
 	/* Place one monster, or fail */
-	if (!place_monster_one(x, y, r_idx, slp, friendly, pet))
-		return (FALSE);
+	m_ptr = place_monster_one(x, y, r_idx, slp, friendly, pet);
 
+	if (!m_ptr) return (NULL);
 
 	/* Require the "group" flag */
-	if (!grp) return (TRUE);
-
+	if (!grp) return (m_ptr);
 
 	/* Friends for certain monsters */
 	if (FLAG(r_ptr, RF_FRIENDS))
@@ -2167,7 +2166,7 @@ bool place_monster_aux(int x, int y, int r_idx, bool slp, bool grp,
 	}
 
 	/* Success */
-	return (TRUE);
+	return (m_ptr);
 }
 
 
@@ -2715,13 +2714,14 @@ bool summon_specific(int who, int x1, int y1, int req_lev, int type, bool group,
 /*
  * A "dangerous" function, creates a pet of the specified type
  */
-bool summon_named_creature(int x1, int y1, int r_idx, bool slp, bool group_ok,
+monster_type *summon_named_creature(int x1, int y1, int r_idx, bool slp, bool group_ok,
                            bool pet)
 {
 	int i, x, y;
-	bool success = FALSE;
 
 	cave_type *c_ptr;
+	
+	monster_type *m_ptr = NULL;
 
 	/* Paranoia */
 	/* if (!r_idx) return; */
@@ -2748,14 +2748,11 @@ bool summon_named_creature(int x1, int y1, int r_idx, bool slp, bool group_ok,
 		if (!cave_empty_grid(c_ptr)) continue;
 
 		/* Place it (allow groups) */
-		if (place_monster_aux(x, y, r_idx, slp, group_ok, FALSE, pet, TRUE))
-		{
-			success = TRUE;
-			break;
-		}
+		m_ptr = place_monster_aux(x, y, r_idx, slp, group_ok, FALSE, pet, TRUE);
+		if (m_ptr) break;
 	}
 
-	return success;
+	return (m_ptr);
 }
 
 
@@ -2764,13 +2761,12 @@ bool summon_named_creature(int x1, int y1, int r_idx, bool slp, bool group_ok,
  *
  * Note that "reproduction" REQUIRES empty space.
  */
-bool multiply_monster(int m_idx, bool clone, bool friendly, bool pet)
+monster_type *multiply_monster(int m_idx, bool clone, bool friendly, bool pet)
 {
 	monster_type *m_ptr = &m_list[m_idx];
+	monster_type *t_ptr = NULL;
 
 	int i, y, x;
-
-	bool result = FALSE;
 
 	cave_type *c_ptr;
 
@@ -2793,17 +2789,16 @@ bool multiply_monster(int m_idx, bool clone, bool friendly, bool pet)
 		if (!cave_empty_grid(c_ptr)) continue;
 
 		/* Create a new monster (awake, no groups) */
-		result =
-			place_monster_aux(x, y, m_ptr->r_idx, FALSE, FALSE, friendly, pet, TRUE);
+		t_ptr = place_monster_aux(x, y, m_ptr->r_idx, FALSE, FALSE, friendly, pet, TRUE);
 
 		/* Done */
 		break;
 	}
 
-	if (clone && result) m_list[hack_m_idx_ii].smart |= SM_CLONED;
+	if (clone && t_ptr) t_ptr->smart |= SM_CLONED;
 
 	/* Result */
-	return (result);
+	return (t_ptr);
 }
 
 

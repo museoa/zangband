@@ -127,7 +127,6 @@ extern s16b fld_cnt;
 extern s16b rg_max;
 extern s16b rg_cnt;
 extern s16b hack_m_idx;
-extern s16b hack_m_idx_ii;
 extern int total_friends;
 extern s32b total_friend_levels;
 extern s32b friend_align;
@@ -509,18 +508,18 @@ extern void update_mon_vis(u16b r_idx, int increment);
 extern void update_mon(int m_idx, bool full);
 extern void update_monsters(bool full);
 extern bool test_monster_square(cave_type *c_ptr, monster_race *r_ptr);
-extern bool place_monster_aux(int x, int y, int r_idx, bool slp, bool grp,
+extern monster_type *place_monster_aux(int x, int y, int r_idx, bool slp, bool grp,
 							  bool friendly, bool pet, bool summon);
 extern bool place_monster(int x, int y, bool slp, bool grp, int deltalevel);
 extern bool alloc_horde(int x, int y);
 extern bool alloc_monster(int dis, bool slp, int delta_level);
 extern bool summon_specific(int who, int x1, int y1, int lev, int type,
 							bool group, bool friendly, bool pet);
-extern bool summon_named_creature(int x1, int y1, int r_idx, bool slp,
+extern monster_type *summon_named_creature(int x1, int y1, int r_idx, bool slp,
 								  bool group_ok, bool pet);
-extern bool multiply_monster(int m_idx, bool clone, bool friendly, bool pet);
+extern monster_type *multiply_monster(int m_idx, bool clone, bool friendly, bool pet);
 extern void update_smart_learn(int m_idx, int what);
-extern bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
+extern monster_type *place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
 							  bool pet);
 
 /* monster3.c (currently in monster1.c) */

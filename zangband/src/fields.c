@@ -84,11 +84,9 @@ static void notice_field(field_type *f_ptr)
 
 
 /*
- * Delete a dungeon field
+ * Delete a field
  *
  * Handle "lists" of fields correctly.
- *
- * Given a pointer to a s16b that points to this fld_idx.
  */
 void delete_field_ptr(field_type *f_ptr)
 {
@@ -117,12 +115,8 @@ void delete_field_ptr(field_type *f_ptr)
 				c_ptr->fld_idx = f_ptr->next_f_idx;
 			}
 			
-			/* Refuse "illegal" locations */
-			if (in_boundsp(x, y))
-			{
-				/* Note + Lite the spot */
-				note_spot(x, y);
-			}
+			/* Notice the change */
+			notice_field(f_ptr);
 
 			/* Wipe the field */
 			field_wipe(f_ptr);
@@ -146,29 +140,8 @@ void delete_field_ptr(field_type *f_ptr)
 
 /*
  * Deletes all fields at given location
- */
-void delete_field(int x, int y)
-{
-	cave_type *c_ptr;
-
-	/* Refuse "illegal" locations */
-	if (!in_bounds2(x, y)) return;
-
-	/* Grid */
-	c_ptr = area(x, y);
-
-	delete_field_location(c_ptr);
-
-	/* Paranoia */
-	if (!in_boundsp(x, y)) return;
-
-	/* Note + Lite the spot */
-	if (character_dungeon) note_spot(x, y);
-}
-
-
-/*
- * Deletes all fields at given location
+ *
+ * Note it does not display the changes on screen
  */
 void delete_field_location(cave_type *c_ptr)
 {
@@ -187,6 +160,29 @@ void delete_field_location(cave_type *c_ptr)
 
 	/* Nothing left */
 	c_ptr->fld_idx = 0;
+}
+
+
+/*
+ * Deletes all fields at given location
+ */
+void delete_field(int x, int y)
+{
+	cave_type *c_ptr;
+
+	/* Refuse "illegal" locations */
+	if (!in_bounds2(x, y)) return;
+
+	/* Grid */
+	c_ptr = area(x, y);
+
+	delete_field_location(c_ptr);
+
+	/* Paranoia */
+	if (!in_boundsp(x, y)) return;
+
+	/* Note + Lite the spot */
+	if (character_dungeon) note_spot(x, y);
 }
 
 
@@ -1423,15 +1419,17 @@ bool field_action_corpse_decay(field_type *f_ptr, va_list vp)
 	/* Monster race */
 	u16b r_idx = ((u16b)f_ptr->data[1]) * 256 + f_ptr->data[2];
 
+	monster_type *m_ptr;
+
 	/* Hack - ignore 'vp' */
 	(void) vp;
-
-
+	
 	if (ironman_nightmare)
 	{
 		/* Make a monster nearby if possible */
-		if (summon_named_creature(f_ptr->fx, f_ptr->fy,
-								  r_idx, FALSE, FALSE, FALSE))
+		m_ptr = summon_named_creature(f_ptr->fx, f_ptr->fy,
+								  r_idx, FALSE, FALSE, FALSE);
+		if (m_ptr)
 		{
 			if (player_has_los_grid(parea(f_ptr->fx, f_ptr->fy)))
 			{
@@ -1439,7 +1437,7 @@ bool field_action_corpse_decay(field_type *f_ptr, va_list vp)
 			}
 
 			/* Set the cloned flag, so no treasure is dropped */
-			m_list[hack_m_idx_ii].smart |= SM_CLONED;
+			m_ptr->smart |= SM_CLONED;
 		}
 
 		/* Paranoia */
@@ -1477,13 +1475,16 @@ bool field_action_corpse_raise(field_type *f_ptr, va_list vp)
 
 	/* Monster race */
 	u16b r_idx = ((u16b)f_ptr->data[1]) * 256 + f_ptr->data[2];
-
+	
 	/* Make a monster nearby if possible */
-	if (summon_named_creature(f_ptr->fx, f_ptr->fy,
-							  r_idx, FALSE, FALSE, want_pet))
+	monster_type *m_ptr = summon_named_creature(f_ptr->fx, f_ptr->fy,
+							  r_idx, FALSE, FALSE, want_pet);
+
+	/* Success? */
+	if (m_ptr)
 	{
 		/* Set the cloned flag, so no treasure is dropped */
-		m_list[hack_m_idx_ii].smart |= SM_CLONED;
+		m_ptr->smart |= SM_CLONED;
 	}
 
 	/* Delete the field */
