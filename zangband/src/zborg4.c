@@ -1179,14 +1179,33 @@ static void borg_notice_lite(void)
 	{
 		object_kind *k_ptr = &k_info[l_ptr->k_idx];
 
-		/* No fuel means no radius */
-		if (l_ptr->timeout || (l_ptr->kn_flags3 & TR3_LITE))
+		/* If it is a torch with fuel or everburning */
+		if ((k_ptr->sval == SV_LITE_TORCH) &&
+			(l_ptr->timeout ||
+			(l_ptr->kn_flags3 & TR3_LITE)))
+
 		{
 			/* Torches -- radius one */
-			if (k_ptr->sval == SV_LITE_TORCH) bp_ptr->cur_lite += 1;
-
-			/* Lanterns -- radius two */
-			if (k_ptr->sval == SV_LITE_LANTERN) bp_ptr->cur_lite += 2;
+			bp_ptr->cur_lite += 1;
+		}
+		
+		/* If it is a Lantern */
+		if (k_ptr->sval == SV_LITE_LANTERN)
+		{
+			/* And it has fuel */
+			if (l_ptr->timeout)
+			{
+				/* Lanterns -- radius two */
+				bp_ptr->cur_lite += 2;
+			}
+			else
+			{
+				if (l_ptr->kn_flags3 & TR3_LITE)
+				{
+					/* Unfueled Lantern of Everburning still has radius 1 */
+					bp_ptr->cur_lite += 1;
+				}
+			}
 		}
 		
 		if (l_ptr->kn_flags3 & TR3_LITE)
@@ -1194,8 +1213,11 @@ static void borg_notice_lite(void)
 			/* Permanently glowing */
 			bp_ptr->britelite = TRUE;
 			
-			/* No need for fuel */
-			bp_ptr->able.fuel += 1000;
+			/*
+			 * Lantern of Everburning still needs fuel.
+			 * Any other perm light does not.
+			 */
+			if (k_ptr->sval != SV_LITE_LANTERN) bp_ptr->able.fuel += 1000;
 		}
 		
 		/* Artifact lites -- radius three */
@@ -1847,9 +1869,18 @@ static void borg_notice_inven_item(list_item *l_ptr)
 		case TV_FLASK:
 		{
 			/* Flasks */
+			list_item* l_ptr = look_up_equip_slot(EQUIP_LITE);
 
-			/* Use as fuel if we equip a lantern */
-			if (bp_ptr->cur_lite == 2) bp_ptr->able.fuel += number;
+			/* Does the borg wield a light item? */
+			if (l_ptr)
+			{
+				/* Is that a lantern */
+				if (k_info[l_ptr->k_idx].sval == SV_LITE_LANTERN)
+				{
+					/* Count the flask as fuel */
+					bp_ptr->able.fuel += number;
+				}
+			}
 
 			/* Count as (crappy) Missiles */
 			if (bp_ptr->lev < 15)
@@ -1860,19 +1891,26 @@ static void borg_notice_inven_item(list_item *l_ptr)
 		}
 
 		case TV_LITE:
-
 		{
-			/* Torches */
+			/* Torches or Lanterns */
+			l_ptr = look_up_equip_slot(EQUIP_LITE);
 
-			/* Use as fuel if it is a torch and we carry a torch */
-			if ((k_ptr->sval == SV_LITE_TORCH) && (bp_ptr->cur_lite <= 1))
+			/* Does the borg wield a light item? */
+			if (l_ptr)
 			{
-				bp_ptr->able.fuel += number;
-			}
-			
-			if (k_ptr->sval == SV_LITE_LANTERN)
-			{
-				bp_ptr->able.fuel += 2;
+				/* Is that a lantern */
+				if (k_info[l_ptr->k_idx].sval == SV_LITE_LANTERN)
+				{
+					/* Count the lantern as 2 fuel */
+					if (k_ptr->sval == SV_LITE_LANTERN) bp_ptr->able.fuel += 2;
+				}
+				
+				/* Is that a torch */
+				if (k_info[l_ptr->k_idx].sval == SV_LITE_TORCH)
+				{
+					/* Count the torches as fuel */
+					if (k_ptr->sval == SV_LITE_TORCH) bp_ptr->able.fuel += number;
+				}
 			}
 			
 			break;
