@@ -623,7 +623,19 @@ void wilderness_gen(void)
 	bool daytime;
 	cave_type *c_ptr;
 
-	/* Init the wilderness */
+   	/* Big town */
+	cur_hgt = MAX_HGT;
+	cur_wid = MAX_WID;
+	
+	/* Determine number of panels */
+	max_panel_rows = (cur_hgt / SCREEN_HGT) * 2 - 2;
+	max_panel_cols = (cur_wid / SCREEN_WID) * 2 - 2;
+	
+	/* Assume illegal panel */
+	panel_row = max_panel_rows;
+	panel_col = max_panel_cols;
+
+	/* Init the wilderness */	
 	process_dungeon_file("w_info.txt", 0, 0, max_wild_y, max_wild_x);
 
 	x = p_ptr->wilderness_x;

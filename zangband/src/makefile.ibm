@@ -13,9 +13,9 @@ OBJS = \
   xtra1.o xtra2.o spells1.o spells2.o melee1.o melee2.o \
   load.o save.o files.o \
   cmd1.o cmd2.o cmd3.o cmd4.o cmd5.o cmd6.o \
-  store.o birth.o wizard1.o wizard2.o \
+  store.o birth.o wizard1.o wizard2.o grid.o streams.o rooms.o \
   generate.o dungeon.o init1.o init2.o \
-  effects.o racial.o \
+  effects.o racial.o grid.o streams.o rooms.o \
   artifact.o mutation.o flavor.o spells3.o \
   mspells1.o mspells2.o scores.o mind.o \
   bldg.o obj_kind.o wild.o \
