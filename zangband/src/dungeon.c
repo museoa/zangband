@@ -171,6 +171,9 @@ void sense_item(object_type *o_ptr, bool heavy, bool wield, bool msg)
 	/* Skip non-changes */
 	if (feel == o_ptr->feeling) return;
 
+	/* hack the knowledge flag */
+	if (cursed_p(o_ptr)) o_ptr->kn_flags[2] |= TR2_CURSED;
+
 	/* Bad luck */
 	if ((p_ptr->muta3 & MUT3_BAD_LUCK) && !one_in_(13))
 	{
@@ -817,6 +820,9 @@ bool psychometry(void)
 
 	/* We have "felt" it */
 	o_ptr->info |= (OB_SENSE);
+
+	/* hack the knowledge flag */
+	if (cursed_p(o_ptr)) o_ptr->kn_flags[2] |= TR2_CURSED;
 
 	/* "Inscribe" it */
 	o_ptr->feeling = feel;
