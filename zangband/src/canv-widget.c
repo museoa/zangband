@@ -10,27 +10,44 @@
  * included in all such copies.
  */
 
+
+
+#include "angband.h"
+#include "tnb.h"
+
+/* Hack - prevent warnings from tk headers */
+#if defined errno
+#	undef errno
+#	define errno errno_hack
+#endif /* errno */
+
 #ifdef PLATFORM_WIN
-#include <windows.h>
-#include <tkWinInt.h>
+#	include <windows.h>
+#	include <tkWinInt.h>
 #endif /* PLATFORM_WIN */
 
 #ifdef PLATFORM_X11
-#define HAVE_LIMITS_H
-#define HAVE_UNISTD_H
-#include <sys/param.h> /* Warning about NBBY being redefined */
-#include <tkInt.h>
+#	define HAVE_LIMITS_H
+#	define HAVE_UNISTD_H
+
+/*
+ * Hack - prevent a huge number of compiler warnings when <tclInt.h
+ * is included indirectly below.
+ */
+#	define _TCLINTDECLS
+#	include <tkInt.h>
 #endif /* PLATFORM_X11 */
 
 #include <tkCanvas.h>
-#include "angband.h"
-#include "tnb.h"
 #include "interp.h"
 #include "util-dll.h"
 #include "icon.h"
+#include "plat-dll.h"
 
 static BitmapType CanvWidgetBitmap;
+#ifdef PLATFORM_WIN
 static int g_256color;
+#endif /* PLATFORM_WIN */
 
 typedef struct WidgetItem WidgetItem;
 struct WidgetItem  {
@@ -82,29 +99,29 @@ static Tk_CustomOption assignOption = {
 };
 
 static Tk_ConfigSpec configSpecs[] = {
-    {TK_CONFIG_ANCHOR, "-anchor", NULL, NULL,
-	 "nw", Tk_Offset(WidgetItem, anchor),
-	 TK_CONFIG_DONT_SET_DEFAULT},
-    {TK_CONFIG_COLOR, "-bordercolor", NULL, NULL,
-	 "Yellow", Tk_Offset(WidgetItem, borderColor),
-	 TK_CONFIG_DONT_SET_DEFAULT | TK_CONFIG_NULL_OK},
-    {TK_CONFIG_INT, "-borderdistance", NULL, NULL,
-	 "1", Tk_Offset(WidgetItem, borderDist), 0},
-    {TK_CONFIG_INT, "-borderwidth", NULL, NULL,
-	 "2", Tk_Offset(WidgetItem, borderWidth), 0},
-    {TK_CONFIG_CUSTOM, "-assign", NULL, NULL,
+    {TK_CONFIG_ANCHOR, (char *) "-anchor", NULL, NULL,
+	 (char *) "nw", Tk_Offset(WidgetItem, anchor),
+	 TK_CONFIG_DONT_SET_DEFAULT, NULL},
+    {TK_CONFIG_COLOR, (char *) "-bordercolor", NULL, NULL,
+	 (char *) "Yellow", Tk_Offset(WidgetItem, borderColor),
+	 TK_CONFIG_DONT_SET_DEFAULT | TK_CONFIG_NULL_OK, NULL},
+    {TK_CONFIG_INT, (char *) "-borderdistance", NULL, NULL,
+	 (char *) "1", Tk_Offset(WidgetItem, borderDist), 0, NULL},
+    {TK_CONFIG_INT, (char *) "-borderwidth", NULL, NULL,
+	 (char *) "2", Tk_Offset(WidgetItem, borderWidth), 0, NULL},
+    {TK_CONFIG_CUSTOM, (char *) "-assign", NULL, NULL,
 	 NULL, Tk_Offset(WidgetItem, assign), TK_CONFIG_USER_BIT,
 	 &assignOption},
-    {TK_CONFIG_CUSTOM, "-assignbg", NULL, NULL,
+    {TK_CONFIG_CUSTOM, (char *) "-assignbg", NULL, NULL,
 	 NULL, Tk_Offset(WidgetItem, assignbg), TK_CONFIG_USER_BIT,
 	 &assignOption},
-    {TK_CONFIG_CUSTOM, "-state", NULL, NULL,
+    {TK_CONFIG_CUSTOM, (char *) "-state", NULL, NULL,
 	 NULL, Tk_Offset(Tk_Item, state), TK_CONFIG_NULL_OK,
 	 &stateOption},
-    {TK_CONFIG_CUSTOM, "-tags", NULL, NULL,
+    {TK_CONFIG_CUSTOM, (char *) "-tags", NULL, NULL,
 	 NULL, 0, TK_CONFIG_NULL_OK, &tagsOption},
     {TK_CONFIG_END, NULL, NULL, NULL,
-	 NULL, 0, 0}
+	 NULL, 0, 0, NULL}
 };
 
 static int		WidgetToArea _ANSI_ARGS_((Tk_Canvas canvas,
@@ -134,7 +151,7 @@ static void		TranslateWidget _ANSI_ARGS_((Tk_Canvas canvas,
 			    Tk_Item *itemPtr, double deltaX, double deltaY));
 
 Tk_ItemType WidgetType = {
-    "widget",						/* name */
+    (char *) "widget",				/* name */
     sizeof(WidgetItem),				/* itemSize */
     CreateWidget,					/* createProc */
     configSpecs,					/* configSpecs */
@@ -153,7 +170,11 @@ Tk_ItemType WidgetType = {
     NULL,							/* selectionProc */
     NULL,	  						/* insertProc */
     NULL,	 						/* dTextProc */
-    NULL							/* nextPtr */
+    NULL,							/* nextPtr */
+	NULL,							/* Reserved */
+	0,								/* Reserved */
+	NULL,							/* Reserved */
+	NULL							/* Reserved */
 };
 
 static int
@@ -306,15 +327,19 @@ ConfigureWidget(
     return TCL_OK;
 }
 
-static void
-DeleteWidget(
-    Tk_Canvas canvas,			/* Info about overall canvas widget. */
-    Tk_Item *itemPtr,			/* Item that is being deleted. */
-    Display *display 			/* Display containing window for
-					 * canvas. */
-)
+/*
+ * canvas: Info about overall canvas widget.
+ * itemPtr: Item that is being deleted.
+ * display: Display containing window for canvas.
+ */
+
+static void DeleteWidget(Tk_Canvas canvas, Tk_Item *itemPtr, Display *display)
 {
 	WidgetItem *widgetPtr = (WidgetItem *) itemPtr;
+	
+	/* Hack - ignore unused parameters */
+	(void) canvas;
+	(void) display;
 
 	DoubleLink_Unlink(&widgetPtr->link);
 }
@@ -496,16 +521,17 @@ static void DrawIconSpec(IconSpec *iconSpecPtr)
 	}
 }
 
-static void
-DisplayWidget(
-    Tk_Canvas canvas,			/* Canvas that contains item. */
-    Tk_Item *itemPtr,			/* Item to be displayed. */
-    Display *display,			/* Display on which to draw item. */
-    Drawable drawable,			/* Pixmap or window in which to draw
-								 * item. */
-    int x, int y,				/* Describes region of canvas that */
-    int width, int height 		/* must be redisplayed (not used). */
-)
+/*
+ * canvas: Canvas that contains item
+ * itemPtr: Item to be displayed
+ * display: Display on which to draw item.
+ * drawable: Pixmap or window in which to draw item.
+ * x, y, width, height : Describes region of canvas
+ *						 that must be redisplayed (not used).
+ */
+static void DisplayWidget(Tk_Canvas canvas, Tk_Item *itemPtr,
+					 		Display *display, Drawable drawable,
+							int x, int y, int width, int height)
 {
 #ifdef PLATFORM_WIN
 
@@ -713,17 +739,27 @@ DisplayWidget(
 	Plat_SyncDisplay(display);
 
 #endif /* PLATFORM_X11 */
+	
+	/* Hack -ignore unused parameters */
+	(void) x;
+	(void) y;
+	(void) width;
+	(void) height;
 }
 
-static double
-WidgetToPoint(
-    Tk_Canvas canvas,		/* Canvas containing item. */
-    Tk_Item *itemPtr,		/* Item to check against point. */
-    double *coordPtr 		/* Pointer to x and y coordinates. */
-)
+/*
+ * canvas: Canvas containing item.
+ * itemPtr: Item to check against point.
+ * coorPtr: Pointer to x and y coordinates.
+ */
+static double WidgetToPoint(Tk_Canvas canvas, Tk_Item *itemPtr,
+				double *coordPtr)
 {
 	WidgetItem *widgetPtr = (WidgetItem *) itemPtr;
 	double x1, x2, y1, y2, xDiff, yDiff;
+	
+	/* Hack - ignore unused parameter */
+	(void) canvas; 
 
 	x1 = widgetPtr->header.x1;
 	y1 = widgetPtr->header.y1;
@@ -763,16 +799,19 @@ WidgetToPoint(
 	return hypot(xDiff, yDiff);
 }
 
+/*
+ * canvas: Canvas containing item.
+ * itemPtr: Item to check against rectangle.
+ * rectPtr: Pointer to array of four coordinates
+ * (x1, y1, x2, y2) describing rectangular area.
+ */
 static int
-WidgetToArea(
-    Tk_Canvas canvas,		/* Canvas containing item. */
-    Tk_Item *itemPtr,		/* Item to check against rectangle. */
-    double *rectPtr 		/* Pointer to array of four coordinates
-				 * (x1, y1, x2, y2) describing rectangular
-				 * area.  */
-)
+WidgetToArea(Tk_Canvas canvas, Tk_Item *itemPtr, double *rectPtr)
 {
     WidgetItem *widgetPtr = (WidgetItem *) itemPtr;
+
+	/* Hack - ignore unused parameter */
+	(void) canvas;
 
     if ((rectPtr[2] <= widgetPtr->header.x1)
 	    || (rectPtr[0] >= widgetPtr->header.x2)
@@ -823,11 +862,14 @@ TranslateWidget(
     ComputeWidgetBbox(canvas, widgetPtr);
 }
 
-static int
-Assign_ParseProc(ClientData clientData, Tcl_Interp *interp,
+static int Assign_ParseProc(ClientData clientData, Tcl_Interp *interp,
 	Tk_Window tkwin, char *value, char *widgRec, int offset)
 {
 /*	WidgetItem *itemPtr = (WidgetItem *) widgRec; */
+
+	/* Hack - ignore unused parameters */
+	(void) tkwin;
+	(void) clientData;
 
 	if (assign_parse(interp, (t_assign *) (widgRec + offset), value) != TCL_OK)
 	{
@@ -837,12 +879,15 @@ Assign_ParseProc(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-static char *
-Assign_PrintProc(ClientData clientData, Tk_Window tkwin, char *widgRec,
-	int offset, Tcl_FreeProc **freeProcPtr)
+static char *Assign_PrintProc(ClientData clientData, Tk_Window tkwin,
+				 char *widgRec, int offset, Tcl_FreeProc **freeProcPtr)
 {
 /*	WidgetItem *itemPtr = (WidgetItem *) widgRec; */
 	char *buf = Tcl_Alloc(128);
+	
+	/* Hack - ignore unused parameters */
+	(void) tkwin;
+	(void) clientData;
 
 	*freeProcPtr = (Tcl_FreeProc *) TCL_DYNAMIC;
 	return assign_print(buf, (t_assign *) (widgRec + offset));
