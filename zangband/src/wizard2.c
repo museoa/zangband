@@ -1133,10 +1133,10 @@ static void wiz_create_item(void)
 	/* Get object base type */
 	k_idx = wiz_create_itemtype();
 	
-	if (!k_idx) return;
-
 	/* Restore the screen */
 	screen_load();
+	
+	if (!k_idx) return;
 	
 	/* Place the object */
 	place_specific_object(p_ptr->px, p_ptr->py, p_ptr->depth, k_idx);
