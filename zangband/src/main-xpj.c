@@ -49,11 +49,6 @@
 /* Hack - tile size for Adam Bolt tiles */
 #define P_TILE_SIZE	16
 
-
-/* Hack - Font size in main window */
-#undef DEFAULT_X11_FONT_0
-#define DEFAULT_X11_FONT_0		"9x15"
-
 #ifndef __MAKEDEPEND__
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -66,8 +61,6 @@
  * Include some helpful X11 code.
  */
 #include "maid-x11.h"
-
-
 
 
 /*
@@ -1258,28 +1251,14 @@ static errr Infofnt_text_std(int x, int y, cptr str, int len)
 	/* Get the length of the string */
 	if (len < 0) len = strlen(str);
 
-
-	if (Term->data == &data[0])
-	{
-		/*** Decide where to place the string, horizontally ***/
-
-		/* Line up with x at left edge of column 'x' */
-		x = x * P_TILE_SIZE + (y + 1) * P_TILE_SIZE / 2 + Infowin->ox;
-		
-		/* Ignore Vertical Justifications */
-		y = y * P_TILE_SIZE + P_TILE_SIZE / 2 + Infofnt->asc + Infowin->oy;
-	}
-	else
-	{
-		/* Ignore Vertical Justifications */
-		y = y * Infofnt->hgt + Infofnt->asc + Infowin->oy;
+	/* Ignore Vertical Justifications */
+	y = y * Infofnt->hgt + Infofnt->asc + Infowin->oy;
 
 
-		/*** Decide where to place the string, horizontally ***/
+	/*** Decide where to place the string, horizontally ***/
 
-		/* Line up with x at left edge of column 'x' */
-		x = x * Infofnt->wid + Infowin->ox;
-	}	
+	/* Line up with x at left edge of column 'x' */
+	x = x * Infofnt->wid + Infowin->ox;	
 
 	/*** Actually draw 'str' onto the infowin ***/
 
@@ -1290,22 +1269,7 @@ static errr Infofnt_text_std(int x, int y, cptr str, int len)
 	/*** Handle the fake mono we can enforce on fonts ***/
 
 	/* Monotize the font */
-	if (Term->data == &data[0])
-	{
-		/* Do each character */
-		for (i = 0; i < len; ++i)
-		{
-			/* Fill Rectangle with black */
-			XFillRectangle(Metadpy->dpy, Infowin->win, clr[0]->gc,
-							 x + i * P_TILE_SIZE, y - Infofnt->asc,
-							 P_TILE_SIZE, P_TILE_SIZE);
-			
-			/* Note that the Infoclr is set up to contain the Infofnt */
-			XDrawImageString(Metadpy->dpy, Infowin->win, Infoclr->gc,
-			                 x + i * P_TILE_SIZE, y , str + i, 1);
-		}
-	}
-	else if (Infofnt->mono)
+	if (Infofnt->mono)
 	{
 		/* Do each character */
 		for (i = 0; i < len; ++i)
@@ -1343,40 +1307,20 @@ static errr Infofnt_text_non(int x, int y, cptr str, int len)
 	if (len < 0) len = strlen(str);
 
 
-	if (Term->data == &data[0])
-	{
-		/*** Decide where to place the string, horizontally ***/
-		
-		/* Line up with x at left edge of column 'x' */
-		x = x * P_TILE_SIZE + (y + 1) * P_TILE_SIZE / 2 + Infowin->ox;
-		
-		/* Ignore Vertical Justifications */
-		y = y * P_TILE_SIZE + P_TILE_SIZE / 2 + Infowin->oy;
-	
-		/* P_TILE_SIZE (a single row) high */
-		h = P_TILE_SIZE;
-		
-		/* The total width will be 'len' chars * P_TILE_SIZE */
-		w = len * P_TILE_SIZE;
-
-	}
-	else
-	{
-		/* Ignore Vertical Justifications */
-		y = y * Infofnt->hgt + Infowin->oy;
+	/* Ignore Vertical Justifications */
+	y = y * Infofnt->hgt + Infowin->oy;
 
 
-		/*** Decide where to place the string, horizontally ***/
+	/*** Decide where to place the string, horizontally ***/
 
-		/* Line up with x at left edge of column 'x' */
-		x = x * Infofnt->wid + Infowin->ox;
+	/* Line up with x at left edge of column 'x' */
+	x = x * Infofnt->wid + Infowin->ox;
 		
-		/* Simply do 'Infofnt->hgt' (a single row) high */
-		h = Infofnt->hgt;
+	/* Simply do 'Infofnt->hgt' (a single row) high */
+	h = Infofnt->hgt;
 		
-		/* The total width will be 'len' chars * standard width */
-		w = len * Infofnt->wid;
-	}
+	/* The total width will be 'len' chars * standard width */
+	w = len * Infofnt->wid;
 
 
 	/*** Actually 'paint' the area ***/
@@ -2181,6 +2125,8 @@ static errr draw_rect_t1(int x, int y, term_data *td, int xp, int yp)
 	byte ta;
 	char tc;
 	
+	bool floor_blank1 = FALSE, floor_blank2 = FALSE;
+
 	/* Look to see if we are already drawn */
 	int cur_col = x / 16;
 	u32b row_mask = (1L << (x % 16));
@@ -2262,6 +2208,9 @@ static errr draw_rect_t1(int x, int y, term_data *td, int xp, int yp)
 			{
 				mask |= PJ_T_FLOOR2;
 				set_tile1(PJ_FLOOR2, tc & 0x3F, ta & 0x7F);
+			
+				/* Blank floor? */
+				if (!((tc & 0x3F) || (ta & 0x7F))) floor_blank2 = TRUE;
 			}
 	
 			/* Are we overlaying anything? */
@@ -2311,6 +2260,9 @@ static errr draw_rect_t1(int x, int y, term_data *td, int xp, int yp)
 			{
 				mask |= PJ_T_FLOOR1;
 				set_tile1(PJ_FLOOR1, tc & 0x3F, ta & 0x7F);
+			
+				/* Blank floor? */
+				if (!((tc & 0x3F) || (ta & 0x7F))) floor_blank1 = TRUE;
 			}
 	
 			/* Are we overlaying anything? */
@@ -2356,18 +2308,18 @@ static errr draw_rect_t1(int x, int y, term_data *td, int xp, int yp)
 				mask |= PJ_T_WALLB;
 				set_tile1(PJ_WALLB, tc & 0x3F, ta & 0x7F);
 			}
-#if 0			
+			
 			/* Hack - check for "blank floor" */
-			if ((mask & PJ_T_FLOOR1) && (table[PJ_FLOOR1] == td->tiles->data))
+			if (floor_blank1)
 			{
 				mask &= ~(PJ_T_FLOOR1);
 			}
 			
-			if ((mask & PJ_T_FLOOR2) && (table[PJ_FLOOR2] == td->tiles->data))
+			if (floor_blank2)
 			{
 				mask &= ~(PJ_T_FLOOR2);
 			}
-#endif
+
 		}
 		
 		/* Are we overlaying anything? */
@@ -2426,6 +2378,8 @@ static errr draw_rect_t2(int x, int y, term_data *td, int xp, int yp)
 	byte ta;
 	char tc;
 	
+	bool floor_blank = FALSE;
+
 	/* Look to see if we are already drawn */
 	int cur_col = x / 16;
 	u32b row_mask = (1L << (x % 16 + 16));
@@ -2487,6 +2441,9 @@ static errr draw_rect_t2(int x, int y, term_data *td, int xp, int yp)
 			{
 				mask |= PJ_T_FLOOR1;
 				set_tile2(PJ_FLOOR1, tc & 0x3F, ta & 0x7F);
+			
+				/* Blank floor? */
+				if (!((tc & 0x3F) || (ta & 0x7F))) floor_blank = TRUE;
 			}
 	
 			/* Are we overlaying anything? */
@@ -2523,13 +2480,12 @@ static errr draw_rect_t2(int x, int y, term_data *td, int xp, int yp)
 			set_tile2(PJ_WALL2_T, tc & 0x3F, ta & 0x7F);
 			set_tile2(PJ_TOP2, tc & 0x3F, ta & 0x7F);
 			set_tile2(PJ_TOP_T2, tc & 0x3F, ta & 0x7F);
-#if 0			
+			
 			/* Hack - check for "blank floor" */
-			if ((mask & PJ_T_FLOOR1) && (table[PJ_FLOOR1] == td->tiles->data))
+			if (floor_blank)
 			{
 				mask &= ~(PJ_T_FLOOR1);
 			}
-#endif
 		}
 		
 		/* Are we overlaying anything? */
@@ -2565,13 +2521,13 @@ static errr draw_rect_t2(int x, int y, term_data *td, int xp, int yp)
 			
 			set_tile2(PJ_TOP1, tc & 0x3F, ta & 0x7F);
 			set_tile2(PJ_TOP_T1, tc & 0x3F, ta & 0x7F);
-#if 0			
+			
 			/* Hack - check for "blank floor" */
-			if ((mask & PJ_T_FLOOR1) && (table[PJ_FLOOR1] == td->tiles->data))
+			if (floor_blank)
 			{
 				mask &= ~(PJ_T_FLOOR1);
 			}
-#endif			
+	
 			if (mask & PJ_T_WALL2)
 			{
 				mask &= ~(PJ_T_WALL2 | PJ_T_WALL2_T);
@@ -2623,10 +2579,17 @@ static errr draw_rect_t2(int x, int y, term_data *td, int xp, int yp)
 	return (0);
 }
 
-
-static errr Term_pict_skew(int x, int y, int n, term_data *td)
-{
+static errr Term_skew_xpj(int x, int y, int n, const byte *ap, const char *cp, const byte *tap, const char *tcp)
+{	
 	int i, xp, yp;
+	
+	term_data *td = (term_data*)(Term->data);
+	
+	/* Hack - ignore some of the parameters */
+	(void) ap;
+	(void) cp;
+	(void) tap;
+	(void) tcp;
 	
 	xp = x * P_TILE_SIZE + y * P_TILE_SIZE / 2 + Infowin->ox;
 	yp = (y + 1) * P_TILE_SIZE + Infowin->oy;
@@ -2696,11 +2659,6 @@ static errr Term_pict_xpj(int x, int y, int n, const byte *ap, const char *cp, c
 	Pixell pixel;
 
 	term_data *td = (term_data*)(Term->data);	
-
-	if (td == &data[0])
-	{
-		return (Term_pict_skew(x, y, n, td));		
-	}
 
 	hgt = Infofnt->hgt;
 	wid = Infofnt->wid;
@@ -3394,14 +3352,14 @@ errr init_xpj(int argc, char *argv[])
 
 			term *t = &td->t;
 
-			/* Graphics hook */
-			t->pict_hook = Term_pict_xpj;
-
 			/* Use graphics sometimes */
 			t->higher_pict = TRUE;
 
 			if (i == 0)
 			{
+				/* Graphics hook */
+				t->pict_hook = Term_skew_xpj;
+				
 				/* Always use graphics */
 				t->always_pict = TRUE;
 				
@@ -3413,6 +3371,9 @@ errr init_xpj(int argc, char *argv[])
 			}
 			else
 			{
+				/* Graphics hook */
+				t->pict_hook = Term_pict_xpj;
+				
 				/* Resize tiles */
 				td->tiles =
 					ResizeImage(dpy, tiles_raw,
