@@ -5357,11 +5357,10 @@ static int borg_launch_bolt_aux(int x, int y, int rad, int dam, int typ,
 	/* Simulate the spell/missile path */
 	for (dist = 0; dist < max; dist++)
 	{
-		mb_ptr = map_loc(x, y);
-
 		/* Bounds checking */
 		if (!map_in_bounds(x, y)) return (0);
 
+		mb_ptr = map_loc(x, y);
 
 		/* Stop at walls */
 		/* note: beams end at walls.  */
