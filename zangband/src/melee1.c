@@ -896,7 +896,7 @@ bool make_attack_normal(int m_idx)
 							msgf("You stand your ground!");
 							obvious = TRUE;
 						}
-						else if (randint0(100) < p_ptr->skill_sav)
+						else if (randint0(100) < p_ptr->skill.sav)
 						{
 							msgf("You stand your ground!");
 							obvious = TRUE;
@@ -929,7 +929,7 @@ bool make_attack_normal(int m_idx)
 							msgf("You are unaffected!");
 							obvious = TRUE;
 						}
-						else if (randint0(100) < p_ptr->skill_sav)
+						else if (randint0(100) < p_ptr->skill.sav)
 						{
 							msgf("You resist the effects!");
 							obvious = TRUE;

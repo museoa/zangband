@@ -2774,7 +2774,7 @@ void do_cmd_cast(void)
 				msgf("Your sanity is shaken by reading the Necronomicon!");
 
 				/* Mind blast */
-				if (!saving_throw(p_ptr->skill_sav))
+				if (!saving_throw(p_ptr->skill.sav))
 				{
 					if (!p_ptr->resist_confu)
 					{
@@ -2787,7 +2787,7 @@ void do_cmd_cast(void)
 				}
 
 				/* Lose int & wis */
-				else if (!saving_throw(p_ptr->skill_sav))
+				else if (!saving_throw(p_ptr->skill.sav))
 				{
 					(void)do_dec_stat(A_INT);
 					(void)do_dec_stat(A_WIS);

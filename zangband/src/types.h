@@ -1343,6 +1343,25 @@ struct player_state
 };
 
 /*
+ * The player skills
+ */
+typedef struct player_skill player_skill;
+
+struct player_skill
+{
+	s16b dis; /* Skill: Disarming */
+	s16b dev; /* Skill: Magic Devices */
+	s16b sav; /* Skill: Saving throw */
+	s16b stl; /* Skill: Stealth factor */
+	s16b sns; /* Skill: Sensing ability */
+	s16b fos; /* Skill: Searching frequency */
+	s16b thn; /* Skill: To hit (normal) */
+	s16b thb; /* Skill: To hit (shooting) */
+	s16b tht; /* Skill: To hit (throwing) */
+	s16b dig; /* Skill: Digging */
+};
+
+/*
  * Most of the "player" information goes here.
  *
  * This stucture gives us a large collection of player variables.
@@ -1419,7 +1438,10 @@ struct player_type
 					 * characters (such as Amberite Paladins)
 					 */
 	player_timed tim;	/* Timed effects */
+	
 	player_state state;	/* Internal state of the player */
+	
+	player_skill skill;	/* Player skills */
 
 	/*** Pointers to player grid information ***/
 
@@ -1588,17 +1610,6 @@ struct player_type
 	s16b ac;	/* Base ac */
 
 	s16b see_infra;	/* Infravision range */
-
-	s16b skill_dis;	/* Skill: Disarming */
-	s16b skill_dev;	/* Skill: Magic Devices */
-	s16b skill_sav;	/* Skill: Saving throw */
-	s16b skill_stl;	/* Skill: Stealth factor */
-	s16b skill_sns;	/* Skill: Sensing ability */
-	s16b skill_fos;	/* Skill: Searching frequency */
-	s16b skill_thn;	/* Skill: To hit (normal) */
-	s16b skill_thb;	/* Skill: To hit (shooting) */
-	s16b skill_tht;	/* Skill: To hit (throwing) */
-	s16b skill_dig;	/* Skill: Digging */
 
 	u32b noise;	/* Derived from stealth */
 

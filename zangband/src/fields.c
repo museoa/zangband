@@ -1979,7 +1979,7 @@ static bool check_save(int power)
 	if (power <= 0) return (FALSE);
 
 	/* Power competes against saving throw */
-	if (randint1(power) > randint1(p_ptr->skill_sav)) return (TRUE);
+	if (randint1(power) > randint1(p_ptr->skill.sav)) return (TRUE);
 
 	/* Assume miss */
 	return (FALSE);

@@ -3973,7 +3973,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 			case 13:  case 14:  case 15:  case 19:  case 20:
 			{
 				if (stop_ty
-					|| (p_ptr->free_act && (randint1(100) < p_ptr->skill_sav)))
+					|| (p_ptr->free_act && (randint1(100) < p_ptr->skill.sav)))
 				{
 					/* Do nothing */ ;
 				}

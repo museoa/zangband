@@ -1850,18 +1850,18 @@ void mutation_effect(void)
 
 	if (p_ptr->muta3 & MUT3_XTRA_EYES)
 	{
-		p_ptr->skill_fos += 15;
-		p_ptr->skill_sns += 15;
+		p_ptr->skill.fos += 15;
+		p_ptr->skill.sns += 15;
 	}
 
 	if (p_ptr->muta3 & MUT3_MAGIC_RES)
 	{
-		p_ptr->skill_sav += (15 + (p_ptr->lev / 5));
+		p_ptr->skill.sav += (15 + (p_ptr->lev / 5));
 	}
 
 	if (p_ptr->muta3 & MUT3_XTRA_NOIS)
 	{
-		p_ptr->skill_stl -= 3;
+		p_ptr->skill.stl -= 3;
 	}
 
 	if (p_ptr->muta3 & MUT3_INFRAVIS)
@@ -1944,7 +1944,7 @@ void mutation_effect(void)
 	if (p_ptr->muta3 & MUT3_MOTION)
 	{
 		p_ptr->free_act = TRUE;
-		p_ptr->skill_stl += 1;
+		p_ptr->skill.stl += 1;
 	}
 
 	if (p_ptr->muta3 & MUT3_ILL_NORM)

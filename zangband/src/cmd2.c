@@ -491,7 +491,7 @@ static bool do_cmd_open_chest(int x, int y, object_type *o_ptr)
 		flag = FALSE;
 
 		/* Get the "disarm" factor */
-		i = p_ptr->skill_dis;
+		i = p_ptr->skill.dis;
 
 		/* Penalize some conditions */
 		if (p_ptr->tim.blind || no_lite()) i = i / 10;
@@ -738,7 +738,7 @@ bool do_cmd_open_aux(int x, int y)
 	if (*fld_ptr)
 	{
 		/* Get the "disarm" factor */
-		i = p_ptr->skill_dis;
+		i = p_ptr->skill.dis;
 
 		/* Penalize some conditions */
 		if (p_ptr->tim.blind || no_lite()) i = i / 10;
@@ -1064,7 +1064,7 @@ static bool do_cmd_tunnel_aux(int x, int y)
 
 	int action;
 
-	int dig = p_ptr->skill_dig;
+	int dig = p_ptr->skill.dig;
 
 	s16b *fld_ptr = field_hook_find(&c_ptr->fld_idx,
 									FIELD_ACT_INTERACT_TEST, &action);
@@ -1116,7 +1116,7 @@ static bool do_cmd_tunnel_aux(int x, int y)
 	else if ((c_ptr->feat == FEAT_TREES) || (c_ptr->feat == FEAT_PINE_TREE))
 	{
 		/* Chop Down */
-		if ((p_ptr->skill_dig > 10 + randint0(400)) && twall(x, y, FEAT_GRASS))
+		if ((p_ptr->skill.dig > 10 + randint0(400)) && twall(x, y, FEAT_GRASS))
 		{
 			msgf("You have cleared away the trees.");
 
@@ -1139,7 +1139,7 @@ static bool do_cmd_tunnel_aux(int x, int y)
 	else if (c_ptr->feat == FEAT_SNOW_TREE)
 	{
 		/* Chop Down */
-		if ((p_ptr->skill_dig > 10 + randint0(400)) && twall(x, y, FEAT_SNOW))
+		if ((p_ptr->skill.dig > 10 + randint0(400)) && twall(x, y, FEAT_SNOW))
 		{
 			msgf("You have cleared away the trees.");
 
@@ -1163,7 +1163,7 @@ static bool do_cmd_tunnel_aux(int x, int y)
 	else if (c_ptr->feat == FEAT_JUNGLE)
 	{
 		/* Chop Down */
-		if ((p_ptr->skill_dig > 10 + randint0(800)) && twall(x, y, FEAT_BUSH))
+		if ((p_ptr->skill.dig > 10 + randint0(800)) && twall(x, y, FEAT_BUSH))
 		{
 			msgf("You have cleared away the jungle.");
 
@@ -1191,7 +1191,7 @@ static bool do_cmd_tunnel_aux(int x, int y)
 			 (c_ptr->feat == FEAT_PILLAR))
 	{
 		/* Tunnel */
-		if ((p_ptr->skill_dig > 40 + randint0(1600)) && twall(x, y, FEAT_FLOOR))
+		if ((p_ptr->skill.dig > 40 + randint0(1600)) && twall(x, y, FEAT_FLOOR))
 		{
 			msgf("You have finished the tunnel.");
 
@@ -1224,13 +1224,13 @@ static bool do_cmd_tunnel_aux(int x, int y)
 		/* Quartz */
 		if (hard)
 		{
-			okay = (p_ptr->skill_dig > 20 + randint0(800));
+			okay = (p_ptr->skill.dig > 20 + randint0(800));
 		}
 
 		/* Magma */
 		else
 		{
-			okay = (p_ptr->skill_dig > 10 + randint0(400));
+			okay = (p_ptr->skill.dig > 10 + randint0(400));
 		}
 
 		/* Success */
@@ -1278,7 +1278,7 @@ static bool do_cmd_tunnel_aux(int x, int y)
 	else if (c_ptr->feat == FEAT_RUBBLE)
 	{
 		/* Remove the rubble */
-		if ((p_ptr->skill_dig > randint0(200)) && twall(x, y, FEAT_FLOOR))
+		if ((p_ptr->skill.dig > randint0(200)) && twall(x, y, FEAT_FLOOR))
 		{
 			/* Message */
 			msgf("You have removed the rubble.");
@@ -1309,7 +1309,7 @@ static bool do_cmd_tunnel_aux(int x, int y)
 	else if (c_ptr->feat >= FEAT_SECRET)
 	{
 		/* Tunnel */
-		if ((p_ptr->skill_dig > 30 + randint0(1200)) && twall(x, y, FEAT_FLOOR))
+		if ((p_ptr->skill.dig > 30 + randint0(1200)) && twall(x, y, FEAT_FLOOR))
 		{
 			msgf("You have finished the tunnel.");
 		}
@@ -1453,7 +1453,7 @@ static bool do_cmd_disarm_chest(int x, int y, object_type *o_ptr)
 	p_ptr->energy_use = 100;
 
 	/* Get the "disarm" factor */
-	i = p_ptr->skill_dis;
+	i = p_ptr->skill.dis;
 
 	/* Penalize some conditions */
 	if (p_ptr->tim.blind || no_lite()) i = i / 10;
@@ -1558,7 +1558,7 @@ bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
 	t_ptr = &t_info[f_ptr->t_idx];
 
 	/* Get the "disarm" factor */
-	i = p_ptr->skill_dis;
+	i = p_ptr->skill.dis;
 
 	/* Penalize some conditions */
 	if (p_ptr->tim.blind || no_lite()) i = i / 10;
@@ -2041,7 +2041,7 @@ void do_cmd_stay(int pickup)
 
 
 	/* Spontaneous Searching */
-	if ((p_ptr->skill_fos >= 50) || one_in_(50 - p_ptr->skill_fos))
+	if ((p_ptr->skill.fos >= 50) || one_in_(50 - p_ptr->skill.fos))
 	{
 		search();
 	}
@@ -2370,7 +2370,7 @@ void do_cmd_fire_aux(object_type *o_ptr, const object_type *j_ptr)
 
 	/* Actually "fire" the object. */
 	bonus = (p_ptr->to_h + i_ptr->to_h + j_ptr->to_h);
-	chance = (p_ptr->skill_thb + (bonus * BTH_PLUS_ADJ));
+	chance = (p_ptr->skill.thb + (bonus * BTH_PLUS_ADJ));
 
 	/* Cursed arrows tend not to hit anything */
 	if (cursed_p(i_ptr)) chance = chance / 2;
@@ -2867,11 +2867,11 @@ void do_cmd_throw_aux(int mult)
 	 */
 	if (q_ptr->flags2 & (TR2_THROW))
 	{
-		chance = p_ptr->skill_tht + (p_ptr->to_h + q_ptr->to_h) * BTH_PLUS_ADJ;
+		chance = p_ptr->skill.tht + (p_ptr->to_h + q_ptr->to_h) * BTH_PLUS_ADJ;
 	}
 	else
 	{
-		chance = p_ptr->skill_tht * 3 / 2 + q_ptr->to_h * BTH_PLUS_ADJ;
+		chance = p_ptr->skill.tht * 3 / 2 + q_ptr->to_h * BTH_PLUS_ADJ;
 	}
 
 	/* Take a turn */

@@ -46,7 +46,7 @@ void have_nightmare(int r_idx)
 		power *= 2;
 	}
 
-	if (saving_throw(p_ptr->skill_sav * 100 / power))
+	if (saving_throw(p_ptr->skill.sav * 100 / power))
 	{
 		msgf("%^s chases you through your dreams.", m_name);
 
@@ -100,7 +100,7 @@ void have_nightmare(int r_idx)
 	}
 
 	/* Mind blast */
-	if (!saving_throw(p_ptr->skill_sav * 100 / power))
+	if (!saving_throw(p_ptr->skill.sav * 100 / power))
 	{
 		if (!p_ptr->resist_confu)
 		{
@@ -114,7 +114,7 @@ void have_nightmare(int r_idx)
 	}
 
 	/* Lose int & wis */
-	if (!saving_throw(p_ptr->skill_sav * 100 / power))
+	if (!saving_throw(p_ptr->skill.sav * 100 / power))
 	{
 		(void)do_dec_stat(A_INT);
 		(void)do_dec_stat(A_WIS);
@@ -122,7 +122,7 @@ void have_nightmare(int r_idx)
 	}
 
 	/* Brain smash */
-	if (!saving_throw(p_ptr->skill_sav * 100 / power))
+	if (!saving_throw(p_ptr->skill.sav * 100 / power))
 	{
 		if (!p_ptr->resist_confu)
 		{
@@ -132,11 +132,11 @@ void have_nightmare(int r_idx)
 		{
 			(void)set_paralyzed(p_ptr->tim.paralyzed + rand_range(4, 8));
 		}
-		while (!saving_throw(p_ptr->skill_sav))
+		while (!saving_throw(p_ptr->skill.sav))
 		{
 			(void)do_dec_stat(A_INT);
 		}
-		while (!saving_throw(p_ptr->skill_sav))
+		while (!saving_throw(p_ptr->skill.sav))
 		{
 			(void)do_dec_stat(A_WIS);
 		}
@@ -148,7 +148,7 @@ void have_nightmare(int r_idx)
 	}
 
 	/* Permanent lose int & wis */
-	if (!saving_throw(p_ptr->skill_sav * 100 / power))
+	if (!saving_throw(p_ptr->skill.sav * 100 / power))
 	{
 		if (dec_stat(A_INT, 10, TRUE)) happened = TRUE;
 		if (dec_stat(A_WIS, 10, TRUE)) happened = TRUE;
@@ -160,7 +160,7 @@ void have_nightmare(int r_idx)
 	}
 
 	/* Amnesia */
-	if (!saving_throw(p_ptr->skill_sav * 100 / power))
+	if (!saving_throw(p_ptr->skill.sav * 100 / power))
 	{
 		if (lose_all_info())
 		{
@@ -987,7 +987,7 @@ static void compare_weapon_aux1(const object_type *o_ptr)
  */
 static int hit_prob(int to_h, int ac)
 {
-	int chance = p_ptr->skill_thn + (p_ptr->to_h + to_h) * BTH_PLUS_ADJ;
+	int chance = p_ptr->skill.thn + (p_ptr->to_h + to_h) * BTH_PLUS_ADJ;
 	int prob = 0;
 
 	if (chance > 0 && ac < chance) prob = (100 * (chance - ac) / chance);
@@ -1003,7 +1003,7 @@ static int hit_prob(int to_h, int ac)
  */
 static int critical_prob(int to_h, int number)
 {
-	int chance = p_ptr->skill_thn + (p_ptr->to_h + to_h) * BTH_PLUS_ADJ;
+	int chance = p_ptr->skill.thn + (p_ptr->to_h + to_h) * BTH_PLUS_ADJ;
 
 	if (chance <= 0) return (0);
 

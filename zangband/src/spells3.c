@@ -942,7 +942,7 @@ void apply_nexus(const monster_type *m_ptr)
 
 		case 6:
 		{
-			if (randint0(100) < p_ptr->skill_sav)
+			if (randint0(100) < p_ptr->skill.sav)
 			{
 				msgf("You resist the effects!");
 				break;
@@ -955,7 +955,7 @@ void apply_nexus(const monster_type *m_ptr)
 
 		case 7:
 		{
-			if (randint0(100) < p_ptr->skill_sav)
+			if (randint0(100) < p_ptr->skill.sav)
 			{
 				msgf("You resist the effects!");
 				break;
@@ -4792,7 +4792,7 @@ void sanity_blast(const monster_type *m_ptr)
 	if (is_pet(m_ptr) && !one_in_(8)) return;
 
 	/* Do we pass the saving throw? */
-	if (saving_throw(p_ptr->skill_sav * 100 / power)) return;
+	if (saving_throw(p_ptr->skill.sav * 100 / power)) return;
 
 	if (p_ptr->tim.image)
 	{
@@ -4828,7 +4828,7 @@ void sanity_blast(const monster_type *m_ptr)
 		 (p_ptr->rp.prace == RACE_GHOUL)) && saving_throw(25 + p_ptr->lev)) return;
 
 	/* Mind blast */
-	if (!saving_throw(p_ptr->skill_sav * 100 / power))
+	if (!saving_throw(p_ptr->skill.sav * 100 / power))
 	{
 		if ((!p_ptr->resist_fear) || one_in_(5))
 		{

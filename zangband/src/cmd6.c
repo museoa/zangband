@@ -400,7 +400,7 @@ static void do_cmd_use_staff_aux(object_type *o_ptr)
 	lev = get_object_level(o_ptr);
 
 	/* Base chance of success */
-	chance = p_ptr->skill_dev;
+	chance = p_ptr->skill.dev;
 
 	/* Confusion hurts skill */
 	if (p_ptr->tim.confused) chance = chance / 2;
@@ -701,7 +701,7 @@ static void do_cmd_zap_rod_aux(object_type *o_ptr)
 	}
 
 	/* Take a turn */
-	p_ptr->energy_use = MIN(75, 200 - 5 * p_ptr->skill_dev / 8);
+	p_ptr->energy_use = MIN(75, 200 - 5 * p_ptr->skill.dev / 8);
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -710,7 +710,7 @@ static void do_cmd_zap_rod_aux(object_type *o_ptr)
 	lev = get_object_level(o_ptr);
 
 	/* Base chance of success */
-	chance = p_ptr->skill_dev;
+	chance = p_ptr->skill.dev;
 
 	/* Confusion hurts skill */
 	if (p_ptr->tim.confused) chance = chance / 2;
@@ -1098,13 +1098,13 @@ static void do_cmd_activate_aux(object_type *o_ptr)
 	int dir, lev, chance;
 
 	/* Take a turn */
-	p_ptr->energy_use = MIN(75, 200 - 5 * p_ptr->skill_dev / 8);
+	p_ptr->energy_use = MIN(75, 200 - 5 * p_ptr->skill.dev / 8);
 
 	/* Extract the item level */
 	lev = get_object_level(o_ptr);
 
 	/* Base chance of success */
-	chance = p_ptr->skill_dev;
+	chance = p_ptr->skill.dev;
 
 	/* Confusion hurts skill */
 	if (p_ptr->tim.confused) chance /= 2;
