@@ -6102,7 +6102,7 @@ option_type option_info[] =
 	"view_granite_lite",            "Use special colors for wall grids (slow)" },
 
 	{ &view_special_lite,           FALSE, 5, 1, 31,
-	"view_special_lite",            "Turn on lighting effects (slow)" },
+	"view_special_lite",            "Use special colors for floor grids (slow)" },
 
 	{ &hilite_player,               TRUE, 5, 1, 27,
 	"hilite_player",                "Hilite the player with the cursor" },

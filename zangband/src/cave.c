@@ -998,11 +998,11 @@ void map_info(int y, int x, byte *ap, char *cp)
 		 * tiny speedup.  (But any speed increase in this
 		 * extremely important routine is good.)
 		 */
-		if (view_special_lite && !p_ptr->blind
+		if (view_bright_lite && !p_ptr->blind
 			 && (!(feat & 0x20) || view_granite_lite))
 		{
 			/* It's not in view? */
-			if (((!(info & (CAVE_VIEW))) && view_bright_lite) ||
+			if (((!(info & (CAVE_VIEW))) && view_special_lite) ||
 				((!(info & (CAVE_GLOW | CAVE_LITE | CAVE_MNLT)))
 					 &&  view_torch_grids))
 			{
