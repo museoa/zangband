@@ -5064,7 +5064,7 @@ void item_describe(object_type *o_ptr)
 	/* Get a description */
 	object_desc(o_name, o_ptr, TRUE, 3, 256);
 
-	if (!list && !o_ptr->ix && !o_ptr->iy)
+	if (!list)
 	{
 		/* Item is in the equipment */
 		item = GET_ARRAY_INDEX(p_ptr->equipment, o_ptr);
