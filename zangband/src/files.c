@@ -1293,6 +1293,7 @@ static void display_player_abilities(void)
 	long		avgdam;
 	u32b            f1, f2, f3;
 	int		energy_fire = 100;
+	int		shots, shot_frac;
 
 	object_type		*o_ptr;
 
@@ -1362,7 +1363,10 @@ static void display_player_abilities(void)
 			break;
 		}
 	}
-
+	/* Calculate shots per round */
+	shots = p_ptr->num_fire * 100;
+	shot_frac = (shots * 100 / energy_fire) % 100;
+	shots = shots / energy_fire;
 
 	/* Average damage per round */
 	o_ptr = &inventory[INVEN_WIELD];
@@ -1427,8 +1431,7 @@ static void display_player_abilities(void)
 	put_str("Shots/Round :", 17, COL_SKILLS3);
 	
 	/* Calculate shots (rounded) */
-	put_str(format("%d", p_ptr->num_fire * 100 + (energy_fire / 2)
-		/ energy_fire), 17, COL_SKILLS3 + WID_SKILLS);
+	put_str(format("%d.%d", shots, shot_frac), 17, COL_SKILLS3 + WID_SKILLS);
 
 	put_str("Avg.Dam./Rnd:", 18, COL_SKILLS3);
 
