@@ -1356,8 +1356,12 @@ static void rd_extra(void)
 
 	/* Hack -- the two "special seeds" */
 	rd_u32b(&seed_flavor);
-	rd_u32b(&seed_town);
-
+	
+	if (sf_version < 24)
+	{
+		/* No more seed_town */
+		strip_bytes(4);
+	}
 
 	/* Special stuff */
 	rd_u16b(&p_ptr->panic_save);
@@ -1920,7 +1924,7 @@ static void load_wild_data(void)
 }
 
 /* The version when the format of the wilderness last changed */
-#define VERSION_CHANGE_WILD		23
+#define VERSION_CHANGE_WILD		24
 
 
 /*

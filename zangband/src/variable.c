@@ -79,9 +79,6 @@ bool character_xtra;		/* The game is in an icky startup mode */
 
 u32b seed_flavor;		/* Hack -- consistent object colors */
 
-/* Is this used? */
-u32b seed_town;			/* Hack -- consistent town layout */
-
 bool msg_flag;			/* Used in msg_print() for "buffering" */
 
 s16b min_hgt;			/* Current y bounds of area() */
@@ -489,9 +486,6 @@ cave_type *(*area)(int, int);
 
 /* block used to generate plasma fractal for random wilderness */
 u16b *temp_block[WILD_BLOCK_SIZE + 1];
-
-/* block used to make towns and cities in the wilderness */
-u16b *town_block[WILD_BLOCK_SIZE + 1];
 
 /* cache of blocks near the player */
 cave_type **wild_cache[WILD_BLOCKS];

@@ -3700,9 +3700,6 @@ void play_game(bool new_game)
 
 		/* Hack -- seed for flavors */
 		seed_flavor = randint0(0x10000000);
-
-		/* Hack -- seed for town layout (not used any more) */
-		seed_town = 0;
 	}
 	
 	/* Normal machine (process player name) */

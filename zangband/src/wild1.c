@@ -257,6 +257,62 @@ static void general_init(int town_num, int store_num, byte general_type)
 	st_ptr->last_visit = 0;
 }
 
+byte build_x[WILD_BLOCK_SIZE * WILD_BLOCK_SIZE];
+byte build_y[WILD_BLOCK_SIZE * WILD_BLOCK_SIZE];
+static byte build_pop[WILD_BLOCK_SIZE * WILD_BLOCK_SIZE];
+static u16b build_count;
+
+/* Recursive function used to generate towns with no islands */
+static void fill_town(byte x, byte y)
+{
+	byte i;
+
+	/* Hack - deliberate braces to lower memory cost of recursion */	
+	{
+		u16b *block_data = &temp_block[y][x];
+
+		/* Do not continue if hit a previously done area. */
+		if (*block_data == 1) return;
+	
+		/* Do not redo a building */
+		if (*block_data == 2) return;
+	
+		/* Save the square */
+		build_pop[build_count] = *block_data / WILD_BLOCK_SIZE; 
+	
+		/* Do not redo this square */
+		*block_data = 2;
+	}
+	
+	build_x[build_count] = x;
+	build_y[build_count] = y;
+	
+	/* Increment store counter */
+	build_count++;
+	
+	/* Look at adjacent squares */
+	for (i = 0; i < 8; i++)
+	{
+		/* Recurse  */				
+		fill_town(x + ddx_ddd[i], y + ddy_ddd[i]);
+	}
+}
+
+/* Driver function for the fill_town() routine */
+byte fill_town_driver(void)
+{
+	/* Paranoia - middle square must be in the town */
+	if (!temp_block[WILD_BLOCK_SIZE / 2][WILD_BLOCK_SIZE / 2]) return (0);	
+
+	build_count = 0;
+	
+	/* 'Fill' the town with buildings, stopping at the walls */
+	fill_town(WILD_BLOCK_SIZE / 2, WILD_BLOCK_SIZE / 2);
+	
+	/* Return number of buildings allocated */
+	return (build_count);
+}
+
 
 /* Create a city + contained stores and buildings */
 static bool create_city(int x, int y, int town_num)
@@ -267,11 +323,11 @@ static bool create_city(int x, int y, int town_num)
 	int pop = (1 << randint0(7)) + 128;
 	int law = wild[y][x].trans.law_map;
 	int magic, temp;
-	int count = 0;	
 	int build_num = 0, build_tot;
 	byte building;
+	byte count;
 	byte gate_value[MAX_GATES];
-	byte gate_num[MAX_GATES];
+	byte gate_num[MAX_GATES];	
 
 	bool city_block;
 	u32b rng_seed_save;
@@ -316,33 +372,13 @@ static bool create_city(int x, int y, int town_num)
 	{
 		for (j = 0; j < WILD_BLOCK_SIZE + 1; j++)
 		{
-			temp = temp_block[j][i];
-			
-			if (temp < WILD_BLOCK_SIZE * 128)
+			if (temp_block[j][i] < WILD_BLOCK_SIZE * 128)
 			{
 				/* Outside the town */
-				town_block[j][i] = 0;
-			}
-			else
-			{
-				town_block[j][i] = temp;
+				temp_block[j][i] = 0;
 			}
 		}
 	}
-	
-	/* Hack - save seed of rng */
-	rng_seed_save = Rand_value;
-	
-	/* 
-	 * Generate second fractal
-	 */
-	clear_temp_block();
-	set_temp_corner_val(WILD_BLOCK_SIZE * 64);
-	set_temp_mid(WILD_BLOCK_SIZE * law);
-	frac_block();
-	
-	/* Restore the old seed */
-	Rand_value = rng_seed_save;
 	
 	/* Find walls */
 	for (i = 0; i < WILD_BLOCK_SIZE; i++)
@@ -350,7 +386,7 @@ static bool create_city(int x, int y, int town_num)
 		for (j = 0; j < WILD_BLOCK_SIZE; j++)
 		{
 			/* Is a "city block" */
-			if (town_block[j][i])
+			if (temp_block[j][i])
 			{
 				/* Scan around */
 				for (k = -1; k <= 1; k++)				
@@ -362,27 +398,25 @@ static bool create_city(int x, int y, int town_num)
 							(j + l >= 0) && (j + l < WILD_BLOCK_SIZE))
 						{
 							/* Is it outside? */
-							if (!town_block[j + l][i + k])
+							if (!temp_block[j + l][i + k])
 							{
 								/* Make a wall */
-								town_block[j][i] = 1;
+								temp_block[j][i] = 1;
 							}
 						}
 						else
 						{
 							/* Make a wall */
-							town_block[j][i] = 1;
+							temp_block[j][i] = 1;
 						}
 					}
 				}
-
-				/* Count "buildable blocks" */				
-				if (town_block[j][i] != 1) count++;
 			}
 		}
 	}
 	
-	
+	/* 'Fill' the town with buildings */
+	count = fill_town_driver();
 		
 	/* Too few squares??? */
 	if (count < 6) return (FALSE);
@@ -393,7 +427,7 @@ static bool create_city(int x, int y, int town_num)
 		for (j = 0; j < WILD_BLOCK_SIZE; j++)
 		{
 			/* Is a "wall block" */
-			if (town_block[j][i] == 1)
+			if (temp_block[j][i] == 1)
 			{
 				city_block = FALSE;
 								
@@ -407,7 +441,7 @@ static bool create_city(int x, int y, int town_num)
 							(j + l >= 0) && (j + l < WILD_BLOCK_SIZE))
 						{
 							/* Is it a city block? */
-							if (town_block[j + l][i + k] > 1)
+							if (temp_block[j + l][i + k] == 2)
 							{
 								/* We are next to a city */
 								city_block = TRUE;
@@ -417,7 +451,7 @@ static bool create_city(int x, int y, int town_num)
 				}
 				
 				/* No islands */
-				if (!city_block) town_block[j][i] = 0;
+				if (!city_block) temp_block[j][i] = 0;
 			}
 		}
 	}
@@ -446,7 +480,7 @@ static bool create_city(int x, int y, int town_num)
 		for (j = 0; j < WILD_BLOCK_SIZE; j++)
 		{
 			/* Is it a city block? */
-			if (town_block[j][i])
+			if (temp_block[j][i])
 			{
 				w_ptr =	&wild[y + j / 2][x + i / 2].trans;
 
@@ -533,7 +567,15 @@ static bool create_city(int x, int y, int town_num)
 			}
 		}
 	}
-		
+
+	/* 
+	 * Generate second fractal
+	 */
+	clear_temp_block();
+	set_temp_corner_val(WILD_BLOCK_SIZE * 64);
+	set_temp_mid(WILD_BLOCK_SIZE * law);
+	frac_block();
+
 	/* Restore the old seed */
 	Rand_value = rng_seed_save;
 	
@@ -544,32 +586,11 @@ static bool create_city(int x, int y, int town_num)
 	while (count)
 	{
 		/* Pick a square */		
-		i = randint0(WILD_BLOCK_SIZE);
-		j = randint0(WILD_BLOCK_SIZE);
-
-		/* Find some room for a building */
-		while (town_block[j][i] <= 1)
-		{
-			/* Scan across town_block */
-			i++;
-
-			if (i == WILD_BLOCK_SIZE)
-			{
-				/* New line */
-				i = 0;
-				j++;
-
-				if (j == WILD_BLOCK_SIZE)
-				{
-					/* Restart from the begining */
-					j = 0;
-				}
-			}
-		}
-
+		i = randint0(count);
+		
 		/* Get parameters for the 8x8 section the building is on */
-		pop = town_block[j][i] / WILD_BLOCK_SIZE;
-		law = temp_block[j][i] / WILD_BLOCK_SIZE;
+		pop = build_pop[i] ;
+		law = temp_block[build_y[i]][build_x[i]] / WILD_BLOCK_SIZE;
 
 		/* 
 		 * "place" building, and then record in the
@@ -582,15 +603,26 @@ static bool create_city(int x, int y, int town_num)
 		
 		/* Record list of created buildings */
 		build_list[build_num++] = building;
-		
-		/* Decrement free space in city */
-		count--;
-		
-		town_block[j][i] = 0;
+				
+		/* 
+		 * Decrement free space in city
+		 * Note deliberate use of count-- in initialiser
+		 */
+		for (count--; i < count; i++)
+		{
+			/* Shift unallocated buildings down */
+			build_pop[i] = build_pop[i + 1];
+			build_x[i] = build_x[i + 1];
+			build_y[i] = build_y[i + 1];
+		}
 	}
 	
 	/*
 	 * Generate store and building data structures
+	 *
+	 * We need to do this second, because we need to
+	 * know exactly how many stores we have - and realloc
+	 * is silly, unless you need to use it.
 	 */
 	
 	/* Allocate the stores */

@@ -2050,13 +2050,6 @@ static errr init_other(void)
 		C_MAKE(temp_block[i], WILD_BLOCK_SIZE + 1, u16b);
 	}
 
-	/* Allocate town temp block */
-	for (i = 0; i < WILD_BLOCK_SIZE + 1; i++)
-	{
-		/* Allocate one row of the town_block */
-		C_MAKE(town_block[i], WILD_BLOCK_SIZE + 1, u16b);
-	}
-
 	/* Allocate cache of wilderness blocks */
 	for (i = 0; i < WILD_BLOCKS ; i++)
 	{

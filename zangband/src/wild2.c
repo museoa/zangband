@@ -744,12 +744,12 @@ void draw_city(u16b town_num)
 						}
 					}
 				}
-				
-				/* Count "buildable blocks" */
-				if (temp_block[j][i] != 1) count++;
 			}
 		}
 	}
+
+	/* 'Fill' the town with buildings */	
+	count = fill_town_driver();
 	
 	/* Rescan walls to avoid "islands" */
 	for (i = 0; i < WILD_BLOCK_SIZE; i++)
@@ -759,7 +759,6 @@ void draw_city(u16b town_num)
 			/* Is a "wall block" */
 			if (temp_block[j][i] == 1)
 			{
-				
 				city_block = FALSE;
 								
 				/* Scan around */
@@ -772,7 +771,7 @@ void draw_city(u16b town_num)
 							(j + l >= 0) && (j + l < WILD_BLOCK_SIZE))
 						{
 							/* Is it a city block? */
-							if (temp_block[j + l][i + k] > 1)
+							if (temp_block[j + l][i + k] == 2)
 							{
 								/* We are next to a city */
 								city_block = TRUE;
@@ -839,36 +838,24 @@ void draw_city(u16b town_num)
 	}	
 	
 	/* Scan blocks in a random order */
-	for (build = 0; build < count; build++)
+	for (build = 0; count; build++)
 	{
 		/* Pick a square */		
-		i = (byte)randint0(WILD_BLOCK_SIZE);
-		j = (byte)randint0(WILD_BLOCK_SIZE);
-		
-		/* Find some room for a building */
-		while (temp_block[j][i] <= 1)
-		{
-			/* Scan across town_block */
-			i++;
-			
-			if (i == WILD_BLOCK_SIZE)
-			{
-				/* New line */
-				i = 0;
-				j++;
-				
-				if (j == WILD_BLOCK_SIZE)
-				{
-					/* Restart from the begining */
-					j = 0;
-				}
-			}
-		}
+		i = randint0(count);
 		
 		/* Draw the building */
-		draw_building(0, i, j, build, town_num);
+		draw_building(0, build_x[i], build_y[i], build, town_num);
 		
-		temp_block[j][i] = 0;
+		/* 
+		 * Decrement free space in city
+		 * Note deliberate use of count-- in initialiser
+		 */
+		for (count--; i < count; i++)
+		{
+			/* Shift unallocated buildings down */
+			build_x[i] = build_x[i + 1];
+			build_y[i] = build_y[i + 1];
+		}
 	}
 
 	/* Hack -- use the "complex" RNG */
