@@ -19,7 +19,6 @@ namespace eval NSMainWindow {
 	variable trackStepping 0
 	variable trackX
 	variable trackY
-	variable trackHPfrac
 
 # namespace eval NSMainWindow
 }
@@ -1486,9 +1485,7 @@ proc NSMainWindow::TrackPress {oop x y} {
 		return
 	}
 
-	variable trackHPfrac
-	scan [angband player hitpoints] "%d %d %f" curhp maxhp hpfrac
-	set trackHPfrac $hpfrac
+	scan [angband player hitpoints] "%d %d" curhp maxhp
 
 	TrackOnce $oop
 
