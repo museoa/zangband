@@ -634,9 +634,6 @@ static int count_traps(int *y, int *x, bool under)
 		/* paranoia */
 		if (!in_bounds2(yy, xx)) continue;
 
-		/* Must have knowledge */
-		if (!(area(yy,xx)->info & (CAVE_MARK))) continue;
-
 		/* Not looking for this feature */
 		if (!is_visible_trap(area(yy, xx))) continue;
 
