@@ -928,21 +928,21 @@ static void health_redraw(void)
 	else if (!m_list[p_ptr->health_who].ml)
 	{
 		/* Indicate that the monster health is "unknown" */
-		Term_putstr(COL_INFO, ROW_INFO, 12, TERM_WHITE, "[----------]");
+		put_fstr(COL_INFO, ROW_INFO, "[----------]");
 	}
 
 	/* Tracking a hallucinatory monster */
 	else if (p_ptr->image)
 	{
 		/* Indicate that the monster health is "unknown" */
-		Term_putstr(COL_INFO, ROW_INFO, 12, TERM_WHITE, "[----------]");
+		put_fstr(COL_INFO, ROW_INFO, "[----------]");
 	}
 
 	/* Tracking a dead monster ??? */
 	else if (!m_list[p_ptr->health_who].hp < 0)
 	{
 		/* Indicate that the monster health is "unknown" */
-		Term_putstr(COL_INFO, ROW_INFO, 12, TERM_WHITE, "[----------]");
+		put_fstr(COL_INFO, ROW_INFO, "[----------]");
 	}
 
 	/* Tracking a visible monster */
@@ -983,7 +983,7 @@ static void health_redraw(void)
 		len = (pct < 10) ? 1 : (pct < 90) ? (pct / 10 + 1) : 10;
 
 		/* Default to "unknown" */
-		Term_putstr(COL_INFO, ROW_INFO, 12, TERM_WHITE, "[----------]");
+		put_fstr(COL_INFO, ROW_INFO, "[----------]");
 
 		/* Hack -- fake monochrome */
 		if (!use_color || ironman_moria) attr = CLR_WHITE;
@@ -1239,13 +1239,10 @@ static void fix_message(void)
 		/* Dump messages */
 		for (i = 0; i < h; i++)
 		{
-			byte attr = message_color((s16b)i);
-
-			/* Hack -- fake monochrome */
-			if (!use_color || ironman_moria) attr = TERM_WHITE;
+			cptr attr = color_seq[message_color((s16b)i)];
 
 			/* Dump the message on the appropriate line */
-			Term_putstr(0, (h - 1) - i, -1, attr, message_str((s16b)i));
+			put_fstr(0, (h - 1) - i, "%s%s", attr, message_str((s16b)i));
 
 			/* Cursor */
 			(void)Term_locate(&x, &y);

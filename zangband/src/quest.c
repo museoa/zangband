@@ -272,14 +272,14 @@ void get_player_quests(int q_num)
 	if (q_num == -1)
 	{
 		/* Extra info */
-		Term_putstr(5, 15, -1, TERM_WHITE,
+		put_fstr(5, 15,
 				"You can enter the number of quests you'd like to perform in addition");
-		Term_putstr(5, 16, -1, TERM_WHITE,
+		put_fstr(5, 16,
 				"to the two obligatory ones ( Oberon and the Serpent of Chaos )");
-		Term_putstr(5, 17, -1, TERM_WHITE,
+		put_fstr(5, 17,
 				"In case you do not want any additional quests, just enter 0");
 
-		Term_putstr(5, 18, -1, TERM_WHITE,
+		put_fstr(5, 18,
 				"If you want a random number of random quests, just enter *");
 
 		/* Ask the number of additional quests */

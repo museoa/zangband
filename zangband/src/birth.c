@@ -1560,7 +1560,7 @@ static bool get_player_sex(void)
 	cptr genders[MAX_SEXES];
 
 	/* Extra info */
-	Term_putstr(QUESTION_COL, QUESTION_ROW, -1, TERM_WHITE,
+	put_fstr(QUESTION_COL, QUESTION_ROW,
 				"Your 'sex' does not have any significant gameplay effects.");
 
 	/* Tabulate genders */
@@ -1592,7 +1592,6 @@ static bool get_player_sex(void)
 static void race_aux_hook(cptr r_str)
 {
 	int race, i;
-	char s[30];
 
 	/* Extract the proper race index from the string. */
 	for (race = 0; race < MAX_RACES; race++)
@@ -1605,16 +1604,15 @@ static void race_aux_hook(cptr r_str)
 	/* Display relevant details. */
 	for (i = 0; i < A_MAX; i++)
 	{
-		sprintf(s, "%s%+d", stat_names_reduced[i], race_info[race].r_adj[i]);
-		Term_putstr(RACE_AUX_COL, TABLE_ROW + i, -1, TERM_WHITE, s);
+		put_fstr(RACE_AUX_COL, TABLE_ROW + i, "%s%+d",
+				 stat_names_reduced[i], race_info[race].r_adj[i]);
 	}
 
-	sprintf(s, "Hit die: %d ", race_info[race].r_mhp);
-	Term_putstr(RACE_AUX_COL, TABLE_ROW + A_MAX, -1, TERM_WHITE, s);
-	sprintf(s, "Experience: %2d%%", race_info[race].r_exp);
-	Term_putstr(RACE_AUX_COL, TABLE_ROW + A_MAX + 1, -1, TERM_WHITE, s);
-	sprintf(s, "Infravision: %d ft ", race_info[race].infra * 10);
-	Term_putstr(RACE_AUX_COL, TABLE_ROW + A_MAX + 2, -1, TERM_WHITE, s);
+	put_fstr(RACE_AUX_COL, TABLE_ROW + A_MAX, "Hit die: %d ", race_info[race].r_mhp);
+	put_fstr(RACE_AUX_COL, TABLE_ROW + A_MAX + 1, "Experience: %2d%%",
+			 race_info[race].r_exp);
+	put_fstr(RACE_AUX_COL, TABLE_ROW + A_MAX + 2, "Infravision: %d ft ",
+			 race_info[race].infra * 10);
 }
 
 
@@ -1627,7 +1625,7 @@ static bool get_player_race(void)
 	cptr races[MAX_RACES];
 
 	/* Extra info */
-	Term_putstr(QUESTION_COL, QUESTION_ROW, -1, TERM_WHITE,
+	put_fstr(QUESTION_COL, QUESTION_ROW,
 				"Your 'race' determines various intrinsic factors and bonuses.");
 
 	/* Tabulate races */
@@ -1688,15 +1686,14 @@ static void class_aux_hook(cptr c_str)
 	/* Display relevant details. */
 	for (i = 0; i < A_MAX; i++)
 	{
-		sprintf(s, "%s%+d", stat_names_reduced[i],
+		put_fstr(CLASS_AUX_COL, TABLE_ROW + i, "%s%+d", stat_names_reduced[i],
 				class_info[class_idx].c_adj[i]);
-		Term_putstr(CLASS_AUX_COL, TABLE_ROW + i, -1, TERM_WHITE, s);
 	}
 
-	sprintf(s, "Hit die: %d ", class_info[class_idx].c_mhp);
-	Term_putstr(CLASS_AUX_COL, TABLE_ROW + A_MAX, -1, TERM_WHITE, s);
-	sprintf(s, "Experience: %2d%%", class_info[class_idx].c_exp);
-	Term_putstr(CLASS_AUX_COL, TABLE_ROW + A_MAX + 1, -1, TERM_WHITE, s);
+	put_fstr(CLASS_AUX_COL, TABLE_ROW + A_MAX, "Hit die: %d ",
+			 class_info[class_idx].c_mhp);
+	put_fstr(CLASS_AUX_COL, TABLE_ROW + A_MAX + 1, "Experience: %2d%%",
+			 class_info[class_idx].c_exp);
 }
 
 
@@ -1711,9 +1708,9 @@ static bool get_player_class(void)
 
 
 	/* Extra info */
-	Term_putstr(QUESTION_COL, QUESTION_ROW, -1, TERM_WHITE,
+	put_fstr(QUESTION_COL, QUESTION_ROW,
 				"Your 'class' determines various intrinsic abilities and bonuses.");
-	Term_putstr(QUESTION_COL, QUESTION_ROW + 1, -1, TERM_WHITE,
+	put_fstr(QUESTION_COL, QUESTION_ROW + 1,
 				"Any entries in parentheses should only be used by advanced players.");
 
 	/* Tabulate classes */
@@ -1798,9 +1795,9 @@ static bool get_player_realms(void)
 	if (!count) return (TRUE);
 
 	/* Extra info */
-	Term_putstr(QUESTION_COL, QUESTION_ROW, -1, TERM_WHITE,
+	put_fstr(QUESTION_COL, QUESTION_ROW,
 				"Life and Sorcery are protective, Chaos and Death are destructive.");
-	Term_putstr(QUESTION_COL, QUESTION_ROW + 1, -1, TERM_WHITE,
+	put_fstr(QUESTION_COL, QUESTION_ROW + 1,
 				"Nature has both defensive and offensive spells.");
 
 	choose = get_player_choice(realms, count, REALM1_COL, 10,
@@ -1867,13 +1864,13 @@ static bool player_birth_aux_1(void)
 	Term_clear();
 
 	/* Display some helpful information */
-	Term_putstr(QUESTION_COL, HEADER_ROW, -1, TERM_WHITE,
+	put_fstr(QUESTION_COL, HEADER_ROW,
 				"Please select your character from the menu below.");
-	Term_putstr(QUESTION_COL, HEADER_ROW + 2, -1, TERM_WHITE,
+	put_fstr(QUESTION_COL, HEADER_ROW + 2,
 				"Use the movement keys to scroll the menu, 'enter' to select the current");
-	Term_putstr(QUESTION_COL, HEADER_ROW + 3, -1, TERM_WHITE,
+	put_fstr(QUESTION_COL, HEADER_ROW + 3,
 				"menu item, '*' for a random menu item, 'ESC' to restart the character");
-	Term_putstr(QUESTION_COL, HEADER_ROW + 4, -1, TERM_WHITE,
+	put_fstr(QUESTION_COL, HEADER_ROW + 4,
 				"selection, '=' for the birth options, '?' for help, or 'Ctrl-X' to quit.");
 
 	if (!get_player_sex()) return (FALSE);
@@ -2172,11 +2169,11 @@ static bool player_birth_aux_3(void)
 		clear_from(10);
 
 		/* Extra info */
-		Term_putstr(5, 10, -1, TERM_WHITE,
+		put_fstr(5, 10,
 					"The auto-roller will generate 500 characters and try to pick");
-		Term_putstr(5, 11, -1, TERM_WHITE,
+		put_fstr(5, 11,
 					"the one with the best stats, according to the weightings you");
-		Term_putstr(5, 12, -1, TERM_WHITE,
+		put_fstr(5, 12,
 					"choose below. Enter a value from 1-100 for each stat.");
 
 		/* Prompt for the stat weights */

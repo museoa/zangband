@@ -2382,15 +2382,10 @@ void messages_free(void)
  */
 static void msg_flush(int x)
 {
-	byte a = TERM_L_BLUE;
-
-	/* Hack -- fake monochrome */
-	if (!use_color || ironman_moria) a = TERM_WHITE;
-
 	if (!p_ptr->skip_more)
 	{
 		/* Pause for response */
-		Term_putstr(x, 0, -1, a, "-more-");
+		put_fstr(x, 0, CLR_L_BLUE "-more-");
 
 		/* Get an acceptable keypress */
 		while (1)
@@ -2527,7 +2522,7 @@ static void msg_print_aux(u16b type, cptr msg)
 		t[split] = '\0';
 
 		/* Display part of the message */
-		Term_putstr(0, 0, split, color, t);
+		put_fstr(0, 0, "%s%s", color_seq[color], t);
 
 		/* Flush it */
 		msg_flush(split + 1);
@@ -2544,7 +2539,7 @@ static void msg_print_aux(u16b type, cptr msg)
 	}
 
 	/* Display the tail of the message */
-	Term_putstr(message_column, 0, n, color, t);
+	put_fstr(message_column, 0, "%s%s", color_seq[color], t);
 
 	/* Remember the message */
 	msg_flag = TRUE;

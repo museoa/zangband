@@ -229,16 +229,13 @@ void do_cmd_messages(void)
 		for (j = 0; (j < hgt - 4) && (i + j < n); j++)
 		{
 			cptr msg = message_str((s16b)(i + j));
-			byte attr = message_color((s16b)(i + j));
-
-			/* Hack -- fake monochrome */
-			if (!use_color || ironman_moria) attr = TERM_WHITE;
+			cptr attr = color_seq[message_color((s16b)(i + j))];
 
 			/* Apply horizontal scroll */
 			msg = ((int)strlen(msg) >= q) ? (msg + q) : "";
 
 			/* Dump the messages, bottom to top */
-			Term_putstr(0, hgt - 3 - j, -1, attr, msg);
+			put_fstr(0, hgt - 3 - j, "%s%s", attr, msg);
 
 			/* Hilite "shower" */
 			if (shower[0])
@@ -249,10 +246,9 @@ void do_cmd_messages(void)
 				while ((str = strstr(str, shower)) != NULL)
 				{
 					int len = strlen(shower);
-
+				
 					/* Display the match */
-					Term_putstr(str - msg, hgt - 3 - j, len, TERM_YELLOW,
-								shower);
+					put_fstr(str - msg, hgt - 3 - j, CLR_YELLOW "%s", shower);
 
 					/* Advance */
 					str += len;
@@ -261,8 +257,8 @@ void do_cmd_messages(void)
 		}
 
 		/* Display header XXX XXX XXX */
-		prt(format("Message Recall (%d-%d of %d), Offset %d",
-				   i, i + j - 1, n, q), 0, 0);
+		put_fstr(0, 0, "Message Recall (%d-%d of %d), Offset %d",
+				   i, i + j - 1, n, q);
 
 		/* Display prompt (not very informative) */
 		prt("[Press 'p' for older, 'n' for newer, ..., or ESCAPE]", 0, hgt - 1);
@@ -908,37 +904,27 @@ static void do_cmd_options_win(void)
 		/* Display the windows */
 		for (j = 0; j < ANGBAND_TERM_MAX; j++)
 		{
-			byte a = TERM_WHITE;
-
-			cptr s = angband_term_name[j];
-
-			/* Use color */
-			if (use_color && (j == x) && !ironman_moria) a = TERM_L_BLUE;
-
 			/* Window name, staggered, centered */
-			Term_putstr(35 + j * 5 - strlen(s) / 2, 2 + j % 2, -1, a, s);
+			put_fstr(35 + j * 5 - strlen(angband_term_name[j]) / 2, 2 + j % 2,
+						CLR_L_BLUE "%s", angband_term_name[j]);
 		}
 
 		/* Display the options */
 		for (i = 0; i < 16; i++)
 		{
-			byte a = TERM_WHITE;
-
 			cptr str = window_flag_desc[i];
-
-			/* Use color */
-			if (use_color && (i == y) && !ironman_moria) a = TERM_L_BLUE;
 
 			/* Unused option */
 			if (!str) str = "(Unused option)";
 
 			/* Flag name */
-			Term_putstr(0, i + 5, -1, a, str);
+			put_fstr(0, i + 5, CLR_L_BLUE "%s", str);
 
 			/* Display the windows */
 			for (j = 0; j < ANGBAND_TERM_MAX; j++)
 			{
 				char c = '.';
+				byte a;
 
 				a = TERM_WHITE;
 
@@ -2310,24 +2296,21 @@ void do_cmd_visuals(void)
 				byte cc = (r_ptr->x_char);
 
 				/* Label the object */
-				Term_putstr(5, 17, -1, TERM_WHITE,
-							format("Monster = %d, Name = %-40.40s",
-								   r, (r_name + r_ptr->name)));
+				put_fstr(5, 17, "Monster = %d, Name = %-40.40s",
+								   r, (r_name + r_ptr->name));
 
 				/* Label the Default values */
-				Term_putstr(10, 19, -1, TERM_WHITE,
-							format("Default attr/char = %3u / %3u", da, dc));
-				Term_putstr(40, 19, -1, TERM_WHITE, "<< ? >>");
+				put_fstr(10, 19, "Default attr/char = %3u / %3u", da, dc);
+				put_fstr(40, 19, "<< ? >>");
 				Term_putch(43, 19, da, dc);
 
 				/* Label the Current values */
-				Term_putstr(10, 20, -1, TERM_WHITE,
-							format("Current attr/char = %3u / %3u", ca, cc));
-				Term_putstr(40, 20, -1, TERM_WHITE, "<< ? >>");
+				put_fstr(10, 20, "Current attr/char = %3u / %3u", ca, cc);
+				put_fstr(40, 20, "<< ? >>");
 				Term_putch(43, 20, ca, cc);
 
 				/* Prompt */
-				Term_putstr(0, 22, -1, TERM_WHITE, "Command (n/N/a/A/c/C): ");
+				put_fstr(0, 22, "Command (n/N/a/A/c/C): ");
 
 				/* Get a command */
 				i = inkey();
@@ -2364,24 +2347,21 @@ void do_cmd_visuals(void)
 				byte cc = (byte)k_ptr->x_char;
 
 				/* Label the object */
-				Term_putstr(5, 17, -1, TERM_WHITE,
-							format("Object = %d, Name = %-40.40s",
-								   k, (k_name + k_ptr->name)));
+				put_fstr(5, 17, "Object = %d, Name = %-40.40s",
+								   k, (k_name + k_ptr->name));
 
 				/* Label the Default values */
-				Term_putstr(10, 19, -1, TERM_WHITE,
-							format("Default attr/char = %3d / %3d", da, dc));
-				Term_putstr(40, 19, -1, TERM_WHITE, "<< ? >>");
+				put_fstr(10, 19, "Default attr/char = %3d / %3d", da, dc);
+				put_fstr(40, 19, "<< ? >>");
 				Term_putch(43, 19, da, dc);
 
 				/* Label the Current values */
-				Term_putstr(10, 20, -1, TERM_WHITE,
-							format("Current attr/char = %3d / %3d", ca, cc));
-				Term_putstr(40, 20, -1, TERM_WHITE, "<< ? >>");
+				put_fstr(10, 20, "Current attr/char = %3d / %3d", ca, cc);
+				put_fstr(40, 20, "<< ? >>");
 				Term_putch(43, 20, ca, cc);
 
 				/* Prompt */
-				Term_putstr(0, 22, -1, TERM_WHITE, "Command (n/N/a/A/c/C): ");
+				put_fstr(0, 22, "Command (n/N/a/A/c/C): ");
 
 				/* Get a command */
 				i = inkey();
@@ -2418,24 +2398,21 @@ void do_cmd_visuals(void)
 				byte cc = (byte)f_ptr->x_char;
 
 				/* Label the object */
-				Term_putstr(5, 17, -1, TERM_WHITE,
-							format("Terrain = %d, Name = %-40.40s",
-								   f, (f_name + f_ptr->name)));
+				put_fstr(5, 17, "Terrain = %d, Name = %-40.40s",
+								   f, (f_name + f_ptr->name));
 
 				/* Label the Default values */
-				Term_putstr(10, 19, -1, TERM_WHITE,
-							format("Default attr/char = %3d / %3d", da, dc));
-				Term_putstr(40, 19, -1, TERM_WHITE, "<< ? >>");
+				put_fstr(10, 19, "Default attr/char = %3d / %3d", da, dc);
+				put_fstr(40, 19, "<< ? >>");
 				Term_putch(43, 19, da, dc);
 
 				/* Label the Current values */
-				Term_putstr(10, 20, -1, TERM_WHITE,
-							format("Current attr/char = %3d / %3d", ca, cc));
-				Term_putstr(40, 20, -1, TERM_WHITE, "<< ? >>");
+				put_fstr(10, 20, "Current attr/char = %3d / %3d", ca, cc);
+				put_fstr(40, 20, "<< ? >>");
 				Term_putch(43, 20, ca, cc);
 
 				/* Prompt */
-				Term_putstr(0, 22, -1, TERM_WHITE, "Command (n/N/a/A/c/C): ");
+				put_fstr(0, 22, "Command (n/N/a/A/c/C): ");
 
 				/* Get a command */
 				i = inkey();
@@ -2472,24 +2449,20 @@ void do_cmd_visuals(void)
 				byte cc = (byte)t_ptr->f_char;
 
 				/* Label the object */
-				Term_putstr(5, 17, -1, TERM_WHITE,
-							format("Field = %d, Name = %-40.40s",
-								   f, t_ptr->name));
+				put_fstr(5, 17, "Field = %d, Name = %-40.40s", f, t_ptr->name);
 
 				/* Label the Default values */
-				Term_putstr(10, 19, -1, TERM_WHITE,
-							format("Default attr/char = %3d / %3d", da, dc));
-				Term_putstr(40, 19, -1, TERM_WHITE, "<< ? >>");
+				put_fstr(10, 19, "Default attr/char = %3d / %3d", da, dc);
+				put_fstr(40, 19, "<< ? >>");
 				Term_putch(43, 19, da, dc);
 
 				/* Label the Current values */
-				Term_putstr(10, 20, -1, TERM_WHITE,
-							format("Current attr/char = %3d / %3d", ca, cc));
-				Term_putstr(40, 20, -1, TERM_WHITE, "<< ? >>");
+				put_fstr(10, 20, "Current attr/char = %3d / %3d", ca, cc);
+				put_fstr(40, 20, "<< ? >>");
 				Term_putch(43, 20, ca, cc);
 
 				/* Prompt */
-				Term_putstr(0, 22, -1, TERM_WHITE, "Command (n/N/a/A/c/C): ");
+				put_fstr(0, 22, "Command (n/N/a/A/c/C): ");
 
 				/* Get a command */
 				i = inkey();
@@ -2749,30 +2722,27 @@ void do_cmd_colors(void)
 				for (j = 0; j < 16; j++)
 				{
 					/* Exhibit this color */
-					Term_putstr(j * 4, 20, -1, a, "###");
+					put_fstr(j * 4, 20, "%s###", color_seq[a]);
 
 					/* Exhibit all colors */
-					Term_putstr(j * 4, 22, -1, j, format("%3d", j));
+					put_fstr(j * 4, 22, "%3d", j);
 				}
 
 				/* Describe the color */
 				name = ((a < 16) ? color_names[a] : "undefined");
 
 				/* Describe the color */
-				Term_putstr(5, 12, -1, TERM_WHITE,
-							format("Color = %d, Name = %s", a, name));
+				put_fstr(5, 12, "Color = %d, Name = %s", a, name);
 
 				/* Label the Current values */
-				Term_putstr(5, 14, -1, TERM_WHITE,
-							format("K = 0x%02x / R,G,B = 0x%02x,0x%02x,0x%02x",
+				put_fstr(5, 14, "K = 0x%02x / R,G,B = 0x%02x,0x%02x,0x%02x",
 								   angband_color_table[a][0],
 								   angband_color_table[a][1],
 								   angband_color_table[a][2],
-								   angband_color_table[a][3]));
+								   angband_color_table[a][3]);
 
 				/* Prompt */
-				Term_putstr(0, 16, -1, TERM_WHITE,
-							"Command (n/N/k/K/r/R/g/G/b/B): ");
+				put_fstr(0, 16, "Command (n/N/k/K/r/R/g/G/b/B): ");
 
 				/* Get a command */
 				i = inkey();
@@ -2824,8 +2794,7 @@ void do_cmd_colors(void)
 				clear_from(12);
 
 				/* Describe the message */
-				Term_putstr(5, 12, -1, TERM_WHITE,
-							format("Message = %d, Type = %s", a, msg_names[a]));
+				put_fstr(5, 12, "Message = %d, Type = %s", a, msg_names[a]);
 
 				/* Show current color */
 				color = get_msg_type_color(a);
@@ -2833,12 +2802,11 @@ void do_cmd_colors(void)
 				/* Paranoia */
 				if (color >= 16) color = 0;
 
-				Term_putstr(5, 14, -1, TERM_WHITE,
-							format("Current color: %c / ", color_char[color]));
-				Term_putstr(24, 14, -1, color, color_names[color]);
+				put_fstr(5, 14, "Current color: %c / ", color_char[color]);
+				put_fstr(24, 14, "%s%s", color_seq[color], color_names[color]);
 
 				/* Prompt */
-				Term_putstr(0, 16, -1, TERM_WHITE, "Command (n/N/c/C): ");
+				put_fstr(0, 16, "Command (n/N/c/C): ");
 
 				/* Get a command */
 				i = inkey();

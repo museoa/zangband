@@ -2981,7 +2981,6 @@ void display_spell_list(void)
 		int chance;
 		mindcraft_power spell;
 		char comment[80];
-		char psi_desc[80];
 
 		/* Display a list of spells */
 		put_fstr(x + 3, y, "Name");
@@ -2990,7 +2989,7 @@ void display_spell_list(void)
 		/* Dump the spells */
 		for (i = 0; (i < MINDCRAFT_MAX) && (i < Term->hgt - 1); i++)
 		{
-			byte a = TERM_WHITE;
+			cptr a = CLR_WHITE;
 
 			/* Access the available spell */
 			spell = mindcraft_powers[i];
@@ -3010,7 +3009,7 @@ void display_spell_list(void)
 			if (spell.mana_cost > p_ptr->csp)
 			{
 				chance += 5 * (spell.mana_cost - p_ptr->csp);
-				a = TERM_ORANGE;
+				a = CLR_ORANGE;
 			}
 
 			/* Extract the minimum failure rate */
@@ -3030,10 +3029,9 @@ void display_spell_list(void)
 			mindcraft_info(comment, i);
 
 			/* Dump the spell */
-			sprintf(psi_desc, "%c) %-30s%2d %4d %3d%%%s",
-					I2A(i), spell.name,
+			put_fstr(x, y + i + 1, "%s%c) %-30s%2d %4d %3d%%%s",
+					a, I2A(i), spell.name,
 					spell.min_lev, spell.mana_cost, chance, comment);
-			Term_putstr(x, y + i + 1, -1, a, psi_desc);
 		}
 
 		return;
@@ -3049,7 +3047,7 @@ void display_spell_list(void)
 		/* Scan spells */
 		for (i = 0; i < 32; i++)
 		{
-			byte a = TERM_WHITE;
+			cptr a = CLR_WHITE;
 
 			/* Access the spell */
 			s_ptr = &mp_ptr->info[(j < 1) ? use_realm1 : use_realm2][i % 32];
@@ -3064,7 +3062,7 @@ void display_spell_list(void)
 				strcpy(name, "(illegible)");
 
 				/* Unusable */
-				a = TERM_L_DARK;
+				a = CLR_L_DARK;
 			}
 
 			/* Forgotten */
@@ -3073,7 +3071,7 @@ void display_spell_list(void)
 					 ((p_ptr->spell_forgotten2 & (1L << (i % 32)))))
 			{
 				/* Forgotten */
-				a = TERM_ORANGE;
+				a = CLR_ORANGE;
 			}
 
 			/* Unknown */
@@ -3082,7 +3080,7 @@ void display_spell_list(void)
 					   (p_ptr->spell_learned2 & (1L << (i % 32)))))
 			{
 				/* Unknown */
-				a = TERM_RED;
+				a = CLR_RED;
 			}
 
 			/* Untried */
@@ -3091,7 +3089,7 @@ void display_spell_list(void)
 					   (p_ptr->spell_worked2 & (1L << (i % 32)))))
 			{
 				/* Untried */
-				a = TERM_YELLOW;
+				a = CLR_YELLOW;
 			}
 
 			/* Dump the spell --(-- */
@@ -3100,7 +3098,7 @@ void display_spell_list(void)
 			max_wid = MAX(max_wid, strlen(out_val) + 1);
 
 			/* Dump onto the window */
-			Term_putstr(col, row, -1, a, out_val);
+			put_fstr(col, row, "%s%s", a, out_val);
 
 			/* Next row */
 			row++;

@@ -5786,7 +5786,7 @@ void display_koff(int k_idx)
 	object_desc_store(o_name, q_ptr, FALSE, 0, 256);
 
 	/* Mention the object name */
-	Term_putstr(0, 0, -1, TERM_WHITE, o_name);
+	put_fstr(0, 0, o_name);
 
 	/* Warriors are illiterate */
 	if (!(p_ptr->realm1 || p_ptr->realm2)) return;

@@ -2745,374 +2745,363 @@ void borg_status_window(void)
 		/* Check for borg status term */
 		if (window_flag[j] & (PW_BORG_2))
 		{
-			byte attr;
+			cptr attr;
 
 			/* Activate */
 			Term_activate(angband_term[j]);
 
 			/* Display what resists the borg (thinks he) has */
-			Term_putstr(5, 0, -1, TERM_WHITE, "RESISTS");
+			put_fstr(5, 0, "RESISTS");
 
 			/* Basic four */
-			attr = TERM_SLATE;
-			if (bp_ptr->flags2 & TR2_RES_ACID) attr = TERM_BLUE;
-			if (my_oppose_acid) attr = TERM_GREEN;
-			if (bp_ptr->flags2 & TR2_IM_ACID) attr = TERM_WHITE;
-			Term_putstr(1, 1, -1, attr, "Acid");
+			attr = CLR_SLATE;
+			if (bp_ptr->flags2 & TR2_RES_ACID) attr = CLR_BLUE;
+			if (my_oppose_acid) attr = CLR_GREEN;
+			if (bp_ptr->flags2 & TR2_IM_ACID) attr = CLR_WHITE;
+			put_fstr(1, 1, "%s%s", attr, "Acid");
 
-			attr = TERM_SLATE;
-			if (bp_ptr->flags2 & TR2_RES_ELEC) attr = TERM_BLUE;
-			if (my_oppose_elec) attr = TERM_GREEN;
-			if (bp_ptr->flags2 & TR2_IM_ELEC) attr = TERM_WHITE;
-			Term_putstr(1, 2, -1, attr, "Elec");
+			attr = CLR_SLATE;
+			if (bp_ptr->flags2 & TR2_RES_ELEC) attr = CLR_BLUE;
+			if (my_oppose_elec) attr = CLR_GREEN;
+			if (bp_ptr->flags2 & TR2_IM_ELEC) attr = CLR_WHITE;
+			put_fstr(1, 2, "%s%s", attr, "Elec");
 
-			attr = TERM_SLATE;
-			if (bp_ptr->flags2 & TR2_RES_FIRE) attr = TERM_BLUE;
-			if (my_oppose_fire) attr = TERM_GREEN;
-			if (bp_ptr->flags2 & TR2_IM_FIRE) attr = TERM_WHITE;
-			Term_putstr(1, 3, -1, attr, "Fire");
+			attr = CLR_SLATE;
+			if (bp_ptr->flags2 & TR2_RES_FIRE) attr = CLR_BLUE;
+			if (my_oppose_fire) attr = CLR_GREEN;
+			if (bp_ptr->flags2 & TR2_IM_FIRE) attr = CLR_WHITE;
+			put_fstr(1, 3, "%s%s", attr, "Fire");
 
-			attr = TERM_SLATE;
-			if (bp_ptr->flags2 & TR2_RES_COLD) attr = TERM_BLUE;
-			if (my_oppose_cold) attr = TERM_GREEN;
-			if (bp_ptr->flags2 & TR2_IM_COLD) attr = TERM_WHITE;
-			Term_putstr(1, 4, -1, attr, "Cold");
+			attr = CLR_SLATE;
+			if (bp_ptr->flags2 & TR2_RES_COLD) attr = CLR_BLUE;
+			if (my_oppose_cold) attr = CLR_GREEN;
+			if (bp_ptr->flags2 & TR2_IM_COLD) attr = CLR_WHITE;
+			put_fstr(1, 4, "%s%s", attr, "Cold");
 
 			/* High resists */
-			attr = TERM_SLATE;
-			if (bp_ptr->flags2 & TR2_RES_POIS) attr = TERM_BLUE;
-			if (my_oppose_pois) attr = TERM_GREEN;
-			Term_putstr(1, 5, -1, attr, "Pois");
+			attr = CLR_SLATE;
+			if (bp_ptr->flags2 & TR2_RES_POIS) attr = CLR_BLUE;
+			if (my_oppose_pois) attr = CLR_GREEN;
+			put_fstr(1, 5, "%s%s", attr, "Pois");
 
-			if (bp_ptr->flags2 & TR2_RES_FEAR) attr = TERM_BLUE;
+			if (bp_ptr->flags2 & TR2_RES_FEAR) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(1, 6, -1, attr, "Fear");
+				attr = CLR_SLATE;
+			put_fstr(1, 6, "%s%s", attr, "Fear");
 
-			if (bp_ptr->flags2 & TR2_RES_LITE) attr = TERM_BLUE;
+			if (bp_ptr->flags2 & TR2_RES_LITE) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(1, 7, -1, attr, "Lite");
+				attr = CLR_SLATE;
+			put_fstr(1, 7, "%s%s", attr, "Lite");
 
-			if (bp_ptr->flags2 & TR2_RES_DARK) attr = TERM_BLUE;
+			if (bp_ptr->flags2 & TR2_RES_DARK) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(1, 8, -1, attr, "Dark");
+				attr = CLR_SLATE;
+			put_fstr(1, 8, "%s%s", attr, "Dark");
 
-			if (bp_ptr->flags2 & TR2_RES_BLIND) attr = TERM_BLUE;
+			if (bp_ptr->flags2 & TR2_RES_BLIND) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(6, 1, -1, attr, "Blind");
+				attr = CLR_SLATE;
+			put_fstr(6, 1, "%s%s", attr, "Blind");
 
-			if (bp_ptr->flags2 & TR2_RES_CONF) attr = TERM_BLUE;
+			if (bp_ptr->flags2 & TR2_RES_CONF) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(6, 2, -1, attr, "Confu");
+				attr = CLR_SLATE;
+			put_fstr(6, 2, "%s%s", attr, "Confu");
 
-			if (bp_ptr->flags2 & TR2_RES_SOUND) attr = TERM_BLUE;
+			if (bp_ptr->flags2 & TR2_RES_SOUND) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(6, 3, -1, attr, "Sound");
+				attr = CLR_SLATE;
+			put_fstr(6, 3, "%s%s", attr, "Sound");
 
-			if (bp_ptr->flags2 & TR2_RES_SHARDS) attr = TERM_BLUE;
+			if (bp_ptr->flags2 & TR2_RES_SHARDS) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(6, 4, -1, attr, "Shard");
+				attr = CLR_SLATE;
+			put_fstr(6, 4, "%s%s", attr, "Shard");
 
-			if (bp_ptr->flags2 & TR2_RES_NEXUS) attr = TERM_BLUE;
+			if (bp_ptr->flags2 & TR2_RES_NEXUS) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(6, 5, -1, attr, "Nexus");
+				attr = CLR_SLATE;
+			put_fstr(6, 5, "%s%s", attr, "Nexus");
 
-			if (bp_ptr->flags2 & TR2_RES_NETHER) attr = TERM_BLUE;
+			if (bp_ptr->flags2 & TR2_RES_NETHER) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(6, 6, -1, attr, "Nethr");
+				attr = CLR_SLATE;
+			put_fstr(6, 6, "%s%s", attr, "Nethr");
 
-			if (bp_ptr->flags2 & TR2_RES_CHAOS) attr = TERM_BLUE;
+			if (bp_ptr->flags2 & TR2_RES_CHAOS) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(6, 7, -1, attr, "Chaos");
+				attr = CLR_SLATE;
+			put_fstr(6, 7, "%s%s", attr, "Chaos");
 
-			if (bp_ptr->flags2 & TR2_RES_DISEN) attr = TERM_BLUE;
+			if (bp_ptr->flags2 & TR2_RES_DISEN) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(6, 8, -1, attr, "Disen");
+				attr = CLR_SLATE;
+			put_fstr(6, 8, "%s%s", attr, "Disen");
 
 			/* Other abilities */
-			if (bp_ptr->flags3 & TR3_SLOW_DIGEST) attr = TERM_BLUE;
+			if (bp_ptr->flags3 & TR3_SLOW_DIGEST) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(12, 1, -1, attr, "S.Dig");
+				attr = CLR_SLATE;
+			put_fstr(12, 1, "%s%s", attr, "S.Dig");
 
-			if (bp_ptr->flags3 & TR3_FEATHER) attr = TERM_BLUE;
+			if (bp_ptr->flags3 & TR3_FEATHER) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(12, 2, -1, attr, "Feath");
+				attr = CLR_SLATE;
+			put_fstr(12, 2, "%s%s", attr, "Feath");
 
-			if (bp_ptr->britelite) attr = TERM_BLUE;
+			if (bp_ptr->britelite) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(12, 3, -1, attr, "PLite");
+				attr = CLR_SLATE;
+			put_fstr(12, 3, "%s%s", attr, "PLite");
 
-			if (bp_ptr->flags3 & TR3_REGEN) attr = TERM_BLUE;
+			if (bp_ptr->flags3 & TR3_REGEN) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(12, 4, -1, attr, "Regen");
+				attr = CLR_SLATE;
+			put_fstr(12, 4, "%s%s", attr, "Regen");
 
-			if (bp_ptr->flags3 & TR3_TELEPATHY) attr = TERM_BLUE;
+			if (bp_ptr->flags3 & TR3_TELEPATHY) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(12, 5, -1, attr, "Telep");
+				attr = CLR_SLATE;
+			put_fstr(12, 5, "%s%s", attr, "Telep");
 
-			if (bp_ptr->flags3 & TR3_SEE_INVIS) attr = TERM_BLUE;
+			if (bp_ptr->flags3 & TR3_SEE_INVIS) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(12, 6, -1, attr, "Invis");
+				attr = CLR_SLATE;
+			put_fstr(12, 6, "%s%s", attr, "Invis");
 
-			if (bp_ptr->flags2 & TR2_FREE_ACT) attr = TERM_BLUE;
+			if (bp_ptr->flags2 & TR2_FREE_ACT) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(12, 7, -1, attr, "FrAct");
+				attr = CLR_SLATE;
+			put_fstr(12, 7, "%s%s", attr, "FrAct");
 
-			if (bp_ptr->flags2 & TR2_HOLD_LIFE) attr = TERM_BLUE;
+			if (bp_ptr->flags2 & TR2_HOLD_LIFE) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(12, 8, -1, attr, "HLife");
+				attr = CLR_SLATE;
+			put_fstr(12, 8, "%s%s", attr, "HLife");
 
 			/* Display the slays */
-			Term_putstr(5, 10, -1, TERM_WHITE, "Weapon Slays:");
+			put_fstr(5, 10, "Weapon Slays:");
 
-			if (bp_ptr->flags1 & TR1_SLAY_ANIMAL) attr = TERM_BLUE;
+			if (bp_ptr->flags1 & TR1_SLAY_ANIMAL) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(1, 11, -1, attr, "Animal");
+				attr = CLR_SLATE;
+			put_fstr(1, 11, "%s%s", attr, "Animal");
 
-			if (bp_ptr->flags1 & TR1_SLAY_EVIL) attr = TERM_BLUE;
+			if (bp_ptr->flags1 & TR1_SLAY_EVIL) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(8, 11, -1, attr, "Evil");
+				attr = CLR_SLATE;
+			put_fstr(8, 11, "%s%s", attr, "Evil");
 
-			if (bp_ptr->flags1 & TR1_SLAY_UNDEAD) attr = TERM_BLUE;
+			if (bp_ptr->flags1 & TR1_SLAY_UNDEAD) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(15, 11, -1, attr, "Undead");
+				attr = CLR_SLATE;
+			put_fstr(15, 11, "%s%s", attr, "Undead");
 
-			if (bp_ptr->flags1 & TR1_SLAY_DEMON) attr = TERM_BLUE;
+			if (bp_ptr->flags1 & TR1_SLAY_DEMON) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(22, 11, -1, attr, "Demon");
+				attr = CLR_SLATE;
+			put_fstr(22, 11, "%s%s", attr, "Demon");
 
-			if (bp_ptr->flags1 & TR1_SLAY_ORC) attr = TERM_BLUE;
+			if (bp_ptr->flags1 & TR1_SLAY_ORC) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(1, 12, -1, attr, "Orc");
+				attr = CLR_SLATE;
+			put_fstr(1, 12, "%s%s", attr, "Orc");
 
-			if (bp_ptr->flags1 & TR1_SLAY_TROLL) attr = TERM_BLUE;
+			if (bp_ptr->flags1 & TR1_SLAY_TROLL) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(8, 12, -1, attr, "Troll");
+				attr = CLR_SLATE;
+			put_fstr(8, 12, "%s%s", attr, "Troll");
 
-			if (bp_ptr->flags1 & TR1_SLAY_GIANT) attr = TERM_BLUE;
+			if (bp_ptr->flags1 & TR1_SLAY_GIANT) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(15, 12, -1, attr, "Giant");
+				attr = CLR_SLATE;
+			put_fstr(15, 12, "%s%s", attr, "Giant");
 
-			if (bp_ptr->flags1 & TR1_SLAY_DRAGON) attr = TERM_BLUE;
-			if (bp_ptr->flags1 & TR1_KILL_DRAGON) attr = TERM_GREEN;
+			if (bp_ptr->flags1 & TR1_SLAY_DRAGON) attr = CLR_BLUE;
+			if (bp_ptr->flags1 & TR1_KILL_DRAGON) attr = CLR_GREEN;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(22, 12, -1, attr, "Dragon");
+				attr = CLR_SLATE;
+			put_fstr(22, 12, "%s%s", attr, "Dragon");
 
-			if (bp_ptr->flags1 & TR1_BRAND_ACID) attr = TERM_BLUE;
+			if (bp_ptr->flags1 & TR1_BRAND_ACID) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(1, 13, -1, attr, "Acid");
+				attr = CLR_SLATE;
+			put_fstr(1, 13, "%s%s", attr, "Acid");
 
-			if (bp_ptr->flags1 & TR1_BRAND_COLD) attr = TERM_BLUE;
+			if (bp_ptr->flags1 & TR1_BRAND_COLD) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(8, 13, -1, attr, "Cold");
+				attr = CLR_SLATE;
+			put_fstr(8, 13, "%s%s", attr, "Cold");
 
-			if (bp_ptr->flags1 & TR1_BRAND_ELEC) attr = TERM_BLUE;
+			if (bp_ptr->flags1 & TR1_BRAND_ELEC) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(15, 13, -1, attr, "Elec");
+				attr = CLR_SLATE;
+			put_fstr(15, 13, "%s%s", attr, "Elec");
 
-			if (bp_ptr->flags1 & TR1_BRAND_FIRE) attr = TERM_BLUE;
+			if (bp_ptr->flags1 & TR1_BRAND_FIRE) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(22, 13, -1, attr, "Fire");
+				attr = CLR_SLATE;
+			put_fstr(22, 13, "%s%s", attr, "Fire");
 
 
 			/* Display the Concerns */
-			Term_putstr(36, 10, -1, TERM_WHITE, "Concerns:");
+			put_fstr(36, 10, "Concerns:");
 
-			if (borg_wearing_cursed) attr = TERM_BLUE;
+			if (borg_wearing_cursed) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(29, 11, -1, attr, "Cursed");
+				attr = CLR_SLATE;
+			put_fstr(29, 11, "%s%s", attr, "Cursed");
 
-			if (bp_ptr->status.weak) attr = TERM_BLUE;
+			if (bp_ptr->status.weak) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(36, 11, -1, attr, "Weak");
+				attr = CLR_SLATE;
+			put_fstr(36, 11, "%s%s", attr, "Weak");
 
-			if (bp_ptr->status.poisoned) attr = TERM_BLUE;
+			if (bp_ptr->status.poisoned) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(43, 11, -1, attr, "Poison");
+				attr = CLR_SLATE;
+			put_fstr(43, 11, "%s%s", attr, "Poison");
 
-			if (bp_ptr->status.cut) attr = TERM_BLUE;
+			if (bp_ptr->status.cut) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(29, 12, -1, attr, "Cut");
+				attr = CLR_SLATE;
+			put_fstr(29, 12, "%s%s", attr, "Cut");
 
-			if (bp_ptr->status.stun) attr = TERM_BLUE;
+			if (bp_ptr->status.stun) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(36, 12, -1, attr, "Stun");
+				attr = CLR_SLATE;
+			put_fstr(36, 12, "%s%s", attr, "Stun");
 
-			if (bp_ptr->status.confused) attr = TERM_BLUE;
+			if (bp_ptr->status.confused) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(43, 12, -1, attr, "Confused");
+				attr = CLR_SLATE;
+			put_fstr(43, 12, "%s%s", attr, "Confused");
 
-			if (bp_ptr->status.fixexp) attr = TERM_BLUE;
+			if (bp_ptr->status.fixexp) attr = CLR_BLUE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(43, 13, -1, attr, "Exp Drain");
+				attr = CLR_SLATE;
+			put_fstr(43, 13, "%s%s", attr, "Exp Drain");
 
 			/* Display the Time */
-			Term_putstr(60, 10, -1, TERM_WHITE, "Time:");
+			put_fstr(60, 10, "Time:");
 
-			Term_putstr(54, 11, -1, TERM_SLATE, "This Level         ");
-			Term_putstr(65, 11, -1, TERM_WHITE,
-						format("%d", borg_t - borg_began));
+			put_fstr(54, 11, "This Level         %d", borg_t - borg_began);
 
-			Term_putstr(54, 12, -1, TERM_SLATE, "Since Town         ");
-			Term_putstr(65, 12, -1, TERM_WHITE,
-						format("%d", borg_time_town + (borg_t - borg_began)));
+			put_fstr(54, 12, CLR_SLATE, "Since Town         " CLR_WHITE "%d",
+					 borg_time_town + (borg_t - borg_began));
 
 
 			/* Sustains */
-			Term_putstr(19, 0, -1, TERM_WHITE, "Sustains");
+			put_fstr(19, 0, "Sustains");
 
-			if (bp_ptr->sust[A_STR]) attr = TERM_WHITE;
+			if (bp_ptr->sust[A_STR]) attr = CLR_WHITE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(21, 1, -1, attr, "STR");
+				attr = CLR_SLATE;
+			put_fstr(21, 1, "%s%s", attr, "STR");
 
-			if (bp_ptr->sust[A_INT]) attr = TERM_WHITE;
+			if (bp_ptr->sust[A_INT]) attr = CLR_WHITE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(21, 2, -1, attr, "INT");
+				attr = CLR_SLATE;
+			put_fstr(21, 2, "%s%s", attr, "INT");
 
-			if (bp_ptr->sust[A_WIS]) attr = TERM_WHITE;
+			if (bp_ptr->sust[A_WIS]) attr = CLR_WHITE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(21, 3, -1, attr, "WIS");
+				attr = CLR_SLATE;
+			put_fstr(21, 3, "%s%s", attr, "WIS");
 
-			if (bp_ptr->sust[A_DEX]) attr = TERM_WHITE;
+			if (bp_ptr->sust[A_DEX]) attr = CLR_WHITE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(21, 4, -1, attr, "DEX");
+				attr = CLR_SLATE;
+			put_fstr(21, 4, "%s%s", attr, "DEX");
 
-			if (bp_ptr->sust[A_CON]) attr = TERM_WHITE;
+			if (bp_ptr->sust[A_CON]) attr = CLR_WHITE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(21, 5, -1, attr, "CON");
+				attr = CLR_SLATE;
+			put_fstr(21, 5, "%s%s", attr, "CON");
 
-			if (bp_ptr->sust[A_CHR]) attr = TERM_WHITE;
+			if (bp_ptr->sust[A_CHR]) attr = CLR_WHITE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(21, 6, -1, attr, "CHR");
+				attr = CLR_SLATE;
+			put_fstr(21, 6, "%s%s", attr, "CHR");
 
 
 			/* Temporary effects */
-			Term_putstr(28, 0, -1, TERM_WHITE, "Temp Effects");
+			put_fstr(28, 0, "Temp Effects");
 
-			if (borg_prot_from_evil) attr = TERM_WHITE;
+			if (borg_prot_from_evil) attr = CLR_WHITE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(28, 1, -1, attr, "Prot. Evil");
+				attr = CLR_SLATE;
+			put_fstr(28, 1, "%s%s", attr, "Prot. Evil");
 
-			if (borg_goi) attr = TERM_WHITE;
+			if (borg_goi) attr = CLR_WHITE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(28, 2, -1, attr, "Invulnerable");
+				attr = CLR_SLATE;
+			put_fstr(28, 2, "%s%s", attr, "Invulnerable");
 
-			if (borg_hero) attr = TERM_WHITE;
+			if (borg_hero) attr = CLR_WHITE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(28, 3, -1, attr, "Heroism");
+				attr = CLR_SLATE;
+			put_fstr(28, 3, "%s%s", attr, "Heroism");
 
-			if (borg_berserk) attr = TERM_WHITE;
+			if (borg_berserk) attr = CLR_WHITE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(28, 4, -1, attr, "Berserk");
+				attr = CLR_SLATE;
+			put_fstr(28, 4, "%s%s", attr, "Berserk");
 
-			if (borg_shield) attr = TERM_WHITE;
+			if (borg_shield) attr = CLR_WHITE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(28, 5, -1, attr, "Shielded");
+				attr = CLR_SLATE;
+			put_fstr(28, 5, "%s%s", attr, "Shielded");
 
-			if (borg_bless) attr = TERM_WHITE;
+			if (borg_bless) attr = CLR_WHITE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(28, 6, -1, attr, "Blessed");
+				attr = CLR_SLATE;
+			put_fstr(28, 6, "%s%s", attr, "Blessed");
 
-			if (borg_speed) attr = TERM_WHITE;
+			if (borg_speed) attr = CLR_WHITE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(28, 7, -1, attr, "Fast");
+				attr = CLR_SLATE;
+			put_fstr(28, 7, "%s%s", attr, "Fast");
 
-			if (borg_inviso) attr = TERM_WHITE;
+			if (borg_inviso) attr = CLR_WHITE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(28, 8, -1, attr, "Invisible");
+				attr = CLR_SLATE;
+			put_fstr(28, 8, "%s%s", attr, "Invisible");
 
 			/* Temporary effects */
-			Term_putstr(42, 0, -1, TERM_WHITE, "Level Information");
+			put_fstr(42, 0, "Level Information");
 
-			if (vault_on_level) attr = TERM_WHITE;
+			if (vault_on_level) attr = CLR_WHITE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(42, 1, -1, attr, "Vault on level");
+				attr = CLR_SLATE;
+			put_fstr(42, 1, "%s%s", attr, "Vault on level");
 
-			if (unique_on_level) attr = TERM_WHITE;
+			if (unique_on_level) attr = CLR_WHITE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(42, 2, -1, attr, "Unique on level");
-			if (unique_on_level) Term_putstr(58, 2, -1, attr, format("(%s)",
-																	 r_name +
-																	 r_info[(int)unique_on_level].name));
+				attr = CLR_SLATE;
+			put_fstr(42, 2, "%s%s", attr, "Unique on level");
+			if (unique_on_level) put_fstr(58, 2, "(%s)",																	 r_name + r_info[(int)unique_on_level].name);
 			else
-				Term_putstr(58, 2, -1, attr,
-							"                                   ");
-			if (breeder_level) attr = TERM_WHITE;
+				put_fstr(58, 2, "                                   ");
+			if (breeder_level) attr = CLR_WHITE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(42, 4, -1, attr,
+				attr = CLR_SLATE;
+			put_fstr(42, 4, "%s%s", attr,
 						"Breeder level (close the door, will ye)");
 
 			/* level preparedness */
-			attr = TERM_SLATE;
-			Term_putstr(42, 6, -1, attr, "Reason for not diving:");
-			attr = TERM_WHITE;
-			Term_putstr(64, 6, -1, attr,
-						format("%s                              ",
-							   borg_prepared(bp_ptr->max_depth + 1)));
+			put_fstr(42, 6, CLR_SLATE "Reason for not diving:");
+			put_fstr(64, 6, "%s                              ",
+							   borg_prepared(bp_ptr->max_depth + 1));
 
-			if (goal_fleeing) attr = TERM_WHITE;
+			if (goal_fleeing) attr = CLR_WHITE;
 			else
-				attr = TERM_SLATE;
-			Term_putstr(42, 7, -1, attr, "Fleeing Level");
+				attr = CLR_SLATE;
+			put_fstr(42, 7, "%s%s", attr, "Fleeing Level");
 
-			attr = TERM_SLATE;
-			Term_putstr(42, 8, -1, attr, "Maximal Depth:");
-			attr = TERM_WHITE;
-			Term_putstr(56, 8, -1, attr, format("%d    ", bp_ptr->max_depth));
+			put_fstr(42, 8, CLR_SLATE "Maximal Depth:");
+			put_fstr(56, 8, "%d    ", bp_ptr->max_depth);
 
 			/* Fresh */
 			Term_fresh();
@@ -3188,42 +3177,36 @@ void do_cmd_borg(void)
 		Term_clear();
 
 		i++;
-		Term_putstr(2, i, -1, TERM_WHITE, "Command 'z' activates the Borg.");
-		Term_putstr(42, i++, -1, TERM_WHITE, "Command 'u' updates the Borg.");
-		Term_putstr(2, i++, -1, TERM_WHITE, "Command 'x' steps the Borg.");
-		Term_putstr(42, i, -1, TERM_WHITE,
-					"Command 'f' modifies the normal flags.");
-		Term_putstr(2, i++, -1, TERM_WHITE,
-					"Command 'c' modifies the cheat flags.");
-		Term_putstr(42, i, -1, TERM_WHITE, "Command 'l' activates a log file.");
-		Term_putstr(2, i++, -1, TERM_WHITE,
-					"Command 's' activates search mode.");
-		Term_putstr(42, i, -1, TERM_WHITE, "Command 'i' displays grid info.");
-		Term_putstr(2, i++, -1, TERM_WHITE,
-					"Command 'g' displays grid feature.");
-		Term_putstr(42, i, -1, TERM_WHITE, "Command 'a' displays avoidances.");
-		Term_putstr(2, i++, -1, TERM_WHITE,
-					"Command 'k' displays monster info.");
-		Term_putstr(42, i, -1, TERM_WHITE, "Command 't' displays object info.");
-		Term_putstr(2, i++, -1, TERM_WHITE,
-					"Command '%' displays current flow.");
-		Term_putstr(42, i, -1, TERM_WHITE, "Command '#' displays danger grid.");
-		Term_putstr(2, i++, -1, TERM_WHITE, "Command '_' Regional Fear info.");
-		Term_putstr(42, i, -1, TERM_WHITE, "Command 'p' Borg Power.");
-		Term_putstr(2, i++, -1, TERM_WHITE, "Command 'R' Respawn Borg.");
-		Term_putstr(42, i, -1, TERM_WHITE, "Command '2' level prep info.");
-		Term_putstr(2, i++, -1, TERM_WHITE, "Command 'e' Examine Equip Item.");
-		Term_putstr(42, i, -1, TERM_WHITE, "Command '!' Time.");
-		Term_putstr(2, i++, -1, TERM_WHITE, "Command '@' Borg LOS.");
-		Term_putstr(42, i, -1, TERM_WHITE, "Command 'w' My Swap Weapon.");
-		Term_putstr(2, i++, -1, TERM_WHITE, "Command 'q' Auto stop on level.");
-		Term_putstr(42, i, -1, TERM_WHITE, "Command 'v' Version stamp.");
-		Term_putstr(2, i++, -1, TERM_WHITE, "Command 'd' Dump spell info.");
-		Term_putstr(42, i, -1, TERM_WHITE, "Command 'h' Borg_Has function.");
-		Term_putstr(2, i++, -1, TERM_WHITE, "Command '$' Reload Borg.txt.");
-		Term_putstr(42, i, -1, TERM_WHITE, "Command 'y' Last 75 steps.");
-		Term_putstr(2, i++, -1, TERM_WHITE, "Command '^' Flow Pathway.");
-		Term_putstr(42, i, -1, TERM_WHITE, "Command 'o' Examine Inven Item.");
+		put_fstr(2, i, "Command 'z' activates the Borg.");
+		put_fstr(42, i++, "Command 'u' updates the Borg.");
+		put_fstr(2, i++, "Command 'x' steps the Borg.");
+		put_fstr(42, i, "Command 'f' modifies the normal flags.");
+		put_fstr(2, i++, "Command 'c' modifies the cheat flags.");
+		put_fstr(42, i, "Command 'l' activates a log file.");
+		put_fstr(2, i++, "Command 's' activates search mode.");
+		put_fstr(42, i, "Command 'i' displays grid info.");
+		put_fstr(2, i++, "Command 'g' displays grid feature.");
+		put_fstr(42, i, "Command 'a' displays avoidances.");
+		put_fstr(2, i++, "Command 'k' displays monster info.");
+		put_fstr(42, i, "Command 't' displays object info.");
+		put_fstr(2, i++, "Command '%' displays current flow.");
+		put_fstr(42, i, "Command '#' displays danger grid.");
+		put_fstr(2, i++, "Command '_' Regional Fear info.");
+		put_fstr(42, i, "Command 'p' Borg Power.");
+		put_fstr(2, i++, "Command 'R' Respawn Borg.");
+		put_fstr(42, i, "Command '2' level prep info.");
+		put_fstr(2, i++, "Command 'e' Examine Equip Item.");
+		put_fstr(42, i, "Command '!' Time.");
+		put_fstr(2, i++, "Command '@' Borg LOS.");
+		put_fstr(42, i, "Command 'w' My Swap Weapon.");
+		put_fstr(2, i++, "Command 'q' Auto stop on level.");
+		put_fstr(42, i, "Command 'v' Version stamp.");
+		put_fstr(2, i++, "Command 'd' Dump spell info.");
+		put_fstr(42, i, "Command 'h' Borg_Has function.");
+		put_fstr(2, i++, "Command '$' Reload Borg.txt.");
+		put_fstr(42, i, "Command 'y' Last 75 steps.");
+		put_fstr(2, i++, "Command '^' Flow Pathway.");
+		put_fstr(42, i, "Command 'o' Examine Inven Item.");
 
 
 
@@ -4141,9 +4124,7 @@ void do_cmd_borg(void)
 					/* Clear the screen */
 					Term_clear();
 
-					Term_putstr(1, ii++, -1, TERM_WHITE,
-								format("[ Realm 1 ]:(%s)",
-									   &borg_magics[k][0][0].realm_name));
+					put_fstr(1, ii++, "[ Realm 1 ]:(%s)", &borg_magics[k][0][0].realm_name);
 					for (j = 0; j < 8; j++)
 					{
 						borg_magic *as = &borg_magics[bp_ptr->realm1][i][j];
@@ -4155,9 +4136,8 @@ void do_cmd_borg(void)
 								(borg_spell_legal(bp_ptr->realm1, i, j) ?
 								 "legal" : "Not Legal ");
 						}
-						Term_putstr(1, ii++, -1, TERM_WHITE,
-									format("%s, %s, attempted %d times",
-										   as->name, legal, as->times));
+						put_fstr(1, ii++, "%s, %s, attempted %d times",
+									as->name, legal, as->times);
 					}
 					get_com("Exam spell books.  Press any key for next book.",
 							&cmd);

@@ -1208,7 +1208,7 @@ static errr init_alloc(void)
 static void note(cptr str)
 {
 	Term_erase(0, 23, 255);
-	Term_putstr(20, 23, -1, TERM_WHITE, str);
+	put_fstr(20, 23, str);
 	Term_fresh();
 }
 
@@ -1342,7 +1342,7 @@ void init_angband(void)
 		while (0 == my_fgets(fp, buf, 1024))
 		{
 			/* Display and advance */
-			Term_putstr(0, i++, -1, TERM_WHITE, buf);
+			put_fstr(0, i++, buf);
 		}
 
 		/* Close */

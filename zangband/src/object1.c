@@ -2253,7 +2253,7 @@ void display_inven(void)
 {
 	int i = 0, n;
 	object_type *o_ptr;
-	byte attr;
+	cptr attr;
 
 	char tmp_val[80];
 	char o_name[256];
@@ -2280,7 +2280,7 @@ void display_inven(void)
 		}
 
 		/* Display the index (or blank space) */
-		Term_putstr(0, i, 3, TERM_WHITE, tmp_val);
+		put_fstr(0, i, tmp_val);
 
 		/* Obtain an item description */
 		object_desc(o_name, o_ptr, TRUE, 3, wid - 3);
@@ -2289,16 +2289,13 @@ void display_inven(void)
 		n = strlen(o_name);
 
 		/* Get a color */
-		attr = tval_to_attr[o_ptr->tval % 128];
+		attr = color_seq[tval_to_attr[o_ptr->tval % 128]];
 
 		/* Grey out charging items */
-		if (item_is_recharging(o_ptr)) attr = TERM_L_DARK;
-
-		/* Hack -- fake monochrome */
-		if (!use_color || ironman_moria) attr = TERM_WHITE;
+		if (item_is_recharging(o_ptr)) attr = CLR_L_DARK;
 
 		/* Display the entry itself */
-		Term_putstr(3, i, n, attr, o_name);
+		put_fstr(3, i, "%s%s", attr, o_name);
 
 		/* Erase the rest of the line */
 		Term_erase(3 + n, i, 255);
@@ -2307,8 +2304,7 @@ void display_inven(void)
 		if (show_weights && o_ptr->weight)
 		{
 			int wgt = o_ptr->weight * o_ptr->number;
-			sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
-			Term_putstr(wid - 9, i, -1, TERM_WHITE, tmp_val);
+			put_fstr(wid - 9, i, "%3d.%1d lb", wgt / 10, wgt % 10);
 		}
 
 		/* Count items in inventory */
@@ -2332,7 +2328,7 @@ void display_equip(void)
 {
 	int i, n;
 	object_type *o_ptr;
-	byte attr;
+	cptr attr;
 	char tmp_val[80];
 	char o_name[256];
 
@@ -2362,7 +2358,7 @@ void display_equip(void)
 		}
 
 		/* Display the index (or blank space) */
-		Term_putstr(0, i, 3, TERM_WHITE, tmp_val);
+		put_fstr(0, i, tmp_val);
 
 		/* Obtain an item description */
 		object_desc(o_name, o_ptr, TRUE, 3, 256);
@@ -2371,16 +2367,13 @@ void display_equip(void)
 		n = strlen(o_name);
 
 		/* Get the color */
-		attr = tval_to_attr[o_ptr->tval % 128];
+		attr = color_seq[tval_to_attr[o_ptr->tval % 128]];
 
 		/* Grey out charging items */
-		if (item_is_recharging(o_ptr)) attr = TERM_L_DARK;
-
-		/* Hack -- fake monochrome */
-		if (!use_color || ironman_moria) attr = TERM_WHITE;
+		if (item_is_recharging(o_ptr)) attr = CLR_L_DARK;
 
 		/* Display the entry itself */
-		Term_putstr(3, i, n, attr, o_name);
+		put_fstr(3, i, "%s%s", attr, o_name);
 
 		/* Erase the rest of the line */
 		Term_erase(3 + n, i, 255);
@@ -2388,8 +2381,8 @@ void display_equip(void)
 		/* Display the slot description (if needed) */
 		if (show_labels)
 		{
-			Term_putstr(wid - 19, i, -1, TERM_WHITE, "<--");
-			Term_putstr(wid - 15, i, -1, TERM_WHITE, mention_use(i));
+			put_fstr(wid - 19, i, "<--");
+			put_fstr(wid - 15, i, mention_use(i));
 		}
 
 		/* Display the weight (if needed) */
@@ -2397,8 +2390,7 @@ void display_equip(void)
 		{
 			int wgt = o_ptr->weight * o_ptr->number;
 			int col = (show_labels ? wid - 28 : wid - 9);
-			sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
-			Term_putstr(col, i, -1, TERM_WHITE, tmp_val);
+			put_fstr(col, i, "%3d.%1d lb", wgt / 10, wgt % 10);
 		}
 	}
 

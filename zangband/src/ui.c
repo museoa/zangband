@@ -61,11 +61,11 @@ int get_player_choice(cptr *choices, int num, int col, int wid,
 			if (i == (cur - top))
 			{
 				/* Highlight the current selection */
-				Term_putstr(col, i + TABLE_ROW, wid, TERM_L_BLUE, buf);
+				put_fstr(col, i + TABLE_ROW, CLR_L_BLUE "%s", buf);
 			}
 			else
 			{
-				Term_putstr(col, i + TABLE_ROW, wid, TERM_WHITE, buf);
+				put_fstr(col, i + TABLE_ROW, buf);
 			}
 		}
 
@@ -667,15 +667,7 @@ bool askfor_aux(char *buf, int len)
 	/* Display the default answer */
 	Term_erase(x, y, len);
 
-	/* Fake monochrome */
-	if (!use_color || ironman_moria)
-	{
-		Term_putstr(x, y, -1, TERM_WHITE, buf);
-	}
-	else
-	{
-		Term_putstr(x, y, -1, TERM_YELLOW, buf);
-	}
+	put_fstr(x, y, CLR_YELLOW "%s", buf);
 
 	/* Process input */
 	while (!done)
@@ -722,7 +714,7 @@ bool askfor_aux(char *buf, int len)
 
 		/* Update the entry */
 		Term_erase(x, y, len);
-		Term_putstr(x, y, -1, TERM_WHITE, buf);
+		put_fstr(x, y, buf);
 	}
 
 	/* Aborted */

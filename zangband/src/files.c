@@ -2557,7 +2557,7 @@ void do_cmd_character(void)
 		display_player(mode);
 
 		/* Prompt */
-		Term_putstr(2, 23, -1, TERM_WHITE,
+		put_fstr(2, 23,
 					"['c' to change name, 'f' to file, 'p' for previous, 'n' for next, or ESC]");
 
 		/* Query */
@@ -3249,7 +3249,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 			find = NULL;
 
 			/* Dump the line */
-			Term_putstr(0, i + 2, -1, TERM_WHITE, buf);
+			put_fstr(0, i + 2, buf);
 
 			/* Hilite "shower" */
 			if (shower[0])
@@ -3262,8 +3262,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 					int len = strlen(shower);
 
 					/* Display the match */
-					Term_putstr(str - lc_buf, i + 2, len, TERM_YELLOW,
-								&buf[str - lc_buf]);
+					put_fstr(str - lc_buf, i + 2, CLR_YELLOW "%s", shower);
 
 					/* Advance */
 					str += len;
@@ -4632,7 +4631,7 @@ static void handle_signal_simple(int sig)
 		Term_erase(0, 0, 255);
 
 		/* Display the cause */
-		Term_putstr(0, 0, -1, TERM_WHITE, "Contemplating suicide!");
+		put_fstr(0, 0, "Contemplating suicide!");
 
 		/* Flush */
 		Term_fresh();
@@ -4667,11 +4666,10 @@ static void handle_signal_abort(int sig)
 	Term_erase(0, 23, 255);
 
 	/* Give a warning */
-	Term_putstr(0, 23, -1, TERM_RED,
-				"A gruesome software bug LEAPS out at you!");
+	put_fstr(0, 23, CLR_RED "A gruesome software bug LEAPS out at you!");
 
 	/* Message */
-	Term_putstr(45, 23, -1, TERM_RED, "Panic save...");
+	put_fstr(45, 23, CLR_RED "Panic save...");
 
 	/* Flush output */
 	Term_fresh();
@@ -4688,13 +4686,13 @@ static void handle_signal_abort(int sig)
 	/* Attempt to save */
 	if (save_player())
 	{
-		Term_putstr(45, 23, -1, TERM_RED, "Panic save succeeded!");
+		put_fstr(45, 23, CLR_RED "Panic save succeeded!");
 	}
 
 	/* Save failed */
 	else
 	{
-		Term_putstr(45, 23, -1, TERM_RED, "Panic save failed!");
+		put_fstr(45, 23, CLR_RED "Panic save failed!");
 	}
 
 	/* Flush output */
