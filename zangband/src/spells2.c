@@ -3525,7 +3525,7 @@ bool wall_stone(void)
 bool destroy_doors_touch(void)
 {
 	u16b flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
-	return (project(0, 1, p_ptr->py, p_ptr->px, 0, GF_KILL_DOOR, flg));
+	return (project(0, 1, p_ptr->py, p_ptr->px, 60, GF_KILL_DOOR, flg));
 }
 
 
