@@ -3776,7 +3776,7 @@ extern int PlayerUID;
 #define FIELD_ACTION_MAX	14	/* The last action + 1 */
 
 
-#define FIELD_ACTION_TYPES  2 /* Number of FIELD_ACT functions */
+#define FIELD_ACTION_TYPES  3 /* Number of FIELD_ACT functions */
 
 
 

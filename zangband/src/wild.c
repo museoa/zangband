@@ -4653,9 +4653,10 @@ static void wild_done(void)
 	panel_row = max_panel_rows;
 	panel_col = max_panel_cols;
 
-	/* Hack - delete all items / monsters in wilderness */
+	/* Hack - delete all items / monsters / fields in wilderness */
 	wipe_o_list();
 	wipe_m_list();
+	wipe_f_list();
 
 	/* Clear cache */
 	init_wild_cache();

@@ -3749,6 +3749,9 @@ static void process_energy(void)
 			process_player();
 		}
 	}
+	
+	/* Process the fields */
+	process_fields();
 }
 
 
@@ -4436,6 +4439,7 @@ void play_game(bool new_game)
 		/* Erase the old cave */
 		wipe_o_list();
 		wipe_m_list();
+		wipe_f_list();
 
 		change_level(dun_level);
 

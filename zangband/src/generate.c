@@ -1373,6 +1373,9 @@ void generate_cave(void)
 
 		/* Wipe the monsters */
 		wipe_m_list();
+		
+		/* Wipe the fields */
+		wipe_f_list();
 	}
 
 	/* The dungeon is ready */

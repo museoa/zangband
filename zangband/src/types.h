@@ -843,11 +843,11 @@ typedef struct field_type field_type;
 
 /*
  * A function pointer to an action.  The function takes two values:
- * 1) the field that is undergoing the action.
+ * 1) a pointer to the index of the field that is undergoing the action.
  * 2) a pointer to a structure cast to void that contains the
  *	information the action needs to complete its job.
  */
-typedef void (*field_action_type)(field_type *f_ptr, void*);
+typedef void (*field_action_type)(s16b *field_ptr, void*);
 
 
 

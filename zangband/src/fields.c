@@ -309,10 +309,7 @@ void compact_fields(int size)
 			if (!f_ptr->t_idx) continue;
 
 			/* Get compaction "value" */
-			if (f_ptr->action[FIELD_ACT_COMPACT])
-			{
-				f_ptr->action[FIELD_ACT_COMPACT](f_ptr, (void *) &fld_level);
-			}
+			field_hook(field_find(i), FIELD_ACT_COMPACT, (void *) &fld_level);
 
 			/* Hack -- High level fields start out "immune" */
 			if (fld_level > cur_lev) continue;
@@ -334,13 +331,7 @@ void compact_fields(int size)
 			if (rand_int(100) < chance) continue;
 
 			/* Call completion routine */
-			if (f_ptr->action[FIELD_ACT_EXIT])
-			{
-				f_ptr->action[FIELD_ACT_EXIT](f_ptr, (void *) &dummy);
-			}
-			
-			/* Delete the field */
-			delete_field_idx(i);
+			field_hook(field_find(i), FIELD_ACT_EXIT, (void *) &dummy);
 
 			/* Count it */
 			num++;
@@ -719,6 +710,77 @@ s16b place_field(int y, int x, s16b t_idx)
 	return(fld_idx);
 }
 
+/*
+ * Find the connection to the cave array for the field
+ * fld_list[fld_idx].
+ * 
+ * This is used so that an arbitrary field can be deleted.
+ * This routine is fairly fast if there are not too many fields
+ * on a square at one time.
+ *
+ * Note that this routine should not be merged with field_hook
+ * because most of the time you know where a field is.  Only
+ * if you are looking through the fld_list[] one by one will
+ * this be needed.
+ */
+s16b *field_find(s16b fld_idx)
+{
+	field_type *f_ptr;
+	
+	/* pointer to a field index in a list. */
+	s16b *location;
+	
+	/* Point to the field */
+	f_ptr = &fld_list[fld_idx];
+	
+	location = &(area(f_ptr->fy, f_ptr->fx)->fld_idx);
+	
+	while (*location != fld_idx)
+	{
+		/* Paranoia: Is the list broken? */
+		if (!(*location)) return (location);
+		
+		/* Get the next field in the chain */
+		location = &(fld_list[*location].next_f_idx);
+	}
+	
+	/* Found a pointer to our field */
+	return (location);
+}
+
+/*
+ * Call the specified action routine for each field
+ * in the list specified by *field_ptr.
+ *
+ * Note the code must take into account fields deleting
+ * themselves.
+ */
+void field_hook(s16b *field_ptr, int action, void *action_struct)
+{
+	field_type *f_ptr;
+	
+	while (*field_ptr)
+	{
+		/* Point to the field */
+		f_ptr = &fld_list[*field_ptr];
+		
+		/* Is there a function to call? */
+		if(f_ptr->action[action])
+		{		
+			/* Call the action function */
+			f_ptr->action[action](field_ptr, action_struct);
+		}
+		
+		/* 
+		 * Hack - the action function must change *field_ptr
+		 * to point to the next field.
+		 *
+		 * This is much simpler than trying to work what the
+		 * next one is in the case where the field deletes itself.
+		 */
+	}
+}
+
 
 void process_fields(void)
 {
@@ -744,24 +806,15 @@ void process_fields(void)
 			if(!f_ptr->counter)
 			{
 				/* Call completion routine */
-				if (f_ptr->action[FIELD_ACT_EXIT])
-				{
-					f_ptr->action[FIELD_ACT_EXIT](f_ptr, (void *) &dummy);
-				}
-				
-				/* Delete the field */
-				delete_field_idx(fld_idx);
-				
+				field_hook(field_find(fld_idx), FIELD_ACT_EXIT, (void *) &dummy);
+
 				/* Nothing else to do now */
 				continue;
 			}
 		}
 		
 		/* If acts every turn */
-		if (f_ptr->action[FIELD_ACT_ALWAYS])
-		{
-			f_ptr->action[FIELD_ACT_ALWAYS](f_ptr, (void *) &dummy);
-		}
+		field_hook(field_find(fld_idx), FIELD_ACT_ALWAYS, (void *) &dummy);
 	}
 }
 
@@ -842,9 +895,33 @@ void test_field_data_integtrity(void)
 /* Field action functions - later will be implemented in python */
 
 /* Simple function that does nothing */
-void field_action_nothing(field_type *f_ptr, void *nothing)
+void field_action_nothing(s16b *field_ptr, void *nothing)
 {
-	/* Do nothing at all */
+	field_type *f_ptr;
+	
+	/* Point to the field */
+	f_ptr = &fld_list[*field_ptr];
+	
+	/* Action: Do nothing at all */
+	
+	/* Update *field_ptr to point to the next field in the list */
+	field_ptr = &(f_ptr->next_f_idx);
 	return;
 }
 
+/* Simple function that deletes the field */
+void field_action_delete(s16b *field_ptr, void *nothing)
+{
+	field_type *f_ptr;
+	
+	/* Point to the field */
+	f_ptr = &fld_list[*field_ptr];
+	
+	/* Action: Do nothing at all */
+	
+	/* Delete the field */
+	delete_field_aux(field_ptr);
+	
+	/* Note that *field_ptr does not need to be updated */
+	return;
+}
