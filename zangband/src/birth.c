@@ -2299,7 +2299,8 @@ static bool player_birth_aux_3(void)
 					for (i = 0; i < A_MAX; i++)
 					{
 						/* Put the stat */
-						put_fstr(col + 13, 3 + i, CLR_L_GREEN "%t", stat_use[i]);
+						put_fstr(col + 13, 3 + i, CLR_L_GREEN "%v",
+								 stat_format, stat_use[i]);
 					}
 
 					/* Dump round */

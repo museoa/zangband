@@ -46,7 +46,7 @@
  * removed from the "format sequence", and replaced by the textual form
  * of the next argument in the argument list.  See examples below.
  *
- * Legal format characters: %,n,p,c,s,d,i,o,u,X,x,v,S,t.
+ * Legal format characters: %,n,p,c,s,d,i,o,u,X,x,v,S.
  *
  * Format("%%")
  *   Append the literal "%".
@@ -61,9 +61,6 @@
  *
  * Format("%d", int i)
  *   Append the integer "i".
- *
- * Format("%t", int stat)
- *   Append the integer "stat" formatted like a stat.
  *
  * Format("%lu", unsigned long int i)
  *   Append the unsigned long integer "i".
@@ -429,23 +426,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list *vp)
 				/* Done */
 				break;
 			}
-			
-			case 't':
-			{
-				/* Stat values */
-				int arg;
-				
-				arg = va_arg(*vp, int);
-				
-				if (arg >= 400)
-        			sprintf(tmp, "  40+ ");
-    			else
-        			sprintf(tmp, "  %2d.%d", arg / 10, arg % 10);
-			
-				/* Done */
-				break;
-			}
-			
+						
 			case 'S':
 			{
 				/* Use a format string */

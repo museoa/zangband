@@ -922,6 +922,7 @@ extern void repeat_check(void);
 
 /* xtra1.c */
 extern s16b modify_stat_value(int value, int amount);
+extern void stat_format(char *buf, uint max, cptr fmt, va_list *vp);
 extern void notice_stuff(void);
 extern void update_stuff(void);
 extern void redraw_stuff(void);

@@ -1318,7 +1318,6 @@ static void prt_num(cptr header, s32b num, int col, int row, cptr color,
  * Where x is the first parameter in the list,
  * and y is the second.
  */
-
 static void likert(char *buf, uint max, cptr fmt, va_list *vp)
 {
 	cptr desc;
@@ -2086,7 +2085,8 @@ static void display_player_stat_info(void)
 
 		/* Internal "natural" max value.  Maxes at 18/100 */
 		/* This is useful to see if you are maxed out */
-		put_fstr(stat_col + 5, row + i, CLR_BLUE "%t", p_ptr->stat_max[i]);
+		put_fstr(stat_col + 5, row + i, CLR_BLUE "%v",
+				 stat_format, p_ptr->stat_max[i]);
 
 		/* Race, class, and equipment modifiers */
 		put_fstr(stat_col + 12, row + i, CLR_L_BLUE "%3d", (int)rp_ptr->r_adj[i]);
@@ -2094,13 +2094,14 @@ static void display_player_stat_info(void)
 		put_fstr(stat_col + 20, row + i, CLR_L_BLUE "%3d", (int)e_adj);
 
 		/* Actual maximal modified value */
-		put_fstr(stat_col + 24, row + i, CLR_L_GREEN "%t", p_ptr->stat_top[i]);
+		put_fstr(stat_col + 24, row + i, CLR_L_GREEN "%v",
+				 stat_format, p_ptr->stat_top[i]);
 
 		/* Only display stat_use if not maximal */
 		if (p_ptr->stat_use[i] < p_ptr->stat_top[i])
 		{
-			put_fstr(stat_col + 31, row + i, CLR_YELLOW "%t",
-						 p_ptr->stat_use[i]);
+			put_fstr(stat_col + 31, row + i, CLR_YELLOW "%v",
+						 stat_format, p_ptr->stat_use[i]);
 		}
 	}
 
@@ -2331,11 +2332,12 @@ static void display_player_top(void)
 			put_fstr(COL_STATS, i + 2, stat_names_reduced[i]);
 
 			/* Display the current stat (modified) */
-			put_fstr(COL_STATS + 5, i + 2, CLR_YELLOW "%t", p_ptr->stat_use[i]);
+			put_fstr(COL_STATS + 5, i + 2, CLR_YELLOW "%v",
+					 stat_format, p_ptr->stat_use[i]);
 
 			/* Display the maximum stat (modified) */
-			put_fstr(COL_STATS + 5 + 7, i + 2, CLR_L_GREEN "%t",
-					 p_ptr->stat_top[i]);
+			put_fstr(COL_STATS + 5 + 7, i + 2, CLR_L_GREEN "%v",
+					 stat_format, p_ptr->stat_top[i]);
 		}
 
 		/* Normal treatment of "normal" stats */
@@ -2345,8 +2347,8 @@ static void display_player_top(void)
 			put_fstr(COL_STATS, i + 2, stat_names[i]);
 
 			/* Display the current stat (modified) */
-			put_fstr(COL_STATS + 5, i + 2, CLR_L_GREEN "%t",
-					 p_ptr->stat_use[i]);
+			put_fstr(COL_STATS + 5, i + 2, CLR_L_GREEN "%v",
+					 stat_format, p_ptr->stat_use[i]);
 		}
 	}
 }

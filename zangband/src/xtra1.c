@@ -45,6 +45,28 @@ static void prt_field(cptr info, int col, int row)
 	put_fstr(col, row, CLR_L_BLUE "%s", info);
 }
 
+/*
+ * Returns a formatted string in the buffer of
+ * the stat value which is the first parameter
+ * in the va_list.
+ */
+void stat_format(char *buf, uint max, cptr fmt, va_list *vp)
+{
+    int arg;
+	
+	/* Unused parameter */
+	(void)fmt;
+	
+	/* Get the argument */
+	arg = va_arg(*vp, int);
+
+	/* Format the number for the stat */
+	if (arg >= 400)
+        strnfmt(buf, max, "  40+ ");
+    else
+        strnfmt(buf, max, "  %2d.%d", arg / 10, arg % 10);
+}
+
 
 /*
  * Print character stat in given row, column
@@ -54,15 +76,17 @@ static void prt_stat(int stat)
 	/* Display "injured" stat */
 	if (p_ptr->stat_cur[stat] < p_ptr->stat_max[stat])
 	{
-		put_fstr(COL_STAT, ROW_STAT + stat, "%5s" CLR_YELLOW " %t",
-				 stat_names_reduced[stat], p_ptr->stat_use[stat]);
+		put_fstr(COL_STAT, ROW_STAT + stat, "%5s" CLR_YELLOW " %v",
+				 stat_names_reduced[stat],
+				 stat_format, p_ptr->stat_use[stat]);
 	}
 
 	/* Display "healthy" stat */
 	else
 	{
-		put_fstr(COL_STAT, ROW_STAT + stat, "%5s" CLR_L_GREEN " %t",
-				 stat_names[stat], p_ptr->stat_use[stat]);
+		put_fstr(COL_STAT, ROW_STAT + stat, "%5s" CLR_L_GREEN " %v",
+				 stat_names[stat],
+				 stat_format, p_ptr->stat_use[stat]);
 	}
 
 	/* Indicate natural maximum */
