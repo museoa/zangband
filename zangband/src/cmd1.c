@@ -1239,7 +1239,7 @@ static void hit_trap(void)
 
 static void touch_zap_player(monster_type *m_ptr)
 {
-	int aura_damage = 0;
+	int aura_damage;
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 	if (r_ptr->flags2 & RF2_AURA_FIRE)
@@ -1312,7 +1312,7 @@ static void touch_zap_player(monster_type *m_ptr)
 static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 {
 	int             k, bonus, chance;
-	int             n_weight = 0;
+	int             n_weight;
 	monster_type    *m_ptr = &m_list[m_idx];
 	monster_race    *r_ptr = &r_info[m_ptr->r_idx];
 	char            m_name[80];

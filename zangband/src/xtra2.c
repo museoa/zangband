@@ -21,12 +21,9 @@
  */
 void check_experience(void)
 {
-	int		i;
 	bool level_reward = FALSE;
 	bool level_mutation = FALSE;
 
-	/* Note current level */
-	i = p_ptr->lev;
 
 	/* Hack -- lower limit */
 	if (p_ptr->exp < 0) p_ptr->exp = 0;
@@ -2773,9 +2770,6 @@ bool target_set(int mode)
 		/* Arbitrary grids */
 		else
 		{
-			/* Access */
-			c_ptr = area(y, x);
-
 			/* Default prompt */
 			strcpy(info, "q,t,p,m,+,-,<dir>");
 
@@ -3202,8 +3196,9 @@ void gain_level_reward(int chosen_reward)
 	object_type forge;
 	char        wrath_reason[32] = "";
 	int         nasty_chance = 6;
-	int         dummy = 0, dummy2 = 0;
+	int         tval, sval;
 	int         type, effect;
+	int i;
 
 	int count = 0;
 
@@ -3285,95 +3280,95 @@ void gain_level_reward(int chosen_reward)
 			msg_print("'Thy deed hath earned thee a worthy blade.'");
 			/* Get local object */
 			q_ptr = &forge;
-			dummy = TV_SWORD;
+			tval = TV_SWORD;
 			switch (randint(p_ptr->lev))
 			{
 				case 0: case 1:
-					dummy2 = SV_DAGGER;
+					sval = SV_DAGGER;
 					break;
 				case 2: case 3:
-					dummy2 = SV_MAIN_GAUCHE;
+					sval = SV_MAIN_GAUCHE;
 					break;
 				case 4:
-					dummy2 = SV_TANTO;
+					sval = SV_TANTO;
 					break;
 				case 5: case 6:
-					dummy2 = SV_RAPIER;
+					sval = SV_RAPIER;
 					break;
 				case 7: case 8:
-					dummy2 = SV_SMALL_SWORD;
+					sval = SV_SMALL_SWORD;
 					break;
 				case 9: case 10:
-					dummy2 = SV_BASILLARD;
+					sval = SV_BASILLARD;
 					break;
 				case 11: case 12: case 13:
-					dummy2 = SV_SHORT_SWORD;
+					sval = SV_SHORT_SWORD;
 					break;
 				case 14: case 15:
-					dummy2 = SV_SABRE;
+					sval = SV_SABRE;
 					break;
 				case 16: case 17:
-					dummy2 = SV_CUTLASS;
+					sval = SV_CUTLASS;
 					break;
 				case 18:
-					dummy2 = SV_WAKIZASHI;
+					sval = SV_WAKIZASHI;
 					break;
 				case 19:
-					dummy2 = SV_KHOPESH;
+					sval = SV_KHOPESH;
 					break;
 				case 20:
-					dummy2 = SV_TULWAR;
+					sval = SV_TULWAR;
 					break;
 				case 21:
-					dummy2 = SV_BROAD_SWORD;
+					sval = SV_BROAD_SWORD;
 					break;
 				case 22: case 23:
-					dummy2 = SV_LONG_SWORD;
+					sval = SV_LONG_SWORD;
 					break;
 				case 24: case 25:
-					dummy2 = SV_SCIMITAR;
+					sval = SV_SCIMITAR;
 					break;
 				case 26:
-					dummy2 = SV_NINJATO;
+					sval = SV_NINJATO;
 					break;
 				case 27:
-					dummy2 = SV_KATANA;
+					sval = SV_KATANA;
 					break;
 				case 28: case 29:
-					dummy2 = SV_BASTARD_SWORD;
+					sval = SV_BASTARD_SWORD;
 					break;
 				case 30:
-					dummy2 = SV_GREAT_SCIMITAR;
+					sval = SV_GREAT_SCIMITAR;
 					break;
 				case 31:
-					dummy2 = SV_CLAYMORE;
+					sval = SV_CLAYMORE;
 					break;
 				case 32:
-					dummy2 = SV_ESPADON;
+					sval = SV_ESPADON;
 					break;
 				case 33:
-					dummy2 = SV_TWO_HANDED_SWORD;
+					sval = SV_TWO_HANDED_SWORD;
 					break;
 				case 34:
-					dummy2 = SV_FLAMBERGE;
+					sval = SV_FLAMBERGE;
 					break;
 				case 35:
-					dummy2 = SV_NO_DACHI;
+					sval = SV_NO_DACHI;
 					break;
 				case 36:
-					dummy2 = SV_EXECUTIONERS_SWORD;
+					sval = SV_EXECUTIONERS_SWORD;
 					break;
 				case 37:
-					dummy2 = SV_ZWEIHANDER;
+					sval = SV_ZWEIHANDER;
 					break;
 				case 38:
-					dummy2 = SV_DIAMOND_EDGE;
+					sval = SV_DIAMOND_EDGE;
 					break;
 				default:
-					dummy2 = SV_BLADE_OF_CHAOS;
+					sval = SV_BLADE_OF_CHAOS;
 			}
 
-			object_prep(q_ptr, lookup_kind(dummy, dummy2));
+			object_prep(q_ptr, lookup_kind(tval, sval));
 			q_ptr->to_h = 3 + randint(dun_level) % 10;
 			q_ptr->to_d = 3 + randint(dun_level) % 10;
 			random_resistance(q_ptr, FALSE, randint(34) + 4);
@@ -3410,7 +3405,7 @@ void gain_level_reward(int chosen_reward)
 			msg_format("The voice of %s booms out:",
 				chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'My pets, destroy the arrogant mortal!'");
-			for (dummy = 0; dummy < randint(5) + 1; dummy++)
+			for (i = 0; i < randint(5) + 1; i++)
 			{
 				(void)summon_specific(0, py, px, dun_level, 0, TRUE, FALSE, FALSE);
 			}
@@ -3434,7 +3429,7 @@ void gain_level_reward(int chosen_reward)
 			if ((randint(3) == 1) && !(chaos_stats[p_ptr->chaos_patron] < 0))
 				do_inc_stat(chaos_stats[p_ptr->chaos_patron]);
 			else
-				do_inc_stat(rand_int(6));
+				do_inc_stat(rand_int(A_MAX));
 			break;
 		case REW_LOSE_ABL:
 			msg_format("The voice of %s booms out:",
@@ -3443,16 +3438,16 @@ void gain_level_reward(int chosen_reward)
 			if ((randint(3) == 1) && !(chaos_stats[p_ptr->chaos_patron] < 0))
 				do_dec_stat(chaos_stats[p_ptr->chaos_patron]);
 			else
-				(void)do_dec_stat(rand_int(6));
+				(void)do_dec_stat(rand_int(A_MAX));
 			break;
 		case REW_RUIN_ABL:
 			msg_format("The voice of %s thunders:",
 				chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Thou needst a lesson in humility, mortal!'");
 			msg_print("You feel less powerful!");
-			for (dummy = 0; dummy < 6; dummy++)
+			for (i = 0; i < A_MAX; i++)
 			{
-				(void)dec_stat(dummy, 10 + randint(15), TRUE);
+				(void)dec_stat(i, 10 + randint(15), TRUE);
 			}
 			break;
 		case REW_POLY_WND:
@@ -3464,9 +3459,9 @@ void gain_level_reward(int chosen_reward)
 			msg_format("The voice of %s booms out:",
 				chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Receive this modest gift from me!'");
-			for (dummy = 0; dummy < 6; dummy++)
+			for (i = 0; i < A_MAX; i++)
 			{
-				(void)do_inc_stat(dummy);
+				(void)do_inc_stat(i);
 			}
 			break;
 		case REW_HURT_LOT:
@@ -3488,9 +3483,9 @@ void gain_level_reward(int chosen_reward)
 			(void)set_stun(0);
 			(void)set_cut(0);
 			hp_player(5000);
-			for (dummy = 0; dummy < 6; dummy++)
+			for (i = 0; i < A_MAX; i++)
 			{
-				(void)do_res_stat(dummy);
+				(void)do_res_stat(i);
 			}
 			break;
 		case REW_CURSE_WP:
@@ -3524,9 +3519,9 @@ void gain_level_reward(int chosen_reward)
 					else (void)curse_armor();
 					break;
 				default:
-					for (dummy = 0; dummy < 6; dummy++)
+					for (i = 0; i < A_MAX; i++)
 					{
-						(void)dec_stat(dummy, 10 + randint(15), TRUE);
+						(void)dec_stat(i, 10 + randint(15), TRUE);
 					}
 			}
 			break;
@@ -3538,9 +3533,9 @@ void gain_level_reward(int chosen_reward)
 
 			take_hit(p_ptr->lev * 4, wrath_reason);
 
-			for (dummy = 0; dummy < 6; dummy++)
+			for (i = 0; i < A_MAX; i++)
 			{
-				(void)dec_stat(dummy, 10 + randint(15), FALSE);
+				(void)dec_stat(i, 10 + randint(15), FALSE);
 			}
 
 			activate_hi_summon();

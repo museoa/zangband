@@ -2107,7 +2107,6 @@ static bool get_player_class(void)
 	p_ptr->pclass = k;
 	cp_ptr = &class_info[p_ptr->pclass];
 	mp_ptr = &magic_info[p_ptr->pclass];
-	str = cp_ptr->title;
 
 	/* Display */
 	put_str("Class       :", 5, 1);
@@ -2212,7 +2211,7 @@ static bool player_birth_aux_1(void)
 		}
 
 		if (ch == 'S') return (FALSE);
-		k = (islower(ch) ? A2I(ch) : -1);
+
 		if (ch == ESCAPE) ch = '*';
 		if (ch == '*')
 		{
@@ -2235,7 +2234,6 @@ static bool player_birth_aux_1(void)
 	/* Set sex */
 	p_ptr->psex = k;
 	sp_ptr = &sex_info[p_ptr->psex];
-	str = sp_ptr->title;
 
 	/* Sex */
 	put_str("Sex         :", 3, 1);

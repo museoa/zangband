@@ -857,9 +857,6 @@ static u16b get_gen_type(byte hgt, byte pop, byte law)
 			}
 		}
 	}
-
-	/* Paranoia - should never get to here */
-	return (0);
 }
 
 /* The number of allocated nodes in the decsion tree */
@@ -2059,9 +2056,6 @@ static u16b add_node(wild_bound_box_type *bound,
 			}
 		}
 	}
-
-	/* Paranoia - should never get to here */
-	return (0);
 }
 
 /*
