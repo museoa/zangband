@@ -1078,7 +1078,7 @@ static errr grab_one_kind_flag(object_kind *k_ptr, cptr what)
  */
 errr init_k_info_txt(FILE *fp, char *buf)
 {
-	int i;
+	int i, j;
 
 	char *s, *t;
 
@@ -1185,6 +1185,12 @@ errr init_k_info_txt(FILE *fp, char *buf)
 
 			/* Advance the index */
 			k_head->name_size += strlen(s);
+			
+			/* Paranoia */
+			k_ptr->chance[0] = 0;
+			k_ptr->chance[1] = 0;
+			k_ptr->chance[2] = 0;
+			k_ptr->chance[3] = 0;
 
 			/* Next... */
 			continue;
