@@ -3224,13 +3224,16 @@ FALSE;
  */
 static void load_all_pref_files(void)
 {
-	/* Process that file */
+	/* Process global pref file */
+	(void)process_pref_file("player.prf");
+	
+	/* Process race pref file */
 	(void)process_pref_file("%s.prf", rp_ptr->title);
 
-	/* Process that file */
+	/* Process class pref file */
 	(void)process_pref_file("%s.prf", cp_ptr->title);
 
-	/* Process that file */
+	/* Process character file */
 	(void)process_pref_file("%s.prf", player_base);
 
 	/* Access the "realm 1" pref file */
