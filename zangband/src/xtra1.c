@@ -909,7 +909,7 @@ static void prt_study(void)
 {
 	if (p_ptr->new_spells)
 	{
-		put_str("Study", Term->hgt - 1, 64);
+		put_str("Study", Term->hgt - 1, COL_STUDY);
 	}
 	else
 	{
