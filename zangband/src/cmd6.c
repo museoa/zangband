@@ -81,7 +81,7 @@ static void do_cmd_eat_food_aux(int item)
 	ident = FALSE;
 
 	/* Eat the food */
-	use_object(o_ptr, &ident);
+	(void) use_object(o_ptr, &ident);
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -226,7 +226,7 @@ static void do_cmd_quaff_potion_aux(int item)
 	ident = FALSE;
 
 	/* Quaff the potion */
-	use_object(o_ptr, &ident);
+	(void) use_object(o_ptr, &ident);
 
 	if (p_ptr->prace == RACE_SKELETON)
 	{
@@ -641,7 +641,7 @@ void do_cmd_use_staff(void)
  */
 static void do_cmd_aim_wand_aux(int item)
 {
-	bool ident;
+	bool ident, use_charge;
 	object_type *o_ptr;
 
 
@@ -665,7 +665,7 @@ static void do_cmd_aim_wand_aux(int item)
 	}
 
 	/* Aim the wand */
-	(void)use_object(o_ptr, &ident);
+	use_charge = use_object(o_ptr, &ident);
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -685,6 +685,8 @@ static void do_cmd_aim_wand_aux(int item)
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
+	/* Hack -- some uses are "free" */
+	if (!use_charge) return;
 
 	/* Use a single charge */
 	o_ptr->pval--;
