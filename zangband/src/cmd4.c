@@ -3854,7 +3854,7 @@ void do_cmd_knowledge(void)
 		if (take_notes)
 			prt("(8) Display notes", 5, 11);
 		if (!vanilla_town)
-			prt("(9) Display wilderness places", 5, 12);
+			prt("(9) Display town information", 5, 12);
 
 		/* Prompt */
 		prt("Command: ", 0, 13);
