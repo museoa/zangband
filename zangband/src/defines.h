@@ -3649,7 +3649,7 @@
 #define ironman_downward		p_ptr->birth[4]
 #define ironman_autoscum		p_ptr->birth[5]
 #define ironman_hard_quests		p_ptr->birth[6]
-/* {TRUE,  0, NULL,					"Number 199" }, p_ptr->birth[7] */
+#define ironman_los				p_ptr->birth[7]
 #define ironman_empty_levels	p_ptr->birth[8]
 #define terrain_streams			p_ptr->birth[9]
 #define ironman_moria			p_ptr->birth[10]

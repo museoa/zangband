@@ -4088,6 +4088,10 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 		x1 = x;
 		y1 = y;
 
+		/* Default "destination" */
+		y2 = y;
+		x2 = x;
+		
 		/* Clear the flag */
 		flg &= ~(PROJECT_JUMP);
 
@@ -4099,29 +4103,38 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 	{
 		x1 = p_ptr->px;
 		y1 = p_ptr->py;
+		
+		/* Default "destination" */
+		y2 = y;
+		x2 = x;
 	}
 
 	/* Start at monster */
 	else if (who > 0)
 	{
-		x1 = m_list[who].fx;
-		y1 = m_list[who].fy;
+		if (ironman_los)
+		{
+			/*
+			 * Start at player, and go to monster
+			 * This means that monsters always can hit the player
+			 * if the player can see them
+			 */
+			y1 = y;
+			x1 = x;
+		
+			x2 = m_list[who].fx;
+			y2 = m_list[who].fy;
+		}
+		else
+		{
+			/* Start at monster, and go to player */
+			y2 = y;
+			x2 = x;
+		
+			x1 = m_list[who].fx;
+			y1 = m_list[who].fy;
+		}
 	}
-
-	/* Oops */
-	else
-	{
-		x1 = x;
-		y1 = y;
-	}
-
-	y_saver = y1;
-	x_saver = x1;
-
-	/* Default "destination" */
-	y2 = y;
-	x2 = x;
-
 
 	/* Hack -- verify stuff */
 	if (flg & (PROJECT_THRU))
@@ -4139,15 +4152,44 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 		breath = TRUE;
 		flg |= PROJECT_HIDE;
 	}
-
+	
+	/* Calculate the projection path */
+	path_n = project_path(path_g, y1, x1, y2, x2, flg);
+	
+	/* Do we need to invert the path? */
+	if (ironman_los && !jump && (who > 0))
+	{
+		for (i = 0; i < path_n / 2; i++)
+		{
+			/* Swap y coords */
+			t = path_g[i].y;
+			path_g[i].y = path_g[path_n - 1 - i].y;
+			path_g[path_n - 1 - i].y = t;
+		
+			/* Swap x coords */
+			t = path_g[i].x;
+			path_g[i].x = path_g[path_n - 1 - i].x;
+			path_g[path_n - 1 - i].x = t;
+	
+			/* Swap the initial and final coords */
+			t = y1;
+			y1 = y2;
+			y2 = t;
+		
+			t = x1;
+			x1 = x2;
+			x2 = t;
+		}
+	}
 
 	/* Hack -- Assume there will be no blast (max radius 32) */
 	for (dist = 0; dist < 32; dist++) gm[dist] = 0;
 
-
 	/* Initial grid */
 	y = y1;
 	x = x1;
+	y_saver = y1;
+	x_saver = x1;
 	dist = 0;
 
 	/* Collect beam grids */
@@ -4158,16 +4200,11 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 		grids++;
 	}
 
-
-	/* Calculate the projection path */
-	path_n = project_path(path_g, y1, x1, y2, x2, flg);
-
-
 	/* Hack -- Handle stuff */
 	handle_stuff();
 
 	/* Project along the path */
-	for (i = 0; i < path_n; ++i)
+	for (i = 0; i < path_n; i++)
 	{
 		int oy = y;
 		int ox = x;
