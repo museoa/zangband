@@ -66,11 +66,11 @@ end
 --
 --	Initialise a corpse field
 --
-function corpse_init()
-	field.data[1] = race / 256
-	field.data[2] = mod(race, 256)
+function corpse_init(r_idx)
+	field.data[1] = r_idx / 256
+	field.data[2] = mod(r_idx, 256)
 	
-	set_corpse_size(field, corpse_type(r_info[race].d_char))
+	set_corpse_size(field, corpse_type(r_info[r_idx].d_char))
 
 	notice_field(field)
 end
@@ -112,6 +112,7 @@ function corpse_exit()
 			if (visible == TRUE) then
 				if (disturb_minor == TRUE) then
 					msgf("The "..name.." rises.")
+					disturb(FALSE)
 				end
 			end
 		else
@@ -120,6 +121,7 @@ function corpse_exit()
 				-- Let the player know what happened
 				if (disturb_minor == TRUE) then
 					msgf("The "..name.." decays.")
+					disturb(FALSE)
 				end
 			end
 		end	
@@ -129,6 +131,7 @@ function corpse_exit()
 			-- Let the player know what happened
 			if (disturb_minor == TRUE) then
 				msgf("The "..name.." decays.")
+				disturb(FALSE)
 			end
 		end
 	end
