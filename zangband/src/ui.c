@@ -360,6 +360,20 @@ static bool show_option(int x, int y, menu_type *option, char c, bool scroll, bo
 	return (FALSE);
 }
 
+/*
+ * Array for converting numbers to a logical list symbol
+ */
+static const char listsym[] =
+{
+	'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+	'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+	'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+	'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+	'\0'
+};
+
+
 
 /*
  * Display a menu of choices on the screen
@@ -448,12 +462,19 @@ static int show_menu(int num, menu_type *options, int select, bool scroll,
 		/* Display the prompt */
 		prtf(0, 0, "%s (Command (a), ESC=exit)", prompt ? prompt : "Select a command: ");
 	}
-	else
+	else if (cnt < 18)
 	{
 		/* Display the prompt */
 		prtf(0, 0, "%s (Command (a-%c), ESC=exit)",
 			 prompt ? prompt : "Select a command: " ,I2A(cnt - 1));
 	}
+	else
+	{
+		/* Display the prompt */
+		prtf(0, 0, "%s (Command (0-%c), ESC=exit)",
+			 prompt ? prompt : "Select a command: " ,listsym[cnt - 1]);
+	}
+
 	
 	return (cnt);
 }

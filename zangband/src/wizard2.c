@@ -725,107 +725,150 @@ static void strip_name(char *buf, int k_idx)
 	*t = '\0';
 }
 
+/*
+ * Global variables so the sub-menus can access
+ * the required information
+ */
+static int create_item_kidx = 0;
+static int create_item_tval = 0;
 
 /*
- * Specify tval and sval (type and subtype of object) originally
- * by RAK, heavily modified by -Bernd-
- *
- * This function returns the k_idx of an object type, or zero if failed
- *
- * List up to 50 choices in three columns
+ * Select the item to use
  */
-static int wiz_create_itemtype(void)
+static bool wiz_create_itemtype_aux2(int num)
 {
-	int i, num, max_num;
-	int col, row;
-	int tval;
-
-	cptr tval_desc;
-	char ch;
-
-	int choice[60];
-
-	char buf[160];
-
-
-	/* Clear screen */
-	Term_clear();
-
-	/* Print all tval's and their descriptions */
-	for (num = 0; (num < 60) && tvals[num].tval; num++)
-	{
-		row = 2 + (num % 20);
-		col = 30 * (num / 20);
-		ch = listsym[num];
-		prtf(col, row, "[%c] %s", ch, tvals[num].desc);
-	}
-
-	/* We need to know the maximal possible tval_index */
-	max_num = num;
-
-	/* Choose! */
-	if (!get_com("Get what type of object? ", &ch)) return (0);
-
-	/* Analyze choice */
-	for (num = 0; num < max_num; num++)
-	{
-		if (listsym[num] == ch) break;
-	}
-
-	/* Bail out if choice is illegal */
-	if (num >= max_num) return (0);
-
-	/* Base object type chosen, fill in tval */
-	tval = tvals[num].tval;
-	tval_desc = tvals[num].desc;
-
-
-	/*** And now we go for k_idx ***/
-
-	/* Clear screen */
-	Term_clear();
-
-	/* We have to search the whole itemlist. */
-	for (num = 0, i = 1; (num < 60) && (i < z_info->k_max); i++)
+	int i;
+	
+	/* Look up the item to use */
+	for (i = 0; i < z_info->k_max; i++)
 	{
 		object_kind *k_ptr = &k_info[i];
-
-		/* Analyze matching items */
-		if (k_ptr->tval == tval)
+		
+		if (k_ptr->tval == create_item_tval)
 		{
-			/* Prepare it */
-			row = 2 + (num % 20);
-			col = 30 * (num / 20);
-			ch = listsym[num];
-
-			/* Acquire the "name" of object "i" */
-			strip_name(buf, i);
-
-			/* Print it */
-			prtf(col, row, "[%c] %s", ch, buf);
-
-			/* Remember the object index */
-			choice[num++] = i;
+			/* Are we there yet? */
+			if (!num)
+			{
+				create_item_kidx = i;
+				return (TRUE);
+			}
+			
+			/* Count down the objects to go */
+			num--;
 		}
 	}
 
-	/* We need to know the maximal possible remembered object_index */
-	max_num = num;
+	/* Paranoia */
+	return (FALSE);
+}
 
-	/* Choose! */
-	if (!get_com(format("What Kind of %s? ", tval_desc), &ch)) return (0);
 
-	/* Analyze choice */
-	for (num = 0; num < max_num; num++)
+/*
+ * Specify the sval for the object to create.
+ */
+static bool wiz_create_itemtype_aux1(int tval_entry)
+{
+	int i, num = 0;
+	
+	int tval = tvals[tval_entry].tval;
+	
+	char buf[1024];
+	char prompt[80];
+	
+	menu_type *item_menu;
+	
+	bool result;
+	
+	/* Count number of options */
+	for (i = 0; i < z_info->k_max; i++)
 	{
-		if (listsym[num] == ch) break;
+		object_kind *k_ptr = &k_info[i];
+		
+		if (k_ptr->tval == tval) num++;
 	}
+	
+	/* Create menu array */
+	C_MAKE(item_menu, num + 1, menu_type);
+	
+	/* Collect all the objects and their descriptions */
+	num = 0;
+	for (i = 0; i < z_info->k_max; i++)
+	{
+		object_kind *k_ptr = &k_info[i];
+		
+		if (k_ptr->tval == tval)
+		{
+			/* Acquire the "name" of object "i" */
+			strip_name(buf, i);
+			
+			/* Create the menu entry */
+			item_menu[num].text = string_make(buf);
+			item_menu[num].help = NULL;
+			item_menu[num].action = wiz_create_itemtype_aux2;
+			item_menu[num].flags = MN_ACTIVE;
+		
+			num++;
+		}
+	}
+	
+	/* Save tval so we can access it in aux2 */
+	create_item_tval = tval;
+	
+	/* Create the prompt */
+	strnfmt(prompt, 80, "What Kind of %s? ", tvals[tval_entry].desc);
+	result = display_menu(item_menu, -1, FALSE, NULL, prompt);
+	
+	/* Free the option strings */
+	for (i = 0; i <= num; i++)
+	{
+		string_free(item_menu[i].text);
+	}
+	
+	/* Free the array */
+	FREE(item_menu);
+	
+	return (result);
+}
 
-	/* Bail out if choice is "illegal" */
-	if (num >= max_num) return (0);
 
-	/* And return successful */
-	return (choice[num]);
+/*
+ * Specify tval and sval (type and subtype of object) originally
+ *
+ * This function returns the k_idx of an object type, or zero if failed
+ */
+static int wiz_create_itemtype(void)
+{
+	int i, num;
+	
+	menu_type *item_menu;
+
+	/* Count number of options */
+	num = 0;
+	while(tvals[num].tval) num++;
+	
+	/* Create menu array */
+	C_MAKE(item_menu, num + 1, menu_type);
+	
+	/* Collect all the tvals and their descriptions */
+	for (i = 0; i < num; i++)
+	{
+		item_menu[i].text = tvals[i].desc;
+		item_menu[i].help = NULL;
+		item_menu[i].action = wiz_create_itemtype_aux1;
+		item_menu[i].flags = MN_ACTIVE | MN_CLEAR;
+	}
+	
+	/* Hack - we know that item_menu[num].text is NULL due to C_MAKE */
+	
+	/* Clear item to make */
+	create_item_kidx = 0;
+	
+	display_menu(item_menu, -1, FALSE, NULL, "Get what type of object? ");
+	
+	/* Free the array */
+	FREE(item_menu);
+	
+	return (create_item_kidx);
 }
 
 

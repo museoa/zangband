@@ -22,7 +22,6 @@ extern const s16b cdd[8];
 extern const s16b ddx_cdd[8];
 extern const s16b ddy_cdd[8];
 extern const char hexsym[16];
-extern const char listsym[];
 extern cptr color_char;
 extern const byte adj_mag_study[];
 extern const byte adj_mag_mana[];
