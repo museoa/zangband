@@ -113,7 +113,6 @@ X:avoid_center
 
 X:vanilla_town
 X:lite_town
-X:Rand_unbiased
 Y:terrain_streams
 Y:maximize_mode
 Y:preserve_mode
