@@ -55,19 +55,12 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 	int objC = objc - infoCmd->depth;
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
-	static cptr cmdOptions[] = {"assign", "blocked",
-		"info", "in_bounds", "in_bounds_fully", "exists", "day",
-		"wild_name",
-		NULL};
-	enum {IDX_ASSIGN, IDX_BLOCKED,
-		IDX_INFO, IDX_IN_BOUNDS, IDX_IN_BOUNDS_FULLY, IDX_EXISTS,
-		IDX_DAY , IDX_WILD_NAME
-		} option;
+	static cptr cmdOptions[] = {"blocked", "wild_name", NULL};
+	enum {IDX_BLOCKED, IDX_WILD_NAME} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 
 	int y, x;
 	int blocked;
-	char *varName;
 
     if (objC < 2)
     {
@@ -83,55 +76,8 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 
 	switch (option)
 	{
-		case IDX_ASSIGN: /* assign */
-		{
-			static cptr opt[] = {"icon1", "icon2", "icon3", "icon4", NULL};
-			int plane;
-			t_assign assign;
-			char *t;
-
-			if (objC < 5 || objC > 6)
-			{
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv,
-					(char *) "y x plane ?assign?");
-				return TCL_ERROR;
-			}
-			if (Tcl_GetIntFromObj(interp, objV[2], &y) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			if (Tcl_GetIntFromObj(interp, objV[3], &x) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			if (!in_bounds2(x, y))
-			{
-				goto bad_location;
-			}
-			if (Tcl_GetIndexFromObj(interp, objV[4], (char **) opt, (char *) "plane", 0, 
-				&plane) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			if (objC == 5)
-			{
-				char buf[128];
-				assign = g_icon_map[plane][y][x];
-				(void) assign_print(buf, &assign);
-				Tcl_SetResult(interp, buf, TCL_VOLATILE);
-				break;
-			}
-			t = Tcl_GetString(objV[5]);
-			if (assign_parse(interp, &assign, t) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			g_icon_map[plane][y][x] = assign;
-			break;
-		}
-
 		case IDX_BLOCKED: /* blocked */
-			if (!character_dungeon) goto not_exists;
+			if (!character_dungeon) goto error;
 			if (objC != 4)
 			{
 				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, (char *) "y x");
@@ -148,93 +94,25 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 	
 			if (!in_bounds2(x, y))
 			{
-				goto bad_location;
+				/* Set the error */
+				Tcl_AppendStringsToObj(resultPtr, (char *) "location ",
+					format("y=%d,x=%d", y, x), " is not in bounds", NULL);
+			
+				goto error;
 			}
 			
 			blocked = !player_test_feature(y, x, 0);
 
 			Tcl_SetBooleanObj(resultPtr, blocked);
 			break;
-
-		case IDX_INFO: /* info */
-			if (!character_dungeon) goto not_exists;
-			if (objC != 5)
-			{
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, (char *) "y x arrayName");
-				return TCL_ERROR;
-			}
-
-			/* Get the y coordinate */
-			if (Tcl_GetIntFromObj(interp, objV[2], &y) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-
-			/* Get the x coordinate */
-			if (Tcl_GetIntFromObj(interp, objV[3], &x) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-
-			/* Validate coordinates */
-			if (!in_bounds2(x, y))
-			{
-				goto bad_location;
-			}
-
-			/* Get the array variable name to dump results in */
-			varName = Tcl_GetStringFromObj(objV[4], NULL);
-
-			if (SetArrayValueLong(varName, "f_idx", area(x, y)->feat) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			if (SetArrayValueLong(varName, "m_idx", area(x, y)->m_idx) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			if (SetArrayValueLong(varName, "o_idx", area(x, y)->o_idx) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			break;
-
-		case IDX_IN_BOUNDS: /* in_bounds */
-		case IDX_IN_BOUNDS_FULLY: /* in_bounds_fully */
-			if (!character_dungeon) goto not_exists;
-			if (objC != 4)
-			{
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, (char *) "y x");
-				return TCL_ERROR;
-			}
-			if (Tcl_GetIntFromObj(interp, objV[2], &y) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			if (Tcl_GetIntFromObj(interp, objV[3], &x) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-
-			if (option == IDX_IN_BOUNDS)
-				Tcl_SetBooleanObj(resultPtr, in_bounds2(x, y));
-			else
-				Tcl_SetBooleanObj(resultPtr, in_bounds(x, y));
-			break;
-
-		case IDX_EXISTS: /* exists */
-			Tcl_SetBooleanObj(resultPtr, character_dungeon);
-			break;
-
-		case IDX_DAY: /* day */
-		{
-			Tcl_SetStringObj(resultPtr, (char *) ((!p_ptr->depth && g_daytime) ?
-				"day" : "night"), -1);
-			break;
-		}
 	
 		case IDX_WILD_NAME: /* wild_name */
-			if (!character_dungeon) goto not_exists;
+			if (!character_dungeon)
+			{
+				/* Set the error */
+				Tcl_SetStringObj(resultPtr, (char *) "dungeon has not been generated yet", -1);
+				goto error;
+			}
 			if (!p_ptr->depth)
 			{
 				if (p_ptr->place_num)
@@ -251,19 +129,7 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 
 	/* Success */
 	return TCL_OK;
-
-bad_location:
-
-	/* Set the error */
-	Tcl_AppendStringsToObj(resultPtr, (char *) "location ",
-		format("y=%d,x=%d", y, x), " is not in bounds", NULL);
-	goto error;
-
-not_exists:
-
-	/* Set the error */
-	Tcl_SetStringObj(resultPtr, (char *) "dungeon has not been generated yet", -1);
-
+	
 error:
 
 	/* Failure */
@@ -712,11 +578,11 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
 	static cptr cmdOptions[] = {"abort", "tkdir"
-		"macro_dump", "new", "open", "process_pref_file", "quit",
+		"macro_dump", "new", "open", "quit",
 		"keymap_dump", "version",
 		"savefile", NULL};
 	enum {IDX_ABORT, IDX_TKDIR,
-		IDX_MACRO_DUMP, IDX_NEW, IDX_OPEN, IDX_PROCESS_PREF_FILE, IDX_QUIT,
+		IDX_MACRO_DUMP, IDX_NEW, IDX_OPEN, IDX_QUIT,
 		IDX_KEYMAP_DUMP, IDX_VERSION,
 		IDX_SAVEFILE} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
@@ -885,43 +751,6 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 			game_in_progress = 1;
 			play_game(FALSE);
 			quit(NULL);
-			break;
-
-		case IDX_PROCESS_PREF_FILE: /* process_pref_file */
-			if (objC != 3)
-			{
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, (char *) "filename");
-				return TCL_ERROR;
-			}
-
-			/* Get the file path */
-			t = Tcl_GetString(objV[2]);
-
-			/* */
-			if (t[0] && t[0] != ' ')
-			{
-				/* Translate the file path */
-				extString = UtfToExt_TranslateFileName(interp, t, &extDString);
-				if (extString == NULL) return TCL_ERROR;
-
-				/* Read the preferences */
-				if (process_pref_file(extString) == -1)
-				{
-					/* Set the error */
-					Tcl_AppendStringsToObj(resultPtr,
-						"error processing pref file \"", t, "\"",
-						NULL);
-
-					/* Clean up */
-					Tcl_DStringFree(&extDString);
-
-					/* Failure */
-					return TCL_ERROR;
-				}
-
-				/* Clean up */
-				Tcl_DStringFree(&extDString);
-			}
 			break;
 
 		case IDX_QUIT: /* quit */
