@@ -520,36 +520,6 @@ proc NSInventory::Win98MenuCmd_Options {oop button} {
 	set keywordList {}
 	set descList {}
 
-	Info $oop setting,show_flavors [Setting show_flavors]
-	$menu add checkbutton -label [mc "Show Flavors"] \
-		-command "Setting show_flavors \$NSInventory($oop,setting,show_flavors)" \
-		-variable ::NSInventory($oop,setting,show_flavors)
-	lappend keywordList show_flavors
-	lappend descList [SettingDesc show_flavors]
-
-	Info $oop setting,show_icons [Setting show_icons]
-	$menu add checkbutton -label [mc "Show Icons"] \
-		-command "Setting show_icons \$NSInventory($oop,setting,show_icons)" \
-		-variable ::NSInventory($oop,setting,show_icons)
-	lappend keywordList show_icons
-	lappend descList [SettingDesc show_icons]
-
-	if {[string equal [Info $oop invOrEquip] equipment]} {
-		Info $oop setting,show_labels [Setting show_labels]
-		$menu add checkbutton -label [mc "Show Labels"] \
-			-command "Setting show_labels \$NSInventory($oop,setting,show_labels)" \
-			-variable ::NSInventory($oop,setting,show_labels)
-		lappend keywordList show_labels
-		lappend descList [SettingDesc show_labels]
-	}
-
-	Info $oop setting,show_weights [Setting show_weights]
-	$menu add checkbutton -label [mc "Show Weights"] \
-		-command "Setting show_weights \$NSInventory($oop,setting,show_weights)" \
-		-variable ::NSInventory($oop,setting,show_weights)
-	lappend keywordList show_weights
-	lappend descList [SettingDesc show_weights]
-
 	$menu add separator
 	lappend descList ""
 

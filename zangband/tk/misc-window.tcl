@@ -1731,10 +1731,6 @@ proc NSMiscWindow::InventoryPopup {menu canvas invOrEquip cmdChar args} {
 
 	if {[lsearch -exact [angband inkey_flags] INKEY_CMD] == -1} return
 
-	# Hack -- Turn off show_flavors
-	set setting [Setting show_flavors]
-	Setting show_flavors no
-
 	# When an entry is highlighted, show object memory in the Recall Window
 	set InventoryPopup(invOrEquip) $invOrEquip
 	set InventoryPopup(itemList) {}
@@ -1763,9 +1759,6 @@ proc NSMiscWindow::InventoryPopup {menu canvas invOrEquip cmdChar args} {
 		$menu add separator
 	}
 	$menu add command -label [mc Cancel]
-
-	# Hack -- Restore show_flavors
-	Setting show_flavors $setting
 
 	set x [winfo rootx [winfo toplevel $canvas]]
 	set y [expr {[winfo rooty $canvas] + [winfo height $canvas]}]

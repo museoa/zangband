@@ -642,13 +642,6 @@ proc NSInventory2::Win98MenuCmd_Options {oop button} {
 	set keywordList {}
 	set descList {}
 
-	Info $oop setting,show_flavors [Setting show_flavors]
-	$menu add checkbutton -label [mc "Show Flavors"] \
-		-command {Setting show_flavors [Inventory2Obj Info setting,show_flavors]} \
-		-variable NSInventory2($oop,setting,show_flavors)
-	lappend keywordList show_flavors
-	lappend descList [SettingDesc show_flavors]
-
 	$menu add separator
 	lappend descList ""
 

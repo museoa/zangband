@@ -661,15 +661,6 @@ proc Setting {keyword args} {
 	# Set
 	if {[llength $args]} {
 		set value [lindex $args 0]
-		# Hack -- Map show_flavors to plain_descriptions (reverse logic)
-		switch -- $keyword {
-			show_flavors {
-				set keyword plain_descriptions
-				set value [expr {$value ? 0 : 1}]
-				angband setting set $keyword $value
-				return
-			}
-		}
 		switch -- $keyword {
 			scroll_follow -
 			show_icons {
@@ -682,13 +673,6 @@ proc Setting {keyword args} {
 
 	# Get
 	} else {
-		# Hack -- Map show_flavors to plain_descriptions (reverse logic)
-		switch -- $keyword {
-			show_flavors {
-				set value [angband setting set plain_descriptions]
-				return [expr {$value ? 0 : 1}]
-			}
-		}
 		switch -- $keyword {
 			ambient_delay -
 			scroll_follow -
@@ -715,13 +699,6 @@ proc Setting {keyword args} {
 #	What happened.
 
 proc SettingDesc {keyword} {
-
-	# Hack -- Map show_flavors to plain_descriptions
-	switch -- $keyword {
-		show_flavors {
-			return "Show flavors in object descriptions"
-		}
-	}
 
 	switch -- $keyword {
 		scroll_follow {
