@@ -16,7 +16,7 @@
 /*
  * Distance between two points via Newton-Raphson technique
  */
-int distance (int y1, int x1, int y2, int x2)
+int distance(int y1, int x1, int y2, int x2)
 {
 	int dy = (y1 > y2) ? (y1 - y2) : (y2 - y1);
 	int dx = (x1 > x2) ? (x1 - x2) : (x2 - x1);
@@ -474,12 +474,6 @@ bool cave_valid_bold(int y, int x)
 static cptr image_monster_hack = \
 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-/*
- * Hack -- Legal monster codes for IBM pseudo-graphics
- */
-static cptr image_monster_hack_ibm = \
-"ƒ„…†‡ˆ‰Š‘’•–™š›œŸ¡¥¨©ª¯°²³´µ¶·¸¾ÇÌÑÔÕ×ÙİŞßàáâãåèéæêëìíîïğñòóôõö÷øùúûüış";
-
 
 /*
  * Mega-Hack -- Hallucinatory monster
@@ -491,21 +485,8 @@ static void image_monster(byte *ap, char *cp)
 	/* Random symbol from set above */
 	if (use_graphics)
 	{
-		/* Normal graphics */
-		if (!(streq(ANGBAND_SYS, "ibm")))
-		{
-			(*cp) = r_info[randint(max_r_idx-1)].x_char;
-			(*ap) = r_info[randint(max_r_idx-1)].x_attr;
-		}
-		else
-		/* IBM-pseudo graphics */
-		{
-			n = strlen(image_monster_hack_ibm);
-			(*cp) = (image_monster_hack_ibm[rand_int(n)]);
-
-			/* Random color */
-			(*ap) = randint(15);
-		}
+		(*cp) = r_info[randint(max_r_idx-1)].x_char;
+		(*ap) = r_info[randint(max_r_idx-1)].x_attr;
 	}
 	else
 	/* Text mode */
@@ -525,8 +506,6 @@ static void image_monster(byte *ap, char *cp)
 static cptr image_object_hack = \
 "?/|\\\"!$()_-=[]{},~";
 
-static cptr image_object_hack_ibm = \
-"€“”—¤¦«­®º»¼½ÀÁÂÃÄÈÉÊËÍÎÓÚç";
 
 /*
  * Mega-Hack -- Hallucinatory object
@@ -537,19 +516,8 @@ static void image_object(byte *ap, char *cp)
 
 	if (use_graphics)
 	{
-		if (!(streq(ANGBAND_SYS, "ibm")))
-		{
-			(*cp) = k_info[randint(max_k_idx-1)].x_char;
-			(*ap) = k_info[randint(max_k_idx-1)].x_attr;
-		}
-		else
-		{
-			n = strlen(image_object_hack_ibm);
-			(*cp) = (image_object_hack_ibm[rand_int(n)]);
-
-			/* Random color */
-			(*ap) = randint(15);
-		}
+		(*cp) = k_info[randint(max_k_idx-1)].x_char;
+		(*ap) = k_info[randint(max_k_idx-1)].x_attr;
 	}
 	else
 	{
@@ -1110,19 +1078,8 @@ void map_info(int y, int x, byte *ap, char *cp)
 				{
 					if (use_graphics)
 					{
-						if (!(streq(ANGBAND_SYS, "ibm")))
-						{
-							(*cp) = r_info[randint(max_r_idx-1)].x_char;
-							(*ap) = r_info[randint(max_r_idx-1)].x_attr;
-						}
-						else
-						{
-							int n = strlen(image_monster_hack_ibm);
-							(*cp) = (image_monster_hack_ibm[rand_int(n)]);
-
-							/* Random color */
-							(*ap) = randint(15);
-						}
+						(*cp) = r_info[randint(max_r_idx-1)].x_char;
+						(*ap) = r_info[randint(max_r_idx-1)].x_attr;
 					}
 					else
 					{
