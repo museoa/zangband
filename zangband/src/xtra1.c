@@ -1004,7 +1004,7 @@ static void health_redraw(void)
 		put_fstr(COL_INFO, ROW_INFO, "[----------]");
 
 		/* Dump the current "health" (use '*' symbols) */
-		put_fstr(COL_INFO + 1, ROW_INFO, "%s**********", attr);
+		put_fstr(COL_INFO + 1, ROW_INFO, "%s%.*s", attr, len, "**********");
 	}
 }
 
