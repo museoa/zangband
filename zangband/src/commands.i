@@ -91,8 +91,6 @@ struct field_type
 	/* Storage space for the actions to interact with. */
 	byte data[8];
 
-	field_action_type action[FIELD_ACTION_MAX]; /* Function pointers for the actions */
-
 	s16b counter;			/* Counter for timed effects */
 	
 	byte priority;			/* LOS priority higher = more visible */
