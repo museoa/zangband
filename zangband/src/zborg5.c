@@ -2846,47 +2846,16 @@ static void borg_forget_map(void)
 	map_block *mb_ptr;
 
     /* Itterate over the map */
-#if 0
     MAP_ITT_START (mb_ptr)
-#endif
-	{
-		int _map_count;
-
-		for (_map_count = 0; _map_count < MAP_CACHE; _map_count++)
-		{
-            int _map_i, _map_j;
-
-			if (map_cache_x[_map_count] == -1) continue;
-
-			if (map_grid[map_cache_y[_map_count]][map_cache_x[_map_count]] == -1)
-				 continue;
-
-			for (_map_i = 0; _map_i < WILD_BLOCK_SIZE; _map_i++)
-			{
-				for (_map_j = 0; _map_j < WILD_BLOCK_SIZE; _map_j++)
-				{
-					(mb_ptr) = &map_cache[_map_count][_map_j][_map_i];
-
     {
 		/* Clear flow information */
 		mb_ptr->cost = 255;
-
-        /* ARRRRGH! */
-        assert(mb_ptr == &map_cache[_map_count][_map_j][_map_i]);
-
 		mb_ptr->flow = 255;
 
 		/* Clear icky + know flag */
 		mb_ptr->info &= ~(BORG_MAP_ICKY | BORG_MAP_KNOW);
     }
-
-                }
-			}
-		}
-	}
-#if 0
     MAP_ITT_END;
-#endif
 
 	/* Forget the view */
 	borg_forget_view();
