@@ -519,10 +519,15 @@ errr process_pref_file_aux(char *buf)
 	{
 		for (i = 0; option_info[i].o_desc; i++)
 		{
+			int os = option_info[i].o_set;
+			int ob = option_info[i].o_bit;
+
 			if (option_info[i].o_var &&
-			    option_info[i].o_text &&
-			    streq(option_info[i].o_text, buf + 2))
+				 option_info[i].o_text &&
+				 streq(option_info[i].o_text, buf + 2))
 			{
+				/* Clear */
+				option_flag[os] &= ~(1L << ob);
 				(*option_info[i].o_var) = FALSE;
 				return (0);
 			}
@@ -534,10 +539,15 @@ errr process_pref_file_aux(char *buf)
 	{
 		for (i = 0; option_info[i].o_desc; i++)
 		{
+			int os = option_info[i].o_set;
+			int ob = option_info[i].o_bit;
+
 			if (option_info[i].o_var &&
-			    option_info[i].o_text &&
-			    streq(option_info[i].o_text, buf + 2))
+				 option_info[i].o_text &&
+				 streq(option_info[i].o_text, buf + 2))
 			{
+				/* Set */
+				option_flag[os] |= (1L << ob);
 				(*option_info[i].o_var) = TRUE;
 				return (0);
 			}
