@@ -165,16 +165,12 @@ void *Plat_PaletteInit(unsigned char *rgb)
 
 #ifdef PLATFORM_X11
 
-#include <errno.h>
 #include <X11/extensions/XShm.h>
-
 #include <X11/Xutil.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
 
 #include <tkIntPlatDecls.h>
-
-#include "tcltk.h"
 
 struct PlatBitmap
 {

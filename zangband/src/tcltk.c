@@ -12,7 +12,6 @@
 
 #include "tnb.h"
 #include "util-dll.h"
-#include "tcltk.h"
 
 #ifdef PLATFORM_WIN
 #include <windows.h>

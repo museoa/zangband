@@ -14,6 +14,7 @@
 #include "cmdinfo-dll.h"
 #include "util-dll.h"
 #include "icon.h"
+#include "widget.h"
 
 static char *AssignToString_Alternate(char *buf, t_assign *assign)
 {

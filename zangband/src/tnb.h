@@ -305,6 +305,11 @@ extern struct SettingGroup_ *g_setting;
 /* struct.c */
 extern void init_struct(void);
 
+/* tcltk.c */
+Tcl_Interp *TclTk_Init(int argc, char **argv);
+void TclTk_Exit(Tcl_Interp *interp);
+
+
 /* util-tnb.c */
 extern cptr keyword_term_color[];
 extern byte g_prompt_attr;
