@@ -1143,6 +1143,461 @@ static void borg_notice_aux1(void)
 
 
 /*
+ * Notice food
+ */
+static void borg_notice_food(list_item *l_ptr, int number)
+{
+	int sval = k_info[l_ptr->k_idx].sval;
+
+	/* Analyze */
+	switch (sval)
+	{
+		case SV_FOOD_WAYBREAD:
+		{
+			amt_food_hical += number;
+			break;
+		}
+		case SV_FOOD_RATION:
+		{
+			amt_food_hical += number;
+			break;
+		}
+		case SV_FOOD_JERKY:
+		{
+			amt_food_lowcal += number;
+			break;
+		}
+		case SV_FOOD_BISCUIT:
+		{
+			amt_food_lowcal += number;
+			break;
+		}
+		case SV_FOOD_SLIME_MOLD:
+		{
+			amt_food_lowcal += number;
+			break;
+		}
+
+		case SV_FOOD_RESTORE_STR:
+		{
+			amt_fix_stat[A_STR] += number;
+			break;
+		}
+		case SV_FOOD_RESTORE_CON:
+		{
+			amt_fix_stat[A_CON] += number;
+			break;
+		}
+		case SV_FOOD_RESTORING:
+		{
+			amt_fix_stat[A_STR] += number;
+			amt_fix_stat[A_INT] += number;
+			amt_fix_stat[A_WIS] += number;
+			amt_fix_stat[A_DEX] += number;
+			amt_fix_stat[A_CON] += number;
+			amt_fix_stat[A_CHR] += number;
+			amt_fix_stat[6] += number;
+			break;
+		}
+
+		case SV_FOOD_CURE_CONFUSION:
+		{
+			amt_cure_confusion += number;
+			break;
+		}
+
+		case SV_FOOD_CURE_BLINDNESS:
+		{
+			amt_cure_blind += number;
+			break;
+		}
+
+		case SV_FOOD_CURE_POISON:
+		{
+			borg_skill[BI_ACUREPOIS] += number;
+			break;
+		}
+	}
+}
+
+
+/*
+ * Notice Potions
+ */
+static void borg_notice_potions(list_item *l_ptr, int number)
+{
+	int sval = k_info[l_ptr->k_idx].sval;
+
+	/* Analyze */
+	switch (sval)
+	{
+		case SV_POTION_HEALING:
+		{
+			borg_skill[BI_AHEAL] += number;
+			break;
+		}
+		case SV_POTION_STAR_HEALING:
+		case SV_POTION_LIFE:
+		{
+			borg_skill[BI_AEZHEAL] += number;
+			break;
+		}
+		case SV_POTION_CURE_CRITICAL:
+		{
+			borg_skill[BI_ACCW] += number;
+			break;
+		}
+		case SV_POTION_CURE_SERIOUS:
+		{
+			borg_skill[BI_ACSW] += number;
+			break;
+		}
+		case SV_POTION_CURE_LIGHT:
+		{
+			if (borg_skill[BI_ISCUT]) borg_skill[BI_ACSW] +=
+					number;
+			break;
+		}
+		case SV_POTION_CURE_POISON:
+		{
+			borg_skill[BI_ACUREPOIS] += number;
+			break;
+		}
+		case SV_POTION_SLOW_POISON:
+		{
+			amt_slow_poison += number;
+			break;
+		}
+		case SV_POTION_RESIST_HEAT:
+		{
+			borg_skill[BI_ARESHEAT] += number;
+			break;
+		}
+		case SV_POTION_RESIST_COLD:
+		{
+			borg_skill[BI_ARESCOLD] += number;
+			break;
+		}
+		case SV_POTION_INC_STR:
+		{
+			amt_add_stat[A_STR] += number;
+			break;
+		}
+		case SV_POTION_INC_INT:
+		{
+			amt_add_stat[A_INT] += number;
+			break;
+		}
+		case SV_POTION_INC_WIS:
+		{
+			amt_add_stat[A_WIS] += number;
+			break;
+		}
+		case SV_POTION_INC_DEX:
+		{
+			amt_add_stat[A_DEX] += number;
+			break;
+		}
+		case SV_POTION_INC_CON:
+		{
+			amt_add_stat[A_CON] += number;
+			break;
+		}
+		case SV_POTION_INC_CHR:
+		{
+			amt_add_stat[A_CHR] += number;
+			break;
+		}
+		case SV_POTION_RES_STR:
+		{
+			amt_fix_stat[A_STR] += number;
+			break;
+		}
+		case SV_POTION_RES_INT:
+		{
+			amt_fix_stat[A_INT] += number;
+			break;
+		}
+		case SV_POTION_RES_WIS:
+		{
+			amt_fix_stat[A_WIS] += number;
+			break;
+		}
+		case SV_POTION_RES_DEX:
+		{
+			amt_fix_stat[A_DEX] += number;
+			break;
+		}
+		case SV_POTION_RES_CON:
+		{
+			amt_fix_stat[A_CON] += number;
+			break;
+		}
+		case SV_POTION_RES_CHR:
+		{
+			amt_fix_stat[A_CHR] += number;
+			break;
+		}
+		case SV_POTION_RESTORE_EXP:
+		{
+			amt_fix_exp += number;
+			break;
+		}
+		case SV_POTION_SPEED:
+		{
+			borg_skill[BI_ASPEED] += number;
+			break;
+		}
+	}
+}
+
+
+/*
+ * Notice scrolls
+ */
+static void borg_notice_scrolls(list_item *l_ptr, int number)
+{
+	int sval = k_info[l_ptr->k_idx].sval;
+	
+	/* Analyze the scroll */
+	switch (sval)
+	{
+		case SV_SCROLL_IDENTIFY:
+		{
+			borg_skill[BI_AID] += number;
+			break;
+		}
+		case SV_SCROLL_RECHARGING:
+		{
+			borg_skill[BI_ARECHARGE] += number;
+			break;
+		}
+		case SV_SCROLL_PHASE_DOOR:
+		{
+			amt_phase += number;
+			break;
+		}
+		case SV_SCROLL_TELEPORT:
+		{
+			borg_skill[BI_AESCAPE] += number;
+			borg_skill[BI_ATELEPORT] += number;
+			break;
+		}
+		case SV_SCROLL_WORD_OF_RECALL:
+		{
+			borg_skill[BI_RECALL] += number;
+			break;
+		}
+		case SV_SCROLL_ENCHANT_ARMOR:
+		{
+			amt_enchant_to_a += number;
+			break;
+		}
+		case SV_SCROLL_ENCHANT_WEAPON_TO_HIT:
+		{
+			amt_enchant_to_h += number;
+			break;
+		}
+		case SV_SCROLL_ENCHANT_WEAPON_TO_DAM:
+		{
+			amt_enchant_to_d += number;
+			break;
+		}
+		case SV_SCROLL_STAR_ENCHANT_WEAPON:
+		{
+			amt_enchant_weapon += number;
+			break;
+		}
+		case SV_SCROLL_PROTECTION_FROM_EVIL:
+		{
+			borg_skill[BI_APFE] += number;
+			break;
+		}
+		case SV_SCROLL_STAR_ENCHANT_ARMOR:
+		{
+			amt_enchant_armor += number;
+			break;
+		}
+		case SV_SCROLL_RUNE_OF_PROTECTION:
+		{
+			borg_skill[BI_AGLYPH] += number;
+			break;
+		}
+		case SV_SCROLL_TELEPORT_LEVEL:
+		{
+			borg_skill[BI_ATELEPORTLVL] += number;
+			break;
+		}
+		case SV_SCROLL_SATISFY_HUNGER:
+		{
+			borg_skill[BI_FOOD] += number;
+			break;
+		}
+	}
+}
+
+
+/*
+ * Notice rods
+ */
+static void borg_notice_rods(list_item *l_ptr, int number)
+{
+	object_kind *k_ptr = &k_info[l_ptr->k_idx];
+	int sval = k_ptr->sval;
+	
+	/* Analyze */
+	switch (sval)
+	{
+		case SV_ROD_IDENTIFY:
+		{
+			if (borg_skill[BI_DEV] - k_ptr->level > 7)
+			{
+				borg_skill[BI_AID] += number * 100;
+			}
+			else
+			{
+				borg_skill[BI_AID] += number;
+			}
+			break;
+		}
+
+		case SV_ROD_RECALL:
+		{
+			/* Don't count on it if I suck at activations */
+			if (borg_skill[BI_DEV] - k_ptr->level > 7)
+			{
+				borg_skill[BI_RECALL] += number * 100;
+			}
+			else
+			{
+				borg_skill[BI_RECALL] += number;
+			}
+			break;
+		}
+
+		case SV_ROD_DETECT_TRAP:
+		{
+			borg_skill[BI_ADETTRAP] += number * 100;
+			break;
+		}
+
+		case SV_ROD_DETECT_DOOR:
+		{
+			borg_skill[BI_ADETDOOR] += number * 100;
+			break;
+		}
+
+		case SV_ROD_DETECTION:
+		{
+			borg_skill[BI_ADETTRAP] += number * 100;
+			borg_skill[BI_ADETDOOR] += number * 100;
+			borg_skill[BI_ADETEVIL] += number * 100;
+			break;
+		}
+
+		case SV_ROD_SPEED:
+		{
+			/* Don't count on it if I suck at activations */
+			if (borg_skill[BI_DEV] - k_ptr->level > 7)
+			{
+				borg_skill[BI_ASPEED] += number * 100;
+			}
+			else
+			{
+				borg_skill[BI_ASPEED] += number;
+			}
+			break;
+		}
+
+		case SV_ROD_MAPPING:
+		{
+			borg_skill[BI_AMAGICMAP] += number * 100;
+			break;
+		}
+
+		case SV_ROD_HEALING:
+		{
+			/* only +2 per rod because of long charge time. */
+			/* Don't count on it if I suck at activations */
+			if (borg_skill[BI_DEV] - k_ptr->level > 7)
+			{
+				borg_skill[BI_AHEAL] += number * 2;
+			}
+			else
+			{
+				borg_skill[BI_AHEAL] += number;
+			}
+			break;
+		}
+	}
+}
+
+
+/*
+ * Notice staves
+ */
+static void borg_notice_staves(list_item *l_ptr, int number)
+{
+	int sval = k_info[l_ptr->k_idx].sval;
+
+	/*
+	 * Staves should not be carried to Morgoth, he drains
+	 * them to heal himself- not good at all
+	 */
+	if (borg_skill[BI_MAXDEPTH] >= 99 && !borg_skill[BI_KING])
+	{
+		/* skip these */
+		return;
+	}
+	
+	/* Analyze */
+	switch (sval)
+	{
+		case SV_STAFF_IDENTIFY:
+		{
+			borg_skill[BI_AID] += number * l_ptr->pval;
+			break;
+		}
+		case SV_STAFF_TELEPORTATION:
+		{
+			borg_skill[BI_ATELEPORT] += number * l_ptr->pval;
+			break;
+		}
+		case SV_STAFF_SPEED:
+		{
+			borg_skill[BI_ASPEED] += number * l_ptr->pval;
+			break;
+		}
+		case SV_STAFF_HEALING:
+		{
+			borg_skill[BI_AHEAL] += number * l_ptr->pval;
+			break;
+		}
+		case SV_STAFF_THE_MAGI:
+		{
+			borg_skill[BI_ASTFMAGI] += number * l_ptr->pval;
+			break;
+		}
+		case SV_STAFF_DESTRUCTION:
+		{
+			borg_skill[BI_ASTFDEST] += number * l_ptr->pval;
+			break;
+		}
+		case SV_STAFF_POWER:
+		{
+			amt_cool_staff += number;
+			break;
+		}
+		case SV_STAFF_HOLINESS:
+		{
+			amt_cool_staff += number;
+			borg_skill[BI_AHEAL] += number * l_ptr->pval;
+			break;
+		}
+	}
+}
+
+/*
  * Notice the inventory
  */
 static void borg_notice_inven(void)
@@ -1248,440 +1703,36 @@ static void borg_notice_inven(void)
 
 			case TV_FOOD:
 			{
-				/* Analyze */
-				switch (k_ptr->sval)
-				{
-					case SV_FOOD_WAYBREAD:
-					{
-						amt_food_hical += number;
-						break;
-					}
-					case SV_FOOD_RATION:
-					{
-						amt_food_hical += number;
-						break;
-					}
-					case SV_FOOD_JERKY:
-					{
-						amt_food_lowcal += number;
-						break;
-					}
-					case SV_FOOD_BISCUIT:
-					{
-						amt_food_lowcal += number;
-						break;
-					}
-					case SV_FOOD_SLIME_MOLD:
-					{
-						amt_food_lowcal += number;
-						break;
-					}
-
-					case SV_FOOD_RESTORE_STR:
-					{
-						amt_fix_stat[A_STR] += number;
-						break;
-					}
-					case SV_FOOD_RESTORE_CON:
-					{
-						amt_fix_stat[A_CON] += number;
-						break;
-					}
-					case SV_FOOD_RESTORING:
-					{
-						amt_fix_stat[A_STR] += number;
-						amt_fix_stat[A_INT] += number;
-						amt_fix_stat[A_WIS] += number;
-						amt_fix_stat[A_DEX] += number;
-						amt_fix_stat[A_CON] += number;
-						amt_fix_stat[A_CHR] += number;
-						amt_fix_stat[6] += number;
-						break;
-					}
-
-					case SV_FOOD_CURE_CONFUSION:
-					{
-						amt_cure_confusion += number;
-						break;
-					}
-
-					case SV_FOOD_CURE_BLINDNESS:
-					{
-						amt_cure_blind += number;
-						break;
-					}
-
-					case SV_FOOD_CURE_POISON:
-					{
-						borg_skill[BI_ACUREPOIS] += number;
-						break;
-					}
-
-				}
+				/* Food */
+				borg_notice_food(l_ptr, number);
 				break;
 			}
 
 			case TV_POTION:
 			{
 				/* Potions */
-			
-				/* Analyze */
-				switch (k_ptr->sval)
-				{
-					case SV_POTION_HEALING:
-					{
-						borg_skill[BI_AHEAL] += number;
-						break;
-					}
-					case SV_POTION_STAR_HEALING:
-					case SV_POTION_LIFE:
-					{
-						borg_skill[BI_AEZHEAL] += number;
-						break;
-					}
-					case SV_POTION_CURE_CRITICAL:
-					{
-						borg_skill[BI_ACCW] += number;
-						break;
-					}
-					case SV_POTION_CURE_SERIOUS:
-					{
-						borg_skill[BI_ACSW] += number;
-						break;
-					}
-					case SV_POTION_CURE_LIGHT:
-					{
-						if (borg_skill[BI_ISCUT]) borg_skill[BI_ACSW] +=
-								number;
-						break;
-					}
-					case SV_POTION_CURE_POISON:
-					{
-						borg_skill[BI_ACUREPOIS] += number;
-						break;
-					}
-					case SV_POTION_SLOW_POISON:
-					{
-						amt_slow_poison += number;
-						break;
-					}
-					case SV_POTION_RESIST_HEAT:
-					{
-						borg_skill[BI_ARESHEAT] += number;
-						break;
-					}
-					case SV_POTION_RESIST_COLD:
-					{
-						borg_skill[BI_ARESCOLD] += number;
-						break;
-					}
-					case SV_POTION_INC_STR:
-					{
-						amt_add_stat[A_STR] += number;
-						break;
-					}
-					case SV_POTION_INC_INT:
-					{
-						amt_add_stat[A_INT] += number;
-						break;
-					}
-					case SV_POTION_INC_WIS:
-					{
-						amt_add_stat[A_WIS] += number;
-						break;
-					}
-					case SV_POTION_INC_DEX:
-					{
-						amt_add_stat[A_DEX] += number;
-						break;
-					}
-					case SV_POTION_INC_CON:
-					{
-						amt_add_stat[A_CON] += number;
-						break;
-					}
-					case SV_POTION_INC_CHR:
-					{
-						amt_add_stat[A_CHR] += number;
-						break;
-					}
-					case SV_POTION_RES_STR:
-					{
-						amt_fix_stat[A_STR] += number;
-						break;
-					}
-					case SV_POTION_RES_INT:
-					{
-						amt_fix_stat[A_INT] += number;
-						break;
-					}
-					case SV_POTION_RES_WIS:
-					{
-						amt_fix_stat[A_WIS] += number;
-						break;
-					}
-					case SV_POTION_RES_DEX:
-					{
-						amt_fix_stat[A_DEX] += number;
-						break;
-					}
-					case SV_POTION_RES_CON:
-					{
-						amt_fix_stat[A_CON] += number;
-						break;
-					}
-					case SV_POTION_RES_CHR:
-					{
-						amt_fix_stat[A_CHR] += number;
-						break;
-					}
-					case SV_POTION_RESTORE_EXP:
-					{
-						amt_fix_exp += number;
-						break;
-					}
-					case SV_POTION_SPEED:
-					{
-						borg_skill[BI_ASPEED] += number;
-						break;
-					}
-				}
+				borg_notice_potions(l_ptr, number);
 				break;
 			}
 
 			case TV_SCROLL:
 			{
 				/* Scrolls */
-				
-				/* Analyze the scroll */
-				switch (k_ptr->sval)
-				{
-					case SV_SCROLL_IDENTIFY:
-					{
-						borg_skill[BI_AID] += number;
-						break;
-					}
-					case SV_SCROLL_RECHARGING:
-					{
-						borg_skill[BI_ARECHARGE] += number;
-						break;
-					}
-					case SV_SCROLL_PHASE_DOOR:
-					{
-						amt_phase += number;
-						break;
-					}
-					case SV_SCROLL_TELEPORT:
-					{
-						borg_skill[BI_AESCAPE] += number;
-						borg_skill[BI_ATELEPORT] += number;
-						break;
-					}
-					case SV_SCROLL_WORD_OF_RECALL:
-					{
-						borg_skill[BI_RECALL] += number;
-						break;
-					}
-					case SV_SCROLL_ENCHANT_ARMOR:
-					{
-						amt_enchant_to_a += number;
-						break;
-					}
-					case SV_SCROLL_ENCHANT_WEAPON_TO_HIT:
-					{
-						amt_enchant_to_h += number;
-						break;
-					}
-					case SV_SCROLL_ENCHANT_WEAPON_TO_DAM:
-					{
-						amt_enchant_to_d += number;
-						break;
-					}
-					case SV_SCROLL_STAR_ENCHANT_WEAPON:
-					{
-						amt_enchant_weapon += number;
-						break;
-					}
-					case SV_SCROLL_PROTECTION_FROM_EVIL:
-					{
-						borg_skill[BI_APFE] += number;
-						break;
-					}
-					case SV_SCROLL_STAR_ENCHANT_ARMOR:
-					{
-						amt_enchant_armor += number;
-						break;
-					}
-					case SV_SCROLL_RUNE_OF_PROTECTION:
-					{
-						borg_skill[BI_AGLYPH] += number;
-						break;
-					}
-					case SV_SCROLL_TELEPORT_LEVEL:
-					{
-						borg_skill[BI_ATELEPORTLVL] += number;
-						break;
-					}
-					case SV_SCROLL_SATISFY_HUNGER:
-					{
-						borg_skill[BI_FOOD] += number;
-						break;
-					}
-				}
+				borg_notice_scrolls(l_ptr, number);
 				break;
 			}
 
 			case TV_ROD:
 			{
 				/* Rods */
-			
-				/* Analyze */
-				switch (k_ptr->sval)
-				{
-					case SV_ROD_IDENTIFY:
-					{
-						if (borg_skill[BI_DEV] - k_ptr->level > 7)
-						{
-							borg_skill[BI_AID] += number * 100;
-						}
-						else
-						{
-							borg_skill[BI_AID] += number;
-						}
-						break;
-					}
-
-					case SV_ROD_RECALL:
-					{
-						/* Don't count on it if I suck at activations */
-						if (borg_skill[BI_DEV] - k_ptr->level > 7)
-						{
-							borg_skill[BI_RECALL] += number * 100;
-						}
-						else
-						{
-							borg_skill[BI_RECALL] += number;
-						}
-						break;
-					}
-
-					case SV_ROD_DETECT_TRAP:
-					{
-						borg_skill[BI_ADETTRAP] += number * 100;
-						break;
-					}
-
-					case SV_ROD_DETECT_DOOR:
-					{
-						borg_skill[BI_ADETDOOR] += number * 100;
-						break;
-					}
-
-					case SV_ROD_DETECTION:
-					{
-						borg_skill[BI_ADETTRAP] += number * 100;
-						borg_skill[BI_ADETDOOR] += number * 100;
-						borg_skill[BI_ADETEVIL] += number * 100;
-						break;
-					}
-
-					case SV_ROD_SPEED:
-					{
-						/* Don't count on it if I suck at activations */
-						if (borg_skill[BI_DEV] - k_ptr->level > 7)
-						{
-							borg_skill[BI_ASPEED] += number * 100;
-						}
-						else
-						{
-							borg_skill[BI_ASPEED] += number;
-						}
-						break;
-					}
-
-					case SV_ROD_MAPPING:
-					{
-						borg_skill[BI_AMAGICMAP] += number * 100;
-						break;
-					}
-
-					case SV_ROD_HEALING:
-					{
-						/* only +2 per rod because of long charge time. */
-						/* Don't count on it if I suck at activations */
-						if (borg_skill[BI_DEV] - k_ptr->level > 7)
-						{
-							borg_skill[BI_AHEAL] += number * 2;
-						}
-						else
-						{
-							borg_skill[BI_AHEAL] += number;
-						}
-						break;
-					}
-				}
+				borg_notice_rods(l_ptr, number);
 				break;
 			}
 
 			case TV_STAFF:
 			{
 				/* Staffs */
-			
-				/*
-				 * Staves should not be carried to Morgoth, he drains
-				 * them to heal himself- not good at all
-				 */
-				if (borg_skill[BI_MAXDEPTH] >= 99 && !borg_skill[BI_KING])
-				{
-					/* skip these */
-					break;
-				}
-				/* Analyze */
-				switch (k_ptr->sval)
-				{
-					case SV_STAFF_IDENTIFY:
-					{
-						borg_skill[BI_AID] += number * l_ptr->pval;
-						break;
-					}
-					case SV_STAFF_TELEPORTATION:
-					{
-						borg_skill[BI_ATELEPORT] += number * l_ptr->pval;
-						break;
-					}
-					case SV_STAFF_SPEED:
-					{
-						borg_skill[BI_ASPEED] += number * l_ptr->pval;
-						break;
-					}
-					case SV_STAFF_HEALING:
-					{
-						borg_skill[BI_AHEAL] += number * l_ptr->pval;
-						break;
-					}
-					case SV_STAFF_THE_MAGI:
-					{
-						borg_skill[BI_ASTFMAGI] += number * l_ptr->pval;
-						break;
-					}
-					case SV_STAFF_DESTRUCTION:
-					{
-						borg_skill[BI_ASTFDEST] += number * l_ptr->pval;
-						break;
-					}
-					case SV_STAFF_POWER:
-					{
-						amt_cool_staff += number;
-						break;
-					}
-					case SV_STAFF_HOLINESS:
-					{
-						amt_cool_staff += number;
-						borg_skill[BI_AHEAL] += number * l_ptr->pval;
-						break;
-					}
-				}
-
+				borg_notice_staves(l_ptr, number);
 				break;
 			}
 
