@@ -914,7 +914,7 @@ static void term_getsize(term_data *td)
 static void save_prefs_aux(term_data *td, cptr sec_name)
 {
 	char buf[1024];
-
+	WINDOWPLACEMENT lpwndpl;
 	RECT rc;
 
 	/* Paranoia */
@@ -948,15 +948,19 @@ static void save_prefs_aux(term_data *td, cptr sec_name)
 	wsprintf(buf, "%d", td->rows);
 	WritePrivateProfileString(sec_name, "NumRows", buf, ini_file);
 
-	/* Acquire position */
-	GetWindowRect(td->w, &rc);
+	/* Get window placement and dimensions */
+	lpwndpl.length = sizeof(WINDOWPLACEMENT);
+	GetWindowPlacement(td->w, &lpwndpl);
+
+	/* Acquire position in *normal* mode (not minimized) */
+	rc = lpwndpl.rcNormalPosition;
 
 	/* Window position (x) */
-	wsprintf(buf, "%d", (rc.left > 0) ? rc.left : 0);
+	wsprintf(buf, "%d", rc.left);
 	WritePrivateProfileString(sec_name, "PositionX", buf, ini_file);
 
 	/* Window position (y) */
-	wsprintf(buf, "%d", (rc.top > 0) ? rc.top : 0);
+	wsprintf(buf, "%d", rc.top);
 	WritePrivateProfileString(sec_name, "PositionY", buf, ini_file);
 }
 
@@ -998,7 +1002,6 @@ static void save_prefs(void)
 static void load_prefs_aux(term_data *td, cptr sec_name)
 {
 	char tmp[1024];
-	int pos;
 
 	int wid, hgt;
 
@@ -1023,10 +1026,8 @@ static void load_prefs_aux(term_data *td, cptr sec_name)
 	td->rows = GetPrivateProfileInt(sec_name, "NumRows", td->rows, ini_file);
 
 	/* Window position */
-	pos = GetPrivateProfileInt(sec_name, "PositionX", td->pos_x, ini_file);
-	td->pos_x = (pos > 0) ? pos : 0;
-	pos = GetPrivateProfileInt(sec_name, "PositionY", td->pos_y, ini_file);
-	td->pos_y = (pos > 0) ? pos : 0;
+	td->pos_x = GetPrivateProfileInt(sec_name, "PositionX", td->pos_x, ini_file);
+	td->pos_y = GetPrivateProfileInt(sec_name, "PositionY", td->pos_y, ini_file);
 }
 
 
