@@ -1507,6 +1507,7 @@ static void player_outfit(void)
 		object_prep(q_ptr, lookup_kind(TV_LITE, SV_LITE_TORCH));
 		q_ptr->number = (byte)rand_range(3, 7);
 		q_ptr->timeout = rand_range(3, 7) * 500;
+		q_ptr->pval = 0;
 		object_aware(q_ptr);
 		object_known(q_ptr);
 
