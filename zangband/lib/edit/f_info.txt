@@ -193,7 +193,7 @@ G:#:D
 
 # 0x30 --> secret door
 
-N:48:secret door
+N:48:granite wall
 G:#:w
 
 # 0x31 --> rubble
