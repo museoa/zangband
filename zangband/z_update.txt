@@ -24,7 +24,7 @@ Zangband 2.3.3:
  to various monsters.
 -Monsters with KILL_BODY will now perform an attack on other monsters
  blocking their path rather than insta-killing them.
--Added 8x8 graphics tiles for new the monsters and items.
+-Added 8x8 graphics tiles for the new monsters and items.
 -You can now teleport into forested areas. This will prevent getting
  trapped in the wilderness.
 -Fixed a bug preventing the loading of 2.2.7 save files.
