@@ -7086,46 +7086,6 @@ static int borg_attack_aux_spell_callvoid(void)
 	return (0);
 }
 
-#if 0
-
-/* Holcolleth -- sleep adjacent monsters */
-static int borg_attack_aux_artifact_holcolleth(void)
-{
-	int p1 = 0;
-	int p2 = 0;
-	int d = 0;
-
-	/* Obtain initial danger */
-	borg_sleep_spell = FALSE;
-	p1 = borg_danger(c_x, c_y, 4, TRUE);
-
-	if (!borg_equips_artifact(ART_HOLCOLLETH, INVEN_OUTER))
-		return (0);
-
-	/* What effect is there? */
-	borg_sleep_spell_ii = TRUE;
-	p2 = borg_danger(c_x, c_y, 4, TRUE);
-	borg_sleep_spell_ii = FALSE;
-
-	/* value is d, enhance the value for rogues and rangers so that
-	 * they can use their critical hits.
-	 */
-	d = (p1 - p2);
-
-	/* Simulation */
-	if (borg_simulate) return (d);
-
-	/* Cast the spell */
-	if (borg_activate_artifact(ART_HOLCOLLETH, FALSE))
-		/* Value */
-	{
-		return (d);
-	}
-	else
-		return (0);
-}
-
-#endif /* 0 */
 
 /*
  * Simulate/Apply the optimal result of making a racial physical attack
@@ -8880,18 +8840,12 @@ static int borg_defend_aux_speed(int p1)
 	if (borg_equips_rod(SV_ROD_SPEED))
 		speed_rod = TRUE;
 
-	if (borg_slot(TV_POTION, SV_POTION_SPEED) && !speed_staff && !speed_rod && !speed_spell	/*&&
-																								   !borg_equips_artifact(ART_FEANOR, INVEN_FEET) &&
-																								   !borg_equips_artifact(ART_TARATOL, INVEN_WIELD) &&
-																								   !borg_equips_artifact(ART_TULKAS, INVEN_LEFT) */ )
+	if (borg_slot(TV_POTION, SV_POTION_SPEED) && !speed_staff && !speed_rod && !speed_spell)
 		return (0);
 
 	/* if we have an infinite/large suppy of speed we can */
 	/* be generious with our use */
-	if (speed_rod || speed_spell || speed_staff	/*||
-												   borg_equips_artifact(ART_TULKAS, INVEN_RIGHT) ||
-												   borg_equips_artifact(ART_FEANOR, INVEN_FEET) ||
-												   borg_equips_artifact(ART_TARATOL, INVEN_WIELD) */ )
+	if (speed_rod || speed_spell || speed_staff)
 		good_speed = TRUE;
 
 	/* pretend we are protected and look again */
@@ -9130,8 +9084,7 @@ static int borg_defend_aux_resist_fce(int p1)
 	if (p1 < avoidance / 3)
 		fail_allowed += 10;
 
-	if (!borg_spell_okay_fail(REALM_NATURE, 0, 6, fail_allowed) &&
-		!borg_equips_artifact(ART_COLLUIN, EQUIP_OUTER))
+	if (!borg_spell_okay_fail(REALM_NATURE, 0, 6, fail_allowed))
 		return (0);
 
 	/* pretend we are protected and look again */
@@ -9190,12 +9143,13 @@ static int borg_defend_aux_resist_fecap(int p1)
 		/* not very scary, allow lots of fail */
 	if (p1 < avoidance / 3)
 		fail_allowed += 10;
-/* How about adding the potion of Resistance?
- * Won't want to cast it though if only one element is
- * down.  Ought to at least wait until 3 of the 4 are down.
- */
+
+	/*
+ 	 * How about adding the potion of Resistance?
+	 * Won't want to cast it though if only one element is
+	 * down.  Ought to at least wait until 3 of the 4 are down.
+	 */
 	if (!borg_spell_okay_fail(REALM_NATURE, 2, 3, fail_allowed) &&
-		!borg_equips_artifact(ART_COLLUIN, EQUIP_OUTER) &&
 		!borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 35, fail_allowed))
 		return (0);
 
@@ -9264,7 +9218,6 @@ static int borg_defend_aux_resist_f(int p1)
 
 	if (!borg_spell_okay_fail(REALM_ARCANE, 1, 6, fail_allowed) &&
 		!borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 20, fail_allowed) &&
-		!borg_equips_artifact(ART_COLLUIN, EQUIP_OUTER) &&
 		!borg_slot(TV_POTION, SV_POTION_RESIST_HEAT))
 		return (0);
 
@@ -9321,7 +9274,6 @@ static int borg_defend_aux_resist_c(int p1)
 		fail_allowed += 10;
 
 	if (!borg_spell_okay_fail(REALM_NATURE, 1, 7, fail_allowed) &&
-		!borg_equips_artifact(ART_COLLUIN, EQUIP_OUTER) &&
 		!borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 25, fail_allowed) &&
 		!borg_slot(TV_POTION, SV_POTION_RESIST_COLD))
 		return (0);
@@ -9379,8 +9331,7 @@ static int borg_defend_aux_resist_a(int p1)
 		fail_allowed += 10;
 
 	if (!borg_spell_okay_fail(REALM_NATURE, 2, 1, fail_allowed) &&
-		!borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 15, fail_allowed) &&
-		!borg_equips_artifact(ART_COLLUIN, EQUIP_OUTER))
+		!borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 15, fail_allowed))
 		return (0);
 
 	save_acid = my_oppose_acid;
@@ -9432,8 +9383,7 @@ static int borg_defend_aux_resist_p(int p1)
 	if (p1 < avoidance / 3)
 		fail_allowed += 10;
 
-	if (!borg_spell_okay_fail(REALM_DEATH, 0, 5, fail_allowed) &&
-		!borg_equips_artifact(ART_COLLUIN, EQUIP_OUTER))
+	if (!borg_spell_okay_fail(REALM_DEATH, 0, 5, fail_allowed))
 		return (0);
 
 	save_poison = my_oppose_pois;
@@ -9490,16 +9440,13 @@ static int borg_defend_aux_prot_evil(int p1)
 
 	if (borg_spell_okay_fail(REALM_LIFE, 1, 5, fail_allowed)) pfe_spell = TRUE;
 
-	if (borg_slot(TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL)) pfe_spell =
-			TRUE;
+	if (borg_slot(TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL)) pfe_spell = TRUE;
 
 	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED] ||
 		borg_skill[BI_ISIMAGE])
 		pfe_spell = FALSE;
 	if (!(mb_ptr->flags & MAP_GLOW) &&
 		borg_skill[BI_CUR_LITE] == 0) pfe_spell = FALSE;
-
-	if (borg_equips_artifact(ART_CARLAMMAS, EQUIP_NECK)) pfe_spell = TRUE;
 
 	if (!pfe_spell) return (0);
 
@@ -9618,7 +9565,6 @@ static int borg_defend_aux_tell_away(int p1)
 	if (borg_spell_okay_fail(REALM_ARCANE, 3, 3, fail_allowed) ||
 		borg_spell_okay_fail(REALM_SORCERY, 1, 4, fail_allowed) ||
 		borg_spell_okay_fail(REALM_CHAOS, 1, 5, fail_allowed) ||
-		borg_equips_artifact(ART_ULMO, EQUIP_WIELD) ||
 		(borg_slot(TV_WAND, SV_WAND_TELEPORT_AWAY) &&
 		 borg_slot(TV_WAND, SV_WAND_TELEPORT_AWAY)->pval))
 		spell_ok = TRUE;
@@ -10059,8 +10005,7 @@ static int borg_defend_aux_mass_genocide(void)
 
 	/* see if prayer is legal */
 	if (!borg_spell_okay_fail(REALM_DEATH, 2, 7, 40) &&
-		!borg_spell_okay_fail(REALM_DEATH, 3, 6, 40) &&
-		!borg_equips_artifact(ART_EONWE, EQUIP_WIELD))
+		!borg_spell_okay_fail(REALM_DEATH, 3, 6, 40))
 		return (0);
 
 	/* Obtain initial danger, measured over time */
@@ -10182,7 +10127,6 @@ static int borg_defend_aux_genocide(void)
 		fail_allowed += 10;
 
 	if (borg_spell_okay_fail(REALM_DEATH, 1, 6, fail_allowed) ||
-		borg_equips_artifact(ART_CELEBORN, EQUIP_BODY) ||
 		borg_equips_staff_fail(SV_STAFF_GENOCIDE) ||
 		(borg_slot(TV_SCROLL, SV_SCROLL_GENOCIDE)))
 	{
@@ -10393,7 +10337,6 @@ static int borg_defend_aux_genocide_hounds(void)
 		return (0);
 
 	if (borg_spell_okay_fail(REALM_DEATH, 1, 6, 35) ||
-		borg_equips_artifact(ART_CELEBORN, EQUIP_BODY) ||
 		borg_equips_staff_fail(SV_STAFF_GENOCIDE))
 	{
 		genocide_spell = TRUE;
@@ -11226,7 +11169,6 @@ enum
 	BP_TELEPATHY,
 
 	BP_RESIST_ALL,
-	BP_RESIST_ALL_COLLUIN,
 	BP_RESIST_F,
 	BP_RESIST_C,
 	BP_RESIST_A,
@@ -11333,37 +11275,6 @@ static int borg_perma_aux_resist(void)
 	return (0);
 }
 
-/* all resists from the cloak*/
-static int borg_perma_aux_resist_colluin(void)
-{
-	if (my_oppose_fire + my_oppose_acid + my_oppose_pois +
-		my_oppose_elec + my_oppose_cold >= 3)
-		return (0);
-
-	/* Only use it when Unique is close */
-	if (!borg_fighting_unique) return (0);
-
-	/* Not needed if GOI is on */
-	if (borg_goi) return (0);
-
-
-	if (!borg_equips_artifact(ART_COLLUIN, EQUIP_OUTER))
-		return (0);
-
-
-	/* Simulation */
-	if (borg_simulate) return (2);
-
-	/* do it! */
-	if (borg_activate_artifact(ART_COLLUIN, FALSE))
-
-		/* Value */
-		return (2);
-
-
-	/* default to can't do it. */
-	return (0);
-}
 
 /* resists--- Only bother if a Unique is on the level.*/
 static int borg_perma_aux_resist_f(void)
@@ -12070,10 +11981,6 @@ static int borg_perma_aux(int what)
 		case BP_RESIST_ALL:
 		{
 			return (borg_perma_aux_resist());
-		}
-		case BP_RESIST_ALL_COLLUIN:
-		{
-			return (borg_perma_aux_resist_colluin());
 		}
 		case BP_RESIST_F:
 		{
@@ -14456,7 +14363,6 @@ static bool borg_flow_dark_interesting(int x, int y, int b_stair)
 						borg_spell_legal(REALM_ARCANE, 2, 4) ||
 						borg_spell_legal(REALM_NATURE, 1, 0) ||
 						borg_spell_legal(REALM_CHAOS, 0, 6) ||
-						borg_equips_artifact(ART_OROME, INVEN_WIELD) ||
 						borg_racial_check(RACE_HALF_GIANT, TRUE)) return (TRUE);
 
 					/* Do not dig unless we appear strong enough to succeed or we have a digger */

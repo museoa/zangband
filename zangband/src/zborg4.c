@@ -1915,8 +1915,7 @@ static void borg_notice_aux2(void)
 	}
 
 	/* Handle "detection" */
-	if (borg_equips_artifact(ART_HOLHENNETH, EQUIP_HEAD) ||
-		borg_mindcr_legal(MIND_PRECOGNIT, 30))
+	if (borg_mindcr_legal(MIND_PRECOGNIT, 30))
 	{
 		borg_skill[BI_ADETDOOR] += 1000;
 		borg_skill[BI_ADETTRAP] += 1000;
@@ -1926,7 +1925,6 @@ static void borg_notice_aux2(void)
 	/* Handle "magic mapping" */
 	if (borg_spell_legal(REALM_SORCERY, 1, 0) ||
 		borg_spell_legal(REALM_NATURE, 1, 2) ||
-		borg_equips_artifact(ART_ELENDIL, EQUIP_LITE) ||
 		borg_mindcr_legal(MIND_PRECOGNIT, 20))
 	{
 		borg_skill[BI_ADETDOOR] += 1000;
@@ -1935,8 +1933,7 @@ static void borg_notice_aux2(void)
 	}
 
 	/* Handle "protection from evil" */
-	if (borg_spell_legal(REALM_LIFE, 1, 5) ||
-		borg_equips_artifact(ART_CARLAMMAS, EQUIP_HEAD))
+	if (borg_spell_legal(REALM_LIFE, 1, 5))
 	{
 		borg_skill[BI_APFE] += 1000;
 	}
@@ -1954,12 +1951,6 @@ static void borg_notice_aux2(void)
 		amt_enchant_to_h += 1000;
 		amt_enchant_to_d += 1000;
 		amt_enchant_weapon += 1000;
-	}
-
-	/* apw Handle "Brand Weapon (bolts)" */
-	if (borg_equips_artifact(ART_BRAND, EQUIP_BOW))
-	{
-		amt_brand_weapon += 1000;
 	}
 
 	/* Handle "enchant armor" */
@@ -2038,25 +2029,15 @@ static void borg_notice_aux2(void)
 		borg_skill[BI_ASPEED] += 1000;
 	}
 
-	/* Handle "cure light wounds" */
-	if (borg_equips_artifact(ART_LOTHARANG, EQUIP_WIELD))
-	{
-		borg_skill[BI_ACSW] += 1000;
-	}
-
-
 	/* Handle "heal" */
-	if (borg_equips_artifact(ART_SOULKEEPER, EQUIP_BODY) ||
-		borg_equips_artifact(ART_GONDOR, EQUIP_HEAD) ||
-		borg_spell_legal(REALM_LIFE, 1, 6) ||
+	if (borg_spell_legal(REALM_LIFE, 1, 6) ||
 		borg_spell_legal(REALM_NATURE, 1, 7))
 	{
 		borg_skill[BI_AHEAL] += 1000;
 	}
 
 	/* Handle "fix exp" */
-	if (borg_equips_artifact(ART_LUTHIEN, EQUIP_OUTER) ||
-		borg_spell_legal(REALM_LIFE, 3, 3) ||
+	if (borg_spell_legal(REALM_LIFE, 3, 3) ||
 		borg_spell_legal(REALM_DEATH, 1, 7) ||
 		borg_racial_check(RACE_SKELETON, FALSE) ||
 		borg_racial_check(RACE_ZOMBIE, FALSE))
@@ -2065,8 +2046,7 @@ static void borg_notice_aux2(void)
 	}
 
 	/* Handle "recharge" */
-	if (borg_equips_artifact(ART_THINGOL, EQUIP_OUTER) ||
-		borg_spell_legal(REALM_ARCANE, 3, 0) ||
+	if (borg_spell_legal(REALM_ARCANE, 3, 0) ||
 		borg_spell_legal(REALM_SORCERY, 0, 7))
 	{
 		borg_skill[BI_ARECHARGE] += 1000;
@@ -4200,8 +4180,7 @@ static void borg_notice_home_aux2(borg_item *in_item, bool no_items)
 
 	/* Handle "identify" -> infinite identifies */
 	if (borg_spell_legal(REALM_SORCERY, 1, 1) ||
-		borg_spell_legal(REALM_ARCANE, 3, 2) ||
-		borg_equips_artifact(ART_ERIRIL, INVEN_WIELD))
+		borg_spell_legal(REALM_ARCANE, 3, 2))
 	{
 		num_ident += 1000;
 	}
@@ -4213,8 +4192,7 @@ static void borg_notice_home_aux2(borg_item *in_item, bool no_items)
 	}
 
 	/* apw Handle "protection from evil" */
-	if (borg_spell_legal(REALM_LIFE, 1, 5) ||
-		borg_equips_artifact(ART_CARLAMMAS, INVEN_HEAD))
+	if (borg_spell_legal(REALM_LIFE, 1, 5))
 	{
 		num_pfe += 1000;
 	}
