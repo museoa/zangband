@@ -772,15 +772,6 @@ static bool create_city(int x, int y, int town_num)
 		}
 	}
 
-	/* Fix gates so that they are in range */
-	for (i = 0; i < 4; i++)
-	{
-		if (pl_ptr->gates_x[i] + x < 0) pl_ptr->gates_x[i] = 0;
-		if (pl_ptr->gates_y[i] + y < 0) pl_ptr->gates_y[i] = 0;
-		if (pl_ptr->gates_x[i] + x > WILD_SIZE) pl_ptr->gates_x[i] = WILD_BLOCK_SIZE;
-		if (pl_ptr->gates_y[i] + y > WILD_SIZE) pl_ptr->gates_y[i] = WILD_BLOCK_SIZE;
-	}
-
 	/*
 	 * Generate second fractal
 	 */

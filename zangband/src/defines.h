@@ -69,6 +69,32 @@
 #define HAS_CLEANUP
 
 
+/* Debug modes depend on version */
+
+/* Dev version? */
+#if ((VER_MINOR == 1) || (VER_MINOR == 3) || (VER_MINOR == 5) || \
+    (VER_MINOR == 7) || (VER_MINOR == 9))
+
+#define DEBUG
+#endif /* Dev version */
+
+/* Alpha testing */
+#if (VER_EXTRA != 0)
+#define ALPHA_DEBUG
+
+#ifndef DEBUG
+#define DEBUG
+#endif /*  !DEBUG */
+
+#endif /* Pre version */
+
+/* Turn off assert if not debugging */
+#ifndef DEBUG
+#undef assert
+#define assert(ignore)	((void) 0)
+#endif /* !DEBUG */
+
+
 /*
  * The maximum number of players we support
  */
