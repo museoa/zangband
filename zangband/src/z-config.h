@@ -458,7 +458,7 @@
 #define DEFAULT_X11_FONT_7		"5x8"
 
 /*
- * OPTION: Gamma correct X11 colours.
+ * OPTION: Gamma correct colours.
  */
 
 #define SUPPORT_GAMMA
@@ -514,9 +514,6 @@
 #endif
 
 
-/* Should the player know his / her starting life rate? */
-/* # define SHOW_LIFE_RATE */
-
 /* Do we want different characters for different races? */
 /*
  * Too slow for general use - note that the 16x16 tiles use a
@@ -537,12 +534,6 @@
  * playing monks in the first place
  */
 /* #define MONK_HACK */
-
-/* Wizard mode testing options: */
-
-/* DEBUGGING: Testing upkeep   (This probably isn't needed any more) */
-/* # define TRACK_FRIENDS */
-
 
 /*
  * Check the modification time of *_info.raw files

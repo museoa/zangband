@@ -1473,23 +1473,13 @@ static void process_world(void)
 
 	if (total_friends)
 	{
-#ifdef TRACK_FRIENDS
-		if (p_ptr->wizard)
-			msg_format("Total friends: %d.", total_friends);
-#endif /* TRACK_FRIENDS */
-
 		if (total_friends > 1 + (p_ptr->lev / cp_ptr->pet_upkeep_div))
 		{
 			upkeep_factor = total_friend_levels;
 
+			/* Bounds checking */
 			if (upkeep_factor > 95) upkeep_factor = 95;
-			else if (upkeep_factor < 5) upkeep_factor = 5;
-
-#ifdef TRACK_FRIENDS
-			if (p_ptr->wizard)
-			msg_format("Levels %d, upkeep %d", total_friend_levels, upkeep_factor);
-#endif /* TRACK_FRIENDS */
-
+			if (upkeep_factor < 5) upkeep_factor = 5;
 		}
 	}
 
@@ -1500,14 +1490,6 @@ static void process_world(void)
 		{
 			s16b upkeep_regen = (((100 - upkeep_factor) * regen_amount) / 100);
 			regenmana(upkeep_regen);
-
-#ifdef TRACK_FRIENDS
-			if (p_ptr->wizard)
-			{
-				msg_format("Regen: %d/%d", upkeep_regen, regen_amount);
-			}
-#endif /* TRACK_FRIENDS */
-
 		}
 		else
 		{
