@@ -1405,14 +1405,6 @@ bool change_panel(int dy, int dx)
 	int y = panel_row_min + dy * (map_hgt / 2);
 	int x = panel_col_min + dx * (map_wid / 2);
 
-	/* Verify the row */
-	if (y > max_panel_rows * (map_hgt / 2)) y = max_panel_rows * (map_hgt / 2);
-	else if (y < 0) y = 0;
-
-	/* Verify the col */
-	if (x > max_panel_cols * (map_wid / 2)) x = max_panel_cols * (map_wid / 2);
-	else if (x < 0) x = 0;
-
 	/* Verify wilderness */
 	if (!dun_level)
 	{
@@ -1426,6 +1418,14 @@ bool change_panel(int dy, int dx)
 			x = max_wild * 8 - map_wid / 2 - 15;
 			y = max_wild * 8 - map_hgt / 2 - 5;
 		}
+	}
+	else
+	{
+		/* Dungeon bounds */
+		if (y > cur_hgt - map_hgt) y = cur_hgt - map_hgt;
+		if (y < 0) y = 0;
+		if (x > cur_wid - map_wid) x = cur_wid - map_wid;
+		if (x < 0) x = 0;
 	}
 
 	/* Handle "changes" */

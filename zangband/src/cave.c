@@ -1727,18 +1727,120 @@ void prt_map(void)
 	int     v;
 	bool    fake_monochrome = (!use_graphics || streq(ANGBAND_SYS, "ibm"));
 
+	/* map bounds */
+	s16b	xmin, xmax, ymin, ymax;
 
 	/* Access the cursor state */
 	(void)Term_get_cursor(&v);
 
 	/* Hide the cursor */
 	(void)Term_set_cursor(0);
+	
+	/* Get bounds */
+	if (dun_level)
+	{
+		/* Dungeon */
+		xmin = (0 < panel_col_min) ? panel_col_min : 0;
+		xmax = (cur_wid > panel_col_max) ? panel_col_max : cur_wid;
+		ymin = (0 < panel_row_min) ? panel_row_min : 0;
+		ymax = (cur_hgt > panel_row_max) ? panel_row_max : cur_hgt;
+	}
+	else
+	{
+		/* Wilderness */
+		xmin = (wild_grid.x_min < panel_col_min) ? panel_col_min : wild_grid.x_min;
+		xmax = (wild_grid.x_max > panel_col_max) ? panel_col_max : wild_grid.x_max;
+		ymin = (wild_grid.y_min < panel_row_min) ? panel_row_min : wild_grid.y_min;
+		ymax = (wild_grid.y_max > panel_row_max) ? panel_row_max : wild_grid.y_max;
+	}
+	
+	
+	
+#ifdef USE_TRANSPARENCY	
+	/* Bottom section of screen */
+	for (y = 1; y < ymin - panel_row_prt; y++)
+	{
+		for (x = 13; x < map_wid + 13; x++)
+		{
+			/* Efficiency -- Redraw that grid of the map */
+			Term_queue_char(x, y , TERM_WHITE, ' ', TERM_WHITE, ' ');
+		}
+	}
+	
+	/* Top section of screen */
+	for (y = ymax - panel_row_prt; y < map_hgt; y++)
+	{
+		for (x = 13; x < map_wid + 13; x++)
+		{
+			
+			/* Efficiency -- Redraw that grid of the map */
+			Term_queue_char(x, y, TERM_WHITE, ' ', TERM_WHITE, ' ');
+		}	
+	}
+	
+	/* Left section of screen */
+	for (x = 13; x < xmin - panel_col_prt; x++)
+	{
+		for (y = ymin - panel_row_prt; y < ymax - panel_row_prt; y++)
+		{
+			/* Efficiency -- Redraw that grid of the map */
+			Term_queue_char(x, y, TERM_WHITE, ' ', TERM_WHITE, ' ');
+		}
+	}
+
+	/* Right section of screen */
+	for (x = xmax - panel_col_prt; x < map_wid + 13; x++)
+	{
+		for (y = ymin - panel_row_prt; y < ymax - panel_row_prt; y++)
+		{
+			/* Efficiency -- Redraw that grid of the map */
+			Term_queue_char(x, y, TERM_WHITE, ' ', TERM_WHITE, ' ');
+		}
+	}
+	
+#else /* USE_TRANSPARENCY */
+	/* Clear out of bounds region */
+	for (x = 0; x < map_wid; x++)
+	{
+		/* Bottom section of screen */
+		for (y = 1; y < ymin - panel_row_prt; y++)
+		{
+			/* Efficiency -- Redraw that grid of the map */
+			Term_queue_char(x + 13, y , TERM_WHITE, ' ');
+		}
+		
+		/* Top section of screen */
+		for (y = ymax; y < panel_row_max; y++)
+		{
+			/* Efficiency -- Redraw that grid of the map */
+			Term_queue_char(x + 13, y - panel_row_prt, TERM_WHITE, ' ');
+		}	
+	}
+	
+	for (y = ymin - panel_row_prt; y < ymax - panel_row_prt; y++)
+	{
+		/* Left section of screen */
+		for (x = xmin; x < panel_col_min; x++)
+		{
+			/* Efficiency -- Redraw that grid of the map */
+			Term_queue_char(x - panel_col_prt, y, TERM_WHITE, ' ');
+		}
+		
+		/* Right section of screen */
+		for (x = xmax ; x < panel_col_max; x++)
+		{
+			/* Efficiency -- Redraw that grid of the map */
+			Term_queue_char(x - panel_col_prt, y, TERM_WHITE, ' ');
+		}
+	}
+
+#endif /* USE_TRANSPARENCY */
 
 	/* Dump the map */
-	for (y = panel_row_min; y <= panel_row_max; y++)
+	for (y = ymin; y <= ymax; y++)
 	{
 		/* Scan the columns of row "y" */
-		for (x = panel_col_min; x <= panel_col_max; x++)
+		for (x = xmin; x <= xmax; x++)
 		{
 			byte a;
 			char c;
@@ -1747,19 +1849,9 @@ void prt_map(void)
 			byte ta;
 			char tc;
 
-			if (!in_bounds2(y, x))
-			{
-				/* Outside the wilderness */
-				a = TERM_WHITE;
-				ta = TERM_WHITE;
-				c = ' ';
-				tc = ' ';
-			}
-			else
-			{
-				/* Determine what is there */
-				map_info(y, x, &a, &c, &ta, &tc);
-			}
+			/* Determine what is there */
+			map_info(y, x, &a, &c, &ta, &tc);
+
 			/* Hack -- fake monochrome */
 			if (fake_monochrome)
 			{
@@ -1771,17 +1863,8 @@ void prt_map(void)
 			Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c, ta, tc);
 #else /* USE_TRANSPARENCY */
 
-			if (!in_bounds2(y, x))
-			{
-				/* Outside the wilderness */
-				a = TERM_WHITE;
-				c = ' ';
-			}
-			else
-			{
-				/* Determine what is there */
-				map_info(y, x, &a, &c);
-			}
+			/* Determine what is there */
+			map_info(y, x, &a, &c);
 
 			/* Hack -- fake monochrome */
 			if (fake_monochrome)
@@ -3558,6 +3641,14 @@ void forget_flow(void)
 static int flow_head = 0;
 static int flow_tail = 0;
 
+/*
+ * Hack - speed up the update_flow algorithm by only doing
+ * it everytime the player moves out of LOS of the last
+ * "way-point".
+ */
+static u16b flow_x = 0;
+static u16b flow_y = 0;
+
 
 /*
  * Take note of a reachable grid.  Assume grid is legal.
@@ -3627,6 +3718,17 @@ void update_flow(void)
 	/* Paranoia -- make sure the array is empty */
 	if (temp_n) return;
 
+	/* The last way-point is on the map */
+	if (in_bounds2(flow_y, flow_x))
+	{
+		/* The way point is in sight - do not update.  (Speedup) */
+		if (area(flow_y, flow_x)->info & CAVE_VIEW) return;
+	}
+	
+	/* Save player position */
+	flow_y = py;
+	flow_x = px;	
+	
 	/* Cycle the old entries (once per 128 updates) */
 	if (flow_n == 255)
 	{
