@@ -1,0 +1,859 @@
+/* File: compress.c */
+
+/*
+ * Copyright (c) 1989 James E. Wilson, Robert A. Koeneke
+ *
+ * This software may be copied and distributed for educational, research, and
+ * not for profit purposes provided that this copyright and statement are
+ * included in all such copies.
+ */
+
+/*
+ * Purpose: Compression and decompression of block streams.
+ * 
+ * This is used to decrease the size of savefiles, and to
+ * decrease the bandwidth requirements of the multiplayer
+ * version when it is finally made.
+ * 
+ * Original code by Steven Fuerst
+ */
+
+#include "angband.h"
+
+/* 4k for each block_type */
+#define BLOCK_DATA_SIZE (4096 - sizeof(u16b) - sizeof(void *))
+
+#define HI_BIT_32		0x80000000
+#define NEXT_BIT_32		0x40000000
+#define ALL_BITS		0xFFFFFFFF
+
+typedef struct block_type block_type;
+
+struct block_type
+{
+	/* Pointer to next block in list */
+	block_type *b_next;
+	
+	/* Size of used region in this block */
+	u16b size;
+	
+	/* Data in this block */
+	byte block_data[BLOCK_DATA_SIZE];
+};
+
+
+typedef struct block_handle block_handle;
+
+struct block_handle
+{
+	/* Pointer to a block */
+	block_type *b_ptr;
+	
+	/* Position of read/write head */
+	u32b counter;
+};
+
+static block_type *free_list = NULL;
+static block_type *used_list = NULL;
+
+static block_type* new_block(void)
+{
+	block_type *temp_ptr;
+	
+	/* Is the free list empty? */
+	if (!free_list)
+	{
+		/* Ok - make a new block */
+		MAKE(temp_ptr, block_type);
+	
+		/* Return a pointer to it */
+		return (temp_ptr);
+	}
+	
+	/* Pick the first thing on the free list */
+	temp_ptr = free_list;
+	
+	/* Update the free list */
+	free_list = free_list->b_next;
+
+	/* Return a pointer to the block */
+	return (temp_ptr);
+}
+
+static block_type *del_block(block_type *b_ptr)
+{
+	/* Save what this block is attached to */
+	block_type *temp_ptr;
+	
+	/* Paranoia */
+	if (!b_ptr) return (NULL);
+	
+	/* Save the block after *b_ptr */
+	temp_ptr = b_ptr->b_next;
+	
+	/* Add to front of free list */
+	b_ptr->b_next = free_list;
+	free_list = b_ptr;
+	
+	/* Return the block after *b_ptr */
+	return (temp_ptr);
+}
+
+/* Read a byte from the stream of blocks */
+static int read_block_byte(block_handle *h_ptr)
+{
+	/* End of block? */
+	if (h_ptr->counter >= h_ptr->b_ptr->size)
+	{
+		/* Change block */
+		h_ptr->b_ptr = h_ptr->b_ptr->b_next;
+		
+		/* Start of new block */
+		h_ptr->counter = 0;
+
+		/* End of the stream */
+		if (!h_ptr->b_ptr) return (-1);
+	}
+	
+	return (h_ptr->b_ptr->block_data[h_ptr->counter++]);
+}
+
+/* Read a byte from the stream of blocks - erasing as we go*/
+static int rerase_block_byte(block_handle *h_ptr)
+{
+	/* End of block? */
+	if (h_ptr->counter >= h_ptr->b_ptr->size)
+	{
+		/* Change block, deleting old one */
+		h_ptr->b_ptr = del_block(h_ptr->b_ptr);
+		
+		/* Start of new block */
+		h_ptr->counter = 0;
+
+		/* End of the stream */
+		if (!h_ptr->b_ptr) return (-1);
+	}
+	
+	return (h_ptr->b_ptr->block_data[h_ptr->counter++]);
+}
+
+static write_block_byte(block_handle *h_ptr, byte output)
+{
+	/* End of block? */
+	if (h_ptr->counter >= BLOCK_DATA_SIZE)
+	{
+		if (!h_ptr->b_ptr->b_next)
+		{
+			/* Do we need to make a new block? */
+			h_ptr->b_ptr->b_next = new_block();
+		}
+		
+		/* Change block */
+		h_ptr->b_ptr = h_ptr->b_ptr->b_next;
+		
+		/* Start of new block */
+		h_ptr->counter = 0;
+	}
+	
+	h_ptr->b_ptr->block_data[h_ptr->counter++] = output;
+	
+	h_ptr->b_ptr->size = h_ptr->counter;
+}
+
+/* Current byte of information to read / write */
+static byte current_byte;
+
+/* Which bit are we up to */
+static byte current_bit;
+
+static write_block_bit(block_handle *h_ptr, byte output)
+{
+	/* End of block? */
+	if (h_ptr->counter >= BLOCK_DATA_SIZE)
+	{
+		if (!h_ptr->b_ptr->b_next)
+		{
+			/* Do we need to make a new block? */
+			h_ptr->b_ptr->b_next = new_block();
+		}
+		
+		/* Change block */
+		h_ptr->b_ptr = h_ptr->b_ptr->b_next;
+		
+		/* Start of new block */
+		h_ptr->counter = 0;
+	}
+	
+	/* Write the bit */
+	current_byte += (output ? 1 : 0) << current_bit;
+	
+	/* Move to next bit */
+	current_bit++;
+	
+	if (current_bit = 8)
+	{
+		/* We've done a whole byte */
+		h_ptr->b_ptr->block_data[h_ptr->counter++] = current_byte;
+		
+		/* Reset to start of new byte */
+		current_byte = 0;
+		current_bit = 0;
+		
+		h_ptr->b_ptr->size = h_ptr->counter;
+	}
+}
+
+static int rerase_block_bit(block_handle *h_ptr)
+{
+	/* End of block? */
+	if (h_ptr->counter >= h_ptr->b_ptr->size)
+	{
+		/* Change block, deleting old one */
+		h_ptr->b_ptr = del_block(h_ptr->b_ptr);
+		
+		/* Start of new block */
+		h_ptr->counter = 0;
+
+		/* End of the stream */
+		if (!h_ptr->b_ptr) return (0);
+	}
+	
+	if (current_bit == 0)
+	{
+		/* Read a new byte */
+		current_byte = h_ptr->b_ptr->block_data[h_ptr->counter++];
+		
+		current_bit = 8;
+	}
+	
+	/* Move to next bit */
+	current_bit--;
+	
+	/* Return that bit */
+	return ((current_byte | (1 << current_bit)) ? 1 : 0);
+}
+
+/* Initialise static variables used to have a bitwise stream */
+static init_block_bit(void)
+{
+	current_byte = 0;
+	current_bit = 0;
+}
+
+/* Write out the pending bits, if any exist */
+static flush_bits(block_handle *h_ptr)
+{
+	/* End of block? */
+	if (h_ptr->counter >= BLOCK_DATA_SIZE)
+	{
+		if (!h_ptr->b_ptr->b_next)
+		{
+			/* Do we need to make a new block? */
+			h_ptr->b_ptr->b_next = new_block();
+		}
+		
+		/* Change block */
+		h_ptr->b_ptr = h_ptr->b_ptr->b_next;
+		
+		/* Start of new block */
+		h_ptr->counter = 0;
+	}
+
+	/* Anything to output? */
+	if (current_bit != 0)
+	{
+		/* Write the partially full byte */
+		h_ptr->b_ptr->block_data[h_ptr->counter++] = current_byte;
+		
+		/* Reset to start of new byte */
+		current_byte = 0;
+		current_bit = 0;
+		
+		h_ptr->b_ptr->size = h_ptr->counter;
+	}
+}
+
+
+/*
+ * Clean the list of blocks.
+ *
+ * Compact everything until the least amount of memory is used.
+ */
+static cln_blocks(block_type *b_ptr)
+{
+	int i = 0, j = 0;
+	block_type* next_ptr = b_ptr;
+	
+	/* While there are blocks to do */
+	while (next_ptr)
+	{
+		/* Note inline versions of read and write block_byte for speed */
+		
+		
+		/* End of write block? */
+		if (i >= BLOCK_DATA_SIZE)
+		{
+			i = 0;
+			
+			b_ptr->size = BLOCK_DATA_SIZE;
+			
+			b_ptr = b_ptr->b_next;
+			
+			continue;
+		}
+		
+		/* End of read block? */
+		if (j >= next_ptr->size)
+		{
+			j = 0;
+			next_ptr = next_ptr->b_next;
+
+			continue;
+		}
+		
+		/*
+		 * Copy from read to write.
+		 *
+		 * Note that read head is always further along the stream
+		 * than the write head.
+		 */
+		b_ptr->block_data[i++] = next_ptr->block_data[j++];
+	}
+	
+	/* Save the size */
+	b_ptr->size = i;
+	
+	/* We have finished copying the stuff - now delete the extra blocks */
+	
+	/* Save the start of the blocks to delete */
+	b_ptr = b_ptr->b_next;
+	
+	while (b_ptr)
+	{
+		/* Delete the block - and point to its child */
+		b_ptr = del_block(b_ptr);
+	}
+	
+	/* Delete the extra blocks in the free list */
+	while (free_list)
+	{
+		/* Save next block */
+		next_ptr = free_list->b_next;
+		
+		/* Destroy the current block */
+		C_KILL(free_list);
+		
+		/* Point to next block */
+		free_list = next_ptr;
+	}
+}
+
+/*
+ * RLE encode this list of blocks - inserting new blocks as needed
+ */
+static rle_blocks_encode(block_handle *h1_ptr)
+{
+	block_handle handle, *h2_ptr = &handle;
+	block_type *b_ptr;
+	int count = 0;
+	byte symbol = 0;
+	int new_symbol;
+
+	/* Swap the block streams the two handles refer to */
+	b_ptr = h1_ptr->b_ptr;
+	h1_ptr->b_ptr = new_block();
+	h2_ptr->b_ptr = b_ptr
+	
+	/* Move the read/write head to the start of the stream */
+	h1_ptr->counter = 0;
+	h2_ptr->counter = 0;
+		
+	/* Paranoia */
+	if (!h2_ptr->b_ptr) return;
+	
+	/* While we have blocks to do */
+	while (TRUE)
+	{
+		/* Output the old symbol */
+		write_block_byte(h1_ptr, symbol);
+		
+		/* Get a new symbol */
+		new_symbol = rerase_block_byte(h2_ptr);
+		
+		/* At the end? */
+		if (new_symbol == -1) break;
+		
+		/* No match - keep looping */
+		if (new_symbol != symbol)
+		{
+			symbol = (byte) new_symbol;
+			continue;
+		}
+		
+		/*
+		 * There is a match - write out the symbol again.
+		 * A duplicated symbol marks a run.
+		 */
+		write_block_byte(h1_ptr, symbol);
+
+		/* Reset counter */
+		count = 0;
+	
+		while (count < 255)
+		{
+			/* Get a new symbol */
+			new_symbol = rerase_block_byte(h2_ptr);
+			
+			if (new_symbol != symbol) break;
+		
+			count++;
+		}
+		
+		/* Output the count */
+		write_block_byte(h1_ptr, count);
+		
+		/* At the end? */
+		if (new_symbol == -1) break;
+		
+		/* Go back to looping */
+		symbol = (byte) new_symbol;
+	}
+}
+
+
+/*
+ * The inverse of the above function.
+ *
+ * Scan for duplicated symbols, and then fill in the count
+ * with copies of them.
+ */
+static rle_blocks_decode(block_handle *h1_ptr)
+{
+	block_handle handle, *h2_ptr = &handle;
+	block_type *b_ptr;
+	
+	int count = 0;
+	byte symbol = 0, new_symbol;
+
+	/* Swap the block streams the two handles refer to */
+	b_ptr = h1_ptr->b_ptr;
+	h1_ptr->b_ptr = new_block();
+	h2_ptr->b_ptr = b_ptr
+	
+	/* Move the read/write head to the start of the stream */
+	h1_ptr->counter = 0;
+	h2_ptr->counter = 0;
+		
+	/* Paranoia */
+	if (!h2_ptr->b_ptr) return;
+	
+	/* While we have blocks to do */
+	while (TRUE)
+	{
+		/* Output the old symbol */
+		write_block_byte(h1_ptr, symbol);
+		
+		/* Get a new symbol */
+		new_symbol = rerase_block_byte(h2_ptr);
+		
+		/* No match - keep looping */
+		if (new_symbol != symbol)
+		{
+			symbol = new_symbol;
+			continue;
+		}
+		
+		/*
+		 * There is a match - write out the symbol again.
+		 * A duplicated symbol marks a run.
+		 */
+		write_block_byte(h1_ptr, symbol);
+
+		/* Get the count */
+		count = rerase_block_byte(h2_ptr);
+		
+		/* Paranoia */
+		if (count == -1) break;
+		
+		/* Write out the run */
+		for (;count > 0; count--)
+		{
+			write_block_byte(h1_ptr, symbol);
+		}
+	
+		/* Get new start symbol */
+		symbol = rerase_block_byte(h2_ptr);
+	
+		/* Paranoia */
+		if (symbol == -1) break;
+	}
+}
+
+/* Bounds of arithmetic code value */
+static u32b bound1;
+static u32b bound2;
+
+/* 
+ * Bits in an all-one or all-zero 'run' next to high-bit.
+ * (This gives us extra precision and avoids overflows.)
+ */
+static u32b run_bits;
+
+
+/* Encode a symbol into the block stream */
+static arth_block_encode(block_handle *h_ptr, u32b *prob_table, byte symbol)
+{
+	/* How large is the current range of possibilities? */
+	u32b range = bound2 - bound1 + 1;
+		
+	/*
+	 * Rescale the bounds
+	 * Note how upper bound is exclusive of the number.
+	 */
+	bounds2 = bounds1 + range * prob_table[symbol] / table_total - 1;
+	bounds1 += range * (prob_table[symbol + 1] - 1) / table_total;
+
+	/* Prune as many bits as possible */
+	while (TRUE)
+	{
+		/* Do the high bits match? */
+		if ((bounds1 & HI_BIT_32) == (bounds2 & HI_BIT_32))
+		{
+			/* Output the bit */
+			write_block_bit(h_ptr, bounds1 & HI_BIT_32);
+			
+			/* Output the overflow bits in a run */
+			for (;run_bits > 0; run_bits--)
+			{
+				write_block_bit(h_ptr, !(bounds1 & (~NEXT_BIT_32))
+			}
+		}	
+	
+		/* Check the overflow bits - and store runs */
+		else if ((bounds1 & NEXT_BIT_32) != (bounds2 & NEXT_BIT_32))
+		{
+			/* Count the run bits */
+			run_bits++;
+			
+			/*
+			 * Make sure the bits differ so we
+			 * shift them into the correct location.
+			 *
+			 * Note: we know that bounds2 has the bit set,
+			 * and bounds1 has it cleared, because
+			 * bounds2 > bounds1.
+			 *
+			 * (Basically we are just deleting the bits -
+			 * which means setting them to the right thing,
+			 * and shifting them into the high bit.)
+			 */
+			bounds1 &= ~(NEXT_BIT_32)
+			bounds2 |= NEXT_BIT_32;
+		}
+		else
+		{
+			/* We have removed as many bits as possible */
+			break;
+		}
+	
+		/* Shift out the high bits */
+		
+		/* Shift in a zero */
+		bounds1 = bounds1 << 1;
+		
+		/* Shift in a one */
+		bounds2 = (bounds2 << 1) + 1;
+	}
+
+}
+
+/*
+ * Find the fraction that code lies between bounds1 and bounds2
+ *
+ * This fraction is used to find the corresponding symbol.
+ */
+static u32b arth_block_decode(u32b code, u32b *prob_table)
+{
+    return (((code - bounds1 + 1 ) * prob_table[256] - 1) /
+		(bounds2 - bounds1 + 1));
+}
+
+
+/*
+ * Remove the current symbol from the code, and insert more
+ * bits as needed.
+ */
+static byte remove_symbol(u32b count, u32b *code, u32b *prob_table,
+	block_handle *h_ptr);
+{
+	/* How large is the current range of possibilities? */
+	u32b range = bound2 - bound1 + 1;
+	
+	byte b1 = 0, b2 = 255;
+	int test = (b1 + b2) / 2;
+	int tv = prob_table[test];
+	
+	
+	
+	/*
+	 * Use a binary chop algorithm to find
+	 * the symbol that best-matches the code
+	 */
+	
+	
+	/* Check boundaries first */
+	if (prob_table[b1] == count) return (b1);
+	if (prob_table[b2] <= count) return (b2);
+	
+	/* While we haven't found it, and the bounds are not to small */
+	while ((tv != count) && (b1 + 1 < b2))
+	{
+		if (tv > count)
+		{
+			/* Shrink the boundary inwards */
+			b2 = (byte) test;
+			test = (b1 + b2) / 2;
+			
+			/* Paranoia - make sure we shrink it. */
+			if (test == b2) test--;
+			
+			tv = prob_table[test];
+		}
+		else
+		{
+			/* The lower boundary is special */
+			if (prob_table[b1 + 1] > count)
+			{
+				/* Save the value */
+				tv = prob_table[b1];
+				break;
+			}
+		
+			/* Shrink the boundary inwards */
+			b1 = (byte) test;
+			test = (b1 + b2) / 2;
+			
+			/* Paranoia - make sure we shrink it. */
+			if (test == b1) test++;
+			
+			tv = prob_table[test];
+		}
+	}	
+		
+	/* Rescale the bounds */
+	bounds2 = bounds1 + range * prob_table[tv] / prob_table[256] - 1;
+	bounds1 += range * (prob_table[tv + 1] - 1) / prob_table[256];
+
+	/* Try to remove as many bits as possible */
+	while (TRUE)
+	{
+		/* If the high bits match - remove them */
+		if ((bounds1 & HI_BIT_32) == (bounds2 & HI_BIT_32))
+		{
+			/* Shift out the bits below */
+		}
+		
+		/* Are we near an underflow? */
+		else if (((bounds1 & NEXT_BIT_32) == NEXT_BIT_32)
+			 && !(bounds2 & NEXT_BIT_32))
+		{
+			/* Delete these bits by copying in the state of the high bits */
+			
+			/* Make these bits match the high bit. */
+			bounds1 &= ~(NEXT_BIT_32)
+			bounds2 |= NEXT_BIT_32;
+			
+			/* Flip the second highest bit in the code */
+			*code ^= NEXT_BIT_32;
+		}
+		else
+		{
+			/*
+			 * We can't shift out anything
+			 * so exit with the symbol we found earlier.
+			 */
+			return (tv);
+		}
+
+		/* Swap out the high bits */
+		bounds1 *= 2;
+		bounds2 = bounds2 * 2 + 1;
+		
+		/* Add in a new bit from the stream */
+		*code = *code * 2 + rerase_block_bit(h_ptr);
+	}
+}
+
+/* Flush the final bits when done */
+static flush_arith(block_handle *h_ptr)
+{
+	/* Output the second highest bit */
+	write_block_bit(h_ptr, bounds1 & NEXT_BIT_32)
+	
+	/*
+	 * Increment the number of overflow bits,
+	 * so we always output at least two.
+	 *
+	 * Then we output all the pending ones.
+	 */
+	for(run_bits++; run_bits > 0; run_bits--)
+	{
+		write_block_bit(h_ptr, !(bounds1 & (~NEXT_BIT_32))
+	}
+	
+	/* Write out the final byte, if required */
+	flush_bits(h_ptr);
+}
+
+static arth_blocks_encode(block_handle *h1_ptr)
+{
+	block_handle handle, *h2_ptr = &handle;
+	block_type *b_ptr;
+
+	byte symbol;
+	int i = 0, j = 0;
+	u32b size, prob_table[256];
+	
+	/* Swap the block streams the two handles refer to */
+	b_ptr = h1_ptr->b_ptr;
+	h1_ptr->b_ptr = new_block();
+	h2_ptr->b_ptr = b_ptr
+	
+	/* Move the read/write head to the start of the stream */
+	h1_ptr->counter = 0;
+	h2_ptr->counter = 0;
+		
+	/* Get size of the encoded stream */
+	while (b_ptr)
+	{
+		/* Add up the size */
+		size += b_ptr->size;
+		
+		/* Point to the next block */
+		b_ptr = b_ptr->b_next;
+	}
+
+	/* Write the size to the file */
+	write_block_byte(h1_ptr, size & 0xFF);
+	write_block_byte(h1_ptr, (size >> 8) & 0xFF);
+	write_block_byte(h1_ptr, (size >> 16) & 0xFF);
+	write_block_byte(h1_ptr, &j, (size >> 24) & 0xFF);
+	
+	/*
+	 * Init the encoder.
+	 *
+	 * The boundary is 0->1 in fixed point.
+	 */
+	bound1 = 0;
+	bound2 = ALL_BITS;
+	
+	/* No overflow yet */
+	run_bits = 0;
+	
+	/* Init the compression model */
+	init_compress(prob_table);
+	
+	/* Init the bitwise stream */
+	init_block_bit();
+	
+	/* Compress the blocks */
+	while (TRUE)
+	{
+		/* Get symbols */
+		symbol = rerase_block_byte(h2_ptr);
+		
+		if (symbol == -1)
+		{
+			/* Done - flush the data */
+			flush_arith(h1_ptr);
+			
+			break;
+		}
+	
+		/* Encode it */
+		arth_block_encode(h1_ptr, prob_table, table_total, symbol);
+		
+		/* Update probability table */
+		calc_prob(symbol, prob_table);
+	}
+}
+
+static arth_blocks_decode(block_handle *h1_ptr)
+{
+	block_handle handle, *h2_ptr = &handle;
+	block_type *b_ptr;
+
+	int i;
+	u32b code = 0, size, prob_table[256];
+
+	byte symbol;
+	
+	/* Swap the block streams the two handles refer to */
+	b_ptr = h1_ptr->b_ptr;
+	h1_ptr->b_ptr = new_block();
+	h2_ptr->b_ptr = b_ptr
+	
+	/* Move the read/write head to the start of the stream */
+	h1_ptr->counter = 0;
+	h2_ptr->counter = 0;
+		
+	/*
+	 * Init the decoder.
+	 *
+	 * The boundary is 0->1 in fixed point.
+	 */
+	bound1 = 0;
+	bound2 = ALL_BITS;
+
+	/* Paranoia */
+	if (b_ptr->size <= 64)
+	{
+		msg_print("Stream too small to decode *");
+		
+		return;
+	}
+	
+	/* Get size of the encoded stream */
+	size = rerase_block_byte(h2_ptr);
+	size |= (rerase_block_byte(h2_ptr) << 8);
+	size |= (rerase_block_byte(h2_ptr) << 16);
+	size |= (rerase_block_byte(h2_ptr) << 24);
+
+	/* Init the compression model */
+	init_compress(prob_table);
+	
+	/* Init the bitwise stream */
+	init_block_bit();
+	
+	/* Initialise the decoder */
+	for (i = 0; i < 32; i++)
+	{
+		code *= 2;
+		code += rerase_block_bit(h2_ptr);
+	}
+	
+	/* Decompress the blocks */
+	for (;size > 0; size--)
+	{
+		/* Decode it */
+		symbol = remove_symbol(arth_block_decode(code, prob_table),
+			 &code, prob_table, h1_ptr);
+		
+		/* Output the symbol to the stream */
+		write_block_byte(h1_ptr, symbol);
+			
+		/* Update probability table */
+		calc_prob(symbol, prob_table);
+	}
+	
+	/* Paranoia - Get rid of the rest of the input stream */
+	b_ptr = h2_ptr->b_ptr;
+	
+	while (b_ptr)
+	{
+		/* Delete the block - and point to its child */
+		b_ptr = del_block(b_ptr);
+	}
+}
+
+
