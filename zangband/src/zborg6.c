@@ -352,8 +352,10 @@ bool borg_recover(void)
 	if (goal_fleeing) return (FALSE);
 
 	/* Step 1.  Recharge just 1 rod. */
-	if (borg_equips_rod(SV_ROD_HEALING) ||
-		borg_equips_rod(SV_ROD_RECALL))
+	if ((borg_slot(TV_ROD, SV_ROD_HEALING) &&
+		 borg_slot(TV_ROD, SV_ROD_HEALING)->timeout) ||
+		(borg_slot(TV_ROD, SV_ROD_RECALL) &&
+		 borg_slot(TV_ROD, SV_ROD_RECALL)->timeout))
 	{
 		/* Rest until at least one recharges */
 		if (!bp_ptr->status.weak && !bp_ptr->status.cut &&
