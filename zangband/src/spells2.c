@@ -1426,7 +1426,7 @@ static bool evil_mon_tester(const monster_type *m_ptr, vptr data)
 	(void) data;
 	
 	/* Detect evil monsters */
-	if (FLAG(r_ptr, RF_INVISIBLE))
+	if (FLAG(r_ptr, RF_EVIL))
 	{
 		/* Take note that they are evil */
 		r_ptr->r_flags[2] |= (RF2_EVIL);
