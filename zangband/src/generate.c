@@ -1368,7 +1368,7 @@ void generate_cave(void)
 		}
 
 		/* Mega-Hack -- "auto-scum" */
-		else if ((auto_scum || ironman_autoscum) && (num < 100))
+		else if (ironman_autoscum && (num < 100))
 		{
 			/* Require "goodness" */
 			if ((dun_ptr->feeling > 9) ||

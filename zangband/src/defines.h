@@ -3595,10 +3595,10 @@
 /* Option set 1 */
 
 /* {TRUE,  0, NULL,					"Number 32" }, p_ptr->options[30] */
-#define	auto_scum				svr_ptr->options[2]
+/* {TRUE,  0, NULL,					"Number 33" }, svr_ptr->options[2] */
 /* {TRUE,  0, NULL,					"Number 34" }, svr_ptr->options[3] */
 #define stack_allow_wands		svr_ptr->options[4]
-/* {TRUE, 0, NULL, 					"Number 36"}, svr_ptr->options[5] */
+/* {TRUE, 0, NULL, 					"Number 36" }, svr_ptr->options[5] */
 #define expand_list				svr_ptr->options[6]
 #define view_perma_grids		p_ptr->options[31]
 #define view_torch_grids		p_ptr->options[32]

@@ -2851,8 +2851,6 @@ errr file_character(cptr name, bool full)
 		fprintf(fff, "\n Preserve Mode:      OFF");
 
 	if (ironman_autoscum)
-		fprintf(fff, "\n Autoscum:           ALWAYS");
-	else if (auto_scum)
 		fprintf(fff, "\n Autoscum:           ON");
 	else
 		fprintf(fff, "\n Autoscum:           OFF");
