@@ -384,7 +384,7 @@ G:1:U
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
 D:0:0:0:0:0:0:0:0
-F:3,field_action_door_store
+F:2,field_action_door_store
 
 # Armoury
 N:35:Armoury
@@ -392,7 +392,7 @@ G:2:s
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
 D:1:0:0:0:0:0:0:0
-F:3,field_action_door_store
+F:2,field_action_door_store
 
 # Weapon Smiths
 N:36:Weapon Smiths
@@ -400,7 +400,7 @@ G:3:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
 D:2:0:0:0:0:0:0:0
-F:3,field_action_door_store
+F:2,field_action_door_store
 
 # Temple
 N:37:Temple
@@ -408,7 +408,7 @@ G:4:g
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
 D:3:0:0:0:0:0:0:0
-F:3,field_action_door_store
+F:2,field_action_door_store
 
 # Alchemy Shop
 N:38:Alchemy Shop
@@ -416,7 +416,7 @@ G:5:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
 D:4:0:0:0:0:0:0:0
-F:3,field_action_door_store
+F:2,field_action_door_store
 
 # Magic Shop
 N:39:Magic Shop
@@ -424,7 +424,7 @@ G:6:r
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
 D:5:0:0:0:0:0:0:0
-F:3,field_action_door_store
+F:2,field_action_door_store
 
 # Black Market
 N:40:Black Market
@@ -432,7 +432,7 @@ G:7:D
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
 D:6:0:0:0:0:0:0:0
-F:3,field_action_door_store
+F:2,field_action_door_store
 
 # Home
 N:41:Home
@@ -440,7 +440,7 @@ G:8:y
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
 D:7:0:0:0:0:0:0:0
-F:3,field_action_door_store
+F:2,field_action_door_store
 
 # Book Store
 N:42:Book Store
@@ -448,5 +448,5 @@ G:9:o
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
 D:8:0:0:0:0:0:0:0
-F:3,field_action_door_store
+F:2,field_action_door_store
 
