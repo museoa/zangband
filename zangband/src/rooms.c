@@ -2454,10 +2454,10 @@ static void build_type9(int bx0, int by0)
  *
  * The doors must be INSIDE the allocated region.
  */
-static void add_door(int x, int y)
+static bool add_door(int x, int y)
 {
 	/* Need to have a wall in the center square */
-	if (cave_p(x, y)->feat != FEAT_WALL_OUTER) return;
+	if (cave_p(x, y)->feat != FEAT_WALL_OUTER) return (FALSE);
 
 	/* look at:
 	 *  x#x
@@ -2473,12 +2473,13 @@ static void add_door(int x, int y)
 		(cave_p(x - 1, y)->feat == FEAT_WALL_OUTER) &&
 		(cave_p(x + 1, y)->feat == FEAT_WALL_OUTER))
 	{
-		/* secret door */
-		place_secret_door(x, y);
+		place_random_door(x, y);
 
 		/* set boundarys so don't get wide doors */
 		set_feat_bold(x - 1, y, FEAT_WALL_SOLID);
 		set_feat_bold(x + 1, y, FEAT_WALL_SOLID);
+
+		return (TRUE);
 	}
 
 
@@ -2495,13 +2496,16 @@ static void add_door(int x, int y)
 		(cave_p(x - 1, y)->feat == FEAT_FLOOR) &&
 		(cave_p(x + 1, y)->feat == FEAT_FLOOR))
 	{
-		/* secret door */
-		place_secret_door(x, y);
+		place_random_door(x, y);
 
 		/* set boundarys so don't get wide doors */
 		set_feat_bold(x, y - 1, FEAT_WALL_SOLID);
 		set_feat_bold(x, y + 1, FEAT_WALL_SOLID);
+
+		return (TRUE);
 	}
+	
+	return (FALSE);
 }
 
 
@@ -4913,7 +4917,246 @@ static void build_type24(int bx0, int by0)
 	place_random_door(xval, yval);
 }
 
-#define ROOM_TYPES	24
+
+/*
+ * Overlay a room that will overlap others.
+ */
+static void overdraw_room(int x1, int y1, int x2, int y2, bool light)
+{
+	int x, y, i, j;
+	cave_type *c_ptr;
+	
+	bool connected = FALSE;
+	int overlap = 0;
+	int empty = 0;
+	int wallcount = 0;
+	
+	/* Pass 1: Check that there is overlap */
+	for (x = x1; x <= x2; x++)
+	{
+		for(y = y1; y <= y2; y++)
+		{
+			c_ptr = cave_p(x, y);
+			
+			/* There is a room square here */
+			if (c_ptr->info & CAVE_ROOM)
+			{
+				overlap++;
+				
+				/* Is it an outer wall? */
+				if (c_ptr->feat == FEAT_WALL_OUTER)
+				{
+					wallcount++;
+				}
+			}
+			else
+			{
+				empty++;
+			}
+		}
+	}
+
+	/* The room must connect with others */
+	if (overlap < 5) return;
+
+	/* Not too much overlap */
+	if (overlap > 20) return;
+	
+	/* Does it add enough? */
+	if (empty < 30) return;
+	
+	/* Pass 2: Add floor */
+	for (x = x1 + 1; x <= x2 - 1; x++)
+	{
+		for(y = y1 + 1; y <= y2 - 1; y++)
+		{
+			c_ptr = cave_p(x, y);
+			
+			/* There is a room square here */
+			if (c_ptr->info & CAVE_ROOM) continue;
+			
+			cave_set_feat(x, y, FEAT_FLOOR);
+		}
+	}
+	
+	/* Pass 3: Add outer walls */
+	for (x = x1; x <= x2; x++)
+	{
+		for (y = y1; y <= y2; y++)
+		{
+			c_ptr = cave_p(x, y);
+						
+			/* There is a room square here */
+			if (!(c_ptr->info & CAVE_ROOM))
+			{
+				if (c_ptr->feat == FEAT_WALL_EXTRA)
+				{
+					/* Scan for adjacent floor */
+					for (i = -1; i <= 1; i++)
+					{
+						for (j = -1; j <= 1; j++)
+						{
+							/* Paranoia */
+							if (!in_bounds(x + i, y + j)) continue;
+							
+							/* Are we next to a floor? */
+							if (cave_p(x + i, y + j)->feat == FEAT_FLOOR)
+							{
+								/* Outer walls */
+								cave_set_feat(x, y, FEAT_WALL_OUTER);
+								
+								/* Quickly exit the nested loops */
+								goto exitloop;
+							}
+						}
+					}
+				}
+			}
+			
+			exitloop: ;
+		}
+	}
+	
+	/* Pass 4: Add doors */
+	for (x = x1; x <= x2; x++)
+	{
+		for(y = y1; y <= y2; y++)
+		{
+			c_ptr = cave_p(x, y);
+			
+			/* There is a room square here */
+			if (c_ptr->info & CAVE_ROOM)
+			{
+				if (one_in_(wallcount / 2) && add_door(x, y))
+				{
+					connected = TRUE;
+				}
+			}
+		}
+	}
+	
+	/* Pass 5: Convert to inner walls, and build the room itself */
+	for (x = x1; x <= x2; x++)
+	{
+		for(y = y1; y <= y2; y++)
+		{
+			c_ptr = cave_p(x, y);
+			
+			/* There is a room square here */
+			if (c_ptr->info & CAVE_ROOM)
+			{
+				if (c_ptr->feat == FEAT_WALL_OUTER)
+				{
+					if (!connected && one_in_(wallcount--))
+					{
+						/* Emergency - open passage into room */
+						cave_set_feat(x, y, FEAT_FLOOR);
+						
+						connected = TRUE;
+					}
+					else
+					{
+						/* Inner walls */
+						cave_set_feat(x, y, FEAT_WALL_INNER);
+					}
+				}
+			}
+			else
+			{
+				if (c_ptr->feat != FEAT_WALL_EXTRA)
+				{
+					/* Add room */
+					c_ptr->info |= CAVE_ROOM;
+					
+					if (light) c_ptr->info |= CAVE_GLOW;
+				}
+			}
+		}
+	}
+}
+
+
+/*
+ * Type 25 -- Connected small rooms
+ */
+static void build_type25(int bx0, int by0)
+{
+	int xval, yval;
+	int y1, x1, y2, x2;
+	bool light;
+	
+	int xi1, yi1, xi2, yi2;
+	
+	int xsize, ysize;
+	
+	int i;
+	
+	/* Pick a room size */
+	y1 = rand_range(5, 14);
+	x1 = rand_range(5, 20);
+	y2 = rand_range(5, 14);
+	x2 = rand_range(5, 20);
+
+	xsize = x1 + x2 + 1;
+	ysize = y1 + y2 + 1;
+
+	/* Try to allocate space for room.  If fails, exit */
+	if (!room_alloc(xsize + 2, ysize + 2, FALSE, bx0, by0, &xval, &yval))
+		return;
+
+	/* Choose lite or dark */
+	light = (p_ptr->depth <= randint1(25));
+
+	/* Get corner values */
+	y1 = yval - ysize / 2;
+	x1 = xval - xsize / 2;
+	y2 = yval + (ysize - 1) / 2;
+	x2 = xval + (xsize - 1) / 2;
+	
+	/* Add "starting" room */
+	
+	/* Generate new room */
+	generate_room(xval - 3, yval - 3, xval + 3, yval + 3, light);
+
+	/* Generate outer walls */
+	generate_draw(xval - 3, yval - 3, xval + 3, yval + 3, FEAT_WALL_OUTER);
+
+	/* Generate inner floors */
+	generate_fill(xval - 2, yval - 2, xval + 2, yval + 2, FEAT_FLOOR);
+
+	/*
+	 * Add other rooms
+	 *
+	 * Note that the size of the rooms is forced
+	 * to be odd, and the walls are forced to be
+	 * on "even" x and y coordinates.  This makes
+	 * them fit together better.
+	 */
+	for (i = 20; i > 0; i--)
+	{
+		/* Pick new room to add */
+		xi1 = rand_range(x1 - 1, x2 - 5);
+		yi1 = rand_range(y1 - 1, y2 - 5);
+		
+		if (xi1 % 2) xi1++;
+		if (yi1 % 2) yi1++;
+		
+		xi2 = xi1 + rand_range(5, 10);
+		yi2 = yi1 + rand_range(5, 10);
+		
+		if (xi2 % 2) xi2++;
+		if (yi2 % 2) yi2++;
+		
+		/* Out of the box */
+		if ((xi2 > x2) || (yi2 > y2)) continue;
+	
+		/* Draw the room, and connect it */
+		overdraw_room(xi1, yi1, xi2, yi2, light);
+	}
+}
+
+
+#define ROOM_TYPES	25
 
 typedef void (*room_build_type)(int, int);
 
@@ -4942,7 +5185,8 @@ room_build_type room_list[ROOM_TYPES] =
 	build_type21,
 	build_type22,
 	build_type23,
-	build_type24
+	build_type24,
+	build_type25
 };
 
 
@@ -4964,10 +5208,7 @@ bool room_build(int bx0, int by0, int typ)
 	if ((dun->crowded >= 2) && ((typ == 5) || (typ == 6))) return (FALSE);
 	
 	/* Build a room */
-	/* room_list[typ - 1](bx0, by0); */
-	
-	/* DELETE ME */
-	room_list[ROOM_TYPES - 1](bx0, by0);
+	room_list[typ - 1](bx0, by0);
 
 	return (TRUE);
 }
