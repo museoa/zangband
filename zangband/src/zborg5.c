@@ -1100,7 +1100,7 @@ static int borg_new_kill(int r_idx, int y, int x)
 	}
 
 	/* Allocate a new monster */
-	if ((n < 0) && (borg_kills_nxt < 256))
+	if ((n < 0) && (borg_kills_nxt < BORG_KILLS_MAX))
 	{
 		/* Acquire the entry, advance */
 		n = borg_kills_nxt++;
@@ -3511,7 +3511,7 @@ void borg_update(void)
 		genocide_level_hounds = FALSE;
 
 		/* Forget old monsters */
-		C_WIPE(borg_kills, 256, borg_kill);
+		C_WIPE(borg_kills, BORG_KILLS_MAX, borg_kill);
 
 		/* Hack -- Forget race counters */
 		C_WIPE(borg_race_count, z_info->r_max, s16b);

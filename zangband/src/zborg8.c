@@ -2790,12 +2790,12 @@ bool borg_think_dungeon(void)
 		/* Clear all objects */
 		borg_takes_cnt = 0;
 		borg_takes_nxt = 1;
-		C_WIPE(borg_takes, 256, borg_take);
+		C_WIPE(borg_takes, BORG_TAKES_MAX, borg_take);
 
 		/* Clear all monsters */
 		borg_kills_cnt = 0;
 		borg_kills_nxt = 1;
-		C_WIPE(borg_kills, 256, borg_kill);
+		C_WIPE(borg_kills, BORG_KILLS_MAX, borg_kill);
 
 	}
 	if (borg_skill[BI_CDEPTH] && (time_this_panel >= 500))

@@ -124,6 +124,7 @@
 
 /* Maximum number of 'takes' */
 #define BORG_TAKES_MAX	1024
+#define BORG_KILLS_MAX	1024
 
 
 
