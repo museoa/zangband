@@ -22,7 +22,7 @@
 void gen_block_helper(blk_ptr block_ptr, byte *data, int gen_type);
 void blend_helper(cave_type *c_ptr, byte *data,int g_type);
 
-
+#define WALL_BREAK	50	/* Chance to get a break in town wall */
 
 /* Lighten / Darken new block depending on Day/ Night */
 void light_dark_block(blk_ptr block_ptr, u16b x, u16b y)
@@ -312,6 +312,38 @@ static void build_store(int n, int yy, int xx)
 }
 
 
+static void add_town_wall(void)
+{
+	int i;
+	
+	/* Upper and lower walls */
+	for (i = 0; i < SCREEN_WID; i++)
+	{
+		/* Occasional break (but not in corners - it looks bad.) */
+		if (i == SCREEN_WID / 2) continue;
+		if (!(rand_int(WALL_BREAK) || (i == 0) || (i == SCREEN_WID)))
+		{
+			continue;
+		}
+		
+		/* Make walls */
+		cave[0][i].feat = FEAT_PERM_OUTER;
+		cave[SCREEN_HGT - 1][i].feat = FEAT_PERM_OUTER;	
+	}
+	
+	/* Left and right walls */
+	for (i = 1; i < SCREEN_HGT - 1; i++)
+	{
+		/* Occasional break */
+		if (i == SCREEN_HGT / 2) continue;
+		if (!rand_int(WALL_BREAK)) continue;
+		
+		/* Make walls */
+		cave[i][0].feat = FEAT_PERM_OUTER;
+		cave[i][SCREEN_WID - 1].feat = FEAT_PERM_OUTER;
+	}
+}
+
 /*
  * Generate the "consistent" town features, and place the player
  *
@@ -390,6 +422,13 @@ static void town_gen_hack(u16b town_num, int *xx, int *yy)
 
 	/* Clear previous contents, add down stairs */
 	cave[*yy][*xx].feat = FEAT_MORE;
+
+	/* Vanilla town mode already has a wall... but normal towns don't */
+	if (!vanilla_town)
+	{
+		/* Add an outer wall */
+		add_town_wall();
+	}
 
 	/* Hack -- use the "complex" RNG */
 	Rand_quick = FALSE;
@@ -499,9 +538,9 @@ static bool town_blank(int x, int y, int xsize, int ysize)
 	int i, j;
 	wild_done_type *w_ptr;
 	
-	for(i = x; i < x + xsize; i++)
+	for(i = x; i < x + xsize + 1; i++)
 	{
-		for(j = y; j < y + ysize; j++)
+		for(j = y; j < y + ysize + 1; j++)
 		{ 
 			/* Hack - Not next to boundary */
 			if ((x <= 0) || (x >= max_wild - 1) || (y <= 0) || (y >= max_wild - 1))
