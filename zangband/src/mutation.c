@@ -66,7 +66,7 @@ static bool select_mutation(int choose_mut, bool gain, int *mutation)
 	/* Sanity check */
 	if (choose_mut < 0 || choose_mut > 193) choose_mut = 0;
 
-	attempts_left = (choose_mut ? 1 : 20);
+	attempts_left = (choose_mut ? 1 : (gain ? 20 : 2000));
 
 	while (attempts_left--)
 	{
@@ -484,7 +484,7 @@ static bool select_mutation(int choose_mut, bool gain, int *mutation)
 			/* Save the mutation we are using */
 			*mutation = num;
 			
-			return ((flag & mutations[num].which ? TRUE : FALSE) == gain);
+			return ((flag & mutations[num].which ? FALSE : TRUE) == gain);
 		}
 	}
 
