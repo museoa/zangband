@@ -1703,13 +1703,13 @@ objcmd_mindcraft(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 	int objC = objc - infoCmd->depth;
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
-	static cptr cmdOptions[] = {"get", "info", NULL};
-	enum {IDX_GET, IDX_INFO} option;
+	static cptr cmdOptions[] = {"get", NULL};
+	enum {IDX_GET} option;
 
 	mindcraft_power *pow_ptr;
 	Tcl_Obj *listObjPtr;
-	int i, chance, min_fail;
-	char comment[80], *s = comment, *t;
+	int i;
+	char comment[80];
 
     if (objC < 2)
     {
@@ -1736,64 +1736,6 @@ objcmd_mindcraft(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 					Tcl_NewIntObj(i));
 			}
 			Tcl_SetObjResult(interp, listObjPtr);
-			break;
-
-		case IDX_INFO: /* info */
-		    if (objC != 4)
-		    {
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, (char *) "index arrayName");
-				return TCL_ERROR;
-		    }
-			if (Tcl_GetIntFromObj(interp, objV[2], &i) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			if (i < 0 || i >= MINDCRAFT_MAX)
-			{
-				return TCL_ERROR;
-			}
-			t = Tcl_GetStringFromObj(objV[3], NULL);
-
-			pow_ptr = &mindcraft_powers[i];
-
-			chance = pow_ptr->fail;
-
-			/* Reduce failure rate by "effective" level adjustment */
-			chance -= 3 * (p_ptr->lev - pow_ptr->min_lev);
-
-			/* Reduce failure rate by INT/WIS adjustment */
-			chance -= 3 * (adj_mag_stat[p_ptr->stat_ind[mp_ptr->spell_stat]] - 1);
-
-			/* Not enough mana to cast */
-			if (pow_ptr->mana_cost > p_ptr->csp)
-			{
-				chance += 5 * (pow_ptr->mana_cost - p_ptr->csp);
-			}
-
-			/* Extract the minimum failure rate */
-			min_fail = adj_mag_fail[p_ptr->stat_ind[mp_ptr->spell_stat]];
-			
-			/* Minimum failure rate */
-			if (chance < min_fail) chance = min_fail;
-
-			/* Stunning makes spells harder */
-			if (p_ptr->stun > 50) chance += 25;
-			else if (p_ptr->stun) chance += 15;
-
-			/* Always a 5 percent chance of working */
-			if (chance > 95) chance = 95;
-			
-			/* Get info */
-			mindcraft_info(s, i);
-			if (s[0]) s++;
-
-			SetArrayValueString(t, "char", format("%c", I2A(i)));
-			ExtToUtf_SetArrayValueString(t, (char *) "name", (char *) pow_ptr->name);
-			SetArrayValueLong(t, "level", pow_ptr->min_lev);
-			SetArrayValueLong(t, "fail", chance);
-			SetArrayValueLong(t, "mana", pow_ptr->mana_cost);
-			SetArrayValueString(t, "comment", s);
-			SetArrayValueLong(t, "okay", pow_ptr->min_lev <= p_ptr->lev);
 			break;
 	}
 

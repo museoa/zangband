@@ -671,7 +671,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
 	static cptr cmdOptions[] = {"ability", "age", "armor_class",
-		"blows_per_round", "icon", "class", "depth", "died_from",
+		"blows_per_round", "icon", "died_from",
 		"exp", "food", "gold", "height", "history", "hitpoints",
 		"infravision", "level", "mana", "max_depth", "name", "position",
 		"race", "sex", "shots_per_round", "social_class", "spell_book",
@@ -683,7 +683,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 		"pets", "realm1", "realm2", "patron",
 		NULL};
 	enum {IDX_ABILITY, IDX_AGE, IDX_ARMOR_CLASS,
-		IDX_BLOWS_PER_ROUND, IDX_ICON, IDX_CLASS, IDX_DEPTH, IDX_DIED_FROM,
+		IDX_BLOWS_PER_ROUND, IDX_ICON, IDX_DIED_FROM,
 		IDX_EXP, IDX_FOOD, IDX_GOLD, IDX_HEIGHT, IDX_HISTORY, IDX_HITPOINTS,
 		IDX_INFRAVISION, IDX_LEVEL, IDX_MANA, IDX_MAX_DEPTH, IDX_NAME, IDX_POSITION,
 		IDX_RACE, IDX_SEX, IDX_SHOTS_PER_ROUND, IDX_SOCIAL_CLASS, IDX_SPELL_BOOK,
@@ -800,14 +800,6 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 				TCL_VOLATILE);
 			break;
 		}
-
-		case IDX_CLASS: /* class */
-			Tcl_SetStringObj(resultPtr, (char *) cp_ptr->title, -1);
-			break;
-
-	    case IDX_DEPTH: /* depth */
-			Tcl_SetIntObj(resultPtr, p_ptr->depth);
-			break; 
 
 		case IDX_DIED_FROM: /* died_from */
 			if (!p_ptr->is_dead)
