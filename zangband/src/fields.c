@@ -421,8 +421,12 @@ void compact_fields(int size)
 			if (randint0(100) < chance) continue;
 
 			/* Call completion routine */
-			field_script_single(f_ptr, FIELD_ACT_EXIT,
-								"b", LUA_VAR_NAMED(field_visible(f_ptr), "visible"));
+			if (field_script_single(f_ptr, FIELD_ACT_EXIT,
+								"b", LUA_VAR_NAMED(field_visible(f_ptr), "visible")))
+			{
+				/* Handler failed to delete field - delete it by hand. */
+				delete_field_ptr(f_ptr);
+			}
 
 			/* Count it */
 			num++;
