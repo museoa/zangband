@@ -5704,15 +5704,9 @@ void combine_pack(void)
 	object_type *j_ptr;
 	bool flag = FALSE;
 	
-	/* Not if have nothing in inventory */
-	if (!p_ptr->inventory) return;
-
-	/* Combine the pack (backwards) */
+	/* Combine the pack */
 	OBJ_ITT_START (p_ptr->inventory, o_ptr)
 	{
-		/* No more items? */
-		if (!o_ptr->next_o_idx) break;
-	
 		/* Scan the items above that item */
 		OBJ_ITT_START (o_ptr->next_o_idx, j_ptr)
 		{
@@ -5723,10 +5717,10 @@ void combine_pack(void)
 				flag = TRUE;
 
 				/* Add together the item counts */
-				object_absorb(o_ptr, j_ptr);
+				object_absorb(j_ptr, o_ptr);
 
 				/* Delete the item */
-				delete_held_object(&p_ptr->inventory, j_ptr);
+				delete_held_object(&p_ptr->inventory, o_ptr);
 
 				/* Window stuff */
 				p_ptr->window |= (PW_INVEN);
@@ -5736,9 +5730,6 @@ void combine_pack(void)
 			}
 		}
 		OBJ_ITT_END;
-		
-		/* No more items? */
-		if (!o_ptr->next_o_idx) break;
 	}
 	OBJ_ITT_END;
 
