@@ -352,7 +352,7 @@ extern void do_cmd_stay(int pickup);
 extern void do_cmd_run(void);
 extern void do_cmd_rest(void);
 extern void do_cmd_fire(void);
-extern void do_cmd_fire_aux(object_type *o_ptr, const object_type *j_ptr);
+extern void do_cmd_fire_aux(int mult, object_type *o_ptr, const object_type *j_ptr);
 extern void do_cmd_throw(void);
 extern void do_cmd_throw_aux(int mult);
 extern bool do_cmd_open_aux(int x, int y);

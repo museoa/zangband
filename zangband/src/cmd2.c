@@ -2352,7 +2352,7 @@ static void throw_item_effect(object_type *o_ptr, bool hit_body, bool hit_wall,
  *
  * Note that Bows of "Extra Shots" give an extra shot.
  */
-void do_cmd_fire_aux(object_type *o_ptr, const object_type *j_ptr)
+void do_cmd_fire_aux(int mult, object_type *o_ptr, const object_type *j_ptr)
 {
 	int py = p_ptr->py;
 	int px = p_ptr->px;
@@ -2377,6 +2377,8 @@ void do_cmd_fire_aux(object_type *o_ptr, const object_type *j_ptr)
 	int tdis, thits, tmul;
 	int cur_dis;
 
+	int mul, div;
+		
 	int chance2;
 
 	object_type *i_ptr;
@@ -2387,6 +2389,8 @@ void do_cmd_fire_aux(object_type *o_ptr, const object_type *j_ptr)
 	int msec = delay_factor * delay_factor * delay_factor;
 
 	bool hit_wall = FALSE;
+
+	bool rogue_throw = FALSE;
 
 	cave_type *c_ptr;
 
@@ -2414,9 +2418,6 @@ void do_cmd_fire_aux(object_type *o_ptr, const object_type *j_ptr)
 	/* Duplicate the object */
 	i_ptr = object_dup(o_ptr);
 
-	/* sum all the applicable additions to Deadliness. */
-	total_deadliness = p_ptr->to_d + i_ptr->to_d + j_ptr->to_d;
-
 	/* Single object */
 	i_ptr->number = 1;
 
@@ -2424,30 +2425,95 @@ void do_cmd_fire_aux(object_type *o_ptr, const object_type *j_ptr)
 	item_increase(o_ptr, -1);
 
 	/* Sound */
-	sound(SOUND_SHOOT);
+	if (j_ptr)
+	{
+		sound(SOUND_SHOOT);
+	}
 
 	/* Describe the object */
 	object_desc(o_name, i_ptr, FALSE, 0, 256);
 
+	/* Rogues get a bonus when throwing daggers */
+	if (p_ptr->rp.pclass == CLASS_ROGUE &&
+			i_ptr->tval == TV_SWORD && i_ptr->weight <= 20)
+	{
+		rogue_throw = TRUE;
+	}
+
 	/* Use the proper number of shots */
-	thits = p_ptr->num_fire;
+	if (j_ptr)
+	{
+		thits = p_ptr->num_fire;
+	}
+	else
+	{
+		thits = 1;
+
+		if (rogue_throw && p_ptr->lev >= 10)
+			thits++;
+	}
 
 	/* Actually "fire" the object. */
-	bonus = (p_ptr->to_h + i_ptr->to_h + j_ptr->to_h);
-	chance = (p_ptr->skill.thb + (bonus * BTH_PLUS_ADJ));
+	if (j_ptr)
+	{
+		total_deadliness = p_ptr->to_d + i_ptr->to_d + j_ptr->to_d;
+		
+		bonus = (p_ptr->to_h + i_ptr->to_h + j_ptr->to_h);
+		chance = (p_ptr->skill.thb + (bonus * BTH_PLUS_ADJ));
+	}
+	else
+	{
+		total_deadliness = p_ptr->to_d + i_ptr->to_d;
+
+		if ((i_ptr->flags2 & (TR2_THROW)) || rogue_throw)
+		{
+			bonus = p_ptr->to_h + i_ptr->to_h;
+			chance = p_ptr->skill.tht + (bonus * BTH_PLUS_ADJ);
+		}
+		else
+		{
+			bonus = i_ptr->to_h;
+			chance = p_ptr->skill.tht * 3 / 2 + (bonus * BTH_PLUS_ADJ);
+		}
+	}
 
 	/* Cursed arrows tend not to hit anything */
 	if (cursed_p(i_ptr)) chance = chance / 2;
 
 	/* Shooter properties */
-	p_ptr->energy_use = p_ptr->bow_energy;
-	tmul = p_ptr->ammo_mult;
+	if (j_ptr)
+	{
+		p_ptr->energy_use = p_ptr->bow_energy;
+		tmul = p_ptr->ammo_mult;
 
-	/* Get extra "power" from "extra might" */
-	if ((p_ptr->flags3 & (TR3_XTRA_MIGHT))) tmul++;
+		/* Get extra "power" from "extra might" */
+		if ((p_ptr->flags3 & (TR3_XTRA_MIGHT))) tmul++;
+	}
+	else
+	{
+		p_ptr->energy_use = 100;
 
-	/* Base range */
-	tdis = 5 + 5 * tmul;
+		if ((i_ptr->flags2 & (TR2_THROW)) || rogue_throw)
+		{
+			tmul = 4 + p_ptr->lev / 6;
+		}
+		else
+		{
+			tmul = 1;
+		}
+	}
+
+	/* Extract a "distance multiplier" */
+	mul = 5 + 5 * tmul + 2 * (mult - 1);
+
+	/* Enforce a minimum "weight" of one pound */
+	div = ((i_ptr->weight > 10) ? i_ptr->weight : 10);
+
+	/* Distance -- Reward strength, penalize weight */
+	tdis = (adj_str_blow[p_ptr->stat[A_STR].ind] + 10) * mul / div;
+	
+	/* Maximum distance */
+	if (tdis > mul) tdis = mul;
 
 	/* Paranoia */
 	if (tdis > MAX_RANGE) tdis = MAX_RANGE;
@@ -2659,8 +2725,11 @@ void do_cmd_fire_aux(object_type *o_ptr, const object_type *j_ptr)
 				 * Multiply by critical shot.
 				 * (10x inflation) + level damage bonus
 				 */
-				tdam *= critical_shot(chance2, sleeping_bonus,
-									  o_name, m_name, m_ptr->ml);
+				if (tmul > 1)
+				{
+					tdam *= critical_shot(chance2, sleeping_bonus,
+										  o_name, m_name, m_ptr->ml);
+				}
 
 				/*
 				 * Convert total Deadliness into a percentage, and apply
@@ -2693,15 +2762,15 @@ void do_cmd_fire_aux(object_type *o_ptr, const object_type *j_ptr)
 				/* Modify the damage */
 				tdam = mon_damage_mod(m_ptr, tdam, 0);
 
-				/* Drop (or break) near that location (i_ptr is now invalid) */
-				throw_item_effect(i_ptr, TRUE, FALSE, x, y);
-
 				/* Complex message */
 				if (p_ptr->state.wizard)
 				{
 					msgf("You do %d (out of %d) damage.",
 							   tdam, m_ptr->hp);
 				}
+
+				/* Drop (or break) near that location (i_ptr is now invalid) */
+				throw_item_effect(i_ptr, TRUE, FALSE, x, y);
 
 				/* Hit the monster, check for death */
 				if (mon_take_hit(c_ptr->m_idx, tdam, &fear, note_dies))
@@ -2738,8 +2807,6 @@ void do_cmd_fire_aux(object_type *o_ptr, const object_type *j_ptr)
 
 	/* Drop (or break) near that location (i_ptr is now invalid) */
 	throw_item_effect(i_ptr, FALSE, hit_wall, x, y);
-
-	make_noise(3);
 }
 
 
@@ -2772,7 +2839,7 @@ void do_cmd_fire(void)
 	if (!o_ptr) return;
 
 	/* Fire the item */
-	do_cmd_fire_aux(o_ptr, j_ptr);
+	do_cmd_fire_aux(1, o_ptr, j_ptr);
 }
 
 /*
@@ -2786,42 +2853,9 @@ void do_cmd_fire(void)
  */
 void do_cmd_throw_aux(int mult)
 {
-	int py = p_ptr->py;
-	int px = p_ptr->px;
-
-	int dir;
-	int y, x, ny, nx, ty, tx;
-
-	int chance, chance2, tdis;
-
-	int mul, div;
-	int cur_dis;
-
-	long tdam;
-	int slay;
-
-	int total_deadliness;
-	int sleeping_bonus = 0;
-	int terrain_bonus = 0;
-
-	bool rogue_throw = FALSE;
-
-	object_type *q_ptr;
-
-	object_type *o_ptr;
-
-	bool hit_wall = FALSE;
-
-	char o_name[256];
-	char m_name[80];
-
-	int msec = delay_factor * delay_factor * delay_factor;
-
 	cptr q, s;
 
-	bool potion;
-
-	cave_type *c_ptr;
+	object_type *o_ptr;
 
 
 	/* Get an item */
@@ -2843,321 +2877,7 @@ void do_cmd_throw_aux(int mult)
 		return;
 	}
 
-	/* Get a direction (or cancel) */
-	if (!get_aim_dir(&dir)) return;
-
-
-	/* Split object */
-	q_ptr = item_split(o_ptr, 1);
-
-	/* Description */
-	object_desc(o_name, q_ptr, FALSE, 3, 256);
-
-	/* Extract a "distance multiplier" */
-	/* Changed for 'launcher' mutation */
-	mul = 10 + 2 * (mult - 1);
-
-	/* Enforce a minimum "weight" of one pound */
-	div = ((q_ptr->weight > 10) ? q_ptr->weight : 10);
-
-	/* Hack -- Distance -- Reward strength, penalize weight */
-	tdis = (adj_str_blow[p_ptr->stat[A_STR].ind] + 20) * mul / div;
-
-	/* Max distance of 10-18 */
-	if (tdis > mul) tdis = mul;
-
-	/* Paranoia */
-	if (tdis > MAX_RANGE) tdis = MAX_RANGE;
-
-	/* Rogues get a bonus when throwing daggers */
-	if (p_ptr->rp.pclass == CLASS_ROGUE && p_ptr->lev >= 10 &&
-			q_ptr->tval == TV_SWORD && q_ptr->weight <= 20)
-	{
-		rogue_throw = TRUE;
-	}
-
-	/*
-	 * Chance of hitting.  Other thrown objects are easier to use, but
-	 * only throwing weapons take advantage of bonuses to Skill from
-	 * other items. -LM-
-	 */
-	if ((q_ptr->flags2 & (TR2_THROW)) || rogue_throw)
-	{
-		chance = p_ptr->skill.tht + (p_ptr->to_h + q_ptr->to_h) * BTH_PLUS_ADJ;
-	}
-	else
-	{
-		chance = p_ptr->skill.tht * 3 / 2 + q_ptr->to_h * BTH_PLUS_ADJ;
-	}
-
-	/* Take a turn */
-	p_ptr->energy_use = 100;
-
-	if (rogue_throw)
-		p_ptr->energy_use = 50;
-
-	/* Start at the player */
-	y = py;
-	x = px;
-
-	/* Predict the "target" location */
-	tx = px + 99 * ddx[dir];
-	ty = py + 99 * ddy[dir];
-
-	/* Check for "target request" */
-	if ((dir == 5) && target_okay())
-	{
-		tx = p_ptr->target_col;
-		ty = p_ptr->target_row;
-	}
-
-	/* Hack -- Handle stuff */
-	handle_stuff();
-
-	/* Initialise the multi-move */
-	mmove_init(px, py, tx, ty);
-
-	/* Travel until stopped */
-	for (cur_dis = 0; cur_dis <= tdis;)
-	{
-		/* Hack -- Stop at the target */
-		if ((y == ty) && (x == tx)) break;
-
-		/* Calculate the new location (see "project()") */
-		ny = y;
-		nx = x;
-		mmove(&nx, &ny, px, py);
-
-		/* Stopped by wilderness boundary */
-		if (!in_bounds2(nx, ny))
-		{
-			hit_wall = TRUE;
-			break;
-		}
-
-		/* Stopped by walls/doors */
-		c_ptr = area(nx, ny);
-		if (cave_wall_grid(c_ptr))
-		{
-			hit_wall = TRUE;
-			break;
-		}
-
-		/* Advance the distance */
-		cur_dis++;
-
-		/* The player can see the (on screen) missile */
-		if (panel_contains(nx, ny) && player_can_see_bold(nx, ny))
-		{
-			char c = object_char(q_ptr);
-			byte a = object_attr(q_ptr);
-
-			/* Draw, Hilite, Fresh, Pause, Erase */
-			print_rel(c, a, nx, ny);
-			move_cursor_relative(nx, ny);
-			Term_fresh();
-			Term_xtra(TERM_XTRA_DELAY, msec);
-			lite_spot(nx, ny);
-			Term_fresh();
-		}
-
-		/* The player cannot see the missile */
-		else
-		{
-			/* Pause anyway, for consistancy */
-			Term_xtra(TERM_XTRA_DELAY, msec);
-		}
-
-		/* Save the new location */
-		x = nx;
-		y = ny;
-
-		/* Monster here, Try to hit it */
-		if (c_ptr->m_idx)
-		{
-			monster_type *m_ptr = &m_list[c_ptr->m_idx];
-			monster_race *r_ptr = &r_info[m_ptr->r_idx];
-
-			/* Calculate the projectile accuracy, modified by distance. */
-			chance2 = chance - distance(px, py, x, y);
-
-			/* Monsters in rubble can take advantage of cover. -LM- */
-			if (c_ptr->feat == FEAT_RUBBLE)
-			{
-				terrain_bonus = r_ptr->ac / 5 + 5;
-			}
-			/*
-			 * Monsters in trees can take advantage of cover,
-			 * except from rangers.
-			 */
-			else if ((c_ptr->feat == FEAT_TREES) &&
-					 (p_ptr->rp.pclass != CLASS_RANGER))
-			{
-				terrain_bonus = r_ptr->ac / 5 + 5;
-			}
-			/* Monsters in water are vulnerable. -LM- */
-			else if (c_ptr->feat == FEAT_DEEP_WATER)
-			{
-				terrain_bonus -= r_ptr->ac / 4;
-			}
-
-			/* Look to see if we've spotted a mimic */
-			if ((m_ptr->smart & SM_MIMIC) && m_ptr->ml)
-			{
-				/* We've spotted it */
-				msgf("You've found %v!", MONSTER_FMT(m_ptr, 0x88));
-
-				/* Toggle flag */
-				m_ptr->smart &= ~(SM_MIMIC);
-
-				/* It is in the monster list now */
-				update_mon_vis(m_ptr->r_idx, 1);
-			}
-
-			/* Did we hit it (penalize range) */
-			if (test_hit_fire
-				(chance - cur_dis, r_ptr->ac + terrain_bonus, m_ptr->ml))
-			{
-				bool fear = FALSE;
-
-				/* Assume a default death */
-				cptr note_dies = " dies.";
-
-				/* Some monsters get "destroyed" */
-				if (!monster_living(r_ptr))
-				{
-					/* Special note at death */
-					note_dies = " is destroyed.";
-				}
-
-				/* Get "the monster" or "it" */
-				monster_desc(m_name, m_ptr, 0, 80);
-
-				/* Hack -- Track this monster race */
-				if (m_ptr->ml) monster_race_track(m_ptr->r_idx);
-
-				/* Hack -- Track this monster */
-				if (m_ptr->ml) health_track(c_ptr->m_idx);
-
-				/* sum all the applicable additions to Deadliness. */
-				total_deadliness = p_ptr->to_d + q_ptr->to_d;
-
-				/*
-				 * The basic damage-determination formula is the same in
-				 * throwing as it is in melee (apart from the thrown weapon
-				 * multiplier, and the ignoring of non-object bonuses to
-				 * Deadliness for objects that are not thrown weapons).  See
-				 * formula "py_attack" in "cmd1.c" for more details. -LM-
-				 */
-				tdam = q_ptr->ds;
-
-				/*
-				 * Multiply the number of damage dice by the throwing weapon
-				 * multiplier, if applicable.  This is not the prettiest
-				 * equation, but it does at least try to keep throwing
-				 * weapons competitive.
-				 */
-				if (q_ptr->flags2 & (TR2_THROW))
-				{
-					tdam *= 4 + p_ptr->lev / 6;
-				}
-
-				/* multiply by slays or brands. (10x inflation) */
-				slay = tot_dam_aux(q_ptr, m_ptr);
-				tdam *= slay;
-
-				/*
-				 * Only allow critical hits if the object is a throwing
-				 * weapon.  Otherwise, grant the default multiplier.
-				 * (10x inflation)
-				 */
-				if (q_ptr->flags2 & (TR2_THROW))
-				{
-					tdam *= critical_shot(chance2, sleeping_bonus, o_name,
-										  m_name, m_ptr->ml);
-				}
-				else
-				{
-					tdam *= 10;
-				}
-
-				/*
-				 * Convert total or object-only Deadliness into a percen-
-				 * tage, and apply it as a bonus or penalty (100x inflation)
-				 */
-				if (q_ptr->flags2 & (TR2_THROW))
-				{
-					tdam *= deadliness_calc(total_deadliness);
-				}
-				else
-				{
-					tdam *= deadliness_calc(q_ptr->to_d);
-				}
-
-				/*
-				 * Get the whole number of dice sides by deflating,
-				 * and then get total dice damage.
-				 */
-				tdam = damroll(q_ptr->dd, tdam / 10000 +
-							   (randint0(10000) < (tdam % 10000) ? 1 : 0));
-
-				/* Add in extra effect due to slays */
-				tdam += (slay - 10);
-
-				/* No negative damage */
-				if (tdam < 0) tdam = 0;
-
-				/* Modify the damage */
-				tdam = mon_damage_mod(m_ptr, tdam, 0);
-
-				/* Complex message */
-				if (p_ptr->state.wizard)
-				{
-					msgf("You do %d (out of %d) damage.",
-							   tdam, m_ptr->hp);
-				}
-
-				/* Remember if the object is a potion or not */
-				potion = object_is_potion(q_ptr);
-
-				/* The item hits the monster (q_ptr is now invalid) */
-				throw_item_effect(q_ptr, TRUE, FALSE, x, y);
-
-				/* Hit the monster, check for death */
-				if (mon_take_hit(c_ptr->m_idx, tdam, &fear, note_dies))
-				{
-					/* Dead monster */
-				}
-
-				/* No death */
-				else
-				{
-					/* Message */
-					message_pain(c_ptr->m_idx, tdam);
-
-					/* Anger the monster */
-					if ((tdam > 0) && !potion) anger_monster(m_ptr);
-
-					/* Take note */
-					if (fear && m_ptr->ml)
-					{
-						flee_message(m_name, m_ptr->r_idx);
-					}
-				}
-			}
-			else
-			{
-				/* The item hits the monster (q_ptr is now invalid) */
-				throw_item_effect(q_ptr, TRUE, FALSE, x, y);
-			}
-
-			/* Stop looking */
-			return;
-		}
-	}
-
-	/* The item hits the ground (q_ptr is now invalid) */
-	throw_item_effect(q_ptr, FALSE, hit_wall, x, y);
+	do_cmd_fire_aux(mult, o_ptr, NULL);
 }
 
 
