@@ -57,7 +57,8 @@ OBJ = \
 	xtra1.obj \
 	wizard2.obj \
 	wizard1.obj \
-	wild.obj \
+	wild1.obj \
+	wild2.obj \
 	variable.obj \
 	util.obj \
 	tables.obj \

@@ -57,7 +57,7 @@ SRCS = \
 	effects.c racial.c \
 	artifact.c mutation.c flavor.c spells3.c \
 	mspells1.c mspells2.c scores.c mind.c \
-	bldg.c obj_kind.c wild.c avatar.c notes.c\
+	bldg.c obj_kind.c wild1.c wild2.c avatar.c notes.c\
 	main-cap.c main-gcu.c main-x11.c main-xaw.c main.c
 
 OBJS = \
@@ -73,7 +73,7 @@ OBJS = \
 	effects.o racial.o \
 	artifact.o mutation.o flavor.o spells3.o \
 	mspells1.o mspells2.o scores.o mind.o \
-	bldg.o obj_kind.o wild.o avatar.o notes.o\
+	bldg.o obj_kind.o wild1.o wild2.o avatar.o notes.o\
 	main-cap.o main-gcu.o main-x11.o main-xaw.o main.o
 
 
@@ -357,7 +357,8 @@ store.o: store.c $(INCS)
 tables.o: tables.c $(INCS)
 util.o: util.c $(INCS)
 variable.o: variable.c $(INCS)
-wild.o: wild.c $(INCS)
+wild1.o: wild1.c $(INCS) wild.h
+wild2.o: wild2.c $(INCS) wild.h grid.h
 wizard1.o: wizard1.c $(INCS)
 wizard2.o: wizard2.c $(INCS)
 xtra1.o: xtra1.c $(INCS)
