@@ -1348,6 +1348,8 @@ void test_field_data_integrity(void)
  * FIELD_ACT_SPECIAL		Function dependent.   (Be careful)
  * FIELD_ACT_INTERACT_TEST	int*
  * FIELD_ACT_MON_ENTER_TEST field_mon_test*
+ * FIELD_ACT_STORE_ACT1		int* or field_obj_test* (building/ store)
+ * FIELD_ACT_STORE_ACT2		int* or field_obj_test* (building/ store)
  */	
 
 
@@ -1726,10 +1728,20 @@ void field_action_corpse_look(s16b *field_ptr, void *output)
 	
 	monster_race *r_ptr = &r_info[r_idx];
 	
-	/* Copy name to the output string. */
-	(void)strnfmt(name, 40, "%s %s", (r_name + r_ptr->name),
-	              t_info[f_ptr->t_idx].name);
-
+	/* Are we looking at a unique corpse? */
+	if (r_ptr->flags1 & RF1_UNIQUE)
+	{
+		/* Copy name to the output string. */
+		(void)strnfmt(name, 40, "%s of %s",  t_info[f_ptr->t_idx].name,
+			(r_name + r_ptr->name));
+	}
+	else
+	{
+		/* Copy name to the output string. */
+		(void)strnfmt(name, 40, "%s %s", (r_name + r_ptr->name),
+	    	          t_info[f_ptr->t_idx].name);
+	}
+	
 	/* Done */
 	return;
 }
