@@ -3061,7 +3061,7 @@ static void calc_bonuses(void)
 	p_ptr->noise = (1L << (30 - p_ptr->skill.stl));
 
 	if ((TEST_FLAG(p_ptr->flags, 2, TR2_NO_MAGIC)) && (p_ptr->skill.sav < p_ptr->lev + 85))
-		 p_ptr->skill.sav = p_ptr->lev - 85;
+		 p_ptr->skill.sav = p_ptr->lev + 85;
 
 	/* Assume not heavy */
 	p_ptr->heavy_wield = FALSE;
