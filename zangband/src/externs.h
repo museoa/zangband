@@ -688,6 +688,7 @@ extern bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg);
 extern void message_pain(int m_idx, int dam);
 extern void self_knowledge(void);
 extern bool detect_traps(void);
+extern void create_closed_door(int x, int y);
 extern bool detect_doors(void);
 extern bool detect_stairs(void);
 extern bool detect_treasure(void);

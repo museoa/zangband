@@ -855,6 +855,49 @@ bool detect_traps(void)
 }
 
 
+/*
+ * Place a random type of normal door at the given location.
+ * Use this in-game
+ */
+void create_closed_door(int x, int y)
+{
+	int tmp;
+
+	/* Invisible wall */
+	if (ironman_nightmare && one_in_(666))
+	{
+		/* Create invisible wall */
+		cave_set_feat(x, y, FEAT_FLOOR);
+		(void)place_field(x, y, FT_WALL_INVIS);
+		return;
+	}
+
+	/* Choose an object */
+	tmp = randint0(400);
+	
+	/* Closed doors (300/400) */
+	if (tmp < 300)
+	{
+		/* Create closed door */
+		cave_set_feat(x, y, FEAT_CLOSED);
+	}
+
+	/* Locked doors (99/400) */
+	else if (tmp < 399)
+	{
+		/* Create locked door */
+		make_lockjam_door(x, y, randint1(10) + p_ptr->depth / 10, FALSE);
+	}
+
+	/* Stuck doors (1/400) */
+	else
+	{
+		/* Create jammed door */
+		make_lockjam_door(x, y, randint1(5) + p_ptr->depth / 10, TRUE);
+	}
+}
+
+
 
 /*
  * Detect all doors in range
@@ -887,7 +930,7 @@ bool detect_doors(void)
 			if (c_ptr->feat == FEAT_SECRET)
 			{
 				/* Pick a door */
-				place_closed_door(x, y);
+				create_closed_door(x, y);
 			}
 
 			/* Detect doors */

@@ -76,7 +76,7 @@ bool test_hit_fire(int chance, int ac, int vis)
 	int k;
 
 	/* Percentile dice */
-	k = randint0(100);
+	k = randint0(102);
 
 	/* Hack -- Instant hit.  Chance to miss removed in Oangband because
 	 * of the way monster ACs now work (fewer truly easy targets).
@@ -541,10 +541,7 @@ void search(void)
 					msg_print("You have found a secret door.");
 
 					/* Pick a door */
-					place_closed_door(x, y);
-					
-					/* Notice + Lite this */
-					note_spot(x, y);
+					create_closed_door(x, y);
 
 					/* Disturb */
 					disturb(FALSE);

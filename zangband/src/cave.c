@@ -1926,7 +1926,7 @@ void note_spot(int x, int y)
 		&& player_has_los_grid(pc_ptr) && !p_ptr->blind)
 	{
 		/* Memorize certain non-torch-lit wall grids */
-		if (!cave_floor_grid(c_ptr))
+		if (!cave_floor_grid(c_ptr) && !(pc_ptr->player &(GRID_LITE)))
 		{
 			int yy, xx;
 
@@ -1943,6 +1943,9 @@ void note_spot(int x, int y)
 				/* Done */
 				return;
 			}
+			
+			/* We can't see the square */
+			pc_ptr->player &= ~(GRID_SEEN);
 		}
 		
 		/* We can see the square */

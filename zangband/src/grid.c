@@ -163,6 +163,7 @@ void place_random_door(int x, int y)
 
 /*
  * Place a random type of normal door at the given location.
+ * (Use this during dungeon creation)
  */
 void place_closed_door(int x, int y)
 {
