@@ -3942,6 +3942,7 @@ int adjust_stat(int stat, int value, int amount, bool fixed)
         /* Apply reward */
         for (i = 0; i < amount; i++)
         {
+#if 0
             if (value < 18)
             {
                 value++;
@@ -3953,6 +3954,23 @@ int adjust_stat(int stat, int value, int amount, bool fixed)
                 else
                     value += rand_range(5, 15);
             }
+#else /* 0 */
+            if (value < 17)
+            {
+                value++;
+            }
+            else if (value == 17)
+            {
+                if (fixed)
+                    value++;
+                else
+                    value += rand_range(1, 10);
+            }
+            else
+            {
+                value += 10;
+            }
+#endif /* !0 */
         }
     }
 
