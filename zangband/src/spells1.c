@@ -4403,8 +4403,8 @@ static bool in_disintegration_range(int y1, int x1, int y2, int x2)
  * The player will only get "experience" for monsters killed by himself
  * Unique monsters can only be destroyed by attacks from the player
  *
- * Only 256 grids can be affected per projection, limiting the effective
- * "radius" of standard ball attacks to nine units (diameter nineteen).
+ * Only 1024 grids can be affected per projection.  This affects the maximum
+ * possible effect per projection.
  *
  * One can project in a given "direction" by combining PROJECT_THRU with small
  * offsets to the initial location (see "line_spell()"), or by calculating
@@ -4542,7 +4542,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 	int grids = 0;
 
 	/* Coordinates of the affected grids */
-	int gx[256], gy[256];
+	int gx[1024], gy[1024];
 
 	/* Encoded "radius" info (see above) */
 	byte gm[32];
