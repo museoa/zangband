@@ -21,6 +21,15 @@
 #define FEAT_INVIS	0x02
 
 
+/* Old overhead map info hook to chain into */
+extern map_info_hook_type old_info_hook;
+
+/*
+ * Save the borg information into the overhead map
+ */
+extern void borg_map_info(map_block *mb_ptr, term_map *map);
+
+
 /*
  * Hack -- monster/object tracking grids
  */
@@ -31,9 +40,6 @@ struct borg_wank
 {
     byte x;
     byte y;
-
-    byte t_a;
-    char t_c;
 	
 	u16b object;
 	u16b monster;

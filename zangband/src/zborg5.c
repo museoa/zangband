@@ -254,11 +254,12 @@ static bool observe_take_diff(int y, int x)
  * Note that, of course, objects are never supposed to move,
  * but we may want to take account of "falling" missiles later.
  */
-static bool observe_take_move(int y, int x, int d, byte a, char c)
+static bool observe_take_move(int y, int x, int d)
 {
     int i, z, ox, oy;
 
     object_kind *k_ptr;
+	map_block *mb_ptr;
 
     /* Scan the objects */
     for (i = 1; i < borg_takes_nxt; i++)
@@ -278,21 +279,13 @@ static bool observe_take_move(int y, int x, int d, byte a, char c)
         /* Calculate distance */
         z = distance(oy, ox, y, x);
 
-        /* Possible match */
+        /* Too far? */
         if (z > d) continue;
+		
+		mb_ptr = map_loc(x, y);
 
-        /* Access the kind */
-        k_ptr = &k_info[take->k_idx];
-
-        /* Require matching char */
-        if (c != k_ptr->d_char) continue;
-
-        /* Require matching attr rr9*/
-          if (a != k_ptr->d_attr)
-        {
-            /* Ignore "flavored" colors */
-            if (!k_ptr->flavor) continue;
-        }
+		/* Match type here */
+		if (mb_ptr->object != take->k_idx) continue;
 
         /* Actual movement (?) */
         if (z)
@@ -300,6 +293,8 @@ static bool observe_take_move(int y, int x, int d, byte a, char c)
             /* Track it */
             take->x = x;
             take->y = y;
+			
+			k_ptr = &k_info[take->k_idx];
 
             /* Note */
             borg_note(format("# Tracking an object '%s' at (%d,%d) from (%d,%d)",
@@ -2304,6 +2299,205 @@ static bool borg_handle_self(cptr str)
     return (TRUE);
 }
 
+/*
+ * Hack - save old hook to overhead map.
+ *
+ * We chain into this after storing our information.
+ * (This is so multiple sub-systems can hook into
+ * map changes.)
+ */
+map_info_hook_type old_info_hook = NULL;
+
+/*
+ * Save the borg information into the overhead map
+ */
+void borg_map_info(map_block *mb_ptr, term_map *map)
+{
+	int i;
+
+	int x = map->x;
+	int y = map->y;
+	
+	bool old_wall;
+	bool new_wall;
+	
+	/* Save the old "wall" or "door" */
+    old_wall = !borg_cave_floor_grid(mb_ptr);
+
+	/* Save the information used by the borg */
+	mb_ptr->object = map->object;
+	mb_ptr->monster = map->monster;
+	mb_ptr->field = map->field;
+	mb_ptr->terrain = map->terrain;
+	
+	/* Clear flow and cost */
+	if (!mb_ptr->flow) mb_ptr->flow = 255;
+	if (!mb_ptr->cost) mb_ptr->cost = 255;
+	
+	
+	/*
+	 * Examine monsters
+	 */
+	if (mb_ptr->monster)
+	{
+		borg_wank *wank;
+
+	    /* Check for memory overflow */
+	    if (borg_wank_num == AUTO_VIEW_MAX) borg_oops("too many objects");
+
+	    /* Access next wank, advance */
+	    wank = &borg_wanks[borg_wank_num++];
+		
+	    /* Save some information */
+	    wank->x = x;
+	    wank->y = y;
+	    wank->is_kill = TRUE;
+	}
+
+	/*
+	 * Examine objects
+	 */
+	if (mb_ptr->object)
+	{
+		borg_wank *wank;
+
+	    /* Check for memory overflow */
+	    if (borg_wank_num == AUTO_VIEW_MAX) borg_oops("too many objects");
+
+	    /* Access next wank, advance */
+	    wank = &borg_wanks[borg_wank_num++];
+
+	    /* Save some information */
+	    wank->x = x;
+	    wank->y = y;
+	    wank->is_take = TRUE;
+	}
+	
+	/* Analyze terrain */
+    switch (mb_ptr->terrain)
+	{
+    	/* Up stairs */
+    	case FEAT_LESS:
+    	{
+    		/* Check for an existing "up stairs" */
+    		for (i = 0; i < track_less_num; i++)
+    		{
+    		    /* Stop if we already new about these stairs */
+    		    if ((track_less_x[i] == x) && (track_less_y[i] == y)) break;
+    		}
+
+    		/* Track the newly discovered "up stairs" */
+    		if ((i == track_less_num) && (i < track_less_size))
+    		{
+    		    track_less_x[i] = x;
+    		    track_less_y[i] = y;
+    		    track_less_num++;
+    		}
+    		/* Done */
+    		break;
+    	}
+
+    	/* Down stairs */
+    	case FEAT_MORE:
+		{
+			/* Check for an existing "down stairs" */
+			for (i = 0; i < track_more_num; i++)
+			{
+			    /* We already knew about that one */
+			    if ((track_more_x[i] == x) && (track_more_y[i] == y)) break;
+			}
+
+			/* Track the newly discovered "down stairs" */
+			if ((i == track_more_num) && (i < track_more_size))
+			{
+			    track_more_x[i] = x;
+			    track_more_y[i] = y;
+		    	track_more_num++;
+			}
+
+			/* Done */
+			break;
+		}
+
+#if 0 /* Need to use fields */
+		/* Traps */
+		case FEAT_TRAP_TRAPDOOR:
+		case FEAT_TRAP_PIT:
+		case FEAT_TRAP_SPIKED_PIT:
+		case FEAT_TRAP_POISON_PIT:
+		case FEAT_TRAP_TY_CURSE:
+		case FEAT_TRAP_TELEPORT:
+		case FEAT_TRAP_FIRE:
+		case FEAT_TRAP_ACID:
+		case FEAT_TRAP_SLOW:
+		case FEAT_TRAP_LOSE_STR:
+		case FEAT_TRAP_LOSE_DEX:
+		case FEAT_TRAP_LOSE_CON:
+		case FEAT_TRAP_BLIND:
+		case FEAT_TRAP_CONFUSE:
+		case FEAT_TRAP_POISON:
+		case FEAT_TRAP_SLEEP:
+		case FEAT_TRAP_TRAPS:
+		{
+
+		    /* Assume trap door */
+		    ag->feat = FEAT_TRAP_TRAPDOOR;
+
+	    	/* Done */
+		    break;
+		}
+#endif /* 0 */
+
+ 
+
+#if 0  /* Need to parse fields */
+		/* glyph of warding stuff here */
+		case FEAT_MINOR_GLYPH:
+		case FEAT_GLYPH:
+		{
+		    ag->feat = FEAT_GLYPH;
+
+	    	/* Check for an existing glyph */
+		    for (i = 0; i < track_glyph_num; i++)
+		    {
+	    	    /* Stop if we already new about this glyph */
+	        	if ((track_glyph_x[i] == x) && (track_glyph_y[i] == y)) break;
+		    }
+
+		    /* Track the newly discovered glyph */
+	    	if ((i == track_glyph_num) && (i < track_glyph_size))
+		    {
+		        track_glyph_x[i] = x;
+	    	    track_glyph_y[i] = y;
+	        	track_glyph_num++;
+		    }
+	
+		    /* done */
+	    	break;
+		}
+#endif /* 0 */
+	}
+	
+	/* Save the new "wall" or "door" */
+	new_wall = !borg_cave_floor_grid(mb_ptr);
+	
+	/* Notice wall changes */
+	if (old_wall != new_wall)
+	{
+	    /* Remove this grid from any flow */
+	    if (new_wall) mb_ptr->flow = 255;
+
+	    /* Remove this grid from any flow */
+	    mb_ptr->info &= ~(BORG_MAP_ICKY | BORG_MAP_KNOW);
+
+	    /* Recalculate the view (if needed) */
+	    if (mb_ptr->info & BORG_MAP_VIEW) borg_do_update_view = TRUE;
+	}
+
+	/* Finally - chain into the old hook, if it exists */
+	if (old_info_hook) old_info_hook(mb_ptr, map);
+}
+
 
 
 /*
@@ -2416,316 +2610,31 @@ static byte Get_f_info_number[256];
  */
 static void borg_update_map(void)
 {
-    int i, x, y, dx, dy;
+    int i;
+	
+	/* Hack - simply read location of player from game... */
+	
+	/* Memorize player location */
+	c_x = p_ptr->px;
+	c_y = p_ptr->py;
+	
+	/* Mark this grid as having been stepped on */
+	track_step_x[track_step_num] = c_x;
+	track_step_y[track_step_num] = c_y;
+	track_step_num++;
 
-	map_block *mb_ptr;
-
-    byte t_a;
-    byte t_c;
-
-    /* Analyze the current map panel */
-    for (dy = 0; dy < SCREEN_HGT; dy++)
-    {
-        /* Direct access XXX XXX XXX */
-        byte *aa = &(Term->scr->a[dy+1][13]);
-        char *cc = &(Term->scr->c[dy+1][13]);
-
-#ifdef ALLOW_BORG_GRAPHICS
-       byte a_trans;
-       char c_trans;
-#endif /* ALLOW_BORG_GRAPHICS */
-
-        /* Scan the row */
-        for (dx = 0; dx < SCREEN_WID; dx++)
-        {
-            bool old_wall;
-            bool new_wall;
-
-
-            /* Obtain the map location */
-            x = w_x + dx;
-            y = w_y + dy;
-
-
-			/* Save contents */
-            t_a = *aa++;
-            t_c = *cc++;
-#ifdef ALLOW_BORG_GRAPHICS
-
-           /* Translate the glyph into an ASCII char */
-           a_trans = translate_visuals[(byte)t_a][(byte)t_c].d_attr;
-           c_trans = translate_visuals[(byte)t_a][(byte)t_c].d_char;
-
-           if ((a_trans != 0) || (c_trans != 0))
-           {
-               /* Translation found */
-               t_a = a_trans;
-               t_c = c_trans;
-           }
-
-#endif /* ALLOW_BORG_GRAPHICS */
-
-            /* Get the borg_grid */
-   			mb_ptr = map_loc(x, y);
-
-            /* Notice the player */
-            if (t_c == '@')
-            {
-                /* Memorize player location */
-                c_x = x;
-                c_y = y;
-
-                /* Hack -- white */
-                t_a = TERM_WHITE;
-
-                /* I might be standing on a stair */
-                if (borg_on_dnstairs)
-                {
-                    borg_on_dnstairs = FALSE;
-                }
-                if (borg_on_upstairs)
-                {
-                    borg_on_upstairs = FALSE;
-                }
-
-                /* Mark this grid as having been stepped on */
-                    track_step_x[track_step_num] = x;
-                    track_step_y[track_step_num] = y;
-                    track_step_num++;
-
-                /* Hack - Clean the steps every so often */
-                if (track_step_num > 75)
-                {
-                    for (i = 0; i < 75; i++)
-                    {
-                        /* Move each step down one position */
-                        track_step_x[i] = track_step_x[i + 1];
-                        track_step_y[i] = track_step_y[i + 1];
-                    }
-                    /* reset the count */
-                    track_step_num = 75;
-                }
-
-                /* AJG Just get the char from the features array */
-                if (mb_ptr->terrain != FEAT_NONE)
-                    t_c = f_info[mb_ptr->terrain].d_char;
-                else
-                    t_c = f_info[FEAT_FLOOR].d_char;
-            }
-
-            /* Save the old "wall" or "door" */
-            old_wall = !borg_cave_floor_grid(mb_ptr);
-			
-			/*
-			 * Examine monsters
-			 */
-			if (mb_ptr->monster)
-			{
-				borg_wank *wank;
-
-		        /* Check for memory overflow */
-		        if (borg_wank_num == AUTO_VIEW_MAX) borg_oops("too many objects");
-
-		        /* Access next wank, advance */
-		        wank = &borg_wanks[borg_wank_num++];
-
-		        /* Save some information */
-		        wank->x = x;
-		        wank->y = y;
-		        wank->t_a = t_a;
-		        wank->t_c = t_c;
-		        wank->is_kill = TRUE;
-			}
-			
-			/*
-			 * Examine objects
-			 */
-			if (mb_ptr->object)
-			{
-				borg_wank *wank;
-
-		        /* Check for memory overflow */
-		        if (borg_wank_num == AUTO_VIEW_MAX) borg_oops("too many objects");
-
-		        /* Access next wank, advance */
-		        wank = &borg_wanks[borg_wank_num++];
-
-		        /* Save some information */
-		        wank->x = x;
-		        wank->y = y;
-		        wank->t_a = t_a;
-		        wank->t_c = t_c;
-		        wank->is_take = TRUE;
-			}
-
-			if (borg_cave_floor_grid(mb_ptr))
-			{
-				/* Track "lit" floors */
-                borg_temp_y[borg_temp_n] = y;
-                borg_temp_x[borg_temp_n] = x;
-               	borg_temp_n++;
-			}
-
-            /* Analyze terrain */
-            switch (mb_ptr->terrain)
-			{
-               /* Up stairs */
-                case FEAT_LESS:
-                {
-                    /* Check for an existing "up stairs" */
-                    for (i = 0; i < track_less_num; i++)
-                    {
-                        /* Stop if we already new about these stairs */
-                        if ((track_less_x[i] == x) && (track_less_y[i] == y)) break;
-                    }
-
-                    /* Track the newly discovered "up stairs" */
-                    if ((i == track_less_num) && (i < track_less_size))
-                    {
-                        track_less_x[i] = x;
-                        track_less_y[i] = y;
-                        track_less_num++;
-                    }
-                    /* Done */
-                    break;
-                }
-
-                /* Down stairs */
-                case FEAT_MORE:
-                {
-                    /* Check for an existing "down stairs" */
-                    for (i = 0; i < track_more_num; i++)
-                    {
-                        /* We already knew about that one */
-                        if ((track_more_x[i] == x) && (track_more_y[i] == y))
-                        {
-							break;
-						}
-                    }
-
-                    /* Track the newly discovered "down stairs" */
-                    if ((i == track_more_num) && (i < track_more_size))
-                    {
-                        track_more_x[i] = x;
-                        track_more_y[i] = y;
-                        track_more_num++;
-                    }
-
-                    /* Done */
-                    break;
-                }
-
-#if 0  /* Need to use fields */
-				/* Traps */
-                case FEAT_TRAP_TRAPDOOR:
-				case FEAT_TRAP_PIT:
-				case FEAT_TRAP_SPIKED_PIT:
-				case FEAT_TRAP_POISON_PIT:
-				case FEAT_TRAP_TY_CURSE:
-				case FEAT_TRAP_TELEPORT:
-				case FEAT_TRAP_FIRE:
-				case FEAT_TRAP_ACID:
-				case FEAT_TRAP_SLOW:
-				case FEAT_TRAP_LOSE_STR:
-				case FEAT_TRAP_LOSE_DEX:
-				case FEAT_TRAP_LOSE_CON:
-				case FEAT_TRAP_BLIND:
-				case FEAT_TRAP_CONFUSE:
-				case FEAT_TRAP_POISON:
-				case FEAT_TRAP_SLEEP:
-				case FEAT_TRAP_TRAPS:
-                {
-
-                    /* Minor cheat for the borg.  If the borg is running
-                     * in the graphics mode (not the AdamBolt Tiles) he will
-                     * mis-id the glyph of warding as a trap
-                     */
-                    byte feat = mb_ptr->terrain;
-                    if (feat == FEAT_MINOR_GLYPH ||
-                    	feat == FEAT_GLYPH)
-                    {
-                        ag->feat = FEAT_GLYPH;
-                        /* Check for an existing glyph */
-                        for (i = 0; i < track_glyph_num; i++)
-                        {
-                            /* Stop if we already new about this glyph */
-                            if ((track_glyph_x[i] == x) && (track_glyph_y[i] == y)) break;
-                        }
-
-                        /* Track the newly discovered glyph */
-                        if ((i == track_glyph_num) && (i < track_glyph_size))
-                        {
-                            track_glyph_x[i] = x;
-                            track_glyph_y[i] = y;
-                            track_glyph_num++;
-                        }
-
-                        /* done */
-                        break;
-                    }
-
-					/* Mountains look like traps */
-                    if (feat == FEAT_MOUNTAIN)
-                    {
-                        ag->feat = FEAT_MOUNTAIN;
-                        break;
-					}
-                    /* Assume trap door */
-                    ag->feat = FEAT_TRAP_TRAPDOOR;
-
-                    /* Done */
-                    break;
-                }
-#endif /* 0 */
-
- 
-
-#if 0  /* Need to parse fields */
-                /* glyph of warding stuff here */
-                case FEAT_MINOR_GLYPH:
-                case FEAT_GLYPH:
-                {
-                    ag->feat = FEAT_GLYPH;
-
-                    /* Check for an existing glyph */
-                    for (i = 0; i < track_glyph_num; i++)
-                    {
-                        /* Stop if we already new about this glyph */
-                        if ((track_glyph_x[i] == x) && (track_glyph_y[i] == y)) break;
-                    }
-
-                    /* Track the newly discovered glyph */
-                    if ((i == track_glyph_num) && (i < track_glyph_size))
-                    {
-                        track_glyph_x[i] = x;
-                        track_glyph_y[i] = y;
-                        track_glyph_num++;
-                    }
-
-                    /* done */
-                    break;
-                }
-#endif /* 0 */
-
-			}
-
-            /* Save the new "wall" or "door" */
-            new_wall = !borg_cave_floor_grid(mb_ptr);
-
-            /* Notice wall changes */
-            if (old_wall != new_wall)
-            {
-                /* Remove this grid from any flow */
-                if (new_wall) mb_ptr->flow = 255;
-
-                /* Remove this grid from any flow */
-                mb_ptr->info &= ~(BORG_MAP_ICKY | BORG_MAP_KNOW);
-
-                /* Recalculate the view (if needed) */
-                if (mb_ptr->info & BORG_MAP_VIEW) borg_do_update_view = TRUE;
-            }
-        }
-    }
+	/* Hack - Clean the steps every so often */
+	if (track_step_num > 75)
+	{
+	    for (i = 0; i < 75; i++)
+	    {
+	        /* Move each step down one position */
+	        track_step_x[i] = track_step_x[i + 1];
+	        track_step_y[i] = track_step_y[i + 1];
+	    }
+	    /* reset the count */
+	    track_step_num = 75;
+	}
 }
 
 /* Cheat the feature codes into memory.  Used on Wilderness
@@ -3550,9 +3459,6 @@ void borg_update(void)
 
     /*** Update the map ***/
 
-    /* Track floors */
-    borg_temp_n = 0;
-
     /* Update the map */
     borg_update_map();
 
@@ -3600,8 +3506,7 @@ void borg_update(void)
         borg_wank *wank = &borg_wanks[i];
 
         /* Track stationary monsters */
-        if (wank->is_kill &&
-            observe_kill_move(wank->y, wank->x, 0, FALSE))
+        if (wank->is_kill && observe_kill_move(wank->y, wank->x, 0, FALSE))
         {
             /* Hack -- excise the entry */
             borg_wanks[i] = borg_wanks[--borg_wank_num];
@@ -3613,8 +3518,7 @@ void borg_update(void)
         borg_wank *wank = &borg_wanks[i];
 
         /* Track stationary objects */
-        if (wank->is_take &&
-            observe_take_move(wank->y, wank->x, 0, wank->t_a, wank->t_c))
+        if (wank->is_take && observe_take_move(wank->y, wank->x, 0))
         {
             /* Hack -- excise the entry */
             borg_wanks[i] = borg_wanks[--borg_wank_num];
@@ -3626,8 +3530,7 @@ void borg_update(void)
         borg_wank *wank = &borg_wanks[i];
 
         /* Track moving monsters */
-        if (wank->is_kill &&
-            observe_kill_move(wank->y, wank->x, 1, FALSE))
+        if (wank->is_kill && observe_kill_move(wank->y, wank->x, 1, FALSE))
         {
             /* Hack -- excise the entry */
             borg_wanks[i] = borg_wanks[--borg_wank_num];
@@ -3639,8 +3542,7 @@ void borg_update(void)
         borg_wank *wank = &borg_wanks[i];
 
         /* Track moving monsters */
-        if (wank->is_kill &&
-            observe_kill_move(wank->y, wank->x, 2, FALSE))
+        if (wank->is_kill && observe_kill_move(wank->y, wank->x, 2, FALSE))
         {
             /* Hack -- excise the entry */
             borg_wanks[i] = borg_wanks[--borg_wank_num];
@@ -3652,8 +3554,7 @@ void borg_update(void)
         borg_wank *wank = &borg_wanks[i];
 
         /* Track moving monsters */
-        if (wank->is_kill &&
-            observe_kill_move(wank->y, wank->x, 3, FALSE))
+        if (wank->is_kill && observe_kill_move(wank->y, wank->x, 3, FALSE))
         {
             /* Hack -- excise the entry */
             borg_wanks[i] = borg_wanks[--borg_wank_num];
@@ -3665,8 +3566,7 @@ void borg_update(void)
         borg_wank *wank = &borg_wanks[i];
 
         /* Track moving monsters */
-        if (wank->is_kill &&
-            observe_kill_move(wank->y, wank->x, 3, TRUE))
+        if (wank->is_kill && observe_kill_move(wank->y, wank->x, 3, TRUE))
         {
             /* Hack -- excise the entry */
             borg_wanks[i] = borg_wanks[--borg_wank_num];
@@ -3690,8 +3590,7 @@ void borg_update(void)
         borg_wank *wank = &borg_wanks[i];
 
         /* Track new monsters */
-        if (wank->is_kill &&
-            observe_kill_diff(wank->y, wank->x))
+        if (wank->is_kill && observe_kill_diff(wank->y, wank->x))
         {
             /* Hack -- excise the entry */
             borg_wanks[i] = borg_wanks[--borg_wank_num];
@@ -3706,7 +3605,7 @@ void borg_update(void)
 		for (i =0; i < borg_wank_num; i++)
 		{
 			borg_wank *wank = &borg_wanks[i];
-			borg_note(format("# Unresolved Wank(ACSII %d) at %d,%d. #%d of %d",wank->t_c,
+			borg_note(format("# Unresolved Wank at %d,%d. #%d of %d",
 			wank->y,wank->x, i,borg_wank_num));
 		}
 #endif

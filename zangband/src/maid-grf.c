@@ -719,9 +719,13 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 	{
 		map.flags = glow ? MAP_GLOW : 0;
 	}
+	
+	/* Save location */
+	map.x = x;
+	map.y = y;
 
 	/* Save information in map */
-	save_map_location(x,y, &map);
+	save_map_location(x, y, &map);
 }
 
 /*

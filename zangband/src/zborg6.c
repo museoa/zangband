@@ -14,7 +14,6 @@
 
 static bool borg_desperate = FALSE;
 
-map_info_hook_type old_info_hook = NULL;
 
 
 /*
@@ -37,27 +36,6 @@ map_info_hook_type old_info_hook = NULL;
  *   We get "twitchy" when we are afraid of the monsters
  *   Annoyance and Danger are very different things (!)
  */
-
-
-/*
- * Save the borg information into the overhead map
- */
-void borg_map_info(map_block *mb_ptr, term_map *map)
-{
-	/* Save the information used by the borg */
-	mb_ptr->object = map->object;
-	mb_ptr->monster = map->monster;
-	mb_ptr->field = map->field;
-	mb_ptr->terrain = map->terrain;
-	
-	/* Clear flow and cost */
-	if (!mb_ptr->flow) mb_ptr->flow = 255;
-	if (!mb_ptr->cost) mb_ptr->cost = 255;
-
-	/* Finally - chain into the old hook, if it exists */
-	if (old_info_hook) old_info_hook(mb_ptr, map);
-}
-
 
 
 
@@ -3150,8 +3128,6 @@ bool borg_caution(void)
                 auto_scum = TRUE;
             }
 
-            /* Take the stairs */
-            borg_on_dnstairs = TRUE;
             borg_keypress('<');
 
             /* Success */
@@ -3216,8 +3192,7 @@ bool borg_caution(void)
         }
 
         /* Take the stairs */
-        borg_on_upstairs = TRUE;
-        borg_keypress('>');
+       borg_keypress('>');
 
         /* Success */
         return (TRUE);
@@ -5631,10 +5606,11 @@ static int borg_launch_bolt(int rad, int dam, int typ, int max)
 				n = 0;
 
                 /* Consider it if its a ball spell or right on top of it */
-                if (rad >= 2 ||
-                   (y == borg_temp_y[i] &&
-                    x == borg_temp_x[i])) n = borg_launch_bolt_aux(y, x, rad, dam, typ, max);
-
+                if (rad >= 2 || (y == borg_temp_y[i] && x == borg_temp_x[i]))
+				{
+					n = borg_launch_bolt_aux(y, x, rad, dam, typ, max);
+				}
+				
                 /* Skip useless attacks */
                 if (n <= 0) continue;
 #if 0
@@ -12768,7 +12744,6 @@ static bool borg_play_step(int y2, int x2)
         if (mb_ptr->terrain == FEAT_LESS)
         {
             /* Stand on stairs */
-            borg_on_upstairs = TRUE;
             goal_less = FALSE;
 
             /* Success */

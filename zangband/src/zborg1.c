@@ -447,8 +447,6 @@ bool borg_attacking;        /* Simulation flag */
 bool borg_offsetting;    /* offset ball attacks */
 
 bool borg_completed;        /* Completed the level */
-bool borg_on_upstairs;      /* used when leaving a level */
-bool borg_on_dnstairs;      /* used when leaving a level */
 
 bool borg_needs_searching;  /* borg will search with each step */
 bool borg_full_damage;  /* make danger = full possible damage. */

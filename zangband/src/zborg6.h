@@ -35,14 +35,6 @@
 
 #define SV_FOOD_MIN_OKAY    SV_FOOD_CURE_POISON
 
-/* Old overhead map info hook to chain into */
-extern map_info_hook_type old_info_hook;
-
-/*
- * Save the borg information into the overhead map
- */
-extern void borg_map_info(map_block *mb_ptr, term_map *map);
-
 /*
  * Attempt to induce "word of recall"
  */

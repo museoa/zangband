@@ -70,11 +70,18 @@ typedef struct term_map term_map;
 
 struct term_map
 {
+	/* Information about what is at the grid */
 	s16b object;
 	s16b monster;
 	s16b field;
 	byte terrain;
+	
+	/* Player-known flags */
 	byte flags;
+	
+	/* Location */
+	u16b x;
+	u16b y;
 };
 
 typedef struct map_block map_block;

@@ -2677,9 +2677,7 @@ static bool borg_think_dungeon_brave(void)
         /* Usable stairs */
         if (mb_ptr->terrain == FEAT_MORE)
         {
-
             /* Take the stairs */
-            borg_on_upstairs = TRUE;
             borg_note("# Fleeing town via Stairs.");
             borg_keypress('>');
 

@@ -47,43 +47,16 @@
 /*
  * Flags for the "info" field of grids
  *
- * Note that some of the flags below are not "perfect", in particular,
- * several of the flags should be treated as "best guesses", see below.
+ * "BORG_MAP_VIEW"  This is the equivalent of GRID_VIEW,
+ * calculated with the best information available to the
+ * borg.
  *
- * The "BORG_MARK" flag means that the grid has been "observed", though
- * the terrain feature may or may not be memorized.  Note the use of the
- * "FEAT_NONE", "FEAT_FLOOR", and "FEAT_INVIS" feature codes below.
+ * "BORG_MAP_ICKY"  These are grids not to flow over.
  *
- * The "BORG_GLOW" flag means that a grid is probably "perma-lit", but
- * sometimes it is really only "recently" perma-lit, but was then made
- * dark with a darkness attack, and it is now torch-lit or off-screen.
- *
- * The "BORG_DARK" flag means that a grid is probably not "perma-lit",
- * but sometimes it is really only "recently" dark, but was then made
- * "lite" with a "call lite" spell, and it is now torch-lit or off-screen.
- *
- * The "BORG_LITE" flag means that a grid is probably lit by the player
- * torch, but this may not be true if the nearby "BORG_VIEW" flags are
- * not correct, or if the "lite radius" has changed recently.
- *
- * The "BORG_VIEW" flag means that a grid is probably in line of sight
- * of the player, but this may not be true if some of the grids between
- * the player and the grid contain previously unseen walls/doors/etc.
- *
- * The "BORG_TEMP" flag means that a grid has been added to the array
- * "borg_temp_x"/"borg_temp_y", though normally we ignore this flag.
- *
- * The "BORG_XTRA" flag is used for various "extra" purposes, primarily
- * to assist with the "update_view()" code.
+ * "BORG_MAP_KNOW"  This marks grids already in the flow,
+ * and already tested for 'ickyness'.  This is done for
+ * efficiency.
  */
-/* #define BORG_MARK   0x01 */   /* observed grid */
-/* #define BORG_GLOW   0x02 */   /* probably perma-lit */
-/* #define BORG_DARK   0x04 */  /* probably not perma-lit */
-/* #define BORG_OKAY   0x08 */   /* on the current panel */
-/* #define BORG_LITE   0x10 */   /* lit by the torch */
-/* #define BORG_VIEW   0x20 */   /* in line of sight */
-/* #define BORG_TEMP   0x40 */   /* temporary flag */
-/* #define BORG_XTRA   0x80 */   /* extra flag */
 
 
 #define BORG_MAP_VIEW   0x01    /* in line of sight */
@@ -117,7 +90,6 @@
 #define BORG_GSTORE  	0
 #define BORG_TEMPLE  	3
 #define BORG_ALCHEMIST  4
-#define BORG_BM  		6
 #define BORG_HOME  		7
 
 
@@ -125,8 +97,7 @@
 /*
  * Maximum size of the "view" array
  */
-/*#define AUTO_VIEW_MAX 1536*/
-#define AUTO_VIEW_MAX 9000
+#define AUTO_VIEW_MAX 1536
 
 
 /*
@@ -138,7 +109,7 @@
 /*
  * Number of grids in the "flow" array
  */
-#define AUTO_FLOW_MAX 1536
+#define AUTO_FLOW_MAX 2000
 
 
 
@@ -667,8 +638,6 @@ extern bool borg_attacking; /* Are we attacking a monster? */
 extern bool borg_offsetting; /* Are we attacking a monster? with offsett balls*/
 
 extern bool borg_completed; /* Completed the level */
-extern bool borg_on_upstairs;      /* used when leaving a level */
-extern bool borg_on_dnstairs;      /* used when leaving a level */
 extern bool borg_needs_searching;  /* borg will search with each step */
 extern bool borg_full_damage;  /* make danger = full possible damage. */
 
@@ -1400,19 +1369,6 @@ extern cptr borg_prt_item(int item);
  * Initialize this file
  */
 extern void borg_init_1(void);
-
-#ifdef ALLOW_BORG_GRAPHICS
-
-typedef struct glyph
-{
-   byte d_attr;        /* Attribute */
-   char d_char;        /* Character */
-} glyph;
-
-
-extern glyph translate_visuals[255][255];
-
-#endif /* ALLOW_BORG_GRAPHICS */
 
 #endif
 
