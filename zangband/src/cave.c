@@ -1928,15 +1928,14 @@ void display_map(int *cy, int *cx)
 	bool old_view_special_lite = view_special_lite;
 	bool old_view_granite_lite = view_granite_lite;
 
-	int hgt = Term->hgt - 2;
-	int wid = Term->wid - 14;
+	int hgt, wid, yrat, xrat, xfactor, yfactor;
 
-	int yrat = (max_hgt - min_hgt) / hgt;
-	int xrat = (max_wid - min_wid) / wid;
+	/* Get size */
+	Term_get_size(&wid, &hgt);
+	hgt -= 2;
+	wid -= 14;
+	
 
-	/* Take care of rounding */
-	if ((max_hgt - min_hgt) % hgt) yrat++;
-	if ((max_wid - min_wid) % wid) xrat++;
 
 	/* Disable lighting effects */
 	view_special_lite = FALSE;
@@ -2047,9 +2046,19 @@ void display_map(int *cy, int *cx)
 	}
 	else
 	{
+		yrat = max_hgt - min_hgt;
+		xrat = max_wid - min_wid;
+	
+		/* Get scaling factors */
+		yfactor = ((yrat / hgt < 4) && (yrat > hgt)) ? 10 : 1;
+		xfactor = ((xrat / wid < 4) && (xrat > wid)) ? 10 : 1;
+	
+		yrat = (yrat * yfactor + hgt - 1) / hgt;
+		xrat = (xrat * xfactor + wid - 1) / wid;
+		
 		/* Player location in dungeon */
-		(*cy) = py / yrat + ROW_MAP;
-		(*cx) = px / xrat + COL_MAP;
+		(*cy) = py * yfactor / yrat + ROW_MAP;
+		(*cx) = px * xfactor / xrat + COL_MAP;
 
 		/* Fill in the map of dungeon */
 		for (i = min_wid; i < max_wid; ++i)
@@ -2057,8 +2066,8 @@ void display_map(int *cy, int *cx)
 			for (j = min_hgt; j < max_hgt; ++j)
 			{
 				/* Location */
-				x = i / xrat + 1;
-				y = j / yrat + 1;
+				x = i * xfactor / xrat + 1;
+				y = j * yfactor / yrat + 1;
 
 				/* Priority zero */
 				tp = 0;
