@@ -801,6 +801,12 @@ byte item_tester_tval;
 bool (*item_tester_hook)(object_type*);
 
 
+/*
+ * Hack - price ranges used for item_tester_hook_price
+ */
+s32b item_tester_price_min;
+s32b item_tester_price_max;
+
 
 /*
  * Current "comp" function for ang_sort()

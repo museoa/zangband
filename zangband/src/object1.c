@@ -1537,6 +1537,182 @@ cptr describe_use(int i)
 }
 
 
+/*
+ * Hook to specify "weapon"
+ */
+bool item_tester_hook_weapon(object_type *o_ptr)
+{
+	switch (o_ptr->tval)
+	{
+		case TV_SWORD:
+		case TV_HAFTED:
+		case TV_POLEARM:
+		case TV_DIGGING:
+		case TV_BOW:
+		case TV_BOLT:
+		case TV_ARROW:
+		case TV_SHOT:
+		{
+			return (TRUE);
+		}
+	}
+
+	return (FALSE);
+}
+
+/*
+ * Hook to specify "melee weapon"
+ */
+bool item_tester_hook_melee_weapon(object_type *o_ptr)
+{
+	switch (o_ptr->tval)
+	{
+		case TV_SWORD:
+		case TV_HAFTED:
+		case TV_POLEARM:
+		case TV_DIGGING:
+		{
+			return (TRUE);
+		}
+	}
+
+	return (FALSE);
+}
+
+
+/*
+ * Hook to specify "ammo"
+ */
+bool item_tester_hook_ammo(object_type *o_ptr)
+{
+	switch (o_ptr->tval)
+	{
+		case TV_SHOT:
+		case TV_ARROW:
+		case TV_BOLT:
+		{
+			return (TRUE);
+		}
+	}
+
+	return (FALSE);
+}
+
+
+/*
+ * Hook to specify "armour"
+ */
+bool item_tester_hook_armour(object_type *o_ptr)
+{
+	switch (o_ptr->tval)
+	{
+		case TV_DRAG_ARMOR:
+		case TV_HARD_ARMOR:
+		case TV_SOFT_ARMOR:
+		case TV_SHIELD:
+		case TV_CLOAK:
+		case TV_CROWN:
+		case TV_HELM:
+		case TV_BOOTS:
+		case TV_GLOVES:
+		{
+			return (TRUE);
+		}
+	}
+
+	return (FALSE);
+}
+
+
+/*
+ * Check if an object is weapon or armour (but not arrow, bolt, or shot)
+ */
+bool item_tester_hook_weapon_armour(object_type *o_ptr)
+{
+	switch (o_ptr->tval)
+	{
+		case TV_SWORD:
+		case TV_HAFTED:
+		case TV_POLEARM:
+		case TV_DIGGING:
+		case TV_BOW:
+		case TV_DRAG_ARMOR:
+		case TV_HARD_ARMOR:
+		case TV_SOFT_ARMOR:
+		case TV_SHIELD:
+		case TV_CLOAK:
+		case TV_CROWN:
+		case TV_HELM:
+		case TV_BOOTS:
+		case TV_GLOVES:
+		{
+			return (TRUE);
+		}
+	}
+
+	return (FALSE);
+}
+
+
+/*
+ * The "wearable" tester
+ */
+bool item_tester_hook_wear(object_type *o_ptr)
+{
+	/* Check for a usable slot */
+	if (wield_slot(o_ptr) >= INVEN_WIELD) return (TRUE);
+
+	/* Assume not wearable */
+	return (FALSE);
+}
+
+
+/*
+ * Determine if something is rechargable.
+ */
+bool item_tester_hook_recharge(object_type *o_ptr)
+{
+	/* Staffs */
+	if (o_ptr->tval == TV_STAFF) return (TRUE);
+
+	/* Wands */
+	if (o_ptr->tval == TV_WAND) return (TRUE);
+
+	/* Rods */
+	if (o_ptr->tval == TV_ROD) return (TRUE);
+
+	/* Nope */
+	return (FALSE);
+}
+
+
+/* Hack - match item_tester_tval */
+bool item_tester_hook_tval(object_type *o_ptr)
+{
+	/* A match? */
+	if (o_ptr->tval == item_tester_tval) return (TRUE);
+
+	/* Nope */
+	return (FALSE);
+}
+
+/* Match the price */
+bool item_tester_hook_price(object_type *o_ptr)
+{
+	s32b price = object_value(o_ptr);
+	
+	/* Check the price */
+	if ((price < item_tester_price_min) || price > item_tester_price_max)
+	{
+		return (FALSE);
+	}
+	
+	/* A match */
+	return (TRUE);
+
+}
+
+
 /* Hack: Check if a spellbook is one of the realms we can use. -- TY */
 
 static bool check_book_realm(const byte book_tval)

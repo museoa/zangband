@@ -1255,47 +1255,6 @@ static void list_weapon(object_type *o_ptr, int row, int col)
 
 
 /*
- * Hook to specify "weapon"
- */
-static bool item_tester_hook_melee_weapon(object_type *o_ptr)
-{
-	switch (o_ptr->tval)
-	{
-		case TV_SWORD:
-		case TV_HAFTED:
-		case TV_POLEARM:
-		case TV_DIGGING:
-		{
-			return (TRUE);
-		}
-	}
-
-	return (FALSE);
-}
-
-#if 0 
-
-/*
- * Hook to specify "ammo"
- */
-static bool item_tester_hook_ammo(object_type *o_ptr)
-{
-	switch (o_ptr->tval)
-	{
-		case TV_SHOT:
-		case TV_ARROW:
-		case TV_BOLT:
-		{
-			return (TRUE);
-		}
-	}
-
-	return (FALSE);
-}
-
-#endif /* 0 */
-
-/*
  * Compare weapons
  *
  * Copies the weapons to compare into the weapon-slot and

@@ -119,19 +119,6 @@ void do_cmd_equip(void)
 
 
 /*
- * The "wearable" tester
- */
-static bool item_tester_hook_wear(object_type *o_ptr)
-{
-	/* Check for a usable slot */
-	if (wield_slot(o_ptr) >= INVEN_WIELD) return (TRUE);
-
-	/* Assume not wearable */
-	return (FALSE);
-}
-
-
-/*
  * Wield or wear a single item from the pack or floor
  */
 void do_cmd_wield(void)

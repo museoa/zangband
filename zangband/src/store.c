@@ -594,9 +594,6 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
 		(o_ptr->flags3 != j_ptr->flags3))
 			return (FALSE);
 
-	/* Hack -- Never stack artifacts */
-	if (o_ptr->flags3 & TR3_INSTA_ART) return (FALSE);
-
 	/* Hack -- Never stack recharging items */
 	if (o_ptr->timeout || j_ptr->timeout) return (FALSE);
 
