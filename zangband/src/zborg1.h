@@ -456,8 +456,6 @@ extern s16b borg_quest_level;	/* On a level with quest */
 
 extern bool breeder_level;	/* Borg will shut doors */
 extern s16b old_depth;
-extern bool genocide_level_hounds;	/* used against hounds */
-extern s16b borg_hound_count;
 extern s16b borg_no_retreat;
 
 /*

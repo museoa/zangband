@@ -127,8 +127,6 @@ s16b borg_quest_level;	/* On a level with quest */
 
 bool breeder_level = FALSE;	/* Borg will shut door */
 s16b old_depth = 128;
-bool genocide_level_hounds = FALSE;	/* Used against Hounds */
-s16b borg_hound_count = 0;
 s16b borg_no_retreat = 0;
 
 /*

@@ -476,6 +476,58 @@ static void borg_fear_grid(cptr who, int y, int x, uint k, bool seen_guy)
 
 
 /*
+ * Delete an old "kill" record
+ */
+void borg_delete_kill(int i)
+{
+	borg_kill *kill = &borg_kills[i];
+
+	map_block *mb_ptr;
+
+	/* Paranoia -- Already wiped */
+	if (!kill->r_idx) return;
+
+	/* Note */
+	borg_note(format("# Forgetting a monster '%s' at (%d,%d)",
+					 (r_name + r_info[kill->r_idx].name), kill->y, kill->x));
+#if 0
+	/* Reduce the regional fear with this guy dead */
+	borg_fear_grid(NULL, kill->y, kill->x,
+				   -(borg_danger(kill->y, kill->x, 1, TRUE)), TRUE);
+#endif
+
+	/* Bounds checking */
+	if (map_in_bounds(kill->x, kill->y))
+	{
+		mb_ptr = map_loc(kill->x, kill->y);
+
+		/* Update the grids */
+		mb_ptr->kill = 0;
+	}
+
+	/* save a time stamp of when the last multiplier was killed */
+	if (r_info[kill->r_idx].flags2 & RF2_MULTIPLY)
+		when_last_kill_mult = borg_t;
+
+	/* Kill the monster */
+	WIPE(kill, borg_kill);
+
+	/* One less monster */
+	borg_kills_cnt--;
+
+	/* Recalculate danger */
+	borg_danger_wipe = TRUE;
+
+
+	/* Wipe goals */
+	goal = 0;
+
+	/* After killing a monster, check for being in a quest */
+	/* borg_quest_level = quest_number(borg_skill[BI_CDEPTH]); */
+
+}
+
+/*
  * Hack -- Update a "new" monster
  */
 static void borg_update_kill(int i)
@@ -531,56 +583,95 @@ static void borg_update_kill(int i)
 
 
 /*
- * Delete an old "kill" record
+ * Obtain a new "kill" index
  */
-void borg_delete_kill(int i)
+static int borg_new_kill(int r_idx, int y, int x)
 {
-	borg_kill *kill = &borg_kills[i];
+	int i, n = -1;
+	int p = 0;
 
 	map_block *mb_ptr;
 
-	/* Paranoia -- Already wiped */
-	if (!kill->r_idx) return;
+	borg_kill *kill;
 
-	/* Note */
-	borg_note(format("# Forgetting a monster '%s' at (%d,%d)",
-					 (r_name + r_info[kill->r_idx].name), kill->y, kill->x));
-#if 0
-	/* Reduce the regional fear with this guy dead */
-	borg_fear_grid(NULL, kill->y, kill->x,
-				   -(borg_danger(kill->y, kill->x, 1, TRUE)), TRUE);
-#endif
+	monster_race *r_ptr;
 
-	/* Bounds checking */
-	if (map_in_bounds(kill->x, kill->y))
+	/* Look for a "dead" monster */
+	for (i = 1; (n < 0) && (i < borg_kills_nxt); i++)
 	{
-		mb_ptr = map_loc(kill->x, kill->y);
-
-		/* Update the grids */
-		mb_ptr->kill = 0;
+		/* Skip real entries */
+		if (!borg_kills[i].r_idx) n = i;
 	}
 
-	/* save a time stamp of when the last multiplier was killed */
-	if (r_info[kill->r_idx].flags2 & RF2_MULTIPLY)
-		when_last_kill_mult = borg_t;
+	/* Allocate a new monster */
+	if ((n < 0) && (borg_kills_nxt < BORG_KILLS_MAX))
+	{
+		/* Acquire the entry, advance */
+		n = borg_kills_nxt++;
+	}
 
-	/* Kill the monster */
-	WIPE(kill, borg_kill);
+	/* Hack -- steal an old monster */
+	if (n < 0)
+	{
+		/* Note */
+		borg_note("# Too many monsters");
 
-	/* One less monster */
-	borg_kills_cnt--;
+		/* Hack -- Pick a random monster */
+		n = randint1(borg_kills_nxt - 1);
+
+		/* Kill it */
+		borg_delete_kill(n);
+	}
+
+
+	/* Count the monsters */
+	borg_kills_cnt++;
+
+	/* Access the monster */
+	kill = &borg_kills[n];
+	r_ptr = &r_info[kill->r_idx];
+
+	/* Save the race */
+	kill->r_idx = r_idx;
+
+	/* Location */
+	kill->x = x;
+	kill->y = y;
+
+	mb_ptr = map_loc(x, y);
+
+	/* Update the grids */
+	mb_ptr->kill = n;
+
+	/* Timestamp */
+	kill->when = borg_t;
+
+	/* Update the monster */
+	borg_update_kill(n);
+
+	/* Danger of this monster to its grid (used later) */
+	p = borg_danger(y, x, 1, FALSE);
+
+	/* Note */
+	borg_note(format("# Creating a monster '%s' at (%d,%d) danger %d",
+					 (r_name + r_info[kill->r_idx].name), y, x, p));
+
+#if 0
+	/* Add some regional fear (2%) due to this monster */
+	borg_fear_grid(NULL, y, x, p * 2 / 100, TRUE);
+#endif
 
 	/* Recalculate danger */
 	borg_danger_wipe = TRUE;
 
-
 	/* Wipe goals */
 	goal = 0;
 
-	/* After killing a monster, check for being in a quest */
-	/* borg_quest_level = quest_number(borg_skill[BI_CDEPTH]); */
-
+	/* Return the monster */
+	return (n);
 }
+
+
 
 
 /*
@@ -845,97 +936,6 @@ static void borg_follow_kill(int i)
 }
 
 
-/*
- * Obtain a new "kill" index
- */
-static int borg_new_kill(int r_idx, int y, int x)
-{
-	int i, n = -1;
-	int p = 0;
-
-	map_block *mb_ptr;
-
-	borg_kill *kill;
-
-	monster_race *r_ptr;
-
-	/* Look for a "dead" monster */
-	for (i = 1; (n < 0) && (i < borg_kills_nxt); i++)
-	{
-		/* Skip real entries */
-		if (!borg_kills[i].r_idx) n = i;
-	}
-
-	/* Allocate a new monster */
-	if ((n < 0) && (borg_kills_nxt < BORG_KILLS_MAX))
-	{
-		/* Acquire the entry, advance */
-		n = borg_kills_nxt++;
-	}
-
-	/* Hack -- steal an old monster */
-	if (n < 0)
-	{
-		/* Note */
-		borg_note("# Too many monsters");
-
-		/* Hack -- Pick a random monster */
-		n = randint1(borg_kills_nxt - 1);
-
-		/* Kill it */
-		borg_delete_kill(n);
-	}
-
-
-	/* Count the monsters */
-	borg_kills_cnt++;
-
-	/* Access the monster */
-	kill = &borg_kills[n];
-	r_ptr = &r_info[kill->r_idx];
-
-	/* Save the race */
-	kill->r_idx = r_idx;
-
-	/* Location */
-	kill->x = x;
-	kill->y = y;
-
-	mb_ptr = map_loc(x, y);
-
-	/* Update the grids */
-	mb_ptr->kill = n;
-
-	/* Timestamp */
-	kill->when = borg_t;
-
-	/* Update the monster */
-	borg_update_kill(n);
-
-	/* Danger of this monster to its grid (used later) */
-	p = borg_danger(y, x, 1, FALSE);
-
-	/* Note */
-	borg_note(format("# Creating a monster '%s' at (%d,%d) danger %d",
-					 (r_name + r_info[kill->r_idx].name), y, x, p));
-
-#if 0
-	/* Add some regional fear (2%) due to this monster */
-	borg_fear_grid(NULL, y, x, p * 2 / 100, TRUE);
-#endif
-
-	/* Recalculate danger */
-	borg_danger_wipe = TRUE;
-
-	/* Wipe goals */
-	goal = 0;
-
-	/* Count Hounds */
-	if (r_ptr->d_char == 'Z') borg_hound_count++;
-
-	/* Return the monster */
-	return (n);
-}
 
 
 
@@ -3259,9 +3259,6 @@ void borg_update(void)
 		/* No monsters here */
 		borg_kills_cnt = 0;
 		borg_kills_nxt = 1;
-
-		/* Reset the hound Genocide */
-		genocide_level_hounds = FALSE;
 
 		/* Forget old monsters */
 		C_WIPE(borg_kills, BORG_KILLS_MAX, borg_kill);

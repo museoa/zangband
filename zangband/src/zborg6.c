@@ -10546,9 +10546,6 @@ static int borg_defend_aux_genocide_hounds(void)
 
 	bool genocide_spell = FALSE;
 
-	/* Not if level is already cleared */
-	if (genocide_level_hounds && borg_hound_count < 30) return (0);
-
 	/* Not if I am weak */
 	if (borg_skill[BI_CURHP] < borg_skill[BI_MAXHP] ||
 		borg_skill[BI_CURHP] < 350) return (0);
@@ -10580,9 +10577,6 @@ static int borg_defend_aux_genocide_hounds(void)
 		/* and the winner is..... */
 		borg_keypress((genocide_target));
 
-		/* set the flag to not do it again */
-		genocide_level_hounds = TRUE;
-
 		/* Remove this race from the borg_kill */
 		for (i = 0; i < borg_kills_nxt; i++)
 		{
@@ -10598,9 +10592,6 @@ static int borg_defend_aux_genocide_hounds(void)
 
 			/* remove this monster */
 			borg_delete_kill(i);
-
-			/* reset the count */
-			borg_hound_count = 0;
 		}
 
 		return (1);
