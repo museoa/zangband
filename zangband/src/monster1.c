@@ -2027,10 +2027,7 @@ void anger_monster(monster_type *m_ptr)
 {
 	if (!is_hostile(m_ptr))
 	{
-		char m_name[80];
-
-		monster_desc(m_name, m_ptr, 0);
-		msgf("%^s gets angry!", m_name);
+		msgf("%^v gets angry!", MONSTER_FMT(m_ptr, 0));
 		set_hostile(m_ptr);
 
 		chg_virtue(V_INDIVIDUALISM, 1);

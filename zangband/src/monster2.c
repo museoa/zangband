@@ -945,6 +945,30 @@ void monster_desc(char *desc, const monster_type *m_ptr, int mode)
 }
 
 
+/*
+ * Wrapper around monster_desc() for the '%v'
+ * format option.  This allows monster_desc() to be
+ * called in a format string.
+ *
+ * The parameters are monster_type (m_ptr) and mode(int).
+ */
+void monster_fmt(char *buf, uint max, cptr fmt, va_list *vp)
+{
+	const monster_type *m_ptr;
+	int mode;
+	
+	/* Unused parameter */
+	(void)fmt;
+	
+	/* Get the object */
+	m_ptr = va_arg(*vp, const monster_type*);
+	
+	/* Get the mode */
+	mode = va_arg(*vp, int);
+	
+	/* Print the description into the buffer */
+	monster_desc(buf, m_ptr, mode);
+}
 
 
 /*

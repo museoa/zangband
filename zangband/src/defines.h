@@ -3957,6 +3957,10 @@
 #define OBJECT_STORE_FMT(O, P, M) \
 	object_store_fmt, (O), (P), (M)
 
+/* Monster name format */
+#define MONSTER_FMT(M, P) \
+	monster_fmt, (M), (P)
+
 /*
  * Determines if a map location is currently "on screen" -RAK-
  */

@@ -2153,9 +2153,6 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 				/* Normal monsters */
 				else
 				{
-					/* Get the monster name ("a kobold") */
-					monster_desc(m_name, m_ptr, 0x08);
-
 					/* Hack -- track this monster race */
 					monster_race_track(m_ptr->r_idx);
 
@@ -2200,8 +2197,8 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 								attitude = " ";
 
 							/* Describe, and prompt for recall */
-							prtf(0, 0, "%s%s%s%s (%s)%s[r,%s]",
-									s1, s2, s3, m_name,
+							prtf(0, 0, "%s%s%s%v (%s)%s[r,%s]",
+									s1, s2, s3, MONSTER_FMT(m_ptr, 0x08),
 									look_mon_desc(c_ptr->m_idx), attitude,
 									info);
 

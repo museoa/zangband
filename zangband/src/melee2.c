@@ -1300,13 +1300,8 @@ static bool get_move_retreat(monster_type *m_ptr, int *tx, int *ty)
 			/* Visible */
 			if (m_ptr->ml)
 			{
-				char m_name[80];
-
-				/* Get the monster name */
-				monster_desc(m_name, m_ptr, 0);
-
 				/* Dump a message */
-				msgf("%^s turns to fight!", m_name);
+				msgf("%^v turns to fight!", MONSTER_FMT(m_ptr, 0));
 			}
 
 			/* Charge! */
@@ -1792,37 +1787,27 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 				/* Look to see if we've spotted a mimic */
 				if ((m_ptr->smart & SM_MIMIC) && m_ptr->ml)
 				{
-					char m_name2[80];
-
-					/* Get name */
-					monster_desc(m_name2, m_ptr, 0x88);
+					/* We've spotted it */
+					msgf("You see %v!", MONSTER_FMT( m_ptr, 0x88));
 
 					/* Toggle flag */
 					m_ptr->smart &= ~(SM_MIMIC);
 
 					/* It is in the monster list now */
 					update_mon_vis(m_ptr->r_idx, 1);
-
-					/* We've spotted it */
-					msgf("You see %s!", m_name2);
 				}
 
 				/* Look to see if we've spotted a mimic */
 				if ((t_ptr->smart & SM_MIMIC) && t_ptr->ml)
 				{
-					char t_name2[80];
-
-					/* Get name */
-					monster_desc(t_name2, t_ptr, 0x88);
-
+					/* We've spotted it */
+					msgf("You see %v!", MONSTER_FMT(t_ptr, 0x88));
+					
 					/* Toggle flag */
 					t_ptr->smart &= ~(SM_MIMIC);
 
 					/* It is in the monster list now */
 					update_mon_vis(t_ptr->r_idx, 1);
-
-					/* We've spotted it */
-					msgf("You see %s!", t_name2);
 				}
 
 				if ((p_ptr->image) && one_in_(3))
@@ -2455,19 +2440,14 @@ static void take_move(int m_idx, int *mm)
 			/* Look to see if we've spotted a mimic */
 			if ((m_ptr->smart & SM_MIMIC) && m_ptr->ml)
 			{
-				char m_name2[80];
-
-				/* Get name */
-				monster_desc(m_name2, m_ptr, 0x88);
+				/* We've spotted it */
+				msgf("You see %v!", MONSTER_FMT(m_ptr, 0x88));
 
 				/* Toggle flag */
 				m_ptr->smart &= ~(SM_MIMIC);
 
 				/* It is in the monster list now */
 				update_mon_vis(m_ptr->r_idx, 1);
-
-				/* We've spotted it */
-				msgf("You see %s!", m_name2);
 			}
 
 			/* Process fields under the monster. */
@@ -2681,11 +2661,8 @@ static void take_move(int m_idx, int *mm)
 		/* Message if seen */
 		if (m_ptr->ml)
 		{
-			/* Acquire the monster name */
-			monster_desc(m_name, m_ptr, 0);
-
 			/* Dump a message */
-			msgf("%^s turns to fight!", m_name);
+			msgf("%^v turns to fight!", MONSTER_FMT(m_ptr, 0));
 
 			chg_virtue(V_COMPASSION, -1);
 		}
@@ -2754,11 +2731,8 @@ static void process_monster(int m_idx)
 
 			if (m_ptr->ml)
 			{
-				/* Acquire the monster name */
-				monster_desc(m_name, m_ptr, 0);
-
 				/* Oops */
-				msgf("%^s disappears!", m_name);
+				msgf("%^v disappears!", MONSTER_FMT(m_ptr, 0));
 			}
 
 			/* Generate treasure, etc */
@@ -2835,11 +2809,8 @@ static void process_monster(int m_idx)
 				/* Notice the "waking up" */
 				if ((m_ptr->ml) && (!(m_ptr->smart & SM_MIMIC)))
 				{
-					/* Acquire the monster name */
-					monster_desc(m_name, m_ptr, 0);
-
 					/* Dump a message */
-					msgf("%^s wakes up.", m_name);
+					msgf("%^v wakes up.", MONSTER_FMT(m_ptr, 0));
 
 					/* Redraw the health bar */
 					if (p_ptr->health_who == m_idx)
@@ -2887,11 +2858,8 @@ static void process_monster(int m_idx)
 			/* Message if visible */
 			if (m_ptr->ml)
 			{
-				/* Acquire the monster name */
-				monster_desc(m_name, m_ptr, 0);
-
 				/* Dump a message */
-				msgf("%^s is no longer stunned.", m_name);
+				msgf("%^v is no longer stunned.", MONSTER_FMT(m_ptr, 0));
 			}
 		}
 
@@ -2922,11 +2890,8 @@ static void process_monster(int m_idx)
 			/* Message if visible */
 			if ((m_ptr->ml) && (!(m_ptr->smart & SM_MIMIC)))
 			{
-				/* Acquire the monster name */
-				monster_desc(m_name, m_ptr, 0);
-
 				/* Dump a message */
-				msgf("%^s is no longer confused.", m_name);
+				msgf("%^v is no longer confused.", MONSTER_FMT(m_ptr, 0));
 			}
 		}
 	}
@@ -2939,11 +2904,8 @@ static void process_monster(int m_idx)
 
 		if (!(m_ptr->invulner) && m_ptr->ml)
 		{
-			/* Acquire the monster name */
-			monster_desc(m_name, m_ptr, 0);
-
 			/* Dump a message */
-			msgf("%^s is no longer invulnerable.", m_name);
+			msgf("%^v is no longer invulnerable.", MONSTER_FMT(m_ptr, 0));
 		}
 	}
 
@@ -2982,13 +2944,9 @@ static void process_monster(int m_idx)
 			/* Visual note */
 			if (m_ptr->ml)
 			{
-				char m_poss[80];
-
-				/* Acquire the monster poss */
-				monster_desc(m_poss, m_ptr, 0x22);
-
-				/* Dump a message */
-				msgf("%^s recovers %s courage.", m_name, m_poss);
+				/* Acquire the monster poss + dump message*/
+				msgf("%^s recovers %v courage.", m_name,
+					 MONSTER_FMT(m_ptr, 0x22));
 			}
 		}
 	}

@@ -2532,19 +2532,14 @@ void do_cmd_fire_aux(object_type *o_ptr, const object_type *j_ptr)
 			/* Look to see if we've spotted a mimic */
 			if ((m_ptr->smart & SM_MIMIC) && m_ptr->ml)
 			{
-				char m_name2[80];
-
-				/* Get name */
-				monster_desc(m_name2, m_ptr, 0x88);
-
+				/* We've spotted it */
+				msgf("You've found %v!", MONSTER_FMT(m_ptr, 0x88));
+				
 				/* Toggle flag */
 				m_ptr->smart &= ~(SM_MIMIC);
 
 				/* It is in the monster list now */
 				update_mon_vis(m_ptr->r_idx, 1);
-
-				/* We've spotted it */
-				msgf("You've found %s!", m_name2);
 			}
 
 			/* Did we hit it (penalize range) */
@@ -2754,10 +2749,10 @@ static void throw_item_effect(object_type *o_ptr, bool hit_body, bool hit_wall,
 					!is_hostile(&m_list[area(x, y)->m_idx]) &&
 					!(m_ptr->invulner))
 				{
-					char m_name2[80];
-					monster_desc(m_name2, &m_list[area(x, y)->m_idx], 0);
-					msgf("%^s gets angry!", m_name2);
-					set_hostile(&m_list[area(x, y)->m_idx]);
+					monster_type *m2_ptr = &m_list[area(x, y)->m_idx];
+				
+					msgf("%^v gets angry!", MONSTER_FMT(m2_ptr, 0));
+					set_hostile(m2_ptr);
 				}
 			}
 
@@ -3000,19 +2995,14 @@ void do_cmd_throw_aux(int mult)
 			/* Look to see if we've spotted a mimic */
 			if ((m_ptr->smart & SM_MIMIC) && m_ptr->ml)
 			{
-				char m_name2[80];
-
-				/* Get name */
-				monster_desc(m_name2, m_ptr, 0x88);
+				/* We've spotted it */
+				msgf("You've found %v!", MONSTER_FMT(m_ptr, 0x88));
 
 				/* Toggle flag */
 				m_ptr->smart &= ~(SM_MIMIC);
 
 				/* It is in the monster list now */
 				update_mon_vis(m_ptr->r_idx, 1);
-
-				/* We've spotted it */
-				msgf("You've found %s!", m_name2);
 			}
 
 			/* Did we hit it (penalize range) */

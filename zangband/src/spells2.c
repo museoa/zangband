@@ -2188,16 +2188,11 @@ bool probing(void)
 		/* Probe visible monsters */
 		if (m_ptr->ml)
 		{
-			char m_name[80];
-
 			/* Start the message */
 			if (!probe) msgf("Probing...");
 
-			/* Get "the monster" or "something" */
-			monster_desc(m_name, m_ptr, 0x04);
-
 			/* Describe the monster */
-			msgf("%^s has %d hit points.", m_name, m_ptr->hp);
+			msgf("%^v has %d hit points.", MONSTER_FMT(m_ptr, 0x04), m_ptr->hp);
 
 			/* Learn all of the non-spell, non-treasure flags */
 			lore_do_probe(i);
@@ -2633,8 +2628,6 @@ bool earthquake(int cx, int cy, int r)
 				if (!(r_ptr->flags2 & (RF2_KILL_WALL)) &&
 					!(r_ptr->flags2 & (RF2_PASS_WALL)))
 				{
-					char m_name[80];
-
 					/* Assume not safe */
 					sn = 0;
 
@@ -2701,11 +2694,8 @@ bool earthquake(int cx, int cy, int r)
 						}
 					}
 
-					/* Describe the monster */
-					monster_desc(m_name, m_ptr, 0);
-
 					/* Scream in pain */
-					msgf("%^s wails out in pain!", m_name);
+					msgf("%^v wails out in pain!", MONSTER_FMT(m_ptr, 0));
 
 					/* Take damage from the quake */
 					damage = (sn ? damroll(4, 8) : (m_ptr->hp + 1));
@@ -2720,7 +2710,7 @@ bool earthquake(int cx, int cy, int r)
 					if (m_ptr->hp < 0)
 					{
 						/* Message */
-						msgf("%^s is embedded in the rock!", m_name);
+						msgf("%^v is embedded in the rock!", MONSTER_FMT(m_ptr, 0));
 
 						/* Delete the monster */
 						delete_monster(xx, yy);
@@ -2904,13 +2894,8 @@ static void cave_temp_room_lite(void)
 					/* Notice the "waking up" */
 					if (m_ptr->ml)
 					{
-						char m_name[80];
-
-						/* Acquire the monster name */
-						monster_desc(m_name, m_ptr, 0);
-
 						/* Dump a message */
-						msgf("%^s wakes up.", m_name);
+						msgf("%^v wakes up.", MONSTER_FMT(m_ptr, 0));
 
 						/* Redraw the health bar */
 						if (p_ptr->health_who == c_ptr->m_idx)

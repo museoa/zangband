@@ -2982,10 +2982,7 @@ static bool cmd_pets_dismiss(int dummy)
 				delete_this = TRUE;
 			else
 			{
-				char friend_name[80];
-				monster_desc(friend_name, m_ptr, 0x80);
-
-				if (get_check("Dismiss %s? ", friend_name))
+				if (get_check("Dismiss %v? ", MONSTER_FMT(m_ptr, 0x80)))
 					delete_this = TRUE;
 			}
 

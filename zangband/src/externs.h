@@ -517,6 +517,7 @@ extern void get_mon_num_prep(monster_hook_type monster_hook,
 							 monster_hook_type monster_hook2);
 extern s16b get_mon_num(int level);
 extern void monster_desc(char *desc, const monster_type *m_ptr, int mode);
+extern void monster_fmt(char *buf, uint max, cptr fmt, va_list *vp);
 extern void lore_do_probe(int m_idx);
 extern void lore_treasure(int m_idx, int num_item, int num_gold);
 extern void update_mon_vis(u16b r_idx, int increment);

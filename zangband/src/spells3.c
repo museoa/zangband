@@ -4796,12 +4796,9 @@ void sanity_blast(const monster_type *m_ptr)
 {
 	int power = 100;
 
-	char m_name[80];
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 	power = r_ptr->level + 10;
-
-	monster_desc(m_name, m_ptr, 0);
 
 	if (!(r_ptr->flags1 & RF1_UNIQUE))
 	{
@@ -4826,8 +4823,8 @@ void sanity_blast(const monster_type *m_ptr)
 	if (p_ptr->image)
 	{
 		/* Something silly happens... */
-		msgf("You behold the %s visage of %s!",
-				   funny_desc[randint0(MAX_SAN_FUNNY)], m_name);
+		msgf("You behold the %s visage of %v!",
+				   funny_desc[randint0(MAX_SAN_FUNNY)], MONSTER_FMT(m_ptr, 0));
 
 		if (one_in_(3))
 		{
@@ -4840,8 +4837,8 @@ void sanity_blast(const monster_type *m_ptr)
 	}
 
 	/* Something frightening happens... */
-	msgf("You behold the %s visage of %s!",
-			   horror_desc[randint0(MAX_SAN_HORROR)], m_name);
+	msgf("You behold the %s visage of %v!",
+			   horror_desc[randint0(MAX_SAN_HORROR)], MONSTER_FMT(m_ptr, 0));
 
 	/* Monster memory */
 	r_ptr->r_flags4 |= RF4_ELDRITCH_HORROR;
