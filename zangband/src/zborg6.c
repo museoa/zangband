@@ -841,7 +841,7 @@ static bool borg_surrounded(void)
  *
  * XXX XXX XXX We should attempt to walk "around" buildings.
  */
-static int borg_freedom(int y, int x)
+static int borg_freedom(int x, int y)
 {
 	int d, f = 0;
 
@@ -891,7 +891,7 @@ static int borg_freedom(int y, int x)
  * Stepped on grids are good because they likely stem from an area
  * which has been cleared of monsters.
  */
-static bool borg_happy_grid_bold(int y, int x)
+static bool borg_happy_grid_bold(int x, int y)
 {
 	int i;
 
@@ -3418,7 +3418,7 @@ bool borg_caution(void)
 			 */
 
 			/* Require "happy" grids (most of the time) */
-			if (!borg_happy_grid_bold(y2, x2)) continue;
+			if (!borg_happy_grid_bold(x2, y2)) continue;
 
 			/* Track "nearest" grid */
 			if (b_r >= 0)
@@ -3562,7 +3562,7 @@ bool borg_caution(void)
 		if (borg_surround) b_k = (b_k * 6 / 10);
 
 		/* Check the freedom */
-		b_f = borg_freedom(c_y, c_x);
+		b_f = borg_freedom(c_x, c_y);
 
 		/* Attempt to find a better grid */
 		for (i = 0; i < 8; i++)
@@ -3604,7 +3604,7 @@ bool borg_caution(void)
 			if (b_k < k) continue;
 
 			/* Check the freedom there */
-			f = borg_freedom(y, x);
+			f = borg_freedom(x, y);
 
 			/* Danger is the same */
 			if (b_k == k)
