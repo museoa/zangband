@@ -225,6 +225,13 @@ main-cap: CFLAGS += -D"USE_X11" -D"USE_CAP"
 main-cap: LIBS := -lX11 -ltermcap
 
 ##
+## Variation -- Work without X installed
+##
+gcu: CFLAGS += -D"USE_GCU"
+gcu: LIBS := -lcurses -lncurses
+
+
+##
 ## Variation -- Only work on simple vt100 terminals
 ##
 vt100: CFLAGS += -D"USE_CAP" -D"USE_HARDCODE"
