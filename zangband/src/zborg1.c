@@ -555,7 +555,7 @@ errr borg_what_text(int x, int y, int n, byte *a, char *s)
 /*
  * Memorize a message, Log it, Search it, and Display it in pieces
  */
-void borg_note(cptr what)
+static void borg_note_aux(cptr what)
 {
 	int j, n, i, k;
 
@@ -681,8 +681,29 @@ void borg_note(cptr what)
 }
 
 
+/* Do a message with formatting */
+void borg_note(cptr fmt, ...)
+{
+	va_list vp;
+
+	char buf[1024];
+
+	/* Begin the Varargs Stuff */
+	va_start(vp, fmt);
+
+	/* Format the args, save the length */
+	(void)vstrnfmt(buf, 1024, fmt, &vp);
+
+	/* End the Varargs Stuff */
+	va_end(vp);
+
+	/* Display */
+	borg_note_aux(buf);
+}
+
+
 /*
- * borg_note() , but with formatting
+ * Not needed.
  */
 void borg_note_fmt(cptr fmt, ...)
 {
@@ -700,14 +721,14 @@ void borg_note_fmt(cptr fmt, ...)
 	va_end(vp);
 
 	/* Display */
-	borg_note(buf);
+	borg_note_aux(buf);
 }
 
 
 /*
  * Abort the Borg, noting the reason
  */
-void borg_oops(cptr what)
+void borg_oops_aux(cptr what)
 {
 	char buf[1024];
 
@@ -724,8 +745,30 @@ void borg_oops(cptr what)
 	borg_flush();
 }
 
+
+/* Abort the borg, give a text with formatting */
+void borg_oops(cptr fmt, ...)
+{
+	va_list vp;
+
+	char buf[1024];
+
+	/* Begin the Varargs Stuff */
+	va_start(vp, fmt);
+
+	/* Format the args, save the length */
+	(void)vstrnfmt(buf, 1024, fmt, &vp);
+
+	/* End the Varargs Stuff */
+	va_end(vp);
+
+	/* Display */
+	borg_oops_aux(buf);
+}
+
+
 /*
- * borg_oops() , but with formatting
+ * No longer needed
  */
 void borg_oops_fmt(cptr fmt, ...)
 {
@@ -743,7 +786,7 @@ void borg_oops_fmt(cptr fmt, ...)
 	va_end(vp);
 
 	/* Display */
-	borg_oops(buf);
+	borg_oops_aux(buf);
 }
 
 

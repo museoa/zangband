@@ -371,6 +371,7 @@ struct borg_player
 	s16b b_to_d;
 	s16b b_max_dam;
 	s16b blows;
+	s16b mana_bonus;
 
 	u32b value;	/* Cost of items we are carrying */
 
@@ -819,13 +820,13 @@ extern errr borg_what_text(int x, int y, int n, byte *a, char *s);
 /*
  * Log a message, Search it, and Show/Memorize it in pieces
  */
-extern void borg_note(cptr what);
+extern void borg_note(cptr fmt, ...);
 extern void borg_note_fmt(cptr fmt, ...);
 
 /*
  * Abort the Borg, noting the reason
  */
-extern void borg_oops(cptr what);
+extern void borg_oops(cptr fmt, ...);
 extern void borg_oops_fmt(cptr fmt, ...);
 
 /*

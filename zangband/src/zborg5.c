@@ -3103,6 +3103,7 @@ static s32b borg_power_aux3(void)
 			}
 		}
 	}
+
 	
 	/*** Reward various things ***/
 
@@ -3250,7 +3251,8 @@ static s32b borg_power_aux3(void)
 	for (i = 0; i < 6; i++) value += my_stat_add[i];
 
 
-	/*** Reward current skills ***/
+	/* Reward the extra mana */
+	if (borg_class != CLASS_WARRIOR) value += (bp_ptr->mana_bonus * 987);
 
 	/* Hack -- tiny rewards */
 	value += (bp_ptr->skill_dis * 2L);

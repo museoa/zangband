@@ -97,6 +97,7 @@ int num_sustain_con;
 int num_sustain_all;
 
 int num_artifact;
+int num_bad_curse;
 int num_speed;
 int num_edged_weapon;
 int num_bad_gloves;
@@ -481,6 +482,41 @@ static void borg_notice_equip(int *extra_blows, int *extra_shots,
 		/* Ignore empty slots */
 		if (!l_ptr) continue;
 
+		/* There is no flag for an amulet of sustenance */
+		if (i == EQUIP_NECK)
+		{
+			/* Not too much or the borg will never replace this amulet */
+			if (k_info[l_ptr->k_idx].sval == SV_AMULET_SUSTENANCE)
+			{
+				bp_ptr->food += 5;
+			}
+
+			/* You can only see the luck flag when it has *id* */
+			if (k_info[l_ptr->k_idx].sval == SV_AMULET_LUCK)
+			{
+				bp_ptr->flags[3] |= TR3_LUCK_10;
+			}
+		}
+
+		/* If the borg has a cloak that is not identified */
+		if (i == EQUIP_OUTER && !borg_obj_known_p(l_ptr))
+		{
+			/* Shadow cloak */
+			if (k_info[l_ptr->k_idx].sval == SV_SHADOW_CLOAK)
+			{
+				/* Add the dark and light flags */
+				bp_ptr->flags[1] |= TR1_RES_DARK;
+				bp_ptr->flags[1] |= TR1_RES_LITE;
+			}
+
+			/* Elven cloak */
+			if (k_info[l_ptr->k_idx].sval == SV_ELVEN_CLOAK)
+			{
+				/* Surely not a bad cloak */
+				bp_ptr->skill_stl += 1;
+			}
+		}
+
 		/* Does this item need id or remove curse? */
 		borg_notice_improve_item(l_ptr, TRUE);
 
@@ -504,6 +540,9 @@ static void borg_notice_equip(int *extra_blows, int *extra_shots,
 		/* Affect stealth */
 		if (KN_FLAG(l_ptr, TR_STEALTH)) bp_ptr->skill_stl += l_ptr->pval;
 
+		/* Affect saving throw */
+		if (KN_FLAG(l_ptr, TR_LUCK_10)) bp_ptr->skill_sav += 10;
+
 		/* Affect searching ability (factor of five) */
 		if (KN_FLAG(l_ptr, TR_SEARCH)) bp_ptr->skill_sns += l_ptr->pval * 5;
 
@@ -515,6 +554,9 @@ static void borg_notice_equip(int *extra_blows, int *extra_shots,
 
 		/* Affect speed */
 		if (KN_FLAG(l_ptr, TR_SPEED)) bp_ptr->speed += l_ptr->pval;
+
+		/* Affect spell points */
+		if (KN_FLAG(l_ptr, TR_SP)) bp_ptr->mana_bonus += l_ptr->pval;
 
 		/* Affect blows */
 		if (KN_FLAG(l_ptr, TR_BLOWS)) *extra_blows += l_ptr->pval;
@@ -2242,6 +2284,11 @@ static void borg_notice_staves(list_item *l_ptr, int number)
 			bp_ptr->able.id += number * l_ptr->pval;
 			break;
 		}
+		case SV_STAFF_CURE_LIGHT:
+		{
+			bp_ptr->able.clw += number * l_ptr->pval;
+			break;
+		}
 		case SV_STAFF_CURING:
 		{
 			bp_ptr->able.ccw += number * l_ptr->pval;
@@ -3284,6 +3331,7 @@ static void borg_notice_home_clear(void)
 	home_stat_add[A_CHR] = 0;
 
 	num_artifact = 0;
+	num_bad_curse = 0;
 	num_weapons = 0;
 
 	num_bow = 0;
@@ -4068,6 +4116,14 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 		num_artifact += l_ptr->number;
 	}
 
+	/* If this item has some really bad flag */
+	if (KN_FLAG(l_ptr, TR_TY_CURSE) ||
+		KN_FLAG(l_ptr, TR_NO_TELE) ||
+		(KN_FLAG(l_ptr, TR_NO_MAGIC) && borg_class != CLASS_WARRIOR))
+	{
+		/* Count this flag */
+		num_bad_curse += l_ptr->number;
+	}
 
 	/* Analyze the item */
 	switch (l_ptr->tval)
@@ -4271,7 +4327,6 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 			/* Analyze */
 			switch (k_info[l_ptr->k_idx].sval)
 			{
-				case SV_FOOD_WAYBREAD:
 				case SV_FOOD_RATION:
 				{
 					/* If the borg can digest food collect some at home */
@@ -4877,6 +4932,9 @@ static s32b borg_power_home_aux1(void)
 
 	/* Do not allow duplication of items. */
 	value -= num_duplicate_items * 5000L;
+
+	/* Do not allow bad flags */
+	value -= num_bad_curse * 100000;
 
 	/* Return the value */
 	return (value);
