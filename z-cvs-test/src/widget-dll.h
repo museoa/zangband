@@ -13,10 +13,6 @@
 #ifndef _INCLUDE_WIDGETDLL_H_
 #define _INCLUDE_WIDGETDLL_H_
 
-#if !defined(PLATFORM_MAC) && !defined(PLATFORM_WIN) && !defined(PLATFORM_X11)
-#error "you must define one of PLATFORM_MAC, PLATFORM_WIN or PLATFORM_X11"
-#endif /* */
-
 typedef struct Widget Widget;
 typedef void Widget_CenterProc(Widget *widgetPtr, int y, int x);
 typedef void Widget_ChangedProc(Widget *widgetPtr);
@@ -110,15 +106,6 @@ struct Widget
 	int ox, oy;					/* testing */
 	int hit, hitx, hity;		/* Highlight */
 };
-
-#define ISO_WID 54 /* Width of iso icon */
-#define ISO_HGT 49 /* Height of iso icon */
-#define ISO_FH 27 /* Height of "floor" */
-#define ISO_LAPY 1 /* Overlap in y */
-#define ISO_FH2 (ISO_FH - ISO_LAPY) /* Visible floor height */
-#define ISO_LAPX 2 /* Amount of overlap in x direction (on one side) */
-#define ISO_WID2 (ISO_WID - ISO_LAPX)
-#define ISO_BOTTOM 11
 
 /*
  * For each extension in a Widget there exists one record with

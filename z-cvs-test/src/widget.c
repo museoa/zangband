@@ -74,11 +74,7 @@ void Widget_InvertSpot(Widget *widgetPtr, int row, int col, t_display *wtd)
 			xp += bounds[0];
 			yp += bounds[1];
 		}
-		else
-		{
-			xp += bounds[0];
-			yp += ISO_HGT - h - ISO_BOTTOM;
-		}
+
 		dstPtr = bitmapPtr->pixelPtr + xp * bypp + yp * pitch;
 
 		while (1)
