@@ -2017,6 +2017,12 @@ static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
 					{
 						(void) gain_random_mutation(0);
 					}
+					
+					/* Display messages */
+					msg_print(NULL);
+					
+					/* Redraw screen */
+					display_build(f_ptr, b_ptr);
 				}
 				
 				done = TRUE;
