@@ -23,13 +23,6 @@ static s16b mon_d_head = 0;
 static s16b mon_d_tail = 0;
 static s16b mon_d_m_idx[DEATH_MAX];
 
-
-
-/* ToDo: Make this global */
-/* 1/x chance of reducing stats (for elemental attacks) */
-#define HURT_CHANCE 16
-
-
 /*
  * Get a legal "multi-hued" color for drawing "spells"
  */

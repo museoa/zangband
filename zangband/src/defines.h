@@ -884,6 +884,9 @@
  */
 #define A_MAX	6
 
+/* 1/x chance of reducing stats (for elemental attacks) */
+#define HURT_CHANCE 50
+
 
 /*
  * Player sex constants (hard-coded by save-files, arrays, etc)

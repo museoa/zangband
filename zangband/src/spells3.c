@@ -15,10 +15,6 @@
 /* Maximum number of tries for teleporting */
 #define MAX_TRIES 100
 
-/* 1/x chance of reducing stats (for elemental attacks) */
-#define HURT_CHANCE 16
-
-
 /*
  * Teleport a monster, normally up to "dis" grids away.
  *
