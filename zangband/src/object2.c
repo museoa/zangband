@@ -212,6 +212,9 @@ void drop_object_list(s16b *o_idx_ptr, int x, int y)
 
 		/* Delete the object */
 		object_wipe(o_ptr);
+		
+		/* Count objects */
+		o_cnt--;
 
 		/* Drop it */
 		(void)drop_near(q_ptr, -1, x, y);
