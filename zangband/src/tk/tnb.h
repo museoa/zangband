@@ -393,7 +393,6 @@ DECLARE_TK_HOOK(spell);
 DECLARE_TK_HOOK(cave);
 DECLARE_TK_HOOK(floor);
 DECLARE_TK_HOOK(game);
-DECLARE_TK_HOOK(info);
 DECLARE_TK_HOOK(init_icons);
 DECLARE_TK_HOOK(inkey_flags);
 DECLARE_TK_HOOK(inventory);
