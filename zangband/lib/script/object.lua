@@ -91,7 +91,7 @@ function eat_food(object)
 			end
 		end
 	elseif object.sval == SV_FOOD_POISON then
-		if not (player.resist_pois or player.oppose_pois) then
+		if not (player.resist_pois or (player.oppose_pois > 0)) then
 			if set_poisoned(player.poisoned + rand_int(10) + 10) then
 				ident = TRUE
 			end
@@ -127,7 +127,7 @@ function quaff_potion(object)
 		set_paralyzed(player.paralyzed + 4)
 		ident = TRUE
 	elseif object.sval == SV_POTION_POISON then
-		if not (player.resist_pois or player.oppose_pois) then
+		if not (player.resist_pois or (player.oppose_pois > 0)) then
 			if set_poisoned(player.poisoned + rand_range(10, 25)) then
 				ident = TRUE
 			end
@@ -240,7 +240,7 @@ function quaff_potion(object)
 	elseif object.sval == SV_POTION_BOLDNESS then
 		if set_afraid(0) then ident = TRUE end
 	elseif object.sval == SV_POTION_SPEED then
-		if not player.fast then
+		if player.fast == 0 then
 			if set_fast(rand_range(15, 40)) then ident = TRUE end
 		else
 			set_fast(player.fast + 5)
@@ -407,7 +407,7 @@ function quaff_potion(object)
 		ident = TRUE
 	elseif object.sval == SV_POTION_NEW_LIFE then
 		do_cmd_rerate()
-		if player.muta1 or player.muta2 or player.muta3 then
+		if (player.muta1 ~= 0) or (player.muta2 ~= 0) or (player.muta3 ~= 0) then
 			msg_print("You are cured of all mutations.")
 			player.muta1 = 0
 			player.muta2 = 0
@@ -563,13 +563,13 @@ function read_scroll(object)
 	elseif object.sval == SV_SCROLL_FIRE then
 		fire_ball(GF_FIRE, 0, 300, 4)
 		-- Note: "Double" damage since it is centered on the player ...
-		if not (player.oppose_fire or player.resist_fire or player.immune_fire) then
+		if not ((player.oppose_fire > 0) or player.resist_fire or player.immune_fire) then
 			take_hit(rand_range(50, 100), "a Scroll of Fire")
 		end
 		ident = TRUE
 	elseif object.sval == SV_SCROLL_ICE then
 		fire_ball(GF_ICE, 0, 350, 4)
-		if not (player.oppose_cold or player.resist_cold or player.immune_cold) then
+		if not ((player.oppose_cold > 0) or player.resist_cold or player.immune_cold) then
 			take_hit(rand_range(100, 200), "a Scroll of Ice")
 		end
 		ident = TRUE
@@ -623,13 +623,13 @@ function use_staff(object)
 		ident = TRUE
 	elseif sval == SV_STAFF_REMOVE_CURSE then
 		if remove_curse() then
-			if not player.blind then
+			if player.blind == 0 then
 				msg_print("The staff glows blue for a moment...")
 			end
 			ident = TRUE
 		end
 	elseif sval == SV_STAFF_STARLITE then
-		if not player.blind then
+		if player.blind == 0 then
 			msg_print("The end of the staff glows brightly...")
 		end
 		starlite()
@@ -683,7 +683,7 @@ function use_staff(object)
 	elseif sval == SV_STAFF_SLOW_MONSTERS then
 		if slow_monsters() then ident = TRUE end
 	elseif sval == SV_STAFF_SPEED then
-		if not player.fast then
+		if player.fast == 0 then
 			if set_fast(rand_range(15, 45)) then ident = TRUE end
 		else
 			set_fast(player.fast + 5)
@@ -742,7 +742,7 @@ function aim_wand(object)
 	local chance = player.skill_dev
 
 	-- Confusion hurts skill
-	if player.confused then chance = chance / 2 end
+	if (player.confused ~= 0) then chance = chance / 2 end
 
 	-- High level objects are harder
 	chance = chance - lev / 2
