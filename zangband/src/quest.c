@@ -308,9 +308,9 @@ static u16b find_good_town(int *dist)
 cptr describe_quest_location(cptr * dirn, int x, int y, bool known)
 {
 	int i;
-	
 	int dx, dy;
 	
+	bool visit = FALSE;
 	wild_done_type *w_ptr;
 
 	/* Find the nearest town */
@@ -327,11 +327,27 @@ cptr describe_quest_location(cptr * dirn, int x, int y, bool known)
 		/* Should this be a known town? */
 		if (known)
 		{
-			/* Get wilderness square in the middle of the town */
-			 w_ptr = &wild[place[i].y + 4][place[i].x + 4].done;
+			for (dx = 0; dx < 8; dx++)
+			{
+				for (dy = 0; dy < 8; dy++)
+				{
+					/* Get wilderness square in the middle of the town */
+					 w_ptr = &wild[place[i].y + dy][place[i].x + dx].done;
+
+					 /* Is this inside the town? */
+					 if (w_ptr->place != i) continue;
 	
-			/* Has the player visited this square? */
-			if (!(w_ptr->info & WILD_INFO_SEEN)) continue;
+					/* Has the player visited this square? */
+					if (!(w_ptr->info & WILD_INFO_SEEN))
+					{
+						visit = TRUE;
+						break;
+					}
+				}
+			}
+
+			/* Unmapped town */
+			if (!visit) continue;
 		}
 
 		/* Find closest town */
