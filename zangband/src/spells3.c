@@ -2327,7 +2327,7 @@ bool recharge(int power)
 
 			/* (High) Mages recharge objects more safely. */
 			if ((p_ptr->pclass == CLASS_MAGE) ||
-				 (p_ptr->class == CLASS_HIGH_MAGE))
+				 (p_ptr->pclass == CLASS_HIGH_MAGE))
 			{
 				/* 10% chance to blow up one rod, otherwise draining. */
 				if (o_ptr->tval == TV_ROD)
