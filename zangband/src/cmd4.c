@@ -548,8 +548,6 @@ static bool do_cmd_options_cheat(int dummy)
 
 	int i;
 	
-	cptr info = "Cheaters never win";
-	
 	/* Hack - ignore unused parameter */
 	(void) dummy;
 	
@@ -569,7 +567,7 @@ static bool do_cmd_options_cheat(int dummy)
 		cheat_menu[i].text = string_make(buf);
 	}
 
-	display_menu(cheat_menu, 0, TRUE, info);
+	display_menu(cheat_menu, 0, TRUE, "Cheaters never win");
 
 	return (FALSE);
 }
@@ -585,20 +583,70 @@ static const cheat_option_type autosave_info[2] =
 };
 
 
-static s16b toggle_frequency(s16b current)
-{
-	if (current == 0) return 50;
-	if (current == 50) return 100;
-	if (current == 100) return 250;
-	if (current == 250) return 500;
-	if (current == 500) return 1000;
-	if (current == 1000) return 2500;
-	if (current == 2500) return 5000;
-	if (current == 5000) return 10000;
-	if (current == 10000) return 25000;
+/* Forward declare */
+extern menu_type autosave_menu[4];
 
-	return 0;
+
+static bool do_cmd_options_toggle_frequency(int option)
+{
+	s16b current = autosave_freq;
+	
+	char buf[1024];
+	
+	if (current == 0) autosave_freq = 50;
+	if (current == 50) autosave_freq = 100;
+	if (current == 100) autosave_freq = 250;
+	if (current == 250) autosave_freq = 500;
+	if (current == 500) autosave_freq = 1000;
+	if (current == 1000) autosave_freq = 2500;
+	if (current == 2500) autosave_freq = 5000;
+	if (current == 5000) autosave_freq = 10000;
+	if (current == 10000) autosave_freq = 25000;
+	if (current == 25000) autosave_freq = 0;
+
+	strnfmt(buf, 1024, "Timed autosave frequency: every %d turns", autosave_freq);
+	
+	/* Delete old string */
+	string_free(autosave_menu[option].text);
+
+	/* Save new string */
+	autosave_menu[option].text = string_make(buf);
+
+	return (FALSE);
 }
+
+
+
+static bool do_cmd_options_autosave_aux(int option)
+{
+	char buf[1024];
+	
+	/* Toggle the option */
+	(*autosave_info[option].o_var) = ~(*autosave_info[option].o_var);
+		
+	/* Change the option text */
+	strnfmt(buf, 1024, "%-48s: %s  (%s)",
+			autosave_info[option].o_desc,
+			(*autosave_info[option].o_var ? "yes" : "no "),
+			autosave_info[option].o_text);
+	
+	/* Delete old string */
+	string_free(autosave_menu[option].text);
+
+	/* Save new string */
+	autosave_menu[option].text = string_make(buf);
+
+	return (FALSE);
+}
+
+
+menu_type autosave_menu[4] =
+{
+	{NULL, do_cmd_options_autosave_aux, MN_AVAILABLE | MN_SELECT},
+	{NULL, do_cmd_options_autosave_aux, MN_AVAILABLE | MN_SELECT},
+	{NULL, do_cmd_options_toggle_frequency, MN_AVAILABLE},
+	MENU_END
+};
 
 
 /*
@@ -606,112 +654,38 @@ static s16b toggle_frequency(s16b current)
  */
 static bool do_cmd_options_autosave(int dummy)
 {
-	char ch;
+	char buf[1024];
 
-	int i, k = 0, n = 2;
-	
-	cptr info = "Autosave";
+	int i;
 	
 	/* Hack - ignore unused parameter */
 	(void) dummy;
-
-	screen_save();
-
-	/* Clear screen */
-	Term_clear();
-
-	/* Interact with the player */
-	while (TRUE)
+	
+	for (i = 0; i < 2; i++)
 	{
-		/* Prompt XXX XXX XXX */
-		put_fstr(0, 0, "%s (RET to advance, y/n to set, 'F' for frequency, ESC to accept) ",
-				info);
+		/* Change the option text */
+		strnfmt(buf, 1024, "%-48s: %s  (%s)",
+				autosave_info[i].o_desc,
+				(*autosave_info[i].o_var ? "yes" : "no "),
+				autosave_info[i].o_text);
+	
+		/* Delete old string */
+		string_free(autosave_menu[i].text);
 
-		/* Display the options */
-		for (i = 0; i < n; i++)
-		{
-			cptr a = CLR_WHITE;
-
-			/* Color current option */
-			if (i == k) a = CLR_L_BLUE;
-
-			/* Display the option text */
-			prtf(0, i + 2, "%s%-48s: %s  (%s)",
-					a, autosave_info[i].o_desc,
-					(*autosave_info[i].o_var ? "yes" : "no "),
-					autosave_info[i].o_text);
-		}
-		put_fstr(0, 5, "Timed autosave frequency: every %d turns", autosave_freq);
-
-		/* Hilite current option */
-		Term_gotoxy(50, k + 2);
-
-		/* Get a key */
-		ch = inkey();
-
-		/* Analyze */
-		switch (ch)
-		{
-			case ESCAPE:
-			{
-				screen_load();
-			
-				return (FALSE);
-			}
-
-			case '-':
-			case '8':
-			{
-				k = (n + k - 1) % n;
-				break;
-			}
-
-			case ' ':
-			case '\n':
-			case '\r':
-			case '2':
-			{
-				k = (k + 1) % n;
-				break;
-			}
-
-			case 'y':
-			case 'Y':
-			case '6':
-			{
-
-				(*autosave_info[k].o_var) = TRUE;
-				k = (k + 1) % n;
-				break;
-			}
-
-			case 'n':
-			case 'N':
-			case '4':
-			{
-				(*autosave_info[k].o_var) = FALSE;
-				k = (k + 1) % n;
-				break;
-			}
-
-			case 'f':
-			case 'F':
-			{
-				autosave_freq = toggle_frequency(autosave_freq);
-				prtf(0, 5, "Timed autosave frequency: every %d turns",
-						   autosave_freq);
-				break;
-			}
-
-			default:
-			{
-				bell("Illegal command for autosave!");
-				break;
-			}
-		}
+		/* Save new string */
+		autosave_menu[i].text = string_make(buf);
 	}
+	
+	/* Get string for autosave frequency */
+	strnfmt(buf, 1024, "Timed autosave frequency: every %d turns", autosave_freq);
+	
+	/* Delete old string */
+	string_free(autosave_menu[2].text);
 
-	screen_load();
+	/* Save new string */
+	autosave_menu[2].text = string_make(buf);
+	
+	display_menu(autosave_menu, 0, TRUE, "Autosave");
 	
 	return (FALSE);
 }
@@ -1201,7 +1175,7 @@ static menu_type options_menu[OPTION_MENU_MAX] =
 	{"Base Delay Factor", do_cmd_options_delay, MN_AVAILABLE},
 	{"Hitpoint Warning", do_cmd_options_hitpoint, MN_AVAILABLE},
 	MENU_SEPERATOR,
-	{"Autosave Options", do_cmd_options_autosave, MN_AVAILABLE},
+	{"Autosave Options", do_cmd_options_autosave, MN_AVAILABLE | MN_CLEAR},
 	{"Window Flags", do_cmd_options_win, MN_AVAILABLE},
 	MENU_SEPERATOR,
 	{"Dump Options to a Pref File", do_cmd_options_dump, MN_AVAILABLE},
