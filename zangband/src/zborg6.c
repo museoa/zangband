@@ -1998,7 +1998,7 @@ bool borg_waits_daylight(void)
 	goal_shop = b_i;
 
 	/* Go to that inn */
-	if (b_i != -1 && borg_flow_shop_entry(b_i) || borg_gold > 25)
+	if (b_i != -1 && borg_flow_shop_entry(b_i) && borg_gold > 25)
 	{
 		borg_note("# Looking for a place to spend the night.");
 
@@ -2009,6 +2009,7 @@ bool borg_waits_daylight(void)
 	if (!borg_on_safe_feat(map_loc(c_x, c_y)->feat)) return (FALSE);
 
 	/* Wait out the night */
+	borg_keypress(ESCAPE);
 	borg_keypress('0');
 	borg_keypress('2');
 	borg_keypress('9');
