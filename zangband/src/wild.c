@@ -2947,12 +2947,23 @@ static void add_monsters_block(int x, int y)
 	int i, j, xx, yy;
 	long prob;
 	
+	/* Day time */
+	if ((turn % (10L * TOWN_DAWN)) < ((10L * TOWN_DAWN) / 2))
+	{	
+		/* Monsters are rarer in the day */
+		prob = 32786;
+	}
+	else
+	{
+		/* Monsters are more common at night */
+		prob = 20000;
+	}
+	
 	/* 
 	 * Probability of a monster being on a certain sqaure.
 	 * Perhaps this should include the effects of stealth.
 	 */
-		
-	prob = 16384 / (wild[y][x].done.mon_prob + 1);
+	prob /= (wild[y][x].done.mon_prob + 1);
 		
 	xx = x * 16;
 	yy = y * 16;
@@ -2964,7 +2975,16 @@ static void add_monsters_block(int x, int y)
 			/* See if monster should go on square */
 			if (!rand_int(prob))
 			{
-				(void) place_monster(yy + j, xx + i, FALSE, TRUE);
+				if(rand_int(2))
+				{
+					/* Monsters are awake */
+					(void) place_monster(yy + j, xx + i, FALSE, TRUE);
+				}
+				else
+				{
+					/* Monsters are asleep */
+					(void) place_monster(yy + j, xx + i, TRUE, TRUE);
+				}
 			}
 		}
 	}
