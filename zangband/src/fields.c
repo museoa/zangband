@@ -2969,38 +2969,64 @@ void make_lockjam_door(s16b y, s16b x, int power, bool jam)
 	
 	s16b fld_idx = field_is_type(c_ptr->fld_idx, FTYPE_DOOR);
 	
-	/* Make a closed door on the square */
+	int old_power = 0;
+	
+	/* Hack - Make a closed door on the square */
 	c_ptr->feat = FEAT_CLOSED;
 	
 	/* look for a door field on the square */
-	if (!fld_idx)
+	if (fld_idx)
 	{
-		/* Add a locked door field */
-		fld_idx = place_field(y, x, FT_LOCKJAM_DOOR);
+		/* Point to the field */
+		f_ptr = &fld_list[fld_idx];
 		
-		if (!fld_idx)
+		/* There already is a door field here... */
+		
+		/* HACK - Look at type */
+		if (!(f_ptr->t_idx == FT_JAM_DOOR) || (f_ptr->t_idx == FT_LOCK_DOOR))
 		{
-			msg_print("Cannot make door! Too many fields.");
+			/* 
+			 * Not a locked door or a jammed door.
+			 *
+			 * Probably a store or building... exit.
+			 */
+			
+			msg_print("Cannot make door! Already one there!");
+			
+			/* Exit */
 			return;
 		}
+		
+		/* Save old power */
+		old_power = f_ptr->counter;
+		
+		/* Get rid of old field */
+		delete_field_idx(fld_idx);
+	}
+	
+	/* Make a new field */
+	if (jam)
+	{
+		/* Add a jammed door field */
+		fld_idx = place_field(y, x, FT_JAM_DOOR);
+	}
+	else
+	{	
+		/* Add a locked door field */
+		fld_idx = place_field(y, x, FT_LOCK_DOOR);
+	}
+		
+	if (!fld_idx)
+	{
+		msg_print("Cannot make door! Too many fields.");
+		return;
 	}
 	
 	/* Point to the field */
 	f_ptr = &fld_list[fld_idx];
-		
-	if (jam)
-	{
-		/* Make it a jammed door field */
-		f_ptr->data[0] = 1;
-	}
-	else
-	{
-		/* Make it a locked door field */
-		f_ptr->data[0] = 0;
-	}
 	
-	/* Add "power" of lock to the field */
-	f_ptr->counter += power;
+	/* Add "power" of lock / spikes to the field */
+	f_ptr->counter += power + old_power;
 	
 	/* Bounds checking */
 	if (f_ptr->counter > 25) f_ptr->counter = 25;
@@ -3014,19 +3040,7 @@ void field_action_door_unlock(s16b **field_ptr, void *input)
 	int *lock = (int *) input;
 	
 	/* Extract door "power" */
-	int power = *lock - f_ptr->counter;
-	
-	/* Check for a stuck door */
-	if (f_ptr->data[0] == 1)
-	{
-		/* Stuck */
-		msg_print("The door appears to be stuck.");
-		
-		/* Update *field_ptr to point to the next field in the list */
-		*field_ptr = &(f_ptr->next_f_idx);
-		
-		return;
-	}	
+	int power = *lock - f_ptr->counter;	
 	
 	/* Always have a small chance of success */
 	if (power < 2) power = 2;
@@ -3053,6 +3067,20 @@ void field_action_door_unlock(s16b **field_ptr, void *input)
 		/* Update *field_ptr to point to the next field in the list */
 		*field_ptr = &(f_ptr->next_f_idx);
 	}
+}
+
+
+void field_action_door_unlock_jammed(s16b **field_ptr, void *input)
+{	
+	field_type *f_ptr = &fld_list[**field_ptr];
+	
+	/* Stuck */
+	msg_print("The door appears to be stuck.");
+		
+	/* Update *field_ptr to point to the next field in the list */
+	*field_ptr = &(f_ptr->next_f_idx);
+		
+	return;
 }
 
 
@@ -3102,7 +3130,7 @@ void field_action_door_bash(s16b **field_ptr, void *input)
 }
 
 
-void field_action_door_monster(s16b **field_ptr, void *input)
+void field_action_door_lock_monster(s16b **field_ptr, void *input)
 {	
 	field_type *f_ptr = &fld_list[**field_ptr];
 	
@@ -3125,75 +3153,27 @@ void field_action_door_monster(s16b **field_ptr, void *input)
 		return;
 	}
 			
-	/* Check for a stuck door */
-	if (f_ptr->data[0] == 1)
+	
+	/* Locked doors */
+	if ((r_ptr->flags2 & RF2_OPEN_DOOR) &&
+			(!is_pet(m_ptr) || p_ptr->pet_open_doors))
 	{
-		/* Stuck Door */
-		if ((r_ptr->flags2 & RF2_BASH_DOOR) &&
-				(!is_pet(m_ptr) || p_ptr->pet_open_doors))
+		/* Attempt to Unlock */
+		if (rand_int(m_ptr->hp / 10) > f_ptr->counter)
 		{
-			/* Attempt to Bash */
-			if (rand_int(m_ptr->hp / 10) > f_ptr->counter)
+			/* Open the door */
+			cave_set_feat(f_ptr->fy, f_ptr->fx, FEAT_OPEN);
+				
+			/* Update view */
+			if (player_can_see_bold(f_ptr->fy, f_ptr->fx))
 			{
-				/* Message */
-				msg_print("You hear a door burst open!");
-
-				/* Disturb (sometimes) */
-				if (disturb_minor) disturb(0, 0);
-
-				/* Break down the door */
-				if (rand_int(100) < 50)
-				{
-					cave_set_feat(f_ptr->fy, f_ptr->fx, FEAT_BROKEN);
-				}
-
-				/* Open the door */
-				else
-				{
-					cave_set_feat(f_ptr->fy, f_ptr->fx, FEAT_OPEN);
-				}
-				
-				/* Update view */
-				if (player_can_see_bold(f_ptr->fy, f_ptr->fx))
-				{
-					p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS);
-				}
-			
-				/* Delete the field */
-				delete_field_ptr(*field_ptr);
-
-				/* Note that *field_ptr does not need to be updated */
-
-				/* Hack -- fall into doorway */
-				mon_enter->do_move  = TRUE;
-				
-				return;
+				p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS);
 			}
-		}
-	}	
-	else
-	{
-		/* Locked doors */
-		if ((r_ptr->flags2 & RF2_OPEN_DOOR) &&
-				(!is_pet(m_ptr) || p_ptr->pet_open_doors))
-		{
-			/* Attempt to Unlock */
-			if (rand_int(m_ptr->hp / 10) > f_ptr->counter)
-			{
-				/* Open the door */
-				cave_set_feat(f_ptr->fy, f_ptr->fx, FEAT_OPEN);
-				
-				/* Update view */
-				if (player_can_see_bold(f_ptr->fy, f_ptr->fx))
-				{
-					p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS);
-				}
 			
-				/* Delete the field */
-				delete_field_ptr(*field_ptr);
+			/* Delete the field */
+			delete_field_ptr(*field_ptr);
 
-				/* Note that *field_ptr does not need to be updated */
-			}
+			/* Note that *field_ptr does not need to be updated */
 		}
 	}
 	
@@ -3204,26 +3184,77 @@ void field_action_door_monster(s16b **field_ptr, void *input)
 	mon_enter->do_move = FALSE;
 }
 
-void field_action_door_interact(s16b **field_ptr, void *output)
+
+void field_action_door_jam_monster(s16b **field_ptr, void *input)
 {	
 	field_type *f_ptr = &fld_list[**field_ptr];
-
-	int *action = (int *) output;
 	
-	/* Check for a stuck door */
-	if (f_ptr->data[0] == 1)
+	field_mon_test *mon_enter = (field_mon_test *) input;
+	
+	monster_type *m_ptr = mon_enter->m_ptr;
+	
+	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+	
+	bool do_move = mon_enter->do_move;
+	
+	if (!do_move)
 	{
-		/* Bash flag */
-		*action = 3;
-	}	
-	else
-	{
-		/* Open flag */
-		*action = 2;
+		/* Monster cannot open the door */
+	
+		/* Update *field_ptr to point to the next field in the list */
+		*field_ptr = &(f_ptr->next_f_idx);
+		
+		/* Done */
+		return;
 	}
+			
 
+	/* Stuck Door */
+	if ((r_ptr->flags2 & RF2_BASH_DOOR) &&
+			(!is_pet(m_ptr) || p_ptr->pet_open_doors))
+	{
+		/* Attempt to Bash */
+		if (rand_int(m_ptr->hp / 10) > f_ptr->counter)
+		{
+			/* Message */
+			msg_print("You hear a door burst open!");
+
+			/* Disturb (sometimes) */
+			if (disturb_minor) disturb(0, 0);
+
+			/* Break down the door */
+			if (rand_int(100) < 50)
+			{
+				cave_set_feat(f_ptr->fy, f_ptr->fx, FEAT_BROKEN);
+			}
+
+			/* Open the door */
+			else
+			{
+				cave_set_feat(f_ptr->fy, f_ptr->fx, FEAT_OPEN);
+			}
+				
+			/* Update view */
+			if (player_can_see_bold(f_ptr->fy, f_ptr->fx))
+			{
+				p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS);
+			}
+			
+			/* Delete the field */
+			delete_field_ptr(*field_ptr);
+
+			/* Note that *field_ptr does not need to be updated */
+
+			/* Hack -- fall into doorway */
+			mon_enter->do_move  = TRUE;
+				
+			return;
+		}
+	}
+	
 	/* Update *field_ptr to point to the next field in the list */
 	*field_ptr = &(f_ptr->next_f_idx);
-	return;
+	
+	/* Cannot move */
+	mon_enter->do_move = FALSE;
 }
-

@@ -6614,13 +6614,16 @@ field_action f_action[FIELD_ACTION_TYPES] =
 	/* Attempt to unlock a door */
 	{field_action_door_unlock, "field_action_door_unlock"},
 	
+	/* Attempt to unlock a jammed door */
+	{field_action_door_unlock_jammed, "field_action_door_unlock_jammed"},
+	
 	/* Attempt to bash a door */
 	{field_action_door_bash, "field_action_door_bash"},
 	
-	/* Monster attemts to enter door */
-	{field_action_door_monster, "field_action_door_monster"},
+	/* Monster attemts to enter locked door */
+	{field_action_door_lock_monster, "field_action_door_lock_monster"},
 	
-	/* Interact with grid looking at door */
-	{field_action_door_interact, "field_action_door_interact"}
+	/* Monster attemts to enter jammed door */
+	{field_action_door_jam_monster, "field_action_door_jam_monster"}
 };
 

@@ -1032,7 +1032,8 @@
 #define FT_TRAP_AGGRAVATE	0x001D
 #define FT_TRAP_SUMMON		0x001E
 #define FT_TRAP_LOSE_MEMORY	0x001F
-#define FT_LOCKJAM_DOOR		0x0020
+#define FT_LOCK_DOOR		0x0020
+#define FT_JAM_DOOR			0x0021
 
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
 
@@ -3759,7 +3760,7 @@ extern int PlayerUID;
 #define FIELD_ACTION_MAX		18	/* The last action + 1 */
 
 
-#define FIELD_ACTION_TYPES  45 /* Number of FIELD_ACT functions in tables.c */
+#define FIELD_ACTION_TYPES  46 /* Number of FIELD_ACT functions in tables.c */
 
 
 

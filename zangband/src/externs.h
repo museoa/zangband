@@ -1282,8 +1282,10 @@ extern void field_action_hit_trap_summon(s16b **field_ptr, void *nothing);
 extern void field_action_hit_trap_lose_memory(s16b **field_ptr, void *nothing);
 extern void make_lockjam_door(s16b y, s16b x, int power, bool jam);
 extern void field_action_door_unlock(s16b **field_ptr, void *input);
+extern void field_action_door_unlock_jammed(s16b **field_ptr, void *input);
 extern void field_action_door_bash(s16b **field_ptr, void *input);
-extern void field_action_door_monster(s16b **field_ptr, void *input);
+extern void field_action_door_lock_monster(s16b **field_ptr, void *input);
+extern void field_action_door_jam_monster(s16b **field_ptr, void *input);
 extern void field_action_door_interact(s16b **field_ptr, void *input);
 
 /*
