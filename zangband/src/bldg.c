@@ -1622,13 +1622,13 @@ bool building_magetower(bool display)
             /* Label it, clear the line --(-- */
             (void)sprintf(out_val, "%c) ", I2A(i));
             prt(out_val, 0, i + 4);
-			
-			/* Print cost */
-			(void)sprintf(out_val, "$%ld", (long) cost[i]);
-            prt(out_val, 3, i + 4);
 
             /* Print place name */
-            prt(place[link_p[i]].name, 10, i + 4);
+            prt(place[link_p[i]].name, 3, i + 4);
+			
+			/* Print cost */
+			(void)sprintf(out_val, "%ld au", (long) cost[i]);
+            prt(out_val, 30, i + 4);
         }
     }
     else
