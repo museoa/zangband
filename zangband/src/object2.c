@@ -4354,8 +4354,16 @@ void place_object(int x, int y, bool good, bool great)
 	c_ptr = area(x, y);
 
 	/* Require clean floor space */
-	if (!cave_gen_grid(c_ptr)) return;
-
+	if (!cave_clean_grid(c_ptr)) return;
+	
+	/* Do not generate items on "nasty" terrain */
+	if ((c_ptr->feat == FEAT_SHAL_LAVA) ||
+		(c_ptr->feat == FEAT_SHAL_WATER) ||
+		(c_ptr->feat == FEAT_SHAL_ACID))
+	{
+		return;
+	}
+	
 	/* Get local object */
 	q_ptr = &forge;
 

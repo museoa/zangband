@@ -390,9 +390,8 @@ void teleport_player(int dis)
 
 			c_ptr = area(x, y);
 
-			/* Require "naked" floor space or trees */
-			if (!(cave_naked_grid(c_ptr) ||
-				  ((c_ptr->feat & 0x60) == 0x60))) continue;
+			/* Require empty space */
+			if (!cave_empty_grid(c_ptr)) continue;
 
 			/* No non-movement */
 			if ((y == py) && (x == px)) continue;

@@ -57,8 +57,8 @@ static cptr f_info_flags[] =
 	"BLOCK",
 	"HALF_LOS",
 	"USE_TRANS",
-	"DUMMY1",
-	"DUMMY2",
+	"ICKY",
+	"PERM",
 	"DUMMY3",
 	"DUMMY4",
 	"DUMMY5"

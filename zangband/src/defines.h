@@ -2388,6 +2388,8 @@
 #define FF_BLOCK		0x01	/* Blocks movement + los */
 #define FF_HALF_LOS		0x02	/* Half-blocks los */
 #define FF_USE_TRANS	0x04	/* Use transparency light effects */
+#define FF_ICKY			0x08	/* Terrain can not have objects */
+#define FF_PERM			0x10	/* Permanent terrain */
 
 
 /*
@@ -3954,47 +3956,18 @@
 #define cave_half_grid(C) \
     ((f_info[(C)->feat].flags & FF_HALF_LOS) && (quick_rand()))
 
-
 /*
  * Grid will block LOS.
  */
-
 #define cave_los_grid(C) \
    ((cave_floor_grid(C)) || (cave_half_grid(C)))
 
 /*
- * Grid based version of "cave_clean_bold()"
+ * Grid that does not have any objects or "interesting" terrains
  */
 #define cave_clean_grid(C) \
-    ((((C)->feat == FEAT_FLOOR) || \
-	  ((C)->feat == FEAT_SHAL_WATER) || \
-	  ((C)->feat == FEAT_SHAL_LAVA) || \
-	  ((C)->feat == FEAT_SHAL_ACID) || \
-	  ((C)->feat == FEAT_GRASS) || \
-	  ((C)->feat == FEAT_SNOW) || \
-	  (((C)->feat & 0xF8) == 0x08) || \
-	  (((C)->feat & 0x80) == 0x80) || \
-	  ((C)->feat == FEAT_DIRT)) && \
-	  ((C)->o_idx == 0))
-
-/*
- * Determine if a "legal" grid is a "gen" floor grid
- *
- * Line 1 -- forbid non-floors
- * Line 2 -- forbid water -KMW-
- * Line 3 -- forbid lava -KMW-
- * Line 4 -- forbid normal objects
- *  This function describes grids that can hold any object.
- *  Note: The *_SHAL_* possibilities are removed.
- */
-#define cave_gen_grid(C) \
-	((((C)->feat == FEAT_FLOOR) || \
-	  ((C)->feat == FEAT_GRASS) || \
-	  ((C)->feat == FEAT_SNOW) || \
-	  (((C)->feat & 0xF8) == 0x08) || \
-	  (((C)->feat & 0x80) == 0x80) || \
-	  ((C)->feat == FEAT_DIRT)) && \
-	  ((C)->o_idx == 0))
+    (!(f_info[(C)->feat].flags & FF_ICKY) && \
+	((C)->o_idx == 0))
 
 /*
  * Not occupied by a monster
@@ -4003,33 +3976,20 @@
     (cave_floor_grid(C) && !((C)->m_idx))
 
 /*
- * Grid based version of "cave_naked_bold()"
+ * Grid that is empty of everything interesting
  */
 #define cave_naked_grid(C) \
-    ((((C)->feat == FEAT_FLOOR) || \
-	  ((C)->feat == FEAT_SHAL_WATER) || \
-	  ((C)->feat == FEAT_SHAL_LAVA) || \
-	  ((C)->feat == FEAT_SHAL_ACID) || \
-	  ((C)->feat == FEAT_SNOW) || \
-	  (((C)->feat & 0xF8) == 0x08) || \
-	  ((C)->feat == FEAT_GRASS) || \
-	  ((C)->feat == FEAT_DIRT)) && \
+    (!(f_info[(C)->feat].flags & FF_ICKY) && \
 	  ((C)->o_idx == 0) && \
 	  ((C)->m_idx == 0) && \
 	  ((C)->fld_idx == 0))
 
 
 /*
- * Grid based version of "cave_perma_bold()"
+ * Grid that cannot be destroyed or passed.
  */
 #define cave_perma_grid(C) \
-	((((C)->feat >= FEAT_PERM_EXTRA) && \
-	((C)->feat <= FEAT_PERM_SOLID)) || \
-	(((C)->feat == FEAT_LESS) || \
-	 ((C)->feat == FEAT_MORE)) || \
-	(((C)->feat & 0x70) == 0x70) || \
-	 (((C)->feat >= FEAT_PATTERN_START) && \
-	  ((C)->feat <= FEAT_PATTERN_XTRA2)))
+	(f_info[(C)->feat].flags & FF_PERM)
 
 
 /*
