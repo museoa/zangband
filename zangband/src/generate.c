@@ -808,6 +808,9 @@ static bool cave_gen(dun_type *d_ptr)
 		delta_level = (100 - dun_rating) / 10;
 		if (delta_level < 0) delta_level = 0;
 		
+		/* Not too far out of depth for the early levels */
+		if (delta_level > p_ptr->depth * 2) delta_level = 0;
+		
 		(void)alloc_monster(0, TRUE, delta_level);
 	}
 
