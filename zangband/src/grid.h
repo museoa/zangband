@@ -25,7 +25,7 @@
 #define place_rubble(Y,X)       set_cave_feat(Y,X,FEAT_RUBBLE)
 #define place_up_stairs(Y,X)    set_cave_feat(Y,X,FEAT_LESS)
 #define place_down_stairs(Y,X)  set_cave_feat(Y,X,FEAT_MORE)
-#define place_locked_door(Y,X)  set_cave_feat(Y,X,FEAT_DOOR_HEAD+randint(7))
+#define place_locked_door(Y,X)  make_lockjam_door(Y, X, randint(10) + dun_level / 10, FALSE)
 #define place_secret_door(Y,X)  set_cave_feat(Y,X,FEAT_SECRET)
 #define place_inner_wall(Y,X)   set_cave_feat(Y,X,FEAT_WALL_INNER)
 #define place_outer_wall(Y,X)   set_cave_feat(Y,X,FEAT_WALL_OUTER)

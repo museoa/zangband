@@ -168,26 +168,26 @@ void place_closed_door(int y, int x)
 
 	/* Choose an object */
 	tmp = rand_int(400);
-
+	
 	/* Closed doors (300/400) */
 	if (tmp < 300)
 	{
 		/* Create closed door */
-		cave_set_feat(y, x, FEAT_DOOR_HEAD + 0x00);
+		cave_set_feat(y, x, FEAT_CLOSED);
 	}
 
 	/* Locked doors (99/400) */
 	else if (tmp < 399)
 	{
 		/* Create locked door */
-		cave_set_feat(y, x, FEAT_DOOR_HEAD + randint(7));
+		make_lockjam_door(y, x, randint(10) + dun_level / 10, FALSE);
 	}
 
 	/* Stuck doors (1/400) */
 	else
 	{
 		/* Create jammed door */
-		cave_set_feat(y, x, FEAT_DOOR_HEAD + 0x08 + rand_int(8));
+		make_lockjam_door(y, x, randint(5) + dun_level / 10, TRUE);
 	}
 }
 

@@ -67,8 +67,7 @@ void light_dark_block(blk_ptr block_ptr, u16b x, u16b y)
 				/* Darken "boring" features */
 				if (!(((c_ptr->feat >= FEAT_OPEN) &&
 				    (c_ptr->feat <= FEAT_MORE)) ||
-				    ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
-				    (c_ptr->feat <= FEAT_SHOP_TAIL))))
+				    (c_ptr->feat == FEAT_CLOSED)))
 				{
 					/* Forget the grid */
 					c_ptr->info &= ~(CAVE_GLOW | CAVE_MARK);
@@ -320,6 +319,10 @@ static void build_store(int n, int yy, int xx)
 static void add_town_wall(void)
 {
 	int i;
+	
+	
+	/* Mega hack - the field functions need area() to work */
+	area = access_cave;
 
 	/* Upper and lower walls */
 	for (i = 0; i < TOWN_WID; i++)
@@ -327,9 +330,9 @@ static void add_town_wall(void)
 		/* Wall with doors in middle */
 		if (i == TOWN_WID / 2)
 		{
-			/* Make town gates (locked) */
-			cave[0][i].feat = FEAT_DOOR_HEAD + 4;
-			cave[TOWN_HGT - 1][i].feat = FEAT_DOOR_HEAD + 4;
+			/* Make town gates */
+			cave[0][i].feat = FEAT_CLOSED;
+			cave[TOWN_HGT - 1][i].feat = FEAT_CLOSED;
 		}
 		else
 		{
@@ -346,8 +349,8 @@ static void add_town_wall(void)
 		if (i == TOWN_HGT / 2)
 		{
 			/* Make town gates (locked) */
-			cave[i][0].feat = FEAT_DOOR_HEAD + 4;
-			cave[i][TOWN_WID - 1].feat = FEAT_DOOR_HEAD + 4;
+			cave[i][0].feat = FEAT_CLOSED;
+			cave[i][TOWN_WID - 1].feat = FEAT_CLOSED;
 		}
 		else
 		{
@@ -356,6 +359,9 @@ static void add_town_wall(void)
 			cave[i][TOWN_WID - 1].feat = FEAT_PERM_OUTER;
 		}
 	}
+	
+	/* Mega hack - back to the wilderness */
+	area = access_wild;
 }
 
 /*

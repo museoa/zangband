@@ -1886,6 +1886,69 @@ static void rd_messages(void)
 #define OLD_GRID_WALL_GRANITE   0x0003  /* Granite wall */
 
 
+static void clean_square(int y, int x, cave_type *c_ptr)
+{
+	/* Get rid of pre-fields terrain */
+	if (sf_version < 17)
+	{
+		/* Invisible wall */
+		if (c_ptr->feat == 0x5B)
+		{
+			/* Get rid of it */
+			c_ptr->feat = FEAT_NONE;
+					
+			/* Add the invisible wall here as a field */
+			(void) place_field(y, x, FT_WALL_INVIS);
+		}
+				
+		/* Glyph of warding */
+		if (c_ptr->feat == 0x03)
+		{
+			/* Get rid of it */
+			c_ptr->feat = FEAT_NONE;
+					
+			/* Add the glyph here as a field */
+			(void) place_field(y, x, FT_GLYPH_WARDING);
+		}
+				
+		/* Explosive Rune */
+		if (c_ptr->feat == 0x40)
+		{
+			/* Get rid of it */
+			c_ptr->feat = FEAT_NONE;
+					
+			/* Add the glyph here as a field */
+			(void) place_field(y, x, FT_GLYPH_EXPLODE);
+		}
+				
+		/* Traps */
+		if ((c_ptr->feat == 0x02) ||
+			(c_ptr->feat >= 0x10 && c_ptr->feat <=0x1F) ||
+			(c_ptr->feat == 0x5A))
+		{
+			/* Get rid of it */
+			c_ptr->feat = FEAT_NONE;
+					
+			/* Hack- Add a trap here as a field */
+			place_trap(y, x);
+		}
+				
+		/* Doors */
+		if ((c_ptr->feat > 0x20) && (c_ptr->feat < 0x28))
+		{
+			/* Locked door */
+			make_lockjam_door(y, x, randint(10) + dun_level / 10, FALSE);
+		}
+				
+		if ((c_ptr->feat >= 0x28) && (c_ptr->feat <= 0x2F))
+		{
+			/* Stuck door */
+			make_lockjam_door(y, x, randint(10) + dun_level / 10, TRUE);
+		}
+	}
+}
+
+
 /*
  * Read pre-2.8.0 dungeon info
  *
@@ -2175,7 +2238,7 @@ static errr rd_dungeon_aux(void)
 					{
 						k = (0 - q_ptr->pval) / 2;
 						if (k > 7) k = 7;
-						k = FEAT_DOOR_HEAD + 0x08 + k;
+						k = 0x28 + k;
 					}
 
 					/* Locked door */
@@ -2183,7 +2246,7 @@ static errr rd_dungeon_aux(void)
 					{
 						k = q_ptr->pval / 2;
 						if (k > 7) k = 7;
-						k = FEAT_DOOR_HEAD + k;
+						k = 0x20 + k;
 					}
 
 					break;
@@ -2536,57 +2599,13 @@ static errr rd_dungeon_aux(void)
 		{
 			cave_type *c_ptr = area(y,x);
 			
-			/* Get rid of pre-fields terrain */
-			if (sf_version < 16)
-			{
-				/* Invisible wall */
-				if (c_ptr->feat == 0x5B)
-				{
-					/* Get rid of it */
-					c_ptr->feat = FEAT_NONE;
-					
-					/* Add the invisible wall here as a field */
-					(void) place_field(y, x, FT_WALL_INVIS);
-				}
-				
-				/* Glyph of warding */
-				if (c_ptr->feat == 0x03)
-				{
-					/* Get rid of it */
-					c_ptr->feat = FEAT_NONE;
-					
-					/* Add the glyph here as a field */
-					(void) place_field(y, x, FT_GLYPH_WARDING);
-				}
-				
-				/* Explosive Rune */
-				if (c_ptr->feat == 0x40)
-				{
-					/* Get rid of it */
-					c_ptr->feat = FEAT_NONE;
-					
-					/* Add the glyph here as a field */
-					(void) place_field(y, x, FT_GLYPH_EXPLODE);
-				}
-				
-				/* Traps */
-				if ((c_ptr->feat == 0x02) ||
-					(c_ptr->feat >= 0x20 && c_ptr->feat <=0x2F) ||
-					(c_ptr->feat == 0x5A))
-				{
-					/* Get rid of it */
-					c_ptr->feat = FEAT_NONE;
-					
-					/* Hack- Add a trap here as a field */
-					place_trap(y, x);
-				}
-			}
+			/* Fix the square */
+			clean_square(y, x, c_ptr);
 
 			/* Hack -- convert nothing-ness into floors */
 			if (!c_ptr->feat) c_ptr->feat = FEAT_FLOOR;
 		}
 	}
-
 
 	/* The dungeon is ready */
 	character_dungeon = TRUE;
@@ -2594,6 +2613,57 @@ static errr rd_dungeon_aux(void)
 
 	/* Success */
 	return (0);
+}
+
+
+static void fix_tile(cave_type *c_ptr)
+{
+	/* Get rid of pre-fields terrain */
+	if (sf_version < 17)
+	{
+		/* Invisible wall */
+		if (c_ptr->feat == 0x5B)
+		{
+			/* Get rid of it */
+			c_ptr->feat = FEAT_FLOOR;
+		}
+				
+		/* Glyph of warding */
+		if (c_ptr->feat == 0x03)
+		{
+			/* Get rid of it */
+			c_ptr->feat = FEAT_FLOOR;
+		}
+				
+		/* Explosive Rune */
+		if (c_ptr->feat == 0x40)
+		{
+			/* Get rid of it */
+			c_ptr->feat = FEAT_FLOOR;
+		}
+				
+		/* Traps */
+		if ((c_ptr->feat == 0x02) ||
+			(c_ptr->feat >= 0x10 && c_ptr->feat <=0x1F) ||
+			(c_ptr->feat == 0x5A))
+		{
+			/* Get rid of it */
+			c_ptr->feat = FEAT_FLOOR;
+		}
+				
+		/* Doors */
+		if ((c_ptr->feat > 0x20) && (c_ptr->feat < 0x28))
+		{
+			/* Locked door -> closed door*/
+			c_ptr->feat = FEAT_CLOSED;
+		}
+				
+		if ((c_ptr->feat >= 0x28) && (c_ptr->feat <= 0x2F))
+		{
+			/* Stuck door -> closed door*/
+			c_ptr->feat = FEAT_CLOSED;
+		}
+	}
 }
 
 
@@ -2657,6 +2727,9 @@ static void load_map(int ymax, int ymin, int xmax, int xmin)
 
 			/* Extract "feat" */
 			c_ptr->feat = tmp8u;
+			
+			/* Quick hack to fix various removed features */
+			fix_tile(c_ptr);
 
 			/* Advance/Wrap */
 			if (++x >= xmax)

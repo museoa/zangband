@@ -1815,7 +1815,7 @@ static byte priority_table[][2] =
 	{ FEAT_BROKEN, 15 },
 
 	/* Closed doors */
-	{ FEAT_DOOR_HEAD + 0x00, 17 },
+	{ FEAT_CLOSED, 17 },
 
 	/* Hidden gold */
 	{ FEAT_QUARTZ_K, 19 },
@@ -3545,9 +3545,9 @@ void update_flow(void)
 			/* Ignore "pre-stamped" entries */
 			if (c_ptr->when == flow_n) continue;
 
-			/* Ignore all "walls" except doors */
-			if (!(((feat >= FEAT_DOOR_HEAD) && (feat <= FEAT_DOOR_TAIL))
-		 		|| (feat & 0x20))) continue;
+			/* Ignore all "walls" except doors + terrain */
+			if ((feat & 0x20) && (feat != FEAT_CLOSED) &&
+				 ((feat & 0x60) != 0x60)) continue;
 
 			/* Save the time-stamp */
 			c_ptr->when = flow_n;

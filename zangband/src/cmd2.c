@@ -609,7 +609,7 @@ static bool is_open(int feat)
  */
 static bool is_closed(int feat)
 {
-	return ((feat >= FEAT_DOOR_HEAD) && (feat <= FEAT_DOOR_TAIL));
+	return (feat == FEAT_CLOSED);
 }
 
 /*
@@ -767,53 +767,49 @@ static int coords_to_dir(int y, int x)
  *
  * Returns TRUE if repeated commands may continue
  */
-static bool do_cmd_open_aux(int y, int x)
+bool do_cmd_open_aux(int y, int x)
 {
-	int i, j;
+	int i;
 
 	cave_type *c_ptr;
+	field_type *f_ptr;
 
 	bool more = FALSE;
-
+	
+	s16b fld_idx;
 
 	/* Take a turn */
 	energy_use = 100;
 
 	/* Get requested grid */
 	c_ptr = area(y,x);
-
-	/* Jammed door */
-	if (c_ptr->feat >= FEAT_DOOR_HEAD + 0x08)
+	
+	/* Must be a closed door */
+	if (c_ptr->feat != FEAT_CLOSED)
 	{
-		/* Stuck */
-		msg_print("The door appears to be stuck.");
+		/* Nope */
+		return (FALSE);
 	}
-
-	/* Locked door */
-	else if (c_ptr->feat >= FEAT_DOOR_HEAD + 0x01)
+	
+	/* Get fields */
+	fld_idx = field_is_type(c_ptr->fld_idx, FTYPE_DOOR);
+	
+	/* If the door is locked / jammed */
+	if (fld_idx)
 	{
-		/* Disarm factor */
+		/* Point to field */
+		f_ptr = &fld_list[fld_idx];
+	
+		/* Get the "disarm" factor */
 		i = p_ptr->skill_dis;
 
 		/* Penalize some conditions */
 		if (p_ptr->blind || no_lite()) i = i / 10;
 		if (p_ptr->confused || p_ptr->image) i = i / 10;
 
-		/* Extract the lock power */
-		j = c_ptr->feat - FEAT_DOOR_HEAD;
-
-		/* Extract the difficulty XXX XXX XXX */
-		j = i - (j * 4);
-
-		/* Always have a small chance of success */
-		if (j < 2) j = 2;
-
 		/* Success */
-		if (rand_int(100) < j)
+		if (!field_hook_single(&fld_idx, FIELD_ACT_INTERACT, (void *) &i))
 		{
-			/* Message */
-			msg_print("You have picked the lock.");
-
 			/* Open the door */
 			cave_set_feat(y, x, FEAT_OPEN);
 
@@ -832,9 +828,6 @@ static bool do_cmd_open_aux(int y, int x)
 		{
 			/* Failure */
 			if (flush_failure) flush();
-
-			/* Message */
-			msg_print("You failed to pick the lock.");
 
 			/* We may keep trying */
 			more = TRUE;
@@ -932,9 +925,7 @@ void do_cmd_open(void)
 		o_idx = chest_check(y, x);
 
 		/* Nothing useful */
-		if (!((c_ptr->feat >= FEAT_DOOR_HEAD) &&
-		      (c_ptr->feat <= FEAT_DOOR_TAIL)) &&
-		    !o_idx)
+		if (!((c_ptr->feat == FEAT_CLOSED) || o_idx))
 		{
 			/* Message */
 			msg_print("You see nothing there to open.");
@@ -1007,7 +998,7 @@ static bool do_cmd_close_aux(int y, int x)
 	else
 	{
 		/* Close the door */
-		cave_set_feat(y, x, FEAT_DOOR_HEAD + 0x00);
+		cave_set_feat(y, x, FEAT_CLOSED);
 
 		/* Update some things */
 		p_ptr->update |= (PU_VIEW | PU_MONSTERS);
@@ -1108,36 +1099,7 @@ void do_cmd_close(void)
 }
 
 
-/*
- * Determine if a given grid may be "tunneled"
- */
-static bool do_cmd_tunnel_test(int y, int x)
-{
-	cave_type *c_ptr = area(y, x);
 
-	/* Must have knowledge */
-	if (!(c_ptr->info & (CAVE_MARK)))
-	{
-		/* Message */
-		msg_print("You see nothing there.");
-
-		/* Nope */
-		return (FALSE);
-	}
-
-	/* Must be a wall/door/etc */
-	if (cave_floor_grid(c_ptr))
-	{
-		/* Message */
-		msg_print("You see nothing there to tunnel.");
-
-		/* Nope */
-		return (FALSE);
-	}
-
-	/* Okay */
-	return (TRUE);
-}
 
 
 
@@ -1178,21 +1140,62 @@ static bool twall(int y, int x, byte feat)
  */
 static bool do_cmd_tunnel_aux(int y, int x)
 {
-	cave_type *c_ptr;
-
 	bool more = FALSE;
-
-	/* Verify legality */
-	if (!do_cmd_tunnel_test(y, x)) return (FALSE);
-
+	
+	cave_type *c_ptr = area(y, x);
+	
+	int action;
+	
+	int dig = p_ptr->skill_dig;
+	
+	s16b fld_idx = field_hook_find(&c_ptr->fld_idx,
+			 FIELD_ACT_INTERACT_TEST, (void *) &action);
+			 
 	/* Take a turn */
 	energy_use = 100;
-
-	/* Get grid */
-	c_ptr = area(y,x);
-
+	
 	/* Sound */
 	sound(SOUND_DIG);
+
+	/* Must have knowledge */
+	if (!(c_ptr->info & (CAVE_MARK)))
+	{
+		/* Message */
+		msg_print("You see nothing there.");
+
+		/* Nope */
+		return (FALSE);
+	}
+
+	if (fld_idx && (action == 0))
+	{
+		if (!field_hook_single(&fld_idx, FIELD_ACT_INTERACT,
+			 (void *) &dig))
+		{
+			/* Notice new floor grids */
+			if (!cave_floor_grid(c_ptr))
+			{
+				/* Update some things */
+				p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS);
+			}
+			
+			/* Finished tunneling */
+			return(FALSE);
+		}
+		
+		/* Keep on tunneling */
+		return (TRUE);
+	}
+
+	/* Must be a wall/door/etc */
+	if (cave_floor_grid(c_ptr))
+	{
+		/* Message */
+		msg_print("You see nothing there to tunnel.");
+
+		/* Nope */
+		return (FALSE);
+	}
 
 	/* Titanium */
 	if ((c_ptr->feat >= FEAT_PERM_EXTRA) &&
@@ -1480,7 +1483,7 @@ void do_cmd_tunnel(void)
 		c_ptr = area(y,x);
 
 		/* No tunnelling through doors */
-		if (((c_ptr->feat >= FEAT_DOOR_HEAD) && (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
+		if ((c_ptr->feat == FEAT_CLOSED) ||
 		((c_ptr->feat >= FEAT_SHOP_HEAD) && (c_ptr->feat <= FEAT_SHOP_TAIL)))
 		{
 			/* Message */
@@ -1527,103 +1530,6 @@ void do_cmd_tunnel(void)
 	if (!more) disturb(0, 0);
 }
 
-
-/*
- * easy_open_door --
- *
- *	If there is a jammed/closed/locked door at the given location,
- *	then attempt to unlock/open it. Return TRUE if an attempt was
- *	made (successful or not), otherwise return FALSE.
- *
- *	The code here should be nearly identical to that in
- *	do_cmd_open_test() and do_cmd_open_aux().
- */
-bool easy_open_door(int y, int x)
-{
-	int i, j;
-
-	cave_type *c_ptr = area(y,x);
-
-	/* Must be a closed door */
-	if (!((c_ptr->feat >= FEAT_DOOR_HEAD) &&
-	      (c_ptr->feat <= FEAT_DOOR_TAIL)))
-	{
-		/* Nope */
-		return (FALSE);
-	}
-
-	/* Jammed door */
-	if (c_ptr->feat >= FEAT_DOOR_HEAD + 0x08)
-	{
-		/* Stuck */
-		msg_print("The door appears to be stuck.");
-	}
-
-	/* Locked door */
-	else if (c_ptr->feat >= FEAT_DOOR_HEAD + 0x01)
-	{
-		/* Disarm factor */
-		i = p_ptr->skill_dis;
-
-		/* Penalize some conditions */
-		if (p_ptr->blind || no_lite()) i = i / 10;
-		if (p_ptr->confused || p_ptr->image) i = i / 10;
-
-		/* Extract the lock power */
-		j = c_ptr->feat - FEAT_DOOR_HEAD;
-
-		/* Extract the difficulty XXX XXX XXX */
-		j = i - (j * 4);
-
-		/* Always have a small chance of success */
-		if (j < 2) j = 2;
-
-		/* Success */
-		if (rand_int(100) < j)
-		{
-			/* Message */
-			msg_print("You have picked the lock.");
-
-			/* Open the door */
-			cave_set_feat(y, x, FEAT_OPEN);
-
-			/* Update some things */
-			p_ptr->update |= (PU_VIEW | PU_MONSTERS);
-
-			/* Sound */
-			sound(SOUND_OPENDOOR);
-
-			/* Gain experience, but not for the locked doors in town */
-			if (dun_level) gain_exp(1);
-		}
-
-		/* Failure */
-		else
-		{
-			/* Failure */
-			if (flush_failure) flush();
-
-			/* Message */
-			msg_print("You failed to pick the lock.");
-		}
-	}
-
-	/* Closed door */
-	else
-	{
-		/* Open the door */
-		cave_set_feat(y, x, FEAT_OPEN);
-
-		/* Update some things */
-		p_ptr->update |= (PU_VIEW | PU_MONSTERS);
-
-		/* Sound */
-		sound(SOUND_OPENDOOR);
-	}
-
-	/* Result */
-	return (TRUE);
-}
 
 /*
  * Perform the basic "disarm" command
@@ -1908,7 +1814,7 @@ void do_cmd_disarm(void)
  */
 static bool do_cmd_bash_aux(int y, int x, int dir)
 {
-	int			bash, temp;
+	int			bash;
 
 	cave_type	*c_ptr;
 
@@ -1927,34 +1833,10 @@ static bool do_cmd_bash_aux(int y, int x, int dir)
 	/* Hack -- Bash power based on strength */
 	/* (Ranges from 3 to 20 to 100 to 200) */
 	bash = adj_str_blow[p_ptr->stat_ind[A_STR]];
-
-	/* Extract door power */
-	temp = ((c_ptr->feat - FEAT_DOOR_HEAD) & 0x07);
-
-	/* Compare bash power to door power XXX XXX XXX */
-	temp = (bash - (temp * 10));
-
-	/* Hack -- always have a chance */
-	if (temp < 1) temp = 1;
-
-	/* Hack -- attempt to bash down the door */
-	if (rand_int(100) < temp)
+	
+	/* Success */
+	if (!field_hook_single(&c_ptr->fld_idx, FIELD_ACT_BASH, (void *) &bash))
 	{
-		/* Message */
-		msg_print("The door crashes open!");
-
-		/* Break down the door */
-		if (rand_int(100) < 50)
-		{
-			cave_set_feat(y, x, FEAT_BROKEN);
-		}
-
-		/* Open the door */
-		else
-		{
-			cave_set_feat(y, x, FEAT_OPEN);
-		}
-
 		/* Sound */
 		sound(SOUND_OPENDOOR);
 
@@ -2049,8 +1931,7 @@ void do_cmd_bash(void)
 		c_ptr = area(y,x);
 
 		/* Nothing useful */
-		if (!((c_ptr->feat >= FEAT_DOOR_HEAD) &&
-		      (c_ptr->feat <= FEAT_DOOR_TAIL)))
+		if (c_ptr->feat != FEAT_CLOSED)
 		{
 			/* Message */
 			msg_print("You see nothing there to bash.");
@@ -2095,6 +1976,7 @@ void do_cmd_bash(void)
 void do_cmd_alter(void)
 {
 	int			y, x, dir;
+	int			action;
 
 	cave_type	*c_ptr;
 
@@ -2144,6 +2026,41 @@ void do_cmd_alter(void)
 			py_attack(y, x);
 		}
 
+		if (field_hook_find(&c_ptr->fld_idx,
+			 FIELD_ACT_INTERACT_TEST, (void *) &action))
+		{
+			switch (action)
+			{
+				case 0:
+				{
+					/* Tunnel */
+					more = do_cmd_tunnel_aux(y, x);
+					break;
+				}
+				
+				case 1:
+				{
+					/* Disarm */
+					more = do_cmd_disarm_aux(c_ptr, dir);
+					break;
+				}
+				
+				case 2:
+				{
+					/* Unlock / open */
+					more = do_cmd_open_aux(y, x);
+					break;
+				}
+				
+				case 3:
+				{
+					/* Bash */
+					more = do_cmd_bash_aux(y, x, dir);
+					break;
+				}
+			}
+		}
+
 		/* Tunnel through walls */
 		else if (((c_ptr->feat >= FEAT_SECRET) &&
 		          (c_ptr->feat <= FEAT_PERM_SOLID)) ||
@@ -2158,19 +2075,10 @@ void do_cmd_alter(void)
 			more = do_cmd_tunnel_aux(y, x);
 		}
 
-		/* Bash jammed doors */
-		else if ((c_ptr->feat >= FEAT_DOOR_HEAD + 0x08) &&
-		         (c_ptr->feat <= FEAT_PERM_SOLID))
-		{
-			/* Tunnel */
-			more = do_cmd_bash_aux(y, x, dir);
-		}
-
 		/* Open closed doors */
-		else if ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
-		         (c_ptr->feat <= FEAT_PERM_SOLID))
+		else if (c_ptr->feat == FEAT_CLOSED)
 		{
-			/* Tunnel */
+			/* open */
 			more = do_cmd_open_aux(y, x);
 		}
 
@@ -2178,15 +2086,8 @@ void do_cmd_alter(void)
 		else if ((c_ptr->feat == FEAT_OPEN) ||
 		         (c_ptr->feat == FEAT_BROKEN))
 		{
-			/* Tunnel */
+			/* close */
 			more = do_cmd_close_aux(y, x);
-		}
-
-		/* Disarm traps */
-		else if (is_visible_trap(c_ptr))
-		{
-			/* Tunnel */
-			more = do_cmd_disarm_aux(c_ptr, dir);
 		}
 
 		/* Oops */
@@ -2269,8 +2170,7 @@ void do_cmd_spike(void)
 		c_ptr = area(y,x);
 
 		/* Require closed door */
-		if (!((c_ptr->feat >= FEAT_DOOR_HEAD) &&
-		      (c_ptr->feat <= FEAT_DOOR_TAIL)))
+		if (c_ptr->feat != FEAT_CLOSED)
 		{
 			/* Message */
 			msg_print("You see nothing there to spike.");
@@ -2304,12 +2204,9 @@ void do_cmd_spike(void)
 
 			/* Successful jamming */
 			msg_print("You jam the door with a spike.");
-
-			/* Convert "locked" to "stuck" XXX XXX XXX */
-			if (c_ptr->feat < FEAT_DOOR_HEAD + 0x08) c_ptr->feat += 0x08;
-
-			/* Add one spike to the door */
-			if (c_ptr->feat < FEAT_DOOR_TAIL) c_ptr->feat++;
+			
+			/* Make a jammed door on the square */
+			make_lockjam_door(y, x, 1, TRUE);
 
 			/* Use up, and describe, a single spike, from the bottom */
 			inven_item_increase(item, -1);

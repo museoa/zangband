@@ -1620,7 +1620,7 @@ void py_attack(int y, int x)
 				/* Make a special monk attack */
 				monk_attack(m_ptr, &k, m_name);
 			}
-
+			
 			/* Handle normal weapon */
 			else if (o_ptr->k_idx)
 			{
@@ -1729,6 +1729,12 @@ void py_attack(int y, int x)
 						}
 					}
 				}
+			}
+			
+			/* Bare hands and not a monk */
+			else
+			{
+				msg_format("You punch %s", m_name); break;			
 			}
 
 			/* No negative damage */
@@ -2367,14 +2373,13 @@ void move_player(int dir, int do_pickup)
 	}
 
 	/* Closed door */
-	else if ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
-	         (c_ptr->feat <= FEAT_DOOR_TAIL))
+	else if (c_ptr->feat == FEAT_CLOSED)
 	{
 		/* Pass through the door? */
 		if (p_can_pass_walls)
 		{
 			/* Automatically open the door? */
-			if (easy_open && easy_open_door(y, x))
+			if (easy_open && do_cmd_open_aux(y, x))
 			{
 				oktomove = FALSE;
 
@@ -2402,7 +2407,7 @@ void move_player(int dir, int do_pickup)
 			else
 			{
 				/* Try to open a door if is there */
-				if (easy_open && easy_open_door(y, x)) return;
+				if (easy_open && do_cmd_open_aux(y, x)) return;
 
 				msg_print("There is a closed door blocking your way.");
 

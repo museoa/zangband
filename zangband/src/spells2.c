@@ -1396,10 +1396,9 @@ bool detect_doors(void)
 			}
 
 			/* Detect doors */
-			if (((c_ptr->feat >= FEAT_DOOR_HEAD) &&
-			     (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
-			    ((c_ptr->feat == FEAT_OPEN) ||
-			     (c_ptr->feat == FEAT_BROKEN)))
+			if ((c_ptr->feat == FEAT_CLOSED) ||
+			    (c_ptr->feat == FEAT_OPEN) ||
+			     (c_ptr->feat == FEAT_BROKEN))
 			{
 				/* Hack -- Memorize */
 				c_ptr->info |= (CAVE_MARK);
@@ -3813,14 +3812,14 @@ bool wizard_lock(int dir)
 bool destroy_door(int dir)
 {
 	u16b flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM;
-	return (project_hook(GF_KILL_DOOR, dir, 0, flg));
+	return (project_hook(GF_KILL_DOOR, dir, 60, flg));
 }
 
 
 bool disarm_trap(int dir)
 {
 	u16b flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM;
-	return (project_hook(GF_KILL_TRAP, dir, 0, flg));
+	return (project_hook(GF_KILL_TRAP, dir, 60, flg));
 }
 
 

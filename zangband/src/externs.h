@@ -526,7 +526,7 @@ extern void do_cmd_fire(void);
 extern void do_cmd_fire_aux(int item, object_type *j_ptr);
 extern void do_cmd_throw(void);
 extern void do_cmd_throw_aux(int mult);
-extern bool easy_open_door(int y, int x);
+extern bool do_cmd_open_aux(int y, int x);
 extern bool do_cmd_disarm_aux(cave_type *c_ptr, int dir);
 
 /* cmd3.c */
@@ -1225,7 +1225,7 @@ extern void field_copy(field_type *f_ptr, field_type *j_ptr);
 extern s16b field_add(field_type *f_ptr, s16b *fld_idx2);
 extern void field_sort_priority(s16b *fld_idx_ptr);
 extern void field_prep(field_type *f_ptr, int t_idx);
-extern bool field_is_type(s16b fld_idx, byte typ);
+extern s16b field_is_type(s16b fld_idx, byte typ);
 extern s16b field_first_known(s16b fld_idx, byte typ);
 extern bool field_is_known_type(s16b fld_idx, byte typ);
 extern u16b fields_have_flags(s16b fld_idx, u16b info);
@@ -1236,6 +1236,7 @@ extern s16b *field_find(s16b fld_idx);
 extern bool field_hook_single(s16b *field_ptr, int action, void *action_struct);
 extern void field_hook(s16b *field_ptr, int action, void *action_struct);
 extern void field_hook_special(s16b *field_ptr, u16b t_idx, void *action_struct);
+extern s16b field_hook_find(s16b *field_ptr, int action, void *action_struct);
 extern void process_fields(void);
 extern void test_field_data_integtrity(void);
 extern void field_action_nothing(s16b **field_ptr, void *nothing);
@@ -1245,6 +1246,11 @@ extern void field_action_glyph_explode(s16b **field_ptr, void *mon_enter_test);
 extern void field_action_corpse_decay(s16b **field_ptr, void *nothing);
 extern void field_action_corpse_raise(s16b **field_ptr, void *input);
 extern void field_action_corpse_init(s16b **field_ptr, void *input);
+extern void field_action_wall_tunnel(s16b **field_ptr, void *input);
+extern void field_action_interact_tunnel(s16b **field_ptr, void *output);
+extern void field_action_interact_disarm(s16b **field_ptr, void *output);
+extern void field_action_interact_open(s16b **field_ptr, void *output);
+extern void field_action_interact_bash(s16b **field_ptr, void *output);
 extern void place_trap(int y, int x);
 extern void field_action_trap_init(s16b **field_ptr, void *input);
 extern void field_action_trap_disarm(s16b **field_ptr, void *input);
@@ -1274,10 +1280,11 @@ extern void field_action_hit_trap_drain_magic(s16b **field_ptr, void *nothing);
 extern void field_action_hit_trap_aggravate(s16b **field_ptr, void *nothing);
 extern void field_action_hit_trap_summon(s16b **field_ptr, void *nothing);
 extern void field_action_hit_trap_lose_memory(s16b **field_ptr, void *nothing);
-
-
-
-
+extern void make_lockjam_door(s16b y, s16b x, int power, bool jam);
+extern void field_action_door_unlock(s16b **field_ptr, void *input);
+extern void field_action_door_bash(s16b **field_ptr, void *input);
+extern void field_action_door_monster(s16b **field_ptr, void *input);
+extern void field_action_door_interact(s16b **field_ptr, void *input);
 
 /*
  * Hack -- conditional (or "bizarre") externs

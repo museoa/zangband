@@ -1953,8 +1953,7 @@ static bool target_set_accept(int y, int x)
 		    (c_ptr->feat <= FEAT_SHOP_TAIL)) return (TRUE);
 
 		/* Notice doors */
-		if ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
-		    (c_ptr->feat <= FEAT_DOOR_TAIL)) return (TRUE);
+		if (c_ptr->feat == FEAT_CLOSED) return (TRUE);
 
 		/* Notice rubble */
 		if (c_ptr->feat == FEAT_RUBBLE) return (TRUE);
@@ -2477,7 +2476,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 			{
 				s2 = "on ";
 			}
-			else if (*s2 && ((feat >= FEAT_DOOR_HEAD) &&
+			else if (*s2 && ((feat >= FEAT_CLOSED) &&
 				(feat <= FEAT_PERM_SOLID)))
 			{
 				s2 = "in ";

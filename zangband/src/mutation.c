@@ -1942,7 +1942,7 @@ void mutation_power_aux(u32b power)
 				}
 				else
 				{
-					if ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
+					if ((c_ptr->feat >= FEAT_CLOSED) &&
 						(c_ptr->feat <= FEAT_RUBBLE))
 					{
 						(void)set_food(p_ptr->food + 3000);

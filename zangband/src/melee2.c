@@ -2529,98 +2529,6 @@ static void process_monster(int m_idx)
 			if (player_can_see_bold(ny, nx)) do_view = TRUE;
 		}
 
-		/* Handle doors and secret doors */
-		else if (((c_ptr->feat >= FEAT_DOOR_HEAD) &&
-		          (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
-		          (c_ptr->feat == FEAT_SECRET))
-		{
-			bool may_bash = TRUE;
-
-			/* Take a turn */
-			do_turn = TRUE;
-
-			/* Creature can open doors. */
-			if ((r_ptr->flags2 & RF2_OPEN_DOOR) &&
-				 (!is_pet(m_ptr) || p_ptr->pet_open_doors))
-			{
-				/* Closed doors and secret doors */
-				if ((c_ptr->feat == FEAT_DOOR_HEAD) ||
-					(c_ptr->feat == FEAT_SECRET))
-				{
-					/* The door is open */
-					did_open_door = TRUE;
-
-					/* Do not bash the door */
-					may_bash = FALSE;
-				}
-
-				/* Locked doors (not jammed) */
-				else if (c_ptr->feat < FEAT_DOOR_HEAD + 0x08)
-				{
-					int k;
-
-					/* Door power */
-					k = ((c_ptr->feat - FEAT_DOOR_HEAD) & 0x07);
-
-					/* Try to unlock it XXX XXX XXX */
-					if (rand_int(m_ptr->hp / 10) > k)
-					{
-						/* Unlock the door */
-						cave_set_feat(ny, nx, FEAT_DOOR_HEAD + 0x00);
-
-						/* Do not bash the door */
-						may_bash = FALSE;
-					}
-				}
-			}
-
-			/* Stuck doors -- attempt to bash them down if allowed */
-			if (may_bash && (r_ptr->flags2 & RF2_BASH_DOOR) &&
-				(!is_pet(m_ptr) || p_ptr->pet_open_doors))
-			{
-				int k;
-
-				/* Door power */
-				k = ((c_ptr->feat - FEAT_DOOR_HEAD) & 0x07);
-
-				/* Attempt to Bash XXX XXX XXX */
-				if (rand_int(m_ptr->hp / 10) > k)
-				{
-					/* Message */
-					msg_print("You hear a door burst open!");
-
-					/* Disturb (sometimes) */
-					if (disturb_minor) disturb(0, 0);
-
-					/* The door was bashed open */
-					did_bash_door = TRUE;
-
-					/* Hack -- fall into doorway */
-					do_move = TRUE;
-				}
-			}
-
-
-			/* Deal with doors in the way */
-			if (did_open_door || did_bash_door)
-			{
-				/* Break down the door */
-				if (did_bash_door && (rand_int(100) < 50))
-				{
-					cave_set_feat(ny, nx, FEAT_BROKEN);
-				}
-
-				/* Open the door */
-				else
-				{
-					cave_set_feat(ny, nx, FEAT_OPEN);
-				}
-
-				/* Handle viewable doors */
-				if (player_can_see_bold(ny, nx)) do_view = TRUE;
-			}
-		}
-
 		/* Some monsters never attack */
 		if (do_move && (ny == py) && (nx == px) &&
 			(r_ptr->flags1 & RF1_NEVER_BLOW))
@@ -2651,8 +2559,30 @@ static void process_monster(int m_idx)
 		field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
 			 (void *) &mon_enter_test);
 			 
+		/* Take turn in some cases. */
+		if (!mon_enter_test.do_move && do_move) do_turn;
+		
 		/* Get result */
 		do_move = mon_enter_test.do_move;
+
+		/* Handle closed doors and secret doors */
+		if (do_move && ((c_ptr->feat == FEAT_CLOSED)
+			 || (c_ptr->feat == FEAT_SECRET)) &&
+			 (r_ptr->flags2 & RF2_OPEN_DOOR) &&
+			 (!is_pet(m_ptr) || p_ptr->pet_open_doors))
+		{
+			/* Open the door */
+			cave_set_feat(ny, nx, FEAT_OPEN);
+
+			/* Handle viewable doors */
+			if (player_can_see_bold(ny, nx)) do_view = TRUE;
+				
+			/* Take a turn */
+			do_turn = TRUE;
+				
+			/* Do not move in any case. */
+			do_move = FALSE;
+		}
 
 		/* The player is in the way.  Attack him. */
 		if (do_move && (ny == py) && (nx == px))

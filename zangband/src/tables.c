@@ -6512,6 +6512,21 @@ field_action f_action[FIELD_ACTION_TYPES] =
 	/* Corpse raising function for spell */
 	{field_action_corpse_raise, "field_action_corpse_raise"},
 	
+	/* Tunnel into a "standard" wall to pass */
+	{field_action_wall_tunnel, "field_action_wall_tunnel"},
+	
+	/* Interact with grid 'tunnels' */
+	{field_action_interact_tunnel, "field_action_interact_tunnel"},
+	
+	/* Interact with grid 'disarms' */
+	{field_action_interact_disarm, "field_action_interact_disarm"},
+	
+	/* Interact with grid 'opens' */
+	{field_action_interact_open, "field_action_interact_open"},
+	
+	/* Interact with grid 'bashes' */
+	{field_action_interact_bash, "field_action_interact_bash"},
+	
 	/* Trap init function */
 	{field_action_trap_init, "field_action_trap_init"},
 	
@@ -6594,6 +6609,18 @@ field_action f_action[FIELD_ACTION_TYPES] =
 	{field_action_hit_trap_summon, "field_action_hit_trap_summon"},
 	
 	/* Lose Memory Trap */
-	{field_action_hit_trap_lose_memory, "field_action_hit_trap_lose_memory"}
+	{field_action_hit_trap_lose_memory, "field_action_hit_trap_lose_memory"},
+	
+	/* Attempt to unlock a door */
+	{field_action_door_unlock, "field_action_door_unlock"},
+	
+	/* Attempt to bash a door */
+	{field_action_door_bash, "field_action_door_bash"},
+	
+	/* Monster attemts to enter door */
+	{field_action_door_monster, "field_action_door_monster"},
+	
+	/* Interact with grid looking at door */
+	{field_action_door_interact, "field_action_door_interact"}
 };
 

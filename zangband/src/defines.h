@@ -40,7 +40,7 @@
 #define VERSION_MINOR   8
 #define VERSION_PATCH   1
 
-#define SAVEFILE_VERSION 16
+#define SAVEFILE_VERSION 17
 
 /* Added for ZAngband */
 #ifdef USE_SCRIPT
@@ -887,8 +887,16 @@
 #endif /* 0 */
 
 /* Doors */
-#define FEAT_DOOR_HEAD          0x20
-#define FEAT_DOOR_TAIL          0x2F
+/* #define FEAT_DOOR_HEAD          0x20 Locked and jammed */
+/* #define FEAT_DOOR_TAIL          0x2F doors are now fields */
+
+#define FEAT_CLOSED				0x20
+
+
+/* A big gap for expansion */
+
+
+
 
 /* Extra */
 #define FEAT_SECRET             0x30
@@ -1024,6 +1032,7 @@
 #define FT_TRAP_AGGRAVATE	0x001D
 #define FT_TRAP_SUMMON		0x001E
 #define FT_TRAP_LOSE_MEMORY	0x001F
+#define FT_LOCKJAM_DOOR		0x0020
 
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
 
@@ -3740,17 +3749,17 @@ extern int PlayerUID;
 #define FIELD_ACT_OBJECT_ON		9	/* Object is on square */
 #define FIELD_ACT_INTERACT		10  /* Type-specific interation */
 #define FIELD_ACT_MAGIC_TARGET	11	/* Targeting this square */
-#define FIELD_ACT_XXX12			12	
+#define FIELD_ACT_BASH			12	/* Bashing the square */
 #define FIELD_ACT_EXIT			13	/* Field is destroyed */
 #define FIELD_ACT_MONSTER_AI	14	/* Monster AI hook */
 #define FIELD_ACT_SPECIAL		15	/* Special, type specific action */
-#define FIELD_ACT_XXX16			16
+#define FIELD_ACT_INTERACT_TEST	16	/* Test for type of player interaction */
 #define FIELD_ACT_MON_ENTER_TEST 17 /* Monster attempts to enter grid */
 
 #define FIELD_ACTION_MAX		18	/* The last action + 1 */
 
 
-#define FIELD_ACTION_TYPES  36 /* Number of FIELD_ACT functions in tables.c */
+#define FIELD_ACTION_TYPES  45 /* Number of FIELD_ACT functions in tables.c */
 
 
 
