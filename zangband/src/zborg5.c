@@ -501,30 +501,6 @@ static int get_blank_kill(void)
 
 
 /*
- * Get a new kill entry for a list
- */
-static int get_new_mon(byte type)
-{
-	int who;
-
-	borg_kill *kill;
-	
-	/* Get new kill */
-	who = get_blank_kill();
-	
-	kill = &borg_kills[who];
-	
-	/* Set type */
-	kill->type = type;
-	
-	borg_note(format("# Getting new monster entry. (%d)", who));
-
-	/* Done */
-	return (who);
-}
-
-
-/*
  * Merge an old "kill" record
  */
 static void borg_merge_kill(int who)
@@ -564,8 +540,6 @@ void borg_delete_kill(int who)
 	/* Wipe goals */
 	goal = 0;
 }
-
-
 
 
 /*
@@ -2107,10 +2081,12 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 	 */
 	if (map->monster)
 	{
+		borg_kill *kill;
+	
 		/* Is the monster known? */
 		if (mb_ptr->kill && (map->monster == mb_ptr->monster))
 		{
-			borg_kill *kill = &borg_kills[mb_ptr->kill];
+			kill = &borg_kills[mb_ptr->kill];
 		
 			/* Remove it from the old list. */
 			kill->type = BORG_MON_USED;
@@ -2120,14 +2096,19 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 			/* Is it a new monster? */
 			if (mb_ptr->kill)
 			{
-				borg_kill *kill = &borg_kills[mb_ptr->kill];
+				kill = &borg_kills[mb_ptr->kill];
 				
 				/* Move old entry into "moved" list */
 				kill->type = BORG_MON_MOVE;
 			}
-			
-			/* Add to the "new" list */
-			mb_ptr->kill = get_new_mon(BORG_MON_NEW);
+						
+			/* Get new kill */
+			mb_ptr->kill = get_blank_kill();
+	
+			kill = &borg_kills[mb_ptr->kill];
+	
+			/* Set type */
+			kill->type = BORG_MON_NEW;
 			
 			/* Fill in information for new monster */
 			borg_new_kill(map->monster, mb_ptr->kill, x, y);
