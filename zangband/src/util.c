@@ -1830,6 +1830,29 @@ s16b quark_add(cptr str)
 }
 
 /*
+ * Like quark_add(), but take a format string.
+ */
+s16b quark_fmt(cptr str, ...)
+{
+	va_list vp;
+
+	char buf[1024];
+
+	/* Begin the Varargs Stuff */
+	va_start(vp, str);
+
+	/* Format the args, save the length */
+	(void)vstrnfmt(buf, 1024, str, &vp);
+
+	/* End the Varargs Stuff */
+	va_end(vp);
+
+	/* Quark stuff */
+	return (quark_add(buf));
+}
+
+
+/*
  * Remove the quark
  */
 void quark_remove(s16b *i)
