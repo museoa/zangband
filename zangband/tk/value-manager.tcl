@@ -640,21 +640,6 @@ proc Setting {keyword args} {
 	return
 }
 
-# SettingDesc --
-#
-#	Return the human-readable description for a setting.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc SettingDesc {keyword} {
-
-	return [angband setting desc $keyword]
-}
-
 set data {}
 lappend data \
 	"Ancient Dragons" "-d_char D" \
