@@ -2303,7 +2303,7 @@ static void angtk_character_generated(void)
 			"You must call \"angband init_icons\"");
 	}
 
-#if 1
+#if 0
 	/* Process each grid */
 	for (y = 0; y < MAX_HGT; y++)
 	{

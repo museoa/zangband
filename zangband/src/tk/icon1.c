@@ -603,6 +603,7 @@ void get_display_info(int y, int x, t_display *displayPtr)
 
 bool is_wall(int y, int x)
 {
+#if 0
 	int f_idx = area(x, y)->feat;
 
 	if ((f_idx == FEAT_SECRET) ||
@@ -610,15 +611,20 @@ bool is_wall(int y, int x)
 	{
 		return TRUE;
 	}
+#endif /* 0 */
+
 	return FALSE;
 }
 
 bool is_door(int y, int x)
 {
+#if 0
 	int f_idx = area(x, y)->feat;
 
 	if ((f_idx == FEAT_OPEN || f_idx == FEAT_BROKEN) || (f_idx == FEAT_CLOSED))
 		return TRUE;
+#endif /* 0 */
+
 	return FALSE;	
 }
 
