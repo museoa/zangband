@@ -357,7 +357,6 @@ static void build_type1(int by0, int bx0)
 			{
 				c_ptr = &cave[y][x];
 				c_ptr->feat = FEAT_WALL_INNER;
-				g_grid[y][x].xtra |= GRID_XTRA_PILLAR; /* TNB */
 			}
 		}
 	}
@@ -378,11 +377,6 @@ static void build_type1(int by0, int bx0)
 
 			c_ptr = &cave[y2 - 1][x2 - 1];
 			c_ptr->feat = FEAT_WALL_INNER;
-
-			g_grid[y1 + 1][x1 + 1].xtra |= GRID_XTRA_PILLAR; /* TNB */
-			g_grid[y1 + 1][x2 - 1].xtra |= GRID_XTRA_PILLAR; /* TNB */
-			g_grid[y2 - 1][x1 + 1].xtra |= GRID_XTRA_PILLAR; /* TNB */
-			g_grid[y2 - 1][x2 - 1].xtra |= GRID_XTRA_PILLAR; /* TNB */
 		}
 	}
 
@@ -395,8 +389,6 @@ static void build_type1(int by0, int bx0)
 			c_ptr->feat = FEAT_WALL_INNER;
 			c_ptr = &cave[y][x2];
 			c_ptr->feat = FEAT_WALL_INNER;
-			g_grid[y][x1].xtra |= GRID_XTRA_PILLAR;	/* TNB */
-			g_grid[y][x2].xtra |= GRID_XTRA_PILLAR;	/* TNB */
 		}
 		for (x = x1 + 2; x <= x2 - 2; x += 2)
 		{
@@ -404,8 +396,6 @@ static void build_type1(int by0, int bx0)
 			c_ptr->feat = FEAT_WALL_INNER;
 			c_ptr = &cave[y2][x];
 			c_ptr->feat = FEAT_WALL_INNER;
-			g_grid[y1][x].xtra |= GRID_XTRA_PILLAR;	/* TNB */
-			g_grid[y2][x].xtra |= GRID_XTRA_PILLAR;	/* TNB */
 		}
 	}
 	/* Hack -- Occasional divided room */
@@ -814,7 +804,6 @@ static void build_type3(int by0, int bx0)
 			{
 				c_ptr = &cave[yval][xval];
 				c_ptr->feat = FEAT_WALL_INNER;
-				g_grid[yval][xval].xtra |= GRID_XTRA_PILLAR; /* TNB */
 			}
 
 			break;
@@ -1120,7 +1109,6 @@ static void build_type4(int by0, int bx0)
 					{
 						c_ptr = &cave[y][x];
 						c_ptr->feat = FEAT_WALL_INNER;
-						g_grid[y][x].xtra |= GRID_XTRA_PILLAR; /* TNB */
 					}
 				}
 			}

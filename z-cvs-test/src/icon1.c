@@ -179,22 +179,6 @@ void get_grid_info(int y, int x, t_grid *gridPtr)
 	gridPtr->o_idx = 0;
 	gridPtr->m_idx = 0;
 
-#ifdef ALLOW_PILE_IMAGE
-
-	/*
-	 * Note: This doesn't really depend on the easy_floor option.
-	 * We could add another option just for this.
-	 */
-
-	/* Option: Use a unique icon for piles */
-	if (easy_floor)
-	{
-		/* Forget the pile */
-		gridPtr->xtra &= ~(GRID_XTRA_PILE);
-	}
-	
-#endif /* ALLOW_PILE_IMAGE */
-
 	/* Feature */
 	feat = cave[y][x].feat;
 
@@ -278,31 +262,7 @@ void get_grid_info(int y, int x, t_grid *gridPtr)
 
 		/* Memorized objects */
 		if (!o_ptr->marked) continue;
-		
-#ifdef ALLOW_PILE_IMAGE
-
-		/* Option: Use a unique icon for piles */
-		if (easy_floor)
-		{
-			/* We already saw a marked object */
-			if (gridPtr->o_idx)
-			{
-				/* This is a pile */
-				gridPtr->xtra |= (GRID_XTRA_PILE);
-
-				/* Stop */
-				break;
-			}
-
-			/* Remember the top-most object index */
-			gridPtr->o_idx = this_o_idx;
-
-			/* Next */
-			continue;
-		}
-
-#endif /* ALLOW_PILE_IMAGE */
-		
+				
 		/* Remember the top-most object index */
 		gridPtr->o_idx = this_o_idx;
 
@@ -401,42 +361,12 @@ void get_display_info(int y, int x, t_display *displayPtr)
 	
 		/* Object */
 		else if (o_idx)
-		{
-#ifdef ALLOW_PILE_IMAGE
-	
-			/* This a pile of objects */
-			if (easy_floor && (gridPtr->xtra & GRID_XTRA_PILE))
-			{
-				/* Get the icon assigned to object kind zero */
-				assign = g_assign[ASSIGN_OBJECT].assign[0];
-			}
-	
-			/* Not a pile */
-			else
-			{
-				/* Get the object kind */
-				int k_idx = o_list[o_idx].k_idx;
-	
-				/* XXX Hack -- Hallucination */
-				if (p_ptr->image)
-				{
-					/* Get a random object kind */
-					k_idx = g_image_object[k_idx];
-				}
-		
-				/* Get the icon assigned to the object kind */
-				assign = g_assign[ASSIGN_OBJECT].assign[k_idx];
-			}
-			
-#else /* ALLOW_PILE_IMAGE */
-	
+		{	
 			/* Get the object kind */
 			int k_idx = o_list[o_idx].k_idx;
 	
 			/* Get the icon assigned to the object kind */
 			assign = g_assign[ASSIGN_OBJECT].assign[k_idx];
-	
-#endif /* ALLOW_PILE_IMAGE */
 		}
 
 		/*
@@ -611,7 +541,7 @@ void get_display_info(int y, int x, t_display *displayPtr)
 	 * Get the icon from the global icon map. The g_icon_map[]
 	 * array allows us to use different icons for the same
 	 * feature index. For example, doors may be vertical or
-	 * horizontal, and some walls are actually pillars.
+	 * horizontal.
 	 */
 	for (layer = 0; layer < ICON_LAYER_MAX; layer++)
 	{
@@ -1196,8 +1126,8 @@ void angtk_feat_known(int y, int x)
  * This routine determines the icon to use for the given cave
  * location. It is called after the dungeon is created or loaded
  * from the savefile, and whenever a feature changes. It handles
- * the possible TYPE_ALTERNATE assignments used to display doors
- * and pillars. It handles any special vault icons as well.
+ * the possible TYPE_ALTERNATE assignments used to display doors.
+ * It handles any special vault icons as well.
  */
 void set_grid_assign(int y, int x)
 {
@@ -1291,10 +1221,9 @@ g_grid[y][x].xtra &= ~0x0001;
 		{
 			/* The reason must be REASON_FEATURE */
 			t_alternate *alternatePtr = &g_alternate[assign.alternate.index];
-			int pillar = (g_grid[y][x].xtra & GRID_XTRA_PILLAR) != 0;
 	
 			/* Index 0 is normal granite wall, 1 is pillar */
-			iconSpec = alternatePtr->icon[pillar];
+			iconSpec = alternatePtr->icon[0];
 
 			assign.assignType = ASSIGN_TYPE_ICON;
 			assign.icon.type = iconSpec.type;
@@ -1341,10 +1270,9 @@ g_grid[y][x].xtra &= ~0x0001;
 			{
 				/* The reason must be REASON_FEATURE */
 				t_alternate *alternatePtr = &g_alternate[assign.alternate.index];
-				int pillar = (g_grid[y][x].xtra & GRID_XTRA_PILLAR) != 0;
 		
 				/* Index 0 is normal granite wall, 1 is pillar */
-				iconSpec = alternatePtr->icon[pillar];
+				iconSpec = alternatePtr->icon[0];
 
 				assign.assignType = ASSIGN_TYPE_ICON;
 				assign.icon.type = iconSpec.type;
@@ -2321,7 +2249,7 @@ void init_icons(int size, int depth)
 	 * are not calculated for visibility or light radius. This
 	 * array allows different icons to be assigned to the same
 	 * feature type. For example, doors are horizontal or vertical,
-	 * and pillars have different icons, and the town has a varied
+	 * and have different icons, and the town has a varied
 	 * set of icons.
 	 */
 	for (i = 0; i < MAX_HGT; i++)

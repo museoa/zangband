@@ -58,7 +58,6 @@ extern bool g_initialized;
 extern bool game_in_progress;
 extern cptr ANGBAND_DIR_ROOT;
 extern cptr ANGBAND_DIR_TK;
-extern cptr ANGBAND_DIR_COMMON;
 
 /* canv-widget.c */
 extern void CanvasWidget_Idle(void);
@@ -89,21 +88,10 @@ extern byte *g_feat_flag;
 #define GRID_LITE_DARK 2
 
 /* Constants for t_grid.xtra */
-#define GRID_XTRA_LITE_0 0x0001 /* Light radius bit 1/2 (NOT USED) */
-#define GRID_XTRA_LITE_1 0x0002 /* Light radius bit 2/2 (NOT USED) */
-#define GRID_XTRA_PILLAR 0x0004 /* Grid is a pillar */
 #define GRID_XTRA_ISVERT 0x0008 /* Door is vertical */
 #define GRID_XTRA_WALL 0x0010 /* Is a wall or secret door */
 #define GRID_XTRA_DOOR 0x0020 /* Is a door */
 
-/*
- * Option: Use unique image/description for floor stack of items.
- */
-#define ALLOW_PILE_IMAGE
-
-#ifdef ALLOW_PILE_IMAGE
-#define GRID_XTRA_PILE   0x8000 /* Pile of items */
-#endif /* ALLOW_PILE_IMAGE */
 
 /* Constants for t_grid.shape */
 enum {
@@ -123,7 +111,6 @@ GRID_SHAPE_QUAD,
 GRID_SHAPE_MAX
 };
 
-extern int wall_shape(int y, int x, bool force);
 extern bool is_door(int y, int x);
 extern bool is_wall(int y, int x);
 
