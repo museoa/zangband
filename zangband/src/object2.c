@@ -1319,7 +1319,7 @@ s32b object_value_real(const object_type *o_ptr)
 			/* Armour */
 
 			/* Factor in the bonuses */
-			value += (bonus_value(o_ptr->to_h - k_ptr->to_a +
+			value += (bonus_value(o_ptr->to_h - k_ptr->to_h +
 								  o_ptr->to_d - k_ptr->to_d) * 20);
 			value += (bonus_value((o_ptr->to_a - k_ptr->to_a) * 2) * 10);
 
