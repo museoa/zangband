@@ -161,8 +161,7 @@ static void prt_binary(u32b flags, int col, int row)
 	}
 }
 
-#ifdef ALLOW_FLOAT
-#undef double
+#if 0
 static double pow4(double n)
 {
     double pow2 = n * n;
@@ -246,7 +245,7 @@ static void get_obj_dist(int min_level, int obj_num, u32b rarity[MAX_DEPTH])
     for (i = 0; i < MAX_DEPTH; i++)
         rarity[i] = (int)(0x10000 * r_db[i]);
 }
-#endif /* ALLOW_FLOAT */
+#endif /* 0 */
 
 /*
  * Output a rarity graph for a type of object.
@@ -291,15 +290,15 @@ static void prt_alloc(const object_type *o_ptr, int col, int row, u32b monte)
     }
     else
     {
-#ifdef ALLOW_FLOAT
+#if 0
         /* Calculate */
         get_obj_dist(0, kind, rarity);
 
         for (i = 0; i < MAX_DEPTH; i++)
             total[i] = 0x10000;
-#else
+#else /* 0 */
         return;
-#endif /* ALLOW_FLOAT */
+#endif /* 0 */
     }
 
 	/* Find maxima */
