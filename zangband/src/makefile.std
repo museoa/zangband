@@ -130,11 +130,11 @@ CC = gcc
 ## Note: Get the 16x16.bmp file, and put in Zdirectory/lib/xtra/graf
 ##       to get 256 colours.
 ##
-CFLAGS = -Wall -O2 -fno-strength-reduce -pipe -g \
+CFLAGS = -Wall -O2 -fno-strength-reduce -m486 -pipe -g \
          -D"USE_X11" -D"USE_GCU" -D"USE_TRANSPARENCY"
 LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib
 
-#CFLAGS = -Wall -O2 -fno-strength-reduce -pipe -g \
+#CFLAGS = -Wall -O2 -fno-strength-reduce -m486 -pipe -g \
 #          -D"USE_XAW" -D"USE_GCU" -D"USE_TRANSPARENCY"
 #LIBS = -L/usr/X11R6/lib -lXaw -lXext -lSM -lICE -lXmu -lXt -lX11 -lcurses
 
@@ -142,7 +142,7 @@ LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib
 ##
 ## Variation -- Compile for Linux
 ##
-#CFLAGS = -Wall -O2 -fno-strength-reduce -pipe -g -D"USE_XAW" -D"USE_GCU"
+#CFLAGS = -Wall -O2 -fno-strength-reduce -m486 -pipe -g -D"USE_XAW" -D"USE_GCU"
 #LIBS = -L/usr/X11R6/lib -lXaw -lXext -lSM -lICE -lXmu -lXt \
 #	-lX11 -lcurses
 
@@ -185,7 +185,7 @@ LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib
 ## Variation -- this might work for Linux 1.1.93 using ncurses-1.8.7.
 ##
 #CFLAGS = -I/usr/X11R6/include -I/usr/include/ncurses \
-#         -Wall -O2 -fno-strength-reduce -fomit-frame-pointer \
+#         -Wall -O2 -fno-strength-reduce -fomit-frame-pointer -m486 \
 #         -D"USE_X11" -D"USE_GCU"
 #LIBS = -L/usr/X11R6/lib -lX11 -lncurses -ltermcap
 
@@ -246,6 +246,19 @@ LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib
 #CC = cc
 #CFLAGS = -bnoquiet -O2  -D"USE_X11" -D"SYS_V"
 #LIBS = -lX11 -ltermcap -lcurses -lbsd -lXm -lXmu -lXaw -lXt
+
+
+
+##
+## Variation -- compile for Linux + SVGA Library.
+## Do not use this unless you wnat to play as root in a console.
+## The graphics is really out of date - this combination probably
+## should not be used.  Does anyone feel like fixing main_lsl.c to
+## use the normal scaled graphics?
+#
+#CFLAGS = -Wall -D"USE_LSL"
+#LIBS = -lz -lvgagl -lvga
+
 
 
 #
