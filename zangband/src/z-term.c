@@ -555,9 +555,12 @@ void Term_queue_char(int x, int y, byte a, char c)
 }
 
 /*
- * Mentally draw an attr/char at a given location
+ * Mentally draw a string of attr/chars at a given location
  *
  * Assumes given location and values are valid.
+ *
+ * This function is designed to be fast, with no consistancy checking.
+ * It is used to update the map in the game.
  */
 #ifdef USE_TRANSPARENCY
 void Term_queue_line(int x, int y, int n, byte *a, char *c, byte *ta, char *tc)
@@ -567,7 +570,8 @@ void Term_queue_line(int x, int y, int n, byte *a, char *c)
 {
 	term_win *scrn = Term->scr;
 	
-	bool flag = TRUE;
+	int x1 = -1;
+	int x2 = -1;
 	
 	byte *scr_aa = &scrn->a[y][x];
 	char *scr_cc = &scrn->c[y][x];
@@ -622,22 +626,26 @@ void Term_queue_line(int x, int y, int n, byte *a, char *c)
 		*scr_aa++ = *a++;
 		*scr_cc++ = *c++;
 		
-		/* Check for new min/max col info for this row */
-		if (x < Term->x1[y]) Term->x1[y] = x;
-		if (x > Term->x2[y]) Term->x2[y] = x;
+		/* Track minumum changed column */
+		if (x1 < 0) x1 = x;
+
+		/* Track maximum changed column */
+		x2 = x;
 		
 		x++;
-		
-		/* There was a new character */
-		flag = FALSE;	
 	}
-
-	/* If there were no new characters - exit */
-	if (flag) return;
 	
-	/* Check for new min/max row info */
-	if (y < Term->y1) Term->y1 = y;
-	if (y > Term->y2) Term->y2 = y;
+	/* Expand the "change area" as needed */
+	if (x1 >= 0)
+	{
+		/* Check for new min/max row info */
+		if (y < Term->y1) Term->y1 = y;
+		if (y > Term->y2) Term->y2 = y;
+
+		/* Check for new min/max col info in this row */
+		if (x1 < Term->x1[y]) Term->x1[y] = x1;
+		if (x2 > Term->x2[y]) Term->x2[y] = x2;
+	}
 }
 
 
