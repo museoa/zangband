@@ -268,7 +268,7 @@ F:16,field_action_interact_disarm
 
 # faded rune
 N:23:faded rune
-G:^:d
+G:^:D
 W:100:1:0
 I:FEAT | TRANS
 D:2:125:0:0:0:0:0:0
