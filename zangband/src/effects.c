@@ -2612,7 +2612,7 @@ void take_hit(int damage, cptr hit_from)
 
 
 	/* Paranoia */
-	if (death) return;
+	if (p_ptr->is_dead) return;
 
 	/* Disturb */
 	disturb(1, 0);
@@ -2689,7 +2689,7 @@ void take_hit(int damage, cptr hit_from)
 		p_ptr->leaving = TRUE;
 
 		/* Note death */
-		death = TRUE;
+		p_ptr->is_dead = TRUE;
 
 		if (get_check("Dump the screen? "))
 		{

@@ -464,22 +464,22 @@ void do_cmd_study(void)
 	/* Learn the spell */
 	if (spell < 32)
 	{
-		spell_learned1 |= (1L << spell);
+		p_ptr->spell_learned1 |= (1L << spell);
 	}
 	else
 	{
-		spell_learned2 |= (1L << (spell - 32));
+		p_ptr->spell_learned2 |= (1L << (spell - 32));
 	}
 
 	/* Find the next open entry in "spell_order[]" */
 	for (i = 0; i < 64; i++)
 	{
 		/* Stop at the first empty space */
-		if (spell_order[i] == 99) break;
+		if (p_ptr->spell_order[i] == 99) break;
 	}
 
 	/* Add the spell to the known list */
-	spell_order[i++] = spell;
+	p_ptr->spell_order[i++] = spell;
 
 	/* Mention the result */
 	msg_format("You have learned the %s of %s.",
@@ -2859,19 +2859,19 @@ void do_cmd_cast(void)
 
 		/* A spell was cast */
 		if (!(increment ?
-		    (spell_worked2 & (1L << spell)) :
-		    (spell_worked1 & (1L << spell))))
+		    (p_ptr->spell_worked2 & (1L << spell)) :
+		    (p_ptr->spell_worked1 & (1L << spell))))
 		{
 			int e = s_ptr->sexp;
 
 			/* The spell worked */
 			if (realm == p_ptr->realm1)
 			{
-				spell_worked1 |= (1L << spell);
+				p_ptr->spell_worked1 |= (1L << spell);
 			}
 			else
 			{
-				spell_worked2 |= (1L << spell);
+				p_ptr->spell_worked2 |= (1L << spell);
 			}
 
 			/* Gain experience */

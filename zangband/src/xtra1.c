@@ -758,7 +758,7 @@ static void prt_state(void)
 	}
 
 	/* Resting */
-	else if (resting)
+	else if (p_ptr->resting)
 	{
 		int i;
 
@@ -766,9 +766,9 @@ static void prt_state(void)
 		strcpy(text, "Rest      ");
 
 		/* Extensive (timed) rest */
-		if (resting >= 1000)
+		if (p_ptr->resting >= 1000)
 		{
-			i = resting / 100;
+			i = p_ptr->resting / 100;
 			text[9] = '0';
 			text[8] = '0';
 			text[7] = '0' + (i % 10);
@@ -784,9 +784,9 @@ static void prt_state(void)
 		}
 
 		/* Long (timed) rest */
-		else if (resting >= 100)
+		else if (p_ptr->resting >= 100)
 		{
-			i = resting;
+			i = p_ptr->resting;
 			text[9] = '0' + (i % 10);
 			i = i / 10;
 			text[8] = '0' + (i % 10);
@@ -794,28 +794,28 @@ static void prt_state(void)
 		}
 
 		/* Medium (timed) rest */
-		else if (resting >= 10)
+		else if (p_ptr->resting >= 10)
 		{
-			i = resting;
+			i = p_ptr->resting;
 			text[9] = '0' + (i % 10);
 			text[8] = '0' + (i / 10);
 		}
 
 		/* Short (timed) rest */
-		else if (resting > 0)
+		else if (p_ptr->resting > 0)
 		{
-			i = resting;
+			i = p_ptr->resting;
 			text[9] = '0' + (i);
 		}
 
 		/* Rest until healed */
-		else if (resting == -1)
+		else if (p_ptr->resting == -1)
 		{
 			text[5] = text[6] = text[7] = text[8] = text[9] = '*';
 		}
 
 		/* Rest until done */
-		else if (resting == -2)
+		else if (p_ptr->resting == -2)
 		{
 			text[5] = text[6] = text[7] = text[8] = text[9] = '&';
 		}
@@ -1502,8 +1502,8 @@ static void calc_spells(void)
 	{
 		/* Count known spells */
 		if ((j < 32) ?
-		    (spell_learned1 & (1L << j)) :
-		    (spell_learned2 & (1L << (j - 32))))
+		    (p_ptr->spell_learned1 & (1L << j)) :
+		    (p_ptr->spell_learned2 & (1L << (j - 32))))
 		{
 			num_known++;
 		}
@@ -1517,10 +1517,10 @@ static void calc_spells(void)
 	for (i = 63; i >= 0; i--)
 	{
 		/* Efficiency -- all done */
-		if (!spell_learned1 && !spell_learned2) break;
+		if (!p_ptr->spell_learned1 && !p_ptr->spell_learned2) break;
 
 		/* Access the spell */
-		j = spell_order[i];
+		j = p_ptr->spell_order[i];
 
 		/* Skip non-spells */
 		if (j >= 99) continue;
@@ -1537,20 +1537,20 @@ static void calc_spells(void)
 
 		/* Is it known? */
 		if ((j < 32) ?
-		    (spell_learned1 & (1L << j)) :
-		    (spell_learned2 & (1L << (j - 32))))
+		    (p_ptr->spell_learned1 & (1L << j)) :
+		    (p_ptr->spell_learned2 & (1L << (j - 32))))
 		{
 			/* Mark as forgotten - no longer known */
 			if (j < 32)
 			{
-				spell_forgotten1 |= (1L << j);
-				spell_learned1 &= ~(1L << j);
+				p_ptr->spell_forgotten1 |= (1L << j);
+				p_ptr->spell_learned1 &= ~(1L << j);
 				which = use_realm1;
 			}
 			else
 			{
-				spell_forgotten2 |= (1L << (j - 32));
-				spell_learned2 &= ~(1L << (j - 32));
+				p_ptr->spell_forgotten2 |= (1L << (j - 32));
+				p_ptr->spell_learned2 &= ~(1L << (j - 32));
 				which = use_realm2;
 			}
 
@@ -1571,30 +1571,30 @@ static void calc_spells(void)
 		if (p_ptr->new_spells >= 0) break;
 
 		/* Efficiency -- all done */
-		if (!spell_learned1 && !spell_learned2) break;
+		if (!p_ptr->spell_learned1 && !p_ptr->spell_learned2) break;
 
 		/* Get the (i+1)th spell learned */
-		j = spell_order[i];
+		j = p_ptr->spell_order[i];
 
 		/* Skip unknown spells */
 		if (j >= 99) continue;
 
 		/* Forget it (if learned) */
 		if ((j < 32) ?
-		    (spell_learned1 & (1L << j)) :
-		    (spell_learned2 & (1L << (j - 32))))
+		    (p_ptr->spell_learned1 & (1L << j)) :
+		    (p_ptr->spell_learned2 & (1L << (j - 32))))
 		{
 			/* Mark as forgotten - no longer known */
 			if (j < 32)
 			{
-				spell_forgotten1 |= (1L << j);
-				spell_learned1 &= ~(1L << j);
+				p_ptr->spell_forgotten1 |= (1L << j);
+				p_ptr->spell_learned1 &= ~(1L << j);
 				which = use_realm1;
 			}
 			else
 			{
-				spell_forgotten2 |= (1L << (j - 32));
-				spell_learned2 &= ~(1L << (j - 32));
+				p_ptr->spell_forgotten2 |= (1L << (j - 32));
+				p_ptr->spell_learned2 &= ~(1L << (j - 32));
 				which = use_realm2;
 			}
 
@@ -1615,10 +1615,10 @@ static void calc_spells(void)
 		if (p_ptr->new_spells <= 0) break;
 
 		/* Efficiency -- all done */
-		if (!spell_forgotten1 && !spell_forgotten2) break;
+		if (!p_ptr->spell_forgotten1 && !p_ptr->spell_forgotten2) break;
 
 		/* Get the next spell we learned */
-		j = spell_order[i];
+		j = p_ptr->spell_order[i];
 
 		/* Skip unknown spells */
 		if (j >= 99) break;
@@ -1634,20 +1634,20 @@ static void calc_spells(void)
 
 		/* First set of spells */
 		if ((j < 32) ?
-		    (spell_forgotten1 & (1L << j)) :
-		    (spell_forgotten2 & (1L << (j - 32))))
+		    (p_ptr->spell_forgotten1 & (1L << j)) :
+		    (p_ptr->spell_forgotten2 & (1L << (j - 32))))
 		{
 			/* No longer forgotten - known once more */
 			if (j < 32)
 			{
-				spell_forgotten1 &= ~(1L << j);
-				spell_learned1 |= (1L << j);
+				p_ptr->spell_forgotten1 &= ~(1L << j);
+				p_ptr->spell_learned1 |= (1L << j);
 				which = use_realm1;
 			}
 			else
 			{
-				spell_forgotten2 &= ~(1L << (j - 32));
-				spell_learned2 |= (1L << (j - 32));
+				p_ptr->spell_forgotten2 &= ~(1L << (j - 32));
+				p_ptr->spell_learned2 |= (1L << (j - 32));
 				which = use_realm2;
 			}
 
@@ -1678,8 +1678,8 @@ static void calc_spells(void)
 
 		/* Skip spells we already know */
 		if ((j < 32) ?
-		    (spell_learned1 & (1L << j)) :
-		    (spell_learned2 & (1L << (j - 32))))
+		    (p_ptr->spell_learned1 & (1L << j)) :
+		    (p_ptr->spell_learned2 & (1L << (j - 32))))
 		{
 			continue;
 		}
@@ -2035,7 +2035,7 @@ static void calc_torch(void)
 	/* end experimental mods */
 
 	/* Reduce lite when running if requested */
-	if (running && view_reduce_lite)
+	if (p_ptr->running && view_reduce_lite)
 	{
 		/* Reduce the lite radius if needed */
 		if (p_ptr->cur_lite > 1) p_ptr->cur_lite = 1;

@@ -3038,8 +3038,8 @@ void display_spell_list(void)
 
 			/* Forgotten */
 			else if ((j < 1) ?
-				((spell_forgotten1 & (1L << i))) :
-				((spell_forgotten2 & (1L << (i % 32)))))
+				((p_ptr->spell_forgotten1 & (1L << i))) :
+				((p_ptr->spell_forgotten2 & (1L << (i % 32)))))
 			{
 				/* Forgotten */
 				a = TERM_ORANGE;
@@ -3047,8 +3047,8 @@ void display_spell_list(void)
 
 			/* Unknown */
 			else if (!((j < 1) ?
-				(spell_learned1 & (1L << i)) :
-				(spell_learned2 & (1L << (i % 32)))))
+				(p_ptr->spell_learned1 & (1L << i)) :
+				(p_ptr->spell_learned2 & (1L << (i % 32)))))
 			{
 				/* Unknown */
 				a = TERM_RED;
@@ -3056,8 +3056,8 @@ void display_spell_list(void)
 
 			/* Untried */
 			else if (!((j < 1) ?
-				(spell_worked1 & (1L << i)) :
-				(spell_worked2 & (1L << (i % 32)))))
+				(p_ptr->spell_worked1 & (1L << i)) :
+				(p_ptr->spell_worked2 & (1L << (i % 32)))))
 			{
 				/* Untried */
 				a = TERM_YELLOW;
@@ -3162,8 +3162,8 @@ bool spell_okay(int spell, bool known, int realm)
 
 	/* Spell is forgotten */
 	if ((realm == p_ptr->realm2 - 1) ?
-	    (spell_forgotten2 & (1L << spell)) :
-	    (spell_forgotten1 & (1L << spell)))
+	    (p_ptr->spell_forgotten2 & (1L << spell)) :
+	    (p_ptr->spell_forgotten1 & (1L << spell)))
 	{
 		/* Never okay */
 		return (FALSE);
@@ -3171,8 +3171,8 @@ bool spell_okay(int spell, bool known, int realm)
 
 	/* Spell is learned */
 	if ((realm == p_ptr->realm2 - 1) ?
-	    (spell_learned2 & (1L << spell)) :
-	    (spell_learned1 & (1L << spell)))
+	    (p_ptr->spell_learned2 & (1L << spell)) :
+	    (p_ptr->spell_learned1 & (1L << spell)))
 	{
 		/* Okay to cast, not to study */
 		return (known);
@@ -3419,22 +3419,22 @@ void print_spells(byte *spells, int num, int y, int x, int realm)
 
 		/* Analyze the spell */
 		if ((realm + 1 == p_ptr->realm1) ?
-		    ((spell_forgotten1 & (1L << spell))) :
-		    ((spell_forgotten2 & (1L << spell))))
+		    ((p_ptr->spell_forgotten1 & (1L << spell))) :
+		    ((p_ptr->spell_forgotten2 & (1L << spell))))
 		{
 			comment = " forgotten";
 			line_attr = TERM_YELLOW;
 		}
 		else if (!((realm + 1 == p_ptr->realm1) ?
-		    (spell_learned1 & (1L << spell)) :
-		    (spell_learned2 & (1L << spell))))
+		    (p_ptr->spell_learned1 & (1L << spell)) :
+		    (p_ptr->spell_learned2 & (1L << spell))))
 		{
 			comment = " unknown";
 			line_attr = TERM_L_BLUE;
 		}
 		else if (!((realm + 1 == p_ptr->realm1) ?
-		    (spell_worked1 & (1L << spell)) :
-		    (spell_worked2 & (1L << spell))))
+		    (p_ptr->spell_worked1 & (1L << spell)) :
+		    (p_ptr->spell_worked2 & (1L << spell))))
 		{
 			comment = " untried";
 			line_attr = TERM_L_GREEN;

@@ -1103,7 +1103,7 @@ static void wr_extra(void)
 
 
 	/* Write death */
-	wr_byte(death);
+	wr_byte(p_ptr->is_dead);
 
 	/* Write feeling */
 	wr_byte(feeling);
@@ -1577,17 +1577,17 @@ static bool wr_savefile_new(void)
 
 
 	/* Write spell data */
-	wr_u32b(spell_learned1);
-	wr_u32b(spell_learned2);
-	wr_u32b(spell_worked1);
-	wr_u32b(spell_worked2);
-	wr_u32b(spell_forgotten1);
-	wr_u32b(spell_forgotten2);
+	wr_u32b(p_ptr->spell_learned1);
+	wr_u32b(p_ptr->spell_learned2);
+	wr_u32b(p_ptr->spell_worked1);
+	wr_u32b(p_ptr->spell_worked2);
+	wr_u32b(p_ptr->spell_forgotten1);
+	wr_u32b(p_ptr->spell_forgotten2);
 
 	/* Dump the ordered spells */
 	for (i = 0; i < 64; i++)
 	{
-		wr_byte(spell_order[i]);
+		wr_byte(p_ptr->spell_order[i]);
 	}
 
 
@@ -1645,7 +1645,7 @@ static bool wr_savefile_new(void)
 	wr_byte(p_ptr->pet_pickup_items);
 
 	/* Player is not dead, write the dungeon */
-	if (!death)
+	if (!p_ptr->is_dead)
 	{
 		/* Dump the dungeon */
 		wr_dungeon();
@@ -1893,7 +1893,7 @@ bool load_player(void)
 	turn = 0;
 
 	/* Paranoia */
-	death = FALSE;
+	p_ptr->is_dead = FALSE;
 
 
 	/* Allow empty savefile name */
@@ -2101,10 +2101,10 @@ bool load_player(void)
 		}
 
 		/* Player is dead */
-		if (death)
+		if (p_ptr->is_dead)
 		{
 			/* Player is no longer "dead" */
-			death = FALSE;
+			p_ptr->is_dead = FALSE;
 
 			/* Cheat death */
 			if (arg_wizard)

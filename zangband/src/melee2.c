@@ -3196,7 +3196,7 @@ void process_monsters(int min_energy)
 		process_monster(i);
 
 		/* Hack -- notice death or departure */
-		if (!alive || death) break;
+		if (!p_ptr->playing || p_ptr->is_dead) break;
 
 		/* Notice leaving */
 		if (p_ptr->leaving) break;

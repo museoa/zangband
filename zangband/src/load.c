@@ -1359,7 +1359,7 @@ static void rd_extra(void)
 
 	/* Read "death" */
 	rd_byte(&tmp8u);
-	death = tmp8u;
+	p_ptr->is_dead = tmp8u;
 
 	/* Read "feeling" */
 	rd_byte(&tmp8u);
@@ -2837,16 +2837,16 @@ static errr rd_savefile_new_aux(void)
 
 
 	/* Read spell info */
-	rd_u32b(&spell_learned1);
-	rd_u32b(&spell_learned2);
-	rd_u32b(&spell_worked1);
-	rd_u32b(&spell_worked2);
-	rd_u32b(&spell_forgotten1);
-	rd_u32b(&spell_forgotten2);
+	rd_u32b(&p_ptr->spell_learned1);
+	rd_u32b(&p_ptr->spell_learned2);
+	rd_u32b(&p_ptr->spell_worked1);
+	rd_u32b(&p_ptr->spell_worked2);
+	rd_u32b(&p_ptr->spell_forgotten1);
+	rd_u32b(&p_ptr->spell_forgotten2);
 
 	for (i = 0; i < 64; i++)
 	{
-		rd_byte(&spell_order[i]);
+		rd_byte(&p_ptr->spell_order[i]);
 	}
 
 
@@ -2957,7 +2957,7 @@ static errr rd_savefile_new_aux(void)
 	}
 
 	/* I'm not dead yet... */
-	if (!death)
+	if (!p_ptr->is_dead)
 	{
 		/* Dead players have no dungeon */
 		note("Restoring Dungeon...");

@@ -828,7 +828,7 @@ bool make_attack_spell(int m_idx)
 	if (!chance) return (FALSE);
 
 	/* Stop if player is dead or gone */
-	if (!alive || death) return (FALSE);
+	if (!p_ptr->playing || p_ptr->is_dead) return (FALSE);
 
 	/* Stop if player is leaving */
 	if (p_ptr->leaving) return (FALSE);
@@ -2421,7 +2421,7 @@ bool make_attack_spell(int m_idx)
 
 
 	/* Always take note of monsters that kill you */
-	if (death && (r_ptr->r_deaths < MAX_SHORT))
+	if (p_ptr->is_dead && (r_ptr->r_deaths < MAX_SHORT))
 	{
 		r_ptr->r_deaths++;
 	}

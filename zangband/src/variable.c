@@ -100,13 +100,6 @@ bool create_down_stair;	/* Auto-create "down stairs" */
 
 bool msg_flag;			/* Used in msg_print() for "buffering" */
 
-bool alive;				/* True if game is running */
-
-bool death;				/* True if player has died */
-
-s16b running;			/* Current counter for running, if any */
-s16b resting;			/* Current counter for resting, if any */
-
 s16b min_hgt;			/* Current y bounds of area() */
 s16b max_hgt;
 s16b min_wid;			/* Current x bounds of area() */
@@ -825,18 +818,6 @@ player_sex *sp_ptr;
 player_race *rp_ptr;
 player_class *cp_ptr;
 player_magic *mp_ptr;
-
-
-/*
- * More spell info
- */
-u32b spell_learned1;	/* bit mask of spells learned */
-u32b spell_learned2;	/* bit mask of spells learned */
-u32b spell_worked1;		/* bit mask of spells tried and worked */
-u32b spell_worked2;		/* bit mask of spells tried and worked */
-u32b spell_forgotten1;	/* bit mask of spells learned but forgotten */
-u32b spell_forgotten2;	/* bit mask of spells learned but forgotten */
-byte spell_order[64];	/* order spells learned/remembered/forgotten */
 
 
 /*

@@ -3824,10 +3824,10 @@ void do_cmd_suicide(void)
 	}
 
 	/* Stop playing */
-	alive = FALSE;
+	p_ptr->playing = FALSE;
 
 	/* Kill the player */
-	death = TRUE;
+	p_ptr->is_dead = TRUE;
 
 	/* Leaving */
 	p_ptr->leaving = TRUE;
@@ -3905,7 +3905,7 @@ void do_cmd_save_game(int is_autosave)
  */
 void do_cmd_save_and_exit(void)
 {
-	alive = FALSE;
+	p_ptr->playing = FALSE;
 
 	/* Leaving */
 	p_ptr->leaving = TRUE;
@@ -4388,7 +4388,7 @@ void close_game(void)
 
 
 	/* Handle death */
-	if (death)
+	if (p_ptr->is_dead)
 	{
 		/* Handle retirement */
 		if (total_winner)
@@ -4494,7 +4494,7 @@ void exit_game_panic(void)
 	disturb(1, 0);
 
 	/* Mega-Hack -- Delay death */
-	if (p_ptr->chp < 0) death = FALSE;
+	if (p_ptr->chp < 0) p_ptr->is_dead = FALSE;
 
 	/* Hardcode panic save */
 	panic_save = 1;
@@ -4703,7 +4703,7 @@ static void handle_signal_simple(int sig)
 
 
 	/* Terminate dead characters */
-	if (death)
+	if (p_ptr->is_dead)
 	{
 		/* Mark the savefile */
 		(void)strcpy(died_from, "Abortion");
@@ -4722,10 +4722,10 @@ static void handle_signal_simple(int sig)
 		(void)strcpy(died_from, "Interrupting");
 
 		/* Stop playing */
-		alive = FALSE;
+		p_ptr->playing = FALSE;
 
 		/* Suicide */
-		death = TRUE;
+		p_ptr->is_dead = TRUE;
 
 		/* Leaving */
 		p_ptr->leaving = TRUE;

@@ -4358,20 +4358,20 @@ void disturb(int stop_search, int unused_flag)
 	}
 
 	/* Cancel Resting */
-	if (resting)
+	if (p_ptr->resting)
 	{
 		/* Cancel */
-		resting = 0;
+		p_ptr->resting = 0;
 
 		/* Redraw the state (later) */
 		p_ptr->redraw |= (PR_STATE);
 	}
 
 	/* Cancel running */
-	if (running)
+	if (p_ptr->running)
 	{
 		/* Cancel */
-		running = 0;
+		p_ptr->running = 0;
 
 		/* Check for new panel if appropriate */
 		if (center_player && avoid_center) verify_panel();

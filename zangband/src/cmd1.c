@@ -2299,7 +2299,7 @@ void move_player(int dir, int do_pickup)
 	else if (!(p_can_pass_walls || p_can_pass_fields))
 	{
 		msg_print("You can't cross that!");
-		running = 0;
+		p_ptr->running = 0;
 		oktomove = FALSE;
 	}
 
@@ -2547,7 +2547,7 @@ void move_player(int dir, int do_pickup)
 		 * out of detection range +
 		 * we are running?
 		 */
-		if (disturb_traps && p_ptr->detected && running && 
+		if (disturb_traps && p_ptr->detected && p_ptr->running && 
 			(distance(py, px, p_ptr->detecty, p_ptr->detectx) >= MAX_DETECT))
 		{
 			/* We are out of range */
@@ -2908,12 +2908,12 @@ static void run_init(int dir)
 	if (!dun_level)
 	{
 		/* If in the wilderness - run max 32 squares at a time */
-		running = 32;
+		p_ptr->running = 32;
 	}
 	else
 	{
 		/* Large number to prevent infinite loops */
-		running = 1000;
+		p_ptr->running = 1000;
 	}
 
 	/* Save the direction */
@@ -3496,9 +3496,9 @@ void run_step(int dir)
 	}
 
 	/* Decrease the run counter */
-	if (--running <= 0)
+	if (--p_ptr->running <= 0)
 	{
-		running = 0;
+		p_ptr->running = 0;
 		return;
 	}
 

@@ -931,7 +931,7 @@ static void process_world(void)
 				msg_print("The gates to ANGBAND are now closed.");
 
 				/* Stop playing */
-				alive = FALSE;
+				p_ptr->playing = FALSE;
 
 				/* Leaving */
 				p_ptr->leaving = TRUE;
@@ -1481,7 +1481,7 @@ static void process_world(void)
 
 
 	/* Searching or Resting */
-	if (p_ptr->searching || resting)
+	if (p_ptr->searching || p_ptr->resting)
 	{
 		regen_amount = regen_amount * 2;
 	}
@@ -3331,10 +3331,10 @@ static void process_player(void)
 	/*** Check for interupts ***/
 
 	/* Complete resting */
-	if (resting < 0)
+	if (p_ptr->resting < 0)
 	{
 		/* Basic resting */
-		if (resting == -1)
+		if (p_ptr->resting == -1)
 		{
 			/* Stop resting */
 			if ((p_ptr->chp == p_ptr->mhp) &&
@@ -3345,7 +3345,7 @@ static void process_player(void)
 		}
 
 		/* Complete resting */
-		else if (resting == -2)
+		else if (p_ptr->resting == -2)
 		{
 			/* Stop resting */
 			if ((p_ptr->chp == p_ptr->mhp) &&
@@ -3365,7 +3365,8 @@ static void process_player(void)
 	if (!avoid_abort)
 	{
 		/* Check for "player abort" (semi-efficiently for resting) */
-		if (running || command_rep || (resting && !(resting & 0x0F)))
+		if (p_ptr->running || command_rep ||
+		    (p_ptr->resting && !(p_ptr->resting & 0x0F)))
 		{
 			/* Do not wait */
 			inkey_scan = TRUE;
@@ -3473,13 +3474,13 @@ static void process_player(void)
 		}
 
 		/* Resting */
-		else if (resting)
+		else if (p_ptr->resting)
 		{
 			/* Timed rest */
-			if (resting > 0)
+			if (p_ptr->resting > 0)
 			{
 				/* Reduce rest count */
-				resting--;
+				p_ptr->resting--;
 
 				/* Redraw the state */
 				p_ptr->redraw |= (PR_STATE);
@@ -3490,7 +3491,7 @@ static void process_player(void)
 		}
 
 		/* Running */
-		else if (running)
+		else if (p_ptr->running)
 		{
 			/* Take a step */
 			run_step(0);
@@ -3639,7 +3640,7 @@ static void process_player(void)
 
 
 		/* Hack -- notice death */
-		if (!alive || death) break;
+		if (!p_ptr->playing || p_ptr->is_dead) break;
 
 		/* Handle "leaving" */
 		if (p_ptr->leaving) break;
@@ -3898,7 +3899,7 @@ static void dungeon(void)
 	Term_fresh();
 
 	/* Hack -- notice death or departure */
-	if (!alive || death) return;
+	if (!p_ptr->playing || p_ptr->is_dead) return;
 
 	/* Print quest message if appropriate */
 	if (!p_ptr->inside_quest)
@@ -3973,7 +3974,7 @@ static void dungeon(void)
 		if (fresh_after) Term_fresh();
 
 		/* Hack -- Notice death or departure */
-		if (!alive || death) break;
+		if (!p_ptr->playing || p_ptr->is_dead) break;
 
 		/* Process all of the monsters */
 		process_monsters(100);
@@ -3997,7 +3998,7 @@ static void dungeon(void)
 		if (fresh_after) Term_fresh();
 
 		/* Hack -- Notice death or departure */
-		if (!alive || death) break;
+		if (!p_ptr->playing || p_ptr->is_dead) break;
 
 		/* Handle "leaving" */
 		if (p_ptr->leaving) break;
@@ -4024,7 +4025,7 @@ static void dungeon(void)
 		if (fresh_after) Term_fresh();
 
 		/* Hack -- Notice death or departure */
-		if (!alive || death) break;
+		if (!p_ptr->playing || p_ptr->is_dead) break;
 
 		/* Handle "leaving" */
 		if (p_ptr->leaving) break;
@@ -4345,10 +4346,10 @@ void play_game(bool new_game)
 
 
 	/* Start game */
-	alive = TRUE;
+	p_ptr->playing = TRUE;
 
 	/* Hack -- Enforce "delayed death" */
-	if (p_ptr->chp < 0) death = TRUE;
+	if (p_ptr->chp < 0) p_ptr->is_dead = TRUE;
 
 	/* Resize / init the map */
 	map_panel_size();
@@ -4391,7 +4392,7 @@ void play_game(bool new_game)
 		forget_view();
 
 		/* Handle "quit and save" */
-		if (!alive && !death) break;
+		if (!p_ptr->playing && !p_ptr->is_dead) break;
 
 		/* Erase the old cave */
 		wipe_o_list();
@@ -4404,7 +4405,7 @@ void play_game(bool new_game)
 		msg_print(NULL);
 
 		/* Accidental Death */
-		if (alive && death)
+		if (p_ptr->playing && p_ptr->is_dead)
 		{
 			/* Mega-Hack -- Allow player to cheat death */
 			if ((wizard || cheat_live) && !get_check("Die? "))
@@ -4459,7 +4460,7 @@ void play_game(bool new_game)
 				(void)strcpy(died_from, "Cheating death");
 
 				/* Do not die */
-				death = FALSE;
+				p_ptr->is_dead = FALSE;
 
 				dun_level = 0;
 				change_level(dun_level);
@@ -4474,7 +4475,7 @@ void play_game(bool new_game)
 		}
 
 		/* Handle "death" */
-		if (death) break;
+		if (p_ptr->is_dead) break;
 
 		/* Make a new level */
 		generate_cave();

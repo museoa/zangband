@@ -186,7 +186,7 @@ bool make_attack_normal(int m_idx)
 
 
 		/* Stop if player is dead or gone */
-		if (!alive || death) break;
+		if (!p_ptr->playing || p_ptr->is_dead) break;
 
 		/* Handle "leaving" */
 		if (p_ptr->leaving) break;
@@ -1592,7 +1592,7 @@ bool make_attack_normal(int m_idx)
 
 
 	/* Always notice cause of death */
-	if (death && (r_ptr->r_deaths < MAX_SHORT))
+	if (p_ptr->is_dead && (r_ptr->r_deaths < MAX_SHORT))
 	{
 		r_ptr->r_deaths++;
 	}
