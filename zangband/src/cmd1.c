@@ -2388,22 +2388,22 @@ void move_player(int dir, int do_pickup)
 
 	/* Find the result of moving */
 	y = py + ddy[dir];
-	x = px + ddx[dir];
+	x = px + ddx[dir];	
 
-	/* Examine the destination */
-	c_ptr = area(y,x);
-
-	/* Exit the wilderness-area */
+	/* Do not exit the wilderness-area */
 	if (!dun_level )
 	{
-		if ((y == 0) || (x == 0) || 
-			(y == (WILD_SIZE<<4) - 1) || (x == (WILD_SIZE<<4) - 1))
+		if (!in_bounds2(y,x))
 		{
 			/* Do not leave the wilderness */
-			oktomove = FALSE;
+			msg_print("You can not leave the wilderness.");
+			return;
 		}
 		
 	}
+	/* Examine the destination */
+	c_ptr = area(y,x);
+
 
 	/* Get the monster */
 	m_ptr = &m_list[c_ptr->m_idx];
@@ -3196,9 +3196,12 @@ static bool run_test(void)
 	int         option = 0, option2 = 0;
 	cave_type   *c_ptr;
 
+	/* Hack - do not run next to edge of wilderness */
+	if (!in_bounds(py,px)) return TRUE;
+
 	/* Where we came from */
 	prev_dir = find_prevdir;
-
+	
 
 	/* Range of newly adjacent grids */
 	max = (prev_dir & 0x01) + 1;
@@ -3216,7 +3219,7 @@ static bool run_test(void)
 		/* New location */
 		row = py + ddy[new_dir];
 		col = px + ddx[new_dir];
-
+		
 		/* Access grid */
 		c_ptr = area(row,col);
 
