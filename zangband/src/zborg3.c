@@ -709,8 +709,9 @@ static cptr borg_activation[] =
 	"magic mapping and illumination",
 	"magic mapping and light area",
 	"magic mapping",
-	"clairvoyance",
+	"dangerous clairvoyance",
 	"word of recall",
+	"dangerous clairvoyance and recall",
 	"protection from evil",
 	"haste self",
 	"speed",
@@ -1657,14 +1658,6 @@ bool borg_read_scroll(int sval)
 	borg_keypress('r');
 	borg_keypress(I2A(slot));
 
-	/* reset recall depth in dungeon? */
-	if ((sval == SV_SCROLL_WORD_OF_RECALL) &&
-		(bp_ptr->depth < bp_ptr->max_depth) && bp_ptr->depth)
-	{
-		/* Do not reset depth */
-		borg_keypress('n');
-	}
-
 	/* Success */
 	return (TRUE);
 }
@@ -2071,6 +2064,45 @@ bool borg_activate_aux2(int act_index, bool real_use)
 					borg_activate_aux(BORG_ACT_HEAL_BIG3, real_use) ||
 					borg_activate_aux(BORG_ACT_HEAL_BIG4, real_use));
 		}
+
+		/* Word of Recall has several entries */
+		case BORG_ACT_RECALL:
+		{
+			/* Regular try */
+			if (borg_activate_aux(BORG_ACT_RECALL, real_use))
+			{
+				/* success */
+				return (TRUE);
+			}
+
+			/* Maybe the borg has the Jewel of Judgement */
+			if (borg_activate_aux(BORG_ACT_RECALL2, real_use))
+			{
+				/* Activate for recall */
+				borg_keypress('y');
+
+				return (TRUE);
+			}
+
+			/* No recall available */
+			return (FALSE);
+		}
+
+		/* The jewel of judgement needs specail treatment */
+		case BORG_ACT_CLAIRVOYANCE:
+		{
+			if (borg_activate_aux(BORG_ACT_CLAIRVOYANCE, real_use))
+			{
+				/* It is the jewel of judgement, no need to recall */
+				borg_keypress('n');
+
+				return (TRUE);
+			}
+
+			/* Not found */
+			return (FALSE);
+		}
+
 
 		default:
 		{

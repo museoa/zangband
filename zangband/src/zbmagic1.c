@@ -319,8 +319,12 @@ bool borg_recall(void)
 			borg_mutation(MUT1_RECALL) ||
 			borg_read_scroll(SV_SCROLL_WORD_OF_RECALL))
 		{
-			/* Press another ESC to avoid the recall reset */
-			borg_keypress(ESCAPE);
+			/* reset recall depth in dungeon? */
+			if ((bp_ptr->depth < bp_ptr->max_depth) && bp_ptr->depth)
+			{
+				/* Do not reset depth */
+				borg_keypress('n');
+			}
 
 			/* Success */
 			return (TRUE);
