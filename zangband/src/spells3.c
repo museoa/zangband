@@ -541,13 +541,14 @@ void teleport_player_to(int nx, int ny)
 		/* Accept "naked" floor grids */
 		c_ptr = area(x, y);
 
-		/* Can enter grid? */
-		if (cave_naked_grid(c_ptr) && !(fields_have_flags(c_ptr->fld_idx,
-														  FIELD_INFO_NO_ENTER)))
-			break;
-
 		/* No non-movement */
 		if ((y == py) && (x == px)) continue;
+
+		/* Can enter grid? */
+		if (cave_empty_grid(c_ptr) && !(c_ptr->info & CAVE_ICKY) && 
+				!(fields_have_flags(c_ptr->fld_idx,
+														  FIELD_INFO_NO_ENTER)))
+			break;
 
 		/* Occasionally advance the distance */
 		if (++ctr > (4 * dis * dis + 4 * dis + 1))
