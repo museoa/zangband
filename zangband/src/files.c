@@ -3238,7 +3238,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 			find = NULL;
 
 			/* Dump the line */
-			put_fstr(0, i + 2, buf);
+			put_fstr(0, i + 2, "%s", buf);
 
 			/* Hilite "shower" */
 			if (shower[0])
