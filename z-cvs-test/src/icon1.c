@@ -1593,6 +1593,17 @@ IconPtr SetIconBits(IconPtr bg, IconPtr fg, IconPtr mk, TintTable t, IconPtr b)
 	return b - ICON_LENGTH;
 }
 
+/* Return the number of milliseconds */
+unsigned long Milliseconds(void)
+{
+#ifdef PLATFORM_WIN
+	return GetTickCount();
+#endif
+#ifdef PLATFORM_X11
+	return TclpGetClicks() / 1000;
+#endif
+}
+
 int update_sprites(void)
 {
 	static unsigned long last_update = 0;

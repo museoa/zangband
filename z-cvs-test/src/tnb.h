@@ -146,7 +146,6 @@ extern void set_grid_assign(int y, int x);
 extern bool door_vertical(int y, int x);
 extern void free_icons(void);
 extern void init_palette(void);
-extern unsigned long Milliseconds(void);
 
 /* widget.c */
 extern void angtk_widget_lock(bool lock);

@@ -275,14 +275,5 @@ objcmd_system(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 #endif /* PLATFORM_WIN */
 }
 
-/* Return the number of milliseconds */
-unsigned long Milliseconds(void)
-{
-#ifdef PLATFORM_WIN
-	return GetTickCount();
-#endif
-#ifdef PLATFORM_X11
-	return TclpGetClicks() / 1000;
-#endif
-}
+
 
