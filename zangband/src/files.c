@@ -667,7 +667,7 @@ static cptr process_pref_file_expr(char **sp, char *fp)
 			while (*s && (f != b2))
 			{
 				t = process_pref_file_expr(&s, &f);
-				if (*t && streq(t, "0")) v = "0";
+				if (*t && !streq(t, "0")) v = "0";
 			}
 		}
 
