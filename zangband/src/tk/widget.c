@@ -442,8 +442,6 @@ static int widget_create(Tcl_Interp *interp, Widget **ptr)
 	return TCL_OK;
 }
 
-static Widget_CreateProc *g_create_proc;
-
 #define BAD_COLOR(c) (((c) < 0) || ((c) > 255))
 
 /* Array of all allocated Widget item colors */
@@ -1533,9 +1531,6 @@ Tk_ClassProcs widgetProcs = {
     NULL							/* modalProc. */ 
 };
 
-/* List of existing widgets let us iterate over them */
-DoubleLinker WidgetList;
-
 
 /*
  * Table specifying legal configuration options for a Widget.
@@ -1624,7 +1619,7 @@ static int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tc
     Tk_SetClass(tkwin, "Widget");
 
     /* Allocate a new Widget struct */
-    if ((*g_create_proc)(interp, &widgetPtr) != TCL_OK)
+    if (widget_create(interp, &widgetPtr) != TCL_OK)
     {
     	return TCL_ERROR;
     }
@@ -1661,7 +1656,6 @@ static int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 	widgetPtr->y = widgetPtr->x = 0;
 	widgetPtr->y_min = widgetPtr->y_max = 0;
 	widgetPtr->x_min = widgetPtr->x_max = 0;
-	DoubleLink_Init(&WidgetList, &widgetPtr->link, widgetPtr);
 	widgetPtr->noUpdate = FALSE;
 	widgetPtr->dx = widgetPtr->dy = 0;
 	widgetPtr->dw = widgetPtr->dh = 0;
@@ -1714,13 +1708,6 @@ static int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tc
  */
 int init_widget(Tcl_Interp *interp)
 {
-	/*  */
-	g_create_proc = widget_create;
-
-	/* Linked lists of Widgets */
-	DoubleLink_Init(&WidgetList, NULL, NULL);
-	WidgetList.what = "widget";
-
 	/* Initialize Widget item colors */
 	if (WidgetColor_Init(interp) != TCL_OK)
 	{
@@ -1734,31 +1721,6 @@ int init_widget(Tcl_Interp *interp)
     return TCL_OK;
 }
 
-void angtk_widget_lock(bool lock)
-{
-	DoubleLink *link;
-	Widget *widgetPtr;
-
-	if (lock)
-	{
-		for (link = WidgetList.head; link; link = link->next)
-		{
-			widgetPtr = DoubleLink_Data(link, Widget);
-			widgetPtr->flags |= WIDGET_NO_UPDATE;
-		}
-	}
-	else
-	{
-		for (link = WidgetList.head; link; link = link->next)
-		{
-			widgetPtr = DoubleLink_Data(link, Widget);
-			if (!widgetPtr->noUpdate)
-			{
-				widgetPtr->flags &= ~WIDGET_NO_UPDATE;
-			}
-		}
-	}
-}
 
 /*
  * This is a dummy lite_spot() routine that may get called before

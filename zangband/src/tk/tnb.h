@@ -139,7 +139,6 @@ extern void free_icons(void);
 extern void init_palette(void);
 
 /* widget.c */
-extern void angtk_widget_lock(bool lock);
 extern void (*angtk_lite_spot)(int y, int x);
 extern void angtk_lite_spot_real(int y, int x);
 extern void angtk_wipe_spot(int y, int x);
