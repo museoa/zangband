@@ -769,7 +769,7 @@ sint project_path(coord *gp, int x1, int y1, int x2, int y2, u16b flg)
 			if ((x == x1 + dx) && (y == y1 + dy)) break;
 
 			/* Stop if out of bounds */
-			if (!in_bounds(x, y)) break;
+			if (!in_bounds2(x, y)) break;
 
 			c_ptr = area(x, y);
 
@@ -808,7 +808,7 @@ sint project_path(coord *gp, int x1, int y1, int x2, int y2, u16b flg)
 			if ((x == x1 + dx) && (y == y1 + dy)) break;
 
 			/* Stop if out of bounds */
-			if (!in_bounds(x, y)) break;
+			if (!in_bounds2(x, y)) break;
 
 			c_ptr = area(x, y);
 
