@@ -822,6 +822,7 @@ extern store_type *get_current_store(void);
 extern void do_cmd_store(const field_type *f_ptr);
 extern void store_init(int town_num, int store_num, byte store);
 extern void place_sb(int greed, int max_cost);
+extern bool do_standard_command(s16b c);
 
 /* bldg.c */
 extern bool get_nightmare(int r_idx);

@@ -1944,6 +1944,238 @@ static void store_examine(void)
 static bool leave_store = FALSE;
 
 
+/* These commands are available inside stores and buildings both. */
+bool do_standard_command(s16b c)
+{
+	/* Is this the right sort of command? */
+	switch (c)
+	{
+			/*** Inventory Commands ***/
+
+		case 'w':
+		{
+			/* Wear/wield equipment */
+			do_cmd_wield();
+			return (TRUE);
+		}
+
+		case 't':
+		{
+			/* Take off equipment */
+			do_cmd_takeoff();
+			return (TRUE);
+		}
+
+		case 'k':
+		{
+			/* Destroy an item */
+			do_cmd_destroy();
+			return (TRUE);
+		}
+
+		case 'e':
+		{
+			/* Equipment list */
+			do_cmd_equip();
+			return (TRUE);
+		}
+
+		case 'i':
+		{
+			/* Inventory list */
+			do_cmd_inven();
+			return (TRUE);
+		}
+
+
+			/*** Various commands ***/
+
+		case 'M':
+		{
+			/* Full dungeon map */
+			do_cmd_view_map();
+			return (TRUE);
+		}
+
+		case 'I':
+		{
+			/* Identify an object */
+			do_cmd_observe();
+			return (TRUE);
+		}
+
+		case KTRL('I'):
+		{
+			/* Hack -- toggle windows */
+			toggle_inven_equip();
+			return (TRUE);
+		}
+
+
+			/*** Use various objects ***/
+
+		case 'b':
+		{
+			/* Browse a book */
+			do_cmd_browse();
+			return (TRUE);
+		}
+
+		case '{':
+		{
+			/* Inscribe an object */
+			do_cmd_inscribe();
+			return (TRUE);
+		}
+
+		case '}':
+		{
+			/* Uninscribe an object */
+			do_cmd_uninscribe();
+			return (TRUE);
+		}
+
+
+
+		/*** Help and Such ***/
+
+		case '?':
+		{
+			/* Help */
+			do_cmd_help();
+			return (TRUE);
+		}
+
+		case '/':
+		{
+			/* Identify symbol */
+			do_cmd_query_symbol();
+			return (TRUE);
+		}
+
+		case 'C':
+		{
+			/* Character description */
+			do_cmd_character();
+			return (TRUE);
+		}
+
+
+		/*** System Commands ***/
+
+		case '!':
+		{
+			/* Hack -- User interface */
+			(void)Term_user(0);
+			return (TRUE);
+		}
+
+		case '"':
+		{
+			/* Single line from a pref file */
+			do_cmd_pref();
+			return (TRUE);
+		}
+
+		case '@':
+		{
+			/* Interact with macros */
+			do_cmd_macros();
+			return (TRUE);
+		}
+
+		case '%':
+		{
+			/* Interact with visuals */
+			do_cmd_visuals();
+			return (TRUE);
+		}
+
+		case '&':
+		{
+			/* Interact with colors */
+			do_cmd_colors();
+			return (TRUE);
+		}
+
+		case '=':
+		{
+			/* Interact with options */
+			do_cmd_options(OPT_FLAG_SERVER | OPT_FLAG_PLAYER);
+			return (TRUE);
+		}
+
+			/*** Misc Commands ***/
+
+		case ':':
+		{
+			/* Take notes */
+			do_cmd_note();
+			return (TRUE);
+		}
+
+		case 'V':
+		{
+			/* Version info */
+			do_cmd_version();
+			return (TRUE);
+		}
+
+		case KTRL('F'):
+		{
+			/* Repeat level feeling */
+			do_cmd_feeling();
+			return (TRUE);
+		}
+
+		case KTRL('P'):
+		{
+			/* Show previous messages */
+			do_cmd_messages();
+			return (TRUE);
+		}
+
+		case KTRL('Q'):
+		{
+			/* Show quest status -KMW- */
+			do_cmd_checkquest();
+			return (TRUE);
+		}
+
+		case KTRL('T'):
+		{
+			/* Get the time of day */
+			do_cmd_time();
+			return (TRUE);
+		}
+
+		case '~':
+		case '|':
+		{
+			/* Check artifacts, uniques, quests etc. */
+			do_cmd_knowledge();
+			return (TRUE);
+		}
+
+		case '(':
+		{
+			/* Load "screen dump" */
+			do_cmd_load_screen();
+			return (TRUE);
+		}
+
+		case ')':
+		{
+			/* Save "screen dump" */
+			do_cmd_save_screen();
+			return (TRUE);
+		}
+	}
+
+	/* So the commands didn't match */
+	return (FALSE);
+}
+
 /*
  * Process a command in a store
  *
@@ -2026,212 +2258,15 @@ static void store_process_command(void)
 			break;
 		}
 
-			/*** Inventory Commands ***/
-
-		case 'w':
-		{
-			/* Wear/wield equipment */
-			do_cmd_wield();
-			break;
-		}
-
-		case 't':
-		{
-			/* Take off equipment */
-			do_cmd_takeoff();
-			break;
-		}
-
-		case 'k':
-		{
-			/* Destroy an item */
-			do_cmd_destroy();
-			break;
-		}
-
-		case 'e':
-		{
-			/* Equipment list */
-			do_cmd_equip();
-			break;
-		}
-
-		case 'i':
-		{
-			/* Inventory list */
-			do_cmd_inven();
-			break;
-		}
-
-
-			/*** Various commands ***/
-
-		case 'I':
-		{
-			/* Identify an object */
-			do_cmd_observe();
-			break;
-		}
-
-		case KTRL('I'):
-		{
-			/* Hack -- toggle windows */
-			toggle_inven_equip();
-			break;
-		}
-
-
-			/*** Use various objects ***/
-
-		case 'b':
-		{
-			/* Browse a book */
-			do_cmd_browse();
-			break;
-		}
-
-		case '{':
-		{
-			/* Inscribe an object */
-			do_cmd_inscribe();
-			break;
-		}
-
-		case '}':
-		{
-			/* Uninscribe an object */
-			do_cmd_uninscribe();
-			break;
-		}
-
-
-
-		/*** Help and Such ***/
-
-		case '?':
-		{
-			/* Help */
-			do_cmd_help();
-			break;
-		}
-
-		case '/':
-		{
-			/* Identify symbol */
-			do_cmd_query_symbol();
-			break;
-		}
-
-		case 'C':
-		{
-			/* Character description */
-			do_cmd_character();
-			display_store();
-			break;
-		}
-
-
-		/*** System Commands ***/
-
-		case '!':
-		{
-			/* Hack -- User interface */
-			(void)Term_user(0);
-			break;
-		}
-
-		case '"':
-		{
-			/* Single line from a pref file */
-			do_cmd_pref();
-			break;
-		}
-
-		case '@':
-		{
-			/* Interact with macros */
-			do_cmd_macros();
-			break;
-		}
-
-		case '%':
-		{
-			/* Interact with visuals */
-			do_cmd_visuals();
-			break;
-		}
-
-		case '&':
-		{
-			/* Interact with colors */
-			do_cmd_colors();
-			break;
-		}
-
-		case '=':
-		{
-			/* Interact with options */
-			do_cmd_options(OPT_FLAG_SERVER | OPT_FLAG_PLAYER);
-			break;
-		}
-
-			/*** Misc Commands ***/
-
-		case ':':
-		{
-			/* Take notes */
-			do_cmd_note();
-			break;
-		}
-
-		case 'V':
-		{
-			/* Version info */
-			do_cmd_version();
-			break;
-		}
-
-		case KTRL('F'):
-		{
-			/* Repeat level feeling */
-			do_cmd_feeling();
-			break;
-		}
-
-		case KTRL('P'):
-		{
-			/* Show previous messages */
-			do_cmd_messages();
-			break;
-		}
-
-		case '~':
-		case '|':
-		{
-			/* Check artifacts, uniques, quests etc. */
-			do_cmd_knowledge();
-			break;
-		}
-
-		case '(':
-		{
-			/* Load "screen dump" */
-			do_cmd_load_screen();
-			break;
-		}
-
-		case ')':
-		{
-			/* Save "screen dump" */
-			do_cmd_save_screen();
-			break;
-		}
-
 		default:
 		{
-			/* Hack -- Unknown command */
-			msgf("That command does not work in stores.");
-			break;
+			/* Is it a standard command? */
+			if (!do_standard_command(p_ptr->cmd.cmd))
+			{
+				/* Hack -- Unknown command */
+				msgf("That command does not work in stores.");
+				break;
+			}
 		}
 	}
 }

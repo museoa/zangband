@@ -1780,141 +1780,14 @@ static bool build_process_command(const field_type *f_ptr)
 			break;
 		}
 
-
-		/*** Various commands ***/
-
-		case KTRL('I'):
-		{
-			/* Hack -- toggle windows */
-			toggle_inven_equip();
-			break;
-		}
-
-		/*** Help and Such ***/
-
-		case '?':
-		{
-			/* Help */
-			do_cmd_help();
-			break;
-		}
-
-		case '/':
-		{
-			/* Identify symbol */
-			do_cmd_query_symbol();
-			break;
-		}
-
-		case 'C':
-		{
-			/* Character description */
-			do_cmd_character();
-			display_build(f_ptr);
-			break;
-		}
-
-
-		/*** System Commands ***/
-
-		case '!':
-		{
-			/* Hack -- User interface */
-			(void)Term_user(0);
-			break;
-		}
-
-		case '"':
-		{
-			/* Single line from a pref file */
-			do_cmd_pref();
-			break;
-		}
-
-		case '@':
-		{
-			/* Interact with macros */
-			do_cmd_macros();
-			break;
-		}
-
-		case '%':
-		{
-			/* Interact with visuals */
-			do_cmd_visuals();
-			break;
-		}
-
-		case '&':
-		{
-			/* Interact with colors */
-			do_cmd_colors();
-			break;
-		}
-
-		case '=':
-		{
-			/* Interact with options */
-			do_cmd_options(OPT_FLAG_SERVER | OPT_FLAG_PLAYER);
-			break;
-		}
-
-		/*** Misc Commands ***/
-
-		case ':':
-		{
-			/* Take notes */
-			do_cmd_note();
-			break;
-		}
-
-		case 'V':
-		{
-			/* Version info */
-			do_cmd_version();
-			break;
-		}
-
-		case KTRL('F'):
-		{
-			/* Repeat level feeling */
-			do_cmd_feeling();
-			break;
-		}
-
-		case KTRL('P'):
-		{
-			/* Show previous messages */
-			do_cmd_messages();
-			break;
-		}
-
-		case '~':
-		case '|':
-		{
-			/* Check artifacts, uniques etc. */
-			do_cmd_knowledge();
-			break;
-		}
-
-		case '(':
-		{
-			/* Load "screen dump" */
-			do_cmd_load_screen();
-			break;
-		}
-
-		case ')':
-		{
-			/* Save "screen dump" */
-			do_cmd_save_screen();
-			break;
-		}
-
 		default:
 		{
-			/* Hack -- Unknown command */
-			msgf("That command does not work in buildings.");
+			/* Is it a standard command? */
+			if (!do_standard_command(p_ptr->cmd.cmd))
+			{
+				/* Hack -- Unknown command */
+				msgf("That command does not work in buildings.");
+			}
 			break;
 		}
 	}
@@ -1969,8 +1842,6 @@ void do_cmd_bldg(const field_type *f_ptr)
 	/* Interact with player */
 	while (!leave_build)
 	{
-		clear_row(1);
-
 		/* Clear */
 		clear_from(21);
 
@@ -1994,6 +1865,8 @@ void do_cmd_bldg(const field_type *f_ptr)
 
 		/* Handle stuff */
 		handle_stuff();
+
+		message_flush();
 	}
 
 	/* Free turn XXX XXX XXX */
