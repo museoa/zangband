@@ -226,9 +226,8 @@ extern bool target_vis;
 #define INKEY_MORE 6
 #define INKEY_SPELL 7
 #define INKEY_TARGET 8
-#define INKEY_MINDCRAFT 9
-#define INKEY_POWER 10
-#define INKEY_CMD_PET 11
+#define INKEY_POWER 9
+#define INKEY_CMD_PET 10
 
 extern int inkey_book;
 extern int inkey_flags;
@@ -402,7 +401,6 @@ DECLARE_TK_HOOK(keycount);
 DECLARE_TK_HOOK(keypress);
 DECLARE_TK_HOOK(macro);
 DECLARE_TK_HOOK(message);
-DECLARE_TK_HOOK(mindcraft);
 DECLARE_TK_HOOK(fontdesc);
 DECLARE_TK_HOOK(menuentrystate);
 DECLARE_TK_HOOK(equipinfo);

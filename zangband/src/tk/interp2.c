@@ -812,8 +812,7 @@ objcmd_init_icons(ClientData clientData, Tcl_Interp *interp, int objc,
 /* Strings returned by "inkey_flags" command, indexed by INKEY_XXX defines. */
 cptr inkey_to_str[] = {"", "INKEY_CMD", "INKEY_DIR", "INKEY_DISTURB",
 	"INKEY_ITEM", "INKEY_ITEM_STORE", "INKEY_MORE", "INKEY_SPELL",
-	"INKEY_TARGET",
-	"INKEY_MINDCRAFT", "INKEY_POWER", "INKEY_CMD_PET",
+	"INKEY_TARGET", "INKEY_POWER", "INKEY_CMD_PET",
 	NULL};
 
 /* (inkey) flags */
@@ -1221,62 +1220,4 @@ objcmd_message(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 	return TCL_OK;
 }
 
-/*
- *--------------------------------------------------------------
- *
- * objcmd_mindcraft --
- *
- *	Implements the "mindcraft" script command. Usage:
- *	> Get a list of allowable mindcraft power indexes:
- *		mindcraft get
- *	> Get info about a mindcraft power by index:
- *		mindcraft info $index $arrayName
- *
- *--------------------------------------------------------------
- */
-
-int
-objcmd_mindcraft(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
-{
-	CommandInfo *infoCmd = (CommandInfo *) clientData;
-	int objC = objc - infoCmd->depth;
-	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
-
-	static cptr cmdOptions[] = {"get", NULL};
-	enum {IDX_GET} option;
-
-	mindcraft_power *pow_ptr;
-	Tcl_Obj *listObjPtr;
-	int i;
-
-    if (objC < 2)
-    {
-		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, (char *) "option ?arg ...?");
-		return TCL_ERROR;
-    }
-
-    if (Tcl_GetIndexFromObj(interp, objV[1], (char **) cmdOptions, (char *) "option", 0, 
-		(int *) &option) != TCL_OK)
-	{
-		return TCL_ERROR;
-    }
-
-	switch (option)
-	{
-		case IDX_GET: /* get */
-			listObjPtr = Tcl_NewListObj(0, NULL);
-			for (i = 0; i < MINDCRAFT_MAX; i++)
-			{
-				pow_ptr = &mindcraft_powers[i];
-/*				if (pow_ptr->min_lev > p_ptr->lev) break; */
-
-				Tcl_ListObjAppendElement(interp, listObjPtr,
-					Tcl_NewIntObj(i));
-			}
-			Tcl_SetObjResult(interp, listObjPtr);
-			break;
-	}
-
-	return TCL_OK;
-}
 
