@@ -153,9 +153,6 @@ proc NSConfig::InitIcons {iconSize} {
 		angband init_icons $iconSize $depth
 	}
 
-	# icon or iso
-	Global iconStyle icon
-
 	return
 }
 
@@ -269,7 +266,7 @@ proc NSConfig::Source {fileName namespace} {
 # NSConfig::FileLibData --
 #
 #	Takes the "tail" of the given file name, and appends it to the
-#	complete pathname of the lib/data directory.
+#	complete pathname of the image directory.
 #
 # Arguments:
 #	arg1					about arg1
@@ -280,7 +277,7 @@ proc NSConfig::Source {fileName namespace} {
 proc NSConfig::FileLibData {file} {
 
 	set file [file tail $file]
-	return [PathTk lib data $file]
+	return [PathTk image $file]
 }
 
 # NSConfig::FindImage --

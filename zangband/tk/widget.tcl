@@ -43,7 +43,7 @@ proc NSWidget::NSWidget {oop parent width height gwidth gheight} {
 	set widget $parent.widget$oop
 
 	if {$gwidth == [icon size]} {
-		set style [Global iconStyle]
+		set style icon
 	} else {
 		set style map
 	}
@@ -262,7 +262,7 @@ proc NSWidget::SetScale {oop scale} {
 	if {$scale == [$widget cget -gwidth]} return
 
 	if {$scale == [icon size]} {
-		set style [Global iconStyle]
+		set style icon
 	} else {
 		set style map
 	}

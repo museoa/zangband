@@ -65,7 +65,7 @@ Manage bigmap,scale 4
 Manage choicewindow,autoexpand 1
 Manage choicewindow,show 0
 Manage choicewindow,showicon 0
-Manage config,prefix dg32
+Manage config,prefix classic16
 Manage font,autobar {Helvetica 12}
 Manage font,choice {Helvetica 12}
 Manage font,inventory {Helvetica 12}

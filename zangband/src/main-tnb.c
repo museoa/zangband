@@ -79,8 +79,6 @@ objcmd_term_attr(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, (char *) "x y");
 		return TCL_ERROR;
     }
-	
-	plog("here");
 
 	if (Tcl_GetIntFromObj(interp, objV[1], &x) != TCL_OK)
 	{
@@ -91,8 +89,6 @@ objcmd_term_attr(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 	{
 		return TCL_ERROR;
 	}
-	
-	plog_fmt("(%d,%d)\n", x, y); 
 	
 	/* Paranoia */
 	if ((x >= 80) || (x < 0)) return TCL_ERROR;
@@ -132,13 +128,11 @@ objcmd_term_char(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 	
 	if (Tcl_GetIntFromObj(interp, objV[1], &x) != TCL_OK)
 	{
-		quit("Ouch1");
 		return TCL_ERROR;
 	}
 	
 	if (Tcl_GetIntFromObj(interp, objV[2], &y) != TCL_OK)
 	{
-		quit("Ouch2");
 		return TCL_ERROR;
 	}
 	
@@ -155,8 +149,6 @@ objcmd_term_char(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 
 	return TCL_OK;
 }
-
-
 
 static errr Term_user_tnb(int n)
 {
@@ -440,17 +432,19 @@ static void init_windows(void)
 static void hook_quit(cptr str)
 {
 	/* Give a warning */
+#if 0
 	if (str)
 	{
 #ifdef PLATFORM_X11
 		fputs(str, stderr);
 #endif
 	}
+#endif /* 0 */
 
 	free_icons();
 
 	/* Cleanup Tcl and Tk (this exits via Tcl_Exit()) */
-	TclTk_Exit(g_interp);
+	/* TclTk_Exit(g_interp); */
 	
 	cleanup_angband();
 }

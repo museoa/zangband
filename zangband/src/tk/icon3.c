@@ -59,8 +59,15 @@ static int CompressIconFile(Tcl_Interp *interp, char *fileName, t_icon_data *idp
 	gzFile out;
 	long sum = 0, dataSize;
 	int err, result = TCL_OK;
+	
+	/* Grab permissions */
+	safe_setuid_grab();
 
 	out = gzopen(fileName, "wb6");
+	
+	/* Drop permissions */
+	safe_setuid_drop();
+	
 	if (out == NULL)
 	{
 		Tcl_AppendResult(interp, "couldn't open \"", fileName, "\"", NULL);
@@ -153,8 +160,15 @@ static int DecompressIconFile(Tcl_Interp *interp, char *fileName, IconPtr *iconD
 	long sum = 0, size;
 	int depth, bypp, width, height, count;
 	int length;
-
+	
+	/* Grab permissions */
+	safe_setuid_grab();
+	
 	in = gzopen(fileName, "rb");
+	
+	/* Drop permissions */
+	safe_setuid_drop();
+	
 	if (in == NULL)
 	{
 		Tcl_AppendResult(interp, "couldn't open \"", fileName, "\"",

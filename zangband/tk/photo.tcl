@@ -54,14 +54,13 @@ proc NSPhoto::NSPhoto {oop {parent ""}} {
 		$canvas create image 0 0 \
 			-anchor nw -image Image_Empty -tags image
 	
-if {[Global iconStyle] != "iso"} {
 		$canvas bind image <Enter> \
 			"NSPhoto::Motion $oop %x %y"
 		$canvas bind image <Motion> \
 			"NSPhoto::Motion $oop %x %y"
 		$canvas bind image <Leave> \
 			"NSPhoto::Info $oop examined {}"
-}
+
 		Info $oop canvas $canvas
 
 		# Destroy the object along with the widget (later)

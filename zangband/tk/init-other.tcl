@@ -951,7 +951,7 @@ proc InitOther {} {
 
 	angband_load progress 0.45
 	angband_load note "Initializing icons..."
-
+	
 	# Load the configuration files from the "current" set
 	NSConfig::Load
 	
