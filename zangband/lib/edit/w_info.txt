@@ -1,89 +1,55 @@
 # CVS: Last edit by $Author$ on $Date$
 # File: w_info.txt
 
-# Defines the layout of the wilderness
+# Defines the types of 16x16 wilderness blocks.
+# These blocks are described by a bounds in 256x256x256 parameter space.
+# The "type" is the number of the function used in the code.
+# The extra data fields are passed to that function.
 
-# W:F:letter:wilderness_type:level:town_number:road:name
+# Note that at the moment the wilderness "lite" and "none" options
+# have no effect here.  This may change.  However, it is most likely
+# that they will only be referenced in the create_wilderness() function.
+
+# 'G' is for graphics - symbol and color. There are 16 colors, as
+# follows:
+
+# D - Black        w - White          s - Gray          o - Orange
+# r - Red          g - Green          b - Blue          u - Brown
+# d - Dark Gray    W - Light Gray     v - Violet        y - Yellow
+# R - Light Red    G - Light Green    B - Light Blue    U - Light Brown
 
 # Road Flags: Sum of NORTH 1, SOUTH 2, EAST 4, WEST 8
 
-?:[EQU $WILDERNESS NORMAL]
+# 'W' describes the bounds in the 3D parameter space.
+# The first slot is "hgtmin", the second is "hgtmax"  - describing
+# the effects of land height.
+# The third and fourth slots are "popmin" and "popmax" - describing
+# the effects of "population denisity" on the type of landscape.
+# The final two slots are "lawmin" and "lawmax" these separate regions
+# of "good" and "evil" in the wilderness.
 
-# Edge of the world
-W:F:#:0
+# 'T' describes wilderness Type.  The first slot is the number of the
+# function to call to generate the 16x16 wilderness block.
+# The second slot is the "type" - 2 bits for "forest","mountian",
+# "flat", and "swamp".  This describes the density of forest (for example)
+# in that 16x16 block.  This is used to smooth the the boundaries between
+# blocks using the plasma fractal routine.
+
+# 'E' is a list of eight extra parameters.  These parameters are passed to
+# the function in the 'T' flag.  This allows the same function to be used
+# in different ways.
+
+# Testing - only two types at the moment.
 
 # Grass
-W:F:G:6:5
-
-# Dirt
-W:F:D:5:15
+G:.:G
+W:0:128:0:255:0:255
+T:1:12:1
+E:0:0:0:0:0:0:0:0
 
 # Forest
-W:F:F:7:20
-
-# Shallow Water
-W:F:S:3:30
-
-# Deep Water
-W:F:W:2:40
-
-# Mountain
-W:F:M:11:50
-
-# Volcano
-W:F:V:10:60
-
-# Town 1
-W:F:1:1:0:1:0:Outpost
-
-# Town 2
-W:F:2:1:0:2:0:Telmora
-
-# Town 3
-W:F:3:1:0:3:0:Morivant
-
-# Town 4
-W:F:4:7:4:4:0:Angwil
-
-# Town 5
-W:F:5:2:90:5:0:Wilderness
-
-# Grassland with road east-west-south
-W:F:-:6:3:0:14
-
-# Grassland with road north-south
-W:F:|:6:3:0:3
-
-# Wilderness layout
-W:D:##########
-W:D:#GGGGMVMM#
-W:D:#GGG3GGMM#
-W:D:#GGG|GGGG#
-W:D:#GGG1-2GG#
-W:D:#GGDD|DGG#
-W:D:#WSFF4FFS#
-W:D:#WWSSSSSS#
-W:D:#WWWW5WWW#
-W:D:##########
-
-# Starting position
-W:P:4:4
-
-?:[IOR [EQU $WILDERNESS NONE] [EQU $WILDERNESS LITE] ]
-
-# Edge of the world
-W:F:#:0
-
-# Town 1
-W:F:1:1:0:1:0:Town
-
-# Wilderness layout
-W:D:###
-W:D:#1#
-W:D:###
-
-# Starting position
-W:P:1:1
-
-?:1
+G:#:g
+W:128:255:0:255:0:255
+T:1:192:1
+E:0:0:0:0:0:0:0:0
 
