@@ -37,6 +37,7 @@ extern bool borg_recall(void);
  */
 extern bool borg_caution(void);
 extern bool borg_attack(bool boosted_bravery);
+extern bool borg_flow_non_hurt(void);
 extern bool borg_recover(void);
 
 extern bool borg_offset_ball(void);

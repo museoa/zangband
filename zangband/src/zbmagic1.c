@@ -198,106 +198,6 @@ int borg_goto_dir(int x1, int y1, int x2, int y2)
 }
 
 
-
-/* Check to see if the borg is standing on a nasty grid.
- * Lava can hurt the borg unless he is IFire.
- * Water can hurt if it is deep/ocean and encumbered.
- * Acid can hurt the borg unless he is IAcid.
- * Swamp can hurt the borg unless he is IPoison.
- * Levitation item can reduce the effect of nasty grids.
- */
-bool borg_on_safe_feat(byte feat)
-{
-	/* Water */
-	if (feat == FEAT_DEEP_WATER ||
-	 	 feat == FEAT_OCEAN_WATER)
-	{
-		/* Levitation helps */
-		if (FLAG(bp_ptr, TR_FEATHER)) return (TRUE);
-
-		/* Being non-encumbered helps */
-		if (!bp_ptr->encumber) return (TRUE);
-
-		/* Everything else hurts */
-		return (FALSE);
-	}
-
-	/* Nothing hurts when Invulnerable */
-	if (borg_goi) return (TRUE);
-
-	/* Lava */
-	if (feat == FEAT_DEEP_LAVA)
-	{
-		/* Immunity helps */
-		if (FLAG(bp_ptr, TR_IM_FIRE)) return (TRUE);
-
-		/* Everything else hurts */
-		return (FALSE);
-	}
-
-	if (feat == FEAT_SHAL_LAVA)
-	{
-		/* Levitation helps */
-		if (FLAG(bp_ptr, TR_FEATHER)) return (TRUE);
-
-		/* Immunity helps */
-		if (FLAG(bp_ptr, TR_IM_FIRE)) return (TRUE);
-
-		/* Everything else hurts */
-		return (FALSE);
-	}
-
-	/* Swamp */
-	if (feat == FEAT_DEEP_SWAMP)
-	{
-		/* Immunity helps */
-		if (FLAG(bp_ptr, TR_IM_POIS)) return (TRUE);
-
-		return (FALSE);
-	}
-
-	if (feat == FEAT_SHAL_SWAMP)
-	{
-		/* Immunity helps */
-		if (FLAG(bp_ptr, TR_IM_POIS)) return (TRUE);
-
-		/* (temp) Resistance helps */
-		if (FLAG(bp_ptr, TR_RES_POIS) || my_oppose_pois) return (TRUE);
-
-		/* Levitation helps */
-		if (FLAG(bp_ptr, TR_FEATHER)) return (TRUE);
-
-		/* Shallow swamp does hurt */
-		return (FALSE);
-	}
-
-	/* Acid */
-	if (feat == FEAT_DEEP_ACID)
-	{
-		/* Immunity helps */
-		if (FLAG(bp_ptr, TR_IM_ACID)) return (TRUE);
-
-		/* Everything else hurts */
-		return (FALSE);
-	}
-
-	if (feat == FEAT_SHAL_ACID)
-	{
-		/* Immunity helps */
-		if (FLAG(bp_ptr, TR_IM_ACID)) return (TRUE);
-
-		/* Levitation helps */
-		if (FLAG(bp_ptr, TR_FEATHER)) return (TRUE);
-
-		/* Everything else hurts */
-		return (FALSE);
-	}
-	/* Generally ok */
-	return (TRUE);
-}
-
-
-
 /*
  * Attempt to induce "word of recall"
  * artifact activations added throughout this code
@@ -2531,6 +2431,7 @@ bool borg_caution(void)
 
 	/* Hallucination is nasty */
 	if (bp_ptr->status.image) nasty = TRUE;
+
 
 	/*** Evaluate local danger ***/
 

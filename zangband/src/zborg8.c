@@ -2030,6 +2030,9 @@ bool borg_think_dungeon(void)
 	/* Try not to die */
 	if (borg_caution()) return (TRUE);
 
+	/* Get to a non-hurting feat */
+	if (borg_flow_non_hurt()) return (TRUE);
+
 	/*** if returning from dungeon in bad shape...***/
 	if (!bp_ptr->cur_lite || bp_ptr->status.cut ||
 		bp_ptr->status.poisoned || bp_ptr->status.weak)

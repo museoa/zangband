@@ -32,6 +32,7 @@
 #define GOAL_BORE   6			/* Leaving */
 #define GOAL_FLEE   7			/* Fleeing */
 #define GOAL_TOWN	8			/* Town Special Grid */
+#define GOAL_FEAT	9			/* Getting of painful feat */
 
 
 /*
