@@ -2450,11 +2450,6 @@ errr Term_resize(int w, int h)
 	{
 		Term->resize_hook();
 	}
-	else
-	{
-		/* Just refresh it */
-		Term_fresh();
-	}
 
 	/* Success */
 	return (0);
