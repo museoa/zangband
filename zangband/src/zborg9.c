@@ -376,23 +376,6 @@ static void borg_hidden(void)
  *
  * Process "store" and other modes when necessary
  *
- * Note that the non-cheating "inventory" and "equipment" parsers
- * will get confused by a "weird" situation involving an ant ("a")
- * on line one of the screen, near the left, next to a shield, of
- * the same color, and using --(-- the ")" symbol, directly to the
- * right of the ant.  This is very rare, but perhaps not completely
- * impossible.  I ignore this situation.  :-)
- *
- * The handling of stores is a complete and total hack, but seems
- * to work remarkably well, considering... :-)  Note that while in
- * a store, time does not pass, and most actions are not available,
- * and a few new commands are available ("sell" and "purchase").
- *
- * Note the use of "cheat" functions to extract the current inventory,
- * the current equipment, the current panel, and the current spellbook
- * information.  These can be replaced by (very expensive) "parse"
- * functions, which cause an insane amount of "screen flashing".
- *
  * Technically, we should attempt to parse all the messages that
  * indicate that it is necessary to re-parse the books, and only
  * set the appropriate flags at that point.  This would not only
@@ -571,21 +554,6 @@ static bool borg_think(void)
 			/* take note of the page */
 			borg_shops[shop_num].more = 1;
 			borg_shops[shop_num].page = (buf[6] - '0') - 1;
-		}
-
-		/* React to disappering pages */
-		if (borg_do_browse_more != borg_shops[shop_num].more)
-		{
-			/* Clear the second page */
-			for (i = 12; i < 24; i++)
-			{
-				/* XXX Wipe the ware */
-				WIPE(&borg_shops[shop_num].ware[i], borg_item);
-			}
-
-			/* Save the new one */
-			borg_do_browse_more = borg_shops[shop_num].more;
-			borg_do_browse = borg_do_browse_more;
 		}
 
 		/* Hack -- Reset food counter for money scumming */

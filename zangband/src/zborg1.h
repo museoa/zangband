@@ -189,6 +189,8 @@ extern int sold_item_sval;
 extern int sold_item_pval;
 extern int sold_item_store;
 
+extern bool borg_inside_store;
+
 extern bool borg_plays_risky;
 extern bool borg_slow_optimizehome;
 extern bool borg_scums_uniques;
@@ -928,8 +930,6 @@ extern bool borg_do_spell;	/* Acquire "spell" info */
 extern bool borg_do_browse;	/* Acquire "store" info */
 
 extern byte borg_do_browse_what;	/* Hack -- store for "borg_do_browse" */
-
-extern byte borg_do_browse_more;	/* Hack -- pages for "borg_do_browse" */
 
 
 /*

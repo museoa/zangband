@@ -73,15 +73,19 @@ void borg_list_info(byte list_type)
 			break;
 		}
 
-		case LIST_STORE_BUY:
+		case LIST_STORE:
 		{
-
+			/* Notice store inventory changes */
+			borg_inside_store = TRUE;
+			
 			break;
 		}
-
-		case LIST_STORE_SELL:
+		
+		case LIST_HOME:
 		{
-
+			/* Notice home inventory changes */
+			
+			
 			break;
 		}
 	}

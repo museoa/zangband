@@ -1015,7 +1015,7 @@ extern int mon_damage_mod(const monster_type *m_ptr, int dam, int type);
 extern void exp_for_kill(const monster_race *r_ptr, s32b *new_exp,
 						 s32b *new_exp_frac);
 extern int stat_cap(int stat);
-extern int adjust_stat(int stat, int value, int amount, bool fixed);
+extern int adjust_stat(int stat, int value, int amount);
 
 /* mspells1.c */
 extern bool clean_shot(int x1, int y1, int x2, int y2, bool friendly);

@@ -611,8 +611,6 @@ bool borg_do_browse = 0;	/* Acquire "store" info */
 
 byte borg_do_browse_what = 0;	/* Hack -- store for "borg_do_browse" */
 
-byte borg_do_browse_more = 0;	/* Hack -- pages for "borg_do_browse" */
-
 
 /*
  * Strategy flags -- run certain functions

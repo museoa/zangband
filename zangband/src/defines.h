@@ -4358,5 +4358,5 @@ extern int PlayerUID;
 #define LIST_INVEN			1
 #define LIST_EQUIP			2
 #define LIST_FLOOR			3
-#define LIST_STORE_BUY		4
-#define LIST_STORE_SELL		5
+#define LIST_STORE			4
+#define LIST_HOME			5

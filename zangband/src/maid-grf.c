@@ -1192,7 +1192,7 @@ void Term_write_list(s16b o_idx, byte list_type)
 		set_basic_flags(l_ptr, o_ptr);
 
 		/* Stores are special */
-		if (list_type == LIST_STORE_SELL)
+		if (list_type == LIST_STORE)
 		{
 			/* Describe the object */
 			object_desc_store(o_name, o_ptr, TRUE, 3, 256);
