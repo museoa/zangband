@@ -20,30 +20,7 @@
  */
 void cnv_stat(int val, char *out_val)
 {
-	/* Above 18 */
-	if (val > 180)
-	{
-		int bonus = (val - 180);
-
-		if (bonus >= 220)
-		{
-			sprintf(out_val, "18/%3s", "***");
-		}
-		else if (bonus >= 100)
-		{
-			sprintf(out_val, "18/%03d", bonus);
-		}
-		else
-		{
-			sprintf(out_val, " 18/%02d", bonus);
-		}
-	}
-
-	/* From 3 to 18 */
-	else
-	{
-		sprintf(out_val, "    %2d", val / 10);
-	}
+    sprintf(out_val, "  %2d.%d", val / 10, val % 10);
 }
 
 
