@@ -433,7 +433,7 @@ static void add_monsters(int count)
 	
 	u16b best_r_idx;
 	
-	int depth, min_depth;
+	int min_depth;
 	
 	u16b r_idx;
 	monster_race *r_ptr;
@@ -471,7 +471,7 @@ static void add_monsters(int count)
 	/* Sometimes have lots of monster of a given type */
 	if (one_in_(10))
 	{
-		level = (p_ptr->depth * 96 + 8) / 20 + 3;
+		level = p_ptr->depth * 2 + 6;
 
 		best_r_idx = 1;
 		best_level = 1;
@@ -479,16 +479,12 @@ static void add_monsters(int count)
 		/* Get monster */
 		for (j = 0; j < 100; j++)
 		{
-			depth = level + 6 +
-					randint1(level / 10 + 1) +
-					randint1(level / 10 + 1);
 			min_depth = level + (level / 20) + 1;
 
 			/*
 			 * Random monster out of depth
-			 * (depending on level + number of quests)
 			 */
-			r_idx = get_mon_num(depth);
+			r_idx = get_mon_num(level);
 
 			r_ptr = &r_info[r_idx];
 
