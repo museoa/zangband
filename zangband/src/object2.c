@@ -3071,12 +3071,11 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
  */
 static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 {
-	if ((flags & OC_FORCE_GOOD) && one_in_(2))
+	if (!(flags & OC_FORCE_GOOD) && one_in_(2))
 	{
 		/* Half the time, the stuff can be bad */
 
 		flags |= OC_FORCE_BAD;
-		flags &= ~ OC_FORCE_GOOD;
 	}
 
 	/* Apply magic (good or bad) according to type */
