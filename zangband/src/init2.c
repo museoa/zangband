@@ -1991,7 +1991,7 @@ errr init_t_info(void)
 static errr init_misc(void)
 {
 	/* Initialize the values */
-	process_dungeon_file("misc.txt", 0, 0, 0, 0);
+	process_dungeon_file("misc.txt", INIT_NORMAL);
 
 	return 0;
 }

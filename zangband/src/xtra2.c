@@ -2519,26 +2519,6 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 		{
 			cptr name = f_name + f_info[feat].name;
 
-#if 0
-			/* Hack -- special handling for quest entrances */
-			if (feat == FEAT_QUEST_ENTER)
-			{
-				/* Set the quest number temporary */
-				int old_quest = p_ptr->inside_quest;
-				p_ptr->inside_quest = c_ptr->special;
-
-				/* Get the quest text */
-				init_flags = INIT_SHOW_TEXT;
-				quest_text_line = 0;
-				process_dungeon_file("q_info.txt", 0, 0, 0, 0);
-
-				name = quest[c_ptr->special].name;
-
-				/* Reset the old quest number */
-				p_ptr->inside_quest = old_quest;
-			}
-#endif
-
 			/* Hack -- handle unknown grids */
 			if (feat == FEAT_NONE) name = "unknown grid";
 

@@ -802,13 +802,6 @@ bool (*item_tester_hook)(object_type*);
 
 
 /*
- * Hack - price ranges used for item_tester_hook_price
- */
-s32b item_tester_price_min;
-s32b item_tester_price_max;
-
-
-/*
  * Current "comp" function for ang_sort()
  */
 bool (*ang_sort_comp)(vptr u, vptr v, int a, int b);
@@ -834,13 +827,6 @@ monster_hook_type get_mon_num2_hook;
  * Hack -- function hook to restrict "get_obj_num_prep()" function
  */
 byte (*get_obj_num_hook)(int k_idx);
-
-
-/* Hack, monk armour */
-/* XXX XXX XXX - move this to player_type if possible */
-bool monk_armour_aux;
-bool monk_notify_aux;
-
 
 
 /*

@@ -3713,8 +3713,7 @@ static void do_cmd_knowledge_quests(void)
 			p_ptr->inside_quest = i;
 
 			/* Get the quest text */
-			init_flags = INIT_SHOW_TEXT;
-			process_dungeon_file("q_info.txt", 0, 0, 0, 0);
+			process_dungeon_file("q_info.txt", INIT_SHOW_TEXT);
 
 			/* Reset the old quest number */
 			p_ptr->inside_quest = old_quest;

@@ -4207,11 +4207,10 @@ extern int PlayerUID;
 /*
  * Initialization flags
  */
+#define INIT_NORMAL				0x00
 #define INIT_SHOW_TEXT          0x01
 #define INIT_ASSIGN             0x02
-#define INIT_CREATE_DUNGEON     0x04
-#define INIT_ONLY_FEATURES      0x08
-#define INIT_ONLY_BUILDINGS     0x10
+
 
 /*
  * Quest flags

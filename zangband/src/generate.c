@@ -979,40 +979,6 @@ static bool cave_gen(void)
 }
 
 
-#if 0
-
-/*
- * Generate a quest level
- */
-static void quest_gen(void)
-{
-	int x, y;
-
-
-	/* Start with perm walls */
-	for (y = min_hgt; y < max_hgt; y++)
-	{
-		for (x = min_wid; x < max_wid; x++)
-		{
-			cave[y][x].feat = FEAT_PERM_SOLID;
-		}
-	}
-
-	/* Set the quest level */
-	base_level = quest[p_ptr->inside_quest].level;
-	p_ptr->depth = base_level;
-	object_level = base_level;
-	monster_level = base_level;
-
-	/* Prepare allocation table */
-	get_mon_num_prep(get_monster_hook(), NULL);
-
-	init_flags = INIT_CREATE_DUNGEON | INIT_ASSIGN;
-	process_dungeon_file("q_info.txt", 0, 0, MAX_HGT, MAX_WID);
-}
-
-#endif
-
 static int map_wid_old = 66;
 
 

@@ -2269,9 +2269,8 @@ static bool player_birth_aux_1(void)
 	clear_from(15);
 
 	/* Init the random quests */
-	init_flags = INIT_ASSIGN;
 	p_ptr->inside_quest = MIN_RANDOM_QUEST;
-	process_dungeon_file("q_info.txt", 0, 0, 0, 0);
+	process_dungeon_file("q_info.txt", INIT_ASSIGN);
 	p_ptr->inside_quest = 0;
 
 	/* Prepare allocation table */
@@ -2341,13 +2340,12 @@ static bool player_birth_aux_1(void)
 	}
 
 	/* Init the two main quests (Oberon + Serpent) */
-	init_flags = INIT_ASSIGN;
 	p_ptr->inside_quest = QUEST_OBERON;
-	process_dungeon_file("q_info.txt", 0, 0, 0, 0);
+	process_dungeon_file("q_info.txt", INIT_ASSIGN);
 	quest[QUEST_OBERON].status = QUEST_STATUS_TAKEN;
 
 	p_ptr->inside_quest = QUEST_SERPENT;
-	process_dungeon_file("q_info.txt", 0, 0, 0, 0);
+	process_dungeon_file("q_info.txt", INIT_ASSIGN);
 	quest[QUEST_SERPENT].status = QUEST_STATUS_TAKEN;
 	p_ptr->inside_quest = 0;
 

@@ -382,6 +382,7 @@ static bool create_city(int x, int y, int town_num)
 		}
 	}
 	
+	
 		
 	/* Too few squares??? */
 	if (count < 6) return (FALSE);

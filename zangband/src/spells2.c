@@ -2726,8 +2726,8 @@ static void cave_temp_room_lite(void)
 	{
 		for (j = 0; j < 8; j++)
 		{
-			int y = temp_y[i] + ddy_cdd[j];
-			int x = temp_x[i] + ddx_cdd[j];
+			int y = temp_y[i] + ddy_ddd[j];
+			int x = temp_x[i] + ddx_ddd[j];
 
 			cave_type *c_ptr = area(y,x);
 
