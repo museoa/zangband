@@ -322,17 +322,6 @@ static void borg_notice_equip(int *extra_blows, int *extra_shots,
 		/* Check for cursed items */
 		if (l_ptr->kn_flags3 & TR3_CURSED) borg_wearing_cursed = TRUE;
 
-		if (l_ptr->treat_as == TREAT_AS_LESS)
-		{
-			/* Track number of items the borg has on him less one. */
-			borg_has_on[l_ptr->k_idx] += l_ptr->number - 1;
-		}
-		else
-		{
-			/* Track number of items the borg has on him */
-			borg_has_on[l_ptr->k_idx] += l_ptr->number;
-		}
-
 		/* Affect stats */
 		if (l_ptr->kn_flags1 & TR1_STR) my_stat_add[A_STR] += l_ptr->pval;
 		if (l_ptr->kn_flags1 & TR1_INT) my_stat_add[A_INT] += l_ptr->pval;
@@ -1676,7 +1665,8 @@ static void borg_notice_inven_item(list_item *l_ptr)
 	
 	object_kind *k_ptr;
 	
-	if (l_ptr->treat_as == TREAT_AS_LESS)
+	if ((l_ptr->treat_as == TREAT_AS_LESS) ||
+		 (l_ptr->treat_as == TREAT_AS_SWAP))
 	{
 		/* Pretend we have less items */
 		number = l_ptr->number - 1;
@@ -1913,6 +1903,10 @@ static void borg_notice_inven(void)
 
 		/* Pretend item isn't there */
 		if (l_ptr->treat_as == TREAT_AS_GONE) continue;
+		
+		/* Item is swapped into equipment */
+		if ((l_ptr->treat_as == TREAT_AS_SWAP) &&
+			(l_ptr->number == 1)) continue;
 		
 		/* Unaware item? */
 		if (!l_ptr->k_idx) continue;

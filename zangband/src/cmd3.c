@@ -138,6 +138,17 @@ void do_cmd_wield(void)
 
 	/* Check the slot */
 	slot = wield_slot(q_ptr);
+	
+	/* Hack - rings are special */
+	if (slot == EQUIP_LEFT)
+	{
+		/* Check to see if have two rings */
+		if ((p_ptr->equipment[EQUIP_LEFT].k_idx) &&
+			(p_ptr->equipment[EQUIP_RIGHT].k_idx))
+		{
+			if (get_check("Use right hand?")) slot = EQUIP_RIGHT;
+		}
+	}
 
 	/* Access the wield slot */
 	o_ptr = &p_ptr->equipment[slot];

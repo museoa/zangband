@@ -2158,12 +2158,6 @@ bool borg_think_store(void)
 	/* Stamp the shop with a time stamp */
 	borg_shops[shop_num].when = borg_t;
 
-	/* Remove "backwards" rings */
-	if (borg_swap_rings()) return (TRUE);
-
-	/* Repair "backwards" rings */
-	if (borg_wear_rings()) return (TRUE);
-
 	/* Wear "optimal" equipment */
 	if (borg_best_stuff()) return (TRUE);
 
@@ -2687,11 +2681,8 @@ bool borg_think_dungeon(void)
 	/* Attack monsters */
 	if (borg_attack(FALSE)) return (TRUE);
 
-	/* Wear things that need to be worn, but try to avoid swap loops */
+	/* Wear things that need to be worn */
 	if (borg_wear_stuff()) return (TRUE);
-
-	/* Repair "backwards" rings */
-	if (borg_wear_rings()) return (TRUE);
 
 	/* Remove stuff that is useless or detrimental */
 	if (borg_remove_stuff()) return (TRUE);

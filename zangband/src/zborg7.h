@@ -37,8 +37,6 @@ extern bool borg_crush_hole(void);
 extern bool borg_crush_slow(void);
 extern bool borg_test_stuff(bool star_id);
 extern bool borg_takeoff_stuff(void);
-extern bool borg_swap_rings(void);
-extern bool borg_wear_rings(void);
 extern bool borg_wear_stuff(void);
 extern bool borg_best_stuff(void);
 extern bool borg_play_magic(bool bored);
