@@ -782,8 +782,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 	/* Get the cave */
 	c_ptr = area(y,x);
 
-	/* Feature + Info flags */
-	feat = c_ptr->feat;
+	/* Info flags */	
 	info = c_ptr->info;
 	
 	/* Is this feature memorized? */
@@ -808,8 +807,8 @@ void map_info(int y, int x, byte *ap, char *cp)
 	}
 	else
 	{
-		/* Apply mimic field */
-		feat = f_info[feat].mimic;
+		/* Apply mimic field to feat */
+		feat = f_info[c_ptr->feat].mimic;
 		
 		/* point to the feat */
 		f_ptr = &f_info[feat];
@@ -855,14 +854,15 @@ void map_info(int y, int x, byte *ap, char *cp)
 				}
 			}
 		}
+		
+		/* Hack -- rare random hallucination, except on outer dungeon walls */
+		if (halluc && !((feat == FEAT_PERM_SOLID) || rand_int(256)))
+		{
+			/* Hallucinate */
+			image_random(&a, &c);
+		}
 	}
-
-	/* Hack -- rare random hallucination, except on outer dungeon walls */
-	if (halluc && (feat != FEAT_PERM_SOLID) && !rand_int(256))
-	{
-		/* Hallucinate */
-		image_random(&a, &c);
-	}
+	
 
 #ifdef USE_TRANSPARENCY
 	/* Save the terrain info for the transparency effects */
