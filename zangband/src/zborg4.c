@@ -4571,34 +4571,34 @@ static s32b borg_power_aux3(void)
 
 	/* Hack -- Reward speed */
 
-   if (borg_skill[BI_SPEED] >= 150)
-       value += (((borg_skill[BI_SPEED] - 120) * 1000L) + 185000L);
+	if (borg_skill[BI_SPEED] >= 150)
+		value += (((borg_skill[BI_SPEED] - 120) * 1000L) + 185000L);
 
-   if (borg_skill[BI_SPEED] >= 145 && borg_skill[BI_SPEED] <= 149)
-       value += (((borg_skill[BI_SPEED] - 120) * 1000L) + 180000L);
+	if (borg_skill[BI_SPEED] >= 145 && borg_skill[BI_SPEED] <= 149)
+		value += (((borg_skill[BI_SPEED] - 120) * 1000L) + 180000L);
 
-   if (borg_skill[BI_SPEED] >= 140 && borg_skill[BI_SPEED] <= 144)
-       value += (((borg_skill[BI_SPEED] - 120) * 1000L) + 175000L);
+	if (borg_skill[BI_SPEED] >= 140 && borg_skill[BI_SPEED] <= 144)
+		value += (((borg_skill[BI_SPEED] - 120) * 1000L) + 175000L);
 
-   if (borg_skill[BI_SPEED] >= 135 && borg_skill[BI_SPEED] <= 139)
-       value += (((borg_skill[BI_SPEED] - 120) * 1000L) + 165000L);
+	if (borg_skill[BI_SPEED] >= 135 && borg_skill[BI_SPEED] <= 139)
+		value += (((borg_skill[BI_SPEED] - 120) * 1000L) + 165000L);
 
-   if (borg_skill[BI_SPEED] >= 130 && borg_skill[BI_SPEED] <= 134)
-       value += (((borg_skill[BI_SPEED] - 120) * 1000L) + 150000L);
+	if (borg_skill[BI_SPEED] >= 130 && borg_skill[BI_SPEED] <= 134)
+		value += (((borg_skill[BI_SPEED] - 120) * 1000L) + 150000L);
 
-   if (borg_skill[BI_SPEED] >= 125 && borg_skill[BI_SPEED] <= 129)
-       value += (((borg_skill[BI_SPEED] - 110) * 1000L) + 125000L);
+	if (borg_skill[BI_SPEED] >= 125 && borg_skill[BI_SPEED] <= 129)
+		value += (((borg_skill[BI_SPEED] - 110) * 1000L) + 125000L);
 
-   if (borg_skill[BI_SPEED] >= 120 && borg_skill[BI_SPEED] <= 124)
-       value += (((borg_skill[BI_SPEED] - 110) * 1000L) + 100000L);
+	if (borg_skill[BI_SPEED] >= 120 && borg_skill[BI_SPEED] <= 124)
+		value += (((borg_skill[BI_SPEED] - 110) * 1000L) + 100000L);
 
-   if (borg_skill[BI_SPEED] >= 115 && borg_skill[BI_SPEED] <= 119)
-       value += (((borg_skill[BI_SPEED] - 110) * 1000L) + 75000L);
+	if (borg_skill[BI_SPEED] >= 115 && borg_skill[BI_SPEED] <= 119)
+		value += (((borg_skill[BI_SPEED] - 110) * 1000L) + 75000L);
 
-   if (borg_skill[BI_SPEED] >= 110 && borg_skill[BI_SPEED] <= 114)
-       value += (((borg_skill[BI_SPEED] - 110) * 1000L) + 55000L);
-   else
-       value += (((borg_skill[BI_SPEED] - 110) * 2500L));
+	if (borg_skill[BI_SPEED] >= 110 && borg_skill[BI_SPEED] <= 114)
+		value += (((borg_skill[BI_SPEED] - 110) * 1000L) + 55000L);
+	else
+		value += (((borg_skill[BI_SPEED] - 110) * 2500L));
 
 
 	/* Hack -- Reward strength bonus */
@@ -4610,8 +4610,8 @@ static s32b borg_power_aux3(void)
 		value += (my_stat_ind[A_INT] * 500L);
 
 		/* Bonus for sp. */
-		value +=((adj_mag_mana[my_stat_ind[A_INT]] *
-			 borg_skill[BI_CLEVEL]) / 2) * 155L;
+		value += ((adj_mag_mana[my_stat_ind[A_INT]] *
+				   borg_skill[BI_CLEVEL]) / 2) * 155L;
 
 		/* bonus for fail rate */
 		value += adj_mag_stat[my_stat_ind[A_INT]] * 5010L;
@@ -4672,15 +4672,15 @@ my_stat_ind[A_INT] * 35000L;
 			(((adj_con_mhp[my_stat_ind[A_CON]] -
 			   128) * borg_skill[BI_MAXCLEVEL]) / 2);
 
-	   value += (my_stat_ind[A_CON] * 150L);
-	   /* Hack -- Reward hp bonus */
-	   /*		  This is a bit wierd because we are not really giving a bonus for */
-	   /*		  what hp you have, but for the 'bonus' hp you get */
-	   /*		  getting over 500hp is very important. */
-	   if (bonus_hp < 500)
-	       value += bonus_hp * 350L;
-	   else
-	       value += (bonus_hp - 500) * 100L + (350L * 500);
+		value += (my_stat_ind[A_CON] * 150L);
+		/* Hack -- Reward hp bonus */
+		/*         This is a bit wierd because we are not really giving a bonus for */
+		/*         what hp you have, but for the 'bonus' hp you get */
+		/*         getting over 500hp is very important. */
+		if (bonus_hp < 500)
+			value += bonus_hp * 350L;
+		else
+			value += (bonus_hp - 500) * 100L + (350L * 500);
 	}
 
 
@@ -4888,7 +4888,8 @@ my_stat_ind[A_INT] * 35000L;
 	{
 		value += borg_skill[BI_ARMOR] * 1500L + 28350L;
 	}
-    if (borg_skill[BI_ARMOR] >= 75) value += borg_skill[BI_ARMOR] * 500L + 73750L;
+	if (borg_skill[BI_ARMOR] >= 75) value +=
+			borg_skill[BI_ARMOR] * 500L + 73750L;
 
 	/*** Penalize various things ***/
 
@@ -5587,7 +5588,7 @@ s32b borg_power(void)
 
 	/* Process the inventory */
 	value += borg_power_aux4();
-	
+
 	/* Add a bonus for deep level prep */
 	/* Dump prep codes */
 	for (i = 1; i <= borg_skill[BI_MAXDEPTH] + 10; i++)

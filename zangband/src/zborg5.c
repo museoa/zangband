@@ -109,12 +109,12 @@ static void borg_delete_take(int i)
 		borg_oops("Deleting already gone object!");
 		return;
 	}
-	
+
 	/* Bounds checking */
 	if (map_in_bounds(take->x, take->y))
 	{
 		mb_ptr = map_loc(take->x, take->y);
-		
+
 		/* Delete the 'take' value on grid. */
 		mb_ptr->take = 0;
 	}
@@ -160,7 +160,7 @@ static int borg_guess_kidx(char unknown)
 		/* Return the result */
 		return k;
 	}
-	
+
 	borg_note(format("# Cannot guess object '%c'", unknown));
 
 	/* Didn't find anything */
@@ -176,15 +176,15 @@ static int borg_new_take(int k_idx, char unknown, int x, int y)
 	int i, n = 0;
 
 	borg_take *take;
-	
+
 	/* Handle unknown items */
 	if (unknown) k_idx = borg_guess_kidx(unknown);
-	
+
 	/* Paranoia */
 	if (!k_idx)
 	{
 		borg_oops("Cannot find object!");
-		return(0);
+		return (0);
 	}
 
 	/* Look for a "dead" object */
@@ -2514,13 +2514,13 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 
 	bool old_wall;
 	bool new_wall;
-	
+
 	/* Don't do anything if the borg is inactive */
 	if (!borg_active)
 	{
 		/* Chain into the old hook, if it exists */
 		if (old_info_hook) old_info_hook(mb_ptr, map);
-		
+
 		/* Done */
 		return;
 	}
@@ -2559,16 +2559,16 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 		if (mb_ptr->take)
 		{
 			borg_take *bt_ptr = &borg_takes[mb_ptr->take];
-			
+
 			if ((bt_ptr->unknown != map->unknown) ||
 				((bt_ptr->k_idx != map->object) && !map->unknown))
 			{
 				borg_note(format("# The object %d is different! (%d,%d)",
-					mb_ptr->take, bt_ptr->k_idx, map->object));
-			
+								 mb_ptr->take, bt_ptr->k_idx, map->object));
+
 				/* The object is different- delete it */
 				borg_delete_take(mb_ptr->take);
-				
+
 				/* Make a new object */
 				mb_ptr->take = borg_new_take(map->object, map->unknown, x, y);
 			}
@@ -2585,7 +2585,7 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 		if (mb_ptr->take && (map->flags & MAP_SEEN))
 		{
 			borg_note(format("# Removing missing object (%d)", mb_ptr->take));
-		
+
 			/* The object is no longer here - delete it */
 			borg_delete_take(mb_ptr->take);
 		}
@@ -2761,7 +2761,7 @@ void borg_map_erase(void)
 {
 	/* Forget the view */
 	borg_forget_view();
-	
+
 	/* No objects here */
 	borg_takes_cnt = 0;
 	borg_takes_nxt = 1;

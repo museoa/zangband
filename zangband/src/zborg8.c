@@ -2981,7 +2981,7 @@ bool borg_think_dungeon(void)
 			borg_keypress('\n');
 			return (TRUE);
 		}
-		
+
 		/* attempt to refuel */
 		if (borg_refuel_torch() || borg_refuel_lantern()) return (TRUE);
 

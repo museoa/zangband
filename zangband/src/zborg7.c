@@ -339,8 +339,7 @@ bool borg_use_things(void)
 			borg_eat_food(SV_FOOD_RATION) ||
 			borg_spell(REALM_SORCERY, 2, 0) ||
 			borg_spell(REALM_LIFE, 0, 7) ||
-			borg_spell(REALM_ARCANE, 2, 7) ||
-			borg_spell(REALM_NATURE, 0, 3))
+			borg_spell(REALM_ARCANE, 2, 7) || borg_spell(REALM_NATURE, 0, 3))
 		{
 			return (TRUE);
 		}
@@ -2715,7 +2714,7 @@ bool borg_test_stuff(bool star_id)
 
 					/* Hack -- on boring levels, only if pack is full */
 					if ((!borg_items[INVEN_PACK - 1].iqty) &&
-						 (borg_skill[BI_MAXDEPTH] < 5)) break;
+						(borg_skill[BI_MAXDEPTH] < 5)) break;
 
 					/* Hack -- reward depth */
 					v += (borg_skill[BI_MAXDEPTH] * 500L);
@@ -4091,7 +4090,7 @@ static void borg_best_stuff_aux(int n, byte *test, byte *best, s32b *vp)
 bool borg_best_stuff(void)
 {
 #if 0
-    int hole = INVEN_PACK - 1;
+	int hole = INVEN_PACK - 1;
 #endif
 
 	int k;
@@ -4597,7 +4596,7 @@ bool borg_leave_level(bool bored)
 
 		/* Hack -- Recall into dungeon */
 		if ((borg_skill[BI_MAXDEPTH] >= 5) &&
-			 (borg_skill[BI_RECALL] >= 6) && borg_recall())
+			(borg_skill[BI_RECALL] >= 6) && borg_recall())
 		{
 			/* Note */
 			borg_note("# Recalling into dungeon.");

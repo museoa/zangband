@@ -160,8 +160,8 @@ static int wild_first_town[START_STORE_NUM] =
 	BUILD_SUPPLIES0,
 	BUILD_WARHALL0,
 	BUILD_STORE_TEMPLE,
-    BUILD_STORE_MAGIC,
-    BUILD_BLACK0
+	BUILD_STORE_MAGIC,
+	BUILD_BLACK0
 };
 
 
@@ -1745,8 +1745,8 @@ static void place_gen(u16b place_num)
 		{
 			draw_quest(place_num);
 			break;
-        }
-        default:
+		}
+		default:
 		{
 			quit("Unknown town/quest type in wilderness");
 		}
@@ -2726,13 +2726,13 @@ static void make_wild_03(blk_ptr block_ptr, byte *data)
  */
 static void make_wild_04(blk_ptr block_ptr, byte *data)
 {
-    int x, y, i, j;
-    int type;
+	int x, y, i, j;
+	int type;
 
 	cave_type *c_ptr;
-	
+
 	/* Hack - ignore parameter */
-	(void) data;
+	(void)data;
 
 	/* Get type of ground */
 	switch (randint0(8))
@@ -2759,36 +2759,36 @@ static void make_wild_04(blk_ptr block_ptr, byte *data)
 			break;
 		}
 	}
-	
+
 	/* Get location of building */
 	x = rand_range(6, 10);
-    y = rand_range(6, 10);
+	y = rand_range(6, 10);
 
 
-   	for (i = 0; i < WILD_BLOCK_SIZE; i++)
+	for (i = 0; i < WILD_BLOCK_SIZE; i++)
 	{
-	    for (j = 0; j < WILD_BLOCK_SIZE; j++)
-    	{
-	        /* Get location */
-    	    c_ptr = &block_ptr[j][i];
+		for (j = 0; j < WILD_BLOCK_SIZE; j++)
+		{
+			/* Get location */
+			c_ptr = &block_ptr[j][i];
 
 			/* Place ground */
-    	    if (type == 1 || (type == 3 && j % 2 == 0))
-	        {
-    	        c_ptr->feat = FEAT_GRASS;
-        	}
-	        else if (type > 2)
-    	    {
-        	    c_ptr->feat = FEAT_DIRT;
-	        }
-			
+			if (type == 1 || (type == 3 && j % 2 == 0))
+			{
+				c_ptr->feat = FEAT_GRASS;
+			}
+			else if (type > 2)
+			{
+				c_ptr->feat = FEAT_DIRT;
+			}
+
 			if ((i >= x - 1) && (i <= x + 1) &&
-				 (i >= y - 1) && (i <= y + 1) && (type == 4))
+				(i >= y - 1) && (i <= y + 1) && (type == 4))
 			{
 				/* Build an invulnerable rectangular building */
 				c_ptr->feat = FEAT_PERM_EXTRA;
 			}
-    	}
+		}
 	}
 }
 
@@ -2873,10 +2873,10 @@ static void blend_block(int x, int y, blk_ptr block_ptr, u16b type)
 	int i, j, dx, dy;
 
 	u16b w_type;
-	
+
 	/* Get current location */
 	w_type = wild[y][x].done.wild;
-			
+
 	/* Farms do not blend */
 	if (wild_gen_data[w_type].gen_routine == 4) return;
 

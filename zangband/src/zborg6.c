@@ -4431,7 +4431,7 @@ bool borg_target_unknown_wall(int y, int x)
 	int n_x, n_y;
 	bool found = FALSE;
 	bool y_hall = FALSE;
-    bool x_hall = FALSE;
+	bool x_hall = FALSE;
 
 	borg_note(format("# Perhaps wall near targetted location (%d,%d)", y, x));
 
@@ -4474,7 +4474,7 @@ bool borg_target_unknown_wall(int y, int x)
 		if (map_in_bounds(n_x, n_y))
 		{
 			mb_ptr = map_loc(n_x, n_y);
-	
+
 			if (!mb_ptr->feat &&
 				((n_y != c_y) || !y_hall) && ((n_x != c_x) || !x_hall))
 			{
@@ -4488,7 +4488,7 @@ bool borg_target_unknown_wall(int y, int x)
 
 		/* Calculate the new location */
 		borgmove2(&n_y, &n_x, c_y, c_x, y, x);
-    }
+	}
 
 	return found;
 }
@@ -14959,12 +14959,12 @@ extern void borg_flow_direct(int y, int x)
 
 		/* Access the grid */
 		mb_ptr = map_loc(x, y);
-		
+
 		if (borg_cave_wall_grid(mb_ptr))
 		{
 			/* Only like 'diggable' things */
 			if (!((mb_ptr->feat >= FEAT_CLOSED) &&
-				(mb_ptr->feat <= FEAT_QUARTZ))) return;
+				  (mb_ptr->feat <= FEAT_QUARTZ))) return;
 		}
 
 		/* Ignore certain "non-wall" grids */

@@ -111,7 +111,7 @@ struct map_block
 	/* Borg-specific stuff */
 #ifdef ALLOW_BORG
 	u16b fear;	/* fear value */
-	
+
 	u16b kill;	/* Entry into "kill" list */
 	u16b take;	/* Entry into "take" list */
 

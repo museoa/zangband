@@ -769,7 +769,7 @@ static bool store_will_stock(const object_type *o_ptr)
 	 * (store_will_stock needs const due to the item_hook
 	 * which is really annoying.)
 	 */
-	f_o_t.o_ptr = (object_type *) o_ptr;
+	f_o_t.o_ptr = (object_type *)o_ptr;
 
 	/* Default is to reject this rejection */
 	f_o_t.result = FALSE;
@@ -937,7 +937,7 @@ static int store_carry(object_type *o_ptr)
 
 #if 0
 	/* We will buy some items we will not stock */
-    if (!store_will_stock(o_ptr)) return (-1);
+	if (!store_will_stock(o_ptr)) return (-1);
 #endif
 
 	/* Erase the inscription */

@@ -1749,7 +1749,7 @@ static void borg_parse_aux(cptr msg, int len)
 		borg_react(msg, buf);
 		return;
 	}
-	
+
 	/* Ignore talking monsters */
 	if (strstr(msg, " says,")) return;
 
@@ -2164,7 +2164,7 @@ static void borg_parse_aux(cptr msg, int len)
 	if (prefix(msg, "Illegal "))
 	{
 		borg_oops(format("# Borg problem msg: %s", msg));
-		
+
 		/* Hack -- Oops */
 		borg_keypress(ESCAPE);
 		borg_keypress(ESCAPE);
@@ -3129,7 +3129,7 @@ void borg_init_9(void)
 
 	/* Ignore inscriptions */
 	stack_force_notes = TRUE;
-	
+
 	/* The borg doesn't understand this */
 	easy_floor = FALSE;
 
@@ -3167,7 +3167,7 @@ void borg_init_9(void)
 	borg_init_6();
 	borg_init_7();
 	borg_init_8();
-	
+
 	/* Hack - initialise the hooks into the overhead map code */
 
 	/* Initialise the overhead map code */
@@ -4016,7 +4016,7 @@ void do_cmd_borg(void)
 
 			/* Step forever */
 			borg_step = 0;
-			
+
 			/*** Redraw ***/
 
 			/* Redraw map */
@@ -4128,7 +4128,7 @@ void do_cmd_borg(void)
 
 			/* Step N times */
 			borg_step = 1;
-			
+
 			/*** Redraw ***/
 
 			/* Redraw map */

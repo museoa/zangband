@@ -138,7 +138,7 @@ struct borg_take
 	s16b k_idx;	/* Kind index */
 
 	byte x, y;	/* Location */
-	
+
 	char unknown;	/* Unknown type */
 };
 
