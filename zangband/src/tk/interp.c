@@ -1360,8 +1360,8 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 		}
 		
 		case IDX_VERSION: /* version */
-			Tcl_SetStringObj(resultPtr, format("%d.%d.%d", FAKE_VER_MAJOR,
-				FAKE_VER_MINOR, FAKE_VER_PATCH), -1);
+			Tcl_SetStringObj(resultPtr, format("%d.%d.%d", VER_MAJOR,
+				VER_MINOR, VER_PATCH), -1);
 			break;
 	}
 

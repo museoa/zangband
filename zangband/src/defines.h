@@ -31,28 +31,35 @@
  */
 #define VERSION_NAME "ZAngband"
 
+/* Savefile version */
+#define SAVEFILE_VERSION 44
+
+/* User-visible version */
+#define VER_MAJOR 2
+#define VER_MINOR 7
+#define VER_PATCH 3
+#define VER_EXTRA 2
+
+/* Stringify argument */
+#define Z_STR(a) Z_STR1(a)
+
+#define Z_STR1(a)\
+	# a
+
+/* Pre-release version string */
+#if VER_EXTRA != 0
+	#define PRE_VERSION \
+		"pre" Z_STR(VER_EXTRA)
+#else
+	#define PRE_VERSION
+#endif /* VER_EXTRA != 0 */
+
 
 /*
  * Current version string
  */
-#define VERSION_STRING	"2.7.2"
-
-
-/*
- * Current version number of Angband: 2.8.1
- */
-#define VERSION_MAJOR   2
-#define VERSION_MINOR   8
-#define VERSION_PATCH   1
-
-#define SAVEFILE_VERSION 44
-
-/* Added for ZAngband */
-/* Why do we need a fake version number? */
-#define FAKE_VERSION   0
-#define FAKE_VER_MAJOR 2
-#define FAKE_VER_MINOR 7
-#define FAKE_VER_PATCH 3
+#define VERSION_STRING \
+	Z_STR(VER_MAJOR) "." Z_STR(VER_MINOR) "." Z_STR(VER_PATCH) PRE_VERSION
 
 #define ANGBAND_2_8_1
 #define ZANGBAND
@@ -61,10 +68,6 @@
 /* hack - define if the source contains the cleanup_angband() function. */
 #define HAS_CLEANUP
 
-/*
- * This value is not currently used
- */
-#define VERSION_EXTRA   0
 
 /*
  * The maximum number of players we support

@@ -29,17 +29,14 @@ cptr copyright[5] =
 /*
  * Executable version
  */
-byte version_major = VERSION_MAJOR;
-byte version_minor = VERSION_MINOR;
-byte version_patch = VERSION_PATCH;
-byte version_extra = VERSION_EXTRA;
+byte version_major = VER_MAJOR;
+byte version_minor = VER_MINOR;
+byte version_patch = VER_PATCH;
+byte version_extra = VER_EXTRA;
 
 /*
  * Savefile version
  */
-byte sf_major;	/* Savefile's "version_major" */
-byte sf_minor;	/* Savefile's "version_minor" */
-byte sf_patch;	/* Savefile's "version_patch" */
 byte sf_extra;	/* Savefile's "version_extra" */
 u32b sf_version;	/* Savefile's "version" */
 

@@ -363,10 +363,10 @@ static errr init_info_raw(int fd, header *head)
 static void init_header(header *head, int num, int len)
 {
 	/* Save the "version" */
-	head->v_major = VERSION_MAJOR;
-	head->v_minor = VERSION_MINOR;
-	head->v_patch = VERSION_PATCH;
-	head->v_extra = VERSION_EXTRA;
+	head->v_major = VER_MAJOR;
+	head->v_minor = VER_MINOR;
+	head->v_patch = VER_PATCH;
+	head->v_extra = VER_EXTRA;
 
 	/* Save the "record" information */
 	head->info_num = num;
@@ -1321,6 +1321,9 @@ void init_angband(void)
 		/* Close */
 		my_fclose(fp);
 	}
+	
+	/* Display version number */
+	put_fstr(42, 3, "%d.%d.%d", VER_MAJOR, VER_MINOR, VER_PATCH);
 
 	/* Flush it */
 	Term_fresh();

@@ -230,10 +230,10 @@ static errr wr_savefile(void)
 	data_fd = -1;
 
 	/* Dump the version */
-	fake[0] = (byte)(FAKE_VER_MAJOR);
-	fake[1] = (byte)(FAKE_VER_MINOR);
-	fake[2] = (byte)(FAKE_VER_PATCH);
-	fake[3] = (byte)(VERSION_EXTRA);
+	fake[0] = (byte)(VER_MAJOR);
+	fake[1] = (byte)(VER_MINOR);
+	fake[2] = (byte)(VER_PATCH);
+	fake[3] = (byte)(VER_EXTRA);
 
 
 	/* Dump the data */
@@ -1400,11 +1400,11 @@ static bool wr_savefile_new(void)
 
 	/* Dump the file header */
 	xor_byte = 0;
-	wr_byte(FAKE_VER_MAJOR);
+	wr_byte(VER_MAJOR);
 	xor_byte = 0;
-	wr_byte(FAKE_VER_MINOR);
+	wr_byte(VER_MINOR);
 	xor_byte = 0;
-	wr_byte(FAKE_VER_PATCH);
+	wr_byte(VER_PATCH);
 	xor_byte = 0;
 
 	tmp8u = (byte)randint0(256);
@@ -2083,49 +2083,14 @@ bool load_player(void)
 		z_minor = vvv[1];
 		z_patch = vvv[2];
 		sf_extra = vvv[3];
-		sf_major = 2;
-		sf_minor = 8;
-		sf_patch = 1;
-
-
-		/* Pre-2.1.0: Assume 2.0.6 (same as 2.0.0 - 2.0.5) */
-		if ((z_major == sf_major) &&
-			(z_minor == sf_minor) && (z_patch == sf_patch))
-		{
-			z_major = 2;
-			z_minor = 0;
-			z_patch = 6;
-		}
-
-		/* Very old savefiles */
-		if ((sf_major == 5) && (sf_minor == 2))
-		{
-			sf_major = 2;
-			sf_minor = 5;
-		}
-
-		/* Extremely old savefiles */
-		if (sf_major > 2)
-		{
-			sf_major = 1;
-		}
 
 		/* Clear screen */
 		Term_clear();
 
 		/* Parse "new" savefiles */
-		if ((sf_major == 2) && (sf_minor >= 7))
-		{
-			/* Attempt to load */
-			err = rd_savefile_new();
-		}
 
-		/* Parse "future" savefiles */
-		else
-		{
-			/* Error XXX XXX XXX */
-			err = -1;
-		}
+		/* Attempt to load */
+		err = rd_savefile_new();
 
 		/* Message (below) */
 		if (err) what = "Cannot parse savefile";
@@ -2163,19 +2128,13 @@ bool load_player(void)
 	if (!err)
 	{
 		/* Give a conversion warning */
-		if ((FAKE_VER_MAJOR != z_major) ||
-			(FAKE_VER_MINOR != z_minor) || (FAKE_VER_PATCH != z_patch))
+		if ((VER_MAJOR != z_major) ||
+			(VER_MINOR != z_minor) || (VER_PATCH != z_patch))
 		{
-			if (z_major == 2 && z_minor == 0 && z_patch == 6)
-			{
-				msgf("Converted a 2.0.* savefile.");
-			}
-			else
-			{
-				/* Message */
-				msgf("Converted a %d.%d.%d savefile.",
-						   z_major, z_minor, z_patch);
-			}
+			/* Message */
+			msgf("Converted a %d.%d.%d savefile.",
+					 z_major, z_minor, z_patch);
+
 			message_flush();
 		}
 

@@ -472,7 +472,7 @@ void enter_score(void)
 
 	/* Save the version */
 	strnfmt(the_score.what, 8, "%u.%u.%u",
-			VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+			VER_MAJOR, VER_MINOR, VER_PATCH);
 
 	/* Calculate and save the points */
 	strnfmt(the_score.pts, 10, "%9lu", (unsigned long)total_points());
@@ -608,7 +608,7 @@ void predict_score(void)
 
 	/* Save the version */
 	strnfmt(the_score.what, 8, "%u.%u.%u",
-			VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+			VER_MAJOR, VER_MINOR, VER_PATCH);
 
 	/* Calculate and save the points */
 	strnfmt(the_score.pts, 10, "%9lu", (unsigned long)total_points());
