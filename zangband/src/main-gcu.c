@@ -1093,8 +1093,18 @@ errr init_gcu(void)
 		int rows, cols, y, x;
 
 		/* Hack - the main window is huge */
-		cols = 80 + (COLS - 80) / 4;
-		rows = 24 + (LINES - 24) / 2;
+		
+		/* Work out how much extra room we have */
+		cols = (COLS - 80) / 4;
+		rows = (LINES - 24) / 2;
+		
+		/* Prevent stupidly small windows */
+		if (cols < 25) cols = 0;
+		if (rows < 10) rows = 0;
+		
+		/* Ok - so we now have the size of the main window */
+		cols += 80;
+		rows += 24;
 
 		/* Decide on size and position */
 		switch (i)
