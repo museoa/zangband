@@ -4839,7 +4839,7 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
  */
 void acquirement(int x1, int y1, int num, bool great, bool known)
 {
-	object_type *o_ptr;
+	object_type *o_ptr = NULL;
 
 	int i;
 
@@ -5045,7 +5045,7 @@ void item_describe(object_type *o_ptr)
 	/* Get a description */
 	object_desc(o_name, o_ptr, TRUE, 3, 256);
 
-	if (!list)
+	if (!list && !o_ptr->ix && !o_ptr->iy)
 	{
 		/* Item is in the equipment */
 		item = GET_ARRAY_INDEX(p_ptr->equipment, o_ptr);
