@@ -3036,7 +3036,7 @@ void do_cmd_throw_aux(int mult)
 			monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 			/* Calculate the projectile accuracy, modified by distance. */
-			chance2 = chance - distance(py, px, y, x);
+			chance2 = chance - distance(px, py, x, y);
 
 			/* Monsters in rubble can take advantage of cover. -LM- */
 			if (c_ptr->feat == FEAT_RUBBLE)

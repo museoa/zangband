@@ -711,7 +711,7 @@ void trigger_quest_create(byte c_type, void *data)
 								c_ptr = &cave[y][x];
 
 								if (!cave_naked_grid(c_ptr)) continue;
-								if (distance(y, x, p_ptr->py, p_ptr->px) < 10) continue;
+								if (distance(x, y, p_ptr->px, p_ptr->py) < 10) continue;
 								else break;
 							}
 

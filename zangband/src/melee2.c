@@ -528,7 +528,7 @@ static bool get_fear_moves_aux(int m_idx, int *xp, int *yp)
 		if (area(x, y)->when < when) continue;
 
 		/* Calculate distance of this grid from our destination */
-		dis = distance(y, x, y1, x1);
+		dis = distance(x, y, x1, y1);
 
 		/* Score this grid */
 		s = 5000 / (dis + 3) - 500 / (area(x, y)->cost + 1);
@@ -760,7 +760,7 @@ static bool find_safety(int m_idx, int *xp, int *yp)
 			{
 
 				/* Calculate distance from player */
-				dis = distance(y, x, py, px);
+				dis = distance(x, y, px, py);
 
 				/* Remember if further than previous */
 				if (dis > gdis)
@@ -858,7 +858,7 @@ static bool find_hiding(int m_idx, int *xp, int *yp)
 					 && clean_shot(fx, fy, x, y, FALSE))
 			{
 				/* Calculate distance from player */
-				dis = distance(y, x, py, px);
+				dis = distance(x, y, px, py);
 
 				/* Remember if closer than previous */
 				if (dis < gdis && dis >= 2)

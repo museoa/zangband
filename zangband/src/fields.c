@@ -476,7 +476,7 @@ void compact_fields(int size)
 			x = f_ptr->fx;
 
 			/* Nearby fields start out "immune" */
-			if ((cur_dis > 0) && (distance(py, px, y, x) < cur_dis)) continue;
+			if ((cur_dis > 0) && (distance(px, py, x, y) < cur_dis)) continue;
 
 			/* Saving throw */
 			chance = 90;

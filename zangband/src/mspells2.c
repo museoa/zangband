@@ -142,7 +142,7 @@ bool monst_spell_monst(int m_idx)
 		f6 = r_ptr->flags6;
 
 		/* Disallow blink unless close */
-		if ((distance(m_ptr->fy, m_ptr->fx, y, x) > 1) || one_in_(3)) f6 &= ~(RF6_BLINK);
+		if ((distance(m_ptr->fx, m_ptr->fy, x, y) > 1) || one_in_(3)) f6 &= ~(RF6_BLINK);
 
 		/* Disallow teleport unless wounded */
 		if (m_ptr->hp > m_ptr->maxhp / 2) f6 &= ~(RF6_TPORT);
@@ -164,7 +164,7 @@ bool monst_spell_monst(int m_idx)
 		}
 
 		/* Prevent collateral damage */
-		if (friendly && (distance(p_ptr->py, p_ptr->px, y, x) <= rad))
+		if (friendly && (distance(p_ptr->px, p_ptr->py, x, y) <= rad))
 		{
 			f4 &= ~(RF4_BALL_MASK);
 			f5 &= ~(RF5_BALL_MASK);

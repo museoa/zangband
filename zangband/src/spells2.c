@@ -2228,7 +2228,7 @@ bool destroy_area(int x1, int y1, int r)
 			if (!in_boundsp(x, y)) continue;
 
 			/* Extract the distance */
-			k = distance(y1, x1, y, x);
+			k = distance(x1, y1, x, y);
 
 			/* Stay in the circle of death */
 			if (k > r) continue;
@@ -2417,7 +2417,7 @@ bool earthquake(int cx, int cy, int r)
 			if (!in_boundsp(xx, yy)) continue;
 
 			/* Skip distant grids */
-			if (distance(cy, cx, yy, xx) > r) continue;
+			if (distance(cx, cy, xx, yy) > r) continue;
 
 			/* Access the grid */
 			c_ptr = area(xx, yy);
@@ -3084,7 +3084,7 @@ static void cave_temp_room_aux(int x, int y)
 	if (!cave_floor_grid(c_ptr)) return;
 
 	/* Do not exceed the maximum spell range */
-	if (distance(p_ptr->py, p_ptr->px, y, x) > MAX_RANGE) return;
+	if (distance(p_ptr->px, p_ptr->py, x, y) > MAX_RANGE) return;
 
 
 	/* Verify this grid */

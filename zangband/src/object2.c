@@ -413,7 +413,7 @@ void compact_objects(int size)
 
 			/* Nearby objects start out "immune" */
 			if ((cur_dis > 0) &&
-			    (distance(p_ptr->py, p_ptr->px, y, x) < cur_dis)) continue;
+			    (distance(p_ptr->px, p_ptr->py, x, y) < cur_dis)) continue;
 
 			/* Saving throw */
 			chance = 90;

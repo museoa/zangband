@@ -3883,7 +3883,7 @@ int dist_to_line(int x, int y, int x1, int y1, int x2, int y2)
 	int nx = y1 - y2;
 
 	/* Length of N */
-	int d = distance(y1, x1, y2, x2);
+	int d = distance(x1, y1, x2, y2);
 
 	/* Component of P on N */
 	d = ((d) ? ((py * ny + px * nx) / d) : 0);
@@ -4356,10 +4356,10 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 							if (!in_bounds(x, y)) continue;
 
 							/* Enforce a circular "ripple" */
-							if (distance(y1, x1, y, x) != bdis) continue;
+							if (distance(x1, y1, x, y) != bdis) continue;
 
 							/* Enforce an arc */
-							if (distance(by, bx, y, x) != cdis) continue;
+							if (distance(bx, by, x, y) != cdis) continue;
 
 							/* The blast is stopped by walls */
 							if (!in_ball_range(bx, by, x, y)) continue;
@@ -4413,7 +4413,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 						if (!in_bounds2(x, y)) continue;
 
 						/* Enforce a "circular" explosion */
-						if (distance(y2, x2, y, x) != dist) continue;
+						if (distance(x2, y2, x, y) != dist) continue;
 
 						if (typ == GF_DISINTEGRATE)
 						{

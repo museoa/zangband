@@ -2825,7 +2825,7 @@ bool target_set(int mode)
 					/* Pick a nearby monster */
 					for (i = 0; i < temp_n; i++)
 					{
-						t = distance(y, x, temp_y[i], temp_x[i]);
+						t = distance(x, y, temp_x[i], temp_y[i]);
 
 						/* Pick closest */
 						if (t < bd)

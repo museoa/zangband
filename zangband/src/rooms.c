@@ -3582,12 +3582,12 @@ static void build_type11(int bx0, int by0)
 	{
 		for (y = y0 - rad; y <= y0 + rad; y++)
 		{
-			if (distance(y0, x0, y, x) <= rad - 1)
+			if (distance(x0, y0, x, y) <= rad - 1)
 			{
 				/* inside- so is floor */
 				cave[y][x].feat = FEAT_FLOOR;
 			}
-			else if (distance(y0, x0, y, x) <= rad + 1)
+			else if (distance(x0, y0, x, y) <= rad + 1)
 			{
 				/* make granite outside so arena works */
 				cave[y][x].feat = FEAT_WALL_EXTRA;
@@ -3644,7 +3644,7 @@ static void build_type12(int bx0, int by0)
 				/* inside - so is floor */
 				cave[y][x].feat = FEAT_FLOOR;
 			}
-			else if (distance(y0, x0, y, x) < 3)
+			else if (distance(x0, y0, x, y) < 3)
 			{
 				cave[y][x].feat = FEAT_FLOOR;
 			}

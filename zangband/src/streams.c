@@ -102,7 +102,7 @@ static void recursive_river(int x1, int y1, int x2, int y2, int feat1, int feat2
 						if (c_ptr->feat == feat1) continue;
 						if (c_ptr->feat == feat2) continue;
 
-						if (distance(ty, tx, y, x) > rand_spread(width, 1)) continue;
+						if (distance(tx, ty, x, y) > rand_spread(width, 1)) continue;
 
 						/* Do not convert permanent features */
 						if (cave_perma_grid(c_ptr)) continue;
@@ -114,7 +114,7 @@ static void recursive_river(int x1, int y1, int x2, int y2, int feat1, int feat2
 						 * Clear previous contents, add feature
 						 * The border mainly gets feat2, while the center gets feat1
 						 */
-						if (distance(ty, tx, y, x) > width)
+						if (distance(tx, ty, x, y) > width)
 							c_ptr->feat = feat2;
 						else
 							c_ptr->feat = feat1;
@@ -300,7 +300,7 @@ void place_trees(int x, int y)
 			c_ptr = &cave[j][i];
 
 			/* Want square to be in the circle and accessable. */
-			if (in_bounds(i, j) && (distance(j, i, y, x) < 4) && !cave_perma_grid(c_ptr))
+			if (in_bounds(i, j) && (distance(i, j, x, y) < 4) && !cave_perma_grid(c_ptr))
 			{
 				/* Adding to grids with fields is problematical */
 				delete_field_location(c_ptr);
@@ -309,7 +309,7 @@ void place_trees(int x, int y)
 				 * Clear previous contents, add feature
 				 * The border mainly gets trees, while the center gets rubble
 				 */
-				if ((distance(j, i, y, x) > 1) || one_in_(4))
+				if ((distance(i, j, x, y) > 1) || one_in_(4))
 				{
 					if (randint1(100) < 75)
 						cave[j][i].feat = FEAT_TREES;
@@ -370,7 +370,7 @@ void destroy_level(void)
 				if (!in_bounds(x, y)) continue;
 
 				/* Extract the distance */
-				k = distance(y1, x1, y, x);
+				k = distance(x1, y1, x, y);
 
 				/* Stay in the circle of death */
 				if (k >= 16) continue;

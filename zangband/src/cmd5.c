@@ -1388,7 +1388,7 @@ static bool cast_chaos_spell(int spell)
 					if (!player_has_los_grid(parea(x, y))) continue;
 
 					/* if close enough - exit */
-					if (distance(py, px, y, x) < 6) break;
+					if (distance(px, py, x, y) < 6) break;
 				}
 
 				if (count >= 1000) break;

@@ -1963,7 +1963,7 @@ bool alloc_monster(int dis, bool slp)
 		if (!cave_empty_grid(c_ptr)) continue;
 
 		/* Accept far away grids */
-		if (distance(y, x, py, px) > dis) break;
+		if (distance(x, y, px, py) > dis) break;
 	}
 
 	if (!attempts_left)

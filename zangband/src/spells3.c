@@ -71,7 +71,7 @@ bool teleport_away(int m_idx, int dis)
 			{
 				ny = rand_spread(oy, dis);
 				nx = rand_spread(ox, dis);
-				d = distance(oy, ox, ny, nx);
+				d = distance(ox, oy, nx, ny);
 				if ((d >= min) && (d <= dis)) break;
 			}
 
@@ -223,7 +223,7 @@ void teleport_to_player(int m_idx)
 			{
 				ny = rand_spread(py, dis);
 				nx = rand_spread(px, dis);
-				d = distance(py, px, ny, nx);
+				d = distance(px, py, nx, ny);
 				if ((d >= min) && (d <= dis)) break;
 			}
 
@@ -382,7 +382,7 @@ void teleport_player(int dis)
 			{
 				y = rand_spread(py, dis);
 				x = rand_spread(px, dis);
-				d = distance(py, px, y, x);
+				d = distance(px, py, x, y);
 				if ((d >= min) && (d <= dis)) break;
 			}
 
@@ -1136,7 +1136,7 @@ void fetch(int dir, int wgt, bool require_los)
 		ty = p_ptr->target_row;
 
 		/* Paranoia */
-		if ((distance(py, px, ty, tx) > MAX_RANGE)
+		if ((distance(px, py, tx, ty) > MAX_RANGE)
 			 || (!in_bounds2(tx, ty)))
 		{
 			msg_print("You can't fetch something that far away!");
@@ -1182,7 +1182,7 @@ void fetch(int dir, int wgt, bool require_los)
 
 			c_ptr = area(tx, ty);
 
-			if ((distance(py, px, ty, tx) > MAX_RANGE) ||
+			if ((distance(px, py, tx, ty) > MAX_RANGE) ||
 			    !cave_floor_grid(c_ptr)) return;
 
 			/* found a spot */
@@ -4325,7 +4325,7 @@ bool dimension_door(void)
 	c_ptr = area(x, y);
 
 	if (!cave_empty_grid(c_ptr) || (c_ptr->info & CAVE_ICKY) ||
-		(distance(y, x, py, px) > plev + 2) || (one_in_(plev * plev / 2)))
+		(distance(x, y, px, py) > plev + 2) || (one_in_(plev * plev / 2)))
 	{
 		msg_print("You fail to exit the astral plane correctly!");
 		p_ptr->energy -= 100;
