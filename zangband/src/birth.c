@@ -733,7 +733,8 @@ static byte choose_realm(byte choices)
 			remove_loc();
 			quit(NULL);
 		}
-		if (c == 'S') return (REALM_NONE);
+		/*Hack - allow 'S' to restart the birth process */
+		if (c == 'S') return (MAX_REALM + 1);
 		if (c == '*')
 		{
 			k = randint0(n);
@@ -778,7 +779,7 @@ static bool get_player_realms(void)
 	/* Select the first realm */
 	p_ptr->realm1 = choose_realm(realm_choices1[p_ptr->pclass]);
 
-	if (p_ptr->realm1)
+	if ((p_ptr->realm1 > REALM_NONE) && (p_ptr->realm1 <= MAX_REALM))
 	{
 		/* Print the realm */
 		put_str("Magic       :", 6, 1);
@@ -788,16 +789,14 @@ static bool get_player_realms(void)
 		p_ptr->realm2 = choose_realm(realm_choices2[p_ptr->pclass]);
 
 		/* Print the realm */
-		if (p_ptr->realm2)
+		if ((p_ptr->realm2 > REALM_NONE) && (p_ptr->realm2 <= MAX_REALM))
 		{
 			c_put_str(TERM_L_BLUE, realm_names[p_ptr->realm2], 7, 15);
 		}
-		else
-		{
-			return (FALSE);
-		}
 	}
-	else
+
+	/* Hack - allow 'S' to restart the birth process */
+	if ((p_ptr->realm1 > MAX_REALM) || (p_ptr->realm2 > MAX_REALM))
 	{
 		return (FALSE);
 	}
