@@ -2,7 +2,7 @@ This is a document file listing the changes in Zangband (compared to
 the standard Angband 2.8.1.) No long explanations, just a list. See
 code for details. In reversed chronological order (more or less):
 
-Zangband 2.5.0:
+Zangband 2.3.4:
 -Extended the online helpful system significantly (also added The
  Angband Newbie Guide by Chris Weisiger and amended it somewhat for
  Zangband).
@@ -98,9 +98,9 @@ Zangband 2.5.0:
 -Enhanced pack monster AI.
 -Level feelings will now be generated based on the length of time you
  have spent on the current level rather than the previous level.
--Monster memory is now sorted by monster level regardless of the
- monsters' entries in r_info.txt.
--Unique lists and kill counts are similarly sorted.
+-Monster memory, unique lists, and kill counts are now sorted by monster
+ level regardless of the monsters' index in r_info.txt.
+-Easy-open doors works now normally for Spectres.
 -Life rating is no longer shown at character generation.
 -Reworked the 'C'haracter information screen to remove duplicate
  information and reformatted character dumps to prevent line wrapping.
@@ -127,9 +127,7 @@ Zangband 2.5.0:
  monsters at present).
 -Added a main-mac.new for testing. It adds support for 16x16 tiles with
  transparency, and asynchronous sound effects by Ron Anderson
- <randerso@cais.com> but is untested.
-
-
+ <randerso@cais.com> (untested).
 
 Zangband 2.3.3:
 -Added magical figurines, statues, and corpses (corpses are turned off
