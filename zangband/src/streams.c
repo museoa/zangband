@@ -449,8 +449,8 @@ void build_cavern(void)
 	done = FALSE;
 
 	/* Make a cave the size of the dungeon */
-	xsize = p_ptr->max_wid - 1;
-	ysize = p_ptr->max_hgt - 1;
+	xsize = p_ptr->max_wid - 2;
+	ysize = p_ptr->max_hgt - 2;
 	x0 = xsize / 2;
 	y0 = ysize / 2;
 
@@ -495,8 +495,8 @@ void build_lake(int type)
 	}
 
 	/* Make the size of the dungeon */
-	xsize = p_ptr->max_wid - 1;
-	ysize = p_ptr->max_hgt - 1;
+	xsize = p_ptr->max_wid - 2;
+	ysize = p_ptr->max_hgt - 2;
 	x0 = xsize / 2;
 	y0 = ysize / 2;
 
