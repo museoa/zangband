@@ -1256,9 +1256,6 @@ void map_info(int y, int x, byte *ap, char *cp)
 
 		/* Acquire next object */
 		next_o_idx = o_ptr->next_o_idx;
-		
-		/* Exit if not in dungeon */
-		if (o_ptr->held_m_idx) continue;
 
 		/* Memorized objects */
 		if (o_ptr->marked)
