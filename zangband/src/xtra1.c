@@ -556,6 +556,10 @@ static void prt_depth(void)
 			prtf(COL_DEPTH, Term->hgt - 1, "Wilderness");
 		}
 	}
+	else if (p_ptr->depth == max_dun_level())
+	{
+		prtf(COL_DEPTH, Term->hgt - 1, "Bottom");
+	}
 	else if (depth_in_feet)
 	{
 		prtf(COL_DEPTH, Term->hgt - 1, "%d ft", p_ptr->depth * 50);
