@@ -4276,7 +4276,7 @@ void place_gold(int x, int y)
  * the object can combine, stack, or be placed.  Artifacts will try very
  * hard to be placed, including "teleporting" to a useful grid if needed.
  */
-s16b drop_near(object_type *j_ptr, int chance, int y, int x)
+s16b drop_near(object_type *j_ptr, int chance, int x, int y)
 {
 	int i, k, d, s;
 
@@ -4683,7 +4683,7 @@ void acquirement(int y1, int x1, int num, bool great, bool known)
 		}
 
 		/* Drop the object */
-		(void)drop_near(i_ptr, -1, y1, x1);
+		(void)drop_near(i_ptr, -1, x1, y1);
 	}
 }
 
@@ -5280,7 +5280,7 @@ void inven_drop(int item, int amt)
 	msg_format("You drop %s (%c).", o_name, index_to_label(item));
 
 	/* Drop it near the player */
-	(void)drop_near(q_ptr, 0, p_ptr->py, p_ptr->px);
+	(void)drop_near(q_ptr, 0, p_ptr->px, p_ptr->py);
 
 	/* Modify, Describe, Optimize */
 	inven_item_increase(item, -amt);

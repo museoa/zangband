@@ -379,7 +379,7 @@ static void chest_death(int x, int y, s16b o_idx)
 		}
 
 		/* Drop it in the dungeon */
-		(void)drop_near(q_ptr, -1, y, x);
+		(void)drop_near(q_ptr, -1, x, y);
 	}
 
 	/* Reset the object level */
@@ -1291,7 +1291,7 @@ static bool do_cmd_tunnel_aux(int x, int y)
 			if (gold)
 			{
 				/* Place some gold */
-				place_gold(y, x);
+				place_gold(x, y);
 
 				/* Message */
 				msg_print("You have found something!");
@@ -2776,7 +2776,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	j = (hit_body ? breakage_chance(i_ptr) : 0);
 
 	/* Drop (or break) near that location */
-	(void)drop_near(i_ptr, j, y, x);
+	(void)drop_near(i_ptr, j, x, y);
 
 	make_noise(3);
 }
@@ -3259,7 +3259,7 @@ void do_cmd_throw_aux(int mult)
 	}
 
 	/* Drop (or break) near that location */
-	(void)drop_near(q_ptr, breakage, y, x);
+	(void)drop_near(q_ptr, breakage, x, y);
 
 	p_ptr->redraw |= (PR_EQUIPPY);
 

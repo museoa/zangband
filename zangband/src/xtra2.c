@@ -423,7 +423,7 @@ bool monster_death(int m_idx, bool explode)
 			q_ptr->flags3 |= (TR3_AGGRAVATE);
 
 		/* Drop it in the dungeon */
-		(void)drop_near(q_ptr, -1, y, x);
+		(void)drop_near(q_ptr, -1, x, y);
 	}
 
 	/*
@@ -498,7 +498,7 @@ bool monster_death(int m_idx, bool explode)
 		apply_magic(q_ptr, object_level, 0, 0);
 
 		/* Drop it in the dungeon */
-		(void)drop_near(q_ptr, -1, y, x);
+		(void)drop_near(q_ptr, -1, x, y);
 	}
 
 	/* Mega^2-hack -- Get a t-shirt from our first Greater Hell-beast kill */
@@ -517,7 +517,7 @@ bool monster_death(int m_idx, bool explode)
 						 TR3_IGNORE_FIRE | TR3_IGNORE_COLD);
 
 		/* Drop it in the dungeon */
-		(void)drop_near(q_ptr, -1, y, x);
+		(void)drop_near(q_ptr, -1, x, y);
 	}
 
 	/* Mega-Hack -- drop "winner" treasures */
@@ -680,7 +680,7 @@ bool monster_death(int m_idx, bool explode)
 		}
 
 		/* Drop it in the dungeon */
-		(void)drop_near(q_ptr, -1, y, x);
+		(void)drop_near(q_ptr, -1, x, y);
 	}
 
 	/* Take note of any dropped treasure */
@@ -3321,7 +3321,7 @@ void gain_level_reward(int chosen_reward)
 			add_ego_flags(q_ptr, EGO_CHAOTIC);
 
 			/* Drop it in the dungeon */
-			(void)drop_near(q_ptr, -1, py, px);
+			(void)drop_near(q_ptr, -1, px, py);
 			break;
 		case REW_GOOD_OBS:
 			msg_format("The voice of %s booms out:",

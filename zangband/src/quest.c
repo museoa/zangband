@@ -636,7 +636,7 @@ static void quest_reward(int num, int y, int x)
 	
 	
 	/* Drop it in the dungeon */
-	(void)drop_near(o_ptr, -1, y, x);
+	(void)drop_near(o_ptr, -1, x, y);
 }
 
 

@@ -2952,7 +2952,7 @@ void monster_drop_carried_objects(monster_type *m_ptr)
 		delete_object_idx(this_o_idx);
 
 		/* Drop it */
-		(void)drop_near(q_ptr, -1, m_ptr->fy, m_ptr->fx);
+		(void)drop_near(q_ptr, -1, m_ptr->fx, m_ptr->fy);
 	}
 
 	/* Forget objects */

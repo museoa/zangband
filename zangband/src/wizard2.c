@@ -1192,7 +1192,7 @@ static void wiz_create_item(void)
 	}
 
 	/* Drop the object from heaven */
-	(void)drop_near(q_ptr, -1, py, px);
+	(void)drop_near(q_ptr, -1, px, py);
 
 	/* All done */
 	msg_print("Allocated.");

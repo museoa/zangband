@@ -3154,5 +3154,5 @@ void create_named_art(int a_idx, int x, int y)
 	}
 
 	/* Drop the artifact from heaven */
-	(void)drop_near(q_ptr, -1, y, x);
+	(void)drop_near(q_ptr, -1, x, y);
 }

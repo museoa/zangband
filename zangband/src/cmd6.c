@@ -132,7 +132,7 @@ static void do_cmd_eat_food_aux(int item)
 			object_prep(q_ptr, lookup_kind(o_ptr->tval, o_ptr->sval));
 
 			/* Drop the object from heaven */
-			(void)drop_near(q_ptr, -1, p_ptr->py, p_ptr->px);
+			(void)drop_near(q_ptr, -1, p_ptr->px, p_ptr->py);
 		}
 		else
 		{
