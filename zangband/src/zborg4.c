@@ -4447,7 +4447,7 @@ my_stat_ind[A_INT] * 35000L;
 		l_ptr = look_up_equip_slot(i);
 
 		/* Skip empty items */
-		if (l_ptr) continue;
+		if (!l_ptr) continue;
 
 		/* Good to have one item with multiple high resists */
 		multibonus = (((l_ptr->kn_flags2 & TR2_RES_POIS) != 0) +
