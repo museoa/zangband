@@ -2476,7 +2476,7 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 /*
  * Buy an item from a store 			-RAK-
  */
-static void store_purchase(int store_top, town_type *twn_ptr)
+static void store_purchase(int *store_top, town_type *twn_ptr)
 {
 	int i, amt, choice;
 	int item, item_new;
@@ -2506,7 +2506,7 @@ static void store_purchase(int store_top, town_type *twn_ptr)
 
 
 	/* Find the number of objects on this and following pages */
-	i = (st_ptr->stock_num - store_top);
+	i = (st_ptr->stock_num - *store_top);
 
 	/* And then restrict it to the current page */
 	if (i > 12) i = 12;
@@ -2525,7 +2525,7 @@ static void store_purchase(int store_top, town_type *twn_ptr)
 	if (!get_stock(&item, out_val, 0, i - 1)) return;
 
 	/* Get the actual index */
-	item = item + store_top;
+	item = item + *store_top;
 
 	/* Get the actual item */
 	o_ptr = &st_ptr->stock[item];
@@ -2733,17 +2733,17 @@ static void store_purchase(int store_top, town_type *twn_ptr)
 					store_top = 0;
 
 					/* Redraw everything */
-					display_inventory(store_top);
+					display_inventory(*store_top);
 				}
 
 				/* The item is gone */
 				else if (st_ptr->stock_num != i)
 				{
 					/* Pick the correct screen */
-					if (store_top >= st_ptr->stock_num) store_top -= 12;
+					if (*store_top >= st_ptr->stock_num) *store_top -= 12;
 
 					/* Redraw everything */
-					display_inventory(store_top);
+					display_inventory(*store_top);
 				}
 
 				/* Item is still here */
@@ -2802,10 +2802,10 @@ static void store_purchase(int store_top, town_type *twn_ptr)
 			if (st_ptr->stock_num == 0) store_top = 0;
 
 			/* Nothing left on that screen */
-			else if (store_top >= st_ptr->stock_num) store_top -= 12;
+			else if (*store_top >= st_ptr->stock_num) *store_top -= 12;
 
 			/* Redraw everything */
-			display_inventory(store_top);
+			display_inventory(*store_top);
 
 			chg_virtue(V_SACRIFICE, 1);
 		}
@@ -2819,7 +2819,7 @@ static void store_purchase(int store_top, town_type *twn_ptr)
 /*
  * Sell an item to the store (or home)
  */
-static void store_sell(int store_top)
+static void store_sell(int *store_top)
 {
 	int choice;
 	int item, item_pos;
@@ -3040,8 +3040,8 @@ static void store_sell(int store_top)
 			/* Re-display if item is now in store */
 			if (item_pos >= 0)
 			{
-				store_top = (item_pos / 12) * 12;
-				display_inventory(store_top);
+				*store_top = (item_pos / 12) * 12;
+				display_inventory(*store_top);
 			}
 		}
 	}
@@ -3069,8 +3069,8 @@ static void store_sell(int store_top)
 		/* Update store display */
 		if (item_pos >= 0)
 		{
-			store_top = (item_pos / 12) * 12;
-			display_inventory(store_top);
+			*store_top = (item_pos / 12) * 12;
+			display_inventory(*store_top);
 		}
 	}
 }
@@ -3207,14 +3207,14 @@ static void store_process_command(field_type *f_ptr, town_type *twn_ptr,
 		/* Get (purchase) */
 		case 'g':
 		{
-			store_purchase(store_top, twn_ptr);
+			store_purchase(&store_top, twn_ptr);
 			break;
 		}
 
 		/* Drop (Sell) */
 		case 'd':
 		{
-			store_sell(store_top);
+			store_sell(&store_top);
 			break;
 		}
 
@@ -3586,8 +3586,8 @@ void do_cmd_store(field_type *f_ptr)
 	/* Get the store the player is on */
 	for (i = 0; i < twn_ptr->numstores; i++)
 	{
-		if ((p_ptr->py - twn_ptr->y == twn_ptr->store[i].y) && 
-		 (p_ptr->px - twn_ptr->x == twn_ptr->store[i].x))
+		if ((p_ptr->py - twn_ptr->y * 16 == twn_ptr->store[i].y) && 
+		 (p_ptr->px - twn_ptr->x * 16 == twn_ptr->store[i].x))
 		{
 			which = i;
 		}

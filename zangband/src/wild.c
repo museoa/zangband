@@ -330,7 +330,7 @@ static void town_gen_hack(u16b town_num, int *xx, int *yy)
 			k = ((n <= 1) ? 0 : randint0(n));
 
 			/* Build that store at the proper location */
-			build_store(y, x, &town[town_num].store[k]);
+			build_store(y, x, &town[town_num].store[rooms[k]]);
 
 			/* Shift the stores down, remove one store */
 			rooms[k] = rooms[--n];
@@ -649,7 +649,6 @@ static void init_towns(void)
 			/* Initialize */
 			store_init(town_count, j, j);
 		}
-
 		
 		/* Place town on wilderness */
 		for (j = 0; j < (TOWN_HGT / 16 + 1); j++)
