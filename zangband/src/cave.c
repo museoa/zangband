@@ -3573,7 +3573,7 @@ void wiz_lite(void)
 #endif
 
 			/* Memorize normal features */
-			if (c_ptr->feat > FEAT_INVIS)
+			if ((c_ptr->feat > FEAT_INVIS) && (c_ptr->feat != FEAT_WALL_INVIS))
 			{
 				/* Memorize the grid */
 				c_ptr->info |= (CAVE_MARK);
