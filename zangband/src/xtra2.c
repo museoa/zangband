@@ -3955,16 +3955,9 @@ int adjust_stat(int stat, int value, int amount, bool fixed)
 					value += rand_range(5, 15);
 			}
 #else  /* 0 */
-			if (value < 17)
+			if (value < 18)
 			{
 				value++;
-			}
-			else if (value == 17)
-			{
-				if (fixed)
-					value++;
-				else
-					value += rand_range(1, 10);
 			}
 			else
 			{
