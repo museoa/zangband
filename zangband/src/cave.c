@@ -782,6 +782,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 	byte c;
 	
 	bool feat_s_light;
+	bool feat_ascii;
 
 	/* Get the cave */
 	c_ptr = area(y,x);
@@ -815,13 +816,16 @@ void map_info(int y, int x, byte *ap, char *cp)
 			/* Normal attr */
 			a = f_ptr->x_attr;
 
+			/* Is it ascii ? */
+			feat_ascii = is_ascii_graphics(c,a);
+			
 			/* Special lighting effects */
-			if (view_special_lite && (!use_transparency || feat_s_light || is_ascii_graphics(c,a)))
+			if (view_special_lite && (!use_transparency || feat_s_light || feat_ascii))
 			{
 				/* Handle "blind" */
 				if (p_ptr->blind)
 				{
-					if (is_ascii_graphics(c,a))
+					if (feat_ascii)
 					{
 						/* Use darkened colour */
 						a = lighting_colours[a][1];
@@ -839,7 +843,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 					/* Torch lite */
 					if (view_yellow_lite)
 					{
-						if (is_ascii_graphics(c,a))
+						if (feat_ascii)
 						{
 							/* Use lightened colour */
 							a = lighting_colours[a][0];
@@ -855,7 +859,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 				/* Handle "dark" grids */
 				else if (!(info & CAVE_GLOW))
 				{
-					if (is_ascii_graphics(c,a))
+					if (feat_ascii)
 					{
 						/* Use darkened colour */
 						a = lighting_colours[a][1];
@@ -873,7 +877,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 					/* Special flag */
 					if (view_bright_lite)
 					{
-						if (is_ascii_graphics(c,a))
+						if (feat_ascii)
 						{
 							/* Use darkened colour */
 							a = lighting_colours[a][1];
@@ -917,10 +921,13 @@ void map_info(int y, int x, byte *ap, char *cp)
 			/* Normal attr */
 			a = f_ptr->x_attr;
 
+			/* Is it ascii ? */
+			feat_ascii = is_ascii_graphics(c,a);
+			
 			/* Handle "blind" */
 			if (p_ptr->blind)
 			{
-				if (is_ascii_graphics(c,a))
+				if (feat_ascii)
 				{
 					/* Use darkened colour */
 					a = lighting_colours[a][1];
@@ -936,9 +943,9 @@ void map_info(int y, int x, byte *ap, char *cp)
 			else if (info & CAVE_LITE)
 			{
 				/* Torch lite */
-				if (view_yellow_lite && (!use_transparency || feat_s_light || is_ascii_graphics(c,a)))
+				if (view_yellow_lite && (!use_transparency || feat_s_light || feat_ascii))
 				{
-					if (is_ascii_graphics(c,a))
+					if (feat_ascii)
 					{
 						/* Use lightened colour */
 						a = lighting_colours[a][0];
@@ -952,13 +959,13 @@ void map_info(int y, int x, byte *ap, char *cp)
 			}
 
 			/* Handle "view_bright_lite" */
-			else if (view_bright_lite && (!use_transparency || feat_s_light || is_ascii_graphics(c,a)))
+			else if (view_bright_lite && (!use_transparency || feat_s_light || feat_ascii))
 
 			{
 				/* Not viewable */
 				if (!(info & CAVE_VIEW))
 				{
-					if (is_ascii_graphics(c,a))
+					if (feat_ascii)
 					{
 						/* Use darkened colour */
 						a = lighting_colours[a][1];
@@ -973,7 +980,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 				/* Not glowing */
 				else if (!(info & CAVE_GLOW))
 				{
-					if (is_ascii_graphics(c,a))
+					if (feat_ascii)
 					{
 						/* Use darkened colour */
 						a = lighting_colours[a][1];
@@ -3504,7 +3511,7 @@ void update_view(void)
 							info |= (CAVE_MARK);
 						}
 					}
-					else
+					else if (info & (CAVE_LITE | CAVE_GLOW))
 					{
 						/* Memorize */
 						info |= (CAVE_MARK);
