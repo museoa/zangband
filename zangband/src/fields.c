@@ -48,7 +48,7 @@ static s16b *field_find(s16b fld_idx)
 
 
 /*
- * Excise a field from a stacks
+ * Excise a field from a stack
  */
 void excise_field_idx(int fld_idx)
 {
@@ -64,10 +64,6 @@ void excise_field_idx(int fld_idx)
 
 	int y = j_ptr->fy;
 	int x = j_ptr->fx;
-
-
-	/* Exit if is a "dummy" object */
-	if ((x == 0) && (y == 0)) return;
 
 	/* Grid */
 	c_ptr = area(x, y);
@@ -581,9 +577,8 @@ void wipe_fields(int rg_idx)
 		/* Enforce region */
 		if (f_ptr->region != rg_idx) continue;
 		
-		/* Delete the field */
-		delete_field_idx(i);
-
+		/* Hack - delete all fields on this square */
+		delete_field(f_ptr->fx, f_ptr->fy);
 	}
 
 	/* Compress the fields list */
@@ -1359,7 +1354,7 @@ void test_field_data_integrity(void)
 }
 
 
-/* Field action functions - later will be implemented in python */
+/* Field action functions - later will be implemented in lua */
 
 
 /*
@@ -3328,7 +3323,10 @@ bool field_action_door_lock_monster(field_type *f_ptr, vptr input)
 		
 		/* Done */
 		return (FALSE);
-	}			
+	}
+	
+	/* Use move to try to open the door */
+	mon_enter->do_move = FALSE;	
 	
 	/* Locked doors */
 	if ((r_ptr->flags2 & RF2_OPEN_DOOR) &&
@@ -3339,17 +3337,11 @@ bool field_action_door_lock_monster(field_type *f_ptr, vptr input)
 		{
 			/* Open the door */
 			cave_set_feat(f_ptr->fx, f_ptr->fy, FEAT_OPEN);
-						
-			/* Cannot move */
-			mon_enter->do_move = FALSE;
 			
 			/* Delete the field */
 			return (TRUE);
 		}
 	}
-	
-	/* Cannot move */
-	mon_enter->do_move = FALSE;
 	
 	/* Done */
 	return (FALSE);
