@@ -52,7 +52,7 @@ V:2.7.4
 
 N:1:of Galadriel
 I:39:4:1
-W:20:1:10:10000
+W:20:1:10:2000
 P:0:1d1:0:0:0
 F:ACTIVATE | SENSE | INSTA_ART | LITE
 L:USE:	msgf("The phial wells with clear light...")
@@ -65,7 +65,7 @@ L:DESC:	return "illumination every 10-20 turns"
 
 N:2:of Elendil
 I:39:5:1
-W:52:25:5:32500
+W:52:25:5:5000
 P:0:1d1:0:0:0
 F:ACTIVATE | SEE_INVIS | HOLD_LIFE | INSTA_ART | SPEED | LITE
 L:USE:	msgf("The star shines brightly...")
@@ -80,7 +80,7 @@ L:DESC:	return "magic mapping and illumination every 50-100 turns"
 
 N:3:of Judgement
 I:39:6:3
-W:80:50:5:150000
+W:80:50:5:15000
 P:0:1d1:0:0:0
 F:ACTIVATE | SEE_INVIS | HOLD_LIFE | RES_CONF | RES_CHAOS |
 F:INSTA_ART | SPEED | WIS | INT | LITE
@@ -104,7 +104,7 @@ L:SPOIL:	return "Damages player randomly"
 
 N:4:of Carlammas
 I:40:10:2
-W:80:10:3:60000
+W:80:10:3:5000
 F:CON | HIDE_TYPE | ACTIVATE | RES_FIRE | INSTA_ART
 L:USE:	msgf("The amulet lets out a shrill wail...")
 L:USE:	inc_protevil(randint1(25) + 3 * player.lev)
@@ -116,7 +116,7 @@ L:DESC:	return "protection from evil every 225-450 turns"
 
 N:5:of Ingwe
 I:40:11:3
-W:95:30:3:90000
+W:95:30:3:15000
 F:WIS | CHR | INFRA | HIDE_TYPE |
 F:SEE_INVIS | FREE_ACT | ACTIVATE |
 F:RES_ACID | RES_COLD | RES_ELEC |
@@ -131,7 +131,7 @@ L:DESC:	return "dispel evil (level * 5) every 300-600 turns"
 
 N:6:of the Dwarves
 I:40:12:3
-W:100:50:3:75000
+W:100:50:3:20000
 F:STR | CON | INFRA | HIDE_TYPE |
 F:SEE_INVIS | FREE_ACT | REGEN | LITE | INSTA_ART
 
@@ -140,7 +140,7 @@ F:SEE_INVIS | FREE_ACT | REGEN | LITE | INSTA_ART
 
 N:7:of Sawall
 I:39:3:3
-W:35:10:5:20000
+W:35:10:5:4000
 P:0:1d1:0:0:0
 F:INSTA_ART | INFRA | SH_FIRE | SH_ELEC | LITE
 
@@ -149,7 +149,7 @@ F:INSTA_ART | INFRA | SH_FIRE | SH_ELEC | LITE
 
 N:8:'Frakir'
 I:45:32:1
-W:80:25:2:75000
+W:80:25:2:7500
 F:STR | INT | WIS | DEX | CON | CHR | STEALTH | HIDE_TYPE |
 F:RES_POIS | ACTIVATE | SEE_INVIS | SENSE | INSTA_ART
 L:USE:	msgf("You order Frakir to strangle your opponent.")
@@ -163,7 +163,7 @@ L:DESC:	return "a strangling attack (200) every 100-200 turns"
 
 N:9:of Tulkas
 I:45:33:4
-W:100:50:2:175000
+W:100:50:2:17500
 F:STR | DEX | CON | HIDE_TYPE | ACTIVATE | SPEED | INSTA_ART
 L:USE:	msgf("The ring glows brightly...")
 L:USE:	inc_fast(rand_range(75, 150))
@@ -257,7 +257,7 @@ L:SPOIL:	return "Random ability & high resist"
 
 N:14:of Elemental Mastery
 I:45:50:4
-W:105:50:2:300000
+W:105:50:2:30000
 F:STR | INT | DEX | SPEED | STEALTH | HIDE_TYPE |
 F:RES_FIRE | RES_COLD | RES_ACID | RES_ELEC | RES_POIS |
 F:TELEPATHY |
@@ -278,7 +278,7 @@ L:DESC:	return "ball of the elements (800), rad. 3, every 250-500 turns"
 
 N:16:'Razorback'
 I:38:6:0
-W:90:9:500:400000
+W:90:9:500:40000
 P:30:2d4:-4:0:25
 F:RES_FIRE | RES_COLD | RES_POIS | RES_LITE | RES_DARK |
 F:LITE | SEE_INVIS | AGGRAVATE | FREE_ACT | IM_ELEC |
@@ -294,7 +294,7 @@ L:DESC:	return "star ball (1000) every 100 turns";
 
 N:17:'Bladeturner'
 I:38:30:0
-W:95:3:600:500000
+W:95:3:600:50000
 P:50:2d4:-8:0:35
 F:HOLD_LIFE | REGEN |
 F:RES_ACID | RES_FIRE | RES_COLD | RES_ELEC | RES_POIS | FEATHER |
@@ -324,7 +324,7 @@ L:DESC:	return "berserk, bless, resistance, and breathe elements (1000) every 10
 
 N:18:of the Thaumaturgist
 I:36:2:4
-W:18:11:20:20000
+W:18:11:20:10000
 P:2:0d0:0:0:3
 F:INT | STEALTH | FREE_ACT | RES_CONF | RES_BLIND | RES_NEXUS | HIDE_TYPE
 F:INSTA_ART
@@ -333,7 +333,7 @@ F:INSTA_ART
 
 N:19:'Soulkeeper'
 I:37:30:2
-W:100:9:420:300000
+W:100:9:420:30000
 P:40:2d4:-4:0:20
 F:CON | HOLD_LIFE | SUST_CON |
 F:RES_ACID | RES_COLD | RES_DARK | RES_NETHER | RES_NEXUS | RES_CHAOS |
@@ -350,7 +350,7 @@ L:DESC:	return "heal (1000) every 888 turns"
 
 N:20:of Isildur
 I:37:15:1
-W:52:3:300:50000
+W:52:3:300:15000
 P:25:2d4:0:0:25
 F:CON | RES_ACID | RES_ELEC | RES_FIRE | RES_COLD |
 F:RES_SOUND | RES_CONF | RES_NEXUS | INSTA_ART
@@ -360,7 +360,7 @@ F:RES_SOUND | RES_CONF | RES_NEXUS | INSTA_ART
 
 N:21:of the Rohirrim
 I:37:9:2
-W:52:3:200:30000
+W:52:3:200:13000
 P:19:1d4:0:0:15
 F:STR | DEX | HIDE_TYPE |
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_CONF | RES_SOUND
@@ -396,7 +396,7 @@ D:imbued with celestial power.
 
 N:23:of Julian
 I:37:3:4
-W:70:3:250:150000
+W:70:3:250:15000
 P:15:2d4:-2:0:40
 F:STR | CHR | HIDE_TYPE |
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_DARK |
@@ -413,7 +413,7 @@ L:SPOIL:	return "Random high resist"
 
 N:24:of Command
 I:37:4:2
-W:35:3:220:32000
+W:35:3:220:9000
 P:14:1d4:-2:0:15
 F:STR | CHR | HIDE_TYPE | INSTA_ART
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD
@@ -433,7 +433,7 @@ D:total confidence and power.
 
 N:25:of Caspanion
 I:37:6:3
-W:43:9:270:40000
+W:43:9:270:14000
 P:16:1d4:-2:0:20
 F:INT | WIS | CON | HIDE_TYPE | INSTA_ART
 F:RES_ACID | RES_POIS | RES_CONF | ACTIVATE
@@ -448,7 +448,7 @@ L:SPOIL:	return "Random high resist"
 
 N:26:'Nemovebla'
 I:37:3:4
-W:25:8:225:22000
+W:25:8:225:14000
 P:13:1d4:0:0:10
 F:STR | CON | RES_NEXUS | RES_NETHER | NO_TELE | SLOW_DIGEST | HIDE_TYPE
 F:INSTA_ART
@@ -457,7 +457,7 @@ F:INSTA_ART
 
 N:27:'Tenyo's Despair'
 I:36:16:4
-W:45:3:20:40000
+W:45:3:20:13000
 P:2:0d0:0:0:20
 F:STEALTH | FEATHER | RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_DARK |
 F:ACTIVATE | SUST_STR | SUST_INT | SUST_WIS | SUST_DEX | SUST_CON | SUST_CHR
@@ -485,7 +485,7 @@ D:find her robe.
 
 N:28:'Thalkettoth'
 I:36:11:3
-W:35:3:60:25000
+W:35:3:60:9000
 P:11:1d1:-1:0:25
 F:DEX | HIDE_TYPE | RES_ACID | RES_SHARDS | INSTA_ART
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
@@ -495,7 +495,7 @@ L:SPOIL:	return "Random high resist"
 
 N:29:of Melman
 I:36:12:2
-W:52:30:120:30000
+W:52:30:120:10000
 P:12:1d2:0:0:20
 F:HOLD_LIFE | INT | WIS | RES_FIRE | RES_COLD | INSTA_ART
 
@@ -503,7 +503,7 @@ F:HOLD_LIFE | INT | WIS | RES_FIRE | RES_COLD | INSTA_ART
 
 N:30:of Thorin
 I:34:3:4
-W:52:6:65:60000
+W:52:6:65:24000
 P:5:1d3:0:0:25
 F:STR | CON | HIDE_TYPE | FREE_ACT | IM_ACID | RES_SOUND | RES_CHAOS
 F:INSTA_ART
@@ -514,7 +514,7 @@ L:SPOIL:	return "Random high resist"
 
 N:31:of Celegorm
 I:34:4:0
-W:52:3:60:12000
+W:52:3:60:8000
 P:6:1d4:0:0:20
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_LITE | RES_DARK
 F:INSTA_ART
@@ -525,7 +525,7 @@ L:SPOIL:	return "Random high resist"
 
 N:32:of Anarion
 I:34:5:0
-W:70:9:120:160000
+W:70:9:120:7000
 P:8:1d5:0:0:20
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | SUST_STR | SUST_INT |
 F:SUST_WIS | SUST_DEX | SUST_CON | SUST_CHR | INSTA_ART
@@ -570,7 +570,7 @@ L:SPOIL:	return "Random ability"
 
 N:36:of Thranduil
 I:32:2:2
-W:35:2:15:50000
+W:35:2:15:8500
 P:2:0d0:0:0:10
 F:INT | WIS | HIDE_TYPE | RES_BLIND | TELEPATHY
 F:INSTA_ART
@@ -581,7 +581,7 @@ L:SPOIL:	return "Random high resist"
 
 N:37:of Thengel
 I:32:3:3
-W:17:2:20:22000
+W:17:2:20:4000
 P:3:1d1:0:0:12
 F:WIS | CHR | HIDE_TYPE | INSTA_ART
 
@@ -589,7 +589,7 @@ F:WIS | CHR | HIDE_TYPE | INSTA_ART
 
 N:38:of Hammerhand
 I:32:6:3
-W:35:2:60:45000
+W:35:2:60:10000
 P:6:1d3:0:0:20
 F:STR | DEX | CON | HIDE_TYPE | RES_ACID | RES_NEXUS
 F:INSTA_ART
@@ -598,7 +598,7 @@ F:INSTA_ART
 
 N:39:of Dor-Lomin
 I:32:7:4
-W:70:12:75:300000
+W:70:12:75:20000
 P:8:1d3:0:0:20
 F:STR | DEX | CON | HIDE_TYPE |
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_LITE | RES_BLIND |
@@ -612,7 +612,7 @@ L:DESC:	return "turn monsters every 33-180 turns"
 
 N:40:'Holhenneth'
 I:32:5:2
-W:35:5:75:100000
+W:35:5:75:7500
 P:5:1d3:0:0:10
 F:INT | WIS | SENSE | HIDE_TYPE | RES_BLIND | SEE_INVIS | ACTIVATE
 F:INSTA_ART
@@ -653,7 +653,7 @@ L:SPOIL:	return "Random ability & high resist (warrior); curse, heavy curse, agg
 
 N:42:of Amber
 I:33:11:3
-W:70:40:30:125000
+W:70:40:30:25000
 P:0:1d1:0:0:15
 F:STR | WIS | CON | HIDE_TYPE | SPEED |
 F:RES_COLD | RES_FIRE | RES_LITE | RES_BLIND | RES_ELEC | RES_CONF |
@@ -686,7 +686,7 @@ L:DESC:	return "create food every 100 turns"
 
 N:44:'Colluin'
 I:35:1:0
-W:9:45:10:10000
+W:9:45:10:7000
 P:1:0d0:0:0:15
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_POIS | ACTIVATE
 F:INSTA_ART
@@ -704,7 +704,7 @@ L:DESC:	return "resistance (20-40) every 111 turns"
 # Variable bonus: +2 stealth, +1 per +2 ac
 N:45:'Thief's Shadow'
 I:35:1:2
-W:9:45:10:13000
+W:9:45:10:5000
 P:1:0d0:0:0:4
 F:DEX | STEALTH | HIDE_TYPE | RES_LITE | ACTIVATE | INSTA_ART | EASY_ENCHANT
 L:USE:	msgf("Your cloak glows deep blue...")
@@ -721,7 +721,7 @@ D:perfectly with the shadows.
 
 N:46:of the Alchemist
 I:35:1:3
-W:17:90:10:35000
+W:17:90:10:11000
 P:1:0d0:0:0:18
 F:DEX | LUCK_10 | HIDE_TYPE |
 F:FREE_ACT | RES_ACID | RES_FIRE | RES_COLD | ACTIVATE | INSTA_ART
@@ -740,7 +740,7 @@ D:protect him from his frequent magical mishaps.
 # Variable bonus: +1 sensing per 10 levels
 N:47:of Thorongil
 I:35:1:0
-W:9:20:10:8000
+W:9:20:10:4000
 P:1:0d0:0:0:10
 F:FREE_ACT | RES_ACID | SEE_INVIS | INSTA_ART
 L:BONUS:	b.skills[SKILL_SNS] = b.skills[SKILL_SNS] + player.lev / 2
@@ -752,7 +752,7 @@ L:SPOIL:	return "+1 sense / 10 levels"
 
 N:48:'Colannon'
 I:35:1:3
-W:5:10:10:11000
+W:5:10:10:3000
 P:1:0d0:0:0:15
 F:STEALTH | RES_ACID | ACTIVATE | INSTA_ART
 L:USE:	msgf("Your cloak twists space around you...")
@@ -765,7 +765,7 @@ L:DESC:	return "teleport every 45 turns"
 
 N:49:of Luthien
 I:35:6:2
-W:70:40:5:55000
+W:70:40:5:15000
 P:6:0d0:0:0:20
 F:INT | WIS | CHR | HIDE_TYPE | SPEED | STEALTH |
 F:RES_ACID | RES_FIRE | RES_COLD | ACTIVATE |
@@ -802,7 +802,7 @@ D:when worn by a skilled assassin.
 # Variable bonus: +1 str and +1 con per +2 ac
 N:52:of the Ogre
 I:31:1:3
-W:17:6:5:5000
+W:17:6:5:7000
 P:1:0d0:6:6:6
 F:STR | CON | HIDE_TYPE | SHOW_MODS | INSTA_ART | EASY_ENCHANT
 L:ALTER:	object.pval = object.to_a / 2
@@ -815,7 +815,7 @@ D:strength and skill of an ogre.
 
 N:53:'Cammithrim'
 I:31:1:0
-W:17:3:5:3000
+W:17:3:5:5000
 P:1:0d0:0:0:10
 F:FREE_ACT | RES_LITE | SUST_CON | LITE | ACTIVATE | INSTA_ART
 L:USE:	msgf("Your gloves glow extremely brightly...")
@@ -830,7 +830,7 @@ L:DESC:	return "magic missile (3d6) every 2 turns"
 
 N:54:'Paurhach'
 I:31:2:0
-W:17:20:25:5000
+W:17:20:25:3500
 P:2:1d1:0:0:15
 F:RES_FIRE | ACTIVATE | INSTA_ART
 L:USE:	msgf("Your gauntlets are covered in fire...")
@@ -845,7 +845,7 @@ L:DESC:	return "fire bolt (11d8) every 8-16 turns"
 
 N:55:of Corwin
 I:31:2:4
-W:17:20:25:10000
+W:17:20:25:6000
 P:2:1d1:0:0:15
 F:SUST_CON | CON | REGEN | RES_COLD | ACTIVATE | INSTA_ART
 L:USE:	msgf("Your gauntlets are covered in frost...")
@@ -860,7 +860,7 @@ L:DESC:	return "frost bolt (8d8) every 7-14 turns"
 
 N:56:'Pauraegen'
 I:31:2:0
-W:17:20:25:5000
+W:17:20:25:3500
 P:2:1d1:0:0:15
 F:RES_ELEC | ACTIVATE | INSTA_ART
 L:USE:	msgf("Your gauntlets are covered in sparks...")
@@ -875,7 +875,7 @@ L:DESC:	return "lightning bolt (6d8) every 6-12 turns"
 
 N:57:'Paurnen'
 I:31:2:0
-W:17:20:25:6000
+W:17:20:25:3500
 P:2:1d1:0:0:15
 F:RES_ACID | ACTIVATE | INSTA_ART
 L:USE:	msgf("Your gauntlets are covered in acid...")
@@ -902,7 +902,7 @@ F:INSTA_ART
 
 N:59:of Fingolfin
 I:31:5:4
-W:70:15:40:110000
+W:70:15:40:13000
 P:5:1d1:10:10:20
 F:DEX | HIDE_TYPE |
 F:FREE_ACT | RES_ACID | ACTIVATE | SHOW_MODS | INSTA_ART
@@ -934,7 +934,7 @@ L:DESC:	return "haste self (20-40) every 200 turns"
 
 N:61:of Flora
 I:30:2:5
-W:17:25:20:40000
+W:17:25:20:14000
 P:2:1d1:0:0:15
 F:DEX | HIDE_TYPE | CHR | SUST_CHR | ACTIVATE | FREE_ACT |
 F:RES_NETHER | RES_CHAOS | SUST_CON | INSTA_ART
@@ -961,7 +961,7 @@ L:SPOIL:	return "Random high resist"
 # Variable bonus: +1 speed per 5 levels (rounded up)
 N:63:of Bleys
 I:30:2:4
-W:52:20:20:100000
+W:52:20:20:25000
 P:4:1d1:4:4:16
 F:DEX | RES_NEXUS | SUST_DEX | FREE_ACT | INSTA_ART
 L:BONUS:	b.pspeed = (player.lev + 4) / 5
@@ -973,7 +973,7 @@ D:These ordinary looking boots are said to grow with their wearer.
 
 N:64:of Maedhros
 I:23:5:3
-W:26:30:30:22500
+W:26:30:30:17500
 P:0:2d5:12:15:0
 F:INT | DEX | HIDE_TYPE | SPEED |
 F:SLAY_TROLL | SLAY_GIANT | FREE_ACT | SEE_INVIS | SHOW_MODS | INSTA_ART
@@ -985,7 +985,7 @@ L:SPOIL:	return "Random ability or high resist"
 
 N:65:of Caine
 I:23:4:4
-W:35:80:12:25000
+W:35:80:12:15000
 P:0:2d4:10:15:5
 F:DEX | HIDE_TYPE | STEALTH | SENSE |
 F:SLAY_EVIL | SLAY_TROLL | SLAY_ORC | BRAND_POIS |
@@ -998,7 +998,7 @@ F:INSTA_ART
 # Unique power: Damage increases 10% per level (applied after all other mods)
 N:66:'Narthanc'
 I:23:4:0
-W:7:10:12:4000
+W:7:10:12:6000
 P:0:1d6:4:6:0
 F:BRAND_FIRE | RES_FIRE | ACTIVATE | SHOW_MODS | LITE | 
 F:THROW | RETURN | INSTA_ART
@@ -1020,7 +1020,7 @@ L:SPOIL:	return "Random high resist; +1 STR / 5 levels; +10% dam / level"
 # Unique power: Damage increases 10% per level (applied after all other mods)
 N:67:'Nimthanc'
 I:23:4:0
-W:5:10:12:3500
+W:5:10:12:5000
 P:0:1d6:4:6:0
 F:BRAND_COLD | RES_COLD | ACTIVATE | SHOW_MODS | THROW | RETURN | INSTA_ART
 L:USE:	msgf("Your dagger is covered in frost...")
@@ -1080,7 +1080,7 @@ L:SPOIL:	return "+1 INT / 10 levels"
 
 N:70:of Fiona
 I:23:4:2
-W:17:40:12:20000
+W:17:40:12:25000
 P:0:2d4:6:9:0
 F:DEX | HIDE_TYPE | SPEED | BLOWS | BRAND_COLD | RES_COLD |
 F:SEE_INVIS | SLOW_DIGEST | REGEN |
@@ -1097,7 +1097,7 @@ L:DESC:	return "frost ball (100) every 5-10 turns"
 
 N:71:'Calris'
 I:23:21:5
-W:52:15:140:100000
+W:52:15:140:25000
 P:0:4d4:-20:20:0
 F:CON | HIDE_TYPE |
 F:KILL_DRAGON | SLAY_EVIL | SLAY_DEMON | SLAY_TROLL | RES_DISEN |
@@ -1109,7 +1109,7 @@ F:AGGRAVATE | CURSED | HEAVY_CURSE | SHOW_MODS | INSTA_ART
 # Unique power: Damage increases +1 per 200' of depth
 N:72:'Grayswandir'
 I:23:11:4
-W:35:45:50:125000
+W:35:45:50:50000
 P:0:2d7:20:12:0
 F:STR | DEX | CON | SUST_CON | SUST_STR |
 F:REGEN | FREE_ACT | SEE_INVIS |
@@ -1125,7 +1125,7 @@ L:SPOIL:	return "+1 dam / 200'"
 
 N:73:'Glamdring'
 I:23:16:1
-W:35:20:150:40000
+W:35:20:150:10000
 P:0:2d5:10:15:0
 F:SENSE |
 F:SLAY_EVIL | BRAND_FIRE | SLAY_ORC | RES_FIRE | RES_LITE | LITE |
@@ -1138,7 +1138,7 @@ L:SPOIL:	return "Random ability or high resist"
 
 N:74:'Nothung'
 I:23:16:4
-W:35:90:150:95000
+W:35:90:150:15000
 P:0:2d5:12:16:0
 F:SENSE | BRAND_ELEC | SLAY_ORC | KILL_DRAGON | RES_FEAR |
 F:RES_ELEC | LITE | RES_FIRE | RES_POIS |
@@ -1149,7 +1149,7 @@ F:SLOW_DIGEST | SHOW_MODS | INSTA_ART
 
 N:75:'Orcrist'
 I:23:16:3
-W:35:20:150:40000
+W:35:20:150:8000
 P:0:2d5:10:15:0
 F:STEALTH | SLAY_EVIL | BRAND_COLD | SLAY_ORC | RES_COLD | LITE |
 F:SLOW_DIGEST | SHOW_MODS | INSTA_ART
@@ -1161,7 +1161,7 @@ L:SPOIL:	return "Random ability or high resist"
 
 N:76:'Gurthang'
 I:23:25:2
-W:52:30:200:100000
+W:52:30:200:12500
 P:0:3d6:13:17:0
 F:STR | HIDE_TYPE |
 F:KILL_DRAGON | SLAY_TROLL | FREE_ACT | SLOW_DIGEST | REGEN | SHOW_MODS
@@ -1173,7 +1173,7 @@ L:SPOIL:	return "Random ability or high resist"
 
 N:77:'Zarcuthra'
 I:23:25:4
-W:52:180:250:205000
+W:52:180:250:30000
 P:0:4d6:19:21:0
 F:STR | CHR | INFRA | HIDE_TYPE | VORPAL |
 F:KILL_DRAGON | SLAY_ANIMAL | SLAY_EVIL | BRAND_FIRE | LITE |
@@ -1198,7 +1198,7 @@ F:INSTA_ART
 
 N:79:'Gondricam'
 I:23:12:3
-W:35:8:110:28000
+W:35:8:110:10000
 P:0:1d10:10:11:0
 F:DEX | STEALTH | HIDE_TYPE |
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | FEATHER |
@@ -1209,7 +1209,7 @@ F:SEE_INVIS | REGEN | SHOW_MODS | INSTA_ART
 
 N:80:'Crisdurian'
 I:23:28:0
-W:70:15:260:111000
+W:70:15:260:20000
 P:0:4d5:18:19:0
 F:SLAY_DRAGON | SLAY_EVIL | SLAY_UNDEAD | SLAY_TROLL | SLAY_GIANT |
 F:SLAY_ORC | SEE_INVIS | SHOW_MODS | VORPAL | BRAND_POIS
@@ -1220,7 +1220,7 @@ F:INSTA_ART
 # Unique power: Double damage if wielder is a warrior
 N:81:of Groo
 I:23:20:2
-W:52:25:50:75000
+W:52:25:50:20000
 P:0:5d4:0:0:0
 F:DEX | HIDE_TYPE | VORPAL |
 F:SUST_DEX | SHOW_MODS | SPEED | INSTA_ART
@@ -1234,7 +1234,7 @@ L:SPOIL:	return "Double damage (warrior)"
 
 N:82:'Ringil'
 I:23:17:10
-W:35:120:130:300000
+W:35:120:130:150000
 P:0:4d5:22:25:0
 F:SPEED | REGEN | ACTIVATE | SHOW_MODS |
 F:SLAY_EVIL | BRAND_COLD | SLAY_UNDEAD | SLAY_DEMON | SLAY_TROLL |
@@ -1252,7 +1252,7 @@ L:DESC:	return "frost ball (200) every 300 turns"
 
 N:83:'Anduril'
 I:23:17:4
-W:35:40:130:80000
+W:35:40:130:12000
 P:0:2d5:10:15:5
 F:STR | HIDE_TYPE |
 F:SLAY_EVIL | BRAND_FIRE | SLAY_TROLL | SLAY_ORC | FREE_ACT |
@@ -1272,7 +1272,7 @@ L:SPOIL:	return "Random ability or high resist"
 
 N:84:'Werewindle'
 I:23:17:2
-W:35:30:130:150000
+W:35:30:130:25000
 P:0:3d5:8:12:0
 F:STR | CON | HIDE_TYPE | CHAOTIC | REGEN | SLOW_DIGEST |
 F:SLAY_EVIL | BRAND_ELEC | SLAY_DEMON | FREE_ACT | RES_ELEC |
@@ -1288,7 +1288,7 @@ L:DESC:	return "a getaway every 35 turns"
 
 N:85:'Chainsword'
 I:23:16:2
-W:52:15:130:66666
+W:52:15:130:6666
 P:0:9d5:-30:7:0
 F:DEX | CHR | HIDE_TYPE | SPEED | AGGRAVATE |
 F:SLAY_TROLL | SLAY_ORC | SEE_INVIS | SHOW_MODS | INSTA_ART
@@ -1302,7 +1302,7 @@ L:TIMED:	end
 
 N:86:'Forasgil'
 I:23:7:0
-W:26:8:40:15000
+W:26:8:40:7500
 P:0:1d12:12:19:0
 F:SLAY_ANIMAL | BRAND_COLD | RES_COLD | RES_LITE | LITE | SHOW_MODS
 F:INSTA_ART
@@ -1312,7 +1312,7 @@ F:INSTA_ART
 
 N:87:'Careth Asdriag'
 I:23:11:1
-W:26:8:50:25000
+W:26:8:50:10000
 P:0:1d14:6:8:0
 F:BLOWS | SLAY_DRAGON | SLAY_ANIMAL | SLAY_TROLL | SLAY_GIANT |
 F:SLAY_ORC | SHOW_MODS | INSTA_ART
@@ -1323,7 +1323,7 @@ F:SLAY_ORC | SHOW_MODS | INSTA_ART
 # Dependent power: pval and to-hit doubled for hobbits.
 N:88:'Sting'
 I:23:8:2
-W:35:15:75:50000
+W:35:15:75:30000
 P:0:2d6:7:8:0
 F:STR | DEX | CON | SLAY_EVIL | SLAY_UNDEAD | SLAY_ORC |
 F:BLOWS | FREE_ACT | RES_LITE | LITE | SEE_INVIS | SHOW_MODS
@@ -1341,7 +1341,7 @@ D:in the hands of a hobbit.
 
 N:89:'Soulsword'
 I:23:18:2
-W:35:8:130:111111
+W:35:8:130:20000
 P:0:3d5:9:11:0
 F:INT | WIS | SEE_INVIS | BLESSED |
 F:SLAY_ANIMAL | SLAY_EVIL | SLAY_UNDEAD | SLAY_DRAGON | SLAY_DEMON |
@@ -1357,7 +1357,7 @@ L:SPOIL:	return "Random ability or high resist"
 # Unique power: +1 dam per 10 maximum sp (applied after other bonuses).
 N:90:of Merlin
 I:23:10:2
-W:35:8:80:35000
+W:35:8:80:25000
 P:0:1d10:3:7:0
 F:BLOWS |
 F:SLAY_ANIMAL | SLOW_DIGEST | REGEN | SHOW_MODS | SEE_INVIS | RES_DISEN
@@ -1375,7 +1375,7 @@ D:This fine sword is most powerful in the hands of a skilled magic user.
 
 N:91:'Doomcaller'
 I:23:30:0
-W:100:25:180:250000
+W:100:25:180:25000
 P:0:6d5:18:28:-50
 F:KILL_DRAGON | SLAY_ANIMAL | SLAY_EVIL | BRAND_COLD | SLAY_TROLL |
 F:SLAY_ORC | FREE_ACT | RES_ACID | RES_ELEC | RES_FIRE | RES_COLD |
@@ -1388,7 +1388,7 @@ F:CHAOTIC | VORPAL | BRAND_FIRE | BRAND_POIS | LITE | INSTA_ART
 # Unique power: Increased vorpality
 N:92:'Vorpal Blade'
 I:23:17:2
-W:80:30:150:250000
+W:80:30:150:35000
 P:0:4d5:32:32:0
 F:VORPAL | SLAY_EVIL |
 F:FREE_ACT | LITE | SEE_INVIS | SLOW_DIGEST | REGEN | SPEED | STR | DEX
@@ -1400,7 +1400,7 @@ L:SPOIL:	return "Extra vorpality"
 
 N:93:of Theoden
 I:22:10:3
-W:35:15:180:40000
+W:35:15:180:9500
 P:0:2d6:8:10:0
 F:WIS | CON | HIDE_TYPE |
 F:SLAY_DRAGON | TELEPATHY | SLOW_DIGEST | ACTIVATE | SHOW_MODS | INSTA_ART
@@ -1416,7 +1416,7 @@ L:DESC:	return "drain life (200) every 400 turns"
 
 N:94:of Pain
 I:22:13:0
-W:52:25:190:50000
+W:52:25:190:21000
 P:0:7d6:0:30:0
 F:SHOW_MODS | INSTA_ART
 
@@ -1425,7 +1425,7 @@ F:SHOW_MODS | INSTA_ART
 
 N:95:'Osondir'
 I:22:15:3
-W:35:8:190:22000
+W:35:8:190:10000
 P:0:3d5:6:9:0
 F:CHR | HIDE_TYPE |
 F:BRAND_FIRE | SLAY_UNDEAD | SLAY_GIANT | RES_FIRE | RES_SOUND |
@@ -1436,7 +1436,7 @@ F:FEATHER | SEE_INVIS | SHOW_MODS | LITE | INSTA_ART
 
 N:96:'Til-i-arc'
 I:22:8:2
-W:35:15:160:32000
+W:35:15:160:16000
 P:0:2d5:10:12:10
 F:INT | HIDE_TYPE |
 F:BRAND_COLD | BRAND_FIRE | SLAY_DEMON | SLAY_TROLL | SLAY_GIANT |
@@ -1447,7 +1447,7 @@ F:INSTA_ART
 
 N:97:'Runespear'
 I:22:2:4
-W:26:45:50:180000
+W:26:45:50:29000
 P:0:1d20:15:25:5
 F:INT | WIS | HIDE_TYPE | BRAND_FIRE | BRAND_ELEC |
 F:SLAY_TROLL | SLAY_ORC | SLAY_GIANT |
@@ -1466,7 +1466,7 @@ L:DESC:	return "lightning ball (200) every 500 turns"
 
 N:98:of Destiny
 I:22:2:4
-W:26:45:50:77777
+W:26:45:50:25000
 P:0:1d10:15:15:0
 F:INT | WIS | INFRA | HIDE_TYPE | SENSE | BRAND_FIRE |
 F:SLAY_GIANT | SLAY_EVIL | SLAY_DEMON | SLAY_UNDEAD | SLAY_DRAGON |
@@ -1498,7 +1498,7 @@ L:SPOIL:	return "+1 speed / 5 levels"
 
 N:100:'Soulsucker'
 I:22:2:4
-W:35:20:50:33600
+W:35:20:50:3000
 P:0:1d8:16:20:0
 F:STEALTH | SENSE | VAMPIRIC | BRAND_POIS | RES_POIS | RES_DARK | 
 F:RES_NETHER | HIDE_TYPE | SHOW_MODS | SEE_INVIS | DRAIN_EXP
@@ -1508,7 +1508,7 @@ F:INSTA_ART
 
 N:101:of Durin
 I:22:25:3
-W:52:90:230:150000
+W:52:90:230:22000
 P:0:4d4:10:20:15
 F:CON | HIDE_TYPE |
 F:KILL_DRAGON | SLAY_DEMON | SLAY_TROLL | SLAY_ORC | FREE_ACT |
@@ -1519,7 +1519,7 @@ F:INSTA_ART
 
 N:102:of Eonwe
 I:22:25:2
-W:52:120:230:200000
+W:52:120:230:33000
 P:0:4d4:15:18:8
 F:STR | INT | WIS | DEX | CON | CHR | HIDE_TYPE |
 F:SLAY_EVIL | BRAND_COLD | SLAY_UNDEAD |
@@ -1535,7 +1535,7 @@ L:DESC:	return "mass genocide every 1000 turns"
 
 N:103:of Balli Stonehand
 I:22:22:3
-W:52:15:170:90000
+W:52:15:170:20000
 P:0:3d8:8:11:5
 F:STR | CON | STEALTH | HIDE_TYPE |
 F:SLAY_DEMON | SLAY_TROLL | SLAY_ORC | FREE_ACT |
@@ -1547,7 +1547,7 @@ F:SEE_INVIS | REGEN | SHOW_MODS | INSTA_ART
 
 N:104:'Lotharang'
 I:22:22:1
-W:52:15:170:21000
+W:52:15:170:8000
 P:0:2d8:4:3:0
 F:STR | DEX | HIDE_TYPE |
 F:SLAY_TROLL | SLAY_ORC | ACTIVATE | SHOW_MODS | INSTA_ART
@@ -1562,7 +1562,7 @@ L:DESC:	return "cure wounds (100) every 3-6 turns"
 
 N:105:of the Dwarves
 I:22:28:10
-W:52:8:250:80000
+W:52:8:250:16000
 P:0:3d8:12:17:0
 F:SLAY_EVIL | TUNNEL | INFRA | SENSE | SLAY_GIANT |
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_FEAR |
@@ -1573,7 +1573,7 @@ F:SHOW_MODS | INSTA_ART
 
 N:106:'Barukkheled'
 I:22:11:3
-W:35:8:160:50000
+W:35:8:160:10000
 P:0:2d6:13:19:0
 F:CON | HIDE_TYPE |
 F:SLAY_EVIL | SLAY_TROLL | SLAY_GIANT | SLAY_ORC |
@@ -1584,7 +1584,7 @@ F:SEE_INVIS | SHOW_MODS | INSTA_ART
 
 N:107:of Wrath
 I:22:5:2
-W:26:35:300:90000
+W:26:35:300:18000
 P:0:1d24:16:18:0
 F:STR | DEX | HIDE_TYPE | CHAOTIC |
 F:SLAY_EVIL | SLAY_UNDEAD | RES_LITE | RES_DARK | SEE_INVIS |
@@ -1595,7 +1595,7 @@ F:BLESSED | SHOW_MODS | INSTA_ART
 
 N:108:of Ulmo
 I:22:5:4
-W:52:90:70:120000
+W:52:90:70:40000
 P:0:1d32:15:19:0
 F:DEX | HIDE_TYPE |
 F:SLAY_DRAGON | SLAY_ANIMAL | FREE_ACT | HOLD_LIFE | IM_ACID |
@@ -1630,7 +1630,7 @@ L:DESC:	return "word of recall every 200 turns"
 
 N:110:of the Dawn
 I:23:17:3
-W:70:120:130:250000
+W:70:120:130:29000
 P:0:3d5:20:20:0
 F:ACTIVATE | LITE | BRAND_FIRE | FREE_ACT | RES_FIRE | INFRA |
 F:SLAY_EVIL | SLAY_DRAGON | SLAY_UNDEAD | SLAY_DEMON | VORPAL |
@@ -1663,7 +1663,7 @@ F:QUESTITEM
 
 N:112:'Totila'
 I:21:13:2
-W:35:8:150:55000
+W:35:8:150:9000
 P:0:3d6:6:8:0
 F:STEALTH |
 F:SLAY_EVIL | BRAND_FIRE | RES_FIRE | RES_CONF | ACTIVATE |
@@ -1680,7 +1680,7 @@ L:DESC:	return "confuse monster every 15 turns"
 
 N:113:'Thunderfist'
 I:21:18:4
-W:75:38:300:160000
+W:75:38:300:16000
 P:0:3d6:5:18:0
 F:STR | HIDE_TYPE |
 F:SLAY_ANIMAL | BRAND_FIRE | BRAND_ELEC | SLAY_TROLL | SLAY_ORC |
@@ -1692,7 +1692,7 @@ F:RES_ELEC | RES_FIRE | RES_DARK | SHOW_MODS | LITE | INSTA_ART
 
 N:114:'Whirlwind'
 I:21:6:2
-W:60:35:150:79000
+W:60:35:150:32000
 P:0:2d4:13:18:0
 F:DEX | SPEED | BLOWS | CHAOTIC | SLAY_EVIL | SUST_DEX | 
 F:FREE_ACT | RES_FEAR | RES_NEXUS | RES_CHAOS | NO_TELE |
@@ -1707,7 +1707,7 @@ L:DESC:	return "whirlwind attack every 50-100 turns"
 
 N:115:'Firestar'
 I:21:12:0
-W:35:15:150:35000
+W:35:15:150:5500
 P:0:2d6:5:7:2
 F:BRAND_FIRE | RES_FIRE | ACTIVATE | SHOW_MODS | LITE | INSTA_ART
 L:USE:	msgf("Your morning star rages in fire...")
@@ -1723,7 +1723,7 @@ L:DESC:	return "fire ball (200), rad. 3, every 100 turns"
 # Unique power: does double damage when the player is hasted.
 N:116:of Energy
 I:22:17:4
-W:70:25:250:50000
+W:70:25:250:25000
 P:0:5d3:15:5:0
 F:CON | BRAND_ELEC | IM_ELEC | HIDE_TYPE | SHOW_MODS | KILL_DRAGON
 F:INSTA_ART | ACTIVATE
@@ -1743,7 +1743,7 @@ D:faster.
 
 N:117:of Aule
 I:21:8:4
-W:70:75:120:250000
+W:70:75:120:25000
 P:0:7d3:19:21:5
 F:WIS | HIDE_TYPE |
 F:KILL_DRAGON | SLAY_EVIL | BRAND_ELEC | SLAY_UNDEAD | SLAY_DEMON |
@@ -1758,7 +1758,7 @@ L:SPOIL:	return "Random ability & high resist"
 
 N:118:'Nar-i-vagil'
 I:21:3:3
-W:35:18:150:70000
+W:35:18:150:17000
 P:0:1d18:10:20:0
 F:INT | HIDE_TYPE |
 F:SLAY_ANIMAL | BRAND_FIRE | RES_FIRE | SHOW_MODS | LITE | INSTA_ART
@@ -1768,7 +1768,7 @@ F:SLAY_ANIMAL | BRAND_FIRE | RES_FIRE | SHOW_MODS | LITE | INSTA_ART
 
 N:119:of the Wandering Wizard
 I:21:3:2
-W:35:18:150:20000
+W:35:18:150:18000
 P:0:1d18:3:5:0
 F:INT | SP | HIDE_TYPE |
 F:RES_DARK | RES_LITE | LITE | SEE_INVIS | ACTIVATE | SHOW_MODS | INSTA_ART
@@ -1784,7 +1784,7 @@ D:to instead pass it to a new keeper.
 
 N:120:of Gandalf
 I:21:3:4
-W:52:105:150:140000
+W:52:105:150:30000
 P:0:1d30:10:13:0
 F:INT | WIS | CHR | HIDE_TYPE | SENSE | BRAND_FIRE |
 F:SLAY_EVIL | BRAND_FIRE | SLAY_TROLL | SLAY_ORC | LITE |
@@ -1804,7 +1804,7 @@ L:SPOIL:	return "Random ability"
 
 N:121:'Deathwreaker'
 I:21:20:6
-W:100:38:400:444444
+W:100:38:400:44444
 P:0:6d8:18:18:0
 F:STR | TUNNEL | HIDE_TYPE | NO_TELE |
 F:SLAY_DRAGON | SLAY_ANIMAL | SLAY_EVIL | SLAY_UNDEAD | BRAND_FIRE |
@@ -1816,7 +1816,7 @@ F:LITE | SHOW_MODS | BRAND_POIS | VAMPIRIC | INSTA_ART
 
 N:122:'Turmil'
 I:22:12:4
-W:35:15:120:30000
+W:35:15:120:13000
 P:0:2d5:10:6:8
 F:WIS | INFRA | HIDE_TYPE | BLESSED |
 F:BRAND_COLD | SLAY_ORC | RES_COLD | RES_LITE | LITE | REGEN |
@@ -1834,7 +1834,7 @@ L:SPOIL:	return "Random high resist"
 
 N:123:'Catapult'
 I:19:2:2
-W:12:8:5:7500
+W:12:8:5:8500
 P:0:0d0:20:10:0
 F:DEX | INFRA | HIDE_TYPE | SHOW_MODS | XTRA_MIGHT | ACTIVATE
 F:INSTA_ART
@@ -1848,7 +1848,7 @@ L:DESC:	return "heal (45) every 10 turns"
 
 N:124:'Belthronding'
 I:19:13:3
-W:70:20:40:35000
+W:70:20:40:15000
 P:0:0d0:20:22:0
 F:DEX | STEALTH | HIDE_TYPE | RES_DISEN | XTRA_SHOTS | SHOW_MODS
 F:INSTA_ART
@@ -1857,7 +1857,7 @@ F:INSTA_ART
 
 N:125:of Bard
 I:19:13:3
-W:52:20:40:20000
+W:52:20:40:12000
 P:0:0d0:17:19:0
 F:DEX | HIDE_TYPE | FREE_ACT | XTRA_MIGHT | SHOW_MODS | INSTA_ART
 
@@ -1866,7 +1866,7 @@ F:DEX | HIDE_TYPE | FREE_ACT | XTRA_MIGHT | SHOW_MODS | INSTA_ART
 
 N:126:of Brand
 I:19:23:10
-W:80:25:60:50000
+W:80:25:60:70000
 P:0:0d0:10:14:0
 F:SPEED | RES_FIRE | XTRA_MIGHT | ACTIVATE | SHOW_MODS | INSTA_ART
 L:USE:	msgf("Your crossbow glows deep red...")
@@ -1880,7 +1880,7 @@ L:SPOIL:	return "Random ability or high resist"
 
 N:127:of Marksmanship
 I:19:12:4
-W:25:20:30:28000
+W:25:20:30:21000
 P:0:0d0:35:15:0
 F:DEX | SENSE | INFRA | SUST_DEX | RES_BLIND | HIDE_TYPE | SHOW_MODS | 
 F:LITE | SEE_INVIS | XTRA_MIGHT | XTRA_SHOTS | INSTA_ART
@@ -1889,7 +1889,7 @@ F:LITE | SEE_INVIS | XTRA_MIGHT | XTRA_SHOTS | INSTA_ART
 
 N:128:'Soulless One'
 I:35:1:4
-W:45:40:10:20000
+W:45:40:10:7000
 P:1:0d0:0:0:25
 F:STEALTH | RES_DARK | RES_NEXUS | DRAIN_EXP | DRAIN_STATS | PASS_WALL |
 F:CURSED | AUTO_CURSE | INSTA_ART
@@ -1901,7 +1901,7 @@ D:there is something very wrong about it.
 # Variable bonus: +10 saves, +1 per +2 to-hit or to-dam
 N:129:'Luck Blade'
 I:23:17:0
-W:20:25:130:10000
+W:20:25:130:15000
 P:0:4d5:13:14:0
 F:VORPAL | LUCK_10 | BLESSED | FREE_ACT | LITE | INSTA_ART | EASY_ENCHANT
 # Luck bonus depending on enchantment - normally an extra +13,
@@ -1915,7 +1915,7 @@ D:A sword said to grant incredible luck to its wielder.
 
 N:130:'Stormbringer'
 I:23:30:2
-W:95:0:180:10000
+W:95:0:180:20000
 P:0:6d6:16:16:0
 F:VAMPIRIC | STR | CON | FREE_ACT | HOLD_LIFE | RES_NEXUS
 F:RES_CHAOS | RES_NETHER | RES_CONF | INSTA_ART | CURSED
@@ -1935,7 +1935,7 @@ D:The Stormbringer is now under your control.  It still thrists for souls.
 # Unique power: Triple damage when the player is hungry
 N:131:of Hunger
 I:22:5:3
-W:40:25:70:22000
+W:40:25:70:16000
 P:0:2d12:8:20:0
 F:RES_FEAR | RES_FIRE | RES_COLD | RES_CHAOS | SLAY_ANIMAL
 F:VAMPIRIC | STR
@@ -1955,7 +1955,7 @@ D:you are hungry the mouth opens to reveal dozens of sharp teeth.
 # Unique power: One extra damage per 100,000 au
 N:132:of the Miser
 I:21:13:-2
-W:60:25:300:500000
+W:60:25:300:20000
 P:0:2d6:12:6:0
 F:HOLD_LIFE | CHR
 F:INSTA_ART
@@ -1972,7 +1972,7 @@ D:It would look perfect in the center of a huge pile of treasure...
 # Unique power: Recharge is faster for monks
 N:133:of the Jade Dragon
 I:35:1:0
-W:95:20:10:800000
+W:95:20:10:24000
 P:1:0d0:8:8:35
 F:ACTIVATE | RES_LITE | RES_DARK | RES_NETHER | RES_NEXUS | RES_DISEN
 F:HOLD_LIFE | SLOW_DIGEST | REGEN
