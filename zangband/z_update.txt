@@ -52,7 +52,7 @@ Zangband 2.3.4:
     items will do more damage when thrown.
   - Strength no longer affects your combat skill (was to_hit).
 -Further amendments and refinements to the dungeon generation code
- including (by sfuerst):
+ including (by Steven Fuerst):
   - Rooms of all types can be packed closer together.
   - 5 new room types added.
   - 2 new corridor types (the pillared tunnel is optional).
@@ -61,6 +61,7 @@ Zangband 2.3.4:
   - Rivers and trees are placed more realistically.
   - Vaults in v_info.txt can now be included in the dungeon but rotated
     and reflected.
+-Increased the damage from wands of rockets and annihilation.
 -You will no longer receive rewards for killing non-unique monsters.
 -Added a small tribute to Lev Zakrevski.
 -Trees will now only block LOS half the time.
@@ -98,8 +99,8 @@ Zangband 2.3.4:
 -Enhanced pack monster AI.
 -Level feelings will now be generated based on the length of time you
  have spent on the current level rather than the previous level.
--Monster memory, unique lists, and kill counts are now sorted by monster
- level regardless of the monsters' index in r_info.txt.
+-Monster memory, unique lists, spoilers, and kill counts are now sorted
+ by monster level regardless of the monsters' index in r_info.txt.
 -Easy-open doors works now normally for Spectres.
 -Life rating is no longer shown at character generation.
 -Reworked the 'C'haracter information screen to remove duplicate
