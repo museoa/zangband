@@ -575,7 +575,7 @@ static bool create_city(int x, int y, int town_num)
  */
 static void init_towns(void)
 {
-	int x, y;
+	int x, y, i;
 	
 	wild_gen2_type *w_ptr;
 	
@@ -608,8 +608,19 @@ static void init_towns(void)
 			/* Select easiest town */
 			if ((w_ptr->law_map + w_ptr->pop_map) > town_value)
 			{
-				town_value = w_ptr->law_map + w_ptr->pop_map;
-				best_town = town_count;
+				/* Check to see if the town has stairs */
+				for (i = 0; i < town[town_count].numstores; i++)
+				{
+					if (town[town_count].store[i].type == BUILD_STAIRS)
+					{
+						/* Save this town */
+						town_value = w_ptr->law_map + w_ptr->pop_map;
+						best_town = town_count;
+						
+						/* Done */
+						break;
+					}
+				}
 			}
 			
 			/* Increment number of towns */
