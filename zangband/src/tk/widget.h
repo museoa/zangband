@@ -58,7 +58,6 @@ struct Widget
 	Widget_InvalidateAreaProc *invalidateAreaProc;
 	Widget_WipeProc *wipeProc;  /* Per-widget fresh routine */
 	DoubleLink link;			/* Linked list of Widget's */
-	DoubleLink linkMap;			/* Linked list of mapped Widget's */
 	int noUpdate;				/* Drawing is disabled */
 
 	int tc;						/* rc * cc */

@@ -1468,9 +1468,6 @@ static void Widget_Destroy(Widget *widgetPtr)
 	 * Removes the deleted Widget from the global list of Widgets.
 	 */
 	DoubleLink_Unlink(&widgetPtr->link);
-
-	/* Remove from the list of mapped Widgets */
-	DoubleLink_Unlink(&widgetPtr->linkMap);
 	
 	/* Free the options table */
 	Tk_FreeConfigOptions((char *) widgetPtr, optionTable,
@@ -1515,18 +1512,6 @@ static void Widget_EventProc(ClientData clientData, XEvent *eventPtr)
 	{
 		/* Destroy the window */
 		Widget_Destroy(widgetPtr);
-	}
-
-	/* The window was mapped */
-	else if (eventPtr->type == MapNotify)
-	{
-		DoubleLink_Link(&widgetPtr->linkMap);
-	}
-
-	/* The window was unmapped */
-	else if (eventPtr->type == UnmapNotify)
-	{
-		DoubleLink_Unlink(&widgetPtr->linkMap);
 	}
 
 	/* Done */
@@ -1680,7 +1665,6 @@ static int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 	widgetPtr->y_min = widgetPtr->y_max = 0;
 	widgetPtr->x_min = widgetPtr->x_max = 0;
 	DoubleLink_Init(&WidgetList, &widgetPtr->link, widgetPtr);
-	DoubleLink_Init(&WidgetListMap, &widgetPtr->linkMap, widgetPtr);
 	widgetPtr->noUpdate = FALSE;
 	widgetPtr->dx = widgetPtr->dy = 0;
 	widgetPtr->dw = widgetPtr->dh = 0;
