@@ -1648,7 +1648,7 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 	{
 		u32b hp = m_ptr->maxhp * 2L;
 
-		m_ptr->maxhp = MIN(30000, hp);
+		m_ptr->maxhp = (s16b)MIN(30000, hp);
 	}
 
 	/* And start out fully healthy */
