@@ -3960,6 +3960,9 @@ void field_action_isammo_tester(s16b *field_ptr, vptr input)
 void field_action_ispotion_tester(s16b *field_ptr, vptr input)
 {
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
+
+	/* Save old tval */	
+	byte tval_save = item_tester_tval;
 	
 	/* Hack - ignore field_ptr */
 	(void) field_ptr;
@@ -3968,6 +3971,9 @@ void field_action_ispotion_tester(s16b *field_ptr, vptr input)
 	item_tester_tval = TV_POTION;
 	
 	f_o_ptr->result = item_tester_hook_tval(f_o_ptr->o_ptr);
+
+	/* Restore tval */
+	item_tester_tval = tval_save;
 }
 
 /*
@@ -3977,6 +3983,9 @@ void field_action_isscroll_tester(s16b *field_ptr, vptr input)
 {
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
+	/* Save old tval */	
+	byte tval_save = item_tester_tval;
+	
 	/* Hack - ignore field_ptr */
 	(void) field_ptr;
 	
@@ -3984,6 +3993,9 @@ void field_action_isscroll_tester(s16b *field_ptr, vptr input)
 	item_tester_tval = TV_SCROLL;
 	
 	f_o_ptr->result = item_tester_hook_tval(f_o_ptr->o_ptr);
+	
+	/* Restore tval */
+	item_tester_tval = tval_save;
 }
 
 
@@ -3994,6 +4006,9 @@ void field_action_isstatue_tester(s16b *field_ptr, vptr input)
 {
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
+	/* Save old tval */	
+	byte tval_save = item_tester_tval;
+	
 	/* Hack - ignore field_ptr */
 	(void) field_ptr;
 	
@@ -4001,6 +4016,9 @@ void field_action_isstatue_tester(s16b *field_ptr, vptr input)
 	item_tester_tval = TV_STATUE;
 	
 	f_o_ptr->result = item_tester_hook_tval(f_o_ptr->o_ptr);
+	
+	/* Restore tval */
+	item_tester_tval = tval_save;
 }
 
 /*
@@ -4010,6 +4028,9 @@ void field_action_isfigurine_tester(s16b *field_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
+	/* Save old tval */	
+	byte tval_save = item_tester_tval;
+	
 	/* Hack - ignore field_ptr */
 	(void) field_ptr;
 	
@@ -4017,6 +4038,9 @@ void field_action_isfigurine_tester(s16b *field_ptr, vptr input)
 	item_tester_tval = TV_FIGURINE;
 	
 	f_o_ptr->result = item_tester_hook_tval(f_o_ptr->o_ptr);
+	
+	/* Restore tval */
+	item_tester_tval = tval_save;
 }
 
 /*
@@ -4026,6 +4050,9 @@ void field_action_isfood_tester(s16b *field_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
+	/* Save old tval */	
+	byte tval_save = item_tester_tval;
+	
 	/* Hack - ignore field_ptr */
 	(void) field_ptr;
 	
@@ -4033,6 +4060,9 @@ void field_action_isfood_tester(s16b *field_ptr, vptr input)
 	item_tester_tval = TV_FOOD;
 	
 	f_o_ptr->result = item_tester_hook_tval(f_o_ptr->o_ptr);
+	
+	/* Restore tval */
+	item_tester_tval = tval_save;
 }
 
 
@@ -4098,6 +4128,9 @@ void field_action_issword_tester(s16b *field_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
+	/* Save old tval */	
+	byte tval_save = item_tester_tval;
+	
 	/* Hack - ignore field_ptr */
 	(void) field_ptr;
 		
@@ -4105,6 +4138,9 @@ void field_action_issword_tester(s16b *field_ptr, vptr input)
 	item_tester_tval = TV_SWORD;
 	
 	f_o_ptr->result = item_tester_hook_tval(f_o_ptr->o_ptr);
+	
+	/* Restore tval */
+	item_tester_tval = tval_save;
 }
 
 /*
@@ -4127,6 +4163,9 @@ void field_action_isshield_tester(s16b *field_ptr, void *input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
+	/* Save old tval */	
+	byte tval_save = item_tester_tval;
+	
 	/* Hack - ignore field_ptr */
 	(void) field_ptr;
 		
@@ -4134,6 +4173,9 @@ void field_action_isshield_tester(s16b *field_ptr, void *input)
 	item_tester_tval = TV_SHIELD;
 	
 	f_o_ptr->result = item_tester_hook_tval(f_o_ptr->o_ptr);
+	
+	/* Restore tval */
+	item_tester_tval = tval_save;
 }
 
 /*
