@@ -1394,7 +1394,7 @@ static errr rd_inventory(void)
 			if (n < EQUIP_MAX)
 			{
 				/* Copy object */
-				object_copy(&p_ptr->equipment[n], q_ptr);
+				swap_objects(&p_ptr->equipment[n], q_ptr);
 			}
 		}
 		else
@@ -1403,14 +1403,14 @@ static errr rd_inventory(void)
 			if (n >= 24)
 			{
 				/* Copy object */
-				object_copy(&p_ptr->equipment[n - 24], q_ptr);
+				swap_objects(&p_ptr->equipment[n - 24], q_ptr);
 			}
 
 			/* Carry inventory */
 			else
 			{
 				/* Copy object into temp structure */
-				object_copy(&old_inventory[n], q_ptr);
+				swap_objects(&old_inventory[n], q_ptr);
 			}
 		}
 	}

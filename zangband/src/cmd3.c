@@ -184,7 +184,7 @@ void do_cmd_wield(void)
 	}
 
 	/* Wear the new stuff */
-	object_copy(o_ptr, q_ptr);
+	swap_objects(o_ptr, q_ptr);
 
 	/* Forget stack */
 	o_ptr->next_o_idx = 0;
