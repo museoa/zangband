@@ -566,4 +566,5 @@
  */
 #ifdef ALLOW_BORG
 #define TERM_USE_MAP
+#define TERM_CAVE_MAP
 #endif /* ALLOW_BORG */

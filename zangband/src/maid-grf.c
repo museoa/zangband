@@ -285,6 +285,8 @@ bool pick_graphics(int graphics, int *xsize, int *ysize, char *filename)
 
 #ifdef TERM_USE_MAP
 
+static bool map_init = FALSE;
+
 /* List of 16x16 blocks for the overhead map */
 static map_blk_ptr *map_cache;
 
@@ -305,7 +307,9 @@ static byte **map_refcount;
 static int player_x = 0;
 static int player_y = 0;
 
+/* Hooks to access overhead map */
 static map_info_hook_type map_info_hook = NULL;
+static map_erase_hook_type map_erase_hook = NULL;
 
 /*
  * Set the map hook - returning the old hook
@@ -326,6 +330,26 @@ map_info_hook_type set_map_hook(map_info_hook_type hook_func)
 	return (temp);
 }
 
+/*
+ * Set the erase hook - returning the old hook
+ *
+ * You need to keep a copy of the old hook
+ * to chain in on because multiple places
+ * use the overhead map.
+ */
+map_erase_hook_type set_erase_hook(map_erase_hook_type hook_func)
+{
+	/* Save the original hook */
+	map_erase_hook_type temp = map_erase_hook;
+	
+	/* Set the hook */
+	map_erase_hook = hook_func;
+	
+	/* Return the old hook for chaining */
+	return (temp);
+}
+
+
 
 /*
  * Create the map information
@@ -333,6 +357,9 @@ map_info_hook_type set_map_hook(map_info_hook_type hook_func)
 void init_overhead_map(void)
 {
 	int i, j;
+	
+	/* Do not initialize twice */
+	if (map_init) return;
 	
 	/* Make the list of pointers to blocks */
 	C_MAKE(map_cache, MAP_CACHE, map_blk_ptr);
@@ -367,6 +394,9 @@ void init_overhead_map(void)
 		C_MAKE(map_grid[i], WILD_SIZE, int);
 		C_MAKE(map_refcount[i], WILD_SIZE, byte);
 	}
+	
+	/* The map exists */
+	map_init = TRUE;
 }
 
 /*
@@ -375,6 +405,9 @@ void init_overhead_map(void)
 void del_overhead_map(void)
 {
 	int i, j;
+	
+	/* Do not remove twice */
+	if (!map_init) return;
 	
 	/* Free refcount for cache blocks */
 	FREE(map_cache_refcount);
@@ -409,6 +442,9 @@ void del_overhead_map(void)
 	/* Free the overhead map itself */
 	FREE(map_grid);
 	FREE(map_refcount);
+	
+	/* The map no longer exists */
+	map_init = FALSE;
 }
 
 
@@ -527,7 +563,7 @@ static bool map_in_bounds(int x, int y)
 /*
  * Save information into a block location
  */
-void save_map_location(int x, int y, term_map *map)
+static void save_map_location(int x, int y, term_map *map)
 {
 	map_blk_ptr mbp_ptr;
 	map_block *mb_ptr;
@@ -579,6 +615,9 @@ void save_map_location(int x, int y, term_map *map)
 	{
 		map_info_hook(mb_ptr, map);
 	}
+	
+	/* Save the flags */
+	mb_ptr->flags = map->flags;
 
 	/* Hack - save player location */
 	if (map->monster == -1)
@@ -603,6 +642,17 @@ map_block *read_map_location(int dx, int dy)
 
 
 /*
+ * Hook to send map information
+ */
+errr (*term_map_hook) (int x, int y, term_map *map) = NULL;
+
+/*
+ * Hook to erase the map
+ */
+errr (*term_erase_map_hook) (void) = NULL;
+
+
+/*
  * Angband-specific code designed to allow the map to be sent
  * to the port as required.  This allows the main-???.c file
  * not to access internal game data, which may or may not
@@ -623,7 +673,7 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 	bool lite = (c_ptr->info & CAVE_MNLT) || (pc_ptr->player & GRID_LITE);
 
 	/* Paranoia */
-	if (!term_map_hook) return;
+	if (!map_init) return;
 
 	/* Visible, and not hallucinating */
 	if (visible && !p_ptr->image)
@@ -693,8 +743,8 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 		map.monster = -1;
 	}
 
-	/* Send data to hook */
-	term_map_hook(x, y, &map);
+	/* Save information in map */
+	save_map_location(x,y, &map);
 }
 
 /*
@@ -703,7 +753,7 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 void Term_erase_map(void)
 {
 	/* Notify erasure of the map */
-	if (term_erase_map_hook) term_erase_map_hook();
+	if (map_erase_hook) map_erase_hook();
 	
 	/* Actually clear the map */
 	clear_map();

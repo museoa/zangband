@@ -269,24 +269,6 @@
  */
 term *Term = NULL;
 
-/*
- * Data used for the overhead map used by
- * some ports and the borg.
- */
-#ifdef TERM_USE_MAP
-
-/*
- * Hook to send map information
- */
-errr (*term_map_hook) (int x, int y, term_map *map) = NULL;
-
-/*
- * Hook to erase the map
- */
-errr (*term_erase_map_hook) (void) = NULL;
-
-#endif /* TERM_USE_MAP */
-
 
 /*** Local routines ***/
 
