@@ -155,14 +155,14 @@ void add_note_type(int note_number)
 						  race_info[p_ptr->rp.prace].title,
 						  class_info[p_ptr->rp.pclass].title);
 
-			if (p_ptr->spell.realm1 != REALM_NONE)
+			if (p_ptr->spell.r[0].realm != REALM_NONE)
 			{
-				strnfcat(player, 100, &len, " of %s", realm_names[p_ptr->spell.realm1]);
+				strnfcat(player, 100, &len, " of %s", realm_names[p_ptr->spell.r[0].realm]);
 			}
 
-			if (p_ptr->spell.realm2 != REALM_NONE)
+			if (p_ptr->spell.r[1].realm != REALM_NONE)
 			{
-				strnfcat(player, 100, &len, " and %s", realm_names[p_ptr->spell.realm2]);
+				strnfcat(player, 100, &len, " and %s", realm_names[p_ptr->spell.r[1].realm]);
 			}
 
 			/* Add in "character start" information */

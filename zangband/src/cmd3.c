@@ -376,7 +376,7 @@ bool destroy_item_aux(object_type *o_ptr, int amt)
 		}
 		else if (p_ptr->rp.pclass == CLASS_PALADIN)
 		{
-			if (p_ptr->spell.realm1 == REALM_LIFE)
+			if (p_ptr->spell.r[0].realm == REALM_LIFE)
 			{
 				if (o_ptr->tval != TV_LIFE_BOOK) gain_expr = TRUE;
 			}

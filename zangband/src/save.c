@@ -889,8 +889,8 @@ static void wr_extra(void)
 	wr_byte(p_ptr->rp.prace);
 	wr_byte(p_ptr->rp.pclass);
 	wr_byte(p_ptr->rp.psex);
-	wr_byte(p_ptr->spell.realm1);
-	wr_byte(p_ptr->spell.realm2);
+	wr_byte(p_ptr->spell.r[0].realm);
+	wr_byte(p_ptr->spell.r[1].realm);
 	wr_byte(0);					/* oops */
 
 	wr_byte(p_ptr->rp.hitdie);
@@ -1567,12 +1567,12 @@ static bool wr_savefile_new(void)
 
 
 	/* Write spell data */
-	wr_u32b(p_ptr->spell.learned1);
-	wr_u32b(p_ptr->spell.learned2);
-	wr_u32b(p_ptr->spell.worked1);
-	wr_u32b(p_ptr->spell.worked2);
-	wr_u32b(p_ptr->spell.forgotten1);
-	wr_u32b(p_ptr->spell.forgotten2);
+	wr_u32b(p_ptr->spell.r[0].learned);
+	wr_u32b(p_ptr->spell.r[1].learned);
+	wr_u32b(p_ptr->spell.r[0].worked);
+	wr_u32b(p_ptr->spell.r[1].worked);
+	wr_u32b(p_ptr->spell.r[0].forgotten);
+	wr_u32b(p_ptr->spell.r[1].forgotten);
 
 	/* Dump the ordered spells */
 	for (i = 0; i < PY_MAX_SPELLS; i++)

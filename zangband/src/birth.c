@@ -1300,21 +1300,21 @@ static const byte player_init[MAX_CLASS][3][2] =
 
 	{
 	 /* Mage */
-	 {TV_SORCERY_BOOK, 0},		/* Hack: for realm1 book */
+	 {TV_SORCERY_BOOK, 0},		/* Hack: for r[0].realm book */
 	 {TV_SWORD, SV_DAGGER},
-	 {TV_DEATH_BOOK, 0}			/* Hack: for realm2 book */
+	 {TV_DEATH_BOOK, 0}			/* Hack: for r[1].realm book */
 	 },
 
 	{
 	 /* Priest */
 	 {TV_SORCERY_BOOK, 0},		/* Hack: for Life / Death book */
 	 {TV_HAFTED, SV_MACE},
-	 {TV_DEATH_BOOK, 0}			/* Hack: for realm2 book */
+	 {TV_DEATH_BOOK, 0}			/* Hack: for r[1].realm book */
 	 },
 
 	{
 	 /* Rogue */
-	 {TV_SORCERY_BOOK, 0},		/* Hack: for realm1 book */
+	 {TV_SORCERY_BOOK, 0},		/* Hack: for r[0].realm book */
 	 {TV_SWORD, SV_DAGGER},
 	 {TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR}
 	 },
@@ -1323,7 +1323,7 @@ static const byte player_init[MAX_CLASS][3][2] =
 	 /* Ranger */
 	 {TV_NATURE_BOOK, 0},
 	 {TV_SWORD, SV_DAGGER},
-	 {TV_DEATH_BOOK, 0}			/* Hack: for realm2 book */
+	 {TV_DEATH_BOOK, 0}			/* Hack: for r[1].realm book */
 	 },
 
 	{
@@ -1335,14 +1335,14 @@ static const byte player_init[MAX_CLASS][3][2] =
 
 	{
 	 /* Warrior-Mage */
-	 {TV_SORCERY_BOOK, 0},		/* Hack: for realm1 book */
+	 {TV_SORCERY_BOOK, 0},		/* Hack: for r[0].realm book */
 	 {TV_SWORD, SV_SHORT_SWORD},
-	 {TV_DEATH_BOOK, 0}			/* Hack: for realm2 book */
+	 {TV_DEATH_BOOK, 0}			/* Hack: for r[1].realm book */
 	 },
 
 	{
 	 /* Chaos Warrior */
-	 {TV_SORCERY_BOOK, 0},		/* Hack: For realm1 book */
+	 {TV_SORCERY_BOOK, 0},		/* Hack: For r[0].realm book */
 	 {TV_SWORD, SV_BROAD_SWORD},
 	 {TV_HARD_ARMOR, SV_METAL_SCALE_MAIL}
 	 },
@@ -1363,7 +1363,7 @@ static const byte player_init[MAX_CLASS][3][2] =
 
 	{
 	 /* High Mage */
-	 {TV_SORCERY_BOOK, 0},		/* Hack: for realm1 book */
+	 {TV_SORCERY_BOOK, 0},		/* Hack: for r[0].realm book */
 	 {TV_SWORD, SV_DAGGER},
 	 {TV_RING, SV_RING_SUSTAIN_INT}
 	 },
@@ -1494,8 +1494,8 @@ static void player_outfit(void)
 		sv = player_init[p_ptr->rp.pclass][i][1];
 
 		/* Hack to initialize spellbooks */
-		if (tv == TV_SORCERY_BOOK) tv = TV_LIFE_BOOK + p_ptr->spell.realm1 - 1;
-		else if (tv == TV_DEATH_BOOK) tv = TV_LIFE_BOOK + p_ptr->spell.realm2 - 1;
+		if (tv == TV_SORCERY_BOOK) tv = TV_LIFE_BOOK + p_ptr->spell.r[0].realm - 1;
+		else if (tv == TV_DEATH_BOOK) tv = TV_LIFE_BOOK + p_ptr->spell.r[1].realm - 1;
 
 		else if (tv == TV_RING && sv == SV_RING_RES_FEAR &&
 				 p_ptr->rp.prace == RACE_BARBARIAN)
@@ -1509,7 +1509,7 @@ static void player_outfit(void)
 
 		/* Assassins begin the game with a poisoned dagger */
 		if (tv == TV_SWORD && p_ptr->rp.pclass == CLASS_ROGUE &&
-			p_ptr->spell.realm1 == REALM_DEATH)
+			p_ptr->spell.r[0].realm == REALM_DEATH)
 		{
 			add_ego_flags(q_ptr, EGO_BRAND_POIS);
 		}
@@ -1804,7 +1804,7 @@ static bool get_player_realms(void)
 	if (choose == INVALID_CHOICE) return (FALSE);
 
 	/* Save the choice */
-	p_ptr->spell.realm1 = select[choose];
+	p_ptr->spell.r[0].realm = select[choose];
 
 	/* Paranoia - No realms at all? */
 	select[0] = REALM_NONE;
@@ -1817,7 +1817,7 @@ static bool get_player_realms(void)
 	{
 		/* Can we use this realm? */
 		if ((realm_choices2[p_ptr->rp.pclass] & (1 << (i - 1)))
-			&& (i != p_ptr->spell.realm1))
+			&& (i != p_ptr->spell.r[0].realm))
 		{
 			/* Save the information */
 			select[count] = i;
@@ -1838,7 +1838,7 @@ static bool get_player_realms(void)
 	if (choose == INVALID_CHOICE) return (FALSE);
 
 	/* Save the choice */
-	p_ptr->spell.realm2 = select[choose];
+	p_ptr->spell.r[1].realm = select[choose];
 
 	/* Done */
 	return (TRUE);
@@ -1899,14 +1899,14 @@ static bool player_birth_aux_1(void)
 				"Class    : " CLR_L_BLUE "%s\n",
 				player_name, sp_ptr->title, rp_ptr->title, cp_ptr->title);
 
-	if (p_ptr->spell.realm1 || p_ptr->spell.realm2)
+	if (p_ptr->spell.r[0].realm || p_ptr->spell.r[1].realm)
 	{
-		put_fstr(0, 6, "Magic    : " CLR_L_BLUE "%s", realm_names[p_ptr->spell.realm1]);
+		put_fstr(0, 6, "Magic    : " CLR_L_BLUE "%s", realm_names[p_ptr->spell.r[0].realm]);
 	}
 
-	if (p_ptr->spell.realm2)
+	if (p_ptr->spell.r[1].realm)
 	{
-		put_fstr(11, 7, CLR_L_BLUE "%s", realm_names[p_ptr->spell.realm2]);
+		put_fstr(11, 7, CLR_L_BLUE "%s", realm_names[p_ptr->spell.r[1].realm]);
 	}
 
 	/* And finally, get the number of random quests */

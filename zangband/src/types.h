@@ -1254,21 +1254,23 @@ struct player_data
 /*
  * Player spell data
  */
+typedef struct player_realm player_realm;
+
+struct player_realm
+{
+	u32b learned;	/* Spell flags */
+	u32b worked;	/* Spell flags */
+	u32b forgotten;	/* Spell flags */
+	
+	byte realm;	/* Realm number */
+};
+
 typedef struct player_spell player_spell;
 
 struct player_spell
 {
-	u32b learned1;	/* Spell flags */
-	u32b learned2;    /* Spell flags */
-	u32b worked1; /* Spell flags */
-	u32b worked2; /* Spell flags */
-	u32b forgotten1;  /* Spell flags */
-	u32b forgotten2;  /* Spell flags */
-
+	player_realm r[2];	/* Magic realms */
 	byte order[PY_MAX_SPELLS];	/* Spell order */
-	
-	byte realm1;	/* First magic realm */
-	byte realm2;	/* Second magic realm */
 };
 
 /*

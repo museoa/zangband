@@ -136,19 +136,19 @@ struct player_data
 	byte pclass;	/* Class index */
 };
 
+struct player_realm
+{
+	u32b learned;
+	u32b worked;
+	u32b forgotten;
+
+	byte realm;
+};
+
 struct player_spell
 {
-	u32b learned1;	/* Spell flags */
-	u32b learned2;    /* Spell flags */
-	u32b worked1; /* Spell flags */
-	u32b worked2; /* Spell flags */
-	u32b forgotten1;  /* Spell flags */
-	u32b forgotten2;  /* Spell flags */
-
+	player_realm r[2];
 	byte order[PY_MAX_SPELLS];	/* Spell order */
-	
-	byte realm1;	/* First magic realm */
-	byte realm2;	/* Second magic realm */
 };
 
 struct player_type

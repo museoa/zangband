@@ -2534,8 +2534,8 @@ void borg_update_frame(void)
 	bp_ptr->max_depth = p_ptr->max_depth;
 
 	/* Hack -- Realms */
-	bp_ptr->realm1 = p_ptr->realm1;
-	bp_ptr->realm2 = p_ptr->realm2;
+	bp_ptr->realm1 = p_ptr->spell.r[0].realm;
+	bp_ptr->realm2 = p_ptr->spell.r[1].realm;
 
 	/* Hack -- Mana increases */
 	switch (borg_class)
