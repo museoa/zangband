@@ -91,7 +91,7 @@ EXOBJS = \
 	l-monst.o l-object.o l-player.o l-random.o l-ui.o \
 	l-misc.o l-spell.o \
 	zborg1.c zborg2.c zborg3.c zborg4.c zborg5.c \
-	zborg6.c zborg7.c zborg8.c zborg9.c
+	zborg6.c zborg7.c zborg8.c zborg9.c \
 	$(LUAOBJS)
 
 HDRS = \
