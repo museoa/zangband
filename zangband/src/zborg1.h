@@ -558,7 +558,6 @@ extern s16b when_last_kill_mult;	/* When a multiplier was last killed */
 
 extern bool my_need_alter;	/* incase of walls/doors */
 extern bool my_no_alter;	/* incase of walls/doors */
-extern bool my_need_redraw;	/* incase of walls/doors */
 extern bool borg_attempting_refresh;	/* for the goi spell */
 
 /*

@@ -2755,14 +2755,6 @@ bool borg_think_dungeon(void)
 	/* add a short pause to slow the borg down for viewing */
 	Term_xtra(TERM_XTRA_DELAY, msec);
 
-	/* redraw the screen if we need to */
-	if (my_need_redraw)
-	{
-		borg_note(format("#  Redrawing screen."));
-		do_cmd_redraw();
-		my_need_redraw = FALSE;
-	}
-
 	/* Prevent clock overflow */
 	if (borg_t - borg_began >= 10000)
 	{

@@ -2072,7 +2072,6 @@ static void borg_parse_aux(cptr msg, int len)
 	/* check for wall blocking but not when confused */
 	if ((prefix(msg, "There is a wall ") && (!borg_skill[BI_ISCONFUSED])))
 	{
-		my_need_redraw = TRUE;
 		my_need_alter = TRUE;
 		goal = 0;
 		return;
@@ -2083,7 +2082,6 @@ static void borg_parse_aux(cptr msg, int len)
 	if ((prefix(msg, "There is a closed door blocking your way.") &&
 		 (!borg_skill[BI_ISCONFUSED])))
 	{
-		my_need_redraw = TRUE;
 		my_need_alter = TRUE;
 		goal = 0;
 		return;

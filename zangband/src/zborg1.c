@@ -393,7 +393,6 @@ s16b when_last_kill_mult = 0;	/* When a multiplier was last killed */
 
 bool my_need_alter;	/* incase i hit a wall or door */
 bool my_no_alter;	/*  */
-bool my_need_redraw;	/* incase i hit a wall or door */
 bool borg_attempting_refresh = FALSE;	/* for the goi spell */
 
 /*
