@@ -944,67 +944,6 @@ proc NSAutobar::hook_cmd_pet {oop message args} {
 	return
 }
 
-proc NSAutobar::hook_mindcraft {oop message args} {
-
-	switch -- $message {
-
-		open {
-		}
-
-		fresh {
-			SetList $oop
-		}
-
-		close {
-		}
-
-		set_list {
-		
-			set textBox [Info $oop text]
-		
-			# Get the list of mindcraft powers
-			set powerList [angband mindcraft get]
-
-			# Keep a list of chars
-			set match {}
-
-			# Process each power
-			foreach power $powerList {
-
-				angband mindcraft info $power attrib
-				if {!$attrib(okay)} continue
-
-				# Append the character and description
-				$textBox insert end "$attrib(char)\) " TEXT \
-					$attrib(name) [list POWER_$attrib(char) TEXT] "\n"
-				$textBox tag configure POWER_$attrib(char) -foreground White
-
-				# Keep a list of chars
-				lappend match $attrib(char)
-			}
-		
-			# Delete trailing newline
-			$textBox delete "end - 1 chars"
-		
-			# Keep a list of chars
-			Info $oop match $match
-		}
-
-		invoke {
-
-			if {![Info $oop choosing]} return
-			set row [lindex $args 0]
-			set char [lindex [Info $oop match] $row]
-			angband keypress $char
-		}
-
-		highlight {
-		}
-	}
-
-	return
-}
-
 proc NSAutobar::hook_power {oop message args} {
 
 	set powerChars "abcdefghijklmnopqrstuvwxyz0123456789"

@@ -239,10 +239,6 @@ proc angband_display {window action args} {
 				NSModule::LoadIfNeeded NSMacros
 			}
 
-			mindcraft {
-				NSModule::LoadIfNeeded NSMindcraftWindow
-			}
-
 			pets {
 				NSModule::LoadIfNeeded NSPets
 			}

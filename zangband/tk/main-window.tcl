@@ -523,9 +523,6 @@ proc NSMainWindow::InitMenus {oop} {
 
 	NSMenu::MenuInsertEntries $mbarId -end MENU_INVEN $entries
 
-	NSModule::LoadIfNeeded NSMindcraftMenu
-	NSObject::New NSMindcraftMenu $mbarId
-
 	#
 	# Action Menu
 	#
@@ -2200,10 +2197,6 @@ proc NSMainWindow::ButtonPress3 {oop x y X Y} {
 	if {[string equal $flags INKEY_CMD_PET]} {
 		NSRecall::PopupSelect_CmdPet $win.context $X $Y
 		
-	# Popup Mindcraft power list
-	} elseif {[string equal $flags INKEY_MINDCRAFT]} {
-		NSMindcraftMenu::PopupSelect $win.context $X $Y
-	
 	# Popup racial/mutation power list
 	} elseif {[string equal $flags INKEY_POWER]} {
 		NSRecall::PopupSelect_Power $win.context $X $Y

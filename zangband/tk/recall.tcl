@@ -404,65 +404,6 @@ proc NSRecall::Close {oop} {
 }
 
 
-# NSRecall::RecallMindcraft --
-#
-#	Show info about a mindcraft power.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSRecall::RecallMindcraft {index} {
-
-	variable Priv
-
-	if {![Value recall,show]} return
-
-	# Hack -- Get the object id
-	set oop [Global recall,oop]
-	
-	# If we are in "list mode", don't clobber the text
-	if {[string length [Info $oop hook]]} return
-
-if 0 {
-
-	# Get information about the power
-	angband mindcraft info $index attrib
-
-	# Get the icon
-	### Use the character icon?
-	set icon {icon none 0}
-
-	# Color
-	set color White
-	
-	# Get the name
-	set name $attrib(name):
-
-	# Get the memory
-	set memory ""
-
-	# Extra info
-	if {[string length $memory]} {
-		append memory \n
-	}
-	append memory "Level $attrib(level)  Mana $attrib(mana) \
-		Fail $attrib(fail)%"
-	if {[string length $attrib(comment)]} {
-		append memory "\n$attrib(comment)"
-	}
-
-	# Set the text
-	SetText $oop $icon $color $name $memory
-
-	return
-	
-}
-
-}
-
 
 # NSRecall::RecallSpell --
 #
@@ -1179,7 +1120,7 @@ proc NSRecall::ContentChanged {oop} {
 
 proc NSRecall::Choose {oop what show args} {
 
-	if {[lsearch -exact [list cmd_pet ele_attack item mindcraft power spell] \
+	if {[lsearch -exact [list cmd_pet ele_attack item power spell] \
 		$what] == -1} return
 
 	if {!$show} {
@@ -1193,9 +1134,6 @@ proc NSRecall::Choose {oop what show args} {
 		}
 		ele_attack {
 			SetHook $oop hook_ele_attack
-		}
-		mindcraft {
-			SetHook $oop hook_mindcraft
 		}
 		power {
 			SetHook $oop hook_power
@@ -1390,75 +1328,6 @@ proc NSRecall::PopupSelect_CmdPet {menu x y} {
 	after idle {
 		if {!$PopupResult} {
 			angband keypress \033
-		}
-	}
-
-	return
-}
-
-proc NSRecall::hook_mindcraft {oop message args} {
-
-	switch -- $message {
-
-		open {
-		}
-
-		fresh {
-			SetList $oop
-		}
-
-		close {
-		}
-
-		set_list {
-		
-			set textBox [Info $oop text]
-		
-			# Get the list of mindcraft powers
-			set powerList [angband mindcraft get]
-
-			# Keep a list of chars
-			set match {}
-
-			if 0 {
-
-			# Process each power
-			foreach power $powerList {
-
-				angband mindcraft info $power attrib
-				if {!$attrib(okay)} continue
-
-				# Append the character and description
-				$textBox insert end "$attrib(char)\) " TEXT \
-					$attrib(name) [list POWER_$attrib(char) TEXT] "\n"
-				$textBox tag configure POWER_$attrib(char) -foreground White
-
-				# Keep a list of chars
-				lappend match $attrib(char)
-			}
-			
-			}
-		
-			# Delete trailing newline
-			$textBox delete "end - 1 chars"
-		
-			# Keep a list of chars
-			Info $oop match $match
-		}
-
-		get_color {
-
-			return White
-		}
-
-		invoke {
-
-			set row [lindex $args 0]
-			set char [lindex [Info $oop match] $row]
-			angband keypress $char
-		}
-
-		highlight {
 		}
 	}
 
