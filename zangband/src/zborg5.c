@@ -420,7 +420,7 @@ static int borg_guess_race_name(cptr who)
 /*
  * Increase the "region danger"
  */
-static void borg_fear_grid(cptr who, int y, int x, uint k, bool seen_guy)
+static void borg_fear_grid(cptr who, int x, int y, uint k, bool seen_guy)
 {
 	int i, j;
 
@@ -516,7 +516,7 @@ static void borg_merge_kill(int who)
 					 kill->x, kill->y));
 #if 0
 	/* Reduce the regional fear with this guy dead */
-	borg_fear_grid(NULL, kill->y, kill->x,
+	borg_fear_grid(NULL, kill->x, kill->y,
 				   -(borg_danger(kill->x, kill->y, 1, TRUE)), TRUE);
 #endif
 
@@ -544,7 +544,7 @@ void borg_delete_kill(int who, cptr reason)
 					 kill->x, kill->y, reason));
 #if 0
 	/* Reduce the regional fear with this guy dead */
-	borg_fear_grid(NULL, kill->y, kill->x,
+	borg_fear_grid(NULL, kill->x, kill->y,
 				   -(borg_danger(kill->x, kill->y, 1, TRUE)), TRUE);
 #endif
 
@@ -684,7 +684,7 @@ static void borg_new_kill(int r_idx, int n, int x, int y)
 	p = borg_danger(x, y, 1, FALSE);
 
 	/* Add some regional fear (2%) due to this monster */
-	borg_fear_grid(NULL, y, x, p * 2 / 100, TRUE);
+	borg_fear_grid(NULL, x, y, p * 2 / 100, TRUE);
 #endif /* 0 */
 
 	/* Recalculate danger */
@@ -1698,7 +1698,7 @@ static int borg_fear_spell(int i)
  *
  * XXX XXX XXX Currently, confusion may cause messages to be ignored.
  */
-static int borg_locate_kill(cptr who, int y, int x, int r)
+static int borg_locate_kill(cptr who, int x, int y, int r)
 {
 	int i, d, r_idx;
 
@@ -2574,7 +2574,7 @@ void borg_update(void)
 		if (prefix(msg, "HIT:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, g_y, g_x, 0)) > 0)
+			if ((k = borg_locate_kill(what, g_x, g_y, 0)) > 0)
 			{
 				borg_msg_use[i] = 2;
 			}
@@ -2584,7 +2584,7 @@ void borg_update(void)
 		else if (prefix(msg, "MISS:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, g_y, g_x, 0)) > 0)
+			if ((k = borg_locate_kill(what, g_x, g_y, 0)) > 0)
 			{
 				borg_msg_use[i] = 2;
 			}
@@ -2594,7 +2594,7 @@ void borg_update(void)
 		else if (prefix(msg, "KILL:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, g_y, g_x, 0)) > 0)
+			if ((k = borg_locate_kill(what, g_x, g_y, 0)) > 0)
 			{
 				borg_count_death(k);
 
@@ -2612,7 +2612,7 @@ void borg_update(void)
 		else if (prefix(msg, "BLINK:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, g_y, g_x, 0)) > 0)
+			if ((k = borg_locate_kill(what, g_x, g_y, 0)) > 0)
 			{
 				borg_delete_kill(k, "blinked");
 				borg_msg_use[i] = 2;
@@ -2627,7 +2627,7 @@ void borg_update(void)
 		else if (prefix(msg, "DIED:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, g_y, g_x, 3)) > 0)
+			if ((k = borg_locate_kill(what, g_x, g_y, 3)) > 0)
 			{
 				borg_count_death(k);
 				borg_delete_kill(k, "died");
@@ -2643,7 +2643,7 @@ void borg_update(void)
 		else if (prefix(msg, "PAIN:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, g_y, g_x, 3)) > 0)
+			if ((k = borg_locate_kill(what, g_x, g_y, 3)) > 0)
 			{
 				borg_msg_use[i] = 2;
 			}
@@ -2655,7 +2655,7 @@ void borg_update(void)
 		else if (prefix(msg, "STATE__FEAR:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, g_y, g_x, 0)) > 0)
+			if ((k = borg_locate_kill(what, g_x, g_y, 0)) > 0)
 			{
 				borg_msg_use[i] = 2;
 			}
@@ -2665,7 +2665,7 @@ void borg_update(void)
 		else if (prefix(msg, "STATE__BOLD:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, g_y, g_x, 0)) > 0)
+			if ((k = borg_locate_kill(what, g_x, g_y, 0)) > 0)
 			{
 				borg_msg_use[i] = 2;
 			}
@@ -2732,7 +2732,7 @@ void borg_update(void)
 		if (prefix(msg, "HIT:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, g_y, g_x, hit_dist)) > 0)
+			if ((k = borg_locate_kill(what, g_x, g_y, hit_dist)) > 0)
 			{
 				borg_msg_use[i] = 3;
 			}
@@ -2742,7 +2742,7 @@ void borg_update(void)
 		else if (prefix(msg, "MISS:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, g_y, g_x, hit_dist)) > 0)
+			if ((k = borg_locate_kill(what, g_x, g_y, hit_dist)) > 0)
 			{
 				borg_msg_use[i] = 3;
 			}
@@ -2752,7 +2752,7 @@ void borg_update(void)
 		else if (prefix(msg, "KILL:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, g_y, g_x, 1)) > 0)
+			if ((k = borg_locate_kill(what, g_x, g_y, 1)) > 0)
 			{
 				borg_count_death(k);
 				borg_delete_kill(k, "killed");
@@ -2768,7 +2768,7 @@ void borg_update(void)
 		else if (prefix(msg, "BLINK:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, g_y, g_x, 1)) > 0)
+			if ((k = borg_locate_kill(what, g_x, g_y, 1)) > 0)
 			{
 				borg_delete_kill(k, "blinked");
 				borg_msg_use[i] = 3;
@@ -2784,7 +2784,7 @@ void borg_update(void)
 		else if (prefix(msg, "DIED:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, o_c_y, o_c_x, 20)) > 0)
+			if ((k = borg_locate_kill(what, o_c_x, o_c_y, 20)) > 0)
 			{
 				borg_count_death(k);
 				borg_delete_kill(k, "died");
@@ -2800,7 +2800,7 @@ void borg_update(void)
 		else if (prefix(msg, "PAIN:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, o_c_y, o_c_x, 20)) > 0)
+			if ((k = borg_locate_kill(what, o_c_x, o_c_y, 20)) > 0)
 			{
 				borg_msg_use[i] = 3;
 			}
@@ -2812,7 +2812,7 @@ void borg_update(void)
 		else if (prefix(msg, "HIT_BY:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, o_c_y, o_c_x, 1)) > 0)
+			if ((k = borg_locate_kill(what, o_c_x, o_c_y, 1)) > 0)
 			{
 				borg_msg_use[i] = 3;
 			}
@@ -2822,7 +2822,7 @@ void borg_update(void)
 		else if (prefix(msg, "MISS_BY:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, o_c_y, o_c_x, 1)) > 0)
+			if ((k = borg_locate_kill(what, o_c_x, o_c_y, 1)) > 0)
 			{
 				borg_msg_use[i] = 3;
 			}
@@ -2840,7 +2840,7 @@ void borg_update(void)
 		else if (prefix(msg, "STATE_AWAKE:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, o_c_y, o_c_x, 20)) > 0)
+			if ((k = borg_locate_kill(what, o_c_x, o_c_y, 20)) > 0)
 			{
 				borg_msg_use[i] = 3;
 			}
@@ -2850,7 +2850,7 @@ void borg_update(void)
 		else if (prefix(msg, "STATE__FEAR:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, o_c_y, o_c_x, 20)) > 0)
+			if ((k = borg_locate_kill(what, o_c_x, o_c_y, 20)) > 0)
 			{
 				borg_msg_use[i] = 3;
 			}
@@ -2860,7 +2860,7 @@ void borg_update(void)
 		else if (prefix(msg, "STATE__BOLD:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, o_c_y, o_c_x, 20)) > 0)
+			if ((k = borg_locate_kill(what, o_c_x, o_c_y, 20)) > 0)
 			{
 				borg_msg_use[i] = 3;
 			}
@@ -2870,7 +2870,7 @@ void borg_update(void)
 		else if (prefix(msg, "SPELL_"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, o_c_y, o_c_x, 20)) > 0)
+			if ((k = borg_locate_kill(what, o_c_x, o_c_y, 20)) > 0)
 			{
 				borg_msg_use[i] = 3;
 			}
@@ -3212,7 +3212,7 @@ void borg_update(void)
 		if (prefix(msg, "DIED:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, c_y, c_x, 20)) > 0)
+			if ((k = borg_locate_kill(what, c_x, c_y, 20)) > 0)
 			{
 				borg_count_death(k);
 				borg_delete_kill(k, "died");
@@ -3224,7 +3224,7 @@ void borg_update(void)
 		else if (prefix(msg, "PAIN:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, c_y, c_x, 20)) > 0)
+			if ((k = borg_locate_kill(what, c_x, c_y, 20)) > 0)
 			{
 				borg_msg_use[i] = 4;
 			}
@@ -3234,7 +3234,7 @@ void borg_update(void)
 		else if (prefix(msg, "HIT_BY:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, c_y, c_x, hit_dist)) > 0)
+			if ((k = borg_locate_kill(what, c_x, c_y, hit_dist)) > 0)
 			{
 				borg_msg_use[i] = 4;
 			}
@@ -3245,7 +3245,7 @@ void borg_update(void)
 		{
 			/* Attempt to find the monster */
 
-			if ((k = borg_locate_kill(what, c_y, c_x, hit_dist)) > 0)
+			if ((k = borg_locate_kill(what, c_x, c_y, hit_dist)) > 0)
 			{
 				borg_msg_use[i] = 4;
 			}
@@ -3263,7 +3263,7 @@ void borg_update(void)
 		else if (prefix(msg, "STATE_AWAKE:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, c_y, c_x, 20)) > 0)
+			if ((k = borg_locate_kill(what, c_x, c_y, 20)) > 0)
 			{
 				borg_msg_use[i] = 4;
 			}
@@ -3273,7 +3273,7 @@ void borg_update(void)
 		else if (prefix(msg, "STATE__FEAR:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, c_y, c_x, 20)) > 0)
+			if ((k = borg_locate_kill(what, c_x, c_y, 20)) > 0)
 			{
 				borg_msg_use[i] = 4;
 			}
@@ -3283,7 +3283,7 @@ void borg_update(void)
 		else if (prefix(msg, "STATE__BOLD:"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, c_y, c_x, 20)) > 0)
+			if ((k = borg_locate_kill(what, c_x, c_y, 20)) > 0)
 			{
 				borg_msg_use[i] = 4;
 			}
@@ -3293,7 +3293,7 @@ void borg_update(void)
 		else if (prefix(msg, "SPELL_"))
 		{
 			/* Attempt to find the monster */
-			if ((k = borg_locate_kill(what, c_y, c_x, 20)) > 0)
+			if ((k = borg_locate_kill(what, c_x, c_y, 20)) > 0)
 			{
 				borg_msg_use[i] = 4;
 			}
@@ -3314,7 +3314,7 @@ void borg_update(void)
 		/* Handle "xxx hits you." */
 		if (prefix(msg, "HIT_BY:"))
 		{
-			borg_fear_grid(what, c_y, c_x,
+			borg_fear_grid(what, c_x, c_y,
 						   4 * ((borg_skill[BI_CDEPTH] / 5) + 1), FALSE);
 			borg_msg_use[i] = 5;
 		}
@@ -3322,7 +3322,7 @@ void borg_update(void)
 		/* Handle "xxx misses you." */
 		else if (prefix(msg, "MISS_BY:"))
 		{
-			borg_fear_grid(what, c_y, c_x,
+			borg_fear_grid(what, c_x, c_y,
 						   2 * ((borg_skill[BI_CDEPTH] / 5) + 1), FALSE);
 			borg_msg_use[i] = 5;
 		}
@@ -3330,7 +3330,7 @@ void borg_update(void)
 		/* Hack -- Handle "spell" */
 		else if (prefix(msg, "SPELL_"))
 		{
-			borg_fear_grid(what, c_y, c_x, borg_fear_spell(atoi(msg + 6)),
+			borg_fear_grid(what, c_x, c_y, borg_fear_spell(atoi(msg + 6)),
 						   FALSE);
 			borg_msg_use[i] = 5;
 		}
