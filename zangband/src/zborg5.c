@@ -525,23 +525,6 @@ static int get_new_mon(byte type)
 
 
 /*
- * Move a kill entry from one list to another
- */
-static void move_mon_entry(u16b who, byte type)
-{
-	borg_kill *kill = &borg_kills[who];
-		
-	/* Paranoia */
-	if (!who)
-	{
-		borg_oops("Trying to move invalid monster number (0)");
-		return;
-	}
-
-	kill->type = type;
-}
-
-/*
  * Merge an old "kill" record
  */
 static void borg_merge_kill(int who)
@@ -840,7 +823,7 @@ static void observe_kill_move(int new_type, int old_type, int dist)
 			if (d > dist) continue;
 			
 			/* Move the old monster to the used list */
-			move_mon_entry(i, BORG_MON_USED);
+			kill1->type = BORG_MON_USED;
 			
 			/* Remove the new monster */
 			borg_merge_kill(j);
@@ -914,14 +897,11 @@ static bool remove_bad_kills(u16b who)
  */
 static void handle_old_mons(byte type)
 {
-	int i, j;
+	int i;
 	
 	borg_kill *kill;
 	
 	map_block *mb_ptr;
-	
-	int x, y, dx, dy;
-	int b_dx = 0, b_dy = 0;
 	int ox, oy;
 	
 	for (i = 1; i < borg_kills_nxt; i++)
@@ -946,7 +926,7 @@ static void handle_old_mons(byte type)
 			if (mb_ptr->monster == kill->r_idx)
 			{
 				/* Move the old monster to the used list */
-				move_mon_entry(i, BORG_MON_USED);
+				kill->type = BORG_MON_USED;
 				
 				continue;	
 			}
@@ -958,89 +938,13 @@ static void handle_old_mons(byte type)
 		if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISIMAGE])
 		{
 			/* Move the old monster to the used list */
-			move_mon_entry(i, BORG_MON_USED);
+			kill->type = BORG_MON_USED;
 
 			continue;
 		}
 
-#if 0
-		/* Scan for non-visible squares near the monster */
-		for (j = 0; j < 8; j++)
-		{
-			/* Access offset */
-			dx = ddx_ddd[j];
-			dy = ddy_ddd[j];
-
-			/* Access location */
-			x = ox + dx;
-			y = oy + dy;
-
-			/* Bounds checking */
-			if (!map_in_bounds(x, y)) continue;
-
-			/* Access the grid */
-			mb_ptr = map_loc(x, y);
-
-			/* Skip known walls and doors */
-			if (borg_cave_wall_grid(mb_ptr)) continue;
-
-			/* Skip known monsters */
-			if (mb_ptr->monster) continue;
-
-			/* Skip visible grids */
-			if (borg_follow_kill_aux(i, x, y)) continue;
-
-			/* Collect the offsets */
-			b_dx += dx;
-			b_dy += dy;
-		}
-
-		/* Don't go too far */
-		if (b_dx < -1) b_dx = -1;
-		else if (b_dx > 1) b_dx = 1;
-
-		/* Don't go too far */
-		if (b_dy < -1) b_dy = -1;
-		else if (b_dy > 1) b_dy = 1;
-
-		/* Access location */
-		x = ox + b_dx;
-		y = oy + b_dy;
-	
-		/* Access the grid */
-		mb_ptr = map_loc(x, y);
-
-		/* Avoid walls and doors */
-		if (borg_cave_wall_grid(mb_ptr) || mb_ptr->monster)
-		{
-			/* Just delete the monster */
-			borg_delete_kill(i);
-
-			continue;
-		}
-		
-		ox += b_dx;
-		oy += b_dy;
-		
-		if ((ox != kill->x) || (oy != kill->y))
-		{
-			/* Note */
-			borg_note(format("# Following monster (%d) from (%d,%d) to (%d,%d)",
-						i, kill->x, kill->y, ox, oy));
-						
-			/* Recalculate danger */
-			borg_danger_wipe = TRUE;
-
-			/* Clear goals */
-			goal = 0;
-			
-			/* Save the Location */
-			kill->x = ox;
-			kill->y = oy;
-		}
-#endif /* 0 */	
 		/* Move the old monster to the used list */
-		move_mon_entry(i, BORG_MON_USED);
+		kill->type = BORG_MON_USED;
 	}
 }
 
@@ -2206,16 +2110,20 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 		/* Is the monster known? */
 		if (mb_ptr->kill && (map->monster == mb_ptr->monster))
 		{
+			borg_kill *kill = &borg_kills[mb_ptr->kill];
+		
 			/* Remove it from the old list. */
-			move_mon_entry(mb_ptr->kill, BORG_MON_USED);
+			kill->type = BORG_MON_USED;
 		}
 		else
 		{
 			/* Is it a new monster? */
 			if (mb_ptr->kill)
 			{
+				borg_kill *kill = &borg_kills[mb_ptr->kill];
+				
 				/* Move old entry into "moved" list */
-				move_mon_entry(mb_ptr->kill, BORG_MON_MOVE);
+				kill->type = BORG_MON_MOVE;
 			}
 			
 			/* Add to the "new" list */
@@ -2223,7 +2131,6 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 			
 			/* Fill in information for new monster */
 			borg_new_kill(map->monster, mb_ptr->kill, x, y);
-		
 		}
 	}
 	else
@@ -2236,7 +2143,7 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 			if ((kill->x == x) && (kill->y == y)) 
 			{
 				/* We need to remove this from the list, it must have moved. */
-				move_mon_entry(mb_ptr->kill, BORG_MON_MOVE);
+				kill->type = BORG_MON_MOVE;
 			}
 			
 			/* Clear it */
