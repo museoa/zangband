@@ -552,7 +552,7 @@ extern void delete_monster(int y, int x);
 extern void compact_monsters(int size);
 extern void wipe_m_list(void);
 extern s16b m_pop(void);
-extern errr get_mon_num_prep(monster_hook_type monster_hook, monster_hook_type monster_hook2);
+extern void get_mon_num_prep(monster_hook_type monster_hook, monster_hook_type monster_hook2);
 extern s16b get_mon_num(int level);
 extern void monster_desc(char *desc, const monster_type *m_ptr, int mode);
 extern void lore_do_probe(int m_idx);
@@ -662,7 +662,7 @@ extern void delete_object_location(cave_type *c_ptr);
 extern void compact_objects(int size);
 extern void wipe_o_list(void);
 extern s16b o_pop(void);
-extern errr get_obj_num_prep(void);
+extern void get_obj_num_prep(void);
 extern errr get_obj_store_prep(void);
 extern s16b get_obj_num(int level, int min_level);
 extern void object_known(object_type *o_ptr);
@@ -895,12 +895,12 @@ extern void build_init(int town_num, int build_num, byte build_type);
 
 /* util.c */
 extern errr path_parse(char *buf, int max, cptr file);
-extern errr path_build(char *buf, int max, cptr path, cptr file);
+extern void path_build(char *buf, int max, cptr path, cptr file);
 extern FILE *my_fopen(cptr file, cptr mode);
 extern FILE *my_fopen_temp(char *buf, int max);
 extern errr my_fgets(FILE *fff, char *buf, huge n);
 extern errr my_fputs(FILE *fff, cptr buf, huge n);
-extern errr my_fclose(FILE *fff);
+extern void my_fclose(FILE *fff);
 extern errr fd_kill(cptr file);
 extern errr fd_move(cptr file, cptr what);
 extern errr fd_copy(cptr file, cptr what);
@@ -918,7 +918,7 @@ extern void sound(int num);
 extern void move_cursor(int row, int col);
 extern void text_to_ascii(char *buf, cptr str);
 extern void ascii_to_text(char *buf, cptr str);
-extern errr macro_add(cptr pat, cptr act);
+extern void macro_add(cptr pat, cptr act);
 extern sint macro_find_exact(cptr pat);
 extern char inkey(void);
 extern cptr quark_str(s16b num);
@@ -1239,6 +1239,10 @@ extern bool field_action_ishardarmour_tester(field_type *f_ptr, vptr input);
 extern bool field_action_isphardarmour_tester(field_type *f_ptr, vptr input);
 extern bool field_action_ishelm_tester(field_type *f_ptr, vptr input);
 extern bool field_action_issupplies_tester(field_type *f_ptr, vptr input);
+
+/* compress.c */
+extern void test_compress_module(void);
+
 
 /*
  * Hack -- conditional (or "bizarre") externs

@@ -32,13 +32,13 @@
 
 #define MAX_RACE_GROUPS   10
 
-const cptr race_group_name[MAX_RACE_GROUPS]=
+static const cptr race_group_name[MAX_RACE_GROUPS]=
 {
 	"Human", "Elven", "Midget", "Giant", "Goblinoid", 
 	"Natural", "Magic", "Constructs", "Undead", "Extraplanar",
 };
 
-const cptr race_group_desc[MAX_RACE_GROUPS]=
+static const cptr race_group_desc[MAX_RACE_GROUPS]=
 {
 	"This group consists of human subtypes and human-looking races.",
 	"This group consists of elven subraces.",
@@ -54,7 +54,7 @@ const cptr race_group_desc[MAX_RACE_GROUPS]=
 
 #define MAX_GROUP_INT 6 /* Internal max amount of races per group. */
 
-const sint race_groups [MAX_RACE_GROUPS][MAX_GROUP_INT]=
+static const sint race_groups [MAX_RACE_GROUPS][MAX_GROUP_INT]=
 {
 	{RACE_HUMAN, RACE_BARBARIAN, RACE_AMBERITE, -1, -1, -1},
 	{RACE_HALF_ELF, RACE_ELF, RACE_HIGH_ELF, RACE_DARK_ELF, -1, -1},
@@ -790,7 +790,7 @@ static byte choose_realm(byte choices)
 		if (c == '?')
 		{
 			screen_save();
-			show_file("magic.txt#MagicRealms", NULL, 0, 0);
+			(void) show_file("magic.txt#MagicRealms", NULL, 0, 0);
 			screen_load();
 		}
 		else if (c == '=')
@@ -1945,7 +1945,7 @@ static byte get_sub_race(int group)
 			if (c == '?')
 			{
 				screen_save();
-				show_file("charattr.txt#TheRaces", NULL, 0, 0);
+				(void) show_file("charattr.txt#TheRaces", NULL, 0, 0);
 				screen_load();
 			}
 			else if (c == '=')
@@ -2037,7 +2037,7 @@ static bool get_player_race(void)
 				}
 				else 
 				{
-					sprintf(buf, "Unknown value: get_sub_race returned %d. Please submit a bug report.", sub_ret_val);
+					sprintf(buf, "Unknown value: get_sub_race returned %d. Please submit a bug report.", (int) sub_ret_val);
 					bell();
 					msg_print(buf);
 					msg_print(NULL);
@@ -2059,7 +2059,7 @@ static bool get_player_race(void)
 			else if (c == '?')
 			{
 				screen_save();
-				show_file("charattr.txt#TheRaces", NULL, 0, 0);
+				(void)show_file("charattr.txt#TheRaces", NULL, 0, 0);
 				screen_load();
 			}
 			else if (c == '=')
@@ -2152,7 +2152,7 @@ static bool get_player_class(void)
 		if (c == '?')
 		{
 			screen_save();
-			show_file("charattr.txt#TheClasses", NULL, 0, 0);
+			(void)show_file("charattr.txt#TheClasses", NULL, 0, 0);
 			screen_load();
 		}
 		else if (c == '=')
@@ -2278,7 +2278,7 @@ static bool player_birth_aux_1(void)
 		if (ch == '?')
 		{
 			screen_save();
-			show_file("charattr.txt#TheSexes", NULL, 0, 0);
+			(void)show_file("charattr.txt#TheSexes", NULL, 0, 0);
 			screen_load();
 		}
 		else if (ch == '=')
@@ -2374,7 +2374,7 @@ static bool player_birth_aux_1(void)
 
 	/* Init the random quests */
 	p_ptr->inside_quest = MIN_RANDOM_QUEST;
-	process_dungeon_file("q_info.txt", INIT_ASSIGN);
+	(void)process_dungeon_file("q_info.txt", INIT_ASSIGN);
 	p_ptr->inside_quest = 0;
 
 	/* Prepare allocation table */
@@ -2445,11 +2445,11 @@ static bool player_birth_aux_1(void)
 
 	/* Init the two main quests (Oberon + Serpent) */
 	p_ptr->inside_quest = QUEST_OBERON;
-	process_dungeon_file("q_info.txt", INIT_ASSIGN);
+	(void)process_dungeon_file("q_info.txt", INIT_ASSIGN);
 	quest[QUEST_OBERON].status = QUEST_STATUS_TAKEN;
 
 	p_ptr->inside_quest = QUEST_SERPENT;
-	process_dungeon_file("q_info.txt", INIT_ASSIGN);
+	(void)process_dungeon_file("q_info.txt", INIT_ASSIGN);
 	quest[QUEST_SERPENT].status = QUEST_STATUS_TAKEN;
 	p_ptr->inside_quest = 0;
 
@@ -2667,7 +2667,7 @@ static bool player_birth_aux_3(void)
 	int i, j, m, v;
 
 	bool flag;
-	bool prev = FALSE;
+	bool previous = FALSE;
 
 	char ch;
 
@@ -2971,7 +2971,7 @@ static bool player_birth_aux_3(void)
 			Term_gotoxy(2, 23);
 			Term_addch(TERM_WHITE, b1);
 			Term_addstr(-1, TERM_WHITE, "'r' to reroll");
-			if (prev) Term_addstr(-1, TERM_WHITE, ", 'p' for prev");
+			if (previous) Term_addstr(-1, TERM_WHITE, ", 'p' for prev");
 			Term_addstr(-1, TERM_WHITE, ", 'h' for history");
 			Term_addstr(-1, TERM_WHITE, ", or ESC to accept");
 			Term_addch(TERM_WHITE, b2);
@@ -2992,7 +2992,7 @@ static bool player_birth_aux_3(void)
 			if ((ch == ' ') || (ch == 'r')) break;
 
 			/* Previous character */
-			if (prev && (ch == 'p'))
+			if (previous && (ch == 'p'))
 			{
 				load_prev_data();
 				continue;
@@ -3008,7 +3008,7 @@ static bool player_birth_aux_3(void)
 			if (ch == '?')
 			{
 				screen_save();
-				show_file("birth.txt#CharDisplay", NULL, 0, 0);
+				(void)show_file("birth.txt#CharDisplay", NULL, 0, 0);
 				screen_load();
 				continue;
 			}
@@ -3032,7 +3032,7 @@ static bool player_birth_aux_3(void)
 		save_prev_data();
 
 		/* Note that a previous roll exists */
-		prev = TRUE;
+		previous = TRUE;
 	}
 
 	/* Clear prompt */

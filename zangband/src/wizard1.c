@@ -334,11 +334,13 @@ static void spoil_obj_desc(cptr fname)
 
 
 	/* Check for errors */
-	if (ferror(fff) || my_fclose(fff))
+	if (ferror(fff))
 	{
 		msg_print("Cannot close spoiler file.");
 		return;
 	}
+	
+	my_fclose(fff);
 
 	/* Message */
 	msg_print("Successfully created a spoiler file.");
@@ -1292,11 +1294,13 @@ static void spoil_artifact(cptr fname)
 	}
 
 	/* Check for errors */
-	if (ferror(fff) || my_fclose(fff))
+	if (ferror(fff))
 	{
 		msg_print("Cannot close spoiler file.");
 		return;
 	}
+	
+	my_fclose(fff);
 
 	/* Message */
 	msg_print("Successfully created a spoiler file.");
@@ -1442,13 +1446,14 @@ static void spoil_mon_desc(cptr fname)
 	/* End it */
 	fprintf(fff, "\n");
 
-
 	/* Check for errors */
-	if (ferror(fff) || my_fclose(fff))
+	if (ferror(fff))
 	{
 		msg_print("Cannot close spoiler file.");
 		return;
 	}
+	
+	my_fclose(fff);
 
 	/* Worked */
 	msg_print("Successfully created a spoiler file.");
@@ -2320,11 +2325,13 @@ static void spoil_mon_info(cptr fname)
 	C_KILL(who, max_r_idx, s16b);
 
 	/* Check for errors */
-	if (ferror(fff) || my_fclose(fff))
+	if (ferror(fff))
 	{
 		msg_print("Cannot close spoiler file.");
 		return;
 	}
+
+	 my_fclose(fff);
 
 	msg_print("Successfully created a spoiler file.");
 }
@@ -2429,11 +2436,13 @@ static void spoil_mutation(cptr fname)
 	}
 
 	/* Check for errors */
-	if (ferror(fff) || my_fclose(fff))
+	if (ferror(fff))
 	{
 		msg_print("Cannot close spoiler file.");
 		return;
 	}
+	
+	my_fclose(fff);
 
 	/* Message */
 	msg_print("Successfully created a spoiler file.");
@@ -2508,11 +2517,13 @@ static void spoil_rac_pow(cptr fname)
 	}
 
 	/* Check for errors */
-	if (ferror(fff) || my_fclose(fff))
+	if (ferror(fff))
 	{
 		msg_print("Cannot close spoiler file.");
 		return;
 	}
+	
+	my_fclose(fff);
 
 	/* Message */
 	msg_print("Successfully created a spoiler file.");

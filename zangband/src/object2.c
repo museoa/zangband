@@ -585,7 +585,7 @@ s16b o_pop(void)
 /*
  * Apply a "object restriction function" to the "object allocation table"
  */
-errr get_obj_num_prep(void)
+void get_obj_num_prep(void)
 {
 	int i;
 
@@ -615,9 +615,6 @@ errr get_obj_num_prep(void)
 			table[i].prob2 = table[i].prob1;
 		}
 	}
-
-	/* Success */
-	return (0);
 }
 
 

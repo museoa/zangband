@@ -426,13 +426,16 @@ errr Term_user(int n)
 /*
  * Execute the "Term->xtra_hook" hook, if available (see above).
  */
-errr Term_xtra(int n, int v)
+void Term_xtra(int n, int v)
 {
 	/* Verify the hook */
-	if (!Term->xtra_hook) return (-1);
-
+	if (!Term->xtra_hook) return;
+	
 	/* Call the hook */
-	return ((*Term->xtra_hook)(n, v));
+	(*Term->xtra_hook)(n, v);
+	
+	/* Done */
+	return;
 }
 
 
@@ -1274,7 +1277,7 @@ static void Term_fresh_row_text(int y, int x1, int x2)
  * Currently, the use of "Term->icky_corner" and "Term->soft_cursor"
  * together may result in undefined behavior.
  */
-errr Term_fresh(void)
+void Term_fresh(void)
 {
 	int x, y;
 
@@ -1289,7 +1292,7 @@ errr Term_fresh(void)
 
 
 	/* Do nothing unless "mapped" */
-	if (!Term->mapped_flag) return (1);
+	if (!Term->mapped_flag) return;
 
 
 	/* Trivial Refresh */
@@ -1301,7 +1304,7 @@ errr Term_fresh(void)
 	    !(Term->total_erase))
 	{
 		/* Nothing */
-		return (1);
+		return;
 	}
 
 
@@ -1564,7 +1567,7 @@ errr Term_fresh(void)
 
 
 	/* Success */
-	return (0);
+	return;
 }
 
 
@@ -1593,14 +1596,14 @@ errr Term_set_cursor(int v)
  *
  * Note -- "illegal" requests do not move the cursor.
  */
-errr Term_gotoxy(int x, int y)
+void Term_gotoxy(int x, int y)
 {
 	int w = Term->wid;
 	int h = Term->hgt;
 
 	/* Verify */
-	if ((x < 0) || (x >= w)) return (-1);
-	if ((y < 0) || (y >= h)) return (-1);
+	if ((x < 0) || (x >= w)) return;
+	if ((y < 0) || (y >= h)) return;
 
 	/* Remember the cursor */
 	Term->scr->cx = x;
@@ -1610,7 +1613,7 @@ errr Term_gotoxy(int x, int y)
 	Term->scr->cu = 0;
 
 	/* Success */
-	return (0);
+	return;
 }
 
 
@@ -1619,17 +1622,17 @@ errr Term_gotoxy(int x, int y)
  * Do not change the cursor position
  * No visual changes until "Term_fresh()".
  */
-errr Term_draw(int x, int y, byte a, char c)
+void Term_draw(int x, int y, byte a, char c)
 {
 	int w = Term->wid;
 	int h = Term->hgt;
 
 	/* Verify location */
-	if ((x < 0) || (x >= w)) return (-1);
-	if ((y < 0) || (y >= h)) return (-1);
+	if ((x < 0) || (x >= w)) return;
+	if ((y < 0) || (y >= h)) return;
 
 	/* Paranoia -- illegal char */
-	if (!c) return (-2);
+	if (!c) return;
 
 	/* Queue it for later */
 #ifdef USE_TRANSPARENCY
@@ -1639,16 +1642,12 @@ errr Term_draw(int x, int y, byte a, char c)
 #endif /* USE_TRANSPARENCY */
 
 	/* Success */
-	return (0);
+	return;
 }
 
 
 /*
  * Using the given attr, add the given char at the cursor.
- *
- * We return "-2" if the character is "illegal". XXX XXX
- *
- * We return "-1" if the cursor is currently unusable.
  *
  * We queue the given attr/char for display at the current
  * cursor location, and advance the cursor to the right,
@@ -1659,15 +1658,15 @@ errr Term_draw(int x, int y, byte a, char c)
  * positive value, future calls to either function will
  * return negative ones.
  */
-errr Term_addch(byte a, char c)
+void Term_addch(byte a, char c)
 {
 	int w = Term->wid;
 
 	/* Handle "unusable" cursor */
-	if (Term->scr->cu) return (-1);
+	if (Term->scr->cu) return;
 
 	/* Paranoia -- no illegal chars */
-	if (!c) return (-2);
+	if (!c) return;
 
 	/* Queue the given character for display */
 #ifdef USE_TRANSPARENCY
@@ -1680,13 +1679,13 @@ errr Term_addch(byte a, char c)
 	Term->scr->cx++;
 
 	/* Success */
-	if (Term->scr->cx < w) return (0);
+	if (Term->scr->cx < w) return;
 
 	/* Note "Useless" cursor */
 	Term->scr->cu = 1;
 
 	/* Note "Useless" cursor */
-	return (1);
+	return;
 }
 
 
@@ -1700,16 +1699,11 @@ errr Term_addch(byte a, char c)
  * displaying more characters than will actually fit, since
  * we do NOT attempt to "wrap" the cursor at the screen edge.
  *
- * We return "-1" if the cursor is currently unusable.
- * We return "N" if we were "only" able to write "N" chars,
- * even if all of the given characters fit on the screen,
- * and mark the cursor as unusable for future attempts.
- *
  * So when this function, or the preceding one, return a
  * positive value, future calls to either function will
  * return negative ones.
  */
-errr Term_addstr(int n, byte a, cptr s)
+void Term_addstr(int n, byte a, cptr s)
 {
 	int k;
 
@@ -1718,7 +1712,7 @@ errr Term_addstr(int n, byte a, cptr s)
 	errr res = 0;
 
 	/* Handle "unusable" cursor */
-	if (Term->scr->cu) return (-1);
+	if (Term->scr->cu) return;
 
 	/* Obtain maximal length */
 	k = (n < 0) ? (w + 1) : n;
@@ -1739,43 +1733,36 @@ errr Term_addstr(int n, byte a, cptr s)
 	if (res) Term->scr->cu = 1;
 
 	/* Success (usually) */
-	return (res);
+	return;
 }
 
 
 /*
  * Move to a location and, using an attr, add a char
  */
-errr Term_putch(int x, int y, byte a, char c)
+void Term_putch(int x, int y, byte a, char c)
 {
-	errr res;
-
 	/* Move first */
-	if ((res = Term_gotoxy(x, y)) != 0) return (res);
+	Term_gotoxy(x, y);
 
 	/* Then add the char */
-	if ((res = Term_addch(a, c)) != 0) return (res);
-
-	/* Success */
-	return (0);
+	Term_addch(a, c);
 }
 
 
 /*
  * Move to a location and, using an attr, add a string
  */
-errr Term_putstr(int x, int y, int n, byte a, cptr s)
+void Term_putstr(int x, int y, int n, byte a, cptr s)
 {
-	errr res;
-
 	/* Move first */
-	if ((res = Term_gotoxy(x, y)) != 0) return (res);
+	Term_gotoxy(x, y);
 
 	/* Then add the string */
-	if ((res = Term_addstr(n, a, s)) != 0) return (res);
+	(void) Term_addstr(n, a, s);
 
 	/* Success */
-	return (0);
+	return;
 }
 
 
@@ -1783,7 +1770,7 @@ errr Term_putstr(int x, int y, int n, byte a, cptr s)
 /*
  * Place cursor at (x,y), and clear the next "n" chars
  */
-errr Term_erase(int x, int y, int n)
+void Term_erase(int x, int y, int n)
 {
 	int i;
 
@@ -1805,7 +1792,7 @@ errr Term_erase(int x, int y, int n)
 #endif /* USE_TRANSPARENCY */
 
 	/* Place cursor */
-	if (Term_gotoxy(x, y)) return (-1);
+	Term_gotoxy(x, y);
 
 	/* Force legal size */
 	if (x + n > w) n = w - x;
@@ -1855,9 +1842,6 @@ errr Term_erase(int x, int y, int n)
 		if (x1 < Term->x1[y]) Term->x1[y] = x1;
 		if (x2 > Term->x2[y]) Term->x2[y] = x2;
 	}
-
-	/* Success */
-	return (0);
 }
 
 
@@ -1866,7 +1850,7 @@ errr Term_erase(int x, int y, int n)
  *
  * Note the use of the special "total_erase" code
  */
-errr Term_clear(void)
+void Term_clear(void)
 {
 	int x, y;
 
@@ -1917,9 +1901,6 @@ errr Term_clear(void)
 
 	/* Force "total erase" */
 	Term->total_erase = TRUE;
-
-	/* Success */
-	return (0);
 }
 
 
@@ -1929,16 +1910,13 @@ errr Term_clear(void)
 /*
  * Redraw (and refresh) the whole window.
  */
-errr Term_redraw(void)
+void Term_redraw(void)
 {
 	/* Force "total erase" */
 	Term->total_erase = TRUE;
 
 	/* Hack -- Refresh */
 	Term_fresh();
-
-	/* Success */
-	return (0);
 }
 
 
@@ -2005,14 +1983,11 @@ errr Term_get_cursor(int *v)
 /*
  * Extract the current window size
  */
-errr Term_get_size(int *w, int *h)
+void Term_get_size(int *w, int *h)
 {
 	/* Access the cursor */
 	(*w) = Term->wid;
 	(*h) = Term->hgt;
-
-	/* Success */
-	return (0);
 }
 
 
@@ -2201,7 +2176,7 @@ errr Term_inkey(char *ch, bool wait, bool take)
  *
  * Every "Term_save()" should match exactly one "Term_load()"
  */
-errr Term_save(void)
+void Term_save(void)
 {
 	int w = Term->wid;
 	int h = Term->hgt;
@@ -2218,9 +2193,6 @@ errr Term_save(void)
 
 	/* Grab */
 	term_win_copy(Term->mem, Term->scr, w, h);
-
-	/* Success */
-	return (0);
 }
 
 
@@ -2229,7 +2201,7 @@ errr Term_save(void)
  *
  * Every "Term_save()" should match exactly one "Term_load()"
  */
-errr Term_load(void)
+void Term_load(void)
 {
 	int y;
 
@@ -2260,9 +2232,6 @@ errr Term_load(void)
 	/* Assume change */
 	Term->y1 = 0;
 	Term->y2 = h - 1;
-
-	/* Success */
-	return (0);
 }
 
 
@@ -2498,10 +2467,10 @@ errr Term_resize(int w, int h)
  * To "create" a valid "term", one should do "term_init(t)", then
  * set the various flags and hooks, and then do "Term_activate(t)".
  */
-errr Term_activate(term *t)
+void Term_activate(term *t)
 {
 	/* Hack -- already done */
-	if (Term == t) return (1);
+	if (Term == t) return;
 
 	/* Deactivate the old Term */
 	if (Term) Term_xtra(TERM_XTRA_LEVEL, 0);
@@ -2524,9 +2493,6 @@ errr Term_activate(term *t)
 
 	/* Activate the new Term */
 	if (Term) Term_xtra(TERM_XTRA_LEVEL, 1);
-
-	/* Success */
-	return (0);
 }
 
 

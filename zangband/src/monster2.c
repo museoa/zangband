@@ -461,7 +461,7 @@ s16b m_pop(void)
 /*
  * Apply a "monster restriction function" to the "monster allocation table"
  */
-errr get_mon_num_prep(monster_hook_type monster_hook,
+void get_mon_num_prep(monster_hook_type monster_hook,
 					  monster_hook_type monster_hook2)
 {
 	int i;
@@ -502,7 +502,7 @@ errr get_mon_num_prep(monster_hook_type monster_hook,
 	}
 
 	/* Success */
-	return (0);
+	return;
 }
 
 

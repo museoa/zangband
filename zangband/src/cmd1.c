@@ -2057,7 +2057,7 @@ void py_attack(int y, int x)
 		int px = p_ptr->px;
 		int py = p_ptr->py;
 
-		earthquake(py, px, 10);
+		(void) earthquake(py, px, 10);
 	}
 }
 
@@ -2065,7 +2065,6 @@ void py_attack(int y, int x)
 static void summon_pattern_vortex(int y, int x)
 {
 	int i;
-
 
 	/* Find the pattern vortex */
 	for (i = 1; i < max_r_idx; i++)

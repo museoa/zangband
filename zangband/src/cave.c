@@ -2412,7 +2412,7 @@ void display_map(int *cy, int *cx)
 
 	bool road;
 
-	u16b w_type, w_info, town;
+	u16b w_type, w_info, twn;
 
 	byte **ma;
 	char **mc;
@@ -2581,14 +2581,14 @@ void display_map(int *cy, int *cx)
 				/* Hack - draw towns/specials */
 				/* Eventually will get attr,char from town data structure. */
 
-				town = wild[j + y][i + x].done.town;
+				twn = wild[j + y][i + x].done.town;
 
 				/* If there is a town... */
-				if (town)
+				if (twn)
 				{
 					/* Hack make a char /attr */
 					ma[j + 1][i + 1] = TERM_WHITE;
-					mc[j + 1][i + 1] = '0' + town % 10;
+					mc[j + 1][i + 1] = '0' + twn % 10;
 				}
 
 				/* Finally show position of player */
@@ -2662,15 +2662,25 @@ void display_map(int *cy, int *cx)
 	j = hgt + 1;
 
 	/* Draw the corners */
-	mc[0][0] = mc[0][i] = mc[j][0] = mc[j][i] = '+';
+	mc[0][0] = '+';
+	mc[0][i] = '+';
+	mc[j][0] = '+';
+	mc[j][i] = '+';
 
 	/* Draw the horizontal edges */
-	for (i = 1; i <= wid; i++) mc[0][i] = mc[j][i] = '-';
+	for (i = 1; i <= wid; i++)
+	{
+		mc[0][i] = '-';
+		mc[j][i] = '-';
+	}
 
 	/* Draw the vertical edges */
-	for (j = 1; j <= hgt; j++) mc[j][0] = mc[j][i] = '|';
-
-
+	for (j = 1; j <= hgt; j++)
+	{
+		mc[j][0] = '|';
+		mc[j][i] = '|';
+	}
+	
 	/* Display each map line in order */
 	for (j = 0; j < hgt + 2; ++j)
 	{
@@ -2770,7 +2780,7 @@ void do_cmd_view_map(void)
 		move_cursor(cy, cx);
 
 		/* Get any key */
-		inkey();
+		(void) inkey();
 	}
 	else
 	{

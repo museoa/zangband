@@ -2878,13 +2878,8 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 					/* Take note */
 					if (fear && m_ptr->ml)
 					{
-						char m_name[80];
-
 						/* Sound */
 						sound(SOUND_FLEE);
-
-						/* Get the monster name (or "it") */
-						monster_desc(m_name, m_ptr, 0);
 
 						/* Message */
 						msg_format("%^s flees in terror!", m_name);
@@ -3317,13 +3312,8 @@ void do_cmd_throw_aux(int mult)
 					/* Take note */
 					if (fear && m_ptr->ml)
 					{
-						char m_name[80];
-
 						/* Sound */
 						sound(SOUND_FLEE);
-
-						/* Get the monster name (or "it") */
-						monster_desc(m_name, m_ptr, 0);
 
 						/* Message */
 						msg_format("%^s flees in terror!", m_name);
@@ -3370,9 +3360,9 @@ void do_cmd_throw_aux(int mult)
 				    !is_hostile(&m_list[area(y, x)->m_idx]) &&
 				    !(m_ptr->invulner))
 				{
-					char m_name[80];
-					monster_desc(m_name, &m_list[area(y, x)->m_idx], 0);
-					msg_format("%^s gets angry!", m_name);
+					char m_name2[80];
+					monster_desc(m_name2, &m_list[area(y, x)->m_idx], 0);
+					msg_format("%^s gets angry!", m_name2);
 					set_hostile(&m_list[area(y, x)->m_idx]);
 				}
 			}

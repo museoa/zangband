@@ -1696,7 +1696,7 @@ static bool save_player_aux(char *name)
 			if (wr_savefile_new()) ok = TRUE;
 
 			/* Attempt to close it */
-			if (my_fclose(fff)) ok = FALSE;
+			my_fclose(fff);
 		}
 
 		/* Remove "broken" files */

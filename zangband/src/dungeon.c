@@ -589,14 +589,14 @@ static bool pattern_effect(void)
  */
 static void regenhp(int percent)
 {
-	s32b    new_chp, new_chp_frac;
+	u32b    new_chp, new_chp_frac;
 	int     old_chp;
 
 	/* Save the old hitpoints */
 	old_chp = p_ptr->chp;
 
 	/* Extract the new hitpoints */
-	new_chp = ((long)p_ptr->mhp) * percent + PY_REGEN_HPBASE;
+	new_chp = ((u32b)p_ptr->mhp) * percent + PY_REGEN_HPBASE;
 	p_ptr->chp += (s16b)(new_chp >> 16);   /* div 65536 */
 
 	/* check for overflow */
@@ -636,11 +636,11 @@ static void regenhp(int percent)
  */
 static void regenmana(int percent)
 {
-	s32b        new_mana, new_mana_frac;
+	u32b        new_mana, new_mana_frac;
 	int                   old_csp;
 
 	old_csp = p_ptr->csp;
-	new_mana = ((long)p_ptr->msp) * percent + PY_REGEN_MNBASE;
+	new_mana = ((u32b)p_ptr->msp) * percent + PY_REGEN_MNBASE;
 	p_ptr->csp += (s16b)(new_mana >> 16);	/* div 65536 */
 
 	/* check for overflow */
@@ -1060,9 +1060,10 @@ static void process_world(void)
 		    (inventory[INVEN_LITE].sval < SV_LITE_THRAIN) &&
 		    !p_ptr->resist_lite)
 		{
-			object_type *o_ptr = &inventory[INVEN_LITE];
 			char o_name[80];
 			char ouch[80];
+			
+			o_ptr = &inventory[INVEN_LITE];
 
 			/* Get an object description */
 			object_desc(o_name, o_ptr, FALSE, 0);
@@ -1338,7 +1339,7 @@ static void process_world(void)
 
 				disturb(TRUE);
 				msg_print("A distant bell tolls many times, fading into an deathly silence.");
-				activate_ty_curse(FALSE, &count);
+				(void)activate_ty_curse(FALSE, &count);
 			}
 		}
 	}
@@ -3492,19 +3493,19 @@ static void load_all_pref_files(void)
 	sprintf(buf, "%s.prf", rp_ptr->title);
 
 	/* Process that file */
-	process_pref_file(buf);
+	(void)process_pref_file(buf);
 
 	/* Access the "class" pref file */
 	sprintf(buf, "%s.prf", cp_ptr->title);
 
 	/* Process that file */
-	process_pref_file(buf);
+	(void)process_pref_file(buf);
 
 	/* Access the "character" pref file */
 	sprintf(buf, "%s.prf", player_base);
 
 	/* Process that file */
-	process_pref_file(buf);
+	(void)process_pref_file(buf);
 
 	/* Access the "realm 1" pref file */
 	if (p_ptr->realm1 != REALM_NONE)
@@ -3512,7 +3513,7 @@ static void load_all_pref_files(void)
 		sprintf(buf, "%s.prf", realm_names[p_ptr->realm1]);
 
 		/* Process that file */
-		process_pref_file(buf);
+		(void)process_pref_file(buf);
 	}
 
 	/* Access the "realm 2" pref file */
@@ -3521,7 +3522,7 @@ static void load_all_pref_files(void)
 		sprintf(buf, "%s.prf", realm_names[p_ptr->realm2]);
 
 		/* Process that file */
-		process_pref_file(buf);
+		(void)process_pref_file(buf);
 	}
 }
 
@@ -3551,6 +3552,8 @@ void play_game(bool new_game)
 	/* Make sure main term is active */
 	Term_activate(angband_term[0]);
 
+	if (!angband_term[0]) quit("Main terms does not exist!");
+	
 	/* Initialise the resize hooks */
 	angband_term[0]->resize_hook = resize_map;
 	
@@ -3617,7 +3620,7 @@ void play_game(bool new_game)
 #ifdef SET_UID
 
 		/* Mutate the seed on Unix machines */
-		seed = ((seed >> 3) * (getpid() << 1));
+		seed = ((seed >> 3) * (getpid() * 2));
 
 #endif
 

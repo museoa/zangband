@@ -115,12 +115,12 @@ extern bool show_file(cptr name, cptr what, int line, int mode);
 
 /* util.c */
 extern errr path_parse(char *buf, int max, cptr file);
-extern errr path_build(char *buf, int max, cptr path, cptr file);
+extern void path_build(char *buf, int max, cptr path, cptr file);
 extern FILE *my_fopen(cptr file, cptr mode);
 extern FILE *my_fopen_temp(char *buf, int max);
 extern errr my_fgets(FILE *fff, char *buf, huge n);
 extern errr my_fputs(FILE *fff, cptr buf, huge n);
-extern errr my_fclose(FILE *fff);
+extern void my_fclose(FILE *fff);
 extern errr fd_kill(cptr file);
 extern errr fd_move(cptr file, cptr what);
 extern errr fd_copy(cptr file, cptr what);
@@ -138,7 +138,7 @@ extern void sound(int num);
 extern void move_cursor(int row, int col);
 extern void text_to_ascii(char *buf, cptr str);
 extern void ascii_to_text(char *buf, cptr str);
-extern errr macro_add(cptr pat, cptr act);
+extern void macro_add(cptr pat, cptr act);
 extern sint macro_find_exact(cptr pat);
 extern char inkey(void);
 extern cptr quark_str(s16b num);
@@ -217,7 +217,7 @@ extern term *Term;
 /**** Available Functions ****/
 
 extern errr Term_user(int n);
-extern errr Term_xtra(int n, int v);
+extern void Term_xtra(int n, int v);
 
 #ifndef SWIG
 
@@ -231,21 +231,21 @@ extern void Term_queue_char(int x, int y, byte a, char c);
 
 extern void Term_queue_chars(int x, int y, int n, byte a, cptr s);
 
-extern errr Term_fresh(void);
+extern void Term_fresh(void);
 extern errr Term_set_cursor(int v);
-extern errr Term_gotoxy(int x, int y);
-extern errr Term_draw(int x, int y, byte a, char c);
-extern errr Term_addch(byte a, char c);
-extern errr Term_addstr(int n, byte a, cptr s);
-extern errr Term_putch(int x, int y, byte a, char c);
-extern errr Term_putstr(int x, int y, int n, byte a, cptr s);
-extern errr Term_erase(int x, int y, int n);
-extern errr Term_clear(void);
-extern errr Term_redraw(void);
+extern void Term_gotoxy(int x, int y);
+extern void Term_draw(int x, int y, byte a, char c);
+extern void Term_addch(byte a, char c);
+extern void Term_addstr(int n, byte a, cptr s);
+extern void Term_putch(int x, int y, byte a, char c);
+extern void Term_putstr(int x, int y, int n, byte a, cptr s);
+extern void Term_erase(int x, int y, int n);
+extern void Term_clear(void);
+extern void Term_redraw(void);
 
 extern errr Term_get_cursor(int *v);
 
-extern errr Term_get_size(int *w, int *h);
+extern void Term_get_size(int *w, int *h);
 extern errr Term_locate(int *x, int *y);
 extern errr Term_what(int x, int y, byte *a, char *c);
 
@@ -254,14 +254,14 @@ extern errr Term_keypress(int k);
 extern errr Term_key_push(int k);
 extern errr Term_inkey(char *ch, bool wait, bool take);
 
-extern errr Term_save(void);
-extern errr Term_load(void);
+extern void Term_save(void);
+extern void Term_load(void);
 
 extern errr Term_exchange(void);
 
 extern errr Term_resize(int w, int h);
 
-extern errr Term_activate(term *t);
+extern void Term_activate(term *t);
 
 extern errr term_nuke(term *t);
 extern errr term_init(term *t, int w, int h, int k);

@@ -111,8 +111,8 @@ void have_nightmare(int r_idx)
 	/* Lose int & wis */
 	if (!saving_throw(p_ptr->skill_sav * 100 / power))
 	{
-		do_dec_stat(A_INT);
-		do_dec_stat(A_WIS);
+		(void)do_dec_stat(A_INT);
+		(void)do_dec_stat(A_WIS);
 		return;
 	}
 
@@ -947,8 +947,8 @@ bool inn_rest(void)
 	}
 
 	/* Normally heal the player */
-	set_blind(0);
-	set_confused(0);
+	(void)set_blind(0);
+	(void)set_confused(0);
 	p_ptr->stun = 0;
 	p_ptr->csp = p_ptr->msp;
 
@@ -1358,7 +1358,7 @@ static void list_weapon(const object_type *o_ptr)
 
 	/* Print the weapons base damage dice and blows */
 	sprintf(tmp_str, "Dice: %dd%d    Number of Blows: %d",
-		 o_ptr->dd, o_ptr->ds, p_ptr->num_blow);
+		 (int) o_ptr->dd, (int) o_ptr->ds, p_ptr->num_blow);
 	put_str(tmp_str, 10, WEP_MAST_COL1);
 
 	/* Print hit probabilities */
