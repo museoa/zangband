@@ -3,11 +3,13 @@ the standard Angband 2.8.1.) No long explanations, just a list. See
 code for details. In reversed chronological order (more or less):
 
 
-Changes since the release of 2.3.5:
--Added an invisible wall for nightmare mode.
--Added numerous new vaults.
+ZAngband 2.5.0:
+-Completely reworked the wilderness.  The extended towns and fixed quests
+ are not available at the moment.
 -Added a feature to allow your game to be automatically logged. You
  may append notes to the log file by pressing ':'.
+-Added an invisible wall for nightmare mode.
+-Added numerous new vaults.
 -Added new graphics tiles by Marten Woxberg.
 -Revised and re-ordered the options menus.
 -The Nazguls can no longer be killed by other monsters.
@@ -36,16 +38,15 @@ Changes since the release of 2.3.5:
  caused by extreme life rating values.
 -Coordinates are now diplayed when targetting in wizard mode.
 -Pressing '|' on the options screen will save them to "pref-opt.prf".
--Updated the Python interface.
--Enhancements and fixes to ,ain-win.c, main-mac.c, main-mac.new and
+-Enhancements and fixes to main-win.c, main-mac.c, main-mac.new and
  main-mac-carbon.c.
 -Added makefiles for the Cygwin, LCC-32 and Borland command line
  compilers.
--Added some Draconian histories (by who?).
+-Added some Draconian histories.
 -Added a patch by Jason Willoughby to remove Y2K warnings when
  compiling.
 -Fixed a bug that crashed the game when looking at quest entrances
- (Note:made obsolete by the wilderness changes).
+ (Note: made obsolete by the wilderness changes).
 -Minor fixes to the combat code.
 -Toned down the damage dice of some artifacts.
 -Tweaked the levels at which monks gain additional attacks.
@@ -67,7 +68,6 @@ Changes since the release of 2.3.5:
 -Fixed a problem with item activations when wielding them from
  the ground.
 -Caverns are rarer deeper in the dungeon.
--Completely reworked the wilderness [Steven to provide details].
 -Store memory allocation is now dynamic.
 -Removed a number of unused variables, intializations and some
  dead code.
