@@ -2948,6 +2948,7 @@ void update_view(void)
 	int x, y, i, o2;
 
 	s16b this_o_idx, next_o_idx = 0;
+	s16b this_f_idx, next_f_idx = 0;
 
 	/* Light radius */
 	s16b radius = p_ptr->cur_lite;
@@ -3255,6 +3256,18 @@ void update_view(void)
 
 				/* Memorize objects */
 				o_ptr->marked = TRUE;
+			}
+			
+			/* Show the fields */
+			for (this_f_idx = c_ptr->fld_idx; this_f_idx; this_f_idx = next_f_idx)
+			{
+				field_type *f_ptr = &fld_list[this_f_idx];
+
+				/* Acquire next field */
+				next_f_idx = f_ptr->next_f_idx;
+
+				/* Memorize fields */
+				f_ptr->info |= FIELD_INFO_MARK;
 			}
 
 			/* Must note the new information on the screen */
