@@ -670,6 +670,8 @@ static void init_towns(void)
 		
 		/* Hack - make a supplies store */
 		store_init(best_town, i, BUILD_SUPPLIES0);
+		
+		break;
 	}
 	
 	/* Build starting city / town */
