@@ -507,15 +507,6 @@ static DIBINIT infMask;
 #endif /* USE_GRAPHICS */
 
 
-/*
- * Available graphic modes
- */
-#define GRAPHICS_NONE       0
-#define GRAPHICS_ORIGINAL   1
-#define GRAPHICS_ADAM_BOLT  2
-
-
-
 #ifdef USE_SOUND
 
 /*

@@ -2551,20 +2551,19 @@ void move_player(int dir, int do_pickup)
 		/* Warn about traps */
 		
 		/* 
-		 * Is the disturb_traps option set +
-		 * out of detection range +
-		 * we are running?
+		 * Is the disturb_traps option set and out of detection range?
 		 */
-		if (disturb_traps && p_ptr->detected && p_ptr->running && 
-			(distance(y, x, p_ptr->detecty, p_ptr->detectx) >= MAX_DETECT))
+		if (disturb_traps && !(pc_ptr->player & GRID_DTCT) && p_ptr->detected)
 		{
 			/* We are out of range */
 				
-			/* Disturb */
-			disturb(FALSE);
+			msg_print("Out of trap detection range.");
 				
 			/* Reset the detection flag */
 			p_ptr->detected = FALSE;
+			
+			/* Disturb the player */
+			disturb(FALSE);
 		}
 
 		/* Spontaneous Searching */

@@ -2386,7 +2386,7 @@
 #define GRID_DUM1		0x01
 #define GRID_VIEW		0x02	/* In LOS */
 #define GRID_SEEN		0x04	/* In LOS + Lit in some way */
-#define GRID_DUM2		0x08
+#define GRID_DTCT		0x08	/* Detected for traps */
 #define GRID_LITE		0x10	/* Lit by torchlight */
 #define GRID_DUM3		0x20
 #define GRID_DUM4		0x40
@@ -4263,6 +4263,7 @@ extern int PlayerUID;
 #define GRAPHICS_NONE       0
 #define GRAPHICS_ORIGINAL   1
 #define GRAPHICS_ADAM_BOLT  2
+#define GRAPHICS_ANY		3
 
 /*
  * Modes for the random name generator

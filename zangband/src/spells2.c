@@ -813,10 +813,7 @@ bool detect_traps(void)
 	int             x, y;
 	bool            detect = FALSE;
 	cave_type       *c_ptr;
-
-	/* Save center of detection radius */
-	p_ptr->detectx = px;
-	p_ptr->detecty = py;
+	pcave_type		*pc_ptr;
 
 	/* Have detected traps on this level */
 	p_ptr->detected = TRUE;
@@ -832,7 +829,8 @@ bool detect_traps(void)
 			if (distance(px, py, x, y) > MAX_DETECT) continue;
 
 			/* Access the grid */
-			c_ptr = area(y,x);
+			c_ptr = area(y, x);
+			pc_ptr = parea(y, x);
 
 			/* Detect traps */
 			if (field_detect_type(c_ptr->fld_idx, FTYPE_TRAP))
@@ -840,6 +838,9 @@ bool detect_traps(void)
 				/* Obvious */
 				detect = TRUE;
 			}
+			
+			/* Save the 'detected' status for this square */
+			pc_ptr->player |= GRID_DTCT;
 		}
 	}
 

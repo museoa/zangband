@@ -538,11 +538,6 @@ struct NewMenu window_menu[] =
 /* Menu array */
 static struct NewMenu newmenu[ MENUMAX ];
 
-#ifdef USE_TRANSPARENCY
-extern void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp);
-#else /* USE_TRANSPARENCY */
-extern void map_info(int y, int x, byte *ap, char *cp);
-#endif /* USE_TRANSPARENCY */
 extern void center_string( char *buf, cptr str );
 extern void amiga_gfxmap(void);
 
@@ -4168,116 +4163,56 @@ static void amiga_map( void )
 		td->map_x = 0;
 	if (td->map_y < 0)
 		td->map_y = 0;
-#ifdef ZANGBAND
-	/* In the dungeon */
-	if (dun_level)
+
+	/* Zangband changes the map data - you must not access it from here */
+#ifndef ZANGBAND
+
+	/* Draw all "interesting" features */
+	for ( i = 0; i < max_wid; i++ )
 	{
-#endif
-		/* Draw all "interesting" features */
-		for ( i = 0; i < max_wid; i++ )
+		for ( j = 0; j < max_hgt; j++ )
 		{
-			for ( j = 0; j < max_hgt; j++ )
+			/* Get frame tile */
+			if ( (i == 0) || (i == max_wid - 1) || (j == 0) || (j == max_hgt - 1) )
 			{
-				/* Get frame tile */
-				if ( (i == 0) || (i == max_wid - 1) || (j == 0) || (j == max_hgt - 1) )
-				{
 #ifdef ANG283
-					ta = f_info[ 63 ].x_attr;
-					tc = f_info[ 63 ].x_char;
+				ta = f_info[ 63 ].x_attr;
+				tc = f_info[ 63 ].x_char;
 #else
-#ifdef ZANGBAND
-					ta = f_info[ 63 ].x_attr;
-					tc = f_info[ 63 ].x_char;
-#else
-					ta = f_info[ 63 ].z_attr;
-					tc = f_info[ 63 ].z_char;
+				ta = f_info[ 63 ].x_attr;
+				tc = f_info[ 63 ].x_char;
 #endif
-#endif
-				}
-
-				/* Get tile from cave table */
-				else
-				{
-#ifdef USE_TRANSPARENCY
-					map_info( j, i, &ta, (char *) &tc, &tap, (char *) &tcp );
-#else
-					map_info( j, i, &ta, (char *) &tc );
-#endif
-				}
-
-				/* Ignore non-graphics */
-				if ( ta & 0x80 )
-				{
-					ta = ta & ((GFXH >> 3) - 1);
-					tc = tc & ((GFXW >> 3) - 1);
-
-					/* Player XXX XXX XXX */
-					if ( ta == 12 && tc == 0 )
-					{
-						ta = get_p_attr();
-						tc = get_p_char();
-					}
-
-					/* Put the graphics to the screen */
-					put_gfx_map( td, i, j, tc, ta );
-				}
 			}
-		}
-#ifdef ZANGBAND
-	}
-	else
-	{
-		/* The player is in the wilderness */
 
-		/* Work out offset of corner of dungeon-sized segment of the wilderness */
-		int xoffset, yoffset;
-
-		xoffset = (wild_grid.x_min + wild_grid.x_max - WILD_GRID_SIZE * 16) / 2;
-		yoffset = (wild_grid.y_min + wild_grid.y_max - MAX_HGT) / 2;
-
-		/* Draw all "interesting" features */
-		for ( i = xoffset; i < xoffset + WILD_GRID_SIZE * 16; i++ )
-		{
-			for ( j = yoffset; j < yoffset + MAX_HGT; j++ )
+			/* Get tile from cave table */
+			else
 			{
-				/* Get frame tile */
-				if ( (i == xoffset) || (i == xoffset + WILD_GRID_SIZE * 16 - 1) ||
-					(j == yoffset) || (j == yoffset + MAX_HGT - 1) )
-				{
-					ta = f_info[63].x_attr;
-					tc = f_info[63].x_char;
-				}
-				/* Get tile from cave table */
-				else
-				{
 #ifdef USE_TRANSPARENCY
-					map_info( j, i, &ta, (char *) &tc, &tap, (char *) &tcp );
+				map_info( j, i, &ta, (char *) &tc, &tap, (char *) &tcp );
 #else
-					map_info( j, i, &ta, (char *) &tc );
+				map_info( j, i, &ta, (char *) &tc );
 #endif
-				}
+			}
 
-				/* Ignore non-graphics */
-				if ( ta & 0x80 )
+			/* Ignore non-graphics */
+			if ( ta & 0x80 )
+			{
+				ta = ta & ((GFXH >> 3) - 1);
+				tc = tc & ((GFXW >> 3) - 1);
+
+				/* Player XXX XXX XXX */
+				if ( ta == 12 && tc == 0 )
 				{
-					ta = ta & ((GFXH >> 3) - 1);
-					tc = tc & ((GFXW >> 3) - 1);
-
-					/* Player XXX XXX XXX */
-					if ( ta == 12 && tc == 0 )
-					{
-						ta = get_p_attr();
-						tc = get_p_char();
-					}
-
-					/* Put the graphics to the screen */
-					put_gfx_map( td, i - xoffset, j - yoffset, tc, ta );
+					ta = get_p_attr();
+					tc = get_p_char();
 				}
 
+				/* Put the graphics to the screen */
+				put_gfx_map( td, i, j, tc, ta );
 			}
 		}
-#endif
 	}
+#endif /* ZANGBAND */
 
 	/* Draw a small cursor now */
 	td->cursor_map = TRUE;

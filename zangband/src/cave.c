@@ -1516,17 +1516,13 @@ static void variable_player_graph(byte *a, char *c)
  * to be "scrambled" in various ways.
  */
 #ifdef USE_TRANSPARENCY
-void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
+static void map_info(cave_type *c_ptr, pcave_type *pc_ptr,
+				 byte *ap, char *cp, byte *tap, char *tcp)
 #else /* USE_TRANSPARENCY */
-void map_info(int y, int x, byte *ap, char *cp)
+static void map_info(cave_type *c_ptr, pcave_type *pc_ptr,
+				 byte *ap, char *cp)
 #endif /* USE_TRANSPARENCY */
 {
-	int py = p_ptr->py;
-	int px = p_ptr->px;
-
-	cave_type *c_ptr;
-	pcave_type *pc_ptr;
-
 	feature_type *f_ptr;
 
 	object_type *o_ptr;
@@ -1546,12 +1542,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 	char c;
 
 	bool feat_not_ascii;
-	s16b halluc = p_ptr->image;
-
-	/* Get the cave */
-	c_ptr = area(y, x);
-	pc_ptr = parea(y, x);
-	
+	s16b halluc = p_ptr->image;	
 
 	/* Info flags */
 	player = pc_ptr->player;
@@ -1641,7 +1632,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 #endif /* USE_TRANSPARENCY */
 
 	/* Handle "player" */
-	if ((y == py) && (x == px))
+	if (c_ptr == area(p_ptr->py, p_ptr->px))
 	{
 		monster_race *r_ptr = &r_info[0];
 
@@ -2012,6 +2003,9 @@ void display_dungeon(void)
 {
 	int px = p_ptr->px;
 	int py = p_ptr->py;
+	
+	pcave_type *pc_ptr;
+	cave_type *c_ptr;
 
 	int x, y;
 	byte a;
@@ -2030,23 +2024,22 @@ void display_dungeon(void)
 		{
 			if (in_boundsp(y, x))
 			{
-
+				c_ptr = area(y, x);
+				pc_ptr = parea(y, x);
+				
 #ifdef USE_TRANSPARENCY
 				/* Examine the grid */
-				map_info(y, x, &a, &c, &ta, &tc);
-#else /* USE_TRANSPARENCY */
-				/* Examine the grid */
-				map_info(y, x, &a, &c);
-#endif /* USE_TRANSPARENCY */
-
-#ifdef USE_TRANSPARENCY
+				map_info(c_ptr, pc_ptr, &a, &c, &ta, &tc);
+								
 				/* Hack -- Queue it */
 				Term_queue_char(x - px + wid - 1, y - py + hgt - 1, a, c, ta, tc);
 #else /* USE_TRANSPARENCY */
+				/* Examine the grid */
+				map_info(c_ptr, pc_ptr, &a, &c);
+								
 				/* Hack -- Queue it */
 				Term_queue_char(x - px + wid - 1, y - py + hgt - 1, a, c);
 #endif /* USE_TRANSPARENCY */
-
 			}
 			else
 			{
@@ -2090,12 +2083,15 @@ void lite_spot(int y, int x)
 #ifdef USE_TRANSPARENCY
 		byte ta;
 		char tc;
+		
+		cave_type *c_ptr = area(y, x);
+		pcave_type *pc_ptr = parea(y, x);
 
 		/* Examine the grid */
-		map_info(y, x, &a, &c, &ta, &tc);
+		map_info(c_ptr, pc_ptr, &a, &c, &ta, &tc);
 #else /* USE_TRANSPARENCY */
 		/* Examine the grid */
-		map_info(y, x, &a, &c);
+		map_info(c_ptr, pc_ptr, &a, &c);
 #endif /* USE_TRANSPARENCY */
 
 #ifdef USE_TRANSPARENCY
@@ -2129,6 +2125,9 @@ void prt_map(void)
 	/* Temp variables to speed up deletion loops */
 	s16b l1, l2, l3;
 
+	cave_type *c_ptr;
+	pcave_type *pc_ptr;
+	
 	byte *pa;
 	char *pc;
 
@@ -2198,8 +2197,6 @@ void prt_map(void)
 #ifdef USE_TRANSPARENCY
 	pta = mp_ta;
 	ptc = mp_tc;
-#endif /* USE_TRANSPARENCY */
-
 
 	/* Dump the map */
 	for (y = ymin; y <= ymax; y++)
@@ -2210,20 +2207,13 @@ void prt_map(void)
 		/* Scan the columns of row "y" */
 		for (x = xmin; x <= xmax; x++)
 		{
-#ifdef USE_TRANSPARENCY
-			/* Determine what is there */
-			map_info(y, x, pa++, pc++, pta++, ptc++);
-
-#else /* USE_TRANSPARENCY */
+			c_ptr = area(y, x);
+			pc_ptr = parea(y, x);
 
 			/* Determine what is there */
-			map_info(y, x, pa++, pc++);
-
-#endif /* USE_TRANSPARENCY */
+			map_info(c_ptr, pc_ptr, pa++, pc++, pta++, ptc++);
 		}
 
-
-#ifdef USE_TRANSPARENCY
 
 		/* Point to start of line */
 		pa = mp_a;
@@ -2234,8 +2224,25 @@ void prt_map(void)
 		/* Efficiency -- Redraw that row of the map */
 		Term_queue_line(xmin - panel_col_prt, y - panel_row_prt, xmax - xmin + 1
 			, pa, pc, pta, ptc);
+	}
 
 #else /* USE_TRANSPARENCY */
+
+	/* Dump the map */
+	for (y = ymin; y <= ymax; y++)
+	{
+		/* No characters yet */
+		n = 0;
+
+		/* Scan the columns of row "y" */
+		for (x = xmin; x <= xmax; x++)
+		{
+			c_ptr = area(y, x);
+			pc_ptr = parea(y, x);
+
+			/* Determine what is there */
+			map_info(c_ptr, pc_ptr, pa++, pc++);
+		}
 
 		/* Point to start of line */
 		pa = mp_a;
@@ -2244,9 +2251,8 @@ void prt_map(void)
 		/* Efficiency -- Redraw that row of the map */
 		Term_queue_line(xmin - panel_col_prt, y - panel_row_prt, xmax - xmin + 1
 			, pa, pc);
-
-#endif /* USE_TRANSPARENCY */
 	}
+#endif /* USE_TRANSPARENCY */
 
 	/* Restore the cursor */
 	(void)Term_set_cursor(v);
@@ -2368,6 +2374,9 @@ void display_map(int *cy, int *cx)
 {
 	int py = p_ptr->py;
 	int px = p_ptr->px;
+
+	cave_type *c_ptr;
+	pcave_type *pc_ptr;
 
 	int i, j, x, y;
 
@@ -2598,11 +2607,14 @@ void display_map(int *cy, int *cx)
 				x = i * xfactor / xrat + 1;
 				y = j * yfactor / yrat + 1;
 
+				c_ptr = area(j, i);
+				pc_ptr = parea(j, i);
+
 				/* Extract the current attr/char at that map location */
 #ifdef USE_TRANSPARENCY
-				map_info(j, i, &ta, &tc, &tta, &ttc);
+				map_info(c_ptr, pc_ptr, &ta, &tc, &tta, &ttc);
 #else /* USE_TRANSPARENCY */
-				map_info(j, i, &ta, &tc);
+				map_info(c_ptr, pc_ptr, &ta, &tc);
 #endif /* USE_TRANSPARENCY */
 
 				/* Extract the priority of that attr/char */

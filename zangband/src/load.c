@@ -1376,9 +1376,8 @@ static void rd_extra(void)
 		/* Get trap detection status */
 		rd_byte((byte *)&player_detected);
 		
-		/* Get location of detection */
-		rd_s16b(&p_ptr->detecty);
-		rd_s16b(&p_ptr->detectx);
+		/* oops */
+		strip_bytes(4);
 	}
 }
 

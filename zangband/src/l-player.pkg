@@ -257,11 +257,6 @@ struct player_type
 
 	s32b align;			/* Good/evil/neutral */
 	
-	s16b detectx;		/* Coords of last detect traps casting */
-	s16b detecty;		/* Coords of last detect traps casting */
-	bool detected;		/* Have cast detect_traps on this level */
-	bool det_pad;		/* Padding byte */
-
 	s16b total_weight;	/* Total weight being carried */
 
 	s16b inven_cnt;		/* Number of items in inventory */
@@ -307,7 +302,7 @@ struct player_type
 	bool heavy_wield;		/* Heavy weapon */
 	bool heavy_shoot;		/* Heavy shooter */
 	bool icky_wield;		/* Icky weapon */
-	bool pad_byte;		/* Yet more padding */
+	bool detected;		/* Detection on level */
 
 	s16b cur_lite;		/* Radius of lite (if any) */
 

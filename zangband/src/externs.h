@@ -308,11 +308,6 @@ extern void scatter(int *yp, int *xp, int y, int x, int d);
 extern bool player_can_see_bold(int y, int x);
 extern bool cave_valid_grid(const cave_type *c_ptr);
 extern bool no_lite(void);
-#ifdef USE_TRANSPARENCY
-extern void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp);
-#else /* USE_TRANSPARENCY */
-extern void map_info(int y, int x, byte *ap, char *cp);
-#endif /* USE_TRANSPARENCY */
 extern void move_cursor_relative(int row, int col);
 extern void print_rel(char c, byte a, int y, int x);
 extern void note_spot(int y, int x);
@@ -928,6 +923,10 @@ extern void build_gamma_table(int gamma);
 #endif /* SUPPORT_GAMMA */
 
 extern cptr get_default_font(int term_num);
+
+#ifdef USE_GRAPHICS
+extern bool pick_graphics(int graphics, int *tile_size, char *filename);
+#endif /* USE_GRAPHICS */
 
 /* xtra1.c */
 extern void cnv_stat(int val, char *out_val);
