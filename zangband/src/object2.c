@@ -762,9 +762,9 @@ s16b get_obj_num(int level, int min_level)
 	alloc_entry *table = alloc_kind_table;
 
 	/* Luck gives occasional out-of-depth items */
-	if ((p_ptr->flags4 & (TR4_STRANGE_LUCK)) && one_in_(GREAT_OBJ))
+	if ((p_ptr->flags4 & (TR4_STRANGE_LUCK)) && one_in_(13))
 	{
-		level += 20;
+		level += randint1(one_in_(7) ? 40 : 10);
 	}
 
 	/* Occasional "boost" */

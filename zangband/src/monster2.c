@@ -765,9 +765,6 @@ s16b get_mon_num(int level)
 		{
 			int checks = 2;
 
-			if (p_ptr->flags4 & (TR4_STRANGE_LUCK))
-				checks = 5;
-
 			for ( ; checks > 0; checks--)
 			{
 				/* Occasional "nasty" monster */
@@ -776,6 +773,12 @@ s16b get_mon_num(int level)
 					/* Boost the level */
 					level += 7;
 				}
+			}
+
+			/* Luck gives occasional very out-of-depth monsters */
+			if ((p_ptr->flags4 & (TR4_STRANGE_LUCK)) && one_in_(13))
+			{
+				level += randint1(one_in_(7) ? 40 : 10);
 			}
 		}
 	}

@@ -133,22 +133,20 @@ void check_experience(void)
 		/* Handle stuff */
 		handle_stuff();
 
-		if (level_reward)
+		if (level_reward || (one_in_(7) && 
+					(p_ptr->flags4 & TR4_STRANGE_LUCK)))
 		{
 			if (!multi_rew)
 			{
 				gain_level_reward(0);
 				multi_rew = TRUE;
 			}
-
-			level_reward = FALSE;
 		}
 
 		if (level_mutation)
 		{
 			msgf("You feel different...");
 			(void)gain_mutation(0);
-			level_mutation = FALSE;
 		}
 	}
 }
@@ -3265,12 +3263,20 @@ void gain_level_reward(int chosen_reward)
 	int tval, sval;
 	int type, effect;
 	int i;
+	int patron = p_ptr->chaos_patron;
 
 	int count = 0;
 
 	if (p_ptr->lev == 13) nasty_chance = 2;
 	else if (!(p_ptr->lev % 13)) nasty_chance = 3;
 	else if (!(p_ptr->lev % 14)) nasty_chance = 12;
+
+	/* Strange luck can give chaos rewards from a random patron */
+	if (!(p_ptr->flags4 & TR4_PATRON))
+	{
+		nasty_chance *= 2;
+		patron = randint0(MAX_PATRON);
+	}
 
 	if (one_in_(nasty_chance))
 		type = randint1(20);	/* Allow the 'nasty' effects */
@@ -3282,15 +3288,14 @@ void gain_level_reward(int chosen_reward)
 	type--;
 
 
-	strnfmt(wrath_reason, 32, "the Wrath of %s",
-			chaos_patrons[p_ptr->chaos_patron]);
+	strnfmt(wrath_reason, 32, "the Wrath of %s", chaos_patrons[patron]);
 
-	effect = chaos_rewards[p_ptr->chaos_patron][type];
+	effect = chaos_rewards[patron][type];
 
 	if (one_in_(6) && !chosen_reward)
 	{
 		msgf("%^s rewards you with a mutation!",
-				   chaos_patrons[p_ptr->chaos_patron]);
+				   chaos_patrons[patron]);
 		(void)gain_mutation(0);
 		return;
 	}
@@ -3300,7 +3305,7 @@ void gain_level_reward(int chosen_reward)
 		case REW_POLY_SLF:
 		{
 			msgf("The voice of %s booms out:",
-					   chaos_patrons[p_ptr->chaos_patron]);
+					   chaos_patrons[patron]);
 			msgf("'Thou needst a new form, mortal!'");
 			do_poly_self();
 			break;
@@ -3308,7 +3313,7 @@ void gain_level_reward(int chosen_reward)
 		case REW_GAIN_EXP:
 		{
 			msgf("The voice of %s booms out:",
-					   chaos_patrons[p_ptr->chaos_patron]);
+					   chaos_patrons[patron]);
 			msgf("'Well done, mortal! Lead on!'");
 			if (p_ptr->exp < PY_MAX_EXP)
 			{
@@ -3322,7 +3327,7 @@ void gain_level_reward(int chosen_reward)
 		case REW_LOSE_EXP:
 		{
 			msgf("The voice of %s booms out:",
-					   chaos_patrons[p_ptr->chaos_patron]);
+					   chaos_patrons[patron]);
 			msgf("'Thou didst not deserve that, slave.'");
 			lose_exp(p_ptr->exp / 6);
 			break;
@@ -3330,7 +3335,7 @@ void gain_level_reward(int chosen_reward)
 		case REW_GOOD_OBJ:
 		{
 			msgf("The voice of %s whispers:",
-					   chaos_patrons[p_ptr->chaos_patron]);
+					   chaos_patrons[patron]);
 			msgf("'Use my gift wisely.'");
 			acquirement(px, py, 1, FALSE, FALSE);
 			break;
@@ -3338,7 +3343,7 @@ void gain_level_reward(int chosen_reward)
 		case REW_GREA_OBJ:
 		{
 			msgf("The voice of %s booms out:",
-					   chaos_patrons[p_ptr->chaos_patron]);
+					   chaos_patrons[patron]);
 			msgf("'Use my gift wisely.'");
 			acquirement(px, py, 1, TRUE, FALSE);
 			break;
@@ -3346,7 +3351,7 @@ void gain_level_reward(int chosen_reward)
 		case REW_CHAOS_WP:
 		{
 			msgf("The voice of %s booms out:",
-					   chaos_patrons[p_ptr->chaos_patron]);
+					   chaos_patrons[patron]);
 			msgf("'Thy deed hath earned thee a worthy blade.'");
 
 			tval = TV_SWORD;
@@ -3453,7 +3458,7 @@ void gain_level_reward(int chosen_reward)
 		case REW_GOOD_OBS:
 		{
 			msgf("The voice of %s booms out:",
-					   chaos_patrons[p_ptr->chaos_patron]);
+					   chaos_patrons[patron]);
 			msgf("'Thy deed hath earned thee a worthy reward.'");
 			acquirement(px, py, rand_range(2, 3), FALSE, FALSE);
 			break;
@@ -3461,7 +3466,7 @@ void gain_level_reward(int chosen_reward)
 		case REW_GREA_OBS:
 		{
 			msgf("The voice of %s booms out:",
-					   chaos_patrons[p_ptr->chaos_patron]);
+					   chaos_patrons[patron]);
 			msgf("'Behold, mortal, how generously I reward thy loyalty.'");
 			acquirement(px, py, rand_range(2, 3), TRUE, FALSE);
 			break;
@@ -3469,7 +3474,7 @@ void gain_level_reward(int chosen_reward)
 		case REW_TY_CURSE:
 		{
 			msgf("The voice of %s thunders:",
-					   chaos_patrons[p_ptr->chaos_patron]);
+					   chaos_patrons[patron]);
 			msgf("'Thou art growing arrogant, mortal.'");
 			(void)activate_ty_curse(FALSE, &count);
 			break;
@@ -3477,7 +3482,7 @@ void gain_level_reward(int chosen_reward)
 		case REW_SUMMON_M:
 		{
 			msgf("The voice of %s booms out:",
-					   chaos_patrons[p_ptr->chaos_patron]);
+					   chaos_patrons[patron]);
 			msgf("'My pets, destroy the arrogant mortal!'");
 			for (i = 0; i < rand_range(2, 6); i++)
 			{
@@ -3489,7 +3494,7 @@ void gain_level_reward(int chosen_reward)
 		case REW_H_SUMMON:
 		{
 			msgf("The voice of %s booms out:",
-					   chaos_patrons[p_ptr->chaos_patron]);
+					   chaos_patrons[patron]);
 			msgf("'Thou needst worthier opponents!'");
 			(void)activate_hi_summon();
 			break;
@@ -3497,7 +3502,7 @@ void gain_level_reward(int chosen_reward)
 		case REW_DO_HAVOC:
 		{
 			msgf("The voice of %s booms out:",
-					   chaos_patrons[p_ptr->chaos_patron]);
+					   chaos_patrons[patron]);
 			msgf("'Death and destruction! This pleaseth me!'");
 			call_chaos();
 			break;
@@ -3505,10 +3510,10 @@ void gain_level_reward(int chosen_reward)
 		case REW_GAIN_ABL:
 		{
 			msgf("The voice of %s rings out:",
-					   chaos_patrons[p_ptr->chaos_patron]);
+					   chaos_patrons[patron]);
 			msgf("'Stay, mortal, and let me mold thee.'");
-			if (one_in_(3) && !(chaos_stats[p_ptr->chaos_patron] < 0))
-				(void)do_inc_stat(chaos_stats[p_ptr->chaos_patron]);
+			if (one_in_(3) && !(chaos_stats[patron] < 0))
+				(void)do_inc_stat(chaos_stats[patron]);
 			else
 				(void)do_inc_stat(randint0(A_MAX));
 			break;
@@ -3516,10 +3521,10 @@ void gain_level_reward(int chosen_reward)
 		case REW_LOSE_ABL:
 		{
 			msgf("The voice of %s booms out:",
-					   chaos_patrons[p_ptr->chaos_patron]);
+					   chaos_patrons[patron]);
 			msgf("'I grow tired of thee, mortal.'");
-			if (one_in_(3) && !(chaos_stats[p_ptr->chaos_patron] < 0))
-				(void)do_dec_stat(chaos_stats[p_ptr->chaos_patron]);
+			if (one_in_(3) && !(chaos_stats[patron] < 0))
+				(void)do_dec_stat(chaos_stats[patron]);
 			else
 				(void)do_dec_stat(randint0(A_MAX));
 			break;
@@ -3527,7 +3532,7 @@ void gain_level_reward(int chosen_reward)
 		case REW_RUIN_ABL:
 		{
 			msgf("The voice of %s thunders:",
-					   chaos_patrons[p_ptr->chaos_patron]);
+					   chaos_patrons[patron]);
 			msgf("'Thou needst a lesson in humility, mortal!'");
 			msgf("You feel less powerful!");
 			for (i = 0; i < A_MAX; i++)
@@ -3539,14 +3544,14 @@ void gain_level_reward(int chosen_reward)
 		case REW_POLY_WND:
 		{
 			msgf("You feel the power of %s touch you.",
-					   chaos_patrons[p_ptr->chaos_patron]);
+					   chaos_patrons[patron]);
 			do_poly_wounds();
 			break;
 		}
 		case REW_AUGM_ABL:
 		{
 			msgf("The voice of %s booms out:",
-					   chaos_patrons[p_ptr->chaos_patron]);
+					   chaos_patrons[patron]);
 			msgf("'Receive this modest gift from me!'");
 			for (i = 0; i < A_MAX; i++)
 			{
@@ -3557,7 +3562,7 @@ void gain_level_reward(int chosen_reward)
 		case REW_HURT_LOT:
 		{
 			msgf("The voice of %s booms out:",
-					   chaos_patrons[p_ptr->chaos_patron]);
+					   chaos_patrons[patron]);
 			msgf("'Suffer, pathetic fool!'");
 			(void)fire_ball(GF_DISINTEGRATE, 0, p_ptr->lev * 4, 4);
 			take_hit(p_ptr->lev * 4, wrath_reason);
@@ -3566,7 +3571,7 @@ void gain_level_reward(int chosen_reward)
 		case REW_HEAL_FUL:
 		{
 			msgf("The voice of %s booms out:",
-					   chaos_patrons[p_ptr->chaos_patron]);
+					   chaos_patrons[patron]);
 			msgf("'Rise, my servant!'");
 			(void)restore_level();
 			(void)clear_poisoned();
@@ -3589,7 +3594,7 @@ void gain_level_reward(int chosen_reward)
 		case REW_CURSE_WP:
 		{
 			msgf("The voice of %s booms out:",
-					   chaos_patrons[p_ptr->chaos_patron]);
+					   chaos_patrons[patron]);
 			msgf("'Thou reliest too much on thy weapon.'");
 			(void)curse_weapon();
 			break;
@@ -3597,7 +3602,7 @@ void gain_level_reward(int chosen_reward)
 		case REW_CURSE_AR:
 		{
 			msgf("The voice of %s booms out:",
-					   chaos_patrons[p_ptr->chaos_patron]);
+					   chaos_patrons[patron]);
 			msgf("'Thou reliest too much on thine equipment.'");
 			(void)curse_armor();
 			break;
@@ -3605,7 +3610,7 @@ void gain_level_reward(int chosen_reward)
 		case REW_PISS_OFF:
 		{
 			msgf("The voice of %s whispers:",
-					   chaos_patrons[p_ptr->chaos_patron]);
+					   chaos_patrons[patron]);
 			msgf("'Now thou shalt pay for annoying me.'");
 			switch (randint1(4))
 			{
@@ -3633,7 +3638,7 @@ void gain_level_reward(int chosen_reward)
 		case REW_WRATH:
 		{
 			msgf("The voice of %s thunders:",
-					   chaos_patrons[p_ptr->chaos_patron]);
+					   chaos_patrons[patron]);
 			msgf("'Die, mortal!'");
 
 			take_hit(p_ptr->lev * 4, wrath_reason);
@@ -3654,7 +3659,7 @@ void gain_level_reward(int chosen_reward)
 		case REW_DESTRUCT:
 		{
 			msgf("The voice of %s booms out:",
-					   chaos_patrons[p_ptr->chaos_patron]);
+					   chaos_patrons[patron]);
 			msgf("'Death and destruction! This pleaseth me!'");
 			(void)destroy_area(px, py, 25);
 			break;
@@ -3662,7 +3667,7 @@ void gain_level_reward(int chosen_reward)
 		case REW_GENOCIDE:
 		{
 			msgf("The voice of %s booms out:",
-					   chaos_patrons[p_ptr->chaos_patron]);
+					   chaos_patrons[patron]);
 			msgf("'Let me relieve thee of thine oppressors!'");
 			(void)genocide(FALSE);
 			break;
@@ -3670,7 +3675,7 @@ void gain_level_reward(int chosen_reward)
 		case REW_MASS_GEN:
 		{
 			msgf("The voice of %s booms out:",
-					   chaos_patrons[p_ptr->chaos_patron]);
+					   chaos_patrons[patron]);
 			msgf("'Let me relieve thee of thine oppressors!'");
 			(void)mass_genocide(FALSE);
 			break;
@@ -3678,19 +3683,19 @@ void gain_level_reward(int chosen_reward)
 		case REW_DISPEL_C:
 		{
 			msgf("You can feel the power of %s assault your enemies!",
-					   chaos_patrons[p_ptr->chaos_patron]);
+					   chaos_patrons[patron]);
 			(void)dispel_monsters(p_ptr->lev * 4);
 			break;
 		}
 		case REW_IGNORE:
 		{
-			msgf("%s ignores you.", chaos_patrons[p_ptr->chaos_patron]);
+			msgf("%s ignores you.", chaos_patrons[patron]);
 			break;
 		}
 		case REW_SER_DEMO:
 		{
 			msgf("%s rewards you with a demonic servant!",
-					   chaos_patrons[p_ptr->chaos_patron]);
+					   chaos_patrons[patron]);
 			if (!summon_specific
 				(-1, px, py, p_ptr->depth, SUMMON_DEMON, FALSE, TRUE, TRUE))
 				msgf("Nobody ever turns up...");
@@ -3699,7 +3704,7 @@ void gain_level_reward(int chosen_reward)
 		case REW_SER_MONS:
 		{
 			msgf("%s rewards you with a servant!",
-					   chaos_patrons[p_ptr->chaos_patron]);
+					   chaos_patrons[patron]);
 			if (!summon_specific
 				(-1, px, py, p_ptr->depth, SUMMON_NO_UNIQUES, FALSE, TRUE,
 				 TRUE))
@@ -3709,7 +3714,7 @@ void gain_level_reward(int chosen_reward)
 		case REW_SER_UNDE:
 		{
 			msgf("%s rewards you with an undead servant!",
-					   chaos_patrons[p_ptr->chaos_patron]);
+					   chaos_patrons[patron]);
 			if (!summon_specific
 				(-1, px, py, p_ptr->depth, SUMMON_UNDEAD, FALSE, TRUE, TRUE))
 				msgf("Nobody ever turns up...");
@@ -3718,7 +3723,7 @@ void gain_level_reward(int chosen_reward)
 		default:
 		{
 			msgf("The voice of %s stammers:",
-					   chaos_patrons[p_ptr->chaos_patron]);
+					   chaos_patrons[patron]);
 			msgf("'Uh... uh... the answer's %d/%d, what's the question?'",
 					   type, effect);
 		}
