@@ -4173,10 +4173,28 @@ static void amiga_map( void )
 	Term_clear();
 	Term_fresh();
 
+#ifdef ZANGBAND
+	/* In the dungeon */
+	if (dun_level)
+	{
+		/* Calculate offset values */
+		td->map_x = (( td->fw * 80 ) - ( td->mpt_w * cur_wid )) / 2;
+		td->map_y = (( td->fh * 24 ) - ( td->mpt_h * cur_hgt )) / 2;
+	}
+	else
+	{
+		/* Calculate offset values */
+		td->map_x = (( td->fw * 80 ) - ( td->mpt_w * WILD_GRID_SIZE * 16 )) / 2;
+		td->map_y = (( td->fh * 24 ) - ( td->mpt_h * WILD_GRID_SIZE * 16 )) / 2;
+	}
+#else	
+
 	/* Calculate offset values */
 	td->map_x = (( td->fw * 80 ) - ( td->mpt_w * cur_wid )) / 2;
 	td->map_y = (( td->fh * 24 ) - ( td->mpt_h * cur_hgt )) / 2;
-
+	
+#endif	
+	
 	if (td->map_x < 0)
 		td->map_x = 0;
 	if (td->map_y < 0)
@@ -4192,7 +4210,7 @@ static void amiga_map( void )
 			for ( j = 0; j < cur_hgt; j++ )
 			{
 				/* Get frame tile */
-				if ( i==0 || i == cur_wid - 1 || j == 0 || j == cur_hgt - 1 )
+				if ( (i == 0) || (i == cur_wid - 1) || (j == 0) || (j == cur_hgt - 1) )
 				{
 #ifdef ANG283
 					ta = f_info[ 63 ].x_attr;
@@ -4248,11 +4266,11 @@ static void amiga_map( void )
 			for ( j = wild_grid.y_min; j < wild_grid.y_max; j++ )
 			{
 				/* Get frame tile */
-				if ( i==wild_grid.x_min || i == wild_grid.x_max - 1 ||
-					j ==wild_grid.y_min || j == wild_grid.y_max - 1 )
+				if ( (i == wild_grid.x_min) || (i == wild_grid.x_max - 1) ||
+					(j == wild_grid.y_min) || (j == wild_grid.y_max - 1) )
 				{
-					ta = f_info[63].z_attr;
-					tc = f_info[63].z_char;
+					ta = f_info[63].x_attr;
+					tc = f_info[63].x_char;
 				}
 				/* Get tile from cave table */
 				else
