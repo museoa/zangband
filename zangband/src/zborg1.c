@@ -737,11 +737,6 @@ bool borg_do_update_view = FALSE;	/* Recalculate view */
 /*
  * Strategy flags -- examine the world
  */
-
-bool borg_do_inven = TRUE;	/* Acquire "inven" info */
-
-bool borg_do_equip = TRUE;	/* Acquire "equip" info */
-
 bool borg_do_panel = TRUE;	/* Acquire "panel" info */
 
 bool borg_do_frame = TRUE;	/* Acquire "frame" info */

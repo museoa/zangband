@@ -1336,7 +1336,7 @@ static bool borg_decurse_armour(void)
 	/* Ability for heavy curse */
 	if (decurse_armour_swap == 1)
 	{
-		if (-1 == borg_slot(TV_SCROLL, SV_SCROLL_STAR_REMOVE_CURSE) &&
+		if (!borg_slot(TV_SCROLL, SV_SCROLL_STAR_REMOVE_CURSE) &&
 			!borg_spell_okay_fail(REALM_LIFE, 2, 1, 40))
 		{
 			return (FALSE);
@@ -1367,9 +1367,9 @@ static bool borg_decurse_armour(void)
 	/* Ability for light curse */
 	if (decurse_armour_swap == 0 || borg_wearing_cursed)
 	{
-		if (-1 == borg_slot(TV_SCROLL, SV_SCROLL_REMOVE_CURSE) &&
-			(-1 == borg_slot(TV_STAFF, SV_STAFF_REMOVE_CURSE) &&
-			 -1 == borg_items[borg_slot(TV_STAFF, SV_STAFF_REMOVE_CURSE)].pval)
+		if (!borg_slot(TV_SCROLL, SV_SCROLL_REMOVE_CURSE) &&
+			(!borg_slot(TV_STAFF, SV_STAFF_REMOVE_CURSE) &&
+			 !borg_slot(TV_STAFF, SV_STAFF_REMOVE_CURSE)->pval)
 			&& !borg_spell_okay_fail(REALM_LIFE, 2, 1, 40))
 		{
 			return (FALSE);
@@ -1415,7 +1415,7 @@ static bool borg_decurse_weapon(void)
 	/* Ability for heavy curse */
 	if (decurse_weapon_swap == 1)
 	{
-		if (-1 == borg_slot(TV_SCROLL, SV_SCROLL_STAR_REMOVE_CURSE) &&
+		if (!borg_slot(TV_SCROLL, SV_SCROLL_STAR_REMOVE_CURSE) &&
 			!borg_spell_okay_fail(REALM_LIFE, 2, 1, 40))
 		{
 			return (FALSE);
@@ -1440,9 +1440,9 @@ static bool borg_decurse_weapon(void)
 	/* Ability for light curse */
 	if (decurse_weapon_swap == 0)
 	{
-		if (-1 == borg_slot(TV_SCROLL, SV_SCROLL_REMOVE_CURSE) &&
-			(-1 == borg_slot(TV_STAFF, SV_STAFF_REMOVE_CURSE) &&
-			 -1 == borg_items[borg_slot(TV_STAFF, SV_STAFF_REMOVE_CURSE)].pval)
+		if (!borg_slot(TV_SCROLL, SV_SCROLL_REMOVE_CURSE) &&
+			(!borg_slot(TV_STAFF, SV_STAFF_REMOVE_CURSE) &&
+			 !borg_slot(TV_STAFF, SV_STAFF_REMOVE_CURSE)->pval)
 			&& !borg_spell_okay_fail(REALM_LIFE, 2, 1, 40))
 		{
 			return (FALSE);

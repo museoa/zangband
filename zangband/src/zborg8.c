@@ -1008,7 +1008,7 @@ static bool borg_think_shop_sell_aux(void)
 			c = ((item->value < 30000L) ? item->value : 30000L);
 
 			/* sell cheap items first.  This is done because we may have to */
-			/* buy the item back in some very strange cercemstances. */
+			/* buy the item back in some very strange circumstances. */
 			if ((p == b_p) && (c >= b_c)) continue;
 
 			/* Maintain the "best" */
@@ -2458,10 +2458,6 @@ bool borg_think_store(void)
 		borg_keypress(ESCAPE);
 		borg_keypress(ESCAPE);
 		borg_keypress(ESCAPE);
-
-		/* Re-examine inven and equip */
-		borg_do_inven = TRUE;
-		borg_do_equip = TRUE;
 	}
 
 	/* update all my equipment and swap items */
@@ -2711,10 +2707,6 @@ bool borg_think_dungeon(void)
 		borg_keypress(ESCAPE);
 		borg_keypress(ESCAPE);
 		borg_keypress(ESCAPE);
-
-		/* Re-examine inven and equip */
-		borg_do_inven = TRUE;
-		borg_do_equip = TRUE;
 
 		/* enter a special routine to handle this behavior.  Messing with
 		 * the old_level forces him to re-explore this level, and reshop,

@@ -2946,8 +2946,6 @@ void borg_update(void)
 		borg_do_update_view = TRUE;
 
 		/* Examine the world */
-		borg_do_inven = TRUE;
-		borg_do_equip = TRUE;
 		borg_do_spell = TRUE;
 		borg_do_panel = TRUE;
 		borg_do_frame = TRUE;
@@ -3116,12 +3114,6 @@ void borg_update(void)
 			time_this_panel = 1;
 
 		}
-
-		/* Examine the world while in town. */
-		if (!borg_skill[BI_CDEPTH]) borg_do_inven = TRUE;
-		if (!borg_skill[BI_CDEPTH]) borg_do_equip = TRUE;
-
-
 	}
 
 

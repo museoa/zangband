@@ -1048,11 +1048,6 @@ extern bool borg_do_update_view;	/* Recalculate view */
 /*
  * Strategy flags -- examine the world
  */
-
-extern bool borg_do_inven;	/* Acquire "inven" info */
-
-extern bool borg_do_equip;	/* Acquire "equip" info */
-
 extern bool borg_do_panel;	/* Acquire "panel" info */
 
 extern bool borg_do_frame;	/* Acquire "frame" info */

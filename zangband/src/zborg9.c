@@ -420,31 +420,6 @@ static bool borg_think(void)
 
 
 	/*** Process inventory/equipment ***/
-	/* Cheat */
-	if (borg_do_equip)
-	{
-		/* Only do it once */
-		borg_do_equip = FALSE;
-
-		/* Cheat the "equip" screen */
-		borg_cheat_equip();
-
-		/* Done */
-		return (FALSE);
-	}
-
-	/* Cheat */
-	if (borg_do_inven)
-	{
-		/* Only do it once */
-		borg_do_inven = FALSE;
-
-		/* Cheat the "inven" screen */
-		borg_cheat_inven();
-
-		/* Done */
-		return (FALSE);
-	}
 
 	/* save now */
 	if (borg_save && borg_save_game())
@@ -667,10 +642,6 @@ static bool borg_think(void)
 			/* Extract actual index */
 			n = borg_shops[shop_num].page * 12 + i;
 
-			/* We have to cheat and get a pointer to the actual item... */
-			borg_item_analyze(&borg_shops[shop_num].ware[n],
-							  &st_ptr->stock[n], desc);
-
 			/* Save the cost */
 			borg_shops[shop_num].ware[n].cost = atoi(cost);
 		}
@@ -687,12 +658,6 @@ static bool borg_think(void)
 			/* Done */
 			return (TRUE);
 		}
-
-		/* Recheck inventory */
-		borg_do_inven = TRUE;
-
-		/* Recheck equipment */
-		borg_do_equip = TRUE;
 
 		/* Recheck spells */
 		borg_do_spell = TRUE;
@@ -765,12 +730,6 @@ static bool borg_think(void)
 
 	/*** Re-activate Tests ***/
 
-	/* Check equip again later */
-	borg_do_equip = TRUE;
-
-	/* Check inven again later */
-	borg_do_inven = TRUE;
-
 	/* Check panel again later */
 	borg_do_panel = TRUE;
 
@@ -806,9 +765,6 @@ static bool borg_think(void)
 
 	/* Extract some "hidden" variables */
 	borg_hidden();
-
-	/* Examine the equipment/inventory */
-	borg_notice(TRUE);
 
 	/* Evaluate the current world */
 	my_power = borg_power();
@@ -4699,9 +4655,6 @@ void do_cmd_borg(void)
 			/* Cheat the "equip" screen */
 			borg_cheat_equip();
 
-			/* Cheat the "inven" screen */
-			borg_cheat_inven();
-
 			/* Extract some "hidden" variables */
 			borg_hidden();
 
@@ -4783,7 +4736,6 @@ void do_cmd_borg(void)
 
 			/* Extract some "hidden" variables */
 			borg_cheat_equip();
-			borg_cheat_inven();
 			borg_hidden();
 
 			/* Examine the inventory */
@@ -4825,11 +4777,11 @@ void do_cmd_borg(void)
 
 			/* Cheat the "equip" screen */
 			borg_cheat_equip();
-			/* Cheat the "inven" screen */
-			borg_cheat_inven();
+
 			/* Examine the inventory */
 			borg_notice(TRUE);
 			borg_notice_home(NULL, FALSE);
+
 			/* Check the power */
 			borg_power();
 
@@ -4865,11 +4817,11 @@ void do_cmd_borg(void)
 
 			/* Cheat the "equip" screen */
 			borg_cheat_equip();
-			/* Cheat the "inven" screen */
-			borg_cheat_inven();
+
 			/* Examine the inventory */
 			borg_notice(TRUE);
 			borg_notice_home(NULL, FALSE);
+
 			/* Check the power */
 			borg_power();
 
@@ -4990,6 +4942,7 @@ void do_cmd_borg(void)
 					break;
 				}
 			}
+
 			/* Examine the screen */
 			borg_update_frame();
 
@@ -4999,15 +4952,13 @@ void do_cmd_borg(void)
 			/* Cheat the "equip" screen */
 			borg_cheat_equip();
 
-			/* Cheat the "inven" screen */
-			borg_cheat_inven();
-
 			/* Extract some "hidden" variables */
 			borg_hidden();
 
 			/* Examine the inventory */
 			borg_notice(TRUE);
 			borg_notice_home(NULL, FALSE);
+
 			for (; item < to; item++)
 			{
 				switch (cmd)

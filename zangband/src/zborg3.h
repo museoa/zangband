@@ -31,8 +31,6 @@ typedef struct borg_item borg_item;
 typedef struct borg_shop borg_shop;
 typedef struct borg_mind borg_mind;
 
-extern list_notice_hook_type old_list_hook;
-
 
 /*
  * A structure holding information about an object.  120 bytes.
@@ -212,8 +210,6 @@ struct borg_mind
  * Some variables
  */
 
-extern borg_item *borg_items;	/* Current "inventory" */
-
 extern borg_shop *borg_shops;	/* Current "shops" */
 
 
@@ -221,7 +217,6 @@ extern borg_shop *borg_shops;	/* Current "shops" */
  * Safety arrays for simulating possible worlds
  */
 
-extern borg_item *safe_items;	/* Safety "inventory" */
 extern borg_item *safe_home;	/* Safety "home" */
 
 extern borg_shop *safe_shops;	/* Safety "shops" */
@@ -242,12 +237,6 @@ extern borg_mind borg_minds[MINDCRAFT_MAX];
 extern int borg_wield_slot(borg_item *item);
 
 /*
- * Analyze an item, given a textual description
- */
-extern void borg_item_analyze(borg_item *item, object_type *real_item,
-							  cptr buf);
-
-/*
  * Count the items of a given tval/sval
  */
 extern int borg_count(int tval, int sval);
@@ -255,7 +244,12 @@ extern int borg_count(int tval, int sval);
 /*
  * Find an item with a given tval/sval
  */
-extern int borg_slot(int tval, int sval);
+extern list_item *borg_slot(int tval, int sval);
+
+/*
+ * Find corresponding index of item
+ */
+extern int look_up_index(list_item *l_ptr);
 
 /*
  * Item usage functions
@@ -321,7 +315,6 @@ extern bool borg_racial(int race);
  * Cheat/Parse the "equip" and "inven" screens.
  */
 extern void borg_cheat_equip(void);
-extern void borg_cheat_inven(void);
 
 /*
  * Cheat/Parse the "spell" screen

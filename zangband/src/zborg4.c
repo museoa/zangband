@@ -40,6 +40,13 @@ void borg_list_info(byte list_type)
 			/* Notice changes */
 			borg_notice(TRUE);
 		
+			/* inventory changed so goals must change. */
+			goal_shop = goal_ware = goal_item = -1;
+
+			/* Note changed inventory */
+			borg_do_crush_junk = TRUE;
+			borg_do_crush_hole = TRUE;
+			borg_do_crush_slow = TRUE;
 			break;
 		}
 		
@@ -47,6 +54,13 @@ void borg_list_info(byte list_type)
 		{
 			/* Notice changes */
 			borg_notice(TRUE);
+			
+			goal_shop = goal_ware = goal_item = -1;
+
+			/* Note changed inventory */
+			borg_do_crush_junk = TRUE;
+			borg_do_crush_hole = TRUE;
+			borg_do_crush_slow = TRUE;
 		
 			break;
 		}
