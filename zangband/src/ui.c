@@ -332,8 +332,6 @@ int get_player_sort_choice(cptr *choices, int num, int col, int wid,
 }
 
 
-
-
 /*
  * Display a menu, and get a choice.
  * Return false if escape is pressed.
@@ -348,18 +346,19 @@ int get_player_sort_choice(cptr *choices, int num, int col, int wid,
 bool display_menu(int num, cptr *options, menu_select_type *cmd, int select)
 {
 	int i;
-	bool flag;
 	int ask = 0;
 	char choice;
 	byte x = 0;
-	char prompt[160];
-
-	/* Build a prompt */
-	(void)strnfmt(prompt, 78, "(Command (a-%c), ESC=exit) Select a command: ",
-				  I2A(num - 1));
+                  
+    /* Paranoia XXX XXX XXX */
+	message_flush();
 
 	/* Save the screen */
 	Term_save();
+    
+    /* Display the prompt */
+	prtf(0, 0, "(Command (a-%c), ESC=exit) Select a command: ",
+				  I2A(num - 1));
 
 	/* Border on top of menu */
 	clear_row(1);
@@ -374,12 +373,16 @@ bool display_menu(int num, cptr *options, menu_select_type *cmd, int select)
 	/* Border below menu */
 	clear_row(num + 1);
     
-	/* Nothing selected yet */
-	flag = FALSE;
-	
 	/* Get a command from the user */
-	while (get_com(prompt, &choice))
+	while ((choice = inkey()))
 	{
+    	/* Handle "cancel" */
+		if (choice == ESCAPE)
+        {
+			Term_load();
+        	return (FALSE);
+        }
+    
 		if (choice == '\r')
 		{
 			/* Default options */
@@ -421,18 +424,16 @@ bool display_menu(int num, cptr *options, menu_select_type *cmd, int select)
 		/* Call the function */
 		if (cmd[i](options[i]))
 		{
-			/* Success! */
-			flag = TRUE;
-			
-			/* Stop the loop */
-			break;
+			/* Restore the screen */
+			Term_load();
+	
+			/* Success */
+			return (TRUE);
 		}
 	}
 
-	/* Restore the screen */
-	Term_load();
-	
-	return (flag);
+	/* Paranoia for dumb compilers */
+	quit("Unreachable code in display_menu");
 }
 
 
