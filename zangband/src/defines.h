@@ -3445,7 +3445,7 @@
 #define show_labels				p_ptr->options[10]
 #define show_weights			p_ptr->options[11]
 #define view_monster_grids		p_ptr->options[12]
-/* {TRUE,  0, NULL,					"Number 13" }, p_ptr->options[13] */
+#define toggle_xp				p_ptr->options[13]
 #define ring_bell				p_ptr->options[14]
 #define use_color				p_ptr->options[15]
 #define find_ignore_stairs		p_ptr->options[16]

@@ -6167,7 +6167,7 @@ option_type option_info[OPT_MAX] =
 	{TRUE,  5, "show_labels",			"Show labels in object listings" },
 	{TRUE,  5, "show_weights",			"Show weights in object listings" },
 	{FALSE, 8, "view_monster_grids",	"Map remembers monster-lit grids" },
-	{TRUE,  0, NULL,					"Number 13" },
+	{FALSE, 1, "toggle_xp",				"Reverse experience display" },
 	{FALSE, 2, "ring_bell",				"Audible bell (on errors, etc)" },
 	{TRUE,  5, "use_color",				"Use color if possible (slow)" },
 	{FALSE, 2, "find_ignore_stairs",	"Run past stairs" },

@@ -2472,12 +2472,22 @@ static void display_player_middle(void)
 		put_str("Exp to Adv.", 12, COL_VALUE);
 		c_put_str(TERM_L_GREEN, "       *****", 12, COL_VALUE+11);
 	}
-	else
+	else if (toggle_xp)
 	{
+		/* Print the amount of xp until next level */
 		prt_num("Exp to Adv.",
-					(s32b)(player_exp[p_ptr->lev - 1] * p_ptr->expfact / 100L),
+				(long)(player_exp[p_ptr->lev - 1] * p_ptr->expfact / 100L
+					 - (long)p_ptr->exp),
 					12, COL_VALUE, TERM_L_GREEN, 9);
 	}
+	else
+	{
+		/* Print the total xp required for next level */
+		prt_num("Exp to Adv.",
+					(long)(player_exp[p_ptr->lev - 1] * p_ptr->expfact / 100L),
+					12, COL_VALUE, TERM_L_GREEN, 9);
+	}
+	
 
 	prt_num("Gold       ", p_ptr->au, 13, COL_VALUE, TERM_L_GREEN, 9);
 

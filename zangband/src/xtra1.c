@@ -472,18 +472,41 @@ static void prt_level(void)
 static void prt_exp(void)
 {
 	char out_val[32];
-
-	(void)sprintf(out_val, "%8ld", (long)p_ptr->exp);
-
+	byte attr;
+	
 	if (p_ptr->exp >= p_ptr->max_exp)
 	{
-		put_str("EXP ", ROW_EXP, 0);
-		c_put_str(TERM_L_GREEN, out_val, ROW_EXP, COL_EXP + 4);
+		attr = TERM_L_GREEN;
 	}
 	else
 	{
-		put_str("Exp ", ROW_EXP, 0);
-		c_put_str(TERM_YELLOW, out_val, ROW_EXP, COL_EXP + 4);
+		attr = TERM_YELLOW;
+	}
+	
+	put_str("EXP ", ROW_EXP, 0);
+
+	if (toggle_xp)
+	{
+		if (p_ptr->lev >= PY_MAX_LEVEL)
+		{
+			c_put_str(attr, "********", ROW_EXP, COL_EXP + 4);
+		}
+		else
+		{
+			/* Print the amount of experience to go until the next level */
+			(void)sprintf(out_val, "%8ld",
+				 (long)(player_exp[p_ptr->lev - 1] * p_ptr->expfact / 100L)
+				 	 - (long)p_ptr->exp);
+					 
+			c_put_str(attr, out_val, ROW_EXP, COL_EXP + 4);
+		}
+	}
+	else
+	{
+		/* Use the 'old' experience display */
+		(void)sprintf(out_val, "%8ld", (long)p_ptr->exp);
+		
+		c_put_str(attr, out_val, ROW_EXP, COL_EXP + 4);
 	}
 }
 
