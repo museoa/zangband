@@ -2483,49 +2483,49 @@ F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 ##### Chests #####
 
 N:338:& Small wooden chest~
-G:~:s
+G:&:o
 I:7:1:0
 W:5:0:250:20
 A:5/1
 P:0:2d3:0:0:0
 
 N:339:& Large wooden chest~
-G:~:s
+G:&:U
 I:7:5:0
 W:15:0:500:60
 A:15/1
 P:0:2d5:0:0:0
 
 N:340:& Small iron chest~
-G:~:s
+G:&:D
 I:7:2:0
 W:25:0:300:100
 A:25/1
 P:0:2d4:0:0:0
 
 N:341:& Large iron chest~
-G:~:s
+G:&:s
 I:7:6:0
 W:35:0:1000:150
 A:35/1
 P:0:2d6:0:0:0
 
 N:342:& Small steel chest~
-G:~:s
+G:&:s
 I:7:3:0
 W:45:0:500:200
 A:45/1
 P:0:2d4:0:0:0
 
 N:343:& Large steel chest~
-G:~:s
+G:&:W
 I:7:7:0
 W:55:0:1000:250
 A:55/1
 P:0:2d6:0:0:0
 
 N:344:& Ruined chest~
-G:~:s
+G:&:u
 I:7:0:0
 W:0:0:250:0
 A:75/1
