@@ -1118,9 +1118,6 @@ static bool borg_enchant_to_d(void)
 		/* Save the info  */
 		a_i = i;
 		a_a = a;
-
-		/* Item is in the inventory */
-		inven = TRUE;
 	}
 
 	/*
