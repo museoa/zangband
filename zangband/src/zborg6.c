@@ -3853,6 +3853,17 @@ bool borg_caution(void)
 #define	BF_MAX					10
 
 
+/* What sort of distance attacks does the borg have: */
+#define BORG_BOLT		-2
+#define BORG_BEAM		-1
+#define BORG_BALL_RAD0	0
+#define BORG_BALL_RAD1	1
+#define BORG_BALL_RAD2	2
+#define BORG_BALL_RAD3	3
+#define BORG_BALL_RAD4	4
+#define BORG_BALL_RAD8	8
+#define BORG_DISPEL		0
+
 
 /*
  * Guess how much damage a physical attack will do to a monster
