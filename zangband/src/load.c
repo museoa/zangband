@@ -2007,9 +2007,6 @@ static errr rd_dungeon(void)
 
     bool ignore_stuff = FALSE;
 
-    /* This variable is only for toggling in the debugger, for now. */
-    bool try_recover = FALSE;
-
 	s16b cur_wid, cur_hgt;
 
 	/* Hack - Reset the object theme */
@@ -2272,7 +2269,7 @@ static errr rd_dungeon(void)
 		o_idx = o_pop();
 
 		/* Oops */
-		if (i != o_idx && !try_recover)
+		if (i != o_idx)
         {
 			note(format("Object allocation error (%d <> %d)", i, o_idx));
 			return (152);
@@ -2292,9 +2289,6 @@ static errr rd_dungeon(void)
 		{
             if (!in_bounds(o_ptr->ix, o_ptr->iy))
             {
-                if (try_recover)
-                    continue;
-
 				note(format
 					 ("Object placement error (%d,%d)", o_ptr->ix, o_ptr->iy));
 				return (152);
@@ -2374,7 +2368,7 @@ static errr rd_dungeon(void)
 		if (!ignore_stuff)
 		{
 			/* Oops */
-			if (i != m_idx && !try_recover)
+			if (i != m_idx)
 			{
 				note(format("Monster allocation error (%d <> %d)", i, m_idx));
 				return (162);
@@ -2382,9 +2376,6 @@ static errr rd_dungeon(void)
 
 			if (!in_bounds(m_ptr->fx, m_ptr->fy))
             {
-                if (try_recover)
-                    continue;
-
 				note(format
 					 ("Monster placement error (%d,%d)", m_ptr->fx, m_ptr->fy));
 				return (162);
@@ -2442,7 +2433,7 @@ static errr rd_dungeon(void)
 				fld_idx = field_add(f_ptr, &c_ptr->fld_idx);
 
 				/* Oops */
-				if (i != fld_idx && !try_recover)
+				if (i != fld_idx)
 				{
 					note(format
 						 ("Field allocation error (%d <> %d)", i, fld_idx));
