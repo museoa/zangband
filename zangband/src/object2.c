@@ -4944,6 +4944,9 @@ s16b *look_up_list(object_type *o_ptr)
 
 	/* Failure - the object is inconsistant */
 	quit("Failed to look up object.");
+
+    /* Quiet a warning - in gcc marking quit() 'noreturn' would also work */
+    return (0);
 }
 
 /*
