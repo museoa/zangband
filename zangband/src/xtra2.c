@@ -1358,13 +1358,13 @@ void ang_sort(vptr u, vptr v, int n)
 
 
 
-/*** Targetting Code ***/
+/*** Targeting Code ***/
 
 
 /*
  * Determine is a monster makes a reasonable target
  *
- * The concept of "targetting" was stolen from "Morgul" (?)
+ * The concept of "targeting" was stolen from "Morgul" (?)
  *
  * The player can target any location, or any "target-able" monster.
  *
@@ -2142,7 +2142,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
  * "update_mon()" code to allow "visibility" even if off panel, and
  * may require dynamic recalculation of the "temp" grid set.
  *
- * Hack -- targetting/observing an "outer border grid" may induce
+ * Hack -- targeting/observing an "outer border grid" may induce
  * problems, so this is not currently allowed.
  *
  * The player can use the direction keys to move among "interesting"
@@ -3304,7 +3304,7 @@ bool get_hack_dir(int *dp)
 	/* Global direction */
 	dir = 0;
 
-	/* (No auto-targetting */
+	/* (No auto-targeting) */
 
 	/* Ask until satisfied */
 	while (!dir)
