@@ -2047,9 +2047,6 @@ static void target_set_prepare(int mode)
  * Note that if a monster is in the grid, we update both the monster
  * recall info and the health bar info to track that monster.
  *
- * Eventually, we may allow multiple objects per grid, or objects
- * and terrain features in the same grid. XXX XXX XXX
- *
  * This function must handle blindness/hallucination.
  */
 static int target_set_aux(int y, int x, int mode, cptr info)
@@ -2057,6 +2054,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 	cave_type *c_ptr = area(y, x);
 
 	s16b this_o_idx, next_o_idx = 0;
+	s16b this_f_idx, next_f_idx = 0;
 
 	cptr s1, s2, s3;
 
@@ -2371,6 +2369,63 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 
 		/* Double break */
 		if (this_o_idx) break;
+		
+		/* Scan all fields in the grid */
+		for (this_f_idx = c_ptr->fld_idx; this_f_idx; this_f_idx = next_f_idx)
+		{
+			field_type *f_ptr;
+
+			/* Acquire field */
+			f_ptr = &fld_list[this_f_idx];
+
+			/* Acquire next field */
+			next_f_idx = f_ptr->next_f_idx;
+			
+			/* Do not describe this field */
+			if (f_ptr->info & FIELD_INFO_NO_LOOK) continue;
+
+			/* Describe it */
+			if (f_ptr->info & FIELD_INFO_MARK)
+			{
+				/* Not boring */
+				boring = FALSE;
+
+				/* Describe the field */
+				sprintf(out_val, "%s%s%s%s [%s]", s1, s2, s3,
+					 t_info[f_ptr->t_idx].name, info);
+				prt(out_val, 0, 0);
+				move_cursor_relative(y, x);
+				query = inkey();
+
+				/* Always stop at "normal" keys */
+				if ((query != '\r') && (query != '\n') && (query != ' ')) break;
+
+				/* Sometimes stop at "space" key */
+				if ((query == ' ') && !(mode & TARGET_LOOK)) break;
+
+				/* Change the intro */
+				s1 = "It is ";
+
+				/* Preposition */
+				s2 = "on ";
+			}
+		}
+		
+		/* Sometimes a field stops the feat from being mentioned */
+		if (fields_have_flags(c_ptr->fld_idx,
+			 FIELD_INFO_NFT_LOOK, FIELD_INFO_NFT_LOOK))
+		{
+			if ((query != '\r') && (query != '\n'))
+			{
+				/* Just exit */
+				break;
+			}
+			else
+			{
+				/* Back for more */
+				continue;
+			}
+		}
 
 		feat = f_info[c_ptr->feat].mimic;
 
