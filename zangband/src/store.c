@@ -976,11 +976,23 @@ static bool store_will_buy(object_type *o_ptr)
 				{
 					break;
 				}
-				/* Accept statues of 'good' monsters */
 				case TV_FIGURINE:
 				case TV_STATUE:
 				{
-					if (r_info[o_ptr->pval].flags3 & RF3_GOOD) break;
+					monster_race *r_ptr = &r_info[o_ptr->pval];
+
+					/* Decline evil */
+					if (!(r_ptr->flags3 & RF3_EVIL))
+					{
+						/* Accept good */
+						if (r_ptr->flags3 & RF3_GOOD) break;
+
+						/* Accept animals */
+						if (r_ptr->flags3 & RF3_ANIMAL) break;
+
+						/* Accept mimics */
+						if (strchr("?!", r_ptr->d_char)) break;
+					}
 				}
 				case TV_POLEARM:
 				case TV_SWORD:
