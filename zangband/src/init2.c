@@ -2368,7 +2368,7 @@ static errr init_alloc(void)
 
 #endif
 
-	/* Init the "alloc_kind_table" */
+	/* Init "alloc_kind_table" and "alloc_ego_table" */
 	(void)init_object_alloc();
 
 	/* Success */
