@@ -150,7 +150,7 @@ struct dun_data
 	bool room_map[MAX_ROOMS_ROW][MAX_ROOMS_COL];
 
 	/* Hack -- there is a pit/nest on this level */
-	bool crowded;
+	int crowded;
 };
 
 extern dun_data *dun;

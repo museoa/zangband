@@ -232,7 +232,7 @@ static bool room_alloc(int x, int y, bool crowded, int by0, int bx0, int *xx, in
 	}
 
 	/* Count "crowded" rooms */
-	if (crowded) dun->crowded = TRUE;
+	if (crowded) dun->crowded++;
 
 	/*
 	 * Hack- See if room will cut off a cavern.
@@ -4675,7 +4675,7 @@ bool room_build(int by0, int bx0, int typ)
 	if ((dun_level < roomdep[typ]) && !ironman_rooms) return (FALSE);
 
 	/* Restrict "crowded" rooms */
-	if (dun->crowded && ((typ == 5) || (typ == 6))) return (FALSE);
+	if ((dun->crowded>=2) && ((typ == 5) || (typ == 6))) return (FALSE);
 
 	/* Build a room */
 	switch (typ)

@@ -480,7 +480,7 @@ static bool cave_gen(void)
 
 
 	/* No "crowded" rooms yet */
-	dun->crowded = FALSE;
+	dun->crowded = 0;
 
 
 	/* No rooms yet */
