@@ -1144,8 +1144,6 @@ static void process_world(void)
 	{
 		int damage = resist(p_ptr->lev, res_pois_lvl);
 
-		if (p_ptr->tim.oppose_pois) damage = damage / 3;
-
 		if (damage)
 		{
 			/* Take damage */
@@ -1157,7 +1155,7 @@ static void process_world(void)
 
 	else if ((c_ptr->feat == FEAT_DEEP_SWAMP) && !p_ptr->tim.invuln)
 	{
-		int damage = p_ptr->lev * 2;
+		int damage = resist(p_ptr->lev * 2, res_pois_lvl);
 		cptr message;
 		cptr hit_from;
 
