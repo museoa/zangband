@@ -2242,12 +2242,6 @@ static void deallocate_store(void)
 	/* Return if there are no stores with stock */
 	if (store_cache_num == 0) return;
 
-	/* No stock in first one? */
-	if (!store_cache[0]->stock)
-	{
-		store_cache[0]->type = 0;
-	}
-
 	/* Do not deallocate homes or lockers */
 	while (store_cache[0]->type == BUILD_STORE_HOME)
 	{
@@ -2297,26 +2291,18 @@ bool allocate_store(store_type *st_ptr)
 		/* See if cache location matches */
 		if (st_ptr == store_cache[i])
 		{
-			/* note location */
-			n = i;
-			break;
+			/* Resort order based on last_visit */
+			for (n = i + 1; n < store_cache_num; n++)
+			{
+				store_cache[n - 1] = store_cache[n];
+			}
+
+			/* Move current one to end */
+			store_cache[store_cache_num - 1] = st_ptr;
+
+			/* (No need to maintain store) */
+			return FALSE;
 		}
-	}
-
-	/* Did we find it? */
-	if (n != -1)
-	{
-		/* Resort order based on last_visit */
-		for (i = n + 1; i < store_cache_num; i++)
-		{
-			store_cache[i - 1] = store_cache[i];
-		}
-
-		/* Move current one to end */
-		store_cache[store_cache_num - 1] = st_ptr;
-
-		/* (No need to maintain store) */
-		return FALSE;
 	}
 
 	/* Store does not have stock - so need to allocate. */
