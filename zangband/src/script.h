@@ -35,6 +35,7 @@ extern bool script_do_file(cptr filename);
  */
 extern bool apply_object_trigger(int trigger_id, object_type *o_ptr, bool *ident, 
 		cptr var1, int val1, cptr var2, int val2, cptr var3, int val3);
+extern char *apply_object_trigger_str(int trigger_id, object_type *o_ptr);
 
 /*
  * Callback for using an object

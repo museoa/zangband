@@ -74,6 +74,7 @@ static cptr k_info_triggers[] =
 	"HIT",
 	"THROW",
 	"SMASH",
+	"DESC",
 	NULL
 };
 

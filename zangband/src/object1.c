@@ -11,6 +11,7 @@
  */
 
 #include "angband.h"
+#include "script.h"
 
 
 /*
@@ -717,6 +718,9 @@ cptr item_activation(const object_type *o_ptr)
 		}
 	}
 
+	return apply_object_trigger_str(TRIGGER_DESC, o_ptr);
+
+#if 0
 	if (o_ptr->tval == TV_RING)
 	{
 		switch (o_ptr->sval)
@@ -794,6 +798,7 @@ cptr item_activation(const object_type *o_ptr)
 
 	/* Oops */
 	return "breathe air";
+#endif
 }
 
 

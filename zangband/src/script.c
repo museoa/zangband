@@ -207,6 +207,60 @@ static const struct luaL_reg intMathLib[] =
 	{"max",    math_max },
 };
 
+static char string_buf[200];
+
+char *apply_object_trigger_str(int trigger_id, object_type *o_ptr)
+{
+	char *result;
+	
+	int status;
+
+	object_kind *k_ptr = &k_info[o_ptr->k_idx];
+
+	cptr script = NULL;
+
+	int oldtop = lua_gettop(L);
+
+	if (o_ptr->trigger[trigger_id])
+		script = quark_str(o_ptr->trigger[trigger_id]);
+	else if (k_ptr->trigger[trigger_id])
+		script = k_text + k_ptr->trigger[trigger_id];
+	else
+	{
+		script = "return apply_default_object_trigger(trigger_id, "
+					"object, who, x, y)";
+	}
+
+	/* Set parameters (really globals) */
+	tolua_pushusertype(L, (void*)o_ptr, tolua_tag(L, "object_type"));
+	lua_setglobal(L, "object");
+	lua_pushnumber(L, trigger_id); lua_setglobal(L, "trigger_id");
+
+	/* Call the script */
+	status = lua_dostring(L, script);
+
+	if (status == 0)
+	{
+		strncpy(string_buf, tolua_getstring(L, 1, ""), 199);
+		result = string_buf;
+
+		/* Remove the results */
+		lua_settop(L, oldtop);
+	}
+	else
+	{
+		result = NULL;
+	}
+
+	/* Clear globals */
+	lua_pushnil(L); lua_setglobal(L, "trigger_id");
+	lua_pushnil(L); lua_setglobal(L, "object");
+	lua_pushnil(L); lua_setglobal(L, "ident");
+	lua_pushnil(L); lua_setglobal(L, "result");
+
+	return (result);
+}
+
 bool apply_object_trigger(int trigger_id, object_type *o_ptr, bool *ident, 
 		cptr var1, int val1, cptr var2, int val2, cptr var3, int val3)
 {

@@ -1250,6 +1250,7 @@ F:RES_FIRE | IGNORE_FIRE | ACTIVATE
 L:USE:	fire_ball(GF_FIRE, dir, 100, 2)
 L:USE:	inc_oppose_fire(rand_range(20, 40))
 L:USE:	object.timeout = rand_range(25, 50)
+L:DESC:	return "ball of fire and resist fire"
 D:It feels warm to the touch.
 
 N:147:Acid
@@ -1262,6 +1263,7 @@ F:RES_ACID | IGNORE_ACID | ACTIVATE
 L:USE:	fire_ball(GF_ACID, dir, 100, 2)
 L:USE:	inc_oppose_acid(rand_range(20, 40))
 L:USE:	object.timeout = rand_range(25, 50)
+L:DESC:	return "ball of acid and resist acid"
 D:It is covered with a strange sheen.
 
 N:148:Ice
@@ -1274,6 +1276,7 @@ F:RES_COLD | IGNORE_COLD | ACTIVATE
 L:USE:	fire_ball(GF_COLD, dir, 100, 2)
 L:USE:	inc_oppose_cold(rand_range(20, 40))
 L:USE:	object.timeout = rand_range(25, 50)
+L:DESC: return "ball of cold and resist cold"
 D:It feels cool to the touch.
 
 N:149:Woe
@@ -3503,6 +3506,7 @@ F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 L:USE:	msgf("You breathe acid.")
 L:USE:	fire_ball(GF_ACID, dir, 430, 2)
 L:USE:	object.timeout = rand_range(50, 100)
+L:DESC:	return "breathe acid (430) every 50-100 turns"
 
 N:401:Blue Dragon Scale Mail~
 G:[:b
@@ -3515,6 +3519,7 @@ F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 L:USE:	msgf("You breathe lightning.")
 L:USE:	fire_ball(GF_ELEC, dir, 330, 2)
 L:USE:	object.timeout = rand_range(50, 100)
+L:DESC:	return "breathe lightning (330) every 50-100 turns"
 
 N:402:White Dragon Scale Mail~
 G:[:w
@@ -3527,6 +3532,7 @@ F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 L:USE:	msgf("You breathe frost.")
 L:USE:	fire_ball(GF_COLD, dir, 370, 2)
 L:USE:	object.timeout = rand_range(50, 100)
+L:DESC:	return "breathe frost (370) every 50-100 turns"
 
 N:403:Red Dragon Scale Mail~
 G:[:r
@@ -3539,6 +3545,7 @@ F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 L:USE:	msgf("You breathe fire.")
 L:USE:	fire_ball(GF_FIRE, dir, 670, 2)
 L:USE:	object.timeout = rand_range(50, 100)
+L:DESC:	return "breathe fire (670) every 50-100 turns"
 
 N:404:Green Dragon Scale Mail~
 G:[:g
@@ -3551,6 +3558,7 @@ F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 L:USE:	msgf("You breathe poison gas.")
 L:USE:	fire_ball(GF_POIS, dir, 500, 2)
 L:USE:	object.timeout = rand_range(50, 100)
+L:DESC:	return "breathe poison gas (500) every 50-100 turns"
 
 N:405:Multi-Hued Dragon Scale Mail~
 G:[:v
@@ -3570,7 +3578,8 @@ L:USE:  else                    damtype = GF_POIS, damname = "poison gas"
 L:USE:  end
 L:USE:	msgf("You breathe %s.", damname)
 L:USE:	fire_ball(damtype, dir, 840, 2)
-L:USE:	object.timeout = rand_range(50, 100)
+L:USE:	object.timeout = rand_range(25, 50)
+L:DESC:	return "breathe multi-hued (840) every 25-50 turns"
 
 N:406:Pseudo Dragon Scale Mail~
 G:[:v
@@ -3587,6 +3596,7 @@ L:USE:  else                damtype = GF_DARK, damname = "darkness"
 L:USE:  end
 L:USE:	fire_ball(damtype, dir, 670, 2)
 L:USE:	object.timeout = rand_range(30, 60)
+L:DESC:	return "breathe light/darkness (670) every 30-60 turns"
 
 N:407:Law Dragon Scale Mail~
 G:[:B
@@ -3603,6 +3613,7 @@ L:USE:  else                damtype = GF_SHARDS, damname = "shards"
 L:USE:  end
 L:USE:	fire_ball(damtype, dir, 750, 2)
 L:USE:	object.timeout = rand_range(30, 60)
+L:DESC:	return "breathe sound/shards (750) every 30-60 turns"
 
 N:408:Bronze Dragon Scale Mail~
 G:[:U
@@ -3615,6 +3626,7 @@ F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 L:USE:	msgf("You breathe confusion.")
 L:USE:	fire_ball(GF_CONFUSION, dir, 400, 2)
 L:USE:	object.timeout = rand_range(50, 100)
+L:DESC:	return "breathe confusion (400) every 50-100 turns"
 
 N:409:Gold Dragon Scale Mail~
 G:[:y
@@ -3627,6 +3639,7 @@ F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 L:USE:	msgf("You breathe sound.")
 L:USE:	fire_ball(GF_SOUND, dir, 430, 2)
 L:USE:	object.timeout = rand_range(50, 100)
+L:DESC:	return "breathe sound (430) every 50-100 turns"
 
 N:410:Chaos Dragon Scale Mail~
 G:[:v
@@ -3643,6 +3656,7 @@ L:USE:  else                damtype = GF_DISENCHANT, damname = "disenchantment"
 L:USE:  end
 L:USE:	fire_ball(damtype, dir, 740, 2)
 L:USE:	object.timeout = rand_range(30, 60)
+L:DESC:	return "breathe chaos/disenchant (740) every 30-60 turns"
 
 N:411:Balance Dragon Scale Mail~
 G:[:v
@@ -3662,6 +3676,7 @@ L:USE:  end
 L:USE:	msgf("You breathe %s.", damname)
 L:USE:	fire_ball(damtype, dir, 840, 2)
 L:USE:	object.timeout = rand_range(30, 60)
+L:DESC:	return "breathe balance (840) every 30-60 turns"
 
 N:412:Power Dragon Scale Mail~
 G:[:v
@@ -3676,6 +3691,7 @@ F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 L:USE:	msgf("You breathe the elements.")
 L:USE:	fire_ball(GF_MISSILE, dir, 1000, 2)
 L:USE:	object.timeout = rand_range(30, 60)
+L:DESC:	return "breathe the elements (1000) every 30-60 turns"
 
 ## PDSM has been restored to (almost) its former glory in Zangband
 
