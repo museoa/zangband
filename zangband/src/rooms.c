@@ -1305,14 +1305,14 @@ static vault_aux_type *pick_vault_type(vault_aux_type *l_ptr)
 
 static vault_aux_type nest_types[] =
 {
-	{"clone",	vault_aux_clone,	vault_prep_clone,	7,	3},
+	{"clone",	vault_aux_clone,	vault_prep_clone,	7,	2},
 	{"jelly",	vault_aux_jelly,	NULL,			7,	6},
-	{"symbol clone",vault_aux_symbol,	vault_prep_symbol,	40,	3},
+	{"symbol clone",vault_aux_symbol,	vault_prep_symbol,	40,	2},
 	{"mimic",	vault_aux_mimic,	NULL,			45,	6},
 	{"lovecraftian",vault_aux_cthulhu,	NULL,			80,	2},
 	{"kennel",	vault_aux_kennel,	NULL,			50,	2},
 	{"animal",	vault_aux_animal,	NULL,			50,	4},
-	{"chapel",	vault_aux_chapel,	NULL,			90,	2},
+	{"chapel",	vault_aux_chapel,	NULL,			90,	8},
 	{"undead",	vault_aux_undead,	NULL,			90,	4},
 	{NULL,		NULL,			NULL,			0,	0},
 };
@@ -1451,12 +1451,12 @@ static void build_type5(int by0, int bx0)
 
 static vault_aux_type pit_types[] =
 {
-	{"orc",		vault_aux_orc,		NULL,			7,	4},
+	{"orc",		vault_aux_orc,		NULL,			7,	1},
 	{"troll",	vault_aux_troll,	NULL,			35,	4},
 	{"giant",	vault_aux_giant,	NULL,			70,	4},
-	{"lovecraftian",vault_aux_cthulhu,	NULL,			90,	4},
+	{"lovecraftian",vault_aux_cthulhu,	NULL,			90,	8},
 	{"clone",	vault_aux_symbol,	vault_prep_symbol,	85,	3},
-	{"chapel",	vault_aux_chapel,	NULL,			85,	1},
+	{"chapel",	vault_aux_chapel,	NULL,			85,	4},
 	{"dragon",	vault_aux_dragon,	vault_prep_dragon,	80,	4},
 	{"demon",	vault_aux_demon,	NULL,   		90,	4},
 	{NULL,		NULL,			NULL,			0,	0},
@@ -1985,8 +1985,16 @@ static void build_type7(int by0, int bx0)
 	/* No lesser vault found */
 	if (!v_ptr) return;
 
-	/* pick type of transformation (0-7) */
-	transno = randint0(8);
+	if (!randint0(3))
+	{
+		/* pick type of transformation (0-7) */
+		transno = randint0(8);
+	}
+	else
+	{
+		/* No change */
+		transno = 3;
+	}
 
 	/* calculate offsets */
 	x = v_ptr->wid;
@@ -2075,8 +2083,16 @@ static void build_type8(int by0, int bx0)
 	/* No greater vault found */
 	if (!v_ptr) return;
 
-	/* pick type of transformation (0-7) */
-	transno = randint0(8);
+	if (!randint0(3))
+	{
+		/* pick type of transformation (0-7) */
+		transno = randint0(8);
+	}
+	else
+	{
+		/* No Change */
+		transno = 3;
+	}
 
 	/* calculate offsets */
 	x = v_ptr->wid;

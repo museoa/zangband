@@ -409,8 +409,8 @@ static bool cave_gen(void)
 	/* Global data */
 	dun = &dun_body;
 
-	if (max_hgt - min_hgt < 34) max_vault_ok--;
-	if (max_wid - min_wid < 67) max_vault_ok--;
+	if (max_hgt - min_hgt < 23) max_vault_ok--;
+	if (max_wid - min_wid < 34) max_vault_ok--;
 
 	/* Randomize the dungeon creation values */
 	dun_rooms = rand_range(DUN_ROOMS_MIN, DUN_ROOMS_MAX);
@@ -538,8 +538,8 @@ static bool cave_gen(void)
 #ifdef FORCE_V_IDX
 				if (room_build(y, x, 8)) continue;
 #else
-				/* Type 8 -- Greater vault (7%) */
-				if (k < 7)
+				/* Type 8 -- Greater vault (10%) */
+				if (k < 10)
 				{
 					if (max_vault_ok > 1)
 					{
@@ -547,12 +547,12 @@ static bool cave_gen(void)
 					}
 					else
 					{
-						if (cheat_room) msg_print("Refusing a greater vault.");
+						if (cheat_room) msg_format("Refusing a greater vault. %d", max_vault_ok);
 					}
 				}
 
-				/* Type 7 -- Lesser vault (10%) */
-				if (k < 17)
+				/* Type 7 -- Lesser vault (13%) */
+				if (k < 23)
 				{
 					if (max_vault_ok > 0)
 					{
@@ -566,13 +566,13 @@ static bool cave_gen(void)
 
 
 				/* Type 5 -- Monster nest (8%) */
-				if ((k < 25) && room_build(y, x, 5)) continue;
+				if ((k < 31) && room_build(y, x, 5)) continue;
 
-				/* Type 6 -- Monster pit (10%) */
-				if ((k < 35) && room_build(y, x, 6)) continue;
+				/* Type 6 -- Monster pit (5%) */
+				if ((k < 36) && room_build(y, x, 6)) continue;
 
-				/* Type 10 -- Random vault (8%) */
-				if ((k < 43) && room_build(y, x, 10)) continue;
+				/* Type 10 -- Random vault (11%) */
+				if ((k < 47) && room_build(y, x, 10)) continue;
 #endif
 
 			}
@@ -1095,7 +1095,7 @@ static bool level_gen(cptr *why)
 		max_wid = level_width * BLOCK_WID;
 
 		if (cheat_room)
-		  msg_format("X:%d, Y:%d.", max_panel_cols, max_panel_rows);
+		  msg_format("X:%d, Y:%d.", max_wid, max_hgt);
 	}
 	else
 	{
