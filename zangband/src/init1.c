@@ -587,6 +587,20 @@ static cptr k_info_flags3[] =
 	"PERMA_CURSE"
 };
 
+/*
+ * Wilderness Flags
+ */
+static cptr w_info_flags[] =
+{
+	"FOREST1",
+	"FOREST2",
+	"MOUNT1",
+	"MOUNT2",
+	"WASTE1",
+	"WASTE2",
+	"SWAMP1",
+	"SWAMP2",
+};
 
 /*
  * Convert a "color letter" into an "actual" color
@@ -2434,11 +2448,39 @@ errr init_r_info_txt(FILE *fp, char *buf)
 
 
 /*
+ * Grab one flag in an wild_type from a textual string
+ */
+static errr grab_one_wild_flag(wild_gen_data_type *w_ptr, cptr what)
+{
+	int i;
+
+	/* Check flags */
+	for (i = 0; i < 8; i++)
+	{
+		if (streq(what, w_info_flags[i]))
+		{
+			w_ptr->rough_type |= (1 << i);
+			return (0);
+		}
+	}
+
+	/* Oops */
+	msg_format("Unknown wilderness flag '%s'.", what);
+
+	/* Error */
+	return (1);
+}
+
+
+
+/*
  * Initialize the "wild_choice_tree" and "wild_gen_data" arrays,
  *  by parsing an ascii "template" file
  */
 errr init_w_info_txt(FILE *fp, char *buf)
 {
+	char *s, *t;
+	
 	int i = 0;
 
 	/* Bounding box of entry */
@@ -2529,16 +2571,42 @@ errr init_w_info_txt(FILE *fp, char *buf)
 		/* Process 'T' for "Type" (one line only) */
 		if (buf[0] == 'T')
 		{
-			int routine, type, chance;
+			int routine, chance;
 
 			/* Scan for the values */
-			if (3 != sscanf(buf+2, "%d:%d:%d",
-				&routine, &type, &chance)) return (1);
+			if (2 != sscanf(buf+2, "%d:%d",
+				&routine, &chance)) return (1);
 
 			/* Save the values */
 			w_ptr->gen_routine = routine;
-			w_ptr->rough_type = type;
 			w_ptr->chance = chance;
+
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'F' for "Basic Flags" (multiple lines) */
+		if (buf[0] == 'F')
+		{
+			/* Parse every entry */
+			for (s = buf + 2; *s; )
+			{
+				/* Find the end of this entry */
+				for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */;
+
+				/* Nuke and skip any dividers */
+				if (*t)
+				{
+					*t++ = '\0';
+					while (*t == ' ' || *t == '|') t++;
+				}
+
+				/* Parse this entry */
+				if (0 != grab_one_wild_flag(w_ptr, s)) return (5);
+
+				/* Start the next entry */
+				s = t;
+			}
 
 			/* Next... */
 			continue;
