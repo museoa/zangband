@@ -190,7 +190,6 @@
 #define IDM_OPTIONS_SOUND           410
 #define IDM_OPTIONS_LOW_PRIORITY    420
 #define IDM_OPTIONS_SAVER           430
-#define IDM_OPTIONS_MAP             440
 
 #define IDM_HELP_GENERAL		901
 #define IDM_HELP_SPOILERS		902
@@ -401,11 +400,6 @@ struct _term_data
 
 	uint tile_wid;
 	uint tile_hgt;
-
-	uint map_tile_wid;
-	uint map_tile_hgt;
-
-	bool map_active;
 };
 
 
@@ -1662,30 +1656,19 @@ static void term_change_font(term_data *td)
 }
 
 
-static void windows_map_aux(void);
-
-
 /*
  * Hack -- redraw a term_data
  */
 static void term_data_redraw(term_data *td)
 {
-	if (td->map_active)
-	{
-		/* Redraw the map */
-		windows_map_aux();
-	}
-	else
-	{
-		/* Activate the term */
-		Term_activate(&td->t);
+	/* Activate the term */
+	Term_activate(&td->t);
 
-		/* Redraw the contents */
-		Term_redraw();
+	/* Redraw the contents */
+	Term_redraw();
 
-		/* Restore the term */
-		Term_activate(term_screen);
-	}
+	/* Restore the term */
+	Term_activate(term_screen);
 }
 
 
@@ -2153,16 +2136,8 @@ static errr Term_curs_win(int x, int y)
 
 	int tile_wid, tile_hgt;
 
-	if (td->map_active)
-	{
-		tile_wid = td->map_tile_wid;
-		tile_hgt = td->map_tile_hgt;
-	}
-	else
-	{
-		tile_wid = td->tile_wid;
-		tile_hgt = td->tile_hgt;
-	}
+	tile_wid = td->tile_wid;
+	tile_hgt = td->tile_hgt;
 
 	/* Frame the grid */
 	rc.left = x * tile_wid + td->size_ow1;
@@ -2354,16 +2329,8 @@ static errr Term_pict_win(int x, int y, int n, const byte *ap, const char *cp)
 	src_hgt = infGraph.CellHeight;
 
 	/* Size of window cell */
-	if (td->map_active)
-	{
-		dest_wid = td->map_tile_wid;
-		dest_hgt = td->map_tile_hgt;
-	}
-	else
-	{
-		dest_wid = td->tile_wid;
-		dest_hgt = td->tile_hgt;
-	}
+	dest_wid = td->tile_wid;
+	dest_hgt = td->tile_hgt;
 
 	/* Location of window cell */
 	dest_x = x * dest_wid + td->size_ow1;
@@ -2495,118 +2462,6 @@ static errr Term_pict_win(int x, int y, int n, const byte *ap, const char *cp)
 
 	/* Success */
 	return 0;
-}
-
-
-static void windows_map_aux(void)
-{
-	term_data *td = &data[0];
-	byte a;
-	char c;
-	int x, min_x, max_x;
-	int y, min_y, max_y;
-
-#ifdef USE_TRANSPARENCY
-	byte ta;
-	char tc;
-#endif /* USE_TRANSPARENCY */
-
-#ifdef ZANGBAND
-
-	td->map_tile_wid = (td->tile_wid * td->cols) / MAX_WID;
-	td->map_tile_hgt = (td->tile_hgt * td->rows) / MAX_HGT;
-
-#ifdef ZANGBAND_WILDERNESS
-
-	min_x = min_wid;
-	min_y = min_hgt;
-	max_x = max_wid;
-	max_y = max_hgt;
-
-#else /* ZANGBAND_WILDERNESS */
-
-	min_x = 0;
-	min_y = 0;
-	max_x = cur_wid;
-	max_y = cur_hgt;
-
-#endif /* ZANGBAND_WILDERNESS */
-
-#else /* ZANGBAND */
-
-	td->map_tile_wid = (td->tile_wid * td->cols) / DUNGEON_WID;
-	td->map_tile_hgt = (td->tile_hgt * td->rows) / DUNGEON_HGT;
-
-	min_x = 0;
-	min_y = 0;
-	max_x = DUNGEON_WID;
-	max_y = DUNGEON_HGT;
-
-#endif /* ZANGBAND */
-
-	/* Draw the map */
-	for (x = min_x; x < max_x; x++)
-	{
-		for (y = min_y; y < max_y; y++)
-		{
-#ifdef USE_TRANSPARENCY
-			map_info(y, x, &a, &c, &ta, &tc);
-#else /* USE_TRANSPARENCY */
-			map_info(y, x, &a, &c);
-#endif /* USE_TRANSPARENCY */
-
-			/* Ignore non-graphics */
-			if ((a & 0x80) && (c & 0x80))
-			{
-#ifdef USE_TRANSPARENCY
-				Term_pict_win(x - min_x, y - min_y, 1, &a, &c, &ta, &tc);
-#else /* USE_TRANSPARENCY */
-				Term_pict_win(x - min_x, y - min_y, 1, &a, &c);
-#endif /* USE_TRANSPARENCY */
-			}
-		}
-	}
-
-	/* Hilite the player */
-	Term_curs_win(p_ptr->px - min_x, p_ptr->py - min_y);
-}
-
-
-/*
- * MEGA_HACK - Display a graphical map of the dungeon.
- */
-static void windows_map(void)
-{
-	term_data *td = &data[0];
-	char ch;
-
-	/* Only in graphics mode since the fonts can't be scaled */
-	if (!use_graphics) return;
-
-	/* Prevent various menu-actions from working */
-	initialized = FALSE;
-
-	/* Clear screen */
-	Term_xtra_win_clear();
-
-	td->map_active = TRUE;
-
-	/* Draw the map */
-	windows_map_aux();
-
-	/* Wait for a keypress, flush key buffer */
-	Term_inkey(&ch, TRUE, TRUE);
-	Term_flush();
-
-	/* Switch off the map display */
-	td->map_active = FALSE;
-
-	/* Restore screen */
-	Term_xtra_win_clear();
-	Term_redraw();
-
-	/* We are ready again */
-	initialized = TRUE;
 }
 
 
@@ -3038,13 +2893,6 @@ static void setup_menus(void)
 	               MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
 	EnableMenuItem(hm, IDM_OPTIONS_LOW_PRIORITY,
 	               MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
-
-	/* Menu "Options", Item "Map" */
-	if (inkey_flag && initialized && (use_graphics != GRAPHICS_NONE))
-		EnableMenuItem(GetMenu(data[0].w), IDM_OPTIONS_MAP, MF_BYCOMMAND | MF_ENABLED);
-	else
-		EnableMenuItem(GetMenu(data[0].w), IDM_OPTIONS_MAP,
-		               MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
 
 	/* Menu "Options", update all */
 	CheckMenuItem(hm, IDM_OPTIONS_NO_GRAPHICS,
@@ -3866,19 +3714,6 @@ static void process_menus(WORD wCmd)
 			break;
 		}
 
-		case IDM_OPTIONS_MAP:
-		{
-			/* Paranoia */
-			if (!inkey_flag || !initialized)
-			{
-				plog("You may not do that right now.");
-				break;
-			}
-
-			windows_map();
-			break;
-		}
-
 		case IDM_HELP_GENERAL:
 		{
 			display_help(HELP_GENERAL);
@@ -3908,24 +3743,15 @@ static void handle_wm_paint(HWND hWnd)
 
 	BeginPaint(hWnd, &ps);
 
-	if (td->map_active)
-	{
-		/* Redraw the map */
-		/* ToDo: Only redraw the necessary parts */
-		windows_map_aux();
-	}
-	else
-	{
-		/* Get the area that should be updated (rounding up/down) */
-		/* ToDo: Take the window borders into account */
-		x1 = (ps.rcPaint.left / td->tile_wid) - 1;
-		x2 = (ps.rcPaint.right / td->tile_wid) + 1;
-		y1 = (ps.rcPaint.top / td->tile_hgt) - 1;
-		y2 = (ps.rcPaint.bottom / td->tile_hgt) + 1;
+	/* Get the area that should be updated (rounding up/down) */
+	/* ToDo: Take the window borders into account */
+	x1 = (ps.rcPaint.left / td->tile_wid) - 1;
+	x2 = (ps.rcPaint.right / td->tile_wid) + 1;
+	y1 = (ps.rcPaint.top / td->tile_hgt) - 1;
+	y2 = (ps.rcPaint.bottom / td->tile_hgt) + 1;
 
-		/* Redraw */
-		if (td) term_data_redraw_section(td, x1, y1, x2, y2);
-	}
+	/* Redraw */
+	if (td) term_data_redraw_section(td, x1, y1, x2, y2);
 
 	EndPaint(hWnd, &ps);
 }
