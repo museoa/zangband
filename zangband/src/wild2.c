@@ -176,6 +176,20 @@ cptr building_name(byte build_type)
 	return (t_info[field_num].name);
 }
 
+/*
+ * Return the building attributes given a building "type"
+ */
+void building_char(byte build_type, byte *a, char *c)
+{
+	u16b field_num;
+	
+	/* Look up the field type */
+	field_num = wild_build[build_type].field;
+	
+	/* Get attr/char */
+	*a = t_info[field_num].d_attr;
+	*c = t_info[field_num].d_char;
+}
 
 /* Find a place for the player */
 static void place_player_start(s32b *x, s32b *y, u16b this_town)

@@ -1072,6 +1072,8 @@ extern dun_type *dungeon(void);
 extern void move_dun_level(int direction);
 extern int max_dun_level_reached(void);
 extern cptr building_name(byte build_type);
+extern void building_char(byte build_type, byte *a, char *c);
+
 
 /* avatar.c */
 extern cptr virtue[MAX_VIRTUE];
