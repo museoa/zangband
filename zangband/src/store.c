@@ -839,6 +839,8 @@ static int store_carry(object_type *o_ptr)
  */
 static void store_item_increase(int item, int num)
 {
+	int j;
+
 	int cnt;
 	object_type *o_ptr;
 
@@ -853,22 +855,6 @@ static void store_item_increase(int item, int num)
 
 	/* Save the new number */
 	o_ptr->number += num;
-}
-
-
-/*
- * Remove a slot if it is empty
- */
-static void store_item_optimize(int item)
-{
-	int j;
-	object_type *o_ptr;
-
-	/* Get the item */
-	o_ptr = &st_ptr->stock[item];
-
-	/* Must exist */
-	if (!o_ptr->k_idx) return;
 
 	/* Must have no items */
 	if (o_ptr->number) return;
@@ -885,6 +871,7 @@ static void store_item_optimize(int item)
 	/* Nuke the final slot */
 	object_wipe(&st_ptr->stock[j]);
 }
+
 
 
 /*
@@ -920,7 +907,6 @@ static void store_delete(void)
 
 	/* Actually destroy (part of) the item */
 	store_item_increase(what, -num);
-	store_item_optimize(what);
 }
 
 
@@ -1711,7 +1697,6 @@ static void store_purchase(int *store_top)
 
 				/* Remove the bought items from the store */
 				store_item_increase(item, -amt);
-				store_item_optimize(item);
 
 				/* Store is empty */
 				if (st_ptr->stock_num == 0)
@@ -1800,7 +1785,6 @@ static void store_purchase(int *store_top)
 
 		/* Remove the items from the home */
 		store_item_increase(item, -amt);
-		store_item_optimize(item);
 
 		/* Hack -- Item is still here */
 		if (i == st_ptr->stock_num)
