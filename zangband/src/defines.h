@@ -3679,34 +3679,47 @@ extern int PlayerUID;
 /*
  * Field information flags
  */
-#define FIELD_INFO_TEMP		0x01	/* Temporary field - use counter */
-#define FIELD_INFO_FEAT		0x02	/* Terrain feature based field */
-#define FIELD_INFO_DUMMY1	0x04
-#define FIELD_INFO_DUMMY2	0x08
-#define FIELD_INFO_DUMMY3	0x10
-#define FIELD_INFO_DUMMY4	0x20
-#define FIELD_INFO_DUMMY5	0x40
-#define FIELD_INFO_DUMMY6	0x80
+#define FIELD_INFO_TEMP		0x0001	/* Temporary field - use counter */
+#define FIELD_INFO_FEAT		0x0002	/* Terrain feature based field */
+#define FIELD_INFO_ATTR		0x0004	/* Use attr */
+#define FIELD_INFO_CHAR		0x0008	/* Use char */
+#define FIELD_INFO_RAND		0x0010	/* Randomize first 4 data values */
+#define FIELD_INFO_FLAGS	0x0020	/* Affects targets flags */
+#define FIELD_INFO_DUMMY5	0x0040
+#define FIELD_INFO_DUMMY6	0x0080
+#define FIELD_INFO_DUMMY7	0x0100
+#define FIELD_INFO_DUMMY8	0x0200
+#define FIELD_INFO_DUMMY9	0x0400
+#define FIELD_INFO_DUMMY10	0x0800
+#define FIELD_INFO_DUMMY11	0x1000
+#define FIELD_INFO_DUMMY12	0x2000
+#define FIELD_INFO_DUMMY13	0x4000
 
-
+#define FTYPE_TRAP	1
+#define FTYPE_DOOR	2
+#define FTYPE_BUILD	3
+#define FTYPE_FIELD	4
+#define FTYPE_OBJ	5
+#define FTYPE_MON	6
 
 /*
  * Field Actions
  */
-#define FIELD_ACT_INIT			0	/* Initialise the field data */
-#define FIELD_ACT_ALWAYS		1	/* Every turn */
-#define FIELD_ACT_PLAYER_ENTER		2	/* Player walks onto square */
-#define FIELD_ACT_PLAYER_ON		3	/* Player is on square */
-#define FIELD_ACT_PLAYER_LEAVE		4	/* Player leaves square */
-#define FIELD_ACT_MONSTER_ENTER		5	/* Monster walks onto square */
-#define FIELD_ACT_MONSTER_ON		6	/* Monster is on square */
-#define FIELD_ACT_MONSTER_LEAVE		7	/* Monster leaves square */
-#define FIELD_ACT_OBJECT_DROP		8	/* Object lands on square */
-#define FIELD_ACT_OBJECT_ON		9	/* Object is on square */
-#define FIELD_ACT_MAGIC_PASS		10	/* bolt/beam/ball spell tries to pass this field */
-#define FIELD_ACT_MAGIC_TARGET		11	/* Targeting this square */
-#define FIELD_ACT_COMPACT		12	/* Compaction if too many */
-#define FIELD_ACT_EXIT			13	/* Field is destroyed */
+#define FIELD_ACT_INIT		0	/* Initialise the field data */
+#define FIELD_ACT_ALWAYS	1	/* Every turn */
+#define FIELD_ACT_PLAYER_ENTER	2	/* Player walks onto square */
+#define FIELD_ACT_PLAYER_ON	3	/* Player is on square */
+#define FIELD_ACT_PLAYER_LEAVE	4	/* Player leaves square */
+#define FIELD_ACT_MONSTER_ENTER	5	/* Monster walks onto square */
+#define FIELD_ACT_MONSTER_ON	6	/* Monster is on square */
+#define FIELD_ACT_MONSTER_LEAVE	7	/* Monster leaves square */
+#define FIELD_ACT_OBJECT_DROP	8	/* Object lands on square */
+#define FIELD_ACT_OBJECT_ON	9	/* Object is on square */
+#define FIELD_ACT_MAGIC_PASS	10	/* bolt/beam/ball spell tries to pass this field */
+#define FIELD_ACT_MAGIC_TARGET	11	/* Targeting this square */
+#define FIELD_ACT_COMPACT	12	/* Compaction if too many */
+#define FIELD_ACT_EXIT		13	/* Field is destroyed */
+#define FIELD_ACT_RECALC	14	/* Recalculating monster / object flags */
 
-#define FIELD_ACTION_MAX		14	/* The last action + 1 */
+#define FIELD_ACTION_MAX	15	/* The last action + 1 */
 

@@ -460,7 +460,7 @@ struct cave_type
 
 	s16b m_idx;		/* Monster in this grid */
 
-	s16b special;	/* Special cave info */
+	s16b f_idx;		/* Field in this grid */
 
 	byte mimic;		/* Feature to mimic */
 
@@ -751,6 +751,8 @@ struct object_type
 	s16b next_o_idx;	/* Next object in stack (if any) */
 
 	s16b held_m_idx;	/* Monster holding us (if any) */
+	
+	s16b att_f_idx;		/* Field affect attached (if any) */
 
 #ifdef USE_SCRIPT
 	PyObject *python;
@@ -818,6 +820,8 @@ struct monster_type
 	bool ml;			/* Monster is "visible" */
 
 	s16b hold_o_idx;	/* Object being held (if any) */
+	
+	s16b att_f_idx;	/* Magic affect attached to monster */
 
 #ifdef WDT_TRACK_OPTIONS
 
@@ -838,13 +842,41 @@ struct monster_type
 
 };
 
+/*
+ * The thaumaturgical list of fields.
+ *
+ * (Equivalent to monster races, or object kinds.
+ *  They had to be called something. ;-) )
+ *
+ * Eventually most of this, and the following struct
+ * will be wrapped inside a python object.  Only things
+ * that need to be accessed quickly will be left as is.
+ */
 
+typedef struct field_thaum field_thaum;
+struct field_thaum
+{
+	byte f_attr;			/* attribute */
+	char f_char;			/* character */
+	
+	byte priority;			/* LOS priority higher = more visible */
+	
+	byte type;			/* Type of field */
+	
+	s16b count_init;		/* Counter for timed effects */
+
+	s16b action[FIELD_ACTION_MAX]; /* Function indexs for the actions */
+	
+	/* Storage space for the actions to interact with. */
+	byte data_init[8];
+	
+	u16b info;			/* Information flags */
+	
+	char *name;			/* The name of the field */
+};
 
 
 typedef struct field_type field_type;
-
-/* Pointer to a field */
-typedef field_type *field_ptr;
 
 /*
  * A function pointer to an action.  The function takes two values:
@@ -852,8 +884,28 @@ typedef field_type *field_ptr;
  * 2) a pointer to a structure cast to void that contains the
  *	information the action needs to complete its job.
  */
-typedef void (*field_action_type)(field_ptr, void*);
+typedef void (*field_action_type)(field_type *f_ptr, void*);
 
+
+/*
+ * The field structure.
+ *
+ * Fields can be used in the following ways:
+ * 1) Attached to the ground.
+ * 2) Attached to an object.
+ * 3) Attached to a monster.
+ * 4) Some global "effect".
+ *
+ * The data-type is very general, and will be used to
+ * create a variety of effects from the ability to place
+ * traps on _all_ terrains (not just dungeon floor), to
+ * The nightmare mode automatic corpse raising.
+ * The same code can do effects like "wall of fire", or
+ * timed branding of ammo.
+ * The new building / store code will use this structure.
+ * Even the "Change colour of item" spell can be done this
+ * way.
+ */
 struct field_type
 {	
 	byte f_attr;			/* attribute */
@@ -863,19 +915,25 @@ struct field_type
 
 	s16b fy;			/* Y location on map */
 	s16b fx;			/* X location on map */
+	
+	s16b att_o_idx;			/* Attached to an object */
 
-	byte info;			/* quick access flags */
-	byte priority;			/* LOS priority higher = more visible */
+	s16b att_m_idx;			/* Attached to a monster */
+
+	s16b next_f_idx;		/* Pointer to next field in list */
+	
+	u16b info;			/* quick access flags */
+	
 	
 	s16b counter;			/* Counter for timed effects */
 	
-	field_ptr next;			/* Pointer to next field on square */
 	
 	/* Storage space for the actions to interact with. */
 	byte data[8];			
 	
 	field_action_type action[FIELD_ACTION_MAX]; /* Function pointers for the actions */
-
+	
+	byte priority;			/* LOS priority higher = more visible */
 };
 
 
