@@ -1303,7 +1303,7 @@ static void do_cmd_wiz_jump(void)
 		{
 			/* Ask for a level */
 			if (!get_string(tmp_val, 11, "Jump to level (0-%d): ",
-							min_depth, max_depth)) return;
+							max_depth)) return;
 		}
 		/* Ignore the depths between the surface and the start */
 		else
