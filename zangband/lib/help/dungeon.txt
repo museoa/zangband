@@ -189,7 +189,8 @@ concentration, you can find these secret doors. Secret doors will
 sometimes hide rooms or corridors, or even entire sections of that
 level of the dungeon. Sometimes they simply hide small empty closets or
 even dead ends. Secret doors always look like granite walls, just like
-traps always look like normal floors.
+traps always look like normal floors.  Like normal doors, a secret door
+may also be locked or jammed.
 
 Creatures in the dungeon will generally know and use these secret
 doors, and can often be counted on to leave them open behind them when
@@ -302,7 +303,7 @@ and should be noted in any 'winner' post to the newsgroup.
 Original   : (??)
 Updated    : (??)
 Updated    : Zangband DevTeam
-Last update: March 20, 2000
+Last update: May 16, 2000
 
 ***** Begin Hyperlinks
 ***** [1] command.txt
