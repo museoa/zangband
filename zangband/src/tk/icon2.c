@@ -14,25 +14,25 @@
 #include "icon.h"
 
 
-static char *AssignToString_Icon(char *buf, t_assign *assign)
+static char *AssignToString_Icon(char *buf, t_assign_icon *assign)
 {
-	if (assign->icon.ascii == -1)
+	if (assign->ascii == -1)
 	{
 		(void) sprintf(buf, "icon %s %d",
-			g_icon_data[assign->icon.type].desc,
-			assign->icon.index);
+			g_icon_data[assign->type].desc,
+			assign->index);
 	}
 	else
 	{
 		(void) sprintf(buf,"icon %s %d %d",
-			g_icon_data[assign->icon.type].desc,
-			assign->icon.index, assign->icon.ascii);
+			g_icon_data[assign->type].desc,
+			assign->index, assign->ascii);
 	}
 
 	return buf;
 }
 
-static int StringToAssign_Icon(Tcl_Interp *interp, t_assign *assignPtr, cptr desc)
+static int StringToAssign_Icon(Tcl_Interp *interp, t_assign_icon *assignPtr, cptr desc)
 {
 	char option[64], typeName[64];
 	IconSpec iconSpec;
@@ -52,10 +52,9 @@ static int StringToAssign_Icon(Tcl_Interp *interp, t_assign *assignPtr, cptr des
 		return TCL_ERROR;
 	}
 
-	assignPtr->assignType = ASSIGN_TYPE_ICON;
-	assignPtr->icon.type = iconSpec.type;
-	assignPtr->icon.index = iconSpec.index;
-	assignPtr->icon.ascii = iconSpec.ascii;
+	assignPtr->type = iconSpec.type;
+	assignPtr->index = iconSpec.index;
+	assignPtr->ascii = iconSpec.ascii;
 
 	return TCL_OK;
 }
@@ -64,19 +63,18 @@ static int StringToAssign_Icon(Tcl_Interp *interp, t_assign *assignPtr, cptr des
 cptr keyword_assign_type[] = {"icon", NULL};
 
 /* char* -> t_assign */
-typedef char *(*AssignToStringProc)(char *buf, t_assign *assign);
+typedef char *(*AssignToStringProc)(char *buf, t_assign_icon *assign);
 AssignToStringProc gAssignToStringProc[ASSIGN_TYPE_MAX] = {
 	AssignToString_Icon
-
 };
 
 /* t_assign -> char* */
-typedef int (*StringToAssignProc)(Tcl_Interp *interp, t_assign *assignPtr, cptr desc);
+typedef int (*StringToAssignProc)(Tcl_Interp *interp, t_assign_icon *assignPtr, cptr desc);
 StringToAssignProc gStringToAssignProc[ASSIGN_TYPE_MAX] = {
 	StringToAssign_Icon
 };
 
-int assign_parse(Tcl_Interp *interp, t_assign *assignPtr, cptr desc)
+int assign_parse(Tcl_Interp *interp, t_assign_icon *assignPtr, cptr desc)
 {
 	char option[64];
 	Tcl_Obj *objPtr;
@@ -102,20 +100,20 @@ int assign_parse(Tcl_Interp *interp, t_assign *assignPtr, cptr desc)
 	return (*gStringToAssignProc[assignType])(interp, assignPtr, desc);
 }
 
-char *assign_print(char *buf, t_assign *assignPtr)
+char *assign_print(char *buf, t_assign_icon *assignPtr)
 {
-	return (*gAssignToStringProc[assignPtr->assignType])(buf, assignPtr);
+	return (*gAssignToStringProc[0])(buf, assignPtr);
 }
 
 char *assign_print2(char *buf, int assignType, int assignIndex)
 {
-	t_assign *assignPtr = &g_assign[assignType].assign[assignIndex];
+	t_assign_icon *assignPtr = &g_assign[assignType].assign[assignIndex];
 	return assign_print(buf, assignPtr);
 }
 
 char *assign_print_object(char *buf, object_type *o_ptr)
 {
-	t_assign assign;
+	t_assign_icon assign;
 	get_object_assign(&assign, o_ptr);
 	return assign_print(buf, &assign);
 }
@@ -124,9 +122,9 @@ char *assign_print_object(char *buf, object_type *o_ptr)
  * Get the assignment for the given object. Handle "empty" objects and
  * resolve alternate assignments.
  */
-void get_object_assign(t_assign *assignPtr, object_type *o_ptr)
+void get_object_assign(t_assign_icon *assignPtr, object_type *o_ptr)
 {
-	t_assign assign;
+	t_assign_icon assign;
 
 	if (o_ptr->k_idx)
 	{
@@ -138,10 +136,9 @@ void get_object_assign(t_assign *assignPtr, object_type *o_ptr)
 		 * Use ICON_TYPE_NONE icon. This is needed because the "pile" icon is
 		 * assigned to object zero.
 		 */
-		assign.assignType = ASSIGN_TYPE_ICON;
-		assign.icon.type = ICON_TYPE_NONE;
-		assign.icon.index = 0;
-		assign.icon.ascii = -1;
+		assign.type = ICON_TYPE_NONE;
+		assign.index = 0;
+		assign.ascii = -1;
 	}
 
 	(*assignPtr) = assign;
@@ -182,7 +179,7 @@ static int objcmd_assign_toicon(ClientData clientData, Tcl_Interp *interp, int o
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 	char buf[128], *t;
 	IconSpec iconSpec;
-	t_assign assign;
+	t_assign_icon assign;
 
 	/* Hack - ignore parameter */
 	(void) objc;
@@ -207,7 +204,7 @@ static int objcmd_assign_validate(ClientData clientData, Tcl_Interp *interp, int
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 	char *t;
-	t_assign assign;
+	t_assign_icon assign;
 
 	/* Hack - ignore parameter */
 	(void) objc;
@@ -233,7 +230,7 @@ CommandInit assignCmdInit[] = {
 void init_icons(int size, int depth)
 {
 	int i, n, y, x, y2, x2;
-	t_assign assign;
+	t_assign_icon assign;
 	t_icon_data icon_data, *icon_data_ptr = &icon_data;
 	unsigned char *rgb = Colormap_GetRGB();
 
@@ -351,27 +348,26 @@ void init_icons(int size, int depth)
 
 	Icon_AddType(icon_data_ptr);
 
-	/* Allocate array of t_assign for each monster */
+	/* Allocate array of t_assign_icon for each monster */
 	g_assign[ASSIGN_MONSTER].count = z_info->r_max;
-	C_MAKE(g_assign[ASSIGN_MONSTER].assign, z_info->r_max, t_assign);
+	C_MAKE(g_assign[ASSIGN_MONSTER].assign, z_info->r_max, t_assign_icon);
 
-	/* Allocate array of t_assign for each object */
+	/* Allocate array of t_assign_icon for each object */
 	g_assign[ASSIGN_OBJECT].count = z_info->k_max;
-	C_MAKE(g_assign[ASSIGN_OBJECT].assign, z_info->k_max, t_assign);
+	C_MAKE(g_assign[ASSIGN_OBJECT].assign, z_info->k_max, t_assign_icon);
 
-	/* Allocate array of t_assign for the character */
+	/* Allocate array of t_assign_icon for the character */
 	n = 1;
 	g_assign[ASSIGN_CHARACTER].count = n;
-	C_MAKE(g_assign[ASSIGN_CHARACTER].assign, n, t_assign);
+	C_MAKE(g_assign[ASSIGN_CHARACTER].assign, n, t_assign_icon);
 
-	/* Allocate array of t_assign for each feature */
+	/* Allocate array of t_assign_icon for each feature */
 	g_assign[ASSIGN_FEATURE].count = z_info->f_max;
-	C_MAKE(g_assign[ASSIGN_FEATURE].assign, z_info->f_max, t_assign);
+	C_MAKE(g_assign[ASSIGN_FEATURE].assign, z_info->f_max, t_assign_icon);
 
-	assign.assignType = ASSIGN_TYPE_ICON;
-	assign.icon.type = ICON_TYPE_DEFAULT;
-	assign.icon.index = 0;
-	assign.icon.ascii = -1;
+	assign.type = ICON_TYPE_DEFAULT;
+	assign.index = 0;
+	assign.ascii = -1;
 
 	/* Set default icon for the character */
 	for (i = 0; i < g_assign[ASSIGN_CHARACTER].count; i++)
@@ -384,14 +380,14 @@ void init_icons(int size, int depth)
 	{
 		g_assign[ASSIGN_MONSTER].assign[i] = assign;
 	}
-	g_assign[ASSIGN_MONSTER].assign[0].icon.type = ICON_TYPE_NONE;
+	g_assign[ASSIGN_MONSTER].assign[0].type = ICON_TYPE_NONE;
 
 	/* Set default icon for each object */
 	for (i = 0; i < g_assign[ASSIGN_OBJECT].count; i++)
 	{
 		g_assign[ASSIGN_OBJECT].assign[i] = assign;
 	}
-	g_assign[ASSIGN_OBJECT].assign[0].icon.type = ICON_TYPE_NONE;
+	g_assign[ASSIGN_OBJECT].assign[0].type = ICON_TYPE_NONE;
 
 	/*
 	 * This is an array of t_icon types, one for every grid in
@@ -407,7 +403,7 @@ void init_icons(int size, int depth)
 	{
 		int layer;
 		for (layer = 0; layer < ICON_LAYER_MAX; layer++)
-			C_MAKE(g_icon_map[layer][i], MAX_WID, t_assign);
+			C_MAKE(g_icon_map[layer][i], MAX_WID, t_assign_icon);
 	}
 
 	/*
@@ -423,7 +419,7 @@ void init_icons(int size, int depth)
 		g_assign[ASSIGN_FEATURE].assign[i] = assign;
 		g_background[i] = i;
 	}
-	g_assign[ASSIGN_FEATURE].assign[FEAT_NONE].icon.type = ICON_TYPE_NONE;
+	g_assign[ASSIGN_FEATURE].assign[FEAT_NONE].type = ICON_TYPE_NONE;
 
 	/* Clear the color hash table */
 	Palette_ResetHash();
@@ -431,10 +427,9 @@ void init_icons(int size, int depth)
 	/* Add some new commands to the global interpreter */
 	CommandInfo_Init(g_interp, assignCmdInit, NULL);
 
-	g_assign_none.assignType = ASSIGN_TYPE_ICON;
-	g_assign_none.icon.type = ICON_TYPE_NONE;
-	g_assign_none.icon.index = 0;
-	g_assign_none.icon.ascii = -1;
+	g_assign_none.type = ICON_TYPE_NONE;
+	g_assign_none.index = 0;
+	g_assign_none.ascii = -1;
 	
 	if (init_widget(g_interp) != TCL_OK)
 		quit(Tcl_GetStringFromObj(Tcl_GetObjResult(g_interp), NULL));

@@ -101,15 +101,6 @@ extern int CommandInfo_ObjCmd(ClientData clientData, Tcl_Interp *interp,
 
 /* icon1.c */
 
-#define FLAVOR_AMULET 0
-#define FLAVOR_MUSHROOM 1
-#define FLAVOR_POTION 2
-#define FLAVOR_RING 3
-#define FLAVOR_ROD 4
-#define FLAVOR_STAFF 5
-#define FLAVOR_WAND 6
-#define FLAVOR_MAX 7
-
 /* Constants for t_grid.dark */
 #define GRID_LITE_TORCH 0
 #define GRID_LITE_NORMAL 1

@@ -26,8 +26,8 @@ struct WidgetItem  {
     Tk_Canvas canvas;
 	double x, y;
 	Tk_Anchor anchor;
-	t_assign assign;
-	t_assign assignbg;
+	t_assign_icon assign;
+	t_assign_icon assignbg;
 	int gwidth, gheight;
 	XColor *borderColor;
 	int borderWidth;
@@ -151,7 +151,7 @@ CreateWidget(
 )
 {
     WidgetItem *widgetPtr = (WidgetItem *) itemPtr;
-    t_assign none;
+    t_assign_icon none;
 
     if (argc < 2)
     {
@@ -168,10 +168,9 @@ CreateWidget(
 
 	widgetPtr->interp = interp;
     widgetPtr->canvas = canvas;
-    none.assignType = ASSIGN_TYPE_ICON;
-    none.icon.type = ICON_TYPE_NONE;
-    none.icon.index = 0;
-    none.icon.ascii = -1;
+    none.type = ICON_TYPE_NONE;
+    none.index = 0;
+    none.ascii = -1;
 	widgetPtr->assign = none;
 	widgetPtr->assignbg = none;
 	widgetPtr->gwidth = widgetPtr->gheight = g_icon_size;
@@ -755,7 +754,7 @@ static int Assign_ParseProc(ClientData clientData, Tcl_Interp *interp,
 	(void) tkwin;
 	(void) clientData;
 
-	if (assign_parse(interp, (t_assign *) (widgRec + offset), value) != TCL_OK)
+	if (assign_parse(interp, (t_assign_icon *) (widgRec + offset), value) != TCL_OK)
 	{
 		return TCL_ERROR;
 	}
@@ -776,7 +775,7 @@ static char *Assign_PrintProc(ClientData clientData, Tk_Window tkwin,
 	(void) clientData;
 
 	*freeProcPtr = (Tcl_FreeProc *) TCL_DYNAMIC;
-	return assign_print(buf, (t_assign *) (widgRec + offset));
+	return assign_print(buf, (t_assign_icon *) (widgRec + offset));
 }
 
 int CanvasWidget_Init(Tcl_Interp *interp)

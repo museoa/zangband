@@ -15,12 +15,12 @@
 
 unsigned char *g_palette_rgb;
 t_assign_group g_assign[ASSIGN_MAX];
-t_assign g_assign_none;
+t_assign_icon g_assign_none;
 t_grid *g_grid[MAX_HGT] = {0};
 
 int *g_background = NULL;
 
-t_assign *g_icon_map[ICON_LAYER_MAX][MAX_HGT];
+t_assign_icon *g_icon_map[ICON_LAYER_MAX][MAX_HGT];
 bool g_icon_map_changed = FALSE;
 int *g_image_monster, *g_image_object;
 
@@ -115,7 +115,7 @@ void get_display_info(int y, int x, t_display *displayPtr)
 
 	int layer;
 
-	t_assign assign;
+	t_assign_icon assign;
 	IconSpec iconSpec;
 	
 	m_idx = gridPtr->m_idx;
@@ -179,18 +179,9 @@ void get_display_info(int y, int x, t_display *displayPtr)
 		 * Now we have the assignment for the character, monster, or object.
 		 */
 	
-		switch (assign.assignType)
-		{		
-			/* Resolve icon */
-			case ASSIGN_TYPE_ICON:
-			{
-				iconSpec.type = assign.icon.type;
-				iconSpec.index = assign.icon.index;
-				iconSpec.ascii = assign.icon.ascii;
-		
-				break;
-			}
-		}
+		iconSpec.type = assign.type;
+		iconSpec.index = assign.index;
+		iconSpec.ascii = assign.ascii;
 	}
 
 	/* No character, monster or object */
@@ -246,9 +237,9 @@ void get_display_info(int y, int x, t_display *displayPtr)
 	{
 		assign = g_icon_map[layer][y][x];
 
-		iconSpec.type = assign.icon.type;
-		iconSpec.index = assign.icon.index;
-		iconSpec.ascii = assign.icon.ascii;
+		iconSpec.type = assign.type;
+		iconSpec.index = assign.index;
+		iconSpec.ascii = assign.ascii;
 
 		/* Only layer 1 is required */
 		if (iconSpec.type == ICON_TYPE_NONE)
@@ -271,7 +262,7 @@ void get_display_info(int y, int x, t_display *displayPtr)
 void set_grid_assign(int y, int x)
 {
 	int feat = area(x, y)->feat;
-	t_assign assign;
+	t_assign_icon assign;
 	int layer;
 
 	/* The dungeon isn't ready yet */
@@ -315,16 +306,11 @@ void set_grid_assign(int y, int x)
  * icon type/index. This routine is used to get the actual frame of
  * a sprite for example. Usually the given icon type/index is returned.
  */
-void FinalIcon(IconSpec *iconOut, t_assign *assignPtr, int hack, object_type *o_ptr)
+void FinalIcon(IconSpec *iconOut, t_assign_icon *assignPtr, int hack, object_type *o_ptr)
 {
-	switch (assignPtr->assignType)
-	{
-		case ASSIGN_TYPE_ICON:
-			iconOut->type = assignPtr->icon.type;
-			iconOut->index = assignPtr->icon.index;
-			iconOut->ascii = assignPtr->icon.ascii;
-			break;
-	}
+	iconOut->type = assignPtr->type;
+	iconOut->index = assignPtr->index;
+	iconOut->ascii = assignPtr->ascii;
 }
 
 

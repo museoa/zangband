@@ -129,34 +129,14 @@ extern void Icon_MakeDark(t_icon_data *iconDataPtr, int index);
 #define ASSIGN_TYPE_ICON 0
 #define ASSIGN_TYPE_MAX 1
 
-/* One assigned alternate */
-typedef struct t_assign_alternate {
-	int assignType; /* Required field */
-	int index;
-} t_assign_alternate;
-
-/* One assigned flavor */
-typedef struct t_assign_flavor {
-	int assignType; /* Required field */
-	int group;
-	int index;
-} t_assign_flavor;
 
 /* One assigned icon */
 typedef struct t_assign_icon {
-	int assignType; /* Required field */
 	int type;
 	int index;
 	int ascii;
 } t_assign_icon;
 
-/* One assignment */
-typedef union t_assign {
-	int assignType;
-	t_assign_alternate alternate;
-	t_assign_flavor flavor;
-	t_assign_icon icon;
-} t_assign;
 
 /*
  * Icon assignment for each member of each group (monster,
@@ -164,11 +144,11 @@ typedef union t_assign {
  */
 typedef struct t_assign_group {
 	int count; /* Number of elements in array */
-	t_assign *assign; /* Array of iassignments */
+	t_assign_icon *assign; /* Array of iassignments */
 } t_assign_group;
 
 extern t_assign_group g_assign[ASSIGN_MAX];
-extern t_assign g_assign_none;
+extern t_assign_icon g_assign_none;
 
 extern int *g_image_object;
 
@@ -185,7 +165,7 @@ ICON_LAYER_MAX
 };
 
 /* Per-layer assignment for each cave location */
-extern t_assign *g_icon_map[ICON_LAYER_MAX][MAX_HGT];
+extern t_assign_icon *g_icon_map[ICON_LAYER_MAX][MAX_HGT];
 
 /*
  * Information about what to display.
@@ -212,11 +192,11 @@ extern unsigned char *g_palette_rgb;
 
 extern int *g_image_monster;
 
-extern void FinalIcon(IconSpec *iconOut, t_assign *assignPtr, int hack, object_type *o_ptr);
-extern int assign_parse(Tcl_Interp *interp, t_assign *assignPtr, cptr desc);
-extern char *assign_print(char *buf, t_assign *assignPtr);
+extern void FinalIcon(IconSpec *iconOut, t_assign_icon *assignPtr, int hack, object_type *o_ptr);
+extern int assign_parse(Tcl_Interp *interp, t_assign_icon *assignPtr, cptr desc);
+extern char *assign_print(char *buf, t_assign_icon *assignPtr);
 extern char *assign_print2(char *buf, int assignType, int assignIndex);
 extern char *assign_print_object(char *buf, object_type *o_ptr);
-extern void get_object_assign(t_assign *assignPtr, object_type *o_ptr);
+extern void get_object_assign(t_assign_icon *assignPtr, object_type *o_ptr);
 
 #endif /* _INCLUDE_ICON_H_ */
