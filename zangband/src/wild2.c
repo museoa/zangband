@@ -1386,6 +1386,7 @@ static bool blank_spot(int x, int y, int xsize, int ysize, int town_num, bool to
 	return (TRUE);
 }
 
+#define DUN_LIST_NUM		12
 
 /*
  * A few dungeon types.
@@ -1517,8 +1518,15 @@ const dun_gen_type *pick_dungeon_type(void)
 
 
 /* Save dungeon information so we know what to build later */
-static void init_dungeon(dun_type *dt_ptr, const dun_gen_type *d_ptr)
+static void init_dungeon(place_type *pl_ptr, const dun_gen_type *d_ptr)
 {
+	dun_type *dt_ptr;
+
+	/* Create it */
+	MAKE(pl_ptr->dungeon, dun_type);
+
+	dt_ptr = pl_ptr->dungeon;
+
 	/* Set the object theme (structure copy) */
 	dt_ptr->theme = d_ptr->theme;
 	
@@ -1566,6 +1574,8 @@ static bool create_towns(int xx, int yy)
 
 	wild_gen2_type *w_ptr;
 
+	place_type *pl_ptr;
+
 	/* Variables to pick "easiest" town. */
 	u16b best_town = 0, town_value = 0;
 
@@ -1598,18 +1608,21 @@ static bool create_towns(int xx, int yy)
 
 		/* Generate it */
 		if (!create_city(x, y, place_count)) continue;
-			
+		
+		/* get wildernesss + place pointers */
 		w_ptr = &wild[y][x].trans;
+		pl_ptr = &place[place_count];
 				
 		/* Check to see if the town has stairs */
-		for (i = 0; i < place[place_count].numstores; i++)
+		for (i = 0; i < pl_ptr->numstores; i++)
 		{
-			if (place[place_count].store[i].type == BUILD_STAIRS)
+			if (pl_ptr->store[i].type == BUILD_STAIRS)
 			{
 				/* Create dungeon information */
-				if (!place[place_count].dungeon)
+				if (!pl_ptr->dungeon)
 				{
-					MAKE(place[place_count].dungeon, dun_type);
+					/* Use sewer */
+					init_dungeon(pl_ptr, &dungeons[0]);
 				}
 				
 				/* Select easiest town */
@@ -1672,31 +1685,48 @@ static bool create_towns(int xx, int yy)
 }
 
 
+/*
+ * What is the "score" for a dungeon of the given type
+ * at this location in the wilderness?
+ * The lower the score, the better the match.
+ */
+static long score_dungeon(const wild_gen2_type *w_ptr, const dun_gen_type *d_ptr)
+{
+	long score = 0, value;
+	
+	/* Height */
+	value = w_ptr->hgt_map - d_ptr->height;
+	score += value * value;
+	
+	/* Population */
+	value = w_ptr->pop_map - d_ptr->pop;
+	score += value * value;
+	
+	/* Lawless level */
+	value = w_ptr->law_map - d_ptr->min_level;
+	score += value * value;
+	
+	return (score);
+}
+
+
+
 /* Add in dungeons into the wilderness */
 static void create_dungeons(void)
 {
-	int i;
+	int i, j;
 	
 	int x, y;
+	
+	int best;
+	
+	long best_val, score;
 	
 	place_type *pl_ptr;
 	
 	wild_gen2_type *w_ptr;
 	
-	int *dungeon_list;
-	
-	/* Get list of sewers */
-	for (i = 1; i < NUM_TOWNS; i++)
-	{
-		pl_ptr = &place[i];
-	
-		/* Has dungeon - default to sewer */
-		if (pl_ptr->dungeon)
-		{
-			/* Use sewer */
-			init_dungeon(pl_ptr->dungeon, &dungeons[0]);
-		}
-	}
+	int dungeon_list[NUM_DUNGEON];
 	
 	/*
 	 * Scan for places to add dungeons.
@@ -1737,27 +1767,55 @@ static void create_dungeons(void)
 		
 		/* Hack - A really crap name */
 		strcpy(pl_ptr->name, "Dungeon");
-		
-		MAKE(pl_ptr->dungeon, dun_type);
 
 		/* Increment number of places */
 		place_count++;
 	}
-	
-	
-	/* Sort somehow */
 
-
-	/* Match available dungeon types to locations */
-	
-	
-	/* Init dungeons - object theme, monsters, rooms etc. */
-	for (i = NUM_TOWNS; i < NUM_TOWNS + NUM_DUNGEON; i++)
+	/* Select list of dungeon types to use */
+	for (i = 0; i <	NUM_DUNGEON; i++)
 	{
-		pl_ptr = &place[i];
+		/* Make sure we have at least one of each */
+		if (i < DUN_LIST_NUM)
+		{
+			dungeon_list[i] = i;
+		}
+		else
+		{
+			dungeon_list[i] = randint0(DUN_LIST_NUM);
+		}	
+	}
 	
-		/* Use random type... */
-		init_dungeon(pl_ptr->dungeon, &dungeons[randint0(12)]);
+	/* Match available dungeon types to locations */
+	for (i = 0; i < NUM_DUNGEON; i++)
+	{
+		/* Score each available location, and pick the best one. */
+		
+		best = -1;
+		best_val = -1;
+		
+		for (j = NUM_TOWNS; j < NUM_TOWNS + NUM_DUNGEON; j++)
+		{
+			pl_ptr = &place[j];
+			
+			/* Skip already created dungeons */
+			if (pl_ptr->dungeon) continue;
+			
+			/* Get location */
+			w_ptr = &wild[pl_ptr->y][pl_ptr->x].trans;
+			
+			score = score_dungeon(w_ptr, &dungeons[dungeon_list[i]]);
+			
+			/* Better dungeon? */
+			if ((best == -1) || (score < best_val))
+			{
+				best = j;
+				best_val = score;
+			}
+		}
+		
+		/* Initialise best dungeon */
+		init_dungeon(&place[best], &dungeons[dungeon_list[i]]);
 	}
 }
 
