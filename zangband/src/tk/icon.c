@@ -897,7 +897,7 @@ void PixelLongToPtr(IconPtr dst, int pixel, int bypp);
 static int init_ascii_data(Tcl_Interp *interp, t_icon_data *icon_data_ptr);
 
 /* Hack -- Standard 16 "term" colors. User should be able to change */
-IconValue g_term_palette[16] = {255, 0, 250, 17, 217, 196, 199, 101, 129,
+int g_term_palette[16] = {255, 0, 250, 17, 217, 196, 199, 101, 129,
 	247, 30, 5, 35, 185, 180, 52};
 
 /* Actual 8/16/24 pixel values for above */

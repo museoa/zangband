@@ -101,6 +101,9 @@ extern int CommandInfo_ObjCmd(ClientData clientData, Tcl_Interp *interp,
 
 /* icon1.c */
 
+extern int g_icon_size; /* 16, 24 or 32 */
+extern void init_icons(int size, int depth);
+
 /* Constants for t_grid.dark */
 #define GRID_LITE_TORCH 0
 #define GRID_LITE_NORMAL 1
