@@ -971,7 +971,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 	byte a;
 	byte c;
 
-	bool feat_ascii;
+	bool feat_not_ascii;
 	s16b halluc = p_ptr->image;
 
 	/* Get the cave */
@@ -1100,16 +1100,16 @@ void map_info(int y, int x, byte *ap, char *cp)
 		{
 			monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
-			feat_ascii = (a & 0x80);
+			feat_not_ascii = (a & 0x80);
 
 			/* Desired attr */
-			if (!((r_ptr->flags1 & (RF1_ATTR_CLEAR)) && feat_ascii))
+			if (!(r_ptr->flags1 & (RF1_ATTR_CLEAR)) || feat_not_ascii)
 			{
 				a = r_ptr->x_attr;
 			}
 
 			/* Desired char */
-			if (!((r_ptr->flags1 & (RF1_CHAR_CLEAR)) && feat_ascii))
+			if (!(r_ptr->flags1 & (RF1_CHAR_CLEAR)) || feat_not_ascii)
 			{
 				c = r_ptr->x_char;
 			}
