@@ -569,13 +569,6 @@ player_magic *pmb_ptr;	/* Player magic info */
  */
 u16b borg_step = 0;	/* Step count (if any) */
 
-
-/*
- * Status message search string
- */
-char borg_match[128] = "plain gold ring";	/* Search string */
-
-
 /*
  * Log file
  */
@@ -1134,14 +1127,6 @@ void borg_note(cptr what)
 
 	/* Log the message */
 	borg_info(what);
-
-
-	/* Mega-Hack -- Check against the search string */
-	if (borg_match[0] && strstr(what, borg_match))
-	{
-		/* Clean cancel */
-		borg_cancel = TRUE;
-	}
 
 	/* Mega-Hack -- Check against the swap loops */
 	if (strstr(what, "Best Combo"))

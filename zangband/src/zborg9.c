@@ -4236,23 +4236,6 @@ void do_cmd_borg(void)
 			break;
 		}
 
-		case 's':
-		case 'S':
-		{
-			/* Activate a search string */
-
-			/* Get the new search string (or cancel the matching) */
-			if (!get_string("Borg Match String: ", borg_match, 70))
-			{
-				/* Cancel it */
-				strcpy(borg_match, "");
-
-				/* Message */
-				msg_print("Borg Match String de-activated.");
-			}
-			break;
-		}
-
 		case 'g':
 		case 'G':
 		{

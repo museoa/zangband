@@ -894,12 +894,6 @@ extern void borgmove2(int *y, int *x, int y1, int x1, int y2, int x2);
 
 
 /*
- * Status message search string
- */
-extern char borg_match[128];	/* Search string */
-
-
-/*
  * Log file
  */
 extern FILE *borg_fff;	/* Log file */
