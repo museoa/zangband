@@ -350,10 +350,10 @@ static int borg_attack_thrust(void)
 	mb_ptr = map_loc(g_x, g_y);
 
 	/* Note */
-	borg_note_fmt
+	borg_note
 		("# Facing %s at (%d,%d).",
 		 mon_race_name(&r_info[mb_ptr->monster]), g_x, g_y);
-	borg_note_fmt
+	borg_note
 		("# Attacking with weapon '%s'", equipment[EQUIP_WIELD].o_name);
 
 	/* Get a direction for attacking */
@@ -1599,7 +1599,7 @@ static int borg_attack_scroll(int *b_slot)
 	}
 
 	/* Do it */
-	borg_note_fmt("# Reading scroll '%s'", inventory[*b_slot].o_name);
+	borg_note("# Reading scroll '%s'", inventory[*b_slot].o_name);
 
 	/* Read the scroll */
 	borg_keypress('r');
@@ -1810,7 +1810,7 @@ static int borg_attack_launch(int *b_slot)
 	borg_target(g_x, g_y);
 
 	/* Do it */
-	borg_note_fmt("# Firing missile '%s'", inventory[*b_slot].o_name);
+	borg_note("# Firing missile '%s'", inventory[*b_slot].o_name);
 
 	/* Fire */
 	borg_keypress('f');
@@ -2032,7 +2032,7 @@ static int borg_attack_object(int *b_slot, int mult)
 	}
 
 	/* Do it */
-	borg_note_fmt("# Throwing painful object '%s'", inventory[*b_slot].o_name);
+	borg_note("# Throwing painful object '%s'", inventory[*b_slot].o_name);
 
 	/* Set the target */
 	borg_target(g_x, g_y);
@@ -2158,7 +2158,7 @@ static int borg_attack_ring(int *b_slot)
 	borg_target(g_x, g_y);
 
 	/* Do it */
-	borg_note_fmt("# Activating %s", equipment[*b_slot].o_name);
+	borg_note("# Activating %s", equipment[*b_slot].o_name);
 
 	/* Activate the ring*/
 	borg_keypress('A');
@@ -2286,7 +2286,7 @@ static int borg_attack_dragon(void)
 	borg_target(g_x, g_y);
 
 	/* Do it */
-	borg_note_fmt("# Activating %s", equipment[EQUIP_BODY].o_name);
+	borg_note("# Activating %s", equipment[EQUIP_BODY].o_name);
 
 	/* Activate the dragon armour*/
 	borg_keypress('A');
@@ -2416,7 +2416,7 @@ static int borg_attack_rod(int *b_slot)
 	borg_target(g_x, g_y);
 
 	/* Tell what is zapped */
-	borg_note_fmt("# Zapping %s", inventory[*b_slot].o_name);
+	borg_note("# Zapping %s", inventory[*b_slot].o_name);
 
 	/* Zap the rod */
 	borg_keypress('z');
@@ -2492,7 +2492,7 @@ static int borg_wand_damage_monster(int sval)
 				borg_danger(c_x, c_y, 1, TRUE) >= (avoidance * 2))
 			{
 				/* note the use of the wand in the emergency */
-				borg_note_fmt("# Emergency use of a Wand of Wonder.");
+				borg_note("# Emergency use of a Wand of Wonder.");
 
 				/* make the wand appear deadly */
 				return (999);
@@ -2600,7 +2600,7 @@ static int borg_attack_wand(int *b_slot)
 	borg_target(g_x, g_y);
 
 	/* Do it */
-	borg_note_fmt("# Aiming %s", inventory[*b_slot].o_name);
+	borg_note("# Aiming %s", inventory[*b_slot].o_name);
 
 	/* Fire */
 	borg_keypress('a');
@@ -3001,7 +3001,7 @@ static int borg_attack_mutation(int *b_slot, int *b_spell)
 
 	/* Note */
 	borg_note("# Mutation Attack ");
-	borg_note_fmt("With letter = %c", I2A(*b_spell));
+	borg_note("With letter = %c", I2A(*b_spell));
 
 	/* Set the target */
 	borg_target(g_x, g_y);
@@ -3299,7 +3299,7 @@ static int borg_attack_mindcrafter_reserve(bool faint, int *b_spell)
 	}
 
 	/* make a note */
-	borg_note_fmt("Emergency mindcr use: %s", (faint) ? "faint" : "reserve");
+	borg_note("Emergency mindcr use: %s", (faint) ? "faint" : "reserve");
 
 	/* Set target for some spells */
 	if (*b_spell == MIND_NEURAL_BL ||
@@ -3508,7 +3508,7 @@ static int borg_life_damage_monster(int book, int spell)
 
 		default:
 		{
-			borg_oops_fmt("Trying to cast from life book = %d", book);
+			borg_oops("Trying to cast from life book = %d", book);
 			return (0);
 		}
 	}
@@ -3616,7 +3616,7 @@ static int borg_sorcery_damage_monster(int book, int spell)
 
 		default:
 		{
-			borg_oops_fmt("Is book %d really a sorcery book?", book);
+			borg_oops("Is book %d really a sorcery book?", book);
 			return (0);
 		}
 	}
@@ -3849,7 +3849,7 @@ static int borg_nature_damage_monster(int book, int spell)
 
 		default:
 		{
-			borg_oops_fmt("Is book %d really a Nature book?", book);
+			borg_oops("Is book %d really a Nature book?", book);
 			return (0);
 		}
 	}
@@ -4157,7 +4157,7 @@ static int borg_chaos_damage_monster(int book, int spell)
 
 		default:
 		{
-			borg_oops_fmt("Is book %d really a sorcery book?", book);
+			borg_oops("Is book %d really a sorcery book?", book);
 			return (0);
 		}
 	}
@@ -4384,7 +4384,7 @@ static int borg_death_damage_monster(int book, int spell)
 		}
 		default:
 		{
-			borg_oops_fmt("Is book %d really a death book?", book);
+			borg_oops("Is book %d really a death book?", book);
 			return (0);
 		}
 	}
@@ -4443,7 +4443,7 @@ static int borg_trump_damage_monster(int book, int spell)
 
 		default:
 		{
-			borg_oops_fmt("Trying to cast from trump book %d", book);
+			borg_oops("Trying to cast from trump book %d", book);
 			return (0);
 		}
 	}
@@ -4553,7 +4553,7 @@ static int borg_arcane_damage_monster(int book, int spell)
 
 		default:
 		{
-			borg_oops_fmt("Trying to cast from arcane book %d", book);
+			borg_oops("Trying to cast from arcane book %d", book);
 			return (0);
 		}
 	}
@@ -4833,7 +4833,7 @@ static int borg_attack_spell_reserve(bool faint, int *b_slot, int *b_spell)
 	}
 
 	/* Make a note */
-	borg_note_fmt("Emergency spell use: %s", (faint) ? "faint" : "reserve");
+	borg_note("Emergency spell use: %s", (faint) ? "faint" : "reserve");
 
 	/* Get the book */
 	l_ptr = &inventory[*b_slot];
@@ -4879,6 +4879,17 @@ static int borg_staff_damage_monster(int sval)
 
 	switch (sval)
 	{
+		case SV_STAFF_STARLITE:
+		{
+			/*
+			 * Actually this staff picks 5d3 random targets that are in LOS
+			 * and send a light beam at them.
+			 * The borg assumes that two of those beams hit the best target.
+			 * This can easily happen in a hallway
+			 */
+			return (2 * borg_launch_beam(27, GF_LITE_WEAK, MAX_RANGE));
+		}
+
 		case SV_STAFF_SLEEP_MONSTERS:
 		{
 			/* Set the type */
@@ -5015,7 +5026,7 @@ static int borg_attack_staff(int *b_slot)
 	}
 
 	/* Make a note */
-	borg_note_fmt("Using a %s", inventory[*b_slot].o_name);
+	borg_note("Using a %s", inventory[*b_slot].o_name);
 
 	/* Use the staff */
 	borg_keypress('u');
@@ -5148,7 +5159,7 @@ static int borg_attack_aux(int what, int *slot, int *spell)
 	}
 
 	/* report code mistake */
-	borg_oops_fmt("The BF_value %d is not in the switch", what);
+	borg_oops("The BF_value %d is not in the switch", what);
 
 	/* Oops */
 	return (0);
@@ -5477,7 +5488,7 @@ bool borg_attack(bool boosted_bravery)
 
 
 	/* Note */
-	borg_note_fmt("# Performing attack type %d with value %d.", b_g, b_n);
+	borg_note("# Performing attack type %d with value %d.", b_g, b_n);
 
 	/* Instantiate */
 	borg_simulate = FALSE;
