@@ -428,6 +428,7 @@ bool destroy_item_aux(object_type *o_ptr, int amt)
 	
 	bool gain_expr = FALSE;
 	
+	object_desc(o_name, o_ptr, TRUE, 3);
 	
 #ifdef USE_SCRIPT
 
