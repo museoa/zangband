@@ -3590,9 +3590,8 @@ static void build_bubble_vault(int x0, int y0, int xsize, int ysize)
 	/* array of center points of bubbles */
 	coord center[BUBBLENUM];
 
-	int i, j, x, y;
+	int i, x, y;
 	u16b min1, min2, temp;
-	bool done;
 
 	/* Offset from center to top left hand corner */
 	int xhsize = xsize / 2;
@@ -3602,30 +3601,12 @@ static void build_bubble_vault(int x0, int y0, int xsize, int ysize)
 	if (cheat_room) msg_print("Bubble Vault");
 
 	/* Allocate center of bubbles */
-	center[0].x = randint(xsize - 3) + 1;
-	center[0].y = randint(ysize - 3) + 1;
-
-	for (i = 1; i < BUBBLENUM; i++)
+	for (i = 0; i < BUBBLENUM; i++)
 	{
-		done = FALSE;
+		/* get center and (Uniqueness check removed)*/
 
-		/* get center and check to see if it is unique */
-		while (!done)
-		{
-			done = TRUE;
-
-			x = randint(xsize - 3) + 1;
-			y = randint(ysize - 3) + 1;
-
-			for (j = 0; j < i; j++)
-			{
-				/* rough test to see if there is an overlap */
-				if ((x == center[j].x) && (y == center[j].y)) done = FALSE;
-			}
-		}
-
-		center[i].x = x;
-		center[i].y = y;
+		center[i].x = randint(xsize - 3) + 1;
+		center[i].y = randint(ysize - 3) + 1;
 	}
 
 
@@ -3803,11 +3784,11 @@ static void build_room_vault(int x0, int y0, int xsize, int ysize)
 	if (cheat_room) msg_print("Room Vault");
 
 	/* fill area so don't get problems with arena levels */
-	for (x1 = 0; x1 <= xsize; x1++)
+	for (x1 = 0; x1 < xsize; x1++)
 	{
 		int x = x0 - xhsize + x1;
 
-		for (y1 = 0; y1 <= ysize; y1++)
+		for (y1 = 0; y1 < ysize; y1++)
 		{
 			int y = y0 - yhsize + y1;
 
@@ -3846,8 +3827,8 @@ static void build_cave_vault(int x0, int y0, int xsiz, int ysiz)
 	bool done, light, room;
 
 	/* round to make sizes even */
-	xhsize = xsiz / 2;
-	yhsize = ysiz / 2;
+	xhsize = (xsiz - 1) / 2;
+	yhsize = (ysiz - 1) / 2;
 	xsize = xhsize * 2;
 	ysize = yhsize * 2;
 
