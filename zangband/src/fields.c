@@ -2354,7 +2354,7 @@ void field_action_hit_trap_curse(s16b *field_ptr, void *nothing)
 		{
 			stop_ty = activate_ty_curse(stop_ty, &count);
 		}
-		while (randint1(6) == 1);
+		while (one_in_(6));
 	}
 	
 	/* Blast weapon */

@@ -296,7 +296,7 @@ static void build_type1(int by0, int bx0)
 	generate_fill(y1, x1, y2, x2, FEAT_FLOOR);
 
 	/* Hack -- Occasional pillar room */
-	if (randint0(20) == 0)
+	if (one_in_(20))
 	{
 		for (y = y1; y <= y2; y += 2)
 		{
@@ -309,7 +309,7 @@ static void build_type1(int by0, int bx0)
 	}
 
 	/* Hack -- Occasional room with four pillars */
-	else if (randint0(40) == 0)
+	else if (one_in_(40))
 	{
 		if ((y1 + 4 < y2) && (x1 + 4 < x2))
 		{
@@ -328,7 +328,7 @@ static void build_type1(int by0, int bx0)
 	}
 	
 	/* Hack -- Occasional room with rounded corners */
-	else if (randint0(40) == 0)
+	else if (one_in_(40))
 	{
 		c_ptr = &cave[y1][x1];
 		c_ptr->feat = FEAT_WALL_INNER;
@@ -344,7 +344,7 @@ static void build_type1(int by0, int bx0)
 	}
 	
 	/* Hack -- Occasional ragged-edge room */
-	else if (randint0(50) == 0)
+	else if (one_in_(50))
 	{
 		for (y = y1 + 2; y <= y2 - 2; y += 2)
 		{
@@ -363,9 +363,9 @@ static void build_type1(int by0, int bx0)
 	}
 	
 	/* Hack -- Occasional divided room */
-	else if (randint0(50) == 0)
+	else if (one_in_(50))
 	{
-		if (randint1(100) < 50)
+		if (one_in_(2))
 		{
 			/* Horizontal wall */
 			for (x = x1; x <= x2; x++)
@@ -567,7 +567,7 @@ static void build_type3(int by0, int bx0)
 		case 4:
 		{
 			/* Occasionally pinch the center shut */
-			if (randint0(3) == 0)
+			if (one_in_(3))
 			{
 				/* Pinch the east/west sides */
 				for (y = y1b; y <= y2b; y++)
@@ -590,7 +590,7 @@ static void build_type3(int by0, int bx0)
 				}
 
 				/* Sometimes shut using secret doors */
-				if (randint0(3) == 0)
+				if (one_in_(3))
 				{
 					place_secret_door(yval, x1a - 1);
 					place_secret_door(yval, x2a + 1);
@@ -600,13 +600,13 @@ static void build_type3(int by0, int bx0)
 			}
 
 			/* Occasionally put a "plus" in the center */
-			else if (randint0(3) == 0)
+			else if (one_in_(3))
 			{
 				generate_plus(y1b, x1a, y2b, x2a, FEAT_WALL_INNER);
 			}
 
 			/* Occasionally put a pillar in the center */
-			else if (randint0(3) == 0)
+			else if (one_in_(3))
 			{
 				c_ptr = &cave[yval][xval];
 				c_ptr->feat = FEAT_PILLAR;
@@ -726,7 +726,7 @@ static void build_type4(int by0, int bx0)
 			generate_fill(yval - 1, xval - 1, yval + 1, xval + 1, FEAT_WALL_INNER);
 
 			/* Occasionally, two more Large Inner Pillars */
-			if (randint0(2) == 0)
+			if (one_in_(2))
 			{
 				tmp = randint1(2);
 				
@@ -740,7 +740,7 @@ static void build_type4(int by0, int bx0)
 			}
 
 			/* Occasionally, some Inner rooms */
-			if (randint0(3) == 0)
+			if (one_in_(3))
 			{
 				/* Inner rectangle */
 				generate_draw(yval - 1, xval - 5, yval + 1, xval + 5, FEAT_WALL_INNER);
@@ -754,8 +754,8 @@ static void build_type4(int by0, int bx0)
 				vault_monsters(yval, xval + 2, randint1(2));
 
 				/* Objects */
-				if (randint0(3) == 0) place_object(yval, xval - 2, FALSE, FALSE);
-				if (randint0(3) == 0) place_object(yval, xval + 2, FALSE, FALSE);
+				if (one_in_(3)) place_object(yval, xval - 2, FALSE, FALSE);
+				if (one_in_(3)) place_object(yval, xval + 2, FALSE, FALSE);
 			}
 
 			break;
@@ -2718,7 +2718,7 @@ static void r_visit(int y1, int x1, int y2, int x2,
 	cave_set_feat(y, x, FEAT_FLOOR);
 
 	/* setup order of adjacent node visits */
-	if (randint0(3) == 0)
+	if (one_in_(3))
 	{
 		/* pick a random ordering */
 		for (i = 0; i < 4; i++)
@@ -2917,7 +2917,7 @@ static void build_mini_c_vault(int x0, int y0, int xsize, int ysize)
 	}
 
 	/* Make a couple of entrances */
-	if (randint1(2) == 1)
+	if (one_in_(2))
 	{
 		/* left and right */
 		y = randint1(dy) + dy / 2;
@@ -2996,7 +2996,7 @@ static void build_recursive_room(int x1, int y1, int x2, int y2, int power)
 			generate_draw(y1, x1, y2, x2, FEAT_WALL_OUTER);
 
 			/* Make a couple of entrances */
-			if (randint1(2) == 1)
+			if (one_in_(2))
 			{
 				/* left and right */
 				y = randint1(ysize) + y1;
@@ -3056,7 +3056,7 @@ static void build_recursive_room(int x1, int y1, int x2, int y2, int power)
 			/* Make a door */
 			y = rand_range(y1 + 1, y1 + ysize - 2);
 
-			if (randint1(2) == 1)
+			if (one_in_(2))
 			{
 				/* left */
 				cave[y][x1 + 1].feat = FEAT_FLOOR;
@@ -3449,17 +3449,17 @@ static void build_micro_room_vault(int x0, int y0, int xsize, int ysize)
 	{
 		for (i = x1 + 2; i < x2 - 1; i +=4)
 		{
-			if (randint0(2) == 1)
+			if (one_in_(2))
 			{
 				/* A tiny room */
 				build_small_room(i, j);
 			}
-			else if (randint0(2) == 1)
+			else if (one_in_(2))
 			{
 				/* 1/4 chance for a pillar */
 				generate_fill(j - 1, i - 1, j + 1, i + 1, FEAT_WALL_INNER); 
 			}
-			else if (randint0(2) == 1)
+			else if (one_in_(2))
 			{
 				/* 1/8 chance for a plus */
 				generate_plus(j - 1, i - 1, j + 1, i + 1, FEAT_WALL_INNER);
@@ -3472,7 +3472,7 @@ static void build_micro_room_vault(int x0, int y0, int xsize, int ysize)
 	{
 		for (i = x1; i < x2 - 1; i +=4)
 		{
-			if (randint0(2) == 1)
+			if (one_in_(2))
 			{
 				cave[j][i].feat = FEAT_WALL_INNER;
 			}
@@ -3648,7 +3648,7 @@ static void build_type12(int by0, int bx0)
 		}
 	}
 
-	if (emptyflag && (randint1(2) == 1))
+	if (emptyflag && one_in_(2))
 	{
 		/* Build the vault */
 		build_small_room(x0, y0);
@@ -3895,7 +3895,7 @@ static void build_type15(int by0, int bx0)
 	y1 = yval - h / 2;
 	
 	/* Get handedness */
-	type = ((randint0(2) == 1) ? TRUE : FALSE);
+	type = (one_in_(2) ? TRUE : FALSE);
 	
 	/* Fill in floor */
 	for (y = 1; y < h; y++)

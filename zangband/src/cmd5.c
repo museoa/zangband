@@ -437,7 +437,7 @@ void do_cmd_study(void)
 				k++;
 
 				/* Hack -- Apply the randomizer */
-				if (randint0(k) == 0) gift = spell;
+				if (one_in_(k)) gift = spell;
 			}
 		}
 
@@ -1356,7 +1356,7 @@ static bool cast_chaos_spell(int spell)
 		break;
 	case 23: /* Summon monster, demon */
 		{
-			bool pet = (randint1(3) == 1);
+			bool pet = (one_in_(3));
 			bool group = !(pet && (plev < 50));
 
 			if (summon_specific((pet ? -1 : 0), py, px, (plev * 3) / 2, SUMMON_DEMON, group, FALSE, pet))
@@ -1472,7 +1472,7 @@ static bool cast_death_spell(int spell)
 		fire_ball(GF_HELL_FIRE, dir,
 			damroll(3 + ((plev - 1) / 5), 3), 0);
 
-		if (randint1(5) == 1)
+		if (one_in_(5))
 		{
 			/* Special effect first */
 			dummy = randint1(1000);
@@ -1742,14 +1742,14 @@ static bool cast_death_spell(int spell)
 	case 25: /* Raise the Dead */
 		{
 #if 0
-			bool pet = (randint1(3) == 1);
+			bool pet = (one_in_(3));
 			bool group;
 			int type;
 
 			if (pet)
 			{
 				type = (plev > 47 ? SUMMON_HI_UNDEAD_NO_UNIQUES : SUMMON_UNDEAD);
-				group = (((plev > 24) && (randint1(3) == 1)) ? TRUE : FALSE);
+				group = (((plev > 24) && (one_in_(3))) ? TRUE : FALSE);
 			}
 			else
 			{
@@ -2229,7 +2229,7 @@ static bool cast_trump_spell(int spell, bool success)
 			break;
 		case 16: /* Joker Card */
 		{
-			bool pet = success; /* was (randint1(2) == 1) */
+			bool pet = success; /* was one_in_(2) */
 			bool group = (pet ? FALSE : TRUE);
 
 			if (success)
@@ -2322,7 +2322,7 @@ static bool cast_trump_spell(int spell, bool success)
 		case 21: /* Living Trump */
 			if (success)
 			{
-				if (randint1(8) == 1)
+				if (one_in_(8))
 					/* Teleport control */
 					dummy = 12;
 				else
@@ -2796,7 +2796,7 @@ void do_cmd_cast(void)
 		}
 		else if ((o_ptr->tval == TV_DEATH_BOOK) && (randint1(100) < spell))
 		{
-			if ((sval == 3) && (randint1(2) == 1))
+			if ((sval == 3) && one_in_(2))
 			{
 				sanity_blast(0, TRUE);
 			}
@@ -2804,7 +2804,7 @@ void do_cmd_cast(void)
 			{
 				msg_print("It hurts!");
 				take_hit(damroll(o_ptr->sval + 1, 6), "a miscast Death spell");
-				if ((spell > 15) && (randint1(6) == 1) && !p_ptr->hold_life)
+				if ((spell > 15) && one_in_(6) && !p_ptr->hold_life)
 					lose_exp(spell * 250);
 			}
 		}

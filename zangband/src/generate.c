@@ -424,7 +424,7 @@ static bool cave_gen(void)
 	dun_tun_jct = rand_range(DUN_TUN_JCT_MIN, DUN_TUN_JCT_MAX);
 
 	/* Empty arena levels */
-	if (ironman_empty_levels || (empty_levels && (randint1(EMPTY_LEVEL) == 1)))
+	if (ironman_empty_levels || (empty_levels && one_in_(EMPTY_LEVEL)))
 	{
 		empty_level = TRUE;
 
@@ -449,7 +449,7 @@ static bool cave_gen(void)
 	}
 
 	/* Possible "destroyed" level */
-	if ((p_ptr->depth > 15) && (randint0(DUN_DEST) == 0) && (small_levels))
+	if ((p_ptr->depth > 15) && one_in_(DUN_DEST) && (small_levels))
 	{
 		destroyed = TRUE;
 
@@ -458,7 +458,7 @@ static bool cave_gen(void)
 	}
 
 	/* Make a lake some of the time */
-	if ((randint0(LAKE_LEVEL) == 0) && !empty_level && !destroyed && terrain_streams)
+	if (one_in_(LAKE_LEVEL) && !empty_level && !destroyed && terrain_streams)
 	{
 		/* Lake of Water */
 		if (p_ptr->depth > 52) laketype = LAKE_WATER;
@@ -474,7 +474,7 @@ static bool cave_gen(void)
 		}
 	}
 
-	if ((randint0(DUN_CAV1/(p_ptr->depth + DUN_CAV2)) == 0) && !empty_level &&
+	if (one_in_(DUN_CAV1/(p_ptr->depth + DUN_CAV2)) && !empty_level &&
 	    (laketype == 0) && !destroyed && (p_ptr->depth >= MIN_CAVERN))
 	{
 		cavern = TRUE;
@@ -634,7 +634,7 @@ static bool cave_gen(void)
 	/* Make a hole in the dungeon roof sometimes at level 1 */
 	if ((p_ptr->depth == 1) && terrain_streams)
 	{
-		while (randint1(DUN_MOS_DEN) == 1)
+		while (one_in_(DUN_MOS_DEN))
 		{
 			place_trees(rand_range(min_wid + 1, max_wid - 2),
 				 rand_range(min_hgt + 1, max_hgt - 2));
@@ -645,7 +645,7 @@ static bool cave_gen(void)
 	if (destroyed) destroy_level();
 
 	/* Hack -- Add some rivers */
-	if ((randint1(3) == 1) && (randint1(p_ptr->depth) > 5) && terrain_streams)
+	if (one_in_(3) && (randint1(p_ptr->depth) > 5) && terrain_streams)
 	{
 	 	/* Choose water or lava */
 		if (randint1(MAX_DEPTH * 2) - 1 > p_ptr->depth)
@@ -1083,8 +1083,7 @@ static bool level_gen(cptr *why)
 {
 	int level_height, level_width;
 
-	if (ironman_small_levels ||
-		((randint1(SMALL_LEVEL) == 1) && small_levels))
+	if (ironman_small_levels || (one_in_(SMALL_LEVEL) && small_levels))
 	{
 		if (cheat_room)
 		  msg_print("A 'small' dungeon level.");

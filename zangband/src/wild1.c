@@ -385,7 +385,7 @@ static bool create_city(int x, int y, int town_num)
 					t_ptr->gates_x[0] = i;
 					t_ptr->gates_y[0] = j;
 				}
-				else if ((gate_value[0] == i) && (randint0(gate_num[0]) == 0))
+				else if ((gate_value[0] == i) && one_in_(gate_num[0]))
 				{
 					/* save it */
 					gate_value[0] = i;
@@ -403,7 +403,7 @@ static bool create_city(int x, int y, int town_num)
 					t_ptr->gates_x[1] = i;
 					t_ptr->gates_y[1] = j;
 				}
-				else if ((gate_value[1] == i) && (randint0(gate_num[1]) == 0))
+				else if ((gate_value[1] == i) && one_in_(gate_num[1]))
 				{
 					/* save it */
 					gate_value[1] = i;
@@ -421,7 +421,7 @@ static bool create_city(int x, int y, int town_num)
 					t_ptr->gates_x[2] = i;
 					t_ptr->gates_y[2] = j;
 				}
-				else if ((gate_value[2] == j) && (randint0(gate_num[2]) == 0))
+				else if ((gate_value[2] == j) && one_in_(gate_num[2]))
 				{
 					/* save it */
 					gate_value[2] = j;
@@ -439,7 +439,7 @@ static bool create_city(int x, int y, int town_num)
 					t_ptr->gates_x[3] = i;
 					t_ptr->gates_y[3] = j;
 				}
-				else if ((gate_value[3] == j) && (randint0(gate_num[3]) == 0))
+				else if ((gate_value[3] == j) && one_in_(gate_num[3]))
 				{
 					/* save it */
 					gate_value[3] = j;

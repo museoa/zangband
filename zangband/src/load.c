@@ -2854,7 +2854,7 @@ static errr rd_savefile_new_aux(void)
 			if (c == '*')
 			{
 				c = 'y';
-				if (randint1(2) == 1)
+				if (one_in_(2))
 					c = 'n';
 				break;
 			}
@@ -2903,7 +2903,7 @@ static errr rd_savefile_new_aux(void)
 			if (c == '*')
 			{
 				c = 'y';
-				if (randint1(2) == 1)
+				if (one_in_(2))
 					c = 'n';
 				break;
 			}

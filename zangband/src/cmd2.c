@@ -2537,7 +2537,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	if ((j_ptr->name2 == EGO_VELOCITY) || (j_ptr->name2 == EGO_ACCURACY))
 	{
 		/* Occasional boost to shot. */
-		if (randint1(16) == 1)
+		if (one_in_(16))
 		{
 			if (j_ptr->name2 == EGO_VELOCITY) special_dam = TRUE;
 			else if (j_ptr->name2 == EGO_ACCURACY) special_hit = TRUE;

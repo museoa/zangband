@@ -1402,16 +1402,16 @@ bool set_stun(int v)
 		 * explained away by their "superior mental skills" or
 		 * something...
 		 */
-		if ((randint1(1000) < v || randint1(16) == 1) &&
+		if ((randint1(1000) < v || one_in_(16)) &&
 		 (!(p_ptr->pclass == CLASS_MINDCRAFTER)))
 		{
 			msg_print("A vicious blow hits your head.");
-			if (randint1(3) == 1)
+			if (one_in_(3))
 			{
 				if (!p_ptr->sustain_int) (void)do_dec_stat(A_INT);
 				if (!p_ptr->sustain_wis) (void)do_dec_stat(A_WIS);
 			}
-			else if (randint1(2) == 1)
+			else if (one_in_(2))
 			{
 				if (!p_ptr->sustain_int) (void)do_dec_stat(A_INT);
 			}
@@ -1626,7 +1626,7 @@ bool set_cut(int v)
 		/* Notice */
 		notice = TRUE;
 
-		if (randint1(1000) < v || randint1(16) == 1)
+		if (randint1(1000) < v || one_in_(16))
 		{
 			if (!p_ptr->sustain_chr)
 			{
@@ -2384,7 +2384,7 @@ void do_poly_wounds(void)
 	s16b wounds = p_ptr->cut;
 	s16b hit_p = (p_ptr->mhp - p_ptr->chp);
 	s16b change = damroll(p_ptr->lev, 5);
-	bool Nasty_effect = (randint1(5) == 1);
+	bool Nasty_effect = (one_in_(5));
 
 	if (!(wounds || hit_p || Nasty_effect)) return;
 
@@ -2411,7 +2411,7 @@ void do_poly_self(void)
 
 	chg_virtue(V_CHANCE, 1);
 
-	if ((power > randint0(20)) && (randint0(3) == 1))
+	if ((power > randint0(20)) && one_in_(3))
 	{
 		char effect_msg[80] = "";
 		int new_race, expfact, goalexpfact;
@@ -2419,7 +2419,7 @@ void do_poly_self(void)
 		/* Some form of racial polymorph... */
 		power -= 10;
 
-		if ((power > randint0(5)) && (randint0(4) == 1))
+		if ((power > randint0(5)) && one_in_(4))
 		{
 			/* sex change */
 			power -= 2;
@@ -2438,7 +2438,7 @@ void do_poly_self(void)
 			}
 		}
 
-		if ((power > randint0(30)) && (randint0(5) == 1))
+		if ((power > randint0(30)) && one_in_(5))
 		{
 			int tmp = 0;
 
@@ -2447,9 +2447,9 @@ void do_poly_self(void)
 
 			while (tmp < 6)
 			{
-				if (randint0(2) == 1)
+				if (one_in_(2))
 				{
-					(void)dec_stat(tmp, randint1(6) + 6, (randint1(3) == 1));
+					(void)dec_stat(tmp, randint1(6) + 6, one_in_(3));
 					power -= 1;
 				}
 				tmp++;
@@ -2470,7 +2470,7 @@ void do_poly_self(void)
 			}
 		}
 
-		while ((power > randint0(20)) && (randint0(10) == 1))
+		while ((power > randint0(20)) && one_in_(10))
 		{
 			/* Polymorph into a less mutated form */
 			power -= 10;
@@ -2542,7 +2542,7 @@ void do_poly_self(void)
 		lite_spot(p_ptr->py, p_ptr->px);
 	}
 
-	if ((power > randint0(30)) && (randint0(6) == 1))
+	if ((power > randint0(30)) && one_in_(6))
 	{
 		int tmp = 0;
 
@@ -2552,10 +2552,10 @@ void do_poly_self(void)
 		msg_print("Your internal organs are rearranged!");
 		while (tmp < 6)
 		{
-			(void)dec_stat(tmp, randint1(6) + 6, (randint1(3) == 1));
+			(void)dec_stat(tmp, randint1(6) + 6, one_in_(3));
 			tmp++;
 		}
-		if (randint1(6) == 1)
+		if (one_in_(6))
 		{
 			msg_print("You find living difficult in your present form!");
 			take_hit(damroll(randint1(10), p_ptr->lev), "a lethal mutation");
@@ -2563,14 +2563,14 @@ void do_poly_self(void)
 		}
 	}
 
-	if ((power > randint0(20)) && (randint0(4) == 1))
+	if ((power > randint0(20)) && one_in_(4))
 	{
 		power -= 10;
 
 		do_cmd_rerate();
 	}
 
-	while ((power > randint0(15)) && (randint0(3) == 1))
+	while ((power > randint0(15)) && one_in_(3))
 	{
 		power -= 7;
 		(void)gain_mutation(0);
@@ -2623,7 +2623,7 @@ void take_hit(int damage, cptr hit_from)
 	/* Mega-Hack -- Apply "invulnerability" */
 	if (p_ptr->invuln && (damage < 9000))
 	{
-		if (randint1(PENETRATE_INVULNERABILITY) == 1)
+		if (one_in_(PENETRATE_INVULNERABILITY))
 		{
 			pen_invuln = TRUE;
 		}
@@ -2636,7 +2636,7 @@ void take_hit(int damage, cptr hit_from)
 	if (p_ptr->wraith_form)
 	{
 		damage /= 10;
-		if ((damage == 0) && (randint1(10) == 1)) damage = 1;
+		if ((damage == 0) && one_in_(10)) damage = 1;
 	}
 
 	/* Hurt the player */

@@ -521,7 +521,7 @@ static bool pattern_effect(void)
 		return FALSE;
 
 	if ((p_ptr->prace == RACE_AMBERITE) &&
-	    (p_ptr->cut > 0) && (randint1(10) == 1))
+	    (p_ptr->cut > 0) && one_in_(10))
 	{
 		wreck_the_pattern();
 	}
@@ -1018,7 +1018,7 @@ static void process_world(void)
 	/*** Process the monsters ***/
 
 	/* Check for creature generation. */
-	if ((randint0(MAX_M_ALLOC_CHANCE) == 0) && !p_ptr->inside_quest)
+	if (one_in_(MAX_M_ALLOC_CHANCE) && !p_ptr->inside_quest)
 	{
 		/* Make a new monster */
 		(void)alloc_monster(MAX_SIGHT + 5, FALSE);
@@ -1735,7 +1735,7 @@ static void process_world(void)
 	}
 
 	/* Rarely, take damage from the Jewel of Judgement */
-	if ((randint1(999) == 1) && !p_ptr->anti_magic)
+	if (one_in_(999) && !p_ptr->anti_magic)
 	{
 		if ((inventory[INVEN_LITE].tval) && !p_ptr->invuln &&
 		    (inventory[INVEN_LITE].sval == SV_LITE_THRAIN))
@@ -1758,7 +1758,7 @@ static void process_world(void)
 		object_flags(o_ptr, &f1, &f2, &f3);
 
 		/* TY Curse */
-		if ((f3 & TR3_TY_CURSE) && (randint1(TY_CURSE_CHANCE) == 1))
+		if ((f3 & TR3_TY_CURSE) && one_in_(TY_CURSE_CHANCE))
 		{
 			int count = 0;
 
@@ -1767,7 +1767,7 @@ static void process_world(void)
 
 		/* Make a chainsword noise */
 		if ((o_ptr->activate == ART_CHAINSWORD + 128) &&
-			 randint1(CHAINSWORD_NOISE) == 1)
+			one_in_(CHAINSWORD_NOISE))
 		{
 			char noise[1024];
 			if (!get_rnd_line("chainswd.txt", 0, noise))
@@ -2761,7 +2761,7 @@ static void process_command(void)
 		/* Hack -- Unknown command */
 		default:
 		{
-			if (randint1(2) == 1)
+			if (one_in_(2))
 			{
 				char error_m[1024];
 				sound(SOUND_ILLEGAL);

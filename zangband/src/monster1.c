@@ -29,10 +29,6 @@ static cptr wd_his[3] =
     (((c) == 1) ? (s) : (p))
 
 
-
-
-
-
 /*
  * Determine if the "armor" is known
  * The higher the level, the fewer kills needed.

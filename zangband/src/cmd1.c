@@ -1673,27 +1673,26 @@ void py_attack(int y, int x)
 			object_flags(o_ptr, &f1, &f2, &f3);
 
 			/* Select a chaotic effect (50% chance) */
-			if ((f1 & TR1_CHAOTIC) && (randint1(2) == 1))
+			if ((f1 & TR1_CHAOTIC) && (one_in_(2)))
 			{
-				if (randint1(10) == 1)
-					chg_virtue(V_CHANCE, 1);
+				if (one_in_(10)) chg_virtue(V_CHANCE, 1);
 
 				if (randint1(5) < 3)
 				{
 					/* Vampiric (20%) */
 					chaos_effect = 1;
 				}
-				else if (randint1(250) == 1)
+				else if (one_in_(250))
 				{
 					/* Quake (0.12%) */
 					chaos_effect = 2;
 				}
-				else if (randint1(10) != 1)
+				else if (!one_in_(10))
 				{
 					/* Confusion (26.892%) */
 					chaos_effect = 3;
 				}
-				else if (randint1(2) == 1)
+				else if (one_in_(2))
 				{
 					/* Teleport away (1.494%) */
 					chaos_effect = 4;
@@ -1715,7 +1714,7 @@ void py_attack(int y, int x)
 					drain_result = 0;
 			}
 
-			if ((f1 & TR1_VORPAL) && (randint1((o_ptr->activate + 128 == ART_VORPAL_BLADE) ? 3 : 6) == 1))
+			if ((f1 & TR1_VORPAL) && (one_in_((o_ptr->activate + 128 == ART_VORPAL_BLADE) ? 3 : 6)))
 				vorpal_cut = TRUE;
 			else vorpal_cut = FALSE;
 
@@ -1762,7 +1761,7 @@ void py_attack(int y, int x)
 
 
 
-				if ((p_ptr->impact && ((k > 50) || randint1(7) == 1)) ||
+				if ((p_ptr->impact && ((k > 50) || one_in_(7))) ||
 				    (chaos_effect == 2))
 				{
 					do_quake = TRUE;
@@ -2048,8 +2047,7 @@ void py_attack(int y, int x)
 
 	if (drain_left != MAX_VAMPIRIC_DRAIN)
 	{
-		if (randint1(4) == 1)
-			chg_virtue(V_VITALITY, 1);
+		if (one_in_(4)) chg_virtue(V_VITALITY, 1);
 	}
 
 	/* Mega-Hack -- apply earthquake brand */

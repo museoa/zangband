@@ -432,7 +432,7 @@ bool make_attack_normal(int m_idx)
 
 				case RBM_SHOW:
 				{
-					if (randint1(3) == 1)
+					if (one_in_(3))
 						act = "sings 'We are a happy family.'";
 					else
 						act = "sings 'I love you, you love me.'";
@@ -444,7 +444,7 @@ bool make_attack_normal(int m_idx)
 			/* Message */
 			if (act)
 			{
-				if ((p_ptr->image) && (randint1(3) == 1))
+				if ((p_ptr->image) && one_in_(3))
 				{
 					msg_format("%^s %s you.", m_name,
 					           silly_attacks[randint1(MAX_SILLY_ATTACK) - 1]);
@@ -1241,7 +1241,7 @@ bool make_attack_normal(int m_idx)
 						if (randint1(100) < 11)
 						{
 							/* 1% chance for perm. damage */
-							bool perm = (randint1(10) == 1);
+							bool perm = (one_in_(10));
 							if (dec_stat(A_CON, randint1(10), perm)) obvious = TRUE;
 						}
 

@@ -3554,9 +3554,9 @@ void call_chaos(void)
 	};
 
 	Chaos_type = hurt_types[randint0(30)];
-	if (randint1(4) == 1) line_chaos = TRUE;
+	if (one_in_(4)) line_chaos = TRUE;
 
-	if (randint1(6) == 1)
+	if (one_in_(6))
 	{
 		for (dummy = 1; dummy < 10; dummy++)
 		{
@@ -3569,7 +3569,7 @@ void call_chaos(void)
 			}
 		}
 	}
-	else if (randint1(3) == 1)
+	else if (one_in_(3))
 	{
 		fire_ball(Chaos_type, 0, 300, 8);
 	}
@@ -3715,14 +3715,14 @@ bool activate_ty_curse(bool stop_ty, int *count)
 					{
 						(void)do_dec_stat(stat);
 					}
-					while (randint1(2) == 1);
+					while (one_in_(2));
 
 					stat++;
 				}
 			}
 		}
 	}
-	while ((randint1(3) == 1) && !stop_ty);
+	while (one_in_(3) && !stop_ty);
 
 	return stop_ty;
 }

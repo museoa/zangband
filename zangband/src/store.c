@@ -286,8 +286,7 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
 		msg_print(comment_7b[randint0(MAX_COMMENT_7B)]);
 
 		chg_virtue(V_JUSTICE, -1);
-		if (randint1(4) == 1)
-			chg_virtue(V_HONOUR, -1);
+		if (one_in_(4)) chg_virtue(V_HONOUR, -1);
 
 		/* Sound */
 		sound(SOUND_STORE2);
@@ -299,9 +298,9 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
 		/* Comment */
 		msg_print(comment_7c[randint0(MAX_COMMENT_7C)]);
 
-		if (randint1(4) == 1)
+		if (one_in_(4))
 			chg_virtue(V_HONOUR, -1);
-		else if (randint1(4) == 1)
+		else if (one_in_(4))
 			chg_virtue(V_HONOUR, 1);
 
 		/* Sound */
@@ -314,9 +313,9 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
 		/* Comment */
 		msg_print(comment_7d[randint0(MAX_COMMENT_7D)]);
 
-		if (randint1(2) == 1)
+		if (one_in_(2))
 			chg_virtue(V_HONOUR, -1);
-		if (randint1(4) == 1)
+		if (one_in_(4))
 			chg_virtue(V_HONOUR, 1);
 
 		if (10 * price < value)
@@ -502,7 +501,7 @@ static void mass_produce(object_type *o_ptr)
 		case TV_WAND:
 		case TV_STAFF:
 		{
-			if (randint1(3) == 1)
+			if (one_in_(3))
 			{
 				if (cost < 1601L) size += damroll(1, 5);
 				else if (cost < 3201L) size += damroll(1, 3);
@@ -526,19 +525,19 @@ static void mass_produce(object_type *o_ptr)
 	{
 		discount = 0;
 	}
-	else if (randint0(25) == 0)
+	else if (one_in_(25))
 	{
 		discount = 25;
 	}
-	else if (randint0(150) == 0)
+	else if (one_in_(150))
 	{
 		discount = 50;
 	}
-	else if (randint0(300) == 0)
+	else if (one_in_(300))
 	{
 		discount = 75;
 	}
-	else if (randint0(500) == 0)
+	else if (one_in_(500))
 	{
 		discount = 90;
 	}
@@ -2457,7 +2456,7 @@ static void store_purchase(int *store_top)
 				if (st_ptr->stock_num == 0)
 				{
 					/* Shuffle */
-					if (randint0(STORE_SHUFFLE) == 0)
+					if (one_in_(STORE_SHUFFLE))
 					{
 						/* Message */
 						msg_print("The shopkeeper retires.");

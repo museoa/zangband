@@ -729,7 +729,7 @@ void monster_desc(char *desc, monster_type *m_ptr, int mode)
 	/* Are we hallucinating? (Idea from Nethack...) */
 	if (p_ptr->image)
 	{
-		if (randint1(2) == 1)
+		if (one_in_(2))
 		{
 			if (!get_rnd_line("silly.txt", m_ptr->r_idx, silly_name))
 				named = TRUE;
@@ -980,7 +980,7 @@ void sanity_blast(monster_type *m_ptr, bool necro)
 			msg_format("You behold the %s visage of %s!",
 				funny_desc[randint0(MAX_SAN_FUNNY)], m_name);
 
-			if (randint1(3) == 1)
+			if (one_in_(3))
 			{
 				msg_print(funny_comments[randint0(MAX_SAN_COMMENT)]);
 				p_ptr->image = p_ptr->image + randint1(r_ptr->level);

@@ -2669,9 +2669,8 @@ errr init_w_info_txt(FILE *fp, char *buf)
 			/* Initialise if tree is empty */
 			if (i == 1)
 			{
+				/* Initialise */
 				init_choice_tree(&bound, i);
-				/* if (init_choice_tree(&bound, i+1) == 0)
-					return (PARSE_ERROR_OBSOLETE_FILE);*/
 			}
 			else
 			{

@@ -1564,7 +1564,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 			/* Message */
 			if (act && see_either)
 			{
-				if ((p_ptr->image) && (randint1(3) == 1))
+				if ((p_ptr->image) && one_in_(3))
 				{
 					strfmt(temp, "%s %s.",
 					       silly_attacks[randint1(MAX_SILLY_ATTACK)-1],t_name);
@@ -1627,7 +1627,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 			case RBE_EAT_GOLD:
 				{
 					pt = damage = 0;
-					if (randint1(2) == 1) blinked = TRUE;
+					if (one_in_(2)) blinked = TRUE;
 					break;
 				}
 
@@ -2249,8 +2249,7 @@ static void process_monster(int m_idx)
 
 
 	/* Hack! "Cyber" monster makes noise... */
-	if (strstr((r_name + r_ptr->name), "Cyber") &&
-	    (randint1(CYBERNOISE) == 1) &&
+	if (strstr((r_name + r_ptr->name), "Cyber") && one_in_(CYBERNOISE) &&
 	    !m_ptr->ml && (m_ptr->cdis <= MAX_SIGHT))
 	{
 		msg_print("You hear heavy steps.");
@@ -2261,8 +2260,7 @@ static void process_monster(int m_idx)
 
 	/* Some monsters can speak */
 	if (speak_unique &&
-	    (r_ptr->flags2 & RF2_CAN_SPEAK) &&
-		(randint1(SPEAK_CHANCE) == 1) &&
+	    (r_ptr->flags2 & RF2_CAN_SPEAK) && one_in_(SPEAK_CHANCE) &&
 		player_has_los_grid(c_ptr))
 	{
 		char m_name[80];
@@ -2518,7 +2516,7 @@ static void process_monster(int m_idx)
 			/* Monster destroyed a wall */
 			did_kill_wall = TRUE;
 
-			if (randint1(GRINDNOISE) == 1)
+			if (one_in_(GRINDNOISE))
 			{
 				msg_print("There is a grinding sound.");
 			}

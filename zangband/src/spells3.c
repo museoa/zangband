@@ -1780,7 +1780,7 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 		/* Message */
 		msg_print("The enchantment failed.");
 
-		if (randint1(3) == 1) chg_virtue(V_ENCHANT, -1);
+		if (one_in_(3)) chg_virtue(V_ENCHANT, -1);
 	}
 	else
 		chg_virtue(V_ENCHANT, 1);
@@ -1871,7 +1871,7 @@ bool artifact_scroll(void)
 
 		/* Message */
 		msg_print("The enchantment failed.");
-		if (randint1(3) == 1) chg_virtue(V_ENCHANT, -1);
+		if (one_in_(3)) chg_virtue(V_ENCHANT, -1);
 	}
 	else
 		chg_virtue(V_ENCHANT, 1);
@@ -2322,7 +2322,7 @@ bool recharge(int power)
 
 
 		/* Back-fire */
-		if (randint0(recharge_strength) == 0)
+		if (one_in_(recharge_strength))
 		{
 			/* Activate the failure code. */
 			fail = TRUE;
@@ -2358,8 +2358,7 @@ bool recharge(int power)
 			(8 * o_ptr->pval)) / 15;
 
 		/* Back-fire */
-		if ((recharge_strength < 0) ||
-			 (randint0(recharge_strength) == 0))
+		if ((recharge_strength < 0) || one_in_(recharge_strength))
 		{
 			/* Activate the failure code. */
 			fail = TRUE;
@@ -2448,19 +2447,19 @@ bool recharge(int power)
 				/* 10% chance to blow up one rod, otherwise draining. */
 				if (o_ptr->tval == TV_ROD)
 				{
-					if (randint1(10) == 1) fail_type = 2;
+					if (one_in_(10)) fail_type = 2;
 					else fail_type = 1;
 				}
 				/* 75% chance to blow up one wand, otherwise draining. */
 				else if (o_ptr->tval == TV_WAND)
 				{
-					if (randint1(3) != 1) fail_type = 2;
+					if (!one_in_(3)) fail_type = 2;
 					else fail_type = 1;
 				}
 				/* 50% chance to blow up one staff, otherwise no effect. */
 				else if (o_ptr->tval == TV_STAFF)
 				{
-					if (randint1(2) == 1) fail_type = 2;
+					if (one_in_(2)) fail_type = 2;
 					else fail_type = 0;
 				}
 			}
@@ -2471,13 +2470,13 @@ bool recharge(int power)
 				/* 33% chance to blow up one rod, otherwise draining. */
 				if (o_ptr->tval == TV_ROD)
 				{
-					if (randint1(3) == 1) fail_type = 2;
+					if (one_in_(3)) fail_type = 2;
 					else fail_type = 1;
 				}
 				/* 20% chance of the entire stack, else destroy one wand. */
 				else if (o_ptr->tval == TV_WAND)
 				{
-					if (randint1(5) == 1) fail_type = 3;
+					if (one_in_(5)) fail_type = 3;
 					else fail_type = 2;
 				}
 				/* Blow up one staff. */
@@ -2665,7 +2664,7 @@ bool bless_weapon(void)
 		return TRUE;
 	}
 
-	if (!(o_ptr->xtra_name) || (randint1(3) == 1))
+	if (!(o_ptr->xtra_name) || one_in_(3))
 	{
 		/* Describe */
 		msg_format("%s %s shine%s!",
@@ -3804,8 +3803,7 @@ void acid_dam(int dam, cptr kb_str)
 	if (p_ptr->resist_acid) dam = (dam + 2) / 3;
 	if (p_ptr->oppose_acid) dam = (dam + 2) / 3;
 
-	if ((!(p_ptr->oppose_acid || p_ptr->resist_acid)) &&
-	    randint1(HURT_CHANCE) == 1)
+	if ((!(p_ptr->oppose_acid || p_ptr->resist_acid)) && one_in_(HURT_CHANCE))
 		(void)do_dec_stat(A_CHR);
 
 	/* If any armor gets hit, defend the player */
@@ -3837,8 +3835,7 @@ void elec_dam(int dam, cptr kb_str)
 	if (p_ptr->oppose_elec) dam = (dam + 2) / 3;
 	if (p_ptr->resist_elec) dam = (dam + 2) / 3;
 
-	if ((!(p_ptr->oppose_elec || p_ptr->resist_elec)) &&
-	    randint1(HURT_CHANCE) == 1)
+	if ((!(p_ptr->oppose_elec || p_ptr->resist_elec)) && one_in_(HURT_CHANCE))
 		(void)do_dec_stat(A_DEX);
 
 	/* Take damage */
@@ -3867,8 +3864,7 @@ void fire_dam(int dam, cptr kb_str)
 	if (p_ptr->resist_fire) dam = (dam + 2) / 3;
 	if (p_ptr->oppose_fire) dam = (dam + 2) / 3;
 
-	if ((!(p_ptr->oppose_fire || p_ptr->resist_fire)) &&
-	    randint1(HURT_CHANCE) == 1)
+	if ((!(p_ptr->oppose_fire || p_ptr->resist_fire)) && one_in_(HURT_CHANCE))
 		(void)do_dec_stat(A_STR);
 
 	/* Take damage */
@@ -3897,8 +3893,7 @@ void cold_dam(int dam, cptr kb_str)
 	if (p_ptr->resist_cold) dam = (dam + 2) / 3;
 	if (p_ptr->oppose_cold) dam = (dam + 2) / 3;
 
-	if ((!(p_ptr->oppose_cold || p_ptr->resist_cold)) &&
-	    randint1(HURT_CHANCE) == 1)
+	if ((!(p_ptr->oppose_cold || p_ptr->resist_cold)) && one_in_(HURT_CHANCE))
 		(void)do_dec_stat(A_STR);
 
 	/* Take damage */

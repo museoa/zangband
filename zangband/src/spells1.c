@@ -1390,7 +1390,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 				dam *= 3; dam /= randint1(6) + 6;
 				if (seen) r_ptr->r_flags3 |= (RF3_IM_POIS);
 			}
-			else if (randint1(3) == 1) do_poly = TRUE;
+			else if (one_in_(3)) do_poly = TRUE;
 			break;
 		}
 
@@ -1505,7 +1505,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			do_poly = TRUE;
 			do_conf = (5 + randint1(11) + r) / (r + 1);
 			if ((r_ptr->flags4 & RF4_BR_CHAO) ||
-			   ((r_ptr->flags3 & RF3_DEMON) && (randint1(3) == 1)))
+			   ((r_ptr->flags3 & RF3_DEMON) && one_in_(3)))
 			{
 				note = " resists.";
 				dam *= 3; dam /= randint1(6) + 6;
@@ -1778,8 +1778,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 				 */
 				if (((r_ptr->flags3 & RF3_UNDEAD) ||
 					  (r_ptr->flags3 & RF3_DEMON)) &&
-					  (r_ptr->level > p_ptr->lev) &&
-					  (randint1(2) == 1))
+					  (r_ptr->level > p_ptr->lev) && one_in_(2))
 				{
 					note = NULL;
 					msg_format("%^s%s corrupted mind backlashes your attack!",
@@ -1794,7 +1793,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 						/* Injure +/- confusion */
 						monster_desc(killer, m_ptr, 0x88);
 						take_hit(dam, killer);  /* has already been /3 */
-						if (randint1(4) == 1)
+						if (one_in_(4))
 						{
 							switch (randint1(4))
 							{
@@ -1823,7 +1822,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 				}
 			}
 
-			if ((dam > 0) && (randint1(4) == 1))
+			if ((dam > 0) && one_in_(4))
 			{
 				switch (randint1(4))
 				{
@@ -1872,8 +1871,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 				 */
 				if (((r_ptr->flags3 & RF3_UNDEAD) ||
 				     (r_ptr->flags3 & RF3_DEMON)) &&
-				     (r_ptr->level > p_ptr->lev) &&
-				     (randint1(2) == 1))
+				     (r_ptr->level > p_ptr->lev) && one_in_(2))
 				{
 					note = NULL;
 					msg_format("%^s%s corrupted mind backlashes your attack!",
@@ -1963,8 +1961,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 				 */
 				if (((r_ptr->flags3 & RF3_UNDEAD) ||
 				     (r_ptr->flags3 & RF3_DEMON)) &&
-				     (r_ptr->level > p_ptr->lev) &&
-				     (randint1(2) == 1))
+				     (r_ptr->level > p_ptr->lev) && one_in_(2))
 				{
 					note = NULL;
 					msg_format("%^s%s corrupted mind backlashes your attack!",
@@ -3487,7 +3484,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			if (p_ptr->oppose_pois) dam = (dam + 2) / 3;
 
 			if ((!(p_ptr->oppose_pois || p_ptr->resist_pois)) &&
-			     randint1(HURT_CHANCE) == 1)
+			     one_in_(HURT_CHANCE))
 			{
 				do_dec_stat(A_CON);
 			}
@@ -3512,16 +3509,16 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			{
 				set_poisoned(p_ptr->poisoned + randint0(dam) + 10);
 
-				if (randint1(5) == 1) /* 6 */
+				if (one_in_(5))
 				{
 					msg_print("You undergo a freakish metamorphosis!");
-					if (randint1(4) == 1) /* 4 */
+					if (one_in_(4))
 						do_poly_self();
 					else
 						mutate_player();
 				}
 
-				if (randint1(6) == 1)
+				if (one_in_(6))
 				{
 					inven_damage(set_acid_destroy, 2);
 				}
@@ -3644,7 +3641,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 				set_confused(p_ptr->confused + randint1(5) + 5);
 			}
 
-			if (randint1(5) == 1)
+			if (one_in_(5))
 			{
 				inven_damage(set_cold_destroy, 3);
 			}
@@ -3668,7 +3665,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			if (!p_ptr->resist_chaos)
 			{
 				(void)set_image(p_ptr->image + randint1(10));
-				if (randint1(3) == 1)
+				if (one_in_(3))
 				{
 					msg_print("Your body is twisted by chaos!");
 					(void)gain_mutation(0);
@@ -3691,7 +3688,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 					lose_exp(5000 + (p_ptr->exp / 100) * MON_DRAIN_LIFE);
 				}
 			}
-			if (!p_ptr->resist_chaos || (randint1(9) == 1))
+			if (!p_ptr->resist_chaos || one_in_(9))
 			{
 				inven_damage(set_elec_destroy, 2);
 				inven_damage(set_fire_destroy, 2);
@@ -3713,7 +3710,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 				(void)set_cut(p_ptr->cut + dam);
 			}
 
-			if (!p_ptr->resist_shard || (randint1(13) == 1))
+			if (!p_ptr->resist_shard || one_in_(13))
 			{
 				inven_damage(set_cold_destroy, 2);
 			}
@@ -3736,7 +3733,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 				(void)set_stun(p_ptr->stun + k);
 			}
 
-			if (!p_ptr->resist_sound || (randint1(13) == 1))
+			if (!p_ptr->resist_sound || one_in_(13))
 			{
 				inven_damage(set_cold_destroy, 2);
 			}
@@ -3823,7 +3820,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 				(void)set_cut(p_ptr->cut + (dam / 2));
 			}
 
-			if (!p_ptr->resist_shard || (randint1(12) == 1))
+			if (!p_ptr->resist_shard || one_in_(12))
 			{
 				inven_damage(set_cold_destroy, 3);
 			}
@@ -3963,7 +3960,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 				dam = (dam * 2) / 3;
 			}
 
-			if (!p_ptr->ffall || (randint1(13) == 1))
+			if (!p_ptr->ffall || one_in_(13))
 			{
 				inven_damage(set_cold_destroy, 2);
 			}
@@ -4040,7 +4037,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 		{
 			if (fuzzy) msg_print("Something falls from the sky on you!");
 			take_hit(dam, killer);
-			if (!p_ptr->resist_shard || (randint1(13) == 1))
+			if (!p_ptr->resist_shard || one_in_(13))
 			{
 				if (!p_ptr->immune_fire) inven_damage(set_fire_destroy, 2);
 				inven_damage(set_cold_destroy, 2);
@@ -4063,7 +4060,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 				(void)set_stun(p_ptr->stun + randint1(15));
 			}
 
-			if ((!(p_ptr->resist_cold || p_ptr->oppose_cold)) || (randint1(12) == 1))
+			if ((!(p_ptr->resist_cold || p_ptr->oppose_cold)) || one_in_(12))
 			{
 				if (!p_ptr->immune_cold) inven_damage(set_cold_destroy, 3);
 			}

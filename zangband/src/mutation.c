@@ -1377,7 +1377,7 @@ void mutation_power_aux(mutation_type *mut_ptr)
  */
 void mutation_random_aux(mutation_type *mut_ptr)
 {
-	if (!(randint1(mut_ptr->chance * 100) == 1)) return;
+	if (!one_in_(mut_ptr->chance * 100)) return;
 	
 	if (mut_ptr->which == MUT2_BERS_RAGE)
 	{
@@ -1480,7 +1480,7 @@ void mutation_random_aux(mutation_type *mut_ptr)
 
 	else if ((mut_ptr->which == MUT2_ATT_DEMON) && !p_ptr->anti_magic)
 	{
-		bool pet = (randint1(6) == 1);
+		bool pet = (one_in_(6));
 
 		if (summon_specific((pet ? -1 : 0), p_ptr->py, p_ptr->px,
 				 p_ptr->depth, SUMMON_DEMON, TRUE, FALSE, pet))
@@ -1493,7 +1493,7 @@ void mutation_random_aux(mutation_type *mut_ptr)
 	else if (mut_ptr->which == MUT2_SPEED_FLUX)
 	{
 		disturb(FALSE);
-		if (randint1(2) == 1)
+		if (one_in_(2))
 		{
 			msg_print("You feel less energetic.");
 			if (p_ptr->fast > 0)
@@ -1572,7 +1572,7 @@ void mutation_random_aux(mutation_type *mut_ptr)
 			
 	else if ((mut_ptr->which == MUT2_ATT_ANIMAL) && !p_ptr->anti_magic)
 	{
-		bool pet = (randint1(3) == 1);
+		bool pet = (one_in_(3));
 
 		if (summon_specific((pet ? -1 : 0), p_ptr->py, p_ptr->px,
 			 p_ptr->depth, SUMMON_ANIMAL, TRUE, FALSE, pet))
@@ -1647,7 +1647,7 @@ void mutation_random_aux(mutation_type *mut_ptr)
 			msg_print("You can feel yourself wasting away!");
 			msg_print(NULL);
 #if 0
-			(void)dec_stat(which_stat, randint1(6) + 6, randint1(3) == 1);
+			(void)dec_stat(which_stat, randint1(6) + 6, one_in_(3));
 #else
 			(void)dec_stat(which_stat, randint1(6) + 6, 0);
 #endif
@@ -1656,7 +1656,7 @@ void mutation_random_aux(mutation_type *mut_ptr)
 
 	else if ((mut_ptr->which == MUT2_ATT_DRAGON) && !p_ptr->anti_magic)
 	{
-		bool pet = (randint1(5) == 1);
+		bool pet = (one_in_(5));
 
 		if (summon_specific((pet ? -1 : 0), p_ptr->py, p_ptr->px,
 			 p_ptr->depth, SUMMON_DRAGON, TRUE, FALSE, pet))

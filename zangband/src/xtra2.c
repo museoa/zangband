@@ -104,7 +104,7 @@ void check_experience(void)
 				 */
 				for (i = p_ptr->max_lev; i < p_ptr->lev; i++)
 				{
-					if (randint1(5) == 1) level_mutation = TRUE;
+					if (one_in_(5)) level_mutation = TRUE;
 				}
 			}
 
@@ -508,7 +508,7 @@ bool monster_death(int m_idx)
 	/* Drop a dead corpse? */
 
 	/* Hack: Do not drop a corpse in a random quest.  (reward is set) */
-	if (((randint1(r_ptr->flags1 & RF1_UNIQUE ? 1 : 2) == 1) &&
+	if ((one_in_(r_ptr->flags1 & RF1_UNIQUE ? 1 : 2) &&
 	    ((r_ptr->flags9 & RF9_DROP_CORPSE) ||
 	    (r_ptr->flags9 & RF9_DROP_SKELETON))) && !reward)
 	{
@@ -529,11 +529,11 @@ bool monster_death(int m_idx)
 			/* Lots of damage in one blow */
 			if ((0 - ((m_ptr->maxhp) / 4)) > m_ptr->hp)
 			{
-				if (randint1(3) == 1) corpse = TRUE;
+				if (one_in_(3)) corpse = TRUE;
 			}
 			else
 			{
-				if (randint1(3) != 1) corpse = TRUE;
+				if (!one_in_(3)) corpse = TRUE;
 			}
 		}
 
@@ -607,7 +607,7 @@ bool monster_death(int m_idx)
 		q_ptr->flags3 |= (TR3_CURSED | TR3_HEAVY_CURSE);
 		q_ptr->ident |= IDENT_CURSED;
 
-		if (randint1(2) == 1)
+		if (one_in_(2))
 			q_ptr->flags3 |= (TR3_DRAIN_EXP);
 		else
 			q_ptr->flags3 |= (TR3_AGGRAVATE);
@@ -740,7 +740,7 @@ bool monster_death(int m_idx)
 
 			if (strstr((r_name + r_ptr->name), "Oberon,"))
 			{
-				if (randint1(3) == 1)
+				if (one_in_(3))
 				{
 					a_idx = ART_THRAIN;
 					chance = 33;
@@ -970,7 +970,7 @@ int mon_damage_mod(monster_type *m_ptr, int dam, int type)
 	/* Hack - ignore type for now */
 	(void) type;
 	
-	if (m_ptr->invulner && !(randint1(PENETRATE_INVULNERABILITY) == 1))
+	if (m_ptr->invulner && !one_in_(PENETRATE_INVULNERABILITY))
 		return (0);
 	else
 		return (dam);
@@ -1064,7 +1064,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 					msg_format("%^s says: %s", m_name, line_got);
 			}
 
-			if ((r_ptr->flags1 & RF1_UNIQUE) && (randint1(REWARD_CHANCE) == 1) &&
+			if ((r_ptr->flags1 & RF1_UNIQUE) && one_in_(REWARD_CHANCE) &&
 			    !(r_ptr->flags7 & RF7_FRIENDLY))
 			{
 				if (!get_rnd_line("crime.txt", m_ptr->r_idx, line_got))
@@ -1106,7 +1106,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 			chg_virtue(V_VITALITY, -2);
 		}
 
-		if ((r_ptr->flags1 & RF1_UNIQUE) & (randint1(3) == 1))
+		if ((r_ptr->flags1 & RF1_UNIQUE) && one_in_(3))
 			chg_virtue(V_INDIVIDUALISM, -1);
 
 		if ((strstr((r_name + r_ptr->name),"beggar")) ||
@@ -1180,7 +1180,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 
 		if ((r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags3 & RF3_EVIL))
 		{
-			if (randint1(3) == 1) chg_virtue(V_NATURE, -1);
+			if (one_in_(3)) chg_virtue(V_NATURE, -1);
 		}
 
 		/* Make a sound */
@@ -1270,7 +1270,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		}
 		
 		/* Don't kill Amberites */
-		if ((r_ptr->flags3 & RF3_AMBERITE) && (randint1(2) == 1))
+		if ((r_ptr->flags3 & RF3_AMBERITE) && one_in_(2))
 		{
 			int curses = 1 + randint1(3);
 			bool stop_ty = FALSE;
@@ -3315,7 +3315,7 @@ void gain_level_reward(int chosen_reward)
 	else if (!(p_ptr->lev % 13)) nasty_chance = 3;
 	else if (!(p_ptr->lev % 14)) nasty_chance = 12;
 
-	if (randint1(nasty_chance) == 1)
+	if (one_in_(nasty_chance))
 		type = randint1(20); /* Allow the 'nasty' effects */
 	else
 		type = randint1(15) + 5; /* Or disallow them */
@@ -3330,7 +3330,7 @@ void gain_level_reward(int chosen_reward)
 
 	effect = chaos_rewards[p_ptr->chaos_patron][type];
 
-	if ((randint1(6) == 1) && !chosen_reward)
+	if (one_in_(6) && !chosen_reward)
 	{
 		msg_format("%^s rewards you with a mutation!",
 			chaos_patrons[p_ptr->chaos_patron]);
@@ -3531,7 +3531,7 @@ void gain_level_reward(int chosen_reward)
 			msg_format("The voice of %s rings out:",
 				chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Stay, mortal, and let me mold thee.'");
-			if ((randint1(3) == 1) && !(chaos_stats[p_ptr->chaos_patron] < 0))
+			if (one_in_(3) && !(chaos_stats[p_ptr->chaos_patron] < 0))
 				do_inc_stat(chaos_stats[p_ptr->chaos_patron]);
 			else
 				do_inc_stat(randint0(A_MAX));
@@ -3540,7 +3540,7 @@ void gain_level_reward(int chosen_reward)
 			msg_format("The voice of %s booms out:",
 				chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'I grow tired of thee, mortal.'");
-			if ((randint1(3) == 1) && !(chaos_stats[p_ptr->chaos_patron] < 0))
+			if (one_in_(3) && !(chaos_stats[p_ptr->chaos_patron] < 0))
 				do_dec_stat(chaos_stats[p_ptr->chaos_patron]);
 			else
 				(void)do_dec_stat(randint0(A_MAX));
@@ -3620,7 +3620,7 @@ void gain_level_reward(int chosen_reward)
 					activate_hi_summon();
 					break;
 				case 3:
-					if (randint1(2) == 1) (void)curse_weapon();
+					if (one_in_(2)) (void)curse_weapon();
 					else (void)curse_armor();
 					break;
 				default:
@@ -3646,8 +3646,8 @@ void gain_level_reward(int chosen_reward)
 			activate_hi_summon();
 			(void)activate_ty_curse(FALSE, &count);
 
-			if (randint1(2) == 1) (void)curse_weapon();
-			if (randint1(2) == 1) (void)curse_armor();
+			if (one_in_(2)) (void)curse_weapon();
+			if (one_in_(2)) (void)curse_armor();
 
 			break;
 		}

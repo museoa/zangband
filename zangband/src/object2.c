@@ -649,7 +649,7 @@ errr get_obj_num_prep(void)
  * a relatively efficient manner.
  *
  * It is more likely to acquire an object of the given level
- * than one of a lower level.  This is done by choosing four objects
+ * than one of a lower level.  This is done by choosing three objects
  * appropriate to the given level and keeping the "hardest" one.
  *
  * Note that if no objects are "appropriate", then this function will
@@ -665,7 +665,7 @@ s16b get_obj_num(int level, int min_level)
 	if (level > 0)
 	{
 		/* Occasional "boost" */
-		if (randint0(GREAT_OBJ) == 0)
+		if (one_in_(GREAT_OBJ))
 		{
 			/* What a bizarre calculation */
 			level = 1 + (level * MAX_DEPTH / randint1(MAX_DEPTH));
@@ -799,7 +799,6 @@ static s32b object_value_base(object_type *o_ptr)
 	/* Analyze the type */
 	switch (o_ptr->tval)
 	{
-
 		/* Un-aware Food */
 		case TV_FOOD: return (5L);
 
@@ -1868,12 +1867,12 @@ static s16b w_bonus(int max, int lev_dif)
 	if (max < 6) return (0);
 
 	/* Level difference is too small? */
-	if (abs(lev_dif) < 6) return (0);
+	if (abs(lev_dif) < 10) return (0);
 
 	if (lev_dif < 0)
 	{
 		/* Negative bonus */
-		return (-randint1(5) - m_bonus(max - 5, lev_dif * 3));
+		return (-m_bonus(max - 5, lev_dif));
 
 	}
 	else
@@ -1979,7 +1978,7 @@ static byte get_ego_num(int level)
 
 
 	/* Boost the level from time to time */
-	if (randint0(EGO_INFLATE) == 0)
+	if (one_in_(EGO_INFLATE))
 	{
 		/* What a bizzare calculation */
 		level = 1 + (level * MAX_DEPTH / randint1(MAX_DEPTH));
@@ -2126,6 +2125,7 @@ bool make_artifact(object_type *o_ptr)
 		/* Cannot make an artifact twice */
 		if (a_ptr->cur_num) continue;
 
+		/* No quest items */
 		if (a_ptr->flags3 & TR3_QUESTITEM) continue;
 
 		/* XXX XXX Enforce minimum "depth" (loosely) */
@@ -2289,7 +2289,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 			if (flags & OC_FORCE_GOOD)
 			{
 				/* Roll for a random artifact */
-				if (randint0(40) == 0)
+				if (one_in_(40))
 				{
 					create_artifact(o_ptr, FALSE);
 
@@ -2310,7 +2310,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 					{
 						add_ego_power(EGO_XTRA_SUSTAIN, o_ptr);
 
-						if (randint1(4) == 1)
+						if (one_in_(4))
 						{
 							o_ptr->flags1 |= TR1_BLOWS;
 
@@ -2326,7 +2326,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 
 					case EGO_DF:
 					{
-						if (randint1(3) == 1)
+						if (one_in_(3))
 						{
 							o_ptr->flags2 |= TR2_RES_POIS;
 						}
@@ -2345,7 +2345,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 
 					case EGO_KILL_DRAGON:
 					{
-						if (randint1(3) == 1)
+						if (one_in_(3))
 						{
 							o_ptr->flags2 |= TR2_RES_POIS;
 						}
@@ -2358,7 +2358,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 
 					case EGO_WEST:
 					{
-						if (randint1(3) == 1)
+						if (one_in_(3))
 						{
 							o_ptr->flags2 |= TR2_RES_FEAR;
 						}
@@ -2398,15 +2398,15 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 						{
 							o_ptr->dd++;
 						}
-						while (randint1(o_ptr->dd) == 1);
+						while (one_in_(o_ptr->dd));
 
 						do
 						{
 							o_ptr->ds++;
 						}
-						while (randint1(o_ptr->ds) == 1);
+						while (one_in_(o_ptr->ds));
 
-						if (randint1(5) == 1)
+						if (one_in_(5))
 						{
 							o_ptr->flags1 |= TR1_BRAND_POIS;
 						}
@@ -2415,7 +2415,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 					}
 					case EGO_TRUMP:
 					{
-						if (randint1(5) == 1)
+						if (one_in_(5))
 						{
 							o_ptr->flags1 |= TR1_SLAY_DEMON;
 						}
@@ -2423,7 +2423,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 						/* Add activation */
 						o_ptr->activate = ACT_TELEPORT_1;
 
-						if (randint1(7) == 1)
+						if (one_in_(7))
 						{
 							add_ego_power(EGO_XTRA_ABILITY, o_ptr);
 						}
@@ -2433,17 +2433,17 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 					}
 					case EGO_PATTERN:
 					{
-						if (randint1(3) == 1)
+						if (one_in_(3))
 						{
 							o_ptr->flags2 |= TR2_HOLD_LIFE;
 						}
 
-						if (randint1(3) == 1)
+						if (one_in_(3))
 						{
 							o_ptr->flags1 |= TR1_DEX;
 						}
 
-						if (randint1(5) == 1)
+						if (one_in_(5))
 						{
 							o_ptr->flags2 |= TR2_RES_FEAR;
 						}
@@ -2478,7 +2478,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 						{
 							o_ptr->pval = m_bonus(3, level) + 3;
 
-							if (randint1(3) == 1)
+							if (one_in_(3))
 							{
 								o_ptr->flags1 |= TR1_BLOWS;
 
@@ -2494,7 +2494,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 				/* Hack -- Super-charge the damage dice */
 				if (ego)
 				{
-					while (randint0(10L * o_ptr->dd * o_ptr->ds) == 0)
+					while (one_in_(10L * o_ptr->dd * o_ptr->ds))
 					{
 						o_ptr->dd++;
 					}
@@ -2533,7 +2533,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 			if (flags & OC_FORCE_GOOD)
 			{
 				/* Roll for a random artifact */
-				if (randint0(21) == 0)
+				if (one_in_(21))
 				{
 					create_artifact(o_ptr, FALSE);
 
@@ -2577,7 +2577,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 				}
 
 				/* Hack -- super-charge the damage dice */
-				while (randint0(10L * o_ptr->dd * o_ptr->ds) == 0)
+				while (one_in_(10L * o_ptr->dd * o_ptr->ds))
 				{
 					o_ptr->ds++;
 				}
@@ -2623,12 +2623,12 @@ static void dragon_resist(object_type * o_ptr)
 {
 	do
 	{
-		if (randint1(4) == 1)
+		if (one_in_(4))
 			(void) random_resistance(o_ptr, (randint1(14) + 4), 0);
 		else
 			(void) random_resistance(o_ptr, (randint1(22) + 16), 0);
 	}
-	while (randint1(2) == 1);
+	while (one_in_(2));
 }
 
 
@@ -2696,7 +2696,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 			if (flags & OC_FORCE_GOOD)
 			{
 				/* Roll for a random artifact */
-				if (randint0(21) == 0)
+				if (one_in_(21))
 				{
 					create_artifact(o_ptr, FALSE);
 
@@ -2728,7 +2728,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 					}
 					case EGO_RESISTANCE:
 					{
-						if (randint1(4) == 1)
+						if (one_in_(4))
 						{
 							o_ptr->flags2 |= TR2_RES_POIS;
 						}
@@ -2769,7 +2769,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				if (flags & OC_FORCE_GOOD)
 				{
 					/* Roll for random artifact */
-					if (randint0(21) == 0)
+					if (one_in_(21))
 					{
 						create_artifact(o_ptr, FALSE);
 
@@ -2787,7 +2787,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 					{
 						(void) random_resistance(o_ptr, (randint1(34) + 4), 0);
 
-						if (randint1(4) == 1)
+						if (one_in_(4))
 						{
 							o_ptr->flags2 |= TR2_RES_POIS;
 						}
@@ -2803,7 +2803,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 			if (flags & OC_FORCE_GOOD)
 			{
 				/* Roll for a random artifact */
-				if (randint0(20) == 0)
+				if (one_in_(20))
 				{
 					create_artifact(o_ptr, FALSE);
 
@@ -2842,7 +2842,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 			if (flags & OC_FORCE_GOOD)
 			{
 				/* Roll for a random artifact */
-				if (randint0(20) == 0)
+				if (one_in_(20))
 				{
 					create_artifact(o_ptr, FALSE);
 
@@ -2858,7 +2858,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				/* Extra powers */
 				if (ego == EGO_SLOW_DESCENT)
 				{
-					if (randint1(2) == 1)
+					if (one_in_(2))
 					{
 						(void)random_resistance(o_ptr, (randint1(22) + 16), 0);
 					}
@@ -2884,7 +2884,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 			if (flags & OC_FORCE_GOOD)
 			{
 				/* Roll for a random artifact */
-				if (randint0(20) == 0)
+				if (one_in_(20))
 				{
 					create_artifact(o_ptr, FALSE);
 
@@ -2921,7 +2921,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 					}
 					case EGO_SEEING:
 					{
-						if (randint1(3) == 1)
+						if (one_in_(3))
 						{
 							o_ptr->flags3 |= TR3_TELEPATHY;
 						}
@@ -2961,7 +2961,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 				if (flags & OC_FORCE_GOOD)
 				{
 					/* Roll for a random artifacts */
-					if (randint0(20) == 0)
+					if (one_in_(20))
 					{
 						create_artifact(o_ptr, FALSE);
 
@@ -2977,7 +2977,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 					/* Extra powers */
 					if (ego == EGO_SEEING)
 					{
-						if (randint1(7) == 1)
+						if (one_in_(7))
 						{
 							o_ptr->flags3 |= TR3_TELEPATHY;
 						}
@@ -3009,7 +3009,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 			if (flags & OC_FORCE_GOOD)
 			{
 				/* Roll for a random artifact */
-				if (randint0(20) == 0)
+				if (one_in_(20))
 				{
 					create_artifact(o_ptr, FALSE);
 
@@ -3088,7 +3088,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 				case SV_RING_ATTACKS:
 				{
 					/* Rarely have a ring +2 */
-					if (randint1(100) == 1)
+					if (one_in_(100))
 					{
 						o_ptr->pval = 2;
 					}
@@ -3173,7 +3173,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 
 				case SV_RING_LORDLY:
 				{
-					if (randint1(7) == 1)
+					if (one_in_(7))
 					{
 						/* Randart ring */
 						create_artifact(o_ptr, FALSE);
@@ -3184,7 +3184,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 						{
 							(void) random_resistance(o_ptr, randint1(20) + 18, 0);
 						}
-						while (randint1(4) == 1);
+						while (one_in_(4));
 
 						/* Bonus to armor class */
 						o_ptr->to_a = 10 + randint1(5) + m_bonus(10, level);
@@ -3390,12 +3390,12 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 
 				case SV_AMULET_RESISTANCE:
 				{
-					if (randint1(3) == 1)
+					if (one_in_(3))
 					{
 						(void)random_resistance(o_ptr, (randint1(34) + 4), 0);
 					}
 
-					if (randint1(5) == 1)
+					if (one_in_(5))
 					{
 						o_ptr->flags2 |= TR2_RES_POIS;
 					}
@@ -3426,7 +3426,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 				/* Amulet of the Magi -- never cursed */
 				case SV_AMULET_THE_MAGI:
 				{
-					if (randint1(7) == 1)
+					if (one_in_(7))
 					{
 						/* Randart amulet */
 						create_artifact(o_ptr, FALSE);
@@ -3442,7 +3442,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 						o_ptr->pval = randint1(5) + m_bonus(5, level);
 						o_ptr->to_a = randint1(5) + m_bonus(5, level);
 
-						if (randint1(3) == 1) o_ptr->flags3 |= TR3_SLOW_DIGEST;
+						if (one_in_(3)) o_ptr->flags3 |= TR3_SLOW_DIGEST;
 
 						/* Boost the rating */
 						rating += 25;
@@ -4155,7 +4155,7 @@ bool make_gold(object_type *j_ptr, int coin_type)
 		i = ((randint1(object_level + 2) + 2) / 2) - 1;
 
 		/* Apply "extra" magic */
-		if (randint0(GREAT_OBJ) == 0)
+		if (one_in_(GREAT_OBJ))
 		{
 			i += randint1(object_level + 1);
 		}

@@ -335,7 +335,7 @@ static void cmd_racial_power_aux(mutation_type *mut_ptr)
 
 			case RACE_DRACONIAN:
 			{
-				int  Type = ((randint1(3) == 1) ? GF_COLD : GF_FIRE);
+				int  Type = (one_in_(3) ? GF_COLD : GF_FIRE);
 				cptr Type_desc = ((Type == GF_COLD) ? "cold" : "fire");
 
 				if (randint1(100) < plev)
@@ -344,7 +344,7 @@ static void cmd_racial_power_aux(mutation_type *mut_ptr)
 					{
 						case CLASS_WARRIOR:
 						case CLASS_RANGER:
-							if (randint1(3) == 1)
+							if (one_in_(3))
 							{
 								Type = GF_MISSILE;
 								Type_desc = "the elements";
@@ -358,7 +358,7 @@ static void cmd_racial_power_aux(mutation_type *mut_ptr)
 						case CLASS_MAGE:
 						case CLASS_WARRIOR_MAGE:
 						case CLASS_HIGH_MAGE:
-							if (randint1(3) == 1)
+							if (one_in_(3))
 							{
 								Type = GF_MANA;
 								Type_desc = "mana";
@@ -407,7 +407,7 @@ static void cmd_racial_power_aux(mutation_type *mut_ptr)
 							break;
 						case CLASS_PRIEST:
 						case CLASS_PALADIN:
-							if (randint1(3) == 1)
+							if (one_in_(3))
 							{
 								Type = GF_HELL_FIRE;
 								Type_desc = "hellfire";
@@ -419,7 +419,7 @@ static void cmd_racial_power_aux(mutation_type *mut_ptr)
 							}
 							break;
 						case CLASS_ROGUE:
-							if (randint1(3) == 1)
+							if (one_in_(3))
 							{
 								Type = GF_DARK;
 								Type_desc = "darkness";
