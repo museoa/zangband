@@ -37,6 +37,8 @@ bool teleport_away(int m_idx, int dis)
 	monster_type *m_ptr = &m_list[m_idx];
 	cave_type *c_ptr = NULL;
 	
+	field_mon_test	mon_enter_test;
+	
 	/* Paranoia */
 	if (!m_ptr->r_idx) return (FALSE);
 
@@ -94,6 +96,22 @@ bool teleport_away(int m_idx, int dis)
 			/* ...nor onto the Pattern */
 			if ((c_ptr->feat >= FEAT_PATTERN_START) &&
 			    (c_ptr->feat <= FEAT_PATTERN_XTRA2)) continue;
+				
+			/* 
+			 * Test for fields that will not allow monsters to
+			 * be generated on them.  (i.e. Glyph of warding)
+			 */
+		 
+			/* Initialise information to pass to action functions */
+			mon_enter_test.m_ptr = NULL;
+			mon_enter_test.do_move = TRUE;
+		
+			/* Call the hook */
+			field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
+				 (void *) &mon_enter_test);
+			 
+			/* Get result */
+			if (!mon_enter_test.do_move) continue;
 
 			/* No teleporting into vaults and such */
 			if (!(p_ptr->inside_quest || p_ptr->inside_arena))
@@ -162,6 +180,7 @@ void teleport_to_player(int m_idx)
 	bool look = TRUE;
 	monster_type *m_ptr = &m_list[m_idx];
 	cave_type *c_ptr = NULL;
+	field_mon_test	mon_enter_test;
 
 	/* Paranoia */
 	if (!m_ptr->r_idx) return;
@@ -208,6 +227,22 @@ void teleport_to_player(int m_idx)
 			{
 				continue;
 			}
+			
+			/* 
+			 * Test for fields that will not allow monsters to
+			 * be generated on them.  (i.e. Glyph of warding)
+			 */
+		 
+			/* Initialise information to pass to action functions */
+			mon_enter_test.m_ptr = NULL;
+			mon_enter_test.do_move = TRUE;
+		
+			/* Call the hook */
+			field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
+				 (void *) &mon_enter_test);
+			 
+			/* Get result */
+			if (!mon_enter_test.do_move) continue;
 
 			/* Require "empty" floor space */
 			if (!cave_empty_grid(c_ptr)) continue;

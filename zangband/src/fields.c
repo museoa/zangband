@@ -1002,6 +1002,7 @@ void test_field_data_integtrity(void)
  * FIELD_ACT_MONSTER_AI		Not implemented yet.
  * FIELD_ACT_OPEN			Not implemented yet.
  * FIELD_ACT_CLOSE			Not implemented yet.
+ * FIELD_ACT_MON_ENTER_TEST field_mon_test*
  */	
 
 

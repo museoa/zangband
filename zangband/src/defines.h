@@ -3684,7 +3684,7 @@ extern int PlayerUID;
 #define FIELD_INFO_NO_LOOK	0x0020	/* Do not describe when looked at */
 #define FIELD_INFO_NFT_LOOK	0x0040  /* Do not describe feat when looked at */
 #define FIELD_INFO_MERGE	0x0080  /* Merge counter with similar fields */ 
-#define FIELD_INFO_NO_ENTER	0x0100  /* Grid blocks entry by entities */
+#define FIELD_INFO_NO_ENTER	0x0100  /* Grid blocks player entry */
 #define FIELD_INFO_NO_MAGIC	0x0200  /* Grid blocks magic */
 #define FIELD_INFO_NO_OBJCT	0x0400  /* Grid cannot hold objects */
 #define FIELD_INFO_PERM		0x0800	/* Grid is not affected by disintegrate */
@@ -3721,7 +3721,7 @@ extern int PlayerUID;
 #define FIELD_ACT_MONSTER_AI	14	/* Monster AI hook */
 #define FIELD_ACT_OPEN			15	/* Attempt to "open" grid */
 #define FIELD_ACT_CLOSE			16 	/* Attempt to "close" grid */
-#define FIELD_ACT_XXXX17		17
+#define FIELD_ACT_MON_ENTER_TEST 17 /* Monster attempts to enter grid */
 
 #define FIELD_ACTION_MAX		18	/* The last action + 1 */
 

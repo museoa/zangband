@@ -1928,6 +1928,7 @@ static void process_monster(int m_idx)
 	bool            did_pass_wall;
 	bool            did_kill_wall;
 	bool            gets_angry = FALSE;
+	field_mon_test	mon_enter_test;
 
 	/* Quantum monsters are odd */
 	if (r_ptr->flags2 & (RF2_QUANTUM))
@@ -2695,6 +2696,22 @@ static void process_monster(int m_idx)
 		{
 			do_move = FALSE;
 		}
+		
+		/* 
+		 * Test for fields that will not allow this
+		 * specific monster to pass.  (i.e. Glyph of warding)
+		 */
+		 
+		/* Initialise information to pass to action functions */
+		mon_enter_test.m_ptr = m_ptr;
+		mon_enter_test.do_move = do_move;
+		
+		/* Call the hook */
+		field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
+			 (void *) &mon_enter_test);
+			 
+		/* Get result */
+		do_move = mon_enter_test.do_move;
 
 		/* The player is in the way.  Attack him. */
 		if (do_move && (ny == py) && (nx == px))

@@ -1498,6 +1498,7 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 	monster_race	*r_ptr = &r_info[r_idx];
 
 	cptr		name = (r_name + r_ptr->name);
+	field_mon_test	mon_enter_test;
 
 
 	/* Verify location */
@@ -1556,6 +1557,22 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 		/* Cannot create */
 		return(FALSE);
 	}
+	
+	/* 
+	 * Test for fields that will not allow monsters to
+	 * be generated on them.  (i.e. Glyph of warding)
+	 */
+		 
+	/* Initialise information to pass to action functions */
+	mon_enter_test.m_ptr = NULL;
+	mon_enter_test.do_move = TRUE;
+		
+	/* Call the hook */
+	field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
+		 (void *) &mon_enter_test);
+			 
+	/* Get result */
+	if (!mon_enter_test.do_move) return (FALSE);
 
 
 	/* Powerful monster */

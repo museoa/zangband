@@ -342,6 +342,7 @@ static bool summon_possible(int y1, int x1)
 	int dy, dx;
 
 	cave_type *c_ptr;
+	field_mon_test	mon_enter_test;
 
 	/* Start at the player's location, and check 2 grids in each dir */
 	for (dy = -2; dy <= 2; dy++)
@@ -375,6 +376,22 @@ static bool summon_possible(int y1, int x1)
 				/* Cannot create */
 				return(FALSE);
 			}
+			
+			/* 
+			 * Test for fields that will not allow monsters to
+			 * be generated on them.  (i.e. Glyph of warding)
+			 */
+		 
+			/* Initialise information to pass to action functions */
+			mon_enter_test.m_ptr = NULL;
+			mon_enter_test.do_move = TRUE;
+		
+			/* Call the hook */
+			field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
+				 (void *) &mon_enter_test);
+			 
+			/* Get result */
+			if (!mon_enter_test.do_move) return (FALSE);
 
 			/* Require empty floor grid in line of sight of player */
 			if (cave_empty_grid(c_ptr) && (c_ptr->info & CAVE_VIEW)) return (TRUE);

@@ -948,6 +948,18 @@ struct field_magic_target
 	bool notice; /* Does the player notice? */
 };
 
+/* 
+ * Structure required to pass infomation to the
+ * FIELD_ACT_MON_ENTER_TEST action functions.
+ */
+typedef struct field_mon_test field_mon_test;
+
+struct field_mon_test
+{
+	monster_type *m_ptr; /* The monster */
+	bool do_move; /* Does the monster enter this grid? */
+};
+
 /*
  * An entry for the object/monster allocation functions
  *
