@@ -6857,10 +6857,7 @@ const field_action f_action[] =
 	
 	/* Corpse decay function */
 	{field_action_corpse_decay, "field_action_corpse_decay"},
-	
-	/* Initialise corpse on load of savefile */
-	{field_action_corpse_load, "field_action_corpse_load"},
-	
+		
 	/* Corpse init function */
 	{field_action_corpse_init, "field_action_corpse_init"},
 	

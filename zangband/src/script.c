@@ -567,32 +567,31 @@ bool use_object(object_type *o_ptr, bool *id_return, int dir)
 	return result;
 }
 
-#if 0
+static bool field_delete = FALSE;
+
+/*
+ * Delete current field when finish processing.
+ *
+ * This is a horrible name...
+ */
+void deleteme(void)
+{
+	field_delete = TRUE;
+}
+
 /*
  * Apply an field trigger, a small lua script which does
  * what the old field action functions did.
  */
-void apply_field_trigger(int trigger_id, field_type *f_ptr, cptr format, ...)
+bool apply_field_trigger(cptr script, field_type *f_ptr, cptr format, va_list vp)
 {
-	va_list vp;
-	
 	field_thaum *t_ptr = &t_info[f_ptr->t_idx];
 
-	cptr script = NULL;
-	
 	void *q_ptr = NULL;
 	
 	bool success;
-	
-	if (t_ptr->action[trigger_id])
-	{
-		script = quark_str(t_ptr->action[trigger_id]);
-	}
-	else
-	{
-		return;
-	}
-	
+	bool delete_save, delete;
+		
 	/* Save parameter so recursion works. */
 	lua_getglobal (L, "field");
 	if (tolua_istype(L, -1, tolua_tag(L, "field_type"), 0))
@@ -600,31 +599,32 @@ void apply_field_trigger(int trigger_id, field_type *f_ptr, cptr format, ...)
 		q_ptr = tolua_getuserdata(L, -1, NULL);
 	}
 	lua_pop(L,1);
+	delete_save = field_delete;
+	
+	/* Default to no deletion */
+	field_delete = FALSE;
 
 	/* Set parameters (really global) */
 	tolua_pushusertype(L, (void*)f_ptr, tolua_tag(L, "field_type"));
 	lua_setglobal(L, "field");
 	
-	/* Begin the Varargs Stuff */
-	va_start(vp, format);
-	
 	success = call_lua_hook(script, format, vp);
-
-	/* End the Varargs Stuff */
-	va_end(vp);
 	
 	/* Restore global so recursion works*/
 	tolua_pushusertype(L, q_ptr, tolua_tag(L,"field_type"));
 	lua_setglobal(L, "field");
+	delete = field_delete;
+	field_delete = delete_save;
 	
 	/* Paranoia */
 	if (!success)
 	{
 		msgf("Script for field: %s failed.", t_ptr->name);
 	}
+	
+	/* Does the field want to be deleted? */
+	return (delete);
 }
-#endif
-
 
 static void line_hook(lua_State *L, lua_Debug *ar)
 {
@@ -896,6 +896,14 @@ bool script_do_file(cptr filename)
 bool player_res(u32b flag)
 {
 	return ((p_ptr->flags[1] & flag) ? TRUE : FALSE);
+}
+
+/*
+ * Get the monster race in r_info[]
+ */
+monster_race *monst_race(int r_idx)
+{
+	return (&r_info[r_idx]);
 }
 
 /*

@@ -32,3 +32,6 @@ struct field_type
 
 	s16b counter;	/* Counter for timed effects */
 };
+
+extern void deleteme(void);
+extern void set_corpse_size(field_type *f_ptr, int size);

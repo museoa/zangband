@@ -12,6 +12,7 @@
 
 #include "angband.h"
 #include "grid.h"
+#include "script.h"
 
 /*
  * Excise a field from a stack
@@ -766,7 +767,7 @@ void init_fields(void)
 		f_ptr->f_char = t_ptr->f_char;
 
 		/* Call loading routine */
-		(void)field_hook_single(f_ptr, FIELD_ACT_LOAD);
+		(void) field_script_single(f_ptr, FIELD_ACT_LOAD, "");
 	}
 }
 
@@ -1019,6 +1020,75 @@ bool field_hook_single(field_type *f_ptr, int action, ...)
 		return FALSE;
 	}
 }
+
+
+/*
+ * Call the action function for the field pointed to by *field_ptr.
+ *
+ * This function does not do a list of fields like the one below.
+ *
+ * It returns FALSE if the field deleted itself, TRUE otherwise.
+ */
+bool field_script_single(field_type *f_ptr, int action, cptr format, ...)
+{
+	va_list vp;
+	cptr script;
+
+	/* Point to the field */
+	field_thaum *t_ptr = &t_info[f_ptr->t_idx];
+    
+    /* Begin the Varargs Stuff */
+	va_start(vp, format);
+
+	/* Paranoia - Is there a function to call? */
+	if (t_ptr->action[action])
+	{
+		/* Get script to use */
+		script = quark_str(t_ptr->action[action]);
+	
+		/* Call the action script */
+		if (apply_field_trigger(script, f_ptr, format, vp))
+		{
+			/* The field wants to be deleted */
+			delete_field_ptr(f_ptr);
+            
+            /* End the Varargs Stuff */
+			va_end(vp);
+
+			/* The field no longer exists */
+			return (FALSE);
+		}
+		else
+		{
+        	/* End the Varargs Stuff */
+			va_end(vp);
+        
+			/* The field exists */
+			return (TRUE);
+		}
+	}
+    
+    /* End the Varargs Stuff */
+	va_end(vp);
+
+	/*
+	 * XXX XXX Is this logic correct?
+	 * What should we do if the field doesn't have the function?
+	 */
+
+	/* Check for deletion */
+	if (f_ptr->t_idx)
+	{
+		/* The field is still there */
+		return TRUE;
+	}
+	else
+	{
+		/* The field has deleted itself */
+		return FALSE;
+	}
+}
+
 
 
 /*
@@ -1608,29 +1678,18 @@ static char corpse_type(char feat)
 	}
 }
 
-
-/*
- * Initialise a corpse / skeleton after being loaded from a savefile.
- */
-bool field_action_corpse_load(field_type *f_ptr, va_list vp)
+void set_corpse_size(field_type *f_ptr, int size)
 {
-	/* Monster race */
-	u16b r_idx = ((u16b)f_ptr->data[1]) * 256 + f_ptr->data[2];
-
-	monster_race *r_ptr = &r_info[r_idx];
-
-	/* Hack - ignore 'vp' */
-	(void)vp;
-
 	/* Initialise the graphic */
 	if (use_graphics == GRAPHICS_ADAM_BOLT)
 	{
-		/* Hack - get new tile via offset table */
-		f_ptr->f_char += corpse_type(r_ptr->d_char);
+		/* Paranoia */
+		if ((size > 0) && (size < 7))
+		{
+			/* Hack - get new tile via offset table */
+			f_ptr->f_char += size;
+		}
 	}
-
-	/* Done */
-	return (FALSE);
 }
 
 
@@ -1652,11 +1711,7 @@ bool field_action_corpse_init(field_type *f_ptr, va_list vp)
 	f_ptr->data[2] = m_ptr->r_idx % 256;
 
 	/* Initialise the graphic */
-	if (use_graphics == GRAPHICS_ADAM_BOLT)
-	{
-		/* Hack - get new tile via offset table */
-		f_ptr->f_char += corpse_type(r_ptr->d_char);
-	}
+	set_corpse_size(f_ptr, corpse_type(r_ptr->d_char));
 
 	/* Notice the changes */
 	notice_field(f_ptr);

@@ -1109,18 +1109,19 @@ extern bool field_detect_type(const cave_type *c_ptr, byte typ);
 extern void field_destroy_type(cave_type *c_ptr, byte typ);
 extern field_type *place_field(int x, int y, s16b t_idx);
 extern bool field_hook_single(field_type *f_ptr, int action, ...);
+extern bool field_script_single(field_type *f_ptr, int action, cptr format, ...);
 extern void field_hook(cave_type *c_ptr, int action, ...);
 extern bool field_hook_special(cave_type *c_ptr, u16b t_idx, ...);
 extern field_type *field_hook_find(cave_type *c_ptr, int action, ...);
 extern void process_fields(void);
 extern void test_field_data_integrity(void);
+extern void set_corpse_size(field_type *f_ptr, int size);
 DECL_FIELD_ACTION(nothing);
 DECL_FIELD_ACTION(delete);
 DECL_FIELD_ACTION(glyph_warding);
 DECL_FIELD_ACTION(glyph_explode);
 DECL_FIELD_ACTION(corpse_decay);
 DECL_FIELD_ACTION(corpse_raise);
-DECL_FIELD_ACTION(corpse_load);
 DECL_FIELD_ACTION(corpse_init);
 DECL_FIELD_ACTION(corpse_look);
 DECL_FIELD_ACTION(wall_tunnel);
@@ -1282,7 +1283,9 @@ extern int get_keymap_dir(char ch);
 extern void do_cmd_borg(void);
 
 /* script.c */
+extern void deleteme(void);
 extern bool player_res(u32b flag);
+extern monster_race *monst_race(int r_idx);
 
 /*
  * Hack -- conditional (or "bizarre") externs

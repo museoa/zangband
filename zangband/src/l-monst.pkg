@@ -284,9 +284,29 @@ typedef int errr;
 #define SUMMON_BLUE_HORROR          49
 
 
+/***** Types *****/
+
+struct monster_race
+{
+	u32b name;	/* Name (offset) */
+
+	u32b flags[9];	/* Flags 1 (general) */
+			/* Flags 2 (abilities) */
+			/* Flags 3 (race/resist) */
+			/* Flags 4 (inate/breath) */
+			/* Flags 5 (normal spells) */
+			/* Flags 6 (special spells) */
+			/* Flags 7 (movement related abilities) */
+			/* Flags 8 (wilderness info) */
+			/* Flags 9 (drops info) */
+
+	char d_char;	/* Default monster character */
+};
+
+
 /***** Functions *****/
 
 /* monster2.c */
 extern bool summon_specific(int who, int x1, int y1, int lev, int type, bool group, bool friendly, bool pet);
-
+extern monster_race *monst_race(int r_idx);
 
