@@ -23,12 +23,6 @@ extern void map_draw_all(Widget *widgetPtr);
 extern void map_draw_invalid(Widget *widgetPtr);
 extern int map_symbol_proc(Widget *widgetPtr, int y, int x);
 
-static Tk_OptionSpec extraOptions[] = {
-    {TK_OPTION_INT, "-vaultnum", "vaultNum", "VaultNum",
-     "0", -1, Tk_Offset(ExWidget, vaultNum), 0, 0, 0},
-    {TK_OPTION_END, NULL, NULL, NULL,
-     NULL, 0, -1, 0, 0, 0}
-};
 
 /*
  * Invert a grid in the bitmap of a Widget
@@ -1141,7 +1135,6 @@ int widget_create(Tcl_Interp *interp, Widget **ptr)
 	widgetPtr->wipeProc = NULL;
 	widgetPtr->invalidateProc = NULL;
 	widgetPtr->invalidateAreaProc = NULL;
-	exPtr->vaultNum = 0;
 	exPtr->whatToDrawProc = NULL;
 	exPtr->symbolProc = NULL;
 	exPtr->effect = NULL;
@@ -1151,21 +1144,6 @@ int widget_create(Tcl_Interp *interp, Widget **ptr)
 	return TCL_OK;
 }
 
-#if 0
-int WidgetProc(Tcl_Interp *interp, Widget *widgetPtr, int message, long param)
-{
-	switch (message)
-	{
-		WIDGET_MSG_INIT:
-			break;
-		WIDGET_MSG_DESTROY:
-			break;
-		default:
-			return TCL_OK;
-	}
-}
-#endif
-
 /*
  * One-time initialization.
  */
@@ -1173,7 +1151,6 @@ int init_widget(Tcl_Interp *interp)
 {
 	if (Widget_Init(interp, widget_create) != TCL_OK)
 		return TCL_ERROR;
-	Widget_AddOptions(interp, extraOptions);
 	return TCL_OK;
 }
 
