@@ -960,7 +960,7 @@ static void process_world(void)
 			{
 				for (x = p_ptr->min_wid; x < p_ptr->max_wid; x++)
 				{
-					light_dark_square(y, x, dawn);
+					light_dark_square(x, y, dawn);
 				}
 			}
 

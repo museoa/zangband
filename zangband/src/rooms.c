@@ -566,10 +566,10 @@ static void build_type3(int bx0, int by0)
 				/* Sometimes shut using secret doors */
 				if (one_in_(3))
 				{
-					place_secret_door(yval, x1a - 1);
-					place_secret_door(yval, x2a + 1);
-					place_secret_door(y1b - 1, xval);
-					place_secret_door(y2b + 1, xval);
+					place_secret_door(x1a - 1, yval);
+					place_secret_door(x2a + 1, yval);
+					place_secret_door(xval, y1b - 1);
+					place_secret_door(xval, y2b + 1);
 				}
 			}
 
@@ -717,8 +717,8 @@ static void build_type4(int bx0, int by0)
 				generate_draw(xval - 5, yval - 1, xval + 5, yval + 1, FEAT_WALL_INNER);
 				
 				/* Secret doors (random top/bottom) */
-				place_secret_door(yval - 3 + (randint1(2) * 2), xval - 3);
-				place_secret_door(yval - 3 + (randint1(2) * 2), xval + 3);
+				place_secret_door(xval - 3, yval - 3 + (randint1(2) * 2));
+				place_secret_door(xval + 3, yval - 3 + (randint1(2) * 2));
 
 				/* Monsters */
 				vault_monsters(xval - 2, yval, randint1(2));
@@ -774,18 +774,18 @@ static void build_type4(int bx0, int by0)
 			if (randint0(100) < 50)
 			{
 				int i = randint1(10);
-				place_secret_door(y1 - 1, xval - i);
-				place_secret_door(y1 - 1, xval + i);
-				place_secret_door(y2 + 1, xval - i);
-				place_secret_door(y2 + 1, xval + i);
+				place_secret_door(xval - i, y1 - 1);
+				place_secret_door(xval + i, y1 - 1);
+				place_secret_door(xval - i, y2 + 1);
+				place_secret_door(xval + i, y2 + 1);
 			}
 			else
 			{
 				int i = randint1(3);
-				place_secret_door(yval + i, x1 - 1);
-				place_secret_door(yval - i, x1 - 1);
-				place_secret_door(yval + i, x2 + 1);
-				place_secret_door(yval - i, x2 + 1);
+				place_secret_door(x1 - 1, yval + i);
+				place_secret_door(x1 - 1, yval - i);
+				place_secret_door(x2 + 1, yval + i);
+				place_secret_door(x2 + 1, yval - i);
 			}
 
 			/* Treasure, centered at the center of the cross */
@@ -1806,7 +1806,7 @@ static void build_vault(int xval, int yval, int xmax, int ymax, cptr data,
 				case '+':
 				{
 					/* Secret doors */
-					place_secret_door(y, x);
+					place_secret_door(x, y);
 					break;
 				}
 
@@ -2240,7 +2240,7 @@ static void add_door(int x, int y)
 		(cave_p(x + 1, y)->feat == FEAT_WALL_OUTER))
 	{
 		/* secret door */
-		place_secret_door(y, x);
+		place_secret_door(x, y);
 
 		/* set boundarys so don't get wide doors */
 		set_feat_bold(x - 1, y, FEAT_WALL_SOLID);
@@ -2262,7 +2262,7 @@ static void add_door(int x, int y)
 	    (cave_p(x + 1, y)->feat == FEAT_FLOOR))
 	{
 		/* secret door */
-		place_secret_door(y, x);
+		place_secret_door(x, y);
 
 		/* set boundarys so don't get wide doors */
 		set_feat_bold(x, y - 1, FEAT_WALL_SOLID);

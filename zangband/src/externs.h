@@ -466,7 +466,7 @@ extern errr get_rnd_line(cptr file_name, int entry, char *output);
 extern void get_character_name(void);
 
 /* generate.c */
-extern void place_closed_door(int y, int x);
+extern void place_closed_door(int x, int y);
 extern void map_panel_size(void);
 extern void generate_cave(void);
 
@@ -1153,7 +1153,7 @@ extern bool field_action_hit_trap_drain_magic(field_type *f_ptr, vptr nothing);
 extern bool field_action_hit_trap_aggravate(field_type *f_ptr, vptr nothing);
 extern bool field_action_hit_trap_summon(field_type *f_ptr, vptr nothing);
 extern bool field_action_hit_trap_lose_memory(field_type *f_ptr, vptr nothing);
-extern void make_lockjam_door(int y, int x, int power, bool jam);
+extern void make_lockjam_door(int x, int y, int power, bool jam);
 extern bool field_action_counter_init(field_type *f_ptr, vptr input);
 extern bool field_action_door_unlock(field_type *f_ptr, vptr input);
 extern bool field_action_door_bash(field_type *f_ptr, vptr input);

@@ -3085,7 +3085,7 @@ bool field_action_hit_trap_lose_memory(field_type *f_ptr, vptr nothing)
 /*
  * Make a locked or jammed door on a square
  */
-void make_lockjam_door(int y, int x, int power, bool jam)
+void make_lockjam_door(int x, int y, int power, bool jam)
 {
 	cave_type *c_ptr = area(x, y);
 	field_type *f_ptr;

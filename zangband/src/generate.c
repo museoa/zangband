@@ -263,13 +263,13 @@ static void alloc_object(int set, int typ, int num)
 
 			case ALLOC_TYP_GOLD:
 			{
-				place_gold(y, x);
+				place_gold(x, y);
 				break;
 			}
 
 			case ALLOC_TYP_OBJECT:
 			{
-				place_object(y, x, FALSE, FALSE);
+				place_object(x, y, FALSE, FALSE);
 				break;
 			}
 

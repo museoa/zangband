@@ -15,9 +15,6 @@
 
 /* Macros */
 
-#define place_locked_door(Y,X)  make_lockjam_door(Y, X, randint1(10) + dun_level / 10, FALSE)
-#define place_secret_door(Y,X)  cave[(Y)][(X)].feat = FEAT_SECRET
-
 #define LAKE_LAVA		1
 #define LAKE_WATER		2
 #define LAKE_DESTROY	3
@@ -47,6 +44,11 @@
  */
 #define set_feat_grid(C, F) \
 	((C)->feat=(F))
+
+#define place_locked_door(X, Y) \
+	make_lockjam_door((X), (Y), randint1(10) + dun_level / 10, FALSE)
+#define place_secret_door(X,Y) \
+	set_feat_bold((X), (Y), (FEAT_SECRET))
 
 
 /* Externs */

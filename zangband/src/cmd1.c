@@ -541,7 +541,7 @@ void search(void)
 					msg_print("You have found a secret door.");
 
 					/* Pick a door */
-					place_closed_door(y, x);
+					place_closed_door(x, y);
 					
 					/* Notice + Lite this */
 					note_spot(x, y);

@@ -301,7 +301,7 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 		{
 			if (c_ptr->feat == FEAT_CLOSED)
 			{
-				make_lockjam_door(y, x, 1, TRUE);
+				make_lockjam_door(x, y, 1, TRUE);
 	
 				/* Check line of sight */
 				if (known)

@@ -1972,7 +1972,7 @@ void do_cmd_spike(void)
 			msg_print("You jam the door with a spike.");
 			
 			/* Make a jammed door on the square */
-			make_lockjam_door(y, x, 1, TRUE);
+			make_lockjam_door(x, y, 1, TRUE);
 
 			/* Use up, and describe, a single spike, from the bottom */
 			inven_item_increase(item, -1);

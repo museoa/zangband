@@ -1928,7 +1928,7 @@ void note_spot(int x, int y)
 			if (!(area(xx, yy)->info & (CAVE_GLOW)))
 			{
 				/* Hack - lite the spot any way */
-				lite_spot(y, x);
+				lite_spot(x, y);
 				
 				/* Done */
 				return;
@@ -1967,7 +1967,7 @@ void note_spot(int x, int y)
 	}
 
 	/* Light the spot, now that we have noticed the changes. */
-	lite_spot(y, x);
+	lite_spot(x, y);
 }
 
 

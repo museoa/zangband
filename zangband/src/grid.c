@@ -191,14 +191,14 @@ void place_closed_door(int x, int y)
 	else if (tmp < 399)
 	{
 		/* Create locked door */
-		make_lockjam_door(y, x, randint1(10) + p_ptr->depth / 10, FALSE);
+		make_lockjam_door(x, y, randint1(10) + p_ptr->depth / 10, FALSE);
 	}
 
 	/* Stuck doors (1/400) */
 	else
 	{
 		/* Create jammed door */
-		make_lockjam_door(y, x, randint1(5) + p_ptr->depth / 10, TRUE);
+		make_lockjam_door(x, y, randint1(5) + p_ptr->depth / 10, TRUE);
 	}
 }
 
@@ -347,7 +347,7 @@ void vault_monsters(int x1, int y1, int num)
 
 			/* Place the monster (allow groups) */
 			monster_level = base_level + 2;
-			(void)place_monster(y, x, TRUE, TRUE);
+			(void)place_monster(x, y, TRUE, TRUE);
 			monster_level = base_level;
 			
 			/* Have placed a monster */
@@ -594,7 +594,7 @@ void generate_door(int x1, int y1, int x2, int y2, bool secret)
 	/* Add the door */
 	if (secret)
 	{
-		place_secret_door(y0, x0);
+		place_secret_door(x0, y0);
 	}
 	else
 	{
