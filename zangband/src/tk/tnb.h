@@ -45,7 +45,7 @@
 #	define HAVE_UNISTD_H
 
 /*
- * Hack - prevent a huge number of compiler warnings when <tclInt.h
+ * Hack - prevent a huge number of compiler warnings when <tclInt.h>
  * is included indirectly below.
  */
 #	define _TCLINTDECLS
@@ -65,9 +65,6 @@ extern Tcl_Interp *g_interp;
 /* canv-widget.c */
 extern void CanvasWidget_Idle(void);
 extern int CanvasWidget_Init(Tcl_Interp *interp);
-
-/* const.c */
-extern int init_const(Tcl_Interp *interp);
 
 
 /* cmdinfo.c */
@@ -101,13 +98,13 @@ struct CommandInit {
 	ClientData clientData;
 };
 
-void CommandInfo_Add(CommandInfo *infoCmd, CommandInfo *infoSubCmd);
-CommandInfo *CommandInfo_GetInfo(Tcl_Interp *interp, char *names[]);
+extern void CommandInfo_Add(CommandInfo *infoCmd, CommandInfo *infoSubCmd);
+extern CommandInfo *CommandInfo_GetInfo(Tcl_Interp *interp, char *names[]);
 extern int CommandInfo_InitAux(Tcl_Interp *interp, CommandInit *init,
 	int index, CommandInfo *parent);
-int CommandInfo_Init(Tcl_Interp *interp, CommandInit *init,
+extern int CommandInfo_Init(Tcl_Interp *interp, CommandInit *init,
 	CommandInfo *parent);
-CommandInfo *CommandInfo_New(CommandInit *init);
+extern CommandInfo *CommandInfo_New(CommandInit *init);
 extern int CommandInfo_ObjCmd(ClientData clientData, Tcl_Interp *interp,
 	int objc, Tcl_Obj *CONST objv[]);
 
@@ -141,8 +138,6 @@ typedef struct t_grid {
 } t_grid;
 
 extern t_grid *g_grid[MAX_HGT];
-
-extern bool g_daytime; /* Day or night */
 
 /* Cave location -> t_grid */
 extern void get_grid_info(int y, int x, t_grid *gridPtr);
@@ -184,6 +179,7 @@ extern cptr *keyword_class;
 extern cptr g_attr_str;
 extern int exit_skip_save;
 extern bool command_repeating;
+extern int angtk_tval_const(int *tval, cptr str);
 extern void angtk_angband_initialized(void);
 extern void angtk_display_info_init(void);
 extern void angtk_display_info_append(cptr s);
@@ -194,13 +190,8 @@ extern void angtk_eval(cptr command, ...);
 extern int angtk_eval_file(cptr extFileName);
 extern void angtk_cave_generated(void);
 extern void angtk_health(char *buf);
-extern int angtk_tval_string(cptr *str, int tval);
-extern int angtk_tval_const(int *tval, cptr str);
 extern void angtk_init(void);
 extern cptr player_status(int status, int *value);
-
-extern void blows_per_round(int *_blows, int *_muta_att);
-extern void shots_per_round(int *shots, int *shots_frac);
 
 #define TARGET_STATE_SET 0x0001 /* Target is set */
 #define TARGET_STATE_VIS 0x0002 /* Target is visible */
@@ -254,8 +245,8 @@ extern int map_symbol_find(Tcl_Interp *interp, Tcl_Obj *objName,
 	int *symbolIndex);
 
 /* tcltk.c */
-Tcl_Interp *TclTk_Init(int argc, char **argv);
-void TclTk_Exit(Tcl_Interp *interp);
+extern Tcl_Interp *TclTk_Init(int argc, char **argv);
+extern void TclTk_Exit(Tcl_Interp *interp);
 
 /* util-tnb.c */
 extern cptr keyword_term_color[];
@@ -285,23 +276,23 @@ extern unsigned char g_colormap2palette[256];
 extern int gamma_correct(int value, double gamma);
 
 typedef unsigned char TintValue, TintTable[256];
-int Palette_Init(Tcl_Interp *interp, char *fileName);
+extern int Palette_Init(Tcl_Interp *interp, char *fileName);
 #ifdef PLATFORM_WIN
-/* HPALETTE */ void *Palette_GetHPal(void);
+/* HPALETTE */ extern void *Palette_GetHPal(void);
 #endif /* PLATFORM_WIN */
-unsigned char *Palette_GetRGB(void);
-void Palette_ResetHash(void);
-int Palette_RGB2Index(unsigned char r, unsigned char g, unsigned char b);
-void Palette_GammaTable(double gamma, TintTable table);
+extern unsigned char *Palette_GetRGB(void);
+extern void Palette_ResetHash(void);
+extern int Palette_RGB2Index(unsigned char r, unsigned char g, unsigned char b);
+extern void Palette_GammaTable(double gamma, TintTable table);
 
-int Colormap_Init(Tcl_Interp *interp);
-unsigned char *Colormap_GetRGB(void);
-int Colormap_RGB2Index(unsigned char r, unsigned char g, unsigned char b);
-void Colormap_GammaTable(double gamma, TintTable table);
-void Colormap_TintTable(int tint, int opacity, TintTable table);
-void Colormap_BrightnessTable(int intensity, TintTable table);
-void Colormap_ContrastTable(int intensity, TintTable table);
-void Colormap_One2OneTable(TintTable table);
+extern int Colormap_Init(Tcl_Interp *interp);
+extern unsigned char *Colormap_GetRGB(void);
+extern int Colormap_RGB2Index(unsigned char r, unsigned char g, unsigned char b);
+extern void Colormap_GammaTable(double gamma, TintTable table);
+extern void Colormap_TintTable(int tint, int opacity, TintTable table);
+extern void Colormap_BrightnessTable(int intensity, TintTable table);
+extern void Colormap_ContrastTable(int intensity, TintTable table);
+extern void Colormap_One2OneTable(TintTable table);
 
 typedef struct RGBInfo RGBInfo;
 struct RGBInfo
@@ -311,16 +302,17 @@ struct RGBInfo
 	int red_shift, green_shift, blue_shift;
 	int extra;
 };
+
 extern RGBInfo g_rgbi;
 
-void SetPix16(unsigned char *p, int r, int g, int b);
+extern void SetPix16(unsigned char *p, int r, int g, int b);
 
-void *Array_New(int count, int elem_size);
-void *Array_Append(void *array_ptr, int *count, int elem_size,
+extern void *Array_New(int count, int elem_size);
+extern void *Array_Append(void *array_ptr, int *count, int elem_size,
 	void *elem_ptr);
-void *Array_Insert(void *array_ptr, int *count, int elem_size,
+extern void *Array_Insert(void *array_ptr, int *count, int elem_size,
 	int index);
-void *Array_Delete(void *array_ptr, int *count, int elem_size,
+extern void *Array_Delete(void *array_ptr, int *count, int elem_size,
 	int index);
 
 typedef struct BitmapType {
@@ -334,11 +326,11 @@ typedef struct BitmapType {
     void *platData; /* Platform-specific info */
 } BitmapType, *BitmapPtr;
 
-void Bitmap_New(Tcl_Interp *interp, BitmapPtr bitmapPtr);
-void Bitmap_Delete(BitmapPtr bitmapPtr);
+extern void Bitmap_New(Tcl_Interp *interp, BitmapPtr bitmapPtr);
+extern void Bitmap_Delete(BitmapPtr bitmapPtr);
 
 #ifdef PLATFORM_WINxxx
-HFONT TkToWinFont(Tk_Font tkFont);
+extern HFONT TkToWinFont(Tk_Font tkFont);
 #endif /* PLATFORM_WIN */
 
 typedef struct DoubleLink DoubleLink;
@@ -362,14 +354,13 @@ struct DoubleLinker
 };
 
 #define DoubleLink_Data(link,type) ((type *) link->data)
-void DoubleLink_Init(DoubleLinker *linker, DoubleLink *link, void *data);
-void DoubleLink_Link(DoubleLink *link);
-void DoubleLink_Unlink(DoubleLink *link);
-/* void DoubleLink_Move(DoubleLink *old, DoubleLink *new); */
+extern void DoubleLink_Init(DoubleLinker *linker, DoubleLink *link, void *data);
+extern void DoubleLink_Link(DoubleLink *link);
+extern void DoubleLink_Unlink(DoubleLink *link);
 
-Tcl_Obj *ExtToUtf_NewStringObj(CONST char *bytes, int length);
-void ExtToUtf_SetResult(Tcl_Interp *interp, char *string);
-char *UtfToExt_TranslateFileName(Tcl_Interp *interp, char *utfPath,
+extern Tcl_Obj *ExtToUtf_NewStringObj(CONST char *bytes, int length);
+extern void ExtToUtf_SetResult(Tcl_Interp *interp, char *string);
+extern char *UtfToExt_TranslateFileName(Tcl_Interp *interp, char *utfPath,
 	Tcl_DString *extDStringPtr);
 
 

@@ -173,7 +173,7 @@ int angtk_tval_const(int *tval, cptr str)
  * Convert a TV_XXX constant into the corresponding string.
  * Return an error if the tval is unknown.
  */
-int angtk_tval_string(cptr *str, int tval)
+static int angtk_tval_string(cptr *str, int tval)
 {
 	Tcl_HashEntry *hPtr;
 
@@ -579,7 +579,7 @@ cptr player_status(int status, int *value)
 	return format;
 }
 
-void blows_per_round(int *_blows, int *_muta_att)
+static void blows_per_round(int *_blows, int *_muta_att)
 {
 	int muta_att = 0;
 
@@ -598,7 +598,7 @@ void blows_per_round(int *_blows, int *_muta_att)
 	(*_muta_att) = muta_att;
 }
 
-void shots_per_round(int *_shots, int *_shots_frac)
+static void shots_per_round(int *_shots, int *_shots_frac)
 {
 	int energy_fire = 100;
 	int shots, shots_frac;

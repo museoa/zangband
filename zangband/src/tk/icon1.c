@@ -17,7 +17,7 @@ unsigned char *g_palette_rgb;
 t_assign_group g_assign[ASSIGN_MAX];
 t_assign g_assign_none;
 t_grid *g_grid[MAX_HGT] = {0};
-int g_grid_xtra_init = 0;
+
 t_flavor *g_flavor = NULL; /* Array of flavor types */
 int g_flavor_count = 0; /* Number of flavors */
 Tcl_HashTable g_flavor_table; /* Map flavor name to g_flavor[] index */
@@ -27,7 +27,6 @@ int *g_background = NULL;
 t_assign *g_icon_map[ICON_LAYER_MAX][MAX_HGT];
 bool g_icon_map_changed = FALSE;
 int *g_image_monster, *g_image_object;
-bool g_daytime; /* Day or night */
 
 
 /*

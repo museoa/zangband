@@ -182,17 +182,17 @@ extern void WidgetColor_Deref(t_widget_color *color_ptr);
 
 extern DoubleLinker WidgetList;
 extern DoubleLinker WidgetListMap;
-int Widget_Init(Tcl_Interp *interp, Widget_CreateProc *proc);
-int Widget_AddOptions(Tcl_Interp *interp, Tk_OptionSpec *option);
-void Widget_Center(Widget *widgetPtr, int cy, int cx);
-void Widget_Display(ClientData clientData);
-void Widget_Invalidate(Widget *widgetPtr, int row, int col);
-void Widget_InvalidateArea(Widget *widgetPtr, int top, int left, int right, int bottom);
-void Widget_Wipe(Widget *widgetPtr);
-void Widget_DrawAll(Widget *widgetPtr);
-void Widget_DrawInvalid(Widget *widgetPtr);
-void Widget_EventuallyRedraw(Widget *widgetPtr);
-int Widget_CaveToView(Widget *widgetPtr, int y, int x, int *rowPtr, int *colPtr);
+extern int Widget_Init(Tcl_Interp *interp, Widget_CreateProc *proc);
+extern int Widget_AddOptions(Tcl_Interp *interp, Tk_OptionSpec *option);
+extern void Widget_Center(Widget *widgetPtr, int cy, int cx);
+extern void Widget_Display(ClientData clientData);
+extern void Widget_Invalidate(Widget *widgetPtr, int row, int col);
+extern void Widget_InvalidateArea(Widget *widgetPtr, int top, int left, int right, int bottom);
+extern void Widget_Wipe(Widget *widgetPtr);
+extern void Widget_DrawAll(Widget *widgetPtr);
+extern void Widget_DrawInvalid(Widget *widgetPtr);
+extern void Widget_EventuallyRedraw(Widget *widgetPtr);
+extern int Widget_CaveToView(Widget *widgetPtr, int y, int x, int *rowPtr, int *colPtr);
 
 extern WidgetItemType ProgressType;
 extern WidgetItemType TextType;

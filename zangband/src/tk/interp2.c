@@ -41,9 +41,6 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 	enum {IDX_WILD_NAME} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 
-	int y, x;
-	int blocked;
-
     if (objC < 2)
     {
 		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, (char *) "option ?arg ...?");

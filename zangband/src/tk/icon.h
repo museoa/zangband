@@ -75,32 +75,32 @@ typedef struct t_ascii {
 extern t_ascii *g_ascii; /* Array of "ascii" icon info */
 extern int g_ascii_count; /* Number of elements in g_ascii[] array */
 
-void PixelSet_RGB(IconPtr dst, int r, int g, int b, int bypp);
-void RL_Bounds(int w, int h, int bypp, IconPtr srcbuf, int key, unsigned char *bounds);
-int RL_Len(int w, int h, int bypp, IconPtr srcbuf, int pitch, int key);
-int RL_Encode(int w, int h, int bypp, IconPtr srcbuf, int pitch, int key, IconPtr rlebuf);
-int RL_Decode(int w, int h, int bypp, IconPtr rlebuf, IconPtr dst, int pitch);
-void Icon_MakeRLEBounds(t_icon_data *iconDataPtr, int i);
-void Icon_MakeRLE(t_icon_data *iconDataPtr);
+extern void PixelSet_RGB(IconPtr dst, int r, int g, int b, int bypp);
+extern void RL_Bounds(int w, int h, int bypp, IconPtr srcbuf, int key, unsigned char *bounds);
+extern int RL_Len(int w, int h, int bypp, IconPtr srcbuf, int pitch, int key);
+extern int RL_Encode(int w, int h, int bypp, IconPtr srcbuf, int pitch, int key, IconPtr rlebuf);
+extern int RL_Decode(int w, int h, int bypp, IconPtr rlebuf, IconPtr dst, int pitch);
+extern void Icon_MakeRLEBounds(t_icon_data *iconDataPtr, int i);
+extern void Icon_MakeRLE(t_icon_data *iconDataPtr);
 
-int Image2Bits(Tcl_Interp *interp, t_icon_data *iconDataPtr,
+extern int Image2Bits(Tcl_Interp *interp, t_icon_data *iconDataPtr,
 	Tk_PhotoHandle photoH, int imageW, int imageH, XColor *xColorPtr);
 
-void Icon_AddType(t_icon_data *data);
-int Icon_Init(Tcl_Interp *interp, int size, int depth);
-void Icon_Exit(Tcl_Interp *interp);
-int Icon_Validate(Tcl_Interp *interp, char *typeName, int index, int ascii,
+extern void Icon_AddType(t_icon_data *data);
+extern int Icon_Init(Tcl_Interp *interp, int size, int depth);
+extern void Icon_Exit(Tcl_Interp *interp);
+extern int Icon_Validate(Tcl_Interp *interp, char *typeName, int index, int ascii,
 	IconSpec *specPtr);
-int Icon_ParseArgs(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[],
+extern int Icon_ParseArgs(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[],
 	int offset, IconSpec *spectr);
-IconPtr Icon_GetAsciiData(IconSpec *specPtr, IconPtr dstPtr);
-int Icon_FindTypeByName(Tcl_Interp *interp, int *typeIndexPtr,
+extern IconPtr Icon_GetAsciiData(IconSpec *specPtr, IconPtr dstPtr);
+extern int Icon_FindTypeByName(Tcl_Interp *interp, int *typeIndexPtr,
 	char *typeName);
-int Icon_GetTypeFromObj(Tcl_Interp *interp,
+extern int Icon_GetTypeFromObj(Tcl_Interp *interp,
 	t_icon_data **typePtrPtr, Tcl_Obj *objPtr);
-int Icon_GetIndexFromObj(Tcl_Interp *interp,
+extern int Icon_GetIndexFromObj(Tcl_Interp *interp,
 	int *indexPtr, Tcl_Obj *objPtr, t_icon_data *iconDataPtr);
-void Icon_MakeDark(t_icon_data *iconDataPtr, int index);
+extern void Icon_MakeDark(t_icon_data *iconDataPtr, int index);
 
 
 /*
