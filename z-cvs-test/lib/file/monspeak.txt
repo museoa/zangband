@@ -25,23 +25,39 @@
 # To stop a certain monster from having unique lines, put a # in front of
 # its N: line.
 #
-# Entries by Matt Graham, Andrew Hill, and Topi Ylinen
+# Entries by Matt Graham, Andrew Hill, Topi Ylinen, and Chris Kern
 
 N:8:Farmer Maggot
-7
+12
 seems sad about something.
 asks if you have seen his dogs.
 tells you to get off his land.
-mumbles something about mushrooms.
-says, 'I'm carrying CASH!'
-smirks, 'You wouldn't kill me, would you?'
-gleefully shows off a nifty object he just bought.
+says, "Grip! Fang! Wolf! Come on, lads!"
+says, "They won't harm you -- not unless I tell 'em to!"
+says, "Here, Grip! Fang! Heel!"
+exclaims, "Well, if that isn't queerer than ever?"
+asks, "Were you coming to visit me?"
+says, "I'll not light my lanterns till I turn for home."
+says, "I see you are in some kind of trouble."
+yells, "Hallo there!"
+says, "It's been a queer day, and no mistake."
 
 N:19:Martti Ihrasaari
 3
 says, 'For a Finnish President, I sure am stupid...'
 says, 'I routinely carry nifty things...'
 says, 'I need a sauna, eh?'
+
+N:39:Topi Ylinen, the Cute, Furry Bunny
+8
+magically summons Cyberdemons!
+says, "Let's make a super-nightmare mode!"
+asks for a carrot.
+wants you to pet it.
+nuzzles against you.
+gets a red glow in its eyes.
+says, "Don't give away my secret lair!"
+says, "I'm not evil!"
 
 N:53:Grip, Farmer Maggot's dog
 N:54:Wolf, Farmer Maggot's dog
@@ -92,13 +108,18 @@ says, 'Death and destruction make me happy!'
 snickers evilly.
 
 N:137:Wormtongue, Agent of Saruman
-6
+10
 whines and sniggers.
-leafs through 'Pervert Magazine.'
 whispers nasty things.
 says, 'I'll slaughter you slowly...'
-giggles as he fingers his knife.
-says, 'Now, you shall taste my wrath!'
+says, 'Lathspell I name you, Ill-news; and Ill-news is an ill guest they say.'
+says, 'Forbid his staff!'
+yells, 'You lie!'
+says, 'Let me go, let me go!  I know the way!'
+says, 'My messages are useless now!'
+says, 'No no!'
+hisses, 'You told me to; you made me do it!'
+
 
 N:138:Robin Hood, the Outlaw
 6
@@ -130,6 +151,16 @@ says, 'I'll make your short life nasty and brutish!'
 
 N:140:Lagduf, the Snaga
 N:186:Grishnakh, the Hill Orc
+7
+says, 'Saruman is a fool, and a dirty treacherous fool.'
+says, 'I left a fool.'
+yells, 'Nazgul, Nazgul!'
+says, 'Fine leadership!  I hope the great Ugluk will lead us out again.'
+hisses, 'My dear tender little fools.'
+says, 'Well, my little ones!  Enjoying your nice rest?'
+snarls, 'Have you got it -- either of you?'
+
+
 N:215:Golfimbul, the Hill Orc Chief
 N:260:Ufthak of Cirith Ungol
 N:314:Shagrat, the Orc Captain
