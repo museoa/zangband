@@ -2341,10 +2341,6 @@ static errr rd_dungeon(void)
 		/* Read the item */
 		rd_item(o_ptr);
 
-		/* Hack - set region of object */
-		o_ptr->region = cur_region;
-
-
 		/* XXX XXX XXX XXX XXX */
 
 		/* Monster */
@@ -2390,6 +2386,9 @@ static errr rd_dungeon(void)
 
 			/* Place the object */
 			c_ptr->o_idx = o_idx;
+			
+			/* Hack - set region of object */
+			o_ptr->region = cur_region;
 		}
 	}
 
