@@ -1013,8 +1013,9 @@ s32b flag_cost(const object_type *o_ptr, int plusses)
 	if (FLAG(o_ptr, TR_DEX)) total += (500 * plusses);
 	if (FLAG(o_ptr, TR_CON)) total += (500 * plusses);
 	if (FLAG(o_ptr, TR_CHR)) total += (250 * plusses);
+
 	if ((FLAG(o_ptr, TR_SP)) && (plusses > 0)) total += (2500 * plusses);
-	if (FLAG(o_ptr, TR_CHAOTIC)) total += 5000;
+	if (FLAG(o_ptr, TR_CHAOTIC)) total += 1500;
 	if (FLAG(o_ptr, TR_VAMPIRIC)) total += 5000;
 	if (FLAG(o_ptr, TR_STEALTH)) total += (50 * plusses);
 	if (FLAG(o_ptr, TR_SEARCH)) total += (50 * plusses);
@@ -1022,57 +1023,66 @@ s32b flag_cost(const object_type *o_ptr, int plusses)
 	if (FLAG(o_ptr, TR_TUNNEL)) total += (20 * plusses);
 	if ((FLAG(o_ptr, TR_SPEED)) && (plusses > 0)) total += (500 * sqvalue(plusses));
 	if ((FLAG(o_ptr, TR_BLOWS)) && (plusses > 0)) total += (500 * sqvalue(plusses));
-	if (FLAG(o_ptr, TR_XXX1)) total += 0;
+
 	if (FLAG(o_ptr, TR_SLAY_ANIMAL)) total += 750;
-	if (FLAG(o_ptr, TR_SLAY_EVIL)) total += 1000;
-	if (FLAG(o_ptr, TR_SLAY_UNDEAD)) total += 800;
-	if (FLAG(o_ptr, TR_SLAY_DEMON)) total += 800;
-	if (FLAG(o_ptr, TR_SLAY_ORC)) total += 300;
-	if (FLAG(o_ptr, TR_SLAY_TROLL)) total += 750;
-	if (FLAG(o_ptr, TR_SLAY_GIANT)) total += 750;
+	if (FLAG(o_ptr, TR_SLAY_EVIL))   total += 750;
+	if (FLAG(o_ptr, TR_SLAY_UNDEAD)) total += 750;
+	if (FLAG(o_ptr, TR_SLAY_DEMON))  total += 750;
+	if (FLAG(o_ptr, TR_SLAY_ORC))    total += 750;
+	if (FLAG(o_ptr, TR_SLAY_TROLL))  total += 750;
+	if (FLAG(o_ptr, TR_SLAY_GIANT))  total += 750;
 	if (FLAG(o_ptr, TR_SLAY_DRAGON)) total += 750;
 	if (FLAG(o_ptr, TR_KILL_DRAGON)) total += 1500;
+
 	if (FLAG(o_ptr, TR_VORPAL)) total += 1500;
 	if (FLAG(o_ptr, TR_IMPACT)) total += 1500;
-	if (FLAG(o_ptr, TR_BRAND_POIS)) total += 1500;
-	if (FLAG(o_ptr, TR_BRAND_ACID)) total += 1500;
-	if (FLAG(o_ptr, TR_BRAND_ELEC)) total += 1500;
-	if (FLAG(o_ptr, TR_BRAND_FIRE)) total += 1500;
-	if (FLAG(o_ptr, TR_BRAND_COLD)) total += 1500;
+
+	if (FLAG(o_ptr, TR_BRAND_POIS)) total += 750;
+	if (FLAG(o_ptr, TR_BRAND_ACID)) total += 750;
+	if (FLAG(o_ptr, TR_BRAND_ELEC)) total += 750;
+	if (FLAG(o_ptr, TR_BRAND_FIRE)) total += 750;
+	if (FLAG(o_ptr, TR_BRAND_COLD)) total += 750;
+
 	if (FLAG(o_ptr, TR_SUST_STR)) total += 200;
 	if (FLAG(o_ptr, TR_SUST_INT)) total += 200;
 	if (FLAG(o_ptr, TR_SUST_WIS)) total += 200;
 	if (FLAG(o_ptr, TR_SUST_DEX)) total += 200;
 	if (FLAG(o_ptr, TR_SUST_CON)) total += 200;
-	if (FLAG(o_ptr, TR_SUST_CHR)) total += 100;
-	if (FLAG(o_ptr, TR_XXX1)) total += 0;
+	if (FLAG(o_ptr, TR_SUST_CHR)) total += 200;
+
 	if (FLAG(o_ptr, TR_IM_POIS)) total += 10000;
 	if (FLAG(o_ptr, TR_IM_ACID)) total += 10000;
 	if (FLAG(o_ptr, TR_IM_ELEC)) total += 10000;
 	if (FLAG(o_ptr, TR_IM_FIRE)) total += 10000;
 	if (FLAG(o_ptr, TR_IM_COLD)) total += 10000;
+	if (FLAG(o_ptr, TR_IM_LITE)) total += 10000;
+	if (FLAG(o_ptr, TR_IM_DARK)) total += 10000;
+
 	if (FLAG(o_ptr, TR_THROW)) total += 2000;
 	if (FLAG(o_ptr, TR_REFLECT)) total += 5000;
-	if (FLAG(o_ptr, TR_FREE_ACT)) total += 3000;
-	if (FLAG(o_ptr, TR_HOLD_LIFE)) total += 2000;
-	if (FLAG(o_ptr, TR_RES_ACID)) total += 750;
-	if (FLAG(o_ptr, TR_RES_ELEC)) total += 750;
-	if (FLAG(o_ptr, TR_RES_FIRE)) total += 750;
-	if (FLAG(o_ptr, TR_RES_COLD)) total += 750;
-	if (FLAG(o_ptr, TR_RES_POIS)) total += 1500;
-	if (FLAG(o_ptr, TR_RES_FEAR)) total += 1000;
-	if (FLAG(o_ptr, TR_RES_LITE)) total += 750;
-	if (FLAG(o_ptr, TR_RES_DARK)) total += 750;
-	if (FLAG(o_ptr, TR_RES_BLIND)) total += 1000;
-	if (FLAG(o_ptr, TR_RES_CONF)) total += 2000;
-	if (FLAG(o_ptr, TR_RES_SOUND)) total += 1000;
-	if (FLAG(o_ptr, TR_RES_SHARDS)) total += 1000;
-	if (FLAG(o_ptr, TR_RES_NETHER)) total += 2000;
-	if (FLAG(o_ptr, TR_RES_NEXUS)) total += 500;
-	if (FLAG(o_ptr, TR_RES_CHAOS)) total += 2000;
-	if (FLAG(o_ptr, TR_RES_DISEN)) total += 5000;
+
+	if (FLAG(o_ptr, TR_RES_ACID))   total += 500;
+	if (FLAG(o_ptr, TR_RES_ELEC))   total += 500;
+	if (FLAG(o_ptr, TR_RES_FIRE))   total += 500;
+	if (FLAG(o_ptr, TR_RES_COLD))   total += 500;
+	if (FLAG(o_ptr, TR_RES_POIS))   total += 1500;
+	if (FLAG(o_ptr, TR_RES_FEAR))   total += 1500;
+	if (FLAG(o_ptr, TR_RES_LITE))   total += 1500;
+	if (FLAG(o_ptr, TR_RES_DARK))   total += 1500;
+	if (FLAG(o_ptr, TR_RES_BLIND))  total += 1500;
+	if (FLAG(o_ptr, TR_RES_CONF))   total += 1500;
+	if (FLAG(o_ptr, TR_RES_SOUND))  total += 1500;
+	if (FLAG(o_ptr, TR_RES_SHARDS)) total += 1500;
+	if (FLAG(o_ptr, TR_RES_NETHER)) total += 1500;
+	if (FLAG(o_ptr, TR_RES_NEXUS))  total += 1500;
+	if (FLAG(o_ptr, TR_RES_CHAOS))  total += 1500;
+	if (FLAG(o_ptr, TR_RES_DISEN))  total += 1500;
+
 	if (FLAG(o_ptr, TR_SH_FIRE)) total += 1000;
 	if (FLAG(o_ptr, TR_SH_ELEC)) total += 1000;
+	if (FLAG(o_ptr, TR_SH_ACID)) total += 1000;
+	if (FLAG(o_ptr, TR_SH_COLD)) total += 1000;
+
 	if (FLAG(o_ptr, TR_QUESTITEM)) total += 0;
 	if (FLAG(o_ptr, TR_XXX4)) total += 0;
 	if (FLAG(o_ptr, TR_NO_TELE)) total += 1500;
@@ -1082,18 +1092,25 @@ s32b flag_cost(const object_type *o_ptr, int plusses)
 	if (FLAG(o_ptr, TR_HIDE_TYPE)) total += 0;
 	if (FLAG(o_ptr, TR_SHOW_MODS)) total += 0;
 	if (FLAG(o_ptr, TR_INSTA_ART)) total += 0;
-	if (FLAG(o_ptr, TR_FEATHER)) total += 250;
-	if (FLAG(o_ptr, TR_LITE)) total += 500;
-	if (FLAG(o_ptr, TR_SEE_INVIS)) total += 2000;
-	if (FLAG(o_ptr, TR_TELEPATHY)) total += 10000;
-	if (FLAG(o_ptr, TR_SLOW_DIGEST)) total += 750;
-	if (FLAG(o_ptr, TR_REGEN)) total += 1000;
+
+	/* EGO_XTRA_ABILITY */
+	if (FLAG(o_ptr, TR_SLOW_DIGEST)) total += 250;
+	if (FLAG(o_ptr, TR_FEATHER))     total += 250;
+	if (FLAG(o_ptr, TR_LITE))        total += 500;
+	if (FLAG(o_ptr, TR_SEE_INVIS))   total += 500;
+	if (FLAG(o_ptr, TR_REGEN))       total += 1000;
+	if (FLAG(o_ptr, TR_FREE_ACT))    total += 1000;
+	if (FLAG(o_ptr, TR_HOLD_LIFE))   total += 2000;
+	if (FLAG(o_ptr, TR_TELEPATHY))   total += 2000;
+
 	if (FLAG(o_ptr, TR_XTRA_MIGHT)) total += 1000;
 	if (FLAG(o_ptr, TR_XTRA_SHOTS)) total += 1000;
-	if (FLAG(o_ptr, TR_IGNORE_ACID)) total += 200;
+
+	if (FLAG(o_ptr, TR_IGNORE_ACID)) total += 50;
 	if (FLAG(o_ptr, TR_IGNORE_ELEC)) total += 50;
 	if (FLAG(o_ptr, TR_IGNORE_FIRE)) total += 50;
 	if (FLAG(o_ptr, TR_IGNORE_COLD)) total += 50;
+
 	if (FLAG(o_ptr, TR_ACTIVATE)) total += 0;
 	if (FLAG(o_ptr, TR_DRAIN_EXP)) total -= 12500;
 	if (FLAG(o_ptr, TR_TELEPORT))
@@ -1108,11 +1125,7 @@ s32b flag_cost(const object_type *o_ptr, int plusses)
 	if (FLAG(o_ptr, TR_CURSED)) total -= 5000;
 	if (FLAG(o_ptr, TR_HEAVY_CURSE)) total -= 12500;
 	if (FLAG(o_ptr, TR_PERMA_CURSE)) total -= 15000;
-	if (FLAG(o_ptr, TR_LUCK_10)) total += 1000;
-	if (FLAG(o_ptr, TR_IM_LITE)) total += 2500;
-	if (FLAG(o_ptr, TR_IM_DARK)) total += 5000;
-	if (FLAG(o_ptr, TR_SH_ACID)) total += 1250;
-	if (FLAG(o_ptr, TR_SH_COLD)) total += 1000;
+	if (FLAG(o_ptr, TR_LUCK_10)) total += 3000;
 	if (FLAG(o_ptr, TR_MUTATE)) total += 500;
 	if (FLAG(o_ptr, TR_PATRON)) total += 1500;
 	if (FLAG(o_ptr, TR_STRANGE_LUCK)) total += 2000;
