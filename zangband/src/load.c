@@ -2392,9 +2392,6 @@ static errr rd_dungeon(void)
 		}
 	}
 
-	/* Expand object array */
-	o_max++;
-
 	/* Repair inventory information */
 	if (sf_version < 37)
 	{
