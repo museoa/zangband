@@ -4347,6 +4347,9 @@ static s32b borg_power_home_aux2(void)
 s32b borg_power_home(void)
 {
 	s32b value = 0L;
+	
+	/* Notice changes to the home */
+	borg_notice_home();
 
 	/* Process the home equipment */
 	value += borg_power_home_aux1();

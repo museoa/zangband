@@ -1527,7 +1527,6 @@ static void borg_destroy_item(list_item *l_ptr, int slot, int number)
 bool borg_crush_junk(void)
 {
 	int i;
-	bool fix = FALSE;
 	s32b p;
 	s32b value, old_value;
 	s32b my_power;
@@ -1538,9 +1537,6 @@ bool borg_crush_junk(void)
 	/* No crush if even slightly dangerous */
 	if (borg_danger(c_x, c_y, 1, TRUE) >
 		borg_skill[BI_CURHP] / 10) return (FALSE);
-
-	/* Notice changes */
-	borg_notice();
 
 	my_power = borg_power();
 
@@ -1575,12 +1571,6 @@ bool borg_crush_junk(void)
 
 			/* Pretend one item isn't there */
 			l_ptr->treat_as = TREAT_AS_LESS;
-
-			/* Fix later */
-			fix = TRUE;
-
-			/* Examine the inventory */
-			borg_notice();
 
 			/* Evaluate the inventory */
 			p = borg_power();
@@ -1623,9 +1613,6 @@ bool borg_crush_junk(void)
 				continue;
 		}
 
-		/* re-examine the inventory */
-		if (fix) borg_notice();
-
 		/* Hack -- skip good un-id'd "artifacts" */
 		if (strstr(l_ptr->o_name, "{special")) continue;
 		if (strstr(l_ptr->o_name, "{terrible")) continue;
@@ -1643,12 +1630,8 @@ bool borg_crush_junk(void)
 		return (TRUE);
 	}
 
-	/* re-examine the inventory */
-	if (fix) borg_notice();
-
 	/* Hack -- no need */
 	borg_do_crush_junk = FALSE;
-
 
 	/* Nothing to destroy */
 	return (FALSE);
@@ -1676,8 +1659,6 @@ bool borg_crush_hole(void)
 {
 	int i, b_i = -1;
 	s32b p, b_p = 0L;
-
-	bool fix = FALSE;
 
 	byte sval;
 
@@ -1728,12 +1709,6 @@ bool borg_crush_hole(void)
 		/* Pretend one item isn't there */
 		l_ptr->treat_as = TREAT_AS_LESS;
 
-		/* Fix later */
-		fix = TRUE;
-
-		/* Examine the inventory */
-		borg_notice();
-
 		/* Evaluate the inventory */
 		p = borg_power();
 
@@ -1747,9 +1722,6 @@ bool borg_crush_hole(void)
 		b_i = i;
 		b_p = p;
 	}
-
-	/* Examine the inventory */
-	if (fix) borg_notice();
 
 	/* Attempt to destroy it */
 	if (b_i >= 0)
@@ -1787,8 +1759,6 @@ bool borg_crush_slow(void)
 	int i, b_i = -1;
 	s32b p, b_p = 0L;
 
-	bool fix = FALSE;
-
 	/* No crush if even slightly dangerous */
 	if (borg_danger(c_x, c_y, 1, TRUE) >
 		borg_skill[BI_CURHP] / 20) return (FALSE);
@@ -1818,12 +1788,6 @@ bool borg_crush_slow(void)
 		/* Pretend item is less */
 		l_ptr->treat_as = TREAT_AS_LESS;
 
-		/* Fix later */
-		fix = TRUE;
-
-		/* Examine the inventory */
-		borg_notice();
-
 		/* Evaluate the inventory */
 		p = borg_power();
 
@@ -1840,9 +1804,6 @@ bool borg_crush_slow(void)
 		b_i = i;
 		b_p = p;
 	}
-
-	/* Examine the inventory */
-	if (fix) borg_notice();
 
 	/* Destroy "useless" things */
 	if ((b_i >= 0) && (b_p >= borg_power()))
@@ -2225,8 +2186,6 @@ static bool borg_wear_rings(void)
 
 	list_item *l_ptr;
 
-	bool fix = FALSE;
-
 	/* Require no rings */
 	if (equipment[EQUIP_LEFT].number) return (FALSE);
 	if (equipment[EQUIP_RIGHT].number) return (FALSE);
@@ -2262,12 +2221,6 @@ static bool borg_wear_rings(void)
 			equipment[slot].treat_as = TREAT_AS_SWAP;
 			l_ptr->treat_as = TREAT_AS_LESS;
 
-			/* Fix later */
-			fix = TRUE;
-
-			/* Examine the inventory */
-			borg_notice();
-
 			/* Evaluate the inventory */
 			p = borg_power();
 
@@ -2293,9 +2246,6 @@ static bool borg_wear_rings(void)
 			}
 		}
 	}
-
-	/* Restore bonuses */
-	if (fix) borg_notice();
 
 	/* No item */
 	if ((b_i >= 0) && (b_p > borg_power()))
@@ -2352,13 +2302,13 @@ bool borg_remove_stuff(void)
 
 	list_item *l_ptr;
 
-	bool fix = FALSE;
-
 	/* Require an empty slot */
 	if (inven_num >= INVEN_PACK - 1) return (FALSE);
-
+	
 	/* Start with good power */
 	b_p = borg_power();
+	
+	borg_note_fmt("# Removing initial power(%ld).", (long) b_p);
 
 	/* Scan equip */
 	for (i = 0; i < equip_num; i++)
@@ -2382,14 +2332,10 @@ bool borg_remove_stuff(void)
 		/* Take it off */
 		l_ptr->treat_as = TREAT_AS_SWAP;
 
-		/* Fix later */
-		fix = TRUE;
-
-		/* Examine the inventory */
-		borg_notice();
-
 		/* Evaluate the inventory */
 		p = borg_power();
+		
+		borg_note_fmt("# Removing %s - power(%ld).", l_ptr->o_name, (long) p);
 
 		/* Put it back on */
 		l_ptr->treat_as = TREAT_AS_NORM;
@@ -2400,9 +2346,6 @@ bool borg_remove_stuff(void)
 			b_i = i;
 		}
 	}
-
-	/* Restore bonuses */
-	if (fix) borg_notice();
 
 	/* No item */
 	if (b_i >= 0)
@@ -2445,18 +2388,12 @@ bool borg_wear_stuff(void)
 	int slot;
 	int d;
 
-	s32b p, b_p;
+	s32b p, b_p = borg_power();
 
 	int i, b_i = -1;
 	int danger;
 
 	list_item *l_ptr;
-
-	bool fix = FALSE;
-
-	borg_notice();
-
-	b_p = borg_power();
 
 	/* Require an empty slot */
 	if (inven_num >= INVEN_PACK - 1) return (FALSE);
@@ -2505,12 +2442,6 @@ bool borg_wear_stuff(void)
 			equipment[slot].treat_as = TREAT_AS_SWAP;
 			l_ptr->treat_as = TREAT_AS_LESS;
 
-			/* Fix later */
-			fix = TRUE;
-
-			/* Examine the inventory */
-			borg_notice();
-
 			/* Evaluate the inventory */
 			p = borg_power();
 
@@ -2532,9 +2463,6 @@ bool borg_wear_stuff(void)
 			b_p = p;
 		}
 	}
-
-	/* Restore bonuses */
-	if (fix) borg_notice();
 
 	/* No item */
 	if ((b_i >= 0) && (b_p > borg_power()))

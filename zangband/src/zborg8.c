@@ -329,9 +329,6 @@ static int borg_think_home_sell_aux2(void)
 
 	/**** Get the starting best (current) ****/
 
-	/* Examine the home  */
-	borg_notice_home();
-
 	/* Evaluate the home  */
 	best_power = borg_power_home() + borg_power();
 
@@ -370,12 +367,6 @@ static int borg_think_home_sell_aux2(void)
 		}
 
 		/* Test to see if this is a good move. */
-
-		/* Examine the player */
-		borg_notice();
-
-		/* Examine the home  */
-		borg_notice_home();
 
 		/* Evaluate the new power  */
 		power = borg_power_home() + borg_power();
@@ -426,12 +417,6 @@ static int borg_think_home_sell_aux2(void)
 		{
 			l_ptr->treat_as = TREAT_AS_LESS;
 		}
-
-		/* Examine the player */
-		borg_notice();
-
-		/* Examine the home  */
-		borg_notice_home();
 
 		/* Evaluate the new power  */
 		power = borg_power_home() + borg_power();
@@ -575,8 +560,6 @@ static bool borg_think_shop_sell_aux(int shop)
 	s32b c = 0L;
 	s32b b_c = 30001L;
 
-	bool fix = FALSE;
-
 	/* Evaluate */
 	b_p = borg_power();
 
@@ -590,12 +573,6 @@ static bool borg_think_shop_sell_aux(int shop)
 
 		/* Give the item to the shop */
 		l_ptr->treat_as = TREAT_AS_LESS;
-
-		/* Fix later */
-		fix = TRUE;
-
-		/* Examine the inventory */
-		borg_notice();
 
 		/* Evaluate the inventory with this item gone */
 		p = borg_power();
@@ -636,9 +613,6 @@ static bool borg_think_shop_sell_aux(int shop)
 		b_p = p;
 		b_c = c;
 	}
-
-	/* Examine the inventory */
-	if (fix) borg_notice();
 
 	/* Sell something (if useless) */
 	if (b_i >= 0)
@@ -683,12 +657,6 @@ static s32b borg_think_buy_slot(list_item *l_ptr, int slot, bool home)
 	q_ptr->treat_as = TREAT_AS_SWAP;
 	l_ptr->treat_as = TREAT_AS_SWAP;
 
-	/* Examine the inventory */
-	borg_notice();
-
-	/* Examine the home */
-	if (home) borg_notice_home();
-
 	/* Evaluate the inventory */
 	p = borg_power();
 
@@ -715,8 +683,6 @@ static bool borg_think_shop_buy_aux(int shop)
 	int n, b_n = -1;
 	s32b p, b_p = 0L;
 	s32b c, b_c = 0L;
-
-	bool fix = FALSE;
 
 	/* Require one empty slot */
 	if (inven_num >= INVEN_PACK - 1) return (FALSE);
@@ -755,9 +721,6 @@ static bool borg_think_shop_buy_aux(int shop)
 		{
 			/* Get power for doing swap */
 			p = borg_think_buy_slot(l_ptr, slot, FALSE);
-
-			/* Fix later */
-			fix = TRUE;
 		}
 
 		/* Consider new inventory */
@@ -765,12 +728,6 @@ static bool borg_think_shop_buy_aux(int shop)
 		{
 			/* Hack - use 'INVEN_LESS' to say we want it in the inventory */
 			l_ptr->treat_as = TREAT_AS_LESS;
-
-			/* Fix later */
-			fix = TRUE;
-
-			/* Examine the inventory */
-			borg_notice();
 
 			/* Evaluate the equipment */
 			p = borg_power();
@@ -800,9 +757,6 @@ static bool borg_think_shop_buy_aux(int shop)
 	/* Use normal items */
 	use_shop = FALSE;
 
-	/* Examine the inventory */
-	if (fix) borg_notice();
-
 	/* Buy something */
 	if (b_n >= 0)
 	{
@@ -831,9 +785,6 @@ static bool borg_think_home_buy_aux(void)
 	s32b p, b_p = 0L;
 	s32b p_left = 0;
 	s32b p_right = 0;
-
-	bool fix = FALSE;
-
 
 	/* Require one empty slot */
 	if (inven_num >= INVEN_PACK - 1) return (FALSE);
@@ -872,9 +823,6 @@ static bool borg_think_home_buy_aux(void)
 				/* Get power for doing swap */
 				p = borg_think_buy_slot(l_ptr, slot, TRUE);
 			}
-
-			/* Fix later */
-			fix = TRUE;
 		}
 
 		/* Consider new inventory */
@@ -882,15 +830,6 @@ static bool borg_think_home_buy_aux(void)
 		{
 			/* Try to get item */
 			l_ptr->treat_as = TREAT_AS_LESS;
-
-			/* Fix later */
-			fix = TRUE;
-
-			/* Examine the inventory */
-			borg_notice();
-
-			/* Examine the home */
-			borg_notice_home();
 
 			/* Evaluate the equipment */
 			p = borg_power() + borg_power_home();
@@ -906,9 +845,6 @@ static bool borg_think_home_buy_aux(void)
 		b_n = n;
 		b_p = p;
 	}
-
-	/* Examine the inventory */
-	if (fix) borg_notice();
 
 	/* Buy something */
 	if ((b_n >= 0) && (b_p > borg_power()))
@@ -946,9 +882,6 @@ static bool borg_think_shop_grab_aux(int shop)
 	/* Require two empty slots */
 	if (inven_num >= INVEN_PACK - 2) return (FALSE);
 
-	/* Examine the home */
-	borg_notice_home();
-
 	/* Evaluate the home */
 	b_s = borg_power_home();
 
@@ -965,9 +898,6 @@ static bool borg_think_shop_grab_aux(int shop)
 
 		/* Get a single item */
 		l_ptr->treat_as = TREAT_AS_LESS;
-
-		/* Notice home changes */
-		borg_notice_home();
 
 		/* Evaluate the home */
 		s = borg_power_home();
@@ -992,9 +922,6 @@ static bool borg_think_shop_grab_aux(int shop)
 		b_s = s;
 		b_c = c;
 	}
-
-	/* Restore home */
-	borg_notice_home();
 
 	/* Normal power calculation */
 	use_shop = FALSE;
@@ -1032,9 +959,6 @@ static bool borg_think_home_grab_aux(void)
 	/* Require two empty slots */
 	if (inven_num >= INVEN_PACK - 2) return (FALSE);
 
-	/* Examine the home */
-	borg_notice_home();
-
 	/* Evaluate the home */
 	b_s = borg_power_home() + borg_power();
 
@@ -1045,12 +969,6 @@ static bool borg_think_home_grab_aux(void)
 
 		/* Remove the item */
 		l_ptr->treat_as = TREAT_AS_SWAP;
-
-		/* Notice the player */
-		borg_notice();
-
-		/* Examine the home */
-		borg_notice_home();
 
 		/* Evaluate the home */
 		s = borg_power_home() + borg_power();
@@ -1065,9 +983,6 @@ static bool borg_think_home_grab_aux(void)
 		b_n = n;
 		b_s = s;
 	}
-
-	/* Examine the home */
-	borg_notice_home();
 
 	/* Evaluate the home */
 	s = borg_power_home();

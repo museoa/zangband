@@ -3996,12 +3996,19 @@ s32b borg_power(void)
 {
 	int i = 1;
 	s32b value = 0L;
+	
+	/* Notice the inventory and equipment */
+	borg_notice();
 
 	/* Process the equipment */
 	value += borg_power_aux3();
+	
+	borg_note_fmt("# Equip power %ld", (long) value);
 
 	/* Process the inventory */
 	value += borg_power_aux4();
+	
+	borg_note_fmt("# Inven power %ld", (long) value);
 
 	/* Add a bonus for deep level prep */
 	/* Dump prep codes */

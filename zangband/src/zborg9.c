@@ -461,9 +461,6 @@ static bool borg_think(void)
 		/* Cheat the current gold (unless in home) */
 		borg_gold = p_ptr->au;
 
-		/* Examine the inventory */
-		borg_notice();
-
 		/* Hack -- allow user abort */
 		if (borg_cancel) return (TRUE);
 
@@ -4038,13 +4035,8 @@ void do_cmd_borg(void)
 			/* Extract some "hidden" variables */
 			borg_hidden();
 
-			/* Examine the inventory */
-			borg_notice();
-
 			/* Evaluate */
 			p = borg_power();
-
-			borg_notice_home();
 
 			/* Report it */
 			msg_format("Current Borg Power %ld", p);
