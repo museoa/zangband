@@ -497,9 +497,15 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 		{
 			/* Require a "naked" floor grid */
 			if ((c_ptr->o_idx != 0) || (c_ptr->m_idx != 0)) break;
+			
+			/* Require a floor grid */
+			if (!cave_floor_grid(c_ptr)) break;
 
 			/* Add the glyph here as a field */
 			(void)place_field(y, x, FT_GLYPH_WARDING);
+			
+			/* Notice it */
+			note_spot(y, x);
 
 			break;
 		}

@@ -1265,9 +1265,19 @@ bool warding_glyph(void)
 		msg_print("The object resists the spell.");
 		return FALSE;
 	}
+	
+	/* Not in a wall */
+	if (!cave_floor_grid(c_ptr))
+	{
+		msg_print("You need open space to draw the rune.");
+		return FALSE;
+	}
 
 	/* Add the glyph here as a field */
 	(void)place_field(py, px, FT_GLYPH_WARDING);
+	
+	/* Notice it */
+	note_spot(py, px);
 
 	return TRUE;
 }
@@ -1289,9 +1299,19 @@ bool explosive_rune(void)
 		msg_print("The object resists the spell.");
 		return FALSE;
 	}
+	
+	/* Not in a wall */
+	if (!cave_floor_grid(c_ptr))
+	{
+		msg_print("You need open space to draw the rune.");
+		return FALSE;
+	}
 
 	/* Add the glyph here as a field */
 	(void)place_field(py, px, FT_GLYPH_EXPLODE);
+	
+	/* Notice it */
+	note_spot(py, px);
 
 	return TRUE;
 }
