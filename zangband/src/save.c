@@ -1298,43 +1298,23 @@ static void wr_dungeon(void)
 	wr_u16b(p_ptr->px);
 	wr_u16b(p_ptr->max_hgt);
 	wr_u16b(p_ptr->max_wid);
-	wr_u16b(max_panel_rows);
-	wr_u16b(max_panel_cols);
+	
+	/* Old panel stuff */
+	wr_u16b(0);
+	wr_u16b(0);
+	
+	/* Panel bounds */
+	wr_s16b(p_ptr->panel_x1);
+	wr_s16b(p_ptr->panel_y1);
+	wr_s16b(p_ptr->panel_x2);
+	wr_s16b(p_ptr->panel_y2);
 
 	/* Save wilderness data */
 	save_wild_data();
 
-	if (p_ptr->depth)
-	{
-		/* Save dungeon map */
-		save_map(p_ptr->min_wid, p_ptr->min_hgt, p_ptr->max_wid,
-				 p_ptr->max_hgt);
-#if 0
-		/* Hack - the player is not in this dungeon */
-		character_dungeon = FALSE;
-
-		/* Save wilderness map */
-		change_level(0);
-
-		save_map(wild_grid.y_max, wild_grid.y_min,
-				 wild_grid.x_max, wild_grid.x_min);
-
-		change_level(p_ptr->depth);
-
-		/* The character is back in the dungeon */
-		character_dungeon = TRUE;
-
-		/* Restore bounds */
-		max_hgt = cur_hgt;
-		max_wid = cur_wid;
-#endif /* 0 */
-	}
-	else
-	{
-		/* Save wilderness map */
-		save_map(p_ptr->min_wid, p_ptr->min_hgt, p_ptr->max_wid,
-				 p_ptr->max_hgt);
-	}
+	/* Save map */
+	save_map(p_ptr->min_wid, p_ptr->min_hgt, p_ptr->max_wid,
+				p_ptr->max_hgt);
 
 	/* Compact the monsters */
 	compact_monsters(0);

@@ -1180,21 +1180,78 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 
 
 /*
- * Calculates current boundaries
+ * Get size of map on screen
  */
-static void panel_recalc_bounds(void)
+void get_map_size(int *x, int *y)
 {
 	int wid, hgt;
-
+	
 	/* Get size */
 	Term_get_size(&wid, &hgt);
 
-	panel_row_max = panel_row_min + hgt - ROW_MAP - 2;
-	panel_row_prt = panel_row_min - 1;
-	panel_col_max = panel_col_min + wid - COL_MAP - 2;
-	panel_col_prt = panel_col_min - 13;
+    /* Offset */
+	hgt -= ROW_MAP + 1;
+	wid -= COL_MAP + 1;
+
+	/* Hack - bigmap has half resolution */
+	if (use_bigtile) wid = wid / 2;
+	
+	/* Return values */
+	*x = wid;
+	*y = hgt;
 }
 
+
+/*
+ * Get panel max bounds
+ * where (x, y) is a provisional top left corner.
+ */
+static bool panel_bounds(int x, int y, int wid, int hgt)
+{
+	int xmax, ymax;
+	
+	/* Hack - vanilla town is special */
+	if (vanilla_town && (!p_ptr->depth) && !use_bigtile)
+	{
+		/* Same bounds all the time */
+		x = max_wild * WILD_BLOCK_SIZE / 2 - wid / 2 - 15;
+		y = max_wild * WILD_BLOCK_SIZE / 2 - hgt / 2 - 5;
+	}
+	else
+	{
+		/* Bounds */
+		if (y > p_ptr->max_hgt - hgt) y = p_ptr->max_hgt - hgt;
+		if (y < p_ptr->min_hgt) y = p_ptr->min_hgt;
+		if (x > p_ptr->max_wid - wid) x = p_ptr->max_wid - wid;
+		if (x < p_ptr->min_wid) x = p_ptr->min_wid;
+	}
+	
+	xmax = x + wid;
+	ymax = y + hgt;
+	
+	/* Handle "changes" */
+	if ((y != p_ptr->panel_y1) || (x != p_ptr->panel_x1))
+	{
+		/* Save the new panel info */
+		p_ptr->panel_x1 = x;
+		p_ptr->panel_y1 = y;
+		p_ptr->panel_x2 = xmax;
+		p_ptr->panel_y2 = ymax;
+
+		/* Update stuff */
+		p_ptr->update |= (PU_MONSTERS);
+
+		/* Redraw map */
+		p_ptr->redraw |= (PR_MAP);
+
+		/* Handle stuff */
+		handle_stuff();
+		
+		return (TRUE);
+	}
+	
+	return (FALSE);
+}
 
 /*
  * Handle a request to change the current panel
@@ -1205,199 +1262,64 @@ static void panel_recalc_bounds(void)
  */
 bool change_panel(int dx, int dy)
 {
-	int y, x;
+	int x, y;
 	int wid, hgt;
 
-	/* Get size */
-	Term_get_size(&wid, &hgt);
-
-	/* Offset */
-	hgt -= ROW_MAP + 1;
-	wid -= COL_MAP + 1;
+	get_map_size(&wid, &hgt);
 
 	/* Apply the motion */
-	y = panel_row_min + dy * (hgt / 2);
-	x = panel_col_min + dx * (wid / 2);
-
-	/* Bounds */
-	if (y > p_ptr->max_hgt - hgt) y = p_ptr->max_hgt - hgt;
-	if (y < p_ptr->min_hgt) y = p_ptr->min_hgt;
-	if (x > p_ptr->max_wid - wid) x = p_ptr->max_wid - wid;
-	if (x < p_ptr->min_wid) x = p_ptr->min_wid;
-
-	if (vanilla_town && (!p_ptr->depth))
-	{
-		x = max_wild * WILD_BLOCK_SIZE / 2 - wid / 2 - 15;
-		y = max_wild * WILD_BLOCK_SIZE / 2 - hgt / 2 - 5;
-	}
-
-	/* Handle "changes" */
-	if ((y != panel_row_min) || (x != panel_col_min))
-	{
-		/* Save the new panel info */
-		panel_row_min = y;
-		panel_col_min = x;
-
-		/* Recalculate the boundaries */
-		panel_recalc_bounds();
-
-		/* Update stuff */
-		p_ptr->update |= (PU_MONSTERS);
-
-		/* Redraw map */
-		p_ptr->redraw |= (PR_MAP);
-
-		/* Handle stuff */
-		handle_stuff();
-
-		/* Success */
-		return (TRUE);
-	}
-
-	/* No change */
-	return (FALSE);
+	x = p_ptr->panel_x1 + dx * (wid / 2);
+	y = p_ptr->panel_y1 + dy * (hgt / 2);
+	
+	/* Get new bounds */
+	return (panel_bounds(x, y, wid, hgt));
 }
 
 
+/*
+ * Recenter the map around the player as required
+ */
 void verify_panel(void)
 {
-	int py = p_ptr->py;
-	int px = p_ptr->px;
-
-	int y = py;
-	int x = px;
-
 	int wid, hgt;
-
-	int prow_min;
-	int pcol_min;
-
-	int max_prow_min;
-	int max_pcol_min;
-
-
-	/* Hack - in vanilla town mode - do not move the screen */
-	if (vanilla_town && (!p_ptr->depth))
-	{
-		(void)change_panel(0, 0);
-		return;
-	}
-
-	/* Get size */
-	Term_get_size(&wid, &hgt);
-
-	/* Offset */
-	hgt -= ROW_MAP + 1;
-	wid -= COL_MAP + 1;
-
-	/* Where are we? */
-	if (!vanilla_town && !p_ptr->depth)
-	{
-		/* Fix the borders in the wilderness */
-		max_pcol_min = max_panel_cols - wid - 3 - COL_MAP;
-		max_prow_min = max_panel_rows - hgt - WILD_BLOCK_SIZE + 1 - ROW_MAP;
-	}
-	else
-	{
-		/* In the dungeon */
-		max_prow_min = max_panel_rows - hgt;
-		max_pcol_min = max_panel_cols - wid;
-	}
-
-	/* Bounds checking */
-	if (max_prow_min < 0) max_prow_min = 0;
-	if (max_pcol_min < 0) max_pcol_min = 0;
-
-	/* Center on player */
-	if (center_player && (!avoid_center || !p_ptr->state.running))
-	{
-		/* Center vertically */
-		prow_min = y - hgt / 2;
-		if (prow_min < 0) prow_min = 0;
-		else if (prow_min > max_prow_min) prow_min = max_prow_min;
-
-		/* Center horizontally */
-		pcol_min = x - wid / 2;
-		if (pcol_min < 0) pcol_min = 0;
-		else if (pcol_min > max_pcol_min) pcol_min = max_pcol_min;
-	}
-	else
-	{
-		prow_min = panel_row_min;
-		pcol_min = panel_col_min;
-
-		/* Scroll screen when 2 grids from top/bottom edge */
-		if (y > panel_row_max - 2)
-		{
-			while (y > prow_min + hgt - 2)
-			{
-				prow_min += (hgt / 2);
-			}
-
-			if (prow_min > max_prow_min) prow_min = max_prow_min;
-		}
-
-		if (y < panel_row_min + 2)
-		{
-			while (y < prow_min + 2)
-			{
-				prow_min -= (hgt / 2);
-			}
-
-			if (prow_min < 0) prow_min = 0;
-		}
-
-		/* Scroll screen when 4 grids from left/right edge */
-		if (x > panel_col_max - 4)
-		{
-			while (x > pcol_min + wid - 4)
-			{
-				pcol_min += (wid / 2);
-			}
-
-			if (pcol_min > max_pcol_min) pcol_min = max_pcol_min;
-		}
-
-		if (x < panel_col_min + 4)
-		{
-			while (x < pcol_min + 4)
-			{
-				pcol_min -= (wid / 2);
-			}
-
-			if (pcol_min < 0) pcol_min = 0;
-		}
-	}
-
-	/* Check for "no change" */
-	if ((prow_min == panel_row_min) && (pcol_min == panel_col_min)) return;
-
-	/* Save the new panel info */
-	panel_row_min = prow_min;
-	panel_col_min = pcol_min;
-
-	/* Hack -- optional disturb on "panel change" */
-	if (disturb_panel && !center_player) disturb(FALSE);
-
-	/* Recalculate the boundaries */
-	panel_recalc_bounds();
-
-	/* Update stuff */
-	p_ptr->update |= (PU_MONSTERS);
-
-	/* Redraw map */
-	p_ptr->redraw |= (PR_MAP);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
 	
-	/* Handle stuff */
-	handle_stuff();
+	int x, y;	
+	int nx, ny;
+	
+	get_map_size(&wid, &hgt);
+	
+	if (center_player && !(avoid_center && p_ptr->state.running))
+	{
+		/* Center it */
+		x = p_ptr->px - wid / 2;
+		y = p_ptr->py - hgt / 2;
+	}
+	else
+	{
+		/* Get new 'best value' */
+		x = p_ptr->panel_x1;
+		y = p_ptr->panel_x1;
+		nx = p_ptr->px - wid / 2;
+		ny = p_ptr->py - hgt / 2;
+		
+		/* How far to move panel? */
+		if (abs(nx - x) > wid / 4) x = nx;
+		if (abs(ny - y) > hgt / 4) y = ny; 
+	}
+	
+	/* Get new bounds */
+	if (panel_bounds(x, y, wid, hgt))
+	{
+		/* Hack -- optional disturb on "panel change" */
+		if (disturb_panel && !center_player) disturb(FALSE);
+		
+		/* Window stuff */
+		p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
+		
+		/* Handle stuff */
+		handle_stuff();
+	}
 }
-
-
-
-
 
 /*
  * Center the dungeon display around the player
@@ -1405,58 +1327,81 @@ void verify_panel(void)
 void panel_center(void)
 {
 	int wid, hgt;
-	int new_panel_row, new_panel_col;
+	
+	int x, y;
 
-	/* Hack - in vanilla town mode - do not move the screen */
-	if (vanilla_town && (!p_ptr->depth))
+	/* Get size */
+	get_map_size(&wid, &hgt);
+		
+	x = p_ptr->px - wid / 2;
+	y = p_ptr->py - hgt / 2;
+		
+	/* Get new bounds */
+	if (panel_bounds(x, y, wid, hgt))
 	{
-		(void)change_panel(0, 0);
+		/* Hack -- optional disturb on "panel change" */
+		if (disturb_panel && !center_player) disturb(FALSE);
+		
+		/* Window stuff */
+		p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
+		
+		/* Handle stuff */
+		handle_stuff();
+	}
+}
+
+
+static int map_wid_old = 66;
+
+
+void map_panel_size(void)
+{
+	int wid, hgt;
+
+	/* Only if the map exists */
+	if (!character_dungeon) return;
+	
+	/* Hack - wait until are done with menus before updating */
+	if (character_icky)
+	{
+		p_ptr->update |= PU_MAP;
 		return;
 	}
+	
+	/* Get size */
+	get_map_size(&wid, &hgt);
+	
+	/* Set bigreion if required */
+	if (use_bigtile)
+	{
+		Term_bigregion(COL_MAP, ROW_MAP, ROW_MAP + hgt - 1);
+	}
 
-	/* Get the screen size */
-	Term_get_size(&wid, &hgt);
+	/* Kill previous size of line */
 
-	/* Calculate the dimensions of the displayed map */
-	hgt -= ROW_MAP + 1;
-	wid -= COL_MAP + 1;
+	/* String of terrain characters along one row of the map */
+	if (mp_ta) KILL(mp_ta);
+	if (mp_tc) KILL(mp_tc);
 
-	/* Center the map around the player */
-	new_panel_row = p_ptr->py - (hgt / 2);
-	new_panel_col = p_ptr->px - (wid / 2);
+	/* String of characters along one row of the map */
+	if (mp_a) KILL(mp_a);
+	if (mp_c) KILL(mp_c);
 
-	/* Move the map so that it only shows the dungeon */
-	if (new_panel_row + hgt > p_ptr->max_hgt) new_panel_row =
-			p_ptr->max_hgt - hgt;
-	if (new_panel_col + wid > p_ptr->max_wid) new_panel_col =
-			p_ptr->max_wid - wid;
+	/* Save size */
+	map_wid_old = wid;
 
-	/* Verify the lower panel bounds */
-	if (new_panel_row < 0) new_panel_row = 0;
-	if (new_panel_col < 0) new_panel_col = 0;
+	/* Make the new lines */
 
-	/* Check for "no change" */
-	if ((new_panel_row == panel_row_min) && (new_panel_col ==
-											 panel_col_min)) return;
+	/* String of terrain characters along one row of the map */
+	C_MAKE(mp_ta, wid, byte);
+	C_MAKE(mp_tc, wid, char);
 
-	/* Save the new panel info */
-	panel_row_min = new_panel_row;
-	panel_col_min = new_panel_col;
+	/* String of characters along one row of the map */
+	C_MAKE(mp_a, wid, byte);
+	C_MAKE(mp_c, wid, char);
 
-	/* Hack -- optional disturb on "panel change" */
-	if (disturb_panel && !center_player) disturb(FALSE);
-
-	/* Recalculate the boundaries */
-	panel_recalc_bounds();
-
-	/* Update stuff */
-	p_ptr->update |= (PU_MONSTERS);
-
-	/* Redraw map */
-	p_ptr->redraw |= (PR_MAP);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
+    /* Verify the panel */
+	verify_panel();
 }
 
 
@@ -1992,9 +1937,9 @@ static void target_set_prepare(int mode)
 	temp_n = 0;
 
 	/* Scan the current panel */
-	for (y = panel_row_min; y <= panel_row_max; y++)
+	for (y = p_ptr->panel_y1; y <= p_ptr->panel_y2; y++)
 	{
-		for (x = panel_col_min; x <= panel_col_max; x++)
+		for (x = p_ptr->panel_x1; x <= p_ptr->panel_x2; x++)
 		{
 			cave_type *c_ptr;
 
@@ -2565,12 +2510,9 @@ static int target_set_aux(int x, int y, int mode, cptr info)
  */
 bool target_set(int mode)
 {
-	int py = p_ptr->py;
-	int px = p_ptr->px;
-
 	int i, d, m, t, bd;
-	int y = py;
-	int x = px;
+	int y = p_ptr->py;
+	int x = p_ptr->px;
 
 	bool done = FALSE;
 
@@ -2584,13 +2526,8 @@ bool target_set(int mode)
 
 	int wid, hgt;
 
-
-	/* Get size */
-	Term_get_size(&wid, &hgt);
-
 	/* Cancel target */
 	p_ptr->target_who = 0;
-
 
 	/* Cancel tracking */
 	/* health_track(0); */
@@ -2695,8 +2632,8 @@ bool target_set(int mode)
 					/* Recalculate interesting grids */
 					target_set_prepare(mode);
 
-					y = py;
-					x = px;
+					y = p_ptr->py;
+					x = p_ptr->px;
 
 					/* Fall through */
 				}
@@ -2726,8 +2663,8 @@ bool target_set(int mode)
 			if (d)
 			{
 				/* Modified to scroll to monster */
-				int y2 = panel_row_min;
-				int x2 = panel_col_min;
+				int y2 = p_ptr->panel_y1;
+				int x2 = p_ptr->panel_x1;
 
 				/* Find a new monster */
 				i = target_pick(temp_x[m], temp_y[m], ddx[d], ddy[d]);
@@ -2759,24 +2696,13 @@ bool target_set(int mode)
 					{
 						int dx = ddx[d];
 						int dy = ddy[d];
+						
+						/* Get size */
+						get_map_size(&wid, &hgt);
 
 						/* Restore previous position */
-						panel_row_min = y2;
-						panel_col_min = x2;
-						panel_recalc_bounds();
-
-						/* Update stuff */
-						p_ptr->update |= (PU_MONSTERS);
-
-						/* Redraw map */
-						p_ptr->redraw |= (PR_MAP);
-
-						/* Window stuff */
-						p_ptr->window |= (PW_OVERHEAD);
-
-						/* Handle stuff */
-						handle_stuff();
-
+						panel_bounds(x2, y2, wid, hgt);
+						
 						/* Recalculate interesting grids */
 						target_set_prepare(mode);
 
@@ -2784,42 +2710,19 @@ bool target_set(int mode)
 						flag = FALSE;
 
 						/* Move */
-						x += dx;
-						y += dy;
-
-						/* Do not move horizontally if unnecessary */
-						if (((x < panel_col_min + (wid - 14) / 2) && (dx > 0))
-							|| ((x > panel_col_min + (wid - 14) / 2)
-								&& (dx < 0)))
-						{
-							dx = 0;
-						}
-
-						/* Do not move vertically if unnecessary */
-						if (((y < panel_row_min + (hgt - 2) / 2) && (dy > 0)) ||
-							((y > panel_row_min + (hgt - 2) / 2) && (dy < 0)))
-						{
-							dy = 0;
-						}
+						x = x2 + dx;
+						y = y2 + dy;
 
 						/* Apply the motion */
-						if ((y >= panel_row_min + hgt - 2)
-							|| (y < panel_row_min)
-							|| (x >= panel_col_min + wid - 14)
-							|| (x < panel_col_min))
-						{
-							if (change_panel(dx, dy)) target_set_prepare(mode);
-						}
+						if (change_panel(dx, dy)) target_set_prepare(mode);
 
 						/* Slide into legality */
-						if (x <= p_ptr->min_wid) x = p_ptr->min_wid + 1;
-						else if (x >= p_ptr->max_wid - 1) x =
-								p_ptr->max_wid - 2;
+						if (x < p_ptr->panel_x1) x = p_ptr->panel_x1;
+						else if (x >= p_ptr->panel_x2) x = p_ptr->panel_x2 - 1;
 
 						/* Slide into legality */
-						if (y <= p_ptr->min_hgt) y = p_ptr->min_hgt + 1;
-						else if (y >= p_ptr->max_hgt - 1) y =
-								p_ptr->max_hgt - 2;
+						if (y < p_ptr->panel_y1) y = p_ptr->panel_y1;
+						else if (y >= p_ptr->panel_y2) y = p_ptr->panel_y2 - 1;
 					}
 				}
 
@@ -2881,8 +2784,8 @@ bool target_set(int mode)
 					/* Recalculate interesting grids */
 					target_set_prepare(mode);
 
-					y = py;
-					x = px;
+					y = p_ptr->py;
+					x = p_ptr->px;
 
 					/* Fall through */
 				}
@@ -2938,34 +2841,15 @@ bool target_set(int mode)
 				x += dx;
 				y += dy;
 
-				/* Do not move horizontally if unnecessary */
-				if (((x < panel_col_min + (wid - 14) / 2) && (dx > 0)) ||
-					((x > panel_col_min + (wid - 14) / 2) && (dx < 0)))
-				{
-					dx = 0;
-				}
-
-				/* Do not move vertically if unnecessary */
-				if (((y < panel_row_min + (hgt - 2) / 2) && (dy > 0)) ||
-					((y > panel_row_min + (hgt - 2) / 2) && (dy < 0)))
-				{
-					dy = 0;
-				}
-
-				/* Apply the motion */
-				if ((y >= panel_row_min + hgt - 2) || (y < panel_row_min) ||
-					(x >= panel_col_min + wid - 14) || (x < panel_col_min))
-				{
-					if (change_panel(dx, dy)) target_set_prepare(mode);
-				}
+				if (change_panel(dx, dy)) target_set_prepare(mode);
 
 				/* Slide into legality */
-				if (x <= p_ptr->min_wid) x = p_ptr->min_wid + 1;
-				else if (x >= p_ptr->max_wid - 1) x = p_ptr->max_wid - 2;
+				if (x < p_ptr->panel_x1) x = p_ptr->panel_x1;
+				else if (x >= p_ptr->panel_x2) x = p_ptr->panel_x2 - 1;
 
 				/* Slide into legality */
-				if (y <= p_ptr->min_hgt) y = p_ptr->min_hgt + 1;
-				else if (y >= p_ptr->max_hgt - 1) y = p_ptr->max_hgt - 2;
+				if (y < p_ptr->panel_y1) y = p_ptr->panel_y1;
+				else if (y >= p_ptr->panel_y2) y = p_ptr->panel_y2 - 1;
 			}
 		}
 	}
@@ -3730,22 +3614,22 @@ bool tgt_pt(int *x, int *y)
 
 				/* Hack -- Verify x */
 				if ((*x >= p_ptr->max_wid - 1)
-					|| (*x >= panel_col_min + wid - 14))
+					|| (*x >= p_ptr->panel_x2 - COL_MAP))
 				{
 					(*x)--;
 				}
-				else if ((*x <= p_ptr->min_wid) || (*x <= panel_col_min))
+				else if (*x <= p_ptr->panel_x1)
 				{
 					(*x)++;
 				}
 
 				/* Hack -- Verify y */
 				if ((*y >= p_ptr->max_hgt - 1)
-					|| (*y >= panel_row_min + hgt - 2))
+					|| (*y >= p_ptr->panel_y2 - 1))
 				{
 					(*y)--;
 				}
-				else if ((*y <= p_ptr->min_hgt) || (*y <= panel_row_min))
+				else if (*y <= p_ptr->panel_y1)
 				{
 					(*y)++;
 				}

@@ -126,9 +126,6 @@ cptr help_x11[] =
  */
 #include "maid-x11.h"
 
-/* Hack - not in [Z] yet */
-static bool use_bigtile = FALSE;
-
 /*
  * Hack -- avoid some compiler warnings
  */
@@ -1232,7 +1229,7 @@ static errr Infofnt_prepare(XFontStruct *info)
 	/* Assign the struct */
 	ifnt->info = info;
 
-	/* Jump into the max bouonds thing */
+	/* Jump into the max bounds thing */
 	cs = &(info->max_bounds);
 
 	/* Extract default sizing info */
@@ -1338,11 +1335,56 @@ static errr Infofnt_init_data(cptr name)
 
 
 /*
+ * Find the square a particular pixel is part of.
+ */
+static void pixel_to_square(int *x, int *y, int ox, int oy)
+{
+	(*x) = (ox - Infowin->ox) / Infofnt->wid;
+	(*y) = (oy - Infowin->oy) / Infofnt->hgt;
+	
+	if ((use_bigtile) && ((*y) >= Term->scr->big_y1)
+		&& ((*y) <= Term->scr->big_y2)
+		&& ((*x) >= Term->scr->big_x1))
+	{
+		(*x) -= ((*x) - Term->scr->big_x1) / 2;
+	}
+}
+
+/*
+ * Find the pixel at the top-left corner of a square.
+ */
+static void square_to_pixel(int *x, int *y, int ox, int oy)
+{
+	(*y) = oy * Infofnt->hgt + Infowin->oy;
+	
+	if ((use_bigtile) && (oy >= Term->scr->big_y1)
+			&& (oy <= Term->scr->big_y2))
+	{
+		if (ox > Term->scr->big_x1)
+		{
+			(*x) = Term->scr->big_x1 * Infofnt->wid +
+					(ox - Term->scr->big_x1) * Infofnt->twid + Infowin->ox;
+		}
+		else
+		{
+			(*x) = ox * Infofnt->wid + Infowin->ox;
+		}
+	}
+	else
+	{
+		(*x) = ox * Infofnt->wid + Infowin->ox;
+	}
+}
+
+
+/*
  * Standard Text
  */
-static errr Infofnt_text_std(int x, int y, cptr str, int len)
+static errr Infofnt_text_std(int cx, int cy, cptr str, int len)
 {
 	int i;
+	
+	int x, y;
 
 
 	/*** Do a brief info analysis ***/
@@ -1356,15 +1398,12 @@ static errr Infofnt_text_std(int x, int y, cptr str, int len)
 
 	/*** Decide where to place the string, vertically ***/
 
+	square_to_pixel(&x, &y, cx, cy);
+	
 	/* Ignore Vertical Justifications */
-	y = (y * Infofnt->hgt) + Infofnt->asc + Infowin->oy;
-
-
-	/*** Decide where to place the string, horizontally ***/
-
-	/* Line up with x at left edge of column 'x' */
-	x = (x * Infofnt->wid) + Infowin->ox;
-
+	y += Infofnt->asc;
+	
+	
 
 	/*** Actually draw 'str' onto the infowin ***/
 
@@ -1373,16 +1412,30 @@ static errr Infofnt_text_std(int x, int y, cptr str, int len)
 
 
 	/*** Handle the fake mono we can enforce on fonts ***/
-
-	/* Monotize the font */
-	if (Infofnt->mono)
+	
+	/* Monotize the font if required */
+	if (Infofnt->mono || is_bigtiled(cx + len - 1, cy))
 	{
+		/* Horizontal Justification */
+		x += Infofnt->off;
+		
 		/* Do each character */
 		for (i = 0; i < len; ++i)
 		{
-			/* Note that the Infoclr is set up to contain the Infofnt */
-			XDrawImageString(Metadpy->dpy, Infowin->win, Infoclr->gc,
-			                 x + i * Infofnt->wid + Infofnt->off, y, str + i, 1);
+			if (is_bigtiled(cx + i, cy))
+			{
+				/* Note that the Infoclr is set up to contain the Infofnt */
+				XDrawImageString(Metadpy->dpy, Infowin->win, Infoclr->gc,
+								x, y, str + i, 1);
+				x += Infofnt->twid;
+			}
+			else
+			{
+				/* Note that the Infoclr is set up to contain the Infofnt */
+				XDrawImageString(Metadpy->dpy, Infowin->win, Infoclr->gc,
+								x, y, str + i, 1);
+				x += Infofnt->wid;
+			}
 		}
 	}
 
@@ -1400,55 +1453,39 @@ static errr Infofnt_text_std(int x, int y, cptr str, int len)
 }
 
 
+
 /*
  * Painting where text would be
  */
-static errr Infofnt_text_non(int x, int y, cptr str, int len)
+static errr Infofnt_text_non(int x, int y, int len)
 {
-	int w, h;
+	int x1, y1, x2, y2;
 
-
-	/*** Find the width ***/
-
-	/* Negative length is a flag to count the characters in str */
-	if (len < 0) len = strlen(str);
-
-	/* The total width will be 'len' chars * standard width */
-	w = len * Infofnt->wid;
-
-
-	/*** Find the X dimensions ***/
-
-	/* Line up with x at left edge of column 'x' */
-	x = x * Infofnt->wid + Infowin->ox;
-
-
-	/*** Find other dimensions ***/
-
-	/* Simply do 'Infofnt->hgt' (a single row) high */
-	h = Infofnt->hgt;
-
-	/* Simply do "at top" in row 'y' */
-	y = y * h + Infowin->oy;
-
+	/*** Find the dimensions ***/
+	square_to_pixel(&x1, &y1, x, y);
+	square_to_pixel(&x2, &y2, x + len - 1, y);
+	
+	/* Get bottom rhs of rectangle */
+	if (is_bigtiled(x + len, y))
+	{
+		x2 += Infofnt->twid;
+	}
+	else
+	{
+		x2 += Infofnt->wid;
+	}
+	y2 += Infofnt->hgt;
 
 	/*** Actually 'paint' the area ***/
 
 	/* Just do a Fill Rectangle */
-	XFillRectangle(Metadpy->dpy, Infowin->win, Infoclr->gc, x, y, w, h);
+	XFillRectangle(Metadpy->dpy, Infowin->win, Infoclr->gc,
+					x1, y1,
+					x2 - 1, y2 - 1);
 
 	/* Success */
 	return (0);
 }
-
-
-
-/*************************************************************************/
-
-
-/*
- * Angband specific code follows... (ANGBAND)
- */
 
 
 /*
@@ -1485,6 +1522,7 @@ struct term_data
 #ifdef USE_GRAPHICS
 
 	XImage *tiles;
+	XImage *b_tiles;
 
 	/* Temporary storage for overlaying tiles. */
 	XImage *TmpImage;
@@ -1644,27 +1682,6 @@ static void react_keypress(XKeyEvent *ev)
 		/* Create a macro */
 		macro_add(msg, buf);
 	}
-}
-
-
-/*
- * Find the square a particular pixel is part of.
- */
-static void pixel_to_square(int * const x, int * const y,
-	const int ox, const int oy)
-{
-	(*x) = (ox - Infowin->ox) / Infofnt->wid;
-	(*y) = (oy - Infowin->oy) / Infofnt->hgt;
-}
-
-/*
- * Find the pixel at the top-left corner of a square.
- */
-static void square_to_pixel(int * const x, int * const y,
-                            const int ox, const int oy)
-{
-	(*x) = ox * Infofnt->wid + Infowin->ox;
-	(*y) = oy * Infofnt->hgt + Infowin->oy;
 }
 
 
@@ -2250,37 +2267,33 @@ static errr Term_xtra_x11(int n, int v)
 
 		/* React to changes */
 		case TERM_XTRA_REACT: return (Term_xtra_x11_react());
+
+		/* Bigtile mode */
+		case TERM_XTRA_SETBG: use_bigtile = v; return (0);
 	}
 
 	/* Unknown */
 	return (1);
 }
 
-
 /*
  * Draw the cursor as a rectangular outline
  */
 static errr Term_curs_x11(int x, int y)
 {
-	XDrawRectangle(Metadpy->dpy, Infowin->win, xor->gc,
-			 x * Infofnt->wid + Infowin->ox,
-			 y * Infofnt->hgt + Infowin->oy,
-			 Infofnt->wid - 1, Infofnt->hgt - 1);
-
-	/* Success */
-	return (0);
-}
-
-
-/*
- * Draw the double width cursor as a rectangular outline
- */
-static errr Term_bigcurs_x11(int x, int y)
-{
-	XDrawRectangle(Metadpy->dpy, Infowin->win, xor->gc,
-			 x * Infofnt->wid + Infowin->ox,
-			 y * Infofnt->hgt + Infowin->oy,
+	int x1, y1;
+	square_to_pixel(&x1, &y1, x, y);
+	
+	if (is_bigtiled(x, y))
+	{
+		XDrawRectangle(Metadpy->dpy, Infowin->win, xor->gc,
+			 x1, y1,
 			 Infofnt->twid - 1, Infofnt->hgt - 1);
+	}
+	
+	XDrawRectangle(Metadpy->dpy, Infowin->win, xor->gc,
+			 x1, y1,
+			 Infofnt->wid - 1, Infofnt->hgt - 1);
 
 	/* Success */
 	return (0);
@@ -2296,7 +2309,7 @@ static errr Term_wipe_x11(int x, int y, int n)
 	Infoclr_set(clr[TERM_DARK]);
 
 	/* Mega-Hack -- Erase some space */
-	Infofnt_text_non(x, y, "", n);
+	Infofnt_text_non(x, y, n);
 	
 	/* Redraw the selection if any, as it may have been obscured. (later) */
 	x11_selection->drawn = FALSE;
@@ -2327,10 +2340,13 @@ static errr Term_text_x11(int x, int y, int n, byte a, cptr s)
 
 #ifdef USE_GRAPHICS
 
+
+
+
 /*
  * Draw some graphical characters.
  */
-static errr Term_pict_x11(int x, int y, int n, const byte *ap, const char *cp, const byte *tap, const char *tcp)
+static errr Term_pict_x11(int ox, int oy, int n, const byte *ap, const char *cp, const byte *tap, const char *tcp)
 {
 	int i;
 	int x1 = 0, y1 = 0;
@@ -2340,21 +2356,21 @@ static errr Term_pict_x11(int x, int y, int n, const byte *ap, const char *cp, c
 
 	byte ta;
 	char tc;
-
+	
+	int x, y;
 	int x2, y2;
 	int k,l;
 
 	unsigned long pixel, blank;
 
 	term_data *td = (term_data*)(Term->data);
+	
+	int wid, hgt = td->fnt->hgt;
+	XImage *tiles;
 
-	y *= Infofnt->hgt;
-	x *= Infofnt->wid;
-
-	/* Add in affect of window boundaries */
-	y += Infowin->oy;
-	x += Infowin->ox;
-
+	/* Starting point */
+	square_to_pixel(&x, &y, ox, oy);
+	
 	for (i = 0; i < n; ++i)
 	{
 		a = *ap++;
@@ -2363,46 +2379,57 @@ static errr Term_pict_x11(int x, int y, int n, const byte *ap, const char *cp, c
 		ta = *tap++;
 		tc = *tcp++;
 
+		/* What are we drawing? */
+		if (is_bigtiled(ox + i, oy))
+		{
+			tiles = td->b_tiles;
+			wid = td->fnt->twid;
+		}
+		else
+		{
+			tiles = td->tiles;
+			wid = td->fnt->wid;
+		}
+			
 		/* For extra speed - cache these values */
-		x1 = (c & 0x7F) * td->fnt->twid;
-		y1 = (a & 0x7F) * td->fnt->hgt;
+		x1 = (c & 0x7F) * wid;
+		y1 = (a & 0x7F) * hgt;
 
 		/* For extra speed - cache these values */
-		x2 = (tc & 0x7F) * td->fnt->twid;
-		y2 = (ta & 0x7F) * td->fnt->hgt;
-
+		x2 = (tc & 0x7F) * wid;
+		y2 = (ta & 0x7F) * hgt;
+			
 		/* Optimise the common case */
 		if (((x1 == x2) && (y1 == y2)) ||
 		    !(((byte)ta & 0x80) && ((byte)tc & 0x80)))
 		{
 			/* Draw object / terrain */
 			XPutImage(Metadpy->dpy, td->win->win,
-			          clr[0]->gc,
-			          td->tiles,
-			          x1, y1,
-			          x, y,
-			          td->fnt->twid, td->fnt->hgt);
+						clr[0]->gc,
+						tiles,
+						x1, y1,
+						x, y,
+						wid, hgt);
 		}
 		else
 		{
 			/* Mega Hack^2 - assume the top left corner is "blank" */
 			if (arg_graphics == GRAPHICS_DAVID_GERVAIS)
-				blank = XGetPixel(td->tiles, 0, 0);
+				blank = XGetPixel(tiles, 0, 0);
 			else
-				blank = XGetPixel(td->tiles, 0, td->fnt->hgt * 6);
-
-			for (k = 0; k < td->fnt->twid; k++)
+				blank = XGetPixel(tiles, 0, td->fnt->hgt * 6);
+	
+			for (k = 0; k < wid; k++)
 			{
-				for (l = 0; l < td->fnt->hgt; l++)
+				for (l = 0; l < hgt; l++)
 				{
 					/* If mask set... */
-					if ((pixel = XGetPixel(td->tiles, x1 + k, y1 + l)) == blank)
+					if ((pixel = XGetPixel(tiles, x1 + k, y1 + l)) == blank)
 					{
 						/* Output from the terrain */
-						pixel = XGetPixel(td->tiles, x2 + k, y2 + l);
+						pixel = XGetPixel(tiles, x2 + k, y2 + l);
 
-						if (pixel == blank)
-							pixel = 0L;
+						if (pixel == blank) pixel = 0L;
 					}
 
 					/* Store into the temp storage. */
@@ -2413,13 +2440,13 @@ static errr Term_pict_x11(int x, int y, int n, const byte *ap, const char *cp, c
 
 			/* Draw to screen */
 			XPutImage(Metadpy->dpy, td->win->win,
-			          clr[0]->gc,
-			          td->TmpImage,
-			          0, 0, x, y,
-			          td->fnt->twid, td->fnt->hgt);
+						clr[0]->gc,
+						td->TmpImage,
+						0, 0, x, y,
+						wid, hgt);
 		}
-
-		x += td->fnt->wid;
+			
+		x += wid;
 	}
 
 	/* Redraw the selection if any, as it may have been obscured. (later) */
@@ -2657,7 +2684,7 @@ errr init_x11(int argc, char *argv[])
 	int graphmode = GRAPHICS_ANY;
 
 	char *TmpData;
-
+	
 #endif /* USE_GRAPHICS */
 
 
@@ -2705,7 +2732,11 @@ errr init_x11(int argc, char *argv[])
 
 	/* Init the Metadpy if possible */
 	if (Metadpy_init_name(dpy_name)) return (-1);
-
+	
+#ifdef USE_GRAPHICS
+	/* We support bigtile mode */
+	if (arg_bigtile) use_bigtile = TRUE;
+#endif /* USE_GRAPHICS */	
 
 	/* Prepare cursor color */
 	MAKE(xor, infoclr);
@@ -2757,17 +2788,9 @@ errr init_x11(int argc, char *argv[])
 		/* Save global entry */
 		angband_term[i] = Term;
 	}
-
-	/* Raise the "Angband" window */
-	Infowin_set(data[0].win);
-	Infowin_raise();
-
-	/* Activate the "Angband" window screen */
-	Term_activate(&data[0].t);
-
+	
 
 #ifdef USE_GRAPHICS
-
 	/* Try graphics */
 	if (arg_graphics)
 	{
@@ -2814,20 +2837,31 @@ errr init_x11(int argc, char *argv[])
 				{
 					o_td = &data[j];
 
-					if ((td->fnt->twid == o_td->fnt->twid) && (td->fnt->hgt == o_td->fnt->hgt))
+					if ((td->fnt->wid == o_td->fnt->wid) && (td->fnt->hgt == o_td->fnt->hgt))
 					{
 						/* Use same graphics */
 						td->tiles = o_td->tiles;
+						td->b_tiles = o_td->b_tiles;
 						break;
 					}
 				}
-
+				
+				/* Resize Tiles */
 				if (!td->tiles)
 				{
-					/* Resize tiles */
+					if (arg_bigtile)
+					{
+						td->b_tiles = ResizeImage(dpy, tiles_raw,
+													pict_wid, pict_hgt,
+													td->fnt->twid, td->fnt->hgt);
+					}
+					else
+					{
+						td->b_tiles = NULL;
+					}
 					td->tiles = ResizeImage(dpy, tiles_raw,
 					                        pict_wid, pict_hgt,
-					                        td->fnt->twid, td->fnt->hgt);
+					                        td->fnt->wid, td->fnt->hgt);
 				}
 			}
 
@@ -2850,7 +2884,7 @@ errr init_x11(int argc, char *argv[])
 			while (jj >>= 1) ii <<= 1;
 
 			/* Pad the scanline to a multiple of 4 bytes */
-			total = td->fnt->wid * ii;
+			total = td->fnt->twid * ii;
 			total = (total + 3) & ~3;
 			total *= td->fnt->hgt;
 
@@ -2858,11 +2892,18 @@ errr init_x11(int argc, char *argv[])
 
 			td->TmpImage = XCreateImage(dpy,visual,depth,
 				ZPixmap, 0, TmpData,
-				td->fnt->wid, td->fnt->hgt, 32, 0);
+				td->fnt->twid, td->fnt->hgt, 32, 0);
 		}
 	}
 
 #endif /* USE_GRAPHICS */
+
+	/* Raise the "Angband" window */
+	Infowin_set(data[0].win);
+	Infowin_raise();
+
+	/* Activate the "Angband" window screen */
+	Term_activate(&data[0].t);
 
 	/* Success */
 	return (0);

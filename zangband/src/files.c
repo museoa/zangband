@@ -4731,10 +4731,8 @@ void close_game(void)
 	/* No suspending now */
 	signals_ignore_tstp();
 
-
 	/* Hack -- Character is now "icky" */
-	character_icky = TRUE;
-
+	screen_save();
 
 	/* Build the filename */
 	path_make(buf, ANGBAND_DIR_APEX, "scores.raw");
@@ -4784,6 +4782,9 @@ void close_game(void)
 
 	/* Forget the high score fd */
 	highscore_fd = -1;
+	
+	/* No longer icky */
+	screen_load();
 
 	/* Allow suspending now */
 	signals_handle_tstp();

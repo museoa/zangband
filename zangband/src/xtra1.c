@@ -3412,12 +3412,17 @@ void update_stuff(void)
 	/* Character is not ready yet, no screen updates */
 	if (!character_generated) return;
 
-
 	/* Character is in "icky" mode, no screen updates */
 	if (character_icky) return;
 	
 	/* Do not update map, it doesn't exist */
 	if (!character_dungeon) return;
+	
+	if (p_ptr->update & (PU_MAP))
+	{
+		p_ptr->update &= ~(PU_MAP);
+		map_panel_size();
+	}
 	
 	if ((p_ptr->update & (PU_MON_LITE)) && monster_light)
 	{

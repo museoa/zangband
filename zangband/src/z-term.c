@@ -331,6 +331,11 @@ static errr term_win_init(term_win *s, int w, int h)
 		s->ta[y] = s->vta + w * y;
 		s->tc[y] = s->vtc + w * y;
 	}
+	
+	/* Hack - disable bigtile */
+	s->big_x1 = -1;
+	s->big_y1 = -1;
+	s->big_y2 = -1;
 
 	/* Success */
 	return (0);
@@ -2268,4 +2273,29 @@ errr term_init(term *t, int w, int h, int k)
 
 	/* Success */
 	return (0);
+}
+
+
+/*
+ * Make a region of a term 'bigtiled'
+ */
+errr Term_bigregion(int x1, int y1, int y2)
+{
+	/* Verify the hook */
+	if (!Term->xtra_hook) return (1);
+
+	/* Call the hook */
+	if (!(*Term->xtra_hook) (TERM_XTRA_SETBG, TRUE))
+	{
+    	/* Save region */
+		Term->scr->big_x1 = x1;
+		Term->scr->big_y1 = y1;
+		Term->scr->big_y2 = y2;
+
+    	/* Success */
+		return (0);
+	}
+
+	/* Failure */
+	return (1);
 }

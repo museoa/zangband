@@ -51,6 +51,11 @@ struct term_win
 	byte *vta;
 	char *vtc;
 	
+	/* Bigtile data */
+	int big_x1;
+	int big_y1;
+	int big_y2;
+	
 	term_win *next;
 };
 
@@ -256,7 +261,7 @@ struct term
 #define TERM_XTRA_ALIVE 11		/* Change the "hard" level (optional) */
 #define TERM_XTRA_LEVEL 12		/* Change the "soft" level (optional) */
 #define TERM_XTRA_DELAY 13		/* Delay some milliseconds (optional) */
-#define TERM_XTRA_ERMAP 14		/* Erase the overhead map (optional) */
+#define TERM_XTRA_SETBG 14		/* Set 'big' area (optional) */
 
 
 
@@ -308,5 +313,7 @@ extern void Term_activate(term *t);
 
 extern errr term_nuke(term *t);
 extern errr term_init(term *t, int w, int h, int k);
+
+extern errr Term_bigregion(int x1, int y1, int y2);
 
 #endif /* INCLUDED_Z_TERM_H */

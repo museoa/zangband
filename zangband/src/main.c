@@ -387,6 +387,7 @@ static void game_usage(void)
 	puts("  -w       Request wizard mode");
 	puts("  -v       Request sound mode");
 	puts("  -g       Request graphics mode");
+	puts("  -t       Request bigtile mode");
 	puts("  -o       Request original keyset (default)");
 	puts("  -r       Request rogue-like keyset");
 	puts("  -M       Request monochrome mode");
@@ -597,6 +598,13 @@ int main(int argc, char *argv[])
 			case 'g':
 			{
 				arg_graphics = TRUE;
+				break;
+			}
+			
+			case 'T':
+			case 't':
+			{
+				arg_bigtile = TRUE;
 				break;
 			}
 

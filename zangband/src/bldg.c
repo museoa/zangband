@@ -1952,7 +1952,7 @@ void do_cmd_bldg(const field_type *f_ptr)
 	forget_view();
 
 	/* Hack -- Increase "icky" depth */
-	character_icky++;
+	screen_save();
 
 	/* No command argument */
 	p_ptr->cmd.arg = 0;
@@ -1989,9 +1989,6 @@ void do_cmd_bldg(const field_type *f_ptr)
 			break;
 		}
 
-		/* Hack -- Character is still in "icky" mode */
-		character_icky = TRUE;
-
 		/* Notice stuff */
 		notice_stuff();
 
@@ -2003,8 +2000,7 @@ void do_cmd_bldg(const field_type *f_ptr)
 	p_ptr->state.energy_use = 0;
 
 	/* Hack -- Character is no longer in "icky" mode */
-	character_icky = FALSE;
-
+	screen_load();
 
 	/* Hack -- Cancel automatic command */
 	p_ptr->cmd.new = 0;

@@ -32,7 +32,7 @@
 #define VERSION_NAME "ZAngband"
 
 /* Savefile version */
-#define SAVEFILE_VERSION 50
+#define SAVEFILE_VERSION 51
 
 /* User-visible version */
 #define VER_MAJOR 2
@@ -2568,6 +2568,7 @@
 /* xxx (many) */
 #define PU_WEIGHT		0x00000100L	/* Calculate weight of inventory */
 /* xxx (many) */
+#define PU_MAP			0x00001000L	/* Notice change in screen size */
 /* xxx (many) */
 #define PU_VIEW         0x00100000L	/* Update view */
 #define PU_MON_LITE		0x00200000L	/* Monster illumination */
@@ -4526,8 +4527,8 @@ static __inline void COPY_FLAG_AUX(const u32b *flags1, u32b *flags2, int num, u3
  * Determines if a map location is currently "on screen" -RAK-
  */
 #define panel_contains(X,Y) \
-  (((Y) >= panel_row_min) && ((Y) <= panel_row_max) && \
-   ((X) >= panel_col_min) && ((X) <= panel_col_max))
+  (((Y) >= p_ptr->panel_y1) && ((Y) <= p_ptr->panel_y2) && \
+   ((X) >= p_ptr->panel_x1) && ((X) <= p_ptr->panel_x2))
 
 /*
  * Determine if a "legal" grid is a "floor" grid

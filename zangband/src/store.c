@@ -2447,8 +2447,7 @@ void do_cmd_store(const field_type *f1_ptr)
 
 
 	/* Hack -- Character is in "icky" mode */
-	character_icky = TRUE;
-
+	screen_save();
 
 	/* No command argument */
 	p_ptr->cmd.arg = 0;
@@ -2553,7 +2552,6 @@ void do_cmd_store(const field_type *f1_ptr)
 		item_tester_hook = NULL;
 
 
-
 		/* Basic commands */
 		prtf(0, 22, " ESC) Exit from Building.");
 
@@ -2589,9 +2587,6 @@ void do_cmd_store(const field_type *f1_ptr)
 		/* Process the command */
 		store_process_command();
 
-		/* Hack -- Character is still in "icky" mode */
-		character_icky = TRUE;
-
 		/* Notice stuff */
 		notice_stuff();
 
@@ -2620,7 +2615,7 @@ void do_cmd_store(const field_type *f1_ptr)
 	p_ptr->state.energy_use = 0;
 
 	/* Hack -- Character is no longer in "icky" mode */
-	character_icky = FALSE;
+	screen_load();
 
 	/* Hack -- Cancel automatic command */
 	p_ptr->cmd.new = 0;

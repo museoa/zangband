@@ -286,6 +286,23 @@ bool pick_graphics(int graphics, int *xsize, int *ysize, char *filename)
 	/* Success */
 	return (TRUE);
 }
+
+/*
+ * Is a square in a bigtiled region?
+ */
+bool is_bigtiled(int x, int y)
+{
+	if ((use_bigtile)
+		&& (y >= Term->scr->big_y1)
+		&& (y <= Term->scr->big_y2)
+		&& (x >= Term->scr->big_x1))
+	{
+		return (TRUE);
+	}
+	
+	return (FALSE);
+}
+
 #endif /* USE_GRAPHICS */
 
 
@@ -310,11 +327,11 @@ void free_term_callbacks(void)
 {
 	int i;
 	callback_list *p, *p_next;
-	
+
 	for (i = 0; i < CALL_MAX; i++)
 	{
 		p = callbacks[i];
-		
+
 		while (p)
 		{
 			p_next = p->next;
@@ -715,7 +732,7 @@ static void set_player_location(int x, int y)
 
 	player_x = x;
 	player_y = y;
-	
+
 	/* Tell the port that the player has moved */
 	for (callback = callbacks[CALL_PLAYER_MOVE]; callback; callback = callback->next)
 	{
@@ -1098,7 +1115,7 @@ void do_cmd_view_map(void)
 				/* Check if this is an info command */
 				if (do_cmd_view_map_aux(c, w_ptr->place)) continue;
 			}
-			
+
 			/* Done if not a direction */
 			d = get_keymap_dir(c);
 
@@ -2252,13 +2269,9 @@ void prt_map(void)
 
 	byte *pta;
 	char *ptc;
-	
-	/* Get size */
-	Term_get_size(&wid, &hgt);
 
-	/* Remove map offset */
-	wid -= COL_MAP + 1;
-	hgt -= ROW_MAP + 1;
+	/* Get size */
+	get_map_size(&wid, &hgt);
 
 	/* Access the cursor state */
 	(void)Term_get_cursor(&v);
@@ -2266,34 +2279,42 @@ void prt_map(void)
 	/* Hide the cursor */
 	(void)Term_set_cursor(0);
 
-
+#if 0
 	/* Get bounds */
-	xmin = (p_ptr->min_wid < panel_col_min) ? panel_col_min : p_ptr->min_wid;
-	xmax = (p_ptr->max_wid - 1 > panel_col_max) ?
-		panel_col_max : p_ptr->max_wid - 1;
-	ymin = (p_ptr->min_hgt < panel_row_min) ? panel_row_min : p_ptr->min_hgt;
-	ymax = (p_ptr->max_hgt - 1 > panel_row_max) ?
-		panel_row_max : p_ptr->max_hgt - 1;
-
+	xmin = (p_ptr->min_wid < p_ptr->panel_x1) ? p_ptr->panel_x1 : p_ptr->min_wid;
+	xmax = (p_ptr->max_wid > p_ptr->panel_x2) ?
+		p_ptr->panel_x2 - 1: p_ptr->max_wid - 1;
+	ymin = (p_ptr->min_hgt < p_ptr->panel_y1) ? p_ptr->panel_y1 : p_ptr->min_hgt;
+	ymax = (p_ptr->max_hgt > p_ptr->panel_y2) ?
+		p_ptr->panel_y2 - 1 : p_ptr->max_hgt - 1;
+#endif /* 0 */
+	
+	/* Get bounds */
+	xmin = p_ptr->panel_x1;
+	xmax = p_ptr->panel_x2 - 1;
+	ymin = p_ptr->panel_y1;
+	ymax = p_ptr->panel_y2 - 1;
+		
+		
 	/* Top section of screen */
-    clear_region(COL_MAP, 1, ymin - panel_row_prt);
+    clear_region(COL_MAP, 1, ymin - p_ptr->panel_y1 + ROW_MAP);
 
 	/* Bottom section of screen */
-    clear_region(COL_MAP, ymax - panel_row_prt, hgt);
+    clear_region(COL_MAP, ymax - p_ptr->panel_y1 + ROW_MAP, hgt);
 
 	/* Sides of screen */
 	/* Left side */
-	l1 = xmin - panel_col_min;
+	l1 = xmin - p_ptr->panel_x1;
 
 	/* Right side */
-	l2 = xmax - panel_col_prt;
+	l2 = xmax - p_ptr->panel_x1 + COL_MAP;
 	l3 = Term->wid - l2;
 
-	for (y = ymin - panel_row_prt; y <= ymax - panel_row_prt; y++)
+	for (y = ymin; y <= ymax; y++)
 	{
 		/* Erase the sections */
-		Term_erase(COL_MAP, y, l1);
-		Term_erase(l2, y, l3);
+		Term_erase(COL_MAP, y - p_ptr->panel_y1 + ROW_MAP, l1);
+		Term_erase(l2, y - p_ptr->panel_y1 + ROW_MAP, l3);
 	}
 
 	/* Pointers to current position in the string */
@@ -2321,7 +2342,8 @@ void prt_map(void)
 		ptc = mp_tc;
 
 		/* Efficiency -- Redraw that row of the map */
-		Term_queue_line(xmin - panel_col_prt, y - panel_row_prt,
+		Term_queue_line(xmin - p_ptr->panel_x1 + COL_MAP,
+						y - p_ptr->panel_y1 + ROW_MAP,
 						xmax - xmin + 1, pa, pc, pta, ptc);
 	}
 
@@ -2588,9 +2610,9 @@ void display_map(int *cx, int *cy)
 	Term_get_size(&wid, &hgt);
 	hgt -= 2;
 	wid -= 2;
-
+	
 	/* Paranoia */
-	if ((hgt < 3) || (wid < 3))
+	if ((hgt < 5) || (wid < 3))
 	{
 		/*
 		 * Need to place the player...
@@ -2599,6 +2621,13 @@ void display_map(int *cx, int *cy)
 		(*cy) = ROW_MAP;
 		(*cx) = COL_MAP;
 		return;
+	}
+	
+	/* Bigtile whole screen */
+	if (use_bigtile)
+	{
+		wid /= 2;
+		Term_bigregion(1, 1, hgt);
 	}
 
 	/* Allocate the maps */
@@ -2910,6 +2939,9 @@ void display_map(int *cx, int *cy)
 	FREE(mta);
 	FREE(mtc);
 	FREE(mp);
+	
+	/* Hack - Revert bigtile mode */
+	if (use_bigtile) map_panel_size();
 }
 
 
@@ -2937,12 +2969,53 @@ void lite_spot(int x, int y)
 		/* Redraw if on screen */
 		if (panel_contains(x, y))
 		{
+			/* Real coordinates convert to screen positions */
+			x -= p_ptr->panel_x1 - COL_MAP;
+			y -= p_ptr->panel_y1 - ROW_MAP;
+
 			/* Hack -- Queue it */
-			Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c, ta, tc);
+			Term_queue_char(x, y, a, c, ta, tc);
 		}
 	}
 }
 
+/*
+ * Moves the cursor to a given MAP (x, y) location
+ */
+void move_cursor_relative(int x, int y)
+{
+	/* Real coordinates convert to screen positions */
+	x -= p_ptr->panel_y1 - ROW_MAP;
+	y -= p_ptr->panel_x1 - COL_MAP;
+
+	/* Go there */
+	Term_gotoxy(x, y);
+}
+
+
+/*
+ * Place an attr/char pair at the given map coordinate, if legal.
+ */
+void print_rel(char c, byte a, int x, int y)
+{
+	/* Only do "legal" locations */
+	if (panel_contains(x, y))
+	{
+		/* Hack -- fake monochrome */
+		if (fake_monochrome)
+		{
+			if (p_ptr->tim.invuln || !use_color) a = TERM_WHITE;
+			else if (p_ptr->tim.wraith_form) a = TERM_L_DARK;
+		}
+
+		/* Real coordinates convert to screen positions */
+		x -= p_ptr->panel_x1 - COL_MAP;
+		y -= p_ptr->panel_y1 - ROW_MAP;
+
+		/* Draw the char using the attr */
+		Term_draw(x, y, a, c);
+	}
+}
 
 /*
  * The player has moved
@@ -3369,3 +3442,4 @@ void Term_write_list(s16b o_idx, byte list_type)
 }
 
 #endif /* TERM_USE_LIST */
+

@@ -967,65 +967,6 @@ static bool cave_gen(dun_type *d_ptr)
 }
 
 
-static int map_wid_old = 66;
-
-
-void map_panel_size(void)
-{
-	int wid, hgt;
-
-
-	/* Only if the map exists */
-	if (!character_dungeon) return;
-
-	/* Get size */
-	Term_get_size(&wid, &hgt);
-
-	/* Offset */
-	wid -= COL_MAP + 1;
-
-	/* reset panels */
-	if (p_ptr->depth)
-	{
-		/* Determine number of panels (dungeon) */
-		max_panel_rows = p_ptr->max_hgt - p_ptr->min_hgt;
-		max_panel_cols = p_ptr->max_wid - p_ptr->min_wid;
-	}
-	else
-	{
-		/* Determine number of panels (wilderness) */
-		max_panel_rows = max_wild * WILD_BLOCK_SIZE;
-		max_panel_cols = max_wild * WILD_BLOCK_SIZE;
-	}
-
-	/* Assume illegal panel */
-	panel_row_min = max_panel_rows;
-	panel_col_min = max_panel_cols;
-
-	/* Kill previous size of line */
-
-	/* String of terrain characters along one row of the map */
-	if (mp_ta) KILL(mp_ta);
-	if (mp_tc) KILL(mp_tc);
-
-	/* String of characters along one row of the map */
-	if (mp_a) KILL(mp_a);
-	if (mp_c) KILL(mp_c);
-
-	/* Save size */
-	map_wid_old = wid;
-
-	/* Make the new lines */
-
-	/* String of terrain characters along one row of the map */
-	C_MAKE(mp_ta, wid, byte);
-	C_MAKE(mp_tc, wid, char);
-
-	/* String of characters along one row of the map */
-	C_MAKE(mp_a, wid, byte);
-	C_MAKE(mp_c, wid, char);
-}
-
 /* Make a real level */
 static bool level_gen(cptr *why, dun_type *d_ptr)
 {
@@ -1450,9 +1391,6 @@ void generate_cave(void)
 
 	/* Reset map panels */
 	map_panel_size();
-
-	/* Verify the panel */
-	verify_panel();
 
 	/* Remember when this level was "created" */
 	old_turn = turn;

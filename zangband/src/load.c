@@ -2182,8 +2182,18 @@ static errr rd_dungeon(void)
 	rd_s16b(&px);
 	rd_s16b(&cur_hgt);
 	rd_s16b(&cur_wid);
-	rd_s16b(&max_panel_rows);
-	rd_s16b(&max_panel_cols);
+	
+	/* Old panel rows and columns */
+	strip_bytes(4);
+	
+	/* New panel bounds */
+	if (sf_version > 50)
+	{
+		rd_s16b(&p_ptr->panel_x1);
+		rd_s16b(&p_ptr->panel_y1);
+		rd_s16b(&p_ptr->panel_x2);
+		rd_s16b(&p_ptr->panel_y2);
+	}
 
 	/* The player may not be in the dungeon */
 	character_dungeon = FALSE;
@@ -2193,16 +2203,6 @@ static errr rd_dungeon(void)
 	p_ptr->min_hgt = 0;
 	p_ptr->max_wid = cur_wid;
 	p_ptr->min_wid = 0;
-
-	if (sf_version < 12)
-	{
-		max_panel_cols = max_panel_cols * (wid - COL_MAP - 1) / 2;
-		max_panel_rows = max_panel_rows * (hgt - ROW_MAP - 1) / 2;
-
-		/* Reset the panel */
-		panel_row_min = max_panel_rows;
-		panel_col_min = max_panel_cols;
-	}
 
 	if (sf_version < 7)
 	{

@@ -59,6 +59,7 @@ bool arg_fiddle;	/* Command arg -- Request fiddle mode */
 bool arg_wizard;	/* Command arg -- Request wizard mode */
 bool arg_sound;	/* Command arg -- Request special sounds */
 byte arg_graphics;	/* Command arg -- Request graphics mode */
+bool arg_bigtile;	/* Command arg -- Request bigtile mode */
 bool arg_monochrome;	/* Command arg -- Request monochrome mode */
 bool arg_force_original;	/* Command arg -- Request original keyset */
 bool arg_force_roguelike;	/* Command arg -- Request roguelike keyset */
@@ -85,6 +86,7 @@ s32b old_turn;	/* Turn when level began (feelings) */
 
 bool use_sound;	/* The "sound" mode is enabled */
 byte use_graphics;	/* The "graphics" mode enabled (0 is none) */
+bool use_bigtile = FALSE;	/* Use square map tiles */
 
 bool use_transparency = FALSE;	/* Use transparent tiles */
 
@@ -147,10 +149,8 @@ bool fake_monochrome;	/* Use fake monochrome for effects */
  * Dungeon size info
  */
 
-s16b max_panel_rows, max_panel_cols;
 s16b panel_row_min, panel_row_max;
 s16b panel_col_min, panel_col_max;
-s16b panel_col_prt, panel_row_prt;
 
 byte *mp_a = NULL;
 char *mp_c = NULL;

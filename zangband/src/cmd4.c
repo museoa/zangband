@@ -88,15 +88,8 @@ void resize_map(void)
 	/* Only if the dungeon exists */
 	if (!character_dungeon) return;
 
-	/* Mega-Hack -- no panel yet */
-	panel_row_min = 0;
-	panel_row_max = 0;
-	panel_col_min = 0;
-	panel_col_max = 0;
-
 	/* Reset the panels */
 	map_panel_size();
-	verify_panel();
 
 	/* Update torch */
 	p_ptr->update |= (PU_TORCH);
@@ -3976,7 +3969,7 @@ void dump_town_info(FILE *fff, int town, bool ignore)
 /*
  * Dump info about a place if is has a dungeon to the given file
  */
-static void dump_dungeon_info(FILE *fff, int town, bool ignore)
+static void dump_dungeon_info(FILE *fff, int town)
 {
 	int i;
 
@@ -4162,7 +4155,7 @@ static bool do_cmd_knowledge_dungeon(int dummy)
 	/* Cycle through the places */
 	for (k = 1; k < place_count; k++)
 	{
-		dump_dungeon_info(fff, k, TRUE);
+		dump_dungeon_info(fff, k);
 	}
 
 	/* Close the file */

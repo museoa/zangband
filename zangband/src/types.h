@@ -1448,6 +1448,12 @@ struct player_type
 	s16b old_wild_x;	/* Previous block coords in the wilderness */
 	s16b old_wild_y;
 
+	s16b panel_x1;	/* Coordinates of top left hand corner of panel */
+	s16b panel_y1;
+
+	s16b panel_x2;	/* Coordinates of bottom right hand corner of panel */
+	s16b panel_y2;
+
 	s16b mhp;	/* Max hit pts */
 	s16b chp;	/* Cur hit pts */
 	u16b chp_frac;	/* Cur hit frac (times 2^16) */

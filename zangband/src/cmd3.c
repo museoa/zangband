@@ -860,17 +860,12 @@ void do_cmd_locate(void)
 	char tmp_val[80];
 	char out_val[160];
 
-
 	/* Get size */
-	Term_get_size(&wid, &hgt);
-
-	/* Offset */
-	wid -= COL_MAP + 1;
-	hgt -= ROW_MAP + 1;
+	get_map_size(&wid, &hgt);
 
 	/* Start at current panel */
-	y2 = y1 = panel_row_min;
-	x2 = x1 = panel_col_min;
+	x2 = x1 = p_ptr->panel_x1;
+	y2 = y1 = p_ptr->panel_y1;
 
 	/* Show panels until done */
 	while (1)
@@ -917,8 +912,8 @@ void do_cmd_locate(void)
 		/* Apply the motion */
 		if (change_panel(ddx[dir], ddy[dir]))
 		{
-			y2 = panel_row_min;
-			x2 = panel_col_min;
+			x2 = p_ptr->panel_x1;
+			y2 = p_ptr->panel_y1;
 		}
 	}
 

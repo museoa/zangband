@@ -3194,9 +3194,6 @@ void play_game(bool new_game)
 {
 	int i;
 
-	/* Hack -- Character is "icky" */
-	character_icky = TRUE;
-
 	/* Verify main term */
 	if (!angband_term[0])
 	{
@@ -3207,6 +3204,9 @@ void play_game(bool new_game)
 	Term_activate(angband_term[0]);
 
 	if (!angband_term[0]) quit("Main term does not exist!");
+	
+	/* Hack -- Character is "icky" */
+	screen_save();
 
 	/* Initialise the resize hooks */
 	angband_term[0]->resize_hook = resize_map;
@@ -3379,8 +3379,7 @@ void play_game(bool new_game)
 	character_generated = TRUE;
 
 	/* Hack -- Character is no longer "icky" */
-	character_icky = FALSE;
-
+	screen_load();
 
 	/* Start game */
 	p_ptr->state.playing = TRUE;
@@ -3390,9 +3389,6 @@ void play_game(bool new_game)
 
 	/* Resize / init the map */
 	map_panel_size();
-
-	/* Verify the (possibly resized) panel */
-	verify_panel();
 
 	/* Enter "xtra" mode */
 	character_xtra = TRUE;
