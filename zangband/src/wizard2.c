@@ -805,8 +805,9 @@ static void wiz_reroll_item(object_type *o_ptr)
 
 	bool changed = FALSE;
 
-	/* Hack -- leave artifacts alone */
-	if (o_ptr->flags3 & TR3_INSTA_ART) return;
+	/* Hack -- leave normal artifacts alone */
+	if ((o_ptr->flags3 & TR3_INSTA_ART) &&
+		(o_ptr->activate > 128)) return;
 
 	/* Get local object */
 	q_ptr = &forge;
