@@ -731,6 +731,9 @@ static void create_stairs(int x, int y)
 
 	/* Explain the staircase */
 	msgf("A magical staircase appears...");
+	
+	/* Destroy the fields on the square */
+	delete_field(x, y);
 
 	/* Create stairs down */
 	cave_set_feat(x, y, FEAT_MORE);
