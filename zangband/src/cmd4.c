@@ -2992,8 +2992,6 @@ void do_cmd_load_screen(void)
 			Term_draw(x, y, a, c);
 		}
 
-		/* End the row */
-		fprintf(fff, "\n");
 	}
 
 
