@@ -3258,9 +3258,66 @@ void borg_status_window(void)
 			prtf(42, 4, CLR_SLATE "Borg is ready for level " CLR_WHITE "%d",
 				borg_prepared_depth());
 
-			/* level preparedness */
-			prtf(42, 6, CLR_SLATE "Reason: " CLR_WHITE
-						"%s", borg_prepared(borg_prepared_depth()));
+			/* In the dungeon */
+			if (bp_ptr->depth || vanilla_town)
+			{
+				/* level preparedness */
+				prtf(42, 6, CLR_SLATE "Reason: " CLR_WHITE
+							"%s", borg_prepared(borg_prepared_depth()));
+			}
+			else
+			{
+				cptr why;
+
+				switch(goal)
+				{
+					case GOAL_NONE:
+					{
+						why = "No goal";
+						break;
+					}
+					case GOAL_KILL:
+					{
+						why = "Killing a monster";
+						break;
+					}
+					case GOAL_TAKE:
+					{
+						why = "Getting an object";
+						break;
+					}
+					case GOAL_FLEE:
+					{
+						why = "Running away";
+						break;
+					}
+					case GOAL_SHOP:
+					{
+						why = "Shopping";
+						break;
+					}
+					case GOAL_DARK:
+					{
+						why = "Exploring";
+						break;
+					}
+					case GOAL_TOWN:
+					{
+						why = "Reaching a town";
+						break;
+					}
+					case GOAL_CAVE:
+					{
+						why = "Reaching a dungeon";
+						break;
+					}
+					default: why = "Something or other";
+				}
+
+				/* level preparedness */
+				prtf(42, 6, CLR_SLATE "What to do on the surface: " CLR_WHITE "%s.", why);
+			}
+
 
 			if (goal_fleeing) attr = CLR_WHITE;
 			else

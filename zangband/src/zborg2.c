@@ -2218,9 +2218,9 @@ static bool remove_bad_kills(u16b who)
 	{
 		char buf[100];
 
-		/* Check again because BORG_MAP_VIEW != Line of Sight 
+		/* Check again because BORG_MAP_VIEW != Line of Sight */
 		if (distance(c_x, c_y, ox, oy) < MAX_SIGHT &&
-			borg_los_pure(c_x, c_y, ox, oy))				  */
+			borg_los_pure(c_x, c_y, ox, oy))				  
 		{
 			(void)strnfmt(buf, 100, "vanished : %d, %d", map_loc(ox, oy)->monster,
 						  kill->r_idx);

@@ -1538,6 +1538,9 @@ bool borg_find_town(void)
 	int i, b_i = -1;
 	int d, b_d = BORG_MAX_DISTANCE;
 
+	/* Only on the surface */
+	if (bp_ptr->depth && !vanilla_town) return (FALSE);
+
 	/* No known town */
 	if (!borg_town_num) return (FALSE);
 
@@ -1628,7 +1631,7 @@ bool borg_find_dungeon(void)
 	int p;
 
 	/* Do this only on the surface */
-	if (bp_ptr->depth) return (FALSE);
+	if (bp_ptr->depth || !vanilla_town) return (FALSE);
 
 	/* No trekking through the wilderness in the dark */
 	if (!vanilla_town &&
