@@ -3921,6 +3921,7 @@ void create_wilderness(void)
 			{
 				/* Toughness (level 0 - 64) */
 				w_ptr->done.mon_gen = ((256 - law) + (256 - pop)) / 4 ;
+				w_ptr->done.mon_gen = MIN(1, w_ptr->done.mon_gen - 20);
 
 				/* No monsters (probability 0 - 16) */
 				w_ptr->done.mon_prob = pop / 16;
