@@ -2650,7 +2650,7 @@ static void generate_hmap(int y0, int x0, int xsiz, int ysiz, int grd, int roug,
 	 * Fill in the rectangle with fractal height data -
 	 * like the 'plasma fractal' in fractint.
 	 */
-	while ((xstep / 256 > 1) || (ystep / 256 > 1))
+	while ((xhstep > 256) || (yhstep > 256))
 	{
 		/* Halve the step sizes */
 		xstep = xhstep;
