@@ -9,16 +9,14 @@
  * not for profit purposes provided that this copyright and statement are
  * included in all such copies.
  */
-
-#include <tcl.h>
 #include "angband.h"
 #include "tnb.h"
+#define _TCLINTDECLS
+#include <tclInt.h>
 #include "interp.h"
 #include "cmdinfo-dll.h"
 #include "util-dll.h"
 #include "icon.h"
-
-#include <sys/stat.h>
 
 extern int AngbandTk_CmdChooseFont _ANSI_ARGS_((ClientData clientData,
 	 Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]));
@@ -68,7 +66,7 @@ void angtk_view_floor(int y, int x, int info, int torch)
 		}
 
 		/* Handle "seen" grids */
-		else if (info & (CAVE_VIEW))
+		else if (info & (GRID_VIEW))
 		{
 			/* Only lit by "torch" lite */
 			if (view_yellow_lite && torch)
@@ -119,7 +117,7 @@ void angtk_view_wall(int y, int x, int info, int torch)
 		}
 
 		/* Handle "seen" grids */
-		else if (info & (CAVE_VIEW))
+		else if (info & (GRID_VIEW))
 		{
 			if (view_yellow_lite && torch)
 			{
@@ -155,7 +153,7 @@ void get_grid_info(int y, int x, t_grid *gridPtr)
 	byte feat;
 	byte info;
 
-	s16b this_o_idx, next_o_idx;
+	object_type *o_ptr;
 
 	s16b m_idx;
 
@@ -165,24 +163,16 @@ void get_grid_info(int y, int x, t_grid *gridPtr)
 	 */
 
 	gridPtr->f_idx = 0;
-	gridPtr->o_idx = 0;
+	gridPtr->o_ptr = NULL;
 	gridPtr->m_idx = 0;
 
 	/* Feature */
-	feat = cave[y][x].feat;
-
-	/* Apply "mimic" field */
-	if (cave[y][x].mimic)
-		feat = cave[y][x].mimic;
-
-	/* Apply mimic field */
-	feat = f_info[feat].mimic;
+	feat = area(x, y)->feat;
 
 	/* Monster/Player */
-	m_idx = cave[y][x].m_idx;
+	m_idx = area(x, y)->m_idx;
 
-	if ((y == py) && (x == px))
-		m_idx = -1;
+	if ((y == p_ptr->py) && (x == p_ptr->px)) m_idx = -1;
 
 	/* Handle "player" */
 	if (m_idx < 0)
@@ -198,11 +188,12 @@ void get_grid_info(int y, int x, t_grid *gridPtr)
 	}
 
 	/* Cave flags */
-	info = cave[y][x].info;
-
+	info = area(x, y)->info;
+#if 0
 	/* Boring grids (floors, etc) */
 	if (g_feat_flag[feat] & FEAT_FLAG_BORING)
 	{
+
 		/* Memorized (or seen) floor */
 		if ((info & (CAVE_MARK)) ||
 		    (((info & (CAVE_LITE)) ||
@@ -210,6 +201,7 @@ void get_grid_info(int y, int x, t_grid *gridPtr)
 		       (info & (CAVE_VIEW)))) &&
 		     !p_ptr->blind))
 		{
+
 			/* Remember the feature index */
 			gridPtr->f_idx = feat;
 		}
@@ -227,8 +219,10 @@ void get_grid_info(int y, int x, t_grid *gridPtr)
 		/* Memorized grids */
 		if (info & (CAVE_MARK))
 		{
+#endif /* 0 */
 			/* Remember the feature index */
 			gridPtr->f_idx = feat;
+#if 0
 		}
 
 		/* Unknown */
@@ -237,27 +231,21 @@ void get_grid_info(int y, int x, t_grid *gridPtr)
 			/* Nothing */
 		}
 	}
+#endif /* 0 */
 
 	/* Objects */
-	for (this_o_idx = cave[y][x].o_idx; this_o_idx; this_o_idx = next_o_idx)
+	OBJ_ITT_START (area(x, y)->o_idx, o_ptr)
 	{
-		object_type *o_ptr;
-
-		/* Acquire object */
-		o_ptr = &o_list[this_o_idx];
-
-		/* Acquire next object */
-		next_o_idx = o_ptr->next_o_idx;
-
 		/* Memorized objects */
-		if (!o_ptr->marked) continue;
+		if (!o_ptr->info & OB_SEEN) continue;
 				
-		/* Remember the top-most object index */
-		gridPtr->o_idx = this_o_idx;
+		/* Remember the top-most object */
+		gridPtr->o_ptr = o_ptr;
 
 		/* Stop */
 		break;
 	}
+	OBJ_ITT_END;
 
 	/* Monsters */
 	if (m_idx > 0)
@@ -280,7 +268,9 @@ void get_grid_info(int y, int x, t_grid *gridPtr)
  */
 void get_display_info(int y, int x, t_display *displayPtr)
 {
-	int m_idx, o_idx, f_idx;
+	int m_idx, f_idx;
+	
+	object_type *o_ptr;
 
 	/* Access the global cave memory */
 	t_grid *gridPtr = &g_grid[y][x];
@@ -297,11 +287,11 @@ void get_display_info(int y, int x, t_display *displayPtr)
 	IconSpec iconSpec;
 	
 	m_idx = gridPtr->m_idx;
-	o_idx = gridPtr->o_idx;
+	o_ptr = gridPtr->o_ptr;
 	f_idx = gridPtr->f_idx;
 
 	/* The grid is completely uninteresting */
-	if (!m_idx && !o_idx && !f_idx)
+	if (!m_idx && !o_ptr && !f_idx)
 	{
 		/* All other values are uninitialized */
 		displayPtr->blank = TRUE;
@@ -315,7 +305,7 @@ void get_display_info(int y, int x, t_display *displayPtr)
 	displayPtr->tint = NULL;
 	displayPtr->anim = FALSE;
 
-	if (m_idx || o_idx)
+	if (m_idx || o_ptr)
 	{
 		/* Character */
 		if (m_idx == -1)
@@ -349,13 +339,10 @@ void get_display_info(int y, int x, t_display *displayPtr)
 		}
 	
 		/* Object */
-		else if (o_idx)
+		else if (o_ptr)
 		{	
-			/* Get the object kind */
-			int k_idx = o_list[o_idx].k_idx;
-	
 			/* Get the icon assigned to the object kind */
-			assign = g_assign[ASSIGN_OBJECT].assign[k_idx];
+			assign = g_assign[ASSIGN_OBJECT].assign[o_ptr->k_idx];
 		}
 
 		/*
@@ -390,11 +377,11 @@ void get_display_info(int y, int x, t_display *displayPtr)
 						break;
 		
 					case REASON_NUMBER:
-						if (o_list[o_idx].number == 1) ++index;
+						if (o_ptr->number == 1) ++index;
 						break;
 					
 					case REASON_IDENT:
-						if (object_known_p(&o_list[o_idx])) ++index;
+						if (object_known_p(o_ptr)) ++index;
 						break;
 				}
 		
@@ -502,7 +489,7 @@ void get_display_info(int y, int x, t_display *displayPtr)
 		if (dark == GRID_LITE_TORCH)
 		{
 			/* Calculate distance from py,px */
-			dark = MAX(ABS(x - px), ABS(y - py)) - 1;
+			dark = MAX(ABS(x - p_ptr->px), ABS(y - p_ptr->py)) - 1;
 
 			/* We may have dark == -1 at py,px */
 			if (dark < 0) dark = 0;
@@ -624,14 +611,7 @@ void get_display_info(int y, int x, t_display *displayPtr)
 
 bool is_wall(int y, int x)
 {
-	int f_idx = cave[y][x].feat;
-
-	/* Apply "mimic" field */
-	if (cave[y][x].mimic)
-		f_idx = cave[y][x].mimic;
-
-	/* Apply mimic field */
-	f_idx = f_info[f_idx].mimic;
+	int f_idx = area(x, y)->feat;
 
 	if ((f_idx == FEAT_SECRET) ||
 		((f_idx >= FEAT_MAGMA) && (f_idx <= FEAT_PERM_SOLID)))
@@ -643,23 +623,14 @@ bool is_wall(int y, int x)
 
 bool is_door(int y, int x)
 {
-	int f_idx = cave[y][x].feat;
+	int f_idx = area(x, y)->feat;
 
-	/* Apply "mimic" field */
-	if (cave[y][x].mimic)
-		f_idx = cave[y][x].mimic;
-
-	/* Apply mimic field */
-	f_idx = f_info[f_idx].mimic;
-
-	if (f_idx == FEAT_OPEN || f_idx == FEAT_BROKEN)
-		return TRUE;
-	if (f_idx >= FEAT_DOOR_HEAD && f_idx <= FEAT_DOOR_TAIL)
+	if ((f_idx == FEAT_OPEN || f_idx == FEAT_BROKEN) || (f_idx == FEAT_CLOSED))
 		return TRUE;
 	return FALSE;	
 }
 
-int wall_shape(int y, int x, bool force)
+static int wall_shape(int y, int x, bool force)
 {
 	int i, j;
 	bool wall[3][3];
@@ -672,8 +643,8 @@ int wall_shape(int y, int x, bool force)
 		return GRID_SHAPE_NOT;
 
 	/* Require knowledge unless forced */
-	if (!force && !(cave[y][x].info & CAVE_MARK))
-		return GRID_SHAPE_NOT;
+	/* if (!force && !(area(x, y)->info & CAVE_MARK))
+		return GRID_SHAPE_NOT; */
 
 	/* Require wall or secret door */
 	if (!(g_grid[y][x].xtra & GRID_XTRA_WALL))
@@ -697,7 +668,9 @@ int wall_shape(int y, int x, bool force)
 				continue;
 			}
 
-			known = force || ((cave[yy][xx].info & CAVE_MARK) != 0);
+			/* known = force || ((cave[yy][xx].info & CAVE_MARK) != 0); */
+			
+			known = TRUE;
 
 			wall[j][i] = known &&
 				(g_grid[yy][xx].xtra & (GRID_XTRA_WALL | GRID_XTRA_DOOR));
@@ -1120,8 +1093,8 @@ void angtk_feat_known(int y, int x)
  */
 void set_grid_assign(int y, int x)
 {
-	int feat = cave[y][x].feat;
-	t_assign assign, assignArray[ICON_LAYER_MAX];
+	int feat = area(x, y)->feat;
+	t_assign assign;
 	IconSpec iconSpec;
 	int layer, shape;
 
@@ -1131,14 +1104,7 @@ void set_grid_assign(int y, int x)
 	/* Paranoia */
 	if (g_icon_map[ICON_LAYER_1][0] == NULL) return;
 
-	/* Apply "mimic" field */
-	if (cave[y][x].mimic)
-		feat = cave[y][x].mimic;
-
-	/* Apply mimic field */
-	feat = f_info[feat].mimic;
-
-g_grid[y][x].xtra &= ~0x0001;
+	g_grid[y][x].xtra &= ~0x0001;
 
 	/* Get the assignment for this feature */
 	assign = g_assign[ASSIGN_FEATURE].assign[feat];
@@ -1175,7 +1141,7 @@ g_grid[y][x].xtra &= ~0x0001;
 		 * XXX Hack -- Remember if there is a second shape assignment.
 		 * The second assignment uses an "unknown" floor.
 		 */
-		assign2 = g_assignshape[shape][max_f_idx + feat];
+		assign2 = g_assignshape[shape][z_info->f_max + feat];
 		if ((assign2.assignType != ASSIGN_TYPE_ICON) ||
 			(assign2.icon.type != ICON_TYPE_DEFAULT))
 		{
@@ -1187,8 +1153,7 @@ g_grid[y][x].xtra &= ~0x0001;
 	if (assign.assignType == ASSIGN_TYPE_ALTERNATE)
 	{
 		/* This is a door */
-		if ((feat == FEAT_OPEN) || (feat == FEAT_BROKEN) ||
-			((feat >= FEAT_DOOR_HEAD) && (feat <= FEAT_DOOR_TAIL)))
+		if ((feat == FEAT_OPEN) || (feat == FEAT_BROKEN) || (feat == FEAT_CLOSED))
 		{
 			/* The reason must be REASON_FEATURE */
 			t_alternate *alternatePtr = &g_alternate[assign.alternate.index];
@@ -1237,8 +1202,7 @@ g_grid[y][x].xtra &= ~0x0001;
 		if (assign.assignType == ASSIGN_TYPE_ALTERNATE)
 		{
 			/* This is a door */
-			if ((feat == FEAT_OPEN) || (feat == FEAT_BROKEN) ||
-				((feat >= FEAT_DOOR_HEAD) && (feat <= FEAT_DOOR_TAIL)))
+			if ((feat == FEAT_OPEN) || (feat == FEAT_BROKEN) || (feat == FEAT_CLOSED))
 			{
 				/* The reason must be REASON_FEATURE */
 				t_alternate *alternatePtr = &g_alternate[assign.alternate.index];
@@ -1360,7 +1324,7 @@ void FinalIcon(IconSpec *iconOut, t_assign *assignPtr, int hack, object_type *o_
 	}
 }
 
-int read_dark_file(char *fileName)
+static int read_dark_file(char *fileName)
 {
 	FILE *fp;
 	int count, table_count, index[16], i;
@@ -1457,6 +1421,11 @@ void init_palette(void)
  */
 bool door_vertical(int y, int x)
 {
+	/* Ignore these for now */
+	(void) x;
+	(void) y;
+#if 0
+
 	bool wall_left, wall_right, wall_above, wall_below;
 	bool door_right, door_left;
 	int f_left, f_right;
@@ -1474,48 +1443,25 @@ bool door_vertical(int y, int x)
 	if (wall_above && wall_below) return (1);
 	
 	/* Check for doors on either horizontal side */
-	f_left = cave[y][x - 1].feat;
-	f_right = cave[y][x + 1].feat;
+	f_left = area(x - 1, y)->feat;
+	f_right = area(x + 1, y)->feat;
 	
-	/* Note we also check secret doors */
 	door_left = (f_left == FEAT_OPEN) || (f_left == FEAT_BROKEN) ||
-		(f_left >= FEAT_DOOR_HEAD && f_left <= FEAT_SECRET);
+		(f_left == FEAT_CLOSED);
 	door_right = (f_right == FEAT_OPEN) || (f_right == FEAT_BROKEN) ||
-		(f_right >= FEAT_DOOR_HEAD && f_right <= FEAT_SECRET);
+		(f_right == FEAT_CLOSED);
 
 	/* Doors on left and right */
 	if (door_left && door_right) return (0);
 	
 	/* Door on one side and wall on the other side */
 	if ((door_left && wall_right) || (door_right && wall_left)) return (0);
-	
+#endif /* 0 */
+
 	/* Default to vertical door (handles stacked vertical doors too!) */
 	return (1);
 }
 
-IconPtr SetIconBitsRLE(IconPtr bg, IconPtr fg, TintTable t, IconPtr b)
-{
-	IconPtr dst = b;
-	int i;
-
-	/* Tint */
-	if (t)
-	{
-		for (i = 0; i < ICON_LENGTH; i++)
-		{
-			*dst++ = *(t + *bg++);
-		}
-
-		/* Return the address of the buffer we wrote into */
-		return b;
-	}
-
-	/*
-	 * In the simplest case (non-tinted), just return
-	 * the given address of the icon data.
-	 */
-	return bg;
-}
 
 /*
  * bg -- background bits
@@ -1594,7 +1540,7 @@ IconPtr SetIconBits(IconPtr bg, IconPtr fg, IconPtr mk, TintTable t, IconPtr b)
 }
 
 /* Return the number of milliseconds */
-unsigned long Milliseconds(void)
+static unsigned long Milliseconds(void)
 {
 #ifdef PLATFORM_WIN
 	return GetTickCount();
@@ -1779,7 +1725,7 @@ void angtk_image_reset(void)
 	int i;
 
 	/* Randomize monsters */
-	for (i = 1; i < max_r_idx; i++)
+	for (i = 1; i < z_info->r_max; i++)
 	{
 		int r_idx;
 		monster_race *r_ptr;
@@ -1788,7 +1734,7 @@ void angtk_image_reset(void)
 		while (1)
 		{
 			/* Pick a random non-unique */
-			r_idx = randint(max_r_idx - 1);
+			r_idx = randint1(z_info->r_max - 1);
 
 			/* Access the monster race */
 			r_ptr = &r_info[r_idx];
@@ -1808,7 +1754,7 @@ void angtk_image_reset(void)
 	}
 
 	/* Randomize objects */
-	for (i = 1; i < max_k_idx; i++)
+	for (i = 1; i < z_info->k_max; i++)
 	{
 		int k_idx;
 		object_kind *k_ptr;
@@ -1817,7 +1763,7 @@ void angtk_image_reset(void)
 		while (1)
 		{
 			/* Pick a random object kind */
-			k_idx = randint(max_k_idx - 1);
+			k_idx = randint1(z_info->k_max - 1);
 
 			/* Access the object kind */
 			k_ptr = &k_info[k_idx];
@@ -1923,11 +1869,14 @@ static Tcl_TimerToken g_timer_token = NULL;
  */
 static void AngbandTimerProc(ClientData clientData)
 {
+	/* Hack - ignore parameter */
+	(void) clientData;
+
 	/* Reschedule the animation timer */
 	g_timer_token = Tcl_CreateTimerHandler(TIMER_TICKS, AngbandTimerProc, 0);
 
 	/* No animation while repeating a command */
-	if (running || command_rep || resting) return;
+	if (p_ptr->running || p_ptr->command_rep || p_ptr->resting) return;
 
 #ifdef TIMER_STATS
 
@@ -2015,13 +1964,13 @@ void angtk_flavor_swap(int n, int a, int b)
 	g_flavor[n].sorted[b] = tmp;
 }
 
-static int init_flavor_aux(int n, char *desc, int tval, int count,
+static int init_flavor_aux(int n, cptr desc, int tval, int count,
 	byte *color)
 {
 	Tcl_HashEntry *hPtr;
 	t_flavor flavor;
 	int i, dummy;
-	IconSpec defaultIcon = {ICON_TYPE_DEFAULT, 0, -1};
+	IconSpec defaultIcon = {ICON_TYPE_DEFAULT, 0, -1, 0};
 
 	flavor.desc = (char *) string_make(desc);
 	flavor.tval = tval;
@@ -2075,7 +2024,7 @@ void init_icons(int size, int depth)
 	int i, n, y, x, y2, x2;
 	t_assign assign;
 	t_icon_data icon_data, *icon_data_ptr = &icon_data;
-	IconSpec iconDefault = {ICON_TYPE_DEFAULT, 0, -1};
+	IconSpec iconDefault = {ICON_TYPE_DEFAULT, 0, -1, 0};
 	unsigned char *rgb = Colormap_GetRGB();
 
 	/* Initialize the Icon library */
@@ -2201,12 +2150,12 @@ void init_icons(int size, int depth)
 	Icon_AddType(icon_data_ptr);
 
 	/* Allocate array of t_assign for each monster */
-	g_assign[ASSIGN_MONSTER].count = max_r_idx;
-	C_MAKE(g_assign[ASSIGN_MONSTER].assign, max_r_idx, t_assign);
+	g_assign[ASSIGN_MONSTER].count = z_info->r_max;
+	C_MAKE(g_assign[ASSIGN_MONSTER].assign, z_info->r_max, t_assign);
 
 	/* Allocate array of t_assign for each object */
-	g_assign[ASSIGN_OBJECT].count = max_k_idx;
-	C_MAKE(g_assign[ASSIGN_OBJECT].assign, max_k_idx, t_assign);
+	g_assign[ASSIGN_OBJECT].count = z_info->k_max;
+	C_MAKE(g_assign[ASSIGN_OBJECT].assign, z_info->k_max, t_assign);
 
 	/* Allocate array of t_assign for the character */
 	n = 1;
@@ -2214,8 +2163,8 @@ void init_icons(int size, int depth)
 	C_MAKE(g_assign[ASSIGN_CHARACTER].assign, n, t_assign);
 
 	/* Allocate array of t_assign for each feature */
-	g_assign[ASSIGN_FEATURE].count = max_f_idx;
-	C_MAKE(g_assign[ASSIGN_FEATURE].assign, max_f_idx, t_assign);
+	g_assign[ASSIGN_FEATURE].count = z_info->f_max;
+	C_MAKE(g_assign[ASSIGN_FEATURE].assign, z_info->f_max, t_assign);
 
 	assign.assignType = ASSIGN_TYPE_ICON;
 	assign.icon.type = ICON_TYPE_DEFAULT;
@@ -2265,14 +2214,14 @@ void init_icons(int size, int depth)
 	 * (2) FT_LIGHT_ICON means use a sequence of icons
 	 * (3) FT_LIGHT_TINT means use the g_darken[] tint table (slow)
 	 */
-	C_MAKE(g_feat_lite, max_f_idx, int);
+	C_MAKE(g_feat_lite, z_info->f_max, int);
 
 	/*
 	 * When a feature is masked, or a masked icon is drawn on
 	 * a feature, we may use the icon assigned to a different feature
 	 * as the background.
 	 */
-	C_MAKE(g_background, max_f_idx, int);
+	C_MAKE(g_background, z_info->f_max, int);
 
 	/* Set default icon for each feature */
 	for (i = 0; i < g_assign[ASSIGN_FEATURE].count; i++)
@@ -2286,8 +2235,8 @@ void init_icons(int size, int depth)
 	for (i = 0; i < GRID_SHAPE_MAX; i++)
 	{
 		int j;
-		C_MAKE(g_assignshape[i], max_f_idx * 2, t_assign);
-		for (j = 0; j < max_f_idx * 2; j++)
+		C_MAKE(g_assignshape[i], z_info->f_max * 2, t_assign);
+		for (j = 0; j < z_info->f_max * 2; j++)
 		{
 			g_assignshape[i][j] = assign;
 		}
@@ -2357,8 +2306,8 @@ void init_icons(int size, int depth)
 		quit(Tcl_GetStringFromObj(Tcl_GetObjResult(g_interp), NULL));
 
 	/* Hack -- indices for hallucination */
-	C_MAKE(g_image_monster, max_r_idx, int);
-	C_MAKE(g_image_object, max_k_idx, int);
+	C_MAKE(g_image_monster, z_info->r_max, int);
+	C_MAKE(g_image_object, z_info->k_max, int);
 
 	/* Randomize the hallucination indices */
 	angtk_image_reset();

@@ -117,7 +117,7 @@ extern bool is_wall(int y, int x);
 typedef struct t_grid {
 	int dark; /* GRID_LITE_XXX flags */
 	int f_idx; /* Feature */
-	int o_idx; /* Object */
+	object_type *o_ptr; /* Object */
 	int m_idx; /* Character/Monster */
 	int xtra; /* GRID_XTRA_XXX flags */
 	int shape; /* GRID_SHAPE_XXX enum */
