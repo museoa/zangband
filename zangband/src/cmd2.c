@@ -246,7 +246,7 @@ static void chest_death(int x, int y, object_type *o_ptr)
 
 	byte sval, tval;
 
-	bool small;
+	bool small_chest;
 
 	object_type *q_ptr;
 
@@ -330,7 +330,7 @@ static void chest_death(int x, int y, object_type *o_ptr)
 	get_obj_num_prep();
 
 	/* Small chests often hold "gold" */
-	small = (o_ptr->sval < SV_CHEST_MIN_LARGE);
+	small_chest = (o_ptr->sval < SV_CHEST_MIN_LARGE);
 
 	/* Determine how much to drop (see above) */
 	number = (o_ptr->sval % SV_CHEST_MIN_LARGE) * 2;
@@ -345,7 +345,7 @@ static void chest_death(int x, int y, object_type *o_ptr)
 	for (; number > 0; --number)
 	{
 		/* Small chests often drop gold */
-		if (small && one_in_(4))
+		if (small_chest && one_in_(4))
 		{
 			/* Make some gold */
 			q_ptr = make_gold(0);

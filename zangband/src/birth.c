@@ -2873,3 +2873,4 @@ void player_birth(void)
 	if (!window_flag[2])
 		window_flag[2] |= PW_INVEN;
 }
+

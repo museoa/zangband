@@ -12,7 +12,6 @@
 
 #include "angband.h"
 
-
 /* Chance of using syllables to form the name instead of the "template" files */
 #define TABLE_NAME      45
 #define A_CURSED        13
