@@ -1334,39 +1334,40 @@ static void get_random_name(char *return_name, byte tval, int power)
 	{
 		cptr filename;
 
-		switch ((bool)(tval >= TV_BOOTS))
+		/* Armour or a Weapon? */
+		if (tval >= TV_BOOTS)
 		{
-			case 1:
-				switch (power)
-				{
-					case 0:
-						filename = "a_cursed.txt";
-						break;
-					case 1:
-						filename = "a_low.txt";
-						break;
-					case 2:
-						filename = "a_med.txt";
-						break;
-					default:
-						filename = "a_high.txt";
-				}
-				break;
-			default:
-				switch (power)
-				{
-					case 0:
-						filename = "w_cursed.txt";
-						break;
-					case 1:
-						filename = "w_low.txt";
-						break;
-					case 2:
-						filename = "w_med.txt";
-						break;
-					default:
-						filename = "w_high.txt";
-				}
+			switch (power)
+			{
+				case 0:
+					filename = "a_cursed.txt";
+					break;
+				case 1:
+					filename = "a_low.txt";
+					break;
+				case 2:
+					filename = "a_med.txt";
+					break;
+				default:
+					filename = "a_high.txt";
+			}
+		}
+		else
+		{
+			switch (power)
+			{
+				case 0:
+					filename = "w_cursed.txt";
+					break;
+				case 1:
+					filename = "w_low.txt";
+					break;
+				case 2:
+					filename = "w_med.txt";
+					break;
+				default:
+					filename = "w_high.txt";
+			}
 		}
 
 		(void)get_rnd_line(filename, 0, return_name);
