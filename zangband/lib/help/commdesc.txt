@@ -607,8 +607,8 @@ Redraw Screen (^R)
      changing various global properties (options, attr/char mappings,
      color definitions, etc). When in doubt, use it.
 
-Display Time (^T)
-	 This command shows the current day and the time of day in the game.
+Display Time (^T) or (')
+     This command shows the current day and the time of day in the game.
         
 Load screen dump (left-paren)
      This command loads a "snap-shot" of the current screen from the
