@@ -1395,7 +1395,7 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 	if (o_ptr->to_h && o_ptr->to_d) show_weapon = TRUE;
 
 	/* Display the item like armour */
-	if (o_ptr->ac) show_armour = TRUE;
+	if ((o_ptr->ac) && (o_ptr->tval != TV_WAND)) show_armour = TRUE;
 
 	/* Dump base weapon info */
 	switch (o_ptr->tval)
@@ -1653,7 +1653,7 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 	if (known)
 	{
 		/* Show the armor class info */
-		if ((show_armour) && (o_ptr->tval != TV_WAND))
+		if (show_armour)
 		{
 			t = object_desc_chr(t, ' ');
 			t = object_desc_chr(t, b1);
@@ -1664,7 +1664,7 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		}
 
 		/* No base armor, but does increase armor */
-		else if ((o_ptr->to_a) && (o_ptr->tval != TV_WAND))
+		else if (o_ptr->to_a)
 		{
 			t = object_desc_chr(t, ' ');
 			t = object_desc_chr(t, b1);
