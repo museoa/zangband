@@ -565,6 +565,17 @@ alloc_entry *alloc_race_table;
 
 
 /*
+ * The size of the "alloc_ego_table" (at most max_e_idx)
+ */
+s16b alloc_ego_size;
+
+/*
+ * The entries in the "ego item allocator table"
+ */
+alloc_entry *alloc_ego_table;
+
+
+/*
  * Specify attr/char pairs for visual special effects
  * Be sure to use "index & 0x7F" to avoid illegal access
  */
