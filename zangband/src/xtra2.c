@@ -2432,7 +2432,7 @@ bool target_set(int mode)
 		{
 			y = temp_y[m];
 			x = temp_x[m];
-
+			
 			/* Access */
 			c_ptr = area(y,x);
 
