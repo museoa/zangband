@@ -66,6 +66,9 @@
 /* Define to 1 if you have the `Xmu' library (-lXmu). */
 #undef HAVE_LIBXMU
 
+/* Define to 1 if you have the `Xpm' library (-lXpm). */
+#undef HAVE_LIBXPM
+
 /* Define to 1 if you have the `Xt' library (-lXt). */
 #undef HAVE_LIBXT
 

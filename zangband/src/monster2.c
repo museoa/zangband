@@ -1306,6 +1306,10 @@ void update_mon_vis(u16b r_idx, int increment)
 	/* Update the counter */
 	r_ptr->r_see += increment;
 
+	/* Disturb if necessary */
+	if (disturb_view)
+		disturb(FALSE);
+
 	/* Update 'most powerful seen monster' */
 	if (r_ptr->r_see)
 	{
