@@ -853,27 +853,28 @@ static object_type *wiz_reroll_item(object_type *o_ptr)
 		{
 			case 'w':  case 'W':
 			{
-				/* Apply bad magic, but first clear object */
+				/* Apply bad magic */
 				o_ptr = object_prep(o_ptr->k_idx);
 				apply_magic(o_ptr, p_ptr->depth, 0, OC_FORCE_BAD);
 				break;
 			}
 			case 'n':  case 'N':
 			{
-				/* Apply normal magic, but first clear object */
+				/* Apply normal magic */
 				o_ptr = object_prep(o_ptr->k_idx);
 				apply_magic(o_ptr, p_ptr->depth, 0, OC_NORMAL);
 				break;
 			}
 			case 'e':  case 'E':
 			{
-				/* Apply great magic, but first clear object */
+				/* Apply great magic */
 				o_ptr = object_prep(o_ptr->k_idx);
 				apply_magic(o_ptr, p_ptr->depth, 30, OC_FORCE_GOOD);
 				break;
 			}
 			case 's':  case 'S':
 			{
+				/* Apply special magic */
 				o_ptr = object_prep(o_ptr->k_idx);
 
 				/* Make a random artifact */
