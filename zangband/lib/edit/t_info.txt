@@ -375,7 +375,7 @@ L:PENTER:hit_trap(field)
 L:PENTER:if (player_save(player.depth) ~= TRUE) then
 L:PENTER:	msgf("There is a bright flash of light!")
 L:PENTER:	project(0, 1, player.px, player.py, 0, GF_MAKE_TRAP,
-L:PENTER:			PROJECT_HIDE | PROJECT_JUMP | PROJECT_GRID)
+L:PENTER:			PROJECT_HIDE + PROJECT_JUMP + PROJECT_GRID)
 L:PENTER:	deleteme()
 L:PENTER:end
 
