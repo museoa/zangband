@@ -1114,6 +1114,7 @@ void do_cmd_racial_power(void)
 	(void)strnfmt(out_val, 78, "(Powers %c-%c, *=List, ESC=exit) Use which power? ",
 		I2A(0), (num <= 26) ? I2A(num - 1) : '0' + num - 27);
 
+if (!repeat_pull(&i) || i<0 || i>=num) {
 	/* Get a spell from the user */
 	while (!flag && get_com(out_val, &choice))
 	{
@@ -1229,6 +1230,9 @@ void do_cmd_racial_power(void)
 		p_ptr->energy_use = 0;
 		return;
 	}
+
+        repeat_push(i);
+        } /*if (!repeat_pull(&i) || ...)*/
 
 	if (power_desc[i].number < 0)
 	{
