@@ -394,7 +394,7 @@ static void do_cmd_wiz_feature(int feat)
 		x = rand_spread(px, d);
 
 		/* Reject illegal grids */
-		if (!in_bounds(y, x)) continue;
+		if (!in_boundsp(y, x)) continue;
 
 		/* Reject the player */
 		if ((y == py) && (x == px)) continue;

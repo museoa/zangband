@@ -2536,6 +2536,16 @@ static bool in_bounds2_cave(int y, int x)
 		 && (y < p_ptr->max_hgt) && (x < p_ptr->max_wid));
 }
 
+/*
+ * In bounds for the player information?
+ */
+static bool in_bounds_wild_player (int y, int x)
+{
+	/* Use the same player bounds information as in_bounds_cave() */
+	return((y > p_ptr->min_hgt) && (x > p_ptr->min_wid)
+		 && (y < p_ptr->max_hgt - 1) && (x < p_ptr->max_wid - 1));
+}
+
 
 /* Allocate all grids around player */
 void init_wild_cache(void)
@@ -2608,6 +2618,7 @@ void change_level(int level)
 		/* Bounds checking rountine */
 		in_bounds = in_bounds_wild;
 		in_bounds2 = in_bounds_wild;
+		in_boundsp = in_bounds_wild_player;
 #if 0
 		if (p_ptr->depth == 0)
 		{
@@ -2651,6 +2662,7 @@ void change_level(int level)
 		/* Bounds checking */
 		in_bounds = in_bounds_cave;
 		in_bounds2 = in_bounds2_cave;
+		in_boundsp = in_bounds2_cave;
 
 		/* No town stored in cave[][] */
 		cur_town = 0;

@@ -206,6 +206,9 @@ static int project_m_y;
  * XXX XXX XXX We also "see" grids which are "memorized", probably a hack
  *
  * XXX XXX XXX Perhaps we should affect doors?
+ *
+ * XXX XXX XXX Bounds checking is broken - we can affect grids out of
+ *				view of the player, causing a crash...
  */
 static bool project_f(int who, int r, int y, int x, int dam, int typ)
 {
@@ -3145,7 +3148,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			if (!max_attempts) break;
 
 			/* not off edge */
-			if (!in_bounds2(t_y, t_x)) continue;
+			if (!in_boundsp(t_y, t_x)) continue;
 
 			/* Hack - exit if can see the reflection */
 			if (player_has_los_grid(parea(t_y, t_x))) break;
@@ -4078,7 +4081,6 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 	bool jump = FALSE;
 
 	cave_type *c_ptr;
-	pcave_type *pc_ptr;
 
 	/* Are there no monsters queued to die? */
 	bool mon_explode = (mon_d_head == mon_d_tail) ? TRUE : FALSE;
@@ -4245,9 +4247,9 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 		/* Only do visuals if requested */
 		if (!blind && !(flg & (PROJECT_HIDE)))
 		{
-
 			/* Only do visuals if the player can "see" the bolt */
-			if (panel_contains(y, x) && player_has_los_grid(parea(y, x)))
+			if (in_boundsp(y, x) && panel_contains(y, x)
+				 && player_has_los_grid(parea(y, x)))
 			{
 				byte a, c;
 
@@ -4474,10 +4476,9 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 				y = gy[i];
 				x = gx[i];
 
-				pc_ptr = parea(y, x);
-
 				/* Only do visuals if the player can "see" the blast */
-				if (panel_contains(y, x) && player_has_los_grid(pc_ptr))
+				if (in_boundsp(y, x) && panel_contains(y, x)
+					 && player_has_los_grid(parea(y, x)))
 				{
 					byte a, c;
 
@@ -4514,10 +4515,8 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 				y = gy[i];
 				x = gx[i];
 
-				pc_ptr = parea(y, x);
-
 				/* Hack -- Erase if needed */
-				if (panel_contains(y, x) && player_has_los_grid(pc_ptr))
+				if (in_boundsp(y, x) && player_has_los_grid(parea(y, x)))
 				{
 					lite_spot(y, x);
 				}

@@ -825,6 +825,9 @@ bool player_can_see_bold(int y, int x)
 	int xx, yy;
 
 	pcave_type *pc_ptr;
+	
+	/* Needs to be in bounds */
+	if (!in_boundsp(y, x)) return (FALSE);
 
 	/* Blind players see nothing */
 	if (p_ptr->blind) return (FALSE);
@@ -2076,7 +2079,7 @@ void display_dungeon(void)
 	{
 		for (y = py - hgt + 1; y <= py + hgt; y++)
 		{
-			if (in_bounds2(y, x))
+			if (in_boundsp(y, x))
 			{
 
 #ifdef USE_TRANSPARENCY
@@ -2130,7 +2133,7 @@ void display_dungeon(void)
 void lite_spot(int y, int x)
 {
 	/* Redraw if on screen */
-	if (panel_contains(y, x) && in_bounds2(y, x))
+	if (panel_contains(y, x) && in_boundsp(y, x))
 	{
 		byte a;
 		char c;
@@ -3726,7 +3729,7 @@ void update_view(void)
 		y = view_y[i];
 		x = view_x[i];
 
-		if (!in_bounds2(y, x)) continue;
+		if (!in_boundsp(y, x)) continue;
 
 		c_ptr = area(y, x);
 		pc_ptr = parea(y, x);
@@ -3836,7 +3839,7 @@ void update_view(void)
 				y = p->grid_y[o2] + py;
 
 				/* Is it in bounds? */
-				if (!in_bounds2(y, x))
+				if (!in_boundsp(y, x))
 				{
 					/* Clear bits */
 					bits0 &= ~(p->bits[0]);
@@ -4164,7 +4167,7 @@ static void mon_lite_hack(int y, int x)
 	pcave_type *pc_ptr;
 
 	/* Out of bounds */
-	if (!in_bounds2(y, x)) return;
+	if (!in_boundsp(y, x)) return;
 
 	c_ptr = area(y, x);
 	pc_ptr = parea(y, x);
@@ -4313,13 +4316,13 @@ void update_mon_lite(void)
 		if (rad >= 2)
 		{
 			/* South of the monster */
-			if (in_bounds2(fy + 1, fx) && cave_floor_grid(area(fy + 1, fx)))
+			if (in_boundsp(fy + 1, fx) && cave_floor_grid(area(fy + 1, fx)))
 			{
 				mon_lite_hack(fy + 2, fx + 1);
 				mon_lite_hack(fy + 2, fx);
 				mon_lite_hack(fy + 2, fx - 1);
 
-				if (in_bounds2(fy + 2, fx))
+				if (in_boundsp(fy + 2, fx))
 				{
 					c_ptr = area(fy + 2, fx);
 	
@@ -4334,13 +4337,13 @@ void update_mon_lite(void)
 			}
 
 			/* North of the monster */
-			if (in_bounds2(fy - 1, fx) && cave_floor_grid(area(fy - 1, fx)))
+			if (in_boundsp(fy - 1, fx) && cave_floor_grid(area(fy - 1, fx)))
 			{
 				mon_lite_hack(fy - 2, fx + 1);
 				mon_lite_hack(fy - 2, fx);
 				mon_lite_hack(fy - 2, fx - 1);
 
-				if (in_bounds2(fy - 2, fx))
+				if (in_boundsp(fy - 2, fx))
 				{
 					c_ptr = area(fy - 2, fx);
 
@@ -4355,13 +4358,13 @@ void update_mon_lite(void)
 			}
 
 			/* East of the monster */
-			if (in_bounds2(fy, fx + 1) && cave_floor_grid(area(fy, fx + 1)))
+			if (in_boundsp(fy, fx + 1) && cave_floor_grid(area(fy, fx + 1)))
 			{
 				mon_lite_hack(fy + 1, fx + 2);
 				mon_lite_hack(fy, fx + 2);
 				mon_lite_hack(fy - 1, fx + 2);
 
-				if (in_bounds2(fy, fx + 2))
+				if (in_boundsp(fy, fx + 2))
 				{
 					c_ptr = area(fy, fx + 2);
 
@@ -4376,13 +4379,13 @@ void update_mon_lite(void)
 			}
 
 			/* West of the monster */
-			if (in_bounds2(fy, fx - 1) && cave_floor_grid(area(fy, fx - 1)))
+			if (in_boundsp(fy, fx - 1) && cave_floor_grid(area(fy, fx - 1)))
 			{
 				mon_lite_hack(fy + 1, fx - 2);
 				mon_lite_hack(fy, fx - 2);
 				mon_lite_hack(fy - 1, fx - 2);
 
-				if (in_bounds2(fy, fx - 2))
+				if (in_boundsp(fy, fx - 2))
 				{
 					c_ptr = area(fy, fx - 2);
 	
@@ -4401,28 +4404,28 @@ void update_mon_lite(void)
 		if (rad == 3)
 		{
 			/* South-East of the monster */
-			if (in_bounds2(fy + 1, fx + 1) && 
+			if (in_boundsp(fy + 1, fx + 1) && 
 				cave_floor_grid(area(fy + 1, fx + 1)))
 			{
 				mon_lite_hack(fy + 2, fx + 2);
 			}
 
 			/* South-West of the monster */
-			if (in_bounds2(fy + 1, fx - 1) && 
+			if (in_boundsp(fy + 1, fx - 1) && 
 				cave_floor_grid(area(fy + 1, fx - 1)))
 			{
 				mon_lite_hack(fy + 2, fx - 2);
 			}
 
 			/* North-East of the monster */
-			if (in_bounds2(fy - 1, fx + 1) &&
+			if (in_boundsp(fy - 1, fx + 1) &&
 				cave_floor_grid(area(fy - 1, fx + 1)))
 			{
 				mon_lite_hack(fy - 2, fx + 2);
 			}
 
 			/* North-West of the monster */
-			if (in_bounds2(fy - 1, fx - 1) &&
+			if (in_boundsp(fy - 1, fx - 1) &&
 				cave_floor_grid(area(fy - 1, fx - 1)))
 			{
 				mon_lite_hack(fy - 2, fx - 2);
@@ -4438,7 +4441,7 @@ void update_mon_lite(void)
 		fx = lite_x[i];
 		fy = lite_y[i];
 
-		if (!in_bounds2(fy, fx)) continue;
+		if (!in_boundsp(fy, fx)) continue;
 
 		/* Point to grid */
 		c_ptr = area(fy, fx);
@@ -4473,7 +4476,7 @@ void update_mon_lite(void)
 		fx = temp_x[i];
 		fy = temp_y[i];
 
-		if (!in_bounds2(fy, fx)) continue;
+		if (!in_boundsp(fy, fx)) continue;
 
 		/* Point to grid */
 		c_ptr = area(fy, fx);
@@ -4611,7 +4614,7 @@ void update_flow(void)
 	if (temp_n) return;
 
 	/* The last way-point is on the map */
-	if (in_bounds2(flow_y, flow_x))
+	if (in_boundsp(flow_y, flow_x))
 	{
 		/* Check to see if the player is too close and in los */
 		if ((distance(px, py, flow_x, flow_y) < FLOW_DIST_MAX)

@@ -167,12 +167,7 @@ void delete_object_idx(int o_idx)
 		y = j_ptr->iy;
 		x = j_ptr->ix;
 
-		/* Refuse "illegal" locations */
-		if (in_bounds(y, x))
-		{
-			/* Visual update */
-			lite_spot(y, x);
-		}
+		/* Visual update */
 	}
 
 	/* Wipe the object */

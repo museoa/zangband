@@ -469,7 +469,7 @@ wild_choice_tree_type *wild_choice_tree;
 /* Bounds checking function pointers */
 bool (*in_bounds)(int, int);
 bool (*in_bounds2)(int, int);
-
+bool (*in_boundsp)(int, int);
 
 /*
  * The dungeon data itself

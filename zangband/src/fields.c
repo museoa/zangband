@@ -127,7 +127,7 @@ static void notice_field(field_type *f_ptr)
 	int y = f_ptr->fy;
 	
 	/* Refuse "illegal" locations */
-	if (in_bounds(y, x))
+	if (in_boundsp(y, x))
 	{
 		/* Can the player see the square? */
 		if (player_has_los_grid(parea(y, x)))
@@ -160,7 +160,7 @@ void delete_field_idx(int fld_idx)
 	excise_field_idx(fld_idx);
 
 	/* Refuse "illegal" locations */
-	if (in_bounds(y, x))
+	if (in_boundsp(y, x))
 	{
 		/* Note + Lite the spot */
 		note_spot(y, x);
@@ -197,7 +197,7 @@ void delete_field_ptr(s16b *fld_idx)
 	*fld_idx = f_ptr->next_f_idx;
 
 	/* Refuse "illegal" locations */
-	if (in_bounds(y, x))
+	if (in_boundsp(y, x))
 	{
 		/* Note + Lite the spot */
 		note_spot(y, x);
@@ -254,6 +254,9 @@ void delete_field(int y, int x)
 	c_ptr = area(y,x);
 
 	delete_field_aux(&(c_ptr->fld_idx));
+	
+	/* Paranoia */
+	if (!in_boundsp(y, x)) return;
 
 	/* Note + Lite the spot */
 	if (character_dungeon) note_spot(y, x);

@@ -1382,7 +1382,7 @@ static bool cast_chaos_spell(int spell)
 					y = py - 5 + randint1(10);
 
 					/* paranoia */
-					if (!in_bounds(y, x)) continue;
+					if (!in_boundsp(y, x)) continue;
 
 					/* keep going if not in LOS */
 					if (!player_has_los_grid(parea(y, x))) continue;

@@ -2014,7 +2014,7 @@ static bool target_set_accept(int y, int x)
 	if (p_ptr->image) return (FALSE);
 
 	/* paranoia */
-	if (!in_bounds2(y, x)) return (FALSE);
+	if (!in_boundsp(y, x)) return (FALSE);
 
 	/* Examine the grid */
 	c_ptr = area(y, x);

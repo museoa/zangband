@@ -2600,7 +2600,7 @@ static int see_wall(int dir, int y, int x)
 	x += ddx[dir];
 
 	/* Illegal grids are "walls" */
-	if (!in_bounds2(y, x)) return (TRUE);
+	if (!in_boundsp(y, x)) return (TRUE);
 
 	c_ptr = area(y, x);
 	pc_ptr = parea(y, x);
@@ -2642,7 +2642,7 @@ static int see_nothing(int dir, int y, int x)
 	x += ddx[dir];
 
 	/* Illegal grids are unknown */
-	if (!in_bounds2(y, x)) return (FALSE);
+	if (!in_boundsp(y, x)) return (FALSE);
 
 	c_ptr = area(y, x);
 	pc_ptr = parea(y, x);
@@ -2967,7 +2967,7 @@ static bool run_test(void)
 		row = py + ddy[new_dir];
 		col = px + ddx[new_dir];
 
-		if (!in_bounds2(row, col)) continue;
+		if (!in_boundsp(row, col)) continue;
 
 		/* Access grid */
 		c_ptr = area(row, col);

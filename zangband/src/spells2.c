@@ -875,7 +875,7 @@ bool detect_doors(void)
 	{
 		for (x = px - MAX_DETECT; x <= px + MAX_DETECT; x++)
 		{
-			if (!in_bounds2(y, x)) continue;
+			if (!in_boundsp(y, x)) continue;
 
 			if (distance(px, py, x, y) > MAX_DETECT) continue;
 
@@ -937,7 +937,7 @@ bool detect_stairs(void)
 	{
 		for (x = px - MAX_DETECT; x <= px + MAX_DETECT; x++)
 		{
-			if (!in_bounds2(y, x)) continue;
+			if (!in_boundsp(y, x)) continue;
 
 			if (distance(px, py, x, y) > MAX_DETECT) continue;
 
@@ -991,7 +991,7 @@ bool detect_treasure(void)
 	{
 		for (x = px - MAX_DETECT; x <= px + MAX_DETECT; x++)
 		{
-			if (!in_bounds2(y, x)) continue;
+			if (!in_boundsp(y, x)) continue;
 
 			if (distance(px, py, x, y) > MAX_DETECT) continue;
 
@@ -2219,7 +2219,7 @@ bool destroy_area(int y1, int x1, int r)
 		for (x = (x1 - r); x <= (x1 + r); x++)
 		{
 			/* Skip illegal grids */
-			if (!in_bounds(y, x)) continue;
+			if (!in_boundsp(y, x)) continue;
 
 			/* Extract the distance */
 			k = distance(y1, x1, y, x);
@@ -2409,7 +2409,7 @@ bool earthquake(int cy, int cx, int r)
 			xx = cx + dx;
 
 			/* Skip illegal grids */
-			if (!in_bounds(yy, xx)) continue;
+			if (!in_boundsp(yy, xx)) continue;
 
 			/* Skip distant grids */
 			if (distance(cy, cx, yy, xx) > r) continue;
@@ -2950,7 +2950,7 @@ static void cave_temp_room_unlite(void)
 			pcave_type *pc_ptr;
 
 			/* Verify */
-			if (!in_bounds2(y, x)) continue;
+			if (!in_boundsp(y, x)) continue;
 			
 			c_ptr = area(y, x);
 			pc_ptr = parea(y, x);

@@ -635,7 +635,7 @@ static int count_doors(int *y, int *x, bool (*test)(int feat), bool under)
 		xx = p_ptr->px + ddx_ddd[d];
 
 		/* paranoia */
-		if (!in_bounds2(yy, xx)) continue;
+		if (!in_boundsp(yy, xx)) continue;
 
 		/* Must have knowledge */
 		if (!(parea(yy, xx)->player & (GRID_MARK))) continue;

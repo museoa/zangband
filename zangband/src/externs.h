@@ -215,6 +215,7 @@ extern wild_gen_data_type *wild_gen_data;
 extern wild_choice_tree_type *wild_choice_tree;
 extern bool (*in_bounds)(int, int);
 extern bool (*in_bounds2)(int, int);
+extern bool (*in_boundsp)(int, int);
 extern dun_type *dun_ptr;
 extern maxima *z_info;
 extern object_type *o_list;

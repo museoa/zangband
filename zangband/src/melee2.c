@@ -742,7 +742,7 @@ static bool find_safety(int m_idx, int *yp, int *xp)
 			x = fx + dx;
 
 			/* Skip illegal locations */
-			if (!in_bounds(y, x)) continue;
+			if (!in_boundsp(y, x)) continue;
 
 			c_ptr = area(y, x);
 
@@ -843,7 +843,7 @@ static bool find_hiding(int m_idx, int *yp, int *xp)
 			x = fx + dx;
 
 			/* Skip illegal locations */
-			if (!in_bounds(y, x)) continue;
+			if (!in_boundsp(y, x)) continue;
 
 			c_ptr = area(y, x);
 
@@ -2423,7 +2423,7 @@ static void process_monster(int m_idx)
 		nx = ox + ddx[d];
 
 		/* Ignore locations off of edge */
-		if (!in_bounds2(ny, nx)) continue;
+		if (!in_boundsp(ny, nx)) continue;
 
 		/* Access that cave grid */
 		c_ptr = area(ny, nx);
