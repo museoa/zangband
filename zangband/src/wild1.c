@@ -3800,7 +3800,8 @@ static void wild_done(void)
  */
 void create_wilderness(void)
 {
-	int i, j;
+	int i, j, k;
+	int x, y;
 
 	u16b hgt_min, hgt_max, pop_min, pop_max, law_min, law_max;
 	byte sea_level;
@@ -4073,6 +4074,37 @@ void create_wilderness(void)
 
 			/* Info flags */
 			w_ptr->done.info = info;
+		}
+	}
+
+	/* Create ocean boundaries (This might be very slow) */
+	for (i = 0; i < max_wild; i++)
+	{
+		for (j = 0; j < max_wild; j++)
+		{
+			if (wild[j][i].done.wild >= WILD_SEA)
+			{
+				for (k = 0; k < 8; k++)
+				{
+					x = i + ddx_ddd[k];
+					y = j + ddy_ddd[k];			
+					
+					/* Must be in bounds */
+					if ((x < 0) || (x >= max_wild) ||
+						 (y < 0) || (y >= max_wild))
+					{
+						continue;	
+					}
+					
+					/* Get wilderness grid */
+					w_ptr = &wild[y][x];
+					
+					if (w_ptr->done.wild < WILD_SEA)
+					{
+						w_ptr->done.info |= WILD_INFO_WATER;
+					}
+				}
+			}
 		}
 	}
 
