@@ -3430,100 +3430,7 @@ static void calc_bonuses(void)
 	}
 	/* Add all class and race-specific adjustments to missile Skill. -LM- */
 	p_ptr->skill_thb += add_special_missile_skill(p_ptr->pclass);
-
-
-	/* Examine the "main weapon" */
-	o_ptr = &inventory[INVEN_WIELD];
-
-	/* Assume not heavy */
-	p_ptr->heavy_wield = FALSE;
-
-	/* It is hard to hold a heavy weapon */
-	if (hold < o_ptr->weight / 10)
-	{
-		/* Hard to wield a heavy weapon */
-		p_ptr->to_h += 2 * (hold - o_ptr->weight / 10);
-		p_ptr->dis_to_h += 2 * (hold - o_ptr->weight / 10);
-
-		/* Heavy weapon */
-		p_ptr->heavy_wield = TRUE;
-
-		/* The player gets to swing a heavy weapon only once. -LM- */
-		p_ptr->num_blow = 1;
-	}
-
-
-	/* Normal weapons */
-	if (o_ptr->k_idx && !p_ptr->heavy_wield)
-	{
-		int str_index, dex_index;
-
-		int effective_weight = 0, mul = 6;
-
-		/* Enforce a minimum weight of three pounds. */
-		effective_weight = (o_ptr->weight < 30 ? 30 : o_ptr->weight);
-
-		/* Compare strength and weapon weight. */
-		str_index = mul * adj_str_blow[p_ptr->stat_ind[A_STR]] /
-			effective_weight;
-
-		/* Maximal value */
-		if (str_index > 11) str_index = 11;
-
-		/* Index by dexterity */
-		dex_index = (adj_dex_blow[p_ptr->stat_ind[A_DEX]]);
-
-		/* Maximal value */
-		if (dex_index > 11) dex_index = 11;
-
-
-		/* Use the blows table */
-		p_ptr->num_blow = blows_table[str_index][dex_index];
-
-		/* Paranoia - require at least one blow */
-		if (p_ptr->num_blow < 1) p_ptr->num_blow = 1;
-
-
-		/* Boost digging skill by weapon weight */
-		p_ptr->skill_dig += (o_ptr->weight / 10);
-	}
-
-	else if (!(inventory[INVEN_WIELD].k_idx))
-	{
-		/* Different calculation for monks with empty hands */
-		if (p_ptr->pclass == CLASS_MONK)
-		{
-			p_ptr->num_blow = 2;
-
-			if (p_ptr->lev > 9) p_ptr->num_blow++;
-			if (p_ptr->lev > 14) p_ptr->num_blow++;
-			if (p_ptr->lev > 24) p_ptr->num_blow++;
-			if (p_ptr->lev > 34) p_ptr->num_blow++;
-			if (p_ptr->lev > 44) p_ptr->num_blow++;
-			if (p_ptr->lev > 49) p_ptr->num_blow++;
-
-			if (p_ptr->monk_armour_stat)
-			{
-				p_ptr->num_blow /= 2;
-			}
-			else
-			{
-				p_ptr->to_h += (p_ptr->lev / 3);
-				p_ptr->to_d += (p_ptr->lev / 3);
-
-				p_ptr->dis_to_h += (p_ptr->lev / 3);
-				p_ptr->dis_to_d += (p_ptr->lev / 3);
-			}
-
-			p_ptr->num_blow += extra_blows;
-		}
-		else
-		{
-			/* Everyone gets two blows if not wielding a weapon. -LM- */
-			p_ptr->num_blow = 2;
-		}
-	}
-
+	
 	/* Add all other class-specific adjustments to melee Skill. -LM- */
 	p_ptr->skill_thn += add_special_melee_skill(p_ptr->pclass, o_ptr);
 
@@ -3610,6 +3517,122 @@ static void calc_bonuses(void)
 	p_ptr->noise = (1L << (30 - p_ptr->skill_stl));
 
 	if ((p_ptr->anti_magic) && (p_ptr->skill_sav < 95)) p_ptr->skill_sav = 95;
+
+
+	/* Examine the "main weapon" */
+	o_ptr = &inventory[INVEN_WIELD];
+
+	/* Assume not heavy */
+	p_ptr->heavy_wield = FALSE;
+	
+	/* Are we using a weapon? */
+	if (o_ptr->k_idx)
+	{
+		/* It is hard to hold a heavy weapon */
+		if (hold < o_ptr->weight / 10)
+		{
+			/* Hard to wield a heavy weapon */
+			p_ptr->to_h += 2 * (hold - o_ptr->weight / 10);
+			p_ptr->dis_to_h += 2 * (hold - o_ptr->weight / 10);
+
+			/* Heavy weapon */
+			p_ptr->heavy_wield = TRUE;
+	
+			/* The player gets to swing a heavy weapon only once. -LM- */
+			p_ptr->num_blow = 1;
+		}
+
+		/* Normal weapons */
+		else
+		{
+			int str_index, dex_index;
+
+			int effective_weight = 0, mul = 6;
+			
+			int skill;
+	
+			/* Enforce a minimum weight of three pounds. */
+			effective_weight = (o_ptr->weight < 30 ? 30 : o_ptr->weight);
+
+			/* Compare strength and weapon weight. */
+			str_index = mul * adj_str_blow[p_ptr->stat_ind[A_STR]] /
+				effective_weight;
+
+			/* Maximal value */
+			if (str_index > 11) str_index = 11;
+
+			/* Index by dexterity */
+			dex_index = (adj_dex_blow[p_ptr->stat_ind[A_DEX]]);
+
+			/* Maximal value */
+			if (dex_index > 11) dex_index = 11;
+
+
+			/* Use the blows table */
+			p_ptr->num_blow = blows_table[str_index][dex_index];
+			
+			/* Get weapon skill */
+			skill = p_ptr->skill_thn + (p_ptr->to_h * BTH_PLUS_ADJ);
+			
+			/* Require high skill to get large number of blows */
+			if ((skill < 100) && (p_ptr->num_blow > 3))
+			{
+				p_ptr->num_blow = 3;
+			}
+			if ((skill < 150) && (p_ptr->num_blow > 4))
+			{
+				p_ptr->num_blow = 4;
+			}
+			if ((skill < 200) && (p_ptr->num_blow > 5))
+			{
+				p_ptr->num_blow = 5;
+			}
+
+			/* Paranoia - require at least one blow */
+			if (p_ptr->num_blow < 1) p_ptr->num_blow = 1;
+
+
+			/* Boost digging skill by weapon weight */
+			p_ptr->skill_dig += (o_ptr->weight / 10);
+		}
+	}
+	
+	/* No weapon */
+	else
+	{
+		/* Different calculation for monks with empty hands */
+		if (p_ptr->pclass == CLASS_MONK)
+		{
+			p_ptr->num_blow = 2;
+
+			if (p_ptr->lev > 9) p_ptr->num_blow++;
+			if (p_ptr->lev > 14) p_ptr->num_blow++;
+			if (p_ptr->lev > 24) p_ptr->num_blow++;
+			if (p_ptr->lev > 34) p_ptr->num_blow++;
+			if (p_ptr->lev > 44) p_ptr->num_blow++;
+			if (p_ptr->lev > 49) p_ptr->num_blow++;
+
+			if (p_ptr->monk_armour_stat)
+			{
+				p_ptr->num_blow /= 2;
+			}
+			else
+			{
+				p_ptr->to_h += (p_ptr->lev / 3);
+				p_ptr->to_d += (p_ptr->lev / 3);
+
+				p_ptr->dis_to_h += (p_ptr->lev / 3);
+				p_ptr->dis_to_d += (p_ptr->lev / 3);
+			}
+
+			p_ptr->num_blow += extra_blows;
+		}
+		else
+		{
+			/* Everyone gets two blows if not wielding a weapon. -LM- */
+			p_ptr->num_blow = 2;
+		}
+	}
 
 	/* Hack -- handle "xtra" mode */
 	if (character_xtra) return;
