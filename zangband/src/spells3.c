@@ -4745,7 +4745,7 @@ bool brand_bolts(void)
 		if (o_ptr->xtra_name) continue;
 
 		/* Skip cursed/broken items */
-		if (cursed_p(o_ptr) || broken_p(o_ptr)) continue;
+		if (cursed_p(o_ptr) || !o_ptr->cost) continue;
 
 		/* Randomize */
 		if (randint0(100) < 75) continue;

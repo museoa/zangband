@@ -3872,13 +3872,6 @@
 #define ego_item_p(T) \
 	((((T)->xtra_name) && (!((T)->flags3 & TR3_INSTA_ART))) ? TRUE : FALSE)
 
-
-/*
- * Broken items.
- */
-#define broken_p(T) \
-	((T)->ident & (IDENT_BROKEN))
-
 /*
  * Cursed items.
  */

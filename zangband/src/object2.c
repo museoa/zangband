@@ -1343,7 +1343,7 @@ s32b object_value(const object_type *o_ptr)
 	if (object_known_p(o_ptr))
 	{
 		/* Broken items -- worthless */
-		if (broken_p(o_ptr)) return (0L);
+		if (!o_ptr->cost) return (0L);
 
 		/* Cursed items -- worthless */
 		if (cursed_p(o_ptr)) return (0L);
@@ -1356,7 +1356,7 @@ s32b object_value(const object_type *o_ptr)
 	else
 	{
 		/* Hack -- Felt broken items */
-		if ((o_ptr->ident & (IDENT_SENSE)) && broken_p(o_ptr)) return (0L);
+		if ((o_ptr->ident & (IDENT_SENSE)) && !o_ptr->cost) return (0L);
 
 		/* Hack -- Felt cursed items */
 		if ((o_ptr->ident & (IDENT_SENSE)) && cursed_p(o_ptr)) return (0L);
@@ -1643,7 +1643,7 @@ bool object_similar(const object_type *o_ptr, const object_type *j_ptr)
 	if (cursed_p(o_ptr) != cursed_p(j_ptr)) return (FALSE);
 
 	/* Hack -- Require identical "broken" status */
-	if (broken_p(o_ptr) != broken_p(j_ptr)) return (FALSE);
+	if ((!o_ptr->cost) != (!j_ptr->cost)) return (FALSE);
 
 	/* Need to be identical ego items or artifacts */
 	if (o_ptr->xtra_name != j_ptr->xtra_name) return (FALSE);
@@ -2111,7 +2111,7 @@ static void init_ego_item(object_type *o_ptr, byte ego)
 	if (e_ptr->flags3 & (TR3_CURSED)) o_ptr->ident |= (IDENT_CURSED);
 
 	/* Hack -- apply extra penalties if needed */
-	if (cursed_p(o_ptr) || broken_p(o_ptr))
+	if (cursed_p(o_ptr) || !o_ptr->cost)
 	{
 		/* Hack -- obtain bonuses */
 		if (e_ptr->max_to_h) o_ptr->to_h -= randint1(e_ptr->max_to_h);
@@ -4260,7 +4260,7 @@ bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme)
 	obj_level = get_object_level(o_ptr);
 
 	/* Notice "okay" out-of-depth objects */
-	if (!cursed_p(o_ptr) && !broken_p(o_ptr) && (obj_level > p_ptr->depth))
+	if (!cursed_p(o_ptr) && o_ptr->cost && (obj_level > p_ptr->depth))
 	{
 		/* Rating increase */
 		dun_ptr->rating += (obj_level - p_ptr->depth);
@@ -5718,7 +5718,7 @@ bool can_player_destroy_object(object_type *o_ptr)
 		byte feel = FEEL_SPECIAL;
 
 		/* Hack -- Handle icky artifacts */
-		if (cursed_p(o_ptr) || broken_p(o_ptr)) feel = FEEL_TERRIBLE;
+		if (cursed_p(o_ptr) || !o_ptr->cost) feel = FEEL_TERRIBLE;
 
 		/* Hack -- inscribe the artifact */
 		o_ptr->feeling = feel;

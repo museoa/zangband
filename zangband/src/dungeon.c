@@ -24,8 +24,8 @@ static byte value_check_aux1(const object_type *o_ptr)
 	/* Artifacts */
 	if (o_ptr->flags3 & TR3_INSTA_ART)
 	{
-		/* Cursed/Broken */
-		if (cursed_p(o_ptr) || broken_p(o_ptr)) return FEEL_TERRIBLE;
+		/* Cursed / Worthless */
+		if (cursed_p(o_ptr) || !o_ptr->cost) return FEEL_TERRIBLE;
 
 		/* Normal */
 		return FEEL_SPECIAL;
@@ -34,8 +34,8 @@ static byte value_check_aux1(const object_type *o_ptr)
 	/* Ego-Items */
 	if (ego_item_p(o_ptr))
 	{
-		/* Cursed/Broken */
-		if (o_ptr->flags3 & TR3_CURSED || broken_p(o_ptr))
+		/* Cursed / Worthless */
+		if (o_ptr->flags3 & TR3_CURSED || !o_ptr->cost)
 		{
 			return FEEL_WORTHLESS;
 		}
@@ -49,7 +49,7 @@ static byte value_check_aux1(const object_type *o_ptr)
 	}
 
 	/* Broken items */
-	if (broken_p(o_ptr)) return FEEL_BROKEN;
+	if (!o_ptr->cost) return FEEL_BROKEN;
 
 	/* Good bonus */
 	if ((o_ptr->to_a > 0) || (o_ptr->to_h + o_ptr->to_d > 0))
@@ -81,7 +81,7 @@ static byte value_check_aux2(const object_type *o_ptr)
 	if (cursed_p(o_ptr)) return FEEL_CURSED;
 
 	/* Broken items (all of them) */
-	if (broken_p(o_ptr)) return FEEL_BROKEN;
+	if (!o_ptr->cost) return FEEL_BROKEN;
 
 	/* Artifacts -- except cursed/broken ones */
 	if (o_ptr->flags3 & TR3_INSTA_ART) return FEEL_GOOD;
