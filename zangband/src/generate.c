@@ -433,7 +433,7 @@ static bool cave_gen(void)
 
 #ifdef ALLOW_CAVERNS_AND_LAKES
 	/* Possible "destroyed" level */
-	if ((dun_level > 10) && (rand_int(DUN_DEST) == 0) && (small_levels))
+	if ((dun_level > 15) && (rand_int(DUN_DEST) == 0) && (small_levels))
 	{
 		destroyed = TRUE;
 
@@ -445,10 +445,10 @@ static bool cave_gen(void)
 	if ((rand_int(LAKE_LEVEL) == 0) && !empty_level && !destroyed)
 	{
 		/* Lake of Water */
-		if (dun_level > 30) laketype = 2;
+		if (dun_level > 52) laketype = 2;
 
 		/* Lake of Lava */
-		if (dun_level > 60) laketype = 1;
+		if (dun_level > 90) laketype = 1;
 
 		if (laketype != 0)
 		{
@@ -525,8 +525,8 @@ static bool cave_gen(void)
 #ifdef FORCE_V_IDX
 				if (room_build(y, x, 8)) continue;
 #else
-				/* Type 8 -- Greater vault (7%) */
-				if (k < 7)
+				/* Type 8 -- Greater vault (4%) */
+				if (k < 4)
 				{
 					if (max_vault_ok > 1)
 					{
@@ -538,8 +538,8 @@ static bool cave_gen(void)
 					}
 				}
 
-				/* Type 7 -- Lesser vault (10%) */
-				if (k < 17)
+				/* Type 7 -- Lesser vault (6%) */
+				if (k < 10)
 				{
 					if (max_vault_ok > 0)
 					{
@@ -552,14 +552,14 @@ static bool cave_gen(void)
 				}
 
 
-				/* Type 5 -- Monster nest (15%) */
-				if ((k < 32) && room_build(y, x, 5)) continue;
+				/* Type 5 -- Monster nest (8%) */
+				if ((k < 18) && room_build(y, x, 5)) continue;
 
-				/* Type 6 -- Monster pit (10%) */
-				if ((k < 42) && room_build(y, x, 6)) continue;
+				/* Type 6 -- Monster pit (6%) */
+				if ((k < 24) && room_build(y, x, 6)) continue;
 
-				/* Type 10 -- Random vault (8%) */
-				if ((k < 50) && room_build(y, x, 10)) continue;
+				/* Type 10 -- Random vault (4%) */
+				if ((k < 28) && room_build(y, x, 10)) continue;
 #endif
 
 			}

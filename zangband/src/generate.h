@@ -4,13 +4,13 @@
 /*
  * Dungeon generation values
  */
-#define DUN_UNUSUAL 194 /* Level/chance of unusual room (was 200) */
+#define DUN_UNUSUAL 250 /* Level/chance of unusual room (was 200) */
 #define DUN_DEST    18  /* 1/chance of having a destroyed level */
 #define SMALL_LEVEL 3   /* 1/chance of smaller size (3) */
 #define EMPTY_LEVEL 15  /* 1/chance of being 'empty' (15) */
 #define LAKE_LEVEL  7   /* 1/chance of being a lake on the level */
 #define DARK_EMPTY  5   /* 1/chance of arena level NOT being lit (2) */
-#define DUN_CAV1    525 /* 1/chance for getting a cavern is: */
+#define DUN_CAV1    918 /* 1/chance for getting a cavern is: */
 #define DUN_CAV2    75  /* DUN_CAV1/(dun_level + DUN_CAV2)  */
 			/*  = 5 at dl 30   and = 3 at dl 100 */
 #define MIN_CAVERN  30  /* Minimum level to get a cavern */
