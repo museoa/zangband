@@ -1240,11 +1240,16 @@ bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac)
 	object_type *o_ptr;
 	cptr q, s;
 	int maxenchant = (p_ptr->lev / 5);
+	int maxenchant_d = (p_ptr->lev / 3);
 	char tmp_str[256];
 
 
 	clear_bldg(5, 18);
-	prt(format("  Based on your skill, we can improve up to +%d.", maxenchant),
+	if (to_dam)
+		prt(format("  Based on your skill, we can improve up to +%d,+%d%%.", maxenchant, maxenchant_d * 3),
+		0, 5);
+	else
+		prt(format("  Based on your skill, we can improve up to +%d.", maxenchant),
 		0, 5);
 	prt(format("  The price for the service is %d gold per item.", cost), 0, 7);
 
@@ -1277,7 +1282,7 @@ bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac)
 	}
 
 	/* Enchant to damage */
-	if ((to_dam) && (enchant(o_ptr, maxenchant - o_ptr->to_d,
+	if ((to_dam) && (enchant(o_ptr, maxenchant_d - o_ptr->to_d,
 							 (ENCH_TODAM | ENCH_FORCE))))
 	{
 		okay = TRUE;
