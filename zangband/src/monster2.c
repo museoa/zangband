@@ -3005,6 +3005,8 @@ bool player_place(int y, int x)
 	if (!dun_level)
 	{
 		/* Scroll wilderness */
+		p_ptr->wilderness_x = px;
+		p_ptr->wilderness_y = py;
 		move_wild();
 	}
 

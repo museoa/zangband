@@ -337,6 +337,8 @@ void teleport_player(int dis)
 	if (!dun_level)
 	{
 		/* Scroll wilderness */
+		p_ptr->wilderness_x = px;
+		p_ptr->wilderness_y = py;
 		move_wild();
 	}
 
@@ -450,6 +452,8 @@ void teleport_player_to(int ny, int nx)
 	if (!dun_level)
 	{
 		/* Scroll wilderness */
+		p_ptr->wilderness_x = px;
+		p_ptr->wilderness_y = py;
 		move_wild();
 	}
 

@@ -1957,6 +1957,8 @@ void mutation_power_aux(u32b power)
 				if (!dun_level)
 				{
 					/* Scroll wilderness */
+					p_ptr->wilderness_x = px;
+					p_ptr->wilderness_y = py;
 					move_wild();
 				}
 

@@ -2806,6 +2806,8 @@ bool earthquake(int cy, int cx, int r)
 			if (!dun_level)
 			{
 				/* Scroll wilderness */
+				p_ptr->wilderness_x = px;
+				p_ptr->wilderness_y = py;
 				move_wild();
 			}
 
@@ -3533,6 +3535,8 @@ bool teleport_swap(int dir)
 	if (!dun_level)
 	{
 		/* Scroll wilderness */
+		p_ptr->wilderness_x = px;
+		p_ptr->wilderness_y = py;
 		move_wild();
 	}
 
