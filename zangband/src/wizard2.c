@@ -1265,9 +1265,11 @@ static void wiz_create_item(void)
 {
 	int py = p_ptr->py;
 	int px = p_ptr->px;
+	int i;
 
 	object_type	forge;
 	object_type *q_ptr;
+	object_kind *k_ptr;
 
 	int k_idx;
 
@@ -1291,9 +1293,33 @@ static void wiz_create_item(void)
 	/* Create the item */
 	object_prep(q_ptr, k_idx);
 
-	if (k_info[k_idx].flags3 & TR3_INSTA_ART)
+	k_ptr = &k_info[k_idx];
+
+	if (k_ptr->flags3 & TR3_INSTA_ART)
 	{
-		make_artifact(q_ptr);
+		/* Find the "special" artifact this object belongs to */
+		for (i = 1; i < max_a_idx; i++)
+		{
+			artifact_type *a_ptr = &a_info[i];
+			
+			/* Skip "empty" artifacts */
+			if (!a_ptr->name) continue;
+			
+			if ((a_ptr->tval == k_ptr->tval) && (a_ptr->sval == k_ptr->sval))
+			{
+				/* found it */
+				create_named_art(i, py, px);
+				
+#ifdef USE_SCRIPT
+				q_ptr->python = object_create_callback(q_ptr);
+#endif /* USE_SCRIPT */
+				
+				/* All done */
+				msg_print("Allocated.");
+				
+				return;		
+			}
+		}
 	}
 	else
 	{

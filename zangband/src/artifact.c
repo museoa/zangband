@@ -3116,6 +3116,14 @@ void create_named_art(int a_idx, int y, int x)
 
 	/* Set the activation */
 	q_ptr->activate = a_idx + 128;
+	
+	/* Do not make another one */
+	a_ptr->cur_num = 1;
+	
+	/* Save the artifact flags */
+	q_ptr->flags1 |= a_ptr->flags1;
+	q_ptr->flags2 |= a_ptr->flags2;
+	q_ptr->flags3 |= a_ptr->flags3;
 
 	/* Extract the fields */
 	q_ptr->pval = a_ptr->pval;
