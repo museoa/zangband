@@ -698,7 +698,7 @@ static cptr t_info_flags[] =
 	"NO_OBJECT",
 	"PERM",
 	"IGNORE",
-	"XXX12",
+	"NO_MPLACE",
 	"XXX13",
 	"XXX14"
 };
@@ -728,6 +728,7 @@ static cptr t_info_triggers[] =
 	"MENTT",
 	"STORE1",
 	"STORE2",
+	"MPLACE",
 	NULL
 };
 

@@ -1523,16 +1523,6 @@ bool field_action_glyph_explode(field_type *f_ptr, va_list vp)
 
 	monster_race *r_ptr;
 
-	/* Hack: No monster - just test for existance of glyph */
-	if (!m_ptr)
-	{
-		/* Monsters cannot be generated / teleported onto glyph */
-		*flags &= ~(MEG_DO_MOVE);
-
-		/* Done */
-		return (FALSE);
-	}
-
 	/* Take turn */
 	*flags |= MEG_DO_TURN;
 
@@ -2828,20 +2818,7 @@ bool field_action_door_lock_monster(field_type *f_ptr, va_list vp)
 	monster_type *m_ptr = va_arg(vp, monster_type *);
 	byte *flags = va_arg(vp, byte *);
 
-	monster_race *r_ptr;
-
-	/* Hack: No monster - cannot enter the grid */
-	if (!m_ptr)
-	{
-		/* Monsters cannot be generated / teleported on doors */
-		*flags &= ~(MEG_DO_MOVE);
-
-		/* Done */
-		return (FALSE);
-	}
-
-	/* Get race */
-	r_ptr = &r_info[m_ptr->r_idx];
+	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 	if (!(*flags & (MEG_DO_MOVE)))
 	{
@@ -2883,20 +2860,7 @@ bool field_action_door_jam_monster(field_type *f_ptr, va_list vp)
 	monster_type *m_ptr = va_arg(vp, monster_type *);
 	byte *flags = va_arg(vp, byte *);
 	
-	monster_race *r_ptr;
-
-	/* Hack: No monster - cannot enter the grid */
-	if (!m_ptr)
-	{
-		/* Monsters cannot be generated / teleported on doors */
-		*flags &= ~(MEG_DO_MOVE);
-
-		/* Done */
-		return (FALSE);
-	}
-
-	/* Get race */
-	r_ptr = &r_info[m_ptr->r_idx];
+	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 	if (!(*flags & (MEG_DO_MOVE)))
 	{

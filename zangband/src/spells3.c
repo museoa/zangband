@@ -34,8 +34,6 @@ bool teleport_away(int m_idx, int dis)
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	cave_type *c_ptr = NULL;
 
-	byte flags;
-
 	/* Paranoia */
 	if (!m_ptr->r_idx) return (FALSE);
 
@@ -90,16 +88,7 @@ bool teleport_away(int m_idx, int dis)
 			 * Test for fields that will not allow monsters to
 			 * be generated on them.  (i.e. Glyph of warding)
 			 */
-
-			/* Initialise information to pass to action functions */
-			flags = MEG_DO_MOVE;
-
-			/* Call the hook */
-			field_hook(c_ptr, FIELD_ACT_MON_ENTER_TEST,
-					   (monster_type *) NULL, &flags);
-
-			/* Get result */
-			if (!(flags & (MEG_DO_MOVE))) continue;
+			if (fields_have_flags(c_ptr, FIELD_INFO_NO_MPLACE)) continue;
 
 			/* No teleporting into vaults and such */
 			if (c_ptr->info & CAVE_ICKY) continue;
@@ -173,7 +162,6 @@ void teleport_to_player(int m_idx)
 	monster_type *m_ptr = &m_list[m_idx];
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	cave_type *c_ptr = NULL;
-	byte flags;
 
 	/* Paranoia */
 	if (!m_ptr->r_idx) return;
@@ -229,16 +217,7 @@ void teleport_to_player(int m_idx)
 			 * Test for fields that will not allow monsters to
 			 * be generated on them.  (i.e. Glyph of warding)
 			 */
-
-			/* Initialise information to pass to action functions */
-			flags = MEG_DO_MOVE;
-
-			/* Call the hook */
-			field_hook(c_ptr, FIELD_ACT_MON_ENTER_TEST,
-					   (monster_type *) NULL, &flags);
-
-			/* Get result */
-			if (!(flags & (MEG_DO_MOVE))) continue;
+			if (fields_have_flags(c_ptr, FIELD_INFO_NO_MPLACE)) continue;
 
 			/* Require "empty" floor space */
 			if (!cave_empty_grid(c_ptr)) continue;

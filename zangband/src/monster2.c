@@ -1692,8 +1692,7 @@ monster_type *place_monster_one(int x, int y, int r_idx, bool slp, bool friendly
 	monster_race *r_ptr = &r_info[r_idx];
 
 	cptr name;
-	byte flags;
-	
+
 	/* Paranoia */
 	if (!r_idx) return (NULL);
 
@@ -1743,16 +1742,7 @@ monster_type *place_monster_one(int x, int y, int r_idx, bool slp, bool friendly
 	 * Test for fields that will not allow monsters to
 	 * be generated on them.  (i.e. Glyph of warding)
 	 */
-
-	/* Initialise information to pass to action functions */
-	flags = MEG_DO_MOVE;
-
-	/* Call the hook */
-	field_hook(c_ptr, FIELD_ACT_MON_ENTER_TEST,
-			   (monster_type *) NULL, &flags);
-
-	/* Get result */
-	if (!(flags & (MEG_DO_MOVE))) return (NULL);
+	if (fields_have_flags(c_ptr, FIELD_INFO_NO_MPLACE)) return (NULL);
 
 	/* Powerful monster */
 	if (r_ptr->level > p_ptr->depth)
@@ -2637,7 +2627,6 @@ bool summon_specific(int who, int x1, int y1, int req_lev, int type, bool group,
 {
 	int i, x, y, r_idx;
 	cave_type *c_ptr;
-	byte flags;
 
 	/* Look for a location */
 	for (i = 0; i < 20; ++i)
@@ -2665,19 +2654,10 @@ bool summon_specific(int who, int x1, int y1, int req_lev, int type, bool group,
 		if (fields_have_flags(c_ptr, FIELD_INFO_NO_ENTER)) continue;
 
 		/* 
-		 * Test for fields that will not allow this
-		 * specific monster to pass. (i.e. Glyph of warding)
+		 * Test for fields that will not allow monsters to
+		 * be generated on them.  (i.e. Glyph of warding)
 		 */
-
-		/* Initialise info to pass to action functions */
-		flags = MEG_DO_MOVE;
-
-		/* Call the hook */
-		field_hook(c_ptr, FIELD_ACT_MON_ENTER_TEST,
-				   (monster_type *) NULL, &flags);
-
-		/* Get result */
-		if (!(flags & (MEG_DO_MOVE))) continue;
+		if (fields_have_flags(c_ptr, FIELD_INFO_NO_MPLACE)) continue;
 
 		/* Okay */
 		break;

@@ -1534,13 +1534,11 @@ bool detect_monsters_string(cptr match)
 /* Generic monster tester */
 static bool flag_mon_tester(const monster_type *m_ptr, vptr data)
 {
-	u32b flag;
+	/* Get flags to compare with */
+	const u32b flag = *((const u32b *) data);
 
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
-	
-	/* Get flags to compare with */
-	flag = *((const u32b *) data);
-	
+		
 	if (r_ptr->flags[2] & flag)
 	{
 		/* Take note that they are something */
@@ -2239,7 +2237,6 @@ bool earthquake(int cx, int cy, int r)
 	pcave_type *pc_ptr;
 
 	bool map[32][32];
-	byte flags;
 
 	/* Prevent destruction of town and wilderness */
 	if (!p_ptr->depth)
@@ -2503,20 +2500,11 @@ bool earthquake(int cx, int cy, int r)
 							if (fields_have_flags(c_ptr, FIELD_INFO_NO_ENTER))
 								continue;
 
-							/*
-							 * Test for fields that will not allow this
-							 * specific monster to pass. (i.e. Glyph of warding)
+							/* 
+							 * Test for fields that will not allow monsters to
+							 * be generated on them.  (i.e. Glyph of warding)
 							 */
-
-							/* Initialise info to pass to action functions */
-							flags = MEG_DO_MOVE;
-
-							/* Call the hook */
-							field_hook(c_ptr, FIELD_ACT_MON_ENTER_TEST,
-									   (monster_type *) NULL, &flags);
-
-							/* Get result */
-							if (!(flags & MEG_DO_MOVE)) continue;
+							if (fields_have_flags(c_ptr, FIELD_INFO_NO_MPLACE)) continue;
 
 							/* ... nor on the Pattern */
 							if (cave_pattern_grid(c_ptr))
