@@ -771,24 +771,14 @@ void recall_player(int turns)
 		return;
 	}
 
-#if 0
 	if (!check_down_wild()) return;
-#endif
 
-	if (p_ptr->depth && (p_ptr->recall_depth > p_ptr->depth))
+	if (p_ptr->depth && (p_ptr->max_depth > p_ptr->depth))
 	{
 		if (get_check("Reset recall depth? "))
-		{
-			p_ptr->recall_depth = p_ptr->depth;
-			p_ptr->recall_place = p_ptr->place_num;
-		}
-	}
-	else if (p_ptr->depth > p_ptr->recall_depth)
-	{
-		p_ptr->recall_depth = p_ptr->depth;
-		p_ptr->recall_place = p_ptr->place_num;
-	}
+			p_ptr->max_depth = p_ptr->depth;
 
+	}
 	if (!p_ptr->tim.word_recall)
 	{
 		p_ptr->tim.word_recall = turns;
