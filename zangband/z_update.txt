@@ -60,7 +60,7 @@ Zangband 2.7.4
 - Updated the tk port so it compiles with version 8.3 again. 
 - Fix the tk port so that if it fails to start up
   due to X11 not existing, then the game will try some other port.
-- Added RISC-OS port from Andrew Sidwell.
+- Added RISC-OS port from Antony Sidwell.
 - Make gtk the default port, not the tk port, which doesn't
   work very well yet.  (This fixes the screen offset problem.)
 - Fixed overflow handling of object and monster lists in
@@ -145,8 +145,6 @@ Zangband 2.7.4
 - Rubble in the wilderness doesn't yield objects when dug out.
 - Add 'entrances' to the wilderness dungeons.  Now you'll have to
   fight your way in.
-- Change town gate linking with roads so that the roads connect
-  better, and don't run into walls nearly so often.
 - Add the auto-more option from angband.
 - Make starting in wizard mode be able to prevent death again.
   (Instead of crashing on an assert.)
