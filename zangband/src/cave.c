@@ -680,7 +680,7 @@ sint project_path(coord *gp, int y1, int x1, int y2, int x2, u16b flg)
 	}
 	
 	/* Scan over squares along path */
-	for (sq = 0; sq < MAX_RANGE; sq++)
+	for (sq = 0; (sq < MAX_RANGE) && (sq < slope_count[sl]); sq++)
 	{
 		if (ay < ax)
 		{
@@ -694,7 +694,14 @@ sint project_path(coord *gp, int y1, int x1, int y2, int x2, u16b flg)
 			x = x1 + sx * project_data[sl][sq].y;
 			y = y1 + sy * project_data[sl][sq].x;
 		}
-	
+		
+		/* Stop if out of bounds */
+		if (!in_bounds(y, x))
+		{
+			sq--;
+			break;
+		}
+		
 		/* Save the square */
 		gp[sq].x = x;
 		gp[sq].y = y;
@@ -705,17 +712,21 @@ sint project_path(coord *gp, int y1, int x1, int y2, int x2, u16b flg)
 			if ((x == x2) && (y == y2)) break;
 		}
 
-		/* Stop if out of bounds */
-		if (!in_bounds(y, x)) break;
-
 		c_ptr = area(y, x);
 		
 		/* Does the grid stop projection? */
 		if (project_stop(c_ptr, flg)) break;
 	}
+	
+	/* Include the last square */
+	sq++;
+	
+	/* Paranoia */
+	if (sq > MAX_RANGE) sq = MAX_RANGE;
+	if (sq >= slope_count[sl]) sq = slope_count[sl] - 1;
 
-	/* Length (never more than MAX_RANGE) */
-	return (MIN(sq + 1, MAX_RANGE));
+	/* Length */
+	return (sq);
 }
 
 
