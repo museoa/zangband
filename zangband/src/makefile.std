@@ -107,7 +107,7 @@ BORGOBJS := \
 ## The list of ports available
 ##
 PORTS := default_port linux linux_svga openbsd freebsd main-cap vt100 \
-         solaris sgi dec isc next aix cygwin dos ibm lcc risc emx
+         solaris sgi dec isc next aix cygwin dos ibm lcc risc emx amiga
 
 ##
 ## Following are some "system" definitions
@@ -338,6 +338,16 @@ main-epm.o: main-emx.c
 zangband.a: $(OBJS)
 	$(AR) r $@ $(OBJS)
 
+##
+## Variation -- Compile for Amiga
+##
+amiga: LD := slink QUIET WITH zangband.lnk
+amiga: CC := sc
+amiga: CFLAGS := DEFINE AMIGA DEFINE USE_AMI
+amiga: INSTALL :=  # Fixme
+
+
+
 ##########################################################
 
 ##
@@ -538,4 +548,4 @@ LUALIST := $(addprefix $(LUA), $(LUALIST))
 ##
 ## Phony targets
 ##
-.PHONY: install clean depend $(PORTS) lcc_clean dos_clean ibm_clean
+.PHONY: install clean depend $(PORTS)
