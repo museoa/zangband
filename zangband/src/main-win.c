@@ -1537,7 +1537,7 @@ static errr term_force_font(term_data *td, cptr path)
 
 		/* all this trouble to get the cell size */
 		hdcDesktop = GetDC(HWND_DESKTOP);
-		hfOld = SelectObject(hdcDesktop, td->font_id);
+		hfOld = (HFONT)SelectObject(hdcDesktop, td->font_id);
 		GetTextMetrics(hdcDesktop, &tm);
 		SelectObject(hdcDesktop, hfOld);
 		ReleaseDC(HWND_DESKTOP, hdcDesktop);
@@ -2312,7 +2312,7 @@ static errr Term_pict_win(int x, int y, int n, const byte *ap, const char *cp)
 
 	/* More info */
 	hdcSrc = CreateCompatibleDC(hdc);
-	hbmSrcOld = SelectObject(hdcSrc, infGraph.hBitmap);
+	hbmSrcOld = (HBITMAP)SelectObject(hdcSrc, infGraph.hBitmap);
 
 # ifdef USE_TRANSPARENCY
 
@@ -4470,7 +4470,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 		wc.hInstance     = hInst;
 		wc.hIcon         = hIcon = LoadIcon(hInst, AppName);
 		wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
-		wc.hbrBackground = GetStockObject(BLACK_BRUSH);
+		wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
 		wc.lpszMenuName  = AppName;
 		wc.lpszClassName = AppName;
 

@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: init1.c */
 
 /* Purpose: Initialization (part 1) -BEN- */
@@ -1196,7 +1195,7 @@ errr init_k_info_txt(FILE *fp, char *buf)
 				fake_name_size += 1000;
 
 				/* Reallocate the extra memory */
-				k_info = realloc(k_name, fake_name_size);
+				k_info = (object_kind*)realloc(k_name, fake_name_size);
 			}
 
 			/* Advance and Save the name index */

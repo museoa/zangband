@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: obj_kind.c */
 
 /* Purpose: Code for the object templates */
@@ -74,7 +73,7 @@ object_kind *k_info_add(object_kind *k_info_entry)
 		k_info_size += K_INFO_RESIZE;
 
 		/* Reallocate the extra memory */
-		k_info = realloc(k_info, k_info_size * sizeof(object_kind));
+		k_info = (object_kind*)realloc(k_info, k_info_size * sizeof(object_kind));
 
 		/* Failure */
 		if (!k_info) quit("Out of memory!");

@@ -414,13 +414,13 @@ static bool summon_possible(int y1, int x1)
  * and simpler than before.
  */
 /* Must be the same as projectable() */
-bool clean_shot(int y1, int x1, int y2, int x2, bool friend)
+bool clean_shot(int y1, int x1, int y2, int x2, bool friendly)
 {
 	int grid_n;
 	coord grid_g[512];
 
 	/* Check the projection path */
-	if (friend)
+	if (friendly)
 	{
 		grid_n = project_path(grid_g, MAX_RANGE, y1, x1, y2, x2, PROJECT_FRND);
 	}

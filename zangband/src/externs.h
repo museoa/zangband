@@ -112,7 +112,7 @@ extern s16b max_hgt;
 extern s16b min_wid;
 extern s16b max_wid;
 extern s16b dun_level;
-obj_theme dun_theme;
+extern obj_theme dun_theme;
 extern s16b num_repro;
 extern bool mon_fight;
 extern s16b object_level;
@@ -1105,7 +1105,7 @@ extern int mon_damage_mod(monster_type *m_ptr, int dam, int type);
 extern void exp_for_kill(monster_race *r_ptr, s32b *new_exp, s32b *new_exp_frac);
 
 /* mspells1.c */
-extern bool clean_shot(int y1, int x1, int y2, int x2, bool friend);
+extern bool clean_shot(int y1, int x1, int y2, int x2, bool friendly);
 
 /* mspells2.c */
 extern bool monst_spell_monst(int m_idx);
