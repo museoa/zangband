@@ -13397,3 +13397,18 @@ F:WILD_VOLCANO | WILD_SWAMP |
 F:NO_FEAR | NO_CONF | NO_SLEEP | NO_STUN | 
 D:It is a swirling cloud of yellowish gas.
 
+N:876:Pattern vortex
+G:v:R
+I:110:100d100:20:200:1
+W:50:100:0:70000
+B:EXPLODE:LOSE_ALL:50d50
+F:RAND_25 | EMPTY_MIND | REFLECTING | FORCE_MAXHP | FORCE_SLEEP |
+F:REGENERATE | AURA_ELEC | BASH_DOOR | KILL_BODY |
+F:NONLIVING | IM_ACID | IM_ELEC | IM_FIRE | IM_COLD | IM_POIS | 
+F:RES_TELE | RES_NETH | RES_WATE | RES_PLAS | RES_DISE |
+F:NO_FEAR | NO_STUN | NO_CONF | NO_SLEEP | WILD_ONLY | CAN_FLY |
+S:1_IN_10 |
+S:HOLD
+D:A swirling, rotating red disk.  A funnel thrusts out, seeking the
+D: one who disturbed the Pattern.
+
