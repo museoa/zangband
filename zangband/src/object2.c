@@ -482,20 +482,8 @@ void wipe_o_list(void)
 			a_info[o_ptr->activate - 128].cur_num = 0;
 		}
 
-		/* Monster */
-		if (o_ptr->held_m_idx)
-		{
-			monster_type *m_ptr;
-
-			/* Monster */
-			m_ptr = &m_list[o_ptr->held_m_idx];
-
-			/* Hack -- see above */
-			m_ptr->hold_o_idx = 0;
-		}
-
-		/* Dungeon */
-		else
+		/* Dungeon items */
+		if (!o_ptr->held_m_idx)
 		{
 			cave_type *c_ptr;
 
