@@ -428,6 +428,20 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 					obvious = TRUE;
 				}
 			}
+			/* Pillar */
+			else if (c_ptr->feat == FEAT_PILLAR)
+			{
+				/* Destroy the pillar */
+				cave_set_feat(x, y, the_floor());
+
+				/* Message */
+				if (known)
+				{
+					msgf("The pillar turns into mud!");
+					obvious = TRUE;
+				}
+			}
+
 
 			break;
 		}
