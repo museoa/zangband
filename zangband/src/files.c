@@ -2732,9 +2732,6 @@ errr file_character(cptr name, bool full)
 	int msg_max = message_num();
 
 
-	/* Drop priv's */
-	safe_setuid_drop();
-
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_USER, name);
 
@@ -2761,10 +2758,6 @@ errr file_character(cptr name, bool full)
 
 	/* Open the non-existing file */
 	if (fd < 0) fff = my_fopen(buf, "w");
-
-	/* Grab priv's */
-	safe_setuid_grab();
-
 
 	/* Invalid file */
 	if (!fff)
@@ -3564,14 +3557,8 @@ bool show_file(cptr name, cptr what, int line, int mode)
 			/* Hack -- Re-Open the input file */
 			fff = my_fopen(path, "r");
 
-			/* Drop priv's */
-			safe_setuid_drop();
-
 			/* Open the output file */
 			ffp = my_fopen(outfile, "w");
-
-			/* Grab priv's */
-			safe_setuid_grab();
 
 			/* Oops */
 			if (!(fff && ffp))
@@ -3982,8 +3969,14 @@ static void make_bones(void)
 			/* File type is "TEXT" */
 			FILE_TYPE(FILE_TYPE_TEXT);
 
+			/* Grab permissions */
+			safe_setuid_grab();
+
 			/* Try to write a new "Bones File" */
 			fp = my_fopen(str, "w");
+
+			/* Drop permissions */
+			safe_setuid_drop();
 
 			/* Not allowed to write it?  Weird. */
 			if (!fp) return;

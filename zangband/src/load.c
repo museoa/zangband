@@ -3226,8 +3226,14 @@ errr rd_savefile_new(void)
 {
 	errr err;
 
+	/* Grab permissions */
+	safe_setuid_grab();
+
 	/* The savefile is a binary file */
 	fff = my_fopen(savefile, "rb");
+
+	/* Drop permissions */
+	safe_setuid_drop();
 
 	/* Paranoia */
 	if (!fff) return (-1);

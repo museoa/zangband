@@ -2559,10 +2559,6 @@ void do_cmd_spoilers(void)
 	screen_save();
 
 
-	/* Drop priv's */
-	safe_setuid_drop();
-
-
 	/* Interact */
 	while (1)
 	{
@@ -2637,10 +2633,6 @@ void do_cmd_spoilers(void)
 		/* Flush messages */
 		message_flush();
 	}
-
-
-	/* Grab priv's */
-	safe_setuid_grab();
 
 
 	/* Restore the screen */

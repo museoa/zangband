@@ -1674,8 +1674,14 @@ static bool save_player_aux(char *name)
 	FILE_TYPE(FILE_TYPE_SAVE);
 
 
+	/* Grab permissions */
+	safe_setuid_grab();
+
 	/* Create the savefile */
 	fd = fd_make(name, mode);
+
+	/* Drop permissions */
+	safe_setuid_drop();
 
 	/* File is okay */
 	if (fd >= 0)
@@ -1683,8 +1689,14 @@ static bool save_player_aux(char *name)
 		/* Close the "fd" */
 		(void)fd_close(fd);
 
+		/* Grab permissions */
+		safe_setuid_grab();
+
 		/* Open the savefile */
 		fff = my_fopen(name, "wb");
+
+		/* Drop permissions */
+		safe_setuid_drop();
 
 		/* Successful open */
 		if (fff)
@@ -1696,8 +1708,14 @@ static bool save_player_aux(char *name)
 			my_fclose(fff);
 		}
 
+		/* Grab permissions */
+		safe_setuid_grab();
+
 		/* Remove "broken" files */
 		if (!ok) (void)fd_kill(name);
+
+		/* Drop permissions */
+		safe_setuid_drop();
 	}
 
 
@@ -1745,8 +1763,14 @@ bool save_player(void)
 	strcat(safe, "n");
 #endif /* VM */
 
+	/* Grab permissions */
+	safe_setuid_grab();
+
 	/* Remove it */
 	(void)fd_kill(safe);
+
+	/* Drop permissions */
+	safe_setuid_drop();
 
 	/* Attempt to save the player */
 	if (save_player_aux(safe))
@@ -1763,6 +1787,9 @@ bool save_player(void)
 		strcat(temp, "o");
 #endif /* VM */
 
+		/* Grab permissions */
+		safe_setuid_grab();
+
 		/* Remove it */
 		(void)fd_kill(temp);
 
@@ -1775,6 +1802,9 @@ bool save_player(void)
 		/* Remove preserved savefile */
 		(void)fd_kill(temp);
 
+		/* Drop permissions */
+		safe_setuid_drop();
+
 		/* Hack -- Pretend the character was loaded */
 		character_loaded = TRUE;
 
@@ -1784,8 +1814,14 @@ bool save_player(void)
 		strcpy(temp, savefile);
 		strcat(temp, ".lok");
 
+		/* Grab permissions */
+		safe_setuid_grab();
+
 		/* Remove lock file */
 		fd_kill(temp);
+
+		/* Drop permissions */
+		safe_setuid_drop();
 
 #endif
 
@@ -1852,13 +1888,17 @@ bool load_player(void)
 	/* Allow empty savefile name */
 	if (!savefile[0]) return (TRUE);
 
+	/* Grab permissions */
+	safe_setuid_grab();
 
-#if !defined(MACINTOSH) && !defined(WINDOWS) && !defined(VM)
+	/* Open the savefile */
+	fd = fd_open(savefile, O_RDONLY);
 
-	/* XXX XXX XXX Fix this */
+	/* Drop permissions */
+	safe_setuid_drop();
 
-	/* Verify the existance of the savefile */
-	if (access(savefile, 0) < 0)
+	/* No file */
+	if (fd < 0)
 	{
 		/* Give a message */
 		msg_print("Savefile does not exist.");
@@ -1868,7 +1908,8 @@ bool load_player(void)
 		return (TRUE);
 	}
 
-#endif
+	/* Close the file */
+	(void)fd_close(fd);
 
 
 #ifdef VERIFY_SAVEFILE
@@ -1884,8 +1925,14 @@ bool load_player(void)
 		strcpy(temp, savefile);
 		strcat(temp, ".lok");
 
+		/* Grab permissions */
+		safe_setuid_grab();
+
 		/* Check for lock */
 		fkk = my_fopen(temp, "r");
+
+		/* Drop permissions */
+		safe_setuid_drop();
 
 		/* Oops, lock exists */
 		if (fkk)
@@ -1901,8 +1948,14 @@ bool load_player(void)
 			return (FALSE);
 		}
 
+		/* Grab permissions */
+		safe_setuid_grab();
+
 		/* Create a lock file */
 		fkk = my_fopen(temp, "w");
+
+		/* Drop permissions */
+		safe_setuid_drop();
 
 		/* Dump a line of info */
 		fprintf(fkk, "Lock file for savefile '%s'\n", savefile);
@@ -1917,8 +1970,14 @@ bool load_player(void)
 	/* Okay */
 	if (!err)
 	{
+		/* Grab permissions */
+		safe_setuid_grab();
+
 		/* Open the savefile */
 		fd = fd_open(savefile, O_RDONLY);
+
+		/* Drop permissions */
+		safe_setuid_drop();
 
 		/* No file */
 		if (fd < 0) err = -1;
@@ -1932,8 +1991,16 @@ bool load_player(void)
 	{
 
 #ifdef VERIFY_TIMESTAMP
+
+		/* Grab permissions */
+		safe_setuid_grab();
+
 		/* Get the timestamp */
 		(void)fstat(fd, &statbuf);
+
+		/* Drop permissions */
+		safe_setuid_drop();
+
 #endif
 
 		/* Read the first four bytes */
@@ -1949,7 +2016,6 @@ bool load_player(void)
 	/* Process file */
 	if (!err)
 	{
-
 		/* Extract version */
 		z_major = vvv[0];
 		z_minor = vvv[1];
@@ -2105,8 +2171,14 @@ bool load_player(void)
 		strcpy(temp, savefile);
 		strcat(temp, ".lok");
 
+		/* Grab permissions */
+		safe_setuid_grab();
+
 		/* Remove lock */
 		fd_kill(temp);
+
+		/* Drop permissions */
+		safe_setuid_drop();
 	}
 
 #endif

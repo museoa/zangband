@@ -525,15 +525,26 @@ void enter_score(void)
 	/* Save the cause of death (31 chars) */
 	sprintf(the_score.how, "%-.31s", p_ptr->died_from);
 
+	/* Grab permissions */
+	safe_setuid_grab();
 
 	/* Lock (for writing) the highscore file, or fail */
 	if (fd_lock(highscore_fd, F_WRLCK)) return;
 
+	/* Drop permissions */
+	safe_setuid_drop();
+
 	/* Add a new entry to the score list, see where it went */
 	score_idx = highscore_add(&the_score);
 
+	/* Grab permissions */
+	safe_setuid_grab();
+
 	/* Unlock the highscore file, or fail */
 	if (fd_lock(highscore_fd, F_UNLCK)) return;
+
+	/* Drop permissions */
+	safe_setuid_drop();
 
 	/* Success */
 	return;

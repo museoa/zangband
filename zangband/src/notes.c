@@ -44,14 +44,8 @@ void output_note(cptr final_note)
 {
 	FILE *fff;
 
-	/* Drop priv's */
-	safe_setuid_drop();
-
 	/* Open notes file */
 	fff = my_fopen(notes_file(), "a");
-
-	/* Grab priv's */
-	safe_setuid_grab();
 
 	/* Failure */
 	if (!fff) return;

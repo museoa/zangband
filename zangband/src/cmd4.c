@@ -1292,14 +1292,8 @@ void do_cmd_options(byte flags)
 				/* Build the filename */
 				path_build(buf, 1024, ANGBAND_DIR_USER, "pref-opt.prf");
 
-				/* Drop priv's */
-				safe_setuid_drop();
-
 				/* Open the file */
 				fff = my_fopen(buf, "w");
-
-				/* Grab priv's */
-				safe_setuid_grab();
 
 				/* Failed */
 				if (!fff) break;
@@ -1732,14 +1726,8 @@ void do_cmd_macros(void)
 			/* Ask for a file */
 			if (!askfor_aux(tmp, 80)) continue;
 
-			/* Drop priv's */
-			safe_setuid_drop();
-
 			/* Dump the macros */
 			(void)macro_dump(tmp);
-
-			/* Grab priv's */
-			safe_setuid_grab();
 
 			/* Prompt */
 			msg_print("Appended macros.");
@@ -1855,14 +1843,8 @@ void do_cmd_macros(void)
 			/* Ask for a file */
 			if (!askfor_aux(tmp, 80)) continue;
 
-			/* Drop priv's */
-			safe_setuid_drop();
-
 			/* Dump the macros */
 			(void)keymap_dump(tmp);
-
-			/* Grab priv's */
-			safe_setuid_grab();
 
 			/* Prompt */
 			msg_print("Appended keymaps.");
@@ -2099,14 +2081,8 @@ void do_cmd_visuals(void)
 			/* Build the filename */
 			path_build(buf, 1024, ANGBAND_DIR_USER, tmp);
 
-			/* Drop priv's */
-			safe_setuid_drop();
-
 			/* Append to the file */
 			fff = my_fopen(buf, "a");
-
-			/* Grab priv's */
-			safe_setuid_grab();
 
 			/* Failure */
 			if (!fff) continue;
@@ -2159,14 +2135,8 @@ void do_cmd_visuals(void)
 			/* Build the filename */
 			path_build(buf, 1024, ANGBAND_DIR_USER, tmp);
 
-			/* Drop priv's */
-			safe_setuid_drop();
-
 			/* Append to the file */
 			fff = my_fopen(buf, "a");
-
-			/* Grab priv's */
-			safe_setuid_grab();
 
 			/* Failure */
 			if (!fff) continue;
@@ -2219,14 +2189,8 @@ void do_cmd_visuals(void)
 			/* Build the filename */
 			path_build(buf, 1024, ANGBAND_DIR_USER, tmp);
 
-			/* Drop priv's */
-			safe_setuid_drop();
-
 			/* Append to the file */
 			fff = my_fopen(buf, "a");
-
-			/* Grab priv's */
-			safe_setuid_grab();
 
 			/* Failure */
 			if (!fff) continue;
@@ -2279,14 +2243,8 @@ void do_cmd_visuals(void)
 			/* Build the filename */
 			path_build(buf, 1024, ANGBAND_DIR_USER, tmp);
 
-			/* Drop priv's */
-			safe_setuid_drop();
-
 			/* Append to the file */
 			fff = my_fopen(buf, "a");
-
-			/* Grab priv's */
-			safe_setuid_grab();
 
 			/* Failure */
 			if (!fff) continue;
@@ -2662,14 +2620,8 @@ void do_cmd_colors(void)
 			/* Build the filename */
 			path_build(buf, 1024, ANGBAND_DIR_USER, tmp);
 
-			/* Drop priv's */
-			safe_setuid_drop();
-
 			/* Append to the file */
 			fff = my_fopen(buf, "a");
-
-			/* Grab priv's */
-			safe_setuid_grab();
 
 			/* Failure */
 			if (!fff) continue;
@@ -3041,14 +2993,8 @@ void do_cmd_save_screen(void)
 		/* File type is "TEXT" */
 		FILE_TYPE(FILE_TYPE_TEXT);
 
-		/* Hack -- drop permissions */
-		safe_setuid_drop();
-
 		/* Append to the file */
 		fff = my_fopen(buf, "w");
-
-		/* Hack -- grab permissions */
-		safe_setuid_grab();
 
 		/* Oops */
 		if (!fff) return;

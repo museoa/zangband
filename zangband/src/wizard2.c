@@ -1677,14 +1677,8 @@ void output_monster_matlab(void)
 	/* Create the file name */
 	path_build(buf, 500, ANGBAND_DIR_SAVE, "monmatlb.m");
 
-	/* Drop priv's */
-	safe_setuid_drop();
-
 	/* Open file */
 	fff = my_fopen(buf, "w");
-
-	/* Grab priv's */
-	safe_setuid_grab();
 
 	/* Failure */
 	if (!fff) return;

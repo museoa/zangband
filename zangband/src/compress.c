@@ -1534,15 +1534,9 @@ static errr write_file(block_handle *h_ptr, cptr name)
 	/* File type is "DATA" */
 	FILE_TYPE(FILE_TYPE_DATA);
 	
-	/* Drop priv's */
-	safe_setuid_drop();
-	
 	/* Open the file */
 	fd = fd_make(name, mode);
 	
-	/* Grab priv's */
-	safe_setuid_grab();
-
 	/* No such file */
 	if (fd < 0) return (-1);
 
