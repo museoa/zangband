@@ -107,6 +107,24 @@ void check_experience(void)
 		/* Message */
 		msg_format("Welcome to level %d.", p_ptr->lev);
 
+                /* If auto-note taking enabled, write a note to the file. */
+                if (take_notes && auto_notes) {
+
+                  char buf[80];
+                  char long_day[80];
+                  time_t ct = time((time_t*)0);
+                  
+                  /* Get date and time */
+                  (void)strftime(long_day, 25, "%m/%d/%Y at %I:%M %p", localtime(&ct));
+
+                  /* Build the message */
+                  sprintf(buf, "%s | %s reached level %d", long_day, player_name, p_ptr->lev);
+
+                  /* Write message */
+                  do_cmd_note(buf);
+
+                }
+
 		/* Update some stuff */
 		p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS);
 
@@ -1192,6 +1210,20 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 
 		/* When the player kills a Unique, it stays dead */
 		if (r_ptr->flags1 & RF1_UNIQUE) r_ptr->max_num = 0;
+
+                /* If the player kills a Unique, and the notes options are on, write a note */
+                if ((r_ptr->flags1 & RF1_UNIQUE) && take_notes && auto_notes) {
+
+                  char long_day[25];
+                  time_t ct = time((time_t*)0);
+
+                  /* Get date and time */
+                  (void)strftime(long_day, 25, "%m/%d/%Y at %I:%M %p", localtime(&ct));
+
+                  /* Write note */
+                  fprintf(notes_file, "%s | Killed %s\n", long_day, m_name);
+                  
+                }
 
 		/* When the player kills a Nazgul, it stays dead */
 		if (r_ptr->flags3 & RF3_UNIQUE_7) r_ptr->max_num--;

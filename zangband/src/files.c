@@ -4575,7 +4575,7 @@ void close_game(void)
 		  (void)strftime(long_day, 25, "%m/%d/%Y at %I:%M %p", localtime(&ct));
 		 
 		  /* Add note */
-		  fprintf(notes_file, "%s died to %s on %s\n",player_name, died_from, long_day);
+		  fprintf(notes_file, "\n%s was killed by %s on %s\n",player_name, died_from, long_day);
 
 		}
 
@@ -4593,6 +4593,20 @@ void close_game(void)
 	{
 		/* Save the game */
 		do_cmd_save_game(FALSE);
+                
+                /* If note-taking enabled, write session end to notes file */
+                if (take_notes) {
+                  
+                  char long_day[25];
+                  time_t ct = time((time_t*)0);
+
+                  /* Get date and time */
+                  (void)strftime(long_day, 25, "%m/%d/%Y at %I:%M %p", localtime(&ct));
+
+                  fprintf(notes_file, "\nSession end: %s\n", long_day);
+
+
+                }
 
 		/* Prompt for scores XXX XXX XXX */
 		prt("Press Return (or Escape).", 0, 40);

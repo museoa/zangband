@@ -72,7 +72,7 @@ void do_cmd_redraw(void)
 		/* Dead window */
 		if (!angband_term[j]) continue;
 
-		/* Activate */
+                /* Activate */
 		Term_activate(angband_term[j]);
 
 		/* Redraw */
@@ -2468,11 +2468,19 @@ void do_cmd_note(char *note)
 	 * the message recall.
 	 */
 	if (take_notes) {
-	  
-	  fprintf(notes_file, buf);
- 
-	  /* Hack - add newline */
-	  fprintf(notes_file, "\n");
+
+          char final_note[80];
+          char long_day[25];
+          time_t ct = time((time_t*)0);
+
+          /* Get date and time */
+          (void)strftime(long_day, 25, "%m/%d/%Y at %I:%M %p", localtime(&ct));
+
+          /* Make note */
+          sprintf(final_note, "%s | %s\n", long_day, buf);
+    
+	  /* Add note to buffer */
+	  fprintf(notes_file, final_note);
 
 	}
 

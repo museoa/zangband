@@ -4109,7 +4109,7 @@ void play_game(bool new_game)
 
 	  /* Add in continuation info */
 	  fprintf(notes_file, "================================================\n");
-	  fprintf(notes_file, "New session start at %s\n", long_day);
+	  fprintf(notes_file, "New session start at %s\n\n", long_day);
 	  
 	}
 

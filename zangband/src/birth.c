@@ -2820,7 +2820,7 @@ void player_birth(void)
 		                                race_info[p_ptr->prace].title, 
 		                                class_info[p_ptr->pclass].title );
 	  fprintf(notes_file, "Born on %s\n",long_day);
-	  fprintf(notes_file, "================================================\n");
+	  fprintf(notes_file, "================================================\n\n");
 
 	} /* if (take_notes) */
 
