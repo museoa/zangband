@@ -10,9 +10,9 @@
  * included in all such copies.
  */
 
-#include <tcl.h>
 #include "angband.h"
 #include "tnb.h"
+#include <tcl.h>
 #include "interp.h"
 #include "cmdinfo-dll.h"
 #include "util-dll.h"
@@ -106,7 +106,7 @@ static int SettingProc_autosave_freq(SettingParam *param)
 }
 
 /* Setting callback for misc boolean options */
-int SettingProc_bool(SettingParam *param)
+static int SettingProc_bool(SettingParam *param)
 {
 	Tcl_Interp *interp = param->interp;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
@@ -139,7 +139,7 @@ int SettingProc_bool(SettingParam *param)
 }
 
 /* Setting callback for allow_animation option */
-int SettingProc_allow_animation(SettingParam *param)
+static int SettingProc_allow_animation(SettingParam *param)
 {
 	int result = SettingProc_bool(param);
 
@@ -214,77 +214,11 @@ static int SettingProc_hitpoint_warn(SettingParam *param)
 	return TCL_OK;
 }
 
-#define cheat_variable(i) (*cheat_info[i].o_var)
-
-/* Setting callback for cheating options */
-static int SettingProc_cheat(SettingParam *param)
-{
-	Tcl_Interp *interp = param->interp;
-	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
-	Tcl_Obj **objv = param->objv;
-
-	int index = (int) param->setting->data;
-	int value;
-	
-	switch (param->cmd)
-	{
-		case SETTING_GET:
-			Tcl_SetBooleanObj(resultPtr, cheat_variable(index));
-			break;
-		case SETTING_DEFAULT:
-			break;
-		case SETTING_SET:
-			if (Tcl_GetBooleanFromObj(interp, objv[0], &value) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			cheat_variable(index) = value;
-			noscore |= (cheat_info[index].o_set * 256 +
-				cheat_info[index].o_bit);
-			Bind_Setting(param->setting->detail, value);
-			break;
-	}
-
-	return TCL_OK;
-}
-
-#define option_variable(i) (*option_info[i].o_var)
-
-/* Setting callback for regular boolean options */
-int SettingProc_opt(SettingParam *param)
-{
-	Tcl_Interp *interp = param->interp;
-	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
-	Tcl_Obj **objv = param->objv;
-
-	int index = (int) param->setting->data;
-	int value;
-	
-	switch (param->cmd)
-	{
-		case SETTING_GET:
-			Tcl_SetBooleanObj(resultPtr, option_variable(index));
-			break;
-		case SETTING_DEFAULT:
-			break;
-		case SETTING_SET:
-			if (Tcl_GetBooleanFromObj(interp, objv[0], &value) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			option_variable(index) = value;
-			Bind_Setting(param->setting->detail, value);
-			break;
-	}
-
-	return TCL_OK;
-}
-
 /*
  * Return the setting[] index for the setting with the given keyword.
  * Return an error if there is no such setting.
  */
-int Setting_FindByName(SettingGroupToken token, char *settingName,
+static int Setting_FindByName(SettingGroupToken token, char *settingName,
 	int *settingIndex)
 {
 	SettingGroup *group = (SettingGroup *) token;
@@ -315,7 +249,7 @@ int Setting_FindByName(SettingGroupToken token, char *settingName,
 	return TCL_OK;
 }
 
-int Setting_FromObj(SettingGroupToken token, SettingType **settingPtrPtr,
+static int Setting_FromObj(SettingGroupToken token, SettingType **settingPtrPtr,
 	Tcl_Obj *nameObjPtr)
 {
 	SettingGroup *group = (SettingGroup *) token;
@@ -332,7 +266,7 @@ int Setting_FromObj(SettingGroupToken token, SettingType **settingPtrPtr,
 	return TCL_OK;
 }
 
-int Setting_Add(SettingGroupToken token, SettingType *data)
+static int Setting_Add(SettingGroupToken token, SettingType *data)
 {
 	SettingGroup *group = (SettingGroup *) token;
 	SettingType *settingPtr;
@@ -360,7 +294,7 @@ int Setting_Add(SettingGroupToken token, SettingType *data)
 	return TCL_OK;
 }
 
-SettingGroupToken Setting_Init(Tcl_Interp *interp)
+static SettingGroupToken Setting_Init(Tcl_Interp *interp)
 {
 	SettingGroup *group;
 
@@ -381,7 +315,7 @@ objcmd_setting(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
 	SettingGroupToken token = (SettingGroupToken) infoCmd->clientData;
-	static char *cmdOptions[] = {"default", "desc", "set", NULL};
+	static cptr cmdOptions[] = {"default", "desc", "set", NULL};
 	int index;
 
 	SettingParam param;
@@ -389,11 +323,11 @@ objcmd_setting(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 	
     if (objC < 3)
     {
-		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, "option setting ?arg ...?");
+		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, (char *) "option setting ?arg ...?");
 		return TCL_ERROR;
     }
 
-    if (Tcl_GetIndexFromObj(interp, objV[1], cmdOptions, "option", 0, 
+    if (Tcl_GetIndexFromObj(interp, objV[1], (char **) cmdOptions, (char *) "option", 0, 
 		&index) != TCL_OK)
 	{
 		return TCL_ERROR;
@@ -434,27 +368,6 @@ objcmd_setting(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 
 SettingGroupToken g_setting; /* The global setting info. */
 
-static void verify_option_table(void)
-{
-	u32b flag[8] = {0L};
-	int i;
-
-	for (i = 0; option_info[i].o_desc; i++)
-	{
-		int os = option_info[i].o_set;
-		int ob = option_info[i].o_bit;
-
-		if ((os < 0) || (os >= 8))
-			quit_fmt("verify_option_table: bad os=%d", os);
-		if ((ob < 0) || (ob >= 32))
-			quit_fmt("verify_option_table: bad ob=%d", ob);
-		if (flag[os] & (1L << ob))
-			quit_fmt("verify_option_table: os=%d,ob=%d already set", os, ob);
-
-		flag[os] |= (1L << ob);
-	}
-}
-
 /*
  * Initialize all the setting/option-related stuff.
  */
@@ -464,24 +377,8 @@ void init_settings(void)
 	SettingType setting;
 	int i;
 
-	verify_option_table();
-
 	/* Allocate the game settings master */
 	g_setting = Setting_Init(g_interp);
-
-	for (i = 0; option_info[i].o_desc; i++)
-	{
-		setting.name = option_info[i].o_text;
-		setting.desc = option_info[i].o_desc;
-		setting.proc = SettingProc_opt;
-		setting.data = (void *) i;
-
-		if (!setting.name)
-			continue;
-
-		/* Add this setting */
-		Setting_Add(g_setting, &setting);
-	}
 
 	setting.name = "delay_factor";
 	setting.desc = "Base delay factor";
@@ -518,19 +415,6 @@ void init_settings(void)
 	setting.proc = SettingProc_autosave_freq;
 	setting.data = 0;
 	Setting_Add(g_setting, &setting);
-
-	for (i = 0; i < CHEAT_MAX; i++)
-	{
-		setting.name = cheat_info[i].o_text;
-		setting.desc = cheat_info[i].o_desc;
-		setting.proc = SettingProc_cheat;
-		setting.data = (void *) i;
-
-		if (!setting.name)
-			continue;
-
-		Setting_Add(g_setting, &setting);
-	}
 
 	/*
 	 * Create a list of setting keywords for use with bind.c stuff.
