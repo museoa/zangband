@@ -1670,7 +1670,7 @@ static void calc_spells(void)
 	k = 0;
 
 	/* Count spells that can be learned */
-	for (j = 0; j < 64; j++)
+	for (j = 0; j < (p_ptr->realm2 != REALM_NONE ? 64 : 32); j++)
 	{
 		/* Access the spell */
 		if (j < 32)
@@ -1691,15 +1691,6 @@ static void calc_spells(void)
 
 		/* Count it */
 		k++;
-	}
-
-	if (p_ptr->realm2 == REALM_NONE)
-	{
-		if (k > 32) k = 32;
-	}
-	else
-	{
-		if (k > 64) k = 64;
 	}
 
 	/* Cannot learn more spells than exist */
