@@ -2,6 +2,26 @@ This is a document file listing the changes in Zangband (compared to
 the standard Angband 2.8.1.) No long explanations, just a list. See
 code for details. In reversed chronological order (more or less):
 
+ZAngband 2.5.3:
+- Added roads between the towns to the wilderness.
+- Added lakes (of various kinds) to the wilderness.
+- Enchanted ammo is now worth less.
+- Tweaked the inflated damage dice of weapons.
+- Fixed the bug with monsters without the PASS_WALL flag walking through
+  pillars.
+- Fixed a bug with random quest rewards.
+- Fixed a problem with 'Vanila town' mode and the dungeon 'M'ap.
+- Light carried by monsters should no longer be visible of the player
+  is blind.
+- Toned down some of the nastier traps.
+- Improved handling of the bigscreen feature in the windows port.
+- Added some new 16x16 monster and terrain tiles.
+- Reduced DSM breath damage by one-third.
+- You can now press 'S' while choosing your magic realms to restart
+  the birth process.
+- *Identifying* a book (or eXamining it in a store) will now print out
+  a list of its spells regardless of the player's realm choices.
+
 ZAngband 2.5.2b:
 -The "Good luck" and "Bad luck" mutations no longer affect unweildable
  items.  The "Good luck" mutation can no longer be abused with memory
