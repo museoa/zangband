@@ -613,7 +613,7 @@ static void prt_depth(void)
 		if (p_ptr->town_num)
 		{
 			strncpy(depths, town[p_ptr->town_num].name, T_NAME_LEN);
-			depths[31] = '\0';
+			depths[T_NAME_LEN - 1] = '\0';
 		}
 		else
 			strcpy(depths, "Wilderness");
