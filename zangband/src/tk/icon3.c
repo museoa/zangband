@@ -214,7 +214,7 @@ static int DecompressIconFile(Tcl_Interp *interp, char *fileName, IconPtr *iconD
 		goto error;
 	}
 	
-	buf = Tcl_AllocDebug(size);
+	buf = Tcl_Alloc(size);
 
 	while (sum < size)
 	{
@@ -242,7 +242,7 @@ static int DecompressIconFile(Tcl_Interp *interp, char *fileName, IconPtr *iconD
 	/* gzclose() fails sometimes, even though the whole file was read */
 	if ((gzclose(in) != Z_OK) && 0)
 	{
-		Tcl_FreeDebug(buf);
+		Tcl_Free(buf);
 		(void) gzerror(in, &err);
 		Tcl_AppendResult(interp, format("gzclose() failed: err %d", err),
 			NULL);
@@ -259,7 +259,7 @@ static int DecompressIconFile(Tcl_Interp *interp, char *fileName, IconPtr *iconD
 
 error:
 	if (buf)
-		Tcl_FreeDebug(buf);
+		Tcl_Free(buf);
 	if (gzclose(in) != Z_OK)
 	{
 	}
@@ -504,7 +504,7 @@ void Icon_MakeRLE(t_icon_data *iconDataPtr)
 
 	/* x, y, width, height for each icon */
 	iconDataPtr->rle_bounds =
-		(unsigned char *) Tcl_AllocDebug(sizeof(unsigned char) *
+		(unsigned char *) Tcl_Alloc(sizeof(unsigned char) *
 		iconDataPtr->icon_count * 4);
 
 	for (i = 0; i < iconDataPtr->icon_count; i++)
@@ -530,11 +530,11 @@ void Icon_MakeRLE(t_icon_data *iconDataPtr)
 	else
 		slop = iconDataPtr->height * 2;
 
-	iconDataPtr->rle_data = (IconPtr) Tcl_AllocDebug(total + slop);
+	iconDataPtr->rle_data = (IconPtr) Tcl_Alloc(total + slop);
 	iconDataPtr->rle_offset =
-		(long *) Tcl_AllocDebug(sizeof(long) * iconDataPtr->icon_count);
+		(long *) Tcl_Alloc(sizeof(long) * iconDataPtr->icon_count);
 	iconDataPtr->rle_len =
-		(int *) Tcl_AllocDebug(sizeof(int) * iconDataPtr->icon_count);
+		(int *) Tcl_Alloc(sizeof(int) * iconDataPtr->icon_count);
 
 	total = 0;
 
@@ -557,7 +557,7 @@ void Icon_MakeRLE(t_icon_data *iconDataPtr)
 		total += len;
 	}
 
-	Tcl_FreeDebug((char *) iconDataPtr->icon_data);
+	Tcl_Free((char *) iconDataPtr->icon_data);
 	iconDataPtr->icon_data = NULL;
 }
 
@@ -764,7 +764,7 @@ int Image2Bits(Tcl_Interp *interp, t_icon_data *iconDataPtr,
 
 	/* Allocate icon buffer */
 	dataSize = iconDataPtr->icon_count * iconDataPtr->length;
-	iconDataPtr->icon_data = (unsigned char *) Tcl_AllocDebug(dataSize);
+	iconDataPtr->icon_data = (unsigned char *) Tcl_Alloc(dataSize);
 
 	if (pixelSize == 1)
 	{
@@ -1804,7 +1804,7 @@ static int objcmd_icon_photo(ClientData dummy, Tcl_Interp *interp, int objc, Tcl
 	}
 
 	iconDataPtr = &g_icon_data[iconSpec.type];
-	dataPtr = (unsigned char *) Tcl_AllocDebug(iconDataPtr->length);
+	dataPtr = (unsigned char *) Tcl_Alloc(iconDataPtr->length);
 
 	/* Ascii-type icon */
 	if (iconSpec.ascii != -1)
@@ -1839,7 +1839,7 @@ static int objcmd_icon_photo(ClientData dummy, Tcl_Interp *interp, int objc, Tcl
 			bounds[1] * iconDataPtr->pitch, iconDataPtr->pitch);
 
 		/* Create a mask, 1-byte-per-pixel */
-		maskPtr = (unsigned char *) Tcl_AllocDebug(iconDataPtr->pixels);
+		maskPtr = (unsigned char *) Tcl_Alloc(iconDataPtr->pixels);
 		for (i = 0; i < iconDataPtr->pixels; i++)
 		{
 			int pixel = PixelPtrToLong(dataPtr + i * iconDataPtr->bypp,
@@ -1865,7 +1865,7 @@ static int objcmd_icon_photo(ClientData dummy, Tcl_Interp *interp, int objc, Tcl
 	}
 
 	/* Convert the icon data to RGB */
-	photoData = (unsigned char *) Tcl_AllocDebug(iconDataPtr->pixels * 3);
+	photoData = (unsigned char *) Tcl_Alloc(iconDataPtr->pixels * 3);
 	dstPtr = photoData;
 	for (i = 0; i < iconDataPtr->pixels; i++)
 	{
@@ -1936,10 +1936,10 @@ static int objcmd_icon_photo(ClientData dummy, Tcl_Interp *interp, int objc, Tcl
 			photoBlock.height);
 	}
 
-	Tcl_FreeDebug((char *) photoData);
-	Tcl_FreeDebug((char *) dataPtr);
+	Tcl_Free((char *) photoData);
+	Tcl_Free((char *) dataPtr);
 	if (maskPtr)
-		Tcl_FreeDebug((char *) maskPtr);
+		Tcl_Free((char *) maskPtr);
 
 	return TCL_OK;
 }
@@ -1953,7 +1953,7 @@ void Icon_MakeDark(t_icon_data *iconDataPtr, int index)
 	if (iconDataPtr->dark_data == NULL)
 	{
 		iconDataPtr->dark_data = (IconPtr *)
-			Tcl_AllocDebug(iconDataPtr->icon_count * sizeof(IconPtr));
+			Tcl_Alloc(iconDataPtr->icon_count * sizeof(IconPtr));
 		for (i = 0; i < iconDataPtr->icon_count; i++)
 		{
 			iconDataPtr->dark_data[i] = NULL;
@@ -1979,7 +1979,7 @@ void Icon_MakeDark(t_icon_data *iconDataPtr, int index)
 	if (iconDataPtr->dark_data[index] == NULL)
 	{
 		iconDataPtr->dark_data[index] =
-			(IconPtr) Tcl_AllocDebug(2 * length);
+			(IconPtr) Tcl_Alloc(2 * length);
 	}
 
 	/*
@@ -1991,7 +1991,7 @@ void Icon_MakeDark(t_icon_data *iconDataPtr, int index)
 		IconPtr tmp;
 
 		/* New temp buffer for 1 icon */
-		tmp = (IconPtr) Tcl_AllocDebug(iconDataPtr->length);
+		tmp = (IconPtr) Tcl_Alloc(iconDataPtr->length);
 
 		for (dark = 0; dark < 2; dark++)
 		{
@@ -2051,7 +2051,7 @@ void Icon_MakeDark(t_icon_data *iconDataPtr, int index)
 				iconDataPtr->pitch, iconDataPtr->rle_pixel, dstPtr);
 		}
 
-		Tcl_FreeDebug((char *) tmp);
+		Tcl_Free((char *) tmp);
 
 		/* Dark data created */
 		iconDataPtr->flags[index] &= ~ICON_FLAG_DARK;
@@ -2198,7 +2198,7 @@ static int objcmd_icon_dark(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_
 		if ((iconDataPtr->dark_data != NULL) &&
 			(iconDataPtr->dark_data[index] != NULL))
 		{
-			Tcl_FreeDebug((char *) iconDataPtr->dark_data[index]);
+			Tcl_Free((char *) iconDataPtr->dark_data[index]);
 			iconDataPtr->dark_data[index] = NULL;
 		}
 		if (iconDataPtr->gamma[0])
@@ -2213,9 +2213,9 @@ static int objcmd_icon_dark(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_
 	if (iconDataPtr->gamma[0] == NULL)
 	{
 		iconDataPtr->gamma[0] = (unsigned char *)
-			Tcl_AllocDebug(iconDataPtr->icon_count * sizeof(unsigned char));
+			Tcl_Alloc(iconDataPtr->icon_count * sizeof(unsigned char));
 		iconDataPtr->gamma[1] = (unsigned char *)
-			Tcl_AllocDebug(iconDataPtr->icon_count * sizeof(unsigned char));
+			Tcl_Alloc(iconDataPtr->icon_count * sizeof(unsigned char));
 		for (i = 0; i < iconDataPtr->icon_count; i++)
 		{
 			iconDataPtr->gamma[0][i] = 100;
@@ -2289,12 +2289,12 @@ static int objcmd_icon_dynamic(ClientData dummy, Tcl_Interp *interp, int objc,
 			mem = (IconPtr *) iconDataPtr->rle_data;
 			if (mem[index])
 			{
-				Tcl_FreeDebug((char *) mem[index]);
+				Tcl_Free((char *) mem[index]);
 				mem[index] = NULL;
 			}
 			if (iconDataPtr->dark_data && iconDataPtr->dark_data[index])
 			{
-				Tcl_FreeDebug((char *) iconDataPtr->dark_data[index]);
+				Tcl_Free((char *) iconDataPtr->dark_data[index]);
 				iconDataPtr->dark_data[index] = NULL;
 			}
 			for (i = 0; i < 4; i++)
@@ -2353,7 +2353,7 @@ static int objcmd_icon_dynamic(ClientData dummy, Tcl_Interp *interp, int objc,
 			mem = (IconPtr *) iconDataPtr->rle_data;
 
 			/* New temp buffer for 1 icon */
-			tmp = (IconPtr) Tcl_AllocDebug(iconDataPtr->length);
+			tmp = (IconPtr) Tcl_Alloc(iconDataPtr->length);
 
 			/* Init to transparent pixel */
 			for (i = 0; i < iconDataPtr->pixels; i++)
@@ -2370,7 +2370,7 @@ static int objcmd_icon_dynamic(ClientData dummy, Tcl_Interp *interp, int objc,
 				RL_Decode(bounds[2], bounds[3], iconDataPtr->bypp,
 					mem[index], tmp + bounds[0] * bypp + 
 					bounds[1] * iconDataPtr->pitch, iconDataPtr->pitch);
-				Tcl_FreeDebug((char *) mem[index]);
+				Tcl_Free((char *) mem[index]);
 				mem[index] = NULL;
 			}
 
@@ -2390,7 +2390,7 @@ static int objcmd_icon_dynamic(ClientData dummy, Tcl_Interp *interp, int objc,
 
 			/* Allocate RLE buf */
 			/* FIXME: Does RL_Encode() still go past end of buffer? */
-			bits = (IconPtr) Tcl_AllocDebug(len);
+			bits = (IconPtr) Tcl_Alloc(len);
 
 			/* Encode */
 			(void) RL_Encode(bounds[2], bounds[3],
@@ -2410,7 +2410,7 @@ static int objcmd_icon_dynamic(ClientData dummy, Tcl_Interp *interp, int objc,
 				}
 			}
 
-			Tcl_FreeDebug((char *) tmp);
+			Tcl_Free((char *) tmp);
 			
 			break;
 		}
@@ -2437,12 +2437,12 @@ static int objcmd_icon_dynamic(ClientData dummy, Tcl_Interp *interp, int objc,
 				return TCL_ERROR;
 			}
 
-			newMem = (IconPtr *) Tcl_AllocDebug(sizeof(IconPtr) * count);
-			newBounds = (unsigned char *) Tcl_AllocDebug(sizeof(unsigned char) * count * 4);
+			newMem = (IconPtr *) Tcl_Alloc(sizeof(IconPtr) * count);
+			newBounds = (unsigned char *) Tcl_Alloc(sizeof(unsigned char) * count * 4);
 			memset(newBounds, '\0', count * 4);
-			newLen = (int *) Tcl_AllocDebug(sizeof(int) * count);
-			newSpec = (IconSpec *) Tcl_AllocDebug(sizeof(IconSpec) * count * 4);
-			newFlags = (short *) Tcl_AllocDebug(sizeof(short) * count);
+			newLen = (int *) Tcl_Alloc(sizeof(int) * count);
+			newSpec = (IconSpec *) Tcl_Alloc(sizeof(IconSpec) * count * 4);
+			newFlags = (short *) Tcl_Alloc(sizeof(short) * count);
 			for (i = 0; i < count * 4; i++)
 				newSpec[i].type = -1;
 			for (i = 0; i < count; i++)
@@ -2466,17 +2466,17 @@ static int objcmd_icon_dynamic(ClientData dummy, Tcl_Interp *interp, int objc,
 				}
 				for ( ; i < iconDataPtr->icon_count; i++)
 				{
-					Tcl_FreeDebug((char *) oldMem[i]);
+					Tcl_Free((char *) oldMem[i]);
 				}
-				Tcl_FreeDebug((char *) oldMem);
-				Tcl_FreeDebug((char *) oldBounds);
-				Tcl_FreeDebug((char *) oldLen);
+				Tcl_Free((char *) oldMem);
+				Tcl_Free((char *) oldBounds);
+				Tcl_Free((char *) oldLen);
 
 				for (i = 0; i < count * 4; i++)
 					newSpec[i] = oldSpec[i];
-				Tcl_FreeDebug((char *) oldSpec);
+				Tcl_Free((char *) oldSpec);
 
-				Tcl_FreeDebug((char *) oldFlags);
+				Tcl_Free((char *) oldFlags);
 			}
 			iconDataPtr->icon_count = count;
 			iconDataPtr->rle_data = (IconPtr) newMem;
@@ -2655,7 +2655,7 @@ error:
 	if (xColorPtr)
 		Tk_FreeColor(xColorPtr);
 	if (iconData.icon_data)
-		Tcl_FreeDebug((char *) iconData.icon_data);
+		Tcl_Free((char *) iconData.icon_data);
 	if (photoH)
 	{
 		length = sprintf(buf, "image delete %s", imageName);
@@ -2875,7 +2875,7 @@ wrongCreateArgs:
 					 * which characters each icon represents.
 					 */
 					iconData.char_table = (int *)
-						Tcl_AllocDebug(sizeof(int) * iconData.icon_count);
+						Tcl_Alloc(sizeof(int) * iconData.icon_count);
 
 					/* Check each icon */
 					for (i = 0; i < iconData.icon_count; i++)
@@ -2892,7 +2892,7 @@ wrongCreateArgs:
 				}
 
 				/* Allocate the icon data buffer */
-				iconData.icon_data = (IconPtr) Tcl_AllocDebug(iconData.icon_count *
+				iconData.icon_data = (IconPtr) Tcl_Alloc(iconData.icon_count *
 					iconData.length);
 
 				/* Set the icon data using the desired font */
@@ -3579,7 +3579,7 @@ void Icon_AddType(t_icon_data *data)
 	/* Could be dynamic */
 	if (data->icon_count)
 	{
-		icon_data_ptr->flags = (short *) Tcl_AllocDebug(
+		icon_data_ptr->flags = (short *) Tcl_Alloc(
 			sizeof(short) * icon_data_ptr->icon_count);
 		memset(icon_data_ptr->flags, 0,
 			sizeof(short) * icon_data_ptr->icon_count);
@@ -3732,7 +3732,7 @@ void Icon_Exit(Tcl_Interp *interp)
 
 		/* Help the memory debugger */
 		if (iconDataPtr->icon_data)
-			Tcl_FreeDebug((char *) iconDataPtr->icon_data);
+			Tcl_Free((char *) iconDataPtr->icon_data);
 
 		/* Help the memory debugger */
 		if (iconDataPtr->rle_data)
@@ -3742,28 +3742,28 @@ void Icon_Exit(Tcl_Interp *interp)
 				IconPtr *mem = (IconPtr *) iconDataPtr->rle_data;
 				for (j = 0; j < iconDataPtr->icon_count; j++)
 					if (mem[j])
-						Tcl_FreeDebug((char *) mem[j]);
+						Tcl_Free((char *) mem[j]);
 			}
 			else
 			{
-				Tcl_FreeDebug((void *) iconDataPtr->rle_offset);
-				Tcl_FreeDebug((void *) iconDataPtr->rle_len);
+				Tcl_Free((void *) iconDataPtr->rle_offset);
+				Tcl_Free((void *) iconDataPtr->rle_len);
 			}
-			Tcl_FreeDebug((void *) iconDataPtr->rle_bounds);
+			Tcl_Free((void *) iconDataPtr->rle_bounds);
 		}
 
 		/* Help the memory debugger */
-		Tcl_FreeDebug((void *) iconDataPtr->flags);
+		Tcl_Free((void *) iconDataPtr->flags);
 
 		/* Help the memory debugger */
-		Tcl_FreeDebug((void *) iconDataPtr->gamma[0]);
-		Tcl_FreeDebug((void *) iconDataPtr->gamma[1]);
+		Tcl_Free((void *) iconDataPtr->gamma[0]);
+		Tcl_Free((void *) iconDataPtr->gamma[1]);
 
 		if (iconDataPtr->dark_data)
 		{
 			for (j = 0; j < iconDataPtr->icon_count; j++)
 				if (iconDataPtr->dark_data[j])
-					Tcl_FreeDebug((char *) iconDataPtr->dark_data[j]);
+					Tcl_Free((char *) iconDataPtr->dark_data[j]);
 		}
 	}
 }

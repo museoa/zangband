@@ -439,11 +439,6 @@ void *Array_Insert(void *array_ptr, int *count, int elem_size,
 void *Array_Delete(void *array_ptr, int *count, int elem_size,
 	int index);
 
-#define TCL_FREE_MAGIC 1234
-
-extern char *Tcl_AllocDebug(int size);
-extern void Tcl_FreeDebug(char *ptr);
-
 typedef struct BitmapType {
 	unsigned char *pixelPtr; /* Address of top-left pixel */
 	int width; /* Width in pixels */

@@ -54,7 +54,7 @@ unsigned char g_palette2colormap[256];
  */
 void *Array_New(int count, int elem_size)
 {
-	char *p = Tcl_AllocDebug(count * elem_size);
+	char *p = Tcl_Alloc(count * elem_size);
 	return (void *) p;
 }
 
@@ -634,35 +634,6 @@ void *Palette_GetHPal(void)
 unsigned char *Palette_GetRGB(void)
 {
 	return g_palette.rgb;
-}
-
-char *Tcl_AllocDebug(int size)
-{
-	char *ptr = Tcl_Alloc(size);
-	
-	((int *) ptr)[0] = TCL_FREE_MAGIC;
-	((int *) ptr)[1] = size;
-	return ptr;
-}
-
-void Tcl_FreeDebug(char *ptr)
-{
-	int i, size;
-	
-	/*
-	 * Look for a magic number at the start, to verify this is
-	 * valid memory.
-	 */
-	if (((int *) ptr)[0] != TCL_FREE_MAGIC)
-		Tcl_Panic((char *) "Tcl_FreeDebug: magic number not found");
-	size = ((int *) ptr)[1];
-
-	/* Zero the memory to catch other errors */
-	for (i = 0; i < size; i++)
-		ptr[i] = 0;
-
-	/* Free the storage */
-	Tcl_Free(ptr);
 }
 
 void DoubleLink_Init(DoubleLinker *linker, DoubleLink *link, void *data)

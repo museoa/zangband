@@ -498,7 +498,7 @@ static int objcmd_symbol_image2bits(ClientData clientData, Tcl_Interp *interp,
 cleanup:
 
 	if (iconData.icon_data != NULL)
-		Tcl_FreeDebug((char *) iconData.icon_data);
+		Tcl_Free((char *) iconData.icon_data);
 
 	/* Delete the image */
 	length = sprintf(buf, "image delete %s", imageName);
@@ -569,7 +569,7 @@ static int objcmd_symbol_new(ClientData clientData, Tcl_Interp *interp, int objc
 	/* Add it to our list of symbols */
 	g_symbol = Array_Insert(g_symbol, &g_symbol_count,
 		sizeof(t_symbol *), g_symbol_count);
-	symbolPtr = (t_symbol *) Tcl_AllocDebug(sizeof(t_symbol));
+	symbolPtr = (t_symbol *) Tcl_Alloc(sizeof(t_symbol));
 	g_symbol[g_symbol_count - 1] = symbolPtr;
 
 	symbolPtr->name = (char *) string_make(symbol.name);

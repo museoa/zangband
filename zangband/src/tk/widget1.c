@@ -497,7 +497,7 @@ static void widget_changed(Widget *widgetPtr)
 	{
 		if (exPtr->effect)
 		{
-			Tcl_FreeDebug((char *) exPtr->effect);
+			Tcl_Free((char *) exPtr->effect);
 			exPtr->effect = NULL;
 		}
 	}
@@ -505,7 +505,7 @@ static void widget_changed(Widget *widgetPtr)
 	/*  */
 	if ((widgetPtr->style != WIDGET_STYLE_MAP) && (exPtr->effect == NULL))
 	{
-		exPtr->effect = (IconSpec *) Tcl_AllocDebug(sizeof(IconSpec) * widgetPtr->tc);
+		exPtr->effect = (IconSpec *) Tcl_Alloc(sizeof(IconSpec) * widgetPtr->tc);
 
 		for (i = 0; i < widgetPtr->tc; i++)
 		{
@@ -519,7 +519,7 @@ static void widget_destroy(Widget *widgetPtr)
 	ExWidget *exPtr = (ExWidget *) widgetPtr;
 
 	if (exPtr->effect)
-		Tcl_FreeDebug((char *) exPtr->effect);
+		Tcl_Free((char *) exPtr->effect);
 }
 
 /*
@@ -527,7 +527,7 @@ static void widget_destroy(Widget *widgetPtr)
  */
 static int widget_create(Tcl_Interp *interp, Widget **ptr)
 {
-	ExWidget *exPtr = (ExWidget *) Tcl_AllocDebug(sizeof(ExWidget));
+	ExWidget *exPtr = (ExWidget *) Tcl_Alloc(sizeof(ExWidget));
 	Widget *widgetPtr = (Widget *) exPtr;
 
 	/* Hack - ignore unused parameter */

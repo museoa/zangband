@@ -2371,7 +2371,7 @@ void init_icons(int size, int depth)
 	 */
 	icon_data_ptr->desc = "none";
 	icon_data_ptr->icon_count = 1;
-	icon_data_ptr->icon_data = (IconPtr) Tcl_AllocDebug(ICON_LENGTH);
+	icon_data_ptr->icon_data = (IconPtr) Tcl_Alloc(ICON_LENGTH);
 	icon_data_ptr->char_table = NULL;
 	icon_data_ptr->font = NULL;
 	for (i = 0; i < ICON_LENGTH; i++)
@@ -2398,7 +2398,7 @@ void init_icons(int size, int depth)
 	 */
 	icon_data_ptr->desc = "blank";
 	icon_data_ptr->icon_count = 1;
-	icon_data_ptr->icon_data = (IconPtr) Tcl_AllocDebug(ICON_LENGTH);
+	icon_data_ptr->icon_data = (IconPtr) Tcl_Alloc(ICON_LENGTH);
 	icon_data_ptr->char_table = NULL;
 	icon_data_ptr->font = NULL;
 	for (i = 0; i < ICON_LENGTH; i++)
@@ -2427,7 +2427,7 @@ void init_icons(int size, int depth)
 	 */
 	icon_data_ptr->desc = "default";
 	icon_data_ptr->icon_count = 1;
-	icon_data_ptr->icon_data = (IconPtr) Tcl_AllocDebug(ICON_LENGTH);
+	icon_data_ptr->icon_data = (IconPtr) Tcl_Alloc(ICON_LENGTH);
 	icon_data_ptr->char_table = NULL;
 	icon_data_ptr->font = NULL;
 	n = 0, y2 = 0;

@@ -179,7 +179,7 @@ t_widget_color *WidgetColor_Alloc(int color, int opacity)
 	if (!(color_ptr = WidgetColor_FindFree()))
 	{
 		/* Allocate a struct */
-		color_ptr = (t_widget_color *) Tcl_AllocDebug(sizeof(t_widget_color));
+		color_ptr = (t_widget_color *) Tcl_Alloc(sizeof(t_widget_color));
 
 		/* Append pointer to the global array */
 		g_widget_color = Array_Insert(g_widget_color,
@@ -847,10 +847,6 @@ error:
 	return TCL_ERROR;
 }
 
-static void Tcl_FreeDebugHack(char *ptr)
-{
-	Tcl_FreeDebug(ptr);
-}
 
 /*
  * This procedure is invoked by Tcl_EventuallyFree() or Tcl_Release()
@@ -913,20 +909,20 @@ static void Widget_Destroy(Widget *widgetPtr)
 		widgetPtr->tkwin);
 
 	if (widgetPtr->anim)
-		Tcl_FreeDebug((void *) widgetPtr->anim);
+		Tcl_Free((void *) widgetPtr->anim);
 	if (widgetPtr->info)
-		Tcl_FreeDebug((void *) widgetPtr->info);
+		Tcl_Free((void *) widgetPtr->info);
 	if (widgetPtr->invalid)
-		Tcl_FreeDebug((void *) widgetPtr->invalid);
+		Tcl_Free((void *) widgetPtr->invalid);
 	if (widgetPtr->yp)
-		Tcl_FreeDebug((void *) widgetPtr->yp);
+		Tcl_Free((void *) widgetPtr->yp);
 	if (widgetPtr->xp)
-		Tcl_FreeDebug((void *) widgetPtr->xp);
+		Tcl_Free((void *) widgetPtr->xp);
 
 	widgetPtr->tkwin = NULL;
 
 	/* Free the Widget struct */
-    Tcl_EventuallyFree((ClientData) widgetPtr, Tcl_FreeDebugHack);
+    Tcl_EventuallyFree((ClientData) widgetPtr, Tcl_Free);
 }
 
 /*
@@ -1034,27 +1030,27 @@ void Widget_WorldChanged(ClientData instanceData)
 	{
 		if (widgetPtr->anim)
 		{
-			Tcl_FreeDebug((char *) widgetPtr->anim);
+			Tcl_Free((char *) widgetPtr->anim);
 			widgetPtr->anim = NULL;
 		}
 		if (widgetPtr->info)
 		{
-			Tcl_FreeDebug((char *) widgetPtr->info);
+			Tcl_Free((char *) widgetPtr->info);
 			widgetPtr->info = NULL;
 		}
 		if (widgetPtr->invalid)
 		{
-			Tcl_FreeDebug((char *) widgetPtr->invalid);
+			Tcl_Free((char *) widgetPtr->invalid);
 			widgetPtr->invalid = NULL;
 		}
 		if (widgetPtr->yp)
 		{
-			Tcl_FreeDebug((char *) widgetPtr->yp);
+			Tcl_Free((char *) widgetPtr->yp);
 			widgetPtr->yp = NULL;
 		}
 		if (widgetPtr->xp)
 		{
-			Tcl_FreeDebug((char *) widgetPtr->xp);
+			Tcl_Free((char *) widgetPtr->xp);
 			widgetPtr->xp = NULL;
 		}
 	}
@@ -1344,18 +1340,18 @@ void Widget_Calc(Widget *widgetPtr)
 	widgetPtr->by = rTop * widgetPtr->gheight - dTop;
 
 	if (widgetPtr->anim)
-		Tcl_FreeDebug((char *) widgetPtr->anim);
+		Tcl_Free((char *) widgetPtr->anim);
 	if (widgetPtr->info)
-		Tcl_FreeDebug((char *) widgetPtr->info);
+		Tcl_Free((char *) widgetPtr->info);
 	if (widgetPtr->invalid)
-		Tcl_FreeDebug((char *) widgetPtr->invalid);
+		Tcl_Free((char *) widgetPtr->invalid);
 
-	widgetPtr->anim = (int *) Tcl_AllocDebug(sizeof(int) *
+	widgetPtr->anim = (int *) Tcl_Alloc(sizeof(int) *
 		widgetPtr->rc * widgetPtr->cc);
 	widgetPtr->animCnt = 0;
-	widgetPtr->info = (short *) Tcl_AllocDebug(sizeof(short) *
+	widgetPtr->info = (short *) Tcl_Alloc(sizeof(short) *
 		widgetPtr->rc * widgetPtr->cc);
-	widgetPtr->invalid = (int *) Tcl_AllocDebug(sizeof(int) *
+	widgetPtr->invalid = (int *) Tcl_Alloc(sizeof(int) *
 		widgetPtr->rc * widgetPtr->cc);
 	widgetPtr->invalidCnt = 0;
 
@@ -1589,7 +1585,7 @@ int WidgetItem_Create(Tcl_Interp *interp, Widget *widgetPtr,
 	}
 	
 	/* Allocate item memory */
-	itemPtr = (WidgetItem *) Tcl_AllocDebug(typePtr->itemSize);
+	itemPtr = (WidgetItem *) Tcl_Alloc(typePtr->itemSize);
 
 	/* Set fields */
 	itemPtr->typePtr = typePtr;
@@ -1604,7 +1600,7 @@ int WidgetItem_Create(Tcl_Interp *interp, Widget *widgetPtr,
 			widgetPtr->tkwin);
 
 		/* Free item memory */
-		Tcl_FreeDebug((char *) itemPtr);
+		Tcl_Free((char *) itemPtr);
 
 		/* Failure */
 		goto error;
@@ -1798,7 +1794,7 @@ void WidgetItem_Delete(Widget *widgetPtr, WidgetItem *itemPtr)
 	DoubleLink_Unlink(&itemPtr->link);
 
 	/* Free the item memory */
-	Tcl_FreeDebug((char *) itemPtr);
+	Tcl_Free((char *) itemPtr);
 }
 
 /*
