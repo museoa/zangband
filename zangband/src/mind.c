@@ -183,8 +183,8 @@ static int get_mindcraft_power(int *sn)
 
 				/* Display a list of spells */
 				prt("", x, y);
-				put_str("Name", x + 5, y);
-				put_str("Lv Mana Fail Info", x + 35, y);
+				put_fstr(x + 5, y, "Name");
+				put_fstr(x + 35, y, "Lv Mana Fail Info");
 
 				/* Dump the spells */
 				for (i = 0; i < MINDCRAFT_MAX; i++)

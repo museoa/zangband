@@ -75,7 +75,7 @@ int get_player_choice(cptr *choices, int num, int col, int wid,
 		if (hook) hook(choices[cur]);
 
 		/* Move the cursor */
-		put_str("", col, TABLE_ROW + cur - top);
+		Term_gotoxy(col, TABLE_ROW + cur - top);
 
 		c = inkey();
 
@@ -385,18 +385,6 @@ void screen_load(void)
 
 	/* Decrease "icky" depth */
 	character_icky--;
-}
-
-/*
- * Display a string on the screen in white.
- *
- * At the given location, if allowed add the given string.
- * Do not clear the line.
- */
-void put_str(cptr str, int col, int row)
-{
-	/* Spawn */
-	Term_putstr(col, row, -1, TERM_WHITE, str);
 }
 
 
@@ -940,7 +928,7 @@ void pause_line(int row)
 {
 	int i;
 	prt("", 0, row);
-	put_str("[Press any key to continue]", 23, row);
+	put_fstr(23, row, "[Press any key to continue]");
 	i = inkey();
 	prt("", 0, row);
 }

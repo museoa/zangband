@@ -2984,8 +2984,8 @@ void display_spell_list(void)
 		char psi_desc[80];
 
 		/* Display a list of spells */
-		put_str("Name", x + 3, y);
-		put_str("Lv Mana Fail Info", x + 33, y);
+		put_fstr(x + 3, y, "Name");
+		put_fstr(x + 33, y, "Lv Mana Fail Info");
 
 		/* Dump the spells */
 		for (i = 0; (i < MINDCRAFT_MAX) && (i < Term->hgt - 1); i++)
@@ -3886,8 +3886,8 @@ void print_spells(byte *spells, int num, int x, int y, int realm)
 
 	/* Title the list */
 	prt("", x, y);
-	put_str("Name", x + 5, y);
-	put_str("Lv Mana Fail Info", x + 35, y);
+	put_fstr(x + 5, y, "Name");
+	put_fstr(x + 35, y, "Lv Mana Fail Info");
 
 
 	/* Dump the spells */

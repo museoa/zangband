@@ -3026,7 +3026,7 @@ void do_cmd_view_map(void)
 		display_map(&cx, &cy);
 
 		/* Wait for it */
-		put_str("Hit any key to continue", (wid - COL_MAP) / 2, hgt - 1);
+		put_fstr((wid - COL_MAP) / 2, hgt - 1, "Hit any key to continue");
 
 		/* Hilite the player */
 		Term_gotoxy(cx, cy);
@@ -3057,8 +3057,8 @@ void do_cmd_view_map(void)
 			display_map(&cx, &cy);
 
 			/* Wait for it */
-			put_str("Move around, or hit any other key to continue.",
-					COL_MAP - 23 + (wid - COL_MAP) / 2, hgt - 1);
+			put_fstr(COL_MAP - 23 + (wid - COL_MAP) / 2, hgt - 1,
+						"Move around, or hit any other key to continue.");
 
 			/* Hilite the player */
 			Term_gotoxy(cx, cy);

@@ -1181,9 +1181,8 @@ bool compare_weapons(void)
 		return (FALSE);
 	}
 
-	put_str
-		("Based on your current abilities, here is what your weapon will do:",
-		 2, 4);
+	put_fstr(2, 4, 
+			"Based on your current abilities, here is what your weapon will do:");
 
 	/* Identify the weapon */
 	identify_item(o_ptr);
@@ -1202,9 +1201,8 @@ bool compare_weapons(void)
 	list_weapon(o_ptr);
 	compare_weapon_aux1(o_ptr);
 
-	put_str
-		("(Only highest damage applies per monster. Special damage not cumulative.)",
-		 0, 20);
+	put_fstr(0, 20,
+			"(Only highest damage applies per monster. Special damage not cumulative.)");
 
 	/* Done */
 	return (TRUE);

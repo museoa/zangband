@@ -40,7 +40,7 @@ s16b modify_stat_value(int value, int amount)
 static void prt_field(cptr info, int col, int row)
 {
 	/* Dump 13 spaces to clear */
-	put_str("             ", col, row);
+	put_fstr(col, row, "             ");
 
 	/* Dump the info itself */
 	put_fstr(col, row, CLR_L_BLUE "%s", info);
@@ -57,7 +57,7 @@ static void prt_stat(int stat)
 	/* Display "injured" stat */
 	if (p_ptr->stat_cur[stat] < p_ptr->stat_max[stat])
 	{
-		put_str(stat_names_reduced[stat], 0, ROW_STAT + stat);
+		put_fstr(0, ROW_STAT + stat, stat_names_reduced[stat]);
 		put_fstr(COL_STAT + 6, ROW_STAT + stat, CLR_YELLOW "%t",
 				 p_ptr->stat_use[stat]);
 	}
@@ -65,7 +65,7 @@ static void prt_stat(int stat)
 	/* Display "healthy" stat */
 	else
 	{
-		put_str(stat_names[stat], 0, ROW_STAT + stat);
+		put_fstr(0, ROW_STAT + stat, stat_names[stat]);
 		put_fstr(COL_STAT + 6, ROW_STAT + stat, CLR_L_GREEN "%t",
 				 p_ptr->stat_use[stat]);
 	}
@@ -73,7 +73,7 @@ static void prt_stat(int stat)
 	/* Indicate natural maximum */
 	if (p_ptr->stat_max[stat] == stat_cap(stat))
 	{
-		put_str("!", 3, ROW_STAT + stat);
+		put_fstr(3, ROW_STAT + stat, "!");
 	}
 }
 
@@ -386,12 +386,12 @@ static void prt_level(void)
 {
 	if (p_ptr->lev >= p_ptr->max_lev)
 	{
-		put_str("LEVEL ", 0, ROW_LEVEL);
+		put_fstr(0, ROW_LEVEL, "LEVEL ");
 		put_fstr(COL_LEVEL + 6, ROW_LEVEL, CLR_L_GREEN "%6d", p_ptr->lev);
 	}
 	else
 	{
-		put_str("Level ", 0, ROW_LEVEL);
+		put_fstr(0, ROW_LEVEL, "Level ");
 		put_fstr(COL_LEVEL + 6, ROW_LEVEL, CLR_YELLOW "%6d", p_ptr->lev);
 	}
 }
@@ -416,7 +416,7 @@ static void prt_exp(void)
 	if (toggle_xp)
 	{
 
-		put_str("NEED ", 0, ROW_EXP);
+		put_fstr(0, ROW_EXP, "NEED ");
 
 		if (p_ptr->lev >= PY_MAX_LEVEL)
 		{
@@ -444,8 +444,7 @@ static void prt_exp(void)
  */
 static void prt_gold(void)
 {
-	put_str("AU ", COL_GOLD, ROW_GOLD);
-	put_fstr(COL_GOLD + 3, ROW_GOLD, CLR_L_GREEN "%9ld", (long)p_ptr->au);
+	put_fstr(COL_GOLD, ROW_GOLD, "AU " CLR_L_GREEN "%9ld", (long)p_ptr->au);
 }
 
 
@@ -455,8 +454,8 @@ static void prt_gold(void)
  */
 static void prt_ac(void)
 {
-	put_str("Cur AC ", COL_AC, ROW_AC);
-	put_fstr(COL_AC + 7, ROW_AC, CLR_L_GREEN "%5d", p_ptr->dis_ac + p_ptr->dis_to_a);
+	put_fstr(COL_AC + 7, ROW_AC, "Cur AC " CLR_L_GREEN "%5d",
+				p_ptr->dis_ac + p_ptr->dis_to_a);
 }
 
 
@@ -465,8 +464,6 @@ static void prt_ac(void)
  */
 static void prt_hp(void)
 {
-	char tmp[32];
-
 	byte color;
 
 #ifndef VARIABLE_PLAYER_GRAPH
@@ -478,12 +475,10 @@ static void prt_hp(void)
 
 	put_fstr(COL_MAXHP, ROW_MAXHP, "Max HP " CLR_L_GREEN "%5d", p_ptr->mhp);
 
-	put_str("Cur HP ", COL_CURHP, ROW_CURHP);
+	put_fstr(COL_CURHP, ROW_CURHP, "Cur HP ");
 
 	color = TERM_L_GREEN;
 	
-	sprintf(tmp, "%5d", p_ptr->chp);
-
 	if (p_ptr->chp >= p_ptr->mhp)
 	{
 		color = TERM_L_GREEN;
@@ -497,7 +492,7 @@ static void prt_hp(void)
 		color = TERM_RED;
 	}
 
-	put_fstr(COL_CURHP + 7, ROW_CURHP, "%s%s", color_seq[color], tmp);
+	put_fstr(COL_CURHP + 7, ROW_CURHP, "%s%5d", color_seq[color], p_ptr->chp);
 
 #ifndef VARIABLE_PLAYER_GRAPH
 
@@ -538,7 +533,6 @@ static void prt_hp(void)
  */
 static void prt_sp(void)
 {
-	char tmp[32];
 	byte color;
 
 
@@ -547,9 +541,8 @@ static void prt_sp(void)
 
 	put_fstr(COL_MAXSP, ROW_MAXSP, "Max SP " CLR_L_GREEN "%5d", p_ptr->msp);
 
-	put_str("Cur SP ", COL_CURSP, ROW_CURSP);
+	put_fstr(COL_CURSP, ROW_CURSP, "Cur SP ");
 
-	sprintf(tmp, "%5d", p_ptr->csp);
 	color = TERM_L_GREEN;
 
 	if (p_ptr->csp >= p_ptr->msp)
@@ -566,7 +559,7 @@ static void prt_sp(void)
 	}
 
 	/* Show mana */
-	put_fstr(COL_CURSP + 7, ROW_CURSP, "%s%s", color_seq[color], tmp);
+	put_fstr(COL_CURSP + 7, ROW_CURSP, "%s%5d", color_seq[color], p_ptr->csp);
 }
 
 
@@ -634,7 +627,7 @@ static void prt_hunger(void)
 	/* Normal */
 	else if (p_ptr->food < PY_FOOD_FULL)
 	{
-		put_str("      ", COL_HUNGRY, Term->hgt - 1);
+		put_cstr(COL_HUNGRY, Term->hgt - 1, "      ");
 	}
 
 	/* Full */
@@ -662,7 +655,7 @@ static void prt_blind(void)
 	}
 	else
 	{
-		put_str("     ", COL_BLIND, Term->hgt - 1);
+		put_cstr(COL_BLIND, Term->hgt - 1, "     ");
 	}
 }
 
@@ -678,7 +671,7 @@ static void prt_confused(void)
 	}
 	else
 	{
-		put_str("        ", COL_CONFUSED, Term->hgt - 1);
+		put_cstr(COL_CONFUSED, Term->hgt - 1, "        ");
 	}
 }
 
@@ -690,11 +683,11 @@ static void prt_afraid(void)
 {
 	if (p_ptr->afraid)
 	{
-		put_str(CLR_ORANGE "Afraid", COL_AFRAID, Term->hgt - 1);
+		put_fstr(COL_AFRAID, Term->hgt - 1, CLR_ORANGE "Afraid");
 	}
 	else
 	{
-		put_str("      ", COL_AFRAID, Term->hgt - 1);
+		put_cstr(COL_AFRAID, Term->hgt - 1, "      ");
 	}
 }
 
@@ -710,7 +703,7 @@ static void prt_poisoned(void)
 	}
 	else
 	{
-		put_str("        ", COL_POISONED, Term->hgt - 1);
+		put_cstr(COL_POISONED, Term->hgt - 1, "        ");
 	}
 }
 
@@ -885,11 +878,11 @@ static void prt_study(void)
 {
 	if (p_ptr->new_spells)
 	{
-		put_str("Study", COL_STUDY, Term->hgt - 1);
+		put_fstr(COL_STUDY, Term->hgt - 1, "Study");
 	}
 	else
 	{
-		put_str("     ", COL_STUDY, Term->hgt - 1);
+		put_fstr(COL_STUDY, Term->hgt - 1, "     ");
 	}
 }
 
@@ -928,7 +921,7 @@ static void prt_cut(void)
 	}
 	else
 	{
-		put_str("            ", COL_CUT, ROW_CUT);
+		put_fstr(COL_CUT, ROW_CUT, "            ");
 	}
 }
 
@@ -951,7 +944,7 @@ static void prt_stun(void)
 	}
 	else
 	{
-		put_str("            ", COL_STUN, ROW_STUN);
+		put_fstr(COL_STUN, ROW_STUN, "            ");
 	}
 }
 

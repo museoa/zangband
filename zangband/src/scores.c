@@ -214,8 +214,6 @@ void display_scores_aux(int from, int to, int note, const high_score *score)
 	high_score the_score;
 
 	char out_val[256];
-	char tmp_val[160];
-
 
 	/* Paranoia -- it may not have opened */
 	if (highscore_fd < 0) return;
@@ -250,14 +248,12 @@ void display_scores_aux(int from, int to, int note, const high_score *score)
 		Term_clear();
 
 		/* Title */
-		sprintf(tmp_val, "                %s Hall of Fame", VERSION_NAME);
-		put_str(tmp_val, 0, 0);
+		put_fstr(0, 0, "                %s Hall of Fame", VERSION_NAME);
 
 		/* Indicate non-top scores */
 		if (k > 0)
 		{
-			sprintf(tmp_val, "(from position %d)", k + 1);
-			put_str(tmp_val, 40, 0);
+			put_fstr(40, 0, "(from position %d)", k + 1);
 		}
 
 		/* Dump 5 entries */
@@ -840,23 +836,23 @@ void kingly(void)
 	Term_clear();
 
 	/* Display a crown */
-	put_str("#", 34, 1);
-	put_str("#####", 32, 2);
-	put_str("#", 34, 3);
-	put_str(",,,  $$$  ,,,", 28, 4);
-	put_str(",,=$   \"$$$$$\"   $=,,", 24, 5);
-	put_str(",$$        $$$        $$,", 22, 6);
-	put_str("*>         <*>         <*", 22, 7);
-	put_str("$$         $$$         $$", 22, 8);
-	put_str("\"$$        $$$        $$\"", 22, 9);
-	put_str("\"$$       $$$       $$\"", 23, 10);
-	put_str("*#########*#########*", 24, 11);
-	put_str("*#########*#########*", 24, 12);
+	put_fstr(34, 1, "#");
+	put_fstr(32, 2, "#####");
+	put_fstr(34, 3, "#");
+	put_fstr(28, 4, ",,,  $$$  ,,,");
+	put_fstr(24, 5, ",,=$   \"$$$$$\"   $=,,");
+	put_fstr(22, 6, ",$$        $$$        $$,");
+	put_fstr(22, 7, "*>         <*>         <*");
+	put_fstr(22, 8, "$$         $$$         $$");
+	put_fstr(22, 9, "\"$$        $$$        $$\"");
+	put_fstr(23, 10, "\"$$       $$$       $$\"");
+	put_fstr(24, 11, "*#########*#########*");
+	put_fstr(24, 12, "*#########*#########*");
 
 	/* Display a message */
-	put_str("Veni, Vidi, Vici!", 26, 15);
-	put_str("I came, I saw, I conquered!", 21, 16);
-	put_str(format("All Hail the Mighty %s!", sp_ptr->winner), 22, 17);
+	put_fstr(26, 15, "Veni, Vidi, Vici!");
+	put_fstr(21, 16, "I came, I saw, I conquered!");
+	put_fstr(22, 17, "All Hail the Mighty %s!", sp_ptr->winner);
 
 	/* Flush input */
 	flush();

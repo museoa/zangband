@@ -2427,7 +2427,6 @@ void show_list(s16b o_list_ptr)
 	object_type *o_ptr;
 
 	char o_name[256];
-	char tmp_val[80];
 
 	object_type *out_object[23];
 	int out_index[23];
@@ -2521,11 +2520,8 @@ void show_list(s16b o_list_ptr)
 		/* Clear the line */
 		prt("", col ? col - 2 : col, j + 1);
 
-		/* Prepare an index --(-- */
-		sprintf(tmp_val, "%c)", I2A(out_index[j]));
-
 		/* Clear the line with the (possibly indented) index */
-		put_str(tmp_val, col, j + 1);
+		put_fstr(col, j + 1, "%c)", I2A(out_index[j]));
 
 		/* Display graphics for object, if desired */
 		a = object_attr(o_ptr);
@@ -2571,7 +2567,6 @@ void show_equip(void)
 
 	object_type *o_ptr;
 
-	char tmp_val[80];
 	char o_name[256];
 	int out_index[23];
 	byte out_color[23];
@@ -2673,11 +2668,8 @@ void show_equip(void)
 		/* Clear the line */
 		prt("", col ? col - 2 : col, j + 1);
 
-		/* Prepare an index --(-- */
-		sprintf(tmp_val, "%c)", I2A(i));
-
 		/* Clear the line with the (possibly indented) index */
-		put_str(tmp_val, col, j + 1);
+		put_fstr(col, j + 1,"%c)", I2A(i));
 
 		/* Show_equip_graph perm. on. */
 		a = object_attr(o_ptr);
@@ -2724,8 +2716,7 @@ void show_equip(void)
 		if (show_weights && o_ptr->number)
 		{
 			int wgt = o_ptr->weight * o_ptr->number;
-			(void)sprintf(tmp_val, "%3d.%d lb", wgt / 10, wgt % 10);
-			put_str(tmp_val, lim, j + 1);
+			put_fstr(lim, j + 1, "%3d.%d lb", wgt / 10, wgt % 10);
 		}
 	}
 

@@ -2046,14 +2046,13 @@ static bool player_birth_aux_2(void)
 		display_player(mode);
 
 		/* Display the costs header */
-		put_str("Cost", col + 32, row - 2);
+		put_fstr(col + 32, row - 2, "Cost");
 
 		/* Display the costs */
 		for (i = 0; i < A_MAX; i++)
 		{
 			/* Display cost */
-			sprintf(buf, "%4d", birth_stat_costs[stats[i] - 10]);
-			put_str(buf, col + 32, row + (i - 1));
+			put_fstr(col + 32, row + (i - 1), "%4d", birth_stat_costs[stats[i] - 10]);
 		}
 
 
@@ -2148,8 +2147,6 @@ static bool player_birth_aux_3(void)
 	char b1 = '[';
 	char b2 = ']';
 
-	char buf[80];
-
 	int mode = DISPLAY_PLAYER_STANDARD;
 
 #ifdef ALLOW_AUTOROLLER
@@ -2183,7 +2180,7 @@ static bool player_birth_aux_3(void)
 					"choose below. Enter a value from 1-100 for each stat.");
 
 		/* Prompt for the stat weights */
-		put_str("Enter weight for: ", 2, 15);
+		put_fstr(2, 15, "Enter weight for: ");
 
 		/* Output the prompts */
 		for (i = 0; i < A_MAX; i++)
@@ -2191,11 +2188,8 @@ static bool player_birth_aux_3(void)
 			/* Reset the "success" counter */
 			stat_match[i] = 0;
 
-			/* Prepare a prompt */
-			sprintf(buf, "%-5s", stat_names[i]);
-
 			/* Dump the prompt */
-			put_str(buf, 5, 16 + i);
+			put_fstr(5, 16 + i, "%-5s", stat_names[i]);
 		}
 
 		/* Input the minimum stats */
@@ -2208,7 +2202,7 @@ static bool player_birth_aux_3(void)
 			while (TRUE)
 			{
 				/* Move the cursor */
-				put_str("", 10, 16 + i);
+				Term_gotoxy(10, 16 + i);
 
 				/* Default */
 				sprintf(inp, "%i", def_weight);
@@ -2250,16 +2244,16 @@ static bool player_birth_aux_3(void)
 			Term_clear();
 
 			/* Label */
-			put_str("Weight", col + 5, 2);
+			put_fstr(col + 5, 2, "Weight");
 
 			/* Label */
-			put_str("  Roll", col + 13, 2);
+			put_fstr(col + 13, 2, "  Roll");
 
 			/* Put the stat weights */
 			for (i = 0; i < A_MAX; i++)
 			{
 				/* Label stats */
-				put_str(stat_names[i], col, i + 3);
+				put_fstr(col, i + 3, stat_names[i]);
 
 				/* Put the weight */
 				put_fstr(col + 5, i + 3, CLR_L_BLUE "%6i", stat_weight[i]);
@@ -2269,10 +2263,10 @@ static bool player_birth_aux_3(void)
 			last_round = auto_round;
 
 			/* Label count */
-			put_str("Round:", col + 13, 10);
+			put_fstr(col + 13, 10, "Round:");
 
 			/* Indicate the state */
-			put_str("(Hit ESC to stop)", col + 13, 12);
+			put_fstr(col + 13, 12, "(Hit ESC to stop)");
 
 			best_score = -1;
 			for (i = 0; i < A_MAX; i++)

@@ -229,7 +229,7 @@ void do_cmd_browse_aux(const object_type *o_ptr)
 	prt("", 0, 0);
 
 	/* Prompt user */
-	put_str("[Press any key to continue]", 23, 0);
+	put_fstr(23, 0, "[Press any key to continue]");
 
 	/* Wait for key */
 	(void)inkey();

@@ -1003,8 +1003,7 @@ static void display_entry(int pos)
 		{
 			/* Only show the weight of an individual item */
 			int wgt = o_ptr->weight;
-			(void)sprintf(out_val, "%3d.%d lb", wgt / 10, wgt % 10);
-			put_str(out_val, wid - 12, i + 6);
+			put_fstr(wid - 12, i + 6, "%3d.%d lb", wgt / 10, wgt % 10);
 		}
 	}
 
@@ -1027,17 +1026,14 @@ static void display_entry(int pos)
 		{
 			/* Only show the weight of an individual item */
 			int wgt = o_ptr->weight;
-			(void)sprintf(out_val, "%3d.%d", wgt / 10, wgt % 10);
-			put_str(out_val, wid - 19, i + 6);
+			put_fstr(wid - 19, i + 6, "%3d.%d", wgt / 10, wgt % 10);
 		}
 
 		/* Extract the "minimum" price */
 		x = price_item(o_ptr, FALSE);
 
-		/* Actually draw the price (with tax) */
-		(void)sprintf(out_val, "%9ld  ", (long)x);
-		put_str(out_val, wid - 12, i + 6);
-
+		/* Actually draw the price */
+		put_fstr(wid - 12, i + 6, "%9ld  ", (long)x);
 	}
 }
 
@@ -1066,7 +1062,7 @@ static void display_inventory(int store_top)
 	for (i = k; i < 13; i++) prt("", 0, i + 6);
 
 	/* Assume "no current page" */
-	put_str("        ", 20, 5);
+	put_fstr( 20, 5, "        ");
 
 	/* Visual reminder of "more items" */
 	if (stocknum > 12)
@@ -1075,7 +1071,7 @@ static void display_inventory(int store_top)
 		prt("-more-", 3, k + 6);
 
 		/* Indicate the "current page" */
-		put_str(format("(Page %d)", store_top / 12 + 1), 20, 5);
+		put_fstr( 20, 5, "(Page %d)", store_top / 12 + 1);
 	}
 }
 
@@ -1099,8 +1095,6 @@ static void store_prt_gold(void)
  */
 static void display_store(int store_top)
 {
-	char buf[80];
-
 	const owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
 
 	/* Clear screen */
@@ -1110,15 +1104,15 @@ static void display_store(int store_top)
 	if (st_ptr->type == BUILD_STORE_HOME)
 	{
 		/* Put the owner name */
-		put_str("Your Home", 30, 3);
+		put_fstr(30, 3, "Your Home");
 
 		/* Label the item descriptions */
-		put_str("Item Description", 3, 5);
+		put_fstr(3, 5, "Item Description");
 
 		/* If showing weights, show label */
 		if (show_weights)
 		{
-			put_str("Weight", 70, 5);
+			put_fstr(70, 5, "Weight");
 		}
 	}
 
@@ -1130,24 +1124,22 @@ static void display_store(int store_top)
 		cptr race_name = race_info[ot_ptr->owner_race].title;
 
 		/* Put the owner name and race */
-		sprintf(buf, "%s (%s)", owner_name, race_name);
-		put_str(buf, 5, 3);
+		put_fstr(5, 3, "%s (%s)", owner_name, race_name);
 
 		/* Show the max price in the store (above prices) */
-		sprintf(buf, "%s (%ld)", store_name, (long)(ot_ptr->max_cost) * 100);
-		prt(buf, 45, 3);
+		put_fstr(45, 3, "%s (%ld)", store_name, (long)(ot_ptr->max_cost) * 100);
 
 		/* Label the item descriptions */
-		put_str("Item Description", 3, 5);
+		put_fstr(3, 5, "Item Description");
 
 		/* If showing weights, show label */
 		if (show_weights)
 		{
-			put_str("Weight", 60, 5);
+			put_fstr(60, 5, "Weight");
 		}
 
 		/* Label the asking price (in stores) */
-		put_str("Price", 72, 5);
+		put_fstr(72, 5, "Price");
 	}
 
 	/* Display the current gold */
@@ -1369,9 +1361,8 @@ static bool store_access_item(const object_type *o_ptr, s32b price, bool buy)
 		object_desc(o_name, o_ptr, TRUE, 3, 256);
 	}
 
-	(void)sprintf(out_val, "%s %s, offer :  %ld",
+	put_fstr(0, 1, "%s %s, offer :  %ld",
 				  (buy) ? "Buying" : "Selling", o_name, (long)price);
-	put_str(out_val, 0, 1);
 
 	(void)sprintf(out_val, "Do you want to %s it? ", (buy) ? "buy" : "sell");
 

@@ -1305,7 +1305,6 @@ static void prt_num(cptr header, s32b num, int col, int row, byte color,
 #define COL_SKILLS1		0
 #define COL_SKILLS2		29
 #define COL_SKILLS3		58
-#define WID_SKILLS		14
 
 
 /*
@@ -1469,55 +1468,40 @@ static void display_player_abilities(void)
 	xsns = p_ptr->skill_sns;
 	xfos = p_ptr->skill_fos;
 
-
-	put_str("Fighting    :", COL_SKILLS1, 16);
 	likert(xthn, 10, desc);
-	put_cstr(COL_SKILLS1 + WID_SKILLS, 16, desc);
+	put_fstr(COL_SKILLS1, 16, "Fighting    : %s", desc);
 
-	put_str("Bows/Throw  :", COL_SKILLS1, 17);
 	likert(xthb, 10, desc);
-	put_cstr(COL_SKILLS1 + WID_SKILLS, 17, desc);
+	put_fstr(COL_SKILLS1, 17, "Bows/Throw  : %s", desc);
 
-	put_str("Saving Throw:", COL_SKILLS1, 18);
 	likert(xsav, 6, desc);
-	put_cstr(COL_SKILLS1 + WID_SKILLS, 18, desc);
+	put_fstr(COL_SKILLS1, 18, "Saving Throw: %s", desc);
 
-	put_str("Stealth     :", COL_SKILLS1, 19);
 	likert(xstl, 1, desc);
-	put_cstr(COL_SKILLS1 + WID_SKILLS, 19, desc);
+	put_fstr(COL_SKILLS1, 19, "Stealth     : %s", desc);
 
 
-	put_str("Perception  :", COL_SKILLS2, 16);
 	likert(xfos, 6, desc);
-	put_cstr(COL_SKILLS2 + WID_SKILLS, 16, desc);
+	put_fstr(COL_SKILLS2, 16, "Perception  : %s", desc);
 
-	put_str("Sensing     :", COL_SKILLS2, 17);
 	likert(xsns, 6, desc);
-	put_cstr(COL_SKILLS2 + WID_SKILLS, 17, desc);
+	put_fstr(COL_SKILLS2, 17, "Sensing     : %s", desc);
 
-	put_str("Disarming   :", COL_SKILLS2, 18);
 	likert(xdis, 8, desc);
-	put_cstr(COL_SKILLS2 + WID_SKILLS, 18, desc);
+	put_fstr(COL_SKILLS2, 18, "Disarming   : %s", desc);
 
-	put_str("Magic Device:", COL_SKILLS2, 19);
 	likert(xdev, 6, desc);
-	put_cstr(COL_SKILLS2 + WID_SKILLS, 19, desc);
+	put_fstr(COL_SKILLS2, 19, "Magic Device: %s", desc);
 
-
-	put_str("Blows/Round :", COL_SKILLS3, 16);
 
 	if (!muta_att)
-		put_str(format("%d", p_ptr->num_blow), COL_SKILLS3 + WID_SKILLS, 16);
+		put_fstr(COL_SKILLS3, 16, "Blows/Round : %d", p_ptr->num_blow);
 	else
-		put_str(format("%d+%d", p_ptr->num_blow, muta_att),
-				COL_SKILLS3 + WID_SKILLS, 16);
+		put_fstr(COL_SKILLS3, 16, "Blows/Round : %d+%d",
+					p_ptr->num_blow, muta_att);
 
-	put_str("Shots/Round :", COL_SKILLS3, 17);
-
-	/* Calculate shots (rounded) */
-	put_str(format("%d.%d", shots, shot_frac), COL_SKILLS3 + WID_SKILLS, 17);
-
-	put_str("Avg.Dam./Rnd:", COL_SKILLS3, 18);
+	
+	put_fstr(COL_SKILLS3, 17, "Shots/Round : %d.%d", shots, shot_frac);
 
 	/* Effect of damage dice x2 */
 	avgdam = avg_dam(dambonus, damdice, damsides);
@@ -1554,19 +1538,17 @@ static void display_player_abilities(void)
 	if (avgdam == 0)
 	{
 		if ((p_ptr->pclass == CLASS_MONK) && (!o_ptr->k_idx))
-			sprintf(desc, "%d", monk_avg_damage[p_ptr->lev] * blows / 100);
+			put_fstr(COL_SKILLS3, 18, "Avg.Dam./Rnd: %d",
+					 monk_avg_damage[p_ptr->lev] * blows / 100);
 		else
-			strcpy(desc, "nil!");
+			put_fstr(COL_SKILLS3, 18, "Avg.Dam./Rnd: nil!");
 	}
 	else
 	{
-		sprintf(desc, "%d", (int)avgdam);
+		put_fstr(COL_SKILLS3, 18, "Avg.Dam./Rnd: %d", (int)avgdam);
 	}
 
-	put_str(desc, COL_SKILLS3 + WID_SKILLS, 18);
-
-	put_str("Infra-Vision:", COL_SKILLS3, 19);
-	put_str(format("%d'", p_ptr->see_infra * 10), COL_SKILLS3 + WID_SKILLS, 19);
+	put_fstr(COL_SKILLS3, 19, "Infra-Vision: %d'", p_ptr->see_infra * 10);
 }
 
 
@@ -1911,7 +1893,7 @@ static void display_player_flag_aux(int col, int row,
 
 
 	/* Header */
-	put_str(header, col, row);
+	put_fstr(col, row, header);
 
 	/* Advance */
 	col += strlen(header) + 1;
@@ -1932,8 +1914,8 @@ static void display_player_flag_aux(int col, int row,
 		put_cstr(col, row, CLR_SLATE ".");
 
 		/* Check flags */
-		if (f[n - 1] & flag1) put_str("+", col, row);
-		if (f[n - 1] & flag2) put_str("*", col, row);
+		if (f[n - 1] & flag1) put_fstr(col, row, "+");
+		if (f[n - 1] & flag2) put_fstr(col, row, "*");
 
 		/* Advance */
 		col++;
@@ -1946,8 +1928,8 @@ static void display_player_flag_aux(int col, int row,
 	put_cstr(col, row, CLR_SLATE ".");
 
 	/* Check flags */
-	if (f[n - 1] & flag1) put_str("+", col, row);
-	if (f[n - 1] & flag2) put_str("*", col, row);
+	if (f[n - 1] & flag1) put_fstr(col, row, "+");
+	if (f[n - 1] & flag2) put_fstr(col, row, "*");
 }
 
 
@@ -1967,7 +1949,7 @@ static void display_player_flag_info(void)
 
 	display_player_equippy(col + 8, row++);
 
-	put_str("abcdefghijkl@", col + 8, row++);
+	put_fstr(col + 8, row++, "abcdefghijkl@");
 
 	display_player_flag_aux(col, row++, "Acid  :", 2, TR2_RES_ACID,
 							TR2_IM_ACID);
@@ -1998,7 +1980,7 @@ static void display_player_flag_info(void)
 
 	display_player_equippy(col + 10, row++);
 
-	put_str("abcdefghijkl@", col + 10, row++);
+	put_fstr(col + 10, row++, "abcdefghijkl@");
 
 	display_player_flag_aux(col, row++, "Speed   :", 1, TR1_SPEED, 0);
 	display_player_flag_aux(col, row++, "Reflect :", 2, TR2_REFLECT, 0);
@@ -2019,7 +2001,7 @@ static void display_player_flag_info(void)
 
 	display_player_equippy(col + 11, row++);
 
-	put_str("abcdefghijkl@", col + 11, row++);
+	put_fstr(col + 11, row++, "abcdefghijkl@");
 
 	display_player_flag_aux(col, row++, "Free Actn:", 2, TR2_FREE_ACT, 0);
 	display_player_flag_aux(col, row++, "SeeInvis.:", 3, TR3_SEE_INVIS, 0);
@@ -2065,7 +2047,7 @@ static void display_player_stat_info(void)
 	row = 3;
 
 	/* Print out the labels for the columns */
-	put_str("Stat", stat_col, row - 1);
+	put_fstr(stat_col, row - 1, "Stat");
 	put_cstr(stat_col + 5, row - 1, CLR_BLUE "Intrnl");
 	put_cstr(stat_col + 12, row - 1, CLR_L_BLUE "Rce Cls Mod");
 	put_cstr(stat_col + 24, row - 1, CLR_L_GREEN "Actual");
@@ -2089,7 +2071,7 @@ static void display_player_stat_info(void)
 			e_adj = p_ptr->stat_top[i] - (p_ptr->stat_max[i] - 18) / 10 - 19;
 
 		/* Reduced name of stat */
-		put_str(stat_names_reduced[i], stat_col, row + i);
+		put_fstr(stat_col, row + i, stat_names_reduced[i]);
 
 		/* Internal "natural" max value.  Maxes at 18/100 */
 		/* This is useful to see if you are maxed out */
@@ -2115,7 +2097,7 @@ static void display_player_stat_info(void)
 	col = stat_col + 39;
 
 	/* Header and Footer */
-	put_str("abcdefghijkl@", col, row - 1);
+	put_fstr(col, row - 1, "abcdefghijkl@");
 	put_cstr(col, row + 6, CLR_L_GREEN "Modifications");
 
 	/* Process equipment */
@@ -2333,7 +2315,7 @@ static void display_player_top(void)
 		if (p_ptr->stat_cur[i] < p_ptr->stat_max[i])
 		{
 			/* Use lowercase stat name */
-			put_str(stat_names_reduced[i], COL_STATS, i + 2);
+			put_fstr(COL_STATS, i + 2, stat_names_reduced[i]);
 
 			/* Display the current stat (modified) */
 			put_fstr(COL_STATS + 5, i + 2, CLR_YELLOW "%t", p_ptr->stat_use[i]);
@@ -2347,7 +2329,7 @@ static void display_player_top(void)
 		else
 		{
 			/* Assume uppercase stat name */
-			put_str(stat_names[i], COL_STATS, i + 2);
+			put_fstr(COL_STATS, i + 2, stat_names[i]);
 
 			/* Display the current stat (modified) */
 			put_fstr(COL_STATS + 5, i + 2, CLR_L_GREEN "%t",
@@ -2407,7 +2389,7 @@ static void display_player_middle(void)
 
 	if (p_ptr->lev >= PY_MAX_LEVEL)
 	{
-		put_str("Exp to Adv.", COL_VALUE, 12);
+		put_fstr(COL_VALUE, 12, "Exp to Adv.");
 		put_cstr(COL_VALUE + 11, 12, CLR_L_GREEN "       *****");
 	}
 	else if (toggle_xp)
@@ -2478,7 +2460,7 @@ static void display_player_standard(void)
 	/* Extra info */
 	display_player_middle();
 
-	put_str("(Miscellaneous Abilities)", 25, 15);
+	put_fstr(25, 15, "(Miscellaneous Abilities)");
 
 	/* Display the abilities */
 	display_player_abilities();
@@ -2498,12 +2480,12 @@ static void display_player_history(void)
 	/* Extra info */
 	display_player_middle();
 
-	put_str("(Character Background)", 25, 15);
+	put_fstr(25, 15, "(Character Background)");
 
 	/* Dump the history */
 	for (i = 0; i < 4; i++)
 	{
-		put_str(p_ptr->history[i], 10, i + 16);
+		put_fstr(10, i + 16, p_ptr->history[i]);
 	}
 }
 
@@ -3847,74 +3829,6 @@ static void center_string(char *buf, cptr str)
 }
 
 
-#if 0
-/*
- * Save a "bones" file for a dead character
- *
- * Note that we will not use these files until Angband 2.8.0, and
- * then we will only use the name and level on which death occured.
- *
- * Should probably attempt some form of locking...
- */
-static void make_bones(void)
-{
-	FILE *fp;
-
-	char str[1024];
-
-
-	/* Ignore wizards and borgs */
-	if (!(p_ptr->noscore & 0x00FF))
-	{
-		/* Ignore people who die in town */
-		if (p_ptr->depth)
-		{
-			char tmp[128];
-
-			/* XXX XXX XXX "Bones" name */
-			sprintf(tmp, "bone.%03d", p_ptr->depth);
-
-			/* Build the filename */
-			path_build(str, 1024, ANGBAND_DIR_BONE, tmp);
-
-			/* Attempt to open the bones file */
-			fp = my_fopen(str, "r");
-
-			/* Close it right away */
-			if (fp) my_fclose(fp);
-
-			/* Do not over-write a previous ghost */
-			if (fp) return;
-
-			/* File type is "TEXT" */
-			FILE_TYPE(FILE_TYPE_TEXT);
-
-			/* Grab permissions */
-			safe_setuid_grab();
-
-			/* Try to write a new "Bones File" */
-			fp = my_fopen(str, "w");
-
-			/* Drop permissions */
-			safe_setuid_drop();
-
-			/* Not allowed to write it?  Weird. */
-			if (!fp) return;
-
-			/* Save the info */
-			fprintf(fp, "%s\n", player_name);
-			fprintf(fp, "%d\n", p_ptr->mhp);
-			fprintf(fp, "%d\n", p_ptr->prace);
-			fprintf(fp, "%d\n", p_ptr->pclass);
-
-			/* Close and save the Bones file */
-			my_fclose(fp);
-		}
-	}
-}
-#endif
-
-
 /*
  * Redefinable "print_tombstone" action
  */
@@ -3968,7 +3882,7 @@ static void print_tomb(void)
 			while (0 == my_fgets(fp, buf, 1024))
 			{
 				/* Display and advance */
-				put_str(buf, 0, i++);
+				put_fstr(0, i++, buf);
 			}
 
 			/* Close */
@@ -3989,33 +3903,33 @@ static void print_tomb(void)
 		}
 
 		center_string(buf, player_name);
-		put_str(buf, 11, 6);
+		put_fstr(11, 6, buf);
 
 		center_string(buf, "the");
-		put_str(buf, 11, 7);
+		put_fstr(11, 7, buf);
 
 		center_string(buf, p);
-		put_str(buf, 11, 8);
+		put_fstr(11, 8, buf);
 
 
 		center_string(buf, cp_ptr->title);
-		put_str(buf, 11, 10);
+		put_fstr(11, 10, buf);
 
 		(void)sprintf(tmp, "Level: %d", (int)p_ptr->lev);
 		center_string(buf, tmp);
-		put_str(buf, 11, 11);
+		put_fstr(11, 11, buf);
 
 		(void)sprintf(tmp, "Exp: %ld", (long)p_ptr->exp);
 		center_string(buf, tmp);
-		put_str(buf, 11, 12);
+		put_fstr(11, 12, buf);
 
 		(void)sprintf(tmp, "AU: %ld", (long)p_ptr->au);
 		center_string(buf, tmp);
-		put_str(buf, 11, 13);
+		put_fstr(11, 13, buf);
 
 		(void)sprintf(tmp, "Killed on Level %d", p_ptr->depth);
 		center_string(buf, tmp);
-		put_str(buf, 11, 14);
+		put_fstr(11, 14, buf);
 
 
 		if (strlen(p_ptr->died_from) > 24)
@@ -4028,12 +3942,12 @@ static void print_tomb(void)
 			(void)sprintf(tmp, "by %s.", p_ptr->died_from);
 
 		center_string(buf, tmp);
-		put_str(buf, 11, 15);
+		put_fstr(11, 15, buf);
 
 
 		(void)sprintf(tmp, "%-.24s", ctime(&ct));
 		center_string(buf, tmp);
-		put_str(buf, 11, 17);
+		put_fstr(11, 17, buf);
 	}
 }
 
@@ -4326,7 +4240,7 @@ static void close_game_handle_death(void)
 				char tmp[160] = "";
 
 				/* Prompt */
-				put_str("Filename: ", 0, 23);
+				put_fstr(0, 23, "Filename: ");
 
 				/* Ask for filename (or abort) */
 				if (!askfor_aux(tmp, 60)) continue;
