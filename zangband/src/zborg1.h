@@ -181,8 +181,6 @@ extern bool borg_cancel;	/* Being cancelled */
 
 extern char genocide_target;	/* Identity of the poor unsuspecting soul */
 extern bool borg_casted_glyph;	/* we dont have a launch messages anymore */
-extern int borg_stop_dlevel;
-extern int borg_stop_clevel;
 extern bool borg_stop_king;
 extern bool borg_dont_react;
 extern int successful_target;

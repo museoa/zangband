@@ -2416,8 +2416,6 @@ static void init_borg_txt_file(void)
 	borg_plays_risky = FALSE;
 	borg_scums_uniques = TRUE;
 	borg_slow_optimizehome = FALSE;
-	borg_stop_dlevel = 128;
-	borg_stop_clevel = 55;
 	borg_stop_king = TRUE;
 
 	/* Success */
@@ -4594,20 +4592,10 @@ void do_cmd_borg(void)
 
 		case 'q':
 		{
-			/* APW command: debug -- allow borg to stop */
-			int new_borg_stop_dlevel = 127;
-			int new_borg_stop_clevel = 51;
 			char cmd;
 
-			/* Get the new max depth */
-			new_borg_stop_dlevel =
-				get_quantity("Enter new auto-stop dlevel: ", MAX_DEPTH - 1);
-			new_borg_stop_clevel =
-				get_quantity("Enter new auto-stop clevel: ", 51);
 			get_com("Stop when Morgoth Dies? (y or n)? ", &cmd);
 
-			borg_stop_dlevel = new_borg_stop_dlevel;
-			borg_stop_clevel = new_borg_stop_clevel;
 			if (cmd == 'n' || cmd == 'N') borg_stop_king = FALSE;
 
 			break;

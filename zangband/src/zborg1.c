@@ -78,8 +78,6 @@ bool borg_cancel;	/* Being cancelled */
 
 char genocide_target;	/* identity of the poor unsuspecting soul */
 bool borg_casted_glyph;	/* because we dont have a launch anymore */
-int borg_stop_dlevel = -1;
-int borg_stop_clevel = -1;
 bool borg_stop_king = TRUE;
 bool borg_dont_react = FALSE;
 int successful_target = 0;

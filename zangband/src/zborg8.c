@@ -14,8 +14,6 @@
 #include "zborg7.h"
 #include "zborg8.h"
 
-byte *test;
-byte *best;
 s32b *b_home_power;
 
 #if 0
@@ -269,23 +267,6 @@ static void borg_think_home_sell_aux2_slow(int n, int start_i)
 		{
 			/* Save the results */
 			for (i = 0; i < STORE_INVEN_MAX; i++) best[i] = test[i];
-
-#if 0
-			/* dump, for debugging */
-			borg_note(format("Trying Combo (best home power %ld)",
-							 *b_home_power));
-			borg_note(format("             (test home power %ld)", home_power));
-			for (i = 0; i < STORE_INVEN_MAX; i++)
-			{
-				if (borg_shops[BORG_HOME].ware[i].iqty)
-					borg_note(format("store %d %s (qty-%d).", i,
-									 borg_shops[BORG_HOME].ware[i].desc,
-									 borg_shops[BORG_HOME].ware[i].iqty));
-				else
-					borg_note(format("store %d (empty).", i));
-			}
-			borg_note(" ");		/* add a blank line */
-#endif
 
 			/* Use it */
 			*b_home_power = home_power;
@@ -593,7 +574,6 @@ static bool borg_think_home_sell_aux(bool save_best)
 	byte best_a[STORE_INVEN_MAX];
 
 	/* if the best is being saved (see borg_think_shop_grab_aux) */
-	/* !FIX THIS NEEDS TO BE COMMENTED BETTER */
 	if (!save_best)
 		b_home_power = &home_power;
 	test = test_a;
@@ -1598,173 +1578,6 @@ static bool borg_think_home_grab_aux(void)
 
 
 /*
- * Choose a shop to visit (see above)
- */
-static bool borg_choose_shop(void)
-{
-	int i;
-
-	/* Must be in town */
-	if (borg_skill[BI_CDEPTH]) return (FALSE);
-
-	/* If poisoned or bleeding -- flow to temple */
-	if (borg_skill[BI_ISCUT] || borg_skill[BI_ISPOISONED]) goal_shop = 3;
-
-#if 0
-	/* If Starving  -- flow to food */
-	if (borg_skill[BI_ISWEAK] || (borg_skill[BI_CUR_LITE] == 0 &&
-								  borg_skill[BI_CLEVEL] >= 2))
-	{
-		if (borg_race > RACE_IMP && borg_race < RACE_SPRITE)
-		{
-			/* Alchemist for Sat Hung scrolls */
-			goal_shop = BORG_ALCHEMIST;
-		}
-		else
-			goal_shop = BORG_GSTORE;
-	}
-
-	/* If poisoned or bleeding -- Buy items from temple */
-	if (borg_skill[BI_CUR_LITE] == 0 || borg_skill[BI_ISWEAK] ||
-		borg_skill[BI_ISCUT] || borg_skill[BI_ISPOISONED])
-	{
-		if (borg_think_shop_buy_aux())
-		{
-			/* Message */
-			/* borg_note(format("# Buying '%s' at '%s' (for player)",
-			   borg_shops[goal_shop].ware[goal_ware].desc,
-			   (f_name + f_info[FEAT_SHOP_HEAD+goal_shop].name))); */
-
-			/* Success */
-			return (TRUE);
-		}
-
-		/* if temple is out of healing stuff, try the house */
-		if (borg_think_home_buy_aux())
-		{
-			/* Message */
-			borg_note(format("# Buying '%s' from the home",
-							 borg_shops[goal_shop].ware[goal_ware].desc));
-
-			/* Success */
-			return (TRUE);
-		}
-
-	}
-#endif /* 0 */
-
-	/* Must have visited all shops first---complete information */
-	for (i = 0; i < (track_shop_num); i++)
-	{
-		borg_shop *shop = &borg_shops[i];
-
-		/* Skip "visited" shops */
-		if (!shop->when) return (FALSE);
-	}
-
-	/* if we are already flowing toward a shop do not check again... */
-	if (goal_shop != -1)
-		return TRUE;
-
-	/* Assume no important shop */
-	goal_shop = goal_ware = goal_item = -1;
-
-#if 0
-	/* Step 1 -- Sell items to the home */
-	if (borg_think_home_sell_aux(FALSE))
-	{
-		/* Message */
-		if (goal_item != -1)
-			borg_note(format("# Selling '%s' to the home",
-							 borg_items[goal_item].desc));
-		else
-			borg_note(format("# Buying '%s' from the home (step 1)",
-							 borg_shops[goal_shop].ware[goal_ware].desc));
-
-		/* Success */
-		return (TRUE);
-	}
-#endif /* 0 */
-
-	/* Step 2 -- Sell items to the shops */
-	if (borg_think_shop_sell_aux())
-	{
-		/* Message */
-		/* borg_note(format("# Selling '%s' at '%s'",
-		   borg_items[goal_item].desc,
-		   (f_name + f_info[FEAT_SHOP_HEAD+goal_shop].name))); */
-
-		/* Success */
-		return (TRUE);
-	}
-
-
-	/* Step 3 -- Buy items from the shops (for the player) */
-	if (borg_think_shop_buy_aux())
-	{
-		/* Message */
-		/* borg_note(format("# Buying '%s' at '%s' (for player)",
-		   borg_shops[goal_shop].ware[goal_ware].desc,
-		   (f_name + f_info[FEAT_SHOP_HEAD+goal_shop].name))); */
-
-		/* Success */
-		return (TRUE);
-	}
-
-#if 0
-	/* Step 4 -- Buy items from the home (for the player) */
-	if (borg_think_home_buy_aux())
-	{
-		/* Message */
-		borg_note(format("# Buying '%s' from the home (step 4)",
-						 borg_shops[goal_shop].ware[goal_ware].desc));
-
-		/* Success */
-		return (TRUE);
-	}
-#endif /* 0 */
-
-	/* get rid of junk from home first.  That way the home is 'uncluttered' */
-	/* before you buy stuff for it.  This will prevent the problem where an */
-	/* item has become a negative value and swapping in a '0' gain item */
-	/* (like pottery) is better. */
-
-#if 0
-	/* Step 5 -- Grab items from the home (for the shops) */
-	if (borg_think_home_grab_aux())
-	{
-		/* Message */
-		borg_note(format("# Grabbing (to sell) '%s' from the home",
-						 borg_shops[goal_shop].ware[goal_ware].desc));
-
-		/* Success */
-		return (TRUE);
-	}
-#endif /* 0 */
-
-#if 0
-	/* Step 6 -- Buy items from the shops (for the home) */
-	if (borg_think_shop_grab_aux())
-	{
-		/* Message */
-		/* borg_note(format("# Grabbing (for home) '%s' at '%s'",
-		   borg_shops[goal_shop].ware[goal_ware].desc,
-		   (f_name + f_info[FEAT_SHOP_HEAD+goal_shop].name))); */
-
-		/* Success */
-		return (TRUE);
-	}
-#endif /* 0 */
-
-	/* Failure */
-	return (FALSE);
-
-}
-
-
-
-
-/*
  * Sell items to the current shop, if desired
  */
 static bool borg_think_shop_sell(void)
@@ -1917,20 +1730,77 @@ static bool borg_think_shop_buy(void)
 
 
 /*
+ * Choose a shop to visit (see above)
+ */
+static bool borg_choose_shop(void)
+{
+	int i;
+
+	/* Must be in town */
+	if (borg_skill[BI_CDEPTH]) return (FALSE);
+
+	/* If poisoned or bleeding -- flow to temple */
+	if (borg_skill[BI_ISCUT] || borg_skill[BI_ISPOISONED]) goal_shop = 3;
+
+	/* Must have visited all shops first---complete information */
+	for (i = 0; i < (track_shop_num); i++)
+	{
+		borg_shop *shop = &borg_shops[i];
+
+		/* Skip "visited" shops */
+		if (!shop->when) return (FALSE);
+	}
+
+	/* if we are already flowing toward a shop do not check again... */
+	if (goal_shop != -1)
+		return TRUE;
+
+	/* Assume no important shop */
+	goal_shop = goal_ware = goal_item = -1;
+
+#if 0
+	/* Step 1 -- Sell items to the home */
+	if (borg_think_home_sell_aux(FALSE)) return (TRUE);
+#endif /* 0 */
+
+	/* Step 2 -- Sell items to the shops */
+	if (borg_think_shop_sell_aux()) return (TRUE);
+
+
+	/* Step 3 -- Buy items from the shops (for the player) */
+	if (borg_think_shop_buy_aux()) return (TRUE);
+
+#if 0
+	/* Step 4 -- Buy items from the home (for the player) */
+	if (borg_think_home_buy_aux()) return (TRUE);
+#endif /* 0 */
+
+	/* get rid of junk from home first.  That way the home is 'uncluttered' */
+	/* before you buy stuff for it.  This will prevent the problem where an */
+	/* item has become a negative value and swapping in a '0' gain item */
+	/* (like pottery) is better. */
+
+#if 0
+	/* Step 5 -- Grab items from the home (for the shops) */
+	if (borg_think_home_grab_aux()) return (TRUE);
+#endif /* 0 */
+
+#if 0
+	/* Step 6 -- Buy items from the shops (for the home) */
+	if (borg_think_shop_grab_aux()) return (TRUE);
+
+#endif /* 0 */
+
+	/* Failure */
+	return (FALSE);
+}
+
+
+/*
  * Deal with being in a store
  */
 bool borg_think_store(void)
 {
-	/* Hack -- prevent clock wrapping */
-	if (borg_t >= 20000 && borg_t <= 20010)
-	{
-		/* Clear Possible errors */
-		borg_keypress(ESCAPE);
-		borg_keypress(ESCAPE);
-		borg_keypress(ESCAPE);
-		borg_keypress(ESCAPE);
-	}
-
 	/* update all my equipment and swap items */
 	borg_notice();
 
@@ -1940,13 +1810,8 @@ bool borg_think_store(void)
 	/* Wear "optimal" equipment */
 	if (borg_best_stuff()) return (TRUE);
 
-	/* If using a digger, Wear "useful" equipment */
-	if (borg_items[INVEN_WIELD].tval == TV_DIGGING &&
-		borg_wear_stuff()) return (TRUE);
-
 	/* Remove "useless" equipment */
 	if (borg_remove_stuff()) return (TRUE);
-
 
 	/* Choose a shop to visit */
 	if (borg_choose_shop())
@@ -1960,7 +1825,6 @@ bool borg_think_store(void)
 
 	/* No shop */
 	shop_num = -1;
-
 
 	/* Leave the store */
 	borg_keypress(ESCAPE);
@@ -2049,7 +1913,6 @@ static bool borg_think_dungeon_brave(void)
 
 		/* Try to hide on a glyph if no stairs */
 		if (borg_flow_glyph(GOAL_FLEE)) return (TRUE);
-
 	}
 
 	/* Do short looks on special levels */
@@ -2106,7 +1969,6 @@ static bool borg_think_dungeon_brave(void)
 	/* Search for secret doors */
 	if (borg_flow_spastic(FALSE)) return (TRUE);
 
-
 	/*** Track down old stuff ***/
 
 	/* Chase old objects */
@@ -2117,7 +1979,6 @@ static bool borg_think_dungeon_brave(void)
 
 	/* Search for secret doors */
 	if (borg_flow_spastic(TRUE)) return (TRUE);
-
 
 	/* Nothing */
 	return (FALSE);
@@ -2157,12 +2018,6 @@ bool borg_think_dungeon(void)
 	int i, j;
 
 	int msec = (delay_factor * delay_factor);
-
-	/* HACK allows user to stop the borg on certain levels */
-	if (borg_skill[BI_CDEPTH] ==
-		borg_stop_dlevel) borg_oops("Auto-stop for user DLevel.");
-	if (borg_skill[BI_CLEVEL] ==
-		borg_stop_clevel) borg_oops("Auto-stop for user CLevel.");
 
 	/* Hack -- prevent clock wrapping Step 1 */
 	if (borg_t >= 12000 && borg_t <= 12025)
@@ -2267,12 +2122,11 @@ bool borg_think_dungeon(void)
 	}
 
 	/* hack -- close doors on breeder levles */
-	if (j >= 4)
+	if (j >= 8)
 	{
 		/* set the flag to close doors */
 		breeder_level = TRUE;
 	}
-
 
 	/* Hack -- caution from breeders */
 	if ((j >= MIN(borg_skill[BI_CLEVEL], 5)) &&
@@ -2321,46 +2175,6 @@ bool borg_think_dungeon(void)
 		borg_danger_wipe = TRUE;
 	}
 
-#if 0
-	/* Keep borg on a short leash */
-	if (track_less_num &&
-		(borg_skill[BI_MAXHP] < 30 || borg_skill[BI_CLEVEL] < 10) && !goal_less)
-	{
-		int y, x;
-
-		/* Check for an existing "up stairs" */
-		for (i = 0; i < track_less_num; i++)
-		{
-			x = track_less_x[i];
-			y = track_less_y[i];
-
-			/* How far is the nearest up stairs */
-			j = distance(c_y, c_x, y, x);
-
-			/* skip the closer ones */
-			if (b_j >= j) continue;
-
-			/* track it */
-			b_j = j;
-		}
-
-		/* is the upstair too far away? */
-		if (b_j > borg_skill[BI_CLEVEL] * 5 + 14)
-		{
-			/* Return to Stairs */
-			if (!goal_less)
-			{
-				/* Note */
-				borg_note("# Return to Stair (wandered too far)");
-
-				/* Start returning */
-				goal_less = TRUE;
-			}
-
-		}
-	}
-#endif /* 0 */
-
 	/*** crucial goals ***/
 
 	/* examine equipment and swaps */
@@ -2388,24 +2202,17 @@ bool borg_think_dungeon(void)
 		if (!goal_recalling && borg_zap_rod(SV_ROD_RECALL)) return (TRUE);
 
 		/* Test for stairs */
-		borg_keypress('<');
-
-		/* Try to flow to upstairs if on level one */
-		if (borg_flow_stair_less(GOAL_FLEE))
+		if (map_loc(c_x, c_y).feat == FEAT_LESS)
 		{
-			/* Take the stairs */
 			borg_keypress('<');
-			return (TRUE);
 		}
 
 		/* Try to flow to a lite if I can recall */
-		if (borg_skill[BI_RECALL] && borg_flow_light(GOAL_FLEE))
+		if (borg_skill[BI_RECALL])
 		{
 			/* Can I recall out with a spell */
-			if (!goal_recalling && borg_recall()) return (TRUE);
-			return (TRUE);
+			if (borg_flow_light(GOAL_FLEE)) return (TRUE);
 		}
-
 	}
 
 	/* Decrease the amount of time not allowed to retreat */
@@ -2436,10 +2243,6 @@ bool borg_think_dungeon(void)
 
 		/* Continue flowing (see below) */
 		if (borg_flow_old(GOAL_TOWN)) return (TRUE);
-
-		/* Try to get to town location (town gate for now) */
-		if ((map_loc(c_x, c_y)->feat == FEAT_MORE)
-			&& borg_flow_town_exit(GOAL_TOWN)) return (TRUE);
 
 		/* shop for something that will help us */
 		if (borg_flow_shop_visit()) return (TRUE);
@@ -2474,94 +2277,6 @@ bool borg_think_dungeon(void)
 
 	/* Perform "cool" perma spells */
 	if (borg_perma_spell()) return (TRUE);
-
-	/* Try to stick close to stairs if weak */
-	if (borg_skill[BI_CLEVEL] < 10 && borg_skill[BI_MAXSP] &&
-		borg_skill[BI_CURSP] == 0)
-	{
-		if (borg_skill[BI_CDEPTH])
-		{
-			int i, y, x;
-
-			/* Check for an existing "up stairs" */
-			for (i = 0; i < track_less_num; i++)
-			{
-				x = track_less_x[i];
-				y = track_less_y[i];
-
-				/* Not on a stair */
-				if (c_y != y || c_x != x) continue;
-
-				/* I am standing on a stair */
-
-				/* reset the goal_less flag */
-				goal_less = FALSE;
-
-				/* if not dangerous, wait here */
-				if (borg_danger(c_x, c_y, 1, TRUE) == 0)
-				{
-					/* rest here a moment */
-					borg_note("# Resting on stair to gain Mana.");
-					borg_keypress(',');
-					return (TRUE);
-				}
-			}
-
-
-			/* Start leaving */
-			if (!goal_leaving)
-			{
-				/* Note */
-				borg_note("# Leaving (Stairs to be safe)");
-
-				/* Start leaving */
-				goal_leaving = TRUE;
-			}
-
-			/* Start fleeing */
-			if (!goal_fleeing)
-			{
-				/* Note */
-				borg_note("# Fleeing (Stairs to be safe)");
-
-				/* Start fleeing */
-				goal_fleeing = TRUE;
-			}
-		}
-		else					/* in town */
-		{
-			int i, y, x;
-
-			/* Check for an existing "dn stairs" */
-			for (i = 0; i < track_more_num; i++)
-			{
-				x = track_more_x[i];
-				y = track_more_y[i];
-
-				/* Not on a stair */
-				if (c_y != y || c_x != x) continue;
-
-				/* I am standing on a stair */
-
-				/* if not dangerous, wait here */
-				if (borg_danger(c_x, c_y, 1, TRUE) == 0)
-				{
-					/* rest here a moment */
-					borg_note("# Resting on town stair to gain Mana.");
-					borg_keypress(',');
-					return (TRUE);
-				}
-			}
-		}
-
-		/* In town, standing on stairs, sit tight */
-		if (borg_flow_old(GOAL_FLEE)) return (TRUE);
-
-		/* Try to find some stairs up */
-		if (borg_flow_stair_less(GOAL_FLEE)) return (TRUE);
-
-	}
-
 
 	/*** Flee the level XXX XXX XXX ***/
 
@@ -2695,21 +2410,6 @@ bool borg_think_dungeon(void)
 
 	/*** Explore the dungeon ***/
 
-#if 0
-	if (vault_on_level)
-	{
-
-		/* Chase close monsters */
-		if (borg_flow_kill(FALSE, 35)) return (TRUE);
-
-		/* Chase close objects */
-		if (borg_flow_take(FALSE, 35)) return (TRUE);
-
-		/* Explore close interesting grids */
-		if (borg_flow_dark(TRUE)) return (TRUE);
-	}
-#endif /* 0 */
-
 	/* Chase close monsters */
 	if (borg_flow_kill(FALSE, 35)) return (TRUE);
 
@@ -2733,10 +2433,6 @@ bool borg_think_dungeon(void)
 
 
 	/*** Deal with shops ***/
-
-	/* Try to get to town location (town gate for now) */
-	if (map_loc(c_x, c_y)->feat == FEAT_MORE
-		&& borg_flow_town_exit(GOAL_TOWN)) return (TRUE);
 
 	/* Hack -- visit all the shops */
 	if (borg_flow_shop_visit()) return (TRUE);
@@ -2762,7 +2458,6 @@ bool borg_think_dungeon(void)
 
 	/* Leave the level (bored) */
 	if (borg_leave_level(TRUE)) return (TRUE);
-
 
 	/* Search for secret doors */
 	if (borg_flow_spastic(TRUE)) return (TRUE);
@@ -2796,13 +2491,6 @@ bool borg_think_dungeon(void)
 
 	/*** Nothing to do ***/
 
-	/* Twitching in town can be fatal.  Really he should not become twitchy
-	 * but sometimes he cant recall to the dungeon and that may induce the
-	 * twitchy behavior.  So we reset the level if this happens.  That will
-	 * force him to go shopping all over again.
-	 */
-	if ((borg_skill[BI_CDEPTH] == 0 && borg_t - borg_began > 800) ||
-		borg_t > 28000) old_depth = 126;
 
 	/* Set a flag that the borg is  not allowed to retreat for 5 rounds */
 	borg_no_retreat = 5;

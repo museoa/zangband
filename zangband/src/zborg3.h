@@ -94,11 +94,6 @@ struct borg_shop
 {
 	s16b when;	/* Time stamp */
 
-	s16b xtra;	/* Something unused */
-
-	s16b page;	/* Current page */
-	s16b more;	/* Number of pages */
-
 	borg_item ware[24];	/* Store contents */
 };
 
