@@ -626,7 +626,7 @@ static char *vformat(cptr fmt, va_list *vp)
 	if (fmt)
 	{
 		/* Otherwise - just use vstrnfmt */
-		vstrnfmt(format_buf, 1024, fmt, &vp);
+		vstrnfmt(format_buf, 1024, fmt, vp);
 	}
 	
 	/* Return the new buffer */
