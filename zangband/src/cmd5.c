@@ -1985,7 +1985,7 @@ static bool cast_trump_spell(int spell, bool success)
 
 				/* Ask for a level */
 				if (get_string(tmp_val, 11, "Reset to which level (1-%d): ",
-								 p_ptr->max_depth))
+								 p_ptr->recall_depth))
 				{
 					/* Extract request */
 					dummy = atoi(tmp_val);
@@ -1994,9 +1994,9 @@ static bool cast_trump_spell(int spell, bool success)
 					if (dummy < 1) dummy = 1;
 
 					/* Paranoia */
-					if (dummy > p_ptr->max_depth) dummy = p_ptr->max_depth;
+					if (dummy > p_ptr->recall_depth) dummy = p_ptr->recall_depth;
 
-					p_ptr->max_depth = dummy;
+					p_ptr->recall_depth = dummy;
 
 					/* Accept request */
 					msgf("Recall depth set to level %d (%d').", dummy,

@@ -1455,7 +1455,7 @@ struct player_type
 	
 	player_data rp;	/* Role-play information */
 	
-	s16b max_depth;	/* Max depth */
+	s16b max_depth; /* Max depth */
 	s16b depth;	/* Cur depth */
 	s16b max_lev;	/* Max level */
 	s16b lev;	/* Cur level */
@@ -1467,6 +1467,9 @@ struct player_type
 	s32b au;	/* Current Gold */
 
 	s16b place_num;	/* Current place number in the wilderness */
+
+	s16b recall_depth;	/* Recall depth */
+	s16b recall_place;	/* Recall place */
 
 	s32b wilderness_x;	/* Coordinates in the wilderness */
 	s32b wilderness_y;
