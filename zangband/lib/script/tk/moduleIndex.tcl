@@ -13,6 +13,7 @@ IndexOne NSKnowledge knowledge.tcl
 IndexOne NSMap map.tcl
 IndexOne NSMapEditor map-editor.tcl
 IndexOne NSMessageHistory message-history.tcl
+IndexOne NSTerm term.tcl
 IndexOne NSMainWindow main-window.tcl
 IndexOne NSMessageWindow message-window.tcl
 IndexOne NSMiscPopup misc-popup.tcl
@@ -22,7 +23,6 @@ IndexOne NSPlayerFlags player-flags.tcl
 IndexOne NSRecall recall.tcl
 IndexOne NSStore store.tcl
 IndexOne NSStore2 store2.tcl
-IndexOne NSTerm	term.tcl
 IndexOne NSTips tips.tcl
 IndexOne NSTomb tomb.tcl
 IndexOne NSWidget widget.tcl

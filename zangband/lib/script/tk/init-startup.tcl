@@ -740,8 +740,6 @@ proc NSInitStartup::InitStartup {} {
 		option add *selectBackground [Global SystemHighlight] 
 	}
 		
-	Source term.tcl
-	
 	# Get term colours
 	Global term_attr {"TERM_DARK" \
 					"TERM_WHITE" \

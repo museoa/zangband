@@ -9,109 +9,85 @@
 # not for profit purposes provided that this copyright and statement are
 # included in all such copies.
 
-
 namespace eval NSTerm {
-	
-	variable Priv
-	
-	variable Term
+
+
+# namespace eval NSTerm
 }
 
+# NSTerm::InitModule --
+#
+#	One-time-only-ever initialization.
+#
+# Arguments:
+#	arg1					about arg1
+#
+# Results:
+#	What happened.
 
-# Startup
 proc NSTerm::InitModule {} {
 
-	variable Priv
-
-	InitWindow
 }
 
+# NSTerm::NSTerm --
+#
+#	Object constructor called by NSObject::New().
+#
+# Arguments:
+#	arg1					about arg1
+#
+# Results:
+#	What happened.
 
-# Cleanup
-proc NSTerm::CloseModule {} {
+proc NSTerm::NSTerm {oop parent width height gwidth gheight font} {
 
-	variable Priv
-	
-	variable Term
+	variable win
 
-	catch {
-		destroy Term
-	}
-
-	exit
-}
-
-# Close
-proc NSTerm::Close {} {
-
-	variable Term
-
-	wm withdraw $Term
-}
-
-# Redraw screen
-proc NSTerm::Redraw {} {
-
-	variable Priv
-	
-	variable Term
+	set widget $parent.term$oop
 		
-	set width 640
-	set height 480
-
-	set fg Black
-	set bg White
-
-	set grids $Term.grids
+	#update idletasks
 	
-	frame $grids
-			
-# Create rows + columns
-	for {set j 0} {$j <= 23} {incr j} {
-		frame $grids.row$j
-		for {set i 0} {$i <= 79} {incr i} {
-			set char [term_window char $i $j]
-			label $grids.row$j.col$i -text $char -bg blue 
-#			         -font font,fixed,normal
-			pack $grids.row$j.col$i -side right
-		}
-		
-		pack $grids.row$j -side top
-	}	
+
+	term $widget -width $width -height $height \
+		-gwidth $gwidth -gheight $gheight -font $font
 	
-	pack $grids -padx 1 -pady 1
-}
 
-proc NSTerm::InitWindow {} {
+	# Shift-drag does nothing
+	bind $widget <Shift-Button1-Motion> break
 
-	variable Priv
+	bind $widget <ButtonPress-1> break
+	bind $widget <Button1-Motion> break
 	
-	variable Term
+	# Disable tracking when dragging
+	bind $widget <Button1-Enter> break
+	bind $widget <Button1-Leave> break
 	
-	set Term .terms
-
-	toplevel $Term
+	# This binding is called whenever the window is resized
+	# by the user.
+	bind $widget <Configure> \
+		"NSTerm::Resize $oop %w %h"
 	
-	wm title $Term "The Main Terminal"
-	wm title . "Not The Main Terminal"
-	wm resizable $Term no no
-
-	# Do stuff when window closes
-	wm protocol $Term WM_DELETE_WINDOW "NSTerm::Close"
-
-
-	# Click/Escape to hide the window
-	bind $Term <ButtonPress-1> "NSTerm::Close"
-	bind $Term <KeyPress-Escape> "NSTerm::Close"
+	# Feed the Term when keys are pressed
+	Term_KeyPress_Bind $widget
 	
-	wm minsize $Term 80 24
-	
-	Redraw
-
-	raise $Term
+	pack $widget -expand yes -fill both
 	
 	return
 }
 
-NSTerm::InitModule
 
+proc NSTerm::Resize {oop width height} {
+
+	variable win
+
+	.term.term$oop configure -width $width -height $height
+
+	return 1
+}
+
+
+proc NSTerm::Close {oop} {
+
+	#wm iconify .term.term$oop
+}
+	

@@ -39,6 +39,7 @@ proc NSMainWindow::InitModule {} {
 	
 	NSModule::LoadIfNeeded NSMap
 	NSModule::LoadIfNeeded NSWidget
+	NSModule::LoadIfNeeded NSTerm
 
 	# The character's position
 	set PYPX "0 0"
@@ -363,6 +364,39 @@ proc NSMainWindow::InitWindow {oop} {
 	#
 
 	Term_KeyPress_Bind $win
+	
+	# Create terms window
+	
+	# This is a large monitor
+	if {[winfo screenwidth .] >= 800} {
+		set width [expr {16 * 80}]
+		set height [expr {16 * 24}]
+		set font {Times 13 bold}
+
+	# This is a small monitor
+	} else {
+		set width [expr {16 * 80}]
+		set height [expr {16 * 24}]
+		set font {Times 13}
+	}
+	
+	set term .term
+	
+	toplevel $term
+	
+	wm title $term "Terminal"
+	
+	wm geometry $term +$width+$height
+	wm minsize $term $width $height
+	
+	# Do stuff when window closes
+	wm protocol $term WM_DELETE_WINDOW "NSTerm::Close $oop"
+	
+	set termId [NSObject::New NSTerm .term $width $height $gsize $gsize $font]
+			
+	update
+	
+	
 
 	return
 }
