@@ -26,7 +26,7 @@
 
 static void random_plus(object_type *o_ptr)
 {
-	switch (randint1(o_ptr->tval < TV_BOOTS ? 23 : 19))
+	switch (randint1(o_ptr->tval < TV_BOOTS ? 24 : 20))
 	{
 		case 1:  case 2:
 			o_ptr->flags1 |= TR1_STR;
@@ -58,10 +58,13 @@ static void random_plus(object_type *o_ptr)
 		case 19:
 			o_ptr->flags1 |= TR1_SPEED;
 			break;
-		case 20:  case 21:
+		case 20:
+			o_ptr->flags1 |= TR1_SP;
+			break;
+		case 21:  case 22:
 			o_ptr->flags1 |= TR1_TUNNEL;
 			break;
-		case 22:  case 23:
+		case 23:  case 24:
 			if (o_ptr->tval == TV_BOW)
 			{
 				o_ptr->flags1 |= TR1_DEX;
@@ -1975,6 +1978,8 @@ static int random_major_theme_armor(object_type *o_ptr)
 			o_ptr->flags2 |= TR2_SUST_INT;
 			o_ptr->flags1 |= TR1_WIS;
 			o_ptr->flags2 |= TR2_SUST_WIS;
+			if (one_in_(3))
+				o_ptr->flags1 |= TR1_SP;
 			
 			break;
 

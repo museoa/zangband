@@ -1593,6 +1593,8 @@ struct player_type
 
 	s16b pspeed;	/* Current speed */
 
+	s16b sp_bonus;  /* Extra mana per level */
+
 	/*** Pet commands ***/
 
 	s16b pet_follow_distance;	/* Length of the imaginary "leash" for pets */

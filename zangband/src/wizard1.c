@@ -444,6 +444,7 @@ static const flag_desc stat_flags_desc[] =
 
 static const flag_desc pval_flags1_desc[] =
 {
+	{TR1_SP, "Mana"},
 	{TR1_STEALTH, "Stealth"},
 	{TR1_SEARCH, "Searching"},
 	{TR1_INFRA, "Infravision"},

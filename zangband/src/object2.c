@@ -983,6 +983,7 @@ s32b flag_cost(const object_type *o_ptr, int plusses)
 	if (o_ptr->flags1 & TR1_DEX) total += (500 * plusses);
 	if (o_ptr->flags1 & TR1_CON) total += (500 * plusses);
 	if (o_ptr->flags1 & TR1_CHR) total += (250 * plusses);
+	if ((o_ptr->flags1 & TR1_SP) && (plusses > 0)) total += (2500 * plusses);
 	if (o_ptr->flags1 & TR1_CHAOTIC) total += 5000;
 	if (o_ptr->flags1 & TR1_VAMPIRIC) total += 5000;
 	if (o_ptr->flags1 & TR1_STEALTH) total += (50 * plusses);
@@ -992,7 +993,6 @@ s32b flag_cost(const object_type *o_ptr, int plusses)
 	if ((o_ptr->flags1 & TR1_SPEED) && (plusses > 0)) total += (500 * sqvalue(plusses));
 	if ((o_ptr->flags1 & TR1_BLOWS) && (plusses > 0)) total += (500 * sqvalue(plusses));
 	if (o_ptr->flags1 & TR1_XXX1) total += 0;
-	if (o_ptr->flags1 & TR1_XXX2) total += 0;
 	if (o_ptr->flags1 & TR1_SLAY_ANIMAL) total += 750;
 	if (o_ptr->flags1 & TR1_SLAY_EVIL) total += 1000;
 	if (o_ptr->flags1 & TR1_SLAY_UNDEAD) total += 800;
@@ -1189,6 +1189,9 @@ s32b object_value_real(const object_type *o_ptr)
 			if (o_ptr->flags1 & (TR1_DEX)) value += (o_ptr->pval * 200L);
 			if (o_ptr->flags1 & (TR1_CON)) value += (o_ptr->pval * 200L);
 			if (o_ptr->flags1 & (TR1_CHR)) value += (o_ptr->pval * 200L);
+
+			/* Give credit for mana increase */
+			if (o_ptr->flags1 & (TR1_SP)) value += (o_ptr->pval * 1000L);
 
 			/* Give credit for stealth and searching */
 			if (o_ptr->flags1 & (TR1_STEALTH)) value += (o_ptr->pval * 100L);
@@ -3292,8 +3295,12 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 				case SV_RING_CON:
 				case SV_RING_DEX:
 				case SV_RING_INT:
+				case SV_RING_SEARCHING:
+				case SV_RING_WIZARDRY:
 				{
-					/* Strength, Constitution, Dexterity, Intelligence */
+					/* 
+					 * Strength, Constitution, Dexterity, Intelligence,
+					 * Searching, Wizardry */
 
 					/* Stat bonus */
 					o_ptr->pval = 1 + m_bonus(o_ptr->pval, level);
@@ -3361,29 +3368,6 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					o_ptr->to_a = rand_range(10, 15) + m_bonus(10, level);
 					inc_rating(5);
 					
-					break;
-				}
-
-				case SV_RING_SEARCHING:
-				{
-					/* Searching */
-
-					/* Bonus to searching */
-					o_ptr->pval = 1 + m_bonus(o_ptr->pval, level);
-
-					/* Cursed */
-					if (flags & OC_FORCE_BAD)
-					{
-						/* Broken */
-						o_ptr->cost = 0;
-
-						/* Cursed */
-						o_ptr->flags3 |= (TR3_CURSED);
-
-						/* Reverse pval */
-						o_ptr->pval = 0 - (o_ptr->pval);
-					}
-
 					break;
 				}
 

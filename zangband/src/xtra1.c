@@ -1852,6 +1852,9 @@ static void calc_mana(void)
 	}
 
 
+	/* Add bonus mana (not affected by encumberance or gloves) */
+	msp += p_ptr->sp_bonus * levels;
+
 	/* Mana can never be negative */
 	if (msp < 0) msp = 0;
 
@@ -2376,6 +2379,9 @@ static void calc_bonuses(void)
 	/* Start with "normal" speed */
 	p_ptr->pspeed = 110;
 
+	/* Start with "normal" mana */
+	p_ptr->sp_bonus = 0;
+
 	/* Start with a single blow per turn */
 	p_ptr->num_blow = 1;
 
@@ -2466,6 +2472,9 @@ static void calc_bonuses(void)
 		if (o_ptr->flags1 & (TR1_DEX)) p_ptr->stat[A_DEX].add += o_ptr->pval;
 		if (o_ptr->flags1 & (TR1_CON)) p_ptr->stat[A_CON].add += o_ptr->pval;
 		if (o_ptr->flags1 & (TR1_CHR)) p_ptr->stat[A_CHR].add += o_ptr->pval;
+
+		/* Affect mana */
+		if (o_ptr->flags1 & (TR1_SP)) p_ptr->sp_bonus += o_ptr->pval;
 
 		/* Affect stealth */
 		if (o_ptr->flags1 & (TR1_STEALTH)) p_ptr->skill.stl += o_ptr->pval;

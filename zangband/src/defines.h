@@ -2149,6 +2149,7 @@
 #define SV_RING_RES_FIRE_COLD           51
 #define SV_RING_CAT                     52
 #define SV_RING_FATE                    53
+#define SV_RING_WIZARDRY                54
 
 /* The "sval" codes for TV_STAFF */
 #define SV_STAFF_DARKNESS                0
@@ -2917,7 +2918,7 @@
 #define TR1_CON                 0x00000010L	/* CON += "pval" */
 #define TR1_CHR                 0x00000020L	/* CHR += "pval" */
 #define TR1_XXX1                0x00000040L	/* Later */
-#define TR1_XXX2                0x00000080L	/* Later */
+#define TR1_SP                  0x00000080L	/* Extra mana */
 #define TR1_STEALTH             0x00000100L	/* Stealth += "pval" */
 #define TR1_SEARCH              0x00000200L	/* Search += "pval" */
 #define TR1_INFRA               0x00000400L	/* Infra += "pval" */
@@ -3051,7 +3052,7 @@
  */
 #define TR1_PVAL_MASK \
 	(TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | \
-     TR1_CON | TR1_CHR | \
+     TR1_CON | TR1_CHR | TR1_SP | \
 	 TR1_STEALTH | TR1_SEARCH | TR1_INFRA | TR1_TUNNEL | \
      TR1_SPEED | TR1_BLOWS)
 
@@ -3061,7 +3062,7 @@
  */
 #define TR1_EASY_MASK \
     (TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | \
-     TR1_CON | TR1_CHR | \
+     TR1_CON | TR1_CHR | TR1_SP | \
      TR1_INFRA | TR1_SPEED | TR1_BLOWS)
 
 /*

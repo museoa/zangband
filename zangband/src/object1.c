@@ -129,8 +129,7 @@ void object_flags_known(const object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, 
 	(*f4) = k_ptr->flags4;
 
 	/* Show modifications to stats */
-	(*f1) |= (o_ptr->flags1 &
-			  (TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR));
+	(*f1) |= (o_ptr->flags1 & TR1_EASY_MASK);
 
 	/* 
 	 * *Identify* sets these flags,
@@ -576,6 +575,21 @@ bool identify_fully_aux(const object_type *o_ptr)
 		{
 			temp = string_make(format("It decreases your charisma by %+i.",
 									  o_ptr->pval));
+		}
+
+		info[i++] = temp;
+		reclaim[num_reclaim++] = temp;
+	}
+
+	if (f1 & (TR1_SP))
+	{
+		if (o_ptr->pval > 0)
+		{
+			temp = string_make(format("It increases your maximum sp by %i per level.", o_ptr->pval));
+		}
+		else
+		{
+			temp = string_make(format("It decreases your maximum sp by %i per level.", o_ptr->pval));
 		}
 
 		info[i++] = temp;

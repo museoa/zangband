@@ -4813,7 +4813,12 @@ W:15:0:2:200
 A:15/5:30/5
 F:STRANGE_LUCK
 
-# 586 are unused
+N:586:Wizardry
+G:=:d
+I:45:54:2
+W:60:0:2:5000
+A:75/2
+F:SP
 
 ##### New amulets #####
 
