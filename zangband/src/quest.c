@@ -403,7 +403,7 @@ void get_player_quests(void)
 	/* Add the winner quests */
 
 	/* Hack XXX XXX Oberon, hard coded */
-	q_idx = insert_dungeon_monster_quest(QW_OBERON, 1, 98);
+	q_idx = insert_dungeon_monster_quest(QW_OBERON, 1, 99);
 	quest[q_idx].x_type = QX_KILL_WINNER;
 	quest[q_idx].flags |= QUEST_FLAG_KNOWN;
 	quest[q_idx].status = QUEST_STATUS_TAKEN;
