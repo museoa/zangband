@@ -2295,10 +2295,28 @@ static void del_block(int x, int y)
 	int xx, yy;
 	int m_idx;
 	
+	wild_type *w_ptr = &wild[y][x];
+	byte town_num;
+	
 	if (!wild_refcount[y][x]) quit("Dead wilderness cache!");
 
 	/* Decrement refcount */
 	wild_refcount[y][x]--;
+	
+	/* Access town */
+	town_num = w_ptr->done.town;
+	
+	if (town_num)
+	{
+		/* Decrement town counter if town exists */
+		town[town_num].refcount--;
+		
+		if (!town[town_num].refcount)
+		{
+			/* Deallocate quest stuff? */
+		}
+	}
+	
 	
 	/* Don't do anything if someone else is here */
 	if (wild_refcount[y][x]) return;
@@ -2344,20 +2362,30 @@ static void del_block(int x, int y)
  */
 static void allocate_block(int x, int y)
 {
+	wild_type *w_ptr = &wild[y][x];
+	byte town_num;
+	
 	/* Increment refcount */
 	wild_refcount[y][x]++;
 	
-	/* Don't do anything if someone else is here */
-	if (wild_grid[y][x]) return;
-
-	/* Paranoia */
-	if (wc_cnt >= WILD_CACHE) quit("Out of wilderness cache!!");
+	/* Need to make the block if it doesn't exist */
+	if (!wild_grid[y][x])
+	{
+		/* Paranoia */
+		if (wc_cnt >= WILD_CACHE) quit("Out of wilderness cache!!");
 	
-	/* Get new block */
-	wild_grid[y][x] = wild_cache[wc_cnt++];
+		/* Get new block */
+		wild_grid[y][x] = wild_cache[wc_cnt++];
 		
-	/* Generate the block */
-	gen_block(x, y);
+		/* Generate the block */
+		gen_block(x, y);	
+	}
+
+	/* Access town */
+	town_num = w_ptr->done.town;
+		
+	/* Increment town counter if town exists */
+	if (town_num) town[town_num].refcount++;
 }
 
 

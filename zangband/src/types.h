@@ -1693,6 +1693,8 @@ struct town_type
 	
 	byte		pop;		/* population density (from wilderness) */
 	byte		monst_type;	/* Type of population (monsters/people etc.) */
+
+	u32b		refcount;	/* refcount for creation / deletion */
 	
 	byte		gates_x[MAX_GATES];	/* Position of the town gates */
 	byte		gates_y[MAX_GATES];

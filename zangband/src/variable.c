@@ -471,6 +471,11 @@ bool (*in_bounds2)(int, int);
 bool (*in_boundsp)(int, int);
 
 /*
+ * Current size of the wilderness
+ */
+s32b max_wild;
+
+/*
  * The dungeon data itself
  */
 dun_type dun_data;
@@ -792,11 +797,6 @@ monster_hook_type get_mon_num2_hook;
  */
 byte (*get_obj_num_hook)(int k_idx);
 
-
-/*
- * Current size of the wilderness
- */
-s32b max_wild;
 
 /* Get rid of the quest stuff? */
 
