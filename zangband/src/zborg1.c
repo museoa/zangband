@@ -316,8 +316,8 @@ FILE *borg_fff = NULL;	/* Log file */
 /*
  * Track "stairs up"
  */
-s16b track_less_num;
-s16b track_less_size;
+s16b track_less_num = 0;
+s16b track_less_size = 16;
 int *track_less_x;
 int *track_less_y;
 
@@ -325,48 +325,48 @@ int *track_less_y;
 /*
  * Track "stairs down"
  */
-s16b track_more_num;
-s16b track_more_size;
+s16b track_more_num = 0;
+s16b track_more_size = 16;
 int *track_more_x;
 int *track_more_y;
 
 /*
  * Track glyphs
  */
-s16b track_glyph_num;
-s16b track_glyph_size;
+s16b track_glyph_num = 0;
+s16b track_glyph_size = 256;
 int *track_glyph_x;
 int *track_glyph_y;
 
 /*
  * Track Steps
  */
-s16b track_step_num;
-s16b track_step_size;
+s16b track_step_num = 0;
+s16b track_step_size = 256;
 int *track_step_x;
 int *track_step_y;
 
 /*
  * Track closed doors
  */
-s16b track_door_num;
-s16b track_door_size;
+s16b track_door_num = 0;
+s16b track_door_size = 256;
 int *track_door_x;
 int *track_door_y;
 
 /*
  * The object list.  This list is used to "track" objects.
  */
-s16b borg_takes_cnt;
-s16b borg_takes_nxt;
+s16b borg_takes_cnt = 0;
+s16b borg_takes_nxt = 1;
 borg_take *borg_takes;
 
 
 /*
  * The monster list.  This list is used to "track" monsters.
  */
-s16b borg_kills_cnt;
-s16b borg_kills_nxt;
+s16b borg_kills_cnt = 0;
+s16b borg_kills_nxt = 1;
 borg_kill *borg_kills;
 
 /*
@@ -375,8 +375,8 @@ borg_kill *borg_kills;
 
 s16b borg_view_n = 0;
 
-s16b borg_view_x[AUTO_VIEW_MAX];
-s16b borg_view_y[AUTO_VIEW_MAX];
+s16b *borg_view_x;
+s16b *borg_view_y;
 
 
 /*
@@ -385,28 +385,28 @@ s16b borg_view_y[AUTO_VIEW_MAX];
 
 /* For any monster within MAX_RANGE */
 s16b borg_temp_n = 0;
-s16b borg_temp_x[AUTO_TEMP_MAX];
-s16b borg_temp_y[AUTO_TEMP_MAX];
+s16b *borg_temp_x;
+s16b *borg_temp_y;
 
 /* For the monsters immediately surrounding the borg */
 s16b borg_next_n = 0;
-s16b borg_next_x[AUTO_HIT_MAX];
-s16b borg_next_y[AUTO_HIT_MAX];
+s16b *borg_next_x;
+s16b *borg_next_y;
 
 /* For the monsters that can be hit by a bolt */
 s16b borg_bolt_n = 0;
-s16b borg_bolt_x[AUTO_TEMP_MAX];
-s16b borg_bolt_y[AUTO_TEMP_MAX];
+s16b *borg_bolt_x;
+s16b *borg_bolt_y;
 
 /* For the monsters that can be hit by a beam, basically any monster in LOS */
 s16b borg_beam_n = 0;
-s16b borg_beam_x[AUTO_TEMP_MAX];
-s16b borg_beam_y[AUTO_TEMP_MAX];
+s16b *borg_beam_x;
+s16b *borg_beam_y;
 
 /* For the monsters that can be hit by a ball with radius > 1 */
 s16b borg_ball_n = 0;
-s16b borg_ball_x[AUTO_TEMP_MAX];
-s16b borg_ball_y[AUTO_TEMP_MAX];
+s16b *borg_ball_x;
+s16b *borg_ball_y;
 
 
 /*
@@ -415,8 +415,8 @@ s16b borg_ball_y[AUTO_TEMP_MAX];
 
 s16b borg_flow_n = 0;
 
-s16b borg_flow_x[AUTO_FLOW_MAX];
-s16b borg_flow_y[AUTO_FLOW_MAX];
+s16b *borg_flow_x;
+s16b *borg_flow_y;
 
 
 /*
@@ -1043,52 +1043,59 @@ void borg_init_1(void)
 	/*** Special "tracking" arrays ***/
 
 	/* Track "up" stairs */
-	track_less_num = 0;
-	track_less_size = 16;
 	C_MAKE(track_less_x, track_less_size, int);
 	C_MAKE(track_less_y, track_less_size, int);
 
 	/* Track "down" stairs */
-	track_more_num = 0;
-	track_more_size = 16;
 	C_MAKE(track_more_x, track_more_size, int);
 	C_MAKE(track_more_y, track_more_size, int);
 
 	/* Track glyphs */
-	track_glyph_num = 0;
-	track_glyph_size = 256;
 	C_MAKE(track_glyph_x, track_glyph_size, int);
 	C_MAKE(track_glyph_y, track_glyph_size, int);
 
 	/* Track Steps */
-	track_step_num = 0;
-	track_step_size = 256;
 	C_MAKE(track_step_x, track_step_size, int);
 	C_MAKE(track_step_y, track_step_size, int);
 
 	/* Track closed doors */
-	track_door_num = 0;
-	track_door_size = 256;
 	C_MAKE(track_door_x, track_door_size, int);
 	C_MAKE(track_door_y, track_door_size, int);
-
-	/*** Object tracking ***/
-
-	/* No objects yet */
-	borg_takes_cnt = 0;
-	borg_takes_nxt = 1;
 
 	/* Array of objects */
 	C_MAKE(borg_takes, BORG_TAKES_MAX, borg_take);
 
-	/*** Monster tracking ***/
-
-	/* No monsters yet */
-	borg_kills_cnt = 0;
-	borg_kills_nxt = 1;
-
 	/* Array of monsters */
 	C_MAKE(borg_kills, BORG_KILLS_MAX, borg_kill);
+
+	/* Array of views */
+	C_MAKE(borg_view_x, AUTO_VIEW_MAX, s16b);
+	C_MAKE(borg_view_y, AUTO_VIEW_MAX, s16b);
+
+	/* Array of temporary coordinates */
+	C_MAKE(borg_temp_x, BORG_TEMP_MAX, s16b);
+	C_MAKE(borg_temp_y, BORG_TEMP_MAX, s16b);
+
+	/* Array of temporary coordinates */
+	C_MAKE(borg_next_x, BORG_NEXT_MAX, s16b);
+	C_MAKE(borg_next_y, BORG_NEXT_MAX, s16b);
+
+	/* Array of temporary coordinates */
+	C_MAKE(borg_bolt_x, BORG_TEMP_MAX, s16b);
+	C_MAKE(borg_bolt_y, BORG_TEMP_MAX, s16b);
+
+	/* Array of temporary coordinates */
+	C_MAKE(borg_beam_x, BORG_TEMP_MAX, s16b);
+	C_MAKE(borg_beam_y, BORG_TEMP_MAX, s16b);
+
+	/* Array of temporary coordinates */
+	C_MAKE(borg_ball_x, BORG_TEMP_MAX, s16b);
+	C_MAKE(borg_ball_y, BORG_TEMP_MAX, s16b);
+
+	/* Array of temporary coordinates */
+	C_MAKE(borg_flow_x, BORG_FLOW_MAX, s16b);
+	C_MAKE(borg_flow_y, BORG_FLOW_MAX, s16b);
+
 
 	/* Struct for the player information */
 	MAKE(bp_ptr, borg_player);

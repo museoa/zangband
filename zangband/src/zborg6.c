@@ -966,7 +966,7 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid,
 		y1 = borg_flow_y[flow_tail];
 
 		/* Circular queue -- dequeue the next entry */
-		if (++flow_tail == AUTO_FLOW_MAX) flow_tail = 0;
+		if (++flow_tail == BORG_FLOW_MAX) flow_tail = 0;
 
 		/* Bounds checking */
 		if (!map_in_bounds(x1, y1)) continue;
@@ -1090,7 +1090,7 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid,
 			old_head = flow_head;
 
 			/* Circular queue -- insert with wrap */
-			if (++flow_head == AUTO_FLOW_MAX)
+			if (++flow_head == BORG_FLOW_MAX)
 				flow_head = 0;
 
 			/* Circular queue -- handle overflow (badly) */
@@ -1155,7 +1155,7 @@ static void borg_flow_enqueue_grid(int x, int y)
 	old_head = flow_head;
 
 	/* Circular queue -- insert with wrap */
-	if (++flow_head == AUTO_FLOW_MAX) flow_head = 0;
+	if (++flow_head == BORG_FLOW_MAX) flow_head = 0;
 
 	/* Circular queue -- handle overflow */
 	if (flow_head == flow_tail) flow_head = old_head;
@@ -3528,7 +3528,7 @@ static bool borg_flow_dark_5(int b_stair)
 	MAP_ITT_START (mb_ptr)
 	{
 		/* Paranoia -- Check for overflow */
-		if (borg_temp_n == AUTO_TEMP_MAX) continue;
+		if (borg_temp_n == BORG_TEMP_MAX) continue;
 
 		/* Get location */
 		MAP_GET_LOC(x, y);

@@ -103,19 +103,19 @@
 /*
  * Number of grids in the "temp" array
  */
-#define AUTO_TEMP_MAX 1536
+#define BORG_TEMP_MAX 1536
 
 
 /*
- * Number of grids in the "borg_hit" array
+ * Number of grids in the "borg_next" array
  */
-#define AUTO_HIT_MAX 1536
+#define BORG_NEXT_MAX 8
 
 
 /*
  * Number of grids in the "flow" array
  */
-#define AUTO_FLOW_MAX 2000
+#define BORG_FLOW_MAX 2000
 
 
 /*
@@ -765,8 +765,8 @@ extern borg_kill *borg_kills;
  */
 
 extern s16b borg_view_n;
-extern s16b borg_view_y[AUTO_VIEW_MAX];
-extern s16b borg_view_x[AUTO_VIEW_MAX];
+extern s16b *borg_view_y;
+extern s16b *borg_view_x;
 
 
 /*
@@ -775,36 +775,36 @@ extern s16b borg_view_x[AUTO_VIEW_MAX];
 
 /* For any monster within MAX_RANGE */
 extern s16b borg_temp_n;
-extern s16b borg_temp_y[AUTO_TEMP_MAX];
-extern s16b borg_temp_x[AUTO_TEMP_MAX];
+extern s16b *borg_temp_y;
+extern s16b *borg_temp_x;
 
 /* For the monsters immediately surrounding the borg */
 extern s16b borg_next_n;
-extern s16b borg_next_y[AUTO_HIT_MAX];
-extern s16b borg_next_x[AUTO_HIT_MAX];
+extern s16b *borg_next_y;
+extern s16b *borg_next_x;
 
 /* For the monsters that can be hit by a bolt */
 extern s16b borg_bolt_n;
-extern s16b borg_bolt_y[AUTO_TEMP_MAX];
-extern s16b borg_bolt_x[AUTO_TEMP_MAX];
+extern s16b *borg_bolt_y;
+extern s16b *borg_bolt_x;
 
 /* For the monsters that can be hit by a beam, basically any monster in LOS */
 extern s16b borg_beam_n;
-extern s16b borg_beam_y[AUTO_TEMP_MAX];
-extern s16b borg_beam_x[AUTO_TEMP_MAX];
+extern s16b *borg_beam_y;
+extern s16b *borg_beam_x;
 
 /* For the monsters that can be hit by a ball with radius > 1 */
 extern s16b borg_ball_n;
-extern s16b borg_ball_y[AUTO_TEMP_MAX];
-extern s16b borg_ball_x[AUTO_TEMP_MAX];
+extern s16b *borg_ball_y;
+extern s16b *borg_ball_x;
 
 
 /*
  * Maintain a set of grids (flow calculations)
  */
 extern s16b borg_flow_n;
-extern s16b borg_flow_y[AUTO_FLOW_MAX];
-extern s16b borg_flow_x[AUTO_FLOW_MAX];
+extern s16b *borg_flow_y;
+extern s16b *borg_flow_x;
 
 
 /*
