@@ -4614,7 +4614,7 @@ void item_charges(object_type *o_ptr)
 /*
  * Describe an item in the inventory.
  */
-static void item_describe_aux(object_type *o_ptr, bool back_step)
+static cptr item_describe_aux(object_type *o_ptr, bool back_step)
 {
 	char o_name[256];
 	char lab[40] = "";
@@ -4644,7 +4644,7 @@ static void item_describe_aux(object_type *o_ptr, bool back_step)
 			item = GET_ARRAY_INDEX(p_ptr->equipment, o_ptr);
 			
 			/* No more items? */
-			msgf("You were %s: %s (%c).", describe_use(item), o_name, I2A(item));
+			return (format("You were %s: %s (%c).", describe_use(item), o_name, I2A(item)));
 			
 			/* Restore old number of items */
 			o_ptr->number = num;
@@ -4652,7 +4652,7 @@ static void item_describe_aux(object_type *o_ptr, bool back_step)
 		else if (list == &p_ptr->inventory)
 		{
 			/* No more items? */
-			msgf("There are %s.", o_name);
+			return (format("There are %s.", o_name));
 		}
 	}
 	else
@@ -4664,7 +4664,7 @@ static void item_describe_aux(object_type *o_ptr, bool back_step)
 
 			if (show_labels) strnfmt(lab, 40, "%^s: ", describe_use(item));
 
-			msgf("%s%s (%c).", lab, o_name, I2A(item));
+			return (format("%s%s (%c).", lab, o_name, I2A(item)));
 		}
 		else if (list == &p_ptr->inventory)
 		{
@@ -4675,20 +4675,20 @@ static void item_describe_aux(object_type *o_ptr, bool back_step)
 
 			/* Hack to get that letter correct in case a scroll disappears */
 			if (back_step)
-				msgf("%s%s (%c).", lab, o_name, I2A(item - 1));
+				return (format("%s%s (%c).", lab, o_name, I2A(item - 1)));
 			else
-				msgf("%s%s (%c).", lab, o_name, I2A(item));
+				return (format("%s%s (%c).", lab, o_name, I2A(item)));
 		}
 		else if (list == &c_ptr->o_idx)
 		{
-			msgf("On the ground: %s.", o_name);
+			return (format("On the ground: %s.", o_name));
 		}
 		/* Then it is in the shop */
 		else
 		{
 			if (show_labels) strnfmt(lab, 40, "In the shop: ");
 
-			msgf("%s%s", lab, o_name);
+			return (format("%s%s", lab, o_name));
 		}
 	}
 }
@@ -4699,7 +4699,16 @@ static void item_describe_aux(object_type *o_ptr, bool back_step)
  */
 void item_describe(object_type *o_ptr)
 {
-	item_describe_aux(o_ptr, FALSE);
+	msgf("%s", item_describe_aux(o_ptr, FALSE));
+}
+
+
+/*
+ * Describe an item in the inventory.
+ */
+void item_describe_roff(object_type *o_ptr)
+{
+	roff("%s", item_describe_aux(o_ptr, FALSE));
 }
 
 
@@ -4713,7 +4722,7 @@ void item_describe(object_type *o_ptr)
  */
 void item_describe_faux(object_type *o_ptr)
 {
-	item_describe_aux(o_ptr, TRUE);
+	msgf("%s", item_describe_aux(o_ptr, TRUE));
 }
 
 

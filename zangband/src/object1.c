@@ -209,8 +209,11 @@ static void roff_obj_aux(const object_type *o_ptr)
 	/* Extract the bonuses */
 	object_bonuses_known(o_ptr, &b);
 
+	/* Show the item in a message including its pack letter */
+	item_describe_roff((object_type *)o_ptr);
+
 	/* Start a bit lower */
-	roff("\n");
+	roff("\n\n");
 
 	/* If you don't know anything about the item */
 	if (!object_known_p(o_ptr) && !object_aware_p(o_ptr))
@@ -855,18 +858,12 @@ void identify_fully_aux(const object_type *o_ptr)
 	/* Save the screen */
 	screen_save();
 
-	/* Show the item in a message including its pack letter */
-	item_describe((object_type *)o_ptr);
-
-	/* Begin recall */
-	clear_row(1);
-
 	/* Recall object */
 	roff_obj_aux(o_ptr);
 
 	/* Wait for the player to read the info */
-	if (auto_more) (void)inkey();
-
+	(void)inkey();
+	
 	/* Restore the screen */
 	screen_load();
 }

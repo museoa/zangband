@@ -618,6 +618,7 @@ extern bool floor_item(object_type *o_ptr);
 extern bool player_item(object_type *o_ptr);
 extern void item_charges(object_type *o_ptr);
 extern void item_describe(object_type *o_ptr);
+extern void item_describe_roff(object_type *o_ptr);
 extern void item_describe_faux(object_type *o_ptr);
 extern object_type *item_split(object_type *o_ptr, int num);
 extern void item_increase(object_type *o_ptr, int num);
