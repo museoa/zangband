@@ -1472,7 +1472,7 @@ bool get_string(char *buf, int len, cptr str, ...)
 
 	/* Display prompt */
 	prtf(0, 0, prompt);
-
+	
 	/* Ask the user for a string */
 	res = askfor_aux(buf, len);
 
@@ -1491,23 +1491,10 @@ bool get_string(char *buf, int len, cptr str, ...)
  *
  * Note that "[y/n]" is appended to the prompt.
  */
-bool get_check(cptr prompt, ...)
+static bool get_check_base(bool def, bool esc, cptr prompt)
 {
 	int i;
     
-    va_list vp;
-
-	char buf[1024];
-
-	/* Begin the Varargs Stuff */
-	va_start(vp, prompt);
-
-	/* Format the args, save the length */
-	(void)vstrnfmt(buf, 1024, prompt, &vp);
-
-	/* End the Varargs Stuff */
-	va_end(vp);
-
 	/* Do not skip */
 	p_ptr->state.skip_more = FALSE;
 
@@ -1515,7 +1502,7 @@ bool get_check(cptr prompt, ...)
 	message_flush();
 
 	/* Prompt for it */
-	prtf(0, 0, "%.70s[y/n] ", buf);
+	prtf(0, 0, "%.70s[y/n] ", prompt);
 
 	/* Get an acceptable answer */
 	while (TRUE)
@@ -1536,11 +1523,52 @@ bool get_check(cptr prompt, ...)
 		case 'y': case 'Y':
 			return (TRUE);
 		
+		case ESCAPE:
+			return (esc);
+
+		case '\n': case '\r':
+			return (def);
+
 		default:
 			return (FALSE);
 	}
 }
 
+bool get_check_ext(bool def, bool esc, cptr prompt, ...)
+{
+	va_list vp;
+
+	char buf[1024];
+
+	/* Begin the Varargs Stuff */
+	va_start(vp, prompt);
+
+	/* Format the args, save the length */
+	(void)vstrnfmt(buf, 1024, prompt, &vp);
+
+	/* End the Varargs Stuff */
+	va_end(vp);
+
+	return get_check_base(def, esc, buf);
+}
+
+bool get_check(cptr prompt, ...)
+{
+	va_list vp;
+
+	char buf[1024];
+
+	/* Begin the Varargs Stuff */
+	va_start(vp, prompt);
+
+	/* Format the args, save the length */
+	(void)vstrnfmt(buf, 1024, prompt, &vp);
+
+	/* End the Varargs Stuff */
+	va_end(vp);
+
+	return get_check_base(FALSE, FALSE, buf);
+}
 
 /*
  * Prompts for a keypress

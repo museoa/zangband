@@ -1338,7 +1338,7 @@ static bool store_access_item(const object_type *o_ptr, s32b price, bool buy)
 	put_fstr(0, 2, "Offer :  %ld", (long)price);
 
 	/* Ask the user for a response */
-	if (check_transaction && !get_check(buy ? "Buy? ": "Sell? "))
+	if (check_transaction && !get_check_ext(TRUE, FALSE, buy ? "Buy? ": "Sell? "))
 	{
 		return (FALSE);
 	}
@@ -1432,6 +1432,10 @@ static void store_purchase(void)
 		/* Find out how many the player wants */
 		if (o_ptr->number > 1)
 		{
+			/* Describe the object (fully) */
+			put_fstr(0, 1, "%s %v", "Buying",
+						OBJECT_STORE_FMT(o_ptr, TRUE, 3));
+
 			/* Get a quantity */
 			amt = get_quantity(NULL, o_ptr->number);
 
@@ -1700,6 +1704,10 @@ static void store_sell(void)
 	/* Find out how many the player wants to sell */
 	if (o_ptr->number > 1)
 	{
+		/* Describe the object (only what we know) */
+		put_fstr(0, 1, "%s %v", "Selling",
+					OBJECT_FMT(o_ptr, TRUE, 3));
+
 		/* Get a quantity */
 		amt = get_quantity(NULL, o_ptr->number);
 

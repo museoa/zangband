@@ -1197,6 +1197,7 @@ extern void clear_region(int x, int y1, int y2);
 extern bool askfor_aux(char *buf, int len);
 extern bool get_string(char *buf, int len, cptr str, ...);
 extern bool get_check(cptr prompt, ...);
+extern bool get_check_ext(bool def, bool esc, cptr prompt, ...);
 extern bool get_com(cptr prompt, char *command);
 extern s16b get_quantity(cptr prompt, int max);
 extern void pause_line(int row);
