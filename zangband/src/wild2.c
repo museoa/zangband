@@ -1514,6 +1514,11 @@ void init_towns(int xx, int yy)
 					}
 				}
 			}
+			else
+			{
+				/* Try again */
+				continue;
+			}
 		}
 		else
 		{
