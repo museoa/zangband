@@ -854,6 +854,9 @@ static void wiz_reroll_item(object_type *o_ptr)
 			a_info[q_ptr->activate - 128].cur_num = 0;
 			q_ptr->activate = 0;
 			q_ptr->xtra_name = 0;
+			
+			/* Remove the artifact flag */
+			o_ptr->flags3 &= ~(TR3_INSTA_ART);
 		}
 
 		switch(ch)

@@ -1753,6 +1753,11 @@ void object_prep(object_type *o_ptr, int k_idx)
 
 	/* Set cost */
 	o_ptr->cost = k_ptr->cost;
+	
+	/* Save the flags */
+	o_ptr->flags1 = k_ptr->flags1;
+	o_ptr->flags2 = k_ptr->flags2;
+	o_ptr->flags3 = k_ptr->flags3;
 
 	/* Hack -- worthless items are always "broken" */
 	if (o_ptr->cost <= 0) o_ptr->ident |= (IDENT_BROKEN);
@@ -3505,19 +3510,8 @@ static void a_m_aux_4(object_type *o_ptr)
 				if (o_ptr->pval > 0) o_ptr->timeout = randint1(o_ptr->pval);
 			}
 			
-			if (o_ptr->sval > SV_LITE_LANTERN)
-			{
-				/* Paranoia - we have an artifact!!! */
-				msg_print("Error - artifact passed to apply_magic");
-				msg_format("Object sval:%d Object flags3:%d",
-					o_ptr->sval, o_ptr->flags3);
-				msg_print("Submit a bugreport please. :-)");
-			}
-			else
-			{
-				/* Hack - remove pval */
-				o_ptr->pval = 0;
-			}
+			/* Hack - remove pval */
+			o_ptr->pval = 0;
 			
 			break;
 		}
@@ -3750,6 +3744,16 @@ void apply_magic(object_type *o_ptr, int lev, int lev_dif, byte flags)
 		else if (randint0(100) < f) flags |= OC_FORCE_BAD;
 	}
 
+	if (o_ptr->flags3 & TR3_INSTA_ART)
+	{
+		/* Paranoia - we have an artifact!!! */
+		msg_print("Error Condition - artifact passed to apply_magic");
+		msg_format("Object sval:%d Object flags3:%d",
+			o_ptr->sval, o_ptr->flags3);
+		msg_print("Submit a bugreport please. :-)");
+		return;
+	}
+	
 	/* Apply magic */
 	switch (o_ptr->tval)
 	{
