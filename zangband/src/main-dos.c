@@ -2104,13 +2104,6 @@ static void play_song(void)
 /*
  * Attempt to initialize this file
  *
- * Hack -- we assume that "blank space" should be "white space"
- * (and not "black space" which might make more sense).
- *
- * Note the use of "((x << 2) | (x >> 4))" to "expand" a 6 bit value
- * into an 8 bit value, without losing much precision, by using the 2
- * most significant bits as the least significant bits in the new value.
- *
  * We should attempt to "share" bitmaps (and fonts) between windows
  * with the same "tile" size.  XXX XXX XXX
  */

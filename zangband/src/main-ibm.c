@@ -1188,9 +1188,6 @@ void enable_graphic_font(const char *font)
 /*
  * Initialize the IBM "visual module"
  *
- * Hack -- we assume that "blank space" should be "white space"
- * (and not "black space" which might make more sense).
- *
  * Note the use of "((x << 2) | (x >> 4))" to "expand" a 6 bit value
  * into an 8 bit value, without losing much precision, by using the 2
  * most significant bits as the least significant bits in the new value.
