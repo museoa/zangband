@@ -160,6 +160,7 @@ void add_note_type(int note_number)
 			/* Saving the game */
 			sprintf(buf, "\nSession end: %s\n", long_day);
 		}
+                break;
 		
 		case NOTE_ENTER_DUNGEON:
 		{
