@@ -21,8 +21,8 @@ static void WishPanic TCL_VARARGS_DEF(char *,arg1)
     char buf[1024];
     char *format;
     
-    format = TCL_VARARGS_START(char *,arg1,argList);
-    vsprintf(buf, format, argList);
+    format = TCL_VARARGS_START(char *, arg1, argList);
+    vstrnfmt(buf, 1024, format, &argList);
 
     MessageBeep(MB_ICONEXCLAMATION);
     MessageBox(NULL, buf, "Fatal Error in Angband",

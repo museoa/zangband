@@ -458,7 +458,7 @@ int SetArrayValueChar(cptr varName, cptr field, char value)
 {
 	char string[20];
 
-	(void) sprintf(string, "%c", value);
+	strnfmt(string, 20, "%c", value);
 	if (Tcl_SetVar2(g_interp, varName, field, string, TCL_LEAVE_ERR_MSG)
 		== NULL)
 	{
@@ -474,7 +474,7 @@ int SetArrayValueLong(cptr varName, cptr field, long value)
 {
 	char string[20];
 
-	(void) sprintf(string, "%ld", value);
+	strnfmt(string, 20, "%ld", value);
 	if (Tcl_SetVar2(g_interp, varName, field, string, TCL_LEAVE_ERR_MSG)
 		== NULL)
 	{

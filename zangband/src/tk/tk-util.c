@@ -231,7 +231,7 @@ static int objcmd_palette_set(ClientData clientData, Tcl_Interp *interp, int obj
 	r = g_palette.rgb[i * 3];
 	g = g_palette.rgb[i * 3 + 1];
 	b = g_palette.rgb[i * 3 + 2];
-	(void) sprintf(buf, "#%02X%02X%02X", r, g, b);
+	strnfmt(buf, 20, "#%02X%02X%02X", r, g, b);
 	Tcl_SetResult(interp, buf, TCL_VOLATILE);
 
 	return TCL_OK;
@@ -504,7 +504,7 @@ int objcmd_fontdesc(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 
 	fontPtr = (TkFont *) tkfont;
 	
-	(void) sprintf(buf, "-family {%s} -size %d -weight %s -slant %s "
+	strnfmt(buf, 1024, "-family {%s} -size %d -weight %s -slant %s "
 		"-underline %d -overstrike %d",
 		fontPtr->fa.family, fontPtr->fa.size,
 		(fontPtr->fa.weight == TK_FW_BOLD) ? "bold" : "normal",

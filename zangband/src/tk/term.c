@@ -803,7 +803,7 @@ static int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int ob
 			yc = widgetPtr->y_min + row;
 			xc = widgetPtr->x_min + col;
 				
-			(void) sprintf(buffer, "%d %d", yc, xc);
+			strnfmt(buffer, 20, "%d %d", yc, xc);
 			Tcl_SetStringObj(Tcl_GetObjResult(interp), buffer, -1);
 
 			break;
@@ -836,7 +836,7 @@ static int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int ob
 			else
 			{
 				/* Print the current center */
-				(void) sprintf(buffer, "%d %d", widgetPtr->y, widgetPtr->x);
+				strnfmt(buffer, 20, "%d %d", widgetPtr->y, widgetPtr->x);
 		
 				/* Return the center */
 				Tcl_SetStringObj(Tcl_GetObjResult(interp), buffer, -1);
@@ -878,7 +878,7 @@ static int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int ob
 		case IDX_BOUNDS: /* bounds */
 		{
 			char buf[32];
-			(void) sprintf(buf, "%d %d %d %d",
+			strnfmt(buf, 32, "%d %d %d %d",
 				widgetPtr->y_min, widgetPtr->x_min,
 				widgetPtr->y_max - 1, widgetPtr->x_max - 1);
 			Tcl_SetStringObj(Tcl_GetObjResult(interp), buf, -1);
@@ -963,7 +963,7 @@ static int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int ob
 			yc = widgetPtr->y_min + row;
 			xc = widgetPtr->x_min + col;
 
-			(void) sprintf(buffer, "%d %d %d", yc, xc, layer);
+			strnfmt(buffer, 20, "%d %d %d", yc, xc, layer);
 			Tcl_SetStringObj(Tcl_GetObjResult(interp), buffer, -1);
 			
 			break;

@@ -167,13 +167,13 @@ char *AssignToString_Icon(char *buf, t_assign_icon *assign)
 {
 	if (assign->ascii == -1)
 	{
-		(void) sprintf(buf, "icon %s %d",
+		strnfmt(buf, 128, "icon %s %d",
 			g_icon_data[assign->type].desc,
 			assign->index);
 	}
 	else
 	{
-		(void) sprintf(buf,"icon %s %d %d",
+		strnfmt(buf, 128, "icon %s %d %d",
 			g_icon_data[assign->type].desc,
 			assign->index, assign->ascii);
 	}
@@ -992,7 +992,7 @@ static int init_ascii_data(Tcl_Interp *interp, t_icon_data *icon_data_ptr)
 		if (isprint(ch))
 		{
 			/* Get a 2-byte string */
-			(void) sprintf(buf, "%c", ch);
+			strnfmt(buf, 2, "%c", ch);
 
 			/* Calculate the width of the character */
 			width = Tk_TextWidth(icon_data_ptr->font, buf, 1);

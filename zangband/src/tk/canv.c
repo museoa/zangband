@@ -233,8 +233,7 @@ WidgetCoords(
     }
     else
     {
-		sprintf(interp->result,
-			"wrong # coordinates: expected 0 or 2, got %d", argc);
+		interp->result = format("wrong # coordinates: expected 0 or 2, got %d", argc);
 		return TCL_ERROR;
     }
     return TCL_OK;
