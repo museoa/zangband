@@ -37,7 +37,6 @@ extern byte adj_int_dis[];
 extern byte adj_dex_ta[];
 extern byte adj_str_td[];
 extern byte adj_dex_th[];
-extern byte adj_str_th[];
 extern byte adj_str_wgt[];
 extern byte adj_str_hold[];
 extern byte adj_str_dig[];
