@@ -1091,7 +1091,9 @@ static bool level_gen(cptr *why, dun_type *d_ptr)
  */
 void del_region(int rg_idx)
 {
-	int i;
+	int i, j;
+	
+	pcave_type *pc_ptr;
 
 	/* Acquire region info */
 	region_info *ri_ptr = &ri_list[rg_idx];
@@ -1118,6 +1120,21 @@ void del_region(int rg_idx)
 		 */
 		wipe_objects(rg_idx);
 		wipe_fields(rg_idx);
+		
+		/* Hack - delete player knowledge */
+		for (i = 0; i < MAX_WID; i++)
+		{
+			for (j = 0; j < MAX_HGT; j++)
+			{
+				pc_ptr = &p_ptr->pcave[j][i];
+				
+				/* Clear the player dungeon flags */
+				pc_ptr->player = 0x00;
+				
+				/* Clear the player dungeon memory */
+				forget_grid(pc_ptr);
+			}
+		}
 	}
 
 	/* Deallocate the cave information */

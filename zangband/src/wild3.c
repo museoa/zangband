@@ -2205,9 +2205,6 @@ void move_dun_level(int direction)
 
 void change_level(int level)
 {
-	int i, j;
-	pcave_type *pc_ptr;
-	
 	place_type *pl_ptr = &place[p_ptr->place_num];
 
 	bool switched = FALSE;
@@ -2263,12 +2260,6 @@ void change_level(int level)
 			/* Create wilderness */
 			init_wild_cache();
 		}
-		else
-		{
-			/* Mega-hack - redo everything */
-			del_wild_cache();
-			init_wild_cache();
-		}
 	}
 	else
 	{
@@ -2282,8 +2273,11 @@ void change_level(int level)
 		}
 
 		/* Used to be in the wilderness? */
-		if (area_aux == access_wild) switched = TRUE;
-
+		if (area_aux == access_wild)
+		{
+			/* Hack XXX XXX Delete the wilderness cache */
+			del_wild_cache();
+		}
 
 		/* 
 		 * Default bounds - allocated in generate.c
@@ -2303,26 +2297,6 @@ void change_level(int level)
 		in_bounds = in_bounds_cave;
 		in_bounds2 = in_bounds2_cave;
 		in_boundsp = in_bounds2_cave;
-
-		for (i = 0; i < MAX_WID; i++)
-		{
-			for (j = 0; j < MAX_HGT; j++)
-			{
-				pc_ptr = parea(i, j);
-
-				/* Clear the player dungeon memory */
-				forget_grid(pc_ptr);
-
-				/* Clear the player dungeon flags */
-				pc_ptr->player = 0x00;
-			}
-		}
-
-		if (switched)
-		{
-			/* Hack XXX XXX Delete the wilderness cache */
-			del_wild_cache();
-		}
 	}
 
 	/* Tell the rest of the world that the map is no longer valid */
