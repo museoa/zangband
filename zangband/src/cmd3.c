@@ -466,10 +466,10 @@ void do_cmd_destroy(void)
 	}
 
 
-	/* Describe the object */
+	/* Describe the objects to delete */
 	old_number = o_ptr->number;
 	o_ptr->number = amt;
-	o_ptr->number = old_number;
+	
 
 	/* Verify unless quantity given */
 	if (!force)
@@ -477,9 +477,15 @@ void do_cmd_destroy(void)
 		if (!(auto_destroy && (object_value(o_ptr) < 1)))
 		{
 			/* Make a verification */
-			if (!get_check("Really destroy %v? ", OBJECT_FMT(o_ptr, TRUE, 3))) return;
+			if (!get_check("Really destroy %v? ", OBJECT_FMT(o_ptr, TRUE, 3)))
+			{
+				o_ptr->number = old_number;
+				return;
+			}
 		}
 	}
+	
+	o_ptr->number = old_number;
 
 	/* No energy used yet */
 	p_ptr->energy_use = 0;
