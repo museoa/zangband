@@ -2721,11 +2721,16 @@ static errr rd_dungeon(void)
 
 	/*** Success ***/
 
-	/* The dungeon is ready */
-	if (z_older_than(2, 1, 3))
+	/* Regenerate the dungeon for old savefiles and corrupted panic-saves */
+	if (z_older_than(2, 1, 3) || (py == 0) || (px == 0))
+	{
 		character_dungeon = FALSE;
+	}
 	else
+	{
+		/* The dungeon is ready */
 		character_dungeon = TRUE;
+	}
 
 	/* Success */
 	return (0);
