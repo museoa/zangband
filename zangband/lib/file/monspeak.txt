@@ -32,6 +32,7 @@ N:8:Farmer Maggot
 seems sad about something.
 asks if you have seen his dogs.
 tells you to get off his land.
+#LOTR Book1 Chap.4
 says, "Grip! Fang! Wolf! Come on, lads!"
 says, "They won't harm you -- not unless I tell 'em to!"
 says, "Here, Grip! Fang! Heel!"
@@ -101,6 +102,7 @@ N:137:Wormtongue, Agent of Saruman
 whines and sniggers.
 whispers nasty things.
 says, 'I'll slaughter you slowly...'
+#LOTR Book3 Chap.6
 says, 'Lathspell I name you, Ill-news; and Ill-news is an ill guest they say.'
 says, 'Forbid his staff!'
 yells, 'You lie!'
@@ -277,6 +279,7 @@ whines: 'You swindler, do you seek to vilify me?'
 
 N:517:Jurt the Living Trump
 2
+#Amber Book8 Chap.4
 says: 'Only your death will set things right.'
 says: 'Don't call me clumsy!'
 
@@ -284,8 +287,11 @@ says: 'Don't call me clumsy!'
 
 N:573:Lord Borel of Hendrake
 3
+#Amber Book9 Chap.6
 says: 'You smile at your own cowardice? Stand and fight, bastard!'
+#Amber Book10 Chap.5
 says: 'I am Borel, Duke of Hendrake, Master of Arms of the Ways of Hendrake.'
+#Amber Book5 Chap.10
 'I do not want it said that I took unfair advantage of you when I killed you.'
 
 #N:595:Father Dagon
@@ -359,6 +365,7 @@ growls: 'Come here, young braggart.'
 
 N:713:Fangorn the Treebeard
 1
+#LOTR Book3 Chap.4
 says: 'Hoom, hm, ah well.'
 
 N:715:Glaurung, Father of the Dragons
@@ -419,6 +426,7 @@ says, 'Verily, it is too late for thee.'
 
 N:772:Gandalf the Grey
 3
+#LOTR Book2 Chap.5
 says, 'I am a Wielder of the Flame of Anor, you cannot pass.'
 says, 'The dark fire will not avail you, Flame of Udun.'
 says, 'Go Back to the Shadow! You cannot pass!'
@@ -441,7 +449,14 @@ says, 'Go Back to the Shadow! You cannot pass!'
 #N:817:Hela, Queen of the Dead
 #N:820:Corwin, Lord of Avalon
 #N:824:Benedict, the Ideal Warrior
-#N:825:The Witch-King of Angmar
+
+N:825:The Witch-King of Angmar
+2
+#LOTR Book5 Chap.4
+says, 'Do you not know Death when you see it?'
+#LOTR Book5 Chap.6
+says, 'Thou fool. No living man may hinder me!'
+
 #N:828:Ithaqua the Windwalker
 #N:834:Ymir the Ice Giant
 #N:835:Loki the Trickster
