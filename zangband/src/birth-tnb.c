@@ -12,7 +12,6 @@
 
 #include "angband.h"
 #include "tk/tnb.h"
-#include "tk/cmdinfo.h"
 
 #undef SHOW_LIFE_RATE
 
