@@ -731,9 +731,10 @@ static bool town_blank(int x, int y, int xsize, int ysize, int town_count)
  *
  * We have cities now...
  */
-static void init_towns(void)
+static void init_towns(int xx, int yy)
 {
 	int x, y, i;
+	bool first_try = TRUE;
 
 	wild_gen2_type *w_ptr;
 
@@ -748,10 +749,22 @@ static void init_towns(void)
 	 */
 	while (town_count < max_towns)
 	{
-		/* Get random position */
-		x = randint0(max_wild);
-		y = randint0(max_wild);
-
+		if (first_try)
+		{
+			/* Try the "easiest" spot in the wilderness */
+			x = xx;
+			y = yy;
+			
+			/* Only try once here */
+			first_try = FALSE;
+		}
+		else
+		{
+			/* Get a random position */
+			x = randint0(max_wild);
+			y = randint0(max_wild);
+		}
+		
 		/*
 		 * See if a city will fit.
 		 * (Need a 8x8 block free.)
@@ -4015,6 +4028,10 @@ void create_wilderness(void)
 
 	/* Rescale minimum. */
 	law_min *= 16;
+	
+	/* Best place in wilderness for starting town */
+	x = -1;
+	y = -1;
 
 	/* Fill wilderness with terrain */
 	for (i = 0; i < max_wild; i++)
@@ -4048,6 +4065,17 @@ void create_wilderness(void)
 
 			/* No info flags set yet */
 			w_ptr->trans.info = 0;
+
+			/* How good is this spot to put a town? */
+			if (w_ptr->trans.law_map < 20)
+			{
+				/* Only record the first such place */
+				if ((x == -1) && (y == -1))
+				{
+					x = i;
+					y = j;
+				}
+			}
 		}
 	}
 
@@ -4063,7 +4091,7 @@ void create_wilderness(void)
 	create_lakes();
 
 	/* Add towns + dungeons etc */
-	init_towns();
+	init_towns(x, y);
 
 	/* Connect the towns with roads */
 	create_roads();
