@@ -349,13 +349,6 @@ static void town_gen_hack(u16b town_num, int *xx, int *yy)
 	int rooms[MAX_STORES];
 	byte feat;
 
-	/* Hack -- Use the "simple" RNG */
-	Rand_quick = TRUE;
-
-	/* Hack -- Induce consistant town layout */
-	Rand_value = town[town_num].seed;
-
-
 	/* Prepare an Array of "remaining stores", and count them */
 	for (n = 0; n < MAX_STORES; n++) rooms[n] = n;
 
@@ -384,9 +377,15 @@ static void town_gen_hack(u16b town_num, int *xx, int *yy)
 		*yy = rand_range(3, TOWN_HGT - 4);
 		*xx = rand_range(3, TOWN_WID - 4);
 
-		/* Require a floor grid */
-		if ((cave[*yy][*xx].feat == FEAT_PEBBLES) ||
-			(cave[*yy][*xx].feat == FEAT_FLOOR)) break;
+		feat = cave[*yy][*xx].feat;
+		
+		/* If square is a shop, exit */
+		if (feat == FEAT_PERM_EXTRA) continue;
+		if ((feat >= FEAT_SHOP_HEAD) &&
+			(feat <= FEAT_SHOP_TAIL)) continue;
+		
+		/* Blank square */
+		break;
 	}
 
 	/* Put dungeon floor next to stairs so they are easy to find. */
@@ -416,9 +415,6 @@ static void town_gen_hack(u16b town_num, int *xx, int *yy)
 		/* Add an outer wall */
 		add_town_wall();
 	}
-
-	/* Hack -- use the "complex" RNG */
-	Rand_quick = FALSE;
 }
 
 
@@ -450,6 +446,12 @@ static void town_gen(u16b town_num, int *xx, int *yy)
 			cave[y][x].feat = vanilla_town ? FEAT_PERM_EXTRA : FEAT_NONE;
 		}
 	}
+	
+	/* Hack -- Use the "simple" RNG */
+	Rand_quick = TRUE;
+
+	/* Hack -- Induce consistant town layout */
+	Rand_value = town[town_num].seed;
 
 	/* Place some floors */
 	for (y = 1; y < TOWN_HGT - 1; y++)
@@ -485,7 +487,10 @@ static void town_gen(u16b town_num, int *xx, int *yy)
 	town_gen_hack(town_num, xx, yy);
 
 	/* Town is now built */
-	cur_town = town_num;
+	cur_town = town_num;	
+	
+	/* Hack -- use the "complex" RNG */
+	Rand_quick = FALSE;
 }
 
 /*
