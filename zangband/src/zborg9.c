@@ -2447,7 +2447,7 @@ static void borg_display_item(list_item *l_ptr)
     clear_region(13 - 2, 1, 30);
 
 	/* Describe fully */
-	if (l_ptr->o_name) prtf(j, 2, l_ptr->o_name);
+	if (l_ptr->o_name) prtf(j, 2, "%s", l_ptr->o_name);
 
 	prtf(j, 4, "k_idx = %-5d    tval = %-5d ",
 			   l_ptr->k_idx, l_ptr->tval);
