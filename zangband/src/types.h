@@ -1098,7 +1098,7 @@ struct owner_type
 {
 	cptr owner_name;	/* Name */
 
-	s16b max_cost;		/* Purse limit */
+	s16b max_cost;		/* Purse limit / 100 */
 
 	byte max_inflate;	/* Inflation (max) */
 	byte min_inflate;	/* Inflation (min) */

@@ -2333,7 +2333,7 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 	noneed = noneedtobargain(final_ask);
 
 	/* Get the owner's payout limit */
-	purse = (s32b)(ot_ptr->max_cost);
+	purse = (s32b)(ot_ptr->max_cost) * 100;
 
 	/* No need to haggle */
 	if (noneed || auto_haggle || (final_ask >= purse))
