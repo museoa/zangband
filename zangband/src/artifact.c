@@ -2510,6 +2510,19 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 			power_level = 3;
 	}
 
+	/* If this non-weapon has the show_mod flag */
+	if (o_ptr->tval >= TV_BOOTS &&
+		o_ptr->tval <= TV_RING &&
+		FLAG(o_ptr, TR_SHOW_MODS))
+	{
+		/* Check if it is not accidentally zero */
+		if (!o_ptr->to_h && !o_ptr->to_d)
+		{
+			/* Turn of that flag, no silly (+0, +0%) display */
+			o_ptr->flags[2] &= ~(TR2_SHOW_MODS);
+		}
+	}
+
 	if (a_scroll)
 	{
 		char dummy_name[80];
