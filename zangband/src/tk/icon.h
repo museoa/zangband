@@ -388,7 +388,6 @@ extern char *assign_print(char *buf, t_assign *assignPtr);
 extern char *assign_print2(char *buf, int assignType, int assignIndex);
 extern char *assign_print_object(char *buf, object_type *o_ptr);
 extern void get_object_assign(t_assign *assignPtr, object_type *o_ptr);
-extern void Bind_Assign(int to, int toindex, t_assign *assignPtr);
 
 extern int objcmd_vault _ANSI_ARGS_((ClientData clientData,
 		    Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]));

@@ -69,129 +69,6 @@ struct SettingGroup
 };
 
 
-/* Setting callback for autosave_freq */
-static int SettingProc_autosave_freq(SettingParam *param)
-{
-	Tcl_Interp *interp = param->interp;
-	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
-	Tcl_Obj **objv = param->objv;
-
-	int value;
-	
-	switch (param->cmd)
-	{
-		case SETTING_GET:
-			Tcl_SetIntObj(resultPtr, autosave_freq);
-			break;
-		case SETTING_DEFAULT:
-			break;
-		case SETTING_SET:
-			if (Tcl_GetIntFromObj(interp, objv[0], &value) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			if (value < 0 || value > 25000) value = 0;
-			autosave_freq = value;
-			Bind_Setting(param->setting->detail, value);
-			break;
-	}
-
-	return TCL_OK;
-}
-
-/* Setting callback for misc boolean options */
-static int SettingProc_bool(SettingParam *param)
-{
-	Tcl_Interp *interp = param->interp;
-	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
-	Tcl_Obj **objv = param->objv;
-
-	bool *var = (bool *) param->setting->data;
-	int value;
-	
-	switch (param->cmd)
-	{
-		case SETTING_GET:
-			Tcl_SetBooleanObj(resultPtr, (*var));
-			break;
-		case SETTING_DEFAULT:
-			break;
-		case SETTING_SET:
-			if (Tcl_GetBooleanFromObj(interp, objv[0], &value) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			(*var) = value;
-
-			/* XXX Hack -- don't generate <Setting> for Borg options */
-			if (param->setting->detail != -1)
-				Bind_Setting(param->setting->detail, value);
-			break;
-	}
-
-	return TCL_OK;
-}
-
-/* Setting callback for delay_factor */
-static int SettingProc_delay_factor(SettingParam *param)
-{
-	Tcl_Interp *interp = param->interp;
-	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
-	Tcl_Obj **objv = param->objv;
-
-	int value;
-	
-	switch (param->cmd)
-	{
-		case SETTING_GET:
-			Tcl_SetIntObj(resultPtr, delay_factor);
-			break;
-		case SETTING_DEFAULT:
-			break;
-		case SETTING_SET:
-			if (Tcl_GetIntFromObj(interp, objv[0], &value) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			if (value < 0 || value > 9) value = 9;
-			delay_factor = value;
-			Bind_Setting(param->setting->detail, value);
-			break;
-	}
-
-	return TCL_OK;
-}
-
-/* Setting callback for hitpoint_warn */
-static int SettingProc_hitpoint_warn(SettingParam *param)
-{
-	Tcl_Interp *interp = param->interp;
-	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
-	Tcl_Obj **objv = param->objv;
-
-	int value;
-	
-	switch (param->cmd)
-	{
-		case SETTING_GET:
-			Tcl_SetIntObj(resultPtr, hitpoint_warn);
-			break;
-		case SETTING_DEFAULT:
-			break;
-		case SETTING_SET:
-			if (Tcl_GetIntFromObj(interp, objv[0], &value) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			if (value < 0 || value > 9) value = 9;
-			hitpoint_warn = value;
-			Bind_Setting(param->setting->detail, value);
-			break;
-	}
-
-	return TCL_OK;
-}
-
 /*
  * Return the setting[] index for the setting with the given keyword.
  * Return an error if there is no such setting.
@@ -358,36 +235,6 @@ void init_settings(void)
 	/* Allocate the game settings master */
 	g_setting = Setting_Init(g_interp);
 
-	setting.name = "delay_factor";
-	setting.desc = "Base delay factor";
-	setting.proc = SettingProc_delay_factor;
-	setting.data = 0;
-	Setting_Add(g_setting, &setting);
-
-	setting.name = "hitpoint_warn";
-	setting.desc = "Base hitpoint warning";
-	setting.proc = SettingProc_hitpoint_warn;
-	setting.data = 0;
-	Setting_Add(g_setting, &setting);
-
-	setting.name = "autosave_l";
-	setting.desc = "Autosave when entering new levels";
-	setting.proc = SettingProc_bool;
-	setting.data = (void *) &autosave_l;
-	Setting_Add(g_setting, &setting);
-
-	setting.name = "autosave_t";
-	setting.desc = "Timed autosave";
-	setting.proc = SettingProc_bool;
-	setting.data = (void *) &autosave_t;
-	Setting_Add(g_setting, &setting);
-
-	setting.name = "autosave_freq";
-	setting.desc = "Timed autosave frequency";
-	setting.proc = SettingProc_autosave_freq;
-	setting.data = 0;
-	Setting_Add(g_setting, &setting);
-
 	/*
 	 * Create a list of setting keywords for use with bind.c stuff.
 	 */
@@ -398,17 +245,6 @@ void init_settings(void)
 		keyword_setting[i] = group->setting[i].name;
 	}
 	keyword_setting[i] = NULL;
-}
-
-void Bind_Option(const char *name, int value)
-{
-	int index;
-
-	if (Setting_FindByName(g_setting, (char *) name, &index) == TCL_OK)
-	{
-		SettingGroup *group = (SettingGroup *) g_setting;
-		Bind_Setting(group->setting[index].detail, value);
-	}
 }
 
 

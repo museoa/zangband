@@ -926,7 +926,7 @@ static int objcmd_assign_set(ClientData clientData, Tcl_Interp *interp, int objc
 	g_icon_map_changed = TRUE;
 
 	/* Fire off an event to inform the world of the assignment */
-	Bind_Assign(group + 1, member, assignPtr);
+	/* Bind_Assign(group + 1, member, assignPtr); */
 
 	return TCL_OK;
 }

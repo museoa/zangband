@@ -289,15 +289,6 @@ extern cptr keyword_status[];
 extern cptr keyword_target[];
 extern cptr *keyword_setting;
 extern void init_bindings(void);
-extern void Bind_Choose(int detail, int other, int show);
-extern void Bind_Cursor(int detail, int y, int x);
-extern void Bind_Generic(int eventType, int eventDetail);
-extern void Bind_Keymap(int ch);
-extern void Bind_Position(int who, int y1, int x1, int y2, int x2);
-extern void Bind_Setting(int detail, int value);
-extern void Bind_Status(int detail);
-extern void Bind_Track(int detail, int who, int y, int x);
-extern void Bind_Option(const char *name, int value);
 
 /* birth-tnb.c */
 extern void init_birth(void);

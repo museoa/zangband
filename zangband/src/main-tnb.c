@@ -320,8 +320,6 @@ static errr Term_xtra_tnb(int n, int v)
 		{
 			int flags = TCL_WINDOW_EVENTS | TCL_IDLE_EVENTS | TCL_DONT_WAIT;
 
-			Bind_Generic(EVENT_TERM, KEYWORD_TERM_FRESH + 1);
-			
 			while (Tcl_DoOneEvent(flags) != 0)
 				;
 

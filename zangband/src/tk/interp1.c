@@ -673,7 +673,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 	static cptr cmdOptions[] = {"ability", "age", "armor_class",
 		"blows_per_round", "icon", "died_from",
 		"exp", "food", "gold", "height", "history", "hitpoints",
-		"infravision", "level", "mana", "max_depth", "name", "position",
+		"infravision", "level", "mana", "max_depth", "position",
 		"sex", "shots_per_round", "social_class", "spell_book",
 		"status", "title", "to_dam", "to_hit", "weight",
 		"total_weight", "preserve", "base_name",
@@ -685,7 +685,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 	enum {IDX_ABILITY, IDX_AGE, IDX_ARMOR_CLASS,
 		IDX_BLOWS_PER_ROUND, IDX_ICON, IDX_DIED_FROM,
 		IDX_EXP, IDX_FOOD, IDX_GOLD, IDX_HEIGHT, IDX_HISTORY, IDX_HITPOINTS,
-		IDX_INFRAVISION, IDX_LEVEL, IDX_MANA, IDX_MAX_DEPTH, IDX_NAME, IDX_POSITION,
+		IDX_INFRAVISION, IDX_LEVEL, IDX_MANA, IDX_MAX_DEPTH, IDX_POSITION,
 		IDX_SEX, IDX_SHOTS_PER_ROUND, IDX_SOCIAL_CLASS, IDX_SPELL_BOOK,
 		IDX_STATUS, IDX_TITLE, IDX_TO_DAM, IDX_TO_HIT, IDX_WEIGHT,
 		IDX_TOTAL_WEIGHT, IDX_PRESERVE, IDX_BASE_NAME,
@@ -866,25 +866,6 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 	    case IDX_MAX_DEPTH: /* max_depth */
 			Tcl_SetIntObj(resultPtr, p_ptr->max_depth);
 			break; 
-
- 		case IDX_NAME: /* name */
-			if (objC == 3)
-			{
-				t = Tcl_GetStringFromObj(objV[2], NULL);
-				for (p = t; *p; p++)
-					if (iscntrl((unsigned char) p[0])) break;
-				if (*p || (p - t > 15))
-				{
-					Tcl_AppendStringsToObj(resultPtr,
-						"invalid character name \"", t, "\"", NULL);
-					return TCL_ERROR;
-				}
-				(void) strcpy(player_name, t);
-				process_player_name(FALSE);
-				Bind_Generic(EVENT_PY, KEYWORD_PY_NAME + 1);
-			}
-			ExtToUtf_SetResult(interp, (char *) player_name);
-			break;
 
 		case IDX_POSITION: /* position */
 			Tcl_SetStringObj(resultPtr, format("%d %d", p_ptr->py, p_ptr->px),
@@ -2395,8 +2376,6 @@ int angtk_eval_file(cptr extFileName)
 void angtk_cave_generated(void)
 {
 	g_icon_map_changed = TRUE;
-
-	Bind_Generic(EVENT_DUNGEON, KEYWORD_DUNGEON_GEN + 1);
 }
 
 
