@@ -1270,6 +1270,12 @@ F:STR | DEX | CON | SLAY_EVIL | SLAY_UNDEAD | SLAY_ORC |
 F:BLOWS | FREE_ACT | RES_LITE | LITE | SEE_INVIS | SHOW_MODS
 F:INSTA_ART
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
+L:MAKE: if player.rp.prace == RACE_HOBBIT then
+L:MAKE:		object.pval = 4
+L:MAKE:		object.to_h = 14
+L:MAKE:	end
+D:In a human's hands, no more than an enchanted large dagger, but a fearsome weapon 
+D:in the hands of a hobbit.
 
 # The Scimitar 'Haradekket' -> Soulsword
 
