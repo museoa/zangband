@@ -230,7 +230,6 @@ long angtk_roff(int r_idx, char *buffer)
 	if (r_ptr->flags1 & (RF1_FEMALE)) flags1 |= (RF1_FEMALE);
 
 	/* Assume some "creation" flags */
-	if (r_ptr->flags1 & (RF1_FRIEND)) flags1 |= (RF1_FRIEND);
 	if (r_ptr->flags1 & (RF1_FRIENDS)) flags1 |= (RF1_FRIENDS);
 	if (r_ptr->flags1 & (RF1_ESCORT)) flags1 |= (RF1_ESCORT);
 	if (r_ptr->flags1 & (RF1_ESCORTS)) flags1 |= (RF1_ESCORTS);
@@ -535,7 +534,6 @@ long angtk_roff(int r_idx, char *buffer)
 		}
 
 		/* Describe the "quality" */
-        if (flags2 & (RF2_ELDRITCH_HORROR)) roff2(" sanity-blasting");
 		if (flags3 & (RF3_ANIMAL)) roff2(" natural");
 		if (flags3 & (RF3_EVIL)) roff2(" evil");
         if (flags3 & (RF3_GOOD)) roff2(" good");
@@ -618,7 +616,7 @@ long angtk_roff(int r_idx, char *buffer)
 	}
 
 	/* Describe friends */
-	else if ((flags1 & (RF1_FRIEND)) || (flags1 & (RF1_FRIENDS)))
+	else if (flags1 & (RF1_FRIENDS))
 	{
 		roff2fmt(
 			"%^s usually appears in groups.  ",
