@@ -90,8 +90,11 @@ static unsigned long create_pixel(Display *dpy, byte red, byte green, byte blue)
 	{
 		cptr str = getenv("ANGBAND_X11_GAMMA");
 		if (str != NULL) gamma = atoi(str);
+		
 		gamma_table_ready = TRUE;
-		build_gamma_table(gamma);
+		
+		/* Only need to build the table if gamma exists */
+		if (gamma) build_gamma_table(gamma);
 	}
 
 	/* Hack -- Gamma Correction */
