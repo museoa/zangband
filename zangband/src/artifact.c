@@ -532,9 +532,9 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 	int radius = 0;
 	bool aimed = TRUE;
 
-	char turns_buf[20];
-	char dice_buf[20];
-	char radius_buf[20];
+	char turns_buf[40];
+	char dice_buf[40];
+	char radius_buf[40];
 	
 	char o_name[256];
 	char xtra_buf[256];
