@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: cave.c */
 
 /* Purpose: low level dungeon routines -BEN- */
@@ -56,7 +55,7 @@ int distance (int y1, int x1, int y2, int x2)
  */
 bool is_trap(cave_type *c_ptr)
 {
-	return (field_is_type(c_ptr->fld_idx, FTYPE_TRAP));
+	return (field_is_type(c_ptr->fld_idx, FTYPE_TRAP) != 0);
 }
 
 /*
