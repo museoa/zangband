@@ -155,7 +155,7 @@ void do_cmd_messages(void)
 			msg = (strlen(msg) >= q) ? (msg + q) : "";
 
 			/* Dump the messages, bottom to top */
-			Term_putstr(0, 21-j, -1, TERM_WHITE, msg);
+			Term_putstr(0, 21 - j, -1, TERM_WHITE, msg);
 
 			/* Hilite "shower" */
 			if (shower[0])
@@ -168,7 +168,7 @@ void do_cmd_messages(void)
 					int len = strlen(shower);
 
 					/* Display the match */
-					Term_putstr(str-msg, 21-j, len, TERM_YELLOW, shower);
+					Term_putstr(str - msg, 21 - j, len, TERM_YELLOW, shower);
 
 					/* Advance */
 					str += len;
@@ -178,7 +178,7 @@ void do_cmd_messages(void)
 
 		/* Display header XXX XXX XXX */
 		prt(format("Message Recall (%d-%d of %d), Offset %d",
-		    i, i+j-1, n, q), 0, 0);
+		    i, i + j - 1, n, q), 0, 0);
 
 		/* Display prompt (not very informative) */
 		prt("[Press 'p' for older, 'n' for newer, ..., or ESCAPE]", 23, 0);
@@ -437,11 +437,11 @@ static void do_cmd_options_cheat(cptr info)
 
 static option_type autosave_info[2] =
 {
-	{ &autosave_l,      FALSE, 255, 0x01, 0x00,
-	    "autosave_l",    "Autosave when entering new levels" },
+	{ &autosave_l, FALSE, 255, 0x01, 0x00,
+	  "autosave_l", "Autosave when entering new levels" },
 
-	{ &autosave_t,      FALSE, 255, 0x02, 0x00,
-	    "autosave_t",   "Timed autosave" },
+	{ &autosave_t, FALSE, 255, 0x02, 0x00,
+	  "autosave_t", "Timed autosave" },
 };
 
 
@@ -1075,6 +1075,9 @@ void do_cmd_options(void)
 
 				/* Close the file */
 				my_fclose(fff);
+
+				/* Success message */
+				msg_print("Saved default options.");
 
 				break;
 			}
@@ -2367,7 +2370,7 @@ void do_cmd_colors(void)
 				for (j = 0; j < 16; j++)
 				{
 					/* Exhibit this color */
-					Term_putstr(j*4, 20, -1, a, "###");
+					Term_putstr(j * 4, 20, -1, a, "###");
 
 					/* Exhibit all colors */
 					Term_putstr(j*4, 22, -1, j, format("%3d", j));
@@ -3396,26 +3399,25 @@ static void do_cmd_knowledge_objects(void)
  */
 static void do_cmd_knowledge_virtues(void)
 {
-	
 	FILE *fff;
-	
+
 	char file_name[1024];
-	
-	
+
+
 	/* Temporary file */
 	if (path_temp(file_name, 1024)) return;
-		
+
 	/* Open a new file */
 	fff = my_fopen(file_name, "w");
-	
+
 	if (fff) dump_virtues(fff);
-	
+
 	/* Close the file */
 	my_fclose(fff);
-	
+
 	/* Display the file contents */
 	show_file(file_name, "Virtues", 0, 0);
-	
+
 	/* Remove the file */
 	fd_kill(file_name);
 }
@@ -3589,7 +3591,7 @@ void do_cmd_knowledge(void)
 		case '3': /* Objects */
 			do_cmd_knowledge_objects();
 			break;
-		case '4': /* Kill count  */
+		case '4': /* Kill count */
 			do_cmd_knowledge_kill_count();
 			break;
 		case '5': /* Mutations */
@@ -3738,4 +3740,3 @@ void do_cmd_time(void)
 	/* Close the file */
 	my_fclose(fff);
 }
-
