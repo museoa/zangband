@@ -1889,6 +1889,12 @@ void py_attack(int y, int x)
 			/* Modify the damage */
 			k = mon_damage_mod(m_ptr, k, 0);
 
+			/* Complex message */
+			if (wizard)
+			{
+				msg_format("You do %d (out of %d) damage.", k, m_ptr->hp);
+			}
+
 			/* Damage, check for fear and death */
 			if (mon_take_hit(c_ptr->m_idx, k, &fear, NULL))
 			{
