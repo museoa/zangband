@@ -648,9 +648,9 @@ void borg_update_view(void)
 		x = borg_view_x[i];
 
 		if (!map_in_bounds(x, y)) continue;
-		
+
 		mb_ptr = map_loc(x, y);
-		
+
 		/* Clear "BORG_VIEW" flag */
 		mb_ptr->info &= ~(BORG_MAP_VIEW);
 	}
@@ -763,7 +763,7 @@ void borg_update_view(void)
 					bits3 &= ~(p->bits[3]);
 					bits4 &= ~(p->bits[4]);
 				}
-				
+
 				/* All ready seen.  Next... */
 				if (info & BORG_MAP_VIEW) continue;
 
@@ -788,31 +788,31 @@ void borg_update_view(void)
  */
 void borg_forget_view(void)
 {
-    int i;
+	int i;
 
-    map_block *mb_ptr;
+	map_block *mb_ptr;
 
-    /* None to forget */
-    if (!borg_view_n) return;
+	/* None to forget */
+	if (!borg_view_n) return;
 
-    /* Clear them all */
-    for (i = 0; i < borg_view_n; i++)
-    {
-        int y = borg_view_y[i];
-        int x = borg_view_x[i];
-		
+	/* Clear them all */
+	for (i = 0; i < borg_view_n; i++)
+	{
+		int y = borg_view_y[i];
+		int x = borg_view_x[i];
+
 		/* Bounds checking */
 		if (!map_in_bounds(x, y)) continue;
 
-        /* Access the grid */
-        mb_ptr = map_loc(x, y);
+		/* Access the grid */
+		mb_ptr = map_loc(x, y);
 
-        /* Forget that the grid is viewable */
-        mb_ptr->info &= ~BORG_MAP_VIEW;
-    }
+		/* Forget that the grid is viewable */
+		mb_ptr->info &= ~BORG_MAP_VIEW;
+	}
 
-    /* None left */
-    borg_view_n = 0;
+	/* None left */
+	borg_view_n = 0;
 }
 
 
@@ -829,8 +829,8 @@ bool borg_los(int y1, int x1, int y2, int x2)
  * the function borg_projectable().  It is slightly better.
  */
 
- if (borg_projectable(y1,x1,y2,x2)) return (TRUE);
- return (FALSE);
+	if (borg_projectable(y1, x1, y2, x2)) return (TRUE);
+	return (FALSE);
 
 }
 
@@ -842,46 +842,47 @@ bool borg_los(int y1, int x1, int y2, int x2)
  */
 bool borg_projectable(int y1, int x1, int y2, int x2)
 {
-    int dist, y, x;
+	int dist, y, x;
 
-    map_block *mb_ptr;
+	map_block *mb_ptr;
 
-    /* Start at the initial location */
-    y = y1; x = x1;
+	/* Start at the initial location */
+	y = y1;
+	x = x1;
 
-    /* Simulate the spell/missile path */
-    for (dist = 0; dist <= MAX_RANGE; dist++)
-    {
+	/* Simulate the spell/missile path */
+	for (dist = 0; dist <= MAX_RANGE; dist++)
+	{
 		/* Bounds checking */
 		if (!map_in_bounds(x, y)) break;
-	
-        /* Get the grid */
-        mb_ptr = map_loc(x, y);
 
-        if (borg_skill[BI_CURHP] < borg_skill[BI_MAXHP] / 2)
-        {
-            /* Assume all unknow grids more than distance 10 from you */
-            /* are walls--when I am wounded. This will make me more fearful */
-            if ((dist > 10) && (mb_ptr->terrain == FEAT_NONE)) break;
-        }
-        else
-        {
-            /* Assume all unknow grids more than distance 3 from you */
-            /* are walls. */
-            if ((dist > 2) && (mb_ptr->terrain == FEAT_NONE)) break;
-        }
-        /* Never pass through walls/doors */
-        if (dist && (!borg_cave_floor_grid(mb_ptr))) break;
+		/* Get the grid */
+		mb_ptr = map_loc(x, y);
 
-        /* Check for arrival at "final target" */
-        if ((x == x2) && (y == y2)) return (TRUE);
+		if (borg_skill[BI_CURHP] < borg_skill[BI_MAXHP] / 2)
+		{
+			/* Assume all unknow grids more than distance 10 from you */
+			/* are walls--when I am wounded. This will make me more fearful */
+			if ((dist > 10) && (mb_ptr->terrain == FEAT_NONE)) break;
+		}
+		else
+		{
+			/* Assume all unknow grids more than distance 3 from you */
+			/* are walls. */
+			if ((dist > 2) && (mb_ptr->terrain == FEAT_NONE)) break;
+		}
+		/* Never pass through walls/doors */
+		if (dist && (!borg_cave_floor_grid(mb_ptr))) break;
 
-        /* Calculate the new location */
-        borgmove2(&y, &x, y1, x1, y2, x2);
-    }
+		/* Check for arrival at "final target" */
+		if ((x == x2) && (y == y2)) return (TRUE);
 
-    /* Assume obstruction */
-    return (FALSE);
+		/* Calculate the new location */
+		borgmove2(&y, &x, y1, x1, y2, x2);
+	}
+
+	/* Assume obstruction */
+	return (FALSE);
 }
 
 
@@ -894,37 +895,38 @@ bool borg_projectable(int y1, int x1, int y2, int x2)
  */
 bool borg_offset_projectable(int y1, int x1, int y2, int x2)
 {
-    int dist, y, x;
+	int dist, y, x;
 
-    map_block *mb_ptr;
+	map_block *mb_ptr;
 
-    /* Start at the initial location */
-    y = y1; x = x1;
+	/* Start at the initial location */
+	y = y1;
+	x = x1;
 
-    /* Simulate the spell/missile path */
-    for (dist = 0; dist <= MAX_RANGE; dist++)
-    {
+	/* Simulate the spell/missile path */
+	for (dist = 0; dist <= MAX_RANGE; dist++)
+	{
 		/* Bounds checking */
 		if (!map_in_bounds(x, y)) break;
-	
-        /* Get the grid */
-        mb_ptr = map_loc(x, y);
 
-        /* Assume all unknown grids are walls. */
-        if ((dist) && (mb_ptr->terrain == FEAT_NONE)) break;
+		/* Get the grid */
+		mb_ptr = map_loc(x, y);
 
-        /* Never pass through walls/doors */
-        if (dist && (!borg_cave_floor_grid(mb_ptr))) break;
+		/* Assume all unknown grids are walls. */
+		if ((dist) && (mb_ptr->terrain == FEAT_NONE)) break;
 
-        /* Check for arrival at "final target" */
-        if ((x == x2) && (y == y2)) return (TRUE);
+		/* Never pass through walls/doors */
+		if (dist && (!borg_cave_floor_grid(mb_ptr))) break;
 
-        /* Calculate the new location */
-        borgmove2(&y, &x, y1, x1, y2, x2);
-    }
+		/* Check for arrival at "final target" */
+		if ((x == x2) && (y == y2)) return (TRUE);
 
-    /* Assume obstruction */
-    return (FALSE);
+		/* Calculate the new location */
+		borgmove2(&y, &x, y1, x1, y2, x2);
+	}
+
+	/* Assume obstruction */
+	return (FALSE);
 }
 
 
@@ -936,40 +938,41 @@ bool borg_offset_projectable(int y1, int x1, int y2, int x2)
  */
 bool borg_projectable_pure(int y1, int x1, int y2, int x2)
 {
-    int dist, y, x;
-   
+	int dist, y, x;
+
 	map_block *mb_ptr;
 
-    /* Start at the initial location */
-    y = y1; x = x1;
+	/* Start at the initial location */
+	y = y1;
+	x = x1;
 
-    /* Simulate the spell/missile path */
-    for (dist = 0; dist <= MAX_RANGE; dist++)
-    {
+	/* Simulate the spell/missile path */
+	for (dist = 0; dist <= MAX_RANGE; dist++)
+	{
 		/* Bounds checking */
 		if (!map_in_bounds(x, y)) break;
-		
-        /* Get the grid */
-        mb_ptr = map_loc(x, y);
 
-        /* Hack -- assume unknown grids are walls */
-        if (dist && (mb_ptr->terrain == FEAT_NONE)) break;
+		/* Get the grid */
+		mb_ptr = map_loc(x, y);
 
-        /* Never pass through walls/doors */
-        if (dist && (!borg_cave_floor_grid(mb_ptr))) break;
+		/* Hack -- assume unknown grids are walls */
+		if (dist && (mb_ptr->terrain == FEAT_NONE)) break;
 
-        /* Check for arrival at "final target" */
-        if ((x == x2) && (y == y2)) return (TRUE);
+		/* Never pass through walls/doors */
+		if (dist && (!borg_cave_floor_grid(mb_ptr))) break;
 
-        /* Stop at monsters */
-        if (mb_ptr->monster) break;
+		/* Check for arrival at "final target" */
+		if ((x == x2) && (y == y2)) return (TRUE);
 
-        /* Calculate the new location */
-        borgmove2(&y, &x, y1, x1, y2, x2);
-    }
+		/* Stop at monsters */
+		if (mb_ptr->monster) break;
 
-    /* Assume obstruction */
-    return (FALSE);
+		/* Calculate the new location */
+		borgmove2(&y, &x, y1, x1, y2, x2);
+	}
+
+	/* Assume obstruction */
+	return (FALSE);
 }
 
 

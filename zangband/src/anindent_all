@@ -245,5 +245,53 @@
 ./anindent z-virt.h
 ./anmerge z-virt.h
 
+./anindent zborg1.c
+./anmerge zborg1.c
+
+./anindent zborg1.h
+./anmerge zborg1.h
+
+./anindent zborg2.c
+./anmerge zborg2.c
+
+./anindent zborg2.h
+./anmerge zborg2.h
+
+./anindent zborg3.c
+./anmerge zborg3.c
+
+./anindent zborg3.h
+./anmerge zborg3.h
+
+./anindent zborg4.c
+./anmerge zborg4.c
+
+./anindent zborg4.h
+./anmerge zborg4.h
+
+./anindent zborg5.c
+./anmerge zborg5.c
+
+./anindent zborg5.h
+./anmerge zborg5.h
+
+./anindent zborg6.c
+./anmerge zborg6.c
+
+./anindent zborg6.h
+./anmerge zborg6.h
+
+./anindent zborg7.c
+./anmerge zborg7.c
+
+./anindent zborg7.h
+./anmerge zborg7.h
+
+./anindent zborg8.c
+./anmerge zborg8.c
+
+./anindent zborg8.h
+./anmerge zborg8.h
+
 rm ./s_back.c
 rm ./s_back.c~

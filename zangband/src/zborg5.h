@@ -38,14 +38,14 @@ typedef struct borg_wank borg_wank;
 
 struct borg_wank
 {
-    byte x;
-    byte y;
-	
+	byte x;
+	byte y;
+
 	u16b object;
 	u16b monster;
 
-    bool is_take;
-    bool is_kill;
+	bool is_take;
+	bool is_kill;
 };
 
 
@@ -73,4 +73,3 @@ extern void borg_init_5(void);
 #endif
 
 #endif
-

@@ -20,14 +20,14 @@
 /*
  * Possible values of "goal"
  */
-#define GOAL_KILL   1       /* Monsters */
-#define GOAL_TAKE   2       /* Objects */
-#define GOAL_MISC   3       /* Stores */
-#define GOAL_DARK   4       /* Exploring */
-#define GOAL_XTRA   5       /* Searching */
-#define GOAL_BORE   6       /* Leaving */
-#define GOAL_FLEE   7       /* Fleeing */
-#define GOAL_TOWN	8		/* Town Special Grid */
+#define GOAL_KILL   1			/* Monsters */
+#define GOAL_TAKE   2			/* Objects */
+#define GOAL_MISC   3			/* Stores */
+#define GOAL_DARK   4			/* Exploring */
+#define GOAL_XTRA   5			/* Searching */
+#define GOAL_BORE   6			/* Leaving */
+#define GOAL_FLEE   7			/* Fleeing */
+#define GOAL_TOWN	8			/* Town Special Grid */
 
 /*
  * Minimum "harmless" food
@@ -113,7 +113,7 @@ extern int borg_attack_aux_thrust(void);
 
 
 extern void borg_log_battle(bool);
-extern bool borg_target_unknown_wall(int g_y,int g_x);
+extern bool borg_target_unknown_wall(int g_y, int g_x);
 extern bool borg_lite_beam(bool simulation);
 extern bool borg_caution_phase(int emergency, int turns);
 
@@ -128,4 +128,3 @@ extern void borg_init_6(void);
 #endif
 
 #endif
-

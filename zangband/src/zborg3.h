@@ -47,29 +47,29 @@ typedef struct borg_mind borg_mind;
  */
 struct borg_item
 {
-    char desc[80];  /* Actual Description */
+	char desc[80];	/* Actual Description */
 
-    cptr note;      /* Pointer to tail of 'desc' */
+	cptr note;	/* Pointer to tail of 'desc' */
 
-    s16b kind;      /* Kind index */
+	s16b kind;	/* Kind index */
 
-    bool able;      /* True if item is identified */
+	bool able;	/* True if item is identified */
 
-    bool fully_identified; /* True if item is fully identified (AJG) */
+	bool fully_identified;	/* True if item is fully identified (AJG) */
 
-    bool needs_I_exam; /* True if item needs to be examined for *ID* */
+	bool needs_I_exam;	/* True if item needs to be examined for *ID* */
 
-    bool xxxx;      /* Unused */
+	bool xxxx;	/* Unused */
 
-    byte tval;      /* Item type */
-    byte sval;      /* Item sub-type */
-    s16b pval;      /* Item extra-info */
+	byte tval;	/* Item type */
+	byte sval;	/* Item sub-type */
+	s16b pval;	/* Item extra-info */
 
-    byte discount;  /* Discount */
+	byte discount;	/* Discount */
 
-    byte iqty;      /* Number of items */
+	byte iqty;	/* Number of items */
 
-    s16b weight;    /* Probable weight */
+	s16b weight;	/* Probable weight */
 
 	u16b xtra_name;	/* Extra Name (Artifacts and ego items) */
 #if 0
@@ -79,28 +79,28 @@ struct borg_item
 	 * (Since most ego items have random abilities - this
 	 * isn't too much of a problem.
 	 */
-    int name1;     /* Artifact index (if any) */
-    int name2;     /* Ego-item index (if any) */
+	int name1;	/* Artifact index (if any) */
+	int name2;	/* Ego-item index (if any) */
 #endif /* 0 */
-    s16b timeout;   /* Timeout counter */
+	s16b timeout;	/* Timeout counter */
 
-    s16b to_h;      /* Bonus to hit */
-    s16b to_d;      /* Bonus to dam */
-    s16b to_a;      /* Bonus to ac */
-    s16b ac;        /* Armor class */
-    byte dd;        /* Damage dice */
-    byte ds;        /* Damage sides */
+	s16b to_h;	/* Bonus to hit */
+	s16b to_d;	/* Bonus to dam */
+	s16b to_a;	/* Bonus to ac */
+	s16b ac;	/* Armor class */
+	byte dd;	/* Damage dice */
+	byte ds;	/* Damage sides */
 
-    byte level;     /* Level apw */
+	byte level;	/* Level apw */
 
-    s32b cost;      /* Cost (in stores) */
+	s32b cost;	/* Cost (in stores) */
 
-    s32b value;     /* Value (estimated) */
+	s32b value;	/* Value (estimated) */
 
-    bool cursed;    /* Item is cursed */
-    u32b flags1;    /* Extracted item flags (set 1) */
-    u32b flags2;    /* Extracted item flags (set 2) */
-    u32b flags3;    /* Extracted item flags (set 3) */
+	bool cursed;	/* Item is cursed */
+	u32b flags1;	/* Extracted item flags (set 1) */
+	u32b flags2;	/* Extracted item flags (set 2) */
+	u32b flags3;	/* Extracted item flags (set 3) */
 };
 
 
@@ -109,14 +109,14 @@ struct borg_item
  */
 struct borg_shop
 {
-    s16b when;      /* Time stamp */
+	s16b when;	/* Time stamp */
 
-    s16b xtra;      /* Something unused */
+	s16b xtra;	/* Something unused */
 
-    s16b page;      /* Current page */
-    s16b more;      /* Number of pages */
+	s16b page;	/* Current page */
+	s16b more;	/* Number of pages */
 
-    borg_item ware[24]; /* Store contents */
+	borg_item ware[24];	/* Store contents */
 };
 
 
@@ -125,24 +125,24 @@ struct borg_shop
  * Spell method values
  */
 
-#define BORG_MAGIC_ICK      0   /* Spell is illegible */
-#define BORG_MAGIC_NOP      1   /* Spell takes no arguments */
-#define BORG_MAGIC_EXT      2   /* Spell needs 'space' after cast */
-#define BORG_MAGIC_AIM      3   /* Spell requires a direction */
-#define BORG_MAGIC_OBJ      4   /* Spell requires a pack object */
-#define BORG_MAGIC_WHO      5   /* Spell requires a monster symbol */
+#define BORG_MAGIC_ICK      0	/* Spell is illegible */
+#define BORG_MAGIC_NOP      1	/* Spell takes no arguments */
+#define BORG_MAGIC_EXT      2	/* Spell needs 'space' after cast */
+#define BORG_MAGIC_AIM      3	/* Spell requires a direction */
+#define BORG_MAGIC_OBJ      4	/* Spell requires a pack object */
+#define BORG_MAGIC_WHO      5	/* Spell requires a monster symbol */
 
 
 /*
  * Spell status values
  */
 
-#define BORG_MAGIC_ICKY     0   /* Spell is illegible */
-#define BORG_MAGIC_LOST     1   /* Spell is forgotten */
-#define BORG_MAGIC_HIGH     2   /* Spell is high level */
-#define BORG_MAGIC_OKAY     3   /* Spell is learnable */
-#define BORG_MAGIC_TEST     4   /* Spell is untried */
-#define BORG_MAGIC_KNOW     5   /* Spell is known */
+#define BORG_MAGIC_ICKY     0	/* Spell is illegible */
+#define BORG_MAGIC_LOST     1	/* Spell is forgotten */
+#define BORG_MAGIC_HIGH     2	/* Spell is high level */
+#define BORG_MAGIC_OKAY     3	/* Spell is learnable */
+#define BORG_MAGIC_TEST     4	/* Spell is untried */
+#define BORG_MAGIC_KNOW     5	/* Spell is known */
 
 /*
  * Define some MindCraft Spells
@@ -172,27 +172,27 @@ typedef struct borg_magic borg_magic;
  */
 struct borg_magic
 {
-    cptr name;      /* Textual name */
+	cptr name;	/* Textual name */
 
-	cptr realm_name;  /* Text name of realm */
+	cptr realm_name;	/* Text name of realm */
 
-	byte realm;     /* number Realm, see defines.h */
+	byte realm;	/* number Realm, see defines.h */
 
-    byte status;    /* Status (see above) */
+	byte status;	/* Status (see above) */
 
-    byte method;    /* Method (see above) */
+	byte method;	/* Method (see above) */
 
-    byte rating;    /* Usefulness */
+	byte rating;	/* Usefulness */
 
-    byte level;     /* Required level */
+	byte level;	/* Required level */
 
-    byte power;     /* Required power */
+	byte power;	/* Required power */
 
-    byte sfail;     /* Minimum chance of failure */
+	byte sfail;	/* Minimum chance of failure */
 
-    byte cheat;     /* Actual "spell index" (or 99) */
+	byte cheat;	/* Actual "spell index" (or 99) */
 
-    s32b times;     /* Times this spell was cast */
+	s32b times;	/* Times this spell was cast */
 };
 
 /*
@@ -200,17 +200,17 @@ struct borg_magic
  */
 struct borg_mind
 {
-    cptr name;      /* Textual name */
+	cptr name;	/* Textual name */
 
-    byte level;     /* Required level */
+	byte level;	/* Required level */
 
-    byte power;     /* Required power --mana cost */
+	byte power;	/* Required power --mana cost */
 
-    byte sfail;     /* Minimum chance of failure */
+	byte sfail;	/* Minimum chance of failure */
 
-    char letter;     /* Actual "spell index" (a,b,c...) */
+	char letter;	/* Actual "spell index" (a,b,c...) */
 
-    s32b times;     /* Times this spell was cast */
+	s32b times;	/* Times this spell was cast */
 };
 
 
@@ -218,26 +218,26 @@ struct borg_mind
  * Some variables
  */
 
-extern borg_item *borg_items;       /* Current "inventory" */
+extern borg_item *borg_items;	/* Current "inventory" */
 
-extern borg_shop *borg_shops;       /* Current "shops" */
+extern borg_shop *borg_shops;	/* Current "shops" */
 
 
 /*
  * Safety arrays for simulating possible worlds
  */
 
-extern borg_item *safe_items;       /* Safety "inventory" */
-extern borg_item *safe_home;        /* Safety "home" */
+extern borg_item *safe_items;	/* Safety "inventory" */
+extern borg_item *safe_home;	/* Safety "home" */
 
-extern borg_shop *safe_shops;       /* Safety "shops" */
+extern borg_shop *safe_shops;	/* Safety "shops" */
 
 
 /*
  * Spell casting information
  */
 
-extern borg_magic borg_magics[8][4][8];    /* Spell info, including realm */
+extern borg_magic borg_magics[8][4][8];	/* Spell info, including realm */
 extern borg_mind borg_minds[MINDCRAFT_MAX];
 
 
@@ -250,14 +250,16 @@ extern int borg_wield_slot(borg_item *item);
 /*
  * Analyze an item, given a textual description
  */
-extern void borg_item_analyze(borg_item *item, object_type *real_item, cptr buf);
+extern void borg_item_analyze(borg_item *item, object_type *real_item,
+							  cptr buf);
 
 
 /* look for a *id*'d item */
-extern bool borg_object_star_id( void );
+extern bool borg_object_star_id(void);
 
 /* look for a *id*'d item */
-extern bool borg_object_star_id_aux(borg_item *borg_item, object_type *real_item);
+extern bool borg_object_star_id_aux(borg_item *borg_item,
+									object_type *real_item);
 
 /*
  * Inscribe an object
@@ -285,7 +287,7 @@ extern bool borg_refuel_lantern(void);
  * Item usage functions (by sval)
  */
 extern bool borg_eat_food(int sval);
-extern bool borg_quaff_crit( bool no_check );
+extern bool borg_quaff_crit(bool no_check);
 extern bool borg_quaff_potion(int sval);
 extern bool borg_eat_unknown(void);
 extern bool borg_use_unknown(void);
@@ -303,10 +305,10 @@ extern bool borg_inscribe_food(void);
 /*
  * Artifact usage function (by index)
  */
-extern bool borg_activate_artifact(int name1, bool secondary); /* apw */
-extern bool borg_equips_artifact(int name1, int location);  /* apw */
-extern bool borg_activate_dragon(int drag_sval); /* apw */
-extern bool borg_equips_dragon(int drag_sval);  /* apw */
+extern bool borg_activate_artifact(int name1, bool secondary);	/* apw */
+extern bool borg_equips_artifact(int name1, int location);	/* apw */
+extern bool borg_activate_dragon(int drag_sval);	/* apw */
+extern bool borg_equips_dragon(int drag_sval);	/* apw */
 
 
 /*
@@ -316,8 +318,9 @@ extern bool borg_spell_legal(int realm, int book, int what);
 extern bool borg_spell_okay(int realm, int book, int what);
 extern bool borg_spell(int realm, int book, int what);
 extern bool borg_spell_fail(int realm, int book, int what, int allow_fail);
-extern bool borg_spell_okay_fail(int realm, int book, int what, int allow_fail );
-extern bool borg_spell_legal_fail(int realm, int book, int what, int allow_fail );
+extern bool borg_spell_okay_fail(int realm, int book, int what, int allow_fail);
+extern bool borg_spell_legal_fail(int realm, int book, int what,
+								  int allow_fail);
 
 /*
  * Mindcraft Spell functions
@@ -326,8 +329,8 @@ extern bool borg_mindcr_legal(int spell, int level);
 extern bool borg_mindcr_okay(int spell, int level);
 extern bool borg_mindcr(int spell, int level);
 extern bool borg_mindcr_fail(int spell, int level, int allow_fail);
-extern bool borg_mindcr_okay_fail(int spell, int level, int allow_fail );
-extern bool borg_mindcr_legal_fail(int spell, int level, int allow_fail );
+extern bool borg_mindcr_okay_fail(int spell, int level, int allow_fail);
+extern bool borg_mindcr_legal_fail(int spell, int level, int allow_fail);
 
 /*
  * Racial abilities
@@ -362,4 +365,3 @@ extern void borg_init_3(void);
 #endif
 
 #endif
-
