@@ -209,7 +209,7 @@ static u16b find_good_dungeon(int level, int dist)
 		pl_ptr = &place[i];
 		
 		/* Want dungeons */
-		if (!pl_ptr->dungeon) continue;
+		if (pl_ptr->type != TOWN_DUNGEON) continue;
 		
 		/* Constrain distance */
 		if (distance(pl_ptr->x, pl_ptr->y, p_ptr->px / 16, p_ptr->py / 16) < dist)
@@ -924,6 +924,7 @@ void trigger_quest_complete(byte x_type, vptr data)
 				/* Wilderness quests turn off the monsters */
 				if (q_ptr->type == QUEST_TYPE_WILD)
 				{
+				
 					/* Unlink location from wilderness */
 					int x = ((u16b)p_ptr->wilderness_x / WILD_BLOCK_SIZE);
 					int y = ((u16b)p_ptr->wilderness_y / WILD_BLOCK_SIZE);
@@ -932,10 +933,14 @@ void trigger_quest_complete(byte x_type, vptr data)
 					
 					/* No more place here */
 					w_ptr->place = 0;
+					
+					/* Decrement active block counter */
+					pl_ptr->data--;
+					
+					/* Are we done yet? */
+					if (pl_ptr->data) continue;
 				}
-				
-				/* Are we done yet? */
-				if (pl_ptr->data) continue;
+				/* Else always completed on first entrance */
 
 				/* Complete the quest */
 				q_ptr->status = QUEST_STATUS_COMPLETED;
@@ -1619,15 +1624,6 @@ static quest_type *insert_find_place_quest(int dist)
 	
 	/* Get the place */
 	pl_ptr = &place[place_num];
-	
-	/*
-	 * Hack XXX XXX
-	 * Increment "active block" counter once.
-	 *
-	 * This should work somewhat differently than
-	 * the normal wilderness quests.
-	 */
-	pl_ptr->data++;
 	
 	pl_ptr->quest_num = q_num;
 	

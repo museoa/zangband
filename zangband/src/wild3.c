@@ -103,15 +103,16 @@ static void overlay_place(int x, int y, u16b w_place, blk_ptr block_ptr)
 			/* Get pointer to overlay info */
 			c_ptr = access_region(x1 + i, y1 + j, pl_ptr->region);
 
+			/* Only copy terrain if there is something there. */
+			if (c_ptr->feat != FEAT_NONE)
+			{
+				/* Copy the terrain */
+				block_ptr[j][i].feat = c_ptr->feat;
+			}
 			/* Get destination */
 			x2 = x * WILD_BLOCK_SIZE + i;
 			y2 = y * WILD_BLOCK_SIZE + j;
 
-			/* Only copy if there is something there. */
-			if (c_ptr->feat == FEAT_NONE) continue;
-
-			/* Copy the terrain */
-			block_ptr[j][i].feat = c_ptr->feat;
 
 			/*
 			 * Instantiate field
@@ -1962,9 +1963,6 @@ void move_wild(void)
 		/* Some quests are completed by walking on them */
 		if (q_ptr->x_type == QX_WILD_ENTER)
 		{
-			/* Decrement active block counter */
-			pl_ptr->data--;
-
 			/* Done? */
 			trigger_quest_complete(QX_WILD_ENTER, (vptr)q_ptr);
 		}
