@@ -620,6 +620,9 @@ bool borg_recall(void)
 static bool borg_eat_food_any(void)
 {
 	int i;
+	
+	list_item *l_ptr;
+	object_kind *k_ptr;
 
 	/* No help for some */
 	if (borg_race >= RACE_GOLEM && borg_race <= RACE_SPECTRE)
@@ -628,61 +631,58 @@ static bool borg_eat_food_any(void)
 	}
 
 	/* Scan the inventory for "normal" food */
-	for (i = 0; i < INVEN_PACK; i++)
+	for (i = 0; i < inven_num; i++)
 	{
-		borg_item *item = &borg_items[i];
+		l_ptr = &inventory[i];
 
-		/* Skip empty items */
-		if (!item->iqty) continue;
-
-		/* Skip unknown food */
-		if (!item->kind) continue;
+		/* Skip empty / unknown items */
+		if (!l_ptr->k_idx) continue;
 
 		/* Skip non-food */
-		if (item->tval != TV_FOOD) continue;
+		if (l_ptr->tval != TV_FOOD) continue;
+		
+		/* Get kind */
+		k_ptr = &k_info[l_ptr->k_idx];
 
 		/* Skip "flavored" food */
-		if (item->sval < SV_FOOD_MIN_FOOD) continue;
+		if (k_ptr->sval < SV_FOOD_MIN_FOOD) continue;
 
 		/* Eat something of that type */
-		if (borg_eat_food(item->sval)) return (TRUE);
+		if (borg_eat_food(k_ptr->sval)) return (TRUE);
 	}
 
 	/* Scan the inventory for "okay" food */
-	for (i = 0; i < INVEN_PACK; i++)
+	for (i = 0; i < inven_num; i++)
 	{
-		borg_item *item = &borg_items[i];
+		l_ptr = &inventory[i];
 
-		/* Skip empty items */
-		if (!item->iqty) continue;
-
-		/* Skip unknown food */
-		if (!item->kind) continue;
+		/* Skip empty / unknown items */
+		if (!l_ptr->k_idx) continue;
 
 		/* Skip non-food */
-		if (item->tval != TV_FOOD) continue;
+		if (l_ptr->tval != TV_FOOD) continue;
+		
+		/* Get kind */
+		k_ptr = &k_info[l_ptr->k_idx];
 
 		/* Skip "icky" food */
-		if (item->sval < SV_FOOD_MIN_FOOD) continue;
+		if (k_ptr->sval < SV_FOOD_MIN_FOOD) continue;
 
 		/* Eat something of that type */
-		if (borg_eat_food(item->sval)) return (TRUE);
+		if (borg_eat_food(k_ptr->sval)) return (TRUE);
 	}
 
 	/* Scan the inventory for "potions" food */
-	for (i = 0; i < INVEN_PACK; i++)
+	for (i = 0; i < inven_num; i++)
 	{
-		borg_item *item = &borg_items[i];
+		l_ptr = &inventory[i];
 
-		/* Skip empty items */
-		if (!item->iqty) continue;
+		/* Skip empty / unknown items */
+		if (!l_ptr->k_idx) continue;
 
-		/* Skip unknown food */
-		if (!item->kind) continue;
-
-		/* Skip non-food */
-		if (item->tval != TV_POTION) continue;
-
+		/* Skip non-potion */
+		if (l_ptr->tval != TV_POTION) continue;
+		
 		/* Consume in order, when hurting */
 		if (borg_skill[BI_CURHP] < 4 &&
 			(borg_quaff_potion(SV_POTION_CURE_LIGHT) ||
@@ -2765,7 +2765,7 @@ bool borg_caution(void)
 
 	/* About to run out of light is extremely nasty */
 	if (!borg_skill[BI_LITE] &&
-		borg_items[INVEN_LITE].timeout < 250) nasty = TRUE;
+		equipment[EQUIP_LITE].timeout < 250) nasty = TRUE;
 
 	/* Starvation is nasty */
 	if (borg_skill[BI_ISWEAK]) nasty = TRUE;
@@ -3205,24 +3205,26 @@ bool borg_caution(void)
 	/* Hack -- require light */
 	if (!borg_skill[BI_LITE])
 	{
-		borg_item *item = &borg_items[INVEN_LITE];
+		list_item *l_ptr = &equipment[EQUIP_LITE];
+		
+		object_kind *k_ptr = &k_info[l_ptr->k_idx];
 
 		/* Must have light -- Refuel current torch */
-		if ((item->tval == TV_LITE) && (item->sval == SV_LITE_TORCH))
+		if ((l_ptr->tval == TV_LITE) && (k_ptr->sval == SV_LITE_TORCH))
 		{
 			/* Try to refuel the torch */
-			if ((item->timeout < 500) && borg_refuel_torch()) return (TRUE);
+			if ((l_ptr->timeout < 500) && borg_refuel_torch()) return (TRUE);
 		}
 
 		/* Must have light -- Refuel current lantern */
-		if ((item->tval == TV_LITE) && (item->sval == SV_LITE_LANTERN))
+		if ((l_ptr->tval == TV_LITE) && (k_ptr->sval == SV_LITE_LANTERN))
 		{
 			/* Try to refill the lantern */
-			if ((item->timeout < 1000) && borg_refuel_lantern()) return (TRUE);
+			if ((l_ptr->timeout < 1000) && borg_refuel_lantern()) return (TRUE);
 		}
 
 		/* Flee for fuel */
-		if (borg_skill[BI_CDEPTH] && (item->timeout < 250))
+		if (borg_skill[BI_CDEPTH] && (l_ptr->timeout < 250))
 		{
 			/* Start leaving */
 			if (!goal_leaving)
@@ -4101,12 +4103,12 @@ static int borg_thrust_damage_one(int i)
 
 	monster_race *r_ptr;
 
-	borg_item *item;
+	list_item *l_ptr;
 
 	int chance;
 
 	/* Examine current weapon */
-	item = &borg_items[INVEN_WIELD];
+	l_ptr = &equipment[EQUIP_WIELD];
 
 	/* Monster record */
 	kill = &borg_kills[i];
@@ -4115,7 +4117,7 @@ static int borg_thrust_damage_one(int i)
 	r_ptr = &r_info[kill->r_idx];
 
 	/* Damage */
-	dam = (item->dd * (item->ds + 1) / 2);
+	dam = (l_ptr->dd * (l_ptr->ds + 1) / 2);
 
 	/* here is the place for slays and such */
 	mult = 1;
@@ -4141,7 +4143,7 @@ static int borg_thrust_damage_one(int i)
 	dam *= mult;
 
 	/* add weapon bonuses */
-	dam += item->to_d;
+	dam += l_ptr->to_d;
 
 	/* add player bonuses */
 	dam += borg_skill[BI_TODAM];
@@ -4150,7 +4152,7 @@ static int borg_thrust_damage_one(int i)
 	dam *= borg_skill[BI_BLOWS];
 
 	/* reduce for % chance to hit (AC) */
-	chance = (borg_skill[BI_THN] + ((borg_skill[BI_TOHIT] + item->to_h) * 3));
+	chance = (borg_skill[BI_THN] + ((borg_skill[BI_TOHIT] + l_ptr->to_h) * 3));
 	if ((r_ptr->ac * 3 / 4) > 0)
 		chance = (chance * 100) / (r_ptr->ac * 3 / 4);
 
@@ -4330,7 +4332,7 @@ int borg_attack_aux_thrust(void)
 			  ("# Facing %s at (%d,%d).",
 			   (r_name + r_info[mb_ptr->monster].name), g_x, g_y));
 	borg_note(format
-			  ("# Attacking with weapon '%s'", borg_items[INVEN_WIELD].desc));
+			  ("# Attacking with weapon '%s'", equipment[EQUIP_WIELD].o_name));
 
 	/* Get a direction for attacking */
 	dir = borg_extract_dir(c_x, c_y, g_x, g_y);
@@ -5757,34 +5759,27 @@ static int borg_attack_aux_launch(void)
 	int d, b_d = -1;
 
 
-	borg_item *bow = &borg_items[INVEN_BOW];
+	list_item *bow = &equipment[EQUIP_BOW];
 
 	/* Scan the pack */
-	for (k = 0; k < INVEN_PACK; k++)
+	for (k = 0; k < inven_num; k++)
 	{
-
-		borg_item *item = &borg_items[k];
-
-		/* Skip empty items */
-		if (!item->iqty) continue;
+		list_item *l_ptr = &inventory[k];
 
 		/* Skip Ego branded items--they are looked at later */
-		if (item->xtra_name) continue;
+		if (l_ptr->xtra_name) continue;
 
 		/* Skip bad missiles */
-		if (item->tval != my_ammo_tval) continue;
-
-		/* Skip worthless missiles */
-		if (item->value <= 0) continue;
+		if (l_ptr->tval != my_ammo_tval) continue;
 
 		/* Skip un-identified, non-average, missiles */
-		if (!item->able && !strstr(item->desc, "{average") &&
-			!strstr(item->desc, "{good") &&
-			!strstr(item->desc, "{excellent")) continue;
+		if (!(l_ptr->info & OB_KNOWN) && !strstr(l_ptr->o_name, "{average") &&
+			!strstr(l_ptr->o_name, "{good") &&
+			!strstr(l_ptr->o_name, "{excellent")) continue;
 
 		/* Determine average damage */
-		d = (item->dd * (item->ds + 1) / 2);
-		d = d + item->to_d + bow->to_d;
+		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
+		d = d + l_ptr->to_d + bow->to_d;
 		d = d * my_ammo_power * borg_skill[BI_SHOTS];
 
 
@@ -5813,7 +5808,7 @@ static int borg_attack_aux_launch(void)
 
 
 	/* Do it */
-	borg_note(format("# Firing standard missile '%s'", borg_items[b_k].desc));
+	borg_note(format("# Firing standard missile '%s'", inventory[b_k].o_name));
 
 	/* Fire */
 	borg_keypress('f');
@@ -5843,35 +5838,26 @@ static int borg_attack_aux_launch_seeker(void)
 	int k, b_k = -1;
 	int d, b_d = -1;
 
-
-	borg_item *bow = &borg_items[INVEN_BOW];
+	list_item *bow = &equipment[EQUIP_BOW];
 
 	/* Scan the pack */
-	for (k = 0; k < INVEN_PACK; k++)
+	for (k = 0; k < inven_num; k++)
 	{
-
-		borg_item *item = &borg_items[k];
-
-		/* Skip empty items */
-		if (!item->iqty) continue;
+		list_item *l_ptr = &inventory[k];
 
 		/* Skip non-seekers items--they are looked at later */
-		if (item->sval != SV_AMMO_HEAVY) continue;
+		if (k_info[l_ptr->k_idx].sval != SV_AMMO_HEAVY) continue;
 
 		/* Skip bad missiles */
-		if (item->tval != my_ammo_tval) continue;
-
-		/* Skip worthless missiles */
-		if (item->value <= 0) continue;
+		if (l_ptr->tval != my_ammo_tval) continue;
 
 		/* Skip un-identified, non-average, missiles */
-		if (!item->able && !strstr(item->desc, "{average")) continue;
+		if (!(l_ptr->info & OB_KNOWN) && !strstr(l_ptr->o_name, "{average")) continue;
 
 		/* Determine average damage */
-		d = (item->dd * (item->ds + 1) / 2);
-		d = d + item->to_d + bow->to_d;
+		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
+		d = d + l_ptr->to_d + bow->to_d;
 		d = d * my_ammo_power * borg_skill[BI_SHOTS];
-
 
 		/* Paranoia */
 		if (d <= 0) continue;
@@ -5897,7 +5883,7 @@ static int borg_attack_aux_launch_seeker(void)
 	if (borg_simulate) return (b_n);
 
 	/* Do it */
-	borg_note(format("# Firing seeker missile '%s'", borg_items[b_k].desc));
+	borg_note(format("# Firing seeker missile '%s'", inventory[b_k].o_name));
 
 	/* Fire */
 	borg_keypress('f');
@@ -5927,32 +5913,22 @@ static int borg_attack_aux_launch_flame(void)
 	int k, b_k = -1;
 	int d, b_d = -1;
 
-	borg_item *bow = &borg_items[INVEN_BOW];
+	list_item *bow = &equipment[EQUIP_BOW];
 
 	/* Scan the pack */
-	for (k = 0; k < INVEN_PACK; k++)
+	for (k = 0; k < inven_num; k++)
 	{
-		borg_item *item = &borg_items[k];
-
-		/* Skip empty items */
-		if (!item->iqty) continue;
-
-		if (item->sval == SV_AMMO_HEAVY) continue;
-
-		if (item->xtra_name) continue;
+		list_item *l_ptr = &inventory[k];
 
 		/* Skip bad missiles */
-		if (item->tval != my_ammo_tval) continue;
-
-		/* Skip worthless missiles */
-		if (item->value <= 0) continue;
+		if (l_ptr->tval != my_ammo_tval) continue;
 
 		/* Skip un-identified, non-average, missiles */
-		if (!item->able && !strstr(item->desc, "{average")) continue;
+		if (!(l_ptr->info & OB_KNOWN) && !strstr(l_ptr->o_name, "{average")) continue;
 
 		/* Determine average damage */
-		d = (item->dd * (item->ds + 1) / 2);
-		d = d + item->to_d + bow->to_d;
+		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
+		d = d + l_ptr->to_d + bow->to_d;
 		d = d * my_ammo_power * borg_skill[BI_SHOTS];
 
 
@@ -5982,7 +5958,7 @@ static int borg_attack_aux_launch_flame(void)
 
 	/* Do it */
 	borg_note(format("# Firing flame branded missile '%s'",
-					 borg_items[b_k].desc));
+					 inventory[b_k].o_name));
 
 	/* Fire */
 	borg_keypress('f');
@@ -6012,31 +5988,22 @@ static int borg_attack_aux_launch_frost(void)
 	int k, b_k = -1;
 	int d, b_d = -1;
 
-	borg_item *bow = &borg_items[INVEN_BOW];
+	list_item *bow = &equipment[EQUIP_BOW];
 
 	/* Scan the pack */
-	for (k = 0; k < INVEN_PACK; k++)
+	for (k = 0; k < inven_num; k++)
 	{
-		borg_item *item = &borg_items[k];
-
-		/* Skip empty items */
-		if (!item->iqty) continue;
-
-		if (item->sval == SV_AMMO_HEAVY) continue;
-		if (item->xtra_name) continue;
+		list_item *l_ptr = &inventory[k];
 
 		/* Skip bad missiles */
-		if (item->tval != my_ammo_tval) continue;
-
-		/* Skip worthless missiles */
-		if (item->value <= 0) continue;
+		if (l_ptr->tval != my_ammo_tval) continue;
 
 		/* Skip un-identified, non-average, missiles */
-		if (!item->able && !strstr(item->desc, "{average")) continue;
+		if (!(l_ptr->info & OB_KNOWN) && !strstr(l_ptr->o_name, "{average")) continue;
 
 		/* Determine average damage */
-		d = (item->dd * (item->ds + 1) / 2);
-		d = d + item->to_d + bow->to_d;
+		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
+		d = d + l_ptr->to_d + bow->to_d;
 		d = d * my_ammo_power * borg_skill[BI_SHOTS];
 
 		/* Paranoia */
@@ -6065,7 +6032,7 @@ static int borg_attack_aux_launch_frost(void)
 
 	/* Do it */
 	borg_note(format("# Firing frost branded missile '%s'",
-					 borg_items[b_k].desc));
+					 inventory[b_k].o_name));
 
 	/* Fire */
 	borg_keypress('f');
@@ -6095,31 +6062,22 @@ static int borg_attack_aux_launch_animal(void)
 	int k, b_k = -1;
 	int d, b_d = -1;
 
-	borg_item *bow = &borg_items[INVEN_BOW];
+	list_item *bow = &equipment[EQUIP_BOW];
 
 	/* Scan the pack */
-	for (k = 0; k < INVEN_PACK; k++)
+	for (k = 0; k < inven_num; k++)
 	{
-		borg_item *item = &borg_items[k];
-
-		/* Skip empty items */
-		if (!item->iqty) continue;
-
-		if (item->sval == SV_AMMO_HEAVY) continue;
-		if (item->xtra_name) continue;
+		list_item *l_ptr = &inventory[k];
 
 		/* Skip bad missiles */
-		if (item->tval != my_ammo_tval) continue;
-
-		/* Skip worthless missiles */
-		if (item->value <= 0) continue;
+		if (l_ptr->tval != my_ammo_tval) continue;
 
 		/* Skip un-identified, non-average, missiles */
-		if (!item->able && !strstr(item->desc, "{average")) continue;
+		if (!(l_ptr->info & OB_KNOWN) && !strstr(l_ptr->o_name, "{average")) continue;
 
 		/* Determine average damage */
-		d = (item->dd * (item->ds + 1) / 2);
-		d = d + item->to_d + bow->to_d;
+		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
+		d = d + l_ptr->to_d + bow->to_d;
 		d = d * my_ammo_power * borg_skill[BI_SHOTS];
 
 
@@ -6148,7 +6106,7 @@ static int borg_attack_aux_launch_animal(void)
 
 
 	/* Do it */
-	borg_note(format("# Firing animal missile '%s'", borg_items[b_k].desc));
+	borg_note(format("# Firing animal missile '%s'", inventory[b_k].o_name));
 
 	/* Fire */
 	borg_keypress('f');
@@ -6178,31 +6136,22 @@ static int borg_attack_aux_launch_evil(void)
 	int k, b_k = -1;
 	int d, b_d = -1;
 
-	borg_item *bow = &borg_items[INVEN_BOW];
+	list_item *bow = &equipment[EQUIP_BOW];
 
 	/* Scan the pack */
-	for (k = 0; k < INVEN_PACK; k++)
+	for (k = 0; k < inven_num; k++)
 	{
-		borg_item *item = &borg_items[k];
-
-		/* Skip empty items */
-		if (!item->iqty) continue;
-
-		if (item->sval == SV_AMMO_HEAVY) continue;
-		if (item->xtra_name) continue;
+		list_item *l_ptr = &inventory[k];
 
 		/* Skip bad missiles */
-		if (item->tval != my_ammo_tval) continue;
-
-		/* Skip worthless missiles */
-		if (item->value <= 0) continue;
+		if (l_ptr->tval != my_ammo_tval) continue;
 
 		/* Skip un-identified, non-average, missiles */
-		if (!item->able && !strstr(item->desc, "{average")) continue;
+		if (!(l_ptr->info & OB_KNOWN) && !strstr(l_ptr->o_name, "{average")) continue;
 
 		/* Determine average damage */
-		d = (item->dd * (item->ds + 1) / 2);
-		d = d + item->to_d + bow->to_d;
+		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
+		d = d + l_ptr->to_d + bow->to_d;
 		d = d * my_ammo_power * borg_skill[BI_SHOTS];
 
 
@@ -6232,7 +6181,7 @@ static int borg_attack_aux_launch_evil(void)
 
 	/* Do it */
 	borg_note(format("# Firing evil branded missile '%s'",
-					 borg_items[b_k].desc));
+					 inventory[b_k].o_name));
 
 	/* Fire */
 	borg_keypress('f');
@@ -6262,31 +6211,22 @@ static int borg_attack_aux_launch_dragon(void)
 	int k, b_k = -1;
 	int d, b_d = -1;
 
-	borg_item *bow = &borg_items[INVEN_BOW];
+	list_item *bow = &equipment[EQUIP_BOW];
 
 	/* Scan the pack */
-	for (k = 0; k < INVEN_PACK; k++)
+	for (k = 0; k < inven_num; k++)
 	{
-		borg_item *item = &borg_items[k];
-
-		/* Skip empty items */
-		if (!item->iqty) continue;
-
-		if (item->sval == SV_AMMO_HEAVY) continue;
-		if (item->xtra_name) continue;
+		list_item *l_ptr = &inventory[k];
 
 		/* Skip bad missiles */
-		if (item->tval != my_ammo_tval) continue;
-
-		/* Skip worthless missiles */
-		if (item->value <= 0) continue;
+		if (l_ptr->tval != my_ammo_tval) continue;
 
 		/* Skip un-identified, non-average, missiles */
-		if (!item->able && !strstr(item->desc, "{average")) continue;
+		if (!(l_ptr->info & OB_KNOWN) && !strstr(l_ptr->o_name, "{average")) continue;
 
 		/* Determine average damage */
-		d = (item->dd * (item->ds + 1) / 2);
-		d = d + item->to_d + bow->to_d;
+		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
+		d = d + l_ptr->to_d + bow->to_d;
 		d = d * my_ammo_power * borg_skill[BI_SHOTS];
 
 
@@ -6316,7 +6256,7 @@ static int borg_attack_aux_launch_dragon(void)
 
 	/* Do it */
 	borg_note(format("# Firing dragon branded missile '%s'",
-					 borg_items[b_k].desc));
+					 inventory[b_k].o_name));
 
 	/* Fire */
 	borg_keypress('f');
@@ -6346,31 +6286,22 @@ static int borg_attack_aux_launch_wounding(void)
 	int k, b_k = -1;
 	int d, b_d = -1;
 
-	borg_item *bow = &borg_items[INVEN_BOW];
+	list_item *bow = &equipment[EQUIP_BOW];
 
 	/* Scan the pack */
-	for (k = 0; k < INVEN_PACK; k++)
+	for (k = 0; k < inven_num; k++)
 	{
-		borg_item *item = &borg_items[k];
-
-		/* Skip empty items */
-		if (!item->iqty) continue;
-
-		if (item->sval == SV_AMMO_HEAVY) continue;
-		if (item->xtra_name) continue;
+		list_item *l_ptr = &inventory[k];
 
 		/* Skip bad missiles */
-		if (item->tval != my_ammo_tval) continue;
-
-		/* Skip worthless missiles */
-		if (item->value <= 0) continue;
+		if (l_ptr->tval != my_ammo_tval) continue;
 
 		/* Skip un-identified, non-average, missiles */
-		if (!item->able && !strstr(item->desc, "{average")) continue;
+		if (!(l_ptr->info & OB_KNOWN) && !strstr(l_ptr->o_name, "{average")) continue;
 
 		/* Determine average damage */
-		d = (item->dd * (item->ds + 1) / 2);
-		d = d + item->to_d + bow->to_d;
+		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
+		d = d + l_ptr->to_d + bow->to_d;
 		d = d * my_ammo_power * borg_skill[BI_SHOTS];
 
 
@@ -6400,7 +6331,7 @@ static int borg_attack_aux_launch_wounding(void)
 
 	/* Do it */
 	borg_note(format("# Firing wounding branded missile '%s'",
-					 borg_items[b_k].desc));
+					 inventory[b_k].o_name));
 
 	/* Fire */
 	borg_keypress('f');
@@ -6435,30 +6366,24 @@ static int borg_attack_aux_object(void)
 	int div, mul;
 
 	/* Scan the pack */
-	for (k = 0; k < INVEN_PACK; k++)
+	for (k = 0; k < inven_num; k++)
 	{
-		borg_item *item = &borg_items[k];
-
-		/* Skip empty items */
-		if (!item->iqty) continue;
+		list_item *l_ptr = &inventory[k];
 
 		/* Skip un-identified, non-average, objects */
-		if (!item->able && !strstr(item->desc, "{average")) continue;
+		if (!(l_ptr->info & OB_KNOWN) && !strstr(l_ptr->o_name, "{average")) continue;
 
 		/* Skip "equipment" items (not ammo) */
-		if (borg_wield_slot(item) >= 0) continue;
+		if (borg_wield_slot(l_ptr) >= 0) continue;
 
 		/* Determine average damage from object */
-		d = (k_info[item->kind].dd * (k_info[item->kind].ds + 1) / 2);
+		d = (l_ptr->dd * (l_ptr->ds + 1) / 2);
 
 		/* Skip useless stuff */
 		if (d <= 0) continue;
 
-		/* Skip "expensive" stuff */
-		if (d < item->value) continue;
-
 		/* Hack -- Save last seven flasks for fuel, if needed */
-		if (item->tval == TV_FLASK &&
+		if (l_ptr->tval == TV_FLASK &&
 			(borg_skill[BI_AFUEL] <= 7 && !borg_fighting_unique)) continue;
 
 		/* Ignore worse damage */
@@ -6472,7 +6397,7 @@ static int borg_attack_aux_object(void)
 		mul = 10;
 
 		/* Enforce a minimum "weight" of one pound */
-		div = ((item->weight > 10) ? item->weight : 10);
+		div = ((l_ptr->weight > 10) ? l_ptr->weight : 10);
 
 		/* Hack -- Distance -- Reward strength, penalize weight */
 		b_r = (adj_str_blow[my_stat_ind[A_STR]] + 20) * mul / div;
@@ -6498,7 +6423,7 @@ static int borg_attack_aux_object(void)
 
 
 	/* Do it */
-	borg_note(format("# Throwing painful object '%s'", borg_items[b_k].desc));
+	borg_note(format("# Throwing painful object '%s'", inventory[b_k].o_name));
 
 	/* Fire */
 	borg_keypress('v');
@@ -9206,7 +9131,7 @@ static int borg_defend_aux_resist_fce(int p1)
 		fail_allowed += 10;
 
 	if (!borg_spell_okay_fail(REALM_NATURE, 0, 6, fail_allowed) &&
-		!borg_equips_artifact(ART_COLLUIN, INVEN_OUTER))
+		!borg_equips_artifact(ART_COLLUIN, EQUIP_OUTER))
 		return (0);
 
 	/* pretend we are protected and look again */
@@ -9270,7 +9195,7 @@ static int borg_defend_aux_resist_fecap(int p1)
  * down.  Ought to at least wait until 3 of the 4 are down.
  */
 	if (!borg_spell_okay_fail(REALM_NATURE, 2, 3, fail_allowed) &&
-		!borg_equips_artifact(ART_COLLUIN, INVEN_OUTER) &&
+		!borg_equips_artifact(ART_COLLUIN, EQUIP_OUTER) &&
 		!borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 35, fail_allowed))
 		return (0);
 
@@ -9339,7 +9264,7 @@ static int borg_defend_aux_resist_f(int p1)
 
 	if (!borg_spell_okay_fail(REALM_ARCANE, 1, 6, fail_allowed) &&
 		!borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 20, fail_allowed) &&
-		!borg_equips_artifact(ART_COLLUIN, INVEN_OUTER) &&
+		!borg_equips_artifact(ART_COLLUIN, EQUIP_OUTER) &&
 		!borg_slot(TV_POTION, SV_POTION_RESIST_HEAT))
 		return (0);
 
@@ -9396,7 +9321,7 @@ static int borg_defend_aux_resist_c(int p1)
 		fail_allowed += 10;
 
 	if (!borg_spell_okay_fail(REALM_NATURE, 1, 7, fail_allowed) &&
-		!borg_equips_artifact(ART_COLLUIN, INVEN_OUTER) &&
+		!borg_equips_artifact(ART_COLLUIN, EQUIP_OUTER) &&
 		!borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 25, fail_allowed) &&
 		!borg_slot(TV_POTION, SV_POTION_RESIST_COLD))
 		return (0);
@@ -9455,7 +9380,7 @@ static int borg_defend_aux_resist_a(int p1)
 
 	if (!borg_spell_okay_fail(REALM_NATURE, 2, 1, fail_allowed) &&
 		!borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 15, fail_allowed) &&
-		!borg_equips_artifact(ART_COLLUIN, INVEN_OUTER))
+		!borg_equips_artifact(ART_COLLUIN, EQUIP_OUTER))
 		return (0);
 
 	save_acid = my_oppose_acid;
@@ -9508,7 +9433,7 @@ static int borg_defend_aux_resist_p(int p1)
 		fail_allowed += 10;
 
 	if (!borg_spell_okay_fail(REALM_DEATH, 0, 5, fail_allowed) &&
-		!borg_equips_artifact(ART_COLLUIN, INVEN_OUTER))
+		!borg_equips_artifact(ART_COLLUIN, EQUIP_OUTER))
 		return (0);
 
 	save_poison = my_oppose_pois;
@@ -9574,7 +9499,7 @@ static int borg_defend_aux_prot_evil(int p1)
 	if (!(mb_ptr->flags & MAP_GLOW) &&
 		borg_skill[BI_CUR_LITE] == 0) pfe_spell = FALSE;
 
-	if (borg_equips_artifact(ART_CARLAMMAS, INVEN_NECK)) pfe_spell = TRUE;
+	if (borg_equips_artifact(ART_CARLAMMAS, EQUIP_NECK)) pfe_spell = TRUE;
 
 	if (!pfe_spell) return (0);
 
@@ -9693,7 +9618,7 @@ static int borg_defend_aux_tell_away(int p1)
 	if (borg_spell_okay_fail(REALM_ARCANE, 3, 3, fail_allowed) ||
 		borg_spell_okay_fail(REALM_SORCERY, 1, 4, fail_allowed) ||
 		borg_spell_okay_fail(REALM_CHAOS, 1, 5, fail_allowed) ||
-		borg_equips_artifact(ART_ULMO, INVEN_WIELD) ||
+		borg_equips_artifact(ART_ULMO, EQUIP_WIELD) ||
 		(borg_slot(TV_WAND, SV_WAND_TELEPORT_AWAY) &&
 		 borg_slot(TV_WAND, SV_WAND_TELEPORT_AWAY)->pval))
 		spell_ok = TRUE;
@@ -10135,7 +10060,7 @@ static int borg_defend_aux_mass_genocide(void)
 	/* see if prayer is legal */
 	if (!borg_spell_okay_fail(REALM_DEATH, 2, 7, 40) &&
 		!borg_spell_okay_fail(REALM_DEATH, 3, 6, 40) &&
-		!borg_equips_artifact(ART_EONWE, INVEN_WIELD))
+		!borg_equips_artifact(ART_EONWE, EQUIP_WIELD))
 		return (0);
 
 	/* Obtain initial danger, measured over time */
@@ -10257,7 +10182,7 @@ static int borg_defend_aux_genocide(void)
 		fail_allowed += 10;
 
 	if (borg_spell_okay_fail(REALM_DEATH, 1, 6, fail_allowed) ||
-		borg_equips_artifact(ART_CELEBORN, INVEN_BODY) ||
+		borg_equips_artifact(ART_CELEBORN, EQUIP_BODY) ||
 		borg_equips_staff_fail(SV_STAFF_GENOCIDE) ||
 		(borg_slot(TV_SCROLL, SV_SCROLL_GENOCIDE)))
 	{
@@ -10468,7 +10393,7 @@ static int borg_defend_aux_genocide_hounds(void)
 		return (0);
 
 	if (borg_spell_okay_fail(REALM_DEATH, 1, 6, 35) ||
-		borg_equips_artifact(ART_CELEBORN, INVEN_BODY) ||
+		borg_equips_artifact(ART_CELEBORN, EQUIP_BODY) ||
 		borg_equips_staff_fail(SV_STAFF_GENOCIDE))
 	{
 		genocide_spell = TRUE;
@@ -11422,7 +11347,7 @@ static int borg_perma_aux_resist_colluin(void)
 	if (borg_goi) return (0);
 
 
-	if (!borg_equips_artifact(ART_COLLUIN, INVEN_OUTER))
+	if (!borg_equips_artifact(ART_COLLUIN, EQUIP_OUTER))
 		return (0);
 
 
@@ -12279,7 +12204,7 @@ bool borg_check_rest(void)
 	}
 
 	/* Do not rest with Phial or Star if it hurts */
-	if (borg_skill[BI_FEAR_LITE] && borg_items[INVEN_LITE].xtra_name)
+	if (borg_skill[BI_FEAR_LITE] && (equipment[EQUIP_LITE].kn_flags3 & TR3_INSTA_ART))
 	{
 		return (FALSE);
 	}
@@ -12392,11 +12317,11 @@ bool borg_recover(void)
 	/*** Handle annoying situations ***/
 
 	/* Refuel current torch */
-	if ((borg_items[INVEN_LITE].tval == TV_LITE) &&
-		(borg_items[INVEN_LITE].sval == SV_LITE_TORCH))
+	if ((equipment[EQUIP_LITE].tval == TV_LITE) &&
+		(k_info[equipment[EQUIP_LITE].k_idx].sval == SV_LITE_TORCH))
 	{
 		/* Refuel the torch if needed */
-		if (borg_items[INVEN_LITE].timeout < 250)
+		if (equipment[EQUIP_LITE].timeout < 250)
 		{
 			if (borg_refuel_torch()) return (TRUE);
 
@@ -12410,11 +12335,11 @@ bool borg_recover(void)
 	}
 
 	/* Refuel current lantern */
-	if ((borg_items[INVEN_LITE].tval == TV_LITE) &&
-		(borg_items[INVEN_LITE].sval == SV_LITE_LANTERN))
+	if ((equipment[EQUIP_LITE].tval == TV_LITE) &&
+		(k_info[equipment[EQUIP_LITE].k_idx].sval == SV_LITE_LANTERN))
 	{
 		/* Refuel the lantern if needed */
-		if (borg_items[INVEN_LITE].timeout < 500)
+		if (equipment[EQUIP_LITE].timeout < 500)
 		{
 			if (borg_refuel_lantern()) return (TRUE);
 
@@ -13132,8 +13057,8 @@ static bool borg_play_step(int y2, int x2)
 
 		/* Tunnel */
 		/* If I have a shovel then use it */
-		if (borg_items[weapon_swap].tval == TV_DIGGING &&
-			!(borg_items[INVEN_WIELD].cursed))
+		if (equipment[weapon_swap].tval == TV_DIGGING &&
+			!(equipment[EQUIP_WIELD].kn_flags3 & TR3_CURSED))
 		{
 			borg_note("# Swapping Digger");
 			borg_keypress(ESCAPE);
@@ -14306,7 +14231,7 @@ bool borg_flow_take(bool viewable, int nearness)
 	if (!borg_takes_cnt) return (FALSE);
 
 	/* Require one empty slot */
-	if (borg_items[INVEN_PACK - 1].iqty) return (FALSE);
+	if (inven_num >= INVEN_PACK) return (FALSE);
 
 	/* Nothing yet */
 	borg_temp_n = 0;

@@ -185,7 +185,7 @@ bool borg_item_icky(borg_item *item)
 	if (strstr(item->desc, "{good"))
 	{
 		/* Obtain the slot of the suspect item */
-		slot = borg_wield_slot(item);
+		slot = borg_wield_slot(l_ptr);
 
 		/* Obtain my equipped item in the slot */
 		item = &borg_items[slot];
@@ -3167,7 +3167,7 @@ bool borg_wear_rings(void)
 		if (!item->fully_identified && item->xtra_name) continue;
 
 		/* Where does it go */
-		slot = borg_wield_slot(item);
+		slot = borg_wield_slot(l_ptr);
 
 		/* Only process "rings" */
 		if (slot != INVEN_LEFT) continue;
@@ -3299,7 +3299,7 @@ bool borg_backup_swap(int p)
 	item = &borg_items[i];
 
 	/* Where does it go */
-	slot = borg_wield_slot(item);
+	slot = borg_wield_slot(l_ptr);
 
 	/* Save the old item (empty) */
 	COPY(&safe_items[slot], &borg_items[slot], borg_item);
@@ -3379,7 +3379,7 @@ bool borg_backup_swap(int p)
 	item = &borg_items[i];
 
 	/* Where does it go */
-	slot = borg_wield_slot(item);
+	slot = borg_wield_slot(l_ptr);
 
 	/* Save the old item (empty) */
 	COPY(&safe_items[slot], &borg_items[slot], borg_item);
@@ -3706,7 +3706,7 @@ bool borg_wear_stuff(void)
 																	   (item->name1 != ART_POWER) */ ) continue;
 
 		/* Where does it go */
-		slot = borg_wield_slot(item);
+		slot = borg_wield_slot(l_ptr);
 
 		/* Cannot wear this item */
 		if (slot < 0) continue;
@@ -4051,7 +4051,7 @@ static void borg_best_stuff_aux(int n, byte *test, byte *best, s32b *vp)
 		/* Make sure it goes in this slot, special consideration
 		 * for checking rings
 		 */
-		if (slot != borg_wield_slot(item)) continue;
+		if (slot != borg_wield_slot(l_ptr)) continue;
 
 		/* Make sure that slot does not have a cursed item */
 		if ((borg_items[slot].cursed) ||
@@ -4475,7 +4475,7 @@ bool borg_wear_recharge(void)
 		if (!o_ptr->timeout) continue;
 
 		/* Where does this belong? */
-		slot = borg_wield_slot(item);
+		slot = borg_wield_slot(l_ptr);
 
 		/* Skip stuff that can't be worn */
 		if (slot < INVEN_WIELD) continue;

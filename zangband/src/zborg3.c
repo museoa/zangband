@@ -725,35 +725,35 @@ static byte borg_magic_rating[8][4][8] =
  *
  * Returns "-1" if the item cannot (or should not) be wielded
  */
-int borg_wield_slot(borg_item *item)
+int borg_wield_slot(list_item *l_ptr)
 {
-	if ((item->tval == TV_SWORD) ||
-		(item->tval == TV_POLEARM) ||
-		(item->tval == TV_HAFTED) ||
-		(item->tval == TV_DIGGING)) return (EQUIP_WIELD);
+	if ((l_ptr->tval == TV_SWORD) ||
+		(l_ptr->tval == TV_POLEARM) ||
+		(l_ptr->tval == TV_HAFTED) ||
+		(l_ptr->tval == TV_DIGGING)) return (EQUIP_WIELD);
 
-	if ((item->tval == TV_DRAG_ARMOR) ||
-		(item->tval == TV_HARD_ARMOR) ||
-		(item->tval == TV_SOFT_ARMOR)) return (EQUIP_BODY);
+	if ((l_ptr->tval == TV_DRAG_ARMOR) ||
+		(l_ptr->tval == TV_HARD_ARMOR) ||
+		(l_ptr->tval == TV_SOFT_ARMOR)) return (EQUIP_BODY);
 
-	if (item->tval == TV_SHIELD) return (EQUIP_ARM);
+	if (l_ptr->tval == TV_SHIELD) return (EQUIP_ARM);
 
-	if ((item->tval == TV_CROWN) ||
-		(item->tval == TV_HELM)) return (EQUIP_HEAD);
+	if ((l_ptr->tval == TV_CROWN) ||
+		(l_ptr->tval == TV_HELM)) return (EQUIP_HEAD);
 
-	if (item->tval == TV_BOW) return (EQUIP_BOW);
+	if (l_ptr->tval == TV_BOW) return (EQUIP_BOW);
 
-	if (item->tval == TV_RING) return (EQUIP_LEFT);
+	if (l_ptr->tval == TV_RING) return (EQUIP_LEFT);
 
-	if (item->tval == TV_AMULET) return (EQUIP_NECK);
+	if (l_ptr->tval == TV_AMULET) return (EQUIP_NECK);
 
-	if (item->tval == TV_LITE) return (EQUIP_LITE);
+	if (l_ptr->tval == TV_LITE) return (EQUIP_LITE);
 
-	if (item->tval == TV_CLOAK) return (EQUIP_OUTER);
+	if (l_ptr->tval == TV_CLOAK) return (EQUIP_OUTER);
 
-	if (item->tval == TV_GLOVES) return (EQUIP_HANDS);
+	if (l_ptr->tval == TV_GLOVES) return (EQUIP_HANDS);
 
-	if (item->tval == TV_BOOTS) return (EQUIP_FEET);
+	if (l_ptr->tval == TV_BOOTS) return (EQUIP_FEET);
 
 	/* No slot available */
 	return (-1);

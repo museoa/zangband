@@ -590,6 +590,9 @@ static void borg_think_home_sell_aux3()
 		int num_items_given;
 		num_items_given = 0;
 
+		/* Fixme */
+		l_ptr = &home_perhaps...[i];
+
 		/* if there is no item here, go to next slot */
 		if (!borg_items[i].iqty)
 			continue;
@@ -597,7 +600,7 @@ static void borg_think_home_sell_aux3()
 
 		/* 1) eliminate garbage items (items that add nothing to an */
 		/*     empty house) */
-		borg_notice_home(&borg_items[i], FALSE);
+		borg_notice_home(l_ptr, FALSE);
 		if (borg_power_home() <= borg_empty_home_power)
 		{
 			safe_items[i].iqty = 0;
@@ -1239,7 +1242,7 @@ static bool borg_think_shop_buy_aux(void)
 			borg_shops[k].ware[n].iqty -= qty;
 
 			/* Obtain "slot" */
-			slot = borg_wield_slot(item);
+			slot = borg_wield_slot(l_ptr);
 
 /* what if the item is a ring?  we have 2 ring slots --- copy it from the Home code */
 
@@ -1417,7 +1420,7 @@ static bool borg_think_home_buy_aux(void)
 		borg_shops[BORG_HOME].ware[n].iqty -= qty;
 
 		/* Obtain "slot" */
-		slot = borg_wield_slot(item);
+		slot = borg_wield_slot(l_ptr);
 
 		/* Consider new equipment-- Must check both ring slots */
 		if (slot >= 0)
@@ -1877,7 +1880,7 @@ static bool borg_think_home_buy_swap_weapon(void)
 		if (!item->iqty) continue;
 
 		/* Obtain "slot" make sure its a weapon */
-		slot = borg_wield_slot(item);
+		slot = borg_wield_slot(l_ptr);
 		if (slot != INVEN_WIELD) continue;
 
 		/* Save shop item */
@@ -2008,7 +2011,7 @@ static bool borg_think_home_buy_swap_armour(void)
 		if (!item->iqty) continue;
 
 		/* Obtain "slot".  Elimination of non armours in borg4.c */
-		slot = borg_wield_slot(item);
+		slot = borg_wield_slot(l_ptr);
 
 
 		/* Save shop item */
@@ -2425,7 +2428,7 @@ static bool borg_think_shop_buy(void)
 		 * the shop after buying it, even though there may be a few
 		 * more items he'd like to buy.
 		 */
-		if (borg_wield_slot(item) >= INVEN_WIELD || time_this_panel > 100 ||
+		if (borg_wield_slot(l_ptr) >= INVEN_WIELD || time_this_panel > 100 ||
 			item->tval == TV_FOOD)
 		{
 			/* leave the store */

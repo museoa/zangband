@@ -234,7 +234,7 @@ extern borg_mind borg_minds[MINDCRAFT_MAX];
 /*
  * Determine which slot an item could be wielded into
  */
-extern int borg_wield_slot(borg_item *item);
+extern int borg_wield_slot(list_item *item);
 
 /*
  * Count the items of a given tval/sval
