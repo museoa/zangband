@@ -2765,8 +2765,6 @@ void field_action_hit_trap_summon(s16b *field_ptr, void *nothing)
 
 void field_action_hit_trap_lose_memory(s16b *field_ptr, void *nothing)
 {	
-	field_type *f_ptr = &fld_list[*field_ptr];
-	
 	/* Disturb the player */
 	disturb(0, 0);
 	
