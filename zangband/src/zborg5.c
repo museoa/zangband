@@ -3846,10 +3846,10 @@ static s32b borg_power_aux4(void)
 	{
 		value += 250 * MIN(bp_ptr->able.res_heat, 5);
 		value += 250 * MIN(bp_ptr->able.res_cold, 5);
-
-		/* It is counted as res_heas & cold too */
-		value += 250 * MIN(bp_ptr->able.res_all, 5);
 	}
+
+	/* It is counted as res_heas & cold too */
+	value += 250 * MIN(bp_ptr->able.res_all, 5);
 
 	/* Reward ident */
 	value += 6000 * MIN(bp_ptr->able.id, 10);

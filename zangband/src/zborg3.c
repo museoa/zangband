@@ -769,6 +769,7 @@ static cptr borg_activation[] =
 	"create stairs",
 	"alter reality",
 	"phase door",
+	"stone to mud",
 	"borg_act_max"
 };
 
@@ -2066,10 +2067,10 @@ bool borg_activate_aux2(int act_index, bool real_use)
 		}
 
 		/* Word of Recall has several entries */
-		case BORG_ACT_RECALL:
+		case BORG_ACT_WORD_OF_RECALL:
 		{
 			/* Regular try */
-			if (borg_activate_aux(BORG_ACT_RECALL, real_use))
+			if (borg_activate_aux(BORG_ACT_WORD_OF_RECALL, real_use))
 			{
 				/* success */
 				return (TRUE);

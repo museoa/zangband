@@ -32,8 +32,6 @@ int num_cure_critical;
 int num_cure_serious;
 int num_cure_light;
 
-int num_pot_rheat;
-int num_pot_rcold;
 int num_pot_resist;
 
 int num_missile;
@@ -50,9 +48,6 @@ int num_glyph;
 int num_mass_genocide;
 int num_goi_pot;
 
-int num_enchant_to_a;
-int num_enchant_to_d;
-int num_enchant_to_h;
 int num_brand_weapon;	/*apw brand bolts */
 int num_genocide;
 
@@ -2759,9 +2754,10 @@ static void borg_notice_aux2(void)
 	borg_notice_inven();
 
 
-	/*** Process the Spells and Prayers ***/
-	/*  apw  artifact activations are accounted here
-	 *  But some artifacts are not counted for two reasons .
+	/*
+	 *Process the Spells and Prayers and Artifact Activations.
+	 *
+	 *  Some artifacts are treated differently because:
 	 *  1.  Some spells-powers are needed instantly and are considered in
 	 *  the borg preparation code.  An artifact maybe non-charged at the
 	 *  moment he needes it.  Then he would need the spell and not be able
@@ -2772,11 +2768,14 @@ static void borg_notice_aux2(void)
 	 *  because his power drops since he does not have the scrolls anymore.
 	 *  and he does not buy items first.
 	 *
-	 *  A possible solution would be to have him keep a few scrolls as a
-	 *  back-up, or to remove the bonus for level preparation from borg_power.
-	 *  Right now I think it is better that he not consider the artifacts
-	 *  Whose powers are considered in borg_prep.
 	 */
+
+	/* Not too many because of the possible swap */
+	if (borg_activate_fail(BORG_ACT_SATISFY))
+	{
+		amt_food_scroll += 5;
+		bp_ptr->food += 5;
+	}
 
 	/* Handle "satisfy hunger" -> infinite food */
 	if (borg_spell_legal_fail(REALM_SORCERY, 2, 0, 40) ||
@@ -2789,6 +2788,9 @@ static void borg_notice_aux2(void)
 		bp_ptr->food += 1000;
 	}
 
+	/* Not too many because of the possible swap */
+	if (borg_activate_fail(BORG_ACT_SATISFY)) bp_ptr->able.id += 5;
+
 	/* Handle "identify" -> infinite identifies */
 	if (borg_spell_legal_fail(REALM_SORCERY, 1, 1, 60) ||
 		borg_spell_legal_fail(REALM_ARCANE, 3, 2, 60) ||
@@ -2798,7 +2800,8 @@ static void borg_notice_aux2(void)
 	}
 
 	/* Handle "*identify*" -> infinite *identifies* */
-	if (borg_spell_legal_fail(REALM_SORCERY, 1, 7, 60) ||
+	if (borg_activate_fail(BORG_ACT_STAR_IDENTIFY) ||
+		borg_spell_legal_fail(REALM_SORCERY, 1, 7, 60) ||
 		borg_spell_legal_fail(REALM_NATURE, 2, 5, 60) ||
 		borg_spell_legal_fail(REALM_DEATH, 3, 2, 60) ||
 		borg_spell_legal_fail(REALM_TRUMP, 3, 1, 60) ||
@@ -2809,20 +2812,23 @@ static void borg_notice_aux2(void)
 	}
 
 	/* Handle "remove_curse" -> infinite remove curses */
-	if (borg_spell_legal_fail(REALM_LIFE, 1, 0, 60))
+	if (borg_activate_fail(BORG_ACT_REMOVE_CURSE) ||
+		borg_spell_legal_fail(REALM_LIFE, 1, 0, 60))
 	{
 		bp_ptr->able.remove_curse += 1000;
 	}
 
 	/* Handle "*remove_curse*" -> infinite *remove curses* */
-	if (borg_spell_legal_fail(REALM_LIFE, 2, 1, 60))
+	if (borg_activate_fail(BORG_ACT_STAR_REMOVE_CURSE) ||
+		borg_spell_legal_fail(REALM_LIFE, 2, 1, 60))
 	{
 		bp_ptr->able.remove_curse += 1000;
 		bp_ptr->able.star_remove_curse += 1000;
 	}
 
 	/* Handle "detect traps, doors, stairs" */
-	if (borg_spell_legal_fail(REALM_LIFE, 0, 5, 60) ||
+	if (borg_activate_fail(BORG_ACT_DETECT_TRAP_DOOR) ||
+		borg_spell_legal_fail(REALM_LIFE, 0, 5, 60) ||
 		borg_spell_legal_fail(REALM_SORCERY, 0, 2, 60) ||
 		borg_spell_legal_fail(REALM_ARCANE, 1, 0, 60) ||
 		borg_spell_legal_fail(REALM_NATURE, 1, 2, 60) ||
@@ -2836,7 +2842,9 @@ static void borg_notice_aux2(void)
 	}
 
 	/* Handle "detect evil & monsters" */
-	if (borg_spell_legal_fail(REALM_LIFE, 0, 0, 60) ||
+	if (borg_activate_fail(BORG_ACT_DETECT_MONSTERS) ||
+		borg_activate_fail(BORG_ACT_DETECT_EVIL) ||
+		borg_spell_legal_fail(REALM_LIFE, 0, 0, 60) ||
 		borg_spell_legal_fail(REALM_SORCERY, 0, 0, 60) ||
 		borg_spell_legal_fail(REALM_NATURE, 0, 0, 60) ||
 		borg_spell_legal_fail(REALM_DEATH, 0, 0, 60) ||
@@ -2847,7 +2855,8 @@ static void borg_notice_aux2(void)
 	}
 
 	/* Handle "detection" */
-	if (borg_mindcr_legal_fail(MIND_PRECOGNIT, 30, 60))
+	if (borg_activate_fail(BORG_ACT_DETECTION) ||
+		borg_mindcr_legal_fail(MIND_PRECOGNIT, 30, 60))
 	{
 		bp_ptr->able.det_door += 1000;
 		bp_ptr->able.det_trap += 1000;
@@ -2855,7 +2864,8 @@ static void borg_notice_aux2(void)
 	}
 
 	/* Handle "magic mapping" */
-	if (borg_spell_legal_fail(REALM_SORCERY, 1, 0, 60) ||
+	if (borg_activate_fail(BORG_ACT_MAGIC_MAPPING) ||
+		borg_spell_legal_fail(REALM_SORCERY, 1, 0, 60) ||
 		borg_spell_legal_fail(REALM_NATURE, 1, 2, 60) ||
 		borg_mindcr_legal_fail(MIND_PRECOGNIT, 20, 60))
 	{
@@ -2863,7 +2873,8 @@ static void borg_notice_aux2(void)
 	}
 
 	/* Handle "light" */
-	if (borg_spell_legal_fail(REALM_LIFE, 0, 4, 60) ||
+	if (borg_activate_fail(BORG_ACT_LIGHT) ||
+		borg_spell_legal_fail(REALM_LIFE, 0, 4, 60) ||
 		borg_spell_legal_fail(REALM_SORCERY, 0, 3, 60) ||
 		borg_spell_legal_fail(REALM_NATURE, 0, 4, 60) ||
 		borg_spell_legal_fail(REALM_CHAOS, 0, 2, 60) ||
@@ -2903,13 +2914,17 @@ static void borg_notice_aux2(void)
 	}
 
 	/* Handle Diggers */
-	if (borg_spell_legal_fail(REALM_NATURE, 1, 0, 40) ||
+	if (borg_activate_fail(BORG_ACT_STONE_TO_MUD) ||
+		borg_spell_legal_fail(REALM_NATURE, 1, 0, 40) ||
 		borg_spell_legal_fail(REALM_CHAOS, 0, 6, 40) ||
 		borg_mutation_check(MUT1_EAT_ROCK, TRUE) ||
 		borg_racial_check(RACE_HALF_GIANT, TRUE))
 	{
 		amt_digger += 1;
 	}
+
+	/* Not too many, this artifact may dissappear */
+	if (borg_activate_fail(BORG_ACT_WORD_OF_RECALL)) bp_ptr->recall += 3;
 
 	/* Handle recall */
 	if (borg_spell_legal_fail(REALM_ARCANE, 3, 6, 40) ||
@@ -2921,12 +2936,16 @@ static void borg_notice_aux2(void)
 	}
 
 	/* Handle teleport_level */
-	if (borg_spell_legal_fail(REALM_SORCERY, 2, 6, 40) ||
+	if (borg_activate_fail(BORG_ACT_TELEPORT_LEVEL) ||
+		borg_spell_legal_fail(REALM_SORCERY, 2, 6, 40) ||
 		borg_spell_legal_fail(REALM_ARCANE, 3, 1, 40) ||
 		borg_spell_legal_fail(REALM_TRUMP, 1, 5, 40))
 	{
 		bp_ptr->able.teleport_level += 1000;
 	}
+
+	/* Not too many because of the possible swap */
+	if (borg_activate_fail(BORG_ACT_PHASE_DOOR)) bp_ptr->able.phase += 5;
 
 	/* Handle phase door */
 	if (borg_spell_legal_fail(REALM_SORCERY, 0, 1, 40) ||
@@ -2937,6 +2956,9 @@ static void borg_notice_aux2(void)
 	{
 		bp_ptr->able.phase += 1000;
 	}
+
+	/* Not too many because of the possible swap */
+	if (borg_activate_fail(BORG_ACT_PHASE_DOOR)) bp_ptr->able.teleport += 5;
 
 	/* Handle teleport spell carefully */
 	if (((borg_spell_okay_fail(REALM_ARCANE, 2, 3, 5) ||
@@ -2952,6 +2974,9 @@ static void borg_notice_aux2(void)
 		bp_ptr->able.teleport += 1000;
 	}
 
+	/* Not too many because of the possible swap */
+	if (borg_activate_fail(BORG_ACT_PHASE_DOOR)) bp_ptr->able.speed += 5;
+
 	/* speed spells */
 	if (borg_spell_legal_fail(REALM_SORCERY, 1, 5, 40) ||
 		borg_spell_legal_fail(REALM_DEATH, 2, 3, 40) ||
@@ -2961,7 +2986,9 @@ static void borg_notice_aux2(void)
 	}
 
 	/* berserk spells */
-	if (borg_spell_legal_fail(REALM_DEATH, 2, 0, 40) ||
+	if (borg_activate_fail(BORG_ACT_BERSERKER) ||
+		borg_activate_fail(BORG_ACT_HEROISM) ||
+		borg_spell_legal_fail(REALM_DEATH, 2, 0, 40) ||
 		borg_mindcr_legal_fail(MIND_ADRENALINE, 35, 40) ||
 		borg_mutation_check(MUT1_BERSERK, TRUE))
 	{
@@ -2975,6 +3002,9 @@ static void borg_notice_aux2(void)
 		bp_ptr->able.heal += 1000;
 	}
 
+	/* Not too many because of the possible swap */
+	if (borg_activate_fail(BORG_ACT_HEAL_BIG)) bp_ptr->able.easy_heal += 5;
+
 	/* Handle big healing spell */
 	if (borg_spell_legal_fail(REALM_LIFE, 3, 4, 2))
 	{
@@ -2982,7 +3012,8 @@ static void borg_notice_aux2(void)
 	}
 
 	/* Handle "fix exp" */
-	if (borg_spell_legal_fail(REALM_LIFE, 3, 3, 60) ||
+	if (borg_activate_fail(BORG_ACT_RESTORE_LIFE) ||
+		borg_spell_legal_fail(REALM_LIFE, 3, 3, 60) ||
 		borg_spell_legal_fail(REALM_DEATH, 1, 7, 60) ||
 		borg_racial_check(RACE_SKELETON, FALSE) ||
 		borg_racial_check(RACE_ZOMBIE, FALSE))
@@ -2991,11 +3022,21 @@ static void borg_notice_aux2(void)
 	}
 
 	/* Handle "recharge" */
-	if (borg_spell_legal_fail(REALM_ARCANE, 3, 0, 60) ||
+	if (borg_activate_fail(BORG_ACT_RECHARGE) ||
+		borg_spell_legal_fail(REALM_ARCANE, 3, 0, 60) ||
 		borg_spell_legal_fail(REALM_SORCERY, 0, 7, 60))
 	{
 		bp_ptr->able.recharge += 1000;
 	}
+
+	/* Handle resistance */
+	if (borg_activate_fail(BORG_ACT_RESISTANCE) ||
+		borg_spell_legal_fail(REALM_NATURE, 2, 3, 40) ||
+		borg_mindcr_legal_fail(MIND_CHAR_ARMOUR, 33, 40))
+	{
+		bp_ptr->able.res_all += 1000;
+	}
+
 
 	/*** Process the Needs ***/
 
@@ -3336,8 +3377,6 @@ static void borg_notice_home_clear(void)
 	num_genocide = 0;
 	num_mass_genocide = 0;
 	num_berserk = 0;
-	num_pot_rheat = 0;
-	num_pot_rcold = 0;
 	num_pot_resist = 0;
 	num_goi_pot = 0;
 
@@ -3429,11 +3468,6 @@ static void borg_notice_home_clear(void)
 	num_fix_stat[A_CON] = 0;
 	num_fix_stat[A_CHR] = 0;
 	num_fix_stat[6] = 0;
-
-	/* Reset enchantment */
-	num_enchant_to_a = 0;
-	num_enchant_to_d = 0;
-	num_enchant_to_h = 0;
 
 	home_slot_free = 0;
 	home_damage = 0;
@@ -3804,22 +3838,8 @@ static void borg_notice_home_potion(list_item *l_ptr)
 			break;
 		}
 
-		case SV_POTION_RESIST_HEAT:
-		{
-			num_pot_rheat += l_ptr->number;
-			break;
-		}
-
-		case SV_POTION_RESIST_COLD:
-		{
-			num_pot_rcold += l_ptr->number;
-			break;
-		}
-
 		case SV_POTION_RESISTANCE:
 		{
-			num_pot_rcold += l_ptr->number;
-			num_pot_rheat += l_ptr->number;
 			num_pot_resist += l_ptr->number;
 			break;
 		}
@@ -3960,24 +3980,6 @@ static void borg_notice_home_scroll(list_item *l_ptr)
 			break;
 		}
 
-		case SV_SCROLL_ENCHANT_ARMOR:
-		{
-			num_enchant_to_a += l_ptr->number;
-			break;
-		}
-
-		case SV_SCROLL_ENCHANT_WEAPON_TO_HIT:
-		{
-			num_enchant_to_h += l_ptr->number;
-			break;
-		}
-
-		case SV_SCROLL_ENCHANT_WEAPON_TO_DAM:
-		{
-			num_enchant_to_d += l_ptr->number;
-			break;
-		}
-
 		case SV_SCROLL_RUNE_OF_PROTECTION:
 		{
 			num_glyph += l_ptr->number;
@@ -4046,21 +4048,12 @@ static void borg_notice_home_spells(void)
 		num_star_remove_curse += 1000;
 	}
 
-	/* Handle "enchant weapon" */
-	if (borg_spell_legal_fail(REALM_SORCERY, 3, 4, 40))
-	{
-		num_enchant_to_h += 1000;
-		num_enchant_to_d += 1000;
-	}
-
 	/* apw Handle "rune of protection" glyph */
 	if (borg_spell_legal_fail(REALM_LIFE, 1, 7, 40) ||
 		borg_spell_legal_fail(REALM_LIFE, 2, 7, 40))
 	{
 		num_glyph += 1000;
 	}
-
-	/* handle restore */
 
 	/* Handle recall */
 	if (borg_spell_legal_fail(REALM_ARCANE, 3, 6, 40) ||
@@ -4078,6 +4071,20 @@ static void borg_notice_home_spells(void)
 	{
 		num_teleport_level += 1000;
 	}
+
+	/* Handle resistance */
+	if (borg_mindcr_legal_fail(MIND_CHAR_ARMOUR, 33, 60))
+	{
+		num_pot_resist += 1000;
+	}
+	
+	/* Handle speed */
+	if (borg_mindcr_legal_fail(MIND_ADRENALINE, 25, 40) ||
+		borg_spell_legal_fail(REALM_SORCERY, 1, 5, 40))
+	{
+		num_speed += 1000;
+	}
+
 }
 
 
@@ -4989,7 +4996,7 @@ static s32b borg_power_home_aux1(void)
  * borg gets 10000 per food item in the inv, but only for the first five.  Then
  * the borg collects some for the home and once he 10 at home he takes along
  * more in the inv.
- * The usage of home_max is a try to keep the home not too full, otherwise the
+ * The usage of 'pile' is a try to keep the home not too full, otherwise the
  * borg may spend all his money on building stock for boring items.  Otherwise
  * he'd only go down to lvl 5 when he has 99 scrolls of Word of Recall.
  */
@@ -5034,13 +5041,8 @@ static s32b borg_power_home_aux2(void)
 	/* Reward Mass Genocide scrolls. Just scrolls, mainly used for Serpent */
 	value += 1000 * MIN(num_mass_genocide, pile);
 
-	/* Reward Resistance Potions for Warriors */
-	if (borg_class == CLASS_WARRIOR)
-	{
-		value += 200 * MIN(num_pot_rheat, pile);
-		value += 200 * MIN(num_pot_rcold, pile);
-		value += 200 * MIN(num_pot_resist, pile);
-	}
+	/* Reward Resistance Potions */
+	value += 200 * MIN(num_pot_resist, pile);
 
 	/* Collect recall */
 	value += 1700 * MIN(num_recall, 20);

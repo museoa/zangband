@@ -459,7 +459,7 @@ bool borg_check_lite(void)
 	if (do_wall && (!when_detect_walls || (borg_t - when_detect_walls >= 15)))
 	{
 		/* Check for walls */
-		if (borg_activate(BORG_ACT_MAGIC_MAP) ||
+		if (borg_activate(BORG_ACT_MAGIC_MAPPING) ||
 			borg_read_scroll(SV_SCROLL_MAPPING) ||
 			borg_use_staff(SV_STAFF_MAPPING) ||
 			borg_zap_rod(SV_ROD_MAPPING) ||

@@ -312,7 +312,7 @@ bool borg_recall(void)
 
 		/* Try to "recall" */
 		if (borg_zap_rod(SV_ROD_RECALL) ||
-			borg_activate(BORG_ACT_RECALL) ||
+			borg_activate(BORG_ACT_WORD_OF_RECALL) ||
 			borg_spell_fail(REALM_SORCERY, 2, 7, 60) ||
 			borg_spell_fail(REALM_ARCANE, 3, 6, 60) ||
 			borg_spell_fail(REALM_TRUMP, 1, 6, 60) ||
