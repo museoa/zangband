@@ -2760,11 +2760,17 @@ static void make_wild_04(blk_ptr block_ptr, byte *data)
             /* Alternating grass & dirt */
             type = 3;
 			break;
-		}
-		default:
+        }
+        case 6:
 		{
             /* Dirt with building */
             type = 4;
+			break;
+        }
+		default:
+		{
+            /* Grass with building */
+            type = 5;
 			break;
 		}
 	}
@@ -2787,7 +2793,7 @@ static void make_wild_04(blk_ptr block_ptr, byte *data)
 			c_ptr = &block_ptr[j][i];
 
 			/* Place ground */
-			if (type == 1 || (type == 3 && j % 2 == 0))
+			if (type == 1 || (type == 3 && j % 2 == 0) || type == 5)
 			{
 				c_ptr->feat = FEAT_GRASS;
 			}
@@ -2797,11 +2803,16 @@ static void make_wild_04(blk_ptr block_ptr, byte *data)
 			}
 
 			if ((i >= x1) && (i <= x2) &&
-				(j >= y1) && (j <= y2) && (type == 4))
+				(j >= y1) && (j <= y2) && (type >= 4))
 			{
 				/* Build an invulnerable rectangular building */
 				c_ptr->feat = FEAT_PERM_EXTRA;
-			}
+            }
+            else if ((i >= x1 - 1) && (i <= x2 + 1) &&
+                     (j >= y1 - 1) && (j <= y2 + 1) && (type >= 4))
+            {
+                c_ptr->feat = FEAT_DIRT;
+            }
 		}
 	}
 }
