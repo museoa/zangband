@@ -130,6 +130,12 @@
 # from attack. There may be up to four of these lines; effect and
 # damage are optional.
 
+# 'O' is for object theme.  The three numbers represent the percent
+# chance to drop treasure, combat and magic items.  The chance to
+# drop tools is defined as 100 - the sum of these three numbers.
+# Note that monsters do not drop junk.  Junk can only be generated
+# in the dungeon when you enter it.
+
 # 'S' is for spells. The first S: line must be S:1_IN_X with X the
 # number of monster turns, on average, before the monster will cast
 # one of its spells. X must not be zero.
