@@ -4131,12 +4131,12 @@ static void amiga_map( void )
 
 
 	/* Draw all "interesting" features */
-	for ( i = 0; i < max_wid; i++ )
+	for ( i = 0; i < MAX_WID; i++ )
 	{
-		for ( j = 0; j < max_hgt; j++ )
+		for ( j = 0; j < MAX_HGT; j++ )
 		{
 			/* Get frame tile */
-			if ( (i == 0) || (i == max_wid - 1) || (j == 0) || (j == max_hgt - 1) )
+			if ( (i == 0) || (i == MAX_WID - 1) || (j == 0) || (j == MAX_HGT - 1) )
 			{
 				ta = f_info[63].x_attr;
 				tc = f_info[63].x_char;
@@ -4148,8 +4148,8 @@ static void amiga_map( void )
 			/* Get tile from cave table */
 			else
 			{
-            	int x = i - MAX_WID / 2 + player_x;
-                int y = j - MAX_HGT / 2 + player_y;
+            	int x = player_x + i - MAX_WID / 2;
+                int y = player_y + j - MAX_HGT / 2;
                 
                 if (!map_in_bounds(x, y)) continue;
             	
