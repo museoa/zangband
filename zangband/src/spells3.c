@@ -95,6 +95,9 @@ bool teleport_away(int m_idx, int dis)
 			/* ...nor onto the Pattern */
 			if ((c_ptr->feat >= FEAT_PATTERN_START) &&
 				(c_ptr->feat <= FEAT_PATTERN_XTRA2)) continue;
+			
+			/* Not on bad terrain */
+			if (!monster_can_cross_terrain(c_ptr->feat, r_ptr)) continue;
 
 			/* 
 			 * Test for fields that will not allow monsters to
