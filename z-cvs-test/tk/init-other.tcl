@@ -1228,24 +1228,6 @@ proc InitOther {} {
 	if {[Value tip,show]} {
 		NSModule::LoadIfNeeded NSTips
 	}
-
-	### XXX Mega-Smegga-Hack -- A character record includes a "photo.txt"
-	### entry, which describes what is seen by the character at the time
-	### of death. The problem is that the monster and object lists are
-	### wiped after dungeon(). So I create the photo.txt file whenever
-	### leaving dungeon() and the character is dead.
-	Global photoId 0
-	Global photoText ""
-	qebind PhotoFileHack <Dungeon-leave> {
-		if {[angband player is_dead]} {
-			NSModule::LoadIfNeeded NSPhoto
-			Global photoText [NSUtils::TempFileName $Angband(dir)]
-			Global photoId [NSObject::New NSPhoto]
-			NSPhoto::ExamineWidget [Global photoId] [Global main,widget]
-			NSPhoto::WritePhotoText [Global photoId] [Global photoText]
-			NSObject::Delete NSPhoto [Global photoId]
-		}
-	}
 	
 	return
 }
@@ -1320,47 +1302,8 @@ proc InitBrightnessContrast {} {
 SetRadius 1
 InitBrightnessContrast
 
-} elseif 1 {
-
-	# Nothing
-	
-} else {
-
-set darkenFile [CPathTk image darken.gif]
-if {[file exists $darkenFile]} {
-	image create photo Image_Darken -file $darkenFile
-	for {set i 0} {$i < 3} {incr i} {
-		set color {}
-		for {set y 0} {$y < 16} {incr y} {
-			for {set x 0} {$x < 16} {incr x} {
-				set rgb [Image_Darken get [expr {$x + $i * 16}] $y]
-				lappend color [eval format #%02x%02x%02x $rgb]
-			}
-		}
-		angband tint $i $color
-	}
-	image delete Image_Darken
 }
 
-}
-
-if 0 {
-
-catch {
-for {set y 0} {$y < 16} {incr y} {
-	set row {}
-	for {set x 0} {$x < 16} {incr x} {
-		lappend row [palette set [expr {$x + $y * 16}]]
-	}
-	lappend data $row
-}
-image create photo Palette -height 16 -width 16 -palette 256/256/256
-Palette put $data -to 0 0
-toplevel .palette
-label .palette.label -image Palette
-pack .palette.label
-} result
-}
 
 # Dump a list of vaults to a text window. I found a bug in a vault
 # by doing this (the height and width were reversed). We could
