@@ -4109,7 +4109,7 @@ static bool CheckEvents(bool wait)
 					if (character_dungeon && redraw_it)
 					{			
 						/* Activate term zero for the redraw */
-						Term_activate(&data[0].t);
+						Term_activate(data[0].t);
 				
 						/* redraw */
 						do_cmd_redraw_term(window);
