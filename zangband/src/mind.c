@@ -367,7 +367,7 @@ static bool cast_mindcrafter_spell(int spell)
 			break;
 		case MINDCRAFT_CHARACTER_ARMOUR:
 			/* Character Armour */
-			(void)set_shield(p_ptr->tim.shield + plev);
+			(void)inc_shield(plev);
 			if (plev > 14) (void)set_oppose_acid(p_ptr->tim.oppose_acid + plev);
 			if (plev > 19) (void)set_oppose_fire(p_ptr->tim.oppose_fire + plev);
 			if (plev > 24) (void)set_oppose_cold(p_ptr->tim.oppose_cold + plev);
@@ -405,9 +405,9 @@ static bool cast_mindcrafter_spell(int spell)
 
 			b = 10 + randint1((plev * 3) / 2);
 			if (plev < 35)
-				(void)set_hero(p_ptr->tim.hero + b);
+				(void)inc_hero(b);
 			else
-				(void)set_shero(p_ptr->tim.shero + b);
+				(void)inc_shero(b);
 
 			/* Haste */
 			(void)inc_fast(b);

@@ -265,7 +265,7 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 					(void)hp_player(30);
 				}
 				(void)clear_afraid();
-				(void)set_shero(p_ptr->tim.shero + 10 + randint1(plev));
+				(void)inc_shero(10 + randint1(plev));
 
 				break;
 			}
@@ -322,7 +322,7 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 				}
 
 				(void)clear_afraid();
-				(void)set_shero(p_ptr->tim.shero + 10 + randint1(plev));
+				(void)inc_shero(10 + randint1(plev));
 				break;
 			}
 
@@ -537,7 +537,7 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 
 			case RACE_GOLEM:
 			{
-				(void)set_shield(p_ptr->tim.shield + rand_range(30, 50));
+				(void)inc_shield(rand_range(30, 50));
 				break;
 			}
 

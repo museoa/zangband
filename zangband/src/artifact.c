@@ -1778,9 +1778,9 @@ bool activate_effect(object_type *o_ptr)
 				(void)fire_ball(GF_MISSILE, dir, 1000, 4);
 				msgf("Your armor glows many colours...");
 				(void)clear_afraid();
-				(void)set_shero(p_ptr->tim.shero + rand_range(50, 100));
+				(void)inc_shero(rand_range(50, 100));
 				(void)hp_player(30);
-				(void)set_blessed(p_ptr->tim.blessed + rand_range(50, 100));
+				(void)inc_blessed(rand_range(50, 100));
 				(void)set_oppose_acid(p_ptr->tim.oppose_acid + rand_range(50, 100));
 				(void)set_oppose_elec(p_ptr->tim.oppose_elec + rand_range(50, 100));
 				(void)set_oppose_fire(p_ptr->tim.oppose_fire + rand_range(50, 100));
@@ -1808,7 +1808,7 @@ bool activate_effect(object_type *o_ptr)
 				(void)set_stun(0);
 				(void)clear_confused();
 				(void)clear_blind();
-				(void)set_hero(p_ptr->tim.hero + rand_range(25, 50));
+				(void)inc_hero(rand_range(25, 50));
 				(void)hp_player(777);
 				o_ptr->timeout = 300;
 				break;
@@ -2808,8 +2808,8 @@ bool activate_effect(object_type *o_ptr)
 		case ACT_BERSERK:
 		{
 			msgf("The %s angers you...", o_name);
-			(void)set_shero(p_ptr->tim.shero + rand_range(50, 100));
-			(void)set_blessed(p_ptr->tim.blessed + rand_range(50, 100));
+			(void)inc_shero(rand_range(50, 100));
+			(void)inc_blessed(rand_range(50, 100));
 			o_ptr->timeout = (s16b)rand_range(100, 200);
 			break;
 		}

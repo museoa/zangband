@@ -1516,10 +1516,10 @@ static void process_world(void)
 	if (p_ptr->tim.protevil) (void)set_protevil(p_ptr->tim.protevil - 1);
 	if (p_ptr->tim.invuln) (void)set_invuln(p_ptr->tim.invuln - 1);
 	if (p_ptr->tim.wraith_form) (void)set_wraith_form(p_ptr->tim.wraith_form - 1);
-	if (p_ptr->tim.hero) (void)set_hero(p_ptr->tim.hero - 1);
-	if (p_ptr->tim.shero) (void)set_shero(p_ptr->tim.shero - 1);
-	if (p_ptr->tim.blessed) (void)set_blessed(p_ptr->tim.blessed - 1);
-	if (p_ptr->tim.shield) (void)set_shield(p_ptr->tim.shield - 1);
+	if (p_ptr->tim.hero) (void)inc_hero(-1);
+	if (p_ptr->tim.shero) (void)inc_shero(-1);
+	if (p_ptr->tim.blessed) (void)inc_blessed(-1);
+	if (p_ptr->tim.shield) (void)inc_shield(-1);
 	if (p_ptr->tim.oppose_acid) (void)set_oppose_acid(p_ptr->tim.oppose_acid - 1);
 	if (p_ptr->tim.oppose_elec) (void)set_oppose_elec(p_ptr->tim.oppose_elec - 1);
 	if (p_ptr->tim.oppose_fire) (void)set_oppose_fire(p_ptr->tim.oppose_fire - 1);

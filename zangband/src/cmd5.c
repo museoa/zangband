@@ -611,7 +611,7 @@ static bool cast_life_spell(int spell)
 			(void)set_cut(p_ptr->tim.cut - 10);
 			break;
 		case 2:				/* Bless */
-			(void)set_blessed(p_ptr->tim.blessed + rand_range(12, 24));
+			(void)inc_blessed(rand_range(12, 24));
 			break;
 		case 3:				/* Remove Fear */
 			(void)clear_afraid();
@@ -704,12 +704,12 @@ static bool cast_life_spell(int spell)
 			(void)glyph_creation();
 			break;
 		case 24:				/* Heroism */
-			(void)set_hero(p_ptr->tim.hero + rand_range(25, 50));
+			(void)inc_hero(rand_range(25, 50));
 			(void)hp_player(10);
 			(void)clear_afraid();
 			break;
 		case 25:				/* Prayer */
-			(void)set_blessed(p_ptr->tim.blessed + rand_range(50, 100));
+			(void)inc_blessed(rand_range(50, 100));
 			break;
 		case 26:
 			return bless_weapon();
@@ -739,7 +739,7 @@ static bool cast_life_spell(int spell)
 			(void)stasis_monsters(plev * 4);
 			(void)summon_specific(-1, px, py, plev, SUMMON_ANGEL, TRUE, TRUE,
 								  TRUE);
-			(void)set_shero(p_ptr->tim.shero + rand_range(25, 50));
+			(void)inc_shero(rand_range(25, 50));
 			(void)hp_player(300);
 
 			/* Haste */
@@ -998,7 +998,7 @@ static bool cast_nature_spell(int spell)
 			(void)stair_creation();
 			break;
 		case 18:				/* Stone Skin */
-			(void)set_shield(p_ptr->tim.shield + rand_range(30, 50));
+			(void)inc_shield(rand_range(30, 50));
 			break;
 		case 19:				/* Resistance True */
 			(void)set_oppose_acid(p_ptr->tim.oppose_acid + rand_range(20, 40));
@@ -1502,7 +1502,7 @@ static bool cast_death_spell(int spell)
 			(void)restore_level();
 			break;
 		case 16:				/* Berserk */
-			(void)set_shero(p_ptr->tim.shero + rand_range(25, 50));
+			(void)inc_shero(rand_range(25, 50));
 			(void)hp_player(30);
 			(void)clear_afraid();
 			break;
@@ -1640,7 +1640,7 @@ static bool cast_death_spell(int spell)
 									damroll(4 + ((plev - 5) / 4), 8));
 			break;
 		case 19:				/* Battle Frenzy */
-			(void)set_shero(p_ptr->tim.shero + rand_range(25, 50));
+			(void)inc_shero(rand_range(25, 50));
 			(void)hp_player(30);
 			(void)clear_afraid();
 			(void)inc_fast(rand_range(plev / 2, 20 + plev));
@@ -1894,7 +1894,7 @@ static bool cast_trump_spell(int spell, bool success)
 				else if (die < 42)
 				{
 					msgf("It's Justice.");
-					(void)set_blessed(p_ptr->tim.blessed + p_ptr->lev);
+					(void)inc_blessed(p_ptr->lev);
 				}
 				else if (die < 47)
 				{

@@ -611,11 +611,14 @@ bool clear_slow(void)
 }
 
 /*
- * Set "p_ptr->shield", notice observable changes
+ * Increment "p_ptr->shield", notice observable changes
  */
-bool set_shield(int v)
+bool inc_shield(int v)
 {
 	bool notice = FALSE;
+	
+	/* What will the new value be? */
+	v = v + p_ptr->tim.shield;
 
 	/* Hack -- Force good values */
 	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
@@ -665,11 +668,14 @@ bool set_shield(int v)
 
 
 /*
- * Set "p_ptr->blessed", notice observable changes
+ * Increment "p_ptr->blessed", notice observable changes
  */
-bool set_blessed(int v)
+bool inc_blessed(int v)
 {
 	bool notice = FALSE;
+	
+	/* What will the new value be? */
+	v = v + p_ptr->tim.blessed;
 
 	/* Hack -- Force good values */
 	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
@@ -718,11 +724,14 @@ bool set_blessed(int v)
 
 
 /*
- * Set "p_ptr->hero", notice observable changes
+ * Increment "p_ptr->hero", notice observable changes
  */
-bool set_hero(int v)
+bool inc_hero(int v)
 {
 	bool notice = FALSE;
+
+	/* What will the new value be? */
+	v = v + p_ptr->tim.hero;
 
 	/* Hack -- Force good values */
 	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
@@ -774,11 +783,14 @@ bool set_hero(int v)
 
 
 /*
- * Set "p_ptr->shero", notice observable changes
+ * Increment "p_ptr->shero", notice observable changes
  */
-bool set_shero(int v)
+bool inc_shero(int v)
 {
 	bool notice = FALSE;
+
+	/* What will the new value be? */
+	v = v + p_ptr->tim.shero;
 
 	/* Hack -- Force good values */
 	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;

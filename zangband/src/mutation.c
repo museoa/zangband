@@ -1118,7 +1118,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 			(void)hp_player(30);
 		}
 
-		(void)set_shero(p_ptr->tim.shero + rand_range(25, 50));
+		(void)inc_shero(rand_range(25, 50));
 		(void)clear_afraid();
 	}
 
@@ -1368,7 +1368,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 		disturb(FALSE);
 		msgf("RAAAAGHH!");
 		msgf("You feel a fit of rage coming over you!");
-		(void)set_shero(p_ptr->tim.shero + 10 + randint1(p_ptr->lev));
+		(void)inc_shero(10 + randint1(p_ptr->lev));
 	}
 
 	else if (mut_ptr->which == MUT2_COWARDICE)
