@@ -6613,6 +6613,9 @@ field_action f_action[FIELD_ACTION_TYPES] =
 	/* Lose Memory Trap */
 	{field_action_hit_trap_lose_memory, "field_action_hit_trap_lose_memory"},
 	
+	/* Initialise a field with a counter */
+	{field_action_counter_init, "field_action_counter_init"},
+	
 	/* Attempt to unlock a door */
 	{field_action_door_unlock, "field_action_door_unlock"},
 		

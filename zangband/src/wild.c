@@ -578,11 +578,14 @@ static void overlay_town(int y, int x, u16b w_town, blk_ptr block_ptr)
 				case FT_LOCK_DOOR:
 				case FT_JAM_DOOR:
 				{
+					int data = 9;
+					
 					/* Add a door field */
 					if (place_field(y * 16 + j, x * 16 + i, c_ptr->fld_idx))
 					{
 						/* Add "power" of lock / jam to the field */
-						fld_list[block_ptr[j][i].fld_idx].counter = 9;
+						(void)field_hook_single(&block_ptr[j][i].fld_idx,
+							 FIELD_ACT_INIT, &data);
 					}
 					
 					break;

@@ -3026,14 +3026,57 @@ void make_lockjam_door(int y, int x, int power, bool jam)
 		return;
 	}
 	
-	/* Point to the field */
-	f_ptr = &fld_list[fld_idx];
+	power = power + old_power;
 	
-	/* Add "power" of lock / spikes to the field */
-	f_ptr->counter += power + old_power;
+	/* 
+	 * Initialise it.
+	 * Hack - note that hack_fld_ptr is a global that is overwritten
+	 * by the place_field() function.
+	 */
+	(void)field_hook_single(hack_fld_ptr, FIELD_ACT_INIT, (void *) &power);
+}
+
+/*
+ * Initialise a field with a counter
+ */
+void field_action_counter_init(s16b *field_ptr, void *input)
+{
+	field_type *f_ptr = &fld_list[*field_ptr];
+	
+	int *value = (int *) input;
+	int max;
+	int new_value;
+	
+	/* 
+	 * Add the value to the counter
+	 * but not if the counter will overflow.
+	 * data[6] and data[7] control the counter maximum.
+	 */
+	max = f_ptr->data[6] * 256 + f_ptr->data[7];
+	
+	new_value = f_ptr->counter + *value;
 	
 	/* Bounds checking */
-	if (f_ptr->counter > 25) f_ptr->counter = 25;
+	if (new_value > max)
+	{
+		f_ptr->counter = max;
+	}
+	else if (new_value < 0)
+	{
+		f_ptr->counter = 0;
+		
+		/* Call completion routine */
+		if (field_hook_single(field_ptr, FIELD_ACT_EXIT, NULL))
+		{
+			/* It didn't delete itself - do it now */
+			delete_field_ptr(field_ptr);
+		}
+	}
+	else
+	{
+		/* Store in the new value */
+		f_ptr->counter = new_value;
+	}
 }
 
 
