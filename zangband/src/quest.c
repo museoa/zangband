@@ -194,7 +194,7 @@ static void insert_winner_quest(u16b r_idx, u16b num, u16b level)
 /*
  * Look for an appropriate dungeon for a given level
  */
-static u16b find_good_dungeon(int level, int dist)
+static u16b find_good_dungeon(int level, bool repeat)
 {
 	int i;
 	
@@ -210,19 +210,16 @@ static u16b find_good_dungeon(int level, int dist)
 		
 		/* Want dungeons */
 		if (pl_ptr->type != TOWN_DUNGEON) continue;
+
+		/* Reuse this dungeon? (relevant for quest_find_place) */
+		if (!repeat && pl_ptr->quest_num) continue;
 		
-		/* Constrain distance */
-		if (distance(pl_ptr->x, pl_ptr->y, p_ptr->px / 16, p_ptr->py / 16) < dist)
-		{
-			continue;
-		}
-	
 		/* Get difference in levels */
-		score = abs(pl_ptr->dungeon->max_level - level);
+		score = ABS(pl_ptr->dungeon->max_level - level);
 		
 		/* The bigger the difference, the less likely a high score is */
 		score = randint1(127 - score); 
-	
+
 		if (score > best_score)
 		{
 			best_score = score;
@@ -988,15 +985,14 @@ void trigger_quest_complete(byte x_type, vptr data)
 					/* Are we done yet? */
 					if (pl_ptr->data) continue;
 				}
-				/* Different treatment for the find_place quest */
-				else if (q_ptr->type == QUEST_TYPE_FIND_PLACE)
-				{
-					/* Break the link between place and quest */
-					pl_ptr->quest_num = 0;
-				}
 
 				/* Complete the quest */
 				q_ptr->status = QUEST_STATUS_COMPLETED;
+
+				if (q_ptr->type == QUEST_TYPE_FIND_PLACE)
+				{
+					msgf("You find the ruin you were looking for.");
+				}
 
 				break;
 			}
@@ -1005,6 +1001,8 @@ void trigger_quest_complete(byte x_type, vptr data)
 			{
 				if (*((int *) data) == q_ptr->data.fit.a_idx)
 				{
+					msgf("You find the relic you were looking for.");
+
 					/* Complete the quest */
 					q_ptr->status = QUEST_STATUS_COMPLETED;
 				}
@@ -1193,6 +1191,9 @@ void reward_quest(quest_type *q_ptr)
 				q_ptr->place = 0;
 				q_ptr->shop = 0;
 				
+				/* Break the link between place and quest */
+				place[q_ptr->data.fpl.place].quest_num = z_info->q_max;
+
 				/* Allow this quest to be deleted if needed */
 				q_ptr->status = QUEST_STATUS_FINISHED;
 				
@@ -1283,7 +1284,7 @@ static quest_type *insert_artifact_quest(u16b a_idx)
 	
 	/* Save the quest data */
 	q_ptr->data.fit.a_idx = a_idx;
-	q_ptr->data.fit.place = find_good_dungeon(a_ptr->level, curr_scale * 2);
+	q_ptr->data.fit.place = find_good_dungeon(a_ptr->level, TRUE);
 	
 	/* Where is it? */
 	pl_ptr = &place[q_ptr->data.fit.place];
@@ -1292,8 +1293,7 @@ static quest_type *insert_artifact_quest(u16b a_idx)
 	town_name = describe_quest_location(&town_dir, pl_ptr->x, pl_ptr->y);
 				
 	/* XXX XXX Create quest name */
-	(void)strnfmt(q_ptr->name, 128, "For %s, find the relic %s, which is hidden %s of %s.",
-				  place[p_ptr->place_num].name, 	
+	(void)strnfmt(q_ptr->name, 128, "Find the relic %s, which is hidden %s of %s.",
 				  a_name + a_ptr->name, town_dir, town_name);
 
 	/* Artifact is now a quest item */
@@ -1304,8 +1304,61 @@ static quest_type *insert_artifact_quest(u16b a_idx)
 }
 
 
-static bool bad_item_quest = FALSE;
-static const store_type *bad_item_quest_giver = NULL;
+/* Supply an artifact-idx that has not been found yet */
+static u16b find_random_artifact(void)
+{
+	u16b a_idx;
+	int count = 0;
+
+	artifact_type *a_ptr;
+
+
+	for (a_idx = 0; a_idx < z_info->a_max; a_idx++)
+	{
+		a_ptr = &a_info[a_idx];
+
+		/* Skip "empty" artifacts */
+		if (!a_ptr->name) continue;
+			
+		/* Cannot make an artifact twice */
+		if (a_ptr->cur_num) continue;
+
+		/* No quest items */
+		if (FLAG(a_ptr, TR_QUESTITEM)) continue;
+
+		/* count the remaining artifacts */
+		count++;
+	}
+
+	/* All the artifacts have been found! */
+	if (!count) return (0);
+
+	/* Get a random */
+	count = randint1(count);
+
+	for (a_idx = 0; a_idx < z_info->a_max; a_idx++)
+	{
+		a_ptr = &a_info[a_idx];
+
+		/* Skip "empty" artifacts */
+		if (!a_ptr->name) continue;
+			
+		/* Cannot make an artifact twice */
+		if (a_ptr->cur_num) continue;
+
+		/* No quest items */
+		if (FLAG(a_ptr, TR_QUESTITEM)) continue;
+
+		/* subtract the artifacts that are not needed */
+		count--;
+
+		/* deliver the countth artifact */
+		if (!count) return (a_idx);
+	}
+
+	/* How is this possible? */
+	return (0);
+}
 
 static bool request_find_item(int dummy)
 {	
@@ -1313,30 +1366,16 @@ static bool request_find_item(int dummy)
 
 	/* Hack - ignore parameter */
 	(void) dummy;
-	
-	/* Hack - if we have tried before, break out early */
-	if (bad_item_quest && (bad_item_quest_giver == curr_build))
-	{
-		msgf("I still don't know of any lost relics!");
-	
-		message_flush();
-		
-		/* No available quests. */
-		return (FALSE);
-	}
-	
+
 	/* Try to find a artifact to quest for */
-	q_ptr = insert_artifact_quest(randint1(z_info->a_max));
+	q_ptr = insert_artifact_quest(find_random_artifact());
 	
 	if (!q_ptr)
 	{
-		msgf("Sorry, I don't know of any missing relics to find right now.");
+		msgf("You have found all the relics and still want more?  Impossible.");
 	
 		message_flush();
 		
-		bad_item_quest = TRUE;
-		bad_item_quest_giver = curr_build;
-	
 		/* No available quests, unfortunately. */
 		return (FALSE);
 	}
@@ -1422,14 +1461,12 @@ static quest_type *insert_bounty_quest(u16b r_idx, u16b num)
 		plural_aux(buf);
 
 		/* XXX XXX Create quest name */
-		(void)strnfmt(q_ptr->name, 128, "%s offers a bounty for killing %d %s.",
-			place[p_ptr->place_num].name, (int)num, buf);
+		(void)strnfmt(q_ptr->name, 128, "Kill %d %s.", num, buf);
 	}
 	else
 	{
 		/* XXX XXX Create quest name */
-		(void)strnfmt(q_ptr->name, 128, "%s offers a bounty for killing %s.",
-			place[p_ptr->place_num].name, mon_race_name(r_ptr));
+		(void)strnfmt(q_ptr->name, 128, "Kill %s.", mon_race_name(r_ptr));
 	}
 	
 	/* No need to specially create anything */
@@ -1592,8 +1629,7 @@ static quest_type *insert_message_quest(int dist)
 		   st_ptr->type == BUILD_STORE_HOME);
 
 	/* XXX XXX Create quest name */
-	(void)strnfmt(q_ptr->name, 128, "Carry a message from %s to %s in %s.",
-					place[p_ptr->place_num].name, 
+	(void)strnfmt(q_ptr->name, 128, "Carry a message to %s in %s.",
 					quark_str(st_ptr->owner_name),
 					pl_ptr->name);
 	
@@ -1635,7 +1671,7 @@ static bool request_message(int dummy)
 	/* Show it on the screen? */
 			
 	/* Display a helpful message. */
-	msgf("%s.", q_ptr->name);
+	msgf("%s", q_ptr->name);
 				  
 	message_flush();
 			
@@ -1646,7 +1682,7 @@ static bool request_message(int dummy)
 	return (TRUE);
 }
 
-static quest_type *insert_find_place_quest(int dist)
+static quest_type *insert_find_place_quest(void)
 {
 	place_type *pl_ptr;
 	
@@ -1656,8 +1692,16 @@ static quest_type *insert_find_place_quest(int dist)
 
 	u16b place_num;
 
+	int q_num;
+
+	/* Find a dungeon appropriate for this player */
+	place_num = find_good_dungeon(2 * p_ptr->lev, FALSE);
+
+	/* All dungeons have been found */
+	if (!place_num)	return (NULL);
+	
 	/* Get a new quest */
-	int q_num = q_pop();
+	q_num = q_pop();
 		
 	/* Paranoia */
 	if (!q_num) return (NULL);
@@ -1676,9 +1720,6 @@ static quest_type *insert_find_place_quest(int dist)
 	/* Finished when the player finds it */
 	q_ptr->x_type = QX_WILD_ENTER;
 	
-	/* Find a dungeon that is roughly dist wilderness blocks away */
-	place_num = find_good_dungeon(curr_scale * 2, dist);
-	
 	/* Get the place */
 	pl_ptr = &place[place_num];
 	
@@ -1688,14 +1729,14 @@ static quest_type *insert_find_place_quest(int dist)
 	town_name = describe_quest_location(&town_dir, pl_ptr->x, pl_ptr->y);
 				
 	/* XXX XXX Create quest name */
-	(void)strnfmt(q_ptr->name, 128, "For %s, find a certain lost ruin, which is hidden %s of %s.",
-				  place[p_ptr->place_num].name, town_dir, town_name);
+	(void)strnfmt(q_ptr->name, 128, "Find a certain lost ruin, which is hidden %s of %s.",
+				  town_dir, town_name);
 
 	q_ptr->data.fpl.place = place_num;
 	
 	/* Set the reward level */
-	q_ptr->reward = dist + curr_scale * 2;
-	
+	q_ptr->reward = distance(pl_ptr->x, pl_ptr->y, p_ptr->wilderness_x / 16, p_ptr->wilderness_y / 16);
+
 	/* Done */
 	return (q_ptr);
 }
@@ -1707,15 +1748,12 @@ static bool request_find_place(int dummy)
 	/* Hack - ignore parameter */
 	(void) dummy;
 	
-	/*
-	 * Generate a quest to find a dungeon
-	 * roughly 75 wilderness blocks away
-	 */
-	q_ptr = insert_find_place_quest(75);
+	/*Generate a quest to find an unknown dungeon */
+	q_ptr = insert_find_place_quest();
 
 	if (!q_ptr)
 	{
-		msgf("Sorry, I'm not looking for any lost ruins.");
+		msgf("You've found all the ruins that I know of.");
 	
 		message_flush();
 	
@@ -1726,7 +1764,7 @@ static bool request_find_place(int dummy)
 	/* Show it on the screen? */
 			
 	/* Display a helpful message. */
-	msgf("%s.", q_ptr->name);
+	msgf("%s", q_ptr->name);
 				  
 	message_flush();
 			
