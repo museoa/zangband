@@ -2583,7 +2583,7 @@ void move_player(int dir, int do_pickup)
 		lite_spot(ox, oy);
 
 		/* Process fields under the player. */
-		field_hook(area(x, y), FIELD_ACT_PLAYER_ENTER);
+		field_script(area(x, y), FIELD_ACT_PLAYER_ENTER, "");
 
 		/* Sound */
 		/* sound(SOUND_WALK); */

@@ -51,7 +51,7 @@ void notice_field(field_type *f_ptr)
 /*
  * The name of a field
  */
-cptr field_name(field_type *f_ptr)
+cptr field_name(const field_type *f_ptr)
 {
 	return (t_info[f_ptr->t_idx].name);
 }
@@ -1822,17 +1822,36 @@ bool monster_can_open(monster_race *r_ptr, int power)
 
 
 /*
- * Weaponmaster1
+ * Take num strings in an array, and then print them on the screen.
+ * 
+ * The strings are centered on the term.
  */
-bool field_action_weaponmaster1(field_type *f_ptr, va_list vp)
+void print_building_options(cptr strings[], int num)
 {
-	int factor = va_arg(vp, int);
+	int i;
+	
+	int max = 0, len;
+	
+	int wid, hgt;
 
-	put_fstr(35, 19, CLR_YELLOW " E) Examine Weapons (%dgp)", f_ptr->data[1] * factor);
+	/* Get size */
+	Term_get_size(&wid, &hgt);
+	
+	/* Get size of longest string */
+	for (i = 0; i < num; i++)
+	{
+		len = strlen(strings[i]);
+		
+		if (len > max) max = len;
+	}
 
-	/* Done */
-	return (FALSE);
+	/* Print them out */
+	for (i = 0; i < num; i++)
+	{
+		put_fstr(40 - len / 2, 20 - num + i, CLR_YELLOW "%s", strings[i]);
+	}
 }
+
 
 /*
  * Weaponmaster2
@@ -1859,22 +1878,6 @@ bool field_action_weaponmaster2(field_type *f_ptr, va_list vp)
 	{
 		*factor = FALSE;
 	}
-
-	/* Done */
-	return (FALSE);
-}
-
-
-/*
- * Recharge1
- */
-bool field_action_recharge1(field_type *f_ptr, va_list vp)
-{
-	int factor = va_arg(vp, int);
-
-	put_fstr(35, 19, CLR_YELLOW
-    			" R) Recharge Items\n"
-				" I) Identify Items (%dgp)", f_ptr->data[2] * factor);
 
 	/* Done */
 	return (FALSE);
@@ -1927,19 +1930,6 @@ bool field_action_recharge2(field_type *f_ptr, va_list vp)
 
 
 /*
- * Weaponplus1
- */
-bool field_action_weaponplus1(field_type *f_ptr, va_list vp)
-{
-	int factor = va_arg(vp, int);
-
-	put_fstr(35, 19, CLR_YELLOW " E) Enchant Weapons (%dgp)", f_ptr->data[1] * factor);
-
-	/* Done */
-	return (FALSE);
-}
-
-/*
  * Weaponplus2
  */
 bool field_action_weaponplus2(field_type *f_ptr, va_list vp)
@@ -1966,19 +1956,6 @@ bool field_action_weaponplus2(field_type *f_ptr, va_list vp)
 
 
 /*
- * Armourplus1
- */
-bool field_action_armourplus1(field_type *f_ptr, va_list vp)
-{
-	int factor = va_arg(vp, int);
-
-	put_fstr(35, 19, CLR_YELLOW " E) Enchant Armour (%dgp)", f_ptr->data[1] * factor);
-
-	/* Done */
-	return (FALSE);
-}
-
-/*
  * Armourplus2
  */
 bool field_action_armourplus2(field_type *f_ptr, va_list vp)
@@ -1998,21 +1975,6 @@ bool field_action_armourplus2(field_type *f_ptr, va_list vp)
 	{
 		*factor = FALSE;
 	}
-
-	/* Done */
-	return (FALSE);
-}
-
-
-/*
- * Mutate1
- */
-bool field_action_mutate1(field_type *f_ptr, va_list vp)
-{
-	int factor = va_arg(vp, int);
-
-	put_fstr(30, 19, CLR_YELLOW " E) Expose yourself to raw chaos (%dgp)",
-			f_ptr->data[1] * factor * (count_mutations() + 1));
 
 	/* Done */
 	return (FALSE);
@@ -2069,19 +2031,6 @@ bool field_action_mutate2(field_type *f_ptr, va_list vp)
 
 
 /*
- * Buymap1
- */
-bool field_action_buymap1(field_type *f_ptr, va_list vp)
-{
-	int factor = va_arg(vp, int);
-
-	put_fstr(35, 19, CLR_YELLOW " E) Examine Map (%dgp)", f_ptr->data[1] * factor);
-
-	/* Done */
-	return (FALSE);
-}
-
-/*
  * Buymap2
  */
 bool field_action_buymap2(field_type *f_ptr, va_list vp)
@@ -2119,19 +2068,6 @@ bool field_action_buymap2(field_type *f_ptr, va_list vp)
 
 
 /*
- * Library1
- */
-bool field_action_library1(field_type *f_ptr, va_list vp)
-{
-	int factor = va_arg(vp, int);
-
-	put_fstr(35, 19, CLR_YELLOW " R) Read about monsters (%dgp)", f_ptr->data[1] * factor);
-
-	/* Done */
-	return (FALSE);
-}
-
-/*
  * Library2
  */
 bool field_action_library2(field_type *f_ptr, va_list vp)
@@ -2156,28 +2092,6 @@ bool field_action_library2(field_type *f_ptr, va_list vp)
 	{
 		*factor = FALSE;
 	}
-
-	/* Done */
-	return (FALSE);
-}
-
-/*
- * Casino1
- */
-bool field_action_casino1(field_type *f_ptr, va_list vp)
-{
-	/* Ignore 'f_ptr' */
-	(void)f_ptr;
-
-	/* Ignore 'vp' */
-	(void)vp;
-
-	put_fstr(35, 16, CLR_YELLOW
-    			" H) Help\n"
-				" I) In Between\n"
-				" C) Craps\n"
-				" S) Spin the wheel\n"
-				" D) Dice slots");
 
 	/* Done */
 	return (FALSE);
@@ -2252,23 +2166,6 @@ bool field_action_casino2(field_type *f_ptr, va_list vp)
 }
 
 /*
- * Inn1
- */
-bool field_action_inn1(field_type *f_ptr, va_list vp)
-{
-	int factor = va_arg(vp, int);
-
-	put_fstr(35, 18, CLR_YELLOW
-    			" E) Eat (%dgp)\n"
-				" R) Rest (%dgp)",
-                f_ptr->data[1] * factor / 100,
-                f_ptr->data[1] * factor / 20);
-
-	/* Done */
-	return (FALSE);
-}
-
-/*
  * Inn2
  */
 bool field_action_inn2(field_type *f_ptr, va_list vp)
@@ -2318,19 +2215,6 @@ bool field_action_inn2(field_type *f_ptr, va_list vp)
 
 
 /*
- * Healer1
- */
-bool field_action_healer1(field_type *f_ptr, va_list vp)
-{
-	int factor = va_arg(vp, int);
-
-	put_fstr(35, 18, CLR_YELLOW " R) Restore Stats (%dgp)", f_ptr->data[1] * factor);
-
-	/* Done */
-	return (FALSE);
-}
-
-/*
  * Healer2
  */
 bool field_action_healer2(field_type *f_ptr, va_list vp)
@@ -2356,32 +2240,6 @@ bool field_action_healer2(field_type *f_ptr, va_list vp)
 	{
 		*factor = FALSE;
 	}
-
-	/* Done */
-	return (FALSE);
-}
-
-/*
- * Mage Tower1
- */
-bool field_action_magetower1(field_type *f_ptr, va_list vp)
-{
-	int factor = va_arg(vp, int);
-
-	store_type *st_ptr;
-
-	/* Display options */
-	building_magetower(factor, TRUE);
-
-	st_ptr = get_current_store();
-
-	/* We only need to do this once */
-	if (st_ptr && !st_ptr->data)
-	{
-		put_fstr(35, 18, CLR_YELLOW " R) Record aura (%dgp)", f_ptr->data[1] * factor);
-	}
-
-	put_fstr(35, 19, CLR_YELLOW " T) Teleport");
 
 	/* Done */
 	return (FALSE);
@@ -2420,6 +2278,8 @@ bool field_action_magetower2(field_type *f_ptr, va_list vp)
 				p_ptr->au -= cost;
 
 				msgf("The portal keeper notes your aura.");
+				
+				/* XXX XXX Need to redraw */
 			}
 		}
 
@@ -2444,34 +2304,6 @@ bool field_action_magetower2(field_type *f_ptr, va_list vp)
 		*factor = FALSE;
 	}
 
-	/* Done */
-	return (FALSE);
-}
-
-/*
- * Castle quest-giver building
- */
-bool field_action_castlequest1(field_type *f_ptr, va_list vp)
-{
-	int factor = va_arg(vp, int);
-	const store_type *b_ptr = va_arg(vp, const store_type *);
-	
-	quest_type *q_ptr = lookup_quest_building(b_ptr);
-	
-	/* Ignore parameter */
-	(void) factor;
-	(void) f_ptr;
-	
-	/* Do we already have a quest here? */
-	if (q_ptr)
-	{
-		put_fstr(35, 19, CLR_YELLOW " R) Request Reward");
-	}
-	else
-	{
-		put_fstr(35, 19, CLR_YELLOW " R) Request Quest");
-	}
-	
 	/* Done */
 	return (FALSE);
 }

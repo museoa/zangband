@@ -6843,74 +6843,38 @@ const field_action f_action[] =
 	/* Null - Do absolutely nothing */
 	{NULL, "nothing"}, 
 
-	/* Weaponmaster part 1 */
-	{field_action_weaponmaster1, "field_action_weaponmaster1"},
-	
 	/* Weaponmaster part 2 */
 	{field_action_weaponmaster2, "field_action_weaponmaster2"},
-	
-	/* Recharge items part 1 */
-	{field_action_recharge1, "field_action_recharge1"},
 	
 	/* Recharge items part 2 */
 	{field_action_recharge2, "field_action_recharge2"},
 	
-	/* Enchant weapons part 1 */
-	{field_action_weaponplus1, "field_action_weaponplus1"},
-	
 	/* Enchant weapons part 2 */
 	{field_action_weaponplus2, "field_action_weaponplus2"},
-	
-	/* Enchant armour part 1 */
-	{field_action_armourplus1, "field_action_armourplus1"},
 	
 	/* Enchant armour part 2 */
 	{field_action_armourplus2, "field_action_armourplus2"},
 	
-	/* Mutatalist part 1 */
-	{field_action_mutate1, "field_action_mutate1"},
-	
 	/* Mutatalist part 2 */
 	{field_action_mutate2, "field_action_mutate2"},
-	
-	/* Map maker part 1 */
-	{field_action_buymap1, "field_action_buymap1"},
 	
 	/* Map maker part 2 */
 	{field_action_buymap2, "field_action_buymap2"},
 	
-	/* Library part 1 */
-	{field_action_library1, "field_action_library1"},
-	
 	/* Librry part 2 */
 	{field_action_library2, "field_action_library2"},
-	
-	/* Casino part 1 */
-	{field_action_casino1, "field_action_casino1"},
 	
 	/* Casino part 2 */
 	{field_action_casino2, "field_action_casino2"},
 	
-	/* Inn part 1 */
-	{field_action_inn1, "field_action_inn1"},
-	
 	/* Inn part 2 */
 	{field_action_inn2, "field_action_inn2"},
-	
-	/* Healer part 1 */
-	{field_action_healer1, "field_action_healer1"},
 	
 	/* Healer part 2 */
     {field_action_healer2, "field_action_healer2"},
 
-    /* Mage Tower part 1 */
-    {field_action_magetower1, "field_action_magetower1"},
-
     /* Mage Tower part 2 */
     {field_action_magetower2, "field_action_magetower2"},
-
-	/* Castle quest-giver part 1 */
-	{field_action_castlequest1, "field_action_castlequest1"},
 	
 	/* Castle quest-giver part 2 */
 	{field_action_castlequest2, "field_action_castlequest2"},

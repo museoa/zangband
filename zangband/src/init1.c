@@ -712,10 +712,10 @@ static cptr t_info_triggers[] =
 	"LOAD",
 	"PENTER",
 	"PON",
-	"PLEAVE",
+	"DUMMY1",
 	"MENTER",
 	"MON",
-	"MLEAVE",
+	"DUMMY2",
 	"OBDROP",
 	"OBON",
 	"INTER",
@@ -2982,8 +2982,19 @@ errr init_t_info_txt(FILE *fp, char *buf)
 			s = t;
 
 			/* Store the text */
-			t_ptr->action[n] = quark_add(s);
-			
+			if (t_ptr->action[n])
+			{
+				s16b old = t_ptr->action[n];
+				
+				t_ptr->action[n] = quark_fmt("%s\n%s", quark_str(old), s);
+				
+				quark_remove(&old);
+			}
+			else
+			{
+				t_ptr->action[n] = quark_add(s);
+			}
+					
 			/* Next... */
 			continue;
 		}

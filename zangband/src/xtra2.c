@@ -2377,24 +2377,32 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 			/* Describe if if is visible and known. */
 			if (f_ptr->info & FIELD_INFO_MARK)
 			{
-				cptr name = "";
+				char *name = NULL;
 				
 				/* See if it has a special name */
 				field_script_single(f_ptr, FIELD_ACT_LOOK, ":s", LUA_RETURN(name));
 				
-				/* Copy the string into the temp buffer */
-				strncpy(fld_name, name, 40);
+				if (name)
+				{
+					/* Copy the string into the temp buffer */
+					strncpy(fld_name, name, 40);
 				
-				/* Anything there? */
-				if (!fld_name[0])
-				{				
+					/* Anything there? */
+					if (!fld_name[0])
+					{				
+						/* Default to field name */
+						strncpy(fld_name, t_ptr->name, 40);
+					}
+				
+					/* Free string allocated to hold return value */
+					string_free(name);
+				}
+				else
+				{
 					/* Default to field name */
 					strncpy(fld_name, t_ptr->name, 40);
 				}
 				
-				/* Free string allocated to hold return value */
-				string_free(name);
-					
 				/* Not boring */
 				boring = FALSE;
 

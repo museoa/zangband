@@ -2419,7 +2419,7 @@ bool earthquake(int cx, int cy, int r)
 			lite_spot(px, py);
 
 			/* Process fields under the player. */
-			field_hook(area(px, py), FIELD_ACT_PLAYER_ENTER);
+			field_script(area(px, py), FIELD_ACT_PLAYER_ENTER, "");
 
 			/* Check for new panel */
 			verify_panel();
@@ -3202,7 +3202,7 @@ bool teleport_swap(int dir)
 	lite_spot(px, py);
 
 	/* Process fields under the player. */
-	field_hook(area(px, py), FIELD_ACT_PLAYER_ENTER);
+	field_script(area(px, py), FIELD_ACT_PLAYER_ENTER, "");
 
 	/* Process fields under the monster. */
 	field_script(area(m_ptr->fx, m_ptr->fy),

@@ -1998,7 +1998,7 @@ void do_cmd_stay(int pickup)
 	/* 
 	 * Fields you are standing on may do something.
 	 */
-	field_hook(area(p_ptr->px, p_ptr->py), FIELD_ACT_PLAYER_ENTER);
+	field_script(area(p_ptr->px, p_ptr->py), FIELD_ACT_PLAYER_ENTER, "");
 }
 
 

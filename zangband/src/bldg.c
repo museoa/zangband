@@ -298,17 +298,28 @@ bool test_gold(s32b *cost)
 }
 
 
+static const store_type *build_ptr;
+
+
+/* Does this building have an outstanding quest */
+bool build_has_quest(void)
+{
+	if (lookup_quest_building(build_ptr)) return (TRUE);
+
+	return (FALSE);
+}
+
 
 /*
  * Display a building.
  */
-void display_build(const field_type *f_ptr, const store_type *b_ptr)
+void display_build(field_type *f_ptr, const store_type *b_ptr)
 {
 	const b_own_type *bo_ptr = &b_owners[f_ptr->data[0]][b_ptr->owner];
 
 	int factor;
 
-	cptr build_name = t_info[f_ptr->t_idx].name;
+	cptr build_name = field_name(f_ptr);
 	cptr owner_name = (bo_ptr->owner_name);
 	cptr race_name = race_info[bo_ptr->owner_race].title;
 
@@ -321,10 +332,11 @@ void display_build(const field_type *f_ptr, const store_type *b_ptr)
 	prtf(1, 2, "%s (%s) %s", owner_name, race_name, build_name);
 	prtf(0, 19, "You may:");
 
+	/* Save building pointer for lua hook */
+	build_ptr = b_ptr;
 
 	/* Display building-specific information */
-	field_hook(area(p_ptr->px, p_ptr->py),
-			   FIELD_ACT_BUILD_ACT1, factor, b_ptr);
+	(void) field_script_single(f_ptr, FIELD_ACT_BUILD_ACT1, "i", LUA_VAR(factor));
 
 	prtf(0, 23, " ESC) Exit building");
 
@@ -1552,7 +1564,6 @@ bool building_magetower(int factor, bool display)
 
 	char out_val[160];
 
-
 	/* Save the store pointer */
 	st_ptr = get_current_store();
 
@@ -1564,6 +1575,14 @@ bool building_magetower(int factor, bool display)
 
 	if (display)
 	{
+		/* Haven't been here before? */
+		if (!st_ptr->data)
+		{
+			put_fstr(35, 18, CLR_YELLOW " R) Record aura (%dgp)", factor * 5);
+		}
+		
+		put_fstr(35, 19, CLR_YELLOW " T) Teleport");
+	
 		for (i = 0; i < max_link; i++)
 		{
 			int row = i % 12 + 4;

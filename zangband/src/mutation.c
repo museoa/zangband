@@ -1049,7 +1049,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 		lite_spot(ox, oy);
 
 		/* Process fields under the player. */
-		field_hook(area(px, py), FIELD_ACT_PLAYER_ENTER);
+		field_script(area(px, py), FIELD_ACT_PLAYER_ENTER, "");
 
 		verify_panel();
 

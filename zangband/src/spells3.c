@@ -412,7 +412,7 @@ void teleport_player(int dis)
 	lite_spot(px, py);
 
 	/* Process fields under the player. */
-	field_hook(area(px, py), FIELD_ACT_PLAYER_ENTER);
+	field_script(area(px, py), FIELD_ACT_PLAYER_ENTER, "");
 
 	/* Monsters with teleport ability may follow the player */
 	for (xx = -1; xx <= 1; xx++)
@@ -553,7 +553,7 @@ void teleport_player_to(int nx, int ny)
 	lite_spot(px, py);
 
 	/* Process fields under the player. */
-	field_hook(area(px, py), FIELD_ACT_PLAYER_ENTER);
+	field_script(area(px, py), FIELD_ACT_PLAYER_ENTER, "");
 
 	/* Check for new panel (redraw map) */
 	verify_panel();

@@ -1098,7 +1098,7 @@ static void display_store(void)
 	/* Normal stores */
 	else
 	{
-		cptr store_name = t_info[f_ptr->t_idx].name;
+		cptr store_name = field_name(f_ptr);
 		cptr owner_name = ot_ptr->owner_name;
 		cptr race_name = race_info[ot_ptr->owner_race].title;
 

@@ -158,6 +158,37 @@ static int xxx_dofile(lua_State *L)
 }
 #endif /* RISCOS */
 
+static int xxx_building_options(lua_State *L)
+{
+	int i;
+	
+	/* number of arguments */
+	int n = lua_gettop(L);
+	
+	cptr *strings;
+		
+	/* Make array of strings */
+	C_MAKE(strings, n, cptr);
+
+	for (i = 1; i <= n; i++)
+	{
+		if (!tolua_istype(L,i,LUA_TSTRING,0))
+		{
+			tolua_error(L, "#vinvalid type in lua_building_options().");
+		}
+		
+		strings[i - 1] =  lua_tostring(L, i);
+	}
+	
+	/* Print them out */
+	print_building_options(strings, n);
+
+	/* Free saved pointers */
+	FREE(strings);
+
+	return 0;
+}
+
 
 static const struct luaL_reg anglib[] =
 {
@@ -168,6 +199,7 @@ static const struct luaL_reg anglib[] =
 	{"build_script_path", xxx_build_script_path},
 	{"get_rumor", xxx_get_rumor},
 	{"get_rnd_line", xxx_get_rnd_line},
+	{"building_options", xxx_building_options},
 #ifdef RISCOS
 	{"dofile", xxx_dofile},
 #endif /* RISCOS */
@@ -236,7 +268,6 @@ static int math_max(lua_State *L)
 
 	return 1;
 }
-
 
 static const struct luaL_reg intMathLib[] =
 {
