@@ -552,10 +552,9 @@ static void wr_item(const object_type *o_ptr)
 
 	wr_byte(o_ptr->info);
 
-	wr_u32b(o_ptr->flags[0]);
-	wr_u32b(o_ptr->flags[1]);
-	wr_u32b(o_ptr->flags[2]);
-	wr_u32b(o_ptr->flags[3]);
+	wr_byte(NUM_TR_SETS);
+	for (i = 0; i < NUM_TR_SETS; i++)
+		wr_u32b(o_ptr->flags[i]);
 
 	/* Next object in list */
 	wr_s16b(o_ptr->next_o_idx);
@@ -605,10 +604,8 @@ static void wr_item(const object_type *o_ptr)
 
 	wr_byte(o_ptr->a_idx);
 
-	wr_u32b(o_ptr->kn_flags[0]);
-	wr_u32b(o_ptr->kn_flags[1]);
-	wr_u32b(o_ptr->kn_flags[2]);
-	wr_u32b(o_ptr->kn_flags[3]);
+	for (i = 0; i < NUM_TR_SETS; i++)
+		wr_u32b(o_ptr->kn_flags[i]);
 }
 
 

@@ -32,7 +32,7 @@
 #define VERSION_NAME "ZAngband"
 
 /* Savefile version */
-#define SAVEFILE_VERSION 49
+#define SAVEFILE_VERSION 50
 
 /* User-visible version */
 #define VER_MAJOR 2
@@ -2890,6 +2890,8 @@
  * it can not be affected by various forms of destruction.  This is NOT as
  * powerful as actually granting resistance/immunity to the wearer.
  */
+
+#define NUM_TR_SETS 4
 
 #define TR0_STR                 0x00000001L	/* STR += "pval" */
 #define TR0_INT                 0x00000002L	/* INT += "pval" */

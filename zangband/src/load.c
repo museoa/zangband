@@ -333,9 +333,13 @@ static void rd_item(object_type *o_ptr)
 	object_kind *k_ptr;
 
 	char buf[1024];
+	int i;
 	
 	/* Old flags from pre [Z] 2.5.3 */
 	byte name1, name2, xtra1, xtra2;
+
+	/* Number of object flags */
+	byte n_flags;
 
 
 	/* Kind */
@@ -396,14 +400,23 @@ static void rd_item(object_type *o_ptr)
 		if (tmpbyte) o_ptr->info |= OB_SEEN;
 	}
 
-	/* Old flags */
-	rd_u32b(&o_ptr->flags[0]);
-	rd_u32b(&o_ptr->flags[1]);
-	rd_u32b(&o_ptr->flags[2]);
+	/* Number of object flags */
 	if (sf_version < 41)
-		o_ptr->flags[3] = 0;
+		n_flags = 3;
+	else if (sf_version < 50)
+		n_flags = 4;
 	else
-		rd_u32b(&o_ptr->flags[3]);
+	{
+		rd_byte(&n_flags);
+		if (n_flags > NUM_TR_SETS)
+			abort();
+	}
+	
+	/* Object flags */
+	for (i = 0; i < n_flags; i++)
+		rd_u32b(&o_ptr->flags[i]);
+	for (i = n_flags; i < NUM_TR_SETS; i++)
+		o_ptr->flags[i] = 0;
 
 	/* Lites changed in [Z] 2.6.0 */
 	if ((sf_version < 25) && (o_ptr->tval == TV_LITE))
@@ -546,13 +559,10 @@ static void rd_item(object_type *o_ptr)
 
 		rd_byte(&o_ptr->a_idx);
 
-		rd_u32b(&o_ptr->kn_flags[0]);
-		rd_u32b(&o_ptr->kn_flags[1]);
-		rd_u32b(&o_ptr->kn_flags[2]);
-		if (sf_version < 41)
-			o_ptr->kn_flags[3] = 0;
-		else
-			rd_u32b(&o_ptr->kn_flags[3]);
+		for (i = 0; i < n_flags; i++)
+			rd_u32b(&o_ptr->kn_flags[i]);
+		for (i = n_flags; i < NUM_TR_SETS; i++)
+			o_ptr->kn_flags[i] = 0;
 
 		if (o_ptr->a_idx && sf_version < 46)
 		{
@@ -625,10 +635,8 @@ static void rd_item(object_type *o_ptr)
 		o_ptr->a_idx = 0;
 
 		/* Reset flags */
-		o_ptr->flags[0] = k_ptr->flags[0];
-		o_ptr->flags[1] = k_ptr->flags[1];
-		o_ptr->flags[2] = k_ptr->flags[2];
-		o_ptr->flags[3] = k_ptr->flags[3];
+		for (i = 0; i < NUM_TR_SETS; i++)
+			o_ptr->flags[i] = k_ptr->flags[i];
 
 		/* All done */
 		return;
@@ -689,10 +697,8 @@ static void rd_item(object_type *o_ptr)
 			o_ptr->weight = a_ptr->weight;
 
 			/* Save the artifact flags */
-			o_ptr->flags[0] |= a_ptr->flags[0];
-			o_ptr->flags[1] |= a_ptr->flags[1];
-			o_ptr->flags[2] |= a_ptr->flags[2];
-			o_ptr->flags[3] |= a_ptr->flags[3];
+			for (i = 0; i < NUM_TR_SETS; i++)
+				o_ptr->flags[i] |= a_ptr->flags[i];
 
 			/* Mega-Hack -- set activation */
 			o_ptr->a_idx = name1;
@@ -738,10 +744,8 @@ static void rd_item(object_type *o_ptr)
 		/* Identification status */
 		if (o_ptr->info & (OB_MENTAL))
 		{
-			o_ptr->kn_flags[0] = o_ptr->flags[0];
-			o_ptr->kn_flags[1] = o_ptr->flags[1];
-			o_ptr->kn_flags[2] = o_ptr->flags[2];
-			o_ptr->kn_flags[3] = o_ptr->flags[3];
+			for (i = 0; i < NUM_TR_SETS; i++)
+				o_ptr->kn_flags[i] = o_ptr->flags[i];
 		}
 	}
 
