@@ -113,7 +113,7 @@ D:0:0:0:0:0:0:0:0
 L:INIT:corpse_init(r_idx)
 L:LOAD:local race
 L:LOAD:race = monst_race(field.data[1] * 256 + field.data[2])
-L:LOAD:set_corpse_size(field, corpse_type(r_info[race].d_char))
+L:LOAD:set_corpse_size(field, corpse_type(race.d_char))
 L:SPEC:local race
 L:SPEC:race = monst_race(field.data[1] * 256 + field.data[2])
 L:SPEC:summon_cloned_creature(field.fx, field.fy, race, pet)
@@ -130,7 +130,7 @@ D:0:0:0:0:0:0:0:0
 L:INIT:corpse_init(r_idx)
 L:LOAD:local race
 L:LOAD:race = monst_race(field.data[1] * 256 + field.data[2])
-L:LOAD:set_corpse_size(field, corpse_type(r_info[race].d_char))
+L:LOAD:set_corpse_size(field, corpse_type(race.d_char))
 L:SPEC:local race
 L:SPEC:race = monst_race(field.data[1] * 256 + field.data[2])
 L:SPEC:summon_cloned_creature(field.fx, field.fy, race, pet)
