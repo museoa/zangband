@@ -295,10 +295,10 @@ static int borg_guess_race_name(cptr who)
 	if (!prefix(who, "The "))
 	{
 		/* Message */
-		borg_note(format("# Assuming player ghost (%s)", who));
+		borg_oops(format("# Assuming unknown (%s)", who));
 
 		/* Oops */
-		return (z_info->r_max);
+		return (0);
 	}
 
 	/* Hack -- handle "offscreen" */
@@ -372,10 +372,10 @@ static int borg_guess_race_name(cptr who)
 
 
 	/* Message */
-	borg_note(format("# Assuming player ghost (%s)", who));
+	borg_oops(format("# Assuming unknown (%s)", who));
 
 	/* Oops */
-	return (z_info->r_max);
+	return (0);
 }
 
 /*

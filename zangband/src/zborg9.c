@@ -1784,6 +1784,9 @@ static void borg_parse_aux(cptr msg, int len)
 		borg_react(msg, buf);
 		return;
 	}
+	
+	/* Ignore talking monsters */
+	if (strstr(msg, " says,")) return;
 
 	/* "It hits you." (etc) */
 	for (i = 0; suffix_hit_by[i]; i++)
