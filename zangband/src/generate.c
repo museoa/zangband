@@ -1066,9 +1066,6 @@ static bool level_gen(cptr *why)
 		cur_hgt = level_height * BLOCK_HGT;
 		cur_wid = level_width * BLOCK_WID;
 
-		/* Reset map panels */
-		map_panel_size();
-
 		if (cheat_room)
 		  msg_format("X:%d, Y:%d.", max_panel_cols, max_panel_rows);
 	}
@@ -1077,9 +1074,6 @@ static bool level_gen(cptr *why)
 		/* Big dungeon */
 		cur_hgt = MAX_HGT;
 		cur_wid = MAX_WID;
-
-		/* Reset map panels */
-		map_panel_size();
 	}
 
 	/* Make a dungeon */
@@ -1190,7 +1184,7 @@ void generate_cave(void)
 #endif /* MONSTER_FLOW */
 			}
 		}
-
+#if 0
 		/* Mega-Hack -- no player yet */
 		px = py = 0;
 
@@ -1199,7 +1193,7 @@ void generate_cave(void)
 		panel_row_max = 0;
 		panel_col_min = 0;
 		panel_col_max = 0;
-
+#endif 0
 		/* Set the base level */
 		base_level = dun_level;
 
@@ -1304,6 +1298,12 @@ void generate_cave(void)
 
 	/* The dungeon is ready */
 	character_dungeon = TRUE;
+	
+	/* Reset map panels */
+	map_panel_size();
+	
+	/* Verify the panel */
+	verify_panel();
 
 	/* Remember when this level was "created" */
 	old_turn = turn;
