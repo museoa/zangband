@@ -246,7 +246,6 @@ void get_display_info(int y, int x, t_display *displayPtr)
 	/* */
 	displayPtr->blank = FALSE;
 	displayPtr->tint = NULL;
-	displayPtr->anim = FALSE;
 
 	if (m_idx || o_ptr)
 	{
@@ -354,15 +353,6 @@ void get_display_info(int y, int x, t_display *displayPtr)
 				iconSpec.index = assign.icon.index;
 				iconSpec.ascii = assign.icon.ascii;
 		
-				/* XXX Hack -- Multi-hued ascii icons are animated */
-				if (iconSpec.ascii != -1)
-				{
-					if (g_ascii[iconSpec.ascii].mode != ASCII_NORMAL)
-					{
-						/* This grid is animated */
-						displayPtr->anim = TRUE;
-					}
-				}
 				break;
 			}
 		}
@@ -462,16 +452,6 @@ void get_display_info(int y, int x, t_display *displayPtr)
 		{
 			displayPtr->bg[layer] = iconSpec;
 			break;
-		}
-
-		/* XXX Hack -- Multi-hued ascii icons are animated */
-		if (iconSpec.ascii != -1)
-		{
-			if (g_ascii[iconSpec.ascii].mode != ASCII_NORMAL)
-			{
-				/* This grid is animated */
-				displayPtr->anim = TRUE;
-			}
 		}
 
 		/* A darkened copy of the icon exists, or will exist */

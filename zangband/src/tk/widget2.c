@@ -337,7 +337,6 @@ int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
 	widgetPtr->dw = widgetPtr->dh = 0;
 	widgetPtr->info = NULL;
 	widgetPtr->invalid = NULL;
-	widgetPtr->anim = NULL;
 	widgetPtr->yp = widgetPtr->xp = NULL;
 
 	/*
@@ -908,8 +907,6 @@ static void Widget_Destroy(Widget *widgetPtr)
 	Tk_FreeConfigOptions((char *) widgetPtr, optionTable,
 		widgetPtr->tkwin);
 
-	if (widgetPtr->anim)
-		Tcl_Free((void *) widgetPtr->anim);
 	if (widgetPtr->info)
 		Tcl_Free((void *) widgetPtr->info);
 	if (widgetPtr->invalid)
@@ -1028,11 +1025,6 @@ void Widget_WorldChanged(ClientData instanceData)
 	/* Free old style data */
 	if (widgetPtr->style != widgetPtr->oldStyle)
 	{
-		if (widgetPtr->anim)
-		{
-			Tcl_Free((char *) widgetPtr->anim);
-			widgetPtr->anim = NULL;
-		}
 		if (widgetPtr->info)
 		{
 			Tcl_Free((char *) widgetPtr->info);
@@ -1339,16 +1331,11 @@ void Widget_Calc(Widget *widgetPtr)
 	widgetPtr->bx = cLeft * widgetPtr->gwidth - dLeft;
 	widgetPtr->by = rTop * widgetPtr->gheight - dTop;
 
-	if (widgetPtr->anim)
-		Tcl_Free((char *) widgetPtr->anim);
 	if (widgetPtr->info)
 		Tcl_Free((char *) widgetPtr->info);
 	if (widgetPtr->invalid)
 		Tcl_Free((char *) widgetPtr->invalid);
 
-	widgetPtr->anim = (int *) Tcl_Alloc(sizeof(int) *
-		widgetPtr->rc * widgetPtr->cc);
-	widgetPtr->animCnt = 0;
 	widgetPtr->info = (short *) Tcl_Alloc(sizeof(short) *
 		widgetPtr->rc * widgetPtr->cc);
 	widgetPtr->invalid = (int *) Tcl_Alloc(sizeof(int) *

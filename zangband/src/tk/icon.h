@@ -231,7 +231,6 @@ extern t_assign *g_icon_map[ICON_LAYER_MAX][MAX_HGT];
  */
 typedef struct t_display {
 	bool blank; /* Totally uninteresting grid */
-	bool anim; /* The icon is animated */
 	TintPtr tint; /* Tint to apply, or NULL */
 	IconSpec fg; /* Foreground */
 	IconSpec bg[ICON_LAYER_MAX]; /* Background (when typeFG is masked) */

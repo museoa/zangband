@@ -164,7 +164,6 @@ extern bool angtk_effect_object(int y, int x, object_type *o_ptr);
 extern void (*angtk_lite_spot)(int y, int x);
 extern void angtk_lite_spot_real(int y, int x);
 extern void angtk_wipe_spot(int y, int x);
-extern void angtk_idle(void);
 
 /* interp1.c */
 typedef struct {

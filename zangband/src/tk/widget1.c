@@ -249,12 +249,10 @@ static void widget_draw_all(Widget *widgetPtr)
 	/* Drawing is disabled */
 	if (widgetPtr->flags & WIDGET_NO_UPDATE) return;
 
-	widgetPtr->animCnt = 0;
-
 	for (tile = 0; tile < cc * rc; tile++)
 	{
 		/* This tile does not need to be redrawn */
-		widgetPtr->info[tile] &= ~(WIDGET_INFO_DIRTY | WIDGET_INFO_ANIM);
+		widgetPtr->info[tile] &= ~(WIDGET_INFO_DIRTY);
 
 		y = widgetPtr->y_min + tile / cc;
 		x = widgetPtr->x_min + tile % cc;
@@ -270,12 +268,6 @@ static void widget_draw_all(Widget *widgetPtr)
 			iconSpec.type = ICON_TYPE_BLANK;
 			DrawIconSpec(yp, xp, iconSpec, bitmapPtr);
 			continue;
-		}
-
-		if (wtd.anim)
-		{
-			widgetPtr->info[tile] |= WIDGET_INFO_ANIM;
-			widgetPtr->anim[widgetPtr->animCnt++] = tile;
 		}
 
 		/*
@@ -359,8 +351,6 @@ static void widget_draw_invalid(Widget *widgetPtr)
 	dr = 0;
 	db = 0;
 
-/*	widgetPtr->animCnt = 0; */
-
 	for (i = 0; i < widgetPtr->invalidCnt; i++)
 	{
 		int tile = widgetPtr->invalid[i];
@@ -394,12 +384,6 @@ static void widget_draw_invalid(Widget *widgetPtr)
 			iconSpec.type = ICON_TYPE_BLANK;
 			DrawIconSpec(yp, xp, iconSpec, bitmapPtr);
 			continue;
-		}
-
-		if (wtd.anim && !(pinfo[tile] & WIDGET_INFO_ANIM))
-		{
-			pinfo[tile] |= WIDGET_INFO_ANIM;
-			widgetPtr->anim[widgetPtr->animCnt++] = tile;
 		}
 
 		/*
@@ -805,53 +789,6 @@ bool angtk_effect_object(int y, int x, object_type *o_ptr)
 
 	FinalIcon(&iconSpec, &assign, 0, o_ptr);
 	return angtk_effect_aux(y, x, &iconSpec);
-}
-
-/*
- * Performs actions at idle time
- */
-void angtk_idle(void)
-{
-	DoubleLink *link;
-	int i;
-
-	for (link = WidgetListMap.head; link; link = link->next)
-	{
-		Widget *widgetPtr = DoubleLink_Data(link, Widget);
-
-		/* This Widget doesn't have any animated grids */
-		if (!widgetPtr->animCnt) continue;
-
-		/*
-		 * It is possible that some grids which don't display sprites
-		 * are in the array, but that's okay for now.
-		 */
-		for (i = 0; i < widgetPtr->animCnt; i++)
-		{
-			int tile = widgetPtr->anim[i];
-			if (!(widgetPtr->info[tile] & WIDGET_INFO_DIRTY))
-			{
-				widgetPtr->invalid[widgetPtr->invalidCnt++] = tile;
-				widgetPtr->info[tile] |= WIDGET_INFO_DIRTY;
-			}
-		}
-
-		/* A redraw was scheduled */
-		if (widgetPtr->flags & WIDGET_REDRAW)
-		{
-			/* Cancel the scheduled redraw */
-			Tcl_CancelIdleCall(Widget_Display, (ClientData) widgetPtr);
-		}
-
-		/* Redraw invalidated grids (the sprites) */
-		widgetPtr->flags |= WIDGET_DRAW_INVALID;
-
-		/* Update grids, and copy to screen */
-		Widget_Display((ClientData) widgetPtr);
-	}
-
-	/* Redisplay sprites in all Widget-type Canvas items */
-	CanvasWidget_Idle();
 }
 
 /*

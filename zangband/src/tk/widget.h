@@ -80,11 +80,9 @@ struct Widget
 
 #define WIDGET_INFO_IGNORE 0x0001	/* This tile isn't visible */
 #define WIDGET_INFO_DIRTY 0x0002	/* This tile needs redraw */
-#define WIDGET_INFO_ANIM 0x0004		/* This tile is a sprite */
 	short *info;					/* Flags for each tile */
 
 	int *invalid, invalidCnt;	/* List of invalid grids */
-	int *anim, animCnt;			/* List of animated grids */
 
 	/* WIDGET_STYLE_ICON & WIDGET_STYLE_MAP */
 	int y_min, y_max;           /* Limits of displayed info */
