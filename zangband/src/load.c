@@ -2121,7 +2121,7 @@ static errr rd_dungeon(void)
 	rd_u16b(&limit);
 
 	/* Verify maximum */
-	if (limit >= max_o_idx)
+	if (limit > max_o_idx)
 	{
 		note(format("Too many (%d) object entries!", limit));
 		return (151);
@@ -2191,7 +2191,7 @@ static errr rd_dungeon(void)
 	rd_u16b(&limit);
 
 	/* Hack -- verify */
-	if (limit >= max_m_idx)
+	if (limit > max_m_idx)
 	{
 		note(format("Too many (%d) monster entries!", limit));
 		return (161);
@@ -2249,7 +2249,7 @@ static errr rd_dungeon(void)
 		rd_u16b(&limit);
 
 		/* Verify maximum */
-		if (limit >= max_fld_idx)
+		if (limit > max_fld_idx)
 		{
 			note(format("Too many (%d) field entries!", limit));
 			return (151);
