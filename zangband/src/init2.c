@@ -1425,12 +1425,6 @@ void init_angband(void)
 	/* Access the "user" pref file */
 	(void)process_pref_file("user.prf");
 
-	/* Access the "basic" system pref file */
-	(void)process_pref_file("pref-%s.prf", ANGBAND_SYS);
-
-	/* Access the "user" system pref file */
-	(void)process_pref_file("user-%s.prf", ANGBAND_SYS);
-
 	/* Initialise the fake monochrome flag */
 	fake_monochrome = (!use_graphics
 					   || streq(ANGBAND_SYS, "ibm")) ? TRUE : FALSE;
