@@ -786,9 +786,7 @@ proc NSOptions::SetOptions {oop page} {
 				hitpoint_warn 0 9 1 \
 			]
 			lappend data \
-				autosave_freq 0 25000 50 \
-				ambient_delay 0 500 5 \
-				monster_delay 0 500 5
+				autosave_freq 0 25000 50
 
 			NSCanvist::DeleteAll $canvistId
 			set settings {}
@@ -900,8 +898,6 @@ proc NSOptions::SetList {oop page} {
 
 proc NSOptions::GetPage {page} {
 
-	variable optionList
-
 	switch -- $page {
 
 		Command {
@@ -928,7 +924,7 @@ proc NSOptions::GetPage {page} {
 				small_levels \
 				always_small_levels \
 				empty_levels \
-				pillar_tunnels \
+				pillar_tunnels
 			return $optionList
 		}
 
@@ -1024,8 +1020,6 @@ proc NSOptions::GetPage {page} {
 				delay_factor
 				hitpoint_warn
 				autosave_freq
-				ambient_delay
-				monster_delay
 			}
 		}
 	

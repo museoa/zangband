@@ -198,7 +198,6 @@ if 1 {
 	
 
 	Manage show_icons 1
-	Manage ambient_delay 120
 	Manage scroll_follow 1
 	Manage allow_animation 1
 
@@ -783,7 +782,6 @@ proc Setting {keyword args} {
 			}
 		}
 		switch -- $keyword {
-			ambient_delay -
 			scroll_follow -
 			show_icons {
 				return [Value $keyword]
