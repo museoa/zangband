@@ -4044,10 +4044,17 @@
     (f_info[(C)->feat].flags & FF_BLOCK)
 
 /*
+ * A half-blocking grid
+ */
+#define cave_semi_grid(C) \
+	(f_info[(C)->feat].flags & FF_HALF_LOS)
+
+
+/*
  * True half the time for trees. (Block line of sight half the time.)
  */
 #define cave_half_grid(C) \
-    ((f_info[(C)->feat].flags & FF_HALF_LOS) && (quick_rand()))
+    (cave_semi_grid(C) && (quick_rand()))
 
 /*
  * Grid will block LOS.
