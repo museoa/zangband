@@ -3546,10 +3546,10 @@
 
 
 /* Menu seperator */
-#define MENU_SEPERATOR {"", NULL, 0x00}
+#define MENU_SEPERATOR {"", NULL, NULL, 0x00}
 
 /* Menu terminator */
-#define MENU_END {NULL, NULL, 0x00}
+#define MENU_END {NULL, NULL, NULL, 0x00}
 
 #define MN_AVAILABLE	0x01	/* Available to choose */
 #define MN_SELECT		0x02	/* Can 'select' action */

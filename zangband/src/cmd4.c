@@ -530,12 +530,12 @@ static bool do_cmd_options_cheat_aux(int option)
 
 menu_type cheat_menu[CHEAT_MAX + 1] =
 {
-	{NULL, do_cmd_options_cheat_aux, MN_AVAILABLE | MN_SELECT},
-	{NULL, do_cmd_options_cheat_aux, MN_AVAILABLE | MN_SELECT},
-	{NULL, do_cmd_options_cheat_aux, MN_AVAILABLE | MN_SELECT},
-	{NULL, do_cmd_options_cheat_aux, MN_AVAILABLE | MN_SELECT},
-	{NULL, do_cmd_options_cheat_aux, MN_AVAILABLE | MN_SELECT},
-	{NULL, do_cmd_options_cheat_aux, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_cheat_aux, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_cheat_aux, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_cheat_aux, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_cheat_aux, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_cheat_aux, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_cheat_aux, MN_AVAILABLE | MN_SELECT},
 	MENU_END
 };
 
@@ -642,9 +642,9 @@ static bool do_cmd_options_autosave_aux(int option)
 
 menu_type autosave_menu[4] =
 {
-	{NULL, do_cmd_options_autosave_aux, MN_AVAILABLE | MN_SELECT},
-	{NULL, do_cmd_options_autosave_aux, MN_AVAILABLE | MN_SELECT},
-	{NULL, do_cmd_options_toggle_frequency, MN_AVAILABLE},
+	{NULL, NULL, do_cmd_options_autosave_aux, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_autosave_aux, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_toggle_frequency, MN_AVAILABLE},
 	MENU_END
 };
 
@@ -726,6 +726,12 @@ static bool do_cmd_options_aux2(int option)
 				string_free(options_aux_menu[option].text);
 				options_aux_menu[option].text = string_make(buf);
 				
+				/* Update the help */
+				strnfmt(buf, 1024, "option.txt#%s", option_info[i].o_text);
+				
+				string_free(options_aux_menu[option].help);
+				options_aux_menu[option].help = string_make(buf);
+				
 				/* Done */
 				break;
 			}
@@ -743,30 +749,30 @@ static bool do_cmd_options_aux2(int option)
 
 menu_type options_aux_menu[25] =
 {
-	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
 	MENU_END
 };
 
@@ -803,6 +809,9 @@ static bool do_cmd_options_aux(int page)
 	{
 		string_free(options_aux_menu[i].text);
 		options_aux_menu[i].text = NULL;
+		
+		string_free(options_aux_menu[i].help);
+		options_aux_menu[i].help = NULL;
 	}
 
 	/* Scan the options */
@@ -811,14 +820,17 @@ static bool do_cmd_options_aux(int page)
 		/* Notice options on this "page" */
 		if (option_info[i].o_page == option_page)
 		{
+			/* Update the description */
 			strnfmt(buf, 1024, "%-48s: %s  (%.23s)",
 					option_info[i].o_desc,
 					(option_info[i].o_val ? "yes" : "no "),
 					option_info[i].o_text);
 			
-			/* Update the description */
-			string_free(options_aux_menu[n].text);
 			options_aux_menu[n].text = string_make(buf);
+			
+			/* Update the help */
+			strnfmt(buf, 1024, "option.txt#%s", option_info[i].o_text);
+			options_aux_menu[n].help = string_make(buf);
 
 			n++;
 		}
@@ -837,17 +849,6 @@ static bool do_cmd_options_aux(int page)
 	}
 	
 	display_menu(options_aux_menu, 0, TRUE, option_window_title[page]);
-	
-#if 0
-
-			case '?':
-			{
-				sprintf(buf, "option.txt#%s", option_info[opt[k]].o_text);
-				(void)show_file(buf, NULL, 0, 0);
-				Term_clear();
-				break;
-
-#endif /* 0 */
 	
 	/* Save the changes */
 	init_options(option_flags);
@@ -1173,23 +1174,23 @@ static bool do_cmd_options_dump(int dummy)
 /* The main options menu */
 static menu_type options_menu[OPTION_MENU_MAX] =
 {
-	{"User Interface Options", do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
-	{"Disturbance Options", do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
-	{"Game-Play Options", do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
-	{"Efficiency Options", do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
-	{"Display Options", do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
-	{"Birth Options", do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
-	{"Artificial Intelligence Options", do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
-	{"Testing Options", do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
+	{"User Interface Options", NULL, do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
+	{"Disturbance Options", NULL, do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
+	{"Game-Play Options", NULL, do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
+	{"Efficiency Options", NULL, do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
+	{"Display Options", NULL, do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
+	{"Birth Options", NULL, do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
+	{"Artificial Intelligence Options", NULL, do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
+	{"Testing Options", NULL, do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
 	MENU_SEPERATOR,
-	{"Cheating Options", do_cmd_options_cheat, MN_AVAILABLE | MN_CLEAR},
-	{"Base Delay Factor", do_cmd_options_delay, MN_AVAILABLE},
-	{"Hitpoint Warning", do_cmd_options_hitpoint, MN_AVAILABLE},
+	{"Cheating Options", NULL, do_cmd_options_cheat, MN_AVAILABLE | MN_CLEAR},
+	{"Base Delay Factor", NULL, do_cmd_options_delay, MN_AVAILABLE},
+	{"Hitpoint Warning", NULL, do_cmd_options_hitpoint, MN_AVAILABLE},
 	MENU_SEPERATOR,
-	{"Autosave Options", do_cmd_options_autosave, MN_AVAILABLE | MN_CLEAR},
-	{"Window Flags", do_cmd_options_win, MN_AVAILABLE},
+	{"Autosave Options", NULL, do_cmd_options_autosave, MN_AVAILABLE | MN_CLEAR},
+	{"Window Flags", NULL, do_cmd_options_win, MN_AVAILABLE},
 	MENU_SEPERATOR,
-	{"Dump Options to a Pref File", do_cmd_options_dump, MN_AVAILABLE},
+	{"Dump Options to a Pref File", NULL, do_cmd_options_dump, MN_AVAILABLE},
 	MENU_END
 };
 

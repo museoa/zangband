@@ -480,45 +480,69 @@ bool display_menu(menu_type *options, int select, bool scroll, cptr prompt)
 			/* Extract request */
 			i = (islower(choice) ? A2I(choice) : -1);
 		}
-		else if (scroll)
+
+		/* Scroll selected option up or down */
+		else if ((choice == '8') && scroll)
 		{
-			/* Scroll selected option up or down */
-			if (choice == '8')
+			do
 			{
-				do
-				{
-					/* Find previous option */
-					select--;
-					
-					/* Scroll over */
-					if (select < 0) select = num - 1;
-				}
-				while(!options[select].flags & MN_SELECT);
+				/* Find previous option */
+				select--;
+				
+				/* Scroll over */
+				if (select < 0) select = num - 1;
+			}
+			while(!options[select].flags & MN_SELECT);
+			
+			/* Show the list */
+			show_menu(num, options, select, scroll, prompt);
+
+			/* Next time */
+			continue;
+		}
+		
+		/* Scroll selected option up or down */
+		else if ((choice == '2') && scroll)
+		{
+			do
+			{
+				/* Find next option */
+				select++;
+				
+				/* Scroll over */
+				if (select >= num) select = 0;
+			}
+			while(!options[select].flags & MN_SELECT);
+			
+			/* Show the list */
+			show_menu(num, options, select, scroll, prompt);
+			
+			/* Next time */
+			continue;
+		}
+		
+		/* Context-sensitive help */
+		else if (choice == '?')
+		{
+			/* Do we have a help entry? */
+			if ((select >= 0) && options[select].help)
+			{
+				/* Show the information */
+				show_file(options[select].help, NULL, 0, 0);
+				
+				/* Clear the screen */
+				Term_load();
+				Term_save();
 				
 				/* Show the list */
 				show_menu(num, options, select, scroll, prompt);
-
+				
 				/* Next time */
 				continue;
 			}
-			
-			/* Scroll selected option up or down */
-			if (choice == '2')
+			else
 			{
-				do
-				{
-					/* Find next option */
-					select++;
-					
-					/* Scroll over */
-					if (select >= num) select = 0;
-				}
-				while(!options[select].flags & MN_SELECT);
-				
-				/* Show the list */
-				show_menu(num, options, select, scroll, prompt);
-				
-				/* Next time */
+				bell("No context sensitive help available!");
 				continue;
 			}
 		}

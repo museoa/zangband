@@ -1803,6 +1803,7 @@ typedef struct menu_type menu_type;
 struct menu_type
 {
 	cptr text;					/* Option text */
+	cptr help;					/* Help file to use */
 	menu_select_type action;	/* Action to do */
 
 	byte flags;					/* Flags controling option behaviour */

@@ -3168,14 +3168,14 @@ static bool cmd_pets_items(int dummy)
 /* The menu used to interact with pets */
 menu_type pet_menu[PET_CHOICE_MAX + 1] =
 {
-	{"dismiss pets", cmd_pets_dismiss, MN_AVAILABLE},
-	{"stay close", cmd_pets_close, MN_AVAILABLE | MN_SELECT},
-	{"follow me", cmd_pets_follow, MN_AVAILABLE | MN_SELECT},
-	{"seek and destroy", cmd_pets_destroy, MN_AVAILABLE | MN_SELECT},
-	{"give me space", cmd_pets_space, MN_AVAILABLE | MN_SELECT},
-	{"stay away", cmd_pets_away, MN_AVAILABLE | MN_SELECT},
-	{NULL, cmd_pets_doors, MN_AVAILABLE},
-	{NULL, cmd_pets_items, MN_AVAILABLE},
+	{"dismiss pets", NULL, cmd_pets_dismiss, MN_AVAILABLE},
+	{"stay close", NULL, cmd_pets_close, MN_AVAILABLE | MN_SELECT},
+	{"follow me", NULL, cmd_pets_follow, MN_AVAILABLE | MN_SELECT},
+	{"seek and destroy", NULL, cmd_pets_destroy, MN_AVAILABLE | MN_SELECT},
+	{"give me space", NULL, cmd_pets_space, MN_AVAILABLE | MN_SELECT},
+	{"stay away", NULL, cmd_pets_away, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, cmd_pets_doors, MN_AVAILABLE},
+	{NULL, NULL, cmd_pets_items, MN_AVAILABLE},
 	MENU_END
 };
 
