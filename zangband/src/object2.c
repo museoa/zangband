@@ -370,19 +370,23 @@ void compact_objects(int size)
 
 
 /*
- * Delete all the items when player leaves the level
+ * Delete all the non-held items.
+ * Items in stores, and in the players inventory are not
+ * touched.  Items in monster inventories are wiped by
+ * calling wipe_m_list() before this function.
  *
- * Note -- we do NOT visually reflect these (irrelevant) changes
- *
- * Hack -- we clear the "c_ptr->o_idx" field for every grid,
- * and the "m_ptr->next_o_idx" field for every monster, since
- * we know we are clearing every object.  Technically, we only
- * clear those fields for grids/monsters containing objects,
+ * Hack -- we clear the "c_ptr->o_idx" field for every grid
+ * since we know we are clearing every object.  Technically, we
+ * only clear those fields for grids containing objects,
  * and we clear it once for every such object.
  */
 void wipe_o_list(void)
 {
 	int i;
+	
+	int x, y;
+	
+	cave_type *c_ptr;
 
 	/* Delete the existing objects */
 	for (i = 1; i < o_max; i++)
@@ -391,6 +395,9 @@ void wipe_o_list(void)
 
 		/* Skip dead objects */
 		if (!o_ptr->k_idx) continue;
+		
+		/* Skip held objects */
+		if (o_ptr->held_m_idx) continue;
 
 		/* Preserve artifacts */
 		if (preserve_mode && (o_ptr->flags3 & TR3_INSTA_ART) &&
@@ -400,31 +407,22 @@ void wipe_o_list(void)
 			a_info[o_ptr->activate - 128].cur_num = 0;
 		}
 
-		/* Dungeon items */
-		if (!o_ptr->held_m_idx)
-		{
-			cave_type *c_ptr;
+		/* Access location */
+		y = o_ptr->iy;
+		x = o_ptr->ix;
 
-			/* Access location */
-			int y = o_ptr->iy;
-			int x = o_ptr->ix;
+		/* Access grid */
+		c_ptr = area(x, y);
 
-			/* Access grid */
-			c_ptr = area(x, y);
-
-			/* Hack -- see above */
-			c_ptr->o_idx = 0;
-		}
-
-		/* Wipe the object */
-		object_wipe(o_ptr);
+		/* Hack -- see above */
+		c_ptr->o_idx = 0;
+			
+		/* Delete the object */
+		delete_object_idx(i);
 	}
-
-	/* Reset "o_max" */
-	o_max = 1;
-
-	/* Reset "o_cnt" */
-	o_cnt = 0;
+	
+	/* Compress the object list */
+	compact_objects(0);
 }
 
 
@@ -459,9 +457,6 @@ void wipe_objects(int rg_idx)
 		/* Delete the object */
 		delete_object_idx(i);
 	}
-
-	/* Compress the object list */
-	compact_objects(0);
 }
 
 
