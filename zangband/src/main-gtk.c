@@ -2714,7 +2714,7 @@ errr init_gtk(unsigned char *new_game, int argc, char **argv)
 #ifdef USE_GRAPHICS
 
 	/* Set graphics mode */
-	set_graph_mode(graphmode);
+	if (arg_graphics) set_graph_mode(graphmode);
 
 #endif /* USE_GRAPHICS */
 		
