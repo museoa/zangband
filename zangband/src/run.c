@@ -200,37 +200,66 @@ static int see_interesting(int x, int y)
 #define RUN_W  (RUN_W_SW  | RUN_W_W  | RUN_W_NW)
 #define RUN_NW (RUN_NW_SW | RUN_NW_W | RUN_NW_NW | RUN_NW_N | RUN_NW_NE)
 
+#define TEST_NONE   0
+#define TEST_WALL   1
+#define TEST_UNSEEN 2
+#define TEST_FLOOR  3
+
+/*
+ * The tests.
+ *
+ * Some of these are hard to understand. Don't worry too
+ * much, unless you really need to modify the table.
+ *
+ * The order the groups of checks are in is important!
+ * Don't reorder them unless you're sure you know what
+ * you're doing. The order within each group is arbitrary.
+ *
+ * Each test consists of:
+ *
+ *   What type of square test to do (if any), and what
+ *   square to test as an offset from the player.
+ *
+ *   What other moves must be valid (0 for none). If there
+ *   are multiple moves listed, the test passes if any of
+ *   the listed moves are valid.
+ *
+ *   What moves to remove from consideration if both the
+ *   checks listed pass.
+ */
 static const struct
 {
+	int test;
 	int dx, dy;
 	u32b test_mask;
 	u32b remove_mask;
 } run_checks[] = {
+
 /* Eliminate impossible moves */
-{-2, -2, 0,        RUN_NW_NW},
-{-1, -2, 0,        RUN_NW_N | RUN_N_NW},
-{ 0, -2, 0,        RUN_NW_NE | RUN_N_N | RUN_NE_NW},
-{ 1, -2, 0,        RUN_NE_N | RUN_N_NE},
-{ 2, -2, 0,        RUN_NE_NE},
-{ 2, -1, 0,        RUN_NE_E | RUN_E_NE},
-{ 2,  0, 0,        RUN_NE_SE | RUN_E_E | RUN_SE_NE},
-{ 2,  1, 0,        RUN_SE_E | RUN_E_SE},
-{ 2,  2, 0,        RUN_SE_SE},
-{ 1,  2, 0,        RUN_SE_S | RUN_S_SE},
-{ 0,  2, 0,        RUN_SE_SW | RUN_S_S | RUN_SW_SE},
-{-1,  2, 0,        RUN_SW_S | RUN_S_SW},
-{-2,  2, 0,        RUN_SW_SW},
-{-2,  1, 0,        RUN_SW_W | RUN_W_SW},
-{-2,  0, 0,        RUN_SW_NW | RUN_W_W | RUN_NW_SW},
-{-2, -1, 0,        RUN_NW_W | RUN_W_NW},
-{-1, -1, 0,        RUN_NW},
-{ 0, -1, 0,        RUN_N},
-{ 1, -1, 0,        RUN_NE},
-{ 1,  0, 0,        RUN_E},
-{ 1,  1, 0,        RUN_SE},
-{ 0,  1, 0,        RUN_S},
-{-1,  1, 0,        RUN_SW},
-{-1,  0, 0,        RUN_W},
+{TEST_WALL, -2, -2, 0,        RUN_NW_NW},
+{TEST_WALL, -1, -2, 0,        RUN_NW_N | RUN_N_NW},
+{TEST_WALL,  0, -2, 0,        RUN_NW_NE | RUN_N_N | RUN_NE_NW},
+{TEST_WALL,  1, -2, 0,        RUN_NE_N | RUN_N_NE},
+{TEST_WALL,  2, -2, 0,        RUN_NE_NE},
+{TEST_WALL,  2, -1, 0,        RUN_NE_E | RUN_E_NE},
+{TEST_WALL,  2,  0, 0,        RUN_NE_SE | RUN_E_E | RUN_SE_NE},
+{TEST_WALL,  2,  1, 0,        RUN_SE_E | RUN_E_SE},
+{TEST_WALL,  2,  2, 0,        RUN_SE_SE},
+{TEST_WALL,  1,  2, 0,        RUN_SE_S | RUN_S_SE},
+{TEST_WALL,  0,  2, 0,        RUN_SE_SW | RUN_S_S | RUN_SW_SE},
+{TEST_WALL, -1,  2, 0,        RUN_SW_S | RUN_S_SW},
+{TEST_WALL, -2,  2, 0,        RUN_SW_SW},
+{TEST_WALL, -2,  1, 0,        RUN_SW_W | RUN_W_SW},
+{TEST_WALL, -2,  0, 0,        RUN_SW_NW | RUN_W_W | RUN_NW_SW},
+{TEST_WALL, -2, -1, 0,        RUN_NW_W | RUN_W_NW},
+{TEST_WALL, -1, -1, 0,        RUN_NW},
+{TEST_WALL,  0, -1, 0,        RUN_N},
+{TEST_WALL,  1, -1, 0,        RUN_NE},
+{TEST_WALL,  1,  0, 0,        RUN_E},
+{TEST_WALL,  1,  1, 0,        RUN_SE},
+{TEST_WALL,  0,  1, 0,        RUN_S},
+{TEST_WALL, -1,  1, 0,        RUN_SW},
+{TEST_WALL, -1,  0, 0,        RUN_W},
 
 /*
  * Ensure that the player will take unknown corners by
@@ -246,34 +275,79 @@ static const struct
  * In this situation we remove all the 'west' moves, because
  * they are to unknown squares, and it's possible to move
  * southwest instead.
+ *
+ * Note that this can miss a branch if the unknown square
+ * is actually a floor square and cutting corners is
+ * enabled.
  */
-{-1, -2, RUN_NE | RUN_NW, RUN_N_NW},
-{ 0, -2, RUN_NE | RUN_NW, RUN_N_N},
-{ 1, -2, RUN_NE | RUN_NW, RUN_N_NE},
-{ 2, -1, RUN_NE | RUN_SE, RUN_E_NE},
-{ 2,  0, RUN_NE | RUN_SE, RUN_E_E},
-{ 2,  1, RUN_NE | RUN_SE, RUN_E_SE},
-{ 1,  2, RUN_SE | RUN_SW, RUN_S_SE},
-{ 0,  2, RUN_SE | RUN_SW, RUN_S_S},
-{-1,  2, RUN_SE | RUN_SW, RUN_S_SW},
-{-2,  1, RUN_NW | RUN_SW, RUN_W_SW},
-{-2,  0, RUN_NW | RUN_SW, RUN_W_W},
-{-2, -1, RUN_NW | RUN_SW, RUN_W_NW},
+{TEST_UNSEEN, -1, -2, RUN_NE | RUN_NW, RUN_N_NW},
+{TEST_UNSEEN,  0, -2, RUN_NE | RUN_NW, RUN_N_N},
+{TEST_UNSEEN,  1, -2, RUN_NE | RUN_NW, RUN_N_NE},
+{TEST_UNSEEN,  2, -1, RUN_NE | RUN_SE, RUN_E_NE},
+{TEST_UNSEEN,  2,  0, RUN_NE | RUN_SE, RUN_E_E},
+{TEST_UNSEEN,  2,  1, RUN_NE | RUN_SE, RUN_E_SE},
+{TEST_UNSEEN,  1,  2, RUN_SE | RUN_SW, RUN_S_SE},
+{TEST_UNSEEN,  0,  2, RUN_SE | RUN_SW, RUN_S_S},
+{TEST_UNSEEN, -1,  2, RUN_SE | RUN_SW, RUN_S_SW},
+{TEST_UNSEEN, -2,  1, RUN_NW | RUN_SW, RUN_W_SW},
+{TEST_UNSEEN, -2,  0, RUN_NW | RUN_SW, RUN_W_W},
+{TEST_UNSEEN, -2, -1, RUN_NW | RUN_SW, RUN_W_NW},
+
+/*
+ * Allow the player to run in a pillared corridor with
+ * a radius-2 light source, by removing some diagonal
+ * moves into unknown squares. Example:
+ *
+ *  #.#
+ * #...#
+ * ##@##
+ *
+ * Note that this, like the previous set, can result
+ * in missing an actual (but unusual) branch.
+ * Generally the player will see the branch once we
+ * move another step, but by that point it's too
+ * late, so we keep going forward.
+ */
+{TEST_UNSEEN, -2, -2, RUN_N | RUN_W, RUN_NW_NW},
+{TEST_UNSEEN,  2, -2, RUN_N | RUN_E, RUN_NE_NE},
+{TEST_UNSEEN,  2,  2, RUN_S | RUN_E, RUN_SE_SE},
+{TEST_UNSEEN, -2,  2, RUN_S | RUN_W, RUN_SW_SW},
 
 /* Prefer going straight over zig-zagging */
-{ 0,  0, RUN_N_N,  RUN_NE_NW | RUN_NW_NE},
-{ 0,  0, RUN_E_E,  RUN_NE_SE | RUN_SE_NE},
-{ 0,  0, RUN_S_S,  RUN_SE_SW | RUN_SW_SE},
-{ 0,  0, RUN_W_W,  RUN_NW_SW | RUN_SW_NW},
-/* Prefer to move diagonal then orthagonal over the reverse */
-{ 0,  0, RUN_NW_W, RUN_W_NW},
-{ 0,  0, RUN_NW_N, RUN_N_NW},
-{ 0,  0, RUN_NE_N, RUN_N_NE},
-{ 0,  0, RUN_NE_E, RUN_E_NE},
-{ 0,  0, RUN_SE_E, RUN_E_SE},
-{ 0,  0, RUN_SE_S, RUN_S_SE},
-{ 0,  0, RUN_SW_S, RUN_S_SW},
-{ 0,  0, RUN_SW_W, RUN_W_SW}
+{TEST_NONE,  0,  0, RUN_N_N,  RUN_NE_NW | RUN_NW_NE},
+{TEST_NONE,  0,  0, RUN_E_E,  RUN_NE_SE | RUN_SE_NE},
+{TEST_NONE,  0,  0, RUN_S_S,  RUN_SE_SW | RUN_SW_SE},
+{TEST_NONE,  0,  0, RUN_W_W,  RUN_NW_SW | RUN_SW_NW},
+
+/* Prefer moving diagonal then orthagonal over the reverse */
+{TEST_NONE,  0,  0, RUN_NW_W, RUN_W_NW},
+{TEST_NONE,  0,  0, RUN_NW_N, RUN_N_NW},
+{TEST_NONE,  0,  0, RUN_NE_N, RUN_N_NE},
+{TEST_NONE,  0,  0, RUN_NE_E, RUN_E_NE},
+{TEST_NONE,  0,  0, RUN_SE_E, RUN_E_SE},
+{TEST_NONE,  0,  0, RUN_SE_S, RUN_S_SE},
+{TEST_NONE,  0,  0, RUN_SW_S, RUN_S_SW},
+{TEST_NONE,  0,  0, RUN_SW_W, RUN_W_SW},
+
+/*
+ * If the player starts out by moving into a branch corridor:
+ *
+ * ###    ###
+ * b.@ -> b..
+ * #.#    #@#
+ * #a#    #a#
+ *
+ * we should realize that the player means to continue to the square marked
+ * 'a', and we should ignore the possibility of moving to 'b' instead.
+ *
+ * To recognize this, we check for the presence of a floor tile that the
+ * player might have come from next to, and remove any moves that would
+ * result in "doubling back".
+ */
+{TEST_FLOOR,  0, -1, RUN_SW | RUN_S | RUN_SE, RUN_NE | RUN_NW},
+{TEST_FLOOR,  1,  0, RUN_NW | RUN_W | RUN_SW, RUN_NE | RUN_SE},
+{TEST_FLOOR,  0,  1, RUN_NW | RUN_N | RUN_NE, RUN_SE | RUN_SW},
+{TEST_FLOOR, -1,  0, RUN_SE | RUN_E | RUN_NE, RUN_NW | RUN_SW}
 };
 
 /*
@@ -362,6 +436,9 @@ static int valid_dir_mask[10] = {
  *
  * If, after all the checks, all the two-move combinations left start with the
  * same move, we use that move. Otherwise, we're at a branch, so we stop.
+ *
+ * See run_checks[] for more detailed comments on some of the situations we
+ * test for.
  */
 static void run_follow(void)
 {
@@ -401,22 +478,28 @@ static void run_follow(void)
 			/* Check square if present */
 			if (dx || dy)
 			{
-				/* 
-				 * XXX Hack
-				 *
-				 * If test_mask is absent, do a check for a wall.
-				 * If test_mask is present, do a check for unknown.
-				 */
-				if (!test_mask)
+				bool ok = TRUE;
+
+				switch (run_checks[i].test)
 				{
-					if (!see_wall(px + dx, py + dy))
-						continue;
+				case TEST_NONE:
+					break;
+
+				case TEST_WALL:
+					ok = see_wall(px + dx, py + dy);
+					break;
+
+				case TEST_UNSEEN:
+					ok = see_nothing(px + dx, py + dy);
+					break;
+
+				case TEST_FLOOR:
+					ok = !see_wall(px + dx, py + dy) &&
+					     !see_nothing(px + dx, py + dy);
+					break;
 				}
-				else
-				{
-					if (!see_nothing(px + dx, py + dy))
-						continue;
-				}
+
+				if (!ok) continue;
 			}
 
 			valid_dirs &= ~run_checks[i].remove_mask;
