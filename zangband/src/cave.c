@@ -3522,6 +3522,10 @@ void wiz_lite(void)
 {
 	int i, y, x;
 
+	#ifdef AVATAR
+	chg_virtue(V_KNOWLEDGE, 1);
+	chg_virtue(V_ENLIGHTEN, 1);
+	#endif
 
 	/* Memorize objects */
 	for (i = 1; i < o_max; i++)
