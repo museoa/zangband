@@ -4740,6 +4740,28 @@ static void init_stuff(void)
 #endif /* 0 */
 }
 
+/*
+ * Test to see if we need to work-around bugs in
+ * the windows ascii-drawing routines.
+ */
+bool broken_ascii(void)
+{
+	OSVERSIONEX Dozeversion;
+ 	Dozeversion.dwOSVersionInfoSize = sizeof(Dozeversion);
+	if (GetVersionEx((OSVERSIONINFO*) &Dozeversion))
+	{
+		/* Win XP is b0rken */
+		if ((Dozeversion.dwPlatformId == VER_PLATFORM_WIN32_NT)
+			&& (Dozeversion.dwMajorVersion > 5))
+		{
+			return (TRUE);
+		}
+	}
+	
+	return (FALSE);
+}
+
+
 
 int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
                        LPSTR lpCmdLine, int nCmdShow)
@@ -4883,6 +4905,11 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 
 	/* Set the system suffix */
 	ANGBAND_SYS = "win";
+	
+	if (broken_ascii())
+	{
+		ANGBAND_SYS = "w2k";
+	}
 
 	/* Initialize */
 	init_angband();
