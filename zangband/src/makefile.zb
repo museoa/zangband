@@ -208,7 +208,7 @@ distclean-files += autoconf.h
 srcdirlist += src
 notsrcfiles += compress.c autoconf.h
 
-srcfiles += $(filter_out $(notsrcfiles), \
+srcfiles += $(filter-out $(notsrcfiles), \
 		 src/*.c src/*.h src/angband.rc src/angband.ico \
 		 src/angband.xpm src/zangband.icns src/makefile* src/l-*.pkg) \
 		 autoconf.h.in
