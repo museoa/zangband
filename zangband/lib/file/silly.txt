@@ -1,5 +1,5 @@
 N:*:Default
-296
+323
 Borg
 Dalek
 Destructor
@@ -296,3 +296,30 @@ Beast of the Black Forest
 Demon of the Belfry
 Sex Beast
 Sunday Morning Slasher
+Computer god
+Evil woman
+Lord of this world
+Sadist
+Masochist
+Sado-masochist
+War pig
+Iron Man
+Dehumanizer
+Holy diver
+Jugulator
+Exciter
+Painkiller
+angry mob
+Who
+Y2K bug
+RNG
+Greater hell magic mushroom cyber-unmaker leprechaun of the Dawn
+Devastator, the Destroyer's Big Brother
+Celestial
+Valkyrie
+Diablo
+Eidolon
+Medic
+Tank
+Tank Commander
+Man-in-Black
