@@ -381,6 +381,9 @@ void teleport_player(int dis)
 			if (!(cave_naked_grid(c_ptr) ||
 			    ((c_ptr->feat & 0x60) == 0x60))) continue;
 
+			/* No non-movement */
+			if ((y == py) && (x == px)) continue;
+			
 			/* Check for a field that blocks movement */
 			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_ENTER))
 			{
@@ -528,6 +531,9 @@ void teleport_player_to(int ny, int nx)
 		if (cave_naked_grid(c_ptr) && !(fields_have_flags(c_ptr->fld_idx,
 				 FIELD_INFO_NO_ENTER))) break;
 
+		/* No non-movement */
+		if ((y == py) && (x == px)) continue;
+		
 		/* Occasionally advance the distance */
 		if (++ctr > (4 * dis * dis + 4 * dis + 1))
 		{

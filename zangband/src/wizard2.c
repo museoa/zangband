@@ -118,6 +118,9 @@ static void do_cmd_summon_horde(void)
 
 		c_ptr = area(wy, wx);
 		if (cave_naked_grid(c_ptr)) break;
+		
+		/* Not under the player */
+		if ((wy == py) && (wx == px)) break;
 	}
 
 	(void)alloc_horde(wy, wx);

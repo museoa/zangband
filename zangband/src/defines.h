@@ -3392,8 +3392,7 @@
 	  ((C)->feat == FEAT_DIRT)) && \
 	  ((C)->o_idx == 0) && \
 	  ((C)->m_idx == 0) && \
-	  ((C)->fld_idx == 0) && \
-	  !((C) == area(py, px)))
+	  ((C)->fld_idx == 0))
 
 
 /*
