@@ -1845,6 +1845,8 @@ void display_map(int *cy, int *cx)
 	char tc;
 
 	byte tp;
+	
+	u16b w_type;
 
 	byte ma[SCREEN_HGT + 2][SCREEN_WID + 2];
 	char mc[SCREEN_HGT + 2][SCREEN_WID + 2];
@@ -1859,9 +1861,6 @@ void display_map(int *cy, int *cx)
 	int yrat = cur_hgt / SCREEN_HGT;
 	int xrat = cur_wid / SCREEN_WID;
 
-	/* Massive hack - wilderness map code not written yet */
-	if (!dun_level) return;
-
 	/* Save lighting effects */
 	old_view_special_lite = view_special_lite;
 	old_view_granite_lite = view_granite_lite;
@@ -1869,7 +1868,6 @@ void display_map(int *cy, int *cx)
 	/* Disable lighting effects */
 	view_special_lite = FALSE;
 	view_granite_lite = FALSE;
-
 
 	/* Clear the chars and attributes */
 	for (y = 0; y < SCREEN_HGT + 2; ++y)
@@ -1885,66 +1883,116 @@ void display_map(int *cy, int *cx)
 		}
 	}
 
-	/* Fill in the map */
-	for (i = 0; i < cur_wid; ++i)
+	if (!dun_level)
 	{
-		for (j = 0; j < cur_hgt; ++j)
+		/* Plot wilderness */
+		
+		/* work out coords of player in wilderness */
+		x = px / 16;
+		y = py / 16;
+		
+		/* recenter */
+		x = x - SCREEN_WID / 2;
+		if (x < 0) x = 0;
+		
+		y = y - SCREEN_HGT / 2;
+		if (y < 0) y = 0;
+		
+		/* Fill in the map */
+		for (i = 0; i < SCREEN_WID; ++i)
 		{
-			/* Location */
-			x = i / xrat + 1;
-			y = j / yrat + 1;
+			for (j = 0; j < SCREEN_HGT; ++j)
+			{
+				/* Only draw blocks inside map */
+				if(((x + i + 1) >= max_wild) || ((y + j + 1) >= max_wild)) continue;
+				
+				w_type = wild[j + y][i + x].done.wild;
+				
+				/* Get attr / char pair for wilderness block type */
+				if(w_type >= WILD_SEA)
+				{
+					ma[j + 1][i + 1] = TERM_BLUE;
+					mc[j + 1][i + 1] = '~';
+				} 
+				else
+				{
+					ma[j + 1][i + 1] = wild_gen_data[w_type].w_attr;
+					mc[j + 1][i + 1] = wild_gen_data[w_type].w_char;
+				}
+				
+				/* Add in town / road / rivers later */
+				
+				/* Finally show position of player */
+				if ((i + x == px / 16) && (j + y == py / 16))
+				{
+					ma[j + 1][i + 1] = TERM_WHITE;
+					mc[j + 1][i + 1] = '@';
+				}
+			}
+		}
+	}
+	else
+	{
+		/* Fill in the map of dungeon */
+		for (i = 0; i < cur_wid; ++i)
+		{
+			for (j = 0; j < cur_hgt; ++j)
+			{
+				/* Location */
+				x = i / xrat + 1;
+				y = j / yrat + 1;
 
-			/* Extract the current attr/char at that map location */
+				/* Extract the current attr/char at that map location */
 #ifdef USE_TRANSPARENCY
-			map_info(j, i, &ta, &tc, &ta, &tc);
+				map_info(j, i, &ta, &tc, &ta, &tc);
 #else /* USE_TRANSPARENCY */
-			map_info(j, i, &ta, &tc);
+				map_info(j, i, &ta, &tc);
 #endif /* USE_TRANSPARENCY */
 
-			/* Extract the priority of that attr/char */
-			tp = priority(ta, tc);
+				/* Extract the priority of that attr/char */
+				tp = priority(ta, tc);
 
-			/* Save "best" */
-			if (mp[y][x] < tp)
-			{
-				/* Save the char */
-				mc[y][x] = tc;
+				/* Save "best" */
+				if (mp[y][x] < tp)
+				{
+					/* Save the char */
+					mc[y][x] = tc;
 
-				/* Save the attr */
-				ma[y][x] = ta;
+					/* Save the attr */
+					ma[y][x] = ta;
 
-				/* Save priority */
-				mp[y][x] = tp;
+					/* Save priority */
+					mp[y][x] = tp;
+				}
 			}
 		}
 	}
 
-
 	/* Corners */
-	x = SCREEN_WID + 1;
-	y = SCREEN_HGT + 1;
+	i = SCREEN_WID + 1;
+	j = SCREEN_HGT + 1;
 
 	/* Draw the corners */
-	mc[0][0] = mc[0][x] = mc[y][0] = mc[y][x] = '+';
+	mc[0][0] = mc[0][i] = mc[j][0] = mc[j][i] = '+';
 
 	/* Draw the horizontal edges */
-	for (x = 1; x <= SCREEN_WID; x++) mc[0][x] = mc[y][x] = '-';
+	for (i = 1; i <= SCREEN_WID; i++) mc[0][i] = mc[j][i] = '-';
 
 	/* Draw the vertical edges */
-	for (y = 1; y <= SCREEN_HGT; y++) mc[y][0] = mc[y][x] = '|';
+	for (j = 1; j <= SCREEN_HGT; j++) mc[j][0] = mc[j][i] = '|';
 
 
 	/* Display each map line in order */
-	for (y = 0; y < SCREEN_HGT+2; ++y)
+	for (j = 0; j < SCREEN_HGT+2; ++j)
 	{
 		/* Start a new line */
-		Term_gotoxy(COL_MAP, y);
+		Term_gotoxy(COL_MAP, j);
 
 		/* Display the line */
-		for (x = 0; x < SCREEN_WID+2; ++x)
+		for (i = 0; i < SCREEN_WID+2; ++i)
 		{
-			ta = ma[y][x];
-			tc = mc[y][x];
+			ta = ma[j][i];
+			tc = mc[j][i];
 
 			/* Hack -- fake monochrome */
 			if (fake_monochrome)
@@ -1958,11 +2006,18 @@ void display_map(int *cy, int *cx)
 		}
 	}
 
-
-	/* Player location */
-	(*cy) = py / yrat + 1 + ROW_MAP;
-	(*cx) = px / xrat + 1 + COL_MAP;
-
+	if (!dun_level)
+	{
+		/* Player location in wilderness*/
+		(*cy) = py / 16 - y + 1 + ROW_MAP;
+		(*cx) = px / 16 - x + 1 + COL_MAP;
+	}
+	else
+	{
+		/* Player location in dungeon*/
+		(*cy) = py / yrat + 1 + ROW_MAP;
+		(*cx) = px / xrat + 1 + COL_MAP;
+	}
 
 	/* Restore lighting effects */
 	view_special_lite = old_view_special_lite;
