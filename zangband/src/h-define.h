@@ -119,35 +119,26 @@
 # define assert(ignore)	((void) 0)
 #else /* NDEBUG */
 
-# ifdef DEBUG_ABORT
-#  define assert(expr) \
-	do\
-	{\
-		if (!(expr)) \
-		{\
-			quit_fmt("\n%s%s\n%s%s\n%s%d\n\n",\
-			"Assertion failed: ", #expr,\
-			"in file ", __FILE__,\
-			"on line ", __LINE__);\
-		}\
-	}\
-	while (FALSE)
-
-# else /* DEBUG_ABORT */
-
 	/* Pick which type of output to use */
-#  ifdef DEBUG_CORE
-#   define __assert_fmt core_fmt
-#  else /* DEBUG_CORE */
-#   define __assert_fmt quit_fmt
-#  endif /* DEBUG_CORE */
+# ifdef DEBUG_CORE
+#  define __assert_fmt core_fmt
+# else /* DEBUG_CORE */
+#  define __assert_fmt quit_fmt
+# endif /* DEBUG_CORE */
 
-	/* Save the game, and then abort. */
-#  define assert(expr)\
+	/* Pick whether to save the game before aborting */
+# ifdef DEBUG_ABORT
+#  define __assert_save save_player()
+# else
+#  define __assert_save ((void) 0)
+# endif
+
+	/* Possibly save the game, and then abort. */
+# define assert(expr)\
 	do\
 	{\
 		signals_ignore_tstp();\
-		(void) save_player();\
+		(void) __assert_save;\
 		if (!(expr))\
 		{\
 			__assert_fmt("\n%s%s\n%s%s\n%s%d\n\n",\
@@ -157,7 +148,6 @@
 		}\
 	}\
 	while (FALSE)
-# endif /* DEBUG_ABORT */
 #endif /* NDEBUG */
 
 
