@@ -4612,8 +4612,10 @@ bool borg_leave_level(bool bored)
 
 		/* Hack -- Recall into dungeon */
 		if ((borg_skill[BI_MAXDEPTH] >= (borg_worships_gold ? 8 : 5)) &&
-			(borg_skill[BI_RECALL] >= 3) &&
-			((cptr)NULL == borg_prepared(borg_skill[BI_MAXDEPTH] * 6 / 10)) &&
+            (borg_skill[BI_RECALL] >= 3) &&
+#if 0 /* This is riskier but more fun :) */
+            ((cptr)NULL == borg_prepared(borg_skill[BI_MAXDEPTH] * 6 / 10)) &&
+#endif
 			borg_recall())
 		{
 			/* Note */
