@@ -546,7 +546,7 @@
 /*
  * Maximum number of monsters that can be exploding at once.
  */
-#define DEATH_MAX 100
+#define DEATH_MAX		100
 
 /*
  * Number of keymap modes

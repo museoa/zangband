@@ -1662,12 +1662,9 @@ struct dun_type
 
 
 typedef bool (*monster_hook_type)(int r_idx);
-
-
-/*
- * This seems like a pretty standard "typedef"
- */
 typedef int (*inven_func)(object_type *);
+typedef bool (*cave_hook_type)(cave_type *c_ptr);
+
 
 
 /*

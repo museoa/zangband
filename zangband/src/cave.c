@@ -101,7 +101,7 @@ bool is_visible_trap(cave_type *c_ptr)
  * Use this function instead of cut+pasting los() everywhere
  * with only tiny changes made to it.
  */
-static bool los_general(int y1, int x1, int y2, int x2, bool (*f)(cave_type*))
+static bool los_general(int y1, int x1, int y2, int x2, cave_hook_type c_hook)
 {
 	int i, j, temp, dist;
 	
@@ -156,7 +156,7 @@ static bool los_general(int y1, int x1, int y2, int x2, bool (*f)(cave_type*))
 			
 			c_ptr = area(y, x);
 		
-			if ((*f)(c_ptr))
+			if ((*c_hook)(c_ptr))
 			{
 				/* Blocked: go to the best position we have not looked at yet */
 				temp = project_data[i][j].slope;
@@ -189,7 +189,7 @@ static bool los_general(int y1, int x1, int y2, int x2, bool (*f)(cave_type*))
 		
 			c_ptr = area(y, x);
 		
-			if ((*f)(c_ptr))
+			if ((*c_hook)(c_ptr))
 			{
 				/* Blocked: go to the best position we have not looked at yet */
 				temp = project_data[i][j].slope;
