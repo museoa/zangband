@@ -4195,7 +4195,7 @@ static void borg_target(int x, int y)
  * We will also decrease the value of the missile attack on breeders or
  * high clevel borgs town scumming.
  */
-int borg_launch_damage_one(int i, int dam, int typ)
+static int borg_launch_damage_one(int i, int dam, int typ)
 {
 	int p1, p2 = 0;
 	bool borg_use_missile = FALSE;
@@ -4957,9 +4957,6 @@ static int borg_launch_aux_hack(int i, int dam, int typ)
 	/* Monster */
 	borg_kill *kill = &borg_kills[i];
 
-	/* Monster race */
-	monster_race *r_ptr = &r_info[kill->r_idx];
-
 	/* Skip dead monsters */
 	if (!kill->r_idx) return (0);
 
@@ -5343,6 +5340,9 @@ static int borg_launch_bolt(int rad, int dam, int typ, int max)
 /* Simulate/Apply the optimal result of activating an artifact */
 static int borg_attack_aux_artifact(int *b_slot)
 {
+	/* Ignore parameter */
+	(void) b_slot;
+
 	/* Yeah well, how do I find out what the activation is */
 	return (0);
 }
@@ -5810,7 +5810,7 @@ static int borg_throw_damage(list_item *l_ptr, int *typ)
 static int borg_attack_aux_object(int *b_slot)
 {
 	int n, b_n = 0;
-	int b_x, b_y;
+	int b_x = 0, b_y = 0;
 	int slot;
 
 	int d, typ, r;
@@ -6196,7 +6196,7 @@ static int borg_rod_damage_monster(int sval)
 static int borg_attack_rod_aux(int *b_slot)
 {
 	int n, b_n = -1;
-	int k, b_k = 0;
+	int k;
 	int b_x = 0, b_y = 0;
 	list_item *l_ptr;
 
@@ -6362,7 +6362,7 @@ static int borg_attack_wand_aux(int *b_slot)
 {
 	int n, b_n = 0;
 	int b_x = 0, b_y = 0;
-	int i, k, b_k = 0;
+	int i, k;
 	int sval;
 
 	list_item *l_ptr;
@@ -8360,6 +8360,10 @@ static int borg_attack_spellcaster_aux(int *b_slot, int *b_spell)
 /* Try to use the reserve mana for attacking anyway if there is one monster */
 static int borg_attack_spell_reserve_aux(int *b_slot, int *b_spell)
 {
+	/* Hack - ignore parameters */
+	(void) b_slot;
+	(void) b_spell;
+
 	/* Leave this one for later */
 	return (0);
 }
@@ -8649,7 +8653,7 @@ static void borg_add_temp_ball(int x, int y)
 
 
 /* This procedure adds a grid coords to borg_beam */
-static void borg_add_temp_beam(int x, int y, int dx, int dy)
+static void borg_add_temp_beam(int x, int y)
 {
 	/* Stick this monster in the temp ball array */
 	borg_beam_x[borg_beam_n] = x;
@@ -8659,7 +8663,7 @@ static void borg_add_temp_beam(int x, int y, int dx, int dy)
 
 
 /* This procedure adds a grid coords to borg_bolt */
-static void borg_add_temp_bolt(int x, int y, int dx, int dy)
+static void borg_add_temp_bolt(int x, int y)
 {
 	/* Stick this monster in the temp bolt array */
 	borg_bolt_x[borg_bolt_n] = x;
@@ -8778,7 +8782,7 @@ static void borg_temp_fill(bool all_monsters)
 					if (!dx && !dy)
 					{
 						/* Add the coords to the beam array */
-						borg_add_temp_beam(x1, y1, dx, dy);
+						borg_add_temp_beam(x1, y1);
 					}
 				}
 
@@ -8802,7 +8806,7 @@ static void borg_temp_fill(bool all_monsters)
 						borg_bolt_los_pure(c_x, c_y, x, y)))
 					{
 						/* Add the coords to the bolt array */
-						borg_add_temp_bolt(x1, y1, dx, dy);
+						borg_add_temp_bolt(x1, y1);
 					}
 				}
 				/* Are we looking for a token monster or for all of them? */

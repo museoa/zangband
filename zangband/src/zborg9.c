@@ -3646,7 +3646,7 @@ void do_cmd_borg(void)
 		case 'K':
 		{
 			/* Command: show "monsters" */
-			int i, n = 0;
+			int i;
 
 			/* Scan the monsters */
 			for (i = 0; i < borg_ball_n; i++)
