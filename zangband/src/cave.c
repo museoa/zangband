@@ -5188,10 +5188,10 @@ void object_kind_track(int k_idx)
 void disturb(bool stop_search)
 {
 	/* Cancel repeated commands */
-	if (p_ptr->command_rep)
+	if (p_ptr->cmd.rep)
 	{
 		/* Cancel */
-		p_ptr->command_rep = 0;
+		p_ptr->cmd.rep = 0;
 
 		/* Redraw the state (later) */
 		p_ptr->redraw |= (PR_STATE);
