@@ -1205,7 +1205,7 @@ void do_cmd_options(byte flags)
 	/* Save option flags so menu functions can access them */
 	option_flags = flags;
 
-	display_menu(options_menu, -1, FALSE, NULL, VERSION_NAME " options");
+	display_menu(options_menu, 0, TRUE, NULL, VERSION_NAME " options");
 
 	/* Hack - Redraw equippy chars */
 	p_ptr->redraw |= (PR_EQUIPPY);
