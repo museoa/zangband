@@ -772,25 +772,35 @@ void notice_lite_change(object_type *o_ptr)
 	}
 }
 
+static bool item_tester_unsensed(const object_type *o_ptr)
+{
+	object_kind *k_ptr = &k_info[o_ptr->k_idx];
+
+	/* Check to see if we have identified the item */
+	if (object_known_p(o_ptr)) return (FALSE);
+	
+	/* Cannot sense flavoured items */
+	if (k_ptr->flavor) return (FALSE);
+	
+	/* Check to see if we have sensed the item */
+	if (o_ptr->info & OB_SENSE) return (FALSE);
+
+	return (TRUE);
+}
+
 
 /*
  * Forcibly pseudo-identify an object in the inventory
  * (or on the floor)
- *
- * note: currently this function allows pseudo-id of any object,
- * including silly ones like potions & scrolls, which always
- * get '{average}'. This should be changed, either to stop such
- * items from being pseudo-id'd, or to allow psychometry to
- * detect whether the unidentified potion/scroll/etc is
- * good (Cure Light Wounds, Restore Strength, etc) or
- * bad (Poison, Weakness etc) or 'useless' (Slime Mold Juice, etc).
  */
 bool psychometry(void)
 {
 	object_type *o_ptr;
 	byte feel;
 	cptr q, s;
-
+	
+	/* Only un-id'ed items */
+	item_tester_hook = item_tester_unsensed;
 
 	/* Get an item */
 	q = "Meditate on which item? ";
@@ -800,13 +810,6 @@ bool psychometry(void)
 
 	/* Not a valid item */
 	if (!o_ptr) return (FALSE);
-
-	/* It is fully known, no information needed */
-	if (object_known_p(o_ptr))
-	{
-		msgf("You cannot find out anything more about that.");
-		return TRUE;
-	}
 
 	/* Check for a feeling */
 	feel = value_check_aux1(o_ptr);
