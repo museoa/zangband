@@ -2559,7 +2559,7 @@ void init_wild_cache(void)
 		for (j = 0; j < WILD_VIEW; j++)
 		{
 			/* Hack - erase the player knowledge */
-			block_ptr = p_ptr->pwild[i][j];
+			block_ptr = p_ptr->pwild[j][i];
 			erase_grids(block_ptr);
 			
 			allocate_block(x + i, y + j);
