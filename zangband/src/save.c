@@ -2197,6 +2197,9 @@ bool load_player(void)
 				 */
 				create_wilderness();
 
+				/* If we are dead, then our inventory is corrupt */
+				p_ptr->inventory = 0;
+		
 				/* Done */
 				return (TRUE);
 			}
