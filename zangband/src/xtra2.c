@@ -1372,7 +1372,7 @@ void panel_bounds(void)
 	panel_row_prt = panel_row_min - 1;
 	panel_col_min = panel_col * (map_wid / 2);
 	panel_col_max = panel_col_min + map_wid - 1;
-	panel_col_prt = panel_col_min - (map_hgt / 2);
+	panel_col_prt = panel_col_min - 13;
 }
 
 
@@ -1388,7 +1388,7 @@ void panel_bounds_center(void)
 	panel_row_prt = panel_row_min - 1;
 	panel_col = panel_col_min / (map_wid / 2);
 	panel_col_max = panel_col_min + map_wid - 1;
-	panel_col_prt = panel_col_min - (map_hgt / 2);
+	panel_col_prt = panel_col_min - 13;
 }
 
 
