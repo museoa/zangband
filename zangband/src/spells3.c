@@ -1097,6 +1097,18 @@ void brand_weapon(int brand_type)
 		add_ego_flags(o_ptr, ego);
 
 		o_ptr->cost = cost;
+		
+		/* Recalculate bonuses */
+		p_ptr->update |= (PU_BONUS);
+
+		/* Recalculate mana */
+		p_ptr->update |= (PU_MANA);
+
+		/* Window stuff */
+		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+		
+		/* Combine / Reorder the pack (later) */
+		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 	}
 }
 
@@ -2032,6 +2044,9 @@ static void bad_luck(object_type *o_ptr)
 
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+		
+		/* Combine / Reorder the pack (later) */
+		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 	}
 }
 
@@ -4282,6 +4297,9 @@ bool curse_armor(void)
 
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+		
+		/* Combine / Reorder the pack (later) */
+		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 	}
 
 	return (TRUE);
@@ -4349,6 +4367,9 @@ bool curse_weapon(void)
 
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+		
+		/* Combine / Reorder the pack (later) */
+		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 	}
 
 	/* Notice */
@@ -4386,6 +4407,9 @@ bool brand_bolts(void)
 
 		/* Enchant */
 		(void)enchant(o_ptr, rand_range(2, 6), ENCH_TOHIT | ENCH_TODAM);
+		
+		/* Combine / Reorder the pack (later) */
+		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
 		/* Notice */
 		return (TRUE);
