@@ -76,14 +76,6 @@ typedef struct t_widget_color
 } t_widget_color;
 
 
-/* Extended Widget record */
-typedef struct ExWidget {
-	Widget widget;
-	IconSpec *effect; /* Per-tile effect icons */
-} ExWidget;
-
-
-
 static void DrawIconSpec(int y, int x, IconSpec iconSpec, BitmapPtr bitmapPtr)
 {
 	int pitch = bitmapPtr->pitch;
@@ -265,7 +257,6 @@ static void widget_wtd(Widget *widgetPtr, int y, int x, t_display *wtd)
  */
 static void widget_draw_all(Widget *widgetPtr)
 {
-	ExWidget *exPtr = (ExWidget *) widgetPtr;
 	int tile, layer;
 	int rc = widgetPtr->rc;
 	int cc = widgetPtr->cc;
@@ -324,9 +315,6 @@ static void widget_draw_all(Widget *widgetPtr)
 		if (wtd.fg.type != ICON_TYPE_NONE)
 			DrawIconSpec(yp, xp, wtd.fg, bitmapPtr);
 	
-		/* Draw effect icon */
-		if (exPtr->effect[tile].type != ICON_TYPE_NONE)
-			DrawIconSpec(yp, xp, exPtr->effect[tile], bitmapPtr);
 	}
 
 	/* There are no invalid tiles */
@@ -345,7 +333,6 @@ static void widget_draw_all(Widget *widgetPtr)
  */
 static void widget_draw_invalid(Widget *widgetPtr)
 {
-	ExWidget *exPtr = (ExWidget *) widgetPtr;
 	int i, layer;
 	int cc = widgetPtr->cc;
 	int y, x, yp, xp;
@@ -424,10 +411,6 @@ static void widget_draw_invalid(Widget *widgetPtr)
 		/* Draw foreground icon */
 		if (wtd.fg.type != ICON_TYPE_NONE)
 			DrawIconSpec(yp, xp, wtd.fg, bitmapPtr);
-	
-		/* Draw effect icon */
-		if (exPtr->effect[tile].type != ICON_TYPE_NONE)
-			DrawIconSpec(yp, xp, exPtr->effect[tile], bitmapPtr);
 	}
 
 	widgetPtr->invalidCnt = 0;
@@ -438,58 +421,6 @@ static void widget_draw_invalid(Widget *widgetPtr)
 	widgetPtr->dh = db - dt + 1;
 }
 
-
-static void widget_changed(Widget *widgetPtr)
-{
-	ExWidget *exPtr = (ExWidget *) widgetPtr;
-	int i;
-
-	if ((exPtr->effect != NULL) &&
-		((widgetPtr->tc != widgetPtr->oldTileCnt)))
-	{
-		if (exPtr->effect)
-		{
-			Tcl_Free((char *) exPtr->effect);
-			exPtr->effect = NULL;
-		}
-	}
-
-	if (exPtr->effect == NULL)
-	{
-		exPtr->effect = (IconSpec *) Tcl_Alloc(sizeof(IconSpec) * widgetPtr->tc);
-
-		for (i = 0; i < widgetPtr->tc; i++)
-		{
-			exPtr->effect[i].type = ICON_TYPE_NONE;
-		}
-	}
-}
-
-static void widget_destroy(Widget *widgetPtr)
-{
-	ExWidget *exPtr = (ExWidget *) widgetPtr;
-
-	if (exPtr->effect)
-		Tcl_Free((char *) exPtr->effect);
-}
-
-/*
- * Allocate storage for a new Widget.
- */
-static int widget_create(Tcl_Interp *interp, Widget **ptr)
-{
-	ExWidget *exPtr = (ExWidget *) Tcl_Alloc(sizeof(ExWidget));
-	Widget *widgetPtr = (Widget *) exPtr;
-
-	/* Hack - ignore unused parameter */
-	(void) interp;
-
-	exPtr->effect = NULL;
-
-	(*ptr) = widgetPtr;
-
-	return TCL_OK;
-}
 
 #define BAD_COLOR(c) (((c) < 0) || ((c) > 255))
 
@@ -768,9 +699,6 @@ static void Widget_WorldChanged(ClientData instanceData)
 		/* Cancel gridded geometry management for the toplevel */
 		Tk_UnsetGrid(widgetPtr->tkwin);
 	}
-
-	/* Client command */
-	widget_changed(widgetPtr);
 
 	/* Remember the current info */
 	widgetPtr->oldTileCnt = widgetPtr->tc;
@@ -1494,8 +1422,6 @@ static void Widget_Destroy(Widget *widgetPtr)
 
     Tcl_DeleteCommandFromToken(widgetPtr->interp, widgetPtr->widgetCmd);
 
-	/* Client command */
-	widget_destroy(widgetPtr);
 
 	/* Free a GC */ 
     if (widgetPtr->copyGC != None)
@@ -1659,12 +1585,9 @@ static int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 	 * name as each class.
 	 */
     Tk_SetClass(tkwin, "Widget");
-
-    /* Allocate a new Widget struct */
-    if (widget_create(interp, &widgetPtr) != TCL_OK)
-    {
-    	return TCL_ERROR;
-    }
+	
+	/* Create the pointer */
+	MAKE(widgetPtr, Widget);
 
 	/* Set the class callbacks for the new Widget */
     Tk_SetClassProcs(tkwin, &widgetProcs, (ClientData) widgetPtr);
