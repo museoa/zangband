@@ -336,8 +336,6 @@ proc NSKeymap::InitMenus {oop} {
 		-menu MENU_KEYMAP -label [mc Keymap] -underline 0 -identifier M_KEYMAP
 
 	set entries {}
-	lappend entries [list -type checkbutton -label [mc "Rogue-like Keyset"] \
-		-variable NSKeymap($oop,rogue_like) -identifier E_ROGUE_LIKE]
 	lappend entries [list -type command -label [mc "Dump Keymaps"] \
 		-underline 0 -identifier E_KEYMAP_DUMP]
 	lappend entries [list -type command -label [mc "Load Pref File"] \
@@ -372,7 +370,7 @@ proc NSKeymap::InitMenus {oop} {
 
 proc NSKeymap::SetupMenus {oop mbarId} {
 
-	lappend identList E_ROGUE_LIKE E_KEYMAP_DUMP E_KEYMAP_LOAD E_CLOSE
+	lappend identList E_KEYMAP_DUMP E_KEYMAP_LOAD E_CLOSE
 
 	NSMenu::MenuEnable $mbarId $identList
 
@@ -398,14 +396,6 @@ proc NSKeymap::MenuSelect {oop menuId index ident} {
 	switch -- $ident {
 		{} {
 			set desc {}
-		}
-
-		E_ROGUE_LIKE {
-			if {[Setting rogue_like_commands]} {
-				set desc "Uses the original keyset."
-			} else {
-				set desc "Uses the Rogue-like keyset."
-			}
 		}
 
 		default {
@@ -441,9 +431,6 @@ proc NSKeymap::MenuSelect {oop menuId index ident} {
 proc NSKeymap::MenuInvoke {oop menuId ident} {
 
 	switch -glob -- $ident {
-		E_ROGUE_LIKE {
-			Setting rogue_like_commands [Info $oop rogue_like]
-		}
 		E_KEYMAP_DUMP {KeymapDump $oop}
 		E_KEYMAP_LOAD {KeymapLoad $oop}
 		E_CLOSE {Close $oop}
@@ -466,10 +453,6 @@ proc NSKeymap::DisplayCmd {oop message first} {
 
 	switch -- $message {
 		preDisplay {
-			# checkbutton menu entry
-			Info $oop rogue_like [Setting rogue_like_commands]
-			
-			UpdateKeymap $oop
 		}
 		postDisplay {
 		}
