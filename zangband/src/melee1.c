@@ -523,19 +523,21 @@ bool make_attack_normal(int m_idx)
 
 					case RBE_POISON:
 					{
-						/* Take some damage */
-						take_hit(damage, ddesc);
+						/* Obvious */
+						obvious = TRUE;
+					
+						/* Message */
+						msgf("You receive a dose of poison!");
 
-						/* Take "poison" effect */
-						if (!((FLAG(p_ptr, TR_RES_POIS)) ||
-							 p_ptr->tim.oppose_pois))
+						/* Special damage */
+						pois_dam(damage, ddesc);
+
+						if (res_pois_lvl())
 						{
-							if (inc_poisoned(randint1(rlev) + 5))
-							{
-								obvious = TRUE;
-							}
+							/* Take "poison" effect */
+							inc_poisoned(randint1(rlev) + 5);
 						}
-
+						
 						/* Learn about the player */
 						update_smart_learn(m_idx, DRS_POIS);
 
@@ -1218,8 +1220,7 @@ bool make_attack_normal(int m_idx)
 						take_hit(damage, ddesc);
 
 						/* Take "poison" effect */
-						if (!((FLAG(p_ptr, TR_RES_POIS)) ||
-							 p_ptr->tim.oppose_pois))
+						if (res_pois_lvl() > 3)
 						{
 							if (inc_poisoned(randint1(rlev) + 5))
 							{

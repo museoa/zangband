@@ -2248,7 +2248,7 @@ bool field_action_hit_trap_poison_pit(field_type *f_ptr, va_list vp)
 			dam *= 2;
 			(void)inc_cut(randint1(dam));
 
-			if ((FLAG(p_ptr, TR_RES_POIS)) || p_ptr->tim.oppose_pois)
+			if (res_pois_lvl() <= 3)
 			{
 				msgf("The poison does not affect you!");
 			}
@@ -2365,7 +2365,7 @@ bool field_action_hit_trap_element(field_type *f_ptr, va_list vp)
 		case 2:
 		{
 			msgf("A pungent green gas surrounds you!");
-			if (!(FLAG(p_ptr, TR_RES_POIS)) && !p_ptr->tim.oppose_pois)
+			if (res_pois_lvl() > 3)
 			{
 				(void)inc_poisoned(rand_range(10, 30));
 			}
@@ -2428,7 +2428,7 @@ bool field_action_hit_trap_ba_element(field_type *f_ptr, va_list vp)
 			msgf("A pungent grey gas surrounds you!");
 			(void)fire_ball(GF_POIS, 0, 350, 4);
 
-			if (!(FLAG(p_ptr, TR_RES_POIS)) && !p_ptr->tim.oppose_pois)
+			if (res_pois_lvl() > 3)
 			{
 				(void)inc_poisoned(rand_range(100, 150));
 			}

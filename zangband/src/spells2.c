@@ -457,7 +457,11 @@ void self_knowledge(void)
 		info[i++] = "You are vulnerable to cold.";
 	}
 
-	if ((FLAG(p_ptr, TR_RES_POIS)) && (p_ptr->tim.oppose_pois))
+	if (FLAG(p_ptr, TR_IM_POIS))
+	{
+		info[i++] = "You are completely immune to poison.";
+	}
+	else if ((FLAG(p_ptr, TR_RES_POIS)) && (p_ptr->tim.oppose_pois))
 	{
 		info[i++] = "You resist poison exceptionally well.";
 	}

@@ -1799,6 +1799,27 @@ void cold_dam(int dam, cptr kb_str)
 
 
 /*
+ * Hurt the player with Poison
+ *
+ * Hack - this should probably take a second argument
+ * to add to the poison counter
+ */
+void pois_dam(int dam, cptr kb_str)
+{
+	dam = resist(dam, res_pois_lvl);
+
+	/* Totally immune? */
+	if (dam <= 0) return;
+
+	if ((res_pois_lvl() > 3) && one_in_(HURT_CHANCE))
+		(void)do_dec_stat(A_CON);
+
+	/* Take damage */
+	take_hit(dam, kb_str);
+}
+
+
+/*
  * Set "p_ptr->stun", notice observable changes
  *
  * Note the special code to only notice "range" changes.

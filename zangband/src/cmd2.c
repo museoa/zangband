@@ -402,7 +402,7 @@ static void chest_trap(int x, int y, object_type *o_ptr)
 	if (trap & (CHEST_POISON))
 	{
 		msgf("A puff of green gas surrounds you!");
-		if (!((FLAG(p_ptr, TR_RES_POIS)) || p_ptr->tim.oppose_pois))
+		if (res_pois_lvl() < 3)
 		{
 			(void)inc_poisoned(rand_range(10, 30));
 		}
