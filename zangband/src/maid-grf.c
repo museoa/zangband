@@ -815,7 +815,7 @@ void do_cmd_view_map(void)
 			w_ptr = &wild[y + py / WILD_BLOCK_SIZE][x + px / WILD_BLOCK_SIZE].done;
 
 			/* Show the town name, if it exists */
-			if (w_ptr->place)
+			if (w_ptr->place && (w_ptr->info & WILD_INFO_SEEN))
 			{
 				town_name = place[w_ptr->place].name;
 				town_name_len = strlen(town_name);
