@@ -391,6 +391,9 @@ F:17,field_action_door_jam_monster
 #     many different types of shop can be made.
 # data[7] contains the result of logical-and'ing the ST_XXX bitflags
 #     together for that store.
+#
+#     Note F:18 is not that particular property.
+#          F:19 is that particular property.
 
 # General store
 N:34:General Store
@@ -467,7 +470,7 @@ N:42:Book Store
 G:9:o
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:8:10:30:0:0:100:0:0
+D:8:17:35:0:0:100:0:0
 F:2,field_action_door_store
 F:19,field_action_isbook_tester
 
@@ -524,3 +527,95 @@ I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
 D:5:5:0:0:0:0:0:0
 F:2,field_action_door_build
 F:18,field_action_buymap1 | 19,field_action_buymap2
+
+# Weapon Smiths
+N:49:Advanced Weapon Smiths
+G:3:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:20:50:0:100:0:0:0
+F:2,field_action_door_store
+F:19,field_action_isweapon_tester
+
+# Weapon Smiths
+N:50:Expert Weapon Smiths
+G:3:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:50:75:0:100:0:0:0
+F:2,field_action_door_store
+F:19,field_action_isweapon_tester
+
+# Weapon Smiths
+N:51:Arcane Weapon Smiths
+G:3:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:75:127:0:100:0:0:24
+F:2,field_action_door_store
+F:19,field_action_isweapon_tester
+
+# Weapon Smiths
+N:52:Obscure Weapon Smiths
+G:3:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:50:100:0:100:0:0:26
+F:2,field_action_door_store
+F:19,field_action_isweapon_tester
+
+# Weapon Smiths
+N:53:Rare Weapon Smiths
+G:3:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:50:100:0:100:0:0:30
+F:2,field_action_door_store
+F:19,field_action_isweapon_tester
+
+# Armoury
+N:54:Advanced Armoury
+G:2:s
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:1:20:50:0:100:0:0:0
+F:2,field_action_door_store
+F:19,field_action_isarmour_tester
+
+# Armoury
+N:55:Expert Armoury
+G:2:s
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:1:50:75:0:100:0:0:0
+F:2,field_action_door_store
+F:19,field_action_isarmour_tester
+
+# Armoury
+N:56:Arcane Armoury
+G:2:s
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:1:75:127:0:100:0:0:24
+F:2,field_action_door_store
+F:19,field_action_isarmour_tester
+
+# Armoury
+N:57:Obscure Armoury
+G:2:s
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:1:50:100:0:100:0:0:26
+F:2,field_action_door_store
+F:19,field_action_isarmour_tester
+
+# Armoury
+N:58:Rare Armoury
+G:2:s
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:1:50:100:0:100:0:0:30
+F:2,field_action_door_store
+F:19,field_action_isarmour_tester
+
+
