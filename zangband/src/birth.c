@@ -2816,7 +2816,7 @@ static bool player_birth_aux(void)
 	if (ch == KTRL('X')) quit(NULL);
 
 	/* Start over */
-	if ((ch == 0x7F) || (ch == KTRL('H'))) return (FALSE);
+	if ((ch == 0x7F) || (ch == '.') || (ch == KTRL('H'))) return (FALSE);
 
 	/* Accepted */
 
