@@ -712,7 +712,8 @@ void borg_update_view(void)
 			if ((bits0 & (p->bits[0])) ||
 				(bits1 & (p->bits[1])) ||
 				(bits2 & (p->bits[2])) ||
-				(bits3 & (p->bits[3])) || (bits4 & (p->bits[4])))
+				(bits3 & (p->bits[3])) ||
+				(bits4 & (p->bits[4])))
 			{
 				/* Get location */
 				x = p->grid_x[o2] + c_x;
@@ -1461,11 +1462,11 @@ static int borg_guess_race_name(cptr who)
 		/* Message */
 		if (bp_ptr->status.image)
 		{
-			borg_note_fmt("# Seeing a monster while hallucinating (%s)", who);
+			borg_note("# Seeing a monster while hallucinating (%s)", who);
 		}
 		else
 		{
-			borg_note_fmt("# Assuming unknown (%s)", who);
+			borg_note("# Assuming unknown (%s)", who);
 		}
 
 		/* Oops */
@@ -1481,7 +1482,7 @@ static int borg_guess_race_name(cptr who)
 		who = partial;
 
 		/* Message */
-		borg_note_fmt("# Handling offscreen monster (%s)", who);
+		borg_note("# Handling offscreen monster (%s)", who);
 	}
 
 	/* Skip the prefix */
@@ -1545,11 +1546,11 @@ static int borg_guess_race_name(cptr who)
 	/* Message */
 	if (bp_ptr->status.image)
 	{
-		borg_note_fmt("# Seeing a monster while hallucinating (%s)", who);
+		borg_note("# Seeing a monster while hallucinating (%s)", who);
 	}
 	else
 	{
-		borg_note_fmt("# Assuming unknown (%s)", who);
+		borg_note("# Assuming unknown (%s)", who);
 	}
  
 	/* Oops */
@@ -1583,7 +1584,7 @@ static void borg_delete_take(int i)
 	}
 
 	/* Note */
-	borg_note_fmt("# Forgetting an object '%s' at (%d,%d)",
+	borg_note("# Forgetting an object '%s' at (%d,%d)",
 				  (k_name + k_info[take->k_idx].name), take->x, take->y);
 
 	/* Kill the object */
@@ -1655,7 +1656,7 @@ static int borg_guess_kidx(char unknown)
 	if (b_i != -1) return (b_i);
 
 	/* Didn't find anything */
-	borg_note_fmt("# Cannot guess object '%c'", unknown);
+	borg_note("# Cannot guess object '%c'", unknown);
 
 	return (1);
 }
@@ -1726,7 +1727,7 @@ static int borg_new_take(int k_idx, char unknown, int x, int y)
 	take->y = y;
 
 	/* Note */
-	borg_note_fmt("# Creating an object '%s' at (%d,%d)",
+	borg_note("# Creating an object '%s' at (%d,%d)",
 				  (k_name + k_info[take->k_idx].name), x, y);
 
 	/* Wipe goals */
@@ -1782,7 +1783,7 @@ void borg_delete_kill(int who, cptr reason)
 	}
 
 	/* Note */
-	borg_note_fmt("# Removing a monster '%s' (%i) at (%d,%d) [%s]",
+	borg_note("# Removing a monster '%s' (%i) at (%d,%d) [%s]",
 				  mon_race_name(&r_info[kill->r_idx]), who,
 				  kill->x, kill->y, reason);
 
@@ -1872,7 +1873,7 @@ static void borg_wipe_mon(byte type)
 
 		if (kill->type == type)
 		{
-			borg_note_fmt("Destroying kill %d in MOVED list in wipe_mon", i);
+			borg_note("Destroying kill %d in MOVED list in wipe_mon", i);
 
 			borg_merge_kill(i);
 		}
@@ -1979,7 +1980,7 @@ static void borg_new_kill(int r_idx, int n, int x, int y)
 	borg_update_kill(n);
 
 	/* Note */
-	borg_note_fmt("# Creating a monster '%s' (%d) at (%d, %d)",
+	borg_note("# Creating a monster '%s' (%d) at (%d, %d)",
 				  mon_race_name(&r_info[kill->r_idx]), n, x, y);
 
 	/* Recalculate danger */
@@ -2126,7 +2127,7 @@ static void observe_kill_move(int new_type, int old_type, int dist)
 			mb_ptr2 = map_loc(kill2->x, kill2->y);
 
 			/* Note */
-			borg_note_fmt
+			borg_note
 				("# Tracking monster (%d) from (%d,%d) to (%d) (%d,%d)", i, x,
 				 y, j, kill2->x, kill2->y);
 
@@ -2193,8 +2194,12 @@ static bool remove_bad_kills(u16b who)
 		(void)strnfmt(buf, 100, "vanished : %d, %d", map_loc(ox, oy)->monster,
 					  kill->r_idx);
 
-		borg_delete_kill(who, buf);
-		return (TRUE);
+		/* Not if it has just jumped out of sight */
+		if (distance(c_x, c_y, ox, oy) != MAX_SIGHT)
+		{
+			borg_delete_kill(who, buf);
+			return (TRUE);
+		}
 	}
 
 	/* We haven't seen it for ages? */
@@ -2306,7 +2311,7 @@ static int borg_locate_kill(cptr who, int x, int y, int r)
 	r_ptr = &r_info[r_idx];
 
 	/* Note */
-	borg_note_fmt("# There is a monster '%s' within %d grids of %d,%d",
+	borg_note("# There is a monster '%s' within %d grids of %d,%d",
 				  mon_race_name(r_ptr), r, x, y);
 
 
@@ -2358,7 +2363,7 @@ static int borg_locate_kill(cptr who, int x, int y, int r)
 		kill = &borg_kills[b_i];
 
 		/* Note */
-		borg_note_fmt("# Matched a monster '%s' at (%d,%d)",
+		borg_note("# Matched a monster '%s' at (%d,%d)",
 					  mon_race_name(&r_info[kill->r_idx]), kill->x, kill->y);
 
 
@@ -2370,7 +2375,7 @@ static int borg_locate_kill(cptr who, int x, int y, int r)
 	/*** Oops ***/
 
 	/* Note */
-	borg_note_fmt("# Ignoring a monster '%s' near (%d,%d)",
+	borg_note("# Ignoring a monster '%s' near (%d,%d)",
 				  mon_race_name(r_ptr), x, y);
 
 	/* Oops */
@@ -2768,7 +2773,7 @@ void borg_map_info(map_block *mb_ptr, const term_map *map, vptr dummy)
 				}
 				else
 				{
-					borg_note_fmt("Strange kill %d at (%d,%d)", mb_ptr->kill,
+					borg_note("Strange kill %d at (%d,%d)", mb_ptr->kill,
 								  kill->x, kill->y);
 				}
 			}
@@ -2791,7 +2796,7 @@ void borg_map_info(map_block *mb_ptr, const term_map *map, vptr dummy)
 			if ((bt_ptr->unknown != map->unknown) ||
 				((bt_ptr->k_idx != map->object) && !map->unknown))
 			{
-				borg_note_fmt("# The object %d is different! (%d,%d)",
+				borg_note("# The object %d is different! (%d,%d)",
 							  mb_ptr->take, bt_ptr->k_idx, map->object);
 
 				/* The object is different- delete it */
@@ -2812,7 +2817,7 @@ void borg_map_info(map_block *mb_ptr, const term_map *map, vptr dummy)
 		/* Do we think there is an object here that we cannot see? */
 		if (mb_ptr->take && (map->flags & MAP_SEEN))
 		{
-			borg_note_fmt("# Removing missing object (%d)", mb_ptr->take);
+			borg_note("# Removing missing object (%d)", mb_ptr->take);
 
 			/* The object is no longer here - delete it */
 			borg_delete_take(mb_ptr->take);
@@ -3143,12 +3148,11 @@ static void borg_fear_grid(cptr who, int x, int y, uint k, bool seen_guy)
 	/* Messages */
 	if (seen_guy)
 	{
-		borg_note_fmt("#   Fearing region value %d.", k);
+		borg_note("#   Fearing region value %d.", k);
 	}
 	else
 	{
-		borg_note_fmt
-			("# Fearing grid (%d,%d) value %d because of a non-LOS %s", x,
+		borg_note("# Fearing grid (%d,%d) value %d because of a non-LOS %s", x,
 			 y, k, who);
 	}
 
@@ -4038,7 +4042,7 @@ void borg_update(void)
 		msg = borg_msg_buf + borg_msg_pos[i];
 
 		/* Note the message */
-		borg_note_fmt("# %s (+)", msg);
+		borg_note("# %s (+)", msg);
 	}
 
 	/* Process messages */
@@ -4670,7 +4674,7 @@ void borg_update(void)
 		msg = borg_msg_buf + borg_msg_pos[i];
 
 		/* Final message */
-		borg_note_fmt("# %s (%d)", msg, borg_msg_use[i]);
+		borg_note("# %s (%d)", msg, borg_msg_use[i]);
 	}
 
 	/*** Various things ***/
@@ -4712,7 +4716,7 @@ void borg_react(cptr msg, cptr buf)
 		return;
 
 	/* Note actual message */
-	borg_note_fmt("> %s", msg);
+	borg_note("> %s", msg);
 
 	/* Extract length of parsed message */
 	len = strlen(buf);

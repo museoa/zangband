@@ -56,7 +56,7 @@ bool borg_recover(void)
 			l_ptr->timeout < 1000)
 		{
 			/* Take note */
-			borg_note_fmt("# Need to refuel but can't!", p);
+			borg_note("# Need to refuel but can't!", p);
 
 			/* Go to town */
 			goal_rising = TRUE;
@@ -101,7 +101,7 @@ bool borg_recover(void)
 
 		{
 			/* Take note */
-			borg_note_fmt("# Cure Stun", p);
+			borg_note("# Cure Stun", p);
 
 			return (TRUE);
 		}
@@ -115,7 +115,7 @@ bool borg_recover(void)
 			borg_racial(RACE_AMBERITE_POWER2))
 		{
 			/* Take note */
-			borg_note_fmt("# Cure Heavy Stun", p);
+			borg_note("# Cure Heavy Stun", p);
 
 			return (TRUE);
 		}
@@ -131,7 +131,7 @@ bool borg_recover(void)
 			borg_racial(RACE_AMBERITE_POWER2))
 		{
 			/* Take note */
-			borg_note_fmt("# Cure Cuts", p);
+			borg_note("# Cure Cuts", p);
 
 			return (TRUE);
 		}
@@ -147,7 +147,7 @@ bool borg_recover(void)
 			borg_racial(RACE_AMBERITE_POWER2))
 		 {
 			/* Take note */
-			borg_note_fmt("# Cure poison", p);
+			borg_note("# Cure poison", p);
 
 			return (TRUE);
 		}
@@ -160,7 +160,7 @@ bool borg_recover(void)
 			borg_spell(REALM_LIFE, 0, 3))
 		{
 			/* Take note */
-			borg_note_fmt("# Cure fear", p);
+			borg_note("# Cure fear", p);
 
 			return (TRUE);
 		}
@@ -394,7 +394,7 @@ bool borg_recover(void)
 			!bp_ptr->status.hungry && !bp_ptr->status.poisoned)
 		{
 			/* Take note */
-			borg_note_fmt("# Resting (danger %d)...", p);
+			borg_note("# Resting (danger %d)...", p);
 
 			/* Rest until done */
 			borg_keypress('R');
@@ -413,7 +413,7 @@ bool borg_recover(void)
 			borg_on_safe_feat(map_loc(c_x, c_y)->feat))
 		{
 			/* Take note */
-			borg_note_fmt("# Resting to gain Mana. (danger %d)...", p);
+			borg_note("# Resting to gain Mana. (danger %d)...", p);
 
 			/* Rest until done */
 			borg_keypress('R');
@@ -623,7 +623,7 @@ static bool borg_play_step(int y2, int x2)
 		if (!mb_ptr->monster) return (FALSE);
 
 		/* Message */
-		borg_note_fmt("# Walking into a '%s' at (%d,%d)",
+		borg_note("# Walking into a '%s' at (%d,%d)",
 					  r_name + r_info[mb_ptr->monster].name, x, y);
 
 		/* Walk into it */
@@ -646,7 +646,7 @@ static bool borg_play_step(int y2, int x2)
 	{
 		/*** Handle other takes ***/
 		/* Message */
-		borg_note_fmt("# Walking onto a '%s' at (%d,%d)",
+		borg_note("# Walking onto a '%s' at (%d,%d)",
 					  k_name + k_info[mb_ptr->object].name, x, y);
 
 		/* Walk onto it */
@@ -766,7 +766,7 @@ static bool borg_play_step(int y2, int x2)
 				borg_mutation(MUT1_EAT_ROCK) ||
 				borg_racial(RACE_HALF_GIANT))
 			{
-				borg_note_fmt("# Melting a wall (%c)", I2D(dir));
+				borg_note("# Melting a wall (%c)", I2D(dir));
 				borg_keypress(I2D(dir));
 				return (TRUE);
 			}
@@ -1194,7 +1194,7 @@ static bool borg_flow_commit(cptr who, int why)
 	if (cost >= 250) return (FALSE);
 
 	/* Message */
-	if (who) borg_note_fmt("# Flowing toward %s at cost %d", who, cost);
+	if (who) borg_note("# Flowing toward %s at cost %d", who, cost);
 
 	/* Iterate over all grids */
 	MAP_ITT_START (mb_ptr)
@@ -1450,11 +1450,12 @@ bool borg_find_dungeon(void)
 	int d, b_d = BORG_MAX_DISTANCE;
 	int p;
 
-	/* Do this only in the wilderness */
-	if (vanilla_town || bp_ptr->depth) return (FALSE);
+	/* Do this only on the surface */
+	if (bp_ptr->depth) return (FALSE);
 
 	/* No trekking through the wilderness in the dark */
-	if (bp_ptr->hour < 6 || bp_ptr->hour > 17) return (FALSE);
+	if (vanilla_town &&
+		(bp_ptr->hour < 6 || bp_ptr->hour > 17)) return (FALSE);
 
 	/* Find the target depth */
 	p = borg_prepared_depth();
@@ -1477,7 +1478,7 @@ bool borg_find_dungeon(void)
 			/* This dungeon ends too shallow */
 			if (borg_dungeons[i].max_depth < p &&
 				borg_dungeons[i].bottom) continue;
-			
+
 			/* How far away is this? */
 			d = distance(c_x, c_y, borg_dungeons[i].x, borg_dungeons[i].y);
 
@@ -1712,32 +1713,6 @@ bool borg_flow_glyph(int why)
 	return (TRUE);
 }
 
-/*
- * Prepare to flow towards Town Gates
- */
-bool borg_flow_town_exit(int why)
-{
-	/* Clear the flow codes */
-	borg_flow_clear();
-
-	/* Do something here */
-
-/* This routine can be used to flow to any town special
- * such as the mayors office or the Whitehorse Inn or even
- * special town quests.
- */
-	/* Spread the flow */
-	borg_flow_spread(250, TRUE, FALSE, FALSE, FALSE);
-
-	/* Attempt to Commit the flow */
-	if (!borg_flow_commit("Town Gates", why)) return (FALSE);
-
-	/* Take one step */
-	if (!borg_flow_old(why)) return (FALSE);
-
-	/* Success */
-	return (TRUE);
-}
 
 /*
  * Prepare to flow towards light
@@ -3906,7 +3881,7 @@ bool borg_flow_spastic(bool bored)
 		spastic_y = 0;
 
 		/* Take note */
-		borg_note_fmt("# Spastic Searching at (%d,%d)...", c_x, c_y);
+		borg_note("# Spastic Searching at (%d,%d)...", c_x, c_y);
 
 		/* Count searching */
 		for (i = 0; i < 9; i++)

@@ -872,13 +872,11 @@ extern bool borg_term_text_comp(int x, int y, cptr what);
  * Log a message, Search it, and Show/Memorize it in pieces
  */
 extern void borg_note(cptr fmt, ...);
-extern void borg_note_fmt(cptr fmt, ...);
 
 /*
  * Abort the Borg, noting the reason
  */
 extern void borg_oops(cptr fmt, ...);
-extern void borg_oops_fmt(cptr fmt, ...);
 
 /*
  * Take a "memory note"

@@ -848,7 +848,7 @@ object_kind *borg_get_kind(int tval, int sval)
 	if (sval != SV_ANY)
 	{
 		/* Oops */
-		borg_note_fmt("No object (%d,%d)", tval, sval);
+		borg_note("No object (%d,%d)", tval, sval);
 	}
 
 	return (kb_ptr);
@@ -1291,7 +1291,7 @@ static bool borg_refuel_torch(void)
 	if (b_slot == -1) return (FALSE);
 
 	/* Log the message */
-	borg_note_fmt("# Refueling with %s.", inventory[b_slot].o_name);
+	borg_note("# Refueling with %s.", inventory[b_slot].o_name);
 
 	/* Perform the action */
 	borg_keypress('F');
@@ -1347,7 +1347,7 @@ static bool borg_refuel_lantern(void)
 	if (b_slot == -1) b_slot = slot;
 
 	/* Log the message */
-	borg_note_fmt("# Refueling with %s.", inventory[b_slot].o_name);
+	borg_note("# Refueling with %s.", inventory[b_slot].o_name);
 
 	/* Perform the action */
 	borg_keypress('F');
@@ -1401,7 +1401,7 @@ bool borg_eat_food(int sval)
 	if (slot == -1) return (FALSE);
 
 	/* Log the message */
-	borg_note_fmt("# Eating %s. (%c)", inventory[slot].o_name, I2A(slot));
+	borg_note("# Eating %s. (%c)", inventory[slot].o_name, I2A(slot));
 
 	/* Perform the action */
 	borg_keypress('E');
@@ -1468,7 +1468,7 @@ bool borg_quaff_potion(int sval)
 	if (slot == -1) return (FALSE);
 
 	/* Log the message */
-	borg_note_fmt("# Quaffing %s. (%c)", inventory[slot].o_name, I2A(slot));
+	borg_note("# Quaffing %s. (%c)", inventory[slot].o_name, I2A(slot));
 
 	/* Perform the action */
 	borg_keypress('q');
@@ -1497,7 +1497,7 @@ bool borg_quaff_unknown(void)
 		if (l_ptr->k_idx) continue;
 
 		/* Log the message */
-		borg_note_fmt("# Quaffing unknown potion %s. (%c)", l_ptr->o_name, I2A(i));
+		borg_note("# Quaffing unknown potion %s. (%c)", l_ptr->o_name, I2A(i));
 
 		/* Perform the action */
 		borg_keypress('q');
@@ -1537,7 +1537,7 @@ bool borg_read_unknown(void)
 		if (bp_ptr->status.blind || bp_ptr->status.confused) return (FALSE);
 
 		/* Log the message */
-		borg_note_fmt("# Reading unknown scroll %s. (%c)", l_ptr->o_name, I2A(i));
+		borg_note("# Reading unknown scroll %s. (%c)", l_ptr->o_name, I2A(i));
 
 		/* Perform the action */
 		borg_keypress('r');
@@ -1571,7 +1571,7 @@ bool borg_eat_unknown(void)
 		if (l_ptr->tval != TV_FOOD) continue;
 
 		/* Log the message */
-		borg_note_fmt("# Eating unknown mushroom %s. (%c)", l_ptr->o_name, I2A(i));
+		borg_note("# Eating unknown mushroom %s. (%c)", l_ptr->o_name, I2A(i));
 
 		/* Perform the action */
 		borg_keypress('E');
@@ -1604,7 +1604,7 @@ bool borg_use_unknown(void)
 		if (l_ptr->tval != TV_STAFF) continue;
 
 		/* Log the message */
-		borg_note_fmt("# Using unknown Staff %s. (%c)", l_ptr->o_name, I2A(i));
+		borg_note("# Using unknown Staff %s. (%c)", l_ptr->o_name, I2A(i));
 
 		/* Perform the action */
 		borg_keypress('u');
@@ -1654,7 +1654,7 @@ bool borg_read_scroll(int sval)
 	if (slot == -1) return (FALSE);
 
 	/* Log the message */
-	borg_note_fmt("# Reading %s. (%c)", inventory[slot].o_name, I2A(slot));
+	borg_note("# Reading %s. (%c)", inventory[slot].o_name, I2A(slot));
 
 	/* Perform the action */
 	borg_keypress('r');
@@ -1726,7 +1726,7 @@ static bool borg_rod_aux(int sval, bool zap, bool fail)
 	if (zap)
 	{
 		/* Log the message */
-		borg_note_fmt("# Zapping %s (%c).", l_ptr->o_name, I2A(slot));
+		borg_note("# Zapping %s (%c).", l_ptr->o_name, I2A(slot));
 
 		/* Perform the action */
 		borg_keypress('z');
@@ -1801,7 +1801,7 @@ static bool borg_wand_aux(int sval, bool aim, bool fail)
 	if (aim)
 	{
 		/* Log the message */
-		borg_note_fmt("# Aiming %s (%c).", l_ptr->o_name, I2A(slot));
+		borg_note("# Aiming %s (%c).", l_ptr->o_name, I2A(slot));
 
 		/* Perform the action */
 		borg_keypress('a');
@@ -1897,7 +1897,7 @@ static bool borg_staff_aux(int sval, bool use, bool fail)
 	if (use)
 	{
 		/* Log the message */
-		borg_note_fmt("# Using %s (%c).", l_ptr->o_name, I2A(slot));
+		borg_note("# Using %s (%c).", l_ptr->o_name, I2A(slot));
 
 		/* Perform the action */
 		borg_keypress('u');
@@ -2142,8 +2142,7 @@ static void borg_dimension_door(void)
 	borg_keypress(' ');
 
 	/* Report a little bit */
-	borg_note_fmt
-		("# Targetting Landing Zone (%d,%d)", dim_door_x, dim_door_y);
+	borg_note("# Targetting Landing Zone (%d,%d)", dim_door_x, dim_door_y);
 
 	/* Determine "path" */
 	x1 = c_x;
@@ -2644,7 +2643,7 @@ static bool borg_spell_aux(int realm, int book, int what, bool reserve)
 	if (i < 0) return (FALSE);
 
 	/* Debugging Info */
-	borg_note_fmt("# Casting %s (%d,%d).", as->name, book, what);
+	borg_note("# Casting %s (%d,%d).", as->name, book, what);
 
 	/* Cast a spell */
 	borg_keypress('m');
@@ -2878,8 +2877,7 @@ static bool borg_mindcr_aux(int spell, int level, bool reserve)
 	}
 
 	/* Debugging Info */
-	borg_note_fmt
-		("# Casting %s (spell: %d, level: %d).", as->name, spell, level);
+	borg_note("# Casting %s (spell: %d, level: %d).", as->name, spell, level);
 
 	/* Cast a spell */
 	borg_keypress('m');

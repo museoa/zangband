@@ -1705,7 +1705,7 @@ static void borg_parse_aux(cptr msg, int len)
 	/* Hack to protect against clock overflows and errors */
 	if (prefix(msg, "Illegal "))
 	{
-		borg_oops_fmt("# Borg problem msg: %s", msg);
+		borg_oops("# Borg problem msg: %s", msg);
 
 		/* Hack -- Oops */
 		borg_keypress(ESCAPE);
@@ -2935,6 +2935,7 @@ void borg_status_window(void)
 			attr = CLR_SLATE;
 			if (FLAG(bp_ptr, TR_RES_POIS)) attr = CLR_BLUE;
 			if (my_oppose_pois) attr = CLR_GREEN;
+			if (FLAG(bp_ptr, TR_IM_POIS)) attr = CLR_WHITE;
 			prtf(1, 5, "%sPois", attr);
 
 			if (FLAG(bp_ptr, TR_RES_FEAR)) attr = CLR_BLUE;

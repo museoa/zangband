@@ -154,13 +154,13 @@ bool borg_esp;
 s16b borg_game_ratio;	/* the ratio of borg time to game time */
 
 bool borg_shield;
-bool borg_on_glyph;	/* borg is standing on a glyph of warding */
-bool borg_create_door;	/* borg is going to create doors */
-bool borg_open_door_failed = FALSE;
-bool borg_close_door_failed = FALSE;
+bool borg_on_glyph;
+bool borg_create_door;
+bool borg_open_door_failed;
+bool borg_close_door_failed;
 bool borg_sleep_spell;
 bool borg_sleep_spell_ii;
-bool borg_slow_spell;	/* borg is about to cast the spell */
+bool borg_slow_spell;
 bool borg_confuse_spell;
 bool borg_fear_mon_spell;
 
@@ -737,29 +737,6 @@ void borg_note(cptr fmt, ...)
 
 
 /*
- * Not needed.
- */
-void borg_note_fmt(cptr fmt, ...)
-{
-	va_list vp;
-
-	char buf[1024];
-
-	/* Begin the Varargs Stuff */
-	va_start(vp, fmt);
-
-	/* Format the args, save the length */
-	(void)vstrnfmt(buf, 1024, fmt, &vp);
-
-	/* End the Varargs Stuff */
-	va_end(vp);
-
-	/* Display */
-	borg_note_aux(buf);
-}
-
-
-/*
  * Abort the Borg, noting the reason
  */
 void borg_oops_aux(cptr what)
@@ -782,29 +759,6 @@ void borg_oops_aux(cptr what)
 
 /* Abort the borg, give a text with formatting */
 void borg_oops(cptr fmt, ...)
-{
-	va_list vp;
-
-	char buf[1024];
-
-	/* Begin the Varargs Stuff */
-	va_start(vp, fmt);
-
-	/* Format the args, save the length */
-	(void)vstrnfmt(buf, 1024, fmt, &vp);
-
-	/* End the Varargs Stuff */
-	va_end(vp);
-
-	/* Display */
-	borg_oops_aux(buf);
-}
-
-
-/*
- * No longer needed
- */
-void borg_oops_fmt(cptr fmt, ...)
 {
 	va_list vp;
 

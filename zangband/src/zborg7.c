@@ -3100,28 +3100,9 @@ bool borg_wait_recharge(void)
 bool borg_leave_level(bool bored)
 {
 	int k, g = 0;
-	int target_depth;
-	int i, b_i = -1;
-	int d, b_d = max_wild * WILD_BLOCK_SIZE * 3 / 2;
 
 	/* Hack -- waiting for "recall" */
 	if (goal_recalling) return (FALSE);
-
-	/* There is a great concern about recalling back to level 100.
-	 * Often the borg will fall down a trap door to level 100 when he is not
-	 * prepared to be there.  Some classes can use Teleport Level to get
-	 * back up to 99,  But Warriors cannot.  Realistically the borg needs
-	 * be be able to scum deep in the dungeon.  But he cannot risk being
-	 * on 100 and using the few *Healing* pots that he managed to collect.
-	 * It is better for warriors to walk all the way down to 98 and scum.
-	 * It seems like a long and nasty crawl, but it is the best way to
-	 * make sure the borg survives.  Along the way he will collect the
-	 * Healing, Life and *Healing* that he needs.
-	 *
-	 * The other classes (or at least those who can use the Teleport Level
-	 * spell) will not need to do this nasty crawl.  Risky Borgs will
-	 * not crawl either.
-	 */
 
 	/* Town */
 	if (!bp_ptr->depth)
@@ -3132,66 +3113,8 @@ bool borg_leave_level(bool bored)
 		/* Wait until bored */
 		if (!bored) return (FALSE);
 
-		/* Find out how deep the borg wants to go */
-		target_depth = borg_prepared_depth();
-
-		/* find the closest dungeon that contains the target_depth */
-		for (i = 0; i < borg_dungeon_num; i++)
-		{
-			if ((borg_dungeons[i].min_depth != 0 &&
-				 borg_dungeons[i].min_depth > target_depth) ||
-				(borg_dungeons[i].max_depth != 0 &&
-				 borg_dungeons[i].max_depth < target_depth)) continue;
-
-			/* How far is this dungeon? */
-			d = distance(c_x, c_y, borg_dungeons[i].x, borg_dungeons[i].y);
-
-			/* Skip dungeons that are further than the closest */
-			if (d > b_d) continue;
-
-			/* Remember this one */
-			b_d = d;
-			b_i = i;
-		}
-
-		/* No dungeon known yet */
-		if (b_i == -1) return (FALSE);
-
-		/* Flow closer to the desired dungeon */
-		if (borg_flow_block(borg_dungeons[b_i].x,
-							borg_dungeons[b_i].y,
-							"my dungeon"))
-		{
-			return (TRUE);
-		}
-
-		/* If the dungeon was visited and the target depth is not shallow */
-		if (target_depth >= borg_dungeons[b_i].min_depth + 4 &&
-			borg_dungeons[b_i].min_depth != 0 &&
-			bp_ptr->recall >= 4 && borg_recall())
-		{
-			/* Note */
-			borg_note("# Recalling into dungeon.");
-
-			/* Do some bookkeeping */
-			borg_leave_wilderness();
-
-			/* Give it a shot */
-			return (TRUE);
-		}
-
-		goal_fleeing = TRUE;
-		goal_leaving = TRUE;
-		stair_more = TRUE;
-
-		/* Attempt to use those stairs */
-		if (borg_flow_stair_more(GOAL_BORE)) return (TRUE);
-
-		/* Try to get to town location (town gate for now) */
-		if (borg_flow_town_exit(GOAL_TOWN)) return (TRUE);
-
-		/* Oops */
-		return (FALSE);
+		/* Find the best dungeon */
+		return (borg_find_dungeon());
 	}
 
 	/** In the Dungeon **/

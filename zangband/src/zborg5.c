@@ -1514,7 +1514,7 @@ static int borg_danger_aux2(int i, bool average)
 			case 128 + 9:
 			{
 				/* RF4_DRAIN_MANA */
-				if (bp_ptr->msp) p += 10;
+				if (bp_ptr->msp) p += 20;
 				break;
 			}
 
@@ -2422,6 +2422,7 @@ static int borg_danger_aux2(int i, bool average)
 	 * elemental resistance spells and PFE have the flag set as FALSE.
 	 */
 	if (!average) return (av);
+
 	if ((n >= av * 15 / 10) || (n > bp_ptr->chp * 8 / 10))
 	{
 		return (n);
@@ -2758,6 +2759,7 @@ int borg_danger_aux(int x, int y, int c, int i, bool average)
 		{
 			v2 = v2 / 2;
 		}
+
 		/* Reduce danger from stunnned monsters  */
 		if (kill->m_flags & MONST_STUN)
 		{
@@ -3308,10 +3310,20 @@ static s32b borg_power_aux3(void)
 	if (FLAG(bp_ptr, TR_TELEPATHY)) value += 80000L;
 
 	/* Immunity flags */
-	if (FLAG(bp_ptr, TR_IM_COLD)) value += 25000L;
-	if (FLAG(bp_ptr, TR_IM_ELEC)) value += 40000L;
-	if (FLAG(bp_ptr, TR_IM_FIRE)) value += 60000L;
-	if (FLAG(bp_ptr, TR_IM_ACID)) value += 80000L;
+	if (FLAG(bp_ptr, TR_IM_COLD)) value += 10000L;
+	if (FLAG(bp_ptr, TR_IM_ELEC)) value += 10000L;
+	if (FLAG(bp_ptr, TR_IM_FIRE)) value += 16000L;
+	if (FLAG(bp_ptr, TR_IM_ACID)) value += 10000L;
+
+	/* Immunity implies resistance too */
+	if (FLAG(bp_ptr, TR_IM_COLD)) SET_FLAG(bp_ptr, TR_RES_COLD);
+	if (FLAG(bp_ptr, TR_IM_ELEC)) SET_FLAG(bp_ptr, TR_RES_ELEC);
+	if (FLAG(bp_ptr, TR_IM_ACID)) SET_FLAG(bp_ptr, TR_RES_ACID);
+	if (FLAG(bp_ptr, TR_IM_FIRE)) SET_FLAG(bp_ptr, TR_RES_FIRE);
+	if (FLAG(bp_ptr, TR_IM_POIS)) SET_FLAG(bp_ptr, TR_RES_POIS);
+	if (FLAG(bp_ptr, TR_IM_LITE)) SET_FLAG(bp_ptr, TR_RES_LITE);
+	if (FLAG(bp_ptr, TR_IM_DARK)) SET_FLAG(bp_ptr, TR_RES_DARK);
+
 	/* Warriors need a slight boost for this */
 	if ((borg_class == CLASS_WARRIOR ||
 		 borg_class == CLASS_CHAOS_WARRIOR) &&
@@ -3319,10 +3331,11 @@ static s32b borg_power_aux3(void)
 	if (FLAG(bp_ptr, TR_RES_FEAR)) value += 2000L;
 
 	/* Resistance flags */
-	if (FLAG(bp_ptr, TR_RES_COLD)) value += 3000L;
-	if (FLAG(bp_ptr, TR_RES_ELEC)) value += 4000L;
-	if (FLAG(bp_ptr, TR_RES_ACID)) value += 6000L;
+	if (FLAG(bp_ptr, TR_RES_COLD)) value += 5000L;
+	if (FLAG(bp_ptr, TR_RES_ELEC)) value += 5000L;
+	if (FLAG(bp_ptr, TR_RES_ACID)) value += 5000L;
 	if (FLAG(bp_ptr, TR_RES_FIRE)) value += 8000L;
+
 	/* extra bonus for getting all basic resist */
 	if ((FLAG(bp_ptr, TR_RES_FIRE)) &&
 		(FLAG(bp_ptr, TR_RES_ACID)) &&

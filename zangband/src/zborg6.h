@@ -1,6 +1,6 @@
 /* File: zborg6.h */
 
-/* Purpose: Header file for "borg6.c" -BEN- */
+/* Purpose: Header file for "zborg6.c" */
 
 #ifndef INCLUDED_BORG6_H
 #define INCLUDED_BORG6_H
@@ -10,7 +10,7 @@
 #ifdef ALLOW_BORG
 
 /*
- * This file provides support for "borg6.c".
+ * This file provides support for "zborg6.c".
  */
 
 #include "zborg1.h"
@@ -68,7 +68,6 @@ extern int borg_extract_dir(int x1, int y1, int x2, int y2);
 extern bool borg_flow_stair_both(int why);
 extern bool borg_flow_stair_less(int why);
 extern bool borg_flow_stair_more(int why);
-extern bool borg_flow_town_exit(int why);
 
 extern bool borg_flow_glyph(int why);
 extern bool borg_flow_light(int why);
