@@ -128,11 +128,7 @@ proc NSValueManager::InitModule {} {
 	Manage TERM_SLATE [palette set 250]
 	Manage TERM_ORANGE [palette set 17]
 	Manage TERM_RED [palette set 217]
-if 1 {
 	Manage TERM_GREEN [palette set 227]
-} else {
-	Manage TERM_GREEN [palette set 196]
-}
 	Manage TERM_BLUE [palette set 204]
 	Manage TERM_UMBER [palette set 101]
 	Manage TERM_L_DARK [palette set 129]
@@ -143,58 +139,6 @@ if 1 {
 	Manage TERM_L_GREEN [palette set 185] ; # ~LawnGreen
 	Manage TERM_L_BLUE [palette set 180] ; # ~turquoise2
 	Manage TERM_L_UMBER [palette set 52]
-
-	# This is a bit silly. The Color Window should allow the
-	# user to edit the standard 16 colors, which are then used
-	# for displaying items etc. Currently, every item type can
-	# have its own color.
-	
-	Manage TV_AMULET [Get TERM_ORANGE]
-	Manage TV_ARROW [Get TERM_L_UMBER]
-	Manage TV_BOLT [Get TERM_L_UMBER]
-	Manage TV_BOOTS [Get TERM_L_UMBER]
-	Manage TV_BOTTLE [Get TERM_WHITE]
-	Manage TV_BOW [Get TERM_UMBER]
-	Manage TV_CHEST [Get TERM_SLATE]
-	Manage TV_CLOAK [Get TERM_L_UMBER]
-	Manage TV_CROWN [Get TERM_L_UMBER]
-	Manage TV_DIGGING [Get TERM_SLATE]
-	Manage TV_DRAG_ARMOR [Get TERM_SLATE]
-	Manage TV_FLASK [Get TERM_YELLOW]
-	Manage TV_FOOD [Get TERM_L_UMBER]
-	Manage TV_GLOVES [Get TERM_L_UMBER]
-	Manage TV_GOLD [Get TERM_ORANGE]
-	Manage TV_HAFTED [Get TERM_WHITE]
-	Manage TV_HARD_ARMOR [Get TERM_SLATE]
-	Manage TV_HELM [Get TERM_L_UMBER]
-	Manage TV_JUNK [Get TERM_WHITE]
-	Manage TV_LITE [Get TERM_YELLOW]
-	Manage TV_NONE [Get TERM_WHITE]
-	Manage TV_POLEARM [Get TERM_WHITE]
-	Manage TV_POTION [Get TERM_L_BLUE]
-	Manage TV_RING [Get TERM_RED]
-	Manage TV_ROD [Get TERM_VIOLET]
-	Manage TV_SCROLL [Get TERM_WHITE]
-	Manage TV_SHIELD [Get TERM_L_UMBER]
-	Manage TV_SHOT [Get TERM_L_UMBER]
-	Manage TV_SKELETON [Get TERM_WHITE]
-	Manage TV_SOFT_ARMOR [Get TERM_SLATE]
-	Manage TV_SPIKE [Get TERM_SLATE]
-	Manage TV_STAFF [Get TERM_L_UMBER]
-	Manage TV_SWORD [Get TERM_WHITE]
-	Manage TV_WAND [Get TERM_GREEN]
-
-	
-	Manage TV_FIGURINE [Get TERM_L_WHITE]
-	Manage TV_STATUE [Get TERM_L_WHITE]
-	Manage TV_CORPSE [Get TERM_L_WHITE]
-	Manage TV_ARCANE_BOOK [Get TERM_L_WHITE]
-	Manage TV_CHAOS_BOOK [Get TERM_L_RED]
-	Manage TV_DEATH_BOOK [Get TERM_L_DARK]
-	Manage TV_LIFE_BOOK [Get TERM_WHITE]
-	Manage TV_NATURE_BOOK [Get TERM_L_GREEN]
-	Manage TV_SORCERY_BOOK [Get TERM_L_BLUE]
-	Manage TV_TRUMP_BOOK [Get TERM_ORANGE]
 	
 
 	Manage show_icons 1
@@ -267,21 +211,10 @@ if 1 {
 	Manage font,statusBar [Global font,sys,normal]
 	Manage font,store [Global font,sys,normal]
 
-	# If this is 1, then artifacts in the dungeon are listed in
-	# the Knowledge Window.
-	Manage know_unseen_artifacts 0
-
 	### One-time warnings to the user.
 
 	# Show Setup Window first time
 	Manage warning,setup 0
-
-	# Artifacts are not listed in Knowledge anymore
-#	Manage warning,artifacts 0
-
-	# New Inventory Window
-#	Manage warning,inventory,window 0
-#	Manage warning,store,window 0
 
 #	Manage options,autosave 1
 	Manage window,autosave 1
@@ -812,62 +745,6 @@ proc SettingDesc {keyword} {
 		}
 	}
 }
-
-
-# First element is the title of this group of artifacts/monsters/objects.
-# Second element is list of arguments to pass to the "a_info/r_info/k_info find"
-# command to display artifacts/monsters/objects in the group.
-
-set data [list \
-	"Sword" "-tval TV_SWORD" \
-	"Polearm" "-tval TV_POLEARM" \
-	"Hafted" "-tval TV_HAFTED" \
-	"Bow" "-tval TV_BOW" \
-	"Ammunition" "-tval TV_ARROW -tval TV_BOLT -tval TV_SHOT" \
-	"Shield" "-tval TV_SHIELD" \
-	"Crown" "-tval TV_CROWN" \
-	"Helm" "-tval TV_HELM" \
-	"Gloves" "-tval TV_GLOVES" \
-	"Boots" "-tval TV_BOOTS" \
-	"Cloak" "-tval TV_CLOAK" \
-	"Dragon Scale Mail" "-tval TV_DRAG_ARMOR" \
-	"Hard Armor" "-tval TV_HARD_ARMOR" \
-	"Soft Armor" "-tval TV_SOFT_ARMOR" \
-	"Ring" "-tval TV_RING" \
-	"Amulet" "-tval TV_AMULET" \
-	"Light Source" "-tval TV_FLASK -tval TV_LITE" \
-	"Potion" "-tval TV_POTION" \
-	"Scroll" "-tval TV_SCROLL" \
-	"Wand" "-tval TV_WAND" \
-	"Staff" "-tval TV_STAFF" \
-	"Rod" "-tval TV_ROD" \
-]
-
-lappend data \
-	"Life Book" "-tval TV_LIFE_BOOK" \
-	"Sorcery Book" "-tval TV_SORCERY_BOOK" \
-	"Nature Book" "-tval TV_NATURE_BOOK" \
-	"Chaos Book" "-tval TV_CHAOS_BOOK" \
-	"Death Book" "-tval TV_DEATH_BOOK" \
-	"Trump Book" "-tval TV_TRUMP_BOOK" \
-	"Arcane Book" "-tval TV_ARCANE_BOOK" \
-	"Figurine" "-tval TV_FIGURINE" \
-	"Statue" "-tval TV_STATUE" \
-	"Corpse" "-tval TV_CORPSE" \
-
-lappend data \
-	"Spikes" "-tval TV_SPIKE" \
-	"Digging Tool" "-tval TV_DIGGING" \
-	"Chest" "-tval TV_CHEST" \
-	"Food" "-tval TV_FOOD" \
-	"Gold" "-tval TV_GOLD" \
-	"Skeleton" "-tval TV_SKELETON" \
-	"Junk" "-tval TV_BOTTLE -tval TV_JUNK"
-Global groups,k_info $data
-
-# Artifact groups are the same as object groups, because of
-# random artifacts.
-Global groups,a_info $data
 
 set data {}
 lappend data \
