@@ -2742,9 +2742,16 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 	{
 		map.flags = glow ? MAP_GLOW : 0;
 	}
+	
+	/* Hack - check if is player location */
+	if ((p_ptr->px == x) && (p_ptr->py = y))
+	{
+		/* Hack - set monster as a flag */
+		map.monster = -1;
+	}
 
 	/* Send data to hook */
-	term_map_hook(x, y, map);
+	term_map_hook(x, y, &map);
 }
 
 /*

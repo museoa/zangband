@@ -239,9 +239,9 @@ typedef struct term_map term_map;
 
 struct term_map
 {
-	u16b object;
-	u16b monster;
-	u16b field;
+	s16b object;
+	s16b monster;
+	s16b field;
 	byte terrain;
 	byte flags;
 };

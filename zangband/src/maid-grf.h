@@ -36,9 +36,9 @@ struct map_block
 
 	/* Save the cave info itself - used by the borg */
 #ifdef TERM_CAVE_MAP
-	u16b object;
-	u16b monster;
-	u16b field;
+	s16b object;
+	s16b monster;
+	s16b field;
 	byte terrain;
 #endif /* TERM_CAVE_MAP */
 
