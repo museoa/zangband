@@ -79,6 +79,7 @@ extern bool Rand_quick;
 extern u32b Rand_value;
 extern u16b Rand_place;
 extern u32b Rand_state[RAND_DEG];
+extern byte quick_rand_place;
 
 
 /**** Available Functions ****/
@@ -89,7 +90,7 @@ extern s32b Rand_div(u32b m);
 extern s16b randnor(int mean, int stand);
 extern s16b damroll(int num, int sides);
 extern s16b maxroll(int num, int sides);
-
+extern bool quick_rand();
 
 #endif
 
