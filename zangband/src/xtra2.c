@@ -92,7 +92,7 @@ void check_experience(void)
 			for (vir = 0; vir < MAX_PLAYER_VIRTUES; vir++)
 				p_ptr->virtues[vir] = p_ptr->virtues[vir] + 1;
 
-			if (p_ptr->rp.prace == RACE_BEASTMAN)
+			if (p_ptr->flags4 & (TR4_MUTATE))
 			{
 				/*
 				 * Chance for a mutation is increased
@@ -106,8 +106,7 @@ void check_experience(void)
 
 			p_ptr->max_lev = p_ptr->lev;
 
-			if ((p_ptr->rp.pclass == CLASS_CHAOS_WARRIOR) ||
-				(p_ptr->muta2 & MUT2_CHAOS_GIFT))
+			if (p_ptr->flags4 & (TR4_PATRON))
 			{
 				level_reward = TRUE;
 			}

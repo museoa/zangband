@@ -1580,7 +1580,7 @@ void player_flags(u32b *f1, u32b *f2, u32b *f3, u32b *f4)
 				(*f2) |= (TR2_RES_FEAR);
 			break;
 		case CLASS_CHAOS_WARRIOR:
-			(*f2) |= (TR4_PATRON);
+			(*f4) |= (TR4_PATRON);
 			if (p_ptr->lev > 29)
 				(*f2) |= (TR2_RES_CHAOS);
 			if (p_ptr->lev > 39)
@@ -1793,6 +1793,12 @@ void player_flags(u32b *f1, u32b *f2, u32b *f3, u32b *f4)
 			break;
 		default:
 			;					/* Do nothing */
+	}
+
+	/* Hack - chaos patron */
+	if (p_ptr->muta2 & MUT2_CHAOS_GIFT)
+	{
+		(*f4) |= (TR4_PATRON);
 	}
 
 	/* Mutations */
@@ -2358,16 +2364,15 @@ static void display_player_top(void)
 		put_fstr(COL_NAME, 6, "Magic    : " CLR_L_BLUE "%s", realm_names[p_ptr->spell.r[0].realm]);
 	}
 
-	if (p_ptr->rp.pclass == CLASS_CHAOS_WARRIOR)
-	{
-		put_fstr(COL_NAME, 7, "Patron   : ", CLR_L_BLUE "%s",
-					 chaos_patrons[p_ptr->chaos_patron]);
-	}
-
 	if (p_ptr->spell.r[1].realm)
 	{
 		put_fstr(COL_NAME + WID_NAME, 7, CLR_L_BLUE "%s",
 				 realm_names[p_ptr->spell.r[1].realm]);
+	}
+	else if (p_ptr->flags4 & (TR4_PATRON))
+	{
+		put_fstr(COL_NAME, 7, "Patron   : " CLR_L_BLUE "%s",
+					 chaos_patrons[p_ptr->chaos_patron]);
 	}
 
 	/* Age, Height, Weight, Social */

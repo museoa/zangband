@@ -688,7 +688,7 @@ static int random_misc(object_type *o_ptr, int artifact_bias)
 			break;
 	}
 
-	switch (randint1(34))
+	switch (randint1(36))
 	{
 		case 1:
 			o_ptr->flags2 |= TR2_SUST_STR;
@@ -822,6 +822,12 @@ static int random_misc(object_type *o_ptr, int artifact_bias)
 				case 7: o_ptr->flags4 |= TR4_PROT_GIANT; break;
 				case 8: o_ptr->flags4 |= TR4_PROT_DRAGON; break;
 			}
+			break;
+		case 35:
+			o_ptr->flags4 |= TR4_MUTATE;
+			break;
+		case 36:
+			o_ptr->flags4 |= TR4_PATRON;
 			break;
 	}
 
