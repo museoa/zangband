@@ -11243,8 +11243,21 @@ static int borg_defend_aux_lbeam(void)
 static int borg_defend_aux_panel_shift(void)
 {
 	int dir = 0;
-	int wx = ((c_x - SCREEN_WID / 4) / (SCREEN_WID / 2));
-	int wy = ((c_y - SCREEN_HGT / 4) / (SCREEN_HGT / 2));
+	
+	int x, y;
+	
+	int wx, wy;
+	
+	/* Get size */
+	Term_get_size(&x, &y);
+	
+	/* Remove map offset */
+	x -= COL_MAP + 1;
+	y -= ROW_MAP + 1;
+	
+	/* Get panel */
+	wx = ((c_x - x / 4) / (x / 2));
+	wy = ((c_y - y / 4) / (y / 2));
 
 	/* no need */
 	if (!need_shift_panel && borg_skill[BI_CDEPTH] < 70)
