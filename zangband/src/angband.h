@@ -14,14 +14,14 @@
 #define INCLUDED_ANGBAND_H
 
 /*
- * Include the low-level includes.
- */
-#include "h-basic.h"
-
-/*
  * Configuration
  */
 #include "z-config.h"
+
+/*
+ * Include the low-level includes.
+ */
+#include "h-basic.h"
 
 /*
  * Include the mid-level includes.
