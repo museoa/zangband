@@ -2201,8 +2201,8 @@ static bool player_birth_aux_1(void)
 	/* Choose */
 	while (1)
 	{
-		sprintf(buf, "Choose a sex (%c-%c, or * for random): ",
-			I2A(0), I2A(n-1));
+		sprintf(buf, "Choose a sex (%c-%c), * for random, or = for options: ",
+		        I2A(0), I2A(n-1));
 		put_str(buf, 20, 2);
 		ch = inkey();
 		if (ch == 'Q')
@@ -2223,6 +2223,12 @@ static bool player_birth_aux_1(void)
 		k = (islower(ch) ? A2I(ch) : -1);
 		if ((k >= 0) && (k < n)) break;
 		if (ch == '?') do_cmd_help();
+		else if (ch == '=')
+		{
+			screen_save();
+			do_cmd_options_aux(6, "Startup Options");
+			screen_load();
+		}
 		else bell();
 	}
 
@@ -2847,6 +2853,13 @@ static bool player_birth_aux_3(void)
 		/* Roll for gold */
 		get_money();
 
+		/* Hack -- get a chaos patron even if you are not a chaos warrior */
+		p_ptr->chaos_patron = (s16b)rand_int(MAX_PATRON);
+
+		p_ptr->muta1 = 0;
+		p_ptr->muta2 = 0;
+		p_ptr->muta3 = 0;
+
 		/* Input loop */
 		while (TRUE)
 		{
@@ -2901,6 +2914,13 @@ static bool player_birth_aux_3(void)
 				do_cmd_help();
 				continue;
 			}
+			else if (ch == '=')
+			{
+				screen_save();
+				do_cmd_options_aux(6, "Startup Options");
+				screen_load();
+				continue;
+			}
 
 			/* Warning */
 			bell();
@@ -2946,6 +2966,9 @@ static bool player_birth_aux(void)
 	/* Get a name, prepare savefile */
 	get_character_name();
 
+	/* Initialize the virtues */
+	get_virtues();
+
 	/* Display the player */
 	display_player(0);
 
@@ -2988,7 +3011,7 @@ void player_birth(void)
 	/* Create a note file if that option is set */
 	if (take_notes)
 	{
-		 add_note_type(NOTE_BIRTH);
+		add_note_type(NOTE_BIRTH);
 	}
 
 	/* Note player birth in the message recall */
@@ -3018,6 +3041,4 @@ void player_birth(void)
 	/* Set the inv/equip window flag as default */
 	if (!window_flag[2])
 		window_flag[2] |= PW_INVEN;
-
-
 }
