@@ -8,8 +8,6 @@
  * are included in all such copies.
  */
 
-#include <math.h>
-
 
 /*
  * This file defines some "XImage" manipulation functions for X11.
