@@ -1046,7 +1046,7 @@ const byte blows_table[12][12] =
 cptr owner_names[] =
 {
 	"Bilbo",
-	"Raistlin ",
+	"Raistlin",
 	"Sultan",
 	"Lyar-el",
 	"Falilmawen",
@@ -1121,7 +1121,7 @@ cptr owner_names[] =
 	"Tuethic",	  
 	"Bilious",  			  
 	"Fasgul",				  
-	"Ellefris ",   
+	"Ellefris",   
 	"K'trrik'k",			  
 	"Drocus",    
 	"Fungus",    
@@ -1226,7 +1226,7 @@ cptr owner_names[] =
 	"Nieval",				
 	"Anastasia",
 	"Charity", 
-	"Pugnacious ", 
+	"Pugnacious", 
 	"Footsore",	
 	"Sidria",  
 	"Riatho",	
