@@ -132,6 +132,8 @@ static const struct luaL_reg intMathLib[] =
  */
 bool use_object(object_type *o_ptr, bool *ident)
 {
+	bool used_up;
+
 	lua_getglobal(L, "use_object_hook");
 	tolua_pushusertype(L, (void*)o_ptr, tolua_tag(L, "object_type"));
 
@@ -139,7 +141,12 @@ bool use_object(object_type *o_ptr, bool *ident)
 	lua_call(L, 1, 2);
 
 	*ident = tolua_getbool(L, 1, FALSE);
-	return (tolua_getbool(L, 2, FALSE));
+	used_up = tolua_getbool(L, 2, FALSE);
+
+	/* Remove the two return values from stack */
+	lua_pop(L, 2);
+
+	return (used_up);
 }
 
 
