@@ -2828,7 +2828,6 @@ static void process_msg(int i,ULONG iclass, UWORD icode, UWORD iqual, APTR iaddr
 			else
 				Term_resize(nw,nh);
 
-			Term_redraw();
 			Term_fresh();
 
 			Term_activate(angband_term[ 0 ]);
