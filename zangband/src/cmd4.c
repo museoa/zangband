@@ -530,12 +530,12 @@ static bool do_cmd_options_cheat_aux(int option)
 
 menu_type cheat_menu[CHEAT_MAX + 1] =
 {
-	{NULL, NULL, do_cmd_options_cheat_aux, MN_AVAILABLE | MN_SELECT},
-	{NULL, NULL, do_cmd_options_cheat_aux, MN_AVAILABLE | MN_SELECT},
-	{NULL, NULL, do_cmd_options_cheat_aux, MN_AVAILABLE | MN_SELECT},
-	{NULL, NULL, do_cmd_options_cheat_aux, MN_AVAILABLE | MN_SELECT},
-	{NULL, NULL, do_cmd_options_cheat_aux, MN_AVAILABLE | MN_SELECT},
-	{NULL, NULL, do_cmd_options_cheat_aux, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_cheat_aux, MN_ACTIVE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_cheat_aux, MN_ACTIVE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_cheat_aux, MN_ACTIVE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_cheat_aux, MN_ACTIVE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_cheat_aux, MN_ACTIVE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_cheat_aux, MN_ACTIVE | MN_SELECT},
 	MENU_END
 };
 
@@ -642,9 +642,9 @@ static bool do_cmd_options_autosave_aux(int option)
 
 menu_type autosave_menu[4] =
 {
-	{NULL, NULL, do_cmd_options_autosave_aux, MN_AVAILABLE | MN_SELECT},
-	{NULL, NULL, do_cmd_options_autosave_aux, MN_AVAILABLE | MN_SELECT},
-	{NULL, NULL, do_cmd_options_toggle_frequency, MN_AVAILABLE},
+	{NULL, NULL, do_cmd_options_autosave_aux, MN_ACTIVE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_autosave_aux, MN_ACTIVE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_toggle_frequency, MN_ACTIVE},
 	MENU_END
 };
 
@@ -749,30 +749,30 @@ static bool do_cmd_options_aux2(int option)
 
 menu_type options_aux_menu[25] =
 {
-	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
-	{NULL, NULL, do_cmd_options_aux2, MN_AVAILABLE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_ACTIVE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_ACTIVE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_ACTIVE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_ACTIVE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_ACTIVE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_ACTIVE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_ACTIVE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_ACTIVE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_ACTIVE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_ACTIVE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_ACTIVE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_ACTIVE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_ACTIVE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_ACTIVE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_ACTIVE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_ACTIVE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_ACTIVE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_ACTIVE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_ACTIVE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_ACTIVE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_ACTIVE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_ACTIVE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_ACTIVE | MN_SELECT},
+	{NULL, NULL, do_cmd_options_aux2, MN_ACTIVE | MN_SELECT},
 	MENU_END
 };
 
@@ -1174,23 +1174,23 @@ static bool do_cmd_options_dump(int dummy)
 /* The main options menu */
 static menu_type options_menu[OPTION_MENU_MAX] =
 {
-	{"User Interface Options", NULL, do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
-	{"Disturbance Options", NULL, do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
-	{"Game-Play Options", NULL, do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
-	{"Efficiency Options", NULL, do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
-	{"Display Options", NULL, do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
-	{"Birth Options", NULL, do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
-	{"Artificial Intelligence Options", NULL, do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
-	{"Testing Options", NULL, do_cmd_options_aux, MN_AVAILABLE | MN_CLEAR},
+	{"User Interface Options", NULL, do_cmd_options_aux, MN_ACTIVE | MN_CLEAR},
+	{"Disturbance Options", NULL, do_cmd_options_aux, MN_ACTIVE | MN_CLEAR},
+	{"Game-Play Options", NULL, do_cmd_options_aux, MN_ACTIVE | MN_CLEAR},
+	{"Efficiency Options", NULL, do_cmd_options_aux, MN_ACTIVE | MN_CLEAR},
+	{"Display Options", NULL, do_cmd_options_aux, MN_ACTIVE | MN_CLEAR},
+	{"Birth Options", NULL, do_cmd_options_aux, MN_ACTIVE | MN_CLEAR},
+	{"Artificial Intelligence Options", NULL, do_cmd_options_aux, MN_ACTIVE | MN_CLEAR},
+	{"Testing Options", NULL, do_cmd_options_aux, MN_ACTIVE | MN_CLEAR},
 	MENU_SEPERATOR,
-	{"Cheating Options", NULL, do_cmd_options_cheat, MN_AVAILABLE | MN_CLEAR},
-	{"Base Delay Factor", NULL, do_cmd_options_delay, MN_AVAILABLE},
-	{"Hitpoint Warning", NULL, do_cmd_options_hitpoint, MN_AVAILABLE},
+	{"Cheating Options", NULL, do_cmd_options_cheat, MN_ACTIVE | MN_CLEAR},
+	{"Base Delay Factor", NULL, do_cmd_options_delay, MN_ACTIVE},
+	{"Hitpoint Warning", NULL, do_cmd_options_hitpoint, MN_ACTIVE},
 	MENU_SEPERATOR,
-	{"Autosave Options", NULL, do_cmd_options_autosave, MN_AVAILABLE | MN_CLEAR},
-	{"Window Flags", NULL, do_cmd_options_win, MN_AVAILABLE},
+	{"Autosave Options", NULL, do_cmd_options_autosave, MN_ACTIVE | MN_CLEAR},
+	{"Window Flags", NULL, do_cmd_options_win, MN_ACTIVE},
 	MENU_SEPERATOR,
-	{"Dump Options to a Pref File", NULL, do_cmd_options_dump, MN_AVAILABLE},
+	{"Dump Options to a Pref File", NULL, do_cmd_options_dump, MN_ACTIVE},
 	MENU_END
 };
 
@@ -1914,17 +1914,17 @@ static bool do_cmd_action_create(int dummy)
 /* The macro / keymap menu */
 static menu_type macro_menu[MACRO_MENU_MAX] =
 {
-	{"Load a user pref file", NULL, do_cmd_pref_key_load, MN_AVAILABLE},
+	{"Load a user pref file", NULL, do_cmd_pref_key_load, MN_ACTIVE},
 #ifdef ALLOW_MACROS
-	{"Append macros to a file", NULL, do_cmd_macro_append, MN_AVAILABLE},
-	{"Query a macro", NULL, do_cmd_macro_query, MN_AVAILABLE},
-	{"Create a macro", NULL, do_cmd_macro_create, MN_AVAILABLE},
-	{"Remove a macro", NULL, do_cmd_macro_remove, MN_AVAILABLE},
-	{"Append keymaps to a file", NULL, do_cmd_keymap_append, MN_AVAILABLE},
-	{"Query a keymap", NULL, do_cmd_keymap_query, MN_AVAILABLE},
-	{"Create a keymap", NULL, do_cmd_keymap_create, MN_AVAILABLE},
-	{"Remove a keymap", NULL, do_cmd_keymap_remove, MN_AVAILABLE},
-	{"Enter a new action", NULL, do_cmd_action_create, MN_AVAILABLE},
+	{"Append macros to a file", NULL, do_cmd_macro_append, MN_ACTIVE},
+	{"Query a macro", NULL, do_cmd_macro_query, MN_ACTIVE},
+	{"Create a macro", NULL, do_cmd_macro_create, MN_ACTIVE},
+	{"Remove a macro", NULL, do_cmd_macro_remove, MN_ACTIVE},
+	{"Append keymaps to a file", NULL, do_cmd_keymap_append, MN_ACTIVE},
+	{"Query a keymap", NULL, do_cmd_keymap_query, MN_ACTIVE},
+	{"Create a keymap", NULL, do_cmd_keymap_create, MN_ACTIVE},
+	{"Remove a keymap", NULL, do_cmd_keymap_remove, MN_ACTIVE},
+	{"Enter a new action", NULL, do_cmd_action_create, MN_ACTIVE},
 #endif /* ALLOW_MACROS */
 	MENU_END
 };
@@ -2570,18 +2570,18 @@ static bool do_cmd_reset_visuals(int dummy)
 /* The visuals menu */
 static menu_type visuals_menu[VISUAL_MENU_MAX] =
 {
-	{"Load a user pref file", NULL, do_cmd_pref_vis_load, MN_AVAILABLE},
+	{"Load a user pref file", NULL, do_cmd_pref_vis_load, MN_ACTIVE},
 #ifdef ALLOW_VISUALS
-	{"Dump monster attr/chars", NULL, do_cmd_dump_monster, MN_AVAILABLE},
-	{"Dump object attr/chars", NULL, do_cmd_dump_object, MN_AVAILABLE},
-	{"Dump feature attr/chars", NULL, do_cmd_dump_feature, MN_AVAILABLE},
-	{"Dump field attr/chars", NULL, do_cmd_dump_field, MN_AVAILABLE},
-	{"Change monster attr/chars", NULL, do_cmd_change_monster, MN_AVAILABLE | MN_CLEAR},
-	{"Change object attr/chars", NULL, do_cmd_change_object, MN_AVAILABLE | MN_CLEAR},
-	{"Change feature attr/chars", NULL, do_cmd_change_feature, MN_AVAILABLE | MN_CLEAR},
-	{"Change field attr/chars", NULL, do_cmd_change_field, MN_AVAILABLE | MN_CLEAR},
+	{"Dump monster attr/chars", NULL, do_cmd_dump_monster, MN_ACTIVE},
+	{"Dump object attr/chars", NULL, do_cmd_dump_object, MN_ACTIVE},
+	{"Dump feature attr/chars", NULL, do_cmd_dump_feature, MN_ACTIVE},
+	{"Dump field attr/chars", NULL, do_cmd_dump_field, MN_ACTIVE},
+	{"Change monster attr/chars", NULL, do_cmd_change_monster, MN_ACTIVE | MN_CLEAR},
+	{"Change object attr/chars", NULL, do_cmd_change_object, MN_ACTIVE | MN_CLEAR},
+	{"Change feature attr/chars", NULL, do_cmd_change_feature, MN_ACTIVE | MN_CLEAR},
+	{"Change field attr/chars", NULL, do_cmd_change_field, MN_ACTIVE | MN_CLEAR},
 #endif /* ALLOW_VISUALS */
-	{"Reset Visuals", NULL, do_cmd_reset_visuals, MN_AVAILABLE},
+	{"Reset Visuals", NULL, do_cmd_reset_visuals, MN_ACTIVE},
 	MENU_END
 };
 
@@ -2960,12 +2960,12 @@ static bool do_cmd_modify_message(int dummy)
 
 static menu_type color_menu[COLOR_MENU_MAX] =
 {
-	{"Load a user pref file", NULL, do_cmd_pref_col_load, MN_AVAILABLE},
+	{"Load a user pref file", NULL, do_cmd_pref_col_load, MN_ACTIVE},
 #ifdef ALLOW_COLORS
-	{"Dump colours", NULL, do_cmd_dump_colour, MN_AVAILABLE},
-	{"Dump message colours", NULL, do_cmd_dump_message, MN_AVAILABLE},
-	{"Modify colours", NULL, do_cmd_modify_colour, MN_AVAILABLE | MN_CLEAR},
-	{"Modify message colours", NULL, do_cmd_modify_message, MN_AVAILABLE | MN_CLEAR},
+	{"Dump colours", NULL, do_cmd_dump_colour, MN_ACTIVE},
+	{"Dump message colours", NULL, do_cmd_dump_message, MN_ACTIVE},
+	{"Modify colours", NULL, do_cmd_modify_colour, MN_ACTIVE | MN_CLEAR},
+	{"Modify message colours", NULL, do_cmd_modify_message, MN_ACTIVE | MN_CLEAR},
 #endif /* ALLOW_COLORS */
 	MENU_END
 };

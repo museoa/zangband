@@ -352,7 +352,7 @@ static int show_menu(int num, menu_type *options, int select, bool scroll,
 	
 	for (i = 0; i < num; i++)
 	{
-		if (options[i].flags & MN_AVAILABLE)
+		if (options[i].flags & MN_ACTIVE)
 		{
 			/* Is this option selected */
 			if (i == select)
@@ -571,7 +571,7 @@ bool display_menu(menu_type *options, int select, bool scroll, void (* disp)(voi
 		/* Find the action to call */
 		for (j = 0; j < num; j++)
 		{
-			if (options[j].flags & MN_AVAILABLE)
+			if (options[j].flags & MN_ACTIVE)
 			{
 				if (!i)
 				{
