@@ -182,6 +182,10 @@ void drop_object_list(s16b *o_idx_ptr, int x, int y)
 
 /*
  * Move an object from index i1 to index i2 in the object list
+ *
+ * This function must handle all possible places an object's index may be
+ * recorded, and fix them up, otherwise strange things will happen if an
+ * object is moved.
  */
 static void compact_objects_aux(int i1, int i2)
 {
@@ -268,6 +272,10 @@ static void compact_objects_aux(int i1, int i2)
  *
  * After "compacting" (if needed), we "reorder" the objects into a more
  * compact order, and we reset the allocation info, and the "live" array.
+ *
+ * It is important that this function actually removes all "dead" objects,
+ * because the savefile code assumes that it does so, and if it doesn't
+ * it will create broken savefiles.
  */
 void compact_objects(int size)
 {
