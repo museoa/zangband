@@ -25,7 +25,7 @@ exec_prefix = @exec_prefix@
 bindir = @bindir@
 datadir = @datadir@
 
-DESTDIR = $(datadir)/games/zangband/lib/
+DESTDIR = $(datadir)/games/zangband/
 GAMEGROUP = games
 
 CFLAGS += -DDEFAULT_PATH=\"$(DESTDIR)\"
@@ -39,9 +39,6 @@ subdir =
 scandir = $(addprefix $(subdir),$(addsuffix /makefile.zb,$(dirs)))
 
 files = angdos.cfg readme z_faq.txt z_update.txt
-
-# The executable itself
-files += zangband
 
 clean-files = zangband
 distclean-files = *.bak gmon.out config.log config.status
@@ -79,6 +76,7 @@ configure: configure.in
 	autoconf
 
 makedirs:
+	-mkdir $(datadir)/games/zangband
 	-mkdir $(DESTDIR)
 	-mkdir $(addprefix $(DESTDIR),$(dirlist))
 
@@ -87,12 +85,15 @@ install-files: makedirs
 	    cp $$i $(DESTDIR)$$i; \
 	done
 
-install: install-files zangband
+install: makedirs zangband
+	for i in $(files) ; do \
+	    cp $$i $(DESTDIR)$$i; \
+	done
 	$(INSTALL)
 
 uninstall:
-	-rm -rf $(datadir)/games/zangband
 	-rm -f $(bindir)/zangband
+	-rm -rf $(datadir)/games/zangband
 
 clean:
 	-rm -f $(clean-files)

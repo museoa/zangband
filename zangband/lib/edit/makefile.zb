@@ -3,6 +3,6 @@ subdir = ./lib/edit/
 ## makefile.zb
 
 files += \
-  lib/data/a_info.txt lib/data/e_info.txt lib/data/f_info.txt\
-  lib/data/k_info.txt lib/data/misc.txt lib/data/r_info.txt\
-  lib/data/v_info.txt lib/data/t_info.txt lib/data/w_info.txt
+  lib/edit/a_info.txt lib/edit/e_info.txt lib/edit/f_info.txt\
+  lib/edit/k_info.txt lib/edit/misc.txt lib/edit/r_info.txt\
+  lib/edit/v_info.txt lib/edit/t_info.txt lib/edit/w_info.txt
