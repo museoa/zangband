@@ -2531,10 +2531,12 @@ void display_map(int *cx, int *cy)
 		y = py / 16 + *cy;
 
 		/* recenter */
-		x = x - wid / 2;
+        x = x - wid / 2;
+        if (x + wid >= max_wild) x = max_wild - wid - 1;
 		if (x < 0) x = 0;
 
-		y = y - hgt / 2;
+        y = y - hgt / 2;
+        if (y + hgt >= max_wild) y = max_wild - hgt - 1;
 		if (y < 0) y = 0;
 
 		/* Player location in wilderness */
