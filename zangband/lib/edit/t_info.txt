@@ -450,4 +450,11 @@ I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
 D:8:0:0:0:0:0:0:0
 F:3,field_action_door_store
 
+# Weaponsmith
+N:43:Weaponsmith
+G:+:r
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:0:0:0:0:0:0:0:0
+F:3,field_action_door_build
 
