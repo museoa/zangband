@@ -414,6 +414,7 @@ extern void do_cmd_equip(void);
 extern void do_cmd_wield(void);
 extern void do_cmd_takeoff(void);
 extern void do_cmd_drop(void);
+extern bool destroy_item_aux(object_type *o_ptr, int amt);
 extern void do_cmd_destroy(void);
 extern void do_cmd_observe(void);
 extern void do_cmd_uninscribe(void);

@@ -910,21 +910,10 @@ void carry(int pickup)
 					
 					if ((i == 'K') || (i == 'k'))
 					{
-						/* Artifact? */
-						if (!can_player_destroy_object(o_ptr))
+						/* Physically try to destroy the item */
+						if	(destroy_item_aux(o_ptr, o_ptr->number))
 						{
-							/* Describe the object (with {terrible/special}) */
-							object_desc(o_name, o_ptr, TRUE, 3);
-
-							/* Message */
-							msg_format("You cannot destroy the %s.", o_name);
-						}
-						else
-						{
-							/* Destroy the object */
 							delete_object_idx(this_o_idx);
-							msg_format("You destroy %s.", o_name);
-							sound(SOUND_DESTITEM);
 						}
 					}
 				}
