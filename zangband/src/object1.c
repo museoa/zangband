@@ -2304,8 +2304,8 @@ bool item_tester_okay(const object_type *o_ptr)
 	if (item_tester_tval)
 	{
 		/* Is it a spellbook? If so, we need a hack -- TY */
-		if ((item_tester_tval <= TV_DEATH_BOOK) &&
-			(item_tester_tval >= TV_LIFE_BOOK))
+		if ((item_tester_tval <= TV_BOOKS_MAX) &&
+			(item_tester_tval >= TV_BOOKS_MIN))
 			return check_book_realm(o_ptr->tval);
 		else if (item_tester_tval != o_ptr->tval) return (FALSE);
 	}

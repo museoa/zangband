@@ -3884,7 +3884,7 @@ void print_spells(byte *spells, int num, int x, int y, int realm)
 	cptr comment;
 	char info[80];
 
-	if (((realm <= 0) || (realm >= MAX_REALM)) && p_ptr->state.wizard)
+	if (((realm < 0) || (realm >= MAX_REALM)) && p_ptr->state.wizard)
 		msgf("Warning! print_spells called with null realm");
 
 	/* Title the list */
