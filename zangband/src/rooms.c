@@ -4230,7 +4230,7 @@ static void add_outer_wall(int x, int y, int light, int x1, int y1, int x2, int 
 	/* set room flag */
 	cave[y][x].info|=CAVE_ROOM;
 
-	if (light == TRUE) cave[y][x].info|=CAVE_GLOW;
+	
 
 	if (cave[y][x].feat == FEAT_FLOOR)
 	{
@@ -4239,7 +4239,10 @@ static void add_outer_wall(int x, int y, int light, int x1, int y1, int x2, int 
 			for (j=-1; j<=1; j++)
 			{
 				if ((x + i>=x1) && (x + i<=x2) && (y + j>=y1) && (y + j<=y2))
+				{	
 					add_outer_wall(x + i, y + j, light, x1, y1, x2, y2);
+					if (light == TRUE) cave[y][x].info|=CAVE_GLOW;
+				}
 			}
 		}
 	}
@@ -4383,14 +4386,14 @@ static void build_target_vault(int x0, int y0, int xsize, int ysize)
 	x=(rad - 2)/4 + 1;
 	y = rad/2 + x;
 
-	place_secret_door(y0, x0 + x);
-	place_secret_door(y0, x0 + y);
-	place_secret_door(y0, x0 - x);
-	place_secret_door(y0, x0 - y);
-	place_secret_door(y0 + x, x0);
-	place_secret_door(y0 + y, x0);
-	place_secret_door(y0 - x, x0);
-	place_secret_door(y0 - y, x0);
+	add_door(x0 + x, y0);
+	add_door(x0 + y, y0);
+	add_door(x0 - x, y0);
+	add_door(x0 - y, y0);
+	add_door(x0, y0 + x);
+	add_door(x0, y0 + y);
+	add_door(x0, y0 - x);
+	add_door(x0, y0 - y);
 
 	/* Fill with stuff - medium difficulty */
 	fill_treasure(x0 - rad, x0 + rad, y0 - rad, y0 + rad, randint(3)+3);
