@@ -1,4 +1,4 @@
-/* File: borg2.c */
+/* File: zborg2.c */
 /* Purpose: Low level dungeon mapping skills -BEN- */
 
 #include "angband.h"
@@ -2746,6 +2746,9 @@ void borg_map_info(map_block *mb_ptr, const term_map *map, vptr dummy)
 				/* Position */
 				borg_shops[i].x = x;
 				borg_shops[i].y = y;
+
+				/* Hack that town name in there */
+				strncpy(borg_shops[i].town, place[p_ptr->place_num].name, T_NAME_LEN);
 
 				/* Hack - we have never been here before */
 				borg_shops[i].when = borg_t - 1000;
