@@ -522,7 +522,9 @@ static cptr AngList = "AngList";
 static cptr ANGBAND_DIR_XTRA_FONT;
 static cptr ANGBAND_DIR_XTRA_GRAF;
 static cptr ANGBAND_DIR_XTRA_SOUND;
+#ifdef USE_MUSIC
 static cptr ANGBAND_DIR_XTRA_MUSIC;
+#endif
 static cptr ANGBAND_DIR_XTRA_HELP;
 
 
