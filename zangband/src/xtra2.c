@@ -3570,8 +3570,8 @@ void gain_level_reward(int chosen_reward)
 			msgf("'Rise, my servant!'");
 			(void)restore_level();
 			(void)set_poisoned(0);
-			(void)set_blind(0);
-			(void)set_confused(0);
+			(void)clear_blind();
+			(void)clear_confused();
 			(void)set_image(0);
 			(void)set_stun(0);
 			(void)set_cut(0);

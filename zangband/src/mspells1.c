@@ -1473,7 +1473,7 @@ bool make_attack_spell(int m_idx)
 
 				if (!(p_ptr->flags2 & (TR2_RES_CONF)))
 				{
-					(void)set_confused(p_ptr->tim.confused + rand_range(4, 8));
+					(void)inc_confused(rand_range(4, 8));
 				}
 
 				if (!(p_ptr->flags2 & (TR2_RES_CHAOS)) && one_in_(3))
@@ -1510,11 +1510,11 @@ bool make_attack_spell(int m_idx)
 				take_hit(damroll(12, 15), ddesc);
 				if (!(p_ptr->flags2 & (TR2_RES_BLIND)))
 				{
-					(void)set_blind(p_ptr->tim.blind + rand_range(8, 16));
+					(void)inc_blind(rand_range(8, 16));
 				}
 				if (!(p_ptr->flags2 & (TR2_RES_CONF)))
 				{
-					(void)set_confused(p_ptr->tim.confused + rand_range(4, 8));
+					(void)inc_confused(rand_range(4, 8));
 				}
 				if (!(p_ptr->flags2 & (TR2_FREE_ACT)))
 				{
@@ -1792,7 +1792,7 @@ bool make_attack_spell(int m_idx)
 			}
 			else
 			{
-				(void)set_blind(rand_range(12, 16));
+				(void)inc_blind(rand_range(12, 16));
 			}
 			update_smart_learn(m_idx, DRS_BLIND);
 			break;
@@ -1817,7 +1817,7 @@ bool make_attack_spell(int m_idx)
 			}
 			else
 			{
-				(void)set_confused(p_ptr->tim.confused + rand_range(4, 8));
+				(void)inc_confused(rand_range(4, 8));
 			}
 			update_smart_learn(m_idx, DRS_CONF);
 			break;

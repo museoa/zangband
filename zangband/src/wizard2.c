@@ -1237,8 +1237,8 @@ static void do_cmd_wiz_cure_all(void)
 	p_ptr->csp_frac = 0;
 
 	/* Cure stuff */
-	(void)set_blind(0);
-	(void)set_confused(0);
+	(void)clear_blind();
+	(void)clear_confused();
 	(void)set_poisoned(0);
 	(void)set_afraid(0);
 	(void)set_paralyzed(0);

@@ -2498,7 +2498,7 @@ bool destroy_area(int x1, int y1, int r)
 			!(p_ptr->flags4 & (TR4_IM_LITE)))
 		{
 			/* Become blind */
-			(void)set_blind(p_ptr->tim.blind + rand_range(10, 20));
+			(void)inc_blind(rand_range(10, 20));
 		}
 	}
 

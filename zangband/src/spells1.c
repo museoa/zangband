@@ -1511,8 +1511,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 							switch (randint1(4))
 							{
 								case 1:
-									(void)set_confused(p_ptr->tim.confused + 3 +
-													   randint1(dam));
+									(void)inc_confused(3 + randint1(dam));
 									break;
 								case 2:
 									(void)set_stun(p_ptr->tim.stun + randint1(dam));
@@ -1696,7 +1695,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 								(void)set_stun(p_ptr->tim.stun + dam / 2);
 								break;
 							case 2:
-								(void)set_confused(p_ptr->tim.confused + dam / 2);
+								(void)inc_confused(dam / 2);
 								break;
 							default:
 							{
@@ -3378,7 +3377,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			}
 			if (!(p_ptr->flags2 & (TR2_RES_CONF)))
 			{
-				(void)set_confused(p_ptr->tim.confused + rand_range(5, 10));
+				(void)inc_confused(rand_range(5, 10));
 			}
 
 			if (one_in_(5))
@@ -3401,7 +3400,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			}
 			if (!(p_ptr->flags2 & (TR2_RES_CONF)))
 			{
-				(void)set_confused(p_ptr->tim.confused + rand_range(20, 30));
+				(void)inc_confused(rand_range(20, 30));
 			}
 			if (!(p_ptr->flags2 & (TR2_RES_CHAOS)))
 			{
@@ -3497,7 +3496,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			}
 			if (!(p_ptr->flags2 & (TR2_RES_CONF)))
 			{
-				(void)set_confused(p_ptr->tim.confused + rand_range(10, 30));
+				(void)inc_confused(rand_range(10, 30));
 			}
 			take_hit(dam, killer);
 			break;
@@ -3610,7 +3609,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			}
 			else if (!blind && !(p_ptr->flags2 & (TR2_RES_BLIND)))
 			{
-				(void)set_blind(p_ptr->tim.blind + rand_range(2, 7));
+				(void)inc_blind(rand_range(2, 7));
 			}
 			if (p_ptr->flags4 & (TR4_HURT_LITE))
 			{
@@ -3650,7 +3649,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			}
 			else if (!blind && !(p_ptr->flags2 & (TR2_RES_BLIND)))
 			{
-				(void)set_blind(p_ptr->tim.blind + rand_range(2, 7));
+				(void)inc_blind(rand_range(2, 7));
 			}
 			if (p_ptr->flags4 & (TR4_HURT_DARK))
 			{

@@ -1409,7 +1409,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 
 		if (!(p_ptr->flags2 & (TR2_RES_CONF)))
 		{
-			(void)set_confused(p_ptr->tim.confused + rand_range(15, 35));
+			(void)inc_confused(rand_range(15, 35));
 		}
 
 		if (!(p_ptr->flags2 & (TR2_RES_CHAOS)))

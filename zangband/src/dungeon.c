@@ -546,7 +546,7 @@ static bool pattern_effect(void)
 		(void)set_image(0);
 		(void)set_stun(0);
 		(void)set_cut(0);
-		(void)set_blind(0);
+		(void)clear_blind();
 		(void)set_afraid(0);
 		(void)do_res_stat(A_STR);
 		(void)do_res_stat(A_INT);
@@ -1504,12 +1504,12 @@ static void process_world(void)
 
 	/*** Timeout Various Things ***/
 	if (p_ptr->tim.image) (void)set_image(p_ptr->tim.image - 1);
-	if (p_ptr->tim.blind) (void)set_blind(p_ptr->tim.blind - 1);
+	if (p_ptr->tim.blind) (void)inc_blind(-1);
 	if (p_ptr->tim.invis) (void)set_tim_invis(p_ptr->tim.invis - 1);
 	if (p_ptr->tim.esp) (void)set_tim_esp(p_ptr->tim.esp - 1);
 	if (p_ptr->tim.infra) (void)set_tim_infra(p_ptr->tim.infra - 1);
 	if (p_ptr->tim.paralyzed) (void)set_paralyzed(p_ptr->tim.paralyzed - 1);
-	if (p_ptr->tim.confused) (void)set_confused(p_ptr->tim.confused - 1);
+	if (p_ptr->tim.confused) (void)inc_confused(-1);
 	if (p_ptr->tim.afraid) (void)set_afraid(p_ptr->tim.afraid - 1);
 	if (p_ptr->tim.fast) (void)set_fast(p_ptr->tim.fast - 1);
 	if (p_ptr->tim.slow) (void)set_slow(p_ptr->tim.slow - 1);
@@ -3580,8 +3580,8 @@ void play_game(bool new_game)
 				p_ptr->csp_frac = 0;
 
 				/* Hack -- Healing */
-				(void)set_blind(0);
-				(void)set_confused(0);
+				(void)clear_blind();
+				(void)clear_confused();
 				(void)set_poisoned(0);
 				(void)set_afraid(0);
 				(void)set_paralyzed(0);

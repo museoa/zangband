@@ -1813,8 +1813,8 @@ bool activate_effect(object_type *o_ptr)
 				(void)set_poisoned(0);
 				(void)set_cut(0);
 				(void)set_stun(0);
-				(void)set_confused(0);
-				(void)set_blind(0);
+				(void)clear_confused();
+				(void)clear_blind();
 				(void)set_hero(p_ptr->tim.hero + rand_range(25, 50));
 				(void)hp_player(777);
 				o_ptr->timeout = 300;

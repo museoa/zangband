@@ -15,7 +15,7 @@
 /*
  * Set "p_ptr->blind", notice observable changes
  */
-bool set_blind(int v)
+static bool set_blind(int v)
 {
 	bool notice = FALSE;
 
@@ -75,11 +75,27 @@ bool set_blind(int v)
 	return (TRUE);
 }
 
+/*
+ * Increase the blind counter
+ */
+bool inc_blind(int v)
+{
+	return(set_blind(p_ptr->tim.blind + v));
+}
+
+/*
+ * No more blindness
+ */
+bool clear_blind(void)
+{
+	return(set_blind(0));
+}
+
 
 /*
  * Set "p_ptr->confused", notice observable changes
  */
-bool set_confused(int v)
+static bool set_confused(int v)
 {
 	bool notice = FALSE;
 
@@ -128,6 +144,24 @@ bool set_confused(int v)
 
 	/* Result */
 	return (TRUE);
+}
+
+
+/*
+ * Increase the confusion counter
+ */
+bool inc_confused(int v)
+{
+	return(set_confused(p_ptr->tim.confused + v));
+}
+
+
+/*
+ * No more confusion
+ */
+bool clear_confused(void)
+{
+	return(set_confused(0));
 }
 
 

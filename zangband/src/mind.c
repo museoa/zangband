@@ -529,7 +529,7 @@ void do_cmd_mindcraft(void)
 			else if (b < 45)
 			{
 				msgf("Your brain is addled!");
-				(void)set_confused(p_ptr->tim.confused + randint1(8));
+				(void)inc_confused(randint1(8));
 			}
 			else if (b < 90)
 			{

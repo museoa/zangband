@@ -2636,7 +2636,7 @@ bool field_action_hit_trap_gas(field_type *f_ptr, va_list vp)
 			msgf("A black gas surrounds you!");
 			if (!(p_ptr->flags2 & (TR2_RES_BLIND)))
 			{
-				(void)set_blind(p_ptr->tim.blind + rand_range(25, 75));
+				(void)inc_blind(rand_range(25, 75));
 			}
 			break;
 		}
@@ -2646,7 +2646,7 @@ bool field_action_hit_trap_gas(field_type *f_ptr, va_list vp)
 			msgf("A gas of scintillating colors surrounds you!");
 			if (!(p_ptr->flags2 & (TR2_RES_CONF)))
 			{
-				(void)set_confused(p_ptr->tim.confused + rand_range(10, 30));
+				(void)inc_confused(rand_range(10, 30));
 			}
 			break;
 		}

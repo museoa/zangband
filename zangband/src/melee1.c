@@ -888,7 +888,7 @@ bool make_attack_normal(int m_idx)
 						/* Increase "blind" */
 						if (!(p_ptr->flags2 & (TR2_RES_BLIND)))
 						{
-							if (set_blind(p_ptr->tim.blind + 10 + randint1(rlev)))
+							if (inc_blind(10 + randint1(rlev)))
 							{
 								obvious = TRUE;
 							}
@@ -908,8 +908,7 @@ bool make_attack_normal(int m_idx)
 						/* Increase "confused" */
 						if (!(p_ptr->flags2 & (TR2_RES_CONF)))
 						{
-							if (set_confused
-								(p_ptr->tim.confused + 3 + randint1(rlev)))
+							if (inc_confused(3 + randint1(rlev)))
 							{
 								obvious = TRUE;
 							}

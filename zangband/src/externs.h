@@ -911,8 +911,10 @@ extern void handle_stuff(void);
 
 
 /* effects.c */
-extern bool set_blind(int v);
-extern bool set_confused(int v);
+extern bool inc_blind(int v);
+extern bool clear_blind(void);
+extern bool inc_confused(int v);
+extern bool clear_confused(void);
 extern bool set_poisoned(int v);
 extern bool set_afraid(int v);
 extern bool set_paralyzed(int v);

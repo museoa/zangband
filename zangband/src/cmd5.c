@@ -1551,7 +1551,7 @@ static bool cast_death_spell(int spell)
 			{
 				msgf
 					("Your head is invaded by a horde of gibbering spectral voices...");
-				(void)set_confused(p_ptr->tim.confused + rand_range(4, 8));
+				(void)inc_confused(rand_range(4, 8));
 			}
 			else if (die < 31)
 			{
@@ -2782,7 +2782,7 @@ void do_cmd_cast(void)
 				{
 					if (!(p_ptr->flags2 & (TR2_RES_CONF)))
 					{
-						(void)set_confused(p_ptr->tim.confused + rand_range(4, 8));
+						(void)inc_confused(rand_range(4, 8));
 					}
 					if (!(p_ptr->flags2 & (TR2_RES_CHAOS)) && one_in_(3))
 					{

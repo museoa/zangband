@@ -104,7 +104,7 @@ static void have_nightmare_aux(int r_idx)
 	{
 		if (!(p_ptr->flags2 & (TR2_RES_CONF)))
 		{
-			(void)set_confused(p_ptr->tim.confused + rand_range(4, 8));
+			(void)inc_confused(rand_range(4, 8));
 		}
 		if (!(p_ptr->flags2 & (TR2_RES_CHAOS)) && one_in_(3))
 		{
@@ -126,7 +126,7 @@ static void have_nightmare_aux(int r_idx)
 	{
 		if (!(p_ptr->flags2 & (TR2_RES_CONF)))
 		{
-			(void)set_confused(p_ptr->tim.confused + rand_range(4, 8));
+			(void)inc_confused(rand_range(4, 8));
 		}
 		if (!(p_ptr->flags2 & (TR2_FREE_ACT)))
 		{
@@ -844,8 +844,8 @@ bool inn_rest(void)
 	}
 
 	/* Normally heal the player */
-	(void)set_blind(0);
-	(void)set_confused(0);
+	(void)clear_blind();
+	(void)clear_confused();
 	p_ptr->tim.stun = 0;
 	p_ptr->csp = p_ptr->msp;
 
@@ -1712,8 +1712,8 @@ static void bldg_process_command(building_type * bldg, int i)
 			/* needs work */
 			hp_player(200);
 			set_poisoned(0);
-			set_blind(0);
-			set_confused(0);
+			clear_blind();
+			clear_confused();
 			set_cut(0);
 			set_stun(0);
 			paid = TRUE;
