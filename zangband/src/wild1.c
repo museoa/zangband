@@ -212,8 +212,8 @@ static u16b select_building(byte pop, byte magic, byte law, u16b *build,
 	{
 		for (i = 0; i < MAX_CITY_BUILD; i++)
 		{
-			/* Only stairs and stores in small towns. */
-			if (wild_build[i].type != BT_STORE)
+			/* No 'filler' buildings in small towns. */
+			if (wild_build[i].type == BT_GENERAL)
 			{
 				wild_build[i].gen = 0;
 			}
