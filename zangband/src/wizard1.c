@@ -8,6 +8,9 @@
 
 #ifdef ALLOW_SPOILERS
 
+/* Uncomment to show estimated "correct" artifact costs in spoilers */
+/* #define ESTIMATED_COST */
+
 
 /*
  * The spoiler file being created
@@ -928,9 +931,24 @@ static void analyze_misc(const object_type *o_ptr, char *misc_desc)
 
 	a_ptr = &a_info[o_ptr->a_idx];
 
+#ifndef ESTIMATED_COST
 	strnfmt(misc_desc, 80, "Level %u, Rarity %u, %d.%d lbs, %ld Gold",
 			(uint)a_ptr->level, (uint)a_ptr->rarity,
 			a_ptr->weight / 10, a_ptr->weight % 10, a_ptr->cost);
+#else
+	{
+	int est_cost = flag_cost(o_ptr, o_ptr->pval);
+
+	if (wield_slot(o_ptr) == EQUIP_WIELD)
+		est_cost += o_ptr->dd * o_ptr->ds * (20 + o_ptr->to_h + o_ptr->to_d) * 5;
+	else
+		est_cost += 200 * (o_ptr->to_h + o_ptr->to_d);
+	est_cost += 100 * (o_ptr->ac + o_ptr->to_a);
+	strnfmt(misc_desc, 80, "Level %u, Rarity %u, %d.%d lbs, %ld Gold, %ld Est",
+			(uint)a_ptr->level, (uint)a_ptr->rarity,
+			a_ptr->weight / 10, a_ptr->weight % 10, a_ptr->cost, est_cost);
+	}
+#endif		
 }
 
 
