@@ -1711,12 +1711,8 @@ errr init_v_info(void)
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_DATA, "v_info.raw");
 
-#if 0
 	/* Attempt to open the "raw" file */
 	fd = fd_open(buf, O_RDONLY);
-#else
-	fd = -1;
-#endif
 
 	/* Process existing "raw" file */
 	if (fd >= 0)
