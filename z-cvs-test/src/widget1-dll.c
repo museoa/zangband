@@ -107,11 +107,6 @@ t_widget_color **g_widget_color;
 /* Number of allocated Widget item colors */
 int g_widget_color_count;
 
-#ifdef USE_HERMES
-BitmapType g_hermes_bitmap;
-Widget *g_hermes_widget = NULL;
-#endif /* USE_HERMES */
-
 /*
  * Initialize the Widget item color package
  */
@@ -1101,11 +1096,6 @@ void Widget_WorldChanged(ClientData instanceData)
 	{
 		DoubleLink *link;
 
-#ifdef USE_HERMES
-		if (WidgetList.head == &widgetPtr->link)
-			g_hermes_widget = widgetPtr;
-#endif /* USE_HERMES */
-
 		/* Allocate bitmap */
 		Widget_CreateBitmap(widgetPtr);
 
@@ -1246,12 +1236,6 @@ void Widget_CmdDeletedProc(ClientData clientData)
 		Tk_DestroyWindow(widgetPtr->tkwin);
 	}
 }
-
-#ifdef USE_HERMES
-#include "Hermes.h"
-extern HermesHandle g_hermes_conv;
-extern HermesHandle g_hermes_palette;
-#endif /* USE_HERMES */
 
 /*
  * Actually draw stuff into the Widget's display. This routine is
@@ -1409,30 +1393,12 @@ static void Widget_CreateBitmap(Widget *widgetPtr)
 
 	/* Create the bitmap */
 	Bitmap_New(widgetPtr->interp, &widgetPtr->bitmap);
-
-#if 0
-	Tk_SetWindowBackgroundPixmap(widgetPtr->tkwin, widgetPtr->bitmap.pixmap);
-#endif
-
-#ifdef USE_HERMES
-	if (widgetPtr == g_hermes_widget)
-	{
-		g_hermes_bitmap.width = widgetPtr->width * widgetPtr->gwidth;
-		g_hermes_bitmap.height = widgetPtr->height * widgetPtr->gheight;
-		Bitmap_NewScreen(&g_hermes_bitmap);
-	}
-#endif /* USE_HERMES */
 }
 
 /* Free the bitmap for this Widget */
 static void Widget_DeleteBitmap(Widget *widgetPtr)
 {
 	Bitmap_Delete(&widgetPtr->bitmap);
-
-#ifdef USE_HERMES
-	if (widgetPtr == g_hermes_widget)
-		Bitmap_Delete(&g_hermes_bitmap);
-#endif /* USE_HERMES */
 }
 
 /* List of all Widget item types */

@@ -1537,12 +1537,6 @@ int read_dark_file(char *fileName)
 	return TCL_OK;
 }
 
-#ifdef USE_HERMES
-#include "Hermes.h"
-HermesHandle g_hermes_conv;
-HermesHandle g_hermes_palette;
-#endif /* USE_HERMES */
-
 void init_palette(void)
 {
 	char path[1024], path2[1024];
@@ -1578,21 +1572,6 @@ path_build(path2, 1024, ANGBAND_DIR_COMMON_TK, "config");
 	{
 		quit_fmt("error reading \"%s\"", path);
 	}
-
-#ifdef USE_HERMES
-	if (!Hermes_Init()) quit_fmt("Hermes_Init() failed");
-	g_hermes_conv = Hermes_ConverterInstance(HERMES_CONVERT_NORMAL);
-	if (!g_hermes_conv) quit_fmt("Hermes_ConverterInstance() failed");
-	g_hermes_palette = Hermes_PaletteInstance();
-	for (i = 0; i < 256; i++)
-	{
-		int32 *p = Hermes_PaletteGet(g_hermes_palette) + i;
-		*p =
-			g_palette_rgb[i * 3] << 16L |
-			g_palette_rgb[i * 3 + 1] << 8L |
-			g_palette_rgb[i * 3 + 2];
-	}
-#endif /* USE_HERMES */
 }
 
 /* 
