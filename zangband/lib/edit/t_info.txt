@@ -902,7 +902,7 @@ N:90:Clothes Store
 G:2:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:1:20:0:80:0:20:8
+D:0:1:20:0:80:0:20:8
 F:2,field_action_door_store
 F:19,field_action_isclothes_tester
 
@@ -911,7 +911,7 @@ N:91:Expensive Clothes Store
 G:2:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:20:50:0:80:0:20:24
+D:0:20:50:0:80:0:20:24
 F:2,field_action_door_store
 F:19,field_action_isclothes_tester
 
@@ -974,7 +974,7 @@ N:98:Milliner
 G:2:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:1:50:50:50:0:0:8
+D:0:1:50:50:50:0:0:8
 F:2,field_action_door_store
 F:19,field_action_ishelm_tester
 
@@ -983,7 +983,7 @@ N:99:Advanced Milliner
 G:2:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:50:100:50:50:0:0:8
+D:0:50:100:50:50:0:0:8
 F:2,field_action_door_store
 F:19,field_action_ishelm_tester
 
@@ -992,7 +992,7 @@ N:100:Expert Milliner
 G:2:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:50:100:50:50:0:0:36
+D:0:50:100:50:50:0:0:36
 F:2,field_action_door_store
 F:19,field_action_ishelm_tester
 
@@ -1001,7 +1001,7 @@ N:101:Rare Milliner
 G:2:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:20:100:50:50:0:0:62
+D:0:20:100:50:50:0:0:62
 F:2,field_action_door_store
 F:19,field_action_ishelm_tester
 
@@ -1010,7 +1010,7 @@ N:102:Jeweler
 G:5:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:1:30:100:0:0:0:8
+D:3:1:30:100:0:0:0:8
 F:2,field_action_door_store
 F:19,field_action_isjewel_tester
 
@@ -1019,7 +1019,7 @@ N:103:Copper Jewler
 G:5:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:20:50:100:0:0:0:8
+D:3:20:50:100:0:0:0:8
 F:2,field_action_door_store
 F:19,field_action_isjewel_tester
 
@@ -1028,7 +1028,7 @@ N:104:Silver Jeweler
 G:5:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:40:70:100:0:0:0:24
+D:3:40:70:100:0:0:0:24
 F:2,field_action_door_store
 F:19,field_action_isjewel_tester
 
@@ -1037,7 +1037,7 @@ N:105:Gold Jeweler
 G:5:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:60:90:100:0:0:0:40
+D:3:60:90:100:0:0:0:40
 F:2,field_action_door_store
 F:19,field_action_isjewel_tester
 
@@ -1046,7 +1046,7 @@ N:106:Rare Jeweler
 G:5:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:80:120:100:0:0:0:56
+D:3:80:120:100:0:0:0:56
 F:2,field_action_door_store
 F:19,field_action_isjewel_tester
 
@@ -1055,7 +1055,7 @@ N:107:Statue Store
 G:1:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:1:50:100:0:0:0:8
+D:0:1:50:100:0:0:0:8
 F:2,field_action_door_store
 F:19,field_action_isstatue_tester
 
@@ -1064,7 +1064,7 @@ N:108:Expensive Statue Store
 G:1:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:50:100:100:0:0:0:8
+D:0:50:100:100:0:0:0:8
 F:2,field_action_door_store
 F:19,field_action_isstatue_tester
 
@@ -1073,7 +1073,7 @@ N:109:Figurine Store
 G:5:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:26:26:100:0:0:0:8
+D:5:26:26:100:0:0:0:8
 F:2,field_action_door_store
 F:19,field_action_isfigurine_tester
 
@@ -1082,7 +1082,7 @@ N:110:Expensive Figurine Store
 G:5:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:50:90:100:0:0:0:24
+D:5:50:90:100:0:0:0:24
 F:2,field_action_door_store
 F:19,field_action_isfigurine_tester
 
@@ -1091,7 +1091,7 @@ N:111:Potion Store
 G:5:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:1:30:0:0:100:0:8
+D:4:1:30:0:0:100:0:8
 F:2,field_action_door_store
 F:19,field_action_ispotion_tester
 
@@ -1100,7 +1100,7 @@ N:112:Cultured Potion Store
 G:5:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:20:50:0:0:100:0:8
+D:4:20:50:0:0:100:0:8
 F:2,field_action_door_store
 F:19,field_action_ispotion_tester
 
@@ -1109,7 +1109,7 @@ N:113:Expensive Potion Store
 G:5:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:40:70:0:0:100:0:24
+D:4:40:70:0:0:100:0:24
 F:2,field_action_door_store
 F:19,field_action_ispotion_tester
 
@@ -1118,7 +1118,7 @@ N:114:Obscure Potion Store
 G:5:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:60:90:0:0:100:0:40
+D:4:60:90:0:0:100:0:40
 F:2,field_action_door_store
 F:19,field_action_ispotion_tester
 
@@ -1127,7 +1127,7 @@ N:115:Rare Potion Store
 G:5:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:80:120:0:0:100:0:56
+D:4:80:120:0:0:100:0:56
 F:2,field_action_door_store
 F:19,field_action_ispotion_tester
 
@@ -1136,7 +1136,7 @@ N:116:Scroll Store
 G:5:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:1:30:0:0:100:0:8
+D:8:1:30:0:0:100:0:8
 F:2,field_action_door_store
 F:19,field_action_isscroll_tester
 
@@ -1145,7 +1145,7 @@ N:117:Crafted Scroll Store
 G:5:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:20:50:0:0:100:0:8
+D:8:20:50:0:0:100:0:8
 F:2,field_action_door_store
 F:19,field_action_isscroll_tester
 
@@ -1154,7 +1154,7 @@ N:118:Expensive Scroll Store
 G:5:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:40:70:0:0:100:0:24
+D:8:40:70:0:0:100:0:24
 F:2,field_action_door_store
 F:19,field_action_isscroll_tester
 
@@ -1163,7 +1163,7 @@ N:119:Obscure Scroll Store
 G:5:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:60:90:0:0:100:0:40
+D:8:60:90:0:0:100:0:40
 F:2,field_action_door_store
 F:19,field_action_isscroll_tester
 
@@ -1172,7 +1172,7 @@ N:120:Rare Scroll Store
 G:5:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:80:120:0:0:100:0:56
+D:8:80:120:0:0:100:0:56
 F:2,field_action_door_store
 F:19,field_action_isscroll_tester
 
@@ -1181,7 +1181,7 @@ N:121:Magic Store
 G:6:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:1:30:0:0:100:0:8
+D:5:1:30:0:0:100:0:8
 F:2,field_action_door_store
 F:19,field_action_isrecharge_tester
 
@@ -1190,7 +1190,7 @@ N:122:Crafted Magic Store
 G:5:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:20:50:0:0:100:0:8
+D:5:20:50:0:0:100:0:8
 F:2,field_action_door_store
 F:19,field_action_isrecharge_tester
 
@@ -1199,7 +1199,7 @@ N:123:Expensive Magic Store
 G:6:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:40:70:0:0:100:0:24
+D:5:40:70:0:0:100:0:24
 F:2,field_action_door_store
 F:19,field_action_isrecharge_tester
 
@@ -1208,7 +1208,7 @@ N:124:Obscure Magic Store
 G:6:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:60:90:0:0:100:0:40
+D:5:60:90:0:0:100:0:40
 F:2,field_action_door_store
 F:19,field_action_isrecharge_tester
 
@@ -1217,7 +1217,7 @@ N:125:Rare Magic Store
 G:6:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:80:120:0:0:100:0:56
+D:5:80:120:0:0:100:0:56
 F:2,field_action_door_store
 F:19,field_action_isrecharge_tester
 
@@ -1226,7 +1226,7 @@ N:126:Rare Book Store
 G:9:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:2:50:120:0:0:100:0:56
+D:8:50:120:0:0:100:0:56
 F:2,field_action_door_store
 F:19,field_action_isbook_tester
 
