@@ -3681,9 +3681,9 @@ extern int PlayerUID;
 #define FIELD_INFO_NO_LOOK	0x0020	/* Do not describe when looked at */
 #define FIELD_INFO_NFT_LOOK	0x0040  /* Do not describe feat when looked at */
 #define FIELD_INFO_MERGE	0x0080  /* Merge counter with similar fields */ 
-#define FIELD_INFO_DUMMY7	0x0100
-#define FIELD_INFO_DUMMY8	0x0200
-#define FIELD_INFO_DUMMY9	0x0400
+#define FIELD_INFO_ENTER	0x0100  /* Grid blocks entry by entities */
+#define FIELD_INFO_NO_MAGIC	0x0200  /* Grid blocks magic */
+#define FIELD_INFO_PERM		0x0400  /* Grid is not affected by disintegrate */
 #define FIELD_INFO_DUMMY10	0x0800
 #define FIELD_INFO_DUMMY11	0x1000
 #define FIELD_INFO_DUMMY12	0x2000
@@ -3711,12 +3711,12 @@ extern int PlayerUID;
 #define FIELD_ACT_MONSTER_LEAVE	7	/* Monster leaves square */
 #define FIELD_ACT_OBJECT_DROP	8	/* Object lands on square */
 #define FIELD_ACT_OBJECT_ON		9	/* Object is on square */
-#define FIELD_ACT_MAGIC_TEST	10	/* bolt/beam/ball spell tries to pass this field */
+#define FIELD_ACT_XXXX10		10
 #define FIELD_ACT_MAGIC_TARGET	11	/* Targeting this square */
 #define FIELD_ACT_COMPACT		12	/* Compaction hook */
 #define FIELD_ACT_EXIT			13	/* Field is destroyed */
 #define FIELD_ACT_MONSTER_AI	14 /* Monster AI hook */
-#define FIELD_ACT_ENTER_TEST	15 /* Monster / player entry test hook */
+#define FIELD_ACT_XXXX15		15
 #define FIELD_ACT_PLAYER_INTERACT	16 /* The player interacts with grid */
 #define FIELD_ACT_OBJECT_TEST	17 /* Test to see if can drop on field */
 

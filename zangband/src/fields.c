@@ -684,6 +684,38 @@ bool field_is_type(s16b fld_idx, byte typ)
 	return FALSE;
 }
 
+/*
+ * See if flags are set in a list of fields
+ *
+ * This is used to see of a grid blocks LOS or magic
+ */
+bool fields_have_flags(s16b fld_idx, u16b info, u16b info_result)
+{
+	field_type *f_ptr;
+	
+	u16b flags = 0;
+
+	/* While the field exists */
+	while (fld_idx)
+	{
+		/* Get field */
+		f_ptr = &fld_list[fld_idx];
+
+		/* Or the flags together */
+		flags |= f_ptr->info;
+
+		/* Get next field. */
+		fld_idx = f_ptr->next_f_idx;
+	}
+	
+	/* If all the requested flags are set - return true. */
+	if ((flags & info) == info_result) return TRUE;
+	
+	/* No match */
+	return FALSE;
+}
+
+
 
 /*
  * Place a field of a given type on a square

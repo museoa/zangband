@@ -1928,7 +1928,6 @@ static void process_monster(int m_idx)
 	bool            did_pass_wall;
 	bool            did_kill_wall;
 	bool            gets_angry = FALSE;
-	bool			m_can_enter;
 
 	/* Quantum monsters are odd */
 	if (r_ptr->flags2 & (RF2_QUANTUM))
@@ -2698,14 +2697,9 @@ static void process_monster(int m_idx)
 			do_move = FALSE;
 		}
 		
-		/* Can the monster enter? */
-		m_can_enter = TRUE;
-			
-		/* Check for a field that blocks movement */
-		field_hook(&c_ptr->fld_idx, FIELD_ACT_ENTER_TEST, &m_can_enter);
-
 		/* Require "empty" fields */
-		if (!m_can_enter)
+		if (fields_have_flags(c_ptr->fld_idx,
+				 FIELD_INFO_ENTER, FIELD_INFO_ENTER))
 		{
 			do_move = FALSE;
 		}

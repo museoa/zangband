@@ -1225,6 +1225,7 @@ extern s16b field_add(field_type *f_ptr, s16b *fld_idx2);
 extern void field_sort_priority(s16b *fld_idx_ptr);
 extern void field_prep(field_type *f_ptr, int t_idx);
 extern bool field_is_type(s16b fld_idx, byte typ);
+extern bool fields_have_flags(s16b fld_idx, u16b info, u16b info_result);
 extern s16b place_field(int y, int x, s16b t_idx);
 extern s16b *field_find(s16b fld_idx);
 extern bool field_hook_single(s16b *field_ptr, int action, void *action_struct);

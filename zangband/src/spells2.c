@@ -2773,9 +2773,6 @@ bool earthquake(int cy, int cx, int r)
 	cave_type       *c_ptr;
 	bool            map[32][32];
 	byte			dummy;
-	
-	bool			p_can_enter;
-
 
 	/* Prevent destruction of quest levels and town */
 	if (p_ptr->inside_quest || !dun_level)
@@ -2853,15 +2850,10 @@ bool earthquake(int cy, int cx, int r)
 
 			/* Important -- Skip "quake" grids */
 			if (map[16+y-cy][16+x-cx]) continue;
-			
-			/* Default is that you can enter the square */
-			p_can_enter = TRUE;
-			
+		
 			/* Check for a field that blocks movement */
-			field_hook(&c_ptr->fld_idx, FIELD_ACT_ENTER_TEST, &p_can_enter);
-			
-			/* Cannot enter grid? */
-			if (!p_can_enter) continue;
+			if (fields_have_flags(c_ptr->fld_idx,
+				 FIELD_INFO_ENTER, FIELD_INFO_ENTER)) continue;
 
 			/* Count "safe" grids */
 			sn++;

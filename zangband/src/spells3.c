@@ -80,14 +80,9 @@ bool teleport_away(int m_idx, int dis)
 
 			c_ptr = area(ny, nx);
 			
-			/* Can the monster enter? */
-			m_can_enter = TRUE;
-			
 			/* Check for a field that blocks movement */
-			field_hook(&c_ptr->fld_idx, FIELD_ACT_ENTER_TEST, &m_can_enter);
-
-			/* Require "empty" fields */
-			if (!m_can_enter) continue;
+			if (fields_have_flags(c_ptr->fld_idx,
+				 FIELD_INFO_ENTER, FIELD_INFO_ENTER)) continue;
 			
 			/* Require "empty" floor space */
 			if (!cave_empty_grid(c_ptr)) continue;
@@ -211,14 +206,9 @@ void teleport_to_player(int m_idx)
 
 			c_ptr = area(ny, nx);
 			
-			/* Can the monster enter? */
-			m_can_enter = TRUE;
-			
 			/* Check for a field that blocks movement */
-			field_hook(&c_ptr->fld_idx, FIELD_ACT_ENTER_TEST, &m_can_enter);
-
-			/* Require "empty" fields */
-			if (!m_can_enter) continue;
+			if (fields_have_flags(c_ptr->fld_idx,
+				 FIELD_INFO_ENTER, FIELD_INFO_ENTER)) continue;
 
 			/* Require "empty" floor space */
 			if (!cave_empty_grid(c_ptr)) continue;
@@ -352,14 +342,9 @@ void teleport_player(int dis)
 			if (!(cave_naked_grid(c_ptr) ||
 			    ((c_ptr->feat & 0x60) == 0x60))) continue;
 
-			/* Can the player enter? */
-			p_can_enter = TRUE;
-			
 			/* Check for a field that blocks movement */
-			field_hook(&c_ptr->fld_idx, FIELD_ACT_ENTER_TEST, &p_can_enter);
-			
-			/* Cannot enter grid? */
-			if (!p_can_enter) continue;
+			if (fields_have_flags(c_ptr->fld_idx,
+				 FIELD_INFO_ENTER, FIELD_INFO_ENTER)) continue;
 			
 			/* No teleporting into vaults and such */
 			if (c_ptr->info & CAVE_ICKY) continue;
@@ -500,14 +485,9 @@ void teleport_player_to(int ny, int nx)
 		/* Accept "naked" floor grids */
 		c_ptr = area(y, x);
 		
-		/* Can the player enter? */
-		p_can_enter = TRUE;
-			
-		/* Check for a field that blocks movement */
-		field_hook(&c_ptr->fld_idx, FIELD_ACT_ENTER_TEST, &p_can_enter);
-			
 		/* Can enter grid? */
-		if (cave_naked_grid(c_ptr) && p_can_enter) break;
+		if (cave_naked_grid(c_ptr) && !fields_have_flags(c_ptr->fld_idx,
+				 FIELD_INFO_ENTER, FIELD_INFO_ENTER)) break;
 
 		/* Occasionally advance the distance */
 		if (++ctr > (4 * dis * dis + 4 * dis + 1))

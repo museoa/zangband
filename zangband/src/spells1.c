@@ -238,8 +238,6 @@ sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, u16b flg
 
 	cave_type *c_ptr;
 	
-	bool m_can_enter;
-
 	/* No path necessary (or allowed) */
 	if ((x1 == x2) && (y1 == y2)) return (0);
 
@@ -314,14 +312,9 @@ sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, u16b flg
 			/* Always stop at non-initial wall grids */
 			if ((n > 0) && !cave_floor_grid(c_ptr)) break;
 			
-			/* Can the magic enter? */
-			m_can_enter = TRUE;
-			
-			/* Check for a field that blocks magic */
-			field_hook(&c_ptr->fld_idx, FIELD_ACT_MAGIC_TEST, &m_can_enter);
-
-			/* Require "empty" fields */
-			if (!m_can_enter) break;
+			/* Require fields do not block magic */
+			if (fields_have_flags(c_ptr->fld_idx,
+				 FIELD_INFO_NO_MAGIC, FIELD_INFO_NO_MAGIC)) break;
 
 			/* Sometimes stop at non-initial monsters/players */
 			if ((c_ptr->m_idx != 0) && (n > 0))
@@ -392,15 +385,10 @@ sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, u16b flg
 
 			/* Always stop at non-initial wall grids */
 			if ((n > 0) && !cave_floor_grid(c_ptr)) break;
-			
-			/* Can the magic enter? */
-			m_can_enter = TRUE;
-			
-			/* Check for a field that blocks magic */
-			field_hook(&c_ptr->fld_idx, FIELD_ACT_MAGIC_TEST, &m_can_enter);
 
-			/* Require "empty" fields */
-			if (!m_can_enter) break;
+			/* Require fields do not block magic */
+			if (fields_have_flags(c_ptr->fld_idx,
+				 FIELD_INFO_NO_MAGIC, FIELD_INFO_NO_MAGIC)) break;
 
 			/* Sometimes stop at non-initial monsters/players */
 			if ((c_ptr->m_idx != 0) && (n > 0))
@@ -462,18 +450,13 @@ sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, u16b flg
 			if (!in_bounds(y, x)) break;
 
 			c_ptr = area(y, x);
-			
-			/* Can the magic enter? */
-			m_can_enter = TRUE;
-			
-			/* Check for a field that blocks magic */
-			field_hook(&c_ptr->fld_idx, FIELD_ACT_MAGIC_TEST, &m_can_enter);
-
-			/* Require "empty" fields */
-			if (!m_can_enter) break;
 
 			/* Always stop at non-initial wall grids */
 			if ((n > 0) && !cave_floor_grid(c_ptr)) break;
+			
+			/* Require fields do not block magic */
+			if (fields_have_flags(c_ptr->fld_idx,
+				 FIELD_INFO_NO_MAGIC, FIELD_INFO_NO_MAGIC)) break;
 
 			/* Sometimes stop at non-initial monsters/players */
 			if ((c_ptr->m_idx != 0) && (n > 0))
@@ -4612,9 +4595,6 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 	/* Is the player blind? */
 	bool blind = (p_ptr->blind ? TRUE : FALSE);
 	
-	/* Can magic pass a particular "pile" of fields? */
-	bool m_can_enter;
-	
 	/* Number of grids in the "path" */
 	int path_n = 0;
 
@@ -4738,15 +4718,10 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 		/* Hack -- Balls explode before reaching walls */
 		if (!cave_floor_grid(c_ptr) && (rad > 0)) break;
 		
-		/* Can the magic enter? */
-		m_can_enter = TRUE;
-			
-		/* Check for a field that blocks magic */
-		field_hook(&c_ptr->fld_idx, FIELD_ACT_MAGIC_TEST, &m_can_enter);
-
-		/* Require "empty" fields for balls */
-		if (!m_can_enter && (rad > 0)) break;
-
+		/* Require fields do not block magic */
+		if (fields_have_flags(c_ptr->fld_idx,
+			 FIELD_INFO_NO_MAGIC, FIELD_INFO_NO_MAGIC)) break;
+		
 		/* Advance */
 		y = ny;
 		x = nx;
