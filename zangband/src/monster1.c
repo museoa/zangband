@@ -1615,9 +1615,13 @@ void display_visible(void)
 		{
 			roff(CLR_L_BLUE "%s", (r_name + r_ptr->name));
 		}
+		else if (r_ptr->flags1 & RF1_QUESTOR)
+		{
+			roff(CLR_L_RED "%s", (r_name + r_ptr->name));
+		}
 		else
 		{
-			roff(r_name + r_ptr->name);
+			roff("%s", r_name + r_ptr->name);
 		}
 
 		/* Append the "standard" attr/char info */
