@@ -4262,7 +4262,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 
 				/* Visual effects */
 				print_rel(c, a, y, x);
-				move_cursor_relative(y, x);
+				move_cursor_relative(x, y);
 				
 				if (fresh_before) Term_fresh();
 				
@@ -4500,7 +4500,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 			}
 
 			/* Hack -- center the cursor */
-			move_cursor_relative(y2, x2);
+			move_cursor_relative(x2, y2);
 
 			/* Flush each "radius" seperately */
 			if (fresh_before) Term_fresh();
@@ -4530,7 +4530,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 			}
 
 			/* Hack -- center the cursor */
-			move_cursor_relative(y2, x2);
+			move_cursor_relative(x2, y2);
 
 			/* Flush the explosion */
 			if (fresh_before) Term_fresh();

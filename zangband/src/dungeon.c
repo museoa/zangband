@@ -2680,7 +2680,7 @@ static void process_player(void)
 
 
 		/* Place the cursor on the player */
-		move_cursor_relative(p_ptr->py, p_ptr->px);
+		move_cursor_relative(p_ptr->px, p_ptr->py);
 
 		/* Refresh (optional) */
 		if (fresh_before) Term_fresh();
@@ -2797,7 +2797,7 @@ static void process_player(void)
 		else
 		{
 			/* Place the cursor on the player */
-			move_cursor_relative(p_ptr->py, p_ptr->px);
+			move_cursor_relative(p_ptr->px, p_ptr->py);
 
 			/* Get a command (normal) */
 			request_command(FALSE);
@@ -3209,7 +3209,7 @@ static void dungeon(void)
 		if (p_ptr->window) window_stuff();
 
 		/* Hack -- Hilite the player */
-		move_cursor_relative(p_ptr->py, p_ptr->px);
+		move_cursor_relative(p_ptr->px, p_ptr->py);
 
 		/* Optional fresh */
 		if (fresh_after) Term_fresh();
@@ -3233,7 +3233,7 @@ static void dungeon(void)
 		if (p_ptr->window) window_stuff();
 
 		/* Hack -- Hilite the player */
-		move_cursor_relative(p_ptr->py, p_ptr->px);
+		move_cursor_relative(p_ptr->px, p_ptr->py);
 
 		/* Optional fresh */
 		if (fresh_after) Term_fresh();
@@ -3266,7 +3266,7 @@ static void dungeon(void)
 		if (p_ptr->window) window_stuff();
 
 		/* Hack -- Hilite the player */
-		move_cursor_relative(p_ptr->py, p_ptr->px);
+		move_cursor_relative(p_ptr->px, p_ptr->py);
 
 		/* Optional fresh */
 		if (fresh_after) Term_fresh();

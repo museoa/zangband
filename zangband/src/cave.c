@@ -1853,9 +1853,9 @@ static void map_info(cave_type *c_ptr, pcave_type *pc_ptr,
 
 
 /*
- * Moves the cursor to a given MAP (y,x) location
+ * Moves the cursor to a given MAP (x, y) location
  */
-void move_cursor_relative(int row, int col)
+void move_cursor_relative(int col, int row)
 {
 	/* Real coordinates convert to screen positions */
 	row -= panel_row_prt;

@@ -2031,7 +2031,7 @@ bool genocide(int player_cast)
 		}
 
 		/* Visual feedback */
-		move_cursor_relative(p_ptr->py, p_ptr->px);
+		move_cursor_relative(p_ptr->px, p_ptr->py);
 
 		/* Redraw */
 		p_ptr->redraw |= (PR_HP);
@@ -2111,7 +2111,7 @@ bool mass_genocide(int player_cast)
 			take_hit(randint1(3), "the strain of casting Mass Genocide");
 		}
 
-		move_cursor_relative(p_ptr->py, p_ptr->px);
+		move_cursor_relative(p_ptr->px, p_ptr->py);
 
 		/* Redraw */
 		p_ptr->redraw |= (PR_HP);

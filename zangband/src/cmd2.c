@@ -2570,7 +2570,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 
 			/* Draw, Hilite, Fresh, Pause, Erase */
 			print_rel(c, a, ny, nx);
-			move_cursor_relative(ny, nx);
+			move_cursor_relative(nx, ny);
 			Term_fresh();
 			Term_xtra(TERM_XTRA_DELAY, msec);
 			lite_spot(ny, nx);
@@ -3010,7 +3010,7 @@ void do_cmd_throw_aux(int mult)
 
 			/* Draw, Hilite, Fresh, Pause, Erase */
 			print_rel(c, a, ny, nx);
-			move_cursor_relative(ny, nx);
+			move_cursor_relative(nx, ny);
 			Term_fresh();
 			Term_xtra(TERM_XTRA_DELAY, msec);
 			lite_spot(ny, nx);

@@ -1980,7 +1980,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 			/* Display a message */
 			sprintf(out_val, "%s%s%s%s [%s]", s1, s2, s3, name, info);
 			prt(out_val, 0, 0);
-			move_cursor_relative(y, x);
+			move_cursor_relative(x, y);
 			query = inkey();
 
 			/* Stop on everything but "return" */
@@ -2014,7 +2014,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 					s3 = "a ";
 					sprintf(out_val, "%s%s%s%s [%s]", s1, s2, s3, m_name, info);
 					prt(out_val, 0, 0);
-					move_cursor_relative(y, x);
+					move_cursor_relative(x, y);
 					query = inkey();
 
 					/* Always stop at "normal" keys */
@@ -2087,7 +2087,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 							prt(out_val, 0, 0);
 
 							/* Place cursor */
-							move_cursor_relative(y, x);
+							move_cursor_relative(x, y);
 
 							/* Command */
 							query = inkey();
@@ -2135,7 +2135,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 						/* Describe the object */
 						sprintf(out_val, "%s%s%s%s [%s]", s1, s2, s3, o_name, info);
 						prt(out_val, 0, 0);
-						move_cursor_relative(y, x);
+						move_cursor_relative(x, y);
 						query = inkey();
 
 						/* Always stop at "normal" keys */
@@ -2193,7 +2193,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 					}
 
 					prt(out_val, 0, 0);
-					move_cursor_relative(y, x);
+					move_cursor_relative(x, y);
 
 					/* Command */
 					query = inkey();
@@ -2253,7 +2253,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 				/* Describe the object */
 				sprintf(out_val, "%s%s%s%s [%s]", s1, s2, s3, o_name, info);
 				prt(out_val, 0, 0);
-				move_cursor_relative(y, x);
+				move_cursor_relative(x, y);
 				query = inkey();
 
 				/* Always stop at "normal" keys */
@@ -2320,7 +2320,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 				sprintf(out_val, "%s%s%s%s [%s]", s1, s2, s3,
 					 name, info);
 				prt(out_val, 0, 0);
-				move_cursor_relative(y, x);
+				move_cursor_relative(x, y);
 				query = inkey();
 
 				/* Always stop at "normal" keys */
@@ -2416,7 +2416,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 			else
 				sprintf(out_val, "%s%s%s%s [%s]", s1, s2, s3, name, info);
 			prt(out_val, 0, 0);
-			move_cursor_relative(y, x);
+			move_cursor_relative(x, y);
 			query = inkey();
 
 			/* Always stop at "normal" keys */
@@ -3570,7 +3570,7 @@ bool tgt_pt(int *x, int *y)
 
 	while ((ch != ESCAPE) && (ch != ' '))
 	{
-		move_cursor_relative(*y, *x);
+		move_cursor_relative(*x, *y);
 		ch = inkey();
 		switch (ch)
 		{

@@ -308,7 +308,7 @@ extern void scatter(int *xp, int *yp, int x, int y, int d);
 extern bool player_can_see_bold(int x, int y);
 extern bool cave_valid_grid(const cave_type *c_ptr);
 extern bool no_lite(void);
-extern void move_cursor_relative(int row, int col);
+extern void move_cursor_relative(int col, int row);
 extern void print_rel(char c, byte a, int y, int x);
 extern void note_spot(int y, int x);
 extern void display_dungeon(void);

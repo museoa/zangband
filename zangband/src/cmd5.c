@@ -1805,7 +1805,7 @@ static bool cast_death_spell(int spell)
 				p_ptr->csp++;
 
 			/* Visual feedback */
-			move_cursor_relative(py, px);
+			move_cursor_relative(px, py);
 
 			/* Redraw */
 			p_ptr->redraw |= (PR_HP | PR_MANA);
