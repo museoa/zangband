@@ -718,7 +718,7 @@ static bool borg_think_shop_buy_aux(int shop)
 	int slot;
 
 	int n, b_n = -1;
-	s32b p, b_p = 0L;
+	s32b p = 0L, b_p = 0L;
 	s32b c, b_c = 0L;
 
 	/* Require one empty slot */
