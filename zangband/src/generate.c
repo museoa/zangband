@@ -611,7 +611,7 @@ static bool cave_gen(void)
 	if ((randint(3) == 1) && (randint(dun_level) > 5))
 	{
 	 	/* Choose water or lava */
-		if (randint(MAX_DEPTH) - 1 > dun_level)
+		if (randint(MAX_DEPTH * 2) - 1 > dun_level)
 		{
 			feat1 = FEAT_DEEP_WATER;
 			feat2 = FEAT_SHAL_WATER;
