@@ -2133,7 +2133,7 @@ bool make_artifact(object_type *o_ptr)
 		}
 
 		/* Artifact "rarity roll" */
-		if (randint0(a_ptr->rarity) != 0) return (FALSE);
+		if (randint0(a_ptr->rarity) != 0) continue;
 
 		/* Find the base object */
 		k_idx = lookup_kind(a_ptr->tval, a_ptr->sval);
@@ -3476,7 +3476,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
  *
  * Hack -- note the special code for various items
  */
-static void a_m_aux_4(object_type *o_ptr, byte flags)
+static void a_m_aux_4(object_type *o_ptr)
 {
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
@@ -3769,7 +3769,7 @@ void apply_magic(object_type *o_ptr, int lev, int lev_dif, byte flags)
 
 		default:
 		{
-			a_m_aux_4(o_ptr, flags);
+			a_m_aux_4(o_ptr);
 			break;
 		}
 	}
@@ -3923,10 +3923,18 @@ bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme)
 
 
 	/* Chance of "special object" */
-	prob = 500 - delta_level * 20;
-
-	/* Bounds checking */
-	if (prob < 10) prob = 10;
+	if (delta_level > 0)
+	{
+		prob = 400 / delta_level;
+		
+		/* bounds checking */
+		if (prob < 10) prob = 10;
+	}
+	else
+	{
+		/* No divide by zero */
+		prob = 400;
+	}
 
 	/* "Good Luck" mutation */
 	if ((p_ptr->muta3 & MUT3_GOOD_LUCK) && !randint0(13))
