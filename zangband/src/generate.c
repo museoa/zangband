@@ -1130,14 +1130,14 @@ void generate_cave(void)
 		px = (s16b)p_ptr->wilderness_x;
 		py = (s16b)p_ptr->wilderness_y;
 
+		/* The "dungeon" is ready */
+		character_dungeon = TRUE;
+		
 		/* Reset map panels */
 		map_panel_size();
 
 		/* Add monsters to the wilderness */
 		repopulate_wilderness();
-
-		/* The "dungeon" is ready */
-		character_dungeon = TRUE;
 
 		return;
 	}
