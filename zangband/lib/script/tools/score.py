@@ -108,7 +108,7 @@ class scorefile:
 				       score.how)
 				self.scores[key] = score
 			else:
-				break;
+				break
 
 		f.close()
 

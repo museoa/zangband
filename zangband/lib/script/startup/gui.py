@@ -6,6 +6,6 @@
 #
 #####################################################################
 
-import gui.standard
-#import gui.tk
+import ui.standard
+#import ui.tk
 
