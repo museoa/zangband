@@ -107,7 +107,7 @@ BORGOBJS := \
 ## The list of ports available
 ##
 PORTS := default_port linux open_bsd main-cap vt100 solaris sgi dec \
-	isc next aix cygwin dos ibm lcc
+	isc next aix cygwin dos ibm lcc risc
 
 ##
 ## Following are some "system" definitions
@@ -293,6 +293,18 @@ lcc: ANGOBJS += angband.res readdib.o
 lcc: INSTALL := copy zangband ..\zangband.exe
 lcc: CLEAN := del *.obj; del *.res; del *.exe;
 lcc: LUA := lua\# Dos has different path seperators
+
+##
+## Variation -- Compile for Risc OS 3.10 or later  (Acorn)
+##
+## Remove the #s to generate a debug version
+##
+risc: CC := cc
+risc: LD := link
+risc: CFLAGS := -IOS:,C: -throwback -depend !Depend -Wan -ff -zps1 #-g
+risc: LDFLAGS := -s symbols #-d
+risc: INSTALL := Squeeze zangband ^.!RunImage
+risc: ANGOBJS += C:o.Stubs OSLib:o.OSLib C:o.eventlib
 
 ##########################################################
 
