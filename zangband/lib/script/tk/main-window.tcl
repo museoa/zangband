@@ -389,6 +389,8 @@ proc NSMainWindow::InitWindow {oop} {
 	wm geometry $term +$width+$height
 	wm minsize $term $width $height
 	
+	Term_KeyPress_Bind $term
+	
 	# Do stuff when window closes
 	wm protocol $term WM_DELETE_WINDOW "NSTerm::Close $oop"
 	
