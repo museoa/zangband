@@ -2369,7 +2369,8 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 					(feat == FEAT_DIRT) ||
 					(feat == FEAT_DEEP_ACID) ||
 					(feat == FEAT_SHAL_ACID) ||
-					(feat == FEAT_JUNGLE))
+					(feat == FEAT_JUNGLE) ||
+					(feat == FEAT_GRASS_LONG))
 			{
 				s3 ="";
 			}
@@ -2696,12 +2697,12 @@ bool target_set(int mode)
 						if (!dun_level)
 						{
 							/* Slide into legality */
-							if (x >= wild_grid.x_max-1) x = wild_grid.x_max - 2;
-							else if (x <= wild_grid.x_min) x = wild_grid.x_min + 1;
+							if (x > wild_grid.x_max-1) x = wild_grid.x_max - 1;
+							else if (x < wild_grid.x_min) x = wild_grid.x_min;
 
 							/* Slide into legality */
-							if (y >= wild_grid.y_max-1) y = wild_grid.y_max- 2;
-							else if (y <= wild_grid.y_min) y = wild_grid.y_min + 1;
+							if (y > wild_grid.y_max-1) y = wild_grid.y_max- 1;
+							else if (y < wild_grid.y_min) y = wild_grid.y_min;
 						}
 						else
 						{
@@ -2868,12 +2869,12 @@ bool target_set(int mode)
 				if (!dun_level)
 				{
 					/* Slide into legality */
-					if (x >= wild_grid.x_max-1) x = wild_grid.x_max - 2;
-					else if (x <= wild_grid.x_min) x = wild_grid.x_min + 1;
+					if (x > wild_grid.x_max-1) x = wild_grid.x_max - 1;
+					else if (x < wild_grid.x_min) x = wild_grid.x_min;
 
 					/* Slide into legality */
-					if (y >= wild_grid.y_max-1) y = wild_grid.y_max- 2;
-					else if (y <= wild_grid.y_min) y = wild_grid.y_min + 1;
+					if (y > wild_grid.y_max-1) y = wild_grid.y_max - 1;
+					else if (y < wild_grid.y_min) y = wild_grid.y_min;
 				}
 				else
 				{
