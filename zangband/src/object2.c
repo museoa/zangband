@@ -68,7 +68,7 @@ void excise_object_idx(s16b *o_idx_ptr, int o_idx)
  *
  * Handle "stacks" of objects correctly.
  */
-void delete_held_object(s16b *o_idx_ptr, int o_idx)
+static void delete_held_object(s16b *o_idx_ptr, int o_idx)
 {
 	object_type *o_ptr;
 
