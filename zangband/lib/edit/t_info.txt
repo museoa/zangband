@@ -82,9 +82,12 @@ G:~:v
 W:50:7:1000
 I:TEMP | VIS | IGNORE
 D:0:0:0:0:0:0:0:0
-F:0,field_action_corpse_init | 1,field_action_corpse_load
+F:0,field_action_corpse_init 
 F:12,field_action_corpse_look | 13,field_action_corpse_decay
 F:15,field_action_corpse_raise
+L:LOAD:local race
+L:LOAD:race = monst_race(field.data[1] * 256 + field.data[2])
+L:LOAD:set_corpse_size(field, corpse_type(race))
 
 # Skeleton
 N:5:skeleton
@@ -92,9 +95,12 @@ G:~:w
 W:50:7:1000
 I:TEMP | VIS | IGNORE
 D:0:0:0:0:0:0:0:0
-F:0,field_action_corpse_init | 1,field_action_corpse_load
+F:0,field_action_corpse_init
 F:12,field_action_corpse_look | 13,field_action_corpse_decay
 F:15,field_action_corpse_raise
+L:LOAD:local race
+L:LOAD:race = monst_race(field.data[1] * 256 + field.data[2])
+L:LOAD:set_corpse_size(field, corpse_type(race))
 
 # Trapdoor
 N:6:trap door
