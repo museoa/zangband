@@ -3461,6 +3461,9 @@ void create_wilderness(void)
 
 	bool done = FALSE;
 	int count = 0;
+	
+	/* Invalidate the player while we make everything */
+	character_dungeon = FALSE;
 
 	/* Delete everything */
 	wipe_rg_list();
