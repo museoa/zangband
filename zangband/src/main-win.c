@@ -240,9 +240,13 @@
 #define MMNOMMSYSTEM     /* General MMSYSTEM functions */
 
 /*
- * Include some more files
+ * Include some more files. Note: the Cygnus Cygwin compiler
+ * doesn't use mmsystem.h instead it includes the winmm library
+ * which performs a similar function.
  */
-#include <mmsystem.h>
+#ifndef __CYGWIN__
+  #include <mmsystem.h>
+#endif
 #include <commdlg.h>
 
 /*
@@ -3914,8 +3918,10 @@ static void hook_quit(cptr str)
 	}
 
 	/* Free the bitmap stuff */
+#ifdef USE_GRAPHICS
 	if (infGraph.hPalette) DeleteObject(infGraph.hPalette);
 	if (infGraph.hBitmap) DeleteObject(infGraph.hBitmap);
+#endif /* USE_GRAPHICS */
 
 #ifdef USE_TRANSPARENCY
 	if (infMask.hPalette) DeleteObject(infMask.hPalette);
