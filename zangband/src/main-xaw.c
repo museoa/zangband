@@ -246,23 +246,23 @@ struct AngbandClassRec
  */
 static XtResource resources[] =
 {
-	{ XtNstartRows, XtCValue, XtRInt, sizeof(int),
+	{ (String) XtNstartRows, (String) XtCValue, (String) XtRInt, sizeof(int),
 	  offset(start_rows), XtRImmediate, (XtPointer) 24 },
-	{ XtNstartColumns, XtCValue, XtRInt, sizeof(int),
+	{ (String) XtNstartColumns, (String) XtCValue, (String) XtRInt, sizeof(int),
 	  offset(start_columns), XtRImmediate, (XtPointer) 80 },
-	{ XtNminRows, XtCValue, XtRInt, sizeof(int),
+	{ (String) XtNminRows, (String) XtCValue, (String) XtRInt, sizeof(int),
 	  offset(min_rows), XtRImmediate, (XtPointer) 1 },
-	{ XtNminColumns, XtCValue, XtRInt, sizeof(int),
+	{ (String) XtNminColumns, (String) XtCValue, (String) XtRInt, sizeof(int),
 	  offset(min_columns), XtRImmediate, (XtPointer) 1 },
-	{ XtNmaxRows, XtCValue, XtRInt, sizeof(int),
+	{ (String) XtNmaxRows, (String) XtCValue, (String) XtRInt, sizeof(int),
 	  offset(max_rows), XtRImmediate, (XtPointer) 24 },
-	{ XtNmaxColumns, XtCValue, XtRInt, sizeof(int),
+	{ (String) XtNmaxColumns, (String) XtCValue, (String) XtRInt, sizeof(int),
 	  offset(max_columns), XtRImmediate, (XtPointer) 80 },
-	{ XtNinternalBorder, XtCValue, XtRInt, sizeof(int),
+	{ (String) XtNinternalBorder, (String) XtCValue, (String) XtRInt, sizeof(int),
 	  offset(internal_border), XtRImmediate, (XtPointer) 2 },
-	{ XtNfont, XtCFont, XtRString, sizeof(char *),
-	  offset(font), XtRString, DEFAULT_X11_FONT },
-	{ XtNredrawCallback, XtCCallback, XtRCallback, sizeof(XtPointer),
+	{ (String) XtNfont, (String) XtCFont, (String) XtRString, sizeof(char *),
+	  offset(font), XtRString, (String) DEFAULT_X11_FONT },
+	{ (String) XtNredrawCallback, (String) XtCCallback, (String) XtRCallback, sizeof(XtPointer),
 	  offset(redraw_callbacks), XtRCallback, (XtPointer)NULL }
 };
 
@@ -305,7 +305,7 @@ AngbandClassRec angbandClassRec =
 	{
 		/* Core class fields initialization */
 		/* superclass           */      (WidgetClass) superclass,
-		/* class_name           */      "Angband",
+		/* class_name           */      (String) "Angband",
 		/* widget_size          */      sizeof(AngbandRec),
 		/* class_initialize     */      NULL,
 		/* class_part_initialize*/      NULL,
@@ -958,14 +958,14 @@ static XFontStruct *getFont(AngbandWidget widget,
  */
 char *termNames[MAX_TERM_DATA] =
 {
-	"angband",
-	"term-1",
-	"term-2",
-	"term-3",
-	"term-4",
-	"term-5",
-	"term-6",
-	"term-7"
+	(String) "angband",
+	(String) "term-1",
+	(String) "term-2",
+	(String) "term-3",
+	(String) "term-4",
+	(String) "term-5",
+	(String) "term-6",
+	(String) "term-7"
 };
 
 
@@ -989,13 +989,13 @@ Arg specialArgs[TERM_FALLBACKS] =
  */
 Arg defaultArgs[TERM_FALLBACKS] =
 {
-	{ XtNstartRows,      24},
-	{ XtNstartColumns,   80},
-	{ XtNminRows,        1},
-	{ XtNminColumns,     1},
-	{ XtNmaxRows,        255},
-	{ XtNmaxColumns,     255},
-	{ XtNinternalBorder, 2}
+	{ (String) XtNstartRows,      24},
+	{ (String) XtNstartColumns,   80},
+	{ (String) XtNminRows,        1},
+	{ (String) XtNminColumns,     1},
+	{ (String) XtNmaxRows,        255},
+	{ (String) XtNmaxColumns,     255},
+	{ (String) XtNinternalBorder, 2}
 };
 
 
@@ -1010,22 +1010,22 @@ XtAppContext appcon;
  */
 static String fallback[] =
 {
-	"Angband.angband.iconName:   Angband",
-	"Angband.angband.title:      Angband",
-	"Angband.term-1.iconName:    Term 1",
-	"Angband.term-1.title:       Term 1",
-	"Angband.term-2.iconName:    Term 2",
-	"Angband.term-2.title:       Term 2",
-	"Angband.term-3.iconName:    Term 3",
-	"Angband.term-3.title:       Term 3",
-	"Angband.term-4.iconName:    Term 4",
-	"Angband.term-4.title:       Term 4",
-	"Angband.term-5.iconName:    Term 5",
-	"Angband.term-5.title:       Term 5",
-	"Angband.term-6.iconName:    Term 6",
-	"Angband.term-6.title:       Term 6",
-	"Angband.term-7.iconName:    Term 7",
-	"Angband.term-7.title:       Term 7",
+	(String) "Angband.angband.iconName:   Angband",
+	(String) "Angband.angband.title:      Angband",
+	(String) "Angband.term-1.iconName:    Term 1",
+	(String) "Angband.term-1.title:       Term 1",
+	(String) "Angband.term-2.iconName:    Term 2",
+	(String) "Angband.term-2.title:       Term 2",
+	(String) "Angband.term-3.iconName:    Term 3",
+	(String) "Angband.term-3.title:       Term 3",
+	(String) "Angband.term-4.iconName:    Term 4",
+	(String) "Angband.term-4.title:       Term 4",
+	(String) "Angband.term-5.iconName:    Term 5",
+	(String) "Angband.term-5.title:       Term 5",
+	(String) "Angband.term-6.iconName:    Term 6",
+	(String) "Angband.term-6.title:       Term 6",
+	(String) "Angband.term-7.iconName:    Term 7",
+	(String) "Angband.term-7.title:       Term 7",
 	NULL
 };
 
