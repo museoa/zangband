@@ -7265,11 +7265,11 @@ const mutation_type mutations[MUT_SETS_MAX * MUT_PER_SET] =
 
 	{
 	    MUT1_DAZZLE,
-	    "You can run for your life after hitting something.",
-	    "You suddenly understand how thieves feel.",
-	    "You no longer feel jumpy.",
+		"You can emit confusing, blinding radiation.",
+		"You gain the ability to emit dazzling lights.",
+		"You lose the ability to emit dazzling lights.",
 	    "Dazzle",
-	    10, 12, A_DEX, 14,
+	    7, 15, A_CHR, 8,
 	    0
 	},
 
