@@ -2622,7 +2622,7 @@ void display_map(int *cx, int *cy)
 					{
 						/* Towns are white */
 						ma[j + 1][i + 1] = TERM_WHITE;
-						mc[j + 1][i + 1] = '0' + twn % 10;
+						mc[j + 1][i + 1] = place[twn].name[0];
 						feat = FEAT_NONE;
 					}
 				}
