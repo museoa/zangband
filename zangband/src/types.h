@@ -1659,7 +1659,7 @@ struct store_type
 typedef struct town_type town_type;
 struct town_type
 {
-	char        name[32];
+	char        name[T_NAME_LEN];	/* Town name */
 	u32b        seed;		/* Seed for RNG */
 	store_type	*store;		/* The stores[numstores] */
 	

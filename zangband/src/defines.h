@@ -45,7 +45,7 @@
 #define VERSION_MINOR   8
 #define VERSION_PATCH   1
 
-#define SAVEFILE_VERSION 25
+#define SAVEFILE_VERSION 26
 
 /* Added for ZAngband */
 #ifdef USE_SCRIPT
@@ -125,6 +125,9 @@
 
 /* Number of gates in the city */
 #define MAX_GATES				4
+
+/* Maximum length of town name + '/0' */
+#define T_NAME_LEN	18
 
 /* Building types */
 #define BT_GENERAL		0
@@ -495,11 +498,6 @@
 
 /* Hallucination stuff */
 #define MAX_SILLY_ATTACK		28
-
-/* A hack for cave.c */
-#define BMP_FIRST_PC_CLASS		164
-#define BMP_FIRST_PC_RACE		128
-
 
 /*
  * Size of memory reserved for initialization of some arrays
@@ -955,6 +953,9 @@
 #define ROW_STAT                8
 #define COL_STAT                0       /* "xxx   xxxxxx" */
 
+#define ROW_STATBAR             14
+#define COL_STATBAR             0       /* "Status bar" */
+
 #define ROW_AC                  15
 #define COL_AC                  0       /* "Cur AC xxxxx" */
 
@@ -973,14 +974,15 @@
 #define ROW_INFO                20
 #define COL_INFO                0       /* "xxxxxxxxxxxx" */
 
-#define ROW_MAP					1
-#define COL_MAP                 13		/* The map of the dungeon */
-
 #define ROW_CUT                 21
 #define COL_CUT                 0       /* <cut> */
 
 #define ROW_STUN                22
 #define COL_STUN                0       /* <stun> */
+
+#define ROW_MAP					1
+#define COL_MAP                 13		/* The map of the dungeon */
+
 
 #define COL_HUNGRY              0       /* "Weak" / "Hungry" / "Full" / "Gorged" */
 
@@ -994,15 +996,13 @@
 
 #define COL_STATE               38      /* <state> */
 
-#define COL_SPEED               49      /* "Slow (-NN)" or "Fast (+NN)" */
+#define COL_SPEED               45      /* "Slow (-NN)" or "Fast (+NN)" */
 
-#define COL_STUDY               64      /* "Study" */
+#define COL_STUDY               56      /* "Study" */
 
-#define COL_DEPTH               70      /* "Lev NNN" / "NNNN ft" */
+#define COL_DEPTH               62      /* "Lev NNN" / "NNNN ft" / town name */
 
 
-#define ROW_STATBAR             14
-#define COL_STATBAR             0       /* "Status bar" */
 
 #define MAX_EFFECTS				30	/* Max #of player timed effects*/
 

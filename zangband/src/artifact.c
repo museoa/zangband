@@ -1332,7 +1332,7 @@ static void get_random_name(char *return_name, byte tval, int power)
 	    (tval == TV_AMULET) ||
 	    (tval == TV_RING))
 	{
-		get_table_name(return_name);
+		get_table_name(return_name, TRUE);
 	}
 	else
 	{

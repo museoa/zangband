@@ -2564,6 +2564,9 @@ void move_wild(void)
 	 */
 	if ((x == wild_grid.x) && (y == wild_grid.y)) return;
 
+	/* Redraw depth */
+	p_ptr->redraw |= (PR_DEPTH);
+	
 	dx = x - wild_grid.x;
 	dy = y - wild_grid.y;
 

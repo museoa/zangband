@@ -3107,7 +3107,17 @@ static errr rd_savefile_new_aux(void)
 			rd_byte(&town[i].y);
 
 			/* Name */
-			rd_string(town[i].name, 32);
+			if (sf_version < 26)
+			{
+				rd_string(town[i].name, 32);
+				
+				/* Get a new name */
+				if (!vanilla_town) select_town_name(town[i].name, town[i].pop);
+			}
+			else
+			{
+				rd_string(town[i].name, T_NAME_LEN);
+			}
 			
 			/* Allocate the stores */
 			C_MAKE(town[i].store, town[i].numstores, store_type);

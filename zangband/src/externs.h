@@ -599,7 +599,7 @@ extern bool are_enemies(const monster_type *m_ptr1, const monster_type *m_ptr2);
 extern bool monster_living(const monster_race *r_ptr);
 
 /* flavor.c */
-extern void get_table_name(char *out_string);
+extern void get_table_name(char *out_string, bool quotes);
 extern void flavor_init(void);
 extern void object_desc(char *buf, const object_type *o_ptr, int pref, int mode);
 extern void object_desc_store(char *buf, const object_type *o_ptr, int pref, int mode);
@@ -1093,6 +1093,7 @@ extern errr init_object_alloc(void);
 extern void k_info_reset(void);
 
 /* wild.c */
+extern void select_town_name(char *name, int pop);
 extern void light_dark_block(blk_ptr block_ptr, int x, int y);
 extern void change_level(int);
 extern u16b init_choice_tree(wild_bound_box_type *bound, u16b type);
