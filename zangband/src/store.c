@@ -1020,7 +1020,7 @@ static void display_entry(int pos)
  * Displays a store's inventory
  * All prices are listed as "per individual object".  -BEN-
  */
-static void display_inventory(int store_top)
+static void display_inventory(void)
 {
 	int k;
 
@@ -1030,10 +1030,10 @@ static void display_inventory(int store_top)
 	for (k = 0; k < 12; k++)
 	{
 		/* Do not display "dead" items */
-		if (store_top + k >= stocknum) break;
+		if (p_ptr->store_top + k >= stocknum) break;
 
 		/* Display that line */
-		display_entry(store_top + k);
+		display_entry(p_ptr->store_top + k);
 	}
 
 	/* Erase the extra lines and the "more" prompt */
@@ -1049,7 +1049,7 @@ static void display_inventory(int store_top)
 		prtf(3, k + 6, "-more-");
 
 		/* Indicate the "current page" */
-		put_fstr(20, 5, "(Page %d)", store_top / 12 + 1);
+		put_fstr(20, 5, "(Page %d)", p_ptr->store_top / 12 + 1);
 	}
 }
 
@@ -1067,7 +1067,7 @@ static void store_prt_gold(void)
 /*
  * Displays store (after clearing screen)		-RAK-
  */
-static void display_store(int store_top)
+static void display_store(void)
 {
 	const owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
 	
@@ -1125,7 +1125,10 @@ static void display_store(int store_top)
 	store_prt_gold();
 
 	/* Draw in the inventory */
-	display_inventory(store_top);
+	display_inventory();
+	
+	/* Refresh */
+	Term_fresh();
 }
 
 
@@ -1347,7 +1350,7 @@ static bool store_access_item(const object_type *o_ptr, s32b price, bool buy)
 /*
  * Buy an item from a store
  */
-static void store_purchase(int *store_top)
+static void store_purchase(void)
 {
 	int i, amt;
 	int item, item_new;
@@ -1371,7 +1374,7 @@ static void store_purchase(int *store_top)
 	}
 
 	/* Find the number of objects on this and following pages */
-	i = (get_list_length(st_ptr->stock) - *store_top);
+	i = (get_list_length(st_ptr->stock) - p_ptr->store_top);
 
 	/* And then restrict it to the current page */
 	if (i > 12) i = 12;
@@ -1390,7 +1393,7 @@ static void store_purchase(int *store_top)
 	if (!get_stock(&item, out_val, i)) return;
 
 	/* Get the actual index */
-	item = item + *store_top;
+	item = item + p_ptr->store_top;
 
 	/* Get the actual item */
 	o_ptr = get_list_item(st_ptr->stock, item);
@@ -1560,21 +1563,21 @@ static void store_purchase(int *store_top)
 				}
 
 				/* Start over */
-				*store_top = 0;
+				p_ptr->store_top = 0;
 			}
 
 			/* The item is gone */
 			else if (get_list_length(st_ptr->stock) != i)
 			{
 				/* Pick the correct screen */
-				if (*store_top >= get_list_length(st_ptr->stock))
+				if (p_ptr->store_top >= get_list_length(st_ptr->stock))
 				{
-					*store_top -= 12;
+					p_ptr->store_top -= 12;
 				}
 			}
 			
 			/* Redraw everything */
-			display_inventory(*store_top);
+			display_inventory();
 		}
 	}
 
@@ -1620,16 +1623,16 @@ static void store_purchase(int *store_top)
 		else
 		{
 			/* Nothing left */
-			if (!st_ptr->stock) *store_top = 0;
+			if (!st_ptr->stock) p_ptr->store_top = 0;
 
 			/* Nothing left on that screen */
-			else if (*store_top >= get_list_length(st_ptr->stock))
+			else if (p_ptr->store_top >= get_list_length(st_ptr->stock))
 			{
-				*store_top -= 12;
+				p_ptr->store_top -= 12;
 			}
 
 			/* Redraw everything */
-			display_inventory(*store_top);
+			display_inventory();
 
 			chg_virtue(V_SACRIFICE, 1);
 		}
@@ -1640,7 +1643,7 @@ static void store_purchase(int *store_top)
 /*
  * Sell an item to the store (or home)
  */
-static void store_sell(int *store_top)
+static void store_sell(void)
 {
 	int item_pos;
 	int amt;
@@ -1836,8 +1839,8 @@ static void store_sell(int *store_top)
 			/* Re-display if item is now in store */
 			if (item_pos >= 0)
 			{
-				*store_top = (item_pos / 12) * 12;
-				display_inventory(*store_top);
+				p_ptr->store_top = (item_pos / 12) * 12;
+				display_inventory();
 			}
 		}
 	}
@@ -1866,8 +1869,8 @@ static void store_sell(int *store_top)
 		/* Update store display */
 		if (item_pos >= 0)
 		{
-			*store_top = (item_pos / 12) * 12;
-			display_inventory(*store_top);
+			p_ptr->store_top = (item_pos / 12) * 12;
+			display_inventory();
 		}
 	}
 }
@@ -1876,7 +1879,7 @@ static void store_sell(int *store_top)
 /*
  * Examine an item in a store			   -JDL-
  */
-static void store_examine(int store_top)
+static void store_examine(void)
 {
 	int i;
 	int item;
@@ -1896,7 +1899,7 @@ static void store_examine(int store_top)
 
 
 	/* Find the number of objects on this and following pages */
-	i = (get_list_length(st_ptr->stock) - store_top);
+	i = (get_list_length(st_ptr->stock) - p_ptr->store_top);
 
 	/* And then restrict it to the current page */
 	if (i > 12) i = 12;
@@ -1908,7 +1911,7 @@ static void store_examine(int store_top)
 	if (!get_stock(&item, out_val, i)) return;
 
 	/* Get the actual index */
-	item = item + store_top;
+	item = item + p_ptr->store_top;
 
 	/* Get the actual item */
 	o_ptr = get_list_item(st_ptr->stock, item);
@@ -1938,7 +1941,7 @@ static bool leave_store = FALSE;
  * must disable some commands which are allowed in the dungeon
  * but not in the stores, to prevent chaos.
  */
-static void store_process_command(int *store_top)
+static void store_process_command(void)
 {
 	int stocknum = get_list_length(st_ptr->stock);
 
@@ -1975,9 +1978,9 @@ static void store_process_command(int *store_top)
 			}
 			else
 			{
-				*store_top += 12;
-				if (*store_top >= stocknum) *store_top = 0;
-				display_inventory(*store_top);
+				p_ptr->store_top += 12;
+				if (p_ptr->store_top >= stocknum) p_ptr->store_top = 0;
+				display_inventory();
 			}
 			break;
 		}
@@ -1986,21 +1989,21 @@ static void store_process_command(int *store_top)
 		{
 			/* Redraw */
 			do_cmd_redraw();
-			display_store(*store_top);
+			display_store();
 			break;
 		}
 
 		case 'g':
 		{
 			/* Get (purchase) */
-			store_purchase(store_top);
+			store_purchase();
 			break;
 		}
 
 		case 'd':
 		{
 			/* Drop (Sell) */
-			store_sell(store_top);
+			store_sell();
 			break;
 		}
 
@@ -2008,7 +2011,7 @@ static void store_process_command(int *store_top)
 		case 'x':
 		{
 			/* Examine */
-			store_examine(*store_top);
+			store_examine();
 			break;
 		}
 
@@ -2112,7 +2115,7 @@ static void store_process_command(int *store_top)
 		{
 			/* Character description */
 			do_cmd_character();
-			display_store(*store_top);
+			display_store();
 			break;
 		}
 
@@ -2362,7 +2365,6 @@ void do_cmd_store(const field_type *f1_ptr)
 	int maintain_num;
 	int tmp_chr;
 	int i;
-	int store_top;
 
 	object_type *o_ptr;
 
@@ -2388,7 +2390,7 @@ void do_cmd_store(const field_type *f1_ptr)
 		msgf("The doors are locked.");
 		return;
 	}
-
+		
 	/* Calculate the number of store maintainances since the last visit */
 	maintain_num = (turn - st_ptr->last_visit) / (10L * STORE_TURNS);
 
@@ -2443,10 +2445,13 @@ void do_cmd_store(const field_type *f1_ptr)
 	p_ptr->cmd.new = 0;
 
 	/* Start at the beginning */
-	store_top = 0;
+	p_ptr->store_top = 0;
 
 	/* Display the store */
-	display_store(store_top);
+	display_store();
+
+	/* Hack - change the redraw hook so bigscreen works */
+	angband_term[0]->resize_hook = display_store;
 
 	/* Do not leave */
 	leave_store = FALSE;
@@ -2567,7 +2572,7 @@ void do_cmd_store(const field_type *f1_ptr)
 		request_command(TRUE);
 
 		/* Process the command */
-		store_process_command(&store_top);
+		store_process_command();
 
 		/* Hack -- Character is still in "icky" mode */
 		character_icky = TRUE;
@@ -2591,14 +2596,13 @@ void do_cmd_store(const field_type *f1_ptr)
 		/* Hack -- Redisplay store prices if charisma changes */
 		if (tmp_chr != p_ptr->stat[A_CHR].use)
 		{
-			display_inventory(store_top);
+			display_inventory();
 		}
 	}
 
 
 	/* Free turn XXX XXX XXX */
 	p_ptr->energy_use = 0;
-
 
 	/* Hack -- Character is no longer in "icky" mode */
 	character_icky = FALSE;
@@ -2608,21 +2612,15 @@ void do_cmd_store(const field_type *f1_ptr)
 
 	/* Flush messages XXX XXX XXX */
 	message_flush();
-
+	
+	/* Hack - reset the redraw hook */
+	angband_term[0]->resize_hook = resize_map;
 
 	/* Clear the screen */
 	Term_clear();
-
-
-	/* Update everything */
-	p_ptr->update |= (PU_VIEW);
-	p_ptr->update |= (PU_MONSTERS);
-
-	/* Redraw entire screen */
-	p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_EQUIPPY);
-
-	/* Redraw map */
-	p_ptr->redraw |= (PR_MAP);
+	
+	/* Update for the changed screen size */
+	resize_map();
 
 	/* Window stuff */
 	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
