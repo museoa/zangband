@@ -1836,13 +1836,6 @@ bool are_enemies(monster_type *m_ptr1, monster_type *m_ptr2)
 	monster_race *r_ptr1 = &r_info[m_ptr1->r_idx];
 	monster_race *r_ptr2 = &r_info[m_ptr2->r_idx];
 
-	/* Never pet vs. pet, friendly vs. friendly, normal vs. normal */
-	if ((is_friendly(m_ptr1) == is_friendly(m_ptr2)) &&
-		(is_pet(m_ptr1) == is_pet(m_ptr2)))
-	{
-		return FALSE;
-	}
-
 	/* Pet vs. normal */
 	if ((is_pet(m_ptr1) && !is_friendly(m_ptr2)) ||
 	    (is_pet(m_ptr2) && !is_friendly(m_ptr1)))
