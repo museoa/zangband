@@ -26,8 +26,18 @@
 
 #ifdef USE_GTK
 
+/* Mega-hack, these include files require double and float to work */
+#undef float
+#undef double
+
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
+
+/* Mega-hack redefine them again */
+#undef float
+#define float floating_point_is_not_allowed
+#undef double
+#define double floating_point_is_not_allowed
 
 /*
  * Number of pixels inserted between the menu bar and the main screen
