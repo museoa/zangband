@@ -1743,7 +1743,7 @@ void player_flags(u32b *f1, u32b *f2, u32b *f3, u32b *f4)
 			(*f2) |= (TR2_RES_SHARDS);
 			(*f2) |= (TR2_HOLD_LIFE);
 			(*f2) |= (TR2_RES_POIS);
-			(*f2) |= (TR4_CANT_EAT);
+			(*f4) |= (TR4_CANT_EAT);
 			if (p_ptr->lev > 9)
 				(*f2) |= (TR2_RES_COLD);
 			break;
