@@ -1193,7 +1193,7 @@ static void bw_block_trans(block_handle *h1_ptr, block_handle *h2_ptr)
 	/* Record location of original string in sorted list */
 	for (i = 0; i < size; i++)
 	{
-		if (offsets[i] == 0)
+		if (offsets[i] == 1)
 		{
 			transform = i;
 			break;
