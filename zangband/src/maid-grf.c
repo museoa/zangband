@@ -2209,9 +2209,10 @@ static void map_mon_info(monster_type *m_ptr, monster_race *r_ptr, byte *a, char
  * to be "scrambled" in various ways.
  *
  *
- * Hack - we also save some slow to calculate data into the term_map
- * struct for this square, so we don't have to redo the list-scanning
- * in Term_note_map()
+ * Save data into the term_map struct so we can pass it to the ports
+ * hooking the overhead map code.  The status of the square (x, y) has
+ * probably changed.  This allows the main-???.c files to not access
+ * internal game data, which may or may not be accessable.
  */
 
 static void map_info(int x, int y, byte *ap, char *cp, byte *tap, char *tcp)
@@ -2533,24 +2534,6 @@ static void map_info(int x, int y, byte *ap, char *cp, byte *tap, char *tcp)
 
 
 /*
- * The status of the square (x, y) has probably changed,
- * update our knowledge of it and return the tile info.
- *
- *
- * This is Angband-specific code designed to allow the map to
- * be sent to the port as required.  This allows the main-???.c
- * file not to access internal game data, which may or may not
- * be accessable.
- *
- */
-static void Term_note_map(int x, int y, byte *a, char *c, byte *ta, char *tc)
-{
-	/* Get the map_info() information */
-	map_info(x, y, a, c, ta, tc);
-}
-
-
-/*
  * Erase the map
  */
 void Term_erase_map(void)
@@ -2658,7 +2641,7 @@ void prt_map(void)
 		for (x = xmin; x <= xmax; x++)
 		{
 			/* Update this square */
-			Term_note_map(x, y, pa++, pc++, pta++, ptc++);
+			map_info(x, y, pa++, pc++, pta++, ptc++);
 		}
 
 
@@ -2699,7 +2682,7 @@ void display_dungeon(void)
 			if (in_boundsp(x, y))
 			{
 				/* Update this square */
-				Term_note_map(x, y, &a, &c, &ta, &tc);
+				map_info(x, y, &a, &c, &ta, &tc);
 
 				/* Hack -- Queue it */
 				Term_queue_char(x - px + wid - 1, y - py + hgt - 1, a, c, ta,
@@ -2746,7 +2729,7 @@ void lite_spot(int x, int y)
 	if (in_boundsp(x, y))
 	{
 		/* Update this square */
-		Term_note_map(x, y, &a, &c, &ta, &tc);
+		map_info(x, y, &a, &c, &ta, &tc);
 
 		/* Redraw if on screen */
 		if (panel_contains(x, y))
