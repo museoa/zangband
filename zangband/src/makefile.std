@@ -577,6 +577,7 @@ maid-grf.o: maid-grf.h
 maid-x11.o: maid-grf.h
 main-acn.o: maid-grf.h
 main-gtk.o: maid-grf.h
+main-tnb.o: maid-grf.h
 main-win.o: maid-grf.h
 main-x11.o: maid-grf.h maid-x11.h
 main-xaw.o: maid-grf.h maid-x11.h

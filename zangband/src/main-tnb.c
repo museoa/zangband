@@ -14,6 +14,7 @@
 #ifdef USE_TNB
 
 #include "tk/tnb.h"
+#include "maid-grf.h"
 
 cptr help_tnb[] =
 {
@@ -26,6 +27,12 @@ static term data;
 bool game_in_progress = FALSE;
 char ANGBAND_DIR_TK[1024];
 Tcl_Interp *g_interp;
+
+/* Graphics information */
+int tnb_tile_x;
+int tnb_tile_y;
+
+char tnb_tile_file[1024];
 
 
 int
@@ -437,7 +444,7 @@ int init_tnb(int argc, cptr *argv)
 	path_build(ANGBAND_DIR_TK, 1024, ANGBAND_DIR_SCRIPT, "tk");
 
 	/* Use graphics */
-	use_graphics = 1;
+	pick_graphics(GRAPHICS_ADAM_BOLT, &tnb_tile_x, &tnb_tile_y, tnb_tile_file);
 
 	/* Prepare the windows */
 	init_windows();

@@ -288,15 +288,15 @@ bool pick_graphics(int graphics, int *xsize, int *ysize, char *filename)
 /*
  * The callbacks
  */
-static callback_list **callbacks;
+static callback_list *callbacks[CALL_MAX];
 
 /*
  * Initialise the callbacks
  */
 void init_term_callbacks(void)
 {
-	/* Create and wipe the array */
-	C_MAKE(callbacks, CALL_MAX, callback_list *);
+	/* Wipe the array */
+	C_WIPE(callbacks, CALL_MAX, callback_list *);
 }
 
 /*
@@ -318,10 +318,6 @@ void free_term_callbacks(void)
 			p = p_next;
 		}
 	}
-
-
-	/* Deallocate the array */
-	FREE(callbacks);
 }
 
 /*

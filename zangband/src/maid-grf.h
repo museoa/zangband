@@ -159,6 +159,7 @@ struct map_block
 #ifdef TERM_MAP_GLYPH
 	byte a;
 	char c;
+	
 	byte ta;
 	char tc;
 #endif /* TERM_MAP_GLYPH */
