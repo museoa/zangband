@@ -1318,7 +1318,7 @@ struct player_type
 	s16b oldpx;		/* Previous player location -KMW- */
 
 	s16b px;		/* The player location - not used yet. -SF- */
-	s16b py;
+	s16b py;		/* The player location - not used yet. -SF- */
 
 	byte psex;			/* Sex index */
 	byte prace;			/* Race index */

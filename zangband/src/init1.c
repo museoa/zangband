@@ -3668,8 +3668,11 @@ static errr process_dungeon_file_aux(char *buf, int ymin, int xmin, int ymax, in
 					py = atoi(zz[0]);
 					px = atoi(zz[1]);
 
+					p_ptr->py = atoi(zz[0]);
+					p_ptr->px = atoi(zz[1]);
+
 					/* Delete the monster (if any) */
-					delete_monster(py, px);
+					delete_monster(p_ptr->py, p_ptr->px);
 				}
 				/* Place player in the town */
 				else if (!p_ptr->oldpx && !p_ptr->oldpy)
