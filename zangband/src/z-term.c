@@ -1518,54 +1518,6 @@ void Term_addch(byte a, char c)
 
 
 /*
- * At the current location, using an attr, add a string
- *
- * We also take a length "n", using negative values to imply
- * the largest possible value, and then we use the minimum of
- * this length and the "actual" length of the string as the
- * actual number of characters to attempt to display, never
- * displaying more characters than will actually fit, since
- * we do NOT attempt to "wrap" the cursor at the screen edge.
- *
- * So when this function, or the preceding one, return a
- * positive value, future calls to either function will
- * return negative ones.
- */
-void Term_addstr(int n, byte a, cptr s)
-{
-	int k;
-
-	int w = Term->wid;
-
-	errr res = 0;
-
-	/* Handle "unusable" cursor */
-	if (Term->scr->cu) return;
-
-	/* Obtain maximal length */
-	k = (n < 0) ? (w + 1) : n;
-
-	/* Obtain the usable string length */
-	for (n = 0; (n < k) && s[n]; n++) /* loop */ ;
-
-	/* React to reaching the edge of the screen */
-	if (Term->scr->cx + n >= w) res = n = w - Term->scr->cx;
-
-	/* Queue the first "n" characters for display */
-	Term_queue_chars(Term->scr->cx, Term->scr->cy, n, a, s);
-
-	/* Advance the cursor */
-	Term->scr->cx += n;
-
-	/* Hack -- Notice "Useless" cursor */
-	if (res) Term->scr->cu = 1;
-
-	/* Success (usually) */
-	return;
-}
-
-
-/*
  * Move to a location and, using an attr, add a char
  */
 void Term_putch(int x, int y, byte a, char c)

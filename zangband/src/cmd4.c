@@ -1460,12 +1460,11 @@ static void do_cmd_macro_aux(char *buf)
 	/* Flush */
 	flush();
 
-
 	/* Convert the trigger */
 	ascii_to_text(tmp, buf);
 
 	/* Hack -- display the trigger */
-	Term_addstr(-1, TERM_WHITE, tmp);
+	roff(tmp);
 }
 
 #endif
@@ -1481,21 +1480,18 @@ static void do_cmd_macro_aux_keymap(char *buf)
 {
 	char tmp[1024];
 
-
 	/* Flush */
 	flush();
-
 
 	/* Get a key */
 	buf[0] = inkey();
 	buf[1] = '\0';
 
-
 	/* Convert to ascii */
 	ascii_to_text(tmp, buf);
 
 	/* Hack -- display the trigger */
-	Term_addstr(-1, TERM_WHITE, tmp);
+	roff(tmp);
 
 
 	/* Flush */

@@ -2137,9 +2137,6 @@ static bool player_birth_aux_3(void)
 
 	char ch;
 
-	char b1 = '[';
-	char b2 = ']';
-
 	int mode = DISPLAY_PLAYER_STANDARD;
 
 #ifdef ALLOW_AUTOROLLER
@@ -2387,13 +2384,8 @@ static bool player_birth_aux_3(void)
 			display_player(mode);
 
 			/* Prepare a prompt (must squeeze everything in) */
-			Term_gotoxy(2, 23);
-			Term_addch(TERM_WHITE, b1);
-			Term_addstr(-1, TERM_WHITE, "'r' to reroll");
-			if (previous) Term_addstr(-1, TERM_WHITE, ", 'p' for prev");
-			Term_addstr(-1, TERM_WHITE, ", 'h' for history");
-			Term_addstr(-1, TERM_WHITE, ", or Enter to accept");
-			Term_addch(TERM_WHITE, b2);
+			prtf(2, 23, "['r' to reroll%s, 'h' for history, or Enter to accept]",
+				previous ? ", 'p' for prev": "");
 
 			/* Prompt and get a command */
 			ch = inkey();

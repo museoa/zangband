@@ -1475,32 +1475,26 @@ void roff_top(int r_idx)
 	/* A title (use "The" for non-uniques) */
 	if (!(r_ptr->flags1 & RF1_UNIQUE))
 	{
-		Term_addstr(-1, TERM_WHITE, "The ");
+		roff("The ");
 	}
 
 	/* Dump the name */
-	Term_addstr(-1, TERM_WHITE, (r_name + r_ptr->name));
+	roff(r_name + r_ptr->name);
 
 	/* Append the "standard" attr/char info */
-	Term_addstr(-1, TERM_WHITE, " ('");
+	roff(" ('");
 	Term_addch(a1, c1);
-	Term_addstr(-1, TERM_WHITE, "')");
+	roff("')");
 
 	/* Append the "optional" attr/char info */
-	Term_addstr(-1, TERM_WHITE, "/('");
+	roff("/('");
 	Term_addch(a2, c2);
-	Term_addstr(-1, TERM_WHITE, "'):");
+	roff("'):");
 
 	/* Wizards get extra info */
 	if (p_ptr->wizard)
 	{
-		char buf[6];
-
-		sprintf(buf, "%d", r_idx);
-
-		Term_addstr(-1, TERM_WHITE, " (");
-		Term_addstr(-1, TERM_L_BLUE, buf);
-		Term_addch(TERM_WHITE, ')');
+		roff(" (" CLR_L_BLUE "%d)", r_idx);
 	}
 }
 
@@ -1573,10 +1567,7 @@ void display_visible(void)
 	/* Are we hallucinating? */
 	if (p_ptr->image)
 	{
-		/* Go to top left of screen */
-		Term_gotoxy(0, 10);
-
-		Term_addstr(-1, TERM_VIOLET, "Hallucinations");
+		put_fstr(0, 10, CLR_VIOLET, "Hallucinations");
 
 		return;
 	}
@@ -1615,37 +1606,31 @@ void display_visible(void)
 		/* Dump the name */
 		if (r_ptr->flags1 & RF1_UNIQUE)
 		{
-			Term_addstr(-1, TERM_L_BLUE, (r_name + r_ptr->name));
+			roff(CLR_L_BLUE "%s", (r_name + r_ptr->name));
 		}
 		else
 		{
-			Term_addstr(-1, TERM_WHITE, (r_name + r_ptr->name));
+			roff(r_name + r_ptr->name);
 		}
 
 		/* Append the "standard" attr/char info */
-		Term_addstr(-1, TERM_WHITE, " ('");
+		roff(" ('");
 		Term_addch(a1, c1);
-		Term_addstr(-1, TERM_WHITE, "')");
+		roff("')");
 
 		/* Append the "optional" attr/char info */
-		Term_addstr(-1, TERM_WHITE, "/('");
+		roff("/('");
 		Term_addch(a2, c2);
-		Term_addstr(-1, TERM_WHITE, "'):");
+		roff("'):");
 
 		/* Wizards get extra info */
 		if (p_ptr->wizard)
 		{
-			char buf[6];
-
-			sprintf(buf, "%d", i);
-
-			Term_addstr(-1, TERM_WHITE, " (");
-			Term_addstr(-1, TERM_L_BLUE, buf);
-			Term_addch(TERM_WHITE, ')');
+			roff(" (" CLR_L_BLUE "%d)", i);
 		}
 
 		/* Append count */
-		Term_addstr(-1, TERM_WHITE, format("[%d]", r_ptr->r_see));
+		roff("[%d]", r_ptr->r_see);
 
 		/* Look for the next one */
 		while (i > 0)

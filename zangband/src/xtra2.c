@@ -2190,8 +2190,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 							screen_roff(m_ptr->r_idx, 0);
 
 							/* Hack -- Complete the prompt (again) */
-							Term_addstr(-1, TERM_WHITE,
-										format("  [r,%s]", info));
+							roff("  [r,%s]", info);
 
 							/* Command */
 							query = inkey();

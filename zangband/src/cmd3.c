@@ -1390,7 +1390,7 @@ void do_cmd_query_symbol(void)
 		roff_top(r_idx);
 
 		/* Hack -- Complete the prompt */
-		Term_addstr(-1, TERM_WHITE, " [(r)ecall, ESC]");
+		roff(" [(r)ecall, ESC]");
 
 		/* Interact */
 		while (1)
@@ -1405,7 +1405,7 @@ void do_cmd_query_symbol(void)
 				screen_roff(who[i], 0);
 
 				/* Hack -- Complete the prompt (again) */
-				Term_addstr(-1, TERM_WHITE, " [(r)ecall, ESC]");
+				roff(" [(r)ecall, ESC]");
 			}
 
 			/* Command */
@@ -1576,7 +1576,7 @@ bool research_mon(void)
 		roff_top(r_idx);
 
 		/* Hack -- Complete the prompt */
-		Term_addstr(-1, TERM_WHITE, " [(r)ecall, ESC, space to continue]");
+		roff(" [(r)ecall, ESC, space to continue]");
 
 		/* Interact */
 		while (1)

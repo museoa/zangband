@@ -285,7 +285,6 @@ extern errr Term_set_cursor(int v);
 extern void Term_gotoxy(int x, int y);
 extern void Term_draw(int x, int y, byte a, char c);
 extern void Term_addch(byte a, char c);
-extern void Term_addstr(int n, byte a, cptr s);
 extern void Term_putch(int x, int y, byte a, char c);
 extern void Term_erase(int x, int y, int n);
 extern void Term_clear(void);

@@ -656,7 +656,7 @@ void borg_note(cptr what)
 				buf[i] = '\0';
 
 				/* Show message */
-				Term_addstr(-1, TERM_WHITE, buf);
+				roff(buf);
 
 				/* Advance (wrap) */
 				if (++y >= h) y = 0;
@@ -672,7 +672,7 @@ void borg_note(cptr what)
 			}
 
 			/* Show message tail */
-			Term_addstr(-1, TERM_WHITE, what);
+			roff(what);
 
 			/* Advance (wrap) */
 			if (++y >= h) y = 0;
@@ -685,7 +685,7 @@ void borg_note(cptr what)
 		else
 		{
 			/* Show message */
-			Term_addstr(-1, TERM_WHITE, what);
+			roff(what);
 
 			/* Advance (wrap) */
 			if (++y >= h) y = 0;
