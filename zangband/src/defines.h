@@ -40,7 +40,7 @@
 #define VERSION_MINOR   8
 #define VERSION_PATCH   1
 
-#define SAVEFILE_VERSION 13
+#define SAVEFILE_VERSION 14
 
 /* Added for ZAngband */
 #ifdef USE_SCRIPT
@@ -945,7 +945,7 @@
 
 #define FEAT_TRAP_TRAPS         0x5A
 
-#define FEAT_WALL_INVIS		0x5B
+/* #define FEAT_WALL_INVIS		0x5B   Now is a field */
 
 #define FEAT_OCEAN_WATER	0x5C
 #define FEAT_DEEP_ACID		0x5D
@@ -995,6 +995,9 @@
 #define WILD_INFO_SEEN		0x20
 #define WILD_INFO_DUMMY1	0x40
 #define WILD_INFO_DUMMY2	0x80
+
+/*** Field Thaumatergical types - (see "fields.c" and t_info.txt) ***/
+#define FT_WALL_INVIS		0x0001
 
 
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
@@ -3681,7 +3684,7 @@ extern int PlayerUID;
 #define FIELD_INFO_NO_LOOK	0x0020	/* Do not describe when looked at */
 #define FIELD_INFO_NFT_LOOK	0x0040  /* Do not describe feat when looked at */
 #define FIELD_INFO_MERGE	0x0080  /* Merge counter with similar fields */ 
-#define FIELD_INFO_ENTER	0x0100  /* Grid blocks entry by entities */
+#define FIELD_INFO_NO_ENTER	0x0100  /* Grid blocks entry by entities */
 #define FIELD_INFO_NO_MAGIC	0x0200  /* Grid blocks magic */
 #define FIELD_INFO_NO_OBJCT	0x0400  /* Grid cannot hold objects */
 #define FIELD_INFO_PERM		0x0800	/* Grid is not affected by disintegrate */
@@ -3694,7 +3697,7 @@ extern int PlayerUID;
 #define FTYPE_TRAP		1
 #define FTYPE_DOOR		2
 #define FTYPE_BUILD		3
-#define FTYPE_EVENT		4
+#define FTYPE_FEAT		4
 #define FTYPE_QUEST		5
 #define FTYPE_FIELD		6
 
@@ -3723,7 +3726,7 @@ extern int PlayerUID;
 #define FIELD_ACTION_MAX		18	/* The last action + 1 */
 
 
-#define FIELD_ACTION_TYPES  3 /* Number of FIELD_ACT functions in tables.c */
+#define FIELD_ACTION_TYPES  4 /* Number of FIELD_ACT functions in tables.c */
 
 
 

@@ -2523,6 +2523,21 @@ static errr rd_dungeon_aux(void)
 		for (x = 0; x < cur_wid; x++)
 		{
 			cave_type *c_ptr = area(y,x);
+			
+			/* Get rid of pre-fields terrain */
+			if (sf_version < 14)
+			{
+				/* Invisible wall */
+				if (c_ptr->feat == 0x5B)
+				{
+					/* Get rid of it */
+					c_ptr->feat = FEAT_NONE;
+					
+					/* Add the invisible wall here as a field */
+					(void) place_field(y, x, FT_WALL_INVIS);
+				}
+				
+			}
 
 			/* Hack -- convert nothing-ness into floors */
 			if (!c_ptr->feat) c_ptr->feat = FEAT_FLOOR;

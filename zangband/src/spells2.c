@@ -2813,7 +2813,10 @@ bool earthquake(int cy, int cx, int r)
 			if (map[16+y-cy][16+x-cx]) continue;
 		
 			/* Check for a field that blocks movement */
-			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_ENTER)) continue;
+			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_ENTER))
+			{
+				continue;
+			}
 
 			/* Count "safe" grids */
 			sn++;
@@ -3281,7 +3284,7 @@ static void cave_temp_room_unlite(void)
 			c_ptr->info &= ~(CAVE_GLOW);
 
 			/* Hack -- Forget "boring" grids */
-			if ((c_ptr->feat <= FEAT_INVIS) || (c_ptr->feat == FEAT_WALL_INVIS))
+			if (c_ptr->feat <= FEAT_INVIS)
 			{
 				/* Forget the grid */
 				c_ptr->info &= ~(CAVE_MARK);

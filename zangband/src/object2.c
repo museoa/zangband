@@ -4867,7 +4867,8 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 	}
 
 	/* Fields may interact with an object in some way */
-	field_hook(&area(by, bx)->fld_idx, FIELD_ACT_OBJECT_DROP, (void *) &o_idx);
+	field_hook(&area(by, bx)->fld_idx, FIELD_ACT_OBJECT_DROP,
+		 (void *) &o_list[o_idx]);
 	
 	/* XXX XXX XXX */
 

@@ -1522,9 +1522,6 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 	    (c_ptr->feat <= FEAT_PATTERN_XTRA2))
 		return (FALSE);
 
-	/* Nor on invisible walls */
-	if (c_ptr->feat == FEAT_WALL_INVIS) return (FALSE);
-
 	/* Paranoia */
 	if (!r_idx) return (FALSE);
 
@@ -1554,7 +1551,7 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 	}
 	
 	/* Check to see if fields dissallow placement */
-	if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_ENTER))
+	if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_ENTER))
 	{ 
 		/* Cannot create */
 		return(FALSE);

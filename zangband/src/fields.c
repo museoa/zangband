@@ -981,6 +981,30 @@ void test_field_data_integtrity(void)
 
 /* Field action functions - later will be implemented in python */
 
+
+/*
+ * The type of the void pointer is:
+ *
+ * FIELD_ACT_INIT			Not implemented yet.
+ * FIELD_ACT_ALWAYS			NULL
+ * FIELD_ACT_PLAYER_ENTER	NULL
+ * FIELD_ACT_PLAYER_ON		NULL
+ * FIELD_ACT_PLAYER_LEAVE	NULL	
+ * FIELD_ACT_MONSTER_ENTER	monster_type*	(m_ptr)
+ * FIELD_ACT_MONSTER_ON		monster_type*	(m_ptr)
+ * FIELD_ACT_MONSTER_LEAVE	monster_type*	(m_ptr)
+ * FIELD_ACT_OBJECT_DROP	object_type*	(o_ptr)	 
+ * FIELD_ACT_OBJECT_ON		object_type*	(o_ptr)	 
+ * FIELD_ACT_TUNNEL			Not implemented yet.
+ * FIELD_ACT_MAGIC_TARGET	field_magic_target*
+ * FIELD_ACT_COMPACT		byte*
+ * FIELD_ACT_EXIT			NULL
+ * FIELD_ACT_MONSTER_AI		Not implemented yet.
+ * FIELD_ACT_OPEN			Not implemented yet.
+ * FIELD_ACT_CLOSE			Not implemented yet.
+ */	
+
+
 /* Simple function that does nothing */
 void field_action_nothing(s16b *field_ptr, void *nothing)
 {
@@ -1010,5 +1034,98 @@ void field_action_delete(s16b *field_ptr, void *nothing)
 	delete_field_aux(field_ptr);
 
 	/* Note that *field_ptr does not need to be updated */
+	return;
+}
+
+/* 
+ * A function that gives "typical" values for field compaction.
+ *
+ * You may want to make a new function for strange types of fields.
+ *
+ * Alternatively, this function can be modified.
+ *
+ * Eventually, if there is only one function, it can be merged into
+ * the rest of the compaction code.  This will remove an action type.
+ */
+void field_action_compact_basic(s16b *field_ptr, void *compact_val)
+{
+	field_type *f_ptr;
+	field_thaum *t_ptr;
+
+	byte *compact_value = (byte *) compact_val;
+
+	/* Point to the field */
+	f_ptr = &fld_list[*field_ptr];
+	
+	/* Point to the field type */
+	t_ptr = &t_info[f_ptr->t_idx];
+	
+	switch (t_ptr->type)
+	{
+		case FTYPE_NOTHING:
+		{
+			/* This field is dead - get rid of it */
+			*compact_value = 0;
+		
+			break;
+		}
+		case FTYPE_TRAP:
+		{
+			/* Traps can be gotten rid of safely */
+			*compact_value = 100;
+			
+			
+			break;
+		}
+		case FTYPE_DOOR:
+		{
+			/* Spikes / locked doors can be turned off if required */
+			*compact_value = 80;
+		
+			break;
+		}
+		case FTYPE_BUILD:
+		{
+			/* Buildings should not be removed */
+			*compact_value = 255;
+		
+			break;
+		}
+		case FTYPE_FEAT:
+		{
+			/* General features are important */
+			*compact_value = 250;
+			
+			break;
+		}
+		case FTYPE_QUEST:
+		{
+			/* Quest events can be important */
+			*compact_value = 150;
+		
+			break;
+		}
+		case FTYPE_FIELD:
+		{
+			/* Does the field have a counter? */
+			if (f_ptr->counter)
+			{
+				/* Compact fields that are nearly done */
+				*compact_value = 20 + 40 * f_ptr->counter / t_ptr->count_init;
+			}
+			else
+			{
+				/* Permanent magical fields can be gotten rid of */
+				*compact_value = 50;
+			}
+		
+			break;
+		}
+	}
+
+
+	/* Update *field_ptr to point to the next field in the list */
+	field_ptr = &(f_ptr->next_f_idx);
+	
 	return;
 }

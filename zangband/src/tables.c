@@ -6488,8 +6488,16 @@ cptr silly_attacks[MAX_SILLY_ATTACK] =
 /* Field function's + names */
 field_action f_action[FIELD_ACTION_TYPES] =
 {
-	{NULL, "nothing"}, /* Null - Do absolutely nothing */
-	{field_action_nothing, "field_action_nothing"},  /* Test - Do absolutely nothing */
-	{field_action_delete, "field_action_delete"} /* Delete the field */
+	/* Null - Do absolutely nothing */
+	{NULL, "nothing"}, 
+	
+	/* Test - Do absolutely nothing */
+	{field_action_nothing, "field_action_nothing"},
+	
+	/* Delete the field */
+	{field_action_delete, "field_action_delete"},
+	
+	/*basic compaction chance */ 
+	{field_action_compact_basic, "field_action_compact_basic"} 
 };
 

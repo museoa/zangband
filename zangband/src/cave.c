@@ -1372,7 +1372,7 @@ void note_spot(int y, int x)
 	if (!(c_ptr->info & (CAVE_MARK)))
 	{
 		/* Handle floor grids first */
-		if ((c_ptr->feat <= FEAT_INVIS) || (c_ptr->feat == FEAT_WALL_INVIS))
+		if (c_ptr->feat <= FEAT_INVIS)
 		{
 			/* Option -- memorize all torch-lit floors */
 			if (view_torch_grids && (c_ptr->info & (CAVE_LITE)))
@@ -1469,7 +1469,7 @@ void note_wild_spot(cave_type *c_ptr)
 	if (!(c_ptr->info & (CAVE_MARK)))
 	{
 		/* Handle floor grids first */
-		if ((c_ptr->feat <= FEAT_INVIS) || (c_ptr->feat == FEAT_WALL_INVIS))
+		if (c_ptr->feat <= FEAT_INVIS)
 		{
 			/* Option -- memorize all torch-lit floors */
 			if (view_torch_grids && (c_ptr->info & (CAVE_LITE)))
@@ -3130,8 +3130,7 @@ void update_view(void)
 					}
 
 					/* Floor grids */
-					if ((c_ptr->feat <= FEAT_INVIS) ||
-						(c_ptr->feat == FEAT_WALL_INVIS))
+					if (c_ptr->feat <= FEAT_INVIS)
 					{
 						if (((info & (CAVE_LITE)) && view_torch_grids)
 							 || info & (CAVE_GLOW))
@@ -3281,8 +3280,6 @@ void update_view(void)
 
 		/* Clear "CAVE_TEMP" and "CAVE_XTRA" flags */
 		info &= ~(CAVE_TEMP | CAVE_XTRA);
-
-
 
 		/* Was "CAVE_VIEW", is now not "CAVE_VIEW" */
 		if (!(info & (CAVE_VIEW)))
@@ -3588,8 +3585,7 @@ void map_area(void)
 			if ((c_ptr->feat < FEAT_SECRET) ||
 			    (c_ptr->feat == FEAT_RUBBLE) ||
 				 ((c_ptr->feat >= FEAT_MINOR_GLYPH) &&
-				  (c_ptr->feat != FEAT_TRAP_TRAPS) &&
-				  (c_ptr->feat != FEAT_WALL_INVIS)))
+				  (c_ptr->feat != FEAT_TRAP_TRAPS)))
 			{
 				/* Memorize normal features */
 				if (c_ptr->feat > FEAT_INVIS)
@@ -3604,7 +3600,7 @@ void map_area(void)
 					c_ptr = area(y + ddy_ddd[i],x + ddx_ddd[i]);
 
 					/* Memorize walls (etc) */
-					if ((c_ptr->feat >= FEAT_SECRET) && (c_ptr->feat != FEAT_WALL_INVIS))
+					if (c_ptr->feat >= FEAT_SECRET)
 					{
 						/* Memorize the walls */
 						c_ptr->info |= (CAVE_MARK);
@@ -3689,7 +3685,7 @@ void wiz_lite(void)
 				cave_type *c_ptr = area(y,x);
 
 				/* Memorize normal features */
-				if ((c_ptr->feat > FEAT_INVIS) && (c_ptr->feat != FEAT_WALL_INVIS))
+				if (c_ptr->feat > FEAT_INVIS)
 				{
 					/* Memorize the grid */
 					c_ptr->info |= (CAVE_MARK);
@@ -3707,7 +3703,7 @@ void wiz_lite(void)
 				cave_type *c_ptr = area(y,x);
 
 				/* Memorize normal features */
-				if ((c_ptr->feat > FEAT_INVIS) && (c_ptr->feat != FEAT_WALL_INVIS))
+				if (c_ptr->feat > FEAT_INVIS)
 				{
 					/* Memorize the grid */
 					c_ptr->info |= (CAVE_MARK);

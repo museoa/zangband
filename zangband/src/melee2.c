@@ -2679,13 +2679,6 @@ static void process_monster(int m_idx)
 			}
 		}
 
-		/* Invisible wall */
-		if (c_ptr->feat == FEAT_WALL_INVIS)
-		{
-			/* No movement */
-			do_move = FALSE;
-		}
-
 		/* Some monsters never attack */
 		if (do_move && (ny == py) && (nx == px) &&
 			(r_ptr->flags1 & RF1_NEVER_BLOW))
@@ -2698,7 +2691,7 @@ static void process_monster(int m_idx)
 		}
 		
 		/* Require "empty" fields */
-		if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_ENTER))
+		if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_ENTER))
 		{
 			do_move = FALSE;
 		}

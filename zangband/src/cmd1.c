@@ -2332,7 +2332,6 @@ static bool player_can_enter(byte feature)
 		case FEAT_WALL_INNER:
 		case FEAT_WALL_OUTER:
 		case FEAT_WALL_SOLID:
-		case FEAT_WALL_INVIS:
 		case FEAT_FENCE:
 		case FEAT_WELL:
 		case FEAT_FOUNTAIN:
@@ -2613,7 +2612,8 @@ void move_player(int dir, int do_pickup)
 	}
 	
 	/* Get passability of field(s) if there */
-	p_can_pass_fields = !(fields_have_flags(c_ptr->fld_idx, FIELD_INFO_ENTER));
+	p_can_pass_fields = !(fields_have_flags(c_ptr->fld_idx,
+		 FIELD_INFO_NO_ENTER));
 
 	/* Hack -- attack monsters */
 	if (c_ptr->m_idx && (m_ptr->ml || cave_floor_grid(c_ptr) || p_can_pass_walls))
@@ -2887,16 +2887,6 @@ void move_player(int dir, int do_pickup)
 		disturb(0, 0);
 
 		oktomove = FALSE;
-	}
-
-	/* Hit an invisible wall */
-	else if (c_ptr->feat == FEAT_WALL_INVIS)
-	{
-		oktomove = FALSE;
-
-		disturb(0, 0);
-
-		msg_print("You bump into something.");
 	}
 
 	/* Normal movement */

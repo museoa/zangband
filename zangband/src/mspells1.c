@@ -370,7 +370,7 @@ static bool summon_possible(int y1, int x1)
 			    (c_ptr->feat <= FEAT_PATTERN_XTRA2)) continue;
 				
 			/* Check to see if fields dissallow placement */
-			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_ENTER))
+			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_ENTER))
 			{ 
 				/* Cannot create */
 				return(FALSE);
