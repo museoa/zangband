@@ -4239,7 +4239,7 @@ static int borg_thrust_damage_one(int i)
 /*
  * Simulate/Apply the optimal result of making a physical attack
  */
-extern int borg_attack_aux_thrust(void)
+int borg_attack_aux_thrust(void)
 {
 	int p, dir;
 
@@ -14728,7 +14728,7 @@ static bool borg_flow_dark_reachable(int x, int y)
  *
  * It is also used to move around town without looking like a drunk.
  */
-extern void borg_flow_direct(int x, int y)
+void borg_flow_direct(int x, int y)
 {
 	int n = 0;
 
@@ -14866,8 +14866,10 @@ extern void borg_flow_direct(int x, int y)
 
 }
 
+#if 0
+
 /* Currently not used, I thought I might need it for anti-summoning */
-extern void borg_flow_direct_dig(int x, int y)
+static void borg_flow_direct_dig(int x, int y)
 {
 	int n = 0;
 
@@ -14970,7 +14972,7 @@ extern void borg_flow_direct_dig(int x, int y)
 	}
 }
 
-
+#endif /* 0 */
 
 /*
  * Hack -- mark off the edges of a rectangle as "avoid" or "clear"

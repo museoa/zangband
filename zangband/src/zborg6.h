@@ -100,7 +100,6 @@ extern bool borg_flow_kill(bool viewable, int nearness);
 extern bool borg_flow_kill_aim(bool viewable);
 extern bool borg_flow_kill_corridor(bool viewable);
 extern bool borg_flow_take(bool viewable, int nearness);
-extern void borg_flow_direct_dig(int m_y, int m_x);
 
 /*
  * Flow towards "interesting" grids
