@@ -1,10 +1,24 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
+VER_MAJOR=`awk '/#define VER_MAJOR/ { print $3 }' src/defines.h`
+VER_MINOR=`awk '/#define VER_MINOR/ { print $3 }' src/defines.h`
+VER_PATCH=`awk '/#define VER_PATCH/ { print $3 }' src/defines.h`
+VER_EXTRA=`awk '/#define VER_EXTRA/ { print $3 }' src/defines.h`
+
+if test -n $VER_EXTRA ; then
+	VERSION="$VER_MAJOR.$VER_MINOR.$VER_PATCH-pre$VER_EXTRA"
+else
+	VERSION="$VER_MAJOR.$VER_MINOR.$VER_PATCH"
+fi
+
 AC_PREREQ(2.57)
-AC_INIT(FULL-PACKAGE-NAME, VERSION, BUG-REPORT-ADDRESS)
+AC_INIT(ZAngband, 2.7.3, bugs@zangband.org)
 AC_CONFIG_SRCDIR([src/angband.h])
 AC_CONFIG_HEADER([src/autoconf.h])
+
+AC_DEFINE(PACKAGE_STRING, [ZAngband $VERSION])
+AC_DEFINE(PACKAGE_VERSION, $VERSION)
 
 dnl default option
 GAMEGROUP="games"
