@@ -276,16 +276,14 @@ aix: LIBS := -lX11 -ltermcap -lcurses -lbsd -lXm -lXmu -lXaw -lXt
 ##
 dos: CFLAGS := -Wall -O2 -ggdb -DUSE_DOS -DUSE_IBM -D"USE_BACKGROUND"
 dos: LIBS := -lpc -lalleg
-dos: INSTALL := copy zangband.exe ../zangband.exe
-dos: EXEC :=.exe
+dos: INSTALL := copy zangband.exe ..\zangband.exe
 
 ##
 ## Variation -- Compile using the main-ibm.c port with djgpp
 ##
 ibm: CFLAGS := -Wall -O2 -ggdb -DUSE_IBM
 ibm: LIBS := -lpc
-dos: INSTALL := copy zangband.exe ../zangband.exe
-ibm: EXEC :=.exe
+ibm: INSTALL := copy zangband.exe ..\zangband.exe
 
 ##
 ## Variation -- Compile using the lcc32 compiler
