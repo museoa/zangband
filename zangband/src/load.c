@@ -473,6 +473,19 @@ static void rd_item(object_type *o_ptr)
 		o_ptr->tval = 0;
 		return;
 	}
+	
+	/* The new flags as of [Z] 2.5.3 */
+	if (sf_version > 18)
+	{
+		/* The new flags */
+		rd_s32b(&o_ptr->cost);
+		
+		rd_byte(&o_ptr->activate);
+		
+		rd_u32b(&o_ptr->kn_flags1);
+		rd_u32b(&o_ptr->kn_flags2);
+		rd_u32b(&o_ptr->kn_flags3);
+	}
 
 	/* Repair non "wearable" items */
 	if (!wearable_p(o_ptr))
@@ -500,18 +513,8 @@ static void rd_item(object_type *o_ptr)
 	/* Hack -- extract the "broken" flag */
 	if (!o_ptr->pval < 0) o_ptr->ident |= (IDENT_BROKEN);
 
-	if (sf_version > 18)
-	{
-		/* The new flags */
-		rd_s32b(&o_ptr->cost);
-		
-		rd_byte(&o_ptr->activate);
-		
-		rd_u32b(&o_ptr->kn_flags1);
-		rd_u32b(&o_ptr->kn_flags2);
-		rd_u32b(&o_ptr->kn_flags3);
-	}
-	else
+	
+	if (sf_version < 19)
 	{
 		/* Convert old ego items to current format */
 		if (name2)
