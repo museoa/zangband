@@ -166,7 +166,7 @@ class angterm_list_selection(list_selection):
 # List for player-race selection at birth
 #####################################################################
 class birth_race_list(angterm_list_selection):
-	def __init__(self, list, columns, columns=None):
+	def __init__(self, list, columns=None):
 		angterm_list_selection.__init__(self, list, columns)
 		self.prompt = "Select Race"
 		if columns == None:
