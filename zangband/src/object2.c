@@ -4923,6 +4923,8 @@ void pick_trap(int y, int x)
 
 		/* Hack -- no trap doors on the deepest level */
 		if (dun_level >= MAX_DEPTH-1) continue;
+		
+		break;
 	}
 
 	/* Activate the trap */

@@ -502,7 +502,7 @@ static bool gamble_comm(int cmd)
 
 				case BACT_SPIN_WHEEL:  /* Spin the Wheel Game */
 					win = FALSE;
-					odds = 10;
+					odds = 8;
 					c_put_str(TERM_GREEN, "Wheel", 5, 2);
 					prt("0  1  2  3  4  5  6  7  8  9", 7, 5);
 					prt("--------------------------------", 8, 3);

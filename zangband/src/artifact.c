@@ -288,7 +288,7 @@ void random_resistance(object_type * o_ptr, bool is_scroll, int specific)
 			if ((o_ptr->tval >= TV_CLOAK) && (o_ptr->tval <= TV_HARD_ARMOR) &&
 			   !(o_ptr->art_flags3 & TR3_SH_ELEC))
 			{
-				o_ptr->art_flags2 |= TR3_SH_ELEC;
+				o_ptr->art_flags3 |= TR3_SH_ELEC;
 				if (randint(2) == 1) return;
 			}
 			if (randint(BIAS_LUCK) == 1 && !(o_ptr->art_flags2 & TR2_IM_ELEC))
@@ -308,7 +308,7 @@ void random_resistance(object_type * o_ptr, bool is_scroll, int specific)
 			    (o_ptr->tval <= TV_HARD_ARMOR) &&
 			    !(o_ptr->art_flags3 & TR3_SH_FIRE))
 			{
-				o_ptr->art_flags2 |= TR3_SH_FIRE;
+				o_ptr->art_flags3 |= TR3_SH_FIRE;
 				if (randint(2) == 1) return;
 			}
 			if ((randint(BIAS_LUCK) == 1) &&
