@@ -1950,7 +1950,10 @@ static void init_ego_item(object_type *o_ptr, byte ego)
 		if (e_ptr->max_to_a) o_ptr->to_a += randint1(e_ptr->max_to_a);
 
 		/* Hack -- obtain pval */
-		if (e_ptr->max_pval) o_ptr->pval += randint1(e_ptr->max_pval);
+		if ((e_ptr->max_pval) && (!o_ptr->pval))
+		{
+			o_ptr->pval = randint1(e_ptr->max_pval);
+		}
 	}
 
 	/* Hack -- apply rating bonus */
@@ -2463,7 +2466,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 						else /* Hafted */
 						{
 							ego = EGO_EARTHQUAKES;
-							o_ptr->pval = m_bonus(3, level);
+							o_ptr->pval = m_bonus(3, level) + 3;
 							
 							if (randint1(3) == 1)
 							{
