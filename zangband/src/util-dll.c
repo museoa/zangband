@@ -59,9 +59,6 @@ unsigned char g_palette2colormap[256];
 void *Array_New(int count, int elem_size)
 {
 	char *p = Tcl_AllocDebug(count * elem_size);
-#ifdef MEMORY_DEBUG
-	memset(p, 0xFF, count * elem_size);
-#endif /* MEMORY_DEBUG */
 	return (void *) p;
 }
 
@@ -74,7 +71,7 @@ void *Array_Append(void *array_ptr, int *count, int elem_size,
 	char *ap = array_ptr;
 	int n = (*count) + 1;
 
-	ap = Tcl_ReallocDebug(ap, n * elem_size);
+	ap = Tcl_Realloc(ap, n * elem_size);
 	(void) memcpy(ap + (n - 1) * elem_size, elem_ptr, elem_size);
 	(*count) = n;
 	return ap;
@@ -92,7 +89,7 @@ void *Array_Insert(void *array_ptr, int *count, int elem_size,
 	if (index < 0) index = 0;
 	if (index >= n) index = n - 1;
 
-	ap = Tcl_ReallocDebug(ap, n * elem_size);
+	ap = Tcl_Realloc(ap, n * elem_size);
 	if (index != n - 1)
 	{
 		(void) memcpy(ap + (index + 1) * elem_size,
@@ -133,7 +130,7 @@ void *Array_Delete(void *array_ptr, int *count, int elem_size,
 	}
 	
 	(*count) = n;
-	return (void *) Tcl_ReallocDebug(ap, n * elem_size);
+	return (void *) Tcl_Realloc(ap, n * elem_size);
 }
 
 static void IndexedColor_ResetHash(IndexedColor *idc)
@@ -643,8 +640,6 @@ unsigned char *Palette_GetRGB(void)
 	return g_palette.rgb;
 }
 
-#ifndef MEMORY_DEBUG
-
 char *Tcl_AllocDebug(int size)
 {
 	char *ptr = Tcl_Alloc(size);
@@ -663,7 +658,7 @@ void Tcl_FreeDebug(char *ptr)
 	 * valid memory.
 	 */
 	if (((int *) ptr)[0] != TCL_FREE_MAGIC)
-		Tcl_Panic("Tcl_FreeDebug: magic number not found");
+		Tcl_Panic((char *) "Tcl_FreeDebug: magic number not found");
 	size = ((int *) ptr)[1];
 
 	/* Zero the memory to catch other errors */
@@ -673,8 +668,6 @@ void Tcl_FreeDebug(char *ptr)
 	/* Free the storage */
 	Tcl_Free(ptr);
 }
-
-#endif /* ndef MEMORY_DEBUG */
 
 void DoubleLink_Init(DoubleLinker *linker, DoubleLink *link, void *data)
 {

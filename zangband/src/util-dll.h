@@ -76,27 +76,10 @@ void *Array_Insert(void *array_ptr, int *count, int elem_size,
 void *Array_Delete(void *array_ptr, int *count, int elem_size,
 	int index);
 
-#define TCL_FREE_HEADER \
-	int _tcl_free[2]; /* [0]magic [1]size */
-
 #define TCL_FREE_MAGIC 1234
 
-#define MEMORY_DEBUG
-#ifdef MEMORY_DEBUG
-void db_dump_allocs(void);
-int db_heap_error(void* vp,int head);
-
-void *_db_malloc(size_t siz, cptr file, int line);
-void *_db_realloc(void *ptr, size_t siz, cptr file, int line);
-void _db_free(void *ptr, cptr file, int line);
-#define Tcl_AllocDebug(siz) _db_malloc(siz,__FILE__,__LINE__)
-#define Tcl_ReallocDebug(str,siz) _db_realloc(str,siz,__FILE__,__LINE__)
-#define Tcl_FreeDebug(str) _db_free(str,__FILE__,__LINE__)
-#else /* not MEMORY_DEBUG */
-char *Tcl_AllocDebug(int size);
-void Tcl_ReallocDebug(char *ptr);
-void Tcl_FreeDebug(char *ptr);
-#endif /* not MEMORY_DEBUG */
+extern char *Tcl_AllocDebug(int size);
+extern void Tcl_FreeDebug(char *ptr);
 
 typedef struct BitmapType {
 	unsigned char *pixelPtr; /* Address of top-left pixel */
