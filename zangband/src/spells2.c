@@ -3051,7 +3051,6 @@ bool earthquake(int cy, int cx, int r)
 }
 
 
-
 /*
  * This routine clears the entire "temp" set.
  *
@@ -3074,10 +3073,10 @@ static void cave_temp_room_lite(void)
 	/* Clear them all */
 	for (i = 0; i < temp_n; i++)
 	{
-		for (j = 0; j < 9; j++)
+		for (j = 0; j < 8; j++)
 		{
-			int y = temp_y[i]+ ddy_cdd[j];
-			int x = temp_x[i]+ ddx_cdd[j];
+			int y = temp_y[i] + ddy_cdd[j];
+			int x = temp_x[i] + ddx_cdd[j];
 
 			cave_type *c_ptr = &cave[y][x];
 
@@ -3163,10 +3162,10 @@ static void cave_temp_room_unlite(void)
 	/* Clear them all */
 	for (i = 0; i < temp_n; i++)
 	{
-		for (j = 0; j < 9; j++)
+		for (j = 0; j < 8; j++)
 		{
-			int y = temp_y[i]+ ddy_cdd[j];
-			int x = temp_x[i]+ ddx_cdd[j];
+			int y = temp_y[i] + ddy_cdd[j];
+			int x = temp_x[i] + ddx_cdd[j];
 
 			cave_type *c_ptr = &cave[y][x];
 
