@@ -327,9 +327,43 @@ int get_player_sort_choice(cptr *choices, int num, int col, int wid,
 	return (choice);
 }
 
+
+/* Show the option */
+static bool show_option(int x, int y, menu_type *option, char c, bool scroll, bool select)
+{
+	if (option->flags & MN_ACTIVE)
+	{
+		/* Is this option selected */
+		if (select)
+		{
+			/* Highlight this option? */
+			if (scroll)
+			{
+				prtf(x, y, " %c) " CLR_L_BLUE "%s", c, option->text);
+			}
+			else
+			{
+				prtf(x, y, "*%c) %s", c, option->text);
+			}
+		}
+		else
+		{
+			prtf(x, y, " %c) %s", c, option->text);
+		}
+	
+		return (TRUE);
+	}
+	
+	/* Not a valid option */
+	prtf(x, y, "    %s", option->text);
+		
+	return (FALSE);
+}
+
+
 /*
  * Display a menu of choices on the screen
- *;
+ *
  * We return the number of active options.
  */
 static int show_menu(int num, menu_type *options, int select, bool scroll,
@@ -337,6 +371,8 @@ static int show_menu(int num, menu_type *options, int select, bool scroll,
 {
 	int cnt = 0;
 	int i;
+	
+	int x, y;
 	
 	/*
 	 * Display 'special' information
@@ -346,38 +382,56 @@ static int show_menu(int num, menu_type *options, int select, bool scroll,
 	/* Border on top of menu */
 	clear_row(1);
 	
-	for (i = 0; i < num; i++)
+	/* Will they fit in one column? */
+	if (num < 17)
 	{
-		if (options[i].flags & MN_ACTIVE)
+		for (i = 0; i < num; i++)
 		{
-			/* Is this option selected */
-			if (i == select)
+			if (show_option(0, i + 2, &options[i], I2A(cnt), scroll, i == select))
 			{
-				/* Highlight this option? */
-				if (scroll)
-				{
-					prtf(0, i + 2, " %c) " CLR_L_BLUE "%s", I2A(cnt), options[i].text);
-				}
-				else
-				{
-					prtf(0, i + 2, "*%c) %s", I2A(cnt), options[i].text);
-				}
+				cnt++;
 			}
-			else
-			{
-				prtf(0, i + 2, " %c) %s", I2A(cnt), options[i].text);
-			}
-			
-			cnt++;
 		}
-		else
-		{
-			prtf(0, i + 2, "    %s", options[i].text);
-		}
+	
+		/* Border below menu */
+		clear_row(num + 2);
 	}
 	
-	/* Border below menu */
-	clear_row(num + 2);
+	/* Two columns (use numbers as well) */
+	else if (num < 34)
+	{
+		for (i = 0; i < num; i++)
+		{
+			x = (i / 17) * 40;
+			y = (i % 17) + 2;
+				
+			if (show_option(x, y, &options[i], listsym[cnt], scroll, i == select))
+			{
+				cnt++;
+			}
+		}
+		
+		/* Border below menu */
+		clear_row(19);
+	}
+	
+	/* Three columns - need to use upper case letters */
+	else
+	{
+		for (i = 0; i < num; i++)
+		{
+			x = (i / 20) * 30;
+			y = (i % 20) + 2;
+			
+			if (show_option(x, y, &options[i], listsym[cnt], scroll, i == select))
+			{
+				cnt++;
+			}
+		}
+	
+		/* Border below menu */
+		clear_row(22);
+	}
 	
 	/*
 	 * Display the prompt.
