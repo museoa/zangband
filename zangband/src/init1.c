@@ -132,7 +132,7 @@ static cptr r_info_flags1[] =
 	"FORCE_MAXHP",
 	"FORCE_SLEEP",
 	"FORCE_EXTRA",
-	"FRIEND",
+	"XXX1X1",
 	"FRIENDS",
 	"ESCORT",
 	"ESCORTS",

@@ -193,7 +193,7 @@ static void roff_aux(int r_idx, int remem)
 	if (r_ptr->flags1 & RF1_FEMALE)  flags1 |= (RF1_FEMALE);
 
 	/* Assume some "creation" flags */
-	if (r_ptr->flags1 & RF1_FRIEND)  flags1 |= (RF1_FRIEND);
+	if (r_ptr->flags1 & RF1_XXX1)  flags1 |= (RF1_XXX1);
 	if (r_ptr->flags1 & RF1_FRIENDS) flags1 |= (RF1_FRIENDS);
 	if (r_ptr->flags1 & RF1_ESCORT)  flags1 |= (RF1_ESCORT);
 	if (r_ptr->flags1 & RF1_ESCORTS) flags1 |= (RF1_ESCORTS);
@@ -567,12 +567,17 @@ static void roff_aux(int r_idx, int remem)
 	}
 
 	/* Describe friends */
-	else if ((flags1 & RF1_FRIEND) || (flags1 & RF1_FRIENDS))
+	else if (flags1 & RF1_FRIENDS)
 	{
 		roff(format("%^s usually appears in groups.  ",
 		            wd_he[msex]));
 	}
 
+	else if (flags1 & RF1_XXX1)
+	{
+		roff(format("%^s usually appears in XXX1s.  ",
+		            wd_he[msex]));
+	}
 
 	/* Collect inate attacks */
 	if (flags4 & RF4_SHRIEK)  vp[vn++] = "shriek for help";
