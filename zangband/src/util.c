@@ -2525,7 +2525,7 @@ static int message_column = 0;
  * This should only be done when the user is known to have read the message.
  *
  * We must be very careful about using the "msg_print()" functions without
- * explicitly calling the special "msg_print(NULL)()" function, since this may
+ * explicitly calling the special "message_flush()" function, since this may
  * result in the loss of information if the screen is cleared, or if anything
  * is displayed on the top line.
  *
