@@ -4362,7 +4362,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 							if (distance(by, bx, y, x) != cdis) continue;
 
 							/* The blast is stopped by walls */
-							if (!in_ball_range(by, bx, y, x)) continue;
+							if (!in_ball_range(bx, by, x, y)) continue;
 
 							/* Save this grid */
 							gy[grids] = y;
@@ -4449,7 +4449,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 						else
 						{
 							/* Ball explosions are stopped by walls/fields */
-							if (!in_ball_range(y2, x2, y, x)) continue;
+							if (!in_ball_range(x2, y2, x, y)) continue;
 						}
 
 						/* Save this grid */

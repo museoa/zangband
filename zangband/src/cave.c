@@ -718,7 +718,7 @@ static bool cave_stop_ball(cave_type *c_ptr)
  * Use Modified version of los() for calculation of balls.
  * Balls are stopped by walls, and by fields.
  */
-bool in_ball_range(int y1, int x1, int y2, int x2)
+bool in_ball_range(int x1, int y1, int x2, int y2)
 {
 	return (los_general(x1, y1, x2, y2, cave_stop_ball));
 }
