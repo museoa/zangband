@@ -212,8 +212,8 @@ void build_streamer(int feat, int chance)
 	cave_type *c_ptr;
 
 	/* Hack -- Choose starting point */
-	y = rand_spread(cur_hgt / 2, 10);
-	x = rand_spread(cur_wid / 2, 15);
+	y = rand_spread(cur_hgt / 2, (cur_hgt / 2 > 10? 10: cur_hgt / 2));
+	x = rand_spread(cur_wid / 2, (cur_wid / 2 > 15? 15: cur_wid / 2));
 
 	/* Choose a random compass direction */
 	dir = ddd[rand_int(8)];
