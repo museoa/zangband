@@ -559,7 +559,7 @@ int number_of_quests(void)
 /*
  * Create a magical staircase
  */
-static void create_stairs(int y, int x)
+static void create_stairs(int x, int y)
 {
 	int i = 0;
 	
@@ -601,7 +601,7 @@ static void create_stairs(int y, int x)
 /*
  * Give the reward for the indicated quest
  */
-static void quest_reward(int num, int y, int x)
+static void quest_reward(int num, int x, int y)
 {
 	object_type forge, *o_ptr;
 	
@@ -790,10 +790,10 @@ void trigger_quest_complete(byte x_type, void *data)
 						q_ptr->status = QUEST_STATUS_COMPLETED;
 						
 						/* Create some stairs */
-						create_stairs(m_ptr->fy, m_ptr->fx);
+						create_stairs(m_ptr->fx, m_ptr->fy);
 						
 						/* Drop the reward */
-						quest_reward(q_ptr->reward, m_ptr->fy, m_ptr->fx);
+						quest_reward(q_ptr->reward, m_ptr->fx, m_ptr->fy);
 						
 						/* Monster is no longer 'QUESTOR' */
 						r_info[q_ptr->data.dun.r_idx].flags1 &= ~(RF1_QUESTOR);
@@ -838,7 +838,7 @@ void trigger_quest_complete(byte x_type, void *data)
 					q_ptr->status = QUEST_STATUS_FINISHED;
 					
 					/* Mega-hack */
-					create_stairs(m_ptr->fy, m_ptr->fx);
+					create_stairs(m_ptr->fx, m_ptr->fy);
 				}
 				
 				continue;
