@@ -3436,13 +3436,13 @@ static void prepare_book_info(int realm, int book)
     {
         borg_magic *as = &borg_magics[realm][book][what];
 
-        magic_type *s_ptr = &mb_ptr->info[realm-1][spell[what]];
+        magic_type *s_ptr = &mb_ptr->info[realm][spell[what]];
 
         /* Skip "illegible" spells */
         if (s_ptr->slevel == 99) continue;
 
         /* Save the spell name */
-        as->name = spell_names[realm-1][spell[what]];
+        as->name = spell_names[realm][spell[what]];
 
 		/* Realm Name */
 		if (realm == 1) as->realm_name = "Life";
@@ -3518,9 +3518,16 @@ void prepare_race_class_info(void)
 	borg_skill[BI_REALM2] = p_ptr->realm2;
 
  	/* Initialize the various spell arrays by book */
-	for (book = 0; book < 4; book++) prepare_book_info(borg_skill[BI_REALM1], book);
-	for (book = 0; book < 4; book++) prepare_book_info(borg_skill[BI_REALM2], book);
-
+	for (book = 0; book < 4; book++)
+	{
+		prepare_book_info(borg_skill[BI_REALM1], book);
+	}
+	
+	for (book = 0; book < 4; book++)
+	{
+		prepare_book_info(borg_skill[BI_REALM2], book);
+	}
+	
 	/* MindCrafters */
 	if (borg_class == CLASS_MINDCRAFTER)
 	{

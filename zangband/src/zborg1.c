@@ -2409,10 +2409,6 @@ void borg_init_1(void)
     C_MAKE(track_shop_x, 10, byte);
     C_MAKE(track_shop_y, 10, byte);
 
-    /* Track the quest locations */
-    C_MAKE(track_quest_x, 40, byte);
-    C_MAKE(track_quest_y, 40, byte);
-
     /*** Special "tracking" arrays ***/
 
     /* Track "up" stairs */

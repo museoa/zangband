@@ -3243,7 +3243,7 @@ static void init_borg_txt_file(void)
 	/* make some shortcut pointers into the array */
     borg_has_on = borg_has + z_info->k_max;
     borg_artifact = borg_has_on + z_info->k_max;
-    borg_skill = borg_artifact + z_info->k_max;
+    borg_skill = borg_artifact + z_info->a_max;
 
    path_build(buf, 1024, ANGBAND_DIR_PREF, "zborg.txt");
 
@@ -3522,494 +3522,7 @@ static void init_borg_txt_file(void)
 void resurrect_borg(void)
 {
 
-#if 0 /* This cannot work */
 
-    int i,ii,j;
-    int n, t;
-    bool borg_cheat_live = cheat_live;
-
-    /* Cheat death */
-    p_ptr->is_dead = FALSE;
-    borg_skill[BI_MAXDEPTH] = 0;
-    borg_skill[BI_MAXCLEVEL] = 1;
-
-    /* Flush message buffer */
-    borg_parse(NULL);
-
-    /* flush the commands */
-    borg_flush();
-
-	borg_note("# Preparing to Resurrect.");
-
-    /* remove the spell counters */
-    for (ii = 1; ii < MAX_REALM; ii++)
-    {
-        for (i = 0; i < 4; i++ )
-        {
-           for (j = 0; j < 8; j++)
-            {
-                /* get the magics */
-                borg_magic *as = &borg_magics[ii][i][j];
-                /* reset the counter */
-                as->times = 0;
-            }
-        }
-	}
-
-	/* Mindcrafter spell counts? */
-
-    /*** Wipe the player ***/
-    (void)WIPE(p_ptr, player_type);
-
-	borg_note("# Wiped Player.");
-
-
-	/* Game turn Starting over */
-    turn = 0;
-
-    borg_skill[BI_ISCUT] = borg_skill[BI_ISSTUN] = borg_skill[BI_ISHEAVYSTUN] = borg_skill[BI_ISIMAGE] = borg_skill[BI_ISSTUDY] = FALSE;
-
-	/* Assign the 'Outpost' as town number */
-	p_ptr->town_num = 1;
-	p_ptr->wilderness_y = 4;
-	p_ptr->wilderness_x = 4;
-	p_ptr->depth = 0;
-	leaving_quest = 0;
-	py = 33;
-	px = 133;
-
-	/* Clean the mutation count */
-	mutant_regenerate_mod = 100;
-
-	/* Default pet command settings */
-	p_ptr->pet_open_doors = FALSE;
-	p_ptr->pet_pickup_items = FALSE;
-
-    /* Set some player flags to keep it running */
-    p_ptr->alive = TRUE;
-    p_ptr->leaving = TRUE;
-
-	/* No items */
-	inven_cnt = 0;
-	equip_cnt = 0;
-
-    /* Clear the inventory */
-    for (i = 0; i < INVEN_TOTAL; i++)
-    {
-        object_wipe(&inventory[i]);
-    }
-	borg_note("# Wiped Inventory.");
-
-
-    flavor_init();
-	borg_note("# Flavor Init'd.");
-
-
-    borg_clear_3();
-    borg_init_3();
-
-	borg_note("# Init 3 Completed.");
-
-
-    /* Start with no artifacts made yet */
-    for (i = 0; i < max_a_idx; i++)
-    {
-        artifact_type *a_ptr = &a_info[i];
-        a_ptr->cur_num = 0;
-    }
-
-	/* Wipe the quests */
-	for (i = 0; i < max_quests; i++)
-	{
-		quest[i].status = QUEST_STATUS_UNTAKEN;
-
-		quest[i].cur_num = 0;
-		quest[i].max_num = 0;
-		quest[i].type = 0;
-		quest[i].level = 0;
-		quest[i].r_idx = 0;
-	}
-
-	borg_note("# Reset Artifacts and Quests.");
-
-
-#if 0
-    /* Free the "quarks" */
-    for (i = 1; i < quark__num; i++)
-    {
-        string_free(quark__str[i]);
-    }
-#endif
-
-
-	/* Reset the "objects" */
-    for (i = 1; i < max_k_idx; i++)
-    {
-        object_kind *k_ptr = &k_info[i];
-
-
-        /* skip some stuff */
-        if (k_ptr->tval <= TV_AMULET ||
-            k_ptr->tval >= TV_FLASK) continue;
-
-        /* Reset "tried" */
-        k_ptr->tried = FALSE;
-
-        /* Reset "aware" */
-        k_ptr->aware = FALSE;
-    }
-
-	borg_note("# Reset Objects.");
-
-    /* Reset the "monsters" */
-    for (i = 1; i < max_r_idx; i++)
-    {
-        monster_race *r_ptr = &r_info[i];
-
-        /* Hack -- Reset the counter */
-        r_ptr->cur_num = 0;
-
-        /* Hack -- Reset the max counter */
-        r_ptr->max_num = 100;
-
-        /* Hack -- Reset the max counter */
-        if (r_ptr->flags1 & RF1_UNIQUE) r_ptr->max_num = 1;
-		if (r_ptr->flags3 & RF3_UNIQUE_7) r_ptr->max_num = 7;
-
-        /* Clear player kills */
-        r_ptr->r_pkills = 0;
-    }
-
-	borg_note("# Reset Monsters.");
-
-
-    /* Hack -- no ghosts */
-    r_info[max_r_idx-1].max_num = 0;
-
-
-    /* Hack -- Well fed player */
-    p_ptr->food = PY_FOOD_FULL - 1;
-
-
-    /* None of the spells have been learned yet */
-    for (i = 0; i < 64; i++) spell_order[i] = 99;
-
-    /** Roll up a new character **/
-
-    /* Sex */
-    p_ptr->psex = rand_int(MAX_SEXES);
-    sp_ptr = &sex_info[p_ptr->psex];
-
-
-    /* Class */
-    if (borg_respawn_class == -1)
-    {
-        p_ptr->pclass = rand_int(MAX_CLASS);
-    }
-    else
-    {
-        p_ptr->pclass = borg_respawn_class;
-    }
-
-    cp_ptr = &class_info[p_ptr->pclass];
-    mp_ptr = &magic_info[p_ptr->pclass];
-
-	borg_note("# Class Defined.");
-
-
-   if (borg_respawn_race == -1)
-   {
-    while (1)
-    {
-       /* Race */
-       p_ptr->prace = rand_int(MAX_RACES);
-
-       rp_ptr = &race_info[p_ptr->prace];
-
-       /* Try again if not a legal choice */
-       if (!(rp_ptr->choice & (1L << p_ptr->pclass))) continue;
-       break;
-    }
-   }
-   else
-   {
-        p_ptr->prace = borg_respawn_race;
-        rp_ptr = &race_info[p_ptr->prace];
-   }
-
-	borg_note("# Race Defined.");
-
-
-    /* Some Extra things */
-    get_stats_borg();
-    get_extra_borg();
-    get_ahw_borg();
-    get_history_borg();
-    get_money_borg();
-
-	borg_note("# Set stats, extra, ahw, history, money.");
-
-
-    /* Get a random name */
-    create_random_name(p_ptr->prace,player_name);
-
-	/* Hack -- get a chaos patron even if you are not a chaos warrior */
-	p_ptr->chaos_patron = (s16b)rand_int(MAX_PATRON);
-
-	/* Hack -- enter the world */
-	if ((p_ptr->prace == RACE_VAMPIRE) ||
-	    (p_ptr->prace == RACE_SKELETON) ||
-	    (p_ptr->prace == RACE_ZOMBIE) ||
-	    (p_ptr->prace == RACE_SPECTRE))
-	{
-		/* Undead start just after midnight */
-		turn = (30L * TOWN_DAWN) / 4 + 1;
-	}
-	else
-	{
-		turn = 1;
-	}
-
-
-    /* Reset the Shops */
-    for (t = 1; t < max_towns; t++)
-    {
-    	for (n = 0; n < MAX_STORES; n++)
-    	{
-    	    /* Initialize */
-    	    store_init(t, n);
-
-    	    /* Maintain the shop (ten times), */
-    	    for (i = 0; i < 10; i++) store_maint(t, n);
-    	}
-	}
-	borg_note("# Wiped and Reset Shops.");
-
-
-    /* Hack -- flush it */
-    Term_fresh();
-
-    /*** Hack -- Extract race ***/
-
-    /* Insert the player Race--cheat */
-    borg_race = p_ptr->prace;
-
-    /* Extract the race pointer */
-    rb_ptr = &race_info[borg_race];
-
-
-    /*** Hack -- Extract class ***/
-
-    /* Cheat the class */
-    borg_class = p_ptr->pclass;
-
-	/* Get some Realms of Magic */
-	switch (borg_class)
-	{
-		case CLASS_WARRIOR:
-		case CLASS_MINDCRAFTER:
-			break;
-		case CLASS_CHAOS_WARRIOR:
-			/* No Realm Choices */
-			p_ptr->realm1 = REALM_CHAOS;
-			break;
-		case CLASS_MAGE:
-			/* Realm One */
-			p_ptr->realm1 = rand_int(MAX_REALM -1) +1;
-
-			/* Realm Two */
-			while (1)
-			{
-				/* Assign random realm */
-				p_ptr->realm2 = rand_int(MAX_REALM - 1) + 1;
-
-				/* Make sure its not same */
-				if (p_ptr->realm2 != p_ptr->realm1) break;
-
-				/* Gotta get a new Realm Two */
-				continue;
-			}
-			break;
-		case CLASS_PRIEST:
-			/* Realm One -- Life or Death */
-			p_ptr->realm1 = ((rand_int(50) > 25) ?
-				REALM_LIFE : REALM_DEATH);
-
-			/* Realm Two */
-			while (1)
-			{
-				/* Assign random realm */
-				p_ptr->realm2 = rand_int(MAX_REALM -1) +1;
-
-				/* Certain Class Restrictions: */
-				if (p_ptr->realm1 == REALM_LIFE &&
-				     p_ptr->realm2 == REALM_DEATH) continue;
-
-				if (p_ptr->realm2 == p_ptr->realm1) continue;
-
-
-				/* OK, realm2 is legal */
-				break;
-			}
-			break;
-		case CLASS_ROGUE:
-			/* Realm One */
-			while (1)
-			{
-				/* Assign random realm */
-				p_ptr->realm1 = rand_int(MAX_REALM -1) + 1;
-
-				/* Certain Class Restrictions: */
-				if (p_ptr->realm1 == REALM_LIFE) continue;
-				if (p_ptr->realm1 == REALM_NATURE) continue;
-				if (p_ptr->realm1 == REALM_CHAOS) continue;
-
-				/* OK, realm is legal */
-				break;
-			}
-			break;
-		case CLASS_RANGER:
-			/* Realm One */
-			while (1)
-			{
-				/* Assign random realm */
-				p_ptr->realm1 = rand_int(MAX_REALM -1) + 1;
-
-				/* Certain Class Restrictions: */
-				if (p_ptr->realm1 == REALM_LIFE) continue;
-				if (p_ptr->realm1 == REALM_NATURE) continue;
-
- 				/* OK, realm is legal */
-				break;
-			}
-			break;
-
-		case CLASS_PALADIN:
-			/* Realm One -- Life or Death */
-			p_ptr->realm1 = ((rand_int(50) > 25) ?
-				REALM_LIFE : REALM_DEATH);
-			break;
-		case CLASS_WARRIOR_MAGE:
-			/* Realm One */
-			while (1)
-			{
-				/* Assign random realm */
-				p_ptr->realm1 = rand_int(MAX_REALM -1) + 1;
-
-				/* Certain Class Restrictions: */
-				if (p_ptr->realm1 == REALM_ARCANE) continue;
-
- 				/* OK, realm is legal */
-				break;
-			}
-			break;
-		case CLASS_MONK:
-			/* Realm One */
-			while (1)
-			{
-				/* Assign random realm */
-				p_ptr->realm1 = rand_int(MAX_REALM -1) + 1;
-
-				/* Certain Class Restrictions: */
-				if (p_ptr->realm1 == REALM_ARCANE) continue;
-				if (p_ptr->realm1 == REALM_SORCERY) continue;
-				if (p_ptr->realm1 == REALM_TRUMP) continue;
-				if (p_ptr->realm1 == REALM_CHAOS) continue;
-
- 				/* OK, realm is legal */
-				break;
-			}
-			break;
-		case CLASS_HIGH_MAGE:
-			/* Assign random realm */
-			p_ptr->realm1 = rand_int(MAX_REALM -1) + 1;
-			break;
-	}
-
-    /* Extract the class pointer */
-    cb_ptr = &class_info[borg_class];
-
-    /* Extract the magic pointer */
-    mb_ptr = &magic_info[borg_class];
-
-    /* outfit the player */
-    (void)player_outfit_borg();
-	borg_note("# Outfitted Player.");
-
-    /*** Hack -- react to race and class ***/
-
-    /* Notice the new race and class */
-    prepare_race_class_info();
-	borg_note("# Prepared Race/Class.");
-
-	/* Fully healed */
-	p_ptr->chp = p_ptr->mhp;
-
-	/* Fully rested */
-	p_ptr->csp = p_ptr->msp;
-
-    /* need to check all stats */
-    my_need_stat_check[0] = TRUE;
-    my_need_stat_check[1] = TRUE;
-    my_need_stat_check[2] = TRUE;
-    my_need_stat_check[3] = TRUE;
-    my_need_stat_check[4] = TRUE;
-    my_need_stat_check[5] = TRUE;
-
-    /* Allowable Cheat -- Obtain "recall" flag */
-    goal_recalling = p_ptr->word_recall * 1000;
-
-    /* Allowable Cheat -- Obtain "prot_from_evil" flag */
-    borg_prot_from_evil = (p_ptr->protevil ? TRUE : FALSE);
-    /* Allowable Cheat -- Obtain "speed" flag */
-    borg_speed = (p_ptr->fast ? TRUE : FALSE);
-    /* Allowable Cheat -- Obtain "goi" flag */
-    borg_goi = (p_ptr->invuln ? 9000 : 0);
-    /* Allowable Cheat -- Obtain "resist" flags */
-    my_oppose_acid = (p_ptr->oppose_acid ? TRUE : FALSE);
-    my_oppose_elec = (p_ptr->oppose_elec ? TRUE : FALSE);
-    my_oppose_fire = (p_ptr->oppose_fire ? TRUE : FALSE);
-    my_oppose_cold = (p_ptr->oppose_cold ? TRUE : FALSE);
-    my_oppose_pois = (p_ptr->oppose_pois ? TRUE : FALSE);
-    borg_bless = (p_ptr->blessed ? TRUE : FALSE);
-    borg_shield = (p_ptr->shield ? TRUE : FALSE);
-    borg_hero = (p_ptr->hero ? TRUE : FALSE);
-    borg_berserk = (p_ptr->shero ? TRUE : FALSE);
-
-	/* Reload the Borg.txt */
-    borg_note("Reloading the Borg rules... (zborg.txt)");
-    /*** Hack -- initialize borg.ini options ***/
-
-    for (i = 0; i < MAX_CLASS; i++)
-    {
-		if (i != borg_class) continue;
-
-        KILL(borg_required_item[i]);
-        KILL(borg_power_item[i]);
-    }
-    KILL(borg_has);
-    for (i = 0; i < 1000; i++)
-    {
-        if (formula[i])
-            C_KILL(formula[i], MAX_FORMULA_ELEMENTS, int);
-    }
-
-	init_borg_txt_file();
-
-
-    /* Message */
-    borg_note("# Respawning");
-    borg_respawning = 5;
-
-    /* fully healed and rested */
-    p_ptr->chp = p_ptr->mhp;
-    p_ptr->csp = p_ptr->msp;
-
-    /* Make sure Cheat_live was not reset to FALSE */
-    cheat_live = borg_cheat_live;
-
-   /* Done.  Play on */
-#endif /* 0 */
 }
 
 static void borg_log_death(void)
@@ -4510,6 +4023,7 @@ static void borg_display_item(object_type *item2)
 	return;
 }
 
+
 #ifdef ALLOW_BORG_GRAPHICS
 
 glyph translate_visuals[255][255];
@@ -4539,7 +4053,6 @@ static void init_translate_visuals(void)
 {
    int i,j;
 
-
    /* Extract default attr/char code for features */
    for (i = 0; i < z_info->f_max; i++)
    {
@@ -4552,25 +4065,25 @@ static void init_translate_visuals(void)
        translate_visuals[(byte)f_ptr->x_attr][(byte)f_ptr->x_char].d_char = f_ptr->d_char;
 
        /* Boring grids (floors, etc) */
-           if (view_special_lite && (f_ptr->x_attr == TERM_WHITE) && (i <= FEAT_INVIS))
-           {
-               translate_visuals[TERM_YELLOW][(byte)f_ptr->x_char].d_attr = f_ptr->d_attr;
-               translate_visuals[TERM_YELLOW][(byte)f_ptr->x_char].d_char = f_ptr->d_char;
+       if (view_special_lite && (f_ptr->x_attr == TERM_WHITE) && (i <= FEAT_INVIS))
+       {
+           translate_visuals[TERM_YELLOW][(byte)f_ptr->x_char].d_attr = f_ptr->d_attr;
+           translate_visuals[TERM_YELLOW][(byte)f_ptr->x_char].d_char = f_ptr->d_char;
 
-               translate_visuals[TERM_L_DARK][(byte)f_ptr->x_char].d_attr = f_ptr->d_attr;
-               translate_visuals[TERM_L_DARK][(byte)f_ptr->x_char].d_char = f_ptr->d_char;
+           translate_visuals[TERM_L_DARK][(byte)f_ptr->x_char].d_attr = f_ptr->d_attr;
+           translate_visuals[TERM_L_DARK][(byte)f_ptr->x_char].d_char = f_ptr->d_char;
 
-               translate_visuals[TERM_SLATE][(byte)f_ptr->x_char].d_attr = f_ptr->d_attr;
-               translate_visuals[TERM_SLATE][(byte)f_ptr->x_char].d_char = f_ptr->d_char;
-           }
-           else if (view_granite_lite && (f_ptr->x_attr == TERM_WHITE) && (i >= FEAT_SECRET))
-           {
-               translate_visuals[TERM_L_DARK][(byte)f_ptr->x_char].d_attr = f_ptr->d_attr;
-               translate_visuals[TERM_L_DARK][(byte)f_ptr->x_char].d_char = f_ptr->d_char;
+           translate_visuals[TERM_SLATE][(byte)f_ptr->x_char].d_attr = f_ptr->d_attr;
+           translate_visuals[TERM_SLATE][(byte)f_ptr->x_char].d_char = f_ptr->d_char;
+       }
+       else if (view_granite_lite && (f_ptr->x_attr == TERM_WHITE) && (i >= FEAT_SECRET))
+       {
+           translate_visuals[TERM_L_DARK][(byte)f_ptr->x_char].d_attr = f_ptr->d_attr;
+           translate_visuals[TERM_L_DARK][(byte)f_ptr->x_char].d_char = f_ptr->d_char;
 
-               translate_visuals[TERM_SLATE][(byte)f_ptr->x_char].d_attr = f_ptr->d_attr;
-               translate_visuals[TERM_SLATE][(byte)f_ptr->x_char].d_char = f_ptr->d_char;
-           }
+           translate_visuals[TERM_SLATE][(byte)f_ptr->x_char].d_attr = f_ptr->d_attr;
+           translate_visuals[TERM_SLATE][(byte)f_ptr->x_char].d_char = f_ptr->d_char;
+       }
 
    }
 
@@ -4646,10 +4159,13 @@ void borg_init_9(void)
 
     /* Message */
     prt("Initializing the Borg... (zborg.txt)", 0, 0);
-    init_borg_txt_file();
-
-
-    /*** Hack -- initialize game options ***/
+	
+	/* Hack -- flush it */
+    Term_fresh();
+	
+	init_borg_txt_file();    
+	
+	/*** Hack -- initialize game options ***/
 
     /* Message */
     prt("Initializing the Borg... (options)", 0, 0);
@@ -4665,7 +4181,6 @@ void borg_init_9(void)
 
     /* We specify targets by hand */
     use_old_target = FALSE;
-
 
     /* We must pick items up without verification */
     carry_query_flag = FALSE;
@@ -4706,7 +4221,6 @@ void borg_init_9(void)
     /* Hack -- notice "command" mode */
     hilite_player = FALSE;
 
-
 #ifndef ALLOW_BORG_GRAPHICS
     if (!borg_graphics)
     {
@@ -4725,16 +4239,17 @@ void borg_init_9(void)
     }
 #endif
 
+
 #ifdef ALLOW_BORG_GRAPHICS
 
-   init_translate_visuals();
+	init_translate_visuals();
 
 #else /* ALLOW_BORG_GRAPHICS */
 
 #ifdef USE_GRAPHICS
-   /* The Borg can't work with graphics on, so switch it off */
-   if (use_graphics)
-   {
+	/* The Borg can't work with graphics on, so switch it off */
+	if (use_graphics)
+	{
        /* Reset to ASCII mode */
        use_graphics = FALSE;
        arg_graphics = FALSE;
@@ -4745,8 +4260,8 @@ void borg_init_9(void)
 #endif /* USE_GRAPHICS */
 
 #endif /* ALLOW_BORG_GRAPHICS */
-
-    /*** Redraw ***/
+	
+	/*** Redraw ***/
     /* Redraw map */
     p_ptr->redraw |= (PR_MAP);
 
@@ -4755,6 +4270,7 @@ void borg_init_9(void)
 
     /* Redraw everything */
     do_cmd_redraw();
+	
     /*** Various ***/
 
     /* Message */

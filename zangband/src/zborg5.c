@@ -3657,23 +3657,7 @@ static void borg_cheat_feats(void)
 					}
 #endif /* 0 */
 
-#if 0
-					/* Quest Stair Location */
-					if (cave[y][x].feat == FEAT_QUEST_ENTER)
-					{
-						for (i = 0; i < == ?MAX_QUEST?; i++)
-						{
-							/* Quest 13 says broken */
-							if (i == 13) continue;
 
-							if (i == ?current_quest?)
-							{
-								track_quest_x[i] = x;
-					   			track_quest_y[i] = y;
-							}
-						}
-					}
-#endif
 #if 0
 					/* Shop Entry */
 					if (cave[y][x].feat >= FEAT_SHOP_HEAD &&
@@ -5021,11 +5005,14 @@ void borg_init_5(void)
 
     int size;
 
-    s16b what[800];
-    cptr text[800];
+    s16b *what;
+    cptr *text;
 
-
-    /*** Message tracking ***/
+	/* Allocate temp arrays */
+	C_MAKE(what, z_info->r_max, s16b);
+	C_MAKE(text, z_info->r_max, cptr);
+    
+	/*** Message tracking ***/
 
     /* No chars saved yet */
     borg_msg_len = 0;
@@ -5152,6 +5139,10 @@ void borg_init_5(void)
 
        Get_f_info_number[(int) f_info[i].d_char] = i;
    }
+   
+   /* Free the arrays */
+	FREE(what);
+	FREE(text);
 }
 
 

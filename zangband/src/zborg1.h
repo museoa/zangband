@@ -1166,9 +1166,6 @@ extern bool borg_detect_evil[6][6];
 extern byte *track_shop_x;
 extern byte *track_shop_y;
 
-extern byte *track_quest_x;
-extern byte *track_quest_y;
-
 
 /*
  * Track "stairs up"
