@@ -1,7 +1,7 @@
 -- Helper functions for various things
 
 function summon_monsters(num, kind)
-	local ident = FALSE
+	local ident; ident = FALSE
 	
 	for k = 0, num do
 		if summon_specific(0, player.px, player.py, player.depth,
@@ -10,9 +10,7 @@ function summon_monsters(num, kind)
 		end
 	end
 
-	if ident then return TRUE
-	else return FALSE
-	end
+	return ident
 end
 
 function restore_mana()
