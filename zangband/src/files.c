@@ -3045,6 +3045,9 @@ bool show_file(cptr name, cptr what, int line, int mode)
 
 	/* Backup value for "line" */
 	int back = 0;
+	
+	/* Loop counter */
+	int cnt;
 
 	/* This screen has sub-screens */
 	bool menu = FALSE;
@@ -3332,10 +3335,10 @@ bool show_file(cptr name, cptr what, int line, int mode)
 				back = line;
 				line = line + 1;
 			   
-			        /* Make finder lowercase */
-                                for (lc_buf_ptr = find; *lc_buf_ptr != 0; lc_buf_ptr++) 
-			        {
-				        *lc_buf_ptr = tolower(*lc_buf_ptr);
+				/* Make finder lowercase */
+				for (cnt = 0; finder[cnt] != 0; cnt++) 
+				{
+					finder[cnt] = tolower(finder[cnt]);
 				}
 			   
 			        /* Show it */
