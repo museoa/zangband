@@ -23,6 +23,13 @@ function cure_potion(hp, do_unblind, do_unconfuse, do_unpoison)
 	return ident
 end
 
+function do_curing()
+	local ident = FALSE	
+	if cure_potion(200, TRUE, TRUE, TRUE) then ident = TRUE end
+	if clear_image() then ident = TRUE end
+	return ident
+end
+
 function do_dream()
 	if ironman_nightmare then
 		msgf("A horrible vision enters your mind.")
@@ -143,12 +150,14 @@ function werewindle()
 end
 
 function restore_all_stats()
-	do_res_stat(A_STR)
-	do_res_stat(A_INT)
-	do_res_stat(A_WIS)
-	do_res_stat(A_DEX)
-	do_res_stat(A_CON)
-	do_res_stat(A_CHR)
+	local ident = FALSE
+	if do_res_stat(A_STR) then ident = TRUE end
+	if do_res_stat(A_INT) then ident = TRUE end
+	if do_res_stat(A_WIS) then ident = TRUE end
+	if do_res_stat(A_DEX) then ident = TRUE end
+	if do_res_stat(A_CON) then ident = TRUE end
+	if do_res_stat(A_CHR) then ident = TRUE end
+	return ident
 end
 
 function summon_controlled(specific)

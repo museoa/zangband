@@ -711,6 +711,7 @@ static void do_cmd_zap_rod_aux(object_type *o_ptr)
 
 	/* Hack -- let perception get aborted */
 	bool use_charge = TRUE;
+	bool result = TRUE;
 
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
@@ -784,6 +785,13 @@ static void do_cmd_zap_rod_aux(object_type *o_ptr)
 	/* Increase the timeout by the rod kind's pval. -LM- */
 	o_ptr->timeout += k_ptr->pval;
 
+#if 1
+	/* Zap the rod */
+	apply_object_trigger(TRIGGER_USE, o_ptr, "i:bb", 
+		LUA_VAR(dir), LUA_RETURN(result), LUA_RETURN(ident));
+	use_charge = result;
+#else
+`
 	/* Analyze the rod */
 	switch (o_ptr->sval)
 	{
@@ -982,7 +990,7 @@ static void do_cmd_zap_rod_aux(object_type *o_ptr)
 			break;
 		}
 	}
-
+#endif
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
