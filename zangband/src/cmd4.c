@@ -3888,9 +3888,10 @@ void dump_town_info(FILE *fff, int town)
 {
 	int j;
 
-	char stores_info[2048];
-	
 	cptr build_name;
+	
+	char c;
+	byte a;
 
 	bool visited = FALSE;
 
@@ -3915,23 +3916,6 @@ void dump_town_info(FILE *fff, int town)
 		/* Build a buffer with the information (If visited, and if it is a town) */
 		if (visited)
 		{
-			/* Clear stores and place information */
-			stores_info[0] = '\0';
-
-			/* Built stores information */
-			for (j = 0; j < pl_ptr->numstores;j++)
-			{
-				build_name = building_name(pl_ptr->store[j].type);
-
-				/* Make a string, but only if this is a real building */
-				if (!streq(build_name, "Nothing"))
-				{
-					/* Append information about store */
-					strnfmt(stores_info, 2048, "%s     %s\n",
-							stores_info, build_name);
-				}
-			}
-
 			/* write stairs information to file */
 			if (pl_ptr->dungeon)
 			{
@@ -3942,8 +3926,23 @@ void dump_town_info(FILE *fff, int town)
 				froff(fff, "%s\n", pl_ptr->name);
 			}
 
-			/* Write to file */
-			froff(fff, stores_info);
+			/* Built stores information */
+			for (j = 0; j < pl_ptr->numstores; j++)
+			{
+				build_name = building_name(pl_ptr->store[j].type);
+
+				/* Make a string, but only if this is a real building */
+				if (!streq(build_name, "Nothing"))
+				{
+					/* Get attr/char */
+					building_char(pl_ptr->store[j].type, &a, &c);
+				
+					/* Append information about store */
+					froff(fff, "  %s%c" CLR_WHITE "   %s\n", color_seq[a], c, build_name);
+				}
+			}
+
+			/* Seperator */
 			froff(fff, "\n");
 		}
 	}
