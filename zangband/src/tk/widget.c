@@ -14,12 +14,6 @@
 #include "icon.h"
 
 typedef struct Widget Widget;
-typedef void Widget_CenterProc(Widget *widgetPtr, int y, int x);
-typedef void Widget_ChangedProc(Widget *widgetPtr);
-typedef void Widget_DestroyProc(Widget *widgetPtr);
-typedef int Widget_HitTestProc(Widget *widgetPtr, int x, int y, int col, int row, int *xc, int *yc);
-typedef void Widget_InvalidateProc(Widget *widgetPtr, int row, int col);
-typedef void Widget_InvalidateAreaProc(Widget *widgetPtr, int top, int left, int bottom, int right);
 
 struct Widget
 {
@@ -46,11 +40,6 @@ struct Widget
 	int setGrid;                /* Use gridded geometry */
 
 	int y, x;					/* Cave location (center of widget) */
-	Widget_CenterProc *centerProc; /* Per-widget centering routine */
-	Widget_ChangedProc *changedProc; /* Per-widget config routine */
-	Widget_DestroyProc *destroyProc; /* Per-widget destroy routine */
-	Widget_InvalidateProc *invalidateProc;
-	Widget_InvalidateAreaProc *invalidateAreaProc;
 	int noUpdate;				/* Drawing is disabled */
 
 	int tc;						/* rc * cc */
@@ -72,25 +61,6 @@ struct Widget
     int oldGWidth, oldGHeight;	/* To notice changes */
 };
 
-/*
- * For each extension in a Widget there exists one record with
- * the following structure.  Each actual item is represented by
- * a record with the following stuff at its beginning, plus additional
- * type-specific stuff after that.
- */
-
-typedef struct WidgetItem
-{
-	int visible; /* TRUE if the item should be drawn */
-    struct WidgetItemType *typePtr;	/* Table of procedures that
-					 * implement this type of item. */
-    int x1, y1, x2, y2;			/* Bounding box for item, in pixels.
-					 * Set by item-specific code and guaranteed to
-					 * contain every pixel drawn in item. Item area
-					 * includes x1 and y1 but not x2 and y2. */
-	int minX, minY, maxX, maxY; /* Rows/Columns clobbered in widget */
-} WidgetItem;
-
 
 /*
  * Widget items use tint tables for transparency. Since each tint table
@@ -105,15 +75,11 @@ typedef struct t_widget_color
 	TintTable tint; /* The tint table */
 } t_widget_color;
 
-extern void Widget_InvalidateArea(Widget *widgetPtr, int top, int left, int right, int bottom);
-extern void Widget_EventuallyRedraw(Widget *widgetPtr);
 
 /* Extended Widget record */
 typedef struct ExWidget {
 	Widget widget;
 	IconSpec *effect; /* Per-tile effect icons */
-
-	void (*whatToDrawProc)(Widget *widgetPtr, int y, int x, t_display *wtd);
 } ExWidget;
 
 
@@ -277,7 +243,9 @@ static void DrawIconSpec(int y, int x, IconSpec iconSpec, BitmapPtr bitmapPtr)
 	}
 }
 
-/* Widget.whatToDrawProc() */
+/*
+ * Get what to draw
+ */
 static void widget_wtd(Widget *widgetPtr, int y, int x, t_display *wtd)
 {
 	/* Hack - ignore parameter */
@@ -516,11 +484,6 @@ static int widget_create(Tcl_Interp *interp, Widget **ptr)
 	/* Hack - ignore unused parameter */
 	(void) interp;
 
-	widgetPtr->centerProc = NULL;
-	widgetPtr->changedProc = widget_changed;
-	widgetPtr->destroyProc = widget_destroy;
-	widgetPtr->invalidateProc = NULL;
-	widgetPtr->invalidateAreaProc = NULL;
 	exPtr->effect = NULL;
 
 	(*ptr) = widgetPtr;
@@ -634,6 +597,100 @@ static void Widget_Calc(Widget *widgetPtr)
 
 
 /*
+ * Actually draw stuff into the Widget's display. This routine is
+ * usually passed to Tcl_DoWhenIdle().
+ */
+static void Widget_Display(ClientData clientData)
+{
+	Widget *widgetPtr = (Widget *) clientData;
+	Tk_Window tkwin = widgetPtr->tkwin;
+
+	/* We want to draw all grids */
+	if ((widgetPtr->flags & WIDGET_WIPE) != 0)
+	{
+		/* Forget that a wipe (and redraw) is needed */
+		widgetPtr->flags &= ~(WIDGET_WIPE | WIDGET_DRAW_INVALID);
+
+		/* Draw all grids */
+		widget_draw_all(widgetPtr);
+	}
+
+	/* We want to draw outdated grids */
+	if ((widgetPtr->flags & WIDGET_DRAW_INVALID) != 0)
+	{
+		/* Forget that a redraw is needed */
+		widgetPtr->flags &= ~WIDGET_DRAW_INVALID;
+
+		/* Draw outdated grids (offscreen) */
+		widget_draw_invalid(widgetPtr);
+	}
+
+	/* Forget that a redraw is scheduled */
+	widgetPtr->flags &= ~WIDGET_REDRAW;
+
+	/* The window doesn't exist, or it is not mapped */
+	if ((tkwin == NULL) || (!Tk_IsMapped(tkwin)))
+	{		
+		/* Done */
+		return;
+	}
+
+	if (widgetPtr->flags & WIDGET_EXPOSE)
+	{
+		/* Reset dirty bounds to entire window */
+		widgetPtr->dx = widgetPtr->bx;
+		widgetPtr->dy = widgetPtr->by;
+		widgetPtr->dw = widgetPtr->width;
+		widgetPtr->dh = widgetPtr->height;
+
+		/* Forget expose flag */
+		widgetPtr->flags &= ~WIDGET_EXPOSE;
+	}
+
+#if 0
+	/* Use Tk_SetWindowBackgroundPixmap() for more speed */
+	XClearWindow(widgetPtr->display, Tk_WindowId(tkwin));
+#endif
+
+	XCopyArea(widgetPtr->display,
+		widgetPtr->bitmap.pixmap, /* source drawable */
+		Tk_WindowId(tkwin), /* dest drawable */
+		widgetPtr->copyGC, /* graphics context */
+		widgetPtr->dx, widgetPtr->dy, /* source top-left */
+		(unsigned int) widgetPtr->dw, /* width */
+		(unsigned int) widgetPtr->dh, /* height */
+		widgetPtr->dx - widgetPtr->bx,
+		widgetPtr->dy - widgetPtr->by /* dest top-left */
+	);
+
+	Plat_SyncDisplay(widgetPtr->display);
+
+	/* Reset dirty bounds to entire window */
+	widgetPtr->dx = widgetPtr->bx;
+	widgetPtr->dy = widgetPtr->by;
+	widgetPtr->dw = widgetPtr->width;
+	widgetPtr->dh = widgetPtr->height;
+}
+
+
+static void Widget_EventuallyRedraw(Widget *widgetPtr)
+{
+	if (widgetPtr->tkwin == NULL)
+		return;
+
+	/* A redraw is already scheduled */
+	if (widgetPtr->flags & WIDGET_REDRAW)
+		return;
+
+	/* Schedule a redraw */
+	Tcl_DoWhenIdle(Widget_Display, (ClientData) widgetPtr);
+
+	/* Remember a redraw is scheduled */
+	widgetPtr->flags |= WIDGET_REDRAW;
+}
+
+
+/*
  * This procedure is called when the world has changed in some
  * way and the widget needs to recompute all its graphics contexts
  * and determine its new geometry.
@@ -713,8 +770,7 @@ static void Widget_WorldChanged(ClientData instanceData)
 	}
 
 	/* Client command */
-	if (widgetPtr->changedProc)
-		(*widgetPtr->changedProc)(widgetPtr);
+	widget_changed(widgetPtr);
 
 	/* Remember the current info */
 	widgetPtr->oldTileCnt = widgetPtr->tc;
@@ -1416,84 +1472,6 @@ error:
 }
 
 
-
-/*
- * Actually draw stuff into the Widget's display. This routine is
- * usually passed to Tcl_DoWhenIdle().
- */
-static void Widget_Display(ClientData clientData)
-{
-	Widget *widgetPtr = (Widget *) clientData;
-	Tk_Window tkwin = widgetPtr->tkwin;
-
-	/* We want to draw all grids */
-	if ((widgetPtr->flags & WIDGET_WIPE) != 0)
-	{
-		/* Forget that a wipe (and redraw) is needed */
-		widgetPtr->flags &= ~(WIDGET_WIPE | WIDGET_DRAW_INVALID);
-
-		/* Draw all grids */
-		widget_draw_all(widgetPtr);
-	}
-
-	/* We want to draw outdated grids */
-	if ((widgetPtr->flags & WIDGET_DRAW_INVALID) != 0)
-	{
-		/* Forget that a redraw is needed */
-		widgetPtr->flags &= ~WIDGET_DRAW_INVALID;
-
-		/* Draw outdated grids (offscreen) */
-		widget_draw_invalid(widgetPtr);
-	}
-
-	/* Forget that a redraw is scheduled */
-	widgetPtr->flags &= ~WIDGET_REDRAW;
-
-	/* The window doesn't exist, or it is not mapped */
-	if ((tkwin == NULL) || (!Tk_IsMapped(tkwin)))
-	{		
-		/* Done */
-		return;
-	}
-
-	if (widgetPtr->flags & WIDGET_EXPOSE)
-	{
-		/* Reset dirty bounds to entire window */
-		widgetPtr->dx = widgetPtr->bx;
-		widgetPtr->dy = widgetPtr->by;
-		widgetPtr->dw = widgetPtr->width;
-		widgetPtr->dh = widgetPtr->height;
-
-		/* Forget expose flag */
-		widgetPtr->flags &= ~WIDGET_EXPOSE;
-	}
-
-#if 0
-	/* Use Tk_SetWindowBackgroundPixmap() for more speed */
-	XClearWindow(widgetPtr->display, Tk_WindowId(tkwin));
-#endif
-
-	XCopyArea(widgetPtr->display,
-		widgetPtr->bitmap.pixmap, /* source drawable */
-		Tk_WindowId(tkwin), /* dest drawable */
-		widgetPtr->copyGC, /* graphics context */
-		widgetPtr->dx, widgetPtr->dy, /* source top-left */
-		(unsigned int) widgetPtr->dw, /* width */
-		(unsigned int) widgetPtr->dh, /* height */
-		widgetPtr->dx - widgetPtr->bx,
-		widgetPtr->dy - widgetPtr->by /* dest top-left */
-	);
-
-	Plat_SyncDisplay(widgetPtr->display);
-
-	/* Reset dirty bounds to entire window */
-	widgetPtr->dx = widgetPtr->bx;
-	widgetPtr->dy = widgetPtr->by;
-	widgetPtr->dw = widgetPtr->width;
-	widgetPtr->dh = widgetPtr->height;
-}
-
-
 /*
  * This procedure is invoked by Tcl_EventuallyFree() or Tcl_Release()
  * to clean up the internal structure of a Widget at a safe time
@@ -1517,8 +1495,7 @@ static void Widget_Destroy(Widget *widgetPtr)
     Tcl_DeleteCommandFromToken(widgetPtr->interp, widgetPtr->widgetCmd);
 
 	/* Client command */
-	if (widgetPtr->destroyProc)
-		(*widgetPtr->destroyProc)(widgetPtr);
+	widget_destroy(widgetPtr);
 
 	/* Free a GC */ 
     if (widgetPtr->copyGC != None)
@@ -1790,7 +1767,7 @@ void angtk_lite_spot_real(int y, int x)
 
 }
 
-void Widget_InvalidateArea(Widget *widgetPtr, int top, int left, int bottom, int right)
+static void Widget_InvalidateArea(Widget *widgetPtr, int top, int left, int bottom, int right)
 {
 	int row, col;
 
@@ -1803,22 +1780,6 @@ void Widget_InvalidateArea(Widget *widgetPtr, int top, int left, int bottom, int
 			Widget_Invalidate(widgetPtr, row, col);
 		}
 	}
-}
-
-void Widget_EventuallyRedraw(Widget *widgetPtr)
-{
-	if (widgetPtr->tkwin == NULL)
-		return;
-
-	/* A redraw is already scheduled */
-	if (widgetPtr->flags & WIDGET_REDRAW)
-		return;
-
-	/* Schedule a redraw */
-	Tcl_DoWhenIdle(Widget_Display, (ClientData) widgetPtr);
-
-	/* Remember a redraw is scheduled */
-	widgetPtr->flags |= WIDGET_REDRAW;
 }
 
 /*
