@@ -2178,6 +2178,7 @@ static errr globe_init(term_data *td)
 				ANGBAND_GRAF = "old";
 				
 				use_transparency = false;
+				use_graphics = GRAPHICS_ORIGINAL;
 				
 				break;
 			}
@@ -2199,6 +2200,7 @@ static errr globe_init(term_data *td)
 				ANGBAND_GRAF = "new";
 				
 				use_transparency = true;
+				use_graphics = GRAPHICS_ADAM_BOLT;
 				
 				break;
 			}
@@ -2206,7 +2208,7 @@ static errr globe_init(term_data *td)
 		case GRAPHICS_NONE:
 		default:
 			{
-				use_graphics = false;
+				use_graphics = GRAPHICS_NONE;
 				use_transparency = false;
 			}
 			return 0;
@@ -2451,20 +2453,12 @@ static errr Term_xtra_mac_react(void)
 		{
 			plog("Cannot initialize graphics!");
 			arg_graphics = GRAPHICS_NONE;
-			use_graphics = false;
+			use_graphics = GRAPHICS_NONE;
 		}
 
 		/* Apply request */
 		current_graphics = arg_graphics;
-		
-		if( current_graphics == GRAPHICS_NONE )
-		{
-			use_graphics = false;
-		}
-		else
-		{
-			use_graphics = true;
-		}
+		use_graphics = current_graphics;
 
 		/* Apply and Verify */
 		term_data_check_size(td);
@@ -5105,7 +5099,7 @@ static void menu(long mc)
 				{
 					/* Toggle arg_sound */
 					arg_graphics = GRAPHICS_NONE;
-					use_graphics = false;
+					use_graphics = GRAPHICS_NONE;
 					use_transparency = false;
 					
 					/* React to changes */
@@ -5122,7 +5116,7 @@ static void menu(long mc)
 				{
 					/* Toggle arg_sound */
 					arg_graphics = GRAPHICS_ORIGINAL;
-					use_graphics = true;
+					use_graphics = GRAPHICS_ORIGINAL;
 					use_transparency = false;
 					
 					/* React to changes */
@@ -5139,7 +5133,7 @@ static void menu(long mc)
 				{
 					/* Toggle arg_sound */
 					arg_graphics = GRAPHICS_ADAM_BOLT;
-					use_graphics = true;
+					use_graphics = GRAPHICS_ADAM_BOLT;
 					use_transparency = true;
 					
 					/* React to changes */

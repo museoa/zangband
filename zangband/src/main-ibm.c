@@ -1321,7 +1321,7 @@ errr init_ibm(void)
 			activate_color_complex();
 
 			/* Use graphics */
-			use_graphics = TRUE;
+			use_graphics = GRAPHICS_ORIGINAL;
 		}
 	}
 

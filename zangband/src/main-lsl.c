@@ -550,7 +550,7 @@ errr init_lsl(void)
 
 	if (arg_graphics)
 	{
-		use_graphics = TRUE;
+		use_graphics = GRAPHICS_ORIGINAL;
 	}
 	
 #endif /* USE_GRAPHICS */

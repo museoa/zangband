@@ -917,7 +917,7 @@ static errr Term_user_dos(int n)
 			case 'G':
 			case 'g':
 			{
-				/* Toggle "arg_graphics" */
+				/* Hack - Toggle "arg_graphics" */
 				arg_graphics = !arg_graphics;
 
 				/* React to changes */

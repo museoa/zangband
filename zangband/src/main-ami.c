@@ -659,7 +659,10 @@ errr init_ami( void )
 
 	/* See if we specified graphics | sound via command line */
 	use_sound = arg_sound;
-	use_graphics = arg_graphics;
+	if (arg_graphics)
+		use_graphics = GRAPHICS_ORIGINAL;
+	else
+		use_graphics = GRAPHICS_NONE;
 
 	/* Initialise global data */
 	tglob.resources_freed = FALSE;
@@ -697,11 +700,12 @@ errr init_ami( void )
 
 	/* XXX XXX XXX  Command line options have priority */
 	if (arg_graphics)
-		use_graphics = 1;
+		use_graphics = GRAPHICS_ORIGINAL;
+	else
+		use_graphics = GRAPHICS_NONE;
 	if (arg_sound)
 		use_sound = 1;
 
-	arg_graphics = use_graphics;
 	arg_sound = use_sound;
 
 	init_default_palette();
@@ -711,7 +715,7 @@ errr init_ami( void )
 		if (!read_enhanced_palette())
 			FAIL("Can't read 256 colour palette! Need file tiles256.cmap, 1024 bytes");
 	}
-	else if (use_graphics)
+	else if (use_graphics == GRAPHICS_ORIGINAL)
 	{
 		if (!read_normal_palette())
 			FAIL("Can't read normal colour palette! Need file tiles.cmap, 128 bytes");
@@ -799,7 +803,7 @@ errr init_ami( void )
 			screen_depth = 8;
 
 		/* We want to use 32+ colours with graphics */
-		if (use_graphics)
+		if (use_graphics == GRAPHICS_ORIGINAL)
 		{
 			if (KICK20 && screen_depth < (GFXB + 1))
 			{
@@ -1165,14 +1169,14 @@ errr init_ami( void )
 	amiga_clear();
 
 	/* Load and convert graphics */
-	if ( use_graphics )
+	if (use_graphics == GRAPHICS_ORIGINAL)
 	{
 		MSG( 0, 0, "Loading graphics" );
 		if ( !load_gfx() )
 			FAIL( NULL );
 
 		/* Scale the graphics to fit font sizes. AGA /may/ run out of memory here, but we'll ignore it. */
-		if (use_graphics)
+		if (use_graphics == GRAPHICS_ORIGINAL)
 			size_gfx( &data[ 0 ] );
 
 		MSG( 0, 1, "Remapping graphics" );
@@ -2397,13 +2401,13 @@ static BOOL process_bool(char *param)
 
 static void process_gfx(char *param)
 {
-	use_graphics = FALSE;
+	use_graphics = GRAPHICS_NONE;
 	if (*param == 'Y' || *param == 'y' || *param == '1' ||
 		 *param == 'T' || *param == 't')
-		use_graphics = TRUE;
+		use_graphics = GRAPHICS_ORIGINAL;
 	if (*param == 'E' || *param == 'e')
 	{
-		use_graphics = TRUE;
+		use_graphics = GRAPHICS_ORIGINAL;
 		screen_enhanced = TRUE;
 #ifdef ZANGBAND
 		ANGBAND_GRAF = "new";
@@ -3467,7 +3471,7 @@ static void cursor_on( term_data *td )
 			return;
 
 		/* Draw an outlined cursor */
-		if( CUR_A & 0xf0 && use_graphics )
+		if( CUR_A & 0xf0 && (use_graphics == GRAPHICS_ORIGINAL))
 		{
 			x0 = td->cursor_xpos * td->fw;
 			y0 = td->cursor_ypos * td->fh;
@@ -3501,7 +3505,7 @@ static void cursor_off( term_data *td )
 	if ( td->cursor_lit && !td->iconified )
 	{
 		/* Restore graphics under cursor */
-		if ( CUR_A & 0xf0 && use_graphics )
+		if ( CUR_A & 0xf0 && (use_graphics == GRAPHICS_ORIGINAL))
 		{
 #ifdef USE_TRANSPARENCY
 		put_gfx( td->wrp, td->cursor_xpos, td->cursor_ypos, Term->scr->tc[ td->cursor_ypos ][ td->cursor_xpos ],
@@ -3581,7 +3585,7 @@ static void cursor_anim( void )
 			return;
       }
 		/* Draw an outlined cursor */
-		if ( CUR_A & 0x80 && use_graphics )
+		if ( CUR_A & 0x80 && (use_graphics == GRAPHICS_ORIGINAL))
 		{
 			/* First draw the tile under cursor */
 #ifdef USE_TRANSPARENCY
@@ -3768,7 +3772,7 @@ static int conv_gfx( void )
 	SetAPen(ts->rp, PEN( TERM_BLUE ));
 
 	pen_ptr = stdpens;
-	if (use_graphics)
+	if (use_graphics == GRAPHICS_ORIGINAL)
 		pen_ptr = gfxpens;
 
 	/* Remap graphics and mask bitmaps to correct colours:
@@ -4123,7 +4127,7 @@ static void amiga_map( void )
 #endif
 
 	/* Only in graphics mode, and not on Kickstart1.3 */
-	if ( !use_graphics || KICK13 || !tglob.mapbm)
+	if ((use_graphics == GRAPHICS_NONE) || KICK13 || !tglob.mapbm)
 		return;
 
 	/* Turn off cursor */
@@ -4256,7 +4260,7 @@ void load_palette( void )
 	}
 
 	/* Now do the rest */
-	if (use_graphics)
+	if (use_graphics == GRAPHICS_ORIGINAL)
 	{
 		/* We may run out of colours here; in that case we'll attempt to pick sensible ones
 			via alloc_pen. I reckon text colour is more important than gfx colour. */
@@ -4394,7 +4398,16 @@ void update_menus( void )
 	if (find_menuitem(&a, &b, (void *)MNU_SCALEDMAP))
 	{
 		if ( item = ItemAddress( menu, FULLMENUNUM(a, b, 0)))
-			item->Flags = use_graphics ? item->Flags | ITEMENABLED : item->Flags & ~ITEMENABLED;
+		{
+			if (use_graphics == GRAPHICS_NONE)
+			{
+				item->Flags = item->Flags & ~ITEMENABLED;
+			}
+			else
+			{
+				item->Flags = item->Flags | ITEMENABLED;
+			}
+		}
 	}
 	/* Enable/Disable the palette requester */
 
@@ -4988,26 +5001,56 @@ void amiga_redefine_colours( void )
 		if (!ctable)
 			return;
 		GetRGB32(amiscr->ViewPort.ColorMap,0,cols,ctable);
-		for (i = 0 ; i < cols ; i++)
+		
+		if (use_graphics == GRAPHICS_NONE)
 		{
-			angband_color_table[use_graphics ? i : i + 16][0] = 1;
-			angband_color_table[use_graphics ? i : i + 16][1] = *c++ >> 24;
-			angband_color_table[use_graphics ? i : i + 16][2] = *c++ >> 24;
-			angband_color_table[use_graphics ? i : i + 16][3] = *c++ >> 24;
+			for (i = 0 ; i < cols ; i++)
+			{
+				angband_color_table[i + 16][0] = 1;
+				angband_color_table[i + 16][1] = *c++ >> 24;
+				angband_color_table[i + 16][2] = *c++ >> 24;
+				angband_color_table[i + 16][3] = *c++ >> 24;
+			}
 		}
+		else
+		{
+			for (i = 0 ; i < cols ; i++)
+			{
+				angband_color_table[i][0] = 1;
+				angband_color_table[i][1] = *c++ >> 24;
+				angband_color_table[i][2] = *c++ >> 24;
+				angband_color_table[i][3] = *c++ >> 24;
+			}
+		}
+		
+		
 		FreeMem(ctable,cols << 4);
 	}
 		else
 	{
 		unsigned long w;
 
-		for (i = 0 ; i < cols ; i++)
+		if (use_graphics == GRAPHICS_NONE)
 		{
-			w = GetRGB4(amiscr->ViewPort.ColorMap,i);
-			angband_color_table[use_graphics ? i : i + 16][0] = 1;
-			angband_color_table[use_graphics ? i : i + 16][1] = (w & 0xF00) >> 4;
-			angband_color_table[use_graphics ? i : i + 16][2] = (w & 0xF0);
-			angband_color_table[use_graphics ? i : i + 16][3] = (w & 0xF) << 4;
+			for (i = 0 ; i < cols ; i++)
+			{
+				w = GetRGB4(amiscr->ViewPort.ColorMap,i);
+				angband_color_table[i + 16][0] = 1;
+				angband_color_table[i + 16][1] = (w & 0xF00) >> 4;
+				angband_color_table[i + 16][2] = (w & 0xF0);
+				angband_color_table[i + 16][3] = (w & 0xF) << 4;
+			}
+		}
+		else
+		{
+			for (i = 0 ; i < cols ; i++)
+			{
+				w = GetRGB4(amiscr->ViewPort.ColorMap,i);
+				angband_color_table[i][0] = 1;
+				angband_color_table[i][1] = (w & 0xF00) >> 4;
+				angband_color_table[i][2] = (w & 0xF0);
+				angband_color_table[i][3] = (w & 0xF) << 4;
+			}
 		}
 	}
 }
@@ -5439,14 +5482,15 @@ static void amiga_gfx(int type)
 {
 	if (!type)
 	{
-		use_graphics = screen_enhanced = 0;
+		use_graphics = GRAPHICS_NONE;
+		screen_enhanced = 0;
 		reset_visuals();
 		free_gfx();
 		do_cmd_redraw();
 	}
 	if (type)
 	{
-		use_graphics = 1;
+		use_graphics = GRAPHICS_ORIGINAL;
 		screen_enhanced = (type > 1);
 		free_gfx();
 
@@ -5464,7 +5508,7 @@ static void amiga_gfx(int type)
 		if ( !load_gfx() )
 		{
 			Term_load();
-			use_graphics = 0;
+			use_graphics = GRAPHICS_NONE;
 			return;
 		}
 		size_gfx( &data[ 0 ] );
@@ -5472,7 +5516,7 @@ static void amiga_gfx(int type)
 		if ( !conv_gfx() )
 		{
 			Term_load();
-			use_graphics = 0;
+			use_graphics = GRAPHICS_NONE;
 			return;
 		}
 		Term_load();

@@ -4288,9 +4288,9 @@ extern int PlayerUID;
 /*
  * Available graphic modes
  */
-#define GRAPHICS_NONE       0
-#define GRAPHICS_ORIGINAL   1
-#define GRAPHICS_ADAM_BOLT  2
+#define GRAPHICS_NONE		0
+#define GRAPHICS_ORIGINAL	1
+#define GRAPHICS_ADAM_BOLT	2
 #define GRAPHICS_ANY		3
 #define GRAPHICS_HALF_3D	4
 
