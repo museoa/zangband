@@ -123,6 +123,7 @@ OBJ = \
 	artifact.obj \
 	script.obj \
 	ui.obj \
+	run.obj \
 	l-monst.obj l-object.obj l-player.obj l-random.obj l-ui.obj \
 	l-misc.obj l-spell.obj \
 	zbmagic1.obj zbmagic2.obj zbmagic3.obj \
