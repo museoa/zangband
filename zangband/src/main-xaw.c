@@ -976,7 +976,7 @@ static XFontStruct *getFont(AngbandWidget widget,
 /*
  * Number of fallback resources per window
  */
-#define TERM_FALLBACKS 6
+#define TERM_FALLBACKS 8
 
 
 
@@ -1006,7 +1006,9 @@ Arg specialArgs[TERM_FALLBACKS] =
 	{ XtNminRows,      24},
 	{ XtNminColumns,   80},
 	{ XtNmaxRows,      255},
-	{ XtNmaxColumns,   255}
+	{ XtNmaxColumns,   255},
+	{ XtNinternalBorder, 2},
+	{ XtNfont,			 (unsigned long) DEFAULT_X11_FONT}
 };
 
 
@@ -1015,12 +1017,14 @@ Arg specialArgs[TERM_FALLBACKS] =
  */
 Arg defaultArgs[TERM_FALLBACKS] =
 {
-	{ XtNstartRows,    24},
-	{ XtNstartColumns, 80},
-	{ XtNminRows,      1},
-	{ XtNminColumns,   1},
-	{ XtNmaxRows,      255},
-	{ XtNmaxColumns,   255}
+	{ XtNstartRows,      24},
+	{ XtNstartColumns,   80},
+	{ XtNminRows,        1},
+	{ XtNminColumns,     1},
+	{ XtNmaxRows,        255},
+	{ XtNmaxColumns,     255},
+	{ XtNinternalBorder, 2},
+	{ XtNfont,			 (unsigned long) DEFAULT_X11_FONT}
 };
 
 
@@ -1499,7 +1503,8 @@ static errr term_data_init(term_data *td, Widget topLevel,
 	cptr str;
 
 	int val;
-
+	cptr font;
+	
 	/* Create the shell widget */
 	parent = XtCreatePopupShell(name, topLevelShellWidgetClass, topLevel,
 	                            NULL, 0);
@@ -1526,6 +1531,85 @@ static errr term_data_init(term_data *td, Widget topLevel,
 	/* Reset the initial size */
 	widget_arg[0].value = rows;
 	widget_arg[1].value = cols;
+
+	/* Hack  ox==oy in xaw port */ 
+	
+	/* Window specific inner border offset (ox) */
+	sprintf(buf, "ANGBAND_X11_IBOX_%d", i);
+	str = getenv(buf);
+	val = (str != NULL) ? atoi(str) : -1;
+	if (val > 0) widget_arg[6].value = val;
+
+	/* Window specific inner border offset (oy) */
+	sprintf(buf, "ANGBAND_X11_IBOY_%d", i);
+	str = getenv(buf);
+	val = (str != NULL) ? atoi(str) : -1;
+	if (val > 0) widget_arg[6].value = val;
+
+		
+	/* Window specific font name */
+	sprintf(buf, "ANGBAND_X11_FONT_%d", i);
+
+	/* Check environment for that font */
+	font = getenv(buf);
+
+	/* Check environment for "base" font */
+	if (!font) font = getenv("ANGBAND_X11_FONT");
+
+	/* No environment variables, use default font */
+	if (!font)
+	{
+		switch (i)
+		{
+			case 0:
+			{
+				font = DEFAULT_X11_FONT_0;
+			}
+			break;
+			case 1:
+			{
+				font = DEFAULT_X11_FONT_1;
+			}
+			break;
+			case 2:
+			{
+				font = DEFAULT_X11_FONT_2;
+			}
+			break;
+			case 3:
+			{
+				font = DEFAULT_X11_FONT_3;
+			}
+			break;
+			case 4:
+			{
+				font = DEFAULT_X11_FONT_4;
+			}
+			break;
+			case 5:
+			{
+				font = DEFAULT_X11_FONT_5;
+			}
+			break;
+			case 6:
+			{
+				font = DEFAULT_X11_FONT_6;
+			}
+			break;
+			case 7:
+			{
+				font = DEFAULT_X11_FONT_7;
+			}
+			break;
+			default:
+			{
+				font = DEFAULT_X11_FONT;
+			}
+		}
+	}
+
+	widget_arg[7].value = (unsigned long) font;
+
 
 	/* Create the interior widget */
 	td->widget = (AngbandWidget)
