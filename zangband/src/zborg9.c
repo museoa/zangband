@@ -582,7 +582,10 @@ static bool borg_think(void)
 	/* Hack -- Check for being in a store */
 	if ((0 == borg_what_text(3, 5, 16, &t_a, buf)) &&
 		(streq(buf, "Item Description")))
-	{
+    {
+        static store_type *st_ptr = 0;
+        place_type *pl_ptr = &place[p_ptr->place_num];
+
 		/* Silly value */
         shop_num = 0;
 
@@ -600,6 +603,18 @@ static bool borg_think(void)
                 break;
             }
         }
+
+        /* Scan for the right real shop */
+        for (i = 0; i < pl_ptr->numstores; i++)
+        {
+            if ((p_ptr->py - pl_ptr->y * 16 == pl_ptr->store[i].y) &&
+                (p_ptr->px - pl_ptr->x * 16 == pl_ptr->store[i].x))
+            {
+                st_ptr = &pl_ptr->store[i];
+                break;
+            }
+        }
+
 
 		/* Clear the goal (the goal was probably going to a shop) */
 		goal = 0;
@@ -677,28 +692,32 @@ static bool borg_think(void)
 				int k;
 
 				/* Extract the item description */
-				if (0 != borg_what_text(3, i + 6, -65, &t_a, desc))
+				if (0 != borg_what_text(5, i + 6, -62, &t_a, desc))
 				{
 					desc[0] = '\0';
 				}
 
 				/* Strip trailing spaces */
-				for (k = strlen(desc); (k > 0) && (desc[k - 1] == ' ');
-					 k--) /* loop */ ;
+                for (k = strlen(desc); (k > 0) && (desc[k - 1] == ' '); k--)
+                    /* loop */ ;
 				desc[k] = '\0';
 
 				/* Extract the item cost in stores */
-				if (shop_num != 7)
-				{
-					if (0 != borg_what_text(68, i + 6, -9, &t_a, cost))
-					{
-						cost[0] = '\0';
-					}
-				}
+                if (0 != borg_what_text(68, i + 6, -9, &t_a, cost))
+                {
+                    cost[0] = '\0';
+                }
 			}
 
 			/* Extract actual index */
-			n = borg_shops[shop_num].page * 12 + i;
+            n = borg_shops[shop_num].page * 12 + i;
+
+            /* We have to cheat and get a pointer to the actual item... */
+            borg_item_analyze(&borg_shops[shop_num].ware[n],
+                              &st_ptr->stock[n], desc);
+
+            /* Save the cost */
+            borg_shops[shop_num].ware[n].cost = atoi(cost);
 		}
 
 		/* Hack -- browse as needed */

@@ -2390,7 +2390,7 @@ static bool borg_think_shop_buy(void)
 		if ((goal_ware / 12) != shop->page) borg_keypress(' ');
 
 		/* Log */
-		borg_note(format("# Buying %s.", item->desc));
+		borg_note(format("# Buying %s (%i gold).", item->desc, item->cost));
 
 		/* Buy an item */
 		borg_keypress('p');
