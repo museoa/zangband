@@ -282,7 +282,7 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
  */
 static blk_ptr allocate_block(int x,int y)
 {
-	int i, n, dist, maxdist;
+	int n;
 	
 	#if 0
 	/* See if block is in cache */
@@ -295,46 +295,6 @@ static blk_ptr allocate_block(int x,int y)
 	
 	}
 	
-	#endif
-	
-	#if 0
-	/* See if cache is paritally empty */
-	if (wild_grid.cache_count < WILD_BLOCKS)
-	{
-		/* Make the block */
-		gen_block(x, y, wild_cache[wild_grid.cache_count].block_ptr);
-		
-		/* Store where the block is and increment count */
-		wild_cache[wild_grid.cache_count].x = x;
-		wild_cache[wild_grid.cache_count].y = y;
-		wild_grid.cache_count++;
-		
-		/* Done */
-		
-		return wild_cache[wild_grid.cache_count].block_ptr;
-	}
-
-	
-	/* 
-	 * Find block furthest from grid centre and delete that block.
-	 * Note that this isn't a "most recently least used" algorithm.
-	 */	
-	maxdist=0;
-	n=0;
-	
-	for (i = 0; i < WILD_BLOCKS; i++)
-	{
-		/* Simple distance function */
-		dist=MAX(abs(wild_cache[i].x-(wild_grid.x+WILD_GRID_SIZE/2))
-		 ,abs(wild_cache[i].y-(wild_grid.y+WILD_GRID_SIZE/2)));
-		
-		/* Update block to be deleted if further away. */
-		if (dist > maxdist)
-		{
-			maxdist=dist;
-			n=i;		
-		}		
-	}
 	#endif
 	
 	n = x - wild_grid.x + WILD_GRID_SIZE * (y - wild_grid.y);
@@ -388,11 +348,11 @@ void move_wild(void)
 	wild_grid.y = y;
 	 
 	/* Recalculate boundaries */
-	wild_grid.y_max = ((y+WILD_GRID_SIZE)<<4) - 1;
-	wild_grid.y_min = (y<<4) + 1;
+	wild_grid.y_max = (y+WILD_GRID_SIZE)<<4;
+	wild_grid.y_min = y<<4;
 	
-	wild_grid.x_max = ((x+WILD_GRID_SIZE)<<4) - 1;
-	wild_grid.x_min = (x<<4) + 1;
+	wild_grid.x_max = (x+WILD_GRID_SIZE)<<4;
+	wild_grid.x_min = x<<4;
 	
 	/* Allocate blocks around player */
 	for(x = 0; x < WILD_GRID_SIZE; x++)

@@ -2735,11 +2735,13 @@ static bool update_view_aux(int y, int x, int y1, int x1, int y2, int x2)
  */
 static int scan_grid(int y, int x)
 {
-	cave_type *c_ptr = area(y,x);
+	cave_type *c_ptr;
 
 	/* In bounds? */
 	if (!in_bounds2(y,x)) return FALSE;
-
+	
+	c_ptr = area(y,x);
+	
 	c_ptr->info |= (CAVE_XTRA);
 	cave_view_hack(c_ptr, y, x);
 

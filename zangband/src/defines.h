@@ -127,7 +127,7 @@
 #define WILD_BLOCK_SIZE	16
 
 /* size of local wilderness grid in blocks - hard coded. */
-#define WILD_GRID_SIZE	7
+#define WILD_GRID_SIZE	9
 
 /* number of wilderness blocks in cache */
 #define WILD_BLOCKS	WILD_GRID_SIZE * WILD_GRID_SIZE
