@@ -2237,7 +2237,6 @@ bool raise_dead(int y, int x, bool pet)
 	int fx, fy;
 
 	bool    obvious = FALSE;
-	bool 	want_pet = FALSE;
 
 	cave_type *c_ptr;
 
@@ -2265,7 +2264,7 @@ bool raise_dead(int y, int x, bool pet)
 		if (player_has_los_grid(c_ptr)) obvious = TRUE;
 		
 		/* Raise Corpses / Skeletons */
-		field_hook_special(&c_ptr->fld_idx, FTYPE_CORPSE, (void *) &want_pet);
+		field_hook_special(&c_ptr->fld_idx, FTYPE_CORPSE, (void *) &pet);
 	}
 
 	/* Result */
