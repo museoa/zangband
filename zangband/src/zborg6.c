@@ -14981,27 +14981,19 @@ extern void borg_flow_direct(int y, int x)
 
 		/* Access the grid */
 		mb_ptr = map_loc(x, y);
-
-		/* Floors are ok */
-
-		/* Trees are ok */
-
-		/* Mountains not ok */
-		if (mb_ptr->feat == FEAT_MOUNTAIN) return;
+		
+		if (borg_cave_wall_grid(mb_ptr))
+		{
+			/* Only like 'diggable' things */
+			if (!((mb_ptr->feat >= FEAT_CLOSED) &&
+				(mb_ptr->feat <= FEAT_QUARTZ))) return;
+		}
 
 		/* Ignore certain "non-wall" grids */
 		if ((mb_ptr->feat == FEAT_SHAL_WATER &&
 			 (!borg_skill[BI_ENCUMBERD] &&
 			  !borg_skill[BI_FEATH])) ||
 			(mb_ptr->feat == FEAT_SHAL_LAVA && !borg_skill[BI_IFIRE])) return;
-
-		/* Certain types of Walls */
-		if (mb_ptr->feat >= FEAT_WALL_EXTRA &&
-			mb_ptr->feat <= FEAT_WALL_SOLID) return;
-
-		/* Certain types of Perm walls */
-		if (mb_ptr->feat >= FEAT_PERM_EXTRA &&
-			mb_ptr->feat <= FEAT_PERM_SOLID) return;
 
 		/* Abort at "icky" grids */
 		if (mb_ptr->info & BORG_MAP_ICKY) return;
@@ -15262,12 +15254,13 @@ static bool borg_flow_dark_1(int b_stair)
 	{
 		y = borg_temp_y[i];
 		x = borg_temp_x[i];
-
+#if 0
 		/* Create a path */
 		borg_flow_direct(y, x);
-#if 0
-		borg_flow_enqueue_grid(y, x);
 #endif /* 0 */
+
+		borg_flow_enqueue_grid(y, x);
+
 	}
 
 	/* Spread the flow */
@@ -15357,12 +15350,11 @@ static bool borg_flow_dark_2(void)
 	{
 		y = borg_temp_y[i];
 		x = borg_temp_x[i];
-
+#if 0
 		/* Create a path */
 		borg_flow_direct(y, x);
-#if 0
+#endif /* 0 */
 		borg_flow_enqueue_grid(y, x);
-#endif
 	}
 
 	/* Spread the flow */
@@ -15644,7 +15636,7 @@ static bool borg_flow_dark_5(int b_stair)
  * The "exploration" routines are broken into "near" and "far"
  * exploration, and each set is chosen via the flag below.
  */
-bool borg_flow_dark(bool neer)
+bool borg_flow_dark(bool close)
 {
 	int i;
 	int x, y, j, b_j = -1;
@@ -15675,7 +15667,7 @@ bool borg_flow_dark(bool neer)
 	}
 
 	/* Near */
-	if (neer)
+	if (close)
 	{
 		/* Method 1 */
 		if (borg_flow_dark_1(b_stair)) return (TRUE);
