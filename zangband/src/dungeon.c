@@ -4165,16 +4165,14 @@ void play_game(bool new_game)
 			turn = 1;
 		}
 		
+		dun_level = 0;
+		
 		/* Create a new wilderness for the player */
 		create_wilderness();
 
 		/* Start in town */
 		p_ptr->inside_quest = 0;
 		p_ptr->inside_arena = 0;
-		dun_level = 0;
-		
-		/* Make the function pointers point the the correct data type */
-		change_level(0);
 						
 		/* Add monsters to the wilderness */
 		repopulate_wilderness();

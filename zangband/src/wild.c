@@ -4182,23 +4182,20 @@ static void create_law_map(u16b sea)
 /* Finish making the wilderness - recenter the screen around the player. */
 void wild_done(void)
 {	
-	if (!dun_level)
-	{
-		px = p_ptr->wilderness_x;
-		py = p_ptr->wilderness_y;
+	px = p_ptr->wilderness_x;
+	py = p_ptr->wilderness_y;
 
-		/* Determine number of panels */
-		max_panel_rows = max_wild * 16 * 2 - 2;
-		max_panel_cols = max_wild * 16 * 2 - 2;
+	/* Determine number of panels */
+	max_panel_rows = max_wild * 16 * 2 - 2;
+	max_panel_cols = max_wild * 16 * 2 - 2;
 
-		/* Assume illegal panel */
-		panel_row = max_panel_rows;
-		panel_col = max_panel_cols;
+	/* Assume illegal panel */
+	panel_row = max_panel_rows;
+	panel_col = max_panel_cols;
 
-		/* Hack - delete all items / monsters in wilderness */
-		wipe_o_list();
-		wipe_m_list();
-	}
+	/* Hack - delete all items / monsters in wilderness */
+	wipe_o_list();
+	wipe_m_list();
 
 	/* Clear cache */
 	init_wild_cache();
