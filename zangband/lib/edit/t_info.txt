@@ -187,7 +187,7 @@ F:10,field_action_trap_disarm | 15,field_action_trap_disarm
 F:16,field_action_interact_disarm
 
 # compact rune
-N:15: compact rune
+N:15:compact rune
 G:^:D
 W:100:1:0
 I:FEAT | TRANS | NO_OBJECT
@@ -197,7 +197,7 @@ F:10,field_action_trap_disarm | 15,field_action_trap_disarm
 F:16,field_action_interact_disarm
 
 # dart trap
-N:16: dart trap
+N:16:dart trap
 G:^:r
 W:100:1:0
 I:FEAT | TRANS | NO_OBJECT
@@ -207,7 +207,7 @@ F:10,field_action_trap_disarm | 15,field_action_trap_disarm
 F:16,field_action_interact_disarm
 
 # dart trap
-N:17: dart trap
+N:17:dart trap
 G:^:r
 W:100:1:0
 I:FEAT | TRANS | NO_OBJECT
@@ -375,3 +375,4 @@ D:15:1:0:0:0:0:0:0
 F:10,field_action_door_bash
 F:15,field_action_delete | 16,field_action_interact_disarm
 F:17,field_action_door_jam_monster
+ 
