@@ -969,7 +969,6 @@ s32b flag_cost(object_type * o_ptr, int plusses)
 	if (f3 & TR3_XXX4) total += 0;
 	if (f3 & TR3_NO_TELE) total += 1500;
 	if (f3 & TR3_NO_MAGIC) total += 1500;
-	if (f3 & TR3_WRAITH) total += 250000;
 	if (f3 & TR3_TY_CURSE) total -= 15000;
 	if (f3 & TR3_EASY_KNOW) total += 0;
 	if (f3 & TR3_HIDE_TYPE) total += 0;
@@ -4512,7 +4511,7 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 	int dy, dx;
 	int ty, tx;
 
-	s16b o_idx;
+	s16b o_idx = 0;
 
 	s16b this_o_idx, next_o_idx = 0;
 

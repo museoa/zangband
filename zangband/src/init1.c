@@ -559,7 +559,7 @@ static cptr k_info_flags3[] =
 	"XXX4",
 	"NO_TELE",
 	"NO_MAGIC",
-	"WRAITH",
+	"XXX7",
 	"TY_CURSE",
 	"EASY_KNOW",
 	"HIDE_TYPE",

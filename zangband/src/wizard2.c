@@ -558,12 +558,12 @@ static void wiz_display_item(object_type *o_ptr)
 	prt("+------------FLAGS3------------+", 10, j+32);
 	prt("fe      ehsi  st    iiiiadta  hp", 11, j+32);
 	prt("il   n taihnf ee    ggggcregb vr", 12, j+32);
-	prt("re  nowysdose eld   nnnntalrl ym", 13, j+32);
-	prt("ec  omrcyewta ieirmsrrrriieaeccc", 14, j+32);
-	prt("aa  taauktmatlnpgeihaefcvnpvsuuu", 15, j+32);
-	prt("uu  egirnyoahivaeggoclioaeoasrrr", 16, j+32);
-	prt("rr  litsopdretitsehtierltxrtesss", 17, j+32);
-	prt("aa  echewestreshtntsdcedeptedeee", 18, j+32);
+	prt("re  no ysdose eld   nnnntalrl ym", 13, j+32);
+	prt("ec  om cyewta ieirmsrrrriieaeccc", 14, j+32);
+	prt("aa  ta uktmatlnpgeihaefcvnpvsuuu", 15, j+32);
+	prt("uu  eg rnyoahivaeggoclioaeoasrrr", 16, j+32);
+	prt("rr  li sopdretitsehtierltxrtesss", 17, j+32);
+	prt("aa  ec ewestreshtntsdcedeptedeee", 18, j+32);
 	prt_binary(f3, 19, j+32);
 }
 

@@ -1320,9 +1320,9 @@ bool identify_fully_aux(object_type *o_ptr)
 		info[i++] = "It provides resistance to disenchantment.";
 	}
 
-	if (f3 & (TR3_WRAITH))
+	if (f3 & (TR3_XXX7))
 	{
-		info[i++] = "It renders you incorporeal.";
+		info[i++] = "It renders you XXX7'ed.";
 	}
 	if (f3 & (TR3_FEATHER))
 	{

@@ -572,7 +572,6 @@ static const flag_desc misc_flags3_desc[] =
 	{ TR3_SH_ELEC,            "Electric Aura" },
 	{ TR3_NO_TELE,            "Prevent Teleportation" },
 	{ TR3_NO_MAGIC,           "Anti-Magic" },
-	{ TR3_WRAITH,             "Wraith Form" },
 	{ TR3_FEATHER,            "Levitation" },
 	{ TR3_SEE_INVIS,          "See Invisible" },
 	{ TR3_TELEPATHY,          "ESP" },

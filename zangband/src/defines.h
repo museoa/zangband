@@ -2517,7 +2517,7 @@
 #define TR3_XXX4                0x00000008L     /* Later */
 #define TR3_NO_TELE             0x00000010L     /* Anti-teleportation */
 #define TR3_NO_MAGIC            0x00000020L     /* Anti-magic */
-#define TR3_WRAITH              0x00000040L     /* Wraithform */
+#define TR3_XXX7                0x00000040L     /* Later */
 #define TR3_TY_CURSE            0x00000080L     /* The Ancient Curse */
 #define TR3_EASY_KNOW           0x00000100L     /* Aware -> Known */
 #define TR3_HIDE_TYPE           0x00000200L     /* Hide "pval" description */
@@ -3673,7 +3673,7 @@ extern int PlayerUID;
  */
 #define FIELD_INFO_TEMP		0x0001	/* Temporary field - use counter */
 #define FIELD_INFO_FEAT		0x0002	/* Terrain feature based field */
-#define FIELD_INFO_INVIS	0x0004	/* No attr / char */
+#define FIELD_INFO_VIS		0x0004	/* Has attr / char */
 #define FIELD_INFO_MARK		0x0008	/* Known */
 #define FIELD_INFO_RAND		0x0010	/* Randomize first 4 data values */
 #define FIELD_INFO_NO_LOOK	0x0020	/* Do not describe when looked at */
@@ -3716,8 +3716,9 @@ extern int PlayerUID;
 #define FIELD_ACT_MONSTER_AI	14 /* Monster AI hook */
 #define FIELD_ACT_ENTER_TEST	15 /* Monster / player entry test hook */
 #define FIELD_ACT_PLAYER_INTERACT	16 /* The player interacts with grid */
+#define FIELD_ACT_OBJECT_TEST	17 /* Test to see if can drop on field */
 
-#define FIELD_ACTION_MAX	17	/* The last action + 1 */
+#define FIELD_ACTION_MAX	18	/* The last action + 1 */
 
 
 #define FIELD_ACTION_TYPES  3 /* Number of FIELD_ACT functions */
