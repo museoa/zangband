@@ -4897,7 +4897,13 @@ A:35/2
 F:SLAY_UNDEAD | WIS
 L:MAKE:	object.pval = 1 + m_bonus(object.pval, level)
 
-# 589 is unused
+N:589:Luck
+G:":d
+I:40:18:0
+W:50:0:3:1500
+A:50/1
+F:LUCK_10
+L:MAKE:	add_ego_power(EGO_XTRA_POWER, object)
 
 ##### New weapon types #####
 N:590:& Elfblade~
