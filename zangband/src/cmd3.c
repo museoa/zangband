@@ -1437,6 +1437,7 @@ void do_cmd_query_symbol(void)
 	bool all = FALSE;
 	bool uniq = FALSE;
 	bool norm = FALSE;
+	bool killed = FALSE;
 
 	bool recall = FALSE;
 
@@ -1448,7 +1449,7 @@ void do_cmd_query_symbol(void)
 
 	/* Get a character, or abort */
 	if (!get_com
-		("Enter character to be identified, or (Ctrl-A, Ctrl-U, Ctrl-N, Ctrl-M):",
+		("Enter character to be identified, or Ctrl (A, U, N, M, K):",
 		 &sym)) return;
 
 	/* Find that character info, and describe it */
@@ -1480,6 +1481,12 @@ void do_cmd_query_symbol(void)
 		else
 			sprintf(buf, "Monsters with a name \"%s\"", temp1);
 	}
+	else if (sym == KTRL('U'))
+	{
+		all = killed = TRUE;
+		strcpy(buf, "Killed monster list.");
+	}
+	
 	else if (ident_info[i])
 	{
 		sprintf(buf, "%c - %s.", sym, ident_info[i] + 2);
@@ -1508,6 +1515,9 @@ void do_cmd_query_symbol(void)
 
 		/* Require unique monsters if needed */
 		if (uniq && !(r_ptr->flags1 & (RF1_UNIQUE))) continue;
+		
+		/* Require killed monsters if needed */
+		if (killed && !r_ptr->r_pkills) continue;
 
 		/* Collect monsters with a name temp1 */
 		if (temp1[0])
