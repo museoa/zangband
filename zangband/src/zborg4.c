@@ -1923,6 +1923,37 @@ static void borg_notice_scrolls(list_item *l_ptr, int number)
 			bp_ptr->able.artifact += number;
 			break;
 		}
+		case SV_SCROLL_STAR_ACQUIREMENT:
+		case SV_SCROLL_ACQUIREMENT:
+		{
+			bp_ptr->able.acquire += number;
+			break;
+		}
+		case SV_SCROLL_MUNDANITY:
+		{
+			int i;
+			list_item *l_ptr;
+
+			/* Check the equipment */
+			for (i = 0; i < equip_num; i++)
+			{
+				l_ptr = look_up_equip_slot(i);
+
+				/* No empty slots */
+				if (!l_ptr) continue;
+
+				/* If there is a nasty curse */
+				if (KN_FLAG(l_ptr, TR_NO_TELE) ||
+					(KN_FLAG(l_ptr, TR_NO_MAGIC) && borg_class != CLASS_WARRIOR) ||
+					KN_FLAG(l_ptr, TR_TY_CURSE))
+				{
+					/* Count the mundanity scroll */
+					bp_ptr->able.mundane += number;
+				}
+
+			break;
+			}
+		}
 	}
 }
 

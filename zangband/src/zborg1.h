@@ -255,6 +255,8 @@ struct borg_ability
 	s16b invulnerability;
 	s16b artifact;
 	s16b artify_item;
+	s16b acquire;
+	s16b mundane;
 
 	s16b bolt;
 	s16b ball;

@@ -3273,32 +3273,33 @@ static s32b borg_power_aux3(void)
 	/* Various flags */
 	if (FLAG(bp_ptr, TR_SLOW_DIGEST)) value += 10L;
 
-	/* Feather Fall if low level is nice */
-	if (bp_ptr->max_depth < 20)
+	if (FLAG(bp_ptr, TR_FEATHER))
 	{
-		if (FLAG(bp_ptr, TR_FEATHER)) value += 500L;
-	}
-	else
-	{
-		if (FLAG(bp_ptr, TR_FEATHER)) value += 50;
+		/* Feather Fall if low level is nice */
+		if (bp_ptr->max_depth < 20)
+			value += 500L;
+		else
+			value += 50;
 	}
 
-	if (FLAG(bp_ptr, TR_TELEPATHY))
+	if (FLAG(bp_ptr, TR_SEE_INVIS))
 	{
-		if (FLAG(bp_ptr, TR_SEE_INVIS)) value += 500L;
+		/* See invisible is less important if you have ESP */
+		if (FLAG(bp_ptr, TR_TELEPATHY))
+			value += 500L;
+		else
+			value += 5000L;
 	}
-	else if (FLAG(bp_ptr, TR_SEE_INVIS)) value += 5000L;
 
 	if (FLAG(bp_ptr, TR_FREE_ACT)) value += 10000L;
 
-	/* after you max out you are pretty safe from drainers. */
-	if (bp_ptr->max_lev < 50)
+	if (FLAG(bp_ptr, TR_HOLD_LIFE))
 	{
-		if (FLAG(bp_ptr, TR_HOLD_LIFE)) value += 2000L;
-	}
-	else
-	{
-		if (FLAG(bp_ptr, TR_HOLD_LIFE)) value += 200L;
+		/* after you max out you are pretty safe from drainers. */
+		if (bp_ptr->max_lev < 50)
+			value += 2000L;
+		else
+			value += 200L;
 	}
 	if (FLAG(bp_ptr, TR_REGEN)) value += 2000L;
 	if (FLAG(bp_ptr, TR_TELEPATHY)) value += 80000L;
@@ -3332,10 +3333,6 @@ static s32b borg_power_aux3(void)
 
 	/* this is way boosted to avoid carrying stuff you don't need */
 	if (FLAG(bp_ptr, TR_RES_CONF)) value += 80000L;
-
-	/* mages need a slight boost for this */
-	if ((borg_class == CLASS_MAGE || borg_class == CLASS_HIGH_MAGE) &&
-		FLAG(bp_ptr, TR_RES_CONF)) value += 2000L;
 
 	if (FLAG(bp_ptr, TR_RES_DISEN)) value += 5000L;
 	if (FLAG(bp_ptr, TR_RES_SHARDS)) value += 100L;
@@ -3443,22 +3440,89 @@ static s32b borg_power_aux3(void)
 	/*** Penalize various things ***/
 
 	/* Heavily penalize various flags */
-	if (FLAG(bp_ptr, TR_TELEPORT)) value -= 1000000L;
 	if (FLAG(bp_ptr, TR_TY_CURSE)) value -= 1000000L;
 	if (FLAG(bp_ptr, TR_NO_TELE)) value -= 1000000L;
 	if (FLAG(bp_ptr, TR_NO_MAGIC) &&
 		borg_class != CLASS_WARRIOR) value -= 1000000L;
-	if (FLAG(bp_ptr, TR_HURT_LITE) &&
-		!FLAG(bp_ptr, TR_RES_LITE)) value -= 1000000L;
 
 	/* Slightly penalize some flags */
+	if (FLAG(bp_ptr, TR_CURSED))  value -= 1000L;
 	if (FLAG(bp_ptr, TR_AGGRAVATE)) value -= 2000L;
-	if (FLAG(bp_ptr, TR_HURT_COLD)) value -= 2000L;
-	if (FLAG(bp_ptr, TR_HURT_FIRE)) value -= 2000L;
-	if (FLAG(bp_ptr, TR_HURT_ACID)) value -= 2000L;
-	if (FLAG(bp_ptr, TR_HURT_ELEC)) value -= 2000L;
-	if (FLAG(bp_ptr, TR_HURT_LITE)) value -= 2000L;
-	if (FLAG(bp_ptr, TR_HURT_DARK)) value -= 2000L;
+	if (FLAG(bp_ptr, TR_TELEPORT))  value -= 1000L;
+	if (FLAG(bp_ptr, TR_HEAVY_CURSE))  value -= 5000L;
+
+	/* Penalize vulnerability to light */
+	if (FLAG(bp_ptr, TR_HURT_LITE) &&
+		!FLAG(bp_ptr, TR_IM_LITE) &&
+		!FLAG(bp_ptr, TR_RES_LITE)) value -= 1000000;
+
+	/* Penalize vulnerability to DARK */
+	if (FLAG(bp_ptr, TR_HURT_DARK) && !FLAG(bp_ptr, TR_IM_DARK))
+	{
+		/* Not for high levels, big breathers are too painfull */
+		if (bp_ptr->lev > 40) value -= 1000000L;
+
+		value -= 2000;
+
+		/* With res_DARK it is more acceptable */
+		if (FLAG(bp_ptr, TR_RES_DARK)) value += 1000;
+
+	}
+
+	/* Penalize vulnerability to cold */
+	if (FLAG(bp_ptr, TR_HURT_COLD) && !FLAG(bp_ptr, TR_IM_COLD))
+	{
+		/* Not for high levels, big breathers are too painfull */
+		if (bp_ptr->lev > 40) value -= 1000000L;
+
+		value -= 2000;
+
+		/* With res_cold it is more acceptable */
+		if (FLAG(bp_ptr, TR_RES_COLD)) value += 1000;
+
+	}
+
+	/* Penalize vulnerability to fire */
+	if (FLAG(bp_ptr, TR_HURT_FIRE) && !FLAG(bp_ptr, TR_IM_FIRE))
+	{
+		/* Not for high levels, big breathers are too painfull */
+		if (bp_ptr->lev > 40) value -= 1000000L;
+
+		/* basic penalty */
+		value -= 2000;
+
+		/* With res_FIRE it is more acceptable */
+		if (FLAG(bp_ptr, TR_RES_FIRE)) value += 1000;
+
+	}
+
+	/* Penalize vulnerability to electricity */
+	if (FLAG(bp_ptr, TR_HURT_ELEC) && !FLAG(bp_ptr, TR_IM_ELEC))
+	{
+		/* Not for high levels, big breathers are too painfull */
+		if (bp_ptr->lev > 40) value -= 1000000L;
+
+		/* basic penalty */
+		value -= 2000;
+
+		/* With res_ELEC it is more acceptable */
+		if (FLAG(bp_ptr, TR_RES_ELEC)) value += 1000;
+
+	}
+
+	/* Penalize vulnerability to acid */
+	if (FLAG(bp_ptr, TR_HURT_ACID) && !FLAG(bp_ptr, TR_IM_ACID))
+	{
+		/* Not for high levels, big breathers are too painfull */
+		if (bp_ptr->lev > 40) value -= 1000000L;
+
+		/* basic penalty */
+		value -= 2000;
+
+		/* With res_ACID it is more acceptable */
+		if (FLAG(bp_ptr, TR_RES_ACID)) value += 1000;
+
+	}
 
 	/*** Penalize armor weight ***/
 	if (my_stat_ind[A_STR] < 15)
@@ -3503,7 +3567,8 @@ static s32b borg_power_aux3(void)
 		l_ptr = look_up_equip_slot(EQUIP_HANDS);
 
 		/* Penalize non-usable gloves */
-		if (l_ptr && !KN_FLAG(l_ptr, TR_FREE_ACT) &&
+		if (l_ptr && bp_ptr->msp < 300 &&
+			!KN_FLAG(l_ptr, TR_FREE_ACT) &&
 			!(KN_FLAG(l_ptr, TR_DEX) && (l_ptr->pval > 0)))
 		{
 			/* Hack -- Major penalty */
@@ -3971,6 +4036,12 @@ static s32b borg_power_aux4(void)
 
 	/* Reward having an item to use that artifact scroll on */
 	value += bp_ptr->able.artify_item * 1000 * bp_ptr->able.artifact;
+
+	/* Reward a scroll of acquirement */
+	value += bp_ptr->able.acquire * 100000;
+
+	/* Reward a scroll of mundanity */
+	value += bp_ptr->able.mundane * 100000;
 
 	/*** Hack -- books ***/
 

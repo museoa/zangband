@@ -1346,6 +1346,51 @@ static bool borg_enchant_to_w(void)
 }
 
 
+static bool borg_mundane(void)
+{
+	int i, slot = -1;
+	list_item *l_ptr;
+
+	if (!borg_read_scroll_fail(SV_SCROLL_MUNDANITY)) return (FALSE);
+
+	/* Check the equipment */
+	for (i = 0; i < equip_num; i++)
+	{
+		l_ptr = look_up_equip_slot(i);
+
+		/* Not for empty slots */
+		if (!l_ptr) continue;
+
+		/* If there is a nasty curse */
+		if (KN_FLAG(l_ptr, TR_NO_TELE) ||
+			(KN_FLAG(l_ptr, TR_NO_MAGIC) && borg_class != CLASS_WARRIOR) ||
+			KN_FLAG(l_ptr, TR_TY_CURSE))
+		{
+			/* Remember the target for the mundanity scroll */
+			slot = i;
+		}
+	}
+
+	/* I guess not */
+	if (slot == -1) return (FALSE);
+
+	if (borg_read_scroll(SV_SCROLL_MUNDANITY))
+	{
+		/* switch to equipment */
+		borg_keypress('/');
+
+		/* Kazam! */
+		borg_keypress(I2A(slot));
+
+		/* Getaway */
+		return (TRUE);
+	}
+
+	/* Should be unreachable */
+	return (FALSE);
+}
+
+
 /* Handle the use of a scroll of artifact creation */
 static bool borg_enchant_artifact(void)
 {
@@ -1498,6 +1543,7 @@ bool borg_enchanting(void)
 	if (borg_decurse()) return (TRUE);
 	if (borg_star_decurse()) return (TRUE);
 	if (borg_enchant_artifact()) return (TRUE);
+	if (borg_mundane()) return (TRUE);
 
 	/* Prevent casting a spell over and over */
 	if ((borg_t - borg_began > 150 && bp_ptr->depth) ||
@@ -1674,7 +1720,8 @@ static bool borg_consume(list_item *l_ptr)
 			/* Check if the food is bad or the borg is full */
 			if (bp_ptr->status.full ||
 				bp_ptr->status.gorged ||
-				sval < SV_FOOD_MIN_FOOD)
+				sval < SV_FOOD_MIN_FOOD ||
+				FLAG(bp_ptr, TR_CANT_EAT))
 			{
 				/* Probably not a good idea */
 				return (FALSE);
@@ -2681,10 +2728,6 @@ bool borg_wear_stuff(void)
 		if (!borg_obj_known_full(l_ptr) &&
 			borg_obj_star_id_able(l_ptr)) continue;
 
-		/* skip it if it has not been decursed */
-		if (KN_FLAG(l_ptr, TR_CURSED) ||
-			KN_FLAG(l_ptr, TR_HEAVY_CURSE)) continue;
-
 		/* Where does it go */
 		slot = borg_wield_slot(l_ptr);
 
@@ -2711,7 +2754,7 @@ bool borg_wear_stuff(void)
 			ring_repeat = !ring_repeat;
 		}
 
-		/* skip it if it this slot has been decursed */
+		/* skip it if it this slot has not been decursed */
 		if (KN_FLAG(&equipment[slot], TR_CURSED) ||
 			KN_FLAG(&equipment[slot], TR_HEAVY_CURSE) ) continue;
 
@@ -2771,11 +2814,17 @@ bool borg_wear_stuff(void)
 			borg_keypress('n');
 		}
 	}
+
+	/* Is the item cursed? */
+	if ((KN_FLAG(l_ptr, TR_CURSED) || KN_FLAG(l_ptr, TR_HEAVY_CURSE)) &&
+		confirm_wear)
+	{
+		/* Handle wearing cursed items correctly */
+		borg_keypress('y');
+	}
+
+	/* Okidoki */
 	return (TRUE);
-
-
-	/* Nope */
-	return (FALSE);
 }
 
 

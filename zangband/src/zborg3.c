@@ -1297,6 +1297,9 @@ bool borg_use_item_fail(list_item *l_ptr, bool risky)
 	/* Confusion hurts skill */
 	if (bp_ptr->status.confused) chance = chance / 2;
 	
+	/* Cursed items are difficult to activate */
+	if (KN_FLAG(l_ptr, TR_CURSED)) chance /= 3;
+
 	/* Do you feel lucky, punk? */
 	if (risky)
 	{

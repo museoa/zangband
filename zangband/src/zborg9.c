@@ -2410,14 +2410,18 @@ static void borg_cheat_options(void)
 	/* We pick up items when we step on them */
 	always_pickup = TRUE;
 
-	/* Hack - we don't understand this */
-	auto_destroy = FALSE;
-
-	/* Do not confirm actions */
-	confirm_wear = FALSE;
+	/* The borg adds the direction so these should be off */
+	easy_open = FALSE;
+	easy_disarm = FALSE;
 
 	/* The borg doesn't understand the floor list */
 	easy_floor = FALSE;
+
+	/* Prevent the teleport [y/n] question */
+	disturb_other = FALSE;
+
+	/* The borg can get off-sequence with this */
+	auto_more = FALSE;
 
 	/* set the continous play mode if the game cheat death is on */
 	if (cheat_live) borg_cheat_death = TRUE;
