@@ -3953,6 +3953,30 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 }
 
 
+/*
+ * Find the distance from (x, y) to a line.
+ */
+int dist_to_line(int y, int x, int y1, int x1, int y2, int x2)
+{
+	/* Vector from (x, y) to (x1, y1) */
+	int py = y1 - y;
+	int px = x1 - x;
+
+	/* Normal vector */
+	int ny = x2 - x1;
+	int nx = y1 - y2;
+
+   /* Length of N */
+	int d = distance(y1, x1, y2, x2);
+
+	/* Component of P on N */
+	d = ((d) ? ((py * ny + px * nx) / d) : 0);
+
+   /* Absolute value */
+   return((d >= 0) ? d : 0 - d);
+}
+
+
 
 /*
  * Generic "beam"/"bolt"/"ball" projection routine.
@@ -4118,6 +4142,9 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 	/* Assume the player has seen no blast grids */
 	bool drawn = FALSE;
 
+	/* Assume to be a normal ball spell */
+	bool breath = FALSE;
+
 	/* Is the player blind? */
 	bool blind = (p_ptr->blind ? TRUE : FALSE);
 
@@ -4134,7 +4161,10 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 	byte gx[256], gy[256];
 
 	/* Encoded "radius" info (see above) */
-	byte gm[16];
+	byte gm[32];
+
+	/* Actual radius encoded in gm[] */
+	int gm_rad = rad;
 
 	bool jump = FALSE;
 
@@ -4189,9 +4219,17 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 		}
 	}
 
+	/* Handle a breath attack */
+	if (rad < 0)
+	{
+		rad = 0 - rad;
+		breath = TRUE;
+		flg |= PROJECT_HIDE;
+	}
 
-	/* Hack -- Assume there will be no blast (max radius 16) */
-	for (dist = 0; dist < 16; dist++) gm[dist] = 0;
+
+	/* Hack -- Assume there will be no blast (max radius 32) */
+	for (dist = 0; dist < 32; dist++) gm[dist] = 0;
 
 
 	/* Initial grid */
@@ -4304,62 +4342,144 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 	gm[1] = grids;
 
 	dist_hack = dist;
+   dist = path_n;
 
-	/* Explode */
-	if (TRUE)
+	/* If we found a "target", explode there */
+	if (dist <= MAX_RANGE)
 	{
-		/* Hack -- remove final beam grid */
-		if (flg & PROJECT_BEAM)
-		{
-			grids--;
-		}
+		/* Mega-Hack -- remove the final "beam" grid */
+		if ((flg & (PROJECT_BEAM)) && (grids > 0)) grids--;
 
-		/* Determine the blast area, work from the inside out */
-		for (dist = 0; dist <= rad; dist++)
+		/*
+		 * Create a conical breath attack
+		 *
+		 *         ***
+		 *     ********
+		 * D********@**
+		 *     ********
+		 *         ***
+		 */
+		if (breath)
 		{
-			/* Scan the maximal blast area of radius "dist" */
-			for (y = y2 - dist; y <= y2 + dist; y++)
+			int by, bx;
+			int brad = 0;
+			int bdis = 0;
+			int cdis;
+
+			/* Not done yet */
+			bool done = FALSE;
+
+			flg &= ~(PROJECT_HIDE);
+
+			by = y1;
+			bx = x1;
+
+			while (bdis <= dist + rad)
 			{
-				for (x = x2 - dist; x <= x2 + dist; x++)
+				/* Travel from center outward */
+				for (cdis = 0; cdis <= brad; cdis++)
 				{
-					/* Ignore "illegal" locations */
-					if (!in_bounds2(y, x)) continue;
-
-					/* Enforce a "circular" explosion */
-					if (distance(y2, x2, y, x) != dist) continue;
-
-					if (typ == GF_DISINTEGRATE)
+					/* Scan the maximal blast area of radius "cdis" */
+					for (y = by - cdis; y <= by + cdis; y++)
 					{
-						if (cave_valid_bold(y, x) &&
-						   (cave[y][x].feat < FEAT_PATTERN_START ||
-						    cave[y][x].feat > FEAT_PATTERN_XTRA2) &&
-						   (cave[y][x].feat < FEAT_DEEP_WATER ||
-						    cave[y][x].feat > FEAT_GRASS))
+						for (x = bx - cdis; x <= bx + cdis; x++)
 						{
-							if (cave[y][x].feat == FEAT_TREES)
-								cave_set_feat(y, x, FEAT_GRASS);
-							else
-								cave_set_feat(y, x, FEAT_FLOOR);
+							/* Ignore "illegal" locations */
+							if (!in_bounds(y, x)) continue;
+
+							/* Enforce a circular "ripple" */
+							if (distance(y1, x1, y, x) != bdis) continue;
+
+							/* Enforce an arc */
+							if (distance(by, bx, y, x) != cdis) continue;
+
+							/* The blast is stopped by walls */
+							if (!los(by, bx, y, x)) continue;
+
+							/* Save this grid */
+							gy[grids] = y;
+							gx[grids] = x;
+							grids++;
 						}
-
-						/* Update some things -- similar to GF_KILL_WALL */
-						p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
 					}
-					else
-					{
-						/* Ball explosions are stopped by walls */
-						if (!los(y2, x2, y, x)) continue;
-					}
-
-					/* Save this grid */
-					gy[grids] = y;
-					gx[grids] = x;
-					grids++;
 				}
+
+				/* Encode some more "radius" info */
+				gm[bdis + 1] = grids;
+
+				/* Stop moving */
+				if ((by == y2) && (bx == x2)) done = TRUE;
+
+				/* Finish */
+				if (done)
+				{
+					bdis++;
+					continue;
+				}
+
+				/* Ripple outwards */
+				mmove2(&by, &bx, y1, x1, y2, x2);
+
+				/* Find the next ripple */
+				bdis++;
+
+				/* Increase the size */
+				brad = (rad * bdis) / dist;
 			}
 
-			/* Encode some more "radius" info */
-			gm[dist+1] = grids;
+			/* Store the effect size */
+			gm_rad = bdis;
+		}
+
+		else
+		{
+			/* Determine the blast area, work from the inside out */
+			for (dist = 0; dist <= rad; dist++)
+			{
+				/* Scan the maximal blast area of radius "dist" */
+				for (y = y2 - dist; y <= y2 + dist; y++)
+				{
+					for (x = x2 - dist; x <= x2 + dist; x++)
+					{
+						/* Ignore "illegal" locations */
+						if (!in_bounds2(y, x)) continue;
+
+						/* Enforce a "circular" explosion */
+						if (distance(y2, x2, y, x) != dist) continue;
+
+						if (typ == GF_DISINTEGRATE)
+						{
+							if (cave_valid_bold(y, x) &&
+								(cave[y][x].feat < FEAT_PATTERN_START ||
+								 cave[y][x].feat > FEAT_PATTERN_XTRA2) &&
+								(cave[y][x].feat < FEAT_DEEP_WATER ||
+								 cave[y][x].feat > FEAT_GRASS))
+							{
+								if (cave[y][x].feat == FEAT_TREES)
+									cave_set_feat(y, x, FEAT_GRASS);
+								else
+									cave_set_feat(y, x, FEAT_FLOOR);
+							}
+
+							/* Update some things -- similar to GF_KILL_WALL */
+							p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
+						}
+						else
+						{
+							/* Ball explosions are stopped by walls */
+							if (!los(y2, x2, y, x)) continue;
+						}
+
+						/* Save this grid */
+						gy[grids] = y;
+						gx[grids] = x;
+						grids++;
+					}
+				}
+
+				/* Encode some more "radius" info */
+				gm[dist+1] = grids;
+			}
 		}
 	}
 
@@ -4372,7 +4492,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 	if (!blind && !(flg & (PROJECT_HIDE)))
 	{
 		/* Then do the "blast", from inside out */
-		for (t = 0; t <= rad; t++)
+		for (t = 0; t <= gm_rad; t++)
 		{
 			/* Dump everything with this radius */
 			for (i = gm[t]; i < gm[t+1]; i++)
@@ -4458,8 +4578,19 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 			y = gy[i];
 			x = gx[i];
 
-			/* Affect the feature in that grid */
-			if (project_f(who, dist, y, x, dam, typ)) notice = TRUE;
+			/* Find the closest point in the blast */
+			if (breath)
+			{
+				int d = dist_to_line(y, x, y1, x1, y2, x2);
+
+				/* Affect the grid */
+				if (project_f(who, d, y, x, dam, typ)) notice = TRUE;
+			}
+			else
+			{
+				/* Affect the grid */
+				if (project_f(who, dist, y, x, dam, typ)) notice = TRUE;
+			}
 		}
 	}
 
@@ -4484,8 +4615,19 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 			y = gy[i];
 			x = gx[i];
 
-			/* Affect the object in the grid */
-			if (project_o(who, dist, y, x, dam, typ)) notice = TRUE;
+			/* Find the closest point in the blast */
+			if (breath)
+			{
+				int d = dist_to_line(y, x, y1, x1, y2, x2);
+
+				/* Affect the object in the grid */
+				if (project_o(who, d, y, x, dam, typ)) notice = TRUE;
+			}
+			else
+			{
+				/* Affect the object in the grid */
+				if (project_o(who, dist, y, x, dam, typ)) notice = TRUE;
+			}
 		}
 	}
 
@@ -4513,15 +4655,26 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 
 			if (grids > 1)
 			{
-				/* Affect the monster in the grid */
-				if (project_m(who, dist, y, x, dam, typ)) notice = TRUE;
+				/* Find the closest point in the blast */
+				if (breath)
+				{
+					int d = dist_to_line(y, x, y1, x1, y2, x2);
+
+					/* Affect the monster in the grid */
+					if (project_m(who, d, y, x, dam, typ)) notice = TRUE;
+				}
+				else
+				{
+					/* Affect the monster in the grid */
+					if (project_m(who, dist, y, x, dam, typ)) notice = TRUE;
+				}
 			}
 			else
 			{
 				monster_race *ref_ptr = &r_info[m_list[cave[y][x].m_idx].r_idx];
 
 				if ((ref_ptr->flags2 & RF2_REFLECTING) && (randint(10) != 1)
-				    && (dist_hack > 1))
+					 && (dist_hack > 1))
 				{
 					byte t_y, t_x;
 					int max_attempts = 10;
@@ -4596,8 +4749,19 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 			y = gy[i];
 			x = gx[i];
 
-			/* Affect the player */
-			if (project_p(who, dist, y, x, dam, typ, rad)) notice = TRUE;
+			/* Find the closest point in the blast */
+			if (breath)
+			{
+				int d = dist_to_line(y, x, y1, x1, y2, x2);
+
+				/* Affect the player */
+				if (project_p(who, d, y, x, dam, typ, rad)) notice = TRUE;
+			}
+			else
+			{
+				/* Affect the player */
+				if (project_p(who, dist, y, x, dam, typ, rad)) notice = TRUE;
+			}
 		}
 	}
 

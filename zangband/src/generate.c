@@ -769,29 +769,6 @@ static void add_moss(void)
 }
 #endif /* 0 */
 
-/*
- * Find the distance from (x, y) to a line.
- */
-static int dist_to_line(int y, int x, int y1, int x1, int y2, int x2)
-{
-	/* Vector from (x, y) to (x1, y1) */
-	int py = y1 - y;
-	int px = x1 - x;
-
-	/* Normal vector */
-	int ny = x2 - x1;
-	int nx = y1 - y2;
-
-   /* Length of N */
-	int d = distance(y1, x1, y2, x2);
-
-	/* Component of P on N */
-	d = ((d) ? ((py * ny + px * nx) / d) : 0);
-
-   /* Absolute value */
-	return ((d >= 0) ? d : 0 - d);
-}
-
 
 /*
  * Places water through dungeon.
