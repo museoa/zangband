@@ -873,7 +873,8 @@ static s32b object_value_base(object_type *o_ptr)
 
 		/* Figurines, relative to monster level */
 		case TV_FIGURINE:
-			return ((r_info[o_ptr->pval].level) * 50L);
+			return (r_info[o_ptr->pval].level 
+				* r_info[o_ptr->pval].level * 10L);
 	}
 
 	/* Paranoia -- Oops */
@@ -902,9 +903,9 @@ s32b flag_cost(object_type * o_ptr, int plusses)
 	if (f1 & TR1_INFRA) total += (150 * plusses);
 	if (f1 & TR1_TUNNEL) total += (175 * plusses);
 	if ((f1 & TR1_SPEED) && (plusses > 0))
-		total += (10000 + (2500 * plusses));
+		total += (500 * plusses * plusses);
 	if ((f1 & TR1_BLOWS) && (plusses > 0))
-		total += (10000 + (2500 * plusses));
+		total += (300 * plusses * plusses);
 	if (f1 & TR1_XXX1) total += 0;
 	if (f1 & TR1_XXX2) total += 0;
 	if (f1 & TR1_SLAY_ANIMAL) total += 3500;
@@ -1083,9 +1084,11 @@ s32b flag_cost(object_type * o_ptr, int plusses)
  *
  * Wand and staffs get cost for each charge
  *
- * Armor is worth an extra 100 gold per bonus point to armor class.
+ * Armor is worth an extra 5 gold per bonus point to armor class^2.
  *
- * Weapons are worth an extra 100 gold per bonus point (AC,TH,TD).
+ * Weapons are worth an extra 5 gold per bonus point^2 (AC,TH,TD).
+ *
+ * Note: the bonuses are proportional to the points squared.
  *
  * Missiles are only worth 5 gold per bonus point, since they
  * usually appear in groups of 20, and we want the player to get
@@ -1194,10 +1197,10 @@ s32b object_value_real(object_type *o_ptr)
 			if (f1 & (TR1_TUNNEL)) value += (o_ptr->pval * 50L);
 
 			/* Give credit for extra attacks */
-			if (f1 & (TR1_BLOWS)) value += (o_ptr->pval * 2000L);
+			if (f1 & (TR1_BLOWS)) value += (o_ptr->pval * o_ptr->pval * 500L);
 
 			/* Give credit for speed bonus */
-			if (f1 & (TR1_SPEED)) value += (o_ptr->pval * 30000L);
+			if (f1 & (TR1_SPEED)) value += (o_ptr->pval * o_ptr->pval * 300L);
 
 			break;
 		}
@@ -1239,7 +1242,9 @@ s32b object_value_real(object_type *o_ptr)
 			if (o_ptr->to_d < 0) return (0L);
 
 			/* Give credit for bonuses */
-			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
+			value += ((o_ptr->to_h * o_ptr->to_h
+				+ o_ptr->to_d * o_ptr->to_d
+				+ o_ptr->to_a * o_ptr->to_a) * 5L);
 
 			/* Done */
 			break;
@@ -1257,13 +1262,16 @@ s32b object_value_real(object_type *o_ptr)
 		case TV_DRAG_ARMOR:
 		{
 			/* Give credit for hit bonus */
-			value += ((o_ptr->to_h - k_ptr->to_h) * 100L);
+			value += ((o_ptr->to_h - k_ptr->to_h) *
+				(o_ptr->to_h - k_ptr->to_h) * 5L);
 
 			/* Give credit for damage bonus */
-			value += ((o_ptr->to_d - k_ptr->to_d) * 100L);
+			value += ((o_ptr->to_d - k_ptr->to_d) *
+				(o_ptr->to_d - k_ptr->to_d) * 5L);
 
 			/* Give credit for armor bonus */
-			value += ((o_ptr->to_a - k_ptr->to_a) * 100L);
+			value += ((o_ptr->to_a - k_ptr->to_a) *
+				(o_ptr->to_a - k_ptr->to_a) * 5L);
 
 			/* Done */
 			break;
@@ -1280,7 +1288,9 @@ s32b object_value_real(object_type *o_ptr)
 			if (o_ptr->to_h + o_ptr->to_d < 0) return (0L);
 
 			/* Factor in the bonuses */
-			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
+			value += ((o_ptr->to_h * o_ptr->to_h
+				+ o_ptr->to_d * o_ptr->to_d
+				+ o_ptr->to_a * o_ptr->to_a) * 5L);
 
 			/* Hack -- Factor in extra damage dice */
 			if ((o_ptr->dd > k_ptr->dd) && (o_ptr->ds == k_ptr->ds))
@@ -1301,7 +1311,8 @@ s32b object_value_real(object_type *o_ptr)
 			if (o_ptr->to_h + o_ptr->to_d < 0) return (0L);
 
 			/* Factor in the bonuses */
-			value += ((o_ptr->to_h + o_ptr->to_d) * 5L);
+			value += ((o_ptr->to_h * o_ptr->to_h
+				+ o_ptr->to_d * o_ptr->to_d) * 2L);
 
 			/* Hack -- Factor in extra damage dice */
 			if ((o_ptr->dd > k_ptr->dd) && (o_ptr->ds == k_ptr->ds))
@@ -1316,7 +1327,8 @@ s32b object_value_real(object_type *o_ptr)
 		/* Figurines, relative to monster level */
 		case TV_FIGURINE:
 		{
-			value = ((r_info[o_ptr->pval].level) * 50L);
+			value = (r_info[o_ptr->pval].level * 
+				r_info[o_ptr->pval].level * 50L);
 			break;
 		}
 	}
@@ -3772,7 +3784,7 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great, 
 
 
 	/* Base chance of being "good" */
-	f1 = lev + 10;
+	f1 = (lev * 4) / 7 + 10;
 
 	/* Maximal chance of being "good" */
 	if (f1 > 75) f1 = 75;
