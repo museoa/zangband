@@ -207,6 +207,37 @@ static const struct luaL_reg intMathLib[] =
 	{"max",    math_max },
 };
 
+/*
+ * Execute a piece of lua code, passing global variables and returning values.
+ *
+ * The "format" string should consist of zero or more format codes for
+ * values to pass to the script, optionally followed by a ':' and zero or more
+ * format codes for values to pass and return. Format codes are:
+ *
+ * i - an integer
+ * b - a boolean
+ * s - a string [cptr]
+ * p - a pointer to a user-defined type
+ *
+ * For 'i', 'b', and 's', the vararg list should include a cptr giving the name
+ * of the variable to pass it in, followed by a value of the correct type (if
+ * before the ':') or a pointer to a variable of the correct type (if after).
+ * The macros LUA_VAR(x) and LUA_RETURN(x) pass a variable in the appropriate
+ * form for before or after the ':' respectively.
+ *
+ * For 'p', it should include a cptr with the variable name, a cptr with the
+ * name of the type, and the pointer itself, in order.
+ *
+ * If the script returns values, they are returned in the return variables,
+ * in the order they are declared in the format. If fewer values are returned
+ * than there are returned variables, the remaining variables recieve the
+ * values they have at the end of the lua code - generally the same as was
+ * passed in, unless the lua code changed it. Any excess return values are
+ * ignored.
+ *
+ * The value returned for string arguments is always made with string_make() 
+ * and should be freed with string_free() when no longer needed. 
+ */
 static void call_lua_hook(cptr script, cptr format, va_list vp)
 {
 	int i, status;
@@ -269,10 +300,12 @@ static void call_lua_hook(cptr script, cptr format, va_list vp)
 		if (format[i] == ':')
 		{
 			i++;
-			first_return = i;
 			break;
 		}
 	}
+
+	/* Save the first return argument (or the '\0' if none) */
+	first_return = i;
 
 	for (i = first_return; format[i] && i < 20; i++)
 	{
@@ -390,6 +423,29 @@ static void call_lua_hook(cptr script, cptr format, va_list vp)
 	}
 }
 
+/*
+ * Apply an object trigger, a small lua script which can be attached to an
+ * object type or a specific item (usually an ego-item or artifact).
+ *
+ * Currently defined triggers, and their normal arguments, include:
+ *
+ * TRIGGER_USE - for activating a wearable item or using any other item.
+ * Wearable items neither take nor return values. Other items may or may not
+ * have a 'dir' value, depending on type, and may return 'result' and 'ident' 
+ * which indicate if the action used a charge and if it should identify the
+ * object, respectively.
+ *
+ * TRIGGER_MAKE - called once near the end of object generation. Takes one
+ * argument, 'lev', which is the level the object is being generated at for
+ * non-artifacts and the level of the artifact for artifacts.
+ *
+ * TRIGGER_BONUS - called on worn items during calc_bonuses(). No arguments.
+ *
+ * TRIGGER_SMASH - called for potions when they break.
+ *
+ * TRIGGER_DESC - called to get an activation/use description for an item.
+ * Returns a string describing the activation or use.
+ */
 void apply_object_trigger(int trigger_id, object_type *o_ptr, cptr format, ...)
 {
 	va_list vp;
