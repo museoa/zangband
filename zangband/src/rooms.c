@@ -3698,6 +3698,9 @@ static void build_type13(int by0, int bx0)
 	generate_draw(y0 - yhsize + 1, x0 - xhsize + 1,
 		 y0 - yhsize + ysize - 2, x0 - xhsize + xsize - 2, FEAT_FLOOR);
 		 
+	/* Hack - Use light to denote tile lighting now */
+	light = FALSE;
+	
 	/* Select type of inner feature */
 	switch (rand_int(4))
 	{
@@ -3712,6 +3715,9 @@ static void build_type13(int by0, int bx0)
 		{
 			/* Lava */
 			feat = FEAT_SHAL_LAVA;
+			
+			/* Lava is usually glowing */
+			light = TRUE;
 			break;
 		}
 		
@@ -3726,6 +3732,13 @@ static void build_type13(int by0, int bx0)
 		{
 			/* Rubble - oooh treasure */
 			feat = FEAT_RUBBLE;
+			break;
+		}
+		
+		case 4:
+		{
+			/* Sand */
+			feat = FEAT_SAND;
 			break;
 		}
 	}
@@ -3744,6 +3757,9 @@ static void build_type13(int by0, int bx0)
 			{
 				/* Replace with feature */
 				c_ptr->feat = feat;
+				
+				/* Lava glows */
+				if (light) c_ptr->info |= CAVE_GLOW;
 			}
 			else
 			{
