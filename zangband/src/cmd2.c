@@ -2195,7 +2195,8 @@ void do_cmd_alter(void)
 		          (c_ptr->feat == FEAT_MOUNTAIN) ||
 			  (c_ptr->feat == FEAT_SNOW_MOUNTAIN) ||
 			  (c_ptr->feat == FEAT_PINE_TREE) ||
-			  (c_ptr->feat == FEAT_SNOW_TREE)))
+			  (c_ptr->feat == FEAT_SNOW_TREE) ||
+			  (c_ptr->feat == FEAT_JUNGLE)))
 		{
 			/* Tunnel */
 			more = do_cmd_tunnel_aux(y, x);
