@@ -1332,43 +1332,6 @@ void borg_item_analyze(borg_item *item, object_type *real_item, cptr desc)
 }
 
 /*
- * Send a command to inscribe item number "i" with the inscription "str".
- */
-void borg_send_inscribe(int i, cptr str, bool inven)
-{
-	cptr s;
-
-	/* Label it */
-	borg_keypress('{');
-
-	/* Choose from inventory */
-	if (inven)
-	{
-		/* Choose the item */
-		borg_keypress(I2A(i));
-	}
-
-	/* Choose from equipment */
-	else
-	{
-		/* Go to equipment (if necessary) */
-		if (borg_items[0].iqty) borg_keypress('/');
-
-		/* Choose the item */
-		borg_keypress(I2A(i - INVEN_WIELD));
-	}
-
-	/* Send the label */
-	for (s = str; *s; s++) borg_keypress(*s);
-
-	/* End the inscription */
-	borg_keypress('\n');
-}
-
-
-
-
-/*
  * Find the slot of an item with the given tval/sval, if available.
  * Given multiple choices, choose the item with the largest "pval".
  * Given multiple choices, choose the smallest available pile.
