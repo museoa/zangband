@@ -14731,3 +14731,14 @@ S:1_IN_5 |
 S:BR_TIME | HASTE | SLOW
 D:It wasn't there a second ago....
 
+N:889:Sheep
+G:q:w
+I:110:2d2:5:3:255
+W:0:0:0:0
+B:DROOL
+B:GAZE
+B:BUTT
+F:ANIMAL | FRIENDS | FRIENDLY | WILD_GRASS |
+F:DROP_CORPSE | DROP_SKELETON |
+F:STUPID | EMPTY_MIND | RAND_50 | RAND_25
+D:Awww, look at the sheep isn't it cute...
