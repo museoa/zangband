@@ -632,8 +632,8 @@ static void do_cmd_aim_wand_aux(object_type *o_ptr)
 	sound(SOUND_ZAP);
 
 	/* Aim the wand */
-	use_charge = apply_object_trigger(TRIGGER_USE, o_ptr, &ident, 
-			"dir", dir, NULL, 0, NULL, 0);
+	use_charge = apply_object_trigger(TRIGGER_USE, o_ptr, &ident, 1,
+			LUA_VAR(dir));
 	
 	/* Hack - wands may destroy themselves if activated on the ground */
 	if (o_ptr->k_idx)
@@ -1194,8 +1194,7 @@ static void do_cmd_activate_aux(object_type *o_ptr)
 	}
 
 	/* Activate the object */
-	apply_object_trigger(TRIGGER_USE, o_ptr, NULL, 
-			NULL, 0, NULL, 0, NULL, 0);
+	apply_object_trigger(TRIGGER_USE, o_ptr, NULL, 0); 
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP);

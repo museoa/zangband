@@ -261,15 +261,17 @@ cptr apply_object_trigger_str(int trigger_id, const object_type *o_ptr)
 	return (result);
 }
 
-bool apply_object_trigger(int trigger_id, object_type *o_ptr, bool *ident, 
-		cptr var1, int val1, cptr var2, int val2, cptr var3, int val3)
+bool apply_object_trigger(int trigger_id, object_type *o_ptr, bool *ident,
+		int vcount, ...)
 {
-	int status;
+	int status, i;
 	bool result;
+	
+	va_list vp;
 	
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
-	cptr script = NULL;
+	cptr script = NULL, var;
 
 	int oldtop = lua_gettop(L);
 
@@ -287,9 +289,21 @@ bool apply_object_trigger(int trigger_id, object_type *o_ptr, bool *ident,
 	tolua_pushusertype(L, (void*)o_ptr, tolua_tag(L, "object_type"));
 	lua_setglobal(L, "object");
 	lua_pushnumber(L, trigger_id); lua_setglobal(L, "trigger_id");
-	if (var1) { lua_pushnumber(L, val1); lua_setglobal(L, var1); }
-	if (var2) { lua_pushnumber(L, val2); lua_setglobal(L, var2); }
-	if (var3) { lua_pushnumber(L, val3); lua_setglobal(L, var3); }
+	
+	/* Begin the Varargs Stuff */
+	va_start(vp, vcount);
+	
+	for (i = 0; i < vcount; i++)
+	{
+		/* Get the next argument */
+		var = va_arg(vp, cptr);
+	
+		lua_pushnumber(L, va_arg(vp, int));
+		lua_setglobal(L, var);
+	}
+	
+	/* End the Varargs Stuff */
+	va_end(vp);
 
 	/* Set result vars for convenience */
 	if (trigger_id == TRIGGER_USE)
@@ -331,10 +345,22 @@ bool apply_object_trigger(int trigger_id, object_type *o_ptr, bool *ident,
 	lua_pushnil(L); lua_setglobal(L, "trigger_id");
 	lua_pushnil(L); lua_setglobal(L, "object");
 	lua_pushnil(L); lua_setglobal(L, "ident");
-	lua_pushnil(L); lua_setglobal(L, "result");
-	if (var1) { lua_pushnil(L); lua_setglobal(L, var1); }
-	if (var2) { lua_pushnil(L); lua_setglobal(L, var2); }
-	if (var3) { lua_pushnil(L); lua_setglobal(L, var3); }
+	lua_pushnil(L); lua_setglobal(L, "result");	
+	
+	/* Begin the Varargs Stuff */
+	va_start(vp, vcount);
+	
+	for (i = 0; i < vcount; i++)
+	{
+		lua_pushnil(L);
+		lua_setglobal(L, va_arg(vp, cptr));
+		
+		/* Ignore value */
+		(void) va_arg(vp, int);
+	}
+	
+	/* End the Varargs Stuff */
+	va_end(vp);
 
 	return (result);
 }
@@ -344,8 +370,7 @@ bool apply_object_trigger(int trigger_id, object_type *o_ptr, bool *ident,
  */
 bool use_object(object_type *o_ptr, bool *ident)
 {
-	return apply_object_trigger(TRIGGER_USE, o_ptr, ident, 
-			NULL, 0, NULL, 0, NULL, 0);
+	return apply_object_trigger(TRIGGER_USE, o_ptr, ident, 0);
 }
 
 
