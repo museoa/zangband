@@ -939,7 +939,7 @@ static void touch_zap_player(const monster_type *m_ptr)
 			char aura_dam[80];
 
 			aura_damage =
-				damroll(1 + (r_ptr->level / 26), 1 + (r_ptr->level / 17));
+				damroll(1 + (r_ptr->hdice * 2 / 26), 1 + (r_ptr->level / 17));
 
 			/* Hack -- Get the "died from" name */
 			monster_desc(aura_dam, m_ptr, 0x88, 80);
@@ -959,7 +959,7 @@ static void touch_zap_player(const monster_type *m_ptr)
 			char aura_dam[80];
 
 			aura_damage =
-				damroll(1 + (r_ptr->level / 26), 1 + (r_ptr->level / 17));
+				damroll(1 + (r_ptr->hdice * 2 / 26), 1 + (r_ptr->level / 17));
 
 			/* Hack -- Get the "died from" name */
 			monster_desc(aura_dam, m_ptr, 0x88, 80);
@@ -978,7 +978,7 @@ static void touch_zap_player(const monster_type *m_ptr)
 		{
 			char aura_dam[80];
 
-			aura_damage = damroll(1 + (r_ptr->level / 26), 1 + (r_ptr->level / 17));
+			aura_damage = damroll(1 + (r_ptr->hdice * 2 / 26), 1 + (r_ptr->level / 17));
 
 			/* Hack -- Get the "died from" name */
 			monster_desc(aura_dam, m_ptr, 0x88, 80);
@@ -1162,7 +1162,7 @@ static bool monster_bash(int *blows, int sleeping_bonus, const cave_type *c_ptr,
 	 * Players do not bash if they could otherwise take advantage of special
 	 * bonuses against sleeping monsters, or if the monster is low-level.
 	 */
-	else if ((sleeping_bonus) || (r_ptr->level < p_ptr->lev / 2))
+	else if ((sleeping_bonus) || (r_ptr->hdice * 2 < p_ptr->lev / 2))
 	{
 		bash_chance = 0;
 	}
@@ -1190,7 +1190,7 @@ static bool monster_bash(int *blows, int sleeping_bonus, const cave_type *c_ptr,
 	}
 
 	/* Try to get in a shield bash. */
-	if (bash_chance > randint0(240 + r_ptr->level * 9))
+	if (bash_chance > randint0(240 + r_ptr->hdice * 18))
 	{
 		o_ptr = &p_ptr->equipment[EQUIP_ARM];
 
@@ -1230,7 +1230,7 @@ static bool monster_bash(int *blows, int sleeping_bonus, const cave_type *c_ptr,
 		}
 
 		/* Stunning. */
-		if (bash_quality + p_ptr->lev > randint1(200 + r_ptr->level * 8))
+		if (bash_quality + p_ptr->lev > randint1(200 + r_ptr->hdice * 16))
 		{
 			msgf("%^s is stunned.", m_name);
 
@@ -1239,7 +1239,7 @@ static bool monster_bash(int *blows, int sleeping_bonus, const cave_type *c_ptr,
 		}
 
 		/* Confusion. */
-		if (bash_quality + p_ptr->lev > randint1(300 + r_ptr->level * 6) &&
+		if (bash_quality + p_ptr->lev > randint1(300 + r_ptr->hdice * 12) &&
 			!(FLAG(r_ptr, RF_NO_CONF)))
 		{
 			msgf("%^s appears confused.", m_name);
@@ -1360,7 +1360,7 @@ static void monk_attack(monster_type *m_ptr, long *k, cptr m_name)
 	else if ((special_effect == MA_SLOW) && (*k < m_ptr->hp))
 	{
 		if (!(FLAG(r_ptr, RF_UNIQUE)) &&
-			(randint1(p_ptr->lev) > r_ptr->level) && m_ptr->mspeed > 60)
+			(randint1(p_ptr->lev) > r_ptr->hdice * 2) && m_ptr->mspeed > 60)
 		{
 			msgf("%^s starts limping slower.", m_name);
 			m_ptr->mspeed -= 10;
@@ -1369,7 +1369,7 @@ static void monk_attack(monster_type *m_ptr, long *k, cptr m_name)
 
 	if (stun_effect && (*k < m_ptr->hp))
 	{
-		if (p_ptr->lev > randint1(r_ptr->level + resist_stun + 10))
+		if (p_ptr->lev > randint1(r_ptr->hdice * 2 + resist_stun + 10))
 		{
 			if (m_ptr->stunned)
 				msgf("%^s is more stunned.", m_name);
@@ -1647,7 +1647,7 @@ void py_attack(int x, int y)
 
 			/* Ghoul paralysis */
 			if ((ghoul_paral > -1) && !(FLAG(r_ptr, RF_NO_SLEEP)) &&
-				(r_ptr->level < randint0(1 + ((p_ptr->lev) * 2))))
+				(r_ptr->hdice * 2 < randint0(1 + ((p_ptr->lev) * 2))))
 			{
 				ghoul_paral += 25 + randint1(p_ptr->lev / 2);
 			}
@@ -1901,7 +1901,7 @@ void py_attack(int x, int y)
 
 					msgf("%^s is unaffected.", m_name);
 				}
-				else if (randint0(100) < r_ptr->level)
+				else if (randint0(100) < r_ptr->hdice * 2)
 				{
 					msgf("%^s is unaffected.", m_name);
 				}
@@ -1923,7 +1923,7 @@ void py_attack(int x, int y)
 						msgf("%^s is unaffected!", m_name);
 						resists_tele = TRUE;
 					}
-					else if (r_ptr->level > randint1(100))
+					else if (r_ptr->hdice * 2 > randint1(100))
 					{
 						if (m_ptr->ml) r_ptr->r_flags[2] |= RF2_RES_TELE;
 						msgf("%^s resists!", m_name);
@@ -1940,7 +1940,7 @@ void py_attack(int x, int y)
 				}
 			}
 			else if (do_poly && cave_floor_grid(c_ptr) &&
-					 (randint1(90) > r_ptr->level))
+					 (randint1(90) > r_ptr->hdice * 2))
 			{
 				if (!(FLAG(r_ptr, RF_UNIQUE)) &&
 					!(FLAG(r_ptr, RF_BR_CHAO)) &&

@@ -1332,7 +1332,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 			{
 				/* Powerful monsters can resist */
 				if ((FLAG(r_ptr, RF_UNIQUE)) ||
-					(r_ptr->level > randint1(dam * 3)))
+					(r_ptr->hdice * 2 > randint1(dam * 3)))
 				{
 					obvious = FALSE;
 				}
@@ -1374,7 +1374,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 					note = " is unaffected!";
 					resist_tele = TRUE;
 				}
-				else if (r_ptr->level > randint1(150))
+				else if (r_ptr->hdice * 2 > randint1(150))
 				{
 					if (seen) r_ptr->r_flags[2] |= RF2_RES_TELE;
 					note = " resists!";
@@ -1398,7 +1398,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 				/* 1. slowness */
 				/* Powerful monsters can resist */
 				if ((FLAG(r_ptr, RF_UNIQUE)) ||
-					(r_ptr->level > randint1(dam * 3)))
+					(r_ptr->hdice * 2 > randint1(dam * 3)))
 				{
 					obvious = FALSE;
 				}
@@ -1414,7 +1414,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 
 				/* Attempt a saving throw */
 				if ((FLAG(r_ptr, RF_UNIQUE)) ||
-					(r_ptr->level > randint1(dam * 3)))
+					(r_ptr->hdice * 2 > randint1(dam * 3)))
 				{
 					/* Resist */
 					do_stun = 0;
@@ -1447,7 +1447,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 
 			if (FLAG(r_ptr, RF_UNIQUE))
 			{
-				if (r_ptr->level > randint0(p_ptr->lev * 3))
+				if (r_ptr->hdice * 2 > randint0(p_ptr->lev * 3))
 				{
 					note = " resists.";
 					dam /= 8;
@@ -1478,7 +1478,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 			else if ((FLAG(r_ptr, RF_STUPID)) ||
 					 (FLAG(r_ptr, RF_WEIRD_MIND)) ||
 					 (FLAG(r_ptr, RF_ANIMAL)) ||
-					 (r_ptr->level > randint1(6 * dam)))
+					 (r_ptr->hdice * 2 > randint1(6 * dam)))
 			{
 				dam /= 3;
 				note = " resists.";
@@ -1489,13 +1489,13 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 				 */
 				if (((FLAG(r_ptr, RF_UNDEAD)) ||
 					 (FLAG(r_ptr, RF_DEMON))) &&
-					(r_ptr->level > p_ptr->lev) && one_in_(2))
+					(r_ptr->hdice * 2 > p_ptr->lev) && one_in_(2))
 				{
 					note = NULL;
 					msgf("%^s%s corrupted mind backlashes your attack!",
 							   m_name, (seen ? "'s" : "s"));
 					/* Saving throw */
-					if (player_save(r_ptr->level))
+					if (player_save(r_ptr->hdice * 2))
 					{
 						msgf("You resist the effects!");
 					}
@@ -1571,7 +1571,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 			else if ((FLAG(r_ptr, RF_STUPID)) ||
 					 (FLAG(r_ptr, RF_WEIRD_MIND)) ||
 					 (FLAG(r_ptr, RF_ANIMAL)) ||
-					 (r_ptr->level > randint1(6 * dam)))
+					 (r_ptr->hdice * 2 > randint1(6 * dam)))
 			{
 				dam /= 3;
 				note = " resists.";
@@ -1582,13 +1582,13 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 				 */
 				if (((FLAG(r_ptr, RF_UNDEAD)) ||
 					 (FLAG(r_ptr, RF_DEMON))) &&
-					(r_ptr->level > p_ptr->lev) && one_in_(2))
+					(r_ptr->hdice * 2 > p_ptr->lev) && one_in_(2))
 				{
 					note = NULL;
 					msgf("%^s%s corrupted mind backlashes your attack!",
 							   m_name, (seen ? "'s" : "s"));
 					/* Saving throw */
-					if (player_save(r_ptr->level))
+					if (player_save(r_ptr->hdice * 2))
 					{
 						msgf("You resist the effects!");
 					}
@@ -1629,7 +1629,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 
 			/* Attempt a saving throw */
 			if ((FLAG(r_ptr, RF_UNIQUE)) ||
-				(r_ptr->level > randint1(dam) * 2))
+				(r_ptr->hdice * 2 > randint1(dam) * 2))
 			{
 				/* Resist */
 				do_stun = 0;
@@ -1655,7 +1655,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 			if ((FLAG(r_ptr, RF_UNIQUE)) ||
 				(FLAG(r_ptr, RF_QUESTOR)) ||
 				(FLAG(r_ptr, RF_NO_CONF)) ||
-				(r_ptr->level > randint1(dam * 3)))
+				(r_ptr->hdice * 2 > randint1(dam * 3)))
 			{
 				/* Memorize a flag */
 				if (FLAG(r_ptr, RF_NO_CONF))
@@ -1672,13 +1672,13 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 				 */
 				if (((FLAG(r_ptr, RF_UNDEAD)) ||
 					 (FLAG(r_ptr, RF_DEMON))) &&
-					(r_ptr->level > p_ptr->lev) && one_in_(2))
+					(r_ptr->hdice * 2 > p_ptr->lev) && one_in_(2))
 				{
 					note = NULL;
 					msgf("%^s%s corrupted mind backlashes your attack!",
 							   m_name, (seen ? "'s" : "s"));
 					/* Saving throw */
-					if (player_save(r_ptr->level))
+					if (player_save(r_ptr->hdice * 2))
 					{
 						msgf("You resist the effects!");
 					}
@@ -1832,7 +1832,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 				dam = 0;
 			}
 			else if (((FLAG(r_ptr, RF_UNIQUE)) && !one_in_(666)) ||
-					 (r_ptr->level > randint1(dam / 30)))
+					 (r_ptr->hdice * 2 > randint1(dam / 30)))
 			{
 				note = " resists!";
 				obvious = FALSE;
@@ -1853,7 +1853,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 			/* Powerful monsters can resist */
 			if ((FLAG(r_ptr, RF_UNIQUE)) ||
 				(FLAG(r_ptr, RF_QUESTOR)) ||
-				(r_ptr->level > randint1(dam * 3)))
+				(r_ptr->hdice * 2 > randint1(dam * 3)))
 			{
 				note = " is unaffected!";
 				do_poly = FALSE;
@@ -1975,7 +1975,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 
 			/* Powerful monsters can resist */
 			if ((FLAG(r_ptr, RF_UNIQUE)) ||
-				(r_ptr->level > randint1(dam * 3)))
+				(r_ptr->hdice * 2 > randint1(dam * 3)))
 			{
 				note = " is unaffected!";
 				obvious = FALSE;
@@ -2005,7 +2005,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 			/* Attempt a saving throw */
 			if ((FLAG(r_ptr, RF_UNIQUE)) ||
 				(FLAG(r_ptr, RF_NO_SLEEP)) ||
-				(r_ptr->level > randint1(dam * 3)))
+				(r_ptr->hdice * 2 > randint1(dam * 3)))
 			{
 				/* Memorize a flag */
 				if (FLAG(r_ptr, RF_NO_SLEEP))
@@ -2036,7 +2036,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 
 			/* Attempt a saving throw */
 			if ((FLAG(r_ptr, RF_UNIQUE)) ||
-				(r_ptr->level > randint1(dam * 4)))
+				(r_ptr->hdice * 2 > randint1(dam * 4)))
 			{
 				note = " is unaffected!";
 				obvious = FALSE;
@@ -2064,7 +2064,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 			if ((FLAG(r_ptr, RF_UNIQUE)) ||
 				(FLAG(r_ptr, RF_QUESTOR)) ||
 				(FLAG(r_ptr, RF_NO_CONF)) ||
-				(r_ptr->level > randint1(dam * 3)))
+				(r_ptr->hdice * 2 > randint1(dam * 3)))
 			{
 				/* Memorize a flag */
 				if (FLAG(r_ptr, RF_NO_CONF))
@@ -2105,7 +2105,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 			if ((FLAG(r_ptr, RF_UNIQUE)) ||
 				(FLAG(r_ptr, RF_QUESTOR)) ||
 				(!(FLAG(r_ptr, RF_UNDEAD))) ||
-				(r_ptr->level > randint1(dam * 3)))
+				(r_ptr->hdice * 2 > randint1(dam * 3)))
 			{
 				/* No obvious effect */
 				note = " is unaffected!";
@@ -2136,7 +2136,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 				FLAG(r_ptr, RF_QUESTOR) ||
 				!FLAG(r_ptr, RF_ANIMAL) ||
 				FLAG(r_ptr, RF_NO_CONF) ||
-				(r_ptr->level > randint1(dam * 3)))
+				(r_ptr->hdice * 2 > randint1(dam * 3)))
 			{
 				/* Memorize a flag */
 				if (FLAG(r_ptr, RF_NO_CONF))
@@ -2178,7 +2178,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 			/* Attempt a saving throw */
 			if (FLAG(r_ptr, RF_UNIQUE) ||
 				FLAG(r_ptr, RF_NO_CONF) ||
-				(r_ptr->level > randint1(dam * 3)))
+				(r_ptr->hdice * 2 > randint1(dam * 3)))
 			{
 				/* Memorize a flag */
 				if (FLAG(r_ptr, RF_NO_CONF))
@@ -2207,7 +2207,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 
 			/* Attempt a saving throw */
 			if (FLAG(r_ptr, RF_UNIQUE) ||
-				(r_ptr->level > randint1(dam * 3)))
+				(r_ptr->hdice * 2 > randint1(dam * 3)))
 			{
 				/* Resist */
 				do_stun = 0;
@@ -2331,7 +2331,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 						note = " is unaffected!";
 						resists_tele = TRUE;
 					}
-					else if (r_ptr->level > randint1(150))
+					else if (r_ptr->hdice * 2 > randint1(150))
 					{
 						if (seen) r_ptr->r_flags[2] |= RF2_RES_TELE;
 						note = " resists!";
@@ -2377,7 +2377,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 						note = " is unaffected!";
 						resists_tele = TRUE;
 					}
-					else if (r_ptr->level > randint1(150))
+					else if (r_ptr->hdice * 2 > randint1(150))
 					{
 						if (seen) r_ptr->r_flags[2] |= RF2_RES_TELE;
 						note = " resists!";
@@ -2419,7 +2419,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 					note = " is unaffected!";
 					resists_tele = TRUE;
 				}
-				else if (r_ptr->level > randint1(150))
+				else if (r_ptr->hdice * 2 > randint1(150))
 				{
 					if (seen) r_ptr->r_flags[2] |= RF2_RES_TELE;
 					note = " resists!";
@@ -2458,7 +2458,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 				do_fear = damroll(3, (dam / 2)) + 1;
 
 				/* Attempt a saving throw */
-				if (r_ptr->level > randint1(dam * 3))
+				if (r_ptr->hdice * 2 > randint1(dam * 3))
 				{
 					/* No obvious effect */
 					note = " is unaffected!";
@@ -2496,7 +2496,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 				do_fear = damroll(3, (dam / 2)) + 1;
 
 				/* Attempt a saving throw */
-				if (r_ptr->level > randint1(dam * 3))
+				if (r_ptr->hdice * 2 > randint1(dam * 3))
 				{
 					/* No obvious effect */
 					note = " is unaffected!";
@@ -2530,7 +2530,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 			/* Attempt a saving throw */
 			if (FLAG(r_ptr, RF_UNIQUE) ||
 				FLAG(r_ptr, RF_NO_FEAR) ||
-				(r_ptr->level > randint1(dam * 3)))
+				(r_ptr->hdice * 2 > randint1(dam * 3)))
 			{
 				/* No obvious effect */
 				note = " is unaffected!";
@@ -2752,7 +2752,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 	}
 
 	/* Mega-Hack -- Handle "polymorph" -- monsters get a saving throw */
-	else if (do_poly && (randint1(150) > r_ptr->level))
+	else if (do_poly && (randint1(150) > r_ptr->hdice * 2))
 	{
 		if (polymorph_monster(x, y))
 		{

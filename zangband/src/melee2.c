@@ -573,7 +573,7 @@ static int mon_will_run(monster_type *m_ptr)
 	p_lev = p_ptr->lev;
 
 	/* Examine monster power (level plus morale) */
-	m_lev = r_ptr->level + 25;
+	m_lev = r_ptr->hdice * 2 + 25;
 
 	/* Optimize extreme cases below */
 	if (m_lev > p_lev + 4) return (FALSE);
@@ -1570,7 +1570,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 	ac = tr_ptr->ac;
 
 	/* Extract the effective monster level */
-	rlev = ((r_ptr->level >= 1) ? r_ptr->level : 1);
+	rlev = ((r_ptr->hdice * 2 >= 1) ? r_ptr->hdice * 2 : 1);
 
 	/* Get the monster name (or "it") */
 	monster_desc(m_name, m_ptr, 0, 80);
@@ -1990,7 +1990,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 				if (!explode)
 				{
 					(void)project(m_idx, 0, t_ptr->fx, t_ptr->fy,
-								  (pt == GF_OLD_SLEEP ? r_ptr->level : damage),
+								  (pt == GF_OLD_SLEEP ? r_ptr->hdice * 2 : damage),
 								  pt, PROJECT_KILL | PROJECT_STOP);
 				}
 
@@ -2032,8 +2032,8 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 								tr_ptr->r_flags[1] |= RF1_AURA_FIRE;
 						}
 						(void)project(t_idx, 0, m_ptr->fx, m_ptr->fy,
-									  damroll(1 + ((tr_ptr->level) / 26),
-											  1 + ((tr_ptr->level) / 17)),
+									  damroll(1 + ((tr_ptr->hdice * 2) / 26),
+											  1 + ((tr_ptr->hdice * 2) / 17)),
 									  GF_FIRE, PROJECT_KILL | PROJECT_STOP);
 					}
 
@@ -2049,8 +2049,8 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 								tr_ptr->r_flags[2] |= RF2_AURA_COLD;
 						}
 						(void)project(t_idx, 0, m_ptr->fx, m_ptr->fy,
-									  damroll(1 + ((tr_ptr->level) / 26),
-											  1 + ((tr_ptr->level) / 17)),
+									  damroll(1 + ((tr_ptr->hdice * 2) / 26),
+											  1 + ((tr_ptr->hdice * 2) / 17)),
 									  GF_COLD, PROJECT_KILL | PROJECT_STOP);
 					}
 
@@ -2066,8 +2066,8 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 								tr_ptr->r_flags[1] |= RF1_AURA_ELEC;
 						}
 						(void)project(t_idx, 0, m_ptr->fx, m_ptr->fy,
-									  damroll(1 + ((tr_ptr->level) / 26),
-											  1 + ((tr_ptr->level) / 17)),
+									  damroll(1 + ((tr_ptr->hdice * 2) / 26),
+											  1 + ((tr_ptr->hdice * 2) / 17)),
 									  GF_ELEC, PROJECT_KILL | PROJECT_STOP);
 					}
 
@@ -2385,7 +2385,7 @@ static void take_move(int m_idx, int *mm)
 
 			/* Attack 'enemies' */
 			if ((FLAG(r_ptr, RF_KILL_BODY) &&
-				 (r_ptr->mexp * r_ptr->level > z_ptr->mexp * z_ptr->level) &&
+				 (r_ptr->mexp * r_ptr->hdice * 2 > z_ptr->mexp * z_ptr->level) &&
 				 (cave_floor_grid(c_ptr))) ||
 				are_enemies(m_ptr, m2_ptr) || m_ptr->confused)
 			{
@@ -2837,7 +2837,7 @@ static void process_monster(int m_idx)
 		d = 1;
 
 		/* Make a "saving throw" against stun */
-		if (randint0(10000) <= r_ptr->level * r_ptr->level)
+		if (randint0(10000) <= r_ptr->hdice * 2 * r_ptr->hdice * 2)
 		{
 			/* Recover fully */
 			d = m_ptr->stunned;
@@ -2873,7 +2873,7 @@ static void process_monster(int m_idx)
 	if (m_ptr->confused)
 	{
 		/* Amount of "boldness" */
-		d = randint1(r_ptr->level / 20 + 1);
+		d = randint1(r_ptr->hdice * 2 / 20 + 1);
 
 		/* Still confused */
 		if (m_ptr->confused > d)
@@ -2927,7 +2927,7 @@ static void process_monster(int m_idx)
 	if (m_ptr->monfear)
 	{
 		/* Amount of "boldness" */
-		d = randint1(r_ptr->level / 20 + 1);
+		d = randint1(r_ptr->hdice * 2 / 20 + 1);
 
 		/* Still afraid */
 		if (m_ptr->monfear > d)
@@ -3269,16 +3269,16 @@ void process_monsters(int min_energy)
 		if (is_pet(m_ptr))
 		{
 			total_friends++;
-			total_friend_levels += r_ptr->level;
+			total_friend_levels += r_ptr->hdice * 2;
 
 			/* Determine pet alignment */
 			if (FLAG(r_ptr, RF_GOOD))
 			{
-				friend_align += r_ptr->level;
+				friend_align += r_ptr->hdice * 2;
 			}
 			else if (FLAG(r_ptr, RF_EVIL))
 			{
-				friend_align -= r_ptr->level;
+				friend_align -= r_ptr->hdice * 2;
 			}
 		}
 

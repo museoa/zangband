@@ -894,7 +894,7 @@ void apply_nexus(const monster_type *m_ptr)
 
 		case 6:
 		{
-			if (player_save(r_ptr->level))
+			if (player_save(r_ptr->hdice * 2))
 			{
 				msgf("You resist the effects!");
 				break;
@@ -907,7 +907,7 @@ void apply_nexus(const monster_type *m_ptr)
 
 		case 7:
 		{
-			if (player_save(r_ptr->level))
+			if (player_save(r_ptr->hdice * 2))
 			{
 				msgf("You resist the effects!");
 				break;
@@ -4388,7 +4388,7 @@ void sanity_blast(const monster_type *m_ptr)
 
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
-	power = r_ptr->level + 10;
+	power = r_ptr->hdice * 2 + 10;
 
 	if (!FLAG(r_ptr, RF_UNIQUE))
 	{
@@ -4421,7 +4421,7 @@ void sanity_blast(const monster_type *m_ptr)
 		if (one_in_(3))
 		{
 			msgf(funny_comments[randint0(MAX_SAN_COMMENT)]);
-			(void)inc_image(randint1(r_ptr->level));
+			(void)inc_image(randint1(r_ptr->hdice * 2));
 		}
 
 		/* Never mind; we can't see it clearly enough */

@@ -170,7 +170,7 @@ bool make_attack_normal(int m_idx)
 	ac = p_ptr->ac + p_ptr->to_a;
 
 	/* Extract the effective monster level */
-	rlev = ((r_ptr->level >= 1) ? r_ptr->level : 1);
+	rlev = ((r_ptr->hdice * 2 >= 1) ? r_ptr->level : 1);
 
 
 	/* Get the monster name (or "it") */
@@ -901,7 +901,7 @@ bool make_attack_normal(int m_idx)
 					case RBE_TERRIFY:
 					{
 						/* Saving throw difficulty */
-						int power = MAX(r_ptr->level, damage);
+						int power = MAX(r_ptr->hdice * 2, damage);
 
 						/* Take damage */
 						take_hit(damage, ddesc);
@@ -934,7 +934,7 @@ bool make_attack_normal(int m_idx)
 					case RBE_PARALYZE:
 					{
 						/* Saving throw difficulty */
-						int power = MAX(r_ptr->level, damage);
+						int power = MAX(r_ptr->hdice * 2, damage);
 
 						/* Hack -- Prevent perma-paralysis via damage */
 						if (p_ptr->tim.paralyzed && (damage < 1)) damage = 1;

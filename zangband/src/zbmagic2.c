@@ -635,13 +635,13 @@ static int borg_launch_damage_one(int i, int dam, int typ)
 			else if ((FLAG(r_ptr, RF_STUPID)) ||
 					 (FLAG(r_ptr, RF_WEIRD_MIND)) ||
 					 (FLAG(r_ptr, RF_ANIMAL)) ||
-					 (r_ptr->level > (3 * dam / 2)))
+					 (r_ptr->hdice * 2 > (3 * dam / 2)))
 			{
 				dam /= 3;
 			}
 			else if (((FLAG(r_ptr, RF_UNDEAD)) ||
 					  (FLAG(r_ptr, RF_DEMON))) &&
-					 (r_ptr->level > bp_ptr->lev / 2))
+					 (r_ptr->hdice * 2 > bp_ptr->lev / 2))
 			{
 				dam = 0;
 			}
@@ -898,7 +898,7 @@ static int borg_launch_damage_one(int i, int dam, int typ)
 			if (FLAG(r_ptr, RF_MULTIPLY)) break;
 			if (kill->
 				m_flags & (MONST_ASLEEP | MONST_CONFUSED | MONST_FEAR)) break;
-			if ((r_ptr->level >=
+			if ((r_ptr->hdice * 2 >=
 				 (bp_ptr->lev <
 				  13) ? bp_ptr->lev : (((bp_ptr->lev - 10) /
 										4) * 3) + 10)) break;
@@ -919,7 +919,7 @@ static int borg_launch_damage_one(int i, int dam, int typ)
 			if (FLAG(r_ptr, RF_NO_FEAR)) break;
 			if (kill->
 				m_flags & (MONST_ASLEEP | MONST_CONFUSED | MONST_FEAR)) break;
-			if ((r_ptr->level >=
+			if ((r_ptr->hdice * 2 >=
 				 (bp_ptr->lev <
 				  13) ? bp_ptr->lev : (((bp_ptr->lev - 10) /
 										4) * 3) + 10)) break;
@@ -939,7 +939,7 @@ static int borg_launch_damage_one(int i, int dam, int typ)
 			dam = 0;
 			if (kill->
 				m_flags & (MONST_ASLEEP | MONST_CONFUSED | MONST_FEAR)) break;
-			if ((r_ptr->level >=
+			if ((r_ptr->hdice * 2 >=
 				 (bp_ptr->lev <
 				  13) ? bp_ptr->lev : (((bp_ptr->lev - 10) /
 										4) * 3) + 10)) break;
@@ -961,7 +961,7 @@ static int borg_launch_damage_one(int i, int dam, int typ)
 			if (FLAG(r_ptr, RF_NO_SLEEP)) break;
 			if (kill->
 				m_flags & (MONST_ASLEEP | MONST_CONFUSED | MONST_FEAR)) break;
-			if ((r_ptr->level >=
+			if ((r_ptr->hdice * 2 >=
 				 (bp_ptr->lev <
 				  13) ? bp_ptr->lev : (((bp_ptr->lev - 10) /
 										4) * 3) + 10)) break;
@@ -979,7 +979,7 @@ static int borg_launch_damage_one(int i, int dam, int typ)
 		case GF_OLD_POLY:
 		{
 			dam = 0;
-			if ((r_ptr->level >=
+			if ((r_ptr->hdice * 2 >=
 				 (bp_ptr->lev <
 				  13) ? bp_ptr->lev : (((bp_ptr->lev - 10) /
 										4) * 3) + 10)) break;

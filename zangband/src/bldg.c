@@ -24,7 +24,7 @@ static void have_nightmare_aux(int r_idx)
 	monster_race *r_ptr = &r_info[r_idx];
 	char m_name[80];
 	bool happened = FALSE;
-	int power = r_ptr->level + 10;
+	int power = r_ptr->hdice * 2 + 10;
 	cptr desc = mon_race_name(r_ptr);
 
 	int i;
@@ -64,7 +64,7 @@ static void have_nightmare_aux(int r_idx)
 		if (one_in_(3))
 		{
 			msgf(funny_comments[randint0(MAX_SAN_COMMENT)]);
-			(void) inc_image(randint1(r_ptr->level));
+			(void) inc_image(randint1(r_ptr->hdice * 2));
 		}
 
 		/* Never mind; we can't see it clearly enough */
@@ -266,7 +266,7 @@ bool get_nightmare(int r_idx)
 	if (!FLAG(r_ptr, RF_ELDRITCH_HORROR)) return (FALSE);
 
 	/* Require high level */
-	if (r_ptr->level <= p_ptr->lev) return (FALSE);
+	if (r_ptr->hdice * 2 <= p_ptr->lev) return (FALSE);
 
 	/* Accept this monster */
 	return (TRUE);

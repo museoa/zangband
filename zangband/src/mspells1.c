@@ -734,7 +734,7 @@ bool make_attack_spell(int m_idx)
 	char ddesc[80];
 
 	/* Saving throw difficulty */
-	int power = r_ptr->level;
+	int power = r_ptr->hdice * 2;
 
 	/* Target location */
 	int x = px;
@@ -862,7 +862,7 @@ bool make_attack_spell(int m_idx)
 	if (!thrown_spell) return (FALSE);
 
 	/* Extract the monster level */
-	rlev = ((r_ptr->level >= 1) ? r_ptr->level : 1);
+	rlev = ((r_ptr->hdice * 2 >= 1) ? r_ptr->hdice * 2 : 1);
 
 	/* Calculate spell failure rate */
 	failrate = 25 - (rlev + 3) / 4;
