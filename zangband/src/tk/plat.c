@@ -376,6 +376,10 @@ int Plat_XColor2Pixel(XColor *xColorPtr)
 	return 0;
 }
 
+#ifdef HAVE_TKPSYNC
+extern void TkpSync (Display * display);
+#endif
+
 void Plat_SyncDisplay(Display *display)
 {
 #ifdef HAVE_TKPSYNC
