@@ -52,7 +52,7 @@
 #define FAKE_VERSION   0
 #define FAKE_VER_MAJOR 2
 #define FAKE_VER_MINOR 3
-#define FAKE_VER_PATCH 4
+#define FAKE_VER_PATCH 5
 #endif /* USE_SCRIPT */
 
 #define ANGBAND_2_8_1
