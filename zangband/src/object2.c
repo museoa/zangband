@@ -5059,42 +5059,6 @@ object_type *item_split(object_type *o_ptr, int num)
 
 
 /*
- * Increase the "number" of an item in the inventory
- */
-void item_increase(object_type *o_ptr, int num)
-{
-	/* Apply */
-	num += o_ptr->number;
-
-	/* Bounds check */
-	if (num > 255) num = 255;
-	else if (num < 0) num = 0;
-
-	/* Un-apply */
-	num -= o_ptr->number;
-
-	/* Add the number */
-	o_ptr->number += num;
-
-	/* Notice the change */
-	if (num && !floor_item(o_ptr))
-	{
-		/* Recalculate bonuses and weight */
-		p_ptr->update |= (PU_BONUS | PU_WEIGHT);
-
-		/* Recalculate mana */
-		p_ptr->update |= (PU_MANA);
-
-		/* Combine the pack */
-		p_ptr->notice |= (PN_COMBINE);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP);
-	}
-}
-
-
-/*
  * Erase an inventory slot if it has no more items
  */
 void item_optimize(object_type *o_ptr)
@@ -5147,6 +5111,46 @@ void item_optimize(object_type *o_ptr)
 	/* Window stuff */
 	p_ptr->window |= (PW_SPELL);
 }
+
+
+/*
+ * Increase the "number" of an item in the inventory
+ */
+void item_increase(object_type *o_ptr, int num)
+{
+	/* Apply */
+	num += o_ptr->number;
+
+	/* Bounds check */
+	if (num > 255) num = 255;
+	else if (num < 0) num = 0;
+
+	/* Un-apply */
+	num -= o_ptr->number;
+
+	/* Add the number */
+	o_ptr->number += num;
+
+	/* Notice the change */
+	if (num && !floor_item(o_ptr))
+	{
+		/* Recalculate bonuses and weight */
+		p_ptr->update |= (PU_BONUS | PU_WEIGHT);
+
+		/* Recalculate mana */
+		p_ptr->update |= (PU_MANA);
+
+		/* Combine the pack */
+		p_ptr->notice |= (PN_COMBINE);
+
+		/* Window stuff */
+		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+	}
+	
+	item_describe(o_ptr);
+	item_optimize(o_ptr);
+}
+
 
 /*
  * Check if we have space for an item in the pack without overflow

@@ -140,8 +140,6 @@ static void do_cmd_eat_food_aux(object_type *o_ptr)
 
 	/* Destroy a food item */
 	item_increase(o_ptr, -1);
-	item_describe(o_ptr);
-	item_optimize(o_ptr);
 
 	make_noise(1);
 }
@@ -244,8 +242,6 @@ static void do_cmd_quaff_potion_aux(object_type *o_ptr)
 
 	/* Reduce and describe items */
 	item_increase(o_ptr, -1);
-	item_describe(o_ptr);
-	item_optimize(o_ptr);
 
 	make_noise(1);
 }
@@ -326,8 +322,6 @@ static void do_cmd_read_scroll_aux(object_type *o_ptr)
 
 	/* Destroy a scroll */
 	item_increase(o_ptr, -1);
-	item_describe(o_ptr);
-	item_optimize(o_ptr);
 
 	make_noise(1);
 }

@@ -715,8 +715,7 @@ bool make_attack_normal(int m_idx)
 							}
 
 							/* Steal the items */
-							inven_item_increase(i, -1);
-							inven_item_optimize(i);
+							item_increase(o_ptr, -1);
 
 							/* Obvious */
 							obvious = TRUE;
@@ -758,8 +757,7 @@ bool make_attack_normal(int m_idx)
 									   o_name, index_to_label(i));
 
 							/* Steal the items */
-							inven_item_increase(i, -1);
-							inven_item_optimize(i);
+							item_increase(o_ptr, -1);
 
 							/* Obvious */
 							obvious = TRUE;

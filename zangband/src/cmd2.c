@@ -1939,8 +1939,6 @@ void do_cmd_spike(void)
 
 			/* Use up, and describe, a single spike, from the bottom */
 			item_increase(o_ptr, -1);
-			item_describe(o_ptr);
-			item_optimize(o_ptr);
 		}
 	}
 
@@ -2367,8 +2365,6 @@ void do_cmd_fire_aux(object_type *o_ptr, object_type *j_ptr)
 
 	/* Reduce and describe inventory */
 	item_increase(o_ptr, -1);
-	item_describe(o_ptr);
-	item_optimize(o_ptr);
 
 	/* Sound */
 	sound(SOUND_SHOOT);

@@ -1575,8 +1575,6 @@ bool alchemy(void)
 
 	/* Eliminate the item */
 	item_increase(o_ptr, -amt);
-	item_describe(o_ptr);
-	item_optimize(o_ptr);
 
 	return TRUE;
 }
@@ -2551,8 +2549,6 @@ bool recharge(int power)
 
 				/* Reduce and describe */
 				item_increase(o_ptr, -1);
-				item_describe(o_ptr);
-				item_optimize(o_ptr);
 			}
 
 			/* Destroy all members of a stack of objects. */
@@ -2566,8 +2562,6 @@ bool recharge(int power)
 
 				/* Reduce and describe */
 				item_increase(o_ptr, -999);
-				item_describe(o_ptr);
-				item_optimize(o_ptr);
 			}
 		}
 	}
@@ -4137,7 +4131,7 @@ int inven_damage(inven_func typ, int perc)
 	/* Count the casualties */
 	k = 0;
 
-	/* Scan through the slots backwards */
+	/* Scan the inventory */
 	OBJ_ITT_START (p_ptr->inventory, o_ptr)
 	{
 		/* Hack -- for now, skip artifacts */
@@ -4182,7 +4176,6 @@ int inven_damage(inven_func typ, int perc)
 
 				/* Destroy "amt" items */
 				item_increase(o_ptr, -amt);
-				item_optimize(o_ptr);
 
 				/* Count the casualties */
 				k += amt;

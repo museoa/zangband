@@ -2042,8 +2042,6 @@ static void store_sell(int *store_top)
 
 			/* Take the item from the player, describe the result */
 			item_increase(o_ptr, -amt);
-			item_describe(o_ptr);
-			item_optimize(o_ptr);
 
 			/* Handle stuff */
 			handle_stuff();
@@ -2085,8 +2083,6 @@ static void store_sell(int *store_top)
 
 		/* Take it from the players inventory */
 		item_increase(o_ptr, -amt);
-		item_describe(o_ptr);
-		item_optimize(o_ptr);
 
 		/* Handle stuff */
 		handle_stuff();

@@ -2748,8 +2748,6 @@ static void process_player(void)
 
 					/* Modify, Describe, Optimize */
 					item_increase(o_ptr, -255);
-					item_describe(o_ptr);
-					item_optimize(o_ptr);
 				}
 
 			}

@@ -542,8 +542,6 @@ void do_cmd_destroy(void)
 
 	/* Eliminate the item */
 	item_increase(o_ptr, -amt);
-	item_describe(o_ptr);
-	item_optimize(o_ptr);
 }
 
 
@@ -751,8 +749,6 @@ static void do_cmd_refill_lamp(void)
 	if (o_ptr->tval == TV_FLASK)
 	{
 		item_increase(o_ptr, -1);
-		item_describe(o_ptr);
-		item_optimize(o_ptr);
 	}
 	else
 	{
@@ -835,8 +831,6 @@ static void do_cmd_refill_torch(void)
 
 	/* Decrease the item */
 	item_increase(o_ptr, -1);
-	item_describe(o_ptr);
-	item_optimize(o_ptr);
 
 	/* Recalculate torch */
 	p_ptr->update |= (PU_TORCH);
