@@ -6385,7 +6385,7 @@ martial_arts ma_blows[MAX_MA] =
  * Table of game-generated inscriptions (indexed by the defines in
  * defines.h). -- RG
  */
-cptr game_inscriptions[] =
+cptr game_inscriptions[FEEL_MAX] =
 {
 	NULL,            /* FEEL_NONE */
 	"broken",        /* FEEL_BROKEN */
