@@ -1846,6 +1846,60 @@ bool borg_crush_slow(void)
 	return (FALSE);
 }
 
+/*
+ * Should we *id* this item?
+ */
+bool borg_obj_star_id_able(list_item *l_ptr)
+{
+	/* Is there an object at all? */
+	if (!l_ptr) return (FALSE);
+
+	/* Some non-ego items should be *id'ed too */
+	if (l_ptr->tval == TV_SHIELD &&
+	 	k_info[l_ptr->k_idx].sval == SV_DRAGON_SHIELD) return (TRUE);
+	if (l_ptr->tval == TV_HELM &&
+	 	k_info[l_ptr->k_idx].sval == SV_DRAGON_HELM) return (TRUE);
+	if (l_ptr->tval == TV_CLOAK &&
+	 	k_info[l_ptr->k_idx].sval == SV_SHADOW_CLOAK) return (TRUE);
+
+	/* not an ego object */
+	if (!borg_obj_is_ego_art(l_ptr)) return (FALSE);
+
+	/* Artifacts */
+	if ((l_ptr->kn_flags3) & TR3_INSTA_ART) return (TRUE);
+
+	/* Weapons */
+	if (streq(l_ptr->xtra_name, "(Holy Avenger)")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "(Defender)")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "(Blessed)")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "of Westernesse")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "of Slay Dragon")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "of *Slay* Dragon")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "(Chaotic)")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "of Slaying")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "(Vampiric)")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "(Trump Weapon)")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "(Pattern Weapon)")) return (TRUE);
+
+	/* Bow */
+	if (streq(l_ptr->xtra_name, "of Might")) return (TRUE);
+
+	/* Armour */
+	if (streq(l_ptr->xtra_name, "of Permanence")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "of Resistance")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "of Elvenkind")) return (TRUE);
+
+	/* Hat */
+	if (streq(l_ptr->xtra_name, "of the Magi")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "of Lordliness")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "of Seeing")) return (TRUE);
+
+	/* Cloak */
+	if (streq(l_ptr->xtra_name, "of Aman")) return (TRUE);
+
+	/* Any object that reaches here has nothing interesting to *id* */
+	return (FALSE);
+}
 
 /*
  * Identify items if possible
@@ -1916,7 +1970,7 @@ bool borg_test_stuff(bool star_id)
 		{
 			/* go ahead and check egos and artifacts */
 			if (borg_obj_known_full(l_ptr)) continue;
-			if (!borg_obj_is_ego_art(l_ptr)) continue;
+			if (!borg_obj_star_id_able(l_ptr)) continue;
 		}
 
 		/* Track it */
@@ -1939,7 +1993,18 @@ bool borg_test_stuff(bool star_id)
 		else
 		{
 			if (borg_obj_known_full(l_ptr)) continue;
-			if (borg_obj_is_ego_art(l_ptr)) break;
+
+			/* If it is some item with random flags */
+			if (borg_obj_star_id_able(l_ptr))
+			{
+				/* *identify* this item */
+				b_i = i;
+				inven = TRUE;
+
+				break;
+			}
+			
+			continue;
 		}
 
 		/* Assume nothing */
@@ -1947,10 +2012,10 @@ bool borg_test_stuff(bool star_id)
 
 		/* Identify "good" (and "terrible") items */
 		/* weak pseudo id */
-		if (strstr(l_ptr->o_name, "{good") && (borg_class == CLASS_MAGE ||
-											   borg_class == CLASS_PRIEST ||
-											   borg_class == CLASS_RANGER)) v =
-				10000L;
+		if (strstr(l_ptr->o_name, "{good") &&
+			(borg_class == CLASS_MAGE ||
+			borg_class == CLASS_PRIEST ||
+			borg_class == CLASS_RANGER)) v = 10000L;
 		/* heavy pseudo id */
 		else if (strstr(l_ptr->o_name, "{good") && borg_gold < 10000) v = 1000L;
 		else if (strstr(l_ptr->o_name, "{excellent")) v = 20000L;
@@ -2030,16 +2095,6 @@ bool borg_test_stuff(bool star_id)
 	{
 		if (inven)
 		{
-			l_ptr = &inventory[b_i];
-		}
-		else
-		{
-			l_ptr = &equipment[b_i];
-		}
-
-#if 0
-		if (inven)
-		{
 			list_item *l_ptr = &inventory[b_i];
 
 			if (star_id)
@@ -2106,8 +2161,15 @@ bool borg_test_stuff(bool star_id)
 					/* Log -- may be cancelled */
 					borg_note_fmt("# *IDENTIFY*ing %s.", l_ptr->o_name);
 
-					/* Select the equipment */
-					borg_keypress('/');
+					/* Switch to equipment but not in case you go there immediately */
+					for (i = 0; i < inven_num; i++)
+					{
+						if (!borg_obj_known_full(l_ptr))
+						{
+							borg_keypress('/');
+							break;
+						}
+					}
 
 					/* Select the item */
 					borg_keypress(I2A(b_i));
@@ -2145,8 +2207,15 @@ bool borg_test_stuff(bool star_id)
 					/* Log -- may be cancelled */
 					borg_note_fmt("# Identifying %s.", l_ptr->o_name);
 
-					/* Select the equipment */
-					borg_keypress('/');
+					/* Switch to equipment but not in case you go there immediately */
+					for (i = 0; i < inven_num; i++)
+					{
+						if (!borg_obj_known_p(l_ptr))
+						{
+							borg_keypress('/');
+							break;
+						}
+					}
 
 					/* Select the item */
 					borg_keypress(I2A(b_i));
@@ -2165,8 +2234,6 @@ bool borg_test_stuff(bool star_id)
 				}
 			}
 		}
-
-#endif /* 0 */
 	}
 
 	/* Nothing to do */
@@ -2182,11 +2249,6 @@ bool borg_test_stuff(bool star_id)
  * Basically, we evaluate the world in which each ring is added
  * to the current set of equipment, and we wear the ring, if any,
  * that gives us the most "power".
- *
- * The "borg_swap_rings()" code above occasionally allows us to remove
- * both rings, at which point this function will place the "best" ring
- * on the "tight" finger, and then the "borg_best_stuff()" function will
- * allow us to put on our second "best" ring on the "loose" finger.
  */
 static bool borg_wear_rings(void)
 {
@@ -2199,10 +2261,6 @@ static bool borg_wear_rings(void)
 	bool hand = FALSE;
 
 	list_item *l_ptr;
-
-	/* Require no rings */
-	if (equipment[EQUIP_LEFT].number) return (FALSE);
-	if (equipment[EQUIP_RIGHT].number) return (FALSE);
 
 	/* Require an empty slot */
 	if (inven_num >= INVEN_PACK - 1) return (FALSE);
@@ -2388,10 +2446,6 @@ bool borg_remove_stuff(void)
  * equipment, and in the alternate world in which various items
  * are used instead of the items they would replace, and we take
  * one step towards the world in which we have the most "power".
- *
- * The "borg_swap_rings()" code above occasionally allows us to remove
- * both rings, at which point this function will replace the "best" ring
- * on the "tight" finger, and the second "best" ring on the "loose" finger.
  */
 bool borg_wear_stuff(void)
 {
