@@ -4446,7 +4446,8 @@ bool borg_target_unknown_wall(int y, int x)
 	int n_x, n_y;
 	bool found = FALSE;
 	bool y_hall = FALSE;
-	bool x_hall = FALSE;
+    bool x_hall = FALSE;
+    int i;
 
 	borg_note(format("# Perhaps wall near targetted location (%d,%d)", y, x));
 
@@ -4482,7 +4483,7 @@ bool borg_target_unknown_wall(int y, int x)
 		y_hall = TRUE;
 
 	/* XXX XXX hack */
-	while (1)
+	for (i = 0; i < 1000; i++)
 	{
 		map_block *mb_ptr;
 
@@ -4505,7 +4506,10 @@ bool borg_target_unknown_wall(int y, int x)
 
 		/* Calculate the new location */
 		borgmove2(&n_y, &n_x, c_y, c_x, y, x);
-	}
+    }
+
+    if (i >= 1000)
+        borg_oops("infinite loop while targeting");
 
 	return found;
 }
