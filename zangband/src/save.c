@@ -1164,8 +1164,7 @@ static void save_map(int ymax, int ymin, int xmax, int xmin)
 			c_ptr = area(y, x);
 
 			/* Extract a byte */
-			/* Hack - monster lighting ignored here */
-			tmp8u = (c_ptr->info & (~CAVE_MNLT));
+			tmp8u = c_ptr->info;
 
 			/* If the run is broken, or too full, flush it 	*/
 			if ((tmp8u != prev_char) || (count == MAX_UCHAR))

@@ -2707,8 +2707,8 @@ static void load_map(int ymax, int ymin, int xmax, int xmin)
 			/* Access the cave */
 			c_ptr = area(y,x);
 
-			/* Extract "info" */
-			c_ptr->info = tmp8u;
+			/* Extract "info" (without the CAVE_ROOM flag set)*/
+			c_ptr->info = (tmp8u & ~(CAVE_MNLT));
 
 			/* Advance/Wrap */
 			if (++x >= xmax)
