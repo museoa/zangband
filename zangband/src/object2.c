@@ -1318,6 +1318,9 @@ void distribute_charges(object_type *o_ptr, object_type *q_ptr, int amt)
 {
 	int new_charges;
 
+	/* Paranoia */
+	if (!o_ptr->number) return;
+
 	/*
 	 * Hack -- If rods or wands are dropped, the total maximum timeout or
 	 * charges needs to be allocated between the two stacks.  If all the items
