@@ -100,6 +100,9 @@ adj_mag_fail = [
 class spell(skill):
 	info = ""
 	active = 1
+	common = 1
+	uncommon = 0
+	rare = 0
 
 	def __init__(self, level=0, mana=0, fail=0, exp=0):
 		self.level = level

@@ -31,22 +31,105 @@ class spellcaster_class:
 			else:
 				self.realms[realm].picks = self.realms[realm].player_picks
 
-		# XXX
-		if 0:
-			# Let the player select his spells
-			for realm in self.realms.values():
-				c1, c2, u1, u2, r1, r2 = realm.spell_distribution[realm.picks]
+		# Let the player select his spells
+		for realm in self.realms.values():
+			c1, c2, u1, u2, r1, r2 = realm.spell_distribution[realm.picks]
 
-				if 0 < c1 < 16:
-					for i in range(0, c1):
-						pass
-		else:
-			for realm in self.realms.values():
-				for spell in realm.spells:
-					player.skills.append(spell())
+			# Let the player select the spells for this realm
+			spells = self.select_spells(realm, c2, u2, r2)
+
+			# Add te spells
+			for spell in spells:
+				player.skills.append(spell())
+				realm.spells.remove(spell)
+
+		# XXX - Add the randomly selected spells
 
 		# Remove the event
 		events.get_player_realms.remove(self)
+
+	def select_spells(self, realm, spells_common, spells_uncommon, spells_rare):
+		if not realm.spells or (spells_common + spells_uncommon + spells_rare < 1):
+			return []
+
+		from angband import io
+		from angband import commands
+		import string
+		from util.string import I2A, A2I
+
+		# XXX
+		io.Term_save()
+
+		selection = {}
+
+		while 1:
+			letters = {}
+			row = 0
+
+			io.clear_from(0)
+
+			io.Term_putstr( 0, row, -1, io.TERM_WHITE, "Select %s spells:" % (realm.name))
+			row = row + 1
+
+			# Print the header
+			io.Term_putstr( 5, row, -1, io.TERM_WHITE, "Spell")
+			io.Term_putstr(30, row, -1, io.TERM_WHITE, "Level")
+			io.Term_putstr(40, row, -1, io.TERM_WHITE, "Mana")
+			io.Term_putstr(50, row, -1, io.TERM_WHITE, "Fail")
+			io.Term_putstr(60, row, -1, io.TERM_WHITE, "Selected")
+
+			for spell in realm.spells:
+				letter = "%c" % (I2A(row - 1))
+				letters[letter] = spell
+				row = row + 1
+				io.Term_putstr( 1, row, -1, io.TERM_YELLOW, "%c)" % (letter))
+				io.Term_putstr( 5, row, -1, io.TERM_YELLOW, spell.name)
+				io.Term_putstr(30, row, -1, io.TERM_YELLOW, "%3d" % (spell.level))
+				io.Term_putstr(40, row, -1, io.TERM_YELLOW, "%4d" % (spell.mana))
+				io.Term_putstr(50, row, -1, io.TERM_YELLOW, "%3d" % (spell.fail))
+				if selection.has_key(spell):
+					io.Term_putstr(60, row, -1, io.TERM_YELLOW, "X")
+				else:
+					io.Term_putstr(60, row, -1, io.TERM_YELLOW, " ")
+
+			c = io.inkey()
+
+			if letters.has_key(string.lower(c)):
+				if selection.has_key(letters[string.lower(c)]):
+					try:
+						del selection[letters[string.lower(c)]]
+					except:
+						# Do nothing
+						pass
+				else:
+					selection[letters[string.lower(c)]] = None
+
+			# Quit
+			elif c == 'Q':
+				remove_loc()
+				quit(NULL)
+			# Restart
+			elif c == 'S':
+				return -1
+			# Escape
+			elif A2I(c) == -70:
+				break
+			# Help
+			elif c == '?':
+				commands.do_cmd_help()
+			# Startup-options
+			elif c == '=':
+				io.screen_save()
+				commands.do_cmd_options_aux(6, "Startup Options")
+				io.screen_load()
+			# Error
+			else:
+				io.bell()
+
+		io.Term_load()
+	
+		return selection.keys()
+
 
 	def get_player_realms_hook(self, args):
 		# XXX This section should be moved to the gui-package
@@ -113,8 +196,8 @@ class spellcaster_class:
 				io.screen_save()
 				commands.do_cmd_options_aux(6, "Startup Options")
 				io.screen_load()
-			# Return/Enter
-			elif ord(c) == 13:
+			# Escape
+			elif A2I(c) == -70:
 				if self.check_picks():
 					self.assign_realms()
 					break
@@ -125,7 +208,7 @@ class spellcaster_class:
 				io.bell()
 
 			io.clear_from(15)
-	
+
 		return 1
 
 

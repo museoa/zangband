@@ -48,27 +48,27 @@ class building(room):
 		from angband import io
 		io.screen_save()
 		io.Term_clear()
-#		try:
-		io.prt(("%s (%s) %35s" % (self.owner_name, self.owner_race, self.name)), 2, 1)
-		# Print available commands
-		i = 0
-		for command in self.data:
-			cost = command.cost()
-			if not cost:
-				cost = ""
-			io.prt((" %c) %s %s" % (command.letter, command.name, cost)), 19+(i/2), 35*(i%2))
-			i = i + 1
-		io.prt(" ESC) Exit building", 23, 0)
-		# Request command
-		letter = io.inkey()
-		# Execute the command
-		for command in self.data:
-			if command.letter == letter:
-				command.execute(self)
-#		finally:
-		# Leave the building
-		self.leave()
-		return 1
+		try:
+			io.prt(("%s (%s) %35s" % (self.owner_name, self.owner_race, self.name)), 2, 1)
+			# Print available commands
+			i = 0
+			for command in self.data:
+				cost = command.cost()
+				if not cost:
+					cost = ""
+				io.prt((" %c) %s %s" % (command.letter, command.name, cost)), 19+(i/2), 35*(i%2))
+				i = i + 1
+			io.prt(" ESC) Exit building", 23, 0)
+			# Request command
+			letter = io.inkey()
+			# Execute the command
+			for command in self.data:
+				if command.letter == letter:
+					command.execute(self)
+		finally:
+			# Leave the building
+			self.leave()
+			return 1
 
 	# Leave the building
 	def leave(self):

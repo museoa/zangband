@@ -12,14 +12,10 @@
  */
 
 /* Allow debug commands */
-#if 1
-# define USE_DEBUG
-#endif
+#define USE_DEBUG
 
 /* Allow various special stuff (sound, graphics, etc.) */
-#if 0
-# define USE_SPECIAL
-#endif
+#define USE_SPECIAL
 
 
 /*
@@ -377,7 +373,7 @@
 /*
  * OPTION: Allow the use of "music" in various places
  */
-#define USE_MUSIC
+/* #define USE_MUSIC */
 
 #endif /* USE_SPECIAL */
 
