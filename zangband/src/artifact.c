@@ -698,13 +698,13 @@ static const struct randart_activation randart_activations[] =
 	{
 		NULL,
 		"teleport away",
-		"fire_beam(GF_AWAY_ALL, dir, plev)",
+		"fire_beam(GF_AWAY_ALL, dir, player.lev)",
 		50, TRUE, 5000, 0, 0
 	},
 	{
 		NULL,
 		"charm animal",
-		"charm_animal(dir, plev)",
+		"charm_animal(dir, player.lev)",
 		10, TRUE, 5000, 0, 0
 	},
 	{
@@ -716,7 +716,7 @@ static const struct randart_activation randart_activations[] =
 	{
 		NULL,
 		"enslave undead",
-		"control_one_undead(dir, plev)",
+		"control_one_undead(dir, player.lev)",
 		10, TRUE, 7500, 0, 0
 	},
 	{
@@ -728,7 +728,7 @@ static const struct randart_activation randart_activations[] =
 	{
 		NULL,
 		"charm monster",
-		"charm_monster(dir, plev)",
+		"charm_monster(dir, player.lev)",
 		10, TRUE, 10000, 0, 0
 	},
 	{
@@ -752,7 +752,7 @@ static const struct randart_activation randart_activations[] =
 	{
 		NULL,
 		"animal friendship",
-		"charm_animals(plev * 2)",
+		"charm_animals(player.lev * 2)",
 		5, FALSE, 10000, 0, 0
 	},
 	{
@@ -800,7 +800,7 @@ static const struct randart_activation randart_activations[] =
 	{
 		NULL,
 		"mass charm",
-		"charm_monsters(plev * 2)",
+		"charm_monsters(player.lev * 2)",
 		5, FALSE, 25000, 0, 0
 	},
 	{
@@ -915,7 +915,7 @@ static const struct randart_activation randart_activations[] =
 	{
 		"The %v emits a loud blast...",
 		"terror",
-		"turn_monsters(40 + plev)",
+		"turn_monsters(40 + player.lev)",
 		10, FALSE, 2500, 0, 0
 	},
 	{
@@ -1245,7 +1245,7 @@ static void apply_activation_power(object_type *o_ptr, cptr text, cptr desc, cpt
 	strnfmt(text_buf, 256, text, OBJECT_FMT(o_ptr, FALSE, 0));
 	
 	/* Construct the usage script */
-	len = strnfmt(buf, 1024, "msgf(\"%s\"); local plev = player.lev; ", text_buf);
+	len = strnfmt(buf, 1024, "msgf(\"%s\"); ", text_buf);
 	
 	if (aimed) strnfcat(buf, 1024, &len, 
 				"local success; local dir; "
@@ -1410,9 +1410,9 @@ static void misc_activation_power(object_type *o_ptr, int level, cptr fix_power)
 		if (mult < 1) mult = 1;
 
 		if (mult > 1)
-			strnfmt(dice, 32, "plev * %i", mult);
+			strnfmt(dice, 32, "player.lev * %i", mult);
 		else
-			strcpy(dice, "plev");
+			strcpy(dice, "player.lev");
 		
 		/* Fill in the dice */
 		strnfmt(desc, 256, act->desc, dice);
