@@ -372,10 +372,10 @@ void monster_death(int m_idx)
 				for (i2 = 0; i2 < cur_wid; ++i2)
 					for (j2 = 0; j2 < cur_hgt; j2++)
 						if (area(j2,i2)->m_idx > 0)
-							if (is_hostile(&m_list[area(j2,i2)->m_idx]))
-								number_mon++;
-
-				if ((number_mon - 1) == 0)
+							if (is_hostile(&m_list[area(j2,i2)->m_idx])
+								&& area(j2,i2)->m_idx!=m_idx)
+									number_mon++;
+				if (number_mon == 0)
 				{
 					/* completed */
 					if (quest[i].flags & QUEST_FLAG_SILENT)

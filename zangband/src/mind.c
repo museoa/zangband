@@ -566,7 +566,7 @@ void do_cmd_mindcraft(void)
 	/* Over-exert the player */
 	else
 	{
-		int oops = spell.mana_cost - p_ptr->csp;
+		int oops = spell.mana_cost - old_csp;
 
 		/* No mana left */
 		p_ptr->csp = 0;
