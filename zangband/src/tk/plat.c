@@ -358,3 +358,277 @@ void Plat_SyncDisplay(Display *display)
 }
 
 
+/*
+ * The Win32 "BITMAPFILEHEADER" type.
+ */
+typedef struct BITMAPFILEHEADER
+{
+	u16b bfType;
+	u32b bfSize;
+	u16b bfReserved1;
+	u16b bfReserved2;
+	u32b bfOffBits;
+} BITMAPFILEHEADER;
+
+
+/*
+ * The Win32 "BITMAPINFOHEADER" type.
+ */
+typedef struct BITMAPINFOHEADER
+{
+	u32b biSize;
+	u32b biWidth;
+	u32b biHeight;
+	u16b biPlanes;
+	u16b biBitCount;
+	u32b biCompresion;
+	u32b biSizeImage;
+	u32b biXPelsPerMeter;
+	u32b biYPelsPerMeter;
+	u32b biClrUsed;
+	u32b biClrImportand;
+} BITMAPINFOHEADER;
+
+/*
+ * The Win32 "RGBQUAD" type.
+ */
+typedef struct RGBQUAD
+{
+	unsigned char b, g, r;
+	unsigned char filler;
+} RGBQUAD;
+
+
+/*** Helper functions for system independent file loading. ***/
+
+static byte get_byte(FILE *fff)
+{
+	/* Get a character, and return it */
+	return (getc(fff) & 0xFF);
+}
+
+static void rd_byte(FILE *fff, byte *ip)
+{
+	*ip = get_byte(fff);
+}
+
+static void rd_u16b(FILE *fff, u16b *ip)
+{
+	(*ip) = get_byte(fff);
+	(*ip) |= ((u16b)(get_byte(fff)) << 8);
+}
+
+static void rd_u32b(FILE *fff, u32b *ip)
+{
+	(*ip) = get_byte(fff);
+	(*ip) |= ((u32b)(get_byte(fff)) << 8);
+	(*ip) |= ((u32b)(get_byte(fff)) << 16);
+	(*ip) |= ((u32b)(get_byte(fff)) << 24);
+}
+
+
+/*
+ * Read a Win32 BMP file.
+ *
+ * Assumes that the bitmap has a size such that no padding is needed in
+ * various places.
+ */
+static u32b *ReadBMP(cptr Name, int *bw, int *bh)
+{
+	FILE *f;
+
+	BITMAPFILEHEADER fileheader;
+	BITMAPINFOHEADER infoheader;
+
+	u32b *Data32;
+	u32b *p;
+	u32b pixel;
+	
+	/* Palette of bitmap */
+	byte *pal = NULL;
+
+	int ncol;
+
+	int total;
+
+	int i;
+
+	u16b x, y;
+
+	/* Open the BMP file */
+	f = fopen(Name, "r");
+
+	/* No such file */
+	if (!f)
+	{
+		quit_fmt("No bitmap to load! (%s)", Name);
+	}
+
+	/* Read the "BITMAPFILEHEADER" */
+	rd_u16b(f, &(fileheader.bfType));
+	rd_u32b(f, &(fileheader.bfSize));
+	rd_u16b(f, &(fileheader.bfReserved1));
+	rd_u16b(f, &(fileheader.bfReserved2));
+	rd_u32b(f, &(fileheader.bfOffBits));
+
+	/* Read the "BITMAPINFOHEADER" */
+	rd_u32b(f, &(infoheader.biSize));
+	rd_u32b(f, &(infoheader.biWidth));
+	rd_u32b(f, &(infoheader.biHeight));
+	rd_u16b(f, &(infoheader.biPlanes));
+	rd_u16b(f, &(infoheader.biBitCount));
+	rd_u32b(f, &(infoheader.biCompresion));
+	rd_u32b(f, &(infoheader.biSizeImage));
+	rd_u32b(f, &(infoheader.biXPelsPerMeter));
+	rd_u32b(f, &(infoheader.biYPelsPerMeter));
+	rd_u32b(f, &(infoheader.biClrUsed));
+	rd_u32b(f, &(infoheader.biClrImportand));
+
+	/* Verify the header */
+	if (feof(f) ||
+	    (fileheader.bfType != 19778) ||
+	    (infoheader.biSize != 40))
+	{
+		quit_fmt("Incorrect BMP file format %s", Name);
+	}
+
+	/* The two headers above occupy 54 bytes total */
+	/* The "bfOffBits" field says where the data starts */
+	/* The "biClrUsed" field does not seem to be reliable */
+	/* Compute number of colors recorded */
+	ncol = (fileheader.bfOffBits - 54) / 4;
+	
+	
+	if (ncol)
+	{
+		/* Create palette */
+		C_MAKE(pal, ncol * 3, byte);
+	}
+	
+	for (i = 0; i < ncol; i++)
+	{
+		RGBQUAD clrg;
+
+		/* Read an "RGBQUAD" */
+		rd_byte(f, &(clrg.b));
+		rd_byte(f, &(clrg.g));
+		rd_byte(f, &(clrg.r));
+		rd_byte(f, &(clrg.filler));
+
+		/* Analyze the color */
+		pal[i * 3] = clrg.b;
+		pal[i * 3 + 1] = clrg.g;
+		pal[i * 3 + 2] = clrg.r;
+	}
+	
+	/* Look for illegal bitdepths. */
+	if ((infoheader.biBitCount == 1) || (infoheader.biBitCount == 4))
+	{
+		quit_fmt("Illegal biBitCount %d in %s",
+			 infoheader.biBitCount, Name);
+	}
+
+	/* Determine total bytes needed for image */
+	total = infoheader.biWidth * (infoheader.biHeight + 2);
+
+	/* Allocate image memory */
+	C_MAKE(Data32, total, u32b);
+	p = Data32;
+		
+	for (y = 0; y < infoheader.biHeight; y++)
+	{
+		for (x = 0; x < infoheader.biWidth; x++)
+		{
+			int ch = getc(f);
+
+			/* Verify not at end of file XXX XXX */
+			if (feof(f)) quit_fmt("Unexpected end of file in %s", Name);
+
+			if (infoheader.biBitCount == 8)
+			{
+				pixel = pal[ch * 3];
+				pixel = pixel * 256 + pal[ch * 3 + 1];
+				pixel = pixel * 256 + pal[ch * 3 + 2];
+				*p++ = pixel;
+			}
+			else if (infoheader.biBitCount == 24)
+			{
+				pixel = ch;
+				ch = getc(f);
+
+				/* Verify not at end of file XXX XXX */
+				if (feof(f)) quit_fmt("Unexpected end of file in %s", Name);
+				pixel = pixel * 256 + ch;
+				ch = getc(f);
+
+				/* Verify not at end of file XXX XXX */
+				if (feof(f)) quit_fmt("Unexpected end of file in %s", Name);
+				pixel = pixel * 256 + ch;
+
+				*p++ = pixel;
+			}
+		}
+	}
+
+	fclose(f);
+	
+	/* Save the size for later */
+	*bw = infoheader.biWidth;
+	*bh = infoheader.biHeight;
+
+	/* Free palette */
+	FREE(pal);
+
+	/*
+	 * Return data
+	 */
+	return (Data32);
+}
+
+/*
+ * Actually load a bitmap
+ */
+BitmapPtr Bitmap_Load(Tcl_Interp *interp, cptr name)
+{
+	BitmapPtr bitmapPtr;
+	
+	u32b *data, *p;
+	
+	int i, j;
+	
+	MAKE(bitmapPtr, BitmapType);
+	
+	data = ReadBMP(name, &bitmapPtr->width, &bitmapPtr->height);
+
+	Bitmap_New(interp, bitmapPtr);
+	
+	/* Paranoia */
+	if (bitmapPtr->depth != 24)
+	{
+		quit("Cannot allocate 24bit bitmap");
+	}
+	
+	/* Copy in the data */
+	if (bitmapPtr->pixelSize == 3)
+	{
+		C_COPY(bitmapPtr->pixmap, data, bitmapPtr->pitch * bitmapPtr->height, byte);
+	}
+	else if (bitmapPtr->pixelSize == 4)
+	{
+		p = (u32b *) &bitmapPtr->pixmap;
+	
+		/* We need to copy each part seperately */
+		for (i = 0; i < bitmapPtr->height; i++)
+		{
+			for (j = 0; j < bitmapPtr->width; j++)
+			{
+				*p++ = *data++;
+				*p++ = *data++;
+				*p++ = *data++;
+				p++;
+			}
+		}
+	}
+	
+	FREE(data);
+}

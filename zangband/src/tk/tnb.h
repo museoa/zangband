@@ -304,6 +304,7 @@ typedef struct BitmapType {
 
 extern void Bitmap_New(Tcl_Interp *interp, BitmapPtr bitmapPtr);
 extern void Bitmap_Delete(BitmapPtr bitmapPtr);
+extern BitmapPtr Bitmap_Load(Tcl_Interp *interp, cptr name);
 
 #ifdef PLATFORM_WINxxx
 extern HFONT TkToWinFont(Tk_Font tkFont);
