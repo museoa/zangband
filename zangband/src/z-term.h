@@ -132,7 +132,6 @@ struct term_win
  *	- Displayed screen image
  *	- Requested screen image
  *
- *	- Temporary screen image
  *	- Memorized screen image
  *
  *
@@ -199,7 +198,6 @@ struct term
 	term_win *old;
 	term_win *scr;
 
-	term_win *tmp;
 	term_win *mem;
 
 	void (*init_hook) (term *t);
@@ -303,8 +301,6 @@ extern errr Term_inkey(char *ch, bool wait, bool take);
 
 extern void Term_save(void);
 extern void Term_load(void);
-
-extern errr Term_exchange(void);
 
 extern errr Term_resize(int w, int h);
 
