@@ -241,28 +241,6 @@ tolua_lerror:
  return 0;
 }
 
-/* function: Rand_mod */
-static int toluaI_random_Rand_mod00(lua_State* tolua_S)
-{
- if (
-     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
-     !tolua_isnoobj(tolua_S,2)
- )
-  goto tolua_lerror;
- else
- {
-  u32b m = ((u32b)  tolua_getnumber(tolua_S,1,0));
-  {
-   u32b toluaI_ret = (u32b)  Rand_mod(m);
-   tolua_pushnumber(tolua_S,(long)toluaI_ret);
-  }
- }
- return 1;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'Rand_mod'.");
- return 0;
-}
-
 /* function: Rand_div */
 static int toluaI_random_Rand_div00(lua_State* tolua_S)
 {
@@ -390,7 +368,6 @@ int tolua_random_open (lua_State* tolua_S)
  tolua_function(tolua_S,NULL,"damroll",toluaI_random_damroll00);
  tolua_function(tolua_S,NULL,"maxroll",toluaI_random_maxroll00);
  tolua_function(tolua_S,NULL,"Rand_state_init",toluaI_random_Rand_state_init00);
- tolua_function(tolua_S,NULL,"Rand_mod",toluaI_random_Rand_mod00);
  tolua_function(tolua_S,NULL,"Rand_div",toluaI_random_Rand_div00);
  tolua_function(tolua_S,NULL,"Rand_normal",toluaI_random_Rand_normal00);
  tolua_function(tolua_S,NULL,"Rand_simple",toluaI_random_Rand_simple00);
@@ -413,7 +390,6 @@ void tolua_random_close (lua_State* tolua_S)
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"damroll");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"maxroll");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"Rand_state_init");
- lua_pushnil(tolua_S); lua_setglobal(tolua_S,"Rand_mod");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"Rand_div");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"Rand_normal");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"Rand_simple");
