@@ -110,6 +110,9 @@ extern player_type *p_ptr;
 }
 
 
+%include typemap.i
+
+
 /*
  * Maximum number of "normal" pack slots, and the index of the "overflow"
  * slot, which can hold an item, but only temporarily, since it causes the
@@ -140,6 +143,7 @@ extern player_type *p_ptr;
  * Total number of inventory slots (hard-coded).
  */
 #define INVEN_TOTAL     36
+
 
 
 typedef struct player_type
@@ -196,7 +200,7 @@ typedef struct player_type
 	s16b max_dlv;		/* Max level explored */
 
 	s16b stat_max[6];	/* Current "maximal" stat values */
-	s16b stat_cur[6];	/* Current "natural" stat values */
+	//s16b stat_cur[6];	/* Current "natural" stat values */
 
 	s16b fast;			/* Timed -- Fast */
 	s16b slow;			/* Timed -- Slow */
@@ -402,6 +406,11 @@ typedef struct player_type
 
 %addmethods player_type
 {
+	int stat_cur_get(int index)
+	{
+		return p_ptr->stat_cur[index];
+	}
+
 	object_type *inventory(int index)
 	{
 		return &inventory[index];
@@ -494,11 +503,25 @@ typedef struct player_type
 		alter_reality();
 	}
 
+	bool set_afraid(int v)
+	{
+		return set_afraid(v);
+	}
+
+	bool set_shero(int v)
+	{
+		return set_shero(v);
+	}
+
+	bool hp_player(int num)
+	{
+		return hp_player(num);
+	}
+
 /*
 	bool set_blind(int v);
 	bool set_confused(int v);
 	bool set_poisoned(int v);
-	bool set_afraid(int v);
 	bool set_paralyzed(int v);
 	bool set_image(int v);
 	bool set_fast(int v);
@@ -506,7 +529,6 @@ typedef struct player_type
 	bool set_shield(int v);
 	bool set_blessed(int v);
 	bool set_hero(int v);
-	bool set_shero(int v);
 	bool set_protevil(int v);
 	bool set_invuln(int v);
 	bool set_tim_invis(int v);
@@ -522,7 +544,6 @@ typedef struct player_type
 	bool inc_stat(int stat);
 	bool dec_stat(int stat, int amount, int permanent);
 	bool res_stat(int stat);
-	bool hp_player(int num);
 	bool do_dec_stat(int stat);
 	bool do_res_stat(int stat);
 	bool do_inc_stat(int stat);
