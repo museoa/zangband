@@ -38,16 +38,16 @@ void do_cmd_inven(void)
 			((adj_str_wgt[p_ptr->stat_ind[A_STR]] * 100) / 2));
 
 	/* Get a new command */
-	p_ptr->command_new = inkey();
+	p_ptr->cmd.new = inkey();
 
 	/* Load screen */
 	screen_load();
 
 	/* Process "Escape" */
-	if (p_ptr->command_new == ESCAPE)
+	if (p_ptr->cmd.new == ESCAPE)
 	{
 		/* Reset stuff */
-		p_ptr->command_new = 0;
+		p_ptr->cmd.new = 0;
 	}
 }
 
@@ -76,16 +76,16 @@ void do_cmd_equip(void)
 			((adj_str_wgt[p_ptr->stat_ind[A_STR]] * 100) / 2));
 
 	/* Get a new command */
-	p_ptr->command_new = inkey();
+	p_ptr->cmd.new = inkey();
 
 	/* Restore the screen */
 	screen_load();
 
 	/* Process "Escape" */
-	if (p_ptr->command_new == ESCAPE)
+	if (p_ptr->cmd.new == ESCAPE)
 	{
 		/* Reset stuff */
-		p_ptr->command_new = 0;
+		p_ptr->cmd.new = 0;
 	}
 }
 
@@ -443,7 +443,7 @@ void do_cmd_destroy(void)
 	cptr q, s;
 
 	/* Hack -- force destruction */
-	if (p_ptr->command_arg > 0) force = TRUE;
+	if (p_ptr->cmd.arg > 0) force = TRUE;
 
 
 	/* Get an item */

@@ -1823,7 +1823,7 @@ static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
 static bool build_process_command(field_type *f_ptr, store_type *b_ptr)
 {
 	/* Hack - Get a command */
-	p_ptr->command_cmd = inkey();
+	p_ptr->cmd.cmd = inkey();
 
 	/* Handle repeating the last command */
 	repeat_check();
@@ -1832,7 +1832,7 @@ static bool build_process_command(field_type *f_ptr, store_type *b_ptr)
 	if (process_build_hook(f_ptr, b_ptr)) return (FALSE);
 
 	/* Parse the command */
-	switch (p_ptr->command_cmd)
+	switch (p_ptr->cmd.cmd)
 	{
 		case ESCAPE:
 		{
@@ -2035,13 +2035,13 @@ void do_cmd_bldg(field_type *f_ptr)
 	character_icky++;
 
 	/* No command argument */
-	p_ptr->command_arg = 0;
+	p_ptr->cmd.arg = 0;
 
 	/* No repeated command */
-	p_ptr->command_rep = 0;
+	p_ptr->cmd.rep = 0;
 
 	/* No automatic command */
-	p_ptr->command_new = 0;
+	p_ptr->cmd.new = 0;
 
 	/* Display the building */
 	display_build(f_ptr, b_ptr);
@@ -2087,7 +2087,7 @@ void do_cmd_bldg(field_type *f_ptr)
 
 
 	/* Hack -- Cancel automatic command */
-	p_ptr->command_new = 0;
+	p_ptr->cmd.new = 0;
 
 	/* Flush messages XXX XXX XXX */
 	message_flush();

@@ -153,16 +153,16 @@ void do_cmd_go_down(void)
 void do_cmd_search(void)
 {
 	/* Allow repeated command */
-	if (p_ptr->command_arg)
+	if (p_ptr->cmd.arg)
 	{
 		/* Set repeat count */
-		p_ptr->command_rep = p_ptr->command_arg - 1;
+		p_ptr->cmd.rep = p_ptr->cmd.arg - 1;
 
 		/* Redraw the state */
 		p_ptr->redraw |= (PR_STATE);
 
 		/* Cancel the arg */
-		p_ptr->command_arg = 0;
+		p_ptr->cmd.arg = 0;
 	}
 
 	/* Take a turn */
@@ -811,21 +811,21 @@ void do_cmd_open(void)
 		/* See if only one target */
 		if ((num_doors + num_chests) == 1)
 		{
-			p_ptr->command_dir = coords_to_dir(x, y);
+			p_ptr->cmd.dir = coords_to_dir(x, y);
 		}
 	}
 
 	/* Allow repeated command */
-	if (p_ptr->command_arg)
+	if (p_ptr->cmd.arg)
 	{
 		/* Set repeat count */
-		p_ptr->command_rep = p_ptr->command_arg - 1;
+		p_ptr->cmd.rep = p_ptr->cmd.arg - 1;
 
 		/* Redraw the state */
 		p_ptr->redraw |= (PR_STATE);
 
 		/* Cancel the arg */
-		p_ptr->command_arg = 0;
+		p_ptr->cmd.arg = 0;
 	}
 
 	/* Get a "repeated" direction */
@@ -957,21 +957,21 @@ void do_cmd_close(void)
 		/* Count open doors */
 		if (count_doors(&x, &y, is_open, FALSE) == 1)
 		{
-			p_ptr->command_dir = coords_to_dir(x, y);
+			p_ptr->cmd.dir = coords_to_dir(x, y);
 		}
 	}
 
 	/* Allow repeated command */
-	if (p_ptr->command_arg)
+	if (p_ptr->cmd.arg)
 	{
 		/* Set repeat count */
-		p_ptr->command_rep = p_ptr->command_arg - 1;
+		p_ptr->cmd.rep = p_ptr->cmd.arg - 1;
 
 		/* Redraw the state */
 		p_ptr->redraw |= (PR_STATE);
 
 		/* Cancel the arg */
-		p_ptr->command_arg = 0;
+		p_ptr->cmd.arg = 0;
 	}
 
 	/* Get a "repeated" direction */
@@ -1352,16 +1352,16 @@ void do_cmd_tunnel(void)
 
 
 	/* Allow repeated command */
-	if (p_ptr->command_arg)
+	if (p_ptr->cmd.arg)
 	{
 		/* Set repeat count */
-		p_ptr->command_rep = p_ptr->command_arg - 1;
+		p_ptr->cmd.rep = p_ptr->cmd.arg - 1;
 
 		/* Redraw the state */
 		p_ptr->redraw |= (PR_STATE);
 
 		/* Cancel the arg */
-		p_ptr->command_arg = 0;
+		p_ptr->cmd.arg = 0;
 	}
 
 	/* Get a direction to tunnel, or Abort */
@@ -1631,21 +1631,21 @@ void do_cmd_disarm(void)
 		{
 			bool too_many = (num_traps + num_chests > 1);
 
-			if (!too_many) p_ptr->command_dir = coords_to_dir(x, y);
+			if (!too_many) p_ptr->cmd.dir = coords_to_dir(x, y);
 		}
 	}
 
 	/* Allow repeated command */
-	if (p_ptr->command_arg)
+	if (p_ptr->cmd.arg)
 	{
 		/* Set repeat count */
-		p_ptr->command_rep = p_ptr->command_arg - 1;
+		p_ptr->cmd.rep = p_ptr->cmd.arg - 1;
 
 		/* Redraw the state */
 		p_ptr->redraw |= (PR_STATE);
 
 		/* Cancel the arg */
-		p_ptr->command_arg = 0;
+		p_ptr->cmd.arg = 0;
 	}
 
 	/* Get a direction (or abort) */
@@ -1729,16 +1729,16 @@ void do_cmd_alter(void)
 
 
 	/* Allow repeated command */
-	if (p_ptr->command_arg)
+	if (p_ptr->cmd.arg)
 	{
 		/* Set repeat count */
-		p_ptr->command_rep = p_ptr->command_arg - 1;
+		p_ptr->cmd.rep = p_ptr->cmd.arg - 1;
 
 		/* Redraw the state */
 		p_ptr->redraw |= (PR_STATE);
 
 		/* Cancel the arg */
-		p_ptr->command_arg = 0;
+		p_ptr->cmd.arg = 0;
 	}
 
 	/* Get a direction */
@@ -1958,16 +1958,16 @@ void do_cmd_walk(int pickup)
 
 
 	/* Allow repeated command */
-	if (p_ptr->command_arg)
+	if (p_ptr->cmd.arg)
 	{
 		/* Set repeat count */
-		p_ptr->command_rep = p_ptr->command_arg - 1;
+		p_ptr->cmd.rep = p_ptr->cmd.arg - 1;
 
 		/* Redraw the state */
 		p_ptr->redraw |= (PR_STATE);
 
 		/* Cancel the arg */
-		p_ptr->command_arg = 0;
+		p_ptr->cmd.arg = 0;
 	}
 
 	/* Get a "repeated" direction */
@@ -2007,7 +2007,7 @@ void do_cmd_run(void)
 	if (get_rep_dir(&dir))
 	{
 		/* Hack -- Set the run counter */
-		p_ptr->state.running = (p_ptr->command_arg ? p_ptr->command_arg : 1000);
+		p_ptr->state.running = (p_ptr->cmd.arg ? p_ptr->cmd.arg : 1000);
 
 		/* First step */
 		run_step(dir);
@@ -2023,16 +2023,16 @@ void do_cmd_run(void)
 void do_cmd_stay(int pickup)
 {
 	/* Allow repeated command */
-	if (p_ptr->command_arg)
+	if (p_ptr->cmd.arg)
 	{
 		/* Set repeat count */
-		p_ptr->command_rep = p_ptr->command_arg - 1;
+		p_ptr->cmd.rep = p_ptr->cmd.arg - 1;
 
 		/* Redraw the state */
 		p_ptr->redraw |= (PR_STATE);
 
 		/* Cancel the arg */
-		p_ptr->command_arg = 0;
+		p_ptr->cmd.arg = 0;
 	}
 
 
@@ -2069,7 +2069,7 @@ void do_cmd_stay(int pickup)
 void do_cmd_rest(void)
 {
 	/* Prompt for time if needed */
-	if (p_ptr->command_arg <= 0)
+	if (p_ptr->cmd.arg <= 0)
 	{
 		char out_val[80];
 
@@ -2086,29 +2086,29 @@ void do_cmd_rest(void)
 		/* Rest until done */
 		if (out_val[0] == '&')
 		{
-			p_ptr->command_arg = (-2);
+			p_ptr->cmd.arg = (-2);
 		}
 
 		/* Rest a lot */
 		else if (out_val[0] == '*')
 		{
-			p_ptr->command_arg = (-1);
+			p_ptr->cmd.arg = (-1);
 		}
 
 		/* Rest some */
 		else
 		{
-			p_ptr->command_arg = atoi(out_val);
-			if (p_ptr->command_arg <= 0) return;
+			p_ptr->cmd.arg = atoi(out_val);
+			if (p_ptr->cmd.arg <= 0) return;
 		}
 	}
 
 
 	/* Paranoia */
-	if (p_ptr->command_arg > 9999) p_ptr->command_arg = 9999;
+	if (p_ptr->cmd.arg > 9999) p_ptr->cmd.arg = 9999;
 
 	/* The sin of sloth */
-	if (p_ptr->command_arg > 100)
+	if (p_ptr->cmd.arg > 100)
 		chg_virtue(V_DILIGENCE, -1);
 
 	/* Why are you sleeping when there's no need?  WAKE UP! */
@@ -2125,7 +2125,7 @@ void do_cmd_rest(void)
 	p_ptr->energy_use = 100;
 
 	/* Save the rest code */
-	p_ptr->state.resting = p_ptr->command_arg;
+	p_ptr->state.resting = p_ptr->cmd.arg;
 
 	/* Cancel searching */
 	p_ptr->state.searching = FALSE;

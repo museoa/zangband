@@ -1255,7 +1255,7 @@ static void do_cmd_wiz_cure_all(void)
 static void do_cmd_wiz_jump(void)
 {
 	/* Ask for level */
-	if (p_ptr->command_arg <= 0)
+	if (p_ptr->cmd.arg <= 0)
 	{
 		char tmp_val[160];
 
@@ -1267,22 +1267,22 @@ static void do_cmd_wiz_jump(void)
 						MAX_DEPTH - 1)) return;
 
 		/* Extract request */
-		p_ptr->command_arg = atoi(tmp_val);
+		p_ptr->cmd.arg = atoi(tmp_val);
 	}
 
 	/* Paranoia */
-	if (p_ptr->command_arg < 0) p_ptr->command_arg = 0;
+	if (p_ptr->cmd.arg < 0) p_ptr->cmd.arg = 0;
 
 	/* Paranoia */
-	if (p_ptr->command_arg > MAX_DEPTH - 1) p_ptr->command_arg = MAX_DEPTH - 1;
+	if (p_ptr->cmd.arg > MAX_DEPTH - 1) p_ptr->cmd.arg = MAX_DEPTH - 1;
 
 	/* Accept request */
-	msgf("You jump to dungeon level %d.", p_ptr->command_arg);
+	msgf("You jump to dungeon level %d.", p_ptr->cmd.arg);
 
 	if (autosave_l) do_cmd_save_game(TRUE);
 
 	/* Change level */
-	p_ptr->depth = p_ptr->command_arg;
+	p_ptr->depth = p_ptr->cmd.arg;
 
 	/* Leaving */
 	p_ptr->state.leaving = TRUE;
@@ -1304,7 +1304,7 @@ static void do_cmd_wiz_learn(void)
 		object_kind *k_ptr = &k_info[i];
 
 		/* Induce awareness */
-		if (k_ptr->level <= p_ptr->command_arg)
+		if (k_ptr->level <= p_ptr->cmd.arg)
 		{
 			/* Prepare object */
 			q_ptr = object_prep(i);
@@ -1455,7 +1455,7 @@ extern void do_cmd_debug(void);
 
 /*
  * Ask for and parse a "debug command"
- * The "command_arg" may have been set.
+ * The "cmd.arg" may have been set.
  */
 void do_cmd_debug(void)
 {
@@ -1528,7 +1528,7 @@ void do_cmd_debug(void)
 		case 'C':
 		{
 			/* Create a named artifact */
-			wiz_create_named_art(p_ptr->command_arg);
+			wiz_create_named_art(p_ptr->cmd.arg);
 			break;
 		}
 
@@ -1556,15 +1556,15 @@ void do_cmd_debug(void)
 		case 'F':
 		{
 			/* Create feature */
-			if (p_ptr->command_arg > 0) do_cmd_wiz_feature(p_ptr->command_arg);
+			if (p_ptr->cmd.arg > 0) do_cmd_wiz_feature(p_ptr->cmd.arg);
 			break;
 		}
 
 		case 'g':
 		{
 			/* Good Objects */
-			if (p_ptr->command_arg <= 0) p_ptr->command_arg = 1;
-			acquirement(px, py, p_ptr->command_arg, FALSE, TRUE);
+			if (p_ptr->cmd.arg <= 0) p_ptr->cmd.arg = 1;
+			acquirement(px, py, p_ptr->cmd.arg, FALSE, TRUE);
 			break;
 		}
 
@@ -1628,7 +1628,7 @@ void do_cmd_debug(void)
 		case 'L':
 		{
 			/* Lose Mutation */
-			(void)lose_mutation(p_ptr->command_arg);
+			(void)lose_mutation(p_ptr->cmd.arg);
 			break;
 		}
 
@@ -1642,28 +1642,28 @@ void do_cmd_debug(void)
 		case 'M':
 		{
 			/* Gain Mutation */
-			(void)gain_mutation(p_ptr->command_arg);
+			(void)gain_mutation(p_ptr->cmd.arg);
 			break;
 		}
 
 		case 'r':
 		{
 			/* Specific reward */
-			(void)gain_level_reward(p_ptr->command_arg);
+			(void)gain_level_reward(p_ptr->cmd.arg);
 			break;
 		}
 
 		case 'N':
 		{
 			/* Summon _friendly_ named monster */
-			do_cmd_wiz_named_friendly(p_ptr->command_arg, TRUE);
+			do_cmd_wiz_named_friendly(p_ptr->cmd.arg, TRUE);
 			break;
 		}
 
 		case 'n':
 		{
 			/* Summon Named Monster */
-			do_cmd_wiz_named(p_ptr->command_arg, TRUE);
+			do_cmd_wiz_named(p_ptr->cmd.arg, TRUE);
 			break;
 		}
 
@@ -1707,8 +1707,8 @@ void do_cmd_debug(void)
 		case 's':
 		{
 			/* Summon Random Monster(s) */
-			if (p_ptr->command_arg <= 0) p_ptr->command_arg = 1;
-			do_cmd_wiz_summon(p_ptr->command_arg);
+			if (p_ptr->cmd.arg <= 0) p_ptr->cmd.arg = 1;
+			do_cmd_wiz_summon(p_ptr->cmd.arg);
 			break;
 		}
 
@@ -1747,8 +1747,8 @@ void do_cmd_debug(void)
 		case 'v':
 		{
 			/* Very Good Objects */
-			if (p_ptr->command_arg <= 0) p_ptr->command_arg = 1;
-			acquirement(px, py, p_ptr->command_arg, TRUE, TRUE);
+			if (p_ptr->cmd.arg <= 0) p_ptr->cmd.arg = 1;
+			acquirement(px, py, p_ptr->cmd.arg, TRUE, TRUE);
 			break;
 		}
 
@@ -1777,9 +1777,9 @@ void do_cmd_debug(void)
 		case 'x':
 		{
 			/* Increase Experience */
-			if (p_ptr->command_arg)
+			if (p_ptr->cmd.arg)
 			{
-				gain_exp(p_ptr->command_arg);
+				gain_exp(p_ptr->cmd.arg);
 			}
 			else
 			{

@@ -3031,7 +3031,7 @@ bool get_aim_dir(int *dp)
 	*dp = 0;
 
 	/* Global direction */
-	dir = p_ptr->command_dir;
+	dir = p_ptr->cmd.dir;
 
 	/* Hack -- auto-target if requested */
 	if (use_old_target && target_okay()) dir = 5;
@@ -3110,7 +3110,7 @@ bool get_aim_dir(int *dp)
 	if (!dir) return (FALSE);
 
 	/* Save the direction */
-	p_ptr->command_dir = dir;
+	p_ptr->cmd.dir = dir;
 
 	/* Check for confusion */
 	if (p_ptr->tim.confused)
@@ -3120,7 +3120,7 @@ bool get_aim_dir(int *dp)
 	}
 
 	/* Notice confusion */
-	if (p_ptr->command_dir != dir)
+	if (p_ptr->cmd.dir != dir)
 	{
 		/* Warn the user */
 		msgf("You are confused.");
@@ -3129,7 +3129,7 @@ bool get_aim_dir(int *dp)
 	/* Save direction */
 	(*dp) = dir;
 
-	repeat_push(p_ptr->command_dir);
+	repeat_push(p_ptr->cmd.dir);
 
 	/* A "valid" direction was entered */
 	return (TRUE);
@@ -3139,7 +3139,7 @@ bool get_aim_dir(int *dp)
 
 /*
  * Request a "movement" direction (1,2,3,4,6,7,8,9) from the user,
- * and place it into "command_dir", unless we already have one.
+ * and place it into "cmd.dir", unless we already have one.
  *
  * This function should be used for all "repeatable" commands, such as
  * run, walk, open, close, bash, disarm, spike, tunnel, etc, as well
@@ -3166,7 +3166,7 @@ bool get_rep_dir(int *dp)
 	(*dp) = 0;
 
 	/* Global direction */
-	dir = p_ptr->command_dir;
+	dir = p_ptr->cmd.dir;
 
 	/* Get a direction */
 	while (!dir)
@@ -3187,7 +3187,7 @@ bool get_rep_dir(int *dp)
 	if (!dir) return (FALSE);
 
 	/* Save desired direction */
-	p_ptr->command_dir = dir;
+	p_ptr->cmd.dir = dir;
 
 	/* Apply "confusion" */
 	if (p_ptr->tim.confused)
@@ -3201,7 +3201,7 @@ bool get_rep_dir(int *dp)
 	}
 
 	/* Notice confusion */
-	if (p_ptr->command_dir != dir)
+	if (p_ptr->cmd.dir != dir)
 	{
 		/* Warn the user */
 		msgf("You are confused.");
@@ -3847,7 +3847,7 @@ bool get_hack_dir(int *dp)
 	if (!dir) return (FALSE);
 
 	/* Save the direction */
-	p_ptr->command_dir = dir;
+	p_ptr->cmd.dir = dir;
 
 	/* Check for confusion */
 	if (p_ptr->tim.confused)
@@ -3858,7 +3858,7 @@ bool get_hack_dir(int *dp)
 	}
 
 	/* Notice confusion */
-	if (p_ptr->command_dir != dir)
+	if (p_ptr->cmd.dir != dir)
 	{
 		/* Warn the user */
 		msgf("You are confused.");

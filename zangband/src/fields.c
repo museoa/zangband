@@ -3612,7 +3612,7 @@ bool field_action_weaponmaster2(field_type *f_ptr, va_list vp)
 	int *factor = va_arg(vp, int *);
 	s32b cost;
 
-	if (p_ptr->command_cmd == 'E')
+	if (p_ptr->cmd.cmd == 'E')
 	{
 		cost = f_ptr->data[1] * *factor;
 
@@ -3658,14 +3658,14 @@ bool field_action_recharge2(field_type *f_ptr, va_list vp)
 	int *factor = va_arg(vp, int *);
 	s32b cost;
 
-	if (p_ptr->command_cmd == 'R')
+	if (p_ptr->cmd.cmd == 'R')
 	{
 		building_recharge(f_ptr->data[1] * *factor);
 
 		*factor = TRUE;
 	}
 
-	else if (p_ptr->command_cmd == 'I')
+	else if (p_ptr->cmd.cmd == 'I')
 	{
 		cost = f_ptr->data[2] * *factor;
 
@@ -3716,7 +3716,7 @@ bool field_action_weaponplus2(field_type *f_ptr, va_list vp)
 {
 	int *factor = va_arg(vp, int *);
 
-	if (p_ptr->command_cmd == 'E')
+	if (p_ptr->cmd.cmd == 'E')
 	{
 		item_tester_hook = item_tester_hook_melee_weapon;
 
@@ -3755,7 +3755,7 @@ bool field_action_armourplus2(field_type *f_ptr, va_list vp)
 {
 	int *factor = va_arg(vp, int *);
 
-	if (p_ptr->command_cmd == 'E')
+	if (p_ptr->cmd.cmd == 'E')
 	{
 		item_tester_hook = item_tester_hook_armour;
 
@@ -3796,7 +3796,7 @@ bool field_action_mutate2(field_type *f_ptr, va_list vp)
 	int *factor = va_arg(vp, int *);
 	s32b cost;
 
-	if (p_ptr->command_cmd == 'E')
+	if (p_ptr->cmd.cmd == 'E')
 	{
 		cost = f_ptr->data[1] * *factor * (count_mutations() + 1);
 
@@ -3857,7 +3857,7 @@ bool field_action_buymap2(field_type *f_ptr, va_list vp)
 	int *factor = va_arg(vp, int *);
 	s32b cost;
 
-	if (p_ptr->command_cmd == 'E')
+	if (p_ptr->cmd.cmd == 'E')
 	{
 		cost = f_ptr->data[1] * *factor;
 
@@ -3907,7 +3907,7 @@ bool field_action_library2(field_type *f_ptr, va_list vp)
 	int *factor = va_arg(vp, int *);
 	s32b cost;
 
-	if (p_ptr->command_cmd == 'R')
+	if (p_ptr->cmd.cmd == 'R')
 	{
 		cost = f_ptr->data[1] * *factor;
 
@@ -3961,7 +3961,7 @@ bool field_action_casino2(field_type *f_ptr, va_list vp)
 	/* Ignore f_ptr */
 	(void)f_ptr;
 
-	switch (p_ptr->command_cmd)
+	switch (p_ptr->cmd.cmd)
 	{
 		case 'H':
 		{
@@ -4045,7 +4045,7 @@ bool field_action_inn2(field_type *f_ptr, va_list vp)
 
 	s32b cost;
 
-	if (p_ptr->command_cmd == 'E')
+	if (p_ptr->cmd.cmd == 'E')
 	{
 		cost = f_ptr->data[1] * *factor / 100;
 
@@ -4062,7 +4062,7 @@ bool field_action_inn2(field_type *f_ptr, va_list vp)
 		/* Hack, use factor as a return value */
 		*factor = TRUE;
 	}
-	else if (p_ptr->command_cmd == 'R')
+	else if (p_ptr->cmd.cmd == 'R')
 	{
 		cost = f_ptr->data[1] * *factor / 20;
 
@@ -4107,7 +4107,7 @@ bool field_action_healer2(field_type *f_ptr, va_list vp)
 
 	s32b cost;
 
-	if (p_ptr->command_cmd == 'R')
+	if (p_ptr->cmd.cmd == 'R')
 	{
 		cost = f_ptr->data[1] * *factor;
 
@@ -4167,7 +4167,7 @@ bool field_action_magetower2(field_type *f_ptr, va_list vp)
 
 	s32b cost;
 
-	if (p_ptr->command_cmd == 'R')
+	if (p_ptr->cmd.cmd == 'R')
 	{
 		cost = f_ptr->data[1] * *factor;
 
@@ -4198,7 +4198,7 @@ bool field_action_magetower2(field_type *f_ptr, va_list vp)
 		return (FALSE);
 	}
 
-	if (p_ptr->command_cmd == 'T')
+	if (p_ptr->cmd.cmd == 'T')
 	{
 		cost = f_ptr->data[1] * *factor;
 

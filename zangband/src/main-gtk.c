@@ -1962,7 +1962,7 @@ static void file_menu_update_handler(GtkWidget *widget, gpointer user_data)
 	}
 	else
 	{
-		if (p_ptr->inkey_flag && game_in_progress && character_generated)
+		if (p_ptr->cmd.inkey_flag && game_in_progress && character_generated)
 		{
 			save_ok = TRUE;
 			quit_ok = TRUE;
@@ -2136,7 +2136,7 @@ static void save_game_gtk(void)
 {
 	if (game_in_progress && character_generated)
 	{
-		if (!p_ptr->inkey_flag)
+		if (!p_ptr->cmd.inkey_flag)
 		{
 			plog("You may not do that right now.");
 			return;

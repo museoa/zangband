@@ -304,13 +304,6 @@ struct player_type
 
 	s16b energy_use;		/* Energy use this turn */
 
-	s16b command_cmd;		/* Gives identity of current command */
-	s16b command_arg;		/* Gives argument of current command */
-	s16b command_rep;		/* Gives repetition of current command */
-	s16b command_dir;		/* Gives direction of current command */
-
-	s16b command_new;		/* Hack -- command chaining XXX XXX */
-
 	s16b new_spells;		/* Number of spells available */
 
 	bool cumber_armor;	/* Mana draining armor */

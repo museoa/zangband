@@ -1358,6 +1358,28 @@ struct player_run
 };
 
 /*
+ * The current state of the command being executed
+ * and the keys being pressed
+ */
+typedef struct player_command player_command;
+
+struct player_command
+{
+	s16b cmd;	/* Gives identity of current command */
+	s16b arg;	/* Gives argument of current command */
+	s16b rep;	/* Gives repetition of current command */
+	s16b dir;	/* Gives direction of current command */
+
+	s16b new;	/* Hack -- command chaining XXX XXX */
+	
+	/* Inkey status */
+	bool inkey_base;	/* See the "inkey()" function */
+	bool inkey_xtra;	/* See the "inkey()" function */
+	bool inkey_scan;	/* See the "inkey()" function */
+	bool inkey_flag;	/* See the "inkey()" function */
+};
+
+/*
  * The player skills
  */
 typedef struct player_skill player_skill;
@@ -1457,6 +1479,8 @@ struct player_type
 	player_state state;	/* Internal state of the player */
 	
 	player_skill skill;	/* Player skills */
+	
+	player_command cmd;
 
 	/*** Pointers to player grid information ***/
 
@@ -1492,13 +1516,6 @@ struct player_type
 	s16b energy_use;	/* Energy use this turn */
 	
 	player_run run;		/* Current stat of the running routine */
-
-	s16b command_cmd;	/* Gives identity of current command */
-	s16b command_arg;	/* Gives argument of current command */
-	s16b command_rep;	/* Gives repetition of current command */
-	s16b command_dir;	/* Gives direction of current command */
-
-	s16b command_new;	/* Hack -- command chaining XXX XXX */
 
 	s16b new_spells;	/* Number of spells available */
 
@@ -1648,12 +1665,6 @@ struct player_type
 	u16b max_seen_r_idx;	/* Most powerful monster visible */
 	bool monk_armour_stat;	/* Status of monk armour */
 	byte noise_level;	/* Amount of noise since last update */
-
-	/* Inkey status */
-	bool inkey_base;	/* See the "inkey()" function */
-	bool inkey_xtra;	/* See the "inkey()" function */
-	bool inkey_scan;	/* See the "inkey()" function */
-	bool inkey_flag;	/* See the "inkey()" function */
 };
 
 

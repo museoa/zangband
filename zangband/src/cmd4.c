@@ -1318,7 +1318,7 @@ static void do_cmd_macro_aux(char *buf)
 	flush();
 
 	/* Do not process macros */
-	p_ptr->inkey_base = TRUE;
+	p_ptr->cmd.inkey_base = TRUE;
 
 	/* First key */
 	i = inkey();
@@ -1330,10 +1330,10 @@ static void do_cmd_macro_aux(char *buf)
 		buf[n++] = i;
 
 		/* Do not process macros */
-		p_ptr->inkey_base = TRUE;
+		p_ptr->cmd.inkey_base = TRUE;
 
 		/* Do not wait for keys */
-		p_ptr->inkey_scan = TRUE;
+		p_ptr->cmd.inkey_scan = TRUE;
 
 		/* Attempt to read a key */
 		i = inkey();

@@ -2828,7 +2828,7 @@ static bool get_item_allow(object_type *o_ptr)
 	while (s)
 	{
 		/* Check the "restriction" */
-		if ((s[1] == p_ptr->command_cmd) || (s[1] == '*'))
+		if ((s[1] == p_ptr->cmd.cmd) || (s[1] == '*'))
 		{
 			/* Verify the choice */
 			if (!verify("Really try", o_ptr)) return (FALSE);
@@ -2850,7 +2850,7 @@ static bool get_item_allow(object_type *o_ptr)
  * inscription of an object.
  *
  * Also, the tag "@xn" will work as well, where "n" is a tag-char,
- * and "x" is the "current" command_cmd code.
+ * and "x" is the "current" cmd.cmd code.
  */
 static object_type *get_tag(bool *inven, char tag)
 {
@@ -2884,7 +2884,7 @@ static object_type *get_tag(bool *inven, char tag)
 			}
 
 			/* Check the special tags */
-			if ((s[1] == p_ptr->command_cmd) && (s[2] == tag))
+			if ((s[1] == p_ptr->cmd.cmd) && (s[2] == tag))
 			{
 				/* Save the actual inventory ID */
 				*inven = TRUE;
@@ -2927,7 +2927,7 @@ static object_type *get_tag(bool *inven, char tag)
 			}
 
 			/* Check the special tags */
-			if ((s[1] == p_ptr->command_cmd) && (s[2] == tag))
+			if ((s[1] == p_ptr->cmd.cmd) && (s[2] == tag))
 			{
 				/* Save the actual inventory ID */
 				*inven = FALSE;

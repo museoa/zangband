@@ -1525,7 +1525,7 @@ bool alchemy(void)
 	cptr q, s;
 
 	/* Hack -- force destruction */
-	if (p_ptr->command_arg > 0) force = TRUE;
+	if (p_ptr->cmd.arg > 0) force = TRUE;
 
 	/* Get an item */
 	q = "Turn which item to gold? ";

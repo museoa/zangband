@@ -457,7 +457,7 @@ static void pattern_teleport(void)
 						min_level, max_level)) return;
 
 		/* Extract request */
-		p_ptr->command_arg = atoi(tmp_val);
+		p_ptr->cmd.arg = atoi(tmp_val);
 	}
 	else if (get_check("Normal teleport? "))
 	{
@@ -470,18 +470,18 @@ static void pattern_teleport(void)
 	}
 
 	/* Paranoia */
-	if (p_ptr->command_arg < min_level) p_ptr->command_arg = min_level;
+	if (p_ptr->cmd.arg < min_level) p_ptr->cmd.arg = min_level;
 
 	/* Paranoia */
-	if (p_ptr->command_arg > max_level) p_ptr->command_arg = max_level;
+	if (p_ptr->cmd.arg > max_level) p_ptr->cmd.arg = max_level;
 
 	/* Accept request */
-	msgf("You teleport to dungeon level %d.", p_ptr->command_arg);
+	msgf("You teleport to dungeon level %d.", p_ptr->cmd.arg);
 
 	if (autosave_l) do_cmd_save_game(TRUE);
 
 	/* Change level */
-	p_ptr->depth = p_ptr->command_arg;
+	p_ptr->depth = p_ptr->cmd.arg;
 
 	/* Leaving */
 	p_ptr->state.leaving = TRUE;
@@ -1950,7 +1950,7 @@ static void process_command(void)
 	repeat_check();
 
 	/* Parse the command */
-	switch (p_ptr->command_cmd)
+	switch (p_ptr->cmd.cmd)
 	{
 		case ESCAPE:
 		case ' ':
@@ -2623,10 +2623,10 @@ static void process_player(void)
 	/*** Handle "abort" ***/
 
 	/* Check for "player abort" */
-	if (p_ptr->state.running || p_ptr->command_rep || p_ptr->state.resting)
+	if (p_ptr->state.running || p_ptr->cmd.rep || p_ptr->state.resting)
 	{
 		/* Do not wait */
-		p_ptr->inkey_scan = TRUE;
+		p_ptr->cmd.inkey_scan = TRUE;
 
 		/* Check for a key */
 		if (inkey())
@@ -2732,10 +2732,10 @@ static void process_player(void)
 		}
 
 		/* Repeated command */
-		else if (p_ptr->command_rep)
+		else if (p_ptr->cmd.rep)
 		{
 			/* Count this execution */
-			p_ptr->command_rep--;
+			p_ptr->cmd.rep--;
 
 			/* Redraw the state */
 			p_ptr->redraw |= (PR_STATE);
@@ -2950,11 +2950,11 @@ static void dungeon(void)
 	p_ptr->state.leaving = FALSE;
 
 	/* Reset the "command" vars */
-	p_ptr->command_cmd = 0;
-	p_ptr->command_new = 0;
-	p_ptr->command_rep = 0;
-	p_ptr->command_arg = 0;
-	p_ptr->command_dir = 0;
+	p_ptr->cmd.cmd = 0;
+	p_ptr->cmd.new = 0;
+	p_ptr->cmd.rep = 0;
+	p_ptr->cmd.arg = 0;
+	p_ptr->cmd.dir = 0;
 
 
 	/* Cancel the target */

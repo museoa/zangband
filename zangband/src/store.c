@@ -1956,13 +1956,13 @@ static void store_process_command(int *store_top)
 	/* Handle repeating the last command */
 	repeat_check();
 
-	if (rogue_like_commands && p_ptr->command_cmd == 'l')
+	if (rogue_like_commands && p_ptr->cmd.cmd == 'l')
 	{
-		p_ptr->command_cmd = 'x';	/* hack! */
+		p_ptr->cmd.cmd = 'x';	/* hack! */
 	}
 
 	/* Parse the command */
-	switch (p_ptr->command_cmd)
+	switch (p_ptr->cmd.cmd)
 	{
 		case '\r':
 		{
@@ -2376,7 +2376,7 @@ store_type *get_current_store(void)
  * Enter a store, and interact with it.
  *
  * Note that we use the standard "request_command()" function
- * to get a command, allowing us to use "command_arg" and all
+ * to get a command, allowing us to use "cmd.arg" and all
  * command macros and other nifty stuff, but we use the special
  * "shopping" argument, to force certain commands to be converted
  * into other commands, normally, we convert "p" (pray) and "m"
@@ -2456,13 +2456,13 @@ void do_cmd_store(const field_type *f1_ptr)
 
 
 	/* No command argument */
-	p_ptr->command_arg = 0;
+	p_ptr->cmd.arg = 0;
 
 	/* No repeated command */
-	p_ptr->command_rep = 0;
+	p_ptr->cmd.rep = 0;
 
 	/* No automatic command */
-	p_ptr->command_new = 0;
+	p_ptr->cmd.new = 0;
 
 	/* Start at the beginning */
 	store_top = 0;
@@ -2626,7 +2626,7 @@ void do_cmd_store(const field_type *f1_ptr)
 	character_icky = FALSE;
 
 	/* Hack -- Cancel automatic command */
-	p_ptr->command_new = 0;
+	p_ptr->cmd.new = 0;
 
 	/* Flush messages XXX XXX XXX */
 	message_flush();

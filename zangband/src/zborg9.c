@@ -2174,7 +2174,7 @@ static char borg_inkey_hack(int flush_first)
 	 * And the cursor is on the top line...
 	 * And the text acquired above is "Die?" 
 	 */
-	if (borg_prompt && !p_ptr->inkey_flag &&
+	if (borg_prompt && !p_ptr->cmd.inkey_flag &&
 		(y == 0) && (x >= 4) && streq(buf, "Die?") && borg_cheat_death)
 	{
 		/* Flush messages */
@@ -2220,7 +2220,7 @@ static char borg_inkey_hack(int flush_first)
 	 * And there is text before the cursor...
 	 * And that text is "-more-"
 	 */
-	if (borg_prompt && !p_ptr->inkey_flag &&
+	if (borg_prompt && !p_ptr->cmd.inkey_flag &&
 		(y == 0) && (x >= 7) &&
 		(0 == borg_what_text(x - 7, y, 7, &t_a, buf)) &&
 		(streq(buf, " -more-")))
@@ -2240,7 +2240,7 @@ static char borg_inkey_hack(int flush_first)
 	 * If there is text on the first line...
 	 * And the game wants a command
 	 */
-	if (borg_prompt && p_ptr->inkey_flag)
+	if (borg_prompt && p_ptr->cmd.inkey_flag)
 	{
 		/* Get the message(s) */
 		if (0 == borg_what_text(0, 0, -80, &t_a, buf))
@@ -2271,7 +2271,7 @@ static char borg_inkey_hack(int flush_first)
 	if (ch) return (ch);
 
 	/* Hack - check to see if we are doing a repeated action */
-	if (p_ptr->state.running || p_ptr->command_rep || p_ptr->state.resting)
+	if (p_ptr->state.running || p_ptr->cmd.rep || p_ptr->state.resting)
 	{
 		return (0);
 	}
@@ -3850,7 +3850,7 @@ void do_cmd_borg(void)
 			int n = 0;
 
 			/* Turns */
-			n = (p_ptr->command_arg ? p_ptr->command_arg : 1);
+			n = (p_ptr->cmd.arg ? p_ptr->cmd.arg : 1);
 
 			/* Danger of grid */
 			msgf("Danger(%d,%d,%d) is %d",
@@ -3966,7 +3966,7 @@ void do_cmd_borg(void)
 		case 'O':
 		{
 			/* Command: Display all known info on item */
-			int n = p_ptr->command_arg - 1;
+			int n = p_ptr->cmd.arg - 1;
 
 			/* Paranoia */
 			if (n < 0) n = 0;
@@ -3993,7 +3993,7 @@ void do_cmd_borg(void)
 		case 'E':
 		{
 			/* Command: Display all known info on item */
-			int n = p_ptr->command_arg - 1;
+			int n = p_ptr->cmd.arg - 1;
 
 			/* Paranoia */
 			if (n < 0) n = 0;

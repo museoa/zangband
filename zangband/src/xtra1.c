@@ -752,15 +752,15 @@ static void prt_state(void)
 	}
 
 	/* Repeating */
-	else if (p_ptr->command_rep)
+	else if (p_ptr->cmd.rep)
 	{
-		if (p_ptr->command_rep > 999)
+		if (p_ptr->cmd.rep > 999)
 		{
-			put_fstr(COL_STATE, Term->hgt - 1, "C%3d00", p_ptr->command_rep / 100);
+			put_fstr(COL_STATE, Term->hgt - 1, "C%3d00", p_ptr->cmd.rep / 100);
 		}
 		else
 		{
-			put_fstr(COL_STATE, Term->hgt - 1, "C  %3d", p_ptr->command_rep);
+			put_fstr(COL_STATE, Term->hgt - 1, "C  %3d", p_ptr->cmd.rep);
 		}
 	}
 

@@ -1458,13 +1458,13 @@ s16b get_quantity(cptr prompt, int max)
 
 
 	/* Use "command_arg" */
-	if (p_ptr->command_arg)
+	if (p_ptr->cmd.arg)
 	{
 		/* Extract a number */
-		amt = p_ptr->command_arg;
+		amt = p_ptr->cmd.arg;
 
-		/* Clear "command_arg" */
-		p_ptr->command_arg = 0;
+		/* Clear "cmd.arg" */
+		p_ptr->cmd.arg = 0;
 
 		/* Enforce the maximum */
 		if (amt > max) amt = max;
