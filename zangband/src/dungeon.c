@@ -3742,8 +3742,11 @@ static void process_energy(void)
 		/* process monster with even more energy first */
 		process_monsters(p_ptr->energy + 1);
 
-		/* Process the player */
-		process_player();
+		/* Process the player while still alive */
+		if (!p_ptr->leaving)
+		{
+			process_player();
+		}
 	}
 }
 
