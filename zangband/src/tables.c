@@ -6512,6 +6512,9 @@ field_action f_action[FIELD_ACTION_TYPES] =
 	/* Corpse raising function for spell */
 	{field_action_corpse_raise, "field_action_corpse_raise"},
 	
+	/* Function returning name of the monster the corpse once was. */
+	{field_action_corpse_look, "field_action_corpse_look"},
+	
 	/* Tunnel into a "standard" wall to pass */
 	{field_action_wall_tunnel, "field_action_wall_tunnel"},
 	

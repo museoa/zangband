@@ -2372,6 +2372,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 			
 			cptr name = t_info[f_ptr->t_idx].name;
 
+			char f_name[40];
 
 			/* Acquire next field */
 			next_f_idx = f_ptr->next_f_idx;
@@ -2382,6 +2383,17 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 			/* Describe it */
 			if (f_ptr->info & FIELD_INFO_MARK)
 			{
+				/* See if it has a special name */
+				if (f_ptr->action[FIELD_ACT_LOOK])
+				{
+					/* Get the name */
+					(void) field_hook_single(field_find(this_f_idx),
+						 FIELD_ACT_LOOK, (void *) f_name);
+					
+					/* Point to it */
+					name = f_name;
+				}
+				
 				/* Not boring */
 				boring = FALSE;
 				

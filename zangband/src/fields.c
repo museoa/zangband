@@ -1315,7 +1315,7 @@ void test_field_data_integtrity(void)
  * FIELD_ACT_OBJECT_ON		object_type*	(o_ptr)	 
  * FIELD_ACT_INTERACT		int*
  * FIELD_ACT_MAGIC_TARGET	field_magic_target*
- * FIELD_ACT_COMPACT		byte*
+ * FIELD_ACT_LOOK			char*
  * FIELD_ACT_EXIT			NULL
  * FIELD_ACT_MONSTER_AI		Not implemented yet.
  * FIELD_ACT_SPECIAL		Function dependent.   (Be careful)
@@ -1579,6 +1579,27 @@ void field_action_corpse_init(s16b **field_ptr, void *input)
 	}
 	
 	/* Init action functions do not need to change the field_ptr. */
+	return;
+}
+
+/* Looking at a corpse tells you what type of monster it was */
+void field_action_corpse_look(s16b **field_ptr, void *output)
+{
+	field_type *f_ptr = &fld_list[**field_ptr];
+
+	char *name = (char *) output;
+	
+	/* Monster race */
+	u16b r_idx = ((u16b) f_ptr->data[1]) * 256 + f_ptr->data[2];
+	
+	monster_race	*r_ptr = &r_info[r_idx];
+	
+	/* Copy name to the output string. */
+	(void)strnfmt(name, 40, "%s %s", (r_name + r_ptr->name),
+		 t_info[f_ptr->t_idx].name);
+
+	/* Update *field_ptr to point to the next field in the list */
+	*field_ptr = &(f_ptr->next_f_idx);
 	return;
 }
 
