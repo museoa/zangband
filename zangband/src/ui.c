@@ -706,19 +706,28 @@ bool display_menu(menu_type *options, int select, bool scroll, int (* disp)(int)
 					if (options[j].flags & MN_CLEAR)
 					{
 						screen_load();
-						screen_save();
 					}
 				
 					if (options[j].action(j))
 					{
-						/* Restore the screen */
-						screen_load();
+						/* Hack - restore the screen */
+						if (!(options[j].flags & MN_CLEAR))
+						{
+							/* Restore the screen */
+							screen_load();
+						}
 						
 						/* Save for later */
 						repeat_push(save_choice);
 	
 						/* Success */
 						return (TRUE);
+					}
+					
+					/* Hack - save the screen */
+					if (options[j].flags & MN_CLEAR)
+					{
+						screen_save();
 					}
 										
 					/*
