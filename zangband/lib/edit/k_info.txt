@@ -3280,7 +3280,7 @@ N:436:Extra Attacks
 G:=:d
 I:45:49:0
 W:50:0:2:100000
-A:50/2
+A:50/8:100/2
 F:BLOWS
 
 N:437:Cure Light Wounds
