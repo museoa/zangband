@@ -2587,8 +2587,8 @@ static void build_room_vault(int x0, int y0, int xsize, int ysize)
 	/* Add some random doors */
 	for (i = 0; i < 500; i++)
 	{
-		x1 = rand_range(x0 - xhsize + 1, x0 - xhsize + xsize - 1);
-		y1 = rand_range(y0 - yhsize + 1, y0 - yhsize + ysize - 1);
+		x1 = rand_range(x0 - xhsize + 1, x0 - xhsize + xsize - 2);
+		y1 = rand_range(y0 - yhsize + 1, y0 - yhsize + ysize - 2);
 		add_door(x1, y1);
 	}
 
