@@ -2967,7 +2967,10 @@ static void do_cmd_activate_aux(int item)
 	chance = p_ptr->skill_dev;
 
 	/* Confusion hurts skill */
-	if (p_ptr->confused) chance = chance / 2;
+	if (p_ptr->confused) chance /= 2;
+
+	/* Cursed items are difficult to activate */
+	if (o_ptr->ident & IDENT_CURSED) chance /= 3;
 
 	/* Hight level objects are harder */
 	chance = chance - ((lev > 50) ? 50 : lev);
@@ -2979,8 +2982,7 @@ static void do_cmd_activate_aux(int item)
 	}
 
 	/* Roll for usage */
-	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE) ||
-	    ((o_ptr->ident & IDENT_CURSED) && (randint(3) != 1)))
+	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE))
 	{
 		if (flush_failure) flush();
 		msg_print("You failed to activate it properly.");
