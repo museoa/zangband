@@ -2,10 +2,8 @@ IndexOne NSAbout about.tcl
 IndexOne NSAlternate alternate.tcl
 IndexOne NSAssign assign.tcl
 IndexOne NSAutobar autobar.tcl
-if {[llength [angband player spell_book]]} {
-	IndexOne NSBookMenu book-menu.tcl
-	IndexOne NSBookWindow book-window.tcl
-}
+IndexOne NSBookMenu book-menu.tcl
+IndexOne NSBookWindow book-window.tcl
 IndexOne NSBuilding building.tcl
 IndexOne NSCharacterWindow character-window.tcl
 IndexOne NSCharFlagsCanvas charflags-canvas.tcl
@@ -33,10 +31,8 @@ IndexOne NSMessageWindow message-window.tcl
 IndexOne NSMiscPopup misc-popup.tcl
 IndexOne NSMiscWindow misc-window.tcl
 IndexOne NSOptions options.tcl
-if {[string equal [angband player class] Mindcrafter]} {
-	IndexOne NSMindcraftMenu mindcraft-menu.tcl
-	IndexOne NSMindcraftWindow mindcraft-window.tcl
-}
+IndexOne NSMindcraftMenu mindcraft-menu.tcl
+IndexOne NSMindcraftWindow mindcraft-window.tcl
 IndexOne NSPets pets.tcl
 IndexOne NSPower power.tcl
 IndexOne NSPhoto photo.tcl
@@ -51,5 +47,3 @@ IndexOne NSTerm	term.tcl
 IndexOne NSTips tips.tcl
 IndexOne NSTomb tomb.tcl
 IndexOne NSWidget widget.tcl
-
-
