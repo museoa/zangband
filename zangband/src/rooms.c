@@ -1674,8 +1674,8 @@ static void build_type6(int bx0, int by0)
 	int min = 256;
 	int max = 0;
 
-	bool copy_v = randint0(2);
-	bool copy_h = randint0(2);
+	bool copy_v = (randint0(2)) ? TRUE : FALSE;
+	bool copy_h = (randint0(2)) ? TRUE : FALSE;
 
 	const vault_aux_type *n_ptr = pick_vault_type(pit_types);
 
