@@ -102,4 +102,3 @@ extern void clear_temp_block(void);
 extern void set_temp_corner_val(u16b val);
 extern void set_temp_mid(u16b val);
 extern void frac_block(void);
-/* extern void van_town_gen(u16b town_num); */

@@ -2144,6 +2144,60 @@ static errr rd_dungeon(void)
 		/* Load dungeon map */
 		load_map(0, 0, cur_wid, cur_hgt);
 	}
+	/* The wilderness + dungeon format changed here */
+	else if (sf_version < 28)
+	{
+		/* Load wilderness data */
+		load_wild_data();
+
+		if (p_ptr->depth)
+		{
+			dun_level_backup = p_ptr->depth;
+			
+			change_level(p_ptr->depth);
+			
+			/* Save player location */
+			px_back = px;
+			py_back = py;
+
+			create_wilderness();
+			
+			p_ptr->depth = dun_level_backup;
+			
+			change_level(p_ptr->depth);
+			
+			/* Get the new region */
+			dun_ptr->region = (s16b) create_region(cur_wid, cur_hgt, 
+													REGION_CAVE);
+			incref_region(cur_region);
+			
+			/* Load dungeon map */
+			load_map(0, 0, cur_wid, cur_hgt);
+
+			/* Strip the wilderness map */
+			strip_map(p_ptr->min_wid, p_ptr->min_hgt,
+			         p_ptr->max_wid, p_ptr->max_hgt);
+			
+			px = px_back;
+			py = py_back;
+			
+			/* Restore the bounds */
+			p_ptr->max_hgt = cur_hgt;
+			p_ptr->min_hgt = 0;
+			p_ptr->max_wid = cur_wid;
+			p_ptr->min_wid = 0;
+		}
+		else
+		{
+			/* Strip the wilderness map */
+			strip_map(p_ptr->min_wid, p_ptr->min_hgt,
+			         p_ptr->max_wid, p_ptr->max_hgt);
+
+			/* Make a new wilderness */
+			create_wilderness();
+		}
+	}
+	/* This doesn't do anything at the moment - but will in the future */
 	else if (sf_version < VERSION_CHANGE_WILD)
 	{
 		/* Load wilderness data */
@@ -2212,6 +2266,12 @@ static errr rd_dungeon(void)
 			
 			/* Load dungeon map */
 			load_map(0, 0, cur_wid, cur_hgt);
+			
+			/* Restore the bounds, overwritten in change_level */
+			p_ptr->max_hgt = cur_hgt;
+			p_ptr->min_hgt = 0;
+			p_ptr->max_wid = cur_wid;
+			p_ptr->min_wid = 0;
 		}
 		else
 		{

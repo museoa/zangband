@@ -163,6 +163,7 @@ static int wild_first_town[START_STORE_NUM] =
 	BUILD_STORE_MAGIC
 };
 
+
 /* Find a place for the player */
 static void place_player_start(s32b *x, s32b *y, u16b this_town)
 {
@@ -3672,12 +3673,12 @@ void change_level(int level)
 		if (area == access_wild) switched = TRUE;
 		
 		/* Change dun_ptr? */
-
-		/* Reset the bounds */
+		
+		/* Zero bounds - allocated in generate.c */
 		p_ptr->min_hgt = 0;
-		p_ptr->max_hgt = MAX_HGT;
+		p_ptr->max_hgt = 1;
 		p_ptr->min_wid = 0;
-		p_ptr->max_wid = MAX_WID;
+		p_ptr->max_wid = 1;
 
 		/* Access the cave */
 		area = access_cave;
