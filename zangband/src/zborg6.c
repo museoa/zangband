@@ -13309,49 +13309,6 @@ bool borg_flow_light(int why)
 	return (TRUE);
 }
 
-/*
- * Prepare to "flow" towards any non-visited shop
- */
-bool borg_flow_shop_visit(void)
-{
-	int i, x, y;
-
-	/* Must be in town */
-	if (borg_skill[BI_CDEPTH]) return (FALSE);
-
-	/* Clear the flow codes */
-	borg_flow_clear();
-
-	/* Visit the shops */
-	for (i = 0; i < track_shop_num; i++)
-	{
-		/* Must not be visited */
-		if (borg_shops[i].when) continue;
-
-		/* Obtain the location */
-		x = borg_shops[i].x;
-		y = borg_shops[i].y;
-
-		/* Hack -- Must be known and not under the player */
-		if (!x || !y || ((c_x == x) && (c_y == y))) continue;
-
-		/* Enqueue the grid */
-		borg_flow_enqueue_grid(x, y);
-	}
-
-	/* Spread the flow */
-	borg_flow_spread(250, TRUE, FALSE, FALSE);
-
-	/* Attempt to Commit the flow */
-	if (!borg_flow_commit("all shops", GOAL_MISC)) return (FALSE);
-
-	/* Take one step */
-	if (!borg_flow_old(GOAL_MISC)) return (FALSE);
-
-	/* Success */
-	return (TRUE);
-}
-
 
 /*
  * Prepare to "flow" towards a specific shop entry
@@ -14333,10 +14290,7 @@ static bool borg_flow_dark_reachable(int x, int y)
  * as the rest of the path is "safe" and "clear", the Borg will
  * walk along the path to the given grid.
  *
- * This function is used by "borg_flow_dark_1()" to provide an
- * optimized "flow" during the initial exploration of a level.
- *
- * It is also used to move around town without looking like a drunk.
+ * This is used to move around town without looking like a drunk.
  */
 void borg_flow_direct(int x, int y)
 {
@@ -14476,114 +14430,6 @@ void borg_flow_direct(int x, int y)
 
 }
 
-#if 0
-
-/* Currently not used, I thought I might need it for anti-summoning */
-static void borg_flow_direct_dig(int x, int y)
-{
-	int n = 0;
-
-	int x1, y1, x2, y2;
-
-	int ay, ax;
-
-	int shift;
-
-	map_block *mb_ptr;
-
-	/* Bounds checking */
-	if (!map_in_bounds(x, y)) return;
-
-	mb_ptr = map_loc(x, y);
-
-	/* Save the flow cost (zero) */
-	mb_ptr->cost = 0;
-
-
-	/* Save "origin" */
-	y1 = y;
-	x1 = x;
-
-	/* Save "destination" */
-	y2 = c_y;
-	x2 = c_x;
-
-	/* Calculate distance components */
-	ay = (y2 < y1) ? (y1 - y2) : (y2 - y1);
-	ax = (x2 < x1) ? (x1 - x2) : (x2 - x1);
-
-	/* Path */
-	while (1)
-	{
-		/* Check for arrival at player */
-		if ((x == x2) && (y == y2)) return;
-
-		/* Next */
-		n++;
-
-		/* Move mostly vertically */
-		if (ay > ax)
-		{
-			/* Extract a shift factor XXX */
-			shift = (n * ax + (ay - 1) / 2) / ay;
-
-			/* Sometimes move along the minor axis */
-			x = (x2 < x1) ? (x1 - shift) : (x1 + shift);
-
-			/* Always move along major axis */
-			y = (y2 < y1) ? (y1 - n) : (y1 + n);
-		}
-
-		/* Move mostly horizontally */
-		else
-		{
-			/* Extract a shift factor XXX */
-			shift = (n * ay + (ax - 1) / 2) / ax;
-
-			/* Sometimes move along the minor axis */
-			y = (y2 < y1) ? (y1 - shift) : (y1 + shift);
-
-			/* Always move along major axis */
-			x = (x2 < x1) ? (x1 - n) : (x1 + n);
-		}
-
-		/* Bounds checking */
-		if (!map_in_bounds(x, y)) return;
-
-		/* Access the grid */
-		mb_ptr = map_loc(x, y);
-
-
-		/* Abort at "icky" grids */
-		if (mb_ptr->info & BORG_MAP_ICKY) return;
-
-		/* Analyze every grid once */
-		if (!(mb_ptr->info & BORG_MAP_KNOW))
-		{
-			/* Mark as known */
-			mb_ptr->info |= BORG_MAP_KNOW;
-
-			/* Avoid dangerous grids (forever) */
-			if (borg_danger(x, y, 1, TRUE) > avoidance / 3)
-			{
-				/* Mark as icky */
-				mb_ptr->info |= BORG_MAP_ICKY;
-
-				/* Abort */
-				return;
-			}
-		}
-
-		/* Abort "pointless" paths if possible */
-		if (mb_ptr->cost <= n) break;
-
-		/* Save the new flow cost */
-		mb_ptr->cost = n;
-	}
-}
-
-#endif /* 0 */
-
 /*
  * Hack -- mark off the edges of a rectangle as "avoid" or "clear"
  */
@@ -14653,86 +14499,6 @@ static void borg_flow_border(int x1, int y1, int x2, int y2, bool stop)
 			mb_ptr->info &= ~(BORG_MAP_ICKY | BORG_MAP_KNOW);
 		}
 	}
-}
-
-
-/*
- * Prepare to "flow" towards "interesting" grids (method 1)
- *
- * This function examines the torch-lit grids for "interesting" grids.
- */
-static bool borg_flow_dark_1(int b_stair)
-{
-	int i;
-
-	int x, y;
-
-	/* Ignore parameter */
-	(void)b_stair;
-
-
-	/* Hack -- not in town */
-	if (!borg_skill[BI_CDEPTH]) return (FALSE);
-
-	/* Reset */
-	borg_temp_n = 0;
-
-
-	/* This is broken borg_lite_ no longer exists */
-#if 0
-	/* Scan torch-lit grids */
-	for (i = 0; i < borg_lite_n; i++)
-	{
-		y = borg_lite_y[i];
-		x = borg_lite_x[i];
-
-		/* Skip "boring" grids (assume reachable) */
-		if (!borg_flow_dark_interesting(x, y, b_stair)) continue;
-
-		/* Careful -- Remember it */
-		borg_temp_x[borg_temp_n] = x;
-		borg_temp_y[borg_temp_n] = y;
-		borg_temp_n++;
-	}
-#endif /* 0 */
-
-	/* Nothing */
-	if (!borg_temp_n) return (FALSE);
-
-
-	/* Clear the flow codes */
-	borg_flow_clear();
-
-	/* Create paths to useful grids */
-	for (i = 0; i < borg_temp_n; i++)
-	{
-		y = borg_temp_y[i];
-		x = borg_temp_x[i];
-#if 0
-		/* Create a path */
-		borg_flow_direct(x, y);
-#endif /* 0 */
-
-		borg_flow_enqueue_grid(x, y);
-
-	}
-
-	/* Spread the flow */
-	borg_flow_spread(5, TRUE, FALSE, FALSE);
-
-
-	/* Attempt to Commit the flow */
-	/* Note was NULL */
-	if (!borg_flow_commit("dark-1", GOAL_DARK)) return (FALSE);
-
-	/* Take one step */
-	if (!borg_flow_old(GOAL_DARK)) return (FALSE);
-
-	/* Forget goal */
-	goal = 0;
-
-	/* Success */
-	return (TRUE);
 }
 
 
@@ -15123,9 +14889,6 @@ bool borg_flow_dark(bool close)
 	/* Near */
 	if (close)
 	{
-		/* Method 1 */
-		if (borg_flow_dark_1(b_stair)) return (TRUE);
-
 		/* Method 2 */
 		if (borg_flow_dark_2()) return (TRUE);
 

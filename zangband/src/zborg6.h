@@ -88,7 +88,6 @@ extern bool borg_check_lite_only(void);
 /*
  * Flow to shops
  */
-extern bool borg_flow_shop_visit(void);
 extern bool borg_flow_shop_entry(int n);
 extern void borg_flow_direct(int y, int x);
 

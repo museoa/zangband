@@ -1124,9 +1124,6 @@ static bool borg_choose_shop(void)
  */
 bool borg_think_store(void)
 {
-	/* Update all my equipment and swap items */
-	borg_notice();
-
 	/* Stamp the shop with a time stamp */
 	borg_shops[shop_num].when = borg_t;
 
@@ -1555,8 +1552,7 @@ bool borg_think_dungeon(void)
 		/* Continue flowing (see below) */
 		if (borg_flow_old(GOAL_TOWN)) return (TRUE);
 
-		/* shop for something that will help us */
-		if (borg_flow_shop_visit()) return (TRUE);
+		/* Shop for something that will help us */
 		if (borg_choose_shop())
 		{
 			/* Try and visit a shop, if so desired */
@@ -1746,9 +1742,6 @@ bool borg_think_dungeon(void)
 
 
 	/*** Deal with shops ***/
-
-	/* Hack -- visit all the shops */
-	if (borg_flow_shop_visit()) return (TRUE);
 
 	/* Hack -- Visit the shops */
 	if (borg_choose_shop())
