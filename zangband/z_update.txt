@@ -2,6 +2,78 @@ This is a document file listing the changes in Zangband (compared to
 the standard Angband 2.8.1.) No long explanations, just a list. See
 code for details. In reversed chronological order (more or less):
 
+ZAngband 2.5.5:
+- Tweaked main-gcu.c so it worked better on BSD machines.
+- Prevented stupidly small windows in the main-gcu port, when the
+  screen was slightly larger than 80x24.
+- Fixed the labels in the chardump so that homes are listed properly.
+- The destroy on pickup now works alot more like the normal destroy
+  command.
+- Optimised the 'projected view'  This is now beta quality - playable,
+  but with many minor bugs.
+- Changed the behavior of traps so they trigger and disarm more often.
+- Cloaks of Aman get high resists like they should have.
+- Random quests won't use "easy" monsters.
+- Fixed the message on entering a quest with one remaining monster.
+- Light sources in your inventory are sorted by pval.
+- Fixed how corpses look in 16x16 tiles.  Transparency is used properly.
+- Corpses now last longer before they decay.
+- Artifact spoilers now work properly.
+- The players tile changes when polymorphed.
+- You can tunnel into pillars.
+- The RNG is initialised when loading a dead character.  (Rather than
+  using the old seed.)
+- Random artifacts have a chance to get boosted damage dice.
+- Balance changes: Boots and gloves are more common deeper in the dungeon.
+  Changed some of the better '1dx' weapons to be 1d(2x) or there-abouts.
+  Most if these weapons are deeper in the dungeon than they used to be.
+  (This makes some of the spears more useful in [O]-based combat.)
+  Moved the various healing potions in depth.
+  Changed the damage dice on some artifacts.  
+  Rods should now be deeper than the corresponding staves.
+- Do not calculate the probability distribution of objects in debug mode,
+  unless asked.
+- The game tries less hard to make objects of a given depth, and is more
+  efficient at using object themes.
+- Pressing -ESC- at the -more- prompt skips all messages until the you are
+  hurt, or your turn comes around.
+- Prevented the winning artifacts from being generated early.
+- Building prices depend on your charisma and race.
+- Added a 'monster list' term type, which displays a list of the monsters
+  you can see.
+- Added 16x16 tiles for most objects.
+- Objects that sustain a stat, and increase its value are shown more
+  clearly on the information screen.
+- Artifact creation scrolls cannot be used on ammo.
+- The identification menus will only show unid'ed items.
+- The magesmith now enchants items differently - you get more for your gold.
+- Improved quest rewards.
+- Fixed bugs in the lighting code.
+- Large changes to how stores work on a code-level.  This allowed the
+  creation of about one hundred new types of stores in a short period
+  of time.  Changed the char/attr of the stores so that the new ones fit
+  in.  The scheme is as close to the old method as possible.
+- {bad} items are on average less bad.
+- Fixed a bug with earthquakes and fields.
+- Unidentified items now will not be sold for their real price.  The 'base'
+  price will be used, as it should have been.
+- The starting town has a supplies store, instead of having a general store
+  in every town.
+- Fixed bug in the berserk mutation.
+- The sea looks like it used to, before the new towns were added.
+- Towns have a minimum seperation.
+- Removed unused info.txt files for the old fixed quests.
+- Made mimics harder to spot.
+- Ego diggers get the correct pval.
+- Fixed inequity between monster drops and items in vaults.  Both use the
+  same method now.
+- Monsters stop attacking when they die from an aura.
+- You are allowed to tweak randarts in debug mode.
+- Changed the weaponmaster so that it looks at one weapon, and also 
+  *identifies* it for you.
+- Your gold is displayed on the screen when you are in a building.
+
+
 ZAngband 2.5.4:
 - Tweaked the initial towns and their surroundings to make them more
   hospitable to starting characters.
