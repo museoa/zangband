@@ -982,13 +982,14 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		{
 			int curses = 1 + randint(3);
 			bool stop_ty = FALSE;
+			int count = 0;
 
 			msg_format("%^s puts a terrible blood curse on you!", m_name);
 			curse_equipment(100, 50);
 
 			do
 			{
-				stop_ty = activate_ty_curse(stop_ty);
+				stop_ty = activate_ty_curse(stop_ty, &count);
 			}
 			while (--curses);
 		}
@@ -2944,6 +2945,7 @@ void gain_level_reward(int chosen_reward)
 	int         dummy = 0, dummy2 = 0;
 	int         type, effect;
 
+	int count = 0;
 
 	if (!chosen_reward)
 	{
@@ -3137,11 +3139,13 @@ void gain_level_reward(int chosen_reward)
 			acquirement(py, px, randint(2) + 1, TRUE, FALSE);
 			break;
 		case REW_TY_CURSE:
+		{
 			msg_format("The voice of %s thunders:",
 				chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Thou art growing arrogant, mortal.'");
-			(void)activate_ty_curse(FALSE);
+			(void)activate_ty_curse(FALSE, &count);
 			break;
+		}
 		case REW_SUMMON_M:
 			msg_format("The voice of %s booms out:",
 				chaos_patrons[p_ptr->chaos_patron]);
@@ -3248,8 +3252,10 @@ void gain_level_reward(int chosen_reward)
 			switch (randint(4))
 			{
 				case 1:
-					(void)activate_ty_curse(FALSE);
+				{
+					(void)activate_ty_curse(FALSE, &count);
 					break;
+				}
 				case 2:
 					activate_hi_summon();
 					break;
@@ -3265,19 +3271,26 @@ void gain_level_reward(int chosen_reward)
 			}
 			break;
 		case REW_WRATH:
+		{
 			msg_format("The voice of %s thunders:",
 				chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Die, mortal!'");
+
 			take_hit(p_ptr->lev * 4, wrath_reason);
+
 			for (dummy = 0; dummy < 6; dummy++)
 			{
 				(void)dec_stat(dummy, 10 + randint(15), FALSE);
 			}
+
 			activate_hi_summon();
-			(void)activate_ty_curse(FALSE);
+			(void)activate_ty_curse(FALSE, &count);
+
 			if (randint(2) == 1) (void)curse_weapon();
 			if (randint(2) == 1) (void)curse_armor();
+
 			break;
+		}
 		case REW_DESTRUCT:
 			msg_format("The voice of %s booms out:",
 				chaos_patrons[p_ptr->chaos_patron]);

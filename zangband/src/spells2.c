@@ -3663,105 +3663,134 @@ void call_chaos(void)
  * rr9: Stop the nasty things when a Cyberdemon is summoned
  * or the player gets paralyzed.
  */
-bool activate_ty_curse(bool stop_ty)
+bool activate_ty_curse(bool stop_ty, int *count)
 {
-	int     i = 0;
+	int i;
+	int stat = 0;
 
 	int flg = (PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_JUMP);
-
-	/* Nothing summoned yet */
-	int count = 0;
 
 	do
 	{
 		switch (randint(34))
 		{
-		case 28: case 29:
-			if (!count)
+			case 28: case 29:
 			{
-				msg_print("The ground trembles...");
-				earthquake(py, px, 5 + rand_int(10));
-				if (randint(6) != 1) break;
-			}
-		case 30: case 31:
-			if (!count)
-			{
-				msg_print("A portal opens to a plane of raw mana!");
-				destroy_area(py, px, 20, TRUE);
-				project(1, 3, py, px, damroll(10, 5), GF_MANA, flg);
-				if (randint(6) != 1) break;
-			}
-		case 32: case 33:
-			if (!count)
-		{
-				msg_print("Space warps about you!");
-				teleport_player(damroll(10, 10));
-				if (randint(6) != 1) break;
-			}
-		case 34:
-			msg_print("You feel a surge of energy!");
-			wall_breaker();
-			if (!rand_int(7))
-			{
-				project(1, 7, py, px, 50, GF_KILL_WALL, flg);
-			}
-			if (randint(6) != 1) break;
-		case 1: case 2: case 3: case 16: case 17:
-			aggravate_monsters(1);
-			if (randint(6) != 1) break;
-		case 4: case 5: case 6:
-			count += activate_hi_summon();
-			if (randint(6) != 1) break;
-		case 7: case 8: case 9: case 18:
-			count += summon_specific(py, px, dun_level, 0, TRUE, FALSE, FALSE);
-			if (randint(6) != 1) break;
-		case 10: case 11: case 12:
-			msg_print("You feel your life draining away...");
-			lose_exp(p_ptr->exp / 16);
-			if (randint(6) != 1) break;
-		case 13: case 14: case 15: case 19: case 20:
-			if (stop_ty || (p_ptr->free_act && (randint(100) < p_ptr->skill_sav)))
-			{
-				/* Do nothing */ ;
-			}
-			else
-			{
-				msg_print("You feel like a statue!");
-				if (p_ptr->free_act)
-					set_paralyzed(p_ptr->paralyzed + randint(3));
-				else
-					set_paralyzed(p_ptr->paralyzed + randint(13));
-				stop_ty = TRUE;
-			}
-			if (randint(6) != 1) break;
-		case 21: case 22: case 23:
-			(void)do_dec_stat(rand_int(6));
-			if (randint(6) != 1) break;
-		case 24:
-			msg_print("Huh? Who am I? What am I doing here?");
-			lose_all_info();
-			if (randint(6) != 1) break;
-		case 25:
-			/*
-			 * Only summon Cyberdemons deep in the dungeon.
-			 */
-			if ((dun_level > 65) && !stop_ty)
-			{
-				count += summon_cyber();
-				stop_ty = TRUE;
-				break;
-			}
-			if (randint(6) != 1) break;
-		default:
-			while (i < 6)
-			{
-				do
+				if (!(*count))
 				{
-					(void)do_dec_stat(i);
+					msg_print("The ground trembles...");
+					earthquake(py, px, 5 + rand_int(10));
+					if (randint(6) != 1) break;
 				}
-				while (randint(2) == 1);
+			}
+			case 30: case 31:
+			{
+				if (!(*count))
+				{
+					msg_print("A portal opens to a plane of raw mana!");
+					destroy_area(py, px, 20, TRUE);
+					project(1, 3, py, px, damroll(10, 5), GF_MANA, flg);
+					if (randint(6) != 1) break;
+				}
+			}
+			case 32: case 33:
+			{
+				if (!(*count))
+				{
+					msg_print("Space warps about you!");
+					teleport_player(damroll(10, 10));
+					if (rand_int(13)) (*count) += activate_hi_summon();
+					if (randint(6) != 1) break;
+				}
+			}
+			case 34:
+			{
+				msg_print("You feel a surge of energy!");
+				wall_breaker();
+				if (!rand_int(7))
+				{
+					project(1, 7, py, px, 50, GF_KILL_WALL, flg);
+				}
+				if (randint(6) != 1) break;
+			}
+			case 1: case 2: case 3: case 16: case 17:
+			{
+				aggravate_monsters(1);
+				if (randint(6) != 1) break;
+			}
+			case 4: case 5: case 6:
+			{
+				(*count) += activate_hi_summon();
+				if (randint(6) != 1) break;
+			}
+			case 7: case 8: case 9: case 18:
+			{
+				(*count) += summon_specific(py, px, dun_level, 0, TRUE, FALSE, FALSE);
+				if (randint(6) != 1) break;
+			}
+			case 10: case 11: case 12:
+			{
+				msg_print("You feel your life draining away...");
+				lose_exp(p_ptr->exp / 16);
+				if (randint(6) != 1) break;
+			}
+			case 13: case 14: case 15: case 19: case 20:
+			{
+				if (stop_ty || (p_ptr->free_act && (randint(100) < p_ptr->skill_sav)))
+				{
+					/* Do nothing */ ;
+				}
+				else
+				{
+					msg_print("You feel like a statue!");
+					if (p_ptr->free_act)
+					{
+						set_paralyzed(p_ptr->paralyzed + randint(3));
+					}
+					else
+					{
+						set_paralyzed(p_ptr->paralyzed + randint(13));
+					}
+					stop_ty = TRUE;
+				}
+				if (randint(6) != 1) break;
+			}
+			case 21: case 22: case 23:
+			{
+				(void)do_dec_stat(rand_int(6));
+				if (randint(6) != 1) break;
+			}
+			case 24:
+			{
+				msg_print("Huh? Who am I? What am I doing here?");
+				lose_all_info();
+				if (randint(6) != 1) break;
+			}
+			case 25:
+			{
+				/*
+				 * Only summon Cyberdemons deep in the dungeon.
+				 */
+				if ((dun_level > 65) && !stop_ty)
+				{
+					(*count) += summon_cyber();
+					stop_ty = TRUE;
+					break;
+				}
+				if (randint(6) != 1) break;
+			}
+			default:
+			{
+				while (stat < 6)
+				{
+					do
+					{
+						(void)do_dec_stat(stat);
+					}
+					while (randint(2) == 1);
 
-				i++;
+					stat++;
+				}
 			}
 		}
 	}
@@ -3856,8 +3885,6 @@ void wall_breaker(void)
 		{
 			scatter(&y, &x, py, px, 4, 0);
 
-			if (!cave_floor_bold(y, x)) continue;
-
 			if ((y != py) || (x != px)) break;
 		}
 
@@ -3876,9 +3903,9 @@ void wall_breaker(void)
 		{
 			while(1)
 			{
-				scatter(&y, &x, py, px, 10, 0);
+				scatter(&y, &x, py, px, 4, 0);
 
-				if ((y != py) && (x != px)) break;
+				if ((y != py) || (x != px)) break;
 			}
 
 			project(0, 0, y, x, 20 + randint(30), GF_KILL_WALL,

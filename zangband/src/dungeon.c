@@ -1172,10 +1172,12 @@ static void process_world(void)
 			/* TY_CURSE activates at mignight! */
 			if (!hour && !min)
 			{
+				int count = 0;
+
 				disturb(1, 0);
 				msg_print("A distant bell tolls many times, fading into an deathly silence.");
-		activate_ty_curse(FALSE);
-	}
+				activate_ty_curse(FALSE, &count);
+			}
 		}
 	}
 
@@ -2015,7 +2017,9 @@ static void process_world(void)
 		/* TY Curse */
 		if ((f3 & TR3_TY_CURSE) && (randint(TY_CURSE_CHANCE) == 1))
 		{
-			(void)activate_ty_curse(FALSE);
+			int count = 0;
+
+			(void)activate_ty_curse(FALSE, &count);
 		}
 
 		/* Make a chainsword noise */
@@ -2202,7 +2206,25 @@ static void process_world(void)
 
 				/* New depth */
 				dun_level = p_ptr->max_dlv;
+
 				if (dun_level < 1) dun_level = 1;
+
+				/* Nightmare mode makes recall more dangerous */
+				if (ironman_nightmare && !rand_int(666))
+				{
+					if (dun_level < 50)
+					{
+						dun_level *= 2;
+					}
+					else if (dun_level < 99)
+					{
+						dun_level = (dun_level + 99) / 2;
+					}
+					else if (dun_level > 100)
+					{
+						dun_level = MAX_DEPTH - 1;
+					}
+				}
 
 				/* Save player position */
 				p_ptr->oldpx = px;

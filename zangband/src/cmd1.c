@@ -834,10 +834,11 @@ static void hit_trap(void)
 			if (dun_level > randint(100)) /* No nasty effect for low levels */
 			{
 				bool stop_ty = FALSE;
+				int count = 0;
 
 				do
 				{
-					stop_ty = activate_ty_curse(stop_ty);
+					stop_ty = activate_ty_curse(stop_ty, &count);
 				}
 				while (randint(6) == 1);
 			}

@@ -2027,11 +2027,7 @@ int quest_number(int level)
 	}
 
 	/* Check for random quest */
-	if ((i = random_quest_number(level)))
-		return (i);
-
-	/* Nope */
-	return (0);
+	return (random_quest_number(level));
 }
 
 

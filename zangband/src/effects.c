@@ -2092,18 +2092,18 @@ bool do_dec_stat(int stat)
 	}
 
 	/* Sustain */
-	if (sust)
+	if (sust && (!ironman_nightmare || rand_int(13)))
 	{
 		/* Message */
 		msg_format("You feel %s for a moment, but the feeling passes.",
-			   desc_stat_neg[stat]);
+				desc_stat_neg[stat]);
 
 		/* Notice effect */
 		return (TRUE);
 	}
 
 	/* Attempt to reduce the stat */
-	if (dec_stat(stat, 10, FALSE))
+	if (dec_stat(stat, 10, (ironman_nightmare && !rand_int(13))))
 	{
 		/* Message */
 		msg_format("You feel very %s.", desc_stat_neg[stat]);

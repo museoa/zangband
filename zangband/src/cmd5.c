@@ -510,96 +510,155 @@ void do_cmd_study(void)
 }
 
 
+#define MAX_BIZARRE		6
+
+
+static int bizarre_num[MAX_BIZARRE] =
+{
+	SUMMON_BIZARRE1,
+	SUMMON_BIZARRE2,
+	SUMMON_BIZARRE3,
+	SUMMON_BIZARRE4,
+	SUMMON_BIZARRE5,
+	SUMMON_BIZARRE6,
+};
+
+
 void wild_magic(int spell)
 {
-	int counter = 0;
-	int type = SUMMON_BIZARRE1 + rand_int(6);
-
-	if (type < SUMMON_BIZARRE1) type = SUMMON_BIZARRE1;
-	else if (type > SUMMON_BIZARRE6) type = SUMMON_BIZARRE6;
-
 	switch (randint(spell) + randint(8) + 1)
 	{
-	case 1:
-	case 2:
-	case 3:
-		teleport_player(10);
-		break;
-	case 4:
-	case 5:
-	case 6:
-		teleport_player(100);
-		break;
-	case 7:
-	case 8:
-		teleport_player(200);
-		break;
-	case 9:
-	case 10:
-	case 11:
-		unlite_area(10, 3);
-		break;
-	case 12:
-	case 13:
-	case 14:
-		lite_area(damroll(2, 3), 2);
-		break;
-	case 15:
-		destroy_doors_touch();
-		break;
-	case 16: case 17:
-		wall_breaker();
-	case 18:
-		sleep_monsters_touch();
-		break;
-	case 19:
-	case 20:
-		trap_creation();
-		break;
-	case 21:
-	case 22:
-		door_creation();
-		break;
-	case 23:
-	case 24:
-	case 25:
-		aggravate_monsters(1);
-		break;
-	case 26:
-		earthquake(py, px, 5);
-		break;
-	case 27:
-	case 28:
-		(void)gain_random_mutation(0);
-		break;
-	case 29:
-	case 30:
-		apply_disenchant(0);
-		break;
-	case 31:
-		lose_all_info();
-		break;
-	case 32:
-		fire_ball(GF_CHAOS, 0, spell + 5, 1 + (spell / 10));
-		break;
-	case 33:
-		wall_stone();
-		break;
-	case 34:
-	case 35:
-		while (counter++ < 8)
+		case 1:
+		case 2:
+		case 3:
 		{
-			(void)summon_specific(py, px, (dun_level * 3) / 2, type, TRUE, FALSE, FALSE);
+			teleport_player(10);
+			break;
 		}
-		break;
-	case 36:
-	case 37:
-		activate_hi_summon();
-		break;
-	case 38:
-		summon_cyber();
-	default:
-		(void)activate_ty_curse(FALSE);
+		case 4:
+		case 5:
+		case 6:
+		{
+			teleport_player(100);
+			break;
+		}
+		case 7:
+		case 8:
+		{
+			teleport_player(200);
+			break;
+		}
+		case 9:
+		case 10:
+		case 11:
+		{
+			unlite_area(10, 3);
+			break;
+		}
+		case 12:
+		case 13:
+		case 14:
+		{
+			lite_area(damroll(2, 3), 2);
+			break;
+		}
+		case 15:
+		{
+			destroy_doors_touch();
+			break;
+		}
+		case 16: case 17:
+		{
+			wall_breaker();
+			break;
+		}
+		case 18:
+		{
+			sleep_monsters_touch();
+			break;
+		}
+		case 19:
+		case 20:
+		{
+			trap_creation();
+			break;
+		}
+		case 21:
+		case 22:
+		{
+			door_creation();
+			break;
+		}
+		case 23:
+		case 24:
+		case 25:
+		{
+			aggravate_monsters(1);
+			break;
+		}
+		case 26:
+		{
+			earthquake(py, px, 5);
+			break;
+		}
+		case 27:
+		case 28:
+		{
+			(void)gain_random_mutation(0);
+			break;
+		}
+		case 29:
+		case 30:
+		{
+			apply_disenchant(0);
+			break;
+		}
+		case 31:
+		{
+			lose_all_info();
+			break;
+		}
+		case 32:
+		{
+			fire_ball(GF_CHAOS, 0, spell + 5, 1 + (spell / 10));
+			break;
+		}
+		case 33:
+		{
+			wall_stone();
+			break;
+		}
+		case 34:
+		case 35:
+		{
+			int i;
+			int type = bizarre_num[rand_int(6)];
+
+			for (i = 0; i < 8; i++)
+			{
+				(void)summon_specific(py, px, (dun_level * 3) / 2, type, TRUE, FALSE, FALSE);
+			}
+			break;
+		}
+		case 36:
+		case 37:
+		{
+			activate_hi_summon();
+			break;
+		}
+		case 38:
+		{
+			summon_cyber();
+			break;
+		}
+		default:
+		{
+			int count = 0;
+
+			(void)activate_ty_curse(FALSE, &count);
+
+			break;
+		}
 	}
 
 	return;
@@ -1182,7 +1241,7 @@ static bool cast_chaos_spell(int spell)
 				    damroll(6 + ((plev - 5) / 4), 8));
 			else if (die < 71)
 				fire_bolt_or_beam(beam, GF_FIRE, dir,
-				    damroll(8 + ((plev - 5) / 4), 8));
+					 damroll(8 + ((plev - 5) / 4), 8));
 			else if (die < 76) drain_life(dir, 75);
 			else if (die < 81) fire_ball(GF_ELEC, dir, 30 + plev / 2, 2);
 			else if (die < 86) fire_ball(GF_ACID, dir, 40 + plev, 2);
@@ -1211,7 +1270,6 @@ static bool cast_chaos_spell(int spell)
 			}
 			break;
 		}
-		break;
 	case 9: /* Chaos Bolt */
 		if (!get_aim_dir(&dir)) return FALSE;
 
@@ -1806,8 +1864,10 @@ static bool cast_trump_spell(int spell, bool success)
 				}
 				else if (die < 18)
 				{
+					int count = 0;
+
 					msg_print("Oh no! It's the Hanged Man.");
-					(void)activate_ty_curse(FALSE);
+					(void)activate_ty_curse(FALSE, &count);
 				}
 				else if (die < 22)
 				{
