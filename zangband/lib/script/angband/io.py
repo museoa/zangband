@@ -1,6 +1,5 @@
 # This file was created automatically by SWIG.
 import ioc
-import new
 
 
 #-------------- FUNCTION WRAPPERS ------------------

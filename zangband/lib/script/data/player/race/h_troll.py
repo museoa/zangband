@@ -19,7 +19,7 @@ class half_troll(player_race):
 		from variable import player
 		player.sustain_str = 1
 
-		if player.level > 14:
+		if player.lev > 14:
 			# High level trolls heal fast...
 			player.regenerate = 1
 

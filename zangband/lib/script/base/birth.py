@@ -27,8 +27,7 @@ class player_race_birth:
 		from variable import player
 
 		# Load all available player-races
-		from util.autorun import autorun_dir
-		autorun_dir("worlds", player.world.directory, "player", "race")
+		self.races = player.world.get_player_races()
 
 		# Select the race
 		from variable import ui
@@ -65,8 +64,7 @@ class player_class_birth:
 		from variable import player
 
 		# Load all available player-classes
-		from util.autorun import autorun_dir
-		autorun_dir("worlds", player.world.directory, "player", "pclass")
+		self.classes = player.world.get_player_classes()
 
 		# Select the class
 		from variable import ui

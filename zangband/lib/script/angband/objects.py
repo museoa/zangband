@@ -1,6 +1,5 @@
 # This file was created automatically by SWIG.
 import objectsc
-import new
 class object_kind:
     def __init__(self,this):
         self.this = this
@@ -78,6 +77,7 @@ class object_kindPtr(object_kind):
     def __init__(self,this):
         self.this = this
         self.thisown = 0
+        self.__class__ = object_kind
 
 
 
@@ -89,6 +89,33 @@ class object_type:
     def __del__(self,objectsc=objectsc):
         if self.thisown == 1 :
             objectsc.delete_object_type(self)
+    def object_wipe(*args):
+        val = apply(objectsc.object_type_object_wipe,args)
+        return val
+    def object_copy(*args):
+        val = apply(objectsc.object_type_object_copy,args)
+        return val
+    def object_prep(*args):
+        val = apply(objectsc.object_type_object_prep,args)
+        return val
+    def drop_near(*args):
+        val = apply(objectsc.object_type_drop_near,args)
+        return val
+    def activation(*args):
+        val = apply(objectsc.object_type_activation,args)
+        return val
+    def identify_fully_aux(*args):
+        val = apply(objectsc.object_type_identify_fully_aux,args)
+        return val
+    def object_known(*args):
+        val = apply(objectsc.object_type_object_known,args)
+        return val
+    def object_aware(*args):
+        val = apply(objectsc.object_type_object_aware,args)
+        return val
+    def set_python(*args):
+        val = apply(objectsc.object_type_set_python,args)
+        return val
     __setmethods__ = {
         "k_idx" : objectsc.object_type_k_idx_set,
         "iy" : objectsc.object_type_iy_set,
@@ -99,26 +126,28 @@ class object_type:
         "discount" : objectsc.object_type_discount_set,
         "number" : objectsc.object_type_number_set,
         "weight" : objectsc.object_type_weight_set,
-        "name1" : objectsc.object_type_name1_set,
-        "name2" : objectsc.object_type_name2_set,
-        "xtra1" : objectsc.object_type_xtra1_set,
-        "xtra2" : objectsc.object_type_xtra2_set,
         "to_h" : objectsc.object_type_to_h_set,
         "to_d" : objectsc.object_type_to_d_set,
         "to_a" : objectsc.object_type_to_a_set,
         "ac" : objectsc.object_type_ac_set,
+        "timeout" : objectsc.object_type_timeout_set,
         "dd" : objectsc.object_type_dd_set,
         "ds" : objectsc.object_type_ds_set,
-        "timeout" : objectsc.object_type_timeout_set,
         "ident" : objectsc.object_type_ident_set,
         "marked" : objectsc.object_type_marked_set,
         "inscription" : objectsc.object_type_inscription_set,
-        "art_name" : objectsc.object_type_art_name_set,
-        "art_flags1" : objectsc.object_type_art_flags1_set,
-        "art_flags2" : objectsc.object_type_art_flags2_set,
-        "art_flags3" : objectsc.object_type_art_flags3_set,
+        "xtra_name" : objectsc.object_type_xtra_name_set,
+        "flags1" : objectsc.object_type_flags1_set,
+        "flags2" : objectsc.object_type_flags2_set,
+        "flags3" : objectsc.object_type_flags3_set,
+        "kn_flags1" : objectsc.object_type_kn_flags1_set,
+        "kn_flags2" : objectsc.object_type_kn_flags2_set,
+        "kn_flags3" : objectsc.object_type_kn_flags3_set,
         "next_o_idx" : objectsc.object_type_next_o_idx_set,
         "held_m_idx" : objectsc.object_type_held_m_idx_set,
+        "cost" : objectsc.object_type_cost_set,
+        "feeling" : objectsc.object_type_feeling_set,
+        "activate" : objectsc.object_type_activate_set,
     }
     def __setattr__(self,name,value):
         if (name == "this") or (name == "thisown"): self.__dict__[name] = value; return
@@ -135,26 +164,28 @@ class object_type:
         "discount" : objectsc.object_type_discount_get,
         "number" : objectsc.object_type_number_get,
         "weight" : objectsc.object_type_weight_get,
-        "name1" : objectsc.object_type_name1_get,
-        "name2" : objectsc.object_type_name2_get,
-        "xtra1" : objectsc.object_type_xtra1_get,
-        "xtra2" : objectsc.object_type_xtra2_get,
         "to_h" : objectsc.object_type_to_h_get,
         "to_d" : objectsc.object_type_to_d_get,
         "to_a" : objectsc.object_type_to_a_get,
         "ac" : objectsc.object_type_ac_get,
+        "timeout" : objectsc.object_type_timeout_get,
         "dd" : objectsc.object_type_dd_get,
         "ds" : objectsc.object_type_ds_get,
-        "timeout" : objectsc.object_type_timeout_get,
         "ident" : objectsc.object_type_ident_get,
         "marked" : objectsc.object_type_marked_get,
         "inscription" : objectsc.object_type_inscription_get,
-        "art_name" : objectsc.object_type_art_name_get,
-        "art_flags1" : objectsc.object_type_art_flags1_get,
-        "art_flags2" : objectsc.object_type_art_flags2_get,
-        "art_flags3" : objectsc.object_type_art_flags3_get,
+        "xtra_name" : objectsc.object_type_xtra_name_get,
+        "flags1" : objectsc.object_type_flags1_get,
+        "flags2" : objectsc.object_type_flags2_get,
+        "flags3" : objectsc.object_type_flags3_get,
+        "kn_flags1" : objectsc.object_type_kn_flags1_get,
+        "kn_flags2" : objectsc.object_type_kn_flags2_get,
+        "kn_flags3" : objectsc.object_type_kn_flags3_get,
         "next_o_idx" : objectsc.object_type_next_o_idx_get,
         "held_m_idx" : objectsc.object_type_held_m_idx_get,
+        "cost" : objectsc.object_type_cost_get,
+        "feeling" : objectsc.object_type_feeling_get,
+        "activate" : objectsc.object_type_activate_get,
     }
     def __getattr__(self,name):
         method = object_type.__getmethods__.get(name,None)
@@ -166,17 +197,9 @@ class object_typePtr(object_type):
     def __init__(self,this):
         self.this = this
         self.thisown = 0
+        self.__class__ = object_type
 
 
-object_type.object_wipe = new.instancemethod(objectsc.object_type_object_wipe, None, object_type)
-object_type.object_copy = new.instancemethod(objectsc.object_type_object_copy, None, object_type)
-object_type.object_prep = new.instancemethod(objectsc.object_type_object_prep, None, object_type)
-object_type.drop_near = new.instancemethod(objectsc.object_type_drop_near, None, object_type)
-object_type.activation = new.instancemethod(objectsc.object_type_activation, None, object_type)
-object_type.identify_fully_aux = new.instancemethod(objectsc.object_type_identify_fully_aux, None, object_type)
-object_type.object_known = new.instancemethod(objectsc.object_type_object_known, None, object_type)
-object_type.object_aware = new.instancemethod(objectsc.object_type_object_aware, None, object_type)
-object_type.set_python = new.instancemethod(objectsc.object_type_set_python, None, object_type)
 
 class artifact_type:
     def __init__(self,this):
@@ -241,6 +264,7 @@ class artifact_typePtr(artifact_type):
     def __init__(self,this):
         self.this = this
         self.thisown = 0
+        self.__class__ = artifact_type
 
 
 
@@ -295,6 +319,7 @@ class ego_item_typePtr(ego_item_type):
     def __init__(self,this):
         self.this = this
         self.thisown = 0
+        self.__class__ = ego_item_type
 
 
 

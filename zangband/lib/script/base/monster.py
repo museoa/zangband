@@ -7,25 +7,21 @@
 #####################################################################
 
 from variable import events, debug
-from angband.monster import monster_typePtr, monster_type
+from angband.monster import monster_type
 
 #####################################################################
 # Base class for monsters
 #####################################################################
-class monster(monster_type, monster_typePtr):
+class monster(monster_type):
 	version = 0
 	current_num = 0 # Number of current monsters of this type
 
 	subclasses = []
 
 	def __init__(self, m_ptr=None):
-		# Check if the monster already exists
+		monster_type.__init__(self, m_ptr)
 		if m_ptr:
-			# Create a wrapper around an existing m_ptr
-			monster_typePtr.__init__(self, m_ptr)
-		else:
-			# Create a completely new monster
-			monster_type.__init__(self)
+			self.thisown = 0
 
 		debug.trace("monster.__init__(%s, %s)" % (self, m_ptr))
 

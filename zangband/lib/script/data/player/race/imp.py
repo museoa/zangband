@@ -18,7 +18,7 @@ class imp(player_race):
 	def get_player_flags_hook(self, args):
 		from variable import player
 		player.resist_fire = 1
-		if player.level > 9:
+		if player.lev > 9:
 			player.see_inv = 1
 		return 1
 

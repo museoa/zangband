@@ -19,6 +19,6 @@ class sprite(player_race):
 		from variable import player
 		player.ffall = 1
 		player.resist_lite = 1
-		player.pspeed = player.pspeed + player.level / 10
+		player.pspeed = player.pspeed + player.lev / 10
 		return 1
 

@@ -1,6 +1,5 @@
 # This file was created automatically by SWIG.
 import cavec
-import new
 class cave_type:
     def __init__(self,this):
         self.this = this
@@ -10,7 +9,6 @@ class cave_type:
         "feat" : cavec.cave_type_feat_set,
         "o_idx" : cavec.cave_type_o_idx_set,
         "m_idx" : cavec.cave_type_m_idx_set,
-        "special" : cavec.cave_type_special_set,
         "mimic" : cavec.cave_type_mimic_set,
     }
     def __setattr__(self,name,value):
@@ -23,7 +21,6 @@ class cave_type:
         "feat" : cavec.cave_type_feat_get,
         "o_idx" : cavec.cave_type_o_idx_get,
         "m_idx" : cavec.cave_type_m_idx_get,
-        "special" : cavec.cave_type_special_get,
         "mimic" : cavec.cave_type_mimic_get,
     }
     def __getattr__(self,name):
@@ -36,6 +33,7 @@ class cave_typePtr(cave_type):
     def __init__(self,this):
         self.this = this
         self.thisown = 0
+        self.__class__ = cave_type
 
 
 
@@ -74,6 +72,7 @@ class vault_typePtr(vault_type):
     def __init__(self,this):
         self.this = this
         self.thisown = 0
+        self.__class__ = vault_type
 
 
 

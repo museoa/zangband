@@ -22,7 +22,7 @@ class berserk(racial_power):
 		from variable import player
 		msg_print("Raaagh!")
 		player.set_afraid(0)
-		player.set_shero(player.shero + 10 + randint(player.level))
+		player.set_shero(player.shero + 10 + randint(player.lev))
 		player.hp_player(30)
 
 

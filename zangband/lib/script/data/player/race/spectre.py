@@ -24,7 +24,7 @@ class spectre(player_race):
 		player.slow_digest = 1
 		player.resist_cold = 1
 		player.pass_wall = 1
-		if player.level > 34:
+		if player.lev > 34:
 			player.telepathy = 1
 		return 1
 

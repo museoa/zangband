@@ -1,6 +1,5 @@
 # This file was created automatically by SWIG.
 import monsterc
-import new
 class monster_type:
     def __init__(self,*args):
         self.this = apply(monsterc.new_monster_type,args)
@@ -60,6 +59,7 @@ class monster_typePtr(monster_type):
     def __init__(self,this):
         self.this = this
         self.thisown = 0
+        self.__class__ = monster_type
 
 
 
@@ -94,6 +94,7 @@ class monster_blowPtr(monster_blow):
     def __init__(self,this):
         self.this = this
         self.thisown = 0
+        self.__class__ = monster_blow
 
 
 
@@ -218,6 +219,7 @@ class monster_racePtr(monster_race):
     def __init__(self,this):
         self.this = this
         self.thisown = 0
+        self.__class__ = monster_race
 
 
 

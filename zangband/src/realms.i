@@ -24,13 +24,6 @@ typedef unsigned int u32b;
 
 
 extern player_magic *mp_ptr;
-extern u32b spell_learned1;
-extern u32b spell_learned2;
-extern u32b spell_worked1;
-extern u32b spell_worked2;
-extern u32b spell_forgotten1;
-extern u32b spell_forgotten2;
-extern byte spell_order[64];
 
 extern player_magic magic_info[MAX_CLASS];
 

@@ -21,7 +21,7 @@ class golem(player_race):
 		player.free_act = 1
 		player.see_inv = 1
 		player.resist_pois = 1
-		if player.level > 34:
+		if player.lev > 34:
 			player.hold_life = 1
 		return 1
 

@@ -28,12 +28,13 @@ class player_race(angband.prace.player_race):
 
 		# Set all values
 		self.title = title
-		self.str_mod = str_mod
-		self.int_mod = int_mod
-		self.wis_mod = wis_mod
-		self.dex_mod = dex_mod
-		self.con_mod = con_mod
-		self.chr_mod = chr_mod
+		from base.player import A_STR, A_INT, A_WIS, A_DEX, A_CON, A_CHR
+		self.set_r_adj(A_STR, str_mod)
+		self.set_r_adj(A_INT, int_mod)
+		self.set_r_adj(A_WIS, wis_mod)
+		self.set_r_adj(A_DEX, dex_mod)
+		self.set_r_adj(A_CON, con_mod)
+		self.set_r_adj(A_CHR, chr_mod)
 
 		self.r_dis = r_dis
 		self.r_dev = r_dev

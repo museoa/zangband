@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: init2.c */
 
 /* Purpose: Initialization (part 2) -BEN- */

@@ -13,9 +13,10 @@ from variable import events, debug
 #####################################################################
 # Base class for the player
 #####################################################################
-class player_data_class(player_typePtr):
+class player_data_class(player_type):
 	def __init__(self):
-		player_typePtr.__init__(self, cvar.p_ptr)
+		player_type.__init__(self, cvar.p_ptr)
+		self.thisown = 0
 
 		debug.trace("player_data_class.__init__(%s)" % (self))
 

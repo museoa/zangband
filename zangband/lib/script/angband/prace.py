@@ -1,6 +1,5 @@
 # This file was created automatically by SWIG.
 import pracec
-import new
 class player_race:
     def __init__(self,*args):
         self.this = apply(pracec.new_player_race,args)
@@ -9,6 +8,12 @@ class player_race:
     def __del__(self,pracec=pracec):
         if self.thisown == 1 :
             pracec.delete_player_race(self)
+    def get_r_adj(*args):
+        val = apply(pracec.player_race_get_r_adj,args)
+        return val
+    def set_r_adj(*args):
+        val = apply(pracec.player_race_set_r_adj,args)
+        return val
     __setmethods__ = {
         "title" : pracec.player_race_title_set,
         "r_dis" : pracec.player_race_r_dis_set,
@@ -33,12 +38,6 @@ class player_race:
         "f_m_wt" : pracec.player_race_f_m_wt_set,
         "infra" : pracec.player_race_infra_set,
         "choice" : pracec.player_race_choice_set,
-        "str_mod" : pracec.player_race_str_mod_set,
-        "int_mod" : pracec.player_race_int_mod_set,
-        "wis_mod" : pracec.player_race_wis_mod_set,
-        "dex_mod" : pracec.player_race_dex_mod_set,
-        "con_mod" : pracec.player_race_con_mod_set,
-        "chr_mod" : pracec.player_race_chr_mod_set,
     }
     def __setattr__(self,name,value):
         if (name == "this") or (name == "thisown"): self.__dict__[name] = value; return
@@ -70,12 +69,6 @@ class player_race:
         "f_m_wt" : pracec.player_race_f_m_wt_get,
         "infra" : pracec.player_race_infra_get,
         "choice" : pracec.player_race_choice_get,
-        "str_mod" : pracec.player_race_str_mod_get,
-        "int_mod" : pracec.player_race_int_mod_get,
-        "wis_mod" : pracec.player_race_wis_mod_get,
-        "dex_mod" : pracec.player_race_dex_mod_get,
-        "con_mod" : pracec.player_race_con_mod_get,
-        "chr_mod" : pracec.player_race_chr_mod_get,
     }
     def __getattr__(self,name):
         method = player_race.__getmethods__.get(name,None)
@@ -87,6 +80,7 @@ class player_racePtr(player_race):
     def __init__(self,this):
         self.this = this
         self.thisown = 0
+        self.__class__ = player_race
 
 
 

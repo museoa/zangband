@@ -118,7 +118,9 @@ class spell(skill):
 
 		if self.mana > player.csp:
 			# XXX
+			from angband import io
 			io.msg_print("You don't have enough mana to cast this spell.")
+			return
 
 		# Extract the base spell failure rate
 		chance = self.fail

@@ -19,9 +19,9 @@ class mindflayer(player_race):
 		from variable import player
 		player.sustain_int = 1
 		player.sustain_wis = 1
-		if player.level > 14:
+		if player.lev > 14:
 			player.see_inv = 1
-		if player.level > 29:
+		if player.lev > 29:
 			player.telepathy = 1
 		return 1
 

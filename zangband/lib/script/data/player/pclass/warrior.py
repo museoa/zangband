@@ -15,7 +15,7 @@ class warrior_class(player_class_class):
 				9,  0, 20)
 		events.destroy_object.append(self)
 	def get_player_flags_hook(self, args):
-		if player.level > 29:
+		if player.lev > 29:
 			player.resist_fear = 1
 		return 1
 	def destroy_object_hook(self, args):
@@ -38,7 +38,7 @@ class warrior_class(player_class_class):
 				return 1
 	def sense_inventory_hook(self, args):
 		# Good sensing
-		if (0 != random.rand_int(9000 / (player.level * player.level + 40))):
+		if (0 != random.rand_int(9000 / (player.lev * player.lev + 40))):
 			return
 		# Heavy sensing
 		return -1

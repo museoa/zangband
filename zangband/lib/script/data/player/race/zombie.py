@@ -22,7 +22,7 @@ class zombie(player_race):
 		player.see_inv = 1
 		player.resist_pois = 1
 		player.slow_digest = 1
-		if player.level > 4:
+		if player.lev > 4:
 			player.resist_cold = 1
 		return 1
 

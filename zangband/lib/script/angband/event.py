@@ -1,6 +1,5 @@
 # This file was created automatically by SWIG.
 import eventc
-import new
 
 
 #-------------- FUNCTION WRAPPERS ------------------
@@ -115,6 +114,14 @@ free_object_kind_list_callback = eventc.free_object_kind_list_callback
 
 init_object_kind_list_callback = eventc.init_object_kind_list_callback
 
+field_delete_callback = eventc.field_delete_callback
+
+field_copy_callback = eventc.field_copy_callback
+
+field_save_callback = eventc.field_save_callback
+
+field_load_callback = eventc.field_load_callback
+
 use_skill_callback = eventc.use_skill_callback
 
 get_script_window_line = eventc.get_script_window_line
@@ -171,4 +178,5 @@ COPY_MONSTER_EVENT = eventc.COPY_MONSTER_EVENT
 USE_SKILL_EVENT = eventc.USE_SKILL_EVENT
 GET_SCRIPT_WINDOW_LINE_EVENT = eventc.GET_SCRIPT_WINDOW_LINE_EVENT
 PLAY_GAME_EVENT = eventc.PLAY_GAME_EVENT
+FIELD_LOAD_EVENT = eventc.FIELD_LOAD_EVENT
 MAX_EVENT = eventc.MAX_EVENT

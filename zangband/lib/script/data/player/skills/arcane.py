@@ -10,10 +10,12 @@ from base.spell import spell
 from base.realm import realm
 from angband import io, spells, random
 
-
 class zap(spell):
 	common = 1
 	name = "Zap"
+	level = 1
+	mana = 1
+	fail = 20
 
 	def effect(self):
 		succ, dir = io.get_aim_dir()
@@ -21,13 +23,16 @@ class zap(spell):
 
 		from variable import player
 		beam_chance = player.p_class.get_beam_chance() - 10
-		damage = random.damroll(3 + ((player.level - 1) / 5), 3)
+		damage = random.damroll(3 + ((player.lev - 1) / 5), 3)
 
 		spells.fire_bolt_or_beam(beam_chance, spells.GF_ELEC, dir, damage)
 
 class detect_monsters(spell):
 	common = 1
 	name = "Detect Monsters"
+	level = 2
+	mana = 1
+	fail = 33
 
 	def effect(self):
 		spells.detect_monsters_normal()
@@ -35,18 +40,24 @@ class detect_monsters(spell):
 class blink(spell):
 	common = 1
 	name = "Blink"
-	
+	level = 2
+	mana = 2
+	fail = 33
+
 	def effect(self):
 		spells.teleport_player(10)
 
 class light_area(spell):
 	common = 1
 	name = "Light Area"
+	level = 4
+	mana = 4
+	fail = 40
 
 	def effect(self):
 		from variable import player
-		damage = random.damroll(2, (player.level / 2))
-		radius = (player.level / 10) + 1
+		damage = random.damroll(2, (player.lev / 2))
+		radius = (player.lev / 10) + 1
 		spells.lite_area(damage, radius)
 
 class detect_doors_and_traps(spell):
@@ -64,7 +75,7 @@ class teleport(spell):
 
 	def effect(self):
 		from variable import player
-		spells.teleport_player(player.level * 5)
+		spells.teleport_player(player.lev * 5)
 
 class stone_to_mud(spell):
 	common = 1

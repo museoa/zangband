@@ -18,7 +18,7 @@ class dark_elf(player_race):
 	def get_player_flags_hook(self, args):
 		from variable import player
 		player.resist_dark = 1
-		if player.level > 19:
+		if player.lev > 19:
 			player.see_inv = 1
 		return 1
 

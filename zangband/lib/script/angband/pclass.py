@@ -1,6 +1,5 @@
 # This file was created automatically by SWIG.
 import pclassc
-import new
 class player_class:
     def __init__(self,*args):
         self.this = apply(pclassc.new_player_class,args)
@@ -9,6 +8,12 @@ class player_class:
     def __del__(self,pclassc=pclassc):
         if self.thisown == 1 :
             pclassc.delete_player_class(self)
+    def get_c_adj(*args):
+        val = apply(pclassc.player_class_get_c_adj,args)
+        return val
+    def set_c_adj(*args):
+        val = apply(pclassc.player_class_set_c_adj,args)
+        return val
     __setmethods__ = {
         "title" : pclassc.player_class_title_set,
         "c_dis" : pclassc.player_class_c_dis_set,
@@ -30,12 +35,6 @@ class player_class:
         "c_mhp" : pclassc.player_class_c_mhp_set,
         "c_exp" : pclassc.player_class_c_exp_set,
         "pet_upkeep_div" : pclassc.player_class_pet_upkeep_div_set,
-        "str_mod" : pclassc.player_class_str_mod_set,
-        "int_mod" : pclassc.player_class_int_mod_set,
-        "wis_mod" : pclassc.player_class_wis_mod_set,
-        "dex_mod" : pclassc.player_class_dex_mod_set,
-        "con_mod" : pclassc.player_class_con_mod_set,
-        "chr_mod" : pclassc.player_class_chr_mod_set,
     }
     def __setattr__(self,name,value):
         if (name == "this") or (name == "thisown"): self.__dict__[name] = value; return
@@ -64,12 +63,6 @@ class player_class:
         "c_mhp" : pclassc.player_class_c_mhp_get,
         "c_exp" : pclassc.player_class_c_exp_get,
         "pet_upkeep_div" : pclassc.player_class_pet_upkeep_div_get,
-        "str_mod" : pclassc.player_class_str_mod_get,
-        "int_mod" : pclassc.player_class_int_mod_get,
-        "wis_mod" : pclassc.player_class_wis_mod_get,
-        "dex_mod" : pclassc.player_class_dex_mod_get,
-        "con_mod" : pclassc.player_class_con_mod_get,
-        "chr_mod" : pclassc.player_class_chr_mod_get,
     }
     def __getattr__(self,name):
         method = player_class.__getmethods__.get(name,None)
@@ -81,6 +74,7 @@ class player_classPtr(player_class):
     def __init__(self,this):
         self.this = this
         self.thisown = 0
+        self.__class__ = player_class
 
 
 

@@ -1,6 +1,5 @@
 # This file was created automatically by SWIG.
 import commandsc
-import new
 
 
 #-------------- FUNCTION WRAPPERS ------------------
@@ -22,8 +21,6 @@ do_cmd_close = commandsc.do_cmd_close
 do_cmd_tunnel = commandsc.do_cmd_tunnel
 
 do_cmd_disarm = commandsc.do_cmd_disarm
-
-do_cmd_bash = commandsc.do_cmd_bash
 
 do_cmd_alter = commandsc.do_cmd_alter
 

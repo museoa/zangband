@@ -63,5 +63,5 @@ class mage_class(spellcaster_mage_class, player_class_class):
 
 	def get_beam_chance(self):
 		from variable import player
-		return player.level
+		return player.lev
 

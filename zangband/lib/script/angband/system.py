@@ -1,6 +1,5 @@
 # This file was created automatically by SWIG.
 import systemc
-import new
 
 
 #-------------- FUNCTION WRAPPERS ------------------

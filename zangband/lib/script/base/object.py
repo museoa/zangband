@@ -19,14 +19,11 @@ except ImportError:
 #####################################################################
 # Object base class
 #####################################################################
-class object_class(object_type, object_typePtr):
+class object_class(object_type):
 	def __init__(self, o_ptr=None):
-		# Check if the item already exists
 		if o_ptr:
-			# Create a wrapper around an existing o_ptr
 			object_typePtr.__init__(self, o_ptr)
 		else:
-			# Create a completely new object
 			object_type.__init__(self)
 
 	# Save the object
@@ -80,21 +77,20 @@ class object_data_class:
 	# Called when Angband creates a new object
 	def object_create_hook(self, o_ptr):
 		# Get tval and sval of the new object
-		object = object_typePtr(o_ptr)
-		tval = object.tval
-		sval = object.sval
+		the_object = object_typePtr(o_ptr)
+		tval = the_object.tval
+		sval = the_object.sval
 
 		# Create the corresponding Python object
 		if self.classes.has_key((tval, sval)):
 			# Init a specific item type
-			the_object = apply(self.classes[(tval, sval)], (o_ptr,))
+			the_object.__class__ = self.classes[(tval, sval)]
 		elif self.classes.has_key(tval):
 			# Init an item sub-type
-			the_object = apply(self.classes[tval], (o_ptr,))
+			the_object.__class__ = self.classes[tval]
 		else:
 			# Init a generic item
 			# (disabled atm because generic items are boring)
-			# the_object = object_class(o_ptr)
 			the_object = None
 
 		# Store the object

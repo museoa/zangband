@@ -1,6 +1,5 @@
 # This file was created automatically by SWIG.
 import terrainc
-import new
 class feature_type:
     def __init__(self,*args):
         self.this = apply(terrainc.new_feature_type,args)
@@ -46,6 +45,7 @@ class feature_typePtr(feature_type):
     def __init__(self,this):
         self.this = this
         self.thisown = 0
+        self.__class__ = feature_type
 
 
 

@@ -1,6 +1,5 @@
 # This file was created automatically by SWIG.
 import storec
-import new
 class owner_type:
     def __init__(self,this):
         self.this = this
@@ -38,6 +37,7 @@ class owner_typePtr(owner_type):
     def __init__(self,this):
         self.this = this
         self.thisown = 0
+        self.__class__ = owner_type
 
 
 
@@ -92,6 +92,7 @@ class store_typePtr(store_type):
     def __init__(self,this):
         self.this = this
         self.thisown = 0
+        self.__class__ = store_type
 
 
 

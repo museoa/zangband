@@ -25,7 +25,6 @@
 #####################################################################
 
 from variable import events, debug
-from level import dungeon_level
 
 #####################################################################
 # The base class for all quests
@@ -152,22 +151,6 @@ class quest:
 		else:
 			return 1
 
-	# Enter the quest
-	def player_enter_grid_hook(self, coords):
-		self.enter()
-
-	# "Abstract" methods
-	def player_search_grid_hook(self, coords):
-		pass
-	def generate_level_hook(self, level):
-		pass
-	def cmd_feeling_hook(self, feeling):
-		pass
-	def cmd_open_hook(self, args):
-		pass
-	def cmd_go_up_hook(self, arg):
-		pass
-
 	# Comparision for sorting
 	def __cmp__(self, other):
 		if self.level < other.level:
@@ -176,16 +159,6 @@ class quest:
 			return 1
 		else:
 			return 0
-
-
-#####################################################################
-#
-# Base class for quest-levels
-#
-#####################################################################
-class quest_level(quest, dungeon_level):
-	pass
-
 
 
 #####################################################################
@@ -217,47 +190,6 @@ class plot(quest):
 		debug.trace("plot.add_quest(%s, %s)" % (self, new_quest))
 
 		self.sub_quests.append(new_quest)
-
-
-#####################################################################
-# Quest to kill all monsters on a level
-#####################################################################
-class kill_all_monsters_quest(quest_level):
-	def generate_level_hook(self, level):
-		debug.trace("kill_all_monsters_quest.generate_level_hook(%s, %s)" % (self, level))
-
-		quest.generate_level_hook(self, level)
-		from variable import player
-		self.old_level = player.dun_level
-
-		# Place the player
-		apply(player.place, self.start_pos)
-
-		# Install hooks to the interesting events
-		events.player_move.append(self)
-		events.cmd_open.append(self)
-		events.cmd_feeling.append(self)
-		events.cmd_go_up.append(self)
-		events.kill_monster.append(self)
-		events.leave_level.append(self)
-
-		# Remove the hook for quest creation
-		events.generate_level.remove(self)
-
-	def leave_level_hook(self, args):
-		debug.trace("kill_all_monsters_quest.leave_level_hook(%s, %s)" % (self, args))
-
-		from variable import player
-		player.dun_level = self.old_level
-		events.player_move.remove(self)
-		events.cmd_open.remove(self)
-		events.cmd_feeling.remove(self)
-		events.cmd_go_up.remove(self)
-		events.kill_monster.remove(self)
-		events.leave_level.remove(self)
-
-	def kill_monster_hook(self, r_idx):
-		debug.trace("kill_all_monsters_quest.kill_monster_hook(%s, %s)" % (self, r_idx))
 
 
 #####################################################################

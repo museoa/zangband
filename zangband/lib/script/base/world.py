@@ -48,6 +48,11 @@ class world:
 	def get_level(self, name):
 		return self.levels[self.labels[name]]
 
+	def get_player_races(self):
+		return []
+
+	def get_player_classes(self):
+		return []
 
 
 #####################################################################

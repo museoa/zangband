@@ -1,6 +1,5 @@
 # This file was created automatically by SWIG.
 import realmsc
-import new
 class player_magic:
     def __init__(self,*args):
         self.this = apply(realmsc.new_player_magic,args)
@@ -41,6 +40,7 @@ class player_magicPtr(player_magic):
     def __init__(self,this):
         self.this = this
         self.thisown = 0
+        self.__class__ = player_magic
 
 
 

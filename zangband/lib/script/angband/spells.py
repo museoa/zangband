@@ -1,6 +1,5 @@
 # This file was created automatically by SWIG.
 import spellsc
-import new
 
 
 #-------------- FUNCTION WRAPPERS ------------------
