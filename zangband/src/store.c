@@ -920,6 +920,9 @@ static int store_carry(object_type *o_ptr)
 	/* Cursed/Worthless items "disappear" when sold */
 	if (value <= 0) return (-1);
 	
+	/* Identify it fully */
+	object_known(o_ptr);
+	
 	/* All store items are fully *identified* */
 	o_ptr->ident |= IDENT_MENTAL;
 	
