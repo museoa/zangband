@@ -359,7 +359,7 @@ void dump_virtues(FILE * OutFile)
 
 	for (v_nr = 0; v_nr < 8; v_nr++)
 	{
-		char v_name [20];
+		char v_name[20];
 
 		int tester = p_ptr->virtues[v_nr];
 

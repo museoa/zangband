@@ -1246,7 +1246,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
-	char killer [80];
+	char killer[80];
 
 	cptr name = (r_name + r_ptr->name);
 

@@ -1051,9 +1051,9 @@ static void process_world(void)
 		    (inventory[INVEN_LITE].sval < SV_LITE_THRAIN) &&
 		    !p_ptr->resist_lite)
 		{
-			object_type * o_ptr = &inventory[INVEN_LITE];
-			char o_name [80];
-			char ouch [80];
+			object_type *o_ptr = &inventory[INVEN_LITE];
+			char o_name[80];
+			char ouch[80];
 
 			/* Get an object description */
 			object_desc(o_name, o_ptr, FALSE, 0);
@@ -4065,6 +4065,23 @@ void play_game(bool new_game)
 	/* Hack -- Character is "icky" */
 	character_icky = TRUE;
 
+	/* Verify main term */
+	if (!angband_term[0])
+	{
+		quit("main window does not exist");
+	}
+
+	/* Make sure main term is active */
+	Term_activate(angband_term[0]);
+
+	/* Verify minimum size */
+	if ((Term->hgt < 24) || (Term->wid < 80))
+	{
+		quit("main window is too small");
+	}
+
+	/* Forbid resizing */
+	Term->fixed_shape = TRUE;
 
 	/* Hack -- turn off the cursor */
 	(void)Term_set_cursor(0);
@@ -4092,12 +4109,10 @@ void play_game(bool new_game)
 		character_dungeon = FALSE;
 	}
 
-	/* Process old character */
-	if (!new_game)
+	/* Hack -- Default base_name */
+	if (!player_base[0])
 	{
-		/* Process the player name */
-		process_player_name(FALSE);
-
+		strcpy(player_base, "PLAYER");
 	}
 
 	/* Init the RNG */
@@ -4192,6 +4207,18 @@ void play_game(bool new_game)
 	if (!new_game && take_notes)
 	{
 		add_note_type(NOTE_ENTER_DUNGEON);
+	}
+
+	/* Normal machine (process player name) */
+	if (savefile[0])
+	{
+		process_player_name(FALSE);
+	}
+
+	/* Weird machine (process player name, pick savefile name) */
+	else
+	{
+		process_player_name(TRUE);
 	}
 
 	/* Flash a message */
