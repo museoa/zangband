@@ -840,25 +840,11 @@ int borg_wield_slot(borg_item *item)
  * to 'cheat' for inventory.
  * This function returns TRUE if space needs to be pressed
  */
-bool borg_object_star_id_aux(borg_item *borg_item, object_type *real_item)
+static bool borg_object_star_id_aux(borg_item *borg_item)
 {
-	u32b f1, f2, f3;
+	(void) borg_item;
 
-	/* If a real item pointer is passed in then we are cheating to get */
-	/* the data directly from the real item    */
-	if (real_item)
-	{
-		object_flags(real_item, &f1, &f2, &f3);
-	}
-
-	borg_item->flags1 = f1;
-	borg_item->flags2 = f2;
-	borg_item->flags3 = f3;
-
-	borg_item->needs_I_exam = FALSE;
-
-
-
+	/* This function doesn't work */
 
 	return (FALSE);
 }
@@ -885,7 +871,7 @@ bool borg_object_star_id(void)
 				(borg_cheat_inven && i < INVEN_WIELD))
 			{
 				/* cheat to get the information. */
-				borg_object_star_id_aux(&borg_items[i], &inventory[i]);
+				borg_object_star_id_aux(&borg_items[i]);
 			}
 
 

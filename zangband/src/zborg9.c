@@ -2620,8 +2620,6 @@ static void borg_log_death(void)
 	fprintf(borg_log_file, "Killed on level: %d (max. %d) by %s\n",
 			p_ptr->depth, p_ptr->max_depth, p_ptr->died_from);
 
-	fprintf(borg_log_file, "ZBorg Compile Date: %s\n", borg_engine_date);
-
 	fprintf(borg_log_file, "----------\n\n");
 
 	my_fclose(borg_log_file);
@@ -2652,7 +2650,7 @@ static void borg_log_death_data(void)
 	(void)time(&death_time);
 
 	/* dump stuff for easy import to database */
-	fprintf(borg_log_file, "%s, %s, %s, %d, %d, %s\n", borg_engine_date,
+	fprintf(borg_log_file, "%s, %s, %d, %d, %s\n",
 			race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title,
 			p_ptr->lev, p_ptr->depth, p_ptr->died_from);
 

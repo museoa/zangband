@@ -219,232 +219,208 @@ extern int *borg_skill;
 extern int size_depth;
 extern int size_obj;
 
-/* NOTE: This must exactly match the prefix_pref enums in BORG1.c */
-enum
-{
-	BI_STR,
-	BI_INT,
-	BI_WIS,
-	BI_DEX,
-	BI_CON,
-	BI_CHR,
-	BI_CSTR,
-	BI_CINT,
-	BI_CWIS,
-	BI_CDEX,
-	BI_CCON,
-	BI_CCHR,
-	BI_SSTR,
-	BI_SINT,
-	BI_SWIS,
-	BI_SDEX,
-	BI_SCON,
-	BI_SCHR,
-	BI_INTMANA,
-	BI_WISMANA,
-	BI_LITE,
-	BI_CURHP,
-	BI_MAXHP,
-	BI_HP_ADJ,
-	BI_OLDCHP,
-	BI_CURSP,
-	BI_MAXSP,
-	BI_SP_ADJ,
-	BI_OLDCSP,
-	BI_FAIL1,
-	BI_FAIL2,
-	BI_REALM1,
-	BI_REALM2,
-	BI_CLEVEL,
-	BI_MAXCLEVEL,
-	BI_ESP,
-	BI_CUR_LITE,
-	BI_RECALL,
-	BI_FOOD,
-	BI_SPEED,
-	BI_SDIG,
-	BI_FEATH,
-	BI_REG,
-	BI_SINV,
-	BI_INFRA,
-	BI_DIS,
-	BI_DEV,
-	BI_SAV,
-	BI_STL,
-	BI_SRCH,
-	BI_SRCHFREQ,
-	BI_THN,
-	BI_THB,
-	BI_THT,
-	BI_DIG,
-	BI_IFIRE,
-	BI_IACID,
-	BI_ICOLD,
-	BI_IELEC,
-	BI_RFIRE,
-	BI_RCOLD,
-	BI_RELEC,
-	BI_RACID,
-	BI_RPOIS,
-	BI_RFEAR,
-	BI_RLITE,
-	BI_RDARK,
-	BI_RBLIND,
-	BI_RCONF,
-	BI_RSND,
-	BI_RSHRD,
-	BI_RNXUS,
-	BI_RNTHR,
-	BI_RKAOS,
-	BI_RDIS,
-	BI_REFLECT,
-	BI_HLIFE,
-	BI_FRACT,
-	BI_SRFIRE,
-	BI_SRCOLD,
-	BI_SRELEC,
-	BI_SRACID,
-	BI_SRPOIS,
-	BI_SRFEAR,
-	BI_SRLITE,
-	BI_SRDARK,
-	BI_SRBLIND,
-	BI_SRCONF,
-	BI_SRSND,
-	BI_SRSHRD,
-	BI_SRNXUS,
-	BI_SRNTHR,
-	BI_SRKAOS,
-	BI_SRDIS,
-	BI_SHLIFE,
-	BI_SFRACT,
-	BI_DEPTH,
-	BI_CDEPTH,
-	BI_MAXDEPTH,
-	BI_KING,
 
-	BI_ISWEAK,
-	BI_ISHUNGRY,
-	BI_ISFULL,
-	BI_ISGORGED,
-	BI_ISBLIND,
-	BI_ISAFRAID,
-	BI_ISCONFUSED,
-	BI_ISPOISONED,
-	BI_ISCUT,
-	BI_ISSTUN,
-	BI_ISHEAVYSTUN,
-	BI_ISIMAGE,
-	BI_ISSTUDY,
-	BI_ISSEARCHING,
-	BI_ISFIXLEV,
-	BI_ISFIXEXP,
-	BI_ISFIXSTR,
-	BI_ISFIXINT,
-	BI_ISFIXWIS,
-	BI_ISFIXDEX,
-	BI_ISFIXCON,
-	BI_ISFIXCHR,
-	BI_ISFIXALL,
-	BI_HRTIME,
-	BI_MNTIME,
 
-	BI_ARMOR,
-	BI_TOHIT,
-	BI_TODAM,
-	BI_WTOHIT,
-	BI_WTODAM,
-	BI_BTOHIT,
-	BI_BTODAM,
-	BI_BLOWS,
-	BI_SHOTS,
-	BI_WMAXDAM,
-	BI_WBASEDAM,
-	BI_BMAXDAM,
-	BI_HEAVYWEPON,
-	BI_HEAVYBOW,
-	BI_CRSTELE,
-	BI_CRSAGRV,
-	BI_CRSTY,
-	BI_CRSNOTELE,	/* no teleport */
-	BI_CRSNOMAGIC,	/* no magic */
-	BI_ENCUMBERD,
-	BI_FEAR_LITE,
-	BI_WS_ANIMAL,
-	BI_WS_EVIL,
-	BI_WS_UNDEAD,
-	BI_WS_DEMON,
-	BI_WS_ORC,
-	BI_WS_TROLL,
-	BI_WS_GIANT,
-	BI_WS_DRAGON,
-	BI_WK_DRAGON,
-	BI_W_IMPACT,
-	BI_WB_ACID,
-	BI_WB_ELEC,
-	BI_WB_FIRE,
-	BI_WB_COLD,
-	BI_WB_POIS,
-	BI_WB_VORPAL,
-	BI_WB_VAMPIRIC,
-	BI_WB_CHAOTIC,
-	BI_ATELEPORT,
-	BI_AESCAPE,
-	BI_AFUEL,
-	BI_AHEAL,
-	BI_AEZHEAL,
-	BI_AID,
-	BI_ASPEED,
-	BI_ASTFMAGI,
-	BI_ASTFDEST,
-	BI_AMISSILES,
-	BI_ACUREPOIS,
-	BI_ADETTRAP,
-	BI_ADETDOOR,
-	BI_ADETEVIL,
-	BI_AMAGICMAP,
-	BI_ARECHARGE,
-	BI_APFE,
-	BI_AGLYPH,
-	BI_ACCW,
-	BI_ACSW,
-	BI_ARESHEAT,
-	BI_ARESCOLD,
-	BI_ATELEPORTLVL,	/* scroll of teleport level */
-	BI_AXGOI,	/* reliable GOI spell */
-	BI_AGOI,	/* GOI spell */
-	BI_AHWORD,	/* Holy Word prayer */
+#define BI_STR		0
+#define BI_INT		1
+#define BI_WIS		2
+#define BI_DEX		3
+#define BI_CON		4
+#define BI_CHR		5
+#define BI_CSTR		6
+#define BI_CINT		7
+#define BI_CWIS		8
+#define BI_CDEX		9
+#define BI_CCON		10
+#define BI_CCHR		11
+#define BI_SSTR		12
+#define BI_SINT		13
+#define BI_SWIS		14
+#define BI_SDEX		15
+#define BI_SCON		16
+#define BI_SCHR		17
+#define BI_INTMANA	18
+#define BI_WISMANA	19
+#define BI_LITE		20
+#define BI_CURHP	21
+#define BI_MAXHP	22
+#define BI_HP_ADJ	23
+#define BI_OLDCHP	24
+#define BI_CURSP	25
+#define BI_MAXSP	26
+#define BI_SP_ADJ	27
+#define BI_OLDCSP	28
+#define BI_FAIL1	29
+#define BI_FAIL2	30
+#define BI_REALM1	31
+#define BI_REALM2	32
+#define BI_CLEVEL	33
+#define BI_MAXCLEVEL	34
+#define BI_ESP		35
+#define BI_CUR_LITE	36
+#define BI_RECALL	37
+#define BI_FOOD		38
+#define BI_SPEED	39
+#define BI_SDIG		40
+#define BI_FEATH	41
+#define BI_REG		42
+#define BI_SINV		43
+#define BI_INFRA	44
+#define BI_DIS		45
+#define BI_DEV		46
+#define BI_SAV		47
+#define BI_STL		48
+#define BI_SRCH		49
+#define BI_SRCHFREQ	50
+#define BI_THN		51
+#define BI_THB		52
+#define BI_THT		53
+#define BI_DIG		54
+#define BI_IFIRE	55
+#define BI_IACID	56
+#define BI_ICOLD	57
+#define BI_IELEC	58
+#define BI_RFIRE	59
+#define BI_RCOLD	60
+#define BI_RELEC	61
+#define BI_RACID	62
+#define BI_RPOIS	63
+#define BI_RFEAR	64
+#define BI_RLITE	65
+#define BI_RDARK	66
+#define BI_RBLIND	67
+#define BI_RCONF	68
+#define BI_RSND	 	69
+#define BI_RSHRD	70
+#define BI_RNXUS	71
+#define BI_RNTHR	72
+#define BI_RKAOS	73
+#define BI_RDIS		74
+#define BI_REFLECT	75
+#define BI_HLIFE	76
+#define BI_FRACT	77
+#define BI_SRFIRE	78
+#define BI_SRCOLD	79
+#define BI_SRELEC	80
+#define BI_SRACID	81
+#define BI_SRPOIS	82
+#define BI_SRFEAR	83
+#define BI_SRLITE	84
+#define BI_SRDARK	85
+#define BI_SRBLIND	86
+#define BI_SRCONF	87
+#define BI_SRSND	88
+#define BI_SRSHRD	89
+#define BI_SRNXUS	90
+#define BI_SRNTHR	91
+#define BI_SRKAOS	92
+#define BI_SRDIS	93
+#define BI_SHLIFE	94
+#define BI_SFRACT	95
+#define BI_DEPTH	96
+#define BI_CDEPTH	97
+#define BI_MAXDEPTH	98
+#define BI_KING		99
 
-	BI_TOWN_NUM,	/* Current town number */
-	BI_ARENA_NUM,	/* monster number in arena -KMW- */
-	BI_INSIDEARENA,	/* Is character inside arena? */
-	BI_INSIDEQUEST,	/* Inside quest level */
-	BI_X_WILD,	/* Coordinates in the wilderness */
-	BI_Y_WILD,
+#define BI_ISWEAK 	100
+#define BI_ISHUNGRY	101
+#define BI_ISFULL	102
+#define BI_ISGORGED	103
+#define BI_ISBLIND	104
+#define BI_ISAFRAID	105
+#define BI_ISCONFUSED	106
+#define BI_ISPOISONED	107
+#define BI_ISCUT	108
+#define BI_ISSTUN	109
+#define BI_ISHEAVYSTUN	110
+#define BI_ISIMAGE	111
+#define BI_ISSTUDY	112
+#define BI_ISSEARCHING	113
+#define BI_ISFIXLEV	114
+#define BI_ISFIXEXP	115
+#define BI_ISFIXSTR	116
+#define BI_ISFIXINT	117
+#define BI_ISFIXWIS	118
+#define BI_ISFIXDEX	119
+#define BI_ISFIXCON	120
+#define BI_ISFIXCHR	121
+#define BI_ISFIXALL	122
+#define BI_HRTIME	123
+#define BI_MNTIME	124
 
-	BI_MAX
-};
+#define BI_ARMOR	125
+#define BI_TOHIT	126
+#define BI_TODAM	127
+#define BI_WTOHIT	128
+#define BI_WTODAM	129
+#define BI_BTOHIT	130
+#define BI_BTODAM	131
+#define BI_BLOWS	132
+#define BI_SHOTS	133
+#define BI_WMAXDAM	134
+#define BI_WBASEDAM	135
+#define BI_BMAXDAM	136
+#define BI_HEAVYWEPON	137
+#define BI_HEAVYBOW	138
+#define BI_CRSTELE	139
+#define BI_CRSAGRV	140
+#define BI_CRSTY	141
+#define BI_CRSNOTELE	142	/* no teleport */
+#define BI_CRSNOMAGIC	143	/* no magic */
+#define BI_ENCUMBERD	144
+#define BI_FEAR_LITE	145
+#define BI_WS_ANIMAL	146
+#define BI_WS_EVIL	147
+#define BI_WS_UNDEAD	148
+#define BI_WS_DEMON	149
+#define BI_WS_ORC	150
+#define BI_WS_TROLL	151
+#define BI_WS_GIANT	152
+#define BI_WS_DRAGON	153
+#define BI_WK_DRAGON	154
+#define BI_W_IMPACT	155
+#define BI_WB_ACID	156
+#define BI_WB_ELEC	157
+#define BI_WB_FIRE	158
+#define BI_WB_COLD	159
+#define BI_WB_POIS	160
+#define BI_WB_VORPAL	161
+#define BI_WB_VAMPIRIC	162
+#define BI_WB_CHAOTIC	163
+#define BI_ATELEPORT	164
+#define BI_AESCAPE	165
+#define BI_AFUEL	166
+#define BI_AHEAL	167
+#define BI_AEZHEAL	168
+#define BI_AID		169
+#define BI_ASPEED	170
+#define BI_ASTFMAGI	171
+#define BI_ASTFDEST	172
+#define BI_AMISSILES	173
+#define BI_ACUREPOIS	174
+#define BI_ADETTRAP	175
+#define BI_ADETDOOR	176
+#define BI_ADETEVIL	177
+#define BI_AMAGICMAP	178
+#define BI_ARECHARGE	179
+#define BI_APFE		180
+#define BI_AGLYPH	181
+#define BI_ACCW		182
+#define BI_ACSW		183
+#define BI_ARESHEAT	184
+#define BI_ARESCOLD	185
+#define BI_ATELEPORTLVL	186	/* scroll of teleport level */
+#define BI_AXGOI	187	/* reliable GOI spell */
+#define BI_AGOI		188	/* GOI spell */
+#define BI_AHWORD	189	/* Holy Word prayer */
 
-#define MAX_FORMULA_ELEMENTS 60
-enum
-{
-	BFO_DONE,	/* just to make sure we end fast if there is no formula */
-	BFO_NUMBER,
-	BFO_VARIABLE,
-	BFO_EQ,
-	BFO_NEQ,
-	BFO_NOT,
-	BFO_LT,
-	BFO_LTE,
-	BFO_GT,
-	BFO_GTE,
-	BFO_AND,
-	BFO_OR,
-	BFO_PLUS,
-	BFO_MINUS,
-	BFO_DIVIDE,
-	BFO_MULT
-};
+#define BI_TOWN_NUM	190	/* Current town number */
+#define BI_INSIDEQUEST	191	/* Inside quest level */
+#define BI_X_WILD	192	/* Coordinates in the wilderness */
+#define BI_Y_WILD	193
+
+#define BI_MAX		194
+
 
 /*
  * Hack -- optional cheating flags
@@ -465,8 +441,6 @@ extern bool borg_save;	/* do a save next time we get to press a key! */
 
 extern bool borg_borg_message;	/* List borg messages or not */
 extern bool borg_confirm_target;
-
-extern char borg_engine_date[];	/* last update */
 
 /*
  * Use a simple internal random number generator

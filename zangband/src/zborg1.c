@@ -50,9 +50,6 @@
  * This file contains various low level variables and routines.
  */
 
-/* Date of the last change */
-char borg_engine_date[] = __DATE__;
-
 /* dynamic borg stuff */
 bool borg_uses_swaps;
 bool borg_plays_risky;

@@ -257,10 +257,6 @@ extern void borg_item_analyze(borg_item *item, object_type *real_item,
 /* look for a *id*'d item */
 extern bool borg_object_star_id(void);
 
-/* look for a *id*'d item */
-extern bool borg_object_star_id_aux(borg_item *borg_item,
-									object_type *real_item);
-
 /*
  * Inscribe an object
  */
