@@ -291,14 +291,6 @@ proc NSMainWindow::InitWindow {oop} {
 
 	# Remember the center of the Main Window Widget.
 	Global main,widget,center [angband player position]
-	
-# Debug: draw 1 spot
-proc ::wipespot {y x} {
-	scan [[Global main,widget] caveyx $x $y] "%d %d" y x
-	[Global main,widget] wipespot $y $x
-}
-bind $widget <Shift-ButtonPress-3> "wipespot %y %x"
-
 
 	variable HT ""
 
@@ -381,7 +373,7 @@ bind $widget <Shift-ButtonPress-3> "wipespot %y %x"
 	Term_KeyPress_Bind $win
 
 	# Hack -- Visual feedback of whether the target is set or not.
-	TargetSetup $oop
+	#TargetSetup $oop
 
 	return
 }
@@ -984,223 +976,12 @@ proc NSMainWindow::Configure {oop width height} {
 
 	set widgetId [Global main,widgetId]
 	set widget [Global main,widget]
-
-	# Resize the main widget
-	if {[NSWidget::Resize $widgetId $width $height]} {
-
-		# Move the target 'T' item
-		set x [expr {$width - 6}]
-		set y [expr {$height - 6}]
-		$widget itemconfigure [Global target,itemId] -x $x -y $y
-
-		# Arrange "status" items
-		NSStatus::Configure
-	}
-
-	return
-}
-
-proc NSMainWindow::DisplayPoints {oop itemId value} {
-
-	set widget [Global main,widget]
-	$widget itemconfigure $itemId -text $value
-
-	return
-}
-
-# NSMainWindow::TargetSetup --
-#
-#	One-time initialization. When the target is set, display an
-#	image in the lower-left corner. Remove the image when the target
-#	is unset. Display the image differently when the target is
-#	projectable/not-projectable.
-#
-# Arguments:
-#	oop					OOP ID of NSMainWindow object.
-#
-# Results:
-#	What happened.
-
-proc NSMainWindow::TargetSetup {oop} {
-
-	variable Target
-
-	set win [Info $oop win]
-
-	set widget [Global main,widget]
-	set width [$widget cget -width]
-	set height [$widget cget -height]
-	set x [expr {$width - 6}]
-	set y [expr {$height - 6}]
-
-	if {[Platform unix]} {
-		set font {Times 14 bold}
-	}
-	if {[Platform windows]} {
-		set font {Times 11 bold}
-	}
-
-	set itemId [$widget create text -x $x -y $y -visible no \
-		-anchor se -text T -clipx no -width 20 -height 20 -bevel yes \
-		-font $font -justify center \
-		-fill [Value targetText] \
-		-fill2 [Value targetText2] \
-		-background [Value targetBG] \
-		-background2 [Value targetBG2] \
-		-bevellight [Value targetBL] \
-		-bevellight2 [Value targetBL2] \
-		-beveldark [Value targetBD] \
-		-beveldark2 [Value targetBD2]]
-
-	# Reserve the widget colors for the target image
-	set data {
-		-fill targetText 1
-		-background targetBG 1
-		-bevellight targetBL 1
-		-beveldark targetBD 1
-		-fill target2Text 0
-		-background target2BG 0
-		-bevellight target2BL 0
-		-beveldark target2BD 0
-	}
-	foreach {option valueName visible} $data {
-		set color [palette nearest [Value $valueName]]
-		set opacity [Value ${valueName}2]
-		$widget coloralloc $color $opacity
-		set Target(alloc,$valueName) [list $color $opacity]
-
-		NSValueManager::AddClient $valueName \
-			"NSMainWindow::TargetSynch $valueName $option $visible"
-		NSValueManager::AddClient ${valueName}2 \
-			"NSMainWindow::TargetSynch ${valueName}2 ${option}2 $visible"
-	}
 	
-	Global target,itemId $itemId
-	Global target,visible 0
-
-	# This "cursor" is displayed during targetting/looking
-	set itemId [$widget create cursor -color yellow -linewidth 2 -visible no]
-
-	if {$::DEBUG} {
-		set ::debug_cursor 0
-	}
-
-	Global cursor,itemId $itemId
-	Global cursor,visible 0
+	NSWidget::Resize $widgetId $width $height
 
 	return
 }
 
-# NSMainWindow::TargetSet --
-#
-#	Handle the <Target-set> quasi-event.
-#
-# Arguments:
-#	widget					the main Widget
-#	r_idx					r_info[] index, or zero
-#
-# Results:
-#	What happened.
-
-proc NSMainWindow::TargetSet {widget r_idx} {
-
-	set itemId [Global target,itemId]
-if 0 {
-	if {$r_idx} {
-		set text [angband r_info set $r_idx d_char]
-	} else {
-		set text ""
-	}
-}
-	set text ""
-	
-	$widget itemconfigure $itemId -visible yes -text $text
-
-	return
-}
-
-# NSMainWindow::SetTargetColors --
-#
-#	Sets the colors of the target indicator.
-#
-# Arguments:
-#	visible						True if target in line-of-sight
-#
-# Results:
-#	What happened.
-
-proc NSMainWindow::SetTargetColors {visible} {
-
-	variable Target
-
-	set widget [Global main,widget]
-
-	if {$visible} {
-		set data {
-			-fill targetText
-			-background targetBG
-			-bevellight targetBL
-			-beveldark targetBD
-		}
-	} else {
-		set data {
-			-fill target2Text
-			-background target2BG
-			-bevellight target2BL
-			-beveldark target2BD
-		}
-	}
-
-	set command "$widget itemconfigure [Global target,itemId]"
-	foreach {option valueName} $data {
-		append command " $option [Value $valueName]"
-		append command " ${option}2 [Value ${valueName}2]"
-	}
-	eval $command
-
-	Global target,visible $visible
-
-	return
-}
-
-# NSMainWindow::TargetSynch --
-#
-#	Called by NSValueManager when any of the target indicator colors change.
-#
-# Arguments:
-#	valueName				The name of the value.
-#	option					Configuration option for the widget item.
-#
-# Results:
-#	What happened.
-
-proc NSMainWindow::TargetSynch {valueName option visible} {
-
-	variable Target
-
-	set widget [Global main,widget]
-	set itemId [Global target,itemId]
-
-	set name [string trimright $valueName 2]
-	set color [lindex $Target(alloc,$name) 0]
-	set opacity [lindex $Target(alloc,$name) 1]
-	$widget colorderef $color $opacity
-
-	set value [Value $valueName]
-	if {[string match *2 $valueName]} {
-		set opacity $value
-	} else {
-		set color [palette nearest $value]
-	}
-	$widget coloralloc $color $opacity
-	set Target(alloc,$name) [list $color $opacity]
-
-	if {[Global target,visible] == $visible} {
-		$widget itemconfigure $itemId $option $value
-	}
-
-	return
-}
 
 # NSMainWindow::ValueChanged_font_statusBar --
 #
@@ -1616,15 +1397,7 @@ if 0 {
 		angband keypress $dirKey
 		return
 	}
-if 0 {
-	# If the game is waiting for the user to choose a target, feed the
-	# y,x location.
-	# XXX Remove this if PROJECT_HINT stuff is used
-	if {[string equal $flags INKEY_TARGET]} {
-		angband keypress @$caveY\n$caveX\n
-		return
-	}
-}
+
 	# If the game is NOT asking for a command, then do nothing
 	if {[string compare $flags INKEY_CMD]} {
 		return
@@ -1801,27 +1574,6 @@ proc NSMainWindow::DisplayDepth {label depth} {
 		set depthStr [format "Level %d" $depth]
 	}
 	$label configure -text $depthStr
-
-	return
-}
-
-
-# NSMainWindow::Bind_Py_level --
-#
-#	Handle <Py-level> quasi-event.
-#
-# Arguments:
-#	level					The new experience level.
-#
-# Results:
-#	What happened.
-
-proc NSMainWindow::Bind_Py_level {oop level} {
-
-	if {$level != [Info $oop Py_level]} {
-		NSStatus::SetStatusMessage [format "Level %d" $level] Level info
-		Info $oop Py_level $level
-	}
 
 	return
 }
