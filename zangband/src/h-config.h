@@ -300,6 +300,21 @@
 # endif
 #endif
 
+/*
+ * OPTION: Create and use a hidden directory in the users home directory
+ * for storing pref-files and character-dumps.
+ */
+#ifdef SET_UID
+#define PRIVATE_USER_PATH "~/.angband"
+#endif /* SET_UID */
+
+
+/*
+ * On multiuser systems, add the "uid" to savefile names
+ */
+#ifdef SET_UID
+# define SAVEFILE_USE_UID
+#endif /* SET_UID */
 
 
 /* Include maid-grf.c stuff */

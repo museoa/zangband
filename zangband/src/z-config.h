@@ -372,23 +372,6 @@
 
 
 /*
- * OPTION: Create and use a hidden directory in the users home directory
- * for storing pref-files and character-dumps.
- */
-#ifdef SET_UID
-#define PRIVATE_USER_PATH "~/.angband"
-#endif /* SET_UID */
-
-
-/*
- * On multiuser systems, add the "uid" to savefile names
- */
-#ifdef SET_UID
-# define SAVEFILE_USE_UID
-#endif /* SET_UID */
-
-
-/*
  * OPTION: Check the "time" against "lib/file/hours.txt"
  */
 /* #define CHECK_TIME */
@@ -508,16 +491,6 @@
 # define VERIFY_CHECKSUMS
 # define VERIFY_TIMESTAMP
 #endif
-
-
-/*
- * Allow the Borg to use graphics.
- */
-#ifdef ALLOW_BORG
-# ifdef USE_GRAPHICS
-#  define ALLOW_BORG_GRAPHICS
-# endif	/* USE_GRAPHICS */
-#endif /* ALLOW_BORG */
 
 
 /* Do we want different characters for different races? */
