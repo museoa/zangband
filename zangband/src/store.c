@@ -1963,8 +1963,7 @@ static void store_examine(void)
 	msgf("Examining %v...", OBJECT_FMT(o_ptr, TRUE, 3));
 
 	/* Describe it fully */
-	if (!identify_fully_aux(o_ptr))
-		msgf("You see nothing special.");
+	identify_fully_aux(o_ptr);
 
 	return;
 }

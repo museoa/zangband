@@ -209,6 +209,34 @@ static void roff_obj_aux(const object_type *o_ptr)
 	/* Extract the bonuses */
 	object_bonuses_known(o_ptr, &b);
 
+	/* Start a bit lower */
+	roff("\n");
+
+	/* If you don't know anything about the item */
+	if (!object_known_p(o_ptr) && !object_aware_p(o_ptr))
+	{
+		/* say so */
+		roff("You see nothing special.");
+	}
+
+	/* Hack.  Not all armour and weapons have a description in k_idx.txt */
+	if (o_ptr->tval >= TV_HAFTED &&
+		o_ptr->tval <= TV_DRAG_ARMOR &&
+		!k_ptr->text)
+	{
+		/* If the object has no id or has no interesting flags */
+		if (!object_known_p(o_ptr) ||
+			(o_ptr->flags[0] == 0 &&
+			 o_ptr->flags[1] == TR2_SHOW_MODS &&
+			 o_ptr->flags[2] == 0 &&
+			 o_ptr->flags[3] == 0))
+		{
+			/* say nothing is known */
+			roff("You see nothing special.");
+		}
+	}
+
+
 	/* Indicate if fully known */
 	if (object_known_full(o_ptr))
 	{
@@ -216,7 +244,7 @@ static void roff_obj_aux(const object_type *o_ptr)
 	}
 
 	/* Add the 'description' if any */
-	if (object_known_p(o_ptr))
+	if (object_known_p(o_ptr) || object_aware_p(o_ptr))
 	{
 		artifact_type *a_ptr = NULL;
 		if (o_ptr->a_idx) a_ptr = &a_info[o_ptr->a_idx];
@@ -802,20 +830,20 @@ static void roff_obj_aux(const object_type *o_ptr)
 	roff("\n");
 }
 
-bool identify_fully_aux(const object_type *o_ptr)
+void identify_fully_aux(const object_type *o_ptr)
 {
 	/* Books, a hack */
 	if ((o_ptr->tval >= TV_BOOKS_MIN) && (o_ptr->tval <= TV_BOOKS_MAX))
 	{
 		do_cmd_browse_aux(o_ptr);
-		return (TRUE);
+		return;
 	}
-
-	/* Flush messages */
-	message_flush();
 
 	/* Save the screen */
 	screen_save();
+
+	/* Show the object */
+	put_fstr(0, 0, "Examining %v:", OBJECT_STORE_FMT(o_ptr, TRUE, 3));
 
 	/* Begin recall */
 	clear_row(1);
@@ -830,7 +858,7 @@ bool identify_fully_aux(const object_type *o_ptr)
 	screen_load();
 
 	/* XXX */
-	return (TRUE);
+	return;
 }
 
 /*

@@ -531,11 +531,8 @@ void do_cmd_observe(void)
 	/* Not a valid item */
 	if (!o_ptr) return;
 
-	/* Describe */
-	msgf("Examining %v...", OBJECT_FMT(o_ptr, TRUE, 3));
-
 	/* Describe it fully */
-	if (!identify_fully_aux(o_ptr)) msgf("You see nothing special.");
+	identify_fully_aux(o_ptr);
 }
 
 static bool item_tester_inscribed(const object_type *o_ptr)

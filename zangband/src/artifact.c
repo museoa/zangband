@@ -2526,7 +2526,7 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 		o_ptr->kn_flags[2] = o_ptr->flags[2];
 		o_ptr->kn_flags[3] = o_ptr->flags[3];
 
-		(void)identify_fully_aux(o_ptr);
+		identify_fully_aux(o_ptr);
 		o_ptr->info |= OB_STOREB;
 
 		if (!(get_string(dummy_name, 80,

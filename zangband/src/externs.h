@@ -534,7 +534,7 @@ extern void object_store_fmt(char *buf, uint max, cptr fmt, va_list *vp);
 
 extern void reset_visuals(void);
 extern void object_flags_known(const object_type *o_ptr, object_flags *of_ptr);
-extern bool identify_fully_aux(const object_type *o_ptr);
+extern void identify_fully_aux(const object_type *o_ptr);
 extern s16b wield_slot(const object_type *o_ptr);
 extern cptr mention_use(int i);
 extern cptr describe_use(int i);

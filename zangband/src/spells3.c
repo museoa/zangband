@@ -2263,7 +2263,7 @@ bool identify_fully(void)
 	item_describe(o_ptr);
 
 	/* Describe it fully */
-	(void)identify_fully_aux(o_ptr);
+	identify_fully_aux(o_ptr);
 
 	/* Success */
 	return (TRUE);
