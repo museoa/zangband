@@ -1315,7 +1315,8 @@ void do_cmd_options(byte flags)
 				/* Scan the options */
 				for (i = 0; i < OPT_MAX; i++)
 				{
-					if (option_info[i].o_text)
+					if ((option_info[i].o_text) &&
+						(option_info[i].o_page != OPT_BIRTH_PAGE))
 					{
 						/* Dump the option */
 						fprintf(fff, "%c:%s\n",

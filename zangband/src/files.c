@@ -563,6 +563,7 @@ errr process_pref_file_command(char *buf)
 		for (i = 0; i < OPT_MAX; i++)
 		{
 			if (option_info[i].o_desc &&
+				(option_info[i].o_page != OPT_BIRTH_PAGE) &&
 				option_info[i].o_text && streq(option_info[i].o_text, buf + 2))
 			{
 				/* Clear */
@@ -582,7 +583,7 @@ errr process_pref_file_command(char *buf)
 				return (0);
 			}
 		}
-		/* XXX XXX XXX - ignore unknown options */
+		/* XXX XXX XXX - ignore unknown or birth options */
 		return (0);
 	}
 
@@ -592,6 +593,7 @@ errr process_pref_file_command(char *buf)
 		for (i = 0; i < OPT_MAX; i++)
 		{
 			if (option_info[i].o_desc &&
+				(option_info[i].o_page != OPT_BIRTH_PAGE) &&
 				option_info[i].o_text && streq(option_info[i].o_text, buf + 2))
 			{
 				/* Set */
@@ -612,7 +614,7 @@ errr process_pref_file_command(char *buf)
 			}
 		}
 
-		/* XXX XXX XXX - ignore unknown options */
+		/* XXX XXX XXX - ignore unknown or birth options */
 		return (0);
 	}
 

@@ -3557,6 +3557,9 @@
 #define OPT_FLAG_SERVER			0x02
 #define OPT_FLAG_PLAYER			0x04
 
+
+#define OPT_BIRTH_PAGE			6
+
 /* Option set 0 */
 
 #define rogue_like_commands		p_ptr->options[0]
