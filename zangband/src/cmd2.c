@@ -2812,8 +2812,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 		/* The player can see the (on screen) missile */
 		if (panel_contains(ny, nx) && player_can_see_bold(ny, nx))
 		{
-			int p = bolt_pict(y, x, ny, nx, GF_ARROW);
-			char c = PICT_C(p);
+			char c = object_char(q_ptr);
 			byte a = object_attr(q_ptr);
 
 			/* Draw, Hilite, Fresh, Pause, Erase */
@@ -3171,8 +3170,7 @@ void do_cmd_throw_aux(int mult)
 		/* The player can see the (on screen) missile */
 		if (panel_contains(ny, nx) && player_can_see_bold(ny, nx))
 		{
-			int p = bolt_pict(y, x, ny, nx, GF_ARROW);
-			char c = PICT_C(p);
+			char c = object_char(q_ptr);
 			byte a = object_attr(q_ptr);
 
 			/* Draw, Hilite, Fresh, Pause, Erase */
