@@ -96,11 +96,139 @@ D:0:0:0:0:0:0:0:0
 F:0,field_action_corpse_init
 F:13,field_action_corpse_decay
 
-# Trap
-N:6:trap
+# Trapdoor
+N:6:trap door
 G:^:w
-W:240:6:0
+W:100:1:0
 I:FEAT
-D:0:0:0:0:0:0:0:0
-F:0,field_action_nothing | 13,field_action_nothing
-F:0,field_action_nothing | 13,field_action_nothing
+D:5:125:0:0:0:0:0:0
+F:0,field_action_trap_init | 2,field_action_hit_trap_door
+
+# Pit
+N:7:pit
+G:^:s
+W:100:1:0
+I:FEAT
+D:5:125:0:0:0:0:0:0
+F:0,field_action_trap_init | 2,field_action_hit_trap_pit
+
+# Spiked Pit
+N:8:spiked pit
+G:^:s
+W:100:1:0
+I:FEAT
+D:5:125:0:0:0:0:0:0
+F:0,field_action_trap_init | 2,field_action_hit_trap_spike
+
+# Poison Pit
+N:9:spiked pit
+G:^:s
+W:100:1:0
+I:FEAT
+D:10:125:0:0:0:0:0:0
+F:0,field_action_trap_init | 2,field_action_hit_trap_poison_pit
+
+# evil rune
+N:10:evil rune
+G:^:G
+W:100:1:0
+I:FEAT
+D:10:125:0:0:0:0:0:0
+F:0,field_action_trap_init | 2,field_action_hit_trap_curse
+
+# strange rune
+N:11:strange rune
+G:^:o
+W:100:1:0
+I:FEAT
+D:15:125:0:0:0:0:0:0
+F:0,field_action_trap_init | 2,field_action_hit_trap_teleport
+
+# discolored spot
+N:12:discolored spot
+G:^:u
+W:100:1:0
+I:FEAT
+D:5:125:0:5:0:0:0:0
+F:0,field_action_trap_init | 2,field_action_hit_trap_element
+
+# discolored spot
+N:13:discolored spot
+G:^:u
+W:100:1:0
+I:FEAT
+D:15:125:0:5:0:0:0:0
+F:0,field_action_trap_init | 2,field_action_hit_trap_ba_element
+
+# gas trap
+N:14:gas trap
+G:^:g
+W:100:1:0
+I:FEAT
+D:5:125:0:5:0:0:0:0
+F:0,field_action_trap_init | 2,field_action_hit_trap_gas
+
+# compact rune
+N:15: compact rune
+G:^:D
+W:100:1:0
+I:FEAT
+D:15:125:0:0:0:0:0:0
+F:0,field_action_trap_init | 2,field_action_hit_trap_trap
+
+# dart trap
+N:16: dart trap
+G:^:r
+W:100:1:0
+I:FEAT
+D:5:125:0:3:0:0:0:0
+F:0,field_action_trap_init | 2,field_action_hit_trap_temp_stat
+
+# dart trap
+N:17: dart trap
+G:^:r
+W:100:1:0
+I:FEAT
+D:20:125:0:6:0:0:0:0
+F:0,field_action_trap_init | 2,field_action_hit_trap_perm_stat
+
+# twisted rune
+N:18:twisted rune
+G:^:U
+W:100:1:0
+I:FEAT
+D:20:125:0:0:0:0:0:0
+F:0,field_action_trap_init | 2,field_action_hit_trap_lose_xp
+
+# geometric rune
+N:19:geometric rune
+G:^:v
+W:100:1:0
+I:FEAT
+D:5:125:0:0:0:0:0:0
+F:0,field_action_trap_init | 2,field_action_hit_trap_disenchant
+
+# glowing rune
+N:20:glowing rune
+G:^:y
+W:100:1:0
+I:FEAT
+D:15:125:0:0:0:0:0:0
+F:0,field_action_trap_init | 2,field_action_hit_trap_drop_item
+
+# jagged rune
+N:21:jagged rune
+G:^:b
+W:100:1:0
+I:FEAT
+D:10:125:0:0:0:0:0:0
+F:0,field_action_trap_init | 2,field_action_hit_trap_mutate
+
+# fractured rune
+N:22:fractured rune
+G:^:b
+W:100:1:0
+I:FEAT
+D:25:125:0:0:0:0:0:0
+F:0,field_action_trap_init | 2,field_action_hit_trap_new_life
+
