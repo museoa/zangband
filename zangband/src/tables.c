@@ -5865,7 +5865,7 @@ cptr window_flag_desc[32] =
 	"Display dungeon view",
 	"Display snap-shot",
 	NULL,
-	NULL,
+	"Display script messages",
 	"Display borg messages",
 	"Display borg status",
 	NULL,
