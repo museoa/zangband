@@ -1438,6 +1438,11 @@ b_own_type b_owners[MAX_BLDG][MAX_B_OWN] =
 		/* Magesmith Armour */
 		{ "Paoingth",			100,			RACE_DARK_ELF},
 	},
+	
+	{
+		/* Mutations */
+		{ "Aaognwth",			120,			RACE_HUMAN},
+	},
 };
 
 

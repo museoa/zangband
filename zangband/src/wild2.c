@@ -599,6 +599,12 @@ static void draw_store(int x0, int y0, store_type *st_ptr, int x, int y)
 			break;
 		}
 		
+		case BUILD_MUTATE:
+		{
+			field = FT_BUILD_MUTATE;
+			break;
+		}
+		
 		default:
 		{
 			/* Hack - nothing here? */
@@ -1037,6 +1043,7 @@ static void overlay_town(int y, int x, u16b w_town, blk_ptr block_ptr)
 				case FT_BUILD_RECHARGE:
 				case FT_BUILD_PLUS_WEAPON:
 				case FT_BUILD_PLUS_ARMOUR:
+				case FT_BUILD_MUTATE:
 				{
 					/* Stores + buildings */
 					(void) place_field(y * 16 + j, x * 16 + i, c_ptr->fld_idx);

@@ -149,11 +149,12 @@
 #define BLDG_RECHARGE		1
 #define BLDG_PLUS_WEAPON	2
 #define BLDG_PLUS_ARMOUR	3
+#define BLDG_MUTATE			4
 
 /*
  * Total number of buildings (see "bldg.c", etc)
  */
-#define MAX_BLDG		4
+#define MAX_BLDG		5
 
 
 
@@ -1034,6 +1035,7 @@
 #define FT_BUILD_RECHARGE		0x002C
 #define FT_BUILD_PLUS_WEAPON	0x002D
 #define FT_BUILD_PLUS_ARMOUR	0x002E
+#define FT_BUILD_MUTATE			0x002F
 
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
 

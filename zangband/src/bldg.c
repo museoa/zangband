@@ -495,6 +495,14 @@ static void display_build(field_type *f_ptr, store_type *b_ptr)
 			c_put_str(TERM_YELLOW, tmp_str, 19, 35);
 			break;
 		}
+		
+		case BLDG_MUTATE:
+		{
+			sprintf(tmp_str, " E) Expose yourself to raw chaos (%dgp)",
+				 f_ptr->data[1] * bo_ptr->inflate);
+			c_put_str(TERM_YELLOW, tmp_str, 19, 30);
+			break;
+		}
 	}
 
 
@@ -1982,6 +1990,30 @@ static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
 				done = TRUE;
 			}
 		
+			break;
+		}
+		
+		case BLDG_MUTATE:
+		{
+			if (p_ptr->command_cmd == 'E')
+			{
+				cost = f_ptr->data[1] * bo_ptr->inflate;
+				
+				if (test_gold(&cost))
+				{
+					if (lose_mutation(0))
+					{
+						msg_print("You feel oddly normal.");
+					}
+					else
+					{
+						(void) gain_random_mutation(0);
+					}
+				}
+				
+				done = TRUE;
+			}
+			
 			break;
 		}
 	}

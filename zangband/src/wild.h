@@ -44,9 +44,10 @@
 #define BUILD_RECHARGE			11
 #define BUILD_PLUS_WEAPON		12
 #define BUILD_PLUS_ARMOUR		13
+#define BUILD_MUTATE			14
 
 /* Maximum number of "building" types in a city */
-#define MAX_CITY_BUILD			14
+#define MAX_CITY_BUILD			15
 
 
 /* Dodgy replacement for SCREEN_WID and SCREEN_HGT */
