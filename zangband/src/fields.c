@@ -1258,7 +1258,7 @@ void process_fields(void)
 			if (!f_ptr->counter)
 			{
 				/* Call completion routine */
-				if (field_hook_single(fld_ptr, FIELD_ACT_EXIT, NULL));
+				if (field_hook_single(fld_ptr, FIELD_ACT_EXIT, NULL))
 				{
 					/* It didn't delete itself - do it now */
 					delete_field_ptr(fld_ptr);
