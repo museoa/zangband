@@ -605,6 +605,8 @@ static void wiz_display_item(const object_type *o_ptr)
 	prtf(j, 8, "info = %04x  timeout = %-d",
 			   o_ptr->info, o_ptr->timeout);
 
+	prtf(j, 9, "desc = %s", item_activation(o_ptr));
+
 	prtf(j, 10, "+------------FLAGS1------------+\n"
 	    		"AFFECT........SLAY........BRAND.\n"
 	    		"              cvae      xsqpaefc\n"
