@@ -8332,9 +8332,6 @@ bool borg_attack(bool boosted_bravery)
         /* Get grid */
         ag = &borg_grids[y][x];
 
-        /* Never shoot off-screen */
-        if (!(ag->info & BORG_OKAY)) continue;
-
         /* Never shoot through walls */
         if (!(ag->info & BORG_VIEW)) continue;
 

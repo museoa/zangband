@@ -259,29 +259,6 @@ static void borg_delete_take(int i)
     goal = 0;
 }
 
-
-/*
- * Determine if an object should be "viewable"
- */
-static bool borg_follow_take_aux(int i, int y, int x)
-{
-    borg_grid *ag;
-
-
-	/* Ignore parameter */
-	(void) i;
-
-    /* Access the grid */
-    ag = &borg_grids[y][x];
-
-    /* Not on-screen */
-    if (!(ag->info & BORG_OKAY)) return (FALSE);
-
-    /* Assume viewable */
-    return (TRUE);
-}
-
-
 /*
  * Attempt to "follow" a missing object
  *
@@ -293,29 +270,15 @@ static bool borg_follow_take_aux(int i, int y, int x)
  */
 static void borg_follow_take(int i)
 {
-    int ox, oy;
-
     borg_take *take = &borg_takes[i];
-
 
     /* Paranoia */
     if (!take->k_idx) return;
 
-
-    /* Old location */
-    ox = take->x;
-    oy = take->y;
-
-
-    /* Out of sight */
-    if (!borg_follow_take_aux(i, oy, ox)) return;
-
-
     /* Note */
     borg_note(format("# There was an object '%s' at (%d,%d)",
                      (k_name + k_info[take->k_idx].name),
-                     oy, ox));
-
+                     take->y, take->x));
 
     /* Kill the object */
     borg_delete_take(i);
@@ -1229,10 +1192,6 @@ static bool borg_follow_kill_aux(int i, int y, int x)
     /* Access the grid */
     ag = &borg_grids[y][x];
 	mb_ptr = map_loc(x, y);
-
-    /* Not on-screen */
-    if (!(ag->info & BORG_OKAY)) return (FALSE);
-
 
     /* Line of sight */
     if (ag->info & BORG_VIEW)
@@ -2806,16 +2765,6 @@ static byte Get_f_info_number[256];
  * Note that most "feat" codes, even if they are not "guesses", may
  * not be valid unless the grid is on the current panel.
  *
- * We use the "BORG_MARK" flag to mark a grid as having been "observed",
- * though this may or may not indicate that the "feature" code is known,
- * since observations of monsters or objects via telepathy and/or remote
- * detection may trigger this flag.
- *
- * We use the "BORG_OKAY" flag to mark a grid as being on the current
- * panel, which is used for various things, including verifying that
- * a grid can be used as the destination of a target, and to allow us
- * to assume that off-panel monsters are not "visible".
- *
  * Note the "interesting" code used to learn which floor grids are "dark"
  * and which are "perma-lit", by tracking those floor grids which appear
  * to be "lit", and then marking all of these grids which do not appear
@@ -2918,9 +2867,6 @@ static void borg_update_map(void)
 
 			/* Get the Game Grid */
    			mb_ptr = map_loc(x, y);
-
-            /* Notice "on-screen" */
-            ag->info |= BORG_OKAY;
 
             /* Notice the player */
             if (t_c == '@')
@@ -3710,15 +3656,13 @@ static void borg_cheat_feats(void)
  */
 void borg_update(void)
 {
-    int i, k, x, y, dx, dy;
+    int i, k, x, y;
 
     int hit_dist;
 
     cptr msg;
 
     cptr what;
-
-    borg_grid *ag;
 
     bool reset = FALSE;
 
@@ -4405,23 +4349,6 @@ void borg_update(void)
         /* Handle changing map panel */
         if ((o_w_x != w_x) || (o_w_y != w_y))
         {
-            /* Forget the previous map panel */
-            for (dy = 0; dy < SCREEN_HGT; dy++)
-            {
-                for (dx = 0; dx < SCREEN_WID; dx++)
-                {
-                    /* Access the actual location */
-                    x = o_w_x + dx;
-                    y = o_w_y + dy;
-
-                    /* Get the borg_grid */
-                    ag = &borg_grids[y][x];
-
-                    /* Clear the "okay" field */
-                    ag->info &= ~BORG_OKAY;
-                }
-            }
-
             /* Time stamp this new panel-- to avoid a repeated motion bug */
             time_this_panel = 1;
 
