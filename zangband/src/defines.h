@@ -3977,7 +3977,7 @@
 /*
  * Flag manipulation macros
  */
-#ifdef __MSVC__
+#ifdef _MSC_VER
 
 /* Hack - VC++ doesn't expand preprocessor macros properly */
 static __inline bool FLAG_AUX(const u32b *flags, int num, u32b mask)
@@ -3995,11 +3995,11 @@ static __inline void COPY_FLAG_AUX(const u32b *flags1, u32b *flags2, int num, u3
 	flags2[num] |= flags1[num] & mask;
 }
 
-#else /* __MSVC__ */
+#else /* _MSC_VER */
 #define FLAG_AUX(A, NUM, MASK) (((A)[NUM] & (MASK)) != 0)
 #define SET_FLAG_AUX(A, NUM, MASK) ((A)[NUM] |= (MASK))
 #define COPY_FLAG_AUX(A1, A2, NUM, MASK) ((A2)[NUM] |= ((A1)[NUM] & (MASK)))
-#endif /* __MSVC__ */
+#endif /* _MSC_VER */
 
 #define FLAG(P, F) FLAG_AUX((P)->flags, F)
 #define SET_FLAG(P, F) SET_FLAG_AUX((P)->flags, F)
