@@ -1522,7 +1522,6 @@ cptr look_mon_desc(int m_idx)
 }
 
 
-
 /*
  * Angband sorting algorithm -- quick sort in place
  *
@@ -1587,8 +1586,46 @@ void ang_sort(vptr u, vptr v, int n)
 }
 
 
-
 /*** Targeting Code ***/
+
+/*
+ * Track a new monster
+ */
+void health_track(int m_idx)
+{
+	/* Track a new guy */
+	p_ptr->health_who = m_idx;
+
+	/* Redraw (later) */
+	p_ptr->redraw |= (PR_HEALTH);
+}
+
+
+/*
+ * Hack -- track the given monster race
+ */
+void monster_race_track(int r_idx)
+{
+	/* Save this monster ID */
+	p_ptr->monster_race_idx = r_idx;
+
+	/* Window stuff */
+	p_ptr->window |= (PW_MONSTER);
+}
+
+
+
+/*
+ * Hack -- track the given object kind
+ */
+void object_kind_track(int k_idx)
+{
+	/* Save this monster ID */
+	p_ptr->object_kind_idx = k_idx;
+
+	/* Window stuff */
+	p_ptr->window |= (PW_OBJECT);
+}
 
 
 /*

@@ -2840,3 +2840,64 @@ void make_noise(byte amount)
 	/* Save the new noise level */
 	p_ptr->noise_level = (byte)total;
 }
+
+
+/*
+ * Something has happened to disturb the player.
+ *
+ * The arg indicates a major disturbance, which affects search.
+ *
+ * All disturbance cancels repeated commands, resting, and running.
+ */
+void disturb(bool stop_search)
+{
+	/* Cancel repeated commands */
+	if (p_ptr->cmd.rep)
+	{
+		/* Cancel */
+		p_ptr->cmd.rep = 0;
+
+		/* Redraw the state (later) */
+		p_ptr->redraw |= (PR_STATE);
+	}
+
+	/* Cancel Resting */
+	if (p_ptr->state.resting)
+	{
+		/* Cancel */
+		p_ptr->state.resting = 0;
+
+		/* Redraw the state (later) */
+		p_ptr->redraw |= (PR_STATE);
+	}
+
+	/* Cancel running */
+	if (p_ptr->state.running)
+	{
+		/* Cancel */
+		p_ptr->state.running = 0;
+
+		/* Check for new panel if appropriate */
+		if (center_player && avoid_center) verify_panel();
+
+		/* Calculate torch radius */
+		p_ptr->update |= (PU_TORCH);
+	}
+
+	/* Cancel searching if requested */
+	if (stop_search && p_ptr->state.searching)
+	{
+		/* Cancel */
+		p_ptr->state.searching = FALSE;
+
+		/* Recalculate bonuses */
+		p_ptr->update |= (PU_BONUS);
+
+		/* Redraw the state */
+		p_ptr->redraw |= (PR_STATE);
+	}
+
+	/* Flush the input if requested */
+	if (flush_disturb) flush();
+}
+
