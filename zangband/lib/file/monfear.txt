@@ -234,8 +234,8 @@ N:674:Judge Fear
 N:654:Judge Fire
 N:656:Judge Mortis
 2
-says, 'You'll never get away with this...'
-says, 'Hey! I've got LAWYERS!'
+hisses, 'You'll never get away with thisss...'
+hisses, 'Hey! I've got LAWYERSSS!'
 
 #N:687:Ariel, Queen of Air
 
