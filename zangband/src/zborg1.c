@@ -237,6 +237,7 @@ s16b my_stat_add[6];	/* additions to stats  This will allow upgrading of */
 s16b home_stat_add[6];
 
 bool borg_wearing_cursed;
+bool borg_heavy_curse;
 
 int my_ammo_tval;	/* Ammo -- "tval" */
 s16b my_ammo_power;	/* Average power */

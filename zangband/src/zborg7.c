@@ -850,10 +850,10 @@ static bool borg_enchant_to_a(void)
 	/* Look for armor that needs enchanting */
 	for (i = EQUIP_BODY; i < equip_num; i++)
 	{
-		list_item *l_ptr = &equipment[i];
+		list_item *l_ptr = look_up_equip_slot(i);
 
 		/* Skip empty / unaware items */
-		if (!l_ptr->k_idx) continue;
+		if (!l_ptr) continue;
 
 		/* Skip non-identified items */
 		if (!borg_obj_known_p(l_ptr)) continue;
@@ -938,10 +938,10 @@ static bool borg_enchant_to_h(void)
 	/* Look for a weapon that needs enchanting */
 	for (i = EQUIP_WIELD; i <= EQUIP_BOW; i++)
 	{
-		list_item *l_ptr = &equipment[i];
+		list_item *l_ptr = look_up_equip_slot(i);
 
 		/* Skip empty / unaware items */
-		if (!l_ptr->k_idx) continue;
+		if (!l_ptr) continue;
 
 		/* Skip non-identified items */
 		if (!borg_obj_known_p(l_ptr)) continue;
@@ -1078,10 +1078,10 @@ static bool borg_enchant_to_d(void)
 	/* Look for a weapon that needs enchanting */
 	for (i = EQUIP_WIELD; i <= EQUIP_BOW; i++)
 	{
-		list_item *l_ptr = &equipment[i];
+		list_item *l_ptr = look_up_equip_slot(i);
 
 		/* Skip empty / unaware items */
-		if (!l_ptr->k_idx) continue;
+		if (!l_ptr) continue;
 
 		/* Skip non-identified items */
 		if (!borg_obj_known_p(l_ptr)) continue;
@@ -1166,8 +1166,23 @@ static bool borg_enchant_to_d(void)
 		}
 		else
 		{
-			/* Choose from equipment */
-			borg_keypress('/');
+			/*
+			 * Find out if the prompt is at Inven or Equip by checking if
+			 * there is a weapon or ammo in the inventory.  If there is
+			 * then the prompt is at Inven and has to be moved to Equip.
+			 */
+			for (i = 0; i < inven_num; i++)
+			{
+				list_item *l_ptr = &inventory[i];
+
+				/* Is this item is enchantable? */
+				if (l_ptr->tval >= TV_SHOT && l_ptr->tval <= TV_SWORD)
+				{
+					/* Goto the equipment */
+					borg_keypress('/');
+					break;
+				}
+			}
 
 			/* Choose that item */
 			borg_keypress(I2A(b_i));
@@ -1181,6 +1196,40 @@ static bool borg_enchant_to_d(void)
 	return (FALSE);
 }
 
+/* Find out if the borg wears a cursed item */
+bool borg_wears_cursed(bool heavy)
+{
+	int i;
+	bool result = FALSE;
+
+	for (i = 0; i < equip_num; i++)
+	{
+		list_item *l_ptr = look_up_equip_slot(i);
+
+		/* If this slot is not empty */
+		if (!l_ptr) continue;
+
+		/* And the item in this slot has a name */
+		if (streq(l_ptr->o_name,"")) continue;
+
+		/* And the name is cursed then the borg wears a cursed item */
+		if (strstr(l_ptr->o_name, "cursed"))
+		{
+			result = TRUE;
+			if (heavy)
+			{
+				l_ptr->kn_flags3 |= TR3_HEAVY_CURSE;
+			}
+			else
+			{
+				l_ptr->kn_flags3 |= TR3_CURSED;
+			}
+		}
+	}
+
+	return (result);
+}
+
 
 /*
  * Remove Curse
@@ -1190,26 +1239,53 @@ static bool borg_decurse(void)
 	/* Nothing to decurse */
 	if (!borg_wearing_cursed) return (FALSE);
 
-	/* Ability for light curse */
-	if (borg_wearing_cursed)
-	{
-		if (!borg_slot(TV_SCROLL, SV_SCROLL_REMOVE_CURSE) &&
-			!(borg_slot(TV_STAFF, SV_STAFF_REMOVE_CURSE) &&
-			  borg_slot(TV_STAFF, SV_STAFF_REMOVE_CURSE)->pval)
-			&& !borg_spell_okay_fail(REALM_LIFE, 2, 1, 40))
-		{
-			return (FALSE);
-		}
+	if (!borg_slot(TV_SCROLL, SV_SCROLL_REMOVE_CURSE) &&
+		!(borg_slot(TV_STAFF, SV_STAFF_REMOVE_CURSE) &&
+		  borg_slot(TV_STAFF, SV_STAFF_REMOVE_CURSE)->pval) &&
+		!borg_spell_okay_fail(REALM_LIFE, 1, 0, 40))	return (FALSE);
 
-		/* remove the curse */
-		if (borg_read_scroll(SV_SCROLL_REMOVE_CURSE) ||
-			borg_use_staff(SV_STAFF_REMOVE_CURSE) ||
-			borg_spell(REALM_LIFE, 2, 1))
-		{
-			/* Shekockazol! */
-			borg_wearing_cursed = FALSE;
-			return (TRUE);
-		}
+	/* remove the curse */
+	if (borg_spell(REALM_LIFE, 1, 0) ||
+		borg_use_staff(SV_STAFF_REMOVE_CURSE) ||
+		borg_read_scroll(SV_SCROLL_REMOVE_CURSE))
+	{
+		/* Shekockazol! */
+		borg_wearing_cursed = FALSE;
+		borg_heavy_curse = borg_wears_cursed(TRUE);
+		return (TRUE);
+	}
+
+	/* Try *remove curse* if unlimited available */
+	if (bp_ptr->able.star_remove_curse >= 1000)
+	{
+		/* pretend there is a heavy curse */
+		borg_heavy_curse = TRUE;
+	}
+
+	/* Nothing to do */
+	return (FALSE);
+}
+
+/*
+ * Remove Heavy Curse
+ */
+static bool borg_star_decurse(void)
+{
+	/* Nothing to *decurse* */
+	if (!borg_heavy_curse) return (FALSE);
+
+	/* Nothing to *decurse* with */
+	if (!borg_spell_okay_fail(REALM_LIFE, 2, 1, 40) && 
+		!borg_slot(TV_SCROLL, SV_SCROLL_STAR_REMOVE_CURSE))	return (FALSE);
+
+	/* remove the curse */
+	if (borg_spell(REALM_LIFE, 2, 1) ||
+		borg_read_scroll(SV_SCROLL_REMOVE_CURSE))
+	{
+		/* Shekockazol! */
+		borg_wearing_cursed = FALSE;
+		borg_heavy_curse = FALSE;
+		return (TRUE);
 	}
 
 	/* Nothing to do */
@@ -1231,6 +1307,7 @@ bool borg_enchanting(void)
 
 	/* Remove Curses */
 	if (borg_decurse()) return (TRUE);
+	if (borg_star_decurse()) return (TRUE);
 
 	/* Enchant things */
 	if (borg_enchant_to_d()) return (TRUE);
@@ -1301,7 +1378,12 @@ bool borg_recharging(void)
 			 borg_spell_okay(REALM_CHAOS, 2, 2) ||
 			 borg_spell_okay(REALM_ARCANE, 3, 0)))
 		{
-			charge = TRUE;
+			/*
+			 * Don't do this.  The borg will continue until wild magic consumes
+			 * his rod.  Not fun if it is the Rod of Recall.
+			 * There can be situations when it is a good thing to do, but when???
+			charge = TRUE;*/
+			charge = FALSE;
 		}
 
 		/* get the next item if we are not to charge this one */
@@ -1603,6 +1685,18 @@ bool borg_crush_junk(void)
 			/* Do not junk useful things */
 			if (my_power > p) continue;
 
+			/*
+			 * Destroy these regardless of value,
+			 * it is too troublesome to decurse, id and sell them.
+			 */
+			if (strstr(l_ptr->o_name, "{cursed") ||
+				strstr(l_ptr->o_name, "{bad") ||
+				strstr(l_ptr->o_name, "{dubious") ||
+				strstr(l_ptr->o_name, "{worthless"))
+			{
+				value = 0;
+			}
+
 			/* up to level 5, keep anything of value 100 or better */
 			if (bp_ptr->depth < 5 && value > 100)
 				continue;
@@ -1637,7 +1731,7 @@ bool borg_crush_junk(void)
 		if (strstr(l_ptr->o_name, "{terrible")) continue;
 
 		/* hack check anything interesting */
-		if (borg_obj_is_ego_art(l_ptr) && !borg_obj_known_full(l_ptr)) continue;
+		if (borg_obj_star_id_able(l_ptr) && !borg_obj_known_full(l_ptr)) continue;
 
 		/* Message */
 		borg_note_fmt("# Junking junk (valued at %d)", value);
@@ -1854,6 +1948,9 @@ bool borg_obj_star_id_able(list_item *l_ptr)
 	/* Is there an object at all? */
 	if (!l_ptr) return (FALSE);
 
+	/* Demand that the item is identified */
+	if (borg_obj_known_p(l_ptr)) return (FALSE);
+	
 	/* Some non-ego items should be *id'ed too */
 	if (l_ptr->tval == TV_SHIELD &&
 	 	k_info[l_ptr->k_idx].sval == SV_DRAGON_SHIELD) return (TRUE);
@@ -1934,7 +2031,7 @@ bool borg_obj_star_id_able(list_item *l_ptr)
  * This function is also repeated to *ID* objects.  Right now only objects
  * with random high resist or random powers are *ID*'d
  */
-bool borg_test_stuff(bool star_id)
+bool borg_test_stuff(void)
 {
 	int i, b_i = -1;
 	s32b v, b_v = -1;
@@ -1944,10 +2041,11 @@ bool borg_test_stuff(bool star_id)
 	bool inven = FALSE;
 
 	/* don't ID stuff when you can't recover spent spell point immediately */
-	if ((!star_id) &&
-		((bp_ptr->csp < 50 && borg_spell_legal(REALM_ARCANE, 3, 2)) ||
-		 (bp_ptr->csp < 50 && borg_spell_legal(REALM_SORCERY, 1, 1)))
-		&& !borg_check_rest())
+	if (bp_ptr->csp < 50  &&
+		!borg_check_rest() &&
+		(borg_spell_legal(REALM_ARCANE, 3, 2) ||
+		borg_spell_legal(REALM_SORCERY, 1, 1) ||
+		borg_mindcr_legal(MIND_PSYCHOMETRY, 25)))
 		return (FALSE);
 
 	/* No ID if in danger */
@@ -1956,283 +2054,282 @@ bool borg_test_stuff(bool star_id)
 	/* Look for an item to identify (equipment) */
 	for (i = 0; i < equip_num; i++)
 	{
-		l_ptr = &equipment[i];
+		l_ptr = look_up_equip_slot(i);
 
 		/* Skip empty / unaware items */
-		if (!l_ptr->k_idx) continue;
+		if (!l_ptr) continue;
 
-		/* Skip known items */
-		if (!star_id)
-		{
-			if (borg_obj_known_p(l_ptr)) continue;
-		}
-		else
-		{
-			/* go ahead and check egos and artifacts */
-			if (borg_obj_known_full(l_ptr)) continue;
-			if (!borg_obj_star_id_able(l_ptr)) continue;
-		}
+		if (borg_obj_known_p(l_ptr)) continue;
 
 		/* Track it */
 		b_i = i;
-		b_v = 50000L;
 
 		break;
 	}
 
-	/* Look for an ego or artifact item to identify (inventory) */
-	for (i = 0; i < inven_num; i++)
+	/* Don't bother with the inventory if you found something in the equipment */
+	if (b_i < 0)
 	{
-		l_ptr = &inventory[i];
-
-		/* Skip known items */
-		if (!star_id)
+		/* Look for an ego or artifact item to identify (inventory) */
+		for (i = 0; i < inven_num; i++)
 		{
+			l_ptr = &inventory[i];
+
 			if (borg_obj_known_p(l_ptr)) continue;
-		}
-		else
-		{
-			if (borg_obj_known_full(l_ptr)) continue;
 
-			/* If it is some item with random flags */
-			if (borg_obj_star_id_able(l_ptr))
+			/* Assume nothing */
+			v = 0;
+
+			/* If the borg has unlimited identify then it should identify everything */
+			if (bp_ptr->able.id >= 100) v = 1;
+
+			/* Identify "good" (and "terrible") items */
+			/* weak pseudo id */
+			if (strstr(l_ptr->o_name, "{good") &&
+				(borg_class == CLASS_MAGE ||
+				borg_class == CLASS_PRIEST ||
+				borg_class == CLASS_RANGER)) v = 10000L;
+			/* heavy pseudo id */
+			else if (strstr(l_ptr->o_name, "{good") && borg_gold < 10000) v = 1000L;
+			else if (strstr(l_ptr->o_name, "{excellent")) v = 20000L;
+			else if (strstr(l_ptr->o_name, "{special")) v = 50000L;
+			else if (strstr(l_ptr->o_name, "{terrible")) v = 50000L;
+
+			/* Hack -- reward "unaware" items */
+			if (!l_ptr->k_idx)
 			{
-				/* *identify* this item */
-				b_i = i;
-				inven = TRUE;
-
-				break;
-			}
-			
-			continue;
-		}
-
-		/* Assume nothing */
-		v = 0;
-
-		/* Identify "good" (and "terrible") items */
-		/* weak pseudo id */
-		if (strstr(l_ptr->o_name, "{good") &&
-			(borg_class == CLASS_MAGE ||
-			borg_class == CLASS_PRIEST ||
-			borg_class == CLASS_RANGER)) v = 10000L;
-		/* heavy pseudo id */
-		else if (strstr(l_ptr->o_name, "{good") && borg_gold < 10000) v = 1000L;
-		else if (strstr(l_ptr->o_name, "{excellent")) v = 20000L;
-		else if (strstr(l_ptr->o_name, "{special")) v = 50000L;
-		else if (strstr(l_ptr->o_name, "{terrible")) v = 50000L;
-
-		/* Hack -- reward "unaware" items */
-		if (!l_ptr->k_idx && !star_id)
-		{
-			/* Analyze the type */
-			switch (l_ptr->tval)
-			{
-				case TV_RING:
-				case TV_AMULET:
+				/* Analyze the type */
+				switch (l_ptr->tval)
 				{
+					case TV_RING:
+					case TV_AMULET:
+					{
 
-					/* Hack -- reward depth */
-					v += (bp_ptr->max_depth * 5000L);
+						/* Hack -- reward depth */
+						v += (bp_ptr->max_depth * 5000L);
 
-					break;
-				}
+						break;
+					}
 
-				case TV_ROD:
-				{
+					case TV_ROD:
+					{
 
-					/* Hack -- reward depth */
-					v += (bp_ptr->max_depth * 3000L);
+						/* Hack -- reward depth */
+						v += (bp_ptr->max_depth * 3000L);
 
-					break;
-				}
+						break;
+					}
 
-				case TV_WAND:
-				case TV_STAFF:
-				{
+					case TV_WAND:
+					case TV_STAFF:
+					{
 
-					/* Hack -- reward depth */
-					v += (bp_ptr->max_depth * 2000L);
+						/* Hack -- reward depth */
+						v += (bp_ptr->max_depth * 2000L);
 
-					break;
-				}
+						break;
+					}
 
-				case TV_POTION:
-				case TV_SCROLL:
-				{
-					/* Hack -- reward depth */
-					v += (bp_ptr->max_depth * 500L);
+					case TV_POTION:
+					case TV_SCROLL:
+					{
+						/* Hack -- reward depth */
+						v += (bp_ptr->max_depth * 500L);
 
-					break;
-				}
+						break;
+					}
 
-				case TV_FOOD:
-				{
+					case TV_FOOD:
+					{
 
-					/* Hack -- reward depth */
-					v += (bp_ptr->max_depth * 10L);
+						/* Hack -- reward depth */
+						v += (bp_ptr->max_depth * 10L);
 
-					break;
+						break;
+					}
+					case TV_SHIELD:
+					{
+						/* Hack -- reward depth */
+						v += (bp_ptr->max_depth * 10L);
+		
+						break;
+					}
 				}
 			}
+
+			/* Track the best */
+			if (v <= b_v) continue;
+
+			/* Track it */
+			b_i = i;
+			b_v = v;
+
+			inven = TRUE;
 		}
-
-		/* Nothing */
-		if (!v) continue;
-
-		/* Track the best */
-		if (v < b_v) continue;
-
-		/* Track it */
-		b_i = i;
-		b_v = v;
-
-		inven = TRUE;
 	}
 
 	/* Found something */
 	if (b_i >= 0)
 	{
-		if (inven)
+		/* Use a Spell/Prayer/Rod/Staff/Scroll of Identify */
+		if (borg_activate_artifact(ART_ERIRIL, FALSE) ||
+			borg_zap_rod(SV_ROD_IDENTIFY) ||
+			borg_spell(REALM_ARCANE, 3, 2) ||
+			borg_spell(REALM_SORCERY, 1, 1) ||
+			borg_mindcr(MIND_PSYCHOMETRY, 25) ||
+			borg_use_staff(SV_STAFF_IDENTIFY) ||
+			borg_read_scroll(SV_SCROLL_IDENTIFY))
 		{
-			list_item *l_ptr = &inventory[b_i];
-
-			if (star_id)
+			if (inven)
 			{
-				if (borg_spell(REALM_SORCERY, 1, 7) ||
-					borg_spell(REALM_NATURE, 2, 5) ||
-					borg_spell(REALM_DEATH, 3, 2) ||
-					borg_read_scroll(SV_SCROLL_STAR_IDENTIFY))
-				{
-					/* Log -- may be cancelled */
-					borg_note_fmt("# *IDENTIFY*ing %s.", l_ptr->o_name);
-
-
-					/* Select the item */
-					borg_keypress(I2A(b_i));
-
-					/* press enter a few time (get rid of display) */
-					borg_keypress('\r');
-					borg_keypress('\r');
-					borg_keypress('\r');
-					borg_keypress('\r');
-					borg_keypress(ESCAPE);
-
-					/* Success */
-					return (TRUE);
-				}
-
+				l_ptr = &inventory[b_i];
 			}
 			else
 			{
-				/* Use a Spell/Prayer/Rod/Staff/Scroll of Identify */
-				if (borg_spell(REALM_SORCERY, 1, 1) ||
-					borg_spell(REALM_ARCANE, 3, 2) ||
-					borg_mindcr(MIND_PSYCHOMETRY, 40) ||
-					borg_zap_rod(SV_ROD_IDENTIFY) ||
-					borg_use_staff(SV_STAFF_IDENTIFY) ||
-					borg_activate_artifact(ART_ERIRIL, FALSE) ||
-					borg_read_scroll(SV_SCROLL_IDENTIFY))
+				l_ptr = &equipment[b_i];
+
+				/* Switch to equipment but not in case you go there immediately */
+				for (i = 0; i < inven_num; i++)
 				{
-					/* Log -- may be cancelled */
-					borg_note_fmt("# Identifying %s.", l_ptr->o_name);
-
-					/* Select the item */
-					borg_keypress(I2A(b_i));
-
-					borg_keypress(ESCAPE);
-
-					/* Success */
-					return (TRUE);
+					if (!borg_obj_known_p(&inventory[i]))
+					{
+						borg_keypress('/');
+						break;
+					}
 				}
 			}
+
+			/* Log -- may be cancelled */
+			borg_note_fmt("# Identifying %s.", l_ptr->o_name);
+
+			/* Select the item */
+			borg_keypress(I2A(b_i));
+
+			borg_keypress(ESCAPE);
+
+			/* HACK need to recheck stats if we id something on us. */
+			for (i = 0; i < 6; i++)
+			{
+				my_need_stat_check[i] = TRUE;
+				my_stat_max[i] = 0;
+			}
+
+			/* Success */
+			return (TRUE);
+		}
+	}
+
+	/* Nothing to do */
+	return (FALSE);
+}
+
+bool borg_test_stuff_star(void)
+{
+	int i, b_i = -1;
+
+	list_item *l_ptr;
+
+	bool inven = FALSE;
+
+	/* don't ID stuff when you can't recover spent spell point immediately */
+	if (bp_ptr->csp < 50 &&
+		!borg_check_rest() &&
+		(borg_spell_legal(REALM_SORCERY, 1, 7) ||
+		borg_spell_legal(REALM_NATURE, 2, 5) ||
+		borg_spell_legal(REALM_DEATH, 3, 2) ||
+		borg_spell_legal(REALM_TRUMP, 3, 1) ||
+		borg_spell_legal(REALM_LIFE, 3, 5)))
+		return (FALSE);
+
+	/* No ID if in danger */
+	if (borg_danger(c_x, c_y, 1, TRUE) > 1) return (FALSE);
+
+	/* Look for an item to identify (equipment) */
+	for (i = 0; i < equip_num + inven_num; i++)
+	{
+		if (i >= equip_num)
+		{
+			inven = TRUE;
+			l_ptr = &inventory[i - equip_num];
 		}
 		else
 		{
-			list_item *l_ptr = &equipment[b_i];
+			l_ptr = look_up_equip_slot(i);
 
-			if (star_id)
+			/* Ignore empty slots */
+			if (!l_ptr) continue;
+		}
+
+		/* Ignore items that were *id'd* before */
+		if (borg_obj_known_full(l_ptr)) continue;
+
+		/*
+		 * Accept unknown items if there are unlimited *id*s
+		 * Ignore items that are known and have no hidden flags.
+		 */
+		if ((bp_ptr->able.star_id < 100 ||
+			borg_obj_known_p(l_ptr)) &&
+			!borg_obj_star_id_able(l_ptr))
+			continue;
+
+		/* Track it */
+		if (inven)
+		{
+			b_i = i - equip_num;
+		}
+		else
+		{
+			b_i = i;
+		}
+
+		break;
+	}
+
+	/* Found something */
+	if (b_i >= 0)
+	{
+		if (borg_spell(REALM_SORCERY, 1, 7) ||
+			borg_spell(REALM_NATURE, 2, 5) ||
+			borg_spell(REALM_DEATH, 3, 2) ||
+			borg_spell(REALM_LIFE, 3, 5) ||
+			borg_spell(REALM_TRUMP, 3, 1) ||
+			borg_read_scroll(SV_SCROLL_STAR_IDENTIFY))
+		{
+			if (!inven)
 			{
-				if (borg_spell(REALM_SORCERY, 1, 7) ||
-					borg_spell(REALM_NATURE, 2, 5) ||
-					borg_spell(REALM_DEATH, 3, 2) ||
-					borg_read_scroll(SV_SCROLL_STAR_IDENTIFY))
+				/* Switch to equipment but not in case you go there immediately */
+				for (i = 0; i < inven_num; i++)
 				{
-					/* Log -- may be cancelled */
-					borg_note_fmt("# *IDENTIFY*ing %s.", l_ptr->o_name);
-
-					/* Switch to equipment but not in case you go there immediately */
-					for (i = 0; i < inven_num; i++)
+					if (!borg_obj_known_full(&inventory[i]))
 					{
-						if (!borg_obj_known_full(l_ptr))
-						{
-							borg_keypress('/');
-							break;
-						}
+						borg_keypress('/');
+						break;
 					}
-
-					/* Select the item */
-					borg_keypress(I2A(b_i));
-
-					/* HACK need to recheck stats if we id something on us. */
-					for (i = 0; i < 6; i++)
-					{
-						my_need_stat_check[i] = TRUE;
-						my_stat_max[i] = 0;
-					}
-
-					/* press enter a few time (get rid of display) */
-					borg_keypress('\r');
-					borg_keypress('\r');
-					borg_keypress('\r');
-					borg_keypress('\r');
-					borg_keypress(ESCAPE);
-
-					/* Success */
-					return (TRUE);
-				}
-
-			}
-			else
-			{
-				/* Use a Spell/Prayer/Rod/Staff/Scroll of Identify */
-				if (borg_spell(REALM_SORCERY, 1, 1) ||
-					borg_spell(REALM_ARCANE, 3, 2) ||
-					borg_mindcr(MIND_PSYCHOMETRY, 40) ||
-					borg_zap_rod(SV_ROD_IDENTIFY) ||
-					borg_use_staff(SV_STAFF_IDENTIFY) ||
-					borg_activate_artifact(ART_ERIRIL, FALSE) ||
-					borg_read_scroll(SV_SCROLL_IDENTIFY))
-				{
-					/* Log -- may be cancelled */
-					borg_note_fmt("# Identifying %s.", l_ptr->o_name);
-
-					/* Switch to equipment but not in case you go there immediately */
-					for (i = 0; i < inven_num; i++)
-					{
-						if (!borg_obj_known_p(l_ptr))
-						{
-							borg_keypress('/');
-							break;
-						}
-					}
-
-					/* Select the item */
-					borg_keypress(I2A(b_i));
-
-					/* HACK need to recheck stats if we id something on us. */
-					for (i = 0; i < 6; i++)
-					{
-						my_need_stat_check[i] = TRUE;
-						my_stat_max[i] = 0;
-					}
-
-					borg_keypress(ESCAPE);
-
-					/* Success */
-					return (TRUE);
 				}
 			}
+
+			/* Log -- may be cancelled */
+			borg_note_fmt("# *IDENTIFY*ing %s.", l_ptr->o_name);
+
+			/* Select the item */
+			borg_keypress(I2A(b_i));
+
+			/* press enter a few time (get rid of display) */
+			borg_keypress('\r');
+			borg_keypress('\r');
+			borg_keypress('\r');
+			borg_keypress('\r');
+			borg_keypress(ESCAPE);
+
+			/* HACK need to recheck stats if we id something on us. */
+			for (i = 0; i < 6; i++)
+			{
+				my_need_stat_check[i] = TRUE;
+				my_stat_max[i] = 0;
+			}
+		
+			/* Success */
+			return (TRUE);
 		}
 	}
 
@@ -2383,10 +2480,10 @@ bool borg_remove_stuff(void)
 	/* Scan equip */
 	for (i = 0; i < equip_num; i++)
 	{
-		l_ptr = &equipment[i];
+		l_ptr = look_up_equip_slot(i);
 
 		/* Skip empty / unaware items */
-		if (!l_ptr->k_idx) continue;
+		if (!l_ptr) continue;
 
 		/* Require "known" (or average, good, etc) */
 		if (!borg_obj_known_p(l_ptr) &&
@@ -2890,7 +2987,7 @@ bool borg_leave_level(bool bored)
 		if (!bored) return (FALSE);
 
 		/* Hack -- Recall into dungeon */
-		if ((bp_ptr->max_depth >= 5) && (bp_ptr->recall >= 6) && borg_recall())
+		if ((bp_ptr->max_depth >= 5) && (bp_ptr->recall >= 4) && borg_recall())
 		{
 			/* Note */
 			borg_note("# Recalling into dungeon.");
@@ -2903,7 +3000,7 @@ bool borg_leave_level(bool bored)
 			/* note why we didn't recall. */
 			if (bp_ptr->max_depth < 5)
 				borg_note("# Not deep enough to recall");
-			else if (bp_ptr->recall <= 2)
+			else if (bp_ptr->recall <= 4)
 				borg_note("# Not enough recalls to recall");
 			else
 			{

@@ -1625,10 +1625,10 @@ bool borg_think_dungeon(void)
 	if (borg_use_things()) return (TRUE);
 
 	/* Identify unknown things */
-	if (borg_test_stuff(FALSE)) return (TRUE);
+	if (borg_test_stuff()) return (TRUE);
 
 	/* *Id* unknown things */
-	if (borg_test_stuff(TRUE)) return (TRUE);
+	if (borg_test_stuff_star()) return (TRUE);
 
 	/* Enchant things */
 	if (borg_enchanting()) return (TRUE);

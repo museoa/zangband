@@ -307,10 +307,10 @@ static void borg_hidden(void)
 	/* Scan the usable inventory */
 	for (i = 0; i < equip_num; i++)
 	{
-		list_item *l_ptr = &equipment[i];
+		list_item *l_ptr = look_up_equip_slot(i);
 
 		/* Skip empty items */
-		if (!l_ptr->k_idx) continue;
+		if (!l_ptr) continue;
 
 		/* Affect stats */
 		if (l_ptr->kn_flags1 & TR1_STR) my_stat_add[A_STR] += l_ptr->pval;
@@ -1446,12 +1446,13 @@ static void borg_parse_aux(cptr msg, int len)
 	}
 
 	/* Wearing Cursed Item */
-	if ((prefix(msg, "Oops! It feels deathly cold!")) ||
+	if ((prefix(msg, "There is a malignant black aura surrounding you...")) ||
+		(prefix(msg, "Oops! It feels deathly cold!")) ||
 		(suffix(msg, " appears to be cursed.")) ||
 		(suffix(msg, " seems to be cursed.")))
 	{
 		/* Hack -- Oops */
-		borg_wearing_cursed = TRUE;
+		borg_wearing_cursed = borg_wears_cursed(FALSE);
 		return;
 	}
 
@@ -2379,6 +2380,9 @@ static void borg_cheat_temp_bools(void)
 	borg_hero = (p_ptr->tim.hero ? TRUE : FALSE);
 	borg_berserk = (p_ptr->tim.shero ? TRUE : FALSE);
 	borg_esp = (p_ptr->tim.esp ? TRUE : FALSE);
+
+	/* Is there something cursed? */
+	borg_wearing_cursed = borg_wears_cursed(FALSE);
 }
 
 /*
@@ -3937,7 +3941,7 @@ void do_cmd_borg(void)
 			{
 				/* Is it legal to use this in equipment[]? */
 				if ((n < 0) || (n >= equip_num)) break;
-				if (!equipment[n].k_idx) break;
+				if (!look_up_equip_slot(n)) break;
 
 				/* Display the special screen */
 				borg_display_item(&equipment[n]);

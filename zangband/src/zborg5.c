@@ -3644,8 +3644,13 @@ static s32b borg_power_aux4(void)
 	{
 		for (k = 0; (k < 10) && (k < bp_ptr->food); k++) value += 500L;
 	}
-	/* Prefere to buy HiCalorie foods over LowCalorie */
-	if (amt_food_hical <= 5) value += amt_food_hical * 50;
+
+	/* if you can digest food */
+	if ((borg_race <= RACE_IMP) || (borg_race >= RACE_SPRITE))
+	{
+		/* Prefere to buy HiCalorie foods over LowCalorie */
+		if (amt_food_hical <= 5) value += amt_food_hical * 50;
+	}
 
 	/* Reward Cure Poison and Cuts */
 	if ((bp_ptr->status.cut || bp_ptr->status.poisoned) &&
@@ -3671,8 +3676,8 @@ static s32b borg_power_aux4(void)
 	for (; (k < 15) && (k < bp_ptr->able.id); k++) value += 600L;
 
 	/*  Reward *id* apw carry lots of these */
-	for (k = 0; k < 8 && k < borg_has[177]; k++) value += 10000L;
-	for (; k < 15 && k < borg_has[177]; k++) value += 2000L;
+	for (k = 0; k < 8 && k < bp_ptr->able.star_id; k++) value += 10000L;
+	for (; k < 15 && k < bp_ptr->able.star_id; k++) value += 2000L;
 
 	/*  Reward PFE  carry lots of these */
 	for (k = 0; (k < 10) && (k < bp_ptr->able.pfe); k++) value += 10000L;
@@ -3897,11 +3902,11 @@ static s32b borg_power_aux4(void)
 	if (amt_fix_stat[A_CHR]) value += 10000;
 
 	/* Reward Remove Curse */
-	if (borg_wearing_cursed)
-	{
-		if (borg_has[191]) value += 90000;
-		if (borg_has[180]) value += 90000;
-	}
+	if (borg_wearing_cursed && bp_ptr->able.remove_curse) value += 90000;
+
+	/* Reward *Remove Curse* */
+	if (borg_heavy_curse && bp_ptr->able.star_remove_curse) value += 90000;
+	if (bp_ptr->able.star_remove_curse < 1000) value += bp_ptr->able.star_remove_curse * 100;
 
 	/* Hack -- Restore experience */
 	if (amt_fix_exp) value += 500000;

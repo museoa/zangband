@@ -1506,7 +1506,7 @@ static bool uncurse_item(object_type *o_ptr, bool all)
 /*
  * Removes curses from items in inventory
  */
-static int remove_curse_aux(int all)
+static int remove_curse_aux(bool all)
 {
 	int i, cnt = 0;
 	object_type *o_ptr;

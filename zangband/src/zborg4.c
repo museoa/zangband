@@ -19,6 +19,7 @@ int num_food;
 int num_mold;
 int num_ident;
 int num_star_ident;
+int num_star_remove_curse;
 int num_recall;
 int num_phase;
 int num_escape;
@@ -382,6 +383,9 @@ list_item *look_up_equip_slot(int slot)
 	}
 	else
 	{
+		/* Is it an empty slot or an unknown ring or amulet */
+		if (l_ptr->tval == TV_RING || l_ptr->tval == TV_AMULET) return (l_ptr);
+
 		/* Optimise common case of empty slot */
 		if (l_ptr->treat_as != TREAT_AS_SWAP) return (NULL);
 	}
@@ -441,6 +445,7 @@ static void borg_notice_equip(int *extra_blows, int *extra_shots,
 
 		/* Check for cursed items */
 		if (l_ptr->kn_flags3 & TR3_CURSED) borg_wearing_cursed = TRUE;
+		if (l_ptr->kn_flags3 & TR3_HEAVY_CURSE) borg_heavy_curse = TRUE;
 
 		/* Affect stats */
 		if (l_ptr->kn_flags1 & TR1_STR) my_stat_add[A_STR] += l_ptr->pval;
@@ -1304,6 +1309,7 @@ static void borg_notice_food(list_item *l_ptr, int number)
 		case SV_FOOD_WAYBREAD:
 		{
 			amt_food_hical += number;
+			bp_ptr->able.curepois += number;
 			break;
 		}
 		case SV_FOOD_RATION:
@@ -1515,6 +1521,21 @@ static void borg_notice_scrolls(list_item *l_ptr, int number)
 			bp_ptr->able.id += number;
 			break;
 		}
+		case SV_SCROLL_STAR_IDENTIFY:
+		{
+			bp_ptr->able.star_id += number;
+			break;
+		}
+		case SV_SCROLL_REMOVE_CURSE:
+		{
+			bp_ptr->able.remove_curse += number;
+			break;
+		}
+		case SV_SCROLL_STAR_REMOVE_CURSE:
+		{
+			bp_ptr->able.star_remove_curse += number;
+			break;
+		}
 		case SV_SCROLL_RECHARGING:
 		{
 			bp_ptr->able.recharge += number;
@@ -1613,7 +1634,7 @@ static void borg_notice_rods(list_item *l_ptr, int number)
 		case SV_ROD_RECALL:
 		{
 			/* Don't count on it if I suck at activations */
-			if (bp_ptr->skill_dev - k_ptr->level > 7)
+			if (bp_ptr->skill_dev - k_ptr->level > 1)
 			{
 				bp_ptr->recall += number * 100;
 			}
@@ -1720,6 +1741,11 @@ static void borg_notice_staves(list_item *l_ptr, int number)
 		case SV_STAFF_HEALING:
 		{
 			bp_ptr->able.heal += number * l_ptr->pval;
+			break;
+		}
+		case SV_STAFF_REMOVE_CURSE:
+		{
+			bp_ptr->able.remove_curse += number * l_ptr->pval;
 			break;
 		}
 		case SV_STAFF_THE_MAGI:
@@ -1901,8 +1927,8 @@ static void borg_notice_inven_item(list_item *l_ptr)
 				/* Is that a lantern */
 				if (k_info[l_ptr->k_idx].sval == SV_LITE_LANTERN)
 				{
-					/* Count the lantern as 2 fuel */
-					if (k_ptr->sval == SV_LITE_LANTERN) bp_ptr->able.fuel += 2;
+					/* Count the lantern as 1 fuel */
+					if (k_ptr->sval == SV_LITE_LANTERN) bp_ptr->able.fuel += 1;
 				}
 				
 				/* Is that a torch */
@@ -2005,6 +2031,7 @@ static void borg_notice_inven(void)
 
 		/* Pretend item isn't there */
 		if (l_ptr->treat_as == TREAT_AS_GONE) continue;
+		if (l_ptr->treat_as == TREAT_AS_SWAP) continue;
 		if ((l_ptr->treat_as == TREAT_AS_LESS) && (l_ptr->number == 1))
 		{
 			continue;
@@ -2210,9 +2237,33 @@ static void borg_notice_aux2(void)
 	/* Handle "identify" -> infinite identifies */
 	if (borg_spell_legal(REALM_SORCERY, 1, 1) ||
 		borg_spell_legal(REALM_ARCANE, 3, 2) ||
-		borg_mindcr_legal(MIND_PSYCHOMETRY, 40))
+		borg_mindcr_legal(MIND_PSYCHOMETRY, 25))
 	{
 		bp_ptr->able.id += 1000;
+	}
+
+	/* Handle "*identify*" -> infinite *identifies* */
+	if (borg_spell_legal(REALM_SORCERY, 1, 7) ||
+		borg_spell_legal(REALM_NATURE, 2, 5) ||
+		borg_spell_legal(REALM_DEATH, 3, 2) ||
+		borg_spell_legal(REALM_TRUMP, 3, 1) ||
+		borg_spell_legal(REALM_LIFE, 3, 5))
+	{
+		bp_ptr->able.id += 1000;
+		bp_ptr->able.star_id += 1000;
+	}
+
+	/* Handle "remove_curse" -> infinite remove curses */
+	if (borg_spell_legal(REALM_LIFE, 1, 0))
+	{
+		bp_ptr->able.remove_curse += 1000;
+	}
+
+	/* Handle "*remove_curse*" -> infinite *remove curses* */
+	if (borg_spell_legal(REALM_LIFE, 2, 1))
+	{
+		bp_ptr->able.remove_curse += 1000;
+		bp_ptr->able.star_remove_curse += 1000;
 	}
 
 	/* Handle "detect traps, doors, stairs" */
@@ -2880,6 +2931,8 @@ static void borg_notice_home_dupe(list_item *l_ptr, bool check_sval, int i)
 			/* Check what the borg has on as well. */
 			w_ptr = look_up_equip_slot(x - home_num);
 
+		if (!w_ptr) continue;
+
 		/* Don't count items we are swapping */
 		if (w_ptr->treat_as == TREAT_AS_SWAP) continue;
 
@@ -3233,6 +3286,12 @@ static void borg_notice_home_scroll(list_item *l_ptr)
 			break;
 		}
 
+		case SV_SCROLL_STAR_REMOVE_CURSE:
+		{
+			num_star_remove_curse += l_ptr->number;
+			break;
+		}
+
 		case SV_SCROLL_PHASE_DOOR:
 		{
 			num_phase += l_ptr->number;
@@ -3314,6 +3373,20 @@ static void borg_notice_home_spells(void)
 		borg_spell_legal(REALM_ARCANE, 3, 2))
 	{
 		num_ident += 1000;
+	}
+	/* Handle "*identify*" -> infinite *identifies* */
+	if (borg_spell_legal(REALM_NATURE, 2, 5) ||
+		borg_spell_legal(REALM_SORCERY, 1, 7) ||
+		borg_spell_legal(REALM_DEATH, 3, 2) ||
+		borg_spell_legal(REALM_LIFE, 3, 5))
+	{
+		num_ident += 1000;
+		num_star_ident += 1000;
+	}
+	/* Handle "*remove curse*" -> infinite *remove curses* */
+	if (borg_spell_legal(REALM_LIFE, 2, 1))
+	{
+		num_star_remove_curse += 1000;
 	}
 	/* Handle "enchant weapon" */
 	if (borg_spell_legal_fail(REALM_SORCERY, 3, 4, 40))
@@ -3704,7 +3777,7 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 
 				case SV_ROD_RECALL:
 				{
-					num_recall += l_ptr->number * 100;
+					num_recall += l_ptr->number * 50;
 					break;
 				}
 			}
@@ -4252,6 +4325,9 @@ static s32b borg_power_home_aux2(void)
 
 	/* Collect *id*ent */
 	for (k = 0; k < 50 && k < num_star_ident; k++) value += 5000L - k * 10L;
+
+	/* Collect *remove curse* */
+	for (k = 0; k < 50 && k < num_star_remove_curse; k++) value += 500L - k * 10L;
 
 	/* apw Collect pfe */
 	for (k = 0; k < 100 && k < num_pfe; k++) value += 5000L - k * 10L;

@@ -12163,9 +12163,9 @@ bool borg_recover(void)
 	{
 		/* Step 1.  Recharge just 1 rod. */
 		if ((borg_slot(TV_ROD, SV_ROD_HEALING) &&
-			 !borg_slot(TV_ROD, SV_ROD_HEALING)->pval) ||
+			 borg_slot(TV_ROD, SV_ROD_HEALING)->timeout) ||
 			(borg_slot(TV_ROD, SV_ROD_RECALL) &&
-			 !borg_slot(TV_ROD, SV_ROD_RECALL)->pval))
+			 borg_slot(TV_ROD, SV_ROD_RECALL)->timeout))
 		{
 			/* Mages can cast the recharge spell */
 
@@ -12174,7 +12174,8 @@ bool borg_recover(void)
 			/* Rest until at least one recharges */
 			if (!bp_ptr->status.weak && !bp_ptr->status.cut &&
 				!bp_ptr->status.hungry && !bp_ptr->status.poisoned &&
-				borg_check_rest() && !borg_spell_okay(REALM_SORCERY, 6, 2))
+				borg_check_rest() && !borg_spell_okay(REALM_SORCERY, 0, 7) &&
+				!borg_spell_okay(REALM_CHAOS, 2, 2))
 			{
 				/* Take note */
 				borg_note("# Resting to recharge a rod...");
