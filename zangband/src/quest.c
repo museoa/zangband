@@ -2104,36 +2104,12 @@ bool do_cmd_knowledge_quests(int dummy)
 
 
 /* Dump the quests related to this town into fff, only when display is set */
-bool dump_castle_info(FILE *fff, int town, bool display)
+void dump_castle_info(FILE *fff, int town)
 {
 	int i;
 	bool quest_in_town = FALSE;
-	bool visited_town = FALSE;
 
 	quest_type *q_ptr;
-	store_type *st_ptr;
-
-	/* Check if there is a castle */
-	for (i = 0; i < place[town].numstores; i++)
-	{
-		st_ptr = &place[town].store[i];
-
-		/* Is there a castle at all? */
-		if (st_ptr->type == BUILD_CASTLE0 ||
-			st_ptr->type == BUILD_CASTLE1) quest_in_town = TRUE;
-
-		/* Stores are not given coordinates until you visit a town */
-		if (st_ptr->x != 0 && st_ptr->y != 0) visited_town = TRUE;
-	}
-
-	/* Give up */
-	if (!quest_in_town || !visited_town) return (FALSE);
-
-	/* Is it showtime? */
-	if (!display) return (TRUE);
-
-	/* So there is a castle, but did it issue any quests? */
-	quest_in_town = FALSE;
 
 	/* Loop through the quests */
 	for (i = 0; i < z_info->q_max; i++)
@@ -2157,8 +2133,6 @@ bool dump_castle_info(FILE *fff, int town, bool display)
 		/* Say so */
 		froff(fff, "No quest was issued in this town.\n");
 	}
-
-	return (TRUE);
 }
 
 /*

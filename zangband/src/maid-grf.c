@@ -861,7 +861,7 @@ static void display_banner(place_type *pl_ptr, int wid, int hgt)
 
 
 /* Display info about the home in one town */
-static bool dump_home_info(FILE *fff, int town, bool display)
+static bool dump_home_info(FILE *fff, int town)
 {
 	int i, k;
 	bool visited_town = FALSE;
@@ -879,9 +879,6 @@ static bool dump_home_info(FILE *fff, int town, bool display)
 		/* The only interest is homes */
 		if (st_ptr->type == BUILD_STORE_HOME)
 		{
-			/* bail out if no display is needed (fff is undefined!) */
-			if (!display && visited_town) return (TRUE);
-
 			/* Header with name of the town */
 			froff(fff, "  [Home Inventory - %s]\n\n", place[i].name);
 
@@ -925,6 +922,69 @@ static bool dump_home_info(FILE *fff, int town, bool display)
 }
 
 
+/* This function predicts whether keystroke c on a town has any effect */
+static bool dump_info_test(char c, int town)
+{
+	int i;
+	bool visited_town = FALSE;
+	bool build_found = FALSE;
+
+	store_type *st_ptr;
+
+	/* Paranoia */
+	if (place[town].numstores == 0) return (FALSE);
+	
+	/* Find out if this command makes sense */
+	switch (c)
+	{
+		case '*':
+		{
+			/* Display the list of shops always works */
+			return (TRUE);
+		}
+
+		case 'h':
+		{
+			for (i = 0; i < place[town].numstores; i++)
+			/* Display the items in the home needs a home */
+			{
+				st_ptr = &place[town].store[i];
+
+				/* Stores are not given coordinates until you visit a town */
+				if (st_ptr->x != 0 && st_ptr->y != 0) visited_town = TRUE;
+
+				/* The only interest is homes */
+				if (st_ptr->type == BUILD_STORE_HOME) build_found = TRUE;
+			}
+
+			/* Return success */
+			return (build_found && visited_town);
+		}
+
+		case 'c':
+		{
+			for (i = 0; i < place[town].numstores; i++)
+			/* Display the items in the home needs a home */
+			{
+				st_ptr = &place[town].store[i];
+
+				/* Stores are not given coordinates until you visit a town */
+				if (st_ptr->x != 0 && st_ptr->y != 0) visited_town = TRUE;
+
+				/* The only interest is homes */
+				if (st_ptr->type == BUILD_CASTLE0 ||
+					st_ptr->type == BUILD_CASTLE1) build_found = TRUE;
+			}
+
+			/* Return success */
+			return (build_found && visited_town);
+		}
+	}
+
+	return (FALSE);
+}
+
+
 /* Show the knowledge the player has about a town */
 static bool do_cmd_view_map_aux(char c, int town)
 {
@@ -932,54 +992,16 @@ static bool do_cmd_view_map_aux(char c, int town)
 
 	char file_name[1024];
 
-	bool success = FALSE;
 	cptr title = NULL;
 
 	/* Call this proc with a place that is a town */
 	if (place[town].numstores == 0) return (FALSE);
-	
-	/* Open temporary file */
-	fff = my_fopen_temp(file_name, 1024);
-
-	/* First find out if this command makes sense */
-	switch (c)
-	{
-		case '*':
-		{
-			/* Display the list of shops always works */
-			success = TRUE;
-			title = "Town info";
-
-			break;
-		}
-
-		case 'h':
-		{
-			/* Display the items in the home needs a home */
-			success = dump_home_info(fff, town, FALSE);
-			title = "Home info";
-
-			break;
-		}
-
-		case 'c':
-		{
-			/* Display the quests taken, needs a castle */
-			success = dump_castle_info(fff, town, FALSE);
-			title = "Castle info";
-
-			break;
-		}
-	}
 
 	/* go away if nothing will happen */
-	if (!success)
-	{
-		/* Close the file */
-		my_fclose(fff);
-		
-		return (FALSE);
-	}
+	if (!dump_info_test(c, town)) return (FALSE);
+
+	/* Open temporary file */
+	fff = my_fopen_temp(file_name, 1024);
 
 	/* Failure */
 	if (!fff) return (FALSE);
@@ -991,6 +1013,7 @@ static bool do_cmd_view_map_aux(char c, int town)
 		{
 			/* Display the list of shops */
 			dump_town_info(fff, town, FALSE);
+			title = "Town info";
 
 			break;
 		}
@@ -998,7 +1021,8 @@ static bool do_cmd_view_map_aux(char c, int town)
 		case 'h':
 		{
 			/* Display the items in the home */
-			(void)dump_home_info(fff, town, TRUE);
+			(void)dump_home_info(fff, town);
+			title = "Home info";
 
 			break;
 		}
@@ -1006,7 +1030,8 @@ static bool do_cmd_view_map_aux(char c, int town)
 		case 'c':
 		{
 			/* Display the quests taken */
-			(void)dump_castle_info(fff, town, TRUE);
+			dump_castle_info(fff, town);
+			title = "Castle info";
 
 			break;
 		}
