@@ -266,7 +266,7 @@ bool set_paralyzed(int v)
 	/* Use the value */
 	p_ptr->paralyzed = v;
 
-	/* Redraw status bar */
+	/* Redraw status bar + message*/
 	p_ptr->redraw |= (PR_STATUS);
 
 	/* Nothing to notice */
@@ -276,7 +276,7 @@ bool set_paralyzed(int v)
 	if (disturb_state) disturb(FALSE);
 
 	/* Redraw the state */
-	p_ptr->redraw |= (PR_STATE);
+	p_ptr->redraw |= (PR_STATE | PR_SPEED);
 
 	/* Handle stuff */
 	handle_stuff();
