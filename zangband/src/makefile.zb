@@ -178,7 +178,7 @@ src/zborg4.o: src/zborg1.h src/zborg2.h src/zborg3.h src/zborg4.h \
 src/zborg5.o: src/zborg1.h src/zborg2.h src/zborg3.h src/zborg4.h \
 				src/zborg5.h src/maid-grf.h
 src/zborg6.o: src/zborg1.h src/zborg2.h src/zborg3.h src/zborg4.h \
-				src/zborg5.h src/zborg6.h src/maid-grf.h
+				src/zborg5.h src/zborg6.h src/maid-grf.h src/zbmagic.h
 src/zborg7.o: src/zborg1.h src/zborg2.h src/zborg3.h src/zborg4.h \
 				src/zborg5.h src/zborg6.h src/zborg7.h src/maid-grf.h
 src/zborg8.o: src/zborg1.h src/zborg2.h src/zborg3.h src/zborg4.h \

@@ -637,8 +637,8 @@ zborg2.o: zborg1.h zborg2.h maid-grf.h
 zborg3.o: zborg1.h zborg3.h maid-grf.h
 zborg4.o: zborg1.h zborg2.h zborg3.h zborg4.h maid-grf.h
 zborg5.o: zborg1.h zborg2.h zborg3.h zborg4.h zborg5.h maid-grf.h
-zborg6.o: zborg1.h zborg2.h zborg3.h zborg4.h zborg5.h zborg6.h maid-grf.h
-
+zborg6.o: zborg1.h zborg2.h zborg3.h zborg4.h zborg5.h zborg6.h maid-grf.h \
+			zbmagic.h
 zborg7.o: zborg1.h zborg2.h zborg3.h zborg4.h zborg5.h zborg6.h zborg7.h \
 			maid-grf.h
 zborg8.o: zborg1.h zborg2.h zborg3.h zborg4.h zborg5.h zborg6.h zborg7.h \
