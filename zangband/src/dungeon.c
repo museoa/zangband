@@ -1284,9 +1284,11 @@ static void process_world(void)
 		if (!(turn % 100))
 		{
 			/* Basic digestion rate based on speed */
-			i = ((p_ptr->pspeed > 199) ? 49 : (
-				(p_ptr->pspeed < 0) ? 1 :
-			 		extract_energy[p_ptr->pspeed])) * 2;
+			if (p_ptr->pspeed > 199) i = 49;
+			else if (p_ptr->pspeed < 0) i = 1;
+			else i = extract_energy[p_ptr->pspeed];
+				
+			i*=2;
 
 			/* Regeneration takes more food */
 			if (p_ptr->regenerate) i += 30;
@@ -3215,9 +3217,11 @@ static void process_player(void)
 		hack_mutation = FALSE;
 	}
 
-	i = (p_ptr->pspeed > 199) ? 49 : 
-		((p_ptr->pspeed < 0) ? 1 : 
-			extract_energy[p_ptr->pspeed]);
+	if (p_ptr->pspeed > 199) i = 49;
+	else if (p_ptr->pspeed < 0) i = 1;
+	else i = extract_energy[p_ptr->pspeed];
+
+	p_ptr->energy += i;
 
 	/* No turn yet */
 	if (p_ptr->energy < 100) return;
