@@ -38,7 +38,7 @@ void self_knowledge(void)
 
 	object_type *o_ptr;
 
-	char Dummy[80];
+	char Dummy[80], Liferating[80];
 
 	cptr info[220];
 
@@ -47,13 +47,14 @@ void self_knowledge(void)
 	int percent;
 
 	strcpy(Dummy, "");
+	strcpy(Liferating, "");
 
 	percent = (int)(((long)player_hp[PY_MAX_LEVEL - 1] * 200L) /
 		(2 * p_ptr->hitdie +
 		((PY_MAX_LEVEL - 1) * (p_ptr->hitdie + 1))));
 
-	sprintf(Dummy, "Your current Life Rating is %d/100.", percent);
-	info[i++] = Dummy;
+	sprintf(Liferating, "Your current Life Rating is %d/100.", percent);
+	info[i++] = Liferating;
 
 	chg_virtue(V_KNOWLEDGE, 1);
 	chg_virtue(V_ENLIGHTEN, 1);
