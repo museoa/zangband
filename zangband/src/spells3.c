@@ -2374,7 +2374,15 @@ bool recharge(int power)
 
 			/* Recharge the wand or staff. */
 			o_ptr->pval += recharge_amount;
-
+			
+			/* Reduce "used" charges */
+			if (o_ptr->tval == TV_WAND)
+			{
+				o_ptr->ac -= recharge_amount;
+				
+				/* Never less than zero */
+				if (o_ptr->ac < 0) o_ptr->ac = 0;
+			}
 
 			/* Hack -- we no longer "know" the item */
 			o_ptr->ident &= ~(IDENT_KNOWN);
@@ -2400,7 +2408,10 @@ bool recharge(int power)
 
 			/* Artifact wands and staffs. */
 			else if ((o_ptr->tval == TV_WAND) || (o_ptr->tval == TV_STAFF))
+			{
+				o_ptr->ac += o_ptr->pval;
 				o_ptr->pval = 0;
+			}
 		}
 		else
 		{
@@ -2469,6 +2480,7 @@ bool recharge(int power)
 				else if (o_ptr->tval == TV_WAND)
 				{
 					msg_format("You save your %s from destruction, but all charges are lost.", o_name);
+					o_ptr->ac += o_ptr->pval;
 					o_ptr->pval = 0;
 				}
 				/* Staffs aren't drained. */
@@ -2484,8 +2496,12 @@ bool recharge(int power)
 
 				/* Reduce rod stack maximum timeout, drain wands. */
 				if (o_ptr->tval == TV_ROD) o_ptr->pval -= k_ptr->pval;
-				if (o_ptr->tval == TV_WAND) o_ptr->pval = 0;
-
+				if (o_ptr->tval == TV_WAND)
+				{
+					o_ptr->ac += o_ptr->pval;
+					o_ptr->pval = 0;
+				}
+				
 				/* Reduce and describe inventory */
 				if (item >= 0)
 				{

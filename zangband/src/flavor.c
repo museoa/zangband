@@ -1653,7 +1653,7 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 	if (known)
 	{
 		/* Show the armor class info */
-		if (show_armour)
+		if ((show_armour) && (o_ptr->tval != TV_WAND))
 		{
 			t = object_desc_chr(t, ' ');
 			t = object_desc_chr(t, b1);
@@ -1664,7 +1664,7 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		}
 
 		/* No base armor, but does increase armor */
-		else if (o_ptr->to_a)
+		else if ((o_ptr->to_a) && (o_ptr->tval != TV_WAND))
 		{
 			t = object_desc_chr(t, ' ');
 			t = object_desc_chr(t, b1);

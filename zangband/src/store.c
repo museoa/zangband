@@ -701,7 +701,10 @@ static void mass_produce(object_type *o_ptr)
 				else if (cost < 3201L) size += damroll(1, 3);
 			}
 
-			/* Ensure that mass-produced rods and wands get the correct pvals. */
+			/* 
+			 * Ensure that mass-produced rods and wands
+			 * get the correct pvals.
+			 */
 			if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
 			{
 				o_ptr->pval *= size;
@@ -816,7 +819,10 @@ static void store_object_absorb(object_type *o_ptr, object_type *j_ptr)
 	/* Combine quantity, lose excess items */
 	o_ptr->number = (total > 99) ? 99 : total;
 
-	/* Hack -- if rods are stacking, add the pvals (maximum timeouts) together. -LM- */
+	/* 
+	 * Hack -- if rods are stacking, add the pvals
+	 * (maximum timeouts) together. -LM-
+	 */
 	if (o_ptr->tval == TV_ROD)
 	{
 		o_ptr->pval += j_ptr->pval;
@@ -826,6 +832,9 @@ static void store_object_absorb(object_type *o_ptr, object_type *j_ptr)
 	if (o_ptr->tval == TV_WAND)
 	{
 		o_ptr->pval += j_ptr->pval;
+		
+		/* No "used" charges in store stock */
+		o_ptr->ac = 0;
 	}
 }
 
@@ -1409,10 +1418,15 @@ static void store_delete(void)
 	/* Hack -- sometimes, only destroy a single item */
 	if (randint0(100) < 50) num = 1;
 
-	/* Hack -- decrement the maximum timeouts and total charges of rods and wands. -LM- */
-	if ((st_ptr->stock[what].tval == TV_ROD) || (st_ptr->stock[what].tval == TV_WAND))
+	/* 
+	 * Hack -- decrement the maximum timeouts and
+	 * total charges of rods and wands. -LM-
+	 */
+	if ((st_ptr->stock[what].tval == TV_ROD) ||
+		 (st_ptr->stock[what].tval == TV_WAND))
 	{
-		st_ptr->stock[what].pval -= num * st_ptr->stock[what].pval / st_ptr->stock[what].number;
+		st_ptr->stock[what].pval -= num * st_ptr->stock[what].pval /
+			 st_ptr->stock[what].number;
 	}
 
 	/* Actually destroy (part of) the item */
@@ -2645,9 +2659,11 @@ static void store_purchase(void)
 			{
 				/* Say "okay" */
 				say_comment_1();
-
-				if (cur_store_num == STORE_BLACK) /* The black market is illegal! */
+				
+				/* The black market is illegal! */
+				if (cur_store_num == STORE_BLACK) 
 					chg_virtue(V_JUSTICE, -1);
+					
 				if ((o_ptr->tval == TV_BOTTLE) && (cur_store_num != STORE_HOME))
 					chg_virtue(V_NATURE, -1);
 
@@ -2694,6 +2710,9 @@ static void store_purchase(void)
 				if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
 				{
 					o_ptr->pval -= j_ptr->pval;
+					
+					/* No used charges in store stock */
+					o_ptr->ac = 0;
 				}
 
 				/* Handle stuff */
@@ -2904,9 +2923,24 @@ static void store_sell(void)
 	 * Hack -- If a rod or wand, allocate total maximum
 	 * timeouts or charges to those being sold. -LM-
 	 */
-	if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
+	if (o_ptr->tval == TV_WAND)
 	{
-		q_ptr->pval = o_ptr->pval * amt / o_ptr->number;
+		q_ptr->pval = (o_ptr->pval + o_ptr->ac) * amt / o_ptr->number;
+		
+		/* Remove "used" charges */
+		if (q_ptr->pval < o_ptr->ac)
+		{
+			q_ptr->pval = 0;
+		}
+		else
+		{
+			q_ptr->pval -= o_ptr->ac;
+		}
+	}
+	
+	if (o_ptr->tval == TV_ROD)
+	{
+		q_ptr->pval = o_ptr->pval  * amt / o_ptr->number;
 	}
 
 	/* Get a full description */
@@ -2983,14 +3017,11 @@ static void store_sell(void)
 			q_ptr->number = amt;
 
 			/*
-			 * Hack -- If a rod or wand, let the shopkeeper know just
-			 * how many charges he really paid for. -LM-
+			 * Hack -- Allocate charges between those wands or rods sold
+			 * and retained, unless all are being sold. -LM-
 			 */
-			if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
-			{
-				q_ptr->pval = o_ptr->pval * amt / o_ptr->number;
-			}
-
+			distribute_charges(o_ptr, q_ptr, amt);
+			
 			/* Get the "actual" value */
 			value = object_value(q_ptr) * q_ptr->number;
 
@@ -3002,18 +3033,16 @@ static void store_sell(void)
 
 			if (!((o_ptr->tval == TV_FIGURINE) && (value > 0)))
 			{
-				/* Analyze the prices (and comment verbally) unless a figurine */
+				/* 
+				 * Analyze the prices (and comment verbally)
+				 * unless object is a figurine
+				 */
 				purchase_analyze(price, value, dummy);
 			}
 
-			/*
-			 * Hack -- Allocate charges between those wands or rods sold
-			 * and retained, unless all are being sold. -LM-
-			 */
-			distribute_charges(o_ptr, q_ptr, amt);
-
 			/* Reset timeouts of the sold items */
 			q_ptr->timeout = 0;
+			q_ptr->ac = 0;
 
 			/* Take the item from the player, describe the result */
 			inven_item_increase(item, -amt);

@@ -493,7 +493,11 @@ static void rd_item(object_type *o_ptr)
 		o_ptr->to_a = k_ptr->to_a;
 
 		/* Acquire correct fields */
-		o_ptr->ac = k_ptr->ac;
+		if (o_ptr->tval != TV_WAND)
+		{
+			/* Hack - Wands count "used" charges */
+			o_ptr->ac = k_ptr->ac;
+		}
 		o_ptr->dd = k_ptr->dd;
 		o_ptr->ds = k_ptr->ds;
 

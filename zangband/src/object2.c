@@ -1369,6 +1369,8 @@ s32b object_value(object_type *o_ptr)
  */
 void distribute_charges(object_type *o_ptr, object_type *q_ptr, int amt)
 {
+	int new_charges;
+	
 	/*
 	 * Hack -- If rods or wands are dropped, the total maximum timeout or
 	 * charges needs to be allocated between the two stacks.  If all the items
@@ -1377,8 +1379,40 @@ void distribute_charges(object_type *o_ptr, object_type *q_ptr, int amt)
 	 */
 	if ((o_ptr->tval == TV_WAND) || (o_ptr->tval == TV_ROD))
 	{
-		q_ptr->pval = o_ptr->pval * amt / o_ptr->number;
-		if (amt < o_ptr->number) o_ptr->pval -= q_ptr->pval;
+		new_charges = (o_ptr->pval + o_ptr->ac) * amt / o_ptr->number;
+		
+		/* Hack - AC is a count of the "used" charges */
+		if (o_ptr->tval == TV_WAND)
+		{
+			/* Used more changes than a single wand has */
+			if (o_ptr->ac > new_charges)
+			{
+				/* Drop an empty wand */
+				q_ptr->pval = 0;
+				
+				o_ptr->ac -= new_charges;
+				q_ptr->ac = new_charges;
+			}
+			else
+			{
+				/* Split the charges evenly - then move the "used ones" */
+				q_ptr->pval = new_charges - o_ptr->ac;
+				
+				if (amt < o_ptr->number)
+				{
+					o_ptr->pval -= new_charges - o_ptr->ac;
+				}
+				
+				q_ptr->ac = o_ptr->ac;
+				o_ptr->ac = 0;
+			}
+		}
+		else
+		{
+			q_ptr->pval = o_ptr->pval * amt / o_ptr->number;
+			
+			if (amt < o_ptr->number) o_ptr->pval -= q_ptr->pval;
+		}
 
 		/* Hack -- Rods also need to have their timeouts distributed.  The
 		 * dropped stack will accept all time remaining to charge up to its
@@ -1407,6 +1441,7 @@ void reduce_charges(object_type *o_ptr, int amt)
 		(amt < o_ptr->number))
 	{
 		o_ptr->pval -= o_ptr->pval * amt / o_ptr->number;
+		o_ptr->ac -= o_ptr->ac * amt / o_ptr->number;
 	}
 }
 
@@ -1647,7 +1682,10 @@ void object_absorb(object_type *o_ptr, object_type *j_ptr)
 	/* Hack -- save largest discount XXX XXX XXX */
 	if (o_ptr->discount < j_ptr->discount) o_ptr->discount = j_ptr->discount;
 
-	/* Hack -- if rods are stacking, add the pvals (maximum timeouts) and current timeouts together. -LM- */
+	/* 
+	 * Hack -- if rods are stacking, add the pvals
+	 * (maximum timeouts) and current timeouts together. -LM-
+	 */
 	if (o_ptr->tval == TV_ROD)
 	{
 		o_ptr->pval += j_ptr->pval;
@@ -1658,6 +1696,7 @@ void object_absorb(object_type *o_ptr, object_type *j_ptr)
 	if (o_ptr->tval == TV_WAND)
 	{
 		o_ptr->pval += j_ptr->pval;
+		o_ptr->ac += j_ptr->ac;
 	}
 }
 
@@ -3792,9 +3831,22 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power)
 		}
 
 		case TV_WAND:
+		{
+			/*
+			 * The wand or staff gets a number of initial charges equal
+			 * to between 1/2 (+1) and the full object kind's pval. -LM-
+			 */
+			o_ptr->pval = k_ptr->pval / 2 + randint1((k_ptr->pval + 1) / 2);
+			
+			/* The number of "used" charges starts out as zero */
+			o_ptr->ac = 0;
+			break;
+		}
+		
 		case TV_STAFF:
 		{
-			/* The wand or staff gets a number of initial charges equal
+			/*
+			 * The wand or staff gets a number of initial charges equal
 			 * to between 1/2 (+1) and the full object kind's pval. -LM-
 			 */
 			o_ptr->pval = k_ptr->pval / 2 + randint1((k_ptr->pval + 1) / 2);

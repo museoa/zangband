@@ -2441,6 +2441,8 @@ static void do_cmd_aim_wand_aux(int item)
 
 	/* Use a single charge */
 	o_ptr->pval--;
+	o_ptr->ac++;
+
 
 	/* Describe the charges in the pack */
 	if (item >= 0)
@@ -3250,9 +3252,6 @@ static bool item_tester_hook_use(object_type *o_ptr)
 		case TV_ROD:
 		case TV_SCROLL:
 		case TV_POTION:
-#if 0
-		case TV_FLASK:
-#endif
 		case TV_FOOD:
 		{
 			return (TRUE);
@@ -3329,15 +3328,6 @@ void do_cmd_use(void)
 			do_cmd_eat_food_aux(item);
 			break;
 		}
-
-#if 0
-		/* Fuel your lantern */
-		case TV_FLASK:
-		{
-			do_cmd_refill();
-			break;
-		}
-#endif
 
 		/* Aim a wand */
 		case TV_WAND:

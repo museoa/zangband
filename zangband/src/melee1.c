@@ -583,6 +583,10 @@ bool make_attack_normal(int m_idx)
 								if (p_ptr->health_who == m_idx) p_ptr->redraw |= (PR_HEALTH);
 
 								/* Uncharge */
+								if (o_ptr->tval == TV_WAND)
+								{
+									o_ptr->ac += o_ptr->pval;
+								}
 								o_ptr->pval = 0;
 
 								/* Combine / Reorder the pack */
@@ -734,16 +738,9 @@ bool make_attack_normal(int m_idx)
 
 									/* Modify number */
 									j_ptr->number = 1;
-
-									/* Hack -- If a rod or wand, allocate total
-									 * maximum timeouts or charges between those
-									 * stolen and those missed. -LM-
-									 */
-									if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
-									{
-										j_ptr->pval = o_ptr->pval / o_ptr->number;
-										o_ptr->pval -= j_ptr->pval;
-									}
+									
+									/* Wand / rod stacking */
+									distribute_charges(o_ptr, j_ptr, --o_ptr->number);
 
 									/* Forget mark */
 									j_ptr->marked = FALSE;
@@ -784,15 +781,8 @@ bool make_attack_normal(int m_idx)
 										/* Modify number */
 										j_ptr->number = 1;
 
-										/* Hack -- If a rod or wand, allocate total
-										 * maximum timeouts or charges between those
-										 * stolen and those missed. -LM-
-										 */
-										if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
-										{
-											j_ptr->pval = o_ptr->pval / o_ptr->number;
-											o_ptr->pval -= j_ptr->pval;
-										}
+										/* Wand / rod stacking */
+										distribute_charges(o_ptr, j_ptr, --o_ptr->number);
 
 										/* Forget mark */
 										j_ptr->marked = FALSE;

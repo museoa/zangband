@@ -1696,6 +1696,9 @@ static void building_recharge(void)
 
 		/* Recharge */
 		o_ptr->pval += charges;
+		
+		/* Hack - no "used" charges */
+		o_ptr->ac = 0;
 
 		/* We no longer think the item is empty */
 		o_ptr->ident &= ~(IDENT_EMPTY);

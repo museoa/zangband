@@ -2800,6 +2800,8 @@ void field_action_hit_trap_drain_magic(s16b *field_ptr, void *nothing)
 			(o_ptr->pval))
 		{
 			/* Uncharge */
+			if (o_ptr->tval == TV_WAND) o_ptr->ac += o_ptr->pval;
+			
 			o_ptr->pval = 0;
 
 			/* Combine / Reorder the pack */

@@ -772,7 +772,7 @@ struct object_type
 	
 	byte feeling;       /* Game generated inscription number (eg, pseudo-id) */
 
-	byte activate;	/* Activation type */
+	byte activate;		/* Activation type */
 
 #ifdef USE_SCRIPT
 	PyObject *python;
