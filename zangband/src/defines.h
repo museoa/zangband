@@ -2020,6 +2020,7 @@
 #define SV_AMULET_PROT_EVIL             16
 #define SV_AMULET_PROT_UNDEAD           17
 #define SV_AMULET_LUCK                  18
+#define SV_AMULET_SUSTENANCE            19
 
 /* The sval codes for TV_RING */
 #define SV_RING_WOE                      0

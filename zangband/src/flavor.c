@@ -17,7 +17,7 @@
  * Max sizes of the following arrays
  */
 #define MAX_ROCKS      68		/* Used with rings (min 55) */
-#define MAX_AMULETS    22		/* Used with amulets (min 19) */
+#define MAX_AMULETS    22		/* Used with amulets (min 20) */
 #define MAX_WOODS      32		/* Used with staffs (min 30) */
 #define MAX_METALS     39		/* Used with wands/rods (min 30/29) */
 #define MAX_COLORS     66		/* Used with potions (min 64) */
